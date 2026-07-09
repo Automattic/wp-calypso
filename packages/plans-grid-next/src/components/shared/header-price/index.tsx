@@ -2,6 +2,10 @@ import {
 	getPlanSlugForTermVariant,
 	isFreePlan,
 	isWpcomEnterpriseGridPlan,
+	PLAN_ANNUAL_PERIOD,
+	PLAN_BIENNIAL_PERIOD,
+	PLAN_MONTHLY_PERIOD,
+	PLAN_TRIENNIAL_PERIOD,
 	PERIOD_LIST,
 	TERM_MONTHLY,
 	type PlanSlug,
@@ -10,7 +14,7 @@ import { PlanPrice } from '@automattic/components';
 import { Plans } from '@automattic/data-stores';
 import { useEffect } from '@wordpress/element';
 import clsx from 'clsx';
-import { useTranslate } from 'i18n-calypso';
+import { type TranslateResult, useTranslate } from 'i18n-calypso';
 import { usePlansGridContext } from '../../../grid-context';
 import useIsLargeCurrency from '../../../hooks/use-is-large-currency';
 import { useManageTooltipToggle } from '../../../hooks/use-manage-tooltip-toggle';
@@ -68,27 +72,48 @@ const HeaderPriceBadgeTooltip = ( {
 	children,
 	className,
 	planSlug,
+	text,
 	tooltipId,
 }: {
 	children: ReactNode;
 	className: string;
 	planSlug: PlanSlug;
+	text: TranslateResult;
 	tooltipId?: string;
 } ) => {
-	const translate = useTranslate();
 	const [ activeTooltipId, setActiveTooltipId ] = useManageTooltipToggle();
 	const badge = <span className={ className }>{ children }</span>;
 
 	return (
 		<Plans2023Tooltip
 			id={ `plans-grid-next-header-price-badge-${ planSlug }-${ tooltipId ?? 'default' }` }
-			text={ translate( 'What a savings!' ) }
+			text={ text }
 			activeTooltipId={ activeTooltipId }
 			setActiveTooltipId={ setActiveTooltipId }
 		>
 			{ badge }
 		</Plans2023Tooltip>
 	);
+};
+
+const getPricingBadgeTooltipText = ( {
+	billingPeriod,
+	translate,
+}: {
+	billingPeriod?: -1 | ( typeof PERIOD_LIST )[ number ];
+	translate: ( text: string ) => TranslateResult;
+} ): TranslateResult => {
+	switch ( billingPeriod ) {
+		case PLAN_MONTHLY_PERIOD:
+			return translate( '1-month savings' );
+		case PLAN_BIENNIAL_PERIOD:
+			return translate( '2-year savings' );
+		case PLAN_TRIENNIAL_PERIOD:
+			return translate( '3-year savings' );
+		case PLAN_ANNUAL_PERIOD:
+		default:
+			return translate( '1-year savings' );
+	}
 };
 
 const HeaderPrice = ( { planSlug, visibleGridPlans }: HeaderPriceProps ) => {
@@ -116,6 +141,7 @@ const HeaderPrice = ( { planSlug, visibleGridPlans }: HeaderPriceProps ) => {
 		pricing: { currencyCode, originalPrice, discountedPrice, introOffer, billingPeriod },
 		isMonthlyPlan,
 	} = gridPlansIndex[ planSlug ];
+	const pricingBadgeTooltipText = getPricingBadgeTooltipText( { billingPeriod, translate } );
 	const isPricedPlan = null !== originalPrice.monthly;
 
 	/**
@@ -175,6 +201,7 @@ const HeaderPrice = ( { planSlug, visibleGridPlans }: HeaderPriceProps ) => {
 			<HeaderPriceBadgeTooltip
 				className={ className }
 				planSlug={ planSlug }
+				text={ pricingBadgeTooltipText }
 				tooltipId={ tooltipId }
 			>
 				{ children }

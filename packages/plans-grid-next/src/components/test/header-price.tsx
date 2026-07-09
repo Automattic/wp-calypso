@@ -35,9 +35,14 @@ jest.mock( '../shared/header-price/header-price-context', () => ( {
 import {
 	type PlanSlug,
 	PLAN_ANNUAL_PERIOD,
+	PLAN_BIENNIAL_PERIOD,
 	PLAN_ENTERPRISE_GRID_WPCOM,
+	PLAN_MONTHLY_PERIOD,
 	PLAN_PERSONAL,
+	PLAN_PERSONAL_2_YEARS,
+	PLAN_PERSONAL_3_YEARS,
 	PLAN_PERSONAL_MONTHLY,
+	PLAN_TRIENNIAL_PERIOD,
 } from '@automattic/calypso-products';
 import { Plans } from '@automattic/data-stores';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
@@ -237,29 +242,80 @@ describe( 'HeaderPrice', () => {
 		expect( badge ).toHaveTextContent( 'Save 50%' );
 	} );
 
-	test( 'should show a tooltip on pricing badges in the plans grid redesign experiment', async () => {
+	test.each( [
+		[ '1-year savings', PLAN_PERSONAL, PLAN_ANNUAL_PERIOD ],
+		[ '2-year savings', PLAN_PERSONAL_2_YEARS, PLAN_BIENNIAL_PERIOD ],
+		[ '3-year savings', PLAN_PERSONAL_3_YEARS, PLAN_TRIENNIAL_PERIOD ],
+	] )(
+		'should show "%s" on pricing badge tooltips in the plans grid redesign experiment',
+		async ( expectedTooltipText, planSlug, billingPeriod ) => {
+			const pricing = {
+				currencyCode: 'USD',
+				originalPrice: { full: 120, monthly: 10 },
+				discountedPrice: { full: null, monthly: null },
+				billingPeriod,
+			};
+
+			mockUseHeaderPriceContext.mockReturnValue( {
+				isAnyPlanPriceDiscounted: true,
+				setIsAnyPlanPriceDiscounted: jest.fn(),
+			} );
+			( Plans.usePricingMetaForGridPlans as jest.Mock ).mockReturnValue( {
+				[ PLAN_PERSONAL_MONTHLY ]: {
+					originalPrice: { monthly: 20, full: 240 },
+					discountedPrice: { monthly: null, full: null },
+					billingPeriod: PLAN_MONTHLY_PERIOD,
+				},
+			} );
+
+			usePlansGridContext.mockImplementation( () => ( {
+				gridPlansIndex: {
+					[ planSlug ]: {
+						current: false,
+						isMonthlyPlan: false,
+						pricing,
+					},
+				},
+				isExperimentVariant: true,
+				showFeatureCheckmarks: true,
+				showBillingDescriptionForIncreasedRenewalPrice: 'crossed_price',
+			} ) );
+
+			const { container } = render(
+				<HeaderPrice { ...defaultProps } planSlug={ planSlug as PlanSlug } />,
+				{
+					wrapper: Wrapper,
+				}
+			);
+			const badge = container.querySelector(
+				'.plans-grid-next-header-price__badge.is-plan-differentiators-experiment-badge:not(.is-hidden)'
+			);
+			const hoverArea = container.querySelector( '.plans-2023-tooltip__hover-area-container' );
+
+			expect( badge ).toHaveTextContent( 'Save 50%' );
+			expect( hoverArea ).toContainElement( badge );
+
+			fireEvent.mouseEnter( hoverArea as Element );
+
+			await waitFor( () => {
+				expect(
+					screen.getByText( new RegExp( expectedTooltipText.replace( ' ', '\\s+' ) ) )
+				).toBeInTheDocument();
+			} );
+		}
+	);
+
+	test( 'should show "1-month savings" on monthly pricing badge tooltips', async () => {
 		const pricing = {
 			currencyCode: 'USD',
 			originalPrice: { full: 120, monthly: 10 },
-			discountedPrice: { full: null, monthly: null },
-			billingPeriod: PLAN_ANNUAL_PERIOD,
+			discountedPrice: { full: 60, monthly: 5 },
+			billingPeriod: PLAN_MONTHLY_PERIOD,
 		};
-
-		mockUseHeaderPriceContext.mockReturnValue( {
-			isAnyPlanPriceDiscounted: true,
-			setIsAnyPlanPriceDiscounted: jest.fn(),
-		} );
-		( Plans.usePricingMetaForGridPlans as jest.Mock ).mockReturnValue( {
-			[ PLAN_PERSONAL_MONTHLY ]: {
-				originalPrice: { monthly: 20, full: 240 },
-				discountedPrice: { monthly: null, full: null },
-				billingPeriod: 31,
-			},
-		} );
 
 		usePlansGridContext.mockImplementation( () => ( {
 			gridPlansIndex: {
-				[ PLAN_PERSONAL ]: {
+				[ PLAN_PERSONAL_MONTHLY ]: {
 					current: false,
 					isMonthlyPlan: true,
 					pricing,
@@ -270,19 +326,24 @@ describe( 'HeaderPrice', () => {
 			showBillingDescriptionForIncreasedRenewalPrice: 'crossed_price',
 		} ) );
 
-		const { container } = render( <HeaderPrice { ...defaultProps } />, { wrapper: Wrapper } );
+		const { container } = render(
+			<HeaderPrice { ...defaultProps } planSlug={ PLAN_PERSONAL_MONTHLY } />,
+			{
+				wrapper: Wrapper,
+			}
+		);
 		const badge = container.querySelector(
 			'.plans-grid-next-header-price__badge.is-plan-differentiators-experiment-badge:not(.is-hidden)'
 		);
 		const hoverArea = container.querySelector( '.plans-2023-tooltip__hover-area-container' );
 
-		expect( badge ).toHaveTextContent( 'Save 50%' );
+		expect( badge ).toHaveTextContent( 'One time discount' );
 		expect( hoverArea ).toContainElement( badge );
 
 		fireEvent.mouseEnter( hoverArea as Element );
 
 		await waitFor( () => {
-			expect( screen.getByText( /What a\s+savings!/ ) ).toBeInTheDocument();
+			expect( screen.getByText( /1-month\s+savings/ ) ).toBeInTheDocument();
 		} );
 	} );
 
