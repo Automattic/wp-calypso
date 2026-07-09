@@ -6,11 +6,11 @@ import { getDisplayMessageFromToolData, isDisplayableToolMessageTool } from './t
 import type { GetChatComponent } from './load-external-providers';
 import type { UIMessage } from '@automattic/agenttic-client';
 
-export type AgentsManagerUIMessage = UIMessage & {
+export interface AgentsManagerUIMessage extends UIMessage {
 	disabled?: boolean;
 	/** Suppress Agenttic's transient thinking indicator while this message is the latest one. */
 	suppressThinking?: boolean;
-};
+}
 
 interface Options {
 	messages: UIMessage[];
@@ -18,13 +18,13 @@ interface Options {
 	currentPostId?: number;
 }
 
-type MessageWithContextFlags = UIMessage & {
+interface MessageWithContextFlags extends UIMessage {
 	context?: {
 		flags?: {
 			context_only?: boolean;
 		};
 	};
-};
+}
 
 function isContextOnlyMessage( message: UIMessage ): boolean {
 	return (
