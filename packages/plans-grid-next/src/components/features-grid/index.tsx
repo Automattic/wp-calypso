@@ -345,15 +345,22 @@ const FeaturesGrid = ( {
 		renderedGridPlans: gridPlans,
 		showRefundPeriod,
 	};
+	const gridPlansWithoutSpotlightCount = gridPlanForSpotlight
+		? gridPlans.filter( ( { planSlug } ) => gridPlanForSpotlight.planSlug !== planSlug ).length
+		: gridPlans.length;
 
 	return (
 		<div className="plans-grid-next-features-grid">
 			{ 'small' !== gridSize && <SpotlightPlan { ...spotlightPlanProps } /> }
 			<div className="plan-features">
 				<div
-					className={ clsx( 'plan-features-2023-grid__content', {
-						'has-bottom-plan-card': bottomGridPlan,
-					} ) }
+					className={ clsx(
+						'plan-features-2023-grid__content',
+						`has-${ gridPlansWithoutSpotlightCount }-cols`,
+						{
+							'has-bottom-plan-card': bottomGridPlan,
+						}
+					) }
 				>
 					<div>
 						{ 'large' === gridSize && (

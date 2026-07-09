@@ -723,6 +723,14 @@
 			border-bottom-left-radius: 0;
 			border-bottom-right-radius: 0;
 		}
+
+		&.has-3-cols .plans-grid-next-features-grid__bottom-plan-card {
+			max-width: $table-cell-max-width * 3;
+		}
+
+		&.has-4-cols .plans-grid-next-features-grid__bottom-plan-card {
+			max-width: $table-cell-max-width * 4;
+		}
 	}
 
 	.plans-grid-next-features-grid__bottom-plan-card {
@@ -746,17 +754,20 @@
 			min-height: 176px;
 			overflow: hidden;
 			padding: 0 0 0 32px;
+			position: relative;
 
 			.plans-grid-next-features-grid__bottom-plan-card-copy {
 				align-self: center;
 				flex: 0 0 44%;
 				max-width: 560px;
 				padding: 24px 48px 24px 0;
+				z-index: 1;
 			}
 
 			.plans-grid-next-features-grid__bottom-plan-card-media {
 				align-self: stretch;
-				flex: 1 1 56%;
+				inset: 0;
+				position: absolute;
 			}
 		}
 	}
@@ -826,7 +837,8 @@
 	}
 
 	.plans-grid-next-features-grid__bottom-plan-card-woo-visual {
-		display: flex;
+		display: block;
+		height: 100%;
 		min-height: 176px;
 		position: relative;
 		width: 100%;
@@ -835,9 +847,13 @@
 	.plans-grid-next-features-grid__bottom-plan-card-woo-image {
 		display: block;
 		height: 100%;
+		left: 50%;
+		max-width: 428px;
 		object-fit: cover;
 		object-position: center;
-		width: 100%;
+		position: absolute;
+		top: 0;
+		width: 428px;
 	}
 
 	.plans-grid-next-features-grid__bottom-plan-card-woo-logo-badge {
@@ -847,8 +863,8 @@
 		display: flex;
 		height: 72px;
 		justify-content: center;
-		left: -36px;
 		position: absolute;
+		left: calc( 50% - 36px );
 		top: 32px;
 		width: 72px;
 		z-index: 1;
@@ -1295,7 +1311,10 @@
 				}
 
 				.plans-grid-next-features-grid__bottom-plan-card-media {
+					align-self: stretch;
+					inset: auto;
 					margin: 20px -24px;
+					position: relative;
 					width: calc( 100% + 48px );
 				}
 			}
@@ -1348,13 +1367,25 @@
 		}
 
 		.plans-grid-next-features-grid__bottom-plan-card-woo-visual {
-			min-height: 164px;
+			height: 164px;
+			overflow: hidden;
+		}
+
+		.plans-grid-next-features-grid__bottom-plan-card-woo-image {
+			height: 100%;
+			left: 0;
+			max-width: none;
+			right: auto;
+			top: 0;
+			transform: none;
+			width: 100%;
 		}
 
 		.plans-grid-next-features-grid__bottom-plan-card-woo-logo-badge {
 			border-radius: 16px;
 			height: 64px;
 			left: 24px;
+			right: auto;
 			top: 20px;
 			width: 64px;
 		}
