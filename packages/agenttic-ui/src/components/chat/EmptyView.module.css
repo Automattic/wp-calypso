@@ -27,11 +27,9 @@
   color: var(--color-foreground);
   margin: 0;
   padding: var(--spacing) var(--spacing-4);
-  max-width: 400px;
 }
 
 .suggestionsWrapper {
   width: 100%;
-  max-width: 500px;
   position: relative;
 }
