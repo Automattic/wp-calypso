@@ -20,7 +20,7 @@ export const disconnectDomainMutation = ( domainName: string ) =>
 	mutationOptions( {
 		mutationFn: () => disconnectDomain( domainName ),
 		onSuccess: () => {
-			queryClient.invalidateQueries( domainQuery( domainName ) );
+			queryClient.invalidateQueries( { queryKey: [ 'domains' ] } );
 		},
 	} );
 

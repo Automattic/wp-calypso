@@ -86,7 +86,7 @@ export const transferDomainToSiteMutation = ( domain: string, siteId: number ) =
 	mutationOptions( {
 		mutationFn: ( targetSiteId: number ) => transferDomainToSite( domain, siteId, targetSiteId ),
 		onSuccess: () => {
-			queryClient.invalidateQueries( domainQuery( domain ) );
+			queryClient.invalidateQueries( { queryKey: [ 'domains' ] } );
 		},
 	} );
 
