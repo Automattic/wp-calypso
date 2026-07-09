@@ -1,0 +1,51 @@
+.stats-infotip {
+	display: inline-flex;
+	line-height: 0;
+	vertical-align: middle;
+}
+
+.stats-infotip__trigger {
+	align-items: center;
+	background: none;
+	border: 0;
+	border-radius: var(--wpds-border-radius-sm, 2px);
+	color: inherit;
+	cursor: pointer;
+	display: inline-flex;
+	padding: 0;
+
+	&:hover,
+	&:focus-visible {
+		color: var( --color-neutral-70 );
+	}
+}
+
+.stats-infotip__positioner {
+	z-index: 1000;
+}
+
+.stats-infotip__popup {
+	// No exact WPDS surface-width token for 280px (the scale steps 240px "xs" / 320px "sm");
+	// rounding up to "sm" avoids narrowing existing popup content.
+	max-width: 320px;
+}
+
+.stats-infotip__description {
+	text-align: start;
+
+	p:last-child {
+		margin-bottom: 0;
+	}
+
+	ul {
+		margin-block: var(--wpds-dimension-gap-sm, 8px) var(--wpds-dimension-gap-md, 12px);
+		padding-inline-start: var(--wpds-dimension-padding-xl, 20px);
+	}
+
+	hr {
+		border: 0;
+		border-block-start: var(--wpds-border-width-xs, 1px) solid
+			var(--wpds-color-stroke-surface-neutral-weak, var(--color-border-subtle));
+		margin: var(--wpds-dimension-gap-md, 12px) 0;
+	}
+}

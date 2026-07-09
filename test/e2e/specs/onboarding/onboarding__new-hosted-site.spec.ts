@@ -14,7 +14,7 @@ import {
 	cancelSubscriptionFlow,
 } from '@automattic/calypso-e2e';
 import { tags, test } from '../../lib/pw-base';
-import { apiCloseAccount } from '../shared';
+import { apiCancelAtomicPlan, apiCloseAccount } from '../shared';
 
 test.describe(
 	DataHelper.createSuiteTitle( 'New Hosted Site Flow: Purchase a hosted site and cancel it' ),
@@ -31,15 +31,18 @@ test.describe(
 			}
 			// An account with an active Atomic site cannot be closed ("atomic-site").
 			// The Atomic site cannot be deleted via API either ("cannot delete jetpack
-			// site via API"), so the only lever is time: cancelling the Business plan
-			// (done in the test) is expected to deprovision the site asynchronously.
-			// apiCloseAccount polls the close past that wait; allow generous time.
-			test.setTimeout( 240 * 1000 );
+			// site via API"), so the only lever is cancelling the Business plan, which
+			// deprovisions the site asynchronously. The in-test cancellation only runs
+			// on the happy path; cancel here too (bearer-scoped) so a mid-test failure
+			// still deprovisions. apiCloseAccount then polls the close past that wait.
+			test.setTimeout( 300 * 1000 );
 
 			const restAPIClient = new RestAPIClient(
 				{ username: testUser.username, password: testUser.password },
 				newUserDetails.body.bearer_token
 			);
+
+			await apiCancelAtomicPlan( restAPIClient );
 
 			await apiCloseAccount( restAPIClient, {
 				userID: newUserDetails.body.user_id,

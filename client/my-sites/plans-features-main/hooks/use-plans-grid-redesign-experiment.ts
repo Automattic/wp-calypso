@@ -33,6 +33,10 @@ type PlansGridRedesignExperimentResult = {
 	 */
 	showDifferentiatorHeader: boolean;
 	/**
+	 * When true, use the redesigned feature list for the plan cards.
+	 */
+	usePlansGridRedesignFeatures: boolean;
+	/**
 	 * When true, show the Enterprise/VIP card at the bottom.
 	 */
 	showEnterpriseBottomCard: boolean;
@@ -102,6 +106,7 @@ function usePlansGridRedesignExperiment( {
 		usePlansGridRedesign,
 		usePlansGridRedesignNewDescription,
 		showDifferentiatorHeader: usePlansGridRedesign && variant === 'six_plan_new_features',
+		usePlansGridRedesignFeatures: usePlansGridRedesign && variant === 'six_plan_new_features',
 		showEnterpriseBottomCard: usePlansGridRedesign && variant === 'five_plan_new_description',
 		showWooCommerceBottomCard: usePlansGridRedesign && variant === 'four_plan_new_description',
 		isExperimentEligible: isEligible,

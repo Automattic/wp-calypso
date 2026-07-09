@@ -671,6 +671,20 @@ Questions should feel like natural next-step curiosity: clarify a detail, go dee
 }
 
 /**
+ * Read the shared Agents Manager store state, treating an unusable store
+ * as "no state". `select( storeName )` can throw in some @wordpress/data
+ * implementations when the store isn't registered.
+ * @param {Function} [selectFn] @wordpress/data select, injectable for tests.
+ */
+function getAgentsManagerState( selectFn = select ) {
+	try {
+		return selectFn( AGENTS_MANAGER_STORE )?.getAgentsManagerState?.();
+	} catch {
+		return undefined;
+	}
+}
+
+/**
  * Append a "follow-up chips" strip below the chat panel. Clicking a chip
  * fills the input and submits it. Observes the chat thread for new
  * assistant messages via MutationObserver; after each one, fires a
@@ -850,13 +864,49 @@ function setupFollowupChips() {
 	}
 
 	unsubscribeOpen = subscribe( () => {
-		const state = select( AGENTS_MANAGER_STORE ).getAgentsManagerState?.();
-		if ( state?.isOpen ) {
+		if ( getAgentsManagerState()?.isOpen ) {
 			scheduleObserve();
 		}
 	} );
 
 	tryObserve();
+}
+
+/**
+ * Invoke `onFirstOpen` the first time the chat panel opens.
+ *
+ * Checks current state first (covers a relaunch where the panel is
+ * already open), then watches the shared store for isOpen turning
+ * true. Fires at most once.
+ *
+ * @param {Function} onFirstOpen    Callback to run on the first open.
+ * @param {Object}   deps           Store accessors, injectable for tests.
+ * @param {Function} deps.select    @wordpress/data select.
+ * @param {Function} deps.subscribe @wordpress/data subscribe.
+ */
+function watchFirstChatOpen( onFirstOpen, deps = { select, subscribe } ) {
+	const isOpenNow = () => !! getAgentsManagerState( deps.select )?.isOpen;
+
+	if ( isOpenNow() ) {
+		onFirstOpen();
+		return;
+	}
+
+	let fired = false;
+	let unsubscribe = null;
+	unsubscribe = deps.subscribe( () => {
+		if ( fired || ! isOpenNow() ) {
+			return;
+		}
+		fired = true;
+		unsubscribe?.();
+		onFirstOpen();
+	} );
+	// If the subscribe implementation invoked the callback synchronously,
+	// the handle wasn't available inside the callback — release it now.
+	if ( fired ) {
+		unsubscribe();
+	}
 }
 
 function setupInitialSuggestions() {
@@ -908,8 +958,7 @@ function setupTracksEvents() {
 	// false -> true. Fires once per open; closing + reopening re-fires.
 	let wasOpen = false;
 	const unsubscribe = subscribe( () => {
-		const state = select( AGENTS_MANAGER_STORE ).getAgentsManagerState?.();
-		const isOpen = !! state?.isOpen;
+		const isOpen = !! getAgentsManagerState()?.isOpen;
 		if ( isOpen && ! wasOpen ) {
 			recordTracksEvent( 'jetpack_reader_chat_opened', baseProps );
 		}
@@ -960,15 +1009,20 @@ function setupTracksEvents() {
 			trigger: 'enter',
 		} );
 	};
-	document.addEventListener( 'click', handleClick );
-	document.addEventListener( 'keydown', handleKeydown );
+	// Capture phase: agenttic-ui stops propagation on suggestion-chip
+	// clicks (Suggestions.tsx) and composer Enter keydowns (ChatInput.tsx),
+	// so bubble-phase listeners on document never see those events —
+	// suggestion_click recorded zero events in production. Capture runs
+	// top-down before any handler can stop propagation.
+	document.addEventListener( 'click', handleClick, true );
+	document.addEventListener( 'keydown', handleKeydown, true );
 
 	window.addEventListener(
 		'pagehide',
 		() => {
 			unsubscribe?.();
-			document.removeEventListener( 'click', handleClick );
-			document.removeEventListener( 'keydown', handleKeydown );
+			document.removeEventListener( 'click', handleClick, true );
+			document.removeEventListener( 'keydown', handleKeydown, true );
 		},
 		{ once: true }
 	);
@@ -1060,7 +1114,13 @@ if ( container ) {
 	const root = createRoot( container );
 	root.render( <ReaderChatApp /> );
 
-	setupInitialSuggestions();
+	// Defer the suggestions fetch until the reader actually opens the
+	// chat. The widget mounts on every public page view of an enabled
+	// site, but most visitors never open the chat — and on sites over
+	// their AI Search quota an at-mount fetch logs a failed run on every
+	// page view. First open → fetch once; the wpcom-side 24h cache keeps
+	// repeat opens fast.
+	watchFirstChatOpen( setupInitialSuggestions );
 }
 
 // Exported for unit tests only; injectScopedReset mutates document.head.
@@ -1077,4 +1137,5 @@ export {
 	parseSuggestionsResponse,
 	getSuggestionsFetchHeaders,
 	injectScopedReset,
+	watchFirstChatOpen,
 };

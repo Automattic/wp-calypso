@@ -1,4 +1,4 @@
-import { readSpaceQuery } from '@automattic/api-queries';
+import { readSpaceBySlugQuery } from '@automattic/api-queries';
 import page from '@automattic/calypso-router';
 import { useQueryClient } from '@tanstack/react-query';
 import { useTranslate } from 'i18n-calypso';
@@ -43,10 +43,10 @@ function isOnboardingForced(): boolean {
 	}
 }
 
-// Space ids are URL-safe (base36), so the path segment is the id verbatim — no
-// decoding is needed, and there is nothing for a bad URL to throw on. Mirrors
+// Spaces are addressed in the URL by slug (`sanitize_title` form: lowercase,
+// hyphens), so the first path segment is the slug verbatim. Mirrors
 // getActiveConnection in the Social Feeds section.
-function parseSpaceId( path: string ): string | null {
+function parseSpaceSlug( path: string ): string | null {
 	const match = path.match( /^\/reader\/spaces\/([^/?]+)/ );
 	return match ? match[ 1 ] : null;
 }
@@ -64,13 +64,13 @@ const READER_POST_PATH = /^\/reader\/(?:feeds|blogs)\/[^/]+\/posts\/[^/?]+/;
  * fallback is scoped to post routes, so landing on another stream (Following,
  * a tag, …) highlights that stream instead, never a stale space.
  */
-function getActiveSpaceId( path: string, previousRoute: string ): string | null {
-	const direct = parseSpaceId( path );
+function getActiveSpaceSlug( path: string, previousRoute: string ): string | null {
+	const direct = parseSpaceSlug( path );
 	if ( direct ) {
 		return direct;
 	}
 	if ( READER_POST_PATH.test( path ) ) {
-		return parseSpaceId( previousRoute );
+		return parseSpaceSlug( previousRoute );
 	}
 	return null;
 }
@@ -82,12 +82,12 @@ export function ReaderSidebarSpaces( { path }: Props ) {
 	const spaces = useSpaces();
 	const previousRoute = useSelector( getPreviousRoute );
 
-	const activeId = getActiveSpaceId( path, previousRoute );
+	const activeSlug = getActiveSpaceSlug( path, previousRoute );
 	const isOnSpaces = path === SPACES_BASE_PATH || path.startsWith( `${ SPACES_BASE_PATH }/` );
 	// Expand the section whenever a space is active — on a space route, or while
 	// reading a post opened from one — so the highlighted space stays in view
 	// (including on a direct load of such a post, where there's no open state yet).
-	const hasActiveSpace = isOnSpaces || activeId !== null;
+	const hasActiveSpace = isOnSpaces || activeSlug !== null;
 
 	const [ isOpen, setIsOpen ] = useState( () => hasActiveSpace );
 	const [ isCreateModalOpen, setIsCreateModalOpen ] = useState( false );
@@ -109,17 +109,18 @@ export function ReaderSidebarSpaces( { path }: Props ) {
 	};
 
 	// Warm the feed on hover/focus so the view paints from cache on click. The
-	// stream query's 5-minute staleTime makes repeated hovers cheap no-ops.
-	const prefetchSpace = ( id: string ) => {
+	// stream query's 5-minute staleTime makes repeated hovers cheap no-ops. The view
+	// resolves the detail by slug and the stream by the numeric id, so warm both.
+	const prefetchSpace = ( space: ReadSpace ) => {
 		// Skip the space we're already viewing — its data is loaded (or loading).
-		if ( id === activeId ) {
+		if ( space.slug === activeSlug ) {
 			return;
 		}
 		void prefetchInfiniteStream( queryClient, dispatch, {
-			streamKey: `space:${ id }`,
+			streamKey: `space:${ space.id }`,
 			enabled: true,
 		} );
-		void queryClient.prefetchQuery( readSpaceQuery( id ) );
+		void queryClient.prefetchQuery( readSpaceBySlugQuery( space.slug ) );
 	};
 
 	const handleAddSpaceClick = () => {
@@ -148,7 +149,7 @@ export function ReaderSidebarSpaces( { path }: Props ) {
 	};
 
 	const handleSpaceCreated = ( space: ReadSpace ) => {
-		page( getSpacePath( space.id ) );
+		page( getSpacePath( space.slug ) );
 	};
 
 	return (
@@ -169,9 +170,9 @@ export function ReaderSidebarSpaces( { path }: Props ) {
 					<SpaceMenuItem
 						key={ space.id }
 						space={ space }
-						isSelected={ activeId === space.id }
+						isSelected={ activeSlug === space.slug }
 						onClick={ () => recordSpaceClick( space.id ) }
-						onPrefetch={ () => prefetchSpace( space.id ) }
+						onPrefetch={ () => prefetchSpace( space ) }
 					/>
 				) ) }
 				<AddMenuItem label={ translate( 'Create a space' ) } onClick={ handleAddSpaceClick } />

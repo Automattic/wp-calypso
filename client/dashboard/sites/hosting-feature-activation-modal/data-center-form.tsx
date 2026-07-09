@@ -34,7 +34,7 @@ export function DataCenterForm( { value, onChange }: DataCenterFormProps ) {
 			<Text>
 				{ createInterpolateElement(
 					__(
-						'We’ll place your site in the best data center for performance, but you can <button>choose a different location</button>.'
+						'We’ll pick the best data center for your site, but you can <button>choose a different location</button>.'
 					),
 					{
 						button: (

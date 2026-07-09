@@ -1,6 +1,11 @@
 import { getTracksAnonymousUserId, recordTracksEvent } from '@automattic/calypso-analytics';
 import config from '@automattic/calypso-config';
-import { WPCOM_DIFM_LITE, PRODUCT_1GB_SPACE } from '@automattic/calypso-products';
+import {
+	WPCOM_DIFM_LITE,
+	PRODUCT_1GB_SPACE,
+	getPlan,
+	TERM_MONTHLY,
+} from '@automattic/calypso-products';
 import { getUrlParts } from '@automattic/calypso-url';
 import { Site, AddOns } from '@automattic/data-stores';
 import { STORAGE_ADD_ONS } from '@automattic/data-stores/src/add-ons';
@@ -466,19 +471,41 @@ export function submitWebsiteContent( callback, { siteSlug }, step, reduxStore )
 		} );
 }
 
-function findMarketplacePlugin( state, pluginSlug, billingPeriod = '' ) {
-	const plugins = getMarketplaceProducts( state, pluginSlug );
+/**
+ * Maps the plan the user picked to the marketplace plugin's subscription term (MONTHLY or
+ * ANNUALLY) so the plan and plugin terms stay in sync. Multi-year plans map to the plugin's annual
+ * term. Falls back to `fallbackBillingPeriod` (the CTA default) when the plan term is unknown.
+ */
+export function getPluginBillingPeriodForPlan( planSlug, fallbackBillingPeriod ) {
+	const planTerm = getPlan( planSlug )?.term;
+
+	if ( ! planTerm ) {
+		return fallbackBillingPeriod;
+	}
+
+	return planTerm === TERM_MONTHLY ? 'MONTHLY' : 'ANNUALLY';
+}
+
+/**
+ * Picks the marketplace plugin variant whose subscription term matches `billingPeriod` (MONTHLY or
+ * ANNUALLY). When no billing period is given, or the requested term has no variant, returns the
+ * first available variant instead of nothing: the plugin subscription and the plan bill as
+ * independent line items, so we keep the product the user came to install rather than dropping it
+ * when its term can't match the chosen plan.
+ */
+export function pickMarketplacePluginVariant( variants, billingPeriod = '' ) {
 	const billingPeriodToTerm = {
 		MONTHLY: 'month',
 		ANNUALLY: 'year',
 	};
-	const term = ( billingPeriod && billingPeriodToTerm[ billingPeriod ] ) || '';
+	const term = billingPeriodToTerm[ billingPeriod ] || '';
+	const match = term && variants?.find( ( variant ) => variant.product_term === term );
 
-	if ( ! term ) {
-		return plugins?.[ 0 ] || null;
-	}
+	return match || variants?.[ 0 ] || null;
+}
 
-	return plugins?.find( ( plugin ) => plugin.product_term === term ) || null;
+function findMarketplacePlugin( state, pluginSlug, billingPeriod = '' ) {
+	return pickMarketplacePluginVariant( getMarketplaceProducts( state, pluginSlug ), billingPeriod );
 }
 
 export function addWithThemePlanToCart( callback, dependencies, stepProvidedItems, reduxStore ) {
@@ -597,7 +624,14 @@ export function addWithPluginPlanToCart( callback, dependencies, stepProvidedIte
 	const { cartItems, lastKnownFlow } = stepProvidedItems;
 
 	reduxStore.dispatch( requestProductsList( { type: 'all' } ) ).then( () => {
-		const marketplacePlugin = findMarketplacePlugin( reduxStore.getState(), plugin, billingPeriod );
+		const state = reduxStore.getState();
+
+		// Match the plugin's subscription term to the plan the user picked in the grid, so the plan
+		// and plugin terms don't diverge (billing_period from the CTA is only the default).
+		const planSlug = getPlanCartItem( cartItems )?.product_slug;
+		const pluginBillingPeriod = getPluginBillingPeriodForPlan( planSlug, billingPeriod );
+
+		const marketplacePlugin = findMarketplacePlugin( state, plugin, pluginBillingPeriod );
 		const providedDependencies = { cartItems };
 
 		const newCartItems = [ ...( cartItems ? cartItems : [] ), marketplacePlugin ].filter(

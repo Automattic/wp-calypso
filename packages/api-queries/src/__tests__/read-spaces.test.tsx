@@ -11,6 +11,7 @@ import {
 	createReadSpaceMutation,
 	deleteReadSpaceMutation,
 	deleteReadSpaceSourceMutation,
+	readSpaceBySlugQuery,
 	readSpaceQuery,
 	readSpacesQuery,
 	updateReadSpaceMutation,
@@ -66,6 +67,7 @@ const makeSubscription = (
 // A detail wire response (create/update/add-feed/remove-feed all return one).
 const detailResponse = ( overrides: Record< string, unknown > = {} ) => ( {
 	id: 3,
+	slug: 'work',
 	title: 'Work',
 	layout: { color: 'blue', icon: 'inbox' },
 	follows: [],
@@ -111,6 +113,28 @@ describe( 'read spaces mutations', () => {
 			expect( retryFn( 0, new Error( 'network' ) ) ).toBe( true );
 			expect( retryFn( 3, wpError( 500 ) ) ).toBe( false );
 		} );
+
+		it( 'keys the by-slug detail query on the slug and does not retry a 4xx', () => {
+			const options = readSpaceBySlugQuery( 'work' );
+
+			expect( options.queryKey ).toEqual( [ 'read', 'spaces', 'detail-by-slug', 'work' ] );
+			expect( options.meta ).toEqual( { persist: true } );
+			expect( options.refetchOnMount ).toBe( 'always' );
+
+			const retryFn = options.retry as ( failureCount: number, error: unknown ) => boolean;
+			const notFound = Object.assign( new Error( 'HTTP 404' ), { status: 404, statusCode: 404 } );
+			expect( retryFn( 0, notFound ) ).toBe( false );
+		} );
+
+		it( 'keys the by-slug query canonically, so encoded and decoded slugs share a key', () => {
+			// The view passes the decoded route slug; the sidebar/mutations pass the
+			// encoded API slug. Both must land on the same cache entry.
+			const encoded = readSpaceBySlugQuery( '%d0%bf%d1%80%d0%b8%d0%b2%d0%b5%d1%82' ).queryKey;
+			const decoded = readSpaceBySlugQuery( 'привет' ).queryKey;
+
+			expect( encoded ).toEqual( [ 'read', 'spaces', 'detail-by-slug', 'привет' ] );
+			expect( encoded ).toEqual( decoded );
+		} );
 	} );
 
 	describe( 'createReadSpaceMutation', () => {
@@ -119,23 +143,30 @@ describe( 'read spaces mutations', () => {
 			const invalidateQueries = jest.spyOn( client, 'invalidateQueries' );
 			nock( BASE )
 				.post( '/wpcom/v2/reader/spaces' )
-				.reply( 201, detailResponse( { id: 99, title: 'New' } ) );
+				.reply( 201, detailResponse( { id: 99, slug: 'new', title: 'New' } ) );
 
 			await runMutation( client, createReadSpaceMutation( client ), { name: 'New' } );
 
 			expect( client.getQueryData< ReadSpace[] >( readSpacesQuery().queryKey ) ).toEqual( [
-				{ id: '99', name: 'New', layout: { color: 'blue', icon: 'inbox' } },
+				{ id: '99', slug: 'new', name: 'New', layout: { color: 'blue', icon: 'inbox' } },
 			] );
+			const createdDetail = {
+				id: '99',
+				slug: 'new',
+				name: 'New',
+				layout: { color: 'blue', icon: 'inbox' },
+				sources: [],
+				tags: [],
+				languages: [],
+			};
 			expect( client.getQueryData< ReadSpaceDetails >( readSpaceQuery( '99' ).queryKey ) ).toEqual(
-				{
-					id: '99',
-					name: 'New',
-					layout: { color: 'blue', icon: 'inbox' },
-					sources: [],
-					tags: [],
-					languages: [],
-				}
+				createdDetail
 			);
+			// The by-slug detail cache is seeded too, so a slug-addressed view of the new
+			// space paints from cache without a round-trip.
+			expect(
+				client.getQueryData< ReadSpaceDetails >( readSpaceBySlugQuery( 'new' ).queryKey )
+			).toEqual( createdDetail );
 			expect( invalidateQueries ).toHaveBeenCalledWith( {
 				queryKey: readSpacesQuery().queryKey,
 			} );
@@ -150,7 +181,7 @@ describe( 'read spaces mutations', () => {
 			const client = newClient();
 			const invalidateQueries = jest.spyOn( client, 'invalidateQueries' );
 			client.setQueryData< ReadSpace[] >( readSpacesQuery().queryKey, [
-				{ id: '3', name: 'Old', layout: { color: 'blue', icon: 'inbox' } },
+				{ id: '3', slug: 'old', name: 'Old', layout: { color: 'blue', icon: 'inbox' } },
 			] );
 			nock( BASE )
 				.put( '/wpcom/v2/reader/spaces/3' )
@@ -158,6 +189,7 @@ describe( 'read spaces mutations', () => {
 					200,
 					detailResponse( {
 						id: 3,
+						slug: 'new-name',
 						title: 'New name',
 						layout: { color: 'green', icon: 'inbox' },
 						tags: [ 'x' ],
@@ -170,7 +202,7 @@ describe( 'read spaces mutations', () => {
 			} );
 
 			expect( client.getQueryData< ReadSpace[] >( readSpacesQuery().queryKey ) ).toEqual( [
-				{ id: '3', name: 'New name', layout: { color: 'green', icon: 'inbox' } },
+				{ id: '3', slug: 'new-name', name: 'New name', layout: { color: 'green', icon: 'inbox' } },
 			] );
 			expect(
 				client.getQueryData< ReadSpaceDetails >( readSpaceQuery( '3' ).queryKey )
@@ -183,10 +215,44 @@ describe( 'read spaces mutations', () => {
 			} );
 		} );
 
+		it( 'on a rename seeds the new by-slug cache and drops the old one', async () => {
+			const client = newClient();
+			client.setQueryData< ReadSpace[] >( readSpacesQuery().queryKey, [
+				{ id: '3', slug: 'old', name: 'Old', layout: { color: 'blue', icon: 'inbox' } },
+			] );
+			// The view was resolving through the old slug, so that cache exists.
+			client.setQueryData(
+				readSpaceBySlugQuery( 'old' ).queryKey,
+				detailResponse( { slug: 'old' } )
+			);
+			nock( BASE )
+				.put( '/wpcom/v2/reader/spaces/3' )
+				.reply( 200, detailResponse( { id: 3, slug: 'new-name', title: 'New name' } ) );
+
+			await runMutation( client, updateReadSpaceMutation( client ), {
+				spaceId: '3',
+				params: { name: 'New name' },
+			} );
+
+			// The new slug is seeded (seamless redirect target)...
+			expect(
+				client.getQueryData< ReadSpaceDetails >( readSpaceBySlugQuery( 'new-name' ).queryKey )
+			).toMatchObject( { id: '3', slug: 'new-name' } );
+			// ...and the stale old-slug entry is removed.
+			expect(
+				client.getQueryData< ReadSpaceDetails >( readSpaceBySlugQuery( 'old' ).queryKey )
+			).toBeUndefined();
+		} );
+
 		it( 'optimistically patches the list summary before the server responds', async () => {
 			const client = newClient();
 			client.setQueryData< ReadSpace[] >( readSpacesQuery().queryKey, [
-				{ id: '3', name: 'Old', layout: { color: 'blue', icon: 'inbox', iconColor: 'blue' } },
+				{
+					id: '3',
+					slug: 'old',
+					name: 'Old',
+					layout: { color: 'blue', icon: 'inbox', iconColor: 'blue' },
+				},
 			] );
 
 			// Run just `onMutate` — the sidebar reads this list, so the icon/colour must
@@ -196,16 +262,28 @@ describe( 'read spaces mutations', () => {
 				params: { name: 'New', layout: { icon: 'star', iconColor: 'pink' } },
 			} );
 
-			// `layout` is merged (color kept, icon/iconColor overridden), name replaced.
+			// `layout` is merged (color kept, icon/iconColor overridden), name replaced. The
+			// slug isn't touched optimistically — the server re-derives it and onSuccess
+			// writes the canonical value.
 			expect( client.getQueryData< ReadSpace[] >( readSpacesQuery().queryKey ) ).toEqual( [
-				{ id: '3', name: 'New', layout: { color: 'blue', icon: 'star', iconColor: 'pink' } },
+				{
+					id: '3',
+					slug: 'old',
+					name: 'New',
+					layout: { color: 'blue', icon: 'star', iconColor: 'pink' },
+				},
 			] );
 		} );
 
 		it( 'rolls back the optimistic list patch when the update fails', async () => {
 			const client = newClient();
 			const seeded: ReadSpace[] = [
-				{ id: '3', name: 'Old', layout: { color: 'blue', icon: 'inbox', iconColor: 'blue' } },
+				{
+					id: '3',
+					slug: 'old',
+					name: 'Old',
+					layout: { color: 'blue', icon: 'inbox', iconColor: 'blue' },
+				},
 			];
 			client.setQueryData< ReadSpace[] >( readSpacesQuery().queryKey, seeded );
 			nock( BASE ).put( '/wpcom/v2/reader/spaces/3' ).reply( 500, { error: 'boom' } );
@@ -246,12 +324,18 @@ describe( 'read spaces mutations', () => {
 		it( 'removes the deleted space from the list and discards its detail cache', async () => {
 			const client = newClient();
 			const invalidateQueries = jest.spyOn( client, 'invalidateQueries' );
-			const keep: ReadSpace = { id: 'keep', name: 'Keep', layout: { color: 'red', icon: 'box' } };
+			const keep: ReadSpace = {
+				id: 'keep',
+				slug: 'keep',
+				name: 'Keep',
+				layout: { color: 'red', icon: 'box' },
+			};
 			client.setQueryData< ReadSpace[] >( readSpacesQuery().queryKey, [
 				keep,
-				{ id: '3', name: 'Work', layout: { color: 'blue', icon: 'inbox' } },
+				{ id: '3', slug: 'work', name: 'Work', layout: { color: 'blue', icon: 'inbox' } },
 			] );
 			client.setQueryData( readSpaceQuery( '3' ).queryKey, detailResponse() );
+			client.setQueryData( readSpaceBySlugQuery( 'work' ).queryKey, detailResponse() );
 			nock( BASE ).delete( '/wpcom/v2/reader/spaces/3' ).reply( 200, { deleted: true, id: 3 } );
 
 			await runMutation( client, deleteReadSpaceMutation( client ), '3' );
@@ -261,6 +345,10 @@ describe( 'read spaces mutations', () => {
 			] );
 			expect(
 				client.getQueryData< ReadSpaceDetails >( readSpaceQuery( '3' ).queryKey )
+			).toBeUndefined();
+			// The by-slug detail cache is discarded as well.
+			expect(
+				client.getQueryData< ReadSpaceDetails >( readSpaceBySlugQuery( 'work' ).queryKey )
 			).toBeUndefined();
 			expect( invalidateQueries ).toHaveBeenCalledWith( {
 				queryKey: readSpacesQuery().queryKey,

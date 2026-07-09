@@ -27,10 +27,9 @@ const FULLSCREEN_BODY_CLASS = 'is-fullscreen-mode';
 // `jetpack/projects/packages/agents-manager/src/js/sidebar-docking-gate.ts`.
 const CHAT_PORTAL_CLASS = 'agents-manager-chat';
 
-// Container classes that reserve layout space for the docked sidebar; the Site
-// Editor navigation-view hook imports these to strip and restore them.
-export const SIDEBAR_CONTAINER_CLASS = 'agents-manager-sidebar-container';
-export const SIDEBAR_OPEN_CLASS = 'agents-manager-sidebar-container--sidebar-open';
+// Container classes that reserve layout space for the docked sidebar.
+const SIDEBAR_CONTAINER_CLASS = 'agents-manager-sidebar-container';
+const SIDEBAR_OPEN_CLASS = 'agents-manager-sidebar-container--sidebar-open';
 const SIDEBAR_CLOSING_CLASS = 'agents-manager-sidebar-container--closing';
 
 function getIsFullscreenGateOpen(): boolean {

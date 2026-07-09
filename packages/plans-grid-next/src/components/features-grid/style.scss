@@ -726,8 +726,6 @@
 	}
 
 	.plan-features-2023-grid__table-item {
-		background-color: var( --studio-white );
-
 		&:is( td, th ) {
 			border-left-color: #e0e0e0;
 		}
@@ -758,7 +756,7 @@
 		align-items: flex-start;
 		background-color: transparent;
 		flex-direction: column;
-		padding: 36px 16px 0;
+		padding: 32px 16px 0;
 	}
 
 	.plan-features-2023-grid__header-title {
@@ -802,14 +800,14 @@
 			}
 
 			&.is-original {
-				color: var( --studio-gray-40 );
+				color: var( --wp-components-color-gray-600, #949494 );
 				font-size: 24px;
 				margin-bottom: 3px;
 
 				.plan-price__currency-symbol,
 				.plan-price__integer,
 				.plan-price__tax-amount {
-					color: var( --studio-gray-40 );
+					color: var( --wp-components-color-gray-600, #949494 );
 				}
 
 				.plan-price__integer {
@@ -820,6 +818,7 @@
 
 		.plan-price__currency-symbol,
 		.plan-price.is-discounted .plan-price__currency-symbol {
+			color: inherit;
 			font-size: 14px;
 			margin-top: 3px;
 		}
@@ -837,6 +836,7 @@
 	.plans-grid-next-header-price__badge {
 		background-color: rgba( 184, 230, 191, 0.68 );
 		border-radius: 2px;
+		box-shadow: inset 0 0 0 1px rgba( 0, 0, 0, 0.08 );
 		color: var( --studio-green-80 );
 		font-size: 11px;
 		font-weight: 500;
@@ -923,6 +923,7 @@
 	}
 
 	.plan-features-2023-grid__feature-badge {
+		box-shadow: inset 0 0 0 1px rgba( 0, 0, 0, 0.08 );
 		flex: 0 0 auto;
 		font-weight: 500;
 		margin-inline-start: auto;
@@ -1036,8 +1037,8 @@
 					justify-content: center;
 					left: 16px;
 					letter-spacing: 0;
-					line-height: 16px;
-					padding: 0 10px;
+					line-height: 20px;
+					padding: 0 8px;
 					position: absolute;
 					right: auto;
 					text-transform: none;

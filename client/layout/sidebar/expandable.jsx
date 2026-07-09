@@ -50,6 +50,7 @@ export const ExpandableSidebarMenu = ( menuProps ) => {
 		disableFlyout,
 		prependContent,
 		appendContent,
+		moreMenuActions,
 		...props
 	} = menuProps;
 	let { expanded } = props;
@@ -128,6 +129,7 @@ export const ExpandableSidebarMenu = ( menuProps ) => {
 					menuId={ menuId }
 					prependContent={ prependContent }
 					appendContent={ appendContent }
+					moreMenuActions={ moreMenuActions }
 					{ ...props }
 				/>
 				<li
@@ -158,6 +160,7 @@ ExpandableSidebarMenu.propTypes = {
 	expandableIconClick: PropTypes.func,
 	prependContent: PropTypes.node,
 	appendContent: PropTypes.node,
+	moreMenuActions: PropTypes.node,
 	children: PropTypes.node,
 };
 

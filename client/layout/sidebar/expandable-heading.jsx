@@ -21,6 +21,7 @@ const ExpandableSidebarHeading = ( {
 	expandableIconClick,
 	prependContent,
 	appendContent,
+	moreMenuActions,
 	...props
 } ) => {
 	const translate = useTranslate();
@@ -42,7 +43,10 @@ const ExpandableSidebarHeading = ( {
 			{ undefined !== customIcon && customIcon }
 			<span className="sidebar__expandable-title">
 				{ decodeEntities( title ) }
-				{ undefined !== count && <Count count={ count } /> }
+				<span className="sidebar__actions-and-count">
+					{ moreMenuActions }
+					{ count > 0 && <Count count={ count } /> }
+				</span>
 				{ inlineText && <span className="sidebar__inline-text">{ inlineText }</span> }
 			</span>
 			{ appendContent }
@@ -83,6 +87,7 @@ ExpandableSidebarHeading.propTypes = {
 	expandableIconClick: PropTypes.func,
 	prependContent: PropTypes.node,
 	appendContent: PropTypes.node,
+	moreMenuActions: PropTypes.node,
 };
 
 export default ExpandableSidebarHeading;
