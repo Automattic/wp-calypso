@@ -4,7 +4,7 @@ import { isEditorPage } from './is-editor-page';
 import { isShowComponentTool } from './show-component-tools';
 import { getDisplayMessageFromToolData, isDisplayableToolMessageTool } from './tool-message-utils';
 import type { GetChatComponent } from './load-external-providers';
-import type { UIMessage, UseAgentChatReturn } from '@automattic/agenttic-client';
+import type { UIMessage } from '@automattic/agenttic-client';
 
 export type AgentsManagerUIMessage = UIMessage & {
 	disabled?: boolean;
@@ -16,7 +16,6 @@ interface Options {
 	messages: UIMessage[];
 	getChatComponent?: GetChatComponent;
 	currentPostId?: number;
-	onSubmit: UseAgentChatReturn[ 'onSubmit' ];
 }
 
 type MessageWithContextFlags = UIMessage & {

@@ -723,7 +723,6 @@ export default function OrchestratorChat( {
 			messages: currentMessages,
 			getChatComponent,
 			currentPostId,
-			onSubmit: onSubmitWithImages,
 		} );
 
 		const latestAgentMessageId = getLatestAgentMessageId( currentMessages );
@@ -772,7 +771,6 @@ export default function OrchestratorChat( {
 		isBuildingSite,
 		isProcessing,
 		messages,
-		onSubmitWithImages,
 		retainedShowComponentMessages,
 		siteBuildUtils,
 		thinkingMessage,

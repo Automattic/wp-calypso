@@ -27,13 +27,8 @@ import {
 import type { UIMessage } from '@automattic/agenttic-client';
 
 const MockComponent = jest.fn();
-const mockOnSubmit = jest.fn();
 const SHOW_COMPONENT_TOOL_ID = JETPACK_AI_SHOW_COMPONENT_TOOL_ID;
 const LEGACY_SHOW_COMPONENT_TOOL_ID = BIG_SKY_SHOW_COMPONENT_TOOL_ID;
-
-const convertWithDefaults = (
-	options: Omit< Parameters< typeof convertToolMessagesToComponents >[ 0 ], 'onSubmit' >
-) => convertToolMessagesToComponents( { ...options, onSubmit: mockOnSubmit } );
 
 const createMessage = ( overrides: Partial< UIMessage > = {} ): UIMessage =>
 	( {
@@ -61,7 +56,7 @@ describe( 'convertToolMessagesToComponents', () => {
 	it( 'passes through user messages unchanged', () => {
 		const message = createMessage( { role: 'user' } );
 
-		const result = convertWithDefaults( {
+		const result = convertToolMessagesToComponents( {
 			messages: [ message ],
 		} );
 
@@ -73,7 +68,7 @@ describe( 'convertToolMessagesToComponents', () => {
 			content: [ { type: 'text', text: 'Hello, how can I help?' } ],
 		} );
 
-		const result = convertWithDefaults( {
+		const result = convertToolMessagesToComponents( {
 			messages: [ message ],
 		} );
 
@@ -86,7 +81,7 @@ describe( 'convertToolMessagesToComponents', () => {
 			context: { flags: { context_only: true } },
 		} as Partial< UIMessage > );
 
-		const result = convertWithDefaults( {
+		const result = convertToolMessagesToComponents( {
 			messages: [ message ],
 		} );
 
@@ -98,7 +93,7 @@ describe( 'convertToolMessagesToComponents', () => {
 			content: [ { type: 'context', text: 'This is only context for the model.' } ],
 		} );
 
-		const result = convertWithDefaults( {
+		const result = convertToolMessagesToComponents( {
 			messages: [ message ],
 		} );
 
@@ -113,7 +108,7 @@ describe( 'convertToolMessagesToComponents', () => {
 			],
 		} );
 
-		const result = convertWithDefaults( {
+		const result = convertToolMessagesToComponents( {
 			messages: [ message ],
 		} );
 
@@ -129,7 +124,7 @@ describe( 'convertToolMessagesToComponents', () => {
 		} );
 		const getChatComponent = jest.fn().mockReturnValue( MockComponent );
 
-		const result = convertWithDefaults( {
+		const result = convertToolMessagesToComponents( {
 			messages: [ message ],
 			getChatComponent,
 		} );
@@ -158,7 +153,7 @@ describe( 'convertToolMessagesToComponents', () => {
 		} );
 		const getChatComponent = jest.fn().mockReturnValue( MockComponent );
 
-		const result = convertWithDefaults( {
+		const result = convertToolMessagesToComponents( {
 			messages: [ message ],
 			getChatComponent,
 		} );
@@ -179,7 +174,7 @@ describe( 'convertToolMessagesToComponents', () => {
 		} );
 		const getChatComponent = jest.fn().mockReturnValue( MockComponent );
 
-		const result = convertWithDefaults( {
+		const result = convertToolMessagesToComponents( {
 			messages: [ message ],
 			getChatComponent,
 		} );
@@ -193,7 +188,7 @@ describe( 'convertToolMessagesToComponents', () => {
 		} );
 		const getChatComponent = jest.fn().mockReturnValue( null );
 
-		const result = convertWithDefaults( {
+		const result = convertToolMessagesToComponents( {
 			messages: [ message ],
 			getChatComponent,
 		} );
@@ -208,7 +203,7 @@ describe( 'convertToolMessagesToComponents', () => {
 		] as UIMessage[ 'actions' ];
 		const getChatComponent = jest.fn().mockReturnValue( MockComponent );
 
-		const result = convertWithDefaults( {
+		const result = convertToolMessagesToComponents( {
 			messages: [
 				createToolMessage( LEGACY_SHOW_COMPONENT_TOOL_ID, data, { id: 'msg-1', actions } ),
 				createToolMessage( LEGACY_SHOW_COMPONENT_TOOL_ID, data, { id: 'msg-2', actions } ),
@@ -226,7 +221,7 @@ describe( 'convertToolMessagesToComponents', () => {
 		( isEditorPage as jest.Mock ).mockReturnValue( false );
 		const message = createToolMessage( LEGACY_SHOW_COMPONENT_TOOL_ID, { type: 'my-component' } );
 
-		const result = convertWithDefaults( {
+		const result = convertToolMessagesToComponents( {
 			messages: [ message ],
 		} );
 
@@ -243,7 +238,7 @@ describe( 'convertToolMessagesToComponents', () => {
 			assistantId: 'big-sky-site-admin',
 		} );
 
-		const result = convertWithDefaults( {
+		const result = convertToolMessagesToComponents( {
 			messages: [ message ],
 		} );
 
@@ -259,7 +254,7 @@ describe( 'convertToolMessagesToComponents', () => {
 		const supportText = 'Here is some help for your domain question.';
 		const message = createToolMessage( 'big_sky__wordpress_com_support', supportText );
 
-		const result = convertWithDefaults( {
+		const result = convertToolMessagesToComponents( {
 			messages: [ message ],
 		} );
 
@@ -277,7 +272,7 @@ describe( 'convertToolMessagesToComponents', () => {
 			calypsoCheckpointId: 'checkpoint-1',
 		} );
 
-		const result = convertWithDefaults( {
+		const result = convertToolMessagesToComponents( {
 			messages: [ message ],
 		} );
 
@@ -299,7 +294,7 @@ describe( 'convertToolMessagesToComponents', () => {
 			},
 		} );
 
-		const result = convertWithDefaults( {
+		const result = convertToolMessagesToComponents( {
 			messages: [ message ],
 		} );
 
@@ -316,7 +311,7 @@ describe( 'convertToolMessagesToComponents', () => {
 			summary: 'Tried to update the header, but it did not stick.',
 		} );
 
-		const result = convertWithDefaults( {
+		const result = convertToolMessagesToComponents( {
 			messages: [ message ],
 		} );
 
@@ -330,7 +325,7 @@ describe( 'convertToolMessagesToComponents', () => {
 			isCurrent: true,
 		} );
 
-		const result = convertWithDefaults( {
+		const result = convertToolMessagesToComponents( {
 			messages: [ message ],
 		} );
 
@@ -350,7 +345,7 @@ describe( 'convertToolMessagesToComponents', () => {
 			returnToAgent: true,
 		} );
 
-		const result = convertWithDefaults( {
+		const result = convertToolMessagesToComponents( {
 			messages: [ message ],
 		} );
 
@@ -367,7 +362,7 @@ describe( 'convertToolMessagesToComponents', () => {
 			summary: 'Updated the header and footer.',
 		} );
 
-		const result = convertWithDefaults( {
+		const result = convertToolMessagesToComponents( {
 			messages: [ message ],
 		} );
 
@@ -394,7 +389,7 @@ describe( 'convertToolMessagesToComponents', () => {
 		);
 		const getChatComponent = jest.fn().mockReturnValue( MockComponent );
 
-		const result = convertWithDefaults( {
+		const result = convertToolMessagesToComponents( {
 			messages: [ intermediateMessage, finalMessage ],
 			getChatComponent,
 		} );
@@ -415,7 +410,7 @@ describe( 'convertToolMessagesToComponents', () => {
 			},
 		} );
 
-		const result = convertWithDefaults( {
+		const result = convertToolMessagesToComponents( {
 			messages: [ message ],
 		} );
 
@@ -437,7 +432,7 @@ describe( 'convertToolMessagesToComponents', () => {
 			],
 		} );
 
-		const result = convertWithDefaults( {
+		const result = convertToolMessagesToComponents( {
 			messages: [ message ],
 		} );
 
@@ -452,7 +447,7 @@ describe( 'convertToolMessagesToComponents', () => {
 	} );
 
 	it( 'filters out unhandled tool messages', () => {
-		const result = convertWithDefaults( {
+		const result = convertToolMessagesToComponents( {
 			messages: [ createToolMessage( 'other_tool' ) ],
 		} );
 
@@ -472,7 +467,7 @@ describe( 'convertToolMessagesToComponents', () => {
 		} );
 		const getChatComponent = jest.fn().mockReturnValue( MockComponent );
 
-		const result = convertWithDefaults( {
+		const result = convertToolMessagesToComponents( {
 			messages: [ toolMessage, prose ],
 			getChatComponent,
 		} );
@@ -492,7 +487,7 @@ describe( 'convertToolMessagesToComponents', () => {
 			{ id: 'tool-1' }
 		);
 
-		const result = convertWithDefaults( {
+		const result = convertToolMessagesToComponents( {
 			messages: [ prose, toolMessage ],
 		} );
 
@@ -518,7 +513,7 @@ describe( 'convertToolMessagesToComponents', () => {
 		} );
 		const getChatComponent = jest.fn().mockReturnValue( MockComponent );
 
-		const result = convertWithDefaults( {
+		const result = convertToolMessagesToComponents( {
 			messages: [ toolMessage, userMessage, prose ],
 			getChatComponent,
 		} );
@@ -536,7 +531,7 @@ describe( 'convertToolMessagesToComponents', () => {
 		} );
 		const getChatComponent = jest.fn().mockReturnValue( MockComponent );
 
-		const result = convertWithDefaults( {
+		const result = convertToolMessagesToComponents( {
 			messages: [ message ],
 			getChatComponent,
 		} );
@@ -553,7 +548,7 @@ describe( 'convertToolMessagesToComponents', () => {
 		} );
 		const getChatComponent = jest.fn().mockReturnValue( MockComponent );
 
-		const result = convertWithDefaults( {
+		const result = convertToolMessagesToComponents( {
 			messages: [ message ],
 			getChatComponent,
 		} );
@@ -572,7 +567,7 @@ describe( 'convertToolMessagesToComponents', () => {
 		} );
 		const getChatComponent = jest.fn().mockReturnValue( MockComponent );
 
-		const result = convertWithDefaults( {
+		const result = convertToolMessagesToComponents( {
 			messages: [ message ],
 			getChatComponent,
 			currentPostId: 20,
@@ -591,7 +586,7 @@ describe( 'convertToolMessagesToComponents', () => {
 		} );
 		const getChatComponent = jest.fn().mockReturnValue( MockComponent );
 
-		const result = convertWithDefaults( {
+		const result = convertToolMessagesToComponents( {
 			messages: [ message ],
 			getChatComponent,
 			currentPostId: 20,
@@ -611,7 +606,7 @@ describe( 'convertToolMessagesToComponents', () => {
 		} );
 		const getChatComponent = jest.fn().mockReturnValue( MockComponent );
 
-		const result = convertWithDefaults( {
+		const result = convertToolMessagesToComponents( {
 			messages: [ message ],
 			getChatComponent,
 			currentPostId: 10,
@@ -628,7 +623,7 @@ describe( 'convertToolMessagesToComponents', () => {
 		} );
 		const getChatComponent = jest.fn().mockReturnValue( MockComponent );
 
-		const result = convertWithDefaults( {
+		const result = convertToolMessagesToComponents( {
 			messages: [ message ],
 			getChatComponent,
 			currentPostId: 20,
@@ -646,7 +641,7 @@ describe( 'convertToolMessagesToComponents', () => {
 		} );
 		const getChatComponent = jest.fn().mockReturnValue( MockComponent );
 
-		const result = convertWithDefaults( {
+		const result = convertToolMessagesToComponents( {
 			messages: [ message ],
 			getChatComponent,
 		} );
@@ -664,7 +659,7 @@ describe( 'convertToolMessagesToComponents', () => {
 		const userReply = createMessage( { id: 'user-1', role: 'user' } );
 		const getChatComponent = jest.fn().mockReturnValue( MockComponent );
 
-		const result = convertWithDefaults( {
+		const result = convertToolMessagesToComponents( {
 			messages: [ toolMessage, userReply ],
 			getChatComponent,
 		} );
@@ -684,7 +679,7 @@ describe( 'convertToolMessagesToComponents', () => {
 		} );
 		const getChatComponent = jest.fn().mockReturnValue( MockComponent );
 
-		const result = convertWithDefaults( {
+		const result = convertToolMessagesToComponents( {
 			messages: [ toolMessage, agentFollowUp ],
 			getChatComponent,
 		} );
@@ -705,7 +700,7 @@ describe( 'convertToolMessagesToComponents', () => {
 		} );
 		const getChatComponent = jest.fn().mockReturnValue( MockComponent );
 
-		const result = convertWithDefaults( {
+		const result = convertToolMessagesToComponents( {
 			messages: [ toolMessage, contextMessage ],
 			getChatComponent,
 		} );
