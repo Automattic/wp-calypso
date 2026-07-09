@@ -122,11 +122,6 @@ const ImportContentOnly: React.FunctionComponent< Props > = ( props ) => {
 		dispatch( resetImport( siteItem?.ID, job?.importerId ) );
 	}, [ siteItem, job ] );
 
-	const onBackToGoalsClick = useCallback( () => {
-		dispatch( resetImport( siteItem?.ID, job?.importerId ) );
-		stepNavigator?.goToGoalsPage?.();
-	}, [] );
-
 	/**
 	 ↓ Effects
 	 */
@@ -148,14 +143,7 @@ const ImportContentOnly: React.FunctionComponent< Props > = ( props ) => {
 		>
 			{ renderState === 'progress' && <ProgressScreen job={ job } showHeading={ renderHeading } /> }
 
-			{ renderState === 'error' && (
-				<ErrorMessage
-					onPrimaryBtnClick={ onTryAgainClick }
-					onSecondaryBtnClick={
-						stepNavigator?.flow === 'site-setup' ? onBackToGoalsClick : undefined
-					}
-				/>
-			) }
+			{ renderState === 'error' && <ErrorMessage onPrimaryBtnClick={ onTryAgainClick } /> }
 
 			{ renderState === 'upgrade-plan' && (
 				<UpgradePlan
