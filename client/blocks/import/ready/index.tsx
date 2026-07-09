@@ -142,7 +142,7 @@ const ReadyNotStep: React.FunctionComponent< ReadyNotProps > = ( {
 					<Title>{ __( "Your existing content can't be imported" ) }</Title>
 					<SubTitle>
 						{ __(
-							"Unfortunately, your content is on a platform that we don't yet support. Try Building a new WordPress site instead."
+							"Unfortunately, your content is on a platform that we don't yet support. Try a different site."
 						) }
 					</SubTitle>
 
@@ -279,7 +279,7 @@ const ReadyAlreadyOnWPCOMStep: React.FunctionComponent< ReadyWpComProps > = ( {
 							sprintf(
 								/* translators: the website could be any domain (eg: "yourname.com") */
 								__(
-									'It looks like <strong>%(website)s</strong> is already on WordPress.com. Try a different address or start building a new site instead.'
+									'It looks like <strong>%(website)s</strong> is already on WordPress.com. Try a different address.'
 								),
 								{
 									website: convertToFriendlyWebsiteName( urlData.url ),
