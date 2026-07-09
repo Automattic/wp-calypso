@@ -58,7 +58,7 @@ export function buildSummaryUrl( { period, module, siteSlug, query, shortcut } =
 
 	const url = `/stats/${ period.period }/${ module }/${ siteSlug }`;
 
-	if ( ! query?.start_date ) {
+	if ( ! query?.start_date || ! query?.date ) {
 		return `${ url }?startDate=${ period.endOf.format( DATE_FORMAT ) }`;
 	}
 

@@ -374,7 +374,6 @@ export default connect( ( state, ownProps ) => {
 	const gateStats = shouldGateStats( state, siteId, statType );
 	const gateDownloads = shouldGateStats( state, siteId, STATS_FEATURE_DOWNLOAD_CSV );
 
-	// Forward the active shortcut (matched by the current range) to summary links.
 	const { selectedShortcut } = getShortcuts( state, {
 		chartStart: query?.start_date,
 		chartEnd: query?.date,

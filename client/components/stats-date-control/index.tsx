@@ -121,7 +121,6 @@ const StatsDateControl = ( {
 		].forEach( ( key ) => delete queryParamsObject[ key ] );
 	};
 
-	// Build a path, optionally including the module segment for summary pages.
 	const basePath = ( period: string ) =>
 		module ? `/stats/${ period }/${ module }/${ slug }` : `/stats/${ period }/${ slug }`;
 
@@ -244,8 +243,6 @@ const StatsDateControl = ( {
 		} else {
 			recordTracksEvent( eventNames[ event_from ][ shortcut.id as EventNameKey ] );
 			if ( shortcut.id === 'all_time' ) {
-				// "All time" has no fixed date range; close the popover without committing a
-				// calendar range, then navigate straight to the legacy contract.
 				closePopover();
 				setTimeout( () => page( generateAllTimeLink() ), 250 );
 			} else if ( shortcut.id !== 'custom_date_range' ) {

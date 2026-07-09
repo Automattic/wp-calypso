@@ -76,7 +76,7 @@ export const StatsModuleSummaryLinks = ( props ) => {
 			...shortcutList,
 			{
 				id: 'all_time',
-				label: translate( 'All time' ),
+				label: translate( 'All Time' ),
 				startDate: '',
 				endDate: '',
 				period: 'day',

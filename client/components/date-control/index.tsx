@@ -24,7 +24,6 @@ const DateControl = ( {
 	const siteToday = momentInSite();
 
 	const getButtonLabel = () => {
-		// Shortcuts without a fixed date range (e.g. "All time") show their own label.
 		const selectedShortcut = shortcutList?.find( ( { id } ) => id === dateRange.shortcutId );
 		if ( selectedShortcut && ! selectedShortcut.startDate ) {
 			return selectedShortcut.label;

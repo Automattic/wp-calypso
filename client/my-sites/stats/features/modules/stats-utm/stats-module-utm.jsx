@@ -145,9 +145,9 @@ const StatsModuleUTM = ( {
 
 			// Some modules do not have view all abilities
 			if ( ! summary && period && path && siteSlug ) {
-				// Only fall back to the legacy single-date contract when a modern
-				// `chartStart`/`chartEnd` range isn't already being forwarded.
-				if ( ! clonedParams.has( 'chartStart' ) ) {
+				if ( ! clonedParams.has( 'chartStart' ) || ! clonedParams.has( 'chartEnd' ) ) {
+					clonedParams.delete( 'chartStart' );
+					clonedParams.delete( 'chartEnd' );
 					if ( ! clonedParams.has( 'startDate' ) ) {
 						clonedParams.set( 'startDate', period.startOf.format( 'YYYY-MM-DD' ) );
 					}
