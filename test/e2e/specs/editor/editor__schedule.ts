@@ -155,7 +155,7 @@ describe( DataHelper.createSuiteTitle( 'Editor: Schedule' ), function () {
 			const tmpPage = await browser.newPage();
 
 			const testAccount = new TestAccount( 'defaultUser' );
-			await testAccount.authenticate( tmpPage );
+			await testAccount.authenticate( tmpPage, { waitUntilStable: false } );
 
 			await tmpPage.goto( postURL.href );
 			await new PublishedPostPage( tmpPage ).validateTextInPost( postContent );

@@ -90,6 +90,22 @@ type PublishDiagnostics = {
 
 const diagnosticHeaderNames = [ 'x-ac', 'x-nc', 'server-timing' ];
 
+const publishResponsePatterns = {
+	atomic: /\/v2\/(posts|pages)\/\d+\/?(?:[?&#]|$)/,
+	simple: /\/v2\/sites\/\d+\/(posts|pages)\/\d+\/?(?:[?&#]|$)/,
+};
+
+/**
+ * Matches the canonical post/page save response, excluding child endpoints such as autosaves.
+ */
+function isPublishEndpointResponse(
+	response: Response,
+	method: 'POST' | 'PUT',
+	pattern: RegExp
+): boolean {
+	return response.request().method() === method && pattern.test( response.url() );
+}
+
 /**
  * Removes query strings and hashes before writing URLs to failure output.
  */
@@ -1134,15 +1150,13 @@ export class EditorPage {
 			// First URL matches Atomic requests while the second matches Simple requests.
 			Promise.race( [
 				this.page.waitForResponse(
-					async ( response ) =>
-						/v2\/(posts|pages)\/[\d]+/.test( response.url() ) &&
-						response.request().method() === 'POST',
+					( response ) =>
+						isPublishEndpointResponse( response, 'POST', publishResponsePatterns.atomic ),
 					{ timeout: timeout }
 				),
 				this.page.waitForResponse(
-					async ( response ) =>
-						/.*v2\/sites\/[\d]+\/(posts|pages)\/[\d]+.*/.test( response.url() ) &&
-						response.request().method() === 'PUT',
+					( response ) =>
+						isPublishEndpointResponse( response, 'PUT', publishResponsePatterns.simple ),
 					{ timeout: timeout }
 				),
 			] ).then( ( publishResponse ) => {
