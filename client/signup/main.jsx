@@ -453,7 +453,7 @@ class Signup extends Component {
 
 		// Persist current domains data so re-entering via browser back from checkout can skip the
 		// domains step instead of recreating the site.
-		if ( [ 'onboarding', 'with-plugin' ].includes( this.props.flowName ) ) {
+		if ( flows.getFlow( this.props.flowName, this.props.isLoggedIn ).persistsDomainsOnReEntry ) {
 			const { domainItem, siteUrl, domainCart } = dependencies;
 			const { stepSectionName } = this.props;
 

@@ -209,10 +209,8 @@ export default {
 		const flowName = getFlowName( context.params, userLoggedIn );
 		const stepName = getStepName( context.params );
 		const stepSectionName = getStepSectionName( context.params );
-		const { providesDependenciesInQuery, excludeFromManageSiteFlows } = flows.getFlow(
-			flowName,
-			userLoggedIn
-		);
+		const { providesDependenciesInQuery, excludeFromManageSiteFlows, persistsDomainsOnReEntry } =
+			flows.getFlow( flowName, userLoggedIn );
 
 		// Update initialContext to help woocommerce-install support site switching.
 		if ( 'woocommerce-install' === flowName ) {
@@ -255,7 +253,7 @@ export default {
 		if (
 			domainsDependencies &&
 			isManageSiteFlow &&
-			[ 'onboarding', 'with-plugin' ].includes( flowName ) &&
+			persistsDomainsOnReEntry &&
 			stepName !== 'domains'
 		) {
 			const { step, dependencies } = JSON.parse( domainsDependencies );
