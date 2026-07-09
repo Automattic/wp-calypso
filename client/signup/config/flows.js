@@ -193,7 +193,10 @@ function getWithThemeDestination( {
 	}
 
 	if ( DOT_ORG_THEME === themeType ) {
-		return `/marketplace/theme/${ themeParameter }/install/${ siteSlug }`;
+		// Mark the redirect as trusted (directInstall) so the install page initiates the
+		// transfer/install itself — the in-memory purchase-flow handoff it relies on doesn't
+		// survive this redirect out of signup.
+		return `/marketplace/theme/${ themeParameter }/install/${ siteSlug }?directInstall=1`;
 	}
 
 	const style = styleVariation ? `&styleVariation=${ styleVariation }` : '';
