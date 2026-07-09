@@ -4,6 +4,27 @@
 
 import type { BlockSnapshot } from '../components/block-ref';
 
+export type BlockEditorStore = {
+	getBlocks?: ( rootClientId?: string ) => BlockSnapshot[];
+	getBlocksByName?: ( blockName: string ) => string[];
+	__experimentalGetGlobalBlocksByName?: ( blockName: string ) => string[];
+};
+
+export function getEditorContentBlocks( blockEditor?: BlockEditorStore ): BlockSnapshot[] {
+	if ( ! blockEditor?.getBlocks ) {
+		return [];
+	}
+
+	const [ postContentClientId ] =
+		blockEditor.getBlocksByName?.( 'core/post-content' ) ??
+		blockEditor.__experimentalGetGlobalBlocksByName?.( 'core/post-content' ) ??
+		[];
+
+	return postContentClientId
+		? blockEditor.getBlocks( postContentClientId )
+		: blockEditor.getBlocks();
+}
+
 /** Flatten a block tree into a pre-order list, skipping nameless blocks. */
 export function flattenBlocks( blocks: BlockSnapshot[] ): BlockSnapshot[] {
 	const out: BlockSnapshot[] = [];

@@ -22,7 +22,12 @@ import {
 	toggleBlockReferenceFocus,
 	undoBlockEdit,
 } from '../utils/block-actions';
-import { countOccurrences, flattenBlocks } from '../utils/blocks';
+import {
+	countOccurrences,
+	flattenBlocks,
+	getEditorContentBlocks,
+	type BlockEditorStore,
+} from '../utils/blocks';
 import {
 	trackAiEditorialReviewItemAction,
 	trackAiEditorialReviewResultRendered,
@@ -403,10 +408,10 @@ export default function ReviewMediation( {
 	// Flat pre-order list of blocks; ability's `block_index` maps to this array.
 	// Matches wpcom's recursive Review_Mediator_Ability::extract_blocks() order.
 	const blocks = useSelect( ( select ) => {
-		// eslint-disable-next-line @typescript-eslint/no-explicit-any
-		const rootBlocks = ( ( select as any )( 'core/block-editor' ).getBlocks?.() ??
-			[] ) as BlockSnapshot[];
-		return flattenBlocks( rootBlocks );
+		const contentBlocks = getEditorContentBlocks(
+			select( 'core/block-editor' ) as BlockEditorStore
+		);
+		return flattenBlocks( contentBlocks );
 	}, [] );
 
 	const getBlock = useCallback(

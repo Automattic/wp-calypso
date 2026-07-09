@@ -29,7 +29,12 @@ import {
 	toggleBlockReferenceFocus,
 	undoBlockEdit,
 } from '../utils/block-actions';
-import { countOccurrences, flattenBlocks } from '../utils/blocks';
+import {
+	countOccurrences,
+	flattenBlocks,
+	getEditorContentBlocks,
+	type BlockEditorStore,
+} from '../utils/blocks';
 import BlockRef, { type BlockSnapshot } from './block-ref';
 
 export interface FeedbackListItem {
@@ -232,9 +237,7 @@ export default function FeedbackList( {
 	const editSnapshots = useRef< Record< string, EditSnapshot > >( {} );
 
 	const blocks = useSelect(
-		( select ) =>
-			( select( 'core/block-editor' ) as { getBlocks?: () => BlockSnapshot[] } )?.getBlocks?.() ??
-			[],
+		( select ) => getEditorContentBlocks( select( 'core/block-editor' ) as BlockEditorStore ),
 		[]
 	);
 	const currentPostId = useSelect(
