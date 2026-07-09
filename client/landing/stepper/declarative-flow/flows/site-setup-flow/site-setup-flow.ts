@@ -70,7 +70,6 @@ const siteSetupFlow: Flow = {
 			STEPS.TRIAL_ACKNOWLEDGE,
 			STEPS.PROCESSING,
 			STEPS.ERROR,
-			STEPS.DIFM_STARTING_POINT,
 		];
 
 		return steps;
@@ -318,9 +317,6 @@ const siteSetupFlow: Flow = {
 						case SiteIntent.Import:
 							return exitFlow( `/setup/site-migration?siteSlug=${ siteSlug }&ref=goals` );
 
-						case SiteIntent.DIFM:
-							return navigate( 'difmStartingPoint' );
-
 						default: {
 							return navigate( 'design-setup' );
 						}
@@ -412,15 +408,6 @@ const siteSetupFlow: Flow = {
 
 				case 'verifyEmail':
 					return navigate( `importerWordpress?${ urlQueryParams.toString() }` );
-
-				case 'difmStartingPoint': {
-					const backUrl = window.location.href.replace( window.location.origin, '' );
-					return exitFlow(
-						`/start/website-design-services/?siteSlug=${ siteSlug }&back_to=${ encodeURIComponent(
-							backUrl
-						) }`
-					);
-				}
 			}
 		}
 
@@ -431,9 +418,6 @@ const siteSetupFlow: Flow = {
 
 			switch ( currentStep ) {
 				case 'design-setup':
-					if ( intent === SiteIntent.DIFM ) {
-						return navigate( 'difmStartingPoint' );
-					}
 					return navigate( 'goals' );
 
 				case 'importList': {
@@ -505,9 +489,6 @@ const siteSetupFlow: Flow = {
 				case 'trialAcknowledge':
 					return navigate( `importerWordpress?${ urlQueryParams.toString() }` );
 
-				case 'difmStartingPoint':
-					return navigate( 'goals' );
-
 				default:
 					return navigate( 'goals' );
 			}
@@ -523,9 +504,6 @@ const siteSetupFlow: Flow = {
 
 				case 'import':
 					return navigate( 'importList' );
-
-				case 'difmStartingPoint':
-					return navigate( 'design-setup' );
 
 				default:
 					return navigate( 'goals' );

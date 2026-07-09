@@ -60,7 +60,6 @@ const GoalsStep: StepType< {
 		hiddenGoals?: Onboard.SiteGoal[];
 		hideSecondaryLinks?: {
 			import?: boolean;
-			difm?: boolean;
 			dashboard?: boolean;
 		};
 	};
@@ -153,12 +152,6 @@ const GoalsStep: StepType< {
 		navigation.submit?.( { intent: SiteIntent.Import, shouldSkipSubmitTracking: true } );
 	};
 
-	const handleDIFMClick = () => {
-		setIntent( SiteIntent.DIFM );
-		recordNavigationSelectTracksEvent( SiteIntent.DIFM, 'difm' );
-		navigation.submit?.( { intent: SiteIntent.DIFM, shouldSkipSubmitTracking: true } );
-	};
-
 	const handleDashboardClick = () => {
 		setIntent( SiteIntent.Build );
 		recordNavigationSelectTracksEvent( SiteIntent.Build, 'dashboard' );
@@ -184,9 +177,8 @@ const GoalsStep: StepType< {
 	}, [ refParameter, refGoals ] );
 
 	const showImportLink = ! hideSecondaryLinks?.import;
-	const showDIFMLink = ! hideSecondaryLinks?.difm;
 	const showDashboardLink = ! hideSecondaryLinks?.dashboard;
-	const showAnySecondaryLink = showImportLink || showDIFMLink || showDashboardLink;
+	const showAnySecondaryLink = showImportLink || showDashboardLink;
 
 	const getStepContent = ( nextButton?: ReactNode ) => (
 		<div className="select-goals">
@@ -202,12 +194,6 @@ const GoalsStep: StepType< {
 					{ showImportLink && (
 						<Button variant="link" onClick={ handleImportClick } className="select-goals__link">
 							{ translate( 'Import or migrate an existing site' ) }
-						</Button>
-					) }
-					{ showImportLink && showDIFMLink && <span className="select-goals__link-separator" /> }
-					{ showDIFMLink && (
-						<Button variant="link" onClick={ handleDIFMClick } className="select-goals__link">
-							{ translate( 'Let us build a custom site for you' ) }
 						</Button>
 					) }
 					{ showDashboardLink && (

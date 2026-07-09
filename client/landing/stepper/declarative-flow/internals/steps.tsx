@@ -29,11 +29,6 @@ export const STEPS = {
 		asyncComponent: () => import( './steps-repository/design-setup' ),
 	},
 
-	DIFM_STARTING_POINT: {
-		slug: 'difmStartingPoint',
-		asyncComponent: () => import( './steps-repository/difm-starting-point' ),
-	},
-
 	DOMAIN_CONTACT_INFO: {
 		slug: 'domain-contact-info',
 		asyncComponent: () => import( './steps-repository/domain-contact-info' ),
