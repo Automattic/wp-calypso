@@ -88,10 +88,7 @@ jest.mock( '../../utils/tracks', () => ( {
 	recordBigSkyTracksEvent: jest.fn(),
 	recordAgentsManagerTracksEvent: jest.fn(),
 } ) );
-jest.mock(
-	'../../hooks/use-conversation',
-	() => ( config: unknown ) => mockUseConversation( config )
-);
+jest.mock( '../../hooks/use-conversation', () => () => mockUseConversation() );
 jest.mock( '../../hooks/use-save-new-chat-route', () => () => {} );
 jest.mock( '../../hooks/use-checkpoint-action', () => () => {} );
 jest.mock( '../../hooks/use-feedback-action', () => () => ( {
@@ -778,7 +775,8 @@ describe( 'OrchestratorChat', () => {
 	it( 'does not retain the live show-component message when the history is replaced', () => {
 		// The same picker serializes differently live (no tool_call_id) and in
 		// loaded history (with tool_call_id), so their identities never match.
-		// Replacing the history via loadMessages must not resurrect the live copy.
+		// Server hydration replaces the whole history with freshly-id'd messages;
+		// that swap must not resurrect the live copy as a retained duplicate.
 		const pickerMessage = ( id: string, content: Record< string, unknown > ) => ( {
 			id,
 			role: 'agent',
@@ -848,21 +846,15 @@ describe( 'OrchestratorChat', () => {
 			/>
 		);
 
-		let hydrate: ( ( messages: unknown[], sessionId: string ) => void ) | undefined;
-		mockUseConversation.mockImplementation(
-			( config?: { onSuccess?: ( messages: unknown[], sessionId: string ) => void } ) => {
-				hydrate = config?.onSuccess;
-				return { isLoading: false };
-			}
-		);
-
 		// Seeded from storage: the live-form picker is showing.
 		mockUseAgentChat.mockReturnValue( agentChatReturn( [ userMessage, livePicker ] ) );
 		const { rerender } = render( chat() );
 
-		// Server hydration replaces the whole history with the loaded form.
-		act( () => hydrate?.( [], 'session-id' ) );
-		mockUseAgentChat.mockReturnValue( agentChatReturn( [ userMessage, loadedPicker ] ) );
+		// Server hydration replaces the whole history; every loaded message gets
+		// a fresh id, including the echoed user message.
+		mockUseAgentChat.mockReturnValue(
+			agentChatReturn( [ { ...userMessage, id: 'user-loaded' }, loadedPicker ] )
+		);
 		rerender( chat() );
 
 		const lastMessages = mockAgentChat.mock.calls.at( -1 )![ 0 ].messages as Array< {

@@ -210,7 +210,7 @@ export default function OrchestratorChat( {
 		suggestions,
 		isProcessing,
 		error,
-		loadMessages: loadAgentMessages,
+		loadMessages,
 		onSubmit,
 		abortCurrentRequest,
 		clearSuggestions,
@@ -224,8 +224,15 @@ export default function OrchestratorChat( {
 	const showComponentOrderRef = useRef< Map< string, number > >( new Map() );
 	const nextShowComponentOrderRef = useRef( 0 );
 	const wasProcessingRef = useRef( isProcessing );
-	const skipRetentionRef = useRef( false );
 	messagesRef.current = messages;
+
+	// Drop all retained placeholders, keeping the map reference stable when
+	// already empty so no re-render is triggered.
+	const clearRetainedShowComponentMessages = useCallback( () => {
+		setRetainedShowComponentMessages( ( previousRetainedMessages ) =>
+			previousRetainedMessages.size > 0 ? new Map() : previousRetainedMessages
+		);
+	}, [] );
 
 	// A regeneration is finished once its streaming turn settles — either the new
 	// response arrives or an error restores the previous one. Re-enable component
@@ -253,13 +260,11 @@ export default function OrchestratorChat( {
 				// Drop any retained placeholders up front; the turn is being
 				// rewound, so a leftover picker would otherwise reappear once
 				// regeneration settles if the new response omits the component.
-				setRetainedShowComponentMessages( ( previousRetainedMessages ) =>
-					previousRetainedMessages.size > 0 ? new Map() : previousRetainedMessages
-				);
+				clearRetainedShowComponentMessages();
 				await handler();
 			};
 		},
-		[ getRegenerateHandler ]
+		[ clearRetainedShowComponentMessages, getRegenerateHandler ]
 	);
 
 	const getShowComponentOrder = useCallback( ( message: UIMessage ): number | undefined => {
@@ -279,17 +284,28 @@ export default function OrchestratorChat( {
 	}, [] );
 
 	useEffect( () => {
+		const previousMessages = previousMessagesRef.current;
+
+		// A full history replacement (server hydration, clearing the chat) swaps
+		// every message id at once. Nothing in it was transiently dropped, and
+		// the same picker can carry a different identity in loaded history than
+		// it did live — retaining across the swap would show it as a duplicate.
+		const previousMessageIds = new Set( previousMessages.map( ( message ) => message.id ) );
+		const isHistoryReplaced =
+			previousMessages.length > 0 &&
+			! messages.some( ( message ) => previousMessageIds.has( message.id ) );
+
 		// While regenerating, the dropped component is being replaced, not lost —
-		// don't retain it. A full history replacement (`loadMessages`) likewise
-		// drops nothing transiently. Keep the ref current so the next run
-		// compares against the latest messages.
-		if ( isRegenerating || skipRetentionRef.current ) {
-			skipRetentionRef.current = false;
+		// don't retain it either. Keep the ref current so the next run compares
+		// against the latest messages.
+		if ( isRegenerating || isHistoryReplaced ) {
+			if ( isHistoryReplaced ) {
+				clearRetainedShowComponentMessages();
+			}
 			previousMessagesRef.current = messages;
 			return;
 		}
 
-		const previousMessages = previousMessagesRef.current;
 		messages.filter( isShowComponentMessage ).forEach( getShowComponentOrder );
 
 		const currentShowComponentIdentities = new Set(
@@ -321,23 +337,7 @@ export default function OrchestratorChat( {
 		}
 
 		previousMessagesRef.current = messages;
-	}, [ getShowComponentOrder, messages, isRegenerating ] );
-
-	// A full history replacement (server hydration, clearing the chat) is not
-	// a transient drop, and the same picker can carry a different identity in
-	// loaded history than it did live — retaining the live copy would show it
-	// as a duplicate. Skip the next retention pass and drop any retained
-	// placeholders instead.
-	const loadMessages = useCallback(
-		( nextMessages: Parameters< typeof loadAgentMessages >[ 0 ] ) => {
-			skipRetentionRef.current = true;
-			setRetainedShowComponentMessages( ( previousRetainedMessages ) =>
-				previousRetainedMessages.size > 0 ? new Map() : previousRetainedMessages
-			);
-			return loadAgentMessages( nextMessages );
-		},
-		[ loadAgentMessages ]
-	);
+	}, [ clearRetainedShowComponentMessages, getShowComponentOrder, messages, isRegenerating ] );
 
 	// Reader-chat sessions are short (usually < 50 messages) — don't waste
 	// time paginating 10 pages deep. One page covers typical use.
