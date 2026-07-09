@@ -6,7 +6,11 @@ import {
 	resendAccountRecoveryEmailValidationMutation,
 } from '@automattic/api-queries';
 import { useMutation, useQuery, useSuspenseQuery } from '@tanstack/react-query';
-import { __experimentalVStack as VStack, Button } from '@wordpress/components';
+import {
+	__experimentalInputControl as InputControl,
+	__experimentalVStack as VStack,
+	Button,
+} from '@wordpress/components';
 import { useDispatch } from '@wordpress/data';
 import { DataForm, useFormValidity } from '@wordpress/dataviews';
 import { __, sprintf } from '@wordpress/i18n';
@@ -16,9 +20,9 @@ import { useAnalytics } from '../../app/analytics';
 import { ButtonStack } from '../../components/button-stack';
 import { Card, CardBody } from '../../components/card';
 import ConfirmModal from '../../components/confirm-modal';
-import ValidatedInputControl from '../../components/input-control/validated-input-control';
 import Notice from '../../components/notice';
 import { SectionHeader } from '../../components/section-header';
+import { Text } from '../../components/text';
 import type { Field } from '@wordpress/dataviews';
 
 type SecurityEmailFormData = {
@@ -134,21 +138,23 @@ export default function RecoveryEmail() {
 					const { id, getValue } = field;
 					const validationMessage = field.isValid?.custom?.( data, field );
 					return (
-						<ValidatedInputControl
-							__next40pxDefaultSize
-							type="email"
-							label={ field.label }
-							help={ field.description }
-							placeholder={ field.placeholder }
-							value={ getValue( { item: data } ) }
-							onChange={ ( value: string | undefined ) => {
-								return onChange( { [ id ]: value ?? '' } );
-							} }
-							disabled={ isValidateEmailPending }
-							customValidity={
-								validationMessage ? { type: 'invalid', message: validationMessage } : undefined
-							}
-						/>
+						<VStack spacing={ 2 }>
+							<InputControl
+								__next40pxDefaultSize
+								type="email"
+								label={ field.label }
+								help={ field.description }
+								placeholder={ field.placeholder }
+								value={ getValue( { item: data } ) }
+								onChange={ ( value ) => {
+									return onChange( { [ id ]: value ?? '' } );
+								} }
+								disabled={ isValidateEmailPending }
+							/>
+							{ typeof validationMessage === 'string' && (
+								<Text intent="error">{ validationMessage }</Text>
+							) }
+						</VStack>
 					);
 				},
 			},
@@ -161,7 +167,7 @@ export default function RecoveryEmail() {
 		fields: fields.map( ( field ) => field.id ),
 	};
 
-	const { isValid, validity } = useFormValidity( formData, fields, form );
+	const { isValid } = useFormValidity( formData, fields, form );
 
 	return (
 		<>
@@ -196,7 +202,6 @@ export default function RecoveryEmail() {
 									data={ formData }
 									fields={ fields }
 									form={ form }
-									validity={ validity }
 									onChange={ ( edits: Partial< SecurityEmailFormData > ) => {
 										setFormData( ( data ) => ( { ...data, ...edits } ) );
 									} }
