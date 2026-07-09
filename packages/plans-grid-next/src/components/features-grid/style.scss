@@ -837,6 +837,18 @@
 	}
 
 	.plans-grid-next-features-grid__bottom-plan-card-woo-visual {
+		--bottom-plan-card-woo-image-max-width: 428px;
+		--bottom-plan-card-woo-product-width: 124px;
+		--bottom-plan-card-woo-product-overlap: 40px;
+		--bottom-plan-card-woo-image-width: clamp(
+			0px,
+			calc(
+				50% - var( --bottom-plan-card-woo-product-width ) + var(
+						--bottom-plan-card-woo-product-overlap
+					)
+			),
+			var( --bottom-plan-card-woo-image-max-width )
+		);
 		display: block;
 		height: 100%;
 		min-height: 176px;
@@ -848,12 +860,11 @@
 		display: block;
 		height: 100%;
 		left: 50%;
-		max-width: 428px;
 		object-fit: cover;
 		object-position: center;
 		position: absolute;
 		top: 0;
-		width: 428px;
+		width: var( --bottom-plan-card-woo-image-width );
 	}
 
 	.plans-grid-next-features-grid__bottom-plan-card-woo-logo-badge {
@@ -883,13 +894,17 @@
 		background: var( --studio-white );
 		border: 1px solid #e0e0e0;
 		border-radius: 8px;
-		bottom: 24px;
 		box-shadow: 0 2px 8px rgba( 0, 0, 0, 0.08 );
 		box-sizing: border-box;
+		left: calc(
+			50% + var( --bottom-plan-card-woo-image-width ) - var(
+					--bottom-plan-card-woo-product-overlap
+				)
+		);
 		padding: 8px 8px 10px;
 		position: absolute;
-		right: 32px;
-		width: 124px;
+		top: 14px;
+		width: var( --bottom-plan-card-woo-product-width );
 		z-index: 1;
 	}
 
@@ -1396,7 +1411,9 @@
 
 		.plans-grid-next-features-grid__bottom-plan-card-woo-product-card {
 			bottom: 16px;
+			left: auto;
 			right: 24px;
+			top: auto;
 			width: 104px;
 		}
 
