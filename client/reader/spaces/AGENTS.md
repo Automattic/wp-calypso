@@ -15,13 +15,14 @@ only, and wired to the real `wpcom/v2` backend.
   `adapters.ts` (renames `follows` → `sources`). No JSX, no routes here — api-core
   stays serializable.
 - **Queries & mutations** — `@automattic/api-queries` → `read-spaces.ts`:
-  `readSpacesQuery`/`readSpaceQuery` and the create/update/delete/feed mutations.
+  `readSpacesQuery`/`readSpaceQuery` and the create/update/delete mutations.
   Each mutation returns the full detail and writes it back to the caches.
 - **Consumer hooks** — `client/reader/data/spaces/`: `useSpaces`, `useSpace`,
+  `useSpaceMembership` (the `GET /reader/spaces/membership` lookup),
   `useCreateSpace`, `useUpdateSpace`, `useDeleteSpace`. The Customize modal edits
   sources as local draft state and persists them via the `feeds` replace on
-  `useUpdateSpace`, so there are no per-source consumer hooks (the underlying
-  `addReadSpaceSource`/`deleteReadSpaceSource` endpoints stay in `api-core`).
+  `useUpdateSpace` — there are no per-source add/remove endpoints, so a space's
+  feed set only ever changes through the bulk `update`.
 - **UI (this folder)** — `view.tsx`, `controller.tsx`, `index.tsx` (routes),
   `icons.ts`, `colors.ts`/`colors.scss`, `routes.ts`, `form-helpers.ts`,
   `color-picker.tsx`, `icon-picker.tsx`, `create-modal/`, `customize-modal/`.

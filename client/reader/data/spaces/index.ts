@@ -2,12 +2,13 @@ import {
 	createReadSpaceMutation,
 	deleteReadSpaceMutation,
 	readSpaceBySlugQuery,
+	readSpaceMembershipQuery,
 	readSpaceQuery,
 	readSpacesQuery,
 	updateReadSpaceMutation,
 } from '@automattic/api-queries';
 import { useMutation, useQueries, useQuery, useQueryClient } from '@tanstack/react-query';
-import type { ReadSpace, ReadSpaceDetails } from '@automattic/api-core';
+import type { ReadSpace, ReadSpaceDetails, ReadSpaceMembershipLookup } from '@automattic/api-core';
 
 /**
  * The user's spaces for the sidebar and space views, from the live list
@@ -53,6 +54,19 @@ export function useSpacesDetails( spaceIds: string[] ): {
 			isError: results.some( ( result ) => result.isError ),
 			isLoading: results.some( ( result ) => result.isLoading ),
 		} ),
+	} );
+}
+
+/**
+ * Which of the caller's spaces already contain a feed (or tag), via
+ * `GET /reader/spaces/membership` — a server-side lookup, so a surface can answer
+ * "already in a space?" without loading every space's full source list. Disabled
+ * until a feed/tag is known.
+ */
+export function useSpaceMembership( lookup: ReadSpaceMembershipLookup | null ) {
+	return useQuery( {
+		...readSpaceMembershipQuery( lookup ?? { feed: '' } ),
+		enabled: Boolean( lookup ),
 	} );
 }
 

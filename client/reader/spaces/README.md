@@ -65,21 +65,26 @@ queries for a canonical refresh.
 | 1   | `GET /reader/spaces`                         | —                                                                      | `200` summary[]       | `fetchReadSpaces()`          |
 | 2   | `GET /reader/spaces/{id}`                    | —                                                                      | `200` detail          | `fetchReadSpace(id)`         |
 | 3   | `GET /reader/spaces/slug/{slug}`             | —                                                                      | `200` detail          | `fetchReadSpaceBySlug(slug)` |
+| 3b  | `GET /reader/spaces/membership`              | query: exactly one of `feed` (id/url) or `tag` (slug)                  | `200 { exists, spaces }` | `fetchReadSpaceMembership()` |
 | 4   | `POST /reader/spaces`                        | `{ title*, feeds?, tags?, layout? }`                                   | `201` detail          | `createReadSpace()`          |
 | 5   | `PUT /reader/spaces/{id}`                    | `{ title?, feeds?, tags?, layout? }` (≥1; `layout` is a partial merge) | `200` detail          | `updateReadSpace()`          |
 | 6   | `DELETE /reader/spaces/{id}`                 | —                                                                      | `200 { deleted, id }` | `deleteReadSpace()`          |
-| 7   | `POST /reader/spaces/{id}/feeds`             | `{ feed* }` (feed id or url)                                           | `200` detail          | `addReadSpaceSource()`       |
-| 8   | `DELETE /reader/spaces/{id}/feeds/{feed_id}` | —                                                                      | `200` detail          | `deleteReadSpaceSource()`    |
-| 9   | `GET /reader/spaces/{id}/posts`              | query: `count?` (≤15), `tag_limit?`, `page_handle?`                    | `200` stream          | `space:{id}` stream          |
-| 10  | `GET /reader/spaces/{id}/discover`           | query: `count?` (≤7), `page_handle?`                                   | `200` stream          | `space_discover:{id}` stream |
+| 7   | `GET /reader/spaces/{id}/posts`              | query: `count?` (≤15), `tag_limit?`, `page_handle?`                    | `200` stream          | `space:{id}` stream          |
+| 8   | `GET /reader/spaces/{id}/discover`           | query: `count?` (≤7), `page_handle?`                                   | `200` stream          | `space_discover:{id}` stream |
 
 Notes:
 
 - **Feeds** must already exist (a feed id or url the backend can resolve); the
   client only offers feeds the user already follows. Create/update send the
-  complete desired feed set as `feeds`; the per-feed endpoints remain available
-  for consumers that need immediate add/remove behavior.
-- **Tags** are a full replace via `update` (endpoint 4) — there are no per-tag
+  complete desired feed set as `feeds` — there are no per-feed add/remove
+  endpoints; membership changes go through the bulk `update` (endpoint 5).
+- **Membership** (endpoint 3b) is a read-only lookup answering "which of my
+  spaces already contain this feed/tag?" — pass exactly one of `feed` or `tag`.
+  An unresolvable feed/tag is not an error: it returns `{ exists: false,
+  spaces: [] }`. Exposed as `useSpaceMembership()` — a building block for surfaces
+  that need "already in a space?" without loading every space's sources. It never
+  mutates.
+- **Tags** are a full replace via `update` (endpoint 5) — there are no per-tag
   endpoints. Pass the complete desired set; `[]` clears them.
 - **Create** sends `title`, selected `feeds`, `tags`, and the persisted layout
   fields (`color`/`icon`/`view`) from the shared upsert modal.
@@ -87,7 +92,7 @@ Notes:
   it behind a confirm dialog (`customize-modal/confirm-delete.tsx`) in edit mode.
   `useCreateSpace()`, `useUpdateSpace()` (Save), and `useDeleteSpace()` (Delete
   space) are all consumed by `customize-modal/`.
-- **Feed** (endpoint 8) returns the standard Reader stream shape
+- **Feed** (endpoint 7) returns the standard Reader stream shape
   (`{ cards, next_page_handle }`), built server-side from the space's followed
   feeds and tags. It is wired as a normal Reader stream keyed `space:{id}` (see
   `read-streams` `fetchReadSpacePosts` and the `space` case in
@@ -97,7 +102,7 @@ Notes:
   merged in, capped per page at `tag_limit` (server default 3, `0` = feeds
   only); the rest of each page is followed-feed posts. The client does not
   send `tag_limit` today, so the server default applies.
-- **Discover** (endpoint 9) is the same stream shape and consumer as the Feed —
+- **Discover** (endpoint 8) is the same stream shape and consumer as the Feed —
   the Discover tab renders the same `client/reader/spaces/feed/` shell with
   `variant="discover"`, keyed `space_discover:{id}` (see `fetchReadSpaceDiscover`
   and the `space_discover` case in `build-query-params`). The backend recommends
@@ -112,13 +117,11 @@ Notes:
 | ---- | ------------------------------ | -------------------------------------- |
 | 403  | `rest_forbidden`               | not logged in / not an Automattician   |
 | 404  | `reader_spaces_not_found`      | space doesn't exist or isn't yours     |
-| 404  | `reader_spaces_item_not_found` | removing a feed not in the space       |
 | 400  | `reader_spaces_invalid_title`  | empty title (create or update)         |
 | 400  | `reader_spaces_invalid_feed`   | a feed isn't an existing feedbag feed  |
 | 400  | `reader_spaces_invalid_tag`    | a tag slug isn't a valid Reader tag    |
 | 400  | `reader_spaces_no_changes`     | `update` with no recognized fields     |
 | 409  | `reader_spaces_duplicate_slug` | a space with that title already exists |
-| 409  | `reader_spaces_duplicate_feed` | feed already in the space              |
 | 500  | `reader_spaces_delete_failed`  | delete didn't persist (rare)           |
 
 The create modal maps `rest_forbidden` / `reader_spaces_invalid_title` /

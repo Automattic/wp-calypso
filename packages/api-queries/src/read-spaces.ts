@@ -1,18 +1,17 @@
 import {
-	addReadSpaceSource,
 	canonicalizeReadSpaceSlug,
 	createReadSpace,
 	deleteReadSpace,
-	deleteReadSpaceSource,
 	fetchReadSpace,
 	fetchReadSpaceBySlug,
+	fetchReadSpaceMembership,
 	fetchReadSpaces,
 	isWpError,
 	updateReadSpace,
 	type ReadSpace,
 	type ReadSpaceDeletionResult,
 	type ReadSpaceDetails,
-	type ReadSpaceSourceMutationParams,
+	type ReadSpaceMembershipLookup,
 	type UpdateReadSpaceParams,
 } from '@automattic/api-core';
 import {
@@ -107,6 +106,24 @@ export const readSpaceBySlugQuery = ( slug: string ) =>
 		refetchOnMount: 'always',
 		retry: ( failureCount, error ) => ! isClientError( error ) && failureCount < 3,
 		meta: { persist: true },
+	} );
+
+const readSpaceMembershipKey = ( lookup: ReadSpaceMembershipLookup ) =>
+	'feed' in lookup
+		? ( [ 'read', 'spaces', 'membership', 'feed', String( lookup.feed ) ] as const )
+		: ( [ 'read', 'spaces', 'membership', 'tag', lookup.tag ] as const );
+
+// Which of the caller's spaces already contain a feed/tag (`GET
+// /reader/spaces/membership`). It's derived from the spaces' current feed/tag
+// sets, so editing a space can stale it; `refetchOnMount: 'always'` keeps each
+// modal open showing the current answer without a bespoke invalidation. Not
+// persisted — it's a cheap, request-time lookup, not durable space data.
+export const readSpaceMembershipQuery = ( lookup: ReadSpaceMembershipLookup ) =>
+	queryOptions( {
+		queryKey: readSpaceMembershipKey( lookup ),
+		queryFn: () => fetchReadSpaceMembership( lookup ),
+		staleTime: Infinity,
+		refetchOnMount: 'always',
 	} );
 
 // The summary (list) shape is the detail minus its `sources`, `tags`, and
@@ -274,26 +291,4 @@ export const deleteReadSpaceMutation = ( queryClient: QueryClient ) =>
 			}
 			void invalidateReadSpacesList( queryClient );
 		},
-	} );
-
-// Add/remove a followed feed. Both endpoints return the updated detail, so we
-// write it straight to the detail cache (the list summary is unaffected by
-// feeds). `subscription` carries the feed id/url the api-core mutator sends.
-const writeReadSpaceDetail = ( queryClient: QueryClient, space: ReadSpaceDetails ) => {
-	setReadSpaceDetailCaches( queryClient, space );
-	// Adding/removing a feed changes the space's streams, so reload both.
-	void reloadReadSpaceStreams( queryClient, space.id );
-	void invalidateReadSpaceDetail( queryClient, space.id );
-};
-
-export const addReadSpaceSourceMutation = ( queryClient: QueryClient ) =>
-	mutationOptions< ReadSpaceDetails, unknown, ReadSpaceSourceMutationParams >( {
-		mutationFn: addReadSpaceSource,
-		onSuccess: ( space ) => writeReadSpaceDetail( queryClient, space ),
-	} );
-
-export const deleteReadSpaceSourceMutation = ( queryClient: QueryClient ) =>
-	mutationOptions< ReadSpaceDetails, unknown, ReadSpaceSourceMutationParams >( {
-		mutationFn: deleteReadSpaceSource,
-		onSuccess: ( space ) => writeReadSpaceDetail( queryClient, space ),
 	} );

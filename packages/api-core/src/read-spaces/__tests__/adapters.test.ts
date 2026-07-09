@@ -1,4 +1,9 @@
-import { adaptReadSpace, adaptReadSpaceDetails, type ReadSpaceApiItem } from '../adapters';
+import {
+	adaptReadSpace,
+	adaptReadSpaceDetails,
+	adaptReadSpaceMembership,
+	type ReadSpaceApiItem,
+} from '../adapters';
 
 const wireSpace = ( overrides: Partial< ReadSpaceApiItem > = {} ): ReadSpaceApiItem => ( {
 	id: 3,
@@ -132,6 +137,26 @@ describe( 'read spaces adapters', () => {
 				tags: [],
 				languages: [],
 			} );
+		} );
+	} );
+
+	describe( 'adaptReadSpaceMembership', () => {
+		it( 'maps wire entries onto the client shape (title → name, id stringified)', () => {
+			expect(
+				adaptReadSpaceMembership( {
+					exists: true,
+					spaces: [ { id: 23, title: 'ATProto', slug: 'atproto' } ],
+				} )
+			).toEqual( {
+				exists: true,
+				spaces: [ { id: '23', name: 'ATProto', slug: 'atproto' } ],
+			} );
+		} );
+
+		it( 'coerces a missing spaces array and falsy exists to safe defaults', () => {
+			expect(
+				adaptReadSpaceMembership( {} as Parameters< typeof adaptReadSpaceMembership >[ 0 ] )
+			).toEqual( { exists: false, spaces: [] } );
 		} );
 	} );
 } );

@@ -3,6 +3,7 @@ import {
 	canonicalizeReadSpaceSlug,
 	fetchReadSpace,
 	fetchReadSpaceBySlug,
+	fetchReadSpaceMembership,
 	fetchReadSpaces,
 } from '../fetchers';
 import type { ReadSpaceApiItem } from '../adapters';
@@ -182,6 +183,50 @@ describe( 'read spaces fetchers', () => {
 
 			await expect( fetchReadSpaceBySlug( 'gone' ) ).rejects.toMatchObject( {
 				code: 'reader_spaces_not_found',
+			} );
+		} );
+	} );
+
+	describe( 'fetchReadSpaceMembership', () => {
+		it( 'looks up by feed and adapts the response to the client shape', async () => {
+			const scope = nock( BASE )
+				.get( '/wpcom/v2/reader/spaces/membership' )
+				.query( { feed: '456' } )
+				.reply( 200, {
+					exists: true,
+					spaces: [ { id: 23, title: 'ATProto', slug: 'atproto' } ],
+				} );
+
+			const membership = await fetchReadSpaceMembership( { feed: 456 } );
+
+			expect( scope.isDone() ).toBe( true );
+			expect( membership ).toEqual( {
+				exists: true,
+				spaces: [ { id: '23', name: 'ATProto', slug: 'atproto' } ],
+			} );
+		} );
+
+		it( 'looks up by tag', async () => {
+			const scope = nock( BASE )
+				.get( '/wpcom/v2/reader/spaces/membership' )
+				.query( { tag: 'photography' } )
+				.reply( 200, { exists: false, spaces: [] } );
+
+			const membership = await fetchReadSpaceMembership( { tag: 'photography' } );
+
+			expect( scope.isDone() ).toBe( true );
+			expect( membership ).toEqual( { exists: false, spaces: [] } );
+		} );
+
+		it( 'normalizes a missing spaces array to an empty list', async () => {
+			nock( BASE )
+				.get( '/wpcom/v2/reader/spaces/membership' )
+				.query( { feed: '456' } )
+				.reply( 200, { exists: false } );
+
+			await expect( fetchReadSpaceMembership( { feed: 456 } ) ).resolves.toEqual( {
+				exists: false,
+				spaces: [],
 			} );
 		} );
 	} );
