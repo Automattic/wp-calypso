@@ -26,15 +26,9 @@ function getCheckoutUrl( dependencies, localeSlug, flowName, destination ) {
 	const isGravatarDomain = isDomainForGravatarFlow( flowName );
 	const queryArgs = getQueryArgs() ?? {};
 
-	// For the with-plugin flow, backing out of checkout should return to the plans grid step, not
-	// the post-purchase thank-you/install destination — that page can't render before the purchase
-	// and would leave the user stuck. Rebuild the plans step URL from the flow dependencies; the
-	// current URL query no longer carries the plugin params at this point.
-	//
-	// Known limitation: re-entering the flow restarts from the domains step and creates a new site
-	// (signup progress is lost on the hard navigation, and there is no fulfilled-step check to skip
-	// site creation). Accepted for now as it beats landing on a blank page; a proper resume /
-	// no-recreate fix is a follow-up.
+	// with-plugin: point "back" at the plans grid (params from the dependency store — the URL query
+	// is empty by now), not the post-purchase destination which can't render pre-purchase. Known
+	// tradeoff: this re-enters signup and recreates the site; kept over a blank page for now.
 	let backDestination = destination;
 	if ( flowName === 'with-plugin' ) {
 		const { pluginParameter, pluginBillingPeriod } = dependencies;
@@ -43,7 +37,7 @@ function getCheckoutUrl( dependencies, localeSlug, flowName, destination ) {
 				...( pluginParameter && { plugin: pluginParameter } ),
 				...( pluginBillingPeriod && {
 					billing_period: pluginBillingPeriod,
-					// Match the plans grid's default interval to the plugin's billing period.
+					// Default the grid to the plugin's billing interval.
 					intervalType: pluginBillingPeriod === 'MONTHLY' ? 'monthly' : 'yearly',
 				} ),
 			},
