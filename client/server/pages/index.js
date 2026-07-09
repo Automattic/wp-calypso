@@ -1331,7 +1331,7 @@ export default function pages() {
 	registerCspReportRoute( app );
 
 	// Multi-site Dashboard routing.
-	if ( isDashboardEnv() || calypsoEnv === 'development' ) {
+	if ( isDashboardEnv() ) {
 		// Serve the dashboard shell for any otherwise-unmatched path so the client
 		// router renders its own not-found page, instead of falling through to default.
 		DASHBOARD_VARIANTS.forEach( ( variant ) =>
