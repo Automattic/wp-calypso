@@ -17,6 +17,7 @@ import { Card, CardBody } from '../card';
 import InlineSupportLink from '../inline-support-link';
 import Notice from '../notice';
 import { getContactFormFields } from './contact-form-fields';
+import { mapValidationMessagesToFieldErrors } from './contact-validation-utils';
 import { RegionAddressFieldsLayout } from './region-address-fieldsets';
 import type { UseMutateAsyncFunction } from '@tanstack/react-query';
 interface ContactFormProps {
@@ -40,6 +41,8 @@ export default function ContactForm( {
 	const [ formData, setFormData ] = useState< DomainContactDetails >(
 		initialData ?? { optOutTransferLock: false }
 	);
+	const [ lastValidationResult, setLastValidationResult ] =
+		useState< DomainContactValidationResponse | null >( null );
 	const selectedCountryCode = formData.countryCode ?? initialData?.countryCode ?? '';
 	const { data: statesList } = useQuery( statesListQuery( selectedCountryCode ) );
 
@@ -78,6 +81,7 @@ export default function ContactForm( {
 
 			validate( item )
 				.then( ( result ) => {
+					setLastValidationResult( result );
 					callbacks.forEach( ( callback ) => callback.resolve( result ) );
 				} )
 				.catch( ( error ) => {
@@ -131,7 +135,39 @@ export default function ContactForm( {
 		],
 	};
 
-	const { validity, isValid: canSave } = useFormValidity( normalizedFormData, fields, form );
+	const { validity, isValid: isFormValid } = useFormValidity( normalizedFormData, fields, form );
+
+	// The validation endpoint validates the whole form, so a change to one field
+	// (e.g. the country) can invalidate another (e.g. the postal code) whose own
+	// async validator DataForm won't re-run. Surface every field error from the
+	// latest response so those errors appear without the user having to touch each
+	// field, and keep Save disabled while any of them remain.
+	const serverFieldErrors = useMemo(
+		() =>
+			mapValidationMessagesToFieldErrors(
+				lastValidationResult && ! lastValidationResult.success
+					? lastValidationResult.messages
+					: undefined
+			),
+		[ lastValidationResult ]
+	);
+
+	const validityWithServerErrors = useMemo( () => {
+		const fieldErrors = Object.entries( serverFieldErrors );
+		if ( ! isDirty || fieldErrors.length === 0 ) {
+			return validity;
+		}
+		const merged: NonNullable< typeof validity > = { ...validity };
+		for ( const [ fieldId, message ] of fieldErrors ) {
+			merged[ fieldId ] = {
+				...merged[ fieldId ],
+				custom: { type: 'invalid', message },
+			};
+		}
+		return merged;
+	}, [ validity, serverFieldErrors, isDirty ] );
+
+	const canSave = isFormValid && Object.keys( serverFieldErrors ).length === 0;
 
 	return (
 		<VStack spacing={ 10 }>
@@ -173,7 +209,7 @@ export default function ContactForm( {
 							data={ normalizedFormData }
 							fields={ fields }
 							form={ form }
-							validity={ validity }
+							validity={ validityWithServerErrors }
 							onChange={ ( edits: Partial< DomainContactDetails > ) => {
 								setFormData( ( data ) => ( { ...data, ...edits } ) );
 							} }
