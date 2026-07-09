@@ -883,23 +883,145 @@ type BlockSuggestion = {
 	prompt: string;
 	type: BlockTransformationSuggestionType;
 	condition: ( block: any ) => boolean;
+	options?: SuggestionOption[];
 };
+
+/** Change-tone dropdown options; `value` is the full localized prompt filled on selection. */
+const CHANGE_TONE_OPTIONS: SuggestionOption[] = [
+	{
+		id: 'formal',
+		label: `🎩 ${ __( 'Formal', 'jetpack' ) }`,
+		value: __( 'Change the tone of this text to be more formal', 'jetpack' ),
+	},
+	{
+		id: 'informal',
+		label: `😊 ${ __( 'Informal', 'jetpack' ) }`,
+		value: __( 'Change the tone of this text to be more informal', 'jetpack' ),
+	},
+	{
+		id: 'optimistic',
+		label: `😃 ${ __( 'Optimistic', 'jetpack' ) }`,
+		value: __( 'Change the tone of this text to be more optimistic', 'jetpack' ),
+	},
+	{
+		id: 'humorous',
+		label: `😂 ${ __( 'Humorous', 'jetpack' ) }`,
+		value: __( 'Change the tone of this text to be more humorous', 'jetpack' ),
+	},
+	{
+		id: 'serious',
+		label: `😐 ${ __( 'Serious', 'jetpack' ) }`,
+		value: __( 'Change the tone of this text to be more serious', 'jetpack' ),
+	},
+	{
+		id: 'skeptical',
+		label: `🤨 ${ __( 'Skeptical', 'jetpack' ) }`,
+		value: __( 'Change the tone of this text to be more skeptical', 'jetpack' ),
+	},
+	{
+		id: 'empathetic',
+		label: `💗 ${ __( 'Empathetic', 'jetpack' ) }`,
+		value: __( 'Change the tone of this text to be more empathetic', 'jetpack' ),
+	},
+	{
+		id: 'confident',
+		label: `😎 ${ __( 'Confident', 'jetpack' ) }`,
+		value: __( 'Change the tone of this text to be more confident', 'jetpack' ),
+	},
+	{
+		id: 'passionate',
+		label: `❤️ ${ __( 'Passionate', 'jetpack' ) }`,
+		value: __( 'Change the tone of this text to be more passionate', 'jetpack' ),
+	},
+	{
+		id: 'provocative',
+		label: `🔥 ${ __( 'Provocative', 'jetpack' ) }`,
+		value: __( 'Change the tone of this text to be more provocative', 'jetpack' ),
+	},
+];
+
+/** Translate dropdown target languages; `value` is the full localized prompt filled on selection. */
+const TRANSLATE_LANGUAGE_OPTIONS: SuggestionOption[] = [
+	{
+		id: 'en',
+		label: __( 'English', 'jetpack' ),
+		value: __( 'Translate this block content to English', 'jetpack' ),
+	},
+	{
+		id: 'es',
+		label: __( 'Spanish', 'jetpack' ),
+		value: __( 'Translate this block content to Spanish', 'jetpack' ),
+	},
+	{
+		id: 'fr',
+		label: __( 'French', 'jetpack' ),
+		value: __( 'Translate this block content to French', 'jetpack' ),
+	},
+	{
+		id: 'de',
+		label: __( 'German', 'jetpack' ),
+		value: __( 'Translate this block content to German', 'jetpack' ),
+	},
+	{
+		id: 'it',
+		label: __( 'Italian', 'jetpack' ),
+		value: __( 'Translate this block content to Italian', 'jetpack' ),
+	},
+	{
+		id: 'pt',
+		label: __( 'Portuguese', 'jetpack' ),
+		value: __( 'Translate this block content to Portuguese', 'jetpack' ),
+	},
+	{
+		id: 'ru',
+		label: __( 'Russian', 'jetpack' ),
+		value: __( 'Translate this block content to Russian', 'jetpack' ),
+	},
+	{
+		id: 'zh',
+		label: __( 'Chinese', 'jetpack' ),
+		value: __( 'Translate this block content to Chinese', 'jetpack' ),
+	},
+	{
+		id: 'ja',
+		label: __( 'Japanese', 'jetpack' ),
+		value: __( 'Translate this block content to Japanese', 'jetpack' ),
+	},
+	{
+		id: 'ar',
+		label: __( 'Arabic', 'jetpack' ),
+		value: __( 'Translate this block content to Arabic', 'jetpack' ),
+	},
+	{
+		id: 'hi',
+		label: __( 'Hindi', 'jetpack' ),
+		value: __( 'Translate this block content to Hindi', 'jetpack' ),
+	},
+	{
+		id: 'ko',
+		label: __( 'Korean', 'jetpack' ),
+		value: __( 'Translate this block content to Korean', 'jetpack' ),
+	},
+];
 
 /** Block-aware suggestion definitions with optional condition per block type. */
 const BLOCK_SUGGESTIONS: BlockSuggestion[] = [
 	{
 		id: 'translate',
 		label: __( 'Translate content', 'jetpack' ),
-		prompt: __( 'Translate this block content to:', 'jetpack' ),
+		// Empty prompt — the picked option's `value` is the full prompt sent.
+		prompt: '',
 		type: 'text',
 		condition: ( block: any ) => TEXT_BLOCK_TYPES.includes( block?.name ),
+		options: TRANSLATE_LANGUAGE_OPTIONS,
 	},
 	{
 		id: 'change-tone',
 		label: __( 'Change tone', 'jetpack' ),
-		prompt: __( 'Change the tone of this text to be more:', 'jetpack' ),
+		prompt: '',
 		type: 'text',
 		condition: ( block: any ) => TEXT_BLOCK_TYPES.includes( block?.name ),
+		options: CHANGE_TONE_OPTIONS,
 	},
 	{
 		id: 'check-grammar',
@@ -924,20 +1046,43 @@ const BLOCK_SUGGESTIONS: BlockSuggestion[] = [
 	},
 ];
 
-function matchesBlockTransformationSuggestion(
+type BlockTransformationSuggestionMatch = {
+	suggestion: BlockSuggestion;
+	option?: SuggestionOption;
+};
+
+/**
+ * Resolve a dispatched click value to its suggestion and the picked option.
+ * Option-bearing suggestions use an empty prompt, so the value is the option's.
+ */
+function matchBlockTransformationSuggestion(
 	suggestion: BlockSuggestion,
 	value: string
-): boolean {
-	return [ suggestion.id, suggestion.label, suggestion.prompt ].includes( value );
+): BlockTransformationSuggestionMatch | undefined {
+	const option = suggestion.options?.find( ( candidate ) => candidate.value === value );
+	if ( option ) {
+		return { suggestion, option };
+	}
+	// `filter( Boolean )` drops an empty prompt so a blank value can't false-match.
+	if (
+		[ suggestion.id, suggestion.label, suggestion.prompt ].filter( Boolean ).includes( value )
+	) {
+		return { suggestion };
+	}
+	return undefined;
 }
 
-function getBlockTransformationSuggestionForValue(
+function getBlockTransformationSuggestionMatchForValue(
 	value: string,
 	suggestions: BlockSuggestion[]
-): BlockSuggestion | undefined {
-	return suggestions.find( ( suggestion ) =>
-		matchesBlockTransformationSuggestion( suggestion, value )
-	);
+): BlockTransformationSuggestionMatch | undefined {
+	for ( const suggestion of suggestions ) {
+		const match = matchBlockTransformationSuggestion( suggestion, value );
+		if ( match ) {
+			return match;
+		}
+	}
+	return undefined;
 }
 
 function trackRenderedBlockTransformationSuggestions(
@@ -974,32 +1119,34 @@ function trackBlockTransformationSuggestionClickForValue( value: string ): void 
 
 	const selectedBlock = getSelectedOrRememberedBlock();
 	if ( typeof selectedBlock?.name === 'string' ) {
-		const selectedBlockSuggestion = getBlockTransformationSuggestionForValue(
+		const selectedBlockMatch = getBlockTransformationSuggestionMatchForValue(
 			value,
 			BLOCK_SUGGESTIONS.filter( ( suggestion ) => suggestion.condition( selectedBlock ) )
 		);
-		if ( selectedBlockSuggestion ) {
+		if ( selectedBlockMatch ) {
 			trackBlockTransformationSuggestionClick( {
-				suggestionId: selectedBlockSuggestion.id,
-				suggestionType: selectedBlockSuggestion.type,
+				suggestionId: selectedBlockMatch.suggestion.id,
+				suggestionType: selectedBlockMatch.suggestion.type,
 				blockType: selectedBlock.name,
+				optionId: selectedBlockMatch.option?.id,
 			} );
 			return;
 		}
 	}
 
 	const lastRenderedContext = lastBlockTransformationSuggestionContext;
-	const lastRenderedSuggestion = lastRenderedContext
-		? getBlockTransformationSuggestionForValue( value, lastRenderedContext.suggestions )
+	const lastRenderedMatch = lastRenderedContext
+		? getBlockTransformationSuggestionMatchForValue( value, lastRenderedContext.suggestions )
 		: undefined;
-	if ( ! lastRenderedContext || ! lastRenderedSuggestion ) {
+	if ( ! lastRenderedContext || ! lastRenderedMatch ) {
 		return;
 	}
 
 	trackBlockTransformationSuggestionClick( {
-		suggestionId: lastRenderedSuggestion.id,
-		suggestionType: lastRenderedSuggestion.type,
+		suggestionId: lastRenderedMatch.suggestion.id,
+		suggestionType: lastRenderedMatch.suggestion.type,
 		blockType: lastRenderedContext.blockType,
+		optionId: lastRenderedMatch.option?.id,
 	} );
 }
 
@@ -1151,7 +1298,8 @@ export function useSuggestions(
 		[ blockTransformationsEnabled, selectedBlock ]
 	);
 	const blockTransformationSuggestions = useMemo(
-		() => applicable.map( ( { id, label, prompt } ) => ( { id, label, prompt } ) ),
+		() =>
+			applicable.map( ( { id, label, prompt, options } ) => ( { id, label, prompt, options } ) ),
 		[ applicable ]
 	);
 	// Post-level reviews (Optimize Title, Generate Feedback, AI Editorial Review)
@@ -1160,10 +1308,15 @@ export function useSuggestions(
 		if ( hidden ) {
 			return [];
 		}
-		return applySuggestionLimit(
-			selectedBlock ? blockTransformationSuggestions : postLevelSuggestions,
-			maxSuggestions
-		);
+		// Both branches narrow to this shared shape; the explicit annotation lets
+		// the generic applySuggestionLimit infer a single element type across them.
+		const activeSuggestions: Array< {
+			id: string;
+			label: string;
+			prompt: string;
+			options?: SuggestionOption[];
+		} > = selectedBlock ? blockTransformationSuggestions : postLevelSuggestions;
+		return applySuggestionLimit( activeSuggestions, maxSuggestions );
 	}, [
 		blockTransformationSuggestions,
 		hidden,
