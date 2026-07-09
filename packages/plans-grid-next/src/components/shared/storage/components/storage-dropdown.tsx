@@ -150,12 +150,14 @@ const StorageDropdown = ( {
 			return;
 		}
 
-		hasOpenedOnMount.current = true;
-
 		const openDropdownTimeout = window.setTimeout( () => {
-			const trigger =
-				containerRef.current?.querySelector< HTMLButtonElement >( '[role="combobox"]' );
+			const trigger = containerRef.current?.querySelector< HTMLElement >( '[role="combobox"]' );
 
+			if ( ! trigger ) {
+				return;
+			}
+
+			hasOpenedOnMount.current = true;
 			trigger?.focus();
 			trigger?.click();
 		}, 0 );
