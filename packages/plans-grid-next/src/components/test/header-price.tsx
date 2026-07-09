@@ -58,6 +58,18 @@ const Wrapper = ( { children } ) => {
 	return <QueryClientProvider client={ queryClient }>{ children }</QueryClientProvider>;
 };
 
+const expectTooltipText = async ( text: string ) => {
+	await waitFor( () => {
+		expect(
+			screen.getByText(
+				( _content, element ) =>
+					element?.classList.contains( 'popover__inner' ) &&
+					element.textContent?.replace( /\s+/g, ' ' ) === text
+			)
+		).toBeInTheDocument();
+	} );
+};
+
 describe( 'HeaderPrice', () => {
 	const defaultProps = {
 		isLargeCurrency: false,
@@ -243,15 +255,15 @@ describe( 'HeaderPrice', () => {
 	} );
 
 	test.each( [
-		[ '1-year savings', PLAN_PERSONAL, PLAN_ANNUAL_PERIOD ],
-		[ '2-year savings', PLAN_PERSONAL_2_YEARS, PLAN_BIENNIAL_PERIOD ],
-		[ '3-year savings', PLAN_PERSONAL_3_YEARS, PLAN_TRIENNIAL_PERIOD ],
+		[ '$120/year vs. $240 paying monthly', PLAN_PERSONAL, PLAN_ANNUAL_PERIOD ],
+		[ '$240/2 years vs. $480 paying monthly', PLAN_PERSONAL_2_YEARS, PLAN_BIENNIAL_PERIOD ],
+		[ '$360/3 years vs. $720 paying monthly', PLAN_PERSONAL_3_YEARS, PLAN_TRIENNIAL_PERIOD ],
 	] )(
 		'should show "%s" on pricing badge tooltips in the plans grid redesign experiment',
 		async ( expectedTooltipText, planSlug, billingPeriod ) => {
 			const pricing = {
 				currencyCode: 'USD',
-				originalPrice: { full: 120, monthly: 10 },
+				originalPrice: { full: 12000, monthly: 1000 },
 				discountedPrice: { full: null, monthly: null },
 				billingPeriod,
 			};
@@ -262,7 +274,7 @@ describe( 'HeaderPrice', () => {
 			} );
 			( Plans.usePricingMetaForGridPlans as jest.Mock ).mockReturnValue( {
 				[ PLAN_PERSONAL_MONTHLY ]: {
-					originalPrice: { monthly: 20, full: 240 },
+					originalPrice: { monthly: 2000, full: 24000 },
 					discountedPrice: { monthly: null, full: null },
 					billingPeriod: PLAN_MONTHLY_PERIOD,
 				},
@@ -278,7 +290,7 @@ describe( 'HeaderPrice', () => {
 				},
 				isExperimentVariant: true,
 				showFeatureCheckmarks: true,
-				showBillingDescriptionForIncreasedRenewalPrice: 'crossed_price',
+				enableTermSavingsPriceDisplay: true,
 			} ) );
 
 			const { container } = render(
@@ -297,19 +309,76 @@ describe( 'HeaderPrice', () => {
 
 			fireEvent.mouseEnter( hoverArea as Element );
 
-			await waitFor( () => {
-				expect(
-					screen.getByText( new RegExp( expectedTooltipText.replace( ' ', '\\s+' ) ) )
-				).toBeInTheDocument();
-			} );
+			await expectTooltipText( expectedTooltipText );
 		}
 	);
 
-	test( 'should show "1-month savings" on monthly pricing badge tooltips', async () => {
+	test( 'should show full-term renewal pricing on renewal pricing badge tooltips', async () => {
 		const pricing = {
 			currencyCode: 'USD',
-			originalPrice: { full: 120, monthly: 10 },
-			discountedPrice: { full: 60, monthly: 5 },
+			originalPrice: { full: 21600, monthly: 1800 },
+			discountedPrice: { full: null, monthly: null },
+			billingPeriod: PLAN_ANNUAL_PERIOD,
+			introOffer: {
+				formattedPrice: '$48.00',
+				rawPrice: { monthly: 400, full: 4800 },
+				intervalUnit: 'year',
+				intervalCount: 1,
+				isOfferComplete: false,
+			},
+		};
+
+		mockUseHeaderPriceContext.mockReturnValue( {
+			isAnyPlanPriceDiscounted: true,
+			setIsAnyPlanPriceDiscounted: jest.fn(),
+		} );
+		( Plans.usePricingMetaForGridPlans as jest.Mock ).mockReturnValue( {
+			[ PLAN_PERSONAL_MONTHLY ]: {
+				originalPrice: { monthly: 1800, full: 21600 },
+				discountedPrice: { monthly: null, full: null },
+				billingPeriod: PLAN_MONTHLY_PERIOD,
+				introOffer: {
+					formattedPrice: '$9.00',
+					rawPrice: { monthly: 900, full: 900 },
+					intervalUnit: 'month',
+					intervalCount: 1,
+					isOfferComplete: false,
+				},
+			},
+		} );
+
+		usePlansGridContext.mockImplementation( () => ( {
+			gridPlansIndex: {
+				[ PLAN_PERSONAL ]: {
+					current: false,
+					isMonthlyPlan: false,
+					pricing,
+				},
+			},
+			isExperimentVariant: true,
+			showFeatureCheckmarks: true,
+			showBillingDescriptionForIncreasedRenewalPrice: 'crossed_price',
+		} ) );
+
+		const { container } = render( <HeaderPrice { ...defaultProps } />, { wrapper: Wrapper } );
+		const badge = container.querySelector(
+			'.plans-grid-next-header-price__badge.is-plan-differentiators-experiment-badge:not(.is-hidden)'
+		);
+		const hoverArea = container.querySelector( '.plans-2023-tooltip__hover-area-container' );
+
+		expect( badge ).toHaveTextContent( 'Save 76%' );
+		expect( hoverArea ).toContainElement( badge );
+
+		fireEvent.mouseEnter( hoverArea as Element );
+
+		await expectTooltipText( '$48/year vs. $207 paying monthly' );
+	} );
+
+	test( 'should show first-month pricing on monthly pricing badge tooltips', async () => {
+		const pricing = {
+			currencyCode: 'USD',
+			originalPrice: { full: 1000, monthly: 1000 },
+			discountedPrice: { full: 500, monthly: 500 },
 			billingPeriod: PLAN_MONTHLY_PERIOD,
 		};
 
@@ -342,9 +411,7 @@ describe( 'HeaderPrice', () => {
 
 		fireEvent.mouseEnter( hoverArea as Element );
 
-		await waitFor( () => {
-			expect( screen.getByText( /1-month\s+savings/ ) ).toBeInTheDocument();
-		} );
+		await expectTooltipText( '$5/first month vs. $10 monthly after that' );
 	} );
 
 	test( 'should not show a pricing badge tooltip outside the plans grid redesign experiment', () => {
