@@ -249,6 +249,24 @@ export default {
 		const isManageSiteFlow =
 			! excludeFromManageSiteFlows && ! isAddNewSiteFlow && isReEnteringSignupViaBrowserBack;
 
+		// TEMP diagnostic — remove before merge. Logs why isManageSiteFlow resolves as it does when
+		// re-entering the with-plugin flow after backing out of checkout (duplicate-site debugging).
+		if ( flowName === 'with-plugin' ) {
+			// eslint-disable-next-line no-console
+			console.log( '[with-plugin manage-site debug]', {
+				isManageSiteFlow,
+				excludeFromManageSiteFlows: !! excludeFromManageSiteFlows,
+				isAddNewSiteFlow,
+				wasSignupCheckoutPageUnloaded: wasSignupCheckoutPageUnloaded(),
+				signupDestinationCookieExists: !! signupDestinationCookieExists,
+				isReEnteringFlow,
+				signupCompleteFlowName: getSignupCompleteFlowName(),
+				flowName,
+				stepName,
+				url: window.location.href,
+			} );
+		}
+
 		// Hydrate the store with domains dependencies from session storage,
 		// only in the onboarding flow.
 		const domainsDependencies = getDomainsDependencies();
