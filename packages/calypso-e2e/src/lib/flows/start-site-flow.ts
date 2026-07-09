@@ -6,7 +6,7 @@ import { Page } from 'playwright';
  * @see client/landing/stepper/declarative-flow/site-setup-flow.ts for all step names
  */
 export type StepName = 'goals' | 'vertical' | 'design-setup' | 'options' | 'designChoices';
-type WriteActions = 'Start writing' | 'Start learning' | 'View designs';
+type WriteActions = 'Start writing' | 'View designs';
 
 const selectors = {
 	// Generic
@@ -155,9 +155,6 @@ export class StartSiteFlow {
 			// Extended timeout because the site is being
 			// headstarted at this time.
 			await this.page.waitForURL( /setup\/site-setup\/processing/, { timeout: 20 * 1000 } );
-		}
-		if ( action === 'Start learning' ) {
-			await this.page.waitForURL( /setup\/site-setup\/courses/ );
 		}
 		if ( action === 'View designs' ) {
 			await this.page.waitForURL( /setup\/site-setup\/design-setup/ );

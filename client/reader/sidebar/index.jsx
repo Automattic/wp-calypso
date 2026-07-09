@@ -211,6 +211,8 @@ export class ReaderSidebar extends Component {
 						/>
 					</li>
 
+					{ isEnabled( 'reader/spaces' ) && <ReaderSidebarSpaces path={ path } /> }
+
 					{ this.props.organizations && (
 						<ReaderSidebarOrganizations organizations={ this.props.organizations } path={ path } />
 					) }
@@ -234,8 +236,6 @@ export class ReaderSidebar extends Component {
 						onFollowTag={ this.highlightNewTag }
 						currentTag={ this.state.currentTag }
 					/>
-
-					{ isEnabled( 'reader/spaces' ) && <ReaderSidebarSpaces path={ path } /> }
 
 					<li className="reader-sidebar__section-header" role="presentation">
 						<span role="heading" aria-level="3">

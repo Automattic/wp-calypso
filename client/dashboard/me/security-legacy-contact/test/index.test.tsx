@@ -105,6 +105,18 @@ describe( '<SecurityLegacyContact />', () => {
 		expect( requestBody ).toEqual( { email: CONTACT.contact_email } );
 	} );
 
+	test( 'counts down the remaining characters as notes are typed', async () => {
+		interceptContacts( [] );
+
+		renderScreen();
+
+		expect( await screen.findByText( '500 characters remaining' ) ).toBeVisible();
+
+		await userEvent.type( screen.getByRole( 'textbox', { name: 'Notes' } ), 'Hello' );
+
+		expect( screen.getByText( '495 characters remaining' ) ).toBeVisible();
+	} );
+
 	test( 'opens a confirmation dialog when removing', async () => {
 		interceptContacts( [ CONTACT ] );
 

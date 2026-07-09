@@ -10,7 +10,6 @@ import { useAnalytics } from '../../../app/analytics';
 import { usePersistentView } from '../../../app/hooks/use-persistent-view';
 import { useLocale } from '../../../app/locale';
 import { PerformanceTrackerStop } from '../../../app/performance-tracking';
-import { siteLogsActivityRoute } from '../../../app/router/sites';
 import { DataViews, DataViewsEmptyStateLayout } from '../../../components/dataviews';
 import { formatDate } from '../../../utils/datetime';
 import { getActivityLogHiddenGroups } from '../../../utils/site-features';
@@ -28,6 +27,9 @@ import './style.scss';
 type SiteLogsDataViewsPropsActivity = SiteLogsDataViewsProps & {
 	logType: typeof LogType.ACTIVITY;
 	hasActivityLogsAccess: boolean;
+	// View state deep-linked via the URL, read from the active route's search.
+	// Passed in so this component isn't bound to a specific route.
+	searchParams?: Record< string, unknown >;
 };
 
 const ACTIVITY_LOGS_DEFAULT_PAGE_SIZE = 20;
@@ -38,6 +40,7 @@ function SiteActivityLogsDataViews( {
 	dateRange,
 	dateRangeVersion,
 	hasActivityLogsAccess,
+	searchParams,
 }: SiteLogsDataViewsPropsActivity ) {
 	const { recordTracksEvent } = useAnalytics();
 	const locale = useLocale();
@@ -46,8 +49,6 @@ function SiteActivityLogsDataViews( {
 		() => buildTimeRangeInSeconds( dateRange.start, dateRange.end, timezoneString, gmtOffset ),
 		[ dateRange.start, dateRange.end, gmtOffset, timezoneString ]
 	);
-
-	const searchParams = siteLogsActivityRoute.useSearch();
 
 	const { view, updateView, resetView } = usePersistentView( {
 		slug: 'site-logs-activity',

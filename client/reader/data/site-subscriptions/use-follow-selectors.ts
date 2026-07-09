@@ -8,6 +8,7 @@ import {
 } from '@automattic/api-queries';
 import { NO_ORG_ID } from 'calypso/state/reader/organizations/constants';
 import { useSiteSubscriptions } from './use-site-subscriptions';
+import type { SiteSubscriptionItem } from '@automattic/api-core';
 
 type FollowId = number | string;
 
@@ -48,7 +49,7 @@ export const useAliasedSiteSubscriptionFeedUrl = ( feedUrl: string ) => {
 	return getAliasedSiteSubscriptionFeedUrl( data, feedUrl ) ?? feedUrl;
 };
 
-export const useSubscribedSites = () => {
+export const useSubscribedSites = (): SiteSubscriptionItem[] => {
 	const { data } = useSiteSubscriptions();
 
 	return getSubscribedSitesFromData( data, NO_ORG_ID );
@@ -60,14 +61,30 @@ export const useOrganizationSiteSubscriptions = ( organizationId: number ) => {
 	return getOrganizationSiteSubscriptionsFromData( data, organizationId );
 };
 
+interface FeedsInfo {
+	unseenCount: number;
+	feedIds: number[];
+	feedUrls: string[];
+}
+
+const getFeedsInfo = ( sites: SiteSubscriptionItem[] ): FeedsInfo => ( {
+	unseenCount: sites.reduce( ( sum, item ) => sum + ( item.unseen_count ?? 0 ), 0 ),
+	feedIds: sites
+		.map( ( item ) => ( item.feed_ID ? Number( item.feed_ID ) : null ) )
+		.filter( ( id ) => typeof id === 'number' ),
+	feedUrls: sites.map( ( item ) => item.feed_URL ).filter( Boolean ),
+} );
+
 export const useOrganizationFeedsInfo = ( organizationId: number ) => {
 	const sites = useOrganizationSiteSubscriptions( organizationId );
 
-	return {
-		unseenCount: sites.reduce( ( sum, item ) => sum + ( item.unseen_count ?? 0 ), 0 ),
-		feedIds: sites.map( ( item ) => item.feed_ID ).filter( Boolean ),
-		feedUrls: sites.map( ( item ) => item.feed_URL ).filter( Boolean ),
-	};
+	return getFeedsInfo( sites );
+};
+
+export const useSubscribedFeedsInfo = () => {
+	const sites = useSubscribedSites();
+
+	return getFeedsInfo( sites );
 };
 
 export const useHasSiteSubscriptionOrganization = ( feedId?: FollowId, blogId?: FollowId ) => {

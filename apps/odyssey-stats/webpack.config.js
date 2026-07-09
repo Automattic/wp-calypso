@@ -132,8 +132,18 @@ module.exports = {
 		new DependencyExtractionWebpackPlugin( {
 			injectPolyfill: true,
 			useDefaults: false,
-			requestToHandle: defaultRequestToHandle,
+			requestToHandle: ( request ) => {
+				if ( request === 'react-dom/client' ) {
+					return 'wp-element';
+				}
+
+				return defaultRequestToHandle( request );
+			},
 			requestToExternal: ( request ) => {
+				if ( request === 'react-dom/client' ) {
+					return [ 'wp', 'element' ];
+				}
+
 				if (
 					! [
 						'lodash',

@@ -5,7 +5,7 @@ import {
 	NewSiteResponse,
 	RestAPIClient,
 } from '@automattic/calypso-e2e';
-import { tags, test } from '../../lib/pw-base';
+import { skipIfNotTrunk, tags, test } from '../../lib/pw-base';
 import { apiCloseAccount, apiDeleteSite } from '../shared';
 
 test.describe(
@@ -14,6 +14,8 @@ test.describe(
 		tag: [ tags.CALYPSO_RELEASE ],
 	},
 	() => {
+		skipIfNotTrunk();
+
 		const accountsToCleanup: {
 			testUser: NewTestUserDetails;
 			newUserDetails: NewUserResponse;

@@ -8,9 +8,9 @@ import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import QuerySiteStats from 'calypso/components/data/query-site-stats';
-import InfoPopover from 'calypso/components/info-popover';
 import SectionHeader from 'calypso/components/section-header';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import StatsInfotip from 'calypso/my-sites/stats/components/stats-infotip';
 import { getSiteSlug } from 'calypso/state/sites/selectors';
 import getSiteAdminUrl from 'calypso/state/sites/selectors/get-site-admin-url';
 import {
@@ -199,9 +199,14 @@ class VideoPressStatsModule extends Component {
 							<div className="stats-card-header__title" role="heading" aria-level="4">
 								<div>{ moduleStrings.title }</div>
 								<div className="stats-card-header__title-nodes">
-									<InfoPopover className="stats-info-area__popover" iconSize={ 24 } position="top">
+									<StatsInfotip
+										className="stats-info-area__popover"
+										iconSize={ 24 }
+										label={ translate( 'Learn more about video statistics' ) }
+										side="top"
+									>
 										{ translate( 'View detailed statistics about your videos.' ) }
-									</InfoPopover>
+									</StatsInfotip>
 								</div>
 							</div>
 						}

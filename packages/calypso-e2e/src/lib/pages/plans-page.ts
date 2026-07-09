@@ -140,6 +140,33 @@ export class PlansPage {
 	}
 
 	/**
+	 * Validates that the plan's selection CTA is offered in the grid.
+	 *
+	 * @param {Plans} plan Name of the plan.
+	 */
+	async validatePlanIsAvailable( plan: Plans ): Promise< void > {
+		await this.page
+			.locator( selectors.selectPlanButton( plan ) )
+			.first()
+			.waitFor( { state: 'visible', timeout: 30_000 } );
+	}
+
+	/**
+	 * Validates that the plan is not offered in the grid (e.g. the free plan is hidden).
+	 *
+	 * @param {Plans} plan Name of the plan.
+	 * @throws If the plan's selection CTA is present.
+	 */
+	async validatePlanIsNotAvailable( plan: Plans ): Promise< void > {
+		const count = await this.page.locator( selectors.selectPlanButton( plan ) ).count();
+		if ( count > 0 ) {
+			throw new Error(
+				`Expected the ${ plan } plan to not be offered, but found ${ count } CTA(s).`
+			);
+		}
+	}
+
+	/**
 	 * Opens the escape hatch modal by clicking the "start with a free plan" trigger link.
 	 */
 	async openEscapeHatch(): Promise< void > {

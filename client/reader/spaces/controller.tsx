@@ -23,14 +23,14 @@ export const spaces = ( context: Context, next: () => void ) => {
 	const tab = parseSpaceTab( context.params.tab );
 	if ( tab === null ) {
 		// Unknown tab slug — send to the space's canonical (feed) path.
-		page.redirect( getSpacePath( context.params.id ) );
+		page.redirect( getSpacePath( context.params.slug ) );
 		return;
 	}
 	context.primary = (
 		<AsyncLoad
 			require={ loadSpacesView }
 			placeholder={ null }
-			id={ context.params.id }
+			slug={ context.params.slug }
 			tab={ tab }
 		/>
 	);
