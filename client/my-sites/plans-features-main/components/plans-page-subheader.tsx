@@ -236,7 +236,6 @@ const IconWrapper = styled.span`
 const DifferentiatorIconContainer = styled.span`
 	display: inline-flex;
 	align-items: center;
-	cursor: help;
 	text-align: left;
 	font-size: 16px;
 	line-height: 20px;
