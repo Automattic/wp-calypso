@@ -51,7 +51,7 @@ describe( 'getContactFormFields country field', () => {
 Element.prototype.scrollIntoView = jest.fn();
 
 // +1 is shared by the Bahamas, the US and Canada. The Bahamas is first so it is
-// the plain-first-match fallback; the address country disambiguates the default.
+// the plain-first-match fallback; the address country disambiguates the seed.
 const SMS_COUNTRY_CODES = [
 	{ code: 'BS', country_name: 'Bahamas', name: 'Bahamas (+1)', numeric_code: '+1' },
 	{ code: 'US', country_name: 'United States', name: 'United States (+1)', numeric_code: '+1' },
@@ -61,27 +61,20 @@ const SMS_COUNTRY_CODES = [
 const alwaysValid: AsyncValidator = () => Promise.resolve( { success: true, messages: {} } );
 
 /**
- * Renders the phone field's Edit control the way DataForm would, with the
- * contact's address country held in state (the real form memoizes the fields on
- * it, so the phone Edit keeps a stable identity while the address is unchanged
- * and remounts when it changes). The optional button changes the address
- * country from within the provider-wrapped tree, since the test renderer's
- * rerender does not re-wrap the element in the QueryClientProvider.
+ * Renders the phone field's Edit control the way DataForm would. The address
+ * country lives on the form item (`data.countryCode`), and the optional button
+ * changes it from within the provider-wrapped tree (the test renderer's rerender
+ * would not re-wrap the element in the QueryClientProvider). The phone Edit is a
+ * stable component, so changing the address re-renders it without remounting —
+ * exactly what the real memoized form does.
  */
-function PhoneField( {
-	initialAddressCountry,
-	nextAddressCountry,
-}: {
-	initialAddressCountry: string;
-	nextAddressCountry?: string;
-} ) {
-	const [ addressCountry, setAddressCountry ] = useState( initialAddressCountry );
+function PhoneField( { addressButtons = [] }: { addressButtons?: string[] } ) {
+	// The address country passed here is unused by the phone field (it reads the
+	// item's countryCode); it only feeds the other, unrendered address fields.
 	const phoneField = useMemo(
 		() =>
-			getContactFormFields( [], [], addressCountry, alwaysValid ).find(
-				( field ) => field.id === 'phone'
-			)!,
-		[ addressCountry ]
+			getContactFormFields( [], [], '', alwaysValid ).find( ( field ) => field.id === 'phone' )!,
+		[]
 	);
 	const Edit = phoneField.Edit as React.ComponentType< {
 		field: typeof phoneField & { getValue: ( args: { item: DomainContactDetails } ) => string };
@@ -89,13 +82,20 @@ function PhoneField( {
 		onChange: ( edits: Partial< DomainContactDetails > ) => void;
 	} >;
 
-	const [ data, setData ] = useState( { phone: '+1.5551234' } as DomainContactDetails );
+	const [ data, setData ] = useState(
+		() => ( { phone: '+1.5551234', countryCode: 'US' } ) as DomainContactDetails
+	);
 
 	return (
 		<>
-			{ nextAddressCountry && (
-				<button onClick={ () => setAddressCountry( nextAddressCountry ) }>change address</button>
-			) }
+			{ addressButtons.map( ( code ) => (
+				<button
+					key={ code }
+					onClick={ () => setData( ( prev ) => ( { ...prev, countryCode: code } ) ) }
+				>
+					{ `address ${ code }` }
+				</button>
+			) ) }
 			<Edit
 				field={ { ...phoneField, getValue: ( { item } ) => item.phone ?? '' } }
 				data={ data }
@@ -106,8 +106,7 @@ function PhoneField( {
 }
 
 async function pickCountry( user: ReturnType< typeof userEvent.setup >, optionName: string ) {
-	const countryCode = screen.getByRole( 'combobox', { name: 'Country code' } );
-	await user.click( countryCode );
+	await user.click( screen.getByRole( 'combobox', { name: 'Country code' } ) );
 	await user.click( await screen.findByRole( 'option', { name: optionName } ) );
 }
 
@@ -123,44 +122,42 @@ describe( 'contact form phone field', () => {
 		nock.cleanAll();
 	} );
 
-	test( 'keeps a manually picked country that shares its dialing code with the address country', async () => {
+	test( 'seeds the country from the address on load and keeps a manual pick', async () => {
 		const user = userEvent.setup();
 
-		// Address country is the US, so the +1 phone defaults to United States.
-		render( <PhoneField initialAddressCountry="US" /> );
+		// The +1 number seeds to the US address country, not the first +1 entry.
+		render( <PhoneField /> );
 
 		const countryCode = await screen.findByRole( 'combobox', { name: 'Country code' } );
 		await waitFor( () => expect( countryCode ).toHaveValue( 'United States (+1)' ) );
 
-		// Pick Canada — another +1 country that is not the address country — and
-		// confirm it sticks instead of snapping back to the US address country.
+		// Pick Canada — another +1 country — and confirm it sticks.
 		await pickCountry( user, 'Canada (+1)' );
 		await waitFor( () => expect( countryCode ).toHaveValue( 'Canada (+1)' ) );
 	} );
 
-	test( 'a manual pick after an address change re-seeds and then sticks again', async () => {
+	test( 'does not change the phone country when the address country changes', async () => {
 		const user = userEvent.setup();
 
-		render( <PhoneField initialAddressCountry="US" nextAddressCountry="DE" /> );
+		render( <PhoneField addressButtons={ [ 'DE', 'US' ] } /> );
 
-		// Re-query the combobox on each check: the address change remounts the
-		// field, so a reference captured earlier would point at a detached node.
+		// Re-query the combobox each time in case a re-render replaces the node.
 		const combo = () => screen.getByRole( 'combobox', { name: 'Country code' } );
 
 		await screen.findByRole( 'combobox', { name: 'Country code' } );
 		await waitFor( () => expect( combo() ).toHaveValue( 'United States (+1)' ) );
 
+		// Changing the address country must not move the phone country, even
+		// before the contact has explicitly picked one.
+		await user.click( screen.getByRole( 'button', { name: 'address DE' } ) );
+		await waitFor( () => expect( combo() ).toHaveValue( 'United States (+1)' ) );
+
+		// An explicit pick wins...
 		await pickCountry( user, 'Canada (+1)' );
 		await waitFor( () => expect( combo() ).toHaveValue( 'Canada (+1)' ) );
 
-		// Changing the address country remounts the field and re-seeds the
-		// default. The stored dialing code is still +1, so with no matching
-		// address entry it falls back to the first +1 country (the Bahamas).
-		await user.click( screen.getByRole( 'button', { name: 'change address' } ) );
-		await waitFor( () => expect( combo() ).toHaveValue( 'Bahamas (+1)' ) );
-
-		// A fresh manual pick after the reset is captured and sticks.
-		await pickCountry( user, 'Canada (+1)' );
+		// ...and a later address change still does not move it.
+		await user.click( screen.getByRole( 'button', { name: 'address US' } ) );
 		await waitFor( () => expect( combo() ).toHaveValue( 'Canada (+1)' ) );
 	} );
 } );
