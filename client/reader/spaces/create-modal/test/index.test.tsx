@@ -299,6 +299,25 @@ describe( 'CreateSpaceModal', () => {
 		);
 	} );
 
+	it( 'sends topics entered in the wizard when creating', async () => {
+		const { user, onClose } = setup();
+		const onBody = jest.fn();
+		mockCreateEndpoint( 'Reading', onBody );
+
+		await reachTopicsStep( user );
+		await user.type( screen.getByRole( 'combobox', { name: 'Tags' } ), 'design[Enter]' );
+		await user.type( screen.getByRole( 'combobox', { name: 'Languages' } ), 'English[Enter]' );
+		await user.click( screen.getByRole( 'button', { name: 'Create' } ) );
+
+		await waitFor( () => expect( onClose ).toHaveBeenCalled() );
+		expect( onBody ).toHaveBeenCalledWith(
+			expect.objectContaining( {
+				tags: [ 'design' ],
+				languages: [ 'en' ],
+			} )
+		);
+	} );
+
 	it( 'sends no languages when the account has no locale', async () => {
 		const { user, onClose } = setup();
 		const onBody = jest.fn();

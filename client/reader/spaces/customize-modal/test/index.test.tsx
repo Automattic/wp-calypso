@@ -346,6 +346,26 @@ describe( 'CustomizeModal', () => {
 		);
 	} );
 
+	it( 'saves edited topics with the rest of the edit draft', async () => {
+		const user = userEvent.setup();
+		const { onClose } = render();
+		const onBody = jest.fn();
+		mockUpdateEndpoint( onBody );
+
+		await user.click( screen.getByRole( 'tab', { name: 'Topics' } ) );
+		await user.type( screen.getByRole( 'combobox', { name: 'Tags' } ), 'design[Enter]' );
+		await user.type( screen.getByRole( 'combobox', { name: 'Languages' } ), 'Português[Enter]' );
+		await user.click( screen.getByRole( 'button', { name: 'Save changes' } ) );
+
+		await waitFor( () => expect( onClose ).toHaveBeenCalled() );
+		expect( onBody ).toHaveBeenCalledWith(
+			expect.objectContaining( {
+				tags: [ 'tech', 'design' ],
+				languages: [ 'en', 'pt' ],
+			} )
+		);
+	} );
+
 	it( 'keeps unsaved identity edits when a source is changed (seeds the draft once)', async () => {
 		mockSubscriptions = [ existingSubscription, newSubscription ];
 		const user = userEvent.setup();
