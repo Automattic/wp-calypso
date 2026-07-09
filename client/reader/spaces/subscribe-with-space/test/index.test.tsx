@@ -62,6 +62,7 @@ jest.mock( 'calypso/reader/data/spaces', () => ( {
 
 const space: ReadSpace = {
 	id: '10',
+	slug: 'work',
 	name: 'Work',
 	layout: { color: 'none', icon: 'inbox' },
 };

@@ -1,7 +1,7 @@
 /**
  * @jest-environment jsdom
  */
-import { readSpaceQuery, readSpacesQuery } from '@automattic/api-queries';
+import { readSpaceBySlugQuery, readSpaceQuery, readSpacesQuery } from '@automattic/api-queries';
 import page from '@automattic/calypso-router';
 import { QueryClient } from '@tanstack/react-query';
 import { screen, waitFor, within } from '@testing-library/react';
@@ -85,6 +85,7 @@ jest.mock( 'calypso/reader/hooks/use-infinite-list', () => ( {
 
 const SPACE: ReadSpaceDetails = {
 	id: '7',
+	slug: 'work',
 	name: 'Work',
 	tags: [ 'tech' ],
 	languages: [ 'en' ],
@@ -98,9 +99,12 @@ function mockUpdateEndpoint( onBody?: ( body: Record< string, unknown > ) => voi
 		.put( '/wpcom/v2/reader/spaces/7' )
 		.reply( 200, ( _uri, body: Record< string, unknown > ) => {
 			onBody?.( body );
+			const title = body.title ?? SPACE.name;
 			return {
 				id: 7,
-				title: body.title ?? SPACE.name,
+				// The server re-derives the slug from the title, so echo that here.
+				slug: String( title ).toLowerCase().replace( /\s+/g, '-' ),
+				title,
 				layout: body.layout ?? SPACE.layout,
 				follows: [],
 				tags: body.tags ?? SPACE.tags,
@@ -127,10 +131,13 @@ function render( {
 	const queryClient = new QueryClient( { defaultOptions: { queries: { retry: false } } } );
 	const { sources, tags, ...summary } = space;
 	queryClient.setQueryData( readSpacesQuery().queryKey, [ summary, ...others ] );
+	// The modal resolves the space by slug (sharing the view's cache); the id-keyed
+	// entry is what the mutations write back to.
+	queryClient.setQueryData( readSpaceBySlugQuery( space.slug ).queryKey, space );
 	queryClient.setQueryData( readSpaceQuery( space.id ).queryKey, space );
 
 	const view = renderWithProvider(
-		<CustomizeModal isOpen spaceId={ space.id } onClose={ onClose } />,
+		<CustomizeModal isOpen slug={ space.slug } onClose={ onClose } />,
 		{
 			queryClient,
 			initialState: { currentUser: { id: 1 } },
@@ -143,6 +150,8 @@ describe( 'CustomizeModal', () => {
 	beforeEach( () => {
 		mockSubscriptions = [];
 		mockRecordReaderTracksEvent.mockClear();
+		jest.mocked( page ).mockClear();
+		jest.mocked( page.replace ).mockClear();
 	} );
 
 	afterEach( () => nock.cleanAll() );
@@ -244,6 +253,25 @@ describe( 'CustomizeModal', () => {
 			'calypso_reader_spaces_layout_changed',
 			{ layout: 'legacy' }
 		);
+		// The rename changed the slug, so the URL is canonicalized to the new one.
+		expect( page.replace ).toHaveBeenCalledWith( '/reader/spaces/reading' );
+	} );
+
+	it( 'does not redirect when a save leaves the name (and slug) unchanged', async () => {
+		const user = userEvent.setup();
+		const { onClose } = render();
+		mockUpdateEndpoint();
+
+		// Change only the accent colour; the name — and therefore the slug — is unchanged.
+		await user.click(
+			within( screen.getByRole( 'radiogroup', { name: 'Accent color' } ) ).getByRole( 'radio', {
+				name: 'Green',
+			} )
+		);
+		await user.click( screen.getByRole( 'button', { name: 'Save changes' } ) );
+
+		await waitFor( () => expect( onClose ).toHaveBeenCalled() );
+		expect( page.replace ).not.toHaveBeenCalled();
 	} );
 
 	it( 'defaults an unset width to Wide and lets the user switch to Regular', async () => {
@@ -358,7 +386,11 @@ describe( 'CustomizeModal', () => {
 
 	it( 'allows keeping the current name but blocks a name that collides with another space', async () => {
 		const user = userEvent.setup();
-		render( { others: [ { id: '9', name: 'Reading', layout: { color: 'red', icon: 'box' } } ] } );
+		render( {
+			others: [
+				{ id: '9', slug: 'reading', name: 'Reading', layout: { color: 'red', icon: 'box' } },
+			],
+		} );
 
 		// The unchanged own name is valid.
 		expect( screen.getByRole( 'button', { name: 'Save changes' } ) ).toBeEnabled();

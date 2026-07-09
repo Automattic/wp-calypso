@@ -490,6 +490,7 @@ export class DateRange extends Component {
 		const footerProps = {
 			onApplyClick: this.commitDates,
 			onCancelClick: this.closePopoverAndRevert,
+			isApplyDisabled: Boolean( this.state.startDate ) !== Boolean( this.state.endDate ),
 		};
 
 		const inputsProps = {

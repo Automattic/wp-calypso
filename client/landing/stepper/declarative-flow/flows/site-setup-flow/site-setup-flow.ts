@@ -51,8 +51,6 @@ const siteSetupFlow: Flow = {
 			STEPS.GOALS,
 			STEPS.OPTIONS,
 			STEPS.DESIGN_SETUP,
-			STEPS.BLOGGER_STARTING_POINT,
-			STEPS.COURSES,
 			STEPS.IMPORT,
 			STEPS.IMPORT_LIST,
 			STEPS.IMPORT_READY,
@@ -72,7 +70,6 @@ const siteSetupFlow: Flow = {
 			STEPS.TRIAL_ACKNOWLEDGE,
 			STEPS.PROCESSING,
 			STEPS.ERROR,
-			STEPS.DIFM_STARTING_POINT,
 		];
 
 		return steps;
@@ -265,7 +262,7 @@ const siteSetupFlow: Flow = {
 						 */
 						return navigate( 'design-setup' );
 					}
-					return navigate( 'bloggerStartingPoint' );
+					return navigate( 'design-setup' );
 				}
 
 				case 'design-setup': {
@@ -307,26 +304,6 @@ const siteSetupFlow: Flow = {
 					return exitFlow( `/home/${ siteId ?? siteSlug }` );
 				}
 
-				case 'bloggerStartingPoint': {
-					const intent = providedDependencies.startingPoint as string;
-					switch ( intent ) {
-						case 'firstPost': {
-							return exitFlow( `/post/${ siteSlug }` );
-						}
-						case 'courses': {
-							return navigate( 'courses' );
-						}
-						case 'skip-to-my-home': {
-							return exitFlow( `/home/${ siteId ?? siteSlug }`, {
-								skipLaunchpad: true,
-							} );
-						}
-						default: {
-							return navigate( intent );
-						}
-					}
-				}
-
 				case 'goals': {
 					const { intent, skip } = providedDependencies;
 
@@ -340,17 +317,10 @@ const siteSetupFlow: Flow = {
 						case SiteIntent.Import:
 							return exitFlow( `/setup/site-migration?siteSlug=${ siteSlug }&ref=goals` );
 
-						case SiteIntent.DIFM:
-							return navigate( 'difmStartingPoint' );
-
 						default: {
 							return navigate( 'design-setup' );
 						}
 					}
-				}
-
-				case 'courses': {
-					return exitFlow( `/post/${ siteSlug }` );
 				}
 
 				case 'importList':
@@ -438,15 +408,6 @@ const siteSetupFlow: Flow = {
 
 				case 'verifyEmail':
 					return navigate( `importerWordpress?${ urlQueryParams.toString() }` );
-
-				case 'difmStartingPoint': {
-					const backUrl = window.location.href.replace( window.location.origin, '' );
-					return exitFlow(
-						`/start/website-design-services/?siteSlug=${ siteSlug }&back_to=${ encodeURIComponent(
-							backUrl
-						) }`
-					);
-				}
 			}
 		}
 
@@ -456,16 +417,7 @@ const siteSetupFlow: Flow = {
 			}
 
 			switch ( currentStep ) {
-				case 'bloggerStartingPoint':
-					return navigate( 'options' );
-
-				case 'courses':
-					return navigate( 'bloggerStartingPoint' );
-
 				case 'design-setup':
-					if ( intent === SiteIntent.DIFM ) {
-						return navigate( 'difmStartingPoint' );
-					}
 					return navigate( 'goals' );
 
 				case 'importList': {
@@ -537,9 +489,6 @@ const siteSetupFlow: Flow = {
 				case 'trialAcknowledge':
 					return navigate( `importerWordpress?${ urlQueryParams.toString() }` );
 
-				case 'difmStartingPoint':
-					return navigate( 'goals' );
-
 				default:
 					return navigate( 'goals' );
 			}
@@ -551,13 +500,10 @@ const siteSetupFlow: Flow = {
 					if ( intent === 'sell' ) {
 						return navigate( 'design-setup' );
 					}
-					return navigate( 'bloggerStartingPoint' );
+					return navigate( 'design-setup' );
 
 				case 'import':
 					return navigate( 'importList' );
-
-				case 'difmStartingPoint':
-					return navigate( 'design-setup' );
 
 				default:
 					return navigate( 'goals' );

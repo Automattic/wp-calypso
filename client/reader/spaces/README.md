@@ -64,13 +64,14 @@ queries for a canonical refresh.
 | --- | -------------------------------------------- | ---------------------------------------------------------------------- | --------------------- | ---------------------------- |
 | 1   | `GET /reader/spaces`                         | —                                                                      | `200` summary[]       | `fetchReadSpaces()`          |
 | 2   | `GET /reader/spaces/{id}`                    | —                                                                      | `200` detail          | `fetchReadSpace(id)`         |
-| 3   | `POST /reader/spaces`                        | `{ title*, feeds?, tags?, layout? }`                                   | `201` detail          | `createReadSpace()`          |
-| 4   | `PUT /reader/spaces/{id}`                    | `{ title?, feeds?, tags?, layout? }` (≥1; `layout` is a partial merge) | `200` detail          | `updateReadSpace()`          |
-| 5   | `DELETE /reader/spaces/{id}`                 | —                                                                      | `200 { deleted, id }` | `deleteReadSpace()`          |
-| 6   | `POST /reader/spaces/{id}/feeds`             | `{ feed* }` (feed id or url)                                           | `200` detail          | `addReadSpaceSource()`       |
-| 7   | `DELETE /reader/spaces/{id}/feeds/{feed_id}` | —                                                                      | `200` detail          | `deleteReadSpaceSource()`    |
-| 8   | `GET /reader/spaces/{id}/posts`              | query: `count?` (≤15), `tag_limit?`, `page_handle?`                    | `200` stream          | `space:{id}` stream          |
-| 9   | `GET /reader/spaces/{id}/discover`           | query: `count?` (≤7), `page_handle?`                                   | `200` stream          | `space_discover:{id}` stream |
+| 3   | `GET /reader/spaces/slug/{slug}`             | —                                                                      | `200` detail          | `fetchReadSpaceBySlug(slug)` |
+| 4   | `POST /reader/spaces`                        | `{ title*, feeds?, tags?, layout? }`                                   | `201` detail          | `createReadSpace()`          |
+| 5   | `PUT /reader/spaces/{id}`                    | `{ title?, feeds?, tags?, layout? }` (≥1; `layout` is a partial merge) | `200` detail          | `updateReadSpace()`          |
+| 6   | `DELETE /reader/spaces/{id}`                 | —                                                                      | `200 { deleted, id }` | `deleteReadSpace()`          |
+| 7   | `POST /reader/spaces/{id}/feeds`             | `{ feed* }` (feed id or url)                                           | `200` detail          | `addReadSpaceSource()`       |
+| 8   | `DELETE /reader/spaces/{id}/feeds/{feed_id}` | —                                                                      | `200` detail          | `deleteReadSpaceSource()`    |
+| 9   | `GET /reader/spaces/{id}/posts`              | query: `count?` (≤15), `tag_limit?`, `page_handle?`                    | `200` stream          | `space:{id}` stream          |
+| 10  | `GET /reader/spaces/{id}/discover`           | query: `count?` (≤7), `page_handle?`                                   | `200` stream          | `space_discover:{id}` stream |
 
 Notes:
 
@@ -142,9 +143,9 @@ The Sources tab (`customize-modal/sources-tab.tsx`) only mounts while it is the
 active `TabPanel` tab, so its `useSiteSubscriptions` query (which paginates all
 pages) doesn't run until the user opens Sources. Source choices in create and
 edit are held in local draft state and sent as the final `feeds` list when the
-user submits the upsert modal. The modal reads
-the space detail via `useSpace`, which is already cached by the time the edit
-modal opens.
+user submits the upsert modal. The modal reads the space detail via
+`useSpaceBySlug` — the same by-slug query the view already resolved — so it's a
+cache hit by the time the edit modal opens (no id-keyed refetch).
 
 ## Related
 

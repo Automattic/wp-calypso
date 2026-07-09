@@ -1,9 +1,4 @@
 export const STEPS = {
-	BLOGGER_STARTING_POINT: {
-		slug: 'bloggerStartingPoint',
-		asyncComponent: () => import( './steps-repository/blogger-starting-point' ),
-	},
-
 	BUSINESS_INFO: {
 		slug: 'businessInfo',
 		asyncComponent: () => import( './steps-repository/business-info' ),
@@ -29,16 +24,9 @@ export const STEPS = {
 		asyncComponent: () => import( './steps-repository/sites-checker' ),
 	},
 
-	COURSES: { slug: 'courses', asyncComponent: () => import( './steps-repository/courses' ) },
-
 	DESIGN_SETUP: {
 		slug: 'design-setup',
 		asyncComponent: () => import( './steps-repository/design-setup' ),
-	},
-
-	DIFM_STARTING_POINT: {
-		slug: 'difmStartingPoint',
-		asyncComponent: () => import( './steps-repository/difm-starting-point' ),
 	},
 
 	DOMAIN_CONTACT_INFO: {

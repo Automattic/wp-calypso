@@ -2,6 +2,7 @@ import { HostingFeatures, LogType, type Site, type SiteSettings } from '@automat
 import { siteBySlugQuery, siteSettingsQuery } from '@automattic/api-queries';
 import { DateRangePicker, isLast7Days } from '@automattic/date-range-picker';
 import { useSuspenseQuery } from '@tanstack/react-query';
+import { useSearch } from '@tanstack/react-router';
 import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { useEffect, useState } from 'react';
@@ -85,6 +86,7 @@ function SiteLogsContent( {
 	);
 
 	const siteId = site.ID;
+	const activitySearchParams = useSearch( { strict: false } );
 	const showTimeMismatchNotice = useShouldShowTimeMismatchNotice( {
 		siteTime: gmtOffset,
 		siteId,
@@ -240,6 +242,7 @@ function SiteLogsContent( {
 								timezoneString={ timezoneString }
 								site={ site }
 								hasActivityLogsAccess={ hasActivityLogAccess }
+								searchParams={ activitySearchParams }
 							/>
 						</>
 					) }

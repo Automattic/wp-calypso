@@ -14,7 +14,7 @@ jest.mock( 'calypso/state/reader/analytics/actions', () => ( {
 	recordReaderTracksEvent: ( ...args: unknown[] ) => mockRecordReaderTracksEvent( ...args ),
 } ) );
 
-const SPACE_ID = '2f5d8f28-04b7-4f6a-a908-6c4d2b4b8f21';
+const SPACE_SLUG = 'work';
 
 describe( 'SpaceNavigation', () => {
 	// NavTabs uses IntersectionObserver which jsdom does not provide.
@@ -36,7 +36,7 @@ describe( 'SpaceNavigation', () => {
 	} );
 
 	it( 'renders the Feed and Discover tabs and marks the selected one active', () => {
-		renderWithProvider( <SpaceNavigation spaceId={ SPACE_ID } selectedTab="discover" /> );
+		renderWithProvider( <SpaceNavigation spaceSlug={ SPACE_SLUG } selectedTab="discover" /> );
 
 		expect( screen.getByRole( 'menuitem', { name: /feed/i } ) ).toBeVisible();
 		expect( screen.getByRole( 'menuitem', { name: /discover/i } ) ).toBeVisible();
@@ -52,21 +52,21 @@ describe( 'SpaceNavigation', () => {
 	} );
 
 	it( 'links Feed to the base path and Discover to its suffix', () => {
-		renderWithProvider( <SpaceNavigation spaceId={ SPACE_ID } selectedTab="feed" /> );
+		renderWithProvider( <SpaceNavigation spaceSlug={ SPACE_SLUG } selectedTab="feed" /> );
 
 		expect( screen.getByRole( 'menuitem', { name: /feed/i } ) ).toHaveAttribute(
 			'href',
-			`/reader/spaces/${ SPACE_ID }`
+			`/reader/spaces/${ SPACE_SLUG }`
 		);
 		expect( screen.getByRole( 'menuitem', { name: /discover/i } ) ).toHaveAttribute(
 			'href',
-			`/reader/spaces/${ SPACE_ID }/discover`
+			`/reader/spaces/${ SPACE_SLUG }/discover`
 		);
 	} );
 
 	it( 'records a tracks event when a tab is clicked', async () => {
 		const user = userEvent.setup();
-		renderWithProvider( <SpaceNavigation spaceId={ SPACE_ID } selectedTab="feed" /> );
+		renderWithProvider( <SpaceNavigation spaceSlug={ SPACE_SLUG } selectedTab="feed" /> );
 
 		await user.click( screen.getByRole( 'menuitem', { name: /discover/i } ) );
 

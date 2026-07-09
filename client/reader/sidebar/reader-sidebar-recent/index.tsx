@@ -9,9 +9,10 @@ import { SiteIcon } from 'calypso/blocks/site-icon';
 import AutoDirection from 'calypso/components/auto-direction';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import ExpandableSidebarMenu from 'calypso/layout/sidebar/expandable';
-import { useSubscribedSites } from 'calypso/reader/data/site-subscriptions';
+import { useSubscribedFeedsInfo, useSubscribedSites } from 'calypso/reader/data/site-subscriptions';
 import { getSiteDomain } from 'calypso/reader/get-helpers';
 import { formatUrlForDisplay } from 'calypso/reader/lib/feed-display-helper';
+import { MoreMenuActions } from 'calypso/reader/sidebar/more-menu-actions';
 import { recordAction, recordGaEvent } from 'calypso/reader/stats';
 import { useRecordReaderTracksEvent } from 'calypso/state/reader/analytics/useRecordReaderTracksEvent';
 import { getSelectedRecentFeedId } from 'calypso/state/reader-ui/sidebar/selectors';
@@ -66,7 +67,7 @@ const ReaderSidebarRecent = ( { isOpen, onClick, path, className }: Props ): Rea
 	const translate = useTranslate();
 	const [ showAllSites, setShowAllSites ] = useState( false );
 	const sites = useSubscribedSites();
-	const totalUnseenCount = sites.reduce( ( sum, site ) => sum + ( site.unseen_count ?? 0 ), 0 );
+	const feedsInfo = useSubscribedFeedsInfo();
 	const selectedSiteFeedId = useSelector< AppState, number | null >( getSelectedRecentFeedId );
 	const moment = useLocalizedMoment();
 	const recordReaderTracksEvent = useRecordReaderTracksEvent();
@@ -113,15 +114,22 @@ const ReaderSidebarRecent = ( { isOpen, onClick, path, className }: Props ): Rea
 			expanded={ isOpen }
 			title={ translate( 'Recent' ) }
 			disableFlyout
-			className={ clsx( 'reader-sidebar-recent', className, {
-				'has-counts': totalUnseenCount > 0,
+			className={ clsx( 'reader-sidebar-recent', 'has-counts', className, {
 				'sidebar__menu--selected': isRecentStream && ( ! isOpen || selectedSiteFeedId === null ),
 			} ) }
-			count={ totalUnseenCount > 0 ? totalUnseenCount : undefined }
+			count={ feedsInfo.unseenCount > 0 ? feedsInfo.unseenCount : undefined }
 			icon={ null }
 			materialIcon={ null }
 			materialIconStyle={ null }
 			expandableIconClick={ onClick }
+			moreMenuActions={
+				<MoreMenuActions
+					identifier="following"
+					feedIds={ feedsInfo.feedIds }
+					feedUrls={ feedsInfo.feedUrls }
+					unseenCount={ feedsInfo.unseenCount }
+				/>
+			}
 		>
 			{ sitesToShow.map( ( site ) => {
 				const displayName = getReaderSidebarSiteName( site );
@@ -131,19 +139,15 @@ const ReaderSidebarRecent = ( { isOpen, onClick, path, className }: Props ): Rea
 					args: { count: unseenCount },
 					comment: '%(count)d is the number of unseen posts.',
 				} );
+				const feedId = site.feed_ID ? Number( site.feed_ID ) : null;
 
 				return (
-					<MenuItem
-						key={ site.ID }
-						selected={ isRecentStream && site.feed_ID === selectedSiteFeedId }
-					>
+					<MenuItem key={ site.ID } selected={ isRecentStream && feedId === selectedSiteFeedId }>
 						<AutoDirection>
 							<MenuItemLink
-								href={ `/reader/recent/${ site.feed_ID }` }
+								href={ `/reader/recent/${ feedId }` }
 								className={ clsx( 'reader-sidebar-recent__item sidebar__menu-link' ) }
-								onClick={ () =>
-									trackMenuClick( site.feed_ID == null ? null : Number( site.feed_ID ) )
-								}
+								onClick={ () => trackMenuClick( feedId ) }
 							>
 								<SiteIcon iconUrl={ site.site_icon } size={ 22 } />
 								<span title={ displayName } className="sidebar__menu-item-sitename">
@@ -154,9 +158,19 @@ const ReaderSidebarRecent = ( { isOpen, onClick, path, className }: Props ): Rea
 										</span>
 									) }
 								</span>
-								{ unseenCount > 0 && (
-									<Count count={ unseenCount } compact aria-label={ unseenCountLabel } />
-								) }
+								<span className="sidebar__actions-and-count">
+									{ feedId && site.feed_URL && (
+										<MoreMenuActions
+											identifier={ `feed:${ feedId }` }
+											feedIds={ [ feedId ] }
+											feedUrls={ [ site.feed_URL ] }
+											unseenCount={ unseenCount }
+										/>
+									) }
+									{ unseenCount > 0 && (
+										<Count count={ unseenCount } compact aria-label={ unseenCountLabel } />
+									) }
+								</span>
 							</MenuItemLink>
 						</AutoDirection>
 					</MenuItem>

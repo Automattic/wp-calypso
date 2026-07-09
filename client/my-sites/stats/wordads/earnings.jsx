@@ -1,11 +1,11 @@
-import { Card, Gridicon } from '@automattic/components';
+import { Card } from '@automattic/components';
 import { formatNumber } from '@automattic/number-formatters';
-import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import QueryWordadsEarnings from 'calypso/components/data/query-wordads-earnings';
+import StatsInfotip from 'calypso/my-sites/stats/components/stats-infotip';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { getWordAdsEarnings } from 'calypso/state/wordads/earnings/selectors';
 import './earnings.scss';
@@ -15,51 +15,6 @@ class WordAdsEarnings extends Component {
 		siteId: PropTypes.number,
 		earnings: PropTypes.object,
 	};
-
-	state = {
-		showEarningsNotice: false,
-		showWordadsInfo: false,
-		showSponsoredInfo: false,
-		showAdjustmentInfo: false,
-	};
-
-	handleEarningsNoticeToggle = ( event ) => {
-		event.preventDefault();
-		this.setState( {
-			showEarningsNotice: ! this.state.showEarningsNotice,
-		} );
-	};
-
-	handleInfoToggle = ( type ) => ( event ) => {
-		event.preventDefault();
-		switch ( type ) {
-			case 'wordads':
-				this.setState( {
-					showWordadsInfo: ! this.state.showWordadsInfo,
-				} );
-				break;
-			case 'sponsored':
-				this.setState( {
-					showSponsoredInfo: ! this.state.showSponsoredInfo,
-				} );
-				break;
-			case 'adjustment':
-				this.setState( {
-					showAdjustmentInfo: ! this.state.showAdjustmentInfo,
-				} );
-				break;
-		}
-	};
-
-	getInfoToggle( type ) {
-		const types = {
-			wordads: this.state.showWordadsInfo,
-			sponsored: this.state.showSponsoredInfo,
-			adjustment: this.state.showAdjustmentInfo,
-		};
-
-		return types[ type ] ? types[ type ] : false;
-	}
 
 	checkSize( obj ) {
 		if ( ! obj ) {
@@ -112,40 +67,11 @@ class WordAdsEarnings extends Component {
 	}
 
 	/* eslint-disable wpcalypso/jsx-classname-namespace */
-	payoutNotice() {
-		const { earnings, translate } = this.props;
-		const owed =
-			earnings && earnings.total_amount_owed
-				? formatNumber( earnings.total_amount_owed, { decimals: 2 } )
-				: '0.00';
-		const notice = translate(
-			'Outstanding amount of $%(amountOwed)s does not exceed the minimum $100 needed to make the payment. ' +
-				'Payment will be made as soon as the total outstanding amount has reached $100.',
-			{
-				comment: 'Insufficient balance for payout.',
-				args: { amountOwed: owed },
-			}
-		);
-		const payout = translate(
-			'Outstanding amount of $%(amountOwed)s will be paid approximately 45 days following the end of the month in which it was earned.',
-			{
-				comment: 'Payout will proceed.',
-				args: { amountOwed: owed },
-			}
-		);
-
-		return (
-			<div className="ads__module-content-text module-content-text module-content-text-info">
-				<p>{ owed < 100 ? notice : payout }</p>
-			</div>
-		);
-	}
-
 	infoNotice() {
 		const { translate } = this.props;
 
 		return (
-			<div className="ads__module-content-text module-content-text module-content-text-info">
+			<div>
 				<p>
 					{ translate(
 						'{{strong}}Ads Served{{/strong}} is the number of ads we attempted to display on your site ' +
@@ -226,10 +152,6 @@ class WordAdsEarnings extends Component {
 	earningsTable( earnings, header_text, type ) {
 		const { translate } = this.props;
 		const rows = [];
-		const infoIcon = this.getInfoToggle( type ) ? 'info' : 'info-outline';
-		const classes = clsx( 'earnings_history', {
-			'is-showing-info': this.getInfoToggle( type ),
-		} );
 
 		for ( const period in earnings ) {
 			if ( earnings.hasOwnProperty( period ) ) {
@@ -254,18 +176,17 @@ class WordAdsEarnings extends Component {
 			<>
 				<div className="ads__table-header">
 					<h3 className="ads__table-header-title">{ header_text }</h3>
-					<button
-						className="ads__table-header-button"
-						aria-label={ translate( 'Show or hide panel information' ) }
-						title={ translate( 'Show or hide panel information' ) }
-						onClick={ this.handleInfoToggle( type ) }
+					<StatsInfotip
+						className="ads__table-header-infotip"
+						label={ translate( 'Learn more about ads served' ) }
+						side="bottom"
+						align="end"
 					>
-						<Gridicon icon={ infoIcon } />
-					</button>
-				</div>
-				<Card className={ classes }>
-					<div className="ads__module-content module-content">
 						{ this.infoNotice() }
+					</StatsInfotip>
+				</div>
+				<Card className="earnings_history">
+					<div className="ads__module-content module-content">
 						<table>
 							<thead>
 								<tr>
