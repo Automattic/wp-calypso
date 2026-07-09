@@ -88,7 +88,10 @@ jest.mock( '../../utils/tracks', () => ( {
 	recordBigSkyTracksEvent: jest.fn(),
 	recordAgentsManagerTracksEvent: jest.fn(),
 } ) );
-jest.mock( '../../hooks/use-conversation', () => () => mockUseConversation() );
+jest.mock(
+	'../../hooks/use-conversation',
+	() => ( config: unknown ) => mockUseConversation( config )
+);
 jest.mock( '../../hooks/use-save-new-chat-route', () => () => {} );
 jest.mock( '../../hooks/use-checkpoint-action', () => () => {} );
 jest.mock( '../../hooks/use-feedback-action', () => () => ( {
@@ -764,6 +767,102 @@ describe( 'OrchestratorChat', () => {
 
 		// Regenerate again: the picker disappears once more while streaming.
 		mockUseAgentChat.mockReturnValue( agentChatReturn( [ userMessage ], true ) );
+		rerender( chat() );
+
+		const lastMessages = mockAgentChat.mock.calls.at( -1 )![ 0 ].messages as Array< {
+			content?: Array< { text?: string } >;
+		} >;
+		expect( countShowComponentMessages( lastMessages ) ).toBe( 1 );
+	} );
+
+	it( 'does not retain the live show-component message when the history is replaced', () => {
+		// The same picker serializes differently live (no tool_call_id) and in
+		// loaded history (with tool_call_id), so their identities never match.
+		// Replacing the history via loadMessages must not resurrect the live copy.
+		const pickerMessage = ( id: string, content: Record< string, unknown > ) => ( {
+			id,
+			role: 'agent',
+			content: [ { type: 'text', text: JSON.stringify( content ) } ],
+			timestamp: 1,
+			archived: false,
+			showIcon: true,
+		} );
+		const livePicker = pickerMessage( 'agent-live', {
+			tool_id: 'big_sky__show_component',
+			data: { type: 'titlePicker', summary: 'Optimize title' },
+		} );
+		const loadedPicker = pickerMessage( 'agent-loaded', {
+			tool_id: 'big_sky__show_component',
+			tool_call_id: 'title-picker-call',
+			data: { type: 'titlePicker', summary: 'Optimize title' },
+		} );
+		const userMessage = {
+			id: 'user-1',
+			role: 'user',
+			content: [ { type: 'text', text: 'Optimize the title' } ],
+			timestamp: 0,
+			archived: false,
+			showIcon: true,
+		};
+		const agentChatReturn = ( messages: unknown[] ) => ( {
+			addMessage: jest.fn(),
+			messages,
+			suggestions: [],
+			isProcessing: false,
+			error: null,
+			loadMessages: jest.fn(),
+			onSubmit: jest.fn(),
+			abortCurrentRequest: jest.fn(),
+			clearSuggestions: jest.fn(),
+			registerSuggestions: jest.fn(),
+			registerMessageActions: jest.fn(),
+			getRegenerateHandler: jest.fn(),
+			progressMessage: null,
+		} );
+		const countShowComponentMessages = (
+			messages: Array< { content?: Array< { text?: string } > } >
+		) =>
+			messages.filter( ( message ) => {
+				const text = message?.content?.[ 0 ]?.text;
+				if ( typeof text !== 'string' ) {
+					return false;
+				}
+				try {
+					return JSON.parse( text )?.tool_id === 'big_sky__show_component';
+				} catch ( _error ) {
+					return false;
+				}
+			} ).length;
+		const chat = () => (
+			<OrchestratorChat
+				emptyViewSuggestions={ [] }
+				isDocked={ false }
+				isOpen
+				onClose={ jest.fn() }
+				onExpand={ jest.fn() }
+				chatHeaderOptions={ [] }
+				markdownComponents={ {} }
+				markdownExtensions={ {} }
+				isCompactMode={ false }
+				onHasMessagesChange={ jest.fn() }
+			/>
+		);
+
+		let hydrate: ( ( messages: unknown[], sessionId: string ) => void ) | undefined;
+		mockUseConversation.mockImplementation(
+			( config?: { onSuccess?: ( messages: unknown[], sessionId: string ) => void } ) => {
+				hydrate = config?.onSuccess;
+				return { isLoading: false };
+			}
+		);
+
+		// Seeded from storage: the live-form picker is showing.
+		mockUseAgentChat.mockReturnValue( agentChatReturn( [ userMessage, livePicker ] ) );
+		const { rerender } = render( chat() );
+
+		// Server hydration replaces the whole history with the loaded form.
+		act( () => hydrate?.( [], 'session-id' ) );
+		mockUseAgentChat.mockReturnValue( agentChatReturn( [ userMessage, loadedPicker ] ) );
 		rerender( chat() );
 
 		const lastMessages = mockAgentChat.mock.calls.at( -1 )![ 0 ].messages as Array< {
