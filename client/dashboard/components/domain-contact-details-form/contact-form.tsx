@@ -11,7 +11,7 @@ import { debounce } from '@wordpress/compose';
 import { DataForm, Field, useFormValidity, FormField } from '@wordpress/dataviews';
 import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { ButtonStack } from '../button-stack';
 import { Card, CardBody } from '../card';
 import InlineSupportLink from '../inline-support-link';
@@ -159,15 +159,73 @@ export default function ContactForm( {
 		}
 		const merged: NonNullable< typeof validity > = { ...validity };
 		for ( const [ fieldId, message ] of fieldErrors ) {
-			merged[ fieldId ] = {
-				...merged[ fieldId ],
-				custom: { type: 'invalid', message },
-			};
+			// Replace rather than merge: an empty required field also has a
+			// message-less `required` validity that DataForm prioritises over
+			// `custom`, which would hide the server message. The server error is
+			// the authoritative one to display for these fields.
+			merged[ fieldId ] = { custom: { type: 'invalid', message } };
 		}
 		return merged;
 	}, [ validity, serverFieldErrors, isDirty ] );
 
 	const canSave = isFormValid && Object.keys( serverFieldErrors ).length === 0;
+
+	const fieldLabels = useMemo( () => {
+		const labels: Partial< Record< keyof DomainContactDetails, string > > = {};
+		for ( const field of fields ) {
+			if ( field.label ) {
+				labels[ field.id as keyof DomainContactDetails ] = field.label;
+			}
+		}
+		return labels;
+	}, [ fields ] );
+
+	const validationErrors = useMemo(
+		() =>
+			Object.entries( serverFieldErrors ).map( ( [ fieldId, message ] ) => ( {
+				fieldId,
+				label: fieldLabels[ fieldId as keyof DomainContactDetails ],
+				message,
+			} ) ),
+		[ serverFieldErrors, fieldLabels ]
+	);
+
+	// DataForm keeps a field's validation message hidden until the field is
+	// touched, so a field invalidated by another field's change (e.g. the postal
+	// code becoming required after switching country) stays silent. When the set
+	// of server-flagged fields changes, reveal their errors by triggering native
+	// validation, which DataForm surfaces inline. Keyed on the set of fields (not
+	// the messages) so it does not re-fire — and move focus — while the user types.
+	const fieldsContainerRef = useRef< HTMLDivElement >( null );
+	const revealedErrorKeyRef = useRef( '' );
+	const serverErrorKey = Object.keys( serverFieldErrors ).sort().join( ',' );
+	useEffect( () => {
+		if ( ! isDirty || ! serverErrorKey ) {
+			revealedErrorKeyRef.current = '';
+			return;
+		}
+		if ( revealedErrorKeyRef.current === serverErrorKey ) {
+			return;
+		}
+		revealedErrorKeyRef.current = serverErrorKey;
+
+		// Defer so DataForm has applied the custom validity to the inputs first.
+		const raf = requestAnimationFrame( () => {
+			const container = fieldsContainerRef.current;
+			if ( ! container ) {
+				return;
+			}
+			const controls = container.querySelectorAll< HTMLInputElement >( 'input, select, textarea' );
+			let firstInvalid: HTMLElement | null = null;
+			controls.forEach( ( control ) => {
+				if ( ! control.checkValidity() ) {
+					firstInvalid = firstInvalid ?? control;
+				}
+			} );
+			firstInvalid?.focus();
+		} );
+		return () => cancelAnimationFrame( raf );
+	}, [ isDirty, serverErrorKey ] );
 
 	return (
 		<VStack spacing={ 10 }>
@@ -205,15 +263,17 @@ export default function ContactForm( {
 				<CardBody>
 					<VStack spacing={ 4 }>
 						{ beforeForm }
-						<DataForm< DomainContactDetails >
-							data={ normalizedFormData }
-							fields={ fields }
-							form={ form }
-							validity={ validityWithServerErrors }
-							onChange={ ( edits: Partial< DomainContactDetails > ) => {
-								setFormData( ( data ) => ( { ...data, ...edits } ) );
-							} }
-						/>
+						<div ref={ fieldsContainerRef }>
+							<DataForm< DomainContactDetails >
+								data={ normalizedFormData }
+								fields={ fields }
+								form={ form }
+								validity={ validityWithServerErrors }
+								onChange={ ( edits: Partial< DomainContactDetails > ) => {
+									setFormData( ( data ) => ( { ...data, ...edits } ) );
+								} }
+							/>
+						</div>
 						<Notice>
 							<VStack>
 								<Text as="p">
@@ -234,6 +294,20 @@ export default function ContactForm( {
 								</Text>
 							</VStack>
 						</Notice>
+						{ isDirty && validationErrors.length > 0 && (
+							<Notice
+								variant="error"
+								title={ __( 'Please fix the following to save your changes' ) }
+							>
+								<VStack spacing={ 1 }>
+									{ validationErrors.map( ( { fieldId, label, message } ) => (
+										<Text as="p" key={ fieldId }>
+											{ label ? `${ label }: ${ message }` : message }
+										</Text>
+									) ) }
+								</VStack>
+							</Notice>
+						) }
 						<form onSubmit={ handleSubmit }>
 							<ButtonStack justify="flex-start">
 								<Button
