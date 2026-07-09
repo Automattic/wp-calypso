@@ -5,9 +5,10 @@ import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import { TopicsTab } from '../topics-tab';
+import type { ComponentProps } from 'react';
 
-function setup( overrides: Partial< React.ComponentProps< typeof TopicsTab > > = {} ) {
-	const props: React.ComponentProps< typeof TopicsTab > = {
+function setup( overrides: Partial< ComponentProps< typeof TopicsTab > > = {} ) {
+	const props: ComponentProps< typeof TopicsTab > = {
 		tags: [],
 		onTagsChange: jest.fn(),
 		languages: [],
