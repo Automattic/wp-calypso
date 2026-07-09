@@ -15,8 +15,9 @@ import {
 // than the resting value. Everything else (useMotionValue, motion components)
 // stays real so the component renders and the effect runs against live values.
 // animate() returns playback controls; the effect's cleanup calls .stop().
-const { animateMock, floatingDragProps } = vi.hoisted( () => ( {
+const { animateMock, dragStartSpy, floatingDragProps } = vi.hoisted( () => ( {
 	animateMock: vi.fn( () => ( { stop: () => {} } ) ),
+	dragStartSpy: vi.fn(),
 	// Holds the live props of the draggable floating panel so a test can read its
 	// `x` motion value and invoke `onDragEnd` directly. Framer's pan gesture can't
 	// be driven deterministically in jsdom, so we exercise the drag-end callback.
@@ -36,10 +37,23 @@ vi.mock( 'framer-motion', async () => {
 	return {
 		...actual,
 		animate: animateMock,
+		// Wrap the real controls so we can assert a body pointer-down starts a
+		// move-drag, while leaving the actual drag wiring intact.
+		useDragControls: () => {
+			const controls = actual.useDragControls();
+			const originalStart = controls.start.bind( controls );
+			controls.start = (
+				...args: Parameters< typeof controls.start >
+			) => {
+				dragStartSpy( ...args );
+				return originalStart( ...args );
+			};
+			return controls;
+		},
 		// Capture the floating panel's drag props so a test can fire onDragEnd
 		// against a controlled `x`. Everything else renders through the real motion.
 		// The wrapper identity must be stable ( cached ) so React doesn't remount
-		// the subtree each render.
+		// the subtree each render and drop an in-flight resize pointer capture.
 		motion: ( () => {
 			const RealDiv = actual.motion.div;
 			const WrappedDiv = ( props: Record< string, unknown > ) => {
@@ -163,12 +177,383 @@ describe( 'Chat free-drag minimize docking', () => {
 	} );
 } );
 
+const DEFAULT_SIZE = { width: 600, height: 700 };
+const MIN_SIZE = { width: 400, height: 450 };
+const MAX_SIZE = { width: 900, height: 800 };
+
+interface ResizableContainerProps {
+	state?: ChatState;
+	resizable?: boolean | 'horizontal' | 'vertical';
+	variant?: 'floating' | 'embedded';
+	defaultSize?: { width: number; height: number };
+	minSize?: { width?: number; height?: number };
+	maxSize?: { width?: number; height?: number };
+	onResize?: ( size: { width: number; height: number } ) => void;
+	onResizeEnd?: ( size: { width: number; height: number } ) => void;
+}
+
+function ResizableContainer( {
+	state = 'expanded',
+	resizable = true,
+	variant = 'floating',
+	defaultSize = DEFAULT_SIZE,
+	minSize = MIN_SIZE,
+	maxSize = MAX_SIZE,
+	onResize,
+	onResizeEnd,
+}: ResizableContainerProps ) {
+	return (
+		<AgentUIProvider value={ contextValue }>
+			<Chat
+				messages={ [] }
+				isProcessing={ false }
+				onSubmit={ () => {} }
+				variant={ variant }
+				floatingChatState={ state }
+				resizable={ resizable }
+				defaultSize={ defaultSize }
+				minSize={ minSize }
+				maxSize={ maxSize }
+				onResize={ onResize }
+				onResizeEnd={ onResizeEnd }
+			/>
+		</AgentUIProvider>
+	);
+}
+
+// Reads the seeded size from the inner content div, which binds the width/height
+// motion values through its inline style on the initial render.
+function readPanelSize( root: HTMLElement ): { width: number; height: number } {
+	const content = root.querySelector< HTMLElement >(
+		'[data-slot="chat-floating"] > div'
+	);
+	if ( ! content ) {
+		throw new Error( 'content element not found' );
+	}
+	return {
+		width: parseFloat( content.style.width ),
+		height: parseFloat( content.style.height ),
+	};
+}
+
+function getHandle( edge: string ): HTMLElement {
+	const handle = document.querySelector< HTMLElement >(
+		`[data-resize-edge="${ edge }"]`
+	);
+	if ( ! handle ) {
+		throw new Error( `resize handle not found: ${ edge }` );
+	}
+	return handle;
+}
+
+// Framer schedules DOM transform writes on its frame loop (rAF). Flush a frame
+// inside act() so the latest x/y motion-value writes land on the element style.
+async function flushFrame(): Promise< void > {
+	await act( async () => {
+		await new Promise< void >( ( resolve ) =>
+			requestAnimationFrame( () => resolve() )
+		);
+	} );
+}
+
+// Reads the last { x, y } the panel transform was set to from the element style.
+function readPanelTransform(): { x: number; y: number } {
+	const floating = document.querySelector< HTMLElement >(
+		'[data-slot="chat-floating"]'
+	);
+	const transform = floating?.style.transform ?? '';
+	const x = parseFloat(
+		transform.match( /translateX\(([-\d.]+)px\)/ )?.[ 1 ] ?? '0'
+	);
+	const y = parseFloat(
+		transform.match( /translateY\(([-\d.]+)px\)/ )?.[ 1 ] ?? '0'
+	);
+	return { x, y };
+}
+
+// jsdom has no real pointer capture; stub the methods the loop calls so the
+// handlers run without throwing.
+function makePointerEvent(
+	type: string,
+	clientX: number,
+	clientY: number
+): PointerEvent {
+	const event = new MouseEvent( type, {
+		bubbles: true,
+		clientX,
+		clientY,
+	} ) as unknown as PointerEvent;
+	Object.defineProperty( event, 'pointerId', { value: 1 } );
+	return event;
+}
+
+function startResize(
+	handle: HTMLElement,
+	clientX: number,
+	clientY: number
+): void {
+	handle.setPointerCapture = () => {};
+	handle.releasePointerCapture = () => {};
+	handle.dispatchEvent( makePointerEvent( 'pointerdown', clientX, clientY ) );
+}
+
+describe( 'Chat resize', () => {
+	let container: HTMLDivElement;
+	let root: Root;
+
+	beforeEach( () => {
+		container = document.createElement( 'div' );
+		document.body.appendChild( container );
+		root = createRoot( container );
+	} );
+
+	afterEach( async () => {
+		await act( async () => {
+			root.unmount();
+		} );
+		container.remove();
+		animateMock.mockClear();
+		dragStartSpy.mockClear();
+	} );
+
+	const render = async ( props: ResizableContainerProps = {} ) => {
+		await act( async () => {
+			root.render( <ResizableContainer { ...props } /> );
+		} );
+	};
+
+	it( 'renders the 8 resize handles when resizable, floating, and expanded', async () => {
+		await render();
+		expect(
+			document.querySelectorAll( '[data-slot="resize-handle"]' )
+		).toHaveLength( 8 );
+	} );
+
+	it( 'renders no handles when resizable is false', async () => {
+		await render( { resizable: false } );
+		expect(
+			document.querySelectorAll( '[data-slot="resize-handle"]' )
+		).toHaveLength( 0 );
+	} );
+
+	it( 'renders no handles when not expanded', async () => {
+		await render( { state: 'compact' } );
+		expect(
+			document.querySelectorAll( '[data-slot="resize-handle"]' )
+		).toHaveLength( 0 );
+	} );
+
+	it( 'renders only the left/right edge handles when resizable is horizontal', async () => {
+		await render( { resizable: 'horizontal' } );
+		const edges = Array.from(
+			document.querySelectorAll( '[data-slot="resize-handle"]' )
+		).map( ( el ) => el.getAttribute( 'data-resize-edge' ) );
+		expect( edges ).toEqual( [ 'right', 'left' ] );
+	} );
+
+	it( 'renders only the top/bottom edge handles when resizable is vertical', async () => {
+		await render( { resizable: 'vertical' } );
+		const edges = Array.from(
+			document.querySelectorAll( '[data-slot="resize-handle"]' )
+		).map( ( el ) => el.getAttribute( 'data-resize-edge' ) );
+		expect( edges ).toEqual( [ 'top', 'bottom' ] );
+	} );
+
+	it( 'seeds the panel size from defaultSize', async () => {
+		await render();
+		expect( readPanelSize( container ) ).toEqual( DEFAULT_SIZE );
+	} );
+
+	it( 'grows width and height when dragging the top-right corner and fires onResize', async () => {
+		const onResize = vi.fn();
+		await render( { onResize } );
+
+		// Top-right is the open corner of a bottom-left dock: drag right to grow
+		// width, up to grow height.
+		await act( async () => {
+			startResize( getHandle( 'top-right' ), 0, 0 );
+		} );
+		await act( async () => {
+			getHandle( 'top-right' ).dispatchEvent(
+				makePointerEvent( 'pointermove', 50, -30 )
+			);
+		} );
+
+		expect( onResize ).toHaveBeenLastCalledWith( {
+			width: DEFAULT_SIZE.width + 50,
+			height: DEFAULT_SIZE.height + 30,
+		} );
+	} );
+
+	it( 'clamps the size to the minSize floor', async () => {
+		const onResize = vi.fn();
+		await render( { onResize } );
+
+		// Drag the bottom-right corner far up/left, well past the min.
+		await act( async () => {
+			startResize( getHandle( 'bottom-right' ), 0, 0 );
+		} );
+		await act( async () => {
+			getHandle( 'bottom-right' ).dispatchEvent(
+				makePointerEvent( 'pointermove', -1000, -1000 )
+			);
+		} );
+
+		expect( onResize ).toHaveBeenLastCalledWith( MIN_SIZE );
+	} );
+
+	it( 'clamps the size to the maxSize ceiling', async () => {
+		// Box ceiling for jsdom's 1024x768 viewport is larger than MAX_SIZE width
+		// but smaller than MAX_SIZE height, so width is capped by maxSize and
+		// height by the constraint box.
+		const onResize = vi.fn();
+		await render( { onResize } );
+
+		await act( async () => {
+			startResize( getHandle( 'top-right' ), 0, 0 );
+		} );
+		await act( async () => {
+			getHandle( 'top-right' ).dispatchEvent(
+				makePointerEvent( 'pointermove', 5000, -5000 )
+			);
+		} );
+
+		const box = {
+			width: window.innerWidth - 16 * 2,
+			height: window.innerHeight - 16 * 2,
+		};
+		expect( onResize ).toHaveBeenLastCalledWith( {
+			width: Math.min( MAX_SIZE.width, box.width ),
+			height: Math.min( MAX_SIZE.height, box.height ),
+		} );
+	} );
+
+	it( 'fires onResizeEnd once on pointer-up with the committed size', async () => {
+		const onResizeEnd = vi.fn();
+		await render( { onResizeEnd } );
+
+		const handle = getHandle( 'top-right' );
+		await act( async () => {
+			startResize( handle, 0, 0 );
+		} );
+		await act( async () => {
+			handle.dispatchEvent( makePointerEvent( 'pointermove', 40, -20 ) );
+		} );
+		await act( async () => {
+			handle.dispatchEvent( makePointerEvent( 'pointerup', 40, -20 ) );
+		} );
+
+		expect( onResizeEnd ).toHaveBeenCalledTimes( 1 );
+		expect( onResizeEnd ).toHaveBeenCalledWith( {
+			width: DEFAULT_SIZE.width + 40,
+			height: DEFAULT_SIZE.height + 20,
+		} );
+	} );
+
+	it( 'shifts the panel x to pin the right edge when dragging the left handle', async () => {
+		const onResize = vi.fn();
+		await render( { onResize } );
+		await flushFrame();
+		const startX = readPanelTransform().x;
+
+		const handle = getHandle( 'left' );
+		await act( async () => {
+			startResize( handle, 100, 0 );
+		} );
+		// Drag left handle right by 30px: width shrinks 30, x moves +30 so the
+		// right edge stays pinned.
+		await act( async () => {
+			handle.dispatchEvent( makePointerEvent( 'pointermove', 130, 0 ) );
+		} );
+		await flushFrame();
+
+		expect( onResize ).toHaveBeenLastCalledWith( {
+			width: DEFAULT_SIZE.width - 30,
+			height: DEFAULT_SIZE.height,
+		} );
+		expect( readPanelTransform().x ).toBe( startX + 30 );
+	} );
+
+	it( 'does not grow past the bottom dock when dragging the bottom handle of a docked panel', async () => {
+		const onResize = vi.fn();
+		await render( { onResize } );
+		await flushFrame();
+		const startY = readPanelTransform().y;
+
+		const handle = getHandle( 'bottom' );
+		await act( async () => {
+			startResize( handle, 0, 100 );
+		} );
+		// Drag bottom handle down: the bottom is already at the inset, so growth
+		// stops there — size is unchanged and the panel does not slide off-screen.
+		await act( async () => {
+			handle.dispatchEvent( makePointerEvent( 'pointermove', 0, 130 ) );
+		} );
+		await flushFrame();
+
+		expect( onResize ).toHaveBeenLastCalledWith( {
+			width: DEFAULT_SIZE.width,
+			height: DEFAULT_SIZE.height,
+		} );
+		expect( readPanelTransform().y ).toBe( startY );
+	} );
+
+	it( 'leaves the panel y unchanged when dragging the top handle', async () => {
+		const onResize = vi.fn();
+		await render( { onResize } );
+		await flushFrame();
+		const startY = readPanelTransform().y;
+
+		const handle = getHandle( 'top' );
+		await act( async () => {
+			startResize( handle, 0, 100 );
+		} );
+		// Drag top handle up by 25px: height grows 25. The box is bottom-anchored, so
+		// the bottom edge stays pinned by CSS `bottom` and y must not change.
+		await act( async () => {
+			handle.dispatchEvent( makePointerEvent( 'pointermove', 0, 75 ) );
+		} );
+		await flushFrame();
+
+		expect( onResize ).toHaveBeenLastCalledWith( {
+			width: DEFAULT_SIZE.width,
+			height: DEFAULT_SIZE.height + 25,
+		} );
+		expect( readPanelTransform().y ).toBe( startY );
+	} );
+
+	it( 'starts a move-drag on a body pointer-down (not a resize handle)', async () => {
+		await render();
+		const floating = document.querySelector< HTMLElement >(
+			'[data-slot="chat-floating"]'
+		)!;
+
+		await act( async () => {
+			floating.dispatchEvent(
+				makePointerEvent( 'pointerdown', 200, 200 )
+			);
+		} );
+
+		expect( dragStartSpy ).toHaveBeenCalledTimes( 1 );
+	} );
+
+	it( 'does not start a move-drag from a resize handle pointer-down', async () => {
+		await render();
+		const handle = getHandle( 'bottom-right' );
+		handle.setPointerCapture = () => {};
+
+		await act( async () => {
+			handle.dispatchEvent( makePointerEvent( 'pointerdown', 0, 0 ) );
+		} );
+
+		expect( dragStartSpy ).not.toHaveBeenCalled();
+	} );
+} );
+
 // The drag-end side guard: persisting / firing onChatPositionChange must happen
 // only when the dropped side differs from the current side. Framer's pan gesture
 // can't be driven deterministically in jsdom, so we set the captured `x` motion
 // value to a clearly-left/right drop and invoke the captured onDragEnd directly.
-// Trunk Chat had this guard inverted ( currentSide === newSide ); the shared drag
-// hook fixes it, so these tests pin the corrected behavior.
 const PAN_INFO = { velocity: { x: 0, y: 0 } };
 
 describe( 'Chat drag-end side persistence', () => {

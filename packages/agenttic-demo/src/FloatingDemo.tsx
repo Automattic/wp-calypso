@@ -76,6 +76,28 @@ const FloatingDemo: React.FC< {
 	const [ freeDragPosition, setFreeDragPosition ] = useState<
 		{ x: number; y: number } | undefined
 	>( undefined );
+	const RESIZABLE_MODES: Array< boolean | 'horizontal' | 'vertical' > = [
+		false,
+		true,
+		'horizontal',
+		'vertical',
+	];
+	const [ resizableMode, setResizableMode ] = useState<
+		boolean | 'horizontal' | 'vertical'
+	>( false );
+	const RESIZABLE_LABELS = new Map<
+		boolean | 'horizontal' | 'vertical',
+		string
+	>( [
+		[ false, 'OFF' ],
+		[ true, 'BOTH' ],
+		[ 'horizontal', 'HORIZONTAL' ],
+		[ 'vertical', 'VERTICAL' ],
+	] );
+	const resizableLabel = RESIZABLE_LABELS.get( resizableMode );
+	const [ chatSize, setChatSize ] = useState<
+		{ width: number; height: number } | undefined
+	>( undefined );
 
 	const defaultSuggestions = useMemo(
 		() => [
@@ -283,6 +305,72 @@ const FloatingDemo: React.FC< {
 				>
 					Free Drag: { freeDragEnabled ? 'ON' : 'OFF' }
 				</button>
+				<button
+					onClick={ () =>
+						setResizableMode( ( prev ) => {
+							const next =
+								( RESIZABLE_MODES.indexOf( prev ) + 1 ) %
+								RESIZABLE_MODES.length;
+							return RESIZABLE_MODES[ next ];
+						} )
+					}
+					style={ {
+						padding: '4px 8px',
+						background: resizableMode ? '#0a0' : '#000',
+						color: '#fff',
+						cursor: 'pointer',
+						fontSize: '12px',
+						fontFamily: 'monospace',
+						textTransform: 'uppercase',
+					} }
+				>
+					Resizable: { resizableLabel }
+				</button>
+				{ /* Controlled-size exerciser: grows the controlled `size` in
+					   steps so the panel animates; drag stays in sync via
+					   onResizeEnd feeding the same state. */ }
+				{ resizableMode && (
+					<button
+						onClick={ () =>
+							setChatSize( ( prev ) => {
+								const base = prev ?? {
+									width: 372,
+									height: 520,
+								};
+								return {
+									width: base.width + 80,
+									height: base.height + 80,
+								};
+							} )
+						}
+						style={ {
+							padding: '4px 8px',
+							background: '#05a',
+							color: '#fff',
+							cursor: 'pointer',
+							fontSize: '12px',
+							fontFamily: 'monospace',
+							textTransform: 'uppercase',
+						} }
+					>
+						Grow (controlled)
+					</button>
+				) }
+				{ /* Live size readout for verifying resize clamping */ }
+				{ resizableMode && chatSize && (
+					<span
+						style={ {
+							padding: '4px 8px',
+							background: '#222',
+							color: '#0f0',
+							fontSize: '12px',
+							fontFamily: 'monospace',
+						} }
+					>
+						{ Math.round( chatSize.width ) } ×{ ' ' }
+						{ Math.round( chatSize.height ) }
+					</span>
+				) }
 				<MessageTester
 					addMessage={ addMessage }
 					onClear={ () => loadMessages( [] ) }
@@ -308,6 +396,11 @@ const FloatingDemo: React.FC< {
 				freeDrag={ freeDragEnabled }
 				initialFreeDragPosition={ freeDragPosition }
 				onFreeDragEnd={ setFreeDragPosition }
+				resizable={ resizableMode }
+				defaultSize={ { width: 372, height: 520 } }
+				size={ chatSize }
+				onResize={ setChatSize }
+				onResizeEnd={ setChatSize }
 				onSuggestionsRendered={ ( shown ) => console.log( shown ) }
 			/>
 		</div>

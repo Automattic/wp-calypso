@@ -4,26 +4,33 @@ import {
 	type MotionValue,
 	type PanInfo,
 	useDragControls,
-	useMotionValue,
 } from 'framer-motion';
 import { DRAG_CONSTANTS, STYLE_CONSTANTS } from '../utils/constants';
+import { morphSpring } from '../components/animations';
 import {
 	type ChatPosition,
 	clampFreeDragPosition,
 	getChatPosition,
 	getCornerSnapPosition,
-	getInitialChatPosition,
 	setChatPosition,
 } from '../utils/chatStorage';
-import type { ChatState } from '../types';
+import type { ChatSize, ChatState } from '../types';
 
 export interface UseFloatingPanelPositionArgs {
 	freeDrag: boolean;
-	initialFreeDragPosition: { x: number; y: number } | undefined;
 	initialChatPosition?: ChatPosition;
 	chatState: ChatState;
 	onChatPositionChange?: ( position: ChatPosition ) => void;
 	onFreeDragEnd?: ( position: { x: number; y: number } ) => void;
+	// Shared x/y motion values, seeded and owned by the composition hook so the
+	// position and resize concerns agree on one pair.
+	x: MotionValue< number >;
+	y: MotionValue< number >;
+	// Resize-hook accessors, consumed directly (no ref).
+	getPanelSize: () => ChatSize;
+	// Re-clamps the resized size into the current viewport; the window-resize
+	// handler calls it first so the position clamp reads the corrected size.
+	clampResizedSize: () => void;
 }
 
 export interface UseFloatingPanelPositionResult {
@@ -41,18 +48,27 @@ export interface UseFloatingPanelPositionResult {
 		x: number;
 		y: number;
 	};
+	// Reconciles x/y after a programmatic size change, animating with the morph
+	// spring so the pinned edge stays visually fixed as the panel grows.
+	// `deltaWidth` is the frame-width change (NEW − OLD) supplied by the caller
+	// that knows both values; it defaults to 0 (a pure re-clamp, no edge shift).
+	repositionForResize: ( deltaWidth?: number ) => void;
 }
 
-// Owns the drag/snap/free-drag concern of the floating panel: the x/y position
-// motion values, the snapped-corner side, the active-gesture state, the pointer
-// gate, the corner-snap math, and the free-drag/minimize position effects.
+// Owns the drag/snap/free-drag concern: the x/y position motion values, snapped
+// side, gesture state, the pointer gate, corner-snap math, and the
+// free-drag/minimize position effects. Composes with useResizablePanel via the
+// shared x/y values and the size accessors it receives.
 export function useFloatingPanelPosition( {
 	freeDrag,
-	initialFreeDragPosition,
 	initialChatPosition,
 	chatState,
 	onChatPositionChange,
 	onFreeDragEnd,
+	x,
+	y,
+	getPanelSize,
+	clampResizedSize,
 }: UseFloatingPanelPositionArgs ): UseFloatingPanelPositionResult {
 	const [ isDragging, setIsDragging ] = useState( false );
 	const [ currentSide, setCurrentSide ] = useState< ChatPosition >( () =>
@@ -62,44 +78,36 @@ export function useFloatingPanelPosition( {
 	const constraintsRef = useRef< HTMLDivElement >( null );
 	const chatRef = useRef< HTMLDivElement >( null );
 
-	// Motion values for programmatic control.
-	const { x: initialX, y: initialY } = getInitialChatPosition( {
-		freeDrag,
-		initialFreeDragPosition,
-		side: currentSide,
-	} );
-	const x = useMotionValue( initialX );
-	const y = useMotionValue( initialY );
 	const dragControls = useDragControls();
 
-	// Analytic corner-snap transform target. DOM-free: the panel is CSS-anchored
-	// at left/bottom VIEWPORT_OFFSET, so the docked transform is derivable from the
-	// current side + width alone ({ cornerX, 0 }). The minimized case is handled by
-	// the caller, not here.
+	// Analytic (DOM-free) corner-snap target: the panel is CSS-anchored at
+	// left/bottom VIEWPORT_OFFSET, so the docked transform derives from side +
+	// width alone. Reading the DOM mid-animation snapshotted a stale height and
+	// drifted `y` upward on the first grow click.
 	const calculateSnapPosition = useCallback(
 		( side?: 'left' | 'right' ) => {
 			const targetSide = side ?? currentSide;
-			return getCornerSnapPosition(
-				targetSide,
-				STYLE_CONSTANTS.COMPACT_WIDTH
-			);
+			return getCornerSnapPosition( targetSide, getPanelSize().width );
 		},
-		[ currentSide ]
+		[ currentSide, getPanelSize ]
 	);
 
-	// Handle pointer down to control drag initiation
 	const handlePointerDown = useCallback(
 		( event: React.PointerEvent< HTMLDivElement > ) => {
 			const target = event.target as HTMLElement;
 
-			// Check if the target element is from an iframe.
+			// Resize handles run their own pointer loop — never start a move-drag
+			// from one, or the two gestures fight. This must come first.
+			if ( target.closest( '[data-slot="resize-handle"]' ) ) {
+				return;
+			}
+
 			const isFromIframe = target.ownerDocument !== document;
 
 			if ( isFromIframe ) {
-				return; // Don't start drag for iframe content clicks.
+				return;
 			}
 
-			// Don't drag if clicking inside non-draggable areas
 			const isNonDraggable = target.closest(
 				DRAG_CONSTANTS.NON_DRAGGABLE_SELECTORS
 			);
@@ -117,15 +125,14 @@ export function useFloatingPanelPosition( {
 		setIsDragging( true );
 	}, [] );
 
-	// Handle drag end with snap functionality
 	const handleDragEnd = useCallback(
 		( _event: unknown, info: PanInfo ) => {
 			setIsDragging( false );
 
-			// Determine which side based on drop position
-			// For true 50/50 split, account for the chat widget's width
+			// Pick a side from the drop position, accounting for the panel width so
+			// the split is a true 50/50.
 			const dropX = x.get();
-			const chatWidth = STYLE_CONSTANTS.COMPACT_WIDTH;
+			const chatWidth = getPanelSize().width;
 			const viewportMidpointX = ( window.innerWidth - chatWidth ) / 2;
 			const isLeft = dropX < viewportMidpointX;
 			const newSide = isLeft ? 'left' : 'right';
@@ -136,11 +143,25 @@ export function useFloatingPanelPosition( {
 				onChatPositionChange?.( newSide );
 			}
 
-			// In free drag mode the panel stays where dropped. dragElastic={ 0 }
-			// hard-clamps the drag to the constraint box, so skip the corner-snap
-			// and report the dropped pixel position so consumers can persist it.
+			// In free drag mode the panel stays where dropped, skipping the
+			// corner-snap. dragConstraints only bind mid-gesture (they resolve
+			// before isDragging flips true), so a fast flick can briefly escape
+			// the box — clamp the drop and never persist an off-screen position.
 			if ( freeDrag ) {
-				onFreeDragEnd?.( { x: x.get(), y: y.get() } );
+				const panelSize = getPanelSize();
+				const dropped = { x: dropX, y: y.get() };
+				const clamped = clampFreeDragPosition(
+					dropped,
+					panelSize.width,
+					panelSize.height
+				);
+				if ( clamped.x !== dropped.x ) {
+					animate( x, clamped.x, DRAG_CONSTANTS.SPRING_CONFIG );
+				}
+				if ( clamped.y !== dropped.y ) {
+					animate( y, clamped.y, DRAG_CONSTANTS.SPRING_CONFIG );
+				}
+				onFreeDragEnd?.( clamped );
 				return;
 			}
 
@@ -165,6 +186,7 @@ export function useFloatingPanelPosition( {
 			currentSide,
 			freeDrag,
 			onFreeDragEnd,
+			getPanelSize,
 		]
 	);
 
@@ -184,7 +206,7 @@ export function useFloatingPanelPosition( {
 		const panelCenter =
 			STYLE_CONSTANTS.VIEWPORT_OFFSET +
 			x.get() +
-			STYLE_CONSTANTS.COMPACT_WIDTH / 2;
+			getPanelSize().width / 2;
 		const newSide = panelCenter < window.innerWidth / 2 ? 'left' : 'right';
 
 		if ( currentSide !== newSide ) {
@@ -204,15 +226,13 @@ export function useFloatingPanelPosition( {
 		calculateSnapPosition,
 		onChatPositionChange,
 		currentSide,
+		getPanelSize,
 	] );
 
-	// In free-drag mode the `bottom: 0` minimize animation already docks the
-	// panel's bottom edge to the viewport bottom, so the correct drag `y` offset
-	// while minimized is 0 — any residual offset would shift the tab off the edge.
-	// Pin `y` to 0 on minimize and restore the dragged offset on un-minimize.
-	// Stashed in a ref to avoid re-render churn, and we never fire onFreeDragEnd
-	// here — this transition is internal and must not corrupt the consumer's
-	// persisted free-drag position.
+	// In free-drag mode `bottom: 0` already docks the panel bottom on minimize, so
+	// the correct `y` offset is 0. Pin `y` to 0 on minimize and restore the dragged
+	// offset on un-minimize (stashed in a ref). Never fire onFreeDragEnd here — this
+	// internal transition must not corrupt the consumer's persisted position.
 	const stashedFreeDragYRef = useRef< number | null >( null );
 	const prevMinimizedRef = useRef( chatState === 'minimized' );
 	useEffect( () => {
@@ -248,37 +268,112 @@ export function useFloatingPanelPosition( {
 		return () => controls.stop();
 	}, [ chatState, freeDrag, y ] );
 
-	// Handle window resize to maintain bottom positioning.
-	useEffect( () => {
-		const handleResize = () => {
-			// In free-drag mode the panel keeps its dragged position; just clamp
-			// it back on-screen if the resize would push it off — no corner-snap.
+	// Shared vertical treatment for both grow modes. The box is bottom-anchored, so
+	// a height grow extends UPWARD with the bottom pinned: hold `y` (skipY) when it
+	// is already inside [minY, 0] and only correct the two overflows — raise toward
+	// minY where the grown top crosses the inset (minY wins when the window is
+	// shorter than the panel, keeping the header reachable), and pull a stale
+	// positive offset back to the 0 dock once window space returns.
+	const holdYWithTopGuard = useCallback(
+		( panelHeight: number ): { y: number; skipY: boolean } => {
+			const currentY = y.get();
+			const minY =
+				2 * STYLE_CONSTANTS.VIEWPORT_OFFSET +
+				panelHeight -
+				window.innerHeight;
+			const clampedY = Math.max( minY, Math.min( currentY, 0 ) );
+			return { y: clampedY, skipY: clampedY === currentY };
+		},
+		[ y ]
+	);
+
+	// Shared position-reconcile: the on-screen target for the CURRENT size + side.
+	// `deltaWidth` is the grow delta (NEW − OLD width); grow paths pass it, the
+	// window-resize clamp passes 0 so it never applies a directional shift.
+	const computeReconciledPosition = useCallback(
+		(
+			deltaWidth: number
+		): {
+			x: number;
+			y: number;
+			skipY: boolean;
+		} => {
+			const panelSize = getPanelSize();
+
 			if ( freeDrag ) {
-				const clamped = clampFreeDragPosition(
-					{ x: x.get(), y: y.get() },
-					STYLE_CONSTANTS.COMPACT_WIDTH,
-					STYLE_CONSTANTS.EXPANDED_HEIGHT
+				// Direction-aware horizontal. Right side: shift x left by the grow
+				// delta so the CURRENT right edge stays fixed (grows top-left). Left
+				// side: no shift, hold the left edge (grows top-right). Both clamp to
+				// [0, maxX]; the Math.max(0) floor wins, so pinning the right edge can
+				// never push the left edge past the inset (near-left-edge grows right).
+				const maxX =
+					window.innerWidth -
+					panelSize.width -
+					2 * STYLE_CONSTANTS.VIEWPORT_OFFSET;
+				const sideShift = currentSide === 'right' ? deltaWidth : 0;
+				const xClamped = Math.max(
+					0,
+					Math.min( x.get() - sideShift, maxX )
 				);
-				x.set( clamped.x );
-				y.set( clamped.y );
-				return;
+				const vertical = holdYWithTopGuard( panelSize.height );
+				return { x: xClamped, y: vertical.y, skipY: vertical.skipY };
 			}
 
-			const position = calculateSnapPosition();
+			// Corner-snap: analytic dock x (no DOM read → no stale-height drift).
+			const snapX = getCornerSnapPosition(
+				currentSide,
+				panelSize.width
+			).x;
 
-			// Update motion values directly (no animation during window resize).
-			x.set( position.x );
-			// While minimized the `y` transform is pinned to 0 and `bottom: 0`
-			// keeps the tab docked regardless of viewport height, so leave it
-			// alone — overwriting it would fight the un-minimize stash restore.
-			if ( chatState !== 'minimized' ) {
-				y.set( position.y );
+			// While minimized the `y` transform is pinned to 0 and `bottom: 0` keeps
+			// the tab docked, so leave y alone — overwriting fights the un-minimize
+			// stash restore.
+			if ( chatState === 'minimized' ) {
+				return { x: snapX, y: 0, skipY: true };
+			}
+
+			const vertical = holdYWithTopGuard( panelSize.height );
+			return { x: snapX, y: vertical.y, skipY: vertical.skipY };
+		},
+		[ freeDrag, x, currentSide, chatState, holdYWithTopGuard, getPanelSize ]
+	);
+
+	// Reconcile x/y after a programmatic size change, animating with the morph
+	// spring so it runs concurrent with the size springs (one motion). No-op
+	// mid-drag: the reposition must never fight an active drag gesture.
+	const repositionForResize = useCallback(
+		( deltaWidth: number = 0 ) => {
+			if ( isDragging ) {
+				return;
+			}
+			const target = computeReconciledPosition( deltaWidth );
+			animate( x, target.x, morphSpring );
+			if ( ! target.skipY ) {
+				animate( y, target.y, morphSpring );
+			}
+		},
+		[ isDragging, computeReconciledPosition, x, y ]
+	);
+
+	// Window resize: clamp the resized SIZE back into the new box first (so the
+	// position clamp reads the corrected size), then clamp/snap the POSITION.
+	useEffect( () => {
+		const handleResize = () => {
+			clampResizedSize();
+
+			// Δ=0: a window resize is a re-clamp, not a directional grow — a nonzero
+			// Δ would spuriously shift x.
+			const target = computeReconciledPosition( 0 );
+
+			x.set( target.x );
+			if ( ! target.skipY ) {
+				y.set( target.y );
 			}
 		};
 
 		window.addEventListener( 'resize', handleResize );
 		return () => window.removeEventListener( 'resize', handleResize );
-	}, [ chatState, x, y, calculateSnapPosition, freeDrag ] );
+	}, [ x, y, clampResizedSize, computeReconciledPosition ] );
 
 	return {
 		x,
@@ -292,5 +387,6 @@ export function useFloatingPanelPosition( {
 		handleDragStart,
 		handleDragEnd,
 		calculateSnapPosition,
+		repositionForResize,
 	};
 }
