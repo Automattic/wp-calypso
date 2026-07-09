@@ -8,6 +8,7 @@ import { connect } from 'react-redux';
 import QueryWordadsEarnings from 'calypso/components/data/query-wordads-earnings';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { getWordAdsEarnings } from 'calypso/state/wordads/earnings/selectors';
+import { sortEarningsPeriods, swapYearMonth } from './utils';
 import './earnings.scss';
 
 class WordAdsEarnings extends Component {
@@ -67,11 +68,6 @@ class WordAdsEarnings extends Component {
 		}
 
 		return Object.keys( obj ).length;
-	}
-
-	swapYearMonth( date ) {
-		const splits = date.split( '-' );
-		return splits[ 1 ] + '-' + splits[ 0 ];
 	}
 
 	getStatus( status ) {
@@ -231,12 +227,12 @@ class WordAdsEarnings extends Component {
 			'is-showing-info': this.getInfoToggle( type ),
 		} );
 
-		const sortedPeriods = Object.keys( earnings ).sort( ( a, b ) => b.localeCompare( a ) );
+		const sortedPeriods = sortEarningsPeriods( Object.keys( earnings ) );
 
 		for ( const period of sortedPeriods ) {
 			rows.push(
 				<tr key={ type + '-' + period }>
-					<td className="ads__earnings-history-value">{ this.swapYearMonth( period ) }</td>
+					<td className="ads__earnings-history-value">{ swapYearMonth( period ) }</td>
 					<td className="ads__earnings-history-value">
 						${ formatNumber( earnings[ period ].amount, { decimals: 2 } ) }
 					</td>
