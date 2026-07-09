@@ -21,6 +21,7 @@ import {
 import { Icon, close } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, useMemo, useState } from 'react';
+import { StepIndicator } from 'calypso/reader/components/step-indicator';
 import {
 	useCreateSpace,
 	useDeleteSpace,
@@ -48,10 +49,11 @@ import { DeleteTab } from './delete-tab';
 import { IdentityTab } from './identity-tab';
 import { DEFAULT_SPACE_WIDTH, getLayoutPresetTitle, LayoutTab } from './layout-tab';
 import { SourcesTab } from './sources-tab';
+import { TopicsTab } from './topics-tab';
 
 import './style.scss';
 
-export type CustomizeTab = 'identity' | 'layout' | 'sources' | 'delete';
+export type CustomizeTab = 'identity' | 'layout' | 'sources' | 'topics' | 'delete';
 
 // Ties the hidden Modal header's accessible name to our custom visible heading.
 const SPACE_MODAL_HEADING_ID = 'customize-space-modal__heading';
@@ -194,6 +196,9 @@ function SpaceUpsertModalContent( {
 	const [ width, setWidth ] = useState< SpaceLayoutWidth >( DEFAULT_SPACE_WIDTH );
 	const [ selectedSources, setSelectedSources ] = useState< SourceDraftItem[] >( [] );
 	const [ isConfirmingDelete, setIsConfirmingDelete ] = useState( false );
+	// Create is a guided wizard that walks through the sections one step at a time;
+	// edit keeps the tabbed layout so any section is reachable directly.
+	const [ step, setStep ] = useState( 0 );
 
 	useEffect( () => {
 		if ( ! isCreate && space && ! isSeeded ) {
@@ -344,7 +349,8 @@ function SpaceUpsertModalContent( {
 	const baseTabs: ModalTab[] = [
 		{ name: 'identity', title: translate( 'Identity' ) as string },
 		{ name: 'layout', title: translate( 'Layout' ) as string },
-		{ name: 'sources', title: translate( 'Sources' ) as string },
+		{ name: 'sources', title: translate( 'Feeds' ) as string },
+		{ name: 'topics', title: translate( 'Topics' ) as string },
 	];
 	const tabs: ModalTab[] = isCreate
 		? baseTabs
@@ -372,6 +378,16 @@ function SpaceUpsertModalContent( {
 				/>
 			);
 		}
+		if ( tabName === 'topics' ) {
+			return (
+				<TopicsTab
+					tags={ tags }
+					onTagsChange={ setTags }
+					languages={ languages }
+					onLanguagesChange={ setLanguages }
+				/>
+			);
+		}
 		if ( tabName === 'delete' && ! isCreate ) {
 			return (
 				<DeleteTab
@@ -385,10 +401,6 @@ function SpaceUpsertModalContent( {
 				name={ name }
 				onNameChange={ setName }
 				nameError={ nameError }
-				tags={ tags }
-				onTagsChange={ setTags }
-				languages={ languages }
-				onLanguagesChange={ setLanguages }
 				color={ color }
 				onColorChange={ setColor }
 				iconColor={ iconColor }
@@ -402,11 +414,26 @@ function SpaceUpsertModalContent( {
 	const sourceCount = selectedSources.length;
 	const footerSummary = [
 		getLayoutPresetTitle( view, translate ),
-		translate( '%(count)d source', '%(count)d sources', {
+		translate( '%(count)d feed', '%(count)d feeds', {
 			count: sourceCount,
 			args: { count: sourceCount },
 		} ),
 	].join( ' · ' );
+
+	// The create wizard walks the base sections in order; the current step maps to
+	// the matching entry in `baseTabs` for its heading.
+	const wizardSteps = baseTabs;
+	const isLastStep = step === wizardSteps.length - 1;
+	const currentStep = wizardSteps[ step ];
+
+	const goBack = () => setStep( ( current ) => Math.max( current - 1, 0 ) );
+	const goNext = () => {
+		if ( isLastStep ) {
+			handleSave();
+			return;
+		}
+		setStep( ( current ) => Math.min( current + 1, wizardSteps.length - 1 ) );
+	};
 
 	const modalTitle = isCreate ? translate( 'Create a new space' ) : translate( 'Customize space' );
 
@@ -434,17 +461,28 @@ function SpaceUpsertModalContent( {
 				<p className="customize-space-modal__subtitle">
 					{ isCreate
 						? translate( 'Set up a space for the feeds and tags you want to read together.' )
-						: translate( "Update this space's identity, layout and sources." ) }
+						: translate( "Update this space's identity, layout and feeds." ) }
 				</p>
 			</VStack>
 
-			<TabPanel className="customize-space-modal__tabs" initialTabName={ initialTab } tabs={ tabs }>
-				{ ( tab ) => (
-					<div className="customize-space-modal__panel">
-						{ renderTab( tab.name as CustomizeTab ) }
-					</div>
-				) }
-			</TabPanel>
+			{ isCreate ? (
+				<div className="customize-space-modal__step">
+					<h2 className="customize-space-modal__step-heading">{ currentStep.title }</h2>
+					<div className="customize-space-modal__panel">{ renderTab( currentStep.name ) }</div>
+				</div>
+			) : (
+				<TabPanel
+					className="customize-space-modal__tabs"
+					initialTabName={ initialTab }
+					tabs={ tabs }
+				>
+					{ ( tab ) => (
+						<div className="customize-space-modal__panel">
+							{ renderTab( tab.name as CustomizeTab ) }
+						</div>
+					) }
+				</TabPanel>
+			) }
 
 			{ createSpace.isError || updateSpace.isError ? (
 				<p className="customize-space-modal__error" role="alert">
@@ -452,46 +490,79 @@ function SpaceUpsertModalContent( {
 				</p>
 			) : null }
 
-			<HStack className="customize-space-modal__footer" justify="space-between" alignment="center">
+			{ isCreate ? (
 				<HStack
-					className="customize-space-modal__footer-space"
-					spacing={ 2 }
-					justify="flex-start"
-					expanded={ false }
+					className="customize-space-modal__footer"
+					justify="space-between"
+					alignment="center"
 				>
-					<span
-						className={ `customize-space-modal__footer-icon customize-space-modal__footer-icon--${ iconColor }` }
-						aria-hidden="true"
+					<StepIndicator totalSteps={ wizardSteps.length } currentStep={ step + 1 } />
+					<HStack spacing={ 2 } justify="flex-end" expanded={ false }>
+						<Button
+							__next40pxDefaultSize
+							variant="tertiary"
+							disabled={ isPending }
+							onClick={ step === 0 ? onClose : goBack }
+						>
+							{ step === 0 ? translate( 'Cancel' ) : translate( 'Back' ) }
+						</Button>
+						<Button
+							__next40pxDefaultSize
+							variant="primary"
+							isBusy={ isPending }
+							disabled={ !! nameError || isPending }
+							onClick={ goNext }
+						>
+							{ isLastStep ? translate( 'Create' ) : translate( 'Next' ) }
+						</Button>
+					</HStack>
+				</HStack>
+			) : (
+				<HStack
+					className="customize-space-modal__footer"
+					justify="space-between"
+					alignment="center"
+				>
+					<HStack
+						className="customize-space-modal__footer-space"
+						spacing={ 2 }
+						justify="flex-start"
+						expanded={ false }
 					>
-						<Icon icon={ SPACE_ICONS[ icon ] } size={ 18 } />
-					</span>
-					<VStack spacing={ 0 } className="customize-space-modal__footer-text">
-						<span className="customize-space-modal__footer-name">
-							{ name.trim() || translate( 'New space' ) }
+						<span
+							className={ `customize-space-modal__footer-icon customize-space-modal__footer-icon--${ iconColor }` }
+							aria-hidden="true"
+						>
+							<Icon icon={ SPACE_ICONS[ icon ] } size={ 18 } />
 						</span>
-						<span className="customize-space-modal__footer-summary">{ footerSummary }</span>
-					</VStack>
+						<VStack spacing={ 0 } className="customize-space-modal__footer-text">
+							<span className="customize-space-modal__footer-name">
+								{ name.trim() || translate( 'New space' ) }
+							</span>
+							<span className="customize-space-modal__footer-summary">{ footerSummary }</span>
+						</VStack>
+					</HStack>
+					<HStack spacing={ 2 } justify="flex-end" expanded={ false }>
+						<Button
+							__next40pxDefaultSize
+							variant="tertiary"
+							disabled={ isPending }
+							onClick={ onClose }
+						>
+							{ translate( 'Cancel' ) }
+						</Button>
+						<Button
+							__next40pxDefaultSize
+							variant="primary"
+							isBusy={ isPending }
+							disabled={ ! isSeeded || !! nameError || isPending }
+							onClick={ handleSave }
+						>
+							{ translate( 'Save changes' ) }
+						</Button>
+					</HStack>
 				</HStack>
-				<HStack spacing={ 2 } justify="flex-end" expanded={ false }>
-					<Button
-						__next40pxDefaultSize
-						variant="tertiary"
-						disabled={ isPending }
-						onClick={ onClose }
-					>
-						{ translate( 'Cancel' ) }
-					</Button>
-					<Button
-						__next40pxDefaultSize
-						variant="primary"
-						isBusy={ isPending }
-						disabled={ ! isSeeded || !! nameError || isPending }
-						onClick={ handleSave }
-					>
-						{ isCreate ? translate( 'Create' ) : translate( 'Save changes' ) }
-					</Button>
-				</HStack>
-			</HStack>
+			) }
 
 			{ isConfirmingDelete ? (
 				<ConfirmDeleteDialog
