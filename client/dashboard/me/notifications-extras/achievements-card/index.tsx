@@ -1,7 +1,9 @@
 import { userPreferenceOptimisticMutation, userPreferenceQuery } from '@automattic/api-queries';
 import { useMutation, useSuspenseQuery } from '@tanstack/react-query';
+import { Link } from '@tanstack/react-router';
 import { ToggleControl } from '@wordpress/components';
 import { useDispatch } from '@wordpress/data';
+import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
 import { useAnalytics } from '../../../app/analytics';
@@ -45,6 +47,15 @@ export const AchievementsCard = () => {
 		} );
 	};
 
+	const helpText = createInterpolateElement(
+		__(
+			'Receive notifications when you unlock new achievements. This setting overrides <link>site-level settings</link>.'
+		),
+		{
+			link: <Link to="/me/notifications/sites" />,
+		}
+	);
+
 	return (
 		<Card>
 			<CardBody>
@@ -53,9 +64,7 @@ export const AchievementsCard = () => {
 					checked={ notifications !== 'disabled' }
 					disabled={ isPending }
 					label={ __( 'Achievements' ) }
-					help={ __(
-						'Receive notifications when you unlock new achievements. This setting overrides site-level settings.'
-					) }
+					help={ helpText }
 					onChange={ handleChange }
 				/>
 			</CardBody>
