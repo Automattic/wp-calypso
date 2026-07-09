@@ -60,17 +60,17 @@ Every mutation returns the **full updated detail**, so the client writes that
 straight to the caches for an immediate UI update, then invalidates the affected
 queries for a canonical refresh.
 
-| #   | Method & path                                | Body                                                                   | Returns               | Wired as                     |
-| --- | -------------------------------------------- | ---------------------------------------------------------------------- | --------------------- | ---------------------------- |
-| 1   | `GET /reader/spaces`                         | —                                                                      | `200` summary[]       | `fetchReadSpaces()`          |
-| 2   | `GET /reader/spaces/{id}`                    | —                                                                      | `200` detail          | `fetchReadSpace(id)`         |
-| 3   | `GET /reader/spaces/slug/{slug}`             | —                                                                      | `200` detail          | `fetchReadSpaceBySlug(slug)` |
-| 3b  | `GET /reader/spaces/membership`              | query: exactly one of `feed` (id/url) or `tag` (slug)                  | `200 { exists, spaces }` | `fetchReadSpaceMembership()` |
-| 4   | `POST /reader/spaces`                        | `{ title*, feeds?, tags?, layout? }`                                   | `201` detail          | `createReadSpace()`          |
-| 5   | `PUT /reader/spaces/{id}`                    | `{ title?, feeds?, tags?, layout? }` (≥1; `layout` is a partial merge) | `200` detail          | `updateReadSpace()`          |
-| 6   | `DELETE /reader/spaces/{id}`                 | —                                                                      | `200 { deleted, id }` | `deleteReadSpace()`          |
-| 7   | `GET /reader/spaces/{id}/posts`              | query: `count?` (≤15), `tag_limit?`, `page_handle?`                    | `200` stream          | `space:{id}` stream          |
-| 8   | `GET /reader/spaces/{id}/discover`           | query: `count?` (≤7), `page_handle?`                                   | `200` stream          | `space_discover:{id}` stream |
+| #   | Method & path                      | Body                                                                   | Returns                  | Wired as                     |
+| --- | ---------------------------------- | ---------------------------------------------------------------------- | ------------------------ | ---------------------------- |
+| 1   | `GET /reader/spaces`               | —                                                                      | `200` summary[]          | `fetchReadSpaces()`          |
+| 2   | `GET /reader/spaces/{id}`          | —                                                                      | `200` detail             | `fetchReadSpace(id)`         |
+| 3   | `GET /reader/spaces/slug/{slug}`   | —                                                                      | `200` detail             | `fetchReadSpaceBySlug(slug)` |
+| 3b  | `GET /reader/spaces/membership`    | query: exactly one of `feed` (id/url) or `tag` (slug)                  | `200 { exists, spaces }` | `fetchReadSpaceMembership()` |
+| 4   | `POST /reader/spaces`              | `{ title*, feeds?, tags?, layout? }`                                   | `201` detail             | `createReadSpace()`          |
+| 5   | `PUT /reader/spaces/{id}`          | `{ title?, feeds?, tags?, layout? }` (≥1; `layout` is a partial merge) | `200` detail             | `updateReadSpace()`          |
+| 6   | `DELETE /reader/spaces/{id}`       | —                                                                      | `200 { deleted, id }`    | `deleteReadSpace()`          |
+| 7   | `GET /reader/spaces/{id}/posts`    | query: `count?` (≤15), `tag_limit?`, `page_handle?`                    | `200` stream             | `space:{id}` stream          |
+| 8   | `GET /reader/spaces/{id}/discover` | query: `count?` (≤7), `page_handle?`                                   | `200` stream             | `space_discover:{id}` stream |
 
 Notes:
 
@@ -81,7 +81,7 @@ Notes:
 - **Membership** (endpoint 3b) is a read-only lookup answering "which of my
   spaces already contain this feed/tag?" — pass exactly one of `feed` or `tag`.
   An unresolvable feed/tag is not an error: it returns `{ exists: false,
-  spaces: [] }`. Exposed as `useSpaceMembership()` — a building block for surfaces
+spaces: [] }`. Exposed as `useSpaceMembership()` — a building block for surfaces
   that need "already in a space?" without loading every space's sources. It never
   mutates.
 - **Tags** are a full replace via `update` (endpoint 5) — there are no per-tag
