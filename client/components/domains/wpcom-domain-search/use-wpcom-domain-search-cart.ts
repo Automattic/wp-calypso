@@ -10,6 +10,7 @@ import {
 	CartActionError,
 	type CartKey,
 	type MinimalRequestCartProduct,
+	parseNextDomainCondition,
 	type ResponseCartProduct,
 	useShoppingCart,
 } from '@automattic/shopping-cart';
@@ -91,7 +92,9 @@ export const useWPCOMDomainSearchCart = ( {
 		if ( forceFirstNonPremiumDomainToBeFree ) {
 			effectiveFreeForFirstYearTlds = freeForFirstYearTlds;
 		} else if ( responseCart.next_domain_condition ) {
-			effectiveFreeForFirstYearTlds = responseCart.next_domain_condition.split( ',' );
+			effectiveFreeForFirstYearTlds = parseNextDomainCondition(
+				responseCart.next_domain_condition
+			);
 		}
 
 		// Order domains from most expensive to least expensive
