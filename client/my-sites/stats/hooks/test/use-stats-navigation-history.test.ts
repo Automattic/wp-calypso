@@ -65,13 +65,63 @@ describe( 'use-stats-navigation-history back-link param forwarding', () => {
 			expect( result.current.url ).toContain( 'tab=views' );
 		} );
 
-		it( 'uses the recorded previous screen when history exists', () => {
+		it( 'overrides the recorded previous range with the current screen range', () => {
+			const trafficEntry = {
+				screen: 'traffic',
+				queryParams: {
+					chartStart: '2024-01-01',
+					chartEnd: '2024-12-31',
+					shortcut: 'last_3_years',
+					tab: 'visitors',
+				},
+				period: 'year',
+			};
+			sessionStorage.setItem( STORAGE_KEY, JSON.stringify( [ trafficEntry, summaryEntry ] ) );
+
+			const { result } = renderHook( () => useStatsNavigationHistory() );
+
+			// The current (summary) range wins; other recorded params are kept.
+			expect( result.current.url ).toContain( 'chartStart=2025-07-01' );
+			expect( result.current.url ).toContain( 'chartEnd=2025-07-31' );
+			expect( result.current.url ).toContain( 'shortcut=last_12_months' );
+			expect( result.current.url ).toContain( 'tab=visitors' );
+			// Period is recomputed for the overridden range (31 days -> week).
+			expect( result.current.url ).toContain( '/stats/week/example.com' );
+		} );
+
+		it( 'drops the recorded stale shortcut when the current range is custom', () => {
 			const trafficEntry = {
 				screen: 'traffic',
 				queryParams: { chartStart: '2024-01-01', chartEnd: '2024-12-31', shortcut: 'last_3_years' },
 				period: 'year',
 			};
-			sessionStorage.setItem( STORAGE_KEY, JSON.stringify( [ trafficEntry, summaryEntry ] ) );
+			const customRangeEntry = {
+				screen: 'referrers',
+				queryParams: { chartStart: '2025-05-01', chartEnd: '2025-05-20' },
+				period: 'day',
+			};
+			sessionStorage.setItem( STORAGE_KEY, JSON.stringify( [ trafficEntry, customRangeEntry ] ) );
+
+			const { result } = renderHook( () => useStatsNavigationHistory() );
+
+			expect( result.current.url ).toContain( '/stats/day/example.com' );
+			expect( result.current.url ).toContain( 'chartStart=2025-05-01' );
+			expect( result.current.url ).toContain( 'chartEnd=2025-05-20' );
+			expect( result.current.url ).not.toContain( 'shortcut' );
+		} );
+
+		it( 'keeps the recorded range when the current screen has none (e.g. all-time)', () => {
+			const trafficEntry = {
+				screen: 'traffic',
+				queryParams: { chartStart: '2024-01-01', chartEnd: '2024-12-31', shortcut: 'last_3_years' },
+				period: 'year',
+			};
+			const allTimeEntry = {
+				screen: 'referrers',
+				queryParams: { startDate: '2025-07-08', summarize: '1', num: '-1' },
+				period: 'day',
+			};
+			sessionStorage.setItem( STORAGE_KEY, JSON.stringify( [ trafficEntry, allTimeEntry ] ) );
 
 			const { result } = renderHook( () => useStatsNavigationHistory() );
 

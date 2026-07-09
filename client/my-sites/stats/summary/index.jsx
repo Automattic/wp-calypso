@@ -503,7 +503,7 @@ class StatsSummary extends Component {
 }
 
 const StatsSummaryWrapper = ( props ) => {
-	const breadcrumbTrail = useStatsBreadcrumbTrail();
+	const breadcrumbTrail = useStatsBreadcrumbTrail( props.context?.query );
 	const statsStrings = useStatsStrings( { supportsArchiveStats: props.supportsArchiveStats } );
 
 	return (

@@ -72,6 +72,50 @@ const getTrafficQueryParams = ( queryParams: QueryArgs ): QueryArgs => {
 	);
 };
 
+const DATE_RANGE_PARAMS: string[] = [ 'chartStart', 'chartEnd', 'shortcut' ];
+
+// Mirrors StatsDateControl's bestPeriodForDays, so a back link lands on a period
+// able to display the range (e.g. hour-period pages clamp longer ranges).
+const bestPeriodForRange = ( chartStart: string, chartEnd: string ): string => {
+	const days = Math.round( ( Date.parse( chartEnd ) - Date.parse( chartStart ) ) / 86400000 ) + 1;
+	if ( days <= 30 ) {
+		return 'day';
+	}
+	if ( days <= 175 ) {
+		return 'week';
+	}
+	if ( days <= 750 ) {
+		return 'month';
+	}
+	return 'year';
+};
+
+// The date range is a global filter across Stats screens: when navigating back, the
+// range selected on the current screen wins over the one recorded when the previous
+// screen was left. Only applies to period-aware screens (Traffic, module summaries).
+const applyCurrentDateRange = < T extends { screen: string; queryParams: QueryArgs } >(
+	entry: T,
+	currentParams: QueryArgs
+): T => {
+	const { chartStart, chartEnd, shortcut } = currentParams;
+	if ( ! possibleBackLinks[ entry.screen ]?.includes( '{period}' ) || ! chartStart || ! chartEnd ) {
+		return entry;
+	}
+
+	const queryParams = Object.fromEntries(
+		Object.entries( entry.queryParams || {} ).filter(
+			( [ key ] ) => ! DATE_RANGE_PARAMS.includes( key )
+		)
+	);
+	queryParams.chartStart = chartStart;
+	queryParams.chartEnd = chartEnd;
+	if ( shortcut ) {
+		queryParams.shortcut = shortcut;
+	}
+
+	return { ...entry, queryParams, period: bestPeriodForRange( chartStart, chartEnd ) };
+};
+
 const prepareAdminQueryParams = ( queryParams: QueryArgs ) => {
 	const JP_PREFIX = 'jp_';
 	return Object.fromEntries(
@@ -87,7 +131,11 @@ const prepareAdminQueryParams = ( queryParams: QueryArgs ) => {
  * Supports reading/writing from sessionStorage and initializing from query params
  * @returns { { text: string; url: string | null } }
  */
-export const useStatsNavigationHistory = (): { text: string; url: string | null } => {
+export const useStatsNavigationHistory = (
+	// Pass the current screen's query (e.g. `context.query`) so the back link
+	// re-derives after in-place range changes; the history is read once otherwise.
+	currentQuery?: unknown
+): { text: string; url: string | null } => {
 	const localizedTabNames: { [ key: string ]: string | null } = useMemo(
 		() => ( {
 			traffic: translate( 'Traffic' ),
@@ -153,7 +201,8 @@ export const useStatsNavigationHistory = (): { text: string; url: string | null 
 
 				// Make sure it's array and select last item
 				if ( lastItem && lastItem.screen ) {
-					setLastScreen( lastItem );
+					const currentItem = navState[ navState.length - 1 ];
+					setLastScreen( applyCurrentDateRange( lastItem, currentItem?.queryParams || {} ) );
 				} else {
 					// No prior history (e.g. direct load or a full page load that clears
 					// sessionStorage): fall back to Traffic, but carry the current screen's
@@ -171,7 +220,7 @@ export const useStatsNavigationHistory = (): { text: string; url: string | null 
 				}
 			}
 		} catch ( e ) {}
-	}, [ localizedTabNames ] );
+	}, [ localizedTabNames, currentQuery ] );
 
 	const backLink = useMemo( () => {
 		if ( ! siteSlug ) {
@@ -212,7 +261,11 @@ export const useStatsNavigationHistory = (): { text: string; url: string | null 
  * Excludes the current screen (last item in history).
  * Each item has a label and URL for building breadcrumb navigation.
  */
-export const useStatsBreadcrumbTrail = (): Array< { label: string; url: string | null } > => {
+export const useStatsBreadcrumbTrail = (
+	// Pass the current screen's query (e.g. `context.query`) so the trail re-derives
+	// after in-place range changes; the history is read once otherwise.
+	currentQuery?: unknown
+): Array< { label: string; url: string | null } > => {
 	const localizedTabNames: { [ key: string ]: string | null } = useMemo(
 		() => ( {
 			traffic: translate( 'Traffic' ),
@@ -279,9 +332,11 @@ export const useStatsBreadcrumbTrail = (): Array< { label: string; url: string |
 
 			// Exclude the last item (current screen).
 			const items = navState.slice( 0, -1 );
+			const currentItem = navState[ navState.length - 1 ];
 
 			const breadcrumbs = items
-				.map( ( entry: { screen: string; queryParams: QueryArgs; period: string | null } ) => {
+				.map( ( rawEntry: { screen: string; queryParams: QueryArgs; period: string | null } ) => {
+					const entry = applyCurrentDateRange( rawEntry, currentItem?.queryParams || {} );
 					const label = localizedTabNames[ entry.screen ];
 					if ( ! label ) {
 						return null;
@@ -320,7 +375,7 @@ export const useStatsBreadcrumbTrail = (): Array< { label: string; url: string |
 		} catch ( e ) {
 			setTrail( [] );
 		}
-	}, [ localizedTabNames, siteSlug, adminBaseUrl ] );
+	}, [ localizedTabNames, siteSlug, adminBaseUrl, currentQuery ] );
 
 	return trail;
 };
