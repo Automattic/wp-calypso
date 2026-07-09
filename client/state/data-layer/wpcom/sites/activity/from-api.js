@@ -1,4 +1,3 @@
-import { get } from 'lodash';
 import { parseActivityLogEntryContent } from 'calypso/dashboard/components/logs-activity-formatted-block/api-core-parser';
 import makeJsonSchemaParser from 'calypso/lib/make-json-schema-parser';
 import apiResponseSchema from './schema';
@@ -15,7 +14,7 @@ export const DEFAULT_GRIDICON = 'info-outline';
  * @returns {Object}             Object with an entry for proccessed item objects and another for oldest item timestamp
  */
 export function transformer( apiResponse ) {
-	return get( apiResponse, [ 'current', 'orderedItems' ], [] ).map( processItem );
+	return ( apiResponse?.current?.orderedItems ?? [] ).map( processItem );
 }
 
 /**
@@ -29,12 +28,12 @@ export function processItem( item ) {
 	const activityMeta = {};
 	switch ( item.name ) {
 		case 'rewind__backup_error':
-			if ( '2' === get( item.object, 'error_code', '' ) ) {
+			if ( '2' === ( item.object?.error_code ?? '' ) ) {
 				activityMeta.errorCode = 'bad_credentials';
 			}
 			break;
 		case 'rewind__backup_only_error':
-			if ( '3' === get( item.object, 'error_code', '' ) ) {
+			if ( '3' === ( item.object?.error_code ?? '' ) ) {
 				activityMeta.errorCode = 'not_accessible';
 			}
 			break;
@@ -43,19 +42,19 @@ export function processItem( item ) {
 	return Object.assign(
 		{
 			/* activity actor */
-			actorAvatarUrl: get( actor, 'icon.url', DEFAULT_GRAVATAR_URL ),
-			actorName: get( actor, 'name', '' ),
-			actorRemoteId: get( actor, 'external_user_id', 0 ),
-			actorRole: get( actor, 'role', '' ),
-			actorType: get( actor, 'type', '' ),
-			actorWpcomId: get( actor, 'wpcom_user_id', 0 ),
-			actorIsMcpAgent: get( actor, 'is_mcp_agent', false ),
-			actorMcpClient: get( actor, 'mcp_client', '' ),
+			actorAvatarUrl: actor?.icon?.url ?? DEFAULT_GRAVATAR_URL,
+			actorName: actor?.name ?? '',
+			actorRemoteId: actor?.external_user_id ?? 0,
+			actorRole: actor?.role ?? '',
+			actorType: actor?.type ?? '',
+			actorWpcomId: actor?.wpcom_user_id ?? 0,
+			actorIsMcpAgent: actor?.is_mcp_agent ?? false,
+			actorMcpClient: actor?.mcp_client ?? '',
 
 			/* base activity info */
 			activityDate,
 			activityGroup: ( item.name || '' ).split( '__', 1 )[ 0 ], // split always returns at least one item
-			activityIcon: get( item, 'gridicon', DEFAULT_GRIDICON ),
+			activityIcon: item?.gridicon ?? DEFAULT_GRIDICON,
 			activityId: item.activity_id,
 			activityIsRewindable: item.is_rewindable,
 			activityName: item.name,

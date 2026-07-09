@@ -26,8 +26,10 @@ const useGridPlansForFeaturesGrid = ( {
 	isDomainOnlySite,
 	reflectStorageSelectionInPlanPrices,
 	useVar42NoAiFeatures,
+	usePlansGridRedesignFeatures,
 	showPricingDifferentiationFeaturePills,
 	useFocusedNewCopyTaglines,
+	usePlansGridRedesignNewDescription,
 	isExperimentVariant,
 	showBillingDescriptionForIncreasedRenewalPrice,
 }: UseGridPlansParams ): GridPlan[] | null => {
@@ -51,6 +53,7 @@ const useGridPlansForFeaturesGrid = ( {
 		isDomainOnlySite,
 		reflectStorageSelectionInPlanPrices,
 		useFocusedNewCopyTaglines,
+		usePlansGridRedesignNewDescription,
 		showBillingDescriptionForIncreasedRenewalPrice,
 	} );
 
@@ -63,6 +66,7 @@ const useGridPlansForFeaturesGrid = ( {
 		selectedFeature,
 		showLegacyStorageFeature,
 		useVar42NoAiFeatures,
+		usePlansGridRedesignFeatures,
 		showPricingDifferentiationFeaturePills,
 		isExperimentVariant,
 	} );

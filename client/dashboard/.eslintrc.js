@@ -88,11 +88,6 @@ module.exports = {
 						],
 						message: 'Importing from @automattic/ is not allowed in the dashboard folder.',
 					},
-					{
-						group: [ 'lodash' ],
-						message:
-							'Lodash is not allowed in the dashboard folder. Use native JavaScript methods instead.',
-					},
 				],
 				paths: [
 					{
@@ -113,10 +108,6 @@ module.exports = {
 					{
 						name: 'i18n-calypso',
 						message: 'Please use the @wordpress/i18n package instead of the i18n-calypso package.',
-					},
-					{
-						name: 'lodash',
-						message: 'Please use native JavaScript instead of lodash.',
 					},
 					{
 						name: 'moment',

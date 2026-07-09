@@ -1,6 +1,7 @@
-import { expect, skipIfMailosaurLimitReached, tags, test } from '../../lib/pw-base';
+import { expect, skipIfMailosaurLimitReached, skipIfNotTrunk, tags, test } from '../../lib/pw-base';
 
 test.describe( 'Dashboard: Site Visibility Settings', { tag: [ tags.DASHBOARD_PR ] }, () => {
+	skipIfNotTrunk();
 	skipIfMailosaurLimitReached();
 
 	test( 'As a new simple site user, I can set my site visibility to Private, so that only I can see my site', async ( {

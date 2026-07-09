@@ -1,6 +1,6 @@
 {
 	"name": "@automattic/calypso-stripe",
-	"version": "1.0.0",
+	"version": "1.0.1",
 	"description": "A set of helper functions and components for using Stripe on WordPress.com.",
 	"main": "dist/cjs/index.js",
 	"module": "dist/esm/index.js",

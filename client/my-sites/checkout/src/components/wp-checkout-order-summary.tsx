@@ -162,6 +162,8 @@ function CheckoutSummaryPriceList() {
 	const [ , isCheckoutUiRedesignV1 ] = useCheckoutUiRedesignExperiment();
 	const { setSlotEl } = useSubmitButtonSlot();
 	const isLargeViewport = useViewportMatch( 'large', '>=' );
+	const { formStatus } = useFormStatus();
+	const isCartUpdating = FormStatus.VALIDATING === formStatus;
 
 	const subtotalBeforeDiscounts = responseCart.products.reduce( ( subtotal, product ) => {
 		const originalAmountInteger = getSimulatedCostBeforeDiscounts( product, monthlyPrices );
@@ -175,7 +177,10 @@ function CheckoutSummaryPriceList() {
 			<CheckoutSummaryTitle className="wp-checkout-order-summary__section-title">
 				<span>{ translate( 'Summary' ) }</span>
 			</CheckoutSummaryTitle>
-			<ProductsAndCostOverridesList responseCart={ responseCart } />
+			<ProductsAndCostOverridesList
+				responseCart={ responseCart }
+				isCartUpdating={ isCartUpdating }
+			/>
 			<CheckoutSummaryAmountWrapper className="wp-checkout-order-summary__amount-wrapper">
 				<CheckoutSubtotalSection className="wp-checkout-order-summary__subtotal-section">
 					<CheckoutSummarySubtotal
@@ -184,32 +189,47 @@ function CheckoutSummaryPriceList() {
 						isCheckoutUiRedesignV1={ isCheckoutUiRedesignV1 }
 					>
 						<span>{ translate( 'Subtotal' ) }</span>
-						<span className="wp-checkout-order-summary__subtotal-price">
-							{ totalDiscount > 0 && (
-								<s>
-									{ formatCurrency( subtotalBeforeDiscounts, responseCart.currency, {
+						{ isCartUpdating ? (
+							<PriceLoadingIndicator
+								className="wp-checkout-order-summary__subtotal-price"
+								width="80px"
+								height="18px"
+							/>
+						) : (
+							<span className="wp-checkout-order-summary__subtotal-price">
+								{ totalDiscount > 0 && (
+									<s>
+										{ formatCurrency( subtotalBeforeDiscounts, responseCart.currency, {
+											isSmallestUnit: true,
+											stripZeros: true,
+										} ) }
+									</s>
+								) }
+								<span>
+									{ formatCurrency( responseCart.sub_total_integer, responseCart.currency, {
 										isSmallestUnit: true,
 										stripZeros: true,
 									} ) }
-								</s>
-							) }
-							<span>
-								{ formatCurrency( responseCart.sub_total_integer, responseCart.currency, {
-									isSmallestUnit: true,
-									stripZeros: true,
-								} ) }
+								</span>
 							</span>
-						</span>
+						) }
 					</CheckoutSummarySubtotal>
 					{ totalDiscount > 0 && (
 						<CheckoutSummaryTotalDiscount className="wp-checkout-order-summary__line-item">
 							<span>{ translate( 'Discount' ) }</span>
-							<span className="wp-checkout-order-summary__subtotal-discount">
-								{ formatCurrency( totalDiscount, responseCart.currency, {
-									isSmallestUnit: true,
-									stripZeros: true,
-								} ) }
-							</span>
+							{ isCartUpdating ? (
+								<PriceLoadingIndicator
+									className="wp-checkout-order-summary__subtotal-discount"
+									width="60px"
+								/>
+							) : (
+								<span className="wp-checkout-order-summary__subtotal-discount">
+									{ formatCurrency( totalDiscount, responseCart.currency, {
+										isSmallestUnit: true,
+										stripZeros: true,
+									} ) }
+								</span>
+							) }
 						</CheckoutSummaryTotalDiscount>
 					) }
 
@@ -219,7 +239,11 @@ function CheckoutSummaryPriceList() {
 							className="wp-checkout-order-summary__line-item"
 						>
 							<CheckoutSummaryLineItemLabel lineItem={ taxLineItem } />
-							<span>{ taxLineItem.formattedAmount }</span>
+							{ isCartUpdating ? (
+								<PriceLoadingIndicator width="50px" />
+							) : (
+								<span>{ taxLineItem.formattedAmount }</span>
+							) }
 						</CheckoutSummaryLineItem>
 					) ) }
 					{ isBillingInfoEmpty( responseCart ) && <TaxNotCalculatedLineItem /> }
@@ -229,7 +253,11 @@ function CheckoutSummaryPriceList() {
 							className="wp-checkout-order-summary__line-item"
 						>
 							<span>{ creditsLineItem.label }</span>
-							<span>{ creditsLineItem.formattedAmount }</span>
+							{ isCartUpdating ? (
+								<PriceLoadingIndicator width="50px" />
+							) : (
+								<span>{ creditsLineItem.formattedAmount }</span>
+							) }
 						</CheckoutSummaryLineItem>
 					) }
 				</CheckoutSubtotalSection>
@@ -241,9 +269,17 @@ function CheckoutSummaryPriceList() {
 							textOnly: true,
 						} ) }
 					</span>
-					<span className="wp-checkout-order-summary__total-price">
-						{ totalLineItem.formattedAmount }
-					</span>
+					{ isCartUpdating ? (
+						<PriceLoadingIndicator
+							className="wp-checkout-order-summary__total-price"
+							width="80px"
+							height="22px"
+						/>
+					) : (
+						<span className="wp-checkout-order-summary__total-price">
+							{ totalLineItem.formattedAmount }
+						</span>
+					) }
 				</CheckoutSummaryTotal>
 				{ isLargeViewport && (
 					<>
@@ -845,10 +881,16 @@ const CheckoutSummaryLineItem = styled.div< { isDiscount?: boolean } >`
 	margin-bottom: 4px;
 
 	color: ${ ( props ) => ( props.isDiscount ? props.theme.colors.discount : 'inherit' ) };
+`;
 
-	.is-loading & {
-		animation: ${ pulse } 1.5s ease-in-out infinite;
-	}
+const PriceLoadingIndicator = styled.span< { width?: string; height?: string } >`
+	display: inline-block;
+	height: ${ ( props ) => props.height ?? '16px' };
+	width: ${ ( props ) => props.width ?? '60px' };
+	background: ${ ( props ) => props.theme.colors.borderColorLight };
+	border-radius: 2px;
+	animation: ${ pulse } 1.5s ease-in-out infinite;
+	vertical-align: middle;
 `;
 
 const CheckoutSummarySubtotal = styled( CheckoutSummaryLineItem )< {

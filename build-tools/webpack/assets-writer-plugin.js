@@ -1,6 +1,5 @@
 const fs = require( 'fs' );
 const path = require( 'path' );
-const _ = require( 'lodash' );
 
 function AssetsWriter( options ) {
 	this.options = Object.assign(
@@ -76,14 +75,20 @@ Object.assign( AssetsWriter.prototype, {
 				}
 			}
 
-			statsToOutput.assets = _.mapValues( stats.namedChunkGroups, ( { assets } ) =>
-				_.reject(
-					assets,
-					( { name } ) =>
-						isDevelopmentAsset( name ) ||
-						name.startsWith( this.options.manifestFile ) ||
-						name.startsWith( this.options.runtimeFile )
-				).map( ( { name } ) => fixupPath( name ) )
+			statsToOutput.assets = Object.fromEntries(
+				Object.entries( stats.namedChunkGroups ?? {} ).map( ( [ groupName, { assets } ] ) => [
+					groupName,
+					( assets ?? [] )
+						.filter(
+							( { name } ) =>
+								! (
+									isDevelopmentAsset( name ) ||
+									name.startsWith( this.options.manifestFile ) ||
+									name.startsWith( this.options.runtimeFile )
+								)
+						)
+						.map( ( { name } ) => fixupPath( name ) ),
+				] )
 			);
 
 			self.outputStream.end( JSON.stringify( statsToOutput, null, '\t' ), callback );

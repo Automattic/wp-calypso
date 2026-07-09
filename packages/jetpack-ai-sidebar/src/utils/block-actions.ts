@@ -8,13 +8,21 @@
 
 import { store as blockEditorStore } from '@wordpress/block-editor';
 import { dispatch, select } from '@wordpress/data';
+import { countOccurrences } from './blocks';
+
+/**
+ * Post fields a picker checkpoint can snapshot and restore.
+ */
+export type CheckpointField = 'title' | 'excerpt';
 
 /**
  * Checkpoint API shared between the React `useCheckpoint` hook (which AM
- * calls) and the synchronous `handleShowComponent` callback.
+ * calls) and the synchronous `handleShowComponent` callback. `setCheckpoint`
+ * captures only the fields the triggering picker can write, so restoring one
+ * picker's checkpoint never clobbers another field's later edits.
  */
 export interface CheckpointApi {
-	setCheckpoint: ( id: string ) => void;
+	setCheckpoint: ( id: string, fields?: CheckpointField[] ) => void;
 	hasCheckpoint: ( id: string ) => boolean;
 	restoreCheckpoint: ( id: string ) => Promise< void >;
 }
@@ -408,22 +416,6 @@ export function startBlockShimmer(): void {
 }
 
 // ---------- Ability callbacks ----------
-
-function countOccurrences( source: string, needle: string ): number {
-	if ( needle === '' ) {
-		return 0;
-	}
-	let count = 0;
-	let startIndex = 0;
-	while ( true ) {
-		const index = source.indexOf( needle, startIndex );
-		if ( index === -1 ) {
-			return count;
-		}
-		count++;
-		startIndex = index + 1;
-	}
-}
 
 function normaliseAttributeName( attributeName?: string | null ): string | undefined {
 	return typeof attributeName === 'string' && attributeName.trim() !== ''

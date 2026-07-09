@@ -6,6 +6,9 @@ import FormRadioWithThumbnail from 'calypso/components/forms/form-radio-with-thu
 
 import './style.scss';
 
+/**
+ * @param {{ isThumbnail?: boolean; checked?: string; onChange?: ( event: import('react').ChangeEvent< HTMLInputElement > ) => void; items: Array< { label: import('react').ReactNode; value: string } >; disabled?: boolean; }} props
+ */
 const FormRadiosBar = ( { isThumbnail, checked, onChange, items, disabled } ) => {
 	return (
 		<div className={ clsx( 'form-radios-bar', { 'is-thumbnail': isThumbnail } ) }>

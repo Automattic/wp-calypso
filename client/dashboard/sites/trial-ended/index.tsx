@@ -122,7 +122,7 @@ const SiteTrialEnded = ( { siteSlug }: { siteSlug: string } ) => {
 				</Card>
 				<HStack spacing={ 3 } justify="flex-start">
 					<Text variant="muted">{ __( 'Not ready to upgrade?' ) }</Text>
-					<ExternalLink href={ `/export/${ site.slug }` }>
+					<ExternalLink href={ wpcomLink( `/export/${ site.slug }` ) }>
 						{ __( 'Export your content' ) }
 					</ExternalLink>
 					<Button variant="link" isDestructive onClick={ () => setIsSiteDeleteModalOpen( true ) }>

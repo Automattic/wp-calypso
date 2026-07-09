@@ -1,4 +1,5 @@
 import { wpcom } from '../wpcom-fetcher';
+import { adaptUserSettings } from './adapters';
 import type { PasswordValidationResponse, UserSettings } from './types';
 
 export async function updateUserSettings(
@@ -38,7 +39,7 @@ export async function updateUserSettings(
 	const payload = Object.fromEntries(
 		saveableKeys.filter( ( key ) => key in data ).map( ( key ) => [ key, data[ key ] ] )
 	);
-	return await wpcom.req.post( '/me/settings', payload );
+	return adaptUserSettings( await wpcom.req.post( '/me/settings', payload ) );
 }
 
 export async function validatePassword( password: string ): Promise< PasswordValidationResponse > {

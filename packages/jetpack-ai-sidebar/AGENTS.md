@@ -19,7 +19,7 @@ This package exports the **AM provider contract** — a set of functions the Age
 | `toolProvider`            | Surfaces Jetpack AI's client-side abilities to AM         |
 | `contextProvider`         | Sends Gutenberg editor state to the orchestrator          |
 | `getChatComponent`        | Maps `type` strings → React components for show-component |
-| `useCheckpoint`           | Post-title snapshots for AM's native Undo action          |
+| `useCheckpoint`           | Post title/excerpt snapshots for AM's native Undo action  |
 | `getEmptyViewSuggestions` | Static suggestions shown before conversation starts       |
 | `useSuggestions`          | Block-aware dynamic suggestions during conversation       |
 
@@ -97,7 +97,7 @@ Changes here affect AI response quality. The orchestrator uses `selectedBlockCli
 
 ## Checkpoint / Undo
 
-`useCheckpoint` exposes a minimal subset of AM's `UseCheckpointReturn` interface — only `setCheckpoint` / `hasCheckpoint` / `restoreCheckpoint` are implemented; the Big Sky page/navigation stubs are no-ops. Snapshots are stored in a module-level `titleSnapshots` map keyed by checkpoint id (the tool call id), so the sync `handleShowComponent` callback and the async React restore path share state.
+`useCheckpoint` exposes a minimal subset of AM's `UseCheckpointReturn` interface — only `setCheckpoint` / `hasCheckpoint` / `restoreCheckpoint` are implemented; the Big Sky page/navigation stubs are no-ops. Snapshots capture only the fields the triggering picker writes (title by default, excerpt for the excerpt picker) and are stored in a module-level `postSnapshots` map keyed by checkpoint id (the tool call id), so the sync `handleShowComponent` callback and the async React restore path share state — and restoring one picker's checkpoint never clobbers another field's later edits.
 
 ## Suggestions
 

@@ -1,5 +1,4 @@
 import { localize } from 'i18n-calypso';
-import { get } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import TitleFormatEditor from 'calypso/components/title-format-editor';
@@ -35,10 +34,10 @@ const tokenMap = {
 };
 
 const getTokensForType = ( type, translate ) => {
-	return get( tokenMap, type, [] ).reduce(
+	return ( tokenMap?.[ type ] ?? [] ).reduce(
 		( allTokens, name ) => ( {
 			...allTokens,
-			[ name ]: get( getValidTokens( translate ), name, '' ),
+			[ name ]: getValidTokens( translate )?.[ name ] ?? '',
 		} ),
 		{}
 	);
@@ -82,7 +81,7 @@ export class MetaTitleEditor extends Component {
 						onChange={ this.updateTitleFormat }
 						placeholder={ site && site.title }
 						type={ type }
-						titleFormats={ get( titleFormats, type.value, [] ) }
+						titleFormats={ titleFormats?.[ type.value ] ?? [] }
 						tokens={ getTokensForType( type.value, translate ) }
 					/>
 				) ) }

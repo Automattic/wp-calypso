@@ -8,12 +8,11 @@ import {
 import page from '@automattic/calypso-router';
 import { GravatarTextLogo } from '@automattic/components';
 import { isBlankCanvasDesign } from '@automattic/design-picker';
-import { camelToSnakeCase, kebabCase, omit } from '@automattic/js-utils';
+import { camelToSnakeCase, kebabCase, omit, isEmpty } from '@automattic/js-utils';
 import * as oauthToken from '@automattic/oauth-token';
 import { isDomainForGravatarFlow } from '@automattic/onboarding';
 import debugModule from 'debug';
 import isEqual from 'fast-deep-equal/es6';
-import { clone, find, get, isEmpty, map } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
@@ -452,8 +451,9 @@ class Signup extends Component {
 			setSignupCompleteFlowName( this.props.flowName );
 		}
 
-		// Persist current domains data in the onboarding flow.
-		if ( this.props.flowName === 'onboarding' ) {
+		// Persist current domains data so re-entering via browser back from checkout can skip the
+		// domains step instead of recreating the site.
+		if ( flows.getFlow( this.props.flowName, this.props.isLoggedIn ).persistsDomainsOnReEntry ) {
 			const { domainItem, siteUrl, domainCart } = dependencies;
 			const { stepSectionName } = this.props;
 
@@ -557,13 +557,13 @@ class Signup extends Component {
 		const currentStepIndex = flowSteps.indexOf( stepName );
 		const stepsToProcess =
 			currentStepIndex >= 0 ? flowSteps.slice( 0, currentStepIndex + 1 ) : flowSteps;
-		const previouslyExcludedSteps = clone( flows.excludedSteps );
-		map( previouslyExcludedSteps, ( flowStepName ) => {
+		const previouslyExcludedSteps = [ ...flows.excludedSteps ];
+		previouslyExcludedSteps.forEach( ( flowStepName ) => {
 			if ( stepsToProcess.includes( flowStepName ) ) {
 				this.processFulfilledSteps( flowStepName, nextProps );
 			}
 		} );
-		map( stepsToProcess, ( flowStepName ) =>
+		stepsToProcess.forEach( ( flowStepName ) =>
 			this.processFulfilledSteps( flowStepName, nextProps )
 		);
 
@@ -803,7 +803,7 @@ class Signup extends Component {
 		const { steps: flowSteps } = flows.getFlow( nextFlowName, this.props.isLoggedIn );
 		const currentStepIndex = flowSteps.indexOf( this.props.stepName );
 		const nextStepName = flowSteps[ currentStepIndex + 1 ];
-		const nextProgressItem = get( this.props.progress, nextStepName );
+		const nextProgressItem = this.props.progress?.[ nextStepName ];
 		const nextStepSection = ( nextProgressItem && nextProgressItem.stepSectionName ) || '';
 
 		if ( nextFlowName !== this.props.flowName ) {
@@ -866,7 +866,7 @@ class Signup extends Component {
 	}
 
 	renderProcessingScreen() {
-		const domainItem = get( this.props, 'signupDependencies.domainItem', {} );
+		const domainItem = this.props?.signupDependencies?.domainItem ?? {};
 		const hasPaidDomain = isDomainRegistration( domainItem );
 		const destination = this.signupFlowController.getDestination();
 
@@ -885,7 +885,9 @@ class Signup extends Component {
 		const flow = flows.getFlow( flowName, this.props.isLoggedIn );
 		const flowStepProps = flow?.props?.[ stepName ] || {};
 
-		const currentStepProgress = find( this.props.progress, { stepName } );
+		const currentStepProgress = Object.values( this.props.progress ?? {} ).find(
+			( step ) => step.stepName === stepName
+		);
 		const CurrentComponent = this.props.stepComponent;
 		const propsFromConfig = {
 			...omit( this.props, 'locale' ),

@@ -1,6 +1,5 @@
 import { siteGranularBackupDownloadInitiateMutation } from '@automattic/api-queries';
 import { useMutation } from '@tanstack/react-query';
-import { useRouter } from '@tanstack/react-router';
 import {
 	__experimentalGrid as Grid,
 	__experimentalHStack as HStack,
@@ -13,7 +12,6 @@ import { useCallback } from 'react';
 import FileBrowser from '../../../my-sites/backup/backup-contents-page/file-browser';
 import { useFileBrowserContext } from '../../../my-sites/backup/backup-contents-page/file-browser/file-browser-context';
 import { useAnalytics } from '../../app/analytics';
-import { siteBackupRestoreRoute, siteBackupDownloadRoute } from '../../app/router/sites';
 import { ButtonStack } from '../../components/button-stack';
 import { Card, CardBody, CardHeader } from '../../components/card';
 import { useFormattedTime } from '../../components/formatted-time';
@@ -27,10 +25,20 @@ interface BackupDetailsProps {
 	site: Site;
 	timezoneString?: string;
 	gmtOffset?: number;
+	onRequestRestore?: () => void;
+	onRequestDownload?: () => void;
+	onGranularDownloadReady?: ( downloadId: number ) => void;
 }
 
-export function BackupDetails( { backup, site, timezoneString, gmtOffset }: BackupDetailsProps ) {
-	const router = useRouter();
+export function BackupDetails( {
+	backup,
+	site,
+	timezoneString,
+	gmtOffset,
+	onRequestRestore,
+	onRequestDownload,
+	onGranularDownloadReady,
+}: BackupDetailsProps ) {
 	const { recordTracksEvent } = useAnalytics();
 	const publishedTimestamp = backup.published || backup.last_published;
 	const formattedTime = useFormattedTime(
@@ -55,20 +63,6 @@ export function BackupDetails( { backup, site, timezoneString, gmtOffset }: Back
 	const isSmallViewport = useViewportMatch( 'medium', '<' );
 	const direction = isSmallViewport ? 'column-reverse' : 'row';
 
-	const handleRestoreClick = () => {
-		router.navigate( {
-			to: siteBackupRestoreRoute.fullPath,
-			params: { siteSlug: site.slug, rewindId: backup.rewind_id },
-		} );
-	};
-
-	const handleDownloadClick = useCallback( () => {
-		router.navigate( {
-			to: siteBackupDownloadRoute.fullPath,
-			params: { siteSlug: site.slug, rewindId: backup.rewind_id },
-		} );
-	}, [ router, site.slug, backup.rewind_id ] );
-
 	const handleGranularDownloadClick = useCallback( () => {
 		const browserCheckList = fileBrowserState.getCheckList( Number( backup.rewind_id ) );
 		const includePaths = browserCheckList.includeList.map( ( item ) => item.id ).join( ',' );
@@ -84,12 +78,7 @@ export function BackupDetails( { backup, site, timezoneString, gmtOffset }: Back
 			},
 			{
 				onSuccess: ( downloadId ) => {
-					// Navigate to download page with the downloadId to skip the form
-					router.navigate( {
-						to: siteBackupDownloadRoute.fullPath,
-						params: { siteSlug: site.slug, rewindId: backup.rewind_id },
-						search: { downloadId },
-					} );
+					onGranularDownloadReady?.( downloadId );
 				},
 			}
 		);
@@ -98,37 +87,38 @@ export function BackupDetails( { backup, site, timezoneString, gmtOffset }: Back
 		recordTracksEvent,
 		granularDownloadMutate,
 		backup.rewind_id,
-		router,
-		site.slug,
+		onGranularDownloadReady,
 	] );
 
 	const hasSelectedFiles = selectedFilesCount > 0;
-	const actions = backup.rewind_id ? (
-		<ButtonStack alignment="stretch" justify="center" direction={ direction }>
-			<Button
-				variant="tertiary"
-				size={ isSmallViewport ? 'default' : 'compact' }
-				onClick={ hasSelectedFiles ? handleGranularDownloadClick : handleDownloadClick }
-				style={ { justifyContent: 'center' } }
-				disabled={ isGranularDownloadPending }
-				isBusy={ isGranularDownloadPending }
-			>
-				{ hasSelectedFiles
-					? _n( 'Download selected file', 'Download selected files', selectedFilesCount )
-					: __( 'Download backup' ) }
-			</Button>
-			<Button
-				variant="primary"
-				size={ isSmallViewport ? 'default' : 'compact' }
-				onClick={ handleRestoreClick }
-				style={ { justifyContent: 'center' } }
-			>
-				{ hasSelectedFiles
-					? _n( 'Restore selected file', 'Restore selected files', selectedFilesCount )
-					: __( 'Restore to this point' ) }
-			</Button>
-		</ButtonStack>
-	) : null;
+	const showActions = !! ( onRequestRestore || onRequestDownload );
+	const actions =
+		showActions && backup.rewind_id ? (
+			<ButtonStack alignment="stretch" justify="center" direction={ direction }>
+				<Button
+					variant="tertiary"
+					size={ isSmallViewport ? 'default' : 'compact' }
+					onClick={ hasSelectedFiles ? handleGranularDownloadClick : onRequestDownload }
+					style={ { justifyContent: 'center' } }
+					disabled={ isGranularDownloadPending }
+					isBusy={ isGranularDownloadPending }
+				>
+					{ hasSelectedFiles
+						? _n( 'Download selected file', 'Download selected files', selectedFilesCount )
+						: __( 'Download backup' ) }
+				</Button>
+				<Button
+					variant="primary"
+					size={ isSmallViewport ? 'default' : 'compact' }
+					onClick={ onRequestRestore }
+					style={ { justifyContent: 'center' } }
+				>
+					{ hasSelectedFiles
+						? _n( 'Restore selected file', 'Restore selected files', selectedFilesCount )
+						: __( 'Restore to this point' ) }
+				</Button>
+			</ButtonStack>
+		) : null;
 
 	return (
 		<Card>
@@ -168,10 +158,10 @@ export function BackupDetails( { backup, site, timezoneString, gmtOffset }: Back
 								rewindId={ Number( backup.rewind_id ) }
 								siteId={ site.ID }
 								siteSlug={ site.slug }
-								isRestoreEnabled
+								isRestoreEnabled={ !! onRequestRestore }
 								onTrackEvent={ recordTracksEvent }
 								source="dashboard"
-								onRequestGranularRestore={ handleRestoreClick }
+								onRequestGranularRestore={ onRequestRestore }
 							/>
 						</div>
 					) }

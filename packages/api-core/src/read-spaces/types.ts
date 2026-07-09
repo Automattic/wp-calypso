@@ -9,7 +9,22 @@ import type { SiteSubscriptionItem } from '../read-follows';
  * `color` to a CSS variant. The API does not validate these against the lists
  * below — it only sanitizes — so the client constrains the picker.
  */
-export type SpaceColor = 'blue' | 'purple' | 'red' | 'orange' | 'gray' | 'green' | 'celadon';
+export type SpaceColor =
+	| 'blue'
+	| 'purple'
+	| 'red'
+	| 'orange'
+	| 'gray'
+	| 'green'
+	| 'celadon'
+	| 'pink';
+
+/**
+ * Accent applied to a space's post text (titles + actions). `'none'` keeps the
+ * text neutral — the same reading experience as the rest of the Reader — while
+ * the space icon can still carry its own color via `iconColor`.
+ */
+export type SpaceTextColor = SpaceColor | 'none';
 
 export type SpaceIcon =
 	| 'inbox'
@@ -19,26 +34,46 @@ export type SpaceIcon =
 	| 'cart'
 	| 'star'
 	| 'pages'
-	| 'category';
+	| 'category'
+	| 'globe'
+	| 'tag'
+	| 'rss'
+	| 'people'
+	| 'home'
+	| 'gallery'
+	| 'chart'
+	| 'palette';
 
 /**
  * How a space renders its feed. Each value selects a distinct list geometry —
- * `standard-list` (dense vertical list), `magazine` (large vertical cards),
- * `gallery` (grid), `board` (masonry), `legacy` (the classic Reader stream:
- * InfiniteList + post cards). Unset falls back to `standard-list`.
+ * `standard-list` (dense vertical list), `gallery` (grid), `board` (masonry),
+ * `legacy` (the classic Reader stream: InfiniteList + post cards). Unset falls
+ * back to `standard-list`.
  */
-export type SpaceFeedLayout = 'standard-list' | 'magazine' | 'gallery' | 'board' | 'legacy';
+export type SpaceFeedLayout = 'standard-list' | 'gallery' | 'board' | 'legacy';
+
+/**
+ * Column width of the space feed — `regular` is the narrow single reading column
+ * shared with the rest of the Reader; `wide` is the roomy layout. Unset falls
+ * back to `wide` so spaces created before this shipped keep their current width.
+ */
+export type SpaceLayoutWidth = 'regular' | 'wide';
 
 /**
  * Presentation settings for a space, grouped so they can grow beyond color and
  * icon (e.g. cover image, sort order) without widening `ReadSpace` itself.
  */
 export interface SpaceLayout {
-	color: SpaceColor;
+	// Accent for the space's post text (titles + actions); `'none'` = neutral.
+	color: SpaceTextColor;
+	// Color for the space's icon. Falls back to `color` when absent, so spaces
+	// created before the icon and text colors were split keep a colored icon.
+	iconColor?: SpaceColor;
 	icon: SpaceIcon;
-	// Which feed layout to render. The API does not persist this yet, so the
-	// Customize modal writes it optimistically into the React Query cache.
+	// Which feed layout to render.
 	view?: SpaceFeedLayout;
+	// Column width of the space feed. Unset falls back to `wide`.
+	width?: SpaceLayoutWidth;
 }
 
 /**
@@ -47,6 +82,10 @@ export interface SpaceLayout {
  */
 export interface ReadSpace {
 	id: string;
+	// `sanitize_title( name )`, derived and kept unique-per-owner server-side. Used
+	// to address a space in the URL; it re-syncs on every rename (so it can change),
+	// while `id` stays the stable key for mutations and streams.
+	slug: string;
 	name: string;
 	layout: SpaceLayout;
 }
@@ -59,6 +98,12 @@ export interface ReadSpace {
 export interface ReadSpaceDetails extends ReadSpace {
 	sources: SpaceSource[];
 	tags: string[];
+	// Base ES language codes (e.g. `en`, `pt`) the space's tag results are
+	// filtered to. The server normalizes whatever it's sent to base codes (region
+	// stripped, lowercased, validated, de-duped) and echoes the canonical list
+	// back here, so it may differ from what was submitted. Empty means unset (the
+	// server falls back to the viewer's interface locale).
+	languages: string[];
 }
 
 export interface CreateReadSpaceParams {
@@ -68,18 +113,26 @@ export interface CreateReadSpaceParams {
 	// if unresolvable.
 	tags?: string[];
 	feeds?: Array< number | string >;
+	// Base ES language codes (e.g. `en`, `pt`). The server normalizes to base
+	// codes and silently drops unknown ones, so the persisted set may be a subset.
+	languages?: string[];
 	layout?: Partial< SpaceLayout >;
 }
 
 /**
  * Params for `PUT /reader/spaces/{id}`. Send only the fields you are changing; at
- * least one is required. `tags` is a full replace of the tag set (pass `[]` to
- * clear), not an add/remove — there are no per-tag endpoints. `layout` is a
- * partial merge — send `{ color }` to change only the colour; the icon is kept.
+ * least one is required. `tags` and `feeds` are full replaces (pass `[]` to
+ * clear); `layout` is a partial merge — send `{ color }` to change only the
+ * colour; the icon is kept.
  */
 export interface UpdateReadSpaceParams {
 	name?: string;
 	tags?: string[];
+	feeds?: Array< number | string >;
+	// Full replace of the space's base language codes (pass `[]` to clear). The
+	// server normalizes to base codes and drops unknown ones; see
+	// `CreateReadSpaceParams.languages`.
+	languages?: string[];
 	layout?: Partial< SpaceLayout >;
 }
 

@@ -42,7 +42,7 @@ function boot( config: AppConfig ) {
 
 	if ( isEnabled( 'dashboard/omnibar-radical' ) ) {
 		import( './omnibar' ).then( ( m ) => m.default() ).catch( captureException );
-	} else if ( isEnabled( 'dashboard/omnibar' ) ) {
+	} else {
 		import( './interim-omnibar' )
 			.then( ( m ) => m.default( omnibarEvents ) )
 			.catch( captureException );

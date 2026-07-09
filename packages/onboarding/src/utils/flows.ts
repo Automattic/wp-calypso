@@ -4,6 +4,7 @@ export const HOSTING_LP_FLOW = 'hosting-start';
 export const NEW_HOSTED_SITE_FLOW = 'new-hosted-site';
 export const TRANSFERRING_HOSTED_SITE_FLOW = 'transferring-hosted-site';
 export const DIRECT_TO_CART_FLOW = 'direct-to-cart';
+export const EDUCATION_FLOW = 'education';
 export const CONNECT_DOMAIN_FLOW = 'connect-domain';
 export const DOMAIN_FLOW = 'domain';
 export const ENTREPRENEUR_FLOW = 'entrepreneur';
@@ -37,6 +38,7 @@ export const DIFM_FLOW_STORE = 'do-it-for-me-store';
 export const WEBSITE_DESIGN_SERVICES = 'website-design-services';
 export const ONBOARDING_UNIFIED_FLOW = 'onboarding-unified';
 export const AI_SITE_BUILDER_FLOW = 'ai-site-builder';
+export const AI_SITE_BUILDER_ONBOARDING_FLOW = 'ai-site-builder-onboarding';
 export const AI_SITE_BUILDER_SPEC_FLOW = 'ai-site-builder-spec';
 export const PLAYGROUND_FLOW = 'playground';
 export const PLAN_UPGRADE_FLOW = 'plan-upgrade';
@@ -107,6 +109,10 @@ export const isStartWritingFlow = ( flowName: string | null ) => {
 	return Boolean( flowName && [ START_WRITING_FLOW ].includes( flowName ) );
 };
 
+export const isWriteOnFlow = ( flowName: string | null ) => {
+	return Boolean( flowName && [ WRITE_ON_FLOW ].includes( flowName ) );
+};
+
 export const isOnboardingFlow = ( flowName: string | null ) => {
 	return Boolean( flowName && [ ONBOARDING_FLOW ].includes( flowName ) );
 };
@@ -157,6 +163,10 @@ export const isDIFMFlow = ( flowName: string | null ) => {
 
 export const isAIBuilderFlow = ( flowName: string | null ) => {
 	return Boolean( flowName && [ AI_SITE_BUILDER_FLOW ].includes( flowName ) );
+};
+
+export const isAIBuilderOnboardingFlow = ( flowName: string | null ) => {
+	return Boolean( flowName && [ AI_SITE_BUILDER_ONBOARDING_FLOW ].includes( flowName ) );
 };
 
 export const isAIBuilderSpecFlow = ( flowName: string | null ) => {

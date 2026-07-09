@@ -31,15 +31,38 @@ export function SpaceFeedLoadingMore() {
 	);
 }
 
-/** Shown when the stream has loaded but holds no posts. */
-export function SpaceFeedEmpty() {
+/** Shown when the stream has loaded but holds no posts. Copy differs per variant. */
+export function SpaceFeedEmpty( {
+	variant = 'feed',
+	onAddSources,
+}: {
+	variant?: 'feed' | 'discover';
+	onAddSources?: () => void;
+} ) {
 	const translate = useTranslate();
+
+	if ( variant === 'discover' ) {
+		return (
+			<div className="space-feed__status">
+				<p className="space-feed__status-title">{ translate( 'Nothing here yet' ) }</p>
+				<p className="space-feed__status-line">
+					{ translate( 'On-topic posts you don’t already follow will show up here.' ) }
+				</p>
+			</div>
+		);
+	}
+
 	return (
 		<div className="space-feed__status">
-			<p className="space-feed__status-title">{ translate( 'Nothing here yet' ) }</p>
+			<p className="space-feed__status-title">{ translate( 'Add feeds to get started' ) }</p>
 			<p className="space-feed__status-line">
-				{ translate( 'Posts from this space’s sources will show up here.' ) }
+				{ translate( 'Follow blogs, tags, or sites to fill this space with posts you’ll love.' ) }
 			</p>
+			{ onAddSources && (
+				<Button variant="primary" onClick={ onAddSources }>
+					{ translate( 'Add feeds' ) }
+				</Button>
+			) }
 		</div>
 	);
 }
@@ -48,7 +71,8 @@ export function SpaceFeedEmpty() {
 export function SpaceFeedError( { onRetry }: { onRetry: () => void } ) {
 	const translate = useTranslate();
 	return (
-		<div className="space-feed__status">
+		// `role="alert"` so the failure is announced when it replaces the loading region.
+		<div className="space-feed__status" role="alert">
 			<p className="space-feed__status-title">{ translate( 'Couldn’t load this feed' ) }</p>
 			<Button variant="secondary" onClick={ onRetry }>
 				{ translate( 'Try again' ) }

@@ -8,6 +8,9 @@ export const MAX_SPACE_NAME_LENGTH = 50;
 
 /** Presentation defaults applied to a freshly-created space. */
 export const DEFAULT_SPACE_LAYOUT: SpaceLayout = {
-	color: 'blue',
+	// Neutral post text by default (see `SpaceTextColor`); the icon still carries
+	// a color so the space keeps a visible identity.
+	color: 'none',
+	iconColor: 'blue',
 	icon: 'category',
 };

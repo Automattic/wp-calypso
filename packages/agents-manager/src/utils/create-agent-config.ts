@@ -22,11 +22,18 @@ export interface CreateAgentConfigOptions {
 	currentRoute?: string;
 	toolProvider?: ToolProvider;
 	contextProvider?: ContextProvider;
+	providerIds?: string[];
 	environment?: string;
 	/** Override the agent ID (e.g., from query string). Defaults to ORCHESTRATOR_AGENT_ID. */
 	agentId?: string;
 	/** Override the agent version (e.g., from query string). Passed via constructorArguments. */
 	version?: string;
+	/**
+	 * Streamed task-update callback (from a provider). Forwarded to useAgentChat's
+	 * `onTaskUpdate` so streamed tool-argument deltas reach the provider — e.g. to
+	 * paint streamed page-design markup into the editor as it arrives.
+	 */
+	onTaskUpdate?: ( update: unknown ) => void | Promise< void >;
 }
 
 /**
@@ -103,6 +110,10 @@ function normalizeSiteId( siteId: unknown ): number | undefined {
 	return Number.isFinite( numericSiteId ) && numericSiteId > 0 ? numericSiteId : undefined;
 }
 
+function getProviderIdsContext( providerIds?: string[] ): { loadedProviderIds?: string[] } {
+	return providerIds?.length ? { loadedProviderIds: providerIds } : {};
+}
+
 /**
  * Create a context provider that resolves context entries.
  */
@@ -112,7 +123,8 @@ async function createWrappedContextProvider(
 	agentId?: string,
 	version?: string,
 	environment?: string,
-	currentRoute?: string
+	currentRoute?: string,
+	providerIds?: string[]
 ): Promise< UseAgentChatConfig[ 'contextProvider' ] > {
 	const canAccessZendesk = await canAccessZendeskForAgent( agentId );
 	return {
@@ -154,6 +166,7 @@ async function createWrappedContextProvider(
 				...( Object.keys( mergedSiteEditorActions ).length > 0 && {
 					siteEditorActions: mergedSiteEditorActions,
 				} ),
+				...getProviderIdsContext( providerIds ),
 				constructorArguments: {
 					...( resolvedContext.constructorArguments || {} ),
 					...getClientConstructorArguments( environment, currentRoute ),
@@ -172,7 +185,8 @@ async function createDefaultContextProvider(
 	environment: string,
 	siteId?: number,
 	agentId?: string,
-	version?: string
+	version?: string,
+	providerIds?: string[]
 ): Promise< UseAgentChatConfig[ 'contextProvider' ] > {
 	const canAccessZendesk = await canAccessZendeskForAgent( agentId );
 	return {
@@ -212,6 +226,7 @@ async function createDefaultContextProvider(
 				...( hostData.siteName ? { siteName: hostData.siteName } : {} ),
 				...( hostData.siteUrl ? { siteUrl: hostData.siteUrl } : {} ),
 				...( contextEntries ? { contextEntries } : {} ),
+				...getProviderIdsContext( providerIds ),
 				// TODO: Remove once agenttic-client supports top-level constructorArguments
 				...( Object.keys( constructorArguments ).length && { constructorArguments } ),
 			};
@@ -234,9 +249,11 @@ export async function createAgentConfig(
 		currentRoute,
 		toolProvider,
 		contextProvider,
+		providerIds,
 		environment = 'calypso',
 		agentId = ORCHESTRATOR_AGENT_ID,
 		version,
+		onTaskUpdate,
 	} = options;
 
 	const config: UseAgentChatConfig = {
@@ -250,6 +267,10 @@ export async function createAgentConfig(
 		enableStreaming: true,
 	};
 
+	if ( onTaskUpdate ) {
+		config.onTaskUpdate = onTaskUpdate;
+	}
+
 	if ( toolProvider ) {
 		config.toolProvider = wrapToolProvider( toolProvider );
 	}
@@ -261,7 +282,8 @@ export async function createAgentConfig(
 			agentId,
 			version,
 			environment,
-			currentRoute
+			currentRoute,
+			providerIds
 		);
 	} else {
 		config.contextProvider = await createDefaultContextProvider(
@@ -269,7 +291,8 @@ export async function createAgentConfig(
 			environment,
 			siteId,
 			agentId,
-			version
+			version,
+			providerIds
 		);
 	}
 

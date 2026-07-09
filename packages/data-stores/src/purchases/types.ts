@@ -65,6 +65,7 @@ export interface Purchase {
 	isHundredYearDomain?: boolean;
 	isInAppPurchase: boolean;
 	isLocked: boolean;
+	isPlanTypeDowngradable: boolean;
 	isRechargeable: boolean;
 	isRefundable: boolean;
 	isWithinInitialRefundWindow: boolean;
@@ -134,6 +135,15 @@ export interface Purchase {
 	 */
 	regularPriceInteger: number;
 
+	/**
+	 * The date this subscription will next attempt to auto-renew (ISO 8601).
+	 *
+	 * For active/auto-renewing subscriptions this is the next *renewal attempt*
+	 * date, NOT the expiry date: WordPress.com begins attempting renewals before
+	 * a subscription expires (e.g. non-monthly WordPress.com plans first attempt
+	 * ~30 days before `expiryDate`). For subscriptions that are not renewing
+	 * (expiring, manual-renew, etc.) it falls back to the expiry date.
+	 */
 	renewDate: string;
 	saleAmount?: number;
 	saleAmountInteger?: number;
@@ -196,6 +206,18 @@ export interface Purchase {
 
 	isJetpackPlanOrProduct: boolean;
 	isAttachedToHoldingSite: boolean;
+
+	/**
+	 * True when a delayed downgrade has been scheduled for this subscription.
+	 * See `delayedDowngradeToProductSlug` for the target plan.
+	 */
+	isDelayedDowngradePending: boolean;
+
+	/**
+	 * The product slug of the plan this subscription will downgrade to at
+	 * renewal, or null when no delayed downgrade is scheduled.
+	 */
+	delayedDowngradeToProductSlug: string | null;
 }
 
 export interface PurchasePriceTier {

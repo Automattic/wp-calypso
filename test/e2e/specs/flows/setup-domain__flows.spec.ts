@@ -6,7 +6,7 @@ import {
 	NewUserResponse,
 	RestAPIClient,
 } from '@automattic/calypso-e2e';
-import { tags, test, expect } from '../../lib/pw-base';
+import { skipIfNotTrunk, tags, test, expect } from '../../lib/pw-base';
 import { apiCloseAccount, apiCreateFreeSiteForUser, apiDeleteSite } from '../shared';
 
 test.describe(
@@ -15,6 +15,8 @@ test.describe(
 		tag: [ tags.CALYPSO_RELEASE ],
 	},
 	() => {
+		skipIfNotTrunk();
+
 		const accountsToCleanup: {
 			testUser: NewTestUserDetails;
 			newUserDetails: NewUserResponse;
@@ -353,6 +355,17 @@ test.describe(
 					newSiteDetails.blog_details.site_slug as string,
 					false
 				);
+			} );
+
+			await test.step( 'And I skip the plan step if it appears', async function () {
+				// Adding a domain to a site that already has a paid plan normally lands
+				// straight on checkout, but a plan-eligibility propagation race can
+				// surface the "There's a plan for you" interstitial. When it does, take
+				// the free escape hatch to continue to checkout without adding a plan.
+				await page.waitForURL( /setup\/domain\/plans|\/checkout\// );
+				if ( /setup\/domain\/plans/.test( page.url() ) ) {
+					await pageSignupPickPlan.selectEscapeHatchWithoutSiteCreation( 'Free' );
+				}
 			} );
 
 			await test.step( 'Then I see the domain at checkout', async function () {

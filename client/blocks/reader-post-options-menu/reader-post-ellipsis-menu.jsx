@@ -1,7 +1,6 @@
 import page from '@automattic/calypso-router';
 import { pencil as edit, external, Icon, seen, published, unseen } from '@wordpress/icons';
 import { localize } from 'i18n-calypso';
-import { map } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
@@ -9,22 +8,17 @@ import ConversationFollowButton from 'calypso/blocks/conversation-follow-button'
 import EllipsisMenu from 'calypso/components/ellipsis-menu';
 import PopoverMenuItem from 'calypso/components/popover-menu/item';
 import ReaderFollowConversationIcon from 'calypso/reader/components/icons/follow-conversation-icon';
+import { withSeenPostsMutations } from 'calypso/reader/data/seen-posts';
 import { useHasSiteSubscriptionOrganization } from 'calypso/reader/data/site-subscriptions';
 import ReaderFollowButton from 'calypso/reader/follow-button';
 import { READER_POST_OPTIONS_MENU } from 'calypso/reader/follow-sources';
-import { canBeMarkedAsSeen, isEligibleForUnseen } from 'calypso/reader/get-helpers';
+import { isEligibleForUnseen, canBeMarkedAsSeen } from 'calypso/reader/get-helpers';
 import { isAutomatticTeamMember } from 'calypso/reader/lib/teams';
 import { isConversationFollowable } from 'calypso/reader/post/capabilities';
 import * as stats from 'calypso/reader/stats';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import * as PostUtils from 'calypso/state/posts/utils';
 import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
-import {
-	requestMarkAsSeen,
-	requestMarkAsUnseen,
-	requestMarkAsSeenBlog,
-	requestMarkAsUnseenBlog,
-} from 'calypso/state/reader/seen-posts/actions';
 import { blockSite } from 'calypso/state/reader/site-blocks/actions';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
@@ -37,7 +31,6 @@ class ReaderPostEllipsisMenu extends Component {
 		post: PropTypes.object,
 		feed: PropTypes.object,
 		followSource: PropTypes.string,
-		onBlock: PropTypes.func,
 		openSuggestedFollows: PropTypes.func,
 		showFollow: PropTypes.bool,
 		showVisitPost: PropTypes.bool,
@@ -45,23 +38,18 @@ class ReaderPostEllipsisMenu extends Component {
 		showConversationFollow: PropTypes.bool,
 		showReportPost: PropTypes.bool,
 		showReportSite: PropTypes.bool,
-		position: PropTypes.string,
-		posts: PropTypes.array,
 		teams: PropTypes.array,
 	};
 
 	static defaultProps = {
-		onBlock: noop,
 		followSource: READER_POST_OPTIONS_MENU,
 		openSuggestedFollows: noop,
-		position: 'top left',
 		showFollow: true,
 		showVisitPost: true,
 		showEditPost: true,
 		showConversationFollow: true,
 		showReportPost: true,
 		showReportSite: false,
-		posts: [],
 	};
 
 	openSuggestedFollowsModal = ( shouldOpen ) => {
@@ -75,7 +63,6 @@ class ReaderPostEllipsisMenu extends Component {
 		stats.recordGaEvent( 'Clicked Block Site' );
 		stats.recordTrackForPost( 'calypso_reader_block_site', this.props.post );
 		this.props.blockSite( this.props.post.site_ID );
-		this.props.onBlock();
 	};
 
 	visitPost = () => {
@@ -160,7 +147,7 @@ class ReaderPostEllipsisMenu extends Component {
 	};
 
 	markAsSeen = ( event ) => {
-		const { post, posts } = this.props;
+		const { post } = this.props;
 
 		if ( ! post ) {
 			return;
@@ -169,29 +156,20 @@ class ReaderPostEllipsisMenu extends Component {
 		this.props.recordReaderTracksEvent( 'calypso_reader_mark_as_seen_clicked', {}, { post } );
 
 		const feedId = post.feed_ID;
-		let postIds = [ post.ID ];
-		let feedItemIds = [ post.feed_item_ID ];
-		let globalIds = [ post.global_ID ];
-
-		if ( posts.length ) {
-			postIds = map( posts, 'ID' );
-			feedItemIds = map( posts, 'feed_item_ID' );
-			globalIds = map( posts, 'global_ID' );
-		}
+		const postIds = [ post.ID ];
+		const feedItemIds = [ post.feed_item_ID ];
+		const globalIds = [ post.global_ID ];
 
 		if ( post.feed_item_ID ) {
 			// is feed
 			this.props.requestMarkAsSeen( {
 				feedId,
-				feedUrl: post.feed_URL,
 				feedItemIds,
 				globalIds,
 			} );
 		} else {
 			// is blog
 			this.props.requestMarkAsSeenBlog( {
-				feedId,
-				feedUrl: post.feed_URL,
 				blogId: post.site_ID,
 				postIds,
 				globalIds,
@@ -205,7 +183,7 @@ class ReaderPostEllipsisMenu extends Component {
 	};
 
 	markAsUnSeen = ( event ) => {
-		const { post, posts } = this.props;
+		const { post } = this.props;
 
 		if ( ! post ) {
 			return;
@@ -214,29 +192,20 @@ class ReaderPostEllipsisMenu extends Component {
 		this.props.recordReaderTracksEvent( 'calypso_reader_mark_as_unseen_clicked', {}, { post } );
 
 		const feedId = post.feed_ID;
-		let postIds = [ post.ID ];
-		let feedItemIds = [ post.feed_item_ID ];
-		let globalIds = [ post.global_ID ];
-
-		if ( posts.length ) {
-			postIds = map( posts, 'ID' );
-			feedItemIds = map( posts, 'feed_item_ID' );
-			globalIds = map( posts, 'global_ID' );
-		}
+		const postIds = [ post.ID ];
+		const feedItemIds = [ post.feed_item_ID ];
+		const globalIds = [ post.global_ID ];
 
 		if ( post.feed_item_ID ) {
 			// is feed
 			this.props.requestMarkAsUnseen( {
 				feedId,
-				feedUrl: post.feed_URL,
 				feedItemIds,
 				globalIds,
 			} );
 		} else {
 			// is blog
 			this.props.requestMarkAsUnseenBlog( {
-				feedId,
-				feedUrl: post.feed_URL,
 				blogId: post.site_ID,
 				postIds,
 				globalIds,
@@ -257,8 +226,6 @@ class ReaderPostEllipsisMenu extends Component {
 			site,
 			teams,
 			translate,
-			position,
-			posts,
 			isWPForTeamsItem,
 			currentRoute,
 			hasOrganization,
@@ -281,7 +248,12 @@ class ReaderPostEllipsisMenu extends Component {
 			isBlockPossible = true;
 		}
 
-		const isTeamMember = isAutomatticTeamMember( teams );
+		const isSeen = post?.is_seen;
+		const isAutomattician = isAutomatticTeamMember( teams );
+		const isSeenEnabled =
+			isAutomattician ||
+			( isEligibleForUnseen( { isWPForTeamsItem, currentRoute, hasOrganization } ) &&
+				canBeMarkedAsSeen( { post } ) );
 		const showConversationFollowButton =
 			this.props.showConversationFollow && isConversationFollowable( post );
 
@@ -290,7 +262,7 @@ class ReaderPostEllipsisMenu extends Component {
 				className="reader-post-options-menu__ellipsis-menu"
 				popoverClassName="reader-post-options-menu__popover ignore-click"
 				onToggle={ this.onMenuToggle }
-				position={ position }
+				position="top left"
 				onClick={ this.stopPropagation }
 			>
 				{ this.props.showFollow && (
@@ -319,33 +291,16 @@ class ReaderPostEllipsisMenu extends Component {
 					/>
 				) }
 
-				{ isEligibleForUnseen( { isWPForTeamsItem, currentRoute, hasOrganization } ) &&
-					canBeMarkedAsSeen( { post, posts } ) &&
-					post.is_seen && (
-						<PopoverMenuItem
-							onClick={ this.markAsUnSeen }
-							icon={ unseen }
-							useWordPressIcon
-							iconSize={ 24 }
-						>
-							{ posts.length > 0 && translate( 'Mark all as unseen' ) }
-							{ posts.length === 0 && translate( 'Mark as unseen' ) }
-						</PopoverMenuItem>
-					) }
-
-				{ isEligibleForUnseen( { isWPForTeamsItem, currentRoute, hasOrganization } ) &&
-					canBeMarkedAsSeen( { post, posts } ) &&
-					! post.is_seen && (
-						<PopoverMenuItem
-							onClick={ this.markAsSeen }
-							icon={ seen }
-							useWordPressIcon
-							iconSize={ 24 }
-						>
-							{ posts.length > 0 && translate( 'Mark all as seen' ) }
-							{ posts.length === 0 && translate( 'Mark as seen' ) }
-						</PopoverMenuItem>
-					) }
+				{ isSeenEnabled && (
+					<PopoverMenuItem
+						onClick={ isSeen ? this.markAsUnSeen : this.markAsSeen }
+						icon={ isSeen ? unseen : seen }
+						useWordPressIcon
+						iconSize={ 24 }
+					>
+						{ isSeen ? translate( 'Mark as unseen' ) : translate( 'Mark as seen' ) }
+					</PopoverMenuItem>
+				) }
 
 				{ this.props.showVisitPost && post.URL && (
 					<PopoverMenuItem
@@ -364,8 +319,8 @@ class ReaderPostEllipsisMenu extends Component {
 					</PopoverMenuItem>
 				) }
 
-				{ isTeamMember && site && <hr className="popover__menu-separator" /> }
-				{ isTeamMember && site && <ReaderPostOptionsMenuBlogStickers blogId={ +site.ID } /> }
+				{ isAutomattician && site && <hr className="popover__menu-separator" /> }
+				{ isAutomattician && site && <ReaderPostOptionsMenuBlogStickers blogId={ +site.ID } /> }
 
 				{ ( this.props.showFollow || isEditPossible || post.URL ) && isBlockPossible && (
 					<hr className="popover__menu-separator" />
@@ -409,13 +364,9 @@ const ConnectedPostEllipsisMenu = connect(
 	},
 	{
 		blockSite,
-		requestMarkAsSeen,
-		requestMarkAsUnseen,
-		requestMarkAsSeenBlog,
-		requestMarkAsUnseenBlog,
 		recordReaderTracksEvent,
 	}
-)( localize( ReaderPostEllipsisMenu ) );
+)( localize( withSeenPostsMutations( ReaderPostEllipsisMenu ) ) );
 
 export default function PostEllipsisMenuContainer( props ) {
 	const { feed_ID: feedId, is_external: isExternal, site_ID: siteId } = props.post ?? {};

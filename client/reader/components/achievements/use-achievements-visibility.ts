@@ -1,4 +1,4 @@
-import { readAchievementsSettingsQuery } from '@automattic/api-queries';
+import { readAchievementsSettingsQuery, userPreferenceQuery } from '@automattic/api-queries';
 import { useQuery } from '@tanstack/react-query';
 import { useSelector } from 'calypso/state';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
@@ -7,14 +7,25 @@ export default function useAchievementsVisibility( profileUserLogin?: string ) {
 	const currentUser = useSelector( getCurrentUser );
 	const isOwnProfile = currentUser?.username === profileUserLogin;
 
+	// For others profile.
 	const { data: settingsData, isLoading: settingsLoading } = useQuery( {
 		...readAchievementsSettingsQuery( profileUserLogin ),
-		enabled: ! isOwnProfile && profileUserLogin != null,
+		enabled: ! isOwnProfile && !! profileUserLogin,
 	} );
-	const isPublic = settingsData?.settings[ 'achievements-visibility' ] === 'public';
+
+	// For own profile.
+	const { data: achievementsVisibility } = useQuery( {
+		...userPreferenceQuery( 'achievements-visibility' ),
+		enabled: isOwnProfile,
+	} );
+
+	const isPublic = isOwnProfile
+		? achievementsVisibility === 'public'
+		: settingsData?.settings[ 'achievements-visibility' ] === 'public';
 
 	return {
 		isOwnProfile,
+		isPublic,
 		isVisible: isOwnProfile || isPublic,
 		isLoading: ! isOwnProfile && settingsLoading,
 	};

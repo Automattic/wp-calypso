@@ -191,6 +191,10 @@ const NotesWrapper = ( { wpcom } ) => {
 		sendMessage( { action: 'widescreen', widescreen: true } );
 	}, [] );
 
+	if ( ! isShowing ) {
+		return null;
+	}
+
 	return (
 		<NotificationApp
 			customEnhancer={ customEnhancer }

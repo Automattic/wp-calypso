@@ -6,7 +6,8 @@ import { recordAction, recordGaEvent } from 'calypso/reader/stats';
 import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
 import ReaderSidebarHelper from '../helper';
 import { MenuItem, MenuItemLink } from '../menu';
-export default function ReaderSidebarListsListItemCreateLink( { path } ) {
+
+export default function ListItemCreateLink( { path } ) {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 

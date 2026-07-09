@@ -10,8 +10,13 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { act, fireEvent, render } from '@testing-library/react';
 import React from 'react';
+import ExcerptPicker from './components/excerpt-picker';
+import ImageAltTextPicker from './components/image-alt-text-picker';
 import PostFeedback from './components/post-feedback';
+import Proofread from './components/proofread';
 import ReviewMediation from './components/review-mediation';
+import SeoDescriptionPicker from './components/seo-description-picker';
+import SeoTitlePicker from './components/seo-title-picker';
 import TitlePicker from './components/title-picker';
 import { clearActiveBlockFocus, undoBlockEdit } from './utils/block-actions';
 import {
@@ -31,6 +36,10 @@ Element.prototype.scrollIntoView = jest.fn();
 
 jest.mock( '@automattic/calypso-analytics', () => ( {
 	recordTracksEvent: jest.fn(),
+} ) );
+
+jest.mock( './extensions', () => ( {
+	registerBlockEditorFilters: jest.fn(),
 } ) );
 
 const mockSetIsSplitScreen = jest.fn();
@@ -133,16 +142,23 @@ jest.mock( '@wordpress/data', () => ( {
 
 // Stub @wordpress/data on window so useCheckpoint / handleShowComponent
 // can read/write the post title and current post id via the core/editor store.
-function installWpDataMock( initialTitle: string, postId = 123 ) {
-	const state = { title: initialTitle };
+function installWpDataMock( initialTitle: string, postId = 123, initialExcerpt = '' ) {
+	const state = { title: initialTitle, excerpt: initialExcerpt };
 	( window as any ).wp = {
 		data: {
 			select: ( store: string ) => {
 				if ( store === 'core/editor' ) {
 					return {
 						getCurrentPostId: () => postId,
-						getEditedPostAttribute: ( attr: string ) =>
-							attr === 'title' ? state.title : undefined,
+						getEditedPostAttribute: ( attr: string ) => {
+							if ( attr === 'title' ) {
+								return state.title;
+							}
+							if ( attr === 'excerpt' ) {
+								return state.excerpt;
+							}
+							return undefined;
+						},
 					};
 				}
 				return undefined;
@@ -150,9 +166,12 @@ function installWpDataMock( initialTitle: string, postId = 123 ) {
 			dispatch: ( store: string ) => {
 				if ( store === 'core/editor' ) {
 					return {
-						editPost: ( attrs: { title?: string } ) => {
+						editPost: ( attrs: { title?: string; excerpt?: string } ) => {
 							if ( typeof attrs.title === 'string' ) {
 								state.title = attrs.title;
+							}
+							if ( typeof attrs.excerpt === 'string' ) {
+								state.excerpt = attrs.excerpt;
 							}
 						},
 					};
@@ -164,7 +183,12 @@ function installWpDataMock( initialTitle: string, postId = 123 ) {
 	return state;
 }
 
-function installPostTypeMock( postType?: string, postId: number | null = 123 ) {
+function installPostTypeMock(
+	postType?: string,
+	postId: number | null = 123,
+	supportsExcerpt: boolean = postType === 'post',
+	postTypeRecordResolved = true
+) {
 	( window as any ).wp = {
 		data: {
 			select: ( store: string ) => {
@@ -179,6 +203,14 @@ function installPostTypeMock( postType?: string, postId: number | null = 123 ) {
 						getSelectedBlock: () => mockSelectedBlock,
 						getBlock: ( clientId: string ) => mockBlocksByClientId[ clientId ],
 						getBlocks: () => [],
+					};
+				}
+				if ( store === 'core' ) {
+					return {
+						getPostType: ( name: string ) =>
+							postTypeRecordResolved && name === postType
+								? { supports: { excerpt: supportsExcerpt } }
+								: undefined,
 					};
 				}
 				return undefined;
@@ -222,16 +254,13 @@ function installContextProviderMock( postType = 'post', postId: number | null = 
 
 function installAiEditorialReviewData( features: Record< string, boolean > = {} ) {
 	( globalThis as any ).agentsManagerData = {
-		aiEditorialReviewEnabled: true,
-		jetpackAiSidebarPreview: {
+		jetpackAiSidebar: {
 			enabled: true,
 			features: {
 				aiEditorialReview: true,
 				generateFeedback: true,
 				blockTransformations: true,
 				optimizeTitleSuggestion: false,
-				chatHistory: false,
-				supportGuides: false,
 				...features,
 			},
 		},
@@ -258,6 +287,26 @@ function getTracksCalls( eventName: string ) {
 	return mockedRecordTracksEvent.mock.calls.filter( ( [ name ] ) => name === eventName );
 }
 
+describe( 'contextProvider.getClientContext', () => {
+	afterEach( () => {
+		delete ( globalThis as any ).agentsManagerData;
+	} );
+
+	it( 'forwards jetpackSEOSuggestionsEnabled = true when the host enables SEO suggestions', () => {
+		installAiEditorialReviewData( { seoSuggestions: true } );
+		expect( contextProvider.getClientContext().jetpackSEOSuggestionsEnabled ).toBe( true );
+	} );
+
+	it( 'forwards jetpackSEOSuggestionsEnabled = false when the host disables SEO suggestions', () => {
+		installAiEditorialReviewData( { seoSuggestions: false } );
+		expect( contextProvider.getClientContext().jetpackSEOSuggestionsEnabled ).toBe( false );
+	} );
+
+	it( 'defaults jetpackSEOSuggestionsEnabled to false when no sidebar config is present', () => {
+		expect( contextProvider.getClientContext().jetpackSEOSuggestionsEnabled ).toBe( false );
+	} );
+} );
+
 describe( 'getChatComponent', () => {
 	it( 'returns TitlePicker for type "title-picker"', () => {
 		expect( getChatComponent( 'title-picker' ) ).toBe( TitlePicker );
@@ -269,6 +318,26 @@ describe( 'getChatComponent', () => {
 
 	it( 'returns PostFeedback for type "post-feedback"', () => {
 		expect( getChatComponent( 'post-feedback' ) ).toBe( PostFeedback );
+	} );
+
+	it( 'returns Proofread for type "proofread"', () => {
+		expect( getChatComponent( 'proofread' ) ).toBe( Proofread );
+	} );
+
+	it( 'returns SeoTitlePicker for type "seo-title-picker"', () => {
+		expect( getChatComponent( 'seo-title-picker' ) ).toBe( SeoTitlePicker );
+	} );
+
+	it( 'returns SeoDescriptionPicker for type "seo-description-picker"', () => {
+		expect( getChatComponent( 'seo-description-picker' ) ).toBe( SeoDescriptionPicker );
+	} );
+
+	it( 'returns ImageAltTextPicker for type "image-alt-text-picker"', () => {
+		expect( getChatComponent( 'image-alt-text-picker' ) ).toBe( ImageAltTextPicker );
+	} );
+
+	it( 'returns ExcerptPicker for type "excerpt-picker"', () => {
+		expect( getChatComponent( 'excerpt-picker' ) ).toBe( ExcerptPicker );
 	} );
 
 	it( 'returns null for an unknown type', () => {
@@ -324,9 +393,9 @@ describe( 'PostFeedback', () => {
 		expect( container.textContent ).toContain(
 			'Needs manual edit: Needs confirmed event details from the author.'
 		);
-		const manualReasons = container.querySelectorAll( '.jetpack-ai-post-feedback__manual-reason' );
+		const manualReasons = container.querySelectorAll( '.jetpack-ai-feedback-list__manual-reason' );
 		const acceptButtons = container.querySelectorAll(
-			'.jetpack-ai-post-feedback__action-button.is-primary'
+			'.jetpack-ai-feedback-list__action-button.is-primary'
 		);
 		expect( acceptButtons[ 1 ].hasAttribute( 'disabled' ) ).toBe( true );
 		expect( acceptButtons[ 1 ].getAttribute( 'aria-describedby' ) ).toBe(
@@ -471,7 +540,7 @@ describe( 'PostFeedback', () => {
 			} )
 		);
 
-		const blockRef = document.querySelector( '.jetpack-ai-post-feedback__block-ref' );
+		const blockRef = document.querySelector( '.jetpack-ai-feedback-list__block-ref' );
 		expect( blockRef ).toBeTruthy();
 		( blockRef as HTMLButtonElement ).click();
 
@@ -534,7 +603,7 @@ describe( 'PostFeedback', () => {
 			} )
 		);
 
-		const blockRefs = container.querySelectorAll( '.jetpack-ai-post-feedback__block-ref' );
+		const blockRefs = container.querySelectorAll( '.jetpack-ai-feedback-list__block-ref' );
 		( blockRefs[ 0 ] as HTMLButtonElement ).click();
 		expect( firstLayout.classList.contains( 'is-focus-mode' ) ).toBe( true );
 		expect( secondLayout.classList.contains( 'is-focus-mode' ) ).toBe( false );
@@ -578,7 +647,7 @@ describe( 'PostFeedback', () => {
 		);
 
 		(
-			container.querySelector( '.jetpack-ai-post-feedback__block-ref' ) as HTMLButtonElement
+			container.querySelector( '.jetpack-ai-feedback-list__block-ref' ) as HTMLButtonElement
 		 ).click();
 		expect( layoutElement.classList.contains( 'is-focus-mode' ) ).toBe( true );
 
@@ -618,13 +687,13 @@ describe( 'PostFeedback', () => {
 		);
 
 		(
-			container.querySelector( '.jetpack-ai-post-feedback__block-ref' ) as HTMLButtonElement
+			container.querySelector( '.jetpack-ai-feedback-list__block-ref' ) as HTMLButtonElement
 		 ).click();
 		expect( layoutElement.classList.contains( 'is-focus-mode' ) ).toBe( true );
 		mockClearSelectedBlock.mockClear();
 
 		const dismissButton = container.querySelectorAll(
-			'.jetpack-ai-post-feedback__action-button'
+			'.jetpack-ai-feedback-list__action-button'
 		)[ 1 ] as HTMLButtonElement;
 		fireEvent.mouseDown( dismissButton );
 		act( () => {
@@ -679,6 +748,263 @@ describe( 'PostFeedback', () => {
 	} );
 } );
 
+describe( 'Proofread', () => {
+	beforeEach( () => {
+		mockEditorBlocks = [];
+		document.body.innerHTML = '';
+		clearActiveBlockFocus();
+		delete ( window as any ).wp;
+	} );
+
+	it( 'renders the summary notes and proofread items', () => {
+		const { container } = render(
+			React.createElement( Proofread, {
+				summary: 'Found a duplicated period.',
+				postId: 123,
+				items: [
+					{
+						title: 'Punctuation',
+						feedback: 'The sentence ends with a doubled period.',
+						action: 'Remove the extra period.',
+						block_index: 0,
+						current_text: 'children..',
+						suggested_text: 'children.',
+					},
+				],
+			} )
+		);
+
+		expect( container.textContent ).toContain( 'Found a duplicated period.' );
+		expect( container.textContent ).toContain( 'Spelling and grammar check complete.' );
+		expect( container.textContent ).toContain( 'Reviews your last saved version.' );
+		expect( container.textContent ).toContain( 'Spelling & grammar' );
+		expect( container.textContent ).toContain( 'Punctuation' );
+	} );
+
+	const findAcceptAllButton = ( container: HTMLElement ) =>
+		Array.from( container.querySelectorAll( 'button' ) ).find(
+			( button ) => button.textContent?.startsWith( 'Accept all' )
+		);
+
+	it( 'shows an enabled Accept all button when one-click fixes are available', () => {
+		mockEditorBlocks = [
+			{
+				clientId: 'block-1',
+				name: 'core/paragraph',
+				attributes: { content: 'There will be a lot of activities for children..' },
+			},
+		];
+
+		const { container } = render(
+			React.createElement( Proofread, {
+				summary: 'Summary.',
+				postId: 123,
+				items: [
+					{
+						title: 'Punctuation',
+						feedback: 'Doubled period.',
+						action: 'Remove the extra period.',
+						block_index: 0,
+						current_text: 'There will be a lot of activities for children..',
+						suggested_text: 'There will be a lot of activities for children.',
+					},
+				],
+			} )
+		);
+
+		const acceptAll = findAcceptAllButton( container );
+		expect( acceptAll ).toBeTruthy();
+		expect( acceptAll?.hasAttribute( 'disabled' ) ).toBe( false );
+	} );
+
+	it( 'hides Accept all when no one-click fixes are available', () => {
+		const { container } = render(
+			React.createElement( Proofread, {
+				summary: 'Summary.',
+				postId: 123,
+				items: [
+					{
+						title: 'Manual item',
+						feedback: 'Feedback.',
+						action: 'Action.',
+						block_index: null,
+						requires_manual: true,
+						manual_reason: 'Needs author review.',
+					},
+				],
+			} )
+		);
+
+		expect( findAcceptAllButton( container ) ).toBeUndefined();
+	} );
+
+	const findButtonByText = ( container: HTMLElement, text: string ) =>
+		Array.from( container.querySelectorAll( 'button' ) ).find(
+			( button ) => button.textContent === text
+		) as HTMLButtonElement | undefined;
+
+	it( 'applies pending one-click items and marks them Applied on Accept all', async () => {
+		jest.useFakeTimers();
+		mockEditorBlocks = [
+			{
+				clientId: 'block-1',
+				name: 'core/paragraph',
+				attributes: { content: 'There will be a lot of activities for children..' },
+			},
+		];
+		const { blockUpdates } = installWpDataMockWithBlockEditor( {
+			'block-1': {
+				name: 'core/paragraph',
+				attributes: { content: 'There will be a lot of activities for children..' },
+			},
+		} );
+
+		const { container } = render(
+			React.createElement( Proofread, {
+				summary: 'Summary.',
+				postId: 123,
+				items: [
+					{
+						title: 'Punctuation',
+						feedback: 'Doubled period.',
+						action: 'Remove the extra period.',
+						block_index: 0,
+						current_text: 'There will be a lot of activities for children..',
+						suggested_text: 'There will be a lot of activities for children.',
+					},
+				],
+			} )
+		);
+
+		const acceptAll = findAcceptAllButton( container ) as HTMLButtonElement;
+		await act( async () => {
+			fireEvent.click( acceptAll );
+		} );
+		// applyReviewEdit commits the edit behind an 800ms shimmer delay.
+		await act( async () => {
+			jest.advanceTimersByTime( 1000 );
+		} );
+
+		expect( blockUpdates ).toEqual( [
+			{
+				clientId: 'block-1',
+				attrs: { content: 'There will be a lot of activities for children.' },
+			},
+		] );
+		expect( container.textContent ).toContain( 'Applied' );
+		expect( findButtonByText( container, 'Retry' ) ).toBeUndefined();
+		jest.useRealTimers();
+	} );
+
+	it( 'shows a steady Accepting state while the bulk run is in progress', async () => {
+		jest.useFakeTimers();
+		mockEditorBlocks = [
+			{ clientId: 'block-1', name: 'core/paragraph', attributes: { content: 'children..' } },
+		];
+		installWpDataMockWithBlockEditor( {
+			'block-1': { name: 'core/paragraph', attributes: { content: 'children..' } },
+		} );
+
+		const { container } = render(
+			React.createElement( Proofread, {
+				summary: 'Summary.',
+				postId: 123,
+				items: [
+					{
+						title: 'Punctuation',
+						feedback: 'Doubled period.',
+						action: 'Remove the extra period.',
+						block_index: 0,
+						current_text: 'children..',
+						suggested_text: 'children.',
+					},
+				],
+			} )
+		);
+
+		const acceptAll = findAcceptAllButton( container ) as HTMLButtonElement;
+		await act( async () => {
+			fireEvent.click( acceptAll );
+		} );
+
+		// Mid-run the footer stays put with a steady label rather than showing a
+		// decrementing "Accept all (N)" count that vanishes as items resolve.
+		expect( container.querySelector( '.jetpack-ai-feedback-list__footer' ) ).not.toBeNull();
+		expect( container.textContent ).toContain( 'Accepting…' );
+		expect( container.textContent ).not.toContain( 'Accept all (' );
+
+		await act( async () => {
+			jest.advanceTimersByTime( 1000 );
+		} );
+
+		expect( container.textContent ).toContain( 'Applied' );
+		expect( findAcceptAllButton( container ) ).toBeUndefined();
+		jest.useRealTimers();
+	} );
+
+	it( 'disables Undo on applied items during a bulk run', async () => {
+		jest.useFakeTimers();
+		mockEditorBlocks = [
+			{ clientId: 'block-a', name: 'core/paragraph', attributes: { content: 'aa..' } },
+			{ clientId: 'block-b', name: 'core/paragraph', attributes: { content: 'bb..' } },
+		];
+		installWpDataMockWithBlockEditor( {
+			'block-a': { name: 'core/paragraph', attributes: { content: 'aa..' } },
+			'block-b': { name: 'core/paragraph', attributes: { content: 'bb..' } },
+		} );
+
+		const { container } = render(
+			React.createElement( Proofread, {
+				summary: 'Summary.',
+				postId: 123,
+				items: [
+					{
+						title: 'A',
+						feedback: 'a',
+						action: 'a',
+						block_index: 0,
+						current_text: 'aa..',
+						suggested_text: 'aa.',
+					},
+					{
+						title: 'B',
+						feedback: 'b',
+						action: 'b',
+						block_index: 1,
+						current_text: 'bb..',
+						suggested_text: 'bb.',
+					},
+				],
+			} )
+		);
+
+		// Accept item A on its own so it collapses into an Applied row with Undo.
+		await act( async () => {
+			fireEvent.click( findButtonByText( container, 'Accept' ) as HTMLButtonElement );
+		} );
+		await act( async () => {
+			jest.advanceTimersByTime( 1000 );
+		} );
+		const undoBeforeRun = findButtonByText( container, 'Undo' );
+		expect( undoBeforeRun ).toBeDefined();
+		expect( undoBeforeRun?.hasAttribute( 'disabled' ) ).toBe( false );
+
+		// Start a bulk run over the remaining item B. While it is in flight the Undo
+		// on the already-applied item A must be locked so it cannot race the edit.
+		await act( async () => {
+			fireEvent.click( findAcceptAllButton( container ) as HTMLButtonElement );
+		} );
+		const undoDuringRun = findButtonByText( container, 'Undo' );
+		expect( undoDuringRun ).toBeDefined();
+		expect( undoDuringRun?.hasAttribute( 'disabled' ) ).toBe( true );
+
+		await act( async () => {
+			jest.advanceTimersByTime( 1000 );
+		} );
+		jest.useRealTimers();
+	} );
+} );
+
 describe( 'getEmptyViewSuggestions', () => {
 	beforeEach( () => {
 		mockedRecordTracksEvent.mockClear();
@@ -689,86 +1015,97 @@ describe( 'getEmptyViewSuggestions', () => {
 		delete ( window as any ).wp;
 	} );
 
-	it( 'hides AI Editorial Review by default', () => {
+	it( 'hides post suggestions without a sidebar config', () => {
 		const labels = getEmptyViewSuggestions().map( ( suggestion ) => suggestion.label );
-		expect( labels ).toContain( 'Optimize Title' );
-		expect( labels ).not.toContain( 'AI Editorial Review' );
+		expect( labels ).not.toContain( 'Optimize Title' );
+		expect( labels ).not.toContain( 'Editorial Review' );
 	} );
 
-	it( 'shows AI Editorial Review when enabled by agentsManagerData', () => {
+	it( 'shows Editorial Review when enabled by agentsManagerData', () => {
 		installAiEditorialReviewData();
 		installPostTypeMock( 'post' );
 		const labels = getEmptyViewSuggestions().map( ( suggestion ) => suggestion.label );
 		expect( labels ).not.toContain( 'Optimize Title' );
-		expect( labels ).toContain( 'AI Editorial Review' );
-		expect( labels ).toContain( 'Generate Feedback' );
+		expect( labels ).toContain( 'Editorial Review' );
+		expect( labels ).toContain( 'Simple Review' );
 	} );
 
-	it( 'supports the legacy reviewMediatorEnabled flag while bundles roll forward', () => {
-		( globalThis as any ).agentsManagerData = { reviewMediatorEnabled: true };
-		installPostTypeMock( 'post' );
-
-		const labels = getEmptyViewSuggestions().map( ( suggestion ) => suggestion.label );
-
-		expect( labels ).toContain( 'Optimize Title' );
-		expect( labels ).toContain( 'AI Editorial Review' );
-		expect( labels ).not.toContain( 'Generate Feedback' );
-	} );
-
-	it( 'hides AI Editorial Review on page editors', () => {
+	it( 'hides Editorial Review on page editors', () => {
 		installAiEditorialReviewData();
 		installPostTypeMock( 'page' );
 
 		const labels = getEmptyViewSuggestions().map( ( suggestion ) => suggestion.label );
 
 		expect( labels ).not.toContain( 'Optimize Title' );
-		expect( labels ).not.toContain( 'AI Editorial Review' );
+		expect( labels ).not.toContain( 'Editorial Review' );
 	} );
 
-	it( 'hides AI Editorial Review until the post type is known', () => {
+	it( 'hides Editorial Review until the post type is known', () => {
 		installAiEditorialReviewData();
 		installPostTypeMock();
 
 		const labels = getEmptyViewSuggestions().map( ( suggestion ) => suggestion.label );
 
 		expect( labels ).not.toContain( 'Optimize Title' );
-		expect( labels ).not.toContain( 'AI Editorial Review' );
+		expect( labels ).not.toContain( 'Editorial Review' );
 	} );
 
-	it( 'hides Generate Feedback until the post has a saved post ID', () => {
+	it( 'hides Simple Review until the post has a saved post ID', () => {
 		installAiEditorialReviewData();
 		installPostTypeMock( 'post', null );
 
 		const labels = getEmptyViewSuggestions().map( ( suggestion ) => suggestion.label );
 
-		expect( labels ).not.toContain( 'Generate Feedback' );
-		expect( labels ).toContain( 'AI Editorial Review' );
+		expect( labels ).not.toContain( 'Simple Review' );
+		expect( labels ).toContain( 'Editorial Review' );
 	} );
 
-	it( 'hides Generate Feedback when the preview feature disables it', () => {
+	it( 'hides Simple Review when the preview feature disables it', () => {
 		installAiEditorialReviewData( { generateFeedback: false } );
 		installPostTypeMock( 'post' );
 
 		const labels = getEmptyViewSuggestions().map( ( suggestion ) => suggestion.label );
 
-		expect( labels ).not.toContain( 'Generate Feedback' );
-		expect( labels ).toContain( 'AI Editorial Review' );
+		expect( labels ).not.toContain( 'Simple Review' );
+		expect( labels ).toContain( 'Editorial Review' );
 	} );
 
-	it( 'hides Optimize Title when the preview feature disables it', () => {
+	it( 'hides Proofread by default and shows it when the preview feature enables it', () => {
+		installAiEditorialReviewData();
+		installPostTypeMock( 'post' );
+		expect( getEmptyViewSuggestions().map( ( suggestion ) => suggestion.label ) ).not.toContain(
+			'Proofread'
+		);
+
+		installAiEditorialReviewData( { proofreadContent: true } );
+		installPostTypeMock( 'post' );
+		expect( getEmptyViewSuggestions().map( ( suggestion ) => suggestion.label ) ).toContain(
+			'Proofread'
+		);
+	} );
+
+	it( 'hides Proofread until the post has a saved post ID', () => {
+		installAiEditorialReviewData( { proofreadContent: true } );
+		installPostTypeMock( 'post', null );
+
+		const labels = getEmptyViewSuggestions().map( ( suggestion ) => suggestion.label );
+
+		expect( labels ).not.toContain( 'Proofread' );
+	} );
+
+	it( 'hides Optimize Title when the feature disables it', () => {
 		installAiEditorialReviewData( { aiEditorialReview: false, optimizeTitleSuggestion: false } );
 		installPostTypeMock( 'post' );
 
 		const labels = getEmptyViewSuggestions().map( ( suggestion ) => suggestion.label );
 
 		expect( labels ).not.toContain( 'Optimize Title' );
-		expect( labels ).not.toContain( 'AI Editorial Review' );
+		expect( labels ).not.toContain( 'Editorial Review' );
 	} );
 
-	it( 'treats missing preview features as disabled', () => {
+	it( 'treats missing features as disabled', () => {
 		( globalThis as any ).agentsManagerData = {
-			aiEditorialReviewEnabled: true,
-			jetpackAiSidebarPreview: {
+			jetpackAiSidebar: {
 				enabled: true,
 				features: { aiEditorialReview: true },
 			},
@@ -778,8 +1115,182 @@ describe( 'getEmptyViewSuggestions', () => {
 		const labels = getEmptyViewSuggestions().map( ( suggestion ) => suggestion.label );
 
 		expect( labels ).not.toContain( 'Optimize Title' );
-		expect( labels ).toContain( 'AI Editorial Review' );
-		expect( labels ).not.toContain( 'Generate Feedback' );
+		expect( labels ).toContain( 'Editorial Review' );
+		expect( labels ).not.toContain( 'Simple Review' );
+	} );
+
+	it( 'attaches a one-line description to every starting-screen suggestion', () => {
+		installAiEditorialReviewData( {
+			optimizeTitleSuggestion: true,
+			proofreadContent: true,
+			seoSuggestions: true,
+			excerptSuggestion: true,
+		} );
+		installPostTypeMock( 'post' );
+
+		const suggestions = getEmptyViewSuggestions();
+		const byLabel = ( label: string ) =>
+			suggestions.find( ( suggestion ) => suggestion.label === label );
+
+		[
+			'Optimize Title',
+			'Proofread',
+			'Simple Review',
+			'Editorial Review',
+			'SEO Enhancer',
+			'Generate Excerpt',
+		].forEach( ( label ) => {
+			const suggestion = byLabel( label );
+			expect( suggestion ).toBeDefined();
+			expect( typeof suggestion?.description ).toBe( 'string' );
+			expect( suggestion?.description ).toBeTruthy();
+			expect( suggestion?.description ).not.toContain( '\n' );
+		} );
+	} );
+
+	it( 'shows Generate Excerpt when the excerptSuggestion feature is enabled', () => {
+		installAiEditorialReviewData( { excerptSuggestion: true } );
+		installPostTypeMock( 'post' );
+
+		const excerptChip = getEmptyViewSuggestions().find(
+			( suggestion ) => suggestion.id === 'generate-excerpt'
+		);
+
+		expect( excerptChip?.label ).toBe( 'Generate Excerpt' );
+		expect( excerptChip?.prompt ).toBe( 'Generate an excerpt for this post' );
+	} );
+
+	it( 'hides Generate Excerpt when the feature is disabled', () => {
+		installAiEditorialReviewData( { excerptSuggestion: false } );
+		installPostTypeMock( 'post' );
+
+		const ids = getEmptyViewSuggestions().map( ( suggestion ) => suggestion.id );
+
+		expect( ids ).not.toContain( 'generate-excerpt' );
+	} );
+
+	it( 'hides Generate Excerpt when the post type does not support excerpts', () => {
+		installAiEditorialReviewData( { excerptSuggestion: true } );
+		installPostTypeMock( 'page' );
+
+		const ids = getEmptyViewSuggestions().map( ( suggestion ) => suggestion.id );
+
+		expect( ids ).not.toContain( 'generate-excerpt' );
+	} );
+
+	it( 'hides Generate Excerpt until the post type is known', () => {
+		installAiEditorialReviewData( { excerptSuggestion: true } );
+		installPostTypeMock();
+
+		const ids = getEmptyViewSuggestions().map( ( suggestion ) => suggestion.id );
+
+		expect( ids ).not.toContain( 'generate-excerpt' );
+	} );
+
+	it( 'shows Generate Excerpt on pages when the page post type supports excerpts', () => {
+		installAiEditorialReviewData( { excerptSuggestion: true } );
+		// WordPress.com Simple / any site with the Jetpack SEO Tools module adds
+		// excerpt support to pages — the legacy AI Excerpt panel shows there too.
+		installPostTypeMock( 'page', 123, true );
+
+		const ids = getEmptyViewSuggestions().map( ( suggestion ) => suggestion.id );
+
+		expect( ids ).toContain( 'generate-excerpt' );
+	} );
+
+	it( 'hides Generate Excerpt for templates and patterns even though they support excerpts', () => {
+		installAiEditorialReviewData( { excerptSuggestion: true } );
+		// Core registers excerpt support for wp_block (patterns), but the excerpt
+		// field acts as a description there — the legacy panel excludes these types.
+		installPostTypeMock( 'wp_block', 123, true );
+
+		const ids = getEmptyViewSuggestions().map( ( suggestion ) => suggestion.id );
+
+		expect( ids ).not.toContain( 'generate-excerpt' );
+	} );
+
+	it( 'shows Generate Excerpt for posts while the post type record is still resolving', () => {
+		installAiEditorialReviewData( { excerptSuggestion: true } );
+		installPostTypeMock( 'post', 123, true, false );
+
+		const ids = getEmptyViewSuggestions().map( ( suggestion ) => suggestion.id );
+
+		expect( ids ).toContain( 'generate-excerpt' );
+	} );
+
+	it( 'hides Generate Excerpt for pages while the post type record is still resolving', () => {
+		installAiEditorialReviewData( { excerptSuggestion: true } );
+		installPostTypeMock( 'page', 123, false, false );
+
+		const ids = getEmptyViewSuggestions().map( ( suggestion ) => suggestion.id );
+
+		expect( ids ).not.toContain( 'generate-excerpt' );
+	} );
+
+	it( 'shows the SEO Enhancer dropdown when the seoSuggestions feature is enabled', () => {
+		installAiEditorialReviewData( { seoSuggestions: true } );
+		installPostTypeMock( 'post' );
+
+		const seo = getEmptyViewSuggestions().find(
+			( suggestion ) => suggestion.id === 'seo-enhancer'
+		);
+
+		expect( seo?.label ).toBe( 'SEO Enhancer' );
+		expect( seo?.options?.map( ( option ) => option.label ) ).toEqual( [
+			'Title',
+			'Description',
+			'Image Alt Text',
+		] );
+	} );
+
+	it( 'submits the exact ability prompt as each dropdown option value', () => {
+		installAiEditorialReviewData( { seoSuggestions: true } );
+		installPostTypeMock( 'post' );
+
+		const seo = getEmptyViewSuggestions().find(
+			( suggestion ) => suggestion.id === 'seo-enhancer'
+		);
+
+		// An empty parent prompt makes the submitted text equal the option value
+		// verbatim, so these must match the prompts the abilities route on.
+		expect( seo?.prompt ).toBe( '' );
+		expect( seo?.options ).toEqual( [
+			{
+				id: 'seo-title',
+				label: 'Title',
+				value: 'Generate an SEO title (meta title) for this post',
+			},
+			{
+				id: 'seo-description',
+				label: 'Description',
+				value: 'Generate an SEO meta description for this post',
+			},
+			{
+				id: 'image-alt-text',
+				label: 'Image Alt Text',
+				value: 'Generate descriptive alt text for the images in this post',
+			},
+		] );
+	} );
+
+	it( 'gates the SEO Enhancer dropdown independently of Optimize Title', () => {
+		// Optimize Title on, SEO off: SEO must not appear.
+		installAiEditorialReviewData( { optimizeTitleSuggestion: true, seoSuggestions: false } );
+		installPostTypeMock( 'post' );
+
+		const ids = getEmptyViewSuggestions().map( ( suggestion ) => suggestion.id );
+
+		expect( ids ).toContain( 'optimize-title' );
+		expect( ids ).not.toContain( 'seo-enhancer' );
+	} );
+
+	it( 'hides the SEO Enhancer dropdown when the seoSuggestions feature is disabled', () => {
+		installAiEditorialReviewData( { seoSuggestions: false } );
+		installPostTypeMock( 'post' );
+
+		const ids = getEmptyViewSuggestions().map( ( suggestion ) => suggestion.id );
+
+		expect( ids ).not.toContain( 'seo-enhancer' );
 	} );
 } );
 
@@ -812,14 +1323,12 @@ describe( 'useSuggestions', () => {
 			'Change tone',
 			'Check grammar',
 			'Simplify text',
-			'Generate Feedback',
-			'AI Editorial Review',
 		] );
 		expect( getTracksCalls( 'jetpack_ai_editorial_review_suggestion_rendered' ) ).toEqual( [] );
 		expect( getTracksCalls( 'jetpack_ai_block_transformation_suggestion_rendered' ) ).toEqual( [] );
 	} );
 
-	it( 'appends AI Editorial Review to block-specific suggestions', () => {
+	it( 'shows only block-specific suggestions when a block is selected', () => {
 		installAiEditorialReviewData();
 		mockSelectedBlock = { clientId: 'b1', name: 'core/paragraph' };
 		const onSuggestions = jest.fn();
@@ -833,13 +1342,8 @@ describe( 'useSuggestions', () => {
 			'Change tone',
 			'Check grammar',
 			'Simplify text',
-			'Generate Feedback',
-			'AI Editorial Review',
 		] );
-		expect( mockedRecordTracksEvent ).toHaveBeenCalledWith(
-			'jetpack_ai_editorial_review_suggestion_rendered',
-			{}
-		);
+		expect( getTracksCalls( 'jetpack_ai_editorial_review_suggestion_rendered' ) ).toEqual( [] );
 		expect( getTracksCalls( 'jetpack_ai_block_transformation_suggestion_rendered' ) ).toEqual( [
 			[
 				'jetpack_ai_block_transformation_suggestion_rendered',
@@ -880,7 +1384,7 @@ describe( 'useSuggestions', () => {
 		] );
 	} );
 
-	it( 'keeps AI Editorial Review visible when block suggestions are limited', () => {
+	it( 'limits block-specific suggestions to maxSuggestions', () => {
 		installAiEditorialReviewData();
 		mockSelectedBlock = { clientId: 'b-limited', name: 'core/heading' };
 		const onSuggestions = jest.fn();
@@ -896,14 +1400,32 @@ describe( 'useSuggestions', () => {
 			onSuggestions.mock.calls[ onSuggestions.mock.calls.length - 1 ]?.[ 0 ] ?? [];
 		expect( latestSuggestions.map( ( suggestion: any ) => suggestion.label ) ).toEqual( [
 			'Translate content',
-			'Generate Feedback',
-			'AI Editorial Review',
+			'Change tone',
+			'Check grammar',
 		] );
 		expect( getTracksCalls( 'jetpack_ai_block_transformation_suggestion_rendered' ) ).toEqual( [
 			[
 				'jetpack_ai_block_transformation_suggestion_rendered',
 				{
 					suggestion_id: 'translate',
+					suggestion_type: 'text',
+					block_type: 'core/heading',
+					surface: 'jetpack_ai_sidebar',
+				},
+			],
+			[
+				'jetpack_ai_block_transformation_suggestion_rendered',
+				{
+					suggestion_id: 'change-tone',
+					suggestion_type: 'text',
+					block_type: 'core/heading',
+					surface: 'jetpack_ai_sidebar',
+				},
+			],
+			[
+				'jetpack_ai_block_transformation_suggestion_rendered',
+				{
+					suggestion_id: 'check-grammar',
 					suggestion_type: 'text',
 					block_type: 'core/heading',
 					surface: 'jetpack_ai_sidebar',
@@ -936,8 +1458,8 @@ describe( 'useSuggestions', () => {
 		latestSuggestions =
 			onSuggestions.mock.calls[ onSuggestions.mock.calls.length - 1 ]?.[ 0 ] ?? [];
 		expect( latestSuggestions.map( ( suggestion: any ) => suggestion.label ) ).toEqual( [
-			'Generate Feedback',
-			'AI Editorial Review',
+			'Simple Review',
+			'Editorial Review',
 		] );
 	} );
 
@@ -952,8 +1474,6 @@ describe( 'useSuggestions', () => {
 			onSuggestions.mock.calls[ onSuggestions.mock.calls.length - 1 ]?.[ 0 ] ?? [];
 		expect( latestSuggestions.map( ( suggestion: any ) => suggestion.label ) ).toEqual( [
 			'Generate alt text',
-			'Generate Feedback',
-			'AI Editorial Review',
 		] );
 		expect( getTracksCalls( 'jetpack_ai_block_transformation_suggestion_rendered' ) ).toEqual( [
 			[
@@ -968,7 +1488,7 @@ describe( 'useSuggestions', () => {
 		] );
 	} );
 
-	it( 'keeps AI Editorial Review when the preview feature disables block transformations', () => {
+	it( 'hides review suggestions when a block is selected and block transformations are disabled', () => {
 		installAiEditorialReviewData( { blockTransformations: false } );
 		mockSelectedBlock = { clientId: 'b1', name: 'core/paragraph' };
 		const onSuggestions = jest.fn();
@@ -977,21 +1497,17 @@ describe( 'useSuggestions', () => {
 
 		const latestSuggestions =
 			onSuggestions.mock.calls[ onSuggestions.mock.calls.length - 1 ]?.[ 0 ] ?? [];
-		expect( latestSuggestions.map( ( suggestion: any ) => suggestion.label ) ).toEqual( [
-			'Generate Feedback',
-			'AI Editorial Review',
-		] );
+		expect( latestSuggestions ).toEqual( [] );
 	} );
 
-	it( 'keeps AI Editorial Review when the block transformations preview feature is missing', () => {
+	it( 'shows review suggestions at post level regardless of the block transformations feature', () => {
 		( globalThis as any ).agentsManagerData = {
-			aiEditorialReviewEnabled: true,
-			jetpackAiSidebarPreview: {
+			jetpackAiSidebar: {
 				enabled: true,
 				features: { aiEditorialReview: true },
 			},
 		};
-		mockSelectedBlock = { clientId: 'b1', name: 'core/paragraph' };
+		mockSelectedBlock = null;
 		const onSuggestions = jest.fn();
 
 		render( React.createElement( SuggestionsProbe, { onSuggestions } ) );
@@ -999,11 +1515,11 @@ describe( 'useSuggestions', () => {
 		const latestSuggestions =
 			onSuggestions.mock.calls[ onSuggestions.mock.calls.length - 1 ]?.[ 0 ] ?? [];
 		expect( latestSuggestions.map( ( suggestion: any ) => suggestion.label ) ).toEqual( [
-			'AI Editorial Review',
+			'Editorial Review',
 		] );
 	} );
 
-	it( 'keeps Generate Feedback on the backend path when clicked', () => {
+	it( 'keeps Simple Review on the backend path when clicked', () => {
 		installAiEditorialReviewData();
 		installPostTypeMock( 'post' );
 		const addMessage = jest.fn();
@@ -1034,7 +1550,27 @@ describe( 'useSuggestions', () => {
 		expect( addMessage ).not.toHaveBeenCalled();
 	} );
 
-	it( 'opens split-screen when the AI Editorial Review suggestion is clicked', () => {
+	it( 'opens split-screen when the Proofread suggestion is clicked', () => {
+		installAiEditorialReviewData( { proofreadContent: true } );
+		installPostTypeMock( 'post' );
+		const proofreadPrompt = getEmptyViewSuggestions().find(
+			( suggestion ) => suggestion.id === 'proofread-content'
+		)?.prompt;
+
+		render( React.createElement( SuggestionsProbe, { onSuggestions: jest.fn() } ) );
+
+		act( () => {
+			window.dispatchEvent(
+				new CustomEvent( 'big-sky-inline-suggestion-click', {
+					detail: { value: proofreadPrompt },
+				} )
+			);
+		} );
+
+		expect( mockSetIsSplitScreen ).toHaveBeenCalledWith( true );
+	} );
+
+	it( 'opens split-screen when the Editorial Review suggestion is clicked', () => {
 		installAiEditorialReviewData();
 		installPostTypeMock( 'post' );
 		const mediationPrompt = getEmptyViewSuggestions().find(
@@ -1160,7 +1696,7 @@ describe( 'useSuggestions', () => {
 		expect( getTracksCalls( 'jetpack_ai_block_transformation_suggestion_click' ) ).toEqual( [] );
 	} );
 
-	it( 'does not open split-screen when AI Editorial Review is unavailable', () => {
+	it( 'does not open split-screen when Editorial Review is unavailable', () => {
 		installAiEditorialReviewData();
 		mockCurrentPostType = 'page';
 		installPostTypeMock( 'page' );
@@ -1208,8 +1744,6 @@ describe( 'useSuggestions', () => {
 			'Change tone',
 			'Check grammar',
 			'Simplify text',
-			'Generate Feedback',
-			'AI Editorial Review',
 		] );
 	} );
 
@@ -1283,7 +1817,7 @@ describe( 'contextProvider', () => {
 		} );
 	} );
 
-	it( 'suppresses full page content for the next Generate Feedback chip request', () => {
+	it( 'suppresses full page content for the next Simple Review chip request', () => {
 		installAiEditorialReviewData();
 		installContextProviderMock();
 		const feedbackPrompt = getEmptyViewSuggestions().find(
@@ -1307,7 +1841,31 @@ describe( 'contextProvider', () => {
 		expect( contextProvider.getClientContext().jetpackAi ).toBeUndefined();
 	} );
 
-	it( 'clears pending Generate Feedback content suppression when another suggestion is clicked', () => {
+	it( 'suppresses full page content for the next Proofread chip request', () => {
+		installAiEditorialReviewData( { proofreadContent: true } );
+		installContextProviderMock();
+		const proofreadPrompt = getEmptyViewSuggestions().find(
+			( suggestion ) => suggestion.id === 'proofread-content'
+		)?.prompt;
+
+		render( React.createElement( SuggestionsProbe, { onSuggestions: jest.fn() } ) );
+
+		act( () => {
+			window.dispatchEvent(
+				new CustomEvent( 'big-sky-inline-suggestion-click', {
+					detail: { value: proofreadPrompt },
+				} )
+			);
+		} );
+
+		const proofreadContext = contextProvider.getClientContext();
+		expect( proofreadContext.currentPageContent ).toEqual( [] );
+		expect( proofreadContext.jetpackAi ).toBeUndefined();
+		expect( contextProvider.getClientContext().currentPageContent ).toHaveLength( 1 );
+		expect( contextProvider.getClientContext().jetpackAi ).toBeUndefined();
+	} );
+
+	it( 'clears pending Simple Review content suppression when another suggestion is clicked', () => {
 		installAiEditorialReviewData();
 		installContextProviderMock();
 		const suggestions = getEmptyViewSuggestions();
@@ -1486,6 +2044,84 @@ describe( 'toolProvider', () => {
 			expect( parsed.data.hideZoomAction ).toBe( true );
 		} );
 
+		it( 'echoes the tool call id at the envelope top level', async () => {
+			const { result } = ( await toolProvider.executeAbility( SHOW_COMPONENT_TOOL_ID, {
+				type: 'title-picker',
+				props: { titles: [ { title: 'T', explanation: 'a' } ] },
+				toolCallId: 'call_identity_1',
+			} ) ) as any;
+
+			const parsed = JSON.parse( result.agentMessage );
+			expect( parsed.tool_call_id ).toBe( 'call_identity_1' );
+		} );
+
+		it( 'omits tool_call_id from the envelope when the input has no tool call id', async () => {
+			const { result } = ( await toolProvider.executeAbility( SHOW_COMPONENT_TOOL_ID, {
+				type: 'title-picker',
+				props: { titles: [ { title: 'T', explanation: 'a' } ] },
+			} ) ) as any;
+
+			const parsed = JSON.parse( result.agentMessage );
+			expect( parsed ).not.toHaveProperty( 'tool_call_id' );
+		} );
+
+		it( 'returns an agentMessage envelope with an Undo checkpoint for a seo-title-picker call', async () => {
+			const titles = [ { title: 'SEO Title', explanation: 'a' } ];
+			const { result } = ( await toolProvider.executeAbility( SHOW_COMPONENT_TOOL_ID, {
+				type: 'seo-title-picker',
+				props: { titles },
+				toolCallId: 'call_seo_title',
+			} ) ) as any;
+
+			const parsed = JSON.parse( result.agentMessage );
+			expect( parsed.data.type ).toBe( 'seo-title-picker' );
+			expect( parsed.data.props ).toEqual( { titles } );
+			// SEO meta pickers snapshot for Undo, like title-picker.
+			expect( parsed.data.calypsoCheckpointId ).toBe( 'call_seo_title' );
+		} );
+
+		it( 'returns an agentMessage envelope with an Undo checkpoint for a seo-description-picker call', async () => {
+			const descriptions = [ { description: 'An SEO description', explanation: 'a' } ];
+			const { result } = ( await toolProvider.executeAbility( SHOW_COMPONENT_TOOL_ID, {
+				type: 'seo-description-picker',
+				props: { descriptions },
+				toolCallId: 'call_seo_desc',
+			} ) ) as any;
+
+			const parsed = JSON.parse( result.agentMessage );
+			expect( parsed.data.type ).toBe( 'seo-description-picker' );
+			expect( parsed.data.props ).toEqual( { descriptions } );
+			expect( parsed.data.calypsoCheckpointId ).toBe( 'call_seo_desc' );
+		} );
+
+		it( 'returns an agentMessage envelope with an Undo checkpoint for an excerpt-picker call', async () => {
+			const excerpts = [ { excerpt: 'A short summary.', explanation: 'a' } ];
+			const { result } = ( await toolProvider.executeAbility( SHOW_COMPONENT_TOOL_ID, {
+				type: 'excerpt-picker',
+				props: { excerpts },
+				toolCallId: 'call_excerpt',
+			} ) ) as any;
+
+			const parsed = JSON.parse( result.agentMessage );
+			expect( parsed.data.type ).toBe( 'excerpt-picker' );
+			expect( parsed.data.props ).toEqual( { excerpts } );
+			expect( parsed.data.calypsoCheckpointId ).toBe( 'call_excerpt' );
+		} );
+
+		it( 'returns an agentMessage envelope with an Undo checkpoint for an image-alt-text-picker call', async () => {
+			const images = [ { clientId: 'img1', url: 'u', currentAlt: '', alt: 'A photo' } ];
+			const { result } = ( await toolProvider.executeAbility( SHOW_COMPONENT_TOOL_ID, {
+				type: 'image-alt-text-picker',
+				props: { images },
+				toolCallId: 'call_alt',
+			} ) ) as any;
+
+			const parsed = JSON.parse( result.agentMessage );
+			expect( parsed.data.type ).toBe( 'image-alt-text-picker' );
+			expect( parsed.data.props ).toEqual( { images } );
+			expect( parsed.data.calypsoCheckpointId ).toBe( 'call_alt' );
+		} );
+
 		it( 'accepts the legacy Big Sky show-component tool during migration', async () => {
 			const { result } = ( await toolProvider.executeAbility( LEGACY_SHOW_COMPONENT_TOOL_ID, {
 				type: 'review-mediation',
@@ -1654,6 +2290,44 @@ describe( 'useCheckpoint', () => {
 		expect(
 			( window as any ).wp.data.select( 'core/editor' ).getEditedPostAttribute( 'title' )
 		).toBe( 'Original Title' );
+	} );
+
+	it( 'restores only the excerpt for an excerpt checkpoint, leaving later title edits intact', async () => {
+		installWpDataMock( 'Original Title', 123, 'Original excerpt' );
+		const api = useCheckpoint();
+
+		api.setCheckpoint( 'cp-excerpt', [ 'excerpt' ] );
+
+		( window as any ).wp.data
+			.dispatch( 'core/editor' )
+			.editPost( { title: 'Edited Title', excerpt: 'AI generated excerpt' } );
+		await api.restoreCheckpoint( 'cp-excerpt' );
+
+		expect(
+			( window as any ).wp.data.select( 'core/editor' ).getEditedPostAttribute( 'excerpt' )
+		).toBe( 'Original excerpt' );
+		expect(
+			( window as any ).wp.data.select( 'core/editor' ).getEditedPostAttribute( 'title' )
+		).toBe( 'Edited Title' );
+	} );
+
+	it( 'restores only the title for a default checkpoint, leaving later excerpt edits intact', async () => {
+		installWpDataMock( 'Original Title', 123, 'Original excerpt' );
+		const api = useCheckpoint();
+
+		api.setCheckpoint( 'cp-title' );
+
+		( window as any ).wp.data
+			.dispatch( 'core/editor' )
+			.editPost( { title: 'AI Title', excerpt: 'User excerpt' } );
+		await api.restoreCheckpoint( 'cp-title' );
+
+		expect(
+			( window as any ).wp.data.select( 'core/editor' ).getEditedPostAttribute( 'title' )
+		).toBe( 'Original Title' );
+		expect(
+			( window as any ).wp.data.select( 'core/editor' ).getEditedPostAttribute( 'excerpt' )
+		).toBe( 'User excerpt' );
 	} );
 
 	it( 'keeps the checkpoint after restore so Undo can be used repeatedly', async () => {

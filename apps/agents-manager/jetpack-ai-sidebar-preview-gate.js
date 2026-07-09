@@ -1,42 +1,36 @@
 /* global agentsManagerData */
 
 /**
- * Temporary kill switch for the Jetpack AI Sidebar preview.
+ * Temporary kill switch for the legacy `jetpackAiSidebarPreview` era of the
+ * Jetpack AI Sidebar.
  *
- * Jetpack can mount this post-editor surface on Atomic/self-hosted sites
- * before the server-side AI Assistant setting gate is available everywhere.
- * This widgets.wp.com entrypoint ships faster, so it filters the preview
- * provider client-side.
+ * The sidebar itself is unchanged; only the contract is. New, toggle-respecting
+ * Jetpack advertises the `jetpackAiSidebar` payload and honours the AI Assistant
+ * setting server-side, so it is left to mount. Older releases (the legacy
+ * `jetpackAiSidebarPreview` marker — i.e. no `jetpackAiSidebar`) registered the
+ * provider without that gate, so on non-Simple sites we drop just the Jetpack
+ * provider and let the rest (Big Sky, …) mount. Simple is always gated
+ * server-side by wpcom.
  *
- * Simple sites keep using wpcom's server-side gate and pass through untouched.
- *
- * Remove once released Jetpack versions honor the AI Assistant setting.
+ * Remove once legacy Jetpack releases age out.
  */
 
 const JETPACK_AI_SIDEBAR_PROVIDER_FILE = 'jetpack-ai-sidebar.provider.mjs';
 
 /**
- * Gate the Jetpack AI Sidebar preview on non-Simple sites.
- *
- * Removes the Jetpack AI Sidebar provider from
- * `agentsManagerData.agentProviders`, which Agents Manager's
- * `loadExternalProviders()` reads later.
- * @returns {boolean} True when Agents Manager should not mount at all —
- *                    the preview was the only reason it was loaded.
+ * @returns {boolean} True when Agents Manager should not mount at all — the legacy
+ *                    Jetpack sidebar was the only provider.
  */
 export function shouldSuppressJetpackAiSidebarPreview() {
 	const data = typeof agentsManagerData !== 'undefined' ? agentsManagerData : undefined;
 
-	// Not a preview-driven mount (e.g. Block Notes without the preview).
-	if ( ! data?.jetpackAiSidebarPreview ) {
+	// New Jetpack (emits `jetpackAiSidebar`) honours the setting itself; Simple is
+	// gated server-side by wpcom. Either way, nothing to gate here.
+	if ( ! data || data.jetpackAiSidebar || window._currentSiteType === 'simple' ) {
 		return false;
 	}
 
-	// wpcom owns the Simple-site gating server-side.
-	if ( window._currentSiteType === 'simple' ) {
-		return false;
-	}
-
+	// Legacy Jetpack: drop only its provider, keep the rest.
 	const providers = Array.isArray( data.agentProviders ) ? data.agentProviders : [];
 	const remaining = providers.filter(
 		( provider ) =>

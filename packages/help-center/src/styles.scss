@@ -8,10 +8,23 @@
  *
  * THIS FILE SHOULD NOT CONTAIN ANY COMPONENT SPECIFIC STYLES.
  */
+
+// Hide Smooch's crawler-SEO fallback link, which leaks an unstyled "Powered by
+// Zendesk Sunshine" anchor into the host page for crawler-matching UAs. DOTCOM-17693.
+a[href^='https://smooch.io/live-web-chat'] {
+	display: none !important;
+}
+
 .help-center > div.help-center__container {
 	background-color: var(--color-surface);
 	z-index: $help-center-z-index;
 	cursor: default;
+
+	// Raise above the Agents Manager panel while focused, so the last-clicked
+	// panel wins. Both panels share one base/focused scale.
+	&.is-focused {
+		z-index: $help-center-z-index-focused;
+	}
 	transition: max-height 0.5s;
 	animation: slideIn 0.2s ease-out forwards;
 	transform-origin: bottom;

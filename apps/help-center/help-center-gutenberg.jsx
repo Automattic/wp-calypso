@@ -31,6 +31,12 @@ function HelpCenterContent() {
 
 	const canvasMode = useCanvasMode();
 
+	// Gutenberg's "admin bar in editor" (omnibar) experiment puts a top admin bar in the editor.
+	// When it's active, the legacy Help button moves out of the toolbar and into that admin bar.
+	const isAdminBarInEditor =
+		!! window.__experimentalAdminBarInEditor ||
+		document.body.classList.contains( 'has-admin-bar-in-editor' );
+
 	const trackIconInteraction = useCallback( () => {
 		recordTracksEvent( 'wpcom_help_center_icon_interaction', {
 			is_help_center_visible: isShown ?? false,
@@ -105,14 +111,22 @@ function HelpCenterContent() {
 	const sidebarActionsContainer = document.querySelector( '.edit-site-site-hub__actions' );
 
 	const hasInitialized = useRef( false );
-	// On mobile the SlotFill button is hidden by Gutenberg's own CSS, so wire up the
-	// admin bar icon that our PHP adds for the gutenberg variant instead.
+	// When the toolbar SlotFill button isn't shown — on mobile (hidden by Gutenberg's CSS) or
+	// under the omnibar (where we hide it) — wire up the admin bar icon our PHP adds instead.
 	const adminBarButton = document.getElementById( 'wp-admin-bar-help-center' );
 	useEffect( () => {
-		if ( isDesktop || ! adminBarButton ) {
+		if ( ( isDesktop && ! isAdminBarInEditor ) || ! adminBarButton ) {
 			return;
 		}
 		adminBarButton.onclick = handleToggleHelpCenter;
+
+		// At >= 600px our PHP hides this admin bar item to avoid duplicating the toolbar button;
+		// under the omnibar that button is gone, so reveal it. Revealing from JS — which the
+		// unified experience dequeues with this bundle — keeps it hidden when unified, like the
+		// toolbar button.
+		if ( isAdminBarInEditor ) {
+			adminBarButton.style.setProperty( 'display', 'block', 'important' );
+		}
 
 		// make sure it's closed from the beginning
 		if ( ! hasInitialized.current ) {
@@ -132,9 +146,10 @@ function HelpCenterContent() {
 
 		return () => {
 			adminBarButton.onclick = null;
+			adminBarButton.style.removeProperty( 'display' );
 			document.documentElement.style.removeProperty( '--masterbar-height' );
 		};
-	}, [ isDesktop, adminBarButton, handleToggleHelpCenter, setShowHelpCenter ] );
+	}, [ isDesktop, isAdminBarInEditor, adminBarButton, handleToggleHelpCenter, setShowHelpCenter ] );
 
 	// On mobile, close the Help Center as soon as the user taps a button in
 	// the editor header or the admin bar. The panel has a very high z-index
@@ -241,7 +256,9 @@ function HelpCenterContent() {
 				canvasMode === 'view' &&
 				sidebarActionsContainer &&
 				ReactDOM.createPortal( content, sidebarActionsContainer ) }
-			{ isDesktop && showHelpIcon && <Fill name="PinnedItems/core">{ content }</Fill> }
+			{ isDesktop && showHelpIcon && ! isAdminBarInEditor && (
+				<Fill name="PinnedItems/core">{ content }</Fill>
+			) }
 			<HelpCenter
 				locale={ helpCenterData.locale }
 				sectionName={ helpCenterData.sectionName || 'gutenberg-editor' }

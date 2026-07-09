@@ -26,8 +26,18 @@ function getDOMNode( context ) {
 		return context;
 	}
 
+	if ( typeof context?.getDOMNode === 'function' ) {
+		const node = context.getDOMNode();
+		return isDOMElement( node ) ? node : null;
+	}
+
 	if ( isDOMElement( context?.current ) ) {
 		return context.current;
+	}
+
+	if ( typeof context?.current?.getDOMNode === 'function' ) {
+		const node = context.current.getDOMNode();
+		return isDOMElement( node ) ? node : null;
 	}
 
 	return null;
@@ -388,6 +398,19 @@ class PopoverInner extends Component {
 		onMouseLeave?.();
 	};
 
+	// Keeps the internal ref used for positioning/focus while also forwarding the node to an
+	// optional `nodeRef` (e.g. from `react-transition-group`, which needs it under React 19).
+	setPopoverNode = ( node ) => {
+		this.popoverNodeRef.current = node;
+
+		const { nodeRef } = this.props;
+		if ( typeof nodeRef === 'function' ) {
+			nodeRef( node );
+		} else if ( nodeRef ) {
+			nodeRef.current = node;
+		}
+	};
+
 	render() {
 		if ( ! this.props.context ) {
 			return null;
@@ -397,7 +420,7 @@ class PopoverInner extends Component {
 
 		return (
 			<div
-				ref={ this.popoverNodeRef }
+				ref={ this.setPopoverNode }
 				aria-label={ this.props[ 'aria-label' ] }
 				id={ this.props.id }
 				role="tooltip"
@@ -461,16 +484,25 @@ function Popover( { isVisible = false, showDelay = 0, hideArrow = false, ...prop
 	);
 }
 
-// We accept DOM elements and React refs as the `context` prop.
+// We accept DOM elements, React refs, and explicit getDOMNode accessors as the `context` prop.
 const PropTypeElement = PropTypes.oneOfType( [
 	PropTypes.instanceOf( DOMElement ),
 	PropTypes.shape( {
 		current: PropTypes.instanceOf( DOMElement ),
 	} ),
+	PropTypes.shape( {
+		getDOMNode: PropTypes.func,
+	} ),
+	PropTypes.shape( {
+		current: PropTypes.shape( {
+			getDOMNode: PropTypes.func,
+		} ),
+	} ),
 ] );
 
 Popover.propTypes = {
 	hideArrow: PropTypes.bool,
+	nodeRef: PropTypes.oneOfType( [ PropTypes.func, PropTypes.object ] ),
 	autoPosition: PropTypes.bool,
 	autoRtl: PropTypes.bool,
 	className: PropTypes.string,

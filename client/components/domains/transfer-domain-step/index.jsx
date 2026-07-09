@@ -3,11 +3,11 @@ import page from '@automattic/calypso-router';
 import { Button } from '@automattic/components';
 import { getTld } from '@automattic/domain-search';
 import { localizeUrl } from '@automattic/i18n-utils';
+import { isEmpty } from '@automattic/js-utils';
 import { withShoppingCart } from '@automattic/shopping-cart';
 import { INCOMING_DOMAIN_TRANSFER } from '@automattic/urls';
 import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
-import { get, isEmpty } from 'lodash';
 import PropTypes from 'prop-types';
 import { stringify } from 'qs';
 import { Component } from 'react';
@@ -82,7 +82,7 @@ class TransferDomainStep extends Component {
 	state = this.getDefaultState();
 
 	getDefaultState() {
-		const forcePrecheck = get( this.props, 'forcePrecheck', false );
+		const forcePrecheck = this.props?.forcePrecheck ?? false;
 		return {
 			authCodeValid: null,
 			domain: null,
@@ -331,7 +331,7 @@ class TransferDomainStep extends Component {
 				losingRegistrar={ inboundTransferStatus.losingRegistrar }
 				losingRegistrarIanaId={ inboundTransferStatus.losingRegistrarIanaId }
 				refreshStatus={ this.getInboundTransferStatus }
-				selectedSiteSlug={ get( this.props, 'selectedSite.slug', null ) }
+				selectedSiteSlug={ this.props?.selectedSite?.slug ?? null }
 				setValid={ onSetValid }
 				supportsPrivacy={ this.state.supportsPrivacy }
 				unlocked={ inboundTransferStatus.unlocked }
@@ -342,11 +342,8 @@ class TransferDomainStep extends Component {
 	transferIsRestricted = () => {
 		const { submittingAvailability, submittingWhois } = this.state;
 		const submitting = submittingAvailability || submittingWhois;
-		const transferRestrictionStatus = get(
-			this.state,
-			'inboundTransferStatus.transferRestrictionStatus',
-			false
-		);
+		const transferRestrictionStatus =
+			this.state?.inboundTransferStatus?.transferRestrictionStatus ?? false;
 
 		return (
 			! submitting && transferRestrictionStatus && 'not_restricted' !== transferRestrictionStatus
@@ -365,7 +362,7 @@ class TransferDomainStep extends Component {
 				domain={ domain }
 				goBack={ this.goBack }
 				mapDomainUrl={ this.getMapDomainUrl() }
-				selectedSiteSlug={ get( this.props, 'selectedSite.slug', null ) }
+				selectedSiteSlug={ this.props?.selectedSite?.slug ?? null }
 				termMaximumInYears={ termMaximumInYears }
 				transferEligibleDate={ transferEligibleDate }
 				transferRestrictionStatus={ transferRestrictionStatus }
@@ -540,9 +537,9 @@ class TransferDomainStep extends Component {
 
 		return new Promise( ( resolve ) => {
 			checkDomainAvailability(
-				{ domainName: domain, blogId: get( this.props, 'selectedSite.ID', null ) },
+				{ domainName: domain, blogId: this.props?.selectedSite?.ID ?? null },
 				( error, result ) => {
-					const status = get( result, 'status', error );
+					const status = result?.status ?? error;
 					const tld = result.tld || getTld( domain );
 					switch ( status ) {
 						case domainAvailability.AVAILABLE:
@@ -553,7 +550,7 @@ class TransferDomainStep extends Component {
 							this.setState( {
 								domain,
 								isTransferable: true,
-								supportsPrivacy: get( result, 'supports_privacy', false ),
+								supportsPrivacy: result?.supports_privacy ?? false,
 							} );
 							break;
 						case domainAvailability.TLD_NOT_SUPPORTED: {
@@ -609,7 +606,7 @@ class TransferDomainStep extends Component {
 							} );
 							break;
 						case domainAvailability.UNKNOWN: {
-							const mappableStatus = get( result, 'mappable', error );
+							const mappableStatus = result?.mappable ?? error;
 
 							if ( domainAvailability.MAPPABLE === mappableStatus ) {
 								this.setState( {
@@ -630,12 +627,12 @@ class TransferDomainStep extends Component {
 							}
 						}
 						default: {
-							let site = get( result, 'other_site_domain', null );
+							let site = result?.other_site_domain ?? null;
 							if ( ! site ) {
-								site = get( this.props, 'selectedSite.slug', null );
+								site = this.props?.selectedSite?.slug ?? null;
 							}
 
-							const maintenanceEndTime = get( result, 'maintenance_end_time', null );
+							const maintenanceEndTime = result?.maintenance_end_time ?? null;
 							const { message, severity } = getAvailabilityNotice(
 								domain,
 								status,

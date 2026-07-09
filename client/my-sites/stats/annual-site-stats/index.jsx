@@ -2,7 +2,6 @@ import config from '@automattic/calypso-config';
 import { Card } from '@automattic/components';
 import { formatNumber } from '@automattic/number-formatters';
 import { localize } from 'i18n-calypso';
-import { find } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
@@ -149,9 +148,13 @@ class AnnualSiteStats extends Component {
 		if ( now.month() === 0 ) {
 			previousYear = now.subtract( 1, 'months' ).format( 'YYYY' );
 		}
-		const currentYearData = years && find( years, ( y ) => y.year === currentYear );
+		const currentYearData = Array.isArray( years )
+			? years.find( ( y ) => y.year === currentYear )
+			: undefined;
 		const previousYearData =
-			previousYear && years && find( years, ( y ) => y.year === previousYear );
+			previousYear && Array.isArray( years )
+				? years.find( ( y ) => y.year === previousYear )
+				: undefined;
 		const isLoading = ! years;
 		const isError = ! isLoading && years.errors;
 		const hasData = isWidget ? currentYearData || previousYearData : years;

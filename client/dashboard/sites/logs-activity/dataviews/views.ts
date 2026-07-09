@@ -7,7 +7,7 @@ export const DEFAULT_VIEW: View = {
 		field: 'published',
 		direction: 'desc',
 	},
-	fields: [ 'published', 'event', 'actor' ],
+	fields: [ 'published', 'event', 'actor', 'activity_type' ],
 	layout: {
 		density: 'balanced',
 		styles: {

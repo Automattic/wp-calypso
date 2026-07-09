@@ -1,6 +1,10 @@
 import { Button, Gridicon } from '@automattic/components';
+import { Modal } from '@wordpress/components';
+import { useTranslate } from 'i18n-calypso';
 import { useState, useRef } from 'react';
 import CancelLicenseFeedbackModal from 'calypso/a8c-for-agencies/components/a4a-feedback/churn-mechanism/cancel-license-feedback-modal';
+import LaunchPermissionModal from 'calypso/a8c-for-agencies/components/launch-permission-modal';
+import useWPAdminAccessControl from 'calypso/a8c-for-agencies/hooks/use-wp-admin-access-control';
 import PopoverMenu from 'calypso/components/popover-menu';
 import PopoverMenuItem from 'calypso/components/popover-menu/item';
 import { LicenseAction, LicenseType } from 'calypso/jetpack-cloud/sections/partner-portal/types';
@@ -8,6 +12,7 @@ import useLicenseActions from './use-license-actions';
 
 interface Props {
 	siteUrl: string | null;
+	blogId?: number | null;
 	isDevSite: boolean;
 	attachedAt: string | null;
 	revokedAt: string | null;
@@ -21,6 +26,7 @@ interface Props {
 
 export default function LicenseActions( {
 	siteUrl,
+	blogId,
 	isDevSite,
 	attachedAt,
 	revokedAt,
@@ -31,10 +37,17 @@ export default function LicenseActions( {
 	licenseKey,
 	productId,
 }: Props ) {
+	const translate = useTranslate();
 	const buttonActionRef = useRef< HTMLButtonElement | null >( null );
 
 	const [ isOpen, setIsOpen ] = useState( false );
 	const [ showRevokeDialog, setShowRevokeDialog ] = useState( false );
+	const [ showLaunchPermissionModal, setShowLaunchPermissionModal ] = useState( false );
+
+	const { noWPAdminAccess } = useWPAdminAccessControl( { siteId: blogId ?? 0 } );
+	// Only block launching when we have a valid site to check access against.
+	const cannotLaunch = !! blogId && noWPAdminAccess;
+
 	const licenseActions = useLicenseActions(
 		siteUrl,
 		isDevSite,
@@ -42,13 +55,17 @@ export default function LicenseActions( {
 		revokedAt,
 		licenseType,
 		isChildLicense,
-		isClientLicense
+		isClientLicense,
+		cannotLaunch
 	);
 
 	const handleActionClick = ( action: LicenseAction ) => {
 		action.onClick();
 		if ( action.type === 'revoke' ) {
 			setShowRevokeDialog( true );
+		}
+		if ( action.type === 'launch_permission' ) {
+			setShowLaunchPermissionModal( true );
 		}
 	};
 
@@ -79,6 +96,18 @@ export default function LicenseActions( {
 						</PopoverMenuItem>
 					) ) }
 			</PopoverMenu>
+			{ showLaunchPermissionModal && (
+				<Modal
+					title={ translate( 'Launching requires site admin access' ) }
+					size="medium"
+					onRequestClose={ () => setShowLaunchPermissionModal( false ) }
+				>
+					<LaunchPermissionModal
+						source="licenses"
+						onClose={ () => setShowLaunchPermissionModal( false ) }
+					/>
+				</Modal>
+			) }
 			{ showRevokeDialog && (
 				<CancelLicenseFeedbackModal
 					isAtomicSite

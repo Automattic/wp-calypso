@@ -3,6 +3,20 @@ import { getCalypsoURL } from '../../../data-helper';
 import type { NewSiteResponse, NewUserResponse } from '../../../types/rest-api-client.types';
 
 /**
+ * Signals a transient upstream failure during signup (a 502/503/504 server-error
+ * page or /users/new? response) for which retrying is safe because no account
+ * was created.
+ */
+class TransientSignupError extends Error {}
+
+// Upstream gateway statuses that indicate a transient infra failure rather than
+// the app itself. 500 (Internal Server Error) and 501 are deliberately excluded:
+// they usually mean the app crashed or a genuine bug, which we want to fail on
+// fast rather than mask by retrying. Mirrors the phrases isServerErrorPage()
+// matches (Bad Gateway / Service Unavailable / Gateway Timeout).
+const TRANSIENT_UPSTREAM_STATUSES = [ 502, 503, 504 ];
+
+/**
  * This object represents multiple pages on WordPress.com:
  * 	- regular (/start/user)
  * 	- gutenboarding (/new)
@@ -48,9 +62,41 @@ export class UserSignupPage {
 	/**
 	 * Waits for the signup form to be ready for interaction.
 	 * We consider the form ready when either the "Create your account" heading
-	 * or the email input is visible and actionable.
+	 * or the email input is visible and actionable. On a hydration timeout,
+	 * reloads the page once and retries; any other failure (an unrelated
+	 * exception, or a 5xx error page) is left for the caller's fail-fast/retry
+	 * machinery to handle.
 	 */
 	private async waitForSignupForm(): Promise< void > {
+		try {
+			await this.attemptWaitForSignupForm();
+		} catch ( error ) {
+			// Only reload for a genuine hydration flake: a TimeoutError (email input
+			// never attached) on a page that is not itself a 5xx error page. Rethrow
+			// everything else so it surfaces instead of being masked behind a reload.
+			if (
+				( error as Error ).name !== 'TimeoutError' ||
+				( await this.isServerErrorPage( false ) )
+			) {
+				throw error;
+			}
+			// A reload recovers the un-hydrated form; retry once. Safe: no account is
+			// created until submit.
+			console.warn(
+				`Signup form did not become ready, reloading and retrying once: ${
+					( error as Error ).message
+				}`
+			);
+			await this.page.reload( { waitUntil: 'domcontentloaded' } );
+			await this.attemptWaitForSignupForm();
+		}
+	}
+
+	/**
+	 * Single attempt at waiting for the signup form to be ready. See
+	 * waitForSignupForm for the retry wrapper.
+	 */
+	private async attemptWaitForSignupForm(): Promise< void > {
 		const continueWithEmailButton = this.page.getByRole( 'button', {
 			name: /continue with email/i,
 		} );
@@ -170,18 +216,143 @@ export class UserSignupPage {
 	 * @returns {NewUserResponse} Response from the REST API.
 	 */
 	async signupWithEmail( email: string ): Promise< NewUserResponse > {
-		// Register the response capture before any page interactions so it cannot
-		// miss the /users/new? POST if the form or network responds quickly.
-		const responsePromise = this.captureNewUserResponse();
+		// Staging occasionally serves a transient upstream 5xx (502/503/504) for
+		// the signup page or the /users/new? POST. The form then never loads or
+		// the response is never ok, so the attempt fails. In the common case
+		// (502 Bad Gateway, 503) the request never reached the backend, so no
+		// account was created and reloading + resubmitting is safe. The rare
+		// exception is a 504 where the backend created the user before the gateway
+		// timed out; the same-email retry then surfaces a "user exists" error
+		// instead of recovering, which is still preferable to masking the failure.
+		// Retry a bounded number of times before giving up.
+		const maxAttempts = 3;
+		for ( let attempt = 1; attempt <= maxAttempts; attempt++ ) {
+			try {
+				return await this.attemptSignupWithEmail( email );
+			} catch ( error ) {
+				// Only retry transient upstream failures; surface anything else so
+				// genuine bugs are not masked by reloads.
+				if ( attempt < maxAttempts && error instanceof TransientSignupError ) {
+					await this.page.reload( { waitUntil: 'domcontentloaded' } );
+					continue;
+				}
+				throw error;
+			}
+		}
 
-		await this.waitForSignupForm();
-		await this.emailInput.fill( email );
+		// The loop above either returns a response or throws.
+		throw new Error( 'Signup failed after exhausting retries.' );
+	}
 
-		// Trigger the signup.
-		await this.submitButton.click();
+	/**
+	 * Performs a single signup attempt: fills the email form and captures the
+	 * /users/new? response. Throws a {@link TransientSignupError} when the page
+	 * or the /users/new? response is a transient upstream 5xx.
+	 *
+	 * @param {string} email Email address of the new user.
+	 * @returns {NewUserResponse} Response from the REST API.
+	 */
+	private async attemptSignupWithEmail( email: string ): Promise< NewUserResponse > {
+		// Fail fast when the current page is already a server-error page (e.g. after
+		// a reload that landed on another 502). This keeps a retry cheap instead of
+		// burning the ~60s of form-wait timeouts in waitForSignupForm() before it
+		// gives up, which would otherwise risk blowing the per-test budget.
+		if ( await this.isServerErrorPage() ) {
+			throw new TransientSignupError( 'Signup page returned a transient server error.' );
+		}
 
-		// Wait for the promise to be resolved by the route handler.
-		return responsePromise;
+		try {
+			await this.waitForSignupForm();
+			await this.emailInput.fill( email );
+
+			// Register the response capture immediately before the click that
+			// triggers the /users/new? POST. Registering earlier would start the
+			// 60s capture timeout before waitForSignupForm() (which may reload and
+			// retry) finishes, so a recovered-but-slow form load could expire the
+			// capture before submit. The POST only fires on the click, so this
+			// cannot miss the response.
+			const responsePromise = this.captureNewUserResponse();
+			// Watch for a 5xx /users/new? response so we can fail fast and retry
+			// instead of waiting out the full capture timeout.
+			const serverErrorPromise = this.captureUsersNewServerError();
+			// Keep the abandoned promises from becoming unhandled rejections when
+			// the other settles first (or a step below throws before they are awaited).
+			responsePromise.catch( () => undefined );
+			serverErrorPromise.catch( () => undefined );
+
+			// Trigger the signup.
+			await this.submitButton.click();
+
+			// Resolve with the user response, or reject early on a 5xx /users/new?.
+			return await Promise.race( [ responsePromise, serverErrorPromise ] );
+		} catch ( error ) {
+			// The form never loaded because the page itself is a 5xx error page.
+			if ( ! ( error instanceof TransientSignupError ) && ( await this.isServerErrorPage() ) ) {
+				throw new TransientSignupError( 'Signup page returned a transient server error.' );
+			}
+			throw error;
+		}
+	}
+
+	/**
+	 * Rejects as soon as the /users/new? POST returns any 5xx, so the attempt
+	 * fails fast instead of waiting out the full capture timeout. A transient
+	 * upstream status (502/503/504) rejects with a {@link TransientSignupError}
+	 * so the caller can retry; any other 5xx (e.g. 500 Internal Server Error)
+	 * rejects with a plain Error so the run fails immediately rather than
+	 * masking an app crash behind retries. Never resolves; intended to be raced
+	 * against the successful response capture.
+	 *
+	 * @returns {Promise<never>} A promise that only rejects.
+	 */
+	private captureUsersNewServerError(): Promise< never > {
+		return this.page
+			.waitForResponse(
+				( response ) =>
+					/\/users\/new\?/.test( response.url() ) &&
+					response.request().method() === 'POST' &&
+					response.status() >= 500,
+				{ timeout: 60_000 }
+			)
+			.then( ( response ) => {
+				const status = response.status();
+				const message = `/users/new? responded with status ${ status }.`;
+				if ( TRANSIENT_UPSTREAM_STATUSES.includes( status ) ) {
+					throw new TransientSignupError( message );
+				}
+				throw new Error( message );
+			} );
+	}
+
+	/**
+	 * Detects whether the page is currently showing a server-error page.
+	 *
+	 * By default matches only the transient upstream errors (502/503/504), e.g.
+	 * the nginx "502 Bad Gateway" page, which the retry machinery keys on. Pass
+	 * transientUpstreamServerErrorOnly=false to also match the 500 "Internal
+	 * Server Error" app-crash page (used by the hydration reload-retry so it does
+	 * not mask a genuine error page behind a reload).
+	 *
+	 * @param {boolean} transientUpstreamServerErrorOnly When true (default),
+	 * match only 502/503/504; when false, also match 500 Internal Server Error.
+	 * @returns {Promise<boolean>} True when a matching server-error page is detected.
+	 */
+	private async isServerErrorPage( transientUpstreamServerErrorOnly = true ): Promise< boolean > {
+		return this.page
+			.evaluate( ( transientOnly ) => {
+				const title = document.title || '';
+				const heading = document.querySelector( 'h1' )?.textContent || '';
+				const haystack = `${ title } ${ heading }`;
+				// Match the upstream error phrases (e.g. nginx "502 Bad Gateway")
+				// rather than a bare status number, which could appear incidentally
+				// in legitimate page text.
+				const transient = /Bad Gateway|Service (Temporarily )?Unavailable|Gateway Time-?out/i;
+				if ( transientOnly ) {
+					return transient.test( haystack );
+				}
+				return transient.test( haystack ) || /Internal Server Error/i.test( haystack );
+			}, transientUpstreamServerErrorOnly )
+			.catch( () => false );
 	}
 
 	/**

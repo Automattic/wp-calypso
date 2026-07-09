@@ -23,9 +23,15 @@ import ReauthRequired from 'calypso/me/reauth-required';
 import { successNotice, errorNotice } from 'calypso/state/notices/actions';
 import { SectionHeader } from '../../dashboard/components/section-header';
 import { filterVisibleTools, isReadTool, isWriteTool } from './categories';
+import { getOverridesToMatch, groupIntentKey } from './group-intents';
 import { getAccessSummaryBadge, getWriteAccessBadge } from './hub-helpers';
 import { useMcpPageChrome } from './mcp-page-header';
-import { getAccountMcpAbilities, getDisabledSiteIds, getEnabledSiteIds } from './utils';
+import {
+	getAccountMcpAbilities,
+	getDisabledSiteIds,
+	getEnabledSiteIds,
+	getGroupDescriptors,
+} from './utils';
 
 import './style.scss';
 
@@ -84,16 +90,31 @@ function McpComponent( { path } ) {
 	const anyToolsEnabled = hasTools && visibleTools.some( ( [ , tool ] ) => tool.enabled );
 
 	const handleToggleAll = ( enabled ) => {
-		const accountAbilities = {};
-		Object.keys( mcpAbilities ).forEach( ( toolId ) => {
-			// When enabling, only turn on read tools by default — write tools must be opted in explicitly.
-			accountAbilities[ toolId ] = enabled ? isReadTool( mcpAbilities[ toolId ] ) : false;
-		} );
+		// The `read`/`write` group intents only set the *default* for abilities with
+		// no explicit per-op override — an explicit override from an earlier
+		// individual toggle always wins (see SettingsHelper::is_ability_enabled() on
+		// the backend). So this also force-writes an explicit override for any
+		// currently-known ability that disagrees with the new state, in addition to
+		// the read/write group intents (so abilities added later still inherit the
+		// "on"/"off" state automatically without a future settings write).
+		const overrides = getOverridesToMatch( Object.entries( mcpAbilities ), enabled );
+
+		const groupIntents = { read: enabled, write: enabled };
+		if ( ! enabled ) {
+			// Disabling: also clear every per-group intent, in both categories, so a
+			// future newly-added ability can't be silently re-enabled by a stale
+			// "enable all" intent left over from before this disable.
+			getGroupDescriptors( userSettings || {} ).forEach( ( group ) => {
+				groupIntents[ groupIntentKey( 'read', group.name ) ] = false;
+				groupIntents[ groupIntentKey( 'write', group.name ) ] = false;
+			} );
+		}
 
 		mutation.mutate(
 			{
 				mcp_abilities: {
-					account: accountAbilities,
+					...( overrides && { account: overrides } ),
+					group_intents: groupIntents,
 				},
 			},
 			{

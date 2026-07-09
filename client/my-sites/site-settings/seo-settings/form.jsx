@@ -12,7 +12,6 @@ import { Button, FormInputValidation, FormLabel } from '@automattic/components';
 import { mapValues, pickBy } from '@automattic/js-utils';
 import isEqual from 'fast-deep-equal/es6';
 import { localize } from 'i18n-calypso';
-import { get } from 'lodash';
 import { Component, createRef } from 'react';
 import { connect } from 'react-redux';
 import pageTitleImage from 'calypso/assets/images/illustrations/seo-page-title.svg';
@@ -255,11 +254,6 @@ export class SiteSettingsFormSEO extends Component {
 
 		const upsellPlan = hasGatingFlag ? PLAN_PREMIUM : PLAN_BUSINESS;
 		const upsellPlanType = hasGatingFlag ? TYPE_PREMIUM : TYPE_BUSINESS;
-		// eslint-disable-next-line no-unused-vars
-		const upsellMessagePlaceholder = translate(
-			'Boost your search engine ranking with the powerful SEO tools in the %(planName)s plan',
-			{ args: { planName: getPlan( upsellPlan ).getTitle() } }
-		);
 
 		const upsellProps =
 			siteIsJetpack && ! isAtomic
@@ -270,8 +264,8 @@ export class SiteSettingsFormSEO extends Component {
 				  }
 				: {
 						title: translate(
-							'Boost your search engine ranking with the powerful SEO tools in the %(businessPlanName)s plan',
-							{ args: { businessPlanName: getPlan( upsellPlan ).getTitle() } }
+							'Boost your search engine ranking with the powerful SEO tools in the %(planName)s plan',
+							{ args: { planName: getPlan( upsellPlan ).getTitle() } }
 						),
 						feature: FEATURE_ADVANCED_SEO,
 						plan:
@@ -479,7 +473,7 @@ const mapStateToProps = ( state ) => {
 		storedTitleFormats: getSeoTitleFormatsForSite( getSelectedSite( state ) ),
 		showAdvancedSeo: siteHasFeature( state, siteId, FEATURE_ADVANCED_SEO ),
 		isAtomic: isAtomicSite( state, siteId ),
-		showWebsiteMeta: !! get( selectedSite, 'options.advanced_seo_front_page_description', '' ),
+		showWebsiteMeta: !! ( selectedSite?.options?.advanced_seo_front_page_description ?? '' ),
 		isSeoToolsActive: isJetpackModuleActive( state, siteId, 'seo-tools' ),
 		isSiteHidden: isHiddenSite( state, siteId ),
 		isSitePrivate: isPrivateSite( state, siteId ),

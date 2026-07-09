@@ -2,6 +2,7 @@ import { __experimentalHStack as HStack } from '@wordpress/components';
 import { __, sprintf } from '@wordpress/i18n';
 import { brush, envelope, globe, layout, plugins } from '@wordpress/icons';
 import { useRef } from 'react';
+import AgencySiteSidebar from '../../agency/sites/site-sidebar';
 import RouterLinkButton from '../../components/router-link-button';
 import { SidebarExpandableMenuItem, SidebarMenu, SidebarMenuItem } from '../../components/sidebar';
 import SidebarNavigator from '../../components/sidebar-navigator';
@@ -46,6 +47,9 @@ export default function Sidebar( { scrollSyncEnabled = false }: { scrollSyncEnab
 				</SidebarNavigator.Screen>
 				<SidebarNavigator.Screen path="/sites/$siteSlug">
 					<SiteSidebar />
+				</SidebarNavigator.Screen>
+				<SidebarNavigator.Screen path="/agency/sites/$siteSlug">
+					<AgencySiteSidebar />
 				</SidebarNavigator.Screen>
 				<SidebarNavigator.Screen path="/domains/$domainName">
 					<DomainSidebar />

@@ -1,6 +1,7 @@
-import { expect, skipIfMailosaurLimitReached, tags, test } from '../../lib/pw-base';
+import { expect, skipIfMailosaurLimitReached, skipIfNotTrunk, tags, test } from '../../lib/pw-base';
 
 test.describe( 'Domain: Upsell (Sidebar)', { tag: [ tags.CALYPSO_RELEASE ] }, () => {
+	skipIfNotTrunk();
 	skipIfMailosaurLimitReached();
 
 	const planName = 'Premium';

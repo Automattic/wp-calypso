@@ -1,3 +1,4 @@
+import './style.scss';
 import config from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
 import { Gridicon, EmbedContainer } from '@automattic/components';
@@ -19,6 +20,7 @@ import ReaderSuggestedFollowsDialog from 'calypso/blocks/reader-suggested-follow
 import AutoDirection from 'calypso/components/auto-direction';
 import DocumentHead from 'calypso/components/data/document-head';
 import { withPostLikes } from 'calypso/components/data/post-likes';
+import { withReaderTeams } from 'calypso/components/data/with-reader-teams';
 import PostExcerpt from 'calypso/components/post-excerpt';
 import {
 	RelatedPostsFromSameSite,
@@ -31,6 +33,7 @@ import { usePostCommentsApiDisabled } from 'calypso/reader/data/comments';
 import { useFeedQuery } from 'calypso/reader/data/feed';
 import { usePost } from 'calypso/reader/data/post';
 import { withPostLikeActions } from 'calypso/reader/data/post/likes';
+import { withSeenPostsMutations } from 'calypso/reader/data/seen-posts';
 import { withSite } from 'calypso/reader/data/site';
 import {
 	useSiteSubscriptionForFeed,
@@ -38,6 +41,7 @@ import {
 } from 'calypso/reader/data/site-subscriptions';
 import { canBeMarkedAsSeen, getSiteName, isEligibleForUnseen } from 'calypso/reader/get-helpers';
 import readerContentWidth from 'calypso/reader/lib/content-width';
+import { isAutomatticTeamMember } from 'calypso/reader/lib/teams';
 import { markPostSeen } from 'calypso/reader/mark-post-seen';
 import { isCommentsOpen, isLoginRequiredToComment } from 'calypso/reader/post/capabilities';
 import PostExcerptLink from 'calypso/reader/post-excerpt-link';
@@ -49,12 +53,6 @@ import { useStreamPostKeySelection } from 'calypso/reader/stream/use-stream-post
 import { getPostTitleFallback, showSelectedPost } from 'calypso/reader/utils';
 import XPostHelper, { isXPost } from 'calypso/reader/xpost-helper';
 import { useSelector } from 'calypso/state';
-import {
-	requestMarkAsSeen,
-	requestMarkAsUnseen,
-	requestMarkAsSeenBlog,
-	requestMarkAsUnseenBlog,
-} from 'calypso/state/reader/seen-posts/actions';
 import {
 	setViewingFullPostKey,
 	unsetViewingFullPostKey,
@@ -73,7 +71,6 @@ import ReaderFullPostContentPlaceholder from './placeholders/content';
 import ReaderFullPostNavigation from './post-navigation';
 import ScrollTracker from './scroll-tracker';
 import ReaderFullPostUnavailable from './unavailable';
-import './style.scss';
 
 const inputTags = [ 'INPUT', 'SELECT', 'TEXTAREA' ];
 
@@ -87,8 +84,8 @@ export class FullPostView extends Component {
 		hasOrganization: PropTypes.bool,
 		layout: PropTypes.oneOf( [ 'default', 'recent' ] ),
 		currentPath: PropTypes.string,
-		isAutomattician: PropTypes.bool,
 		commentsApiDisabled: PropTypes.bool,
+		teams: PropTypes.array,
 	};
 
 	hasScrolledToCommentAnchor = false;
@@ -526,7 +523,7 @@ export class FullPostView extends Component {
 	};
 
 	attemptToSendPageView = () => {
-		const { post, site, isWPForTeamsItem, hasOrganization } = this.props;
+		const { post, site } = this.props;
 
 		if (
 			post &&
@@ -544,10 +541,7 @@ export class FullPostView extends Component {
 		}
 
 		if ( ! this.hasLoaded && post && post._state !== 'pending' ) {
-			if (
-				isEligibleForUnseen( { isWPForTeamsItem, hasOrganization } ) &&
-				canBeMarkedAsSeen( { post } )
-			) {
+			if ( this.isSeenEnabled() ) {
 				this.markAsSeen();
 			}
 
@@ -561,6 +555,17 @@ export class FullPostView extends Component {
 			);
 			this.hasLoaded = true;
 		}
+	};
+
+	isSeenEnabled = () => {
+		const { isWPForTeamsItem, hasOrganization, post, teams } = this.props;
+		const isAutomattician = isAutomatticTeamMember( teams );
+
+		return (
+			isAutomattician ||
+			( isEligibleForUnseen( { isWPForTeamsItem, hasOrganization } ) &&
+				canBeMarkedAsSeen( { post } ) )
+		);
 	};
 
 	maybeDisableAppBanner = () => {
@@ -654,33 +659,27 @@ export class FullPostView extends Component {
 		}
 	};
 
-	renderMarkAsSenButton = () => {
+	renderMarkAsSeenButton = () => {
 		const { post } = this.props;
+		const label = post.is_seen
+			? translate( 'Mark post as unseen' )
+			: translate( 'Mark post as seen' );
+
 		return (
-			<div
+			<button
+				type="button"
 				className="reader-full-post__seen-button"
-				title={ post.is_seen ? 'Mark post as unseen' : 'Mark post as seen' }
+				title={ label }
+				aria-label={ label }
+				onClick={ post.is_seen ? this.markAsUnseen : this.markAsSeen }
 			>
-				<Gridicon
-					icon={ post.is_seen ? 'not-visible' : 'visible' }
-					size={ 18 }
-					onClick={ post.is_seen ? this.markAsUnseen : this.markAsSeen }
-					ref={ this.seenTooltipContextRef }
-				/>
-			</div>
+				<Gridicon icon={ post.is_seen ? 'not-visible' : 'visible' } size={ 18 } />
+			</button>
 		);
 	};
 
 	render() {
-		const {
-			post,
-			site,
-			feed,
-			referralPost,
-			hasOrganization,
-			isWPForTeamsItem,
-			commentsApiDisabled,
-		} = this.props;
+		const { post, site, feed, referralPost, commentsApiDisabled } = this.props;
 
 		if ( post.is_error ) {
 			return (
@@ -722,8 +721,6 @@ export class FullPostView extends Component {
 		const commentCount = post?.discussion?.comment_count;
 		const contentWidth = readerContentWidth();
 		const feedUrl = post?.feed_URL;
-		const shouldShowMarkAsSeen =
-			isEligibleForUnseen( { isWPForTeamsItem, hasOrganization } ) && canBeMarkedAsSeen( { post } );
 
 		/*eslint-disable react/no-danger */
 		/*eslint-disable react/jsx-no-target-blank */
@@ -775,7 +772,7 @@ export class FullPostView extends Component {
 										post.discussion?.comment_count > 0
 									}
 									renderMarkAsSeenButton={
-										shouldShowMarkAsSeen ? this.renderMarkAsSenButton : null
+										this.isSeenEnabled() ? this.renderMarkAsSeenButton : null
 									}
 									feedUrl={ feedUrl }
 									siteUrl={ post.site_URL }
@@ -941,12 +938,15 @@ const ConnectedFullPostView = connect( mapStateToFullPostProps, {
 	enableAppBanner,
 	setViewingFullPostKey,
 	unsetViewingFullPostKey,
-	requestMarkAsSeen,
-	requestMarkAsUnseen,
-	requestMarkAsSeenBlog,
-	requestMarkAsUnseenBlog,
 	showSelectedPost,
-} )( withSite( withPostLikes( withPostLikeActions( FullPostView ) ), getPostSiteId ) );
+} )(
+	withSite(
+		withPostLikes(
+			withPostLikeActions( withSeenPostsMutations( withReaderTeams( FullPostView ) ) )
+		),
+		getPostSiteId
+	)
+);
 
 export const withFullPostNavigation = ( WrappedComponent ) =>
 	function FullPostNavigationContainer( props ) {

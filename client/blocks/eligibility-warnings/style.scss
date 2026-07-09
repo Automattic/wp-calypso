@@ -93,17 +93,20 @@
 
 	.eligibility-warnings__message-description {
 		margin-bottom: 0;
+		font-size: 13px;
+		line-height: 20px;
+	}
+
+	// A global `.card a:not(.components-external-link)` rule strips link
+	// underlines; restore them inside the modal so the support and data-center
+	// links stay underlined, matching the MSD modal.
+	.card a:not(.components-external-link) {
+		text-decoration: underline;
 	}
 
 	&.eligibility-warnings--without-title {
 		padding: 24px;
 		box-shadow: 0 0 0 1px var(--color-border-subtle);
-
-		.eligibility-warnings__address-first {
-			// The width of the parent element is much greater for the without title format
-			// so we don't need an ellipsis text-overflow here.
-			max-width: none;
-		}
 	}
 }
 
@@ -185,13 +188,22 @@
 
 .eligibility-warnings__message {
 	flex-grow: 1;
-	line-height: 24px;
+	// Allow this flex column to shrink below its content width so a long
+	// address inside can truncate instead of forcing the modal to scroll.
+	min-width: 0;
+	line-height: 20px;
 	padding: 0;
 	margin-bottom: 10px;
 }
 
 .eligibility-warnings__inline-link {
 	text-decoration: underline;
+}
+
+// The external-link arrow that follows a support link; matches the link color
+// but sits outside the anchor so it isn't underlined.
+.eligibility-warnings__external-arrow {
+	color: var(--color-link);
 }
 
 .eligibility-warnings__action a,
@@ -241,28 +253,41 @@
 	// Specificity bump to override the default styles that may get loaded later.
 	.card.card {
 		background-color: #f6f7f7;
-		padding: 12px;
-		margin-bottom: 4px;
+		padding: 12px 16px;
+		margin-bottom: 8px;
 		display: flex;
 		align-items: center;
+		gap: 8px;
 
 		&::after {
 			content: none;
 		}
 	}
 
+	.eligibility-warnings__address {
+		display: flex;
+		align-items: baseline;
+		flex: 1;
+		min-width: 0;
+		overflow: hidden;
+	}
+
 	.eligibility-warnings__address-first {
 		text-overflow: ellipsis;
-		max-width: 240px;
+		min-width: 0;
 		overflow: hidden;
 		white-space: nowrap;
 	}
 
 	.eligibility-warnings__address-second {
-		margin-right: auto;
+		flex-shrink: 0;
+		white-space: nowrap;
 	}
 
 	.badge {
+		// Keep the badge on the same line at its full width; the address
+		// truncates to make room rather than pushing the badge to a new line.
+		flex-shrink: 0;
 		border-radius: 4px;
 		font-weight: 500;
 		font-size: $font-body-extra-small;
@@ -270,26 +295,11 @@
 		padding-bottom: 0;
 		line-height: unset;
 		height: unset;
+		min-height: 20px;
 
 		&.badge--success {
 			background: var(--studio-green-5);
 			color: var(--studio-green-80);
-		}
-	}
-
-	@media (max-width: 660px) {
-		.card {
-			display: flex;
-			flex-direction: column-reverse;
-			flex-wrap: wrap;
-			gap: 4px;
-
-			.badge {
-				position: relative;
-				right: unset;
-				width: fit-content;
-				align-self: flex-start;
-			}
 		}
 	}
 }
@@ -302,8 +312,11 @@
 	}
 
 	.eligibility-warnings__message {
-		border-bottom: 1px solid var(--color-border-subtle);
 		padding-bottom: 10px;
+	}
+
+	.eligibility-warnings__intro .eligibility-warnings__message {
+		padding-bottom: 0;
 	}
 }
 

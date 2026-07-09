@@ -1,6 +1,5 @@
 import { Card } from '@automattic/components';
 import { localize } from 'i18n-calypso';
-import { get } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
@@ -88,7 +87,7 @@ class CloneCredentialsStep extends Component {
 
 export default connect(
 	( state, ownProps ) => {
-		const originSiteName = get( ownProps, [ 'signupDependencies', 'originSiteName' ], '' );
+		const originSiteName = ownProps?.signupDependencies?.originSiteName ?? '';
 		const originBlogId = ownProps?.signupDependencies?.originBlogId;
 		const destinationSiteName = ownProps?.signupDependencies?.destinationSiteName;
 		const destinationSiteUrl = ownProps?.signupDependencies?.destinationSiteUrl;

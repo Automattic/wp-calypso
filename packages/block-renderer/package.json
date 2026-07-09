@@ -40,7 +40,7 @@
 		"@automattic/global-styles": "workspace:^",
 		"@tanstack/react-query": "^5.83.0",
 		"@wordpress/block-editor": "patch:@wordpress/block-editor@npm%3A15.20.0#~/.yarn/patches/@wordpress-block-editor-npm-15.20.0-2d52fc5cc4.patch",
-		"@wordpress/compose": "patch:@wordpress/compose@npm%3A8.1.0#~/.yarn/patches/@wordpress-compose-npm-8.1.0-ea108e3129.patch",
+		"@wordpress/compose": "^8.2.0",
 		"clsx": "^2.1.1",
 		"tslib": "^2.8.1",
 		"utility-types": "^3.10.0",

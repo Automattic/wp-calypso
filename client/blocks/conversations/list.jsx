@@ -1,5 +1,4 @@
-import { keyBy, pickBy } from '@automattic/js-utils';
-import { map, filter, get, partition } from 'lodash';
+import { keyBy, partition, pickBy } from '@automattic/js-utils';
 import PropTypes from 'prop-types';
 import { Component, useCallback, useMemo, useRef, useState } from 'react';
 import { connect } from 'react-redux';
@@ -159,7 +158,7 @@ export class ConversationCommentList extends Component {
 
 	getParentId = ( commentsTree, childId ) => commentsTree?.[ childId ]?.data?.parent?.ID;
 	commentHasParent = ( commentsTree, childId ) => !! this.getParentId( commentsTree, childId );
-	commentIsLoaded = ( commentsTree, commentId ) => !! get( commentsTree, commentId );
+	commentIsLoaded = ( commentsTree, commentId ) => !! commentsTree?.[ commentId ];
 
 	getInaccessibleParentsIds = ( commentsTree, commentIds ) => {
 		// base case
@@ -167,8 +166,8 @@ export class ConversationCommentList extends Component {
 			return [];
 		}
 
-		const withParents = filter( commentIds, ( id ) => this.commentHasParent( commentsTree, id ) );
-		const parentIds = map( withParents, ( id ) => this.getParentId( commentsTree, id ) );
+		const withParents = commentIds.filter( ( id ) => this.commentHasParent( commentsTree, id ) );
+		const parentIds = withParents.map( ( id ) => this.getParentId( commentsTree, id ) );
 
 		const [ accessible, inaccessible ] = partition( parentIds, ( id ) =>
 			this.commentIsLoaded( commentsTree, id )
@@ -265,7 +264,9 @@ export class ConversationCommentList extends Component {
 		// if you have finished loading comments, then lets use the comments we have as the final comment count
 		// if we are still loading comments, then assume what the server initially told us is right
 		const commentCount = isDoneLoadingComments
-			? filter( commentsTree, ( comment ) => comment?.data?.type === 'comment' ).length // filter out pingbacks/trackbacks
+			? Object.values( commentsTree ?? {} ).filter(
+					( comment ) => comment?.data?.type === 'comment'
+			  ).length // filter out pingbacks/trackbacks
 			: post.discussion.comment_count;
 
 		const showCaterpillar =
@@ -286,7 +287,7 @@ export class ConversationCommentList extends Component {
 							recordReaderTracksEvent={ this.props.recordReaderTracksEvent }
 						/>
 					) }
-					{ map( commentsTree.children, ( commentId ) => {
+					{ commentsTree.children.map( ( commentId ) => {
 						return (
 							<PostComment
 								showNestingReplyArrow

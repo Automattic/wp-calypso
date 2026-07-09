@@ -16,7 +16,10 @@ export const SurveyActionsContext = React.createContext< SurveyActionsContextTyp
 
 const Trigger = ( { asChild, children, onClick, as }: TriggerProps ) => {
 	if ( asChild ) {
-		return cloneElement( children, { onClick } );
+		return cloneElement(
+			children as React.ReactElement< { onClick?: React.MouseEventHandler< HTMLElement > } >,
+			{ onClick }
+		);
 	}
 	const Tag = as ?? 'button';
 	return <Tag onClick={ onClick }>{ children }</Tag>;

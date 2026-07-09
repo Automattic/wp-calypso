@@ -66,14 +66,16 @@ describe( 'read spaces mutators', () => {
 				name: 'Design',
 				feeds: [ 'https://en.blog/feed/', 9982 ],
 				tags: [ 'design' ],
-				layout: { color: 'purple', icon: 'pages' },
+				languages: [ 'en', 'pt' ],
+				layout: { color: 'purple', icon: 'pages', view: 'legacy' },
 			} );
 
 			expect( body ).toEqual( {
 				title: 'Design',
 				feeds: [ 'https://en.blog/feed/', 9982 ],
 				tags: [ 'design' ],
-				layout: { color: 'purple', icon: 'pages' },
+				languages: [ 'en', 'pt' ],
+				layout: { color: 'purple', icon: 'pages', view: 'legacy' },
 			} );
 		} );
 
@@ -102,6 +104,7 @@ describe( 'read spaces mutators', () => {
 				name: 'Work',
 				layout: { color: 'celadon', icon: 'star' },
 				tags: [ 'business' ],
+				languages: [],
 				sources: [
 					{ feedId: 9981, feedUrl: 'https://en.blog/feed/', blogId: 1, name: 'B', siteIcon: null },
 				],
@@ -136,19 +139,23 @@ describe( 'read spaces mutators', () => {
 			const space = await updateReadSpace( '3', {
 				name: 'Renamed',
 				tags: [ 'a', 'b' ],
-				layout: { color: 'green' },
+				languages: [ 'en' ],
+				feeds: [ 456, 'https://example.com/feed' ],
+				layout: { color: 'green', view: 'gallery' },
 			} );
 
 			// layout is a partial merge — only the changed field is sent.
 			expect( body ).toEqual( {
 				title: 'Renamed',
 				tags: [ 'a', 'b' ],
-				layout: { color: 'green' },
+				languages: [ 'en' ],
+				feeds: [ 456, 'https://example.com/feed' ],
+				layout: { color: 'green', view: 'gallery' },
 			} );
 			expect( space ).toMatchObject( { id: '3', name: 'Renamed', tags: [ 'a', 'b' ] } );
 		} );
 
-		it( 'can clear tags by sending an empty array', async () => {
+		it( 'can clear tags and feeds by sending empty arrays', async () => {
 			let body: unknown;
 			nock( BASE )
 				.put( '/wpcom/v2/reader/spaces/3', ( sent ) => {
@@ -157,9 +164,9 @@ describe( 'read spaces mutators', () => {
 				} )
 				.reply( 200, detailResponse( { id: 3, tags: [] } ) );
 
-			await updateReadSpace( '3', { tags: [] } );
+			await updateReadSpace( '3', { tags: [], feeds: [] } );
 
-			expect( body ).toEqual( { tags: [] } );
+			expect( body ).toEqual( { tags: [], feeds: [] } );
 		} );
 	} );
 

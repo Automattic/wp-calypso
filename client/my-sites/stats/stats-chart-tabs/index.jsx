@@ -1,8 +1,8 @@
 import config from '@automattic/calypso-config';
+import { memoize } from '@automattic/js-utils';
 import { withMobileBreakpoint } from '@automattic/viewport-react';
 import clsx from 'clsx';
 import { localize, translate } from 'i18n-calypso';
-import { memoize } from 'lodash';
 import moment from 'moment';
 import PropTypes from 'prop-types';
 import { Component, useRef } from 'react';

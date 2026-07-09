@@ -1,7 +1,57 @@
+@use 'calypso/reader/spaces/colors' as space-colors;
+@use 'calypso/assets/stylesheets/shared/mixins/dark-theme' as ui-mixins;
+
 .space-feed {
 	display: flex;
 	flex-direction: column;
 	gap: 12px;
+}
+
+// Each space exposes its accent as `--space-color` / `--space-color-bg`. Emit
+// them on the feed root from the space's chosen color so any layout inside can
+// consume the accent (e.g. the compact list colors post titles with it).
+@each $color in space-colors.$space-colors {
+	.space-feed--#{$color} {
+		@include space-colors.space-accent-color( $color );
+
+		// The shared post-action buttons (like, comment, share, save) color their
+		// icons and labels from `--color-text-subtle` at rest and `--color-link` on
+		// hover / when active. Remap just those two tokens within the actions scope
+		// so every button follows the space accent, without reaching into each
+		// button's styles. Emitted only under the accent modifier — a feed with no
+		// accent (`color: 'none'`) has no modifier, so the buttons keep the neutral
+		// tokens. The remap is confined to `.reader-post-actions`, so the rest of the
+		// feed (excerpts, meta) keeps the neutral subtle color.
+		.reader-post-actions {
+			--color-text-subtle: var( --space-color );
+			--color-link: var( --space-color-hover );
+		}
+
+		// The accent's default foreground sits at the dark `-80` step, which is
+		// legible on the light feed but disappears against the dark surface. Lift
+		// the accent to lighter studio steps in dark mode so titles and actions
+		// keep the space's colour while staying readable. Only the on-surface text
+		// tokens change here; the chip tokens (`--space-color-bg` etc., used as a
+		// tinted-background + dark-glyph pair) are left untouched.
+		//
+		// The dark theme remaps only the `studio-blue` and `studio-gray` palettes
+		// (see `dark-theme.scss`), where the semantics flip so the high `-80` step
+		// is already a bright foreground — those two already read correctly, and
+		// lifting them to `-30` would instead land on the dark surface tint. Skip
+		// them; the remaining, non-remapped hues keep the original ramp where the
+		// low `-30`/`-20` steps are the light ones.
+		@if $color != 'blue' and $color != 'gray' {
+			@include ui-mixins.when-dark-theme {
+				--space-color: var( --studio-#{$color}-30 );
+				--space-color-hover: var( --studio-#{$color}-20 );
+				--space-color-visited: color-mix(
+					in srgb,
+					var( --studio-#{$color}-30 ) 40%,
+					var( --color-text-subtle )
+				);
+			}
+		}
+	}
 }
 
 .space-feed__toolbar {
@@ -77,8 +127,15 @@
 	inline-size: 40%;
 }
 
+// Shared shimmer block used by the per-layout skeletons (see `Shimmer`).
+.space-feed__shimmer {
+	display: block;
+	border-radius: 4px;
+}
+
 .space-feed__skeleton-avatar,
-.space-feed__skeleton-line {
+.space-feed__skeleton-line,
+.space-feed__shimmer {
 	background: linear-gradient(
 		90deg,
 		var(--color-surface-backdrop) 0%,
@@ -101,7 +158,8 @@
 
 @media (prefers-reduced-motion: reduce) {
 	.space-feed__skeleton-avatar,
-	.space-feed__skeleton-line {
+	.space-feed__skeleton-line,
+	.space-feed__shimmer {
 		animation: none;
 	}
 }
