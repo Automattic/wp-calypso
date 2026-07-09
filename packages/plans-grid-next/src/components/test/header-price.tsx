@@ -266,6 +266,7 @@ describe( 'HeaderPrice', () => {
 				},
 			},
 			isExperimentVariant: true,
+			showFeatureCheckmarks: true,
 			showBillingDescriptionForIncreasedRenewalPrice: 'crossed_price',
 		} ) );
 
@@ -283,6 +284,48 @@ describe( 'HeaderPrice', () => {
 		await waitFor( () => {
 			expect( screen.getByText( /What a\s+savings!/ ) ).toBeInTheDocument();
 		} );
+	} );
+
+	test( 'should not show a pricing badge tooltip outside the plans grid redesign experiment', () => {
+		const pricing = {
+			currencyCode: 'USD',
+			originalPrice: { full: 120, monthly: 10 },
+			discountedPrice: { full: null, monthly: null },
+			billingPeriod: PLAN_ANNUAL_PERIOD,
+		};
+
+		mockUseHeaderPriceContext.mockReturnValue( {
+			isAnyPlanPriceDiscounted: true,
+			setIsAnyPlanPriceDiscounted: jest.fn(),
+		} );
+		( Plans.usePricingMetaForGridPlans as jest.Mock ).mockReturnValue( {
+			[ PLAN_PERSONAL_MONTHLY ]: {
+				originalPrice: { monthly: 20, full: 240 },
+				discountedPrice: { monthly: null, full: null },
+				billingPeriod: 31,
+			},
+		} );
+
+		usePlansGridContext.mockImplementation( () => ( {
+			gridPlansIndex: {
+				[ PLAN_PERSONAL ]: {
+					current: false,
+					isMonthlyPlan: true,
+					pricing,
+				},
+			},
+			isExperimentVariant: true,
+			showFeatureCheckmarks: false,
+			showBillingDescriptionForIncreasedRenewalPrice: 'crossed_price',
+		} ) );
+
+		const { container } = render( <HeaderPrice { ...defaultProps } />, { wrapper: Wrapper } );
+		const badge = container.querySelector(
+			'.plans-grid-next-header-price__badge.is-plan-differentiators-experiment-badge:not(.is-hidden)'
+		);
+
+		expect( badge ).toHaveTextContent( 'Save 50%' );
+		expect( container.querySelector( '.plans-2023-tooltip__hover-area-container' ) ).toBeNull();
 	} );
 
 	test( 'should show the monthly plan price crossed out and the annual monthly-equivalent as the current price', () => {

@@ -102,12 +102,14 @@ const HeaderPrice = ( { planSlug, visibleGridPlans }: HeaderPriceProps ) => {
 		helpers,
 		showBillingDescriptionForIncreasedRenewalPrice,
 		isExperimentVariant,
+		showFeatureCheckmarks,
 		isEnterpriseA4AIndia,
 	} = usePlansGridContext();
 
 	const pricingBadgeClassName = clsx( 'plans-grid-next-header-price__badge', {
 		'is-plan-differentiators-experiment-badge': isExperimentVariant,
 	} );
+	const showPricingBadgeTooltip = isExperimentVariant && showFeatureCheckmarks;
 	const { isAnyPlanPriceDiscounted, setIsAnyPlanPriceDiscounted } = useHeaderPriceContext();
 	const {
 		current,
@@ -165,7 +167,7 @@ const HeaderPrice = ( { planSlug, visibleGridPlans }: HeaderPriceProps ) => {
 	) => {
 		const className = clsx( pricingBadgeClassName, { 'is-hidden': isHidden } );
 
-		if ( isHidden || ! isExperimentVariant ) {
+		if ( isHidden || ! showPricingBadgeTooltip ) {
 			return <div className={ className }>{ children }</div>;
 		}
 
