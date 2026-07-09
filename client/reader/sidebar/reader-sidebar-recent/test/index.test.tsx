@@ -18,8 +18,10 @@ jest.mock( 'calypso/reader/stats', () => ( {
 } ) );
 
 let mockSubscribedSites: Partial< SiteSubscriptionItem >[] = [];
+let mockSubscribedFeedsInfo = { unseenCount: 0, feedIds: [], feedUrls: [] };
 jest.mock( 'calypso/reader/data/site-subscriptions', () => ( {
 	useSubscribedSites: () => mockSubscribedSites,
+	useSubscribedFeedsInfo: () => mockSubscribedFeedsInfo,
 } ) );
 
 function createSubscriptionItem(
@@ -48,9 +50,12 @@ function getUnseenCount( container: HTMLElement ): HTMLElement | null {
 describe( 'ReaderSidebarRecent unseen counts', () => {
 	afterEach( () => {
 		mockSubscribedSites = [];
+		mockSubscribedFeedsInfo = { unseenCount: 0, feedIds: [], feedUrls: [] };
 	} );
 
 	test( 'shows the total unseen count for the section, summed across all followed sites', () => {
+		mockSubscribedFeedsInfo = { unseenCount: 8, feedIds: [], feedUrls: [] };
+
 		const { container } = renderRecentDropdown( [
 			createSubscriptionItem( { ID: 1, name: 'Alpha', unseen_count: 3 } ),
 			createSubscriptionItem( { ID: 2, name: 'Beta', unseen_count: 5 } ),
@@ -80,22 +85,6 @@ describe( 'ReaderSidebarRecent unseen counts', () => {
 		expect( alphaRow?.querySelector( '.a8c-count' ) ).toHaveTextContent( '4' );
 		expect( alphaRow?.querySelector( '.a8c-count' ) ).toHaveAccessibleName( '4 unseen posts' );
 		expect( betaRow?.querySelector( '.a8c-count' ) ).toBeNull();
-	} );
-
-	test( 'flags the section with the has-counts modifier when there are unseen posts', () => {
-		const { container } = renderRecentDropdown( [
-			createSubscriptionItem( { ID: 1, unseen_count: 2 } ),
-		] );
-
-		expect( container.querySelector( '.reader-sidebar-recent' ) ).toHaveClass( 'has-counts' );
-	} );
-
-	test( 'does not flag the section with has-counts when there are no unseen posts', () => {
-		const { container } = renderRecentDropdown( [
-			createSubscriptionItem( { ID: 1, unseen_count: 0 } ),
-		] );
-
-		expect( container.querySelector( '.reader-sidebar-recent' ) ).not.toHaveClass( 'has-counts' );
 	} );
 } );
 

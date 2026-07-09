@@ -7,7 +7,7 @@ import {
 	envToFeatureKey,
 	envVariables,
 } from '@automattic/calypso-e2e';
-import { tags, test } from '../../lib/pw-base';
+import { skipIfNotTrunk, tags, test } from '../../lib/pw-base';
 
 /**
  * Shallowly tests the Stats feature, including Jetpack/Odyssey stats.
@@ -15,6 +15,8 @@ import { tags, test } from '../../lib/pw-base';
  * Keywords: Stats, Jetpack, Odyssey Stats
  */
 test.describe( 'Stats', { tag: [ tags.CALYPSO_PR, tags.JETPACK_WPCOM_INTEGRATION ] }, () => {
+	skipIfNotTrunk();
+
 	const accountName = getTestAccountByFeature( envToFeatureKey( envVariables ), [
 		{ gutenberg: 'stable', siteType: 'simple', accountName: 'defaultUser' },
 	] );

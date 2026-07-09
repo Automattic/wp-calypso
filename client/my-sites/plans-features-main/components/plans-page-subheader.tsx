@@ -1,5 +1,6 @@
 import { Button, Gridicon } from '@automattic/components';
 import { isOnboardingFlow } from '@automattic/onboarding';
+import { Plans2023Tooltip, useManageTooltipToggle } from '@automattic/plans-grid-next';
 import styled from '@emotion/styled';
 import { useTranslate } from 'i18n-calypso';
 import { ReactNode } from 'react';
@@ -101,8 +102,18 @@ const HeaderContainer = styled( Subheader )`
 	margin-bottom: 0;
 
 	&.plans-features-main__differentiator-header {
-		margin-top: -20px;
-		margin-bottom: 32px;
+		flex-wrap: wrap;
+		align-items: center;
+		gap: 12px 8px;
+		margin-top: -13px;
+		margin-bottom: 48px;
+		color: var( --color-text );
+		font-weight: 400;
+
+		.plans-2023-tooltip__hover-area-container {
+			display: inline-flex;
+			align-items: center;
+		}
 	}
 
 	// TODO:
@@ -110,6 +121,10 @@ const HeaderContainer = styled( Subheader )`
 	// Ideally there should be a shared constant that can be reused from the CSS side.
 	@media ( max-width: 740px ) {
 		flex-direction: column;
+
+		&.plans-features-main__differentiator-header {
+			flex-direction: row;
+		}
 	}
 `;
 
@@ -152,40 +167,53 @@ const PlanBenefitHeader = () => {
 	);
 };
 
+const DifferentiatorPrefix = styled.span`
+	display: inline-flex;
+	align-items: center;
+	line-height: 20px;
+	min-height: 20px;
+	white-space: nowrap;
+`;
+
 // Inline SVG components
-const ShieldPlusIcon = () => (
-	<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+const ShieldIcon = () => (
+	<svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
 		<path
 			fillRule="evenodd"
 			clipRule="evenodd"
-			d="M9.12404 5.23988C8.0952 5.51646 7.07304 5.81729 6.05841 6.14212C5.96659 6.17047 5.88463 6.22414 5.82194 6.29698C5.75926 6.36981 5.71839 6.45886 5.70404 6.55387C5.10441 10.938 6.48816 14.1375 8.13854 16.2446C8.96654 17.3021 9.86316 18.0851 10.6102 18.5992C10.9848 18.8558 11.3144 19.0425 11.5743 19.1617C11.7048 19.2214 11.8105 19.2619 11.8915 19.2855C11.9273 19.297 11.9637 19.306 12.0007 19.3125C12.0085 19.3114 12.0434 19.3069 12.1098 19.2866C12.1908 19.2619 12.2965 19.2214 12.427 19.1617C12.6858 19.0425 13.0177 18.8558 13.3912 18.5992C14.3279 17.942 15.161 17.1484 15.8628 16.2446C17.5132 14.1375 18.8969 10.938 18.2973 6.55387C18.2829 6.45886 18.2421 6.36981 18.1794 6.29698C18.1167 6.22414 18.0347 6.17047 17.9429 6.14212C17.2387 5.91712 16.0507 5.55038 14.8773 5.23988C13.678 4.92375 12.5744 4.6875 12.0007 4.6875C11.4269 4.6875 10.3244 4.92375 9.12404 5.23988ZM8.83604 4.15312C10.0094 3.84262 11.2548 3.5625 12.0007 3.5625C12.7454 3.5625 13.9919 3.84262 15.1653 4.15312C16.2119 4.43412 17.2517 4.73983 18.2838 5.07C18.8778 5.259 19.3255 5.77087 19.4122 6.402C20.0568 11.1236 18.5617 14.6224 16.7493 16.9376C15.977 17.9312 15.06 18.8034 14.029 19.5251C13.6706 19.7762 13.2916 19.9968 12.8962 20.1844C12.5924 20.3239 12.2684 20.4375 12.0007 20.4375C11.7329 20.4375 11.4089 20.3239 11.1052 20.1844C10.7096 19.9969 10.3307 19.7764 9.97229 19.5251C8.94172 18.8033 8.02516 17.9311 7.25316 16.9376C5.43854 14.6224 3.94454 11.1236 4.58916 6.402C4.63226 6.09608 4.76112 5.80862 4.96081 5.57289C5.1605 5.33716 5.42286 5.16281 5.71754 5.07C6.74967 4.73984 7.78946 4.43413 8.83604 4.15312Z"
-			fill="#3858E9"
+			d="M10 2.64648L15.625 5.20315V9.01482C15.625 12.2648 13.5383 15.3398 10.5958 16.3106C10.2089 16.4383 9.79114 16.4383 9.40417 16.3106C6.4625 15.3407 4.375 12.264 4.375 9.01482V5.20315L10 2.64648ZM5.625 6.00815V9.01482C5.625 11.7757 7.4125 14.3382 9.79583 15.1232C9.92833 15.1673 10.0717 15.1673 10.2042 15.1232C12.5875 14.3382 14.375 11.7757 14.375 9.01482V6.00815L10 4.01982L5.625 6.00815Z"
+			fill="currentColor"
 		/>
-		<path d="M12 8V13.5" stroke="#3858E9" strokeLinecap="round" strokeLinejoin="round" />
+	</svg>
+);
+
+const ManagedHostingIcon = () => (
+	<svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
 		<path
-			d="M14.7539 10.7461L9.25391 10.7461"
-			stroke="#3858E9"
-			strokeLinecap="round"
-			strokeLinejoin="round"
+			fillRule="evenodd"
+			clipRule="evenodd"
+			d="M14.4793 13.0468C15.0918 12.149 15.4185 11.087 15.4168 10.0002C15.4184 9.00851 15.1465 8.03562 14.631 7.1885L13.5793 7.866C13.9527 8.49016 14.1668 9.22016 14.1668 10.0002C14.1682 10.8471 13.9103 11.6742 13.4277 12.3702L14.4793 13.0468ZM12.8535 14.6052L12.176 13.5543C11.5214 13.956 10.7682 14.1681 10.0002 14.1668C9.20183 14.1668 8.45683 13.9418 7.82266 13.5535L7.146 14.6043C8.00266 15.1368 8.9915 15.4183 10.0002 15.4168C11.0085 15.4184 11.997 15.1372 12.8535 14.6052ZM5.52016 13.0468C4.90803 12.1489 4.58154 11.0869 4.5835 10.0002C4.5835 8.971 4.87016 8.0085 5.36933 7.18933L6.42016 7.866C6.03489 8.51111 5.83212 9.24876 5.8335 10.0002C5.8335 10.8802 6.10683 11.6968 6.57266 12.3693L5.52016 13.0468ZM7.671 6.54433C8.35877 6.07966 9.17014 5.83204 10.0002 5.8335C10.8627 5.8335 11.6635 6.09516 12.3285 6.54433L13.0052 5.49266C12.1159 4.89823 11.0698 4.58175 10.0002 4.5835C8.93012 4.58184 7.88377 4.89861 6.99433 5.4935L7.671 6.54433ZM10.0002 16.6668C11.7683 16.6668 13.464 15.9645 14.7142 14.7142C15.9645 13.464 16.6668 11.7683 16.6668 10.0002C16.6668 8.23205 15.9645 6.53636 14.7142 5.28612C13.464 4.03588 11.7683 3.3335 10.0002 3.3335C8.23205 3.3335 6.53636 4.03588 5.28612 5.28612C4.03588 6.53636 3.3335 8.23205 3.3335 10.0002C3.3335 11.7683 4.03588 13.464 5.28612 14.7142C6.53636 15.9645 8.23205 16.6668 10.0002 16.6668ZM10.0002 12.9168C10.3832 12.9168 10.7625 12.8414 11.1163 12.6948C11.4702 12.5482 11.7917 12.3334 12.0626 12.0626C12.3334 11.7917 12.5482 11.4702 12.6948 11.1163C12.8414 10.7625 12.9168 10.3832 12.9168 10.0002C12.9168 9.61714 12.8414 9.23787 12.6948 8.884C12.5482 8.53014 12.3334 8.20861 12.0626 7.93777C11.7917 7.66693 11.4702 7.45209 11.1163 7.30551C10.7625 7.15894 10.3832 7.0835 10.0002 7.0835C9.22661 7.0835 8.48475 7.39079 7.93777 7.93777C7.39079 8.48475 7.0835 9.22661 7.0835 10.0002C7.0835 10.7737 7.39079 11.5156 7.93777 12.0626C8.48475 12.6095 9.22661 12.9168 10.0002 12.9168Z"
+			fill="currentColor"
+		/>
+	</svg>
+);
+
+const FastLoadingIcon = () => (
+	<svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+		<path
+			d="M10.0005 4.1665C11.1296 4.16656 12.2287 4.4542 13.2017 4.98682L12.271 5.9165C11.5657 5.59092 10.7922 5.41655 10.0005 5.4165C8.5639 5.4165 7.18526 5.98662 6.16943 7.00244C5.15361 8.01826 4.5835 9.39691 4.5835 10.8335C4.58358 12.2699 5.15379 13.6478 6.16943 14.6636L5.28564 15.5474C4.03558 14.2972 3.33358 12.6014 3.3335 10.8335C3.3335 9.06539 4.0354 7.36889 5.28564 6.11865C6.53589 4.86841 8.23238 4.1665 10.0005 4.1665ZM15.8511 7.64014C16.3808 8.61114 16.6665 9.7075 16.6665 10.8335C16.6664 12.6015 15.9645 14.2972 14.7144 15.5474L13.8306 14.6636C14.8463 13.6478 15.4164 12.27 15.4165 10.8335C15.4165 10.0448 15.2436 9.274 14.9204 8.5708L15.8511 7.64014ZM14.5591 5.39111C14.8032 5.14763 15.199 5.14723 15.4429 5.39111C15.6865 5.63501 15.6863 6.03085 15.4429 6.2749L11.2065 10.5103C11.2341 10.6134 11.2505 10.7216 11.2505 10.8335C11.2504 11.5237 10.6907 12.0833 10.0005 12.0835C9.31017 12.0835 8.75055 11.5238 8.75049 10.8335C8.75049 10.1431 9.31013 9.5835 10.0005 9.5835C10.1119 9.58353 10.22 9.59909 10.3228 9.62646L14.5591 5.39111Z"
+			fill="currentColor"
 		/>
 	</svg>
 );
 
 const UnlimitedIcon = () => (
-	<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
+	<svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
 		<path
-			d="M16 18L16 6M16 6L20 10.125M16 6L12 10.125"
-			stroke="#3858E9"
-			strokeWidth="1.2"
-			strokeLinecap="round"
-			strokeLinejoin="round"
-		/>
-		<path
-			d="M8 6L8 18M8 18L12 13.875M8 18L4 13.875"
-			stroke="#3858E9"
-			strokeWidth="1.2"
-			strokeLinecap="round"
-			strokeLinejoin="round"
+			fillRule="evenodd"
+			clipRule="evenodd"
+			d="M9.375 4.1665H10.625V16.6665H9.375V4.1665ZM5 8.33317H6.25V16.6665H5V8.33317ZM15 11.6665H13.75V16.6665H15V11.6665Z"
+			fill="currentColor"
 		/>
 	</svg>
 );
@@ -194,63 +222,81 @@ const IconWrapper = styled.span`
 	display: inline-flex;
 	align-items: center;
 	justify-content: center;
-	margin-right: 8px;
+	margin-right: 4px;
 	flex-shrink: 0;
-	color: var( --studio-blue-60 );
+	color: inherit;
 
 	svg {
-		width: 24px;
-		height: 24px;
-		fill: var( --studio-blue-60 );
-		color: var( --studio-blue-60 );
+		width: 20px;
+		height: 20px;
+		color: inherit;
 	}
 `;
 
 const DifferentiatorIconContainer = styled.span`
 	display: inline-flex;
 	align-items: center;
-	margin-right: 12px;
-	padding: 10px 16px;
-	background-color: var( --studio-blue-5 );
-	border-radius: 8px;
+	cursor: help;
 	text-align: left;
-	font-size: 14px;
-	line-height: 24px;
+	font-size: 16px;
+	line-height: 20px;
 	font-weight: 400;
-	color: var( --studio-gray-70 );
+	color: inherit;
+	white-space: nowrap;
+`;
 
-	&:last-child {
-		margin-right: 0;
-	}
-
-	@media ( max-width: 740px ) {
-		margin-right: 0;
-		margin-bottom: 8px;
-		width: 100%;
-
-		&:last-child {
-			margin-bottom: 0;
-		}
-	}
+const DifferentiatorLabel = styled.span`
+	border-bottom: 1px dashed var( --color-text-subtle );
 `;
 
 const DifferentiatorHeader = () => {
 	const translate = useTranslate();
+	const [ activeTooltipId, setActiveTooltipId ] = useManageTooltipToggle();
+
+	const differentiators = [
+		{
+			id: 'unlimited-traffic',
+			icon: <UnlimitedIcon />,
+			title: translate( 'Unlimited traffic' ),
+			tooltip: translate( 'No slowdowns, no caps, no matter how much traffic your site gets.' ),
+		},
+		{
+			id: 'managed-hosting',
+			icon: <ManagedHostingIcon />,
+			title: translate( 'Managed hosting' ),
+			tooltip: translate( 'Updates, security, and backups, all taken care of for you.' ),
+		},
+		{
+			id: 'built-in-security',
+			icon: <ShieldIcon />,
+			title: translate( 'Built-in security' ),
+			tooltip: translate( 'Protected from malware, attacks, and spam, right out of the box.' ),
+		},
+		{
+			id: 'fast-site-loading',
+			icon: <FastLoadingIcon />,
+			title: translate( 'Fast site loading' ),
+			tooltip: translate( 'Fast loading worldwide with global CDN and free SSL built in.' ),
+		},
+	];
 
 	return (
 		<HeaderContainer className="plans-features-main__differentiator-header">
-			<DifferentiatorIconContainer>
-				<IconWrapper>
-					<UnlimitedIcon />
-				</IconWrapper>
-				{ translate( 'Unlimited pages, posts, users and visitors' ) }
-			</DifferentiatorIconContainer>
-			<DifferentiatorIconContainer>
-				<IconWrapper>
-					<ShieldPlusIcon />
-				</IconWrapper>
-				{ translate( 'Spam, brutforce, DDoS protection and mitigation' ) }
-			</DifferentiatorIconContainer>
+			<DifferentiatorPrefix>{ translate( 'Paid plans include:' ) }</DifferentiatorPrefix>
+			{ differentiators.map( ( { id, icon, title, tooltip } ) => (
+				<Plans2023Tooltip
+					key={ id }
+					id={ `plans-differentiator-${ id }` }
+					text={ tooltip }
+					activeTooltipId={ activeTooltipId }
+					setActiveTooltipId={ setActiveTooltipId }
+				>
+					<DifferentiatorIconContainer className="plans-features-main__differentiator-item">
+						<IconWrapper>{ icon }</IconWrapper>
+						<DifferentiatorLabel>{ title }</DifferentiatorLabel>
+					</DifferentiatorIconContainer>
+				</Plans2023Tooltip>
+			) ) }
 		</HeaderContainer>
 	);
 };
@@ -297,12 +343,7 @@ const PlansPageSubheader = ( {
 		isVisualSplitIntent,
 	};
 
-	const renderSubheader = () => {
-		// Differentiators experiment: show the differentiator header with 3 bullet points
-		if ( showDifferentiatorHeader ) {
-			return <DifferentiatorHeader />;
-		}
-
+	const renderStandardSubheader = () => {
 		// Website Builder intent: use the new copy
 		if ( ! isUsingStepContainerV2 && intent === 'plans-website-builder' ) {
 			if ( deemphasizeFreePlan && offeringFreePlan ) {
@@ -385,6 +426,19 @@ const PlansPageSubheader = ( {
 		}
 
 		return null;
+	};
+
+	const renderSubheader = () => {
+		if ( showDifferentiatorHeader ) {
+			return (
+				<>
+					{ renderStandardSubheader() }
+					<DifferentiatorHeader />
+				</>
+			);
+		}
+
+		return renderStandardSubheader();
 	};
 
 	return (

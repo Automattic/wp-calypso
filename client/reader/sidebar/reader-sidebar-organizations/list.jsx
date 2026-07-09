@@ -4,16 +4,27 @@ import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import ExpandableSidebarMenu from 'calypso/layout/sidebar/expandable';
-import { useOrganizationSiteSubscriptions } from 'calypso/reader/data/site-subscriptions';
+import {
+	useOrganizationFeedsInfo,
+	useOrganizationSiteSubscriptions,
+} from 'calypso/reader/data/site-subscriptions';
+import { AUTOMATTIC_ORG_ID, P2_ORG_ID } from 'calypso/state/reader/organizations/constants';
 import { toggleReaderSidebarOrganization } from 'calypso/state/reader-ui/sidebar/actions';
 import { isOrganizationOpen } from 'calypso/state/reader-ui/sidebar/selectors';
+import { MoreMenuActions } from '../more-menu-actions';
 import ReaderSidebarOrganizationsListItem from './list-item';
+
 export class ReaderSidebarOrganizationsList extends Component {
 	static propTypes = {
 		path: PropTypes.string.isRequired,
 		organization: PropTypes.object,
 		sites: PropTypes.array,
 		teams: PropTypes.array,
+		feedsInfo: PropTypes.shape( {
+			unseenCount: PropTypes.number,
+			feedIds: PropTypes.array,
+			feedUrls: PropTypes.array,
+		} ),
 	};
 
 	toggleMenu = () => {
@@ -36,21 +47,32 @@ export class ReaderSidebarOrganizationsList extends Component {
 		);
 	}
 
+	identifierForOrganizationId( organizationId ) {
+		if ( organizationId === AUTOMATTIC_ORG_ID ) {
+			return 'a8c';
+		}
+
+		if ( organizationId === P2_ORG_ID ) {
+			return 'p2';
+		}
+
+		return `organization-${ organizationId }`;
+	}
+
 	render() {
-		const { organization, path, sites } = this.props;
+		const { organization, path, sites, feedsInfo } = this.props;
 
 		if ( ! organization.sites_count ) {
 			return null;
 		}
 
 		const isChildSelected = sites.some( ( site ) => path === `/reader/feeds/${ site.feed_ID }` );
-		const unseenCount = sites.reduce( ( acc, item ) => acc + ( item.unseen_count ?? 0 ), 0 );
 
 		return (
 			<ExpandableSidebarMenu
 				expanded={ this.props.isOrganizationOpen }
 				title={ organization.title }
-				count={ unseenCount > 0 ? unseenCount : undefined }
+				count={ feedsInfo.unseenCount }
 				onClick={ this.selectMenu }
 				expandableIconClick={ this.toggleMenu }
 				disableFlyout
@@ -59,6 +81,14 @@ export class ReaderSidebarOrganizationsList extends Component {
 						'/reader/' + organization.slug === path ||
 						( ! this.props.isOrganizationOpen && isChildSelected ),
 				} ) }
+				moreMenuActions={
+					<MoreMenuActions
+						identifier={ this.identifierForOrganizationId( organization.id ) }
+						feedIds={ feedsInfo.feedIds }
+						feedUrls={ feedsInfo.feedUrls }
+						unseenCount={ feedsInfo.unseenCount }
+					/>
+				}
 			>
 				{ this.renderSites() }
 			</ExpandableSidebarMenu>
@@ -68,7 +98,9 @@ export class ReaderSidebarOrganizationsList extends Component {
 
 function OrganizationsListWithFollows( props ) {
 	const sites = useOrganizationSiteSubscriptions( props.organization.id );
-	return <ReaderSidebarOrganizationsList { ...props } sites={ sites } />;
+	const feedsInfo = useOrganizationFeedsInfo( props.organization.id );
+
+	return <ReaderSidebarOrganizationsList { ...props } sites={ sites } feedsInfo={ feedsInfo } />;
 }
 
 export default connect(

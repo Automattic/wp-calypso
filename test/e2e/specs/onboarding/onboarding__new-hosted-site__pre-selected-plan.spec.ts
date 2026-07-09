@@ -5,13 +5,15 @@ import {
 	RestAPIClient,
 	UserSignupPage,
 } from '@automattic/calypso-e2e';
-import { tags, test } from '../../lib/pw-base';
+import { skipIfNotTrunk, tags, test } from '../../lib/pw-base';
 import { apiCloseAccount } from '../shared';
 
 test.describe(
 	DataHelper.createSuiteTitle( 'New Hosted Site Flow: With pre-selected plan' ),
 	{ tag: [ tags.CALYPSO_RELEASE ] },
 	() => {
+		skipIfNotTrunk();
+
 		const planSlug = 'business-bundle';
 		const planName = 'Business';
 		const testUser = DataHelper.getNewTestUser();

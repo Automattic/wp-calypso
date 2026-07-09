@@ -105,6 +105,18 @@ function getIndividualConfig( options = {} ) {
 					if ( request === '@wordpress/ui' ) {
 						return null;
 					}
+					// The plugin maps `react`/`react-dom` but not this deep import,
+					// so it would get bundled — a second react-dom copy (v19) that
+					// crashes against the page's external React. WordPress's
+					// `ReactDOM` global has included `createRoot` since WP 6.2.
+					if ( request === 'react-dom/client' ) {
+						return 'ReactDOM';
+					}
+				},
+				requestToHandle( request ) {
+					if ( request === 'react-dom/client' ) {
+						return 'react-dom';
+					}
 				},
 			} ),
 			new ReadableJsAssetsWebpackPlugin(),

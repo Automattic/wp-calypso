@@ -5,6 +5,7 @@ import { connect } from 'react-redux';
 import { SiteIcon } from 'calypso/blocks/site-icon';
 import AutoDirection from 'calypso/components/auto-direction';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
+import { MoreMenuActions } from 'calypso/reader/sidebar/more-menu-actions';
 import { recordAction, recordGaEvent } from 'calypso/reader/stats';
 import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
 import ReaderSidebarHelper from '../helper';
@@ -32,6 +33,7 @@ export class ReaderSidebarOrganizationsListItem extends Component {
 		);
 
 		const selected = computedClassName.includes( 'selected' );
+		const feedId = site.feed_ID ? Number( site.feed_ID ) : null;
 
 		return (
 			<MenuItem selected={ selected } key={ this.props.title }>
@@ -50,7 +52,17 @@ export class ReaderSidebarOrganizationsListItem extends Component {
 							{ site.last_updated > 0 && moment( new Date( site.last_updated ) ).fromNow() }
 						</span>
 					</span>
-					{ site.unseen_count > 0 && <Count count={ site.unseen_count } compact /> }
+					<span className="sidebar__actions-and-count">
+						{ feedId && site.feed_URL && (
+							<MoreMenuActions
+								identifier={ `feed:${ feedId }` }
+								feedIds={ [ feedId ] }
+								feedUrls={ [ site.feed_URL ] }
+								unseenCount={ site.unseen_count }
+							/>
+						) }
+						{ site.unseen_count > 0 && <Count count={ site.unseen_count } compact /> }
+					</span>
 				</MenuItemLink>
 			</MenuItem>
 		);

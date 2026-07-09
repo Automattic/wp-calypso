@@ -1,6 +1,8 @@
 import {
 	availableTldsQuery,
+	bundleForDomainQuery,
 	bundleSuggestionQuery,
+	bundleTriggersQuery,
 	domainSuggestionsQuery,
 	freeSuggestionQuery,
 	domainAvailabilityQuery,
@@ -165,6 +167,8 @@ export interface DomainSearchContextType
 		domainAvailability: ( domainName: string ) => ReturnType< typeof domainAvailabilityQuery >;
 		freeSuggestion: ( query: string ) => ReturnType< typeof freeSuggestionQuery >;
 		bundleSuggestion: ( query: string ) => ReturnType< typeof bundleSuggestionQuery >;
+		bundleTriggers: ( query: string ) => ReturnType< typeof bundleTriggersQuery >;
+		bundleForDomain: ( fqdn: string ) => ReturnType< typeof bundleForDomainQuery >;
 	};
 	config: DomainSearchConfig;
 }
