@@ -1,9 +1,4 @@
 export const STEPS = {
-	BLOGGER_STARTING_POINT: {
-		slug: 'bloggerStartingPoint',
-		asyncComponent: () => import( './steps-repository/blogger-starting-point' ),
-	},
-
 	BUSINESS_INFO: {
 		slug: 'businessInfo',
 		asyncComponent: () => import( './steps-repository/business-info' ),

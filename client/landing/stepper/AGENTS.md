@@ -106,13 +106,10 @@ export default myFlow;
 | `STEPS.*` constant       | slug                   | Purpose                                                         |
 | ------------------------ | ---------------------- | --------------------------------------------------------------- |
 | `GOALS`                  | `goals`                | Ask user what they want to build (blog, store, portfolio, etc.) |
-| `INTENT_STEP`            | `intent`               | Alternative intent/goal selector                                |
 | `SEGMENTATION_SURVEY`    | `segmentation-survey`  | Survey to segment user by use case                              |
-| `DESIGN_CHOICES`         | `design-choices`       | Choose between design options                                   |
 | `DESIGN_SETUP`           | `design-setup`         | Select a theme / design                                         |
 | `SITE_OPTIONS`           | `options`              | Set site title, tagline, icon                                   |
 | `SETUP_BLOG`             | `setup-blog`           | Blog-specific setup step                                        |
-| `BLOGGER_STARTING_POINT` | `bloggerStartingPoint` | Starting point for bloggers                                     |
 | `BUSINESS_INFO`          | `businessInfo`         | Business details (name, category)                               |
 | `STORE_ADDRESS`          | `storeAddress`         | WooCommerce store address                                       |
 | `SITE_SPEC`              | `site-spec`            | AI-assisted site specification                                  |

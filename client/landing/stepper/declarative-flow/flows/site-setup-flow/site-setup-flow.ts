@@ -51,7 +51,6 @@ const siteSetupFlow: Flow = {
 			STEPS.GOALS,
 			STEPS.OPTIONS,
 			STEPS.DESIGN_SETUP,
-			STEPS.BLOGGER_STARTING_POINT,
 			STEPS.IMPORT,
 			STEPS.IMPORT_LIST,
 			STEPS.IMPORT_READY,
@@ -264,7 +263,7 @@ const siteSetupFlow: Flow = {
 						 */
 						return navigate( 'design-setup' );
 					}
-					return navigate( 'bloggerStartingPoint' );
+					return navigate( 'design-setup' );
 				}
 
 				case 'design-setup': {
@@ -304,23 +303,6 @@ const siteSetupFlow: Flow = {
 					}
 
 					return exitFlow( `/home/${ siteId ?? siteSlug }` );
-				}
-
-				case 'bloggerStartingPoint': {
-					const intent = providedDependencies.startingPoint as string;
-					switch ( intent ) {
-						case 'firstPost': {
-							return exitFlow( `/post/${ siteSlug }` );
-						}
-						case 'skip-to-my-home': {
-							return exitFlow( `/home/${ siteId ?? siteSlug }`, {
-								skipLaunchpad: true,
-							} );
-						}
-						default: {
-							return navigate( intent );
-						}
-					}
 				}
 
 				case 'goals': {
@@ -448,9 +430,6 @@ const siteSetupFlow: Flow = {
 			}
 
 			switch ( currentStep ) {
-				case 'bloggerStartingPoint':
-					return navigate( 'options' );
-
 				case 'design-setup':
 					if ( intent === SiteIntent.DIFM ) {
 						return navigate( 'difmStartingPoint' );
@@ -540,7 +519,7 @@ const siteSetupFlow: Flow = {
 					if ( intent === 'sell' ) {
 						return navigate( 'design-setup' );
 					}
-					return navigate( 'bloggerStartingPoint' );
+					return navigate( 'design-setup' );
 
 				case 'import':
 					return navigate( 'importList' );
