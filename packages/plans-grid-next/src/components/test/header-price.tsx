@@ -24,6 +24,9 @@ jest.mock( '@automattic/data-stores', () => ( {
 		usePricingMetaForGridPlans: jest.fn(),
 	},
 } ) );
+jest.mock( '../../lib/touch-detect', () => ( {
+	hasTouch: () => false,
+} ) );
 
 jest.mock( '../shared/header-price/header-price-context', () => ( {
 	useHeaderPriceContext: () => mockUseHeaderPriceContext(),
@@ -38,7 +41,7 @@ import {
 } from '@automattic/calypso-products';
 import { Plans } from '@automattic/data-stores';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { render } from '@testing-library/react';
+import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import React, { useMemo } from 'react';
 import { usePlansGridContext } from '../../grid-context';
 import { GridPlan } from '../../types';
@@ -232,6 +235,54 @@ describe( 'HeaderPrice', () => {
 		const badge = container.querySelector( '.plans-grid-next-header-price__badge' );
 
 		expect( badge ).toHaveTextContent( 'Save 50%' );
+	} );
+
+	test( 'should show a tooltip on pricing badges in the plans grid redesign experiment', async () => {
+		const pricing = {
+			currencyCode: 'USD',
+			originalPrice: { full: 120, monthly: 10 },
+			discountedPrice: { full: null, monthly: null },
+			billingPeriod: PLAN_ANNUAL_PERIOD,
+		};
+
+		mockUseHeaderPriceContext.mockReturnValue( {
+			isAnyPlanPriceDiscounted: true,
+			setIsAnyPlanPriceDiscounted: jest.fn(),
+		} );
+		( Plans.usePricingMetaForGridPlans as jest.Mock ).mockReturnValue( {
+			[ PLAN_PERSONAL_MONTHLY ]: {
+				originalPrice: { monthly: 20, full: 240 },
+				discountedPrice: { monthly: null, full: null },
+				billingPeriod: 31,
+			},
+		} );
+
+		usePlansGridContext.mockImplementation( () => ( {
+			gridPlansIndex: {
+				[ PLAN_PERSONAL ]: {
+					current: false,
+					isMonthlyPlan: true,
+					pricing,
+				},
+			},
+			isExperimentVariant: true,
+			showBillingDescriptionForIncreasedRenewalPrice: 'crossed_price',
+		} ) );
+
+		const { container } = render( <HeaderPrice { ...defaultProps } />, { wrapper: Wrapper } );
+		const badge = container.querySelector(
+			'.plans-grid-next-header-price__badge.is-plan-differentiators-experiment-badge:not(.is-hidden)'
+		);
+		const hoverArea = container.querySelector( '.plans-2023-tooltip__hover-area-container' );
+
+		expect( badge ).toHaveTextContent( 'Save 50%' );
+		expect( hoverArea ).toContainElement( badge );
+
+		fireEvent.mouseEnter( hoverArea as Element );
+
+		await waitFor( () => {
+			expect( screen.getByText( /What a\s+savings!/ ) ).toBeInTheDocument();
+		} );
 	} );
 
 	test( 'should show the monthly plan price crossed out and the annual monthly-equivalent as the current price', () => {
