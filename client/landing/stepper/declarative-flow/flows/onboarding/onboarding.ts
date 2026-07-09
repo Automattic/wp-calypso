@@ -1,9 +1,7 @@
-import { isAutomatticianQuery } from '@automattic/api-queries';
 import { isEnabled } from '@automattic/calypso-config';
 import { OnboardActions, OnboardSelect } from '@automattic/data-stores';
 import { clearStepPersistedState, ONBOARDING_FLOW, SITE_SETUP_FLOW } from '@automattic/onboarding';
 import { MinimalRequestCartProduct } from '@automattic/shopping-cart';
-import { useQuery as useReactQuery } from '@tanstack/react-query';
 import { resolveSelect, useDispatch, useSelect } from '@wordpress/data';
 import { addQueryArgs, getQueryArg, getQueryArgs } from '@wordpress/url';
 import { useEffect } from 'react';
@@ -32,7 +30,6 @@ import { ONBOARD_STORE, SITE_STORE } from '../../../stores';
 import {
 	getBuildWowSiteIdentifier,
 	getBuildWowSiteSpecUrl,
-	isBuildWowEnabled,
 	logBuildWowEvent,
 	requestBuildWowSite,
 } from '../../../utils/build-wow';
@@ -92,11 +89,6 @@ const onboarding: FlowV2< typeof initialize > = {
 		const coupon = queryParams.get( 'coupon' );
 		const refParameter = queryParams.get( 'ref' );
 		const siteSlugParam = queryParams.get( 'siteSlug' );
-		const buildWowRequested = queryParams.get( 'build_wow' ) === '1';
-		const { data: isAutomattician, refetch: refetchIsAutomattician } = useReactQuery( {
-			...isAutomatticianQuery(),
-			enabled: buildWowRequested,
-		} );
 
 		const { setShouldShowNotification } = usePurchasePlanNotification();
 
@@ -241,50 +233,7 @@ const onboarding: FlowV2< typeof initialize > = {
 					const prompt = providedDependencies?.prompt as string | undefined;
 
 					switch ( setupChoice ) {
-						case 'build-with-ai': {
-							let canUseBuildWow = isBuildWowEnabled( queryParams, isAutomattician === true );
-							if ( buildWowRequested && typeof isAutomattician === 'undefined' ) {
-								const { data: resolvedIsAutomattician } = await refetchIsAutomattician();
-								canUseBuildWow = isBuildWowEnabled( queryParams, resolvedIsAutomattician === true );
-							}
-
-							if ( canUseBuildWow ) {
-								const siteIdentifier = getBuildWowSiteIdentifier( {
-									siteSlug,
-									siteId,
-								} );
-
-								if ( ! siteIdentifier ) {
-									logBuildWowEvent( 'start_missing_site', {
-										site_slug: siteSlug,
-										site_id: siteId,
-									} );
-									return navigate( 'error' as typeof currentStepSlug );
-								}
-
-								try {
-									await requestBuildWowSite( siteIdentifier );
-									logBuildWowEvent( 'start_success', {
-										site_identifier: siteIdentifier,
-									} );
-								} catch ( error ) {
-									logBuildWowEvent( 'start_error', {
-										site_identifier: siteIdentifier,
-										error: error instanceof Error ? error.message : String( error ),
-									} );
-									return navigate( 'error' as typeof currentStepSlug );
-								}
-
-								window.location.assign(
-									getBuildWowSiteSpecUrl( {
-										siteSlug,
-										siteId,
-										ref: refParameter,
-									} )
-								);
-								return;
-							}
-
+						case 'build-with-ai':
 							window.location.assign(
 								addQueryArgs( `/setup/${ SITE_SETUP_FLOW }/${ STEPS.LAUNCH_BIG_SKY.slug }`, {
 									siteSlug,
@@ -295,6 +244,45 @@ const onboarding: FlowV2< typeof initialize > = {
 									fromPostCheckoutSetupSite: '1',
 									...( refParameter ? { ref: refParameter } : {} ),
 									...( prompt ? { prompt } : {} ),
+								} )
+							);
+							return;
+						case 'generate-theme': {
+							// Automattician-only: provision an Atomic (WP Cloud) site up front so
+							// the custom AI-generated theme can be installed, then hand off to the
+							// build-wow site-spec step. Gated in the UI to Automatticians; the
+							// build-wow endpoint enforces the permission server-side.
+							const siteIdentifier = getBuildWowSiteIdentifier( {
+								siteSlug,
+								siteId,
+							} );
+
+							if ( ! siteIdentifier ) {
+								logBuildWowEvent( 'start_missing_site', {
+									site_slug: siteSlug,
+									site_id: siteId,
+								} );
+								return navigate( 'error' as typeof currentStepSlug );
+							}
+
+							try {
+								await requestBuildWowSite( siteIdentifier );
+								logBuildWowEvent( 'start_success', {
+									site_identifier: siteIdentifier,
+								} );
+							} catch ( error ) {
+								logBuildWowEvent( 'start_error', {
+									site_identifier: siteIdentifier,
+									error: error instanceof Error ? error.message : String( error ),
+								} );
+								return navigate( 'error' as typeof currentStepSlug );
+							}
+
+							window.location.assign(
+								getBuildWowSiteSpecUrl( {
+									siteSlug,
+									siteId,
+									ref: refParameter,
 								} )
 							);
 							return;
