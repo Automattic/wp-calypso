@@ -11,6 +11,68 @@ import { STYLE_CONSTANTS } from '../utils/constants';
 import { morphSpring } from '../components/animations';
 import type { ChatSize } from '../types';
 
+interface SizeBounds {
+	minWidth: number;
+	minHeight: number;
+	maxWidth?: number;
+	maxHeight?: number;
+}
+
+// The inset viewport the panel is clamped to (constraint box).
+function getViewportBox(): { width: number; height: number } {
+	return {
+		width: window.innerWidth - STYLE_CONSTANTS.VIEWPORT_OFFSET * 2,
+		height: window.innerHeight - STYLE_CONSTANTS.VIEWPORT_OFFSET * 2,
+	};
+}
+
+// Clamp a candidate size into [min, ceiling]. Min wins over max so a viewport
+// smaller than the floor never inverts the bounds.
+function clampSizeToBox( candidate: ChatSize, bounds: SizeBounds ): ChatSize {
+	const box = getViewportBox();
+	const maxW = Math.min( bounds.maxWidth ?? box.width, box.width );
+	const maxH = Math.min( bounds.maxHeight ?? box.height, box.height );
+	return {
+		width: Math.max( bounds.minWidth, Math.min( candidate.width, maxW ) ),
+		height: Math.max(
+			bounds.minHeight,
+			Math.min( candidate.height, maxH )
+		),
+	};
+}
+
+// The rendered footprint for a given chat state. Single source of truth shared by
+// the mount seed and the size-morph effect so the first paint matches the state
+function footprintForState(
+	state: string,
+	expandedSize: ChatSize,
+	compactHeight: number,
+	resizable: boolean
+): ChatSize {
+	if ( state === 'collapsed' ) {
+		return {
+			width: STYLE_CONSTANTS.COLLAPSED_SIZE,
+			height: STYLE_CONSTANTS.COLLAPSED_SIZE,
+		};
+	}
+	if ( state === 'minimized' ) {
+		return {
+			width: STYLE_CONSTANTS.COMPACT_WIDTH,
+			height: STYLE_CONSTANTS.COLLAPSED_SIZE,
+		};
+	}
+	if ( state === 'compact' ) {
+		return { width: STYLE_CONSTANTS.COMPACT_WIDTH, height: compactHeight };
+	}
+	// Expanded: honor the resized size only when resize is enabled.
+	return {
+		width: expandedSize.width,
+		height: resizable
+			? expandedSize.height
+			: STYLE_CONSTANTS.EXPANDED_HEIGHT,
+	};
+}
+
 export interface UseResizablePanelArgs {
 	resizable?: boolean | 'horizontal' | 'vertical';
 	defaultSize?: ChatSize;
@@ -71,20 +133,42 @@ export function useResizablePanel( {
 	const minWidth = minSize?.width ?? STYLE_CONSTANTS.COMPACT_WIDTH;
 	const minHeight = minSize?.height ?? STYLE_CONSTANTS.EXPANDED_HEIGHT;
 
-	// Live expanded size, seeded from defaultSize.
-	const width = useMotionValue(
-		defaultSize?.width ?? STYLE_CONSTANTS.COMPACT_WIDTH
-	);
-	const height = useMotionValue(
-		defaultSize?.height ?? STYLE_CONSTANTS.EXPANDED_HEIGHT
-	);
+	// Compute the mount seed once (useMotionValue only reads its first argument):
+	// clamp the default expanded size into the viewport (parity with the controlled
+	// `size` path) and seed the live motion values from the MOUNT-STATE footprint,
+	// not the expanded size — seeding the expanded size flashed a full-size panel
+	// for one frame before the morph shrank it to the launcher.
+	const [ seed ] = useState( () => {
+		const expanded = clampSizeToBox(
+			{
+				width: defaultSize?.width ?? STYLE_CONSTANTS.COMPACT_WIDTH,
+				height: defaultSize?.height ?? STYLE_CONSTANTS.EXPANDED_HEIGHT,
+			},
+			{
+				minWidth,
+				minHeight,
+				maxWidth: maxSize?.width,
+				maxHeight: maxSize?.height,
+			}
+		);
+		return {
+			expanded,
+			footprint: footprintForState(
+				chatState,
+				expanded,
+				compactHeight,
+				Boolean( resizable )
+			),
+		};
+	} );
+
+	// Live width/height, seeded at the mount-state footprint.
+	const width = useMotionValue( seed.footprint.width );
+	const height = useMotionValue( seed.footprint.height );
 
 	// Last committed expanded size. Survives collapse/minimize (which morph the
 	// motion values to a fixed footprint) so re-expanding restores the resized size.
-	const expandedSizeRef = useRef< ChatSize >( {
-		width: defaultSize?.width ?? STYLE_CONSTANTS.COMPACT_WIDTH,
-		height: defaultSize?.height ?? STYLE_CONSTANTS.EXPANDED_HEIGHT,
-	} );
+	const expandedSizeRef = useRef< ChatSize >( seed.expanded );
 
 	const resizingRef = useRef< {
 		edge: string;
@@ -100,37 +184,16 @@ export function useResizablePanel( {
 	// (layout fights the manual width/height writes).
 	const [ isResizing, setIsResizing ] = useState( false );
 
-	// Geometry of the constraint box the panel is clamped to.
-	const getConstraintBox = useCallback(
-		() => ( {
-			width: window.innerWidth - STYLE_CONSTANTS.VIEWPORT_OFFSET * 2,
-			height: window.innerHeight - STYLE_CONSTANTS.VIEWPORT_OFFSET * 2,
-		} ),
-		[]
-	);
-
-	// Clamp a candidate size into [min, ceiling]. Min wins over max so a viewport
-	// smaller than the floor never inverts the bounds.
+	// Clamp a candidate size into [min, ceiling] against the current viewport.
 	const clampSize = useCallback(
-		( candidate: ChatSize ): ChatSize => {
-			const box = getConstraintBox();
-			const maxW = Math.min( maxSize?.width ?? box.width, box.width );
-			const maxH = Math.min( maxSize?.height ?? box.height, box.height );
-			return {
-				width: Math.max( minWidth, Math.min( candidate.width, maxW ) ),
-				height: Math.max(
-					minHeight,
-					Math.min( candidate.height, maxH )
-				),
-			};
-		},
-		[
-			getConstraintBox,
-			maxSize?.width,
-			maxSize?.height,
-			minWidth,
-			minHeight,
-		]
+		( candidate: ChatSize ): ChatSize =>
+			clampSizeToBox( candidate, {
+				minWidth,
+				minHeight,
+				maxWidth: maxSize?.width,
+				maxHeight: maxSize?.height,
+			} ),
+		[ maxSize?.width, maxSize?.height, minWidth, minHeight ]
 	);
 
 	const getHeightForState = useCallback(
@@ -217,22 +280,57 @@ export function useResizablePanel( {
 				nextHeight = resize.startHeight - dy;
 			}
 
+			// Stop the growing edge at the inset instead of letting the panel keep
+			// growing from the opposite side once it reaches the bound. Each edge can
+			// expand only into the space between the pinned opposite edge and the near
+			// inset it grows toward; the bottom-anchored box measures the vertical room
+			// from the current dock offset (startPosY ≤ 0).
+			const box = getViewportBox();
+			if ( edge.includes( 'right' ) ) {
+				nextWidth = Math.min( nextWidth, box.width - resize.startPosX );
+			} else if ( edge.includes( 'left' ) ) {
+				nextWidth = Math.min(
+					nextWidth,
+					resize.startPosX + resize.startWidth
+				);
+			}
+			if ( edge.includes( 'bottom' ) ) {
+				nextHeight = Math.min(
+					nextHeight,
+					resize.startHeight - resize.startPosY
+				);
+			} else if ( edge.includes( 'top' ) ) {
+				nextHeight = Math.min(
+					nextHeight,
+					box.height + resize.startPosY
+				);
+			}
+
 			const clamped = clampSizeRef.current( {
 				width: nextWidth,
 				height: nextHeight,
 			} );
 
-			// Box is bottom-anchored (CSS `bottom`): left-edge drags shift x to pin
-			// the right edge; bottom-edge drags shift y to pin the top edge; top-edge
-			// drags leave y alone (CSS `bottom` already pins the bottom).
+			// Box is bottom-anchored (CSS `bottom`): a left-edge drag shifts x to pin
+			// the right edge, a bottom-edge drag shifts y to pin the top edge. The caps
+			// above keep these in bounds; the floors are a defensive guard for the
+			// min-wins case (viewport smaller than the size floor).
 			if ( edge.includes( 'left' ) ) {
 				x.set(
-					resize.startPosX + ( resize.startWidth - clamped.width )
+					Math.max(
+						0,
+						resize.startPosX + ( resize.startWidth - clamped.width )
+					)
 				);
 			}
 			if ( edge.includes( 'bottom' ) ) {
+				const minY = Math.min( 0, clamped.height - box.height );
 				y.set(
-					resize.startPosY + ( clamped.height - resize.startHeight )
+					Math.max(
+						minY,
+						resize.startPosY +
+							( clamped.height - resize.startHeight )
+					)
 				);
 			}
 
@@ -249,6 +347,11 @@ export function useResizablePanel( {
 			if ( ! resizingRef.current ) {
 				return;
 			}
+			// Null the gesture first: releasePointerCapture can synchronously fire
+			// `lostpointercapture` (bound to this same handler), and the guard above
+			// must reject that re-entry so onResizeEnd fires exactly once.
+			resizingRef.current = null;
+
 			const handleEl = event.currentTarget as HTMLElement | null;
 			handleEl?.releasePointerCapture?.( event.pointerId );
 			handleEl?.removeEventListener(
@@ -260,7 +363,6 @@ export function useResizablePanel( {
 				'lostpointercapture',
 				handleResizePointerUp
 			);
-			resizingRef.current = null;
 			setIsResizing( false );
 			onResizeEndRef.current?.( {
 				width: width.get(),
@@ -312,16 +414,15 @@ export function useResizablePanel( {
 			return;
 		}
 
-		let targetWidth: number = STYLE_CONSTANTS.COMPACT_WIDTH;
-		if ( chatState === 'collapsed' ) {
-			targetWidth = STYLE_CONSTANTS.COLLAPSED_SIZE;
-		} else if ( chatState === 'expanded' ) {
-			targetWidth = expandedSizeRef.current.width;
-		}
-		const targetHeight = getHeightForState( chatState );
+		const target = footprintForState(
+			chatState,
+			expandedSizeRef.current,
+			compactHeight,
+			true
+		);
 
-		const wControls = animate( width, targetWidth, morphSpring );
-		const hControls = animate( height, targetHeight, morphSpring );
+		const wControls = animate( width, target.width, morphSpring );
+		const hControls = animate( height, target.height, morphSpring );
 
 		// The x-frame is COMPACT_WIDTH outside expanded and the resized width
 		// inside it, so crossing that boundary changes the footprint x was docked
@@ -346,7 +447,7 @@ export function useResizablePanel( {
 		// repositionForResize is a stable bridge (ref proxy from the composition
 		// hook); listing it would re-run the morph on every parent render.
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [ chatState, resizable, width, height, getHeightForState ] );
+	}, [ chatState, resizable, width, height, compactHeight ] );
 
 	// Controlled-size reconciliation. Only runs when a consumer passes `size`;
 	// undefined leaves the uncontrolled defaultSize path untouched. Reconciles the

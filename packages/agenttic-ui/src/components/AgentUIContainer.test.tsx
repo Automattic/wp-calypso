@@ -497,16 +497,18 @@ describe( 'AgentUIContainer resize', () => {
 		expect( readPanelSize( container ) ).toEqual( DEFAULT_SIZE );
 	} );
 
-	it( 'grows width and height when dragging the bottom-right corner and fires onResize', async () => {
+	it( 'grows width and height when dragging the top-right corner and fires onResize', async () => {
 		const onResize = vi.fn();
 		await render( { onResize } );
 
+		// Top-right is the open corner of a bottom-left dock: drag right to grow
+		// width, up to grow height.
 		await act( async () => {
-			startResize( getHandle( 'bottom-right' ), 0, 0 );
+			startResize( getHandle( 'top-right' ), 0, 0 );
 		} );
 		await act( async () => {
-			getHandle( 'bottom-right' ).dispatchEvent(
-				makePointerEvent( 'pointermove', 50, 30 )
+			getHandle( 'top-right' ).dispatchEvent(
+				makePointerEvent( 'pointermove', 50, -30 )
 			);
 		} );
 
@@ -541,11 +543,11 @@ describe( 'AgentUIContainer resize', () => {
 		await render( { onResize } );
 
 		await act( async () => {
-			startResize( getHandle( 'bottom-right' ), 0, 0 );
+			startResize( getHandle( 'top-right' ), 0, 0 );
 		} );
 		await act( async () => {
-			getHandle( 'bottom-right' ).dispatchEvent(
-				makePointerEvent( 'pointermove', 5000, 5000 )
+			getHandle( 'top-right' ).dispatchEvent(
+				makePointerEvent( 'pointermove', 5000, -5000 )
 			);
 		} );
 
@@ -563,15 +565,15 @@ describe( 'AgentUIContainer resize', () => {
 		const onResizeEnd = vi.fn();
 		await render( { onResizeEnd } );
 
-		const handle = getHandle( 'bottom-right' );
+		const handle = getHandle( 'top-right' );
 		await act( async () => {
 			startResize( handle, 0, 0 );
 		} );
 		await act( async () => {
-			handle.dispatchEvent( makePointerEvent( 'pointermove', 40, 20 ) );
+			handle.dispatchEvent( makePointerEvent( 'pointermove', 40, -20 ) );
 		} );
 		await act( async () => {
-			handle.dispatchEvent( makePointerEvent( 'pointerup', 40, 20 ) );
+			handle.dispatchEvent( makePointerEvent( 'pointerup', 40, -20 ) );
 		} );
 
 		expect( onResizeEnd ).toHaveBeenCalledTimes( 1 );
@@ -605,7 +607,7 @@ describe( 'AgentUIContainer resize', () => {
 		expect( readPanelTransform().x ).toBe( startX + 30 );
 	} );
 
-	it( 'shifts the panel y by the clamped height delta when dragging the bottom handle', async () => {
+	it( 'does not grow past the bottom dock when dragging the bottom handle of a docked panel', async () => {
 		const onResize = vi.fn();
 		await render( { onResize } );
 		await flushFrame();
@@ -615,8 +617,8 @@ describe( 'AgentUIContainer resize', () => {
 		await act( async () => {
 			startResize( handle, 0, 100 );
 		} );
-		// Drag bottom handle down by 30px: height grows 30. The box is bottom-anchored,
-		// so y shifts +30 by the height delta to pin the top edge. Width is unchanged.
+		// Drag bottom handle down: the bottom is already at the inset, so growth
+		// stops there — size is unchanged and the panel does not slide off-screen.
 		await act( async () => {
 			handle.dispatchEvent( makePointerEvent( 'pointermove', 0, 130 ) );
 		} );
@@ -624,9 +626,9 @@ describe( 'AgentUIContainer resize', () => {
 
 		expect( onResize ).toHaveBeenLastCalledWith( {
 			width: DEFAULT_SIZE.width,
-			height: DEFAULT_SIZE.height + 30,
+			height: DEFAULT_SIZE.height,
 		} );
-		expect( readPanelTransform().y ).toBe( startY + 30 );
+		expect( readPanelTransform().y ).toBe( startY );
 	} );
 
 	it( 'leaves the panel y unchanged when dragging the top handle', async () => {

@@ -178,6 +178,9 @@ describe( 'useResizablePanel', () => {
 		harness = renderHook( {
 			resizable: true,
 			defaultSize: DEFAULT_SIZE,
+			// DEFAULT_SIZE is below the default floor, so a min that permits it keeps
+			// the mount clamp a no-op and the resized size flows through unchanged.
+			minSize: MIN_SIZE,
 			chatState: 'expanded',
 			compactHeight: 56,
 		} );
@@ -251,6 +254,7 @@ describe( 'useResizablePanel', () => {
 		harness = renderHook( {
 			resizable: true,
 			defaultSize: DEFAULT_SIZE,
+			minSize: MIN_SIZE,
 			chatState: 'expanded',
 			compactHeight: 120,
 		} );
@@ -298,12 +302,14 @@ describe( 'useResizablePanel', () => {
 		} );
 		await harness.render();
 
-		const handle = makeHandle( 'bottom-right' );
+		// Grow via the top-right corner (the open edges of a bottom-left dock): drag
+		// right to grow width, up to grow height.
+		const handle = makeHandle( 'top-right' );
 		await act( async () => {
 			startResize( handle, 0, 0 );
 		} );
 		await act( async () => {
-			handle.dispatchEvent( makePointerEvent( 'pointermove', 40, 20 ) );
+			handle.dispatchEvent( makePointerEvent( 'pointermove', 40, -20 ) );
 		} );
 
 		expect( onResize ).toHaveBeenLastCalledWith( {
@@ -312,7 +318,7 @@ describe( 'useResizablePanel', () => {
 		} );
 
 		await act( async () => {
-			handle.dispatchEvent( makePointerEvent( 'pointerup', 40, 20 ) );
+			handle.dispatchEvent( makePointerEvent( 'pointerup', 40, -20 ) );
 		} );
 
 		expect( onResizeEnd ).toHaveBeenCalledTimes( 1 );
@@ -322,7 +328,7 @@ describe( 'useResizablePanel', () => {
 		} );
 	} );
 
-	it( 'pins the bottom-anchored top edge: y shifts by the height delta on a bottom drag', async () => {
+	it( 'does not grow past the bottom dock when dragging the bottom edge of a docked panel', async () => {
 		harness = renderHook( {
 			resizable: true,
 			defaultSize: DEFAULT_SIZE,
@@ -334,18 +340,21 @@ describe( 'useResizablePanel', () => {
 		await harness.render();
 
 		const { y } = harness.captured.current!;
-		const startY = y.get();
+		const { height } = harness.captured.current!.result;
+		expect( y.get() ).toBe( 0 ); // docked at the bottom inset
 
 		const handle = makeHandle( 'bottom' );
 		await act( async () => {
 			startResize( handle, 0, 100 );
 		} );
+		// Drag the bottom edge down: it is already at the inset, so growth stops
+		// there — the panel neither grows nor slides off-screen.
 		await act( async () => {
 			handle.dispatchEvent( makePointerEvent( 'pointermove', 0, 130 ) );
 		} );
 
-		// Bottom edge grew by 30; y shifts +30 so the top edge stays pinned.
-		expect( y.get() ).toBe( startY + 30 );
+		expect( height.get() ).toBe( DEFAULT_SIZE.height );
+		expect( y.get() ).toBe( 0 );
 	} );
 
 	it( 'leaves y unchanged on a top-edge drag (CSS bottom already pins the bottom)', async () => {
@@ -371,6 +380,117 @@ describe( 'useResizablePanel', () => {
 		} );
 
 		expect( y.get() ).toBe( startY );
+	} );
+
+	describe( 'mount seed', () => {
+		it( 'seeds the live size at the mount-state footprint, not defaultSize (no expanded-size flash)', async () => {
+			harness = renderHook( {
+				resizable: true,
+				defaultSize: { width: 600, height: 600 },
+				minSize: MIN_SIZE,
+				chatState: 'collapsed',
+				compactHeight: 56,
+			} );
+			await harness.render();
+
+			const { width, height, expandedSizeRef } =
+				harness.captured.current!.result;
+			// Mounting collapsed paints the launcher footprint, not 600×600.
+			expect( width.get() ).toBe( STYLE_CONSTANTS.COLLAPSED_SIZE );
+			expect( height.get() ).toBe( STYLE_CONSTANTS.COLLAPSED_SIZE );
+			// The resized size is still remembered for the next expand.
+			expect( expandedSizeRef.current ).toEqual( {
+				width: 600,
+				height: 600,
+			} );
+		} );
+
+		it( 'clamps defaultSize into the size bounds on mount (parity with the controlled path)', async () => {
+			harness = renderHook( {
+				resizable: true,
+				// Width above max, height below the default floor.
+				defaultSize: { width: 5000, height: 100 },
+				maxSize: MAX_SIZE,
+				chatState: 'expanded',
+				compactHeight: 56,
+			} );
+			await harness.render();
+
+			const size = harness.captured.current!.result.getPanelSize();
+			expect( size.width ).toBe( MAX_SIZE.width );
+			expect( size.height ).toBe( STYLE_CONSTANTS.EXPANDED_HEIGHT );
+		} );
+	} );
+
+	describe( 'resize position clamping', () => {
+		it( 'does not drive x negative when growing the left edge of a left-docked panel', async () => {
+			const onResize = vi.fn();
+			harness = renderHook( {
+				resizable: true,
+				defaultSize: DEFAULT_SIZE,
+				minSize: MIN_SIZE,
+				maxSize: MAX_SIZE,
+				chatState: 'expanded',
+				compactHeight: 56,
+				onResize,
+			} );
+			await harness.render();
+
+			const { x } = harness.captured.current!;
+			expect( x.get() ).toBe( 0 ); // docked left
+
+			const handle = makeHandle( 'left' );
+			await act( async () => {
+				startResize( handle, 100, 0 );
+			} );
+			// Drag the left edge far left: the growing edge would cross the inset.
+			await act( async () => {
+				handle.dispatchEvent(
+					makePointerEvent( 'pointermove', -900, 0 )
+				);
+			} );
+
+			// The left edge is at the inset, so growth stops there: width is unchanged
+			// and x stays 0 instead of going negative off-screen.
+			expect( x.get() ).toBe( 0 );
+			expect( onResize ).toHaveBeenLastCalledWith( {
+				width: DEFAULT_SIZE.width,
+				height: DEFAULT_SIZE.height,
+			} );
+		} );
+	} );
+
+	describe( 'pointer-up re-entrancy', () => {
+		it( 'fires onResizeEnd once when releasePointerCapture triggers a synchronous lostpointercapture', async () => {
+			const onResizeEnd = vi.fn();
+			harness = renderHook( {
+				resizable: true,
+				defaultSize: DEFAULT_SIZE,
+				minSize: MIN_SIZE,
+				maxSize: MAX_SIZE,
+				chatState: 'expanded',
+				compactHeight: 56,
+				onResizeEnd,
+			} );
+			await harness.render();
+
+			const handle = makeHandle( 'bottom-right' );
+			await act( async () => {
+				startResize( handle, 0, 0 );
+			} );
+			// The browser fires lostpointercapture synchronously inside
+			// releasePointerCapture; the guard must reject that re-entry.
+			handle.releasePointerCapture = () => {
+				handle.dispatchEvent(
+					makePointerEvent( 'lostpointercapture', 0, 0 )
+				);
+			};
+			await act( async () => {
+				handle.dispatchEvent( makePointerEvent( 'pointerup', 0, 0 ) );
+			} );
+
+			expect( onResizeEnd ).toHaveBeenCalledTimes( 1 );
+		} );
 	} );
 
 	describe( 'controlled size', () => {
@@ -540,13 +660,14 @@ describe( 'useResizablePanel', () => {
 				compactHeight: 56,
 			} );
 
-			// Ref reflects the controlled target; the live motion values stay put
-			// (the state morph will animate to the ref on the next expand).
+			// Ref reflects the controlled target; the live motion values stay at the
+			// compact footprint (the state morph will animate to the ref on the next
+			// expand). They are seeded at the mount-state footprint, not defaultSize.
 			expect(
 				harness.captured.current!.result.expandedSizeRef.current
 			).toEqual( { width: 700, height: 600 } );
-			expect( width.get() ).toBe( DEFAULT_SIZE.width );
-			expect( height.get() ).toBe( DEFAULT_SIZE.height );
+			expect( width.get() ).toBe( STYLE_CONSTANTS.COMPACT_WIDTH );
+			expect( height.get() ).toBe( 56 );
 		} );
 
 		it( 'morphs to a controlled size set while compact on the next expand', async () => {
@@ -563,7 +684,8 @@ describe( 'useResizablePanel', () => {
 			const { width, height } = harness.captured.current!.result;
 
 			// Controlled size arrives while compact: the ref is written but the live
-			// motion values stay put (no morph on the non-expanded pass).
+			// motion values stay at the compact footprint (no morph on the
+			// non-expanded pass).
 			await harness.rerender( {
 				resizable: true,
 				defaultSize: DEFAULT_SIZE,
@@ -574,8 +696,8 @@ describe( 'useResizablePanel', () => {
 				compactHeight: 56,
 			} );
 
-			expect( width.get() ).toBe( DEFAULT_SIZE.width );
-			expect( height.get() ).toBe( DEFAULT_SIZE.height );
+			expect( width.get() ).toBe( STYLE_CONSTANTS.COMPACT_WIDTH );
+			expect( height.get() ).toBe( 56 );
 
 			// Expand: the state size-morph reads expandedSizeRef (written above) and
 			// animates the panel to the controlled size.
