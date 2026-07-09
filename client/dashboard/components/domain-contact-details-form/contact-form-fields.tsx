@@ -95,9 +95,19 @@ export const getContactFormFields = (
 
 				const phoneValue = combinePhoneNumber( countryNumericCode, phoneNumber );
 
-				// Resolve the country from the numeric dialing code, disambiguating
-				// shared codes (e.g. +1) using the contact's own country (DOMENG-635).
-				const smsCountry = resolveSmsCountry( smsCountryCodes, countryNumericCode, countryCode );
+				// The stored phone value encodes only the numeric dialing code (for
+				// example +1), not which of the countries sharing that code the contact
+				// intends. Seed the displayed country from the contact's own country
+				// (DOMENG-635), but once the contact explicitly picks a country keep that
+				// choice — a shared code like +1 must not snap back to the address
+				// country on every re-render.
+				const [ selectedCountryCode, setSelectedCountryCode ] = useState< string | undefined >();
+				const resolvedCountryCode = resolveSmsCountry(
+					smsCountryCodes,
+					countryNumericCode,
+					countryCode
+				)?.code;
+				const displayedCountryCode = selectedCountryCode ?? resolvedCountryCode ?? '';
 
 				// Handle both sync and async validators
 				const [ validationMessage, setValidationMessage ] = useState< string | null >( null );
@@ -121,11 +131,17 @@ export const getContactFormFields = (
 							validationMessage ? { type: 'invalid', message: validationMessage } : undefined
 						}
 						data={ {
-							countryCode: smsCountry?.code || '',
+							countryCode: displayedCountryCode,
 							phoneNumber: phoneNumber,
 							countryNumericCode: countryNumericCode,
 						} }
 						onChange={ ( edits ) => {
+							// Changing the country dropdown (as opposed to typing the
+							// number) is a deliberate country choice; remember it so it
+							// survives re-render and later address-country changes.
+							if ( edits.countryCode && edits.countryCode !== displayedCountryCode ) {
+								setSelectedCountryCode( edits.countryCode );
+							}
 							// Format the phone value back to the expected format: +country_code.phone_number
 							const formattedPhone = combinePhoneNumber(
 								sanitizePhoneCountryCode( edits.countryNumericCode ?? '' ),
