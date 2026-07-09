@@ -718,6 +718,91 @@
 		}
 	}
 
+	.plan-features-2023-grid__content.has-bottom-plan-card {
+		.plan-features-2023-grid__table {
+			border-bottom-left-radius: 0;
+			border-bottom-right-radius: 0;
+		}
+	}
+
+	.plans-grid-next-features-grid__bottom-plan-card {
+		align-items: center;
+		background-color: var( --studio-white );
+		border: 1px solid #e0e0e0;
+		border-radius: 0 0 8px 8px;
+		border-top: 0;
+		box-sizing: border-box;
+		display: flex;
+		gap: 32px;
+		justify-content: space-between;
+		margin: 0 auto;
+		min-height: 136px;
+		padding: 24px 32px;
+		width: 100%;
+	}
+
+	.plans-grid-next-features-grid__bottom-plan-card-copy {
+		flex: 0 0 34%;
+		max-width: 420px;
+		min-width: 220px;
+	}
+
+	.plans-grid-next-features-grid__bottom-plan-card-title {
+		color: var( --studio-gray-100 );
+		font-family: 'SF Pro Display', $sans;
+		font-size: 26px;
+		font-weight: 400;
+		letter-spacing: 0;
+		line-height: 30px;
+		margin: 0 0 4px;
+	}
+
+	.plans-grid-next-features-grid__bottom-plan-card-tagline {
+		color: var( --studio-gray-80 );
+		font-size: 13px;
+		line-height: 20px;
+		margin: 0 0 14px;
+	}
+
+	.plans-grid-next-features-grid__bottom-plan-card-action {
+		.plans-grid-next-action-button,
+		.plans-grid-next-action-button__content {
+			display: inline-flex;
+		}
+
+		.button.plan-features-2023-grid__actions-button {
+			height: 32px;
+			min-width: 92px;
+			padding: 6px 16px;
+			width: auto;
+		}
+	}
+
+	.plans-grid-next-features-grid__bottom-plan-card-media {
+		align-items: center;
+		display: flex;
+		flex: 1;
+		justify-content: flex-end;
+		min-width: 0;
+
+		&.is-empty {
+			display: none;
+		}
+	}
+
+	.plans-grid-next-features-grid__bottom-plan-card-media .plans-grid-next-client-logo-list {
+		align-items: center;
+		column-gap: 42px;
+		justify-content: flex-end;
+		max-width: 720px;
+		row-gap: 16px;
+	}
+
+	.plans-grid-next-features-grid__bottom-plan-card-woo-logo {
+		height: 48px;
+		width: auto;
+	}
+
 	.plan-features-2023-grid__table-top,
 	.plan-features-2023-grid__table-bottom {
 		.plan-features-2023-grid__table {
@@ -1084,6 +1169,43 @@
 
 		.plan-features-2023-grid__header-tagline {
 			min-height: 0;
+		}
+
+		.plan-features-2023-grid__content.has-bottom-plan-card {
+			.plan-features-2023-grid__table {
+				border-bottom-left-radius: 8px;
+				border-bottom-right-radius: 8px;
+			}
+		}
+
+		.plans-grid-next-features-grid__bottom-plan-card {
+			align-items: flex-start;
+			border-radius: 8px;
+			border-top: 1px solid #e0e0e0;
+			flex-direction: column;
+			gap: 24px;
+			margin-top: 20px;
+			max-width: 100%;
+			min-height: 0;
+			padding: 24px 16px;
+		}
+
+		.plans-grid-next-features-grid__bottom-plan-card-copy {
+			flex-basis: auto;
+			max-width: none;
+			min-width: 0;
+			width: 100%;
+		}
+
+		.plans-grid-next-features-grid__bottom-plan-card-media {
+			justify-content: flex-start;
+			width: 100%;
+		}
+
+		.plans-grid-next-features-grid__bottom-plan-card-media .plans-grid-next-client-logo-list {
+			column-gap: 24px;
+			justify-content: flex-start;
+			row-gap: 12px;
 		}
 	}
 }

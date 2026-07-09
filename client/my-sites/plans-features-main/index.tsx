@@ -29,6 +29,7 @@ import {
 	isWooHostedPlan,
 	isWooHostedFreePlan,
 	isWpcomEnterpriseGridPlan,
+	isEcommercePlan,
 } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
 import { Button, Spinner } from '@automattic/components';
@@ -690,6 +691,8 @@ const PlansFeaturesMain = ( {
 	const {
 		isLoading: isPlansGridRedesignExperimentLoading,
 		showDifferentiatorHeader: showPlansGridRedesignDifferentiatorHeader,
+		showEnterpriseBottomCard,
+		showWooCommerceBottomCard,
 		usePlansGridRedesignFeatures,
 		usePlansGridRedesign,
 		usePlansGridRedesignNewDescription,
@@ -938,20 +941,74 @@ const PlansFeaturesMain = ( {
 		[ isIndiaA4A, translate ]
 	);
 
-	// when `deemphasizeFreePlan` is enabled, the Free plan will be presented as a CTA link instead of a plan card in the features grid.
-	const gridPlansForFeaturesGrid = useMemo(
-		() =>
-			applyA4AIndiaCopy(
-				gridPlansForFeaturesGridRaw?.filter( ( { planSlug } ) => {
-					if ( deemphasizeFreePlan ) {
-						return planSlug !== PLAN_FREE;
-					}
-
-					return true;
-				} ) ?? null // optional chaining can result in `undefined`; we don't want to introduce it here.
-			),
-		[ gridPlansForFeaturesGridRaw, deemphasizeFreePlan, applyA4AIndiaCopy ]
+	const gridPlansForFeaturesGridWithA4AIndiaCopy = useMemo(
+		() => applyA4AIndiaCopy( gridPlansForFeaturesGridRaw ?? null ),
+		[ gridPlansForFeaturesGridRaw, applyA4AIndiaCopy ]
 	);
+
+	const bottomGridPlanForFeaturesGrid = useMemo( () => {
+		if ( ! gridPlansForFeaturesGridWithA4AIndiaCopy ) {
+			return undefined;
+		}
+
+		let bottomGridPlan: GridPlan | undefined;
+
+		if ( showEnterpriseBottomCard ) {
+			bottomGridPlan = gridPlansForFeaturesGridWithA4AIndiaCopy.find( ( { planSlug } ) =>
+				isWpcomEnterpriseGridPlan( planSlug )
+			);
+		} else if ( showWooCommerceBottomCard ) {
+			bottomGridPlan = gridPlansForFeaturesGridWithA4AIndiaCopy.find( ( { planSlug } ) =>
+				isEcommercePlan( planSlug )
+			);
+		}
+
+		if (
+			bottomGridPlan &&
+			showWooCommerceBottomCard &&
+			isEcommercePlan( bottomGridPlan.planSlug )
+		) {
+			return {
+				...bottomGridPlan,
+				planTitle: translate( 'WooCommerce' ),
+			};
+		}
+
+		return bottomGridPlan;
+	}, [
+		gridPlansForFeaturesGridWithA4AIndiaCopy,
+		showEnterpriseBottomCard,
+		showWooCommerceBottomCard,
+		translate,
+	] );
+
+	// when `deemphasizeFreePlan` is enabled, the Free plan will be presented as a CTA link instead of a plan card in the features grid.
+	const gridPlansForFeaturesGrid = useMemo( () => {
+		const bottomGridPlanSlug = bottomGridPlanForFeaturesGrid?.planSlug;
+
+		return (
+			gridPlansForFeaturesGridWithA4AIndiaCopy?.filter( ( { planSlug } ) => {
+				if ( planSlug === bottomGridPlanSlug ) {
+					return false;
+				}
+
+				if ( showWooCommerceBottomCard && isWpcomEnterpriseGridPlan( planSlug ) ) {
+					return false;
+				}
+
+				if ( deemphasizeFreePlan ) {
+					return planSlug !== PLAN_FREE;
+				}
+
+				return true;
+			} ) ?? null
+		);
+	}, [
+		bottomGridPlanForFeaturesGrid,
+		gridPlansForFeaturesGridWithA4AIndiaCopy,
+		deemphasizeFreePlan,
+		showWooCommerceBottomCard,
+	] );
 
 	const gridPlansForComparisonGridFinal = useMemo(
 		() => applyA4AIndiaCopy( gridPlansForComparisonGrid ),
@@ -1421,6 +1478,7 @@ const PlansFeaturesMain = ( {
 								{ gridPlansForFeaturesGrid && (
 									<FeaturesGrid
 										allFeaturesList={ getFeaturesList() }
+										bottomGridPlan={ bottomGridPlanForFeaturesGrid }
 										className={ clsx( 'plans-features-main__features-grid', {
 											'is-plan-differentiators-experiment': isExperimentVariant,
 											'is-plans-grid-redesign-experiment': usePlansGridRedesign,
