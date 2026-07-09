@@ -231,7 +231,7 @@ class WordAdsEarnings extends Component {
 			'is-showing-info': this.getInfoToggle( type ),
 		} );
 
-		const sortedPeriods = Object.keys( earnings ).sort( ( a, b ) => new Date( b ) - new Date( a ) );
+		const sortedPeriods = Object.keys( earnings ).sort( ( a, b ) => b.localeCompare( a ) );
 
 		for ( const period of sortedPeriods ) {
 			rows.push(
