@@ -6,13 +6,9 @@ import {
 	resendAccountRecoveryEmailValidationMutation,
 } from '@automattic/api-queries';
 import { useMutation, useQuery, useSuspenseQuery } from '@tanstack/react-query';
-import {
-	__experimentalInputControl as InputControl,
-	__experimentalVStack as VStack,
-	Button,
-} from '@wordpress/components';
+import { __experimentalVStack as VStack, Button } from '@wordpress/components';
 import { useDispatch } from '@wordpress/data';
-import { DataForm } from '@wordpress/dataviews';
+import { DataForm, useFormValidity } from '@wordpress/dataviews';
 import { __, sprintf } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
 import { useMemo, useState } from 'react';
@@ -20,6 +16,7 @@ import { useAnalytics } from '../../app/analytics';
 import { ButtonStack } from '../../components/button-stack';
 import { Card, CardBody } from '../../components/card';
 import ConfirmModal from '../../components/confirm-modal';
+import ValidatedInputControl from '../../components/input-control/validated-input-control';
 import Notice from '../../components/notice';
 import { SectionHeader } from '../../components/section-header';
 import type { Field } from '@wordpress/dataviews';
@@ -112,6 +109,8 @@ export default function RecoveryEmail() {
 
 	const shouldShowValidationNotice = accountRecoveryEmail && ! accountRecoveryData.email_validated;
 
+	const primaryEmail = serverData?.user_email ?? '';
+
 	const fields: Field< SecurityEmailFormData >[] = useMemo(
 		() => [
 			{
@@ -119,29 +118,50 @@ export default function RecoveryEmail() {
 				label: __( 'Email address' ),
 				description:
 					/* translators: %s: email address */
-					sprintf( __( 'Your primary email address is %s.' ), serverData?.user_email ?? '' ),
+					sprintf( __( 'Your primary email address is %s.' ), primaryEmail ),
 				type: 'email',
+				isValid: {
+					custom: ( item ) => {
+						if ( primaryEmail && item.email === primaryEmail ) {
+							return __(
+								'You have entered your primary email address. Please enter a different email address.'
+							);
+						}
+						return null;
+					},
+				},
 				Edit: ( { field, data, onChange } ) => {
 					const { id, getValue } = field;
+					const validationMessage = field.isValid?.custom?.( data, field );
 					return (
-						<InputControl
+						<ValidatedInputControl
 							__next40pxDefaultSize
 							type="email"
 							label={ field.label }
 							help={ field.description }
 							placeholder={ field.placeholder }
 							value={ getValue( { item: data } ) }
-							onChange={ ( value ) => {
+							onChange={ ( value: string | undefined ) => {
 								return onChange( { [ id ]: value ?? '' } );
 							} }
 							disabled={ isValidateEmailPending }
+							customValidity={
+								validationMessage ? { type: 'invalid', message: validationMessage } : undefined
+							}
 						/>
 					);
 				},
 			},
 		],
-		[ serverData?.user_email, isValidateEmailPending ]
+		[ primaryEmail, isValidateEmailPending ]
 	);
+
+	const form = {
+		layout: { type: 'regular' as const },
+		fields: fields.map( ( field ) => field.id ),
+	};
+
+	const { isValid, validity } = useFormValidity( formData, fields, form );
 
 	return (
 		<>
@@ -175,10 +195,8 @@ export default function RecoveryEmail() {
 								<DataForm< SecurityEmailFormData >
 									data={ formData }
 									fields={ fields }
-									form={ {
-										layout: { type: 'regular' as const },
-										fields: fields.map( ( field ) => field.id ),
-									} }
+									form={ form }
+									validity={ validity }
 									onChange={ ( edits: Partial< SecurityEmailFormData > ) => {
 										setFormData( ( data ) => ( { ...data, ...edits } ) );
 									} }
@@ -191,7 +209,8 @@ export default function RecoveryEmail() {
 										disabled={
 											isValidateEmailPending ||
 											! formData.email ||
-											accountRecoveryEmail === formData.email
+											accountRecoveryEmail === formData.email ||
+											! isValid
 										}
 									>
 										{ __( 'Validate' ) }
