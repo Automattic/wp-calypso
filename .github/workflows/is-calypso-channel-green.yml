@@ -4,6 +4,9 @@ run-name: ${{ github.actor }} Checking Calypso Slack Channel Status
 on:
   merge_group:
   pull_request:
+    # Include labeled/unlabeled so adding or removing "Ignore Red Slack"
+    # re-triggers the check with the current label set.
+    types: [opened, synchronize, reopened, labeled, unlabeled]
 
 permissions:
   contents: read
@@ -17,8 +20,7 @@ jobs:
         id: bypass
         env:
           EVENT_NAME: ${{ github.event_name }}
-          PR_TITLE: ${{ github.event.pull_request.title }}
-          PR_LABELS: ${{ toJSON(github.event.pull_request.labels.*.name) }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
           MERGE_HEAD_REF: ${{ github.event.merge_group.head_ref }}
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GH_REPO: ${{ github.repository }}
@@ -26,9 +28,15 @@ jobs:
           set -euo pipefail
 
           # A PR bypasses the red-channel gate if it is a revert or is
-          # explicitly labelled "Ignore Red Slack".
+          # explicitly labelled "Ignore Red Slack". Title and labels are read
+          # live via `gh pr view` (not the event payload) so re-running the
+          # check picks up a label added after the run was first triggered.
           is_revert_or_labeled() {
-            local title="$1" labels="$2"
+            local pr="$1" data title labels
+            data=$(gh pr view "$pr" --json title,labels)
+            title=$(printf '%s' "$data" | jq -r '.title')
+            labels=$(printf '%s' "$data" | jq -c '[.labels[].name]')
+            echo "PR #$pr: $title (labels: $labels)"
             case "$title" in
               "Revert "*) return 0 ;;
             esac
@@ -38,7 +46,7 @@ jobs:
           bypass=false
 
           if [ "$EVENT_NAME" = "pull_request" ]; then
-            if is_revert_or_labeled "$PR_TITLE" "$PR_LABELS"; then
+            if is_revert_or_labeled "$PR_NUMBER"; then
               bypass=true
             fi
           elif [ "$EVENT_NAME" = "merge_group" ]; then
@@ -50,11 +58,7 @@ jobs:
             if [ -n "$pr_numbers" ]; then
               bypass=true
               for pr in $pr_numbers; do
-                data=$(gh pr view "$pr" --json title,labels)
-                title=$(printf '%s' "$data" | jq -r '.title')
-                labels=$(printf '%s' "$data" | jq -c '[.labels[].name]')
-                echo "PR #$pr: $title"
-                if ! is_revert_or_labeled "$title" "$labels"; then
+                if ! is_revert_or_labeled "$pr"; then
                   bypass=false
                   break
                 fi
