@@ -1,10 +1,9 @@
 import './style.scss';
 
 import { ReadList } from '@automattic/api-core';
-import page from '@automattic/calypso-router';
+import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import ExpandableSidebarMenu from 'calypso/layout/sidebar/expandable';
-import { useRecordReaderTracksEvent } from 'calypso/state/reader/analytics/useRecordReaderTracksEvent';
 import ReaderSidebarListsList from './list';
 
 interface ReaderSidebarListsProps {
@@ -17,30 +16,31 @@ interface ReaderSidebarListsProps {
 }
 
 const ReaderSidebarLists = ( {
+	lists,
 	isOpen,
 	onClick,
 	path,
 	...passedProps
 }: ReaderSidebarListsProps ): JSX.Element => {
 	const translate = useTranslate();
-	const recordReaderTracksEvent = useRecordReaderTracksEvent();
 
-	function navigateToLists() {
-		page( '/reader/lists' );
-		recordReaderTracksEvent( 'calypso_reader_sidebar_lists_dropdown_title_clicked' );
-	}
+	const isChildSelected = lists?.some( ( list ) =>
+		path.startsWith( `/reader/list/${ list.owner }/${ list.slug }` )
+	);
 
 	return (
 		<li>
 			<ExpandableSidebarMenu
 				expanded={ isOpen }
 				title={ translate( 'Lists' ) }
-				onClick={ navigateToLists }
+				onClick={ onClick }
 				disableFlyout
-				className={ path === '/reader/lists' ? 'sidebar__menu--selected' : '' }
+				className={ clsx( {
+					'sidebar__menu--selected': ! isOpen && ( isChildSelected || path === '/reader/list/new' ),
+				} ) }
 				expandableIconClick={ onClick }
 			>
-				<ReaderSidebarListsList path={ path } { ...passedProps } />
+				<ReaderSidebarListsList path={ path } lists={ lists } { ...passedProps } />
 			</ExpandableSidebarMenu>
 		</li>
 	);
