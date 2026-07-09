@@ -1331,11 +1331,9 @@ export default function pages() {
 	registerCspReportRoute( app );
 
 	// Multi-site Dashboard routing.
-	if ( isDashboardEnv() ) {
+	if ( isDashboardEnv() || calypsoEnv === 'development' ) {
 		// Serve the dashboard shell for any otherwise-unmatched path so the client
-		// router renders its own not-found page, instead of falling through to
-		// Express's default "Cannot GET". Registered after the explicit routes
-		// above, so those still win.
+		// router renders its own not-found page, instead of falling through to default.
 		DASHBOARD_VARIANTS.forEach( ( variant ) =>
 			handleSectionPath(
 				variant.definition,
