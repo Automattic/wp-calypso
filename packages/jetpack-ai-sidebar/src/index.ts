@@ -95,6 +95,10 @@ let lastBlockTransformationSuggestionContext: {
 const OPTIMIZE_TITLE_SUGGESTION = {
 	id: 'optimize-title',
 	label: __( 'Optimize Title', 'jetpack' ),
+	description: __(
+		'Refine the title based on your post’s content and SEO best practices.',
+		'jetpack'
+	),
 	prompt: __( 'Optimize the title of this post', 'jetpack' ),
 };
 
@@ -107,6 +111,7 @@ const OPTIMIZE_TITLE_SUGGESTION = {
 const GENERATE_EXCERPT_SUGGESTION = {
 	id: 'generate-excerpt',
 	label: __( 'Generate Excerpt', 'jetpack' ),
+	description: __( 'Generate an excerpt for your post.', 'jetpack' ),
 	prompt: __( 'Generate an excerpt for this post', 'jetpack' ),
 };
 
@@ -129,6 +134,7 @@ const GENERATE_EXCERPT_SUGGESTION = {
 const SEO_ENHANCER_SUGGESTION = {
 	id: 'seo-enhancer',
 	label: __( 'SEO Enhancer', 'jetpack' ),
+	description: __( 'Generate metadata for the contents of the post to optimize SEO.', 'jetpack' ),
 	prompt: '',
 	options: [
 		{
@@ -157,7 +163,8 @@ const SEO_ENHANCER_SUGGESTION = {
  */
 const AI_EDITORIAL_REVIEW_SUGGESTION = {
 	id: 'mediate-review-notes',
-	label: __( 'AI Editorial Review', 'jetpack' ),
+	label: __( 'Editorial Review', 'jetpack' ),
+	description: __( 'In-depth review against your content guidelines.', 'jetpack' ),
 	prompt: __(
 		'Run an AI Editorial Review for this post. Check the content, reviewer notes, and site guidelines, then surface conflicts, implications, guideline issues, and suggested edits.',
 		'jetpack'
@@ -166,7 +173,8 @@ const AI_EDITORIAL_REVIEW_SUGGESTION = {
 
 const POST_FEEDBACK_SUGGESTION = {
 	id: 'generate-feedback',
-	label: __( 'Generate Feedback', 'jetpack' ),
+	label: __( 'Simple Review', 'jetpack' ),
+	description: __( 'Quick feedback on your content’s structure.', 'jetpack' ),
 	prompt: __(
 		'Generate feedback for this saved post. Review the saved title and saved block content for content structure, reader clarity, completeness, media/caption/link issues, and obvious publishability concerns. Return practical feedback with one-click suggestions when safe.',
 		'jetpack'
@@ -176,6 +184,7 @@ const POST_FEEDBACK_SUGGESTION = {
 const PROOFREAD_SUGGESTION = {
 	id: 'proofread-content',
 	label: __( 'Proofread', 'jetpack' ),
+	description: __( 'Correct spelling, grammar, and punctuation.', 'jetpack' ),
 	prompt: __(
 		'Proofread this saved post for spelling, grammar, and punctuation. Review the saved title and saved block content, and return practical fixes with one-click suggestions when safe.',
 		'jetpack'
@@ -863,6 +872,7 @@ export function useCheckpoint(): any {
 export function getEmptyViewSuggestions(): Array< {
 	id: string;
 	label: string;
+	description?: string;
 	prompt?: string;
 	options?: SuggestionOption[];
 } > {
@@ -1030,6 +1040,7 @@ export function useSuggestions(
 	suggestions: Array< {
 		id: string;
 		label: string;
+		description?: string;
 		prompt?: string;
 		options?: SuggestionOption[];
 	} >;
