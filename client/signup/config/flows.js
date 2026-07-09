@@ -30,6 +30,11 @@ function getCheckoutUrl( dependencies, localeSlug, flowName, destination ) {
 	// the post-purchase thank-you/install destination — that page can't render before the purchase
 	// and would leave the user stuck. Rebuild the plans step URL from the flow dependencies; the
 	// current URL query no longer carries the plugin params at this point.
+	//
+	// Known limitation: re-entering the flow restarts from the domains step and creates a new site
+	// (signup progress is lost on the hard navigation, and there is no fulfilled-step check to skip
+	// site creation). Accepted for now as it beats landing on a blank page; a proper resume /
+	// no-recreate fix is a follow-up.
 	let backDestination = destination;
 	if ( flowName === 'with-plugin' ) {
 		const { pluginParameter, pluginBillingPeriod } = dependencies;
