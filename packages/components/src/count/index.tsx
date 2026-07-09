@@ -2,22 +2,28 @@ import './style.scss';
 
 import { formatNumber, formatNumberCompact } from '@automattic/number-formatters';
 import clsx from 'clsx';
+import { HTMLAttributes } from 'react';
 
-interface CountProps {
+interface CountProps extends HTMLAttributes< HTMLSpanElement > {
 	count: number;
 	primary?: boolean;
 	compact?: boolean;
-	forwardRef?: React.Ref< HTMLSpanElement >;
 	numberFormat?: ( count: number ) => string;
 }
 
-function Count( props: CountProps ): JSX.Element {
-	const { count, forwardRef, numberFormat: numberFormatFromProps } = props;
+function Count( {
+	count,
+	primary,
+	compact,
+	numberFormat: numberFormatFromProps,
+	className,
+	...props
+}: CountProps ) {
 	const effectiveNumberFormat = numberFormatFromProps ?? formatNumber;
 
 	return (
-		<span ref={ forwardRef } className={ clsx( 'a8c-count', { 'is-primary': props.primary } ) }>
-			{ props.compact ? formatNumberCompact( count ) : effectiveNumberFormat( count ) }
+		<span className={ clsx( 'a8c-count', { 'is-primary': primary }, className ) } { ...props }>
+			{ compact ? formatNumberCompact( count ) : effectiveNumberFormat( count ) }
 		</span>
 	);
 }

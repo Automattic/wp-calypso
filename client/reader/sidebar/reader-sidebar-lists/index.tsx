@@ -23,11 +23,9 @@ const ReaderSidebarLists = ( {
 	...passedProps
 }: ReaderSidebarListsProps ): JSX.Element => {
 	const translate = useTranslate();
-
 	const isChildSelected = lists?.some( ( list ) =>
 		path.startsWith( `/reader/list/${ list.owner }/${ list.slug }` )
 	);
-
 	const totalUnseenCount: number =
 		lists?.reduce( ( total, list ) => total + ( list.unseen_count ?? 0 ), 0 ) || 0;
 
