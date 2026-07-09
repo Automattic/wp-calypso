@@ -6,8 +6,6 @@ import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } fr
 
 import './styles.scss';
 
-const SHOW_SCROLL_THRESHOLD = 10;
-
 type BaseTab = {
 	slug: string;
 	title: string;
@@ -32,35 +30,31 @@ const ScrollableHorizontalNavigation = < T extends object >( {
 }: Props< T > ) => {
 	const scrollRef = useRef< HTMLDivElement >( null );
 	const isRtl = useRtl();
-	const [ showStartArrow, setShowStartArrow ] = useState( false );
-	const [ showEndArrow, setShowEndArrow ] = useState( false );
+	const [ showLeftArrow, setShowLeftArrow ] = useState( false );
+	const [ showRightArrow, setShowRightArrow ] = useState( false );
 
+	// Arrow visibility is tied to the physical button position and is independent
+	// of reading direction: the left button shows once the container is scrolled
+	// away from its physical left edge, the right button while there is still
+	// content past its physical right edge. `Math.abs` normalizes `scrollLeft`,
+	// which is negative in RTL containers. Reading direction only affects which
+	// way each button scrolls and which chevron it shows (handled below).
 	const updateScrollButtonVisibility = useCallback( () => {
 		const container = scrollRef.current;
 
 		if ( ! container ) {
-			setShowStartArrow( false );
-			setShowEndArrow( false );
+			setShowLeftArrow( false );
+			setShowRightArrow( false );
 			return;
 		}
 
-		const { scrollWidth, clientWidth, scrollLeft } = container;
-		const canScroll = scrollWidth > clientWidth;
+		const { scrollLeft, scrollWidth, clientWidth } = container;
+		const scrollLeftAbs = Math.abs( Math.floor( scrollLeft ) );
 
-		if ( isRtl ) {
-			const isAtStart = Math.abs( scrollLeft ) < SHOW_SCROLL_THRESHOLD;
-			const isAtEnd = Math.abs( scrollLeft ) >= scrollWidth - clientWidth - SHOW_SCROLL_THRESHOLD;
-
-			setShowStartArrow( canScroll && ! isAtStart );
-			setShowEndArrow( canScroll && ! isAtEnd );
-		} else {
-			const isAtStart = scrollLeft < SHOW_SCROLL_THRESHOLD;
-			const isAtEnd = scrollLeft >= scrollWidth - clientWidth - SHOW_SCROLL_THRESHOLD;
-
-			setShowStartArrow( canScroll && ! isAtStart );
-			setShowEndArrow( canScroll && ! isAtEnd );
-		}
-	}, [ isRtl ] );
+		setShowLeftArrow( scrollLeftAbs > 0 );
+		// +1 accounts for sub-pixel rounding at the far edge.
+		setShowRightArrow( scrollLeftAbs + 1 < scrollWidth - clientWidth );
+	}, [] );
 
 	useLayoutEffect( () => {
 		updateScrollButtonVisibility();
@@ -98,35 +92,32 @@ const ScrollableHorizontalNavigation = < T extends object >( {
 		[ updateScrollButtonVisibility ]
 	);
 
-	const scrollByDirection = useCallback(
-		( towardStart: boolean ) => {
-			if ( ! scrollRef.current ) {
-				return;
-			}
+	// `scrollBy` moves the viewport physically: a negative delta scrolls toward
+	// the physical left, a positive delta toward the physical right, in both LTR
+	// and RTL.
+	const scrollByDirection = useCallback( ( scrollLeftwards: boolean ) => {
+		if ( ! scrollRef.current ) {
+			return;
+		}
 
-			const scrollAmount = scrollRef.current.clientWidth * ( 2 / 3 );
-			const directionMultiplier = towardStart ? -1 : 1;
-			const rtlMultiplier = isRtl ? -1 : 1;
-			const left = scrollAmount * directionMultiplier * rtlMultiplier;
+		const scrollAmount = scrollRef.current.clientWidth * ( 2 / 3 );
+		const left = scrollLeftwards ? -scrollAmount : scrollAmount;
 
-			scrollRef.current.scrollBy( { left, behavior: 'smooth' } );
-		},
-		[ isRtl ]
-	);
-
-	const showLeftWrapper = isRtl ? showEndArrow : showStartArrow;
-	const showRightWrapper = isRtl ? showStartArrow : showEndArrow;
+		scrollRef.current.scrollBy( { left, behavior: 'smooth' } );
+	}, [] );
 
 	return (
 		<div className={ clsx( 'scrollable-horizontal-navigation', className ) }>
 			<div
 				className={ clsx( 'scrollable-horizontal-navigation__left-button-wrapper', {
-					'display-none': ! showLeftWrapper,
+					'display-none': ! showLeftArrow,
 				} ) }
 				aria-hidden
 			>
 				<Button
 					className="scrollable-horizontal-navigation__left-button"
+					// The physical-left button scrolls toward the start in LTR (physically
+					// left) and toward the start in RTL (physically right).
 					onClick={ () => scrollByDirection( ! isRtl ) }
 					tabIndex={ -1 }
 				>
@@ -136,12 +127,14 @@ const ScrollableHorizontalNavigation = < T extends object >( {
 
 			<div
 				className={ clsx( 'scrollable-horizontal-navigation__right-button-wrapper', {
-					'display-none': ! showRightWrapper,
+					'display-none': ! showRightArrow,
 				} ) }
 				aria-hidden
 			>
 				<Button
 					className="scrollable-horizontal-navigation__right-button"
+					// The physical-right button scrolls toward the end in LTR (physically
+					// right) and toward the end in RTL (physically left).
 					onClick={ () => scrollByDirection( isRtl ) }
 					tabIndex={ -1 }
 				>

@@ -1,7 +1,7 @@
 /**
  * @jest-environment jsdom
  */
-import { act, render, waitFor } from '@testing-library/react';
+import { act, fireEvent, render, waitFor } from '@testing-library/react';
 import { useRtl } from 'i18n-calypso';
 import ScrollableHorizontalNavigation from '../index';
 
@@ -30,14 +30,8 @@ function setScrollMetrics(
 		scrollLeft: number;
 	}
 ) {
-	Object.defineProperty( element, 'scrollWidth', {
-		configurable: true,
-		value: scrollWidth,
-	} );
-	Object.defineProperty( element, 'clientWidth', {
-		configurable: true,
-		value: clientWidth,
-	} );
+	Object.defineProperty( element, 'scrollWidth', { configurable: true, value: scrollWidth } );
+	Object.defineProperty( element, 'clientWidth', { configurable: true, value: clientWidth } );
 	Object.defineProperty( element, 'scrollLeft', {
 		configurable: true,
 		writable: true,
@@ -117,29 +111,21 @@ describe( 'ScrollableHorizontalNavigation', () => {
 
 	test( 'hides both arrows when content does not overflow', async () => {
 		renderNavigation();
-		await applyScrollMetricsAndRecalculate( {
-			scrollWidth: 200,
-			clientWidth: 200,
-			scrollLeft: 0,
-		} );
+		await applyScrollMetricsAndRecalculate( { scrollWidth: 200, clientWidth: 200, scrollLeft: 0 } );
 
 		expect( getLeftWrapper() ).toHaveClass( 'display-none' );
 		expect( getRightWrapper() ).toHaveClass( 'display-none' );
 	} );
 
-	test( 'shows only the end arrow at scroll start in LTR', async () => {
+	test( 'shows only the right button at the start of the scroll range', async () => {
 		renderNavigation();
-		await applyScrollMetricsAndRecalculate( {
-			scrollWidth: 500,
-			clientWidth: 200,
-			scrollLeft: 0,
-		} );
+		await applyScrollMetricsAndRecalculate( { scrollWidth: 500, clientWidth: 200, scrollLeft: 0 } );
 
 		expect( getLeftWrapper() ).toHaveClass( 'display-none' );
 		expect( getRightWrapper() ).not.toHaveClass( 'display-none' );
 	} );
 
-	test( 'shows only the start arrow at scroll end in LTR', async () => {
+	test( 'shows only the left button at the end of the scroll range', async () => {
 		renderNavigation();
 		await applyScrollMetricsAndRecalculate( {
 			scrollWidth: 500,
@@ -151,7 +137,7 @@ describe( 'ScrollableHorizontalNavigation', () => {
 		expect( getRightWrapper() ).toHaveClass( 'display-none' );
 	} );
 
-	test( 'shows both arrows in the middle of the scroll range in LTR', async () => {
+	test( 'shows both buttons in the middle of the scroll range', async () => {
 		renderNavigation();
 		await applyScrollMetricsAndRecalculate( {
 			scrollWidth: 500,
@@ -163,30 +149,78 @@ describe( 'ScrollableHorizontalNavigation', () => {
 		expect( getRightWrapper() ).not.toHaveClass( 'display-none' );
 	} );
 
-	test( 'shows only the end arrow at scroll start in RTL', async () => {
+	test( 'normalizes negative RTL scroll positions to the same physical arrows', async () => {
 		mockUseRtl.mockReturnValue( true );
 		renderNavigation();
-		await applyScrollMetricsAndRecalculate( {
-			scrollWidth: 500,
-			clientWidth: 200,
-			scrollLeft: 0,
-		} );
 
-		expect( getLeftWrapper() ).not.toHaveClass( 'display-none' );
-		expect( getRightWrapper() ).toHaveClass( 'display-none' );
-	} );
+		// RTL start: scrollLeft is 0, only the right (physical) button shows.
+		await applyScrollMetricsAndRecalculate( { scrollWidth: 500, clientWidth: 200, scrollLeft: 0 } );
+		expect( getLeftWrapper() ).toHaveClass( 'display-none' );
+		expect( getRightWrapper() ).not.toHaveClass( 'display-none' );
 
-	test( 'shows only the start arrow at scroll end in RTL', async () => {
-		mockUseRtl.mockReturnValue( true );
-		renderNavigation();
+		// RTL end: scrollLeft goes negative, only the left (physical) button shows.
 		await applyScrollMetricsAndRecalculate( {
 			scrollWidth: 500,
 			clientWidth: 200,
 			scrollLeft: -300,
 		} );
+		expect( getLeftWrapper() ).not.toHaveClass( 'display-none' );
+		expect( getRightWrapper() ).toHaveClass( 'display-none' );
+	} );
 
-		expect( getLeftWrapper() ).toHaveClass( 'display-none' );
-		expect( getRightWrapper() ).not.toHaveClass( 'display-none' );
+	test( 'left and right buttons scroll toward their physical side in LTR', async () => {
+		renderNavigation();
+		await applyScrollMetricsAndRecalculate( {
+			scrollWidth: 500,
+			clientWidth: 300,
+			scrollLeft: 150,
+		} );
+
+		const container = getTabsContainer();
+		const scrollBy = jest.fn();
+		container.scrollBy = scrollBy as unknown as typeof container.scrollBy;
+
+		fireEvent.click(
+			document.querySelector( '.scrollable-horizontal-navigation__left-button' ) as HTMLElement
+		);
+		expect( scrollBy ).toHaveBeenLastCalledWith(
+			expect.objectContaining( { left: -200, behavior: 'smooth' } )
+		);
+
+		fireEvent.click(
+			document.querySelector( '.scrollable-horizontal-navigation__right-button' ) as HTMLElement
+		);
+		expect( scrollBy ).toHaveBeenLastCalledWith(
+			expect.objectContaining( { left: 200, behavior: 'smooth' } )
+		);
+	} );
+
+	test( 'physical buttons scroll the opposite way in RTL', async () => {
+		mockUseRtl.mockReturnValue( true );
+		renderNavigation();
+		await applyScrollMetricsAndRecalculate( {
+			scrollWidth: 500,
+			clientWidth: 300,
+			scrollLeft: -150,
+		} );
+
+		const container = getTabsContainer();
+		const scrollBy = jest.fn();
+		container.scrollBy = scrollBy as unknown as typeof container.scrollBy;
+
+		fireEvent.click(
+			document.querySelector( '.scrollable-horizontal-navigation__left-button' ) as HTMLElement
+		);
+		expect( scrollBy ).toHaveBeenLastCalledWith(
+			expect.objectContaining( { left: 200, behavior: 'smooth' } )
+		);
+
+		fireEvent.click(
+			document.querySelector( '.scrollable-horizontal-navigation__right-button' ) as HTMLElement
+		);
+		expect( scrollBy ).toHaveBeenLastCalledWith(
+			expect.objectContaining( { left: -200, behavior: 'smooth' } )
+		);
 	} );
 
 	test( 'does not use document.querySelector for arrow visibility', () => {

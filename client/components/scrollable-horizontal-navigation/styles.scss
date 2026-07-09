@@ -42,14 +42,14 @@
 	}
 
 	.scrollable-horizontal-navigation__right-button-wrapper {
-		inset-inline-end: 0;
-		padding-inline-start: 30px;
+		right: 0;
+		padding-left: 30px;
 		background: linear-gradient(270deg, var(--color-surface) 30%, transparent 100%);
 	}
 
 	.scrollable-horizontal-navigation__left-button-wrapper {
-		inset-inline-start: 0;
-		padding-inline-end: 30px;
+		left: 0;
+		padding-right: 30px;
 		background: linear-gradient(90deg, var(--color-surface) 30%, transparent 100%);
 	}
 
