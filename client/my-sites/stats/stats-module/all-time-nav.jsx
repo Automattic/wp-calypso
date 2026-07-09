@@ -15,9 +15,10 @@ import {
 	STATS_FEATURE_SUMMARY_LINKS_ALL,
 } from '../constants';
 import { useMomentInSite } from '../hooks/use-moment-site-zone';
-import { addIsGatedFor, shouldGateStats } from '../hooks/use-should-gate-stats';
+import { shouldGateStats } from '../hooks/use-should-gate-stats';
 import StatsCardUpsell from '../stats-card-upsell';
 import DatePicker from '../stats-date-label';
+import { addIsGatedFor } from '../stats-period-navigation';
 import './summary-nav.scss';
 
 export const StatsModuleSummaryLinks = ( props ) => {

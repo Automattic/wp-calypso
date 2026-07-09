@@ -16,16 +16,6 @@ import DateLabelDrill from './date-label-drill';
 
 import './style.scss';
 
-// "Month to date"/"Year to date" read worse than the explicit date they resolve to
-// (e.g. "July 2026"), so those fall through to the date-based label.
-const DATE_LABELED_SHORTCUT_IDS = [ 'month_to_date', 'year_to_date' ];
-
-function getShortcutDisplayLabel( selectedShortcut ) {
-	return selectedShortcut?.label && ! DATE_LABELED_SHORTCUT_IDS.includes( selectedShortcut.id )
-		? selectedShortcut.label
-		: null;
-}
-
 function StatsDateLabel( {
 	date,
 	period,
@@ -111,9 +101,11 @@ function StatsDateLabel( {
 
 	function dateForSummarize( selectedShortcut = null ) {
 		if ( query.start_date ) {
-			const shortcutLabel = getShortcutDisplayLabel( selectedShortcut );
-			if ( shortcutLabel ) {
-				return shortcutLabel;
+			if (
+				selectedShortcut?.label &&
+				! [ 'month_to_date', 'year_to_date' ].includes( selectedShortcut?.id )
+			) {
+				return selectedShortcut.label;
 			}
 			return dateForCustomRange( query.start_date, query.date, selectedShortcut );
 		}
@@ -137,9 +129,11 @@ function StatsDateLabel( {
 	}
 
 	function dateForDisplay( selectedShortcut = null ) {
-		const shortcutLabel = getShortcutDisplayLabel( selectedShortcut );
-		if ( shortcutLabel ) {
-			return shortcutLabel;
+		if (
+			selectedShortcut?.label &&
+			! [ 'month_to_date', 'year_to_date' ].includes( selectedShortcut?.id )
+		) {
+			return selectedShortcut.label;
 		}
 
 		const weekPeriodFormat = isShort ? 'll' : 'LL';
