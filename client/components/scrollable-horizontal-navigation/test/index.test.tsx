@@ -149,6 +149,28 @@ describe( 'ScrollableHorizontalNavigation', () => {
 		expect( getRightWrapper() ).not.toHaveClass( 'display-none' );
 	} );
 
+	test( 'hides arrows when within the scroll threshold of an edge', async () => {
+		renderNavigation();
+
+		// Near the physical left edge: left arrow stays hidden.
+		await applyScrollMetricsAndRecalculate( {
+			scrollWidth: 500,
+			clientWidth: 200,
+			scrollLeft: 5,
+		} );
+		expect( getLeftWrapper() ).toHaveClass( 'display-none' );
+		expect( getRightWrapper() ).not.toHaveClass( 'display-none' );
+
+		// Near the physical right edge: right arrow stays hidden.
+		await applyScrollMetricsAndRecalculate( {
+			scrollWidth: 500,
+			clientWidth: 200,
+			scrollLeft: 295,
+		} );
+		expect( getLeftWrapper() ).not.toHaveClass( 'display-none' );
+		expect( getRightWrapper() ).toHaveClass( 'display-none' );
+	} );
+
 	test( 'normalizes negative RTL scroll positions to the same physical arrows', async () => {
 		mockUseRtl.mockReturnValue( true );
 		renderNavigation();

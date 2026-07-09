@@ -6,6 +6,8 @@ import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } fr
 
 import './styles.scss';
 
+const SHOW_SCROLL_THRESHOLD = 10;
+
 type BaseTab = {
 	slug: string;
 	title: string;
@@ -33,12 +35,12 @@ const ScrollableHorizontalNavigation = < T extends object >( {
 	const [ showLeftArrow, setShowLeftArrow ] = useState( false );
 	const [ showRightArrow, setShowRightArrow ] = useState( false );
 
-	// Arrow visibility is tied to the physical button position and is independent
-	// of reading direction: the left button shows once the container is scrolled
-	// away from its physical left edge, the right button while there is still
-	// content past its physical right edge. `Math.abs` normalizes `scrollLeft`,
-	// which is negative in RTL containers. Reading direction only affects which
-	// way each button scrolls and which chevron it shows (handled below).
+	// Arrow visibility is tied to physical button position, not reading direction:
+	// the left button shows once scrolled past the physical left edge, the right
+	// button while content remains past the physical right edge. `Math.abs`
+	// normalizes `scrollLeft`, which is negative in RTL containers. A small
+	// threshold hides arrows when nearly at an edge. Reading direction only
+	// affects scroll direction on click (handled below); chevrons stay physical.
 	const updateScrollButtonVisibility = useCallback( () => {
 		const container = scrollRef.current;
 
@@ -50,10 +52,10 @@ const ScrollableHorizontalNavigation = < T extends object >( {
 
 		const { scrollLeft, scrollWidth, clientWidth } = container;
 		const scrollLeftAbs = Math.abs( Math.floor( scrollLeft ) );
+		const maxScrollLeft = scrollWidth - clientWidth;
 
-		setShowLeftArrow( scrollLeftAbs > 0 );
-		// +1 accounts for sub-pixel rounding at the far edge.
-		setShowRightArrow( scrollLeftAbs + 1 < scrollWidth - clientWidth );
+		setShowLeftArrow( scrollLeftAbs > SHOW_SCROLL_THRESHOLD );
+		setShowRightArrow( scrollLeftAbs + SHOW_SCROLL_THRESHOLD < maxScrollLeft );
 	}, [] );
 
 	useLayoutEffect( () => {
