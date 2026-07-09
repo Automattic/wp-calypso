@@ -62,6 +62,50 @@ New test file `packages/api-queries/src/__tests__/domain-invalidation.test.tsx`:
 - Assert the spy was called with `{ queryKey: [ 'domains' ] }` for both
   `disconnectDomainMutation` and `transferDomainToSiteMutation`.
 
+## Follow-up: intent-based suppression for immediate clearing
+
+The invalidation fix reconciles the page on the *next successful read*, but a
+residual few-second delay remains because **detach is an asynchronous backend
+job** — the success copy literally reads “The domain will be detached from this
+site in a few minutes.” Right after the request succeeds, both `/all-domains`
+and `/domain-details/<name>` still report the domain as attached and
+`can_set_as_primary: true`, so `isPendingPrimaryDomain` stays true and the
+notice lingers until a later read reflects the completed detach. Client cache
+invalidation can trigger the read but cannot make the backend finish faster.
+
+To clear the notice the instant the user detaches, suppress it by intent:
+
+- **Shared store** (`client/dashboard/utils/detaching-domains.ts`): a
+  module-level `useSyncExternalStore` set of domain names the user has requested
+  to detach. It survives route changes, which is required because the Detach
+  button and one notice instance live on the domain-overview route while another
+  instance lives on the site domains route.
+- **Mark / unmark** (`domains/domain-overview/actions.tsx`): mark on detach
+  `onSuccess`, unmark on `onError`.
+- **Suppress at each call site** (keeps `PendingPrimaryDomainNotice` a pure
+  presenter and honours the sites arbiter’s “no self-nulling” rule):
+  - `sites/domains/index.tsx` — exclude detaching domains from the
+    `pendingDomain` find.
+  - `domains/domain-overview/index.tsx` — guard the notice render.
+- **Reconcile**: each page drops a mark once fresh data shows the domain is no
+  longer pending on that site. That happens exactly when the backend finishes
+  the detach (the domain leaves the site’s list / `can_set_as_primary` flips),
+  so an attach → detach → re-attach cycle in the same session is not wrongly
+  suppressed.
+
+Naive optimistic cache patching was rejected: an immediate refetch returns the
+still-attached backend state and would clobber the patch, making the notice
+flicker back. Out-of-cache intent state avoids that because refetches never
+overwrite it.
+
+### Testing (follow-up)
+
+`client/dashboard/utils/test/detaching-domains.test.tsx` covers the store:
+mark/unmark reflected in the hook, independent tracking of multiple domains,
+new snapshot identity on change (so subscribers re-render), and idempotent
+marking. Page-level suppression wiring is thin and type-checked; the end-to-end
+behaviour is verified manually against the real detach repro.
+
 ## Non-goals / risks
 
 - Scope is deliberately limited to the two mutations behind this bug. Not

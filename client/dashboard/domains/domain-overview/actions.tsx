@@ -27,6 +27,7 @@ import InlineSupportLink from '../../components/inline-support-link';
 import RemoveDomainDialog from '../../components/purchase-dialogs/remove-domain-dialog';
 import RouterLinkButton from '../../components/router-link-button';
 import { SectionHeader } from '../../components/section-header';
+import { markDomainDetaching, unmarkDomainDetaching } from '../../utils/detaching-domains';
 import { getDomainRenewalUrl } from '../../utils/domain';
 import { redirectToDashboardLink, wpcomLink } from '../../utils/link';
 import {
@@ -60,19 +61,24 @@ export default function Actions( { isDisabled }: { isDisabled?: boolean } ) {
 	const onDisconnectConfirm = useCallback(
 		() =>
 			disconnectDomain( undefined, {
-				onSuccess: () =>
+				onSuccess: () => {
+					markDomainDetaching( domainName );
 					createSuccessNotice(
 						__( 'The domain will be detached from this site in a few minutes.' ),
 						{
 							type: 'snackbar',
 						}
-					),
-				onError: ( e: Error ) => createErrorNotice( e.message, { type: 'snackbar' } ),
+					);
+				},
+				onError: ( e: Error ) => {
+					unmarkDomainDetaching( domainName );
+					createErrorNotice( e.message, { type: 'snackbar' } );
+				},
 				onSettled: () => {
 					setIsDisconnectDialogOpen( false );
 				},
 			} ),
-		[ disconnectDomain, createSuccessNotice, createErrorNotice ]
+		[ disconnectDomain, domainName, createSuccessNotice, createErrorNotice ]
 	);
 
 	const onDeleteConfirm = useCallback(
