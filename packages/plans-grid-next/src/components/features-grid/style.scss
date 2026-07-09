@@ -718,18 +718,20 @@
 		}
 	}
 
-	.plan-features-2023-grid__content.has-bottom-plan-card {
-		.plan-features-2023-grid__table {
-			border-bottom-left-radius: 0;
-			border-bottom-right-radius: 0;
-		}
+	.plan-features-2023-grid__content.has-bottom-plan-card .plan-features-2023-grid__table {
+		border-bottom-left-radius: 0;
+		border-bottom-right-radius: 0;
+	}
 
-		&.has-3-cols .plans-grid-next-features-grid__bottom-plan-card {
-			max-width: $table-cell-max-width * 3;
-		}
+	&.is-large {
+		.plan-features-2023-grid__content.has-bottom-plan-card {
+			&.has-3-cols .plans-grid-next-features-grid__bottom-plan-card {
+				max-width: $table-cell-max-width * 3;
+			}
 
-		&.has-4-cols .plans-grid-next-features-grid__bottom-plan-card {
-			max-width: $table-cell-max-width * 4;
+			&.has-4-cols .plans-grid-next-features-grid__bottom-plan-card {
+				max-width: $table-cell-max-width * 4;
+			}
 		}
 	}
 
