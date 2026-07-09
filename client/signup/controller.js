@@ -249,13 +249,13 @@ export default {
 		const isManageSiteFlow =
 			! excludeFromManageSiteFlows && ! isAddNewSiteFlow && isReEnteringSignupViaBrowserBack;
 
-		// Hydrate the store with domains dependencies from session storage,
-		// only in the onboarding flow.
+		// Hydrate the store with domains dependencies from session storage so re-entering via
+		// browser back from checkout skips the domains step instead of recreating the site.
 		const domainsDependencies = getDomainsDependencies();
 		if (
 			domainsDependencies &&
 			isManageSiteFlow &&
-			flowName === 'onboarding' &&
+			[ 'onboarding', 'with-plugin' ].includes( flowName ) &&
 			stepName !== 'domains'
 		) {
 			const { step, dependencies } = JSON.parse( domainsDependencies );
