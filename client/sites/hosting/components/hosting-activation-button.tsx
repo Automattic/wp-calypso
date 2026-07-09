@@ -104,7 +104,7 @@ export default function HostingActivationButton( {
 			{ showEligibility && (
 				<Modal
 					className="plugin-details-cta__dialog-content"
-					title={ translate( 'Before you continue' ) }
+					title={ translate( 'One more step' ) }
 					onRequestClose={ () => setShowEligibility( false ) }
 					size="medium"
 				>
@@ -116,6 +116,7 @@ export default function HostingActivationButton( {
 						showDataCenterPicker
 						standaloneProceed
 						currentContext="hosting-features"
+						atomicTransferAction="hosting-features"
 						path={ path }
 					/>
 				</Modal>

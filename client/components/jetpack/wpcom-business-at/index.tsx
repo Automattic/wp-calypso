@@ -6,7 +6,9 @@ import { Icon, Modal } from '@wordpress/components';
 import { backup } from '@wordpress/icons';
 import { translate } from 'i18n-calypso';
 import { useCallback, useEffect, useState } from 'react';
-import EligibilityWarnings from 'calypso/blocks/eligibility-warnings';
+import EligibilityWarnings, {
+	type AtomicTransferAction,
+} from 'calypso/blocks/eligibility-warnings';
 import {
 	getBlockingMessages,
 	HardBlockingNotice,
@@ -71,6 +73,8 @@ interface TransferFailureNoticeProps {
 export interface AtomicContentSwitch {
 	documentHeadTitle: string;
 	header: string;
+	/** Drives the transfer modal's intro sentence and activation button label. */
+	atomicTransferAction: AtomicTransferAction;
 	subTitle?: string;
 	primaryPromo: {
 		icon?: JSX.Element;
@@ -87,6 +91,7 @@ export interface AtomicContentSwitch {
 const vaultpressContent: AtomicContentSwitch = {
 	documentHeadTitle: translate( 'Activate Jetpack VaultPress Backup now' ) as string,
 	header: translate( 'Backup' ) as string,
+	atomicTransferAction: 'backup',
 	subTitle: translate( 'Save changes and restore quickly with one-click recovery.' ) as string,
 	primaryPromo: {
 		icon: backup,
@@ -185,10 +190,15 @@ export default function WPCOMBusinessAT( {
 
 	// Handles dispatching automated transfer.
 	const dispatch = useDispatch();
-	const initiateAT = useCallback( () => {
-		setShowDialog( false );
-		dispatch( initiateThemeTransfer( siteId, null, '', '', 'jetpack_product_activation' ) );
-	}, [ dispatch, siteId ] );
+	const initiateAT = useCallback(
+		( { geo_affinity = '' }: { geo_affinity?: string } = {} ) => {
+			setShowDialog( false );
+			dispatch(
+				initiateThemeTransfer( siteId, null, '', geo_affinity, 'jetpack_product_activation' )
+			);
+		},
+		[ dispatch, siteId ]
+	);
 	const trackInitiateAT = useTrackCallback( initiateAT, 'calypso_jetpack_backup_business_at' );
 
 	const isJetpack = useSelector( ( state: AppState ) => isJetpackSite( state, siteId ) );
@@ -375,12 +385,14 @@ export default function WPCOMBusinessAT( {
 			{ showDialog && (
 				<Modal
 					className="wpcom-business-at__dialog"
-					title={ translate( 'Before you continue' ) }
+					title={ translate( 'One more step' ) }
 					onRequestClose={ onClose }
 					size="medium"
 				>
 					<EligibilityWarnings
 						currentContext="hosting-features"
+						atomicTransferAction={ content.atomicTransferAction }
+						showDataCenterPicker
 						standaloneProceed
 						onDismiss={ onClose }
 						onProceed={ trackInitiateAT }

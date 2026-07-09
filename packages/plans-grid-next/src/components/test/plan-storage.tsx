@@ -15,7 +15,11 @@ jest.mock( '../shared/storage/components/storage-dropdown', () => {
 
 	return {
 		__esModule: true,
-		default: () => ReactActual.createElement( 'div', { 'data-testid': 'storage-dropdown' } ),
+		default: ( { openOnMount } ) =>
+			ReactActual.createElement( 'div', {
+				'data-open-on-mount': openOnMount ? 'true' : 'false',
+				'data-testid': 'storage-dropdown',
+			} ),
 	};
 } );
 jest.mock( '../shared/storage/components/storage-feature-label', () => {
@@ -72,6 +76,10 @@ describe( 'PlanStorage', () => {
 		fireEvent.click( screen.getByRole( 'button', { name: 'Add more' } ) );
 
 		expect( screen.getByTestId( 'storage-dropdown' ) ).toBeInTheDocument();
+		expect( screen.getByTestId( 'storage-dropdown' ) ).toHaveAttribute(
+			'data-open-on-mount',
+			'true'
+		);
 
 		await new Promise( ( resolve ) => window.setTimeout( resolve, 0 ) );
 
@@ -92,6 +100,10 @@ describe( 'PlanStorage', () => {
 		);
 
 		expect( screen.getByTestId( 'storage-dropdown' ) ).toBeInTheDocument();
+		expect( screen.getByTestId( 'storage-dropdown' ) ).toHaveAttribute(
+			'data-open-on-mount',
+			'false'
+		);
 
 		fireEvent.click( screen.getByRole( 'button', { name: 'Outside' } ) );
 

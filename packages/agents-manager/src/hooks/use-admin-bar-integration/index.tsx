@@ -9,14 +9,14 @@ import type { AgentsManagerSelect } from '@automattic/data-stores';
 import './style.scss';
 
 // Admin bar element selectors
-export const ADMIN_BAR_BUTTON_ID = 'wp-admin-bar-agents-manager';
+const ADMIN_BAR_BUTTON_ID = 'wp-admin-bar-agents-manager';
 const ADMIN_BAR_CHAT_ITEM_ID = 'wp-admin-bar-agents-manager-chat-support';
 const ADMIN_BAR_HISTORY_ITEM_ID = 'wp-admin-bar-agents-manager-chat-history';
 const ADMIN_BAR_GUIDES_ITEM_ID = 'wp-admin-bar-agents-manager-support-guides';
 
 // The standalone AI chat button — the chat's entry point, separate from the Help
 // menu. The wp-admin bar exposes it by ID; Calypso's masterbar by class.
-export const ADMIN_BAR_AI_CHAT_BUTTON_ID = 'wp-admin-bar-agents-manager-ai-chat';
+const ADMIN_BAR_AI_CHAT_BUTTON_ID = 'wp-admin-bar-agents-manager-ai-chat';
 const MASTERBAR_AI_CHAT_BUTTON_SELECTOR = '.masterbar__item-agents-manager-ai-chat';
 
 /**

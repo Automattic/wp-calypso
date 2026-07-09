@@ -536,6 +536,89 @@ describe( 'useWPCOMDomainSearchProps', () => {
 		} );
 	} );
 
+	describe( 'config.priceRules.freeForFirstYearTlds', () => {
+		it( 'passes through the flow-provided list while the credit is still available in the stepper', () => {
+			mockUseShoppingCart.mockReturnValue(
+				buildShoppingCart( { responseCart: { products: [] } } )
+			);
+
+			const { result } = renderHookWithProvider( () =>
+				useWPCOMDomainSearchProps( {
+					...defaultProps,
+					isFirstDomainFreeForFirstYear: true,
+					config: { priceRules: { freeForFirstYearTlds: [ 'blog', 'art' ] } },
+				} )
+			);
+
+			expect( result.current.config.priceRules.freeForFirstYearTlds ).toEqual( [ 'blog', 'art' ] );
+		} );
+
+		it( 'clears the flow-provided list once the free slot is taken in the stepper', () => {
+			mockUseShoppingCart.mockReturnValue(
+				buildShoppingCart( {
+					responseCart: {
+						products: [
+							buildProduct( {
+								uuid: 'dotblog',
+								product_slug: 'blog_domain',
+								meta: 'my-domain.blog',
+								is_domain_registration: true,
+								item_original_cost_integer: 1000,
+								item_subtotal_integer: 1000,
+							} ),
+						],
+					},
+				} )
+			);
+
+			const { result } = renderHookWithProvider( () =>
+				useWPCOMDomainSearchProps( {
+					...defaultProps,
+					isFirstDomainFreeForFirstYear: true,
+					config: { priceRules: { freeForFirstYearTlds: [ 'blog', 'art' ] } },
+				} )
+			);
+
+			expect( result.current.config.priceRules.freeForFirstYearTlds ).toBeUndefined();
+		} );
+
+		it( 'derives the list from next_domain_condition when the plan is in the cart and the credit is available', () => {
+			mockUseShoppingCart.mockReturnValue(
+				buildShoppingCart( {
+					responseCart: {
+						next_domain_is_free: true,
+						next_domain_condition: 'blog,art',
+						products: [ buildProduct( { product_slug: 'business-bundle' } ) ],
+					},
+				} )
+			);
+
+			const { result } = renderHookWithProvider( () =>
+				useWPCOMDomainSearchProps( { ...defaultProps, isFirstDomainFreeForFirstYear: true } )
+			);
+
+			expect( result.current.config.priceRules.freeForFirstYearTlds ).toEqual( [ 'blog', 'art' ] );
+		} );
+
+		it( 'does not restrict by TLD when the plan is in the cart but the credit has already been used', () => {
+			mockUseShoppingCart.mockReturnValue(
+				buildShoppingCart( {
+					responseCart: {
+						next_domain_is_free: false,
+						next_domain_condition: 'blog,art',
+						products: [ buildProduct( { product_slug: 'business-bundle' } ) ],
+					},
+				} )
+			);
+
+			const { result } = renderHookWithProvider( () =>
+				useWPCOMDomainSearchProps( { ...defaultProps, isFirstDomainFreeForFirstYear: true } )
+			);
+
+			expect( result.current.config.priceRules.freeForFirstYearTlds ).toBeUndefined();
+		} );
+	} );
+
 	describe( 'total price', () => {
 		it( 'returns the total price for the cart', () => {
 			mockUseShoppingCart.mockReturnValue(

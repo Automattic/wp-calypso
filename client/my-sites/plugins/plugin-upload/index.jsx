@@ -129,7 +129,7 @@ class PluginUpload extends Component {
 		);
 	}
 
-	renderUploadCard() {
+	renderUploadCard( isPendingEligibility ) {
 		const { inProgress, complete, isJetpack, hasSftpFeature, hasUploadPluginsFeature } = this.props;
 
 		const uploadAction = isJetpack
@@ -146,7 +146,9 @@ class PluginUpload extends Component {
 					{ ! inProgress && ! complete && (
 						<UploadDropZone
 							doUpload={ uploadAction }
-							disabled={ ! canUpload }
+							// Block uploads until the eligibility warnings have been
+							// acknowledged with the Continue button.
+							disabled={ ! canUpload || isPendingEligibility }
 							onFileTooLarge={ this.handleFileTooLarge }
 						/>
 					) }
@@ -233,13 +235,14 @@ class PluginUpload extends Component {
 				{ showEligibilityWarnings && (
 					<EligibilityWarnings
 						backUrl={ `/plugins/${ siteSlug }` }
+						atomicTransferAction="plugins"
 						onProceed={ this.onProceedClick }
 					/>
 				) }
 				{ ( ( ! isJetpackMultisite && ( ! showEligibility || hasUploadPluginsFeature ) ) ||
 					isAtomic ||
 					isTrialSite ) &&
-					this.renderUploadCard() }
+					this.renderUploadCard( showEligibilityWarnings ) }
 			</Main>
 		);
 	}

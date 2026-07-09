@@ -27,17 +27,19 @@ function getCheckoutUrl( dependencies, localeSlug, flowName, destination ) {
 	const queryArgs = getQueryArgs() ?? {};
 
 	// with-plugin: point "back" at the plans grid (params from the dependency store — the URL query
-	// is empty by now), not the post-purchase destination which can't render pre-purchase. Known
-	// tradeoff: this re-enters signup and recreates the site; kept over a blank page for now.
+	// is empty by now), not the post-purchase destination which can't render pre-purchase. The flow
+	// skips the domains step on this re-entry (see controller.js) so it reuses the created site.
 	let backDestination = destination;
 	if ( flowName === 'with-plugin' ) {
 		const { pluginParameter, pluginBillingPeriod } = dependencies;
 		backDestination = addQueryArgs(
 			{
 				...( pluginParameter && { plugin: pluginParameter } ),
+				// billing_period is a required query dependency of this flow, so always include it
+				// (empty for free plugins) — otherwise the flow controller rejects the URL.
+				billing_period: pluginBillingPeriod ?? '',
+				// Default the grid to the plugin's billing interval.
 				...( pluginBillingPeriod && {
-					billing_period: pluginBillingPeriod,
-					// Default the grid to the plugin's billing interval.
 					intervalType: pluginBillingPeriod === 'MONTHLY' ? 'monthly' : 'yearly',
 				} ),
 			},

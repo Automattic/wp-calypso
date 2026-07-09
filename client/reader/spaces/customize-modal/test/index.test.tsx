@@ -160,8 +160,6 @@ describe( 'CustomizeModal', () => {
 		render();
 
 		expect( screen.getByLabelText( 'Name' ) ).toHaveValue( 'Work' );
-		// The saved language base code is shown by its display name.
-		expect( screen.getByText( 'English' ) ).toBeVisible();
 		expect(
 			within( screen.getByRole( 'radiogroup', { name: 'Accent color' } ) ).getByRole( 'radio', {
 				name: 'Blue',
@@ -188,7 +186,7 @@ describe( 'CustomizeModal', () => {
 		).toBeTruthy();
 	} );
 
-	it( 'switches between the Identity, Layout and Sources tabs', async () => {
+	it( 'switches between the Identity, Layout, Feeds, Topics and Delete tabs', async () => {
 		const user = userEvent.setup();
 		render();
 
@@ -199,10 +197,15 @@ describe( 'CustomizeModal', () => {
 		expect( screen.getByRole( 'radio', { name: /Compact list/ } ) ).toBeChecked();
 		expect( screen.getByRole( 'radio', { name: /Classic/ } ) ).toBeVisible();
 
-		await user.click( screen.getByRole( 'tab', { name: 'Sources' } ) );
-		expect(
-			screen.getByText( 'Choose which of your subscriptions appear in this space.' )
-		).toBeVisible();
+		// Feeds have their own tab.
+		await user.click( screen.getByRole( 'tab', { name: 'Feeds' } ) );
+		expect( screen.getByRole( 'button', { name: 'All subscriptions' } ) ).toBeVisible();
+
+		// Tags and languages share the Topics tab.
+		await user.click( screen.getByRole( 'tab', { name: 'Topics' } ) );
+		expect( screen.getByRole( 'combobox', { name: 'Tags' } ) ).toBeVisible();
+		// The saved language base code is shown by its display name.
+		expect( screen.getByText( 'English' ) ).toBeVisible();
 
 		await user.click( screen.getByRole( 'tab', { name: 'Delete' } ) );
 		expect( screen.getByRole( 'button', { name: 'Delete space' } ) ).toBeVisible();
@@ -329,7 +332,7 @@ describe( 'CustomizeModal', () => {
 		const onBody = jest.fn();
 		mockUpdateEndpoint( onBody );
 
-		await user.click( screen.getByRole( 'tab', { name: 'Sources' } ) );
+		await user.click( screen.getByRole( 'tab', { name: 'Feeds' } ) );
 		await user.click( screen.getByRole( 'button', { name: 'Remove Existing Blog' } ) );
 		await user.click( screen.getByRole( 'button', { name: 'Add New Blog' } ) );
 		await user.click( screen.getByRole( 'button', { name: 'Save changes' } ) );
@@ -339,6 +342,26 @@ describe( 'CustomizeModal', () => {
 		expect( onBody ).toHaveBeenCalledWith(
 			expect.objectContaining( {
 				feeds: [ 789 ],
+			} )
+		);
+	} );
+
+	it( 'saves edited topics with the rest of the edit draft', async () => {
+		const user = userEvent.setup();
+		const { onClose } = render();
+		const onBody = jest.fn();
+		mockUpdateEndpoint( onBody );
+
+		await user.click( screen.getByRole( 'tab', { name: 'Topics' } ) );
+		await user.type( screen.getByRole( 'combobox', { name: 'Tags' } ), 'design[Enter]' );
+		await user.type( screen.getByRole( 'combobox', { name: 'Languages' } ), 'Português[Enter]' );
+		await user.click( screen.getByRole( 'button', { name: 'Save changes' } ) );
+
+		await waitFor( () => expect( onClose ).toHaveBeenCalled() );
+		expect( onBody ).toHaveBeenCalledWith(
+			expect.objectContaining( {
+				tags: [ 'tech', 'design' ],
+				languages: [ 'en', 'pt' ],
 			} )
 		);
 	} );
@@ -370,7 +393,7 @@ describe( 'CustomizeModal', () => {
 
 		// ...then toggle a source on another tab. This must not re-seed the draft and
 		// wipe the pending name edit.
-		await user.click( screen.getByRole( 'tab', { name: 'Sources' } ) );
+		await user.click( screen.getByRole( 'tab', { name: 'Feeds' } ) );
 		await user.click( screen.getByRole( 'button', { name: 'Add New Blog' } ) );
 		await user.click( screen.getByRole( 'button', { name: 'Save changes' } ) );
 
