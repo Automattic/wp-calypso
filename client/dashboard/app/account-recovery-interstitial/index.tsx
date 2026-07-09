@@ -13,6 +13,7 @@ import { useId, useRef, useState } from 'react';
 import { useExperiment } from 'calypso/lib/explat';
 import ComponentViewTracker from '../../components/component-view-tracker';
 import { Text } from '../../components/text';
+import { recoveryEmailMatchesAccountEmail } from '../../me/security-account-recovery/utils';
 import { isWelcomeModalEligible } from '../../utils/hosting-dashboard-enrollment';
 import { isDashboardBackport } from '../../utils/is-dashboard-backport';
 import { useAnalytics } from '../analytics';
@@ -107,7 +108,14 @@ export default function AccountRecoveryInterstitial() {
 
 	const now = Math.floor( Date.now() / 1000 );
 
-	const hasRecoveryEmail = !! accountRecovery?.email_validated;
+	// A recovery email that matches the account email provides no additional verification value, so
+	// it doesn't count as a recovery method (older accounts may have set this up before the backend
+	// blocked it). See recoveryEmailMatchesAccountEmail.
+	const recoveryEmailIsAccountEmail = recoveryEmailMatchesAccountEmail(
+		accountRecovery?.email,
+		userSettings?.user_email
+	);
+	const hasRecoveryEmail = !! accountRecovery?.email_validated && ! recoveryEmailIsAccountEmail;
 	const hasRecoveryPhone = !! accountRecovery?.phone_validated;
 	const hasTwoFactor = !! userSettings?.two_step_enabled;
 	const hasBackupCodes = !! userSettings?.two_step_backup_codes_printed;
@@ -180,7 +188,7 @@ export default function AccountRecoveryInterstitial() {
 	};
 
 	const copy = getInterstitialCopy( {
-		recoveryEmail: accountRecovery?.email_validated ? accountRecovery.email : undefined,
+		recoveryEmail: hasRecoveryEmail ? accountRecovery?.email : undefined,
 		recoveryPhoneNumber: accountRecovery?.phone_validated
 			? accountRecovery.phone?.number
 			: undefined,
