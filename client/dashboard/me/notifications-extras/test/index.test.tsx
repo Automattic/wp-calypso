@@ -64,6 +64,12 @@ const mockSaveNotificationSettingsApi = (
 		.reply( 200, { wpcom: expectedSettings } );
 };
 
+const mockGetPreferencesApi = ( preferences: Record< string, unknown > = {} ) => {
+	return nock( 'https://public-api.wordpress.com:443' )
+		.get( '/rest/v1.1/me/preferences' )
+		.reply( 200, { calypso_preferences: preferences } );
+};
+
 const notificationSnackBar = () => {
 	// Snackbar requires a custom matcher because its aria-live is not supported by the testing library
 	return document.getElementById( 'a11y-speak-polite' );
@@ -77,6 +83,7 @@ describe( 'NotificationsExtras', () => {
 
 	it( 'renders the page header and sections correctly', async () => {
 		mockGetNotificationSettingsApi();
+		mockGetPreferencesApi();
 
 		dashboardRender(
 			<>
@@ -105,6 +112,7 @@ describe( 'NotificationsExtras', () => {
 
 	it( 'displays all WordPress.com notification options', async () => {
 		mockGetNotificationSettingsApi();
+		mockGetPreferencesApi();
 
 		dashboardRender(
 			<>
@@ -139,6 +147,7 @@ describe( 'NotificationsExtras', () => {
 
 	it( 'displays all Jetpack notification options', async () => {
 		mockGetNotificationSettingsApi();
+		mockGetPreferencesApi();
 
 		dashboardRender(
 			<>
@@ -179,6 +188,7 @@ describe( 'NotificationsExtras', () => {
 		};
 
 		mockGetNotificationSettingsApi( customSettings );
+		mockGetPreferencesApi();
 
 		dashboardRender(
 			<>
@@ -221,8 +231,106 @@ describe( 'NotificationsExtras', () => {
 		expect( screen.getAllByLabelText( 'Reports' )[ 1 ] ).not.toBeChecked();
 	} );
 
+	it( 'renders the On this day and Achievements toggles', async () => {
+		mockGetNotificationSettingsApi();
+		mockGetPreferencesApi();
+
+		dashboardRender(
+			<>
+				<Snackbars />
+				<NotificationsExtras />
+			</>
+		);
+
+		await waitFor( () => {
+			expect( screen.getByLabelText( 'On this day' ) ).toBeVisible();
+		} );
+
+		expect( screen.getByText( 'Reminders about your posts from past years' ) ).toBeVisible();
+		expect( screen.getByLabelText( 'Achievements' ) ).toBeVisible();
+		expect(
+			screen.getByText(
+				'Receive notifications when you unlock new achievements. This setting overrides site-level settings.'
+			)
+		).toBeVisible();
+	} );
+
+	it( 'saves the On this day setting when toggled', async () => {
+		mockGetNotificationSettingsApi();
+		mockGetPreferencesApi();
+		nock( 'https://public-api.wordpress.com:443' )
+			.post( '/rest/v1.1/me/notifications/settings', {
+				other: { timeline: { on_this_day: true } },
+			} )
+			.reply( 200, { other: { timeline: { on_this_day: true } } } );
+
+		dashboardRender(
+			<>
+				<Snackbars />
+				<NotificationsExtras />
+			</>
+		);
+
+		const onThisDayToggle = await screen.findByLabelText( 'On this day' );
+		expect( onThisDayToggle ).not.toBeChecked();
+
+		await userEvent.click( onThisDayToggle );
+
+		await waitFor( () => {
+			const snackbar = notificationSnackBar();
+			expect( snackbar ).toBeVisible();
+			expect( snackbar ).toHaveTextContent( '"On this day" settings saved.' );
+		} );
+	} );
+
+	it( 'shows the Achievements toggle as unchecked when notifications are disabled', async () => {
+		mockGetNotificationSettingsApi();
+		mockGetPreferencesApi( { 'achievements-global-notifications': 'disabled' } );
+
+		dashboardRender(
+			<>
+				<Snackbars />
+				<NotificationsExtras />
+			</>
+		);
+
+		const achievementsToggle = await screen.findByLabelText( 'Achievements' );
+		expect( achievementsToggle ).not.toBeChecked();
+	} );
+
+	it( 'saves the Achievements setting when toggled', async () => {
+		mockGetNotificationSettingsApi();
+		mockGetPreferencesApi();
+		nock( 'https://public-api.wordpress.com:443' )
+			.post( '/rest/v1.1/me/preferences', {
+				calypso_preferences: { 'achievements-global-notifications': 'disabled' },
+			} )
+			.reply( 200, {
+				calypso_preferences: { 'achievements-global-notifications': 'disabled' },
+			} );
+
+		dashboardRender(
+			<>
+				<Snackbars />
+				<NotificationsExtras />
+			</>
+		);
+
+		const achievementsToggle = await screen.findByLabelText( 'Achievements' );
+		expect( achievementsToggle ).toBeChecked();
+
+		await userEvent.click( achievementsToggle );
+
+		await waitFor( () => {
+			const snackbar = notificationSnackBar();
+			expect( snackbar ).toBeVisible();
+			expect( snackbar ).toHaveTextContent( '"Achievements" settings saved.' );
+		} );
+	} );
+
 	it( 'shows snackbar notification on single setting change', async () => {
 		mockGetNotificationSettingsApi();
+		mockGetPreferencesApi();
 		mockSaveNotificationSettingsApi( { marketing: true } );
 
 		dashboardRender(
@@ -250,6 +358,7 @@ describe( 'NotificationsExtras', () => {
 
 	it( 'shows snackbar notification when all settings are saved', async () => {
 		mockGetNotificationSettingsApi();
+		mockGetPreferencesApi();
 		mockSaveNotificationSettingsApi( {
 			marketing: true,
 			research: true,
@@ -285,6 +394,7 @@ describe( 'NotificationsExtras', () => {
 
 	it( 'disables controls while saving', async () => {
 		mockGetNotificationSettingsApi();
+		mockGetPreferencesApi();
 		// Don't mock the save API to simulate a pending request
 		nock( 'https://public-api.wordpress.com:443' )
 			.post( '/rest/v1.1/me/notifications/settings' )
@@ -316,6 +426,7 @@ describe( 'NotificationsExtras', () => {
 
 	it( 'shows error message when save fails', async () => {
 		mockGetNotificationSettingsApi();
+		mockGetPreferencesApi();
 		nock( 'https://public-api.wordpress.com:443' )
 			.post( '/rest/v1.1/me/notifications/settings' )
 			.reply( 500, { error: 'Internal server error' } );

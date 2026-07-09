@@ -49,8 +49,13 @@ export function getSpaceErrorMessage( error: unknown, translate: TranslateFn ): 
 			return translate( 'Please enter a name for your space.' ) as string;
 		case 'reader_spaces_invalid_tag':
 			return translate( 'One or more of those tags is not an existing Reader tag.' ) as string;
+		// The server derives the slug from the title, so a name collision surfaces as a
+		// duplicate-title 409 (`reader_spaces_duplicate_slug` is the older code name).
+		// It's slug-level, so it's slightly broader than an exact-name match (e.g. "My
+		// Space" and "My Space!" both reduce to `my-space`).
+		case 'reader_spaces_duplicate_title':
 		case 'reader_spaces_duplicate_slug':
-			return translate( 'You already have a space with that name.' ) as string;
+			return translate( 'You already have a space with this name.' ) as string;
 		case 'reader_spaces_no_changes':
 			return translate( 'There are no changes to save.' ) as string;
 		case 'rest_forbidden':

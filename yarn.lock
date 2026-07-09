@@ -12273,7 +12273,7 @@ __metadata:
 
 "@wordpress/element@patch:@wordpress/element@npm%3A8.0.0#~/.yarn/patches/@wordpress-element-npm-8.0.0-edeb0f6c73.patch":
   version: 8.0.0
-  resolution: "@wordpress/element@patch:@wordpress/element@npm%3A8.0.0#~/.yarn/patches/@wordpress-element-npm-8.0.0-edeb0f6c73.patch::version=8.0.0&hash=d44676"
+  resolution: "@wordpress/element@patch:@wordpress/element@npm%3A8.0.0#~/.yarn/patches/@wordpress-element-npm-8.0.0-edeb0f6c73.patch::version=8.0.0&hash=0ca8c4"
   dependencies:
     "@types/react": "npm:^18.3.27"
     "@types/react-dom": "npm:^18.3.1"
@@ -12283,7 +12283,7 @@ __metadata:
     is-plain-object: "npm:^5.0.0"
     react: "npm:^18.3.0"
     react-dom: "npm:^18.3.0"
-  checksum: 1bb3f9977f68a6a2b477f4ba157974de6d9be0adbc11a7f9e159d5b5ff914491e739ec284c74513965efcd1320e784c59814796c17c64c13c217be9a55ae52ea
+  checksum: dac05a27bddb60828c6c99843e5f21d3019ea46f2ec75c0dc1dbf29411d5f4cf00cdc39f617b88babeb64cb3d85faaca7c1ee6df7fcf7a5b8d26097c2a254677
   languageName: node
   linkType: hard
 

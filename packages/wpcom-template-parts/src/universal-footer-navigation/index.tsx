@@ -90,6 +90,11 @@ export const PureUniversalNavbarFooter = ( {
 									</a>
 								</li>
 								<li>
+									<a href={ localizeUrl( 'https://wordpress.com/ecommerce/' ) } target="_self">
+										{ __( 'Ecommerce', __i18n_text_domain__ ) }
+									</a>
+								</li>
+								<li>
 									<a href={ localizeUrl( 'https://wordpress.com/affiliates/' ) } target="_self">
 										{ __( 'Become an Affiliate', __i18n_text_domain__ ) }
 									</a>

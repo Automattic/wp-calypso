@@ -11,7 +11,7 @@ import {
 	getTestAccountByFeature,
 	envToFeatureKey,
 } from '@automattic/calypso-e2e';
-import { tags, test } from '../../lib/pw-base';
+import { skipIfNotTrunk, tags, test } from '../../lib/pw-base';
 import { TEST_IMAGE_PATH, TEST_AUDIO_PATH } from '../constants';
 
 /**
@@ -23,6 +23,8 @@ test.describe(
 	'Blocks: Media (Upload)',
 	{ tag: [ tags.CALYPSO_PR, tags.GUTENBERG, tags.JETPACK_WPCOM_INTEGRATION ] },
 	() => {
+		skipIfNotTrunk();
+
 		const features = envToFeatureKey( envVariables );
 
 		// Default to `defaultUser` as it has WordPress.com Premium enabled, which is required

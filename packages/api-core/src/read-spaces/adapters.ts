@@ -21,6 +21,8 @@ export interface ReadSpaceFollowApiItem {
  */
 export interface ReadSpaceApiItem {
 	id: number;
+	// `sanitize_title( title )`, present on every response (summary + detail).
+	slug: string;
 	title: string;
 	layout: SpaceLayout;
 	// Detail-only — absent on the list (summary) response.
@@ -45,6 +47,7 @@ export function adaptReadSpace( item: ReadSpaceApiItem ): ReadSpace {
 	}
 	return {
 		id: String( item.id ),
+		slug: item.slug,
 		name: item.title,
 		// `iconColor` and `view` are forward-looking: the API does not return them
 		// yet (they stay `undefined`), but mapping them now means they flow through
