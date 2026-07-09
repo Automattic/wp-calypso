@@ -461,9 +461,9 @@ export const SitesWithThisPlugin = ( {
 									closeModal={ closeModal }
 									onExecute={ action }
 									onActionPerformed={ ( deletedItems ) => {
-										// `/me/sites/plugins` is eventually consistent, so refetching now can
-										// re-add the just-deleted plugin. Update the cache optimistically and
-										// only mark it stale so the next natural access reconciles it.
+										// `/me/sites/plugins` lags behind writes, so apply the removal to the
+										// cache and mark it stale rather than refetching, letting the next
+										// read reconcile once the server has caught up.
 										queryClient.setQueryData(
 											pluginsQuery().queryKey,
 											( old: PluginsResponse | undefined ) =>
