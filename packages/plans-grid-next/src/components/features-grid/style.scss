@@ -739,6 +739,26 @@
 		min-height: 136px;
 		padding: 24px 32px;
 		width: 100%;
+
+		&.is-woocommerce-bottom-card {
+			align-items: stretch;
+			gap: 0;
+			min-height: 176px;
+			overflow: hidden;
+			padding: 0 0 0 32px;
+
+			.plans-grid-next-features-grid__bottom-plan-card-copy {
+				align-self: center;
+				flex: 0 0 44%;
+				max-width: 560px;
+				padding: 24px 48px 24px 0;
+			}
+
+			.plans-grid-next-features-grid__bottom-plan-card-media {
+				align-self: stretch;
+				flex: 1 1 56%;
+			}
+		}
 	}
 
 	.plans-grid-next-features-grid__bottom-plan-card-copy {
@@ -805,9 +825,79 @@
 		}
 	}
 
+	.plans-grid-next-features-grid__bottom-plan-card-woo-visual {
+		display: flex;
+		min-height: 176px;
+		position: relative;
+		width: 100%;
+	}
+
+	.plans-grid-next-features-grid__bottom-plan-card-woo-image {
+		display: block;
+		height: 100%;
+		object-fit: cover;
+		object-position: center;
+		width: 100%;
+	}
+
+	.plans-grid-next-features-grid__bottom-plan-card-woo-logo-badge {
+		align-items: center;
+		background: #873eff;
+		border-radius: 16px;
+		display: flex;
+		height: 72px;
+		justify-content: center;
+		left: -36px;
+		position: absolute;
+		top: 32px;
+		width: 72px;
+		z-index: 1;
+	}
+
 	.plans-grid-next-features-grid__bottom-plan-card-woo-logo {
-		height: 48px;
-		width: auto;
+		height: auto;
+		width: 52px;
+
+		.st0 {
+			fill: var( --studio-white );
+		}
+	}
+
+	.plans-grid-next-features-grid__bottom-plan-card-woo-product-card {
+		background: var( --studio-white );
+		border: 1px solid #e0e0e0;
+		border-radius: 8px;
+		bottom: 24px;
+		box-shadow: 0 2px 8px rgba( 0, 0, 0, 0.08 );
+		box-sizing: border-box;
+		padding: 8px 8px 10px;
+		position: absolute;
+		right: 32px;
+		width: 124px;
+		z-index: 1;
+	}
+
+	.plans-grid-next-features-grid__bottom-plan-card-woo-product-image {
+		aspect-ratio: 1;
+		background: #ece9ff;
+		border-radius: 4px;
+		display: block;
+		margin-bottom: 8px;
+		object-fit: cover;
+		object-position: 45% 48%;
+		width: 100%;
+	}
+
+	.plans-grid-next-features-grid__bottom-plan-card-woo-product-name {
+		color: var( --studio-gray-60 );
+		font-size: 10px;
+		line-height: 14px;
+	}
+
+	.plans-grid-next-features-grid__bottom-plan-card-woo-product-price {
+		color: var( --studio-gray-100 );
+		font-size: 16px;
+		line-height: 20px;
 	}
 
 	.plan-features-2023-grid__table-top,
@@ -1195,6 +1285,20 @@
 			max-width: 100%;
 			min-height: 0;
 			padding: 32px 24px 24px;
+
+			&.is-woocommerce-bottom-card {
+				overflow: hidden;
+				padding: 32px 24px 24px;
+
+				.plans-grid-next-features-grid__bottom-plan-card-copy {
+					padding: 0;
+				}
+
+				.plans-grid-next-features-grid__bottom-plan-card-media {
+					margin: 20px -24px;
+					width: calc( 100% + 48px );
+				}
+			}
 		}
 
 		.plans-grid-next-features-grid__bottom-plan-card-copy {
@@ -1241,6 +1345,38 @@
 				color: var( --wp-components-color-gray-700, #757575 );
 				fill: var( --wp-components-color-gray-700, #757575 );
 			}
+		}
+
+		.plans-grid-next-features-grid__bottom-plan-card-woo-visual {
+			min-height: 164px;
+		}
+
+		.plans-grid-next-features-grid__bottom-plan-card-woo-logo-badge {
+			border-radius: 16px;
+			height: 64px;
+			left: 24px;
+			top: 20px;
+			width: 64px;
+		}
+
+		.plans-grid-next-features-grid__bottom-plan-card-woo-logo {
+			width: 46px;
+		}
+
+		.plans-grid-next-features-grid__bottom-plan-card-woo-product-card {
+			bottom: 16px;
+			right: 24px;
+			width: 104px;
+		}
+
+		.plans-grid-next-features-grid__bottom-plan-card-woo-product-name {
+			font-size: 9px;
+			line-height: 12px;
+		}
+
+		.plans-grid-next-features-grid__bottom-plan-card-woo-product-price {
+			font-size: 14px;
+			line-height: 18px;
 		}
 
 		.plans-grid-next-features-grid__bottom-plan-card-action {

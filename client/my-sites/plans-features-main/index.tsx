@@ -963,23 +963,11 @@ const PlansFeaturesMain = ( {
 			);
 		}
 
-		if (
-			bottomGridPlan &&
-			showWooCommerceBottomCard &&
-			isEcommercePlan( bottomGridPlan.planSlug )
-		) {
-			return {
-				...bottomGridPlan,
-				planTitle: translate( 'WooCommerce' ),
-			};
-		}
-
 		return bottomGridPlan;
 	}, [
 		gridPlansForFeaturesGridWithA4AIndiaCopy,
 		showEnterpriseBottomCard,
 		showWooCommerceBottomCard,
-		translate,
 	] );
 
 	// when `deemphasizeFreePlan` is enabled, the Free plan will be presented as a CTA link instead of a plan card in the features grid.
