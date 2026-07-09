@@ -81,7 +81,7 @@ export default function TeamList() {
 
 	return (
 		<Layout className="team-list full-width-layout-with-table" title={ title } wide>
-			<LayoutTop isFullWidth withNavigation>
+			<LayoutTop isFullWidth>
 				<LayoutHeader>
 					<Title>{ title }</Title>
 					<Actions>
