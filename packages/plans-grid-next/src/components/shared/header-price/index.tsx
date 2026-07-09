@@ -431,20 +431,9 @@ const HeaderPrice = ( { planSlug, visibleGridPlans }: HeaderPriceProps ) => {
 	}
 
 	if ( isGridPlanOneTimeDiscounted ) {
-		const oneTimeDiscountTooltipText = getPricingBadgeTooltipText( {
-			billingPeriod,
-			cheaperPrice: discountedPrice.monthly,
-			currencyCode,
-			referencePrice: originalPrice.monthly,
-			translate,
-		} );
-
 		return (
 			<div className="plans-grid-next-header-price">
-				{ renderPricingBadge( translate( 'One time discount' ), {
-					tooltipId: 'one-time-discount',
-					tooltipText: oneTimeDiscountTooltipText,
-				} ) }
+				{ renderPricingBadge( translate( 'One time discount' ) ) }
 				<div
 					className={ clsx( 'plans-grid-next-header-price__pricing-group', {
 						'is-large-currency': isLargeCurrency,

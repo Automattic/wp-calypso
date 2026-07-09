@@ -374,19 +374,19 @@ describe( 'HeaderPrice', () => {
 		await expectTooltipText( '$48/year vs. $207 paying monthly' );
 	} );
 
-	test( 'should show first-month pricing on monthly pricing badge tooltips', async () => {
+	test( 'should not show pricing badge tooltips for one-time discounts', () => {
 		const pricing = {
 			currencyCode: 'USD',
-			originalPrice: { full: 1000, monthly: 1000 },
-			discountedPrice: { full: 500, monthly: 500 },
-			billingPeriod: PLAN_MONTHLY_PERIOD,
+			originalPrice: { full: 12000, monthly: 1000 },
+			discountedPrice: { full: 6000, monthly: 500 },
+			billingPeriod: PLAN_ANNUAL_PERIOD,
 		};
 
 		usePlansGridContext.mockImplementation( () => ( {
 			gridPlansIndex: {
-				[ PLAN_PERSONAL_MONTHLY ]: {
+				[ PLAN_PERSONAL ]: {
 					current: false,
-					isMonthlyPlan: true,
+					isMonthlyPlan: false,
 					pricing,
 				},
 			},
@@ -395,23 +395,14 @@ describe( 'HeaderPrice', () => {
 			showBillingDescriptionForIncreasedRenewalPrice: 'crossed_price',
 		} ) );
 
-		const { container } = render(
-			<HeaderPrice { ...defaultProps } planSlug={ PLAN_PERSONAL_MONTHLY } />,
-			{
-				wrapper: Wrapper,
-			}
-		);
+		const { container } = render( <HeaderPrice { ...defaultProps } />, { wrapper: Wrapper } );
 		const badge = container.querySelector(
 			'.plans-grid-next-header-price__badge.is-plan-differentiators-experiment-badge:not(.is-hidden)'
 		);
 		const hoverArea = container.querySelector( '.plans-2023-tooltip__hover-area-container' );
 
 		expect( badge ).toHaveTextContent( 'One time discount' );
-		expect( hoverArea ).toContainElement( badge );
-
-		fireEvent.mouseEnter( hoverArea as Element );
-
-		await expectTooltipText( '$5/first month vs. $10 monthly after that' );
+		expect( hoverArea ).toBeNull();
 	} );
 
 	test( 'should not show a pricing badge tooltip outside the plans grid redesign experiment', () => {
