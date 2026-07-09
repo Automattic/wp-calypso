@@ -68,7 +68,7 @@ const ExpandableSidebarHeading = ( {
 				{ renderedTitle }
 				<span className="sidebar__actions-and-count">
 					{ moreMenuActions }
-					{ count && count > 0 && <Count count={ count } compact={ compactCount } /> }
+					{ count && count > 0 ? <Count count={ count } compact={ compactCount } /> : null }
 				</span>
 				{ inlineText && <span className="sidebar__inline-text">{ inlineText }</span> }
 			</span>
