@@ -138,7 +138,9 @@ export const getContactFormFields = (
 						onChange={ ( edits ) => {
 							// Changing the country dropdown (as opposed to typing the
 							// number) is a deliberate country choice; remember it so it
-							// survives re-render and later address-country changes.
+							// survives re-render instead of re-resolving from the address
+							// country. (Changing the address country rebuilds the field and
+							// re-seeds the default, which is the intended behavior.)
 							if ( edits.countryCode && edits.countryCode !== displayedCountryCode ) {
 								setSelectedCountryCode( edits.countryCode );
 							}
