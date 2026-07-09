@@ -54,7 +54,7 @@ function getShowComponentSummary( message: UIMessage ): string | undefined {
 		}
 
 		const summary = parsed?.data?.summary;
-		return typeof summary === 'string' && summary.trim() ? summary.trim() : undefined;
+		return typeof summary === 'string' ? summary.trim() || undefined : undefined;
 	} catch ( _error ) {
 		return undefined;
 	}
@@ -198,8 +198,7 @@ export default function convertToolMessagesToComponents( {
 				return [];
 			}
 
-			const summaryText =
-				typeof summary === 'string' && summary.trim() ? summary.trim() : undefined;
+			const summaryText = typeof summary === 'string' ? summary.trim() || undefined : undefined;
 
 			// A picker only stays interactive until the user replies past it — after
 			// that it documents a previous step. Hidden context messages (e.g.
