@@ -217,7 +217,7 @@ describe( 'ScrollableHorizontalNavigation', () => {
 		);
 	} );
 
-	test( 'physical buttons scroll the opposite way in RTL', async () => {
+	test( 'RTL: right button scrolls toward start, left button toward end', async () => {
 		mockUseRtl.mockReturnValue( true );
 		renderNavigation();
 		await applyScrollMetricsAndRecalculate( {
