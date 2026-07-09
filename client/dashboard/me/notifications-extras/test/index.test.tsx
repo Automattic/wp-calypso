@@ -246,7 +246,7 @@ describe( 'NotificationsExtras', () => {
 			expect( screen.getByLabelText( 'On this day' ) ).toBeVisible();
 		} );
 
-		expect( screen.getByText( 'Reminders about your posts from past years' ) ).toBeVisible();
+		expect( screen.getByText( 'Reminders about your posts from past years.' ) ).toBeVisible();
 		expect( screen.getByLabelText( 'Achievements' ) ).toBeVisible();
 		expect(
 			screen.getByText(
