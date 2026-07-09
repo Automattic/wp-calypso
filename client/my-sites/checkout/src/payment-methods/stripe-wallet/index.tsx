@@ -124,7 +124,6 @@ function StripeWalletSubmitButton( {
 			mode: 'payment' as const,
 			amount,
 			currency: currency.toLowerCase(),
-			setup_future_usage: 'off_session' as const,
 		} ),
 		[ amount, currency ]
 	);
