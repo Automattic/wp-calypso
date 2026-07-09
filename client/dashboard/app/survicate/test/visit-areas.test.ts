@@ -31,6 +31,15 @@ describe( 'resolveVisitAreaSlug', () => {
 	} );
 
 	test.each( [
+		[ '/newproduct/sites', '/newproduct', 'sites-list' ],
+		[ '/newproduct/sites/example.com/deployments', '/newproduct', 'deployments' ],
+		[ '/newproduct/domains', 'newproduct', 'domains' ],
+		[ '/sites', '/', 'sites-list' ],
+	] )( 'strips basePath %s (%s)', ( pathname, basePath, expected ) => {
+		expect( resolveVisitAreaSlug( pathname, basePath ) ).toBe( expected );
+	} );
+
+	test.each( [
 		[ '/sites/example.com/settings/sftp-ssh' ],
 		[ '/sites/example.com/settings/php' ],
 		[ '/sites/example.com/settings/database' ],

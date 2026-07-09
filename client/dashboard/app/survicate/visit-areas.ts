@@ -4,8 +4,9 @@
  * X times. The "≥ X" threshold is configured per survey in the Survicate
  * dashboard, not here.
  *
- * To track a new area: add an entry here and call
- * `usePersistentVisitCounter( '<slug>' )` from that area's route component.
+ * To track a new area: add an entry here and a matching case in
+ * `resolveVisitAreaSlug` below. Counting is route-driven via
+ * `useTrackVisitedAreas`; no per-route wiring is needed.
  */
 
 export interface VisitArea {
@@ -36,9 +37,16 @@ const SERVER_CONFIG_SETTINGS = new Set( [ 'sftp-ssh', 'php', 'database', 'cachin
  * the pathname is not a tracked area. Resolution is by the deepest meaningful
  * path segment, so overlapping routes (e.g. `logs/activity` sitting under the
  * logs route) resolve to the most specific area.
+ *
+ * `pathname` is the router's `location.pathname`, which includes the entry
+ * point's `basePath` — strip it so matching is relative to the app root.
  */
-export function resolveVisitAreaSlug( pathname: string ): string | null {
+export function resolveVisitAreaSlug( pathname: string, basePath = '' ): string | null {
 	const parts = pathname.split( '/' ).filter( Boolean );
+	const baseParts = basePath.split( '/' ).filter( Boolean );
+	if ( baseParts.every( ( segment, i ) => parts[ i ] === segment ) ) {
+		parts.splice( 0, baseParts.length );
+	}
 
 	if ( parts[ 0 ] === 'sites' ) {
 		if ( parts.length === 1 ) {
