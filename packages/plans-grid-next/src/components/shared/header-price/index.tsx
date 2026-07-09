@@ -108,13 +108,7 @@ const getPricingBadgeTooltipText = ( {
 	cheaperPrice?: number | null;
 	currencyCode?: string | null;
 	referencePrice?: number | null;
-	translate: (
-		text: string,
-		options?: {
-			args: Record< string, string >;
-			comment?: string;
-		}
-	) => TranslateResult;
+	translate: ReturnType< typeof useTranslate >;
 } ): TranslateResult | undefined => {
 	if (
 		! currencyCode ||
@@ -222,7 +216,7 @@ const HeaderPrice = ( { planSlug, visibleGridPlans }: HeaderPriceProps ) => {
 			? getPlanPriceForDuration( termVariantInfo, currentPlanInfo.termMonths )
 			: null;
 	const currentPlanPrice =
-		currentPlanInfo && termVariantInfo
+		termVariantInfo && currentPlanInfo
 			? getPlanPriceForDuration( currentPlanInfo, currentPlanInfo.termMonths )
 			: null;
 	const termSavingsTooltipText = getPricingBadgeTooltipText( {
