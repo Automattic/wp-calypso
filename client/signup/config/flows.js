@@ -28,15 +28,19 @@ function getCheckoutUrl( dependencies, localeSlug, flowName, destination ) {
 
 	// For the with-plugin flow, backing out of checkout should return to the plans grid step, not
 	// the post-purchase thank-you/install destination — that page can't render before the purchase
-	// and would leave the user stuck. Rebuild the plans step URL from the current query.
+	// and would leave the user stuck. Rebuild the plans step URL from the flow dependencies; the
+	// current URL query no longer carries the plugin params at this point.
 	let backDestination = destination;
 	if ( flowName === 'with-plugin' ) {
-		const { plugin, billing_period: billingPeriod, intervalType } = queryArgs;
+		const { pluginParameter, pluginBillingPeriod } = dependencies;
 		backDestination = addQueryArgs(
 			{
-				...( plugin && { plugin } ),
-				...( billingPeriod && { billing_period: billingPeriod } ),
-				...( intervalType && { intervalType } ),
+				...( pluginParameter && { plugin: pluginParameter } ),
+				...( pluginBillingPeriod && {
+					billing_period: pluginBillingPeriod,
+					// Match the plans grid's default interval to the plugin's billing period.
+					intervalType: pluginBillingPeriod === 'MONTHLY' ? 'monthly' : 'yearly',
+				} ),
 			},
 			`/start/with-plugin/plans-with-plugin${ localeSlug ? `/${ localeSlug }` : '' }`
 		);
