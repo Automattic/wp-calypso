@@ -654,4 +654,62 @@ describe( 'convertToolMessagesToComponents', () => {
 		expect( result ).toHaveLength( 1 );
 		expect( result[ 0 ] ).toMatchObject( { disabled: false } );
 	} );
+
+	it( 'disables the picker once the user replies after it', () => {
+		const toolMessage = createToolMessage(
+			LEGACY_SHOW_COMPONENT_TOOL_ID,
+			{ type: 'my-component', isCurrent: true },
+			{ id: 'tool-1' }
+		);
+		const userReply = createMessage( { id: 'user-1', role: 'user' } );
+		const getChatComponent = jest.fn().mockReturnValue( MockComponent );
+
+		const result = convertWithDefaults( {
+			messages: [ toolMessage, userReply ],
+			getChatComponent,
+		} );
+
+		expect( result[ 0 ] ).toMatchObject( { disabled: true } );
+	} );
+
+	it( 'keeps the picker enabled when only agent messages follow it', () => {
+		const toolMessage = createToolMessage(
+			LEGACY_SHOW_COMPONENT_TOOL_ID,
+			{ type: 'my-component', isCurrent: true },
+			{ id: 'tool-1' }
+		);
+		const agentFollowUp = createMessage( {
+			id: 'agent-1',
+			content: [ { type: 'text', text: 'Anything else?' } ],
+		} );
+		const getChatComponent = jest.fn().mockReturnValue( MockComponent );
+
+		const result = convertWithDefaults( {
+			messages: [ toolMessage, agentFollowUp ],
+			getChatComponent,
+		} );
+
+		expect( result[ 0 ] ).toMatchObject( { disabled: false } );
+	} );
+
+	it( 'does not treat a context-only user message as a reply', () => {
+		const toolMessage = createToolMessage(
+			LEGACY_SHOW_COMPONENT_TOOL_ID,
+			{ type: 'my-component', isCurrent: true },
+			{ id: 'tool-1' }
+		);
+		const contextMessage = createMessage( {
+			id: 'context-1',
+			role: 'user',
+			content: [ { type: 'context', text: 'hidden continuation' } ],
+		} );
+		const getChatComponent = jest.fn().mockReturnValue( MockComponent );
+
+		const result = convertWithDefaults( {
+			messages: [ toolMessage, contextMessage ],
+			getChatComponent,
+		} );
+
+		expect( result[ 0 ] ).toMatchObject( { disabled: false } );
+	} );
 } );

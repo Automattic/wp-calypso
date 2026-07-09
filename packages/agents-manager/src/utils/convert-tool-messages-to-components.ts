@@ -202,11 +202,20 @@ export default function convertToolMessagesToComponents( {
 			const summaryText =
 				typeof summary === 'string' && summary.trim() ? summary.trim() : undefined;
 
+			// A picker only stays interactive until the user replies past it — after
+			// that it documents a previous step. Hidden context messages (e.g.
+			// navigation continuations) are not real replies.
+			const hasUserReplied = array
+				.slice( index + 1 )
+				.some(
+					( laterMessage ) => laterMessage.role === 'user' && ! isContextOnlyMessage( laterMessage )
+				);
+
 			// In the site editor, React-Query caching keeps past conversations alive when the
 			// user navigates to a different page. Compare the picker's `postId` with the
 			// current editor page to disable pickers that no longer belong to this page.
 			const isPageChanged = !! postId && !! currentPostId && postId !== currentPostId;
-			const isStale = ! isCurrent || isPageChanged;
+			const isStale = hasUserReplied || ! isCurrent || isPageChanged;
 
 			const componentMessage: AgentsManagerUIMessage = {
 				...message,
