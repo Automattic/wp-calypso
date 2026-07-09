@@ -6,7 +6,6 @@ import {
 import { WooLogo } from '@automattic/components';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
-import { usePlansGridContext } from '../../grid-context';
 import ActionButton from '../shared/action-button';
 import ClientLogoList from './client-logo-list';
 import type { GridPlan, PlanActionOverrides } from '../../types';
@@ -37,7 +36,6 @@ const BottomPlanCard = ( {
 	planActionOverrides,
 }: BottomPlanCardProps ) => {
 	const translate = useTranslate();
-	const { isEnterpriseA4AIndia } = usePlansGridContext();
 	const isEnterprise = isWpcomEnterpriseGridPlan( gridPlan.planSlug );
 	const isWooCommerce = isEcommercePlan( gridPlan.planSlug );
 
@@ -75,16 +73,12 @@ const BottomPlanCard = ( {
 				</div>
 			</div>
 			<div
-				className={ clsx( 'plans-grid-next-features-grid__bottom-plan-card-media', {
-					'is-empty': isEnterprise && isEnterpriseA4AIndia,
-				} ) }
+				className="plans-grid-next-features-grid__bottom-plan-card-media"
 				aria-label={
 					isEnterprise ? translate( 'Enterprise customer logos' ).toString() : undefined
 				}
 			>
-				{ isEnterprise && ! isEnterpriseA4AIndia && (
-					<ClientLogoList slugs={ ENTERPRISE_BOTTOM_CARD_LOGO_SLUGS } />
-				) }
+				{ isEnterprise && <ClientLogoList slugs={ ENTERPRISE_BOTTOM_CARD_LOGO_SLUGS } /> }
 				{ isWooCommerce && (
 					<WooLogo className="plans-grid-next-features-grid__bottom-plan-card-woo-logo" />
 				) }
