@@ -4,7 +4,7 @@
 import { getContactFormFields } from '../contact-form-fields';
 import type { CountryListItem } from '../custom-form-fieldsets/types';
 
-const asyncValidator = async () => null;
+const asyncValidator = async () => ( { success: true as const } );
 
 // Mirrors the shape returned by the supported-countries endpoint: the popular
 // countries are repeated at the top of the list and an empty-code separator sits
