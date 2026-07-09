@@ -7,7 +7,9 @@ import { useSelector } from 'react-redux';
 import QueryJetpackScan from 'calypso/components/data/query-jetpack-scan';
 import QuerySiteFeatures from 'calypso/components/data/query-site-features';
 import JetpackFooter from 'calypso/components/jetpack/jetpack-footer';
-import WPCOMBusinessAT from 'calypso/components/jetpack/wpcom-business-at';
+import WPCOMBusinessAT, {
+	type AtomicContentSwitch,
+} from 'calypso/components/jetpack/wpcom-business-at';
 import JetpackTitle from 'calypso/components/jetpack-title';
 import Main from 'calypso/components/main';
 import isA8CForAgencies from 'calypso/lib/a8c-for-agencies/is-a8c-for-agencies';
@@ -88,9 +90,10 @@ const ScanAtomicTransferWrapper = () => {
 	}
 
 	// If scan state is 'unavailable' and site has scan feature, show atomic transfer activation
-	const content = {
+	const content: AtomicContentSwitch = {
 		documentHeadTitle: translate( 'Activate Jetpack Scan now' ) as string,
 		header: translate( 'Scan' ) as string,
+		atomicTransferAction: 'scan',
 		subTitle: translate( 'Automated malware scanning and firewall protection.' ) as string,
 		primaryPromo: {
 			icon: shield,

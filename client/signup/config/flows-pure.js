@@ -130,6 +130,9 @@ export function generateFlows( {
 			showRecaptcha: true,
 			providesDependenciesInQuery: [ 'plugin', 'billing_period', 'intervalType' ],
 			optionalDependenciesInQuery: [ 'intervalType' ],
+			// Persist domains data so re-entering via browser back from checkout skips the domains
+			// step and reuses the created site instead of making a duplicate.
+			persistsDomainsOnReEntry: true,
 			hideProgressIndicator: true,
 		},
 		{
@@ -141,6 +144,7 @@ export function generateFlows( {
 			showRecaptcha: true,
 			providesDependenciesInQuery: [ 'coupon' ],
 			optionalDependenciesInQuery: [ 'coupon' ],
+			persistsDomainsOnReEntry: true,
 			hideProgressIndicator: true,
 		},
 		{

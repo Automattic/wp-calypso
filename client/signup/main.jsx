@@ -451,8 +451,9 @@ class Signup extends Component {
 			setSignupCompleteFlowName( this.props.flowName );
 		}
 
-		// Persist current domains data in the onboarding flow.
-		if ( this.props.flowName === 'onboarding' ) {
+		// Persist current domains data so re-entering via browser back from checkout can skip the
+		// domains step instead of recreating the site.
+		if ( flows.getFlow( this.props.flowName, this.props.isLoggedIn ).persistsDomainsOnReEntry ) {
 			const { domainItem, siteUrl, domainCart } = dependencies;
 			const { stepSectionName } = this.props;
 

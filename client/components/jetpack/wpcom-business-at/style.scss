@@ -115,3 +115,13 @@
 		display: none;
 	}
 }
+
+.wpcom-business-at__dialog {
+	.components-modal__header {
+		border-block-end: none;
+	}
+
+	.components-modal__content {
+		padding-block-start: 0;
+	}
+}

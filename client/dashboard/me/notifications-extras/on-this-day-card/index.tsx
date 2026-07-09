@@ -61,7 +61,7 @@ export const OnThisDayCard = () => {
 					checked={ !! data.other.timeline.on_this_day }
 					disabled={ isMutating }
 					label={ __( 'On this day' ) }
-					help={ __( 'Reminders about your posts from past years' ) }
+					help={ __( 'Reminders about your posts from past years.' ) }
 					onChange={ handleChange }
 				/>
 			</CardBody>

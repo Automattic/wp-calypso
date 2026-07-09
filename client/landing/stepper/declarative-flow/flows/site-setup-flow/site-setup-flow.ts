@@ -8,7 +8,6 @@ import { addQueryArgs } from 'calypso/lib/route';
 import wpcom from 'calypso/lib/wp';
 import { clearSignupDestinationCookie } from 'calypso/signup/storageUtils';
 import { useDispatch as reduxDispatch, useSelector } from 'calypso/state';
-import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { requestSite } from 'calypso/state/sites/actions';
 import { getSiteAdminUrl } from 'calypso/state/sites/selectors';
 import { getActiveTheme, getCanonicalTheme } from 'calypso/state/themes/selectors';
@@ -49,7 +48,6 @@ const siteSetupFlow: Flow = {
 	useSteps() {
 		const steps = [
 			STEPS.GOALS,
-			STEPS.OPTIONS,
 			STEPS.DESIGN_SETUP,
 			STEPS.IMPORT,
 			STEPS.IMPORT_LIST,
@@ -112,11 +110,6 @@ const siteSetupFlow: Flow = {
 			( select ) => site && ( select( SITE_STORE ) as SiteSelect ).isSiteAtomic( site.ID ),
 			[ site ]
 		);
-		const storeType = useSelect(
-			( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getStoreType(),
-			[]
-		);
-
 		const { setPendingAction, resetOnboardStoreWithSkipFlags } = useDispatch( ONBOARD_STORE );
 		const { setDesignOnSite } = useDispatch( SITE_STORE );
 		const dispatch = reduxDispatch();
@@ -253,18 +246,6 @@ const siteSetupFlow: Flow = {
 
 		function submit( providedDependencies: ProvidedDependencies = {} ) {
 			switch ( currentStep ) {
-				case 'options': {
-					if ( intent === 'sell' ) {
-						/**
-						 * Part of the theme/plugin bundling is simplyfing the seller flow.
-						 *
-						 * Instead of having the user manually choose between "Start simple" and "More power", we let them select a theme and use the theme choice to determine which path to take.
-						 */
-						return navigate( 'design-setup' );
-					}
-					return navigate( 'design-setup' );
-				}
-
 				case 'design-setup': {
 					return navigate( 'processing' );
 				}
@@ -274,13 +255,6 @@ const siteSetupFlow: Flow = {
 
 					if ( processingResult === ProcessingResult.FAILURE ) {
 						return navigate( 'error' );
-					}
-
-					// End of woo flow
-					if ( intent === 'sell' && storeType === 'power' ) {
-						dispatch( recordTracksEvent( 'calypso_woocommerce_dashboard_redirect' ) );
-
-						return exitFlow( `${ adminUrl }admin.php?page=wc-admin` );
 					}
 
 					// Check current theme: Does it have a plugin bundled?
@@ -479,9 +453,6 @@ const siteSetupFlow: Flow = {
 				case 'importReadyPreview':
 					return navigate( `import?siteSlug=${ siteSlug }` );
 
-				case 'options':
-					return navigate( 'goals' );
-
 				case 'import':
 					return navigate( 'goals' );
 
@@ -496,12 +467,6 @@ const siteSetupFlow: Flow = {
 
 		const goNext = () => {
 			switch ( currentStep ) {
-				case 'options':
-					if ( intent === 'sell' ) {
-						return navigate( 'design-setup' );
-					}
-					return navigate( 'design-setup' );
-
 				case 'import':
 					return navigate( 'importList' );
 
