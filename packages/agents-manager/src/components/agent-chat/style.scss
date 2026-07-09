@@ -1,0 +1,13 @@
+.agents-manager-chat__disclosure {
+	color: var( --color-muted-foreground, #757575 );
+	font-size: 12px;
+	line-height: 1.4;
+	margin: 0;
+	padding: 10px 8px 0;
+	text-align: center;
+
+	a {
+		color: inherit;
+		text-decoration: underline;
+	}
+}

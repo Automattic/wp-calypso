@@ -8,16 +8,19 @@ import type { Suggestion } from '@automattic/agenttic-ui';
 const mockUseAgentChat = jest.fn();
 const mockUseRegenerateAction = jest.fn();
 const mockUseConversation = jest.fn();
+const mockIsReaderChatAgent = jest.fn();
 const mockAgentChat = jest.fn(
 	( {
 		onSuggestionClick,
 		onSubmit,
 		emptyViewSuggestions = [],
+		disclosure,
 	}: {
 		messages?: unknown[];
 		onSuggestionClick: ( suggestion: Suggestion | string ) => void;
 		onSubmit: ( message: string ) => void;
 		emptyViewSuggestions?: Suggestion[];
+		disclosure?: React.ReactNode;
 	} ) => (
 		<>
 			<button
@@ -52,6 +55,7 @@ const mockAgentChat = jest.fn(
 					<li key={ suggestion.id }>{ suggestion.label }</li>
 				) ) }
 			</ul>
+			<div data-testid="disclosure">{ disclosure }</div>
 		</>
 	)
 );
@@ -69,7 +73,10 @@ jest.mock(
 jest.mock( '@wordpress/data', () => ( {
 	useSelect: () => undefined,
 } ) );
-jest.mock( '@wordpress/element', () => jest.requireActual( 'react' ) );
+jest.mock( '@wordpress/element', () => ( {
+	...jest.requireActual( 'react' ),
+	createInterpolateElement: jest.requireActual( '@wordpress/element' ).createInterpolateElement,
+} ) );
 jest.mock( '@wordpress/i18n', () => ( { __: ( text: string ) => text } ) );
 jest.mock( 'react-router-dom', () => ( {
 	useNavigate: () => jest.fn(),
@@ -115,7 +122,7 @@ jest.mock( '../../utils/external-context', () => ( {
 	removeExternalContextEntry: jest.fn(),
 } ) );
 jest.mock( '../../utils/is-reader-chat-agent', () => ( {
-	isReaderChatAgent: () => false,
+	isReaderChatAgent: ( ...args: unknown[] ) => mockIsReaderChatAgent( ...args ),
 } ) );
 jest.mock( '../../utils/persist-last-activity', () => ( {
 	persistLastActivity: jest.fn(),
@@ -131,6 +138,7 @@ import OrchestratorChat from '../orchestrator-chat';
 describe( 'OrchestratorChat', () => {
 	beforeEach( () => {
 		jest.clearAllMocks();
+		mockIsReaderChatAgent.mockReturnValue( false );
 		// Default getter: contributes no actions.
 		mockUseRegenerateAction.mockReturnValue( () => [] );
 		mockUseConversation.mockReturnValue( { isLoading: false } );
@@ -966,5 +974,27 @@ describe( 'OrchestratorChat', () => {
 			content?: Array< { text?: string } >;
 		} >;
 		expect( countShowComponentMessages( lastMessages ) ).toBe( 1 );
+	} );
+
+	it( 'passes the AI disclosure with a guidelines link to the chat', () => {
+		render(
+			<OrchestratorChat
+				emptyViewSuggestions={ [] }
+				isDocked={ false }
+				isOpen
+				onClose={ jest.fn() }
+				onExpand={ jest.fn() }
+				chatHeaderOptions={ [] }
+				markdownComponents={ {} }
+				markdownExtensions={ {} }
+				isCompactMode={ false }
+				onHasMessagesChange={ jest.fn() }
+			/>
+		);
+
+		const disclosureEl = screen.getByTestId( 'disclosure' );
+		expect( disclosureEl ).toHaveTextContent( 'chatting with an AI agent.' );
+		const link = screen.getByRole( 'link', { name: 'See Guidelines' } );
+		expect( link ).toHaveAttribute( 'href', 'https://automattic.com/ai-guidelines/' );
 	} );
 } );

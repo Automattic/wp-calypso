@@ -5,7 +5,14 @@ import {
 	type MarkdownExtensions,
 } from '@automattic/agenttic-ui';
 import { useSelect } from '@wordpress/data';
-import { useState, useCallback, useMemo, useEffect, useRef } from '@wordpress/element';
+import {
+	createInterpolateElement,
+	useState,
+	useCallback,
+	useMemo,
+	useEffect,
+	useRef,
+} from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { useNavigate } from 'react-router-dom';
 import { LOCAL_TOOL_RUNNING_MESSAGE } from '../../constants';
@@ -328,6 +335,16 @@ export default function OrchestratorChat( {
 	const chatError = isReaderChat
 		? getReaderChatErrorMessage( error )
 		: getOrchestratorErrorMessage( error );
+
+	const disclosure = createInterpolateElement(
+		__( "You're chatting with an AI agent. <a>See Guidelines</a>.", __i18n_text_domain__ ),
+		{
+			// eslint-disable-next-line jsx-a11y/anchor-has-content
+			a: (
+				<a href="https://automattic.com/ai-guidelines/" target="_blank" rel="noopener noreferrer" />
+			),
+		}
+	);
 
 	const { isLoading: isLoadingConversation } = useConversation( {
 		maxPages: isReaderChat ? 1 : 10,
@@ -844,6 +861,7 @@ export default function OrchestratorChat( {
 			markdownExtensions={ markdownExtensions }
 			inputValue={ inputValue }
 			onInputChange={ setInputValue }
+			disclosure={ disclosure }
 			isCompactMode={ isCompactMode }
 			imageUpload={ imageUpload }
 			showFeedbackInput={ showFeedbackInput }

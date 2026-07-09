@@ -31,6 +31,7 @@ import type { ExternalContextCard, ExternalContextCardAction } from '../../utils
 import type { Message, NoticeConfig } from '@automattic/agenttic-ui/dist/types';
 import type { AgentsManagerSelect } from '@automattic/data-stores';
 import type { ComponentProps, RefObject } from 'react';
+import './style.scss';
 
 interface Props {
 	/** Chat messages to display. */
@@ -80,6 +81,8 @@ interface Props {
 	onInputChange?: ( value: string ) => void;
 	/** Notice to display in the chat. */
 	notice?: NoticeConfig;
+	/** Muted caption rendered below the input (e.g. AI disclosure). */
+	disclosure?: React.ReactNode;
 	/** Indicates if the floating chat is in compact mode. */
 	isCompactMode?: boolean;
 	/** Image upload state from the parent component. When provided, enables the image uploader UI. */
@@ -155,6 +158,7 @@ export default function AgentChat( {
 	clearSuggestions,
 	onSuggestionClick,
 	notice,
+	disclosure,
 	markdownComponents = {},
 	markdownExtensions = {},
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars -- Kept for API compatibility with `ZendeskChat`
@@ -342,6 +346,7 @@ export default function AgentChat( {
 						/>
 					</AgentUI.Footer>
 				) }
+				{ disclosure && <p className="agents-manager-chat__disclosure">{ disclosure }</p> }
 			</AgentUI.ConversationView>
 		</AgentUI.Container>
 	);
