@@ -7,6 +7,7 @@ import { WooLogo } from '@automattic/components';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import ActionButton from '../shared/action-button';
+import wooCommerceBottomCardProductImage from './assets/woocommerce-bottom-card-product.webp';
 import wooCommerceBottomCardImage from './assets/woocommerce-bottom-card.webp';
 import ClientLogoList from './client-logo-list';
 import type { GridPlan, PlanActionOverrides } from '../../types';
@@ -96,7 +97,7 @@ const BottomPlanCard = ( {
 							<img
 								alt=""
 								className="plans-grid-next-features-grid__bottom-plan-card-woo-product-image"
-								src={ wooCommerceBottomCardImage }
+								src={ wooCommerceBottomCardProductImage }
 							/>
 							<div className="plans-grid-next-features-grid__bottom-plan-card-woo-product-name">
 								{ translate( 'Anna vase', {
