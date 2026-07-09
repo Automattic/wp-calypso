@@ -784,10 +784,6 @@
 		flex: 1;
 		justify-content: flex-end;
 		min-width: 0;
-
-		&.is-empty {
-			display: none;
-		}
 	}
 
 	.plans-grid-next-features-grid__bottom-plan-card-media .plans-grid-next-client-logo-list {
@@ -799,8 +795,8 @@
 		row-gap: 16px;
 
 		svg {
-			color: #949494;
-			fill: #949494;
+			color: var( --wp-components-color-gray-600, #949494 );
+			fill: var( --wp-components-color-gray-600, #949494 );
 			height: var( --bottom-plan-card-logo-height );
 		}
 
@@ -1242,8 +1238,8 @@
 			width: 100%;
 
 			svg {
-				color: #757575;
-				fill: #757575;
+				color: var( --wp-components-color-gray-700, #757575 );
+				fill: var( --wp-components-color-gray-700, #757575 );
 			}
 		}
 
