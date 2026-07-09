@@ -84,6 +84,14 @@ function render( ui: React.ReactElement, initialState?: object ) {
 	} );
 }
 
+async function reachCreateStep( user: ReturnType< typeof userEvent.setup > ) {
+	await user.type( screen.getByLabelText( 'Name' ), 'Reading' );
+	await user.click( screen.getByRole( 'button', { name: 'Next' } ) );
+	await user.click( screen.getByRole( 'button', { name: 'Next' } ) );
+	await user.click( screen.getByRole( 'button', { name: 'Next' } ) );
+	await screen.findByRole( 'button', { name: 'Create' } );
+}
+
 describe( 'ReaderSidebarSpaces', () => {
 	beforeEach( () => {
 		jest.mocked( page ).mockClear();
@@ -247,7 +255,7 @@ describe( 'ReaderSidebarSpaces', () => {
 		render( <ReaderSidebarSpaces path={ OPEN_PATH } /> );
 
 		await user.click( screen.getByRole( 'button', { name: 'Create a space' } ) );
-		await user.type( screen.getByLabelText( 'Name' ), 'Reading' );
+		await reachCreateStep( user );
 		await user.click( screen.getByRole( 'button', { name: 'Create' } ) );
 
 		// The redirect happens in the create mutation's onSuccess, after the POST
