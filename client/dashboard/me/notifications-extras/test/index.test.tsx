@@ -249,10 +249,9 @@ describe( 'NotificationsExtras', () => {
 		expect( screen.getByText( 'Reminders about your posts from past years.' ) ).toBeVisible();
 		expect( screen.getByLabelText( 'Achievements' ) ).toBeVisible();
 		expect(
-			screen.getByText(
-				'Receive notifications when you unlock new achievements. This setting overrides site-level settings.'
-			)
+			screen.getByText( /Receive notifications when you unlock new achievements\./ )
 		).toBeVisible();
+		expect( screen.getByRole( 'link', { name: 'site-level settings' } ) ).toBeVisible();
 	} );
 
 	it( 'saves the On this day setting when toggled', async () => {
