@@ -210,7 +210,7 @@ export default function OrchestratorChat( {
 		suggestions,
 		isProcessing,
 		error,
-		loadMessages,
+		loadMessages: loadAgentMessages,
 		onSubmit,
 		abortCurrentRequest,
 		clearSuggestions,
@@ -224,6 +224,7 @@ export default function OrchestratorChat( {
 	const showComponentOrderRef = useRef< Map< string, number > >( new Map() );
 	const nextShowComponentOrderRef = useRef( 0 );
 	const wasProcessingRef = useRef( isProcessing );
+	const skipRetentionRef = useRef( false );
 	messagesRef.current = messages;
 
 	// A regeneration is finished once its streaming turn settles — either the new
@@ -279,9 +280,11 @@ export default function OrchestratorChat( {
 
 	useEffect( () => {
 		// While regenerating, the dropped component is being replaced, not lost —
-		// don't retain it. Keep the ref current so the next non-regenerating run
-		// compares against the post-regeneration messages.
-		if ( isRegenerating ) {
+		// don't retain it. A full history replacement (`loadMessages`) likewise
+		// drops nothing transiently. Keep the ref current so the next run
+		// compares against the latest messages.
+		if ( isRegenerating || skipRetentionRef.current ) {
+			skipRetentionRef.current = false;
 			previousMessagesRef.current = messages;
 			return;
 		}
@@ -319,6 +322,22 @@ export default function OrchestratorChat( {
 
 		previousMessagesRef.current = messages;
 	}, [ getShowComponentOrder, messages, isRegenerating ] );
+
+	// A full history replacement (server hydration, clearing the chat) is not
+	// a transient drop, and the same picker can carry a different identity in
+	// loaded history than it did live — retaining the live copy would show it
+	// as a duplicate. Skip the next retention pass and drop any retained
+	// placeholders instead.
+	const loadMessages = useCallback(
+		( nextMessages: Parameters< typeof loadAgentMessages >[ 0 ] ) => {
+			skipRetentionRef.current = true;
+			setRetainedShowComponentMessages( ( previousRetainedMessages ) =>
+				previousRetainedMessages.size > 0 ? new Map() : previousRetainedMessages
+			);
+			return loadAgentMessages( nextMessages );
+		},
+		[ loadAgentMessages ]
+	);
 
 	// Reader-chat sessions are short (usually < 50 messages) — don't waste
 	// time paginating 10 pages deep. One page covers typical use.
