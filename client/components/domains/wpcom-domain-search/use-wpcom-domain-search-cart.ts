@@ -10,7 +10,6 @@ import {
 	CartActionError,
 	type CartKey,
 	type MinimalRequestCartProduct,
-	parseNextDomainCondition,
 	type ResponseCartProduct,
 	useShoppingCart,
 } from '@automattic/shopping-cart';
@@ -56,7 +55,6 @@ interface UseWPCOMDomainSearchCartOptions {
 	flowName?: string;
 	flowAllowsMultipleDomainsInCart: boolean;
 	isFirstDomainFreeForFirstYear: boolean;
-	freeForFirstYearTlds?: string[];
 	onContinue( cartItems: ResponseCartProduct[] ): void;
 	beforeAddDomainToCart?: ( domain: MinimalRequestCartProduct ) => MinimalRequestCartProduct;
 }
@@ -66,7 +64,6 @@ export const useWPCOMDomainSearchCart = ( {
 	flowName,
 	flowAllowsMultipleDomainsInCart,
 	isFirstDomainFreeForFirstYear,
-	freeForFirstYearTlds,
 	onContinue,
 	beforeAddDomainToCart = ( domain ) => domain,
 }: UseWPCOMDomainSearchCartOptions ) => {
@@ -86,16 +83,6 @@ export const useWPCOMDomainSearchCart = ( {
 		// We have to check if there's a plan in the cart here since the user's cart might not be empty
 		// when they start a domain search flow.
 		const forceFirstNonPremiumDomainToBeFree = isFirstDomainFreeForFirstYear && ! isPlanInCart;
-
-		// Stepper: use flow config. Checkout (plan in real cart): derive from next_domain_condition.
-		let effectiveFreeForFirstYearTlds: string[] | undefined;
-		if ( forceFirstNonPremiumDomainToBeFree ) {
-			effectiveFreeForFirstYearTlds = freeForFirstYearTlds;
-		} else if ( responseCart.next_domain_condition ) {
-			effectiveFreeForFirstYearTlds = parseNextDomainCondition(
-				responseCart.next_domain_condition
-			);
-		}
 
 		// Order domains from most expensive to least expensive
 		domainItems.sort( ( a, b ) => {
@@ -117,15 +104,9 @@ export const useWPCOMDomainSearchCart = ( {
 				! item.extra?.premium &&
 				! item.extra?.domain_bundle_group_id
 		);
-		let freeDomainName: string | undefined;
-		if ( forceFirstNonPremiumDomainToBeFree && firstNonPremiumDomain?.meta ) {
-			const isBundledTld =
-				! effectiveFreeForFirstYearTlds ||
-				effectiveFreeForFirstYearTlds.some( ( tld ) =>
-					firstNonPremiumDomain.meta.endsWith( '.' + tld )
-				);
-			freeDomainName = isBundledTld ? firstNonPremiumDomain.meta : undefined;
-		}
+		const freeDomainName = forceFirstNonPremiumDomainToBeFree
+			? firstNonPremiumDomain?.meta
+			: undefined;
 
 		const rawTotal = domainItems.reduce(
 			( acc, item ) => acc + ( freeDomainName === item.meta ? 0 : item.item_subtotal_integer ),
@@ -282,16 +263,12 @@ export const useWPCOMDomainSearchCart = ( {
 			},
 		};
 
-		const isNextDomainFree = forceFirstNonPremiumDomainToBeFree
-			? freeDomainName === undefined
-			: responseCart.next_domain_is_free;
-
 		return {
 			cart,
-			isNextDomainFree,
+			isNextDomainFree: forceFirstNonPremiumDomainToBeFree
+				? freeDomainName === undefined
+				: responseCart.next_domain_is_free,
 			freeDomainName,
-			// Only restrict by TLD while the credit is actually available.
-			freeForFirstYearTlds: isNextDomainFree ? effectiveFreeForFirstYearTlds : undefined,
 			onContinue: () => onContinue( domainItems ),
 		};
 	}, [
@@ -300,7 +277,6 @@ export const useWPCOMDomainSearchCart = ( {
 		replaceProductsInCart,
 		flowName,
 		isFirstDomainFreeForFirstYear,
-		freeForFirstYearTlds,
 		flowAllowsMultipleDomainsInCart,
 		onContinue,
 		beforeAddDomainToCart,

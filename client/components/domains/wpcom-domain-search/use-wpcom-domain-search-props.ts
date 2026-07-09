@@ -69,16 +69,14 @@ export const useWPCOMDomainSearchProps = ( {
 		[ dispatch, analyticsSection, externalOnContinue ]
 	);
 
-	const { cart, isNextDomainFree, freeDomainName, freeForFirstYearTlds, onContinue } =
-		useWPCOMDomainSearchCart( {
-			cartKey: getCartKey( { isLoggedIn, currentSiteId } ),
-			flowName,
-			isFirstDomainFreeForFirstYear,
-			freeForFirstYearTlds: externalConfig?.priceRules?.freeForFirstYearTlds,
-			flowAllowsMultipleDomainsInCart,
-			onContinue: onContinueWithStepSubmissionTracking,
-			beforeAddDomainToCart: externalBeforeAddDomainToCart,
-		} );
+	const { cart, isNextDomainFree, freeDomainName, onContinue } = useWPCOMDomainSearchCart( {
+		cartKey: getCartKey( { isLoggedIn, currentSiteId } ),
+		flowName,
+		isFirstDomainFreeForFirstYear,
+		flowAllowsMultipleDomainsInCart,
+		onContinue: onContinueWithStepSubmissionTracking,
+		beforeAddDomainToCart: externalBeforeAddDomainToCart,
+	} );
 
 	const config = useMemo( () => {
 		// Bundles are fixed one-year registrations of multiple TLDs, so they
@@ -99,10 +97,9 @@ export const useWPCOMDomainSearchProps = ( {
 				// Keep the already-added free domain showing as $0 in the suggestion list,
 				// matching what the user saw when they clicked and what appears in their cart.
 				freeForFirstYearDomains: freeDomainName ? [ freeDomainName ] : undefined,
-				freeForFirstYearTlds,
 			},
 		};
-	}, [ externalConfig, isNextDomainFree, freeDomainName, freeForFirstYearTlds, flowName ] );
+	}, [ externalConfig, isNextDomainFree, freeDomainName, flowName ] );
 
 	const analyticsEvents = useWPCOMDomainSearchEvents( {
 		vendor: config.vendor,

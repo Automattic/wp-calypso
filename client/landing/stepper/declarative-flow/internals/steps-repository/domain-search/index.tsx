@@ -10,7 +10,6 @@ import {
 	isNewHostedSiteCreationFlow,
 	isNewsletterFlow,
 	isOnboardingFlow,
-	EDUCATION_FLOW,
 	Step,
 	StepContainer,
 } from '@automattic/onboarding';
@@ -59,7 +58,6 @@ import type { HelpCenterSelect, OnboardSelect } from '@automattic/data-stores';
 import type { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 
 const HUNDRED_YEAR_DOMAIN_TLDS = [ 'com', 'net', 'org', 'blog' ];
-const EDUCATION_BUNDLED_TLDS = [ 'blog', 'art' ];
 
 const HELP_CENTER_STORE = HelpCenter.register();
 
@@ -190,7 +188,6 @@ const DomainSearchStep: StepType< {
 			priceRules: {
 				hidePrice: isHundredYearPlanFlow( flow ),
 				oneTimePrice: isHundredYearDomainFlow( flow ),
-				freeForFirstYearTlds: flow === EDUCATION_FLOW ? EDUCATION_BUNDLED_TLDS : undefined,
 			},
 			skippable:
 				! isHundredYearPlanFlow( flow ) &&

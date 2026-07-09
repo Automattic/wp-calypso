@@ -22,11 +22,6 @@ export interface PriceRulesConfig {
 	 * the suggestion list after it has been added to the cart with a free-domain promotion.
 	 */
 	freeForFirstYearDomains?: string[];
-	/**
-	 * When set, only domains whose TLD is in this list get FREE_FOR_FIRST_YEAR pricing.
-	 * All other TLDs show their real price. Takes precedence over freeForFirstYear.
-	 */
-	freeForFirstYearTlds?: string[];
 }
 
 const getPriceRuleForSuggestion = ( {
@@ -52,19 +47,10 @@ const getPriceRuleForSuggestion = ( {
 		return DomainPriceRule.PRICE;
 	}
 
-	if ( priceRules.freeForFirstYearDomains?.includes( suggestion.domain_name ) ) {
-		return DomainPriceRule.FREE_FOR_FIRST_YEAR;
-	}
-
-	if ( priceRules.freeForFirstYearTlds ) {
-		return priceRules.freeForFirstYearTlds.some( ( tld ) =>
-			suggestion.domain_name.endsWith( '.' + tld )
-		)
-			? DomainPriceRule.FREE_FOR_FIRST_YEAR
-			: DomainPriceRule.PRICE;
-	}
-
-	if ( priceRules.freeForFirstYear ) {
+	if (
+		priceRules.freeForFirstYear ||
+		priceRules.freeForFirstYearDomains?.includes( suggestion.domain_name )
+	) {
 		return DomainPriceRule.FREE_FOR_FIRST_YEAR;
 	}
 
