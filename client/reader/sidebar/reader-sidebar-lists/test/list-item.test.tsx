@@ -1,6 +1,7 @@
 /**
  * @jest-environment jsdom
  */
+import { ReadList } from '@automattic/api-core';
 import { screen } from '@testing-library/react';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import ReaderSidebarListsListItem from '../list-item';
@@ -10,15 +11,19 @@ jest.mock( 'calypso/reader/stats', () => ( {
 	recordGaEvent: jest.fn(),
 } ) );
 
-const list = {
+const list: ReadList = {
 	ID: 123,
 	slug: 'favorites',
 	owner: 'bob',
 	title: 'Favorites',
+	description: '',
+	is_owner: true,
+	is_public: true,
+	unseen_count: 0,
 };
 
 describe( 'ReaderSidebarListsListItem', () => {
-	let scrollIntoView;
+	let scrollIntoView: jest.Mock;
 
 	beforeEach( () => {
 		// jsdom does not implement scrollIntoView.

@@ -11,7 +11,7 @@ interface CountProps extends HTMLAttributes< HTMLSpanElement > {
 	numberFormat?: ( count: number ) => string;
 }
 
-function Count( {
+export function Count( {
 	count,
 	primary,
 	compact,

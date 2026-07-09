@@ -8,7 +8,7 @@ import type { KeyboardEvent, MouseEvent, ReactNode } from 'react';
 
 interface ExpandableSidebarHeadingProps {
 	title: TranslateResult;
-	count: number;
+	count?: number;
 	compactCount?: boolean;
 	onClick?: ( event?: MouseEvent< HTMLAnchorElement > ) => void;
 	customIcon?: ReactNode;
@@ -68,7 +68,7 @@ const ExpandableSidebarHeading = ( {
 				{ renderedTitle }
 				<span className="sidebar__actions-and-count">
 					{ moreMenuActions }
-					{ count > 0 && <Count count={ count } compact={ compactCount } /> }
+					{ count && count > 0 && <Count count={ count } compact={ compactCount } /> }
 				</span>
 				{ inlineText && <span className="sidebar__inline-text">{ inlineText }</span> }
 			</span>

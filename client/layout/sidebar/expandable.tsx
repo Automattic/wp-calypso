@@ -25,7 +25,7 @@ interface SidebarChildProps {
 interface ExpandableSidebarMenuProps {
 	className?: string;
 	title: TranslateResult;
-	count: number;
+	count?: number;
 	compactCount?: boolean;
 	onClick?: ( event?: MouseEvent< HTMLAnchorElement > ) => void;
 	icon?: string | null;
