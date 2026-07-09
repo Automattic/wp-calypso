@@ -22,6 +22,10 @@
 	color: var( --studio-gray-50 );
 }
 
+.stats-infotip__description .ads__earnings-history-info-list {
+	padding-inline-start: var( --wpds-dimension-padding-md, 12px );
+}
+
 .earnings_history {
 	border-radius: 4px;
 	margin-bottom: $vertical-margin;
