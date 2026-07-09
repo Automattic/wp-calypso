@@ -46,15 +46,6 @@ const indexRoute = createRoute( {
 	},
 } );
 
-// Catch-all so every unmatched path still resolves to a route. Without it, an
-// unmatched path renders the not-found component but has no matched route, and
-// navigation APIs like useBlocker throw "No route found for location".
-const catchAllRoute = createRoute( {
-	getParentRoute: () => rootRoute,
-	path: '$',
-	component: NotFound,
-} );
-
 const createRouteTree = ( config: AppConfig ) => {
 	const children = [];
 
@@ -91,8 +82,6 @@ const createRouteTree = ( config: AppConfig ) => {
 	if ( config.supports.startStoreRoute ) {
 		children.push( startStoreRoute );
 	}
-
-	children.push( catchAllRoute );
 
 	return rootRoute.addChildren( children );
 };
