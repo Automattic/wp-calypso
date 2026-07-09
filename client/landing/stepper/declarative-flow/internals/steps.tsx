@@ -29,8 +29,6 @@ export const STEPS = {
 		asyncComponent: () => import( './steps-repository/sites-checker' ),
 	},
 
-	COURSES: { slug: 'courses', asyncComponent: () => import( './steps-repository/courses' ) },
-
 	DESIGN_SETUP: {
 		slug: 'design-setup',
 		asyncComponent: () => import( './steps-repository/design-setup' ),

@@ -52,7 +52,6 @@ const siteSetupFlow: Flow = {
 			STEPS.OPTIONS,
 			STEPS.DESIGN_SETUP,
 			STEPS.BLOGGER_STARTING_POINT,
-			STEPS.COURSES,
 			STEPS.IMPORT,
 			STEPS.IMPORT_LIST,
 			STEPS.IMPORT_READY,
@@ -313,9 +312,6 @@ const siteSetupFlow: Flow = {
 						case 'firstPost': {
 							return exitFlow( `/post/${ siteSlug }` );
 						}
-						case 'courses': {
-							return navigate( 'courses' );
-						}
 						case 'skip-to-my-home': {
 							return exitFlow( `/home/${ siteId ?? siteSlug }`, {
 								skipLaunchpad: true,
@@ -347,10 +343,6 @@ const siteSetupFlow: Flow = {
 							return navigate( 'design-setup' );
 						}
 					}
-				}
-
-				case 'courses': {
-					return exitFlow( `/post/${ siteSlug }` );
 				}
 
 				case 'importList':
@@ -458,9 +450,6 @@ const siteSetupFlow: Flow = {
 			switch ( currentStep ) {
 				case 'bloggerStartingPoint':
 					return navigate( 'options' );
-
-				case 'courses':
-					return navigate( 'bloggerStartingPoint' );
 
 				case 'design-setup':
 					if ( intent === SiteIntent.DIFM ) {

@@ -1,5 +1,5 @@
 import { useTranslate } from 'i18n-calypso';
-import { write, play, design } from 'calypso/signup/icons';
+import { write, design } from 'calypso/signup/icons';
 
 const useStartingPoints = () => {
 	const translate = useTranslate();
@@ -12,14 +12,6 @@ const useStartingPoints = () => {
 			icon: write,
 			value: 'firstPost',
 			actionText: translate( 'Start writing' ),
-		},
-		{
-			key: 'courses',
-			title: translate( 'Watch Blogging videos' ),
-			description: <p>{ translate( ' Learn the blogging basics in minutes ' ) }</p>,
-			icon: play,
-			value: 'courses',
-			actionText: translate( 'Start learning' ),
 		},
 		{
 			key: 'design-setup',

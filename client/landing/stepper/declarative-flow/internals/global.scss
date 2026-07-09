@@ -119,7 +119,6 @@ button {
 		}
 
 		@include break-small {
-			&.courses,
 			&.site-picker,
 			&.new-or-existing-site,
 			&.domains:not(.copy-site):not(.ai-site-builder):not(.domain-and-plan):not(.onboarding):not(.newsletter):not(.readymade-template):not(.reblogging):not(.start-writing) {
