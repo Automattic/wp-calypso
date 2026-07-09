@@ -302,3 +302,15 @@ export const useShouldGateStats = ( statType: string ) => {
 
 	return isGatedStats;
 };
+
+/*
+ * Decorate a date-range shortcut with its per-shortcut gating state.
+ * Intended for mapping over a shortcut list inside mapStateToProps.
+ */
+export const addIsGatedFor =
+	( state: object, siteId: number | null ) =>
+	< T extends { id: string } >( shortcut: T ) => ( {
+		...shortcut,
+		isGated: shouldGateStats( state, siteId, `${ STATS_FEATURE_DATE_CONTROL }/${ shortcut.id }` ),
+		statType: `${ STATS_FEATURE_DATE_CONTROL }/${ shortcut.id }`,
+	} );

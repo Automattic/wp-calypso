@@ -24,6 +24,12 @@ const DateControl = ( {
 	const siteToday = momentInSite();
 
 	const getButtonLabel = () => {
+		// Shortcuts without a fixed date range (e.g. "All time") show their own label.
+		const selectedShortcut = shortcutList?.find( ( { id } ) => id === dateRange.shortcutId );
+		if ( selectedShortcut && ! selectedShortcut.startDate ) {
+			return selectedShortcut.label;
+		}
+
 		const localizedStartDate = moment( dateRange.chartStart );
 		const localizedEndDate = moment( dateRange.chartEnd );
 
@@ -48,8 +54,8 @@ const DateControl = ( {
 	return (
 		<div className={ COMPONENT_CLASS_NAME }>
 			<DateRange
-				selectedStartDate={ moment( dateRange.chartStart ) }
-				selectedEndDate={ moment( dateRange.chartEnd ) }
+				selectedStartDate={ dateRange.chartStart ? moment( dateRange.chartStart ) : undefined }
+				selectedEndDate={ dateRange.chartEnd ? moment( dateRange.chartEnd ) : undefined }
 				selectedShortcutId={ dateRange.shortcutId }
 				lastSelectableDate={ siteToday }
 				firstSelectableDate={ moment( '2010-01-01' ) }
@@ -84,7 +90,7 @@ const DateControl = ( {
 				displayShortcuts
 				useArrowNavigation
 				customTitle="Date Range"
-				focusedMonth={ moment( dateRange.chartEnd ).toDate() }
+				focusedMonth={ dateRange.chartEnd ? moment( dateRange.chartEnd ).toDate() : undefined }
 				shortcutList={ shortcutList }
 				onShortcutClick={ onShortcutClick }
 				trackExternalDateChanges

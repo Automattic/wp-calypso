@@ -16,6 +16,16 @@ import DateLabelDrill from './date-label-drill';
 
 import './style.scss';
 
+// "Month to date"/"Year to date" read worse than the explicit date they resolve to
+// (e.g. "July 2026"), so those fall through to the date-based label.
+const DATE_LABELED_SHORTCUT_IDS = [ 'month_to_date', 'year_to_date' ];
+
+function getShortcutDisplayLabel( selectedShortcut ) {
+	return selectedShortcut?.label && ! DATE_LABELED_SHORTCUT_IDS.includes( selectedShortcut.id )
+		? selectedShortcut.label
+		: null;
+}
+
 function StatsDateLabel( {
 	date,
 	period,
@@ -99,9 +109,13 @@ function StatsDateLabel( {
 		return `${ localizedStartDate.format( 'll' ) } - ${ localizedEndDate.format( 'll' ) }`;
 	}
 
-	function dateForSummarize() {
+	function dateForSummarize( selectedShortcut = null ) {
 		if ( query.start_date ) {
-			return dateForCustomRange( query.start_date, query.date );
+			const shortcutLabel = getShortcutDisplayLabel( selectedShortcut );
+			if ( shortcutLabel ) {
+				return shortcutLabel;
+			}
+			return dateForCustomRange( query.start_date, query.date, selectedShortcut );
 		}
 
 		const localizedDate = momentSiteZone();
@@ -123,11 +137,9 @@ function StatsDateLabel( {
 	}
 
 	function dateForDisplay( selectedShortcut = null ) {
-		if (
-			selectedShortcut?.label &&
-			! [ 'month_to_date', 'year_to_date' ].includes( selectedShortcut?.id )
-		) {
-			return selectedShortcut.label;
+		const shortcutLabel = getShortcutDisplayLabel( selectedShortcut );
+		if ( shortcutLabel ) {
+			return shortcutLabel;
 		}
 
 		const weekPeriodFormat = isShort ? 'll' : 'LL';
@@ -193,7 +205,7 @@ function StatsDateLabel( {
 	const isSummarizeQuery = query?.summarize;
 	const { selectedShortcut } = getShortcuts( reduxState, dateRange, translate );
 	const shortDisplayDate = isShort ? dateForDisplay( selectedShortcut ) : null;
-	const summarizeDisplayDate = isSummarizeQuery ? dateForSummarize() : null;
+	const summarizeDisplayDate = isSummarizeQuery ? dateForSummarize( selectedShortcut ) : null;
 	const displayDate = isShort ? shortDisplayDate : summarizeDisplayDate;
 
 	const previousDisplayDate = useMemo( () => {
@@ -235,7 +247,9 @@ function StatsDateLabel( {
 					period: (
 						<span className="period">
 							<span className="date">
-								{ isSummarizeQuery ? dateForSummarize() : dateForDisplay( selectedShortcut ) }
+								{ isSummarizeQuery
+									? dateForSummarize( selectedShortcut )
+									: dateForDisplay( selectedShortcut ) }
 							</span>
 						</span>
 					),
@@ -248,7 +262,9 @@ function StatsDateLabel( {
 					period: (
 						<span className="period">
 							<span className="date">
-								{ isSummarizeQuery ? dateForSummarize() : dateForDisplay( selectedShortcut ) }
+								{ isSummarizeQuery
+									? dateForSummarize( selectedShortcut )
+									: dateForDisplay( selectedShortcut ) }
 							</span>
 						</span>
 					),

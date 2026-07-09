@@ -81,7 +81,11 @@ import StatsPeriodHeader from './stats-period-header';
 import StatsPeriodNavigation from './stats-period-navigation';
 import StatsPlanUsage from './stats-plan-usage';
 import StatsUpsell from './stats-upsell/traffic-upsell';
-import { appendQueryStringForRedirection, getPathWithUpdatedQueryString } from './utils';
+import {
+	appendQueryStringForRedirection,
+	buildSummaryUrl,
+	getPathWithUpdatedQueryString,
+} from './utils';
 
 const loadJetpackUpsellSection = () =>
 	import(
@@ -353,20 +357,13 @@ function StatsBody( { siteId, chartTab = 'views', date, context, isInternal, ...
 	// Note: This is only used in the empty version of the module.
 	// There's a similar function inside stats-module/index.jsx that is used when we have content.
 	const getStatHref = ( modulePath, query ) => {
-		const paramsValid = props.period && modulePath && slug;
-		if ( ! paramsValid ) {
-			return undefined;
-		}
-
-		let url = `/stats/${ props.period.period }/${ modulePath }/${ slug }`;
-
-		if ( query?.start_date ) {
-			url += `?startDate=${ query.start_date }&endDate=${ query.date }`;
-		} else {
-			url += `?startDate=${ props.period.endOf.format( DATE_FORMAT ) }`;
-		}
-
-		return url;
+		return buildSummaryUrl( {
+			period: props.period,
+			module: modulePath,
+			siteSlug: slug,
+			query,
+			shortcut: context.query?.shortcut,
+		} );
 	};
 
 	// Set up a custom range for the chart.

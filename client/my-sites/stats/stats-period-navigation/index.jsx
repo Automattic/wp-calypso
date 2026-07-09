@@ -21,7 +21,7 @@ import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { toggleUpsellModal } from 'calypso/state/stats/paid-stats-upsell/actions';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { getMomentSiteZone } from '../hooks/use-moment-site-zone';
-import { shouldGateStats } from '../hooks/use-should-gate-stats';
+import { addIsGatedFor, shouldGateStats } from '../hooks/use-should-gate-stats';
 import { withStatsPurchases } from '../hooks/use-stats-purchases';
 import NavigationArrows from '../navigation-arrows';
 import StatsCardUpsell from '../stats-card-upsell';
@@ -392,12 +392,6 @@ class StatsPeriodNavigation extends PureComponent {
 		);
 	}
 }
-
-const addIsGatedFor = ( state, siteId ) => ( shortcut ) => ( {
-	...shortcut,
-	isGated: shouldGateStats( state, siteId, `${ STATS_FEATURE_DATE_CONTROL }/${ shortcut.id }` ),
-	statType: `${ STATS_FEATURE_DATE_CONTROL }/${ shortcut.id }`,
-} );
 
 const connectComponent = connect(
 	( state, { period, translate } ) => {

@@ -40,6 +40,7 @@ const SUPPORTED_QUERY_PARAMS: string[] = [
 	'chartStart',
 	'chartEnd',
 	'shortcut',
+	'tab',
 	'jp_s',
 	'jp_post_type',
 	'jp_status',
@@ -57,6 +58,17 @@ const defaultLastScreen = 'traffic';
 const getFilteredQueryParams = ( queryParams: QueryArgs ): QueryArgs => {
 	return Object.fromEntries(
 		Object.entries( queryParams ).filter( ( [ key ] ) => SUPPORTED_QUERY_PARAMS.includes( key ) )
+	);
+};
+
+// Params the Traffic page actually understands. Used when synthesizing a Traffic
+// back link from the current screen, so summary-only params (startDate, num,
+// summarize, …) don't leak onto the Traffic URL.
+const TRAFFIC_QUERY_PARAMS: string[] = [ 'chartStart', 'chartEnd', 'shortcut', 'tab' ];
+
+const getTrafficQueryParams = ( queryParams: QueryArgs ): QueryArgs => {
+	return Object.fromEntries(
+		Object.entries( queryParams ).filter( ( [ key ] ) => TRAFFIC_QUERY_PARAMS.includes( key ) )
 	);
 };
 
@@ -135,16 +147,26 @@ export const useStatsNavigationHistory = (): { text: string; url: string | null 
 				// Select the second last item from the history stack as the back link.
 				// The last item in the stack if the current screen.
 				const lastItem =
-					Array.isArray( navState ) && navState.length >= 2 ? navState[ navState.length - 2 ] : {};
+					Array.isArray( navState ) && navState.length >= 2
+						? navState[ navState.length - 2 ]
+						: null;
 
 				// Make sure it's array and select last item
 				if ( lastItem && lastItem.screen ) {
 					setLastScreen( lastItem );
 				} else {
+					// No prior history (e.g. direct load or a full page load that clears
+					// sessionStorage): fall back to Traffic, but carry the current screen's
+					// query params/period so the selected date range survives the round-trip.
+					const currentItem =
+						Array.isArray( navState ) && navState.length >= 1
+							? navState[ navState.length - 1 ]
+							: null;
+
 					setLastScreen( {
 						screen: defaultLastScreen,
-						queryParams: {},
-						period: 'day',
+						queryParams: getTrafficQueryParams( currentItem?.queryParams || {} ),
+						period: currentItem?.period || 'day',
 					} );
 				}
 			}
@@ -226,8 +248,32 @@ export const useStatsBreadcrumbTrail = (): Array< { label: string; url: string |
 	useEffect( () => {
 		try {
 			const navState = JSON.parse( sessionStorage.getItem( STORAGE_KEY ) || '[]' );
-			if ( ! Array.isArray( navState ) || navState.length < 2 ) {
+			if ( ! Array.isArray( navState ) || navState.length < 1 ) {
 				setTrail( [] );
+				return;
+			}
+
+			// No prior history (e.g. direct load or a full page load that clears sessionStorage):
+			// synthesize a Traffic back-breadcrumb from the current screen so the selected date
+			// range survives the round-trip back to Traffic.
+			if ( navState.length === 1 ) {
+				const current = navState[ 0 ];
+				const label = localizedTabNames[ defaultLastScreen ];
+				let link = possibleBackLinks[ defaultLastScreen ];
+				if ( ! link || ! label || ! siteSlug ) {
+					setTrail( [] );
+					return;
+				}
+				link = link.replace( '{period}', current.period || 'day' );
+				setTrail( [
+					{
+						label,
+						url: addQueryArgs(
+							link + siteSlug,
+							getTrafficQueryParams( current.queryParams || {} )
+						),
+					},
+				] );
 				return;
 			}
 
