@@ -1010,7 +1010,11 @@ export const notificationsExtrasRoute = createRoute( {
 	} ),
 	getParentRoute: () => notificationsRoute,
 	path: '/extras',
-	loader: () => queryClient.ensureQueryData( userNotificationsSettingsQuery() ),
+	loader: () =>
+		Promise.all( [
+			queryClient.ensureQueryData( userNotificationsSettingsQuery() ),
+			queryClient.ensureQueryData( rawUserPreferencesQuery() ),
+		] ),
 } ).lazy( () =>
 	import( '../../me/notifications-extras' ).then( ( d ) =>
 		createLazyRoute( 'notifications-extras' )( {

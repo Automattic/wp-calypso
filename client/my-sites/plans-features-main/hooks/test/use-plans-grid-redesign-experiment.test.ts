@@ -20,6 +20,7 @@ const CONTROL_RESULT = {
 	usePlansGridRedesign: false,
 	usePlansGridRedesignNewDescription: false,
 	showDifferentiatorHeader: false,
+	usePlansGridRedesignFeatures: false,
 	showEnterpriseBottomCard: false,
 	showWooCommerceBottomCard: false,
 	isExperimentEligible: true,
@@ -184,6 +185,7 @@ describe( 'usePlansGridRedesignExperiment', () => {
 			usePlansGridRedesign: true,
 			usePlansGridRedesignNewDescription: false,
 			showDifferentiatorHeader: true,
+			usePlansGridRedesignFeatures: true,
 		} );
 	} );
 

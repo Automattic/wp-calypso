@@ -158,4 +158,21 @@ describe( 'index', () => {
 
 		expect( definedSteps ).toEqual( new Set() );
 	} );
+
+	test( 'intervalType must be an optional query dependency where it is used (it has a default)', () => {
+		// `intervalType` defaults to yearly when absent, so a flow that carries it through the URL
+		// must also mark it optional — otherwise the flow controller rejects otherwise-valid URLs
+		// that omit it.
+		const flowDefinitions = generateFlows();
+
+		const flowsWithMandatoryIntervalType = Object.entries( flowDefinitions )
+			.filter( ( [ , flow ] ) => {
+				const provided = flow.providesDependenciesInQuery ?? [];
+				const optional = flow.optionalDependenciesInQuery ?? [];
+				return provided.includes( 'intervalType' ) && ! optional.includes( 'intervalType' );
+			} )
+			.map( ( [ flowName ] ) => flowName );
+
+		expect( flowsWithMandatoryIntervalType ).toEqual( [] );
+	} );
 } );

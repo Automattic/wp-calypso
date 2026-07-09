@@ -1,7 +1,7 @@
 /**
  * @jest-environment jsdom
  */
-import { readSpaceQuery, readSpacesQuery } from '@automattic/api-queries';
+import { readSpaceBySlugQuery, readSpaceQuery, readSpacesQuery } from '@automattic/api-queries';
 import { QueryClient } from '@tanstack/react-query';
 import { act, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
@@ -10,8 +10,8 @@ import { SpacesView } from '../view';
 import type { ReadSpaceDetails } from '@automattic/api-core';
 
 const mockSpaceFeed = jest.fn< null, [ unknown ] >( () => null );
-// When set, overrides the single-space detail hook's `error` so tests can drive
-// the not-available branch; otherwise the real (cache-backed) hook is used.
+// When set, overrides the by-slug resolution hook's `error` so tests can drive the
+// not-available branch; otherwise the real (cache-backed) hook is used.
 const mockSpaceError: { current: unknown } = { current: undefined };
 
 // A wpcom-shaped error (an Error with numeric status/statusCode), matching what
@@ -38,14 +38,14 @@ jest.mock( 'calypso/state/reader/analytics/actions', () => ( {
 } ) );
 
 // Keep the data hooks real (they read the seeded cache, and the Customize modal
-// relies on the detail hook); only override the detail hook's `error` when a test
-// opts in via `mockSpaceError`.
+// relies on the by-id detail hook); only override the by-slug resolution hook's
+// `error` when a test opts in via `mockSpaceError`.
 jest.mock( 'calypso/reader/data/spaces', () => {
 	const actual = jest.requireActual( 'calypso/reader/data/spaces' );
 	return {
 		...actual,
-		useSpace: ( ...args: Parameters< typeof actual.useSpace > ) => {
-			const result = actual.useSpace( ...args );
+		useSpaceBySlug: ( ...args: Parameters< typeof actual.useSpaceBySlug > ) => {
+			const result = actual.useSpaceBySlug( ...args );
 			return mockSpaceError.current !== undefined
 				? { ...result, error: mockSpaceError.current }
 				: result;
@@ -62,6 +62,7 @@ jest.mock( 'calypso/reader/data/site-subscriptions', () => ( {
 
 const WORK: ReadSpaceDetails = {
 	id: '2f5d8f28-04b7-4f6a-a908-6c4d2b4b8f21',
+	slug: 'work',
 	name: 'Work',
 	tags: [],
 	languages: [],
@@ -69,10 +70,17 @@ const WORK: ReadSpaceDetails = {
 	sources: [],
 };
 
+// Seed all three caches the view + modal read: the list (sidebar), the by-slug
+// detail (how the view resolves its URL), and the by-id detail (the modal).
+function seedSpace( queryClient: QueryClient, space: ReadSpaceDetails ) {
+	queryClient.setQueryData( readSpacesQuery().queryKey, [ space ] );
+	queryClient.setQueryData( readSpaceBySlugQuery( space.slug ).queryKey, space );
+	queryClient.setQueryData( readSpaceQuery( space.id ).queryKey, space );
+}
+
 function render( ui: React.ReactElement ) {
 	const queryClient = new QueryClient( { defaultOptions: { queries: { retry: false } } } );
-	queryClient.setQueryData( readSpacesQuery().queryKey, [ WORK ] );
-	queryClient.setQueryData( readSpaceQuery( WORK.id ).queryKey, WORK );
+	seedSpace( queryClient, WORK );
 
 	return renderWithProvider( ui, {
 		queryClient,
@@ -103,7 +111,7 @@ describe( 'SpacesView', () => {
 	} );
 
 	it( 'shows the Customize button on a space detail page', () => {
-		render( <SpacesView id={ WORK.id } /> );
+		render( <SpacesView slug={ WORK.slug } /> );
 
 		expect( screen.getByRole( 'button', { name: 'Customize' } ) ).toBeVisible();
 	} );
@@ -121,7 +129,7 @@ describe( 'SpacesView', () => {
 	} );
 
 	it( 'shows a subtitle under the name on a space detail page but not on the landing page', () => {
-		const { unmount } = render( <SpacesView id={ WORK.id } /> );
+		const { unmount } = render( <SpacesView slug={ WORK.slug } /> );
 		expect( screen.getByText( 'Your curated reading space' ) ).toBeVisible();
 		unmount();
 
@@ -130,25 +138,44 @@ describe( 'SpacesView', () => {
 	} );
 
 	it( 'does not flash the generic Spaces heading while a specific space is loading', () => {
-		// The id is not in the loaded list yet, so the space is still resolving.
-		render( <SpacesView id="not-loaded-yet" /> );
+		// This slug isn't cached yet, so the by-slug detail is still resolving.
+		render( <SpacesView slug="not-loaded-yet" /> );
 
 		expect( screen.queryByText( 'Spaces' ) ).not.toBeInTheDocument();
 	} );
 
-	it( 'passes the space layout view to the feed', () => {
-		render( <SpacesView id={ WORK.id } /> );
+	it( 'passes the resolved space (with its layout view) to the feed', () => {
+		render( <SpacesView slug={ WORK.slug } /> );
 
 		expect( mockSpaceFeed ).toHaveBeenCalledWith(
 			expect.objectContaining( {
-				spaceId: WORK.id,
-				layoutView: 'gallery',
+				space: expect.objectContaining( {
+					id: WORK.id,
+					layout: expect.objectContaining( { view: 'gallery' } ),
+				} ),
 			} )
 		);
 	} );
 
+	it( 'paints the header and feed instantly from the list summary before the detail loads', () => {
+		// Seed only the list — no by-slug detail cache. The header and feed must still
+		// render from the summary rather than waiting on the detail request.
+		const queryClient = new QueryClient( { defaultOptions: { queries: { retry: false } } } );
+		queryClient.setQueryData( readSpacesQuery().queryKey, [ WORK ] );
+
+		renderWithProvider( <SpacesView slug={ WORK.slug } />, {
+			queryClient,
+			initialState: { currentUser: { id: 1 } },
+		} );
+
+		expect( screen.getByRole( 'heading', { name: 'Work' } ) ).toBeVisible();
+		expect( mockSpaceFeed ).toHaveBeenCalledWith(
+			expect.objectContaining( { space: expect.objectContaining( { id: WORK.id } ) } )
+		);
+	} );
+
 	it( 'renders the wide layout by default when the space has no stored width', () => {
-		render( <SpacesView id={ WORK.id } /> );
+		render( <SpacesView slug={ WORK.slug } /> );
 
 		expect( screen.getByRole( 'main' ) ).toHaveClass( 'is-wide-layout' );
 	} );
@@ -159,10 +186,9 @@ describe( 'SpacesView', () => {
 			...WORK,
 			layout: { ...WORK.layout, width: 'regular' },
 		};
-		queryClient.setQueryData( readSpacesQuery().queryKey, [ regularSpace ] );
-		queryClient.setQueryData( readSpaceQuery( regularSpace.id ).queryKey, regularSpace );
+		seedSpace( queryClient, regularSpace );
 
-		renderWithProvider( <SpacesView id={ regularSpace.id } />, {
+		renderWithProvider( <SpacesView slug={ regularSpace.slug } />, {
 			queryClient,
 			initialState: { currentUser: { id: 1 } },
 		} );
@@ -171,7 +197,7 @@ describe( 'SpacesView', () => {
 	} );
 
 	it( 'records a page view event with the selected space appearance', async () => {
-		render( <SpacesView id={ WORK.id } /> );
+		render( <SpacesView slug={ WORK.slug } /> );
 
 		await waitFor( () =>
 			expect( mockRecordReaderTracksEvent ).toHaveBeenCalledWith(
@@ -189,7 +215,7 @@ describe( 'SpacesView', () => {
 
 	it( 'opens the Customize modal on the Identity tab', async () => {
 		const user = userEvent.setup();
-		render( <SpacesView id={ WORK.id } /> );
+		render( <SpacesView slug={ WORK.slug } /> );
 
 		await user.click( screen.getByRole( 'button', { name: 'Customize' } ) );
 
@@ -198,7 +224,7 @@ describe( 'SpacesView', () => {
 	} );
 
 	it( 'opens the Customize modal on the Sources tab from the feed Add sources CTA', async () => {
-		render( <SpacesView id={ WORK.id } /> );
+		render( <SpacesView slug={ WORK.slug } /> );
 
 		// The feed tab's SpaceFeed is wired with the empty-state CTA handler.
 		const feedProps = mockSpaceFeed.mock.calls
@@ -219,20 +245,20 @@ describe( 'SpacesView', () => {
 	} );
 
 	it( 'does not open the modal from the route alone', () => {
-		render( <SpacesView id={ WORK.id } /> );
+		render( <SpacesView slug={ WORK.slug } /> );
 
 		expect( screen.queryByRole( 'dialog', { name: 'Customize space' } ) ).not.toBeInTheDocument();
 	} );
 
 	it( 'shows the Feed and Discover sub-navigation on a space detail page', () => {
-		render( <SpacesView id={ WORK.id } /> );
+		render( <SpacesView slug={ WORK.slug } /> );
 
 		expect( screen.getByRole( 'menuitem', { name: /feed/i } ) ).toBeVisible();
 		expect( screen.getByRole( 'menuitem', { name: /discover/i } ) ).toBeVisible();
 	} );
 
 	it( 'renders the feed on the default (feed) tab', () => {
-		render( <SpacesView id={ WORK.id } /> );
+		render( <SpacesView slug={ WORK.slug } /> );
 
 		expect( mockSpaceFeed ).toHaveBeenCalledTimes( 1 );
 		// The feed tab uses the default variant, not Discover.
@@ -242,10 +268,13 @@ describe( 'SpacesView', () => {
 	} );
 
 	it( 'renders the Discover variant of the feed on the discover tab', () => {
-		render( <SpacesView id={ WORK.id } tab="discover" /> );
+		render( <SpacesView slug={ WORK.slug } tab="discover" /> );
 
 		expect( mockSpaceFeed ).toHaveBeenCalledWith(
-			expect.objectContaining( { spaceId: WORK.id, variant: 'discover' } )
+			expect.objectContaining( {
+				space: expect.objectContaining( { id: WORK.id } ),
+				variant: 'discover',
+			} )
 		);
 	} );
 
@@ -254,7 +283,7 @@ describe( 'SpacesView', () => {
 		( status ) => {
 			mockSpaceError.current = wpError( status );
 
-			render( <SpacesView id="missing" /> );
+			render( <SpacesView slug="missing" /> );
 
 			expect( screen.getByRole( 'heading', { name: /isn.t available/i } ) ).toBeVisible();
 			expect( screen.getByRole( 'link', { name: 'Back to Reader' } ) ).toBeVisible();
@@ -265,12 +294,12 @@ describe( 'SpacesView', () => {
 	it( 'records a page error event with the failing status', async () => {
 		mockSpaceError.current = wpError( 404 );
 
-		render( <SpacesView id="missing" /> );
+		render( <SpacesView slug="missing" /> );
 
 		await waitFor( () =>
 			expect( mockRecordReaderTracksEvent ).toHaveBeenCalledWith(
 				'calypso_reader_spaces_page_error',
-				{ space_id: 'missing', status: 404 }
+				{ space_slug: 'missing', status: 404 }
 			)
 		);
 	} );
@@ -278,7 +307,7 @@ describe( 'SpacesView', () => {
 	it( 'keeps rendering the space on a transient (non-4xx) detail error', () => {
 		mockSpaceError.current = wpError( 500 );
 
-		render( <SpacesView id={ WORK.id } /> );
+		render( <SpacesView slug={ WORK.slug } /> );
 
 		expect( screen.queryByRole( 'heading', { name: /isn.t available/i } ) ).not.toBeInTheDocument();
 		expect( screen.getByRole( 'button', { name: 'Customize' } ) ).toBeVisible();

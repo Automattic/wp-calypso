@@ -532,11 +532,6 @@ body.post-new-php.agents-manager-sidebar-container {
 				display: none;
 			}
 
-			.big-sky-onboarding__chat-view & {
-				padding-right: 0;
-				justify-content: start !important;
-			}
-
 			.big-sky__chat-components & {
 				padding-right: 0;
 			}
@@ -628,10 +623,6 @@ body.post-new-php.agents-manager-sidebar-container {
 				margin: 0;
 			}
 		}
-	}
-
-	.big-sky-onboarding__chat-view .big-sky__chat-actions__carousel__item {
-		max-width: 190px;
 	}
 
 	.big-sky__chat-actions::before:not( .has-confirmation-actions ),
@@ -734,14 +725,6 @@ body.post-new-php.agents-manager-sidebar-container {
 			outline: 1px solid #0000004d;
 			overflow: hidden;
 		}
-	}
-}
-
-// Hide the chat while Big Sky's full-screen onboarding overlay is open.
-body:has( .big-sky-onboarding.components-popover ) {
-	.agents-manager-chat,
-	.agents-manager-sidebar-fab {
-		display: none !important;
 	}
 }
 

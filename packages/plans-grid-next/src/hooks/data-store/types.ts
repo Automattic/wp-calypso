@@ -40,6 +40,10 @@ export interface UseGridPlansParams {
 	 */
 	useVar42NoAiFeatures?: boolean;
 	/**
+	 * When true, use the pricing-grid redesign feature set for plan cards.
+	 */
+	usePlansGridRedesignFeatures?: boolean;
+	/**
 	 * When true, show plan-scoped feature pills. AI-labeled pills are suppressed.
 	 */
 	showPricingDifferentiationFeaturePills?: boolean;

@@ -5,12 +5,17 @@
 	"client_slug": "browser",
 	"survicate_enabled": true,
 	"hostname": "my.wordpress.com",
-	"hostname_allowlist": [ "my.wordpress.com", "my.woo.ai" ],
+	"hostname_allowlist": [ "my.wordpress.com", "my.woo.ai", "agencies-beta.automattic.com" ],
 	"hostname_overrides": {
 		"my.woo.ai": {
 			"oauth_client_id": 134405,
 			"wpcom_login_url": false,
 			"features": { "oauth": true, "wpcom-user-bootstrap": false }
+		},
+		"agencies-beta.automattic.com": {
+			"oauth_client_id": 95932,
+			"wpcom_login_url": false,
+			"features": { "oauth": true, "always_use_logout_url": true, "wpcom-user-bootstrap": false }
 		}
 	},
 	"i18n_default_locale_slug": "en",

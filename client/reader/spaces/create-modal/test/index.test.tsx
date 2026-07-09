@@ -67,6 +67,7 @@ jest.mock( 'calypso/state/reader/analytics/actions', () => ( {
 
 const WORK: ReadSpace = {
 	id: '2f5d8f28-04b7-4f6a-a908-6c4d2b4b8f21',
+	slug: 'work',
 	name: 'Work',
 	layout: { color: 'blue', icon: 'inbox' },
 };
@@ -80,6 +81,7 @@ function mockCreateEndpoint( name: string, onBody?: ( body: Record< string, unkn
 			onBody?.( body );
 			return {
 				id: 7,
+				slug: String( name ).toLowerCase().replace( /\s+/g, '-' ),
 				title: name,
 				follows: [],
 				tags: body.tags ?? [],

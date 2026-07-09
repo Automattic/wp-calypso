@@ -2,7 +2,7 @@ import { agencySiteQuery } from '@automattic/api-queries';
 import { useQuery } from '@tanstack/react-query';
 import { __experimentalVStack as VStack } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
-import { category } from '@wordpress/icons';
+import { category, backup } from '@wordpress/icons';
 import { agencySiteRoute } from '../../../app/router/agency';
 import { SidebarBackButton, SidebarMenu, SidebarMenuItem } from '../../../components/sidebar';
 import AgencySiteSwitcherItem from './site-switcher-item';
@@ -27,6 +27,11 @@ export default function AgencySiteSidebar() {
 						>
 							{ __( 'Overview' ) }
 						</SidebarMenuItem>
+						{ site.has_backup && (
+							<SidebarMenuItem icon={ backup } to={ `/sites/${ siteSlug }/backups` }>
+								{ __( 'Backups' ) }
+							</SidebarMenuItem>
+						) }
 					</SidebarMenu>
 				</VStack>
 			) }

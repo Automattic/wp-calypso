@@ -26,6 +26,7 @@ const useGridPlansForFeaturesGrid = ( {
 	isDomainOnlySite,
 	reflectStorageSelectionInPlanPrices,
 	useVar42NoAiFeatures,
+	usePlansGridRedesignFeatures,
 	showPricingDifferentiationFeaturePills,
 	useFocusedNewCopyTaglines,
 	usePlansGridRedesignNewDescription,
@@ -65,6 +66,7 @@ const useGridPlansForFeaturesGrid = ( {
 		selectedFeature,
 		showLegacyStorageFeature,
 		useVar42NoAiFeatures,
+		usePlansGridRedesignFeatures,
 		showPricingDifferentiationFeaturePills,
 		isExperimentVariant,
 	} );

@@ -1,7 +1,16 @@
+.bundle-tld-chips {
+	// Keep the block at its content width (so a neighbouring badge can't crush
+	// it) and let the chips wrap rather than overlap when space is tight.
+	flex-shrink: 0;
+	flex-wrap: wrap;
+}
+
 .bundle-tld-chips__tld {
 	word-break: keep-all;
+	flex-shrink: 0;
 }
 
 .bundle-tld-chips__separator {
 	opacity: 0.3;
+	flex-shrink: 0;
 }
