@@ -11,6 +11,7 @@ import { handleOAuthCallback } from './auth/oauth-callback';
 import { loadPreferencesHelper } from './dev-tools/preferences';
 import Layout from './layout';
 import { omnibarEvents } from './omnibar/events';
+import { suppressSkippedViewTransitions } from './router/suppress-skipped-view-transitions';
 import limitTotalSnackbars from './snackbars/limit-total-snackbars';
 import type { AppConfig } from './context';
 
@@ -32,6 +33,7 @@ function boot( config: AppConfig ) {
 	loadDevHelpers();
 	loadPreferencesHelper();
 	limitTotalSnackbars();
+	suppressSkippedViewTransitions();
 	initSentry();
 
 	const rootElement = document.getElementById( 'wpcom' );
