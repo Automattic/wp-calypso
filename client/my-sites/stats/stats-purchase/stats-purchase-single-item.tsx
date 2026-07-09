@@ -1,6 +1,7 @@
 import config from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
 import { Button as CalypsoButton } from '@automattic/components';
+import { formatNumberCompact } from '@automattic/number-formatters';
 import { Button, CheckboxControl } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import React, { useState, useCallback, useMemo, useEffect } from 'react';
@@ -19,6 +20,7 @@ import getEnvStatsFeatureSupportChecks from 'calypso/state/sites/selectors/get-e
 import { JETPACK_BLOG_ABOUT_COMMERCIAL_STATS_URL } from '../const';
 import useAvailableUpgradeTiers from '../hooks/use-available-upgrade-tiers';
 import useOnDemandCommercialClassificationMutation from '../hooks/use-on-demand-site-identification-mutation';
+import usePlanUsageQuery from '../hooks/use-plan-usage-query';
 import useSiteCompulsoryPlanSelectionQualifiedCheck from '../hooks/use-site-compulsory-plan-selection-qualified-check';
 import useStatsPurchases from '../hooks/use-stats-purchases';
 import { StatsCommercialUpgradeSlider, getTierQuantity } from './stats-commercial-upgrade-slider';
@@ -110,6 +112,23 @@ const StatsUpgradeInstructions = () => {
 	);
 };
 
+const StatsBundledPlanNotice = ( { viewsLimit }: { viewsLimit?: number } ) => {
+	const translate = useTranslate();
+
+	return (
+		<div className="stats-purchase-wizard__notice">
+			{ viewsLimit
+				? translate(
+						'Your current plan already includes %(viewsLimit)s views per month for Stats. Views from this purchase will stack on top, so you keep what you already have.',
+						{ args: { viewsLimit: formatNumberCompact( viewsLimit ) } }
+				  )
+				: translate(
+						'Your current plan already includes views for Stats. Views from this purchase will stack on top, so you keep what you already have.'
+				  ) }
+		</div>
+	);
+};
+
 const useLocalizedStrings = ( isCommercial: boolean ) => {
 	const translate = useTranslate();
 
@@ -155,9 +174,12 @@ const StatsCommercialPurchase = ( {
 	const isWPCOMSite = useSelector( ( state ) => siteId && getIsSiteWPCOM( state, siteId ) );
 	const tiers = useAvailableUpgradeTiers( siteId ) || [];
 	const haveTiers = tiers.length > 0;
-	const { isCommercialOwned, hasAnyStatsPlan } = useStatsPurchases( siteId );
+	const { isCommercialOwned, hasAnyStatsPlan, supportCommercialUse } = useStatsPurchases( siteId );
 	const isSimpleSite = useSelector( ( state ) => getIsSimpleSite( state, siteId ) );
 	const { data: connectionStatus } = useJetpackConnectionStatus( siteId, !! isSimpleSite );
+	const { data: usageData } = usePlanUsageQuery( siteId );
+	// Site already has Stats access via a bundled plan (e.g. Jetpack Complete) rather than a standalone Stats purchase.
+	const hasBundledStatsAccess = supportCommercialUse && ! isCommercialOwned;
 
 	// The button of @automattic/components has built-in color scheme support for Calypso.
 	const ButtonComponent = isWPCOMSite ? CalypsoButton : Button;
@@ -201,6 +223,7 @@ const StatsCommercialPurchase = ( {
 	return (
 		<>
 			<h1>{ pageTitle }</h1>
+			{ hasBundledStatsAccess && <StatsBundledPlanNotice viewsLimit={ usageData?.views_limit } /> }
 			{ ! isCommercialOwned && (
 				<>
 					<p>{ infoText }</p>
