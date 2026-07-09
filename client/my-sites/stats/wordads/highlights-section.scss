@@ -27,6 +27,11 @@ main.earn .highlight-cards.wordads {
 	.highlight-card-tooltip-content {
 		display: block;
 		max-width: 260px;
+		font-family: inherit;
+		font-size: inherit;
+		font-weight: inherit;
+		line-height: inherit;
+		letter-spacing: inherit;
 
 		p:last-child {
 			margin: 0;
