@@ -1193,30 +1193,74 @@
 			border-radius: 8px;
 			border-top: 1px solid #e0e0e0;
 			flex-direction: column;
-			gap: 24px;
+			gap: 0;
 			margin-top: 20px;
 			max-width: 100%;
 			min-height: 0;
-			padding: 24px 16px;
+			padding: 32px 24px 24px;
 		}
 
 		.plans-grid-next-features-grid__bottom-plan-card-copy {
+			display: contents;
 			flex-basis: auto;
 			max-width: none;
 			min-width: 0;
 			width: 100%;
 		}
 
+		.plans-grid-next-features-grid__bottom-plan-card-title {
+			font-size: 26px;
+			font-weight: 400;
+			letter-spacing: 0.21px;
+			line-height: 30px;
+			margin-bottom: 8px;
+			order: 1;
+		}
+
+		.plans-grid-next-features-grid__bottom-plan-card-tagline {
+			font-size: 13px;
+			font-weight: 400;
+			letter-spacing: -0.15px;
+			line-height: 20px;
+			margin: 0;
+			order: 2;
+		}
+
 		.plans-grid-next-features-grid__bottom-plan-card-media {
 			justify-content: flex-start;
+			margin: 20px 0;
+			order: 3;
 			width: 100%;
 		}
 
 		.plans-grid-next-features-grid__bottom-plan-card-media .plans-grid-next-client-logo-list {
-			--bottom-plan-card-logo-height: 32px;
-			column-gap: 24px;
-			justify-content: flex-start;
-			row-gap: 12px;
+			--bottom-plan-card-logo-height: 22px;
+			column-gap: 12px;
+			justify-content: space-between;
+			row-gap: 8px;
+			width: 100%;
+
+			svg {
+				fill: #757575;
+			}
+		}
+
+		.plans-grid-next-features-grid__bottom-plan-card-action {
+			order: 4;
+			width: 100%;
+
+			.plans-grid-next-action-button,
+			.plans-grid-next-action-button__content {
+				display: flex;
+				width: 100%;
+			}
+
+			.button.plan-features-2023-grid__actions-button {
+				font-size: 16px;
+				height: 48px;
+				padding: 12px 16px;
+				width: 100%;
+			}
 		}
 	}
 }
