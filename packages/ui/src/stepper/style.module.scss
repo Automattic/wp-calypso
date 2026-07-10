@@ -39,9 +39,9 @@
 }
 
 // Current step, number variant — solid filled circle. Uses the strong
-// interactive pairing (dark fill, light glyph), like a solid neutral Button.
-// The explicit colors also keep the fill stable on hover, avoiding a ring
-// against the dark background.
+// interactive-neutral pairing (dark fill, light glyph). The explicit colors
+// also keep the fill stable on hover, avoiding a ring against the dark
+// background.
 .indicator.is-current[data-indicator-variant='number'] {
 	border-color: var( --wpds-color-bg-interactive-neutral-strong );
 	background: var( --wpds-color-bg-interactive-neutral-strong );
@@ -99,27 +99,41 @@
 	padding: 0;
 }
 
-// The trigger renders as a minimal neutral Button; its background is
-// suppressed per design (the steps read as plain labels, not pill buttons).
+// The trigger is a custom step-navigation control, not a Button. Base UI's
+// Accordion.Trigger (vertical) and Tabs.Tab (horizontal) render a native
+// <button>; these rules reset that native chrome and re-style it as a
+// tab-like label. Token usage and interaction states mirror the
+// @wordpress/ui Tabs primitive (packages/ui/src/tabs/style.module.css):
+// the steps read as plain labels, not pill buttons.
 .trigger {
+	// Reset native button chrome (the focus ring is drawn on ::after below).
+	appearance: none;
+	margin: 0;
+	padding: 0;
+	border: none;
+	border-radius: 0;
+	background: transparent;
+	box-shadow: none;
+	outline: none;
+
+	// Layout for the indicator + title/description.
+	position: relative;
 	display: flex;
 	align-items: center;
 	justify-content: flex-start;
 	gap: var( --wpds-dimension-gap-sm );
-	padding: 0;
-	background: none;
-	border: none;
-	height: auto;
-	text-align: start;
 	width: 100%;
-	// Rest at regular weight (the Button default is medium); only the active
-	// step's title is bolded via the aria-expanded/aria-selected rule below.
+	text-align: start;
+
+	// Rest at regular weight (Tabs.Tab is 400 too); only the current step's
+	// title is bolded, via the aria-expanded/aria-selected rule below.
+	cursor: var( --wpds-cursor-control );
 	font-weight: var( --wpds-typography-font-weight-regular );
 
-	// State text colors are set once here, on the button, and cascade to the
-	// title and description. Step state is read from the button's own
-	// attributes (data-status / aria-current / aria-disabled).
-	// Upcoming (incomplete) steps rest on the weak variant.
+	// State text color is set once here, on the button, and cascades to the
+	// title and description via currentColor. All colors stay within the
+	// interactive-neutral family used by Tabs. Upcoming (not yet reached) steps
+	// rest on the weak variant.
 	color: var( --wpds-color-fg-interactive-neutral-weak );
 
 	// Completed and current steps read at full neutral strength.
@@ -128,17 +142,44 @@
 		color: var( --wpds-color-fg-interactive-neutral );
 	}
 
-	// Hover/focus use the -active variant of the same neutral tone; WPDS
-	// tokens should not mix tones (no brand color on a neutral control).
-	// The indicator border and glyph follow automatically via currentColor.
-	&:hover:not( [aria-disabled='true'] ),
-	&:focus-visible:not( [aria-disabled='true'] ) {
+	// Disabled steps stay focusable (Base UI sets focusableWhenDisabled on both
+	// Accordion.Trigger and Tabs.Tab, so they emit data-disabled + aria-disabled
+	// rather than the native attribute).
+	&[data-disabled] {
+		cursor: default;
+		color: var( --wpds-color-fg-interactive-neutral-disabled );
+
+		@media ( forced-colors: active ) {
+			color: GrayText;
+		}
+	}
+
+	// Hover/keyboard focus use the -active variant of the same neutral tone;
+	// the indicator border and glyph follow automatically via currentColor.
+	&:not( [data-disabled] ):is( :hover, :focus-visible ) {
 		color: var( --wpds-color-fg-interactive-neutral-active );
 	}
 
-	&[aria-disabled='true'] {
-		cursor: default;
-		color: var( --wpds-color-fg-interactive-neutral-disabled );
+	// Focus ring drawn on a dedicated ::after box (mirrors Tabs.Tab), so the
+	// native outline reset above does not remove keyboard focus visibility. The
+	// ring is a thin outline at the trigger edge over a transparent background,
+	// so it never covers the label/indicator.
+	&::after {
+		content: '';
+		position: absolute;
+		inset: 0;
+		pointer-events: none;
+		border-radius: var( --wpds-border-radius-sm );
+		outline: var( --wpds-border-width-focus ) solid var( --wpds-color-stroke-focus-brand );
+		opacity: 0;
+
+		@media ( prefers-reduced-motion: no-preference ) {
+			transition: opacity 0.1s linear;
+		}
+	}
+
+	&:focus-visible::after {
+		opacity: 1;
 	}
 
 	&[aria-expanded='true'],
@@ -185,8 +226,10 @@
 	font-weight: inherit;
 }
 
-// The description lives inside the interactive trigger, so it uses the weak
-// variant of the same interactive-neutral family as the rest of the trigger.
+// The description lives inside the interactive trigger and stays subordinate
+// to the title, so it uses the weak variant of the same interactive-neutral
+// family (which also keeps it dimmer than the title once a reached step's
+// trigger brightens to the full neutral tone).
 .description {
 	color: var( --wpds-color-fg-interactive-neutral-weak );
 }

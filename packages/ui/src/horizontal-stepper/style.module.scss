@@ -20,16 +20,11 @@
 	justify-content: center;
 }
 
+// Orientation-specific layout only; the base .trigger (stepper/style.module.scss)
+// owns the reset, colors, and focus ring.
 .trigger {
-	display: flex;
 	flex-direction: row;
-	align-items: center;
-	gap: var( --wpds-dimension-gap-sm );
-	background: none;
-	border: none;
 	padding: var( --wpds-dimension-padding-md );
-	height: auto;
-	text-align: start;
 }
 
 .panel {
