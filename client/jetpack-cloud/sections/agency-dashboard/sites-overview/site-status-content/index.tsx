@@ -21,7 +21,7 @@ export default function SiteStatusContent( {
 	isFavorite = false,
 	siteError,
 }: Props ) {
-	const metadata = useRowMetadata( rows, type, isLargeScreen );
+	const metadata = useRowMetadata( rows, type, isLargeScreen, siteError );
 	const {
 		row: { status },
 		tooltip,

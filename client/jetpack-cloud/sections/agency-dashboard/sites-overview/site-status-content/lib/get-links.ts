@@ -1,4 +1,5 @@
 import { isEnabled } from '@automattic/calypso-config';
+import { addQueryArgs } from '@wordpress/url';
 import { urlToSlug } from 'calypso/lib/url/http-utils';
 import { AllowedTypes } from '../../types';
 
@@ -13,7 +14,9 @@ const getLinks = (
 	status: string,
 	siteUrl: string,
 	siteUrlWithScheme: string,
-	isAtomicSite: boolean
+	isAtomicSite: boolean,
+	siteId?: number,
+	siteError?: boolean
 ): {
 	link: string;
 	isExternalLink: boolean;
@@ -29,11 +32,21 @@ const getLinks = (
 
 	switch ( type ) {
 		case 'site': {
+			const siteSlug = urlToSlug( siteUrl );
+
 			link =
 				isWPCOMAtomicSiteCreationEnabled && isAtomicSite
-					? `https://wordpress.com/home/${ urlToSlug( siteUrl ) }`
-					: `/activity-log/${ urlToSlug( siteUrl ) }`;
+					? `https://wordpress.com/home/${ siteSlug }`
+					: `/activity-log/${ siteSlug }`;
 			isExternalLink = isWPCOMAtomicSiteCreationEnabled && isAtomicSite;
+
+			if ( siteError && siteId && ! isExternalLink ) {
+				link = addQueryArgs( `/settings/disconnect-site/confirm/${ siteSlug }`, {
+					site_id: siteId,
+					site_url: siteSlug,
+					type: 'down',
+				} );
+			}
 			break;
 		}
 		case 'backup': {

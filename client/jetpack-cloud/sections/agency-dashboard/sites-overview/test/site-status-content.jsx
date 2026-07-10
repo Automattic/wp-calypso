@@ -51,4 +51,40 @@ describe( 'SiteStatusContent', () => {
 		const href = button.getAttribute( 'href' );
 		expect( href ).toBe( '/activity-log/mycoolsite.example::wordpress' );
 	} );
+
+	it( 'renders a remove-site link for disconnected agency sites', () => {
+		const SITE_URL = 'metalcoreminute.example';
+		const SITE_ID = 987654321;
+
+		const props = {
+			rows: {
+				site: {
+					value: {
+						blog_id: SITE_ID,
+						url: SITE_URL,
+					},
+				},
+				monitor: {
+					error: false,
+				},
+				scan: {
+					threats: 0,
+				},
+				plugin: {
+					updates: 0,
+				},
+				backup: {},
+			},
+			type: 'site',
+			isLargeScreen: true,
+			siteError: true,
+		};
+
+		render( <SiteStatusContent { ...props } /> );
+		const button = screen.getByText( SITE_URL, { role: 'button' } );
+		const href = button.getAttribute( 'href' );
+		expect( href ).toBe(
+			`/settings/disconnect-site/confirm/${ SITE_URL }?site_id=${ SITE_ID }&site_url=${ SITE_URL }&type=down`
+		);
+	} );
 } );

@@ -12,7 +12,8 @@ import useTooltip from './use-tooltip';
 const useRowMetadata = (
 	rows: SiteData,
 	type: AllowedTypes,
-	isLargeScreen: boolean
+	isLargeScreen: boolean,
+	siteError = false
 ): RowMetaData => {
 	const isSupported = useIsMultisiteSupported( rows.site?.value, type );
 
@@ -29,7 +30,9 @@ const useRowMetadata = (
 			row.status,
 			siteUrl,
 			siteUrlWithScheme,
-			rows.site?.value?.is_atomic
+			rows.site?.value?.is_atomic,
+			siteId,
+			siteError
 		);
 		const eventName = getRowEventName( type, row.status, isLargeScreen );
 
@@ -52,6 +55,7 @@ const useRowMetadata = (
 		rows.site?.value?.is_atomic,
 		rows.site?.value?.url,
 		rows.site?.value?.url_with_scheme,
+		siteError,
 		tooltip,
 		type,
 	] );
