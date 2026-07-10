@@ -155,7 +155,10 @@ $border-radius: 5px; // stylelint-disable-line scales/radii
 	grid-template-columns: repeat(4, 1fr);
 	gap: 16px;
 	list-style: none;
-	margin: 16px 0 0;
+	// The chart's 42px-wide x-axis labels wrap onto a second line for
+	// 'MMM YYYY' month labels (as on the post details page); leave room for
+	// the overflowing line, matching the spacing below the post details chart.
+	margin: 40px 0 0;
 	padding: 0;
 }
 
