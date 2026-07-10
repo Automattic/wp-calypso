@@ -32,10 +32,6 @@ import type { OnboardSelect, SiteSelect, UserSelect } from '@automattic/data-sto
 
 const SiteIntent = Onboard.SiteIntent;
 
-type ExitFlowOptions = {
-	skipLaunchpad?: boolean;
-};
-
 function isLaunchpadIntent( intent: string ) {
 	return intent === SiteIntent.Write || intent === SiteIntent.Build;
 }
@@ -47,7 +43,6 @@ const siteSetupFlow: Flow = {
 
 	useSteps() {
 		const steps = [
-			STEPS.GOALS,
 			STEPS.DESIGN_SETUP,
 			STEPS.IMPORT,
 			STEPS.IMPORT_LIST,
@@ -114,16 +109,9 @@ const siteSetupFlow: Flow = {
 		const { setDesignOnSite } = useDispatch( SITE_STORE );
 		const dispatch = reduxDispatch();
 
-		const getLaunchpadScreenValue = (
-			intent: string,
-			shouldSkip: boolean
-		): 'full' | 'skipped' | 'off' => {
+		const getLaunchpadScreenValue = ( intent: string ): 'full' | 'off' => {
 			if ( ! isLaunchpadIntent( intent ) || isLaunched ) {
 				return 'off';
-			}
-
-			if ( shouldSkip ) {
-				return 'skipped';
 			}
 
 			return 'full';
@@ -146,7 +134,7 @@ const siteSetupFlow: Flow = {
 			return featuresForGoals.length > 0 ? featuresForGoals : undefined;
 		};
 
-		const exitFlow = ( to: string, options: ExitFlowOptions = {} ) => {
+		const exitFlow = ( to: string ) => {
 			setPendingAction( () => {
 				/**
 				 * This implementation seems very hacky.
@@ -180,10 +168,7 @@ const siteSetupFlow: Flow = {
 
 					// Update Launchpad option based on site intent
 					if ( typeof siteId === 'number' ) {
-						settings.launchpad_screen = getLaunchpadScreenValue(
-							siteIntent,
-							options.skipLaunchpad ?? false
-						);
+						settings.launchpad_screen = getLaunchpadScreenValue( siteIntent );
 					}
 
 					let redirectionUrl = to;
@@ -276,25 +261,6 @@ const siteSetupFlow: Flow = {
 					}
 
 					return exitFlow( `/home/${ siteId ?? siteSlug }` );
-				}
-
-				case 'goals': {
-					const { intent, skip } = providedDependencies;
-
-					if ( skip ) {
-						return exitFlow( `/home/${ siteId ?? siteSlug }`, {
-							skipLaunchpad: true,
-						} );
-					}
-
-					switch ( intent ) {
-						case SiteIntent.Import:
-							return exitFlow( `/setup/site-migration?siteSlug=${ siteSlug }&ref=goals` );
-
-						default: {
-							return navigate( 'design-setup' );
-						}
-					}
 				}
 
 				case 'importList':

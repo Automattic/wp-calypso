@@ -266,13 +266,6 @@ export const calypsoOverviewPath = buildPathHelper< {
 	params: { siteSlug: string };
 } >( '/overview/:siteSlug' );
 
-export const siteSetupGoalsPath = buildPathHelper< {
-	queryParams: {
-		siteId?: number | string;
-		siteSlug: string;
-	};
-} >( '/setup/site-setup/goals' );
-
 export const dashboardSiteSSHMigration = buildPathHelper< {
 	queryParams: {
 		'ssh-migration': 'completed' | 'failed';

@@ -140,20 +140,8 @@ test.describe(
 			} );
 
 			await test.step( 'Then I land on the post-checkout "Set up your site" screen', async () => {
-				// Eligible paid plans now land on the post-checkout choice screen
-				// instead of the goal-selection step.
 				const postCheckoutSetupSitePage = new PostCheckoutSetupSitePage( page );
 				await postCheckoutSetupSitePage.waitUntilLoaded();
-			} );
-
-			await test.step( 'When I select "Sell services or digital goods" goal', async () => {
-				const startSiteFlow = new StartSiteFlow( page );
-				const goalCards = page.locator( '.select-card-checkbox__container' );
-				if ( ( await goalCards.count() ) === 0 ) {
-					return;
-				}
-				await startSiteFlow.selectGoal( 'Sell services or digital goods' );
-				await startSiteFlow.clickButton( 'Next' );
 			} );
 
 			await test.step( 'When I select theme', async () => {

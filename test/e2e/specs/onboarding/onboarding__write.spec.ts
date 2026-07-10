@@ -78,16 +78,6 @@ test.describe(
 				expect( page.url() ).toContain( selectedFreeDomain );
 			} );
 
-			await test.step( 'When I select "Publish a blog" goal', async () => {
-				const startSiteFlow = new StartSiteFlow( page );
-				const goalCards = page.locator( '.select-card-checkbox__container' );
-				if ( ( await goalCards.count() ) === 0 ) {
-					return;
-				}
-				await startSiteFlow.selectGoal( 'Publish a blog' );
-				await startSiteFlow.clickButton( 'Next' );
-			} );
-
 			await test.step( 'When I select theme', async () => {
 				const startSiteFlow = new StartSiteFlow( page );
 				const showThemesButton = page.getByRole( 'button', { name: 'Show all Blog themes' } );

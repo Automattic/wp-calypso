@@ -88,7 +88,7 @@
 			align-items: center;
 			padding-left: 10px;
 			
-			span {
+			a {
 				overflow: hidden;
 				white-space: nowrap;
 				text-overflow: ellipsis;
@@ -100,6 +100,11 @@
 				color: var(--color-text);
 				font-size: $font-body-small;
 				font-weight: 500;
+				text-decoration: none;
+
+				&:visited {
+					color: var(--color-text);
+				}
 			}
 
 			&::before {
@@ -133,7 +138,7 @@
 			}
 
 			.videopress-stats-module__grid-metric span,
-			.videopress-stats-module__bar span {
+			.videopress-stats-module__bar a {
 				color: var(--color-text-inverted);
 			}
 		}
