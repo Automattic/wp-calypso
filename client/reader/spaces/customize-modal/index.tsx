@@ -204,7 +204,13 @@ function SpaceUpsertModalContent( {
 	// Seed once the open-time refetch has settled, not from the cache it returns
 	// immediately — a stale snapshot can omit tags and would lock in empty fields.
 	useEffect( () => {
-		if ( ! isCreate && space && spaceQuery.isFetchedAfterMount && ! isSeeded ) {
+		if (
+			! isCreate &&
+			space &&
+			spaceQuery.isSuccess &&
+			spaceQuery.isFetchedAfterMount &&
+			! isSeeded
+		) {
 			setName( space.name );
 			setTags( space.tags );
 			// `?? []` guards a persisted React Query cache written before `languages`
@@ -218,7 +224,7 @@ function SpaceUpsertModalContent( {
 			setSelectedSources( space.sources.map( getSpaceSourceDraftItem ) );
 			setIsSeeded( true );
 		}
-	}, [ isCreate, isSeeded, space, spaceQuery.isFetchedAfterMount ] );
+	}, [ isCreate, isSeeded, space, spaceQuery.isFetchedAfterMount, spaceQuery.isSuccess ] );
 
 	const existingNames = useMemo(
 		() =>

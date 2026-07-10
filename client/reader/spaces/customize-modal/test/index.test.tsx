@@ -272,6 +272,34 @@ describe( 'CustomizeModal', () => {
 		expect( await screen.findByText( 'tech' ) ).toBeVisible();
 	} );
 
+	it( 'does not seed stale cached detail when the open-time refetch fails', async () => {
+		const queryClient = new QueryClient( { defaultOptions: { queries: { retry: false } } } );
+		const { sources, tags, languages, ...summary } = SPACE;
+		queryClient.setQueryData( readSpacesQuery().queryKey, [ summary ] );
+		queryClient.setQueryData( readSpaceBySlugQuery( SPACE.slug ).queryKey, {
+			...SPACE,
+			tags: [],
+		} );
+		const failedRefetch = nock( 'https://public-api.wordpress.com' )
+			.get( `/wpcom/v2/reader/spaces/slug/${ SPACE.slug }` )
+			.reply( 404, { error: 'reader_spaces_not_found' } );
+
+		renderWithProvider( <CustomizeModal isOpen slug={ SPACE.slug } onClose={ jest.fn() } />, {
+			queryClient,
+			initialState: { currentUser: { id: 1 } },
+		} );
+
+		await waitFor( () => expect( failedRefetch.isDone() ).toBe( true ) );
+		await waitFor( () => {
+			const queryState = queryClient.getQueryState( readSpaceBySlugQuery( SPACE.slug ).queryKey );
+			expect( queryState?.fetchStatus ).toBe( 'idle' );
+			expect( queryState?.fetchFailureCount ).toBeGreaterThan( 0 );
+		} );
+		expect( screen.getByRole( 'status' ) ).toHaveTextContent( 'Loading…' );
+		expect( screen.queryByLabelText( 'Name' ) ).not.toBeInTheDocument();
+		expect( screen.getByRole( 'button', { name: 'Save changes' } ) ).toBeDisabled();
+	} );
+
 	it( 'saves edited identity and layout, then closes', async () => {
 		const user = userEvent.setup();
 		const { queryClient, onClose } = render();
