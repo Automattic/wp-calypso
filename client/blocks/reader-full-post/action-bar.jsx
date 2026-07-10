@@ -44,7 +44,7 @@ const ReaderFullPostActionBar = ( {
 						key="comment-button"
 						commentCount={ commentCount }
 						onClick={ onCommentClick }
-						tagName="div"
+						tagName="button"
 						icon={ ReaderCommentIcon( { iconSize: 24 } ) }
 						alwaysShowTooltip
 					/>
@@ -55,7 +55,7 @@ const ReaderFullPostActionBar = ( {
 						siteId={ siteId }
 						postId={ +post.ID }
 						fullPost
-						tagName="div"
+						tagName="button"
 						likeSource="reader"
 						iconSize={ 24 }
 					/>
