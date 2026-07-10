@@ -1,12 +1,19 @@
 import { Gridicon } from '@automattic/components';
 import { formatNumber, formatNumberCompact } from '@automattic/number-formatters';
-import { Icon, seen, video } from '@wordpress/icons';
+import { Icon, seen, video, dashboard } from '@wordpress/icons';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 
-export type VideoStatType = 'views' | 'impressions' | 'watch_time';
+export type VideoStatType = 'views' | 'impressions' | 'watch_time' | 'retention_rate';
 
-export type VideoMetricValues = Record< VideoStatType, number | null >;
+// `null` renders a loading placeholder; `undefined` omits the card entirely
+// (used for retention when the video duration is unavailable).
+export interface VideoMetricValues {
+	views: number | null;
+	impressions: number | null;
+	watch_time: number | null;
+	retention_rate?: number | null;
+}
 
 function formatValue( statType: VideoStatType, value: number | null ) {
 	if ( value === null ) {
@@ -18,6 +25,8 @@ function formatValue( statType: VideoStatType, value: number | null ) {
 			return value > 1
 				? formatNumber( value, { decimals: 1 } )
 				: `< ${ formatNumber( 1, { decimals: 1 } ) }`;
+		case 'retention_rate':
+			return `${ formatNumber( value, { decimals: 1 } ) }%`;
 		default:
 			return formatNumberCompact( value );
 	}
@@ -50,11 +59,18 @@ export default function VideoMetricTabs( {
 			label: translate( 'Hours watched', { textOnly: true } ),
 			icon: <Gridicon icon="time" size={ 24 } />,
 		},
+		{
+			key: 'retention_rate',
+			label: translate( 'Retention rate', { textOnly: true } ),
+			icon: <Icon icon={ dashboard } />,
+		},
 	];
+
+	const availableTabs = tabs.filter( ( tab ) => values[ tab.key ] !== undefined );
 
 	return (
 		<ul className="stats-video-metric-tabs">
-			{ tabs.map( ( tab ) => (
+			{ availableTabs.map( ( tab ) => (
 				<li key={ tab.key } className="stats-video-metric-tabs__item">
 					<button
 						type="button"
@@ -69,7 +85,7 @@ export default function VideoMetricTabs( {
 							{ tab.label }
 						</span>
 						<span className="stats-video-metric-tabs__value">
-							{ formatValue( tab.key, values[ tab.key ] ) }
+							{ formatValue( tab.key, values[ tab.key ] ?? null ) }
 						</span>
 					</button>
 				</li>

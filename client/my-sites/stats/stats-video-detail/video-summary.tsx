@@ -28,7 +28,9 @@ type ApiPeriod = 'month' | 'year';
 
 // The endpoint only recognizes statType=watch_time|impressions; `views` falls
 // back to the plays column, which is the same metric the Videos module and the
-// All videos page label "Views".
+// All videos page label "Views". There is no retention series — retention is
+// derived below with the same formula the video-plays complete_stats endpoint
+// uses: (watch time / plays) / video duration.
 const FETCHED_STAT_TYPES = [ 'views', 'impressions', 'watch_time' ] as const;
 
 interface ChartRecord {
@@ -43,13 +45,14 @@ interface BucketRecord {
 	plays: number;
 	impressions: number;
 	watchTime: number;
+	retention: number;
 }
 
 interface VideoSummaryData {
 	data?: Array< { period: string; value: number } >;
 }
 
-const STAT_TYPES: VideoStatType[] = [ 'views', 'impressions', 'watch_time' ];
+const STAT_TYPES: VideoStatType[] = [ 'views', 'impressions', 'watch_time', 'retention_rate' ];
 
 function isVideoStatType( value: string | null ): value is VideoStatType {
 	return !! value && ( STAT_TYPES as string[] ).includes( value );
@@ -61,17 +64,32 @@ function metricOfBucket( bucket: BucketRecord, type: VideoStatType ): number {
 			return bucket.impressions;
 		case 'watch_time':
 			return bucket.watchTime;
+		case 'retention_rate':
+			return bucket.retention;
 		default:
 			return bucket.plays;
 	}
 }
 
+function computeRetention(
+	watchTimeHours: number,
+	plays: number,
+	videoDuration: number | null
+): number {
+	if ( ! videoDuration || plays <= 0 ) {
+		return 0;
+	}
+	return ( ( watchTimeHours * 3600 ) / plays / videoDuration ) * 100;
+}
+
 export default function VideoSummary( {
 	postId,
 	initialStatType,
+	videoDuration,
 }: {
 	postId: number;
 	initialStatType: string | null;
+	videoDuration: number | null;
 } ) {
 	const translate = useTranslate();
 	const moment = useLocalizedMoment();
@@ -81,6 +99,13 @@ export default function VideoSummary( {
 		isVideoStatType( initialStatType ) ? initialStatType : 'views'
 	);
 	const [ selectedRecord, setSelectedRecord ] = useState< ChartRecord | null >( null );
+
+	// Retention needs the video duration from the media item, which is not
+	// available everywhere (e.g. the Odyssey stats-app proxy has no media
+	// route) — when absent, the retention card and series are simply omitted.
+	const hasRetention = !! videoDuration;
+	const effectiveStatType: VideoStatType =
+		statType === 'retention_rate' && ! hasRetention ? 'views' : statType;
 
 	const apiPeriod: ApiPeriod = uiPeriod === 'day' || uiPeriod === 'week' ? 'month' : 'year';
 
@@ -169,19 +194,24 @@ export default function VideoSummary( {
 			] )
 		).sort();
 
-		return keys.map( ( key ) => ( {
-			key,
-			plays: playsByBucket.get( key ) ?? 0,
-			impressions: impressionsByBucket.get( key ) ?? 0,
-			watchTime: watchTimeByBucket.get( key ) ?? 0,
-		} ) );
-	}, [ playsData, impressionsData, watchTimeData, uiPeriod, apiPeriod, moment ] );
+		return keys.map( ( key ) => {
+			const plays = playsByBucket.get( key ) ?? 0;
+			const watchTime = watchTimeByBucket.get( key ) ?? 0;
+			return {
+				key,
+				plays,
+				impressions: impressionsByBucket.get( key ) ?? 0,
+				watchTime,
+				retention: computeRetention( watchTime, plays, videoDuration ),
+			};
+		} );
+	}, [ playsData, impressionsData, watchTimeData, uiPeriod, apiPeriod, videoDuration, moment ] );
 
 	const chartData: ChartRecord[] = useMemo(
 		() =>
 			buckets.map( ( bucket ) => {
 				const start = moment( bucket.key );
-				const value = metricOfBucket( bucket, statType );
+				const value = metricOfBucket( bucket, effectiveStatType );
 				switch ( uiPeriod ) {
 					case 'week':
 						return {
@@ -215,23 +245,33 @@ export default function VideoSummary( {
 						};
 				}
 			} ),
-		[ buckets, statType, uiPeriod, moment ]
+		[ buckets, effectiveStatType, uiPeriod, moment ]
 	);
 
 	const selected =
 		selectedRecord ?? ( chartData.length ? chartData[ chartData.length - 1 ] : null );
 
-	// Card totals cover the whole window shown in the chart.
+	// Card totals cover the whole window shown in the chart. Retention is not
+	// summable, so the total uses the same canonical formula over the sums.
 	const metricValues: VideoMetricValues = useMemo( () => {
 		const sum = ( data: VideoSummaryData | null, pick: ( bucket: BucketRecord ) => number ) =>
 			data ? buckets.reduce( ( total, bucket ) => total + pick( bucket ), 0 ) : null;
 
+		const playsTotal = sum( playsData, ( bucket ) => bucket.plays );
+		const watchTimeTotal = sum( watchTimeData, ( bucket ) => bucket.watchTime );
+		const retentionTotal =
+			playsTotal !== null && watchTimeTotal !== null && videoDuration && playsTotal > 0
+				? computeRetention( watchTimeTotal, playsTotal, videoDuration )
+				: null;
+
 		return {
-			views: sum( playsData, ( bucket ) => bucket.plays ),
+			views: playsTotal,
 			impressions: sum( impressionsData, ( bucket ) => bucket.impressions ),
-			watch_time: sum( watchTimeData, ( bucket ) => bucket.watchTime ),
+			watch_time: watchTimeTotal,
+			// `undefined` hides the retention card entirely (vs `null` = loading).
+			retention_rate: hasRetention ? retentionTotal : undefined,
 		};
-	}, [ buckets, playsData, impressionsData, watchTimeData ] );
+	}, [ buckets, playsData, impressionsData, watchTimeData, videoDuration, hasRetention ] );
 
 	const selectPeriod = ( newPeriod: UiPeriod ) => () => {
 		setUiPeriod( newPeriod );
@@ -264,6 +304,7 @@ export default function VideoSummary( {
 		views: translate( 'Views', { textOnly: true } ),
 		impressions: translate( 'Impressions', { textOnly: true } ),
 		watch_time: translate( 'Hours watched', { textOnly: true } ),
+		retention_rate: translate( 'Retention rate', { textOnly: true } ),
 	};
 
 	const periods: Array< { id: UiPeriod; label: string } > = [
@@ -323,11 +364,15 @@ export default function VideoSummary( {
 				sectionClass="is-video"
 				selected={ selected }
 				onClick={ setSelectedRecord }
-				tabLabel={ tabLabels[ statType ] }
+				tabLabel={ tabLabels[ effectiveStatType ] }
 				type="video"
 			/>
 
-			<VideoMetricTabs values={ metricValues } selected={ statType } onSelect={ selectStatType } />
+			<VideoMetricTabs
+				values={ metricValues }
+				selected={ effectiveStatType }
+				onSelect={ selectStatType }
+			/>
 		</div>
 	);
 }
