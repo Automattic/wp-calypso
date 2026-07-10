@@ -101,6 +101,10 @@
 				font-size: $font-body-small;
 				font-weight: 500;
 				text-decoration: none;
+
+				&:visited {
+					color: var(--color-text);
+				}
 			}
 
 			&::before {
