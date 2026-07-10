@@ -163,9 +163,11 @@ const PlanFeatures2023GridFeatures: React.FC< {
 				return (
 					<div key={ key } className={ divClasses }>
 						<PlanFeaturesItem>
-							{ showFeatureCheckmarks && isFeatureAvailable && (
+							{ showFeatureCheckmarks && (
 								<Gridicon
-									className="plan-features-2023-grid__item-checkmark"
+									className={ clsx( 'plan-features-2023-grid__item-checkmark', {
+										'is-placeholder': ! isFeatureAvailable,
+									} ) }
 									icon="checkmark"
 									size={ 16 }
 									aria-hidden="true"
