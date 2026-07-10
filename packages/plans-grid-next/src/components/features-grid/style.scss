@@ -1,5 +1,7 @@
 @import "../../shared";
 
+$redesign-table-cell-max-width: 280px;
+
 .plan-features-2023-grid__header {
 	display: flex;
 	position: relative;
@@ -717,6 +719,26 @@
 		border-radius: 8px;
 		box-shadow: none;
 
+		&.has-1-cols {
+			max-width: $redesign-table-cell-max-width;
+		}
+
+		&.has-2-cols {
+			max-width: $redesign-table-cell-max-width * 2;
+		}
+
+		&.has-3-cols {
+			max-width: $redesign-table-cell-max-width * 3;
+		}
+
+		&.has-4-cols {
+			max-width: $redesign-table-cell-max-width * 4;
+		}
+
+		&.has-5-cols {
+			max-width: $redesign-table-cell-max-width * 5;
+		}
+
 		&.has-highlighted-plan {
 			margin-top: 12px;
 		}
@@ -726,19 +748,38 @@
 		}
 	}
 
+	.plan-features-2023-grid__desktop-view,
+	.plan-features-2023-grid__tablet-view {
+		.plan-features-2023-grid__table-item {
+			max-width: $redesign-table-cell-max-width;
+		}
+	}
+
 	.plan-features-2023-grid__content.has-bottom-plan-card .plan-features-2023-grid__table {
 		border-bottom-left-radius: 0;
 		border-bottom-right-radius: 0;
 	}
 
-	&.is-large {
+	&:not(.is-small) {
 		.plan-features-2023-grid__content.has-bottom-plan-card {
+			&.has-1-cols .plans-grid-next-features-grid__bottom-plan-card {
+				max-width: $redesign-table-cell-max-width;
+			}
+
+			&.has-2-cols .plans-grid-next-features-grid__bottom-plan-card {
+				max-width: $redesign-table-cell-max-width * 2;
+			}
+
 			&.has-3-cols .plans-grid-next-features-grid__bottom-plan-card {
-				max-width: $table-cell-max-width * 3;
+				max-width: $redesign-table-cell-max-width * 3;
 			}
 
 			&.has-4-cols .plans-grid-next-features-grid__bottom-plan-card {
-				max-width: $table-cell-max-width * 4;
+				max-width: $redesign-table-cell-max-width * 4;
+			}
+
+			&.has-5-cols .plans-grid-next-features-grid__bottom-plan-card {
+				max-width: $redesign-table-cell-max-width * 5;
 			}
 		}
 	}
@@ -939,13 +980,6 @@
 		color: var( --studio-gray-100 );
 		font-size: 16px;
 		line-height: 20px;
-	}
-
-	.plan-features-2023-grid__table-top,
-	.plan-features-2023-grid__table-bottom {
-		.plan-features-2023-grid__table {
-			max-width: 100%;
-		}
 	}
 
 	.plan-features-2023-grid__table-item {
