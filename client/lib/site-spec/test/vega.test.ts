@@ -19,7 +19,7 @@ jest.mock( '@automattic/calypso-config', () => {
 } );
 
 describe( 'Vega site-spec', () => {
-	const mockConfig = config as MockWithIsEnabled;
+	const mockConfig = config as unknown as MockWithIsEnabled;
 
 	beforeEach( () => {
 		// Default config shape covers the branch of `getDefaultSiteSpecConfig()`
