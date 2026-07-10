@@ -71,7 +71,6 @@ button {
  * Site Setup
  */
 .site-setup:not( :has( .step-container-v2 ) ),
-.onboarding.goals:not( :has( .step-container-v2 ) ),
 .onboarding.design-setup:not( :has( .step-container-v2 ) ),
 .site-migration:not( :has( .step-container-v2 ) ),
 .migration,
@@ -127,7 +126,6 @@ button {
 		}
 
 		@include break-xlarge {
-			&.goals,
 			&.domains {
 				margin-top: -60px;
 
