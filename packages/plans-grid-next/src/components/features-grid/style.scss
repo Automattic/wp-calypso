@@ -707,6 +707,27 @@ $redesign-table-cell-max-width: 280px;
 }
 
 .plans-grid-next.is-plans-grid-redesign-experiment {
+	.plan-features-2023-grid__table-item.popular-plan-parent-class {
+		.plan-features-2023-grid__popular-badge {
+			&.is-premium-plan,
+			&.is-wooexpress-medium-plan {
+				.plans-grid__plan-pill {
+					background-color: var(--studio-white);
+					border: 1px solid #e0e0e0;
+					color: var(--studio-gray-100);
+					transform: translate(20px, 0);
+				}
+			}
+
+			&.is-business-plan,
+			&.is-ecommerce-plan {
+				.plans-grid__plan-pill {
+					transform: translate(20px, 0);
+				}
+			}
+		}
+	}
+
 	.plan-features-2023-grid__content,
 	.plan-features-2023-grid__desktop-view,
 	.plan-features-2023-grid__tablet-view {
@@ -1304,7 +1325,15 @@ $redesign-table-cell-max-width: 280px;
 					width: auto;
 				}
 
-				&.is-business-plan .plans-grid__plan-pill {
+				&.is-premium-plan .plans-grid__plan-pill,
+				&.is-wooexpress-medium-plan .plans-grid__plan-pill {
+					background-color: var( --studio-white );
+					border-color: #e0e0e0;
+					color: var( --studio-gray-100 );
+				}
+
+				&.is-business-plan .plans-grid__plan-pill,
+				&.is-ecommerce-plan .plans-grid__plan-pill {
 					background-color: var( --studio-gray-100 );
 					border-color: var( --studio-gray-100 );
 					color: var( --studio-white );
@@ -1333,6 +1362,23 @@ $redesign-table-cell-max-width: 280px;
 		.plans-grid-next-features-grid__mobile-plan-card {
 			border-radius: 8px;
 			padding-block: 24px;
+
+			.plan-features-2023-grid__popular-badge {
+				&.is-premium-plan .plans-grid__plan-pill,
+				&.is-wooexpress-medium-plan .plans-grid__plan-pill {
+					background-color: var( --studio-white );
+					border: 1px solid #e0e0e0;
+					color: var( --studio-gray-100 );
+				}
+			}
+
+			.plan-features-2023-grid__table-item.is-current-plan
+			.plan-features-2023-grid__popular-badge
+			.plans-grid__plan-pill {
+				background-color: var( --color-neutral-0 );
+				border: 1px solid #e0e0e0;
+				color: var( --color-neutral-80 );
+			}
 		}
 
 		.plan-features-2023-grid__header {
