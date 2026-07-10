@@ -3,19 +3,26 @@
 // The original targets `html`, `body`, `button`, `ul`, `a`, etc. directly, which is safe for
 // classic Calypso (it owns the whole document) but not here: `#wpcom` is a subtree of wp-admin's
 // page, and wp-admin chrome outside it (the admin menu, JITM sidebar notices, admin bar) must
-// keep its native styling. Every rule below is scoped under `#wpcom`, wrapped in `:where()` so the
-// scoping doesn't add specificity beyond what the original bare-element selectors had — otherwise
-// an ID selector here would outrank the class-based overrides Stats components already rely on to
-// beat these defaults (e.g. `.section-nav-tab.is-selected a { color: ... }`). Where the source
-// class is toggled on the real `<body>` by WordPress itself (e.g. `rtl`), the selector still
-// anchors to that class (not `body` itself, to match the original's specificity exactly) so it
-// still reacts to it, while the declarations apply only within `#wpcom`.
+// keep its native styling.
+//
+// Odyssey's own DOM footprint isn't just `#wpcom` though: `RootChild` (used by `Popover` and
+// similar overlays) and `react-modal` (used by `Dialog`) both portal outside it, appending their
+// own container straight to `<body>` as a sibling of `#wpcom` — `RootChild` always tags its
+// container `color-scheme` (see `components/root-child.tsx`), `react-modal` always tags its
+// portal `ReactModalPortal`. Every rule below is scoped to `:where(#wpcom, .color-scheme,
+// .ReactModalPortal)` to cover all three, wrapped in `:where()` so the scoping doesn't add
+// specificity beyond what the original bare-element selectors had — otherwise an ID selector here
+// would outrank the class-based overrides Stats components already rely on to beat these defaults
+// (e.g. `.section-nav-tab.is-selected a { color: ... }`). Where the source class is toggled on the
+// real `<body>` by WordPress itself (e.g. `rtl`), the selector still anchors to that class (not
+// `body` itself, to match the original's specificity exactly) so it still reacts to it, while the
+// declarations apply only within the app's own containers.
 //
 // Rules from the source file that depend on Calypso's own `<Layout>`/section-body-class machinery
 // (font smoothing, section-background overrides, `no-scroll`, iframed states) are omitted: Odyssey
 // Stats uses its own lightweight layout that never toggles those classes, so they're dead here.
 
-:where(#wpcom) {
+:where(#wpcom, .color-scheme, .ReactModalPortal) {
 	height: 100%;
 	background: var(--color-surface-backdrop);
 	color: var(--color-text);
@@ -36,40 +43,40 @@
 	}
 }
 
-:where(#wpcom) button,
-:where(#wpcom) input,
-:where(#wpcom) select,
-:where(#wpcom) textarea,
-:where(#wpcom) .button {
+:where(#wpcom, .color-scheme, .ReactModalPortal) button,
+:where(#wpcom, .color-scheme, .ReactModalPortal) input,
+:where(#wpcom, .color-scheme, .ReactModalPortal) select,
+:where(#wpcom, .color-scheme, .ReactModalPortal) textarea,
+:where(#wpcom, .color-scheme, .ReactModalPortal) .button {
 	font-family: $sans;
 }
 
-:where(#wpcom) button {
+:where(#wpcom, .color-scheme, .ReactModalPortal) button {
 	font-size: $font-body-small;
 }
 
 /*!rtl:ignore*/
-.rtl :where(#wpcom),
-.rtl :where(#wpcom) button,
-.rtl :where(#wpcom) input,
-.rtl :where(#wpcom) select,
-.rtl :where(#wpcom) textarea,
-.rtl :where(#wpcom) .button {
+.rtl :where(#wpcom, .color-scheme, .ReactModalPortal),
+.rtl :where(#wpcom, .color-scheme, .ReactModalPortal) button,
+.rtl :where(#wpcom, .color-scheme, .ReactModalPortal) input,
+.rtl :where(#wpcom, .color-scheme, .ReactModalPortal) select,
+.rtl :where(#wpcom, .color-scheme, .ReactModalPortal) textarea,
+.rtl :where(#wpcom, .color-scheme, .ReactModalPortal) .button {
 	font-family: $sans-rtl;
 }
 
 /*!rtl:ignore*/
-:lang(he) .rtl :where(#wpcom),
-:lang(he) .rtl :where(#wpcom) button,
-:lang(he) .rtl :where(#wpcom) input,
-:lang(he) .rtl :where(#wpcom) select,
-:lang(he) .rtl :where(#wpcom) textarea,
-:lang(he) .rtl :where(#wpcom) .button {
+:lang(he) .rtl :where(#wpcom, .color-scheme, .ReactModalPortal),
+:lang(he) .rtl :where(#wpcom, .color-scheme, .ReactModalPortal) button,
+:lang(he) .rtl :where(#wpcom, .color-scheme, .ReactModalPortal) input,
+:lang(he) .rtl :where(#wpcom, .color-scheme, .ReactModalPortal) select,
+:lang(he) .rtl :where(#wpcom, .color-scheme, .ReactModalPortal) textarea,
+:lang(he) .rtl :where(#wpcom, .color-scheme, .ReactModalPortal) .button {
 	font-family: $sans;
 }
 
 /*!rtl:ignore*/
-.rtl :where(#wpcom) .gridicon {
+.rtl :where(#wpcom, .color-scheme, .ReactModalPortal) .gridicon {
 	&.gridicons-chevron-left,
 	&.gridicons-chevron-right,
 	&.gridicons-arrow-left,
@@ -80,27 +87,27 @@
 	}
 }
 
-:where(#wpcom) .notifications {
+:where(#wpcom, .color-scheme, .ReactModalPortal) .notifications {
 	display: inherit;
 }
 
 /* Headings */
-:where(#wpcom) h1,
-:where(#wpcom) h2,
-:where(#wpcom) h3,
-:where(#wpcom) h4,
-:where(#wpcom) h5,
-:where(#wpcom) h6 {
+:where(#wpcom, .color-scheme, .ReactModalPortal) h1,
+:where(#wpcom, .color-scheme, .ReactModalPortal) h2,
+:where(#wpcom, .color-scheme, .ReactModalPortal) h3,
+:where(#wpcom, .color-scheme, .ReactModalPortal) h4,
+:where(#wpcom, .color-scheme, .ReactModalPortal) h5,
+:where(#wpcom, .color-scheme, .ReactModalPortal) h6 {
 	clear: both;
 	text-wrap: balance; // TODO: remove this fallback once `pretty` is globally supported.
 	text-wrap: pretty;
 }
-:where(#wpcom) caption,
-:where(#wpcom) figcaption {
+:where(#wpcom, .color-scheme, .ReactModalPortal) caption,
+:where(#wpcom, .color-scheme, .ReactModalPortal) figcaption {
 	text-wrap: balance;
 	text-wrap: pretty;
 }
-:where(#wpcom) hr {
+:where(#wpcom, .color-scheme, .ReactModalPortal) hr {
 	background: var(--color-neutral-10);
 	border: 0;
 	height: 1px;
@@ -108,58 +115,58 @@
 }
 
 /* Text elements */
-:where(#wpcom) p,
-:where(#wpcom) ul,
-:where(#wpcom) ol,
-:where(#wpcom) blockquote {
+:where(#wpcom, .color-scheme, .ReactModalPortal) p,
+:where(#wpcom, .color-scheme, .ReactModalPortal) ul,
+:where(#wpcom, .color-scheme, .ReactModalPortal) ol,
+:where(#wpcom, .color-scheme, .ReactModalPortal) blockquote {
 	text-wrap: pretty;
 }
-:where(#wpcom) p {
+:where(#wpcom, .color-scheme, .ReactModalPortal) p {
 	margin-bottom: 1.5em;
 }
-:where(#wpcom) ul,
-:where(#wpcom) ol {
+:where(#wpcom, .color-scheme, .ReactModalPortal) ul,
+:where(#wpcom, .color-scheme, .ReactModalPortal) ol {
 	margin: 0 0 1.5em 3em;
 }
-:where(#wpcom) ul {
+:where(#wpcom, .color-scheme, .ReactModalPortal) ul {
 	list-style: disc;
 }
-:where(#wpcom) ol {
+:where(#wpcom, .color-scheme, .ReactModalPortal) ol {
 	list-style: decimal;
 }
-:where(#wpcom) ul ul,
-:where(#wpcom) ol ol,
-:where(#wpcom) ul ol,
-:where(#wpcom) ol ul {
+:where(#wpcom, .color-scheme, .ReactModalPortal) ul ul,
+:where(#wpcom, .color-scheme, .ReactModalPortal) ol ol,
+:where(#wpcom, .color-scheme, .ReactModalPortal) ul ol,
+:where(#wpcom, .color-scheme, .ReactModalPortal) ol ul {
 	margin-bottom: 0;
 	margin-left: 1.5em;
 }
-:where(#wpcom) dt {
+:where(#wpcom, .color-scheme, .ReactModalPortal) dt {
 	font-weight: 600;
 }
-:where(#wpcom) dd {
+:where(#wpcom, .color-scheme, .ReactModalPortal) dd {
 	margin: 0 1.5em 1.5em;
 }
-:where(#wpcom) b,
-:where(#wpcom) strong {
+:where(#wpcom, .color-scheme, .ReactModalPortal) b,
+:where(#wpcom, .color-scheme, .ReactModalPortal) strong {
 	font-weight: 600;
 }
-:where(#wpcom) dfn,
-:where(#wpcom) cite,
-:where(#wpcom) em,
-:where(#wpcom) i {
+:where(#wpcom, .color-scheme, .ReactModalPortal) dfn,
+:where(#wpcom, .color-scheme, .ReactModalPortal) cite,
+:where(#wpcom, .color-scheme, .ReactModalPortal) em,
+:where(#wpcom, .color-scheme, .ReactModalPortal) i {
 	font-style: italic;
 }
-:where(#wpcom) blockquote {
+:where(#wpcom, .color-scheme, .ReactModalPortal) blockquote {
 	margin: 10px 0 0;
 	background: var(--color-neutral-0);
 	padding: 10px 10px 1px;
 	border-radius: 2px;
 }
-:where(#wpcom) address {
+:where(#wpcom, .color-scheme, .ReactModalPortal) address {
 	margin: 0 0 1.5em;
 }
-:where(#wpcom) pre {
+:where(#wpcom, .color-scheme, .ReactModalPortal) pre {
 	background: var(--color-neutral-0);
 	font-family: $monospace;
 	font-size: $font-body;
@@ -169,62 +176,62 @@
 	overflow: auto;
 	max-width: 100%;
 }
-:where(#wpcom) code,
-:where(#wpcom) kbd,
-:where(#wpcom) tt,
-:where(#wpcom) var {
+:where(#wpcom, .color-scheme, .ReactModalPortal) code,
+:where(#wpcom, .color-scheme, .ReactModalPortal) kbd,
+:where(#wpcom, .color-scheme, .ReactModalPortal) tt,
+:where(#wpcom, .color-scheme, .ReactModalPortal) var {
 	font: 15px $code;
 }
-:where(#wpcom) abbr,
-:where(#wpcom) acronym {
+:where(#wpcom, .color-scheme, .ReactModalPortal) abbr,
+:where(#wpcom, .color-scheme, .ReactModalPortal) acronym {
 	border-bottom: 1px dotted var(--color-neutral-10);
 	cursor: help;
 	// Prevent double underline in Chrome
 	text-decoration: none;
 }
-:where(#wpcom) mark,
-:where(#wpcom) ins {
+:where(#wpcom, .color-scheme, .ReactModalPortal) mark,
+:where(#wpcom, .color-scheme, .ReactModalPortal) ins {
 	background: var(--color-warning-light);
 	text-decoration: none;
 }
-:where(#wpcom) small {
+:where(#wpcom, .color-scheme, .ReactModalPortal) small {
 	font-size: 75%;
 }
-:where(#wpcom) big {
+:where(#wpcom, .color-scheme, .ReactModalPortal) big {
 	font-size: 125%;
 }
-:where(#wpcom) figure {
+:where(#wpcom, .color-scheme, .ReactModalPortal) figure {
 	margin: 0;
 }
-:where(#wpcom) table {
+:where(#wpcom, .color-scheme, .ReactModalPortal) table {
 	margin: 0 0 1.5em;
 	width: 100%;
 }
-:where(#wpcom) th {
+:where(#wpcom, .color-scheme, .ReactModalPortal) th {
 	font-weight: 600;
 }
 
-:where(#wpcom) .hide,
-:where(#wpcom) .hidden {
+:where(#wpcom, .color-scheme, .ReactModalPortal) .hide,
+:where(#wpcom, .color-scheme, .ReactModalPortal) .hidden {
 	display: none;
 }
 
 /* Links */
-:where(#wpcom) a,
-:where(#wpcom) a:visited {
+:where(#wpcom, .color-scheme, .ReactModalPortal) a,
+:where(#wpcom, .color-scheme, .ReactModalPortal) a:visited {
 	color: var(--color-link);
 }
 
-:where(#wpcom) a:hover,
-:where(#wpcom) a:focus,
-:where(#wpcom) a:active {
+:where(#wpcom, .color-scheme, .ReactModalPortal) a:hover,
+:where(#wpcom, .color-scheme, .ReactModalPortal) a:focus,
+:where(#wpcom, .color-scheme, .ReactModalPortal) a:active {
 	color: var(--color-link-dark);
 }
 
-:where(#wpcom) .link--caution,
-:where(#wpcom) .link--caution:visited,
-:where(#wpcom) .is-link.link--caution,
-:where(#wpcom) .is-link.link--caution:visited {
+:where(#wpcom, .color-scheme, .ReactModalPortal) .link--caution,
+:where(#wpcom, .color-scheme, .ReactModalPortal) .link--caution:visited,
+:where(#wpcom, .color-scheme, .ReactModalPortal) .is-link.link--caution,
+:where(#wpcom, .color-scheme, .ReactModalPortal) .is-link.link--caution:visited {
 	&,
 	&:hover,
 	&:focus,
@@ -234,8 +241,8 @@
 }
 
 /* Emoji and smileys */
-:where(#wpcom) img.emoji,
-:where(#wpcom) img.wp-smiley {
+:where(#wpcom, .color-scheme, .ReactModalPortal) img.emoji,
+:where(#wpcom, .color-scheme, .ReactModalPortal) img.wp-smiley {
 	height: 1em;
 	max-height: 1em;
 	display: inline;
@@ -248,14 +255,14 @@
 /* =Media
 ----------------------------------------------- */
 
-:where(#wpcom) img {
+:where(#wpcom, .color-scheme, .ReactModalPortal) img {
 	max-width: 100%; /* Fluid images for posts, comments, and widgets */
 	height: auto;
 }
 
 /* Make sure embeds and iframes fit their containers */
-:where(#wpcom) embed,
-:where(#wpcom) iframe,
-:where(#wpcom) object {
+:where(#wpcom, .color-scheme, .ReactModalPortal) embed,
+:where(#wpcom, .color-scheme, .ReactModalPortal) iframe,
+:where(#wpcom, .color-scheme, .ReactModalPortal) object {
 	max-width: 100%;
 }
