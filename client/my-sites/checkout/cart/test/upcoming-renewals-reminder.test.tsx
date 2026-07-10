@@ -54,6 +54,7 @@ function urgentDomainPurchase( overrides = {} ) {
 		currency_symbol: '$',
 		expiry_date: moment().add( 2, 'days' ).format(),
 		expiry_status: 'expiring',
+		days_until_expiry: 2,
 		is_cancelable: true,
 		can_explicit_renew: true,
 		is_renewable: true,
@@ -80,6 +81,7 @@ function nonUrgentPlanPurchase( overrides = {} ) {
 		currency_symbol: '$',
 		expiry_date: moment().add( 60, 'days' ).format(),
 		expiry_status: 'expiring',
+		days_until_expiry: 60,
 		is_cancelable: true,
 		can_explicit_renew: true,
 		is_renewable: true,
@@ -272,6 +274,28 @@ describe( 'UpcomingRenewalsReminder', () => {
 			const dialog = screen.getByRole( 'dialog' );
 			expect( within( dialog ).getByText( URGENT_DOMAIN_NAME ) ).toBeVisible();
 			expect( within( dialog ).getByText( NON_URGENT_PLAN_NAME ) ).toBeVisible();
+		} );
+	} );
+
+	describe( 'urgent classification', () => {
+		test( 'includes a purchase whose status is expired, regardless of daysUntilExpiry', async () => {
+			renderReminder( { purchases: [ nonUrgentPlanPurchase( { expiry_status: 'expired' } ) ] } );
+			expect( await screen.findByText( 'Upcoming renewals' ) ).toBeVisible();
+		} );
+
+		test( 'excludes a perpetual purchase with no expiry (daysUntilExpiry null)', async () => {
+			renderReminder( { purchases: [ nonUrgentPlanPurchase( { days_until_expiry: null } ) ] } );
+			await expect( screen.findByText( 'Upcoming renewals' ) ).toNeverAppear();
+		} );
+
+		test( 'includes a purchase 9 days from expiry', async () => {
+			renderReminder( { purchases: [ nonUrgentPlanPurchase( { days_until_expiry: 9 } ) ] } );
+			expect( await screen.findByText( 'Upcoming renewals' ) ).toBeVisible();
+		} );
+
+		test( 'excludes a purchase exactly 10 days from expiry', async () => {
+			renderReminder( { purchases: [ nonUrgentPlanPurchase( { days_until_expiry: 10 } ) ] } );
+			await expect( screen.findByText( 'Upcoming renewals' ) ).toNeverAppear();
 		} );
 	} );
 } );

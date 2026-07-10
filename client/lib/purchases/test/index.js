@@ -11,7 +11,6 @@ import {
 	handleRenewNowClick,
 	handleRenewMultiplePurchasesClick,
 	shouldRenderMonthlyRenewalOption,
-	isUrgentlyExpiring,
 } from '../index';
 import data from './data';
 const {
@@ -420,64 +419,6 @@ describe( 'index', () => {
 					} )
 				).toBe( true );
 			} );
-		} );
-	} );
-
-	describe( '#isUrgentlyExpiring', () => {
-		const purchase = {
-			id: 1,
-			currencyCode: 'USD',
-			productSlug: 'personal-bundle',
-			productName: 'Personal Plan',
-			amount: 100,
-			expiryDate: '2021-04-26T00:00:00+00:00',
-		};
-
-		test( 'is false when the purchase has no expiry date and is not expired', () => {
-			expect( isUrgentlyExpiring( { ...purchase, expiryDate: null } ) ).toBe( false );
-		} );
-
-		test( 'is true when the purchase is expired', () => {
-			expect( isUrgentlyExpiring( { ...purchase, expiryStatus: 'expired' } ) ).toBe( true );
-		} );
-
-		test( 'is true when the purchase expires within the urgent window', () => {
-			expect(
-				isUrgentlyExpiring( { ...purchase, expiryDate: moment().add( 5, 'days' ).format() } )
-			).toBe( true );
-		} );
-
-		test( 'is true just inside the 10-day window (9d23h out)', () => {
-			// diff() truncates to whole days: 9d23h -> 9 -> urgent. The 1-hour margin
-			// keeps this deterministic against the gap between building the fixture and
-			// the check running. This pins the real cutoff: under 10 whole days is urgent.
-			expect(
-				isUrgentlyExpiring( {
-					...purchase,
-					expiryDate: moment().add( 10, 'days' ).subtract( 1, 'hour' ).format(),
-				} )
-			).toBe( true );
-		} );
-
-		test( 'is false just outside the 10-day window (10d1h out)', () => {
-			expect(
-				isUrgentlyExpiring( {
-					...purchase,
-					expiryDate: moment().add( 10, 'days' ).add( 1, 'hour' ).format(),
-				} )
-			).toBe( false );
-		} );
-
-		test( 'is false when the purchase expires well beyond the urgent window', () => {
-			expect(
-				isUrgentlyExpiring( { ...purchase, expiryDate: moment().add( 30, 'days' ).format() } )
-			).toBe( false );
-		} );
-
-		test( 'is true when the purchase is past expiry but not yet marked expired', () => {
-			expect(
-				isUrgentlyExpiring( { ...purchase, expiryDate: moment().subtract( 3, 'days' ).format() } )
-			).toBe( true );
 		} );
 	} );
 } );

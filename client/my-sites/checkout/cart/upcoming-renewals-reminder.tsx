@@ -10,13 +10,7 @@ import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import SectionHeader from 'calypso/components/section-header';
 import TrackComponentView from 'calypso/lib/analytics/track-component-view';
 import { getRenewalItemFromProduct } from 'calypso/lib/cart-values/cart-items';
-import {
-	getName,
-	isExpired,
-	isRenewing,
-	isInExpirationGracePeriod,
-	isUrgentlyExpiring,
-} from 'calypso/lib/purchases';
+import { getName, isExpired, isRenewing, isInExpirationGracePeriod } from 'calypso/lib/purchases';
 import UpcomingRenewalsDialog from 'calypso/me/purchases/upcoming-renewals/upcoming-renewals-dialog';
 import { PartialCart } from 'calypso/my-sites/checkout/src/components/secondary-cart-promotions';
 import { useSelector, useDispatch } from 'calypso/state';
@@ -31,6 +25,8 @@ import { getSelectedSite } from 'calypso/state/ui/selectors';
 import type { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 import type { Purchase } from 'calypso/lib/purchases/types';
 import type { TranslateResult } from 'i18n-calypso';
+
+const URGENT_RENEWAL_WINDOW_IN_DAYS = 10;
 
 const OtherPurchasesLink = styled.button`
 	background: transparent;
@@ -88,8 +84,17 @@ const UpcomingRenewalsReminder: FunctionComponent< Props > = ( { cart, addItemTo
 		[ renewableSitePurchases, purchasesIdsAlreadyInCart ]
 	);
 
+	// Urgent = already expired, or expiring within 10 days. daysUntilExpiry is the
+	// server's day count (negative once past expiry); expiryStatus 'expired' is
+	// inactive-status, which is not the same as past the expiry date, so keep both.
 	const urgentPurchases = useMemo(
-		() => renewablePurchasesNotAlreadyInCart.filter( isUrgentlyExpiring ),
+		() =>
+			renewablePurchasesNotAlreadyInCart.filter(
+				( purchase ) =>
+					isExpired( purchase ) ||
+					( purchase.daysUntilExpiry != null &&
+						purchase.daysUntilExpiry < URGENT_RENEWAL_WINDOW_IN_DAYS )
+			),
 		[ renewablePurchasesNotAlreadyInCart ]
 	);
 

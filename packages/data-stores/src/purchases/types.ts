@@ -46,6 +46,12 @@ export interface Purchase {
 	paymentExpiryDate: string | undefined;
 
 	expiryStatus: string;
+
+	/**
+	 * Whole days until expiry, rounded down, negative once past expiry. Null for
+	 * purchases with no expiry time (one-time and perpetual).
+	 */
+	daysUntilExpiry: number | null;
 	iapPurchaseManagementLink: string | null;
 	id: number;
 
