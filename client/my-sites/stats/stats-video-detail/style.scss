@@ -203,8 +203,8 @@ $border-radius: 5px; // stylelint-disable-line scales/radii
 }
 
 @media (max-width: $break-small) {
-	.stats-video-metric-tabs__item {
-		flex-basis: 100%;
+	.stats-video-metric-tabs {
+		grid-template-columns: 1fr;
 	}
 
 	.stats-video-details-card {
