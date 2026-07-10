@@ -221,3 +221,38 @@ Expected: all focused tests and lint pass.
 git add client/jetpack-cloud/sections/agency-dashboard/sites-overview/site-status-content/lib/get-links.ts client/jetpack-cloud/sections/agency-dashboard/sites-overview/site-status-content/hooks/test/use-row-metadata.ts client/jetpack-cloud/sections/agency-dashboard/sites-overview/site-table/test/site-table.tsx client/jetpack-cloud/sections/plugin-management/index.ts client/my-sites/plugins/controller.jsx client/my-sites/plugins/plugins-dashboard/index.tsx client/my-sites/plugins/plugins-list/plugins-list-dataviews.tsx client/my-sites/plugins/plugins-list/test/plugins-list-dataviews.tsx client/my-sites/plugins/test/controller-dashboard.js docs/superpowers/specs/2026-07-10-manage-3-plugin-update-link-design.md docs/superpowers/plans/2026-07-10-manage-3-plugin-update-link.md
 git commit -m "Jetpack Manage: Filter plugin updates by site"
 ```
+
+### Task 4: Clarify and visually align the plugin update status
+
+**Files:**
+
+- Modify: `client/jetpack-cloud/sections/agency-dashboard/sites-overview/site-content/hooks/use-formatted-sites.ts`
+- Modify: `client/jetpack-cloud/sections/agency-dashboard/sites-overview/site-status-content/site-status-column.tsx`
+- Modify: `client/jetpack-cloud/sections/agency-dashboard/sites-overview/style.scss`
+- Update: related Sites overview tests and fixtures
+
+- [x] **Step 1: Add failing copy and warning-link class assertions**
+
+Expect plugin update counts to render as “1 Update” and “N Updates.” In the rendered site-table test, assert that the plugin anchor has the `sites-overview__warning-link` class.
+
+- [x] **Step 2: Verify RED**
+
+```bash
+yarn test-client client/jetpack-cloud/sections/agency-dashboard/sites-overview/site-content/hooks/test/use-formatted-sites.ts client/jetpack-cloud/sections/agency-dashboard/sites-overview/site-table/test/site-table.tsx --runInBand --silent
+```
+
+Expected: the formatter still returns “1 Available” and the warning link has no semantic class.
+
+- [x] **Step 3: Implement localized copy and matching decoration color**
+
+Use the existing singular/plural translation API to return “%(updates)d Update” or “%(updates)d Updates.” Add `sites-overview__warning-link` to warning anchors and set its color and `text-decoration-color` to `var(--color-warning-50)` for all interaction states.
+
+- [x] **Step 4: Verify, lint, and commit**
+
+```bash
+yarn test-client client/jetpack-cloud/sections/agency-dashboard/sites-overview/site-content/hooks/test/use-formatted-sites.ts client/jetpack-cloud/sections/agency-dashboard/sites-overview/site-table/test/site-table.tsx client/jetpack-cloud/sections/agency-dashboard/sites-overview/site-table-row/test/site-table-row.tsx client/jetpack-cloud/sections/agency-dashboard/sites-overview/site-card/test/site-card.tsx --runInBand --silent
+yarn lint:css
+yarn eslint client/jetpack-cloud/sections/agency-dashboard/sites-overview/site-content/hooks/use-formatted-sites.ts client/jetpack-cloud/sections/agency-dashboard/sites-overview/site-status-content/site-status-column.tsx
+git add client/jetpack-cloud/sections/agency-dashboard/sites-overview docs/superpowers
+git commit -m "Jetpack Manage: Clarify plugin update status"
+```

@@ -29,6 +29,10 @@ This removes the obsolete routing split and keeps the user in the product descri
 
 No new route, UI, translated string, API request, or permission rule is required.
 
+## Status-label polish
+
+The plugin warning label will describe the actionable object as “1 Update” or “N Updates” instead of “N Available.” Its link will use the same warning color for both the text and underline in default, visited, hover, focus, and active states. This is limited to warning-status links so other feature links keep their existing visual treatment.
+
 ## Data flow
 
 1. The Sites table formats a plugin status row.

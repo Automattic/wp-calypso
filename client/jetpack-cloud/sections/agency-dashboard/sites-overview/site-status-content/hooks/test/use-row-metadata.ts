@@ -98,7 +98,7 @@ const rows: SiteData = {
 	plugin: {
 		updates: pluginUpdates.length,
 		type: 'plugin',
-		value: `${ pluginUpdates.length } Available`,
+		value: `${ pluginUpdates.length } Updates`,
 		status: 'warning',
 	},
 	stats: {

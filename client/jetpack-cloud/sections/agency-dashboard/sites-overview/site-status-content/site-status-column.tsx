@@ -163,6 +163,7 @@ export default function SiteStatusColumn( { type, rows, metadata, disabled }: Pr
 	if ( link ) {
 		wrappedContent = (
 			<a
+				className={ status === 'warning' ? 'sites-overview__warning-link' : undefined }
 				data-testid={ `row-${ tooltipId }` }
 				target={ isExternalLink ? '_blank' : undefined }
 				rel={ isExternalLink ? 'noreferrer' : undefined }
