@@ -1325,13 +1325,6 @@ $redesign-table-cell-max-width: 280px;
 					width: auto;
 				}
 
-				&.is-premium-plan .plans-grid__plan-pill,
-				&.is-wooexpress-medium-plan .plans-grid__plan-pill {
-					background-color: var( --studio-white );
-					border-color: #e0e0e0;
-					color: var( --studio-gray-100 );
-				}
-
 				&.is-business-plan .plans-grid__plan-pill,
 				&.is-ecommerce-plan .plans-grid__plan-pill {
 					background-color: var( --studio-gray-100 );
@@ -1372,12 +1365,14 @@ $redesign-table-cell-max-width: 280px;
 				}
 			}
 
-			.plan-features-2023-grid__table-item.is-current-plan
-			.plan-features-2023-grid__popular-badge
-			.plans-grid__plan-pill {
-				background-color: var( --color-neutral-0 );
-				border: 1px solid #e0e0e0;
-				color: var( --color-neutral-80 );
+			.plan-features-2023-grid__table-item.is-current-plan {
+				.plan-features-2023-grid__popular-badge {
+					.plans-grid__plan-pill {
+						background-color: var( --color-neutral-0 );
+						border: 1px solid #e0e0e0;
+						color: var( --color-neutral-80 );
+					}
+				}
 			}
 		}
 
