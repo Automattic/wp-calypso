@@ -27,6 +27,22 @@ $border-radius: 5px; // stylelint-disable-line scales/radii
 	justify-content: space-around;
 }
 
+.stats-video-summary {
+	.stats__period-header {
+		justify-content: space-between;
+
+		// Keep the period switcher pinned to the right edge when the header
+		// wraps on narrow widths (the base style centers wrapped content).
+		.segmented-control {
+			margin-inline-start: auto;
+		}
+	}
+
+	.is-summary-chart {
+		margin-top: 24px;
+	}
+}
+
 .stats-video-details-card {
 	border-color: var(--studio-gray-5);
 	border-radius: $border-radius;
@@ -123,12 +139,16 @@ $border-radius: 5px; // stylelint-disable-line scales/radii
 }
 
 .stats-video-metric-tabs__item {
+	// Stretch the button to the row height so cards stay uniform when a
+	// label or value wraps inside one of them.
+	display: flex;
 	flex: 1 1 0;
 	margin: 0;
 	min-width: 0;
 }
 
 .stats-video-metric-tabs__tab {
+	flex: 1;
 	background: var(--color-surface);
 	border: 1px solid var(--studio-gray-5);
 	border-radius: 5px; /* stylelint-disable-line scales/radii */
