@@ -70,6 +70,11 @@ $reader-full-post-desktop-min: $reader-full-post-sidebar-width + $reader-full-po
 	@include breakpoint-deprecated( '<660px' ) {
 		top: 12px;
 	}
+
+	&:focus-visible {
+		outline: 2px solid var( --studio-blue-50 );
+		outline-offset: 2px;
+	}
 }
 
 // Header Meta Component Styles
@@ -404,6 +409,11 @@ $reader-full-post-desktop-min: $reader-full-post-sidebar-width + $reader-full-po
 
 	&:hover .reader-full-post__view-original-button-icon {
 		fill: var( --color-link );
+	}
+
+	&:focus-visible {
+		outline: 2px solid var( --studio-blue-50 );
+		outline-offset: 2px;
 	}
 }
 
