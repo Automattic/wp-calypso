@@ -16,9 +16,10 @@ function formatValue( statType: VideoStatType, value: number | null ) {
 
 	switch ( statType ) {
 		case 'watch_time':
-			return value > 1
-				? formatNumber( value, { decimals: 1 } )
-				: `< ${ formatNumber( 1, { decimals: 1 } ) }`;
+			if ( value === 0 || value >= 1 ) {
+				return formatNumber( value, { decimals: 1 } );
+			}
+			return `< ${ formatNumber( 1, { decimals: 1 } ) }`;
 		default:
 			return formatNumberCompact( value );
 	}
