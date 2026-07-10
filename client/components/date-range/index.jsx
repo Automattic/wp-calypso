@@ -533,7 +533,10 @@ export class DateRange extends Component {
 	 * @returns {import('react').Element} the Popover component
 	 */
 	renderPopover() {
-		const popoverMaxWidth = this.getPopoverAvailableWidth( this.state.availableWidth ) || undefined;
+		const popoverMaxWidth =
+			this.state.availableWidth != null
+				? this.getPopoverAvailableWidth( this.state.availableWidth )
+				: undefined;
 		const headerProps = {
 			customTitle: this.props.customTitle,
 			startDate: this.state.startDate,
@@ -576,7 +579,7 @@ export class DateRange extends Component {
 				<div
 					ref={ this.setPopoverContentRef }
 					className="date-range__popover-content"
-					style={ popoverMaxWidth ? { maxWidth: popoverMaxWidth } : undefined }
+					style={ popoverMaxWidth != null ? { maxWidth: popoverMaxWidth } : undefined }
 				>
 					<div
 						className={ clsx( 'date-range__popover-inner', {

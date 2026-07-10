@@ -89,7 +89,7 @@ $summary-nav-swap-width: 661px;
 	}
 
 	@media (max-width: $break-small) {
-		padding: 16px;
+		padding: $summary-small-padding;
 	}
 }
 
