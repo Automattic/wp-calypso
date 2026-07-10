@@ -199,6 +199,10 @@ $border-radius: 5px; // stylelint-disable-line scales/radii
 @media (max-width: $break-medium) {
 	.stats-video-metric-tabs {
 		grid-template-columns: repeat(2, 1fr);
+		// The page container (.stats-summary__positioned) only adds side
+		// padding above this breakpoint, so pad the cards off the viewport
+		// edges ourselves.
+		padding: 0 16px;
 	}
 }
 
