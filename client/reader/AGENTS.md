@@ -65,6 +65,27 @@ New Reader data fetching follows a three-layer pattern — `api-core` fetchers/m
 
 See [`client/reader/data/README.md`](./data/README.md) for the full recipe — naming conventions, `queryKey`/`staleTime` rules, the consumer-`QueryClient` requirement, testing, and reference implementations (`read-sites`, `read-lists`, `read-follows`).
 
+#### Consumer query hooks take a second query-config argument
+
+A read hook that wraps `useQuery` should accept an optional **second argument** that overrides the query config, rather than encoding fetch control in the first argument (e.g. a `null` id/slug to disable). Type it as a narrow object of just the fields callers may tune — commonly `enabled` and `refetchOnMount` — so a caller can gate or reload the query without being able to swap out the `queryKey`/`queryFn` the hook owns. (Keep the shape a plain object; a `Pick< UseQueryOptions< … > >` widens the default `queryKey` generic and breaks the `useQuery` overload when spread onto a `queryOptions()` result.) Spread the options into the query, then re-assert any config the hook must keep (e.g. AND the caller's `enabled` with a known key):
+
+```ts
+type ReadFooQueryOptions = {
+	enabled?: boolean;
+	refetchOnMount?: boolean | 'always';
+};
+
+export function useReadFoo( id: string | null | undefined, options?: ReadFooQueryOptions ) {
+	return useQuery( {
+		...readFooQuery( id ?? '' ),
+		...options,
+		enabled: Boolean( id ) && ( options?.enabled ?? true ),
+	} );
+}
+```
+
+Callers then pass config explicitly — `useReadFoo( id, { enabled: ! isCreate, refetchOnMount: 'always' } )` — instead of `useReadFoo( isCreate ? null : id )`. See `useSpaceBySlug` in `client/reader/data/spaces/index.ts`.
+
 ### Mutation factories must accept the consumer's `QueryClient`
 
 Calypso boots its own `QueryClient` (see `client/state/query-client.ts`, with a per-user persistence key) and injects it via `<QueryClientProvider>` in `client/controller/index.web.js`. The Dashboard, in contrast, uses the singleton exported by `@automattic/api-queries` (`packages/api-queries/src/query-client.ts`).
