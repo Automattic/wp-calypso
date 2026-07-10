@@ -14,6 +14,7 @@ import DatePicker from '../stats-date-label';
 import StatsPeriodHeader from '../stats-period-header';
 import StatsPeriodNavigation from '../stats-period-navigation';
 import SummaryChart from '../stats-summary';
+import VideoMetricTabs, { VideoStatType, VideoMetricValues } from './video-metric-tabs';
 
 type Period = 'day' | 'week' | 'month' | 'year';
 
@@ -28,30 +29,89 @@ interface VideoSummaryData {
 	data?: Array< { period: string; value: number } >;
 }
 
+const STAT_TYPES: VideoStatType[] = [ 'views', 'impressions', 'watch_time', 'retention_rate' ];
+
 const MAX_RECORDS_PER_DAY = 30;
+
+function isVideoStatType( value: string | null ): value is VideoStatType {
+	return !! value && ( STAT_TYPES as string[] ).includes( value );
+}
 
 export default function VideoSummary( {
 	postId,
-	statType,
+	initialStatType,
 }: {
 	postId: number;
-	statType: string | null;
+	initialStatType: string | null;
 } ) {
 	const translate = useTranslate();
 	const moment = useLocalizedMoment();
 	const siteId = useSelector( getSelectedSiteId );
 	const [ period, setPeriod ] = useState< Period >( 'day' );
+	const [ statType, setStatType ] = useState< VideoStatType >(
+		isVideoStatType( initialStatType ) ? initialStatType : 'views'
+	);
 	const [ selectedRecord, setSelectedRecord ] = useState< ChartRecord | null >( null );
 	const [ page, setPage ] = useState( 1 );
 
-	const query = useMemo( () => ( { postId, statType, period } ), [ postId, statType, period ] );
-	const summaryData = useSelector(
+	const queries = useMemo(
+		() =>
+			Object.fromEntries(
+				STAT_TYPES.map( ( type ) => [ type, { postId, statType: type, period } ] )
+			) as Record< VideoStatType, { postId: number; statType: VideoStatType; period: Period } >,
+		[ postId, period ]
+	);
+
+	const viewsData = useSelector(
 		( state ) =>
-			getSiteStatsNormalizedData( state, siteId, 'statsVideo', query ) as VideoSummaryData | null
+			getSiteStatsNormalizedData(
+				state,
+				siteId,
+				'statsVideo',
+				queries.views
+			) as VideoSummaryData | null
+	);
+	const impressionsData = useSelector(
+		( state ) =>
+			getSiteStatsNormalizedData(
+				state,
+				siteId,
+				'statsVideo',
+				queries.impressions
+			) as VideoSummaryData | null
+	);
+	const watchTimeData = useSelector(
+		( state ) =>
+			getSiteStatsNormalizedData(
+				state,
+				siteId,
+				'statsVideo',
+				queries.watch_time
+			) as VideoSummaryData | null
+	);
+	const retentionData = useSelector(
+		( state ) =>
+			getSiteStatsNormalizedData(
+				state,
+				siteId,
+				'statsVideo',
+				queries.retention_rate
+			) as VideoSummaryData | null
 	);
 	const isRequesting = useSelector( ( state ) =>
-		siteId ? isRequestingSiteStatsForQuery( state, siteId, 'statsVideo', query ) : false
+		siteId
+			? isRequestingSiteStatsForQuery( state, siteId, 'statsVideo', queries[ statType ] )
+			: false
 	);
+
+	const seriesByType: Record< VideoStatType, VideoSummaryData | null > = {
+		views: viewsData,
+		impressions: impressionsData,
+		watch_time: watchTimeData,
+		retention_rate: retentionData,
+	};
+
+	const summaryData = seriesByType[ statType ];
 
 	const allRecords: ChartRecord[] = useMemo(
 		() =>
@@ -106,10 +166,61 @@ export default function VideoSummary( {
 	const selected =
 		selectedRecord ?? ( chartData.length ? chartData[ chartData.length - 1 ] : null );
 
+	// Metric totals are computed over the dates visible in the chart, so the
+	// cards always agree with what the chart displays. Retention rate is not
+	// summable, so it is averaged weighted by views.
+	const visibleDates = useMemo(
+		() => new Set( chartData.map( ( record ) => record.startDate ) ),
+		[ chartData ]
+	);
+
+	const sumVisible = ( data: VideoSummaryData | null ) => {
+		if ( ! data?.data ) {
+			return null;
+		}
+		return data.data
+			.filter( ( record ) => visibleDates.has( record.period ) )
+			.reduce( ( total, record ) => total + record.value, 0 );
+	};
+
+	const retentionRate = useMemo( () => {
+		if ( ! retentionData?.data || ! viewsData?.data ) {
+			return null;
+		}
+		const viewsByDate = new Map(
+			viewsData.data
+				.filter( ( record ) => visibleDates.has( record.period ) )
+				.map( ( record ) => [ record.period, record.value ] )
+		);
+		let weightedTotal = 0;
+		let viewsTotal = 0;
+		for ( const record of retentionData.data ) {
+			if ( ! visibleDates.has( record.period ) ) {
+				continue;
+			}
+			const views = viewsByDate.get( record.period ) ?? 0;
+			weightedTotal += record.value * views;
+			viewsTotal += views;
+		}
+		return viewsTotal > 0 ? weightedTotal / viewsTotal : null;
+	}, [ retentionData, viewsData, visibleDates ] );
+
+	const metricValues: VideoMetricValues = {
+		views: sumVisible( viewsData ),
+		impressions: sumVisible( impressionsData ),
+		watch_time: sumVisible( watchTimeData ),
+		retention_rate: retentionRate,
+	};
+
 	const selectPeriod = ( newPeriod: Period ) => () => {
 		setPeriod( newPeriod );
 		setSelectedRecord( null );
 		setPage( 1 );
+	};
+
+	const selectStatType = ( newStatType: VideoStatType ) => {
+		setStatType( newStatType );
+		setSelectedRecord( null );
 	};
 
 	const handleArrows = ( { direction }: { direction: string } ) => {
@@ -154,14 +265,12 @@ export default function VideoSummary( {
 		disableNextArrow = selectedIndex === chartData.length - 1;
 	}
 
-	let tabLabel = translate( 'Views' );
-	if ( statType === 'impressions' ) {
-		tabLabel = translate( 'Impressions' );
-	} else if ( statType === 'watch_time' ) {
-		tabLabel = translate( 'Hours Watched' );
-	} else if ( statType === 'retention_rate' ) {
-		tabLabel = translate( 'Retention Rate' );
-	}
+	const tabLabels: Record< VideoStatType, string > = {
+		views: translate( 'Views', { textOnly: true } ),
+		impressions: translate( 'Impressions', { textOnly: true } ),
+		watch_time: translate( 'Hours watched', { textOnly: true } ),
+		retention_rate: translate( 'Retention rate', { textOnly: true } ),
+	};
 
 	const periods: Array< { id: Period; label: string } > = [
 		{ id: 'day', label: translate( 'Days', { textOnly: true } ) },
@@ -176,7 +285,15 @@ export default function VideoSummary( {
 				'is-period-year': period === 'year',
 			} ) }
 		>
-			{ siteId && <QuerySiteStats siteId={ siteId } statType="statsVideo" query={ query } /> }
+			{ siteId &&
+				STAT_TYPES.map( ( type ) => (
+					<QuerySiteStats
+						key={ type }
+						siteId={ siteId }
+						statType="statsVideo"
+						query={ queries[ type ] }
+					/>
+				) ) }
 
 			<StatsPeriodHeader>
 				<StatsPeriodNavigation
@@ -211,9 +328,11 @@ export default function VideoSummary( {
 				sectionClass="is-video"
 				selected={ selected }
 				onClick={ setSelectedRecord }
-				tabLabel={ tabLabel }
+				tabLabel={ tabLabels[ statType ] }
 				type="video"
 			/>
+
+			<VideoMetricTabs values={ metricValues } selected={ statType } onSelect={ selectStatType } />
 		</div>
 	);
 }

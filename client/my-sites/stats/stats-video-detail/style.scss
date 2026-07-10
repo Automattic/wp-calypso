@@ -100,7 +100,72 @@ $border-radius: 5px; // stylelint-disable-line scales/radii
 	width: 100%;
 }
 
+.stats-video-metric-tabs {
+	display: grid;
+	grid-template-columns: repeat(4, 1fr);
+	gap: 16px;
+	list-style: none;
+	margin: 16px 0 0;
+	padding: 0;
+}
+
+.stats-video-metric-tabs__item {
+	margin: 0;
+}
+
+.stats-video-metric-tabs__tab {
+	background: var(--color-surface);
+	border: 1px solid var(--studio-gray-5);
+	border-radius: 5px; /* stylelint-disable-line scales/radii */
+	box-sizing: border-box;
+	cursor: pointer;
+	display: flex;
+	flex-direction: column;
+	font-family: $font-sf-pro-text;
+	gap: 12px;
+	padding: 16px 24px;
+	text-align: start;
+	width: 100%;
+
+	&:hover {
+		border-color: var(--studio-gray-30);
+	}
+
+	&.is-selected {
+		border-color: var(--color-primary);
+		box-shadow: inset 0 0 0 1px var(--color-primary);
+	}
+}
+
+.stats-video-metric-tabs__header {
+	align-items: center;
+	color: var(--studio-gray-100);
+	display: flex;
+	font-size: $font-body-small;
+	gap: 8px;
+	line-height: 1.5;
+
+	svg {
+		fill: currentColor;
+	}
+}
+
+.stats-video-metric-tabs__value {
+	@include stats-section-header;
+	color: var(--studio-gray-100);
+}
+
+@media (max-width: $break-medium) {
+	.stats-video-metric-tabs {
+		grid-template-columns: repeat(2, 1fr);
+	}
+}
+
 @media (max-width: $break-small) {
+	.stats-video-metric-tabs {
+		grid-template-columns: 1fr;
+	}
+
 	.stats-video-details-card {
 		gap: 12px 0;
 		grid-template-areas:
