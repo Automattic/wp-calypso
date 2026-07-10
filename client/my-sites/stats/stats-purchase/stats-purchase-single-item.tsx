@@ -145,7 +145,6 @@ const StatsUpgradeInstructions = ( {
 
 	return (
 		<div>
-			<p>{ leadText }</p>
 			<div className="stats-purchase-wizard__notice">
 				{ bundledPlanName && (
 					<p>{ getBundledPlanNoticeText( translate, bundledPlanName, bundledViewsLimit ) }</p>
@@ -156,6 +155,7 @@ const StatsUpgradeInstructions = ( {
 					) }
 				</p>
 			</div>
+			<p>{ leadText }</p>
 		</div>
 	);
 };
