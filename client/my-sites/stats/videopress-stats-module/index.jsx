@@ -84,7 +84,7 @@ class VideoPressStatsModule extends Component {
 		return Math.max( ...data.map( ( item ) => item[ field ] || 0 ) );
 	}
 
-	renderTitleCell( title, views, maxViews, href, onClick ) {
+	renderTitleCell( { title, views, maxViews, onClick, href } ) {
 		const fillPercentage = maxViews > 0 ? ( views / maxViews ) * 100 : 0;
 		return (
 			<div className="videopress-stats-module__grid-cell videopress-stats-module__grid-link">
@@ -239,13 +239,13 @@ class VideoPressStatsModule extends Component {
 								key={ 'videopress-stats-row-' + index }
 								className="videopress-stats-module__row-wrapper"
 							>
-								{ this.renderTitleCell(
-									row.title,
-									row.views,
+								{ this.renderTitleCell( {
+									title: row.title,
+									views: row.views,
 									maxViews,
-									videoDetailsHref( row.post_id ),
-									( event ) => showVideoDetails( event, row.post_id )
-								) }
+									href: videoDetailsHref( row.post_id ),
+									onClick: ( event ) => showVideoDetails( event, row.post_id ),
+								} ) }
 								<div className="videopress-stats-module__grid-cell videopress-stats-module__grid-metric">
 									<span
 										onClick={ () => showStat( 'impressions', row ) }
