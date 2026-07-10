@@ -461,6 +461,7 @@ function PrimaryButton( {
 		<CTAButton
 			plugin={ plugin }
 			hasEligibilityMessages={ hasEligibilityMessages }
+			shouldUpgrade={ shouldUpgrade }
 			disabled={
 				incompatiblePlugin ||
 				userCantManageTheSite ||

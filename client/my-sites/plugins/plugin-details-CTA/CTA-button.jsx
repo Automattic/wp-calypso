@@ -10,6 +10,7 @@ import { useTranslate } from 'i18n-calypso';
 import React, { useCallback, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import EligibilityWarnings from 'calypso/blocks/eligibility-warnings';
+import AsyncLoad from 'calypso/components/async-load';
 import { getProductSlugByPeriodVariation } from 'calypso/lib/plugins/utils';
 import useAtomicSiteHasEquivalentFeatureToPlugin from 'calypso/my-sites/plugins/use-atomic-site-has-equivalent-feature-to-plugin';
 import { recordGoogleEvent, recordTracksEvent } from 'calypso/state/analytics/actions';
@@ -23,10 +24,10 @@ import {
 	isMarketplaceProduct as isMarketplaceProductSelector,
 	getProductsList,
 } from 'calypso/state/products-list/selectors';
+import getPlansForFeature from 'calypso/state/selectors/get-plans-for-feature';
 import getPrimaryDomainBySiteId from 'calypso/state/selectors/get-primary-domain-by-site-id';
 import getSiteConnectionStatus from 'calypso/state/selectors/get-site-connection-status';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
-import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { getDomainsBySiteId } from 'calypso/state/sites/domains/selectors';
 import { isSiteOnECommerceTrial } from 'calypso/state/sites/plans/selectors';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
@@ -36,11 +37,28 @@ import { PluginCustomDomainDialog } from '../plugin-custom-domain-dialog';
 import { getPeriodVariationValue } from '../plugin-price';
 import usePreinstalledPremiumPlugin from '../use-preinstalled-premium-plugin';
 
-export default function CTAButton( { plugin, hasEligibilityMessages, disabled } ) {
+const loadIsEligibleForOneClickCheckoutWrapper = () =>
+	import(
+		/* webpackChunkName: "async-load-calypso-my-sites-checkout-purchase-modal-is-eligible-for-one-click-checkout-wrapper" */ 'calypso/my-sites/checkout/purchase-modal/is-eligible-for-one-click-checkout-wrapper'
+	);
+
+const loadUpgradePurchaseModal = () =>
+	import(
+		/* webpackChunkName: "async-load-calypso-my-sites-plugins-plugin-details-cta-upgrade-purchase-modal" */ './upgrade-purchase-modal'
+	);
+
+function CTAButton( {
+	plugin,
+	hasEligibilityMessages,
+	disabled,
+	shouldUpgrade,
+	isEligibleForOneClickCheckout,
+} ) {
 	const dispatch = useDispatch();
 	const translate = useTranslate();
 	const [ showEligibility, setShowEligibility ] = useState( false );
 	const [ showAddCustomDomain, setShowAddCustomDomain ] = useState( false );
+	const [ showPurchaseModal, setShowPurchaseModal ] = useState( false );
 
 	const billingPeriod = useSelector( getBillingInterval );
 
@@ -65,9 +83,11 @@ export default function CTAButton( { plugin, hasEligibilityMessages, disabled } 
 		isSiteOnECommerceTrial( state, selectedSite?.ID )
 	);
 
-	const shouldUpgrade =
-		useSelector( ( state ) => ! siteHasFeature( state, selectedSite?.ID, pluginFeature ) ) &&
-		! isJetpackSelfHosted;
+	// The cheapest plan that unlocks this plugin, as reported by the site's features.
+	const plansWithPluginFeature = useSelector( ( state ) =>
+		getPlansForFeature( state, selectedSite?.ID, pluginFeature )
+	);
+	const upgradePlanSlug = plansWithPluginFeature ? plansWithPluginFeature[ 0 ] : undefined;
 
 	// Keep me updated
 	const userId = useSelector( getCurrentUserId );
@@ -129,8 +149,41 @@ export default function CTAButton( { plugin, hasEligibilityMessages, disabled } 
 		setShowAddCustomDomain( false );
 	}, [ setShowEligibility, setShowAddCustomDomain ] );
 
+	const openPurchaseModal = useCallback( () => {
+		handleDismissEligibilityWarnings();
+		setShowPurchaseModal( true );
+	}, [ handleDismissEligibilityWarnings ] );
+
+	// Buying the plan in place only works for a plugin that comes free with the plan, and only
+	// once we know the plan and that the user can be charged without a full checkout. Anything
+	// else falls back to the Plans page.
+	const upgradeInPurchaseModal =
+		shouldUpgrade &&
+		! isMarketplaceProduct &&
+		! isPreinstalledPremiumPlugin &&
+		! isECommerceTrial &&
+		!! upgradePlanSlug &&
+		isEligibleForOneClickCheckout?.result === true
+			? openPurchaseModal
+			: undefined;
+
+	const installPluginURL = `/marketplace/plugin/${ plugin.slug }/install/${ selectedSite?.slug }`;
+
 	return (
 		<>
+			{ showPurchaseModal && (
+				<AsyncLoad
+					require={ loadUpgradePurchaseModal }
+					placeholder={ null }
+					planSlug={ upgradePlanSlug }
+					siteSlug={ selectedSite.slug }
+					onClose={ () => setShowPurchaseModal( false ) }
+					onPurchaseSuccess={ () => {
+						setShowPurchaseModal( false );
+						page( installPluginURL );
+					} }
+				/>
+			) }
 			<PluginCustomDomainDialog
 				onProceed={ () => {
 					if ( hasEligibilityMessages ) {
@@ -147,6 +200,7 @@ export default function CTAButton( { plugin, hasEligibilityMessages, disabled } 
 						isMarketplaceProduct,
 						billingPeriod,
 						productsList,
+						upgradeInPurchaseModal,
 					} );
 				} }
 				isDialogVisible={ showAddCustomDomain }
@@ -176,6 +230,7 @@ export default function CTAButton( { plugin, hasEligibilityMessages, disabled } 
 								isMarketplaceProduct,
 								billingPeriod,
 								productsList,
+								upgradeInPurchaseModal,
 							} )
 						}
 					/>
@@ -211,6 +266,7 @@ export default function CTAButton( { plugin, hasEligibilityMessages, disabled } 
 						isPreinstalledPremiumPlugin,
 						preinstalledPremiumPluginProduct,
 						productsList,
+						upgradeInPurchaseModal,
 					} );
 				} }
 				disabled={
@@ -244,6 +300,25 @@ export default function CTAButton( { plugin, hasEligibilityMessages, disabled } 
 	);
 }
 
+export default function CTAButtonWithOneClickCheckout( props ) {
+	const isMarketplaceProduct = useSelector( ( state ) =>
+		isMarketplaceProductSelector( state, props.plugin.slug )
+	);
+
+	if ( props.shouldUpgrade && ! isMarketplaceProduct ) {
+		return (
+			<AsyncLoad
+				require={ loadIsEligibleForOneClickCheckoutWrapper }
+				placeholder={ <CTAButton { ...props } /> }
+				component={ CTAButton }
+				componentProps={ props }
+			/>
+		);
+	}
+
+	return <CTAButton { ...props } />;
+}
+
 function onClickInstallPlugin( {
 	dispatch,
 	selectedSite,
@@ -254,6 +329,7 @@ function onClickInstallPlugin( {
 	isPreinstalledPremiumPlugin,
 	preinstalledPremiumPluginProduct,
 	productsList,
+	upgradeInPurchaseModal,
 } ) {
 	const tags = Object.keys( plugin.tags );
 
@@ -311,6 +387,9 @@ function onClickInstallPlugin( {
 	// After buying a plan we need to redirect to the plugin install page.
 	const installPluginURL = `/marketplace/plugin/${ plugin.slug }/install/${ selectedSite.slug }`;
 	if ( upgradeAndInstall ) {
+		if ( upgradeInPurchaseModal ) {
+			return upgradeInPurchaseModal();
+		}
 		// Redirect to plans page to let user choose a plan, then redirect to plugin install
 		return page(
 			`/plans/${ selectedSite.slug }?plan=personal-bundle&redirect_to=${ encodeURIComponent(
