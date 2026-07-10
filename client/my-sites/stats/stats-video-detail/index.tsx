@@ -1,5 +1,5 @@
 import { useTranslate } from 'i18n-calypso';
-import { useEffect } from 'react';
+import { useEffect, useLayoutEffect } from 'react';
 import titlecase from 'to-title-case';
 import QueryMedia from 'calypso/components/data/query-media';
 import Main from 'calypso/my-sites/stats/components/stats-main';
@@ -38,7 +38,10 @@ export default function StatsVideoDetail( { postId, period, context }: StatsVide
 		window.scrollTo( 0, 0 );
 	}, [] );
 
-	useEffect( () => {
+	// Must run before useStatsBreadcrumbTrail's passive effect reads the
+	// navigation history, so the trail treats this screen (not the previous
+	// one) as the current entry to exclude.
+	useLayoutEffect( () => {
 		recordCurrentScreen( 'videodetails', {
 			queryParams: context.query,
 			period: period.period,
