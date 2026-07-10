@@ -52,62 +52,74 @@ export function useInitializeOmnibarSite() {
 		queryClient.getQueryData< number | null >( omnibarSiteIdQuery().queryKey ) ||
 		recentSiteIds?.[ 0 ];
 
-	const { data: originSite, isLoading: isLoadingOriginSite } = useQuery( {
-		...siteByIdQuery( originSiteId ?? 0 ),
-		enabled: !! originSiteId,
-	} );
-
-	const { data: fallbackSite, isLoading: isLoadingFallbackSite } = useQuery( {
-		...siteByIdQuery( fallbackSiteId ?? 0 ),
-		enabled: !! fallbackSiteId,
-	} );
-
 	useEffect( () => {
-		// Wait until the required data are fully loaded, to avoid flicker.
-		if (
-			! isRouteLoaded ||
-			isLoadingRecentSiteIds ||
-			isLoadingOriginSite ||
-			isLoadingFallbackSite
-		) {
+		// Wait until the route and recent sites are loaded, to avoid flicker.
+		if ( ! isRouteLoaded || isLoadingRecentSiteIds ) {
 			return;
 		}
 
-		// `omnibarSiteIdQuery` is used as cross-tree shared state — its placeholder
-		// queryFn resolves to `null`. If it's still in flight when we write here,
-		// the resolution will overwrite our value and the omnibar loses the site.
-		queryClient.cancelQueries( { queryKey: omnibarSiteIdQuery().queryKey } );
+		let cancelled = false;
 
-		const omnibarSite = [ routeSite, originSite, fallbackSite ].find(
-			( site ) => site && isMemberOfSite( site )
-		);
-		const omnibarSiteId = omnibarSite?.ID ?? user?.primary_blog;
-		queryClient.setQueryData( omnibarSiteIdQuery().queryKey, () => omnibarSiteId );
-
-		// Remove the `origin_site_id` query param from the URL.
-		if ( originSiteId ) {
-			window.history.replaceState(
-				null,
-				'',
-				removeQueryArgs( window.location.pathname + window.location.search, 'origin_site_id' )
+		( async () => {
+			// Resolve the omnibar site in priority order, keeping only sites the user
+			// is a member of. The route site is already hydrated; the rest are fetched
+			// on demand and we stop at the first member, so a crafted or inaccessible
+			// candidate is skipped rather than recorded.
+			const candidateIds = [ routeSite?.ID, originSiteId, fallbackSiteId ].filter(
+				( id ): id is number => !! id
 			);
-		}
 
-		if ( omnibarSiteId && omnibarSiteId !== recentSiteIds?.[ 0 ] ) {
-			updateRecentSites(
-				[ ...new Set( [ omnibarSiteId, ...( recentSiteIds || [] ) ] ) ].slice( 0, 5 )
-			);
-		}
+			let member: Site | undefined;
+			for ( const id of candidateIds ) {
+				const site =
+					routeSite?.ID === id
+						? routeSite
+						: await queryClient.ensureQueryData( siteByIdQuery( id ) ).catch( () => undefined );
+
+				if ( site && isMemberOfSite( site ) ) {
+					member = site;
+					break;
+				}
+			}
+
+			if ( cancelled ) {
+				return;
+			}
+
+			const omnibarSiteId = member?.ID ?? user?.primary_blog;
+
+			// `omnibarSiteIdQuery` is used as cross-tree shared state — its placeholder
+			// queryFn resolves to `null`. If it's still in flight when we write here,
+			// the resolution will overwrite our value and the omnibar loses the site.
+			queryClient.cancelQueries( { queryKey: omnibarSiteIdQuery().queryKey } );
+			queryClient.setQueryData( omnibarSiteIdQuery().queryKey, () => omnibarSiteId );
+
+			// Remove the `origin_site_id` query param from the URL.
+			if ( originSiteId ) {
+				window.history.replaceState(
+					null,
+					'',
+					removeQueryArgs( window.location.pathname + window.location.search, 'origin_site_id' )
+				);
+			}
+
+			if ( omnibarSiteId && omnibarSiteId !== recentSiteIds?.[ 0 ] ) {
+				updateRecentSites(
+					[ ...new Set( [ omnibarSiteId, ...( recentSiteIds || [] ) ] ) ].slice( 0, 5 )
+				);
+			}
+		} )();
+
+		return () => {
+			cancelled = true;
+		};
 	}, [
 		isRouteLoaded,
+		isLoadingRecentSiteIds,
 		routeSite,
 		originSiteId,
-		originSite,
-		isLoadingOriginSite,
-		fallbackSite,
-		isLoadingFallbackSite,
+		fallbackSiteId,
 		recentSiteIds,
-		isLoadingRecentSiteIds,
 		user,
 		updateRecentSites,
 	] );
