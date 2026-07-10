@@ -100,12 +100,31 @@ interface StatsCommercialFlowOptOutFormProps {
 
 const COMPONENT_CLASS_NAME = 'stats-purchase-single';
 
+const getBundledPlanNoticeText = (
+	translate: ReturnType< typeof useTranslate >,
+	planName: string | TranslateResult,
+	viewsLimit?: number
+) =>
+	viewsLimit
+		? translate(
+				'Your %(planName)s plan already includes %(viewsLimit)s views per month for Stats. Views from this purchase will stack on top, so you keep what you already have.',
+				{ args: { planName, viewsLimit: formatNumberCompact( viewsLimit ) } }
+		  )
+		: translate(
+				'Your %(planName)s plan already includes views for Stats. Views from this purchase will stack on top, so you keep what you already have.',
+				{ args: { planName } }
+		  );
+
 const StatsUpgradeInstructions = ( {
 	isNearLimit,
 	isOverLimit,
+	bundledPlanName,
+	bundledViewsLimit,
 }: {
 	isNearLimit: boolean;
 	isOverLimit: boolean;
+	bundledPlanName?: string | TranslateResult;
+	bundledViewsLimit?: number;
 } ) => {
 	const translate = useTranslate();
 
@@ -128,9 +147,14 @@ const StatsUpgradeInstructions = ( {
 		<div>
 			<p>{ leadText }</p>
 			<div className="stats-purchase-wizard__notice">
-				{ translate(
-					'The remainder of your current plan will be credited towards the upgrade, ensuring you only pay the price difference. Starting from the next billing cycle, standard charges will apply.'
+				{ bundledPlanName && (
+					<p>{ getBundledPlanNoticeText( translate, bundledPlanName, bundledViewsLimit ) }</p>
 				) }
+				<p>
+					{ translate(
+						'The remainder of your current plan will be credited towards the upgrade, ensuring you only pay the price difference. Starting from the next billing cycle, standard charges will apply.'
+					) }
+				</p>
 			</div>
 		</div>
 	);
@@ -147,15 +171,7 @@ const StatsBundledPlanNotice = ( {
 
 	return (
 		<div className="stats-purchase-wizard__notice">
-			{ viewsLimit
-				? translate(
-						'Your %(planName)s plan already includes %(viewsLimit)s views per month for Stats. Views from this purchase will stack on top, so you keep what you already have.',
-						{ args: { planName, viewsLimit: formatNumberCompact( viewsLimit ) } }
-				  )
-				: translate(
-						'Your %(planName)s plan already includes views for Stats. Views from this purchase will stack on top, so you keep what you already have.',
-						{ args: { planName } }
-				  ) }
+			{ getBundledPlanNoticeText( translate, planName, viewsLimit ) }
 		</div>
 	);
 };
@@ -277,7 +293,7 @@ const StatsCommercialPurchase = ( {
 	return (
 		<>
 			<h1>{ pageTitle }</h1>
-			{ bundledPlanName && (
+			{ bundledPlanName && ! isCommercialOwned && (
 				<StatsBundledPlanNotice
 					viewsLimit={ usageData?.views_limit }
 					planName={ bundledPlanName }
@@ -290,7 +306,12 @@ const StatsCommercialPurchase = ( {
 				</>
 			) }
 			{ isCommercialOwned && (
-				<StatsUpgradeInstructions isNearLimit={ isNearLimit } isOverLimit={ isOverLimit } />
+				<StatsUpgradeInstructions
+					isNearLimit={ isNearLimit }
+					isOverLimit={ isOverLimit }
+					bundledPlanName={ bundledPlanName }
+					bundledViewsLimit={ usageData?.views_limit }
+				/>
 			) }
 			{ tierSelectionElements }
 			{ needsConnectionForUpgrade && (
