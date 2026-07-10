@@ -10,7 +10,7 @@
 
 ---
 
-### Task 1: Add regression coverage and implement the route correction
+## Task 1: Add regression coverage and implement the route correction
 
 **Files:**
 
@@ -81,7 +81,7 @@ Expected: FAIL because the current helper returns `/plugins/updates/:site` for n
 
 Replace the `plugin` case in `get-links.ts` with:
 
-```ts
+```text
 case 'plugin': {
 	link = `/plugins/manage/${ siteUrlWithMultiSiteSupport }`;
 	break;
@@ -116,7 +116,7 @@ git add client/jetpack-cloud/sections/agency-dashboard/sites-overview/site-statu
 git commit -m "Jetpack Manage: Fix plugin status links"
 ```
 
-### Task 2: Start Jetpack Cloud for local acceptance testing
+## Task 2: Start Jetpack Cloud for local acceptance testing
 
 **Files:**
 
@@ -140,7 +140,7 @@ Run `curl` against the reported local URL and confirm an HTTP response is return
 
 Open the local Jetpack Cloud URL, sign in if necessary, select a site with plugin updates on the Sites screen, and click its Plugins status. Confirm the browser stays in the same tab and navigates to `/plugins/manage/:site?updates=1`, where only that site's available plugin updates are shown.
 
-### Task 3: Scope the destination to the selected site's available updates
+## Task 3: Scope the destination to the selected site's available updates
 
 **Files:**
 
@@ -158,7 +158,7 @@ Open the local Jetpack Cloud URL, sign in if necessary, select a site with plugi
 
 Update the existing warning-link expectations to:
 
-```ts
+```text
 `/plugins/manage/${ siteSlug }?updates=1`;
 ```
 
@@ -166,7 +166,7 @@ Add a controller test that calls `renderPluginsDashboard` with `context.query.up
 
 Add a focused `PluginsListDataViews` test that renders an empty list with `showOnlyUpdates` enabled and expects the DataView's initial filters to contain:
 
-```ts
+```text
 [
 	{
 		field: 'status',
@@ -222,7 +222,7 @@ git add client/jetpack-cloud/sections/agency-dashboard/sites-overview/site-statu
 git commit -m "Jetpack Manage: Filter plugin updates by site"
 ```
 
-### Task 4: Clarify and visually align the plugin update status
+## Task 4: Clarify and visually align the plugin update status
 
 **Files:**
 
