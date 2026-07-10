@@ -105,11 +105,7 @@ export default function StatsVideoDetail( { postId, period, context }: StatsVide
 					className="stats-summary-view stats-summary__positioned stats-video-detail"
 				>
 					<VideoDetailsCard title={ videoTitle } date={ videoDate } />
-					<VideoSummary
-						postId={ postId }
-						initialStatType={ statType }
-						videoDuration={ media?.length ?? null }
-					/>
+					<VideoSummary postId={ postId } initialStatType={ statType } />
 					<VideoEmbedsCard postId={ postId } />
 				</div>
 			</div>
