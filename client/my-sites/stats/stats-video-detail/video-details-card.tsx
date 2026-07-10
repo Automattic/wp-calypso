@@ -35,6 +35,14 @@ export default function VideoDetailsCard( {
 
 	const isLoading = ! media;
 	const isOdyssey = config.isEnabled( 'is_odyssey' );
+
+	// The Odyssey stats-app proxy has no media route yet, so the media request
+	// 404s and the card would shimmer forever. Hide it until the data arrives —
+	// once the proxy learns the route, the card simply starts appearing.
+	if ( isOdyssey && ! media ) {
+		return null;
+	}
+
 	const mediaLibraryUrl = isOdyssey
 		? adminBaseUrl && `${ adminBaseUrl }upload.php?item=${ mediaId }`
 		: siteSlug && `/media/${ siteSlug }/${ mediaId }`;

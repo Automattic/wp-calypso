@@ -138,7 +138,8 @@ export default function StatsMain( {
 	return (
 		<Main { ...props } className={ clsx( 'stats-main', 'color-scheme', customTheme, className ) }>
 			{ ! isWPAdminAndNotSimpleSite && <QuerySiteFeatures siteIds={ [ siteId ] } /> }
-			<QuerySiteSettings siteId={ siteId } />
+			{ /* The Odyssey stats-app proxy has no settings route, so the request would 404. */ }
+			{ ! isWPAdminAndNotSimpleSite && <QuerySiteSettings siteId={ siteId } /> }
 			<Page
 				// Restore a stable styling hook lost when @wordpress/admin-ui 2.x moved Page
 				// internals to CSS Modules. Stats SCSS overrides target `.admin-ui-page`.
