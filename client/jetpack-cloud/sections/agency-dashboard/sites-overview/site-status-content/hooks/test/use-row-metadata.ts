@@ -259,7 +259,7 @@ describe( 'useRowMetadata', () => {
 		const expected = {
 			eventName: 'calypso_jetpack_agency_dashboard_update_plugins_click_small_screen',
 			isExternalLink: false,
-			link: `/plugins/updates/${ FAKE_SITE.url }`,
+			link: `/plugins/manage/${ FAKE_SITE.url }`,
 			isSupported: true,
 			row: rows.plugin,
 			siteDown: false,
@@ -267,6 +267,28 @@ describe( 'useRowMetadata', () => {
 			tooltipId: `${ FAKE_SITE.blog_id }-plugin`,
 		};
 		expect( metadata ).toEqual( expected );
+	} );
+
+	it( 'should return the plugin management link for Atomic sites', () => {
+		jest.spyOn( useIsMultisiteSupported, 'default' ).mockReturnValue( true );
+		const {
+			result: { current: metadata },
+		} = renderHook( () =>
+			useRowMetadata(
+				{
+					...rows,
+					site: {
+						...rows.site,
+						value: { ...FAKE_SITE, is_atomic: true },
+					},
+				},
+				'plugin',
+				false
+			)
+		);
+
+		expect( metadata.link ).toEqual( `/plugins/manage/${ FAKE_SITE.url }` );
+		expect( metadata.isExternalLink ).toBe( false );
 	} );
 
 	it( 'should return the expected Stats metadata', () => {
