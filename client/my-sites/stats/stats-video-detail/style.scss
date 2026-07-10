@@ -144,7 +144,8 @@ $border-radius: 5px; // stylelint-disable-line scales/radii
 	font-size: $font-size-header-small;
 	font-weight: 500;
 	line-height: 1.3;
-	margin-bottom: 16px;
+	// wp-admin core styles give h4 a `margin: 1.33em 0` in Odyssey Stats.
+	margin: 0 0 16px;
 }
 
 .stats-video-embeds-card__list {
