@@ -18,6 +18,14 @@ $border-radius: 5px; // stylelint-disable-line scales/radii
 	gap: 24px;
 }
 
+// The x-axis places labels at equal-slot centers (chart width / bar count),
+// but `.is-chart-tabs` caps bars at 156px and lays them out space-between, so
+// with few bars (e.g. ~5 weekly buckets) bars drift away from their labels.
+// space-around keeps every capped bar centered in its slot.
+.stats-video-summary.is-chart-tabs .chart__bars {
+	justify-content: space-around;
+}
+
 .stats-video-details-card {
 	border-color: var(--studio-gray-5);
 	border-radius: $border-radius;

@@ -167,7 +167,9 @@ export default function VideoSummary( {
 				if ( ! parsed.isValid() ) {
 					continue;
 				}
-				const key = parsed.startOf( unit ).format( 'YYYY-MM-DD' );
+				// Stats weeks run Monday-Sunday (see stats-date-label); isoWeek
+				// matches that regardless of the user's locale.
+				const key = parsed.startOf( unit === 'week' ? 'isoWeek' : unit ).format( 'YYYY-MM-DD' );
 				map.set( key, ( map.get( key ) ?? 0 ) + value );
 			}
 			return map;
