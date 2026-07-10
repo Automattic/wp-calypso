@@ -17,7 +17,6 @@ import {
 } from 'calypso/state/stats/lists/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import EmptyModuleCardVideo from '../features/modules/shared/stats-empty-module-video';
-import DatePicker from '../stats-date-label';
 import ErrorPanel from '../stats-error';
 import StatsModulePlaceholder from '../stats-module/placeholder';
 import '../stats-module/style.scss';
@@ -106,13 +105,11 @@ class VideoPressStatsModule extends Component {
 		const {
 			className,
 			summary,
-			path,
 			data,
 			moduleStrings,
 			requesting,
 			statType,
 			query,
-			period,
 			siteSlug,
 			translate,
 			siteId,
@@ -184,19 +181,6 @@ class VideoPressStatsModule extends Component {
 			<div>
 				{ siteId && statType && query && (
 					<QuerySiteStats statType={ statType } siteId={ siteId } query={ query } />
-				) }
-				{ summary && (
-					<div className="stats-module__date-picker-header">
-						<h3>
-							<DatePicker
-								period={ period.period }
-								date={ period.startOf }
-								path={ path }
-								query={ query }
-								summary
-							/>
-						</h3>
-					</div>
 				) }
 				<Card compact className={ cardClasses }>
 					<SectionHeader
