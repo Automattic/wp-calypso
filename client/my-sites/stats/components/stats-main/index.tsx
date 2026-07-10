@@ -76,7 +76,7 @@ function StatsBreadcrumbs( { items }: { items: BreadcrumbItem[] } ) {
 				<span className="stats-breadcrumbs__current">{ STATS_HEADER_TITLE }</span>
 			) }
 			{ restItems.map( ( item, index ) => (
-				<span key={ index }>
+				<span key={ index } className="stats-breadcrumbs__item">
 					<span className="stats-breadcrumbs__separator"> / </span>
 					{ item.to ? (
 						<a

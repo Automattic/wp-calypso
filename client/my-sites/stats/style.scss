@@ -133,6 +133,16 @@ $font-sf-pro-display: "SF Pro Display", $sans;
 			}
 		}
 
+		// Each crumb (separator + label) wraps in a span that is the actual
+		// flex item; without min-width: 0 on it, the label inside can never
+		// shrink and the ellipsis rules below have no effect.
+		.stats-breadcrumbs__item {
+			display: inline-flex;
+			align-items: center;
+			gap: 8px;
+			min-width: 0;
+		}
+
 		.stats-breadcrumbs__link {
 			color: inherit;
 			text-decoration: underline;
@@ -146,6 +156,7 @@ $font-sf-pro-display: "SF Pro Display", $sans;
 		.stats-breadcrumbs__current {
 			overflow: hidden;
 			text-overflow: ellipsis;
+			white-space: nowrap;
 		}
 
 		> .stats-navigation {
