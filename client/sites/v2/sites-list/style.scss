@@ -52,7 +52,7 @@
 }
 
 // On mobile, let the page body scroll instead of the list.
-@media ( max-width: 782px ) {
+@media ( max-width: 600px ) {
 	.is-section-sites-dashboard:has( .sites-dashboard__layout.preview-hidden ) .layout__content {
 		overflow: visible;
 	}
