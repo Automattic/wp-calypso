@@ -1,6 +1,7 @@
 /**
  * @jest-environment jsdom
  */
+import { canonicalizeReadSpaceSlug } from '@automattic/api-core';
 import { readSpaceBySlugQuery, readSpaceQuery, readSpacesQuery } from '@automattic/api-queries';
 import page from '@automattic/calypso-router';
 import { QueryClient } from '@tanstack/react-query';
@@ -97,23 +98,30 @@ const SPACE: ReadSpaceDetails = {
 // seeds the draft from that fresh detail, so the by-slug GET must resolve. Echo
 // the space's fields back in the wire (detail) shape.
 function mockSpaceBySlugEndpoint( space: ReadSpaceDetails = SPACE ) {
-	return nock( 'https://public-api.wordpress.com' )
-		.get( `/wpcom/v2/reader/spaces/slug/${ space.slug }` )
-		.reply( 200, {
-			id: Number( space.id ),
-			slug: space.slug,
-			title: space.name,
-			layout: space.layout,
-			tags: space.tags,
-			languages: space.languages,
-			follows: space.sources.map( ( source ) => ( {
-				feed_id: source.feedId,
-				feed_url: source.feedUrl,
-				blog_id: source.blogId,
-				name: source.name,
-				icon: source.siteIcon,
-			} ) ),
-		} );
+	return (
+		nock( 'https://public-api.wordpress.com' )
+			// Mirror the fetcher's path encoding so the matcher holds for any slug.
+			.get(
+				`/wpcom/v2/reader/spaces/slug/${ encodeURIComponent(
+					canonicalizeReadSpaceSlug( space.slug )
+				) }`
+			)
+			.reply( 200, {
+				id: Number( space.id ),
+				slug: space.slug,
+				title: space.name,
+				layout: space.layout,
+				tags: space.tags,
+				languages: space.languages,
+				follows: space.sources.map( ( source ) => ( {
+					feed_id: source.feedId,
+					feed_url: source.feedUrl,
+					blog_id: source.blogId,
+					name: source.name,
+					icon: source.siteIcon,
+				} ) ),
+			} )
+	);
 }
 
 // Echo the submitted fields back so the adapted detail reflects the edit.
@@ -152,7 +160,8 @@ function render( {
 	space?: ReadSpaceDetails;
 } = {} ) {
 	const queryClient = new QueryClient( { defaultOptions: { queries: { retry: false } } } );
-	const { sources, tags, ...summary } = space;
+	// The list endpoint returns the summary shape only (no sources/tags/languages).
+	const { sources, tags, languages, ...summary } = space;
 	queryClient.setQueryData( readSpacesQuery().queryKey, [ summary, ...others ] );
 	// The modal resolves the space by slug (sharing the view's cache); the id-keyed
 	// entry is what the mutations write back to.
@@ -242,7 +251,7 @@ describe( 'CustomizeModal', () => {
 	it( 'seeds saved tags from the fresh detail even when the cached snapshot has none', async () => {
 		const user = userEvent.setup();
 		const queryClient = new QueryClient( { defaultOptions: { queries: { retry: false } } } );
-		const { sources, tags, ...summary } = SPACE;
+		const { sources, tags, languages, ...summary } = SPACE;
 		queryClient.setQueryData( readSpacesQuery().queryKey, [ summary ] );
 		// A create leaves a by-slug snapshot that can omit tags; seeding that would
 		// show empty tags on edit. The open-time refetch returns the real tags.
