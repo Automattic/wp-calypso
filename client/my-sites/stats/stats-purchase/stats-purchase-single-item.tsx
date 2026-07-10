@@ -9,7 +9,7 @@ import page from '@automattic/calypso-router';
 import { Button as CalypsoButton } from '@automattic/components';
 import { formatNumberCompact } from '@automattic/number-formatters';
 import { Button, CheckboxControl } from '@wordpress/components';
-import { useTranslate, TranslateResult } from 'i18n-calypso';
+import { useTranslate } from 'i18n-calypso';
 import React, { useState, useCallback, useMemo, useEffect } from 'react';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { STATS_PRODUCT_NAME } from 'calypso/my-sites/stats/constants';
@@ -100,9 +100,32 @@ interface StatsCommercialFlowOptOutFormProps {
 
 const COMPONENT_CLASS_NAME = 'stats-purchase-single';
 
+// A site could in theory hold more than one bundled plan purchase at once (e.g. mid-upgrade);
+// prefer naming the highest tier since that's the more relevant entitlement to call out.
+// The yearly slugs are used as stand-ins for their plan family (yearly vs. monthly share the
+// same title), since only the title is read from the returned plan object.
+export const getBundledPlanSlug = ( {
+	isCompletePlanOwned,
+	isGrowthPlanOwned,
+	isBusinessPlanOwned,
+}: {
+	isCompletePlanOwned: boolean;
+	isGrowthPlanOwned: boolean;
+	isBusinessPlanOwned: boolean;
+} ): string | undefined => {
+	if ( isCompletePlanOwned ) {
+		return PLAN_JETPACK_COMPLETE;
+	} else if ( isGrowthPlanOwned ) {
+		return PLAN_JETPACK_GROWTH_YEARLY;
+	} else if ( isBusinessPlanOwned ) {
+		return PLAN_JETPACK_BUSINESS;
+	}
+	return undefined;
+};
+
 const getBundledPlanNoticeText = (
 	translate: ReturnType< typeof useTranslate >,
-	planName: string | TranslateResult,
+	planName: string,
 	viewsLimit?: number
 ) =>
 	viewsLimit
@@ -119,12 +142,10 @@ const StatsUpgradeInstructions = ( {
 	isNearLimit,
 	isOverLimit,
 	bundledPlanName,
-	bundledViewsLimit,
 }: {
 	isNearLimit: boolean;
 	isOverLimit: boolean;
-	bundledPlanName?: string | TranslateResult;
-	bundledViewsLimit?: number;
+	bundledPlanName?: string;
 } ) => {
 	const translate = useTranslate();
 
@@ -146,9 +167,7 @@ const StatsUpgradeInstructions = ( {
 	return (
 		<div>
 			<div className="stats-purchase-wizard__notice">
-				{ bundledPlanName && (
-					<p>{ getBundledPlanNoticeText( translate, bundledPlanName, bundledViewsLimit ) }</p>
-				) }
+				{ bundledPlanName && <p>{ getBundledPlanNoticeText( translate, bundledPlanName ) }</p> }
 				<p>
 					{ translate(
 						'The remainder of your current plan will be credited towards the upgrade, ensuring you only pay the price difference. Starting from the next billing cycle, standard charges will apply.'
@@ -165,13 +184,13 @@ const StatsBundledPlanNotice = ( {
 	planName,
 }: {
 	viewsLimit?: number;
-	planName: string | TranslateResult;
+	planName: string;
 } ) => {
 	const translate = useTranslate();
 
 	return (
 		<div className="stats-purchase-wizard__notice">
-			{ getBundledPlanNoticeText( translate, planName, viewsLimit ) }
+			<p>{ getBundledPlanNoticeText( translate, planName, viewsLimit ) }</p>
 		</div>
 	);
 };
@@ -234,21 +253,19 @@ const StatsCommercialPurchase = ( {
 
 	// Site already has Stats access via a bundled plan (e.g. Jetpack Complete), independent of
 	// whether it has also purchased standalone Stats — both stack, so both notices can co-render.
-	// A site could in theory hold more than one bundled plan purchase at once (e.g. mid-upgrade);
-	// prefer naming the highest tier since that's the more relevant entitlement to call out.
-	// The yearly slugs are used as stand-ins for their plan family (yearly vs. monthly share the
-	// same title), since only the title is read from the returned plan object.
-	let bundledPlanSlug: string | undefined;
-	if ( isCompletePlanOwned ) {
-		bundledPlanSlug = PLAN_JETPACK_COMPLETE;
-	} else if ( isGrowthPlanOwned ) {
-		bundledPlanSlug = PLAN_JETPACK_GROWTH_YEARLY;
-	} else if ( isBusinessPlanOwned ) {
-		bundledPlanSlug = PLAN_JETPACK_BUSINESS;
-	}
+	const bundledPlanSlug = getBundledPlanSlug( {
+		isCompletePlanOwned,
+		isGrowthPlanOwned,
+		isBusinessPlanOwned,
+	} );
 	const bundledPlanTitle = bundledPlanSlug ? getPlan( bundledPlanSlug )?.getTitle() : undefined;
 	// "Jetpack" is a brand name, not translated; bundledPlanTitle is already a translated plan title.
-	const bundledPlanName = bundledPlanTitle ? `Jetpack ${ bundledPlanTitle }` : undefined;
+	// getTitle() is typed to return TranslateResult (which can be a React element), but the three
+	// bundled plans handled here never pass `components`, so it's always a plain string — guard
+	// with typeof rather than assuming, since it also flows into a sprintf-style translate() call
+	// downstream that only supports strings.
+	const bundledPlanName =
+		typeof bundledPlanTitle === 'string' ? `Jetpack ${ bundledPlanTitle }` : undefined;
 
 	const { isNearLimit, isOverLimit } = getUsageLimitStatus( usageData );
 
