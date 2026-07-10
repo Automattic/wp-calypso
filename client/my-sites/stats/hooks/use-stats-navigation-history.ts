@@ -299,34 +299,41 @@ export const useStatsBreadcrumbTrail = (
 	const [ trail, setTrail ] = useState< Array< { label: string; url: string | null } > >( [] );
 
 	useEffect( () => {
+		// A top-level Traffic crumb synthesized from the current screen, so the root
+		// "Stats" breadcrumb always links back to Stats even when there is no usable
+		// history (direct load, a full page load that clears sessionStorage, a trail
+		// made up entirely of screens without a back link, or corrupted storage). When
+		// a current screen entry is available its date range is carried so it survives
+		// the round-trip back to Traffic; otherwise it links to the default range.
+		const trafficFallback = ( current?: {
+			queryParams: QueryArgs;
+			period: string | null;
+		} ): Array< { label: string; url: string | null } > => {
+			const label = localizedTabNames[ defaultLastScreen ];
+			const link = possibleBackLinks[ defaultLastScreen ];
+			if ( ! link || ! label || ! siteSlug ) {
+				return [];
+			}
+			return [
+				{
+					label,
+					url: addQueryArgs(
+						link.replace( '{period}', current?.period || 'day' ) + siteSlug,
+						getTrafficQueryParams( current?.queryParams || {} )
+					),
+				},
+			];
+		};
+
 		try {
 			const navState = JSON.parse( sessionStorage.getItem( STORAGE_KEY ) || '[]' );
 			if ( ! Array.isArray( navState ) || navState.length < 1 ) {
-				setTrail( [] );
+				setTrail( trafficFallback() );
 				return;
 			}
 
-			// No prior history (e.g. direct load or a full page load that clears sessionStorage):
-			// synthesize a Traffic back-breadcrumb from the current screen so the selected date
-			// range survives the round-trip back to Traffic.
 			if ( navState.length === 1 ) {
-				const current = navState[ 0 ];
-				const label = localizedTabNames[ defaultLastScreen ];
-				let link = possibleBackLinks[ defaultLastScreen ];
-				if ( ! link || ! label || ! siteSlug ) {
-					setTrail( [] );
-					return;
-				}
-				link = link.replace( '{period}', current.period || 'day' );
-				setTrail( [
-					{
-						label,
-						url: addQueryArgs(
-							link + siteSlug,
-							getTrafficQueryParams( current.queryParams || {} )
-						),
-					},
-				] );
+				setTrail( trafficFallback( navState[ 0 ] ) );
 				return;
 			}
 
@@ -371,9 +378,9 @@ export const useStatsBreadcrumbTrail = (
 				} )
 				.filter( Boolean ) as Array< { label: string; url: string | null } >;
 
-			setTrail( breadcrumbs );
+			setTrail( breadcrumbs.length ? breadcrumbs : trafficFallback( currentItem ) );
 		} catch ( e ) {
-			setTrail( [] );
+			setTrail( trafficFallback() );
 		}
 	}, [ localizedTabNames, siteSlug, adminBaseUrl, currentQuery ] );
 

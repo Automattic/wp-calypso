@@ -144,6 +144,40 @@ describe( 'use-stats-navigation-history back-link param forwarding', () => {
 			expect( result.current[ 0 ].url ).toContain( 'shortcut=last_12_months' );
 			expect( result.current[ 0 ].url ).toContain( 'tab=views' );
 		} );
+
+		it( 'falls back to a top-level Traffic crumb when there is no history', () => {
+			const { result } = renderHook( () => useStatsBreadcrumbTrail() );
+
+			expect( result.current ).toHaveLength( 1 );
+			expect( result.current[ 0 ].label ).toBe( 'Traffic' );
+			expect( result.current[ 0 ].url ).toContain( '/stats/day/example.com' );
+		} );
+
+		it( 'falls back to a top-level Traffic crumb when no history entry has a back link', () => {
+			sessionStorage.setItem(
+				STORAGE_KEY,
+				JSON.stringify( [
+					{ screen: 'postDetails', queryParams: {}, period: null },
+					{ screen: 'postDetails', queryParams: {}, period: null },
+				] )
+			);
+
+			const { result } = renderHook( () => useStatsBreadcrumbTrail() );
+
+			expect( result.current ).toHaveLength( 1 );
+			expect( result.current[ 0 ].label ).toBe( 'Traffic' );
+			expect( result.current[ 0 ].url ).toContain( '/stats/day/example.com' );
+		} );
+
+		it( 'falls back to a top-level Traffic crumb when sessionStorage holds corrupted JSON', () => {
+			sessionStorage.setItem( STORAGE_KEY, '{oops' );
+
+			const { result } = renderHook( () => useStatsBreadcrumbTrail() );
+
+			expect( result.current ).toHaveLength( 1 );
+			expect( result.current[ 0 ].label ).toBe( 'Traffic' );
+			expect( result.current[ 0 ].url ).toContain( '/stats/day/example.com' );
+		} );
 	} );
 
 	describe( 'recordCurrentScreen', () => {
