@@ -1,4 +1,3 @@
-import { debounce } from '@wordpress/compose';
 import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
@@ -75,6 +74,8 @@ class DatePicker extends PureComponent {
 		useArrowNavigation: false,
 	};
 
+	lastCalendarSelection = null;
+
 	isSameDay( d0, d1 ) {
 		d0 = this.props.moment( d0 );
 		d1 = this.props.moment( d1 );
@@ -142,37 +143,65 @@ class DatePicker extends PureComponent {
 	}
 
 	/**
-	 * Handler for the click/touch events on the calendar
-	 * Debounced to avoid multiple calls to this method
-	 * being fired for due to touch/click both being
-	 * called on touch devices.
+	 * Ignore duplicate touch/click events for the same calendar day without
+	 * dropping fast clicks on different days.
 	 *
 	 * See https://github.com/Automattic/wp-calypso/pull/29938/
 	 */
-	setCalendarDay = debounce(
-		( day, modifiers ) => {
-			const momentDay = this.props.moment( day );
+	shouldIgnoreDuplicateTouchSelection( dayKey, event ) {
+		const now = Date.now();
+		const eventType = event?.type || '';
+		const previousSelection = this.lastCalendarSelection;
 
-			if ( modifiers.disabled ) {
-				return null;
-			}
+		this.lastCalendarSelection = {
+			dayKey,
+			eventType,
+			timestamp: now,
+		};
 
-			const dateMods = {
-				year: momentDay.year(),
-				month: momentDay.month(),
-				date: momentDay.date(),
-			};
-
-			const date = ( this.props.timeReference || momentDay ).set( dateMods );
-
-			this.props.onSelectDay( date, dateMods, modifiers );
-		},
-		500,
-		{
-			leading: true, // invoke call immediately
-			trailing: false, // debounce any subsequent calls
+		if ( ! previousSelection || previousSelection.dayKey !== dayKey ) {
+			return false;
 		}
-	);
+
+		const selectionInterval = now - previousSelection.timestamp;
+		if ( selectionInterval >= 500 ) {
+			return false;
+		}
+
+		if ( ! eventType || ! previousSelection.eventType ) {
+			return false;
+		}
+
+		return (
+			( previousSelection.eventType === 'touchstart' && eventType === 'touchend' ) ||
+			( previousSelection.eventType === 'touchstart' && eventType === 'click' ) ||
+			( previousSelection.eventType === 'touchend' && eventType === 'click' )
+		);
+	}
+
+	setCalendarDay = ( day, modifiers, event ) => {
+		const momentDay = this.props.moment( day );
+
+		if ( modifiers.disabled ) {
+			return null;
+		}
+
+		const dateMods = {
+			year: momentDay.year(),
+			month: momentDay.month(),
+			date: momentDay.date(),
+		};
+
+		const dayKey = `${ dateMods.year }-${ dateMods.month }-${ dateMods.date }`;
+
+		if ( this.shouldIgnoreDuplicateTouchSelection( dayKey, event ) ) {
+			return null;
+		}
+
+		const date = ( this.props.timeReference || momentDay ).set( dateMods );
+
+		this.props.onSelectDay( date, dateMods, modifiers );
+	};
 
 	getDateInstance( v ) {
 		return this.props.moment( v ).toDate();

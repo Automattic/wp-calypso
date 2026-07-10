@@ -77,7 +77,7 @@ export class PaywallFlow implements BlockFlow {
 
 		const publishedPostURL = context.page.url();
 
-		const newPage = await ( await browser.newContext() ).newPage();
+		const newPage = await context.browser.newPage();
 		await newPage.goto( publishedPostURL, { waitUntil: 'domcontentloaded' } );
 
 		await newPage.getByRole( 'main' ).getByText( this.configurationData.prePaywallText ).waitFor();

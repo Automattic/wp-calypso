@@ -1,11 +1,12 @@
-import { ComponentSwapper, Popover } from '@automattic/components';
+import { ComponentSwapper } from '@automattic/components';
 import { formatCurrency } from '@automattic/number-formatters';
-import { Icon, info, payment, receipt, tip } from '@wordpress/icons';
+import { Icon, payment, receipt, tip } from '@wordpress/icons';
 import { translate } from 'i18n-calypso';
-import { useMemo, useRef, useState } from 'react';
+import { useMemo } from 'react';
 import { useSelector } from 'react-redux';
 import CountCard from 'calypso/my-sites/stats/components/highlight-cards/count-card';
 import MobileHighlightCardListing from 'calypso/my-sites/stats/components/highlight-cards/mobile-highlight-cards';
+import StatsInfotip from 'calypso/my-sites/stats/components/stats-infotip';
 import { getWordAdsEarnings } from 'calypso/state/wordads/earnings/selectors';
 import './highlights-section.scss';
 
@@ -88,8 +89,6 @@ function usePayoutNotices( earnings ) {
 
 function HighlightsSectionHeader( props ) {
 	const notices = usePayoutNotices( props.earnings );
-	const [ isTooltipVisible, setTooltipVisible ] = useState( false );
-	const infoReferenceElement = useRef( null );
 	const localizedTitle = translate( 'Totals', {
 		comment: 'Heading for WordAds earnings highlights section',
 	} );
@@ -98,28 +97,20 @@ function HighlightsSectionHeader( props ) {
 		<h3 className="highlight-cards-heading">
 			{ localizedTitle }{ ' ' }
 			{ showNotices && (
-				<>
-					<span
-						className="info-wrapper"
-						ref={ infoReferenceElement }
-						onMouseEnter={ () => setTooltipVisible( true ) }
-						onMouseLeave={ () => setTooltipVisible( false ) }
-					>
-						<Icon className="info-icon" icon={ info } />
-					</span>
-					<Popover
-						className="tooltip tooltip--darker tooltip-wordads highlight-card-tooltip"
-						isVisible={ isTooltipVisible }
-						position="bottom right"
-						context={ infoReferenceElement.current }
-					>
-						<div className="highlight-card-tooltip-content">
-							{ notices?.map( ( notice ) => (
-								<p key={ notice.id }>{ notice.value }</p>
-							) ) }
-						</div>
-					</Popover>
-				</>
+				<StatsInfotip
+					className="info-wrapper"
+					triggerClassName="info-icon"
+					label={ translate( 'Learn more about payout timing' ) }
+					popupClassName="tooltip-wordads highlight-card-tooltip"
+					side="bottom"
+					align="end"
+				>
+					<div className="highlight-card-tooltip-content">
+						{ notices?.map( ( notice ) => (
+							<p key={ notice.id }>{ notice.value }</p>
+						) ) }
+					</div>
+				</StatsInfotip>
 			) }
 		</h3>
 	);

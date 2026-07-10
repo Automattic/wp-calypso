@@ -6,19 +6,21 @@ export type SpaceTab = 'feed' | 'discover';
 /** Tabs in display order, used to build the space sub-navigation. */
 export const SPACE_TABS: SpaceTab[] = [ 'feed', 'discover' ];
 
-export function getSpacePath( id: string ): string {
-	// Encode the segment to match the other Reader route builders; ids are
-	// opaque, so never assume they are already URL-safe.
-	return `${ SPACES_BASE_PATH }/${ encodeURIComponent( id ) }`;
+export function getSpacePath( slug: string ): string {
+	// A space slug is `sanitize_title(title)` — already URL-safe (lowercase, hyphens,
+	// or percent-encoded UTF-8 for non-Latin titles). Don't re-encode it: running
+	// `encodeURIComponent` over an already percent-encoded slug double-encodes the
+	// `%` (`%d0…` → `%25d0…`), breaking the link and the sidebar's active-state match.
+	return `${ SPACES_BASE_PATH }/${ slug }`;
 }
 
 /**
- * Path for a space's tab. `feed` is the canonical base path (no suffix) so
- * existing links keep working; other tabs append their slug, e.g.
- * `/reader/spaces/<id>/discover`.
+ * Path for a space's tab. `feed` is the canonical base path (no suffix) so the
+ * bare space link keeps working; other tabs append their slug, e.g.
+ * `/reader/spaces/<slug>/discover`.
  */
-export function getSpaceTabPath( id: string, tab: SpaceTab ): string {
-	const base = getSpacePath( id );
+export function getSpaceTabPath( slug: string, tab: SpaceTab ): string {
+	const base = getSpacePath( slug );
 	return tab === 'feed' ? base : `${ base }/${ tab }`;
 }
 
@@ -33,4 +35,15 @@ export function parseSpaceTab( tab: string | undefined ): SpaceTab | null {
 		return 'feed';
 	}
 	return tab === 'discover' ? 'discover' : null;
+}
+
+/**
+ * Parse the tab from a full space path (`/reader/spaces/<slug>[/<tab>]`), for
+ * callers that only have the current route string. Keeps the route-shape knowledge
+ * here rather than string-indexing segments at the call site. The base path or an
+ * unknown suffix resolves to the canonical `feed` tab.
+ */
+export function parseSpaceTabFromPath( path: string ): SpaceTab {
+	const tabSegment = ( path || '' ).split( '?' )[ 0 ].split( '/' )[ 4 ];
+	return parseSpaceTab( tabSegment ) ?? 'feed';
 }

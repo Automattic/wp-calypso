@@ -24,30 +24,33 @@ export function isSpaceUnavailable( error: unknown ): boolean {
 }
 
 interface Props {
-	spaceId: string;
+	// The URL slug we failed to resolve. On a 404 there's no numeric id to log (the
+	// space is unknown / renamed away / not the viewer's), so the slug is the
+	// identifier we have.
+	slug: string;
 	error: unknown;
 }
 
 /** Full-page state for a space that doesn't exist or isn't the viewer's. */
-export function SpaceError( { spaceId, error }: Props ) {
+export function SpaceError( { slug, error }: Props ) {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 
 	useEffect( () => {
 		dispatch(
 			recordReaderTracksEvent( 'calypso_reader_spaces_page_error', {
-				space_id: spaceId,
+				space_slug: slug,
 				status: getSpaceErrorStatus( error ) ?? null,
 			} )
 		);
-	}, [ dispatch, error, spaceId ] );
+	}, [ dispatch, error, slug ] );
 
 	return (
 		<ReaderMain>
 			<DocumentHead title={ translate( 'Spaces ‹ Reader' ) } />
 			<EmptyContent
 				title={ translate( 'This space isn’t available' ) }
-				line={ translate( 'It may have been removed, or it’s not one of your spaces.' ) }
+				line={ translate( 'It may have been removed, or its address has changed.' ) }
 				action={ translate( 'Back to Reader' ) }
 				actionURL="/reader"
 			/>

@@ -257,6 +257,18 @@
 		flex: 1 1 0;
 	}
 
+	.sidebar__actions-and-count {
+		display: inline-flex;
+		align-items: center;
+		gap: 6px;
+		margin-inline-start: 8px;
+		justify-content: flex-end;
+
+		.a8c-count {
+			margin-left: 0;
+		}
+	}
+
 	.sidebar__expandable-arrow {
 		transition: transform 0.1s linear;
 		fill: var(--color-sidebar-gridicon-fill);

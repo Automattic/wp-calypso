@@ -1018,56 +1018,56 @@ describe( 'getEmptyViewSuggestions', () => {
 	it( 'hides post suggestions without a sidebar config', () => {
 		const labels = getEmptyViewSuggestions().map( ( suggestion ) => suggestion.label );
 		expect( labels ).not.toContain( 'Optimize Title' );
-		expect( labels ).not.toContain( 'AI Editorial Review' );
+		expect( labels ).not.toContain( 'Editorial Review' );
 	} );
 
-	it( 'shows AI Editorial Review when enabled by agentsManagerData', () => {
+	it( 'shows Editorial Review when enabled by agentsManagerData', () => {
 		installAiEditorialReviewData();
 		installPostTypeMock( 'post' );
 		const labels = getEmptyViewSuggestions().map( ( suggestion ) => suggestion.label );
 		expect( labels ).not.toContain( 'Optimize Title' );
-		expect( labels ).toContain( 'AI Editorial Review' );
-		expect( labels ).toContain( 'Generate Feedback' );
+		expect( labels ).toContain( 'Editorial Review' );
+		expect( labels ).toContain( 'Simple Review' );
 	} );
 
-	it( 'hides AI Editorial Review on page editors', () => {
+	it( 'hides Editorial Review on page editors', () => {
 		installAiEditorialReviewData();
 		installPostTypeMock( 'page' );
 
 		const labels = getEmptyViewSuggestions().map( ( suggestion ) => suggestion.label );
 
 		expect( labels ).not.toContain( 'Optimize Title' );
-		expect( labels ).not.toContain( 'AI Editorial Review' );
+		expect( labels ).not.toContain( 'Editorial Review' );
 	} );
 
-	it( 'hides AI Editorial Review until the post type is known', () => {
+	it( 'hides Editorial Review until the post type is known', () => {
 		installAiEditorialReviewData();
 		installPostTypeMock();
 
 		const labels = getEmptyViewSuggestions().map( ( suggestion ) => suggestion.label );
 
 		expect( labels ).not.toContain( 'Optimize Title' );
-		expect( labels ).not.toContain( 'AI Editorial Review' );
+		expect( labels ).not.toContain( 'Editorial Review' );
 	} );
 
-	it( 'hides Generate Feedback until the post has a saved post ID', () => {
+	it( 'hides Simple Review until the post has a saved post ID', () => {
 		installAiEditorialReviewData();
 		installPostTypeMock( 'post', null );
 
 		const labels = getEmptyViewSuggestions().map( ( suggestion ) => suggestion.label );
 
-		expect( labels ).not.toContain( 'Generate Feedback' );
-		expect( labels ).toContain( 'AI Editorial Review' );
+		expect( labels ).not.toContain( 'Simple Review' );
+		expect( labels ).toContain( 'Editorial Review' );
 	} );
 
-	it( 'hides Generate Feedback when the preview feature disables it', () => {
+	it( 'hides Simple Review when the preview feature disables it', () => {
 		installAiEditorialReviewData( { generateFeedback: false } );
 		installPostTypeMock( 'post' );
 
 		const labels = getEmptyViewSuggestions().map( ( suggestion ) => suggestion.label );
 
-		expect( labels ).not.toContain( 'Generate Feedback' );
-		expect( labels ).toContain( 'AI Editorial Review' );
+		expect( labels ).not.toContain( 'Simple Review' );
+		expect( labels ).toContain( 'Editorial Review' );
 	} );
 
 	it( 'hides Proofread by default and shows it when the preview feature enables it', () => {
@@ -1100,7 +1100,7 @@ describe( 'getEmptyViewSuggestions', () => {
 		const labels = getEmptyViewSuggestions().map( ( suggestion ) => suggestion.label );
 
 		expect( labels ).not.toContain( 'Optimize Title' );
-		expect( labels ).not.toContain( 'AI Editorial Review' );
+		expect( labels ).not.toContain( 'Editorial Review' );
 	} );
 
 	it( 'treats missing features as disabled', () => {
@@ -1115,8 +1115,37 @@ describe( 'getEmptyViewSuggestions', () => {
 		const labels = getEmptyViewSuggestions().map( ( suggestion ) => suggestion.label );
 
 		expect( labels ).not.toContain( 'Optimize Title' );
-		expect( labels ).toContain( 'AI Editorial Review' );
-		expect( labels ).not.toContain( 'Generate Feedback' );
+		expect( labels ).toContain( 'Editorial Review' );
+		expect( labels ).not.toContain( 'Simple Review' );
+	} );
+
+	it( 'attaches a one-line description to every starting-screen suggestion', () => {
+		installAiEditorialReviewData( {
+			optimizeTitleSuggestion: true,
+			proofreadContent: true,
+			seoSuggestions: true,
+			excerptSuggestion: true,
+		} );
+		installPostTypeMock( 'post' );
+
+		const suggestions = getEmptyViewSuggestions();
+		const byLabel = ( label: string ) =>
+			suggestions.find( ( suggestion ) => suggestion.label === label );
+
+		[
+			'Optimize Title',
+			'Proofread',
+			'Simple Review',
+			'Editorial Review',
+			'SEO Enhancer',
+			'Generate Excerpt',
+		].forEach( ( label ) => {
+			const suggestion = byLabel( label );
+			expect( suggestion ).toBeDefined();
+			expect( typeof suggestion?.description ).toBe( 'string' );
+			expect( suggestion?.description ).toBeTruthy();
+			expect( suggestion?.description ).not.toContain( '\n' );
+		} );
 	} );
 
 	it( 'shows Generate Excerpt when the excerptSuggestion feature is enabled', () => {
@@ -1429,8 +1458,8 @@ describe( 'useSuggestions', () => {
 		latestSuggestions =
 			onSuggestions.mock.calls[ onSuggestions.mock.calls.length - 1 ]?.[ 0 ] ?? [];
 		expect( latestSuggestions.map( ( suggestion: any ) => suggestion.label ) ).toEqual( [
-			'Generate Feedback',
-			'AI Editorial Review',
+			'Simple Review',
+			'Editorial Review',
 		] );
 	} );
 
@@ -1486,11 +1515,11 @@ describe( 'useSuggestions', () => {
 		const latestSuggestions =
 			onSuggestions.mock.calls[ onSuggestions.mock.calls.length - 1 ]?.[ 0 ] ?? [];
 		expect( latestSuggestions.map( ( suggestion: any ) => suggestion.label ) ).toEqual( [
-			'AI Editorial Review',
+			'Editorial Review',
 		] );
 	} );
 
-	it( 'keeps Generate Feedback on the backend path when clicked', () => {
+	it( 'keeps Simple Review on the backend path when clicked', () => {
 		installAiEditorialReviewData();
 		installPostTypeMock( 'post' );
 		const addMessage = jest.fn();
@@ -1541,7 +1570,7 @@ describe( 'useSuggestions', () => {
 		expect( mockSetIsSplitScreen ).toHaveBeenCalledWith( true );
 	} );
 
-	it( 'opens split-screen when the AI Editorial Review suggestion is clicked', () => {
+	it( 'opens split-screen when the Editorial Review suggestion is clicked', () => {
 		installAiEditorialReviewData();
 		installPostTypeMock( 'post' );
 		const mediationPrompt = getEmptyViewSuggestions().find(
@@ -1667,7 +1696,7 @@ describe( 'useSuggestions', () => {
 		expect( getTracksCalls( 'jetpack_ai_block_transformation_suggestion_click' ) ).toEqual( [] );
 	} );
 
-	it( 'does not open split-screen when AI Editorial Review is unavailable', () => {
+	it( 'does not open split-screen when Editorial Review is unavailable', () => {
 		installAiEditorialReviewData();
 		mockCurrentPostType = 'page';
 		installPostTypeMock( 'page' );
@@ -1788,7 +1817,7 @@ describe( 'contextProvider', () => {
 		} );
 	} );
 
-	it( 'suppresses full page content for the next Generate Feedback chip request', () => {
+	it( 'suppresses full page content for the next Simple Review chip request', () => {
 		installAiEditorialReviewData();
 		installContextProviderMock();
 		const feedbackPrompt = getEmptyViewSuggestions().find(
@@ -1836,7 +1865,7 @@ describe( 'contextProvider', () => {
 		expect( contextProvider.getClientContext().jetpackAi ).toBeUndefined();
 	} );
 
-	it( 'clears pending Generate Feedback content suppression when another suggestion is clicked', () => {
+	it( 'clears pending Simple Review content suppression when another suggestion is clicked', () => {
 		installAiEditorialReviewData();
 		installContextProviderMock();
 		const suggestions = getEmptyViewSuggestions();

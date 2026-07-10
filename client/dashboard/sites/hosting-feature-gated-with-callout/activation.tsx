@@ -93,7 +93,8 @@ export default function ActivationCallout( {
 			return (
 				<Suspense fallback={ null }>
 					<Modal
-						title={ __( 'Before you continue' ) }
+						className="hosting-feature-activation-modal"
+						title={ __( 'One more step' ) }
 						onRequestClose={ () => setIsModalOpen( false ) }
 						size="medium"
 					>
@@ -103,6 +104,7 @@ export default function ActivationCallout( {
 							showDataCenterPicker
 							standaloneProceed
 							currentContext="hosting-features"
+							atomicTransferAction="hosting-features"
 						/>
 					</Modal>
 				</Suspense>
@@ -112,9 +114,8 @@ export default function ActivationCallout( {
 		return (
 			<Suspense fallback={ null }>
 				<Modal
-					title={
-						hasErrors ? __( 'Hosting features cannot be activated' ) : __( 'Before you continue' )
-					}
+					className="hosting-feature-activation-modal"
+					title={ hasErrors ? __( 'Hosting features cannot be activated' ) : __( 'One more step' ) }
 					onRequestClose={ () => setIsModalOpen( false ) }
 					size="medium"
 				>

@@ -110,7 +110,7 @@ const ALL_STATS_NOTICES: StatsNoticeType[] = [
 		isVisibleFunc: ( {
 			isOdysseyStats,
 			isWpcom,
-			isCommercialOwned,
+			supportCommercialUse,
 			isSiteJetpackNotAtomic,
 			isNearLimit,
 		}: StatsNoticeProps ) => {
@@ -118,10 +118,13 @@ const ALL_STATS_NOTICES: StatsNoticeType[] = [
 			const showTierUpgradeNoticeOnOdyssey = isOdysseyStats;
 			const showTierUpgradeNoticeForJetpackNotAtomic = isSiteJetpackNotAtomic;
 			// We don't show the notice for WPCOM sites for now.
+			// `supportCommercialUse` covers both a standalone Stats purchase and commercial access
+			// granted by a bundled plan (e.g. Jetpack Complete) — either way the site has a views
+			// limit that it can be near/over.
 			return !! (
 				! isWpcom &&
 				( showTierUpgradeNoticeOnOdyssey || showTierUpgradeNoticeForJetpackNotAtomic ) &&
-				isCommercialOwned &&
+				supportCommercialUse &&
 				isNearLimit
 			);
 		},

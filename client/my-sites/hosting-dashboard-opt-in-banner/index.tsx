@@ -39,14 +39,14 @@ function getBannerCopy(
 		const hasUpdatedOptedInTranslations =
 			hasEnTranslation( 'New dashboard is here to stay' ) &&
 			hasEnTranslation(
-				'The new dashboard you’ve been using becomes the default for everyone, and this classic view will be retired.'
+				'The new dashboard you’ve been testing is now the default. We’re retiring the earlier design.'
 			);
 
 		if ( hasUpdatedOptedInTranslations ) {
 			return {
 				heading: translate( 'New dashboard is here to stay' ),
 				description: translate(
-					'The new dashboard you’ve been using becomes the default for everyone, and this classic view will be retired.'
+					'The new dashboard you’ve been testing is now the default. We’re retiring the earlier design.'
 				),
 				button: translate( 'Go to new dashboard' ),
 			};

@@ -5,9 +5,11 @@ import {
 	envVariables,
 } from '@automattic/calypso-e2e';
 import { Locator } from 'playwright';
-import { expect, tags, test } from '../../lib/pw-base';
+import { expect, skipIfNotTrunk, tags, test } from '../../lib/pw-base';
 
 test.describe( 'Help Center in Calypso', { tag: [ tags.CALYPSO_PR ] }, () => {
+	skipIfNotTrunk();
+
 	const normalizeString = ( str: string | null ) => str?.replace( /\s+/g, ' ' ).trim();
 
 	test( 'As a user, I can interact with the Help Center in Calypso', async ( { page } ) => {

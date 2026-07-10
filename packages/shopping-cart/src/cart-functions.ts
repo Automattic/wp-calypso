@@ -215,6 +215,17 @@ export function doesCartLocationDifferFromResponseCartLocation(
 	return false;
 }
 
+// Tolerates whitespace and empty entries (e.g. 'blog, art' or a trailing comma). Returns []
+// for '' — callers must treat a falsy condition as "no restriction", not an empty allow-list.
+export function parseNextDomainCondition(
+	condition: ResponseCart[ 'next_domain_condition' ]
+): string[] {
+	return condition
+		.split( ',' )
+		.map( ( tld ) => tld.trim() )
+		.filter( Boolean );
+}
+
 export function convertRawResponseCartToResponseCart(
 	rawResponseCart: Partial< ResponseCart >
 ): ResponseCart {

@@ -216,22 +216,23 @@ export const ResultsPage = () => {
 				{ isLoadingSuggestions ? (
 					<FeaturedSearchResults.Placeholder />
 				) : (
-					<FeaturedSearchResults suggestions={ featuredSuggestions } />
-				) }
-				{ ! isLoadingSuggestions && visibleBundleSuggestion && (
-					<BundleCard
-						suggestion={ visibleBundleSuggestion }
-						onAddToCart={ ( bundle ) => {
-							addBundleToCart( { bundle, query } );
-						} }
-						isAddedToCart={ visibleBundleSuggestion.domains.every( ( { domain } ) =>
-							cart.hasItem( domain )
+					<FeaturedSearchResults suggestions={ featuredSuggestions }>
+						{ visibleBundleSuggestion && (
+							<BundleCard
+								suggestion={ visibleBundleSuggestion }
+								onAddToCart={ ( bundle ) => {
+									addBundleToCart( { bundle, query } );
+								} }
+								isAddedToCart={ visibleBundleSuggestion.domains.every( ( { domain } ) =>
+									cart.hasItem( domain )
+								) }
+								onContinue={ events.onContinue }
+								isBusy={ isAddingBundle }
+								disabled={ isMutating }
+								errorMessage={ bundleErrorMessage }
+							/>
 						) }
-						onContinue={ events.onContinue }
-						isBusy={ isAddingBundle }
-						disabled={ isMutating }
-						errorMessage={ bundleErrorMessage }
-					/>
+					</FeaturedSearchResults>
 				) }
 				{ isLoadingSuggestions ? (
 					<SearchResults.Placeholder />

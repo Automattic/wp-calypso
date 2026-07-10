@@ -1,9 +1,11 @@
 import {
 	addReadSpaceSource,
+	canonicalizeReadSpaceSlug,
 	createReadSpace,
 	deleteReadSpace,
 	deleteReadSpaceSource,
 	fetchReadSpace,
+	fetchReadSpaceBySlug,
 	fetchReadSpaces,
 	isWpError,
 	updateReadSpace,
@@ -24,6 +26,12 @@ import { getStreamInfiniteQueryKeyPrefix } from './read-streams';
 const readSpacesListKey = [ 'read', 'spaces', 'list' ] as const;
 
 const readSpaceDetailKey = ( spaceId: string ) => [ 'read', 'spaces', 'detail', spaceId ] as const;
+
+// Canonicalize the slug so callers that pass the encoded API slug (sidebar,
+// mutations) and the one that passes the decoded route slug (the view) land on the
+// same key. No-op for ASCII slugs.
+const readSpaceBySlugKey = ( slug: string ) =>
+	[ 'read', 'spaces', 'detail-by-slug', canonicalizeReadSpaceSlug( slug ) ] as const;
 
 // A space drives two streams: the posts feed (`space:<id>`, built server-side
 // from the space's followed feeds and tags) and Discover (`space_discover:<id>`,
@@ -85,6 +93,22 @@ export const readSpaceQuery = ( spaceId: string ) =>
 		meta: { persist: true },
 	} );
 
+// Read a space by its URL slug (`GET /reader/spaces/slug/{slug}`). Slug-addressed
+// URLs resolve through this; the resolved detail carries the numeric `id` that
+// streams and mutations use. Keyed by slug, so a rename (which changes the slug)
+// lands on a fresh entry — the mutations below seed the new slug and drop the old.
+// Same config as `readSpaceQuery`: a 4xx (unknown/renamed-away/not-yours slug) is
+// terminal, so surface it at once rather than retrying.
+export const readSpaceBySlugQuery = ( slug: string ) =>
+	queryOptions( {
+		queryKey: readSpaceBySlugKey( slug ),
+		queryFn: () => fetchReadSpaceBySlug( slug ),
+		staleTime: Infinity,
+		refetchOnMount: 'always',
+		retry: ( failureCount, error ) => ! isClientError( error ) && failureCount < 3,
+		meta: { persist: true },
+	} );
+
 // The summary (list) shape is the detail minus its `sources`, `tags`, and
 // `languages` (the detail-only fields).
 const toSummary = ( space: ReadSpaceDetails ): ReadSpace => {
@@ -114,6 +138,19 @@ const invalidateReadSpaceListAndDetail = ( queryClient: QueryClient, spaceId: st
 		invalidateReadSpaceDetail( queryClient, spaceId ),
 	] ).then( () => undefined );
 
+// Every mutation returns the full detail. Write it to both detail caches — the
+// id-keyed one (streams, the Customize modal) and the slug-keyed one (how the
+// space view resolves its URL) — so a slug-addressed view paints from cache the
+// instant it lands, without a round-trip. A rename also seeds the *new* slug here,
+// so redirecting to it after the save is seamless.
+const setReadSpaceDetailCaches = ( queryClient: QueryClient, space: ReadSpaceDetails ) => {
+	queryClient.setQueryData< ReadSpaceDetails >( readSpaceQuery( space.id ).queryKey, space );
+	queryClient.setQueryData< ReadSpaceDetails >(
+		readSpaceBySlugQuery( space.slug ).queryKey,
+		space
+	);
+};
+
 export const createReadSpaceMutation = ( queryClient: QueryClient ) =>
 	mutationOptions( {
 		mutationFn: createReadSpace,
@@ -124,7 +161,7 @@ export const createReadSpaceMutation = ( queryClient: QueryClient ) =>
 				...( previous ?? [] ),
 				toSummary( space ),
 			] );
-			queryClient.setQueryData< ReadSpaceDetails >( readSpaceQuery( space.id ).queryKey, space );
+			setReadSpaceDetailCaches( queryClient, space );
 			// Reconcile in the background — don't await the refetch so the consumer's
 			// own onSuccess (close modal, redirect) fires immediately off the cache write.
 			void invalidateReadSpaceListAndDetail( queryClient, space.id );
@@ -141,7 +178,7 @@ export const updateReadSpaceMutation = ( queryClient: QueryClient ) =>
 		ReadSpaceDetails,
 		unknown,
 		UpdateReadSpaceVariables,
-		{ previousList: ReadSpace[] | undefined }
+		{ previousList: ReadSpace[] | undefined; previousSlug: string | undefined }
 	>( {
 		mutationFn: ( { spaceId, params } ) => updateReadSpace( spaceId, params ),
 		// Optimistically patch the cached list summary so the sidebar — which reads
@@ -158,6 +195,13 @@ export const updateReadSpaceMutation = ( queryClient: QueryClient ) =>
 				// no-op — fall through to the optimistic write below.
 			}
 			const previousList = queryClient.getQueryData< ReadSpace[] >( readSpacesQuery().queryKey );
+			// The slug we're currently addressed by, captured before the rename so
+			// `onSuccess` can drop its now-stale by-slug cache entry. Prefer the list, but
+			// fall back to the id-keyed detail cache so eviction still happens when the
+			// list query hasn't populated.
+			const previousSlug =
+				previousList?.find( ( item ) => item.id === spaceId )?.slug ??
+				queryClient.getQueryData< ReadSpaceDetails >( readSpaceQuery( spaceId ).queryKey )?.slug;
 			// `params.layout` is a partial merge (see `UpdateReadSpaceParams`), so merge
 			// it onto the existing layout rather than replacing it.
 			queryClient.setQueryData< ReadSpace[] >(
@@ -173,22 +217,29 @@ export const updateReadSpaceMutation = ( queryClient: QueryClient ) =>
 							: item
 					)
 			);
-			return { previousList };
+			return { previousList, previousSlug };
 		},
 		onError: ( _error, _variables, context ) => {
 			if ( context?.previousList ) {
 				queryClient.setQueryData( readSpacesQuery().queryKey, context.previousList );
 			}
 		},
-		onSuccess: ( space ) => {
-			// Update may change summary fields (title/layout), so refresh the matching
-			// list item as well as the detail cache.
+		onSuccess: ( space, _variables, context ) => {
+			// Update may change summary fields (title/slug/layout), so refresh the
+			// matching list item as well as the detail caches.
 			const summary = toSummary( space );
 			queryClient.setQueryData< ReadSpace[] >(
 				readSpacesQuery().queryKey,
 				( previous ) => previous?.map( ( item ) => ( item.id === space.id ? summary : item ) )
 			);
-			queryClient.setQueryData< ReadSpaceDetails >( readSpaceQuery( space.id ).queryKey, space );
+			setReadSpaceDetailCaches( queryClient, space );
+			// A rename changes the slug, so the entry the old URL resolved through is
+			// now stale — drop it so a lingering old-slug view can't render old data.
+			if ( context?.previousSlug && context.previousSlug !== space.slug ) {
+				queryClient.removeQueries( {
+					queryKey: readSpaceBySlugQuery( context.previousSlug ).queryKey,
+				} );
+			}
 			// Tags/feeds/languages may have changed, so reload both the posts feed and
 			// the Discover stream (languages filter Discover).
 			void reloadReadSpaceStreams( queryClient, space.id );
@@ -203,13 +254,24 @@ export const deleteReadSpaceMutation = ( queryClient: QueryClient ) =>
 	mutationOptions< ReadSpaceDeletionResult, unknown, string >( {
 		mutationFn: deleteReadSpace,
 		onSuccess: ( _result, spaceId ) => {
+			// Resolve the deleted space's slug (from the list, falling back to the
+			// id-keyed detail cache) before we drop it, so its by-slug detail cache can be
+			// discarded too.
+			const deletedSlug =
+				queryClient
+					.getQueryData< ReadSpace[] >( readSpacesQuery().queryKey )
+					?.find( ( space ) => space.id === spaceId )?.slug ??
+				queryClient.getQueryData< ReadSpaceDetails >( readSpaceQuery( spaceId ).queryKey )?.slug;
 			// Remove the deleted space from the cached list...
 			queryClient.setQueryData< ReadSpace[] >(
 				readSpacesQuery().queryKey,
 				( previous ) => previous?.filter( ( space ) => space.id !== spaceId )
 			);
-			// ...and discard its now-defunct detail cache.
+			// ...and discard its now-defunct detail caches (id- and slug-keyed).
 			queryClient.removeQueries( { queryKey: readSpaceQuery( spaceId ).queryKey } );
+			if ( deletedSlug ) {
+				queryClient.removeQueries( { queryKey: readSpaceBySlugQuery( deletedSlug ).queryKey } );
+			}
 			void invalidateReadSpacesList( queryClient );
 		},
 	} );
@@ -218,7 +280,7 @@ export const deleteReadSpaceMutation = ( queryClient: QueryClient ) =>
 // write it straight to the detail cache (the list summary is unaffected by
 // feeds). `subscription` carries the feed id/url the api-core mutator sends.
 const writeReadSpaceDetail = ( queryClient: QueryClient, space: ReadSpaceDetails ) => {
-	queryClient.setQueryData< ReadSpaceDetails >( readSpaceQuery( space.id ).queryKey, space );
+	setReadSpaceDetailCaches( queryClient, space );
 	// Adding/removing a feed changes the space's streams, so reload both.
 	void reloadReadSpaceStreams( queryClient, space.id );
 	void invalidateReadSpaceDetail( queryClient, space.id );

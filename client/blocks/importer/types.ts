@@ -10,7 +10,6 @@ export type QueryObject = {
 export type StepNavigator = {
 	flow: string | null;
 	supportLinkModal?: boolean;
-	goToGoalsPage?: () => void;
 	goToImportCapturePage?: () => void;
 	goToImportContentOnlyPage?: () => void;
 	goToAdmin?: () => void;

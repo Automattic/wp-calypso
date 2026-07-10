@@ -11,12 +11,13 @@ import { debounce } from '@wordpress/compose';
 import { DataForm, Field, useFormValidity, FormField } from '@wordpress/dataviews';
 import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { ButtonStack } from '../button-stack';
 import { Card, CardBody } from '../card';
 import InlineSupportLink from '../inline-support-link';
 import Notice from '../notice';
 import { getContactFormFields } from './contact-form-fields';
+import { mapValidationMessagesToFieldErrors } from './contact-validation-utils';
 import { RegionAddressFieldsLayout } from './region-address-fieldsets';
 import type { UseMutateAsyncFunction } from '@tanstack/react-query';
 interface ContactFormProps {
@@ -40,6 +41,8 @@ export default function ContactForm( {
 	const [ formData, setFormData ] = useState< DomainContactDetails >(
 		initialData ?? { optOutTransferLock: false }
 	);
+	const [ lastValidationResult, setLastValidationResult ] =
+		useState< DomainContactValidationResponse | null >( null );
 	const selectedCountryCode = formData.countryCode ?? initialData?.countryCode ?? '';
 	const { data: statesList } = useQuery( statesListQuery( selectedCountryCode ) );
 
@@ -78,6 +81,7 @@ export default function ContactForm( {
 
 			validate( item )
 				.then( ( result ) => {
+					setLastValidationResult( result );
 					callbacks.forEach( ( callback ) => callback.resolve( result ) );
 				} )
 				.catch( ( error ) => {
@@ -131,7 +135,71 @@ export default function ContactForm( {
 		],
 	};
 
-	const { validity, isValid: canSave } = useFormValidity( normalizedFormData, fields, form );
+	const { validity, isValid: isFormValid } = useFormValidity( normalizedFormData, fields, form );
+
+	// A whole-form validation can invalidate a field (e.g. postal code) whose own
+	// validator DataForm won't re-run after another field (e.g. country) changes.
+	// Surface every field's error from the latest response, and gate Save on them.
+	const serverFieldErrors = useMemo(
+		() =>
+			mapValidationMessagesToFieldErrors(
+				lastValidationResult && ! lastValidationResult.success
+					? lastValidationResult.messages
+					: undefined
+			),
+		[ lastValidationResult ]
+	);
+
+	const validityWithServerErrors = useMemo( () => {
+		const fieldErrors = Object.entries( serverFieldErrors );
+		if ( ! isDirty || fieldErrors.length === 0 ) {
+			return validity;
+		}
+		const merged: NonNullable< typeof validity > = { ...validity };
+		for ( const [ fieldId, message ] of fieldErrors ) {
+			// Replace, not merge: a message-less `required` validity (empty required
+			// field) would otherwise take precedence over and hide this message.
+			merged[ fieldId ] = { custom: { type: 'invalid', message } };
+		}
+		return merged;
+	}, [ validity, serverFieldErrors, isDirty ] );
+
+	const canSave = isFormValid && Object.keys( serverFieldErrors ).length === 0;
+
+	// DataForm hides a field's error until it's touched. Reveal server-flagged fields
+	// by re-running native validation when the flagged set changes (keyed on the set,
+	// not the messages, so it doesn't re-fire or move focus while the user types).
+	const fieldsContainerRef = useRef< HTMLDivElement >( null );
+	const revealedErrorKeyRef = useRef( '' );
+	const serverErrorKey = Object.keys( serverFieldErrors ).sort().join( ',' );
+	useEffect( () => {
+		if ( ! isDirty || ! serverErrorKey ) {
+			revealedErrorKeyRef.current = '';
+			return;
+		}
+		if ( revealedErrorKeyRef.current === serverErrorKey ) {
+			return;
+		}
+		revealedErrorKeyRef.current = serverErrorKey;
+
+		// Defer so DataForm has applied the custom validity to the inputs first.
+		const raf = requestAnimationFrame( () => {
+			const container = fieldsContainerRef.current;
+			if ( ! container ) {
+				return;
+			}
+			const controls = Array.from(
+				container.querySelectorAll< HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement >(
+					'input, select, textarea'
+				)
+			);
+			// filter (not find) so checkValidity() runs on every control and reveals
+			// each invalid field, then focus the first invalid one.
+			const invalidControls = controls.filter( ( control ) => ! control.checkValidity() );
+			invalidControls[ 0 ]?.focus();
+		} );
+		return () => cancelAnimationFrame( raf );
+	}, [ isDirty, serverErrorKey ] );
 
 	return (
 		<VStack spacing={ 10 }>
@@ -169,15 +237,17 @@ export default function ContactForm( {
 				<CardBody>
 					<VStack spacing={ 4 }>
 						{ beforeForm }
-						<DataForm< DomainContactDetails >
-							data={ normalizedFormData }
-							fields={ fields }
-							form={ form }
-							validity={ validity }
-							onChange={ ( edits: Partial< DomainContactDetails > ) => {
-								setFormData( ( data ) => ( { ...data, ...edits } ) );
-							} }
-						/>
+						<div ref={ fieldsContainerRef }>
+							<DataForm< DomainContactDetails >
+								data={ normalizedFormData }
+								fields={ fields }
+								form={ form }
+								validity={ validityWithServerErrors }
+								onChange={ ( edits: Partial< DomainContactDetails > ) => {
+									setFormData( ( data ) => ( { ...data, ...edits } ) );
+								} }
+							/>
+						</div>
 						<Notice>
 							<VStack>
 								<Text as="p">

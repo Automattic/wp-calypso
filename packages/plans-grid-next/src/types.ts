@@ -142,6 +142,7 @@ export interface CommonGridProps {
 }
 
 export interface FeaturesGridProps extends CommonGridProps {
+	bottomGridPlan?: GridPlan;
 	gridPlans: GridPlan[];
 	currentPlanManageHref?: string;
 	generatedWPComSubdomain: DataResponse< { domain_name: string } >;
