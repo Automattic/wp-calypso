@@ -40,9 +40,11 @@ function isVideoStatType( value: string | null ): value is VideoStatType {
 export default function VideoSummary( {
 	postId,
 	initialStatType,
+	uploadDate,
 }: {
 	postId: number;
 	initialStatType: string | null;
+	uploadDate: string | null;
 } ) {
 	const translate = useTranslate();
 	const moment = useLocalizedMoment();
@@ -113,9 +115,54 @@ export default function VideoSummary( {
 
 	const summaryData = seriesByType[ statType ];
 
+	// Normalizes a raw API date to its period bucket, so generated buckets and
+	// API records use the same keys regardless of the API's date format.
+	const bucketKey = ( date: string ) => moment( date ).startOf( period ).format( 'YYYY-MM-DD' );
+
+	// The API only returns buckets from the video's first activity onwards, so
+	// a young video yields one or two bars that the chart lays out poorly.
+	// Zero-fill gaps and, for the day view, extend the window backwards to a
+	// full page of bars, matching the designs.
+	const zeroFilledData = useMemo( () => {
+		const raw = summaryData?.data ?? [];
+		if ( ! raw.length ) {
+			return raw;
+		}
+
+		const valuesByBucket = new Map(
+			raw.map( ( { period: date, value } ) => [ bucketKey( date ), value ] )
+		);
+		const end = moment( raw[ raw.length - 1 ].period ).startOf( period );
+		let start = moment( raw[ 0 ].period ).startOf( period );
+		if ( uploadDate ) {
+			const uploadStart = moment( uploadDate ).startOf( period );
+			if ( uploadStart.isValid() && uploadStart.isBefore( start ) ) {
+				start = uploadStart;
+			}
+		}
+		if ( period === 'day' ) {
+			const minStart = end.clone().subtract( MAX_RECORDS_PER_DAY - 1, 'day' );
+			if ( minStart.isBefore( start ) ) {
+				start = minStart;
+			}
+		}
+		const maxBuckets = 1000;
+		if ( end.diff( start, period ) + 1 > maxBuckets ) {
+			start = end.clone().subtract( maxBuckets - 1, period );
+		}
+
+		const buckets = [];
+		for ( const cursor = start.clone(); ! cursor.isAfter( end ); cursor.add( 1, period ) ) {
+			const key = cursor.format( 'YYYY-MM-DD' );
+			buckets.push( { period: key, value: valuesByBucket.get( key ) ?? 0 } );
+		}
+		return buckets;
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [ summaryData, period, uploadDate, moment ] );
+
 	const allRecords: ChartRecord[] = useMemo(
 		() =>
-			( summaryData?.data ?? [] ).map( ( { period: date, value } ) => {
+			zeroFilledData.map( ( { period: date, value } ) => {
 				const start = moment( date );
 				switch ( period ) {
 					case 'week':
@@ -150,7 +197,7 @@ export default function VideoSummary( {
 						};
 				}
 			} ),
-		[ summaryData, period, moment ]
+		[ zeroFilledData, period, moment ]
 	);
 
 	const getPageRecords = ( pageNum: number ) => {
@@ -179,7 +226,7 @@ export default function VideoSummary( {
 			return null;
 		}
 		return data.data
-			.filter( ( record ) => visibleDates.has( record.period ) )
+			.filter( ( record ) => visibleDates.has( bucketKey( record.period ) ) )
 			.reduce( ( total, record ) => total + record.value, 0 );
 	};
 
@@ -189,21 +236,23 @@ export default function VideoSummary( {
 		}
 		const viewsByDate = new Map(
 			viewsData.data
-				.filter( ( record ) => visibleDates.has( record.period ) )
-				.map( ( record ) => [ record.period, record.value ] )
+				.filter( ( record ) => visibleDates.has( bucketKey( record.period ) ) )
+				.map( ( record ) => [ bucketKey( record.period ), record.value ] )
 		);
 		let weightedTotal = 0;
 		let viewsTotal = 0;
 		for ( const record of retentionData.data ) {
-			if ( ! visibleDates.has( record.period ) ) {
+			const key = bucketKey( record.period );
+			if ( ! visibleDates.has( key ) ) {
 				continue;
 			}
-			const views = viewsByDate.get( record.period ) ?? 0;
+			const views = viewsByDate.get( key ) ?? 0;
 			weightedTotal += record.value * views;
 			viewsTotal += views;
 		}
 		return viewsTotal > 0 ? weightedTotal / viewsTotal : null;
-	}, [ retentionData, viewsData, visibleDates ] );
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [ retentionData, viewsData, visibleDates, period ] );
 
 	const metricValues: VideoMetricValues = {
 		views: sumVisible( viewsData ),
@@ -283,6 +332,7 @@ export default function VideoSummary( {
 		<div
 			className={ clsx( 'stats-video-summary', 'is-chart-tabs', {
 				'is-period-year': period === 'year',
+				'has-less-than-three-bars': chartData.length > 0 && chartData.length < 3,
 			} ) }
 		>
 			{ siteId &&
