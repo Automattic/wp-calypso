@@ -46,14 +46,14 @@ function StatusBadge( { status }: { status: TeamMemberStatus } ) {
 function MemberCell( { member }: { member: TeamMember } ) {
 	const name = member.displayName ?? __( 'Team member' );
 	return (
-		<HStack spacing={ 3 } justify="flex-start" className="agency-team-member">
+		<HStack spacing={ 3 } justify="flex-start">
 			{ member.avatar ? (
 				<img className="agency-team-member__avatar" src={ member.avatar } alt="" />
 			) : (
 				<span className="agency-team-member__avatar agency-team-member__avatar-placeholder" />
 			) }
-			<VStack spacing={ 0 } className="agency-team-member__details">
-				<span className="agency-team-member__name">{ name }</span>
+			<VStack spacing={ 0 }>
+				<span>{ name }</span>
 				<Text variant="muted">{ member.email }</Text>
 			</VStack>
 		</HStack>
@@ -82,7 +82,7 @@ export function useTeamFields(): Field< TeamMember >[] {
 			id: 'name',
 			label: __( 'Name' ),
 			enableHiding: false,
-			enableSorting: false,
+			enableSorting: true,
 			enableGlobalSearch: true,
 			getValue: ( { item } ) => [ item.displayName, item.email ].filter( Boolean ).join( ' ' ),
 			render: ( { item } ) => <MemberCell member={ item } />,
