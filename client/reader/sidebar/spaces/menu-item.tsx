@@ -27,7 +27,7 @@ export function SpaceMenuItem( { space, isSelected, onClick, onPrefetch }: Props
 		>
 			<MenuItemLink
 				className="sidebar__menu-link sidebar-spaces__link"
-				href={ getSpacePath( space.id ) }
+				href={ getSpacePath( space.slug ) }
 				onClick={ onClick }
 				onMouseEnter={ onPrefetch }
 				onFocus={ onPrefetch }

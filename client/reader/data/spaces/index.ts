@@ -1,6 +1,7 @@
 import {
 	createReadSpaceMutation,
 	deleteReadSpaceMutation,
+	readSpaceBySlugQuery,
 	readSpaceQuery,
 	readSpacesQuery,
 	updateReadSpaceMutation,
@@ -8,9 +9,14 @@ import {
 import { useMutation, useQueries, useQuery, useQueryClient } from '@tanstack/react-query';
 import type { ReadSpace, ReadSpaceDetails } from '@automattic/api-core';
 
+type ReadSpaceQueryOptions = {
+	enabled?: boolean;
+	refetchOnMount?: boolean | 'always';
+};
+
 /**
  * The user's spaces for the sidebar and space views, from the live list
- * endpoint. Summary shape only (no sources or tags) — use `useSpace` for those.
+ * endpoint. Summary shape only (no sources or tags) — use `useSpaceBySlug` for those.
  */
 export function useSpaces(): ReadSpace[] {
 	const { data = [] } = useQuery( readSpacesQuery() );
@@ -18,27 +24,27 @@ export function useSpaces(): ReadSpace[] {
 }
 
 /**
- * A single space's details (its followed feeds and tags), loaded on demand from
- * the live detail endpoint (e.g. by the Customize modal). Disabled until an id is
- * known; pass `enabled: false` to also hold it off while the consumer (e.g. a
- * closed modal) doesn't need it yet.
+ * A single space's details resolved by its URL slug (`GET /reader/spaces/slug/…`).
+ * This is how a slug-addressed space view resolves itself: the returned detail
+ * carries the numeric `id` that then drives the streams and mutations. A 404
+ * (unknown / renamed-away / not-yours slug) surfaces as the query's error, which
+ * the view turns into the not-found state. `options` tunes the query config; the
+ * caller's `enabled` is ANDed with a known slug, so it never runs without one.
  */
-export function useSpace(
-	spaceId: string | null | undefined,
-	{ enabled = true }: { enabled?: boolean } = {}
-) {
+export function useSpaceBySlug( slug: string | null | undefined, options?: ReadSpaceQueryOptions ) {
 	return useQuery( {
-		...readSpaceQuery( spaceId ?? '' ),
-		enabled: enabled && Boolean( spaceId ),
+		...readSpaceBySlugQuery( slug ?? '' ),
+		...options,
+		enabled: Boolean( slug ) && ( options?.enabled ?? true ),
 	} );
 }
 
 /**
  * Details (sources + tags) for several spaces at once, keyed by space id. Used by
- * the subscribe-with-space picker to know which spaces already contain the feed.
- * Batches the per-space detail queries in a single hook at the modal level (rather
- * than each row mounting its own `useSpace`), sharing the same detail cache as
- * `useSpace`. Note this still runs one query per space id.
+ * the subscribe-with-space picker to know which spaces already contain the feed —
+ * a batch lookup by id (it drives id-based feed mutations), not a URL resolution,
+ * so it reads the id-keyed detail directly. Batches the per-space queries in a
+ * single hook at the modal level; still one query per space id.
  */
 export function useSpacesDetails( spaceIds: string[] ): {
 	byId: Record< string, ReadSpaceDetails | undefined >;

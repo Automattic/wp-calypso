@@ -7,17 +7,35 @@ import ActionPanelLink from 'calypso/components/action-panel/link';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 import type { DomainNames, EligibilityWarning } from 'calypso/state/automated-transfer/selectors';
 
+export type AtomicTransferAction = 'hosting-features' | 'themes' | 'plugins' | 'scan' | 'backup';
+
 interface ExternalProps {
 	context: string | null;
 	warnings: EligibilityWarning[];
 	showContact?: boolean;
+	transferAction?: AtomicTransferAction;
 }
 
 type Props = ExternalProps & LocalizeProps;
 
-export const WarningList = ( { context, translate, warnings, showContact = true }: Props ) => {
+export const WarningList = ( {
+	context,
+	translate,
+	warnings,
+	showContact = true,
+	transferAction,
+}: Props ) => {
+	const transferIntro = getAtomicTransferIntro( transferAction, translate );
+
 	return (
 		<div>
+			{ transferIntro && (
+				<div className="eligibility-warnings__warning eligibility-warnings__intro">
+					<div className="eligibility-warnings__message">
+						<span className="eligibility-warnings__message-description">{ transferIntro }</span>
+					</div>
+				</div>
+			) }
 			{ warnings.map( ( { name, description, supportPostId, supportUrl, domainNames }, index ) => (
 				<div className="eligibility-warnings__warning" key={ index }>
 					<div className="eligibility-warnings__message">
@@ -30,7 +48,7 @@ export const WarningList = ( { context, translate, warnings, showContact = true 
 							{ domainNames ? (
 								<>
 									{ translate(
-										'Turning on this feature will update {{strong}}your site’s default address by changing the subdomain{{/strong}}. We’ll automatically redirect visitors from the current address to the new one.',
+										'{{strong}}Your site’s address will change{{/strong}} to the one below. Links to your old address will redirect automatically.',
 										{ components: { strong: <strong /> } }
 									) }{ ' ' }
 									<InlineSupportLink
@@ -40,9 +58,9 @@ export const WarningList = ( { context, translate, warnings, showContact = true 
 											'https://wordpress.com/support/changing-site-address/#change-a-wpcomstaging-com-address'
 										) }
 									>
-										{ translate( 'Learn more.' ) }
+										{ translate( 'Learn more' ) }
 									</InlineSupportLink>
-									{ displayDomainNames( domainNames ) }
+									.{ displayDomainNames( domainNames ) }
 								</>
 							) : (
 								<>
@@ -50,9 +68,17 @@ export const WarningList = ( { context, translate, warnings, showContact = true 
 										dangerouslySetInnerHTML={ { __html: DOMPurify.sanitize( description ) } } // eslint-disable-line react/no-danger
 									/>
 									{ supportUrl && (
-										<InlineSupportLink supportLink={ supportUrl } supportPostId={ supportPostId }>
-											{ translate( 'Learn more.' ) }
-										</InlineSupportLink>
+										<>
+											{ ' ' }
+											<InlineSupportLink
+												supportLink={ supportUrl }
+												supportPostId={ supportPostId }
+												showIcon={ false }
+											>
+												{ translate( 'Learn more' ) }
+											</InlineSupportLink>{ ' ' }
+											<span className="eligibility-warnings__external-arrow">↗</span>.
+										</>
 									) }
 								</>
 							) }
@@ -77,6 +103,36 @@ export const WarningList = ( { context, translate, warnings, showContact = true 
 		</div>
 	);
 };
+
+function getAtomicTransferIntro(
+	transferAction: AtomicTransferAction | undefined,
+	translate: LocalizeProps[ 'translate' ]
+) {
+	switch ( transferAction ) {
+		case 'hosting-features':
+			return translate(
+				'To turn hosting features on, we’ll need to move your site over to WordPress.com’s advanced managed cloud hosting.'
+			);
+		case 'themes':
+			return translate(
+				'To upload themes, we’ll need to move your site over to WordPress.com’s advanced managed cloud hosting.'
+			);
+		case 'plugins':
+			return translate(
+				'To install plugins, we’ll need to move your site over to WordPress.com’s advanced managed cloud hosting.'
+			);
+		case 'scan':
+			return translate(
+				'To turn Jetpack Scan on, we’ll need to move your site over to WordPress.com’s advanced managed cloud hosting.'
+			);
+		case 'backup':
+			return translate(
+				'To turn Jetpack VaultPress Backup on, we’ll need to move your site over to WordPress.com’s advanced managed cloud hosting.'
+			);
+		default:
+			return null;
+	}
+}
 
 function displayDomainNames( domainNames: DomainNames ) {
 	//Split out the first part of the domain names and then join the rest back together.

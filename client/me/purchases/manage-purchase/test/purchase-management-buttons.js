@@ -130,6 +130,18 @@ function createMockReduxStoreForPurchase( purchaseForRedux, domains_items = {} )
 	);
 }
 
+// The manage-purchase page renders two "Add/Change payment method" links: the
+// management nav item, and an inline link inside the "Payment method" detail
+// (the complementary region) that connects the no-payment-method warning to an
+// action. This returns the nav item, which lives outside that region.
+async function findPaymentMethodNavItem() {
+	const links = await screen.findAllByRole( 'link', {
+		name: /(?:Add|Change) payment method/,
+	} );
+	const paymentMethodDetail = screen.getByRole( 'complementary', { name: 'Payment method' } );
+	return links.find( ( link ) => ! paymentMethodDetail.contains( link ) );
+}
+
 describe( 'Purchase Management Buttons', () => {
 	const queryClient = new QueryClient();
 
@@ -359,7 +371,7 @@ describe( 'Purchase Management Buttons', () => {
 			</QueryClientProvider>
 		);
 
-		expect( await screen.findByText( /(?:Add|Change) payment method/ ) ).toBeInTheDocument();
+		expect( await findPaymentMethodNavItem() ).toBeInTheDocument();
 	} );
 
 	it( 'renders payment method nav item for A4A billingdragon purchase on a siteless holding site', async () => {
@@ -410,7 +422,7 @@ describe( 'Purchase Management Buttons', () => {
 			</QueryClientProvider>
 		);
 
-		expect( await screen.findByText( /(?:Add|Change) payment method/ ) ).toBeInTheDocument();
+		expect( await findPaymentMethodNavItem() ).toBeInTheDocument();
 	} );
 
 	it( 'renders renew button for A4A billingdragon purchase', async () => {
@@ -491,7 +503,7 @@ describe( 'Purchase Management Buttons', () => {
 		);
 
 		// Wait for component to fully render
-		await screen.findByText( /(?:Add|Change) payment method/ );
+		await findPaymentMethodNavItem();
 		expect( screen.queryByText( /Upgrade/ ) ).not.toBeInTheDocument();
 	} );
 } );

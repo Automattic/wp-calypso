@@ -11,6 +11,7 @@ import { SearchNotice } from '../components/search-notice';
 import { SearchResults } from '../components/search-results';
 import { SkipSuggestion } from '../components/skip-suggestion';
 import { UnavailableSearchResult } from '../components/unavailable-search-result';
+import { isFqdnQuery } from '../helpers';
 import { useIsCurrentMutation } from '../hooks/use-is-current-mutation';
 import { useRequestTracking } from '../hooks/use-request-tracking';
 import { useSuggestionsList } from '../hooks/use-suggestions-list';
@@ -145,10 +146,14 @@ export const ResultsPage = () => {
 		regularSuggestions,
 		bundleSuggestion,
 	} = useSuggestionsList();
+	// The top BundleCard is the FQDN path only; a bare-term search shows inline
+	// bundle rows beneath trigger suggestions instead (see useInlineBundles).
+	const isFqdn = isFqdnQuery( query );
 	const visibleBundleSuggestion =
-		unavailableBundle &&
-		bundleSuggestion?.bundle_group_id === unavailableBundle.groupId &&
-		query === unavailableBundle.query
+		! isFqdn ||
+		( unavailableBundle &&
+			bundleSuggestion?.bundle_group_id === unavailableBundle.groupId &&
+			query === unavailableBundle.query )
 			? undefined
 			: bundleSuggestion;
 	const numberOfInitialVisibleSuggestions =
@@ -211,22 +216,23 @@ export const ResultsPage = () => {
 				{ isLoadingSuggestions ? (
 					<FeaturedSearchResults.Placeholder />
 				) : (
-					<FeaturedSearchResults suggestions={ featuredSuggestions } />
-				) }
-				{ ! isLoadingSuggestions && visibleBundleSuggestion && (
-					<BundleCard
-						suggestion={ visibleBundleSuggestion }
-						onAddToCart={ ( bundle ) => {
-							addBundleToCart( { bundle, query } );
-						} }
-						isAddedToCart={ visibleBundleSuggestion.domains.every( ( { domain } ) =>
-							cart.hasItem( domain )
+					<FeaturedSearchResults suggestions={ featuredSuggestions }>
+						{ visibleBundleSuggestion && (
+							<BundleCard
+								suggestion={ visibleBundleSuggestion }
+								onAddToCart={ ( bundle ) => {
+									addBundleToCart( { bundle, query } );
+								} }
+								isAddedToCart={ visibleBundleSuggestion.domains.every( ( { domain } ) =>
+									cart.hasItem( domain )
+								) }
+								onContinue={ events.onContinue }
+								isBusy={ isAddingBundle }
+								disabled={ isMutating }
+								errorMessage={ bundleErrorMessage }
+							/>
 						) }
-						onContinue={ events.onContinue }
-						isBusy={ isAddingBundle }
-						disabled={ isMutating }
-						errorMessage={ bundleErrorMessage }
-					/>
+					</FeaturedSearchResults>
 				) }
 				{ isLoadingSuggestions ? (
 					<SearchResults.Placeholder />

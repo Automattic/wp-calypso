@@ -104,12 +104,10 @@ test.describe(
 			} );
 
 			await test.step( 'Login via popup to like the post', async () => {
-				newPage.on( 'popup', async ( popup ) => {
-					await otherUser.logInViaPopupPage( popup );
-				} );
-
 				const loggedOutPostPage = new PublishedPostPage( newPage );
-				await loggedOutPostPage.likePost();
+				await loggedOutPostPage.likePost( {
+					handleLoginPopup: ( popup ) => otherUser.logInViaPopupPage( popup ),
+				} );
 			} );
 
 			await newContext.close();

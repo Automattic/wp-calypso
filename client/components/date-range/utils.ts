@@ -5,32 +5,29 @@ interface DateRange {
 	to: Moment | null;
 }
 
-function addDayToRange( day: Moment, range: DateRange ): DateRange {
+function addDayToRange( day: Moment | null, range: DateRange ): DateRange {
 	if ( ! day || ! day.isValid() ) {
 		return range;
 	}
 
-	let { from, to } = range;
+	const from = range.from?.clone().startOf( 'day' ) ?? null;
+	const to = range.to?.clone().startOf( 'day' ) ?? null;
+	const selectedDay = day.clone().startOf( 'day' );
 
-	from = from?.startOf( 'day' ) ?? null;
-	to = to?.startOf( 'day' ) ?? null;
-	day = day.startOf( 'day' );
-
-	if ( from?.isSame( day ) ) {
-		return { ...range, from: null };
-	}
-	if ( to?.isSame( day ) ) {
-		return { ...range, to: null };
+	// A complete range exists: start a new selection from the clicked day.
+	if ( from && to ) {
+		return { ...range, from: selectedDay, to: null };
 	}
 
-	if ( ! from ) {
-		return { ...range, from: day };
-	}
-	if ( ! to ) {
-		return { ...range, to: day };
+	// Only one endpoint is set: fill the other, keeping the two days ordered.
+	const anchor = from ?? to;
+	if ( ! anchor ) {
+		return { ...range, from: selectedDay, to: null };
 	}
 
-	return { ...range, from: day, to: null };
+	return selectedDay.isBefore( anchor )
+		? { ...range, from: selectedDay, to: anchor }
+		: { ...range, from: anchor, to: selectedDay };
 }
 
 export { addDayToRange };

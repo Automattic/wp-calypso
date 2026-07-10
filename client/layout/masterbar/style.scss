@@ -724,52 +724,36 @@ body.is-mobile-app-view {
 .masterbar__item-stats-sparkline {
 	padding: 0 10px;
 
-	// vertical-align on the svg itself is never exactly centered — "middle"
-	// aligns to a point derived from the font baseline, not the line box's
-	// true center. Making the content wrapper its own flex container
-	// centers the svg geometrically instead.
 	.masterbar__item-content {
 		display: flex;
 		align-items: center;
 		height: 100%;
 	}
 
-	// Resting size is just the bars — the peak marker to the right is clipped
-	// by default so it doesn't take up any layout space until hovered, the
-	// same show/hide-on-hover technique wp-admin's own admin bar sparkline
-	// uses (there, widening the chart image's clipped container).
-	.masterbar__stats-sparkline {
+	.wpcom-stats-sparkline {
 		width: auto;
 		height: auto;
-		overflow: hidden;
 	}
 
-	.masterbar__stats-sparkline-bar {
+	.wpcom-stats-sparkline-bar {
 		fill: var(--color-masterbar-icon);
 	}
 
-	.masterbar__stats-sparkline-peak {
-		opacity: 0;
-		transition: opacity 0.15s ease-in;
-	}
-
-	.masterbar__stats-sparkline-arrow {
+	.wpcom-stats-sparkline-arrow {
 		fill: var(--color-masterbar-icon);
 	}
 
-	.masterbar__stats-sparkline-label {
+	.wpcom-stats-sparkline-label {
 		fill: var(--color-masterbar-icon);
-		font-size: 9px;
 	}
 
-	// Keyboard users tabbing to this link get the same reveal a mouse hover does.
 	&:hover,
 	&:focus-visible {
-		.masterbar__stats-sparkline {
+		.wpcom-stats-sparkline {
 			overflow: visible;
 		}
 
-		.masterbar__stats-sparkline-peak {
+		.wpcom-stats-sparkline-peak {
 			opacity: 1;
 		}
 	}
@@ -1255,54 +1239,14 @@ a.masterbar__quick-language-switcher {
 }
 
 .masterbar--is-checkout-redesign-v1 {
-	padding-inline-start: 1.5em;
+	// The checkout masterbar reuses StepContainerV2's Step.TopBar as its header
+	// (see client/layout/masterbar/checkout.tsx). Step.TopBar reads these custom
+	// properties for its spacing; they are normally provided by the
+	// .step-container-v2 root, which isn't an ancestor here, so define them.
+	--step-container-v2-top-bar-padding: 1rem;
+	--step-container-v2-top-bar-content-height: 24px;
 
-	.masterbar__secure-checkout {
-		gap: 0;
-	}
-
-	.masterbar__wp-circle-logo {
-		display: block;
-		fill: currentColor;
-	}
-
-	.masterbar__redesign-divider {
-		width: 1px;
-		height: 16px;
-		background-color: currentColor;
-		opacity: 0.3;
-		margin-inline: 12px;
-	}
-
-	.masterbar__back-button {
-		display: flex;
-		align-items: center;
-		gap: 2px;
-		background: none;
-		border: none;
-		cursor: pointer;
-		font-size: 0.875rem;
-		font-weight: 500;
-		color: inherit;
-		padding: 0;
-		line-height: 1;
-
-		svg {
-			fill: currentColor;
-		}
-	}
-
-	.masterbar__need-help-button {
-		margin-left: auto;
-		background: none;
-		border: none;
-		cursor: pointer;
-		font-size: 0.875rem;
-		font-weight: 400;
-		text-decoration: underline;
-		color: inherit;
-		padding: 0;
-	}
+	padding: 0;
 }
 
 .masterbar__item-help {

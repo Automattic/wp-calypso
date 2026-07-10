@@ -80,6 +80,19 @@ $summary-nav-swap-width: 661px;
 	}
 }
 
+.stats-summary-nav__date-control {
+	display: flex;
+	align-items: center;
+
+	@media (max-width: 1160px) {
+		padding: 16px 0;
+	}
+
+	@media (max-width: $break-small) {
+		padding: $summary-small-padding;
+	}
+}
+
 .stats-summary-nav__intervals-container {
 	display: flex;
 }

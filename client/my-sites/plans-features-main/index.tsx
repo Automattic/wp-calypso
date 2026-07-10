@@ -29,6 +29,7 @@ import {
 	isWooHostedPlan,
 	isWooHostedFreePlan,
 	isWpcomEnterpriseGridPlan,
+	isEcommercePlan,
 } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
 import { Button, Spinner } from '@automattic/components';
@@ -690,6 +691,9 @@ const PlansFeaturesMain = ( {
 	const {
 		isLoading: isPlansGridRedesignExperimentLoading,
 		showDifferentiatorHeader: showPlansGridRedesignDifferentiatorHeader,
+		showEnterpriseBottomCard,
+		showWooCommerceBottomCard,
+		usePlansGridRedesignFeatures,
 		usePlansGridRedesign,
 		usePlansGridRedesignNewDescription,
 	} = usePlansGridRedesignExperiment( { flowName, isInSignup, siteId } );
@@ -907,6 +911,7 @@ const PlansFeaturesMain = ( {
 		term,
 		reflectStorageSelectionInPlanPrices: true,
 		useVar42NoAiFeatures,
+		usePlansGridRedesignFeatures,
 		showPricingDifferentiationFeaturePills,
 		useFocusedNewCopyTaglines,
 		usePlansGridRedesignNewDescription,
@@ -936,20 +941,62 @@ const PlansFeaturesMain = ( {
 		[ isIndiaA4A, translate ]
 	);
 
-	// when `deemphasizeFreePlan` is enabled, the Free plan will be presented as a CTA link instead of a plan card in the features grid.
-	const gridPlansForFeaturesGrid = useMemo(
-		() =>
-			applyA4AIndiaCopy(
-				gridPlansForFeaturesGridRaw?.filter( ( { planSlug } ) => {
-					if ( deemphasizeFreePlan ) {
-						return planSlug !== PLAN_FREE;
-					}
-
-					return true;
-				} ) ?? null // optional chaining can result in `undefined`; we don't want to introduce it here.
-			),
-		[ gridPlansForFeaturesGridRaw, deemphasizeFreePlan, applyA4AIndiaCopy ]
+	const gridPlansForFeaturesGridWithA4AIndiaCopy = useMemo(
+		() => applyA4AIndiaCopy( gridPlansForFeaturesGridRaw ?? null ),
+		[ gridPlansForFeaturesGridRaw, applyA4AIndiaCopy ]
 	);
+
+	const bottomGridPlanForFeaturesGrid = useMemo( () => {
+		if ( ! gridPlansForFeaturesGridWithA4AIndiaCopy ) {
+			return undefined;
+		}
+
+		let bottomGridPlan: GridPlan | undefined;
+
+		if ( showEnterpriseBottomCard ) {
+			bottomGridPlan = gridPlansForFeaturesGridWithA4AIndiaCopy.find( ( { planSlug } ) =>
+				isWpcomEnterpriseGridPlan( planSlug )
+			);
+		} else if ( showWooCommerceBottomCard ) {
+			bottomGridPlan = gridPlansForFeaturesGridWithA4AIndiaCopy.find( ( { planSlug } ) =>
+				isEcommercePlan( planSlug )
+			);
+		}
+
+		return bottomGridPlan;
+	}, [
+		gridPlansForFeaturesGridWithA4AIndiaCopy,
+		showEnterpriseBottomCard,
+		showWooCommerceBottomCard,
+	] );
+
+	// when `deemphasizeFreePlan` is enabled, the Free plan will be presented as a CTA link instead of a plan card in the features grid.
+	const gridPlansForFeaturesGrid = useMemo( () => {
+		const bottomGridPlanSlug = bottomGridPlanForFeaturesGrid?.planSlug;
+
+		return (
+			gridPlansForFeaturesGridWithA4AIndiaCopy?.filter( ( { planSlug } ) => {
+				if ( planSlug === bottomGridPlanSlug ) {
+					return false;
+				}
+
+				if ( showWooCommerceBottomCard && isWpcomEnterpriseGridPlan( planSlug ) ) {
+					return false;
+				}
+
+				if ( deemphasizeFreePlan ) {
+					return planSlug !== PLAN_FREE;
+				}
+
+				return true;
+			} ) ?? null
+		);
+	}, [
+		bottomGridPlanForFeaturesGrid,
+		gridPlansForFeaturesGridWithA4AIndiaCopy,
+		deemphasizeFreePlan,
+		showWooCommerceBottomCard,
+	] );
 
 	const gridPlansForComparisonGridFinal = useMemo(
 		() => applyA4AIndiaCopy( gridPlansForComparisonGrid ),
@@ -1228,7 +1275,7 @@ const PlansFeaturesMain = ( {
 		featureGroupMapForFeaturesGrid = getWooExpressFeaturesGroupedForFeaturesGrid();
 	} else if ( intent === 'plans-wordpress-hosting' ) {
 		featureGroupMapForFeaturesGrid = getWordPressHostingFeaturesGroupedForFeaturesGrid();
-	} else if ( useVar42NoAiFeatures ) {
+	} else if ( useVar42NoAiFeatures || usePlansGridRedesignFeatures ) {
 		// Stacked rollout variant should render a single, ordered list (no grouping),
 		// otherwise features get scattered across groups causing gaps and can be filtered out.
 		const featureGroups = getPlanFeaturesGroupedForFeaturesGrid();
@@ -1419,6 +1466,7 @@ const PlansFeaturesMain = ( {
 								{ gridPlansForFeaturesGrid && (
 									<FeaturesGrid
 										allFeaturesList={ getFeaturesList() }
+										bottomGridPlan={ bottomGridPlanForFeaturesGrid }
 										className={ clsx( 'plans-features-main__features-grid', {
 											'is-plan-differentiators-experiment': isExperimentVariant,
 											'is-plans-grid-redesign-experiment': usePlansGridRedesign,

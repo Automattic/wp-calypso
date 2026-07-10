@@ -8,6 +8,7 @@ import {
 	doesCartLocationDifferFromResponseCartLocation,
 	convertResponseCartToRequestCart,
 	convertRawResponseCartToResponseCart,
+	parseNextDomainCondition,
 } from '../src/cart-functions';
 
 const cart = {
@@ -582,5 +583,23 @@ describe( 'convertRawResponseCartToResponseCart', function () {
 		} );
 		expect( Array.isArray( result.tax.location ) ).toBeFalsy();
 		expect( typeof result.tax.location === 'object' ).toBeTruthy();
+	} );
+} );
+
+describe( 'parseNextDomainCondition', function () {
+	it( 'splits a comma-separated list into TLDs', function () {
+		expect( parseNextDomainCondition( 'blog,art' ) ).toEqual( [ 'blog', 'art' ] );
+	} );
+
+	it( 'trims whitespace around entries', function () {
+		expect( parseNextDomainCondition( 'blog, art' ) ).toEqual( [ 'blog', 'art' ] );
+	} );
+
+	it( 'drops empty entries such as trailing commas', function () {
+		expect( parseNextDomainCondition( 'blog,art,' ) ).toEqual( [ 'blog', 'art' ] );
+	} );
+
+	it( 'returns an empty array for an empty string', function () {
+		expect( parseNextDomainCondition( '' ) ).toEqual( [] );
 	} );
 } );

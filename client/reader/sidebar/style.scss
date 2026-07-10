@@ -38,9 +38,8 @@
 }
 
 .reader-sidebar__section-header {
-	padding: 8px 0 5px;
-	margin-top: 24px;
-	pointer-events: none;
+	margin-top: 8px;
+	padding: 0 14px;
 
 	&:first-of-type {
 		margin-top: 0;
@@ -63,6 +62,10 @@
 body.is-section-reader {
 	.is-global-sidebar-visible {
 		--content-padding-top: 32px;
+	}
+
+	.app-title__heading {
+		padding: 0 12px;
 	}
 
 	&.rtl .layout__content {
@@ -102,8 +105,8 @@ body.is-section-reader {
 	.sidebar-menu-container {
 		display: flex;
 		flex-direction: column;
-		gap: 24px;
-		padding: 0 5px;
+		gap: 15px;
+		padding: 0 16px;
 
 		.app-title {
 			padding: 0;
@@ -137,7 +140,7 @@ body.is-section-reader {
 			display: flex;
 			justify-content: space-between;
 			align-items: center;
-			margin-inline-start: 32px;
+			margin-inline-start: 29px;
 		}
 
 		.sidebar__expandable-arrow {
@@ -148,7 +151,7 @@ body.is-section-reader {
 		}
 
 		.sidebar__expandable-content {
-			padding: 2px 0 0 20px;
+			padding-top: 2px;
 			margin: 0;
 			background: none;
 		}
@@ -156,6 +159,7 @@ body.is-section-reader {
 		.sidebar__heading {
 			background-color: initial;
 			margin: 0;
+			border-radius: 4px;
 
 			&:hover .sidebar__expandable-arrow {
 				fill: var( --studio-gray-20 );
@@ -196,7 +200,7 @@ body.is-section-reader {
 	}
 
 	.sidebar__menu-icon {
-		margin-right: 8px;
+		margin-right: 5px;
 	}
 
 	.sidebar__menu-link-reader {
@@ -373,7 +377,7 @@ body.is-section-reader {
 			align-items: center;
 			gap: 6px;
 			line-height: 1.5;
-			padding: 12px;
+			padding: 12px 10px 12px 39px;
 			box-sizing: content-box;
 
 			&.view-more-link {
@@ -385,6 +389,10 @@ body.is-section-reader {
 			&:has( > :nth-child( 1 ):last-child ) > :first-child {
 				grid-column-start: 2;
 			}
+		}
+
+		.add-tags-form {
+			padding-inline-start: 39px;
 		}
 
 		.selected {

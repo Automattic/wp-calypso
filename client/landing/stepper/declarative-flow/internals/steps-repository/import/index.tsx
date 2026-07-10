@@ -19,10 +19,11 @@ export const ImportWrapper: StepType< {
 	accepts: {
 		text?: string;
 		subText?: string;
+		hideBack?: boolean;
 	};
 } > = function ( props ) {
 	const { __ } = useI18n();
-	const { navigation, children, stepName, text, subText } = props;
+	const { navigation, children, stepName, text, subText, hideBack } = props;
 	const useContainerV2 = stepName === 'importList';
 	const documentTitle = __( 'Import your site content' );
 	const showHeading = text && subText;
@@ -55,6 +56,7 @@ export const ImportWrapper: StepType< {
 				className="import__onboarding-page"
 				hideFormattedHeader
 				goBack={ navigation.goBack }
+				hideBack={ hideBack }
 				skipLabelText={ __( "I don't have a site address" ) }
 				isFullLayout
 				stepContent={ children as ReactElement }
@@ -75,7 +77,7 @@ const ImportStep: StepType< {
 	const fromUrl = useQuery().get( 'from' ) || '';
 
 	return (
-		<ImportWrapper { ...props }>
+		<ImportWrapper { ...props } hideBack>
 			<CaptureStep
 				initialUrl={ fromUrl }
 				goToStep={ ( step, section, params ) => {

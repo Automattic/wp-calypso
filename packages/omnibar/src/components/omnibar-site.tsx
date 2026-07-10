@@ -39,7 +39,6 @@ export function OmnibarSiteActionsNode( { nodes }: { nodes: OmnibarNode[] } ) {
 		<OmnibarMenu
 			key={ node.id }
 			node={ {
-				...node,
 				render: ( { title, meta } ) => (
 					<Stack direction="row" gap="xs" align="center">
 						<span>{ title }</span>
@@ -50,6 +49,7 @@ export function OmnibarSiteActionsNode( { nodes }: { nodes: OmnibarNode[] } ) {
 						) }
 					</Stack>
 				),
+				...node,
 			} }
 		/>
 	) );

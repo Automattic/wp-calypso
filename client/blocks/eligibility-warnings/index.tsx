@@ -32,9 +32,11 @@ import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selecto
 import HoldList, { hasBlockingHold, HardBlockingNotice, getBlockingMessages } from './hold-list';
 import SupportLink from './support-link';
 import { isAtomicSiteWithoutBusinessPlan } from './utils';
-import WarningList from './warning-list';
+import WarningList, { type AtomicTransferAction } from './warning-list';
 import type { EligibilityData } from 'calypso/state/automated-transfer/selectors';
 import './style.scss';
+
+export type { AtomicTransferAction } from './warning-list';
 
 // eslint-disable-next-line @typescript-eslint/no-empty-function
 const noop = () => {};
@@ -49,6 +51,7 @@ interface ExternalProps {
 	className?: string;
 	eligibilityData?: EligibilityData;
 	currentContext?: string;
+	atomicTransferAction?: AtomicTransferAction;
 	isMarketplace?: boolean;
 	isOnboarding?: boolean;
 	showDataCenterPicker?: boolean;
@@ -63,6 +66,7 @@ export const EligibilityWarnings = ( {
 	className,
 	ctaName,
 	context,
+	atomicTransferAction,
 	feature,
 	eligibilityData,
 	isEligible,
@@ -202,7 +206,12 @@ export const EligibilityWarnings = ( {
 
 			{ showWarnings && (
 				<CompactCard className="eligibility-warnings__warnings-card">
-					<WarningList context={ context } warnings={ warnings } showContact={ false } />
+					<WarningList
+						context={ context }
+						warnings={ warnings }
+						showContact={ false }
+						transferAction={ atomicTransferAction }
+					/>
 				</CompactCard>
 			) }
 
@@ -236,7 +245,13 @@ export const EligibilityWarnings = ( {
 						isBusy={ siteIsLaunching || siteIsSavingSettings || disableContinueButton }
 						onClick={ logEventAndProceed }
 					>
-						{ getProceedButtonText( listHolds, translate, context, showFreeTrial ) }
+						{ getProceedButtonText(
+							listHolds,
+							translate,
+							context,
+							showFreeTrial,
+							atomicTransferAction
+						) }
 					</Button>
 				</div>
 			</CompactCard>
@@ -263,7 +278,8 @@ function getProceedButtonText(
 	holds: string[],
 	translate: LocalizeProps[ 'translate' ],
 	context: string | null,
-	showFreeTrial?: boolean
+	showFreeTrial?: boolean,
+	atomicTransferAction?: AtomicTransferAction
 ) {
 	if ( siteRequiresUpgrade( holds ) ) {
 		if ( context === 'plugin-details' || context === 'plugins' ) {
@@ -279,6 +295,12 @@ function getProceedButtonText(
 	}
 	if ( siteRequiresGoingPublic( holds ) ) {
 		return translate( 'Make your site public and continue' );
+	}
+	if ( atomicTransferAction === 'scan' ) {
+		return translate( 'Activate Jetpack Scan' );
+	}
+	if ( atomicTransferAction === 'backup' ) {
+		return translate( 'Activate Jetpack VaultPress Backup' );
 	}
 	if ( context === 'hosting-features' ) {
 		return translate( 'Activate hosting features' );

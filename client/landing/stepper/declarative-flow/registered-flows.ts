@@ -14,6 +14,7 @@ import {
 	HUNDRED_YEAR_DOMAIN_FLOW,
 	EXAMPLE_FLOW,
 	AI_SITE_BUILDER_FLOW,
+	AI_SITE_BUILDER_ONBOARDING_FLOW,
 	AI_SITE_BUILDER_SPEC_FLOW,
 	ONBOARDING_UNIFIED_FLOW,
 	DOMAIN_AND_PLAN_FLOW,
@@ -23,6 +24,7 @@ import {
 	ART_PROMO_FLOW,
 	DIRECT_TO_CART_FLOW,
 	WRITE_ON_FLOW,
+	EDUCATION_FLOW,
 } from '@automattic/onboarding';
 import type { Flow, FlowV2 } from '../declarative-flow/internals/types';
 
@@ -34,6 +36,9 @@ const availableFlows: Record< string, () => Promise< { default: FlowV2< any > } 
 
 	[ DIRECT_TO_CART_FLOW ]: () =>
 		import( /* webpackChunkName: "direct-to-cart-flow" */ './flows/direct-to-cart/direct-to-cart' ),
+
+	[ EDUCATION_FLOW ]: () =>
+		import( /* webpackChunkName: "education-flow" */ './flows/education/education' ),
 
 	[ ONBOARDING_FLOW ]: () =>
 		import( /* webpackChunkName: "onboarding-flow" */ './flows/onboarding/onboarding' ),
@@ -154,6 +159,14 @@ const aiSiteBuilderFlows: Record< string, () => Promise< { default: FlowV2< any 
 		  }
 		: {};
 
+const aiSiteBuilderOnboardingFlows: Record< string, () => Promise< { default: FlowV2< any > } > > =
+	{
+		[ AI_SITE_BUILDER_ONBOARDING_FLOW ]: () =>
+			import(
+				/* webpackChunkName: "ai-site-builder-onboarding-flow" */ './flows/ai-site-builder-onboarding/ai-site-builder-onboarding'
+			),
+	};
+
 const hundredYearDomainFlow: Record< string, () => Promise< { default: Flow } > > = {
 	[ HUNDRED_YEAR_DOMAIN_FLOW ]: () =>
 		import(
@@ -170,4 +183,5 @@ export default {
 	...deprecatedV1Flows,
 	...hundredYearDomainFlow,
 	...aiSiteBuilderFlows,
+	...aiSiteBuilderOnboardingFlows,
 };

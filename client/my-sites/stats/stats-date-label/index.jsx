@@ -99,9 +99,15 @@ function StatsDateLabel( {
 		return `${ localizedStartDate.format( 'll' ) } - ${ localizedEndDate.format( 'll' ) }`;
 	}
 
-	function dateForSummarize() {
+	function dateForSummarize( selectedShortcut = null ) {
 		if ( query.start_date ) {
-			return dateForCustomRange( query.start_date, query.date );
+			if (
+				selectedShortcut?.label &&
+				! [ 'month_to_date', 'year_to_date' ].includes( selectedShortcut?.id )
+			) {
+				return selectedShortcut.label;
+			}
+			return dateForCustomRange( query.start_date, query.date, selectedShortcut );
 		}
 
 		const localizedDate = momentSiteZone();
@@ -193,7 +199,7 @@ function StatsDateLabel( {
 	const isSummarizeQuery = query?.summarize;
 	const { selectedShortcut } = getShortcuts( reduxState, dateRange, translate );
 	const shortDisplayDate = isShort ? dateForDisplay( selectedShortcut ) : null;
-	const summarizeDisplayDate = isSummarizeQuery ? dateForSummarize() : null;
+	const summarizeDisplayDate = isSummarizeQuery ? dateForSummarize( selectedShortcut ) : null;
 	const displayDate = isShort ? shortDisplayDate : summarizeDisplayDate;
 
 	const previousDisplayDate = useMemo( () => {
@@ -235,7 +241,9 @@ function StatsDateLabel( {
 					period: (
 						<span className="period">
 							<span className="date">
-								{ isSummarizeQuery ? dateForSummarize() : dateForDisplay( selectedShortcut ) }
+								{ isSummarizeQuery
+									? dateForSummarize( selectedShortcut )
+									: dateForDisplay( selectedShortcut ) }
 							</span>
 						</span>
 					),
@@ -248,7 +256,9 @@ function StatsDateLabel( {
 					period: (
 						<span className="period">
 							<span className="date">
-								{ isSummarizeQuery ? dateForSummarize() : dateForDisplay( selectedShortcut ) }
+								{ isSummarizeQuery
+									? dateForSummarize( selectedShortcut )
+									: dateForDisplay( selectedShortcut ) }
 							</span>
 						</span>
 					),

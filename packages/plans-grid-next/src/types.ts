@@ -65,6 +65,7 @@ export type GridSize = 'small' | 'smedium' | 'medium' | 'large' | 'xlarge';
 export type PlansIntent =
 	| 'plans-affiliate'
 	| 'plans-ai-assembler-free-trial'
+	| 'plans-ai-assembler-paid-only'
 	| 'plans-blog-onboarding'
 	| 'plans-newsletter'
 	| 'plans-new-hosted-site'
@@ -141,6 +142,7 @@ export interface CommonGridProps {
 }
 
 export interface FeaturesGridProps extends CommonGridProps {
+	bottomGridPlan?: GridPlan;
 	gridPlans: GridPlan[];
 	currentPlanManageHref?: string;
 	generatedWPComSubdomain: DataResponse< { domain_name: string } >;

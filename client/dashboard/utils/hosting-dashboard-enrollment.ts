@@ -1,9 +1,6 @@
 import config from '@automattic/calypso-config';
+import { isSupportSession } from '@automattic/calypso-support-session';
 import type { HostingDashboardOptIn } from '@automattic/api-core';
-
-export const ROLLOUT_TESTER_USER_IDS = [
-	27056099, // p-jackson
-];
 
 const ROLLOUT_PERCENTAGE = 50;
 
@@ -17,17 +14,14 @@ const NEW_USER_ID_THRESHOLD = Infinity;
  * in analytics queries; nothing is ever persisted.
  */
 function isInRolloutCohort( userId: number | undefined ): boolean {
-	if ( config.isEnabled( 'dashboard/simulate-full-rollout' ) ) {
+	// Support sessions must see the user's real enrollment, so the full-rollout
+	// simulation is ignored when assisting another user.
+	if ( config.isEnabled( 'dashboard/simulate-full-rollout' ) && ! isSupportSession() ) {
 		return true;
 	}
 
 	if ( userId === undefined ) {
 		return false;
-	}
-
-	// Allow-listed testers bypass the rollout flag entirely.
-	if ( ROLLOUT_TESTER_USER_IDS.includes( userId ) ) {
-		return true;
 	}
 
 	return (
@@ -72,7 +66,7 @@ export function isOptInToggleVisible(
 	preference: HostingDashboardOptIn | undefined,
 	userId: number | undefined
 ): boolean {
-	// Useful for allowing internal testing for proxied a12s.
+	// Ensures the toggle is visible in development for easier testing/dev.
 	if ( config.isEnabled( 'dashboard/force-opt-in-visibility' ) ) {
 		return true;
 	}

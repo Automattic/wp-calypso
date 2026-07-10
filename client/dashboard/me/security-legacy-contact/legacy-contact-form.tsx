@@ -3,8 +3,9 @@ import { useMutation } from '@tanstack/react-query';
 import { __experimentalVStack as VStack, Button, TextareaControl } from '@wordpress/components';
 import { useDispatch } from '@wordpress/data';
 import { DataForm, useFormValidity } from '@wordpress/dataviews';
-import { __ } from '@wordpress/i18n';
+import { __, _n, sprintf } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
+import clsx from 'clsx';
 import { useState } from 'react';
 import { useAnalytics } from '../../app/analytics';
 import { ButtonStack } from '../../components/button-stack';
@@ -12,6 +13,7 @@ import { SectionHeader } from '../../components/section-header';
 import type { Field } from '@wordpress/dataviews';
 
 const LEGACY_CONTACT_NOTES_MAX_LENGTH = 500;
+const LEGACY_CONTACT_NOTES_WARNING_THRESHOLD = 50;
 
 interface LegacyContactFormData {
 	email: string;
@@ -33,20 +35,41 @@ const fields: Field< LegacyContactFormData >[] = [
 		label: __( 'Notes' ),
 		Edit: ( { data, field, onChange, hideLabelFromVision } ) => {
 			const { id, getValue } = field;
+			const value = getValue( { item: data } ) || '';
+			const remaining = LEGACY_CONTACT_NOTES_MAX_LENGTH - value.length;
+			const isAtLimit = remaining <= 0;
+			const isNearLimit = ! isAtLimit && remaining <= LEGACY_CONTACT_NOTES_WARNING_THRESHOLD;
 
 			return (
-				<TextareaControl
-					__nextHasNoMarginBottom
-					value={ getValue( { item: data } ) || '' }
-					onChange={ ( value ) => onChange( { [ id ]: value } ) }
-					label={ field.label }
-					hideLabelFromVision={ hideLabelFromVision }
-					help={ __(
-						'We won’t share these notes with your legacy contact. Record any wishes, such as which sites to transfer.'
-					) }
-					maxLength={ LEGACY_CONTACT_NOTES_MAX_LENGTH }
-					rows={ 3 }
-				/>
+				<div className="legacy-contact-notes-field">
+					<span
+						className={ clsx( 'legacy-contact-notes-field__count', {
+							'is-near-limit': isNearLimit,
+							'is-at-limit': isAtLimit,
+						} ) }
+						// Only announce once the user is near the limit, so screen
+						// readers aren't read the count on every keystroke.
+						aria-live={ isNearLimit || isAtLimit ? 'polite' : 'off' }
+					>
+						{ sprintf(
+							/* translators: %d is the number of characters remaining. */
+							_n( '%d character remaining', '%d characters remaining', remaining ),
+							remaining
+						) }
+					</span>
+					<TextareaControl
+						__nextHasNoMarginBottom
+						value={ value }
+						onChange={ ( nextValue ) => onChange( { [ id ]: nextValue } ) }
+						label={ field.label }
+						hideLabelFromVision={ hideLabelFromVision }
+						help={ __(
+							'We won’t share these notes with your legacy contact. Record any wishes, such as which sites to transfer.'
+						) }
+						maxLength={ LEGACY_CONTACT_NOTES_MAX_LENGTH }
+						rows={ 3 }
+					/>
+				</div>
 			);
 		},
 	},

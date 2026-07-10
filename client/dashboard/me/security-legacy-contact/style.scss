@@ -2,6 +2,28 @@
 	text-wrap: pretty;
 }
 
+.legacy-contact-notes-field {
+	position: relative;
+}
+
+.legacy-contact-notes-field__count {
+	position: absolute;
+	inset-block-start: 0;
+	inset-inline-end: 0;
+	font-size: 11px;
+	line-height: 1.4;
+	color: var( --color-text-subtle );
+	white-space: nowrap;
+
+	&.is-near-limit {
+		color: var( --dashboard__foreground-color-warning );
+	}
+
+	&.is-at-limit {
+		color: var( --dashboard__foreground-color-error );
+	}
+}
+
 .legacy-contact-card {
 	padding: 12px 16px;
 	border: 1px solid var( --dashboard-surface__border-color );

@@ -112,6 +112,7 @@ class MasterbarLoggedIn extends Component {
 		dashboardOptIn: PropTypes.bool,
 		canUserViewStats: PropTypes.bool,
 		statsAdminUrl: PropTypes.string,
+		statsSparkline: PropTypes.node,
 		useUnifiedAgent: PropTypes.bool,
 		launchButton: PropTypes.node,
 		sitePlanUrl: PropTypes.string,
@@ -711,9 +712,14 @@ class MasterbarLoggedIn extends Component {
 	};
 
 	renderStatsSparkline() {
-		const { siteId, translate, domainOnlySite, canUserViewStats, statsAdminUrl } = this.props;
+		const { siteId, translate, domainOnlySite, canUserViewStats, statsAdminUrl, statsSparkline } =
+			this.props;
 
-		if ( ! siteId || domainOnlySite || ! canUserViewStats ) {
+		if ( ! siteId || domainOnlySite || ! canUserViewStats || ! statsAdminUrl ) {
+			return null;
+		}
+
+		if ( 'statsSparkline' in this.props && ! statsSparkline ) {
 			return null;
 		}
 
@@ -728,7 +734,11 @@ class MasterbarLoggedIn extends Component {
 				onClick={ this.clickStatsSparkline }
 				hasGlobalBorderStyle
 			>
-				<MasterbarStatsSparkline siteId={ siteId } />
+				{ 'statsSparkline' in this.props ? (
+					statsSparkline
+				) : (
+					<MasterbarStatsSparkline siteId={ siteId } />
+				) }
 			</Item>
 		);
 	}
@@ -750,6 +760,8 @@ class MasterbarLoggedIn extends Component {
 
 	renderProfileMenu() {
 		const { translate, user, isGlobalSidebarVisible, siteAdminUrl } = this.props;
+		// No site admin URL (e.g. an account with no sites) means no profile.php to link to.
+		const canEditProfile = isGlobalSidebarVisible || !! siteAdminUrl;
 		const editProfileUrl = isGlobalSidebarVisible ? '/me' : `${ siteAdminUrl }profile.php`;
 		const profileActions = [
 			{
@@ -768,14 +780,20 @@ class MasterbarLoggedIn extends Component {
 							<span className="username" title={ user.username }>
 								{ user.username }
 							</span>
-							<span className="display-name edit-profile">
-								{ isGlobalSidebarVisible ? translate( 'My Profile' ) : translate( 'Edit Profile' ) }
-							</span>
+							{ canEditProfile && (
+								<span className="display-name edit-profile">
+									{ isGlobalSidebarVisible
+										? translate( 'My Profile' )
+										: translate( 'Edit Profile' ) }
+								</span>
+							) }
 						</div>
 					</div>
 				),
-				url: editProfileUrl,
-				onClick: () => this.props.recordTracksEvent( 'calypso_masterbar_edit_profile_clicked' ),
+				url: canEditProfile ? editProfileUrl : undefined,
+				onClick: canEditProfile
+					? () => this.props.recordTracksEvent( 'calypso_masterbar_edit_profile_clicked' )
+					: undefined,
 			},
 			{
 				label: translate( 'Log Out' ),
