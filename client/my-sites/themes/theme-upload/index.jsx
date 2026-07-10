@@ -367,7 +367,11 @@ class Upload extends Component {
 				{ showUpgradeBanner && this.renderUpgradeBanner() }
 
 				{ showEligibility && (
-					<EligibilityWarnings backUrl={ backPath } onProceed={ this.onProceedClick } />
+					<EligibilityWarnings
+						backUrl={ backPath }
+						atomicTransferAction="themes"
+						onProceed={ this.onProceedClick }
+					/>
 				) }
 
 				{ this.renderUploadCard() }

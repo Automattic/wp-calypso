@@ -76,7 +76,7 @@ class NavTabs extends Component {
 	componentWillUnmount() {
 		window.removeEventListener( 'resize', this.setDropdownDebounced );
 		// cancel the debounced `setDropdown` calls that might be already scheduled.
-		// see https://lodash.com/docs/4.17.4#debounce to learn about the `cancel` method.
+		// `debounce` returns a function with a `cancel` method that drops pending calls.
 		this.setDropdownDebounced.cancel();
 		this.setDropdownAfterLayoutFlush.cancel();
 		this.unobserve();

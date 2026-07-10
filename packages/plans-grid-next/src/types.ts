@@ -65,6 +65,7 @@ export type GridSize = 'small' | 'smedium' | 'medium' | 'large' | 'xlarge';
 export type PlansIntent =
 	| 'plans-affiliate'
 	| 'plans-ai-assembler-free-trial'
+	| 'plans-ai-assembler-paid-only'
 	| 'plans-blog-onboarding'
 	| 'plans-newsletter'
 	| 'plans-new-hosted-site'
@@ -141,6 +142,7 @@ export interface CommonGridProps {
 }
 
 export interface FeaturesGridProps extends CommonGridProps {
+	bottomGridPlan?: GridPlan;
 	gridPlans: GridPlan[];
 	currentPlanManageHref?: string;
 	generatedWPComSubdomain: DataResponse< { domain_name: string } >;
@@ -229,6 +231,13 @@ export type GridContextProps = {
 	enterpriseFeaturesList?: string[];
 
 	/**
+	 * India Automattic for Agencies test: when true, the Enterprise plan card is presented as A4A.
+	 * This affects Enterprise branding (logo/copy) and layout (e.g. hides Enterprise client logos
+	 * in the price cell and shows A4A-specific billing text instead).
+	 */
+	isEnterpriseA4AIndia?: boolean;
+
+	/**
 	 * `enableCategorisedFeatures` is no longer exact, and probably best to rename.
 	 * It is only used for showing "Everything in [previous] plus".
 	 */
@@ -281,6 +290,11 @@ export type GridContextProps = {
 	 * Used to display cohort-specific feature titles in the comparison grid.
 	 */
 	isExperimentVariant?: boolean;
+
+	/**
+	 * Display availability checkmarks next to features in the features grid.
+	 */
+	showFeatureCheckmarks?: boolean;
 };
 
 export type ComparisonGridExternalProps = Omit<

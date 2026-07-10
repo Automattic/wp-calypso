@@ -11,6 +11,7 @@ import type { ReadSpace, SpaceIcon } from '@automattic/api-core';
 
 const SPACE: ReadSpace = {
 	id: '2f5d8f28-04b7-4f6a-a908-6c4d2b4b8f21',
+	slug: 'work',
 	name: 'Work',
 	layout: { color: 'blue', icon: 'inbox' },
 };
@@ -35,7 +36,7 @@ describe( 'SpaceMenuItem', () => {
 		render( <SpaceMenuItem space={ SPACE } isSelected={ false } onClick={ jest.fn() } /> );
 
 		const link = screen.getByRole( 'link', { name: new RegExp( SPACE.name ) } );
-		expect( link ).toHaveAttribute( 'href', getSpacePath( SPACE.id ) );
+		expect( link ).toHaveAttribute( 'href', getSpacePath( SPACE.slug ) );
 	} );
 
 	it( 'renders the glyph mapped from the space icon', () => {

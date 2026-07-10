@@ -1,17 +1,25 @@
 /* eslint-disable no-restricted-imports */
-import { purchaseQuery, queryClient, siteCurrentPlanQuery } from '@automattic/api-queries';
+import {
+	purchaseQuery,
+	queryClient,
+	siteCurrentPlanQuery,
+	siteHourlyViewsQuery,
+} from '@automattic/api-queries';
 import { isEcommercePlan } from '@automattic/calypso-products';
+import { isSupportSession } from '@automattic/calypso-support-session';
 import { QueryClient, QueryClientProvider, useQuery } from '@tanstack/react-query';
 import { localize } from 'i18n-calypso';
 import { useEffect, useMemo } from 'react';
 import { Provider as ReduxProvider } from 'react-redux';
 import { MasterbarLoggedIn } from 'calypso/layout/masterbar/logged-in';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import { StatsSparkline } from '../../components/stats-sparkline';
 import { getSiteDisplayName } from '../../utils/site-name';
 import { isSimple } from '../../utils/site-types';
 import { getSitePlanUrl } from '../../utils/site-url';
 import { logout } from '../auth';
 import { omnibarEvents, useOmnibarEvent } from '../omnibar/events';
+import { getUserLanguage } from '../shared-locale-loader';
 import { OmnibarLaunchButton } from './omnibar-launch-button';
 import { createOmnibarStore } from './omnibar-store';
 import type { User, Site } from '@automattic/api-core';
@@ -69,8 +77,22 @@ export function InterimOmnibar( {
 	);
 	const sitePlanUrl = site ? getSitePlanUrl( site, planPurchase ) : undefined;
 
+	const { data: hourlyViews } = useQuery(
+		{
+			...siteHourlyViewsQuery( site?.ID ?? 0 ),
+			enabled: !! site,
+		},
+		queryClient
+	);
+
 	const store = useMemo(
-		() => createOmnibarStore( onToggleNotifications ),
+		() =>
+			createOmnibarStore( {
+				onToggleNotifications,
+				initialLocaleSlug: getUserLanguage( user ),
+			} ),
+		// Seed the store's locale once; later changes flow through the switcher.
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 		[ onToggleNotifications ]
 	);
 
@@ -127,6 +149,13 @@ export function InterimOmnibar( {
 					isSimpleSite={ isSimpleSite }
 					isJetpackNotAtomic={ !! site && site.jetpack && ! site.is_wpcom_atomic }
 					domainOnlySite={ !! site?.options?.is_domain_only }
+					canUserViewStats={ !! site }
+					statsAdminUrl={ siteAdminUrl ? `${ siteAdminUrl }admin.php?page=stats` : undefined }
+					statsSparkline={
+						hourlyViews && hourlyViews.length > 0 ? (
+							<StatsSparkline hourlyViews={ hourlyViews } />
+						) : undefined
+					}
 					isUnlaunchedSite={ isUnlaunchedSite }
 					launchButton={ isUnlaunchedSite && site ? <OmnibarLaunchButton site={ site } /> : null }
 					isTrial={ false }
@@ -152,7 +181,7 @@ export function InterimOmnibar( {
 					isGravatarDomain={ false }
 					dashboardOptIn
 					useUnifiedAgent={ false }
-					isSupportSession={ false }
+					isSupportSession={ isSupportSession() }
 					isNotificationsShowing={ false }
 					isMigrationInProgress={ false }
 					migrationStatus={ null }

@@ -71,8 +71,8 @@ export class EditorSidebarBlockInserterComponent {
 					noWaitAfter: true,
 				} );
 			} catch {
-				// The button may have detached between the isVisible-style check
-				// above and the click. That is the success case here.
+				// The button may have detached between the race above and the
+				// click. That is the success case here.
 			}
 
 			try {
@@ -152,8 +152,19 @@ export class EditorSidebarBlockInserterComponent {
 				.first();
 		}
 
-		await Promise.all( [ locator.hover(), locator.focus() ] );
-		await locator.click();
+		// Hover is best-effort: on mobile/CI it occasionally hangs after the
+		// element resolves and the auto-wait reports the element visible and
+		// stable, exhausting the action timeout for no useful reason. The
+		// click below does not require a prior hover, so swallow timeouts.
+		try {
+			await locator.hover( { timeout: 2000 } );
+		} catch {
+			// Hover unavailable; proceed with focus + click.
+		}
+		await locator.focus();
+		// Pattern insertion does not navigate but can emit events that Playwright
+		// treats as "scheduled navigation" on slow CI, hanging the click auto-wait.
+		await locator.click( type === 'pattern' ? { noWaitAfter: true } : undefined );
 
 		return locator;
 	}

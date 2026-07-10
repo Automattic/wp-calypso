@@ -20,6 +20,7 @@ import type {
 	MyAccountInformationResponse,
 	AccountClosureResponse,
 	SiteDeletionResponse,
+	CalypsoPreferences,
 	CalypsoPreferencesResponse,
 	ErrorResponse,
 	AccountCredentials,
@@ -43,6 +44,8 @@ import type {
 	JetpackSearchParams,
 	Subscriber,
 	SitePostState,
+	AllPurchasesResponse,
+	PurchaseCancelParams,
 } from './types';
 
 /* Internal types and interfaces */
@@ -626,6 +629,103 @@ export class RestAPIClient {
 		return await this.sendRequest( this.getRequestURL( '1.1', '/me/account/close' ), params );
 	}
 
+	/* Purchases */
+
+	/**
+	 * Returns all purchases belonging to the authenticated user.
+	 *
+	 * Discovery is bearer-scoped and needs no site ID, so it works even when the
+	 * test failed before a site slug/ID was known.
+	 *
+	 * @returns {Promise<AllPurchasesResponse>} Array of the user's purchases.
+	 * @throws {Error} If the API responded with an error.
+	 */
+	async getAllPurchases(): Promise< AllPurchasesResponse > {
+		const params: RequestParams = {
+			method: 'get',
+			headers: {
+				Authorization: await this.getAuthorizationHeader( 'bearer' ),
+				'Content-Type': this.getContentTypeHeader( 'json' ),
+			},
+		};
+
+		const response = await this.sendRequest( this.getRequestURL( '1.2', '/me/purchases' ), params );
+
+		if ( response.hasOwnProperty( 'error' ) ) {
+			throw new Error(
+				`${ ( response as ErrorResponse ).error }: ${ ( response as ErrorResponse ).message }`
+			);
+		}
+
+		return response;
+	}
+
+	/**
+	 * Cancels and refunds a purchase. Cancelling a Business-plan purchase on an
+	 * Atomic site triggers asynchronous deprovision of the site, the only lever
+	 * that later allows the account to be closed.
+	 *
+	 * Mirrors Calypso's cancel-and-refund call (POST wpcom/v2 /purchases/{id}/cancel).
+	 *
+	 * @param {string|number} purchaseId ID of the purchase to cancel.
+	 * @param {PurchaseCancelParams} body Cancellation parameters.
+	 * @returns {Promise<any>} Decoded JSON response.
+	 */
+	async cancelPurchase( purchaseId: string | number, body: PurchaseCancelParams ): Promise< any > {
+		const params: RequestParams = {
+			method: 'post',
+			headers: {
+				Authorization: await this.getAuthorizationHeader( 'bearer' ),
+				'Content-Type': this.getContentTypeHeader( 'json' ),
+			},
+			body: JSON.stringify( body ),
+		};
+
+		return await this.sendRequest(
+			this.getRequestURL( '2', `/purchases/${ purchaseId }/cancel`, 'wpcom' ),
+			params
+		);
+	}
+
+	/**
+	 * Cancels the Business-plan purchase, triggering asynchronous Atomic-site
+	 * deprovision (the only lever that later allows the account to be closed).
+	 *
+	 * The purchase is discovered bearer-scoped via `getAllPurchases`, so no site
+	 * slug/ID is required. When `siteId` is omitted the first Business plan found
+	 * is cancelled; pass `siteId` to restrict to that site's Business plan.
+	 *
+	 * @param {number|string} [siteId] Restrict cancellation to this site's Business plan.
+	 * @returns {Promise<any | null>} The cancel response, or null if no Business plan was found.
+	 * @throws {Error} If listing purchases responded with an error.
+	 */
+	async cancelAtomicPlan( siteId?: number | string ): Promise< any | null > {
+		const purchases = await this.getAllPurchases();
+
+		const plan = purchases.find(
+			( purchase ) =>
+				purchase.product_slug === 'business-bundle' &&
+				( siteId === undefined || Number( purchase.blog_id ) === Number( siteId ) )
+		);
+
+		if ( ! plan ) {
+			console.info(
+				siteId !== undefined
+					? `No Business plan purchase found for site ${ siteId }; skipping Atomic deprovision.`
+					: 'No Business plan purchase found; skipping Atomic deprovision.'
+			);
+			return null;
+		}
+
+		console.log( `Cancelling Business plan purchase ${ plan.ID } to deprovision Atomic site.` );
+
+		return await this.cancelPurchase( plan.ID, {
+			product_id: plan.product_id,
+			cancel_bundled_domain: 0,
+			email_variant: 'control',
+		} );
+	}
+
 	/**
 	 * Returns Calypso preferences for the user.
 	 *
@@ -638,6 +738,27 @@ export class RestAPIClient {
 				Authorization: await this.getAuthorizationHeader( 'bearer' ),
 				'Content-Type': this.getContentTypeHeader( 'json' ),
 			},
+		};
+
+		return await this.sendRequest( this.getRequestURL( '1.1', '/me/preferences' ), params );
+	}
+
+	/**
+	 * Updates Calypso preferences for the user.
+	 *
+	 * @param {Partial<CalypsoPreferences>} preferences Key/value preferences to persist.
+	 * @returns {Promise<CalypsoPreferencesResponse>} JSON response containing the updated Calypso preferences.
+	 */
+	async setCalypsoPreferences(
+		preferences: Partial< CalypsoPreferences >
+	): Promise< CalypsoPreferencesResponse > {
+		const params: RequestParams = {
+			method: 'post',
+			headers: {
+				Authorization: await this.getAuthorizationHeader( 'bearer' ),
+				'Content-Type': this.getContentTypeHeader( 'json' ),
+			},
+			body: JSON.stringify( { calypso_preferences: preferences } ),
 		};
 
 		return await this.sendRequest( this.getRequestURL( '1.1', '/me/preferences' ), params );
@@ -962,7 +1083,14 @@ export class RestAPIClient {
 
 		if ( media ) {
 			const data = new FormData();
-			data.append( 'media[]', fs.createReadStream( media.fullpath ) );
+			// The request body below is built with `getBuffer()`, which cannot
+			// serialize a stream (it throws on the DelayedStream a read stream
+			// produces). Append the file contents as a Buffer instead, passing the
+			// filename explicitly so form-data still sets the Content-Disposition
+			// filename and the mime-derived Content-Type the stream's path supplied.
+			data.append( 'media[]', fs.readFileSync( media.fullpath ), {
+				filename: media.basename,
+			} );
 
 			params = {
 				method: 'post',
@@ -996,7 +1124,13 @@ export class RestAPIClient {
 			);
 		}
 
-		return response;
+		// `/sites/$site/media/new` wraps the uploaded item(s) in a `media` array;
+		// per-file rejections come back as `{ media: [], errors: [...] }` with no
+		// top-level `error` key.
+		if ( ! response.media?.length ) {
+			throw new Error( `Media upload failed: ${ JSON.stringify( response.errors ?? response ) }` );
+		}
+		return response.media[ 0 ];
 	}
 
 	/* Shopping Cart */

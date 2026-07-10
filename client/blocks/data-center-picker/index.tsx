@@ -1,9 +1,15 @@
 import { getDataCenterOptions } from '@automattic/api-core';
 import { localizeUrl, useHasEnTranslation } from '@automattic/i18n-utils';
-import styled from '@emotion/styled';
-import { SelectControl } from '@wordpress/components';
+import {
+	__experimentalText as Text,
+	Button,
+	Card,
+	CardBody,
+	SelectControl,
+} from '@wordpress/components';
 import { localize, LocalizeProps, translate } from 'i18n-calypso';
 import { useState } from 'react';
+import InlineSupportLink from 'calypso/components/inline-support-link';
 
 interface ExternalProps {
 	value: string;
@@ -30,33 +36,6 @@ const AllDataCenterOptions = [
 	} ) ),
 ];
 
-const Form = styled.div( {
-	maxWidth: '564px',
-	border: '1px solid var( --color-border-subtle )',
-	borderRadius: '4px',
-	padding: '24px',
-} );
-
-const FormHidden = styled.div( {
-	fontSize: '0.75rem',
-} );
-
-const CustomizeLink = styled.a`
-	text-decoration: underline;
-	cursor: pointer;
-`;
-
-const SupportLink = styled.a`
-	text-decoration: underline;
-`;
-
-const StyledLabel = styled.div`
-	text-transform: none;
-	font-size: 0.875rem;
-	color: var( --studio-gray-50 );
-	text-wrap: wrap;
-`;
-
 const DataCenterPicker = ( {
 	onChange,
 	onClickShowPicker = () => null,
@@ -66,71 +45,68 @@ const DataCenterPicker = ( {
 	const [ isFormShowing, setIsFormShowing ] = useState( false );
 	const hasEnTranslation = useHasEnTranslation();
 
-	const supportLinkComponent = (
-		<SupportLink
-			target="_blank"
-			href={ localizeUrl( 'https://wordpress.com/support/choose-your-sites-primary-data-center/' ) }
+	const supportLink = (
+		<InlineSupportLink
+			showIcon={ false }
+			supportPostId={ 227309 }
+			supportLink={ localizeUrl(
+				'https://wordpress.com/support/choose-your-sites-primary-data-center/'
+			) }
 		/>
 	);
 
-	return (
-		<div>
-			{ ! isFormShowing && (
-				<FormHidden>
-					{ translate(
-						'Your site will be placed in the optimal data center, but you can {{customizeLink}}customize it{{/customizeLink}}.',
-						{
-							components: {
-								customizeLink: (
-									<CustomizeLink
-										onClick={ () => {
-											onClickShowPicker();
-											setIsFormShowing( ! isFormShowing );
-										} }
-									/>
-								),
-							},
-						}
-					) }
-				</FormHidden>
-			) }
+	if ( ! isFormShowing ) {
+		return (
+			<Text>
+				{ translate(
+					'We’ll pick the best data center for your site, but you can {{customizeLink}}choose a different location{{/customizeLink}}.',
+					{
+						components: {
+							customizeLink: (
+								<Button
+									variant="link"
+									onClick={ () => {
+										onClickShowPicker();
+										setIsFormShowing( true );
+									} }
+								/>
+							),
+						},
+					}
+				) }
+			</Text>
+		);
+	}
 
-			{ isFormShowing && (
-				<Form>
-					<SelectControl
-						__nextHasNoMarginBottom
-						label={ <StyledLabel>{ translate( 'Pick your primary data center' ) }</StyledLabel> }
-						help={
-							hasEnTranslation(
-								'For redundancy, your site will be replicated in real-time to another region. {{supportLink}}Learn more{{/supportLink}}.'
-							)
-								? translate(
-										'For redundancy, your site will be replicated in real-time to another region. {{supportLink}}Learn more{{/supportLink}}.',
-										{
-											components: {
-												supportLink: supportLinkComponent,
-											},
-										}
-								  )
-								: translate(
-										'For redundancy, your site will replicate in real-time to a second data center in a different region. {{supportLink}}Learn more{{/supportLink}}.',
-										{
-											components: {
-												supportLink: supportLinkComponent,
-											},
-										}
-								  )
-						}
-						options={ AllDataCenterOptions.map( ( option ) => ( {
-							label: option.label,
-							value: option.value,
-						} ) ) }
-						onChange={ ( value ) => onChange( value ) }
-						value={ value }
-					/>
-				</Form>
-			) }
-		</div>
+	return (
+		<Card size="small">
+			<CardBody>
+				<SelectControl
+					__next40pxDefaultSize
+					__nextHasNoMarginBottom
+					label={ translate( 'Pick your primary data center' ) }
+					help={
+						hasEnTranslation(
+							'For redundancy, your site will be replicated in real-time to another region. {{supportLink}}Learn more{{/supportLink}}.'
+						)
+							? translate(
+									'For redundancy, your site will be replicated in real-time to another region. {{supportLink}}Learn more{{/supportLink}}.',
+									{ components: { supportLink } }
+							  )
+							: translate(
+									'For redundancy, your site will replicate in real-time to a second data center in a different region. {{supportLink}}Learn more{{/supportLink}}.',
+									{ components: { supportLink } }
+							  )
+					}
+					options={ AllDataCenterOptions.map( ( option ) => ( {
+						label: option.label,
+						value: option.value,
+					} ) ) }
+					onChange={ ( value ) => onChange( value ) }
+					value={ value }
+				/>
+			</CardBody>
+		</Card>
 	);
 };
 

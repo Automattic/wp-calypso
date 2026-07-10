@@ -1,6 +1,5 @@
 import { getCalypsoURL } from '../../data-helper';
 import { waitForElementEnabled } from '../../element-helper';
-import envVariables from '../../env-variables';
 import type { PaymentDetails, RegistrarDetails } from '../../types/data-helper.types';
 import type { Page } from 'playwright';
 
@@ -64,10 +63,10 @@ const selectors = {
 	couponCodeApplyButton: 'button:text("Apply")',
 	disabledButton: 'button[disabled]:has-text("Processing")',
 	paymentButton: '.checkout-submit-button button',
-	totalAmount:
-		envVariables.VIEWPORT_NAME === 'mobile'
-			? '.wp-checkout__total-price'
-			: '.wp-checkout-order-summary__total-price',
+	// The mobile and desktop checkouts render the total in different elements;
+	// match whichever variant is visible so the check stays a user-visible-price
+	// assertion on both viewports.
+	totalAmount: '.wp-checkout__total-price:visible, .wp-checkout-order-summary__total-price:visible',
 	thirdPartyDeveloperCheckboxLabel:
 		'You agree that an account may be created on a third party developer’s site related to the products you have purchased.',
 
@@ -225,7 +224,7 @@ export class CartCheckoutPage {
 	async getCheckoutTotalAmount( { rawString = false }: { rawString?: boolean } = {} ): Promise<
 		number | string
 	> {
-		const totalAmountLocator = this.page.locator( selectors.totalAmount );
+		const totalAmountLocator = this.page.locator( selectors.totalAmount ).first();
 		await totalAmountLocator.waitFor( { timeout: 20 * 1000 } );
 
 		const stringAmount = await totalAmountLocator.innerText();

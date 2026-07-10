@@ -84,7 +84,7 @@ export default function AgentDock( {
 	const [ isCompactMode, setIsCompactMode ] = useState(
 		window.__agentsManagerActions?.isCompactMode ?? false
 	);
-	const [ shouldRenderChat, setShouldRenderChat ] = useState(
+	const [ isChatEnabled, setIsChatEnabled ] = useState(
 		window.__agentsManagerActions?.isChatEnabled ?? true
 	);
 	const [ desktopMediaQuery, setDesktopMediaQuery ] = useState< string | undefined >(
@@ -194,7 +194,7 @@ export default function AgentDock( {
 		openSidebar,
 		closeSidebar,
 		setIsCompactMode,
-		setShouldRenderChat,
+		setIsChatEnabled,
 		setDesktopMediaQuery,
 	} );
 
@@ -373,9 +373,9 @@ export default function AgentDock( {
 		/>
 	);
 
-	// When chat rendering is disabled there's nothing to open, so render nothing — the editor
+	// When the chat is disabled there's nothing to open, so render nothing — the editor
 	// entry-point buttons would otherwise be dead.
-	if ( ! shouldRenderChat ) {
+	if ( ! isChatEnabled ) {
 		return null;
 	}
 

@@ -12,7 +12,7 @@
 /**
  * External dependencies
  */
-import { useDispatch } from '@wordpress/data';
+import { useDispatch, useSelect } from '@wordpress/data';
 import { useCallback } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 /**
@@ -46,6 +46,14 @@ interface SeoTitlePickerProps {
  */
 export default function SeoTitlePicker( { titles, onComplete }: SeoTitlePickerProps ) {
 	const { editPost } = useDispatch( 'core/editor' );
+	const currentSeoTitle = useSelect( ( select ) => {
+		const meta = (
+			select( 'core/editor' ) as {
+				getEditedPostAttribute?: ( attr: string ) => Record< string, unknown > | undefined;
+			}
+		 )?.getEditedPostAttribute?.( 'meta' );
+		return meta?.[ SEO_TITLE_META_KEY ];
+	}, [] );
 
 	const handleApply = useCallback(
 		( title: string ) => {
@@ -61,6 +69,7 @@ export default function SeoTitlePicker( { titles, onComplete }: SeoTitlePickerPr
 			options={ titles.map( ( option ) => option.title ) }
 			onApply={ handleApply }
 			appliedMessage={ __( 'SEO title updated.', 'jetpack' ) }
+			currentValue={ typeof currentSeoTitle === 'string' ? currentSeoTitle : undefined }
 		/>
 	);
 }

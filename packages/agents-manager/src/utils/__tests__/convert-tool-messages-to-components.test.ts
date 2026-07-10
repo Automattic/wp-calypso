@@ -323,6 +323,44 @@ describe( 'convertToolMessagesToComponents', () => {
 		expect( result ).toEqual( [] );
 	} );
 
+	it( 'renders stream-page-design tool summary as plain text', () => {
+		const summaryText = 'A bold hero with three airy feature sections in the theme accent colors.';
+		const message = createToolMessage( 'big_sky__stream_page_design', {
+			summary: summaryText,
+			isCurrent: true,
+		} );
+
+		const result = convertWithDefaults( {
+			messages: [ message ],
+		} );
+
+		expect( result ).toHaveLength( 1 );
+		expect( result[ 0 ].content[ 0 ] ).toMatchObject( {
+			type: 'text',
+			text: summaryText,
+		} );
+	} );
+
+	it( 'renders stream-page-design structured result message as plain text', () => {
+		const message = createToolMessage( 'big_sky__stream_page_design', {
+			result: {
+				success: true,
+				message: 'The generated page content has been staged in the editor for review.',
+			},
+			returnToAgent: true,
+		} );
+
+		const result = convertWithDefaults( {
+			messages: [ message ],
+		} );
+
+		expect( result ).toHaveLength( 1 );
+		expect( result[ 0 ].content[ 0 ] ).toMatchObject( {
+			type: 'text',
+			text: 'The generated page content has been staged in the editor for review.',
+		} );
+	} );
+
 	it( 'suppresses transient thinking for converted apply-block-edits messages', () => {
 		const message = createToolMessage( 'big_sky__apply_block_edits', {
 			followUpTasks: true,

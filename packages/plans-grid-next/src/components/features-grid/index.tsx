@@ -15,6 +15,7 @@ import useGridSize from '../../hooks/use-grid-size';
 import { PlanFeaturesItem } from '../item';
 import { PlanStorage } from '../shared/storage';
 import BillingTimeframes from './billing-timeframes';
+import BottomPlanCard from './bottom-plan-card';
 import EnterpriseFeatures from './enterprise-features';
 import PlanFeaturesList from './plan-features-list';
 import PlanHeaders from './plan-headers';
@@ -307,6 +308,7 @@ const TabletView = ( {
 // Now that everything under is functional component, we can deprecate this wrapper and only keep ComparisonGrid instead.
 // More details can be found in https://github.com/Automattic/wp-calypso/issues/87047
 const FeaturesGrid = ( {
+	bottomGridPlan,
 	currentSitePlanSlug,
 	generatedWPComSubdomain,
 	gridPlanForSpotlight,
@@ -343,12 +345,23 @@ const FeaturesGrid = ( {
 		renderedGridPlans: gridPlans,
 		showRefundPeriod,
 	};
+	const gridPlansWithoutSpotlightCount = gridPlanForSpotlight
+		? gridPlans.filter( ( { planSlug } ) => gridPlanForSpotlight.planSlug !== planSlug ).length
+		: gridPlans.length;
 
 	return (
 		<div className="plans-grid-next-features-grid">
 			{ 'small' !== gridSize && <SpotlightPlan { ...spotlightPlanProps } /> }
 			<div className="plan-features">
-				<div className="plan-features-2023-grid__content">
+				<div
+					className={ clsx(
+						'plan-features-2023-grid__content',
+						`has-${ gridPlansWithoutSpotlightCount }-cols`,
+						{
+							'has-bottom-plan-card': bottomGridPlan,
+						}
+					) }
+				>
 					<div>
 						{ 'large' === gridSize && (
 							<div className="plan-features-2023-grid__desktop-view">
@@ -369,6 +382,14 @@ const FeaturesGrid = ( {
 							</div>
 						) }
 					</div>
+					{ bottomGridPlan && (
+						<BottomPlanCard
+							currentSitePlanSlug={ currentSitePlanSlug }
+							gridPlan={ bottomGridPlan }
+							isInSignup={ isInSignup }
+							planActionOverrides={ planActionOverrides }
+						/>
+					) }
 				</div>
 			</div>
 		</div>
@@ -379,6 +400,7 @@ const WrappedFeaturesGrid = ( props: FeaturesGridExternalProps ) => {
 	const {
 		siteId,
 		intent,
+		bottomGridPlan,
 		gridPlans,
 		useCheckPlanAvailabilityForPurchase,
 		useAction,
@@ -396,10 +418,12 @@ const WrappedFeaturesGrid = ( props: FeaturesGridExternalProps ) => {
 		featureGroupMap = {},
 		hideFeatureGroupTitles,
 		enterpriseFeaturesList,
+		isEnterpriseA4AIndia,
 		enableTermSavingsPriceDisplay,
 		showSimplifiedBillingDescription,
 		showBillingDescriptionForIncreasedRenewalPrice,
 		isExperimentVariant,
+		showFeatureCheckmarks,
 	} = props;
 
 	const gridContainerRef = useRef< HTMLDivElement >( null );
@@ -437,12 +461,23 @@ const WrappedFeaturesGrid = ( props: FeaturesGridExternalProps ) => {
 		'is-large': 'large' === gridSize,
 	} );
 
+	const gridPlansForContext = useMemo( () => {
+		if (
+			! bottomGridPlan ||
+			gridPlans.some( ( gridPlan ) => gridPlan.planSlug === bottomGridPlan.planSlug )
+		) {
+			return gridPlans;
+		}
+
+		return [ ...gridPlans, bottomGridPlan ];
+	}, [ bottomGridPlan, gridPlans ] );
+
 	return (
 		<div ref={ gridContainerRef } className={ classNames }>
 			<PlansGridContextProvider
 				intent={ intent }
 				siteId={ siteId }
-				gridPlans={ gridPlans }
+				gridPlans={ gridPlansForContext }
 				coupon={ coupon }
 				useCheckPlanAvailabilityForPurchase={ useCheckPlanAvailabilityForPurchase }
 				useAction={ useAction }
@@ -456,12 +491,14 @@ const WrappedFeaturesGrid = ( props: FeaturesGridExternalProps ) => {
 				hideFeatureGroupTitles={ hideFeatureGroupTitles }
 				featureGroupMap={ featureGroupMap }
 				enterpriseFeaturesList={ enterpriseFeaturesList }
+				isEnterpriseA4AIndia={ isEnterpriseA4AIndia }
 				enableTermSavingsPriceDisplay={ enableTermSavingsPriceDisplay }
 				showSimplifiedBillingDescription={ showSimplifiedBillingDescription }
 				showBillingDescriptionForIncreasedRenewalPrice={
 					showBillingDescriptionForIncreasedRenewalPrice
 				}
 				isExperimentVariant={ isExperimentVariant }
+				showFeatureCheckmarks={ showFeatureCheckmarks }
 			>
 				<FeaturesGrid { ...props } gridSize={ gridSize ?? undefined } />
 			</PlansGridContextProvider>

@@ -157,12 +157,13 @@ export default function CTAButton( { plugin, hasEligibilityMessages, disabled } 
 			{ showEligibility && (
 				<Modal
 					className="plugin-details-cta__dialog-content"
-					title={ translate( 'Before you continue' ) }
+					title={ translate( 'One more step' ) }
 					onRequestClose={ () => setShowEligibility( false ) }
 					size="medium"
 				>
 					<EligibilityWarnings
 						currentContext="plugin-details"
+						atomicTransferAction="plugins"
 						isMarketplace={ isMarketplaceProduct }
 						standaloneProceed
 						onDismiss={ handleDismissEligibilityWarnings }

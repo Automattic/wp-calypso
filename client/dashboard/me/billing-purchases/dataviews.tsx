@@ -168,7 +168,7 @@ function BackupPaymentMethodNotice() {
 	const noticeText = createInterpolateElement(
 		__( 'If the renewal fails, a <link>backup payment method</link> may be used.' ),
 		{
-			link: <a href="/me/purchases/payment-methods" />,
+			link: <Link to="/me/billing/payment-methods" />,
 		}
 	);
 	return <BillingPurchaseInfoPopover>{ noticeText }</BillingPurchaseInfoPopover>;

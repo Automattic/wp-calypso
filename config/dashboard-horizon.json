@@ -5,7 +5,7 @@
 	"client_slug": "browser",
 	"survicate_enabled": true,
 	"hostname": "my.wordpress.com",
-	"hostname_allowlist": [ "my.wordpress.com", "my.woo.ai" ],
+	"hostname_allowlist": [ "my.wordpress.com", "my.woo.ai", "agencies-beta.automattic.com" ],
 	"hostname_overrides": {
 		"my.woo.ai": {
 			"oauth_client_id": 134405,
@@ -25,7 +25,7 @@
 		"ciab/custom-branding": true,
 		"cookie-banner": false,
 		"dark-mode": true,
-		"dashboard/account-recovery-interstitial": false,
+		"dashboard/account-recovery-interstitial": true,
 		"dashboard/dark-mode-rollout": true,
 		"dashboard/enable-percentage-rollout": false,
 		"dashboard/opt-in-welcome-modal": false,

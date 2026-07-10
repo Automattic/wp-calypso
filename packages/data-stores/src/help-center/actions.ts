@@ -244,12 +244,16 @@ export const setNewMessagingChat = function* ( {
 	siteUrl,
 	siteId,
 	userFieldFlowName,
+	externalChatProvider,
+	externalChatId,
 }: {
 	initialMessage: string;
 	section?: string;
 	siteUrl?: string;
 	siteId?: string;
 	userFieldFlowName?: string;
+	externalChatProvider?: string;
+	externalChatId?: string;
 } ) {
 	const url = addQueryArgs( '/odie', {
 		provider: 'zendesk',
@@ -258,6 +262,8 @@ export const setNewMessagingChat = function* ( {
 		siteUrl,
 		siteId,
 		userFieldFlowName,
+		externalChatProvider,
+		externalChatId,
 	} );
 	yield setNavigateToRoute( url );
 	yield setShowHelpCenter( true );

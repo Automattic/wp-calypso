@@ -120,6 +120,7 @@ fun gutenbergPlaywrightBuildType( targetDevice: String, buildUuid: String, atomi
 				// The reason for this is an inconsistent issue breaking the login in AT test sites when
 				// more than one test runs in parallel. Remove or set it to 16 after the issue is solved.
 				param("JEST_E2E_WORKERS", "1")
+				param("env.PW_WORKERS", "1")
 
 			}
 
@@ -141,6 +142,11 @@ fun gutenbergPlaywrightBuildType( targetDevice: String, buildUuid: String, atomi
 			text("GB_E2E_ANNOUNCEMENT_THREAD_TS", value = "", allowEmpty = true, display = ParameterDisplay.HIDDEN);
 		},
 		buildSteps = {
+			runMigratedPlaywrightSpecs(
+				tag = "@gutenberg",
+				targetDevice = targetDevice,
+			)
+
 			// These two steps post the build result as a *threaded reply* under the
 			// corresponding Gutenberg version announcement in Slack. They are only relevant
 			// when this build was kicked off by Gutenbot's `announce.sh`, which injects the
@@ -165,6 +171,7 @@ fun gutenbergPlaywrightBuildType( targetDevice: String, buildUuid: String, atomi
 			}
 		},
 		buildFeatures = {
+			playwrightJUnitReport()
 			notifyAllFailuresAndFirstSuccess("#gutenberg-e2e")
 		},
 		buildTriggers = {
@@ -210,11 +217,18 @@ fun jetpackSimpleDeploymentE2eBuildType( targetDevice: String, buildUuid: String
 
 			runE2eTestsWithRetry(testGroup = "jetpack-wpcom-integration")
 
+			runMigratedPlaywrightSpecs(
+				tag = "@jetpack-wpcom-integration",
+				targetDevice = targetDevice,
+			)
+
 			collectE2eResults()
 		}
 
 		features {
 			perfmon {}
+
+			playwrightJUnitReport()
 
 			notifications {
 				notifierSettings = slackNotifier {
@@ -280,6 +294,19 @@ fun jetpackAtomicDeploymentE2eBuildType( targetDevice: String, buildUuid: String
 					),
 					stepName = "Run Atomic Jetpack E2E Tests: $variation",
 				)
+
+				runMigratedPlaywrightSpecs(
+					tag = "@jetpack-wpcom-integration",
+					targetDevice = targetDevice,
+					additionalEnvVars = mapOf(
+						"ATOMIC_VARIATION" to variation,
+						// Mirrors JEST_E2E_WORKERS above and the PW Jetpack Atomic build.
+						"PW_WORKERS" to "5",
+					),
+					stepName = "Run migrated Playwright specs: $variation",
+					// Per-variation report name so the loop's runs don't overwrite each other.
+					reportSuffix = variation,
+				)
 			}
 
 			collectE2eResults()
@@ -287,6 +314,8 @@ fun jetpackAtomicDeploymentE2eBuildType( targetDevice: String, buildUuid: String
 
 		features {
 			perfmon {}
+
+			playwrightJUnitReport()
 
 			notifications {
 				notifierSettings = slackNotifier {
@@ -347,11 +376,20 @@ fun jetpackAtomicBuildSmokeE2eBuildType( targetDevice: String, buildUuid: String
 
 			runE2eTestsWithRetry(testGroup = "jetpack-wpcom-integration")
 
+			runMigratedPlaywrightSpecs(
+				tag = "@jetpack-wpcom-integration",
+				targetDevice = targetDevice,
+				// Mirrors JEST_E2E_WORKERS above and the PW Jetpack Atomic Smoke build.
+				additionalEnvVars = mapOf( "PW_WORKERS" to "14" ),
+			)
+
 			collectE2eResults()
 		}
 
 		features {
 			perfmon {}
+
+			playwrightJUnitReport()
 
 			notifications {
 				notifierSettings = slackNotifier {

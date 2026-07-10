@@ -4,11 +4,13 @@ import {
 	userPreferenceQuery,
 	userPreferenceMutation,
 } from '@automattic/api-queries';
+import { isSupportSession } from '@automattic/calypso-support-session';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { useRouter } from '@tanstack/react-router';
 import { Modal, Button, __experimentalVStack as VStack } from '@wordpress/components';
 import { __, _n, sprintf } from '@wordpress/i18n';
 import { useId, useState } from 'react';
+import { useExperiment } from 'calypso/lib/explat';
 import ComponentViewTracker from '../../components/component-view-tracker';
 import { Text } from '../../components/text';
 import { useAnalytics } from '../analytics';
@@ -18,6 +20,13 @@ import type { InterstitialCta, SecurityLevel } from './copy';
 import './style.scss';
 
 const DAY_IN_SECONDS = 86400;
+
+/**
+ * ExPlat A/B experiment gating the interstitial. Users in the `no_recovery_modal` variation will _not_ see the
+ * modal; everyone else (control / unassigned) does.
+ */
+const EXPERIMENT_NAME = 'calypso_onboarding_account_recovery_modal_202606';
+const EXPERIMENT_TREATMENT_VARIATION = 'no_recovery_modal';
 
 /**
  * Snooze windows (in days) by security level
@@ -99,13 +108,30 @@ export default function AccountRecoveryInterstitial() {
 
 	const isSnoozed = !! snoozeUntilPersisted && now < snoozeUntilPersisted;
 
-	// Eligible once the data has loaded and the snooze (if any) has elapsed.
+	// Eligible once the data has loaded and the snooze (if any) has elapsed. Support sessions are
+	// skipped.
 	const isEligible =
-		isAccountRecoveryLoaded && isUserSettingsLoaded && isSnoozeLoaded && ! isSnoozed;
+		isAccountRecoveryLoaded &&
+		isUserSettingsLoaded &&
+		isSnoozeLoaded &&
+		! isSnoozed &&
+		! isSupportSession() &&
+		securityLevel !== 'strong';
 
-	// Fully-secured users (securityLevel === 'strong') are left alone — we only nudge people who are
-	// still missing a recovery method, 2FA, or backup codes.
-	if ( isDismissed || ! isEligible || securityLevel === 'strong' ) {
+	// Gate the interstitial behind an A/B experiment. Mark the user eligible only once they would
+	// otherwise qualify, so the exposure event fires for the right population and the control vs.
+	// treatment split isn't diluted by users who would never see the modal.
+	const [ isLoadingExperimentAssignment, experimentAssignment ] = useExperiment( EXPERIMENT_NAME, {
+		isEligible,
+	} );
+	const isInExperimentControl =
+		! isLoadingExperimentAssignment &&
+		experimentAssignment?.variationName !== EXPERIMENT_TREATMENT_VARIATION;
+
+	// Fully-secured users (variant === 'strong') are left alone — we only nudge people who are still
+	// missing a recovery method, 2FA, or backup codes. The modal is also not shown to users who are
+	// not in the experiment control group.
+	if ( isDismissed || ! isEligible || ! isInExperimentControl ) {
 		return null;
 	}
 

@@ -39,8 +39,7 @@
 		"prepack": "yarn run clean && yarn run build"
 	},
 	"dependencies": {
-		"events": "^3.3.0",
-		"lodash": "^4.18.1"
+		"events": "^3.3.0"
 	},
 	"devDependencies": {
 		"@automattic/calypso-typescript-config": "workspace:^"

@@ -2,6 +2,7 @@ import { defaultI18n, type I18n, type LocaleData } from '@wordpress/i18n';
 import { I18nProvider as WPI18nProvider } from '@wordpress/react-i18n';
 import { useEffect, useState, type PropsWithChildren } from 'react';
 import { useAuth } from './auth';
+import { useSessionLocale } from './locale/session-locale';
 import { getUserLanguage } from './shared-locale-loader';
 
 async function fetchLocaleData(
@@ -141,12 +142,12 @@ async function switchWebpackCSS( isRTL: boolean ) {
 	}
 }
 
-// Determine the locale to use. The current implementation reads the logged-in user's
-// locale, but it can be made more flexible and support multiple sources. E.g., a locale
-// slug in the route path.
+// Determine the locale to use. A session locale (set by the omnibar language
+// switcher) takes precedence over the logged-in user's saved locale.
 function useLocaleSlug() {
 	const { user } = useAuth();
-	return getUserLanguage( user );
+	const sessionLocale = useSessionLocale();
+	return sessionLocale ?? getUserLanguage( user );
 }
 
 export function I18nProvider( { children }: PropsWithChildren ) {

@@ -21,7 +21,9 @@ export type Product = {
 	isFree: boolean;
 	slug: string;
 	title: string;
-	features: string[];
+	// Feature slugs that indicate the product (or a plan bundling it) is already
+	// owned. The upsell is hidden when the site has all of them.
+	ownedFeatures: string[];
 	checkoutSlug: string;
 	checkoutUrl: string | null;
 };
@@ -37,26 +39,7 @@ export function getAvailableUpsells() {
 			isFree: false,
 			slug: 'security',
 			title: 'Security',
-			features: [
-				'akismet',
-				'antispam',
-				'backups',
-				'backups-daily',
-				'core/audio',
-				'full-activity-log',
-				'google-analytics',
-				'google-my-business',
-				'priority_support',
-				'real-time-backups',
-				'scan',
-				'simple-payments',
-				'subscriber-unlimited-imports',
-				'support',
-				'vaultpress-backups',
-				'video-hosting',
-				'wordads',
-				'wordads-jetpack',
-			],
+			ownedFeatures: [ 'backups', 'scan', 'antispam' ],
 			checkoutSlug: PLAN_JETPACK_SECURITY_T1_YEARLY,
 		},
 		{
@@ -68,7 +51,7 @@ export function getAvailableUpsells() {
 			isFree: false,
 			slug: 'backup',
 			title: 'Backup',
-			features: [ 'backups', 'full-activity-log', 'real-time-backups', 'priority_support' ],
+			ownedFeatures: [ 'backups' ],
 			checkoutSlug: PRODUCT_JETPACK_BACKUP_T1_YEARLY,
 		},
 		{
@@ -80,7 +63,7 @@ export function getAvailableUpsells() {
 			isFree: false,
 			slug: 'search',
 			title: 'Search',
-			features: [ 'search', 'instant-search' ],
+			ownedFeatures: [ 'search' ],
 			checkoutSlug: PRODUCT_JETPACK_SEARCH,
 		},
 		{
@@ -92,7 +75,7 @@ export function getAvailableUpsells() {
 			isFree: false,
 			slug: 'video',
 			title: 'VideoPress',
-			features: [ 'videopress', 'videopress-1tb-storage' ],
+			ownedFeatures: [ 'videopress' ],
 			checkoutSlug: PRODUCT_JETPACK_VIDEOPRESS,
 		},
 		{
@@ -104,14 +87,7 @@ export function getAvailableUpsells() {
 			isFree: true,
 			slug: 'boost',
 			title: 'Boost',
-			features: [
-				'cloud-critical-css',
-				'cornerstone-10-pages',
-				'image-cdn-liar',
-				'image-cdn-quality',
-				'image-size-analysis',
-				'performance-history',
-			],
+			ownedFeatures: [ 'cloud-critical-css' ],
 			checkoutSlug: PRODUCT_JETPACK_BOOST,
 		},
 		{
@@ -123,11 +99,7 @@ export function getAvailableUpsells() {
 			isFree: true,
 			slug: 'social',
 			title: 'Social',
-			features: [
-				'social-enhanced-publishing',
-				'social-image-generator',
-				'subscriber-unlimited-imports',
-			],
+			ownedFeatures: [ 'social-enhanced-publishing' ],
 			checkoutSlug: PRODUCT_JETPACK_SOCIAL_BASIC,
 		},
 	] as Product[];
@@ -137,5 +109,14 @@ export function getAvailableUpsells() {
 // Currently we end up calling getAvailableUpsells() twice per render.
 export function getUpsellFeatureSlugs(): string[] {
 	const upsells = getAvailableUpsells();
-	return upsells.flatMap( ( upsell ) => upsell.features );
+	return upsells.flatMap( ( upsell ) => upsell.ownedFeatures );
+}
+
+export function filterUpsellsBySiteFeatures(
+	upsells: Product[],
+	siteFeatures: string[]
+): Product[] {
+	return upsells.filter(
+		( upsell ) => ! upsell.ownedFeatures.every( ( feature ) => siteFeatures.includes( feature ) )
+	);
 }

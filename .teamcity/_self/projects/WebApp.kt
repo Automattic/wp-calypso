@@ -24,13 +24,10 @@ object WebApp : Project({
 	buildType(CheckCodeStyleBranch)
 	buildType(Translate)
 	buildType(BuildDockerImage)
-	buildType(playwrightPrBuildType("desktop", "23cc069f-59e5-4a63-a131-539fb55264e7"))
-	buildType(playwrightPrBuildType("mobile", "90fbd6b7-fddb-4668-9ed0-b32598143616"))
 	buildType(PlaywrightTestPRMatrix)
 	buildType(PlaywrightTestPreReleaseMatrix)
 	buildType(PlaywrightTestDashboardPRMatrix)
 	buildType(PlaywrightTestA4APRMatrix)
-	buildType(JestPreReleaseE2ETests)
 	buildType(PreReleaseE2ETests)
 	buildType(AuthenticationE2ETests)
 	buildType(QuarantinedE2ETests)
@@ -936,60 +933,6 @@ object Translate : BuildType({
 	}
 })
 
-fun playwrightPrBuildType( targetDevice: String, buildUuid: String ): E2EBuildType {
-	return E2EBuildType(
-		buildId = "calypso_WebApp_Calypso_E2E_Playwright_$targetDevice",
-		buildUuid = buildUuid,
-		buildName = "E2E Tests ($targetDevice)",
-		buildDescription = "Runs Calypso e2e tests on $targetDevice size using Jest runner",
-		getCalypsoLiveURL = """
-			chmod +x ./bin/get-calypso-live-url.sh
-			CALYPSO_LIVE_URL=${'$'}(./bin/get-calypso-live-url.sh ${BuildDockerImage.depParamRefs.buildNumber})
-			if [[ ${'$'}? -ne 0 ]]; then
-				// Command failed. CALYPSO_LIVE_URL contains stderr
-				echo ${'$'}CALYPSO_LIVE_URL
-				exit 1
-			fi
-		""".trimIndent(),
-		testGroup = "calypso-pr",
-		buildParams = {
-			param("env.AUTHENTICATE_ACCOUNTS", "simpleSitePersonalPlanUser,gutenbergSimpleSiteUser,defaultUser")
-			param("env.LIVEBRANCHES", "true")
-			param("env.VIEWPORT_NAME", "$targetDevice")
-		},
-		buildFeatures = {
-			pullRequests {
-				vcsRootExtId = "${Settings.WpCalypso.id}"
-				provider = github {
-					authType = token {
-						token = "credentialsJSON:57e22787-e451-48ed-9fea-b9bf30775b36"
-					}
-					filterAuthorRole = PullRequests.GitHubRoleFilter.EVERYBODY
-				}
-			}
-		},
-		vcsBranchFilter = allBranchesExceptMergeQueue(),
-		enableCommitStatusPublisher = true,
-		buildTriggers = {
-			vcs {
-				branchFilter = """
-					+:*
-					-:pull*
-					-:trunk
-				""".excludeMergeQueueBranches()
-				triggerRules = """
-					-:**.md
-				""".trimIndent()
-			}
-		},
-		buildDependencies = {
-			snapshot(BuildDockerImage) {
-				onDependencyFailure = FailureAction.FAIL_TO_START
-			}
-		}
-	)
-}
-
 object PlaywrightTestPRMatrix : BuildType({
 	templates(CalypsoE2ETestsBuildTemplate)
 	id("calypso_WebApp_Calypso_E2E_Playwright_Test_Matrix")
@@ -1185,155 +1128,6 @@ object PlaywrightTestA4APRMatrix : BuildType({
 	}
 })
 
-
-object JestPreReleaseE2ETests : BuildType({
-	id("calypso_WebApp_Calypso_E2E_Jest_Pre_Release")
-	uuid = "f8e2a4b6-3c91-4d57-8e6f-2a1b9c0d5e7f"
-	name = "Pre-Release E2E Tests (Jest)"
-	description = "Runs Calypso pre-release legacy e2e tests using Jest runner with a build matrix"
-	artifactRules = """
-		logs => logs.tgz
-		screenshots => screenshots
-		trace => trace
-		allure-results => allure-results.tgz
-	""".trimIndent()
-
-	vcs {
-		root(Settings.WpCalypso)
-		branchFilter = allBranchesExceptMergeQueue()
-		cleanCheckout = true
-	}
-
-	params {
-		param("env.NODE_CONFIG_ENV", "test")
-		param("env.PLAYWRIGHT_BROWSERS_PATH", "0")
-		param("env.HEADLESS", "true")
-		param("env.LOCALE", "en")
-		param("env.CALYPSO_BASE_URL", "https://wpcalypso.wordpress.com")
-		param("env.DASHBOARD_BASE_URL", "https://my.wordpress.com")
-		param("env.ALLURE_RESULTS_PATH", "allure-results")
-	}
-
-	features {
-		matrix {
-			param("env.VIEWPORT", listOf(
-				value("desktop", label = "Desktop"),
-				value("mobile", label = "Mobile")
-			))
-		}
-		perfmon {
-		}
-		commitStatusPublisher {
-			vcsRootExtId = "${Settings.WpCalypso.id}"
-			publisher = github {
-				githubUrl = "https://api.github.com"
-				authType = personalToken {
-					token = "credentialsJSON:57e22787-e451-48ed-9fea-b9bf30775b36"
-				}
-			}
-		}
-		notifications {
-			notifierSettings = slackNotifier {
-				connection = "PROJECT_EXT_11"
-				sendTo = "#e2eflowtesting-notif"
-				messageFormat = verboseMessageFormat {
-					addStatusText = true
-				}
-			}
-			branchFilter = "+:<default>"
-			buildFailedToStart = true
-			buildFailed = true
-			buildFinishedSuccessfully = false
-			buildProbablyHanging = true
-		}
-	}
-
-	steps {
-		bashNodeScript {
-			name = "Prepare environment"
-			scriptContent = """
-				# Install deps
-				yarn workspaces focus wp-e2e-tests @automattic/calypso-e2e
-
-				# Decrypt secrets
-				# Must do before build so the secrets are in the dist output
-				E2E_SECRETS_KEY="%E2E_SECRETS_ENCRYPTION_KEY_CURRENT%" yarn workspace @automattic/calypso-e2e decrypt-secrets
-
-				# Build packages
-				yarn workspace @automattic/calypso-e2e build
-			""".trimIndent()
-			dockerImage = "%docker_image_e2e%"
-		}
-
-		bashNodeScript {
-			name = "Run tests"
-			scriptContent = """
-				# Configure bash shell.
-				shopt -s globstar
-				set -x
-
-				# Enter testing directory.
-				cd test/e2e
-				mkdir temp
-
-				# Disable exit on error to support retries.
-				set +o errexit
-
-				# Run suite.
-				xvfb-run yarn jest --reporters=jest-teamcity --reporters=default --maxWorkers=%JEST_E2E_WORKERS% --workerIdleMemoryLimit=1GB --group=calypso-release
-
-				# Restore exit on error.
-				set -o errexit
-
-				# Retry failed tests only.
-				RETRY_COUNT=1 xvfb-run yarn jest --reporters=jest-teamcity --reporters=default --maxWorkers=%JEST_E2E_WORKERS% --workerIdleMemoryLimit=1GB --group=calypso-release --onlyFailures --json --outputFile=pre-release-test-results.json
-			"""
-			dockerImage = "%docker_image_e2e%"
-		}
-
-		bashNodeScript {
-			name = "Collect results"
-			executionMode = BuildStep.ExecutionMode.RUN_ON_FAILURE
-			scriptContent = """
-				set -x
-
-				mkdir -p screenshots
-				find test/e2e/results -type f \( -iname \*.webm -o -iname \*.png \) -print0 | xargs -r -0 mv -t screenshots
-
-				mkdir -p logs
-				find test/e2e/results -name '*.log' -print0 | xargs -r -0 mv -t logs
-
-				mkdir -p trace
-				find test/e2e/results -name '*.zip' -print0 | xargs -r -0 mv -t trace
-
-				mkdir -p allure-results
-				find test/e2e/allure-results -name '*.json' -print0 | xargs -r -0 mv -t allure-results
-			""".trimIndent()
-			dockerImage = "%docker_image_e2e%"
-		}
-	}
-
-	failureConditions {
-		executionTimeoutMin = 20
-		// Don't fail if the runner exists with a non zero code. This allows a build to pass if the failed tests have been muted previously.
-		nonZeroExitCode = false
-
-		// Support retries using the --onlyFailures flag in Jest.
-		supportTestRetry = true
-
-		// Fail if the number of passing tests is 50% or less than the last build. This will catch the case where the test runner crashes and no tests are run.
-		failOnMetricChange {
-			metric = BuildFailureOnMetric.MetricType.PASSED_TEST_COUNT
-			threshold = 50
-			units = BuildFailureOnMetric.MetricUnit.PERCENTS
-			comparison = BuildFailureOnMetric.MetricComparison.LESS
-			compareTo = build {
-				buildRule = lastSuccessful()
-			}
-		}
-	}
-})
-
 object PreReleaseE2ETests : BuildType({
 	id("calypso_WebApp_Calypso_E2E_Pre_Release")
 	uuid = "9c2f634f-6582-4245-bb77-fb97d9f16533"
@@ -1348,9 +1142,6 @@ object PreReleaseE2ETests : BuildType({
 
 	dependencies {
 		snapshot(PlaywrightTestPreReleaseMatrix) {
-			onDependencyFailure = FailureAction.ADD_PROBLEM
-		}
-		snapshot(JestPreReleaseE2ETests) {
 			onDependencyFailure = FailureAction.ADD_PROBLEM
 		}
 	}

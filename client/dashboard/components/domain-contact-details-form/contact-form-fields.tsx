@@ -23,6 +23,21 @@ import { RegionAddressFieldsets } from './region-address-fieldsets';
 import type { CountryListItem } from './custom-form-fieldsets/types';
 import type { DomainContactDetails, StatesListItem } from '@automattic/api-core';
 
+// The supported-countries list repeats popular countries and includes an empty-code
+// separator; the combobox keys options by code, so dedupe to avoid duplicate React keys.
+const getCountryElements = ( countryList: CountryListItem[] | undefined ) => {
+	const seen = new Set< string >();
+	const elements: { label: string; value: string }[] = [];
+	for ( const country of countryList ?? [] ) {
+		if ( ! country.code || seen.has( country.code ) ) {
+			continue;
+		}
+		seen.add( country.code );
+		elements.push( { label: country.name, value: country.code } );
+	}
+	return elements;
+};
+
 export const getContactFormFields = (
 	countryList: CountryListItem[] | undefined,
 	statesList: StatesListItem[] | undefined,
@@ -131,11 +146,7 @@ export const getContactFormFields = (
 			id: 'countryCode',
 			label: __( 'Country' ),
 			type: 'text',
-			elements:
-				countryList?.map( ( country ) => ( {
-					label: country.name,
-					value: country.code,
-				} ) ) ?? [],
+			elements: getCountryElements( countryList ),
 			isValid: {
 				required: true,
 				custom: createFieldAsyncValidator( 'countryCode', asyncValidator ),

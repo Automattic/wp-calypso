@@ -246,6 +246,39 @@ export function redirectToDaySummary( context ) {
 	page.redirect( url );
 }
 
+// Resolve the summary page's date/date-range from the query string.
+// The modern `chartStart`/`chartEnd` pair (matching the Traffic page contract) takes precedence
+// when both are valid `YYYY-MM-DD` dates with `chartStart <= chartEnd`. Otherwise we fall back to
+// the legacy `startDate`/`endDate` params so existing links keep working.
+export function getSummaryDateRangeFromQuery( queryOptions, momentSiteZone, period ) {
+	const parseChartDate = ( value ) =>
+		value && moment( value, 'YYYY-MM-DD', true ).isValid()
+			? momentSiteZone( value ).locale( 'en' )
+			: null;
+
+	const chartStart = parseChartDate( queryOptions.chartStart );
+	const chartEnd = parseChartDate( queryOptions.chartEnd );
+
+	if ( chartStart && chartEnd && ! chartEnd.isBefore( chartStart ) ) {
+		return { date: chartStart, dateRange: { startDate: chartStart, endDate: chartEnd } };
+	}
+
+	const isValidStartDate = queryOptions.startDate && moment( queryOptions.startDate ).isValid();
+	const date = isValidStartDate
+		? momentSiteZone( queryOptions.startDate ).locale( 'en' )
+		: momentSiteZone().endOf( period ).locale( 'en' );
+
+	// Support for custom date ranges.
+	// Evaluate the endDate param if provided and create a date range object if valid.
+	// Valid means endDate is a valid date and is not before the startDate.
+	const isValidEndDate = queryOptions.endDate && moment( queryOptions.endDate ).isValid();
+	const endDate = isValidEndDate ? momentSiteZone( queryOptions.endDate ).locale( 'en' ) : null;
+	const isValidRange = isValidEndDate && ! endDate.isBefore( date );
+	const dateRange = isValidRange ? { startDate: date, endDate: endDate } : null;
+
+	return { date, dateRange };
+}
+
 export function summary( context, next ) {
 	let siteId = context.params.site;
 	const siteFragment = getSiteFragment( context.path );
@@ -295,19 +328,12 @@ export function summary( context, next ) {
 	}
 
 	const momentSiteZone = getMomentSiteZone( context.store.getState(), siteId );
-	const isValidStartDate = queryOptions.startDate && moment( queryOptions.startDate ).isValid();
-	const date = isValidStartDate
-		? momentSiteZone( queryOptions.startDate ).locale( 'en' )
-		: momentSiteZone().endOf( activeFilter.period ).locale( 'en' );
+	const { date, dateRange } = getSummaryDateRangeFromQuery(
+		queryOptions,
+		momentSiteZone,
+		activeFilter.period
+	);
 	const period = rangeOfPeriod( activeFilter.period, date );
-
-	// Support for custom date ranges.
-	// Evaluate the endDate param if provided and create a date range object if valid.
-	// Valid means endDate is a valid date and is not before the startDate.
-	const isValidEndDate = queryOptions.endDate && moment( queryOptions.endDate ).isValid();
-	const endDate = isValidEndDate ? momentSiteZone( queryOptions.endDate ).locale( 'en' ) : null;
-	const isValidRange = isValidEndDate && ! endDate.isBefore( date );
-	const dateRange = isValidRange ? { startDate: date, endDate: endDate } : null;
 
 	const extraProps =
 		context.params.module === 'videodetails' ? { postId: parseInt( queryOptions.post, 10 ) } : {};

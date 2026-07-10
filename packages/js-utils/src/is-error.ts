@@ -4,7 +4,7 @@ const hasOwnProperty = Object.prototype.hasOwnProperty;
 const funcToString = Function.prototype.toString;
 const objectCtorString = funcToString.call( Object );
 
-// Mirrors lodash's `isPlainObject`, including its constructor-string check so
+// Whether a value is a plain object, using a constructor-string check so
 // cross-realm plain objects (e.g. from another iframe) are still recognized as
 // plain rather than mistaken for `Error`-like objects.
 const isPlainObject = ( value: object ): boolean => {
@@ -24,8 +24,8 @@ const isPlainObject = ( value: object ): boolean => {
 };
 
 /**
- * Checks whether a value is an `Error` (or `Error`-like) object, matching
- * lodash's `isError`. Unlike a bare `value instanceof Error`, this also detects
+ * Checks whether a value is an `Error` (or `Error`-like) object. Unlike a bare
+ * `value instanceof Error`, this also detects
  * `DOMException`s and cross-realm errors (e.g. an `Error` from another iframe),
  * resists a spoofed `Symbol.toStringTag`, and still returns `false` for plain
  * objects.

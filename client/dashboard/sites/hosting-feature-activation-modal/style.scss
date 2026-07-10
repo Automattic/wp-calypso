@@ -1,0 +1,51 @@
+@use "calypso/assets/stylesheets/shared/mixins/dark-theme" as ui-mixins;
+
+.hosting-feature-activation-modal {
+	.hosting-feature-activation-modal__domains {
+		.hosting-feature-activation-modal__domain {
+			padding-block: 12px;
+			padding-inline: 16px;
+			background-color: var(--studio-gray-0);
+
+			// --studio-gray-0 is a fixed light gray, so swap it for the dashboard's
+			// dark surface token when the dark theme is active.
+			@include ui-mixins.when-dark-theme {
+				background-color: var(--wp-components-color-gray-100);
+			}
+
+			// The design-system default badge sets its own padding, min-height,
+			// and (in dark mode) an inset outline; override them so both pills
+			// match the Figma spec.
+			.hosting-feature-activation-modal__domain-badge {
+				min-height: 20px;
+				padding-block: 0;
+				padding-inline: 10px;
+				font-weight: 500;
+				border-radius: 4px;
+				box-shadow: none;
+			}
+
+			// The badges use fixed studio palette values tuned for the light row,
+			// so flip them to the dark end of the same ramps in dark mode.
+			.hosting-feature-activation-modal__domain-badge-current {
+				background-color: var(--studio-gray-5);
+				color: var(--studio-gray-80);
+
+				@include ui-mixins.when-dark-theme {
+					background-color: var(--studio-gray-80);
+					color: var(--studio-gray-5);
+				}
+			}
+
+			.hosting-feature-activation-modal__domain-badge-new {
+				background-color: var(--studio-green-5);
+				color: var(--studio-green-80);
+
+				@include ui-mixins.when-dark-theme {
+					background-color: var(--studio-green-80);
+					color: var(--studio-green-5);
+				}
+			}
+		}
+	}
+}

@@ -5,6 +5,7 @@
 .customize-space-modal {
 	&.components-modal__frame {
 		block-size: min( 760px, calc( 100% - 96px ) );
+		max-inline-size: 660px;
 	}
 
 	.components-modal__content {
@@ -29,6 +30,9 @@
 		font-weight: 600;
 	}
 }
+.customize-space-modal__color-selection {
+	padding-block-end: 24px;
+}
 
 .customize-space-modal__subtitle {
 	color: var( --color-text-subtle );
@@ -36,15 +40,57 @@
 	margin-block-end: 0;
 }
 
+// Create-mode wizard: one section at a time in place of the tab strip.
+.customize-space-modal__step {
+	display: flex;
+	flex: 1;
+	flex-direction: column;
+	min-block-size: 0;
+}
+
+.customize-space-modal__step-heading {
+	margin: 0;
+	padding-block: 12px 0;
+	border-block-start: 1px solid var( --color-neutral-5 );
+	color: var( --color-text-subtle );
+	font-size: 0.75rem;
+	font-weight: 600;
+	letter-spacing: 0.5px;
+	text-transform: uppercase;
+}
+
 .customize-space-modal__tabs {
 	display: flex;
 	flex: 1;
 	flex-direction: column;
 	min-block-size: 0;
-	padding-block-end: 12px;
+	padding-block-end: 0;
 	.components-tab-panel__tabs {
 		border-block-end: 1px solid var( --color-neutral-5 );
 		border-block-start: 1px solid var( --color-neutral-5 );
+	}
+
+	// Keep the tab labels in sync with `section-nav-tabs`, which colours its
+	// labels with the theme-aware `--color-neutral-100` / `--color-neutral-70`
+	// tokens so they stay legible in dark mode. The WP TabPanel defaults rely on
+	// `--wpds-color-*-interactive-neutral` tokens that Calypso never defines, so
+	// they fall back to hardcoded light-mode values and vanish on a dark surface.
+	.components-tab-panel__tabs-item {
+		color: var( --color-neutral-100 );
+
+		&:hover,
+		&:focus-visible {
+			color: var( --color-neutral-100 );
+		}
+
+		&.is-active {
+			background: transparent;
+			color: var( --color-neutral-100 );
+
+			&::after {
+				background: var( --color-neutral-70 );
+			}
+		}
 	}
 
 	.components-tab-panel__tab-content {
@@ -61,7 +107,7 @@
 	flex-direction: column;
 	min-block-size: 0;
 	overflow-y: auto;
-	padding-block: 16px 8px;
+	padding-block: 16px 0;
 	padding-inline: 8px;
 }
 
@@ -180,6 +226,10 @@
 	border-radius: 8px;
 	background: var( --space-color-bg );
 	color: var( --space-color );
+
+	svg {
+		fill: currentColor;
+	}
 }
 
 @each $color in space-colors.$space-colors {
@@ -213,12 +263,6 @@
 	flex: 1;
 	min-block-size: 0;
 	overflow: hidden;
-}
-
-.space-sources__description {
-	margin: 0;
-	color: var( --color-text-subtle );
-	font-size: 0.875rem;
 }
 
 .space-sources__filters {

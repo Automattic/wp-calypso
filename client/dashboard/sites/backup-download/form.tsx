@@ -7,7 +7,6 @@ import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
 import { useState } from 'react';
-import { siteBackupDownloadRoute } from '../../app/router/sites';
 import { ButtonStack } from '../../components/button-stack';
 import type { DownloadConfig } from '@automattic/api-core';
 import type { Field } from '@wordpress/dataviews';
@@ -51,14 +50,15 @@ const fields: Field< DownloadConfig >[] = [
 
 function SiteBackupDownloadForm( {
 	siteId,
+	rewindId,
 	downloadPointDate,
 	onDownloadInitiate,
 }: {
 	siteId: number;
+	rewindId: string;
 	downloadPointDate: string;
 	onDownloadInitiate: ( downloadId: number ) => void;
 } ) {
-	const { rewindId } = siteBackupDownloadRoute.useParams();
 	const { mutate: downloadMutation, isPending: isDownloadMutationPending } = useMutation(
 		siteBackupDownloadInitiateMutation( siteId )
 	);

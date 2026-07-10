@@ -87,10 +87,9 @@ export function SourcesTab( { selectedSourceKeys, onAddDraftSource, onRemoveDraf
 
 	return (
 		<VStack spacing={ 4 } justify="flex-start" className="space-sources">
-			<p className="space-sources__description">
-				{ translate( 'Choose which of your subscriptions appear in this space.' ) }
+			<p className="customize-space-modal__field-help">
+				{ translate( 'Pick the subscriptions whose posts make up this space’s main feed.' ) }
 			</p>
-
 			<SearchControl
 				__nextHasNoMarginBottom
 				label={ translate( 'Search your subscriptions' ) }
