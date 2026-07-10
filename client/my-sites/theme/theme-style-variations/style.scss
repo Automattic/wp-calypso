@@ -51,7 +51,14 @@
 	.global-styles-variations {
 		@include break-large {
 			display: grid;
-			grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+			grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
+
+			// Swatches can stretch beyond the 129px the package's 79px iframe
+			// cap allows for; the preview computes its height from the measured
+			// width, so the aspect ratio is preserved without the cap.
+			.global-styles-variation-container__iframe {
+				max-height: none;
+			}
 		}
 	}
 
