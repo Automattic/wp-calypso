@@ -104,8 +104,7 @@ const NewStatsNotices = ( { siteId, isOdysseyStats, statsPurchaseSuccess }: Stat
 		siteHasPaidStatsFeature;
 	const hasFreeStats = useSelector( ( state ) => hasSiteProductJetpackStatsFree( state, siteId ) );
 
-	const { isRequestingSitePurchases, isCommercialOwned, supportCommercialUse } =
-		useStatsPurchases( siteId );
+	const { isRequestingSitePurchases, supportCommercialUse } = useStatsPurchases( siteId );
 
 	const hasPWYWPlanOnly = useSelector( ( state ) =>
 		hasSiteProductJetpackStatsPWYWOnly( state, siteId )
@@ -148,7 +147,7 @@ const NewStatsNotices = ( { siteId, isOdysseyStats, statsPurchaseSuccess }: Stat
 		isSiteJetpack,
 		statsPurchaseSuccess,
 		isCommercial,
-		isCommercialOwned,
+		supportCommercialUse,
 		hasPWYWPlanOnly,
 		hasSignificantViews,
 		showPaywallNotice,
