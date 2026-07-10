@@ -3,7 +3,7 @@ import page from '@automattic/calypso-router';
 import { Page } from '@wordpress/admin-ui';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
-import { ReactNode } from 'react';
+import { MouseEvent, ReactNode } from 'react';
 import QuerySiteFeatures from 'calypso/components/data/query-site-features';
 import QuerySiteSettings from 'calypso/components/data/query-site-settings';
 import JetpackFooter from 'calypso/components/jetpack/jetpack-footer';
@@ -44,16 +44,30 @@ function StatsBreadcrumbs( { items }: { items: BreadcrumbItem[] } ) {
 	const rootUrl = items[ 0 ]?.to ?? ( siteSlug ? `/stats/day/${ siteSlug }` : undefined );
 	const restItems = items.slice( 1 );
 
+	// Route unmodified primary-button clicks through the SPA router while leaving
+	// modified clicks (Cmd/Ctrl/middle-click, etc.) to open in a new tab natively.
+	const handleClick = ( e: MouseEvent, to: string ) => {
+		if (
+			e.defaultPrevented ||
+			e.button !== 0 ||
+			e.metaKey ||
+			e.altKey ||
+			e.ctrlKey ||
+			e.shiftKey
+		) {
+			return;
+		}
+		e.preventDefault();
+		page( to );
+	};
+
 	return (
 		<nav className="stats-breadcrumbs" aria-label={ translate( 'Breadcrumbs' ) }>
 			{ rootUrl ? (
 				<a
 					className="stats-breadcrumbs__link"
 					href={ rootUrl }
-					onClick={ ( e ) => {
-						e.preventDefault();
-						page( rootUrl );
-					} }
+					onClick={ ( e ) => handleClick( e, rootUrl ) }
 				>
 					{ STATS_HEADER_TITLE }
 				</a>
@@ -68,21 +82,7 @@ function StatsBreadcrumbs( { items }: { items: BreadcrumbItem[] } ) {
 							key={ `item-${ index }` }
 							className="stats-breadcrumbs__link"
 							href={ item.to }
-							onClick={ ( e ) => {
-								// Only handle unmodified primary-button clicks via the SPA router.
-								if (
-									e.defaultPrevented ||
-									e.button !== 0 ||
-									e.metaKey ||
-									e.altKey ||
-									e.ctrlKey ||
-									e.shiftKey
-								) {
-									return;
-								}
-								e.preventDefault();
-								page( item.to! );
-							} }
+							onClick={ ( e ) => handleClick( e, item.to! ) }
 						>
 							{ item.label }
 						</a>

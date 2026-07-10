@@ -303,8 +303,9 @@ export const useStatsBreadcrumbTrail = (
 			// A top-level Traffic crumb synthesized from the current screen, so the root
 			// "Stats" breadcrumb always links back to Stats even when there is no usable
 			// history (direct load, a full page load that clears sessionStorage, or a
-			// trail made up entirely of screens without a back link). Carries the current
-			// screen's date range so it survives the round-trip back to Traffic.
+			// trail made up entirely of screens without a back link). When a current
+			// screen entry is available its date range is carried so it survives the
+			// round-trip back to Traffic; otherwise it links to the default range.
 			const trafficFallback = ( current?: {
 				queryParams: QueryArgs;
 				period: string | null;
