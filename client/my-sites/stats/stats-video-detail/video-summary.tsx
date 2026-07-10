@@ -155,9 +155,14 @@ export default function VideoSummary( {
 	// period wants, summing values. Bucket keys are normalized ISO dates.
 	const buckets: BucketRecord[] = useMemo( () => {
 		const unit = uiPeriod;
+		// The endpoint's `month` window spans 31 days inclusive; trim to the
+		// trailing 30 so totals line up with the 30-day window the Videos
+		// module and the All videos page show by default.
+		const trimToWindow = ( data?: Array< { period: string; value: number } > ) =>
+			apiPeriod === 'month' && data && data.length > 30 ? data.slice( -30 ) : data;
 		const toBucketMap = ( data?: Array< { period: string; value: number } > ) => {
 			const map = new Map< string, number >();
-			for ( const { period: date, value } of data ?? [] ) {
+			for ( const { period: date, value } of trimToWindow( data ) ?? [] ) {
 				const parsed = moment( date );
 				if ( ! parsed.isValid() ) {
 					continue;
@@ -187,7 +192,7 @@ export default function VideoSummary( {
 				retention: computeRetention( watchTime, plays, videoDuration ),
 			};
 		} );
-	}, [ playsData, impressionsData, watchTimeData, uiPeriod, videoDuration, moment ] );
+	}, [ playsData, impressionsData, watchTimeData, uiPeriod, apiPeriod, videoDuration, moment ] );
 
 	const chartData: ChartRecord[] = useMemo(
 		() =>
