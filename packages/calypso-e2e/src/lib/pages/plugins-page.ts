@@ -92,7 +92,7 @@ export class PluginsPage {
 	/**
 	 * Visit a specific page within the Plugins feature at `/plugins/page`.
 	 *
-	 * If optional paramter `site` is specified, this method will
+	 * If optional parameter `site` is specified, this method will
 	 * attempt to load `/plugins/<page>/<site>` endpoint.
 	 *
 	 * @param {string} page Sub-page to visit.
