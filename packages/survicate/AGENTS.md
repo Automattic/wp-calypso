@@ -71,6 +71,24 @@ msd_visits_b >= 3`) need no code change.
 so any trait (email, account age, visit counts) flows through the same
 deferred-until-`SurvicateReady` path.
 
+### Two separate trait pushes are expected
+
+Visitor traits are published from **two** independent `setSurvicateVisitorTraits`
+call sites, and this is intentional — don't consolidate them into one:
+
+- `useSurvicate` pushes **identity** traits (`email`, `account_age_in_days`) once
+  from the authenticated user, right after the script loads, next to the
+  `calypso_survicate_user_not_available_error` tracks event that fires when the
+  email is missing at load time.
+- `useSurvicateVisitTraits` pushes **behavioral** traits (`msd_visits_<slug>`)
+  reactively, re-pushing whenever a preference-backed visit count changes.
+
+They have different sources and lifecycles (set-once identity vs. reactive
+counts), so keeping them apart keeps each concern where it belongs. This is safe
+because `_sva.setVisitorTraits` **merges** traits across calls (upsert), rather
+than replacing the whole set — so the visit-count push does not clobber the
+email/account-age traits, and vice versa.
+
 ## Help Center coordination (defense-in-depth)
 
 Surveys must not cover the Help Center while a user is actively seeking support. Three
