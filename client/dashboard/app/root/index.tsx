@@ -84,9 +84,12 @@ function Root() {
 			href: path,
 			state: { __TSR_index: 0 },
 		} );
-		const { foundRoute } = router.getMatchedRoutes( parsedLocation );
+		const { foundRoute, routeParams } = router.getMatchedRoutes( parsedLocation );
 
-		if ( foundRoute ) {
+		// A `_splat` param means the path only matched the catch-all fallback, not a
+		// real route — e.g. the notifications bell's `/notifications`, an anchor that
+		// handles its own click. Navigating there would just render the 404 page.
+		if ( foundRoute && ! ( '_splat' in routeParams ) ) {
 			event.preventDefault();
 			router.navigate( { to: path } );
 		}
