@@ -178,7 +178,7 @@ $y-axis-padding: 0 20px;
 
 	&.is-selected {
 		cursor: default;
-		background-color: color-mix(in srgb, var(--color-primary) 10%, transparent);
+		background-color: color-mix(in srgb, var(--color-accent) 10%, transparent);
 	}
 }
 
