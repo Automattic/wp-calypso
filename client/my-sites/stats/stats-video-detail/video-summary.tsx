@@ -180,7 +180,11 @@ export default function VideoSummary( {
 		const watchTimeByBucket = toBucketMap( watchTimeData?.data );
 
 		const keys = Array.from(
-			new Set( [ ...playsByBucket.keys(), ...impressionsByBucket.keys() ] )
+			new Set( [
+				...playsByBucket.keys(),
+				...impressionsByBucket.keys(),
+				...watchTimeByBucket.keys(),
+			] )
 		).sort();
 
 		return keys.map( ( key ) => {

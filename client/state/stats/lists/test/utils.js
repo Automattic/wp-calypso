@@ -1636,6 +1636,29 @@ describe( 'utils', () => {
 				expect( normalizers.statsVideo() ).toBeNull();
 			} );
 
+			test( 'should return empty data when the endpoint reports an empty window', () => {
+				// With no rows in the requested window, the endpoint returns a
+				// single object instead of the usual [ date, value ] tuples.
+				expect(
+					normalizers.statsVideo( {
+						data: { date: '7-10', p: '0' },
+						pages: [],
+					} )
+				).toEqual( { pages: [], data: [] } );
+			} );
+
+			test( 'should skip non-tuple entries in the data array', () => {
+				expect(
+					normalizers.statsVideo( {
+						data: [ [ '2016-11-12', 1 ], { date: '7-10', p: '0' } ],
+						pages: [],
+					} )
+				).toEqual( {
+					pages: [],
+					data: [ { period: '2016-11-12', value: 1 } ],
+				} );
+			} );
+
 			test( 'should return a properly parsed data array', () => {
 				expect(
 					normalizers.statsVideo( {
