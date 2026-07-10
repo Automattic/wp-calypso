@@ -46,9 +46,16 @@ jest.mock( 'calypso/reader/data/spaces', () => {
 		...actual,
 		useSpaceBySlug: ( ...args: Parameters< typeof actual.useSpaceBySlug > ) => {
 			const result = actual.useSpaceBySlug( ...args );
-			return mockSpaceError.current !== undefined
-				? { ...result, error: mockSpaceError.current }
-				: result;
+			if ( mockSpaceError.current !== undefined ) {
+				return { ...result, error: mockSpaceError.current };
+			}
+			// Tests seed the by-slug cache directly rather than serving the open-time
+			// refetch, so present that seeded detail as a settled successful fetch —
+			// the Customize modal only seeds its draft once the fetch has succeeded.
+			if ( result.data !== undefined ) {
+				return { ...result, isSuccess: true, isFetchedAfterMount: true };
+			}
+			return result;
 		},
 	};
 } );
