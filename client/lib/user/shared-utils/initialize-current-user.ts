@@ -47,13 +47,5 @@ export async function initializeCurrentUser(): Promise< UserData | false > {
 		return false;
 	}
 
-	try {
-		return filterUserObject( userData );
-	} catch ( error: unknown ) {
-		// Treat malformed unauthenticated /me responses the same as an authorization failure.
-		// Some local API proxy paths return a plain error object rather than an error envelope.
-		// eslint-disable-next-line no-console
-		console.error( 'Failed to normalize the user from /me endpoint:', error, userData );
-		return false;
-	}
+	return filterUserObject( userData );
 }

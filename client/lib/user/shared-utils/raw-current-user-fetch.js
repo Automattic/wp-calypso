@@ -4,7 +4,7 @@ const MAX_TRIES = 3;
 const RETRY_DELAY = 1000; // 1 second
 
 const isErrorResponse = ( response ) => {
-	return response?.error || response?.body?.error || response?.code >= 400;
+	return response?.body?.error || response?.code >= 400;
 };
 
 export async function rawCurrentUserFetch( { retry = false } = {} ) {
