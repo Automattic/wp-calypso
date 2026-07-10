@@ -426,13 +426,19 @@ const UnifiedDesignPickerStep: StepType< {
 		if ( isComingFromSuccessfulImport ) {
 			return undefined;
 		}
+		// Site Setup enters directly on the design picker, so there is nothing to
+		// go back to. Return no handler so Stepper's automatic history-back button
+		// (which would just leave the flow) is suppressed.
+		if ( isSiteSetupFlow( flow ) ) {
+			return undefined;
+		}
 		if ( intent === 'update-design' ) {
 			return () =>
 				submit?.( {
 					eventProps: commonFilterProperties,
 				} );
 		}
-		return goBack ? () => handleBackClick() : undefined;
+		return () => handleBackClick();
 	};
 
 	const backButton = getGoBackHandler();

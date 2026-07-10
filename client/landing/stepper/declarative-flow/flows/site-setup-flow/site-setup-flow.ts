@@ -479,19 +479,7 @@ const siteSetupFlow: Flow = {
 			}
 		};
 
-		// The goals step used to be the back target for the design picker and
-		// import capture steps. With it gone they have no in-flow step to return
-		// to, so leave goBack undefined and let Stepper fall back to browser
-		// history instead of pointing at the removed step.
-		const isEntryStep = currentStep === 'design-setup' || currentStep === 'import';
-
-		return {
-			goNext,
-			goBack: isEntryStep ? undefined : goBack,
-			goToStep,
-			submit,
-			exitFlow,
-		};
+		return { goNext, goBack, goToStep, submit, exitFlow };
 	},
 
 	useAssertConditions(): AssertConditionResult {
