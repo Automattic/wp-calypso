@@ -9,7 +9,7 @@ First, display a `jsx` code block to show an example of usage, including import 
 ```jsx
 import DateRange from 'calypso/components/date-range';
 
-export default class extends React.Component {
+export default class DateRangeExample extends React.Component {
 	render() {
 		return <DateRange />;
 	}
