@@ -210,8 +210,11 @@ export default function VideoSummary( {
 							value,
 						};
 					case 'month':
+						// The chart's x-axis labels are 42px wide; 'MMM YYYY' wraps
+						// onto a second line. The year is visible in the tooltip and
+						// the date heading.
 						return {
-							period: start.format( 'MMM YYYY' ),
+							period: start.format( 'MMM' ),
 							periodLabel: start.format( 'MMMM YYYY' ),
 							startDate: bucket.key,
 							value,
@@ -269,8 +272,10 @@ export default function VideoSummary( {
 		setSelectedRecord( null );
 	};
 
+	// Bucket labels can repeat across the window (e.g. two "Jul" months), so
+	// selection identity uses the unique startDate.
 	const selectedIndex = selected
-		? chartData.findIndex( ( record ) => record.period === selected.period )
+		? chartData.findIndex( ( record ) => record.startDate === selected.startDate )
 		: -1;
 
 	const handleArrows = ( { direction }: { direction: string } ) => {
