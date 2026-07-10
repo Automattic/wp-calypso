@@ -9,11 +9,14 @@ import {
 } from 'calypso/my-sites/stats/hooks/use-stats-navigation-history';
 import { useSelector } from 'calypso/state';
 import getMediaItem from 'calypso/state/selectors/get-media-item';
+import { getSiteStatsNormalizedData } from 'calypso/state/stats/lists/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import PageViewTracker from '../stats-page-view-tracker';
-import VideoDetailsCard, { VideoMediaItem } from './video-details-card';
+import VideoDetailsCard from './video-details-card';
 import VideoEmbedsCard from './video-embeds-card';
 import VideoSummary from './video-summary';
+
+import './style.scss';
 
 interface StatsVideoDetailProps {
 	postId: number;
@@ -25,9 +28,38 @@ interface StatsVideoDetailProps {
 	};
 }
 
+interface VideoMediaItem {
+	title?: string;
+	date?: string;
+	/** Video duration in seconds. */
+	length?: number;
+}
+
+interface VideoStatsPost {
+	post_title?: string;
+	post_date?: string;
+}
+
 export default function StatsVideoDetail( { postId, period, context }: StatsVideoDetailProps ) {
 	const translate = useTranslate();
 	const siteId = useSelector( getSelectedSiteId );
+	// The video title and upload date come from the attachment post included in
+	// the statsVideo response — available in both Calypso and Odyssey (the
+	// stats-app proxy forwards stats routes). Mirrors VideoSummary's default
+	// Days/Weeks query, which is always fetched first.
+	const videoStatsPost = useSelector(
+		( state ) =>
+			(
+				getSiteStatsNormalizedData( state, siteId, 'statsVideo', {
+					postId,
+					statType: 'views',
+					period: 'month',
+				} ) as { post?: VideoStatsPost | null } | null
+			 )?.post ?? null
+	);
+	// The media item is only needed for the video duration (retention rate);
+	// the request 404s harmlessly in Odyssey, where the stats-app proxy has no
+	// media route, and the retention card is simply omitted.
 	const media = useSelector(
 		( state ) => getMediaItem( state, siteId, postId ) as VideoMediaItem | null
 	);
@@ -48,7 +80,8 @@ export default function StatsVideoDetail( { postId, period, context }: StatsVide
 		} );
 	}, [ context.query, period.period ] );
 
-	const title = media?.title || translate( 'Video details', { textOnly: true } );
+	const videoTitle = videoStatsPost?.post_title || media?.title || null;
+	const videoDate = videoStatsPost?.post_date || media?.date || null;
 
 	return (
 		<Main
@@ -58,7 +91,7 @@ export default function StatsVideoDetail( { postId, period, context }: StatsVide
 					label: item.label,
 					to: item.url ?? undefined,
 				} ) ),
-				{ label: title },
+				{ label: videoTitle || translate( 'Video details', { textOnly: true } ) },
 			] }
 		>
 			<PageViewTracker
@@ -71,7 +104,7 @@ export default function StatsVideoDetail( { postId, period, context }: StatsVide
 					id="my-stats-content"
 					className="stats-summary-view stats-summary__positioned stats-video-detail"
 				>
-					<VideoDetailsCard media={ media } />
+					<VideoDetailsCard title={ videoTitle } date={ videoDate } />
 					<VideoSummary
 						postId={ postId }
 						initialStatType={ statType }

@@ -854,7 +854,9 @@ export const normalizers = {
 			} );
 		}
 
-		return { pages, data };
+		// The endpoint also returns the video's attachment post, which carries
+		// the title and upload date.
+		return { pages, data, post: payload.post ?? null };
 	},
 
 	/**

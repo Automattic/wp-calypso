@@ -6,12 +6,6 @@
 $card-padding: 24px;
 $border-radius: 5px; // stylelint-disable-line scales/radii
 
-@keyframes stats-video-details-card-shine {
-	to {
-		background-position-x: -200%;
-	}
-}
-
 .stats-video-detail {
 	display: flex;
 	flex-direction: column;
@@ -48,23 +42,6 @@ $border-radius: 5px; // stylelint-disable-line scales/radii
 	&.card::after {
 		display: none;
 	}
-
-	&.is-loading {
-		.stats-video-details-card__heading,
-		.stats-video-details-card__info {
-			position: relative;
-
-			&::after {
-				content: "";
-				position: absolute;
-				inset: 0;
-				background: linear-gradient(94deg, var(--studio-gray-5) 8%, var(--studio-gray-0) 18%, var(--studio-gray-5) 33%);
-				border-radius: 4px;
-				background-size: 200% 100%;
-				animation: 1.5s stats-video-details-card-shine linear infinite;
-			}
-		}
-	}
 }
 
 .stats-video-details-card__heading {
@@ -80,7 +57,6 @@ $border-radius: 5px; // stylelint-disable-line scales/radii
 		@include stats-section-header;
 		display: block;
 		margin-bottom: 4px;
-		min-height: 40px;
 	}
 
 	.stats-video-details-card__date {
