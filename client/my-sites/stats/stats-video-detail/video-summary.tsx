@@ -7,6 +7,7 @@ import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import { useSelector } from 'calypso/state';
 import {
 	getSiteStatsNormalizedData,
+	hasSiteStatsQueryFailed,
 	isRequestingSiteStatsForQuery,
 } from 'calypso/state/stats/lists/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
@@ -133,14 +134,21 @@ export default function VideoSummary( {
 			: false
 	);
 
+	const hasSelectedSeriesFailed = useSelector( ( state ) =>
+		siteId ? hasSiteStatsQueryFailed( state, siteId, 'statsVideo', queries[ statType ] ) : false
+	);
+
 	// QuerySiteStats defers its initial request, so the requesting flag is
 	// still false on the first render after switching windows; treat missing
 	// data as loading too, or the empty state flashes before the fetch starts.
-	const isSelectedSeriesLoaded = !! {
-		views: playsData,
-		impressions: impressionsData,
-		watch_time: watchTimeData,
-	}[ statType ];
+	// A failed request also ends the loading state (empty chart instead of an
+	// infinite placeholder).
+	const isSelectedSeriesLoaded =
+		!! {
+			views: playsData,
+			impressions: impressionsData,
+			watch_time: watchTimeData,
+		}[ statType ] || hasSelectedSeriesFailed;
 
 	// Group the fetched buckets (daily or monthly) into the buckets the UI
 	// period wants, summing values. Bucket keys are normalized ISO dates.

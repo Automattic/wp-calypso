@@ -1,5 +1,5 @@
 import { useTranslate } from 'i18n-calypso';
-import { useEffect, useLayoutEffect } from 'react';
+import { useEffect, useLayoutEffect, useMemo } from 'react';
 import titlecase from 'to-title-case';
 import Main from 'calypso/my-sites/stats/components/stats-main';
 import {
@@ -7,7 +7,10 @@ import {
 	recordCurrentScreen,
 } from 'calypso/my-sites/stats/hooks/use-stats-navigation-history';
 import { useSelector } from 'calypso/state';
-import { getSiteStatsNormalizedData } from 'calypso/state/stats/lists/selectors';
+import {
+	getSiteStatsNormalizedData,
+	hasSiteStatsQueryFailed,
+} from 'calypso/state/stats/lists/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import PageViewTracker from '../stats-page-view-tracker';
 import VideoDetailsCard from './video-details-card';
@@ -38,13 +41,18 @@ export default function StatsVideoDetail( { postId, period, context }: StatsVide
 	// the statsVideo response — available in both Calypso and Odyssey (the
 	// stats-app proxy forwards stats routes). Mirrors VideoSummary's default
 	// Days/Weeks query, which is always fetched first.
+	const videoInfoQuery = useMemo(
+		() => ( { postId, statType: 'views', period: 'month' } ),
+		[ postId ]
+	);
 	const videoStatsData = useSelector(
 		( state ) =>
-			getSiteStatsNormalizedData( state, siteId, 'statsVideo', {
-				postId,
-				statType: 'views',
-				period: 'month',
-			} ) as { post?: VideoStatsPost | null } | null
+			getSiteStatsNormalizedData( state, siteId, 'statsVideo', videoInfoQuery ) as {
+				post?: VideoStatsPost | null;
+			} | null
+	);
+	const hasVideoInfoFailed = useSelector( ( state ) =>
+		siteId ? hasSiteStatsQueryFailed( state, siteId, 'statsVideo', videoInfoQuery ) : false
 	);
 	const videoStatsPost = videoStatsData?.post ?? null;
 	const breadcrumbTrail = useStatsBreadcrumbTrail();
@@ -66,9 +74,9 @@ export default function StatsVideoDetail( { postId, period, context }: StatsVide
 
 	const videoTitle = videoStatsPost?.post_title || null;
 	const videoDate = videoStatsPost?.post_date || null;
-	// Loading until statsVideo answers; a response without a post means there
-	// is genuinely no title and the card hides.
-	const isVideoInfoLoading = ! videoStatsData;
+	// Loading until statsVideo answers (success or failure); a response
+	// without a post means there is genuinely no title and the card hides.
+	const isVideoInfoLoading = ! videoStatsData && ! hasVideoInfoFailed;
 
 	return (
 		<Main

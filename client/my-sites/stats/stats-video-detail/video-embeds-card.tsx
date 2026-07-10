@@ -3,7 +3,10 @@ import { useTranslate } from 'i18n-calypso';
 import { useMemo } from 'react';
 import QuerySiteStats from 'calypso/components/data/query-site-stats';
 import { useSelector } from 'calypso/state';
-import { getSiteStatsNormalizedData } from 'calypso/state/stats/lists/selectors';
+import {
+	getSiteStatsNormalizedData,
+	hasSiteStatsQueryFailed,
+} from 'calypso/state/stats/lists/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import StatsModulePlaceholder from '../stats-module/placeholder';
 
@@ -20,10 +23,13 @@ export default function VideoEmbedsCard( { postId }: { postId: number } ) {
 		( state ) =>
 			getSiteStatsNormalizedData( state, siteId, 'statsVideo', query ) as VideoEmbedsData | null
 	);
+	const hasFailed = useSelector( ( state ) =>
+		siteId ? hasSiteStatsQueryFailed( state, siteId, 'statsVideo', query ) : false
+	);
 	// QuerySiteStats defers its initial request, so the requesting flag can be
 	// false on first render; treat missing data as loading to avoid flashing
-	// the empty state.
-	const isLoading = ! data;
+	// the empty state. A failed request ends the loading state.
+	const isLoading = ! data && ! hasFailed;
 
 	const pages = data?.pages ?? [];
 
