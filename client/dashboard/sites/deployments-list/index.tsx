@@ -48,7 +48,7 @@ function DeploymentsEmptyState( { view }: { view: View } ) {
 		if ( view.search ) {
 			description = sprintf(
 				/** translators: %s: search query string */
-				__( 'Your search for "%s" did not return any results.' ),
+				__( 'Your search for “%s” did not return any results.' ),
 				view.search
 			);
 		}
