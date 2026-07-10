@@ -11,9 +11,10 @@ import { useSelector } from 'calypso/state';
 import getMediaItem from 'calypso/state/selectors/get-media-item';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import PageViewTracker from '../stats-page-view-tracker';
-import VideoDetailsCard, { VideoMediaItem } from './video-details-card';
 import VideoEmbedsCard from './video-embeds-card';
 import VideoSummary from './video-summary';
+
+import './style.scss';
 
 interface StatsVideoDetailProps {
 	postId: number;
@@ -28,8 +29,11 @@ interface StatsVideoDetailProps {
 export default function StatsVideoDetail( { postId, period, context }: StatsVideoDetailProps ) {
 	const translate = useTranslate();
 	const siteId = useSelector( getSelectedSiteId );
+	// The media item is a best-effort enhancement for the breadcrumb title:
+	// the request 404s in Odyssey Stats (the stats-app proxy has no media
+	// route), in which case the static label below is used instead.
 	const media = useSelector(
-		( state ) => getMediaItem( state, siteId, postId ) as VideoMediaItem | null
+		( state ) => getMediaItem( state, siteId, postId ) as { title?: string } | null
 	);
 	const breadcrumbTrail = useStatsBreadcrumbTrail();
 	const statType = context.query.statType ?? null;
@@ -48,7 +52,7 @@ export default function StatsVideoDetail( { postId, period, context }: StatsVide
 		} );
 	}, [ context.query, period.period ] );
 
-	const title = media?.title || translate( 'Video', { textOnly: true } );
+	const title = media?.title || translate( 'Video details', { textOnly: true } );
 
 	return (
 		<Main
@@ -71,12 +75,7 @@ export default function StatsVideoDetail( { postId, period, context }: StatsVide
 					id="my-stats-content"
 					className="stats-summary-view stats-summary__positioned stats-video-detail"
 				>
-					<VideoDetailsCard media={ media } mediaId={ postId } />
-					<VideoSummary
-						postId={ postId }
-						initialStatType={ statType }
-						videoDuration={ media?.length ?? null }
-					/>
+					<VideoSummary postId={ postId } initialStatType={ statType } />
 					<VideoEmbedsCard postId={ postId } />
 				</div>
 			</div>
