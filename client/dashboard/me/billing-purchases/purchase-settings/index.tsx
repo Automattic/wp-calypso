@@ -1714,14 +1714,14 @@ export default function PurchaseSettings() {
 					( features && features.length > 0 ) ) && (
 					<WPComResourceMeters purchase={ purchase } site={ site } features={ features } />
 				) }
-				{ isWpcomFlexSubscription( purchase ) && (
-					<BillingFlexUsageCard purchaseId={ purchase.ID } />
-				) }
 				{ ! purchase.is_trial_plan &&
 					! isCentennial &&
 					purchase.subscription_status === 'active' && (
 						<ManageSubscriptionCard purchase={ purchase } />
 					) }
+				{ isWpcomFlexSubscription( purchase ) && (
+					<BillingFlexUsageCard purchaseId={ purchase.ID } />
+				) }
 				<PurchaseSettingsActions purchase={ purchase } />
 			</VStack>
 		</PageLayout>
