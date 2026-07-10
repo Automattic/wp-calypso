@@ -15,6 +15,7 @@ import { __, _x } from '@wordpress/i18n';
 /**
  * Internal dependencies
  */
+import './components/block-ref.scss';
 import ExcerptPicker from './components/excerpt-picker';
 import './components/feedback-list.scss';
 import ImageAltTextPicker from './components/image-alt-text-picker';

@@ -6,8 +6,14 @@
  * feedback, an action, and an optional one-click rewrite when the item has
  * exact source text. This component owns that shared behaviour - the item
  * status machine, apply/undo/dismiss, block focus, and stale-context handling
- * - and takes the per-flow copy and options (summary notes, bulk "Accept all")
+ * - and takes the per-flow copy and options (summary notes, bulk "Apply all")
  * as props so each flow stays a thin wrapper.
+ *
+ * Cards resolve into two families by whether the edit can be applied in place:
+ * applicable cards show a Current/New diff and "Apply change"; advisory
+ * ("Manual edit") cards show a Why/Suggestion body and "Go to section" instead
+ * of a dead Apply. Applied and Dismissed keep the header and collapse the body
+ * to an undoable resolution row.
  */
 
 /**
@@ -30,7 +36,8 @@ import {
 	undoBlockEdit,
 } from '../utils/block-actions';
 import { countOccurrences, flattenBlocks } from '../utils/blocks';
-import BlockRef, { type BlockSnapshot } from './block-ref';
+import { type BlockSnapshot } from './block-ref';
+import ReviewCard, { type ReviewCardRow } from './review-card';
 
 export interface FeedbackListItem {
 	title: string;
@@ -58,6 +65,9 @@ interface SummaryNote {
 /** Root class name; prefixes every class this component renders. */
 const CLASS_PREFIX = 'jetpack-ai-feedback-list';
 
+/** How long a Copy button stays in its "Copied" state before reverting. */
+const COPY_RESET_MS = 2000;
+
 /**
  * Per-flow copy and options. The data props (summary/items/sections/postId)
  * come from the show-component payload; everything here is flow configuration.
@@ -69,8 +79,6 @@ export interface FeedbackListProps {
 	postId?: number;
 	/** Title used when the flow provides flat items rather than sections. */
 	sectionFallbackTitle: string;
-	/** Label shown above a suggested rewrite, e.g. "Suggested rewrite". */
-	rewriteLabel: string;
 	/** Warning shown when the reviewed post no longer matches the editor. */
 	staleWarning: string;
 	/** Per-item apply reason shown when the post context is stale. */
@@ -79,7 +87,7 @@ export interface FeedbackListProps {
 	failureMessage: string;
 	/** Extra notes rendered under the summary, each with its own class. */
 	summaryNotes?: SummaryNote[];
-	/** When true, render an "Accept all" footer over one-click items. */
+	/** When true, render an "Apply all" footer over one-click items. */
 	enableBulkApply?: boolean;
 }
 
@@ -114,10 +122,6 @@ function getCurrentEditorPostIdFromStore(): number | undefined {
 
 function getItemKey( sectionIndex: number, itemIndex: number ): string {
 	return `${ sectionIndex }:${ itemIndex }`;
-}
-
-function getItemReasonId( sectionIndex: number, itemIndex: number ): string {
-	return `${ CLASS_PREFIX }-reason-${ sectionIndex }-${ itemIndex }`;
 }
 
 function normaliseSections(
@@ -177,26 +181,6 @@ function getApplyUnavailableReason(
 	return undefined;
 }
 
-function getApplyLabel( status: ItemStatus ): string {
-	switch ( status ) {
-		case 'applying':
-			return __( 'Accepting…', __i18n_text_domain__ );
-		case 'accepted':
-			return __( 'Accepted', __i18n_text_domain__ );
-		case 'failed':
-			return __( 'Retry', __i18n_text_domain__ );
-		default:
-			return __( 'Accept', __i18n_text_domain__ );
-	}
-}
-
-function getUnavailableMessage( item: FeedbackListItem, reason: string ): string {
-	if ( item.requires_manual ) {
-		return `${ __( 'Needs manual edit:', __i18n_text_domain__ ) } ${ reason }`;
-	}
-	return reason;
-}
-
 /**
  * Render a flat, item-based feedback list.
  * @param {FeedbackListProps} props Component props.
@@ -208,7 +192,6 @@ export default function FeedbackList( {
 	sections,
 	postId,
 	sectionFallbackTitle,
-	rewriteLabel,
 	staleWarning,
 	staleApplyReason,
 	failureMessage,
@@ -217,6 +200,10 @@ export default function FeedbackList( {
 }: FeedbackListProps ) {
 	const [ itemStatuses, setItemStatuses ] = useState< Record< string, ItemStatus > >( {} );
 	const [ bulkRunning, setBulkRunning ] = useState( false );
+	// Only one item shows "Copied" at a time: copying another reverts the first,
+	// and a short timer reverts it back to "Copy" on its own.
+	const [ copiedKey, setCopiedKey ] = useState< string | null >( null );
+	const copyResetTimer = useRef< ReturnType< typeof setTimeout > | undefined >( undefined );
 	const editSnapshots = useRef< Record< string, EditSnapshot > >( {} );
 
 	const blocks = useSelect(
@@ -263,6 +250,7 @@ export default function FeedbackList( {
 	useEffect( () => {
 		return () => {
 			clearActiveBlockFocus();
+			clearTimeout( copyResetTimer.current );
 		};
 	}, [] );
 
@@ -318,7 +306,7 @@ export default function FeedbackList( {
 		[ flatBlocks, isLatestPostContextStale, setItemStatus ]
 	);
 
-	// Pending, one-click-applicable items, used for the "Accept all" action.
+	// Pending, one-click-applicable items, used for the "Apply all" action.
 	const applyAllTargets = useMemo( () => {
 		if ( ! enableBulkApply || isPostStale ) {
 			return [] as Array< { item: FeedbackListItem; sectionIndex: number; itemIndex: number } >;
@@ -387,6 +375,31 @@ export default function FeedbackList( {
 		[ isPostStale, setItemStatus ]
 	);
 
+	// Advisory cards offer Copy so the author can paste the suggested text where
+	// they decide it belongs; the button confirms with a sticky "Copied" state.
+	const copyItem = useCallback( ( key: string, text: string ) => {
+		const clipboard = ( globalThis.navigator as Navigator | undefined )?.clipboard;
+		if ( ! clipboard?.writeText ) {
+			return;
+		}
+		clipboard
+			.writeText( text )
+			.then( () => {
+				setCopiedKey( key );
+				clearTimeout( copyResetTimer.current );
+				copyResetTimer.current = setTimeout( () => setCopiedKey( null ), COPY_RESET_MS );
+			} )
+			.catch( () => {} );
+	}, [] );
+
+	// Only offer Copy where the clipboard API can actually service it, so an
+	// advisory card never shows a Copy button that does nothing.
+	const clipboardSupported = useMemo(
+		() =>
+			typeof ( globalThis.navigator as Navigator | undefined )?.clipboard?.writeText === 'function',
+		[]
+	);
+
 	return (
 		<div
 			className={ `${ CLASS_PREFIX }${ isPostStale ? ' is-post-stale' : '' }` }
@@ -413,102 +426,121 @@ export default function FeedbackList( {
 				{ feedbackSections.map( ( section, sectionIndex ) => (
 					<PanelBody
 						key={ `${ section.title }:${ sectionIndex }` }
-						title={ section.title }
+						title={ sprintf(
+							/* translators: 1: section label, 2: number of suggestions. */
+							__( '%1$s (%2$d)', __i18n_text_domain__ ),
+							section.title,
+							section.items.length
+						) }
 						initialOpen
 					>
 						<div className={ `${ CLASS_PREFIX }__items` }>
 							{ section.items.map( ( item, itemIndex ) => {
 								const key = getItemKey( sectionIndex, itemIndex );
 								const status = itemStatuses[ key ] ?? 'pending';
-								const isCollapsed = status === 'accepted' || status === 'dismissed';
 								const block = item.block_index === null ? null : flatBlocks[ item.block_index ];
 								const applyUnavailableReason = isPostStale
 									? staleApplyReason
 									: getApplyUnavailableReason( item, block );
-								const isApplyUnavailable = !! applyUnavailableReason;
-								const applyUnavailableReasonId = getItemReasonId( sectionIndex, itemIndex );
+								const canApply = ! applyUnavailableReason;
+								// Apply/Retry shows only while an attempt is in flight or the item can
+								// still be applied; a card that cannot apply never renders a dead Apply.
+								const showApply = canApply || status === 'applying';
+								// The safety classifier marks author-judgment items; they carry a
+								// "Manual edit" badge and a WHY/SUGGESTION body instead of a text diff.
+								const isManualEdit = !! item.requires_manual;
+								// Show the Current/New diff only for applicable cards with an exact
+								// before/after; manual cards always use the Why/Suggestion body even
+								// if a stray diff is present.
+								const showDiff = ! isManualEdit && !! item.current_text && !! item.suggested_text;
+								// The copyable suggestion is whatever the Suggestion/New row shows.
+								const suggestionText = showDiff ? item.suggested_text : item.action;
+								// A section is anchorable only when its target block still exists in the
+								// editor. Post-wide items (block_index null) and dropped blocks are not,
+								// so their "Go to section" affordance renders disabled rather than hidden.
+								const canGoToSection =
+									!! focusCurrentPostBlock &&
+									item.block_index !== null &&
+									item.block_index !== undefined &&
+									item.block_index >= 0 &&
+									item.block_index < flatBlocks.length;
 
-								if ( isCollapsed ) {
-									return (
-										<div
-											key={ key }
-											className={ `${ CLASS_PREFIX }__item is-collapsed is-${ status }` }
-										>
-											<span className={ `${ CLASS_PREFIX }__collapsed-status` }>
-												{ status === 'accepted'
-													? __( 'Applied', __i18n_text_domain__ )
-													: __( 'Dismissed', __i18n_text_domain__ ) }
-											</span>
-											<span className={ `${ CLASS_PREFIX }__collapsed-title` }>{ item.title }</span>
-											<button
-												type="button"
-												className={ `${ CLASS_PREFIX }__small-action` }
-												onClick={ () => undoItem( key ) }
-												disabled={ isPostStale || bulkRunning }
-											>
-												{ __( 'Undo', __i18n_text_domain__ ) }
-											</button>
-										</div>
-									);
+								const badge = isManualEdit
+									? __( 'Manual edit', __i18n_text_domain__ )
+									: sprintf(
+											/* translators: 1: issue category, 2: position in the run, 3: total suggestions. */
+											__( '%1$s (%2$d/%3$d)', __i18n_text_domain__ ),
+											item.title,
+											itemIndex + 1,
+											section.items.length
+									  );
+								const rows: ReviewCardRow[] = [];
+								if ( showDiff ) {
+									rows.push( {
+										tag: __( 'Current', __i18n_text_domain__ ),
+										text: item.current_text ?? '',
+										variant: 'current',
+										element: 'del',
+									} );
+									rows.push( {
+										tag: __( 'New', __i18n_text_domain__ ),
+										text: item.suggested_text ?? '',
+										variant: 'new',
+										element: 'ins',
+									} );
+								} else {
+									const why = item.feedback || item.manual_reason;
+									if ( why ) {
+										rows.push( {
+											tag: __( 'Why', __i18n_text_domain__ ),
+											text: why,
+											variant: 'current',
+											element: 'text',
+										} );
+									}
+									if ( item.action ) {
+										rows.push( {
+											tag: __( 'Suggestion', __i18n_text_domain__ ),
+											text: item.action,
+											variant: 'new',
+											element: 'text',
+										} );
+									}
 								}
 
 								return (
-									<div key={ key } className={ `${ CLASS_PREFIX }__item is-${ status }` }>
-										<div className={ `${ CLASS_PREFIX }__item-header` }>
-											<h4 className={ `${ CLASS_PREFIX }__item-title` }>{ item.title }</h4>
-											<BlockRef
-												index={ item.block_index }
-												blocks={ flatBlocks }
-												onFocus={ focusCurrentPostBlock }
-												className={ `${ CLASS_PREFIX }__block-ref` }
-											/>
-										</div>
-										<p className={ `${ CLASS_PREFIX }__feedback` }>{ item.feedback }</p>
-										<p className={ `${ CLASS_PREFIX }__action` }>{ item.action }</p>
-										{ item.current_text && item.suggested_text && (
-											<div className={ `${ CLASS_PREFIX }__rewrite` }>
-												<p className={ `${ CLASS_PREFIX }__rewrite-label` }>{ rewriteLabel }</p>
-												<del>{ item.current_text }</del>
-												<ins>{ item.suggested_text }</ins>
-											</div>
-										) }
-										{ applyUnavailableReason && (
-											<p
-												id={ applyUnavailableReasonId }
-												className={ `${ CLASS_PREFIX }__manual-reason` }
-											>
-												{ isPostStale
-													? applyUnavailableReason
-													: getUnavailableMessage( item, applyUnavailableReason ) }
-											</p>
-										) }
-										<div className={ `${ CLASS_PREFIX }__actions` }>
-											<button
-												type="button"
-												className={ `${ CLASS_PREFIX }__action-button is-primary` }
-												onClick={ () => applyItem( item, sectionIndex, itemIndex ) }
-												disabled={
-													isPostStale || bulkRunning || status === 'applying' || isApplyUnavailable
-												}
-												aria-describedby={
-													isApplyUnavailable ? applyUnavailableReasonId : undefined
-												}
-											>
-												{ getApplyLabel( status ) }
-											</button>
-											<button
-												type="button"
-												className={ `${ CLASS_PREFIX }__action-button` }
-												onClick={ () => dismissItem( key ) }
-												disabled={ isPostStale || bulkRunning || status === 'applying' }
-											>
-												{ __( 'Dismiss', __i18n_text_domain__ ) }
-											</button>
-										</div>
-										{ status === 'failed' && (
-											<p className={ `${ CLASS_PREFIX }__status is-failed` }>{ failureMessage }</p>
-										) }
-									</div>
+									<ReviewCard
+										key={ key }
+										model={ {
+											badge,
+											isManualEdit,
+											blockIndex: item.block_index,
+											rows,
+											rationale: showDiff && item.action ? item.action : undefined,
+										} }
+										blocks={ flatBlocks }
+										status={ status }
+										showApply={ showApply }
+										canGoToSection={ canGoToSection }
+										showCopy={ !! suggestionText && clipboardSupported }
+										copied={ copiedKey === key }
+										disabled={ isPostStale || bulkRunning }
+										failureMessage={ failureMessage }
+										onApply={ () => applyItem( item, sectionIndex, itemIndex ) }
+										onGoToSection={ () => {
+											if ( item.block_index !== null && item.block_index !== undefined ) {
+												focusBlock( item.block_index );
+											}
+										} }
+										onCopy={ () => {
+											if ( suggestionText ) {
+												copyItem( key, suggestionText );
+											}
+										} }
+										onDismiss={ () => dismissItem( key ) }
+										onUndo={ () => undoItem( key ) }
+										onFocusBlock={ focusCurrentPostBlock }
+									/>
 								);
 							} ) }
 						</div>
@@ -524,10 +556,10 @@ export default function FeedbackList( {
 						disabled={ isPostStale || bulkRunning || applyAllTargets.length === 0 }
 					>
 						{ bulkRunning
-							? __( 'Accepting…', __i18n_text_domain__ )
+							? __( 'Applying…', __i18n_text_domain__ )
 							: sprintf(
 									/* translators: %d is the number of one-click fixes available. */
-									__( 'Accept all (%d)', __i18n_text_domain__ ),
+									__( 'Apply all (%d)', __i18n_text_domain__ ),
 									applyAllTargets.length
 							  ) }
 					</button>

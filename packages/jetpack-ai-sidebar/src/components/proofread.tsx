@@ -33,8 +33,7 @@ export default function Proofread( { summary, items, sections, postId }: Proofre
 			items={ items }
 			sections={ sections }
 			postId={ postId }
-			sectionFallbackTitle={ __( 'Spelling & grammar', __i18n_text_domain__ ) }
-			rewriteLabel={ __( 'Suggested fix', __i18n_text_domain__ ) }
+			sectionFallbackTitle={ __( 'Suggested edits', __i18n_text_domain__ ) }
 			staleWarning={ __(
 				'Review context changed. Run the spelling and grammar check again for this post.',
 				__i18n_text_domain__
