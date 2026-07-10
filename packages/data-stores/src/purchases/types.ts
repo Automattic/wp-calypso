@@ -48,8 +48,9 @@ export interface Purchase {
 	expiryStatus: string;
 
 	/**
-	 * Whole days until expiry, rounded down, negative once past expiry. Null for
-	 * purchases with no expiry time (one-time and perpetual).
+	 * Whole days until expiry, rounded down, negative once past expiry. Measured
+	 * against UTC midnight, so it can be up to a day off from the viewer's local
+	 * time zone. Null for purchases with no expiry time (one-time and perpetual).
 	 */
 	daysUntilExpiry: number | null;
 	iapPurchaseManagementLink: string | null;
