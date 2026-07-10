@@ -36,17 +36,12 @@ $border-radius: 5px; // stylelint-disable-line scales/radii
 .stats-video-details-card {
 	border-color: var(--studio-gray-5);
 	border-radius: $border-radius;
-	display: grid;
+	display: flex;
+	flex-direction: column;
 	font-family: $font-sf-pro-text;
 	font-size: $font-body-small;
-	grid-template-columns: minmax(10px, 1.5fr) minmax(0, auto);
-	grid-template-rows: 26px auto;
-	grid-template-areas:
-		"heading thumbnail"
-		"info thumbnail";
 	margin-bottom: 0;
 	max-width: 100%;
-	max-height: 255px;
 	padding: $card-padding;
 	gap: $card-padding;
 
@@ -77,13 +72,10 @@ $border-radius: 5px; // stylelint-disable-line scales/radii
 	font-family: $font-sf-pro-display;
 	font-size: $font-size-header-small;
 	font-weight: 500;
-	grid-area: heading;
 	line-height: 1.3;
 }
 
 .stats-video-details-card__info {
-	grid-area: info;
-
 	.stats-video-details-card__title {
 		@include stats-section-header;
 		display: block;
@@ -96,23 +88,6 @@ $border-radius: 5px; // stylelint-disable-line scales/radii
 		font-weight: 400;
 		line-height: 1.5;
 	}
-}
-
-.stats-video-details-card__thumbnail-link {
-	grid-area: thumbnail;
-	display: block;
-	height: calc(100% + #{$card-padding * 2});
-	margin: -1 * $card-padding -1 * $card-padding -1 * $card-padding 0;
-	max-width: 300px;
-	width: calc(100% + #{$card-padding});
-}
-
-.stats-video-details-card__thumbnail {
-	border-radius: 0 $border-radius $border-radius 0;
-	display: block;
-	height: 100%;
-	object-fit: cover;
-	width: 100%;
 }
 
 .stats-video-embeds-card {
@@ -235,21 +210,6 @@ $border-radius: 5px; // stylelint-disable-line scales/radii
 	}
 
 	.stats-video-details-card {
-		gap: 12px 0;
-		grid-template-areas:
-			"heading heading"
-			"info thumbnail";
-		max-height: initial;
-	}
-
-	.stats-video-details-card__thumbnail-link {
-		height: 84px;
-		margin: 0;
-		width: 84px;
-		max-width: initial;
-	}
-
-	.stats-video-details-card__thumbnail {
-		border-radius: $border-radius;
+		gap: 12px;
 	}
 }
