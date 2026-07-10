@@ -11,8 +11,8 @@ import { useSelector } from 'calypso/state';
 import getMediaItem from 'calypso/state/selectors/get-media-item';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import PageViewTracker from '../stats-page-view-tracker';
-import VideoPlayDetails from '../stats-video-details';
 import VideoDetailsCard, { VideoMediaItem } from './video-details-card';
+import VideoEmbedsCard from './video-embeds-card';
 import VideoSummary from './video-summary';
 
 interface StatsVideoDetailProps {
@@ -70,7 +70,7 @@ export default function StatsVideoDetail( { postId, period, context }: StatsVide
 				>
 					<VideoDetailsCard media={ media } mediaId={ postId } />
 					<VideoSummary postId={ postId } initialStatType={ statType } />
-					<VideoPlayDetails postId={ postId } statType={ statType } />
+					<VideoEmbedsCard postId={ postId } />
 				</div>
 			</div>
 		</Main>
