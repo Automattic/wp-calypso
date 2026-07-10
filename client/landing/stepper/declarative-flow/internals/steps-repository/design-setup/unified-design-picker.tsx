@@ -426,12 +426,13 @@ const UnifiedDesignPickerStep: StepType< {
 		if ( isComingFromSuccessfulImport ) {
 			return undefined;
 		}
-		return intent === 'update-design'
-			? () =>
-					submit?.( {
-						eventProps: commonFilterProperties,
-					} )
-			: () => handleBackClick();
+		if ( intent === 'update-design' ) {
+			return () =>
+				submit?.( {
+					eventProps: commonFilterProperties,
+				} );
+		}
+		return goBack ? () => handleBackClick() : undefined;
 	};
 
 	const backButton = getGoBackHandler();

@@ -391,9 +391,6 @@ const siteSetupFlow: Flow = {
 			}
 
 			switch ( currentStep ) {
-				case 'design-setup':
-					return navigate( 'goals' );
-
 				case 'importList': {
 					if ( backToStep ) {
 						return navigate( `${ backToStep }?siteSlug=${ siteSlug }` );
@@ -453,15 +450,12 @@ const siteSetupFlow: Flow = {
 				case 'importReadyPreview':
 					return navigate( `import?siteSlug=${ siteSlug }` );
 
-				case 'import':
-					return navigate( 'goals' );
-
 				case 'verifyEmail':
 				case 'trialAcknowledge':
 					return navigate( `importerWordpress?${ urlQueryParams.toString() }` );
 
 				default:
-					return navigate( 'goals' );
+					return exitFlow( `/home/${ siteId ?? siteSlug }` );
 			}
 		};
 
@@ -471,7 +465,7 @@ const siteSetupFlow: Flow = {
 					return navigate( 'importList' );
 
 				default:
-					return navigate( 'goals' );
+					return exitFlow( `/home/${ siteId ?? siteSlug }` );
 			}
 		};
 
@@ -485,7 +479,19 @@ const siteSetupFlow: Flow = {
 			}
 		};
 
-		return { goNext, goBack, goToStep, submit, exitFlow };
+		// The goals step used to be the back target for the design picker and
+		// import capture steps. With it gone they have no in-flow step to return
+		// to, so leave goBack undefined and let Stepper fall back to browser
+		// history instead of pointing at the removed step.
+		const isEntryStep = currentStep === 'design-setup' || currentStep === 'import';
+
+		return {
+			goNext,
+			goBack: isEntryStep ? undefined : goBack,
+			goToStep,
+			submit,
+			exitFlow,
+		};
 	},
 
 	useAssertConditions(): AssertConditionResult {
