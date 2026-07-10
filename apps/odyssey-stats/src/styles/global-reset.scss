@@ -1,0 +1,261 @@
+// `#wpcom`-scoped port of `calypso/assets/stylesheets/_main.scss`.
+//
+// The original targets `html`, `body`, `button`, `ul`, `a`, etc. directly, which is safe for
+// classic Calypso (it owns the whole document) but not here: `#wpcom` is a subtree of wp-admin's
+// page, and wp-admin chrome outside it (the admin menu, JITM sidebar notices, admin bar) must
+// keep its native styling. Every rule below is scoped under `#wpcom`, wrapped in `:where()` so the
+// scoping doesn't add specificity beyond what the original bare-element selectors had — otherwise
+// an ID selector here would outrank the class-based overrides Stats components already rely on to
+// beat these defaults (e.g. `.section-nav-tab.is-selected a { color: ... }`). Where the source
+// class is toggled on the real `<body>` by WordPress itself (e.g. `rtl`), the selector still
+// anchors to that class (not `body` itself, to match the original's specificity exactly) so it
+// still reacts to it, while the declarations apply only within `#wpcom`.
+//
+// Rules from the source file that depend on Calypso's own `<Layout>`/section-body-class machinery
+// (font smoothing, section-background overrides, `no-scroll`, iframed states) are omitted: Odyssey
+// Stats uses its own lightweight layout that never toggles those classes, so they're dead here.
+
+:where(#wpcom) {
+	height: 100%;
+	background: var(--color-surface-backdrop);
+	color: var(--color-text);
+	font-size: $font-body;
+	font-family: $sans;
+	line-height: 1.5;
+	-ms-overflow-style: scrollbar;
+	-webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+
+	* {
+		-webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+	}
+
+	// This fixes an issue with the `click-outside` package not working on mobile.
+	// Specifically, this makes clicking outside a popover work on touch devices. -shaun
+	@include breakpoint-deprecated( "<660px" ) {
+		cursor: pointer;
+	}
+}
+
+:where(#wpcom) button,
+:where(#wpcom) input,
+:where(#wpcom) select,
+:where(#wpcom) textarea,
+:where(#wpcom) .button {
+	font-family: $sans;
+}
+
+:where(#wpcom) button {
+	font-size: $font-body-small;
+}
+
+/*!rtl:ignore*/
+.rtl :where(#wpcom),
+.rtl :where(#wpcom) button,
+.rtl :where(#wpcom) input,
+.rtl :where(#wpcom) select,
+.rtl :where(#wpcom) textarea,
+.rtl :where(#wpcom) .button {
+	font-family: $sans-rtl;
+}
+
+/*!rtl:ignore*/
+:lang(he) .rtl :where(#wpcom),
+:lang(he) .rtl :where(#wpcom) button,
+:lang(he) .rtl :where(#wpcom) input,
+:lang(he) .rtl :where(#wpcom) select,
+:lang(he) .rtl :where(#wpcom) textarea,
+:lang(he) .rtl :where(#wpcom) .button {
+	font-family: $sans;
+}
+
+/*!rtl:ignore*/
+.rtl :where(#wpcom) .gridicon {
+	&.gridicons-chevron-left,
+	&.gridicons-chevron-right,
+	&.gridicons-arrow-left,
+	&.gridicons-arrow-right,
+	&.gridicons-external,
+	&.gridicons-cart {
+		transform: scaleX(-1);
+	}
+}
+
+:where(#wpcom) .notifications {
+	display: inherit;
+}
+
+/* Headings */
+:where(#wpcom) h1,
+:where(#wpcom) h2,
+:where(#wpcom) h3,
+:where(#wpcom) h4,
+:where(#wpcom) h5,
+:where(#wpcom) h6 {
+	clear: both;
+	text-wrap: balance; // TODO: remove this fallback once `pretty` is globally supported.
+	text-wrap: pretty;
+}
+:where(#wpcom) caption,
+:where(#wpcom) figcaption {
+	text-wrap: balance;
+	text-wrap: pretty;
+}
+:where(#wpcom) hr {
+	background: var(--color-neutral-10);
+	border: 0;
+	height: 1px;
+	margin-bottom: 1.5em;
+}
+
+/* Text elements */
+:where(#wpcom) p,
+:where(#wpcom) ul,
+:where(#wpcom) ol,
+:where(#wpcom) blockquote {
+	text-wrap: pretty;
+}
+:where(#wpcom) p {
+	margin-bottom: 1.5em;
+}
+:where(#wpcom) ul,
+:where(#wpcom) ol {
+	margin: 0 0 1.5em 3em;
+}
+:where(#wpcom) ul {
+	list-style: disc;
+}
+:where(#wpcom) ol {
+	list-style: decimal;
+}
+:where(#wpcom) ul ul,
+:where(#wpcom) ol ol,
+:where(#wpcom) ul ol,
+:where(#wpcom) ol ul {
+	margin-bottom: 0;
+	margin-left: 1.5em;
+}
+:where(#wpcom) dt {
+	font-weight: 600;
+}
+:where(#wpcom) dd {
+	margin: 0 1.5em 1.5em;
+}
+:where(#wpcom) b,
+:where(#wpcom) strong {
+	font-weight: 600;
+}
+:where(#wpcom) dfn,
+:where(#wpcom) cite,
+:where(#wpcom) em,
+:where(#wpcom) i {
+	font-style: italic;
+}
+:where(#wpcom) blockquote {
+	margin: 10px 0 0;
+	background: var(--color-neutral-0);
+	padding: 10px 10px 1px;
+	border-radius: 2px;
+}
+:where(#wpcom) address {
+	margin: 0 0 1.5em;
+}
+:where(#wpcom) pre {
+	background: var(--color-neutral-0);
+	font-family: $monospace;
+	font-size: $font-body;
+	line-height: 1.6;
+	margin-bottom: 1.6em;
+	padding: 1.6em;
+	overflow: auto;
+	max-width: 100%;
+}
+:where(#wpcom) code,
+:where(#wpcom) kbd,
+:where(#wpcom) tt,
+:where(#wpcom) var {
+	font: 15px $code;
+}
+:where(#wpcom) abbr,
+:where(#wpcom) acronym {
+	border-bottom: 1px dotted var(--color-neutral-10);
+	cursor: help;
+	// Prevent double underline in Chrome
+	text-decoration: none;
+}
+:where(#wpcom) mark,
+:where(#wpcom) ins {
+	background: var(--color-warning-light);
+	text-decoration: none;
+}
+:where(#wpcom) small {
+	font-size: 75%;
+}
+:where(#wpcom) big {
+	font-size: 125%;
+}
+:where(#wpcom) figure {
+	margin: 0;
+}
+:where(#wpcom) table {
+	margin: 0 0 1.5em;
+	width: 100%;
+}
+:where(#wpcom) th {
+	font-weight: 600;
+}
+
+:where(#wpcom) .hide,
+:where(#wpcom) .hidden {
+	display: none;
+}
+
+/* Links */
+:where(#wpcom) a,
+:where(#wpcom) a:visited {
+	color: var(--color-link);
+}
+
+:where(#wpcom) a:hover,
+:where(#wpcom) a:focus,
+:where(#wpcom) a:active {
+	color: var(--color-link-dark);
+}
+
+:where(#wpcom) .link--caution,
+:where(#wpcom) .link--caution:visited,
+:where(#wpcom) .is-link.link--caution,
+:where(#wpcom) .is-link.link--caution:visited {
+	&,
+	&:hover,
+	&:focus,
+	&:active {
+		color: var(--color-error);
+	}
+}
+
+/* Emoji and smileys */
+:where(#wpcom) img.emoji,
+:where(#wpcom) img.wp-smiley {
+	height: 1em;
+	max-height: 1em;
+	display: inline;
+	margin: 0;
+	padding: 0 0.2em;
+	vertical-align: -0.1em;
+	width: 1em;
+}
+
+/* =Media
+----------------------------------------------- */
+
+:where(#wpcom) img {
+	max-width: 100%; /* Fluid images for posts, comments, and widgets */
+	height: auto;
+}
+
+/* Make sure embeds and iframes fit their containers */
+:where(#wpcom) embed,
+:where(#wpcom) iframe,
+:where(#wpcom) object {
+	max-width: 100%;
+}

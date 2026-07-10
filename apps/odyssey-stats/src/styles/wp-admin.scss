@@ -53,7 +53,11 @@
 }
 
 // Overrides layout for WP Admin.
-.wp-admin {
+// Scoped to `#wpcom` rather than `.wp-admin` — WP core already puts a `wp-admin` class on the real
+// `<body>`, so using it here would apply these overrides to the whole wp-admin page. Written as the
+// `[id="wpcom"]` attribute form rather than `#wpcom` so it carries the same class-level specificity
+// `.wp-admin` did — a bare ID selector would outrank the class-based overrides below it here.
+[id="wpcom"] {
 	// CSS variable overrides.
 	--sidebar-width-max: 160px;
 	--sidebar-width-min: 36px;

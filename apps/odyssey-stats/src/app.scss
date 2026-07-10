@@ -4,7 +4,12 @@
 @import "./styles/typography";
 @import "@wordpress/base-styles/breakpoints";
 
-.wp-admin {
+// Scoped to `#wpcom` (the Stats app's own mount point) rather than `.wp-admin`, since WP core
+// already puts a `wp-admin` class on the real `<body>` — using it here would apply these rules
+// to the whole wp-admin page, not just the Stats app. Written as the `[id="wpcom"]` attribute form
+// rather than `#wpcom` so it carries the same class-level specificity `.wp-admin` did — a bare ID
+// selector would outrank the class-based overrides these nested rules are meant to coexist with.
+[id="wpcom"] {
 	.card {
 		border: 0;
 		max-width: initial;
@@ -127,7 +132,10 @@
 	}
 }
 
-.inner-notice-container .card.banner.is-jetpack {
+// This rule was previously unscoped entirely (not nested in `.wp-admin` above), so — unlike the
+// block above, which is matching `.wp-admin`'s original class-level specificity — scope it with
+// `:where()` to add zero specificity rather than the class-level weight `[id="wpcom"]` carries.
+:where(#wpcom) .inner-notice-container .card.banner.is-jetpack {
 	border-left: 3px solid var(--color-jetpack);
 }
 
