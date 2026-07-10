@@ -18,13 +18,21 @@ export interface VideoMediaItem {
 	thumbnails?: Record< string, string >;
 }
 
+/** Attachment post info from the stats/video endpoint response. */
+export interface VideoStatsPost {
+	title?: string;
+	date?: string;
+}
+
 const THUMBNAIL_SIZES = [ 'fmt_hd', 'fmt_dvd', 'fmt_std' ];
 
 export default function VideoDetailsCard( {
 	media,
+	statsPost,
 	mediaId,
 }: {
 	media: VideoMediaItem | null;
+	statsPost: VideoStatsPost | null;
 	mediaId: number;
 } ) {
 	const translate = useTranslate();
@@ -33,13 +41,17 @@ export default function VideoDetailsCard( {
 	const siteSlug = useSelector( ( state ) => getSiteSlug( state, siteId ) );
 	const adminBaseUrl = useSelector( ( state ) => getSiteAdminUrl( state, siteId ) );
 
-	const isLoading = ! media;
+	const title = media?.title ?? statsPost?.title;
+	const date = media?.date ?? statsPost?.date;
+
+	const isLoading = ! media && ! statsPost;
+	const isOdysseyStats = config.isEnabled( 'is_running_in_jetpack_site' );
 	const isOdyssey = config.isEnabled( 'is_odyssey' );
 
-	// The Odyssey stats-app proxy has no media route yet, so the media request
-	// 404s and the card would shimmer forever. Hide it until the data arrives —
-	// once the proxy learns the route, the card simply starts appearing.
-	if ( isOdyssey && ! media ) {
+	// In Odyssey the media item is never fetched (the stats-app proxy has no
+	// media route yet), so hide the card until the stats/video response
+	// provides the post fallback instead of shimmering indefinitely.
+	if ( isOdysseyStats && isLoading ) {
 		return null;
 	}
 
@@ -56,12 +68,12 @@ export default function VideoDetailsCard( {
 		<Card className={ classes }>
 			<h4 className="stats-video-details-card__heading">{ translate( 'Video details' ) }</h4>
 			<div className="stats-video-details-card__info">
-				<div className="stats-video-details-card__title">{ media?.title }</div>
-				{ ( isLoading || media?.date ) && (
+				<div className="stats-video-details-card__title">{ title }</div>
+				{ ( isLoading || date ) && (
 					<div className="stats-video-details-card__date">
-						{ media?.date &&
+						{ date &&
 							translate( 'Published %(date)s', {
-								args: { date: moment( media.date ).format( 'll' ) },
+								args: { date: moment( date ).format( 'll' ) },
 								comment: 'Date when the video was uploaded.',
 							} ) }
 					</div>
@@ -77,7 +89,7 @@ export default function VideoDetailsCard( {
 						className="stats-video-details-card__thumbnail"
 						src={ thumbnailUrl }
 						alt={ translate( 'Thumbnail for a video titled "%(title)s"', {
-							args: { title: media?.title ?? '' },
+							args: { title: title ?? '' },
 							comment: 'Alt-text for a video thumbnail.',
 							textOnly: true,
 						} ) }

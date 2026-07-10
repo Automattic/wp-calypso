@@ -854,7 +854,17 @@ export const normalizers = {
 			} );
 		}
 
-		return { pages, data };
+		// `post` is the video's attachment post, or `false` when the site's
+		// synced copy of the post is unavailable.
+		let post = null;
+		if ( payload.post && payload.post.post_title ) {
+			post = {
+				title: payload.post.post_title,
+				date: payload.post.post_date,
+			};
+		}
+
+		return { pages, data, post };
 	},
 
 	/**

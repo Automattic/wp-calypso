@@ -1644,7 +1644,7 @@ describe( 'utils', () => {
 						data: { date: '7-10', p: '0' },
 						pages: [],
 					} )
-				).toEqual( { pages: [], data: [] } );
+				).toEqual( { pages: [], data: [], post: null } );
 			} );
 
 			test( 'should skip non-tuple entries in the data array', () => {
@@ -1656,7 +1656,39 @@ describe( 'utils', () => {
 				).toEqual( {
 					pages: [],
 					data: [ { period: '2016-11-12', value: 1 } ],
+					post: null,
 				} );
+			} );
+
+			test( 'should extract the attachment post title and date', () => {
+				expect(
+					normalizers.statsVideo( {
+						data: [],
+						pages: [],
+						post: {
+							ID: 461,
+							post_title: 'Feature walkthrough',
+							post_date: '2026-07-03 11:10:03',
+						},
+					} )
+				).toEqual( {
+					pages: [],
+					data: [],
+					post: {
+						title: 'Feature walkthrough',
+						date: '2026-07-03 11:10:03',
+					},
+				} );
+			} );
+
+			test( 'should return a null post when the post is unavailable', () => {
+				expect(
+					normalizers.statsVideo( {
+						data: [],
+						pages: [],
+						post: false,
+					} )
+				).toEqual( { pages: [], data: [], post: null } );
 			} );
 
 			test( 'should return a properly parsed data array', () => {
@@ -1698,6 +1730,7 @@ describe( 'utils', () => {
 							link: 'http://www.themepremium.com/blog-with-the-speed-of-your-thought-with-the-p2-theme/',
 						},
 					],
+					post: null,
 				} );
 			} );
 		} );
