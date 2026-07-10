@@ -6,6 +6,19 @@
 $date-range-shortcut-min-width: 140px;
 $date-range-mobile-layout-switch: $break-small;
 
+// Stacked (mobile-style) layout, applied both via the viewport media query and
+// via the JS-driven `--stacked` modifier when the content area next to the
+// admin sidebar is too narrow for the side-by-side layout.
+@mixin date-range-popover-stacked-content {
+	flex-direction: column-reverse; // Stack items vertically on small screens
+}
+
+@mixin date-range-popover-stacked-shortcuts {
+	border-left: 0 none;
+	border-bottom: 1px solid var(--gray-gray-5, #dcdcde);
+	display: block; // Ensure it takes full width on mobile
+}
+
 .date-range {
 	position: relative;
 	display: flex;
@@ -345,7 +358,7 @@ $date-range-mobile-layout-switch: $break-small;
 	}
 
 	@media (max-width: $date-range-mobile-layout-switch) {
-		flex-direction: column-reverse; // Stack items vertically on small screens
+		@include date-range-popover-stacked-content;
 	}
 }
 
@@ -355,14 +368,22 @@ $date-range-mobile-layout-switch: $break-small;
 	box-sizing: border-box;
 
 	@media (max-width: $date-range-mobile-layout-switch) {
-		border-left: 0 none;
-		border-bottom: 1px solid var(--gray-gray-5, #dcdcde);
-		display: block; // Ensure it takes full width on mobile
+		@include date-range-popover-stacked-shortcuts;
 	}
 
 	@media (min-width: $date-range-mobile-layout-switch) {
 		// Adjust layout for larger screens
 		flex: 0 0 auto; // Allow it to take only necessary space
+	}
+}
+
+.date-range__popover--stacked {
+	.date-range__popover-content {
+		@include date-range-popover-stacked-content;
+	}
+
+	.date-range-picker-shortcuts {
+		@include date-range-popover-stacked-shortcuts;
 	}
 }
 
