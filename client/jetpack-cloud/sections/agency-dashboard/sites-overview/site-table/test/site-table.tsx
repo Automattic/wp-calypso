@@ -190,7 +190,7 @@ describe( '<SiteTable>', () => {
 
 		const pluginEle = getByTestId( `row-${ blogId }-plugin` );
 		expect( pluginEle.getAttribute( 'href' ) ).toEqual(
-			`/plugins/manage/${ urlToSlug( siteUrl ) }`
+			`/plugins/manage/${ urlToSlug( siteUrl ) }?updates=1`
 		);
 		expect( getByText( `${ pluginUpdates.length } Available` ) ).toBeInTheDocument();
 	} );

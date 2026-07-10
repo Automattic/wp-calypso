@@ -259,7 +259,7 @@ describe( 'useRowMetadata', () => {
 		const expected = {
 			eventName: 'calypso_jetpack_agency_dashboard_update_plugins_click_small_screen',
 			isExternalLink: false,
-			link: `/plugins/manage/${ FAKE_SITE.url }`,
+			link: `/plugins/manage/${ FAKE_SITE.url }?updates=1`,
 			isSupported: true,
 			row: rows.plugin,
 			siteDown: false,
@@ -287,7 +287,7 @@ describe( 'useRowMetadata', () => {
 			)
 		);
 
-		expect( metadata.link ).toEqual( `/plugins/manage/${ FAKE_SITE.url }` );
+		expect( metadata.link ).toEqual( `/plugins/manage/${ FAKE_SITE.url }?updates=1` );
 		expect( metadata.isExternalLink ).toBe( false );
 	} );
 

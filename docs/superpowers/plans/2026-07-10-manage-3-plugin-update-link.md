@@ -138,4 +138,86 @@ Run `curl` against the reported local URL and confirm an HTTP response is return
 
 - [x] **Step 3: Hand off the manual acceptance path**
 
-Open the local Jetpack Cloud URL, sign in if necessary, select a site with plugin updates on the Sites screen, and click its Plugins status. Confirm the browser stays in the same tab and navigates to `/plugins/manage/:site`, where the site's eligible plugin update actions are available.
+Open the local Jetpack Cloud URL, sign in if necessary, select a site with plugin updates on the Sites screen, and click its Plugins status. Confirm the browser stays in the same tab and navigates to `/plugins/manage/:site?updates=1`, where only that site's available plugin updates are shown.
+
+### Task 3: Scope the destination to the selected site's available updates
+
+**Files:**
+
+- Modify: `client/jetpack-cloud/sections/agency-dashboard/sites-overview/site-status-content/lib/get-links.ts`
+- Modify: `client/jetpack-cloud/sections/agency-dashboard/sites-overview/site-status-content/hooks/test/use-row-metadata.ts`
+- Modify: `client/jetpack-cloud/sections/agency-dashboard/sites-overview/site-table/test/site-table.tsx`
+- Modify: `client/jetpack-cloud/sections/plugin-management/index.ts`
+- Modify: `client/my-sites/plugins/controller.jsx`
+- Modify: `client/my-sites/plugins/plugins-dashboard/index.tsx`
+- Modify: `client/my-sites/plugins/plugins-list/plugins-list-dataviews.tsx`
+- Create: `client/my-sites/plugins/plugins-list/test/plugins-list-dataviews.tsx`
+- Create: `client/my-sites/plugins/test/controller-dashboard.js`
+
+- [x] **Step 1: Add failing link, controller, and DataView filter coverage**
+
+Update the existing warning-link expectations to:
+
+```ts
+`/plugins/manage/${ siteSlug }?updates=1`;
+```
+
+Add a controller test that calls `renderPluginsDashboard` with `context.query.updates = '1'` and expects `context.primary.props.showOnlyUpdates` to be `true`.
+
+Add a focused `PluginsListDataViews` test that renders an empty list with `showOnlyUpdates` enabled and expects the DataView's initial filters to contain:
+
+```ts
+[
+	{
+		field: 'status',
+		operator: 'isAny',
+		value: [ PLUGINS_STATUS.UPDATE ],
+	},
+];
+```
+
+- [x] **Step 2: Run the focused tests and verify RED**
+
+```bash
+yarn test-client client/jetpack-cloud/sections/agency-dashboard/sites-overview/site-status-content/hooks/test/use-row-metadata.ts client/jetpack-cloud/sections/agency-dashboard/sites-overview/site-table/test/site-table.tsx client/my-sites/plugins/test/controller-dashboard.js client/my-sites/plugins/plugins-list/test/plugins-list-dataviews.tsx --runInBand
+```
+
+Expected: link assertions omit `updates=1`, the controller does not pass update intent, and the DataView starts without a status filter.
+
+- [x] **Step 3: Propagate site and update context**
+
+For update warnings, return `/plugins/manage/:site?updates=1`. Add `siteSelection` to the Jetpack Cloud `/plugins/manage/:site` route. Pass `siteSlug` and `showOnlyUpdates` from `renderPluginsDashboard`:
+
+```tsx
+context.primary = (
+	<PluginsDashboard
+		pluginSlug={ context.params.slug }
+		siteSlug={ context.params.site }
+		showOnlyUpdates={ context.query.updates === '1' }
+	/>
+);
+```
+
+- [x] **Step 4: Scope plugin aggregation to the selected site**
+
+Read `getSelectedSite` in `PluginsDashboard`. When `siteSlug` is present, use only that selected site; while selection is loading, use an empty array. Preserve the existing all-sites behavior when `siteSlug` is absent.
+
+- [x] **Step 5: Initialize and synchronize the update filter**
+
+Add `showOnlyUpdates?: boolean` to `PluginsListDataViews`. Initialize `dataViewsState.filters` with the existing numeric update status filter and synchronize it when the route prop changes. Pass the prop through from `PluginsDashboard`.
+
+- [x] **Step 6: Verify GREEN and lint**
+
+```bash
+yarn test-client client/jetpack-cloud/sections/agency-dashboard/sites-overview/site-status-content/hooks/test/use-row-metadata.ts client/jetpack-cloud/sections/agency-dashboard/sites-overview/site-table/test/site-table.tsx client/my-sites/plugins/test/controller-dashboard.js client/my-sites/plugins/plugins-list/test/plugins-list-dataviews.tsx client/state/selectors/test/get-selected-or-all-sites-with-plugins.js --runInBand
+yarn eslint client/jetpack-cloud/sections/agency-dashboard/sites-overview/site-status-content/lib/get-links.ts client/jetpack-cloud/sections/agency-dashboard/sites-overview/site-status-content/hooks/test/use-row-metadata.ts client/jetpack-cloud/sections/agency-dashboard/sites-overview/site-table/test/site-table.tsx client/jetpack-cloud/sections/plugin-management/index.ts client/my-sites/plugins/controller.jsx client/my-sites/plugins/plugins-dashboard/index.tsx client/my-sites/plugins/plugins-list/plugins-list-dataviews.tsx client/my-sites/plugins/plugins-list/test/plugins-list-dataviews.tsx client/my-sites/plugins/test/controller-dashboard.js
+```
+
+Expected: all focused tests and lint pass.
+
+- [x] **Step 7: Commit the follow-up**
+
+```bash
+git add client/jetpack-cloud/sections/agency-dashboard/sites-overview/site-status-content/lib/get-links.ts client/jetpack-cloud/sections/agency-dashboard/sites-overview/site-status-content/hooks/test/use-row-metadata.ts client/jetpack-cloud/sections/agency-dashboard/sites-overview/site-table/test/site-table.tsx client/jetpack-cloud/sections/plugin-management/index.ts client/my-sites/plugins/controller.jsx client/my-sites/plugins/plugins-dashboard/index.tsx client/my-sites/plugins/plugins-list/plugins-list-dataviews.tsx client/my-sites/plugins/plugins-list/test/plugins-list-dataviews.tsx client/my-sites/plugins/test/controller-dashboard.js docs/superpowers/specs/2026-07-10-manage-3-plugin-update-link-design.md docs/superpowers/plans/2026-07-10-manage-3-plugin-update-link.md
+git commit -m "Jetpack Manage: Filter plugin updates by site"
+```

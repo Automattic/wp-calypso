@@ -13,13 +13,16 @@ Jetpack Cloud already has a working `/plugins/manage/:site` route. The site prev
 
 ## Decision
 
-All enabled Plugins status links in the Sites table will open `/plugins/manage/:site` inside Jetpack Cloud, regardless of update status or Atomic classification.
+All enabled Plugins status links in the Sites table will open the site-specific plugin manager inside Jetpack Cloud, regardless of Atomic classification. Statuses that report available updates will add an `updates=1` query parameter so the destination can initialize its update filter.
 
 This removes the obsolete routing split and keeps the user in the product described by the support documentation. Existing permission and plugin-management rules remain responsible for deciding which actions are available after navigation.
 
 ## Scope
 
-- Simplify the `plugin` case in `get-links.ts` to return the existing internal management route.
+- Route plugin statuses to the existing internal management route and preserve update intent in the query string.
+- Run site selection on Jetpack Cloud's `/plugins/manage/:site` route.
+- Scope plugin aggregation to the selected site when the route has a site parameter.
+- Initialize the DataView status filter when the link requests available updates.
 - Update the focused metadata and rendered-table regression tests.
 - Add explicit Atomic coverage so the old external redirect cannot return unnoticed.
 - Preserve the current Tracks event, tooltip, disabled-state behavior, and all non-plugin destinations.
@@ -30,17 +33,19 @@ No new route, UI, translated string, API request, or permission rule is required
 
 1. The Sites table formats a plugin status row.
 2. `useRowMetadata` asks `getLinks` for the destination.
-3. `getLinks` returns `/plugins/manage/:site` as an internal link.
-4. Jetpack Cloud's existing plugin-management router selects the site and renders the plugin dashboard.
-5. The dashboard exposes update actions when the existing capability checks allow them.
+3. `getLinks` returns `/plugins/manage/:site?updates=1` for an update warning.
+4. Jetpack Cloud's plugin-management router selects the requested site and passes the update intent to the plugin dashboard.
+5. The dashboard aggregates plugins only for the selected site.
+6. The DataView initializes its status filter to “Update available.”
+7. The dashboard exposes update actions when the existing capability checks allow them.
 
 ## Testing
 
 Use test-driven development:
 
-1. Change or add assertions for update-available and Atomic plugin rows to expect `/plugins/manage/:site` and `isExternalLink: false`.
+1. Change or add assertions for update-available and Atomic plugin rows to expect `/plugins/manage/:site?updates=1` and `isExternalLink: false`.
 2. Run the focused test first and confirm it fails against the current implementation.
-3. Apply the minimal routing change.
-4. Run the focused metadata and table tests, followed by lint/type checks scoped to the changed files where supported.
-5. Start Jetpack Cloud locally with `yarn start` and verify that clicking a Plugins status opens the site's plugin-management screen without opening a new tab.
-
+3. Add focused coverage for update-intent propagation and the DataView's initial filter.
+4. Apply the routing, site-selection, aggregation, and filter changes.
+5. Run the focused metadata, controller, selector, DataView, and table tests, followed by lint/type checks scoped to the changed files where supported.
+6. Start Jetpack Cloud locally with `yarn start-jetpack-cloud` and verify that clicking an “Available” Plugins status opens only that site's plugins with the update filter active.

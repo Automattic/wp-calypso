@@ -65,7 +65,9 @@ const getLinks = (
 			break;
 		}
 		case 'plugin': {
-			link = `/plugins/manage/${ siteUrlWithMultiSiteSupport }`;
+			link = `/plugins/manage/${ siteUrlWithMultiSiteSupport }${
+				status === 'warning' ? '?updates=1' : ''
+			}`;
 			break;
 		}
 	}
