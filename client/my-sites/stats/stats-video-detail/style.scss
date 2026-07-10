@@ -40,6 +40,15 @@ $border-radius: 5px; // stylelint-disable-line scales/radii
 
 	.is-summary-chart {
 		margin-top: 24px;
+		// Both the loading placeholder (228px) and the chart (200px bars +
+		// 28px x-axis) render inside; pin the height and hide the chart while
+		// loading (as .is-chart-tabs.is-loading does for the traffic chart)
+		// so the two never stack and resize the page.
+		min-height: 228px;
+
+		&.is-loading .chart {
+			display: none;
+		}
 	}
 }
 
@@ -125,10 +134,8 @@ $border-radius: 5px; // stylelint-disable-line scales/radii
 }
 
 .stats-video-metric-tabs {
-	// Flex (not a fixed-column grid) so the row divides evenly whether three
-	// or four cards render — the retention card is omitted when the video
-	// duration is unavailable.
-	display: flex;
+	display: grid;
+	grid-template-columns: repeat(3, 1fr);
 	gap: 16px;
 	list-style: none;
 	// The chart's 42px-wide x-axis labels wrap onto a second line for
@@ -142,7 +149,6 @@ $border-radius: 5px; // stylelint-disable-line scales/radii
 	// Stretch the button to the row height so cards stay uniform when a
 	// label or value wraps inside one of them.
 	display: flex;
-	flex: 1 1 0;
 	margin: 0;
 	min-width: 0;
 }
@@ -192,11 +198,7 @@ $border-radius: 5px; // stylelint-disable-line scales/radii
 
 @media (max-width: $break-medium) {
 	.stats-video-metric-tabs {
-		flex-wrap: wrap;
-	}
-
-	.stats-video-metric-tabs__item {
-		flex-basis: calc(50% - 8px);
+		grid-template-columns: repeat(2, 1fr);
 	}
 }
 
