@@ -96,6 +96,11 @@
 
 		.dataviews-view-list__item-wrapper {
 			background-color: rgba(var(--wp-admin-theme-color--rgb), 0.1);
+			// DOTMSD-1321: the 0.1 tint alone measures 1.16:1 against read rows,
+			// so unread is hard to spot. Add the accent bar we already draw in dark
+			// mode. 72% (not the open-note bar's solid color below) keeps an open row
+			// ranking above a merely-unread one.
+			box-shadow: inset 3px 0 0 color-mix(in srgb, var(--wp-admin-theme-color) 72%, transparent);
 		}
 	}
 
