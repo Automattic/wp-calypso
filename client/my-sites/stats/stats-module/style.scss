@@ -33,6 +33,11 @@
 	padding: 0;
 	margin-bottom: 10px;
 	overflow-x: auto;
+
+	// Give the summary chart's top y-axis label room from the card edge.
+	&.is-summary-chart {
+		padding-block-start: 16px;
+	}
 }
 // Site sections
 .stats__module-list {

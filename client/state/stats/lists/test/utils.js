@@ -1677,6 +1677,23 @@ describe( 'utils', () => {
 					],
 				} );
 			} );
+
+			test( 'should drop the stub object row returned for videos with no plays', () => {
+				expect(
+					normalizers.statsVideo( {
+						data: [ { date: '7-10', p: '0' } ],
+						pages: [ 'https://vip.wordpress.com/category/themes/' ],
+					} )
+				).toEqual( {
+					data: [],
+					pages: [
+						{
+							label: 'https://vip.wordpress.com/category/themes/',
+							link: 'https://vip.wordpress.com/category/themes/',
+						},
+					],
+				} );
+			} );
 		} );
 
 		describe( 'statsTopAuthors()', () => {

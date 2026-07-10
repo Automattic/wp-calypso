@@ -19,8 +19,9 @@ const isTouch = hasTouch();
  */
 function getYAxisMax( values ) {
 	// Calculate max value in a dataset.
+	// `Math.max()` of an empty dataset is -Infinity, so guard against it too.
 	const max = Math.max.apply( null, values );
-	if ( 0 === max ) {
+	if ( ! Number.isFinite( max ) || max <= 0 ) {
 		return 2;
 	}
 

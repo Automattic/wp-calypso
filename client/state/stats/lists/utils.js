@@ -835,9 +835,13 @@ export const normalizers = {
 
 		let data = [];
 		if ( payload.data ) {
-			data = payload.data.map( ( item ) => {
-				return { period: item[ 0 ], value: item[ 1 ] };
-			} );
+			// When a video has no plays for the period, the API returns a stub object
+			// (e.g. `{ date: '7-10', p: '0' }`) instead of a `[ period, value ]` pair.
+			data = payload.data
+				.filter( ( item ) => Array.isArray( item ) )
+				.map( ( item ) => {
+					return { period: item[ 0 ], value: item[ 1 ] };
+				} );
 		}
 
 		let pages = [];
