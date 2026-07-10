@@ -8,6 +8,10 @@
  * - Upgrade URLs show persistent warning notice with correct label
  */
 import { renderHook } from '@testing-library/react';
+import {
+	trackImageStudioUpgradeNoticeShown,
+	trackImageStudioUpgradeNoticeClick,
+} from '../utils/tracking';
 import { useErrorNotice } from './use-error-notice';
 
 jest.mock( '@wordpress/element', () => ( {
@@ -18,11 +22,17 @@ jest.mock( '@wordpress/i18n', () => ( {
 	__: ( str: string ) => str,
 } ) );
 
+jest.mock( '../utils/tracking', () => ( {
+	trackImageStudioUpgradeNoticeShown: jest.fn(),
+	trackImageStudioUpgradeNoticeClick: jest.fn(),
+} ) );
+
 describe( 'useErrorNotice', () => {
 	let mockAddNotice: jest.Mock;
 
 	beforeEach( () => {
 		mockAddNotice = jest.fn();
+		jest.clearAllMocks();
 	} );
 
 	describe( 'no error', () => {
@@ -121,6 +131,7 @@ describe( 'useErrorNotice', () => {
 					label: 'See plans',
 					url: 'https://wordpress.com/plans/example.com',
 					openInNewTab: true,
+					onClick: expect.any( Function ),
 				},
 			] );
 		} );
@@ -135,6 +146,7 @@ describe( 'useErrorNotice', () => {
 					label: 'Upgrade plan',
 					url: 'https://wordpress.com/upgrade/premium',
 					openInNewTab: true,
+					onClick: expect.any( Function ),
 				},
 			] );
 		} );
@@ -152,6 +164,7 @@ describe( 'useErrorNotice', () => {
 					label: 'Upgrade plan',
 					url: 'https://jetpack.com/redirect/?source=jetpack-ai-yearly-tier-upgrade-nudge',
 					openInNewTab: true,
+					onClick: expect.any( Function ),
 				},
 			] );
 		} );
@@ -176,6 +189,7 @@ describe( 'useErrorNotice', () => {
 						label: 'Upgrade plan',
 						url: 'https://example.com/wp-admin/admin.php?page=my-jetpack#/add-jetpack-ai',
 						openInNewTab: true,
+						onClick: expect.any( Function ),
 					},
 				] );
 			} finally {
@@ -202,6 +216,7 @@ describe( 'useErrorNotice', () => {
 						label: 'Upgrade plan',
 						url: 'https://jetpack.com/redirect/?source=jetpack-ai-yearly-tier-upgrade-nudge',
 						openInNewTab: true,
+						onClick: expect.any( Function ),
 					},
 				]
 			);
@@ -220,6 +235,7 @@ describe( 'useErrorNotice', () => {
 					label: 'See plans',
 					url: 'https://wordpress.com/plans/example.com',
 					openInNewTab: true,
+					onClick: expect.any( Function ),
 				},
 			] );
 		} );
@@ -229,6 +245,45 @@ describe( 'useErrorNotice', () => {
 			renderHook( () => useErrorNotice( error, mockAddNotice ) );
 
 			expect( mockAddNotice ).toHaveBeenCalledWith( 'Custom error object', 'error' );
+		} );
+	} );
+
+	describe( 'upgrade notice tracking', () => {
+		it( 'tracks the notice impression for upgrade URLs', () => {
+			renderHook( () =>
+				useErrorNotice(
+					'Limit reached https://jetpack.com/redirect/?source=jetpack-ai-yearly-tier-upgrade-nudge',
+					mockAddNotice
+				)
+			);
+
+			expect( trackImageStudioUpgradeNoticeShown ).toHaveBeenCalledTimes( 1 );
+		} );
+
+		it( 'wires the click tracker as the action onClick', () => {
+			renderHook( () =>
+				useErrorNotice(
+					'Limit reached https://jetpack.com/redirect/?source=jetpack-ai-yearly-tier-upgrade-nudge',
+					mockAddNotice
+				)
+			);
+
+			const actions = mockAddNotice.mock.calls[ 0 ][ 2 ];
+			expect( actions[ 0 ].onClick ).toBe( trackImageStudioUpgradeNoticeClick );
+		} );
+
+		it( 'does not track impressions for plain errors', () => {
+			renderHook( () => useErrorNotice( 'Something went wrong', mockAddNotice ) );
+
+			expect( trackImageStudioUpgradeNoticeShown ).not.toHaveBeenCalled();
+		} );
+
+		it( 'does not track impressions for non-upgrade URL errors', () => {
+			renderHook( () =>
+				useErrorNotice( 'Visit https://jetpack.com/docs for help', mockAddNotice )
+			);
+
+			expect( trackImageStudioUpgradeNoticeShown ).not.toHaveBeenCalled();
 		} );
 	} );
 } );

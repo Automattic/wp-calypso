@@ -1,6 +1,10 @@
 import { useEffect } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { parseErrorUrl } from '../utils/parse-error-url';
+import {
+	trackImageStudioUpgradeNoticeShown,
+	trackImageStudioUpgradeNoticeClick,
+} from '../utils/tracking';
 import type { NoticeAction, NoticeType } from '../store';
 
 type AddNoticeFunc = ( content: string, type: NoticeType, actions?: NoticeAction[] ) => void;
@@ -27,6 +31,7 @@ export function useErrorNotice( error: unknown, addNotice: AddNoticeFunc ): void
 
 		if ( url && isUpgradeUrl ) {
 			// Show upgrade notices as persistent warning notices
+			trackImageStudioUpgradeNoticeShown();
 			addNotice( content, 'warning', [
 				{
 					label: isPlansPageUrl
@@ -34,6 +39,7 @@ export function useErrorNotice( error: unknown, addNotice: AddNoticeFunc ): void
 						: __( 'Upgrade plan', __i18n_text_domain__ ),
 					url,
 					openInNewTab: true,
+					onClick: trackImageStudioUpgradeNoticeClick,
 				},
 			] );
 		} else if ( url ) {

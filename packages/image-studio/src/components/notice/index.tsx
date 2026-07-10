@@ -25,6 +25,7 @@ function InlineNotice( { notice, onDismiss }: { notice: NoticeType; onDismiss?: 
 				notice.actions?.map( ( action ) => ( {
 					label: action.label,
 					onClick: () => {
+						action.onClick?.();
 						const newWindow = window.open( action.url, '_blank' );
 						if ( newWindow ) {
 							newWindow.opener = null;
@@ -76,6 +77,7 @@ export function ImageStudioNotice() {
 							actions: notice.actions.map( ( action ) => ( {
 								label: action.label,
 								onClick: () => {
+									action.onClick?.();
 									const newWindow = window.open( action.url, '_blank' );
 									if ( newWindow ) {
 										newWindow.opener = null;

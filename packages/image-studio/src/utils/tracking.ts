@@ -495,6 +495,25 @@ export function trackImageStudioError( {
 }
 
 /**
+ * Tracks when the limit-reached upgrade notice is shown
+ */
+export function trackImageStudioUpgradeNoticeShown(): void {
+	recordImageStudioEvent( 'image_studio_upgrade_notice_shown' );
+}
+
+/**
+ * Tracks a click on the upgrade notice action. Also fires the product-wide
+ * `jetpack_ai_upgrade_button` event so this surface appears in the same
+ * funnel as every other Jetpack AI upgrade button.
+ */
+export function trackImageStudioUpgradeNoticeClick(): void {
+	recordImageStudioEvent( 'image_studio_upgrade_notice_click' );
+	recordTracksEventBase( 'jetpack_ai_upgrade_button', {
+		placement: 'image-studio-limit-notice',
+	} );
+}
+
+/**
  * Tracks when a user provides thumbs up/down feedback on an image
  * @param options              - Tracking options
  * @param options.feedback     - User's feedback (up or down)
