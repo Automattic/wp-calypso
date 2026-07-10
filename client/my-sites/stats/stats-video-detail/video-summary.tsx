@@ -16,7 +16,22 @@ import StatsPeriodNavigation from '../stats-period-navigation';
 import SummaryChart from '../stats-summary';
 import VideoMetricTabs, { VideoStatType, VideoMetricValues } from './video-metric-tabs';
 
-type Period = 'day' | 'week' | 'month' | 'year';
+type UiPeriod = 'day' | 'week' | 'month' | 'year';
+
+// The stats/video/:id endpoint treats `period` as a fixed trailing-window
+// selector, not a bucket granularity: `month` returns ~31 daily buckets and
+// `year` returns ~13 monthly buckets (there are no weekly or yearly buckets,
+// and `day`/`week` windows are too small to chart). So we fetch the daily
+// window for the Days/Weeks views and the monthly window for Months/Years,
+// then aggregate client-side.
+type ApiPeriod = 'month' | 'year';
+
+// The endpoint only recognizes statType=watch_time|impressions; `views` falls
+// back to the plays column, which is the same metric the Videos module and the
+// All videos page label "Views". There is no retention series — retention is
+// derived below with the same formula the video-plays complete_stats endpoint
+// uses: (watch time / plays) / video duration.
+const FETCHED_STAT_TYPES = [ 'views', 'impressions', 'watch_time' ] as const;
 
 interface ChartRecord {
 	period: string;
@@ -25,46 +40,83 @@ interface ChartRecord {
 	value: number;
 }
 
+interface BucketRecord {
+	key: string;
+	plays: number;
+	impressions: number;
+	watchTime: number;
+	retention: number;
+}
+
 interface VideoSummaryData {
 	data?: Array< { period: string; value: number } >;
 }
 
 const STAT_TYPES: VideoStatType[] = [ 'views', 'impressions', 'watch_time', 'retention_rate' ];
 
-const MAX_RECORDS_PER_DAY = 30;
-
 function isVideoStatType( value: string | null ): value is VideoStatType {
 	return !! value && ( STAT_TYPES as string[] ).includes( value );
+}
+
+function metricOfBucket( bucket: BucketRecord, type: VideoStatType ): number {
+	switch ( type ) {
+		case 'impressions':
+			return bucket.impressions;
+		case 'watch_time':
+			return bucket.watchTime;
+		case 'retention_rate':
+			return bucket.retention;
+		default:
+			return bucket.plays;
+	}
+}
+
+function computeRetention(
+	watchTimeHours: number,
+	plays: number,
+	videoDuration: number | null
+): number {
+	if ( ! videoDuration || plays <= 0 ) {
+		return 0;
+	}
+	return ( ( watchTimeHours * 3600 ) / plays / videoDuration ) * 100;
 }
 
 export default function VideoSummary( {
 	postId,
 	initialStatType,
-	uploadDate,
+	videoDuration,
 }: {
 	postId: number;
 	initialStatType: string | null;
-	uploadDate: string | null;
+	videoDuration: number | null;
 } ) {
 	const translate = useTranslate();
 	const moment = useLocalizedMoment();
 	const siteId = useSelector( getSelectedSiteId );
-	const [ period, setPeriod ] = useState< Period >( 'day' );
+	const [ uiPeriod, setUiPeriod ] = useState< UiPeriod >( 'day' );
 	const [ statType, setStatType ] = useState< VideoStatType >(
 		isVideoStatType( initialStatType ) ? initialStatType : 'views'
 	);
 	const [ selectedRecord, setSelectedRecord ] = useState< ChartRecord | null >( null );
-	const [ page, setPage ] = useState( 1 );
+
+	const apiPeriod: ApiPeriod = uiPeriod === 'day' || uiPeriod === 'week' ? 'month' : 'year';
 
 	const queries = useMemo(
 		() =>
 			Object.fromEntries(
-				STAT_TYPES.map( ( type ) => [ type, { postId, statType: type, period } ] )
-			) as Record< VideoStatType, { postId: number; statType: VideoStatType; period: Period } >,
-		[ postId, period ]
+				FETCHED_STAT_TYPES.map( ( type ) => [
+					type,
+					{ postId, statType: type, period: apiPeriod },
+				] )
+			) as Record<
+				( typeof FETCHED_STAT_TYPES )[ number ],
+				{ postId: number; statType: string; period: ApiPeriod }
+			>,
+		[ postId, apiPeriod ]
 	);
 
-	const viewsData = useSelector(
+	const playsData = useSelector(
 		( state ) =>
 			getSiteStatsNormalizedData(
 				state,
@@ -91,180 +143,120 @@ export default function VideoSummary( {
 				queries.watch_time
 			) as VideoSummaryData | null
 	);
-	const retentionData = useSelector(
-		( state ) =>
-			getSiteStatsNormalizedData(
-				state,
-				siteId,
-				'statsVideo',
-				queries.retention_rate
-			) as VideoSummaryData | null
-	);
 	const isRequesting = useSelector( ( state ) =>
 		siteId
-			? isRequestingSiteStatsForQuery( state, siteId, 'statsVideo', queries[ statType ] )
+			? FETCHED_STAT_TYPES.some( ( type ) =>
+					isRequestingSiteStatsForQuery( state, siteId, 'statsVideo', queries[ type ] )
+			  )
 			: false
 	);
 
-	const seriesByType: Record< VideoStatType, VideoSummaryData | null > = {
-		views: viewsData,
-		impressions: impressionsData,
-		watch_time: watchTimeData,
-		retention_rate: retentionData,
-	};
-
-	const summaryData = seriesByType[ statType ];
-
-	// Normalizes a raw API date to its period bucket, so generated buckets and
-	// API records use the same keys regardless of the API's date format.
-	const bucketKey = ( date: string ) => moment( date ).startOf( period ).format( 'YYYY-MM-DD' );
-
-	// The API only returns buckets from the video's first activity onwards, so
-	// a young video yields one or two bars that the chart lays out poorly.
-	// Zero-fill gaps and, for the day view, extend the window backwards to a
-	// full page of bars, matching the designs.
-	const zeroFilledData = useMemo( () => {
-		const raw = summaryData?.data ?? [];
-		if ( ! raw.length ) {
-			return raw;
-		}
-
-		const valuesByBucket = new Map(
-			raw.map( ( { period: date, value } ) => [ bucketKey( date ), value ] )
-		);
-		const end = moment( raw[ raw.length - 1 ].period ).startOf( period );
-		let start = moment( raw[ 0 ].period ).startOf( period );
-		if ( uploadDate ) {
-			const uploadStart = moment( uploadDate ).startOf( period );
-			if ( uploadStart.isValid() && uploadStart.isBefore( start ) ) {
-				start = uploadStart;
+	// Group the fetched buckets (daily or monthly) into the buckets the UI
+	// period wants, summing values. Bucket keys are normalized ISO dates.
+	const buckets: BucketRecord[] = useMemo( () => {
+		const unit = uiPeriod;
+		const toBucketMap = ( data?: Array< { period: string; value: number } > ) => {
+			const map = new Map< string, number >();
+			for ( const { period: date, value } of data ?? [] ) {
+				const parsed = moment( date );
+				if ( ! parsed.isValid() ) {
+					continue;
+				}
+				const key = parsed.startOf( unit ).format( 'YYYY-MM-DD' );
+				map.set( key, ( map.get( key ) ?? 0 ) + value );
 			}
-		}
-		if ( period === 'day' ) {
-			const minStart = end.clone().subtract( MAX_RECORDS_PER_DAY - 1, 'day' );
-			if ( minStart.isBefore( start ) ) {
-				start = minStart;
-			}
-		}
-		const maxBuckets = 1000;
-		if ( end.diff( start, period ) + 1 > maxBuckets ) {
-			start = end.clone().subtract( maxBuckets - 1, period );
-		}
+			return map;
+		};
 
-		const buckets = [];
-		for ( const cursor = start.clone(); ! cursor.isAfter( end ); cursor.add( 1, period ) ) {
-			const key = cursor.format( 'YYYY-MM-DD' );
-			buckets.push( { period: key, value: valuesByBucket.get( key ) ?? 0 } );
-		}
-		return buckets;
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [ summaryData, period, uploadDate, moment ] );
+		const playsByBucket = toBucketMap( playsData?.data );
+		const impressionsByBucket = toBucketMap( impressionsData?.data );
+		const watchTimeByBucket = toBucketMap( watchTimeData?.data );
 
-	const allRecords: ChartRecord[] = useMemo(
+		const keys = Array.from(
+			new Set( [ ...playsByBucket.keys(), ...impressionsByBucket.keys() ] )
+		).sort();
+
+		return keys.map( ( key ) => {
+			const plays = playsByBucket.get( key ) ?? 0;
+			const watchTime = watchTimeByBucket.get( key ) ?? 0;
+			return {
+				key,
+				plays,
+				impressions: impressionsByBucket.get( key ) ?? 0,
+				watchTime,
+				retention: computeRetention( watchTime, plays, videoDuration ),
+			};
+		} );
+	}, [ playsData, impressionsData, watchTimeData, uiPeriod, videoDuration, moment ] );
+
+	const chartData: ChartRecord[] = useMemo(
 		() =>
-			zeroFilledData.map( ( { period: date, value } ) => {
-				const start = moment( date );
-				switch ( period ) {
+			buckets.map( ( bucket ) => {
+				const start = moment( bucket.key );
+				const value = metricOfBucket( bucket, statType );
+				switch ( uiPeriod ) {
 					case 'week':
 						return {
 							period: start.format( 'MMM D' ),
-							periodLabel: `${ start.format( 'L' ) } - ${ moment( date )
+							periodLabel: `${ start.format( 'L' ) } - ${ moment( bucket.key )
 								.add( 6, 'days' )
 								.format( 'L' ) }`,
-							startDate: date,
+							startDate: bucket.key,
 							value,
 						};
 					case 'month':
 						return {
 							period: start.format( 'MMM YYYY' ),
 							periodLabel: start.format( 'MMMM YYYY' ),
-							startDate: date,
+							startDate: bucket.key,
 							value,
 						};
 					case 'year':
 						return {
 							period: start.format( 'YYYY' ),
 							periodLabel: start.format( 'YYYY' ),
-							startDate: date,
+							startDate: bucket.key,
 							value,
 						};
 					default:
 						return {
 							period: start.format( 'MMM D' ),
 							periodLabel: start.format( 'LL' ),
-							startDate: date,
+							startDate: bucket.key,
 							value,
 						};
 				}
 			} ),
-		[ zeroFilledData, period, moment ]
+		[ buckets, statType, uiPeriod, moment ]
 	);
 
-	const getPageRecords = ( pageNum: number ) => {
-		if ( period !== 'day' ) {
-			return allRecords;
-		}
-		const start = Math.max( allRecords.length - MAX_RECORDS_PER_DAY * pageNum, 0 );
-		const end = Math.max( allRecords.length - MAX_RECORDS_PER_DAY * ( pageNum - 1 ), 0 );
-		return allRecords.slice( start, end );
-	};
-
-	const chartData = getPageRecords( page );
 	const selected =
 		selectedRecord ?? ( chartData.length ? chartData[ chartData.length - 1 ] : null );
 
-	// Metric totals are computed over the dates visible in the chart, so the
-	// cards always agree with what the chart displays. Retention rate is not
-	// summable, so it is averaged weighted by views.
-	const visibleDates = useMemo(
-		() => new Set( chartData.map( ( record ) => record.startDate ) ),
-		[ chartData ]
-	);
+	// Card totals cover the whole window shown in the chart. Retention is not
+	// summable, so the total uses the same canonical formula over the sums.
+	const metricValues: VideoMetricValues = useMemo( () => {
+		const sum = ( data: VideoSummaryData | null, pick: ( bucket: BucketRecord ) => number ) =>
+			data ? buckets.reduce( ( total, bucket ) => total + pick( bucket ), 0 ) : null;
 
-	const sumVisible = ( data: VideoSummaryData | null ) => {
-		if ( ! data?.data ) {
-			return null;
-		}
-		return data.data
-			.filter( ( record ) => visibleDates.has( bucketKey( record.period ) ) )
-			.reduce( ( total, record ) => total + record.value, 0 );
-	};
+		const playsTotal = sum( playsData, ( bucket ) => bucket.plays );
+		const watchTimeTotal = sum( watchTimeData, ( bucket ) => bucket.watchTime );
+		const retentionTotal =
+			playsTotal !== null && watchTimeTotal !== null && videoDuration && playsTotal > 0
+				? computeRetention( watchTimeTotal, playsTotal, videoDuration )
+				: null;
 
-	const retentionRate = useMemo( () => {
-		if ( ! retentionData?.data || ! viewsData?.data ) {
-			return null;
-		}
-		const viewsByDate = new Map(
-			viewsData.data
-				.filter( ( record ) => visibleDates.has( bucketKey( record.period ) ) )
-				.map( ( record ) => [ bucketKey( record.period ), record.value ] )
-		);
-		let weightedTotal = 0;
-		let viewsTotal = 0;
-		for ( const record of retentionData.data ) {
-			const key = bucketKey( record.period );
-			if ( ! visibleDates.has( key ) ) {
-				continue;
-			}
-			const views = viewsByDate.get( key ) ?? 0;
-			weightedTotal += record.value * views;
-			viewsTotal += views;
-		}
-		return viewsTotal > 0 ? weightedTotal / viewsTotal : null;
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [ retentionData, viewsData, visibleDates, period ] );
+		return {
+			views: playsTotal,
+			impressions: sum( impressionsData, ( bucket ) => bucket.impressions ),
+			watch_time: watchTimeTotal,
+			retention_rate: retentionTotal,
+		};
+	}, [ buckets, playsData, impressionsData, watchTimeData, videoDuration ] );
 
-	const metricValues: VideoMetricValues = {
-		views: sumVisible( viewsData ),
-		impressions: sumVisible( impressionsData ),
-		watch_time: sumVisible( watchTimeData ),
-		retention_rate: retentionRate,
-	};
-
-	const selectPeriod = ( newPeriod: Period ) => () => {
-		setPeriod( newPeriod );
+	const selectPeriod = ( newPeriod: UiPeriod ) => () => {
+		setUiPeriod( newPeriod );
 		setSelectedRecord( null );
-		setPage( 1 );
 	};
 
 	const selectStatType = ( newStatType: VideoStatType ) => {
@@ -272,47 +264,20 @@ export default function VideoSummary( {
 		setSelectedRecord( null );
 	};
 
-	const handleArrows = ( { direction }: { direction: string } ) => {
-		if ( ! chartData.length || ! selected ) {
-			return;
-		}
-
-		const recordIndex = chartData.findIndex( ( record ) => record.period === selected.period );
-
-		if ( direction === 'previous' ) {
-			if ( recordIndex > 0 ) {
-				setSelectedRecord( chartData[ recordIndex - 1 ] );
-			} else {
-				const previousPage = getPageRecords( page + 1 );
-				if ( previousPage.length ) {
-					setPage( page + 1 );
-					setSelectedRecord( previousPage[ previousPage.length - 1 ] );
-				}
-			}
-		} else if ( direction === 'next' ) {
-			if ( recordIndex < chartData.length - 1 ) {
-				setSelectedRecord( chartData[ recordIndex + 1 ] );
-			} else if ( page > 1 ) {
-				const nextPage = getPageRecords( page - 1 );
-				setPage( page - 1 );
-				setSelectedRecord( nextPage[ 0 ] );
-			}
-		}
-	};
-
 	const selectedIndex = selected
 		? chartData.findIndex( ( record ) => record.period === selected.period )
 		: -1;
-	let disablePreviousArrow = false;
-	let disableNextArrow = false;
-	if ( period === 'day' && allRecords.length ) {
-		const maxPages = Math.ceil( allRecords.length / MAX_RECORDS_PER_DAY );
-		disablePreviousArrow = page >= maxPages && selectedIndex === 0;
-		disableNextArrow = page === 1 && selectedIndex === chartData.length - 1;
-	} else {
-		disablePreviousArrow = selectedIndex <= 0;
-		disableNextArrow = selectedIndex === chartData.length - 1;
-	}
+
+	const handleArrows = ( { direction }: { direction: string } ) => {
+		if ( selectedIndex === -1 ) {
+			return;
+		}
+		if ( direction === 'previous' && selectedIndex > 0 ) {
+			setSelectedRecord( chartData[ selectedIndex - 1 ] );
+		} else if ( direction === 'next' && selectedIndex < chartData.length - 1 ) {
+			setSelectedRecord( chartData[ selectedIndex + 1 ] );
+		}
+	};
 
 	const tabLabels: Record< VideoStatType, string > = {
 		views: translate( 'Views', { textOnly: true } ),
@@ -321,7 +286,7 @@ export default function VideoSummary( {
 		retention_rate: translate( 'Retention rate', { textOnly: true } ),
 	};
 
-	const periods: Array< { id: Period; label: string } > = [
+	const periods: Array< { id: UiPeriod; label: string } > = [
 		{ id: 'day', label: translate( 'Days', { textOnly: true } ) },
 		{ id: 'week', label: translate( 'Weeks', { textOnly: true } ) },
 		{ id: 'month', label: translate( 'Months', { textOnly: true } ) },
@@ -331,14 +296,14 @@ export default function VideoSummary( {
 	return (
 		<div
 			className={ clsx( 'stats-video-summary', 'is-chart-tabs', {
-				'is-period-year': period === 'year',
+				'is-period-year': uiPeriod === 'year',
 				'has-less-than-three-bars': chartData.length > 0 && chartData.length < 3,
 			} ) }
 		>
 			{ siteId &&
-				STAT_TYPES.map( ( type ) => (
+				FETCHED_STAT_TYPES.map( ( type ) => (
 					<QuerySiteStats
-						key={ type }
+						key={ `${ type }-${ apiPeriod }` }
 						siteId={ siteId }
 						statType="statsVideo"
 						query={ queries[ type ] }
@@ -349,18 +314,18 @@ export default function VideoSummary( {
 				<StatsPeriodNavigation
 					showArrows
 					onPeriodChange={ handleArrows }
-					disablePreviousArrow={ disablePreviousArrow }
-					disableNextArrow={ disableNextArrow }
+					disablePreviousArrow={ selectedIndex <= 0 }
+					disableNextArrow={ selectedIndex === chartData.length - 1 }
 					date={ null }
 				>
-					<DatePicker period={ period } date={ selected?.startDate } isShort />
+					<DatePicker period={ uiPeriod } date={ selected?.startDate } isShort />
 				</StatsPeriodNavigation>
 				<SegmentedControl primary>
 					{ periods.map( ( { id, label } ) => (
 						<SegmentedControl.Item
 							key={ id }
 							onClick={ selectPeriod( id ) }
-							selected={ period === id }
+							selected={ uiPeriod === id }
 						>
 							{ label }
 						</SegmentedControl.Item>

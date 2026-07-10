@@ -72,7 +72,7 @@ export default function StatsVideoDetail( { postId, period, context }: StatsVide
 					<VideoSummary
 						postId={ postId }
 						initialStatType={ statType }
-						uploadDate={ media?.date ?? null }
+						videoDuration={ media?.length ?? null }
 					/>
 					<VideoEmbedsCard postId={ postId } />
 				</div>

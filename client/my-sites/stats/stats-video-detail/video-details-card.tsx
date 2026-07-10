@@ -13,6 +13,8 @@ export interface VideoMediaItem {
 	ID: number;
 	title?: string;
 	date?: string;
+	/** Video duration in seconds. */
+	length?: number;
 	thumbnails?: Record< string, string >;
 }
 
