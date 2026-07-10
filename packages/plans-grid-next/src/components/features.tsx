@@ -13,6 +13,7 @@ import { usePlansGridContext } from '../grid-context';
 import { PlanFeaturesItem } from './item';
 import { Plans2023Tooltip } from './plans-2023-tooltip';
 import type { TransformedFeatureObject, DataResponse } from '../types';
+import type { TranslateResult } from 'i18n-calypso';
 
 const SubdomainSuggestion = styled.div`
 	.is-domain-name {
@@ -88,7 +89,7 @@ const PlanFeatures2023GridFeatures: React.FC< {
 	hideUnavailableFeatures?: boolean;
 	selectedFeature?: string;
 	isCustomDomainAllowedOnFreePlan?: boolean;
-	featureBadgesBySlug?: Map< string, React.ReactNode >;
+	featureBadgesBySlug?: ReadonlyMap< string, TranslateResult >;
 	activeTooltipId: string;
 	setActiveTooltipId: Dispatch< SetStateAction< string > >;
 } > = ( {
