@@ -12,7 +12,7 @@ import Main, { MainProps } from 'calypso/components/main';
 import useWPAdminTheme from 'calypso/my-sites/stats/hooks/use-wp-admin-theme';
 import StatsUpsellModal from 'calypso/my-sites/stats/stats-upsell-modal';
 import { useSelector } from 'calypso/state';
-import { isJetpackSite } from 'calypso/state/sites/selectors';
+import { getSiteSlug, isJetpackSite } from 'calypso/state/sites/selectors';
 import { getUpsellModalView } from 'calypso/state/stats/paid-stats-upsell/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { STATS_HEADER_TITLE } from '../../constants';
@@ -36,9 +36,12 @@ interface StatsMainProps extends MainProps {
 
 function StatsBreadcrumbs( { items }: { items: BreadcrumbItem[] } ) {
 	const translate = useTranslate();
+	const siteId = useSelector( ( state ) => getSelectedSiteId( state ) );
+	const siteSlug = useSelector( ( state ) => getSiteSlug( state, siteId ) );
 
-	// First item is always "Stats" with Jetpack logo, using the first item's URL.
-	const rootUrl = items[ 0 ]?.to;
+	// First item is always "Stats" with Jetpack logo, using the first item's URL and
+	// falling back to the top-level Stats page so the root is always a working link.
+	const rootUrl = items[ 0 ]?.to ?? ( siteSlug ? `/stats/day/${ siteSlug }` : undefined );
 	const restItems = items.slice( 1 );
 
 	return (
