@@ -133,6 +133,15 @@ export default function VideoSummary( {
 			: false
 	);
 
+	// QuerySiteStats defers its initial request, so the requesting flag is
+	// still false on the first render after switching windows; treat missing
+	// data as loading too, or the empty state flashes before the fetch starts.
+	const isSelectedSeriesLoaded = !! {
+		views: playsData,
+		impressions: impressionsData,
+		watch_time: watchTimeData,
+	}[ statType ];
+
 	// Group the fetched buckets (daily or monthly) into the buckets the UI
 	// period wants, summing values. Bucket keys are normalized ISO dates.
 	const buckets: BucketRecord[] = useMemo( () => {
@@ -314,7 +323,7 @@ export default function VideoSummary( {
 			</StatsPeriodHeader>
 
 			<SummaryChart
-				isLoading={ isRequesting && ! chartData.length }
+				isLoading={ ( isRequesting || ! isSelectedSeriesLoaded ) && ! chartData.length }
 				data={ chartData }
 				activeKey="period"
 				dataKey="value"
