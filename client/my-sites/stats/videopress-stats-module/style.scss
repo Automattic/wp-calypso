@@ -48,7 +48,7 @@
 	}
 
 	.videopress-stats-module__grid-link {
-		color: var(--color-primary);
+		color: var(--color-accent);
 		overflow: hidden;
 		padding: 0 12px 0 24px;
 
@@ -90,7 +90,7 @@
 				top: 0;
 				height: 100%;
 				width: var(--bar-fill-percentage, 0%);
-				background-color: color-mix(in srgb, var(--color-primary) 15%, transparent);
+				background-color: color-mix(in srgb, var(--color-accent) 15%, transparent);
 				border-radius: 2px;
 				transition: background-color 0.2s ease-out;
 				z-index: 0;
@@ -107,10 +107,10 @@
 
 	.videopress-stats-module__row-wrapper {
 		&:hover {
-			background-color: var(--theme-highlight-color);
+			background-color: var(--color-accent);
 
 			.videopress-stats-module__bar::before {
-				background-color: color-mix(in srgb, var(--color-primary) 15%, transparent);
+				background-color: color-mix(in srgb, var(--color-accent) 15%, transparent);
 			}
 
 			.videopress-stats-module__grid-metric span,
