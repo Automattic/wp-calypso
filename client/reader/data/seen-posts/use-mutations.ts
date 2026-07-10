@@ -5,7 +5,6 @@
  *   - Post-cache `is_seen` patches via `updateCachedPostsMatching` so the
  *     full-post view, stream cards, and other Reader surfaces reflect the
  *     new state once the server confirms it.
- *   - Re-request of the unseen-status Redux slice via `requestUnseenStatus()`.
  */
 import {
 	getSiteSubscriptionsQueryKey,
@@ -16,10 +15,8 @@ import {
 	markReaderWpcomPostsAsUnseenMutation,
 } from '@automattic/api-queries';
 import { useMutation, useQueryClient, type QueryClient } from '@tanstack/react-query';
-import { useDispatch } from 'react-redux';
 import { getCachedPost, updateCachedPostsMatching } from 'calypso/reader/data/post/cache';
 import { getCachedStreamItems } from 'calypso/reader/data/stream';
-import { requestUnseenStatus } from 'calypso/state/reader-ui/seen-posts/actions';
 
 const SOURCE_READER_WEB = 'reader-web';
 
@@ -31,7 +28,6 @@ export interface UseMarkAsSeenParams {
 
 export const useMarkAsSeenMutation = () => {
 	const queryClient = useQueryClient();
-	const dispatch = useDispatch();
 	const baseMutation = markReaderPostsAsSeenMutation( queryClient );
 
 	return useMutation< unknown, Error, UseMarkAsSeenParams >( {
@@ -43,7 +39,6 @@ export const useMarkAsSeenMutation = () => {
 			} ),
 		onSuccess: ( _response, params ) => {
 			patchPostsSeenByGlobalId( queryClient, params.globalIds ?? [], true );
-			dispatch( requestUnseenStatus() );
 			return queryClient.invalidateQueries( { queryKey: getSiteSubscriptionsQueryKey() } );
 		},
 	} );
@@ -51,7 +46,6 @@ export const useMarkAsSeenMutation = () => {
 
 export const useMarkAsUnseenMutation = () => {
 	const queryClient = useQueryClient();
-	const dispatch = useDispatch();
 	const baseMutation = markReaderPostsAsUnseenMutation( queryClient );
 
 	return useMutation< unknown, Error, UseMarkAsSeenParams >( {
@@ -63,7 +57,6 @@ export const useMarkAsUnseenMutation = () => {
 			} ),
 		onSuccess: ( _response, params ) => {
 			patchPostsSeenByGlobalId( queryClient, params.globalIds ?? [], false );
-			dispatch( requestUnseenStatus() );
 			return queryClient.invalidateQueries( { queryKey: getSiteSubscriptionsQueryKey() } );
 		},
 	} );
@@ -77,7 +70,6 @@ export interface UseMarkAsSeenBlogParams {
 
 export const useMarkAsSeenBlogMutation = () => {
 	const queryClient = useQueryClient();
-	const dispatch = useDispatch();
 	const baseMutation = markReaderWpcomPostsAsSeenMutation( queryClient );
 
 	return useMutation< unknown, Error, UseMarkAsSeenBlogParams >( {
@@ -89,7 +81,6 @@ export const useMarkAsSeenBlogMutation = () => {
 			} ),
 		onSuccess: ( _response, params ) => {
 			patchPostsSeenByGlobalId( queryClient, params.globalIds ?? [], true );
-			dispatch( requestUnseenStatus() );
 			return queryClient.invalidateQueries( { queryKey: getSiteSubscriptionsQueryKey() } );
 		},
 	} );
@@ -97,7 +88,6 @@ export const useMarkAsSeenBlogMutation = () => {
 
 export const useMarkAsUnseenBlogMutation = () => {
 	const queryClient = useQueryClient();
-	const dispatch = useDispatch();
 	const baseMutation = markReaderWpcomPostsAsUnseenMutation( queryClient );
 
 	return useMutation< unknown, Error, UseMarkAsSeenBlogParams >( {
@@ -109,7 +99,6 @@ export const useMarkAsUnseenBlogMutation = () => {
 			} ),
 		onSuccess: ( _response, params ) => {
 			patchPostsSeenByGlobalId( queryClient, params.globalIds ?? [], false );
-			dispatch( requestUnseenStatus() );
 			return queryClient.invalidateQueries( { queryKey: getSiteSubscriptionsQueryKey() } );
 		},
 	} );
@@ -124,7 +113,6 @@ export interface UseMarkAllAsSeenParams {
 
 export const useMarkAllAsSeenMutation = () => {
 	const queryClient = useQueryClient();
-	const dispatch = useDispatch();
 	const baseMutation = markAllReaderPostsAsSeenMutation( queryClient );
 
 	return useMutation< unknown, Error, UseMarkAllAsSeenParams >( {
@@ -141,7 +129,6 @@ export const useMarkAllAsSeenMutation = () => {
 				feedUrls: params.feedUrls,
 			} );
 
-			dispatch( requestUnseenStatus() );
 			return queryClient.invalidateQueries( { queryKey: getSiteSubscriptionsQueryKey() } );
 		},
 	} );

@@ -22,8 +22,8 @@ export interface SeenPostsMutationsProps {
  * Higher-order component that wires the seen-posts mutation hooks and forwards
  * their `mutate` callbacks to the wrapped component under the legacy prop
  * names. The hooks must run inside the render phase (they call
- * `useQueryClient`/`useDispatch`), which is why this is a render-scope wrapper
- * rather than `connect`'s `mapDispatchToProps`.
+ * `useQueryClient`), which is why this is a render-scope wrapper rather than
+ * `connect`'s `mapDispatchToProps`.
  */
 export function withSeenPostsMutations< P extends Partial< SeenPostsMutationsProps > >(
 	WrappedComponent: ComponentType< P >
