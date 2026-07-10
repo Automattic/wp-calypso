@@ -88,6 +88,7 @@ const PlanFeatures2023GridFeatures: React.FC< {
 	hideUnavailableFeatures?: boolean;
 	selectedFeature?: string;
 	isCustomDomainAllowedOnFreePlan?: boolean;
+	featureBadgesBySlug?: Map< string, React.ReactNode >;
 	activeTooltipId: string;
 	setActiveTooltipId: Dispatch< SetStateAction< string > >;
 } > = ( {
@@ -98,6 +99,7 @@ const PlanFeatures2023GridFeatures: React.FC< {
 	hideUnavailableFeatures,
 	selectedFeature,
 	isCustomDomainAllowedOnFreePlan,
+	featureBadgesBySlug,
 	activeTooltipId,
 	setActiveTooltipId,
 } ) => {
@@ -145,6 +147,8 @@ const PlanFeatures2023GridFeatures: React.FC< {
 					isCustomDomainFeatureWithPaidDomain && isExperimentVariant;
 				const isFeatureAvailable =
 					isFreePlanAndCustomDomainFeature || currentFeature.availableForCurrentPlan;
+				const placeholderBadgeText = featureBadgesBySlug?.get( featureSlug );
+				const badgeText = currentFeature.badgeText ?? placeholderBadgeText;
 
 				const divClasses = clsx( '', getPlanClass( planSlug ), {
 					'is-last-feature': featureIndex + 1 === features.length,
@@ -211,9 +215,14 @@ const PlanFeatures2023GridFeatures: React.FC< {
 															domainName: paidDomainName,
 														} ) }
 													</span>
-													{ currentFeature.badgeText && (
-														<FeatureBadge className="plan-features-2023-grid__feature-badge">
-															{ currentFeature.badgeText }
+													{ badgeText && (
+														<FeatureBadge
+															className={ clsx( 'plan-features-2023-grid__feature-badge', {
+																'is-placeholder': ! currentFeature.badgeText,
+															} ) }
+															aria-hidden={ currentFeature.badgeText ? undefined : true }
+														>
+															{ badgeText }
 														</FeatureBadge>
 													) }
 												</span>
