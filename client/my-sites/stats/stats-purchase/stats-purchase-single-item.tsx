@@ -236,6 +236,8 @@ const StatsCommercialPurchase = ( {
 	// whether it has also purchased standalone Stats — both stack, so both notices can co-render.
 	// A site could in theory hold more than one bundled plan purchase at once (e.g. mid-upgrade);
 	// prefer naming the highest tier since that's the more relevant entitlement to call out.
+	// The yearly slugs are used as stand-ins for their plan family (yearly vs. monthly share the
+	// same title), since only the title is read from the returned plan object.
 	let bundledPlanSlug: string | undefined;
 	if ( isCompletePlanOwned ) {
 		bundledPlanSlug = PLAN_JETPACK_COMPLETE;
@@ -246,7 +248,11 @@ const StatsCommercialPurchase = ( {
 	}
 	const bundledPlanTitle = bundledPlanSlug ? getPlan( bundledPlanSlug )?.getTitle() : undefined;
 	const bundledPlanName = bundledPlanTitle
-		? translate( 'Jetpack %(planName)s', { args: { planName: bundledPlanTitle } } )
+		? translate( 'Jetpack %(planName)s', {
+				args: { planName: bundledPlanTitle },
+				comment:
+					'Composed plan name, e.g. "Jetpack Complete". planName is an already-translated plan title: "Complete", "Growth", or "Professional".',
+		  } )
 		: undefined;
 
 	const { isNearLimit, isOverLimit } = getUsageLimitStatus( usageData );
@@ -301,7 +307,8 @@ const StatsCommercialPurchase = ( {
 			) }
 			{ ! isCommercialOwned && (
 				<>
-					<p>{ infoText }</p>
+					{ /* Hidden for bundled-plan sites: it contradicts the "already includes" notice above. */ }
+					{ ! bundledPlanName && <p>{ infoText }</p> }
 					<StatsBenefitsCommercial />
 				</>
 			) }
@@ -310,7 +317,8 @@ const StatsCommercialPurchase = ( {
 					isNearLimit={ isNearLimit }
 					isOverLimit={ isOverLimit }
 					bundledPlanName={ bundledPlanName }
-					bundledViewsLimit={ usageData?.views_limit }
+					// `usageData.views_limit` is the site's total stacked limit (bundled + standalone)
+					// once both are owned, so it can't be attributed to the bundled plan alone here.
 				/>
 			) }
 			{ tierSelectionElements }

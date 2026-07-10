@@ -26,6 +26,8 @@ export interface PlanUsage {
 
 const NEAR_LIMIT_USAGE_RATIO = 0.9;
 
+// `isNearLimit` and `isOverLimit` are not mutually exclusive — an over-limit site is also
+// near-limit. Callers that branch on both must check `isOverLimit` first.
 export function getUsageLimitStatus( usage?: PlanUsage ): {
 	isNearLimit: boolean;
 	isOverLimit: boolean;
