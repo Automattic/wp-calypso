@@ -10,12 +10,13 @@ import {
 	useQueryClient,
 	type UseQueryResult,
 } from '@tanstack/react-query';
+import { Link } from '@tanstack/react-router';
 import { Button, Modal } from '@wordpress/components';
 import { filterSortAndPaginate } from '@wordpress/dataviews';
 import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import { Icon, seen } from '@wordpress/icons';
-import { useState, useMemo, useCallback } from 'react';
+import { useState, useMemo, useCallback, type ReactNode } from 'react';
 import { usePersistentView } from '../../app/hooks/use-persistent-view';
 import { PerformanceTrackerStop } from '../../app/performance-tracking';
 import {
@@ -38,9 +39,18 @@ import type {
 } from '@automattic/api-core';
 import type { View } from '@wordpress/dataviews';
 
-function DeploymentsEmptyState( { view }: { view: View } ) {
+function DeploymentsEmptyState( { view, siteSlug }: { view: View; siteSlug: string } ) {
 	let title: string = __( 'No deployments yet' );
-	let description: string = __( 'Deployments from your connected repositories will appear here.' );
+	let description: ReactNode = createInterpolateElement(
+		__(
+			'Deployments from your <repositoriesLink>connected repositories</repositoriesLink> will appear here.'
+		),
+		{
+			repositoriesLink: (
+				<Link to={ siteSettingsRepositoriesRoute.fullPath } params={ { siteSlug } } />
+			),
+		}
+	);
 
 	if ( ( view.filters && view.filters.length > 0 ) || view.search ) {
 		title = __( 'No deployments found' );
@@ -240,7 +250,7 @@ function DeploymentsList() {
 					defaultLayouts={ DEFAULT_LAYOUTS }
 					paginationInfo={ paginationInfo }
 					getItemId={ ( item ) => item.id.toString() }
-					empty={ <DeploymentsEmptyState view={ view } /> }
+					empty={ <DeploymentsEmptyState view={ view } siteSlug={ siteSlug } /> }
 				/>
 			</DataViewsCard>
 
