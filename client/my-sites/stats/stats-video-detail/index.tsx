@@ -47,16 +47,15 @@ export default function StatsVideoDetail( { postId, period, context }: StatsVide
 	// the statsVideo response — available in both Calypso and Odyssey (the
 	// stats-app proxy forwards stats routes). Mirrors VideoSummary's default
 	// Days/Weeks query, which is always fetched first.
-	const videoStatsPost = useSelector(
+	const videoStatsData = useSelector(
 		( state ) =>
-			(
-				getSiteStatsNormalizedData( state, siteId, 'statsVideo', {
-					postId,
-					statType: 'views',
-					period: 'month',
-				} ) as { post?: VideoStatsPost | null } | null
-			 )?.post ?? null
+			getSiteStatsNormalizedData( state, siteId, 'statsVideo', {
+				postId,
+				statType: 'views',
+				period: 'month',
+			} ) as { post?: VideoStatsPost | null } | null
 	);
+	const videoStatsPost = videoStatsData?.post ?? null;
 	// The media item is only needed for the video duration (retention rate);
 	// the request 404s harmlessly in Odyssey, where the stats-app proxy has no
 	// media route, and the retention card is simply omitted.
@@ -82,6 +81,9 @@ export default function StatsVideoDetail( { postId, period, context }: StatsVide
 
 	const videoTitle = videoStatsPost?.post_title || media?.title || null;
 	const videoDate = videoStatsPost?.post_date || media?.date || null;
+	// Loading = neither source has responded yet; once statsVideo answers, a
+	// missing post means there is genuinely no title and the card hides.
+	const isVideoInfoLoading = ! videoStatsData && ! media;
 
 	return (
 		<Main
@@ -104,7 +106,11 @@ export default function StatsVideoDetail( { postId, period, context }: StatsVide
 					id="my-stats-content"
 					className="stats-summary-view stats-summary__positioned stats-video-detail"
 				>
-					<VideoDetailsCard title={ videoTitle } date={ videoDate } />
+					<VideoDetailsCard
+						title={ videoTitle }
+						date={ videoDate }
+						isLoading={ isVideoInfoLoading }
+					/>
 					<VideoSummary postId={ postId } initialStatType={ statType } />
 					<VideoEmbedsCard postId={ postId } />
 				</div>
