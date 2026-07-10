@@ -142,6 +142,11 @@ $reader-full-post-desktop-min: $reader-full-post-sidebar-width + $reader-full-po
 	&:visited {
 		color: var( --color-text );
 	}
+
+	&:focus-visible {
+		outline: 2px solid var( --studio-blue-50 );
+		outline-offset: 2px;
+	}
 }
 
 .reader-full-post__header-meta-separator {
@@ -435,6 +440,11 @@ $reader-full-post-desktop-min: $reader-full-post-sidebar-width + $reader-full-po
 	font-size: rem( 17px );
 	line-height: 28px;
 
+	a:focus-visible {
+		outline: 2px solid var( --studio-blue-50 );
+		outline-offset: 2px;
+	}
+
 	figure.wp-block-table {
 		overflow: auto;
 	}
@@ -714,6 +724,11 @@ $reader-full-post-desktop-min: $reader-full-post-sidebar-width + $reader-full-po
 	.reader-full-post__header-title-link {
 		display: block;
 		text-decoration: none;
+
+		&:focus-visible {
+			outline: 2px solid var( --studio-blue-50 );
+			outline-offset: 2px;
+		}
 
 		&::after {
 			content: "↗";
