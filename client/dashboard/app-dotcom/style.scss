@@ -45,7 +45,9 @@
 	// Headings
 	--dashboard-h1__font-size: 32px;
 	--dashboard-h1__font-weight: 400;
-	--dashboard-h1__line-height: normal;
+	// Fixed so the level-1 heading row is exactly 40px; `normal` renders
+	// Recoleta at ~43.5px, breaking the sidebar/content alignment.
+	--dashboard-h1__line-height: 40px;
 	--dashboard-h1__font-family: Recoleta, Georgia, "Times New Roman", Times, serif;
 
 	// Overview

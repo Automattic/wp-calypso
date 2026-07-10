@@ -10,6 +10,14 @@
 	.dashboard-section-header__heading-row {
 		min-height: 32px;
 	}
+
+	// Level-1 rows take part in the cross-column alignment: page block padding
+	// (24px) + this row (40px) + page gap (24px) must equal the sidebar's
+	// offset to its first menu item, so the first item lines up with the
+	// content below the page title.
+	&.is-level-1 .dashboard-section-header__heading-row {
+		min-height: 40px;
+	}
 }
 
 .dashboard-section-header__heading {

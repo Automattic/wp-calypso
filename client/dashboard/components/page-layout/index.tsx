@@ -20,7 +20,7 @@ function PageLayout( {
 } ) {
 	return (
 		<VStack
-			spacing={ 3 }
+			spacing={ 6 }
 			className={ `dashboard-page-layout is-${ size }` }
 			style={ PAGE_LAYOUT_SIZES[ size ] as CSSProperties }
 		>
