@@ -24,6 +24,22 @@ export interface PlanUsage {
 	validMonthlyViews: number;
 }
 
+const NEAR_LIMIT_USAGE_RATIO = 0.9;
+
+export function getUsageLimitStatus( usage?: PlanUsage ): {
+	isNearLimit: boolean;
+	isOverLimit: boolean;
+} {
+	const tierLimit = usage?.views_limit || 0;
+	const currentUsage = usage?.current_usage?.views_count || 0;
+	const usageRatio = tierLimit ? currentUsage / tierLimit : 0;
+
+	return {
+		isNearLimit: usageRatio >= NEAR_LIMIT_USAGE_RATIO,
+		isOverLimit: usageRatio >= 1,
+	};
+}
+
 function selectPlanUsage( payload: PlanUsage ): PlanUsage {
 	const recent_usages =
 		payload?.recent_usages

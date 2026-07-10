@@ -1,9 +1,15 @@
 import config from '@automattic/calypso-config';
+import {
+	getPlan,
+	PLAN_JETPACK_COMPLETE,
+	PLAN_JETPACK_GROWTH_YEARLY,
+	PLAN_JETPACK_BUSINESS,
+} from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
 import { Button as CalypsoButton } from '@automattic/components';
 import { formatNumberCompact } from '@automattic/number-formatters';
 import { Button, CheckboxControl } from '@wordpress/components';
-import { useTranslate } from 'i18n-calypso';
+import { useTranslate, TranslateResult } from 'i18n-calypso';
 import React, { useState, useCallback, useMemo, useEffect } from 'react';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { STATS_PRODUCT_NAME } from 'calypso/my-sites/stats/constants';
@@ -20,7 +26,7 @@ import getEnvStatsFeatureSupportChecks from 'calypso/state/sites/selectors/get-e
 import { JETPACK_BLOG_ABOUT_COMMERCIAL_STATS_URL } from '../const';
 import useAvailableUpgradeTiers from '../hooks/use-available-upgrade-tiers';
 import useOnDemandCommercialClassificationMutation from '../hooks/use-on-demand-site-identification-mutation';
-import usePlanUsageQuery from '../hooks/use-plan-usage-query';
+import usePlanUsageQuery, { getUsageLimitStatus } from '../hooks/use-plan-usage-query';
 import useSiteCompulsoryPlanSelectionQualifiedCheck from '../hooks/use-site-compulsory-plan-selection-qualified-check';
 import useStatsPurchases from '../hooks/use-stats-purchases';
 import { StatsCommercialUpgradeSlider, getTierQuantity } from './stats-commercial-upgrade-slider';
@@ -94,15 +100,33 @@ interface StatsCommercialFlowOptOutFormProps {
 
 const COMPONENT_CLASS_NAME = 'stats-purchase-single';
 
-const StatsUpgradeInstructions = () => {
+const StatsUpgradeInstructions = ( {
+	isNearLimit,
+	isOverLimit,
+}: {
+	isNearLimit: boolean;
+	isOverLimit: boolean;
+} ) => {
 	const translate = useTranslate();
+
+	let leadText;
+	if ( isOverLimit ) {
+		leadText = translate(
+			'Your site has reached its views limit. Upgrade your tier to restore full access to advanced stats features.'
+		);
+	} else if ( isNearLimit ) {
+		leadText = translate(
+			'Your site is close to its monthly views limit. Upgrade your tier now to avoid any disruption to advanced stats features.'
+		);
+	} else {
+		leadText = translate(
+			'Upgrade and increase your site views limit to continue using our advanced stats features.'
+		);
+	}
+
 	return (
 		<div>
-			<p>
-				{ translate(
-					'Upgrade and increase your site views limit to continue using our advanced stats features.'
-				) }
-			</p>
+			<p>{ leadText }</p>
 			<div className="stats-purchase-wizard__notice">
 				{ translate(
 					'The remainder of your current plan will be credited towards the upgrade, ensuring you only pay the price difference. Starting from the next billing cycle, standard charges will apply.'
@@ -112,18 +136,25 @@ const StatsUpgradeInstructions = () => {
 	);
 };
 
-const StatsBundledPlanNotice = ( { viewsLimit }: { viewsLimit?: number } ) => {
+const StatsBundledPlanNotice = ( {
+	viewsLimit,
+	planName,
+}: {
+	viewsLimit?: number;
+	planName: string | TranslateResult;
+} ) => {
 	const translate = useTranslate();
 
 	return (
 		<div className="stats-purchase-wizard__notice">
 			{ viewsLimit
 				? translate(
-						'Your current plan already includes %(viewsLimit)s views per month for Stats. Views from this purchase will stack on top, so you keep what you already have.',
-						{ args: { viewsLimit: formatNumberCompact( viewsLimit ) } }
+						'Your %(planName)s plan already includes %(viewsLimit)s views per month for Stats. Views from this purchase will stack on top, so you keep what you already have.',
+						{ args: { planName, viewsLimit: formatNumberCompact( viewsLimit ) } }
 				  )
 				: translate(
-						'Your current plan already includes views for Stats. Views from this purchase will stack on top, so you keep what you already have.'
+						'Your %(planName)s plan already includes views for Stats. Views from this purchase will stack on top, so you keep what you already have.',
+						{ args: { planName } }
 				  ) }
 		</div>
 	);
@@ -174,12 +205,35 @@ const StatsCommercialPurchase = ( {
 	const isWPCOMSite = useSelector( ( state ) => siteId && getIsSiteWPCOM( state, siteId ) );
 	const tiers = useAvailableUpgradeTiers( siteId ) || [];
 	const haveTiers = tiers.length > 0;
-	const { isCommercialOwned, hasAnyStatsPlan, supportCommercialUse } = useStatsPurchases( siteId );
+	const {
+		isCommercialOwned,
+		hasAnyStatsPlan,
+		isCompletePlanOwned,
+		isGrowthPlanOwned,
+		isBusinessPlanOwned,
+	} = useStatsPurchases( siteId );
 	const isSimpleSite = useSelector( ( state ) => getIsSimpleSite( state, siteId ) );
 	const { data: connectionStatus } = useJetpackConnectionStatus( siteId, !! isSimpleSite );
 	const { data: usageData } = usePlanUsageQuery( siteId );
-	// Site already has Stats access via a bundled plan (e.g. Jetpack Complete) rather than a standalone Stats purchase.
-	const hasBundledStatsAccess = supportCommercialUse && ! isCommercialOwned;
+
+	// Site already has Stats access via a bundled plan (e.g. Jetpack Complete), independent of
+	// whether it has also purchased standalone Stats — both stack, so both notices can co-render.
+	// A site could in theory hold more than one bundled plan purchase at once (e.g. mid-upgrade);
+	// prefer naming the highest tier since that's the more relevant entitlement to call out.
+	let bundledPlanSlug: string | undefined;
+	if ( isCompletePlanOwned ) {
+		bundledPlanSlug = PLAN_JETPACK_COMPLETE;
+	} else if ( isGrowthPlanOwned ) {
+		bundledPlanSlug = PLAN_JETPACK_GROWTH_YEARLY;
+	} else if ( isBusinessPlanOwned ) {
+		bundledPlanSlug = PLAN_JETPACK_BUSINESS;
+	}
+	const bundledPlanTitle = bundledPlanSlug ? getPlan( bundledPlanSlug )?.getTitle() : undefined;
+	const bundledPlanName = bundledPlanTitle
+		? translate( 'Jetpack %(planName)s', { args: { planName: bundledPlanTitle } } )
+		: undefined;
+
+	const { isNearLimit, isOverLimit } = getUsageLimitStatus( usageData );
 
 	// The button of @automattic/components has built-in color scheme support for Calypso.
 	const ButtonComponent = isWPCOMSite ? CalypsoButton : Button;
@@ -223,14 +277,21 @@ const StatsCommercialPurchase = ( {
 	return (
 		<>
 			<h1>{ pageTitle }</h1>
-			{ hasBundledStatsAccess && <StatsBundledPlanNotice viewsLimit={ usageData?.views_limit } /> }
+			{ bundledPlanName && (
+				<StatsBundledPlanNotice
+					viewsLimit={ usageData?.views_limit }
+					planName={ bundledPlanName }
+				/>
+			) }
 			{ ! isCommercialOwned && (
 				<>
 					<p>{ infoText }</p>
 					<StatsBenefitsCommercial />
 				</>
 			) }
-			{ isCommercialOwned && <StatsUpgradeInstructions /> }
+			{ isCommercialOwned && (
+				<StatsUpgradeInstructions isNearLimit={ isNearLimit } isOverLimit={ isOverLimit } />
+			) }
 			{ tierSelectionElements }
 			{ needsConnectionForUpgrade && (
 				<div className="stats-purchase-wizard__notice connection-notice">
