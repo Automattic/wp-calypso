@@ -1,14 +1,12 @@
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, useLayoutEffect } from 'react';
 import titlecase from 'to-title-case';
-import QueryMedia from 'calypso/components/data/query-media';
 import Main from 'calypso/my-sites/stats/components/stats-main';
 import {
 	useStatsBreadcrumbTrail,
 	recordCurrentScreen,
 } from 'calypso/my-sites/stats/hooks/use-stats-navigation-history';
 import { useSelector } from 'calypso/state';
-import getMediaItem from 'calypso/state/selectors/get-media-item';
 import { getSiteStatsNormalizedData } from 'calypso/state/stats/lists/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import PageViewTracker from '../stats-page-view-tracker';
@@ -26,13 +24,6 @@ interface StatsVideoDetailProps {
 	context: {
 		query: Record< string, string >;
 	};
-}
-
-interface VideoMediaItem {
-	title?: string;
-	date?: string;
-	/** Video duration in seconds. */
-	length?: number;
 }
 
 interface VideoStatsPost {
@@ -56,12 +47,6 @@ export default function StatsVideoDetail( { postId, period, context }: StatsVide
 			} ) as { post?: VideoStatsPost | null } | null
 	);
 	const videoStatsPost = videoStatsData?.post ?? null;
-	// The media item is only needed for the video duration (retention rate);
-	// the request 404s harmlessly in Odyssey, where the stats-app proxy has no
-	// media route, and the retention card is simply omitted.
-	const media = useSelector(
-		( state ) => getMediaItem( state, siteId, postId ) as VideoMediaItem | null
-	);
 	const breadcrumbTrail = useStatsBreadcrumbTrail();
 	const statType = context.query.statType ?? null;
 
@@ -79,11 +64,11 @@ export default function StatsVideoDetail( { postId, period, context }: StatsVide
 		} );
 	}, [ context.query, period.period ] );
 
-	const videoTitle = videoStatsPost?.post_title || media?.title || null;
-	const videoDate = videoStatsPost?.post_date || media?.date || null;
-	// Loading = neither source has responded yet; once statsVideo answers, a
-	// missing post means there is genuinely no title and the card hides.
-	const isVideoInfoLoading = ! videoStatsData && ! media;
+	const videoTitle = videoStatsPost?.post_title || null;
+	const videoDate = videoStatsPost?.post_date || null;
+	// Loading until statsVideo answers; a response without a post means there
+	// is genuinely no title and the card hides.
+	const isVideoInfoLoading = ! videoStatsData;
 
 	return (
 		<Main
@@ -100,7 +85,6 @@ export default function StatsVideoDetail( { postId, period, context }: StatsVide
 				path={ `/stats/${ period.period }/videodetails/:site` }
 				title={ `Stats > ${ titlecase( period.period ) } > Videodetails` }
 			/>
-			{ siteId && <QueryMedia siteId={ siteId } mediaId={ postId } /> }
 			<div className="stats stats-summary-view">
 				<div
 					id="my-stats-content"
