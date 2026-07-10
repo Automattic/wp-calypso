@@ -247,13 +247,8 @@ const StatsCommercialPurchase = ( {
 		bundledPlanSlug = PLAN_JETPACK_BUSINESS;
 	}
 	const bundledPlanTitle = bundledPlanSlug ? getPlan( bundledPlanSlug )?.getTitle() : undefined;
-	const bundledPlanName = bundledPlanTitle
-		? translate( 'Jetpack %(planName)s', {
-				args: { planName: bundledPlanTitle },
-				comment:
-					'Composed plan name, e.g. "Jetpack Complete". planName is an already-translated plan title: "Complete", "Growth", or "Professional".',
-		  } )
-		: undefined;
+	// "Jetpack" is a brand name, not translated; bundledPlanTitle is already a translated plan title.
+	const bundledPlanName = bundledPlanTitle ? `Jetpack ${ bundledPlanTitle }` : undefined;
 
 	const { isNearLimit, isOverLimit } = getUsageLimitStatus( usageData );
 
