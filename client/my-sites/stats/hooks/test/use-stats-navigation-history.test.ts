@@ -168,6 +168,16 @@ describe( 'use-stats-navigation-history back-link param forwarding', () => {
 			expect( result.current[ 0 ].label ).toBe( 'Traffic' );
 			expect( result.current[ 0 ].url ).toContain( '/stats/day/example.com' );
 		} );
+
+		it( 'falls back to a top-level Traffic crumb when sessionStorage holds corrupted JSON', () => {
+			sessionStorage.setItem( STORAGE_KEY, '{oops' );
+
+			const { result } = renderHook( () => useStatsBreadcrumbTrail() );
+
+			expect( result.current ).toHaveLength( 1 );
+			expect( result.current[ 0 ].label ).toBe( 'Traffic' );
+			expect( result.current[ 0 ].url ).toContain( '/stats/day/example.com' );
+		} );
 	} );
 
 	describe( 'recordCurrentScreen', () => {

@@ -39,8 +39,9 @@ function StatsBreadcrumbs( { items }: { items: BreadcrumbItem[] } ) {
 	const siteId = useSelector( ( state ) => getSelectedSiteId( state ) );
 	const siteSlug = useSelector( ( state ) => getSiteSlug( state, siteId ) );
 
-	// First item is always "Stats" with Jetpack logo, using the first item's URL and
-	// falling back to the top-level Stats page so the root is always a working link.
+	// First item is always "Stats" with the Jetpack logo, linking to the first item's URL.
+	// Fall back to the top-level Stats page so the root renders as a working link from the
+	// first frame, before the breadcrumb-trail effect has populated the items.
 	const rootUrl = items[ 0 ]?.to ?? ( siteSlug ? `/stats/day/${ siteSlug }` : undefined );
 	const restItems = items.slice( 1 );
 
