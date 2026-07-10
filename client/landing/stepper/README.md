@@ -344,8 +344,8 @@ list of options, etc.), the right fix is usually to widen its `accepts:` type so
 flows can customize it without duplicating the step. Follow these rules so existing
 flows keep working unchanged:
 
-1. **Name props after their visible effect.** `headerText`, `hiddenGoals`,
-   `hideSecondaryLinks`. No abbreviations. Avoid generic names like `options`
+1. **Name props after their visible effect.** `headerText`, `hideUseMyDomainLink`,
+   `hideFreeDomainPromo`. No abbreviations. Avoid generic names like `options`
    or `config`.
 2. **Make every prop optional, with defaults that reproduce today's behavior.**
    A flow that doesn't pass anything must see exactly the same UI as before.
@@ -365,22 +365,15 @@ flows keep working unchanged:
    review).
 6. **Test the defaults and each prop.** One test that renders the step with
    no props and asserts current behavior, then one test per prop that asserts
-   the override applied. See
-   `internals/steps-repository/goals/test/select-goals.tsx` for a worked example.
+   the override applied. Colocate the test under the step's `test/` folder.
 7. **Document the prop on the flow side.** When a flow opts into a prop via
    `useStepsProps()`, the flow file is the canonical record of the customization.
    Keep the README sketch above in mind: if a future maintainer can't tell
    what the flow customizes just from reading the flow file, the prop is
    misnamed.
 
-**Worked examples.**
+**Worked example.**
 
-- The `goals` step exposes `headerText`, `subHeaderText`,
-  `goalTitles` (sparse label overrides per goal), `hiddenGoals` (cards to drop),
-  and `hideSecondaryLinks` (toggle for the three bottom links). All optional;
-  omitting them reproduces the default GOALS UI verbatim. See
-  [`steps-repository/goals/index.tsx`](/client/landing/stepper/declarative-flow/internals/steps-repository/goals/index.tsx)
-  for the wiring and the colocated test file for the test pattern.
 - The `domain-search` step exposes `headerText`, `subHeaderText`, `hideUseMyDomainLink`
   (suppresses the "Use a domain I own" CTA on both V2 top bar and V1 skip-button surfaces),
   `hideFreeDomainPromo` (hides the free-domain-for-a-year banner), `freeDomainPromoTitle`

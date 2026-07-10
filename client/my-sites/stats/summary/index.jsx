@@ -298,13 +298,12 @@ class StatsSummary extends Component {
 				moduleQuery.complete_stats = 1;
 				summaryView = (
 					<Fragment key="videopress-stats-module">
-						{ /* For CSV button to work, video page needs to pass custom data to the button.
-								It can't use the shared header as long as the CSV download button stays there. */ }
+						{ this.renderSummaryHeader( path, statType, false, moduleQuery ) }
 						<VideoPressStatsModule
 							path={ path }
 							moduleStrings={ statsStrings.videoplays }
 							period={ this.props.period }
-							query={ query }
+							query={ moduleQuery }
 							statType={ statType }
 							summary
 							listItemClassName={ listItemClassName }
@@ -456,7 +455,7 @@ class StatsSummary extends Component {
 }
 
 const StatsSummaryWrapper = ( props ) => {
-	const breadcrumbTrail = useStatsBreadcrumbTrail();
+	const breadcrumbTrail = useStatsBreadcrumbTrail( props.context?.query );
 	const statsStrings = useStatsStrings( { supportsArchiveStats: props.supportsArchiveStats } );
 
 	return (

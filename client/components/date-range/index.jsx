@@ -470,9 +470,12 @@ export class DateRange extends Component {
 		} );
 	};
 
-	// Expose closePopoverAndCommit to the parent component for shortcut clicks.
+	// Expose both close helpers to the parent component for shortcut clicks.
+	// Commit applies the shortcut's range; the plain close neither commits nor
+	// reverts (used by shortcuts that navigate elsewhere, e.g. "All time" —
+	// revert would fire onDateCommit with the stale range and navigate back).
 	handleShortcutClick = ( shortcut ) => {
-		this.props.onShortcutClick( shortcut, this.closePopoverAndCommit );
+		this.props.onShortcutClick( shortcut, this.closePopoverAndCommit, this.closePopover );
 	};
 
 	/**
