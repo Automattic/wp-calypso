@@ -37,7 +37,12 @@ export function UpsellCard( { siteTitle, upsells }: UpsellCardProps ) {
 						</div>
 						<h3 className="jetpack-upsell-card__product-title">{ title }</h3>
 						<p className="jetpack-upsell-card__product-description">{ description }</p>
-						<a href={ href } className="jetpack-upsell-card__product-link">
+						<a
+							href={ href }
+							className="jetpack-upsell-card__product-link"
+							target="_blank"
+							rel="noopener noreferrer"
+						>
 							<span className="jetpack-upsell-card__product-link-text">
 								{ translate( 'More about %(productName)s', {
 									args: { productName: title },
