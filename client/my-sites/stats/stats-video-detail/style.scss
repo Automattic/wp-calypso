@@ -16,6 +16,13 @@ $border-radius: 5px; // stylelint-disable-line scales/radii
 	display: flex;
 	flex-direction: column;
 	gap: 24px;
+
+	// The Card base has `margin: 0 auto`; inside a flex column the auto
+	// inline margins absorb the free space and shrink the card to its content
+	// width instead of stretching, so zero them out.
+	> .card {
+		margin-inline: 0;
+	}
 }
 
 // The x-axis places labels at equal-slot centers (chart width / bar count),
