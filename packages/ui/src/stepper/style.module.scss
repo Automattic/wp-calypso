@@ -99,46 +99,37 @@
 	padding: 0;
 }
 
-// The trigger renders as a minimal neutral Button; its background is
-// suppressed per design (the steps read as plain labels, not pill buttons).
+// The trigger renders as a minimal neutral Button. Button owns the
+// interactive state styling: rest/hover/focus/active/disabled foreground
+// colours, the focus ring and the cursor. The rules here are layout/anatomy
+// plus the one state Button has no concept of: a step being "upcoming".
 .trigger {
 	display: flex;
 	align-items: center;
 	justify-content: flex-start;
 	gap: var( --wpds-dimension-gap-sm );
 	padding: 0;
-	background: none;
-	border: none;
 	height: auto;
 	text-align: start;
 	width: 100%;
-	// Rest at regular weight (the Button default is medium); only the active
-	// step's title is bolded via the aria-expanded/aria-selected rule below.
+
+	// Steps read as plain labels, not pill buttons, so the minimal variant's
+	// weak background + border chrome is dropped. This is an anatomy choice,
+	// not a state override: Button still owns the foreground colours.
+	background: none;
+	border: none;
+
+	// Step labels read as text, so the rest weight is regular rather than
+	// Button's medium; only the active step's title is bolded (rule below).
 	font-weight: var( --wpds-typography-font-weight-regular );
 
-	// State text colors are set once here, on the button, and cascade to the
-	// title and description. Step state is read from the button's own
-	// attributes (data-status / aria-current / aria-disabled).
-	// Upcoming (incomplete) steps rest on the weak variant.
-	color: var( --wpds-color-fg-interactive-neutral-weak );
-
-	// Completed and current steps read at full neutral strength.
-	&[data-status='completed'],
-	&[aria-current='step'] {
-		color: var( --wpds-color-fg-interactive-neutral );
-	}
-
-	// Hover/focus use the -active variant of the same neutral tone; WPDS
-	// tokens should not mix tones (no brand color on a neutral control).
-	// The indicator border and glyph follow automatically via currentColor.
-	&:hover:not( [aria-disabled='true'] ),
-	&:focus-visible:not( [aria-disabled='true'] ) {
-		color: var( --wpds-color-fg-interactive-neutral-active );
-	}
-
-	&[aria-disabled='true'] {
-		cursor: default;
-		color: var( --wpds-color-fg-interactive-neutral-disabled );
+	// The only Stepper-specific colour state: steps that are neither completed
+	// nor current are de-emphasised. Feeding Button's own foreground custom
+	// property (rather than setting `color`) keeps Button in charge of every
+	// state: it reads this value for the rest state and still swaps in its
+	// -active / -disabled tokens for hover, focus and disabled on its own.
+	&:not( [data-status='completed'] ):not( [aria-current='step'] ) {
+		--wp-ui-button-foreground-color: var( --wpds-color-fg-interactive-neutral-weak );
 	}
 
 	&[aria-expanded='true'],
@@ -179,14 +170,15 @@
 // Title and Description
 // ---------------------------------------------------------------------------
 
-// Title color is inherited from the `.trigger` button, which owns the
-// per-state (upcoming/completed/current/hover/disabled) text colors.
+// Title and description both live inside the Button and inherit its per-state
+// foreground colour: Button sets `color` on the trigger, Text sets none, so it
+// cascades down. Neither sets its own colour, so hover/focus/disabled states
+// keep flowing from the Button. The size step (body-md title vs body-sm
+// description) is what visually separates them.
 .title {
 	font-weight: inherit;
 }
 
-// The description lives inside the interactive trigger, so it uses the weak
-// variant of the same interactive-neutral family as the rest of the trigger.
 .description {
-	color: var( --wpds-color-fg-interactive-neutral-weak );
+	color: inherit;
 }
