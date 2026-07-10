@@ -834,9 +834,9 @@ export const normalizers = {
 		}
 
 		let data = [];
-		if ( payload.data ) {
-			// When a video has no plays for the period, the API returns a stub object
-			// (e.g. `{ date: '7-10', p: '0' }`) instead of a `[ period, value ]` pair.
+		// When the requested window has no rows at all, the endpoint returns a single
+		// `{ date, p }` object instead of the usual `[ date, value ]` tuples.
+		if ( Array.isArray( payload.data ) ) {
 			data = payload.data
 				.filter( ( item ) => Array.isArray( item ) )
 				.map( ( item ) => {
@@ -854,7 +854,9 @@ export const normalizers = {
 			} );
 		}
 
-		return { pages, data };
+		// The endpoint also returns the video's attachment post, which carries
+		// the title and upload date.
+		return { pages, data, post: payload.post ?? null };
 	},
 
 	/**
