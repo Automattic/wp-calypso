@@ -178,10 +178,11 @@ export default function AgentChat( {
 	onContextCardAction,
 	onContextCardDismiss,
 }: Props ) {
-	const { setFloatingPosition, setFreeDragPosition } = useDispatch( AGENTS_MANAGER_STORE );
+	const { setFloatingPosition, setFreeDragPosition, setFloatingSize } =
+		useDispatch( AGENTS_MANAGER_STORE );
 	const conversationViewRef = useRef< HTMLDivElement >( null );
 	const imageUploaderRef = useRef< ImageUploaderHandle >( null );
-	const { floatingPosition, freeDragPosition } = useSelect( ( select ) => {
+	const { floatingPosition, freeDragPosition, floatingSize } = useSelect( ( select ) => {
 		const store: AgentsManagerSelect = select( AGENTS_MANAGER_STORE );
 		return store.getAgentsManagerState();
 	}, [] );
@@ -272,6 +273,8 @@ export default function AgentChat( {
 			onChatPositionChange={ ( position ) => setFloatingPosition( position ) }
 			initialFreeDragPosition={ freeDragPosition ?? undefined }
 			onFreeDragEnd={ setFreeDragPosition }
+			defaultSize={ floatingSize ?? undefined }
+			onResizeEnd={ setFloatingSize }
 			className={ clsx( 'agenttic', { dark: isDocked } ) }
 			messages={ messages }
 			isProcessing={ isProcessing }
@@ -280,6 +283,7 @@ export default function AgentChat( {
 			onSubmit={ onSubmit }
 			variant={ isDocked ? 'embedded' : 'floating' }
 			freeDrag={ ! isDocked }
+			resizable={ ! isDocked }
 			suggestions={ suggestions }
 			clearSuggestions={ clearSuggestions }
 			onSuggestionClick={ onSuggestionClick }
