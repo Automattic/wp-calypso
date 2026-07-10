@@ -9,39 +9,29 @@ import {
 	type ReadSeenPostsFeedParams,
 	type ReadSeenPostsResponse,
 } from '@automattic/api-core';
-import { mutationOptions, type QueryClient } from '@tanstack/react-query';
-import { getSiteSubscriptionsQueryKey } from './read-follows';
+import { mutationOptions } from '@tanstack/react-query';
 
-export const markReaderPostsAsSeenMutation = ( queryClient: QueryClient ) =>
+export const markReaderPostsAsSeenMutation = () =>
 	mutationOptions< ReadSeenPostsResponse, Error, ReadSeenPostsFeedParams >( {
 		mutationFn: markReaderPostsAsSeen,
-		onSuccess: () => invalidateSiteSubscriptions( queryClient ),
 	} );
 
-export const markReaderPostsAsUnseenMutation = ( queryClient: QueryClient ) =>
+export const markReaderPostsAsUnseenMutation = () =>
 	mutationOptions< ReadSeenPostsResponse, Error, ReadSeenPostsFeedParams >( {
 		mutationFn: markReaderPostsAsUnseen,
-		onSuccess: () => invalidateSiteSubscriptions( queryClient ),
 	} );
 
-export const markReaderWpcomPostsAsSeenMutation = ( queryClient: QueryClient ) =>
+export const markReaderWpcomPostsAsSeenMutation = () =>
 	mutationOptions< ReadSeenPostsResponse, Error, ReadSeenPostsBlogParams >( {
 		mutationFn: markReaderWpcomPostsAsSeen,
-		onSuccess: () => invalidateSiteSubscriptions( queryClient ),
 	} );
 
-export const markReaderWpcomPostsAsUnseenMutation = ( queryClient: QueryClient ) =>
+export const markReaderWpcomPostsAsUnseenMutation = () =>
 	mutationOptions< ReadSeenPostsResponse, Error, ReadSeenPostsBlogParams >( {
 		mutationFn: markReaderWpcomPostsAsUnseen,
-		onSuccess: () => invalidateSiteSubscriptions( queryClient ),
 	} );
 
-export const markAllReaderPostsAsSeenMutation = ( queryClient: QueryClient ) =>
+export const markAllReaderPostsAsSeenMutation = () =>
 	mutationOptions< ReadSeenPostsResponse, Error, ReadSeenPostsAllParams >( {
 		mutationFn: markAllReaderPostsAsSeen,
-		onSuccess: () => invalidateSiteSubscriptions( queryClient ),
 	} );
-
-function invalidateSiteSubscriptions( queryClient: QueryClient ): void {
-	queryClient.invalidateQueries( { queryKey: getSiteSubscriptionsQueryKey() } );
-}

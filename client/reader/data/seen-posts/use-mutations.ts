@@ -28,7 +28,7 @@ export interface UseMarkAsSeenParams {
 
 export const useMarkAsSeenMutation = () => {
 	const queryClient = useQueryClient();
-	const baseMutation = markReaderPostsAsSeenMutation( queryClient );
+	const baseMutation = markReaderPostsAsSeenMutation();
 
 	return useMutation< unknown, Error, UseMarkAsSeenParams >( {
 		mutationFn: ( params ) =>
@@ -46,7 +46,7 @@ export const useMarkAsSeenMutation = () => {
 
 export const useMarkAsUnseenMutation = () => {
 	const queryClient = useQueryClient();
-	const baseMutation = markReaderPostsAsUnseenMutation( queryClient );
+	const baseMutation = markReaderPostsAsUnseenMutation();
 
 	return useMutation< unknown, Error, UseMarkAsSeenParams >( {
 		mutationFn: ( params ) =>
@@ -70,7 +70,7 @@ export interface UseMarkAsSeenBlogParams {
 
 export const useMarkAsSeenBlogMutation = () => {
 	const queryClient = useQueryClient();
-	const baseMutation = markReaderWpcomPostsAsSeenMutation( queryClient );
+	const baseMutation = markReaderWpcomPostsAsSeenMutation();
 
 	return useMutation< unknown, Error, UseMarkAsSeenBlogParams >( {
 		mutationFn: ( params ) =>
@@ -88,7 +88,7 @@ export const useMarkAsSeenBlogMutation = () => {
 
 export const useMarkAsUnseenBlogMutation = () => {
 	const queryClient = useQueryClient();
-	const baseMutation = markReaderWpcomPostsAsUnseenMutation( queryClient );
+	const baseMutation = markReaderWpcomPostsAsUnseenMutation();
 
 	return useMutation< unknown, Error, UseMarkAsSeenBlogParams >( {
 		mutationFn: ( params ) =>
@@ -113,7 +113,7 @@ export interface UseMarkAllAsSeenParams {
 
 export const useMarkAllAsSeenMutation = () => {
 	const queryClient = useQueryClient();
-	const baseMutation = markAllReaderPostsAsSeenMutation( queryClient );
+	const baseMutation = markAllReaderPostsAsSeenMutation();
 
 	return useMutation< unknown, Error, UseMarkAllAsSeenParams >( {
 		mutationFn: ( params ) =>
