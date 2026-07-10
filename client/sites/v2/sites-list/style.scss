@@ -51,11 +51,8 @@
 	}
 }
 
-// Let the sites list scroll the page body on mobile instead of scrolling internally.
-// The DataViews container keeps its overflow so wide tables still scroll horizontally.
-@media ( max-width: 782px ) { // Matches medium breakpoint from Core.
-	// Release the Calypso focus-content and hosting-dashboard height clamps so the
-	// list can grow. Scoped to the list-only view so the split-pane is unaffected.
+// On mobile, let the page body scroll instead of the list.
+@media ( max-width: 782px ) {
 	.is-section-sites-dashboard:has( .sites-dashboard__layout.preview-hidden ) .layout__content {
 		overflow: visible;
 	}
