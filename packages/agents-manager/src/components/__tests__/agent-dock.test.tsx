@@ -316,6 +316,23 @@ describe( 'AgentDock', () => {
 		expect( screen.getByTestId( 'location' ).textContent ).toBe( '/zendesk' );
 	} );
 
+	it( 'keeps the Zendesk route available when the unified Help Center experience is off', () => {
+		useWpAdminAgent();
+		mockShouldUseUnifiedAgent = false;
+
+		renderAgentDock( '/zendesk' );
+
+		expect( screen.getByTestId( 'zendesk-chat' ) ).toBeInTheDocument();
+		expect( screen.getByTestId( 'location' ).textContent ).toBe( '/zendesk' );
+	} );
+
+	it( 'hides the Zendesk route for reader chat', () => {
+		renderAgentDock( '/zendesk' );
+
+		expect( screen.queryByTestId( 'zendesk-chat' ) ).toBeNull();
+		expect( screen.getByTestId( 'location' ).textContent ).toBe( '/chat' );
+	} );
+
 	it( 'opens Reader Chat without saving shared Agents Manager state', () => {
 		mockAgentsManagerState = { isOpen: false, isDocked: false };
 		renderAgentDock();
