@@ -433,6 +433,18 @@ export const SitesWithThisPlugin = ( {
 										} );
 										return newState;
 									} );
+
+									// `/me/sites/plugins` lags behind writes, so apply the removal to the
+									// cache and mark it stale rather than refetching, letting the next
+									// read reconcile once the server has caught up.
+									queryClient.setQueryData(
+										pluginsQuery().queryKey,
+										( old: PluginsResponse | undefined ) => removePluginsFromSites( old, items )
+									);
+									queryClient.invalidateQueries( {
+										queryKey: pluginsQuery().queryKey,
+										refetchType: 'none',
+									} );
 								}
 
 								return { successCount, errorCount };
@@ -460,20 +472,6 @@ export const SitesWithThisPlugin = ( {
 									items={ [ mapToPluginListRow( plugin, items ) as PluginListRow ] }
 									closeModal={ closeModal }
 									onExecute={ action }
-									onActionPerformed={ ( deletedItems ) => {
-										// `/me/sites/plugins` lags behind writes, so apply the removal to the
-										// cache and mark it stale rather than refetching, letting the next
-										// read reconcile once the server has caught up.
-										queryClient.setQueryData(
-											pluginsQuery().queryKey,
-											( old: PluginsResponse | undefined ) =>
-												removePluginsFromSites( old, deletedItems as PluginListRow[] )
-										);
-										queryClient.invalidateQueries( {
-											queryKey: pluginsQuery().queryKey,
-											refetchType: 'none',
-										} );
-									} }
 								/>
 							);
 						},
