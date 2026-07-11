@@ -144,6 +144,20 @@ jest.mock( '@wordpress/data', () => ( {
 // can read/write the post title and current editor entity id via the core/editor store.
 type EditorPostId = number | string;
 
+const UNSUPPORTED_POST_LEVEL_SUGGESTION_ENTITIES: Array<
+	[ label: string, postType: string | undefined, postId: EditorPostId | null ]
+> = [
+	[ 'templates', 'wp_template', 'theme//front-page' ],
+	[ 'template parts', 'wp_template_part', 'theme//header' ],
+	[ 'patterns', 'wp_block', 456 ],
+	[ 'navigation', 'wp_navigation', 123 ],
+	[ 'global styles', 'wp_global_styles', 789 ],
+	[ 'Site Editor dashboard/list views', undefined, null ],
+	[ 'Jetpack Forms', 'jetpack_form', 101 ],
+	[ 'Jetpack Search overlays', 'jp_search_overlay', 102 ],
+	[ 'other custom post types', 'custom_post_type', 103 ],
+];
+
 function installWpDataMock(
 	initialTitle: string,
 	postId: EditorPostId | null = 123,
@@ -1068,24 +1082,22 @@ describe( 'getEmptyViewSuggestions', () => {
 		] );
 	} );
 
-	it.each( [
-		[ 'wp_template', 'theme//front-page' ],
-		[ 'wp_template_part', 'theme//header' ],
-		[ 'wp_navigation', 123 ],
-		[ 'wp_block', 456 ],
-	] )( 'hides all Jetpack AI suggestions for %s entities', ( postType, postId ) => {
-		installAiEditorialReviewData( {
-			optimizeTitleSuggestion: true,
-			excerptSuggestion: true,
-			proofreadContent: true,
-			seoSuggestions: true,
-		} );
-		installPostTypeMock( postType, postId, true );
+	it.each( UNSUPPORTED_POST_LEVEL_SUGGESTION_ENTITIES )(
+		'hides all post-level Jetpack AI suggestions for %s',
+		( _label, postType, postId ) => {
+			installAiEditorialReviewData( {
+				optimizeTitleSuggestion: true,
+				excerptSuggestion: true,
+				proofreadContent: true,
+				seoSuggestions: true,
+			} );
+			installPostTypeMock( postType, postId, true );
 
-		const labels = getEmptyViewSuggestions().map( ( suggestion ) => suggestion.label );
+			const labels = getEmptyViewSuggestions().map( ( suggestion ) => suggestion.label );
 
-		expect( labels ).toEqual( [] );
-	} );
+			expect( labels ).toEqual( [] );
+		}
+	);
 
 	it( 'hides Editorial Review until the post type is known', () => {
 		installAiEditorialReviewData();
@@ -1474,9 +1486,9 @@ describe( 'useSuggestions', () => {
 		expect( latestCall?.[ 1 ] ).toBe( true );
 	} );
 
-	it.each( [ 'wp_template', 'wp_template_part', 'wp_navigation', 'wp_block' ] )(
-		'hides editor-level Jetpack AI suggestions for %s entities',
-		( postType ) => {
+	it.each( UNSUPPORTED_POST_LEVEL_SUGGESTION_ENTITIES )(
+		'hides dynamic post-level Jetpack AI suggestions for %s',
+		( _label, postType ) => {
 			installAiEditorialReviewData( {
 				optimizeTitleSuggestion: true,
 				proofreadContent: true,

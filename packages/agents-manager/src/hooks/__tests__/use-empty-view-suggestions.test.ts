@@ -52,6 +52,20 @@ const jetpackSuggestion = {
 	prompt: 'Proofread this saved content.',
 };
 
+const UNSUPPORTED_POST_LEVEL_SUGGESTION_TYPES: Array<
+	[ label: string, postType: string | undefined ]
+> = [
+	[ 'templates', 'wp_template' ],
+	[ 'template parts', 'wp_template_part' ],
+	[ 'patterns', 'wp_block' ],
+	[ 'navigation', 'wp_navigation' ],
+	[ 'global styles', 'wp_global_styles' ],
+	[ 'Site Editor dashboard/list views', undefined ],
+	[ 'Jetpack Forms', 'jetpack_form' ],
+	[ 'Jetpack Search overlays', 'jp_search_overlay' ],
+	[ 'other custom post types', 'custom_post_type' ],
+];
+
 function mockCoreStoreReady( isReady: boolean ) {
 	mockUseSelect.mockImplementation( ( mapSelect ) =>
 		mapSelect( ( storeName: string ) => {
@@ -284,9 +298,9 @@ describe( 'useEmptyViewSuggestions', () => {
 		}
 	);
 
-	it.each( [ 'wp_template', 'wp_template_part', 'wp_navigation', 'wp_block' ] )(
+	it.each( UNSUPPORTED_POST_LEVEL_SUGGESTION_TYPES )(
 		'refreshes provider suggestions when navigating from a page to %s and back',
-		async ( postType ) => {
+		async ( _label, postType ) => {
 			window.history.pushState( {}, '', '/wp-admin/site-editor.php' );
 			mockContext = {
 				sectionName: 'site-editor',
