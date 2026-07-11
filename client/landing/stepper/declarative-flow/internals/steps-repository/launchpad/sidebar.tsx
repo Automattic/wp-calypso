@@ -6,7 +6,6 @@ import {
 	useLaunchpad,
 } from '@automattic/data-stores';
 import { LaunchpadInternal, type Task } from '@automattic/launchpad';
-import { isStartWritingFlow } from '@automattic/onboarding';
 import { useQueryClient } from '@tanstack/react-query';
 import { useSelect } from '@wordpress/data';
 import { useRef, useState } from '@wordpress/element';
@@ -178,10 +177,6 @@ const Sidebar = ( {
 	}
 
 	function showDomainUpgradeBadge() {
-		if ( isStartWritingFlow( siteIntentOption ) ) {
-			return selectedDomain?.is_free;
-		}
-
 		return (
 			sidebarDomain?.isWPCOMDomain &&
 			! enhancedTasks?.find( ( task ) => task.id === 'domain_upsell' )
