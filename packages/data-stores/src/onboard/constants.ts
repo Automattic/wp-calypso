@@ -27,7 +27,6 @@ export enum SiteGoal {
 
 export enum SiteIntent {
 	Write = 'write',
-	StartWriting = 'start-writing',
 	Sell = 'sell',
 	Build = 'build',
 	DIFM = 'difm', // "Do It For Me"
