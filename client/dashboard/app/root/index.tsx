@@ -32,7 +32,6 @@ import { useInitializeOmnibarSite } from '../omnibar/site';
 import ResponsiveSidebar from '../responsive-sidebar';
 import Snackbars from '../snackbars';
 import { OptInWelcomeModal } from '../welcome-modal';
-import { resolveOmnibarLinkNavigation } from './omnibar-link-navigation';
 import './style.scss';
 
 const WebpackBuildMonitor = lazy(
@@ -71,10 +70,29 @@ function Root() {
 	useTrackVisitedAreas();
 	useOmnibarEvent( 'mobileMenu', () => setIsSidebarOpen( ( v ) => ! v ) );
 	useOmnibarEvent( 'linkClick', ( { href, event } ) => {
-		const navigation = resolveOmnibarLinkNavigation( router, href );
-		if ( navigation ) {
+		const url = new URL( href, window.location.origin );
+
+		if ( url.origin !== window.location.origin ) {
+			return;
+		}
+
+		const path = url.pathname + url.search + url.hash;
+		const parsedLocation = router.parseLocation( undefined, {
+			pathname: url.pathname,
+			search: url.search,
+			hash: url.hash,
+			href: path,
+			state: { __TSR_index: 0 },
+		} );
+		const { foundRoute } = router.getMatchedRoutes( parsedLocation );
+		const isFallbackNotFoundRoute = foundRoute?.options.staticData?.isFallbackNotFoundRoute;
+
+		// The catch-all route exists only to render the Dashboard 404 shell. Do not
+		// treat it as a real SPA destination; otherwise button-like omnibar anchors
+		// such as `/notifications` are intercepted before their own click handlers run.
+		if ( foundRoute && ! isFallbackNotFoundRoute ) {
 			event.preventDefault();
-			router.navigate( { to: navigation.path } );
+			router.navigate( { to: path } );
 		}
 	} );
 
