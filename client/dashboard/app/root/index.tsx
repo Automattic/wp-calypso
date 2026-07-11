@@ -84,12 +84,13 @@ function Root() {
 			href: path,
 			state: { __TSR_index: 0 },
 		} );
-		const { foundRoute, routeParams } = router.getMatchedRoutes( parsedLocation );
+		const { foundRoute } = router.getMatchedRoutes( parsedLocation );
+		const isFallbackNotFoundRoute = foundRoute?.options.staticData?.isFallbackNotFoundRoute;
 
-		// A `_splat` param means the path only matched the catch-all fallback, not a
-		// real route — e.g. the notifications bell's `/notifications`, an anchor that
-		// handles its own click. Navigating there would just render the 404 page.
-		if ( foundRoute && ! ( '_splat' in routeParams ) ) {
+		// The catch-all route exists only to render the Dashboard 404 shell. Do not
+		// treat it as a real SPA destination; otherwise button-like omnibar anchors
+		// such as `/notifications` are intercepted before their own click handlers run.
+		if ( foundRoute && ! isFallbackNotFoundRoute ) {
 			event.preventDefault();
 			router.navigate( { to: path } );
 		}
