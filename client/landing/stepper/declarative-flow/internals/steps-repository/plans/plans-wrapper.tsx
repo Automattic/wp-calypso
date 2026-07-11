@@ -7,7 +7,6 @@ import {
 	NEWSLETTER_FLOW,
 	NEW_HOSTED_SITE_FLOW,
 	isDomainAndPlanFlow,
-	isStartWritingFlow,
 } from '@automattic/onboarding';
 import { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 import { useDesktopBreakpoint } from '@automattic/viewport-react';
@@ -140,7 +139,9 @@ const PlansWrapper: React.FC< Props > = ( props ) => {
 			( items ) => items.product_slug === PRODUCT_1GB_SPACE
 		);
 
-		cartItemForStorageAddOn && setProductCartItems( [ cartItemForStorageAddOn ] );
+		if ( cartItemForStorageAddOn ) {
+			setProductCartItems( [ cartItemForStorageAddOn ] );
+		}
 		setPlanCartItem( planCartItem );
 		props.onSubmit?.( planCartItem );
 	};
@@ -195,7 +196,7 @@ const PlansWrapper: React.FC< Props > = ( props ) => {
 			return __( 'Choose the perfect plan' );
 		}
 
-		if ( isNewsletterFlow( flowName ) || isStartWritingFlow( flowName ) ) {
+		if ( isNewsletterFlow( flowName ) ) {
 			return __( "There's a plan for you." );
 		}
 
@@ -211,7 +212,7 @@ const PlansWrapper: React.FC< Props > = ( props ) => {
 			<Button onClick={ handleFreePlanButtonClick } className="is-borderless" />
 		);
 
-		if ( isStartWritingFlow( flowName ) || isNewsletterFlow( flowName ) ) {
+		if ( isNewsletterFlow( flowName ) ) {
 			return;
 		}
 

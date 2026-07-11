@@ -89,10 +89,6 @@ const Sidebar = ( {
 		getConnectUrlForSiteId( state, site?.ID ?? 0 )
 	);
 
-	const showDomain =
-		! isStartWritingFlow( flow ) ||
-		( checklistStatuses?.domain_upsell_deferred === true && selectedDomain );
-
 	const isEmailVerified = useSelector( isCurrentUserEmailVerified );
 
 	const { title, launchTitle, subtitle } = getLaunchpadTranslations( flow, hasSkippedCheckout );
@@ -237,44 +233,42 @@ const Sidebar = ( {
 					{ showLaunchTitle && launchTitle ? launchTitle : title }
 				</h1>
 				<p className="launchpad__sidebar-description">{ subtitle }</p>
-				{ showDomain && (
-					<div className="launchpad__url-box">
-						{ /* Google Chrome is adding an extra space after highlighted text. This extra wrapping div prevents that */ }
-						<div className="launchpad__url-box-domain">
-							<div className="launchpad__url-box-domain-text">{ getDomainName() }</div>
-							{ showClipboardButton && (
-								<>
-									<ClipboardButton
-										aria-label={ translate( 'Copy URL' ) }
-										text={ siteSlug }
-										className="launchpad__clipboard-button"
-										borderless
-										compact
-										onCopy={ () => setClipboardCopied( true ) }
-										onMouseLeave={ () => setClipboardCopied( false ) }
-										ref={ clipboardButtonEl }
-									>
-										<Icon icon={ copy } size={ 18 } />
-									</ClipboardButton>
-									<Tooltip
-										context={ clipboardButtonEl.current }
-										isVisible={ clipboardCopied }
-										position="top"
-									>
-										{ translate( 'Copied to clipboard!' ) }
-									</Tooltip>
-								</>
-							) }
-						</div>
-						{ showDomainUpgradeBadge() && (
-							<a href={ getDomainUpgradeBadgeUrl() }>
-								<Badge className="launchpad__domain-upgrade-badge" type="info-blue">
-									{ translate( 'Pick a custom domain' ) }
-								</Badge>
-							</a>
+				<div className="launchpad__url-box">
+					{ /* Google Chrome is adding an extra space after highlighted text. This extra wrapping div prevents that */ }
+					<div className="launchpad__url-box-domain">
+						<div className="launchpad__url-box-domain-text">{ getDomainName() }</div>
+						{ showClipboardButton && (
+							<>
+								<ClipboardButton
+									aria-label={ translate( 'Copy URL' ) }
+									text={ siteSlug }
+									className="launchpad__clipboard-button"
+									borderless
+									compact
+									onCopy={ () => setClipboardCopied( true ) }
+									onMouseLeave={ () => setClipboardCopied( false ) }
+									ref={ clipboardButtonEl }
+								>
+									<Icon icon={ copy } size={ 18 } />
+								</ClipboardButton>
+								<Tooltip
+									context={ clipboardButtonEl.current }
+									isVisible={ clipboardCopied }
+									position="top"
+								>
+									{ translate( 'Copied to clipboard!' ) }
+								</Tooltip>
+							</>
 						) }
 					</div>
-				) }
+					{ showDomainUpgradeBadge() && (
+						<a href={ getDomainUpgradeBadgeUrl() }>
+							<Badge className="launchpad__domain-upgrade-badge" type="info-blue">
+								{ translate( 'Pick a custom domain' ) }
+							</Badge>
+						</a>
+					) }
+				</div>
 				{ isDomainSSLProcessing && (
 					<div className="launchpad__domain-notification">
 						<div className="launchpad__domain-notification-icon">
