@@ -7,7 +7,6 @@ import {
 	ONBOARDING_FLOW,
 	ONBOARDING_UNIFIED_FLOW,
 	PLAN_UPGRADE_FLOW,
-	START_WRITING_FLOW,
 	WOO_HOSTED_PLANS_FLOW,
 } from '@automattic/onboarding';
 import { WOO_HOSTING_SOLUTIONS_REF } from 'calypso/landing/stepper/constants';
@@ -22,8 +21,6 @@ export function getPlansIntent( flowName: string | null ): PlansIntent | null {
 	const search = new URLSearchParams( location.search );
 
 	switch ( flowName ) {
-		case START_WRITING_FLOW:
-			return 'plans-blog-onboarding';
 		case NEWSLETTER_FLOW:
 		case EXAMPLE_FLOW:
 			return 'plans-newsletter';

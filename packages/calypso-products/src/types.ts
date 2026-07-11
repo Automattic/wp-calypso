@@ -142,6 +142,8 @@ export interface WPComPlan extends Plan {
 	getPortfolioSignupFeatures?: () => Feature[];
 	getNewsletterSignupFeatures?: () => Feature[];
 	getNewsletterHighlightedFeatures?: () => Feature[];
+	// @deprecated The blog-onboarding plans intent is no longer produced by any flow (the
+	// start-writing flow was removed); these getters are retained only for external consumers.
 	getBlogOnboardingSignupFeatures?: () => Feature[];
 	getBlogOnboardingHighlightedFeatures?: () => Feature[];
 	getBlogOnboardingSignupJetpackFeatures?: () => Feature[];
@@ -412,6 +414,8 @@ export type Plan = BillingTerm & {
 	 */
 	getInferiorFeatures?: () => Feature[];
 	getNewsletterSignupFeatures?: () => Feature[];
+	// @deprecated The blog-onboarding plans intent is no longer produced by any flow (the
+	// start-writing flow was removed); these getters are retained only for external consumers.
 	getBlogOnboardingSignupFeatures?: () => Feature[];
 	getBlogOnboardingHighlightedFeatures?: () => Feature[];
 	getBlogOnboardingSignupJetpackFeatures?: () => Feature[];

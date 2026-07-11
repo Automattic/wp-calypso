@@ -2,7 +2,6 @@ import config from '@automattic/calypso-config';
 import { PRODUCT_1GB_SPACE } from '@automattic/calypso-products';
 import { Button } from '@automattic/components';
 import {
-	START_WRITING_FLOW,
 	isNewsletterFlow,
 	NEWSLETTER_FLOW,
 	NEW_HOSTED_SITE_FLOW,
@@ -36,8 +35,6 @@ interface Props {
 
 function getPlansIntent( flowName: string | null, isWordCampPromo?: boolean ): PlansIntent | null {
 	switch ( flowName ) {
-		case START_WRITING_FLOW:
-			return 'plans-blog-onboarding';
 		case NEWSLETTER_FLOW:
 			return 'plans-newsletter';
 		case NEW_HOSTED_SITE_FLOW:
@@ -97,9 +94,7 @@ const PlansWrapper: React.FC< Props > = ( props ) => {
 	const isWordCampPromo = new URLSearchParams( location.search ).has( 'utm_source', 'wordcamp' );
 	const plansIntent = getPlansIntent( flowName, isWordCampPromo );
 
-	const hideFreePlan = plansIntent
-		? reduxHideFreePlan && 'plans-blog-onboarding' === plansIntent
-		: reduxHideFreePlan;
+	const hideFreePlan = plansIntent ? false : reduxHideFreePlan;
 
 	useLayoutEffect( () => {
 		// Plan intervals are changed by parsing query params. Updating query params

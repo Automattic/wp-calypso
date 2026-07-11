@@ -66,6 +66,7 @@ export type PlansIntent =
 	| 'plans-affiliate'
 	| 'plans-ai-assembler-free-trial'
 	| 'plans-ai-assembler-paid-only'
+	/** @deprecated No flow produces this intent since the start-writing flow was removed; retained only for external consumers. */
 	| 'plans-blog-onboarding'
 	| 'plans-newsletter'
 	| 'plans-new-hosted-site'
