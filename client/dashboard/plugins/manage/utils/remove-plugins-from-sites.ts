@@ -4,8 +4,7 @@ import type { PluginsResponse } from '@automattic/api-core';
 /**
  * Drop the given plugins from the sites they were removed from in a cached
  * `/me/sites/plugins` response. Used to update the shared plugins cache the
- * moment a delete succeeds, so the manager reflects the removal immediately
- * instead of waiting for the eventually-consistent backend refetch.
+ * moment a delete succeeds, so the manager reflects the removal immediately.
  */
 export function removePluginsFromSites(
 	response: PluginsResponse | undefined,
