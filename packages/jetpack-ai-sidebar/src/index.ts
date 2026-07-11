@@ -259,17 +259,9 @@ function currentPostTypeSupportsExcerpt(
 }
 
 /**
- * Post types where the excerpt field acts as a description. Core registers
- * excerpt support for wp_block (patterns), but the chip excludes patterns.
+ * Editor entities that support whole-content Jetpack AI suggestions.
  */
-const EDITOR_LEVEL_SUGGESTION_POST_TYPES = new Set( [
-	'post',
-	'page',
-	'wp_template',
-	'wp_template_part',
-] );
-
-const EXCERPT_EXCLUDED_POST_TYPES = [ 'wp_block' ];
+const EDITOR_LEVEL_SUGGESTION_POST_TYPES = new Set( [ 'post', 'page' ] );
 
 function isEditorLevelSuggestionPostType(
 	currentPostType: string | undefined = getCurrentEditorPostType()
@@ -286,7 +278,7 @@ function isExcerptSuggestionAvailable(
 	if ( ! isExcerptSuggestionEnabled() ) {
 		return false;
 	}
-	if ( ! currentPostType || EXCERPT_EXCLUDED_POST_TYPES.includes( currentPostType ) ) {
+	if ( ! currentPostType ) {
 		return false;
 	}
 	return supportsExcerpt ?? currentPostTypeSupportsExcerpt( currentPostType );
@@ -340,6 +332,10 @@ function getPostLevelSuggestions(
 	currentPostId?: EditorPostId | null,
 	supportsExcerpt?: boolean
 ) {
+	if ( ! isEditorLevelSuggestionPostType( currentPostType ) ) {
+		return [];
+	}
+
 	return [
 		...( isOptimizeTitleSuggestionEnabled() ? [ OPTIMIZE_TITLE_SUGGESTION ] : [] ),
 		...( isExcerptSuggestionAvailable( currentPostType, supportsExcerpt )
@@ -909,7 +905,7 @@ export function getEmptyViewSuggestions(): Array< {
 	prompt?: string;
 	options?: SuggestionOption[];
 } > {
-	return getPostLevelSuggestions();
+	return getPostLevelSuggestions( getCurrentEditorPostType() );
 }
 
 // ---------- useSuggestions ----------

@@ -1068,23 +1068,23 @@ describe( 'getEmptyViewSuggestions', () => {
 		] );
 	} );
 
-	it( 'shows all enabled editor-level suggestions on site editor templates', () => {
+	it.each( [
+		[ 'wp_template', 'theme//front-page' ],
+		[ 'wp_template_part', 'theme//header' ],
+		[ 'wp_navigation', 123 ],
+		[ 'wp_block', 456 ],
+	] )( 'hides all Jetpack AI suggestions for %s entities', ( postType, postId ) => {
 		installAiEditorialReviewData( {
 			optimizeTitleSuggestion: true,
 			excerptSuggestion: true,
 			proofreadContent: true,
+			seoSuggestions: true,
 		} );
-		installPostTypeMock( 'wp_template', 'theme//front-page', true );
+		installPostTypeMock( postType, postId, true );
 
 		const labels = getEmptyViewSuggestions().map( ( suggestion ) => suggestion.label );
 
-		expect( labels ).toEqual( [
-			'Optimize Title',
-			'Generate Excerpt',
-			'Simple Review',
-			'Proofread',
-			'Editorial Review',
-		] );
+		expect( labels ).toEqual( [] );
 	} );
 
 	it( 'hides Editorial Review until the post type is known', () => {
@@ -1245,13 +1245,13 @@ describe( 'getEmptyViewSuggestions', () => {
 		expect( ids ).toContain( 'generate-excerpt' );
 	} );
 
-	it( 'shows Generate Excerpt for site editor templates that support excerpts', () => {
+	it( 'hides Generate Excerpt for site editor templates that support excerpts', () => {
 		installAiEditorialReviewData( { excerptSuggestion: true } );
 		installPostTypeMock( 'wp_template', 123, true );
 
 		const ids = getEmptyViewSuggestions().map( ( suggestion ) => suggestion.id );
 
-		expect( ids ).toContain( 'generate-excerpt' );
+		expect( ids ).not.toContain( 'generate-excerpt' );
 	} );
 
 	it( 'hides Generate Excerpt for patterns even though they support excerpts', () => {
@@ -1471,6 +1471,43 @@ describe( 'useSuggestions', () => {
 
 		const latestCall = onSuggestions.mock.calls[ onSuggestions.mock.calls.length - 1 ];
 		expect( latestCall?.[ 0 ] ).toEqual( [] );
+		expect( latestCall?.[ 1 ] ).toBe( true );
+	} );
+
+	it.each( [ 'wp_template', 'wp_template_part', 'wp_navigation', 'wp_block' ] )(
+		'hides editor-level Jetpack AI suggestions for %s entities',
+		( postType ) => {
+			installAiEditorialReviewData( {
+				optimizeTitleSuggestion: true,
+				proofreadContent: true,
+				seoSuggestions: true,
+			} );
+			mockCurrentPostType = postType;
+			const onSuggestions = jest.fn();
+
+			render( React.createElement( SuggestionsProbe, { onSuggestions } ) );
+
+			const latestCall = onSuggestions.mock.calls[ onSuggestions.mock.calls.length - 1 ];
+			expect( latestCall?.[ 0 ] ).toEqual( [] );
+			expect( latestCall?.[ 1 ] ).toBe( false );
+		}
+	);
+
+	it( 'keeps selected-block suggestions on template entities', () => {
+		installAiEditorialReviewData();
+		mockCurrentPostType = 'wp_template';
+		mockSelectedBlock = { clientId: 'template-paragraph', name: 'core/paragraph' };
+		const onSuggestions = jest.fn();
+
+		render( React.createElement( SuggestionsProbe, { onSuggestions } ) );
+
+		const latestCall = onSuggestions.mock.calls[ onSuggestions.mock.calls.length - 1 ];
+		expect( latestCall?.[ 0 ].map( ( suggestion: any ) => suggestion.label ) ).toEqual( [
+			'Translate content',
+			'Change tone',
+			'Check grammar',
+			'Simplify text',
+		] );
 		expect( latestCall?.[ 1 ] ).toBe( true );
 	} );
 

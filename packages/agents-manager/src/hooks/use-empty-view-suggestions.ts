@@ -237,6 +237,8 @@ export function useEmptyViewSuggestions( {
 		};
 	}, [ isReaderChat ] );
 
+	// Providers can key suggestions by entity type even when the coarse Site
+	// Editor surface flag stays true during client-side navigation.
 	useEffect( () => {
 		// Re-read override before the core-store readiness gate. Reader-chat
 		// suggestions come from the host page and do not depend on theme data.
@@ -303,6 +305,7 @@ export function useEmptyViewSuggestions( {
 		emptyViewSuggestions,
 		overrideVersion,
 		shouldShowSiteEditorSuggestions,
+		currentPostType,
 	] );
 
 	return emptyViewSuggestions;

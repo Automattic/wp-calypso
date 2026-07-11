@@ -46,6 +46,12 @@ const siteEditorSuggestion = {
 	prompt: 'Show me color palettes for my site that are:',
 };
 
+const jetpackSuggestion = {
+	id: 'proofread-content',
+	label: 'Proofread',
+	prompt: 'Proofread this saved content.',
+};
+
 function mockCoreStoreReady( isReady: boolean ) {
 	mockUseSelect.mockImplementation( ( mapSelect ) =>
 		mapSelect( ( storeName: string ) => {
@@ -274,6 +280,40 @@ describe( 'useEmptyViewSuggestions', () => {
 
 			await waitFor( () =>
 				expect( result.current ).toEqual( [ siteEditorSuggestion, bigSkySuggestion ] )
+			);
+		}
+	);
+
+	it.each( [ 'wp_template', 'wp_template_part', 'wp_navigation', 'wp_block' ] )(
+		'refreshes provider suggestions when navigating from a page to %s and back',
+		async ( postType ) => {
+			window.history.pushState( {}, '', '/wp-admin/site-editor.php' );
+			mockContext = {
+				sectionName: 'site-editor',
+				currentRoute: '/wp-admin/site-editor.php',
+			};
+			mockCurrentPostType = 'page';
+			const getEmptyViewSuggestions = jest.fn( () => [
+				siteEditorSuggestion,
+				...( mockCurrentPostType === 'page' ? [ jetpackSuggestion ] : [] ),
+			] );
+			const loadedProviders = { getEmptyViewSuggestions } as unknown as LoadedProviders;
+			const { result, rerender } = renderHook( () =>
+				useEmptyViewSuggestions( { loadedProviders } )
+			);
+
+			await waitFor( () =>
+				expect( result.current ).toEqual( [ siteEditorSuggestion, jetpackSuggestion ] )
+			);
+
+			mockCurrentPostType = postType;
+			rerender();
+			await waitFor( () => expect( result.current ).toEqual( [ siteEditorSuggestion ] ) );
+
+			mockCurrentPostType = 'page';
+			rerender();
+			await waitFor( () =>
+				expect( result.current ).toEqual( [ siteEditorSuggestion, jetpackSuggestion ] )
 			);
 		}
 	);
