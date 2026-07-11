@@ -278,14 +278,16 @@ function SuggestionsProbe( {
 	maxSuggestions,
 	suggestionsVisible = true,
 }: {
-	onSuggestions: ( suggestions: any[] ) => void;
+	onSuggestions: ( suggestions: any[], replaceEmptyViewSuggestions?: boolean ) => void;
 	maxSuggestions?: number;
 	suggestionsVisible?: boolean;
 } ) {
-	const { suggestions } = useSuggestions( maxSuggestions, { suggestionsVisible } );
+	const { suggestions, replaceEmptyViewSuggestions } = useSuggestions( maxSuggestions, {
+		suggestionsVisible,
+	} );
 	React.useEffect( () => {
-		onSuggestions( suggestions );
-	}, [ onSuggestions, suggestions ] );
+		onSuggestions( suggestions, replaceEmptyViewSuggestions );
+	}, [ onSuggestions, replaceEmptyViewSuggestions, suggestions ] );
 	return null;
 }
 
@@ -1350,6 +1352,11 @@ describe( 'getEmptyViewSuggestions', () => {
 
 describe( 'useSuggestions', () => {
 	beforeEach( () => {
+		useAbilitiesSetup( {
+			addMessage: () => undefined,
+			clearSuggestions: () => undefined,
+			isProcessing: false,
+		} as any );
 		mockSelectedBlock = null;
 		mockBlocksByClientId = {};
 		mockCurrentPostType = 'post';
@@ -1436,6 +1443,35 @@ describe( 'useSuggestions', () => {
 				},
 			],
 		] );
+	} );
+
+	it( 'replaces editor-level empty-view suggestions when a block is selected', () => {
+		installAiEditorialReviewData( { proofreadContent: true } );
+		mockSelectedBlock = { clientId: 'b-context', name: 'core/paragraph' };
+		const onSuggestions = jest.fn();
+
+		render( React.createElement( SuggestionsProbe, { onSuggestions } ) );
+
+		const latestCall = onSuggestions.mock.calls[ onSuggestions.mock.calls.length - 1 ];
+		expect( latestCall?.[ 0 ].map( ( suggestion: any ) => suggestion.label ) ).toEqual( [
+			'Translate content',
+			'Change tone',
+			'Check grammar',
+			'Simplify text',
+		] );
+		expect( latestCall?.[ 1 ] ).toBe( true );
+	} );
+
+	it( 'does not fall back to editor-level suggestions for unsupported selected blocks', () => {
+		installAiEditorialReviewData( { proofreadContent: true } );
+		mockSelectedBlock = { clientId: 'b-unsupported', name: 'core/list' };
+		const onSuggestions = jest.fn();
+
+		render( React.createElement( SuggestionsProbe, { onSuggestions } ) );
+
+		const latestCall = onSuggestions.mock.calls[ onSuggestions.mock.calls.length - 1 ];
+		expect( latestCall?.[ 0 ] ).toEqual( [] );
+		expect( latestCall?.[ 1 ] ).toBe( true );
 	} );
 
 	it( 'limits block-specific suggestions to maxSuggestions', () => {
@@ -1940,6 +1976,40 @@ describe( 'useSuggestions', () => {
 			'Check grammar',
 			'Simplify text',
 		] );
+	} );
+
+	it( 'keeps block suggestions hidden after a Proofread request finishes', () => {
+		installAiEditorialReviewData( { proofreadContent: true } );
+		installPostTypeMock( 'post' );
+		mockSelectedBlock = { clientId: 'b-proofread', name: 'core/paragraph' };
+		const proofreadPrompt = getEmptyViewSuggestions().find(
+			( suggestion ) => suggestion.id === 'proofread-content'
+		)?.prompt;
+		const onSuggestions = jest.fn();
+
+		render( React.createElement( SuggestionsProbe, { onSuggestions } ) );
+
+		act( () => {
+			window.dispatchEvent(
+				new CustomEvent( 'big-sky-inline-suggestion-click', {
+					detail: { value: proofreadPrompt },
+				} )
+			);
+			useAbilitiesSetup( {
+				addMessage: () => undefined,
+				clearSuggestions: () => undefined,
+				isProcessing: true,
+			} as any );
+			useAbilitiesSetup( {
+				addMessage: () => undefined,
+				clearSuggestions: () => undefined,
+				isProcessing: false,
+			} as any );
+		} );
+
+		const latestSuggestions =
+			onSuggestions.mock.calls[ onSuggestions.mock.calls.length - 1 ]?.[ 0 ] ?? [];
+		expect( latestSuggestions ).toEqual( [] );
 	} );
 
 	it( 'does not start the selected block shimmer when a suggestion is only selected', () => {

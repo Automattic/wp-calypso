@@ -42,7 +42,6 @@ import {
 	getSelectedOrRememberedBlock,
 	rememberSelectedBlock,
 	clearRememberedSelectedBlock,
-	notifyBlockActionComplete,
 	BLOCK_ACTION_COMPLETE_EVENT,
 	SELECTED_BLOCK_CLEAR_EVENT,
 } from './utils/block-actions';
@@ -593,7 +592,6 @@ export function useAbilitiesSetup( actions: {
 		startBlockShimmer();
 	} else if ( ! isProcessing && wasAgentProcessing ) {
 		stopBlockShimmer();
-		notifyBlockActionComplete();
 	}
 	wasAgentProcessing = isProcessing;
 }
@@ -1212,7 +1210,8 @@ export const capabilities = {
  * Block-aware dynamic suggestions for the AM sidebar.
  *
  * Returns contextual suggestions based on the selected block type.
- * Hides permanently once the conversation becomes active.
+ * Hides after a suggestion is clicked, then restores block suggestions only
+ * after a block action completes.
  * @returns {Object} Object containing a suggestions array.
  */
 export function useSuggestions(
@@ -1226,6 +1225,7 @@ export function useSuggestions(
 		prompt?: string;
 		options?: SuggestionOption[];
 	} >;
+	replaceEmptyViewSuggestions: boolean;
 } {
 	const [ hidden, setHidden ] = useState( false );
 
@@ -1237,11 +1237,11 @@ export function useSuggestions(
 			clearSuggestionsFn?.();
 			suppressCurrentPageContentForNextContext = false;
 
-			// Review-style responses are dense, so auto-expand those suggestion
-			// flows to 50vw when they are started from chips.
 			if ( typeof value === 'string' ) {
 				trackBlockTransformationSuggestionClickForValue( value );
 			}
+
+			// Auto-expand the review-style chip flows below to 50vw.
 			if ( typeof value === 'string' && value === POST_FEEDBACK_SUGGESTION.prompt ) {
 				suppressCurrentPageContentForNextContext = true;
 				try {
@@ -1423,5 +1423,10 @@ export function useSuggestions(
 		visibleBlockTransformationSuggestionsKey,
 	] );
 
-	return { suggestions: visibleSuggestions };
+	return {
+		suggestions: visibleSuggestions,
+		// Any selected block owns the suggestion surface, even when that block has
+		// no contextual actions, so whole-post suggestions never leak into block context.
+		replaceEmptyViewSuggestions: !! selectedBlock,
+	};
 }

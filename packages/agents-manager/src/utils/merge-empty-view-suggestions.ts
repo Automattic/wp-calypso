@@ -14,19 +14,21 @@ function isDefaultEmptyViewSuggestions( suggestions: Suggestion[] ): boolean {
 
 export function mergeEmptyViewSuggestions(
 	emptyViewSuggestions: Suggestion[],
-	dynamicSuggestions: Suggestion[]
+	dynamicSuggestions: Suggestion[],
+	replaceEmptyViewSuggestions = false
 ): Suggestion[] {
-	if ( dynamicSuggestions.length === 0 ) {
+	if ( dynamicSuggestions.length === 0 && ! replaceEmptyViewSuggestions ) {
 		return emptyViewSuggestions;
 	}
 
 	const combined: Suggestion[] = [];
 	const seenIds = new Set< string >();
-	// Contextual suggestions should replace generic defaults, but custom provider
-	// empty-view chips should be shown alongside them.
-	const baseSuggestions = isDefaultEmptyViewSuggestions( emptyViewSuggestions )
-		? []
-		: emptyViewSuggestions;
+	// Contextual suggestions always replace the empty view when requested.
+	// Otherwise they replace generic defaults and extend custom provider chips.
+	const baseSuggestions =
+		replaceEmptyViewSuggestions || isDefaultEmptyViewSuggestions( emptyViewSuggestions )
+			? []
+			: emptyViewSuggestions;
 
 	for ( const suggestion of [ ...baseSuggestions, ...dynamicSuggestions ] ) {
 		if ( ! seenIds.has( suggestion.id ) ) {

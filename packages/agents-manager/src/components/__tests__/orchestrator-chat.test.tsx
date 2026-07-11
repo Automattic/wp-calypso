@@ -357,6 +357,57 @@ describe( 'OrchestratorChat', () => {
 		expect( screen.getByText( 'Dynamic action' ) ).toBeTruthy();
 	} );
 
+	it( 'replaces provider empty-view suggestions with contextual dynamic suggestions', () => {
+		const emptySuggestions: Suggestion[] = [
+			{ id: 'simple-review', label: 'Simple Review', prompt: 'Review this page' },
+			{ id: 'proofread', label: 'Proofread', prompt: 'Proofread this page' },
+		];
+		const blockSuggestions: Suggestion[] = [
+			{ id: 'change-tone', label: 'Change tone', prompt: 'Change the tone' },
+			{ id: 'check-grammar', label: 'Check grammar', prompt: 'Check the grammar' },
+		];
+		const useSuggestions = jest.fn( () => ( {
+			suggestions: blockSuggestions,
+			replaceEmptyViewSuggestions: true,
+		} ) );
+
+		mockUseAgentChat.mockReturnValue( {
+			addMessage: jest.fn(),
+			messages: [],
+			suggestions: blockSuggestions,
+			isProcessing: false,
+			error: null,
+			loadMessages: jest.fn(),
+			onSubmit: jest.fn(),
+			abortCurrentRequest: jest.fn(),
+			clearSuggestions: jest.fn(),
+			registerSuggestions: jest.fn(),
+			registerMessageActions: jest.fn(),
+			progressMessage: null,
+		} );
+
+		render(
+			<OrchestratorChat
+				emptyViewSuggestions={ emptySuggestions }
+				isDocked={ false }
+				isOpen
+				onClose={ jest.fn() }
+				onExpand={ jest.fn() }
+				chatHeaderOptions={ [] }
+				markdownComponents={ {} }
+				markdownExtensions={ {} }
+				isCompactMode={ false }
+				useSuggestions={ useSuggestions }
+				onHasMessagesChange={ jest.fn() }
+			/>
+		);
+
+		expect( screen.queryByText( 'Simple Review' ) ).toBeNull();
+		expect( screen.queryByText( 'Proofread' ) ).toBeNull();
+		expect( screen.getByText( 'Change tone' ) ).toBeTruthy();
+		expect( screen.getByText( 'Check grammar' ) ).toBeTruthy();
+	} );
+
 	it( 'falls back to the static empty-view suggestions when the provider has none', () => {
 		const staticDefaults: Suggestion[] = [
 			{ id: 'getting-started', label: 'Getting started with WordPress', prompt: 'getting-started' },

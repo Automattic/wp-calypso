@@ -378,6 +378,7 @@ export default function OrchestratorChat( {
 		suggestionsVisible: areSuggestionsVisible,
 	} );
 	const dynamicSuggestionsList = dynamicSuggestions?.suggestions ?? [];
+	const replaceEmptyViewSuggestions = dynamicSuggestions?.replaceEmptyViewSuggestions === true;
 	const dynamicSuggestionsKey = JSON.stringify(
 		dynamicSuggestionsList.map( ( s ) => [ s.id, s.label, s.prompt ] )
 	);
@@ -815,7 +816,10 @@ export default function OrchestratorChat( {
 		// Persistent empty-view chips must survive that clear.
 		displayedEmptyViewSuggestions = mergeEmptyViewSuggestions(
 			emptyViewSuggestions,
-			suggestions.length > 0 ? suggestions : dynamicSuggestionsList
+			replaceEmptyViewSuggestions || suggestions.length === 0
+				? dynamicSuggestionsList
+				: suggestions,
+			replaceEmptyViewSuggestions
 		);
 	} else if ( suggestions.length > 0 ) {
 		displayedEmptyViewSuggestions = suggestions;

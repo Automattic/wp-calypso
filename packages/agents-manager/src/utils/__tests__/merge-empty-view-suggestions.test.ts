@@ -37,6 +37,16 @@ describe( 'mergeEmptyViewSuggestions', () => {
 		] );
 	} );
 
+	it( 'replaces custom provider chips with contextual dynamic suggestions', () => {
+		expect( mergeEmptyViewSuggestions( [ customChip ], [ dynamicSuggestion ], true ) ).toEqual( [
+			dynamicSuggestion,
+		] );
+	} );
+
+	it( 'keeps contextual empty states empty instead of restoring provider chips', () => {
+		expect( mergeEmptyViewSuggestions( [ customChip ], [], true ) ).toEqual( [] );
+	} );
+
 	it( 'dedupes suggestions with the same id across provider chips and dynamic suggestions', () => {
 		const dynamicDuplicate = {
 			id: customChip.id,
