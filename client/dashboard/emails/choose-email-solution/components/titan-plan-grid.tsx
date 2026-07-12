@@ -24,9 +24,9 @@ interface TitanPlan {
 const getTierName = ( tier: TitanPlanTier ): string => {
 	switch ( tier ) {
 		case TitanPlanTier.Pro:
-			return __( 'Premium' );
+			return __( 'Pro' );
 		case TitanPlanTier.Premium:
-			return __( 'Premium Plus' );
+			return __( 'Premium' );
 		case TitanPlanTier.Ultra:
 			return __( 'Ultra' );
 	}
