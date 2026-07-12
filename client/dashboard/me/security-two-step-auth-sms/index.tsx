@@ -2,6 +2,7 @@ import { userSettingsQuery } from '@automattic/api-queries';
 import { useSuspenseQuery } from '@tanstack/react-query';
 import SecurityTwoStepAuthPageLayout from '../security-two-step-auth/common/page-layout';
 import PrintBackupCodes from '../security-two-step-auth/common/print-backup-codes';
+import { getSMSSetupTitle } from '../security-two-step-auth/title';
 import SetupPhoneNumber from './setup-phone-number';
 
 export default function SecurityTwoStepAuthSMS() {
@@ -14,7 +15,7 @@ export default function SecurityTwoStepAuthSMS() {
 	const username = userSettings.user_login;
 
 	return (
-		<SecurityTwoStepAuthPageLayout>
+		<SecurityTwoStepAuthPageLayout title={ getSMSSetupTitle() }>
 			{ showPrintBackupCodes ? (
 				<PrintBackupCodes username={ username } />
 			) : (

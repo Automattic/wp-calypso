@@ -1,22 +1,18 @@
-import { __ } from '@wordpress/i18n';
 import Breadcrumbs from '../../../app/breadcrumbs';
 import { PageHeader } from '../../../components/page-header';
 import PageLayout from '../../../components/page-layout';
 
 export default function SecurityTwoStepAuthPageLayout( {
 	children,
+	title,
 }: {
 	children: React.ReactNode;
+	title: React.ReactNode;
 } ) {
 	return (
 		<PageLayout
 			size="small"
-			header={
-				<PageHeader
-					prefix={ <Breadcrumbs length={ 3 } /> }
-					title={ __( 'Set up two-step authentication' ) }
-				/>
-			}
+			header={ <PageHeader prefix={ <Breadcrumbs length={ 3 } /> } title={ title } /> }
 		>
 			{ children }
 		</PageLayout>
