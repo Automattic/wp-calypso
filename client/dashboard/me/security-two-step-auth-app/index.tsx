@@ -8,7 +8,6 @@ import InlineSupportLink from '../../components/inline-support-link';
 import { Notice } from '../../components/notice';
 import SecurityTwoStepAuthPageLayout from '../security-two-step-auth/common/page-layout';
 import PrintBackupCodes from '../security-two-step-auth/common/print-backup-codes';
-import { getAppSetupTitle } from '../security-two-step-auth/title';
 import ScanQRCode from './scan-qr-code';
 
 export default function SecurityTwoStepAuthApp() {
@@ -21,7 +20,7 @@ export default function SecurityTwoStepAuthApp() {
 	const showPrintBackupCodes = isTwoStepAppEnabled && ! isBackupCodesPrinted;
 
 	return (
-		<SecurityTwoStepAuthPageLayout title={ getAppSetupTitle() }>
+		<SecurityTwoStepAuthPageLayout>
 			<VStack spacing={ 8 }>
 				{ ! isTwoStepAppEnabled && (
 					<Notice variant="info" title={ __( 'Before you continue' ) }>

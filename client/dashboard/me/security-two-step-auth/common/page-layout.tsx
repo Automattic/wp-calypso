@@ -4,16 +4,11 @@ import PageLayout from '../../../components/page-layout';
 
 export default function SecurityTwoStepAuthPageLayout( {
 	children,
-	title,
 }: {
 	children: React.ReactNode;
-	title: React.ReactNode;
 } ) {
 	return (
-		<PageLayout
-			size="small"
-			header={ <PageHeader prefix={ <Breadcrumbs length={ 3 } /> } title={ title } /> }
-		>
+		<PageLayout size="small" header={ <PageHeader prefix={ <Breadcrumbs length={ 3 } /> } /> }>
 			{ children }
 		</PageLayout>
 	);
