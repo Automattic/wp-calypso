@@ -6,7 +6,7 @@ import {
 	SITE_REQUEST_SUCCESS,
 	ODYSSEY_SITE_RECEIVE,
 } from 'calypso/state/action-types';
-import { getSite, isRequestingSite } from 'calypso/state/sites/selectors';
+import { getSite, getSiteOption, isRequestingSite } from 'calypso/state/sites/selectors';
 import { IAppState, CalypsoDispatch } from 'calypso/state/types';
 import { setSelectedSiteId } from 'calypso/state/ui/actions';
 import config from './config-api';
@@ -27,6 +27,18 @@ export async function initializeSiteData(
 
 	const isRequesting = isRequestingSite( state, siteId );
 	const site = getSite( state, siteId );
+
+	// `/sites/{id}` reports the timezone under `options.timezone`, while the rest of the app
+	// (e.g. useMomentSiteZone) reads it as `options.timezone_string`, matching the dedicated
+	// `/settings` endpoint's field name. Normalize it here too, since the early return below
+	// can skip the fetch (and the same normalization further down) when the store was already
+	// hydrated with site data before this function ran.
+	if ( site?.options?.timezone && ! getSiteOption( state, siteId, 'timezone_string' ) ) {
+		dispatch( {
+			type: ODYSSEY_SITE_RECEIVE,
+			site: { ID: siteId, options: { timezone_string: site.options.timezone } },
+		} );
+	}
 
 	// If options stored on WPCOM exists or it's already requesting, we do not need to fetch it again.
 	if ( ( site?.options && 'is_commercial' in site.options ) || isRequesting ) {
