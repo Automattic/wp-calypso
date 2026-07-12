@@ -3,7 +3,6 @@ import { useQueryClient } from '@tanstack/react-query';
 import { useEffect } from 'react';
 import { useAnalytics } from '../analytics';
 
-// Keep the key's leading string segments; stop at the first non-string, which is a dynamic id.
 function getMutationKeyLabel( key: unknown ): string | undefined {
 	if ( ! Array.isArray( key ) ) {
 		return undefined;
@@ -18,15 +17,6 @@ function getMutationKeyLabel( key: unknown ): string | undefined {
 	return leading.length ? leading.join( ':' ) : undefined;
 }
 
-/**
- * Records a Tracks event for every failed mutation, from the one place they all
- * pass through — the mutation cache. This gives complete coverage of user-facing
- * action failures without per-feature instrumentation.
- *
- * Only stable, categorical fields are emitted (status, error code, mutation key,
- * whether a snackbar was shown). The error message is never sent — it is localized
- * and may contain customer data. `path` is added automatically by the analytics client.
- */
 export default function MutationErrorTracker() {
 	const queryClient = useQueryClient();
 	const { recordTracksEvent } = useAnalytics();
