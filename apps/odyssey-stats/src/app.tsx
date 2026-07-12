@@ -62,8 +62,8 @@ async function AppBoot() {
 	setStore( store as Store & WithAddReducer );
 	setupContextMiddleware( store, queryClient );
 
-	// Initialize site data early in the app boot process.
-	await initializeSiteData( store );
+	// Select the embedded site early in the app boot process.
+	initializeSiteData( store );
 
 	if ( ! window.location?.hash ) {
 		// Redirect to the default stats page.

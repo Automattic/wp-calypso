@@ -5,7 +5,7 @@ import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { MouseEvent, ReactNode } from 'react';
 import QuerySiteFeatures from 'calypso/components/data/query-site-features';
-import QuerySiteSettings from 'calypso/components/data/query-site-settings';
+import QuerySites from 'calypso/components/data/query-sites';
 import JetpackFooter from 'calypso/components/jetpack/jetpack-footer';
 import JetpackTitle from 'calypso/components/jetpack-title';
 import Main, { MainProps } from 'calypso/components/main';
@@ -138,8 +138,7 @@ export default function StatsMain( {
 	return (
 		<Main { ...props } className={ clsx( 'stats-main', 'color-scheme', customTheme, className ) }>
 			{ ! isWPAdminAndNotSimpleSite && <QuerySiteFeatures siteIds={ [ siteId ] } /> }
-			{ /* The Odyssey stats-app proxy has no settings route, so the request would 404. */ }
-			{ ! isWPAdminAndNotSimpleSite && <QuerySiteSettings siteId={ siteId } /> }
+			<QuerySites siteId={ siteId } />
 			<Page
 				// Restore a stable styling hook lost when @wordpress/admin-ui 2.x moved Page
 				// internals to CSS Modules. Stats SCSS overrides target `.admin-ui-page`.
