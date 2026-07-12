@@ -4,7 +4,7 @@ import { useEffect } from 'react';
 import { useAnalytics } from '../analytics';
 
 // Keep the key's leading string segments; stop at the first non-string, which is a dynamic id.
-function mutationKeyLabel( key: unknown ): string | undefined {
+function getMutationKeyLabel( key: unknown ): string | undefined {
 	if ( ! Array.isArray( key ) ) {
 		return undefined;
 	}
@@ -44,7 +44,7 @@ export default function MutationErrorTracker() {
 				has_snackbar: Boolean( mutation.meta?.snackbar?.error ),
 			};
 
-			const keyLabel = mutationKeyLabel( mutation.options.mutationKey );
+			const keyLabel = getMutationKeyLabel( mutation.options.mutationKey );
 			if ( keyLabel ) {
 				properties.mutation_key = keyLabel;
 			}
