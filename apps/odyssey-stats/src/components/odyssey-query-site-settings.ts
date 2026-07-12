@@ -70,9 +70,8 @@ export default function OdysseyQuerySiteSettings( { siteId }: { siteId: SiteId }
 			return;
 		}
 
-		dispatch( { type: SITE_SETTINGS_REQUEST, siteId } );
-
 		if ( isFetching ) {
+			dispatch( { type: SITE_SETTINGS_REQUEST, siteId } );
 			return;
 		}
 
