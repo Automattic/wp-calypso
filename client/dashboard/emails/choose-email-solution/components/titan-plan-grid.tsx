@@ -24,29 +24,30 @@ interface TitanPlan {
 const getTierName = ( tier: TitanPlanTier ): string => {
 	switch ( tier ) {
 		case TitanPlanTier.Pro:
-			return __( 'Pro' );
-		case TitanPlanTier.Premium:
 			return __( 'Premium' );
+		case TitanPlanTier.Premium:
+			return __( 'Premium Plus' );
 		case TitanPlanTier.Ultra:
 			return __( 'Ultra' );
 	}
 };
 
-// Placeholder descriptions and feature lists, final copy pending (DOTEMP-111).
+// Descriptions remain placeholder copy; feature lists reflect the tier
+// comparison from DOTEMP-111.
 const getTierDetails = ( tier: TitanPlanTier ): { description: string; features: string[] } => {
 	switch ( tier ) {
 		case TitanPlanTier.Pro:
 			return {
 				description: __( 'Everything you need to get started with professional, secure email.' ),
 				features: [
-					__( '30 GB storage' ),
-					__( 'Rich email' ),
-					__( 'Native mobile apps' ),
-					__( 'Integrated calendar' ),
-					__( 'Integrated contacts' ),
-					__( 'Guaranteed email delivery' ),
-					__( 'Advanced anti-spam' ),
-					__( 'Advanced anti-virus' ),
+					__( '30 GB / mailbox' ),
+					__( '10 Read Receipts' ),
+					__( '1 Email Template' ),
+					__( '1 Contact Group' ),
+					__( 'Blocklist' ),
+					__( 'Allowlist' ),
+					__( 'Grammar & Spell Check' ),
+					__( 'Undo Send' ),
 				],
 			};
 		case TitanPlanTier.Premium:
@@ -55,27 +56,45 @@ const getTierDetails = ( tier: TitanPlanTier ): { description: string; features:
 					'Smarter tools to help your growing business stay organized and productive.'
 				),
 				features: [
-					__( '50 GB storage' ),
-					__( 'Unlimited read receipts' ),
-					__( 'Unlimited email templates' ),
-					__( 'Unlimited contact groups' ),
-					__( 'Follow up reminders' ),
-					__( 'Send later' ),
-					__( 'Grammar & spell check' ),
-					__( 'Priority inbox' ),
+					__( '50 GB / mailbox' ),
+					__( 'Unlimited Read Receipts' ),
+					__( 'Unlimited Email Template' ),
+					__( 'Unlimited Contact Group' ),
+					__( 'Two-Factor Authentication' ),
+					__( 'Priority Inbox' ),
+					__( 'Business auto reply' ),
+					__( 'Titan Task' ),
+					__( 'Titan Drive (1GB storage)' ),
+					__( 'Email labels' ),
+					__( 'Auto-clean' ),
+					__( 'Send Later' ),
+					__( 'Follow-up Reminders' ),
+					__( 'Turbo Search' ),
+					__( 'Send as Alias' ),
+					__( 'Undo Send' ),
+					__( 'Branding' ),
+					__( 'Team Chat' ),
 				],
 			};
 		case TitanPlanTier.Ultra:
 			return {
 				description: __( 'AI-powered email to scale your business and boost marketing impact.' ),
 				features: [
-					__( '100 GB storage' ),
-					__( 'AI email writer' ),
-					__( 'Appointment booking' ),
-					__( 'Email campaigns' ),
-					__( 'Attachment and link tracking' ),
-					__( 'Email designer' ),
-					__( 'Signature designer' ),
+					__( '100 GB / mailbox' ),
+					__( 'Unlimited Read Receipts' ),
+					__( 'Unlimited Email Template' ),
+					__( 'Unlimited Contact Group' ),
+					__( 'Email Backup (50 GB storage)' ),
+					__( 'File Transfer' ),
+					__( 'Titan AI (compose, reply)' ),
+					__( 'AI Summary' ),
+					__( 'Titan Booking' ),
+					__( 'Titan Drive (50 GB storage)' ),
+					__( 'Signature Designer' ),
+					__( 'File and Link Tracking' ),
+					__( 'Email Designer' ),
+					__( 'Email Campaigns' ),
+					__( 'Invoice Builder' ),
 				],
 			};
 	}
@@ -282,7 +301,7 @@ export function TitanPlanGrid( {
 								{ plan.everythingInName &&
 									sprintf(
 										/* translators: %s is the name of the previous, cheaper email plan. */
-										__( 'Everything in %s' ),
+										__( 'Everything in %s +' ),
 										plan.everythingInName
 									) }
 							</Text>
