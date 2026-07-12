@@ -58,6 +58,25 @@ export function getHostingDashboardEnrollment(
 }
 
 /**
+ * Whether the opt-in welcome modal should be shown. The modal introduces the
+ * dashboard to existing users who were moved onto it by the rollout, so it is
+ * limited to enrolled users whose enrollment was forced. New users (who start
+ * on the dashboard by default) and users who explicitly opted in (who are
+ * already acquainted with it) are both excluded.
+ */
+export function isWelcomeModalEligible(
+	preference: HostingDashboardOptIn | undefined,
+	userId: number | undefined
+): boolean {
+	if ( ! userId || userId > NEW_USER_ID_THRESHOLD ) {
+		return false;
+	}
+
+	const enrollment = getHostingDashboardEnrollment( preference, userId );
+	return enrollment.enrolled && enrollment.reason === 'forced';
+}
+
+/**
  * Whether the user-facing opt-in toggle should be shown. Hidden for the
  * rollout cohort (the choice no longer exists) and for escape-hatched
  * users (their enrollment changes only via support tooling).
