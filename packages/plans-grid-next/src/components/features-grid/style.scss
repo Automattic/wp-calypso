@@ -809,31 +809,10 @@ $redesign-table-cell-max-width: 280px;
 				}
 			}
 
-			&.has-tablet-split-row-width-1-cols {
-				.plan-features-2023-grid__table-bottom .plan-features-2023-grid__table,
-				.plans-grid-next-features-grid__bottom-plan-card {
-					max-width: $redesign-table-cell-max-width;
-				}
-			}
-
-			&.has-tablet-split-row-width-2-cols {
-				.plan-features-2023-grid__table-bottom .plan-features-2023-grid__table,
-				.plans-grid-next-features-grid__bottom-plan-card {
-					max-width: $redesign-table-cell-max-width * 2;
-				}
-			}
-
 			&.has-tablet-split-row-width-3-cols {
 				.plan-features-2023-grid__table-bottom .plan-features-2023-grid__table,
 				.plans-grid-next-features-grid__bottom-plan-card {
 					max-width: $redesign-table-cell-max-width * 3;
-				}
-			}
-
-			&.has-tablet-split-row-width-4-cols {
-				.plan-features-2023-grid__table-bottom .plan-features-2023-grid__table,
-				.plans-grid-next-features-grid__bottom-plan-card {
-					max-width: $redesign-table-cell-max-width * 4;
 				}
 			}
 		}

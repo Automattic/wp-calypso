@@ -353,7 +353,6 @@ const FeaturesGrid = ( {
 	const tabletTopRowPlanCount = getTabletTopRowPlanCount( gridPlansWithoutSpotlightCount );
 	const hasTabletSplitRow =
 		'medium' === gridSize && gridPlansWithoutSpotlightCount > tabletTopRowPlanCount;
-	const tabletSplitRowWidthColumnCount = hasTabletSplitRow ? tabletTopRowPlanCount : 0;
 
 	return (
 		<div className="plans-grid-next-features-grid">
@@ -363,8 +362,7 @@ const FeaturesGrid = ( {
 					className={ clsx(
 						'plan-features-2023-grid__content',
 						`has-${ gridPlansWithoutSpotlightCount }-cols`,
-						hasTabletSplitRow &&
-							`has-tablet-split-row-width-${ tabletSplitRowWidthColumnCount }-cols`,
+						hasTabletSplitRow && `has-tablet-split-row-width-${ tabletTopRowPlanCount }-cols`,
 						{
 							'has-bottom-plan-card': bottomGridPlan,
 							'has-tablet-split-row': hasTabletSplitRow,
