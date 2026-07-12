@@ -53,6 +53,13 @@ export async function initializeSiteData(
 				? JSON.parse( data.data )
 				: data;
 
+		// `/sites/{id}` reports the timezone under `options.timezone`, while the rest of the
+		// app (e.g. useMomentSiteZone) reads it as `options.timezone_string`, matching the
+		// dedicated `/settings` endpoint's field name.
+		if ( siteData?.options?.timezone && ! siteData.options.timezone_string ) {
+			siteData.options.timezone_string = siteData.options.timezone;
+		}
+
 		dispatch( { type: ODYSSEY_SITE_RECEIVE, site: siteData } );
 		dispatch( { type: SITE_REQUEST_SUCCESS, siteId } );
 	} catch ( error ) {
