@@ -98,6 +98,15 @@ $font-sf-pro-display: "SF Pro Display", $sans;
 		@include apply-improved-classic-dark-colors();
 	}
 
+	// `admin-ui-page-layout` zeroes `.layout__primary .main`'s padding-bottom,
+	// leaving the footer flush against the content inside the Calypso shell
+	// (Simple sites). Restore a gap. Scoped to `.layout__primary`, which only
+	// exists in the shell — self-hosted wp-admin has none and gets its bottom
+	// spacing from the surrounding chrome, so this never doubles up there.
+	.layout__primary .main > .jetpack-footer {
+		margin-top: 32px;
+	}
+
 	.sticky-panel.is-sticky {
 		padding: 0;
 	}
