@@ -63,7 +63,7 @@ compute_flag() {
 	while IFS= read -r file; do
 		[[ -z "$file" ]] && continue
 		rel="${file#test/e2e/specs/}"
-		grep_value+="|${rel//./\\.}"
+		grep_value+="|(^|\\s)${rel//./\\.}"
 	done <<<"$pw_specs"
 
 	printf -- '--grep=%s' "$grep_value"
