@@ -118,8 +118,6 @@ async function openDeleteModalForSiteOne( user: ReturnType< typeof userEvent.set
 }
 
 describe( '<SitesWithThisPlugin> delete flow', () => {
-	afterEach( () => nock.cleanAll() );
-
 	test( 'keeps the site visible when its delete fails', async () => {
 		const user = userEvent.setup();
 		mockEndpoints( { removeStatus: 500 } );
