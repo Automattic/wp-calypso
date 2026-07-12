@@ -3,9 +3,7 @@ import { useQueryClient } from '@tanstack/react-query';
 import { useEffect } from 'react';
 import { useAnalytics } from '../analytics';
 
-// Leading string segments of a mutation key form a stable, low-cardinality label.
-// Dynamic trailing parts (site/blog ids, slugs appended after the constant) are
-// dropped so the label aggregates cleanly and never carries identifying data.
+// Keep the key's leading string segments; stop at the first non-string, which is a dynamic id.
 function mutationKeyLabel( key: unknown ): string | undefined {
 	if ( ! Array.isArray( key ) ) {
 		return undefined;
