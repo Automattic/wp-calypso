@@ -5,7 +5,6 @@ import { isError } from '@automattic/js-utils';
 import { useQuery } from '@tanstack/react-query';
 import { useEffect } from 'react';
 import { useDispatch } from 'react-redux';
-import wpcom from 'calypso/lib/wp';
 import getDefaultQueryParams from 'calypso/my-sites/stats/hooks/default-query-params';
 import { useSelector } from 'calypso/state';
 import {
@@ -16,29 +15,7 @@ import {
 } from 'calypso/state/action-types';
 import { getSite } from 'calypso/state/sites/selectors';
 import { SiteId } from 'calypso/types';
-import config from '../lib/config-api';
-import { getApiNamespace, getApiPath } from '../lib/get-api';
-
-function querySite( siteId: SiteId ) {
-	return wpcom.req
-		.get(
-			{
-				path: getApiPath( '/site', { siteId } ),
-				apiNamespace: getApiNamespace(),
-			},
-			{
-				// Only add the http_envelope flag if it's a Simple Classic site.
-				http_envelope: ! config.isEnabled( 'is_running_in_jetpack_site' ),
-			}
-		)
-		.then( ( data: { data?: string } ) =>
-			// For Jetpack/Atomic sites, data format is { data: JSON string of SiteDetails }
-			config.isEnabled( 'is_running_in_jetpack_site' ) && 'data' in data
-				? JSON.parse( data.data as string )
-				: data
-		)
-		.catch( ( error: Error ) => error );
-}
+import { querySite } from '../lib/query-site';
 
 function useQuerySite( siteId: SiteId, enabled: boolean ) {
 	return useQuery< Record< string, unknown > | Error >( {
