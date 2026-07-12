@@ -36,11 +36,6 @@ const excludedPackages = [
 	/^calypso\/components\/data\/query-jetpack-modules$/,
 	/^calypso\/components\/data\/query-site-keyrings$/,
 	/^calypso\/components\/data\/query-preferences$/,
-	// Stats only needs timezone_string/gmt_offset out of site settings (see
-	// useMomentSiteZone), and initializeSiteData already supplies that for both
-	// Jetpack-connected AND Simple Classic sites -- Simple Classic loads this same
-	// Odyssey bundle too, it just takes the other branch of getApiPath/getApiNamespace.
-	/^calypso\/components\/data\/query-site-settings$/,
 ];
 
 const excludedPackagePlugins = excludedPackages.map(
@@ -225,6 +220,10 @@ module.exports = {
 		new webpack.NormalModuleReplacementPlugin(
 			/^calypso\/components\/data\/query-site-purchases$/,
 			path.resolve( __dirname, 'src/components/odyssey-query-site-purchases' )
+		),
+		new webpack.NormalModuleReplacementPlugin(
+			/^calypso\/components\/data\/query-site-settings$/,
+			path.resolve( __dirname, 'src/components/odyssey-query-site-settings' )
 		),
 		new webpack.NormalModuleReplacementPlugin(
 			/^calypso\/components\/data\/query-products-list$/,

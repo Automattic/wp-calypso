@@ -28,12 +28,18 @@ export async function initializeSiteData(
 	const isRequesting = isRequestingSite( state, siteId );
 	const site = getSite( state, siteId );
 
-	// `/sites/{id}` reports the timezone under `options.timezone`, while the rest of the app
-	// (e.g. useMomentSiteZone) reads it as `options.timezone_string`, matching the dedicated
-	// `/settings` endpoint's field name. Normalize it here too, since the early return below
-	// can skip the fetch (and the same normalization further down) when the store was already
-	// hydrated with site data before this function ran.
-	if ( site?.options?.timezone && ! getSiteOption( state, siteId, 'timezone_string' ) ) {
+	// Jetpack-connected sites have no dedicated `/settings` endpoint reachable from here (see
+	// OdysseyQuerySiteSettings), so useMomentSiteZone falls back to this fetch's data via
+	// getSiteOption instead. `/sites/{id}` reports the timezone under `options.timezone`
+	// there, while that fallback reads `options.timezone_string` -- normalize it here too,
+	// since the early return below can skip the fetch (and the same normalization further
+	// down) when the store was already hydrated with site data before this function ran.
+	const isJetpackSite = config.isEnabled( 'is_running_in_jetpack_site' );
+	if (
+		isJetpackSite &&
+		site?.options?.timezone &&
+		! getSiteOption( state, siteId, 'timezone_string' )
+	) {
 		dispatch( {
 			type: ODYSSEY_SITE_RECEIVE,
 			site: { ID: siteId, options: { timezone_string: site.options.timezone } },
@@ -55,20 +61,15 @@ export async function initializeSiteData(
 			},
 			{
 				// Only add the http_envelope flag if it's a Simple Classic site.
-				http_envelope: ! config.isEnabled( 'is_running_in_jetpack_site' ),
+				http_envelope: ! isJetpackSite,
 			}
 		);
 
 		// For Jetpack/Atomic sites, data format is { data: JSON string of SiteDetails }
-		const siteData =
-			config.isEnabled( 'is_running_in_jetpack_site' ) && 'data' in data
-				? JSON.parse( data.data )
-				: data;
+		const siteData = isJetpackSite && 'data' in data ? JSON.parse( data.data ) : data;
 
-		// `/sites/{id}` reports the timezone under `options.timezone`, while the rest of the
-		// app (e.g. useMomentSiteZone) reads it as `options.timezone_string`, matching the
-		// dedicated `/settings` endpoint's field name.
-		if ( siteData?.options?.timezone && ! siteData.options.timezone_string ) {
+		// See the comment above on the same normalization for the pre-hydrated case.
+		if ( isJetpackSite && siteData?.options?.timezone && ! siteData.options.timezone_string ) {
 			siteData.options.timezone_string = siteData.options.timezone;
 		}
 
