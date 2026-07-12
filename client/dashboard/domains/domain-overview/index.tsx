@@ -11,7 +11,7 @@ import { useQuery, useSuspenseQuery } from '@tanstack/react-query';
 import { useSearch } from '@tanstack/react-router';
 import { Button, __experimentalHStack as HStack } from '@wordpress/components';
 import { __, sprintf } from '@wordpress/i18n';
-import { useMemo } from 'react';
+import { useEffect, useMemo } from 'react';
 import { useLocale } from '../../app/locale';
 import { PerformanceTrackerStop } from '../../app/performance-tracking';
 import { domainRoute } from '../../app/router/domains';
@@ -22,7 +22,12 @@ import SnackbarBackButton, {
 	getSnackbarBackButtonText,
 } from '../../components/snackbar-back-button';
 import { formatDate } from '../../utils/datetime';
-import { getDomainRenewalUrl, isTldInMaintenance } from '../../utils/domain';
+import { unmarkDomainDetaching, useDetachingDomains } from '../../utils/detaching-domains';
+import {
+	getDomainRenewalUrl,
+	isPendingPrimaryDomain,
+	isTldInMaintenance,
+} from '../../utils/domain';
 import { TLDMaintenanceNotice } from '../maintenance-notice';
 import Actions from './actions';
 import FeaturedCards from './featured-cards';
@@ -68,6 +73,17 @@ export default function DomainOverview() {
 
 	const { back_to: domainsBackTo } = useSearch( { from: domainRoute.fullPath } );
 	const snackbarBackButtonText = getSnackbarBackButtonText( domainsBackTo );
+
+	const detachingDomains = useDetachingDomains();
+	const isDetaching = detachingDomains.has( domain.domain );
+
+	// Drop the detach mark once the domain is no longer pending, so a later
+	// re-attach in the same session is not wrongly suppressed.
+	useEffect( () => {
+		if ( isDetaching && ! isPendingPrimaryDomain( domain ) ) {
+			unmarkDomainDetaching( domain.domain );
+		}
+	}, [ domain, isDetaching ] );
 
 	return (
 		<>
@@ -134,7 +150,7 @@ export default function DomainOverview() {
 				{ domain.is_pending_icann_verification && (
 					<IcannSuspensionNotice domainName={ domain.domain } />
 				) }
-				<PendingPrimaryDomainNotice domainName={ domain.domain } />
+				{ ! isDetaching && <PendingPrimaryDomainNotice domainName={ domain.domain } /> }
 				{ domain.subtype.id !== DomainSubtype.DOMAIN_TRANSFER && (
 					<>
 						<FeaturedCards isDisabled={ isTldInMaintenance( domain ) } />

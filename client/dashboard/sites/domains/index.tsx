@@ -4,6 +4,7 @@ import { Link } from '@tanstack/react-router';
 import { filterSortAndPaginate } from '@wordpress/dataviews';
 import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
+import { useEffect } from 'react';
 import { useAuth } from '../../app/auth';
 import { useAppContext } from '../../app/context';
 import { usePersistentView } from '../../app/hooks/use-persistent-view';
@@ -22,6 +23,7 @@ import {
 	SITE_CONTEXT_VIEW,
 	useBulkActionsProgressNotice,
 } from '../../domains/dataviews';
+import { unmarkDomainDetaching, useDetachingDomains } from '../../utils/detaching-domains';
 import { isPendingPrimaryDomain } from '../../utils/domain';
 import { SitesNoticeArbiter } from '../notice-arbiter';
 import PrimaryDomainSelectorNotice from './primary-domain-selector-notice';
@@ -44,7 +46,21 @@ function SiteDomains() {
 		},
 	} );
 
-	const pendingDomain = siteDomains.find( isPendingPrimaryDomain );
+	const detachingDomains = useDetachingDomains();
+	const pendingDomain = siteDomains.find(
+		( domain ) => isPendingPrimaryDomain( domain ) && ! detachingDomains.has( domain.domain )
+	);
+
+	// Drop a detach mark once the domain is no longer pending on this site,
+	// so a later re-attach in the same session is not wrongly suppressed.
+	useEffect( () => {
+		for ( const domainName of detachingDomains ) {
+			const domain = siteDomains.find( ( item ) => item.domain === domainName );
+			if ( ! domain || ! isPendingPrimaryDomain( domain ) ) {
+				unmarkDomainDetaching( domainName );
+			}
+		}
+	}, [ siteDomains, detachingDomains ] );
 
 	const { data: redirect } = useSuspenseQuery( siteRedirectQuery( site.ID ) );
 	const hasRedirect = redirect && Object.keys( redirect ).length > 0;
