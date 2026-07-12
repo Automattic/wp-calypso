@@ -2,7 +2,6 @@
  * @jest-environment jsdom
  */
 
-import { pluginsQuery } from '@automattic/api-queries';
 import { screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
@@ -122,14 +121,12 @@ describe( '<SitesWithThisPlugin> delete flow', () => {
 		const user = userEvent.setup();
 		mockEndpoints( { removeStatus: 500 } );
 
-		const { queryClient } = render( <PluginSites selectedPluginSlug={ PLUGIN_SLUG } /> );
+		render( <PluginSites selectedPluginSlug={ PLUGIN_SLUG } /> );
 
 		await openDeleteModalForSiteOne( user );
 
 		expect( await screen.findByRole( 'link', { name: /Test Site One/ } ) ).toBeVisible();
-
-		const cached = queryClient.getQueryData< PluginsResponse >( pluginsQuery().queryKey );
-		expect( cached?.sites[ 1 ] ).toHaveLength( 1 );
+		expect( screen.getByRole( 'link', { name: /Test Site Two/ } ) ).toBeVisible();
 	} );
 
 	test( 'removes only the deleted site when its delete succeeds', async () => {
