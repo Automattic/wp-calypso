@@ -55,6 +55,7 @@ function getFeedSeenBaseMutationParams( params: UseMarkAsSeenParams ): ReadSeenP
 		source: SOURCE_READER_WEB,
 	};
 }
+
 export interface UseMarkAsSeenBlogParams {
 	blogId: number;
 	postIds: number[];

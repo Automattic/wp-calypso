@@ -8,8 +8,8 @@ import type { ComponentType } from 'react';
 
 /**
  * Props injected by `withSeenPostsMutations`. These mirror the legacy
- * `calypso/state/reader/seen-posts/actions` so the existing
- * class-component keep working unchanged after the Redux → React Query migration.
+ * Redux action names so existing class components keep working unchanged
+ * after the Redux → React Query migration.
  */
 export interface SeenPostsMutationsProps {
 	requestMarkAsSeen: ReturnType< typeof useMarkAsSeenMutation >[ 'mutate' ];
