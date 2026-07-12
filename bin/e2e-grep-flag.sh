@@ -87,7 +87,7 @@ self_test() {
 	local PW2=test/e2e/specs/tools/import__sites-wordpress.spec.ts
 	local JEST=test/e2e/specs/blocks/blocks__core.ts
 	local POM=test/e2e/lib/pages/some-page.ts
-	local PW_GREP='--grep=@calypso-pr|tools/import__sites-squarespace\.spec\.ts'
+	local PW_GREP='--grep=@calypso-pr|(^|\s)tools/import__sites-squarespace\.spec\.ts'
 
 	# No relevant change: keep the group.
 	check "no e2e change keeps group"   "--grep=@calypso-pr" $'client/foo.ts\ndocs/bar.md'
@@ -100,7 +100,7 @@ self_test() {
 	check "two Jest specs keep group"    "--grep=@calypso-pr" $'test/e2e/specs/blocks/blocks__core.ts\ntest/e2e/specs/me/me__account.ts'
 	check "single PW spec unions path"  "$PW_GREP" "$PW"
 	check "two PW specs union all" \
-		'--grep=@calypso-pr|tools/import__sites-squarespace\.spec\.ts|tools/import__sites-wordpress\.spec\.ts' \
+		'--grep=@calypso-pr|(^|\s)tools/import__sites-squarespace\.spec\.ts|(^|\s)tools/import__sites-wordpress\.spec\.ts' \
 		$'test/e2e/specs/tools/import__sites-squarespace.spec.ts\ntest/e2e/specs/tools/import__sites-wordpress.spec.ts'
 
 	# Mix-and-match.
@@ -112,8 +112,14 @@ self_test() {
 	# Group edge cases.
 	check "PW spec, empty group runs all" "" "$PW" ""
 	check "release group unions" \
-		'--grep=@calypso-release|blocks/blocks__media\.spec\.ts' \
+		'--grep=@calypso-release|(^|\s)blocks/blocks__media\.spec\.ts' \
 		"test/e2e/specs/blocks/blocks__media.spec.ts" "@calypso-release"
+
+	# Each spec path is anchored with (^|\s) so a shorter path can't match a longer
+	# one by suffix, e.g. changed.spec.ts must not select unchanged.spec.ts.
+	check "spec path is anchored" \
+		'--grep=@calypso-pr|(^|\s)a/changed\.spec\.ts' \
+		"test/e2e/specs/a/changed.spec.ts"
 
 	return $fail
 }
