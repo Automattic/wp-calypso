@@ -1,4 +1,4 @@
-import config, { isEnabled } from '@automattic/calypso-config';
+import config from '@automattic/calypso-config';
 import { isSupportSession } from '@automattic/calypso-support-session';
 import type { HostingDashboardOptIn } from '@automattic/api-core';
 
@@ -69,7 +69,7 @@ export function isWelcomeModalEligible(
 	userId: number | undefined
 ): boolean {
 	if (
-		! isEnabled( 'dashboard/opt-in-welcome-modal' ) ||
+		! config.isEnabled( 'dashboard/opt-in-welcome-modal' ) ||
 		! userId ||
 		userId > NEW_USER_ID_THRESHOLD ||
 		preference?.value === 'opt-in' ||
