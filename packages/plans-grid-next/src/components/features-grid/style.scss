@@ -393,6 +393,13 @@ $redesign-table-cell-max-width: 280px;
 	&.is-reduced-feature-group-spacing > .plan-features-2023-grid__table-item {
 		padding-top: 0;
 	}
+
+	&.is-first-feature-group-row.is-reduced-feature-group-spacing
+		> .plan-features-2023-grid__table-item {
+		@include plans-grid-medium-large {
+			padding-top: 0;
+		}
+	}
 }
 
 .plan-features-2023-grid__item-info {
