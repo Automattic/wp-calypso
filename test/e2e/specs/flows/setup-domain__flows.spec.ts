@@ -141,12 +141,17 @@ test.describe(
 			} );
 
 			await test.step( 'Given I have a free site', async function () {
+				const accountToCleanup: ( typeof accountsToCleanup )[ number ] = {
+					testUser,
+					newUserDetails,
+				};
+				accountsToCleanup.push( accountToCleanup );
 				newSiteDetails = await apiCreateFreeSiteForUser(
 					testUser,
 					newUserDetails,
 					helperData.getBlogName()
 				);
-				accountsToCleanup.push( { testUser, newUserDetails, newSiteDetails } );
+				accountToCleanup.newSiteDetails = newSiteDetails;
 			} );
 
 			await test.step( 'And I enter the domain flow', async function () {
@@ -214,12 +219,17 @@ test.describe(
 			} );
 
 			await test.step( 'Given I have a free site', async function () {
+				const accountToCleanup: ( typeof accountsToCleanup )[ number ] = {
+					testUser,
+					newUserDetails,
+				};
+				accountsToCleanup.push( accountToCleanup );
 				newSiteDetails = await apiCreateFreeSiteForUser(
 					testUser,
 					newUserDetails,
 					helperData.getBlogName()
 				);
-				accountsToCleanup.push( { testUser, newUserDetails, newSiteDetails } );
+				accountToCleanup.newSiteDetails = newSiteDetails;
 			} );
 
 			await test.step( 'And I enter the domain flow', async function () {
