@@ -301,7 +301,7 @@ export function TitanPlanGrid( {
 								{ plan.everythingInName &&
 									sprintf(
 										/* translators: %s is the name of the previous, cheaper email plan. */
-										__( 'Everything in %s +' ),
+										__( 'Everything in %s' ),
 										plan.everythingInName
 									) }
 							</Text>
