@@ -19,6 +19,7 @@ import AccountRecoveryInterstitial from '../account-recovery-interstitial';
 import { bumpStat } from '../analytics';
 import CommandPalette from '../command-palette';
 import { useAppContext } from '../context';
+import { useTrackVisitedAreas } from '../hooks/use-visit-counter';
 import OmnibarAgentsManager from '../interim-omnibar/omnibar-agents-manager';
 import OmnibarHelpCenter from '../interim-omnibar/omnibar-help-center';
 import { NavigationBlockerRegistry } from '../navigation-blocker';
@@ -57,6 +58,7 @@ function Root() {
 	const closeSidebar = useCallback( () => setIsSidebarOpen( false ), [ setIsSidebarOpen ] );
 
 	useInitializeOmnibarSite();
+	useTrackVisitedAreas();
 	useOmnibarEvent( 'mobileMenu', () => setIsSidebarOpen( ( v ) => ! v ) );
 	useOmnibarEvent( 'linkClick', ( { href, event } ) => {
 		const url = new URL( href, window.location.origin );

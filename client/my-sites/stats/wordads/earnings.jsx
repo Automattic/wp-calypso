@@ -180,7 +180,7 @@ class WordAdsEarnings extends Component {
 						className="ads__table-header-infotip"
 						label={ translate( 'Learn more about ads served' ) }
 						side="bottom"
-						align="end"
+						align="start"
 					>
 						{ this.infoNotice() }
 					</StatsInfotip>

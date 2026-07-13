@@ -46,12 +46,24 @@
 		}
 	}
 
+	// On desktop the swatches wrap; use a grid so each row fills the full
+	// column width instead of leaving a gap after the last fixed-width swatch.
+	.global-styles-variations {
+		@include break-large {
+			display: grid;
+			grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
+
+			// Swatches can stretch beyond the 129px the package's 79px iframe
+			// cap allows for; the preview computes its height from the measured
+			// width, so the aspect ratio is preserved without the cap.
+			.global-styles-variation-container__iframe {
+				max-height: none;
+			}
+		}
+	}
+
 	.global-styles-variations__item {
 		flex-basis: 80px;
 		flex-shrink: 0;
-
-		@include break-xlarge {
-			flex-basis: 120px;
-		}
 	}
 }

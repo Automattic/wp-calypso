@@ -677,9 +677,7 @@ const PlansFeaturesMain = ( {
 	 * showSimplifiedFeatures should be true always and this variable should be removed.
 	 * It exists temporarily till the flows with the following intents are removed.
 	 */
-	const showSimplifiedFeatures = ! (
-		intent && [ 'plans-newsletter', 'plans-blog-onboarding' ].includes( intent )
-	);
+	const showSimplifiedFeatures = ! ( intent && [ 'plans-newsletter' ].includes( intent ) );
 
 	const {
 		showDifferentiatorHeader,

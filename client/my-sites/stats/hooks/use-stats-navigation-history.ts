@@ -30,6 +30,7 @@ const possibleBackLinks: { [ key: string ]: string | null } = {
 	postList: '{adminUrl}edit.php',
 	emailsummary: '/stats/{period}/emails/',
 	postDetails: null, // Last item in the history, the text is not displayed anywhere but this is used to track the item in history stack.
+	videodetails: null, // Same as postDetails: tracked in the history stack, never rendered as a crumb.
 };
 
 const SUPPORTED_QUERY_PARAMS: string[] = [
@@ -158,6 +159,7 @@ export const useStatsNavigationHistory = (
 			postList: translate( 'Post List' ),
 			emailsummary: translate( 'Emails' ),
 			postDetails: null, // Last item in the history, the text is not displayed anywhere but this is used to track the item in history stack.
+			videodetails: null,
 		} ),
 		[]
 	);
@@ -288,6 +290,7 @@ export const useStatsBreadcrumbTrail = (
 			postList: translate( 'Post List' ),
 			emailsummary: translate( 'Emails' ),
 			postDetails: null,
+			videodetails: null,
 		} ),
 		[]
 	);

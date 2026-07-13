@@ -99,8 +99,8 @@ class StatsSummaryChart extends Component {
 			label: tabLabel + label,
 		};
 
-		// The StatsPostSummary has been modernized to fresh styling.
-		const isModernized = 'post' === type;
+		// The post and video summaries have been modernized to fresh styling.
+		const isModernized = 'post' === type || 'video' === type;
 
 		return isModernized ? (
 			<div className={ clsx( 'is-summary-chart', { 'is-loading': isLoading } ) }>

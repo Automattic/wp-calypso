@@ -8,6 +8,7 @@ import {
 	unbindWindowListeners,
 	onViewportChange,
 	suggested as suggestPosition,
+	arrowLeftOffset,
 	constrainLeft,
 	offset,
 } from './util';
@@ -81,6 +82,7 @@ class PopoverInner extends Component {
 		left: -99999,
 		top: -99999,
 		positionClass: this.getPositionClass( this.props.position ),
+		arrowLeft: null,
 	};
 
 	/**
@@ -304,17 +306,22 @@ class PopoverInner extends Component {
 			suggestedPosition = suggestPosition( suggestedPosition, domContainer, domContext );
 		}
 
-		const reposition = Object.assign(
-			{},
-			constrainLeft(
-				offset( suggestedPosition, domContainer, domContext, relativePosition ),
-				domContainer,
-				this.props.ignoreViewportSize
-			),
-			{ positionClass: this.getPositionClass( suggestedPosition ) }
+		const constrainedOffset = constrainLeft(
+			offset( suggestedPosition, domContainer, domContext, relativePosition ),
+			domContainer,
+			this.props.ignoreViewportSize,
+			this.props.leftBoundary,
+			this.props.rightBoundary
 		);
 
-		return reposition;
+		return {
+			...constrainedOffset,
+			positionClass: this.getPositionClass( suggestedPosition ),
+			arrowLeft:
+				suggestedPosition === 'top' || suggestedPosition === 'bottom'
+					? arrowLeftOffset( constrainedOffset, domContainer, domContext )
+					: null,
+		};
 	}
 
 	setPosition = () => {
@@ -329,6 +336,7 @@ class PopoverInner extends Component {
 				},
 				this.props.customPosition
 			);
+			position.arrowLeft = null;
 		} else {
 			position = this.computePosition();
 		}
@@ -430,7 +438,12 @@ class PopoverInner extends Component {
 				onMouseEnter={ this.handleOnMouseEnter }
 				onMouseLeave={ this.handleOnMouseLeave }
 			>
-				{ ! this.props.hideArrow ? <div className="popover__arrow" /> : null }
+				{ ! this.props.hideArrow ? (
+					<div
+						className="popover__arrow"
+						style={ this.state.arrowLeft != null ? { left: this.state.arrowLeft } : undefined }
+					/>
+				) : null }
 				<div ref={ this.popoverInnerNodeRef } className="popover__inner">
 					{ this.props.children }
 				</div>
@@ -510,6 +523,8 @@ Popover.propTypes = {
 	id: PropTypes.string,
 	context: PropTypeElement,
 	ignoreContext: PropTypeElement,
+	leftBoundary: PropTypes.oneOfType( [ PropTypes.number, PropTypes.func ] ),
+	rightBoundary: PropTypes.oneOfType( [ PropTypes.number, PropTypes.func ] ),
 	isVisible: PropTypes.bool,
 	focusOnShow: PropTypes.bool,
 	position: PropTypes.oneOf( [

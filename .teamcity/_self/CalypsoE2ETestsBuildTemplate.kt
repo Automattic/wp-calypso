@@ -155,28 +155,6 @@ object CalypsoE2ETestsBuildTemplate : Template({
 			dockerImage = "%docker_image_e2e%"
 		}
 
-		bashNodeScript {
-			name = "Determine test group"
-			id = "determine_test_group"
-			scriptContent = """
-				# Check if IGNORE_TEST_GROUP_FOR_E2E_CHANGES param is "true"
-				if [[ "%IGNORE_TEST_GROUP_FOR_E2E_CHANGES%" == "true" ]]; then
-					echo "IGNORE_TEST_GROUP_FOR_E2E_CHANGES is true, checking for E2E changes..."
-
-					# Check if test/e2e or packages/calypso-e2e files have been changed
-					CHANGED_FILES=${'$'}(git diff --name-only refs/remotes/origin/trunk...HEAD)
-					if echo "${'$'}CHANGED_FILES" | grep -q -E "^(test/e2e/|packages/calypso-e2e/)"; then
-						echo "Changes detected in test/e2e/ or packages/calypso-e2e/, clearing TEST_GROUP"
-						echo "##teamcity[setParameter name='TEST_GROUP' value='']"
-					else
-						echo "No changes in test/e2e/ or packages/calypso-e2e/, keeping TEST_GROUP as is"
-					fi
-				else
-					echo "IGNORE_TEST_GROUP_FOR_E2E_CHANGES is false, keeping TEST_GROUP as is"
-				fi
-				"""
-			dockerImage = "%docker_image_e2e%"
-		}
 
 		bashNodeScript {
 			name = "Set extra environment variables"
@@ -200,14 +178,17 @@ object CalypsoE2ETestsBuildTemplate : Template({
 			id = "run_tests"
 			scriptContent = """
 
-				# Check TEST_GROUP param
-				if [[ -n "%TEST_GROUP%" ]]; then
-					echo "TEST_GROUP is set to: %TEST_GROUP%"
+				# Resolve the Playwright grep flag. When IGNORE_TEST_GROUP_FOR_E2E_CHANGES is
+				# "true", adapt TEST_GROUP to the changed E2E files (union with changed specs,
+				# or clear to run all on a non-spec change); otherwise use TEST_GROUP as is.
+				if [[ "%IGNORE_TEST_GROUP_FOR_E2E_CHANGES%" == "true" ]]; then
+					GREP_FLAG=${'$'}(TEST_GROUP="%TEST_GROUP%" ./bin/e2e-grep-flag.sh)
+				elif [[ -n "%TEST_GROUP%" ]]; then
 					GREP_FLAG="--grep=%TEST_GROUP%"
 				else
-					echo "TEST_GROUP is not set, running all tests"
 					GREP_FLAG=""
 				fi
+				echo "Playwright grep flag: ${'$'}{GREP_FLAG:-(none, running all tests)}"
 
 				cd test/e2e
 				# Clear any stale teardown-leak markers from a reused checkout before this run.

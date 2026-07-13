@@ -247,7 +247,7 @@ class VideoPressStatsModule extends Component {
 										tabIndex="0"
 										role="button"
 									>
-										{ row.watch_time > 1
+										{ row.watch_time === 0 || row.watch_time >= 1
 											? formatNumber( row.watch_time, { decimals: 1 } )
 											: `< ${ formatNumber( 1, { decimals: 1 } ) }` }
 									</span>

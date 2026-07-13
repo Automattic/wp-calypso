@@ -252,6 +252,8 @@ type TabletViewProps = {
 	stickyRowOffset: number;
 };
 
+const getTabletTopRowPlanCount = ( planCount: number ) => ( 4 === planCount ? 4 : 3 );
+
 const TabletView = ( {
 	currentSitePlanSlug,
 	generatedWPComSubdomain,
@@ -271,7 +273,7 @@ const TabletView = ( {
 	const gridPlansWithoutSpotlight = ! gridPlanForSpotlight
 		? renderedGridPlans
 		: renderedGridPlans.filter( ( { planSlug } ) => gridPlanForSpotlight.planSlug !== planSlug );
-	const numberOfPlansToShowOnTop = 4 === gridPlansWithoutSpotlight.length ? 4 : 3;
+	const numberOfPlansToShowOnTop = getTabletTopRowPlanCount( gridPlansWithoutSpotlight.length );
 	const plansForTopRow = gridPlansWithoutSpotlight.slice( 0, numberOfPlansToShowOnTop );
 	const plansForBottomRow = gridPlansWithoutSpotlight.slice( numberOfPlansToShowOnTop );
 	const tableProps = {
@@ -348,6 +350,9 @@ const FeaturesGrid = ( {
 	const gridPlansWithoutSpotlightCount = gridPlanForSpotlight
 		? gridPlans.filter( ( { planSlug } ) => gridPlanForSpotlight.planSlug !== planSlug ).length
 		: gridPlans.length;
+	const tabletTopRowPlanCount = getTabletTopRowPlanCount( gridPlansWithoutSpotlightCount );
+	const hasTabletSplitRow =
+		'medium' === gridSize && gridPlansWithoutSpotlightCount > tabletTopRowPlanCount;
 
 	return (
 		<div className="plans-grid-next-features-grid">
@@ -357,8 +362,10 @@ const FeaturesGrid = ( {
 					className={ clsx(
 						'plan-features-2023-grid__content',
 						`has-${ gridPlansWithoutSpotlightCount }-cols`,
+						hasTabletSplitRow && `has-tablet-split-row-width-${ tabletTopRowPlanCount }-cols`,
 						{
 							'has-bottom-plan-card': bottomGridPlan,
+							'has-tablet-split-row': hasTabletSplitRow,
 						}
 					) }
 				>
