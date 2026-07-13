@@ -37,7 +37,7 @@ const mockUseSelector = useSelector as jest.Mock;
 function mockSite( {
 	isGatingBusinessQ1,
 	siteCreationFlow = 'onboarding',
-	createdAt = '2026-07-17 00:00:01',
+	createdAt = '2026-07-13 16:07:02',
 }: {
 	isGatingBusinessQ1?: boolean;
 	siteCreationFlow?: string | null;
@@ -111,11 +111,11 @@ describe( 'usePlansGridRedesignExperiment', () => {
 		expect( result.current ).toEqual( INELIGIBLE_RESULT );
 	} );
 
-	test( 'is not eligible for logged-in plans pages when the onboarding-created site predates the experiment launch', () => {
+	test( 'is not eligible for logged-in plans pages when the onboarding-created site is not after the experiment launch', () => {
 		mockSite( {
 			isGatingBusinessQ1: true,
 			siteCreationFlow: 'onboarding',
-			createdAt: '2026-07-06 23:59:59',
+			createdAt: '2026-07-09 16:00:00',
 		} );
 
 		const { result } = renderHook( () =>

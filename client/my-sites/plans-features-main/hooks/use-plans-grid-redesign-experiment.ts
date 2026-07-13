@@ -4,7 +4,7 @@ import getSite from 'calypso/state/sites/selectors/get-site';
 import type { IAppState } from 'calypso/state/types';
 
 const PLANS_GRID_REDESIGN_EXPERIMENT_NAME = 'calypso_pricing_differentiation_202607';
-const PLANS_GRID_REDESIGN_EXPERIMENT_LAUNCH_DATE = '2026-07-09 00:00:00';
+const PLANS_GRID_REDESIGN_EXPERIMENT_LAUNCH_DATE = '2026-07-13 16:07:00';
 
 const PLANS_GRID_REDESIGN_EXPERIMENT_VARIANTS = [
 	'control',
