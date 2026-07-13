@@ -17,6 +17,20 @@ import SummaryChart from '../stats-summary';
 
 import './style.scss';
 
+function* statsByMonth( stats, moment ) {
+	for ( const year of Object.keys( stats.years ) ) {
+		for ( let month = 1; month <= 12; month++ ) {
+			const firstDayOfMonth = moment( `1/${ month }/${ year }`, 'DD/MM/YYYY' );
+			yield {
+				period: firstDayOfMonth.format( 'MMM YYYY' ),
+				periodLabel: firstDayOfMonth.format( 'MMMM YYYY' ),
+				startDate: firstDayOfMonth.format( 'YYYY-MM-DD' ),
+				value: stats.years[ year ]?.months[ month ] ?? 0,
+			};
+		}
+	}
+}
+
 class StatsPostSummary extends Component {
 	static propTypes = {
 		postId: PropTypes.number,
@@ -50,48 +64,57 @@ class StatsPostSummary extends Component {
 	};
 
 	getMaxPages() {
-		const totalRecords = this.getAllRecordsForPeriod().length;
+		// Avoid mapping the entire daily history into record objects (can be
+		// thousands of entries for an old post) just to count them.
+		const totalRecords =
+			this.state.period === 'day'
+				? this.props.stats?.data?.length ?? 0
+				: this.getAllRecordsForPeriod().length;
 		return Math.max( Math.ceil( totalRecords / STATS_SUMMARY_MAX_BARS ), 1 );
 	}
 
-	// Weeks/months/years are aggregated from the full daily history
-	// (stats.data) rather than the API's own weeks/years breakdowns, which
-	// only cover a recent trailing window (e.g. the last 7 weeks, or years
-	// since 2021 even for a post from 2009) instead of the post's full
-	// lifetime — which left paging with nowhere further to go.
 	getAllRecordsForPeriod() {
 		const { moment, stats } = this.props;
-		if ( ! stats?.data ) {
+		if ( ! stats ) {
 			return [];
 		}
 
-		const { period } = this.state;
+		switch ( this.state.period ) {
+			case 'day': {
+				if ( ! stats.data ) {
+					return [];
+				}
 
-		if ( period === 'day' ) {
-			return stats.data.map( ( [ date, value ] ) => {
-				const momentDate = moment( date );
-				return {
-					period: momentDate.format( 'MMM D' ),
-					periodLabel: momentDate.format( 'LL' ),
-					startDate: date,
-					value,
-				};
-			} );
-		}
+				return stats.data.map( ( [ date, value ] ) => {
+					const momentDate = moment( date );
+					return {
+						period: momentDate.format( 'MMM D' ),
+						periodLabel: momentDate.format( 'LL' ),
+						startDate: date,
+						value,
+					};
+				} );
+			}
+			// stats.weeks only ever covers a fixed recent 7-week window
+			// (hard-coded server-side; no request param widens it — see
+			// WPCOM_JSON_API_Stats_V1_1_Post_Views_Endpoint), so weeks are
+			// aggregated from the full daily history instead, to allow
+			// paging back to the post's actual publish date.
+			case 'week': {
+				if ( ! stats.data ) {
+					return [];
+				}
 
-		const unit = period === 'week' ? 'isoWeek' : period;
-		const totals = new Map();
-		for ( const [ date, value ] of stats.data ) {
-			const key = moment( date ).startOf( unit ).format( 'YYYY-MM-DD' );
-			totals.set( key, ( totals.get( key ) ?? 0 ) + value );
-		}
+				const totals = new Map();
+				for ( const [ date, value ] of stats.data ) {
+					const key = moment( date ).startOf( 'isoWeek' ).format( 'YYYY-MM-DD' );
+					totals.set( key, ( totals.get( key ) ?? 0 ) + value );
+				}
 
-		return Array.from( totals.entries() )
-			.sort( ( [ a ], [ b ] ) => ( a < b ? -1 : 1 ) )
-			.map( ( [ key, value ] ) => {
-				const start = moment( key );
-				switch ( period ) {
-					case 'week':
+				return Array.from( totals.entries() )
+					.sort( ( [ a ], [ b ] ) => a.localeCompare( b ) )
+					.map( ( [ key, value ] ) => {
+						const start = moment( key );
 						return {
 							period: start.format( 'MMM D' ),
 							periodLabel:
@@ -99,22 +122,38 @@ class StatsPostSummary extends Component {
 							startDate: key,
 							value,
 						};
-					case 'month':
-						return {
-							period: start.format( 'MMM YYYY' ),
-							periodLabel: start.format( 'MMMM YYYY' ),
-							startDate: key,
-							value,
-						};
-					default:
-						return {
-							period: start.format( 'YYYY' ),
-							periodLabel: start.format( 'YYYY' ),
-							startDate: key,
-							value,
-						};
+					} );
+			}
+			case 'year':
+				if ( ! stats.years ) {
+					return [];
 				}
-			} );
+
+				return Object.keys( stats.years ).map( ( year ) => {
+					return {
+						period: year,
+						periodLabel: year,
+						startDate: moment( year, 'YYYY' ).startOf( 'year' ).format( 'YYYY-MM-DD' ),
+						value: stats.years[ year ].total,
+					};
+				} );
+			case 'month': {
+				if ( ! stats.years ) {
+					return [];
+				}
+
+				// statsByMonth() expands every year in stats.years to a full
+				// 12 months, which for the current year includes months that
+				// haven't happened yet; drop those rather than paginating
+				// into fake future bars.
+				const today = moment();
+				return [ ...statsByMonth( stats, moment ) ].filter( ( record ) =>
+					moment( record.startDate ).isSameOrBefore( today, 'month' )
+				);
+			}
+			default:
+				return [];
+		}
 	}
 
 	getChartData() {
