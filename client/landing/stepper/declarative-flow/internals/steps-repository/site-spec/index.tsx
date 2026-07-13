@@ -68,6 +68,29 @@ function getSpecId( specData: unknown ): string {
 	return getSpecId( specRecord.data ) || getSpecId( specRecord.detail );
 }
 
+type ActiveFlow = 'build-wow' | 'early-provision' | 'ciab' | 'default';
+
+function getActiveFlow( {
+	shouldBuildWow,
+	shouldProvisionAtomicSite,
+	isCiab,
+}: {
+	shouldBuildWow: boolean;
+	shouldProvisionAtomicSite: boolean;
+	isCiab: boolean;
+} ): ActiveFlow {
+	if ( shouldBuildWow ) {
+		return 'build-wow';
+	}
+	if ( shouldProvisionAtomicSite ) {
+		return 'early-provision';
+	}
+	if ( isCiab ) {
+		return 'ciab';
+	}
+	return 'default';
+}
+
 function logEarlyProvisionEvent(
 	type: string,
 	properties: Record< string, unknown > = {},
@@ -99,6 +122,7 @@ const SiteSpec: StepType = function SiteSpec() {
 		enabled: buildWowRequested,
 	} );
 	const shouldBuildWow = isBuildWowEnabled( queryParams, isAutomattician === true );
+	const activeFlow = getActiveFlow( { shouldBuildWow, shouldProvisionAtomicSite, isCiab } );
 	const atomicProvisionSpecId = shouldProvisionAtomicSite ? queryParams.get( 'spec_id' ) ?? '' : '';
 	const buildWowSpecId = shouldBuildWow ? queryParams.get( 'spec_id' ) ?? '' : '';
 	const buildWowSiteIdentifier = getBuildWowSiteIdentifier( {
@@ -329,27 +353,25 @@ const SiteSpec: StepType = function SiteSpec() {
 	);
 
 	useEffect( () => {
-		if ( ! shouldProvisionAtomicSite || ! atomicProvisionSpecId ) {
-			return;
+		if ( activeFlow === 'build-wow' && buildWowSpecId ) {
+			handleBuildWowSpecConfirm( { spec_id: buildWowSpecId } );
+		} else if ( activeFlow === 'early-provision' && atomicProvisionSpecId ) {
+			handleEarlyProvisionSpecConfirm( { spec_id: atomicProvisionSpecId } );
 		}
-
-		handleEarlyProvisionSpecConfirm( { spec_id: atomicProvisionSpecId } );
-	}, [ handleEarlyProvisionSpecConfirm, shouldProvisionAtomicSite, atomicProvisionSpecId ] );
-
-	useEffect( () => {
-		if ( ! shouldBuildWow || ! buildWowSpecId ) {
-			return;
-		}
-
-		handleBuildWowSpecConfirm( { spec_id: buildWowSpecId } );
-	}, [ handleBuildWowSpecConfirm, shouldBuildWow, buildWowSpecId ] );
+	}, [
+		activeFlow,
+		buildWowSpecId,
+		atomicProvisionSpecId,
+		handleBuildWowSpecConfirm,
+		handleEarlyProvisionSpecConfirm,
+	] );
 
 	if ( buildWowRequested && isLoadingAutomattician ) {
 		return <DocumentHead title={ translate( 'Build Your Site with AI' ) } />;
 	}
 
 	let siteSpecStep = <SiteSpecContainer />;
-	if ( shouldBuildWow ) {
+	if ( activeFlow === 'build-wow' ) {
 		siteSpecStep = (
 			<SiteSpecContainer
 				siteSpecConfig={ getBuildWowSiteSpecConfig( {
@@ -361,14 +383,14 @@ const SiteSpec: StepType = function SiteSpec() {
 				onSpecConfirm={ handleBuildWowSpecConfirm }
 			/>
 		);
-	} else if ( shouldProvisionAtomicSite ) {
+	} else if ( activeFlow === 'early-provision' ) {
 		siteSpecStep = (
 			<SiteSpecContainer
 				siteSpecConfig={ getEarlyProvisionSiteSpecConfig() }
 				onSpecConfirm={ handleEarlyProvisionSpecConfirm }
 			/>
 		);
-	} else if ( isCiab ) {
+	} else if ( activeFlow === 'ciab' ) {
 		siteSpecStep = (
 			<SiteSpecContainer
 				siteSpecConfig={ getCiabSiteSpecConfig() }

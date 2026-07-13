@@ -1,6 +1,7 @@
 import { addQueryArgs } from '@wordpress/url';
 import { logToLogstash } from 'calypso/lib/logstash';
 import wpcom from 'calypso/lib/wp';
+import { pollUntil, PollTimeoutError } from './poll-until';
 
 export const BUILD_WOW_QUERY_VALUE = '1';
 const BUILD_WOW_SITE_SPEC_PATH = '/setup/ai-site-builder-spec/site-spec';
@@ -32,8 +33,6 @@ type SiteResponse = {
 type BigSkyPluginStatus = {
 	remote_option_ready?: boolean;
 };
-
-const wait = ( ms: number ) => new Promise< void >( ( resolve ) => setTimeout( resolve, ms ) );
 
 export function isBuildWowEnabled(
 	queryParams: URLSearchParams,
@@ -104,52 +103,61 @@ export async function waitForBuildWowSiteEditorReady(
 	siteIdentifier: string,
 	{ totalTimeoutSeconds = 300, pollIntervalMs = 3000 } = {}
 ): Promise< void > {
-	const maxFinishTime = Date.now() + totalTimeoutSeconds * 1000;
 	let lastIsAtomic: boolean | undefined;
 	let lastRemoteOptionReady: boolean | undefined;
 	let lastError: string | undefined;
 
-	while ( Date.now() < maxFinishTime ) {
-		await wait( pollIntervalMs );
+	try {
+		await pollUntil(
+			async () => {
+				lastError = undefined;
+				try {
+					const site = ( await wpcom.req.get(
+						{
+							path: `/sites/${ siteIdentifier }`,
+							apiVersion: '1.1',
+						},
+						{
+							fields: 'ID,URL,slug,is_wpcom_atomic,options',
+							options: 'is_wpcom_atomic',
+						}
+					) ) as SiteResponse;
+					lastIsAtomic = site?.is_wpcom_atomic || site?.options?.is_wpcom_atomic;
 
-		try {
-			lastError = undefined;
-			const site = ( await wpcom.req.get(
-				{
-					path: `/sites/${ siteIdentifier }`,
-					apiVersion: '1.1',
-				},
-				{
-					fields: 'ID,URL,slug,is_wpcom_atomic,options',
-					options: 'is_wpcom_atomic',
+					if ( ! lastIsAtomic ) {
+						return undefined;
+					}
+
+					const status = ( await wpcom.req.get( {
+						path: `/sites/${ siteIdentifier }/big-sky-plugin`,
+						apiVersion: '1.1',
+					} ) ) as BigSkyPluginStatus;
+					lastRemoteOptionReady = status.remote_option_ready;
+
+					return status.remote_option_ready !== false ? true : undefined;
+				} catch ( error ) {
+					lastError = error instanceof Error ? error.message : String( error );
+					return undefined;
 				}
-			) ) as SiteResponse;
-			lastIsAtomic = site?.is_wpcom_atomic || site?.options?.is_wpcom_atomic;
-
-			if ( ! lastIsAtomic ) {
-				continue;
+			},
+			{
+				maxAttempts: Math.ceil( ( totalTimeoutSeconds * 1000 ) / pollIntervalMs ),
+				intervalMs: pollIntervalMs,
+				initialDelayMs: pollIntervalMs,
 			}
-
-			const status = ( await wpcom.req.get( {
-				path: `/sites/${ siteIdentifier }/big-sky-plugin`,
-				apiVersion: '1.1',
-			} ) ) as BigSkyPluginStatus;
-			lastRemoteOptionReady = status.remote_option_ready;
-
-			if ( status.remote_option_ready !== false ) {
-				return;
-			}
-		} catch ( error ) {
-			lastError = error instanceof Error ? error.message : String( error );
-			continue;
+		);
+	} catch ( error ) {
+		if ( error instanceof PollTimeoutError ) {
+			throw new Error(
+				`Timed out waiting for build-wow site editor readiness. Last state: is_atomic=${ String(
+					lastIsAtomic
+				) }, remote_option_ready=${ String( lastRemoteOptionReady ) }, error=${
+					lastError ?? 'none'
+				}.`
+			);
 		}
+		throw error;
 	}
-
-	throw new Error(
-		`Timed out waiting for build-wow site editor readiness. Last state: is_atomic=${ String(
-			lastIsAtomic
-		) }, remote_option_ready=${ String( lastRemoteOptionReady ) }, error=${ lastError ?? 'none' }.`
-	);
 }
 
 export function logBuildWowEvent(

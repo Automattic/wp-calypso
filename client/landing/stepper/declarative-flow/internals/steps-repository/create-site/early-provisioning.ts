@@ -1,4 +1,5 @@
 import { AI_SITE_BUILDER_FLOW } from '@automattic/onboarding';
+import { pollUntil, PollTimeoutError } from 'calypso/landing/stepper/utils/poll-until';
 import { logToLogstash } from 'calypso/lib/logstash';
 import wpcom from 'calypso/lib/wp';
 
@@ -73,54 +74,48 @@ export async function pollForAtomicProvisioning(
 ) {
 	const startTime = Date.now();
 
-	if ( initialDelayMs > 0 ) {
-		await new Promise( ( resolve ) => setTimeout( resolve, initialDelayMs ) );
-	}
+	try {
+		return await pollUntil(
+			async ( attempt ) => {
+				const siteResponse = ( await wpcom.req.get(
+					{
+						path: `/sites/${ siteId }`,
+						apiVersion: '1.1',
+					},
+					{
+						fields: 'ID,URL,slug,is_wpcom_atomic,options',
+						options: 'is_wpcom_atomic',
+					}
+				) ) as AtomicProvisioningSite;
 
-	for ( let attempt = 1; attempt <= maxAttempts; attempt++ ) {
-		try {
-			const siteResponse = ( await wpcom.req.get(
-				{
-					path: `/sites/${ siteId }`,
-					apiVersion: '1.1',
-				},
-				{
-					fields: 'ID,URL,slug,is_wpcom_atomic,options',
-					options: 'is_wpcom_atomic',
+				if ( ! siteResponse?.is_wpcom_atomic && ! siteResponse?.options?.is_wpcom_atomic ) {
+					return undefined;
 				}
-			) ) as AtomicProvisioningSite;
 
-			if ( siteResponse?.is_wpcom_atomic || siteResponse?.options?.is_wpcom_atomic ) {
 				const siteSlug = getAtomicProvisionedSiteSlug( siteResponse, siteId );
 				logAtomicProvisioningEvent( 'ready', siteId, {
 					attempt,
 					duration_ms: Date.now() - startTime,
 					site_slug: siteSlug,
 				} );
-				return {
-					siteSlug,
-				};
-			}
-		} catch ( error ) {
-			if ( attempt < maxAttempts ) {
-				await new Promise( ( resolve ) => setTimeout( resolve, delayMs ) );
-			}
-			continue;
+				return { siteSlug };
+			},
+			{ maxAttempts, intervalMs: delayMs, initialDelayMs }
+		);
+	} catch ( error ) {
+		if ( ! ( error instanceof PollTimeoutError ) ) {
+			throw error;
 		}
 
-		if ( attempt < maxAttempts ) {
-			await new Promise( ( resolve ) => setTimeout( resolve, delayMs ) );
-		}
+		logAtomicProvisioningEvent( 'timeout', siteId, {
+			attempts: maxAttempts,
+			duration_ms: Date.now() - startTime,
+		} );
+
+		const timeoutError = new Error(
+			'We were unable to finish provisioning your site. Please try again or contact support.'
+		) as Error & { code: string };
+		timeoutError.code = 'wpcom_atomic_provisioning_timeout';
+		throw timeoutError;
 	}
-
-	logAtomicProvisioningEvent( 'timeout', siteId, {
-		attempts: maxAttempts,
-		duration_ms: Date.now() - startTime,
-	} );
-
-	const error = new Error(
-		'We were unable to finish provisioning your site. Please try again or contact support.'
-	) as Error & { code: string };
-	error.code = 'wpcom_atomic_provisioning_timeout';
-	throw error;
 }
