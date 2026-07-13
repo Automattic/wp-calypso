@@ -16,6 +16,56 @@ class TransientSignupError extends Error {}
 // matches (Bad Gateway / Service Unavailable / Gateway Timeout).
 const TRANSIENT_UPSTREAM_STATUSES = [ 502, 503, 504 ];
 
+/** Returns whether a value is a non-null object (arrays included). */
+function isRecord( value: unknown ): value is Record< string, unknown > {
+	return typeof value === 'object' && value !== null;
+}
+
+/**
+ * Validates that a `/users/new` response created an account with the identity
+ * and bearer token required by subsequent authenticated setup calls.
+ *
+ * @param {unknown} response Raw JSON response from `/users/new`.
+ * @returns {NewUserResponse} Validated successful signup response.
+ */
+export function assertSuccessfulNewUserResponse( response: unknown ): NewUserResponse {
+	const responseBody = isRecord( response ) && isRecord( response.body ) ? response.body : null;
+	// `/users/new` is untyped JSON off the wire; user_id can arrive as a numeric
+	// string, so coerce before validating (mirrors the blogid handling below).
+	// Only a number or string coerces; a boolean/array must not slip through
+	// (`Number( true )` is 1, `Number( [ 123 ] )` is 123).
+	const rawUserID = responseBody?.user_id;
+	const userID =
+		typeof rawUserID === 'number' || typeof rawUserID === 'string' ? Number( rawUserID ) : NaN;
+	const username = responseBody?.username;
+	const bearerToken = responseBody?.bearer_token;
+
+	if (
+		responseBody &&
+		responseBody.success === true &&
+		Number.isInteger( userID ) &&
+		userID > 0 &&
+		typeof username === 'string' &&
+		username.trim() !== '' &&
+		typeof bearerToken === 'string' &&
+		bearerToken.trim() !== ''
+	) {
+		// Normalize a numeric-string user_id to a number so downstream integer
+		// checks (e.g. teardown's Number.isInteger) treat the account as closeable
+		// rather than ID-less (mirrors the blogid handling below).
+		responseBody.user_id = userID;
+		return response as NewUserResponse;
+	}
+
+	const details = [ responseBody?.error, responseBody?.message ]
+		.filter( ( value ): value is string => typeof value === 'string' && value.trim() !== '' )
+		.join( ': ' );
+
+	throw new Error(
+		`User signup did not create a usable account${ details ? `: ${ details }` : '.' }`
+	);
+}
+
 /**
  * This object represents multiple pages on WordPress.com:
  * 	- regular (/start/user)
@@ -182,7 +232,7 @@ export class UserSignupPage {
 				// exceed 10s on a slow CI runner.
 				{ timeout: 60_000 }
 			)
-			.then( ( response ) => response.json() );
+			.then( async ( response ) => assertSuccessfulNewUserResponse( await response.json() ) );
 	}
 
 	/**
@@ -476,7 +526,7 @@ export class UserSignupPage {
 			throw new Error( 'Failed to create new user at WooCommerce using WPCC.' );
 		}
 
-		return responseBody;
+		return assertSuccessfulNewUserResponse( responseBody );
 	}
 
 	/**
