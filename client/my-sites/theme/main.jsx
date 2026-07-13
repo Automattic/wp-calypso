@@ -7,7 +7,7 @@ import {
 	WPCOM_FEATURES_COMMUNITY_THEMES,
 } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
-import { Button, Card, Gridicon } from '@automattic/components';
+import { Button, Card } from '@automattic/components';
 import { getThemeIdFromStylesheet, Onboard } from '@automattic/data-stores';
 import {
 	DEFAULT_GLOBAL_STYLES_VARIATION_SLUG,
@@ -919,12 +919,7 @@ class ThemeSheet extends Component {
 	getDefaultOptionLabel = () => {
 		const { defaultOption, isActive, isLoggedIn, siteId, translate } = this.props;
 		if ( isActive ) {
-			return (
-				<span className="theme__sheet-customize-button">
-					<Gridicon icon="external" />
-					{ translate( 'Customize site' ) }
-				</span>
-			);
+			return translate( 'Customize site' );
 		} else if ( isLoggedIn && siteId ) {
 			return translate( 'Activate' );
 		}
@@ -984,7 +979,6 @@ class ThemeSheet extends Component {
 				primary
 				busy={ this.isRequestingActivatingTheme() }
 				disabled={ this.isLoading() }
-				target={ isActive ? '_blank' : null }
 			>
 				{ this.isLoaded() ? label : placeholder }
 			</Button>
