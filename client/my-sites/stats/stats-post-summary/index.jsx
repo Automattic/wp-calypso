@@ -23,6 +23,7 @@ function* statsByMonth( stats, moment ) {
 			yield {
 				period: firstDayOfMonth.format( 'MMM YYYY' ),
 				periodLabel: firstDayOfMonth.format( 'MMMM YYYY' ),
+				startDate: firstDayOfMonth.format( 'YYYY/MM/DD' ),
 				value: stats.years[ year ]?.months[ month ] ?? 0,
 			};
 		}
@@ -40,7 +41,6 @@ class StatsPostSummary extends Component {
 	static MAX_RECORDS_PER_PAGE = 10;
 
 	state = {
-		selectedRecord: null,
 		period: 'day',
 		page: 1,
 	};
@@ -48,24 +48,19 @@ class StatsPostSummary extends Component {
 	selectPeriod( period ) {
 		return () =>
 			this.setState( {
-				selectedRecord: null,
 				period,
 				page: 1,
 			} );
 	}
-
-	selectRecord = ( record ) => {
-		this.setState( { selectedRecord: record } );
-	};
 
 	// Arrows page the whole visible window of bars (like the Traffic chart's
 	// date-range navigation), they never step through individual bars.
 	onPeriodChange = ( { direction } ) => {
 		const maxPages = this.getMaxPages();
 		if ( 'previous' === direction && this.state.page < maxPages ) {
-			this.setState( { selectedRecord: null, page: this.state.page + 1 } );
+			this.setState( { page: this.state.page + 1 } );
 		} else if ( 'next' === direction && this.state.page > 1 ) {
-			this.setState( { selectedRecord: null, page: this.state.page - 1 } );
+			this.setState( { page: this.state.page - 1 } );
 		}
 	};
 
@@ -105,6 +100,7 @@ class StatsPostSummary extends Component {
 					return {
 						period: year,
 						periodLabel: year,
+						startDate: moment( year, 'YYYY' ).startOf( 'year' ).format( 'YYYY/MM/DD' ),
 						value: stats.years[ year ].total,
 					};
 				} );
@@ -162,45 +158,51 @@ class StatsPostSummary extends Component {
 		return allRecords.slice( dataStart, dataEnd );
 	}
 
-	getQuery() {
-		let selectedRecord = this.state.selectedRecord;
+	// The start/end of the currently displayed page of bars, used to keep the
+	// header label and the UTM breakdown showing the same range (mirrors the
+	// Traffic page's start_date/date/summarize query for its date-range UTM
+	// module) instead of a single selected bar.
+	getPageDateRange() {
 		const { period } = this.state;
 		const { moment } = this.props;
-		const query = {
-			period,
-			max: 0,
-		};
+		const chartData = this.getChartData();
 
-		if ( ! selectedRecord ) {
-			const chartData = this.getChartData();
-
-			if ( chartData.length ) {
-				selectedRecord = chartData[ chartData.length - 1 ];
-			} else {
-				return query;
-			}
+		if ( ! chartData.length ) {
+			return null;
 		}
 
-		let date = selectedRecord.startDate;
+		const start = moment( chartData[ 0 ].startDate );
+		const end = moment( chartData[ chartData.length - 1 ].startDate );
 
 		switch ( period ) {
 			case 'week':
-				date = moment( date ).add( 6, 'days' ).format( 'YYYY/MM/DD' );
+				end.add( 6, 'days' );
 				break;
 			case 'month':
-				date = moment( date ).endOf( 'month' ).format( 'YYYY/MM/DD' );
+				end.endOf( 'month' );
 				break;
 			case 'year':
-				date = moment( date ).endOf( 'year' ).format( 'YYYY/MM/DD' );
+				end.endOf( 'year' );
 				break;
-			case 'day':
 			default:
 				break;
 		}
 
+		return { start, end };
+	}
+
+	getQuery() {
+		const dateRange = this.getPageDateRange();
+		if ( ! dateRange ) {
+			return { period: 'day', max: 0, summarize: 1 };
+		}
+
 		return {
-			...query,
-			date,
+			period: 'day',
+			start_date: dateRange.start.format( 'YYYY/MM/DD' ),
+			date: dateRange.end.format( 'YYYY/MM/DD' ),
+			summarize: 1,
+			max: 0,
 		};
 	}
 
@@ -213,10 +215,7 @@ class StatsPostSummary extends Component {
 			{ id: 'year', label: translate( 'Years' ) },
 		];
 		const chartData = this.getChartData();
-		let selectedRecord = this.state.selectedRecord;
-		if ( ! this.state.selectedRecord && chartData.length ) {
-			selectedRecord = chartData[ chartData.length - 1 ];
-		}
+		const pageDateRange = this.getPageDateRange();
 
 		const disablePreviousArrow = this.state.page >= this.getMaxPages();
 		const disableNextArrow = this.state.page <= 1;
@@ -238,7 +237,18 @@ class StatsPostSummary extends Component {
 							disableNextArrow={ disableNextArrow }
 							date={ null }
 						>
-							<DatePicker period={ this.state.period } date={ selectedRecord?.startDate } isShort />
+							<DatePicker
+								period={ this.state.period }
+								dateRange={
+									pageDateRange
+										? {
+												chartStart: pageDateRange.start.format( 'YYYY-MM-DD' ),
+												chartEnd: pageDateRange.end.format( 'YYYY-MM-DD' ),
+										  }
+										: undefined
+								}
+								isShort
+							/>
 						</StatsPeriodNavigation>
 						<SegmentedControl primary>
 							{ periods.map( ( { id, label } ) => (
@@ -261,8 +271,6 @@ class StatsPostSummary extends Component {
 						labelKey="periodLabel"
 						chartType="views"
 						sectionClass="is-views"
-						selected={ selectedRecord }
-						onClick={ this.selectRecord }
 						tabLabel={ translate( 'Views' ) }
 						type="post"
 					/>
