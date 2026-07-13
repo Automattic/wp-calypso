@@ -64,13 +64,56 @@ class StatsPostSummary extends Component {
 	};
 
 	getMaxPages() {
-		// Avoid mapping the entire daily history into record objects (can be
-		// thousands of entries for an old post) just to count them.
-		const totalRecords =
-			this.state.period === 'day'
-				? this.props.stats?.data?.length ?? 0
-				: this.getAllRecordsForPeriod().length;
-		return Math.max( Math.ceil( totalRecords / STATS_SUMMARY_MAX_BARS ), 1 );
+		return Math.max( Math.ceil( this.getTotalRecordCount() / STATS_SUMMARY_MAX_BARS ), 1 );
+	}
+
+	// Days can run to thousands of entries for an old post, so their count is
+	// read directly off stats.data rather than built into record objects.
+	getTotalRecordCount() {
+		return this.state.period === 'day'
+			? this.props.stats?.data?.length ?? 0
+			: this.getAllRecordsForPeriod().length;
+	}
+
+	// [start, end) slice bounds for the current page within a period's full,
+	// most-recent-last record list.
+	getPageSliceBounds( totalCount ) {
+		const { page } = this.state;
+		const dataStart = Math.max( totalCount - STATS_SUMMARY_MAX_BARS * page, 0 );
+		const dataEnd = Math.max( totalCount - STATS_SUMMARY_MAX_BARS * ( page - 1 ), 0 );
+		return [ dataStart, dataEnd ];
+	}
+
+	// Days are paged directly off the raw stats.data pairs, formatting only
+	// the bars for the current page rather than the post's entire history.
+	getPagedDayRecords() {
+		const { moment, stats } = this.props;
+		const data = stats?.data ?? [];
+		const [ dataStart, dataEnd ] = this.getPageSliceBounds( data.length );
+
+		const records = data.slice( dataStart, dataEnd ).map( ( [ date, value ] ) => {
+			const momentDate = moment( date );
+			return {
+				period: momentDate.format( 'MMM D' ),
+				periodLabel: momentDate.format( 'LL' ),
+				startDate: date,
+				value,
+			};
+		} );
+
+		return { records, totalCount: data.length };
+	}
+
+	// The current page of bars for the active period, plus the total record
+	// count it was sliced from (used to compute max pages).
+	getPagedRecords() {
+		if ( this.state.period === 'day' ) {
+			return this.getPagedDayRecords();
+		}
+
+		const allRecords = this.getAllRecordsForPeriod();
+		const [ dataStart, dataEnd ] = this.getPageSliceBounds( allRecords.length );
+		return { records: allRecords.slice( dataStart, dataEnd ), totalCount: allRecords.length };
 	}
 
 	getAllRecordsForPeriod() {
@@ -80,21 +123,6 @@ class StatsPostSummary extends Component {
 		}
 
 		switch ( this.state.period ) {
-			case 'day': {
-				if ( ! stats.data ) {
-					return [];
-				}
-
-				return stats.data.map( ( [ date, value ] ) => {
-					const momentDate = moment( date );
-					return {
-						period: momentDate.format( 'MMM D' ),
-						periodLabel: momentDate.format( 'LL' ),
-						startDate: date,
-						value,
-					};
-				} );
-			}
 			// stats.weeks only ever covers a fixed recent 7-week window
 			// (hard-coded server-side; no request param widens it — see
 			// WPCOM_JSON_API_Stats_V1_1_Post_Views_Endpoint), so weeks are
@@ -156,26 +184,13 @@ class StatsPostSummary extends Component {
 		}
 	}
 
-	getChartData() {
-		const allRecords = this.getAllRecordsForPeriod();
-		if ( ! allRecords.length ) {
-			return [];
-		}
-
-		const { page } = this.state;
-		const dataStart = Math.max( allRecords.length - STATS_SUMMARY_MAX_BARS * page, 0 );
-		const dataEnd = Math.max( allRecords.length - STATS_SUMMARY_MAX_BARS * ( page - 1 ), 0 );
-		return allRecords.slice( dataStart, dataEnd );
-	}
-
-	// The start/end of the currently displayed page of bars, used to keep the
-	// header label and the UTM breakdown showing the same range (mirrors the
-	// Traffic page's start_date/date/summarize query for its date-range UTM
-	// module) instead of a single selected bar.
-	getPageDateRange() {
+	// The start/end of a page of bars, used to keep the header label and the
+	// UTM breakdown showing the same range (mirrors the Traffic page's
+	// start_date/date/summarize query for its date-range UTM module) instead
+	// of a single selected bar.
+	getPageDateRange( chartData ) {
 		const { period } = this.state;
 		const { moment } = this.props;
-		const chartData = this.getChartData();
 
 		if ( ! chartData.length ) {
 			return null;
@@ -208,16 +223,15 @@ class StatsPostSummary extends Component {
 		return { start, end };
 	}
 
-	getQuery() {
-		const dateRange = this.getPageDateRange();
-		if ( ! dateRange ) {
+	getQuery( pageDateRange ) {
+		if ( ! pageDateRange ) {
 			return { period: 'day', max: 0, summarize: 1 };
 		}
 
 		return {
 			period: 'day',
-			start_date: dateRange.start.format( 'YYYY-MM-DD' ),
-			date: dateRange.end.format( 'YYYY-MM-DD' ),
+			start_date: pageDateRange.start.format( 'YYYY-MM-DD' ),
+			date: pageDateRange.end.format( 'YYYY-MM-DD' ),
 			summarize: 1,
 			max: 0,
 		};
@@ -231,10 +245,11 @@ class StatsPostSummary extends Component {
 			{ id: 'month', label: translate( 'Months' ) },
 			{ id: 'year', label: translate( 'Years' ) },
 		];
-		const chartData = this.getChartData();
-		const pageDateRange = this.getPageDateRange();
+		const { records: chartData, totalCount } = this.getPagedRecords();
+		const pageDateRange = this.getPageDateRange( chartData );
 
-		const disablePreviousArrow = this.state.page >= this.getMaxPages();
+		const maxPages = Math.max( Math.ceil( totalCount / STATS_SUMMARY_MAX_BARS ), 1 );
+		const disablePreviousArrow = this.state.page >= maxPages;
 		const disableNextArrow = this.state.page <= 1;
 
 		const summaryWrapperClass = clsx( 'stats-post-summary', 'is-chart-tabs', {
@@ -301,7 +316,7 @@ class StatsPostSummary extends Component {
 									siteId={ siteId }
 									postId={ postId }
 									period={ this.state.period }
-									query={ this.getQuery() }
+									query={ this.getQuery( pageDateRange ) }
 									context={ this.props.context }
 								/>
 							</div>
