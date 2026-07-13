@@ -1345,7 +1345,7 @@ $redesign-table-cell-max-width: 280px;
 					height: 24px;
 					justify-content: center;
 					left: 16px;
-					letter-spacing: 0;
+					letter-spacing: 0.25px;
 					line-height: 20px;
 					padding: 0 8px;
 					position: absolute;
@@ -1388,6 +1388,10 @@ $redesign-table-cell-max-width: 280px;
 			padding-block: 24px;
 
 			.plan-features-2023-grid__popular-badge {
+				.plans-grid__plan-pill {
+					letter-spacing: 0.25px;
+				}
+
 				&.is-premium-plan .plans-grid__plan-pill,
 				&.is-wooexpress-medium-plan .plans-grid__plan-pill {
 					background-color: var( --studio-white );
