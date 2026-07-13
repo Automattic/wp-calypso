@@ -261,10 +261,36 @@ $button-border: 4px;
 		margin: 0;
 	}
 
-	.theme__sheet-main-info-type {
+	.theme__sheet-main-info-badges {
+		align-items: center;
 		align-self: flex-start;
-		margin: 0;
+		display: flex;
+		flex-wrap: wrap;
+		gap: 8px;
 		margin-bottom: 8px;
+
+		// The tier badge renders nothing for some themes (e.g. retired ones), so
+		// keep the row from reserving space when there is no badge to show.
+		&:empty {
+			display: none;
+		}
+	}
+
+	.theme__sheet-main-info-type {
+		margin: 0;
+	}
+
+	.theme__sheet-active-badge {
+		align-items: center;
+		background-color: var(--color-primary);
+		border-radius: 4px;
+		color: var(--studio-white);
+		display: flex;
+		font-family: $sans;
+		font-size: $font-body-extra-small;
+		font-weight: 400;
+		gap: 3px;
+		white-space: nowrap;
 	}
 
 	.theme__sheet-main-info-tag {

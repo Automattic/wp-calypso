@@ -3,7 +3,8 @@ import { renderToString } from 'react-dom/server';
 import { Provider as ReduxProvider } from 'react-redux';
 import { createReduxStore } from 'calypso/state';
 import { setStore } from 'calypso/state/redux-store';
-import { receiveTheme, themeRequestFailure } from 'calypso/state/themes/actions';
+import { receiveTheme, setActiveTheme, themeRequestFailure } from 'calypso/state/themes/actions';
+import { setSelectedSiteId } from 'calypso/state/ui/actions';
 import ThemeSheetComponent from '../main';
 
 jest.mock( '@automattic/odie-client/src/data', () => ( {
@@ -44,6 +45,8 @@ const mockWindow = {
 global.window = mockWindow;
 global.document = {
 	readyState: 'complete',
+	// The web preview reads the Tracks anonymous ID, which parses document.cookie.
+	cookie: '',
 };
 
 const themeData = {
@@ -58,6 +61,8 @@ const themeData = {
 	stylesheet: 'pub/twentysixteen',
 	demo_uri: 'https://twentysixteendemo.wordpress.com/',
 };
+
+const siteId = 2916284;
 
 let queryClient;
 
@@ -98,6 +103,28 @@ describe( 'main', () => {
 			markup = renderToString( <TestComponent store={ store } themeId="twentysixteen" /> );
 		} ).not.toThrow();
 		expect( markup.includes( 'theme__sheet' ) ).toBeTruthy();
+	} );
+
+	test( 'renders the active badge when the theme is active on the selected site', () => {
+		const store = createReduxStore();
+		setStore( store );
+		store.dispatch( receiveTheme( themeData ) );
+		store.dispatch( setSelectedSiteId( siteId ) );
+		store.dispatch( setActiveTheme( siteId, { ...themeData, id: 'twentysixteen' } ) );
+
+		const markup = renderToString( <TestComponent store={ store } themeId="twentysixteen" /> );
+		expect( markup.includes( 'theme__sheet-active-badge' ) ).toBeTruthy();
+	} );
+
+	test( 'does not render the active badge when a different theme is active on the site', () => {
+		const store = createReduxStore();
+		setStore( store );
+		store.dispatch( receiveTheme( themeData ) );
+		store.dispatch( setSelectedSiteId( siteId ) );
+		store.dispatch( setActiveTheme( siteId, { ...themeData, id: 'twentyseventeen' } ) );
+
+		const markup = renderToString( <TestComponent store={ store } themeId="twentysixteen" /> );
+		expect( markup.includes( 'theme__sheet-active-badge' ) ).toBeFalsy();
 	} );
 
 	test( "doesn't throw an exception with invalid theme data", () => {

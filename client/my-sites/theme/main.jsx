@@ -127,6 +127,7 @@ import { getBackPath } from 'calypso/state/themes/themes-ui/selectors';
 import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { ReviewsModal } from '../marketplace/components/reviews-modal';
 import EligibilityWarningModal from '../themes/atomic-transfer-dialog';
+import ThemeActiveBadge from './theme-active-badge';
 import ThemeDownloadCard from './theme-download-card';
 import ThemeFeaturesCard from './theme-features-card';
 import ThemeNotFoundError from './theme-not-found-error';
@@ -680,16 +681,19 @@ class ThemeSheet extends Component {
 				<div className="theme__sheet-main">
 					<div className="theme__sheet-main-info">
 						<h1 className="theme__sheet-main-info-title">
-							<ThemeTierBadge
-								className="theme__sheet-main-info-type"
-								showUpgradeBadge
-								showPartnerPrice
-								themeId={ themeId }
-								siteId={ siteId }
-								siteSlug={ siteSlug }
-								isThemeRetired={ retired }
-								isThemeActiveForSite={ isActive }
-							/>
+							<div className="theme__sheet-main-info-badges">
+								{ isActive && <ThemeActiveBadge /> }
+								<ThemeTierBadge
+									className="theme__sheet-main-info-type"
+									showUpgradeBadge
+									showPartnerPrice
+									themeId={ themeId }
+									siteId={ siteId }
+									siteSlug={ siteSlug }
+									isThemeRetired={ retired }
+									isThemeActiveForSite={ isActive }
+								/>
+							</div>
 
 							{ title }
 							{ softLaunched && (
