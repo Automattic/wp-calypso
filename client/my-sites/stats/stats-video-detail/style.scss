@@ -191,36 +191,45 @@ $border-radius: 5px; // stylelint-disable-line scales/radii
 
 .stats-video-metric-tabs__tab {
 	flex: 1;
-	background: var(--color-surface);
-	border: 1px solid var(--studio-gray-5);
-	border-radius: 5px; /* stylelint-disable-line scales/radii */
+	background: var(--color-neutral-0);
+	border: 1.5px solid transparent;
+	border-radius: 4px;
 	box-sizing: border-box;
 	cursor: pointer;
 	display: flex;
 	flex-direction: column;
 	font-family: $font-sf-pro-text;
-	gap: 12px;
-	padding: 16px 24px;
+	gap: 8px;
+	padding: 8px 16px;
 	text-align: start;
 	width: 100%;
 
 	&:hover {
-		border-color: var(--studio-gray-30);
+		border-color: var(--color-neutral-10);
+
+		.stats-video-metric-tabs__header {
+			color: var(--studio-black);
+		}
 	}
 
 	&.is-selected {
+		background: var(--color-surface);
 		border-color: var(--color-primary);
-		box-shadow: inset 0 0 0 1px var(--color-primary);
+
+		.stats-video-metric-tabs__header {
+			color: var(--studio-black);
+		}
 	}
 }
 
 .stats-video-metric-tabs__header {
 	align-items: center;
-	color: var(--studio-gray-100);
+	color: var(--color-neutral-60);
 	display: flex;
 	font-size: $font-body-small;
 	gap: 8px;
-	line-height: 1.5;
+	letter-spacing: -0.15px;
+	line-height: 20px;
 
 	svg {
 		fill: currentColor;
@@ -228,8 +237,10 @@ $border-radius: 5px; // stylelint-disable-line scales/radii
 }
 
 .stats-video-metric-tabs__value {
-	@include stats-section-header;
-	color: var(--studio-gray-100);
+	color: var(--studio-black);
+	font-size: $font-title-medium;
+	font-weight: 500;
+	line-height: 40px;
 }
 
 @media (max-width: $break-medium) {

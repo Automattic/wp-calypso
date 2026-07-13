@@ -1,7 +1,7 @@
 import { SegmentedControl } from '@automattic/components';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
-import { useMemo, useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import QuerySiteStats from 'calypso/components/data/query-site-stats';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import { useSelector } from 'calypso/state';
@@ -11,6 +11,7 @@ import {
 	isRequestingSiteStatsForQuery,
 } from 'calypso/state/stats/lists/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { STATS_SUMMARY_MAX_BARS } from '../constants';
 import DatePicker from '../stats-date-label';
 import StatsPeriodHeader from '../stats-period-header';
 import StatsPeriodNavigation from '../stats-period-navigation';
@@ -48,6 +49,7 @@ interface BucketRecord {
 
 interface VideoSummaryData {
 	data?: Array< { period: string; value: number } >;
+	post?: { post_date?: string } | null;
 }
 
 const STAT_TYPES: VideoStatType[] = [ 'views', 'impressions', 'watch_time' ];
@@ -84,6 +86,50 @@ export default function VideoSummary( {
 	const [ selectedRecord, setSelectedRecord ] = useState< ChartRecord | null >( null );
 
 	const apiPeriod: ApiPeriod = uiPeriod === 'day' || uiPeriod === 'week' ? 'month' : 'year';
+
+	// The video's publish date, so the chart never shows periods before the
+	// video existed. Always queried with period=month (rather than reusing
+	// `apiPeriod`, which can be 'year') to mirror the parent StatsVideoDetail
+	// component's videoInfoQuery, so this reuses the same cached response.
+	const videoInfoQuery = useMemo(
+		() => ( { postId, statType: 'views', period: 'month' as const } ),
+		[ postId ]
+	);
+	const videoPublishDate = useSelector(
+		( state ) =>
+			(
+				getSiteStatsNormalizedData(
+					state,
+					siteId,
+					'statsVideo',
+					videoInfoQuery
+				) as VideoSummaryData | null
+			 )?.post?.post_date ?? null
+	);
+
+	// The endpoint's `month` window spans 31 days inclusive; trim to the
+	// trailing 30 so totals line up with the 30-day window the Videos module
+	// and the All videos page show by default, and drop any raw entry before
+	// the video's publish date. Shared by the bucketing below and by the
+	// header's date-range label, so both agree on the window.
+	const trimToTrailingWindow = useCallback(
+		(
+			data?: Array< { period: string; value: number } >
+		): Array< { period: string; value: number } > | undefined => {
+			const trimmed = apiPeriod === 'month' && data && data.length > 30 ? data.slice( -30 ) : data;
+			if ( ! trimmed || ! videoPublishDate ) {
+				return trimmed;
+			}
+			// apiPeriod === 'year' raw entries are whole months (e.g.
+			// '2026-07'); comparing those at day granularity would drop the
+			// publish month entirely for a video published mid-month.
+			const unit = apiPeriod === 'year' ? 'month' : 'day';
+			return trimmed.filter(
+				( { period } ) => ! moment( period ).isBefore( videoPublishDate, unit )
+			);
+		},
+		[ apiPeriod, videoPublishDate, moment ]
+	);
 
 	const queries = useMemo(
 		() =>
@@ -154,14 +200,9 @@ export default function VideoSummary( {
 	// period wants, summing values. Bucket keys are normalized ISO dates.
 	const buckets: BucketRecord[] = useMemo( () => {
 		const unit = uiPeriod;
-		// The endpoint's `month` window spans 31 days inclusive; trim to the
-		// trailing 30 so totals line up with the 30-day window the Videos
-		// module and the All videos page show by default.
-		const trimToWindow = ( data?: Array< { period: string; value: number } > ) =>
-			apiPeriod === 'month' && data && data.length > 30 ? data.slice( -30 ) : data;
 		const toBucketMap = ( data?: Array< { period: string; value: number } > ) => {
 			const map = new Map< string, number >();
-			for ( const { period: date, value } of trimToWindow( data ) ?? [] ) {
+			for ( const { period: date, value } of trimToTrailingWindow( data ) ?? [] ) {
 				const parsed = moment( date );
 				if ( ! parsed.isValid() ) {
 					continue;
@@ -186,13 +227,23 @@ export default function VideoSummary( {
 			] )
 		).sort();
 
-		return keys.map( ( key ) => ( {
+		// Cap Weeks/Months/Years to the most recent STATS_SUMMARY_MAX_BARS
+		// buckets so they show the same amount of history per view as the
+		// Post Details chart, which pages in chunks of the same size. Weeks/
+		// Years will still fall short of that cap: the endpoint's `month`/
+		// `year` windows only cover ~30 days / ~13 months of raw data, which
+		// bucket into fewer than 10 weeks/years regardless of this cap —
+		// there's no more granular data to draw from without a backend
+		// change. Days aren't capped; there's no pagination for this chart,
+		// so it shows the full ~30-day window it always has.
+		const cappedKeys = uiPeriod === 'day' ? keys : keys.slice( -STATS_SUMMARY_MAX_BARS );
+		return cappedKeys.map( ( key ) => ( {
 			key,
 			plays: playsByBucket.get( key ) ?? 0,
 			impressions: impressionsByBucket.get( key ) ?? 0,
 			watchTime: watchTimeByBucket.get( key ) ?? 0,
 		} ) );
-	}, [ playsData, impressionsData, watchTimeData, uiPeriod, apiPeriod, moment ] );
+	}, [ playsData, impressionsData, watchTimeData, uiPeriod, trimToTrailingWindow, moment ] );
 
 	const chartData: ChartRecord[] = useMemo(
 		() =>
@@ -235,8 +286,48 @@ export default function VideoSummary( {
 		[ buckets, statType, uiPeriod, moment ]
 	);
 
-	const selected =
-		selectedRecord ?? ( chartData.length ? chartData[ chartData.length - 1 ] : null );
+	// No bar is highlighted by default; the header shows the range instead of
+	// a single bar's date, so defaulting to the most recent bar would highlight
+	// it for no reason until the user actually clicks one.
+	const selected = selectedRecord;
+
+	// The header shows the date range the visible bars cover (like the Post
+	// Details chart's page-range header), rather than the period of whichever
+	// single bar is selected, so it reads the same across every
+	// Day/Week/Month/Year tab and matches Post Details' behavior.
+	const chartDateRange = useMemo( () => {
+		if ( ! buckets.length ) {
+			return undefined;
+		}
+
+		const start = moment( buckets[ 0 ].key );
+		let end = moment( buckets[ buckets.length - 1 ].key );
+		switch ( uiPeriod ) {
+			case 'week':
+				end = end.add( 6, 'days' );
+				break;
+			case 'month':
+				end = end.endOf( 'month' );
+				break;
+			case 'year':
+				end = end.endOf( 'year' );
+				break;
+			default:
+				break;
+		}
+
+		// Don't extend the range into the future when the last bucket is
+		// still the current, in-progress period.
+		const today = moment();
+		if ( end.isAfter( today, 'day' ) ) {
+			end = today;
+		}
+
+		return {
+			chartStart: start.format( 'YYYY-MM-DD' ),
+			chartEnd: end.format( 'YYYY-MM-DD' ),
+		};
+	}, [ buckets, uiPeriod, moment ] );
 
 	// Card totals cover the whole window shown in the chart.
 	const metricValues: VideoMetricValues = useMemo( () => {
@@ -258,23 +349,6 @@ export default function VideoSummary( {
 	const selectStatType = ( newStatType: VideoStatType ) => {
 		setStatType( newStatType );
 		setSelectedRecord( null );
-	};
-
-	// Bucket labels can repeat across the window (e.g. two "Jul" months), so
-	// selection identity uses the unique startDate.
-	const selectedIndex = selected
-		? chartData.findIndex( ( record ) => record.startDate === selected.startDate )
-		: -1;
-
-	const handleArrows = ( { direction }: { direction: string } ) => {
-		if ( selectedIndex === -1 ) {
-			return;
-		}
-		if ( direction === 'previous' && selectedIndex > 0 ) {
-			setSelectedRecord( chartData[ selectedIndex - 1 ] );
-		} else if ( direction === 'next' && selectedIndex < chartData.length - 1 ) {
-			setSelectedRecord( chartData[ selectedIndex + 1 ] );
-		}
 	};
 
 	const tabLabels: Record< VideoStatType, string > = {
@@ -306,16 +380,30 @@ export default function VideoSummary( {
 						query={ queries[ type ] }
 					/>
 				) ) }
+			{ /* apiPeriod is already 'month' on the Days/Weeks tabs, so
+			queries.views above is this exact query already; only fetch it
+			separately when viewing Months/Years. */ }
+			{ siteId && apiPeriod !== 'month' && (
+				<QuerySiteStats
+					key="video-info"
+					siteId={ siteId }
+					statType="statsVideo"
+					query={ videoInfoQuery }
+				/>
+			) }
 
 			<StatsPeriodHeader>
-				<StatsPeriodNavigation
-					showArrows
-					onPeriodChange={ handleArrows }
-					disablePreviousArrow={ selectedIndex <= 0 }
-					disableNextArrow={ selectedIndex === chartData.length - 1 }
-					date={ null }
-				>
-					<DatePicker period={ uiPeriod } date={ selected?.startDate } isShort />
+				{ /* The video stats endpoint only returns a fixed trailing window
+				ending "now" (no backend support yet for an older window), so
+				there's no previous/next period to navigate to; the arrows are
+				hidden rather than shown disabled. */ }
+				<StatsPeriodNavigation showArrows={ false } date={ null }>
+					<DatePicker
+						period={ uiPeriod }
+						date={ selected?.startDate }
+						dateRange={ chartDateRange }
+						isShort
+					/>
 				</StatsPeriodNavigation>
 				<SegmentedControl primary>
 					{ periods.map( ( { id, label } ) => (
