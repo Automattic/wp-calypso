@@ -11,6 +11,7 @@ import {
 	isRequestingSiteStatsForQuery,
 } from 'calypso/state/stats/lists/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { STATS_SUMMARY_MAX_BARS } from '../constants';
 import DatePicker from '../stats-date-label';
 import StatsPeriodHeader from '../stats-period-header';
 import StatsPeriodNavigation from '../stats-period-navigation';
@@ -193,7 +194,14 @@ export default function VideoSummary( {
 			] )
 		).sort();
 
-		return keys.map( ( key ) => ( {
+		// Cap to the most recent STATS_SUMMARY_MAX_BARS buckets so this chart
+		// shows the same amount of history per view as the Post Details chart,
+		// which pages in chunks of the same size. Weeks/Years will still fall
+		// short of that cap: the endpoint's `month`/`year` windows only cover
+		// ~30 days / ~13 months of raw data, which bucket into fewer than 10
+		// weeks/years regardless of this cap — there's no more granular data
+		// to draw from without a backend change.
+		return keys.slice( -STATS_SUMMARY_MAX_BARS ).map( ( key ) => ( {
 			key,
 			plays: playsByBucket.get( key ) ?? 0,
 			impressions: impressionsByBucket.get( key ) ?? 0,
@@ -247,26 +255,36 @@ export default function VideoSummary( {
 	// it for no reason until the user actually clicks one.
 	const selected = selectedRecord;
 
-	// The header shows the fixed trailing window the chart actually covers
-	// (like the Traffic page's date-range header), rather than the period of
-	// whichever single bar is selected, so it reads the same across every
-	// Day/Week/Month/Year tab.
+	// The header shows the date range the visible bars cover (like the Post
+	// Details chart's page-range header), rather than the period of whichever
+	// single bar is selected, so it reads the same across every
+	// Day/Week/Month/Year tab and matches Post Details' behavior.
 	const chartDateRange = useMemo( () => {
-		const windowDates = [ playsData?.data, impressionsData?.data, watchTimeData?.data ]
-			.flatMap( ( data ) => trimToTrailingWindow( data ) ?? [] )
-			.map( ( { period } ) => period )
-			.filter( ( date ) => moment( date ).isValid() )
-			.sort();
-
-		if ( ! windowDates.length ) {
+		if ( ! buckets.length ) {
 			return undefined;
 		}
 
+		const start = moment( buckets[ 0 ].key );
+		const end = moment( buckets[ buckets.length - 1 ].key );
+		switch ( uiPeriod ) {
+			case 'week':
+				end.add( 6, 'days' );
+				break;
+			case 'month':
+				end.endOf( 'month' );
+				break;
+			case 'year':
+				end.endOf( 'year' );
+				break;
+			default:
+				break;
+		}
+
 		return {
-			chartStart: moment( windowDates[ 0 ] ).format( 'YYYY-MM-DD' ),
-			chartEnd: moment().format( 'YYYY-MM-DD' ),
+			chartStart: start.format( 'YYYY-MM-DD' ),
+			chartEnd: end.format( 'YYYY-MM-DD' ),
 		};
-	}, [ playsData, impressionsData, watchTimeData, trimToTrailingWindow, moment ] );
+	}, [ buckets, uiPeriod, moment ] );
 
 	// Card totals cover the whole window shown in the chart.
 	const metricValues: VideoMetricValues = useMemo( () => {

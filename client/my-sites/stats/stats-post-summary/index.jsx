@@ -7,6 +7,7 @@ import { connect } from 'react-redux';
 import QueryPostStats from 'calypso/components/data/query-post-stats';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
 import { getPostStats, isRequestingPostStats } from 'calypso/state/stats/posts/selectors';
+import { STATS_SUMMARY_MAX_BARS } from '../constants';
 import StatsModuleUTM from '../features/modules/stats-utm';
 import { StatsGlobalValuesContext } from '../pages/providers/global-provider';
 import DatePicker from '../stats-date-label';
@@ -23,8 +24,6 @@ class StatsPostSummary extends Component {
 		translate: PropTypes.func,
 		supportsUTMStats: PropTypes.bool,
 	};
-
-	static MAX_RECORDS_PER_PAGE = 10;
 
 	state = {
 		period: 'day',
@@ -52,7 +51,7 @@ class StatsPostSummary extends Component {
 
 	getMaxPages() {
 		const totalRecords = this.getAllRecordsForPeriod().length;
-		return Math.max( Math.ceil( totalRecords / StatsPostSummary.MAX_RECORDS_PER_PAGE ), 1 );
+		return Math.max( Math.ceil( totalRecords / STATS_SUMMARY_MAX_BARS ), 1 );
 	}
 
 	// Weeks/months/years are aggregated from the full daily history
@@ -125,14 +124,8 @@ class StatsPostSummary extends Component {
 		}
 
 		const { page } = this.state;
-		const dataStart = Math.max(
-			allRecords.length - StatsPostSummary.MAX_RECORDS_PER_PAGE * page,
-			0
-		);
-		const dataEnd = Math.max(
-			allRecords.length - StatsPostSummary.MAX_RECORDS_PER_PAGE * ( page - 1 ),
-			0
-		);
+		const dataStart = Math.max( allRecords.length - STATS_SUMMARY_MAX_BARS * page, 0 );
+		const dataEnd = Math.max( allRecords.length - STATS_SUMMARY_MAX_BARS * ( page - 1 ), 0 );
 		return allRecords.slice( dataStart, dataEnd );
 	}
 
