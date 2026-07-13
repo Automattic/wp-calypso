@@ -1,4 +1,4 @@
-import { activeAgencyQuery, agencyTipaltiPayeeQuery } from '@automattic/api-queries';
+import { activeAgencyQuery, tipaltiPayeeQuery } from '@automattic/api-queries';
 import { useQuery } from '@tanstack/react-query';
 import { Button } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
@@ -18,7 +18,7 @@ export default function MissingPaymentSettingsNotice( {
 	const agencyId = agency?.id ?? 0;
 
 	const { data: tipaltiData, isSuccess } = useQuery( {
-		...agencyTipaltiPayeeQuery( agencyId ),
+		...tipaltiPayeeQuery( agencyId ),
 		enabled: !! agencyId && hasSites,
 	} );
 

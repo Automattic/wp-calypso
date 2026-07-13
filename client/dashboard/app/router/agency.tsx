@@ -10,7 +10,6 @@ import {
 	agencyResourcesQuery,
 	agencySiteQuery,
 	agencySitesWithPluginsQuery,
-	agencyTipaltiPayeeQuery,
 	agencyWooPaymentsDataQuery,
 	jetpackAgencyLicensesQuery,
 	mcpSettingsQuery,
@@ -22,6 +21,7 @@ import {
 	siteSettingsQuery,
 	referralsQuery,
 	referralCommissionPayoutQuery,
+	tipaltiPayeeQuery,
 } from '@automattic/api-queries';
 import { createRoute, createLazyRoute, notFound, Outlet } from '@tanstack/react-router';
 import { __ } from '@wordpress/i18n';
@@ -321,7 +321,7 @@ export const earnWooPaymentsRoute = createRoute( {
 		if ( sitesWithPlugins.length > 0 || licenses.length > 0 ) {
 			await Promise.all( [
 				queryClient.ensureQueryData( agencyWooPaymentsDataQuery( agency.id ) ),
-				queryClient.ensureQueryData( agencyTipaltiPayeeQuery( agency.id ) ),
+				queryClient.ensureQueryData( tipaltiPayeeQuery( agency.id ) ),
 			] );
 		}
 	},

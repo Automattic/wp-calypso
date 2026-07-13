@@ -7,7 +7,7 @@ import {
 	activeAgencyQuery,
 	agencySitesWithPluginsQuery,
 	agencyWooPaymentsDataQuery,
-	jetpackLicensesQuery,
+	jetpackAgencyLicensesQuery,
 	jetpackTestConnectionQuery,
 } from '@automattic/api-queries';
 import { useQueries, useQuery } from '@tanstack/react-query';
@@ -51,7 +51,7 @@ export default function useWooPaymentsDashboardData(): WooPaymentsDashboardData 
 	const agencyId = agency?.id ?? 0;
 
 	const { data: licenseSites, isLoading: isLoadingLicensesWithWooPayments } = useQuery( {
-		...jetpackLicensesQuery( agencyId, {
+		...jetpackAgencyLicensesQuery( agencyId, {
 			filter: JetpackLicenseFilter.Attached,
 			search: 'woopayments',
 			sortField: JetpackLicenseSortField.IssuedAt,
