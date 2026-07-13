@@ -16,20 +16,6 @@ import SummaryChart from '../stats-summary';
 
 import './style.scss';
 
-function* statsByMonth( stats, moment ) {
-	for ( const year of Object.keys( stats.years ) ) {
-		for ( let month = 1; month <= 12; month++ ) {
-			const firstDayOfMonth = moment( `1/${ month }/${ year }`, 'DD/MM/YYYY' );
-			yield {
-				period: firstDayOfMonth.format( 'MMM YYYY' ),
-				periodLabel: firstDayOfMonth.format( 'MMMM YYYY' ),
-				startDate: firstDayOfMonth.format( 'YYYY-MM-DD' ),
-				value: stats.years[ year ]?.months[ month ] ?? 0,
-			};
-		}
-	}
-}
-
 class StatsPostSummary extends Component {
 	static propTypes = {
 		postId: PropTypes.number,
@@ -69,75 +55,67 @@ class StatsPostSummary extends Component {
 		return Math.max( Math.ceil( totalRecords / StatsPostSummary.MAX_RECORDS_PER_PAGE ), 1 );
 	}
 
+	// Weeks/months/years are aggregated from the full daily history
+	// (stats.data) rather than the API's own weeks/years breakdowns, which
+	// only cover a recent trailing window (e.g. the last 7 weeks, or years
+	// since 2021 even for a post from 2009) instead of the post's full
+	// lifetime — which left paging with nowhere further to go.
 	getAllRecordsForPeriod() {
 		const { moment, stats } = this.props;
-		if ( ! stats ) {
+		if ( ! stats?.data ) {
 			return [];
 		}
 
-		switch ( this.state.period ) {
-			case 'day': {
-				if ( ! stats.data ) {
-					return [];
-				}
+		const { period } = this.state;
 
-				return stats.data.map( ( [ date, value ] ) => {
-					const momentDate = moment( date );
-					return {
-						period: momentDate.format( 'MMM D' ),
-						periodLabel: momentDate.format( 'LL' ),
-						startDate: date,
-						value,
-					};
-				} );
-			}
-			case 'year':
-				if ( ! stats.years ) {
-					return [];
-				}
-
-				return Object.keys( stats.years ).map( ( year ) => {
-					return {
-						period: year,
-						periodLabel: year,
-						startDate: moment( year, 'YYYY' ).startOf( 'year' ).format( 'YYYY-MM-DD' ),
-						value: stats.years[ year ].total,
-					};
-				} );
-			case 'month': {
-				if ( ! stats.years ) {
-					return [];
-				}
-
-				const months = [ ...statsByMonth( stats, moment ) ];
-				const firstNotEmpty = months.findIndex( ( item ) => item.value !== 0 );
-				const reverseLastNotEmpty = [ ...months ]
-					.reverse()
-					.findIndex( ( item ) => item.value !== 0 );
-				const lastNotEmpty =
-					reverseLastNotEmpty === -1
-						? reverseLastNotEmpty
-						: months.length - ( reverseLastNotEmpty + 1 );
-
-				return months.slice( firstNotEmpty, lastNotEmpty + 1 );
-			}
-			case 'week':
-				if ( ! stats.weeks ) {
-					return [];
-				}
-
-				return stats.weeks.map( ( week ) => {
-					const firstDay = moment( week.days[ 0 ].day );
-					return {
-						period: firstDay.format( 'MMM D' ),
-						periodLabel: firstDay.format( 'L' ) + ' - ' + firstDay.add( 6, 'days' ).format( 'L' ),
-						startDate: moment( week.days[ 0 ].day ).format( 'YYYY-MM-DD' ),
-						value: week.total,
-					};
-				} );
-			default:
-				return [];
+		if ( period === 'day' ) {
+			return stats.data.map( ( [ date, value ] ) => {
+				const momentDate = moment( date );
+				return {
+					period: momentDate.format( 'MMM D' ),
+					periodLabel: momentDate.format( 'LL' ),
+					startDate: date,
+					value,
+				};
+			} );
 		}
+
+		const unit = period === 'week' ? 'isoWeek' : period;
+		const totals = new Map();
+		for ( const [ date, value ] of stats.data ) {
+			const key = moment( date ).startOf( unit ).format( 'YYYY-MM-DD' );
+			totals.set( key, ( totals.get( key ) ?? 0 ) + value );
+		}
+
+		return Array.from( totals.entries() )
+			.sort( ( [ a ], [ b ] ) => ( a < b ? -1 : 1 ) )
+			.map( ( [ key, value ] ) => {
+				const start = moment( key );
+				switch ( period ) {
+					case 'week':
+						return {
+							period: start.format( 'MMM D' ),
+							periodLabel:
+								start.format( 'L' ) + ' - ' + moment( key ).add( 6, 'days' ).format( 'L' ),
+							startDate: key,
+							value,
+						};
+					case 'month':
+						return {
+							period: start.format( 'MMM YYYY' ),
+							periodLabel: start.format( 'MMMM YYYY' ),
+							startDate: key,
+							value,
+						};
+					default:
+						return {
+							period: start.format( 'YYYY' ),
+							periodLabel: start.format( 'YYYY' ),
+							startDate: key,
+							value,
+						};
+				}
+			} );
 	}
 
 	getChartData() {
