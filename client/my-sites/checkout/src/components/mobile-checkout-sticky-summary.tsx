@@ -2,6 +2,7 @@ import { localizeUrl } from '@automattic/i18n-utils';
 import { formatCurrency } from '@automattic/number-formatters';
 import { useShoppingCart, type ResponseCart } from '@automattic/shopping-cart';
 import {
+	filterCostOverridesForLineItem,
 	getLabel,
 	getTotalLineItemFromCart,
 	LineItemBillingInterval,
@@ -25,7 +26,6 @@ const Wrapper = styled.div`
 	padding: 16px;
 	display: flex;
 	flex-direction: column;
-	gap: 16px;
 `;
 
 const Panel = styled.div< { isOpen: boolean } >`
@@ -97,14 +97,14 @@ const ChevronWrapper = styled.span< { isOpen: boolean } >`
 
 const SubmitRow = styled.div`
 	inline-size: 100%;
-	display: flex;
-	align-items: center;
+	margin-block-start: 16px;
 
 	.checkout-steps__submit-button-wrapper {
 		padding: 0;
 		inline-size: 100%;
 	}
 
+	.checkout-steps__submit-button-wrapper > button,
 	.checkout-submit-button,
 	.checkout-submit-button button {
 		width: 100%;
@@ -113,6 +113,7 @@ const SubmitRow = styled.div`
 
 const TosWrapper = styled.div`
 	inline-size: 100%;
+	margin-block-start: 12px;
 	font-size: 12px;
 	line-height: 20px;
 	color: var( --studio-gray-50 );
@@ -136,6 +137,7 @@ const Summary = styled.div`
 	gap: 16px;
 	max-block-size: 70vh;
 	overflow-y: auto;
+	margin-block-end: 16px;
 `;
 
 const SummaryTitle = styled.p`
@@ -183,6 +185,12 @@ const ProductSublabel = styled.div`
 	color: var( --studio-gray-50 );
 `;
 
+const ProductDiscount = styled.div`
+	font-size: 12px;
+	line-height: 20px;
+	color: var( --studio-green-50 );
+`;
+
 const Divider = styled.div`
 	block-size: 1px;
 	inline-size: 100%;
@@ -213,6 +221,7 @@ function StickyOrderSummary( { responseCart }: { responseCart: ResponseCart } ) 
 							stripZeros: true,
 					  } )
 					: undefined;
+				const costOverrides = filterCostOverridesForLineItem( product, translate );
 				return (
 					<Fragment key={ product.uuid }>
 						{ index > 0 && <Divider /> }
@@ -222,6 +231,11 @@ function StickyOrderSummary( { responseCart }: { responseCart: ResponseCart } ) 
 								<ProductSublabel>
 									<LineItemBillingInterval product={ product } />
 								</ProductSublabel>
+								{ costOverrides.map( ( costOverride, overrideIndex ) => (
+									<ProductDiscount key={ overrideIndex }>
+										{ costOverride.humanReadableReason }
+									</ProductDiscount>
+								) ) }
 							</ProductInfo>
 							<LineItemPrice actualAmount={ actualAmount } crossedOutAmount={ crossedOutAmount } />
 						</ProductRow>

@@ -437,6 +437,7 @@ function PortaledCheckoutFormSubmit( {
 	validateForm?: () => Promise< boolean >;
 } ) {
 	const { slotEl } = useSubmitButtonSlot();
+	const { isMobileCheckoutStickySummary } = useMobileCheckoutStickySummaryExperiment();
 	if ( ! slotEl ) {
 		return null;
 	}
@@ -444,7 +445,11 @@ function PortaledCheckoutFormSubmit( {
 		<CheckoutFormSubmit
 			validateForm={ validateForm }
 			continueToNextIncompleteStep
-			submitButtonFooter={ <ChangePaymentMethodFooter stepId="payment-method-step" /> }
+			submitButtonFooter={
+				isMobileCheckoutStickySummary ? undefined : (
+					<ChangePaymentMethodFooter stepId="payment-method-step" />
+				)
+			}
 		/>,
 		slotEl
 	);
