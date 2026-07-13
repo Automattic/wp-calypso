@@ -5,7 +5,8 @@ import { useDispatch, useSelect } from '@wordpress/data';
 import { useI18n } from '@wordpress/react-i18n';
 import { Route, Routes, useNavigate } from 'react-router-dom';
 import { useHelpCenterContext } from '../contexts/HelpCenterContext';
-import { useGetHistoryChats, useStillNeedHelpURL } from '../hooks';
+import { useSiteConnectionHealth } from '../data/use-site-connection-health';
+import { useChatStatus, useGetHistoryChats, useStillNeedHelpURL } from '../hooks';
 import { HELP_CENTER_STORE } from '../stores';
 import { getChatLinkFromConversation } from './utils';
 
@@ -14,9 +15,11 @@ import './help-center-footer.scss';
 export const HelpCenterContactButton = () => {
 	const { __ } = useI18n();
 	const { url } = useStillNeedHelpURL();
-	const { sectionName } = useHelpCenterContext();
+	const { sectionName, site } = useHelpCenterContext();
 	const navigate = useNavigate();
-	const { setMessage } = useDispatch( HELP_CENTER_STORE );
+	const { setMessage, setNewMessagingChat } = useDispatch( HELP_CENTER_STORE );
+	const { isEligibleForChat } = useChatStatus();
+	const { isSiteUnreachable } = useSiteConnectionHealth( url === '/odie' && isEligibleForChat );
 	const searchQuery = useSelect(
 		( select ) => ( select( HELP_CENTER_STORE ) as HelpCenterSelect ).getMessage(),
 		[]
@@ -24,12 +27,28 @@ export const HelpCenterContactButton = () => {
 	const { recentConversations } = useGetHistoryChats();
 
 	const handleClick = () => {
+		// Users whose site is unreachable need a human, not the AI assistant:
+		// route paid-support-eligible users straight to a Happiness Engineer.
+		const escalateToHuman = url === '/odie' && isEligibleForChat && isSiteUnreachable;
+
 		recordTracksEvent( 'calypso_inlinehelp_morehelp_click', {
 			force_site_id: true,
 			location: 'help-center',
 			section: sectionName,
 			button_type: 'Still need help?',
+			escalated_to_human: escalateToHuman,
 		} );
+
+		if ( escalateToHuman ) {
+			setNewMessagingChat( {
+				initialMessage: searchQuery || '',
+				section: sectionName,
+				siteUrl: site?.URL,
+				siteId: site?.ID ? String( site.ID ) : undefined,
+			} );
+			setMessage( '' );
+			return;
+		}
 
 		const openRecentConversation = recentConversations.find(
 			( conversation ) => conversation.metadata?.status === 'open'
