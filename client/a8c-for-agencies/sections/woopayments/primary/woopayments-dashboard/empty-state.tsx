@@ -32,7 +32,7 @@ const WooPaymentsDashboardEmptyState = () => {
 				</div>
 			</div>
 			<VStack className="woopayments-dashboard-empty-state__step" spacing={ 3 }>
-				<Heading level={ 3 }>{ __( 'How do I start?' ) }</Heading>
+				<Heading level={ 4 }>{ __( 'How do I start?' ) }</Heading>
 				<Card>
 					<CardBody>
 						<HStack justify="space-between">
@@ -50,7 +50,7 @@ const WooPaymentsDashboardEmptyState = () => {
 				spacing={ 2 }
 				alignment="flex-start"
 			>
-				<Heading level={ 3 }>{ __( 'Learn more about the program' ) }</Heading>
+				<Heading level={ 4 }>{ __( 'Learn more about the program' ) }</Heading>
 				<Button
 					variant="link"
 					onClick={ () => {

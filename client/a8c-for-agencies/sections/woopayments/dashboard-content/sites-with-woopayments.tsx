@@ -74,7 +74,7 @@ export default function SitesWithWooPayments() {
 		() => [
 			{
 				id: 'site',
-				label: __( 'Site' ).toUpperCase(),
+				label: __( 'Site' ),
 				getValue: () => '-',
 				render: ( { item }: { item: SitesWithWooPaymentsState } ) => (
 					<SiteColumn site={ item.siteUrl } />
@@ -84,7 +84,7 @@ export default function SitesWithWooPayments() {
 			},
 			{
 				id: 'transactions',
-				label: __( 'Transactions' ).toUpperCase(),
+				label: __( 'Transactions' ),
 				getValue: () => '-',
 				render: ( { item } ) => {
 					if ( isLoadingWooPaymentsData ) {
@@ -98,7 +98,7 @@ export default function SitesWithWooPayments() {
 			},
 			{
 				id: 'commissionsPaid',
-				label: __( 'Commissions paid' ).toUpperCase(),
+				label: __( 'Commissions paid' ),
 				getValue: () => '-',
 				render: ( { item } ) => {
 					if ( isLoadingWooPaymentsData ) {
@@ -112,7 +112,7 @@ export default function SitesWithWooPayments() {
 			},
 			{
 				id: 'timeframeCommissions',
-				label: __( 'Timeframe commissions' ).toUpperCase(),
+				label: __( 'Timeframe commissions' ),
 				getValue: () => '-',
 				render: ( { item } ) => {
 					if ( isLoadingWooPaymentsData ) {
@@ -126,7 +126,7 @@ export default function SitesWithWooPayments() {
 			},
 			{
 				id: 'woopaymentsStatus',
-				label: __( 'WooPayments status' ).toUpperCase(),
+				label: __( 'WooPayments status' ),
 				getValue: () => '-',
 				render: ( { item } ) => (
 					<WooPaymentsStatusColumn state={ item.state } siteId={ item.blogId } />
@@ -136,7 +136,7 @@ export default function SitesWithWooPayments() {
 			},
 			{
 				id: 'commissionEligibility',
-				label: __( 'Commission eligibility' ).toUpperCase(),
+				label: __( 'Commission eligibility' ),
 				getValue: () => '-',
 				render: ( { item } ) => (
 					<CommissionEligibilityColumn
