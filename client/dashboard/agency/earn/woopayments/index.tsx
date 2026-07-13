@@ -1,9 +1,11 @@
 import { __experimentalVStack as VStack } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
+import { useMemo } from 'react';
 import { useAnalytics } from '../../../app/analytics';
 import { DataViewsCard } from '../../../components/dataviews';
 import { PageHeader } from '../../../components/page-header';
 import PageLayout from '../../../components/page-layout';
+import AddWooPaymentsToSite from './add-woopayments-to-site';
 import CommissionsTable from './commissions-table';
 import ConsolidatedViews from './consolidated-views';
 import WooPaymentsDashboardEmptyState from './empty-state';
@@ -23,10 +25,18 @@ export default function EarnWooPayments() {
 	const { recordTracksEvent } = useAnalytics();
 	const { downloadCommissionsReport } = useDownloadCommissionsReport();
 
+	const excludedSiteIds = useMemo(
+		() => sitesWithPluginsStates.map( ( site ) => site.blogId ),
+		[ sitesWithPluginsStates ]
+	);
+
 	const header = (
 		<PageHeader
 			title={ __( 'WooPayments commissions' ) }
 			description={ __( 'Earn revenue share from WooPayments on your clients’ stores.' ) }
+			actions={
+				hasSites ? <AddWooPaymentsToSite excludedSiteIds={ excludedSiteIds } /> : undefined
+			}
 		/>
 	);
 
