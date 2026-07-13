@@ -30,7 +30,7 @@ const Subheader = styled.p< {
 				text-wrap: balance;
 				text-align: left;
 				button.is-borderless {
-					font-weight: 500;
+					font-weight: ${ props.isPlansGridRedesign ? 'inherit' : '500' };
 					color: inherit;
 					text-decoration: underline;
 					font-size: inherit;
@@ -59,7 +59,7 @@ const Subheader = styled.p< {
 				}
 				text-align: center;
 				button.is-borderless {
-					font-weight: ${ props.isVisualSplitIntent ? 'inherit' : '500' };
+					font-weight: ${ props.isPlansGridRedesign || props.isVisualSplitIntent ? 'inherit' : '500' };
 					color: var( --studio-gray-90 );
 					text-decoration: underline;
 					font-size: 16px;
