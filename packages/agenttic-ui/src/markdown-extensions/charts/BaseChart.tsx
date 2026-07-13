@@ -5,10 +5,10 @@ import {
 	type BaseChartProps as AutomatticBaseChartProps,
 	type DataPointDate,
 	defaultTheme,
+	type RenderTooltipParams,
 	type SeriesData,
 	ThemeProvider,
 } from '@automattic/charts';
-import type { RenderTooltipParams } from '@visx/xychart/lib/components/Tooltip';
 import type { FC } from 'react';
 import React, { useMemo } from 'react';
 

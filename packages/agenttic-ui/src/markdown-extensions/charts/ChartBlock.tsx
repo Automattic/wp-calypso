@@ -1,8 +1,11 @@
 /**
  * External dependencies
  */
-import type { DataPointDate, SeriesData } from '@automattic/charts';
-import type { RenderTooltipParams } from '@visx/xychart/lib/components/Tooltip';
+import type {
+	DataPointDate,
+	RenderTooltipParams,
+	SeriesData,
+} from '@automattic/charts';
 import type { FC } from 'react';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { __, sprintf } from '@wordpress/i18n';
