@@ -20,13 +20,6 @@ const Subheader = styled.p< {
 				color: var( --color-text );
 				font-size: 0.875rem;
 				line-height: 1.5;
-				${
-					props.isPlansGridRedesign
-						? `
-							letter-spacing: -0.32px;
-						`
-						: ''
-				}
 				text-wrap: balance;
 				text-align: left;
 				button.is-borderless {
@@ -50,13 +43,6 @@ const Subheader = styled.p< {
 				margin: ${ props.isVisualSplitIntent ? '-40px 0 30px 0' : '-32px 0 40px 0' };
 				color: var( --studio-gray-60 );
 				font-size: 1rem;
-				${
-					props.isPlansGridRedesign
-						? `
-							letter-spacing: -0.32px;
-						`
-						: ''
-				}
 				text-align: center;
 				button.is-borderless {
 					font-weight: ${ props.isPlansGridRedesign || props.isVisualSplitIntent ? 'inherit' : '500' };
