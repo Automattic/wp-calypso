@@ -78,4 +78,8 @@ main(
 		} )
 		.help( 'h' )
 		.alias( 'h', 'help' ).argv
-);
+).catch( ( error ) => {
+	// Diagnostics must never block startup: report and exit clean.
+	console.error( chalk.red( 'Calypso Doctor failed, continuing:' ), error.message ?? error );
+	process.exitCode = 0;
+} );
