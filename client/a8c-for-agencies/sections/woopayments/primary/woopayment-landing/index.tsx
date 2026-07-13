@@ -1,4 +1,4 @@
-import { jetpackLicensesQuery } from '@automattic/api-queries';
+import { jetpackAgencyLicensesQuery } from '@automattic/api-queries';
 import page from '@automattic/calypso-router';
 import { useQuery } from '@tanstack/react-query';
 import { useTranslate } from 'i18n-calypso';
@@ -23,7 +23,7 @@ const WooPaymentsLanding = () => {
 	const agencyId = useSelector( getActiveAgencyId );
 
 	const { data: licenses, isFetched } = useQuery( {
-		...jetpackLicensesQuery( agencyId ?? 0, {
+		...jetpackAgencyLicensesQuery( agencyId ?? 0, {
 			filter: LicenseFilter.Attached,
 			search: 'woopayments',
 			sortField: LicenseSortField.IssuedAt,

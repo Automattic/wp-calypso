@@ -1,4 +1,4 @@
-import { agencySitesWithCountQuery } from '@automattic/api-queries';
+import { paginatedAgencySitesQuery } from '@automattic/api-queries';
 import { useQuery } from '@tanstack/react-query';
 import { useMemo } from 'react';
 import { urlToSlug } from 'calypso/lib/url/http-utils';
@@ -22,7 +22,7 @@ export const useFetchManagedSites = () => {
 
 	// First fetch to discover the total number of managed sites so we can request all of them.
 	const firstFetch = useQuery( {
-		...agencySitesWithCountQuery( agencyId ?? 0, { per_page: 1, page: 1 } ),
+		...paginatedAgencySitesQuery( { per_page: 1, page: 1 }, agencyId ?? 0 ),
 		enabled: !! agencyId,
 	} );
 
@@ -30,7 +30,7 @@ export const useFetchManagedSites = () => {
 
 	// Second fetch to retrieve every managed site, only once we know the total and the first is done.
 	const allSitesFetch = useQuery( {
-		...agencySitesWithCountQuery( agencyId ?? 0, { per_page: total, page: 1 } ),
+		...paginatedAgencySitesQuery( { per_page: total, page: 1 }, agencyId ?? 0 ),
 		enabled: !! agencyId && !! total && ! firstFetch.isFetching,
 	} );
 
