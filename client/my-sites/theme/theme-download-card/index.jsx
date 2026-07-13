@@ -1,5 +1,5 @@
-import { Button } from '@wordpress/components';
-import { Icon, external } from '@wordpress/icons';
+import { Icon, cloudDownload, external } from '@wordpress/icons';
+import { Button } from '@wordpress/ui';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { PureComponent } from 'react';
@@ -33,7 +33,13 @@ class ThemeDownloadCard extends PureComponent {
 						title={ translate( 'Download this theme' ) }
 						description={ downloadText }
 						actions={
-							<Button href={ href } size="compact" variant="secondary">
+							<Button
+								nativeButton={ false }
+								render={ <a href={ href } /> }
+								size="compact"
+								variant="outline"
+							>
+								<Button.Icon icon={ cloudDownload } />
 								{ translate( 'Download' ) }
 							</Button>
 						}

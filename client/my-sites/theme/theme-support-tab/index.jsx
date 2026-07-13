@@ -1,7 +1,7 @@
 import { HELP_CENTER_STORE } from '@automattic/help-center/src/stores';
 import { localizeUrl } from '@automattic/i18n-utils';
-import { Button } from '@wordpress/components';
 import { useDispatch as useDataStoreDispatch } from '@wordpress/data';
+import { Button } from '@wordpress/ui';
 import { useTranslate } from 'i18n-calypso';
 import useSupportDocData from 'calypso/components/inline-support-link/use-support-doc-data';
 import ActionList from 'calypso/dashboard/components/action-list';
@@ -30,7 +30,14 @@ export default function ThemeSupportTab( { themeId } ) {
 				) }
 				actions={
 					<Button
-						href={ localizeUrl( 'https://wordpress.com/support/courses' ) }
+						nativeButton={ false }
+						render={
+							<a
+								href={ localizeUrl( 'https://wordpress.com/support/courses' ) }
+								rel="noreferrer"
+								target="_blank"
+							/>
+						}
 						onClick={ () =>
 							dispatch(
 								recordTracksEvent( 'calypso_theme_sheet_button_click', {
@@ -39,10 +46,8 @@ export default function ThemeSupportTab( { themeId } ) {
 								} )
 							)
 						}
-						rel="noreferrer"
-						target="_blank"
 						size="compact"
-						variant="secondary"
+						variant="outline"
 					>
 						{ translate( 'Watch a course' ) }
 					</Button>
@@ -67,7 +72,7 @@ export default function ThemeSupportTab( { themeId } ) {
 								);
 							} }
 							size="compact"
-							variant="secondary"
+							variant="outline"
 						>
 							{ translate( 'Visit guides' ) }
 						</Button>
@@ -95,7 +100,7 @@ export default function ThemeSupportTab( { themeId } ) {
 									);
 								} }
 								size="compact"
-								variant="secondary"
+								variant="outline"
 							>
 								{ translate( 'Learn more' ) }
 							</Button>
@@ -119,7 +124,7 @@ export default function ThemeSupportTab( { themeId } ) {
 									);
 								} }
 								size="compact"
-								variant="secondary"
+								variant="outline"
 							>
 								{ translate( 'Get in touch' ) }
 							</Button>

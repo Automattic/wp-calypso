@@ -3,4 +3,10 @@
 		fill: currentColor;
 		vertical-align: text-bottom;
 	}
+
+	// The @wordpress/ui Button only sets `color`: without this, the SVG icon
+	// stays black instead of following the button color in all states.
+	.action-item__actions svg {
+		fill: currentColor;
+	}
 }
