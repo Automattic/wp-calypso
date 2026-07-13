@@ -1,11 +1,11 @@
 import { isWpError } from '@automattic/api-core';
 import { useQueryClient } from '@tanstack/react-query';
 import { useEffect } from 'react';
-import { useAnalytics } from '../analytics';
+import { bumpStat } from '../analytics';
 
-function getMutationKeyLabel( key: unknown ): string | undefined {
+function getMutationKeyLabel( key: unknown ): string {
 	if ( ! Array.isArray( key ) ) {
-		return undefined;
+		return 'unknown';
 	}
 	const leading: string[] = [];
 	for ( const part of key ) {
@@ -14,12 +14,11 @@ function getMutationKeyLabel( key: unknown ): string | undefined {
 		}
 		leading.push( part );
 	}
-	return leading.length ? leading.join( ':' ) : undefined;
+	return leading.length ? leading.join( ':' ) : 'unknown';
 }
 
 export default function MutationErrorTracker() {
 	const queryClient = useQueryClient();
-	const { recordTracksEvent } = useAnalytics();
 
 	useEffect( () => {
 		return queryClient.getMutationCache().subscribe( ( event ) => {
@@ -30,25 +29,12 @@ export default function MutationErrorTracker() {
 			const { mutation } = event;
 			const error = event.action.error;
 
-			const properties: Record< string, unknown > = {
-				has_snackbar: Boolean( mutation.meta?.snackbar?.error ),
-			};
-
 			const keyLabel = getMutationKeyLabel( mutation.options.mutationKey );
-			if ( keyLabel ) {
-				properties.mutation_key = keyLabel;
-			}
+			const name = isWpError( error ) ? `${ keyLabel }:${ error.status }` : keyLabel;
 
-			if ( isWpError( error ) ) {
-				properties.status = error.status;
-				if ( error.error ) {
-					properties.error_code = error.error;
-				}
-			}
-
-			recordTracksEvent( 'calypso_dashboard_mutation_error', properties );
+			bumpStat( 'hd-mutation-error', name );
 		} );
-	}, [ queryClient, recordTracksEvent ] );
+	}, [ queryClient ] );
 
 	return null;
 }
