@@ -486,10 +486,12 @@ export class DateRange extends Component {
 
 	settleLayout = () => {
 		const contentElement = this.popoverContentElement;
+		if ( ! this.state.popoverVisible || ! contentElement ) {
+			return;
+		}
+
 		// Ignore a single pixel of overflow caused by subpixel layout rounding.
-		const isOverflowing =
-			contentElement && contentElement.scrollWidth > contentElement.clientWidth + 1;
-		if ( ! this.state.popoverVisible || ! contentElement || ! isOverflowing ) {
+		if ( contentElement.scrollWidth <= contentElement.clientWidth + 1 ) {
 			return;
 		}
 
