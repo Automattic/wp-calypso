@@ -1303,6 +1303,10 @@ $redesign-table-cell-max-width: 280px;
 	&.is-medium,
 	&.is-large,
 	&.is-xlarge {
+		.plan-features-2023-grid__table-item.is-top-buttons button {
+			margin-top: 0;
+		}
+
 		thead tr:first-child .plan-features-2023-grid__table-item.popular-plan-parent-class {
 			height: 0;
 			padding: 0;
