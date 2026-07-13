@@ -1,8 +1,20 @@
-// RadioControl renders a fieldset with default spacing; keep the picker rows compact.
-.woopayments-add-site-table__radio {
-	margin: 0;
+.woopayments-add-site-modal {
+	// The Modal has no dedicated footer slot, so pin our own: let the body scroll
+	// and keep the actions visible regardless of how long the site list is.
+	.components-modal__content {
+		display: flex;
+		flex-direction: column;
+		overflow: hidden;
+	}
 
-	.components-radio-control__option {
-		margin: 0;
+	&__body {
+		flex: 1;
+		min-height: 0;
+		overflow-y: auto;
+	}
+
+	&__footer {
+		flex-shrink: 0;
+		padding-top: 24px;
 	}
 }

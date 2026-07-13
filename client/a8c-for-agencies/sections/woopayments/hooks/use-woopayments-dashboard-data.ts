@@ -99,10 +99,14 @@ export default function useWooPaymentsDashboardData(): WooPaymentsDashboardData 
 		combine: ( results ) => results.map( ( result ) => result.data?.connected ?? true ),
 	} );
 
-	const testConnections = allSitesWithWooPayments.map( ( site, index ) => ( {
-		ID: site.blogId,
-		connected: testConnectionResults[ index ] ?? true,
-	} ) );
+	const testConnections = useMemo(
+		() =>
+			allSitesWithWooPayments.map( ( site, index ) => ( {
+				ID: site.blogId,
+				connected: testConnectionResults[ index ] ?? true,
+			} ) ),
+		[ allSitesWithWooPayments, testConnectionResults ]
+	);
 
 	const isLoading = isLoadingLicensesWithWooPayments || isLoadingSitesWithPlugins;
 	const showEmptyState = ! isLoading && ! allSitesWithWooPayments.length;
