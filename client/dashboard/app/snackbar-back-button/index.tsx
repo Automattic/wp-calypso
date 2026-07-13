@@ -19,9 +19,8 @@ type SnackbarBackTo = 'site-overview' | 'site-domains' | 'site-settings-sftp-ssh
 function getSnackbarBackButtonText( to: SnackbarBackTo | undefined ) {
 	switch ( to ) {
 		case 'site-overview':
-			return __( 'Back to Site Overview' );
 		case 'site-domains':
-			return __( 'Back to Site Domain Names' );
+			return __( 'Back to site' );
 		case 'site-settings-sftp-ssh':
 			return __( 'Back to SFTP/SSH settings' );
 		default:
