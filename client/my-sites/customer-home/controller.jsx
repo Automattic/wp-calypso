@@ -1,3 +1,4 @@
+import { getAiLaunchpadStatus } from '@automattic/api-core';
 import page from '@automattic/calypso-router';
 import { captureException } from '@automattic/calypso-sentry';
 import { fetchLaunchpad } from '@automattic/data-stores';
@@ -8,7 +9,11 @@ import { getSiteFragment } from 'calypso/lib/route';
 import { bumpStat } from 'calypso/state/analytics/actions';
 import { requestSite } from 'calypso/state/sites/actions';
 import isSiteBigSkyTrial from 'calypso/state/sites/plans/selectors/is-site-big-sky-trial';
-import { canCurrentUserUseCustomerHome, getSiteUrl } from 'calypso/state/sites/selectors';
+import {
+	canCurrentUserUseCustomerHome,
+	getSiteAdminUrl,
+	getSiteUrl,
+} from 'calypso/state/sites/selectors';
 import {
 	getSelectedSiteSlug,
 	getSelectedSiteId,
@@ -69,6 +74,22 @@ export async function maybeRedirect( context, next ) {
 	}
 
 	const site = getSelectedSite( state );
+
+	// The AI Launchpad replaces My Home: while it's active, setup happens on its
+	// wp-admin page; once completed, the wp-admin dashboard takes over (My Home
+	// stays hidden from the sidebar for these sites).
+	const aiLaunchpadStatus = site && getAiLaunchpadStatus( site );
+	if ( aiLaunchpadStatus ) {
+		const siteAdminUrl = getSiteAdminUrl( state, siteId );
+		if ( siteAdminUrl ) {
+			window.location.replace(
+				aiLaunchpadStatus === 'active'
+					? siteAdminUrl + 'admin.php?page=site-setup-wp-admin'
+					: siteAdminUrl + 'index.php'
+			);
+			return;
+		}
+	}
 
 	try {
 		const isSiteLaunched = site?.launch_status === 'launched' || false;
