@@ -281,15 +281,11 @@ $button-border: 4px;
 	}
 
 	.theme__sheet-active-badge {
-		align-items: center;
 		background-color: var(--color-primary);
 		border-radius: 4px;
 		color: var(--studio-white);
-		display: flex;
 		font-family: $sans;
 		font-size: $font-body-extra-small;
-		font-weight: 400;
-		gap: 3px;
 		white-space: nowrap;
 	}
 
