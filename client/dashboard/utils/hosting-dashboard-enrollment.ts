@@ -58,7 +58,8 @@ export function getHostingDashboardEnrollment(
 }
 
 /**
- * Whether the opt-in welcome modal should be shown. The modal introduces the
+ * Whether the opt-in welcome modal should be shown. Gated by the
+ * `dashboard/opt-in-welcome-modal` feature flag. The modal introduces the
  * dashboard to existing users who were moved onto it by the rollout, so it is
  * limited to enrolled users whose enrollment was forced. New users (who start
  * on the dashboard by default) and users who explicitly opted in (who are
@@ -68,6 +69,10 @@ export function isWelcomeModalEligible(
 	preference: HostingDashboardOptIn | undefined,
 	userId: number | undefined
 ): boolean {
+	if ( ! config.isEnabled( 'dashboard/opt-in-welcome-modal' ) ) {
+		return false;
+	}
+
 	if ( ! userId || userId > NEW_USER_ID_THRESHOLD ) {
 		return false;
 	}
