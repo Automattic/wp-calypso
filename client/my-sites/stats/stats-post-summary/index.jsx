@@ -23,7 +23,7 @@ function* statsByMonth( stats, moment ) {
 			yield {
 				period: firstDayOfMonth.format( 'MMM YYYY' ),
 				periodLabel: firstDayOfMonth.format( 'MMMM YYYY' ),
-				startDate: firstDayOfMonth.format( 'YYYY/MM/DD' ),
+				startDate: firstDayOfMonth.format( 'YYYY-MM-DD' ),
 				value: stats.years[ year ]?.months[ month ] ?? 0,
 			};
 		}
@@ -100,7 +100,7 @@ class StatsPostSummary extends Component {
 					return {
 						period: year,
 						periodLabel: year,
-						startDate: moment( year, 'YYYY' ).startOf( 'year' ).format( 'YYYY/MM/DD' ),
+						startDate: moment( year, 'YYYY' ).startOf( 'year' ).format( 'YYYY-MM-DD' ),
 						value: stats.years[ year ].total,
 					};
 				} );
@@ -131,7 +131,7 @@ class StatsPostSummary extends Component {
 					return {
 						period: firstDay.format( 'MMM D' ),
 						periodLabel: firstDay.format( 'L' ) + ' - ' + firstDay.add( 6, 'days' ).format( 'L' ),
-						startDate: moment( week.days[ 0 ].day ).format( 'YYYY/MM/DD' ),
+						startDate: moment( week.days[ 0 ].day ).format( 'YYYY-MM-DD' ),
 						value: week.total,
 					};
 				} );
@@ -199,8 +199,8 @@ class StatsPostSummary extends Component {
 
 		return {
 			period: 'day',
-			start_date: dateRange.start.format( 'YYYY/MM/DD' ),
-			date: dateRange.end.format( 'YYYY/MM/DD' ),
+			start_date: dateRange.start.format( 'YYYY-MM-DD' ),
+			date: dateRange.end.format( 'YYYY-MM-DD' ),
 			summarize: 1,
 			max: 0,
 		};
