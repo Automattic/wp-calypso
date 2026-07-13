@@ -80,13 +80,13 @@ export async function maybeRedirect( context, next ) {
 	// stays hidden from the sidebar for these sites).
 	const aiLaunchpadStatus = site && getAiLaunchpadStatus( site );
 	if ( aiLaunchpadStatus ) {
-		const siteAdminUrl = getSiteAdminUrl( state, siteId );
-		if ( siteAdminUrl ) {
-			window.location.replace(
-				aiLaunchpadStatus === 'active'
-					? siteAdminUrl + 'admin.php?page=site-setup-wp-admin'
-					: siteAdminUrl + 'index.php'
-			);
+		const redirectUrl = getSiteAdminUrl(
+			state,
+			siteId,
+			aiLaunchpadStatus === 'active' ? 'admin.php?page=site-setup-wp-admin' : 'index.php'
+		);
+		if ( redirectUrl ) {
+			window.location.replace( redirectUrl );
 			return;
 		}
 	}
