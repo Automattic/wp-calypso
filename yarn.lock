@@ -1953,6 +1953,7 @@ __metadata:
     moment: "npm:^2.30.1"
     path-browserify: "npm:^1.0.1"
     postcss: "npm:^8.5.15"
+    postcss-prefix-selector: "npm:^1.16.1"
     prop-types: "npm:^15.8.1"
     react: "npm:^18.3.1"
     react-dom: "npm:^18.3.1"

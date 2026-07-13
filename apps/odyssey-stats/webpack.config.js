@@ -13,6 +13,7 @@ const {
 	defaultRequestToHandle,
 } = require( '@wordpress/dependency-extraction-webpack-plugin/lib/util' );
 const autoprefixerPlugin = require( 'autoprefixer' );
+const prefixSelectorPlugin = require( 'postcss-prefix-selector' );
 const webpack = require( 'webpack' );
 const { BundleAnalyzerPlugin } = require( 'webpack-bundle-analyzer' );
 const cacheIdentifier = require( '../../build-tools/babel/babel-loader-cache-identifier' );
@@ -99,7 +100,34 @@ module.exports = {
 					// This is required because Calypso imports `@automattic/notifications` and that package defines its
 					// own `postcss.config.js` that they use for their webpack bundling process.
 					config: false,
-					plugins: [ autoprefixerPlugin() ],
+					plugins: [
+						// Scopes every selector compiled from Stats/Calypso component stylesheets to
+						// `#wpcom` (the app's own mount point), so generic classes shared across
+						// hundreds of components (`.card`, `.button`, `.notice`, etc.) can't collide
+						// with wp-admin's own chrome or other plugins' admin pages. `app.scss` and
+						// `calypso-global.scss` are excluded because they already hand-scope their
+						// own selectors (including some that deliberately target real wp-admin
+						// elements like `body.wp-admin #wpcontent`) — running this over them again
+						// would double-nest and break those.
+						prefixSelectorPlugin( {
+							prefix: ':where(#wpcom, .color-scheme, .ReactModalPortal)',
+							ignoreFiles: [
+								'odyssey-stats/src/app.scss',
+								'odyssey-stats/src/styles/calypso-global.scss',
+							],
+							// `:root` carries Calypso's CSS custom properties (`--color-primary`, etc.).
+							// Leaving it unscoped keeps them on the real document root, which
+							// Popover/Dialog portals (siblings of #wpcom) also need to inherit from.
+							//
+							// A handful of component styles (RTL flags, scroll-lock, "blank canvas"
+							// mode) intentionally target the real `<html>`/`<body>` directly, since
+							// that's where the app's own JS toggles those classes. Prefixing those
+							// would require `html`/`body` to be a descendant of `#wpcom`, which can
+							// never happen — the rule would just go dead. Leave them untouched instead.
+							exclude: [ ':root', /(^|[\s,])(html|body)(?=$|[\s.[:#,])/ ],
+						} ),
+						autoprefixerPlugin(),
+					],
 				},
 			} ),
 			FileConfig.loader(),
