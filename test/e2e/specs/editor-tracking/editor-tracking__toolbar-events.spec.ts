@@ -1,166 +1,162 @@
-/**
- * @group editor-tracking
- */
-
 import {
 	DataHelper,
-	EditorPage,
-	envVariables,
-	getTestAccountByFeature,
-	envToFeatureKey,
-	TestAccount,
 	EditorTracksEventManager,
 	FullSiteEditorPage,
 	HeaderBlock,
+	TestAccount,
+	envToFeatureKey,
+	envVariables,
+	getTestAccountByFeature,
 } from '@automattic/calypso-e2e';
-import { Browser, Page } from 'playwright';
-import { skipDescribeIf } from '../../jest-helpers';
-
-declare const browser: Browser;
+import { expect, tags, test } from '../../lib/pw-base';
 
 // None of these toolbar actions are available in mobile.
-skipDescribeIf( envVariables.VIEWPORT_NAME === 'mobile' )(
+test.describe(
 	DataHelper.createSuiteTitle( 'Editor tracking: Toolbar-related events' ),
-	function () {
+	{ tag: [ tags.EDITOR_TRACKING ] },
+	() => {
 		const features = envToFeatureKey( envVariables );
 
-		describe( 'wpcom_block_editor_list_view_toggle/select', function () {
-			let page: Page;
-			let editorPage: EditorPage;
+		// Symptom: the "Document Overview" button opens the list view, but no
+		// "wpcom_block_editor_list_view_toggle" event fires, so the first assertion
+		// (is_open === true) fails. Verified the button works and the list view
+		// becomes visible; only the Tracks event is missing.
+		// Working hypothesis: a product-side regression. The wpcom tracking in
+		// apps/wpcom-block-editor/src/wpcom/features/tracking.js wires
+		// `setIsListViewOpened` only on the `core/edit-post` and `core/edit-site`
+		// stores, but the current unified Gutenberg dispatches list-view toggling
+		// through `core/editor`, which the tracking does not intercept. The fix
+		// belongs in that tracking file (out of scope here: product code, not
+		// test/e2e or calypso-e2e). The undo/redo test below is unaffected.
+		// See TESTOPS-49.
+		test( '"wpcom_block_editor_list_view_toggle" and "wpcom_block_editor_list_view_select" events fire', async ( {
+			page,
+			pageEditor,
+		} ) => {
+			test.skip(
+				envVariables.VIEWPORT_NAME === 'mobile',
+				'Toolbar actions not available on mobile'
+			);
+
+			const accountName = getTestAccountByFeature( features );
 			let editorTracksEventManager: EditorTracksEventManager;
 			let siteSlug: string;
 
-			beforeAll( async () => {
-				page = await browser.newPage();
-
-				const accountName = getTestAccountByFeature( features );
+			await test.step( 'Given I am authenticated', async () => {
 				const testAccount = new TestAccount( accountName );
 				await testAccount.authenticate( page );
 				siteSlug = testAccount.getSiteURL( { protocol: false } );
-
 				editorTracksEventManager = new EditorTracksEventManager( page );
-				editorPage = new EditorPage( page );
 			} );
 
-			it( 'Start a new post', async function () {
-				await editorPage.visit( 'post', { siteSlug } );
-				await editorPage.waitUntilLoaded();
+			await test.step( 'When I start a new post', async () => {
+				await pageEditor.visit( 'post', { siteSlug } );
+				await pageEditor.waitUntilLoaded();
 			} );
 
-			it( 'Enter some text', async function () {
-				await editorPage.enterText( 'The actual text does not matter for this test.' );
+			await test.step( 'When I enter some text', async () => {
+				await pageEditor.enterText( 'The actual text does not matter for this test.' );
 			} );
 
-			it( 'Toggle open the list view', async function () {
-				await editorPage.openListView();
+			await test.step( 'When I toggle open the list view', async () => {
+				await pageEditor.openListView();
 			} );
 
-			it( '"wpcom_block_editor_list_view_toggle" event fires with "is_open" set to true', async function () {
-				const eventDidFire = await editorTracksEventManager.didEventFire(
+			await test.step( 'Then "wpcom_block_editor_list_view_toggle" event fires with "is_open" === true', async () => {
+				const eventDidFire = await editorTracksEventManager!.didEventFire(
 					'wpcom_block_editor_list_view_toggle',
 					{
-						matchingProperties: {
-							is_open: true,
-						},
+						matchingProperties: { is_open: true },
 					}
 				);
 				expect( eventDidFire ).toBe( true );
 			} );
 
-			it( 'Select paragphraph block in list view', async function () {
-				await editorPage.clickFirstListViewEntryByType( 'Paragraph' );
+			await test.step( 'When I select paragraph block in list view', async () => {
+				await pageEditor.clickFirstListViewEntryByType( 'Paragraph' );
 			} );
 
-			it( '"wpcom_block_editor_list_view_select" event fires with correct "block_name" property', async function () {
-				const eventDidFire = await editorTracksEventManager.didEventFire(
+			await test.step( 'Then "wpcom_block_editor_list_view_select" event fires with correct "block_name"', async () => {
+				const eventDidFire = await editorTracksEventManager!.didEventFire(
 					'wpcom_block_editor_list_view_select',
 					{
-						matchingProperties: {
-							block_name: 'core/paragraph',
-						},
+						matchingProperties: { block_name: 'core/paragraph' },
 					}
 				);
 				expect( eventDidFire ).toBe( true );
 			} );
 
-			it( 'Close the list view', async function () {
-				await editorPage.closeListView();
+			await test.step( 'When I close the list view', async () => {
+				await pageEditor.closeListView();
 			} );
 
-			it( '"wpcom_block_editor_list_view_toggle" event fires again with "is_open" set to false', async function () {
-				const eventDidFire = await editorTracksEventManager.didEventFire(
+			await test.step( 'Then "wpcom_block_editor_list_view_toggle" event fires again with "is_open" === false', async () => {
+				const eventDidFire = await editorTracksEventManager!.didEventFire(
 					'wpcom_block_editor_list_view_toggle',
 					{
-						matchingProperties: {
-							is_open: false,
-						},
+						matchingProperties: { is_open: false },
 					}
 				);
 				expect( eventDidFire ).toBe( true );
-			} );
-
-			it( 'Close the page', async function () {
-				await page.close();
 			} );
 		} );
 
-		describe( 'wpcom_block_editor_undo/redo_performed', function () {
-			let page: Page;
+		test( '"wpcom_block_editor_undo_performed" and "wpcom_block_editor_redo_performed" events fire', async ( {
+			page,
+		} ) => {
+			test.skip(
+				envVariables.VIEWPORT_NAME === 'mobile',
+				'Toolbar actions not available on mobile'
+			);
+
+			const accountName = getTestAccountByFeature( { ...features, variant: 'siteEditor' } );
+			let testAccount: TestAccount;
 			let fullSiteEditorPage: FullSiteEditorPage;
 			let editorTracksEventManager: EditorTracksEventManager;
-			let testAccount: TestAccount;
 
-			beforeAll( async () => {
-				page = await browser.newPage();
-
-				const accountName = getTestAccountByFeature( { ...features, variant: 'siteEditor' } );
+			await test.step( 'Given I am authenticated', async () => {
 				testAccount = new TestAccount( accountName );
 				await testAccount.authenticate( page );
-
 				editorTracksEventManager = new EditorTracksEventManager( page );
 				fullSiteEditorPage = new FullSiteEditorPage( page );
 			} );
 
-			it( 'Go to site editor', async function () {
-				await fullSiteEditorPage.visit( testAccount.getSiteURL( { protocol: true } ) );
+			await test.step( 'When I go to site editor', async () => {
+				await fullSiteEditorPage.visit( testAccount!.getSiteURL( { protocol: true } ) );
 				await fullSiteEditorPage.prepareForInteraction( { leaveWithoutSaving: true } );
 			} );
 
-			it( 'Close the navigation sidebar', async function () {
+			await test.step( 'When I close the navigation sidebar', async () => {
 				await fullSiteEditorPage.closeNavSidebar();
 			} );
 
-			it( 'Add a Header block', async function () {
+			await test.step( 'When I add a Header block', async () => {
 				await fullSiteEditorPage.addBlockFromSidebar(
 					HeaderBlock.blockName,
 					HeaderBlock.blockEditorSelector
 				);
 			} );
 
-			it( 'Undo action', async function () {
+			await test.step( 'When I undo action', async () => {
 				await fullSiteEditorPage.undo();
 			} );
 
-			it( '"wpcom_block_editor_undo_performed" event fires', async function () {
-				const eventDidFire = await editorTracksEventManager.didEventFire(
+			await test.step( 'Then "wpcom_block_editor_undo_performed" event fires', async () => {
+				const eventDidFire = await editorTracksEventManager!.didEventFire(
 					'wpcom_block_editor_undo_performed'
 				);
 				expect( eventDidFire ).toBe( true );
 			} );
 
-			it( 'Redo action', async function () {
+			await test.step( 'When I redo action', async () => {
 				await fullSiteEditorPage.redo();
 			} );
 
-			it( '"wpcom_block_editor_redo_performed" event fires', async function () {
-				const eventDidFire = await editorTracksEventManager.didEventFire(
+			await test.step( 'Then "wpcom_block_editor_redo_performed" event fires', async () => {
+				const eventDidFire = await editorTracksEventManager!.didEventFire(
 					'wpcom_block_editor_redo_performed'
 				);
 				expect( eventDidFire ).toBe( true );
-			} );
-
-			it( 'Close the page', async function () {
-				await page.close();
 			} );
 		} );
 	}

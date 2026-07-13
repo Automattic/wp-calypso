@@ -1,135 +1,129 @@
-/**
- * @group editor-tracking
- */
-
 import {
 	DataHelper,
+	EditorTracksEventManager,
+	ElementHelper,
+	FullSiteEditorPage,
+	HeaderBlock,
+	TemplatePartBlock,
+	TestAccount,
+	envToFeatureKey,
 	envVariables,
 	getTestAccountByFeature,
-	envToFeatureKey,
-	TestAccount,
-	EditorTracksEventManager,
-	FullSiteEditorPage,
-	TemplatePartBlock,
-	ElementHelper,
-	HeaderBlock,
 } from '@automattic/calypso-e2e';
-import { Browser, Page } from 'playwright';
-
-declare const browser: Browser;
+import { expect, tags, test } from '../../lib/pw-base';
 
 const createTemplatePartName = () =>
 	`TP-${ DataHelper.getTimestamp() }-${ DataHelper.getRandomInteger( 0, 100 ) }`;
 
-describe(
+test.describe(
 	DataHelper.createSuiteTitle( 'Editor tracking: Site editor template events' ),
-	function () {
+	{ tag: [ tags.EDITOR_TRACKING ] },
+	() => {
 		const features = envToFeatureKey( envVariables );
-		const accountName = getTestAccountByFeature( { ...features, variant: 'siteEditor' } );
 
-		const createdTemplateParts: string[] = [];
-
-		afterAll( async function () {
-			if ( createdTemplateParts.length > 0 ) {
-				// Template part data cleanup
-				const page = await browser.newPage();
-
-				const testAccount = new TestAccount( accountName );
-				await testAccount.authenticate( page );
-
-				const fullSiteEditorPage = new FullSiteEditorPage( page );
-				await fullSiteEditorPage.visit( testAccount.getSiteURL( { protocol: true } ) );
-				await fullSiteEditorPage.prepareForInteraction( { leaveWithoutSaving: true } );
-
-				console.info( `Deleting created template parts: ${ createdTemplateParts.join( ', ' ) }` );
-				await fullSiteEditorPage.deleteTemplateParts( createdTemplateParts );
-			}
-		} );
-
-		describe( 'wpcom_block_editor_create_template_part', function () {
-			let page: Page;
+		// The template-parts manager moved under the "Patterns" nav screen and now
+		// renders as a DataViews grid; the shared helpers (navigateToTemplatePartsManager
+		// and TemplatePartListComponent.deleteTemplatePart) were updated for that,
+		// which re-enables this test. The other two suites below still resist; see
+		// their leading comments.
+		test.describe( '"wpcom_block_editor_create_template_part" event fires', () => {
 			let testAccount: TestAccount;
 			let fullSiteEditorPage: FullSiteEditorPage;
 			let editorTracksEventManager: EditorTracksEventManager;
 			let templatePartBlock: TemplatePartBlock;
-
 			let templatePartName: string;
 
-			beforeAll( async () => {
-				page = await browser.newPage();
-
-				testAccount = new TestAccount( accountName );
-				await testAccount.authenticate( page );
-
-				editorTracksEventManager = new EditorTracksEventManager( page );
-				fullSiteEditorPage = new FullSiteEditorPage( page );
-
-				templatePartName = createTemplatePartName();
+			test.afterEach( async () => {
+				if ( templatePartName ) {
+					await fullSiteEditorPage.deleteTemplateParts( [ templatePartName ] );
+				}
 			} );
 
-			it( 'Visit the site editor', async function () {
-				await fullSiteEditorPage.visit( testAccount.getSiteURL( { protocol: true } ) );
-				await fullSiteEditorPage.prepareForInteraction( { leaveWithoutSaving: true } );
-			} );
-
-			it( 'Close the navigation sidebar', async function () {
-				await fullSiteEditorPage.closeNavSidebar();
-			} );
-
-			it( 'Add a Template Part block', async function () {
-				const block = await fullSiteEditorPage.addBlockFromSidebar(
-					TemplatePartBlock.blockName,
-					TemplatePartBlock.blockEditorSelector
+			test( 'event fires after creating a template part', async ( { page } ) => {
+				// Site editor nav sidebar cannot be closed on mobile
+				// (FullSiteEditorPage.closeNavSidebar throws), so this flow is desktop-only.
+				test.skip(
+					envVariables.VIEWPORT_NAME === 'mobile',
+					'Site editor navigation sidebar cannot be closed on mobile'
 				);
-				templatePartBlock = new TemplatePartBlock( page, block );
-			} );
 
-			it( 'Create a new template part', async function () {
-				await templatePartBlock.clickStartBlank();
-				await fullSiteEditorPage.nameAndFinalizeTemplatePart( templatePartName );
-				createdTemplateParts.push( templatePartName );
-			} );
+				const accountName = getTestAccountByFeature( { ...features, variant: 'siteEditor' } );
 
-			it( '"wpcom_block_editor_create_template_part" event fires', async function () {
-				const eventDidFire = await editorTracksEventManager.didEventFire(
-					'wpcom_block_editor_create_template_part'
-				);
-				expect( eventDidFire ).toBe( true );
-			} );
+				await test.step( 'Given I am authenticated', async () => {
+					testAccount = new TestAccount( accountName );
+					await testAccount.authenticate( page );
+					editorTracksEventManager = new EditorTracksEventManager( page );
+					fullSiteEditorPage = new FullSiteEditorPage( page );
+					templatePartName = createTemplatePartName();
+				} );
 
-			it( 'Close the page', async function () {
-				await page.close();
+				await test.step( 'When I visit the site editor', async () => {
+					await fullSiteEditorPage.visit( testAccount!.getSiteURL( { protocol: true } ) );
+					await fullSiteEditorPage.prepareForInteraction( { leaveWithoutSaving: true } );
+				} );
+
+				await test.step( 'When I close the navigation sidebar', async () => {
+					await fullSiteEditorPage.closeNavSidebar();
+				} );
+
+				await test.step( 'When I add a Template Part block', async () => {
+					const block = await fullSiteEditorPage.addBlockFromSidebar(
+						TemplatePartBlock.blockName,
+						TemplatePartBlock.blockEditorSelector
+					);
+					templatePartBlock = new TemplatePartBlock( page, block );
+				} );
+
+				await test.step( 'When I create a new template part', async () => {
+					await templatePartBlock!.clickStartBlank();
+					await fullSiteEditorPage.nameAndFinalizeTemplatePart( templatePartName );
+				} );
+
+				await test.step( 'Then "wpcom_block_editor_create_template_part" event fires', async () => {
+					const eventDidFire = await editorTracksEventManager!.didEventFire(
+						'wpcom_block_editor_create_template_part'
+					);
+					expect( eventDidFire ).toBe( true );
+				} );
 			} );
 		} );
 
-		describe( 'wpcom_block_editor_template_part_choose_existing/replace', function () {
-			let page: Page;
+		// Symptom: after adding a Header block, TemplatePartBlock.clickChoose times
+		// out waiting for the in-block `button:has-text("Choose")` placeholder.
+		// The inserted Header block no longer renders the Choose/placeholder state,
+		// and the flow depends on theme-specific named template parts
+		// ("Header (Dark, small)" / "Header (Dark, large)") that the current site
+		// theme does not provide. Re-enabling needs the choose-existing flow and the
+		// template-part names reworked against the current theme. The shared
+		// nav-sidebar/DataViews helper fixes (used by the create_template_part test
+		// above) are already in; this is a separate, block-placeholder + theme-data
+		// drift. See TESTOPS-49.
+		test( '"wpcom_block_editor_template_part_choose_existing" and "replace" events fire correctly', async ( {
+			page,
+		} ) => {
+			const accountName = getTestAccountByFeature( { ...features, variant: 'siteEditor' } );
 			let testAccount: TestAccount;
 			let fullSiteEditorPage: FullSiteEditorPage;
 			let editorTracksEventManager: EditorTracksEventManager;
 			let headerBlock: TemplatePartBlock;
 
-			beforeAll( async () => {
-				page = await browser.newPage();
-
+			await test.step( 'Given I am authenticated', async () => {
 				testAccount = new TestAccount( accountName );
 				await testAccount.authenticate( page );
-
 				editorTracksEventManager = new EditorTracksEventManager( page );
 				fullSiteEditorPage = new FullSiteEditorPage( page );
 			} );
 
-			it( 'Visit the site editor', async function () {
-				await fullSiteEditorPage.visit( testAccount.getSiteURL( { protocol: true } ) );
+			await test.step( 'When I visit the site editor', async () => {
+				await fullSiteEditorPage.visit( testAccount!.getSiteURL( { protocol: true } ) );
 				await fullSiteEditorPage.prepareForInteraction( { leaveWithoutSaving: true } );
 			} );
 
-			it( 'Close the navigation sidebar', async function () {
+			await test.step( 'When I close the navigation sidebar', async () => {
 				await fullSiteEditorPage.closeNavSidebar();
 			} );
 
-			it( 'Add a Header block', async function () {
-				// It's just a Template Part block with a different name in the sidebar, so we can re-use that POM class.
+			await test.step( 'When I add a Header block', async () => {
 				const block = await fullSiteEditorPage.addBlockFromSidebar(
 					HeaderBlock.blockName,
 					HeaderBlock.blockEditorSelector
@@ -137,136 +131,135 @@ describe(
 				headerBlock = new HeaderBlock( page, block );
 			} );
 
-			it( 'Choose an existing template ("Header (Dark, small)")', async function () {
-				await headerBlock.clickChoose();
+			await test.step( 'When I choose an existing template ("Header (Dark, small)")', async () => {
+				await headerBlock!.clickChoose();
 				await fullSiteEditorPage.selectExistingTemplatePartFromModal( 'Header (Dark, small)' );
 			} );
 
-			it( '"wpcom_block_editor_template_part_choose_existing" event fires', async function () {
-				const eventDidFire = await editorTracksEventManager.didEventFire(
+			await test.step( 'Then "wpcom_block_editor_template_part_choose_existing" event fires', async () => {
+				const eventDidFire = await editorTracksEventManager!.didEventFire(
 					'wpcom_block_editor_template_part_choose_existing'
 				);
 				expect( eventDidFire ).toBe( true );
 			} );
 
-			it( '"wpcom_block_editor_template_part_replace" event does NOT fire', async function () {
-				const eventDidFire = await editorTracksEventManager.didEventFire(
+			await test.step( 'Then "wpcom_block_editor_template_part_replace" event does NOT fire', async () => {
+				const eventDidFire = await editorTracksEventManager!.didEventFire(
 					'wpcom_block_editor_template_part_replace'
 				);
 				expect( eventDidFire ).toBe( false );
 			} );
 
-			it( 'Clear events for a clean slate', async function () {
-				await editorTracksEventManager.clearEvents();
+			await test.step( 'When I clear events for a clean slate', async () => {
+				await editorTracksEventManager!.clearEvents();
 			} );
 
-			it( 'Replace template with a different template ("Header (Dark, large)")', async function () {
-				// First, let's make sure we have the right block focused!
-				const blockId = await ElementHelper.getIdFromBlock( headerBlock.block );
+			await test.step( 'When I replace template with a different template ("Header (Dark, large)")', async () => {
+				const blockId = await ElementHelper.getIdFromBlock( headerBlock!.block );
 				await fullSiteEditorPage.focusBlock( `#${ blockId }` );
-
-				// Then we can take block toolbar actions.
 				await fullSiteEditorPage.clickBlockToolbarOption( 'Replace Header (Dark, small)' );
 				await fullSiteEditorPage.selectExistingTemplatePartFromModal( 'Header (Dark, large)' );
 			} );
 
-			it( '"wpcom_block_editor_template_part_replace" event fires', async function () {
-				const eventDidFire = await editorTracksEventManager.didEventFire(
+			await test.step( 'Then "wpcom_block_editor_template_part_replace" event fires', async () => {
+				const eventDidFire = await editorTracksEventManager!.didEventFire(
 					'wpcom_block_editor_template_part_replace'
 				);
 				expect( eventDidFire ).toBe( true );
 			} );
 
-			it( '"wpcom_block_editor_template_part_choose_existing" event does NOT fire', async function () {
-				const eventDidFire = await editorTracksEventManager.didEventFire(
+			await test.step( 'Then "wpcom_block_editor_template_part_choose_existing" event does NOT fire', async () => {
+				const eventDidFire = await editorTracksEventManager!.didEventFire(
 					'wpcom_block_editor_template_part_choose_existing'
 				);
 				expect( eventDidFire ).toBe( false );
 			} );
-
-			it( 'Close the page', async function () {
-				await page.close();
-			} );
 		} );
 
-		describe( 'wpcom_block_editor_convert_to_template_part / wpcom_block_editor_template_part_detach_blocks', function () {
-			let page: Page;
+		// Symptom: the convert flow opens a DIFFERENT modal than the start-blank one
+		// used above. Its primary button is "Add" (not "Create", which the
+		// start-blank modal still uses) and it exposes an area selector, so
+		// TemplatePartModalComponent.clickCreate misses it. After clicking "Add" the
+		// "wpcom_block_editor_convert_to_template_part" event still did not fire in a
+		// probe, so there may be an additional product-side tracking gap. The detach
+		// assertion also hardcodes a `pub/twentytwentytwo//...` template_part_id,
+		// which is theme-specific and likely wrong for the current site theme.
+		// Re-enabling needs a convert-modal handler, confirmation the convert/detach
+		// events still fire, and a theme-agnostic template_part_id assertion. See
+		// TESTOPS-49.
+		test.describe( '"wpcom_block_editor_convert_to_template_part" and "detach_blocks" events fire correctly', () => {
 			let testAccount: TestAccount;
 			let fullSiteEditorPage: FullSiteEditorPage;
 			let editorTracksEventManager: EditorTracksEventManager;
-
 			let templatePartName: string;
 
-			beforeAll( async () => {
-				page = await browser.newPage();
-
-				testAccount = new TestAccount( accountName );
-				await testAccount.authenticate( page );
-
-				editorTracksEventManager = new EditorTracksEventManager( page );
-				fullSiteEditorPage = new FullSiteEditorPage( page );
-
-				templatePartName = createTemplatePartName();
+			test.afterEach( async () => {
+				if ( templatePartName ) {
+					await fullSiteEditorPage.deleteTemplateParts( [ templatePartName ] );
+				}
 			} );
 
-			it( 'Visit the site editor', async function () {
-				await fullSiteEditorPage.visit( testAccount.getSiteURL( { protocol: true } ) );
-				await fullSiteEditorPage.prepareForInteraction( { leaveWithoutSaving: true } );
-			} );
+			test( 'convert and detach events fire with correct properties', async ( { page } ) => {
+				const accountName = getTestAccountByFeature( { ...features, variant: 'siteEditor' } );
 
-			it( 'Close the navigation sidebar', async function () {
-				await fullSiteEditorPage.closeNavSidebar();
-			} );
+				await test.step( 'Given I am authenticated', async () => {
+					testAccount = new TestAccount( accountName );
+					await testAccount.authenticate( page );
+					editorTracksEventManager = new EditorTracksEventManager( page );
+					fullSiteEditorPage = new FullSiteEditorPage( page );
+					templatePartName = createTemplatePartName();
+				} );
 
-			it( 'Add a Page List block', async function () {
-				await fullSiteEditorPage.addBlockFromSidebar(
-					'Page List',
-					'[aria-label="Block: Page List"]'
-				);
-			} );
+				await test.step( 'When I visit the site editor', async () => {
+					await fullSiteEditorPage.visit( testAccount!.getSiteURL( { protocol: true } ) );
+					await fullSiteEditorPage.prepareForInteraction( { leaveWithoutSaving: true } );
+				} );
 
-			it( 'Convert to a template part', async function () {
-				// Page List block should already be focused due to just adding it.
-				await fullSiteEditorPage.clickBlockToolbarOption( 'Create Template part' );
-				await fullSiteEditorPage.nameAndFinalizeTemplatePart( templatePartName );
-				// This toast in unique to conversion. It doesn't fire during other creation flows..
-				await fullSiteEditorPage.waitForConfirmationToast( 'Template part created' );
-				createdTemplateParts.push( templatePartName );
-			} );
+				await test.step( 'When I close the navigation sidebar', async () => {
+					await fullSiteEditorPage.closeNavSidebar();
+				} );
 
-			it( '"wpcom_block_editor_convert_to_template_part" event fires with correct "block_names"', async function () {
-				const eventDidFire = await editorTracksEventManager.didEventFire(
-					'wpcom_block_editor_convert_to_template_part',
-					{
-						matchingProperties: {
-							block_names: 'core/page-list',
-						},
-					}
-				);
-				expect( eventDidFire ).toBe( true );
-			} );
+				await test.step( 'When I add a Page List block', async () => {
+					await fullSiteEditorPage.addBlockFromSidebar(
+						'Page List',
+						'[aria-label="Block: Page List"]'
+					);
+				} );
 
-			it( 'Detach the blocks from the newly create template part', async function () {
-				// After creation, the new Template Part block should already be focused.
-				await fullSiteEditorPage.clickBlockToolbarOption( 'Detach blocks from template part' );
-			} );
+				await test.step( 'When I convert to a template part', async () => {
+					await fullSiteEditorPage.clickBlockToolbarOption( 'Create Template part' );
+					await fullSiteEditorPage.nameAndFinalizeTemplatePart( templatePartName );
+					await fullSiteEditorPage.waitForConfirmationToast( 'Template part created' );
+				} );
 
-			it( '"wpcom_block_editor_template_part_detach_blocks" event fires with correct "block_names" and "template_part_id"', async function () {
-				const eventDidFire = await editorTracksEventManager.didEventFire(
-					'wpcom_block_editor_template_part_detach_blocks',
-					{
-						matchingProperties: {
-							block_names: 'core/page-list',
-							// Event property values are always lower case.
-							template_part_id: `pub/twentytwentytwo//${ templatePartName.toLowerCase() }`,
-						},
-					}
-				);
-				expect( eventDidFire ).toBe( true );
-			} );
+				await test.step( 'Then "wpcom_block_editor_convert_to_template_part" event fires with correct "block_names"', async () => {
+					const eventDidFire = await editorTracksEventManager!.didEventFire(
+						'wpcom_block_editor_convert_to_template_part',
+						{
+							matchingProperties: {
+								block_names: 'core/page-list',
+							},
+						}
+					);
+					expect( eventDidFire ).toBe( true );
+				} );
 
-			it( 'Close the page', async function () {
-				await page.close();
+				await test.step( 'When I detach the blocks from the newly created template part', async () => {
+					await fullSiteEditorPage.clickBlockToolbarOption( 'Detach blocks from template part' );
+				} );
+
+				await test.step( 'Then "wpcom_block_editor_template_part_detach_blocks" event fires with correct properties', async () => {
+					const eventDidFire = await editorTracksEventManager!.didEventFire(
+						'wpcom_block_editor_template_part_detach_blocks',
+						{
+							matchingProperties: {
+								block_names: 'core/page-list',
+								template_part_id: `pub/twentytwentytwo//${ templatePartName!.toLowerCase() }`,
+							},
+						}
+					);
+					expect( eventDidFire ).toBe( true );
+				} );
 			} );
 		} );
 	}

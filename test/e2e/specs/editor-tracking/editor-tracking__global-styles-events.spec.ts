@@ -1,199 +1,194 @@
-/**
- * @group editor-tracking
- */
-
 import {
 	DataHelper,
-	envVariables,
-	getTestAccountByFeature,
-	envToFeatureKey,
-	TestAccount,
 	EditorTracksEventManager,
 	FullSiteEditorPage,
+	TestAccount,
+	envToFeatureKey,
+	envVariables,
+	getTestAccountByFeature,
 } from '@automattic/calypso-e2e';
-import { Browser, Page } from 'playwright';
-import { skipDescribeIf } from '../../jest-helpers';
+import { expect, tags, test } from '../../lib/pw-base';
 
-declare const browser: Browser;
+test.describe(
+	DataHelper.createSuiteTitle( 'Editor tracking: Global styles events' ),
+	{ tag: [ tags.EDITOR_TRACKING ] },
+	() => {
+		const features = envToFeatureKey( envVariables );
 
-describe( DataHelper.createSuiteTitle( 'Editor tracking: Global styles events' ), function () {
-	const features = envToFeatureKey( envVariables );
-	const accountName = getTestAccountByFeature( { ...features, variant: 'siteEditor' } );
+		// .fixme: the helpers were reworked this round — openSiteStyles now uses the
+		// header "Styles" toggle (button[aria-label="Styles"]) and the styles sidebar
+		// selectors were updated for the renamed `.editor-global-styles-sidebar`
+		// container / "Close Styles" control, so opening and closing the panel works
+		// again. What still blocks these tests is product-side tracking that was not
+		// updated for the edit-site -> editor rename:
+		//   - panel_toggle: the OPEN event fires (id-based enableComplementaryArea),
+		//     but the CLOSE event does not — trackDisableComplementaryArea only fires
+		//     for scope === 'core/edit-site', while the panel now disables under
+		//     'core/editor'.
+		//   - menu_selected: dead. wpcom-block-editor-global-styles-menu-selected.js
+		//     keys its delegated click selector and its isAtTopLevel guard on the old
+		//     '.edit-site-global-styles-sidebar' class, which no longer exists.
+		//   - update / save: rely on the same global-styles surface and were not
+		//     re-verified once the above two proved dead.
+		// Re-enabling needs the wpcom tracking (apps/wpcom-block-editor) re-pointed at
+		// the new editor scope/classes; that is product code, out of scope here. The
+		// helper fixes are kept so this only needs the product tracking once fixed.
+		// See TESTOPS-49.
+		test( '"wpcom_block_editor_global_styles_panel_toggle" event fires on open and close', async ( {
+			page,
+		} ) => {
+			const accountName = getTestAccountByFeature( { ...features, variant: 'siteEditor' } );
+			let testAccount: TestAccount;
+			let fullSiteEditorPage: FullSiteEditorPage;
+			let editorTracksEventManager: EditorTracksEventManager;
 
-	describe( 'wpcom_block_editor_global_styles_panel_toggle', function () {
-		let page: Page;
-		let testAccount: TestAccount;
-		let fullSiteEditorPage: FullSiteEditorPage;
-		let editorTracksEventManager: EditorTracksEventManager;
+			await test.step( 'Given I am authenticated', async () => {
+				testAccount = new TestAccount( accountName );
+				await testAccount.authenticate( page );
+				editorTracksEventManager = new EditorTracksEventManager( page );
+				fullSiteEditorPage = new FullSiteEditorPage( page );
+			} );
 
-		beforeAll( async () => {
-			page = await browser.newPage();
+			await test.step( 'When I visit the site editor', async () => {
+				await fullSiteEditorPage.visit( testAccount!.getSiteURL( { protocol: true } ) );
+				await fullSiteEditorPage.prepareForInteraction( { leaveWithoutSaving: true } );
+			} );
 
-			testAccount = new TestAccount( accountName );
-			await testAccount.authenticate( page );
+			await test.step( 'When I close the navigation sidebar', async () => {
+				await fullSiteEditorPage.closeNavSidebar();
+			} );
 
-			editorTracksEventManager = new EditorTracksEventManager( page );
-			fullSiteEditorPage = new FullSiteEditorPage( page );
+			await test.step( 'When I open site styles', async () => {
+				await fullSiteEditorPage.openSiteStyles();
+			} );
+
+			await test.step( 'Then "wpcom_block_editor_global_styles_panel_toggle" event fires with "open" === true', async () => {
+				const eventDidFire = await editorTracksEventManager!.didEventFire(
+					'wpcom_block_editor_global_styles_panel_toggle',
+					{
+						matchingProperties: { open: true },
+					}
+				);
+				expect( eventDidFire ).toBe( true );
+			} );
+
+			await test.step( 'When I close site styles', async () => {
+				await fullSiteEditorPage.closeSiteStyles();
+			} );
+
+			await test.step( 'Then "wpcom_block_editor_global_styles_panel_toggle" event fires with "open" === false', async () => {
+				const eventDidFire = await editorTracksEventManager!.didEventFire(
+					'wpcom_block_editor_global_styles_panel_toggle',
+					{
+						matchingProperties: { open: false },
+					}
+				);
+				expect( eventDidFire ).toBe( true );
+			} );
 		} );
 
-		it( 'Visit the site editor', async function () {
-			await fullSiteEditorPage.visit( testAccount.getSiteURL( { protocol: true } ) );
-			await fullSiteEditorPage.prepareForInteraction( { leaveWithoutSaving: true } );
+		// .fixme: depends on the same global-styles panel flow as the
+		// panel_toggle test above. Re-enable once the styles helpers are
+		// updated for the new site-editor navigation. See TESTOPS-49.
+		test( '"wpcom_block_editor_global_styles_menu_selected" event fires for Typography and Blocks', async ( {
+			page,
+		} ) => {
+			const accountName = getTestAccountByFeature( { ...features, variant: 'siteEditor' } );
+			let testAccount: TestAccount;
+			let fullSiteEditorPage: FullSiteEditorPage;
+			let editorTracksEventManager: EditorTracksEventManager;
+
+			await test.step( 'Given I am authenticated', async () => {
+				testAccount = new TestAccount( accountName );
+				await testAccount.authenticate( page );
+				editorTracksEventManager = new EditorTracksEventManager( page );
+				fullSiteEditorPage = new FullSiteEditorPage( page );
+			} );
+
+			await test.step( 'When I visit the site editor', async () => {
+				await fullSiteEditorPage.visit( testAccount!.getSiteURL( { protocol: true } ) );
+				await fullSiteEditorPage.prepareForInteraction( { leaveWithoutSaving: true } );
+			} );
+
+			await test.step( 'When I close the navigation sidebar', async () => {
+				await fullSiteEditorPage.closeNavSidebar();
+			} );
+
+			await test.step( 'When I open site styles', async () => {
+				await fullSiteEditorPage.openSiteStyles();
+			} );
+
+			await test.step( 'When I click on "Typography" menu button', async () => {
+				await fullSiteEditorPage.clickStylesMenuButton( 'Typography' );
+			} );
+
+			await test.step( 'Then "wpcom_block_editor_global_styles_menu_selected" event fires with "menu" === "typography"', async () => {
+				const eventDidFire = await editorTracksEventManager!.didEventFire(
+					'wpcom_block_editor_global_styles_menu_selected',
+					{
+						matchingProperties: { menu: 'typography' },
+					}
+				);
+				expect( eventDidFire ).toBe( true );
+			} );
+
+			await test.step( 'When I return to top menu level', async () => {
+				await fullSiteEditorPage.returnToStylesTopMenu();
+			} );
+
+			await test.step( 'When I click on "Blocks" menu button', async () => {
+				await fullSiteEditorPage.clickStylesMenuButton( 'Blocks' );
+			} );
+
+			await test.step( 'Then "wpcom_block_editor_global_styles_menu_selected" event fires with "menu" === "blocks"', async () => {
+				const eventDidFire = await editorTracksEventManager!.didEventFire(
+					'wpcom_block_editor_global_styles_menu_selected',
+					{
+						matchingProperties: { menu: 'blocks' },
+					}
+				);
+				expect( eventDidFire ).toBe( true );
+			} );
 		} );
 
-		it( 'Close the navigation sidebar', async function () {
-			await fullSiteEditorPage.closeNavSidebar();
-		} );
+		// .fixme: depends on the same global-styles panel flow. See TESTOPS-49.
+		test( '"wpcom_block_editor_global_styles_update" event fires for color and typography changes', async ( {
+			page,
+		} ) => {
+			const accountName = getTestAccountByFeature( { ...features, variant: 'siteEditor' } );
+			let testAccount: TestAccount;
+			let fullSiteEditorPage: FullSiteEditorPage;
+			let editorTracksEventManager: EditorTracksEventManager;
 
-		it( 'Open site styles', async function () {
-			await fullSiteEditorPage.openSiteStyles();
-		} );
+			await test.step( 'Given I am authenticated', async () => {
+				testAccount = new TestAccount( accountName );
+				await testAccount.authenticate( page );
+				editorTracksEventManager = new EditorTracksEventManager( page );
+				fullSiteEditorPage = new FullSiteEditorPage( page );
+			} );
 
-		it( '"wpcom_block_editor_global_styles_panel_toggle" event fires with "open" === true', async function () {
-			const eventDidFire = await editorTracksEventManager.didEventFire(
-				'wpcom_block_editor_global_styles_panel_toggle',
-				{
-					matchingProperties: {
-						open: true,
-					},
-				}
-			);
-			expect( eventDidFire ).toBe( true );
-		} );
+			await test.step( 'When I visit the site editor', async () => {
+				await fullSiteEditorPage.visit( testAccount!.getSiteURL( { protocol: true } ) );
+				await fullSiteEditorPage.prepareForInteraction( { leaveWithoutSaving: true } );
+			} );
 
-		it( 'Close site styles', async function () {
-			await fullSiteEditorPage.closeSiteStyles();
-		} );
+			await test.step( 'When I close the navigation sidebar', async () => {
+				await fullSiteEditorPage.closeNavSidebar();
+			} );
 
-		it( '"wpcom_block_editor_global_styles_panel_toggle" event fires with "open" === false', async function () {
-			const eventDidFire = await editorTracksEventManager.didEventFire(
-				'wpcom_block_editor_global_styles_panel_toggle',
-				{
-					matchingProperties: {
-						open: false,
-					},
-				}
-			);
-			expect( eventDidFire ).toBe( true );
-		} );
+			await test.step( 'When I open site styles', async () => {
+				await fullSiteEditorPage.openSiteStyles();
+			} );
 
-		it( 'Close the page', async function () {
-			await page.close();
-		} );
-	} );
-
-	describe( 'wpcom_block_editor_global_styles_menu_selected', function () {
-		let page: Page;
-		let testAccount: TestAccount;
-		let fullSiteEditorPage: FullSiteEditorPage;
-		let editorTracksEventManager: EditorTracksEventManager;
-
-		beforeAll( async () => {
-			page = await browser.newPage();
-
-			testAccount = new TestAccount( accountName );
-			await testAccount.authenticate( page );
-
-			editorTracksEventManager = new EditorTracksEventManager( page );
-			fullSiteEditorPage = new FullSiteEditorPage( page );
-		} );
-
-		it( 'Visit the site editor', async function () {
-			await fullSiteEditorPage.visit( testAccount.getSiteURL( { protocol: true } ) );
-			await fullSiteEditorPage.prepareForInteraction( { leaveWithoutSaving: true } );
-		} );
-
-		it( 'Close the navigation sidebar', async function () {
-			await fullSiteEditorPage.closeNavSidebar();
-		} );
-
-		it( 'Open site styles', async function () {
-			await fullSiteEditorPage.openSiteStyles();
-		} );
-
-		it( 'Click on "Typography" menu button', async function () {
-			await fullSiteEditorPage.clickStylesMenuButton( 'Typography' );
-		} );
-
-		it( '"wpcom_block_editor_global_styles_menu_selected" event fires with "menu" === "typography"', async function () {
-			const eventDidFire = await editorTracksEventManager.didEventFire(
-				'wpcom_block_editor_global_styles_menu_selected',
-				{
-					matchingProperties: {
-						menu: 'typography',
-					},
-				}
-			);
-			expect( eventDidFire ).toBe( true );
-		} );
-
-		it( 'Return to top menu level', async function () {
-			await fullSiteEditorPage.returnToStylesTopMenu();
-		} );
-
-		it( 'Click on "Blocks" menu button', async function () {
-			await fullSiteEditorPage.clickStylesMenuButton( 'Blocks' );
-		} );
-
-		it( '"wpcom_block_editor_global_styles_menu_selected" event fires with "menu" === "blocks"', async function () {
-			const eventDidFire = await editorTracksEventManager.didEventFire(
-				'wpcom_block_editor_global_styles_menu_selected',
-				{
-					matchingProperties: {
-						menu: 'blocks',
-					},
-				}
-			);
-			expect( eventDidFire ).toBe( true );
-		} );
-
-		it( 'Close the page', async function () {
-			await page.close();
-		} );
-	} );
-
-	describe( 'wpcom_block_editor_global_styles_update', function () {
-		let page: Page;
-		let testAccount: TestAccount;
-		let fullSiteEditorPage: FullSiteEditorPage;
-		let editorTracksEventManager: EditorTracksEventManager;
-
-		beforeAll( async () => {
-			page = await browser.newPage();
-
-			testAccount = new TestAccount( accountName );
-			await testAccount.authenticate( page );
-
-			editorTracksEventManager = new EditorTracksEventManager( page );
-			fullSiteEditorPage = new FullSiteEditorPage( page );
-		} );
-
-		it( 'Visit the site editor', async function () {
-			await fullSiteEditorPage.visit( testAccount.getSiteURL( { protocol: true } ) );
-			await fullSiteEditorPage.prepareForInteraction( { leaveWithoutSaving: true } );
-		} );
-
-		it( 'Close the navigation sidebar', async function () {
-			await fullSiteEditorPage.closeNavSidebar();
-		} );
-
-		it( 'Open site styles', async function () {
-			await fullSiteEditorPage.openSiteStyles();
-		} );
-
-		describe( 'Updating styles directly', function () {
-			it( 'Update the global background color', async function () {
-				// We can always guarantee a target color event if we click a different one first.
-				await fullSiteEditorPage.setGlobalColorStyle( 'Background', {
-					colorName: 'Primary',
-				} );
+			await test.step( 'When I update the global background color', async () => {
+				await fullSiteEditorPage.setGlobalColorStyle( 'Background', { colorName: 'Primary' } );
 				await fullSiteEditorPage.setGlobalColorStyle( 'Background', {
 					colorName: 'Background',
 				} );
 			} );
 
-			it( '"wpcom_block_editor_global_styles_update" event fires with correct color properties', async function () {
-				const eventDidFire = await editorTracksEventManager.didEventFire(
+			await test.step( 'Then "wpcom_block_editor_global_styles_update" event fires with correct color properties', async () => {
+				const eventDidFire = await editorTracksEventManager!.didEventFire(
 					'wpcom_block_editor_global_styles_update',
 					{
 						matchingProperties: {
@@ -201,14 +196,13 @@ describe( DataHelper.createSuiteTitle( 'Editor tracking: Global styles events' )
 							field: 'background',
 							field_value: 'var:preset|color|background',
 						},
-						waitForEventMs: 2 * 1000, // Style update events are debounced
+						waitForEventMs: 2 * 1000,
 					}
 				);
 				expect( eventDidFire ).toBe( true );
 			} );
 
-			it( 'Update the font appearance for the Heading block', async function () {
-				// We can always guarantee a target font appearance event if we select a different one first.
+			await test.step( 'When I update the font appearance for the Heading block', async () => {
 				await fullSiteEditorPage.setBlockTypographyStyle( 'Heading', {
 					fontAppearance: 'Thin',
 				} );
@@ -217,8 +211,8 @@ describe( DataHelper.createSuiteTitle( 'Editor tracking: Global styles events' )
 				} );
 			} );
 
-			it( '"wpcom_block_editor_global_styles_update" event fires with correct typography properties', async function () {
-				const eventDidFire = await editorTracksEventManager.didEventFire(
+			await test.step( 'Then "wpcom_block_editor_global_styles_update" event fires with correct typography properties', async () => {
+				const eventDidFire = await editorTracksEventManager!.didEventFire(
 					'wpcom_block_editor_global_styles_update',
 					{
 						matchingProperties: {
@@ -227,116 +221,96 @@ describe( DataHelper.createSuiteTitle( 'Editor tracking: Global styles events' )
 							field: 'fontWeight',
 							field_value: '500',
 						},
-						waitForEventMs: 2 * 1000, // Style update events are debounced
+						waitForEventMs: 2 * 1000,
 					}
 				);
 				expect( eventDidFire ).toBe( true );
 			} );
-		} );
 
-		// Can't reset to defaults on mobile
-		skipDescribeIf( envVariables.VIEWPORT_NAME === 'mobile' )(
-			'Updating by resetting to defaults',
-			function () {
-				it( 'Reset the Tracks events for a clean slate', async function () {
-					await editorTracksEventManager.clearEvents();
+			// Can't reset to defaults on mobile
+			if ( envVariables.VIEWPORT_NAME !== 'mobile' ) {
+				await test.step( 'When I reset Tracks events for a clean slate', async () => {
+					await editorTracksEventManager!.clearEvents();
 				} );
 
-				it( 'Reset styles to defaults for theme', async function () {
+				await test.step( 'When I reset styles to defaults for theme', async () => {
 					await fullSiteEditorPage.resetStylesToDefaults();
 				} );
 
-				it( '"wpcom_block_editor_global_styles_update" event fires with "field_value" === "reset"', async function () {
-					const eventDidFire = await editorTracksEventManager.didEventFire(
+				await test.step( 'Then "wpcom_block_editor_global_styles_update" event fires with "field_value" === "reset"', async () => {
+					const eventDidFire = await editorTracksEventManager!.didEventFire(
 						'wpcom_block_editor_global_styles_update',
 						{
-							matchingProperties: {
-								field_value: 'reset',
-							},
-							waitForEventMs: 2 * 1000, // Style update events are debounced
+							matchingProperties: { field_value: 'reset' },
+							waitForEventMs: 2 * 1000,
 						}
 					);
 					expect( eventDidFire ).toBe( true );
 				} );
 			}
-		);
-
-		it( 'Close the page', async function () {
-			await page.close();
-		} );
-	} );
-
-	describe( 'wpcom_block_editor_global_styles_save', function () {
-		let page: Page;
-		let testAccount: TestAccount;
-		let fullSiteEditorPage: FullSiteEditorPage;
-		let editorTracksEventManager: EditorTracksEventManager;
-
-		// We must make sure we have a new value to trigger the editor "dirty" state and enable saving.
-		// The main way we do that is by resetting the layouts at the end of each run.
-		// But, for the rare race condition we open the editor right as another test run is in the between state,
-		// we add some randomness to our padding. This makes it extraordinarily rare to have an unsavable state!
-		const padding = DataHelper.getRandomInteger( 1, 32 );
-
-		beforeAll( async () => {
-			page = await browser.newPage();
-
-			testAccount = new TestAccount( accountName );
-			await testAccount.authenticate( page );
-
-			editorTracksEventManager = new EditorTracksEventManager( page );
-			fullSiteEditorPage = new FullSiteEditorPage( page );
 		} );
 
-		afterAll( async function () {
-			// Reset the layout back to empty to protect future runs.
-			// You can reset an already empty layout, so this is safe to do even if saving didn't go through.
-			await fullSiteEditorPage.openSiteStyles();
-			await fullSiteEditorPage.resetGlobalLayoutStyle();
-			await fullSiteEditorPage.closeSiteStyles();
-			await fullSiteEditorPage.save();
-		} );
+		// .fixme: depends on the same global-styles panel flow. See TESTOPS-49.
+		test.describe( '"wpcom_block_editor_global_styles_save" event fires with correct style properties', () => {
+			const padding = DataHelper.getRandomInteger( 1, 32 );
+			let testAccount: TestAccount;
+			let fullSiteEditorPage: FullSiteEditorPage;
+			let editorTracksEventManager: EditorTracksEventManager;
 
-		it( 'Visit the site editor', async function () {
-			await fullSiteEditorPage.visit( testAccount.getSiteURL( { protocol: true } ) );
-			await fullSiteEditorPage.prepareForInteraction( { leaveWithoutSaving: true } );
-		} );
+			test.afterEach( async () => {
+				// Reset layout back to empty to protect future runs.
+				await fullSiteEditorPage.openSiteStyles();
+				await fullSiteEditorPage.resetGlobalLayoutStyle();
+				await fullSiteEditorPage.closeSiteStyles();
+				await fullSiteEditorPage.save();
+			} );
 
-		it( 'Close the navigation sidebar', async function () {
-			await fullSiteEditorPage.closeNavSidebar();
-		} );
+			test( 'event fires with correct style properties', async ( { page } ) => {
+				const accountName = getTestAccountByFeature( { ...features, variant: 'siteEditor' } );
 
-		it( 'Open site styles', async function () {
-			await fullSiteEditorPage.openSiteStyles();
-		} );
+				await test.step( 'Given I am authenticated', async () => {
+					testAccount = new TestAccount( accountName );
+					await testAccount.authenticate( page );
+					editorTracksEventManager = new EditorTracksEventManager( page );
+					fullSiteEditorPage = new FullSiteEditorPage( page );
+				} );
 
-		it( 'Set global layout style', async function () {
-			await fullSiteEditorPage.setGlobalLayoutStyle( { padding: padding } );
-		} );
+				await test.step( 'When I visit the site editor', async () => {
+					await fullSiteEditorPage.visit( testAccount!.getSiteURL( { protocol: true } ) );
+					await fullSiteEditorPage.prepareForInteraction( { leaveWithoutSaving: true } );
+				} );
 
-		it( 'Save the editor', async function () {
-			// On mobile, site styles is a popover panel that blocks the Save button.
-			// So let's always close site styles first to be safe. :)
-			await fullSiteEditorPage.closeSiteStyles();
-			await fullSiteEditorPage.save();
-		} );
+				await test.step( 'When I close the navigation sidebar', async () => {
+					await fullSiteEditorPage.closeNavSidebar();
+				} );
 
-		it( '"wpcom_block_editor_global_styles_save" event fires with correct style properties', async function () {
-			const eventDidFire = await editorTracksEventManager.didEventFire(
-				'wpcom_block_editor_global_styles_save',
-				{
-					matchingProperties: {
-						section: 'spacing',
-						field: 'padding',
-						field_value: `${ padding }px`,
-					},
-				}
-			);
-			expect( eventDidFire ).toBe( true );
-		} );
+				await test.step( 'When I open site styles', async () => {
+					await fullSiteEditorPage.openSiteStyles();
+				} );
 
-		it( 'Close the page', async function () {
-			await page.close();
+				await test.step( 'When I set global layout style', async () => {
+					await fullSiteEditorPage.setGlobalLayoutStyle( { padding: padding } );
+				} );
+
+				await test.step( 'When I save the editor', async () => {
+					await fullSiteEditorPage.closeSiteStyles();
+					await fullSiteEditorPage.save();
+				} );
+
+				await test.step( 'Then "wpcom_block_editor_global_styles_save" event fires with correct style properties', async () => {
+					const eventDidFire = await editorTracksEventManager!.didEventFire(
+						'wpcom_block_editor_global_styles_save',
+						{
+							matchingProperties: {
+								section: 'spacing',
+								field: 'padding',
+								field_value: `${ padding }px`,
+							},
+						}
+					);
+					expect( eventDidFire ).toBe( true );
+				} );
+			} );
 		} );
-	} );
-} );
+	}
+);

@@ -1,128 +1,112 @@
-/**
- * @group editor-tracking
- */
-
 import {
 	DataHelper,
 	EditorPage,
-	envVariables,
-	getTestAccountByFeature,
-	envToFeatureKey,
-	TestAccount,
 	EditorTracksEventManager,
 	FullSiteEditorPage,
+	TestAccount,
+	envToFeatureKey,
+	envVariables,
+	getTestAccountByFeature,
 } from '@automattic/calypso-e2e';
-import { Browser, Page } from 'playwright';
+import { expect, tags, test } from '../../lib/pw-base';
 
-declare const browser: Browser;
-
-describe(
+test.describe(
 	DataHelper.createSuiteTitle( 'Editor tracking: Other block-related events' ),
-	function () {
+	{ tag: [ tags.EDITOR_TRACKING ] },
+	() => {
 		const features = envToFeatureKey( envVariables );
 
-		describe( '"wpcom_block_moved_*"', function () {
+		test( '"wpcom_block_moved_up" and "wpcom_block_moved_down" events fire', async ( {
+			page,
+			pageEditor,
+		} ) => {
 			const accountName = getTestAccountByFeature( features );
-			let page: Page;
-			let editorPage: EditorPage;
 			let editorTracksEventManager: EditorTracksEventManager;
 			let siteSlug: string;
 
-			beforeAll( async () => {
-				page = await browser.newPage();
-
+			await test.step( 'Given I am authenticated', async () => {
 				const testAccount = new TestAccount( accountName );
 				await testAccount.authenticate( page );
 				siteSlug = testAccount.getSiteURL( { protocol: false } );
-
 				editorTracksEventManager = new EditorTracksEventManager( page );
-				editorPage = new EditorPage( page );
 			} );
 
-			it( 'Start a new post', async function () {
-				await editorPage.visit( 'post', { siteSlug } );
-				await editorPage.waitUntilLoaded();
-				// We'll be exiting without saving.
-				editorPage.allowLeavingWithoutSaving();
+			await test.step( 'When I start a new post', async () => {
+				await pageEditor.visit( 'post', { siteSlug } );
+				await pageEditor.waitUntilLoaded();
+				pageEditor.allowLeavingWithoutSaving();
 			} );
 
-			it( 'Add two blocks', async function () {
-				await editorPage.addBlockFromSidebar( 'Heading', '[aria-label="Block: Heading"]' );
-				await editorPage.addBlockFromSidebar( 'Markdown', '[aria-label="Block: Markdown"]' );
+			await test.step( 'When I add two blocks', async () => {
+				await pageEditor.addBlockFromSidebar( 'Heading', '[aria-label^="Block: Heading"]' );
+				await pageEditor.addBlockFromSidebar( 'Markdown', '[aria-label="Block: Markdown"]' );
 			} );
 
-			it( 'Move the bottom block up', async function () {
-				// The bottom block should be selected as it was the last added.
-				await editorPage.moveBlockUp();
+			await test.step( 'When I move the bottom block up', async () => {
+				await pageEditor.moveBlockUp();
 			} );
 
-			it( '"wpcom_block_moved_up" event fires', async function () {
-				const eventDidFire = await editorTracksEventManager.didEventFire( 'wpcom_block_moved_up' );
+			await test.step( 'Then "wpcom_block_moved_up" event fires', async () => {
+				const eventDidFire = await editorTracksEventManager!.didEventFire( 'wpcom_block_moved_up' );
 				expect( eventDidFire ).toBe( true );
 			} );
 
-			it( 'Move the same block back down', async function () {
-				// The same block is still selected.
-				await editorPage.moveBlockDown();
+			await test.step( 'When I move the same block back down', async () => {
+				await pageEditor.moveBlockDown();
 			} );
 
-			it( '"wpcom_block_moved_down" event fires', async function () {
+			await test.step( 'Then "wpcom_block_moved_down" event fires', async () => {
 				const eventDidFire =
-					await editorTracksEventManager.didEventFire( 'wpcom_block_moved_down' );
+					await editorTracksEventManager!.didEventFire( 'wpcom_block_moved_down' );
 				expect( eventDidFire ).toBe( true );
 			} );
 
-			it( 'Close the page', async function () {
-				await page.close();
-			} );
+			void EditorPage;
 		} );
 
-		describe( '"wpcom_block_deleted"', function () {
+		test( '"wpcom_block_deleted" event fires', async ( { page } ) => {
+			// The site editor navigation sidebar cannot be closed on mobile
+			// (FullSiteEditorPage.closeNavSidebar throws), so this flow is desktop-only.
+			test.skip(
+				envVariables.VIEWPORT_NAME === 'mobile',
+				'Site editor navigation sidebar cannot be closed on mobile'
+			);
+
 			const accountName = getTestAccountByFeature( { ...features, variant: 'siteEditor' } );
 			let testAccount: TestAccount;
-
-			let page: Page;
 			let fullSiteEditorPage: FullSiteEditorPage;
 			let editorTracksEventManager: EditorTracksEventManager;
 
-			beforeAll( async () => {
-				page = await browser.newPage();
-
+			await test.step( 'Given I am authenticated', async () => {
 				testAccount = new TestAccount( accountName );
 				await testAccount.authenticate( page );
-
 				editorTracksEventManager = new EditorTracksEventManager( page );
 				fullSiteEditorPage = new FullSiteEditorPage( page );
 			} );
 
-			it( 'Go to the site editor', async function () {
-				await fullSiteEditorPage.visit( testAccount.getSiteURL( { protocol: true } ) );
+			await test.step( 'When I go to the site editor', async () => {
+				await fullSiteEditorPage.visit( testAccount!.getSiteURL( { protocol: true } ) );
 				await fullSiteEditorPage.prepareForInteraction( { leaveWithoutSaving: true } );
 			} );
 
-			it( 'Close the navigation sidebar', async function () {
+			await test.step( 'When I close the navigation sidebar', async () => {
 				await fullSiteEditorPage.closeNavSidebar();
 			} );
 
-			it( 'Add a Pullquote block', async function () {
+			await test.step( 'When I add a Pullquote block', async () => {
 				await fullSiteEditorPage.addBlockFromSidebar(
 					'Pullquote',
 					'[aria-label="Block: Pullquote"]'
 				);
 			} );
 
-			it( 'Delete the Pullquote block from the block toolbar', async function () {
-				// The Pullquote block should still be focused
-				await fullSiteEditorPage.clickBlockToolbarOption( 'Remove Pullquote' );
+			await test.step( 'When I delete the Pullquote block from the block toolbar', async () => {
+				await fullSiteEditorPage.clickBlockToolbarOption( 'Delete' );
 			} );
 
-			it( '"wpcom_block_deleted" event fires', async function () {
-				const eventDidFire = await editorTracksEventManager.didEventFire( 'wpcom_block_deleted' );
+			await test.step( 'Then "wpcom_block_deleted" event fires', async () => {
+				const eventDidFire = await editorTracksEventManager!.didEventFire( 'wpcom_block_deleted' );
 				expect( eventDidFire ).toBe( true );
-			} );
-
-			it( 'Close the page', async function () {
-				await page.close();
 			} );
 		} );
 	}
