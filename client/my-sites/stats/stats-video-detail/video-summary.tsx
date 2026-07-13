@@ -265,19 +265,26 @@ export default function VideoSummary( {
 		}
 
 		const start = moment( buckets[ 0 ].key );
-		const end = moment( buckets[ buckets.length - 1 ].key );
+		let end = moment( buckets[ buckets.length - 1 ].key );
 		switch ( uiPeriod ) {
 			case 'week':
-				end.add( 6, 'days' );
+				end = end.add( 6, 'days' );
 				break;
 			case 'month':
-				end.endOf( 'month' );
+				end = end.endOf( 'month' );
 				break;
 			case 'year':
-				end.endOf( 'year' );
+				end = end.endOf( 'year' );
 				break;
 			default:
 				break;
+		}
+
+		// Don't extend the range into the future when the last bucket is
+		// still the current, in-progress period.
+		const today = moment();
+		if ( end.isAfter( today, 'day' ) ) {
+			end = today;
 		}
 
 		return {

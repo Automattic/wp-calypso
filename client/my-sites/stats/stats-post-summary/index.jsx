@@ -143,20 +143,27 @@ class StatsPostSummary extends Component {
 		}
 
 		const start = moment( chartData[ 0 ].startDate );
-		const end = moment( chartData[ chartData.length - 1 ].startDate );
+		let end = moment( chartData[ chartData.length - 1 ].startDate );
 
 		switch ( period ) {
 			case 'week':
-				end.add( 6, 'days' );
+				end = end.add( 6, 'days' );
 				break;
 			case 'month':
-				end.endOf( 'month' );
+				end = end.endOf( 'month' );
 				break;
 			case 'year':
-				end.endOf( 'year' );
+				end = end.endOf( 'year' );
 				break;
 			default:
 				break;
+		}
+
+		// Don't extend the range into the future when the last bar is still
+		// the current, in-progress period (e.g. this month before it ends).
+		const today = moment();
+		if ( end.isAfter( today, 'day' ) ) {
+			end = today;
 		}
 
 		return { start, end };
