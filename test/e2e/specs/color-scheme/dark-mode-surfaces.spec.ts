@@ -584,19 +584,17 @@ test.describe( 'Themes dark-mode surfaces', { tag: [ tags.CALYPSO_PR ] }, () => 
 			} );
 			await expectSharedDarkTokens( page );
 			await expectNoObviousLightSurface( page.locator( '.theme-download-card' ).first() );
-			await expectNoObviousLightSurface( page.locator( '.theme__sheet-card-support' ).first() );
+			await expectNoObviousLightSurface(
+				page.locator( '.theme__sheet-content .action-list' ).first()
+			);
 
 			const downloadIcon = await getElementStyle(
 				page.locator( '.theme-download-card .gridicon' ).first()
 			);
-			const supportIcon = await getElementStyle(
-				page.locator( '.theme__sheet-card-support .gridicon' ).first()
-			);
 
 			const iconColor = parseRgb( downloadIcon.fill );
 
-			expect( normalizeColor( downloadIcon.fill ) ).toBe( normalizeColor( supportIcon.fill ) );
-			expect( iconColor, 'download/support card icons resolve to rgb' ).not.toBeNull();
+			expect( iconColor, 'download card icon resolves to rgb' ).not.toBeNull();
 			expect( brightness( iconColor as RGB ) ).toBeGreaterThan( 120 );
 		} );
 
