@@ -14318,6 +14318,7 @@ __metadata:
     "@automattic/wpcom-template-parts": "workspace:^"
     "@automattic/zendesk-client": "workspace:^"
     "@babel/core": "npm:^7.27.1"
+    "@emotion/cache": "npm:^11.14.0"
     "@emotion/css": "npm:^11.11.2"
     "@emotion/jest": "npm:^11.11.0"
     "@emotion/react": "npm:^11.11.1"
