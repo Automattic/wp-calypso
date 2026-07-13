@@ -13,22 +13,33 @@ import { getStorageAlertLevel } from '../../utils/site-storage';
 import { AddStorageModal } from '../storage/add-storage-modal';
 import type { Site } from '@automattic/api-core';
 
-export function StorageWarningBanner( { site }: { site: Site } ) {
+/**
+ * Whether the storage warning banner is initially eligible to show: storage is
+ * running low or exhausted, and a low-storage warning hasn't been dismissed.
+ * In-session dismissal is handled inside the component itself.
+ */
+export function useShouldShowStorageWarningBanner( site: Site ) {
 	const { data: mediaStorage } = useSuspenseQuery( siteMediaStorageQuery( site.ID ) );
 	const { data: isDismissedPersisted } = useSuspenseQuery(
 		userPreferenceQuery( `hosting-dashboard-overview-storage-notice-dismissed-${ site.ID }` )
 	);
+
+	const alertLevel = getStorageAlertLevel( mediaStorage );
+	return alertLevel !== 'none' && ! ( alertLevel === 'warning' && isDismissedPersisted );
+}
+
+export function StorageWarningBanner( { site }: { site: Site } ) {
+	const shouldShow = useShouldShowStorageWarningBanner( site );
+	const { data: mediaStorage } = useSuspenseQuery( siteMediaStorageQuery( site.ID ) );
 	const { mutate: updateDismissed, isPending: isDismissing } = useMutation(
 		userPreferenceMutation( `hosting-dashboard-overview-storage-notice-dismissed-${ site.ID }` )
 	);
 	const [ isModalOpen, setIsModalOpen ] = useState( false );
 
-	// Optimistically hide the banner assuming the preference will get saved.
-	const isDismissed = isDismissedPersisted || isDismissing;
-
 	const alertLevel = getStorageAlertLevel( mediaStorage );
 
-	if ( alertLevel === 'none' || ( alertLevel === 'warning' && isDismissed ) ) {
+	// Optimistically hide the banner while the dismissal preference is saving.
+	if ( ! shouldShow || ( alertLevel === 'warning' && isDismissing ) ) {
 		return null;
 	}
 
@@ -67,7 +78,7 @@ export function StorageWarningBanner( { site }: { site: Site } ) {
 				}
 			>
 				{ sprintf(
-					// translators: "used" and "available" amounts data including a unit, e.g. "2.03 MB" or "1.5 GB".
+					// translators: %(used)s: amount of storage used, %(available)s: the storage limit, each including a unit, e.g. "2.03 MB" or "1.5 GB".
 					__(
 						'%(used)s of your %(available)s storage limit has been used. Upgrade to continue storing media, plugins, themes, and backups.'
 					),

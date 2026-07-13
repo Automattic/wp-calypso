@@ -4,9 +4,10 @@ import {
 	receiptQuery,
 	sendReceiptEmailMutation,
 	userTaxDetailsQuery,
+	userReceiptsQuery,
 } from '@automattic/api-queries';
 import { formatCurrency } from '@automattic/number-formatters';
-import { useMutation, useSuspenseQuery } from '@tanstack/react-query';
+import { useMutation, useQuery, useSuspenseQuery } from '@tanstack/react-query';
 import { Link } from '@tanstack/react-router';
 import {
 	Button,
@@ -19,8 +20,9 @@ import {
 } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
-import { useState } from 'react';
+import { type ReactNode, useState } from 'react';
 import Breadcrumbs from '../../app/breadcrumbs';
+import { useLocale } from '../../app/locale';
 import { receiptRoute, taxDetailsRoute } from '../../app/router/me';
 import { Card, CardBody } from '../../components/card';
 import { PageHeader } from '../../components/page-header';
@@ -63,12 +65,25 @@ export default function Receipt() {
 	const params = receiptRoute.useParams();
 	const receiptId = parseInt( params.receiptId );
 	const { data: receipt } = useSuspenseQuery( receiptQuery( receiptId ) );
+	const { data: receipts = [] } = useQuery( userReceiptsQuery() );
+	const historyReceipt = receipts.find( ( item ) => String( item.id ) === String( receiptId ) );
+	const displayReceipt: Receipt = {
+		...historyReceipt,
+		...receipt,
+		tax_is_for_business: mergeTaxIsForBusiness(
+			receipt.tax_is_for_business,
+			historyReceipt?.tax_is_for_business
+		),
+		tax_state: receipt.tax_state || historyReceipt?.tax_state,
+	};
+
+	const locale = useLocale();
 
 	const handlePrint = () => {
 		window.print();
 	};
 
-	const formattedDate = new Date( receipt.date ).toLocaleDateString( undefined, {
+	const formattedDate = new Date( displayReceipt.date ).toLocaleDateString( locale, {
 		year: 'numeric',
 		month: 'long',
 		day: 'numeric',
@@ -84,27 +99,31 @@ export default function Receipt() {
 					<VStack spacing={ 4 }>
 						<HStack justify="space-between">
 							<HStack spacing={ 4 } justify="flex-start">
-								<img src={ receipt.icon } alt={ receipt.service } className="receipt-icon" />
+								<img
+									src={ displayReceipt.icon }
+									alt={ displayReceipt.service }
+									className="receipt-icon"
+								/>
 								<VStack spacing={ 0.5 } alignment="flex-start">
 									<Text size={ 15 } weight={ 500 }>
-										{ receipt.service }
+										{ displayReceipt.service }
 									</Text>
 									<Text variant="muted" size={ 11 }>
-										{ receipt.service_slug === 'memberships'
+										{ displayReceipt.service_slug === 'memberships'
 											? sprintf(
 													/* translators: %s: organization name */
 													__( 'Payment processed by %s' ),
-													receipt.org
+													displayReceipt.org
 											  )
 											: sprintf(
 													/* translators: %s: organization name */
 													__( 'by %s' ),
-													receipt.org
+													displayReceipt.org
 											  ) }
 									</Text>
-									{ receipt.address && (
+									{ displayReceipt.address && (
 										<Text variant="muted" size={ 11 }>
-											{ receipt.address }
+											{ displayReceipt.address }
 										</Text>
 									) }
 								</VStack>
@@ -114,8 +133,8 @@ export default function Receipt() {
 							</Text>
 						</HStack>
 						<VStack spacing={ 6 }>
-							<ReceiptDetails receipt={ receipt } />
-							<ReceiptLineItems receipt={ receipt } />
+							<ReceiptDetails receipt={ displayReceipt } />
+							<ReceiptLineItems receipt={ displayReceipt } />
 							<Flex gap={ 2 }>
 								<Button variant="primary" onClick={ handlePrint }>
 									{ __( 'Print Receipt' ) }
@@ -182,10 +201,70 @@ function ReceiptDetails( { receipt }: { receipt: Receipt } ) {
 				</VStack>
 			) }
 
+			<ReceiptTaxDetails receipt={ receipt } />
 			<VatDetails receipt={ receipt } />
 		</VStack>
 	);
 }
+
+function ReceiptTaxDetails( { receipt }: { receipt: Receipt } ) {
+	const hasReceiptTaxDetails = Boolean( receipt.tax_state ) || receipt.tax_is_for_business === true;
+	const { data: countryList } = useSuspenseQuery( countryListQuery() );
+	const countryName =
+		countryList.find( ( country ) => country.code === receipt.tax_country_code )?.name ??
+		receipt.tax_country_code;
+
+	if ( ! hasReceiptTaxDetails ) {
+		return null;
+	}
+
+	const taxDetails: ReceiptTaxDetail[] = [];
+
+	if ( receipt.tax_country_code ) {
+		taxDetails.push( {
+			key: 'country',
+			label: __( 'Country' ),
+			value: countryName,
+		} );
+	}
+
+	if ( receipt.tax_state ) {
+		taxDetails.push( {
+			key: 'state',
+			label: __( 'State/Province' ),
+			value: receipt.tax_state,
+		} );
+	}
+
+	if ( typeof receipt.tax_is_for_business === 'boolean' ) {
+		taxDetails.push( {
+			key: 'business-use',
+			label: __( 'Business use' ),
+			value: receipt.tax_is_for_business ? __( 'Yes' ) : __( 'No' ),
+		} );
+	}
+
+	return (
+		<VStack spacing={ 1 } alignment="flex-start">
+			<Text upperCase variant="muted" size={ 11 }>
+				{ __( 'Tax details' ) }
+			</Text>
+			<VStack spacing={ 0.5 } alignment="flex-start">
+				{ taxDetails.map( ( { key, label, value } ) => (
+					<div key={ key }>
+						<strong>{ label }</strong> { value }
+					</div>
+				) ) }
+			</VStack>
+		</VStack>
+	);
+}
+
+type ReceiptTaxDetail = {
+	key: string;
+	label: ReactNode;
+	value: ReactNode;
+};
 
 function UserVatDetails( { receipt }: { receipt: Receipt } ) {
 	const { data: vatDetails } = useSuspenseQuery( userTaxDetailsQuery() );
@@ -318,10 +397,48 @@ function getPaymentMethodText( receipt: Receipt ): string | null {
 	return null;
 }
 
+function getBusinessTaxStateName( state: string ): string {
+	const businessUseTaxStates: Record< string, string > = {
+		CT: 'Connecticut',
+		OH: 'Ohio',
+	};
+
+	return businessUseTaxStates[ state.toUpperCase() ] ?? state;
+}
+
+function mergeTaxIsForBusiness(
+	receiptValue?: boolean | null,
+	historyReceiptValue?: boolean | null
+): boolean | null | undefined {
+	if ( receiptValue === true || historyReceiptValue === true ) {
+		return true;
+	}
+
+	return receiptValue ?? historyReceiptValue;
+}
+
+function getBusinessTaxSuffixLabel( receipt: Receipt ): string {
+	if ( ! receipt.tax_is_for_business || ! receipt.tax_state ) {
+		return '';
+	}
+
+	return sprintf(
+		/* translators: %(state)s is a state name like "Ohio". */
+		__( '%(state)s business use taxrate' ),
+		{ state: getBusinessTaxStateName( receipt.tax_state ) }
+	);
+}
+
+function hasBusinessUseTaxDetails( receipt: Receipt ): boolean {
+	return receipt.tax_is_for_business === true && Boolean( receipt.tax_state );
+}
+
 function ReceiptLineItems( { receipt }: { receipt: Receipt } ) {
 	const groupedItems = groupDomainProducts( receipt.items );
 	const { data: countryList } = useSuspenseQuery( countryListQuery() );
 	const taxName = getTaxName( countryList, receipt.tax_country_code );
+	const taxLabel = taxName ?? __( 'Tax' );
+	const businessTaxSuffixLabel = getBusinessTaxSuffixLabel( receipt );
 
 	return (
 		<VStack spacing={ 4 } alignment="flex-start">
@@ -344,12 +461,34 @@ function ReceiptLineItems( { receipt }: { receipt: Receipt } ) {
 							<ReceiptLineItem key={ item.id } item={ item } receipt={ receipt } />
 						) ) }
 					</VStack>
-					{ transactionIncludesTax( receipt ) && (
+					{ ( transactionIncludesTax( receipt ) || hasBusinessUseTaxDetails( receipt ) ) && (
 						<VStack className="receipt-tax-row">
-							<HStack justify="space-between">
-								<span>{ taxName ?? __( 'Tax' ) }</span>
-								<span>{ formatReceiptTaxAmount( receipt ) }</span>
-							</HStack>
+							{ receipt.tax_breakdown && receipt.tax_breakdown.length > 0 ? (
+								receipt.tax_breakdown.map( ( entry ) => (
+									<HStack key={ entry.label } justify="space-between">
+										<Text>{ `${ entry.label } ${ entry.rate_display }` }</Text>
+										<Text>
+											{ formatCurrency( entry.local_tax_collected_integer, receipt.currency, {
+												isSmallestUnit: true,
+												stripZeros: true,
+											} ) }
+										</Text>
+									</HStack>
+								) )
+							) : (
+								<HStack justify="space-between">
+									<Text>
+										{ taxLabel }
+										{ businessTaxSuffixLabel && (
+											<>
+												{ ' (' }
+												<em>{ businessTaxSuffixLabel }</em>)
+											</>
+										) }
+									</Text>
+									<Text>{ formatReceiptTaxAmount( receipt ) }</Text>
+								</HStack>
+							) }
 						</VStack>
 					) }
 				</VStack>
@@ -543,7 +682,9 @@ function getIntroductoryOfferIntervalDisplay( {
 	context: string;
 	remainingRenewalsUsingOffer: number;
 } ): string {
-	let text = isPriceIncrease ? __( 'First billing period' ) : __( 'Discount for first period' );
+	let text: string = isPriceIncrease
+		? __( 'First billing period' )
+		: __( 'Discount for first period' );
 
 	if ( isFreeTrial ) {
 		if ( intervalUnit === 'month' ) {

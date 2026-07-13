@@ -1,4 +1,3 @@
-import { get } from 'lodash';
 import getJetpackUserConnection from 'calypso/state/selectors/get-jetpack-user-connection';
 
 /**
@@ -8,5 +7,5 @@ import getJetpackUserConnection from 'calypso/state/selectors/get-jetpack-user-c
  * @returns {?string}          The name of the Jetpack connection's owner
  */
 export default function getJetpackConnectionOwner( state, siteId ) {
-	return get( getJetpackUserConnection( state, siteId ), [ 'connectionOwner' ], null );
+	return getJetpackUserConnection( state, siteId )?.connectionOwner ?? null;
 }

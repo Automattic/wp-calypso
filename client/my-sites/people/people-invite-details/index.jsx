@@ -2,7 +2,6 @@ import { isEnabled } from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
 import { Card, Button } from '@automattic/components';
 import { localize } from 'i18n-calypso';
-import { get } from 'lodash';
 import PropTypes from 'prop-types';
 import { PureComponent } from 'react';
 import { connect } from 'react-redux';
@@ -41,7 +40,7 @@ export class PeopleInviteDetails extends PureComponent {
 	}
 
 	goBack = () => {
-		const siteSlug = get( this.props, 'site.slug' );
+		const siteSlug = this.props?.site?.slug;
 		const route = isEnabled( 'user-management-revamp' ) ? 'team-members' : 'invites';
 		const fallback = siteSlug ? `/people/${ route }/${ siteSlug }` : `/people/${ route }/`;
 

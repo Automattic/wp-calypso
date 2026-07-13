@@ -4,13 +4,14 @@ import {
 	useMastodonConnectionsQuery,
 } from '@automattic/api-queries';
 import page from '@automattic/calypso-router';
-import { Icon, people } from '@wordpress/icons';
+import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
-import { useEffect, useMemo, useState } from 'react';
+import { useMemo, useState } from 'react';
 import ExpandableSidebarMenu from 'calypso/layout/sidebar/expandable';
 import { DEFAULT_ATMOSPHERE_TAB } from 'calypso/reader/atmosphere/helper';
 import { DEFAULT_FEDIVERSE_TAB } from 'calypso/reader/fediverse/helper';
 import { DEFAULT_MASTODON_TAB } from 'calypso/reader/mastodon/helper';
+import { MenuItem, MenuItemLink } from 'calypso/reader/sidebar/menu';
 import { SocialAddAccountMenuItem } from 'calypso/reader/sidebar/social';
 import { useDispatch } from 'calypso/state';
 import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
@@ -30,6 +31,7 @@ interface Props {
 
 const BASE_PATH = '/reader/connections';
 const NEW_CONNECTION_PATH = `${ BASE_PATH }/new`;
+const CONNECTION_DISPLAY_CUTOFF = 10;
 const PROTOCOL_PATHS: Record< ConnectionProtocol, string > = {
 	atmosphere: '/reader/atmosphere',
 	mastodon: '/reader/mastodon',
@@ -133,12 +135,6 @@ function ReaderSidebarConnections( { path }: Props ) {
 
 	const [ isOpen, setIsOpen ] = useState( () => isOnConnections );
 
-	useEffect( () => {
-		if ( isOnConnections ) {
-			setIsOpen( true );
-		}
-	}, [ isOnConnections ] );
-
 	// All three queries gated on the menu being expanded *or* on a
 	// connections route — i.e. whenever we'd actually render the rows.
 	// Otherwise the user expanding the menu manually from an unrelated
@@ -188,37 +184,54 @@ function ReaderSidebarConnections( { path }: Props ) {
 		dispatch( recordReaderTracksEvent( 'calypso_reader_sidebar_connections_add_account_clicked' ) );
 	};
 
+	let connectionsToShow = connections.slice( 0, CONNECTION_DISPLAY_CUTOFF );
+
+	// Keep the currently active connection visible even when it falls
+	// outside the cutoff, so the user never loses the row representing
+	// the page they're on.
+	if ( active ) {
+		const activeConnection = connections.find(
+			( c ) => c.protocol === active.protocol && c.id === active.id
+		);
+		if ( activeConnection && ! connectionsToShow.includes( activeConnection ) ) {
+			connectionsToShow = [ ...connectionsToShow, activeConnection ];
+		}
+	}
+
+	// Compare against what we actually render: if active-preservation
+	// already surfaced the overflow row, there's nothing left to reveal.
+	const hasMoreConnections = connections.length > connectionsToShow.length;
+
+	const recordViewMoreClick = () => {
+		dispatch(
+			recordReaderTracksEvent( 'calypso_reader_sidebar_connections_view_more_clicked', {
+				connections_total_count: connections.length,
+			} )
+		);
+	};
+
 	const handleMainClick = () => {
 		recordHeaderClick();
-		if ( ! isOpen ) {
-			setIsOpen( true );
-		}
-		// Don't fight the user when they're already inside a specific
-		// connection's pages — clicking the header just opens the menu.
-		// When they're not on any connection, navigate to the unified
-		// landing route which decides between first-connection redirect
-		// or the chooser.
-		if ( active === null && path !== BASE_PATH ) {
-			page( BASE_PATH );
-		}
+		page( BASE_PATH );
 	};
 
 	return (
 		<li>
 			<ExpandableSidebarMenu
 				expanded={ isOpen }
-				title={ translate( 'Social' ) }
-				customIcon={ <Icon className="sidebar__menu-icon" icon={ people } /> }
+				title={ translate( 'Social feeds' ) }
 				onClick={ handleMainClick }
 				expandableIconClick={ () => setIsOpen( ! isOpen ) }
 				disableFlyout
-				className={ ! isOpen ? 'sidebar__menu--selected' : undefined }
+				className={ clsx( 'sidebar-streams__connections', {
+					'sidebar__menu--selected': path === BASE_PATH || ( ! isOpen && isOnConnections ),
+				} ) }
 				count={ undefined }
 				icon={ null }
 				materialIcon={ null }
 				materialIconStyle={ null }
 			>
-				{ connections.map( ( connection ) => (
+				{ connectionsToShow.map( ( connection ) => (
 					<ConnectionMenuItem
 						key={ `${ connection.protocol }-${ connection.id }` }
 						connection={ connection }
@@ -226,6 +239,17 @@ function ReaderSidebarConnections( { path }: Props ) {
 						onClick={ () => recordConnectionClick( connection ) }
 					/>
 				) ) }
+				{ hasMoreConnections && (
+					<MenuItem selected={ false }>
+						<MenuItemLink
+							className="view-more-link"
+							href={ BASE_PATH }
+							onClick={ recordViewMoreClick }
+						>
+							<span>{ translate( 'View more' ) }</span>
+						</MenuItemLink>
+					</MenuItem>
+				) }
 				{ showEmptyHint && (
 					<li className="screen-reader-text">
 						{ translate( 'Nothing here yet — connect one below.' ) }

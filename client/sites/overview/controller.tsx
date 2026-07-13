@@ -1,4 +1,3 @@
-import { isEnabled } from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
 import { dashboardLink } from 'calypso/dashboard/utils/link';
 import { isMigrationInProgress } from 'calypso/data/site-migration';
@@ -65,10 +64,6 @@ export async function dashboardBackportSiteOverview( context: PageJSContext, nex
 	if ( isMigrationInProgress( site ) || sshMigration ) {
 		// Temporarily show the v1 site migration overview page.
 		// @todo implement the page in v2.
-		return overview( context, next );
-	}
-
-	if ( ! isEnabled( 'dashboard/v2/backport/site-overview' ) ) {
 		return overview( context, next );
 	}
 

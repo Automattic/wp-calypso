@@ -53,7 +53,7 @@ describe( 'MySitesSidebar', () => {
 	describe( '#itemLinkMatches() edge cases', () => {
 		test( 'clicking a settings panel should not activate the posts menu', () => {
 			const isSelected = itemLinkMatches(
-				'/settings/taxonomies/category/example.wordpress.com',
+				'/settings/general/example.wordpress.com',
 				'/settings/discussion/cpapfree.wordpress.com'
 			);
 

@@ -1,10 +1,9 @@
+import { useShouldUseUnifiedAgent } from '@automattic/agents-manager';
 import config from '@automattic/calypso-config';
 import { isEcommercePlan } from '@automattic/calypso-products';
-import page from '@automattic/calypso-router';
 import { Gridicon } from '@automattic/components';
 import { Badge } from '@automattic/ui';
-import { createInterpolateElement } from '@wordpress/element';
-import { __, _x, sprintf } from '@wordpress/i18n';
+import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { parse } from 'qs';
 import { Component } from 'react';
@@ -13,6 +12,7 @@ import ReaderIcon from 'calypso/assets/icons/reader/reader-icon';
 import AsyncLoad from 'calypso/components/async-load';
 import Gravatar from 'calypso/components/gravatar';
 import { dashboardLink, wpcomLink } from 'calypso/dashboard/utils/link';
+import { navigate } from 'calypso/lib/navigate';
 import wpcom from 'calypso/lib/wp';
 import { domainManagementList } from 'calypso/my-sites/domains/paths';
 import { preload } from 'calypso/sections-helper';
@@ -23,8 +23,9 @@ import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { redirectToLogout } from 'calypso/state/current-user/actions';
 import { getCurrentUser, getCurrentUserSiteCount } from 'calypso/state/current-user/selectors';
 import { hasDashboardOptIn } from 'calypso/state/dashboard/selectors';
+import { getSidebarType, SidebarType } from 'calypso/state/global-sidebar/selectors';
 import { savePreference } from 'calypso/state/preferences/actions';
-import { getPreference } from 'calypso/state/preferences/selectors';
+import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import getEditorUrl from 'calypso/state/selectors/get-editor-url';
 import getPreviousRoute from 'calypso/state/selectors/get-previous-route';
@@ -57,13 +58,20 @@ import isSimpleSite from 'calypso/state/sites/selectors/is-simple-site';
 import { isSupportSession } from 'calypso/state/support/selectors';
 import { activateNextLayoutFocus, setNextLayoutFocus } from 'calypso/state/ui/layout-focus/actions';
 import { getCurrentLayoutFocus } from 'calypso/state/ui/layout-focus/selectors';
-import { getSectionGroup } from 'calypso/state/ui/selectors';
+import { getSectionGroup, getSectionName } from 'calypso/state/ui/selectors';
 import Item from './item';
 import Masterbar from './masterbar';
-import { AgentsManagerIcon } from './masterbar-agents-manager/agents-manager-icon';
+import BigSkyIcon from './masterbar-agents-manager/big-sky-icon';
+import {
+	closeAgentsManagerChat,
+	isAgentsManagerChatVisible,
+	openAgentsManagerChat,
+} from './masterbar-agents-manager/chat-actions';
+import HelpIcon from './masterbar-agents-manager/help-icon';
 import { HelpCenterIcon } from './masterbar-help-center/help-center-icon';
 import { MasterbarLaunchButton } from './masterbar-launch-button';
 import Notifications from './masterbar-notifications/notifications-button';
+import MasterbarStatsSparkline from './masterbar-stats-sparkline';
 
 const loadCheckout = () =>
 	import( /* webpackChunkName: "async-load-calypso-layout-masterbar-checkout" */ './checkout.tsx' );
@@ -89,6 +97,7 @@ class MasterbarLoggedIn extends Component {
 		user: PropTypes.object.isRequired,
 		domainOnlySite: PropTypes.bool,
 		section: PropTypes.oneOfType( [ PropTypes.string, PropTypes.bool ] ),
+		sectionName: PropTypes.string,
 		setNextLayoutFocus: PropTypes.func.isRequired,
 		currentLayoutFocus: PropTypes.string,
 		siteSlug: PropTypes.string,
@@ -97,10 +106,16 @@ class MasterbarLoggedIn extends Component {
 		isCheckoutPending: PropTypes.bool,
 		isCheckoutFailed: PropTypes.bool,
 		loadHelpCenterIcon: PropTypes.bool,
+		loadAgentsManager: PropTypes.bool,
 		isGlobalSidebarVisible: PropTypes.bool,
 		isGravatarDomain: PropTypes.bool,
 		dashboardOptIn: PropTypes.bool,
+		canUserViewStats: PropTypes.bool,
+		statsAdminUrl: PropTypes.string,
+		statsSparkline: PropTypes.node,
 		useUnifiedAgent: PropTypes.bool,
+		launchButton: PropTypes.node,
+		sitePlanUrl: PropTypes.string,
 	};
 
 	state = { mounted: false };
@@ -191,7 +206,7 @@ class MasterbarLoggedIn extends Component {
 
 	goToCheckout = ( siteId ) => {
 		this.props.recordTracksEvent( 'calypso_masterbar_cart_go_to_checkout' );
-		page( `/checkout/${ siteId }` );
+		navigate( `/checkout/${ siteId }` );
 	};
 
 	onRemoveCartProduct = ( uuid = 'coupon' ) => {
@@ -234,6 +249,8 @@ class MasterbarLoggedIn extends Component {
 	 * In nav unification, the menu is openned with the Sites button
 	 */
 	renderSidebarMobileMenu() {
+		const { translate } = this.props;
+
 		return (
 			<Item
 				tipTarget="mobile-menu"
@@ -241,7 +258,7 @@ class MasterbarLoggedIn extends Component {
 				onClick={ this.handleToggleMobileMenu }
 				isActive={ this.isSidebarOpen() }
 				className="masterbar__item-sidebar-menu"
-				tooltip={ __( 'Menu' ) }
+				tooltip={ translate( 'Menu' ) }
 			/>
 		);
 	}
@@ -251,9 +268,9 @@ class MasterbarLoggedIn extends Component {
 		const {
 			domainOnlySite,
 			siteSlug,
+			translate,
 			section,
 			currentRoute,
-			isGlobalSidebarVisible,
 			siteAdminUrl,
 			dashboardOptIn,
 		} = this.props;
@@ -271,17 +288,21 @@ class MasterbarLoggedIn extends Component {
 			return <Item icon={ icon } className="masterbar__item-no-sites" disabled />;
 		}
 
-		const subItems = isGlobalSidebarVisible
+		// Hidden across the My Sites view. Keys off the sidebar type, not its
+		// visibility, to also cover HD v1 site screens where the sidebar is hidden.
+		const subItems = this.isMySitesActive()
 			? null
 			: [
 					[
 						{
-							label: __( 'Sites' ),
+							label: translate( 'Sites' ),
 							url: dashboardOptIn ? dashboardLink( '/sites' ) : '/sites',
+							onClick: () => this.props.recordTracksEvent( 'calypso_masterbar_sites_clicked' ),
 						},
 						{
-							label: __( 'Domains' ),
+							label: translate( 'Domains' ),
 							url: dashboardOptIn ? dashboardLink( '/domains' ) : '/domains/manage',
+							onClick: () => this.props.recordTracksEvent( 'calypso_masterbar_domains_clicked' ),
 						},
 					],
 					...( this.props.isSimpleSite
@@ -289,12 +310,16 @@ class MasterbarLoggedIn extends Component {
 						: [
 								[
 									{
-										label: __( 'About WordPress' ),
+										label: translate( 'About WordPress' ),
 										url: `${ siteAdminUrl }about.php`,
+										onClick: () =>
+											this.props.recordTracksEvent( 'calypso_masterbar_about_wordpress_clicked' ),
 									},
 									{
-										label: __( 'Get Involved' ),
+										label: translate( 'Get Involved' ),
 										url: `${ siteAdminUrl }contribute.php`,
+										onClick: () =>
+											this.props.recordTracksEvent( 'calypso_masterbar_get_involved_clicked' ),
 									},
 								],
 						  ] ),
@@ -309,7 +334,7 @@ class MasterbarLoggedIn extends Component {
 				subItems={ subItems }
 				onClick={ this.clickMySites }
 				isActive={ this.isMySitesActive() }
-				tooltip={ __( 'Manage your sites' ) }
+				tooltip={ translate( 'Manage your sites' ) }
 				preloadSection={ this.preloadMySites }
 				hasGlobalBorderStyle
 			/>
@@ -406,6 +431,7 @@ class MasterbarLoggedIn extends Component {
 	renderSiteBadges() {
 		const {
 			site,
+			translate,
 			isUnlaunchedSite,
 			isTrial,
 			isSiteP2,
@@ -439,12 +465,12 @@ class MasterbarLoggedIn extends Component {
 
 		// Staging Badge
 		if ( site?.is_wpcom_staging_site ) {
-			badges.push( __( 'Staging' ) );
+			badges.push( translate( 'Staging' ) );
 		}
 
 		// Trial Badge
 		if ( isTrial ) {
-			badges.push( __( 'Trial' ) );
+			badges.push( translate( 'Trial' ) );
 		}
 
 		// P2 Workspace Badge
@@ -455,28 +481,30 @@ class MasterbarLoggedIn extends Component {
 		// Private/Coming Soon Badge
 		if ( site.is_private ) {
 			badges.push(
-				shouldShowPrivateByDefaultComingSoonBadge ? __( 'Coming Soon' ) : __( 'Private' )
+				shouldShowPrivateByDefaultComingSoonBadge
+					? translate( 'Coming Soon' )
+					: translate( 'Private' )
 			);
 		}
 
 		// Express Service Badge
 		if ( site.options && site.options.is_difm_lite_in_progress ) {
-			badges.push( __( 'Express Service' ) );
+			badges.push( translate( 'Express Service' ) );
 		}
 
 		// Public Coming Soon Badge
 		if ( shouldShowPublicComingSoonSiteBadge ) {
-			badges.push( __( 'Coming Soon' ) );
+			badges.push( translate( 'Coming Soon' ) );
 		}
 
 		// Redirect Badge
 		if ( site.options && site.options.is_redirect ) {
-			badges.push( __( 'Redirect' ) );
+			badges.push( translate( 'Redirect' ) );
 		}
 
 		// Domain Badge
 		if ( site.options && site.options.is_domain_only ) {
-			badges.push( __( 'Domain' ) );
+			badges.push( translate( 'Domain' ) );
 		}
 
 		return badges.length > 0
@@ -491,6 +519,7 @@ class MasterbarLoggedIn extends Component {
 	renderSiteMenu() {
 		const {
 			siteSlug,
+			translate,
 			siteTitle,
 			siteUrl,
 			isClassicView,
@@ -499,6 +528,10 @@ class MasterbarLoggedIn extends Component {
 			domainOnlySite,
 			sitePlanName,
 			site,
+			sitePlanUrl,
+			sidebarType,
+			canUserViewStats,
+			statsAdminUrl,
 		} = this.props;
 
 		// Only display when a site is selected and is not domain-only site.
@@ -506,27 +539,62 @@ class MasterbarLoggedIn extends Component {
 			return null;
 		}
 
-		const menuItems = [ { label: __( 'Visit Site' ), url: siteUrl } ];
+		const menuItems = [
+			{
+				label: translate( 'Visit Site' ),
+				url: siteUrl,
+				onClick: () => {
+					this.props.recordTracksEvent( 'calypso_masterbar_visit_site_clicked', {
+						site_id: this.props.siteId,
+					} );
+				},
+			},
+		];
 
-		if ( isClassicView ) {
-			menuItems.push( { label: __( 'Dashboard' ), url: siteAdminUrl } );
-		} else {
-			menuItems.push( { label: __( 'My Home' ), url: siteHomeUrl } );
+		const isWithinSiteContext =
+			sidebarType === SidebarType.UnifiedSiteClassic ||
+			sidebarType === SidebarType.UnifiedSiteDefault;
+
+		if ( ! isWithinSiteContext ) {
+			if ( isClassicView ) {
+				menuItems.push( {
+					label: translate( 'Dashboard' ),
+					url: siteAdminUrl,
+					onClick: () => this.props.recordTracksEvent( 'calypso_masterbar_dashboard_clicked' ),
+				} );
+			} else {
+				menuItems.push( {
+					label: translate( 'My Home' ),
+					url: siteHomeUrl,
+					onClick: () => this.props.recordTracksEvent( 'calypso_masterbar_my_home_clicked' ),
+				} );
+			}
+		}
+
+		if ( canUserViewStats ) {
+			menuItems.push( {
+				label: translate( 'Stats' ),
+				url: statsAdminUrl,
+				onClick: () => this.props.recordTracksEvent( 'calypso_masterbar_stats_clicked' ),
+			} );
 		}
 
 		if ( ! site?.is_wpcom_staging_site ) {
 			menuItems.push( {
 				label: (
 					<div className="masterbar__site-info masterbar__site-plan">
-						<span className="masterbar__site-info-label">{ __( 'Plan' ) }</span>
+						<span className="masterbar__site-info-label">{ translate( 'Plan' ) }</span>
 						<div className="masterbar__info-badges">
 							<Badge className="masterbar__info-badge">{ sitePlanName }</Badge>
 						</div>
 					</div>
 				),
+				...( sitePlanUrl && { url: sitePlanUrl } ),
 				onClick: () => {
 					this.props.recordTracksEvent( 'calypso_masterbar_plan_clicked' );
-					page( `/plans/${ siteSlug }` );
+					if ( ! sitePlanUrl ) {
+						navigate( `/plans/${ siteSlug }` );
+					}
 				},
 			} );
 		}
@@ -536,7 +604,7 @@ class MasterbarLoggedIn extends Component {
 			menuItems.push( {
 				label: (
 					<div className="masterbar__site-info masterbar__site-status">
-						<span className="masterbar__site-info-label">{ __( 'Status' ) }</span>
+						<span className="masterbar__site-info-label">{ translate( 'Status' ) }</span>
 						<div className="masterbar__info-badges">{ siteBadges }</div>
 					</div>
 				),
@@ -560,6 +628,7 @@ class MasterbarLoggedIn extends Component {
 		const {
 			siteSlug,
 			isClassicView,
+			translate,
 			siteAdminUrl,
 			newPostUrl,
 			newPageUrl,
@@ -580,39 +649,47 @@ class MasterbarLoggedIn extends Component {
 		if ( siteSlug ) {
 			siteActions = [
 				{
-					label: __( 'Post' ),
+					label: translate( 'Post' ),
 					url: newPostUrl,
+					onClick: () => this.props.recordTracksEvent( 'calypso_masterbar_new_post_clicked' ),
 				},
 				{
-					label: __( 'Media' ),
+					label: translate( 'Media' ),
 					url: isClassicView ? `${ siteAdminUrl }media-new.php` : `/media/${ siteSlug }`,
+					onClick: () => this.props.recordTracksEvent( 'calypso_masterbar_new_media_clicked' ),
 				},
 				{
-					label: __( 'Page' ),
+					label: translate( 'Page' ),
 					url: newPageUrl,
+					onClick: () => this.props.recordTracksEvent( 'calypso_masterbar_new_page_clicked' ),
 				},
 				{
-					label: __( 'User' ),
+					label: translate( 'User' ),
 					url: isClassicView ? `${ siteAdminUrl }user-new.php` : `/people/new/${ siteSlug }`,
+					onClick: () => this.props.recordTracksEvent( 'calypso_masterbar_new_user_clicked' ),
 				},
 			];
 		} else {
 			siteActions = [
 				{
-					label: __( 'Post' ),
+					label: translate( 'Post' ),
 					url: '/post',
+					onClick: () => this.props.recordTracksEvent( 'calypso_masterbar_new_post_clicked' ),
 				},
 				{
-					label: __( 'Media' ),
+					label: translate( 'Media' ),
 					url: '/media',
+					onClick: () => this.props.recordTracksEvent( 'calypso_masterbar_new_media_clicked' ),
 				},
 				{
-					label: __( 'Page' ),
+					label: translate( 'Page' ),
 					url: '/page',
+					onClick: () => this.props.recordTracksEvent( 'calypso_masterbar_new_page_clicked' ),
 				},
 				{
-					label: __( 'User' ),
+					label: translate( 'User' ),
 					url: '/people/new',
+					onClick: () => this.props.recordTracksEvent( 'calypso_masterbar_new_user_clicked' ),
 				},
 			];
 		}
@@ -622,26 +699,70 @@ class MasterbarLoggedIn extends Component {
 				url={ siteActions[ 0 ].url }
 				subItems={ [ siteActions ] }
 				icon={ <span className="dashicons-before dashicons-plus" /> }
-				tooltip={ _x( 'New', 'admin bar menu group label' ) }
+				tooltip={ translate( 'New', { context: 'admin bar menu group label' } ) }
 				tipTarget="new-menu"
 			>
-				{ _x( 'New', 'admin bar menu group label' ) }
+				{ translate( 'New', { context: 'admin bar menu group label' } ) }
+			</Item>
+		);
+	}
+
+	clickStatsSparkline = () => {
+		this.props.recordTracksEvent( 'calypso_masterbar_stats_sparkline_clicked' );
+	};
+
+	renderStatsSparkline() {
+		const { siteId, translate, domainOnlySite, canUserViewStats, statsAdminUrl, statsSparkline } =
+			this.props;
+
+		if ( ! siteId || domainOnlySite || ! canUserViewStats || ! statsAdminUrl ) {
+			return null;
+		}
+
+		if ( 'statsSparkline' in this.props && ! statsSparkline ) {
+			return null;
+		}
+
+		const label = translate( 'Views over 48 hours. Click for more Stats.' );
+
+		return (
+			<Item
+				className="masterbar__item-stats-sparkline"
+				url={ statsAdminUrl }
+				tooltip={ label }
+				ariaLabel={ label }
+				onClick={ this.clickStatsSparkline }
+				hasGlobalBorderStyle
+			>
+				{ 'statsSparkline' in this.props ? (
+					statsSparkline
+				) : (
+					<MasterbarStatsSparkline siteId={ siteId } />
+				) }
 			</Item>
 		);
 	}
 
 	renderLaunchButton() {
-		const { isA4ADevSite, isUnlaunchedSite, siteId, isManageSiteOptionsEnabled } = this.props;
+		const { isA4ADevSite, isUnlaunchedSite, siteId, isManageSiteOptionsEnabled, launchButton } =
+			this.props;
 
 		if ( ! isUnlaunchedSite || ! isManageSiteOptionsEnabled || isA4ADevSite ) {
 			return null;
+		}
+
+		if ( launchButton ) {
+			return launchButton;
 		}
 
 		return <MasterbarLaunchButton siteId={ siteId } />;
 	}
 
 	renderProfileMenu() {
-		const { user, isGlobalSidebarVisible, siteAdminUrl } = this.props;
+		const { translate, user, isGlobalSidebarVisible, siteAdminUrl } = this.props;
+		// No site admin URL (e.g. an account with no sites) means no profile.php to link to.
+		const canEditProfile = isGlobalSidebarVisible || !! siteAdminUrl;
+		const editProfileUrl = isGlobalSidebarVisible ? '/me' : `${ siteAdminUrl }profile.php`;
 		const profileActions = [
 			{
 				label: (
@@ -659,18 +780,28 @@ class MasterbarLoggedIn extends Component {
 							<span className="username" title={ user.username }>
 								{ user.username }
 							</span>
-							<span className="display-name edit-profile">
-								{ isGlobalSidebarVisible ? __( 'My Profile' ) : __( 'Edit Profile' ) }
-							</span>
+							{ canEditProfile && (
+								<span className="display-name edit-profile">
+									{ isGlobalSidebarVisible
+										? translate( 'My Profile' )
+										: translate( 'Edit Profile' ) }
+								</span>
+							) }
 						</div>
 					</div>
 				),
-				url: isGlobalSidebarVisible ? '/me' : `${ siteAdminUrl }profile.php`,
+				url: canEditProfile ? editProfileUrl : undefined,
+				onClick: canEditProfile
+					? () => this.props.recordTracksEvent( 'calypso_masterbar_edit_profile_clicked' )
+					: undefined,
 			},
 			{
-				label: __( 'Log Out' ),
-				onClick: () => this.props.redirectToLogout(),
-				tooltip: __( 'Log out of WordPress.com' ),
+				label: translate( 'Log Out' ),
+				onClick: () => {
+					this.props.recordTracksEvent( 'calypso_masterbar_log_out_clicked' );
+					this.props.redirectToLogout();
+				},
+				tooltip: translate( 'Log out of WordPress.com' ),
 				className: 'logout-link',
 			},
 		];
@@ -679,17 +810,20 @@ class MasterbarLoggedIn extends Component {
 			{
 				label: (
 					<span className="button wpcom-button">
-						{ createInterpolateElement( __( 'My <wpcomIcon /> WordPress.com Account' ), {
-							wpcomIcon:
-								typeof this.wordpressIcon() !== 'string' ? (
-									this.wordpressIcon()
-								) : (
-									<Gridicon icon={ this.wordpressIcon() } size={ 24 } />
-								),
+						{ translate( 'My {{wpcomIcon/}} WordPress.com Account', {
+							components: {
+								wpcomIcon:
+									typeof this.wordpressIcon() !== 'string' ? (
+										this.wordpressIcon()
+									) : (
+										<Gridicon icon={ this.wordpressIcon() } size={ 24 } />
+									),
+							},
 						} ) }
 					</span>
 				),
 				url: '/me/account',
+				onClick: () => this.props.recordTracksEvent( 'calypso_masterbar_wpcom_account_clicked' ),
 				className: 'wpcom-link',
 			},
 		];
@@ -701,18 +835,16 @@ class MasterbarLoggedIn extends Component {
 				onClick={ this.clickMe }
 				isActive={ this.isActive( 'me', true ) }
 				className="masterbar__item-howdy"
-				tooltip={ __( 'Update your profile, personal settings, and more' ) }
+				tooltip={ translate( 'Update your profile, personal settings, and more' ) }
 				preloadSection={ this.preloadMe }
 				subItems={ [ profileActions, wpcomActions ] }
 				hasGlobalBorderStyle
 			>
 				{ user.display_name && (
 					<span className="masterbar__item-howdy-howdy">
-						{ sprintf(
-							/* translators: %s is the user's display name */
-							__( 'Howdy, %s' ),
-							user.display_name
-						) }
+						{ translate( 'Howdy, %(display_name)s', {
+							args: { display_name: user.display_name },
+						} ) }
 					</span>
 				) }
 				<Gravatar
@@ -726,6 +858,7 @@ class MasterbarLoggedIn extends Component {
 	}
 
 	renderReader() {
+		const { translate } = this.props;
 		return (
 			<Item
 				tipTarget="reader"
@@ -734,12 +867,12 @@ class MasterbarLoggedIn extends Component {
 				icon={ <ReaderIcon className="masterbar__menu-icon masterbar_svg-reader" /> }
 				onClick={ this.clickReader }
 				isActive={ this.isActive( 'reader', true ) }
-				tooltip={ __( 'Read the blogs and topics you follow' ) }
+				tooltip={ translate( 'Read the blogs and topics you follow' ) }
 				preloadSection={ this.preloadReader }
 				hasGlobalBorderStyle
 			>
 				<span className="masterbar__icon-label masterbar__item-reader-label">
-					{ __( 'Reader' ) }
+					{ translate( 'Reader' ) }
 				</span>
 			</Item>
 		);
@@ -772,32 +905,32 @@ class MasterbarLoggedIn extends Component {
 	}
 
 	renderNotifications() {
+		const { translate } = this.props;
 		return (
 			<Notifications
 				isShowing
 				isActive={ this.isActive( 'notifications' ) }
 				className="masterbar__item-notifications"
-				tooltip={ __( 'Manage your notifications' ) }
+				tooltip={ translate( 'Manage your notifications' ) }
 			>
 				<span className="masterbar__item-notifications-label">
-					{
-						/* translators: Toolbar, must be shorter than ~12 chars */
-						_x( 'Notifications', 'masterbar' )
-					}
+					{ translate( 'Notifications', {
+						comment: 'Toolbar, must be shorter than ~12 chars',
+					} ) }
 				</span>
 			</Notifications>
 		);
 	}
 
 	renderHelpCenter() {
-		const { siteId, useUnifiedAgent } = this.props;
+		const { siteId, translate, useUnifiedAgent } = this.props;
 
 		if ( useUnifiedAgent ) {
 			const placeholder = (
 				<Item
 					className="masterbar__item-agents-manager"
-					tooltip={ __( 'Help' ) }
-					icon={ <AgentsManagerIcon hasUnread={ false } /> }
+					tooltip={ translate( 'Help' ) }
+					icon={ <HelpIcon /> }
 				/>
 			);
 
@@ -809,7 +942,7 @@ class MasterbarLoggedIn extends Component {
 				<AsyncLoad
 					require={ loadMasterbarAgentsManager }
 					siteId={ siteId }
-					tooltip={ __( 'Help' ) }
+					tooltip={ translate( 'Help' ) }
 					placeholder={ placeholder }
 				/>
 			);
@@ -818,7 +951,7 @@ class MasterbarLoggedIn extends Component {
 		const placeholder = (
 			<Item
 				className="masterbar__item-help"
-				tooltip={ __( 'Help' ) }
+				tooltip={ translate( 'Help' ) }
 				icon={ <HelpCenterIcon hasUnread={ false } /> }
 			/>
 		);
@@ -831,14 +964,49 @@ class MasterbarLoggedIn extends Component {
 			<AsyncLoad
 				require={ loadMasterbarHelpCenter }
 				siteId={ siteId }
-				tooltip={ __( 'Help' ) }
+				tooltip={ translate( 'Help' ) }
 				placeholder={ placeholder }
 			/>
 		);
 	}
 
+	clickAgentsManagerAiChat = () => {
+		// Toggle: close the chat if it's already showing, otherwise resume the active
+		// conversation and open it.
+		const isVisible = isAgentsManagerChatVisible();
+		this.props.recordTracksEvent( 'calypso_masterbar_agents_manager_ai_chat_clicked', {
+			section: this.props.sectionName,
+			action: isVisible ? 'close' : 'open',
+		} );
+		if ( isVisible ) {
+			closeAgentsManagerChat();
+		} else {
+			openAgentsManagerChat();
+		}
+	};
+
+	renderAgentsManagerAiChat() {
+		const { translate } = this.props;
+
+		return (
+			<Item
+				className="masterbar__item-agents-manager-ai-chat"
+				onClick={ this.clickAgentsManagerAiChat }
+				icon={ <BigSkyIcon /> }
+				tooltip={ translate( 'Ask AI' ) }
+			/>
+		);
+	}
+
 	render() {
-		const { isCheckout, isCheckoutPending, isCheckoutFailed, loadHelpCenterIcon } = this.props;
+		const {
+			isCheckout,
+			isCheckoutPending,
+			isCheckoutFailed,
+			loadHelpCenterIcon,
+			loadAgentsManager,
+			useUnifiedAgent,
+		} = this.props;
 
 		// Checkout flow uses it's own version of the masterbar
 		if ( isCheckout || isCheckoutPending || isCheckoutFailed ) {
@@ -854,6 +1022,7 @@ class MasterbarLoggedIn extends Component {
 					{ this.renderUpdatesMenu() }
 					{ this.renderCommentsMenu() }
 					{ this.renderSiteActionMenu() }
+					{ this.renderStatsSparkline() }
 					{ this.renderLanguageSwitcher() }
 					{ this.renderLaunchButton() }
 				</div>
@@ -861,6 +1030,9 @@ class MasterbarLoggedIn extends Component {
 					{ this.renderCart() }
 					{ this.renderReader() }
 					{ loadHelpCenterIcon && this.renderHelpCenter() }
+					{ /* Show the AI button only where the chat dock is mounted (same two
+					     conditions the dock loads on), so clicking it always opens the chat. */ }
+					{ useUnifiedAgent && loadAgentsManager && this.renderAgentsManagerAiChat() }
 					{ this.renderNotifications() }
 					{ this.renderProfileMenu() }
 				</div>
@@ -871,7 +1043,7 @@ class MasterbarLoggedIn extends Component {
 
 export { MasterbarLoggedIn };
 
-export default connect(
+const ConnectedMasterbarLoggedIn = connect(
 	( state, { siteId } ) => {
 		const sectionGroup = getSectionGroup( state );
 
@@ -882,6 +1054,13 @@ export default connect(
 		const siteCount = getCurrentUserSiteCount( state ) ?? 0;
 		const site = getSite( state, siteId );
 		const isClassicView = site && siteUsesWpAdminInterface( site );
+		const currentRoute = getCurrentRoute( state );
+		const sidebarType = getSidebarType( {
+			state,
+			siteId,
+			section: { group: sectionGroup },
+			route: currentRoute,
+		} );
 
 		return {
 			isManageSiteOptionsEnabled: canCurrentUserManageSiteOptions( state, siteId ),
@@ -898,6 +1077,8 @@ export default connect(
 			siteHomeUrl: getSiteHomeUrl( state, siteId ),
 			adminMenu: getAdminMenu( state, siteId ),
 			sectionGroup,
+			sidebarType,
+			sectionName: getSectionName( state ),
 			domainOnlySite: isDomainOnlySite( state, siteId ),
 			hasNoSites: siteCount === 0,
 			user: getCurrentUser( state ),
@@ -910,7 +1091,7 @@ export default connect(
 			isSimpleSite: isSimpleSite( state, siteId ),
 			isJetpackNotAtomic: isJetpackSite( state, siteId ) && ! isAtomicSite( state, siteId ),
 			currentLayoutFocus: getCurrentLayoutFocus( state ),
-			currentRoute: getCurrentRoute( state ),
+			currentRoute,
 			newPostUrl: getEditorUrl( state, siteId, null, 'post' ),
 			newPageUrl: getEditorUrl( state, siteId, null, 'page' ),
 			isUnlaunchedSite: getIsUnlaunchedSite( state, siteId ),
@@ -922,7 +1103,8 @@ export default connect(
 				getSiteOption( state, siteId, 'editing_toolkit_is_active' ) === false,
 			isGravatarDomain: hasGravatarDomainQueryParam( state ),
 			dashboardOptIn: hasDashboardOptIn( state ),
-			useUnifiedAgent: getPreference( state, 'unified_ai_chat' ) ?? false,
+			canUserViewStats: canCurrentUser( state, siteId, 'view_stats' ),
+			statsAdminUrl: getSiteAdminUrl( state, siteId, 'admin.php?page=stats' ),
 		};
 	},
 	{
@@ -934,4 +1116,12 @@ export default connect(
 		requestAdminMenu,
 		redirectToLogout,
 	}
-)( MasterbarLoggedIn );
+)( localize( MasterbarLoggedIn ) );
+
+// Source the unified-experience flag from `useShouldUseUnifiedAgent` so the masterbar
+// stays in sync with the rest of the agents-manager UI. A hook can't run in the
+// connected class, hence this thin wrapper.
+export default function MasterbarLoggedInWithUnifiedAgent( props ) {
+	const useUnifiedAgent = useShouldUseUnifiedAgent();
+	return <ConnectedMasterbarLoggedIn { ...props } useUnifiedAgent={ !! useUnifiedAgent } />;
+}

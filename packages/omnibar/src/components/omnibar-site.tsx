@@ -25,8 +25,8 @@ export function OmnibarSiteNode( {
 
 	return [
 		<OmnibarMenu key={ siteNode.id } node={ siteNode } style={ { minWidth: 0 } } />,
-		pluginNodes && <OmnibarSitePluginsNode nodes={ pluginNodes } />,
-		siteActionNodes && <OmnibarSiteActionsNode nodes={ siteActionNodes } />,
+		pluginNodes && <OmnibarSitePluginsNode key="plugins" nodes={ pluginNodes } />,
+		siteActionNodes && <OmnibarSiteActionsNode key="actions" nodes={ siteActionNodes } />,
 	].filter( Boolean );
 }
 
@@ -39,7 +39,6 @@ export function OmnibarSiteActionsNode( { nodes }: { nodes: OmnibarNode[] } ) {
 		<OmnibarMenu
 			key={ node.id }
 			node={ {
-				...node,
 				render: ( { title, meta } ) => (
 					<Stack direction="row" gap="xs" align="center">
 						<span>{ title }</span>
@@ -50,6 +49,7 @@ export function OmnibarSiteActionsNode( { nodes }: { nodes: OmnibarNode[] } ) {
 						) }
 					</Stack>
 				),
+				...node,
 			} }
 		/>
 	) );

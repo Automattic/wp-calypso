@@ -1,4 +1,4 @@
-import { intersection, isEmpty, keys } from 'lodash';
+import { isEmpty } from '@automattic/js-utils';
 import flows from '../flows';
 import { generateFlows } from '../flows-pure';
 import { getStepModuleMap } from '../step-components';
@@ -19,7 +19,8 @@ jest.mock( '@automattic/calypso-config', () => ( {
 describe( 'index', () => {
 	// eslint-disable-next-line jest/expect-expect
 	test( 'should not have overlapping step/flow names', () => {
-		const overlappingNames = intersection( keys( steps ), keys( flows.getFlows() ) );
+		const flowNames = Object.keys( flows.getFlows() );
+		const overlappingNames = Object.keys( steps ).filter( ( name ) => flowNames.includes( name ) );
 
 		if ( ! isEmpty( overlappingNames ) ) {
 			throw new Error(
@@ -156,5 +157,22 @@ describe( 'index', () => {
 		definedSteps.delete( 'mailbox-domain' );
 
 		expect( definedSteps ).toEqual( new Set() );
+	} );
+
+	test( 'intervalType must be an optional query dependency where it is used (it has a default)', () => {
+		// `intervalType` defaults to yearly when absent, so a flow that carries it through the URL
+		// must also mark it optional — otherwise the flow controller rejects otherwise-valid URLs
+		// that omit it.
+		const flowDefinitions = generateFlows();
+
+		const flowsWithMandatoryIntervalType = Object.entries( flowDefinitions )
+			.filter( ( [ , flow ] ) => {
+				const provided = flow.providesDependenciesInQuery ?? [];
+				const optional = flow.optionalDependenciesInQuery ?? [];
+				return provided.includes( 'intervalType' ) && ! optional.includes( 'intervalType' );
+			} )
+			.map( ( [ flowName ] ) => flowName );
+
+		expect( flowsWithMandatoryIntervalType ).toEqual( [] );
 	} );
 } );

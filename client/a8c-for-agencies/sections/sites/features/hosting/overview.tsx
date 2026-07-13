@@ -54,7 +54,7 @@ const HostingOverviewPreview = ( { site }: Props ) => {
 			<div className="hosting__wrapper">
 				<div className="card hosting__card">
 					<div className="hosting__header">
-						<div className="hosting__title">{ translate( 'Site Information' ) } </div>
+						<div className="hosting__title">{ translate( 'Site information' ) } </div>
 					</div>
 					<div className="hosting__content">
 						<div className="hosting__content-row">

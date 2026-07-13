@@ -1,4 +1,4 @@
-import { SubscriptionBillPeriod } from '@automattic/api-core';
+import { SubscriptionBillPeriod, getPlanNames } from '@automattic/api-core';
 import { formatCurrency } from '@automattic/number-formatters';
 import { Button, ExternalLink } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
@@ -162,7 +162,7 @@ export function PurchaseExpiryStatus( {
 	) {
 		return createInterpolateElement(
 			sprintf(
-				// translators: date is a formatted date, amount is a currency amount, and excludeTaxStringAbbreviation is something like "excludes VAT"
+				// translators: %(date)s: a formatted date, %(amount)s: a currency amount, excludeTaxStringAbbreviation: something like "excludes VAT"
 				__(
 					'Free trial ends on %(date)s, renews automatically at %(amount)s <excludeTaxStringAbbreviation />'
 				),
@@ -190,7 +190,7 @@ export function PurchaseExpiryStatus( {
 		return (
 			<span>
 				{
-					// translators: date is a formatted date
+					// translators: %(date)s: a formatted date
 					sprintf( __( 'Free trial ends on %(date)s' ), {
 						date: formatDate( new Date( purchase.expiry_date ), locale, { dateStyle: 'long' } ),
 					} )
@@ -208,7 +208,7 @@ export function PurchaseExpiryStatus( {
 		return (
 			<span>
 				{ sprintf(
-					// translators: date is a formatted date
+					// translators: %(date)s: a formatted date
 					__( 'Credit card expires before your next renewal on %(date)s' ),
 					{
 						date: formatDate( new Date( purchase.renew_date ), locale, { dateStyle: 'long' } ),
@@ -239,6 +239,38 @@ export function PurchaseExpiryStatus( {
 		);
 	}
 
+	// When a downgrade is scheduled for the next renewal, the plan won't simply
+	// renew at its current price — it changes to a lower-tier plan. Say so instead
+	// of the usual "Renews ... on <date>" line.
+	if ( isRenewingOnDate && purchase.is_delayed_downgrade_pending ) {
+		const slug = purchase.delayed_downgrade_to_product_slug;
+		const planNames = getPlanNames() as Record< string, string | undefined >;
+		const targetPlanName = slug ? planNames[ slug ] ?? null : null;
+		const renewalDate = formatDate( new Date( purchase.renew_date ), locale, {
+			dateStyle: 'long',
+		} );
+		if ( targetPlanName ) {
+			return (
+				<span>
+					{ sprintf(
+						// translators: %(plan)s is the plan being downgraded to (e.g. "Personal"); %(date)s is a formatted date
+						__( 'Changing to %(plan)s on %(date)s' ),
+						{ plan: targetPlanName, date: renewalDate }
+					) }
+				</span>
+			);
+		}
+		return (
+			<span>
+				{ sprintf(
+					// translators: %(date)s is a formatted date
+					__( 'Changing plan on %(date)s' ),
+					{ date: renewalDate }
+				) }
+			</span>
+		);
+	}
+
 	if ( isRenewingOnDate && purchase.bill_period_days ) {
 		const translateArgs = {
 			amount: formatCurrency( purchase.price_integer, purchase.currency_code, {
@@ -256,7 +288,7 @@ export function PurchaseExpiryStatus( {
 			case SubscriptionBillPeriod.PLAN_MONTHLY_PERIOD:
 				return createInterpolateElement(
 					sprintf(
-						// translators: date is a formatted date, amount is a currency amount, and excludeTaxStringAbbreviation is something like "excludes VAT"
+						// translators: %(date)s: a formatted date, %(amount)s: a currency amount, excludeTaxStringAbbreviation: something like "excludes VAT"
 						__( 'Renews monthly at %(amount)s <excludeTaxStringAbbreviation /> on %(date)s' ),
 						translateArgs
 					),
@@ -265,7 +297,7 @@ export function PurchaseExpiryStatus( {
 			case SubscriptionBillPeriod.PLAN_ANNUAL_PERIOD:
 				return createInterpolateElement(
 					sprintf(
-						// translators: date is a formatted date, amount is a currency amount, and excludeTaxStringAbbreviation is something like "excludes VAT"
+						// translators: %(date)s: a formatted date, %(amount)s: a currency amount, excludeTaxStringAbbreviation: something like "excludes VAT"
 						__( 'Renews yearly at %(amount)s <excludeTaxStringAbbreviation /> on %(date)s' ),
 						translateArgs
 					),
@@ -274,7 +306,7 @@ export function PurchaseExpiryStatus( {
 			case SubscriptionBillPeriod.PLAN_BIENNIAL_PERIOD:
 				return createInterpolateElement(
 					sprintf(
-						// translators: date is a formatted date, amount is a currency amount, and excludeTaxStringAbbreviation is something like "excludes VAT"
+						// translators: %(date)s: a formatted date, %(amount)s: a currency amount, excludeTaxStringAbbreviation: something like "excludes VAT"
 						__(
 							'Renews every two years at %(amount)s <excludeTaxStringAbbreviation /> on %(date)s'
 						),
@@ -285,7 +317,7 @@ export function PurchaseExpiryStatus( {
 			case SubscriptionBillPeriod.PLAN_TRIENNIAL_PERIOD:
 				return createInterpolateElement(
 					sprintf(
-						// translators: date is a formatted date, amount is a currency amount, and excludeTaxStringAbbreviation is something like "excludes VAT"
+						// translators: %(date)s: a formatted date, %(amount)s: a currency amount, excludeTaxStringAbbreviation: something like "excludes VAT"
 						__(
 							'Renews every three years at %(amount)s <excludeTaxStringAbbreviation /> on %(date)s'
 						),
@@ -296,7 +328,7 @@ export function PurchaseExpiryStatus( {
 			default:
 				return createInterpolateElement(
 					sprintf(
-						// translators: date is a formatted date, amount is a currency amount, and excludeTaxStringAbbreviation is something like "excludes VAT"
+						// translators: %(date)s: a formatted date, %(amount)s: a currency amount, excludeTaxStringAbbreviation: something like "excludes VAT"
 						__( 'Renews at %(amount)s <excludeTaxStringAbbreviation /> on %(date)s' ),
 						translateArgs
 					),

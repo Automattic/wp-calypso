@@ -520,14 +520,46 @@ export function canAutoRenewBeTurnedOff( purchase: Purchase ) {
 	return purchase.isAutoRenewEnabled;
 }
 
+/**
+ * Whether the purchase has already passed its expiry date and is no longer
+ * active. This reflects the backend's `expiry_status` field being `expired`,
+ * meaning the subscription has lapsed (auto-renew did not occur or was off) and
+ * the associated product/features are no longer provided.
+ *
+ * This is distinct from `isExpiring`, which indicates a still-active purchase
+ * that is scheduled to expire in the future (e.g. auto-renew is off), and from
+ * `isInExpirationGracePeriod`, which covers the window just after the expiry
+ * date during which the purchase can still be renewed.
+ */
 export function isExpired( purchase: Purchase ) {
 	return 'expired' === purchase.expiryStatus;
 }
 
+/**
+ * Whether the purchase is still active but scheduled to expire because it will
+ * not auto-renew. This reflects the backend's `expiry_status` field being
+ * either `expiring` (auto-renew is off, so it will lapse on its expiry date) or
+ * `manualRenew` (a purchase that has no auto-renew and must be renewed by hand).
+ *
+ * Note this describes a purchase that has not yet expired — once the expiry date
+ * passes without renewal the status becomes `expired` (see `isExpired`).
+ */
 export function isExpiring( purchase: Purchase ) {
 	return [ 'manualRenew', 'expiring' ].includes( purchase.expiryStatus );
 }
 
+/**
+ * Whether the purchase is within the grace period: the window just after its
+ * expiry date has passed but during which it can still be renewed to restore
+ * service without interruption.
+ *
+ * This returns `true` only when all of the following hold:
+ * - the purchase has an expiry date that is in the past;
+ * - it is not already fully `expired` (see `isExpired`);
+ * - it is either renewing or expiring (i.e. it is a renewable subscription
+ *   rather than, say, a one-time purchase);
+ * - it is not an Akismet free product (which has no meaningful grace period).
+ */
 export function isInExpirationGracePeriod( purchase: Purchase ): boolean {
 	if ( ! purchase.expiryDate ) {
 		return false;
@@ -730,6 +762,28 @@ export function isRefundable( purchase: Purchase ): boolean {
  */
 export function hasAmountAvailableToRefund( purchase: Purchase ): boolean {
 	return isRefundable( purchase ) && purchase.refundAmount > 0;
+}
+
+/**
+ * Returns true if the plan is eligible for an instant, self-serve downgrade: the
+ * plan is still within its initial refund window (not a renewal) and has neither
+ * expired nor entered its post-expiry grace period.
+ *
+ * Note: this intentionally does NOT require a refundable amount. Instant
+ * downgrades are also offered for plans that were paid with credits or are
+ * otherwise free, where no money would be refunded.
+ *
+ * The caller is responsible for confirming the purchase is a plan (see `isPlan`
+ * from `@automattic/calypso-products`). This is distinct from
+ * `isInExpirationGracePeriod`, which gates the downgrade-to-checkout flow for
+ * plans whose expiry date has already passed.
+ */
+export function isWithinRefundWindowDowngradeEligible( purchase: Purchase ): boolean {
+	return (
+		purchase.isWithinInitialRefundWindow &&
+		! isExpired( purchase ) &&
+		! isInExpirationGracePeriod( purchase )
+	);
 }
 
 /**

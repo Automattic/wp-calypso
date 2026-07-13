@@ -1,6 +1,8 @@
 @use "../variables";
 @import "@wordpress/base-styles/breakpoints";
 @import "@wordpress/base-styles/mixins";
+@import "@automattic/typography/styles/variables";
+@import "calypso/assets/stylesheets/shared/mixins/breakpoints";
 
 $plugin-details-header-padding: 100px;
 $mobile-icon-height: 175px;

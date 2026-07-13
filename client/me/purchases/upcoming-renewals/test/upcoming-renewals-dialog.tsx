@@ -6,7 +6,6 @@
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import moment from 'moment';
-import { unmountComponentAtNode } from 'react-dom';
 import Modal from 'react-modal';
 import UpcomingRenewalsDialog from '../upcoming-renewals-dialog';
 
@@ -21,7 +20,9 @@ describe( '<UpcomingRenewalsDialog>', () => {
 	} );
 
 	afterEach( () => {
-		unmountComponentAtNode( modalRoot );
+		// React Testing Library auto-unmounts the rendered tree (and its modal
+		// portal) after each test, so no explicit unmount is needed here
+		// (`unmountComponentAtNode` is removed in React 19).
 		document.body.removeChild( modalRoot );
 		modalRoot = null;
 	} );

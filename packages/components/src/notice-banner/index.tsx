@@ -1,4 +1,4 @@
-import { Icon, warning, info, check, closeSmall } from '@wordpress/icons';
+import { Icon, cautionFilled as warning, info, check, closeSmall } from '@wordpress/icons';
 import clsx from 'clsx';
 import React from 'react';
 import { alert } from '../icons';

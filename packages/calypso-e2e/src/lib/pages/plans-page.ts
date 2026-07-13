@@ -54,6 +54,16 @@ const selectors = {
 };
 
 /**
+ * Escapes a string so it can be safely used in a regular expression.
+ *
+ * @param {string} value String to escape.
+ * @returns {string} Escaped string.
+ */
+function escapeRegExp( value: string ): string {
+	return value.replace( /[.*+?^${}()|[\]\\]/g, '\\$&' );
+}
+
+/**
  * Page representing the Plans page under `/plans` endpoint.
  *
  * Also forms a component of the `SignupPickPlanPage` used in the
@@ -101,6 +111,11 @@ export class PlansPage {
 		const combobox = this.page.locator( selectors.addOnCombobox( plan ) );
 
 		const comboboxSelect = combobox.locator( selectors.addOnComboboxButton );
+		// Callers resolve on API responses (e.g. `/users/new?`), which can
+		// return before the React step transition has rendered the plans grid.
+		// Wait for the combobox itself so the action timeout is spent on the
+		// click, not on the preceding navigation.
+		await comboboxSelect.first().waitFor( { state: 'visible', timeout: 30_000 } );
 		await comboboxSelect.first().click();
 
 		const comboboxOption = combobox.locator(
@@ -125,6 +140,33 @@ export class PlansPage {
 	}
 
 	/**
+	 * Validates that the plan's selection CTA is offered in the grid.
+	 *
+	 * @param {Plans} plan Name of the plan.
+	 */
+	async validatePlanIsAvailable( plan: Plans ): Promise< void > {
+		await this.page
+			.locator( selectors.selectPlanButton( plan ) )
+			.first()
+			.waitFor( { state: 'visible', timeout: 30_000 } );
+	}
+
+	/**
+	 * Validates that the plan is not offered in the grid (e.g. the free plan is hidden).
+	 *
+	 * @param {Plans} plan Name of the plan.
+	 * @throws If the plan's selection CTA is present.
+	 */
+	async validatePlanIsNotAvailable( plan: Plans ): Promise< void > {
+		const count = await this.page.locator( selectors.selectPlanButton( plan ) ).count();
+		if ( count > 0 ) {
+			throw new Error(
+				`Expected the ${ plan } plan to not be offered, but found ${ count } CTA(s).`
+			);
+		}
+	}
+
+	/**
 	 * Opens the escape hatch modal by clicking the "start with a free plan" trigger link.
 	 */
 	async openEscapeHatch(): Promise< void > {
@@ -135,7 +177,11 @@ export class PlansPage {
 			} )
 			.first();
 		await trigger.waitFor( { state: 'visible', timeout: 30_000 } );
-		await trigger.click();
+		// The click handler calls both `onUpgradeClick(null)` and `onSubmit(null)`,
+		// the latter of which can kick off a step navigation that Playwright's
+		// default click() will wait on, exceeding the action timeout. Opt out of
+		// the post-click navigation wait since we only need the dialog to appear.
+		await trigger.click( { noWaitAfter: true } );
 
 		const escapeHatchDialog = this.page
 			.getByRole( 'dialog' )
@@ -161,7 +207,51 @@ export class PlansPage {
 	 * Validates that the "Domain redirect" warning is visible in the escape hatch modal.
 	 */
 	async validateDomainRedirectWarning( domainName: string, siteSlug: string ): Promise< void > {
-		await this.page.getByText( `${ domainName } redirects to ${ siteSlug }` ).waitFor();
+		const redirectedDomain = await this.getDomainFromRedirectWarning( siteSlug );
+		if ( redirectedDomain !== domainName ) {
+			throw new Error(
+				`Expected domain redirect warning for ${ domainName }, but found ${ redirectedDomain }.`
+			);
+		}
+	}
+
+	/**
+	 * Returns the domain shown in the "Domain redirect" warning.
+	 */
+	async getDomainFromRedirectWarning( siteSlug: string ): Promise< string > {
+		const warningPattern = new RegExp( `^(\\S+) redirects to ${ escapeRegExp( siteSlug ) }$` );
+		const warning = this.page.getByText( warningPattern ).first();
+		// Same late-render budget as getIncludedDomain: the warning appears
+		// after the escape-hatch/step transition, past the 10s action timeout.
+		await warning.waitFor( { state: 'visible', timeout: 30_000 } );
+
+		const warningText = ( await warning.textContent() )?.trim();
+		const match = warningText?.match( warningPattern );
+		if ( ! match?.[ 1 ] ) {
+			throw new Error( `Failed to read domain redirect warning for ${ siteSlug }.` );
+		}
+
+		return match[ 1 ];
+	}
+
+	/**
+	 * Returns the domain shown as included on the plans grid.
+	 */
+	async getIncludedDomain(): Promise< string > {
+		const includedDomainPattern = /^(\S+) is included$/;
+		const includedDomain = this.page.getByText( includedDomainPattern ).first();
+		// The plans grid renders after a step transition the caller does not
+		// wait on, so the included-domain line can appear later than the 10s
+		// action timeout. Match the 30s budget used by selectPlan/selectAddOn.
+		await includedDomain.waitFor( { state: 'visible', timeout: 30_000 } );
+
+		const includedDomainText = ( await includedDomain.textContent() )?.trim();
+		const match = includedDomainText?.match( includedDomainPattern );
+		if ( ! match?.[ 1 ] ) {
+			throw new Error( 'Failed to read included domain from plans grid.' );
+		}
+
+		return match[ 1 ];
 	}
 
 	/**
@@ -217,6 +307,15 @@ export class PlansPage {
 	 * @throws If the expected plan title is not found in the timeout period.
 	 */
 	async validateActivePlan( expectedPlan: Plans ): Promise< void > {
+		if ( envVariables.VIEWPORT_NAME === 'mobile' ) {
+			// Mobile stacks the plans and surfaces the owned plan in the "My Plan"
+			// card, not the desktop spotlight card. Confirm both the plan name
+			// (scoped to the card title) and the owned-plan "Manage plan" control,
+			// which renders as an anchor rather than a button.
+			await this.page.locator( selectors.myPlanTitle( expectedPlan ) ).first().waitFor();
+			await this.page.locator( selectors.managePlanButton ).first().waitFor();
+			return;
+		}
 		await this.page.locator( selectors.spotlightPlan ).getByText( expectedPlan ).waitFor();
 	}
 

@@ -2,6 +2,7 @@ import type {
 	ContactValidationResponseMessages,
 	DomainContactDetails,
 	DomainContactValidationResponse,
+	SMSCountryCode,
 } from '@automattic/api-core';
 import type { NormalizedField } from '@wordpress/dataviews';
 
@@ -90,6 +91,37 @@ export const createFieldAsyncValidator = (
 	};
 };
 
+/**
+ * Maps a validation response's per-field messages (snake_case API keys) to form
+ * field IDs (camelCase), keeping the first message per field. Lets the form surface
+ * errors for every affected field from a single whole-form validation response.
+ * @param messages - The `messages` object from a failed validation response
+ * @returns A map of field IDs to their first error message
+ */
+export const mapValidationMessagesToFieldErrors = (
+	messages: ContactValidationResponseMessages | undefined
+): Record< string, string > => {
+	const fieldErrors: Record< string, string > = {};
+	if ( ! messages ) {
+		return fieldErrors;
+	}
+
+	for ( const [ fieldId, apiKey ] of Object.entries( FIELD_TO_API_KEY_MAP ) as [
+		keyof DomainContactDetails,
+		keyof ContactValidationResponseMessages | null,
+	][] ) {
+		if ( ! apiKey ) {
+			continue;
+		}
+		const messagesForField = messages[ apiKey ];
+		if ( Array.isArray( messagesForField ) && messagesForField.length > 0 ) {
+			fieldErrors[ fieldId ] = messagesForField[ 0 ];
+		}
+	}
+
+	return fieldErrors;
+};
+
 export function sanitizePhoneCountryCode( phoneCountryCode: string ): string {
 	return phoneCountryCode ? '+' + phoneCountryCode.replace( /[^0-9]/g, '' ) : '';
 }
@@ -111,4 +143,26 @@ export function splitPhoneNumber( phoneNumber: string ): string[] {
 
 export function combinePhoneNumber( countryNumericCode: string, phoneNumber: string ): string {
 	return `${ countryNumericCode }.${ phoneNumber }`;
+}
+
+/**
+ * Resolves the SMS country entry for a phone number's numeric dialing code.
+ *
+ * A single dialing code can be shared by several countries (for example +1 is
+ * used by the US, Canada, and a number of Caribbean nations). Matching on the
+ * numeric code alone returns the first entry (the Bahamas for +1), which showed
+ * the wrong country for US and Canadian numbers (DOMENG-635). When the dialing
+ * code is shared, prefer the entry that matches the contact's own country code.
+ */
+export function resolveSmsCountry(
+	smsCountryCodes: SMSCountryCode[] | undefined,
+	numericCode: string,
+	preferredCountryCode: string
+): SMSCountryCode | undefined {
+	const countriesForCode =
+		smsCountryCodes?.filter( ( country ) => country.numeric_code === numericCode ) ?? [];
+	return (
+		countriesForCode.find( ( country ) => country.code === preferredCountryCode ) ??
+		countriesForCode[ 0 ]
+	);
 }

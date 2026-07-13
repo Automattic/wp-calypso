@@ -143,6 +143,10 @@ const contextLinks = {
 		link: 'https://wordpress.com/support/how-to-create-a-staging-site/',
 		post_id: 239448,
 	},
+	'hosting-staging-site-sync': {
+		link: 'https://wordpress.com/support/how-to-create-a-staging-site/sync-staging-site/',
+		post_id: 386882,
+	},
 	'hosting-edge-cache': {
 		link: 'https://wordpress.com/support/clear-your-sites-cache/',
 		post_id: 164969,
@@ -243,8 +247,7 @@ const contextLinks = {
 		post_id: 219751,
 	},
 	mcp: {
-		link: 'https://wordpress.com/support/model-context-protocol-mcp-settings/',
-		post_id: 418160,
+		link: 'https://wordpress.com/support/mcp/',
 	},
 	media: {
 		link: 'https://wordpress.com/support/media/',
@@ -429,6 +432,13 @@ const contextLinks = {
 	'stats-emails-jetpack': {
 		link: 'https://jetpack.com/support/jetpack-stats/subscribers-stats/#emails-section',
 	},
+	'stats-subscribers': {
+		link: 'https://wordpress.com/support/stats/view-subscriber-stats/#view-subscriber-stats',
+		post_id: 404454,
+	},
+	'stats-subscribers-jetpack': {
+		link: 'https://jetpack.com/support/jetpack-stats/subscribers-stats/#view-your-subscribers',
+	},
 	'stats-search-terms': {
 		link: 'https://wordpress.com/support/stats/understand-traffic-sources/#analyze-search-terms',
 		post_id: 404387,
@@ -457,12 +467,19 @@ const contextLinks = {
 	'stats-tags-jetpack': {
 		link: 'https://jetpack.com/support/jetpack-stats/insights-dashboard/#tags-categories',
 	},
+	'stats-total-views': {
+		link: 'https://wordpress.com/support/stats/learn-insights-about-your-website/#all-time-insights',
+		post_id: 276101,
+	},
+	'stats-total-views-jetpack': {
+		link: 'https://jetpack.com/support/jetpack-stats/insights-dashboard/#total-views',
+	},
 	'stats-top-posts-and-pages-analyze-content-performance': {
 		link: 'https://wordpress.com/support/stats/analyze-content-performance/#view-posts-pages-traffic',
 		post_id: 404034,
 	},
 	'stats-top-posts-and-pages-analyze-content-performance-jetpack': {
-		link: `https://jetpack.com/support/jetpack-stats/traffic-dashboard/#analyzing-popular-posts-and-pages`,
+		link: `https://jetpack.com/support/jetpack-stats/traffic-dashboard/#analyzing-popular-posts-pages-and-archives`,
 	},
 	'stats-posts-amp-pages': {
 		link: 'https://wordpress.com/support/stats/understand-your-sites-traffic/',

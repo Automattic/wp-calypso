@@ -31,7 +31,9 @@ const useGridPlansForComparisonGrid = ( {
 	useVar42NoAiFeatures,
 	showPricingDifferentiationFeaturePills,
 	useFocusedNewCopyTaglines,
+	usePlansGridRedesignNewDescription,
 	isExperimentVariant,
+	showBillingDescriptionForIncreasedRenewalPrice,
 }: UseGridPlansParams ): GridPlan[] | null => {
 	const gridPlans = useGridPlans( {
 		allFeaturesList,
@@ -51,6 +53,8 @@ const useGridPlansForComparisonGrid = ( {
 		isDomainOnlySite,
 		reflectStorageSelectionInPlanPrices,
 		useFocusedNewCopyTaglines,
+		usePlansGridRedesignNewDescription,
+		showBillingDescriptionForIncreasedRenewalPrice,
 	} );
 
 	const planFeaturesForComparisonGrid = useRestructuredPlanFeaturesForComparisonGrid( {

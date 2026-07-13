@@ -2,6 +2,12 @@
  * @jest-environment jsdom
  */
 import { UserSettings } from '@automattic/api-core';
+import {
+	fromUtcDeliveryWindow,
+	getDeliveryWindowOffsetHours,
+	toUtcDeliveryWindow,
+	useDeliveryWindowTimezone,
+} from '@automattic/i18n-utils';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
@@ -18,6 +24,14 @@ jest.mock(
 );
 
 jest.mock( '@tanstack/react-router' );
+
+// Mock only the timezone hook so we can drive the UTC↔local delivery-window
+// conversion deterministically, without depending on the machine's real time
+// zone. The conversion helpers themselves stay real.
+jest.mock( '@automattic/i18n-utils', () => ( {
+	...jest.requireActual( '@automattic/i18n-utils' ),
+	useDeliveryWindowTimezone: jest.fn(),
+} ) );
 
 const mockGetIsAutomatticianApi = ( isAutomttician: boolean ) => {
 	return nock( 'https://public-api.wordpress.com:443' )
@@ -99,6 +113,12 @@ describe( 'SubscriptionSettings', () => {
 	beforeEach( () => {
 		//Snackbar requires window.scrollTo to be defined
 		window.scrollTo = jest.fn();
+		// Default to UTC so the existing tests keep their identity behavior.
+		( useDeliveryWindowTimezone as jest.Mock ).mockReturnValue( {
+			timezone: 'UTC',
+			offsetHours: 0,
+			isUtcFallback: false,
+		} );
 	} );
 
 	it( "doesn't render the automatticians only checkbox", async () => {
@@ -194,6 +214,119 @@ describe( 'SubscriptionSettings', () => {
 		await userEvent.selectOptions( await daySelect(), '1' );
 		await userEvent.selectOptions( await hourSelect(), '10' );
 		await userEvent.click( await jabberSubscriptionDeliveryCheckbox() );
+		await userEvent.click( await saveButton() );
+
+		await waitFor( () => {
+			const snackbar = notificationSnackBar();
+			expect( snackbar ).toBeVisible();
+			expect( snackbar ).toHaveTextContent( 'Subscription settings saved.' );
+		} );
+	} );
+
+	it( 'displays the stored UTC window in local time and saves edits back as UTC', async () => {
+		// Evaluate the offset the same way the hook would, so the test stays
+		// correct across daylight-saving transitions.
+		const offsetHours = getDeliveryWindowOffsetHours( 'America/Los_Angeles' ) ?? 0;
+		( useDeliveryWindowTimezone as jest.Mock ).mockReturnValue( {
+			timezone: 'America/Los_Angeles',
+			offsetHours,
+			isUtcFallback: false,
+		} );
+		const expectedLocal = fromUtcDeliveryWindow( { hour: 0, day: 1 }, offsetHours );
+
+		mockGetIsAutomatticianApi( false );
+		mockGetSettingsApi( {
+			...defaultUserSettings,
+			subscription_delivery_day: 1,
+			subscription_delivery_hour: 0,
+		} );
+
+		render( <SubscriptionSettings />, { wrapper: Wrapper() } );
+
+		// UTC Monday 00:00 should show as the previous-day local bucket in PT.
+		expect( await daySelect() ).toHaveValue( String( expectedLocal.day ) );
+		expect( await hourSelect() ).toHaveValue( String( expectedLocal.hour ) );
+
+		// Pick a different local bucket and verify it round-trips back to UTC.
+		const newLocalHour = expectedLocal.hour === 0 ? 2 : 0;
+		const expectedUtc = toUtcDeliveryWindow(
+			{ hour: newLocalHour, day: expectedLocal.day },
+			offsetHours
+		);
+
+		nock( 'https://public-api.wordpress.com:443' )
+			.post(
+				'/rest/v1.1/me/settings',
+				( body ) =>
+					Number( body.subscription_delivery_hour ) === expectedUtc.hour &&
+					Number( body.subscription_delivery_day ) === expectedUtc.day
+			)
+			.reply( 200, {} );
+
+		await userEvent.selectOptions( await hourSelect(), String( newLocalHour ) );
+		await userEvent.click( await saveButton() );
+
+		await waitFor( () => {
+			const snackbar = notificationSnackBar();
+			expect( snackbar ).toBeVisible();
+			expect( snackbar ).toHaveTextContent( 'Subscription settings saved.' );
+		} );
+	} );
+
+	it( 'falls back to clearly labeled UTC when the time zone is unknown', async () => {
+		( useDeliveryWindowTimezone as jest.Mock ).mockReturnValue( {
+			timezone: undefined,
+			offsetHours: null,
+			isUtcFallback: true,
+		} );
+
+		mockGetIsAutomatticianApi( false );
+		mockGetSettingsApi( {
+			...defaultUserSettings,
+			subscription_delivery_day: 1,
+			subscription_delivery_hour: 8,
+		} );
+
+		render( <SubscriptionSettings />, { wrapper: Wrapper() } );
+
+		// With no time zone, values are shown unchanged (raw UTC).
+		expect( await hourSelect() ).toHaveValue( '8' );
+		// The UTC fallback description and option labels should be present.
+		expect( await screen.findByText( /Timezone:\s*UTC/i ) ).toBeVisible();
+		expect( screen.getByRole( 'option', { name: '08:00 - 10:00 UTC' } ) ).toBeInTheDocument();
+	} );
+
+	it( 'preserves an odd stored UTC hour when only the day changes in UTC fallback mode', async () => {
+		( useDeliveryWindowTimezone as jest.Mock ).mockReturnValue( {
+			timezone: undefined,
+			offsetHours: null,
+			isUtcFallback: true,
+		} );
+
+		mockGetIsAutomatticianApi( false );
+		mockGetSettingsApi( {
+			...defaultUserSettings,
+			subscription_delivery_day: 1,
+			subscription_delivery_hour: 5,
+		} );
+
+		nock( 'https://public-api.wordpress.com:443' )
+			.post(
+				'/rest/v1.1/me/settings',
+				( body ) =>
+					Number( body.subscription_delivery_hour ) === 5 &&
+					Number( body.subscription_delivery_day ) === 2
+			)
+			.reply( 200, {} );
+
+		render( <SubscriptionSettings />, { wrapper: Wrapper() } );
+
+		expect( await hourSelect() ).toHaveValue( '5' );
+		expect( screen.getByRole( 'option', { name: '05:00 - 07:00 UTC' } ) ).toBeInTheDocument();
+
+		expect( await daySelect() ).toHaveValue( '1' );
+
+		await userEvent.selectOptions( await daySelect(), '2' );
 		await userEvent.click( await saveButton() );
 
 		await waitFor( () => {

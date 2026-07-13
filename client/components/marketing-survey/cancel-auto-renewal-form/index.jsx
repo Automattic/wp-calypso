@@ -1,7 +1,7 @@
 import { isDomainRegistration, isPlan } from '@automattic/calypso-products';
+import { shuffle } from '@automattic/js-utils';
 import { Button, RadioControl } from '@wordpress/components';
 import { localize } from 'i18n-calypso';
-import { shuffle } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';

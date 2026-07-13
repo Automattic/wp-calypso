@@ -1,12 +1,11 @@
-import { isEnabled } from '@automattic/calypso-config';
-import { useNavigate } from '@tanstack/react-router';
 import { Button, Dropdown } from '@wordpress/components';
 import { useViewportMatch } from '@wordpress/compose';
 import { __ } from '@wordpress/i18n';
 import { bellUnread, bell } from '@wordpress/icons';
 import clsx from 'clsx';
-import { Suspense, lazy, useCallback, useEffect, useState } from 'react';
+import { Suspense, lazy, useCallback, useEffect, useMemo, useState } from 'react';
 import wpcom from 'calypso/lib/wp';
+import { dashboardLink } from '../../utils/link';
 import { useAuth } from '../auth';
 import { useHelpCenter } from '../help-center';
 import { useLocale } from '../locale';
@@ -23,7 +22,6 @@ export default function Notifications( {
 	/** When true, hides the built-in toggle button (the omnibar provides its own). */
 	anchor?: boolean;
 } ) {
-	const navigate = useNavigate();
 	const { user } = useAuth();
 	const locale = useLocale();
 	const isMobileViewport = useViewportMatch( 'small', '<' );
@@ -31,6 +29,20 @@ export default function Notifications( {
 	const [ isOpen, setIsOpen ] = useState( false );
 	const [ hasUnseenNotifications, setHasUnseenNotifications ] = useState( user.has_unseen_notes );
 	const [ anchorEl, setAnchorEl ] = useState< HTMLElement | null >( null );
+
+	// The masterbar remounts the bell when the unseen count changes, detaching any
+	// cached node. Resolve the live bell at measurement time so the popover stays
+	// anchored, falling back to the captured node while it is still connected.
+	const popoverAnchor = useMemo(
+		() => ( {
+			getBoundingClientRect: () =>
+				( anchorEl?.isConnected
+					? anchorEl
+					: document.querySelector< HTMLElement >( '#wpcom-omnibar .masterbar-notifications' )
+				)?.getBoundingClientRect() ?? new DOMRect(),
+		} ),
+		[ anchorEl ]
+	);
 
 	const handleToggle = ( willOpen: boolean ) => {
 		if ( willOpen ) {
@@ -46,6 +58,11 @@ export default function Notifications( {
 		}
 	}, [ isHelpCenterShown ] );
 
+	// Keep the omnibar button in sync with the panel open state.
+	useEffect( () => {
+		omnibarEvents.notificationsOpen.emit( isOpen );
+	}, [ isOpen ] );
+
 	const handleClose = () => {
 		handleToggle( false );
 	};
@@ -59,8 +76,8 @@ export default function Notifications( {
 		],
 		VIEW_SETTINGS: [
 			() => {
-				handleClose();
-				navigate( { to: '/me/notifications' } );
+				// Open in a new tab so the current notification state is preserved.
+				window.open( dashboardLink( '/me/notifications' ), '_blank' );
 			},
 		],
 		EDIT_COMMENT: [
@@ -112,26 +129,25 @@ export default function Notifications( {
 	return (
 		<Dropdown
 			popoverProps={ {
-				className: 'dashboard-notifications',
-				placement: 'bottom-end',
+				placement: 'bottom-start',
 				offset: 8,
 				focusOnMount: true,
-				...( anchorEl && { anchor: anchorEl } ),
-				...( isEnabled( 'dashboard/omnibar' ) && {
-					onFocusOutside: () => {
-						// When focus moves to the omnibar (e.g. clicking the
-						// omnibar notification bell), suppress the Popover's
-						// auto-close and let the omnibar event handle the toggle
-						// instead. Without this, the Popover's focus-outside close
-						// races with the omnibar's toggle event, causing the panel
-						// to close then immediately reopen.
-						const omnibar = document.getElementById( 'wpcom-omnibar' );
-						if ( omnibar?.contains( document.activeElement ) ) {
-							return;
-						}
-						setIsOpen( false );
-					},
-				} ),
+				flip: false,
+				shift: true,
+				...( anchor ? { anchor: popoverAnchor } : anchorEl && { anchor: anchorEl } ),
+				onFocusOutside: () => {
+					// When focus moves to the omnibar (e.g. clicking the
+					// omnibar notification bell), suppress the Popover's
+					// auto-close and let the omnibar event handle the toggle
+					// instead. Without this, the Popover's focus-outside close
+					// races with the omnibar's toggle event, causing the panel
+					// to close then immediately reopen.
+					const omnibar = document.getElementById( 'wpcom-omnibar' );
+					if ( omnibar?.contains( document.activeElement ) ) {
+						return;
+					}
+					setIsOpen( false );
+				},
 			} }
 			open={ isOpen }
 			expandOnMobile={ isMobileViewport }
@@ -149,24 +165,14 @@ export default function Notifications( {
 				)
 			}
 			renderContent={ () => (
-				<div
-					style={ {
-						width: '100vw',
-						height: '100vh',
-						maxWidth: ! isMobileViewport ? '448px' : undefined,
-						maxHeight: 'inherit',
-						margin: '-8px',
-					} }
-				>
-					<Suspense fallback={ null }>
-						<AsyncNotificationApp
-							locale={ locale }
-							isDismissible={ isMobileViewport }
-							actionHandlers={ actionHandlers }
-							wpcom={ wpcom }
-						/>
-					</Suspense>
-				</div>
+				<Suspense fallback={ null }>
+					<AsyncNotificationApp
+						locale={ locale }
+						isDismissible={ isMobileViewport }
+						actionHandlers={ actionHandlers }
+						wpcom={ wpcom }
+					/>
+				</Suspense>
 			) }
 		/>
 	);

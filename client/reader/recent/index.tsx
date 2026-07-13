@@ -3,26 +3,32 @@ import { WIDE_BREAKPOINT } from '@automattic/viewport';
 import { useBreakpoint } from '@automattic/viewport-react';
 import { DataViews, filterSortAndPaginate, View } from '@wordpress/dataviews';
 import { translate } from 'i18n-calypso';
-import { useState, useEffect, useCallback, useMemo, useLayoutEffect, useRef } from 'react';
-import { useSelector, shallowEqual, useDispatch } from 'react-redux';
+import { useState, useEffect, useCallback, useMemo, useRef } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
 import { UnknownAction } from 'redux';
-import { ThunkDispatch } from 'redux-thunk';
 import { SiteIcon } from 'calypso/blocks/site-icon';
 import AsyncLoad from 'calypso/components/async-load';
 import NavigationHeader from 'calypso/components/navigation-header';
+import { useCommentsApiDisabled } from 'calypso/reader/data/comments';
+import { useCachedPost, useCachedPosts } from 'calypso/reader/data/post/cache';
+import { useSiteSubscriptions } from 'calypso/reader/data/site-subscriptions';
+import {
+	isPaddingStreamItem,
+	usePaginatedStream,
+	type StreamItem,
+	type StreamListItem,
+} from 'calypso/reader/data/stream';
 import { getPostIcon } from 'calypso/reader/get-helpers';
 import FollowingEmptyContent from 'calypso/reader/stream/empty';
-import { isCommentsApiDisabled } from 'calypso/state/comments/selectors/get-comments-api-disabled';
-import { getReaderFollowForFeed } from 'calypso/state/reader/follows/selectors';
-import { getPostByKey } from 'calypso/state/reader/posts/selectors';
-import { requestPaginatedStream } from 'calypso/state/reader/streams/actions';
 import { viewStream } from 'calypso/state/reader-ui/actions';
 import { getSelectedRecentFeedId } from 'calypso/state/reader-ui/sidebar/selectors';
 import Skeleton from '../components/skeleton';
 import EngagementBar from './engagement-bar';
 import RecentPostField from './recent-post-field';
 import RecentPostSkeleton from './recent-post-skeleton';
-import type { PostItem, ReaderPost } from './types';
+import { useRecentSelection } from './use-recent-selection';
+import { getStreamItemKey } from './utils';
+import type { PostItem } from './types';
 import type { AppState } from 'calypso/types';
 
 const loadReaderFullPost = () =>
@@ -34,20 +40,9 @@ interface RecentProps {
 	viewToggle?: React.ReactNode;
 }
 
-interface PaddingItem {
-	isPadding: true;
-	postId: string;
-}
-
-function isPaddingItem( item: ReaderPost | PaddingItem ): item is PaddingItem {
-	return 'isPadding' in item;
-}
-
 const Recent = ( { viewToggle }: RecentProps ) => {
-	const dispatch = useDispatch< ThunkDispatch< AppState, void, UnknownAction > >();
-	const [ selectedItem, setSelectedItem ] = useState< ReaderPost | null >( null );
+	const dispatch = useDispatch();
 	const isWide = useBreakpoint( WIDE_BREAKPOINT );
-	const [ isLoading, setIsLoading ] = useState( false );
 	const postColumnRef = useRef< HTMLDivElement | null >( null );
 	const itemRefs = useRef< { [ key: string ]: HTMLDivElement | null } >( {} );
 	const focusedIndexRef = useRef< string | null >( null ); // Keep track of the currently focused row index
@@ -74,63 +69,133 @@ const Recent = ( { viewToggle }: RecentProps ) => {
 	const streamKey =
 		selectedRecentSidebarFeedId !== null ? `recent:${ selectedRecentSidebarFeedId }` : 'recent';
 
-	const data = useSelector( ( state: AppState ) => state.reader?.streams?.[ streamKey ] );
+	const data = usePaginatedStream( {
+		streamKey,
+		page: view.page ?? 1,
+		perPage: view.perPage ?? 15,
+	} );
+	const streamItems = data.items;
+	const isLoading = data.isRequesting;
 
-	const posts = useSelector( ( state: AppState ) => {
-		const items = data?.items;
+	const { selectedItem, setSelectedItem, selectItem, handleChangeView } = useRecentSelection( {
+		isWide,
+		streamItems,
+		view,
+		setView,
+		selectedFeedId: selectedRecentSidebarFeedId,
+		postColumnRef,
+	} );
+
+	const postItems = useMemo(
+		() => streamItems.filter( ( item ) => ! isPaddingStreamItem( item ) ) as StreamItem[],
+		[ streamItems ]
+	);
+	const postKeys = useMemo(
+		() =>
+			postItems.map( ( item ) => ( {
+				feedId: item.feedId,
+				postId: item.postId,
+			} ) ),
+		[ postItems ]
+	);
+	const cachedPosts = useCachedPosts( postKeys );
+	const { subscriptions } = useSiteSubscriptions();
+	const siteIconsByFeedId = useMemo( () => {
+		const items = streamItems;
 		if ( ! items ) {
 			return {};
 		}
+		const subscriptionsByFeedId = new Map(
+			subscriptions.map( ( subscription ) => [ Number( subscription.feed_ID ), subscription ] )
+		);
 
-		return items.reduce( ( acc: Record< string, PostItem >, item: ReaderPost | PaddingItem ) => {
-			if ( isPaddingItem( item ) ) {
+		return items.reduce( ( acc: Record< number, unknown >, item: StreamListItem ) => {
+			if ( isPaddingStreamItem( item ) || item.feedId == null ) {
 				return acc;
 			}
 
-			const post = getPostByKey( state, {
-				feedId: item.feedId,
-				postId: item.postId,
-			} );
+			const feedId = Number( item.feedId );
+			const feedSubscription = subscriptionsByFeedId.get( feedId );
+			if ( feedSubscription?.site_icon ) {
+				acc[ feedId ] = feedSubscription.site_icon;
+			}
+
+			return acc;
+		}, {} );
+	}, [ subscriptions, streamItems ] );
+
+	const posts = useMemo( () => {
+		return postItems.reduce( ( acc: Record< string, PostItem >, item, index ) => {
+			const post = cachedPosts[ index ];
 			if ( ! post ) {
 				return acc;
 			}
 
-			// Add site icon to feed object so have icon for external feeds
-			if ( ! post.site_icon ) {
-				const feedSubscription = getReaderFollowForFeed( state, item.feedId );
-				post.site_icon = feedSubscription?.site_icon;
-			}
-
-			acc[ `${ item?.feedId }-${ item?.postId }` ] = post;
+			acc[ getStreamItemKey( item ) ] = {
+				...post,
+				site_icon: post.site_icon ?? siteIconsByFeedId[ Number( item.feedId ) ],
+			} as PostItem;
 
 			return acc;
 		}, {} );
-	}, shallowEqual );
+	}, [ cachedPosts, postItems, siteIconsByFeedId ] );
+
+	// While a new page/per-page request is in flight, DataViews keeps the
+	// previous page's rows mounted and dims them (its `is-refreshing` state).
+	// Those rows resolve their content through `getPostFromItem`, but `posts` is
+	// derived from the current request's `streamItems`, which is momentarily
+	// empty for an uncached page size. Remembering the last non-empty posts map
+	// lets the stale rows keep their content, so the sidebar reads as a dimmed
+	// "refreshing" list instead of going blank.
+	// Updated during render (not in an effect) on purpose: this is a
+	// keep-previous cache, so the fallback must be in place on the same render
+	// that `posts` empties out. The write is idempotent.
+	const previousPostsRef = useRef< Record< string, PostItem > >( posts );
+	if ( Object.keys( posts ).length > 0 ) {
+		previousPostsRef.current = posts;
+	}
 
 	const getPostFromItem = useCallback(
-		( item: ReaderPost ) => {
-			const postKey = `${ item?.feedId }-${ item?.postId }`;
-			return posts[ postKey ];
+		( item: StreamItem ) => {
+			const key = getStreamItemKey( item );
+			return posts[ key ] ?? previousPostsRef.current[ key ];
 		},
 		[ posts ]
 	);
 
-	// Get comments API disabled status for the selected post
-	const commentsApiDisabled = useSelector( ( state: AppState ) => {
-		if ( ! selectedItem ) {
-			return false;
-		}
-		const post = getPostFromItem( selectedItem );
-		return post?.site_ID ? isCommentsApiDisabled( state, post.site_ID ) : false;
-	} );
+	const handlePostFieldKeyDown = useCallback(
+		( event: React.KeyboardEvent< HTMLDivElement >, item: StreamItem ) => {
+			if ( event.key !== 'Enter' && event.key !== ' ' ) {
+				return;
+			}
+			event.preventDefault();
+			event.stopPropagation();
+			selectItem( item );
+		},
+		[ selectItem ]
+	);
+
+	const selectedListPost = selectedItem ? getPostFromItem( selectedItem ) : undefined;
+	// Read the selected post straight from the canonical cache so the full-post
+	// pane keeps rendering during a per-page refetch, when the paginated stream
+	// list (and its derived posts map) is momentarily empty for the new page size.
+	const selectedCachedPost = useCachedPost(
+		selectedItem
+			? { blogId: selectedItem.blogId, feedId: selectedItem.feedId, postId: selectedItem.postId }
+			: null
+	);
+	const hasSelectedPost = Boolean( selectedListPost || selectedCachedPost );
+	const commentsApiDisabled = useCommentsApiDisabled(
+		selectedListPost?.site_ID ?? selectedCachedPost?.site_ID
+	);
 
 	const fields = useMemo(
 		() => [
 			{
 				id: 'icon',
 				label: translate( 'Icon' ),
-				render: ( { item }: { item: ReaderPost | PaddingItem } ) => {
-					if ( isPaddingItem( item ) ) {
+				render: ( { item }: { item: StreamListItem } ) => {
+					if ( isPaddingStreamItem( item ) ) {
 						return <Skeleton height="24px" width="24px" shape="circle" />;
 					}
 					const post = getPostFromItem( item );
@@ -143,12 +208,12 @@ const Recent = ( { viewToggle }: RecentProps ) => {
 			{
 				id: 'post',
 				label: translate( 'Post' ),
-				getValue: ( { item }: { item: ReaderPost | PaddingItem } ) =>
-					isPaddingItem( item )
+				getValue: ( { item }: { item: StreamListItem } ) =>
+					isPaddingStreamItem( item )
 						? ''
 						: `${ getPostFromItem( item )?.title ?? '' } - ${ item?.site_name ?? '' }`,
-				render: ( { item }: { item: ReaderPost | PaddingItem } ) => {
-					if ( isPaddingItem( item ) ) {
+				render: ( { item }: { item: StreamListItem } ) => {
+					if ( isPaddingStreamItem( item ) ) {
 						return (
 							<>
 								<Skeleton height="10px" width="100%" style={ { marginBottom: '8px' } } />
@@ -157,12 +222,14 @@ const Recent = ( { viewToggle }: RecentProps ) => {
 						);
 					}
 					return (
-						<div onFocus={ () => handleItemFocus( item.postId?.toString() ) }>
+						<div onFocus={ () => handleItemFocus( getStreamItemKey( item ) ) }>
 							<RecentPostField
 								ref={ ( el ) => {
-									itemRefs.current[ item.postId?.toString() ?? '' ] = el;
+									itemRefs.current[ getStreamItemKey( item ) ] = el;
 								} }
 								post={ getPostFromItem( item ) }
+								onClick={ () => selectItem( item ) }
+								onKeyDown={ ( event ) => handlePostFieldKeyDown( event, item ) }
 							/>
 						</div>
 					);
@@ -172,19 +239,12 @@ const Recent = ( { viewToggle }: RecentProps ) => {
 				enableGlobalSearch: true,
 			},
 		],
-		[ getPostFromItem, handleItemFocus ]
+		[ getPostFromItem, handleItemFocus, handlePostFieldKeyDown, selectItem ]
 	);
 
 	const fetchData = useCallback( () => {
 		dispatch( viewStream( streamKey, window.location.pathname ) as UnknownAction );
-		dispatch(
-			requestPaginatedStream( {
-				streamKey,
-				page: view.page,
-				perPage: view.perPage,
-			} )
-		);
-	}, [ dispatch, view, streamKey ] );
+	}, [ dispatch, streamKey ] );
 
 	const defaultPaginationInfo = useMemo( () => {
 		return {
@@ -194,36 +254,13 @@ const Recent = ( { viewToggle }: RecentProps ) => {
 	}, [ data?.pagination ] );
 
 	const { data: shownData, paginationInfo } = useMemo( () => {
-		return filterSortAndPaginate( data?.items ?? [], view, fields );
-	}, [ data?.items, view, fields ] );
+		return filterSortAndPaginate( streamItems, view, fields );
+	}, [ streamItems, view, fields ] );
 
 	// Fetch the data when the component is mounted.
 	useEffect( () => {
 		fetchData();
 	}, [ fetchData ] );
-
-	// Set the first item as selected on the current page.
-	useEffect( () => {
-		if ( isWide && data?.items?.length > 0 ) {
-			if ( view.page && view.perPage ) {
-				const selectedPost = data?.items?.[ ( view.page - 1 ) * view.perPage ];
-				setSelectedItem( selectedPost || null );
-			}
-		}
-	}, [ isWide, data?.items, view ] );
-
-	// When the selected feed changes, clear the selected item and reset the page to 1.
-	useEffect( () => {
-		setSelectedItem( null );
-		setView( ( prevView ) => ( {
-			...prevView,
-			page: 1,
-		} ) );
-	}, [ selectedRecentSidebarFeedId ] );
-
-	useLayoutEffect( () => {
-		setIsLoading( data?.isRequesting );
-	}, [ data?.isRequesting ] );
 
 	// Handle key events
 	const handleKeyDown = useCallback(
@@ -231,17 +268,14 @@ const Recent = ( { viewToggle }: RecentProps ) => {
 			if ( event.key === 'Enter' && focusedIndexRef.current !== null ) {
 				// Use the focused index to determine the selected item
 				const focusedItem = shownData.find(
-					( item ) => item.postId?.toString() === focusedIndexRef.current
+					( item ) => getStreamItemKey( item ) === focusedIndexRef.current
 				);
-				if ( focusedItem && ! isPaddingItem( focusedItem ) ) {
-					setSelectedItem( focusedItem );
-					setTimeout( () => {
-						postColumnRef.current?.focus();
-					}, 0 );
+				if ( focusedItem && ! isPaddingStreamItem( focusedItem ) ) {
+					selectItem( focusedItem );
 				}
 			}
 		},
-		[ shownData ]
+		[ selectItem, shownData ]
 	);
 	return (
 		/* eslint-disable-next-line jsx-a11y/no-static-element-interactions */
@@ -251,32 +285,28 @@ const Recent = ( { viewToggle }: RecentProps ) => {
 					<NavigationHeader title={ translate( 'Recent' ) }>{ viewToggle }</NavigationHeader>
 				</div>
 				<aside className="recent-feed__list-column-content">
-					<DataViews< ReaderPost | PaddingItem >
+					<DataViews< StreamListItem >
 						config={ { perPageSizes: [ 15, 30, 50, 100 ] } }
-						getItemId={ ( item: ReaderPost | PaddingItem, index = 0 ) =>
-							item.postId?.toString() ?? `item-${ index }`
+						getItemId={ ( item: StreamListItem, index = 0 ) =>
+							getStreamItemKey( item ) || `item-${ index }`
 						}
 						view={ view }
 						fields={ fields }
 						data={ shownData }
-						onChangeView={ ( newView ) =>
-							setView( {
-								...newView,
-							} )
-						}
+						onChangeView={ handleChangeView }
 						paginationInfo={ view.search === '' ? defaultPaginationInfo : paginationInfo }
 						defaultLayouts={ { list: {} } }
 						isLoading={ isLoading }
-						selection={ selectedItem ? [ selectedItem.postId?.toString() ] : [] }
+						selection={ selectedItem ? [ getStreamItemKey( selectedItem ) ] : [] }
 						onChangeSelection={ ( newSelection: string[] ) => {
-							const selectedPost = data?.items?.find(
-								( item: ReaderPost ) => item.postId?.toString() === newSelection[ 0 ]
+							const selectedPost = streamItems.find(
+								( item: StreamListItem ) => getStreamItemKey( item ) === newSelection[ 0 ]
 							);
-							setSelectedItem( selectedPost || null );
-							// Focus the post column after a short delay to ensure DOM updates.
-							setTimeout( () => {
-								postColumnRef.current?.focus();
-							}, 0 );
+							if ( selectedPost && ! isPaddingStreamItem( selectedPost ) ) {
+								selectItem( selectedPost );
+							} else {
+								setSelectedItem( null );
+							}
 						} }
 					/>
 				</aside>
@@ -287,18 +317,16 @@ const Recent = ( { viewToggle }: RecentProps ) => {
 				className={ `recent-feed__post-column ${ selectedItem ? 'overlay' : '' }` }
 				tabIndex={ -1 }
 			>
-				{ ! ( selectedItem && getPostFromItem( selectedItem ) ) && isLoading && (
-					<RecentPostSkeleton />
-				) }
-				{ ! isLoading && data?.items.length === 0 && <FollowingEmptyContent view="recent" /> }
-				{ data?.items.length > 0 && selectedItem && getPostFromItem( selectedItem ) && (
+				{ ! hasSelectedPost && isLoading && <RecentPostSkeleton /> }
+				{ ! isLoading && streamItems.length === 0 && <FollowingEmptyContent view="recent" /> }
+				{ selectedItem && hasSelectedPost && (
 					<>
 						<AsyncLoad
 							require={ loadReaderFullPost }
 							feedId={ selectedItem.feedId }
 							postId={ selectedItem.postId }
 							onClose={ () => {
-								const focusItem = itemRefs.current[ selectedItem?.postId?.toString() ?? '' ];
+								const focusItem = itemRefs.current[ getStreamItemKey( selectedItem ) ];
 								if ( ! isWide ) {
 									setSelectedItem( null );
 								}

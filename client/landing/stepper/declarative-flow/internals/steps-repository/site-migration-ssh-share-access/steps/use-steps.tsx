@@ -1,5 +1,5 @@
 import { useTranslate } from 'i18n-calypso';
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, type JSX } from 'react';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { useGenerateSSHKey } from '../hooks/use-generate-ssh-key';
 import { HelpLink } from './help-link';

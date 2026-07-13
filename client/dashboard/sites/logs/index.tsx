@@ -1,28 +1,27 @@
 import { HostingFeatures, LogType, type Site, type SiteSettings } from '@automattic/api-core';
 import { siteBySlugQuery, siteSettingsQuery } from '@automattic/api-queries';
-import { isEnabled } from '@automattic/calypso-config';
 import { DateRangePicker, isLast7Days } from '@automattic/date-range-picker';
 import { useSuspenseQuery } from '@tanstack/react-query';
-import { useRouter } from '@tanstack/react-router';
-import { TabPanel } from '@wordpress/components';
+import { useSearch } from '@tanstack/react-router';
 import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { useEffect, useState } from 'react';
 import { useDateRange } from '../../app/hooks/use-date-range';
 import { useLocale } from '../../app/locale';
-import { siteRoute } from '../../app/router/sites';
-import { Card, CardBody, CardHeader } from '../../components/card';
+import { Card, CardBody } from '../../components/card';
 import InlineSupportLink from '../../components/inline-support-link';
 import Notice from '../../components/notice';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
-import TimeMismatchNotice from '../../components/time-mismatch-notice';
+import TimeMismatchNotice, {
+	useShouldShowTimeMismatchNotice,
+} from '../../components/time-mismatch-notice';
 import { hasHostingFeature, hasPlanFeature } from '../../utils/site-features';
 import HostingFeatureGatedWithCallout from '../hosting-feature-gated-with-callout';
 import SiteActivityLogsDataViews from '../logs-activity/dataviews';
+import { SitesNoticeArbiter } from '../notice-arbiter';
 import SiteLogsDataViews from './dataviews';
 import { getLogsCalloutProps } from './logs-callout';
-import { LOG_TABS } from './utils';
 import './style.scss';
 
 const selectTimeZone = ( s: SiteSettings | undefined ) => ( {
@@ -30,8 +29,7 @@ const selectTimeZone = ( s: SiteSettings | undefined ) => ( {
 	timezoneString: s?.timezone_string || undefined,
 } );
 
-function SiteLogs( { logType }: { logType: LogType } ) {
-	const { siteSlug } = siteRoute.useParams();
+function SiteLogs( { logType, siteSlug }: { logType: LogType; siteSlug: string } ) {
 	const { data: site } = useSuspenseQuery( siteBySlugQuery( siteSlug ) );
 
 	// Sites with a Jetpack connection error can't reach the settings endpoint;
@@ -78,8 +76,6 @@ function SiteLogsContent( {
 	timezoneString: string | undefined;
 } ) {
 	const locale = useLocale();
-	const router = useRouter();
-	const siteSlug = site.slug;
 
 	const settingsUrl = site.options?.admin_url
 		? `${ site.options.admin_url }options-general.php`
@@ -90,6 +86,11 @@ function SiteLogsContent( {
 	);
 
 	const siteId = site.ID;
+	const activitySearchParams = useSearch( { strict: false } );
+	const showTimeMismatchNotice = useShouldShowTimeMismatchNotice( {
+		siteTime: gmtOffset,
+		siteId,
+	} );
 
 	// Normalize any incoming ?from/&to query params to Unix seconds (canonical form)
 	useEffect( () => {
@@ -127,6 +128,7 @@ function SiteLogsContent( {
 		timezoneString,
 		gmtOffset,
 		autoRefresh,
+		defaultDays: logType === LogType.ACTIVITY ? 30 : 7,
 	} );
 	// this is used to track changes across the dateRange to ensure the components can react to changes when they are triggered by a change in the DateRangePicker
 	const [ dateRangeVersion, setDateRangeVersion ] = useState( 0 );
@@ -155,19 +157,6 @@ function SiteLogsContent( {
 		return true;
 	};
 
-	const handleTabChange = ( tab: LogType ) => {
-		if ( logType === tab ) {
-			return;
-		}
-
-		if ( tab === LogType.PHP ) {
-			router.navigate( { to: `/sites/${ siteSlug }/logs/php` } );
-		} else if ( tab === LogType.ACTIVITY ) {
-			router.navigate( { to: `/sites/${ siteSlug }/logs/activity` } );
-		} else {
-			router.navigate( { to: `/sites/${ siteSlug }/logs/server` } );
-		}
-	};
 	const hasActivityLogAccess =
 		hasHostingFeature( site, HostingFeatures.ACTIVITY_LOG ) ||
 		hasPlanFeature( site, HostingFeatures.ACTIVITY_LOG );
@@ -201,47 +190,30 @@ function SiteLogsContent( {
 			}
 			notices={
 				<>
+					{ /* Action feedback, not an on-load banner: rendered outside the arbiter. */ }
 					{ autoRefreshDisabledReason && (
 						<Notice variant="warning">{ autoRefreshDisabledReason }</Notice>
 					) }
-					{ site.__inaccessible_jetpack_error ? (
-						<Notice variant="warning">
-							{ __(
-								'Your site’s time zone setting is currently unavailable. Dates and times on this page are displayed in UTC instead.'
-							) }
-						</Notice>
-					) : (
-						<TimeMismatchNotice
-							settingsUrl={ settingsUrl }
-							siteTime={ gmtOffset }
-							siteId={ siteId }
-						/>
-					) }
+					<SitesNoticeArbiter>
+						{ site.__inaccessible_jetpack_error && (
+							<Notice variant="warning">
+								{ __(
+									'Your site’s time zone setting is currently unavailable. Dates and times on this page are displayed in UTC instead.'
+								) }
+							</Notice>
+						) }
+						{ showTimeMismatchNotice && (
+							<TimeMismatchNotice
+								settingsUrl={ settingsUrl }
+								siteTime={ gmtOffset }
+								siteId={ siteId }
+							/>
+						) }
+					</SitesNoticeArbiter>
 				</>
 			}
 		>
 			<Card className={ `site-logs-card site-logs-card--${ logType }` }>
-				{ ! isEnabled( 'dashboard/omnibar' ) && (
-					<CardHeader style={ { paddingBottom: '0' } }>
-						<TabPanel
-							className="site-logs-tabs"
-							activeClass="is-active"
-							tabs={ LOG_TABS }
-							onSelect={ ( tabName ) => {
-								if (
-									tabName === LogType.PHP ||
-									tabName === LogType.SERVER ||
-									tabName === LogType.ACTIVITY
-								) {
-									handleTabChange( tabName );
-								}
-							} }
-							initialTabName={ logType }
-						>
-							{ () => null }
-						</TabPanel>
-					</CardHeader>
-				) }
 				<CardBody>
 					{ logType === LogType.PHP || logType === LogType.SERVER ? (
 						<HostingFeatureGatedWithCallout site={ site } { ...getLogsCalloutProps() }>
@@ -270,6 +242,7 @@ function SiteLogsContent( {
 								timezoneString={ timezoneString }
 								site={ site }
 								hasActivityLogsAccess={ hasActivityLogAccess }
+								searchParams={ activitySearchParams }
 							/>
 						</>
 					) }

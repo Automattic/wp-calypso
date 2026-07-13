@@ -1,6 +1,5 @@
 import { getUrlParts } from '@automattic/calypso-url';
 import { translate } from 'i18n-calypso';
-import { trim } from 'lodash';
 import { ReactNode } from 'react';
 import { decodeEntities, stripHTML } from 'calypso/lib/formatting';
 import { formatUrlForDisplay } from 'calypso/reader/lib/feed-display-helper';
@@ -181,7 +180,7 @@ export const getSiteAuthorName = ( site: ReaderSite ): string => {
 	const authorFullName =
 		siteAuthor &&
 		( siteAuthor.name ||
-			trim( `${ siteAuthor.first_name || '' } ${ siteAuthor.last_name || '' }` ) );
+			`${ siteAuthor.first_name || '' } ${ siteAuthor.last_name || '' }`.trim() );
 
 	return decodeEntities( authorFullName || '' );
 };
@@ -221,26 +220,14 @@ export const isEligibleForUnseen = ( {
 
 interface CanBeMarkedAsSeenArgs {
 	post: ReaderPost | null;
-	posts: ReaderPost[];
 }
 
 /**
  * Check if the post/posts can be marked as seen based on the existence of `is_seen` flag and the current route.
  */
-export const canBeMarkedAsSeen = ( {
-	post = null,
-	posts = [],
-}: CanBeMarkedAsSeenArgs ): boolean => {
+export const canBeMarkedAsSeen = ( { post = null }: CanBeMarkedAsSeenArgs ): boolean => {
 	if ( post !== null ) {
 		return post.hasOwnProperty( 'is_seen' );
-	}
-
-	if ( posts.length ) {
-		for ( const thePost in posts ) {
-			if ( thePost.hasOwnProperty( 'is_seen' ) ) {
-				return true;
-			}
-		}
 	}
 
 	return false;

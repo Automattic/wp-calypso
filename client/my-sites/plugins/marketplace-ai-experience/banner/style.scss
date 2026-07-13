@@ -41,7 +41,6 @@
 		border-radius: 50%;
 		background: var(--studio-blue-50);
 		color: var(--studio-white);
-		font-size: 18px;
 	}
 
 	&__body {
@@ -68,7 +67,7 @@
 		align-items: center;
 		gap: 12px;
 		width: calc(100% - 2px);
-		margin: 2px 1px 16px;
+		margin: 16px 1px 6px;
 		padding: 10px 16px;
 		background: var(--studio-gray-0);
 		border: 1px solid transparent;
@@ -83,9 +82,6 @@
 		}
 	}
 
-	&.is-slim &__icon {
-		font-size: 14px;
-	}
 
 	&__slim-text {
 		flex: 1;

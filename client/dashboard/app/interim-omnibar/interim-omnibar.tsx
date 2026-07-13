@@ -1,15 +1,30 @@
 /* eslint-disable no-restricted-imports */
+import {
+	purchaseQuery,
+	queryClient,
+	siteCurrentPlanQuery,
+	siteHourlyViewsQuery,
+} from '@automattic/api-queries';
 import { isEcommercePlan } from '@automattic/calypso-products';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { isSupportSession } from '@automattic/calypso-support-session';
+import { QueryClient, QueryClientProvider, useQuery } from '@tanstack/react-query';
+import { localize } from 'i18n-calypso';
 import { useEffect, useMemo } from 'react';
 import { Provider as ReduxProvider } from 'react-redux';
 import { MasterbarLoggedIn } from 'calypso/layout/masterbar/logged-in';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import { StatsSparkline } from '../../components/stats-sparkline';
 import { getSiteDisplayName } from '../../utils/site-name';
+import { isSimple } from '../../utils/site-types';
+import { getSitePlanUrl } from '../../utils/site-url';
 import { logout } from '../auth';
 import { omnibarEvents, useOmnibarEvent } from '../omnibar/events';
+import { getUserLanguage } from '../shared-locale-loader';
+import { OmnibarLaunchButton } from './omnibar-launch-button';
 import { createOmnibarStore } from './omnibar-store';
 import type { User, Site } from '@automattic/api-core';
+
+const LocalizedMasterbarLoggedIn = localize( MasterbarLoggedIn );
 
 const noop = () => {};
 
@@ -40,11 +55,44 @@ export function InterimOmnibar( {
 	onToggleNotifications,
 }: Props ) {
 	const user = userProp ?? emptyUser;
-	const siteId = user.primary_blog ?? null;
+	const siteId = site?.ID ?? null;
 	const siteSlug = site?.slug ?? null;
 	const siteAdminUrl = site?.options?.admin_url ?? null;
+	const isUnlaunchedSite = !! site && site.launch_status === 'unlaunched' && ! site.is_a4a_dev_site;
+	const isSimpleSite = !! site && isSimple( site );
+
+	const { data: currentPlan } = useQuery(
+		{
+			...siteCurrentPlanQuery( site?.ID ?? 0 ),
+			enabled: !! site,
+		},
+		queryClient
+	);
+	const { data: planPurchase } = useQuery(
+		{
+			...purchaseQuery( currentPlan?.id ?? 0 ),
+			enabled: !! currentPlan?.id,
+		},
+		queryClient
+	);
+	const sitePlanUrl = site ? getSitePlanUrl( site, planPurchase ) : undefined;
+
+	const { data: hourlyViews } = useQuery(
+		{
+			...siteHourlyViewsQuery( site?.ID ?? 0 ),
+			enabled: !! site,
+		},
+		queryClient
+	);
+
 	const store = useMemo(
-		() => createOmnibarStore( onToggleNotifications ),
+		() =>
+			createOmnibarStore( {
+				onToggleNotifications,
+				initialLocaleSlug: getUserLanguage( user ),
+			} ),
+		// Seed the store's locale once; later changes flow through the switcher.
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 		[ onToggleNotifications ]
 	);
 
@@ -65,6 +113,11 @@ export function InterimOmnibar( {
 		} );
 	}, [ store, user.has_unseen_notes ] );
 
+	// Sync the notifications open state (e.g. when the panel closes externally).
+	useOmnibarEvent( 'notificationsOpen', ( isOpen ) => {
+		store.dispatch( { type: 'NOTIFICATIONS_OPEN_SET', isOpen } );
+	} );
+
 	// Also dispatch the emitted unseen note count from the notifications panel.
 	useOmnibarEvent( 'notificationsUnseenCount', ( unseenCount ) => {
 		store.dispatch( { type: 'NOTIFICATIONS_UNSEEN_COUNT_SET', unseenCount } );
@@ -73,7 +126,7 @@ export function InterimOmnibar( {
 	return (
 		<QueryClientProvider client={ omnibarQueryClient }>
 			<ReduxProvider store={ store }>
-				<MasterbarLoggedIn
+				<LocalizedMasterbarLoggedIn
 					// User
 					user={ user }
 					hasNoSites={ user.site_count === 0 }
@@ -86,17 +139,25 @@ export function InterimOmnibar( {
 					siteAdminUrl={ siteAdminUrl }
 					siteHomeUrl={ site?.URL ?? '' }
 					sitePlanName={ site?.plan?.product_name_short ?? '' }
+					sitePlanUrl={ sitePlanUrl }
 					currentSelectedSiteSlug={ siteSlug }
 					// TODO: Audit site-specific flags to see which we need to handle in the interim omnibar, and which can be hardcoded to false.
 					// Site flags
 					isEcommerce={ isEcommercePlan( site?.plan?.product_slug ?? '' ) }
 					// isClassicView={ !! site && siteUsesWpAdminInterface( site ) }
 					isClassicView
-					// TODO: Causes hydration mismatch unless client and server both have the same site object
-					isSimpleSite={ false }
+					isSimpleSite={ isSimpleSite }
 					isJetpackNotAtomic={ !! site && site.jetpack && ! site.is_wpcom_atomic }
 					domainOnlySite={ !! site?.options?.is_domain_only }
-					isUnlaunchedSite={ false }
+					canUserViewStats={ !! site }
+					statsAdminUrl={ siteAdminUrl ? `${ siteAdminUrl }admin.php?page=stats` : undefined }
+					statsSparkline={
+						hourlyViews && hourlyViews.length > 0 ? (
+							<StatsSparkline hourlyViews={ hourlyViews } />
+						) : undefined
+					}
+					isUnlaunchedSite={ isUnlaunchedSite }
+					launchButton={ isUnlaunchedSite && site ? <OmnibarLaunchButton site={ site } /> : null }
 					isTrial={ false }
 					isSiteP2={ !! site?.options?.is_wpforteams_site }
 					isP2Hub={ !! site?.options?.p2_hub_blog_id && site.options.p2_hub_blog_id === site.ID }
@@ -120,7 +181,7 @@ export function InterimOmnibar( {
 					isGravatarDomain={ false }
 					dashboardOptIn
 					useUnifiedAgent={ false }
-					isSupportSession={ false }
+					isSupportSession={ isSupportSession() }
 					isNotificationsShowing={ false }
 					isMigrationInProgress={ false }
 					migrationStatus={ null }

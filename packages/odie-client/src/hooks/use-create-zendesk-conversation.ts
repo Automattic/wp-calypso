@@ -1,7 +1,6 @@
 import { useUpdateZendeskUserFields, type ZendeskConversation } from '@automattic/zendesk-client';
 import { useLocation, useNavigate } from 'react-router-dom';
 import Smooch from 'smooch';
-import { hasReachedConversationLimit } from '../components/notices/get-most-recent-open-live-interaction';
 import {
 	getErrorTryAgainLaterMessage,
 	getOdieTransferMessages,
@@ -10,6 +9,8 @@ import {
 import { useOdieAssistantContext } from '../context';
 import { useManageSupportInteraction } from '../data';
 import { useCurrentSupportInteraction } from '../data/use-current-support-interaction';
+import { getOpenLiveInteractions } from '../utils/get-open-live-interactions';
+import { useOpenInteractionStatusMap } from './use-open-interaction-status-map';
 
 export const useCreateZendeskConversation = () => {
 	const {
@@ -29,9 +30,22 @@ export const useCreateZendeskConversation = () => {
 	const chatId = chat.odieId;
 	const navigate = useNavigate();
 	const location = useLocation();
+	const interactionStatusByUuid = useOpenInteractionStatusMap();
 
 	const getErrorMessage = ( error: unknown ) =>
 		error instanceof Error ? error.message : error?.toString?.() ?? 'Unknown error';
+
+	// The Smooch (Zendesk Web Messenger) SDK is initialized asynchronously elsewhere.
+	// When an escalation fires before init completes, `Smooch.createConversation` is
+	// either missing ("createConversation is not a function") or throws because the
+	// messenger isn't initialized yet. Both are transient — retry until it's ready.
+	const isSmoochNotReadyError = ( error: unknown ) => {
+		const message = getErrorMessage( error );
+		return (
+			message.includes( 'createConversation is not a function' ) ||
+			message.includes( 'Must initialize the Web Messenger' )
+		);
+	};
 
 	const createConversation = async ( {
 		createdFrom = '',
@@ -53,7 +67,11 @@ export const useCreateZendeskConversation = () => {
 			return chat.conversationId || '';
 		}
 
-		if ( hasReachedConversationLimit() ) {
+		// Compute from a fresh Smooch snapshot at call time: Smooch can mutate its
+		// conversation list outside React without triggering a re-render.
+		const { hasReachedLimit } = getOpenLiveInteractions( interactionStatusByUuid );
+
+		if ( hasReachedLimit ) {
 			trackEvent( 'conversation_limit_reached', {
 				created_from: createdFrom,
 			} );
@@ -84,6 +102,12 @@ export const useCreateZendeskConversation = () => {
 		const previousProvider = chat.provider;
 		const previousConversationId = chat.conversationId;
 
+		// Time spent waiting for the Smooch SDK to become ready, and how many
+		// createConversation attempts it took (see the retry loop below).
+		// attempts > 1 means the retry rescued an otherwise-failed escalation.
+		let smoochWaitedMs = 0;
+		let smoochAttempts = 0;
+
 		const handleErrorCreatingZendeskConversation = ( errorType: string, error?: unknown ) => {
 			trackEvent( errorType, {
 				error_message: getErrorMessage( error ),
@@ -91,6 +115,8 @@ export const useCreateZendeskConversation = () => {
 				escalation_on_second_attempt: escalationOnSecondAttempt,
 				active_interaction_id: activeInteractionId || null,
 				is_chat_loaded: isChatLoaded,
+				smooch_waited_ms: smoochWaitedMs,
+				smooch_attempts: smoochAttempts,
 			} );
 
 			setChat( {
@@ -137,17 +163,34 @@ export const useCreateZendeskConversation = () => {
 		let conversation: ZendeskConversation | null = null;
 		let interaction = null;
 
-		try {
-			conversation = await Smooch.createConversation( {
-				metadata: {
-					createdAt: Date.now(),
-					...( activeInteractionId ? { supportInteractionId: activeInteractionId } : {} ),
-					...( chatId ? { odieChatId: chatId } : {} ),
-				},
-			} );
-		} catch ( error ) {
-			handleErrorCreatingZendeskConversation( 'error_creating_zendesk_conversation', error );
-			return;
+		const SMOOCH_READY_TIMEOUT_MS = 10000;
+		const SMOOCH_RETRY_INTERVAL_MS = 250;
+		const smoochReadyDeadline = Date.now() + SMOOCH_READY_TIMEOUT_MS;
+
+		for (;;) {
+			try {
+				smoochAttempts++;
+				conversation = await Smooch.createConversation( {
+					metadata: {
+						createdAt: Date.now(),
+						...( activeInteractionId ? { supportInteractionId: activeInteractionId } : {} ),
+						...( chatId ? { odieChatId: chatId } : {} ),
+					},
+				} );
+				break;
+			} catch ( error ) {
+				const remainingMs = smoochReadyDeadline - Date.now();
+				if ( isSmoochNotReadyError( error ) && remainingMs > 0 ) {
+					// Cap the sleep to the time left so we never overshoot the deadline.
+					const sleepMs = Math.min( SMOOCH_RETRY_INTERVAL_MS, remainingMs );
+					// Only the backoff sleeps count as wait time, not the SDK call itself.
+					smoochWaitedMs += sleepMs;
+					await new Promise( ( resolve ) => setTimeout( resolve, sleepMs ) );
+					continue;
+				}
+				handleErrorCreatingZendeskConversation( 'error_creating_zendesk_conversation', error );
+				return;
+			}
 		}
 
 		if ( ! conversation ) {
@@ -209,6 +252,8 @@ export const useCreateZendeskConversation = () => {
 				created_from: createdFrom,
 				messaging_site_id: selectedSiteId || null,
 				messaging_url: selectedSiteURL || null,
+				smooch_waited_ms: smoochWaitedMs,
+				smooch_attempts: smoochAttempts,
 			} );
 
 			// If the interaction id has changed, update the URL.

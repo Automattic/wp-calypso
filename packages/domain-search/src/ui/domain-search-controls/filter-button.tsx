@@ -25,7 +25,7 @@ export const DomainSearchControlsFilterButton = forwardRef(
 					'Filter, %(filterCount)s filters applied',
 					count
 				),
-				{ filterCount: count }
+				{ filterCount: String( count ) }
 			);
 		} else {
 			ariaLabel = __( 'Filter, no filters applied' );

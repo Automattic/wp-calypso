@@ -1,7 +1,6 @@
 import page from '@automattic/calypso-router';
 import { removeQueryArgs } from '@wordpress/url';
 import { translate } from 'i18n-calypso';
-import { get, includes, map } from 'lodash';
 import DocumentHead from 'calypso/components/data/document-head';
 import ConnectDomainStep from 'calypso/components/domains/connect-domain-step';
 import TransferDomainStep from 'calypso/components/domains/transfer-domain-step';
@@ -229,7 +228,7 @@ const useMyDomain = ( context, next ) => {
 const transferDomainPrecheck = ( context, next ) => {
 	const state = context.store.getState();
 	const siteSlug = getSelectedSiteSlug( state ) || '';
-	const domain = get( context, 'params.domain', '' );
+	const domain = context?.params?.domain ?? '';
 
 	const handleGoBack = () => {
 		if ( context.query.goBack === 'use-my-domain' ) {
@@ -282,11 +281,11 @@ const redirectIfNoSite = ( redirectTo ) => {
 		const state = context.store.getState();
 		const siteId = getSelectedSiteId( state );
 		const sites = getSites( state );
-		const siteIds = map( sites, 'ID' );
+		const siteIds = sites.map( ( site ) => site?.ID );
 
-		if ( ! includes( siteIds, siteId ) ) {
+		if ( ! siteIds.includes( siteId ) ) {
 			const user = getCurrentUser( state );
-			const visibleSiteCount = get( user, 'visible_site_count', 0 );
+			const visibleSiteCount = user?.visible_site_count ?? 0;
 			//if only one site navigate to stats to avoid redirect loop
 			const redirect = visibleSiteCount > 1 ? redirectTo : '/stats';
 			return page.redirect( redirect );
@@ -303,7 +302,7 @@ const redirectToUseYourDomainIfVipSite = () => {
 		if ( selectedSite && selectedSite.is_vip ) {
 			return page.redirect(
 				domainUseMyDomain( selectedSite.slug, {
-					domain: get( context, 'params.suggestion', '' ),
+					domain: context?.params?.suggestion ?? '',
 				} )
 			);
 		}

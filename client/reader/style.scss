@@ -1,7 +1,13 @@
+@import "calypso/assets/stylesheets/shared/functions/z-index";
+
+@import "@automattic/typography/styles/variables";
+@import "calypso/assets/stylesheets/shared/mixins/breakpoints";
+@import "calypso/assets/stylesheets/shared/mixins/hide-content-accessibly";
+@import '@wordpress/base-styles/colors';
 @import '@wordpress/base-styles/breakpoints';
 @import '@wordpress/base-styles/mixins';
 @import '@wordpress/base-styles/variables';
-@import 'client/assets/stylesheets/shared/mixins/long-content-fade';
+@import 'calypso/assets/stylesheets/shared/mixins/long-content-fade';
 
 body.is-reader-page,
 .is-reader-page .layout,
@@ -507,6 +513,16 @@ body.is-section-reader {
 		}
 	}
 
+	// The 2026 global nav is fixed and floats over this dark hero band, so add its
+	// height on top of the hero's own top padding to keep the heading clear of the nav.
+	&:has( .x-nav--2026-redesign ) .layout__header-section-content {
+		padding-top: calc( 24px + var( --nav-2026-height ) );
+
+		@include break-medium {
+			padding-top: calc( 48px + var( --nav-2026-height ) );
+		}
+	}
+
 	.masterbar {
 		border-bottom: none;
 		background: transparent;
@@ -520,8 +536,9 @@ body.is-section-reader {
 		}
 	}
 
-	// logged out master bar
-	.masterbar-menu .masterbar {
+	// Legacy logged-out nav layout — the 2026 nav sets its own (e.g. its 64px
+	// bar must match its 64px white surface, not this 78px), so keep it off.
+	.masterbar-menu .masterbar:not( :has( .x-nav--2026-redesign ) ) {
 		height: 78px;
 		.x-nav-link__logo svg path {
 			fill: var( --studio-white );
@@ -550,6 +567,38 @@ body.is-section-reader {
 			.x-nav-link__primary {
 				border: 2px solid var( --studio-white );
 				background: transparent !important;
+			}
+		}
+	}
+
+	// Resting over the dark hero: white nav ink. Logo and CTA border read
+	// currentcolor from .x-nav-item, but the chevron has its own hardcoded blue
+	// `color` ($studio-blue-90). The component only whitens it under
+	// `.is-style-monochrome`, which is gated on the `site-profiler/metrics` flag
+	// (on in dev, off in production) — so on wordpress.com the chevron stayed
+	// blue and vanished into the hero. Whiten it here, flag-independently.
+	.lpc-header-nav-container .x-nav--2026-redesign .x-nav-item {
+		color: var( --studio-white );
+
+		.x-nav-link-chevron::before {
+			color: var( --studio-white );
+		}
+
+		// Hover flips the CTA to a white fill with dark ink.
+		--x-nav-2026-cta-hover-fill: var( --studio-white );
+		--x-nav-2026-cta-hover-ink: var( --studio-gray-100 );
+	}
+
+	// White surface up (scrolled, a trigger hovered, or a dropdown open): the
+	// nav paints its own white band, so the ink flips back to dark.
+	.lpc-header-nav-container.is-scrolled,
+	.lpc-header-nav-container:has( .x-nav-item__wide:hover .x-nav-link-chevron ),
+	.lpc-header-nav-container:has( .x-dropdown--2026.is-dropdown-open ) {
+		.x-nav--2026-redesign .x-nav-item {
+			color: var( --studio-gray-100 );
+
+			.x-nav-link-chevron::before {
+				color: var( --studio-gray-100 );
 			}
 		}
 	}

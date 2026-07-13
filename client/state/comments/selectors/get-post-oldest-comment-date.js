@@ -1,5 +1,4 @@
 import treeSelect from '@automattic/tree-select';
-import { findLast } from 'lodash';
 import { getPostCommentItems } from 'calypso/state/comments/selectors/get-post-comment-items';
 
 import 'calypso/state/comments/init';
@@ -14,7 +13,7 @@ import 'calypso/state/comments/init';
 export const getPostOldestCommentDate = treeSelect(
 	( state, siteId, postId ) => [ getPostCommentItems( state, siteId, postId ) ],
 	( [ comments ] ) => {
-		const lastContiguousComment = findLast( comments, 'contiguous' );
+		const lastContiguousComment = comments?.findLast( ( comment ) => comment.contiguous );
 		return lastContiguousComment ? new Date( lastContiguousComment.date ) : undefined;
 	}
 );

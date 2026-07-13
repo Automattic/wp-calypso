@@ -9,6 +9,7 @@ import {
 	PLAN_TRIENNIAL_PERIOD,
 	isJetpackPlan,
 	isJetpackProduct,
+	getPlan,
 } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
 import { CompactCard, Gridicon } from '@automattic/components';
@@ -16,7 +17,7 @@ import { formatCurrency } from '@automattic/number-formatters';
 import { CALYPSO_CONTACT } from '@automattic/urls';
 import { getPaymentMethodImageURL, razorpayImage as upiImage } from '@automattic/wpcom-checkout';
 import { ExternalLink, Button } from '@wordpress/components';
-import { Icon, warning as warningIcon } from '@wordpress/icons';
+import { Icon, cautionFilled as warningIcon } from '@wordpress/icons';
 import clsx from 'clsx';
 import { localize, useTranslate } from 'i18n-calypso';
 import { Component } from 'react';
@@ -501,6 +502,34 @@ export function PurchaseItemStatus( {
 
 		if ( isInExpirationGracePeriod( purchase ) ) {
 			return <span className="purchase-item__is-error">{ translate( 'Pending renewal' ) }</span>;
+		}
+
+		// When a downgrade is scheduled for the next renewal, the plan won't simply
+		// renew at its current price — it changes to a lower-tier plan. Say so instead
+		// of the usual "Renews ... on <date>" line.
+		if ( purchase.isDelayedDowngradePending ) {
+			const targetPlanName = purchase.delayedDowngradeToProductSlug
+				? getPlan( purchase.delayedDowngradeToProductSlug )?.getTitle()
+				: null;
+			if ( targetPlanName ) {
+				return translate( 'Changing to %(plan)s on {{span}}%(date)s{{/span}}', {
+					args: {
+						plan: targetPlanName,
+						date: renewDate.format( 'LL' ),
+					},
+					components: {
+						span: <span className="purchase-item__date" />,
+					},
+				} );
+			}
+			return translate( 'Changing plan on {{span}}%(date)s{{/span}}', {
+				args: {
+					date: renewDate.format( 'LL' ),
+				},
+				components: {
+					span: <span className="purchase-item__date" />,
+				},
+			} );
 		}
 
 		if ( purchase.billPeriodDays ) {

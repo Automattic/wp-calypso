@@ -3,6 +3,7 @@ import { useSelect } from '@wordpress/data';
 import { useEffect, useState, useMemo } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { useAgentsManagerContext } from '../contexts';
+import { isPluginCompassHost } from '../utils/is-plugin-compass-agent';
 import { isReaderChatHost } from '../utils/is-reader-chat-agent';
 import type { LoadedProviders } from '../utils/load-external-providers';
 
@@ -32,28 +33,45 @@ const SITE_EDITOR_ONLY_SUGGESTION_IDS = new Set( [
  */
 /**
  * Direct override path: a host that renders AgentsManager (e.g. reader-chat
- * on a blog frontend) can set `window.agentsManagerData.readerSuggestions`
- * to a Suggestion[] and this hook will return it verbatim, bypassing the
- * provider flow. Reassigning the global and forcing a re-render causes
- * the empty view to update with fresh suggestions.
+ * on a blog frontend, Plugin Compass on the plugins marketplace) can set
+ * `window.agentsManagerData.readerSuggestions` / `.compassSuggestions` to a
+ * Suggestion[] and this hook will return it verbatim, bypassing the provider
+ * flow (and the Big Sky theme-readiness gate further below). Reassigning the
+ * global and forcing a re-render causes the empty view to update with fresh
+ * suggestions.
  */
 function readOverrideSuggestions(): Suggestion[] | null {
-	if ( typeof window === 'undefined' || ! isReaderChatHost() ) {
+	if ( typeof window === 'undefined' ) {
 		return null;
 	}
-	const data = ( window as unknown as { agentsManagerData?: { readerSuggestions?: unknown } } )
-		.agentsManagerData;
-	const override = data?.readerSuggestions;
+
+	const data = (
+		window as unknown as {
+			agentsManagerData?: { readerSuggestions?: unknown; compassSuggestions?: unknown };
+		}
+	 ).agentsManagerData;
+
+	let override: unknown;
+	if ( isReaderChatHost() ) {
+		override = data?.readerSuggestions;
+	} else if ( isPluginCompassHost() ) {
+		override = data?.compassSuggestions;
+	} else {
+		return null;
+	}
+
 	// Key absent entirely — no host override, fall through to defaults.
 	if ( ! Array.isArray( override ) ) {
 		return null;
 	}
+
 	// Empty array is an explicit "no chips yet" signal (host is fetching
 	// AI suggestions and wants the empty view to show nothing until they
 	// arrive). Return it verbatim rather than falling through to defaults.
 	if ( override.length === 0 ) {
 		return [];
 	}
+
 	const valid = override.filter(
 		( s ): s is Suggestion =>
 			!! s &&
@@ -65,6 +83,7 @@ function readOverrideSuggestions(): Suggestion[] | null {
 			typeof s.label === 'string' &&
 			typeof s.prompt === 'string'
 	);
+
 	return valid.length > 0 ? valid : null;
 }
 
@@ -78,10 +97,9 @@ function getWindowPathname(): string {
 	return typeof window !== 'undefined' ? window.location.pathname : '';
 }
 
-function isPostEditorSurface( sectionName: string, currentRoute?: string ): boolean {
+function isPostEditorSurface( currentRoute?: string ): boolean {
 	const pathname = getWindowPathname();
 	return (
-		sectionName === 'gutenberg' ||
 		!! currentRoute?.includes( 'post.php' ) ||
 		!! currentRoute?.includes( 'post-new.php' ) ||
 		pathname.includes( 'post.php' ) ||
@@ -90,7 +108,7 @@ function isPostEditorSurface( sectionName: string, currentRoute?: string ): bool
 }
 
 function isSiteEditorSurface( sectionName: string, currentRoute?: string ): boolean {
-	if ( isPostEditorSurface( sectionName, currentRoute ) ) {
+	if ( isPostEditorSurface( currentRoute ) ) {
 		return false;
 	}
 
@@ -125,18 +143,18 @@ export function useEmptyViewSuggestions( {
 		() => [
 			{
 				id: 'getting-started',
-				label: __( 'Getting started with WordPress', '__i18n_text_domain__' ),
-				prompt: __( 'How do I get started with WordPress?', '__i18n_text_domain__' ),
+				label: __( 'Getting started with WordPress', __i18n_text_domain__ ),
+				prompt: __( 'How do I get started with WordPress?', __i18n_text_domain__ ),
 			},
 			{
 				id: 'create-post',
-				label: __( 'Create a blog post', '__i18n_text_domain__' ),
-				prompt: __( 'How do I create a blog post?', '__i18n_text_domain__' ),
+				label: __( 'Create a blog post', __i18n_text_domain__ ),
+				prompt: __( 'How do I create a blog post?', __i18n_text_domain__ ),
 			},
 			{
 				id: 'customize-site',
-				label: __( 'Customize my site', '__i18n_text_domain__' ),
-				prompt: __( 'How can I customize my site?', '__i18n_text_domain__' ),
+				label: __( 'Customize my site', __i18n_text_domain__ ),
+				prompt: __( 'How can I customize my site?', __i18n_text_domain__ ),
 			},
 		],
 		[]
@@ -207,9 +225,15 @@ export function useEmptyViewSuggestions( {
 			return;
 		}
 
+		// Opt-out: a loaded provider can suppress the built-in defaults for
+		// its surfaces (e.g. WooCommerce AI doesn't want WordPress-flavored
+		// chips like "Create a blog post" on a Woo admin chat).
+		const suppressDefaults = loadedProviders.suppressEmptyViewDefaults === true;
+		const fallbackSuggestions = suppressDefaults ? [] : defaultSuggestions;
+
 		if ( ! hasBigSkySuggestions ) {
 			// No Big Sky suggestions provider, use defaults immediately
-			setEmptyViewSuggestions( defaultSuggestions );
+			setEmptyViewSuggestions( fallbackSuggestions );
 		} else {
 			// Big Sky provides suggestions and store is ready - get filtered suggestions
 			const providerSuggestions = loadedProviders.getEmptyViewSuggestions?.() ?? [];
@@ -229,7 +253,7 @@ export function useEmptyViewSuggestions( {
 				// Provider exists but returned empty/undefined (e.g. lazy proxy
 				// race where the IIFE hasn't set window globals yet). Fall back
 				// to defaults so the AM still renders.
-				setEmptyViewSuggestions( defaultSuggestions );
+				setEmptyViewSuggestions( fallbackSuggestions );
 			}
 		}
 	}, [

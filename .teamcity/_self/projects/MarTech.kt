@@ -2,6 +2,7 @@ package _self.projects
 
 import Settings
 import _self.bashNodeScript
+import _self.lib.utils.allBranchesExceptMergeQueue
 import jetbrains.buildServer.configs.kotlin.v2019_2.BuildType
 import jetbrains.buildServer.configs.kotlin.v2019_2.Project
 import jetbrains.buildServer.configs.kotlin.v2019_2.buildFeatures.perfmon
@@ -36,11 +37,13 @@ object ToSAcceptanceTracking: BuildType ({
 
 	vcs {
 		root(Settings.WpCalypso)
+		branchFilter = allBranchesExceptMergeQueue()
 		cleanCheckout = true
 	}
 
 	params {
 		param("env.NODE_CONFIG_ENV", "test")
+		param("env.CALYPSO_BASE_URL", "https://wordpress.com")
 		param("env.PLAYWRIGHT_BROWSERS_PATH", "0")
 		param("env.HEADLESS", "true")
 		param("env.LOCALE", "en")

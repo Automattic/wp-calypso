@@ -5,11 +5,13 @@ import {
 	fromVariantPriceData,
 	getPlanPriceForDuration,
 } from '@automattic/plans-grid-next';
-import { styled } from '@automattic/wpcom-checkout';
-import i18n, { useTranslate } from 'i18n-calypso';
+import { useShoppingCart } from '@automattic/shopping-cart';
+import { LoadingCopy, styled } from '@automattic/wpcom-checkout';
+import { useTranslate } from 'i18n-calypso';
 import { FunctionComponent } from 'react';
 import { useCheckoutUiRedesignExperiment } from 'calypso/my-sites/checkout/src/hooks/use-checkout-ui-redesign-experiment';
 import { useMobileCheckoutStickySummaryExperiment } from 'calypso/my-sites/checkout/src/hooks/use-mobile-checkout-sticky-summary-experiment';
+import useCartKey from '../../../use-cart-key';
 import type { WPCOMProductVariant } from './types';
 
 const Discount = styled.span< { isMobileStickySummary?: boolean } >`
@@ -121,6 +123,9 @@ export const ItemVariantRadioPrice: FunctionComponent< {
 	compareTo?: WPCOMProductVariant;
 } > = ( { variant, compareTo } ) => {
 	const translate = useTranslate();
+	const cartKey = useCartKey();
+	const { couponStatus } = useShoppingCart( cartKey );
+	const isApplyingCoupon = couponStatus === 'pending';
 	const [ , isCheckoutUiRedesignV1 ] = useCheckoutUiRedesignExperiment();
 	const { isMobileCheckoutStickySummary: isMobileStickySummary } =
 		useMobileCheckoutStickySummaryExperiment();
@@ -159,18 +164,10 @@ export const ItemVariantRadioPrice: FunctionComponent< {
 			);
 		}
 		if ( isCheckoutUiRedesignV1 ) {
-			return i18n.fixMe( {
-				text: '%(pricePerMonth)s/mo',
-				newCopy: translate( '%(pricePerMonth)s/mo', {
-					args: {
-						pricePerMonth: pricePerMonthFormatted,
-					},
-				} ),
-				oldCopy: translate( '%(pricePerMonth)s /mo', {
-					args: {
-						pricePerMonth: pricePerMonthFormatted,
-					},
-				} ),
+			return translate( '%(pricePerMonth)s/mo', {
+				args: {
+					pricePerMonth: pricePerMonthFormatted,
+				},
 			} );
 		}
 		return translate( '%(pricePerMonth)s /mo', {
@@ -192,20 +189,26 @@ export const ItemVariantRadioPrice: FunctionComponent< {
 				inlineDiscount={ showInlineDiscount }
 				isCheckoutUiRedesignV1={ isCheckoutUiRedesignV1 }
 			>
-				{ showInlineDiscount && (
-					<DiscountPercentage
-						percent={ discountPercentage }
-						isMobileStickySummary={ isMobileStickySummary }
-					/>
-				) }
-				<Price
-					isCheckoutUiRedesignV1={ isCheckoutUiRedesignV1 }
-					isMobileStickySummary={ isMobileStickySummary }
-				>
-					{ priceDisplay }
-				</Price>
-				{ ! isCheckoutUiRedesignV1 && ! isMobileStickySummary && discountPercentage > 0 && (
-					<DiscountPercentage percent={ discountPercentage } />
+				{ isApplyingCoupon ? (
+					<LoadingCopy width="70px" height="16px" noMargin />
+				) : (
+					<>
+						{ showInlineDiscount && (
+							<DiscountPercentage
+								percent={ discountPercentage }
+								isMobileStickySummary={ isMobileStickySummary }
+							/>
+						) }
+						<Price
+							isCheckoutUiRedesignV1={ isCheckoutUiRedesignV1 }
+							isMobileStickySummary={ isMobileStickySummary }
+						>
+							{ priceDisplay }
+						</Price>
+						{ ! isCheckoutUiRedesignV1 && ! isMobileStickySummary && discountPercentage > 0 && (
+							<DiscountPercentage percent={ discountPercentage } />
+						) }
+					</>
 				) }
 			</PriceArea>
 		</Variant>

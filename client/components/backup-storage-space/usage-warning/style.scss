@@ -1,3 +1,6 @@
+@import "@automattic/typography/styles/variables";
+@import "calypso/assets/stylesheets/shared/mixins/placeholder";
+
 .usage-warning__storage-full {
 	font-size: 1rem;
 	font-weight: bold;

@@ -4,6 +4,7 @@ import {
 	WPCOM_DIFM_LITE,
 	OFFSITE_REDIRECT,
 	DomainTransferStatus,
+	SubscriptionBillPeriod,
 } from '@automattic/api-core';
 import {
 	domainQuery,
@@ -15,6 +16,7 @@ import {
 	reinstallMarketplacePluginsQuery,
 	siteBySlugQuery,
 } from '@automattic/api-queries';
+import config from '@automattic/calypso-config';
 import { domainManagementEdit, domainUseMyDomain } from '@automattic/domains-table/src/utils/paths';
 import { formatCurrency } from '@automattic/number-formatters';
 import { INCOMING_DOMAIN_TRANSFER_STATUSES_IN_PROGRESS } from '@automattic/urls';
@@ -95,16 +97,27 @@ import {
 	isWpcomFlexSubscription,
 	isAkismetFreeProduct,
 	isInExpirationGracePeriod,
+	isWithinRefundWindowDowngradeEligible,
 	isA4ABillingDragonPurchase,
 	isCentennialPurchase,
 	hasAmountAvailableToRefund,
 } from '../../../utils/purchase';
-import { getSitePurchaseUpgradeUrl, getUpgradedPurchaseRedirectUrl } from '../../../utils/site-url';
+import {
+	getChangedPlanRedirectUrl,
+	getSitePurchaseUpgradeUrl,
+	getUpgradedPurchaseRedirectUrl,
+} from '../../../utils/site-url';
 import BillingFlexUsageCard from '../../billing-flex-usage';
 import { useIsSplitCancelRemoveEnabled } from '../cancel-purchase/use-is-split-cancel-remove-enabled';
 import { PurchasePaymentMethod } from '../purchase-payment-method';
 import AkismetApiKeyCard from './akismet-api-key-card';
 import { classifyPurchaseForCopy } from './classify-purchase-for-copy';
+import {
+	AddMailboxesActionItem,
+	EmailPlanMailboxCard,
+	EmailPlanPriceCard,
+	isEmailPlanManagementEnabled,
+} from './email-plan';
 import { getCancelButtonCopy, getRemoveButtonCopy } from './get-cancel-remove-copy';
 import JetpackLicenseKeyCard from './jetpack-license-key-card';
 import { PurchaseNotice } from './purchase-notice';
@@ -132,19 +145,41 @@ function getExpiredNewPlanUrl( purchase: Purchase ): string {
 	}
 
 	if ( purchase.is_plan ) {
-		return getWpcomPlanGridUrl( purchase.site_slug );
+		return getWpcomPlanGridUrl( purchase );
 	}
 
 	return wpcomLink( `/plans/${ purchase.site_slug }` );
 }
 
-function getWpcomPlanGridUrl( siteSlug: string | undefined ): string {
+// Map the purchase's billing term to the plans grid's `intervalType` param so the
+// grid opens on the same term as the current plan. Downgrades only work within the
+// same term, and the grid hides the term selector in the downgrade flow.
+function getPlanGridIntervalType( purchase: Purchase ): string | undefined {
+	switch ( purchase.bill_period_days ) {
+		case SubscriptionBillPeriod.PLAN_MONTHLY_PERIOD:
+			return 'monthly';
+		case SubscriptionBillPeriod.PLAN_ANNUAL_PERIOD:
+			return 'yearly';
+		case SubscriptionBillPeriod.PLAN_BIENNIAL_PERIOD:
+			return '2yearly';
+		case SubscriptionBillPeriod.PLAN_TRIENNIAL_PERIOD:
+			return '3yearly';
+		default:
+			return undefined;
+	}
+}
+
+function getWpcomPlanGridUrl( purchase: Purchase ): string {
 	const backUrl = redirectToDashboardLink();
+	const siteSlug = purchase.site_slug;
+	const intervalType = getPlanGridIntervalType( purchase );
 	return addQueryArgs( wpcomLink( '/setup/plan-upgrade' ), {
 		...( siteSlug && { siteSlug } ),
+		...( intervalType && { intervalType } ),
 		cancel_to: backUrl,
 		dashboard: getCurrentDashboard(),
-		redirect_to: getUpgradedPurchaseRedirectUrl(),
+		redirect_to: getChangedPlanRedirectUrl(),
+		allow_downgrade: 'true',
 	} );
 }
 
@@ -231,12 +266,12 @@ function ProductLink( { purchase }: { purchase: Purchase } ) {
 
 function PurchaseActionMenu( { purchase }: { purchase: Purchase } ) {
 	const { user } = useAuth();
-	const canBeRenewed =
-		purchase.can_explicit_renew && String( user.ID ) === String( purchase.user_id );
+	const isOwner = String( user.ID ) === String( purchase.user_id );
+	const canBeRenewed = purchase.can_explicit_renew && isOwner;
 	const upgradeUrl = getSitePurchaseUpgradeUrl( purchase, getUpgradedPurchaseRedirectUrl() );
 	const { recordTracksEvent } = useAnalytics();
 	const menuItems = [
-		purchase.is_upgradable && upgradeUrl && (
+		canUpgradePurchase( purchase ) && upgradeUrl && isOwner && (
 			<MenuItem
 				onClick={ () => {
 					recordTracksEvent( 'calypso_purchases_upgrade_plan', {
@@ -278,9 +313,14 @@ function PurchaseActionMenu( { purchase }: { purchase: Purchase } ) {
 }
 
 function CancelOrRemoveActionButton( { purchase }: { purchase: Purchase } ) {
+	const { user } = useAuth();
 	const navigate = useNavigate();
 	const locale = useLocale();
 	const isSplitEnabled = useIsSplitCancelRemoveEnabled();
+
+	if ( String( user.ID ) !== String( purchase.user_id ) ) {
+		return null;
+	}
 
 	// WordAds and non-primary domain warnings are shown inline on the confirmation screen
 	// under purchases/split-cancel-remove (see cancellation-main-content.tsx).
@@ -303,12 +343,16 @@ function CancelOrRemoveActionButton( { purchase }: { purchase: Purchase } ) {
 		const isTransferNonRefundable = isDomainTransfer( purchase ) && ! hasRefund;
 		// Visibility is driven purely by what the user controls:
 		// - Cancel: auto-renew is on (stopping it halts any upcoming retry too).
-		// - Remove: auto-renew is off, or a refund is available (dual-button).
+		// - Remove: auto-renew is already off (cancelled subscriptions awaiting
+		//   removal, expired-grace, etc.).
+		// When a refund is available with auto-renew still on, the refund path is
+		// surfaced inside the cancel flow via RefundEligibilityNotice instead of
+		// a second CTA here.
 		// Verified against wpcom-billing backend — cancel / disable-auto-renew /
 		// delete endpoints all accept the call in pending-renewal state, so we
 		// don't need to special-case it.
 		const showCancel = autoRenewOn && ! isTransferNonRefundable;
-		const showRemove = ! autoRenewOn || hasRefund;
+		const showRemove = ! autoRenewOn;
 
 		if ( ! showCancel && ! showRemove ) {
 			return null;
@@ -430,9 +474,48 @@ function CancelOrRemoveActionButton( { purchase }: { purchase: Purchase } ) {
 	return null;
 }
 
-function UpgradeActionButton( { purchase }: { purchase: Purchase } ) {
-	const { recordTracksEvent } = useAnalytics();
+/**
+ * Whether the "Change plan" action should be offered for this purchase. Covers
+ * three downgrade flows, each gated by its own flag:
+ *   - past expiry (downgrade-to-checkout) — `plans/expired-downgrade`
+ *   - within refund window (instant downgrade) — `plans/expired-downgrade`
+ *   - active downgradable plan (delayed downgrade) — `plans/delayed-downgrade`
+ */
+function shouldShowChangePlan( purchase: Purchase ): boolean {
+	if ( ! purchase.is_plan || ! purchase.is_plan_type_downgradable ) {
+		return false;
+	}
+	const expiredOrRefundDowngrade =
+		config.isEnabled( 'plans/expired-downgrade' ) &&
+		( purchase.is_past_expiry_date || isWithinRefundWindowDowngradeEligible( purchase ) );
+	const delayedDowngrade = config.isEnabled( 'plans/delayed-downgrade' );
+	return expiredOrRefundDowngrade || delayedDowngrade;
+}
+
+// Titan email upgrades route through the flag-gated tier grid; without the flag the
+// upgrade URL would fall through to the wrong (site plan) page, so hide the action.
+function canUpgradePurchase( purchase: Purchase ): boolean {
 	if ( ! purchase.is_upgradable ) {
+		return false;
+	}
+	if ( isTitanMail( purchase ) && ! config.isEnabled( 'emails/titan-tiers' ) ) {
+		return false;
+	}
+	return true;
+}
+
+function UpgradeActionButton( { purchase }: { purchase: Purchase } ) {
+	const { user } = useAuth();
+	const { recordTracksEvent } = useAnalytics();
+	if ( String( user.ID ) !== String( purchase.user_id ) ) {
+		return null;
+	}
+	if ( ! canUpgradePurchase( purchase ) ) {
+		return null;
+	}
+	// When "Change plan" is offered (downgrade-eligible), it supersedes the
+	// upgrade action — matching the classic purchases page.
+	if ( shouldShowChangePlan( purchase ) ) {
 		return null;
 	}
 	const upgradeUrl = getSitePurchaseUpgradeUrl( purchase, getUpgradedPurchaseRedirectUrl() );
@@ -594,11 +677,66 @@ function ReinstallButton( { purchase }: { purchase: Purchase } ) {
 	);
 }
 
+function ChangePlanActionItem( { purchase }: { purchase: Purchase } ) {
+	const { user } = useAuth();
+	const { recordTracksEvent } = useAnalytics();
+
+	if ( String( user.ID ) !== String( purchase.user_id ) ) {
+		return null;
+	}
+	if ( ! shouldShowChangePlan( purchase ) ) {
+		return null;
+	}
+
+	const isPastExpiryDowngrade = purchase.is_past_expiry_date && purchase.is_plan;
+	const mode = ( () => {
+		if ( isPastExpiryDowngrade ) {
+			return 'expired';
+		}
+		if ( isWithinRefundWindowDowngradeEligible( purchase ) ) {
+			return 'refund-window';
+		}
+		return 'delayed-downgrade';
+	} )();
+
+	return (
+		<ActionList.ActionItem
+			title={ __( 'Change plan' ) }
+			description={ __( 'Upgrade or downgrade to a plan that works for you.' ) }
+			actions={
+				<Button
+					variant="secondary"
+					size="compact"
+					onClick={ () => {
+						recordTracksEvent( 'calypso_purchases_change_plan_click', {
+							product_slug: purchase.product_slug,
+							mode,
+						} );
+						window.location.href = getExpiredNewPlanUrl( purchase );
+					} }
+				>
+					{ __( 'View plans' ) }
+				</Button>
+			}
+		/>
+	);
+}
+
 function PurchaseSettingsActions( { purchase }: { purchase: Purchase } ) {
+	const { user } = useAuth();
+	const isOwner = String( user.ID ) === String( purchase.user_id );
+	const hasProductAction =
+		( isMarketplacePlugin( purchase ) && ! isMarketplaceHoldingSitePurchase( purchase ) ) ||
+		isJetpackCrmProduct( purchase.product_slug );
+
 	// 100-year plans and domains have no self-serve actions (no upgrade, no
 	// renew, no cancel/remove). Skip the card entirely so we don't render an
 	// empty shell.
 	if ( isCentennialPurchase( purchase ) ) {
+		return null;
+	}
+
+	if ( ! isOwner && ( isExpired( purchase ) || ! hasProductAction ) ) {
 		return null;
 	}
 
@@ -609,6 +747,7 @@ function PurchaseSettingsActions( { purchase }: { purchase: Purchase } ) {
 		return (
 			<VStack spacing={ 4 }>
 				<ActionList>
+					<ChangePlanActionItem purchase={ purchase } />
 					<ReSubscribeActionButton purchase={ purchase } />
 				</ActionList>
 			</VStack>
@@ -621,7 +760,11 @@ function PurchaseSettingsActions( { purchase }: { purchase: Purchase } ) {
 				<ReinstallButton purchase={ purchase } />
 				<JetpackCRMDownloadsButton purchase={ purchase } />
 				<UpgradeActionButton purchase={ purchase } />
+				{ isEmailPlanManagementEnabled( purchase ) && (
+					<AddMailboxesActionItem purchase={ purchase } />
+				) }
 				<ReSubscribeActionButton purchase={ purchase } />
+				<ChangePlanActionItem purchase={ purchase } />
 				<RenewActionButton purchase={ purchase } />
 				<CancelOrRemoveActionButton purchase={ purchase } />
 			</ActionList>
@@ -704,7 +847,7 @@ function getFields( {
 						if ( isInExpirationGracePeriod( purchase ) ) {
 							return __( 'Pending renewal' );
 						}
-						// translators: date is a formatted date string
+						// translators: %(date)s is a formatted date string
 						return sprintf( __( 'You will be billed on %(date)s' ), {
 							date: formatDate( new Date( purchase.renew_date ), locale, { dateStyle: 'long' } ),
 						} );
@@ -715,13 +858,13 @@ function getFields( {
 						} );
 						if ( isExpired( purchase ) || isInExpirationGracePeriod( purchase ) ) {
 							return sprintf(
-								// translators: date is a formatted expiry date
+								// translators: %(date)s is a formatted expiry date
 								__( 'Expired on %(date)s.' ),
 								{ date }
 							);
 						}
 						return sprintf(
-							// translators: date is a formatted expiry date
+							// translators: %(date)s is a formatted expiry date
 							__( 'Expires on %(date)s.' ),
 							{ date }
 						);
@@ -729,6 +872,9 @@ function getFields( {
 					return undefined;
 				} )();
 				if ( purchase.is_auto_renew_enabled && ! purchase.is_rechargeable ) {
+					if ( String( user.ID ) !== String( purchase.user_id ) ) {
+						return null;
+					}
 					return (
 						<div className="purchase-settings__action-item-standalone">
 							<ActionList.ActionItem
@@ -807,7 +953,7 @@ function ManageSubscriptionCard( { purchase }: { purchase: Purchase } ) {
 	const navigate = useNavigate();
 	const isSplitCancelRemoveEnabled = useIsSplitCancelRemoveEnabled();
 
-	if ( isIncludedWithPlan( purchase ) ) {
+	if ( String( user.ID ) !== String( purchase.user_id ) || isIncludedWithPlan( purchase ) ) {
 		return null;
 	}
 
@@ -845,6 +991,14 @@ function ManageSubscriptionCard( { purchase }: { purchase: Purchase } ) {
 
 function PurchasePriceCard( { purchase }: { purchase: Purchase } ) {
 	const isCentennial = isCentennialPurchase( purchase );
+	// Email plans are billed per mailbox; show the per-mailbox renewal price.
+	if (
+		isEmailPlanManagementEnabled( purchase ) &&
+		! isExpired( purchase ) &&
+		! purchase.is_trial_plan
+	) {
+		return <EmailPlanPriceCard purchase={ purchase } />;
+	}
 	if ( isCentennial ) {
 		return (
 			<OverviewCard
@@ -893,7 +1047,7 @@ function PurchasePriceCard( { purchase }: { purchase: Purchase } ) {
 	}
 	const isOffer = purchase.regular_price_integer !== purchase.price_integer;
 	const offerText = isOffer
-		? /* translators: %(regularPrice) is a monetary amount that the customer will be charged after this offer ends */
+		? /* translators: %(regularPrice)s is a monetary amount that the customer will be charged after this offer ends */
 		  sprintf( __( 'After the offer ends, the subscription price will be %(regularPrice)s.' ), {
 				regularPrice: formatCurrency( purchase.regular_price_integer, purchase.currency_code, {
 					isSmallestUnit: true,
@@ -1004,12 +1158,12 @@ function BBEPurchaseDescription( { purchase }: { purchase: Purchase } ) {
 								'A professionally built %(numberOfIncludedPages)s-page website in 4 business days or less.'
 							),
 							{
-								numberOfIncludedPages: tier0.maximum_units,
+								numberOfIncludedPages: String( tier0.maximum_units ),
 							}
 					  ) }{ ' ' }
 				{ extraPageCount > 0 &&
 					sprintf(
-						// translators: numberofPages is a number of pages
+						// translators: %(numberOfPages)d is a number of pages
 						_n(
 							'This purchase includes %(numberOfPages)d extra page.',
 							'This purchase includes %(numberOfPages)d extra pages.',
@@ -1268,7 +1422,7 @@ function PurchaseSecondSubtitle( {
 				<Text variant="muted">
 					{ description }{ ' ' }
 					{ sprintf(
-						// translators: numberOfMailboxes is a number and domain is a domain name
+						// translators: %(numberOfMailboxes)d is a number of mailboxes and %(domain)s is a domain name
 						_n(
 							'This purchase is for %(numberOfMailboxes)d mailbox for the domain %(domain)s.',
 							'This purchase is for %(numberOfMailboxes)d mailboxes for the domain %(domain)s.',
@@ -1276,7 +1430,7 @@ function PurchaseSecondSubtitle( {
 						),
 						{
 							numberOfMailboxes: purchase.renewal_price_tier_usage_quantity,
-							domain: purchase.meta,
+							domain: purchase.meta ?? '',
 						}
 					) }
 				</Text>
@@ -1305,7 +1459,7 @@ function PurchaseSubtitle( { purchase }: { purchase: Purchase } ) {
 		return (
 			<MetadataItem
 				title={ sprintf(
-					// translators: subtitle is the type of purchase (e.g. "Host Managed Plan"), partnerName is the name of the business partner
+					// translators: %(subtitle)s is the type of purchase (e.g. "Host Managed Plan"), %(partnerName)s is the name of the business partner
 					__( '%(subtitle)s. Please contact %(partnerName)s for details.' ),
 					{ subtitle, partnerName: purchase.partner_name }
 				) }
@@ -1380,6 +1534,57 @@ export default function PurchaseSettings() {
 	const isSmallViewport = useViewportMatch( 'medium', '<' );
 	const columns = isSmallViewport ? 1 : 2;
 	const spacing = isSmallViewport ? SPACING.SMALL : SPACING.DEFAULT;
+	const isCurrentPurchaseOwner = String( user.ID ) === String( purchase.user_id );
+	const canHeaderUpgrade = canUpgradePurchase( purchase ) && Boolean( upgradeUrl );
+	const shouldShowHeaderUpgradeAction = canHeaderUpgrade && isCurrentPurchaseOwner;
+	const shouldShowHeaderActionMenu =
+		isCurrentPurchaseOwner && ( canHeaderUpgrade || purchase.can_explicit_renew );
+	const shouldShowHeaderActions =
+		site?.options?.admin_url &&
+		! isCentennial &&
+		( shouldShowHeaderUpgradeAction || shouldShowHeaderActionMenu );
+
+	// Email plans order the overview cards as Renews, Renewal price, Mailbox, Site;
+	// every other purchase keeps Site, Owner, Renews, Price. Extract the two cards
+	// that move so they can be rendered before or after the price card.
+	const isEmailPlan = isEmailPlanManagementEnabled( purchase );
+	const siteCard =
+		site &&
+		( site.options?.is_domain_only &&
+		purchase.is_domain &&
+		purchase.product_slug !== DomainProductSlugs.TRANSFER_IN &&
+		domain?.can_transfer_to_other_site ? (
+			<OverviewCard
+				icon={ <Icon icon={ layout } /> }
+				title={ __( 'Attach to a site' ) }
+				heading={ __( 'No site attached' ) }
+				description={ __( 'Attach this domain name to an existing site.' ) }
+				link={ `/domains/${ purchase.meta }/transfer/other-site` }
+				intent="upsell"
+			/>
+		) : (
+			<OverviewCard
+				icon={ <SiteIcon site={ site } /> }
+				title={ __( 'Site' ) }
+				heading={ site.name }
+				description={ purchase.site_slug }
+				link={ `/sites/${ purchase.site_slug }` }
+			/>
+		) );
+	const ownerOrMailboxCard = isEmailPlan ? (
+		<EmailPlanMailboxCard purchase={ purchase } />
+	) : (
+		<OverviewCard
+			icon={ commentAuthorAvatar }
+			title={ __( 'Owner' ) }
+			heading={
+				String( user.ID ) === String( purchase.user_id )
+					? user.display_name
+					: __( 'Owned by a different user' )
+			}
+			description={ String( user.ID ) === String( purchase.user_id ) ? user.email : undefined }
+		/>
+	);
 
 	return (
 		<PageLayout
@@ -1394,17 +1599,20 @@ export default function PurchaseSettings() {
 								: getTitleForDisplay( purchase )
 						}
 						actions={
-							site?.options?.admin_url &&
-							! isCentennial && (
+							shouldShowHeaderActions && (
 								<HStack justify="space-between">
-									{ purchase.is_upgradable && upgradeUrl && (
+									{ shouldShowHeaderUpgradeAction && upgradeUrl && (
 										<Button __next40pxDefaultSize variant="primary" href={ upgradeUrl }>
 											{ _x( 'Upgrade', 'Change to a plan with more features.' ) }
 										</Button>
 									) }
-									<PageHeader.ActionMenu>
-										<PurchaseActionMenu purchase={ purchase } />
-									</PageHeader.ActionMenu>
+									{ /* Email plans surface every action in the list below, so the
+									     quick-actions menu would only duplicate them. */ }
+									{ shouldShowHeaderActionMenu && ! isEmailPlanManagementEnabled( purchase ) && (
+										<PageHeader.ActionMenu>
+											<PurchaseActionMenu purchase={ purchase } />
+										</PageHeader.ActionMenu>
+									) }
 								</HStack>
 							)
 						}
@@ -1428,41 +1636,13 @@ export default function PurchaseSettings() {
 		>
 			<VStack spacing={ 6 }>
 				<PurchaseNotice purchase={ purchase } />
-				<Grid columns={ columns } gap={ spacing }>
-					{ site &&
-						( site.options?.is_domain_only &&
-						purchase.is_domain &&
-						purchase.product_slug !== DomainProductSlugs.TRANSFER_IN &&
-						domain?.can_transfer_to_other_site ? (
-							<OverviewCard
-								icon={ <Icon icon={ layout } /> }
-								title={ __( 'Attach to a site' ) }
-								heading={ __( 'No site attached' ) }
-								description={ __( 'Attach this domain name to an existing site.' ) }
-								link={ `/domains/${ purchase.meta }/transfer/other-site` }
-								intent="upsell"
-							/>
-						) : (
-							<OverviewCard
-								icon={ <SiteIcon site={ site } /> }
-								title={ __( 'Site' ) }
-								heading={ site.name }
-								description={ purchase.site_slug }
-								link={ `/sites/${ purchase.site_slug }` }
-							/>
-						) ) }
-					<OverviewCard
-						icon={ commentAuthorAvatar }
-						title={ __( 'Owner' ) }
-						heading={
-							String( user.ID ) === String( purchase.user_id )
-								? user.display_name
-								: __( 'Owned by a different user' )
-						}
-						description={
-							String( user.ID ) === String( purchase.user_id ) ? user.email : undefined
-						}
-					/>
+				<Grid
+					columns={ columns }
+					gap={ spacing }
+					className={ isEmailPlan ? 'purchase-settings__email-overview-cards' : undefined }
+				>
+					{ ! isEmailPlan && siteCard }
+					{ ! isEmailPlan && ownerOrMailboxCard }
 					{ hasExpiryInfo &&
 						( isExpired( purchase ) ? (
 							<OverviewCard icon={ info } title={ __( 'Status' ) } heading={ __( 'Removed' ) } />
@@ -1521,6 +1701,8 @@ export default function PurchaseSettings() {
 							/>
 						) ) }
 					<PurchasePriceCard purchase={ purchase } />
+					{ isEmailPlan && ownerOrMailboxCard }
+					{ isEmailPlan && siteCard }
 					{ purchase.is_jetpack_plan_or_product && (
 						<JetpackLicenseKeyCard purchaseId={ purchase.ID } />
 					) }
@@ -1540,7 +1722,7 @@ export default function PurchaseSettings() {
 					purchase.subscription_status === 'active' && (
 						<ManageSubscriptionCard purchase={ purchase } />
 					) }
-				{ ! isCentennial && <PurchaseSettingsActions purchase={ purchase } /> }
+				<PurchaseSettingsActions purchase={ purchase } />
 			</VStack>
 		</PageLayout>
 	);

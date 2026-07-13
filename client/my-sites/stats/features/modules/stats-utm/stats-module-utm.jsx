@@ -145,11 +145,15 @@ const StatsModuleUTM = ( {
 
 			// Some modules do not have view all abilities
 			if ( ! summary && period && path && siteSlug ) {
-				if ( ! clonedParams.has( 'startDate' ) ) {
-					clonedParams.set( 'startDate', period.startOf.format( 'YYYY-MM-DD' ) );
-				}
-				if ( ! clonedParams.has( 'endDate' ) ) {
-					clonedParams.set( 'endDate', period.endOf.format( 'YYYY-MM-DD' ) );
+				if ( ! clonedParams.has( 'chartStart' ) || ! clonedParams.has( 'chartEnd' ) ) {
+					clonedParams.delete( 'chartStart' );
+					clonedParams.delete( 'chartEnd' );
+					if ( ! clonedParams.has( 'startDate' ) ) {
+						clonedParams.set( 'startDate', period.startOf.format( 'YYYY-MM-DD' ) );
+					}
+					if ( ! clonedParams.has( 'endDate' ) ) {
+						clonedParams.set( 'endDate', period.endOf.format( 'YYYY-MM-DD' ) );
+					}
 				}
 
 				return `${ basePath }?${ clonedParams.toString() }`;

@@ -1,8 +1,14 @@
 @use "calypso/assets/stylesheets/shared/mixins/dark-theme" as ui-mixins;
 
+@import "calypso/assets/stylesheets/shared/functions/z-index";
+@import "@automattic/typography/styles/variables";
+
+@import "@wordpress/base-styles/breakpoints";
+@import "calypso/assets/stylesheets/shared/mixins/placeholder";
+@import "calypso/assets/stylesheets/shared/mixins/tooltip";
+
 // Styles targeted at story content
 @import './content';
-@import "@wordpress/base-styles/breakpoints";
 
 // Since we cannot use css variables in media queries, we need to define the valuess in scss.
 $reader-full-post-sidebar-width: 220px;
@@ -162,6 +168,7 @@ $reader-full-post-desktop-min: $reader-full-post-sidebar-width + $reader-full-po
 	.post-edit-button,
 	.reader-full-post__view-original-button,
 	.reader-full-post__seen-button,
+	.reader-subscribe-with-space__spaces,
 	.follow-button {
 		margin: 0;
 		padding: 8px 16px;
@@ -176,6 +183,18 @@ $reader-full-post-desktop-min: $reader-full-post-sidebar-width + $reader-full-po
 		height: auto;
 		min-height: 40px;
 		color: var( --color-neutral-20 );
+
+		@include ui-mixins.when-dark-theme {
+			background: transparent;
+			border-color: var( --dashboard-field__border-color );
+			color: var( --color-text-subtle );
+
+			&:hover,
+			&:focus {
+				border-color: var( --color-link );
+				color: var( --color-link );
+			}
+		}
 
 		&:hover {
 			border-color: var( --color-neutral-20 );
@@ -200,10 +219,6 @@ $reader-full-post-desktop-min: $reader-full-post-sidebar-width + $reader-full-po
 
 	.follow-button {
 		background: transparent;
-
-		@include ui-mixins.when-dark-theme {
-			border-color: var( --color-neutral-20 );
-		}
 
 		svg,
 		.gridicon,
@@ -354,6 +369,20 @@ $reader-full-post-desktop-min: $reader-full-post-sidebar-width + $reader-full-po
 
 		.post-edit-button__label {
 			color: var( --color-link );
+		}
+	}
+
+	@include ui-mixins.when-dark-theme {
+		.comment-button.is-active,
+		.comment-button:hover,
+		.comment-button:focus,
+		.like-button:hover,
+		.like-button:focus,
+		.like-button.is-active,
+		.like-button.is-liked,
+		.post-edit-button:hover,
+		.post-edit-button:focus {
+			border-color: var( --color-link );
 		}
 	}
 }

@@ -1,5 +1,6 @@
 import { unlockAchievement } from '@automattic/api-core';
 import { __ } from '@wordpress/i18n';
+import { bumpStat } from 'calypso/lib/analytics/mc';
 import { getCalypsoQueryClient } from 'calypso/state/query-client';
 import './style.scss';
 
@@ -112,6 +113,8 @@ export function activateArcadeMode(): void {
 	}
 
 	active = true;
+
+	bumpStat( 'calypso_easter_eggs', 'arcade_mode_activated' );
 
 	document.body.classList.add( BODY_CLASS );
 	mountLivesCounter( section );

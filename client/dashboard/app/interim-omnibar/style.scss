@@ -25,13 +25,63 @@ body:has(#wpcom-omnibar) #wpcom {
 		}
 	}
 
+	.masterbar__item.is-active {
+		background: var(--color-masterbar-item-active-background);
+	}
+
 	.masterbar__item:focus-visible {
 		box-shadow: inset 0 0 0 2px var(--color-masterbar-highlight);
 		outline: none;
+	}
+
+	// The Launch button is a primary @wordpress/components Button, but the
+	// generic `.masterbar__item:hover` rules recolor its background, text and
+	// icon to the masterbar highlight. Re-assert the primary treatment so it
+	// behaves like the classic masterbar: white text/icon on a darker-blue
+	// background on hover. The dashboard doesn't load Calypso's color-scheme
+	// variables, so the darker-blue is hard-coded (the classic masterbar's
+	// `--color-accent-60`).
+	// The button renders as <button> while loading and <a> once enabled. The
+	// transparent rule above only matches the <button>, so the primary background
+	// would otherwise appear only after loading. Reassert it for both elements.
+	.masterbar__item-launch-site,
+	button.masterbar__item-launch-site {
+		background: var(--wp-components-color-accent, #3858e9);
+
+		&:hover,
+		&.is-open {
+			background: #2a46ce;
+
+			.masterbar__item-content {
+				color: var(--color-masterbar-text);
+			}
+
+			svg path {
+				fill: var(--color-masterbar-text);
+			}
+		}
 	}
 
 	.masterbar__item-subitems a:focus-visible,
 	.masterbar__item-subitems button:focus-visible {
 		outline: thin dotted;
 	}
+}
+
+// Support "user" session masterbar palette (orange), matching Calypso.
+#wpcom-omnibar.is-support-user-session {
+	--color-masterbar-background: #b26200;
+	--color-masterbar-text: #fff;
+	--color-masterbar-icon: #f3f1f1;
+	--color-masterbar-highlight: #fff;
+	--color-masterbar-border: #8a4d00;
+	--color-masterbar-item-hover-background: #8a4d00;
+	--color-masterbar-item-active-background: #704000;
+	--color-masterbar-unread-dot-background: #3858e9;
+	--color-masterbar-submenu-text: #f3f1f1;
+	// Submenu / site-info backgrounds default to a dark blue-gray from Calypso's
+	// global CSS, which clashes on orange — override them too.
+	--color-sidebar-submenu-background: #704000;
+	--color-masterbar-submenu-group-background: #704000;
+	--color-global-masterbar-site-info-background: #704000;
 }

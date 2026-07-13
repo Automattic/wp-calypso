@@ -38,8 +38,11 @@ function handleLoggedOut( page ) {
 	if ( config.isEnabled( 'jetpack-cloud' ) ) {
 		if ( config.isEnabled( 'oauth' ) ) {
 			page.redirect( '/connect' );
+			return;
 		}
 	}
+	// We can't use page.redirect(), the login app is not loaded.
+	window.location.assign( '/log-in' );
 }
 
 async function handleLoggedIn( page, context ) {

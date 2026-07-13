@@ -3,6 +3,7 @@ import { localizeUrl } from '@automattic/i18n-utils';
 import { Card, __experimentalVStack as VStack } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import DocumentHead from 'calypso/components/data/document-head';
+import InlineSupportLink from 'calypso/components/inline-support-link';
 import NavigationHeader from 'calypso/components/navigation-header';
 import { ReaderBlueskyIcon } from 'calypso/reader/components/icons/bluesky-icon';
 import { ReaderFediverseIcon } from 'calypso/reader/components/icons/fediverse-icon';
@@ -12,6 +13,10 @@ import { type ConnectionProtocol } from 'calypso/reader/sidebar/reader-sidebar-c
 import { useDispatch, useSelector } from 'calypso/state';
 import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
 import getSites from 'calypso/state/selectors/get-sites';
+import type { JSX } from 'react';
+
+const FEDIVERSE_SUPPORT_POST_ID = 294460;
+const SOCIAL_SUPPORT_POST_ID = 439167;
 
 interface ProtocolOption {
 	key: ConnectionProtocol;
@@ -22,6 +27,7 @@ interface ProtocolOption {
 	/** Open the primary link in a new tab — used for off-Calypso destinations like wp-admin. */
 	hrefExternal?: boolean;
 	docHref: string;
+	docPostId: number;
 	docLabel: string;
 	icon: JSX.Element;
 }
@@ -59,8 +65,8 @@ export function ConnectionsNewView() {
 	);
 
 	const fediverseDocHref = localizeUrl( 'https://wordpress.com/support/enter-the-fediverse/' );
-	const blueskyDocHref = localizeUrl( 'https://wordpress.com/support/reader/' );
-	const mastodonDocHref = localizeUrl( 'https://wordpress.com/support/reader/' );
+	const blueskyDocHref = localizeUrl( 'https://wordpress.com/support/reader/social/' );
+	const mastodonDocHref = localizeUrl( 'https://wordpress.com/support/reader/social/' );
 	const learnMoreLabel = String( translate( 'Learn more' ) );
 
 	const fediverse: ProtocolOption = ( () => {
@@ -69,6 +75,7 @@ export function ConnectionsNewView() {
 			label: 'Fediverse',
 			icon: <ReaderFediverseIcon viewBox="4 3 16 18" />,
 			docHref: fediverseDocHref,
+			docPostId: FEDIVERSE_SUPPORT_POST_ID,
 			docLabel: learnMoreLabel,
 		};
 
@@ -138,6 +145,7 @@ export function ConnectionsNewView() {
 		href: '/reader/atmosphere/connect',
 		icon: <ReaderBlueskyIcon filled viewBox="2 3 20 18" />,
 		docHref: blueskyDocHref,
+		docPostId: SOCIAL_SUPPORT_POST_ID,
 		docLabel: learnMoreLabel,
 	};
 
@@ -153,6 +161,7 @@ export function ConnectionsNewView() {
 		href: '/reader/mastodon/connect',
 		icon: <ReaderMastodonIcon viewBox="0 0 74 78" />,
 		docHref: mastodonDocHref,
+		docPostId: SOCIAL_SUPPORT_POST_ID,
 		docLabel: learnMoreLabel,
 	};
 
@@ -224,15 +233,15 @@ export function ConnectionsNewView() {
 							</div>
 							<p className="connections-new__card-tagline">{ option.tagline }</p>
 							<p className="connections-new__card-description">{ option.body }</p>
-							<a
+							<InlineSupportLink
 								className="connections-new__card-doc"
-								href={ option.docHref }
-								target="_blank"
-								rel="noopener noreferrer"
+								supportPostId={ option.docPostId }
+								supportLink={ option.docHref }
 								onClick={ () => handleDocClick( option ) }
+								showIcon={ false }
 							>
 								{ option.docLabel }
-							</a>
+							</InlineSupportLink>
 						</Card>
 					);
 				} ) }

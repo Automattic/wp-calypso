@@ -1,3 +1,4 @@
+import { Badge } from '@automattic/components';
 import {
 	__experimentalNavigatorButton as NavigatorButton,
 	__experimentalItem as Item,
@@ -14,16 +15,17 @@ const ICON_SIZE = 24;
 
 interface Props {
 	id?: string;
-	icon: JSX.Element;
+	icon: React.JSX.Element;
 	path: string;
 	link: string;
 	title: TranslateResult;
+	badge?: string;
 	onClickMenuItem: ( path: string ) => void;
 	withChevron?: boolean;
 	isExternalLink?: boolean;
 	isSelected?: boolean;
 	openInSameTab?: boolean;
-	extraContent?: JSX.Element;
+	extraContent?: React.JSX.Element;
 }
 
 export const SidebarNavigatorMenuItem = ( {
@@ -32,6 +34,7 @@ export const SidebarNavigatorMenuItem = ( {
 	path,
 	link,
 	title,
+	badge,
 	onClickMenuItem,
 	withChevron = false,
 	isExternalLink = false,
@@ -39,7 +42,7 @@ export const SidebarNavigatorMenuItem = ( {
 	openInSameTab = false,
 	extraContent,
 }: Props ) => {
-	const SidebarItem = ( { children }: { children?: JSX.Element } ) => {
+	const SidebarItem = ( { children }: { children?: React.JSX.Element } ) => {
 		return (
 			<Item
 				className={ clsx( 'sidebar-v2__menu-item', {
@@ -74,7 +77,9 @@ export const SidebarNavigatorMenuItem = ( {
 	return (
 		<li>
 			<NavigatorButton as={ SidebarItem } path={ path }>
-				{ title }
+				<div className="sidebar-menu-item__title-with-badge">
+					{ title } { badge && <Badge type="info">{ badge }</Badge> }
+				</div>
 			</NavigatorButton>
 		</li>
 	);

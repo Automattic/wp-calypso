@@ -2,7 +2,7 @@
  * External dependencies
  */
 import { Card, Spinner } from '@automattic/components';
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, type JSX } from 'react';
 import { getRelativeTimeString } from 'calypso/dashboard/utils/datetime';
 import wpcom from 'calypso/lib/wp';
 import './link-preview.scss';

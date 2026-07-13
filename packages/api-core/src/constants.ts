@@ -14,6 +14,11 @@ export const DotcomPlans = {
 	FREE_PLAN: 'free_plan',
 	HOSTING_TRIAL_MONTHLY: 'wp_bundle_hosting_trial_monthly',
 	MIGRATION_TRIAL_MONTHLY: 'wp_bundle_migration_trial_monthly',
+	PERSONAL: 'personal-bundle',
+	PERSONAL_MONTHLY: 'personal-bundle-monthly',
+	PERSONAL_2_YEARS: 'personal-bundle-2y',
+	PERSONAL_3_YEARS: 'personal-bundle-3y',
+	PERSONAL_TRIAL_MONTHLY: 'wp-personal-bundle-free-trial-monthly',
 	PREMIUM: 'value_bundle',
 	PREMIUM_MONTHLY: 'value_bundle_monthly',
 	PREMIUM_2_YEARS: 'value_bundle-2y',
@@ -117,6 +122,14 @@ export const EcommercePlans = [
 	DotcomPlans.ECOMMERCE,
 	DotcomPlans.ECOMMERCE_2_YEARS,
 	DotcomPlans.ECOMMERCE_3_YEARS,
+];
+
+export const PersonalPlans = [
+	DotcomPlans.PERSONAL_TRIAL_MONTHLY,
+	DotcomPlans.PERSONAL_MONTHLY,
+	DotcomPlans.PERSONAL,
+	DotcomPlans.PERSONAL_2_YEARS,
+	DotcomPlans.PERSONAL_3_YEARS,
 ];
 
 export const TrialPlans = [
@@ -269,6 +282,10 @@ export const DomainProductSlugs = {
 export const TitanMailSlugs = {
 	TITAN_MAIL_MONTHLY_SLUG: 'wp_titan_mail_monthly',
 	TITAN_MAIL_YEARLY_SLUG: 'wp_titan_mail_yearly',
+	TITAN_MAIL_PREMIUM_MONTHLY_SLUG: 'wp_titan_mail_premium_monthly',
+	TITAN_MAIL_PREMIUM_YEARLY_SLUG: 'wp_titan_mail_premium_yearly',
+	TITAN_MAIL_ULTRA_MONTHLY_SLUG: 'wp_titan_mail_ultra_monthly',
+	TITAN_MAIL_ULTRA_YEARLY_SLUG: 'wp_titan_mail_ultra_yearly',
 } as const;
 
 export const GoogleWorkspaceSlugs = {
@@ -325,10 +342,26 @@ export const getDataCenterOptions = (): Record< DataCenterOption, string > => ( 
 	ams: __( 'EU West (Amsterdam, Netherlands)' ),
 } );
 
+// Every billing-period variant of a plan maps to the same display name, so that
+// looking up a name by product slug works regardless of term (monthly, annual,
+// 2-year, 3-year).
 export const getPlanNames = () => ( {
-	[ DotcomPlans.BUSINESS ]: __( 'Business' ),
-	[ DotcomPlans.ECOMMERCE ]: __( 'Commerce' ),
+	[ DotcomPlans.PERSONAL ]: __( 'Personal' ),
+	[ DotcomPlans.PERSONAL_MONTHLY ]: __( 'Personal' ),
+	[ DotcomPlans.PERSONAL_2_YEARS ]: __( 'Personal' ),
+	[ DotcomPlans.PERSONAL_3_YEARS ]: __( 'Personal' ),
 	[ DotcomPlans.PREMIUM ]: __( 'Premium' ),
+	[ DotcomPlans.PREMIUM_MONTHLY ]: __( 'Premium' ),
+	[ DotcomPlans.PREMIUM_2_YEARS ]: __( 'Premium' ),
+	[ DotcomPlans.PREMIUM_3_YEARS ]: __( 'Premium' ),
+	[ DotcomPlans.BUSINESS ]: __( 'Business' ),
+	[ DotcomPlans.BUSINESS_MONTHLY ]: __( 'Business' ),
+	[ DotcomPlans.BUSINESS_2_YEARS ]: __( 'Business' ),
+	[ DotcomPlans.BUSINESS_3_YEARS ]: __( 'Business' ),
+	[ DotcomPlans.ECOMMERCE ]: __( 'Commerce' ),
+	[ DotcomPlans.ECOMMERCE_MONTHLY ]: __( 'Commerce' ),
+	[ DotcomPlans.ECOMMERCE_2_YEARS ]: __( 'Commerce' ),
+	[ DotcomPlans.ECOMMERCE_3_YEARS ]: __( 'Commerce' ),
 } );
 
 export const PaymentPartners = {

@@ -11,10 +11,10 @@ import { getQueryArg } from '@wordpress/url';
 import clsx from 'clsx';
 import debugModule from 'debug';
 import { localize } from 'i18n-calypso';
-import { flowRight, get, includes, startsWith } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
+import { compose } from 'redux';
 import { formatSlugToURL } from 'calypso/blocks/importer/util';
 import { ActionButtons } from 'calypso/components/connect-screen/action-buttons';
 import { BrandHeader } from 'calypso/components/connect-screen/brand-header';
@@ -387,12 +387,12 @@ export class JetpackAuthorize extends Component {
 
 	isFromJpo( props = this.props ) {
 		const { from } = props.authQuery;
-		return startsWith( from, 'jpo' );
+		return ( from ?? '' ).startsWith( 'jpo' );
 	}
 
 	isFromJetpackBoost( props = this.props ) {
 		const { from } = props.authQuery;
-		return startsWith( from, 'jetpack-boost' );
+		return ( from ?? '' ).startsWith( 'jetpack-boost' );
 	}
 
 	isFromBlockEditor( props = this.props ) {
@@ -427,32 +427,32 @@ export class JetpackAuthorize extends Component {
 
 	isFromJetpackConnectionManager( props = this.props ) {
 		const { from } = props.authQuery;
-		return startsWith( from, 'connection-ui' );
+		return ( from ?? '' ).startsWith( 'connection-ui' );
 	}
 
 	isFromJetpackBackupPlugin( props = this.props ) {
 		const { from } = props.authQuery;
-		return startsWith( from, 'jetpack-backup' );
+		return ( from ?? '' ).startsWith( 'jetpack-backup' );
 	}
 
 	isFromJetpackSearchPlugin( props = this.props ) {
 		const { from } = props.authQuery;
-		return startsWith( from, 'jetpack-search' );
+		return ( from ?? '' ).startsWith( 'jetpack-search' );
 	}
 
 	isFromJetpackSocialPlugin( props = this.props ) {
 		const { from } = props.authQuery;
-		return startsWith( from, 'jetpack-social' );
+		return ( from ?? '' ).startsWith( 'jetpack-social' );
 	}
 
 	isFromJetpackVideoPressPlugin( props = this.props ) {
 		const { from } = props.authQuery;
-		return startsWith( from, 'jetpack-videopress' );
+		return ( from ?? '' ).startsWith( 'jetpack-videopress' );
 	}
 
 	isFromMyJetpack( props = this.props ) {
 		const { from } = props.authQuery;
-		return startsWith( from, 'my-jetpack' );
+		return ( from ?? '' ).startsWith( 'my-jetpack' );
 	}
 
 	isWooRedirect = ( props = this.props ) => {
@@ -487,22 +487,22 @@ export class JetpackAuthorize extends Component {
 
 	isJetpackPartnerCoupon( props = this.props ) {
 		const { from } = props.authQuery;
-		return startsWith( from, 'jetpack-partner-coupon' );
+		return ( from ?? '' ).startsWith( 'jetpack-partner-coupon' );
 	}
 
 	isFromMigrationPlugin( props = this.props ) {
 		const { from } = props.authQuery;
-		return startsWith( from, 'wpcom-migration' );
+		return ( from ?? '' ).startsWith( 'wpcom-migration' );
 	}
 
 	isFromAutomatticForAgenciesPlugin( props = this.props ) {
 		const { from } = props.authQuery;
-		return startsWith( from, 'automattic-for-agencies-client' );
+		return ( from ?? '' ).startsWith( 'automattic-for-agencies-client' );
 	}
 
 	isFromBlazeAdsPlugin( props = this.props ) {
 		const { from } = props.authQuery;
-		return startsWith( from, 'blaze-ads' );
+		return ( from ?? '' ).startsWith( 'blaze-ads' );
 	}
 
 	shouldRedirectJetpackStart( props = this.props ) {
@@ -513,7 +513,7 @@ export class JetpackAuthorize extends Component {
 
 	isFromMyJetpackConnectAfterCheckout( props = this.props ) {
 		const { from } = props.authQuery;
-		return startsWith( from, 'connect-after-checkout' );
+		return ( from ?? '' ).startsWith( 'connect-after-checkout' );
 	}
 
 	isFromJetpackOnboarding( props = this.props ) {
@@ -748,7 +748,7 @@ export class JetpackAuthorize extends Component {
 			return null;
 		}
 
-		if ( includes( get( authorizeError, 'message' ), 'already_connected' ) ) {
+		if ( authorizeError.message?.includes( 'already_connected' ) ) {
 			return (
 				<JetpackConnectNotices
 					noticeType={ ALREADY_CONNECTED }
@@ -1072,13 +1072,15 @@ export class JetpackAuthorize extends Component {
 
 			// Non-admin secondary connections show no cards — SSO is the
 			// sole benefit and the subtitle already communicates it.
-			const cards =
-				isSecondary && ! isAdmin
-					? []
-					: ( isSecondary
-							? getSecondaryAdminFeatureCards( authQuery.plugins )
-							: getConnectorFeatureCards( authQuery.plugins )
-					  ).cards;
+			let featureCardsResult;
+			if ( isSecondary && ! isAdmin ) {
+				featureCardsResult = { cards: [], heroFirstCard: false };
+			} else if ( isSecondary ) {
+				featureCardsResult = getSecondaryAdminFeatureCards( authQuery.plugins );
+			} else {
+				featureCardsResult = getConnectorFeatureCards( authQuery.plugins );
+			}
+			const { cards, heroFirstCard } = featureCardsResult;
 
 			return (
 				<>
@@ -1092,7 +1094,9 @@ export class JetpackAuthorize extends Component {
 					/>
 					{ this.renderUseDifferentAccountLink() }
 
-					{ cards.length > 0 && <FeaturesSection cards={ cards } /> }
+					{ cards.length > 0 && (
+						<FeaturesSection cards={ cards } heroFirstCard={ heroFirstCard } />
+					) }
 					{ this.renderNotices() }
 					{ this.renderStateAction() }
 				</>
@@ -1519,4 +1523,4 @@ const connectComponent = connect(
 	}
 );
 
-export default flowRight( connectComponent, localize )( JetpackAuthorize );
+export default compose( connectComponent, localize )( JetpackAuthorize );

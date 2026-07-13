@@ -1,5 +1,4 @@
 import { useEffect, useRef } from 'react';
-import type { RefObject } from 'react';
 
 function setCustomPropertyForElement< T extends HTMLElement >(
 	customProperty: `--${ string }`,
@@ -22,7 +21,7 @@ function removeCustomProperty( customProperty: `--${ string }` ) {
 
 export function useCustomPropertyForHeight< T extends HTMLElement >(
 	customProperty: `--${ string }`
-): RefObject< T > {
+) {
 	const elementRef = useRef< T >( null );
 
 	useEffect( () => {

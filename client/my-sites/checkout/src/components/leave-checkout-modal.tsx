@@ -11,7 +11,18 @@ import { leaveCheckout } from '../lib/leave-checkout';
 
 export const useCheckoutLeaveModal = ( { siteUrl }: { siteUrl: string } ) => {
 	const [ isModalVisible, setIsModalVisible ] = useState( false );
+	const [ stepBackUrl, setStepBackUrl ] = useState< string | undefined >( undefined );
 	const forceCheckoutBackUrl = useValidCheckoutBackUrl( siteUrl );
+	// When a flow supplies a dedicated "back to domains" URL, emptying the cart
+	// sends the user there rather than to the plan-step back URL — the plan they
+	// were choosing no longer exists, so the domain step is the right restart
+	// point. An explicit step-back URL still wins so the user's chosen step is
+	// honored.
+	const forceCheckoutBackUrlDomains = useValidCheckoutBackUrl(
+		siteUrl,
+		undefined,
+		'checkoutBackUrlDomains'
+	);
 	const cartKey = useCartKey();
 	const { responseCart, replaceProductsInCart } = useShoppingCart( cartKey );
 	// Used to lazily clear the siteless 'no-site'/'no-user' carts used by
@@ -30,6 +41,7 @@ export const useCheckoutLeaveModal = ( { siteUrl }: { siteUrl: string } ) => {
 	const closeAndLeave = ( options?: {
 		userHasClearedCart?: boolean;
 		closedWithoutConfirmation?: boolean;
+		forceBackUrl?: string;
 	} ) => {
 		const userHasClearedCart = options?.userHasClearedCart ?? false;
 		if ( ! options?.closedWithoutConfirmation ) {
@@ -39,7 +51,7 @@ export const useCheckoutLeaveModal = ( { siteUrl }: { siteUrl: string } ) => {
 		}
 		leaveCheckout( {
 			siteSlug: siteUrl,
-			forceCheckoutBackUrl,
+			forceCheckoutBackUrl: options?.forceBackUrl ?? stepBackUrl ?? forceCheckoutBackUrl,
 			previousPath,
 			tracksEvent: 'calypso_masterbar_close_clicked',
 			userHasClearedCart: userHasClearedCart,
@@ -51,6 +63,9 @@ export const useCheckoutLeaveModal = ( { siteUrl }: { siteUrl: string } ) => {
 	);
 
 	const clickClose = () => {
+		// A plain close must use the default back URL, not a step-back URL left
+		// over from an earlier `clickStepBack` whose modal was dismissed.
+		setStepBackUrl( undefined );
 		if ( shouldClearCartWhenLeaving && responseCart.products.length > 0 ) {
 			recordTracksEvent( 'calypso_masterbar_checkout_close_modal_displayed' );
 			setIsModalVisible( true );
@@ -59,6 +74,16 @@ export const useCheckoutLeaveModal = ( { siteUrl }: { siteUrl: string } ) => {
 		closeAndLeave( {
 			closedWithoutConfirmation: true,
 		} );
+	};
+
+	const clickStepBack = ( destinationUrl: string ) => {
+		setStepBackUrl( destinationUrl );
+		if ( shouldClearCartWhenLeaving && responseCart.products.length > 0 ) {
+			recordTracksEvent( 'calypso_masterbar_checkout_close_modal_displayed' );
+			setIsModalVisible( true );
+			return;
+		}
+		closeAndLeave( { closedWithoutConfirmation: true, forceBackUrl: destinationUrl } );
 	};
 
 	const clearCartAndLeave = async () => {
@@ -90,6 +115,7 @@ export const useCheckoutLeaveModal = ( { siteUrl }: { siteUrl: string } ) => {
 		}
 		closeAndLeave( {
 			userHasClearedCart: true,
+			forceBackUrl: stepBackUrl ?? forceCheckoutBackUrlDomains,
 		} );
 	};
 
@@ -97,6 +123,7 @@ export const useCheckoutLeaveModal = ( { siteUrl }: { siteUrl: string } ) => {
 		isModalVisible,
 		setIsModalVisible,
 		clickClose,
+		clickStepBack,
 		closeAndLeave,
 		clearCartAndLeave,
 	};

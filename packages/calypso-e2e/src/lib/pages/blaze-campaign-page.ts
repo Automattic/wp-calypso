@@ -30,7 +30,10 @@ export class BlazeCampaignPage {
 	 * @returns The heading element for the Blaze Campaign page.
 	 */
 	get makeMostOfYourBlazeCampaignHeading(): Locator {
-		return this.page.getByRole( 'heading', { name: 'Make the most of your Blaze campaign' } );
+		// The external BlazePress widget rebranded "Blaze" to "Blaze Ads"; match either.
+		return this.page.getByRole( 'heading', {
+			name: /^Make the most of your Blaze( Ads)? campaign$/,
+		} );
 	}
 
 	/**

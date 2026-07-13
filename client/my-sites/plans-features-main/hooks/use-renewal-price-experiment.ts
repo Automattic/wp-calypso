@@ -8,7 +8,7 @@ import { getSignupCompleteFlowName } from 'calypso/signup/storageUtils';
 import { useSelector } from 'calypso/state';
 import { getCurrentUserDate } from 'calypso/state/current-user/selectors';
 
-const RENEWAL_PRICING_EXPERIMENT_V2_EN_USD = 'wpcom_renewal_pricing_increase_v2_usd_202604_v1';
+const RENEWAL_PRICING_EXPERIMENT_V2_EN_USD = 'wpcom_renewal_pricing_increase_v2_usd_202604_v2';
 const RENEWAL_PRICING_EXPERIMENT_V2_NON_USD = 'wpcom_renewal_pricing_increase_v2_non_usd_202604_v1';
 
 function useCurrencyFromPlans(): string | undefined {

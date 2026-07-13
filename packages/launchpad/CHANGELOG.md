@@ -1,5 +1,8 @@
-
 # Changelog
+
+## 1.2.3
+
+- Declare React 19 compatibility for package consumers (#111721).
 
 ## 1.2.1
 

@@ -1,6 +1,7 @@
 @use "sass:math";
 @import "@wordpress/base-styles/breakpoints";
 @import "@wordpress/base-styles/mixins";
+@import "@automattic/typography/styles/variables";
 
 // Extra specificity needed to override banner alignment rules
 .hosting-upsell-nudge.banner.card {

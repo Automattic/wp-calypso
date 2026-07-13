@@ -132,7 +132,7 @@ function useCallStatusChangeCallbacks( {
 	const paymentErrorRef = useRef( onPaymentError );
 	paymentErrorRef.current = onPaymentError;
 
-	const prevTransactionStatus = useRef< TransactionStatus >();
+	const prevTransactionStatus = useRef< TransactionStatus >( undefined );
 
 	useEffect( () => {
 		if ( transactionStatus === prevTransactionStatus.current ) {

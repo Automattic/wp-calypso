@@ -16,6 +16,10 @@ interface CalypsoAuthError {
 	message?: string;
 }
 
+interface CalypsoAuthProviderOptions {
+	logWpcomJwtFailure?: boolean;
+}
+
 const JWT_TOKEN_ID = 'jetpack-ai-jwt-token';
 const JWT_TOKEN_EXPIRATION_TIME = 30 * 60 * 1000; // 30 minutes
 
@@ -148,7 +152,8 @@ async function requestJWTToken(
  */
 async function requestJWTTokenViaWpcom(
 	siteId?: string | number,
-	useCachedToken = true
+	useCachedToken = true,
+	logFailure = true
 ): Promise< string | null > {
 	const cacheKey = siteId ? `${ JWT_TOKEN_ID }-wpcom-${ siteId }` : `${ JWT_TOKEN_ID }-wpcom`;
 
@@ -179,8 +184,10 @@ async function requestJWTTokenViaWpcom(
 
 		return token || null;
 	} catch ( error ) {
-		// eslint-disable-next-line no-console
-		console.error( 'Failed to get JWT token via wpcomRequest:', error );
+		if ( logFailure ) {
+			// eslint-disable-next-line no-console
+			console.error( 'Failed to get JWT token via wpcomRequest:', error );
+		}
 		return null;
 	}
 }
@@ -218,9 +225,13 @@ function getOAuthToken(): string | null {
  * Uses OAuth Bearer token in Calypso environments (wordpress.com, *.calypso.live),
  * or JWT token via apiFetch in non-Calypso environments (wp-admin, widgets.wp.com).
  * @param siteId - Optional site ID for simple sites (used when requesting JWT tokens)
+ * @param options - Optional authentication behavior.
  * @returns Authentication provider function that returns headers
  */
-export const createCalypsoAuthProvider = ( siteId?: string | number ): AuthProvider => {
+export const createCalypsoAuthProvider = (
+	siteId?: string | number,
+	options: CalypsoAuthProviderOptions = {}
+): AuthProvider => {
 	return async () => {
 		const headers: Record< string, string > = {
 			'Content-Type': 'application/json',
@@ -234,7 +245,11 @@ export const createCalypsoAuthProvider = ( siteId?: string | number ): AuthProvi
 			}
 
 			// Fallback to JWT via /ai/jwt (works with or without siteId)
-			const jwtToken = await requestJWTTokenViaWpcom( siteId );
+			const jwtToken = await requestJWTTokenViaWpcom(
+				siteId,
+				true,
+				options.logWpcomJwtFailure ?? true
+			);
 			if ( jwtToken ) {
 				headers.Authorization = `Bearer ${ jwtToken }`;
 				return headers;
@@ -267,16 +282,16 @@ export const defaultCalypsoErrorHandler = ( error: CalypsoAuthError ): string =>
 	if ( error?.code === 'rest_invalid_nonce' ) {
 		return __(
 			'Your session expired. Please refresh the page and try again.',
-			'__i18n_text_domain__'
+			__i18n_text_domain__
 		);
 	}
 
 	if ( error?.code === 'rest_forbidden' || error?.status === 403 ) {
-		return __( "You don't have permission to access AI features.", '__i18n_text_domain__' );
+		return __( "You don't have permission to access AI features.", __i18n_text_domain__ );
 	}
 
 	if ( error?.code === 'rest_no_route' || error?.status === 404 ) {
-		return __( 'AI service is not available. Please try again later.', '__i18n_text_domain__' );
+		return __( 'AI service is not available. Please try again later.', __i18n_text_domain__ );
 	}
 
 	if (
@@ -286,16 +301,16 @@ export const defaultCalypsoErrorHandler = ( error: CalypsoAuthError ): string =>
 	) {
 		return __(
 			'Network connection issue. Please check your internet connection and try again.',
-			'__i18n_text_domain__'
+			__i18n_text_domain__
 		);
 	}
 
 	if ( error?.status === 401 ) {
 		return __(
 			'Your session expired. Please refresh the page and try again.',
-			'__i18n_text_domain__'
+			__i18n_text_domain__
 		);
 	}
 
-	return __( 'Unable to connect to AI service. Please try again.', '__i18n_text_domain__' );
+	return __( 'Unable to connect to AI service. Please try again.', __i18n_text_domain__ );
 };

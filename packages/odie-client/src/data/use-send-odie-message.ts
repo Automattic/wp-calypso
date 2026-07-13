@@ -5,9 +5,6 @@ import { useDispatch, useSelect } from '@wordpress/data';
 import { useCallback, useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import wpcomRequest, { canAccessWpcomApis } from 'wpcom-proxy-request';
-import getMostRecentOpenLiveInteraction, {
-	hasReachedConversationLimit,
-} from '../components/notices/get-most-recent-open-live-interaction';
 import {
 	getOdieRateLimitMessage,
 	getOdieEmailFallbackMessage,
@@ -20,8 +17,10 @@ import {
 import { useOdieAssistantContext } from '../context';
 import { useCreateZendeskConversation } from '../hooks';
 import { useLoggedOutSession } from '../hooks/use-logged-out-session';
+import { useOpenInteractionStatusMap } from '../hooks/use-open-interaction-status-map';
 import { generateUUID, getOdieIdFromInteraction, getIsRequestingHumanSupport } from '../utils';
 import { hasRecentEscalationAttempt } from '../utils/chat-utils';
+import { getOpenLiveInteractions } from '../utils/get-open-live-interactions';
 import { useCurrentSupportInteraction } from './use-current-support-interaction';
 import { useManageSupportInteraction, broadcastOdieMessage } from '.';
 import type { Chat, Message, ReturnedChat, SupportInteraction } from '../types';
@@ -130,6 +129,8 @@ export const useSendOdieMessage = ( signal: AbortSignal ) => {
 		forceEmailSupport,
 		trackEvent,
 		newInteractionsBotSlug,
+		externalChatProvider,
+		externalChatId,
 	} = useOdieAssistantContext();
 
 	const botSlug = getBotSlug(
@@ -168,6 +169,8 @@ export const useSendOdieMessage = ( signal: AbortSignal ) => {
 
 	const hasTriedToEscalateToSupport = hasRecentEscalationAttempt( chat );
 
+	const interactionStatusByUuid = useOpenInteractionStatusMap();
+
 	/*
 		Adds a message to the chat.
 		If the message is a request for human support, it will escalate the chat to human support, if eligible.
@@ -182,11 +185,14 @@ export const useSendOdieMessage = ( signal: AbortSignal ) => {
 		props?: Partial< Chat >;
 		isFromError: boolean;
 	} ) => {
-		const warnAboutExistingConversation = getMostRecentOpenLiveInteraction();
+		// Compute from a fresh Smooch snapshot at call time: Smooch can mutate its
+		// conversation list outside React without triggering a re-render.
+		const { mostRecentSupportInteractionId: warnAboutExistingConversation, hasReachedLimit } =
+			getOpenLiveInteractions( interactionStatusByUuid );
 
 		if ( ! Array.isArray( message ) ) {
 			if ( getIsRequestingHumanSupport( message ) ) {
-				if ( hasReachedConversationLimit() ) {
+				if ( hasReachedLimit ) {
 					setChat( ( prevChat ) => ( {
 						...prevChat,
 						...props,
@@ -272,6 +278,8 @@ export const useSendOdieMessage = ( signal: AbortSignal ) => {
 							message: message.content,
 							...( version && { version } ),
 							...( sessionId && { session_id: sessionId } ),
+							...( externalChatProvider && { external_chat_provider: externalChatProvider } ),
+							...( externalChatId && { external_chat_id: externalChatId } ),
 							context: { selectedSiteId, currentScreen, pathname },
 						},
 				  } )
@@ -283,6 +291,8 @@ export const useSendOdieMessage = ( signal: AbortSignal ) => {
 							message: message.content,
 							...( version && { version } ),
 							...( sessionId && { session_id: sessionId } ),
+							...( externalChatProvider && { external_chat_provider: externalChatProvider } ),
+							...( externalChatId && { external_chat_id: externalChatId } ),
 							context: { selectedSiteId, currentScreen, pathname },
 						},
 				  } );

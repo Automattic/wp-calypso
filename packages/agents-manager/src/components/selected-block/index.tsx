@@ -20,6 +20,8 @@ const animations = {
 	},
 };
 
+const SELECTED_BLOCK_CLEAR_EVENT = 'agents-manager-selected-block-cleared';
+
 export default function SelectedBlock() {
 	const { block, name, icon } = useSelect( ( select ) => {
 		const selectedBlock = select( blockEditorStore ).getSelectedBlock();
@@ -43,6 +45,11 @@ export default function SelectedBlock() {
 
 	const { clearSelectedBlock } = useDispatch( blockEditorStore );
 
+	const handleClearSelectedBlock = () => {
+		clearSelectedBlock();
+		window.dispatchEvent( new Event( SELECTED_BLOCK_CLEAR_EVENT ) );
+	};
+
 	if ( ! block ) {
 		return null;
 	}
@@ -62,8 +69,8 @@ export default function SelectedBlock() {
 				className="agents-manager-selected-block__remove"
 				icon={ close }
 				iconSize={ 16 }
-				onClick={ clearSelectedBlock }
-				label={ __( 'Clear selection', 'big-sky' ) }
+				onClick={ handleClearSelectedBlock }
+				label={ __( 'Clear selection', __i18n_text_domain__ ) }
 			/>
 		</motion.div>
 	);

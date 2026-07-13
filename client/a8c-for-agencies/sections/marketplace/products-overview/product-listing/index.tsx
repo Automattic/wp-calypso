@@ -14,7 +14,9 @@ import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { MarketplaceTypeContext, ShoppingCartContext } from '../../context';
 import { useProductTermAvailabilityTooltip } from '../../hooks/use-marketplace';
-import usePressableAddonVisibility from '../../hooks/use-pressable-addon-visibility';
+import usePressableAddonVisibility, {
+	canShowPressableAddonsInMarketplace,
+} from '../../hooks/use-pressable-addon-visibility';
 import { SelectedFilters } from '../../lib/product-filter';
 import useProductAndPlansWithPressableVisibility from '../hooks/use-product-and-plans-with-pressable-visibility';
 import { getSupportedBundleSizes } from '../hooks/use-product-bundle-size';
@@ -62,11 +64,11 @@ export default function ProductListing( {
 		() => ( isReferralMode ? 1 : selectedBundleSize ),
 		[ isReferralMode, selectedBundleSize ]
 	);
-	const { hasActiveAgencyPressablePlanLicense, hasActiveReferralPressablePlanLicense } =
-		usePressableAddonVisibility();
-	const canShowPressableAddonsByMode = isReferralMode
-		? hasActiveReferralPressablePlanLicense
-		: hasActiveAgencyPressablePlanLicense;
+	const { hasActiveAgencyPressablePlanLicense } = usePressableAddonVisibility();
+	const canShowPressableAddonsByMode = canShowPressableAddonsInMarketplace( {
+		isReferralMode,
+		hasActiveAgencyPressablePlanLicense,
+	} );
 
 	const {
 		filteredProductsAndBundles,
@@ -342,7 +344,7 @@ export default function ProductListing( {
 			{ wooExtensions.length > 0 && (
 				<ProductListingSection
 					icon={ <img width={ 45 } src={ WooLogoColor } alt="WooCommerce" /> }
-					title={ translate( 'WooCommerce Extensions' ) }
+					title={ translate( 'WooCommerce extensions' ) }
 					description={ translate(
 						"Explore the tools and integrations you need to grow your client's Woo store."
 					) }
@@ -355,7 +357,7 @@ export default function ProductListing( {
 			{ jetpackPlans.length > 0 && (
 				<ProductListingSection
 					icon={ <JetpackLogo size={ 26 } /> }
-					title={ translate( 'Jetpack Plans' ) }
+					title={ translate( 'Jetpack plans' ) }
 					description={ translate(
 						'Save big with comprehensive bundles of Jetpack security, performance, and growth tools.'
 					) } // FIXME: Add proper description for A4A
@@ -368,7 +370,7 @@ export default function ProductListing( {
 			{ jetpackProducts.length > 0 && (
 				<ProductListingSection
 					icon={ <JetpackLogo size={ 26 } /> }
-					title={ translate( 'Jetpack Products' ) }
+					title={ translate( 'Jetpack products' ) }
 					description={ translate(
 						'Mix and match powerful security, performance, and growth tools for your sites.'
 					) }
@@ -381,7 +383,7 @@ export default function ProductListing( {
 			{ jetpackBackupAddons.length > 0 && (
 				<ProductListingSection
 					icon={ <JetpackLogo size={ 26 } /> }
-					title={ translate( 'Jetpack VaultPress Backup Add-ons' ) }
+					title={ translate( 'Jetpack VaultPress Backup add-ons' ) }
 					description={ translate(
 						'Add additional storage to your current VaultPress Backup plans.'
 					) }
@@ -394,7 +396,7 @@ export default function ProductListing( {
 			{ pressableAddons.length > 0 && (
 				<ProductListingSection
 					icon={ <img src={ pressableIcon } width={ 26 } height={ 26 } alt="Pressable" /> }
-					title={ translate( 'Pressable Add-ons' ) }
+					title={ translate( 'Pressable add-ons' ) }
 					description={ translate( 'Increase your plan limits and features with plan add-ons.' ) }
 					stickyHeadingTopOffset={ stickyHeadingTopOffset }
 				>

@@ -3,6 +3,7 @@ import { Icon } from '@wordpress/icons';
 import A4ACarousel from 'calypso/a8c-for-agencies/components/a4a-carousel';
 import PageSection, { PageSectionProps } from 'calypso/a8c-for-agencies/components/page-section';
 import SimpleList from 'calypso/a8c-for-agencies/components/simple-list';
+import type { JSX } from 'react';
 
 import './style.scss';
 

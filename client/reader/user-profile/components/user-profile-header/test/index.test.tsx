@@ -37,6 +37,19 @@ jest.mock( 'calypso/reader/components/achievements/use-achievements-visibility',
 	default: () => mockUseAchievementsVisibility(),
 } ) );
 
+const mockUseProfileTabVisibility = jest.fn();
+jest.mock( 'calypso/reader/data/user-profile/use-profile-tab-visibility', () => ( {
+	useProfileTabVisibility: () => mockUseProfileTabVisibility(),
+} ) );
+
+jest.mock( '@automattic/api-queries', () => ( {
+	...jest.requireActual( '@automattic/api-queries' ),
+	isAutomatticianQuery: () => ( {
+		queryKey: [ 'me', 'is-automattician' ],
+		initialData: { teams: [ { slug: 'a8c' } ] },
+	} ),
+} ) );
+
 describe( 'UserProfileHeader', () => {
 	const defaultUser: ReaderUser = {
 		ID: 123,
@@ -57,6 +70,12 @@ describe( 'UserProfileHeader', () => {
 		mockUseAchievementsVisibility.mockReturnValue( {
 			isOwnProfile: true,
 			isVisible: true,
+			isLoading: false,
+		} );
+		mockUseProfileTabVisibility.mockReturnValue( {
+			isOwnProfile: false,
+			showPosts: true,
+			showSites: true,
 			isLoading: false,
 		} );
 		nock.disableNetConnect();
@@ -95,6 +114,19 @@ describe( 'UserProfileHeader', () => {
 
 		const displayNameEl = screen.getByText( defaultUser.display_name ?? '' );
 		expect( displayNameEl ).toBeVisible();
+	} );
+
+	test( 'should decode HTML entities in display name and bio', () => {
+		const userWithEntities: ReaderUser = {
+			...defaultUser,
+			display_name: 'Tom &amp; Jerry',
+			description: 'Coffee &amp; Code',
+		};
+
+		renderWithClient( <UserProfileHeader user={ userWithEntities } view="posts" /> );
+
+		expect( screen.getByText( 'Tom & Jerry' ) ).toBeVisible();
+		expect( screen.getByText( 'Coffee & Code' ) ).toBeVisible();
 	} );
 
 	test( 'should render top sites of the user', async () => {
@@ -167,6 +199,54 @@ describe( 'UserProfileHeader', () => {
 		expect( navItems.length ).toBe( 5 );
 
 		expect( screen.getByRole( 'menuitem', { name: 'Achievements' } ) ).toBeVisible();
+	} );
+
+	test( 'should render Settings tab only when viewing your own profile', () => {
+		mockUseAchievementsVisibility.mockReturnValue( {
+			isOwnProfile: true,
+			isVisible: false,
+			isLoading: false,
+		} );
+		mockUseProfileTabVisibility.mockReturnValue( {
+			isOwnProfile: true,
+			showPosts: true,
+			showSites: true,
+			isLoading: false,
+		} );
+		renderWithClient( <UserProfileHeader user={ defaultUser } view="posts" /> );
+
+		expect( screen.getByRole( 'menuitem', { name: 'Settings' } ) ).toBeVisible();
+	} );
+
+	test( 'should not render Settings tab when viewing another user profile', () => {
+		mockUseProfileTabVisibility.mockReturnValue( {
+			isOwnProfile: false,
+			showPosts: true,
+			showSites: true,
+			isLoading: false,
+		} );
+		renderWithClient( <UserProfileHeader user={ defaultUser } view="posts" /> );
+
+		expect( screen.queryByRole( 'menuitem', { name: 'Settings' } ) ).not.toBeInTheDocument();
+	} );
+
+	test( 'should hide the Posts and Sites tabs when the owner has hidden them', () => {
+		mockUseAchievementsVisibility.mockReturnValue( {
+			isOwnProfile: false,
+			isVisible: false,
+			isLoading: false,
+		} );
+		mockUseProfileTabVisibility.mockReturnValue( {
+			isOwnProfile: false,
+			showPosts: false,
+			showSites: false,
+			isLoading: false,
+		} );
+		renderWithClient( <UserProfileHeader user={ defaultUser } view="lists" /> );
+
+		expect( screen.queryByRole( 'menuitem', { name: 'Posts' } ) ).not.toBeInTheDocument();
+		expect( screen.queryByRole( 'menuitem', { name: 'Sites' } ) ).not.toBeInTheDocument();
+		expect( screen.getByRole( 'menuitem', { name: 'Lists' } ) ).toBeVisible();
 	} );
 
 	test( 'should not render bio section when user has no bio', () => {

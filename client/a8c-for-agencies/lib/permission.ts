@@ -56,7 +56,6 @@ import {
 	A4A_WOOPAYMENTS_OVERVIEW_LINK,
 	A4A_LEARN_LINK,
 	A4A_AGENT_STUDIO_LINK,
-	A4A_AGENT_STUDIO_PROJECTS_LINK,
 	A4A_RESOURCES_LINK,
 	A4A_DEV_TOOLS_LINK,
 	A4A_AI_MCP_LINK,
@@ -64,6 +63,8 @@ import {
 	A4A_AI_MCP_CONNECT_LINK,
 	A4A_BENCHMARKS_LINK,
 	A4A_EXCLUSIVE_OFFERS_LINK,
+	A4A_AMPLIFY_LINK,
+	A4A_AMPLIFY_REPORTS_LINK,
 } from '../components/sidebar-menu/lib/constants';
 import type { Agency } from 'calypso/state/a8c-for-agencies/types';
 
@@ -123,10 +124,11 @@ const MEMBER_ACCESSIBLE_PATHS: Record< string, string[] > = {
 	[ A4A_WOOPAYMENTS_SITE_SETUP_LINK ]: [ 'a4a_read_referrals' ],
 	[ A4A_WOOPAYMENTS_OVERVIEW_LINK ]: [ 'a4a_read_referrals' ],
 	[ A4A_EXCLUSIVE_OFFERS_LINK ]: [ 'a4a_read_exclusive_offers' ],
+	[ A4A_AMPLIFY_LINK ]: [ 'a4a_read_amplify' ],
+	[ A4A_AMPLIFY_REPORTS_LINK ]: [ 'a4a_read_amplify' ],
 	[ A4A_RESOURCES_LINK ]: [ 'a4a_read_learn' ],
 	[ A4A_LEARN_LINK ]: [ 'a4a_read_learn' ],
 	[ A4A_AGENT_STUDIO_LINK ]: [ 'a4a_read_learn' ],
-	[ A4A_AGENT_STUDIO_PROJECTS_LINK ]: [ 'a4a_read_learn' ],
 	[ A4A_DEV_TOOLS_LINK ]: [ 'a4a_read_learn' ],
 	[ A4A_AI_MCP_LINK ]: [ 'a4a_read_learn' ],
 	[ A4A_AI_MCP_AVAILABLE_TOOLS_LINK ]: [ 'a4a_read_learn' ],
@@ -151,7 +153,7 @@ const DYNAMIC_PATH_PATTERNS: Record< string, RegExp > = {
 	team: /^\/team(\/.*)?$/,
 	plugins: /^\/plugins(\/.*)?$/,
 	referrals: /^\/referrals(\/.*)?$/,
-	'agent-studio': /^\/resources-and-tools\/agent-studio\/projects\/[^/]+(\/.*)?$/,
+	'agent-studio': /^\/resources-and-tools\/agent-studio\/(projects|agents|outputs)\/[^/]+(\/.*)?$/,
 };
 
 export const isPathAllowed = ( pathname: string, agency: Agency | null ) => {

@@ -2,7 +2,7 @@ import { useEffect } from 'react';
 import { ColorSchemeProvider } from './query-provider';
 import type { ComponentType, ReactNode } from 'react';
 
-type ColorSchemeProviderComponent = ComponentType< { children: ReactNode } >;
+type ColorSchemeProviderComponent = ComponentType< { children: ReactNode; enabled?: boolean } >;
 
 function BodyClass( { className }: { className: string } ) {
 	useEffect( () => {
@@ -32,13 +32,13 @@ export function withColorScheme(
 		Provider?: ColorSchemeProviderComponent;
 	} = {}
 ) {
-	if ( ! enabled ) {
-		return children;
-	}
-
+	// Always render the provider so toggling `enabled` (for example once remote
+	// preferences load) doesn't re-parent and remount `children`. The provider
+	// gates its document side effects on `enabled`, and the body class is only
+	// mounted while enabled.
 	return (
-		<Provider>
-			{ bodyClass && <BodyClass className={ bodyClass } /> }
+		<Provider enabled={ enabled }>
+			{ enabled && bodyClass && <BodyClass className={ bodyClass } /> }
 			{ children }
 		</Provider>
 	);

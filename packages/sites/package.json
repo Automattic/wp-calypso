@@ -1,6 +1,6 @@
 {
 	"name": "@automattic/sites",
-	"version": "1.0.0",
+	"version": "1.0.1",
 	"description": "Automattic Sites utilities.",
 	"homepage": "https://github.com/Automattic/wp-calypso",
 	"license": "GPL-2.0-or-later",
@@ -35,17 +35,17 @@
 		"@automattic/search": "workspace:^"
 	},
 	"peerDependencies": {
-		"@wordpress/data": "^10.23.0",
-		"react": "^18.3.1",
-		"react-dom": "^18.3.1",
+		"@wordpress/data": "^10.48.0",
+		"react": "^18.3.1 || ^19.0.0",
+		"react-dom": "^18.3.1 || ^19.0.0",
 		"redux": "^5.0.1"
 	},
 	"devDependencies": {
 		"@automattic/calypso-typescript-config": "workspace:^",
 		"@testing-library/dom": "^10.4.1",
 		"@testing-library/jest-dom": "^6.9.1",
-		"@testing-library/react": "^16.3.0",
-		"typescript": "^5.8.3"
+		"@testing-library/react": "^16.3.2",
+		"typescript": "^6.0.3"
 	},
 	"scripts": {
 		"clean": "tsc --build ./tsconfig.json ./tsconfig-cjs.json --clean && rm -rf dist",

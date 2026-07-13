@@ -1,4 +1,8 @@
-@import "client/my-sites/stats/modernized-tooltip-styles";
+@import "calypso/assets/stylesheets/shared/functions/z-index";
+
+@import "@automattic/typography/styles/variables";
+@import "calypso/assets/stylesheets/shared/mixins/breakpoints";
+@import "calypso/my-sites/stats/modernized-tooltip-styles";
 @import "calypso/my-sites/stats/modernized-layout-styles";
 
 .woocommerce {

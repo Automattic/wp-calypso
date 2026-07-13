@@ -36,19 +36,23 @@ const offScreen = ( submenu ) => {
 	return rect.y + rect.height > window.innerHeight;
 };
 
-export const ExpandableSidebarMenu = ( {
-	className,
-	title,
-	count,
-	onClick,
-	icon,
-	materialIcon,
-	materialIconStyle,
-	customIcon,
-	children,
-	disableFlyout,
-	...props
-} ) => {
+export const ExpandableSidebarMenu = ( menuProps ) => {
+	const {
+		className,
+		title,
+		count,
+		onClick,
+		icon,
+		materialIcon,
+		materialIconStyle,
+		customIcon,
+		children,
+		disableFlyout,
+		prependContent,
+		appendContent,
+		moreMenuActions,
+		...props
+	} = menuProps;
 	let { expanded } = props;
 	const menu = createRef(); // Needed for HoverIntent.
 	const submenu = useRef();
@@ -109,16 +113,23 @@ export const ExpandableSidebarMenu = ( {
 				<ExpandableSidebarHeading
 					title={ title }
 					count={ count }
-					onClick={ ( event ) => {
-						setSubmenuHovered( false );
-						onClick( event );
-					} }
+					onClick={
+						typeof onClick === 'function'
+							? ( event ) => {
+									setSubmenuHovered( false );
+									onClick( event );
+							  }
+							: undefined
+					}
 					customIcon={ customIcon }
 					icon={ icon }
 					materialIcon={ materialIcon }
 					materialIconStyle={ materialIconStyle }
 					expanded={ expanded }
 					menuId={ menuId }
+					prependContent={ prependContent }
+					appendContent={ appendContent }
+					moreMenuActions={ moreMenuActions }
 					{ ...props }
 				/>
 				<li
@@ -136,6 +147,7 @@ export const ExpandableSidebarMenu = ( {
 };
 
 ExpandableSidebarMenu.propTypes = {
+	className: PropTypes.string,
 	title: PropTypes.oneOfType( [ TranslatableString, PropTypes.element ] ).isRequired,
 	count: PropTypes.number,
 	onClick: PropTypes.func,
@@ -146,6 +158,10 @@ ExpandableSidebarMenu.propTypes = {
 	expanded: PropTypes.bool,
 	disableFlyout: PropTypes.bool,
 	expandableIconClick: PropTypes.func,
+	prependContent: PropTypes.node,
+	appendContent: PropTypes.node,
+	moreMenuActions: PropTypes.node,
+	children: PropTypes.node,
 };
 
 export default ExpandableSidebarMenu;

@@ -1,3 +1,6 @@
+@use "calypso/assets/stylesheets/shared/mixins/dark-theme" as ui-mixins;
+@import "@wordpress/base-styles/mixins";
+
 .connections-view {
 	max-width: 760px;
 }
@@ -42,13 +45,16 @@
 	cursor: pointer;
 	transition: transform 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
 
+	// Reuse the per-card brand accent so the hover/focus ring matches the
+	// leading edge stripe (pink for Fediverse, blue for Bluesky, purple
+	// for Mastodon). Falls back to --color-primary if no accent is set.
 	&:hover {
 		transform: translateY( -2px );
-		box-shadow: 0 0 0 2px var( --color-primary );
+		box-shadow: 0 0 0 2px var( --connections-new-card-accent, var( --color-primary ) );
 	}
 
 	&:focus-within {
-		box-shadow: 0 0 0 2px var( --color-primary );
+		box-shadow: 0 0 0 2px var( --connections-new-card-accent, var( --color-primary ) );
 	}
 }
 
@@ -79,6 +85,17 @@
 			var( --studio-pink-0 ) 0%,
 			var( --color-surface ) 60%
 		);
+
+		// --studio-pink-0 keeps its light pale-pink value in dark mode (the dark
+		// palette only regenerates blue/gray), so the gradient would start on a
+		// bright patch. Tint the dark surface with the brand pink instead.
+		@include ui-mixins.when-dark-theme {
+			background: linear-gradient(
+				135deg,
+				color-mix( in srgb, var( --color-surface ) 88%, var( --studio-pink-50 ) ) 0%,
+				var( --color-surface ) 60%
+			);
+		}
 	}
 }
 
@@ -171,10 +188,6 @@
 	&:focus-visible {
 		text-decoration: underline;
 	}
-
-	&::after {
-		content: " ↗";
-	}
 }
 
 .connections-new__footnote {
@@ -188,6 +201,23 @@
 
 .social-view {
 	max-width: 960px;
+}
+
+.social-accounts {
+	margin-block-start: 24px;
+}
+
+.social-accounts__header {
+	margin-block-end: 12px;
+}
+
+.social-accounts__title {
+	margin: 0;
+	font-size: 0.95rem; /* stylelint-disable-line scales/font-sizes */
+	font-weight: 600;
+	letter-spacing: 0.02em;
+	text-transform: uppercase;
+	color: var( --color-text-subtle );
 }
 
 .social-grid {
@@ -363,10 +393,16 @@
 	}
 }
 
+p.social-empty__learn-more {
+	margin: 16px auto;
+}
+
 // ---------- Social Spotlight ----------
 
 .social-spotlight {
 	margin-block: 24px;
+	padding-block-end: 24px;
+	border-block-end: 1px solid var( --color-border-subtle );
 }
 
 .social-spotlight__header {
@@ -521,5 +557,41 @@
 	gap: 16px;
 	font-size: 0.75rem;
 	color: var( --color-text-subtle );
+}
+
+.social-spotlight-skeleton__subtitle {
+	margin-block-start: 6px;
+}
+
+// The skeleton cards reuse the live card's border, padding, and protocol
+// border-top would imply a protocol we don't yet know — keep them neutral
+// while loading so the strip doesn't flash a colour stripe before
+// settling on the real cards.
+.social-spotlight-skeleton__card {
+	&:hover,
+	&:focus-within {
+		transform: none;
+		box-shadow: none;
+	}
+}
+
+.social-spotlight-skeleton__author {
+	flex: 1;
+	min-width: 0;
+	display: flex;
+	flex-direction: column;
+	gap: 4px;
+}
+
+.social-spotlight-skeleton__text {
+	display: flex;
+	flex-direction: column;
+	gap: 6px;
+	margin-block-end: 8px;
+}
+
+.social-spotlight-skeleton__counts {
+	display: flex;
+	gap: 16px;
 }
 

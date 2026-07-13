@@ -50,7 +50,6 @@ export const PerformanceReportLoading = ( {
 										onClick={ handleRetestClick }
 									/>
 								),
-								br: <br />,
 							}
 						) }
 				</p>

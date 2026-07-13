@@ -99,8 +99,8 @@ export const Prompt: React.FC< { initialPrompt?: string } > = ( { initialPrompt 
 		generateLogo( { prompt, style } );
 	}, [ context, generateLogo, prompt, style ] );
 
-	const onPromptInput = ( event: React.ChangeEvent< HTMLInputElement > ) => {
-		setPrompt( event.target.textContent || '' );
+	const onPromptInput = ( event: React.FormEvent< HTMLDivElement > ) => {
+		setPrompt( event.currentTarget.textContent || '' );
 	};
 
 	const onPromptPaste = ( event: React.ClipboardEvent< HTMLInputElement > ) => {
@@ -211,7 +211,9 @@ export const Prompt: React.FC< { initialPrompt?: string } > = ( { initialPrompt 
 							{ sprintf(
 								// translators: %u is the number of requests
 								__( '%u requests remaining.', 'jetpack' ),
-								requestsRemaining
+								// `%u` renders fine at runtime (tannin) but the typed-sprintf parser
+								// only knows %s/%d/%f, so it types this arg as `never`. Cast past it.
+								requestsRemaining as unknown as never
 							) }
 						</div>
 						{ hasNextTier && (

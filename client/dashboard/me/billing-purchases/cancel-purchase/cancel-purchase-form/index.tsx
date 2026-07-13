@@ -1,4 +1,3 @@
-import config from '@automattic/calypso-config';
 import { Button, __experimentalVStack as VStack } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
@@ -11,6 +10,7 @@ import {
 	type CancelIntent,
 } from '../../../../utils/purchase';
 import { getSolutionsForReason } from '../get-solutions-for-reason';
+import { useIsSplitCancelRemoveEnabled } from '../use-is-split-cancel-remove-enabled';
 import { AtomicRevertStep } from './step-components/atomic-revert-step';
 import EducationContentStep from './step-components/educational-content-step';
 import FeedbackStep from './step-components/feedback-step';
@@ -76,6 +76,7 @@ interface CancelPurchaseFormProps {
 	onRadioTwoChange?: ( eventOrValue: React.ChangeEvent< HTMLInputElement > | string ) => void;
 	onSubmit?: () => void;
 	onSurveyComplete?: () => void;
+	onSwitchToMonthly?: () => void;
 	onTextOneChange: (
 		eventOrValue: React.ChangeEvent< HTMLInputElement > | string,
 		detailsValue?: string
@@ -90,12 +91,14 @@ interface CancelPurchaseFormProps {
 	questionTwoOrder?: string[];
 	questionTwoRadio?: string;
 	questionTwoText?: string;
+	recordEvent?: ( name: string, properties?: Record< string, unknown > ) => void;
 	refundAmount?: number;
 	siteSlug: string;
 	solution?: string;
 	surveyStep?: string;
 	upsell?: string;
 	willAtomicSiteRevert?: boolean;
+	yearlyPlanSlug?: string;
 }
 
 function SurveyContent( {
@@ -138,8 +141,12 @@ function SurveyContent( {
 	includedDomainPurchase,
 	isAkismet,
 	intent,
+	onSwitchToMonthly,
+	recordEvent,
+	yearlyPlanSlug,
 }: CancelPurchaseFormProps ) {
 	const { product_name: productName } = purchase;
+	const isSplitCancelRemoveEnabled = useIsSplitCancelRemoveEnabled();
 	if ( surveyStep === FEEDBACK_STEP ) {
 		return (
 			<FeedbackStep
@@ -159,8 +166,7 @@ function SurveyContent( {
 		const isLastStep = surveyStep === allSteps?.[ allSteps.length - 1 ];
 
 		const solutions = getSolutionsForReason( questionOneText ?? '' );
-		const useSolutionsCards =
-			config.isEnabled( 'cancel-flow/solutions-cards-upsell' ) && solutions && solutions.length > 0;
+		const useSolutionsCards = isSplitCancelRemoveEnabled && solutions && solutions.length > 0;
 
 		if ( useSolutionsCards ) {
 			return (
@@ -171,10 +177,14 @@ function SurveyContent( {
 					closeDialog={ closeDialog }
 					downgradePlan={ downgradePlan }
 					includedDomainPurchase={ includedDomainPurchase }
+					intent={ intent ?? undefined }
 					onClickDowngrade={ downgradeClick }
 					onDeclineUpsell={ isLastStep ? onSubmit : clickNext }
+					onSwitchToMonthly={ onSwitchToMonthly }
 					purchase={ purchase }
+					recordEvent={ recordEvent }
 					refundAmount={ refundAmount }
+					yearlyPlanSlug={ yearlyPlanSlug }
 				/>
 			);
 		}
@@ -387,7 +397,7 @@ function StepButtons( {
 					disabled={ isApplyingOffer || Boolean( offerApplyError ) }
 					isBusy={ isApplyingOffer ?? false }
 					onClick={ () => {
-						onClickAcceptForCancellationOffer && onClickAcceptForCancellationOffer();
+						onClickAcceptForCancellationOffer?.();
 					} }
 					variant="primary"
 				>

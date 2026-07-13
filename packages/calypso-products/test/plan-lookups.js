@@ -1,5 +1,8 @@
 import config from '@automattic/calypso-config';
 import {
+	FEATURE_200GB_STORAGE,
+	FEATURE_50GB_STORAGE,
+	FEATURE_6GB_STORAGE,
 	FEATURE_ACTIVITY_LOG,
 	FEATURE_ALL_PERSONAL_FEATURES,
 	FEATURE_AUDIO_UPLOADS,
@@ -47,6 +50,8 @@ import {
 	PLAN_JETPACK_SECURITY_DAILY_MONTHLY,
 	PLAN_JETPACK_SECURITY_REALTIME,
 	PLAN_JETPACK_SECURITY_REALTIME_MONTHLY,
+	PLAN_JETPACK_SECURITY_T0_MONTHLY,
+	PLAN_JETPACK_SECURITY_T0_YEARLY,
 	PLAN_JETPACK_SECURITY_T1_BI_YEARLY,
 	PLAN_JETPACK_SECURITY_T1_MONTHLY,
 	PLAN_JETPACK_SECURITY_T1_YEARLY,
@@ -62,13 +67,11 @@ import {
 	PLAN_PERSONAL_3_YEARS,
 	PLAN_PERSONAL_MONTHLY,
 	PLAN_PERSONAL_TRIAL_MONTHLY,
-	PLAN_WPCOM_CHOOSE_LOW_YEARLY,
-	PLAN_WPCOM_CHOOSE_MID_YEARLY,
-	PLAN_WPCOM_CHOOSE_HIGH_YEARLY,
 	PLAN_PREMIUM,
 	PLAN_PREMIUM_2_YEARS,
 	PLAN_PREMIUM_3_YEARS,
 	PLAN_PREMIUM_MONTHLY,
+	PLAN_STUDENT,
 	PLAN_WOO_HOSTED_BASIC,
 	PLAN_WOO_HOSTED_BASIC_MONTHLY,
 	PLAN_WOO_HOSTED_FREE,
@@ -96,15 +99,16 @@ import {
 	TYPE_FREE,
 	TYPE_PERSONAL,
 	TYPE_PREMIUM,
+	TYPE_STUDENT,
 } from '../src/constants';
 import {
 	getPlan,
-	getPlanByPathSlug,
 	getPlans,
 	getPlanClass,
 	isProPlan,
 	isBusinessPlan,
 	isPersonalPlan,
+	isStudentPlan,
 	isPremiumPlan,
 	isBloggerPlan,
 	isFreePlan,
@@ -117,6 +121,7 @@ import {
 	isWpComEcommercePlan,
 	isWpComBusinessPlan,
 	isWpComPersonalPlan,
+	isWpComStudentPlan,
 	isWpComPremiumPlan,
 	isWpComBloggerPlan,
 	isWpComFreePlan,
@@ -217,7 +222,21 @@ describe( 'isPersonalPlan', () => {
 		expect( isPersonalPlan( PLAN_BUSINESS ) ).toEqual( false );
 		expect( isPersonalPlan( PLAN_JETPACK_BUSINESS ) ).toEqual( false );
 		expect( isPersonalPlan( PLAN_ECOMMERCE ) ).toEqual( false );
+		expect( isPersonalPlan( PLAN_STUDENT ) ).toEqual( false );
 		expect( isPersonalPlan( 'non-existing plan' ) ).toEqual( false );
+	} );
+} );
+
+describe( 'isStudentPlan', () => {
+	test( 'should return true for student plans', () => {
+		expect( isStudentPlan( PLAN_STUDENT ) ).toEqual( true );
+	} );
+	test( 'should return false for non-student plans', () => {
+		expect( isStudentPlan( PLAN_PERSONAL ) ).toEqual( false );
+		expect( isStudentPlan( PLAN_PREMIUM ) ).toEqual( false );
+		expect( isStudentPlan( PLAN_BUSINESS ) ).toEqual( false );
+		expect( isStudentPlan( PLAN_ECOMMERCE ) ).toEqual( false );
+		expect( isStudentPlan( 'non-existing plan' ) ).toEqual( false );
 	} );
 } );
 
@@ -418,7 +437,22 @@ describe( 'isWpComPersonalPlan', () => {
 		expect( isWpComPersonalPlan( PLAN_BUSINESS ) ).toEqual( false );
 		expect( isWpComPersonalPlan( PLAN_JETPACK_BUSINESS ) ).toEqual( false );
 		expect( isWpComPersonalPlan( PLAN_ECOMMERCE ) ).toEqual( false );
+		expect( isWpComPersonalPlan( PLAN_STUDENT ) ).toEqual( false );
 		expect( isWpComPersonalPlan( 'non-exisWpComting plan' ) ).toEqual( false );
+	} );
+} );
+
+describe( 'isWpComStudentPlan', () => {
+	test( 'should return true for student plans', () => {
+		expect( isWpComStudentPlan( PLAN_STUDENT ) ).toEqual( true );
+	} );
+	test( 'should return false for non-student plans', () => {
+		expect( isWpComStudentPlan( PLAN_PERSONAL ) ).toEqual( false );
+		expect( isWpComStudentPlan( PLAN_PREMIUM ) ).toEqual( false );
+		expect( isWpComStudentPlan( PLAN_BUSINESS ) ).toEqual( false );
+		expect( isWpComStudentPlan( PLAN_ECOMMERCE ) ).toEqual( false );
+		expect( isWpComStudentPlan( PLAN_JETPACK_PERSONAL ) ).toEqual( false );
+		expect( isWpComStudentPlan( 'non-existing plan' ) ).toEqual( false );
 	} );
 } );
 
@@ -550,6 +584,7 @@ describe( 'isWpComAnnualPlan', () => {
 		expect( isWpComAnnualPlan( PLAN_PREMIUM ) ).toEqual( true );
 		expect( isWpComAnnualPlan( PLAN_BUSINESS ) ).toEqual( true );
 		expect( isWpComAnnualPlan( PLAN_ECOMMERCE ) ).toEqual( true );
+		expect( isWpComAnnualPlan( PLAN_STUDENT ) ).toEqual( true );
 
 		// the Free plan is considered annual even though it costs nothing
 		expect( isWpComAnnualPlan( PLAN_FREE ) ).toEqual( true );
@@ -583,6 +618,7 @@ describe( 'isWpComBiennialPlan', () => {
 		expect( isWpComBiennialPlan( PLAN_WPCOM_PRO ) ).toEqual( false );
 		expect( isWpComBiennialPlan( PLAN_WPCOM_STARTER ) ).toEqual( false );
 		expect( isWpComBiennialPlan( PLAN_PERSONAL ) ).toEqual( false );
+		expect( isWpComBiennialPlan( PLAN_STUDENT ) ).toEqual( false );
 		expect( isWpComBiennialPlan( PLAN_PREMIUM ) ).toEqual( false );
 		expect( isWpComBiennialPlan( PLAN_BUSINESS ) ).toEqual( false );
 		expect( isWpComBiennialPlan( PLAN_ECOMMERCE ) ).toEqual( false );
@@ -609,6 +645,7 @@ describe( 'isWpComTriennialPlan', () => {
 		expect( isWpComTriennialPlan( PLAN_WPCOM_PRO ) ).toEqual( false );
 		expect( isWpComTriennialPlan( PLAN_WPCOM_STARTER ) ).toEqual( false );
 		expect( isWpComTriennialPlan( PLAN_PERSONAL ) ).toEqual( false );
+		expect( isWpComTriennialPlan( PLAN_STUDENT ) ).toEqual( false );
 		expect( isWpComTriennialPlan( PLAN_PREMIUM ) ).toEqual( false );
 		expect( isWpComTriennialPlan( PLAN_BUSINESS ) ).toEqual( false );
 		expect( isWpComTriennialPlan( PLAN_ECOMMERCE ) ).toEqual( false );
@@ -634,6 +671,7 @@ describe( 'isWpComMonthlyPlan', () => {
 		expect( isWpComMonthlyPlan( PLAN_WPCOM_PRO ) ).toEqual( false );
 		expect( isWpComMonthlyPlan( PLAN_WPCOM_STARTER ) ).toEqual( false );
 		expect( isWpComMonthlyPlan( PLAN_PERSONAL ) ).toEqual( false );
+		expect( isWpComMonthlyPlan( PLAN_STUDENT ) ).toEqual( false );
 		expect( isWpComMonthlyPlan( PLAN_PREMIUM ) ).toEqual( false );
 		expect( isWpComMonthlyPlan( PLAN_BUSINESS ) ).toEqual( false );
 		expect( isWpComMonthlyPlan( PLAN_ECOMMERCE ) ).toEqual( false );
@@ -742,12 +780,16 @@ describe( 'getMonthlyPlanByYearly', () => {
 		expect( getMonthlyPlanByYearly( PLAN_JETPACK_SECURITY_REALTIME ) ).toEqual(
 			PLAN_JETPACK_SECURITY_REALTIME_MONTHLY
 		);
+		expect( getMonthlyPlanByYearly( PLAN_JETPACK_SECURITY_T0_YEARLY ) ).toEqual(
+			PLAN_JETPACK_SECURITY_T0_MONTHLY
+		);
 		expect( getMonthlyPlanByYearly( PLAN_JETPACK_COMPLETE ) ).toEqual(
 			PLAN_JETPACK_COMPLETE_MONTHLY
 		);
 		expect( getMonthlyPlanByYearly( PLAN_JETPACK_GROWTH_YEARLY ) ).toEqual(
 			PLAN_JETPACK_GROWTH_MONTHLY
 		);
+		expect( getMonthlyPlanByYearly( PLAN_STUDENT ) ).toEqual( '' );
 		expect( getYearlyPlanByMonthly( 'unknown_plan' ) ).toEqual( '' );
 	} );
 } );
@@ -769,6 +811,9 @@ describe( 'getYearlyPlanByMonthly', () => {
 		expect( getYearlyPlanByMonthly( PLAN_JETPACK_SECURITY_REALTIME_MONTHLY ) ).toEqual(
 			PLAN_JETPACK_SECURITY_REALTIME
 		);
+		expect( getYearlyPlanByMonthly( PLAN_JETPACK_SECURITY_T0_MONTHLY ) ).toEqual(
+			PLAN_JETPACK_SECURITY_T0_YEARLY
+		);
 		expect( getYearlyPlanByMonthly( PLAN_JETPACK_COMPLETE_MONTHLY ) ).toEqual(
 			PLAN_JETPACK_COMPLETE
 		);
@@ -787,6 +832,7 @@ describe( 'getPlanClass', () => {
 		expect( getPlanClass( PLAN_BLOGGER_2_YEARS ) ).toEqual( 'is-blogger-plan' );
 		expect( getPlanClass( PLAN_PERSONAL ) ).toEqual( 'is-personal-plan' );
 		expect( getPlanClass( PLAN_PERSONAL_2_YEARS ) ).toEqual( 'is-personal-plan' );
+		expect( getPlanClass( PLAN_STUDENT ) ).toEqual( 'is-student-plan' );
 		expect( getPlanClass( PLAN_JETPACK_PERSONAL ) ).toEqual( 'is-personal-plan' );
 		expect( getPlanClass( PLAN_JETPACK_PERSONAL_MONTHLY ) ).toEqual( 'is-personal-plan' );
 		expect( getPlanClass( PLAN_PREMIUM ) ).toEqual( 'is-premium-plan' );
@@ -800,6 +846,8 @@ describe( 'getPlanClass', () => {
 		expect( getPlanClass( PLAN_ENTERPRISE_GRID_WPCOM ) ).toEqual( 'is-wpcom-enterprise-grid-plan' );
 		expect( getPlanClass( PLAN_JETPACK_BUSINESS ) ).toEqual( 'is-business-plan' );
 		expect( getPlanClass( PLAN_JETPACK_BUSINESS_MONTHLY ) ).toEqual( 'is-business-plan' );
+		expect( getPlanClass( PLAN_JETPACK_SECURITY_T0_YEARLY ) ).toEqual( 'is-security-t0' );
+		expect( getPlanClass( PLAN_JETPACK_SECURITY_T0_MONTHLY ) ).toEqual( 'is-security-t0' );
 	} );
 } );
 
@@ -820,31 +868,6 @@ describe( 'getPlan', () => {
 
 	test( 'should return undefined for invalid plan - by value', () => {
 		expect( getPlan( {} ) ).toEqual( undefined );
-	} );
-
-	test( 'should return the expected product id for Choose yearly plans', () => {
-		expect( getPlan( PLAN_WPCOM_CHOOSE_LOW_YEARLY )?.getProductId() ).toEqual( 1078 );
-		expect( getPlan( PLAN_WPCOM_CHOOSE_MID_YEARLY )?.getProductId() ).toEqual( 1079 );
-		expect( getPlan( PLAN_WPCOM_CHOOSE_HIGH_YEARLY )?.getProductId() ).toEqual( 1080 );
-	} );
-} );
-
-describe( 'getPlanByPathSlug', () => {
-	test( 'should resolve known path slugs to their plan', () => {
-		expect( getPlanByPathSlug( 'personal' )?.getStoreSlug() ).toEqual( PLAN_PERSONAL );
-		expect( getPlanByPathSlug( 'choose-12-yearly' )?.getStoreSlug() ).toEqual(
-			PLAN_WPCOM_CHOOSE_LOW_YEARLY
-		);
-		expect( getPlanByPathSlug( 'choose-24-yearly' )?.getStoreSlug() ).toEqual(
-			PLAN_WPCOM_CHOOSE_MID_YEARLY
-		);
-		expect( getPlanByPathSlug( 'choose-36-yearly' )?.getStoreSlug() ).toEqual(
-			PLAN_WPCOM_CHOOSE_HIGH_YEARLY
-		);
-	} );
-
-	test( 'should return undefined for unknown path slugs', () => {
-		expect( getPlanByPathSlug( 'not-a-plan' ) ).toBeUndefined();
 	} );
 } );
 
@@ -904,6 +927,7 @@ describe( 'findSimilarPlansKeys', () => {
 		expect( findSimilarPlansKeys( PLAN_WOOEXPRESS_MEDIUM, { term: TERM_MONTHLY } ) ).toEqual( [
 			PLAN_WOOEXPRESS_MEDIUM_MONTHLY,
 		] );
+		expect( findSimilarPlansKeys( PLAN_STUDENT, { term: TERM_MONTHLY } ) ).toEqual( [] );
 		expect( findSimilarPlansKeys( PLAN_PERSONAL_3_YEARS, { term: TERM_ANNUALLY } ) ).toEqual( [
 			PLAN_PERSONAL,
 		] );
@@ -1138,21 +1162,20 @@ describe( 'findPlansKeys', () => {
 				PLAN_JETPACK_PREMIUM,
 				PLAN_JETPACK_SECURITY_DAILY,
 				PLAN_JETPACK_SECURITY_REALTIME,
+				PLAN_JETPACK_SECURITY_T0_YEARLY,
 				PLAN_JETPACK_SECURITY_T1_YEARLY,
 				PLAN_JETPACK_SECURITY_T2_YEARLY,
 				PLAN_JETPACK_STARTER_YEARLY,
 				PLAN_P2_FREE,
 				PLAN_PERSONAL,
 				PLAN_PREMIUM,
+				PLAN_STUDENT,
 				PLAN_WOO_HOSTED_FREE,
 				PLAN_WOO_HOSTED_BASIC,
 				PLAN_WOO_HOSTED_PRO,
 				PLAN_WOOEXPRESS_MEDIUM,
 				PLAN_WOOEXPRESS_PLUS,
 				PLAN_WOOEXPRESS_SMALL,
-				PLAN_WPCOM_CHOOSE_HIGH_YEARLY,
-				PLAN_WPCOM_CHOOSE_LOW_YEARLY,
-				PLAN_WPCOM_CHOOSE_MID_YEARLY,
 				PLAN_WPCOM_FLEXIBLE,
 				PLAN_WPCOM_PRO,
 				PLAN_WPCOM_STARTER,
@@ -1172,6 +1195,7 @@ describe( 'findPlansKeys', () => {
 			PLAN_JETPACK_PREMIUM_MONTHLY,
 			PLAN_JETPACK_SECURITY_DAILY_MONTHLY,
 			PLAN_JETPACK_SECURITY_REALTIME_MONTHLY,
+			PLAN_JETPACK_SECURITY_T0_MONTHLY,
 			PLAN_JETPACK_SECURITY_T1_MONTHLY,
 			PLAN_JETPACK_SECURITY_T2_MONTHLY,
 			PLAN_JETPACK_STARTER_MONTHLY,
@@ -1210,6 +1234,7 @@ describe( 'findPlansKeys', () => {
 			PLAN_JETPACK_PERSONAL_MONTHLY,
 			PLAN_PERSONAL_TRIAL_MONTHLY,
 		] );
+		expect( findPlansKeys( { type: TYPE_STUDENT } ) ).toEqual( [ PLAN_STUDENT ] );
 		expect( findPlansKeys( { type: TYPE_PREMIUM } ) ).toEqual( [
 			PLAN_PREMIUM_MONTHLY,
 			PLAN_PREMIUM,
@@ -1262,6 +1287,7 @@ describe( 'findPlansKeys', () => {
 				PLAN_PREMIUM_2_YEARS,
 				PLAN_PREMIUM_3_YEARS,
 				PLAN_PREMIUM_MONTHLY,
+				PLAN_STUDENT,
 				PLAN_WOO_HOSTED_BASIC,
 				PLAN_WOO_HOSTED_BASIC_MONTHLY,
 				PLAN_WOO_HOSTED_FREE,
@@ -1273,9 +1299,6 @@ describe( 'findPlansKeys', () => {
 				PLAN_WOOEXPRESS_PLUS,
 				PLAN_WOOEXPRESS_SMALL,
 				PLAN_WOOEXPRESS_SMALL_MONTHLY,
-				PLAN_WPCOM_CHOOSE_HIGH_YEARLY,
-				PLAN_WPCOM_CHOOSE_LOW_YEARLY,
-				PLAN_WPCOM_CHOOSE_MID_YEARLY,
 				PLAN_WPCOM_FLEXIBLE,
 				PLAN_WPCOM_PRO,
 				PLAN_WPCOM_PRO_2_YEARS,
@@ -1298,6 +1321,8 @@ describe( 'findPlansKeys', () => {
 			PLAN_JETPACK_COMPLETE_BI_YEARLY,
 			PLAN_JETPACK_COMPLETE,
 			PLAN_JETPACK_COMPLETE_MONTHLY,
+			PLAN_JETPACK_SECURITY_T0_YEARLY,
+			PLAN_JETPACK_SECURITY_T0_MONTHLY,
 			PLAN_JETPACK_SECURITY_T1_BI_YEARLY,
 			PLAN_JETPACK_SECURITY_T1_YEARLY,
 			PLAN_JETPACK_SECURITY_T1_MONTHLY,
@@ -1323,6 +1348,9 @@ describe( 'findPlansKeys', () => {
 			PLAN_PERSONAL_2_YEARS,
 			PLAN_PERSONAL_3_YEARS,
 			PLAN_PERSONAL_TRIAL_MONTHLY,
+		] );
+		expect( findPlansKeys( { group: GROUP_WPCOM, type: TYPE_STUDENT } ) ).toEqual( [
+			PLAN_STUDENT,
 		] );
 		expect( findPlansKeys( { group: GROUP_WPCOM, type: TYPE_PREMIUM } ) ).toEqual( [
 			PLAN_PREMIUM_MONTHLY,
@@ -1487,6 +1515,23 @@ describe( 'planHasFeature', () => {
 	test( 'should return false when a plan does not have a feature', () => {
 		expect( planHasFeature( PLAN_PERSONAL, FEATURE_VIDEO_UPLOADS ) ).toBe( false );
 	} );
+
+	test( 'student plan should use business feature mapping with personal storage', () => {
+		const studentPlan = getPlan( PLAN_STUDENT );
+
+		expect( planHasFeature( PLAN_STUDENT, FEATURE_VIDEO_UPLOADS ) ).toBe( true );
+		expect( planHasFeature( PLAN_STUDENT, FEATURE_6GB_STORAGE ) ).toBe( true );
+		expect( planHasFeature( PLAN_STUDENT, FEATURE_50GB_STORAGE ) ).toBe( false );
+		expect( planHasFeature( PLAN_STUDENT, FEATURE_200GB_STORAGE ) ).toBe( false );
+
+		expect( studentPlan.getPlanCompareFeatures() ).toContain( FEATURE_6GB_STORAGE );
+		expect( studentPlan.getPlanCompareFeatures() ).not.toContain( FEATURE_50GB_STORAGE );
+		expect( studentPlan.getPromotedFeatures() ).toContain( FEATURE_6GB_STORAGE );
+		expect( studentPlan.getPromotedFeatures() ).not.toContain( FEATURE_200GB_STORAGE );
+		expect( studentPlan.getPortfolioSignupFeatures() ).toContain( FEATURE_6GB_STORAGE );
+		expect( studentPlan.getPortfolioSignupFeatures() ).not.toContain( FEATURE_200GB_STORAGE );
+		expect( studentPlan.getStorageFeature() ).toEqual( FEATURE_6GB_STORAGE );
+	} );
 } );
 
 describe( 'planHasAtLeastOneFeature', () => {
@@ -1500,6 +1545,12 @@ describe( 'planHasAtLeastOneFeature', () => {
 	} );
 
 	test( 'should return false when a plan has none of the provided features', () => {
+		expect(
+			planHasAtLeastOneFeature( PLAN_JETPACK_SECURITY_T0_YEARLY, [
+				FEATURE_JETPACK_BACKUP_T2_YEARLY,
+				FEATURE_VIDEO_UPLOADS,
+			] )
+		).toBe( false );
 		expect(
 			planHasAtLeastOneFeature( PLAN_JETPACK_SECURITY_T1_YEARLY, [
 				FEATURE_JETPACK_BACKUP_T2_YEARLY,

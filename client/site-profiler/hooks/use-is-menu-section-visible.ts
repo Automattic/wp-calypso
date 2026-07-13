@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { calculateMetricsSectionScrollOffset } from '../utils/calculate-metrics-section-scroll-offset';
 
-export function useIsMenuSectionVisible( ref: React.RefObject< HTMLObjectElement > | undefined ) {
+export function useIsMenuSectionVisible( ref: React.RefObject< HTMLElement | null > | undefined ) {
 	const [ isIntersecting, setIntersecting ] = useState( false );
 
 	useEffect( () => {
@@ -12,7 +12,9 @@ export function useIsMenuSectionVisible( ref: React.RefObject< HTMLObjectElement
 			{ rootMargin: `-${ calculateMetricsSectionScrollOffset() + 1 }px` } // the additional pixel triggers the tab change
 		);
 
-		ref?.current && observer.observe( ref.current );
+		if ( ref?.current ) {
+			observer.observe( ref.current );
+		}
 
 		return () => {
 			observer.disconnect();

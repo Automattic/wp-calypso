@@ -45,22 +45,23 @@ import {
 	PRODUCT_VENDOR_WOOCOMMERCE,
 } from '../../../constants';
 import { MarketplaceTypeContext } from '../../../context';
-import usePressableAddonVisibility from '../../../hooks/use-pressable-addon-visibility';
+import usePressableAddonVisibility, {
+	canShowPressableAddonsInMarketplace,
+} from '../../../hooks/use-pressable-addon-visibility';
 import { isPressableAddonProduct } from '../../../lib/hosting';
 
 export default function useProductFilterOptions() {
 	const translate = useTranslate();
 	const { marketplaceType } = useContext( MarketplaceTypeContext );
 	const { data: productsAndPlans = [] } = useProductsQuery();
-	const { hasActiveAgencyPressablePlanLicense, hasActiveReferralPressablePlanLicense } =
-		usePressableAddonVisibility();
+	const { hasActiveAgencyPressablePlanLicense } = usePressableAddonVisibility();
 	const hasPressableAddonsAvailable = productsAndPlans.some( ( { family_slug } ) =>
 		isPressableAddonProduct( family_slug )
 	);
-	const canShowPressableAddonsByMode =
-		marketplaceType === 'referral'
-			? hasActiveReferralPressablePlanLicense
-			: hasActiveAgencyPressablePlanLicense;
+	const canShowPressableAddonsByMode = canShowPressableAddonsInMarketplace( {
+		isReferralMode: marketplaceType === 'referral',
+		hasActiveAgencyPressablePlanLicense,
+	} );
 
 	return {
 		[ PRODUCT_FILTER_KEY_CATEGORIES ]: [
@@ -102,7 +103,7 @@ export default function useProductFilterOptions() {
 			{ key: PRODUCT_CATEGORY_GROWTH, label: translate( 'Growth' ) as string, icon: trendingUp },
 			{
 				key: PRODUCT_CATEGORY_SHIPPING_DELIVERY_FULFILLMENT,
-				label: translate( 'Shipping, Delivery, and Fulfillment' ) as string,
+				label: translate( 'Shipping, delivery, and fulfillment' ) as string,
 				shortLabel: translate( 'Shipping' ) as string,
 				icon: shipping,
 			},
@@ -113,7 +114,7 @@ export default function useProductFilterOptions() {
 			},
 			{
 				key: PRODUCT_CATEGORY_CUSTOMER_SERVICE,
-				label: translate( 'Customer Service' ) as string,
+				label: translate( 'Customer service' ) as string,
 				icon: commentAuthorName,
 			},
 			{
@@ -123,13 +124,13 @@ export default function useProductFilterOptions() {
 			},
 			{
 				key: PRODUCT_CATEGORY_STORE_CONTENT,
-				label: translate( 'Store Content and Customization' ) as string,
+				label: translate( 'Store content and customization' ) as string,
 				shortLabel: translate( 'Store content' ) as string,
 				icon: postContent,
 			},
 			{
 				key: PRODUCT_CATEGORY_STORE_MANAGEMENT,
-				label: translate( 'Store Management' ) as string,
+				label: translate( 'Store management' ) as string,
 				icon: store,
 			},
 		],

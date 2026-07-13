@@ -2,11 +2,11 @@
 // the same ChatInput + Suggestions primitives as the Odie/Big Sky chat
 // surface so the affordance matches the dock the user is already
 // interacting with.
-
 import '@automattic/agenttic-ui/index.css';
 import { AgentUIProvider, ChatInput, Suggestions, type Suggestion } from '@automattic/agenttic-ui';
 import { useMemo, useRef, useState } from '@wordpress/element';
 import { useTranslate } from 'i18n-calypso';
+import type { JSX, RefObject } from 'react';
 
 import './prompt-form.scss';
 
@@ -36,35 +36,45 @@ export default function PromptForm( { onSubmit, mode = 'initial' }: PromptFormPr
 				{
 					id: 'most-popular',
 					label: translate( 'Most popular' ),
-					prompt: translate( 'Show me the most popular options' ),
+					prompt: translate( 'Show me the most popular options.' ),
 				},
 				{
 					id: 'alternatives',
-					label: translate( 'Show me alternatives' ),
-					prompt: translate( 'Show me some alternatives' ),
+					label: translate( 'Alternatives' ),
+					prompt: translate( 'Show me some alternatives.' ),
+				},
+				{
+					id: 'best-rated',
+					label: translate( 'Best rated' ),
+					prompt: translate( 'Show me the highest-rated options.' ),
 				},
 			];
 		}
 		return [
 			{
-				id: 'contact-forms',
-				label: translate( 'Contact forms' ),
-				prompt: translate( 'I need a contact form to collect leads from visitors' ),
+				id: 'contact-form',
+				label: translate( 'Collect leads with a form' ),
+				prompt: translate( 'I need a contact form to collect leads from visitors.' ),
+			},
+			{
+				id: 'newsletter',
+				label: translate( 'Send marketing emails' ),
+				prompt: translate( 'I want to send email newsletters to my subscribers.' ),
 			},
 			{
 				id: 'seo',
 				label: translate( 'Rank higher in search results' ),
-				prompt: translate( 'Help me rank higher in Google search results' ),
+				prompt: translate( 'Help me rank higher in Google search results.' ),
 			},
 			{
-				id: 'email-marketing',
-				label: translate( 'Email marketing' ),
-				prompt: translate( 'I want to send email newsletters to my subscribers' ),
+				id: 'analytics',
+				label: translate( 'Track visitor analytics' ),
+				prompt: translate( 'I want to track visitor analytics on my site.' ),
 			},
 			{
-				id: 'sell-online',
+				id: 'commerce',
 				label: translate( 'Sell products online' ),
-				prompt: translate( 'I want to sell physical products through my site' ),
+				prompt: translate( 'I want to sell physical products through my site.' ),
 			},
 		];
 	}, [ translate, mode ] );
@@ -91,7 +101,7 @@ export default function PromptForm( { onSubmit, mode = 'initial' }: PromptFormPr
 					onChange={ setValue }
 					onSubmit={ () => submit( value ) }
 					onKeyDown={ handleKeyDown }
-					textareaRef={ textareaRef }
+					textareaRef={ textareaRef as RefObject< HTMLTextAreaElement > }
 					isProcessing={ false }
 					// Cycle the suggestion prompts through the placeholder so
 					// the input keeps suggesting examples without the user

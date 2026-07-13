@@ -1,6 +1,5 @@
 import { Card } from '@automattic/components';
 import { localize } from 'i18n-calypso';
-import { flatten } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
@@ -231,7 +230,7 @@ class GoogleMyBusinessStatsChart extends Component {
 			return false;
 		}
 
-		return flatten( transformedData ).reduce( ( sum, { value } ) => sum + value, 0 ) === 0;
+		return transformedData.flat().reduce( ( sum, { value } ) => sum + value, 0 ) === 0;
 	}
 
 	renderChartNotice() {
@@ -244,7 +243,7 @@ class GoogleMyBusinessStatsChart extends Component {
 		}
 
 		let text = translate( 'Error loading data', {
-			context: 'Message on a chart in Stats where an error was occured while loading data',
+			context: 'Message on a chart in Stats where an error occurred while loading data',
 			comment: 'Should be limited to 32 characters to prevent wrapping',
 		} );
 

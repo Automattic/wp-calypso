@@ -17,6 +17,7 @@ class SharingButtonsPreviewButton extends Component {
 		onMouseOver: PropTypes.func,
 		onClick: PropTypes.func,
 		path: PropTypes.string,
+		elementRef: PropTypes.oneOfType( [ PropTypes.func, PropTypes.object ] ),
 	};
 
 	static defaultProps = {
@@ -78,6 +79,7 @@ class SharingButtonsPreviewButton extends Component {
 
 		return (
 			<div
+				ref={ this.props.elementRef }
 				className={ classes }
 				onClick={ this.onClick }
 				// eslint-disable-next-line jsx-a11y/mouse-events-have-key-events

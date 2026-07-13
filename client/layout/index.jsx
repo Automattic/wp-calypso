@@ -1,7 +1,6 @@
 import config from '@automattic/calypso-config';
 import { isWithinBreakpoint, subscribeIsWithinBreakpoint } from '@automattic/viewport';
 import { useBreakpoint } from '@automattic/viewport-react';
-import { UniversalNavbarHeader } from '@automattic/wpcom-template-parts';
 import clsx from 'clsx';
 import PropTypes from 'prop-types';
 import { Component, useEffect } from 'react';
@@ -22,6 +21,7 @@ import { retrieveMobileRedirect } from 'calypso/jetpack-connect/persistence-util
 import { installKonamiListener } from 'calypso/layout/arcade-mode/detect';
 import EmptyMasterbar from 'calypso/layout/masterbar/empty';
 import MasterbarLoggedIn from 'calypso/layout/masterbar/logged-in';
+import { Nav2026UniversalHeader } from 'calypso/layout/nav-2026-universal-header';
 import { isInStepContainerV2FlowContext } from 'calypso/layout/utils';
 import isA8CForAgencies from 'calypso/lib/a8c-for-agencies/is-a8c-for-agencies';
 import { ClassicColorSchemeProvider, withColorScheme } from 'calypso/lib/color-scheme';
@@ -44,7 +44,6 @@ import { hasDashboardOptIn } from 'calypso/state/dashboard/selectors';
 import { getSidebarType, SidebarType } from 'calypso/state/global-sidebar/selectors';
 import { isUserNewerThan, WEEK_IN_MILLISECONDS } from 'calypso/state/guided-tours/contexts';
 import { getCurrentOAuth2Client } from 'calypso/state/oauth2-clients/ui/selectors';
-import { isReaderMSDEnabled } from 'calypso/state/reader-ui/selectors';
 import getInitialQueryArguments from 'calypso/state/selectors/get-initial-query-arguments';
 import getIsBlazePro from 'calypso/state/selectors/get-is-blaze-pro';
 import getPrimarySiteId from 'calypso/state/selectors/get-primary-site-id';
@@ -86,10 +85,6 @@ const loadWooCoreProfiler = () =>
 const loadBlazePro = () =>
 	import(
 		/* webpackChunkName: "async-load-calypso-layout-masterbar-blaze-pro" */ 'calypso/layout/masterbar/blaze-pro'
-	);
-const loadReaderHeader = () =>
-	import(
-		/* webpackChunkName: "async-load-calypso-reader-components-header" */ 'calypso/reader/components/header'
 	);
 const loadCelebrateSiteLaunchModal = () =>
 	import(
@@ -202,7 +197,6 @@ class Layout extends Component {
 	static propTypes = {
 		primary: PropTypes.element,
 		secondary: PropTypes.element,
-		beforePrimary: PropTypes.element,
 		focus: PropTypes.object,
 		// connected props
 		masterbarIsHidden: PropTypes.bool,
@@ -251,7 +245,7 @@ class Layout extends Component {
 		return null;
 	}
 
-	renderMasterbar( loadHelpCenterIcon ) {
+	renderMasterbar( loadHelpCenterIcon, loadAgentsManager ) {
 		if ( this.props.masterbarIsHidden ) {
 			return <EmptyMasterbar />;
 		}
@@ -266,10 +260,6 @@ class Layout extends Component {
 			return null;
 		}
 
-		if ( this.props.isMSDEnabledForReader ) {
-			return <AsyncLoad require={ loadReaderHeader } placeholder={ null } />;
-		}
-
 		const MasterbarComponent = config.isEnabled( 'jetpack-cloud' )
 			? JetpackCloudMasterbar
 			: MasterbarLoggedIn;
@@ -281,7 +271,7 @@ class Layout extends Component {
 		return (
 			<>
 				{ this.props.hasUniversalHeader && (
-					<UniversalNavbarHeader
+					<Nav2026UniversalHeader
 						isLoggedIn={ this.props.isLoggedIn }
 						sectionName={ this.props.sectionName }
 					/>
@@ -293,6 +283,7 @@ class Layout extends Component {
 					isCheckoutPending={ this.props.sectionName === 'checkout-pending' }
 					isCheckoutFailed={ isCheckoutFailed }
 					loadHelpCenterIcon={ loadHelpCenterIcon }
+					loadAgentsManager={ loadAgentsManager }
 					isGlobalSidebarVisible={ this.props.isGlobalSidebarVisible }
 				/>
 			</>
@@ -338,7 +329,6 @@ class Layout extends Component {
 			'jetpack-cloud': isJetpackCloudOAuth2Client( this.props.oauth2Client ),
 			'feature-flag-woocommerce-core-profiler-passwordless-auth': true,
 			'is-domain-for-gravatar': this.props.isGravatarDomain,
-			'is-reader-msd-enabled': this.props.isMSDEnabledForReader,
 		} );
 
 		const optionalBodyProps = () => {
@@ -407,7 +397,9 @@ class Layout extends Component {
 				{ config.isEnabled( 'layout/guided-tours' ) && (
 					<AsyncLoad require={ loadGuidedTours } placeholder={ null } />
 				) }
-				<div className="layout__header-section">{ this.renderMasterbar( loadHelpCenter ) }</div>
+				<div className="layout__header-section">
+					{ this.renderMasterbar( loadHelpCenter, loadAgentsManager ) }
+				</div>
 				<LayoutLoader />
 				{ isJetpackCloud() && <AsyncLoad require={ loadJetpackCloudStyle } placeholder={ null } /> }
 				{ isA8CForAgencies() && (
@@ -430,7 +422,6 @@ class Layout extends Component {
 							<div id="secondary" className="layout__secondary" role="navigation">
 								{ this.props.secondary }
 							</div>
-							{ this.props.beforePrimary }
 							<div id="primary" className="layout__primary">
 								{ this.props.primary }
 							</div>
@@ -457,9 +448,7 @@ class Layout extends Component {
 					<AsyncLoad require={ loadLegalUpdatesBanner } placeholder={ null } />
 				) }
 
-				{ ! this.props.isMSDEnabledForReader && (
-					<AsyncLoad require={ loadGlobalNotifications } placeholder={ null } />
-				) }
+				<AsyncLoad require={ loadGlobalNotifications } placeholder={ null } />
 				{ this.renderCelebrateSiteLaunchModal() }
 			</div>
 		);
@@ -488,7 +477,6 @@ export default withCurrentRoute(
 		const isWooJPC =
 			[ 'jetpack-connect', 'login' ].includes( sectionName ) && isWooJPCFlow( state );
 		const isBlazePro = getIsBlazePro( state );
-		const isMSDEnabledForReader = currentSection?.name === 'reader' && isReaderMSDEnabled( state );
 
 		const sidebarType = getSidebarType( {
 			state,
@@ -585,7 +573,6 @@ export default withCurrentRoute(
 			isFromAutomatticForAgenciesPlugin,
 			isEligibleForJITM,
 			isBlazePro,
-			isMSDEnabledForReader,
 			oauth2Client,
 			wccomFrom,
 			isLoggedIn,

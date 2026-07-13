@@ -2,6 +2,7 @@ import { __experimentalHStack as HStack } from '@wordpress/components';
 import { __, sprintf } from '@wordpress/i18n';
 import { brush, envelope, globe, layout, plugins } from '@wordpress/icons';
 import { useRef } from 'react';
+import AgencySiteSidebar from '../../agency/sites/site-sidebar';
 import RouterLinkButton from '../../components/router-link-button';
 import { SidebarExpandableMenuItem, SidebarMenu, SidebarMenuItem } from '../../components/sidebar';
 import SidebarNavigator from '../../components/sidebar-navigator';
@@ -11,6 +12,8 @@ import SiteSidebar from '../../sites/site-sidebar';
 import { wpcomLink } from '../../utils/link';
 import { useAnalytics } from '../analytics';
 import { useAppContext } from '../context';
+import AgencySidebar from './agency';
+import AgencyClientSidebar from './agency-client';
 import { useSidebarScrollSync } from './use-sidebar-scroll-sync';
 
 import './sidebar.scss';
@@ -45,6 +48,9 @@ export default function Sidebar( { scrollSyncEnabled = false }: { scrollSyncEnab
 				<SidebarNavigator.Screen path="/sites/$siteSlug">
 					<SiteSidebar />
 				</SidebarNavigator.Screen>
+				<SidebarNavigator.Screen path="/agency/sites/$siteSlug">
+					<AgencySiteSidebar />
+				</SidebarNavigator.Screen>
 				<SidebarNavigator.Screen path="/domains/$domainName">
 					<DomainSidebar />
 				</SidebarNavigator.Screen>
@@ -61,6 +67,8 @@ function PrimaryMenuSidebar() {
 
 	return (
 		<SidebarMenu>
+			{ supports.agency && <AgencySidebar /> }
+			{ supports.agencyClient && <AgencyClientSidebar /> }
 			{ supports.sites && (
 				<SidebarMenuItem icon={ layout } to="/sites">
 					{ __( 'Sites' ) }

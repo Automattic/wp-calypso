@@ -24,6 +24,7 @@ export type PurchaseForCopy = {
 	expiry_status: string;
 	meta?: string;
 	domain: string;
+	advertised_total_upload_space_in_gb?: number | null;
 };
 
 /**
@@ -41,10 +42,7 @@ export type ProductCategory =
 	| 'other';
 
 function isTitanMailSlug( productSlug: string ): boolean {
-	return (
-		productSlug === TitanMailSlugs.TITAN_MAIL_MONTHLY_SLUG ||
-		productSlug === TitanMailSlugs.TITAN_MAIL_YEARLY_SLUG
-	);
+	return ( Object.values( TitanMailSlugs ) as readonly string[] ).includes( productSlug );
 }
 
 function isAkismetProductSlug( productSlug: string ): boolean {
@@ -140,14 +138,14 @@ export function formatTimeRemaining( expiryDate: string | Date, from: Date = new
 	}
 	if ( parts.length === 2 ) {
 		return sprintf(
-			/* translators: joins two duration parts, e.g. "1 month and 11 days" */
+			/* translators: %1$s and %2$s are duration parts, e.g. "1 month and 11 days" */
 			__( '%1$s and %2$s' ),
 			parts[ 0 ],
 			parts[ 1 ]
 		);
 	}
 	return sprintf(
-		/* translators: joins three duration parts, e.g. "2 years, 3 months, and 14 days" */
+		/* translators: %1$s, %2$s and %3$s are duration parts, e.g. "2 years, 3 months, and 14 days" */
 		__( '%1$s, %2$s, and %3$s' ),
 		parts[ 0 ],
 		parts[ 1 ],

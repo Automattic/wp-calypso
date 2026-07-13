@@ -5,7 +5,6 @@ import {
 	domainQuery,
 	userMailboxesQuery,
 } from '@automattic/api-queries';
-import { CALYPSO_CONTACT } from '@automattic/urls';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { useNavigate } from '@tanstack/react-router';
 import {
@@ -32,6 +31,7 @@ import Notice from '../../components/notice';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import { Text } from '../../components/text';
+import { wpcomLink } from '../../utils/link';
 import AddNewDomain from '../components/add-new-domain';
 import { DnsRequirementsNotice } from './dns-requirements-notice';
 import { DEFAULT_MAX_DOMAIN_FORWARDS, useDomainMaxForwards } from './hooks/use-domain-max-forwards';
@@ -39,6 +39,8 @@ import { useForwardingAddresses } from './hooks/use-forwarding-addresses';
 import type { Field } from '@wordpress/dataviews';
 
 import '../style.scss';
+
+const SUPPORT_CONTACT_URL = wpcomLink( '/support/contact' );
 
 export interface FormData {
 	localPart: string;
@@ -120,6 +122,7 @@ function AddEmailForwarder() {
 				id: 'localPart',
 				label: __( 'Email address' ),
 				type: 'text',
+				isValid: { required: true },
 			},
 			{
 				elements: [
@@ -132,6 +135,7 @@ function AddEmailForwarder() {
 				id: 'domain',
 				label: __( 'Domain' ),
 				type: 'text',
+				isValid: { required: true },
 			},
 		],
 		[ eligibleDomains ]
@@ -217,7 +221,7 @@ function AddEmailForwarder() {
 
 						createErrorNotice(
 							sprintf(
-								/* Translators: %s: emailAddress is the email address the user was attempting to add a forwarder for, %s: message is the error message returned by the API */
+								/* Translators: %(emailAddress)s is the email address the user was attempting to add a forwarder for, %(message)s is the error message returned by the API. */
 								__(
 									'Failed to add email forwarder for %(emailAddress)s with message "%(message)s". Please try again or contact support.'
 								),
@@ -226,12 +230,15 @@ function AddEmailForwarder() {
 									message,
 								}
 							),
-							{ actions: [ { label: __( 'Support' ), url: CALYPSO_CONTACT } ], type: 'snackbar' }
+							{
+								actions: [ { label: __( 'Support' ), url: SUPPORT_CONTACT_URL } ],
+								type: 'snackbar',
+							}
 						);
 					} else {
 						createErrorNotice(
 							sprintf(
-								/* Translators: %s: emailAddress is the email address the user was attempting to add a forwarder for */
+								/* Translators: %(emailAddress)s is the email address the user was attempting to add a forwarder for. */
 								__(
 									'Failed to add email forwarder for %(emailAddress)s. Please try again or contact support.'
 								),
@@ -239,7 +246,10 @@ function AddEmailForwarder() {
 									emailAddress: variables.mailbox,
 								}
 							),
-							{ actions: [ { label: __( 'Support' ), url: CALYPSO_CONTACT } ], type: 'snackbar' }
+							{
+								actions: [ { label: __( 'Support' ), url: SUPPORT_CONTACT_URL } ],
+								type: 'snackbar',
+							}
 						);
 					}
 				},
@@ -301,6 +311,9 @@ function AddEmailForwarder() {
 									__next40pxDefaultSize
 									__nextHasNoMarginBottom
 									label={ __( 'Forward to' ) }
+									__experimentalValidateInput={ ( token ) =>
+										emailValidator.validate( token.trim() )
+									}
 									onInputChange={ ( val ) => {
 										setUntokenizedInput( val );
 									} }
@@ -322,10 +335,14 @@ function AddEmailForwarder() {
 									} }
 								/>
 
+								{ untokenizedInput.trim() !== '' && ! isUntokenizedInputValidEmail && (
+									<Text intent="error">{ __( 'Please enter a valid email address.' ) }</Text>
+								) }
+
 								{ newForwardingAddresses.length > 0 && (
 									<Notice>
 										{ sprintf(
-											/* Translators: %s: emailAddress is the email address the user was attempting to add a forwarder for */
+											/* Translators: %(emailAddresses)s is the comma-separated list of email addresses the user is attempting to add forwarders for. */
 											_n(
 												"This is the first time you've set up an email forwarder to %(emailAddresses)s. Look out for a verification email to confirm you have access to that email after saving.",
 												"This is the first time you've set up an email forwarder to %(emailAddresses)s. Look out for a verification email to confirm you have access to those emails after saving.",
@@ -341,12 +358,12 @@ function AddEmailForwarder() {
 								{ isDomainMaxForwardsReached && (
 									<Notice variant="warning">
 										{ sprintf(
-											// translators: %(maxForwards) is the maximum number of email forwards allowed for a domain.
+											// translators: %(maxForwards)d is the maximum number of email forwards allowed for a domain.
 											__(
 												"You can't add another email forwarder for this domain because you've reached the maximum number %(maxForwards)d of Email Forwards allowed on it. Please delete an existing forwarder in order to add a new one."
 											),
 											{
-												maxForwards,
+												maxForwards: maxForwards ?? DEFAULT_MAX_DOMAIN_FORWARDS,
 											}
 										) }
 									</Notice>
@@ -361,7 +378,7 @@ function AddEmailForwarder() {
 											),
 											{
 												forwardingAddressesCount: forwardingAddresses.length,
-												maxForwards,
+												maxForwards: maxForwards ?? DEFAULT_MAX_DOMAIN_FORWARDS,
 												existingForwardersCount: forwards?.length ?? 0,
 											}
 										) }
@@ -406,6 +423,14 @@ function AddEmailForwarder() {
 											/>
 										</VStack>
 									</Notice>
+								) }
+
+								{ ! allFieldsSet && (
+									<Text variant="muted">
+										{ __(
+											'Enter an email address, select a domain, and add at least one forwarding address to continue.'
+										) }
+									</Text>
 								) }
 
 								<ButtonStack justify="flex-start">

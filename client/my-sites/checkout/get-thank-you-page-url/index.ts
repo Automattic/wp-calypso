@@ -76,6 +76,7 @@ const allowedExternalSites = [
 	'my.localhost',
 	'my.woo.ai',
 	'my.woo.localhost',
+	'my.a4a.localhost',
 	'cloud.jetpack.com',
 	'jetpack.cloud.localhost',
 	'jetpack.com',

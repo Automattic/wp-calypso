@@ -24,7 +24,7 @@ export function setPicks( next: Pick[] ): void {
 export function deliverPicks( picks: Pick[], siteSlug: string | null | undefined ): void {
 	setPicks( picks );
 
-	if ( picks.length === 0 || ! siteSlug ) {
+	if ( picks.length === 0 ) {
 		return;
 	}
 
@@ -32,8 +32,7 @@ export function deliverPicks( picks: Pick[], siteSlug: string | null | undefined
 		return;
 	}
 
-	// Navigate the user to the route showing the picks.
-	page( `${ DESCRIBE_ROUTE_PREFIX }/${ siteSlug }` );
+	page( siteSlug ? `${ DESCRIBE_ROUTE_PREFIX }/${ siteSlug }` : DESCRIBE_ROUTE_PREFIX );
 }
 
 export function setLooking( looking: boolean ): void {

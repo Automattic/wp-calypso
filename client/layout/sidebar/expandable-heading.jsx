@@ -1,6 +1,6 @@
 import { Count, Gridicon, MaterialIcon } from '@automattic/components';
 import { Button } from '@wordpress/components';
-import { Icon, chevronDownSmall } from '@wordpress/icons';
+import { Icon, chevronDown } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import TranslatableString from 'calypso/components/translatable/proptype';
@@ -19,6 +19,9 @@ const ExpandableSidebarHeading = ( {
 	hideExpandableIcon,
 	inlineText,
 	expandableIconClick,
+	prependContent,
+	appendContent,
+	moreMenuActions,
 	...props
 } ) => {
 	const translate = useTranslate();
@@ -28,6 +31,7 @@ const ExpandableSidebarHeading = ( {
 			aria-expanded={ expanded ? 'true' : 'false' }
 			{ ...props }
 		>
+			{ prependContent }
 			{ icon && <Gridicon className="sidebar__menu-icon" icon={ icon } /> }
 			{ materialIcon && (
 				<MaterialIcon
@@ -39,9 +43,13 @@ const ExpandableSidebarHeading = ( {
 			{ undefined !== customIcon && customIcon }
 			<span className="sidebar__expandable-title">
 				{ decodeEntities( title ) }
-				{ undefined !== count && <Count count={ count } /> }
+				<span className="sidebar__actions-and-count">
+					{ moreMenuActions }
+					{ count > 0 && <Count count={ count } /> }
+				</span>
 				{ inlineText && <span className="sidebar__inline-text">{ inlineText }</span> }
 			</span>
+			{ appendContent }
 			{ ! hideExpandableIcon &&
 				( expandableIconClick ? (
 					<Button
@@ -58,12 +66,10 @@ const ExpandableSidebarHeading = ( {
 							}
 						} }
 						aria-label={ expanded ? translate( 'Collapse menu' ) : translate( 'Expand menu' ) }
-						icon={
-							<Icon icon={ chevronDownSmall } className="sidebar__expandable-arrow" size={ 24 } />
-						}
+						icon={ <Icon icon={ chevronDown } className="sidebar__expandable-arrow" size={ 24 } /> }
 					/>
 				) : (
-					<Icon icon={ chevronDownSmall } className="sidebar__expandable-arrow" size={ 24 } />
+					<Icon icon={ chevronDown } className="sidebar__expandable-arrow" size={ 24 } />
 				) ) }
 		</SidebarHeading>
 	);
@@ -79,6 +85,9 @@ ExpandableSidebarHeading.propTypes = {
 	materialIconStyle: PropTypes.string,
 	hideExpandableIcon: PropTypes.bool,
 	expandableIconClick: PropTypes.func,
+	prependContent: PropTypes.node,
+	appendContent: PropTypes.node,
+	moreMenuActions: PropTypes.node,
 };
 
 export default ExpandableSidebarHeading;

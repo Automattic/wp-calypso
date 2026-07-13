@@ -24,25 +24,6 @@
 	}
 }
 
-.mastodon-tag-feed .mastodon-tag-feed__header {
-	display: flex;
-	flex-direction: column;
-	gap: 4px;
-}
-
-.mastodon-tag-feed .mastodon-tag-feed__heading {
-	margin: 0;
-	font-size: 24px;
-	font-weight: 600;
-	line-height: 1.2;
-}
-
-.mastodon-tag-feed .mastodon-tag-feed__count {
-	margin: 0;
-	color: var(--color-text-subtle);
-	font-size: 14px;
-}
-
 .mastodon-tag-feed .mastodon-tag-feed__external-link {
 	font-size: 13px;
 }
@@ -85,3 +66,11 @@
 	font-size: 13px;
 	text-align: center;
 }
+
+.mastodon-composer-controls__heading {
+	font-size: inherit;
+	font-weight: 600;
+	margin: 0;
+	color: var( --color-text );
+}
+

@@ -1,6 +1,6 @@
 import { BrowserManager, RestAPIClient } from '@automattic/calypso-e2e';
 import { expect, tags, test } from '../../lib/pw-base';
-import { apiDeleteSite } from '../shared';
+import { apiCancelAtomicPlan, apiDeleteSite } from '../shared';
 import type { NewSiteResponse, TestAccount } from '@automattic/calypso-e2e';
 
 test.describe(
@@ -22,6 +22,7 @@ test.describe(
 			helperData,
 			page,
 			pageCartCheckout,
+			pagePostCheckoutSetupSite,
 			pageSignupPickPlan,
 		} ) => {
 			await test.step( `Given I am authenticated as '${ accountPreRelease.accountName }'`, async function () {
@@ -59,11 +60,16 @@ test.describe(
 				await pageCartCheckout.purchase( { timeout: 75 * 1000 } );
 			} );
 
-			await test.step( 'Then I land on Home', async function () {
-				await page.waitForURL( /home/ );
+			await test.step( 'Then I land on the post-checkout "Set up your site" screen', async function () {
+				// Eligible paid plans now land on the post-checkout choice screen
+				// after checkout, instead of going straight to Home.
+				await pagePostCheckoutSetupSite.waitUntilLoaded();
 			} );
 
 			await test.step( `And the sidebar shows I am on the ${ planName } plan`, async function () {
+				await page.goto(
+					helperData.getCalypsoURL( `home/${ newSiteDetails?.blog_details.site_slug as string }` )
+				);
 				const currentPlan = await componentSidebar.getCurrentPlanName();
 				expect( currentPlan ).toBe( planName );
 			} );
@@ -78,6 +84,13 @@ test.describe(
 				username: accountUsed.credentials.username,
 				password: accountUsed.credentials.password,
 			} );
+
+			// Business is an Atomic plan: the site can't be deleted via API while the
+			// subscription is active, and this shared pre-release account must not be
+			// closed. Cancel this site's plan first (scoped by blog ID so a concurrent
+			// test's plan is untouched) to stop billing and trigger deprovision. The
+			// delete below is best-effort until that async deprovision completes.
+			await apiCancelAtomicPlan( restAPIClient, newSiteDetails.blog_details.blogid );
 
 			await apiDeleteSite( restAPIClient, {
 				url: newSiteDetails.blog_details.url,
