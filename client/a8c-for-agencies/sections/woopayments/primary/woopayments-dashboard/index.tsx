@@ -1,11 +1,10 @@
 import {
 	agencySitesWithPluginsQuery,
 	agencyWooPaymentsDataQuery,
-	jetpackLicensesQuery,
-	jetpackTestConnectionQuery,
+	jetpackAgencyLicensesQuery,
 } from '@automattic/api-queries';
 import { useDesktopBreakpoint } from '@automattic/viewport-react';
-import { useQueries, useQuery } from '@tanstack/react-query';
+import { useQuery } from '@tanstack/react-query';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { useMemo } from 'react';
@@ -30,6 +29,7 @@ import AddWooPaymentsToSite from '../../add-woopayments-to-site';
 import { WooPaymentsProvider } from '../../context';
 import WooPaymentsDashboardContent from '../../dashboard-content';
 import WooPaymentsDashboardEmptyState from './empty-state';
+import { useTestConnections } from './use-test-connections';
 import type { SitesWithWooPaymentsState } from '../../types';
 
 import './style.scss';
@@ -65,7 +65,7 @@ const WooPaymentsDashboard = () => {
 	const agencyId = useSelector( getActiveAgencyId );
 
 	const { data: licenseSites, isLoading: isLoadingLicensesWithWooPayments } = useQuery( {
-		...jetpackLicensesQuery( agencyId ?? 0, {
+		...jetpackAgencyLicensesQuery( agencyId ?? 0, {
 			filter: LicenseFilter.Attached,
 			search: 'woopayments',
 			sortField: LicenseSortField.IssuedAt,
@@ -106,19 +106,7 @@ const WooPaymentsDashboard = () => {
 		return [ ...( licenseSites || [] ), ...sitesWithWooPaymentsPlugins ];
 	}, [ licenseSites, sitesWithWooPaymentsPlugins ] );
 
-	const testConnectionResults = useQueries( {
-		queries: allSitesWithWooPayments.map( ( site ) => ( {
-			...jetpackTestConnectionQuery( site.blogId ?? 0, true ),
-			staleTime: 1000 * 60,
-			enabled: allSitesWithWooPayments.length > 0,
-		} ) ),
-		combine: ( results ) => results.map( ( result ) => result.data?.connected ?? true ),
-	} );
-
-	const testConnections = allSitesWithWooPayments.map( ( site, index ) => ( {
-		ID: site.blogId,
-		connected: testConnectionResults[ index ] ?? true,
-	} ) );
+	const testConnections = useTestConnections( allSitesWithWooPayments );
 
 	const isLoading = isLoadingLicensesWithWooPayments || isLoadingSitesWithPlugins;
 	const showEmptyState = ! isLoading && ! allSitesWithWooPayments.length;
