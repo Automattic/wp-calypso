@@ -71,6 +71,21 @@ $summary-nav-swap-width: 661px;
 		padding: $summary-small-padding;
 	}
 
+	// When the date picker is stacked above the heading, the picker's
+	// bottom padding provides the gap; drop the heading's own top margins
+	// so the spacing stays even. The h3 margin only exists in Odyssey,
+	// where wp-admin core styles aren't reset.
+	@media (max-width: 1160px) {
+		.stats-summary-nav__date-control + & {
+			margin-top: 0;
+
+			.stats-section-title,
+			h3 {
+				margin-top: 0;
+			}
+		}
+	}
+
 	h3 {
 		@include stats-section-header;
 	}
@@ -84,12 +99,17 @@ $summary-nav-swap-width: 661px;
 	display: flex;
 	align-items: center;
 
+	// No top padding: .stats-summary__positioned already separates the
+	// content from the page header with a 32px margin from $break-small up.
 	@media (max-width: 1160px) {
-		padding: 16px 0;
+		padding: 0 0 16px;
 	}
 
+	// Below $break-small that page-level margin is gone, so the picker
+	// carries its own spacing. $summary-small-padding is horizontal-only
+	// and would zero the vertical padding here.
 	@media (max-width: $break-small) {
-		padding: $summary-small-padding;
+		padding: 16px;
 	}
 }
 

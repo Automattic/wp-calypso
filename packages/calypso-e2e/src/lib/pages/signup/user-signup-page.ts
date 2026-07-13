@@ -460,17 +460,22 @@ export class UserSignupPage {
 			this.page.on( 'framenavigated', handler );
 		} );
 
-		// Ensure response is captured correctly
-		const responsePromise = this.page.waitForResponse( /\/users\/new\?[^?]*$/ );
-		await this.submitButton.click();
+		// Read the response body as soon as it arrives; waiting for the redirect
+		// first lets the navigation evict the body from the browser cache.
+		const responseBodyPromise = this.page
+			.waitForResponse( /\/users\/new\?[^?]*$/ )
+			.then( ( response ): Promise< NewUserResponse > => response.json() );
 
-		const [ response ] = await Promise.all( [ responsePromise, redirectDetected ] );
+		const [ responseBody ] = await Promise.all( [
+			responseBodyPromise,
+			redirectDetected,
+			this.submitButton.click(),
+		] );
 
-		if ( ! response ) {
+		if ( ! responseBody ) {
 			throw new Error( 'Failed to create new user at WooCommerce using WPCC.' );
 		}
 
-		const responseBody: NewUserResponse = await response.json();
 		return responseBody;
 	}
 

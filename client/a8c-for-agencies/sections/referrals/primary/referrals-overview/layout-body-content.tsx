@@ -21,12 +21,12 @@ import {
 import WooLogoColor from 'calypso/assets/images/icons/Woo_logo_color.svg';
 import pressableIcon from 'calypso/assets/images/pressable/pressable-icon.svg';
 import JetpackLogo from 'calypso/components/jetpack-logo';
+import { getAccountStatus } from 'calypso/dashboard/agency/earn/payout-settings/get-account-status';
 import { useDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { savePreference } from 'calypso/state/preferences/actions';
 import { getPreference } from 'calypso/state/preferences/selectors';
 import ConsolidatedViews from '../../consolidated-view';
-import { getAccountStatus } from '../../lib/get-account-status';
 import tipaltiLogo from '../../lib/tipalti-logo';
 import ReferralList from '../../referrals-list';
 import type { Referral, ReferralCommissionPayoutResponse } from '../../types';
@@ -60,7 +60,7 @@ export default function LayoutBodyContent( {
 		dispatch( recordTracksEvent( 'calypso_a4a_referrals_get_started_button_click' ) );
 	}, [ dispatch ] );
 
-	const accountStatus = getAccountStatus( tipaltiData, translate );
+	const accountStatus = getAccountStatus( tipaltiData );
 
 	const hasPayeeAccount = !! accountStatus?.status;
 	const bankAccountCTAText = hasPayeeAccount

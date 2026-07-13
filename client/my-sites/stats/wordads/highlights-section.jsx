@@ -103,7 +103,7 @@ function HighlightsSectionHeader( props ) {
 					label={ translate( 'Learn more about payout timing' ) }
 					popupClassName="tooltip-wordads highlight-card-tooltip"
 					side="bottom"
-					align="end"
+					align="start"
 				>
 					<div className="highlight-card-tooltip-content">
 						{ notices?.map( ( notice ) => (

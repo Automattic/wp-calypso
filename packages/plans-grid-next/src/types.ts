@@ -66,6 +66,8 @@ export type PlansIntent =
 	| 'plans-affiliate'
 	| 'plans-ai-assembler-free-trial'
 	| 'plans-ai-assembler-paid-only'
+	// Deprecated: no longer produced by any flow (the start-writing flow was removed); kept only for external
+	// consumers. TypeScript cannot attach an @deprecated tag to a union member, so this is a plain note.
 	| 'plans-blog-onboarding'
 	| 'plans-newsletter'
 	| 'plans-new-hosted-site'

@@ -13,7 +13,6 @@ import {
 	isNewHostedSiteCreationFlow,
 	isNewsletterFlow,
 	isReadymadeFlow,
-	isStartWritingFlow,
 	isWriteOnFlow,
 	isOnboardingFlow,
 	Step,
@@ -49,8 +48,6 @@ import './styles.scss';
 const DEFAULT_SITE_MIGRATION_THEME = 'pub/zoologist';
 const DEFAULT_ENTREPRENEUR_FLOW = 'pub/twentytwentytwo';
 const DEFAULT_NEWSLETTER_THEME = 'pub/lettre';
-// Changing this? Consider also updating WRITE_INTENT_DEFAULT_DESIGN so the write *intent* matches the write flow
-const DEFAULT_START_WRITING_THEME = 'pub/poema';
 
 function hasSourceSlug( data: unknown ): data is { sourceSlug: string } {
 	if ( data && ( data as { sourceSlug: string } ).sourceSlug ) {
@@ -153,8 +150,6 @@ const CreateSite: StepType = function CreateSite( { navigation, flow, data } ) {
 		theme = DEFAULT_SITE_MIGRATION_THEME;
 	} else if ( isEntrepreneurFlow( flow ) ) {
 		theme = DEFAULT_ENTREPRENEUR_FLOW;
-	} else if ( isStartWritingFlow( flow ) ) {
-		theme = DEFAULT_START_WRITING_THEME;
 	} else if ( isNewsletterFlow( flow ) ) {
 		theme = DEFAULT_NEWSLETTER_THEME;
 	}
@@ -167,7 +162,6 @@ const CreateSite: StepType = function CreateSite( { navigation, flow, data } ) {
 	if (
 		isOnboardingFlow( flow ) ||
 		isCopySiteFlow( flow ) ||
-		isStartWritingFlow( flow ) ||
 		isWriteOnFlow( flow ) ||
 		isNewHostedSiteCreationFlow( flow ) ||
 		isReadymadeFlow( flow ) ||
@@ -189,9 +183,7 @@ const CreateSite: StepType = function CreateSite( { navigation, flow, data } ) {
 	const urlQueryParams = useQuery();
 	const platform = urlQueryParams.get( 'platform' ) || '';
 	const useThemeHeadstart =
-		! isStartWritingFlow( flow ) &&
-		! isNewHostedSiteCreationFlow( flow ) &&
-		! isNewSiteMigrationFlow( flow );
+		! isNewHostedSiteCreationFlow( flow ) && ! isNewSiteMigrationFlow( flow );
 	const shouldGoToCheckout = Boolean( planCartItem );
 	const [ , isSimplifiedOnboarding ] = useSimplifiedOnboarding();
 

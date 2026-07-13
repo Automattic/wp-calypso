@@ -1,5 +1,5 @@
 import { HelpCenter } from '@automattic/data-stores';
-import { StepContainer, isStartWritingFlow, Step } from '@automattic/onboarding';
+import { StepContainer, Step } from '@automattic/onboarding';
 import { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 import { useViewportMatch } from '@wordpress/compose';
 import { useDispatch, useSelect } from '@wordpress/data';
@@ -198,8 +198,6 @@ const UseMyDomain: StepType< {
 		);
 	};
 
-	const shouldHideButtons = isStartWritingFlow( flow );
-
 	if ( shouldUseStepContainerV2( flow ) ) {
 		let columnWidth;
 		let headingText;
@@ -216,10 +214,6 @@ const UseMyDomain: StepType< {
 		}
 
 		const getTopBarLeftElement = () => {
-			if ( shouldHideButtons ) {
-				return undefined;
-			}
-
 			if ( goBack ) {
 				return <Step.BackButton onClick={ handleGoBack } />;
 			}
@@ -285,7 +279,7 @@ const UseMyDomain: StepType< {
 			<QueryProductsList />
 			<StepContainer
 				stepName="useMyDomain"
-				shouldHideNavButtons={ shouldHideButtons }
+				shouldHideNavButtons={ false }
 				goBack={ handleGoBack }
 				goNext={ goNext }
 				isHorizontalLayout={ false }
