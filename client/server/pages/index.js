@@ -73,6 +73,7 @@ import middlewareAssets from '../middleware/assets.js';
 import middlewareCache from '../middleware/cache.js';
 import middlewareUnsupportedBrowser from '../middleware/unsupported-browser.js';
 import { logSectionResponse } from './analytics';
+import { registerClearStorageRoute } from './clear-storage';
 import { registerCspReportRoute } from './csp-report';
 const debug = debugFactory( 'calypso:pages' );
 
@@ -1234,6 +1235,8 @@ export default function pages() {
 
 	// Multi-site Dashboard routing.
 	if ( isDashboardEnv() || calypsoEnv === 'development' ) {
+		registerClearStorageRoute( app );
+
 		const signupSectionDefinition = sections.find( ( s ) => s.name === 'signup' );
 		handleSectionPath( signupSectionDefinition, '/start', undefined, ( req ) =>
 			isAllowedDashboardRoute( { hostname: req.hostname, path: req.path } )

@@ -1,5 +1,9 @@
 import { fetchUser, isWpError, User } from '@automattic/api-core';
-import { clearQueryClient, disablePersistQueryClient } from '@automattic/api-queries';
+import {
+	clearQueryClient,
+	disablePersistQueryClient,
+	validateQueryCacheOwner,
+} from '@automattic/api-queries';
 import config from '@automattic/calypso-config';
 import { setUser } from '@automattic/calypso-sentry';
 import { isSupportUserSession } from '@automattic/calypso-support-session';
@@ -62,14 +66,18 @@ export async function initializeCurrentUser(): Promise< User > {
 	// sessions the server does bootstrap the correct `currentUser`.
 	const useBootstrap = ! isSupportUserSession() && config.isEnabled( 'wpcom-user-bootstrap' );
 
+	let user: User;
 	if ( useBootstrap ) {
-		if ( window.currentUser ) {
-			return window.currentUser;
+		if ( ! window.currentUser ) {
+			throw new Error( 'Failed to bootstrap user object' );
 		}
-		throw new Error( 'Failed to bootstrap user object' );
+		user = window.currentUser;
+	} else {
+		user = await fetchUser();
 	}
 
-	return fetchUser();
+	validateQueryCacheOwner( user.ID );
+	return user;
 }
 
 /**
@@ -115,6 +123,11 @@ export function AuthProvider( { children }: { children: React.ReactNode } ) {
 		}
 
 		authErrorHandled.current = true;
+
+		// The session is gone, so treat this like a logout and leave no
+		// previous-user data behind before redirecting to login.
+		disablePersistQueryClient();
+		clearQueryClient();
 
 		if ( config.isEnabled( 'oauth' ) ) {
 			const state = crypto.randomUUID();
