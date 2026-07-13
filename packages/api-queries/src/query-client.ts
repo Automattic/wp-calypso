@@ -63,32 +63,53 @@ const persister = createSyncStoragePersister( {
 } );
 
 const maxAge = 1000 * 60 * 60 * 24; // 24 hours
+const cacheDataShapeVersion = 3; // Bump the numeric prefix when query data shape changes.
 
-const [ disablePersistQueryClient, persistQueryClientPromise ] = persistQueryClient( {
-	queryClient,
-	persister,
-	buster: '3', // Bump when query data shape changes.
-	maxAge,
-	dehydrateOptions: {
-		shouldRedactErrors: () => false,
-		shouldDehydrateQuery: ( query ) => {
-			const persist = query.meta?.persist;
-			if ( persist === false ) {
-				return false;
-			}
-			// Gate the predicate behind the default check so it is never handed the
-			// data of a query that hasn't succeeded.
-			if ( ! defaultShouldDehydrateQuery( query ) ) {
-				return false;
-			}
-			return typeof persist === 'function' ? persist( query.state.data ) : true;
-		},
-	},
-} );
+let disablePersist: ( () => void ) | undefined;
+let persistPromise: Promise< void > | undefined;
+
+/**
+ * Start restoring/persisting the query cache.
+ *
+ * Memoized: the first call starts persistence and every call returns the same
+ * promise, so callers can invoke it freely (e.g. from an effect).
+ */
+export function getPersistQueryClientPromise( userId?: number ): Promise< void > {
+	if ( ! persistPromise ) {
+		const [ disable, promise ] = persistQueryClient( {
+			queryClient,
+			persister,
+			buster: `${ cacheDataShapeVersion }-${ userId ?? 'anon' }`,
+			maxAge,
+			dehydrateOptions: {
+				shouldRedactErrors: () => false,
+				shouldDehydrateQuery: ( query ) => {
+					const persist = query.meta?.persist;
+					if ( persist === false ) {
+						return false;
+					}
+					// Gate the predicate behind the default check so it is never handed the
+					// data of a query that hasn't succeeded.
+					if ( ! defaultShouldDehydrateQuery( query ) ) {
+						return false;
+					}
+					return typeof persist === 'function' ? persist( query.state.data ) : true;
+				},
+			},
+		} );
+		disablePersist = disable;
+		persistPromise = promise;
+	}
+	return persistPromise;
+}
+
+export function disablePersistQueryClient() {
+	disablePersist?.();
+}
 
 startSiteCollisionListener( queryClient );
 
-export { queryClient, disablePersistQueryClient, persistQueryClientPromise };
+export { queryClient };
 
 export function clearQueryClient() {
 	if ( typeof window !== 'undefined' && ! isSupportSession() ) {
