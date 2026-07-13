@@ -94,7 +94,7 @@ export default function MigrationsAddSitesTable( {
 			label: (
 				<div>
 					<CheckboxControl
-						label={ __( 'Site' ).toUpperCase() }
+						label={ __( 'Site' ) }
 						checked={ selectedSites.length === availableSites.length }
 						onChange={ onSelectAllSites }
 						disabled={ false }
@@ -118,7 +118,7 @@ export default function MigrationsAddSitesTable( {
 
 		const dateColumn = {
 			id: 'date',
-			label: __( 'Date added' ).toUpperCase(),
+			label: __( 'Date added' ),
 			getValue: () => '-',
 			render: ( { item }: { item: SiteItem } ) =>
 				item.date ? new Date( item.date ).toLocaleDateString() : '-',

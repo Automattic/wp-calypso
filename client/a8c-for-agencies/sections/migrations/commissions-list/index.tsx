@@ -80,7 +80,7 @@ export default function MigrationsCommissionsList( {
 		() => [
 			{
 				id: 'site',
-				label: __( 'Site' ).toUpperCase(),
+				label: __( 'Site' ),
 				getValue: () => '-',
 				render: ( { item }: { item: TaggedSite } ): ReactNode => <SiteColumn site={ item.url } />,
 				enableHiding: false,
@@ -90,7 +90,7 @@ export default function MigrationsCommissionsList( {
 				id: 'migratedOn',
 				// FIXME: This should be "Migrated on" instead of "Date added"
 				// We will change this when the MC tool is implemented and we have the migration date
-				label: __( 'Date added' ).toUpperCase(),
+				label: __( 'Date added' ),
 				getValue: () => '-',
 				render: ( { item } ): ReactNode => <MigratedOnColumn migratedOn={ item.created_at } />,
 				enableHiding: false,
@@ -98,7 +98,7 @@ export default function MigrationsCommissionsList( {
 			},
 			{
 				id: 'reviewStatus',
-				label: __( 'Review status' ).toUpperCase(),
+				label: __( 'Review status' ),
 				getValue: () => '-',
 				render: ( { item }: { item: TaggedSite } ): ReactNode => {
 					return (
