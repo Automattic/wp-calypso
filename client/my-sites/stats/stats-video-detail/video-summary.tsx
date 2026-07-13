@@ -242,8 +242,10 @@ export default function VideoSummary( {
 		[ buckets, statType, uiPeriod, moment ]
 	);
 
-	const selected =
-		selectedRecord ?? ( chartData.length ? chartData[ chartData.length - 1 ] : null );
+	// No bar is highlighted by default; the header shows the range instead of
+	// a single bar's date, so defaulting to the most recent bar would highlight
+	// it for no reason until the user actually clicks one.
+	const selected = selectedRecord;
 
 	// The header shows the fixed trailing window the chart actually covers
 	// (like the Traffic page's date-range header), rather than the period of
