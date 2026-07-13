@@ -1,4 +1,10 @@
-import { useUpdateZendeskUserFields, type ZendeskConversation } from '@automattic/zendesk-client';
+import {
+	useUpdateZendeskUserFields,
+	ZENDESK_CUSTOM_FIELD_AI_CHAT_ID,
+	ZENDESK_CUSTOM_FIELD_WEBSITE_URL,
+	ZENDESK_SOURCE_URL_TICKET_FIELD_ID,
+	type ZendeskConversation,
+} from '@automattic/zendesk-client';
 import { useLocation, useNavigate } from 'react-router-dom';
 import Smooch from 'smooch';
 import {
@@ -149,7 +155,7 @@ export const useCreateZendeskConversation = () => {
 				messaging_initial_message: userFieldMessage || undefined,
 				messaging_site_id: selectedSiteId || null,
 				messaging_ai_chat_id: chatId || undefined,
-				messaging_url: selectedSiteURL || window.location.href,
+				// messaging_url: selectedSiteURL || window.location.href,
 				messaging_flow: userFieldFlowName || null,
 				messaging_source: window.location.href,
 			} );
@@ -163,6 +169,20 @@ export const useCreateZendeskConversation = () => {
 		let conversation: ZendeskConversation | null = null;
 		let interaction = null;
 
+		// The messaging user fields submitted above can take up to a minute to become
+		// visible to Zendesk's ticket-creation triggers, so tickets created within
+		// seconds of a user's first contact come out with blank Site URL / Started
+		// from. Ticket-field metadata travels atomically with the conversation, so
+		// duplicate the critical fields here. See DOTSUP-472.
+		const ticketFieldMetadata = {
+			[ `zen:ticket_field:${ ZENDESK_CUSTOM_FIELD_WEBSITE_URL }` ]:
+				selectedSiteURL || window.location.href,
+			[ `zen:ticket_field:${ ZENDESK_SOURCE_URL_TICKET_FIELD_ID }` ]: window.location.href,
+			...( chatId
+				? { [ `zen:ticket_field:${ ZENDESK_CUSTOM_FIELD_AI_CHAT_ID }` ]: String( chatId ) }
+				: {} ),
+		};
+
 		const SMOOCH_READY_TIMEOUT_MS = 10000;
 		const SMOOCH_RETRY_INTERVAL_MS = 250;
 		const smoochReadyDeadline = Date.now() + SMOOCH_READY_TIMEOUT_MS;
@@ -175,6 +195,7 @@ export const useCreateZendeskConversation = () => {
 						createdAt: Date.now(),
 						...( activeInteractionId ? { supportInteractionId: activeInteractionId } : {} ),
 						...( chatId ? { odieChatId: chatId } : {} ),
+						...ticketFieldMetadata,
 					},
 				} );
 				break;
