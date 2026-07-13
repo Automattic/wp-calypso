@@ -1,7 +1,7 @@
 import { SegmentedControl } from '@automattic/components';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
-import { useMemo, useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import QuerySiteStats from 'calypso/components/data/query-site-stats';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import { useSelector } from 'calypso/state';
@@ -85,6 +85,18 @@ export default function VideoSummary( {
 
 	const apiPeriod: ApiPeriod = uiPeriod === 'day' || uiPeriod === 'week' ? 'month' : 'year';
 
+	// The endpoint's `month` window spans 31 days inclusive; trim to the
+	// trailing 30 so totals line up with the 30-day window the Videos module
+	// and the All videos page show by default. Shared by the bucketing below
+	// and by the header's date-range label, so both agree on the window.
+	const trimToTrailingWindow = useCallback(
+		(
+			data?: Array< { period: string; value: number } >
+		): Array< { period: string; value: number } > | undefined =>
+			apiPeriod === 'month' && data && data.length > 30 ? data.slice( -30 ) : data,
+		[ apiPeriod ]
+	);
+
 	const queries = useMemo(
 		() =>
 			Object.fromEntries(
@@ -154,14 +166,9 @@ export default function VideoSummary( {
 	// period wants, summing values. Bucket keys are normalized ISO dates.
 	const buckets: BucketRecord[] = useMemo( () => {
 		const unit = uiPeriod;
-		// The endpoint's `month` window spans 31 days inclusive; trim to the
-		// trailing 30 so totals line up with the 30-day window the Videos
-		// module and the All videos page show by default.
-		const trimToWindow = ( data?: Array< { period: string; value: number } > ) =>
-			apiPeriod === 'month' && data && data.length > 30 ? data.slice( -30 ) : data;
 		const toBucketMap = ( data?: Array< { period: string; value: number } > ) => {
 			const map = new Map< string, number >();
-			for ( const { period: date, value } of trimToWindow( data ) ?? [] ) {
+			for ( const { period: date, value } of trimToTrailingWindow( data ) ?? [] ) {
 				const parsed = moment( date );
 				if ( ! parsed.isValid() ) {
 					continue;
@@ -192,7 +199,7 @@ export default function VideoSummary( {
 			impressions: impressionsByBucket.get( key ) ?? 0,
 			watchTime: watchTimeByBucket.get( key ) ?? 0,
 		} ) );
-	}, [ playsData, impressionsData, watchTimeData, uiPeriod, apiPeriod, moment ] );
+	}, [ playsData, impressionsData, watchTimeData, uiPeriod, trimToTrailingWindow, moment ] );
 
 	const chartData: ChartRecord[] = useMemo(
 		() =>
@@ -237,6 +244,27 @@ export default function VideoSummary( {
 
 	const selected =
 		selectedRecord ?? ( chartData.length ? chartData[ chartData.length - 1 ] : null );
+
+	// The header shows the fixed trailing window the chart actually covers
+	// (like the Traffic page's date-range header), rather than the period of
+	// whichever single bar is selected, so it reads the same across every
+	// Day/Week/Month/Year tab.
+	const chartDateRange = useMemo( () => {
+		const windowDates = [ playsData?.data, impressionsData?.data, watchTimeData?.data ]
+			.flatMap( ( data ) => trimToTrailingWindow( data ) ?? [] )
+			.map( ( { period } ) => period )
+			.filter( ( date ) => moment( date ).isValid() )
+			.sort();
+
+		if ( ! windowDates.length ) {
+			return undefined;
+		}
+
+		return {
+			chartStart: moment( windowDates[ 0 ] ).format( 'YYYY-MM-DD' ),
+			chartEnd: moment().format( 'YYYY-MM-DD' ),
+		};
+	}, [ playsData, impressionsData, watchTimeData, trimToTrailingWindow, moment ] );
 
 	// Card totals cover the whole window shown in the chart.
 	const metricValues: VideoMetricValues = useMemo( () => {
@@ -293,9 +321,15 @@ export default function VideoSummary( {
 			<StatsPeriodHeader>
 				{ /* The video stats endpoint only returns a fixed trailing window
 				ending "now" (no backend support yet for an older window), so
-				there's no previous/next period to navigate to. */ }
-				<StatsPeriodNavigation showArrows disablePreviousArrow disableNextArrow date={ null }>
-					<DatePicker period={ uiPeriod } date={ selected?.startDate } isShort />
+				there's no previous/next period to navigate to; the arrows are
+				hidden rather than shown disabled. */ }
+				<StatsPeriodNavigation showArrows={ false } date={ null }>
+					<DatePicker
+						period={ uiPeriod }
+						date={ selected?.startDate }
+						dateRange={ chartDateRange }
+						isShort
+					/>
 				</StatsPeriodNavigation>
 				<SegmentedControl primary>
 					{ periods.map( ( { id, label } ) => (
