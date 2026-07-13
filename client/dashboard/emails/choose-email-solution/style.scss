@@ -37,6 +37,12 @@
 	font-family: Recoleta, sans-serif;
 }
 
+// The tier plan grid drops Recoleta and uses the default sans-serif to match
+// the updated pricing design.
+.email-titan-plan-name {
+	font-family: inherit;
+}
+
 .email-provider-trial {
 	padding: 0 10px;
 	border-radius: 3px;
@@ -81,7 +87,7 @@
 
 // Match the price to the plan header typeface.
 .email-titan-plan-price {
-	font-family: Recoleta, sans-serif;
+	font-family: inherit;
 }
 
 .email-provider-features {
