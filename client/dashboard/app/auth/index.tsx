@@ -1,5 +1,9 @@
 import { fetchUser, isWpError, User } from '@automattic/api-core';
-import { clearQueryClient, disablePersistQueryClient } from '@automattic/api-queries';
+import {
+	clearQueryClient,
+	disablePersistQueryClient,
+	setAuthenticatedUserId,
+} from '@automattic/api-queries';
 import config from '@automattic/calypso-config';
 import { setUser } from '@automattic/calypso-sentry';
 import { isSupportUserSession } from '@automattic/calypso-support-session';
@@ -178,6 +182,30 @@ export function AuthProvider( { children }: { children: React.ReactNode } ) {
 			setUser( { id: user.ID.toString() } );
 		}
 	}, [ user ] );
+
+	// Persist the authenticated user's ID so the startup check in query-client.ts
+	// can detect account switches made via Calypso v1 (legacy logout/login).
+	useEffect( () => {
+		if ( user?.ID ) {
+			setAuthenticatedUserId( user.ID );
+		}
+	}, [ user?.ID ] );
+
+	// Detect when the user logs out via Calypso v1 in another browser tab.
+	// Calypso's logout clears `wpcom_user_id` from localStorage which triggers a
+	// storage event in other tabs. When detected, clear the MSD cache and
+	// redirect to login so the next user starts from a clean state.
+	useEffect( () => {
+		const handleStorage = ( event: StorageEvent ) => {
+			if ( event.key === 'wpcom_user_id' && event.newValue === null ) {
+				disablePersistQueryClient();
+				clearQueryClient();
+				handleAuthError();
+			}
+		};
+		window.addEventListener( 'storage', handleStorage );
+		return () => window.removeEventListener( 'storage', handleStorage );
+	}, [ handleAuthError ] );
 
 	// Handles _all_ errors fetching the user object, regardless of whether they are
 	// `authorization_required` errors or not.
