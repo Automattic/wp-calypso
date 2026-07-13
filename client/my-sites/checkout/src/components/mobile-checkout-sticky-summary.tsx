@@ -1,13 +1,18 @@
 import { localizeUrl } from '@automattic/i18n-utils';
-import { useShoppingCart } from '@automattic/shopping-cart';
-import { getTotalLineItemFromCart } from '@automattic/wpcom-checkout';
+import { formatCurrency } from '@automattic/number-formatters';
+import { useShoppingCart, type ResponseCart } from '@automattic/shopping-cart';
+import {
+	getLabel,
+	getTotalLineItemFromCart,
+	LineItemBillingInterval,
+	LineItemPrice,
+} from '@automattic/wpcom-checkout';
 import styled from '@emotion/styled';
-import { Icon, chevronUp, lock } from '@wordpress/icons';
+import { Icon, chevronUp } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
-import { useId, useState } from 'react';
+import { Fragment, useId, useState } from 'react';
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
 import { useSubmitButtonSlot } from '../lib/submit-button-slot';
-import { WPCheckoutOrderSummary } from './wp-checkout-order-summary';
 
 const Wrapper = styled.div`
 	position: fixed;
@@ -23,38 +28,28 @@ const Wrapper = styled.div`
 	gap: 16px;
 `;
 
-const Panel = styled.div`
-	max-block-size: 70vh;
-	overflow-y: auto;
+const Panel = styled.div< { isOpen: boolean } >`
+	display: grid;
+	grid-template-rows: ${ ( props ) => ( props.isOpen ? '1fr' : '0fr' ) };
 	inline-size: 100%;
+	transition: grid-template-rows 300ms cubic-bezier( 0.16, 1, 0.3, 1 );
 
-	&[hidden] {
-		display: none;
+	@media ( prefers-reduced-motion: reduce ) {
+		transition-duration: 1ms;
 	}
+`;
 
-	/* Figma 2392:15321 — product-name + price typography for the line items
-	   surfaced inside the sticky-summary panel. Scoped to this panel so the
-	   rest of WPCheckoutOrderSummary's use sites are untouched. */
-	.cost-overrides-list-product__title {
-		font-size: 16px;
-		font-weight: 500;
-		line-height: 24px;
-		color: var( --studio-gray-100 );
-	}
+const PanelInner = styled.div< { isOpen: boolean } >`
+	min-block-size: 0;
+	overflow: hidden;
+	opacity: ${ ( props ) => ( props.isOpen ? 1 : 0 ) };
+	transform: translateY( ${ ( props ) => ( props.isOpen ? '0' : '6px' ) } );
+	transition:
+		opacity 220ms ease,
+		transform 300ms cubic-bezier( 0.16, 1, 0.3, 1 );
 
-	.cost-overrides-list-product-wrapper s {
-		font-size: 16px;
-		font-weight: 400;
-		line-height: 24px;
-		color: var( --studio-gray-50 );
-		text-decoration: line-through;
-	}
-
-	.cost-overrides-list-product-wrapper > div > span:last-child > span {
-		font-size: 16px;
-		font-weight: 500;
-		line-height: 24px;
-		color: var( --studio-gray-100 );
+	@media ( prefers-reduced-motion: reduce ) {
+		transition-duration: 1ms;
 	}
 `;
 
@@ -76,6 +71,11 @@ const ToggleRow = styled.button`
 	letter-spacing: 0.38px;
 	text-align: start;
 
+	s {
+		font-weight: 400;
+		color: var( --studio-gray-50 );
+	}
+
 	&:focus-visible {
 		outline: 2px solid var( --color-primary );
 		outline-offset: 2px;
@@ -87,13 +87,16 @@ const ChevronWrapper = styled.span< { isOpen: boolean } >`
 	flex-shrink: 0;
 	display: inline-flex;
 	color: var( --studio-gray-100 );
-	transition: transform 200ms ease-out;
+	transition: transform 350ms cubic-bezier( 0.34, 1.56, 0.64, 1 );
 	transform: ${ ( props ) => ( props.isOpen ? 'rotate(180deg)' : 'rotate(0deg)' ) };
+
+	@media ( prefers-reduced-motion: reduce ) {
+		transition-duration: 1ms;
+	}
 `;
 
 const SubmitRow = styled.div`
 	inline-size: 100%;
-	position: relative;
 	display: flex;
 	align-items: center;
 
@@ -106,23 +109,6 @@ const SubmitRow = styled.div`
 	.checkout-submit-button button {
 		width: 100%;
 	}
-
-	.checkout-submit-button > button {
-		padding-inline-start: 40px;
-	}
-
-	.checkout-submit-button > button svg {
-		display: none;
-	}
-`;
-
-const LockIconWrapper = styled.span`
-	position: absolute;
-	inset-inline-start: 12px;
-	display: inline-flex;
-	align-items: center;
-	pointer-events: none;
-	color: currentColor;
 `;
 
 const TosWrapper = styled.div`
@@ -144,19 +130,134 @@ const TosWrapper = styled.div`
 	}
 `;
 
+const Summary = styled.div`
+	display: flex;
+	flex-direction: column;
+	gap: 16px;
+	max-block-size: 70vh;
+	overflow-y: auto;
+`;
+
+const SummaryTitle = styled.p`
+	margin: 0;
+	font-size: 20px;
+	font-weight: 500;
+	line-height: 26px;
+	letter-spacing: 0.38px;
+	color: var( --studio-gray-100 );
+`;
+
+const ProductRow = styled.div`
+	display: flex;
+	gap: 8px;
+	align-items: flex-start;
+	font-size: 16px;
+	line-height: 24px;
+
+	s {
+		font-weight: 400;
+		color: var( --studio-gray-50 );
+	}
+
+	> :last-child span {
+		font-weight: 500;
+		color: var( --studio-gray-100 );
+	}
+`;
+
+const ProductInfo = styled.div`
+	flex: 1;
+	min-inline-size: 0;
+	display: flex;
+	flex-direction: column;
+`;
+
+const ProductName = styled.div`
+	font-weight: 500;
+	color: var( --studio-gray-100 );
+`;
+
+const ProductSublabel = styled.div`
+	font-size: 12px;
+	line-height: 20px;
+	color: var( --studio-gray-50 );
+`;
+
+const Divider = styled.div`
+	block-size: 1px;
+	inline-size: 100%;
+	background: var( --studio-gray-5 );
+`;
+
+const TotalPriceGroup = styled.span`
+	display: inline-flex;
+	align-items: center;
+	gap: 8px;
+`;
+
+function StickyOrderSummary( { responseCart }: { responseCart: ResponseCart } ) {
+	const translate = useTranslate();
+
+	return (
+		<Summary>
+			<SummaryTitle>{ translate( 'Order summary' ) }</SummaryTitle>
+			{ responseCart.products.map( ( product, index ) => {
+				const isDiscounted = product.item_subtotal_integer < product.item_original_subtotal_integer;
+				const actualAmount = formatCurrency( product.item_subtotal_integer, product.currency, {
+					isSmallestUnit: true,
+					stripZeros: true,
+				} );
+				const crossedOutAmount = isDiscounted
+					? formatCurrency( product.item_original_subtotal_integer, product.currency, {
+							isSmallestUnit: true,
+							stripZeros: true,
+					  } )
+					: undefined;
+				return (
+					<Fragment key={ product.uuid }>
+						{ index > 0 && <Divider /> }
+						<ProductRow>
+							<ProductInfo>
+								<ProductName>{ getLabel( product ) }</ProductName>
+								<ProductSublabel>
+									<LineItemBillingInterval product={ product } />
+								</ProductSublabel>
+							</ProductInfo>
+							<LineItemPrice actualAmount={ actualAmount } crossedOutAmount={ crossedOutAmount } />
+						</ProductRow>
+					</Fragment>
+				);
+			} ) }
+		</Summary>
+	);
+}
+
 export function MobileCheckoutStickySummary() {
 	const translate = useTranslate();
 	const cartKey = useCartKey();
 	const { responseCart } = useShoppingCart( cartKey );
 	const totalLineItem = getTotalLineItemFromCart( responseCart );
+	const originalTotalInteger = responseCart.products.reduce(
+		( total, product ) => total + product.item_original_subtotal_integer,
+		0
+	);
+	const crossedOutTotal =
+		originalTotalInteger > responseCart.total_cost_integer
+			? formatCurrency( originalTotalInteger, responseCart.currency, {
+					isSmallestUnit: true,
+					stripZeros: true,
+			  } )
+			: undefined;
 	const { setSlotEl } = useSubmitButtonSlot();
 	const [ isOpen, setIsOpen ] = useState( false );
 	const panelId = useId();
 
 	return (
 		<Wrapper>
-			<Panel id={ panelId } hidden={ ! isOpen }>
-				<WPCheckoutOrderSummary />
+			<Panel isOpen={ isOpen } id={ panelId } aria-hidden={ ! isOpen }>
+				<PanelInner isOpen={ isOpen }>
+					<StickyOrderSummary responseCart={ responseCart } />
+				</PanelInner>
 			</Panel>
 
 			<ToggleRow
@@ -164,22 +265,26 @@ export function MobileCheckoutStickySummary() {
 				onClick={ () => setIsOpen( ( value ) => ! value ) }
 				aria-expanded={ isOpen }
 				aria-controls={ panelId }
-			>
-				<span>
-					{ translate( 'Total: %(amount)s', {
+				aria-label={
+					translate( 'Total: %(amount)s', {
 						args: { amount: totalLineItem.formattedAmount },
 						comment: 'Total price shown in the mobile checkout sticky bar',
-					} ) }
-				</span>
-				<ChevronWrapper isOpen={ isOpen } aria-hidden="true">
-					<Icon icon={ chevronUp } size={ 24 } />
-				</ChevronWrapper>
+					} ) as string
+				}
+			>
+				<span>{ translate( 'Total:' ) }</span>
+				<TotalPriceGroup>
+					<LineItemPrice
+						actualAmount={ totalLineItem.formattedAmount }
+						crossedOutAmount={ crossedOutTotal }
+					/>
+					<ChevronWrapper isOpen={ isOpen } aria-hidden="true">
+						<Icon icon={ chevronUp } size={ 24 } />
+					</ChevronWrapper>
+				</TotalPriceGroup>
 			</ToggleRow>
 
 			<SubmitRow>
-				<LockIconWrapper aria-hidden="true">
-					<Icon icon={ lock } size={ 16 } />
-				</LockIconWrapper>
 				<div ref={ setSlotEl } style={ { width: '100%' } } />
 			</SubmitRow>
 
