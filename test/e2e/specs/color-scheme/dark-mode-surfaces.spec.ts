@@ -583,19 +583,8 @@ test.describe( 'Themes dark-mode surfaces', { tag: [ tags.CALYPSO_PR ] }, () => 
 				expectColorSchemeBodyClass: true,
 			} );
 			await expectSharedDarkTokens( page );
-			await expectNoObviousLightSurface( page.locator( '.theme-download-card' ).first() );
-			await expectNoObviousLightSurface(
-				page.locator( '.theme__sheet-content .action-list' ).first()
-			);
-
-			const downloadIcon = await getElementStyle(
-				page.locator( '.theme-download-card .gridicon' ).first()
-			);
-
-			const iconColor = parseRgb( downloadIcon.fill );
-
-			expect( iconColor, 'download card icon resolves to rgb' ).not.toBeNull();
-			expect( brightness( iconColor as RGB ) ).toBeGreaterThan( 120 );
+			await expectNoObviousLightSurface( page.locator( '.theme-download-card .action-list' ) );
+			await expectNoObviousLightSurface( page.locator( '.theme__sheet-content > .action-list' ) );
 		} );
 
 		await test.step( 'And the Lente detail route keeps premium badge colors dark-compatible', async () => {

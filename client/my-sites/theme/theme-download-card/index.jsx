@@ -1,8 +1,9 @@
-import { Button, Card, Gridicon } from '@automattic/components';
+import { Button } from '@wordpress/components';
 import { Icon, external } from '@wordpress/icons';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { PureComponent } from 'react';
+import ActionList from 'calypso/dashboard/components/action-list';
 
 import './style.scss';
 
@@ -26,11 +27,19 @@ class ThemeDownloadCard extends PureComponent {
 			}
 		);
 		return (
-			<Card className="theme-download-card">
-				<Gridicon icon="cloud-download" size={ 48 } />
-				<p>{ downloadText }</p>
-				<Button href={ href }>{ translate( 'Download' ) }</Button>
-			</Card>
+			<div className="theme-download-card">
+				<ActionList>
+					<ActionList.ActionItem
+						title={ translate( 'Download this theme' ) }
+						description={ downloadText }
+						actions={
+							<Button href={ href } size="compact" variant="secondary">
+								{ translate( 'Download' ) }
+							</Button>
+						}
+					/>
+				</ActionList>
+			</div>
 		);
 	}
 }

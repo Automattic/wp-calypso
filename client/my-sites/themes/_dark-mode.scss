@@ -139,10 +139,6 @@
 		color: var( --wp-admin-theme-color-darker-20 );
 	}
 
-	.theme-download-card__external-icon {
-		fill: currentColor;
-	}
-
 	.theme-card__image-container {
 		background-color: color-mix( in srgb, var( --dashboard__text-color ) 12%, transparent );
 		border-color: color-mix( in srgb, var( --dashboard__text-color ) 12%, transparent );
@@ -159,7 +155,6 @@
 	}
 
 	.themes-list__option-button.button:not( .is-primary ),
-	.theme-download-card .button,
 	.theme__sheet-demo-button {
 		background-color: transparent;
 		border-color: var( --dashboard-field__border-color );
