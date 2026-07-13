@@ -20,7 +20,7 @@ import {
 	CommissionEligibilityColumn,
 } from './site-columns';
 import type { SitesWithWooPaymentsState } from '../types';
-import type { View } from '@wordpress/dataviews';
+import type { Field, View } from '@wordpress/dataviews';
 
 export default function SitesWithWooPayments() {
 	const {
@@ -70,7 +70,7 @@ export default function SitesWithWooPayments() {
 		},
 	} );
 
-	const fields = useMemo(
+	const fields = useMemo< Field< SitesWithWooPaymentsState >[] >(
 		() => [
 			{
 				id: 'site',
