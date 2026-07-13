@@ -1,7 +1,7 @@
 import { agencyQuery, activeAgencyQuery } from '@automattic/api-queries';
 import { useSuspenseQuery } from '@tanstack/react-query';
 import { __ } from '@wordpress/i18n';
-import { home, globe, layout, pages, tag, currencyDollar } from '@wordpress/icons';
+import { home, globe, layout, pages, tag, currencyDollar, people } from '@wordpress/icons';
 import { SidebarExpandableMenuItem, SidebarMenuItem } from '../../components/sidebar';
 import { useAppContext } from '../context';
 
@@ -23,6 +23,11 @@ export default function AgencySidebar() {
 			{ supports.agency.sites && (
 				<SidebarMenuItem icon={ layout } to="/sites">
 					{ __( 'Sites' ) }
+				</SidebarMenuItem>
+			) }
+			{ supports.agency.team && (
+				<SidebarMenuItem icon={ people } to="/team">
+					{ __( 'Team' ) }
 				</SidebarMenuItem>
 			) }
 			{ supports.agency.tiers && (

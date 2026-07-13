@@ -1,5 +1,7 @@
 @import "../../shared";
 
+$redesign-table-cell-max-width: 280px;
+
 .plan-features-2023-grid__header {
 	display: flex;
 	position: relative;
@@ -499,6 +501,14 @@
 	}
 }
 
+.plan-features-2023-grid__item-checkmark.is-placeholder {
+	visibility: hidden;
+}
+
+.plan-features-2023-grid__feature-badge.is-placeholder {
+	visibility: hidden;
+}
+
 .plan-features-2023-grid__content {
 	.plan-features-2023-grid__table-bottom {
 		margin-top: 54px;
@@ -697,6 +707,27 @@
 }
 
 .plans-grid-next.is-plans-grid-redesign-experiment {
+	.plan-features-2023-grid__table-item.popular-plan-parent-class {
+		.plan-features-2023-grid__popular-badge {
+			&.is-premium-plan,
+			&.is-wooexpress-medium-plan {
+				.plans-grid__plan-pill {
+					background-color: var(--studio-white);
+					border: 1px solid #e0e0e0;
+					color: var(--studio-gray-100);
+					transform: translate(20px, 0);
+				}
+			}
+
+			&.is-business-plan,
+			&.is-ecommerce-plan {
+				.plans-grid__plan-pill {
+					transform: translate(20px, 0);
+				}
+			}
+		}
+	}
+
 	.plan-features-2023-grid__content,
 	.plan-features-2023-grid__desktop-view,
 	.plan-features-2023-grid__tablet-view {
@@ -709,6 +740,26 @@
 		border-radius: 8px;
 		box-shadow: none;
 
+		&.has-1-cols {
+			max-width: $redesign-table-cell-max-width;
+		}
+
+		&.has-2-cols {
+			max-width: $redesign-table-cell-max-width * 2;
+		}
+
+		&.has-3-cols {
+			max-width: $redesign-table-cell-max-width * 3;
+		}
+
+		&.has-4-cols {
+			max-width: $redesign-table-cell-max-width * 4;
+		}
+
+		&.has-5-cols {
+			max-width: $redesign-table-cell-max-width * 5;
+		}
+
 		&.has-highlighted-plan {
 			margin-top: 12px;
 		}
@@ -718,19 +769,51 @@
 		}
 	}
 
+	.plan-features-2023-grid__desktop-view,
+	.plan-features-2023-grid__tablet-view {
+		.plan-features-2023-grid__table-item {
+			max-width: $redesign-table-cell-max-width;
+		}
+	}
+
 	.plan-features-2023-grid__content.has-bottom-plan-card .plan-features-2023-grid__table {
 		border-bottom-left-radius: 0;
 		border-bottom-right-radius: 0;
 	}
 
-	&.is-large {
+	&:not(.is-small) {
 		.plan-features-2023-grid__content.has-bottom-plan-card {
+			&.has-1-cols .plans-grid-next-features-grid__bottom-plan-card {
+				max-width: $redesign-table-cell-max-width;
+			}
+
+			&.has-2-cols .plans-grid-next-features-grid__bottom-plan-card {
+				max-width: $redesign-table-cell-max-width * 2;
+			}
+
 			&.has-3-cols .plans-grid-next-features-grid__bottom-plan-card {
-				max-width: $table-cell-max-width * 3;
+				max-width: $redesign-table-cell-max-width * 3;
 			}
 
 			&.has-4-cols .plans-grid-next-features-grid__bottom-plan-card {
-				max-width: $table-cell-max-width * 4;
+				max-width: $redesign-table-cell-max-width * 4;
+			}
+
+			&.has-5-cols .plans-grid-next-features-grid__bottom-plan-card {
+				max-width: $redesign-table-cell-max-width * 5;
+			}
+
+			&.has-tablet-split-row {
+				.plan-features-2023-grid__table-bottom .plan-features-2023-grid__table-item {
+					max-width: none;
+				}
+			}
+
+			&.has-tablet-split-row-width-3-cols {
+				.plan-features-2023-grid__table-bottom .plan-features-2023-grid__table,
+				.plans-grid-next-features-grid__bottom-plan-card {
+					max-width: $redesign-table-cell-max-width * 3;
+				}
 			}
 		}
 	}
@@ -743,7 +826,7 @@
 		border-top: 0;
 		box-sizing: border-box;
 		display: flex;
-		gap: 32px;
+		gap: 20px;
 		justify-content: space-between;
 		margin: 0 auto;
 		min-height: 136px;
@@ -835,6 +918,13 @@
 
 		.plans-grid-next-client-logo-list__item {
 			--adjustment-unit: calc( var( --bottom-plan-card-logo-height ) / 60 );
+		}
+	}
+
+	&.is-smedium,
+	&.is-medium {
+		.plans-grid-next-features-grid__bottom-plan-card-media .plans-grid-next-client-logo-list {
+			--bottom-plan-card-logo-height: 32px;
 		}
 	}
 
@@ -931,13 +1021,6 @@
 		color: var( --studio-gray-100 );
 		font-size: 16px;
 		line-height: 20px;
-	}
-
-	.plan-features-2023-grid__table-top,
-	.plan-features-2023-grid__table-bottom {
-		.plan-features-2023-grid__table {
-			max-width: 100%;
-		}
 	}
 
 	.plan-features-2023-grid__table-item {
@@ -1262,7 +1345,8 @@
 					width: auto;
 				}
 
-				&.is-business-plan .plans-grid__plan-pill {
+				&.is-business-plan .plans-grid__plan-pill,
+				&.is-ecommerce-plan .plans-grid__plan-pill {
 					background-color: var( --studio-gray-100 );
 					border-color: var( --studio-gray-100 );
 					color: var( --studio-white );
@@ -1291,6 +1375,25 @@
 		.plans-grid-next-features-grid__mobile-plan-card {
 			border-radius: 8px;
 			padding-block: 24px;
+
+			.plan-features-2023-grid__popular-badge {
+				&.is-premium-plan .plans-grid__plan-pill,
+				&.is-wooexpress-medium-plan .plans-grid__plan-pill {
+					background-color: var( --studio-white );
+					border: 1px solid #e0e0e0;
+					color: var( --studio-gray-100 );
+				}
+			}
+
+			.plan-features-2023-grid__table-item.is-current-plan {
+				.plan-features-2023-grid__popular-badge {
+					.plans-grid__plan-pill {
+						background-color: var( --color-neutral-0 );
+						border: 1px solid #e0e0e0;
+						color: var( --color-neutral-80 );
+					}
+				}
+			}
 		}
 
 		.plan-features-2023-grid__header {

@@ -205,6 +205,14 @@ export interface Purchase {
 	 */
 	is_past_expiry_date: boolean;
 
+	/**
+	 * Whole days until the subscription expires, rounded down. Uses a UTC midnight
+	 * basis, so it can go negative up to a day before `is_past_expiry_date`
+	 * (end-of-day basis) does, and can read up to a day off from the viewer's local
+	 * time zone. Null for purchases with no expiry time (one-time and perpetual).
+	 */
+	days_until_expiry: number | null;
+
 	iap_purchase_management_link: string | null;
 
 	/**

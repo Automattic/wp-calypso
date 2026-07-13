@@ -5,5 +5,5 @@ source 'https://rubygems.org'
 # Works around a fastlane crash on Ruby builds without a usable `readline`
 # (fastlane/fastlane#21794).
 gem 'rb-readline'
-gem 'fastlane', '~> 2.221'
+gem 'fastlane', '~> 2.236', '>= 2.236.1'
 gem 'fastlane-plugin-wpmreleasetoolkit', '~> 14.7'

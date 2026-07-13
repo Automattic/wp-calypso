@@ -130,6 +130,7 @@ jobs:
         uses: anthropics/claude-code-action@567fe954a4527e81f132d87d1bdbcc94f7737434 # v1.0.107
         with:
           anthropic_api_key: ${{ secrets.anthropic_api_key }}
+          display_report: true
           prompt: |
             # Code Review Instructions
 
@@ -200,6 +201,7 @@ jobs:
         uses: anthropics/claude-code-action@567fe954a4527e81f132d87d1bdbcc94f7737434 # v1.0.107
         with:
           anthropic_api_key: ${{ secrets.anthropic_api_key }}
+          display_report: true
           prompt: |
             # Code Review Instructions (A4A)
 
@@ -268,6 +270,7 @@ jobs:
         uses: anthropics/claude-code-action@567fe954a4527e81f132d87d1bdbcc94f7737434 # v1.0.107
         with:
           anthropic_api_key: ${{ secrets.anthropic_api_key }}
+          display_report: true
           prompt: |
             # Code Review Instructions (General)
 

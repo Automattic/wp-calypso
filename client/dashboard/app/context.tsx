@@ -21,6 +21,7 @@ export type AgencySupports = {
 	learn: boolean;
 	mcp: boolean;
 	sites: boolean;
+	team: boolean;
 	earn: boolean;
 };
 

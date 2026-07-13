@@ -1,18 +1,14 @@
-interface StatusMeta {
+import { __ } from '@wordpress/i18n';
+import type { TipaltiPayee } from '@automattic/api-core';
+
+interface AccountStatus {
 	statusType: 'success' | 'warning' | 'error';
 	status: string;
 	statusReason?: string;
 	actionRequired: boolean;
 }
 
-export const getAccountStatus = (
-	data: {
-		Status: string;
-		IsPayable: boolean;
-		PayableReason: string[];
-	} | null,
-	translate: ( key: string ) => string
-): StatusMeta | null => {
+export function getAccountStatus( data: TipaltiPayee | null | undefined ): AccountStatus | null {
 	if ( ! data ) {
 		return null;
 	}
@@ -23,13 +19,13 @@ export const getAccountStatus = (
 			if ( ! IsPayable ) {
 				statusMeta = {
 					statusType: 'warning',
-					status: translate( 'Not Payable' ),
+					status: __( 'Not Payable' ),
 					statusReason: PayableReason?.map( ( reason ) => {
 						if ( reason === 'No PM' ) {
-							return translate( 'Bank details are missing' );
+							return __( 'Bank details are missing' );
 						}
 						if ( reason === 'Tax' ) {
-							return translate( 'Tax form is missing' );
+							return __( 'Tax form is missing' );
 						}
 						return reason;
 					} ).join( ', ' ),
@@ -38,27 +34,27 @@ export const getAccountStatus = (
 			}
 			statusMeta = {
 				statusType: 'success',
-				status: translate( 'Confirmed' ),
+				status: __( 'Confirmed' ),
 			};
 			break;
 		case 'Suspended':
 			statusMeta = {
 				statusType: 'error',
-				status: translate( 'Suspended' ),
+				status: __( 'Suspended' ),
 			};
 			break;
 		case 'Blocked':
 			statusMeta = {
 				statusType: 'error',
-				status: translate( 'Blocked' ),
-				statusReason: translate( 'Your account is blocked' ),
+				status: __( 'Blocked' ),
+				statusReason: __( 'Your account is blocked' ),
 			};
 			break;
 		case 'Closed':
 			statusMeta = {
 				statusType: 'error',
-				status: translate( 'Closed' ),
-				statusReason: translate( 'Your account is closed' ),
+				status: __( 'Closed' ),
+				statusReason: __( 'Your account is closed' ),
 			};
 			break;
 		default:
@@ -71,6 +67,6 @@ export const getAccountStatus = (
 
 	return {
 		...statusMeta,
-		actionRequired: [ 'warning', 'error' ].includes( statusMeta?.statusType ),
-	} as StatusMeta;
-};
+		actionRequired: [ 'warning', 'error' ].includes( statusMeta.statusType ),
+	} as AccountStatus;
+}

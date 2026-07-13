@@ -15,16 +15,26 @@
 		display: none;
 	}
 
-	.form-checkbox:checked::before {
-		// Increase Calypso styles specificity.
-		content: url(calypso/assets/images/checkbox-icons/checkmark-primary.svg);
-		width: 12px;
-		height: 12px;
-		margin: 3px auto;
-		display: inline-block;
+	// Checked: secondary-button-like outline style, matching the accent chain the
+	// @wordpress/components controls (e.g. the chart type toggle) already follow.
+	.form-checkbox:checked {
+		background-color: transparent;
+		border-color: var(--wp-components-color-accent, var(--color-accent));
 
-		// Override WP-Admin styles.
-		float: none;
+		&::before {
+			// Render the checkmark through an alpha mask so it takes a theme color;
+			// the base form-checkbox checkmark is an SVG with a hardcoded stroke
+			// that ignores color schemes. Also overrides WP-Admin core's checked
+			// styles (white checkmark content, float: left).
+			content: "";
+			mask: url(calypso/assets/images/checkbox-icons/checkmark-primary.svg) no-repeat center / contain;
+			background-color: var(--wp-components-color-accent, var(--color-accent));
+			width: 12px;
+			height: 12px;
+			margin: 3px auto;
+			display: inline-block;
+			float: none;
+		}
 	}
 
 	// Jetpack custom styles.

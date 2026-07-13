@@ -40,6 +40,13 @@
 		padding: 0;
 	}
 
+	.step-container-v2__content-wrapper.axis-vertical:has(
+		.plans-grid-next.is-plans-grid-redesign-experiment
+			.plan-features-2023-grid__table:is( .has-4-cols, .has-5-cols, .has-6-cols )
+	) {
+		--step-container-v2-content-inline-padding: clamp( 1rem, 2vw, 2rem );
+	}
+
 	// Style the inline `start with a free plan` CTA inside Step.Heading subText
 	// to look like a link instead of a default borderless button. The legacy
 	// <PlansPageSubheader> applied equivalent styles to the same button via its
