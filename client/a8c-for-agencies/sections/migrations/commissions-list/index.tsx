@@ -1,26 +1,55 @@
 import { useDesktopBreakpoint } from '@automattic/viewport-react';
 import { __experimentalHStack as HStack } from '@wordpress/components';
+import { DataViews } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
 import { useCallback, useMemo, ReactNode, useState } from 'react';
-import {
-	initialDataViewsState,
-	DATAVIEWS_TABLE,
-	DATAVIEWS_LIST,
-} from 'calypso/a8c-for-agencies/components/items-dashboard/constants';
-import ItemsDataViews from 'calypso/a8c-for-agencies/components/items-dashboard/items-dataviews';
-import { DataViewsState } from 'calypso/a8c-for-agencies/components/items-dashboard/items-dataviews/interfaces';
-import { DataViews } from 'calypso/components/dataviews';
 import RequestReviewModal from '../request-review-modal';
 import { MigratedOnColumn, ReviewStatusColumn, SiteColumn } from './commission-columns';
 import UntagSiteDialog from './untag-site-dialog';
 import useCommissionListActions from './use-commission-list-actions';
 import type { TaggedSite } from '../types';
-import type { Field } from '@wordpress/dataviews';
+import type { Field, View } from '@wordpress/dataviews';
+
+import '../commissions/components/dataviews/style.scss';
 
 type ActiveModal =
 	| { kind: 'untag'; site: TaggedSite }
 	| { kind: 'request-review'; site: TaggedSite }
 	| null;
+
+// `type`/`layout` are the only viewport-dependent parts of the view: a table on
+// desktop, stacked list cards on narrow viewports.
+function responsiveViewParts( isDesktop: boolean ): Pick< View, 'type' | 'layout' > {
+	if ( ! isDesktop ) {
+		return { type: 'list', layout: {} };
+	}
+
+	return {
+		type: 'table',
+		layout: {
+			styles: {
+				site: { width: '40%' },
+				migratedOn: { width: '25%' },
+				reviewStatus: { width: '25%' },
+			},
+		},
+	};
+}
+
+function buildCommissionsView( isDesktop: boolean ): View {
+	return {
+		search: '',
+		filters: [],
+		page: 1,
+		perPage: 50,
+		sort: { field: '', direction: 'asc' },
+		// `site` is the titleField (rendered as the primary column/title), so it
+		// must not also appear in the visible fields or it renders twice.
+		titleField: 'site',
+		fields: [ 'migratedOn', 'reviewStatus' ],
+		...responsiveViewParts( isDesktop ),
+	};
+}
 
 export default function MigrationsCommissionsList( {
 	items,
@@ -31,27 +60,11 @@ export default function MigrationsCommissionsList( {
 } ) {
 	const isDesktop = useDesktopBreakpoint();
 
-	const [ dataViewsState, setDataViewsState ] = useState< DataViewsState >( () => ( {
-		...initialDataViewsState,
-		titleField: 'site',
-		// `site` is the titleField (rendered as the primary column/title), so it
-		// must not also appear in the visible fields or it renders twice.
-		fields: [ 'migratedOn', 'reviewStatus' ],
-		layout: {
-			styles: {
-				site: { width: '40%' },
-				migratedOn: { width: '25%' },
-				reviewStatus: { width: '25%' },
-			},
-		},
-	} ) );
+	const [ view, setView ] = useState< View >( () => buildCommissionsView( isDesktop ) );
 
-	// `type` is derived from the viewport: a table on desktop, stacked list cards
-	// on narrow viewports. Computing it at render keeps a single source of truth.
-	const view: DataViewsState = {
-		...dataViewsState,
-		type: isDesktop ? DATAVIEWS_TABLE : DATAVIEWS_LIST,
-	};
+	// `type`/`layout` follow the viewport; derive them at render so we don't sync
+	// derived state through an effect. User-driven view changes stay in `view`.
+	const responsiveView: View = { ...view, ...responsiveViewParts( isDesktop ) };
 
 	const [ activeModal, setActiveModal ] = useState< ActiveModal >( null );
 
@@ -116,18 +129,16 @@ export default function MigrationsCommissionsList( {
 	return (
 		<>
 			<div className="redesigned-a8c-table full-width">
-				<ItemsDataViews
-					data={ {
-						items,
-						getItemId: ( item ) => `${ item.id }`,
-						pagination,
-						enableSearch: false,
-						fields,
-						actions,
-						setDataViewsState,
-						dataViewsState: view,
-						defaultLayouts: { table: {}, list: {} },
-					} }
+				<DataViews
+					data={ items }
+					view={ responsiveView }
+					onChangeView={ setView }
+					fields={ fields }
+					search={ false }
+					actions={ actions }
+					getItemId={ ( item ) => `${ item.id }` }
+					paginationInfo={ pagination }
+					defaultLayouts={ { table: {}, list: {} } }
 				>
 					{ isDesktop && (
 						<HStack
@@ -140,7 +151,7 @@ export default function MigrationsCommissionsList( {
 					) }
 					<DataViews.Layout />
 					<DataViews.Footer />
-				</ItemsDataViews>
+				</DataViews>
 			</div>
 
 			{ activeModal?.kind === 'untag' && (

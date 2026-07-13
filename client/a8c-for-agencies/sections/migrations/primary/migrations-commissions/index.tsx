@@ -6,8 +6,8 @@ import { LayoutWithGuidedTour as Layout } from 'calypso/a8c-for-agencies/compone
 import LayoutTop from 'calypso/a8c-for-agencies/components/layout/layout-with-payment-notification';
 import MobileSidebarNavigation from 'calypso/a8c-for-agencies/components/sidebar/mobile-sidebar-navigation';
 import { A4A_MIGRATIONS_LINK } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
-import TextPlaceholder from 'calypso/a8c-for-agencies/components/text-placeholder';
 import MissingPaymentSettingsNotice from 'calypso/a8c-for-agencies/sections/referrals/common/missing-payment-settings-notice';
+import { TextSkeleton } from 'calypso/dashboard/components/text-skeleton';
 import LayoutBody from 'calypso/layout/hosting-dashboard/body';
 import LayoutHeader, {
 	LayoutHeaderBreadcrumb as Breadcrumb,
@@ -21,7 +21,6 @@ import useCanTagSitesForCommission from '../../hooks/use-can-tag-sites-for-commi
 import useFetchTaggedSitesForMigration from '../../hooks/use-fetch-tagged-sites-for-migration';
 import MigrationsTagSitesModal from '../../tag-sites-modal';
 import MigrationsCommissionsEmptyState from './empty-state';
-import IncentiveEndedBanner from './incentive-ended-banner';
 
 import './style.scss';
 
@@ -47,8 +46,8 @@ export default function MigrationsCommissions() {
 		if ( isLoading ) {
 			return (
 				<>
-					<TextPlaceholder />
-					<TextPlaceholder />
+					<TextSkeleton length={ 30 } />
+					<TextSkeleton length={ 30 } />
 				</>
 			);
 		}
@@ -75,7 +74,6 @@ export default function MigrationsCommissions() {
 			wide
 		>
 			<LayoutTop isFullWidth={ ! showEmptyState }>
-				{ ! canTagSitesForCommission && <IncentiveEndedBanner /> }
 				{ ! showEmptyState && <MissingPaymentSettingsNotice commissionType="migrations" /> }
 				<LayoutHeader>
 					<Breadcrumb

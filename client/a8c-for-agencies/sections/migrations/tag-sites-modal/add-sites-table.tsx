@@ -4,13 +4,9 @@ import {
 	CheckboxControl,
 	__experimentalSpacer as Spacer,
 } from '@wordpress/components';
-import { filterSortAndPaginate } from '@wordpress/dataviews';
+import { DataViews, filterSortAndPaginate } from '@wordpress/dataviews';
 import { __, sprintf } from '@wordpress/i18n';
 import { useCallback, useMemo, useState } from 'react';
-import A4ATablePlaceholder from 'calypso/a8c-for-agencies/components/a4a-table-placeholder';
-import { initialDataViewsState } from 'calypso/a8c-for-agencies/components/items-dashboard/constants';
-import ItemsDataViews from 'calypso/a8c-for-agencies/components/items-dashboard/items-dataviews';
-import { DataViewsState } from 'calypso/a8c-for-agencies/components/items-dashboard/items-dataviews/interfaces';
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import {
@@ -18,6 +14,9 @@ import {
 	type SiteItem,
 } from '../hooks/use-fetch-all-managed-sites-for-commission';
 import { TaggedSite } from '../types';
+import type { Field, View } from '@wordpress/dataviews';
+
+import '../commissions/components/dataviews/style.scss';
 
 export default function MigrationsAddSitesTable( {
 	selectedSites,
@@ -57,9 +56,15 @@ export default function MigrationsAddSitesTable( {
 			} );
 	}, [ items, taggedSitesIds ] );
 
-	const [ dataViewsState, setDataViewsState ] = useState< DataViewsState >( {
-		...initialDataViewsState,
+	const [ view, setView ] = useState< View >( {
+		type: 'table',
+		search: '',
+		filters: [],
+		page: 1,
+		perPage: 50,
+		sort: { field: '', direction: 'asc' },
 		fields: [ 'site', 'date' ],
+		layout: {},
 	} );
 
 	const onSelectAllSites = useCallback( () => {
@@ -88,7 +93,7 @@ export default function MigrationsAddSitesTable( {
 		[ dispatch, selectedSites, setSelectedSites ]
 	);
 
-	const fields = useMemo( () => {
+	const fields: Field< SiteItem >[] = useMemo( () => {
 		const siteColumn = {
 			id: 'site',
 			label: (
@@ -130,8 +135,8 @@ export default function MigrationsAddSitesTable( {
 	}, [ isDesktop, availableSites.length, onSelectAllSites, onSelectSite, selectedSites ] );
 
 	const { data: allSites, paginationInfo } = useMemo( () => {
-		return filterSortAndPaginate( availableSites, dataViewsState, fields );
-	}, [ availableSites, dataViewsState, fields ] );
+		return filterSortAndPaginate( availableSites, view, fields );
+	}, [ availableSites, view, fields ] );
 
 	return (
 		<div className="add-sites-table redesigned-a8c-table">
@@ -150,23 +155,18 @@ export default function MigrationsAddSitesTable( {
 						</div>
 					</Spacer>
 				) }
-				{ isLoading ? (
-					<A4ATablePlaceholder />
-				) : (
-					<ItemsDataViews
-						data={ {
-							items: allSites,
-							fields,
-							getItemId: ( item ) => `${ item.id }`,
-							pagination: paginationInfo,
-							enableSearch: false,
-							actions: [],
-							dataViewsState: dataViewsState,
-							setDataViewsState: setDataViewsState,
-							defaultLayouts: { table: {} },
-						} }
-					/>
-				) }
+				<DataViews
+					data={ allSites }
+					view={ view }
+					onChangeView={ setView }
+					fields={ fields }
+					search={ false }
+					actions={ [] }
+					getItemId={ ( item ) => `${ item.id }` }
+					paginationInfo={ paginationInfo }
+					defaultLayouts={ { table: {} } }
+					isLoading={ isLoading }
+				/>
 			</BaseControl>
 		</div>
 	);

@@ -2,11 +2,10 @@ import { Button, ExternalLink } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { useCallback } from 'react';
-import StepSection from 'calypso/a8c-for-agencies/components/step-section';
-import StepSectionItem from 'calypso/a8c-for-agencies/components/step-section-item';
-import { preventWidows } from 'calypso/lib/formatting';
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import StepSection from '../../commissions/components/step-section';
+import StepSectionItem from '../../commissions/components/step-section-item';
 
 export default function MigrationsCommissionsEmptyState( {
 	setShowAddSitesModal,
@@ -30,10 +29,8 @@ export default function MigrationsCommissionsEmptyState( {
 		<StepSection heading={ __( 'View your migrated websites and commissions right here.' ) }>
 			<StepSectionItem
 				heading={ __( 'Concierge Migrations' ) }
-				description={ preventWidows(
-					__(
-						"If you picked the concierge service, we'll move your sites for you. Once we're done, you'll see them here and they'll be available for tagging."
-					)
+				description={ __(
+					"If you picked the concierge service, we'll move your sites for you. Once we're done, you'll see them here and they'll be available for tagging."
 				) }
 			/>
 			{ canTagSitesForCommission && (
