@@ -180,6 +180,16 @@ export function TitanPlanGrid( {
 		  )
 		: plans;
 
+	// The tier that gets the emphasized (primary) button: the recommended plan when
+	// buying, or the recommended upgrade target when upgrading. The current plan is
+	// never emphasized because its button is disabled.
+	const primaryTier = ( () => {
+		const candidates = currentTier
+			? visiblePlans.filter( ( plan ) => plan.tier !== currentTier )
+			: visiblePlans;
+		return ( candidates.find( ( plan ) => plan.isPopular ) ?? candidates[ 0 ] )?.tier;
+	} )();
+
 	const getMonthlyPrice = ( product?: Product ) => {
 		if ( ! product?.cost ) {
 			return 0;
@@ -271,7 +281,7 @@ export function TitanPlanGrid( {
 						<Button
 							__next40pxDefaultSize
 							className="email-provider-action"
-							variant={ plan.isPopular ? 'primary' : 'secondary' }
+							variant={ plan.tier === primaryTier ? 'primary' : 'secondary' }
 							disabled={ ! available || isCurrentPlan }
 							onClick={ () => {
 								// Upgrade mode goes to checkout for the picked tier; otherwise the
