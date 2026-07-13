@@ -1418,7 +1418,6 @@ const StepContainerV2CheckoutFixer = styled.div< {
 			.wp-checkout__review-order-step .checkout-line-item > div:first-of-type {
 				font-size: 16px;
 				line-height: 24px;
-				letter-spacing: -0.32px;
 			}
 			/* Figma 2392:15321/15325/15326 — price typography:
 			   – Outer .checkout-line-item__price carries the "/mo" text node,
@@ -1440,7 +1439,6 @@ const StepContainerV2CheckoutFixer = styled.div< {
 			.wp-checkout__review-order-step .checkout-line-item__price > span {
 				font-size: 16px;
 				line-height: 24px;
-				letter-spacing: -0.32px;
 				/* 8px between the strikethrough and the live price (Figma
 				   3838:3618 gap-[8px]); overrides LineItemPriceWrapper's
 				   default 4px gap. */

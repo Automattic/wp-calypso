@@ -39,7 +39,6 @@ const Panel = styled.div`
 		font-size: 16px;
 		font-weight: 500;
 		line-height: 24px;
-		letter-spacing: -0.32px;
 		color: var( --studio-gray-100 );
 	}
 
@@ -47,7 +46,6 @@ const Panel = styled.div`
 		font-size: 16px;
 		font-weight: 400;
 		line-height: 24px;
-		letter-spacing: -0.32px;
 		color: var( --studio-gray-50 );
 		text-decoration: line-through;
 	}
@@ -56,7 +54,6 @@ const Panel = styled.div`
 		font-size: 16px;
 		font-weight: 500;
 		line-height: 24px;
-		letter-spacing: -0.32px;
 		color: var( --studio-gray-100 );
 	}
 `;

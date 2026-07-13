@@ -56,7 +56,6 @@ const TermOptionsItem = styled.li`
 		gap: 8px;
 		font-size: 16px;
 		line-height: 24px;
-		letter-spacing: -0.32px;
 		color: var( --studio-gray-100 );
 	}
 
