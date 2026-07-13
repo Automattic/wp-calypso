@@ -26,29 +26,34 @@ export const HelpCenterContactButton = () => {
 	);
 	const { recentConversations } = useGetHistoryChats();
 
-	const handleClick = () => {
-		// Users whose site is unreachable need a human, not the AI assistant:
-		// route paid-support-eligible users straight to a Happiness Engineer.
-		const escalateToHuman = url === '/odie' && isEligibleForChat && isSiteUnreachable;
+	// Users whose site is unreachable need a human, not the AI assistant:
+	// offer paid-support-eligible users a direct line to a Happiness Engineer.
+	const showContactHumanButton = url === '/odie' && isEligibleForChat && isSiteUnreachable;
 
+	const handleContactHumanClick = () => {
+		recordTracksEvent( 'calypso_inlinehelp_morehelp_click', {
+			force_site_id: true,
+			location: 'help-center',
+			section: sectionName,
+			button_type: 'Contact a Happiness Engineer',
+		} );
+
+		setNewMessagingChat( {
+			initialMessage: searchQuery || '',
+			section: sectionName,
+			siteUrl: site?.URL,
+			siteId: site?.ID ? String( site.ID ) : undefined,
+		} );
+		setMessage( '' );
+	};
+
+	const handleClick = () => {
 		recordTracksEvent( 'calypso_inlinehelp_morehelp_click', {
 			force_site_id: true,
 			location: 'help-center',
 			section: sectionName,
 			button_type: 'Still need help?',
-			escalated_to_human: escalateToHuman,
 		} );
-
-		if ( escalateToHuman ) {
-			setNewMessagingChat( {
-				initialMessage: searchQuery || '',
-				section: sectionName,
-				siteUrl: site?.URL,
-				siteId: site?.ID ? String( site.ID ) : undefined,
-			} );
-			setMessage( '' );
-			return;
-		}
 
 		const openRecentConversation = recentConversations.find(
 			( conversation ) => conversation.metadata?.status === 'open'
@@ -67,6 +72,16 @@ export const HelpCenterContactButton = () => {
 
 	return (
 		<CardFooter className="help-center__container-footer">
+			{ showContactHumanButton && (
+				<Button
+					onClick={ handleContactHumanClick }
+					variant="primary"
+					className="button help-center-contact-page__button is-contact-human"
+					__next40pxDefaultSize
+				>
+					{ __( 'Contact a Happiness Engineer', __i18n_text_domain__ ) }
+				</Button>
+			) }
 			<Button
 				onClick={ handleClick }
 				variant="secondary"
