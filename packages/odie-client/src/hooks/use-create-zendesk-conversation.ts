@@ -155,7 +155,7 @@ export const useCreateZendeskConversation = () => {
 				messaging_initial_message: userFieldMessage || undefined,
 				messaging_site_id: selectedSiteId || null,
 				messaging_ai_chat_id: chatId || undefined,
-				// messaging_url: selectedSiteURL || window.location.href,
+				messaging_url: selectedSiteURL || window.location.href,
 				messaging_flow: userFieldFlowName || null,
 				messaging_source: window.location.href,
 			} );
