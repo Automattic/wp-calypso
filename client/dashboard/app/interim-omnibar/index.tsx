@@ -11,8 +11,7 @@ export default async function loadOmnibar( events: OmnibarEvents ) {
 		return;
 	}
 
-	// Recolor the masterbar for support "user" sessions. "Next" sessions already
-	// have their own indicator, so they're excluded.
+	// Recolor the masterbar for support sessions.
 	if ( isSupportSession() ) {
 		container.classList.add( 'is-support-user-session' );
 	}
