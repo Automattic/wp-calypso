@@ -1,4 +1,4 @@
-import config from '@automattic/calypso-config';
+import config, { isEnabled } from '@automattic/calypso-config';
 import { isSupportSession } from '@automattic/calypso-support-session';
 import type { HostingDashboardOptIn } from '@automattic/api-core';
 
@@ -58,27 +58,27 @@ export function getHostingDashboardEnrollment(
 }
 
 /**
- * Whether the opt-in welcome modal should be shown. Gated by the
- * `dashboard/opt-in-welcome-modal` feature flag. The modal introduces the
+ * Whether the opt-in welcome modal should be shown. The modal introduces the
  * dashboard to existing users who were moved onto it by the rollout, so it is
- * limited to enrolled users whose enrollment was forced. New users (who start
- * on the dashboard by default) and users who explicitly opted in (who are
- * already acquainted with it) are both excluded.
+ * limited to enrolled users who did not earlier opt in. Can't use the existing
+ * `isInRolloutCohort` logic because semantics are slightly different: even
+ * users who have been "forced" do not see modal if they have previously opt'd in.
  */
 export function isWelcomeModalEligible(
 	preference: HostingDashboardOptIn | undefined,
 	userId: number | undefined
 ): boolean {
-	if ( ! config.isEnabled( 'dashboard/opt-in-welcome-modal' ) ) {
+	if (
+		! isEnabled( 'dashboard/opt-in-welcome-modal' ) ||
+		! userId ||
+		userId > NEW_USER_ID_THRESHOLD ||
+		preference?.value === 'opt-in' ||
+		isSupportSession()
+	) {
 		return false;
 	}
 
-	if ( ! userId || userId > NEW_USER_ID_THRESHOLD ) {
-		return false;
-	}
-
-	const enrollment = getHostingDashboardEnrollment( preference, userId );
-	return enrollment.enrolled && enrollment.reason === 'forced';
+	return userId % 100 < ROLLOUT_PERCENTAGE;
 }
 
 /**
