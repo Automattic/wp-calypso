@@ -48,7 +48,6 @@ import type { FlowV2, SubmitHandler } from '../../internals/types';
 // 1. Define steps BEFORE the flow object (required for TypeScript inference).
 function initialize() {
 	return stepsWithRequiredLogin( [
-		STEPS.GOALS,
 		STEPS.DOMAIN_SEARCH,
 		STEPS.UNIFIED_PLANS,
 		STEPS.PROCESSING,
@@ -73,9 +72,6 @@ const myFlow: FlowV2< typeof initialize > = {
 		const submit: SubmitHandler< typeof initialize > = ( submittedStep ) => {
 			const { slug, providedDependencies } = submittedStep;
 			switch ( slug ) {
-				case 'goals':
-					set( 'goals', providedDependencies );
-					return navigate( 'domains' );
 				case 'domains':
 					set( 'domains', providedDependencies );
 					return navigate( 'plans' );
@@ -103,16 +99,15 @@ export default myFlow;
 
 ### Signup / onboarding steps
 
-| `STEPS.*` constant       | slug                   | Purpose                                                         |
-| ------------------------ | ---------------------- | --------------------------------------------------------------- |
-| `GOALS`                  | `goals`                | Ask user what they want to build (blog, store, portfolio, etc.) |
-| `SEGMENTATION_SURVEY`    | `segmentation-survey`  | Survey to segment user by use case                              |
-| `DESIGN_SETUP`           | `design-setup`         | Select a theme / design                                         |
-| `SITE_OPTIONS`           | `options`              | Set site title, tagline, icon                                   |
-| `SETUP_BLOG`             | `setup-blog`           | Blog-specific setup step                                        |
-| `BUSINESS_INFO`          | `businessInfo`         | Business details (name, category)                               |
-| `STORE_ADDRESS`          | `storeAddress`         | WooCommerce store address                                       |
-| `SITE_SPEC`              | `site-spec`            | AI-assisted site specification                                  |
+| `STEPS.*` constant    | slug                  | Purpose                            |
+| --------------------- | --------------------- | ---------------------------------- |
+| `SEGMENTATION_SURVEY` | `segmentation-survey` | Survey to segment user by use case |
+| `DESIGN_SETUP`        | `design-setup`        | Select a theme / design            |
+| `SITE_OPTIONS`        | `options`             | Set site title, tagline, icon      |
+| `SETUP_BLOG`          | `setup-blog`          | Blog-specific setup step           |
+| `BUSINESS_INFO`       | `businessInfo`        | Business details (name, category)  |
+| `STORE_ADDRESS`       | `storeAddress`        | WooCommerce store address          |
+| `SITE_SPEC`           | `site-spec`           | AI-assisted site specification     |
 
 ### Domain steps
 
@@ -292,19 +287,14 @@ injects the user registration/login step automatically — you don't build it yo
 ```ts
 // Gate ALL steps (most signup flows)
 function initialize() {
-	return stepsWithRequiredLogin( [
-		STEPS.GOALS,
-		STEPS.DOMAIN_SEARCH,
-		STEPS.UNIFIED_PLANS,
-		STEPS.PROCESSING,
-	] );
+	return stepsWithRequiredLogin( [ STEPS.DOMAIN_SEARCH, STEPS.UNIFIED_PLANS, STEPS.PROCESSING ] );
 }
 
 // Gate SOME steps (allow browsing before login)
 function initialize() {
 	return [
-		STEPS.GOALS,
-		...stepsWithRequiredLogin( [ STEPS.DOMAIN_SEARCH, STEPS.UNIFIED_PLANS, STEPS.PROCESSING ] ),
+		STEPS.DOMAIN_SEARCH,
+		...stepsWithRequiredLogin( [ STEPS.UNIFIED_PLANS, STEPS.PROCESSING ] ),
 	] as const;
 }
 ```
@@ -345,12 +335,11 @@ If `goToCheckout` is true, redirect to `/checkout/<siteSlug>?redirect_to=<destin
 
 ## Common flow patterns
 
-### Minimal signup (goals → domain → plans → processing → launchpad)
+### Minimal signup (domain → plans → processing → launchpad)
 
 ```ts
 function initialize() {
 	return stepsWithRequiredLogin( [
-		STEPS.GOALS,
 		STEPS.DOMAIN_SEARCH,
 		STEPS.UNIFIED_PLANS,
 		STEPS.PROCESSING,
@@ -455,7 +444,7 @@ The flow is accessible at `/setup/my-flow` after deployment.
 
 7. **Forgetting `as const`** — If `initialize` returns a plain array (not using
    `stepsWithRequiredLogin`), add `as const` at the end so TypeScript infers the
-   literal step slugs, like `return [ STEPS.GOALS, STEPS.PROCESSING ] as const;`.
+   literal step slugs, like `return [ STEPS.DOMAIN_SEARCH, STEPS.PROCESSING ] as const;`.
    `stepsWithRequiredLogin()` handles this for you.
 
 8. **Not registering in `registered-flows.ts`** — The flow won't exist. The URL

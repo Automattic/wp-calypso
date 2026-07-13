@@ -1,4 +1,3 @@
-import { isStartWritingFlow } from '@automattic/onboarding';
 import { useTranslate } from 'i18n-calypso';
 
 interface Props {
@@ -7,9 +6,8 @@ interface Props {
 	isFirstPostPublished?: boolean;
 }
 
-const useCelebrationData = ( { flow, siteSlug = '', isFirstPostPublished = false }: Props ) => {
+const useCelebrationData = ( { siteSlug = '', isFirstPostPublished = false }: Props ) => {
 	const translate = useTranslate();
-	const isStartWritingFlowOrFirstPostPublished = isStartWritingFlow( flow ) || isFirstPostPublished;
 	const defaultCelebrationData = {
 		dashboardCtaName: 'Go to dashboard',
 		dashboardCtaText: translate( 'Go to dashboard' ),
@@ -19,16 +17,14 @@ const useCelebrationData = ( { flow, siteSlug = '', isFirstPostPublished = false
 	return {
 		...defaultCelebrationData,
 		title: translate( 'Your blog’s ready!' ),
-		subTitle: isStartWritingFlowOrFirstPostPublished
+		subTitle: isFirstPostPublished
 			? translate( 'Now it’s time to connect your social accounts.' )
 			: translate( 'Now it’s time to start posting.' ),
-		primaryCtaName: isStartWritingFlowOrFirstPostPublished
-			? 'Connect to social'
-			: 'Write your first post',
-		primaryCtaText: isStartWritingFlowOrFirstPostPublished
+		primaryCtaName: isFirstPostPublished ? 'Connect to social' : 'Write your first post',
+		primaryCtaText: isFirstPostPublished
 			? translate( 'Connect to social' )
 			: translate( 'Write your first post' ),
-		primaryCtaLink: isStartWritingFlowOrFirstPostPublished
+		primaryCtaLink: isFirstPostPublished
 			? `https://${ siteSlug }/wp-admin/admin.php?page=jetpack-social`
 			: `/post/${ siteSlug }`,
 		secondaryCtaName: 'Visit your blog',

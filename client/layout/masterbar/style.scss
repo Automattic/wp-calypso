@@ -453,23 +453,6 @@ body.is-mobile-app-view {
 		background: var(--color-masterbar-item-active-background);
 	}
 
-	&:hover .masterbar__item-bubble {
-		border-color: var(--color-masterbar-item-hover-background);
-	}
-
-	&.has-unseen .masterbar__item-bubble {
-		display: block;
-		background: var(--color-masterbar-unread-dot-background);
-	}
-
-	&.is-active .masterbar__item-bubble {
-		display: none;
-	}
-
-	&.is-initial-load .masterbar__item-bubble {
-		animation: none;
-	}
-
 	&.masterbar__close-button {
 		color: var(--color-checkout-masterbar-text);
 		cursor: pointer;

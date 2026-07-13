@@ -1,12 +1,19 @@
 import {
+	FEATURE_CLOUD_CRITICAL_CSS,
+	FEATURE_SOCIAL_ENHANCED_PUBLISHING,
 	PLAN_JETPACK_SECURITY_T1_YEARLY,
 	PRODUCT_JETPACK_BACKUP_T1_YEARLY,
 	PRODUCT_JETPACK_BOOST,
 	PRODUCT_JETPACK_SEARCH,
 	PRODUCT_JETPACK_SOCIAL_BASIC,
 	PRODUCT_JETPACK_VIDEOPRESS,
+	WPCOM_FEATURES_ANTISPAM,
+	WPCOM_FEATURES_BACKUPS,
+	WPCOM_FEATURES_CLASSIC_SEARCH,
+	WPCOM_FEATURES_SCAN,
+	WPCOM_FEATURES_VIDEOPRESS,
 } from '@automattic/calypso-products';
-import { translate } from 'i18n-calypso';
+import { translate, TranslateResult } from 'i18n-calypso';
 import SecurityIcon from './icons/jetpack-icon-lock.svg';
 import BackupIcon from './icons/jetpack-product-icon-backup.svg';
 import BoostIcon from './icons/jetpack-product-icon-boost.svg';
@@ -15,15 +22,17 @@ import SocialIcon from './icons/jetpack-product-icon-social.svg';
 import VideoPressIcon from './icons/jetpack-product-icon-videopress.svg';
 
 export type Product = {
-	description: string;
+	description: TranslateResult;
 	href: string;
 	iconUrl: string;
 	isFree: boolean;
 	slug: string;
 	title: string;
-	features: string[];
+	// Feature slugs that indicate the product (or a plan bundling it) is already
+	// owned. The upsell is hidden when the site has all of them.
+	ownedFeatures: string[];
 	checkoutSlug: string;
-	checkoutUrl: string | null;
+	checkoutUrl?: string;
 };
 
 export function getAvailableUpsells() {
@@ -37,26 +46,7 @@ export function getAvailableUpsells() {
 			isFree: false,
 			slug: 'security',
 			title: 'Security',
-			features: [
-				'akismet',
-				'antispam',
-				'backups',
-				'backups-daily',
-				'core/audio',
-				'full-activity-log',
-				'google-analytics',
-				'google-my-business',
-				'priority_support',
-				'real-time-backups',
-				'scan',
-				'simple-payments',
-				'subscriber-unlimited-imports',
-				'support',
-				'vaultpress-backups',
-				'video-hosting',
-				'wordads',
-				'wordads-jetpack',
-			],
+			ownedFeatures: [ WPCOM_FEATURES_BACKUPS, WPCOM_FEATURES_SCAN, WPCOM_FEATURES_ANTISPAM ],
 			checkoutSlug: PLAN_JETPACK_SECURITY_T1_YEARLY,
 		},
 		{
@@ -68,7 +58,7 @@ export function getAvailableUpsells() {
 			isFree: false,
 			slug: 'backup',
 			title: 'Backup',
-			features: [ 'backups', 'full-activity-log', 'real-time-backups', 'priority_support' ],
+			ownedFeatures: [ WPCOM_FEATURES_BACKUPS ],
 			checkoutSlug: PRODUCT_JETPACK_BACKUP_T1_YEARLY,
 		},
 		{
@@ -80,7 +70,7 @@ export function getAvailableUpsells() {
 			isFree: false,
 			slug: 'search',
 			title: 'Search',
-			features: [ 'search', 'instant-search' ],
+			ownedFeatures: [ WPCOM_FEATURES_CLASSIC_SEARCH ],
 			checkoutSlug: PRODUCT_JETPACK_SEARCH,
 		},
 		{
@@ -92,7 +82,7 @@ export function getAvailableUpsells() {
 			isFree: false,
 			slug: 'video',
 			title: 'VideoPress',
-			features: [ 'videopress', 'videopress-1tb-storage' ],
+			ownedFeatures: [ WPCOM_FEATURES_VIDEOPRESS ],
 			checkoutSlug: PRODUCT_JETPACK_VIDEOPRESS,
 		},
 		{
@@ -104,14 +94,7 @@ export function getAvailableUpsells() {
 			isFree: true,
 			slug: 'boost',
 			title: 'Boost',
-			features: [
-				'cloud-critical-css',
-				'cornerstone-10-pages',
-				'image-cdn-liar',
-				'image-cdn-quality',
-				'image-size-analysis',
-				'performance-history',
-			],
+			ownedFeatures: [ FEATURE_CLOUD_CRITICAL_CSS ],
 			checkoutSlug: PRODUCT_JETPACK_BOOST,
 		},
 		{
@@ -123,19 +106,24 @@ export function getAvailableUpsells() {
 			isFree: true,
 			slug: 'social',
 			title: 'Social',
-			features: [
-				'social-enhanced-publishing',
-				'social-image-generator',
-				'subscriber-unlimited-imports',
-			],
+			ownedFeatures: [ FEATURE_SOCIAL_ENHANCED_PUBLISHING ],
 			checkoutSlug: PRODUCT_JETPACK_SOCIAL_BASIC,
 		},
-	] as Product[];
+	] satisfies Product[];
 }
 
 // TODO: Reconfigure this to separate const data and translate calls.
 // Currently we end up calling getAvailableUpsells() twice per render.
 export function getUpsellFeatureSlugs(): string[] {
 	const upsells = getAvailableUpsells();
-	return upsells.flatMap( ( upsell ) => upsell.features );
+	return [ ...new Set( upsells.flatMap( ( upsell ) => upsell.ownedFeatures ) ) ];
+}
+
+export function filterUpsellsBySiteFeatures(
+	upsells: Product[],
+	siteFeatures: string[]
+): Product[] {
+	return upsells.filter(
+		( upsell ) => ! upsell.ownedFeatures.every( ( feature ) => siteFeatures.includes( feature ) )
+	);
 }

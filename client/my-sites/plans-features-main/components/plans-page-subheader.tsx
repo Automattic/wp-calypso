@@ -8,18 +8,22 @@ import FormattedHeader from 'calypso/components/formatted-header';
 import { shouldUseStepContainerV2 } from 'calypso/landing/stepper/declarative-flow/helpers/should-use-step-container-v2';
 import { SelectedFeatureData } from '../hooks/use-selected-feature';
 
-const Subheader = styled.p< { isUsingStepContainerV2?: boolean; isVisualSplitIntent?: boolean } >`
+const Subheader = styled.p< {
+	isPlansGridRedesign?: boolean;
+	isUsingStepContainerV2?: boolean;
+	isVisualSplitIntent?: boolean;
+} >`
 	${ ( props ) =>
 		props.isUsingStepContainerV2
 			? `
-				margin: -2.5rem 0 3rem;
+				margin: ${ props.isPlansGridRedesign ? '-3rem 0 3rem' : '-2.5rem 0 3rem' };
 				color: var( --color-text );
 				font-size: 0.875rem;
 				line-height: 1.5;
 				text-wrap: balance;
 				text-align: left;
 				button.is-borderless {
-					font-weight: 500;
+					font-weight: ${ props.isPlansGridRedesign ? 'inherit' : '500' };
 					color: inherit;
 					text-decoration: underline;
 					font-size: inherit;
@@ -30,6 +34,9 @@ const Subheader = styled.p< { isUsingStepContainerV2?: boolean; isVisualSplitInt
 				}
 				@media ( min-width: 960px ) {
 					font-size: 1rem;
+					button.is-borderless {
+						padding: 1px 0;
+					}
 				}
 			`
 			: `
@@ -38,7 +45,7 @@ const Subheader = styled.p< { isUsingStepContainerV2?: boolean; isVisualSplitInt
 				font-size: 1rem;
 				text-align: center;
 				button.is-borderless {
-					font-weight: ${ props.isVisualSplitIntent ? 'inherit' : '500' };
+					font-weight: ${ props.isPlansGridRedesign || props.isVisualSplitIntent ? 'inherit' : '500' };
 					color: var( --studio-gray-90 );
 					text-decoration: underline;
 					font-size: 16px;
@@ -49,6 +56,11 @@ const Subheader = styled.p< { isUsingStepContainerV2?: boolean; isVisualSplitInt
 				}
 				@media ( min-width: 600px ) {
 					text-align: center;
+				}
+				@media ( min-width: 960px ) {
+					button.is-borderless {
+						padding: 1px 0;
+					}
 				}
 			` }
 `;
@@ -315,6 +327,7 @@ const PlansPageSubheader = ( {
 	selectedFeature,
 	intent,
 	showDifferentiatorHeader,
+	isPlansGridRedesign,
 }: {
 	siteSlug?: string | null;
 	isDisplayingPlansNeededForFeature: boolean;
@@ -327,6 +340,7 @@ const PlansPageSubheader = ( {
 	selectedFeature: SelectedFeatureData | null;
 	intent?: string;
 	showDifferentiatorHeader?: boolean;
+	isPlansGridRedesign?: boolean;
 } ) => {
 	const translate = useTranslate();
 
@@ -338,6 +352,7 @@ const PlansPageSubheader = ( {
 		intent === 'plans-wordpress-hosting' || intent === 'plans-website-builder';
 
 	const subheaderCommonProps = {
+		isPlansGridRedesign,
 		isUsingStepContainerV2,
 		isVisualSplitIntent,
 	};

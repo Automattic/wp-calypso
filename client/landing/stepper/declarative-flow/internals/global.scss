@@ -71,7 +71,6 @@ button {
  * Site Setup
  */
 .site-setup:not( :has( .step-container-v2 ) ),
-.onboarding.goals:not( :has( .step-container-v2 ) ),
 .onboarding.design-setup:not( :has( .step-container-v2 ) ),
 .site-migration:not( :has( .step-container-v2 ) ),
 .migration,
@@ -121,13 +120,12 @@ button {
 			&.new-or-existing-site,
 			&.domains:not( .copy-site ):not( .ai-site-builder ):not( .domain-and-plan ):not(
 					.onboarding
-				):not( .newsletter ):not( .readymade-template ):not( .reblogging ):not( .start-writing ) {
+				):not( .newsletter ):not( .readymade-template ):not( .reblogging ) {
 				margin-top: -60px;
 			}
 		}
 
 		@include break-xlarge {
-			&.goals,
 			&.domains {
 				margin-top: -60px;
 

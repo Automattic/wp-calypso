@@ -6,6 +6,7 @@ import qs from 'qs';
 import { findShortcutForRange } from 'calypso/components/date-range/use-shortcuts';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import { useMomentInSite } from 'calypso/my-sites/stats/hooks/use-moment-site-zone';
 import { useSelector } from 'calypso/state';
 import getSiteId from 'calypso/state/sites/selectors/get-site-id';
 import DateControl from '../date-control';
@@ -13,18 +14,23 @@ import { DateRangePickerShortcut } from '../date-range/shortcuts';
 import type { JSX } from 'react';
 
 type DateRange = {
-	chartStart: string;
-	chartEnd: string;
+	// Absent for shortcuts without a fixed range (e.g. "All time").
+	chartStart?: string;
+	chartEnd?: string;
 	daysInRange: number;
 	shortcutId?: string;
 };
 interface StatsDateControlProps {
 	slug: string;
-	queryParams: string;
+	// Either a raw query string or an already-parsed query object; both are accepted by `qs.parse`.
+	queryParams: string | Record< string, string >;
 	period: 'day' | 'week' | 'month' | 'year';
 	dateRange: DateRange;
 	shortcutList: DateRangePickerShortcut[];
 	overlay?: JSX.Element;
+	// Optional module segment used by summary pages so links resolve to
+	// `/stats/{period}/{module}/{slug}` instead of the Traffic `/stats/{period}/{slug}`.
+	module?: string;
 	onGatedHandler: (
 		events: { name: string; params?: object }[],
 		event_from: string,
@@ -41,6 +47,7 @@ type EventNameKey =
 	| 'last_12_months'
 	| 'year_to_date'
 	| 'last_3_years'
+	| 'all_time'
 	| 'custom_date_range'
 	| 'apply_button'
 	| 'trigger_button';
@@ -61,6 +68,7 @@ const eventNames: EventNames = {
 		last_12_months: 'jetpack_odyssey_stats_date_picker_shortcut_last_12_months_clicked',
 		year_to_date: 'jetpack_odyssey_stats_date_picker_shortcut_year_to_date_clicked',
 		last_3_years: 'jetpack_odyssey_stats_date_picker_shortcut_last_3_years_clicked',
+		all_time: 'jetpack_odyssey_stats_date_picker_shortcut_all_time_clicked',
 		custom_date_range: 'jetpack_odyssey_stats_date_picker_shortcut_custom_date_range_clicked',
 		apply_button: 'jetpack_odyssey_stats_date_picker_apply_button_clicked',
 		trigger_button: 'jetpack_odyssey_stats_date_picker_opened',
@@ -73,6 +81,7 @@ const eventNames: EventNames = {
 		last_12_months: 'calypso_stats_date_picker_shortcut_last_12_months_clicked',
 		year_to_date: 'calypso_stats_date_picker_shortcut_year_to_date_clicked',
 		last_3_years: 'calypso_stats_date_picker_shortcut_last_3_years_clicked',
+		all_time: 'calypso_stats_date_picker_shortcut_all_time_clicked',
 		custom_date_range: 'calypso_stats_date_picker_shortcut_custom_date_range_clicked',
 		apply_button: 'calypso_stats_date_picker_apply_button_clicked',
 		trigger_button: 'calypso_stats_date_picker_opened',
@@ -85,6 +94,7 @@ const StatsDateControl = ( {
 	dateRange,
 	shortcutList,
 	overlay,
+	module,
 	onGatedHandler,
 }: StatsDateControlProps ) => {
 	// ToDo: Consider removing period from shortcuts.
@@ -94,25 +104,25 @@ const StatsDateControl = ( {
 	const moment = useLocalizedMoment();
 	const isOdysseyStats = config.isEnabled( 'is_running_in_jetpack_site' );
 	const siteId = useSelector( ( state ) => getSiteId( state, slug ) );
+	const momentInSite = useMomentInSite( siteId );
 
-	/**
-	 * Remove start date from query params if it's out of range.
-	 * @param queryParamsObject
-	 * @param startDate
-	 * @param endDate
-	 */
-	const removeOutOfRangeStartDate = (
-		queryParamsObject: Record< string, any >,
-		startDate: string,
-		endDate: string
-	): void => {
-		const selectedStartDate = queryParamsObject.startDate as string | undefined;
-
-		if ( selectedStartDate && ( selectedStartDate < startDate || selectedStartDate > endDate ) ) {
-			// When there is no selected date, it takes today by default.
-			delete queryParamsObject.startDate;
-		}
+	// Drop params that belong to the legacy summary date contract so it can't
+	// coexist with the modern `chartStart`/`chartEnd` one in the same URL.
+	const removeLegacyRangeParams = ( queryParamsObject: Record< string, unknown > ): void => {
+		[
+			'startDate',
+			'endDate',
+			'num',
+			'summarize',
+			'customRangeStart',
+			'customRangeEnd',
+			'shortcut',
+			'navigation',
+		].forEach( ( key ) => delete queryParamsObject[ key ] );
 	};
+
+	const basePath = ( period: string ) =>
+		module ? `/stats/${ period }/${ module }/${ slug }` : `/stats/${ period }/${ slug }`;
 
 	// Shared link generation helper.
 	const generateNewLink = (
@@ -122,9 +132,7 @@ const StatsDateControl = ( {
 		shortcutId?: string
 	) => {
 		const queryParamsObject = qs.parse( queryParams );
-		removeOutOfRangeStartDate( queryParamsObject, startDate, endDate );
-		delete queryParamsObject.shortcut;
-		delete queryParamsObject.navigation;
+		removeLegacyRangeParams( queryParamsObject );
 
 		const dateRangeParams = Object.assign( {}, queryParamsObject, {
 			chartStart: startDate,
@@ -138,8 +146,27 @@ const StatsDateControl = ( {
 		const newRangeQuery = qs.stringify( dateRangeParams, {
 			addQueryPrefix: true,
 		} );
-		const url = `/stats/${ period }/${ slug }`;
-		return `${ url }${ newRangeQuery }`;
+		return `${ basePath( period ) }${ newRangeQuery }`;
+	};
+
+	// "All time" keeps the legacy `num=-1&summarize=1` contract so the existing
+	// query/label logic keeps working instead of a synthetic huge chart range.
+	const generateAllTimeLink = () => {
+		const queryParamsObject = qs.parse( queryParams );
+		removeLegacyRangeParams( queryParamsObject );
+		delete queryParamsObject.chartStart;
+		delete queryParamsObject.chartEnd;
+
+		const allTimeParams = Object.assign( {}, queryParamsObject, {
+			startDate: momentInSite().format( 'YYYY-MM-DD' ),
+			summarize: 1,
+			num: -1,
+		} );
+
+		const newRangeQuery = qs.stringify( allTimeParams, {
+			addQueryPrefix: true,
+		} );
+		return `${ basePath( 'day' ) }${ newRangeQuery }`;
 	};
 
 	// Determine period based on number of days in date range.
@@ -200,7 +227,8 @@ const StatsDateControl = ( {
 	// handler for shortcut clicks
 	const onShortcutClickHandler = (
 		shortcut: DateRangePickerShortcut,
-		closePopoverAndCommit: () => void
+		closePopoverAndCommit: () => void,
+		closePopover: () => void
 	) => {
 		const event_from = isOdysseyStats ? 'jetpack_odyssey' : 'calypso';
 
@@ -214,7 +242,10 @@ const StatsDateControl = ( {
 			}
 		} else {
 			recordTracksEvent( eventNames[ event_from ][ shortcut.id as EventNameKey ] );
-			if ( shortcut.id !== 'custom_date_range' ) {
+			if ( shortcut.id === 'all_time' ) {
+				closePopover();
+				setTimeout( () => page( generateAllTimeLink() ), 250 );
+			} else if ( shortcut.id !== 'custom_date_range' ) {
 				// Prevent the unclickable shortcut from being applied.
 				closePopoverAndCommit();
 			}

@@ -309,6 +309,10 @@
 }
 
 .plans-grid-next.is-plans-grid-redesign-experiment {
+	.plans-grid-next-comparison-grid .plans-grid__plan-pill {
+		letter-spacing: 0.25px;
+	}
+
 	.plan-comparison-grid__available-checkmark {
 		color: var( --studio-green-60 );
 		fill: var( --studio-green-60 );

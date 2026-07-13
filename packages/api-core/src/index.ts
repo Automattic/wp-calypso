@@ -4,6 +4,7 @@ export * from './error';
 
 export * from './admin-bar';
 export * from './agency';
+export * from './agency-team';
 export * from './akismet-api-key';
 export * from './big-sky-plugin';
 export * from './cancellation-offers';

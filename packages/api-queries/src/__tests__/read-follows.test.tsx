@@ -20,6 +20,7 @@ import {
 	getOrganizationSiteSubscriptionsFromData,
 	markSiteSubscriptionUnfollowed,
 	patchSiteSubscription,
+	patchSubscriptionSeenCount,
 	unfollowSiteMutation,
 	updateSiteCommentEmailSubscriptionMutation,
 	updateSitePostEmailDeliveryFrequencyMutation,
@@ -358,6 +359,87 @@ describe( 'follow selectors and cache helpers', () => {
 		expect(
 			getIsSubscribedFromData( getCachedData( client ), { feedUrl: 'https://example.com/feed/' } )
 		).toBe( false );
+	} );
+} );
+
+describe( 'patchSubscriptionSeenCount', () => {
+	it( 'does not patch when the subscriptions query has no cached data', () => {
+		const client = newClient();
+
+		patchSubscriptionSeenCount( client, { feedIds: [ 10 ] }, ( n ) => n - 1 );
+
+		expect( getCachedData( client ) ).toBeUndefined();
+	} );
+
+	it( 'does not patch when matching by an empty feedIds list', () => {
+		const client = newClient();
+		const sub = makeFollow( { feed_ID: 10, unseen_count: 4 } );
+		client.setQueryData( getSiteSubscriptionsQueryKey(), makeData( [ sub ] ) );
+
+		patchSubscriptionSeenCount( client, { feedIds: [] }, ( n ) => n - 1 );
+
+		expect( getCachedData( client )?.pages[ 0 ].subscriptions[ 0 ].unseen_count ).toBe( 4 );
+	} );
+
+	it( 'applies the update to a single subscription matched by feed id', () => {
+		const client = newClient();
+		const other = makeFollow( { feed_ID: 9, unseen_count: 3 } );
+		const target = makeFollow( { feed_ID: 10, unseen_count: 5 } );
+		client.setQueryData( getSiteSubscriptionsQueryKey(), makeData( [ other, target ] ) );
+
+		patchSubscriptionSeenCount( client, { feedIds: [ 10 ] }, ( n ) => n - 2 );
+
+		const subs = getCachedData( client )?.pages[ 0 ].subscriptions;
+		expect( subs?.[ 0 ].unseen_count ).toBe( 3 );
+		expect( subs?.[ 1 ].unseen_count ).toBe( 3 );
+	} );
+
+	it( 'applies the update to multiple subscriptions in the feed ids set', () => {
+		const client = newClient();
+		const a = makeFollow( { feed_ID: 10, unseen_count: 4 } );
+		const b = makeFollow( { feed_ID: 20, unseen_count: 2 } );
+		const c = makeFollow( { feed_ID: 30, unseen_count: 7 } );
+		client.setQueryData( getSiteSubscriptionsQueryKey(), makeData( [ a, b, c ] ) );
+
+		patchSubscriptionSeenCount( client, { feedIds: [ 10, 30 ] }, () => 0 );
+
+		const subs = getCachedData( client )?.pages[ 0 ].subscriptions;
+		expect( subs?.[ 0 ].unseen_count ).toBe( 0 );
+		expect( subs?.[ 1 ].unseen_count ).toBe( 2 );
+		expect( subs?.[ 2 ].unseen_count ).toBe( 0 );
+	} );
+
+	it( 'applies the update to the subscription matched by blog id', () => {
+		const client = newClient();
+		const other = makeFollow( { blog_ID: 100, unseen_count: 1 } );
+		const target = makeFollow( { blog_ID: 200, unseen_count: 6 } );
+		client.setQueryData( getSiteSubscriptionsQueryKey(), makeData( [ other, target ] ) );
+
+		patchSubscriptionSeenCount( client, { blogId: 200 }, ( n ) => n - 3 );
+
+		const subs = getCachedData( client )?.pages[ 0 ].subscriptions;
+		expect( subs?.[ 0 ].unseen_count ).toBe( 1 );
+		expect( subs?.[ 1 ].unseen_count ).toBe( 3 );
+	} );
+
+	it( 'clamps the unseen count at zero when the updater returns negative', () => {
+		const client = newClient();
+		const sub = makeFollow( { feed_ID: 10, unseen_count: 3 } );
+		client.setQueryData( getSiteSubscriptionsQueryKey(), makeData( [ sub ] ) );
+
+		patchSubscriptionSeenCount( client, { feedIds: [ 10 ] }, ( n ) => n - 5 );
+
+		expect( getCachedData( client )?.pages[ 0 ].subscriptions[ 0 ].unseen_count ).toBe( 0 );
+	} );
+
+	it( 'treats missing unseen_count as zero when computing the update', () => {
+		const client = newClient();
+		const sub = makeFollow( { feed_ID: 10 } );
+		client.setQueryData( getSiteSubscriptionsQueryKey(), makeData( [ sub ] ) );
+
+		patchSubscriptionSeenCount( client, { feedIds: [ 10 ] }, ( n ) => n + 4 );
+
+		expect( getCachedData( client )?.pages[ 0 ].subscriptions[ 0 ].unseen_count ).toBe( 4 );
 	} );
 } );
 
