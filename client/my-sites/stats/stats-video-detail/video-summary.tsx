@@ -49,6 +49,7 @@ interface BucketRecord {
 
 interface VideoSummaryData {
 	data?: Array< { period: string; value: number } >;
+	post?: { post_date?: string } | null;
 }
 
 const STAT_TYPES: VideoStatType[] = [ 'views', 'impressions', 'watch_time' ];
@@ -86,16 +87,48 @@ export default function VideoSummary( {
 
 	const apiPeriod: ApiPeriod = uiPeriod === 'day' || uiPeriod === 'week' ? 'month' : 'year';
 
+	// The video's publish date, so the chart never shows periods before the
+	// video existed. Always queried with period=month (rather than reusing
+	// `apiPeriod`, which can be 'year') to mirror the parent StatsVideoDetail
+	// component's videoInfoQuery, so this reuses the same cached response.
+	const videoInfoQuery = useMemo(
+		() => ( { postId, statType: 'views', period: 'month' as const } ),
+		[ postId ]
+	);
+	const videoPublishDate = useSelector(
+		( state ) =>
+			(
+				getSiteStatsNormalizedData(
+					state,
+					siteId,
+					'statsVideo',
+					videoInfoQuery
+				) as VideoSummaryData | null
+			 )?.post?.post_date ?? null
+	);
+
 	// The endpoint's `month` window spans 31 days inclusive; trim to the
 	// trailing 30 so totals line up with the 30-day window the Videos module
-	// and the All videos page show by default. Shared by the bucketing below
-	// and by the header's date-range label, so both agree on the window.
+	// and the All videos page show by default, and drop any raw entry before
+	// the video's publish date. Shared by the bucketing below and by the
+	// header's date-range label, so both agree on the window.
 	const trimToTrailingWindow = useCallback(
 		(
 			data?: Array< { period: string; value: number } >
-		): Array< { period: string; value: number } > | undefined =>
-			apiPeriod === 'month' && data && data.length > 30 ? data.slice( -30 ) : data,
-		[ apiPeriod ]
+		): Array< { period: string; value: number } > | undefined => {
+			const trimmed = apiPeriod === 'month' && data && data.length > 30 ? data.slice( -30 ) : data;
+			if ( ! trimmed || ! videoPublishDate ) {
+				return trimmed;
+			}
+			// apiPeriod === 'year' raw entries are whole months (e.g.
+			// '2026-07'); comparing those at day granularity would drop the
+			// publish month entirely for a video published mid-month.
+			const unit = apiPeriod === 'year' ? 'month' : 'day';
+			return trimmed.filter(
+				( { period } ) => ! moment( period ).isBefore( videoPublishDate, unit )
+			);
+		},
+		[ apiPeriod, videoPublishDate, moment ]
 	);
 
 	const queries = useMemo(
@@ -194,14 +227,17 @@ export default function VideoSummary( {
 			] )
 		).sort();
 
-		// Cap to the most recent STATS_SUMMARY_MAX_BARS buckets so this chart
-		// shows the same amount of history per view as the Post Details chart,
-		// which pages in chunks of the same size. Weeks/Years will still fall
-		// short of that cap: the endpoint's `month`/`year` windows only cover
-		// ~30 days / ~13 months of raw data, which bucket into fewer than 10
-		// weeks/years regardless of this cap — there's no more granular data
-		// to draw from without a backend change.
-		return keys.slice( -STATS_SUMMARY_MAX_BARS ).map( ( key ) => ( {
+		// Cap Weeks/Months/Years to the most recent STATS_SUMMARY_MAX_BARS
+		// buckets so they show the same amount of history per view as the
+		// Post Details chart, which pages in chunks of the same size. Weeks/
+		// Years will still fall short of that cap: the endpoint's `month`/
+		// `year` windows only cover ~30 days / ~13 months of raw data, which
+		// bucket into fewer than 10 weeks/years regardless of this cap —
+		// there's no more granular data to draw from without a backend
+		// change. Days aren't capped; there's no pagination for this chart,
+		// so it shows the full ~30-day window it always has.
+		const cappedKeys = uiPeriod === 'day' ? keys : keys.slice( -STATS_SUMMARY_MAX_BARS );
+		return cappedKeys.map( ( key ) => ( {
 			key,
 			plays: playsByBucket.get( key ) ?? 0,
 			impressions: impressionsByBucket.get( key ) ?? 0,
@@ -344,6 +380,17 @@ export default function VideoSummary( {
 						query={ queries[ type ] }
 					/>
 				) ) }
+			{ /* apiPeriod is already 'month' on the Days/Weeks tabs, so
+			queries.views above is this exact query already; only fetch it
+			separately when viewing Months/Years. */ }
+			{ siteId && apiPeriod !== 'month' && (
+				<QuerySiteStats
+					key="video-info"
+					siteId={ siteId }
+					statType="statsVideo"
+					query={ videoInfoQuery }
+				/>
+			) }
 
 			<StatsPeriodHeader>
 				{ /* The video stats endpoint only returns a fixed trailing window
