@@ -15,7 +15,6 @@ import { getAgentManager, UIMessage } from '@automattic/agenttic-client';
 import { getAgentsManagerInlineData } from './get-agents-manager-inline-data';
 import { isReaderChatAgent } from './is-reader-chat-agent';
 import { useReaderFollowupSuggestions } from './reader-followup-hook';
-import type { ImageUploadHook } from '../hooks/use-image-upload';
 import type {
 	ToolProvider,
 	ContextProvider,
@@ -121,8 +120,6 @@ export type UseCheckpointReturn = {
 /** Hook that returns checkpoint utilities for the current editor session. */
 export type UseCheckpointHook = () => UseCheckpointReturn;
 
-export type { ImageUploadHook };
-
 /** Optional flags providers can declare to opt into AM chat-dock features. */
 export interface ProviderCapabilities {
 	/** Adds the "Split screen sidebar" chat-header menu item when true. */
@@ -175,7 +172,6 @@ export interface LoadedProviders {
 	useSuggestions?: UseSuggestionsHook;
 	getChatComponent?: GetChatComponent;
 	siteBuildUtils?: SiteBuildUtils;
-	useImageUpload?: ImageUploadHook;
 	useCheckpoint?: UseCheckpointHook;
 	/**
 	 * Streamed task-update callback, forwarded to useAgentChat's `onTaskUpdate`.
@@ -470,7 +466,6 @@ export async function loadExternalProviders(): Promise< LoadedProviders > {
 	let mergedAbilitiesSetup: AbilitiesSetupHook | undefined;
 	let mergedGetChatComponent: GetChatComponent | undefined;
 	let mergedSiteBuildUtils: SiteBuildUtils | undefined;
-	let mergedImageUpload: ImageUploadHook | undefined;
 	let mergedUseCheckpoint: UseCheckpointHook | undefined;
 	let mergedOnTaskUpdate: LoadedProviders[ 'onTaskUpdate' ] | undefined;
 	// OR-merged across all providers.
@@ -558,9 +553,6 @@ export async function loadExternalProviders(): Promise< LoadedProviders > {
 		}
 		if ( module.siteBuildUtils && ! mergedSiteBuildUtils ) {
 			mergedSiteBuildUtils = module.siteBuildUtils;
-		}
-		if ( module.useImageUpload && ! mergedImageUpload ) {
-			mergedImageUpload = module.useImageUpload;
 		}
 		if ( module.useCheckpoint && ! mergedUseCheckpoint ) {
 			mergedUseCheckpoint = module.useCheckpoint;
@@ -703,7 +695,6 @@ export async function loadExternalProviders(): Promise< LoadedProviders > {
 		useSuggestions: mergedUseSuggestions,
 		getChatComponent: mergedGetChatComponent,
 		siteBuildUtils: mergedSiteBuildUtils,
-		useImageUpload: mergedImageUpload,
 		useCheckpoint: mergedUseCheckpoint,
 		// Match peer fields: undefined when no provider opted in.
 		capabilities: Object.keys( mergedCapabilities ).length ? mergedCapabilities : undefined,
