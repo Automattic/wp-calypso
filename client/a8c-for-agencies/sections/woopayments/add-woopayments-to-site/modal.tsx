@@ -43,7 +43,7 @@ const AddWooPaymentsToSiteModal = ( { onClose }: { onClose: () => void } ) => {
 			onRequestClose={ onClose }
 			size="large"
 		>
-			<VStack className="woopayments-add-site-modal__body" spacing={ 6 }>
+			<VStack spacing={ 6 }>
 				<Text>
 					{ createInterpolateElement(
 						__(

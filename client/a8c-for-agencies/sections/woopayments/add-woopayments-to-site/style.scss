@@ -1,20 +1,18 @@
 .woopayments-add-site-modal {
-	// The Modal has no dedicated footer slot, so pin our own: let the body scroll
-	// and keep the actions visible regardless of how long the site list is.
+	// The Modal has no dedicated footer slot, and its content is the scrolling
+	// element. Pin the actions to the bottom of that scroll area so they stay
+	// reachable no matter how long the site list is. Move the content's bottom
+	// padding onto the footer so its opaque background covers the list all the
+	// way down and no rows peek through beneath the buttons.
 	.components-modal__content {
-		display: flex;
-		flex-direction: column;
-		overflow: hidden;
-	}
-
-	&__body {
-		flex: 1;
-		min-height: 0;
-		overflow-y: auto;
+		padding-bottom: 0;
 	}
 
 	&__footer {
-		flex-shrink: 0;
-		padding-top: 24px;
+		position: sticky;
+		bottom: 0;
+		z-index: 1;
+		padding-block: 16px 24px;
+		background: var( --color-surface );
 	}
 }
