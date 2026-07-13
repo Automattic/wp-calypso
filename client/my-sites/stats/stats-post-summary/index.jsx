@@ -171,12 +171,17 @@ class StatsPostSummary extends Component {
 				}
 
 				// statsByMonth() expands every year in stats.years to a full
-				// 12 months, which for the current year includes months that
-				// haven't happened yet; drop those rather than paginating
-				// into fake future bars.
+				// 12 months: for the current year that includes months that
+				// haven't happened yet, and for the first year it includes
+				// months before the post was published. Drop both rather than
+				// paginating into fake empty bars; post-publish months with
+				// zero views are kept, consistent with Days/Weeks paging.
 				const today = moment();
-				return [ ...statsByMonth( stats, moment ) ].filter( ( record ) =>
-					moment( record.startDate ).isSameOrBefore( today, 'month' )
+				const publishDate = stats.post?.post_date ?? stats.post?.post_date_gmt;
+				return [ ...statsByMonth( stats, moment ) ].filter(
+					( record ) =>
+						moment( record.startDate ).isSameOrBefore( today, 'month' ) &&
+						( ! publishDate || ! moment( record.startDate ).isBefore( publishDate, 'month' ) )
 				);
 			}
 			default:
