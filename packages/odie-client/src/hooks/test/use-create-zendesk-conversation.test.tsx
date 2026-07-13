@@ -184,13 +184,19 @@ describe( 'useCreateZendeskConversation — Smooch-not-ready retry loop', () => 
 			'conv-1'
 		);
 
+		const {
+			ZENDESK_CUSTOM_FIELD_AI_CHAT_ID,
+			ZENDESK_CUSTOM_FIELD_WEBSITE_URL,
+			ZENDESK_SOURCE_URL_TICKET_FIELD_ID,
+		} = jest.requireMock( '@automattic/zendesk-client' );
+
 		expect( smoochCreateConversation ).toHaveBeenCalledWith( {
 			metadata: expect.objectContaining( {
 				supportInteractionId: 'int-1',
 				odieChatId: 'odie-1',
-				'zen:ticket_field:22054927': 'https://example.com',
-				'zen:ticket_field:23752099174548': window.location.href,
-				'zen:ticket_field:33538949515668': 'odie-1',
+				[ `zen:ticket_field:${ ZENDESK_CUSTOM_FIELD_WEBSITE_URL }` ]: 'https://example.com',
+				[ `zen:ticket_field:${ ZENDESK_SOURCE_URL_TICKET_FIELD_ID }` ]: window.location.href,
+				[ `zen:ticket_field:${ ZENDESK_CUSTOM_FIELD_AI_CHAT_ID }` ]: 'odie-1',
 			} ),
 		} );
 	} );
