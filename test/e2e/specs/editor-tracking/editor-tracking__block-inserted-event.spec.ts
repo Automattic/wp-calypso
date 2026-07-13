@@ -87,48 +87,51 @@ test.describe(
 		// for this theme/account; reproducing the event needs a new trigger (and
 		// confirmation the product still emits from_template_selector at all).
 		// Needs revisit. See TESTOPS-49.
-		test( 'In the page editor: block inserted event fires from template selector', async ( {
-			page,
-			pageEditor,
-		} ) => {
-			const accountName = getTestAccountByFeature( features );
-			let editorTracksEventManager: EditorTracksEventManager;
-			let siteSlug: string;
+		test.fixme(
+			'In the page editor: block inserted event fires from template selector',
+			async ( { page, pageEditor } ) => {
+				const accountName = getTestAccountByFeature( features );
+				let editorTracksEventManager: EditorTracksEventManager;
+				let siteSlug: string;
 
-			await test.step( 'Given I am authenticated', async () => {
-				const testAccount = new TestAccount( accountName );
-				await testAccount.authenticate( page );
-				siteSlug = testAccount.getSiteURL( { protocol: false } );
-				editorTracksEventManager = new EditorTracksEventManager( page );
-			} );
-
-			await test.step( 'When I start a new page', async () => {
-				await pageEditor.visit( 'page', { siteSlug } );
-				await pageEditor.waitUntilLoaded();
-				pageEditor.allowLeavingWithoutSaving();
-			} );
-
-			await test.step( 'When I clear Tracks events for a clean slate', async () => {
-				await editorTracksEventManager!.clearEvents();
-			} );
-
-			await test.step( 'When I add a page template', async () => {
-				const editorParent = await pageEditor.getEditorParent();
-				const inserterSelector = editorParent.getByRole( 'listbox', { name: 'All' } );
-				const modalSelector = editorParent.getByRole( 'listbox', {
-					name: 'Block patterns',
+				await test.step( 'Given I am authenticated', async () => {
+					const testAccount = new TestAccount( accountName );
+					await testAccount.authenticate( page );
+					siteSlug = testAccount.getSiteURL( { protocol: false } );
+					editorTracksEventManager = new EditorTracksEventManager( page );
 				} );
-				const firstPattern = inserterSelector.or( modalSelector ).getByRole( 'option' ).first();
-				await pageEditor.selectTemplate( firstPattern, { timeout: 15 * 1000 } );
-			} );
 
-			await test.step( 'Then "wpcom_block_inserted" event fires with "from_template_selector" set to true', async () => {
-				const eventDidFire = await editorTracksEventManager!.didEventFire( 'wpcom_block_inserted', {
-					matchingProperties: { from_template_selector: true },
+				await test.step( 'When I start a new page', async () => {
+					await pageEditor.visit( 'page', { siteSlug } );
+					await pageEditor.waitUntilLoaded();
+					pageEditor.allowLeavingWithoutSaving();
 				} );
-				expect( eventDidFire ).toBe( true );
-			} );
-		} );
+
+				await test.step( 'When I clear Tracks events for a clean slate', async () => {
+					await editorTracksEventManager!.clearEvents();
+				} );
+
+				await test.step( 'When I add a page template', async () => {
+					const editorParent = await pageEditor.getEditorParent();
+					const inserterSelector = editorParent.getByRole( 'listbox', { name: 'All' } );
+					const modalSelector = editorParent.getByRole( 'listbox', {
+						name: 'Block patterns',
+					} );
+					const firstPattern = inserterSelector.or( modalSelector ).getByRole( 'option' ).first();
+					await pageEditor.selectTemplate( firstPattern, { timeout: 15 * 1000 } );
+				} );
+
+				await test.step( 'Then "wpcom_block_inserted" event fires with "from_template_selector" set to true', async () => {
+					const eventDidFire = await editorTracksEventManager!.didEventFire(
+						'wpcom_block_inserted',
+						{
+							matchingProperties: { from_template_selector: true },
+						}
+					);
+					expect( eventDidFire ).toBe( true );
+				} );
+			}
+		);
 
 		test.describe( 'In the site editor', () => {
 			let testAccount: TestAccount;
@@ -155,7 +158,7 @@ test.describe(
 			// theme-specific and likely wrong for the current site theme. Needs the
 			// add-block-in-template-part flow re-targeted and a theme-agnostic
 			// template_part_id assertion. See TESTOPS-49.
-			test( 'block inserted event fires with entity_context', async ( { page } ) => {
+			test.fixme( 'block inserted event fires with entity_context', async ( { page } ) => {
 				const siteEditorAccountName = getTestAccountByFeature( {
 					...features,
 					variant: 'siteEditor',
