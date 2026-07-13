@@ -146,8 +146,7 @@ export async function magicLogin( context, next ) {
 		return login( context, next );
 	}
 
-	// For Gravatar-related OAuth2 clients, check the necessary URL parameters and fetch the client data if needed.
-	if ( gravatar_flow ) {
+	if ( client_id || gravatar_flow ) {
 		if ( ! client_id ) {
 			const error = new Error( 'The `client_id` query parameter is missing.' );
 			error.status = 401;
@@ -160,14 +159,25 @@ export async function magicLogin( context, next ) {
 			return next( error );
 		}
 
-		const oauth2Client = getOAuth2Client( context.store.getState(), client_id );
-		// Only fetch the data if it's not already in the store. This is to avoid unnecessary requests and re-renders.
-		if ( ! oauth2Client ) {
-			try {
-				await context.store.dispatch( fetchOAuth2ClientData( client_id ) );
-			} catch ( error ) {
-				return next( error );
-			}
+		const { searchParams: redirectParams } = getUrlParts( redirect_to );
+		const back = redirectParams.get( 'back' );
+		const redirectClientId =
+			redirectParams.get( 'client_id' ) ||
+			( back ? getUrlParts( back ).searchParams.get( 'client_id' ) : null );
+		if ( client_id !== redirectClientId ) {
+			const error = new Error(
+				'The `redirect_to` query parameter is invalid with the given `client_id`.'
+			);
+			error.status = 401;
+			return next( error );
+		}
+
+		try {
+			// Magic-login branding is derived from this server-owned response. Fetch it on every
+			// entry so persisted client state can never opt a request into a branded flow.
+			await context.store.dispatch( fetchOAuth2ClientData( client_id ) );
+		} catch ( error ) {
+			return next( error );
 		}
 	}
 

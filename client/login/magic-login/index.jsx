@@ -12,6 +12,7 @@ import {
 	isAndroidOAuth2Client,
 	isGravPoweredOAuth2Client,
 	isIosOAuth2Client,
+	isSpacefastOAuth2Client,
 	isStudioAppOAuth2Client,
 } from 'calypso/lib/oauth2-clients';
 import { detectPartnerConfig, getPartnerSignupTosElement } from 'calypso/lib/partner-branding';
@@ -46,6 +47,7 @@ import GravPoweredMagicLogin from './gravatar';
 import MainContentWooCoreProfiler from './main-content-woo-core-profiler';
 import RequestLoginCode from './request-login-code';
 import RequestLoginEmailForm from './request-login-email-form';
+import SpacefastMagicLogin from './spacefast';
 import {
 	getCheckYourEmailHeaders,
 	getEmailCodeHeaders,
@@ -280,6 +282,10 @@ export class MagicLogin extends Component {
 		} = this.props;
 		const { usernameOrEmail } = this.state;
 
+		if ( isSpacefastOAuth2Client( oauth2Client ) ) {
+			return <SpacefastMagicLogin />;
+		}
+
 		if ( isGravPoweredOAuth2Client( oauth2Client ) ) {
 			return <GravPoweredMagicLogin path={ this.props.path } />;
 		}
@@ -348,6 +354,13 @@ export class MagicLogin extends Component {
 }
 
 export const getMagicLoginInitialHeaders = ( props, translate ) => {
+	if ( isSpacefastOAuth2Client( props.oauth2Client ) ) {
+		return {
+			heading: translate( 'Log in or sign up for Spacefast' ),
+			subHeading: translate( 'Continue with your WordPress.com account.' ),
+		};
+	}
+
 	if ( isGravPoweredOAuth2Client( props.oauth2Client ) ) {
 		return {};
 	}

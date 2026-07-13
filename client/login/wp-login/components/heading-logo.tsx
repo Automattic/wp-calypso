@@ -5,6 +5,7 @@ import akismetLogo from 'calypso/assets/images/icons/akismet-logo.svg';
 import crowdsignalLogo from 'calypso/assets/images/icons/crowdsignal.svg';
 import gravatarLogo from 'calypso/assets/images/icons/gravatar.svg';
 import passportLogo from 'calypso/assets/images/icons/passport-icon-rounded.svg';
+import spacefastWordmark from 'calypso/assets/images/icons/spacefast-wordmark.svg';
 import studioAppLogo from 'calypso/assets/images/icons/studio-app-logo.svg';
 import wpJobManagerLogo from 'calypso/assets/images/icons/wp-job-manager.webp';
 import JetpackLogo from 'calypso/components/jetpack-logo';
@@ -23,6 +24,7 @@ import {
 	isPartnerPortalOAuth2Client,
 	isSharedMobileAppOAuth2Client,
 	isIosOAuth2Client,
+	isSpacefastOAuth2Client,
 } from 'calypso/lib/oauth2-clients';
 import { usePartnerBranding } from 'calypso/lib/partner-branding';
 import { useSelector } from 'calypso/state';
@@ -76,6 +78,10 @@ const HeadingLogo = ( { isJetpack, isFromJetpackConnector, connectorPlugins }: P
 	let logo = null;
 	if ( isPushTwoFactor ) {
 		logo = <img src={ JETPACK_PUSH_LOGO_URL } alt="Jetpack" />;
+	} else if ( isSpacefastOAuth2Client( oauth2Client ) ) {
+		logo = (
+			<img src={ spacefastWordmark } alt="Spacefast" className="wp-login__spacefast-wordmark" />
+		);
 	} else if ( isStudioAppOAuth2Client( oauth2Client ) ) {
 		logo = <img src={ studioAppLogo } alt="Studio App Logo" />;
 	} else if ( isCrowdsignalOAuth2Client( oauth2Client ) ) {

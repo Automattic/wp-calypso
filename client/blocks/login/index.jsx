@@ -17,6 +17,7 @@ import {
 	isBlazeProOAuth2Client,
 	isGravatarFlowOAuth2Client,
 	isGravatarOAuth2Client,
+	isSpacefastOAuth2Client,
 } from 'calypso/lib/oauth2-clients';
 import isPassportRedirect from 'calypso/lib/passport/is-passport-redirect';
 import { login } from 'calypso/lib/paths';
@@ -241,7 +242,11 @@ class Login extends Component {
 	handleTwoFactorRequested = ( authType ) => {
 		if ( this.props.onTwoFactorRequested ) {
 			this.props.onTwoFactorRequested( authType );
-		} else if ( this.props.isWCCOM || this.props.isGravPoweredClient ) {
+		} else if (
+			this.props.isWCCOM ||
+			this.props.isGravPoweredClient ||
+			isSpacefastOAuth2Client( this.props.oauth2Client )
+		) {
 			page(
 				login( {
 					isJetpack: this.props.isJetpack,

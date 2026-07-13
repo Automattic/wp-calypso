@@ -1,4 +1,4 @@
-@import "@automattic/typography/styles/variables";
+@import '@automattic/typography/styles/variables';
 
 .wp-login__one-login-layout-content-wrapper {
 	display: flex;
@@ -20,6 +20,11 @@
 	> img {
 		width: 64px;
 		height: 64px;
+	}
+
+	> .wp-login__spacefast-wordmark {
+		width: min( 244px, 100% );
+		height: auto;
 	}
 }
 
