@@ -74,7 +74,7 @@
 		"dashboard/enable-percentage-rollout": true,
 		"dashboard/force-opt-in-visibility": true,
 		"dashboard/omnibar-radical": false,
-		"dashboard/opt-in-welcome-modal": false,
+		"dashboard/opt-in-welcome-modal": true,
 		"dashboard/plans": true,
 		"dashboard/rollout-advance-notice": true,
 		"dashboard/simulate-full-rollout": false,
