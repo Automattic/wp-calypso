@@ -30,7 +30,7 @@
 		"ciab/custom-branding": true,
 		"cookie-banner": false,
 		"dark-mode": true,
-		"dashboard/account-recovery-interstitial": true,
+		"dashboard/account-recovery-interstitial": false,
 		"dashboard/dark-mode-rollout": true,
 		"dashboard/enable-percentage-rollout": false,
 		"dashboard/opt-in-welcome-modal": false,
