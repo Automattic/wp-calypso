@@ -58,6 +58,10 @@
 		font-weight: 500;
 		text-decoration: underline;
 
+		@media ( min-width: 960px ) {
+			padding: 1px 0;
+		}
+
 		&:hover,
 		&:focus {
 			color: inherit;

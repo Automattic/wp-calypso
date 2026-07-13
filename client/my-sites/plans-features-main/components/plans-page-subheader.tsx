@@ -30,6 +30,9 @@ const Subheader = styled.p< { isUsingStepContainerV2?: boolean; isVisualSplitInt
 				}
 				@media ( min-width: 960px ) {
 					font-size: 1rem;
+					button.is-borderless {
+						padding: 1px 0;
+					}
 				}
 			`
 			: `
@@ -49,6 +52,11 @@ const Subheader = styled.p< { isUsingStepContainerV2?: boolean; isVisualSplitInt
 				}
 				@media ( min-width: 600px ) {
 					text-align: center;
+				}
+				@media ( min-width: 960px ) {
+					button.is-borderless {
+						padding: 1px 0;
+					}
 				}
 			` }
 `;
