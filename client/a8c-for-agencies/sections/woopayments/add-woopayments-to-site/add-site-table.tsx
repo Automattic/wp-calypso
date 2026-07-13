@@ -12,8 +12,6 @@ import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { useWooPaymentsContext } from '../context';
 import { useFetchManagedSites, type WooPaymentsSiteItem } from './use-fetch-managed-sites';
 
-import './style.scss';
-
 export type { WooPaymentsSiteItem };
 
 const AddWooPaymentsToSiteTable = ( {
@@ -60,7 +58,6 @@ const AddWooPaymentsToSiteTable = ( {
 			getValue: ( { item }: { item: WooPaymentsSiteItem } ) => item.site,
 			render: ( { item }: { item: WooPaymentsSiteItem } ) => (
 				<RadioControl
-					className="woopayments-add-site-table__radio"
 					selected={ selectedSite?.id === item.id ? String( item.id ) : '' }
 					options={ [ { label: item.site, value: String( item.id ) } ] }
 					onChange={ () => onSelectSite( item ) }
