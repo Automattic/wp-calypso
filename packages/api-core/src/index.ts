@@ -10,7 +10,6 @@ export * from './agency-referrals';
 export * from './agency-team';
 export * from './agency-sites';
 export * from './agency-site-tags';
-export * from './agency-tipalti';
 export * from './agency-woopayments';
 export * from './agency-migrations';
 export * from './akismet-api-key';

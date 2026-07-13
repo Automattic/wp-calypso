@@ -1,4 +1,4 @@
-import { activeAgencyQuery, agencySitesWithCountQuery } from '@automattic/api-queries';
+import { activeAgencyQuery, paginatedAgencySitesQuery } from '@automattic/api-queries';
 import { useQuery } from '@tanstack/react-query';
 import { useMemo } from 'react';
 import { urlToSlug } from '../../../../utils/url';
@@ -16,7 +16,7 @@ export function useFetchManagedSites() {
 
 	// First fetch to discover the total number of managed sites so we can request all of them.
 	const firstFetch = useQuery( {
-		...agencySitesWithCountQuery( agencyId, { per_page: 1, page: 1 } ),
+		...paginatedAgencySitesQuery( { per_page: 1, page: 1 }, agencyId ),
 		enabled: !! agencyId,
 	} );
 
@@ -24,7 +24,7 @@ export function useFetchManagedSites() {
 
 	// Second fetch to retrieve every managed site, once we know the total and the first is done.
 	const allSitesFetch = useQuery( {
-		...agencySitesWithCountQuery( agencyId, { per_page: total, page: 1 } ),
+		...paginatedAgencySitesQuery( { per_page: total, page: 1 }, agencyId ),
 		enabled: !! agencyId && !! total && ! firstFetch.isFetching,
 	} );
 
