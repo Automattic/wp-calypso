@@ -38,14 +38,12 @@ test.describe(
 				);
 
 				const accountName = getTestAccountByFeature( features );
-				let editorTracksEventManager: EditorTracksEventManager;
-				let siteSlug: string;
+				const testAccount = new TestAccount( accountName );
+				const siteSlug = testAccount.getSiteURL( { protocol: false } );
+				const editorTracksEventManager = new EditorTracksEventManager( page );
 
 				await test.step( 'Given I am authenticated', async () => {
-					const testAccount = new TestAccount( accountName );
 					await testAccount.authenticate( page );
-					siteSlug = testAccount.getSiteURL( { protocol: false } );
-					editorTracksEventManager = new EditorTracksEventManager( page );
 				} );
 
 				await test.step( 'When I start a new post', async () => {
@@ -62,7 +60,7 @@ test.describe(
 				} );
 
 				await test.step( 'Then "wpcom_block_editor_list_view_toggle" event fires with "is_open" === true', async () => {
-					const eventDidFire = await editorTracksEventManager!.didEventFire(
+					const eventDidFire = await editorTracksEventManager.didEventFire(
 						'wpcom_block_editor_list_view_toggle',
 						{
 							matchingProperties: { is_open: true },
@@ -76,7 +74,7 @@ test.describe(
 				} );
 
 				await test.step( 'Then "wpcom_block_editor_list_view_select" event fires with correct "block_name"', async () => {
-					const eventDidFire = await editorTracksEventManager!.didEventFire(
+					const eventDidFire = await editorTracksEventManager.didEventFire(
 						'wpcom_block_editor_list_view_select',
 						{
 							matchingProperties: { block_name: 'core/paragraph' },
@@ -90,7 +88,7 @@ test.describe(
 				} );
 
 				await test.step( 'Then "wpcom_block_editor_list_view_toggle" event fires again with "is_open" === false', async () => {
-					const eventDidFire = await editorTracksEventManager!.didEventFire(
+					const eventDidFire = await editorTracksEventManager.didEventFire(
 						'wpcom_block_editor_list_view_toggle',
 						{
 							matchingProperties: { is_open: false },
@@ -110,19 +108,16 @@ test.describe(
 			);
 
 			const accountName = getTestAccountByFeature( { ...features, variant: 'siteEditor' } );
-			let testAccount: TestAccount;
-			let fullSiteEditorPage: FullSiteEditorPage;
-			let editorTracksEventManager: EditorTracksEventManager;
+			const testAccount = new TestAccount( accountName );
+			const editorTracksEventManager = new EditorTracksEventManager( page );
+			const fullSiteEditorPage = new FullSiteEditorPage( page );
 
 			await test.step( 'Given I am authenticated', async () => {
-				testAccount = new TestAccount( accountName );
 				await testAccount.authenticate( page );
-				editorTracksEventManager = new EditorTracksEventManager( page );
-				fullSiteEditorPage = new FullSiteEditorPage( page );
 			} );
 
 			await test.step( 'When I go to site editor', async () => {
-				await fullSiteEditorPage.visit( testAccount!.getSiteURL( { protocol: true } ) );
+				await fullSiteEditorPage.visit( testAccount.getSiteURL( { protocol: true } ) );
 				await fullSiteEditorPage.prepareForInteraction( { leaveWithoutSaving: true } );
 			} );
 
@@ -142,7 +137,7 @@ test.describe(
 			} );
 
 			await test.step( 'Then "wpcom_block_editor_undo_performed" event fires', async () => {
-				const eventDidFire = await editorTracksEventManager!.didEventFire(
+				const eventDidFire = await editorTracksEventManager.didEventFire(
 					'wpcom_block_editor_undo_performed'
 				);
 				expect( eventDidFire ).toBe( true );
@@ -153,7 +148,7 @@ test.describe(
 			} );
 
 			await test.step( 'Then "wpcom_block_editor_redo_performed" event fires', async () => {
-				const eventDidFire = await editorTracksEventManager!.didEventFire(
+				const eventDidFire = await editorTracksEventManager.didEventFire(
 					'wpcom_block_editor_redo_performed'
 				);
 				expect( eventDidFire ).toBe( true );

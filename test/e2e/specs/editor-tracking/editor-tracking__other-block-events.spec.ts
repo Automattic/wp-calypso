@@ -1,6 +1,5 @@
 import {
 	DataHelper,
-	EditorPage,
 	EditorTracksEventManager,
 	FullSiteEditorPage,
 	TestAccount,
@@ -21,14 +20,12 @@ test.describe(
 			pageEditor,
 		} ) => {
 			const accountName = getTestAccountByFeature( features );
-			let editorTracksEventManager: EditorTracksEventManager;
-			let siteSlug: string;
+			const testAccount = new TestAccount( accountName );
+			const siteSlug = testAccount.getSiteURL( { protocol: false } );
+			const editorTracksEventManager = new EditorTracksEventManager( page );
 
 			await test.step( 'Given I am authenticated', async () => {
-				const testAccount = new TestAccount( accountName );
 				await testAccount.authenticate( page );
-				siteSlug = testAccount.getSiteURL( { protocol: false } );
-				editorTracksEventManager = new EditorTracksEventManager( page );
 			} );
 
 			await test.step( 'When I start a new post', async () => {
@@ -47,7 +44,7 @@ test.describe(
 			} );
 
 			await test.step( 'Then "wpcom_block_moved_up" event fires', async () => {
-				const eventDidFire = await editorTracksEventManager!.didEventFire( 'wpcom_block_moved_up' );
+				const eventDidFire = await editorTracksEventManager.didEventFire( 'wpcom_block_moved_up' );
 				expect( eventDidFire ).toBe( true );
 			} );
 
@@ -57,11 +54,9 @@ test.describe(
 
 			await test.step( 'Then "wpcom_block_moved_down" event fires', async () => {
 				const eventDidFire =
-					await editorTracksEventManager!.didEventFire( 'wpcom_block_moved_down' );
+					await editorTracksEventManager.didEventFire( 'wpcom_block_moved_down' );
 				expect( eventDidFire ).toBe( true );
 			} );
-
-			void EditorPage;
 		} );
 
 		test( '"wpcom_block_deleted" event fires', async ( { page } ) => {
@@ -73,19 +68,16 @@ test.describe(
 			);
 
 			const accountName = getTestAccountByFeature( { ...features, variant: 'siteEditor' } );
-			let testAccount: TestAccount;
-			let fullSiteEditorPage: FullSiteEditorPage;
-			let editorTracksEventManager: EditorTracksEventManager;
+			const testAccount = new TestAccount( accountName );
+			const editorTracksEventManager = new EditorTracksEventManager( page );
+			const fullSiteEditorPage = new FullSiteEditorPage( page );
 
 			await test.step( 'Given I am authenticated', async () => {
-				testAccount = new TestAccount( accountName );
 				await testAccount.authenticate( page );
-				editorTracksEventManager = new EditorTracksEventManager( page );
-				fullSiteEditorPage = new FullSiteEditorPage( page );
 			} );
 
 			await test.step( 'When I go to the site editor', async () => {
-				await fullSiteEditorPage.visit( testAccount!.getSiteURL( { protocol: true } ) );
+				await fullSiteEditorPage.visit( testAccount.getSiteURL( { protocol: true } ) );
 				await fullSiteEditorPage.prepareForInteraction( { leaveWithoutSaving: true } );
 			} );
 
@@ -105,7 +97,7 @@ test.describe(
 			} );
 
 			await test.step( 'Then "wpcom_block_deleted" event fires', async () => {
-				const eventDidFire = await editorTracksEventManager!.didEventFire( 'wpcom_block_deleted' );
+				const eventDidFire = await editorTracksEventManager.didEventFire( 'wpcom_block_deleted' );
 				expect( eventDidFire ).toBe( true );
 			} );
 		} );

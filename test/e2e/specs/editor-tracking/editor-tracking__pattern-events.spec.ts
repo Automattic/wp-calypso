@@ -1,6 +1,5 @@
 import {
 	DataHelper,
-	EditorPage,
 	EditorTracksEventManager,
 	TestAccount,
 	envToFeatureKey,
@@ -20,14 +19,12 @@ test.describe(
 			pageEditor,
 		} ) => {
 			const accountName = getTestAccountByFeature( features );
-			let editorTracksEventManager: EditorTracksEventManager;
-			let siteSlug: string;
+			const testAccount = new TestAccount( accountName );
+			const siteSlug = testAccount.getSiteURL( { protocol: false } );
+			const editorTracksEventManager = new EditorTracksEventManager( page );
 
 			await test.step( 'Given I am authenticated', async () => {
-				const testAccount = new TestAccount( accountName );
 				await testAccount.authenticate( page );
-				siteSlug = testAccount.getSiteURL( { protocol: false } );
-				editorTracksEventManager = new EditorTracksEventManager( page );
 			} );
 
 			await test.step( 'When I start a new page', async () => {
@@ -50,7 +47,7 @@ test.describe(
 			} );
 
 			await test.step( `Then "wpcom_pattern_inserted" event fires with "pattern_name" === "${ patternNameInEventProperty }"`, async () => {
-				const eventDidFire = await editorTracksEventManager!.didEventFire(
+				const eventDidFire = await editorTracksEventManager.didEventFire(
 					'wpcom_pattern_inserted',
 					{
 						matchingProperties: {
@@ -62,7 +59,7 @@ test.describe(
 			} );
 
 			await test.step( 'When I clear event stack for clean slate', async () => {
-				await editorTracksEventManager!.clearEvents();
+				await editorTracksEventManager.clearEvents();
 			} );
 
 			// From the sidebar inserter
@@ -71,7 +68,7 @@ test.describe(
 			} );
 
 			await test.step( `Then "wpcom_pattern_inserted" event fires with "pattern_name" === "${ patternNameInEventProperty }"`, async () => {
-				const eventDidFire = await editorTracksEventManager!.didEventFire(
+				const eventDidFire = await editorTracksEventManager.didEventFire(
 					'wpcom_pattern_inserted',
 					{
 						matchingProperties: {
@@ -81,8 +78,6 @@ test.describe(
 				);
 				expect( eventDidFire ).toBe( true );
 			} );
-
-			void EditorPage;
 		} );
 	}
 );

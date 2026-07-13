@@ -25,14 +25,12 @@ test.describe(
 			pageEditor,
 		} ) => {
 			const accountName = getTestAccountByFeature( features );
-			let editorTracksEventManager: EditorTracksEventManager;
-			let siteSlug: string;
+			const testAccount = new TestAccount( accountName );
+			const siteSlug = testAccount.getSiteURL( { protocol: false } );
+			const editorTracksEventManager = new EditorTracksEventManager( page );
 
 			await test.step( 'Given I am authenticated', async () => {
-				const testAccount = new TestAccount( accountName );
 				await testAccount.authenticate( page );
-				siteSlug = testAccount.getSiteURL( { protocol: false } );
-				editorTracksEventManager = new EditorTracksEventManager( page );
 			} );
 
 			await test.step( 'When I start a new post', async () => {
@@ -48,7 +46,7 @@ test.describe(
 			} );
 
 			await test.step( '"wpcom_block_inserted" event fires with expected block-related properties', async () => {
-				const eventDidFire = await editorTracksEventManager!.didEventFire( 'wpcom_block_inserted', {
+				const eventDidFire = await editorTracksEventManager.didEventFire( 'wpcom_block_inserted', {
 					matchingProperties: {
 						block_name: 'core/heading',
 						blocks_replaced: false,
@@ -64,7 +62,7 @@ test.describe(
 				const numericRegex = /^\d+$/;
 
 				const [ , tracksEventProperties ] =
-					await editorTracksEventManager!.getMostRecentMatchingEvent( 'wpcom_block_inserted' );
+					await editorTracksEventManager.getMostRecentMatchingEvent( 'wpcom_block_inserted' );
 				const props = tracksEventProperties as TracksEventProperties;
 
 				expect( props.editor_type ).toBe( 'post' );
