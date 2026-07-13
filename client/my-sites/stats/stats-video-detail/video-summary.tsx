@@ -260,23 +260,6 @@ export default function VideoSummary( {
 		setSelectedRecord( null );
 	};
 
-	// Bucket labels can repeat across the window (e.g. two "Jul" months), so
-	// selection identity uses the unique startDate.
-	const selectedIndex = selected
-		? chartData.findIndex( ( record ) => record.startDate === selected.startDate )
-		: -1;
-
-	const handleArrows = ( { direction }: { direction: string } ) => {
-		if ( selectedIndex === -1 ) {
-			return;
-		}
-		if ( direction === 'previous' && selectedIndex > 0 ) {
-			setSelectedRecord( chartData[ selectedIndex - 1 ] );
-		} else if ( direction === 'next' && selectedIndex < chartData.length - 1 ) {
-			setSelectedRecord( chartData[ selectedIndex + 1 ] );
-		}
-	};
-
 	const tabLabels: Record< VideoStatType, string > = {
 		views: translate( 'Views', { textOnly: true } ),
 		impressions: translate( 'Impressions', { textOnly: true } ),
@@ -308,13 +291,10 @@ export default function VideoSummary( {
 				) ) }
 
 			<StatsPeriodHeader>
-				<StatsPeriodNavigation
-					showArrows
-					onPeriodChange={ handleArrows }
-					disablePreviousArrow={ selectedIndex <= 0 }
-					disableNextArrow={ selectedIndex === chartData.length - 1 }
-					date={ null }
-				>
+				{ /* The video stats endpoint only returns a fixed trailing window
+				ending "now" (no backend support yet for an older window), so
+				there's no previous/next period to navigate to. */ }
+				<StatsPeriodNavigation showArrows disablePreviousArrow disableNextArrow date={ null }>
 					<DatePicker period={ uiPeriod } date={ selected?.startDate } isShort />
 				</StatsPeriodNavigation>
 				<SegmentedControl primary>
