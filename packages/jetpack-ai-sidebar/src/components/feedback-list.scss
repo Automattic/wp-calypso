@@ -175,17 +175,21 @@
 		overflow: hidden;
 		text-overflow: ellipsis;
 		white-space: nowrap;
+	}
 
-		// Advisory badge: a warning-tinted "Manual edit" pill.
-		&.is-manual {
-			flex: 0 0 auto;
-			padding: 0.125rem 0.5rem;
-			border-radius: 4px;
-			background: #fdf8ee;
-			color: #9a6a1a;
-			font-size: 12px;
-			white-space: nowrap;
-		}
+	// "Manual edit" tag above the header — a warning-tinted pill shown when the
+	// edit can't be one-click applied. The category badge stays on the row below.
+	&__manual-tag {
+		display: inline-block;
+		margin: 0.75rem 1rem 0;
+		padding: 0.125rem 0.5rem;
+		border-radius: 4px;
+		background: #fdf8ee;
+		color: #9a6a1a;
+		font-size: 12px;
+		font-weight: 600;
+		line-height: 1.4;
+		white-space: nowrap;
 	}
 
 	// Block reference chip: icon + truncated content, or "Post-wide". Scoped to
@@ -295,9 +299,13 @@
 		opacity: 0.55;
 	}
 
-	&__rationale {
-		padding: 0.5rem 1rem 0.75rem;
-		font-size: 13px;
+	// Note explaining why an edit can't be one-click applied (e.g. "source text
+	// changed"). Muted; sits under the body, above the actions.
+	&__reason-note {
+		margin: 0;
+		padding: 0 1rem 0.75rem;
+		font-size: 12px;
+		opacity: 0.7;
 	}
 
 	&__actions {

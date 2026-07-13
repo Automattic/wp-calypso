@@ -412,14 +412,14 @@ describe( 'PostFeedback', () => {
 
 		const badge = container.querySelector( '.jetpack-ai-feedback-list__item-badge' );
 		expect( badge?.textContent ).toBe( 'Spacing (1/1)' );
-		expect( badge?.classList.contains( 'is-manual' ) ).toBe( false );
+		// Applicable card: no "Manual edit" tag.
+		expect( container.querySelector( '.jetpack-ai-feedback-list__manual-tag' ) ).toBeNull();
 
-		expect( diffTags( container ) ).toEqual( [ 'Current', 'New' ] );
+		// Why on top, then the Current/New diff.
+		expect( diffTags( container ) ).toEqual( [ 'Why', 'Current', 'New' ] );
+		expect( container.textContent ).toContain( 'Missing space after the period.' );
 		expect( container.querySelector( 'del' )?.textContent ).toBe( 'created.When' );
 		expect( container.querySelector( 'ins' )?.textContent ).toBe( 'created. When' );
-		expect( container.querySelector( '.jetpack-ai-feedback-list__rationale' )?.textContent ).toBe(
-			'Add a space between "created." and "When".'
-		);
 
 		const apply = findButton( container, 'Apply change' );
 		expect( apply?.classList.contains( 'is-primary' ) ).toBe( true );
@@ -451,9 +451,12 @@ describe( 'PostFeedback', () => {
 			} )
 		);
 
+		// The category badge stays; "Manual edit" is a separate tag above the header.
 		const badge = container.querySelector( '.jetpack-ai-feedback-list__item-badge' );
-		expect( badge?.textContent ).toBe( 'Manual edit' );
-		expect( badge?.classList.contains( 'is-manual' ) ).toBe( true );
+		expect( badge?.textContent ).toBe( 'Structure (1/1)' );
+		expect( container.querySelector( '.jetpack-ai-feedback-list__manual-tag' )?.textContent ).toBe(
+			'Manual edit'
+		);
 
 		expect( diffTags( container ) ).toEqual( [ 'Why', 'Suggestion' ] );
 		expect( container.textContent ).toContain(
@@ -511,14 +514,14 @@ describe( 'PostFeedback', () => {
 		expect( findButton( container, 'Copied' ) ).toBeDefined();
 	} );
 
-	it( 'copies the New text (not the rationale) on an unappliable applicable card', async () => {
+	it( 'copies the replacement text (not the action) on a card that can no longer be applied', async () => {
 		const writeText = jest.fn().mockResolvedValue( undefined );
 		Object.defineProperty( globalThis.navigator, 'clipboard', {
 			configurable: true,
 			value: { writeText },
 		} );
-		// A query block cannot host the exact fix, so the applicable card keeps its
-		// Current/New diff but falls back to Go to section + Copy.
+		// A query block can't host the exact fix, so the card becomes Manual edit and
+		// shows the Suggestion; Copy still copies the replacement (New) text.
 		mockEditorBlocks = [ { clientId: 'block-1', name: 'core/query', attributes: { queryId: 1 } } ];
 
 		const { container } = render(
@@ -746,11 +749,59 @@ describe( 'PostFeedback', () => {
 		expect( container.querySelector( '.jetpack-ai-feedback-list__item-badge' )?.textContent ).toBe(
 			'Spacing (1/1)'
 		);
-		expect( diffTags( container ) ).toEqual( [ 'Current', 'New' ] );
+		// No editable target → Manual edit, so the body is Why + Suggestion, not a diff.
+		expect( diffTags( container ) ).toEqual( [ 'Why', 'Suggestion' ] );
 		expect( findButton( container, 'Apply change' ) ).toBeUndefined();
 		const goto = findButton( container, 'Go to section' );
 		expect( goto ).toBeDefined();
 		expect( goto?.hasAttribute( 'disabled' ) ).toBe( false );
+		// Frontend-unappliable reads as Manual edit, with a note explaining why.
+		expect( container.querySelector( '.jetpack-ai-feedback-list__manual-tag' )?.textContent ).toBe(
+			'Manual edit'
+		);
+		expect(
+			container.querySelector( '.jetpack-ai-feedback-list__reason-note' )?.textContent
+		).toContain( 'unsupported edit target' );
+	} );
+
+	it( 'does not tag a card "Manual edit" just because the review is stale', () => {
+		// postId 999 !== the editor's 123 → the whole review is stale. The editor is
+		// on a DIFFERENT post whose block does NOT contain the item's source text, so
+		// the item WOULD look "manual" (source changed) if the tag weren't gated on
+		// !isPostStale. It must still render without the tag / reason note.
+		mockEditorBlocks = [
+			{
+				clientId: 'block-1',
+				name: 'core/paragraph',
+				attributes: { content: 'A different paragraph.' },
+			},
+		];
+		const { container } = render(
+			React.createElement( PostFeedback, {
+				summary: 'Summary.',
+				postId: 999,
+				items: [
+					{
+						title: 'Spacing',
+						feedback: 'Missing space after the period.',
+						action: 'Add a space.',
+						block_index: 0,
+						current_text: 'created.When',
+						suggested_text: 'created. When',
+					},
+				],
+			} )
+		);
+
+		// Stale banner is shown, but the card keeps its category badge and no tag.
+		expect( container.textContent ).toContain( 'Feedback context changed' );
+		expect( container.querySelector( '.jetpack-ai-feedback-list__item-badge' )?.textContent ).toBe(
+			'Spacing (1/1)'
+		);
+		expect( container.querySelector( '.jetpack-ai-feedback-list__manual-tag' ) ).toBeNull();
+		expect( container.querySelector( '.jetpack-ai-feedback-list__reason-note' ) ).toBeNull();
+		// Stale → not one-click applicable: Go to section instead of Apply change.
+		expect( findButton( container, 'Apply change' ) ).toBeUndefined();
 	} );
 
 	it( 'uses the Why/Suggestion body with a category badge for a non-manual item without a rewrite', () => {

@@ -1,13 +1,8 @@
 /**
- * ReviewCard - the shared, presentational card for post-review suggestions.
- *
- * Rendered by the flat review flows (Generate Feedback / Proofreader via
- * FeedbackList) and by AI Editorial Review (review-mediation). It is "dumb":
- * it takes a normalised model, the current status, capability flags, and action
- * callbacks, and renders the two card families - applicable (a Current/New diff
- * plus "Apply change") and advisory / "Manual edit" (a Why/Suggestion body plus
- * "Go to section"). Each parent owns its own apply/undo/dismiss/copy state
- * machine and passes handlers in.
+ * ReviewCard — shared presentational card for post-review suggestions, used by
+ * FeedbackList (Generate Feedback / Proofreader) and AI Editorial Review. Takes
+ * a model, status, capability flags, and callbacks; each parent owns its own
+ * apply/undo/dismiss/copy state.
  */
 
 /**
@@ -34,16 +29,16 @@ export interface ReviewCardRow {
 }
 
 export interface ReviewCardModel {
-	/** Fully composed badge text, e.g. `Spacing (1/1)` or `Manual edit`. */
+	/** Category badge, e.g. `Spacing (1/1)`. Always the category — "Manual edit" is a separate tag. */
 	badge: string;
-	/** Advisory family: warning-tinted badge, no in-place Apply. */
+	/** Advisory family: renders a "Manual edit" tag + advisory styling, no in-place Apply. */
 	isManualEdit: boolean;
 	/** 0-based target block index, or null for post-wide. */
 	blockIndex: number | null;
-	/** The Current/New (applicable) or Why/Suggestion (advisory) rows. */
-	rows: ReviewCardRow[];
-	/** Optional rationale line shown under an applicable diff. */
-	rationale?: string;
+	/** Card body: Why first, then the change (a Current/New diff, or a Suggestion). */
+	bodyRows: ReviewCardRow[];
+	/** Optional note explaining why this edit can't be one-click applied. */
+	reasonNote?: string;
 }
 
 export interface ReviewCardProps {
@@ -52,13 +47,10 @@ export interface ReviewCardProps {
 	status: ReviewCardStatus;
 	/** Show the primary Apply/Retry button (else Go to section + Copy). */
 	showApply: boolean;
-	/** Whether the target block can be anchored to right now. */
 	canGoToSection: boolean;
-	/** Show the Copy button (a copyable suggestion + clipboard support exist). */
 	showCopy: boolean;
-	/** This card is the one currently showing "Copied". */
 	copied: boolean;
-	/** Global gate (post stale or a bulk run is in flight). */
+	/** Global gate: post stale or a bulk run is in flight. */
 	disabled: boolean;
 	/** Flow-specific message shown after a failed apply. */
 	failureMessage: string;
@@ -114,14 +106,12 @@ export default function ReviewCard( {
 	footer,
 	classPrefix = DEFAULT_PREFIX,
 }: ReviewCardProps ) {
-	const { badge, isManualEdit, blockIndex, rows, rationale } = model;
+	const { badge, isManualEdit, blockIndex, bodyRows, reasonNote } = model;
 	const isResolved = status === 'accepted' || status === 'dismissed';
 
 	const header = (
 		<div className={ `${ classPrefix }__item-header` }>
-			<span className={ `${ classPrefix }__item-badge${ isManualEdit ? ' is-manual' : '' }` }>
-				{ badge }
-			</span>
+			<span className={ `${ classPrefix }__item-badge` }>{ badge }</span>
 			<BlockRef
 				index={ blockIndex }
 				blocks={ blocks }
@@ -164,10 +154,15 @@ export default function ReviewCard( {
 				isManualEdit ? 'is-advisory' : 'is-applicable'
 			}` }
 		>
+			{ isManualEdit && (
+				<div className={ `${ classPrefix }__manual-tag` }>
+					{ __( 'Manual edit', __i18n_text_domain__ ) }
+				</div>
+			) }
 			{ header }
-			{ rows.length > 0 && (
+			{ bodyRows.length > 0 && (
 				<div className={ `${ classPrefix }__diff` }>
-					{ rows.map( ( row, i ) => (
+					{ bodyRows.map( ( row, i ) => (
 						<div key={ i } className={ `${ classPrefix }__diff-row is-${ row.variant }` }>
 							<span className={ `${ classPrefix }__diff-tag` }>{ row.tag }</span>
 							{ row.element === 'del' && <del>{ row.text }</del> }
@@ -179,7 +174,7 @@ export default function ReviewCard( {
 					) ) }
 				</div>
 			) }
-			{ rationale && <p className={ `${ classPrefix }__rationale` }>{ rationale }</p> }
+			{ reasonNote && <p className={ `${ classPrefix }__reason-note` }>{ reasonNote }</p> }
 			<div className={ `${ classPrefix }__actions` }>
 				{ showApply ? (
 					<button

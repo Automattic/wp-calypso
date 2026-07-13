@@ -36,6 +36,7 @@ import {
 	undoBlockEdit,
 } from '../utils/block-actions';
 import { countOccurrences, flattenBlocks } from '../utils/blocks';
+import { useCopyToClipboard } from '../utils/use-copy-to-clipboard';
 import { type BlockSnapshot } from './block-ref';
 import ReviewCard, { type ReviewCardRow } from './review-card';
 
@@ -64,9 +65,6 @@ interface SummaryNote {
 
 /** Root class name; prefixes every class this component renders. */
 const CLASS_PREFIX = 'jetpack-ai-feedback-list';
-
-/** How long a Copy button stays in its "Copied" state before reverting. */
-const COPY_RESET_MS = 2000;
 
 /**
  * Per-flow copy and options. The data props (summary/items/sections/postId)
@@ -200,10 +198,8 @@ export default function FeedbackList( {
 }: FeedbackListProps ) {
 	const [ itemStatuses, setItemStatuses ] = useState< Record< string, ItemStatus > >( {} );
 	const [ bulkRunning, setBulkRunning ] = useState( false );
-	// Only one item shows "Copied" at a time: copying another reverts the first,
-	// and a short timer reverts it back to "Copy" on its own.
-	const [ copiedKey, setCopiedKey ] = useState< string | null >( null );
-	const copyResetTimer = useRef< ReturnType< typeof setTimeout > | undefined >( undefined );
+	// Only one item shows "Copied" at a time; the shared hook owns that state.
+	const { clipboardSupported, copiedKey, copy: copyItem } = useCopyToClipboard();
 	const editSnapshots = useRef< Record< string, EditSnapshot > >( {} );
 
 	const blocks = useSelect(
@@ -250,7 +246,6 @@ export default function FeedbackList( {
 	useEffect( () => {
 		return () => {
 			clearActiveBlockFocus();
-			clearTimeout( copyResetTimer.current );
 		};
 	}, [] );
 
@@ -375,31 +370,6 @@ export default function FeedbackList( {
 		[ isPostStale, setItemStatus ]
 	);
 
-	// Advisory cards offer Copy so the author can paste the suggested text where
-	// they decide it belongs; the button confirms with a sticky "Copied" state.
-	const copyItem = useCallback( ( key: string, text: string ) => {
-		const clipboard = ( globalThis.navigator as Navigator | undefined )?.clipboard;
-		if ( ! clipboard?.writeText ) {
-			return;
-		}
-		clipboard
-			.writeText( text )
-			.then( () => {
-				setCopiedKey( key );
-				clearTimeout( copyResetTimer.current );
-				copyResetTimer.current = setTimeout( () => setCopiedKey( null ), COPY_RESET_MS );
-			} )
-			.catch( () => {} );
-	}, [] );
-
-	// Only offer Copy where the clipboard API can actually service it, so an
-	// advisory card never shows a Copy button that does nothing.
-	const clipboardSupported = useMemo(
-		() =>
-			typeof ( globalThis.navigator as Navigator | undefined )?.clipboard?.writeText === 'function',
-		[]
-	);
-
 	return (
 		<div
 			className={ `${ CLASS_PREFIX }${ isPostStale ? ' is-post-stale' : '' }` }
@@ -439,25 +409,26 @@ export default function FeedbackList( {
 								const key = getItemKey( sectionIndex, itemIndex );
 								const status = itemStatuses[ key ] ?? 'pending';
 								const block = item.block_index === null ? null : flatBlocks[ item.block_index ];
-								const applyUnavailableReason = isPostStale
-									? staleApplyReason
-									: getApplyUnavailableReason( item, block );
+								// Item-level reason it can't be applied (backend flag or drift) — not the stale
+								// state, whose block refs point at the wrong post.
+								const itemManualReason = getApplyUnavailableReason( item, block );
+								const applyUnavailableReason = isPostStale ? staleApplyReason : itemManualReason;
 								const canApply = ! applyUnavailableReason;
-								// Apply/Retry shows only while an attempt is in flight or the item can
-								// still be applied; a card that cannot apply never renders a dead Apply.
-								const showApply = canApply || status === 'applying';
-								// The safety classifier marks author-judgment items; they carry a
-								// "Manual edit" badge and a WHY/SUGGESTION body instead of a text diff.
-								const isManualEdit = !! item.requires_manual;
-								// Show the Current/New diff only for applicable cards with an exact
-								// before/after; manual cards always use the Why/Suggestion body even
-								// if a stray diff is present.
-								const showDiff = ! isManualEdit && !! item.current_text && !! item.suggested_text;
-								// The copyable suggestion is whatever the Suggestion/New row shows.
-								const suggestionText = showDiff ? item.suggested_text : item.action;
-								// A section is anchorable only when its target block still exists in the
-								// editor. Post-wide items (block_index null) and dropped blocks are not,
-								// so their "Go to section" affordance renders disabled rather than hidden.
+								// Keep Apply while an apply is in flight, unless the post went stale mid-apply.
+								const showApply = canApply || ( ! isPostStale && status === 'applying' );
+								// Manual tag: always for a backend-manual item; a frontend reason only when fresh.
+								const isManualEdit =
+									!! item.requires_manual || ( ! isPostStale && !! itemManualReason );
+								// Show the diff only while the exact source text is still present in the post.
+								const currentTextPresent =
+									!! item.current_text &&
+									!! block &&
+									countOccurrences(
+										getEditableBlockContent( block, item.editable_attribute, item.current_text ),
+										item.current_text
+									) >= 1;
+								const showDiff = currentTextPresent && !! item.suggested_text;
+								const suggestionText = item.suggested_text || item.action;
 								const canGoToSection =
 									!! focusCurrentPostBlock &&
 									item.block_index !== null &&
@@ -465,58 +436,57 @@ export default function FeedbackList( {
 									item.block_index >= 0 &&
 									item.block_index < flatBlocks.length;
 
-								const badge = isManualEdit
-									? __( 'Manual edit', __i18n_text_domain__ )
-									: sprintf(
-											/* translators: 1: issue category, 2: position in the run, 3: total suggestions. */
-											__( '%1$s (%2$d/%3$d)', __i18n_text_domain__ ),
-											item.title,
-											itemIndex + 1,
-											section.items.length
-									  );
-								const rows: ReviewCardRow[] = [];
+								const categoryBadge = sprintf(
+									/* translators: 1: issue category, 2: position in the run, 3: total suggestions. */
+									__( '%1$s (%2$d/%3$d)', __i18n_text_domain__ ),
+									item.title,
+									itemIndex + 1,
+									section.items.length
+								);
+								// Why leads the body; it falls back to manual_reason since the reason note only
+								// carries the frontend can't-apply cause.
+								const feedbackReason = item.feedback || item.manual_reason;
+								const bodyRows: ReviewCardRow[] = [];
+								if ( feedbackReason ) {
+									bodyRows.push( {
+										tag: __( 'Why', __i18n_text_domain__ ),
+										text: feedbackReason,
+										variant: 'current',
+										element: 'text',
+									} );
+								}
 								if ( showDiff ) {
-									rows.push( {
+									bodyRows.push( {
 										tag: __( 'Current', __i18n_text_domain__ ),
 										text: item.current_text ?? '',
 										variant: 'current',
 										element: 'del',
 									} );
-									rows.push( {
+									bodyRows.push( {
 										tag: __( 'New', __i18n_text_domain__ ),
 										text: item.suggested_text ?? '',
 										variant: 'new',
 										element: 'ins',
 									} );
-								} else {
-									const why = item.feedback || item.manual_reason;
-									if ( why ) {
-										rows.push( {
-											tag: __( 'Why', __i18n_text_domain__ ),
-											text: why,
-											variant: 'current',
-											element: 'text',
-										} );
-									}
-									if ( item.action ) {
-										rows.push( {
-											tag: __( 'Suggestion', __i18n_text_domain__ ),
-											text: item.action,
-											variant: 'new',
-											element: 'text',
-										} );
-									}
+								} else if ( suggestionText ) {
+									bodyRows.push( {
+										tag: __( 'Suggestion', __i18n_text_domain__ ),
+										text: suggestionText,
+										variant: 'new',
+										element: 'text',
+									} );
 								}
 
 								return (
 									<ReviewCard
 										key={ key }
 										model={ {
-											badge,
+											badge: categoryBadge,
 											isManualEdit,
 											blockIndex: item.block_index,
-											rows,
-											rationale: showDiff && item.action ? item.action : undefined,
+											bodyRows,
+											reasonNote:
+												isPostStale || item.requires_manual ? undefined : itemManualReason,
 										} }
 										blocks={ flatBlocks }
 										status={ status }

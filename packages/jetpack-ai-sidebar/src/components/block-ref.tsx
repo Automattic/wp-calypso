@@ -14,12 +14,15 @@ import { __ } from '@wordpress/i18n';
 import type { ComponentType } from 'react';
 
 // @wordpress/block-editor ships BlockIcon at runtime but omits it from its
-// published type exports; alias it through a typed shim.
-const BlockIcon = (
-	blockEditor as unknown as {
-		BlockIcon: ComponentType< { icon?: unknown } >;
-	}
- ).BlockIcon;
+// published type exports; alias it through a typed shim. Fall back to a no-op
+// so a future block-editor bump that drops the export degrades to no icon
+// instead of crashing every card header with "element type is invalid".
+const BlockIcon =
+	(
+		blockEditor as unknown as {
+			BlockIcon?: ComponentType< { icon?: unknown } >;
+		}
+	 ).BlockIcon ?? ( () => null );
 
 export interface BlockSnapshot {
 	clientId: string;

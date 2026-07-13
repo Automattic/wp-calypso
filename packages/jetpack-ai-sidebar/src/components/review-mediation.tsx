@@ -29,6 +29,7 @@ import {
 	trackAiEditorialReviewResultRendered,
 	type ReviewContext,
 } from '../utils/tracking';
+import { useCopyToClipboard } from '../utils/use-copy-to-clipboard';
 import BlockRef, { getBlockTypeName, type BlockSnapshot } from './block-ref';
 import ReviewCard, { type ReviewCardRow } from './review-card';
 import ReviewerChip, { type ReviewerMetadata } from './reviewer-chip';
@@ -75,7 +76,7 @@ interface SuggestedEdit {
 	supported_by_reviewers: string[];
 	requires_manual?: boolean;
 	/** Optional short editorial category for the card badge (e.g. "Tone"). */
-	category?: string;
+	feedback_category?: string;
 }
 
 interface GuidelineViolation {
@@ -309,29 +310,8 @@ export default function ReviewMediation( {
 		{}
 	);
 	const [ bulkRunning, setBulkRunning ] = useState( false );
-	// Only one card shows "Copied" at a time; a short timer reverts it.
-	const [ copiedKey, setCopiedKey ] = useState< string | null >( null );
-	const copyResetTimer = useRef< ReturnType< typeof setTimeout > | undefined >( undefined );
-	const clipboardSupported = useMemo(
-		() =>
-			typeof ( globalThis.navigator as Navigator | undefined )?.clipboard?.writeText === 'function',
-		[]
-	);
-	const copyToClipboard = useCallback( ( key: string, text: string ) => {
-		const clipboard = ( globalThis.navigator as Navigator | undefined )?.clipboard;
-		if ( ! clipboard?.writeText ) {
-			return;
-		}
-		clipboard
-			.writeText( text )
-			.then( () => {
-				setCopiedKey( key );
-				clearTimeout( copyResetTimer.current );
-				copyResetTimer.current = setTimeout( () => setCopiedKey( null ), 2000 );
-			} )
-			.catch( () => {} );
-	}, [] );
-	useEffect( () => () => clearTimeout( copyResetTimer.current ), [] );
+	// Only one card shows "Copied" at a time; the shared hook owns that state.
+	const { clipboardSupported, copiedKey, copy: copyToClipboard } = useCopyToClipboard();
 
 	type UndoSnapshot = {
 		clientId: string;
@@ -1219,7 +1199,7 @@ export default function ReviewMediation( {
 														<button
 															type="button"
 															className="jetpack-ai-review-mediation__resolution-undo"
-															disabled={ isPostStale }
+															disabled={ isPostStale || bulkRunning }
 															onClick={ () => handleUndoConflict( i ) }
 															title={
 																status === 'accepted'
@@ -1415,67 +1395,81 @@ export default function ReviewMediation( {
 								>
 									{ suggested_edits.map( ( edit, i ) => {
 										const status = editStatuses[ i ] ?? 'pending';
-										const isManual = isManualSuggestedEdit( edit );
-										const acceptDisabledReason = isManual
+										const requiresManual = isManualSuggestedEdit( edit );
+										const targetBlock =
+											edit.block_index !== null ? getBlock( edit.block_index ) : null;
+										// Item-level reason it can't be applied (drift / block gone / ambiguous) — not stale.
+										const disabledReason = requiresManual
 											? undefined
 											: getBlockEditDisabledReason(
 													edit.block_index,
 													edit.current_text,
 													edit.editable_attribute
 											  );
-										const canApply = ! isManual && ! acceptDisabledReason;
-										const showApply = canApply || status === 'applying';
-										const targetBlock =
-											edit.block_index !== null ? getBlock( edit.block_index ) : null;
+										// Stale can't apply anything (block refs point at the wrong post) even if the
+										// current post still contains the text — so Go to section, never a dead Apply.
+										const canApply = ! requiresManual && ! disabledReason && ! isPostStale;
+										// Manual tag reflects the edit, not staleness (disabledReason is against the current post).
+										const isManualEdit = requiresManual || ( ! isPostStale && !! disabledReason );
+										// Keep Apply while an apply is in flight, unless the review went stale mid-apply.
+										const showApply = canApply || ( ! isPostStale && status === 'applying' );
 										const canGoToSection = !! focusCurrentPostBlock && !! targetBlock;
-										const showDiff = ! isManual && !! edit.current_text && !! edit.suggested_text;
+										// Show the diff only while the exact source text is still present in the post.
+										const currentTextPresent =
+											!! edit.current_text &&
+											!! targetBlock &&
+											countOccurrences(
+												getEditableBlockContent(
+													targetBlock,
+													edit.editable_attribute,
+													edit.current_text
+												),
+												edit.current_text
+											) >= 1;
+										const showDiff = currentTextPresent && !! edit.suggested_text;
 										const suggestionText = edit.suggested_text;
 										const key = `edit-${ i }`;
-										const category =
-											edit.category ||
+										const categoryLabel =
+											edit.feedback_category ||
 											( targetBlock
 												? getBlockTypeName( targetBlock.name ?? '' )
 												: __( 'Suggested edit', 'jetpack' ) );
-										const badge = isManual
-											? __( 'Manual edit', 'jetpack' )
-											: sprintf(
-													/* translators: 1: editorial category, 2: position in the run, 3: total edits. */
-													__( '%1$s (%2$d/%3$d)', 'jetpack' ),
-													category,
-													i + 1,
-													suggested_edits.length
-											  );
-										const rows: ReviewCardRow[] = [];
+										const categoryBadge = sprintf(
+											/* translators: 1: editorial category, 2: position in the run, 3: total edits. */
+											__( '%1$s (%2$d/%3$d)', 'jetpack' ),
+											categoryLabel,
+											i + 1,
+											suggested_edits.length
+										);
+										const bodyRows: ReviewCardRow[] = [];
+										if ( edit.rationale ) {
+											bodyRows.push( {
+												tag: __( 'Why', 'jetpack' ),
+												text: edit.rationale,
+												variant: 'current',
+												element: 'text',
+											} );
+										}
 										if ( showDiff ) {
-											rows.push( {
+											bodyRows.push( {
 												tag: __( 'Current', 'jetpack' ),
 												text: edit.current_text,
 												variant: 'current',
 												element: 'del',
 											} );
-											rows.push( {
+											bodyRows.push( {
 												tag: __( 'New', 'jetpack' ),
 												text: edit.suggested_text,
 												variant: 'new',
 												element: 'ins',
 											} );
-										} else {
-											if ( edit.rationale ) {
-												rows.push( {
-													tag: __( 'Why', 'jetpack' ),
-													text: edit.rationale,
-													variant: 'current',
-													element: 'text',
-												} );
-											}
-											if ( edit.suggested_text ) {
-												rows.push( {
-													tag: __( 'Suggestion', 'jetpack' ),
-													text: edit.suggested_text,
-													variant: 'new',
-													element: 'text',
-												} );
-											}
+										} else if ( edit.suggested_text ) {
+											bodyRows.push( {
+												tag: __( 'Suggestion', 'jetpack' ),
+												text: edit.suggested_text,
+												variant: 'new',
+												element: 'text',
+											} );
 										}
 										const footer =
 											edit.supported_by_reviewers.length > 0 ? (
@@ -1498,11 +1492,11 @@ export default function ReviewMediation( {
 											<ReviewCard
 												key={ key }
 												model={ {
-													badge,
-													isManualEdit: isManual,
+													badge: categoryBadge,
+													isManualEdit,
 													blockIndex: edit.block_index,
-													rows,
-													rationale: showDiff && edit.rationale ? edit.rationale : undefined,
+													bodyRows,
+													reasonNote: isPostStale ? undefined : disabledReason,
 												} }
 												blocks={ blocks }
 												status={ status }
@@ -1540,9 +1534,12 @@ export default function ReviewMediation( {
 								} }
 							>
 								<PanelBody
-									title={ `${ __( 'Guideline violations', 'jetpack' ) } (${
+									title={ sprintf(
+										/* translators: 1: section label, 2: number of violations. */
+										__( '%1$s (%2$d)', 'jetpack' ),
+										__( 'Guideline violations', 'jetpack' ),
 										renderedGuidelineViolations.length
-									})` }
+									) }
 									className="jetpack-ai-review-mediation__violations"
 									opened={ openSections.violations }
 									onToggle={ ( next: boolean ) => setSectionOpen( 'violations', next ) }
@@ -1553,23 +1550,23 @@ export default function ReviewMediation( {
 											const key = `violation-${ i }`;
 											const targetBlock = v.block_index !== null ? getBlock( v.block_index ) : null;
 											const hasGuideline = hasRenderableGuidelineQuote( v.guideline_quote );
-											const rows: ReviewCardRow[] = [];
+											const bodyRows: ReviewCardRow[] = [];
+											bodyRows.push( {
+												tag: __( 'Why', 'jetpack' ),
+												text: v.issue,
+												variant: 'current',
+												element: 'text',
+											} );
 											if ( v.violating_text ) {
-												rows.push( {
+												bodyRows.push( {
 													tag: __( 'Current', 'jetpack' ),
 													text: v.violating_text,
 													variant: 'current',
 													element: 'del',
 												} );
 											}
-											rows.push( {
-												tag: __( 'Why', 'jetpack' ),
-												text: v.issue,
-												variant: 'current',
-												element: 'text',
-											} );
 											if ( hasGuideline && v.guideline_quote ) {
-												rows.push( {
+												bodyRows.push( {
 													tag: __( 'Guideline', 'jetpack' ),
 													text: v.guideline_quote,
 													variant: 'new',
@@ -1589,7 +1586,7 @@ export default function ReviewMediation( {
 														),
 														isManualEdit: false,
 														blockIndex: v.block_index,
-														rows,
+														bodyRows,
 													} }
 													blocks={ blocks }
 													status={ status }
@@ -1632,7 +1629,7 @@ export default function ReviewMediation( {
 							? __( 'Applying…', 'jetpack' )
 							: sprintf(
 									/* translators: %d is the count of pending AI-resolution + suggested-edit items */
-									__( 'Accept all AI resolutions (%d)', 'jetpack' ),
+									__( 'Apply all (%d)', 'jetpack' ),
 									totalPendingCount
 							  ) }
 					</button>
