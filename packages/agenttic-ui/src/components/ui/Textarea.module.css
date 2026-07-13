@@ -23,6 +23,12 @@
     box-shadow: none;
 }
 
+.textarea:read-only {
+    /* Pin the background — wp-admin styles `textarea[readonly]` grey. */
+    background-color: transparent;
+    color: var(--color-muted-foreground);
+}
+
 .textarea:disabled {
     cursor: not-allowed;
     opacity: 0.5;

@@ -9,6 +9,7 @@ import React, {
 } from 'react';
 import { __, sprintf } from '@wordpress/i18n';
 import { useAgentUIContext } from '../../context/AgentUIContext';
+import { cn } from '../../utils/classNames';
 import styles from './ImageUploader.module.css';
 
 export interface UploadedImage {
@@ -23,6 +24,8 @@ export interface UploadedImage {
 export interface UploadingImage {
 	id: string;
 	file?: File;
+	// Local preview URL (e.g. a data URL) shown under the uploading indicator
+	url?: string;
 }
 
 export interface ImageUploaderProps {
@@ -48,7 +51,6 @@ export interface ImageUploaderProps {
 
 	// Customization
 	uploadingIndicator?: React.ReactNode;
-	emptyState?: React.ReactNode;
 	className?: string;
 
 	// Optional feature flags
@@ -61,6 +63,9 @@ export interface ImageUploaderProps {
 	// Visibility
 	visible?: boolean;
 
+	// Disables all interactions (browse, drop, paste, remove) while keeping previews visible
+	disabled?: boolean;
+
 	// Scopes drag detection to this container and makes it a drop target
 	dropZoneRef?: React.RefObject< HTMLElement >;
 }
@@ -69,6 +74,9 @@ interface ImagePreviewItemProps {
 	image: UploadedImage;
 	allowDragToInsert: boolean;
 	showFileMetadata: boolean;
+	disabled: boolean;
+	uploading?: boolean;
+	uploadingIndicator?: React.ReactNode;
 	onDragStart: ( image: UploadedImage, e: React.DragEvent ) => void;
 	onDragEnd: ( image: UploadedImage, e: React.DragEvent ) => void;
 	onRemove: ( e: React.MouseEvent, image: UploadedImage ) => void;
@@ -79,6 +87,9 @@ const ImagePreviewItem = memo(
 		image,
 		allowDragToInsert,
 		showFileMetadata,
+		disabled,
+		uploading = false,
+		uploadingIndicator,
 		onDragStart,
 		onDragEnd,
 		onRemove,
@@ -95,16 +106,24 @@ const ImagePreviewItem = memo(
 		return (
 			<div
 				key={ image.id }
-				className={ styles.previewItem }
-				draggable={ allowDragToInsert }
+				className={ cn( styles.previewItem, {
+					[ styles.uploadingItem ]: uploading,
+				} ) }
+				draggable={ allowDragToInsert && ! disabled && ! uploading }
 				onDragStart={ ( e ) => onDragStart( image, e ) }
 				onDragEnd={ ( e ) => onDragEnd( image, e ) }
+				aria-label={
+					uploading
+						? __( 'Uploading image', 'a8c-agenttic' )
+						: undefined
+				}
 			>
 				<button
 					className={ styles.removeButton }
 					onClick={ ( e ) => onRemove( e, image ) }
 					aria-label={ __( 'Remove image', 'a8c-agenttic' ) }
 					type="button"
+					disabled={ disabled || uploading }
 				>
 					<svg
 						width="16"
@@ -121,12 +140,21 @@ const ImagePreviewItem = memo(
 						/>
 					</svg>
 				</button>
-				<img
-					src={ image.url }
-					alt={ image.alt || fileName }
-					className={ styles.previewImage }
-					loading="lazy"
-				/>
+				<div className={ styles.thumbnail }>
+					<img
+						src={ image.url }
+						alt={ image.alt || fileName }
+						className={ styles.previewImage }
+						loading="lazy"
+					/>
+					{ uploading && (
+						<div className={ styles.uploadingOverlay }>
+							{ uploadingIndicator || (
+								<div className={ styles.spinner } />
+							) }
+						</div>
+					) }
+				</div>
 				{ showFileMetadata && (
 					<div className={ styles.previewMeta }>
 						<span
@@ -175,6 +203,7 @@ export const ImageUploader = forwardRef<
 		allowDragToInsert = true,
 		onError,
 		visible = true,
+		disabled = false,
 		dropZoneRef,
 	}: ImageUploaderProps,
 	ref: React.Ref< ImageUploaderHandle >
@@ -188,11 +217,25 @@ export const ImageUploader = forwardRef<
 	const invalidMessageTimeoutRef = useRef< NodeJS.Timeout | null >( null );
 	const dragCounterRef = useRef( 0 );
 
-	useImperativeHandle( ref, () => ( {
-		openFileDialog: () => {
-			fileInputRef.current?.click();
-		},
-	} ) );
+	// Ref mirror so window-level listeners (drag, paste) see the latest value
+	const disabledRef = useRef( disabled );
+	useEffect( () => {
+		disabledRef.current = disabled;
+		if ( disabled ) {
+			dragCounterRef.current = 0;
+			setIsDraggingFile( false );
+			setIsDraggingOver( false );
+		}
+	}, [ disabled ] );
+
+	const openFileDialog = () => {
+		if ( disabled ) {
+			return;
+		}
+		fileInputRef.current?.click();
+	};
+
+	useImperativeHandle( ref, () => ( { openFileDialog } ) );
 
 	// Track drag state — scoped to dropZoneRef container when provided, otherwise window
 	useEffect( () => {
@@ -203,6 +246,9 @@ export const ImageUploader = forwardRef<
 
 		const handleDragEnter = ( e: DragEvent ) => {
 			// Only track file drags, not element drags
+			if ( disabledRef.current ) {
+				return;
+			}
 			if ( e.dataTransfer?.types?.includes( 'Files' ) ) {
 				dragCounterRef.current += 1;
 				setIsDraggingFile( true );
@@ -210,6 +256,9 @@ export const ImageUploader = forwardRef<
 		};
 
 		const handleDragLeave = ( e: DragEvent ) => {
+			if ( disabledRef.current ) {
+				return;
+			}
 			dragCounterRef.current -= 1;
 			// Reset if counter reaches 0 OR if leaving the window entirely
 			// (relatedTarget is null when drag leaves the document)
@@ -357,7 +406,7 @@ export const ImageUploader = forwardRef<
 			setIsDraggingFile( false );
 			setIsDraggingOver( false );
 
-			if ( e.dataTransfer?.files ) {
+			if ( e.dataTransfer?.files && ! disabledRef.current ) {
 				handleFilesRef.current( e.dataTransfer.files );
 				onDrop?.( Array.from( e.dataTransfer.files ) );
 			}
@@ -378,6 +427,9 @@ export const ImageUploader = forwardRef<
 	// Handle clipboard paste events
 	useEffect( () => {
 		const handlePaste = ( e: ClipboardEvent ) => {
+			if ( disabledRef.current ) {
+				return;
+			}
 			// Check if the input is focused before processing paste
 			// Check both activeElement and event target to handle edge cases
 			const isTextareaFocused =
@@ -425,12 +477,14 @@ export const ImageUploader = forwardRef<
 		return () => {
 			window.removeEventListener( 'paste', handlePaste );
 		};
-	}, [ onPaste ] );
+	}, [ onPaste, textareaRef ] );
 
 	const handleDragOver = ( e: React.DragEvent ) => {
 		e.preventDefault();
 		e.stopPropagation();
-		setIsDraggingOver( true );
+		if ( ! disabled ) {
+			setIsDraggingOver( true );
+		}
 	};
 
 	const handleDragLeave = ( e: React.DragEvent ) => {
@@ -446,7 +500,7 @@ export const ImageUploader = forwardRef<
 		dragCounterRef.current = 0;
 		setIsDraggingFile( false );
 
-		if ( e.dataTransfer.files ) {
+		if ( e.dataTransfer.files && ! disabled ) {
 			const fileArray = Array.from( e.dataTransfer.files );
 			handleFiles( e.dataTransfer.files );
 			// Call the specific onDrop callback if provided
@@ -457,7 +511,7 @@ export const ImageUploader = forwardRef<
 	const handleFileInputChange = (
 		e: React.ChangeEvent< HTMLInputElement >
 	) => {
-		if ( e.target.files ) {
+		if ( e.target.files && ! disabled ) {
 			const fileArray = Array.from( e.target.files );
 			handleFiles( e.target.files );
 			// Call the specific onBrowse callback if provided
@@ -465,10 +519,6 @@ export const ImageUploader = forwardRef<
 		}
 		// Reset the input so the same file can be selected again
 		e.target.value = '';
-	};
-
-	const openFileDialog = () => {
-		fileInputRef.current?.click();
 	};
 
 	const handleImageDragStart = useCallback(
@@ -549,13 +599,16 @@ export const ImageUploader = forwardRef<
 								className={ styles.hiddenInput }
 							/>
 							<div
-								className={ styles.clickArea }
+								className={ cn( styles.clickArea, {
+									[ styles.clickAreaDisabled ]: disabled,
+								} ) }
 								onClick={ openFileDialog }
 								onDragOver={ handleDragOver }
 								onDragLeave={ handleDragLeave }
 								onDrop={ handleDrop }
 								role="button"
-								tabIndex={ 0 }
+								tabIndex={ disabled ? -1 : 0 }
+								aria-disabled={ disabled }
 								onKeyDown={ ( e ) => {
 									if ( e.key === 'Enter' || e.key === ' ' ) {
 										openFileDialog();
@@ -593,6 +646,7 @@ export const ImageUploader = forwardRef<
 													showFileMetadata={
 														showFileMetadata
 													}
+													disabled={ disabled }
 													onDragStart={
 														handleImageDragStart
 													}
@@ -605,28 +659,71 @@ export const ImageUploader = forwardRef<
 												/>
 											) ) }
 										{ isUploading &&
-											uploadingImages.map( ( { id } ) => (
-												<div
-													key={ id }
-													className={
-														styles.previewItem
-													}
-												>
-													{ uploadingIndicator || (
-														<div
-															className={
-																styles.uploadingIndicator
+											uploadingImages.map(
+												( { id, url, file } ) =>
+													url ? (
+														<ImagePreviewItem
+															key={ id }
+															image={ {
+																id,
+																url,
+																name:
+																	file?.name ||
+																	'image',
+																mime_type:
+																	file?.type,
+															} }
+															allowDragToInsert={
+																allowDragToInsert
 															}
+															showFileMetadata={
+																showFileMetadata
+															}
+															disabled={
+																disabled
+															}
+															uploading
+															uploadingIndicator={
+																uploadingIndicator
+															}
+															onDragStart={
+																handleImageDragStart
+															}
+															onDragEnd={
+																handleImageDragEnd
+															}
+															onRemove={
+																handleRemoveImage
+															}
+														/>
+													) : (
+														<div
+															key={ id }
+															className={ cn(
+																styles.previewItem,
+																styles.uploadingItem
+															) }
+															aria-label={ __(
+																'Uploading image',
+																'a8c-agenttic'
+															) }
 														>
-															<div
-																className={
-																	styles.spinner
-																}
-															/>
+															{ uploadingIndicator || (
+																<div
+																	className={
+																		styles.uploadingIndicator
+																	}
+																>
+																	<div
+																		className={
+																			styles.spinner
+																		}
+																	/>
+																</div>
+															) }
 														</div>
-													) }
-												</div>
-											) ) }
+													)
+											) }
 									</div>
 								) }
 							</div>

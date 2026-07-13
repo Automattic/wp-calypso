@@ -45,3 +45,13 @@
 .button {
     border-radius: var(--radius-full);
 }
+
+/* The disabled button underneath is `pointer-events: none`, so the wrapper
+   receives the hover and shows the disabled cursor. */
+.actionWrapper {
+    display: inline-flex;
+}
+
+.actionWrapperDisabled {
+    cursor: not-allowed;
+}
