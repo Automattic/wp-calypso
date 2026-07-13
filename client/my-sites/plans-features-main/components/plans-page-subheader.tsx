@@ -8,14 +8,25 @@ import FormattedHeader from 'calypso/components/formatted-header';
 import { shouldUseStepContainerV2 } from 'calypso/landing/stepper/declarative-flow/helpers/should-use-step-container-v2';
 import { SelectedFeatureData } from '../hooks/use-selected-feature';
 
-const Subheader = styled.p< { isUsingStepContainerV2?: boolean; isVisualSplitIntent?: boolean } >`
+const Subheader = styled.p< {
+	isPlansGridRedesign?: boolean;
+	isUsingStepContainerV2?: boolean;
+	isVisualSplitIntent?: boolean;
+} >`
 	${ ( props ) =>
 		props.isUsingStepContainerV2
 			? `
-				margin: -2.5rem 0 3rem;
+				margin: ${ props.isPlansGridRedesign ? '-3rem 0 3rem' : '-2.5rem 0 3rem' };
 				color: var( --color-text );
 				font-size: 0.875rem;
 				line-height: 1.5;
+				${
+					props.isPlansGridRedesign
+						? `
+							letter-spacing: -0.32px;
+						`
+						: ''
+				}
 				text-wrap: balance;
 				text-align: left;
 				button.is-borderless {
@@ -39,6 +50,13 @@ const Subheader = styled.p< { isUsingStepContainerV2?: boolean; isVisualSplitInt
 				margin: ${ props.isVisualSplitIntent ? '-40px 0 30px 0' : '-32px 0 40px 0' };
 				color: var( --studio-gray-60 );
 				font-size: 1rem;
+				${
+					props.isPlansGridRedesign
+						? `
+							letter-spacing: -0.32px;
+						`
+						: ''
+				}
 				text-align: center;
 				button.is-borderless {
 					font-weight: ${ props.isVisualSplitIntent ? 'inherit' : '500' };
@@ -323,6 +341,7 @@ const PlansPageSubheader = ( {
 	selectedFeature,
 	intent,
 	showDifferentiatorHeader,
+	isPlansGridRedesign,
 }: {
 	siteSlug?: string | null;
 	isDisplayingPlansNeededForFeature: boolean;
@@ -335,6 +354,7 @@ const PlansPageSubheader = ( {
 	selectedFeature: SelectedFeatureData | null;
 	intent?: string;
 	showDifferentiatorHeader?: boolean;
+	isPlansGridRedesign?: boolean;
 } ) => {
 	const translate = useTranslate();
 
@@ -346,6 +366,7 @@ const PlansPageSubheader = ( {
 		intent === 'plans-wordpress-hosting' || intent === 'plans-website-builder';
 
 	const subheaderCommonProps = {
+		isPlansGridRedesign,
 		isUsingStepContainerV2,
 		isVisualSplitIntent,
 	};
