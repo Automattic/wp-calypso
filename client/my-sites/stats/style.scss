@@ -102,7 +102,7 @@ $font-sf-pro-display: "SF Pro Display", $sans;
 	// against the footer. Restore a page-controlled gap. Applies to both the
 	// Calypso shell (Simple) and Odyssey/wp-admin (self-hosted).
 	.layout__primary .main > .admin-ui-page {
-		padding-block-end: 32px;
+		padding-block-end: $vertical-margin;
 
 		// Stop the last section stacking its own trailing space on the page gap
 		// above (otherwise varies by tab and site).
