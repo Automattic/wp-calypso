@@ -432,6 +432,55 @@ type SiteSubscriptionDeliveryPatchKind =
 	| 'email-frequency'
 	| 'notification';
 
+/**
+ * Patch the unseen_count of a subscription in the site subscriptions query data.
+ * This is used to optimistically update the unseen_count when marking posts as
+ * seen/unseen.
+ */
+export const patchSubscriptionSeenCount = (
+	queryClient: QueryClient,
+	match: { feedIds?: number[]; blogId?: number },
+	update: ( currentCount: number ) => number
+) => {
+	if ( ! match.feedIds?.length && ! match.blogId ) {
+		return;
+	}
+
+	const feedIdSet = new Set( match.feedIds?.map( Number ) );
+
+	queryClient.setQueryData< SiteSubscriptionsInfiniteData >(
+		getSiteSubscriptionsQueryKey(),
+		( data ) => {
+			if ( ! data ) {
+				return data;
+			}
+
+			return {
+				...data,
+				pages: data.pages.map( ( page: SiteSubscriptionsPage ) => ( {
+					...page,
+					subscriptions: page.subscriptions.map(
+						( subscription: SiteSubscriptionItem ): SiteSubscriptionItem => {
+							// Match by feed ID or blog ID. Return subscription unchanged if no match.
+							if (
+								( match.feedIds?.length && ! feedIdSet.has( Number( subscription.feed_ID ) ) ) ||
+								( match.blogId && Number( subscription.blog_ID ) !== Number( match.blogId ) )
+							) {
+								return subscription;
+							}
+
+							const current = subscription.unseen_count ?? 0;
+							const newUnseenCount = Math.max( 0, update( current ) );
+
+							return { ...subscription, unseen_count: newUnseenCount };
+						}
+					),
+				} ) ),
+			};
+		}
+	);
+};
+
 const patchSiteSubscriptionDeliveryMethods = (
 	queryClient: QueryClient,
 	params: FollowDeliveryParams,

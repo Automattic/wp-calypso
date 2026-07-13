@@ -245,8 +245,7 @@ function useGenerateActionCallback( {
 				sitePlanSlug &&
 				currentPlan?.productSlug === planSlug &&
 				! flowName &&
-				intent !== 'plans-p2' &&
-				intent !== 'plans-blog-onboarding'
+				intent !== 'plans-p2'
 			) {
 				if ( isFreePlan( planSlug ) ) {
 					page.redirect( `/add-ons/${ siteSlug }` );
@@ -256,13 +255,7 @@ function useGenerateActionCallback( {
 				return;
 			}
 
-			if (
-				sitePlanSlug &&
-				! flowName &&
-				intent !== 'plans-p2' &&
-				intent !== 'plans-blog-onboarding' &&
-				! canUserManageCurrentPlan
-			) {
+			if ( sitePlanSlug && ! flowName && intent !== 'plans-p2' && ! canUserManageCurrentPlan ) {
 				await handleNonOwnerClick( { availableForPurchase } );
 				return;
 			}
@@ -273,7 +266,6 @@ function useGenerateActionCallback( {
 					flowName === WOO_HOSTED_PLANS_FLOW ||
 					intent === 'plans-upgrade-or-downgrade' ) &&
 				intent !== 'plans-p2' &&
-				intent !== 'plans-blog-onboarding' &&
 				! availableForPurchase
 			) {
 				recordTracksEvent?.( 'calypso_plan_features_downgrade_click', {

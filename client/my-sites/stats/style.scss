@@ -98,6 +98,26 @@ $font-sf-pro-display: "SF Pro Display", $sans;
 		@include apply-improved-classic-dark-colors();
 	}
 
+	// The stats layout zeroes the page padding-bottom, leaving content flush
+	// against the footer. Restore a page-controlled gap. Applies to both the
+	// Calypso shell (Simple) and Odyssey/wp-admin (self-hosted).
+	.layout__primary .main > .admin-ui-page {
+		padding-block-end: $vertical-margin;
+
+		// Stop the last section stacking its own trailing space on the page gap
+		// above (otherwise varies by tab and site).
+		.stats > :last-child {
+			margin-block-end: 0;
+			padding-block-end: 0;
+
+			// Drop the flexible-grid `::after` balancer, whose `gap` adds a
+			// trailing row (as already done for `.subscribers-page`).
+			&::after {
+				display: none;
+			}
+		}
+	}
+
 	.sticky-panel.is-sticky {
 		padding: 0;
 	}
@@ -119,6 +139,13 @@ $font-sf-pro-display: "SF Pro Display", $sans;
 			*:has(> h1) {
 				min-width: 0;
 			}
+
+			// The Jetpack logo (JetpackTitle's HStack) is a flex item with the
+			// default flex-shrink: 1, so it compresses along with a truncating
+			// title unless pinned.
+			.jetpack-logo {
+				flex-shrink: 0;
+			}
 		}
 
 		// Breadcrumb trail rendered inside the unified header on detail pages.
@@ -127,10 +154,16 @@ $font-sf-pro-display: "SF Pro Display", $sans;
 			align-items: center;
 			gap: 8px;
 			min-width: 0;
+		}
 
-			.jetpack-logo {
-				flex-shrink: 0;
-			}
+		// Each crumb (separator + label) wraps in a span that is the actual
+		// flex item; without min-width: 0 on it, the label inside can never
+		// shrink and the ellipsis rules below have no effect.
+		.stats-breadcrumbs__item {
+			display: inline-flex;
+			align-items: center;
+			gap: 8px;
+			min-width: 0;
 		}
 
 		.stats-breadcrumbs__link {
@@ -146,6 +179,7 @@ $font-sf-pro-display: "SF Pro Display", $sans;
 		.stats-breadcrumbs__current {
 			overflow: hidden;
 			text-overflow: ellipsis;
+			white-space: nowrap;
 		}
 
 		> .stats-navigation {

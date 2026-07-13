@@ -1,5 +1,6 @@
 # yaml-language-server: $schema=https://raw.githubusercontent.com/buildkite/pipeline-schema/main/schema.json
 ---
+# Variables used in this pipeline are defined in `shared-pipeline-vars`, which is `source`'d before calling `buildkite-agent pipeline upload`
 
 steps:
   # The desktop build is resource-intensive and this repo runs many builds,
@@ -13,9 +14,10 @@ steps:
     agents:
       queue: mac
     env:
-      IMAGE_ID: xcode-26.6
+      IMAGE_ID: $IMAGE_ID
     plugins:
-      - automattic/nvm#0.6.0
+      - $NVM_PLUGIN
+      - $CI_TOOLKIT_PLUGIN
     command: .buildkite/commands/build-desktop-mac.sh
     artifact_paths:
       - desktop/release/*.zip
@@ -33,7 +35,7 @@ steps:
     agents:
       queue: default
     plugins:
-      - docker#v5.13.0:
+      - $DOCKER_PLUGIN:
           image: cimg/node:24.15.0-browsers
           propagate-uid-gid: true
           userns: host
@@ -70,7 +72,7 @@ steps:
     agents:
       queue: windows
     plugins:
-      - automattic/a8c-ci-toolkit#6.1.0
+      - $CI_TOOLKIT_PLUGIN
     command: powershell -NoProfile -ExecutionPolicy Bypass -File .buildkite/commands/build-desktop-windows-nsis.ps1
     artifact_paths:
       - desktop/release/*.exe
@@ -90,7 +92,7 @@ steps:
     agents:
       queue: default
     plugins:
-      - automattic/nvm#0.6.0
+      - $NVM_PLUGIN
     command: .buildkite/commands/publish-desktop-release.sh
     artifact_paths:
       - desktop/release/*

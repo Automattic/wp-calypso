@@ -311,8 +311,24 @@ $y-axis-padding: 0 20px;
 		border-radius: 2px;
 		margin-right: 8px;
 
-		&:checked::before {
-			margin: 3px auto;
+		// Checked: secondary-button-like outline style, matching the chart type
+		// toggle (`.components-button.is-secondary`) next to the legend.
+		&:checked {
+			background-color: transparent;
+			border-color: var(--wp-components-color-accent, var(--color-accent));
+
+			&::before {
+				// Render the checkmark through an alpha mask so it takes a theme
+				// color; the base form-checkbox checkmark is an SVG with a
+				// hardcoded stroke that ignores color schemes.
+				content: "";
+				display: block;
+				width: 12px;
+				height: 12px;
+				margin: 3px auto;
+				mask: url(calypso/assets/images/checkbox-icons/checkmark-primary.svg) no-repeat center / contain;
+				background-color: var(--wp-components-color-accent, var(--color-accent));
+			}
 		}
 	}
 }

@@ -1,5 +1,4 @@
 // @ts-nocheck - TODO: Fix TypeScript issues
-import { START_WRITING_FLOW } from '@automattic/onboarding';
 import { getDomainUpSellTask } from '../';
 import { buildSiteDetails, buildTask } from '../../../test/lib/fixtures';
 import { type TaskContext } from '../../../types';
@@ -19,17 +18,6 @@ describe( 'getDesignEditedTask', () => {
 		expect( getDomainUpSellTask( task, 'flowId', context ) ).toMatchObject( {
 			useCalypsoPath: true,
 			calypso_path: '/domains/manage/site.wordpress.com',
-		} );
-	} );
-
-	it( 'returns the setup domain page when the flow is blog onboarding', () => {
-		const site = buildSiteDetails( { name: 'site.wordpress.com' } );
-		const context = buildContext( { siteSlug: 'site.wordpress.com', site } );
-
-		expect( getDomainUpSellTask( task, START_WRITING_FLOW, context ) ).toMatchObject( {
-			useCalypsoPath: true,
-			calypso_path:
-				'/setup/start-writing/domains?siteId=211078228&flowToReturnTo=start-writing&new=site.wordpress.com',
 		} );
 	} );
 

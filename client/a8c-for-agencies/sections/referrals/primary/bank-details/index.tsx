@@ -1,7 +1,5 @@
 import { useDesktopBreakpoint } from '@automattic/viewport-react';
-import { ExternalLink } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
-import { useLayoutEffect, useState } from 'react';
 import { LayoutWithGuidedTour as Layout } from 'calypso/a8c-for-agencies/components/layout/layout-with-guided-tour';
 import LayoutTop from 'calypso/a8c-for-agencies/components/layout/layout-with-payment-notification';
 import MobileSidebarNavigation from 'calypso/a8c-for-agencies/components/sidebar/mobile-sidebar-navigation';
@@ -11,7 +9,8 @@ import {
 	A4A_WOOPAYMENTS_LINK,
 } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
 import StatusBadge from 'calypso/a8c-for-agencies/components/step-section-item/status-badge';
-import TextPlaceholder from 'calypso/a8c-for-agencies/components/text-placeholder';
+import { getAccountStatus } from 'calypso/dashboard/agency/earn/payout-settings/get-account-status';
+import { TipaltiPayoutSettings } from 'calypso/dashboard/agency/earn/payout-settings/tipalti-payout-settings';
 import LayoutBody from 'calypso/layout/hosting-dashboard/body';
 import LayoutHeader, {
 	LayoutHeaderBreadcrumb as Breadcrumb,
@@ -19,7 +18,6 @@ import LayoutHeader, {
 } from 'calypso/layout/hosting-dashboard/header';
 import useGetTipaltiIFrameURL from '../../hooks/use-get-tipalti-iframe-url';
 import useGetTipaltiPayee from '../../hooks/use-get-tipalti-payee';
-import { getAccountStatus } from '../../lib/get-account-status';
 
 import './style.scss';
 
@@ -67,28 +65,12 @@ export default function ReferralsBankDetails( { type }: { type?: 'migrations' | 
 	const translate = useTranslate();
 	const isDesktop = useDesktopBreakpoint();
 
-	const [ iFrameHeight, setIFrameHeight ] = useState( '100%' );
-
 	const { data, isFetching } = useGetTipaltiIFrameURL();
 	const { data: tipaltiData } = useGetTipaltiPayee();
 
-	const accountStatus = getAccountStatus( tipaltiData, translate );
+	const accountStatus = getAccountStatus( tipaltiData );
 
 	const iFrameSrc = data?.iframe_url || '';
-
-	const tipaltiHandler = ( event: MessageEvent ) => {
-		if ( event.data && event.data.TipaltiIframeInfo ) {
-			const height = event.data.TipaltiIframeInfo?.height || '100%';
-			setIFrameHeight( height );
-		}
-	};
-
-	useLayoutEffect( () => {
-		window.addEventListener( 'message', tipaltiHandler, false );
-		return () => {
-			window.removeEventListener( 'message', tipaltiHandler, false );
-		};
-	}, [] );
 
 	const { title, mainPageBreadCrumb } = getPageInfo( translate, type, isDesktop );
 
@@ -137,30 +119,11 @@ export default function ReferralsBankDetails( { type }: { type?: 'migrations' | 
 					<div className="bank-details__heading">
 						{ translate( 'Connect your bank to receive payments' ) }
 					</div>
-					<div className="bank-details__subheading">
-						{ translate(
-							'Enter your bank details to start receiving payments through {{a}}Tipalti{{/a}}, our secure payments platform.',
-							{
-								components: {
-									a: (
-										<ExternalLink
-											className="referrals-overview__link"
-											href="https://tipalti.com/"
-											children={ null }
-										/>
-									),
-								},
-							}
-						) }
-					</div>
-
-					<div className="bank-details__iframe-container">
-						{ isFetching ? (
-							<TextPlaceholder />
-						) : (
-							<iframe width="100%" height={ iFrameHeight } src={ iFrameSrc } title={ title } />
-						) }
-					</div>
+					<TipaltiPayoutSettings
+						iframeUrl={ iFrameSrc }
+						isLoading={ isFetching }
+						iframeTitle={ title }
+					/>
 				</>
 			</LayoutBody>
 		</Layout>

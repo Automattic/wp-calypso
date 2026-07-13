@@ -10,7 +10,7 @@ import {
 } from '@wordpress/components';
 import { __, isRTL } from '@wordpress/i18n';
 import ComponentViewTracker from '../../components/component-view-tracker';
-import { getHostingDashboardEnrollment } from '../../utils/hosting-dashboard-enrollment';
+import { isWelcomeModalEligible } from '../../utils/hosting-dashboard-enrollment';
 import { useAnalytics } from '../analytics';
 import { useAuth } from '../auth';
 import { hostingDashboardRoute as hostingDashboardPreferencesRoute } from '../router/me';
@@ -50,9 +50,7 @@ export function OptInWelcomeModal() {
 		return null;
 	}
 
-	// Only users whose default experience is the dashboard should see the welcome pitch.
-	const dashboardEnrollment = getHostingDashboardEnrollment( dashboardOptIn, user.ID );
-	if ( ! dashboardEnrollment.enrolled ) {
+	if ( ! isWelcomeModalEligible( dashboardOptIn, user.ID ) ) {
 		return null;
 	}
 
