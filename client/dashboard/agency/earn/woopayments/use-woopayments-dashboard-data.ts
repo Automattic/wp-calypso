@@ -13,7 +13,8 @@ import {
 import { useQueries, useQuery } from '@tanstack/react-query';
 import { useMemo } from 'react';
 import type { SitesWithWooPaymentsState } from './types';
-import type { WooPaymentsData } from '@automattic/api-core';
+import type { JetpackTestConnection, WooPaymentsData } from '@automattic/api-core';
+import type { UseQueryResult } from '@tanstack/react-query';
 
 const sortByState = ( a: SitesWithWooPaymentsState, b: SitesWithWooPaymentsState ): number => {
 	// Order: sites without state, active, disconnected
@@ -32,6 +33,12 @@ const sortByState = ( a: SitesWithWooPaymentsState, b: SitesWithWooPaymentsState
 
 	return getStateOrder( a.state ) - getStateOrder( b.state );
 };
+
+// Kept at module scope so `useQueries` sees a stable `combine` reference and can
+// memoize its result; an inline function would re-run and return a new array every render.
+const combineConnectionResults = (
+	results: UseQueryResult< JetpackTestConnection >[]
+): boolean[] => results.map( ( result ) => result.data?.connected ?? true );
 
 export interface WooPaymentsDashboardData {
 	isLoading: boolean;
@@ -83,7 +90,6 @@ export default function useWooPaymentsDashboardData(): WooPaymentsDashboardData 
 		);
 	}, [ sitesWithPlugins ] );
 
-	// Combine sites with WooPayments licenses (assigned via A4A) and plugins.
 	const allSitesWithWooPayments = useMemo( () => {
 		return [ ...( licenseSites || [] ), ...sitesWithWooPaymentsPlugins ];
 	}, [ licenseSites, sitesWithWooPaymentsPlugins ] );
@@ -94,18 +100,21 @@ export default function useWooPaymentsDashboardData(): WooPaymentsDashboardData 
 			staleTime: 1000 * 60,
 			enabled: allSitesWithWooPayments.length > 0,
 		} ) ),
-		combine: ( results ) => results.map( ( result ) => result.data?.connected ?? true ),
+		combine: combineConnectionResults,
 	} );
 
-	const testConnections = allSitesWithWooPayments.map( ( site, index ) => ( {
-		ID: site.blogId,
-		connected: testConnectionResults[ index ] ?? true,
-	} ) );
+	const testConnections = useMemo(
+		() =>
+			allSitesWithWooPayments.map( ( site, index ) => ( {
+				ID: site.blogId,
+				connected: testConnectionResults[ index ] ?? true,
+			} ) ),
+		[ allSitesWithWooPayments, testConnectionResults ]
+	);
 
 	const isLoading = isLoadingLicensesWithWooPayments || isLoadingSitesWithPlugins;
 	const showEmptyState = ! isLoading && ! allSitesWithWooPayments.length;
 
-	// Only fetch data if there are sites with WooPayments plugins or licenses.
 	const { data: woopaymentsData, isLoading: isLoadingWooPaymentsData } = useQuery( {
 		...agencyWooPaymentsDataQuery( agencyId ),
 		enabled: !! agencyId && !! allSitesWithWooPayments.length,
