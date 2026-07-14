@@ -94,7 +94,7 @@ ul.module-tabs {
 			clear: both;
 			display: block;
 			line-height: 24px;
-			color: var(--color-primary);
+			color: var(--color-accent);
 			transition: font-size 0.3s 0 ease-out;
 
 			@include breakpoint-deprecated( "<480px" ) {
@@ -150,7 +150,7 @@ ul.module-tabs {
 		&.is-selected a .value,
 		&.is-selected.is-low a .value,
 		&.is-selected a:hover .value {
-			color: var(--color-primary);
+			color: var(--color-accent);
 		}
 
 		// Low state ('disabled')

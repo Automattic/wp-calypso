@@ -66,38 +66,42 @@ function getBlockLabel( block: BlockSnapshot ): string {
 		case 'core/paragraph': {
 			const snippet = truncate( stripTags( String( attrs.content ?? '' ) ) );
 			return snippet
-				? `${ __( 'Paragraph', 'jetpack' ) } — “${ snippet }”`
-				: __( 'Paragraph', 'jetpack' );
+				? `${ __( 'Paragraph', __i18n_text_domain__ ) } — “${ snippet }”`
+				: __( 'Paragraph', __i18n_text_domain__ );
 		}
 		case 'core/heading': {
 			const snippet = truncate( stripTags( String( attrs.content ?? '' ) ) );
 			const hasLevel = Number.isInteger( attrs.level );
 			const base = hasLevel
-				? `${ __( 'Heading', 'jetpack' ) } (H${ attrs.level })`
-				: __( 'Heading', 'jetpack' );
+				? `${ __( 'Heading', __i18n_text_domain__ ) } (H${ attrs.level })`
+				: __( 'Heading', __i18n_text_domain__ );
 			return snippet ? `${ base } — “${ snippet }”` : base;
 		}
 		case 'core/image': {
 			const alt = stripTags( String( attrs.alt ?? '' ) );
 			const caption = stripTags( String( attrs.caption ?? '' ) );
 			const snippet = truncate( alt || caption );
-			return snippet ? `${ __( 'Image', 'jetpack' ) } — “${ snippet }”` : __( 'Image', 'jetpack' );
+			return snippet
+				? `${ __( 'Image', __i18n_text_domain__ ) } — “${ snippet }”`
+				: __( 'Image', __i18n_text_domain__ );
 		}
 		case 'core/list': {
 			// `core/list` nests `core/list-item`s in innerBlocks; their text
 			// is not on the list block's own attributes. Skip snippet.
-			return __( 'List', 'jetpack' );
+			return __( 'List', __i18n_text_domain__ );
 		}
 		case 'core/list-item': {
 			const snippet = truncate( stripTags( String( attrs.content ?? '' ) ) );
 			return snippet
-				? `${ __( 'List item', 'jetpack' ) } — “${ snippet }”`
-				: __( 'List item', 'jetpack' );
+				? `${ __( 'List item', __i18n_text_domain__ ) } — “${ snippet }”`
+				: __( 'List item', __i18n_text_domain__ );
 		}
 		case 'core/quote':
 		case 'core/pullquote': {
 			const snippet = truncate( stripTags( String( attrs.value ?? attrs.content ?? '' ) ) );
-			return snippet ? `${ __( 'Quote', 'jetpack' ) } — “${ snippet }”` : __( 'Quote', 'jetpack' );
+			return snippet
+				? `${ __( 'Quote', __i18n_text_domain__ ) } — “${ snippet }”`
+				: __( 'Quote', __i18n_text_domain__ );
 		}
 		default: {
 			// `core/cover` → `Cover`; unknown custom blocks fall back to
@@ -106,7 +110,7 @@ function getBlockLabel( block: BlockSnapshot ): string {
 				const rest = name.slice( 5 );
 				return rest.charAt( 0 ).toUpperCase() + rest.slice( 1 );
 			}
-			return name || __( 'Block', 'jetpack' );
+			return name || __( 'Block', __i18n_text_domain__ );
 		}
 	}
 }
@@ -124,7 +128,7 @@ export default function BlockRef( { index, blocks, onFocus, className = '' }: Bl
 	if ( index === null || index === undefined ) {
 		return (
 			<span className={ `jetpack-ai-block-ref is-post-wide ${ className }`.trim() }>
-				{ __( 'Post-wide', 'jetpack' ) }
+				{ __( 'Post-wide', __i18n_text_domain__ ) }
 			</span>
 		);
 	}
@@ -132,7 +136,7 @@ export default function BlockRef( { index, blocks, onFocus, className = '' }: Bl
 	if ( index < 0 || index >= blocks.length ) {
 		return (
 			<span className={ `jetpack-ai-block-ref is-stale ${ className }`.trim() }>
-				{ __( 'Block no longer present', 'jetpack' ) }
+				{ __( 'Block no longer present', __i18n_text_domain__ ) }
 			</span>
 		);
 	}
@@ -149,7 +153,7 @@ export default function BlockRef( { index, blocks, onFocus, className = '' }: Bl
 			type="button"
 			className={ `jetpack-ai-block-ref is-clickable ${ className }`.trim() }
 			onClick={ () => onFocus( index ) }
-			title={ __( 'Scroll to block in editor', 'jetpack' ) }
+			title={ __( 'Scroll to block in editor', __i18n_text_domain__ ) }
 		>
 			{ label }
 		</button>

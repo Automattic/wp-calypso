@@ -9,6 +9,7 @@ import type { AgentsManagerContextType } from '../../contexts';
 const mockAbortCurrentRequest = jest.fn();
 const mockSetIsOpen = jest.fn();
 const mockSetIsDocked = jest.fn();
+const mockSetIsMinimized = jest.fn();
 const mockUseAgentLayoutManager = jest.fn();
 const mockResumeActiveChat = jest.fn();
 const mockCloseSidebar = jest.fn();
@@ -36,7 +37,7 @@ jest.mock( '@wordpress/data', () => ( {
 	useDispatch: () => ( {
 		setIsOpen: mockSetIsOpen,
 		setIsDocked: mockSetIsDocked,
-		setIsMinimized: jest.fn(),
+		setIsMinimized: mockSetIsMinimized,
 	} ),
 	useSelect: () => mockAgentsManagerState,
 } ) );
@@ -283,15 +284,47 @@ describe( 'AgentDock', () => {
 		expect( screen.getByTestId( 'location' ).textContent ).toBe( '/support-guides' );
 	} );
 
-	it( 'hides the support guides list without the WP admin bar trigger', () => {
-		// `mockHasAdminBar` stays false, so the list route is unavailable and
-		// unknown paths fall back to `/chat`.
+	it( 'keeps the support guides list without the WP admin bar trigger', () => {
+		// The route stays registered even without an entry button, so a
+		// mid-session entry-button change (Site Editor navigation) can't
+		// redirect a user off the list.
 		useWpAdminAgent();
+		mockShouldUseUnifiedAgent = true;
+
+		renderAgentDock( '/support-guides' );
+
+		expect( screen.getByTestId( 'support-guides' ) ).toBeInTheDocument();
+		expect( screen.getByTestId( 'location' ).textContent ).toBe( '/support-guides' );
+	} );
+
+	it( 'hides the support guides list without the unified agent', () => {
+		// Unknown paths fall back to `/chat`.
+		useWpAdminAgent();
+		mockHasAdminBar = true;
 
 		renderAgentDock( '/support-guides' );
 
 		expect( screen.queryByTestId( 'support-guides' ) ).toBeNull();
 		expect( screen.getByTestId( 'location' ).textContent ).toBe( '/chat' );
+	} );
+
+	it( 'clears the minimized flag when the entry button disappears mid-session', () => {
+		useWpAdminAgent();
+		mockHasAdminBar = true;
+		mockAgentsManagerState = { isOpen: true, isDocked: false, isMinimized: true };
+
+		const { rerender } = renderAgentDock();
+		expect( mockSetIsMinimized ).not.toHaveBeenCalled();
+
+		mockHasAdminBar = false;
+		rerender(
+			<MemoryRouter initialEntries={ [ '/chat' ] }>
+				<AgentDock />
+				<LocationProbe />
+			</MemoryRouter>
+		);
+
+		expect( mockSetIsMinimized ).toHaveBeenCalledWith( false );
 	} );
 
 	it( 'keeps the /post viewer available without the WP admin bar trigger', () => {
