@@ -230,7 +230,7 @@ ul.module-header-actions {
 	// Hover state
 	@include breakpoint-deprecated( ">480px" ) {
 		.stats-module:hover & .module-header-action-link {
-			color: var(--color-primary);
+			color: var(--color-link);
 		}
 
 		.module-header & .module-header-action-link:hover {

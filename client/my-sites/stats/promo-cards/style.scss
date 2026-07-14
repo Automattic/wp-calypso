@@ -33,4 +33,15 @@
 .app-promo-card.stats__promo-card-apps {
 	// Overrides Mobile Apps banner styles.
 	border: none;
+
+	// The shared AppPromoCard hardcodes a Jetpack-green link; follow the themed
+	// Stats link colour here instead.
+	a.app-promo-card__link {
+		color: var(--color-link);
+
+		&:hover,
+		&.app-promo-card__jetpack-link:hover {
+			color: var(--color-link-dark);
+		}
+	}
 }
