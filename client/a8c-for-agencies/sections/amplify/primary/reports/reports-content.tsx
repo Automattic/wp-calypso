@@ -35,7 +35,7 @@ function modeLabel( mode: AmplifyMode ): string {
 			return __( 'Human' );
 		case 'ai':
 			return __( 'AI' );
-		case 'fullanalysis':
+		case 'full':
 			return __( 'Full' );
 		default:
 			return mode;
@@ -45,7 +45,7 @@ function modeLabel( mode: AmplifyMode ): string {
 const MODE_BADGE_TYPE: Record< AmplifyMode, BadgeType > = {
 	human: 'info-blue',
 	ai: 'info-purple',
-	fullanalysis: 'info-green',
+	full: 'info-green',
 };
 
 function formatTimestamp( iso: string ): string {
@@ -111,20 +111,11 @@ export default function AmplifyReportsContent() {
 			{
 				id: 'site',
 				label: __( 'Site' ),
-				// Join name + url so the search box matches either token.
-				getValue: ( { item }: { item: AmplifyReportRow } ) =>
-					[ item.agencyName, item.url ].filter( Boolean ).join( ' ' ),
+				getValue: ( { item }: { item: AmplifyReportRow } ) => item.url,
 				render: ( { item }: { item: AmplifyReportRow } ): ReactNode => (
-					<VStack spacing={ 0 }>
-						<Text weight={ 500 } truncate>
-							{ item.agencyName || item.url }
-						</Text>
-						{ item.agencyName && (
-							<Text variant="muted" size={ 12 } truncate>
-								{ item.url }
-							</Text>
-						) }
-					</VStack>
+					<Text weight={ 500 } truncate>
+						{ item.url }
+					</Text>
 				),
 				enableHiding: false,
 				enableSorting: true,
@@ -159,7 +150,7 @@ export default function AmplifyReportsContent() {
 					}
 					return (
 						<HStack spacing={ 2 } justify="flex-start" expanded={ false } wrap>
-							{ item.mode === 'fullanalysis' ? (
+							{ item.mode === 'full' ? (
 								<>
 									<ScoreBadge score={ item.humanScore } label={ __( 'Human' ) } />
 									<ScoreBadge score={ item.aiScore } label={ __( 'AI' ) } />
@@ -181,7 +172,7 @@ export default function AmplifyReportsContent() {
 				label: __( 'Time & date' ),
 				getValue: ( { item }: { item: AmplifyReportRow } ) => item.timestamp,
 				render: ( { item }: { item: AmplifyReportRow } ): ReactNode => (
-					<Text variant="muted">{ formatTimestamp( item.timestamp ) }</Text>
+					<Text variant="muted">{ item.timestamp ? formatTimestamp( item.timestamp ) : '—' }</Text>
 				),
 				enableHiding: false,
 				enableSorting: true,
@@ -198,7 +189,7 @@ export default function AmplifyReportsContent() {
 							</Badge>
 						);
 					}
-					if ( item.rowStatus === 'pending' ) {
+					if ( item.rowStatus === 'in_progress' ) {
 						return (
 							<HStack spacing={ 2 } justify="flex-start" expanded={ false }>
 								<Spinner />
@@ -277,7 +268,7 @@ export default function AmplifyReportsContent() {
 					getItemId: ( item: AmplifyReportRow ) => item.id,
 					pagination,
 					enableSearch: true,
-					searchLabel: __( 'Search by site or URL' ),
+					searchLabel: __( 'Search by URL' ),
 					fields,
 					setDataViewsState,
 					dataViewsState,

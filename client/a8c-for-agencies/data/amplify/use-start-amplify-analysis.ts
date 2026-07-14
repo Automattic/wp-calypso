@@ -7,18 +7,13 @@ import {
 import wpcom from 'calypso/lib/wp';
 import { useSelector } from 'calypso/state';
 import { getActiveAgencyId } from 'calypso/state/a8c-for-agencies/agency/selectors';
-import { getAmplifyJobsQueryKey } from './use-fetch-amplify-jobs';
-import type {
-	AmplifyAnalysisRun,
-	AmplifyApiError,
-	AmplifyJob,
-	StartAmplifyAnalysisParams,
-} from './types';
+import { getAmplifyReportsQueryKey } from './use-fetch-amplify-reports';
+import type { AmplifyApiError, AmplifyReport, StartAmplifyAnalysisParams } from './types';
 
 function startAmplifyAnalysis(
 	params: StartAmplifyAnalysisParams,
 	agencyId: number
-): Promise< AmplifyAnalysisRun > {
+): Promise< AmplifyReport > {
 	return wpcom.req.post( {
 		apiNamespace: 'wpcom/v2',
 		path: `/agency/${ agencyId }/amplify/reports`,
@@ -28,16 +23,16 @@ function startAmplifyAnalysis(
 
 export default function useStartAmplifyAnalysis< TContext = unknown >(
 	options?: UseMutationOptions<
-		AmplifyAnalysisRun,
+		AmplifyReport,
 		AmplifyApiError,
 		StartAmplifyAnalysisParams,
 		TContext
 	>
-): UseMutationResult< AmplifyAnalysisRun, AmplifyApiError, StartAmplifyAnalysisParams, TContext > {
+): UseMutationResult< AmplifyReport, AmplifyApiError, StartAmplifyAnalysisParams, TContext > {
 	const queryClient = useQueryClient();
 	const agencyId = useSelector( getActiveAgencyId );
 
-	return useMutation< AmplifyAnalysisRun, AmplifyApiError, StartAmplifyAnalysisParams, TContext >( {
+	return useMutation< AmplifyReport, AmplifyApiError, StartAmplifyAnalysisParams, TContext >( {
 		...options,
 		mutationFn: ( params ) => {
 			if ( ! agencyId ) {
@@ -50,16 +45,18 @@ export default function useStartAmplifyAnalysis< TContext = unknown >(
 			return startAmplifyAnalysis( params, agencyId );
 		},
 		onSuccess: ( data, variables, context ) => {
-			// Seed the jobs cache with the new pending run so its row appears
-			// immediately and the jobs query starts polling (its refetchInterval
-			// keys off the presence of a pending job) — without waiting for a
-			// manual page refresh. We seed rather than only invalidate because the
-			// server's /jobs list may not reflect the run on an immediate refetch.
-			queryClient.setQueryData< AmplifyJob[] >(
-				getAmplifyJobsQueryKey( agencyId ),
+			// Seed the reports cache with the new `in_progress` report so its row
+			// appears immediately and the reports query starts polling (its
+			// refetchInterval keys off the presence of an in-progress report) —
+			// without waiting for a manual page refresh. We seed rather than only
+			// invalidate so the row shows even if a refetch races the write.
+			queryClient.setQueryData< AmplifyReport[] >(
+				getAmplifyReportsQueryKey( agencyId ),
 				( previous ) => {
 					const existing = previous ?? [];
-					return existing.some( ( job ) => job.id === data.id ) ? existing : [ data, ...existing ];
+					return existing.some( ( report ) => report.id === data.id )
+						? existing
+						: [ data, ...existing ];
 				}
 			);
 			options?.onSuccess?.( data, variables, context );
