@@ -71,8 +71,8 @@ import './style.scss';
 import { MarketplacePluginInstallProps } from './types';
 import type { IAppState } from 'calypso/state/types';
 
-// 3s polls, so a minute of waiting for the transferred plugin to be activated.
-const MAX_ACTIVATION_POLLS = 20;
+// How long to keep waiting for a transferred plugin to install and activate.
+const ACTIVATION_TIMEOUT = 60 * 1000;
 
 const MarketplaceProductInstall = ( {
 	pluginSlug = '',
@@ -271,14 +271,9 @@ const MarketplaceProductInstall = ( {
 		isJetpack,
 	] );
 
-	// Validate completion of atomic transfer flow
-	useEffect( () => {
-		if ( atomicFlow && currentStep === 1 && transferStates.COMPLETE === automatedTransferStatus ) {
-			setCurrentStep( 2 );
-		}
-	}, [ atomicFlow, automatedTransferStatus, currentStep ] );
-
-	// Validate plugin is already installed and activate
+	// Validate plugin is already installed and activate. A transfer installs the plugin without
+	// activating it, and the plugin only turns up here once polling below has fetched it, so this is
+	// what ends the install step: a completed transfer is not a finished installation.
 	useEffect( () => {
 		if (
 			installedPlugin &&
@@ -293,8 +288,7 @@ const MarketplaceProductInstall = ( {
 			);
 			setCurrentStep( 2 );
 		}
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [ pluginUploadComplete, installedPlugin, setCurrentStep ] );
+	}, [ pluginUploadComplete, installedPlugin, currentStep, isPluginUploadFlow, dispatch, siteId ] );
 
 	// Fetch fresh site data (including admin_url) post-transfer
 	const { data: freshSite } = useQuery( {
@@ -319,6 +313,9 @@ const MarketplaceProductInstall = ( {
 	// Prefer fresh URL when available; if in atomic flow, wait for fresh URL
 	const pluginsUrlFinal = atomicFlow ? pluginsUrlFresh : pluginsUrlFresh || pluginsUrlSelector;
 
+	// An inactive plugin is missing from the active-only list the flow normally ends on.
+	const allPluginsUrl = freshAdminUrl ? `${ freshAdminUrl }plugins.php?plugin_status=all` : null;
+
 	// For marketplace plugins (e.g. sensei-pro), the atomic transfer + plugin install
 	// is initiated during checkout, not by this component. The wporg data is unavailable,
 	// so atomicFlow is never set. Once the site is atomic, poll for installed plugins
@@ -330,35 +327,39 @@ const MarketplaceProductInstall = ( {
 		!! freshSite?.is_wpcom_atomic &&
 		wporgPlugin?.wporg === false;
 
-	// The transfer installs the plugin but leaves it inactive, and the effect above only activates a
-	// plugin this component can see. Poll once the transfer is done so the plugin reaches the store
-	// and that effect can fire.
-	const [ activationPolls, setActivationPolls ] = useState( 0 );
-	const gaveUpOnActivation = activationPolls >= MAX_ACTIVATION_POLLS;
+	const canManagePlugins = useSelector( ( state ) => {
+		return siteHasFeature( state, selectedSite?.ID, WPCOM_FEATURES_MANAGE_PLUGINS );
+	} );
 
-	const isAwaitingTransferredPlugin =
+	// The transfer installs the plugin on its own, so the site comes back with a plugin nothing here
+	// has fetched yet.
+	const isTransferredPluginFlow =
 		atomicFlow &&
-		! isPluginUploadFlow &&
-		!! pluginSlug &&
-		transferStates.COMPLETE === automatedTransferStatus;
+		transferStates.COMPLETE === automatedTransferStatus &&
+		isAtomicTransferReady &&
+		canManagePlugins;
 
+	const [ activationTimedOut, setActivationTimedOut ] = useState( false );
+
+	// Poll until the plugin turns up, which is what lets the activation effect above run.
 	useInterval(
-		() => {
-			dispatch( fetchSitePlugins( siteId ) );
-
-			if ( isAwaitingTransferredPlugin ) {
-				setActivationPolls( ( polls ) => polls + 1 );
-			}
-		},
-		( isMarketplacePluginFlow && ! pluginActive ) ||
-			( isAwaitingTransferredPlugin && ! pluginActive && ! gaveUpOnActivation )
+		() => dispatch( fetchSitePlugins( siteId ) ),
+		( isMarketplacePluginFlow || ( isTransferredPluginFlow && ! activationTimedOut ) ) &&
+			! pluginActive
 			? 3000
 			: null
 	);
 
-	const canManagePlugins = useSelector( ( state ) => {
-		return siteHasFeature( state, selectedSite?.ID, WPCOM_FEATURES_MANAGE_PLUGINS );
-	} );
+	useEffect( () => {
+		if ( ! isTransferredPluginFlow || pluginActive || activationTimedOut ) {
+			return;
+		}
+
+		const timeout = setTimeout( () => setActivationTimedOut( true ), ACTIVATION_TIMEOUT );
+
+		return () => clearTimeout( timeout );
+	}, [ isTransferredPluginFlow, pluginActive, activationTimedOut ] );
+
 	// Check completition of all flows and redirect to thank you page
 	useEffect( () => {
 		if (
@@ -367,13 +368,9 @@ const MarketplaceProductInstall = ( {
 			// - Install with the help of uploading archive of a plugins
 			// - If it's simple site which doesn't support plugins, then installing and activation happens at the same time with upgrading to Business plan
 			( installedPlugin && pluginActive ) ||
-			// Transfer to atomic using a marketplace plugin. A plugin waits to be activated first: the
-			// page it lands on lists active plugins, and wouldn't hold the one just installed.
-			( atomicFlow &&
-				transferStates.COMPLETE === automatedTransferStatus &&
-				canManagePlugins &&
-				isAtomicTransferReady &&
-				( ! pluginSlug || pluginActive || gaveUpOnActivation ) ) ||
+			// Transfer to atomic using a marketplace plugin. The plugin has to be active first: the page
+			// this lands on lists active plugins, and would not show the one just installed.
+			( isTransferredPluginFlow && pluginActive ) ||
 			// Transfer to atomic uploading a zip plugin
 			( uploadedPluginSlug &&
 				isPluginUploadFlow &&
@@ -401,8 +398,7 @@ const MarketplaceProductInstall = ( {
 		uploadedPluginSlug,
 		pluginsUrlFinal,
 		isAtomicTransferReady,
-		pluginSlug,
-		gaveUpOnActivation,
+		isTransferredPluginFlow,
 	] ); // We need to trigger this hook also when `automatedTransferStatus` changes cause the plugin install is done on the background in that case.
 
 	// Validate theme is already active
@@ -439,8 +435,32 @@ const MarketplaceProductInstall = ( {
 	}, [ themeSlug, isPluginUploadFlow, translate ] );
 	const additionalSteps = useMarketplaceAdditionalSteps();
 
+	// Resuming the poll is enough to install a plugin that never turned up. One that did turn up is
+	// past its activation step, so activate it again by hand.
+	const retryActivation = () => {
+		setActivationTimedOut( false );
+
+		if ( installedPlugin ) {
+			dispatch( activatePlugin( siteId, { slug: installedPlugin.slug, id: installedPlugin.id } ) );
+		}
+	};
+
 	const renderError = () => {
 		// Evaluate error causes in priority order
+		if ( activationTimedOut && ! pluginActive ) {
+			return (
+				<EmptyContent
+					title={ null }
+					line={ translate(
+						'We installed the plugin, but we could not activate it. You can activate it yourself from your plugins.'
+					) }
+					action={ translate( 'Try again' ) }
+					actionCallback={ retryActivation }
+					secondaryAction={ translate( 'View all plugins' ) }
+					secondaryActionURL={ allPluginsUrl ?? undefined }
+				/>
+			);
+		}
 		if ( nonInstallablePlanError ) {
 			return (
 				<EmptyContent
