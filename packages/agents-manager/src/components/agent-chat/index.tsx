@@ -14,7 +14,7 @@ import { useDispatch, useSelect } from '@wordpress/data';
 import { useCallback, useMemo, useRef } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import clsx from 'clsx';
-import { hasAiChatEntryButton } from '../../hooks/use-admin-bar-integration';
+import useHasAiChatEntryButton from '../../hooks/use-has-ai-chat-entry-button';
 import { AGENTS_MANAGER_STORE } from '../../stores';
 import { getAgentsManagerInlineData } from '../../utils/get-agents-manager-inline-data';
 import { isReaderChatHost } from '../../utils/is-reader-chat-agent';
@@ -194,7 +194,7 @@ export default function AgentChat( {
 	);
 
 	// Without the AI chat entry button, use `collapsed` (a FAB) instead of `minimized`.
-	let floatingChatState: ChatState = hasAiChatEntryButton() ? 'minimized' : 'collapsed';
+	let floatingChatState: ChatState = useHasAiChatEntryButton() ? 'minimized' : 'collapsed';
 	if ( isOpen ) {
 		floatingChatState = 'expanded';
 	} else if ( isCompactMode ) {

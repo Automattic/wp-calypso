@@ -505,4 +505,20 @@ describe( 'mergeUseSuggestionsHooks', () => {
 		expect( firstHook ).toHaveBeenCalledWith( undefined, options );
 		expect( secondHook ).toHaveBeenCalledWith( undefined, options );
 	} );
+
+	it( 'uses only contextual suggestions when any provider replaces the empty view', () => {
+		const firstHook = jest.fn( () => ( {
+			suggestions: [ { id: 'first', label: 'First', prompt: 'First prompt.' } ],
+		} ) ) as UseSuggestionsHook;
+		const secondHook = jest.fn( () => ( {
+			suggestions: [ { id: 'second', label: 'Second', prompt: 'Second prompt.' } ],
+			replaceEmptyViewSuggestions: true,
+		} ) ) as UseSuggestionsHook;
+		const merged = mergeUseSuggestionsHooks( [ firstHook, secondHook ] );
+
+		expect( merged?.() ).toEqual( {
+			suggestions: [ { id: 'second', label: 'Second', prompt: 'Second prompt.' } ],
+			replaceEmptyViewSuggestions: true,
+		} );
+	} );
 } );

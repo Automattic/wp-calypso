@@ -32,6 +32,7 @@ import {
 	type ExternalContextCardAction,
 } from '../../utils/external-context';
 import { isReaderChatAgent } from '../../utils/is-reader-chat-agent';
+import { mergeEmptyViewSuggestions } from '../../utils/merge-empty-view-suggestions';
 import { getOrchestratorErrorMessage } from '../../utils/orchestrator-error-message';
 import { persistLastActivity } from '../../utils/persist-last-activity';
 import { getReaderChatErrorMessage } from '../../utils/reader-chat-error-message';
@@ -201,7 +202,8 @@ export default function OrchestratorChat( {
 	const [ isRegenerating, setIsRegenerating ] = useState( false );
 	const [ hasUserSentMessage, setHasUserSentMessage ] = useState( false );
 	const currentPostId = useSelect( ( select ) => {
-		return ( select( 'core/editor' ) as { getCurrentPostId?: () => number } )?.getCurrentPostId?.();
+		const editor = select( 'core/editor' ) as { getCurrentPostId?: () => number | string };
+		return editor?.getCurrentPostId?.();
 	}, [] );
 
 	const {
@@ -225,6 +227,14 @@ export default function OrchestratorChat( {
 	const nextShowComponentOrderRef = useRef( 0 );
 	const wasProcessingRef = useRef( isProcessing );
 	messagesRef.current = messages;
+
+	// Drop all retained placeholders, keeping the map reference stable when
+	// already empty so no re-render is triggered.
+	const clearRetainedShowComponentMessages = useCallback( () => {
+		setRetainedShowComponentMessages( ( previousRetainedMessages ) =>
+			previousRetainedMessages.size > 0 ? new Map() : previousRetainedMessages
+		);
+	}, [] );
 
 	// A regeneration is finished once its streaming turn settles — either the new
 	// response arrives or an error restores the previous one. Re-enable component
@@ -252,13 +262,11 @@ export default function OrchestratorChat( {
 				// Drop any retained placeholders up front; the turn is being
 				// rewound, so a leftover picker would otherwise reappear once
 				// regeneration settles if the new response omits the component.
-				setRetainedShowComponentMessages( ( previousRetainedMessages ) =>
-					previousRetainedMessages.size > 0 ? new Map() : previousRetainedMessages
-				);
+				clearRetainedShowComponentMessages();
 				await handler();
 			};
 		},
-		[ getRegenerateHandler ]
+		[ clearRetainedShowComponentMessages, getRegenerateHandler ]
 	);
 
 	const getShowComponentOrder = useCallback( ( message: UIMessage ): number | undefined => {
@@ -278,15 +286,28 @@ export default function OrchestratorChat( {
 	}, [] );
 
 	useEffect( () => {
+		const previousMessages = previousMessagesRef.current;
+
+		// A full history replacement (server hydration, clearing the chat) swaps
+		// every message id at once. Nothing in it was transiently dropped, and
+		// the same picker can carry a different identity in loaded history than
+		// it did live — retaining across the swap would show it as a duplicate.
+		const previousMessageIds = new Set( previousMessages.map( ( message ) => message.id ) );
+		const isHistoryReplaced =
+			previousMessages.length > 0 &&
+			! messages.some( ( message ) => previousMessageIds.has( message.id ) );
+
 		// While regenerating, the dropped component is being replaced, not lost —
-		// don't retain it. Keep the ref current so the next non-regenerating run
-		// compares against the post-regeneration messages.
-		if ( isRegenerating ) {
+		// don't retain it either. Keep the ref current so the next run compares
+		// against the latest messages.
+		if ( isRegenerating || isHistoryReplaced ) {
+			if ( isHistoryReplaced ) {
+				clearRetainedShowComponentMessages();
+			}
 			previousMessagesRef.current = messages;
 			return;
 		}
 
-		const previousMessages = previousMessagesRef.current;
 		messages.filter( isShowComponentMessage ).forEach( getShowComponentOrder );
 
 		const currentShowComponentIdentities = new Set(
@@ -318,7 +339,7 @@ export default function OrchestratorChat( {
 		}
 
 		previousMessagesRef.current = messages;
-	}, [ getShowComponentOrder, messages, isRegenerating ] );
+	}, [ clearRetainedShowComponentMessages, getShowComponentOrder, messages, isRegenerating ] );
 
 	// Reader-chat sessions are short (usually < 50 messages) — don't waste
 	// time paginating 10 pages deep. One page covers typical use.
@@ -357,6 +378,7 @@ export default function OrchestratorChat( {
 		suggestionsVisible: areSuggestionsVisible,
 	} );
 	const dynamicSuggestionsList = dynamicSuggestions?.suggestions ?? [];
+	const replaceEmptyViewSuggestions = dynamicSuggestions?.replaceEmptyViewSuggestions === true;
 	const dynamicSuggestionsKey = JSON.stringify(
 		dynamicSuggestionsList.map( ( s ) => [ s.id, s.label, s.prompt ] )
 	);
@@ -704,7 +726,6 @@ export default function OrchestratorChat( {
 			messages: currentMessages,
 			getChatComponent,
 			currentPostId,
-			onSubmit: onSubmitWithImages,
 		} );
 
 		const latestAgentMessageId = getLatestAgentMessageId( currentMessages );
@@ -753,7 +774,6 @@ export default function OrchestratorChat( {
 		isBuildingSite,
 		isProcessing,
 		messages,
-		onSubmitWithImages,
 		retainedShowComponentMessages,
 		siteBuildUtils,
 		thinkingMessage,
@@ -777,28 +797,32 @@ export default function OrchestratorChat( {
 		( isProcessing || ( isThinking && ! isBuildingSite ) ) && ! shouldSuppressTransientThinking;
 
 	// Determine which suggestions to show following Big Sky's logic:
-	// - When there are dynamic suggestions (from block selection, etc.), show those
-	// - Otherwise, show empty view suggestions only when there are no messages AND no input text
+	// - Empty chat: show provider empty-view chips plus dynamic chips.
+	// - Active chat/input: show dynamic suggestions only.
 	let displayedEmptyViewSuggestions: Suggestion[] = [];
 	if ( ! areSuggestionsVisible ) {
 		// Minimized/collapsed: the chat renders no suggestions, so leave the list
 		// empty to avoid firing chat_suggestions_rendered for hidden chips.
 		displayedEmptyViewSuggestions = [];
-	} else if ( suggestions.length > 0 ) {
-		displayedEmptyViewSuggestions = suggestions;
 	} else if (
 		! isLoadingConversation &&
 		displayedMessages.length === 0 &&
 		inputValue.length === 0
 	) {
-		// Read straight from the live `useSuggestions` output rather than the
-		// registered store. Clicking a suggestion calls `clearSuggestions()`,
-		// which empties the store, and the re-registration effect is keyed on
-		// the (unchanged) hook output so it won't restore it. Persistent
-		// empty-view chips must survive that clear; fall back to the static
-		// defaults only when the hook genuinely has none.
-		displayedEmptyViewSuggestions =
-			dynamicSuggestionsList.length > 0 ? dynamicSuggestionsList : emptyViewSuggestions;
+		// Prefer the registered store, but fall back to the live `useSuggestions`
+		// output when the store is empty. Clicking a suggestion calls
+		// `clearSuggestions()`, which empties the store, and the re-registration
+		// effect is keyed on the (unchanged) hook output so it won't restore it.
+		// Persistent empty-view chips must survive that clear.
+		displayedEmptyViewSuggestions = mergeEmptyViewSuggestions(
+			emptyViewSuggestions,
+			replaceEmptyViewSuggestions || suggestions.length === 0
+				? dynamicSuggestionsList
+				: suggestions,
+			replaceEmptyViewSuggestions
+		);
+	} else if ( suggestions.length > 0 ) {
+		displayedEmptyViewSuggestions = suggestions;
 	}
 
 	// Track when a set of suggestions is rendered — the dynamic block-context

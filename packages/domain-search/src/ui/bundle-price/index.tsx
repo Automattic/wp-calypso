@@ -48,7 +48,7 @@ export const BundlePrice = ( {
 
 	return (
 		<VStack spacing={ 0 } className={ clsx( 'bundle-price', className ) }>
-			<HStack spacing={ 2 } justify={ alignment === 'left' ? 'start' : 'end' } expanded={ false }>
+			<HStack spacing={ 3 } justify={ alignment === 'left' ? 'start' : 'end' } expanded={ false }>
 				<Text
 					as="s"
 					size={ size }
