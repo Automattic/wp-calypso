@@ -190,7 +190,7 @@
 		"press-this": true,
 		"publicize-preview": true,
 		"purchases/new-payment-methods": true,
-		"purchases/split-cancel-remove": true,
+		"purchases/split-cancel-remove": false,
 		"push-notifications": true,
 		"reader/social": true,
 		"reader/spaces": true,
