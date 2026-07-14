@@ -74,8 +74,13 @@ import './style.scss';
 import { MarketplacePluginInstallProps } from './types';
 import type { IAppState } from 'calypso/state/types';
 
-// How long to wait for the plugin to install, and then for it to activate.
+// How long to wait for the plugin to install, and then for it to activate, before saying it is
+// taking too long. Waiting carries on after that, more slowly.
 const SETUP_TIMEOUT = 60 * 1000;
+const POLL_INTERVAL = 3 * 1000;
+const SLOW_POLL_INTERVAL = 15 * 1000;
+
+type SetupStage = 'installation' | 'activation';
 
 const MarketplaceProductInstall = ( {
 	pluginSlug = '',
@@ -339,8 +344,13 @@ const MarketplaceProductInstall = ( {
 	const isTransferredPluginFlow =
 		atomicFlow && transferStates.COMPLETE === automatedTransferStatus && isAtomicTransferReady;
 
-	const [ setupTimedOut, setSetupTimedOut ] = useState( false );
-	const setupStage = installedPlugin ? 'activation' : 'installation';
+	// The plugin has to be installed before it can be activated, and either one can be what the page
+	// is still waiting on.
+	const setupStage: SetupStage | null = pluginActive
+		? null
+		: ( installedPlugin && 'activation' ) || 'installation';
+
+	const isSetupPending = ( isTransferredPluginFlow || isMarketplacePluginFlow ) && !! setupStage;
 
 	const activationFailed = useSelector(
 		( state ) =>
@@ -354,23 +364,27 @@ const MarketplaceProductInstall = ( {
 			)
 	);
 
-	const isAwaitingPlugin =
-		( isTransferredPluginFlow || isMarketplacePluginFlow ) && ! pluginActive && ! setupTimedOut;
+	const [ timedOutStage, setTimedOutStage ] = useState< SetupStage | null >( null );
+	const [ retries, setRetries ] = useState( 0 );
 
-	// Poll until the plugin turns up, which is what lets the activation effect above run.
-	useInterval( () => dispatch( fetchSitePlugins( siteId ) ), isAwaitingPlugin ? 3000 : null );
-
-	// Installing and activating are timed one after the other, so a slow install does not eat the
-	// time the activation that follows it gets.
+	// Each stage gets its own time, so a slow install does not eat the time the activation that
+	// follows it gets. Running out of it says so and keeps waiting, since the work is the backend's
+	// and a late plugin should still land on its own.
 	useEffect( () => {
-		if ( ! isAwaitingPlugin ) {
+		setTimedOutStage( null );
+
+		if ( ! isSetupPending || ! setupStage ) {
 			return;
 		}
 
-		const timeout = setTimeout( () => setSetupTimedOut( true ), SETUP_TIMEOUT );
+		const timeout = setTimeout( () => setTimedOutStage( setupStage ), SETUP_TIMEOUT );
 
 		return () => clearTimeout( timeout );
-	}, [ isAwaitingPlugin, setupStage ] );
+	}, [ isSetupPending, setupStage, retries ] );
+
+	// Poll until the plugin turns up, which is what lets the activation effect above run.
+	const pollInterval = timedOutStage ? SLOW_POLL_INTERVAL : POLL_INTERVAL;
+	useInterval( () => dispatch( fetchSitePlugins( siteId ) ), isSetupPending ? pollInterval : null );
 
 	// Check completition of all flows and redirect to thank you page
 	useEffect( () => {
@@ -444,34 +458,38 @@ const MarketplaceProductInstall = ( {
 	}, [ themeSlug, isPluginUploadFlow, translate ] );
 	const additionalSteps = useMarketplaceAdditionalSteps();
 
-	// A plugin that never turned up is looked for again. One that did turn up is past its activation
-	// step, so activate it again by hand.
+	// A plugin that did turn up is past its activation step, so activate it again by hand. One that
+	// never turned up is only looked for again: finishing the install is the backend's to do, not
+	// this page's to ask for twice.
 	const retryPluginSetup = () => {
-		setSetupTimedOut( false );
+		setRetries( ( count ) => count + 1 );
 
 		if ( installedPlugin ) {
 			dispatch( activatePlugin( siteId, { slug: installedPlugin.slug, id: installedPlugin.id } ) );
-		} else {
-			dispatch( fetchSitePlugins( siteId ) );
+			return;
 		}
+
+		dispatch( fetchSitePlugins( siteId ) );
 	};
 
 	const renderError = () => {
 		// Evaluate error causes in priority order
-		if ( ( setupTimedOut || activationFailed ) && ! pluginActive ) {
+		if ( timedOutStage || activationFailed ) {
 			return (
 				<EmptyContent
 					title={ null }
 					line={
 						installedPlugin
 							? translate(
-									'We installed the plugin, but we could not activate it. You can activate it yourself from your plugins.'
+									'We installed the plugin, but we could not activate it. We are still trying, and you can activate it yourself from your plugins.'
 							  )
 							: translate(
-									'The plugin is taking longer than expected to install. You can check your plugins to see whether it arrived.'
+									'The plugin is taking longer than expected to install. We are still waiting for it, and you can check your plugins to see whether it arrived.'
 							  )
 					}
-					action={ translate( 'Try again' ) }
+					action={
+						installedPlugin ? translate( 'Try activating again' ) : translate( 'Check again' )
+					}
 					actionCallback={ retryPluginSetup }
 					secondaryAction={ translate( 'View all plugins' ) }
 					secondaryActionURL={ allPluginsUrl ?? undefined }
