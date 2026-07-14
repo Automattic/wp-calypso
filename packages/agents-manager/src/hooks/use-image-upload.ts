@@ -173,6 +173,12 @@ export function useImageUpload(): UseImageUploadResult {
 			return Promise.reject( new Error( 'An image upload is already in progress' ) );
 		}
 
+		// `uploadMedia` never fires a callback for an empty list — without this
+		// the promise would hang and leave the composer locked in `isUploadingImages`.
+		if ( pendingImages.length === 0 ) {
+			return Promise.resolve( [] );
+		}
+
 		const imagesToUpload = [ ...pendingImages ];
 
 		setUploadingImages(
