@@ -71,6 +71,9 @@ import './style.scss';
 import { MarketplacePluginInstallProps } from './types';
 import type { IAppState } from 'calypso/state/types';
 
+// 3s polls, so a minute of waiting for the transferred plugin to be activated.
+const MAX_ACTIVATION_POLLS = 20;
+
 const MarketplaceProductInstall = ( {
 	pluginSlug = '',
 	themeSlug = '',
@@ -327,9 +330,30 @@ const MarketplaceProductInstall = ( {
 		!! freshSite?.is_wpcom_atomic &&
 		wporgPlugin?.wporg === false;
 
+	// The transfer installs the plugin but leaves it inactive, and the effect above only activates a
+	// plugin this component can see. Poll once the transfer is done so the plugin reaches the store
+	// and that effect can fire.
+	const [ activationPolls, setActivationPolls ] = useState( 0 );
+	const gaveUpOnActivation = activationPolls >= MAX_ACTIVATION_POLLS;
+
+	const isAwaitingTransferredPlugin =
+		atomicFlow &&
+		! isPluginUploadFlow &&
+		!! pluginSlug &&
+		transferStates.COMPLETE === automatedTransferStatus;
+
 	useInterval(
-		() => dispatch( fetchSitePlugins( siteId ) ),
-		isMarketplacePluginFlow && ! pluginActive ? 3000 : null
+		() => {
+			dispatch( fetchSitePlugins( siteId ) );
+
+			if ( isAwaitingTransferredPlugin ) {
+				setActivationPolls( ( polls ) => polls + 1 );
+			}
+		},
+		( isMarketplacePluginFlow && ! pluginActive ) ||
+			( isAwaitingTransferredPlugin && ! pluginActive && ! gaveUpOnActivation )
+			? 3000
+			: null
 	);
 
 	const canManagePlugins = useSelector( ( state ) => {
@@ -343,11 +367,13 @@ const MarketplaceProductInstall = ( {
 			// - Install with the help of uploading archive of a plugins
 			// - If it's simple site which doesn't support plugins, then installing and activation happens at the same time with upgrading to Business plan
 			( installedPlugin && pluginActive ) ||
-			// Transfer to atomic using a marketplace plugin
+			// Transfer to atomic using a marketplace plugin. A plugin waits to be activated first: the
+			// page it lands on lists active plugins, and wouldn't hold the one just installed.
 			( atomicFlow &&
 				transferStates.COMPLETE === automatedTransferStatus &&
 				canManagePlugins &&
-				isAtomicTransferReady ) ||
+				isAtomicTransferReady &&
+				( ! pluginSlug || pluginActive || gaveUpOnActivation ) ) ||
 			// Transfer to atomic uploading a zip plugin
 			( uploadedPluginSlug &&
 				isPluginUploadFlow &&
@@ -375,6 +401,8 @@ const MarketplaceProductInstall = ( {
 		uploadedPluginSlug,
 		pluginsUrlFinal,
 		isAtomicTransferReady,
+		pluginSlug,
+		gaveUpOnActivation,
 	] ); // We need to trigger this hook also when `automatedTransferStatus` changes cause the plugin install is done on the background in that case.
 
 	// Validate theme is already active
