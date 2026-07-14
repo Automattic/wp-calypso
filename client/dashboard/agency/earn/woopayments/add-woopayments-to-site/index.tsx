@@ -2,16 +2,22 @@ import { Button } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { getQueryArg, removeQueryArgs } from '@wordpress/url';
 import { useCallback, useEffect, useState } from 'react';
-import { useAnalytics } from '../../../../app/analytics';
 import AddWooPaymentsToSiteModal from './modal';
+import type { RecordTracksEvent } from '../types';
 
 interface AddWooPaymentsToSiteProps {
+	agencyId: number;
 	excludedSiteIds: number[];
+	recordTracksEvent: RecordTracksEvent;
+	navigate: ( url: string ) => void;
 }
 
-export default function AddWooPaymentsToSite( { excludedSiteIds }: AddWooPaymentsToSiteProps ) {
-	const { recordTracksEvent } = useAnalytics();
-
+export default function AddWooPaymentsToSite( {
+	agencyId,
+	excludedSiteIds,
+	recordTracksEvent,
+	navigate,
+}: AddWooPaymentsToSiteProps ) {
 	const showModal = getQueryArg( window.location.href, 'add-woopayments-to-site' ) === 'true';
 	const [ isOpen, setIsOpen ] = useState( false );
 
@@ -42,7 +48,10 @@ export default function AddWooPaymentsToSite( { excludedSiteIds }: AddWooPayment
 
 			{ isOpen && (
 				<AddWooPaymentsToSiteModal
+					agencyId={ agencyId }
 					excludedSiteIds={ excludedSiteIds }
+					recordTracksEvent={ recordTracksEvent }
+					navigate={ navigate }
 					onClose={ () => setIsOpen( false ) }
 				/>
 			) }

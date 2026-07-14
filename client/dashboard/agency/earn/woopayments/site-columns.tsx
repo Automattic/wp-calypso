@@ -1,7 +1,13 @@
 import { localizeUrl } from '@automattic/i18n-utils';
 import { formatCurrency } from '@automattic/number-formatters';
 import { Badge } from '@automattic/ui';
-import { __experimentalText as Text, Button, Popover } from '@wordpress/components';
+import {
+	__experimentalHStack as HStack,
+	__experimentalText as Text,
+	__experimentalVStack as VStack,
+	Button,
+	Popover,
+} from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { Icon, info } from '@wordpress/icons';
 import { memo, useState } from 'react';
@@ -134,11 +140,7 @@ export const WooPaymentsStatusColumn = ( {
 		return null;
 	}
 
-	return (
-		<div className="woopayments-status-column">
-			<Badge intent={ statusProps.statusType }>{ statusProps.statusText }</Badge>
-		</div>
-	);
+	return <Badge intent={ statusProps.statusType }>{ statusProps.statusText }</Badge>;
 };
 
 export const CommissionEligibilityColumn = ( {
@@ -183,8 +185,8 @@ export const CommissionEligibilityColumn = ( {
 	const reasonInfo = getIneligibleReasonInfo( statusProps.ineligibleReason ?? '' );
 
 	const popoverContent = (
-		<div className="woopayments-status-popover">
-			<p className="woopayments-status-popover__text">{ reasonInfo.message }</p>
+		<VStack className="woopayments-status-popover" spacing={ 3 }>
+			<Text>{ reasonInfo.message }</Text>
 			<Button
 				variant="link"
 				className="woopayments-status-popover__link"
@@ -193,17 +195,16 @@ export const CommissionEligibilityColumn = ( {
 			>
 				{ reasonInfo.linkText }
 			</Button>
-		</div>
+		</VStack>
 	);
 
 	return (
-		<div className="woopayments-status-column">
+		<HStack spacing={ 2 } justify="flex-start" expanded={ false }>
 			<Badge intent={ statusProps.statusType }>{ statusProps.statusText }</Badge>
 			{ statusProps.showInfoIcon && (
 				<>
 					<Button
 						ref={ setInfoIconAnchor }
-						className="woopayments-status-column__info-icon"
 						aria-label={ __( 'More information about commission eligibility' ) }
 						onClick={ () => setShowPopover( ( visible ) => ! visible ) }
 					>
@@ -222,6 +223,6 @@ export const CommissionEligibilityColumn = ( {
 					) }
 				</>
 			) }
-		</div>
+		</HStack>
 	);
 };

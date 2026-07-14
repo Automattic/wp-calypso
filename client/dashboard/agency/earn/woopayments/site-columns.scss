@@ -1,28 +1,9 @@
-.woopayments-status-column {
-	display: flex;
-	align-items: center;
-	gap: 8px;
-	position: relative;
-}
-
 .woopayments-status-popover {
-	display: flex;
-	flex-direction: column;
-	gap: 12px;
 	box-sizing: border-box;
 	width: 300px;
 	padding: 16px;
-	font-size: 13px;
+}
 
-	.woopayments-status-popover__text {
-		margin: 0;
-		font-size: 13px;
-		line-height: 1.4;
-	}
-
-	.woopayments-status-popover__link {
-		display: inline-flex;
-		align-self: flex-start;
-		gap: 4px;
-	}
+.woopayments-status-popover__link {
+	align-self: flex-start;
 }

@@ -4,7 +4,6 @@ import {
 	JetpackLicenseSortDirection,
 } from '@automattic/api-core';
 import {
-	activeAgencyQuery,
 	agencySitesWithPluginsQuery,
 	agencyWooPaymentsDataQuery,
 	jetpackAgencyLicensesQuery,
@@ -53,10 +52,7 @@ export interface WooPaymentsDashboardData {
  * Orchestrates the data for the WooPayments commissions dashboard: the WooPayments licenses and
  * plugin sites the agency manages, their connection health, and the commissions data itself.
  */
-export default function useWooPaymentsDashboardData(): WooPaymentsDashboardData {
-	const { data: agency } = useQuery( activeAgencyQuery() );
-	const agencyId = agency?.id ?? 0;
-
+export default function useWooPaymentsDashboardData( agencyId: number ): WooPaymentsDashboardData {
 	const { data: licenseSites, isLoading: isLoadingLicensesWithWooPayments } = useQuery( {
 		...jetpackAgencyLicensesQuery( agencyId, {
 			filter: JetpackLicenseFilter.Attached,
