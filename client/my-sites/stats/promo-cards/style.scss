@@ -39,6 +39,9 @@
 	a.app-promo-card__link {
 		color: var(--color-link);
 
+		// The compound `&.app-promo-card__jetpack-link:hover` isn't redundant: the
+		// plain `&:hover` only ties AppPromoCard's own jetpack-link hover rule on
+		// specificity, so it also needs the extra class to reliably win.
 		&:hover,
 		&.app-promo-card__jetpack-link:hover {
 			color: var(--color-link-dark);
