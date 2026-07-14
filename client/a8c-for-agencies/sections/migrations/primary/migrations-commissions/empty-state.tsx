@@ -27,7 +27,7 @@ export default function MigrationsCommissionsEmptyState( {
 	const a4aPluginUrl = 'https://wordpress.org/plugins/automattic-for-agencies-client';
 
 	return (
-		<StepSection heading={ __( 'View your migrated websites and commisions right here.' ) }>
+		<StepSection heading={ __( 'View your migrated websites and commissions right here.' ) }>
 			<StepSectionItem
 				heading={ __( 'Concierge Migrations' ) }
 				description={ preventWidows(

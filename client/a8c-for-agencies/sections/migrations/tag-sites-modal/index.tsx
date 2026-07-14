@@ -150,6 +150,7 @@ export default function MigrationsTagSitesModal( {
 			className="migrations-tag-sites-modal"
 			title={ __( 'Tag your transferred sites for commission.' ) }
 			onRequestClose={ handleOnClose }
+			size="large"
 		>
 			<VStack spacing={ 4 }>
 				<Text>{ __( 'Select the sites you moved on your own.' ) }</Text>
@@ -185,26 +186,26 @@ export default function MigrationsTagSitesModal( {
 						migrationSourceHost={ selectedMigrationSourceHost }
 					/>
 				) }
-				<HStack justify="flex-end" spacing={ 3 }>
-					<Button variant="tertiary" onClick={ handleOnClose }>
-						{ __( 'Cancel' ) }
-					</Button>
-					<Button
-						variant="primary"
-						onClick={ handleAddSites }
-						disabled={ isPending || ! isValidHostingProvider || selectedSites.length === 0 }
-						isBusy={ isPending }
-					>
-						{ selectedSites.length > 0
-							? sprintf(
-									/* translators: %d: the number of sites selected */
-									_n( 'Add %d site', 'Add %d sites', selectedSites.length ),
-									selectedSites.length
-							  )
-							: __( 'Add sites' ) }
-					</Button>
-				</HStack>
 			</VStack>
+			<HStack className="migrations-tag-sites-modal__footer" justify="flex-end" spacing={ 3 }>
+				<Button variant="tertiary" onClick={ handleOnClose }>
+					{ __( 'Cancel' ) }
+				</Button>
+				<Button
+					variant="primary"
+					onClick={ handleAddSites }
+					disabled={ isPending || ! isValidHostingProvider || selectedSites.length === 0 }
+					isBusy={ isPending }
+				>
+					{ selectedSites.length > 0
+						? sprintf(
+								/* translators: %d: the number of sites selected */
+								_n( 'Add %d site', 'Add %d sites', selectedSites.length ),
+								selectedSites.length
+						  )
+						: __( 'Add sites' ) }
+				</Button>
+			</HStack>
 		</Modal>
 	);
 }

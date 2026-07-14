@@ -35,8 +35,14 @@ export default function MigrationsConsolidatedCommissions( { items }: { items: T
 			<Card className="consolidated-commissions__card">
 				<CardBody>
 					<VStack spacing={ 2 }>
-						<Text className="consolidated-commissions__value">${ migrationCommissions }</Text>
-						<Text className="consolidated-commissions__label">
+						<Text size={ 20 } weight={ 500 } color="var(--color-accent-100)">
+							${ migrationCommissions }
+						</Text>
+						<Text
+							className="consolidated-commissions__label"
+							size={ 13 }
+							color="var(--color-accent)"
+						>
 							{ sprintf(
 								/* translators: %d: the current quarter number. Q is the short form of "Quarter". */
 								__( 'Migration commissions expected in Q%d' ),
@@ -49,8 +55,14 @@ export default function MigrationsConsolidatedCommissions( { items }: { items: T
 			<Card className="consolidated-commissions__card">
 				<CardBody>
 					<VStack spacing={ 2 }>
-						<Text className="consolidated-commissions__value">{ sitesPendingReview }</Text>
-						<Text className="consolidated-commissions__label">
+						<Text size={ 20 } weight={ 500 } color="var(--color-accent-100)">
+							{ sitesPendingReview }
+						</Text>
+						<Text
+							className="consolidated-commissions__label"
+							size={ 13 }
+							color="var(--color-accent)"
+						>
 							{ __( 'Sites pending review' ) }
 						</Text>
 					</VStack>

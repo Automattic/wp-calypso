@@ -1,7 +1,7 @@
 import { useDesktopBreakpoint } from '@automattic/viewport-react';
 import { __experimentalHStack as HStack } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
-import { useCallback, useEffect, useMemo, ReactNode, useState } from 'react';
+import { useCallback, useMemo, ReactNode, useState } from 'react';
 import {
 	initialDataViewsState,
 	DATAVIEWS_TABLE,
@@ -33,7 +33,6 @@ export default function MigrationsCommissionsList( {
 
 	const [ dataViewsState, setDataViewsState ] = useState< DataViewsState >( () => ( {
 		...initialDataViewsState,
-		type: isDesktop ? DATAVIEWS_TABLE : DATAVIEWS_LIST,
 		titleField: 'site',
 		// `site` is the titleField (rendered as the primary column/title), so it
 		// must not also appear in the visible fields or it renders twice.
@@ -47,13 +46,12 @@ export default function MigrationsCommissionsList( {
 		},
 	} ) );
 
-	// Render as a table on desktop and as stacked list cards on narrow viewports.
-	useEffect( () => {
-		setDataViewsState( ( prev ) => ( {
-			...prev,
-			type: isDesktop ? DATAVIEWS_TABLE : DATAVIEWS_LIST,
-		} ) );
-	}, [ isDesktop ] );
+	// `type` is derived from the viewport: a table on desktop, stacked list cards
+	// on narrow viewports. Computing it at render keeps a single source of truth.
+	const view: DataViewsState = {
+		...dataViewsState,
+		type: isDesktop ? DATAVIEWS_TABLE : DATAVIEWS_LIST,
+	};
 
 	const [ activeModal, setActiveModal ] = useState< ActiveModal >( null );
 
@@ -127,7 +125,7 @@ export default function MigrationsCommissionsList( {
 						fields,
 						actions,
 						setDataViewsState,
-						dataViewsState,
+						dataViewsState: view,
 						defaultLayouts: { table: {}, list: {} },
 					} }
 				>

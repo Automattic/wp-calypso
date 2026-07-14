@@ -1,14 +1,25 @@
-@import "@wordpress/base-styles/mixins";
-@import "@wordpress/base-styles/variables";
+@import '@wordpress/base-styles/mixins';
+@import '@wordpress/base-styles/variables';
 
-.components-modal__frame.migrations-tag-sites-modal {
-	max-width: 700px;
+// The Modal content is the scrolling element and has no dedicated footer slot.
+// Pin the actions to the bottom of that scroll area with an opaque background so
+// they stay reachable and the list does not peek through beneath the buttons.
+.migrations-tag-sites-modal .components-modal__content {
+	padding-block-end: 0;
+}
+
+.migrations-tag-sites-modal__footer {
+	position: sticky;
+	inset-block-end: 0;
+	z-index: 1;
+	padding-block: 16px 24px;
+	background: var( --color-surface );
 }
 
 .migrations-tag-sites-modal__instruction {
 	@include body-small;
 	margin: 0;
-	color: var(--color-accent-60);
+	color: var( --color-accent-60 );
 
 	svg {
 		position: relative;
@@ -30,22 +41,9 @@
 	}
 
 	&::-webkit-scrollbar-thumb {
-		background-color: var(--color-neutral-20);
+		background-color: var( --color-neutral-20 );
 		border-radius: 4px;
 		border: transparent;
-	}
-
-
-	&::after {
-		content: "";
-		position: absolute;
-		inset-inline-start: 0;
-		inset-block-end: 80px;
-		width: 100%;
-		height: 5%;
-		display: inline-block;
-		background: linear-gradient(to bottom, transparent 0%, var(--color-surface) 100%);
-		transition: opacity 0.3s ease-out;
 	}
 
 	.dataviews-wrapper {
@@ -64,7 +62,7 @@
 			}
 
 			th {
-				border-color: var(--color-neutral-5);
+				border-color: var( --color-neutral-5 );
 			}
 		}
 
@@ -74,7 +72,6 @@
 	}
 
 	.dataviews-view-table {
-		padding-block-end: 80px;
 		margin: 0 0 32px;
 
 		tr {

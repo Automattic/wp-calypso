@@ -1,5 +1,5 @@
-@import "@wordpress/base-styles/mixins";
-@import "@wordpress/base-styles/variables";
+@import '@wordpress/base-styles/mixins';
+@import '@wordpress/base-styles/variables';
 
 .migrations-commissions {
 	.consolidated-commissions {
@@ -11,14 +11,7 @@
 			width: 100%;
 		}
 
-		.consolidated-commissions__value {
-			@include heading-x-large;
-			color: var(--color-accent-100);
-		}
-
 		.consolidated-commissions__label {
-			@include body-medium;
-			color: var(--color-accent);
 			text-wrap: nowrap;
 		}
 	}
