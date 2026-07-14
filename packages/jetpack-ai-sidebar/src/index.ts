@@ -906,52 +906,52 @@ type BlockSuggestion = {
 const CHANGE_TONE_OPTIONS: SuggestionOption[] = [
 	{
 		id: 'formal',
-		label: `🎩 ${ __( 'Formal', __i18n_text_domain__ ) }`,
+		label: `🎩 ${ _x( 'Formal', 'Change tone dropdown option', __i18n_text_domain__ ) }`,
 		value: __( 'Change the tone of this text to be more formal', __i18n_text_domain__ ),
 	},
 	{
 		id: 'informal',
-		label: `😊 ${ __( 'Informal', __i18n_text_domain__ ) }`,
+		label: `😊 ${ _x( 'Informal', 'Change tone dropdown option', __i18n_text_domain__ ) }`,
 		value: __( 'Change the tone of this text to be more informal', __i18n_text_domain__ ),
 	},
 	{
 		id: 'optimistic',
-		label: `😃 ${ __( 'Optimistic', __i18n_text_domain__ ) }`,
+		label: `😃 ${ _x( 'Optimistic', 'Change tone dropdown option', __i18n_text_domain__ ) }`,
 		value: __( 'Change the tone of this text to be more optimistic', __i18n_text_domain__ ),
 	},
 	{
 		id: 'humorous',
-		label: `😂 ${ __( 'Humorous', __i18n_text_domain__ ) }`,
+		label: `😂 ${ _x( 'Humorous', 'Change tone dropdown option', __i18n_text_domain__ ) }`,
 		value: __( 'Change the tone of this text to be more humorous', __i18n_text_domain__ ),
 	},
 	{
 		id: 'serious',
-		label: `😐 ${ __( 'Serious', __i18n_text_domain__ ) }`,
+		label: `😐 ${ _x( 'Serious', 'Change tone dropdown option', __i18n_text_domain__ ) }`,
 		value: __( 'Change the tone of this text to be more serious', __i18n_text_domain__ ),
 	},
 	{
 		id: 'skeptical',
-		label: `🤨 ${ __( 'Skeptical', __i18n_text_domain__ ) }`,
+		label: `🤨 ${ _x( 'Skeptical', 'Change tone dropdown option', __i18n_text_domain__ ) }`,
 		value: __( 'Change the tone of this text to be more skeptical', __i18n_text_domain__ ),
 	},
 	{
 		id: 'empathetic',
-		label: `💗 ${ __( 'Empathetic', __i18n_text_domain__ ) }`,
+		label: `💗 ${ _x( 'Empathetic', 'Change tone dropdown option', __i18n_text_domain__ ) }`,
 		value: __( 'Change the tone of this text to be more empathetic', __i18n_text_domain__ ),
 	},
 	{
 		id: 'confident',
-		label: `😎 ${ __( 'Confident', __i18n_text_domain__ ) }`,
+		label: `😎 ${ _x( 'Confident', 'Change tone dropdown option', __i18n_text_domain__ ) }`,
 		value: __( 'Change the tone of this text to be more confident', __i18n_text_domain__ ),
 	},
 	{
 		id: 'passionate',
-		label: `❤️ ${ __( 'Passionate', __i18n_text_domain__ ) }`,
+		label: `❤️ ${ _x( 'Passionate', 'Change tone dropdown option', __i18n_text_domain__ ) }`,
 		value: __( 'Change the tone of this text to be more passionate', __i18n_text_domain__ ),
 	},
 	{
 		id: 'provocative',
-		label: `🔥 ${ __( 'Provocative', __i18n_text_domain__ ) }`,
+		label: `🔥 ${ _x( 'Provocative', 'Change tone dropdown option', __i18n_text_domain__ ) }`,
 		value: __( 'Change the tone of this text to be more provocative', __i18n_text_domain__ ),
 	},
 ];
@@ -960,62 +960,62 @@ const CHANGE_TONE_OPTIONS: SuggestionOption[] = [
 const TRANSLATE_LANGUAGE_OPTIONS: SuggestionOption[] = [
 	{
 		id: 'en',
-		label: __( 'English', __i18n_text_domain__ ),
+		label: _x( 'English', 'Translate content dropdown option', __i18n_text_domain__ ),
 		value: __( 'Translate this block content to English', __i18n_text_domain__ ),
 	},
 	{
 		id: 'es',
-		label: __( 'Spanish', __i18n_text_domain__ ),
+		label: _x( 'Spanish', 'Translate content dropdown option', __i18n_text_domain__ ),
 		value: __( 'Translate this block content to Spanish', __i18n_text_domain__ ),
 	},
 	{
 		id: 'fr',
-		label: __( 'French', __i18n_text_domain__ ),
+		label: _x( 'French', 'Translate content dropdown option', __i18n_text_domain__ ),
 		value: __( 'Translate this block content to French', __i18n_text_domain__ ),
 	},
 	{
 		id: 'de',
-		label: __( 'German', __i18n_text_domain__ ),
+		label: _x( 'German', 'Translate content dropdown option', __i18n_text_domain__ ),
 		value: __( 'Translate this block content to German', __i18n_text_domain__ ),
 	},
 	{
 		id: 'it',
-		label: __( 'Italian', __i18n_text_domain__ ),
+		label: _x( 'Italian', 'Translate content dropdown option', __i18n_text_domain__ ),
 		value: __( 'Translate this block content to Italian', __i18n_text_domain__ ),
 	},
 	{
 		id: 'pt',
-		label: __( 'Portuguese', __i18n_text_domain__ ),
+		label: _x( 'Portuguese', 'Translate content dropdown option', __i18n_text_domain__ ),
 		value: __( 'Translate this block content to Portuguese', __i18n_text_domain__ ),
 	},
 	{
 		id: 'ru',
-		label: __( 'Russian', __i18n_text_domain__ ),
+		label: _x( 'Russian', 'Translate content dropdown option', __i18n_text_domain__ ),
 		value: __( 'Translate this block content to Russian', __i18n_text_domain__ ),
 	},
 	{
 		id: 'zh',
-		label: __( 'Chinese', __i18n_text_domain__ ),
+		label: _x( 'Chinese', 'Translate content dropdown option', __i18n_text_domain__ ),
 		value: __( 'Translate this block content to Chinese', __i18n_text_domain__ ),
 	},
 	{
 		id: 'ja',
-		label: __( 'Japanese', __i18n_text_domain__ ),
+		label: _x( 'Japanese', 'Translate content dropdown option', __i18n_text_domain__ ),
 		value: __( 'Translate this block content to Japanese', __i18n_text_domain__ ),
 	},
 	{
 		id: 'ar',
-		label: __( 'Arabic', __i18n_text_domain__ ),
+		label: _x( 'Arabic', 'Translate content dropdown option', __i18n_text_domain__ ),
 		value: __( 'Translate this block content to Arabic', __i18n_text_domain__ ),
 	},
 	{
 		id: 'hi',
-		label: __( 'Hindi', __i18n_text_domain__ ),
+		label: _x( 'Hindi', 'Translate content dropdown option', __i18n_text_domain__ ),
 		value: __( 'Translate this block content to Hindi', __i18n_text_domain__ ),
 	},
 	{
 		id: 'ko',
-		label: __( 'Korean', __i18n_text_domain__ ),
+		label: _x( 'Korean', 'Translate content dropdown option', __i18n_text_domain__ ),
 		value: __( 'Translate this block content to Korean', __i18n_text_domain__ ),
 	},
 ];
