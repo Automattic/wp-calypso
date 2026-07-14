@@ -212,14 +212,15 @@ export function useImageUpload(): UseImageUploadResult {
 					} );
 					batch.landed = landed;
 
-					if ( batch.landed.length !== files.length ) {
+					// Anything landing after an abort is unused — delete it instead of
+					// resolving a settled promise. Re-deleting an already-deleted
+					// attachment is a harmless no-op.
+					if ( batch.aborted ) {
+						batch.landed.forEach( ( media ) => deleteAttachment( media.id ) );
 						return;
 					}
 
-					// A whole batch landing after an abort is unused — clean it up
-					// instead of resolving a settled promise.
-					if ( batch.aborted ) {
-						batch.landed.forEach( ( media ) => deleteAttachment( media.id ) );
+					if ( batch.landed.length !== files.length ) {
 						return;
 					}
 
