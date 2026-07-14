@@ -115,10 +115,12 @@ export const ResultsPage = () => {
 
 	// Turn an add failure into a notice on the card rather than silently doing
 	// nothing. The "unavailable" case (the backend stripped an incomplete bundle
-	// group, so fewer members came back than were sent) carries no server message,
-	// so give it its own copy; every other error surfaces the cart's own message
-	// (a CartActionError, already user-facing) with a generic fallback. Clicking
-	// "Get bundle" again re-fires the mutation, which clears the error state.
+	// group, so fewer members came back than were sent) only carries a generic
+	// internal message ("The domain bundle could not be added to the cart."), so
+	// override it with friendlier, more actionable copy; every other error
+	// surfaces the cart's own message (a CartActionError, already user-facing)
+	// with a generic fallback. Clicking "Get bundle" again re-fires the mutation,
+	// which clears the error state.
 	const bundleErrorMessage = ( () => {
 		if ( ! isCurrentMutation || ! addBundleError ) {
 			return undefined;
