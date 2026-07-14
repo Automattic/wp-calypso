@@ -484,7 +484,8 @@ export default function OrchestratorChat( {
 					// came from the composer, keep it visible while images upload: wait a
 					// microtask so the restore lands after that clear, and re-place the
 					// caret at the end (the clear leaves it at 0). Suggestion-driven and
-					// programmatic submits leave any draft alone.
+					// programmatic submits leave any draft alone. Agenttic dispatches the
+					// trimmed draft, hence the trim-compare.
 					if ( inputValue.trim() === message ) {
 						await Promise.resolve();
 						setChatInput( message );
