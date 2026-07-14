@@ -7,7 +7,6 @@ import {
 	isDomainTransfer,
 	isGSuiteOrGoogleWorkspace,
 	isMonthlyProduct,
-	isPlan,
 	isThemePurchase,
 	isTitanMail,
 	isConciergeSession,
@@ -28,6 +27,11 @@ import {
 	isAkismetPro500,
 	getAkismetPro500ProductDisplayName,
 	isAkismetFreeProduct,
+	camelOrSnakeSlug,
+	isFreePlan,
+	PLAN_HOST_BUNDLE,
+	PLAN_WPCOM_ENTERPRISE,
+	getPlansSlugs,
 } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
 import { formatCurrency, formatNumber } from '@automattic/number-formatters';
@@ -263,10 +267,33 @@ export function getSubscriptionsBySite(
 		} );
 }
 
+export function isPlan( product: Purchase ): boolean {
+	const slug = camelOrSnakeSlug( product );
+	if ( isFreePlan( slug ) ) {
+		return false;
+	}
+	switch ( slug ) {
+		case PLAN_HOST_BUNDLE:
+		case PLAN_WPCOM_ENTERPRISE:
+			return true;
+		default:
+			return getPlansSlugs().includes( slug );
+	}
+}
+
 export function getName( purchase: Purchase ): string {
 	if ( isDomainRegistration( purchase ) || isDomainMapping( purchase ) ) {
 		return purchase.meta ?? '';
 	}
+
+	if ( isPlan( purchase ) ) {
+		return i18n.translate( '%(productName) Plan', {
+			args: {
+				productName: purchase.productName.replace( /\s*\(.*$/, '' ).trim(),
+			},
+		} );
+	}
+
 	return purchase.productName;
 }
 
@@ -1033,7 +1060,7 @@ export function purchaseType( purchase: Purchase ): string | null {
 	}
 
 	if ( isPlan( purchase ) ) {
-		return i18n.translate( 'Site Plan' );
+		return null;
 	}
 
 	if ( isDomainRegistration( purchase ) ) {
