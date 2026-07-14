@@ -6,8 +6,10 @@
  * ability). Shows each image alongside its suggested alt text for a quick visual
  * check, then applies all of them in one click — writing the alt attribute back
  * to each image block (matched by clientId) via core/block-editor. There is a
- * single common Apply action (not per image). Applying is reversible via the
- * chat's Undo checkpoint.
+ * single common Apply action (not per image). Applying is NOT covered by the
+ * chat's Undo checkpoint — block-attribute targets are unstable (blocks can be
+ * deleted, moved, or transformed after apply), so the editor's own undo
+ * history is the only revert path.
  */
 
 /**

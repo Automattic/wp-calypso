@@ -23,7 +23,7 @@ import BaseSuggestionPicker from './base-suggestion-picker';
  * Jetpack SEO post meta key for the custom HTML <meta> description.
  * @see Jetpack_SEO_Posts::DESCRIPTION_META_KEY
  */
-const SEO_DESCRIPTION_META_KEY = 'advanced_seo_description';
+export const SEO_DESCRIPTION_META_KEY = 'advanced_seo_description';
 
 /**
  * Props for the SeoDescriptionPicker component.

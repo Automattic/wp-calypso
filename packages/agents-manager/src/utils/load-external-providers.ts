@@ -101,7 +101,8 @@ export type GetChatComponent = ( type: ChatComponentType ) => React.ComponentTyp
  */
 export type UseCheckpointReturn = {
 	getLastEditorState: () => unknown;
-	setCheckpoint: ( id: string, keys?: string[] ) => void;
+	// The second argument's shape is provider-owned; AM never invokes this method.
+	setCheckpoint: ( id: string, spec?: unknown ) => void;
 	addCheckpointKeys: ( id: string, keys: string[] ) => void;
 	restoreCheckpoint: ( id: string ) => Promise< void >;
 	addNewPageToCheckpoint: ( pageId: string ) => void;
@@ -215,6 +216,66 @@ export function mergeUseSuggestionsHooks(
 			}
 		}
 		return { suggestions: combined };
+	};
+}
+
+/**
+ * Merge provider checkpoint hooks. On multi-provider surfaces (e.g. Big Sky +
+ * Jetpack AI sidebar on Simple) each provider owns its own checkpoint store,
+ * so every hook must run (to register its store) and id-based lookups must
+ * search all of them — AM itself only calls `hasCheckpoint` /
+ * `restoreCheckpoint` (see `hooks/use-checkpoint-action.ts`). All other
+ * methods delegate to the first provider, preserving the previous
+ * first-write-wins behavior. The hook list is frozen after load, so calling
+ * every hook in order satisfies the React hooks rules.
+ */
+export function mergeUseCheckpointHooks(
+	hooks: UseCheckpointHook[]
+): UseCheckpointHook | undefined {
+	if ( hooks.length === 0 ) {
+		return undefined;
+	}
+
+	if ( hooks.length === 1 ) {
+		return hooks[ 0 ];
+	}
+
+	return () => {
+		// Provider modules arrive untyped from runtime imports, so treat each
+		// instance as partial and guard every delegated call.
+		const instances: Array< Partial< UseCheckpointReturn > | undefined > = hooks.map( ( hook ) =>
+			hook()
+		);
+		const first = instances[ 0 ];
+		const findOwner = ( id: string ) =>
+			instances.find( ( instance ) => instance?.hasCheckpoint?.( id ) );
+
+		return {
+			hasCheckpoint: ( id: string ) =>
+				instances.some( ( instance ) => instance?.hasCheckpoint?.( id ) ),
+			restoreCheckpoint: async ( id: string ) => {
+				await findOwner( id )?.restoreCheckpoint?.( id );
+			},
+			clearCheckpoint: ( id: string ) => {
+				for ( const instance of instances ) {
+					if ( instance?.hasCheckpoint?.( id ) ) {
+						instance.clearCheckpoint?.( id );
+					}
+				}
+			},
+			getLastEditorState: () => first?.getLastEditorState?.(),
+			setCheckpoint: ( id: string, spec?: unknown ) => first?.setCheckpoint?.( id, spec ),
+			addCheckpointKeys: ( id: string, keys: string[] ) => first?.addCheckpointKeys?.( id, keys ),
+			addNewPageToCheckpoint: ( pageId: string ) => first?.addNewPageToCheckpoint?.( pageId ),
+			addPageRenameToCheckpoint: ( pageId: string, oldTitle: string, newTitle: string ) =>
+				first?.addPageRenameToCheckpoint?.( pageId, oldTitle, newTitle ),
+			addPageRemovalToCheckpoint: (
+				pageId: string,
+				pageTitle: string,
+				options?: { shouldRestoreNavigation?: boolean }
+			) => first?.addPageRemovalToCheckpoint?.( pageId, pageTitle, options ),
+			getLatestUserMessageId: () => first?.getLatestUserMessageId?.(),
+		};
 	};
 }
 
@@ -458,7 +519,6 @@ export async function loadExternalProviders(): Promise< LoadedProviders > {
 	let mergedGetChatComponent: GetChatComponent | undefined;
 	let mergedSiteBuildUtils: SiteBuildUtils | undefined;
 	let mergedImageUpload: ImageUploadHook | undefined;
-	let mergedUseCheckpoint: UseCheckpointHook | undefined;
 	let mergedOnTaskUpdate: LoadedProviders[ 'onTaskUpdate' ] | undefined;
 	// OR-merged across all providers.
 	const mergedCapabilities: ProviderCapabilities = {};
@@ -473,6 +533,7 @@ export async function loadExternalProviders(): Promise< LoadedProviders > {
 	const allAbilitiesSetups: AbilitiesSetupHook[] = [];
 	const allUseSuggestions: UseSuggestionsHook[] = [];
 	const allGetEmptyViewSuggestions: ( () => Suggestion[] )[] = [];
+	const allUseCheckpoints: UseCheckpointHook[] = [];
 	const allProviderIds: string[] = [];
 
 	// Load all providers in parallel to avoid serializing network/module fetches.
@@ -529,6 +590,9 @@ export async function loadExternalProviders(): Promise< LoadedProviders > {
 		if ( module.getEmptyViewSuggestions ) {
 			allGetEmptyViewSuggestions.push( module.getEmptyViewSuggestions );
 		}
+		if ( module.useCheckpoint ) {
+			allUseCheckpoints.push( module.useCheckpoint );
+		}
 		if ( module.contextProvider ) {
 			allContextProviders.push( module.contextProvider );
 		}
@@ -548,9 +612,6 @@ export async function loadExternalProviders(): Promise< LoadedProviders > {
 		}
 		if ( module.useImageUpload && ! mergedImageUpload ) {
 			mergedImageUpload = module.useImageUpload;
-		}
-		if ( module.useCheckpoint && ! mergedUseCheckpoint ) {
-			mergedUseCheckpoint = module.useCheckpoint;
 		}
 		if ( module.onTaskUpdate && ! mergedOnTaskUpdate ) {
 			mergedOnTaskUpdate = module.onTaskUpdate;
@@ -657,6 +718,9 @@ export async function loadExternalProviders(): Promise< LoadedProviders > {
 
 	// Merge useSuggestions: combine from all providers, dedupe by id.
 	const mergedUseSuggestions = mergeUseSuggestionsHooks( allUseSuggestions );
+
+	// Merge useCheckpoint: run every provider's hook, search all stores by id.
+	const mergedUseCheckpoint = mergeUseCheckpointHooks( allUseCheckpoints );
 
 	// Merge getEmptyViewSuggestions: combine from all providers, dedupe by id.
 	if ( allGetEmptyViewSuggestions.length === 1 ) {

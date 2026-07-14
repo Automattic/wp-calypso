@@ -23,14 +23,17 @@ import PostFeedback from './components/post-feedback';
 import Proofread from './components/proofread';
 import ReviewMediation from './components/review-mediation';
 import './components/review-mediation.scss';
-import SeoDescriptionPicker from './components/seo-description-picker';
-import SeoTitlePicker from './components/seo-title-picker';
+import SeoDescriptionPicker, {
+	SEO_DESCRIPTION_META_KEY,
+} from './components/seo-description-picker';
+import SeoTitlePicker, { SEO_TITLE_META_KEY } from './components/seo-title-picker';
 import './components/base-suggestion-picker.scss';
 import TitlePicker from './components/title-picker';
 import './auto-scroll-fix.scss';
 import {
 	type CheckpointApi,
 	type CheckpointField,
+	type CheckpointSpec,
 	applyReviewEdit,
 	findBlockElement,
 	findBlockListLayout,
@@ -421,9 +424,24 @@ function shouldDelegateLegacyShowComponent( input: any ): boolean {
 }
 
 /**
+ * Checkpoint spec per picker type: each picker snapshots only what it can
+ * write (top-level post fields or SEO post meta keys), so restoring its
+ * checkpoint cannot clobber later edits elsewhere. The image alt-text picker
+ * has no spec — block-attribute targets are unstable (blocks can be deleted,
+ * moved, or transformed between apply and Undo), so it sets no checkpoint
+ * until a real block-attribute restore design exists.
+ */
+const PICKER_CHECKPOINT_SPECS: Record< string, CheckpointSpec > = {
+	'title-picker': { fields: [ 'title' ] },
+	'excerpt-picker': { fields: [ 'excerpt' ] },
+	'seo-title-picker': { metaKeys: [ SEO_TITLE_META_KEY ] },
+	'seo-description-picker': { metaKeys: [ SEO_DESCRIPTION_META_KEY ] },
+};
+
+/**
  * Handle Jetpack show-component calls by returning an agentMessage envelope.
- * Title picker opts into AM's
- * message-level Undo because the checkpoint API snapshots the post title.
+ * Pickers with a checkpoint spec opt into AM's message-level Undo because the
+ * checkpoint API snapshots the post fields / meta keys they write.
  * @param {any} input - Tool call arguments: `{ type, props, toolCallId, ... }`.
  * @returns {Object} Result containing the `agentMessage` to re-emit.
  */
@@ -460,27 +478,17 @@ function handleShowComponent( input: any ): any {
 		}
 	}
 
-	if (
-		type === 'title-picker' ||
-		type === 'excerpt-picker' ||
-		type === 'seo-title-picker' ||
-		type === 'seo-description-picker' ||
-		type === 'image-alt-text-picker'
-	) {
-		// Snapshot state for Undo (these pickers mutate post data / block
-		// attributes). Tool call id doubles as the checkpoint id so it matches
-		// the identifier AM reads from the rendered message. Only the
-		// supported post fields for this picker are snapshot (title/excerpt —
-		// meta and block-attribute changes aren't checkpointed), so restoring
-		// its checkpoint cannot clobber later edits to other fields.
-		const checkpointFields: CheckpointField[] =
-			type === 'excerpt-picker' ? [ 'excerpt' ] : [ 'title' ];
+	const checkpointSpec = PICKER_CHECKPOINT_SPECS[ type ];
+	if ( checkpointSpec ) {
+		// Snapshot state for Undo (these pickers mutate post data). Tool call
+		// id doubles as the checkpoint id so it matches the identifier AM
+		// reads from the rendered message.
 		const checkpointId: string =
 			input?.toolCallId || input?.calypsoCheckpointId || `show-component-${ type }-${ Date.now() }`;
 		const checkpointApi = getModuleCheckpointApi();
 		if ( checkpointApi && ! checkpointApi.hasCheckpoint( checkpointId ) ) {
 			try {
-				checkpointApi.setCheckpoint( checkpointId, checkpointFields );
+				checkpointApi.setCheckpoint( checkpointId, checkpointSpec );
 			} catch {
 				// Non-fatal — Undo just won't attach if the snapshot fails.
 			}
@@ -813,28 +821,53 @@ export function getChatComponent( type: string ): ComponentType | null {
 
 /**
  * Provider hook consumed by AM's `use-checkpoint-action` so Undo buttons
- * can attach to show-component messages. Snapshots the selected top-level
- * post fields (title by default, excerpt for the excerpt picker) on
- * `setCheckpoint(id, fields)` and restores exactly those fields on
- * `restoreCheckpoint(id)` via `core/editor` dispatch — restoring one picker's
- * checkpoint must not clobber another field's later edits. Only title and
- * excerpt are supported: meta (SEO pickers) and block-attribute (image alt
- * text) changes are not checkpointed. Stubs the rest of AM's
- * `UseCheckpointReturn` interface — only the three methods above are used on
- * this path.
+ * can attach to show-component messages. Snapshots the top-level post fields
+ * and/or post meta keys named by the spec (title by default, excerpt for the
+ * excerpt picker, the SEO meta keys for the SEO pickers) on
+ * `setCheckpoint(id, spec)` and restores exactly those on
+ * `restoreCheckpoint(id)` via a single `core/editor` editPost call —
+ * restoring one picker's checkpoint must not clobber later edits to other
+ * fields or meta keys. Block-attribute changes (image alt text) are not
+ * checkpointed. Stubs the rest of AM's `UseCheckpointReturn` interface —
+ * only the three methods above are used on this path.
  * @returns {Object} The checkpoint API AM consumes.
  */
-const postSnapshots: Map< string, Partial< Record< CheckpointField, string > > > = new Map();
+type PostSnapshot = {
+	fields: Partial< Record< CheckpointField, string > >;
+	meta?: Record< string, string >;
+};
+
+const postSnapshots: Map< string, PostSnapshot > = new Map();
 
 export function useCheckpoint(): any {
 	const api: CheckpointApi = {
-		setCheckpoint( id: string, fields: CheckpointField[] = [ 'title' ] ) {
+		setCheckpoint( id: string, spec: CheckpointSpec = { fields: [ 'title' ] } ) {
 			const editor = ( window as any ).wp?.data?.select?.( 'core/editor' );
-			const snapshot: Partial< Record< CheckpointField, string > > = {};
-			for ( const field of fields ) {
-				snapshot[ field ] = ( editor?.getEditedPostAttribute?.( field ) as string ) ?? '';
+			const snapshot: PostSnapshot = { fields: {} };
+			for ( const field of spec.fields ?? [] ) {
+				snapshot.fields[ field ] = ( editor?.getEditedPostAttribute?.( field ) as string ) ?? '';
 			}
-			postSnapshots.set( id, snapshot );
+			const metaKeys = spec.metaKeys ?? [];
+			if ( metaKeys.length > 0 ) {
+				const meta = editor?.getEditedPostAttribute?.( 'meta' );
+				// Snapshot only keys present on the record: restoring '' for an
+				// unregistered key (e.g. SEO tools inactive) would dispatch a
+				// phantom edit that leaves the post permanently dirty.
+				const presentKeys = meta ? metaKeys.filter( ( key ) => key in meta ) : [];
+				if ( presentKeys.length > 0 ) {
+					const metaSnapshot: Record< string, string > = {};
+					for ( const key of presentKeys ) {
+						metaSnapshot[ key ] = ( meta[ key ] as string ) ?? '';
+					}
+					snapshot.meta = metaSnapshot;
+				}
+			}
+			// Store only when something was captured: an empty snapshot would
+			// make hasCheckpoint() report true and AM would render an Undo
+			// action that restores nothing.
+			if ( Object.keys( snapshot.fields ).length > 0 || snapshot.meta ) {
+				postSnapshots.set( id, snapshot );
+			}
 		},
 		hasCheckpoint( id: string ): boolean {
 			return postSnapshots.has( id );
@@ -844,8 +877,12 @@ export function useCheckpoint(): any {
 			if ( previous === undefined ) {
 				return;
 			}
+			const edits: Record< string, unknown > = { ...previous.fields };
+			if ( previous.meta ) {
+				edits.meta = { ...previous.meta };
+			}
 			const wpData = ( window as any ).wp?.data;
-			wpData?.dispatch?.( 'core/editor' )?.editPost?.( { ...previous } );
+			wpData?.dispatch?.( 'core/editor' )?.editPost?.( edits );
 			// Keep snapshot so the user can re-Undo back to the original values.
 			// clearCheckpoint() removes it when AM resets the session.
 		},

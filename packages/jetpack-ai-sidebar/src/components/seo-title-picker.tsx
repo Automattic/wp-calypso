@@ -24,7 +24,7 @@ import BaseSuggestionPicker from './base-suggestion-picker';
  * Jetpack SEO post meta key for the custom HTML <title> override.
  * @see Jetpack_SEO_Posts::HTML_TITLE_META_KEY
  */
-const SEO_TITLE_META_KEY = 'jetpack_seo_html_title';
+export const SEO_TITLE_META_KEY = 'jetpack_seo_html_title';
 
 /**
  * Props for the SeoTitlePicker component.

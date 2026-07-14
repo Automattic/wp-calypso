@@ -13,15 +13,15 @@ Agents Manager (AM) provider for the Jetpack AI sidebar in Gutenberg. Bridges th
 
 This package exports the **AM provider contract** — a set of functions the Agents Manager calls to wire up a sidebar provider:
 
-| Export                    | Role                                                      |
-| ------------------------- | --------------------------------------------------------- |
-| `useAbilitiesSetup`       | Captures AM's `addMessage`/`clearSuggestions` callbacks   |
-| `toolProvider`            | Surfaces Jetpack AI's client-side abilities to AM         |
-| `contextProvider`         | Sends Gutenberg editor state to the orchestrator          |
-| `getChatComponent`        | Maps `type` strings → React components for show-component |
-| `useCheckpoint`           | Post title/excerpt snapshots for AM's native Undo action  |
-| `getEmptyViewSuggestions` | Static suggestions shown before conversation starts       |
-| `useSuggestions`          | Block-aware dynamic suggestions during conversation       |
+| Export                    | Role                                                        |
+| ------------------------- | ----------------------------------------------------------- |
+| `useAbilitiesSetup`       | Captures AM's `addMessage`/`clearSuggestions` callbacks     |
+| `toolProvider`            | Surfaces Jetpack AI's client-side abilities to AM           |
+| `contextProvider`         | Sends Gutenberg editor state to the orchestrator            |
+| `getChatComponent`        | Maps `type` strings → React components for show-component   |
+| `useCheckpoint`           | Post field / SEO meta snapshots for AM's native Undo action |
+| `getEmptyViewSuggestions` | Static suggestions shown before conversation starts         |
+| `useSuggestions`          | Block-aware dynamic suggestions during conversation         |
 
 All exports live in `src/index.ts`. This is intentionally a single-file provider — keep it that way unless the file exceeds ~800 lines.
 
@@ -50,7 +50,7 @@ Used for Jetpack AI interactive components. The wpcom ability returns an `Input_
 {
   type: '<component-type>',
   props: { ... },
-  calypsoCheckpointId: '<id>',
+  calypsoCheckpointId: '<id>', // only for picker types with a checkpoint spec
   isCurrent: true,
   hideZoomAction: true
 }
@@ -59,7 +59,7 @@ Used for Jetpack AI interactive components. The wpcom ability returns an `Input_
 On the client, `handleShowComponent`:
 
 1. Looks up the component via `getChatComponent(type)` to verify the type is supported.
-2. Snapshots state via the module-level `moduleCheckpointApi.setCheckpoint()` so AM's native Undo action can restore it later.
+2. For picker types with a checkpoint spec, snapshots state via the module-level `moduleCheckpointApi.setCheckpoint()` so AM's native Undo action can restore it later.
 3. Returns `{ agentMessage: JSON.stringify({ tool_id, data }) }`. agenttic-client re-emits this as an `{ role: 'agent', parts: [text] }` message.
 4. AM's `convert-tool-messages-to-components` matches the tool_id, calls `getChatComponent(data.type)`, and replaces the text content with a component render. Because the original message had text content, AgentChat renders its action bar (thumbs, Undo) on the resulting bubble.
 
@@ -72,7 +72,8 @@ The provider temporarily accepts legacy `big_sky__show_component` executions for
 1. Add a case in `getChatComponent()` mapping your `type` string to a React component.
 2. Create the component under `src/components/` with a `scss` sibling.
 3. Update the wpcom ability (or add a new one) to return `tool_id: 'jetpack_ai__show_component'` with `data: { type: '<your-type>', props: { ... } }`.
-4. No changes to `toolProvider`, `useCheckpoint`, or the action bar wiring.
+4. If the component mutates post data and should offer Undo, add an entry to `PICKER_CHECKPOINT_SPECS` in `src/index.ts` — without one, no `calypsoCheckpointId` is set and AM shows no Undo.
+5. No other changes to `toolProvider`, `useCheckpoint`, or the action bar wiring.
 
 ### Adding a non-rendering client tool
 
@@ -97,7 +98,7 @@ Changes here affect AI response quality. The orchestrator uses `selectedBlockCli
 
 ## Checkpoint / Undo
 
-`useCheckpoint` exposes a minimal subset of AM's `UseCheckpointReturn` interface — only `setCheckpoint` / `hasCheckpoint` / `restoreCheckpoint` are implemented; the Big Sky page/navigation stubs are no-ops. Snapshots capture only the fields the triggering picker writes (title by default, excerpt for the excerpt picker) and are stored in a module-level `postSnapshots` map keyed by checkpoint id (the tool call id), so the sync `handleShowComponent` callback and the async React restore path share state — and restoring one picker's checkpoint never clobbers another field's later edits.
+`useCheckpoint` exposes a minimal subset of AM's `UseCheckpointReturn` interface — only `setCheckpoint` / `hasCheckpoint` / `restoreCheckpoint` are implemented; the Big Sky page/navigation stubs are no-ops. `setCheckpoint( id, spec )` takes a `CheckpointSpec` naming the top-level post fields (`title`, `excerpt`) and/or post meta keys the triggering picker writes, defaulting to `{ fields: [ 'title' ] }`; the SEO title/description pickers checkpoint their meta keys (`jetpack_seo_html_title` / `advanced_seo_description`). A spec that captures nothing (e.g. meta keys absent from the record) stores no snapshot, so `hasCheckpoint` stays false and AM renders no Undo. Restore is a single `editPost` call combining the snapshotted fields and meta. Snapshots are stored in a module-level `postSnapshots` map keyed by checkpoint id (the tool call id), so the sync `handleShowComponent` callback and the async React restore path share state — and restoring one picker's checkpoint never clobbers later edits to other fields or meta keys. The image alt-text picker sets no checkpoint (AM shows no Undo for it): block-attribute targets are unstable between apply and Undo, so there is no restore path until a block-attribute restore design exists.
 
 ## Suggestions
 
@@ -141,4 +142,4 @@ Test files go alongside source: `foo.ts` → `foo.test.ts`.
 - Before/after screenshots for UI changes (especially TitlePicker or shimmer effects)
 - Test with both block selected and no block selected states
 
-**Last updated**: 2026-04-10
+**Last updated**: 2026-07-07
