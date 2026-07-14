@@ -16,6 +16,7 @@ interface Props {
 	freeSuggestion?: string;
 	unavailableDomain?: string;
 	existingSiteUrl?: string;
+	canStartFree?: boolean;
 	onSkip: () => void;
 	onSuggestionClick?: () => void;
 	disabled?: boolean;
@@ -26,6 +27,7 @@ const DomainSearchSkipSuggestion = ( {
 	freeSuggestion,
 	unavailableDomain,
 	existingSiteUrl,
+	canStartFree = true,
 	onSkip,
 	onSuggestionClick,
 	disabled,
@@ -76,13 +78,19 @@ const DomainSearchSkipSuggestion = ( {
 		);
 		showButton = false;
 	} else if ( freeSuggestion ) {
-		title = sprintf(
-			// translators: %(domain)s is the free WordPress.com subdomain
-			__( 'Start free with %(domain)s' ),
-			{ domain: freeSuggestion }
-		);
+		title = canStartFree
+			? sprintf(
+					// translators: %(domain)s is the free WordPress.com subdomain
+					__( 'Start free with %(domain)s' ),
+					{ domain: freeSuggestion }
+			  )
+			: sprintf(
+					// translators: %(domain)s is the free WordPress.com subdomain
+					__( 'Start with %(domain)s' ),
+					{ domain: freeSuggestion }
+			  );
 		subtitle = __( 'Upgrade to a custom domain name anytime.' );
-		buttonText = __( 'Start Free' );
+		buttonText = canStartFree ? __( 'Start Free' ) : __( 'Choose a domain later' );
 		chevronOnMobile = true;
 	}
 

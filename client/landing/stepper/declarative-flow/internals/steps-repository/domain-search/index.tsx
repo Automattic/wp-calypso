@@ -197,6 +197,9 @@ const DomainSearchStep: StepType< {
 				! isHundredYearDomainFlow( flow ) &&
 				! isDomainFlow( flow ) &&
 				! isDomainAndPlanFlow( flow ),
+			// AI Website Builder onboarding requires a paid plan, so skipping the
+			// domain doesn't start a free site — drop the "start free" framing.
+			canStartFree: ! isAIBuilderOnboardingFlow( flow ),
 			includeDotBlogSubdomain:
 				! isHundredYearPlanFlow( flow ) &&
 				! isHundredYearDomainFlow( flow ) &&

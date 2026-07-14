@@ -115,6 +115,12 @@ export interface DomainSearchEvents {
 export interface DomainSearchConfig {
 	vendor: DomainSuggestionQueryVendor;
 	skippable: boolean;
+	/**
+	 * Whether skipping the domain leads to a genuinely free site. When false,
+	 * the free-subdomain skip card drops the "free" framing and its CTA becomes
+	 * a neutral "choose later" action (e.g. flows that require a paid plan).
+	 */
+	canStartFree: boolean;
 	deemphasizedTlds: string[];
 	priceRules: PriceRulesConfig;
 	includeDotBlogSubdomain: boolean;
