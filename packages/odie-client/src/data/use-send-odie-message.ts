@@ -9,6 +9,7 @@ import {
 	getOdieRateLimitMessage,
 	getOdieEmailFallbackMessage,
 	getOdieErrorMessageNonEligible,
+	getOdieZendeskConnectionErrorMessage,
 	getExistingConversationMessage,
 	getConversationLimitReachedMessage,
 	ODIE_DEFAULT_BOT_SLUG_LEGACY,
@@ -19,7 +20,11 @@ import { useCreateZendeskConversation } from '../hooks';
 import { useLoggedOutSession } from '../hooks/use-logged-out-session';
 import { useOpenInteractionStatusMap } from '../hooks/use-open-interaction-status-map';
 import { generateUUID, getOdieIdFromInteraction, getIsRequestingHumanSupport } from '../utils';
-import { hasRecentEscalationAttempt } from '../utils/chat-utils';
+import {
+	countFailedEscalationAttempts,
+	hasRecentEscalationAttempt,
+	MAX_AUTOMATIC_ESCALATION_ATTEMPTS,
+} from '../utils/chat-utils';
 import { getOpenLiveInteractions } from '../utils/get-open-live-interactions';
 import { useCurrentSupportInteraction } from './use-current-support-interaction';
 import { useManageSupportInteraction, broadcastOdieMessage } from '.';
@@ -219,6 +224,21 @@ export const useSendOdieMessage = ( signal: AbortSignal ) => {
 						...prevChat,
 						...props,
 						messages: [ ...prevChat.messages, getExistingConversationMessage() ],
+						status: 'loaded',
+					} ) );
+					broadcastOdieMessage( message, odieBroadcastClientId );
+					return;
+				} else if ( countFailedEscalationAttempts( chat ) >= MAX_AUTOMATIC_ESCALATION_ATTEMPTS ) {
+					// Repeated failures mean Zendesk/Smooch is not recovering; stop the
+					// escalate→fail→retry loop and route the user to email support instead.
+					trackEvent( 'automatic_escalation_capped', {
+						odie_id: chat?.odieId,
+						failed_attempts: countFailedEscalationAttempts( chat ),
+					} );
+					setChat( ( prevChat ) => ( {
+						...prevChat,
+						...props,
+						messages: [ ...prevChat.messages, getOdieZendeskConnectionErrorMessage() ],
 						status: 'loaded',
 					} ) );
 					broadcastOdieMessage( message, odieBroadcastClientId );

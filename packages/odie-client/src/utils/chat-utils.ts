@@ -3,6 +3,15 @@ import type { Chat, OdieChat, OdieMessage, Message, LoggedOutOdieConversation } 
 
 const MAX_ESCALATION_ATTEMPT_TIME = 3 * 24 * 60 * 60 * 1000; // three days
 
+export const ERROR_TRY_AGAIN_LATER_MESSAGE_ID = 'error-try-again-later-message';
+
+export const MAX_AUTOMATIC_ESCALATION_ATTEMPTS = 3;
+
+export const countFailedEscalationAttempts = ( chat: Chat ) =>
+	chat?.messages?.filter(
+		( message ) => message.internal_message_id === ERROR_TRY_AGAIN_LATER_MESSAGE_ID
+	).length ?? 0;
+
 export const hasRecentEscalationAttempt = ( chat: Chat ) => {
 	if ( ! chat?.messages?.length ) {
 		return false;

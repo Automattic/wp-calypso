@@ -1,4 +1,6 @@
+import { HelpCenter, type HelpCenterSelect } from '@automattic/data-stores';
 import { useUpdateZendeskUserFields, type ZendeskConversation } from '@automattic/zendesk-client';
+import { select } from '@wordpress/data';
 import { useLocation, useNavigate } from 'react-router-dom';
 import Smooch from 'smooch';
 import {
@@ -11,6 +13,13 @@ import { useManageSupportInteraction } from '../data';
 import { useCurrentSupportInteraction } from '../data/use-current-support-interaction';
 import { getOpenLiveInteractions } from '../utils/get-open-live-interactions';
 import { useOpenInteractionStatusMap } from './use-open-interaction-status-map';
+
+const HELP_CENTER_STORE = HelpCenter.register();
+
+// Fresh read of the store on every call: the async loops below outlive the
+// closure's `isChatLoaded` snapshot from the render that created them.
+const getIsSmoochLoaded = () =>
+	( select( HELP_CENTER_STORE ) as unknown as HelpCenterSelect ).getIsChatLoaded();
 
 export const useCreateZendeskConversation = () => {
 	const {
@@ -135,6 +144,29 @@ export const useCreateZendeskConversation = () => {
 			status: 'transfer',
 		} ) );
 
+		const SMOOCH_READY_TIMEOUT_MS = 10000;
+		const SMOOCH_RETRY_INTERVAL_MS = 250;
+		const smoochReadyDeadline = Date.now() + SMOOCH_READY_TIMEOUT_MS;
+
+		// Wait for Smooch before touching Zendesk: the user-fields call below hits
+		// Zendesk's create-or-update-user API (5 req/min per user), so an escalation
+		// doomed to fail on `createConversation` must bail out before writing anything.
+		// The fields must still be submitted BEFORE the conversation is created —
+		// Zendesk copies them from the user record onto the ticket at creation time.
+		while ( ! getIsSmoochLoaded() ) {
+			const remainingMs = smoochReadyDeadline - Date.now();
+			if ( remainingMs <= 0 ) {
+				handleErrorCreatingZendeskConversation(
+					'error_creating_zendesk_conversation',
+					new Error( 'Smooch did not become ready before submitting user fields' )
+				);
+				return;
+			}
+			const sleepMs = Math.min( SMOOCH_RETRY_INTERVAL_MS, remainingMs );
+			smoochWaitedMs += sleepMs;
+			await new Promise( ( resolve ) => setTimeout( resolve, sleepMs ) );
+		}
+
 		try {
 			trackEvent( 'submitting_zendesk_user_fields', {
 				messaging_initial_message: userFieldMessage || undefined,
@@ -162,10 +194,6 @@ export const useCreateZendeskConversation = () => {
 
 		let conversation: ZendeskConversation | null = null;
 		let interaction = null;
-
-		const SMOOCH_READY_TIMEOUT_MS = 10000;
-		const SMOOCH_RETRY_INTERVAL_MS = 250;
-		const smoochReadyDeadline = Date.now() + SMOOCH_READY_TIMEOUT_MS;
 
 		for (;;) {
 			try {

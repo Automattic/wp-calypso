@@ -1,5 +1,15 @@
+jest.mock( '@automattic/zendesk-client', () => ( {
+	isTestModeEnvironment: () => false,
+} ) );
+
+import { getErrorTryAgainLaterMessage } from '../../constants';
 import { Chat, OdieChat } from '../../types';
-import { convertOdieChatToOdieConversation, hasRecentEscalationAttempt } from '../chat-utils';
+import {
+	convertOdieChatToOdieConversation,
+	countFailedEscalationAttempts,
+	hasRecentEscalationAttempt,
+	ERROR_TRY_AGAIN_LATER_MESSAGE_ID,
+} from '../chat-utils';
 
 // Helper to create a date string in the format 'YYYY-MM-DD HH:MM:SS'
 const formatDate = ( date: Date ): string => {
@@ -99,6 +109,51 @@ describe( 'hasRecentEscalationAttempt', () => {
 		};
 
 		expect( hasRecentEscalationAttempt( chat ) ).toBe( false );
+	} );
+} );
+
+describe( 'countFailedEscalationAttempts', () => {
+	const baseChat: Chat = {
+		messages: [],
+		conversationId: null,
+		provider: 'odie',
+		status: 'loaded',
+	};
+
+	it( 'returns 0 when chat is undefined', () => {
+		expect( countFailedEscalationAttempts( undefined as unknown as Chat ) ).toBe( 0 );
+	} );
+
+	it( 'returns 0 when there are no failed escalation messages', () => {
+		const chat: Chat = {
+			...baseChat,
+			messages: [
+				{ content: 'Hello', role: 'user', type: 'message' },
+				{ content: 'Hi there', role: 'bot', type: 'message' },
+			],
+		};
+
+		expect( countFailedEscalationAttempts( chat ) ).toBe( 0 );
+	} );
+
+	it( 'counts each failed escalation error message', () => {
+		const chat: Chat = {
+			...baseChat,
+			messages: [
+				{ content: 'Hello', role: 'user', type: 'message' },
+				getErrorTryAgainLaterMessage(),
+				{ content: 'Try again?', role: 'user', type: 'message' },
+				getErrorTryAgainLaterMessage(),
+			],
+		};
+
+		expect( countFailedEscalationAttempts( chat ) ).toBe( 2 );
+	} );
+
+	it( 'identifies failed escalations via the stable internal message id', () => {
+		expect( getErrorTryAgainLaterMessage().internal_message_id ).toBe(
+			ERROR_TRY_AGAIN_LATER_MESSAGE_ID
+		);
 	} );
 } );
 

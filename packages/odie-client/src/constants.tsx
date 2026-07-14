@@ -1,5 +1,6 @@
 import { isTestModeEnvironment } from '@automattic/zendesk-client';
 import { __, sprintf } from '@wordpress/i18n';
+import { ERROR_TRY_AGAIN_LATER_MESSAGE_ID } from './utils/chat-utils';
 import type { Context, Message, OdieAllowedBots, OdieAllBotSlugs } from './types';
 declare const __i18n_text_domain__: string;
 
@@ -289,6 +290,7 @@ export const getErrorTryAgainLaterMessage = (): Message => {
 		role: 'bot',
 		type: 'message',
 		message_id: Math.floor( Math.random() * 1000 ),
+		internal_message_id: ERROR_TRY_AGAIN_LATER_MESSAGE_ID,
 		context: {
 			site_id: null,
 			flags: {

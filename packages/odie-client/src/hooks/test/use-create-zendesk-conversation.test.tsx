@@ -16,6 +16,15 @@ const mockSubmitUserFields = jest.fn();
 const mockAddEventToInteraction = jest.fn();
 const mockStartNewInteraction = jest.fn();
 let mockHasReachedLimit = false;
+const mockGetIsChatLoaded = jest.fn( () => true );
+
+jest.mock( '@wordpress/data', () => ( {
+	select: () => ( { getIsChatLoaded: mockGetIsChatLoaded } ),
+} ) );
+
+jest.mock( '@automattic/data-stores', () => ( {
+	HelpCenter: { register: () => 'automattic/help-center' },
+} ) );
 
 jest.mock( 'smooch', () => ( {
 	__esModule: true,
@@ -85,6 +94,7 @@ beforeEach( () => {
 	jest.clearAllMocks();
 	jest.useFakeTimers();
 	mockHasReachedLimit = false;
+	mockGetIsChatLoaded.mockReturnValue( true );
 	mockSubmitUserFields.mockResolvedValue( undefined );
 	// activeInteractionId === interaction.uuid, so updateConversation is skipped.
 	mockAddEventToInteraction.mockResolvedValue( { uuid: 'int-1' } );
@@ -170,6 +180,45 @@ describe( 'useCreateZendeskConversation — Smooch-not-ready retry loop', () => 
 		expect( error.smooch_waited_ms ).toBeLessThanOrEqual( 10_000 );
 		// The user is shown the try-again message.
 		expect( mockSetChat ).toHaveBeenCalled();
+	} );
+
+	it( 'does not submit user fields when Smooch never becomes ready', async () => {
+		mockGetIsChatLoaded.mockReturnValue( false );
+
+		const { result } = renderHook( () => useCreateZendeskConversation() );
+
+		const promise = result.current( { createdFrom: 'automatic_escalation' } );
+
+		await jest.advanceTimersByTimeAsync( 10_500 );
+
+		await expect( promise ).resolves.toBeUndefined();
+
+		expect( mockSubmitUserFields ).not.toHaveBeenCalled();
+		expect( smoochCreateConversation ).not.toHaveBeenCalled();
+
+		const error = lastTrackedProps( 'error_creating_zendesk_conversation' );
+		expect( error ).toBeDefined();
+		// The user is shown the try-again message.
+		expect( mockSetChat ).toHaveBeenCalled();
+	} );
+
+	it( 'submits user fields only after Smooch becomes ready', async () => {
+		mockGetIsChatLoaded.mockReturnValue( false );
+		smoochCreateConversation.mockResolvedValueOnce( { id: 'conv-1', metadata: {} } );
+
+		const { result } = renderHook( () => useCreateZendeskConversation() );
+
+		const promise = result.current( { createdFrom: 'automatic_escalation' } );
+
+		await jest.advanceTimersByTimeAsync( 0 );
+		expect( mockSubmitUserFields ).not.toHaveBeenCalled();
+
+		mockGetIsChatLoaded.mockReturnValue( true );
+		await jest.advanceTimersByTimeAsync( 250 );
+
+		await expect( promise ).resolves.toBe( 'conv-1' );
+		expect( mockSubmitUserFields ).toHaveBeenCalledTimes( 1 );
+		expect( smoochCreateConversation ).toHaveBeenCalledTimes( 1 );
 	} );
 
 	it( 'does not retry a non-transient error', async () => {
