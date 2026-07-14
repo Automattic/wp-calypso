@@ -12,6 +12,7 @@ import {
 	updateUserSettings,
 	sendTwoStepAuthSMSCode,
 } from '@automattic/api-core';
+import config from '@automattic/calypso-config';
 import { create } from '@github/webauthn-json';
 import { queryOptions, mutationOptions } from '@tanstack/react-query';
 import { userSettingsQuery } from './me-settings';
@@ -24,11 +25,12 @@ export const twoStepAuthSecurityKeysQuery = () =>
 		queryFn: fetchTwoStepAuthSecurityKeys,
 	} );
 
-// The hostname is the WebAuthn relying party ID. Keys must be scoped to wordpress.com to be
-// usable at login, not to whichever host the dashboard is served from.
-export const registerTwoStepAuthSecurityKeyMutation = ( hostname = 'wordpress.com' ) =>
+export const registerTwoStepAuthSecurityKeyMutation = () =>
 	mutationOptions( {
 		mutationFn: async ( keyName: string ) => {
+			// Get hostname for non-production environments
+			const hostname = 'production' !== config( 'env_id' ) ? window.location.hostname : undefined;
+
 			// First, fetch the registration challenge
 			const options = await fetchTwoStepAuthSecurityKeyRegistrationChallenge( { hostname } );
 

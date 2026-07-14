@@ -14,7 +14,6 @@ import { store as noticesStore } from '@wordpress/notices';
 import { useMemo, useState } from 'react';
 import { useAnalytics } from '../../../../app/analytics';
 import { ButtonStack } from '../../../../components/button-stack';
-import { getSecurityKeyHostname } from '../../utils';
 import type { Field } from '@wordpress/dataviews';
 
 type SecurityKeyFormData = {
@@ -31,7 +30,7 @@ export default function RegisterKey( { onClose }: { onClose: () => void } ) {
 	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
 
 	const { mutateAsync: registerSecurityKey, isPending: isRegisteringSecurityKey } = useMutation(
-		registerTwoStepAuthSecurityKeyMutation( getSecurityKeyHostname() )
+		registerTwoStepAuthSecurityKeyMutation()
 	);
 
 	const handleSubmit = async ( e: React.FormEvent< HTMLFormElement > ) => {
