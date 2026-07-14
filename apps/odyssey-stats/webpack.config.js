@@ -108,9 +108,11 @@ module.exports = {
 							// .jp-stats-dashboard for normal content. The rest are portal roots
 							// first-party components can render into: .color-scheme/.ReactModalPortal
 							// (Popover/Dialog), [data-base-ui-portal]/[data-wp-compat-overlay-slot]
-							// (@wordpress/ui Popover/Tooltip/Dialog, e.g. StatsInfotip).
+							// (@wordpress/ui Popover/Tooltip/Dialog, e.g. StatsInfotip),
+							// .components-modal__screen-overlay (@wordpress/components Modal, e.g. the
+							// UTM builder, stats upsell modal, and feedback modal).
 							prefix:
-								':where(.jp-stats-dashboard, .color-scheme, .ReactModalPortal, [data-base-ui-portal], [data-wp-compat-overlay-slot])',
+								':where(.jp-stats-dashboard, .color-scheme, .ReactModalPortal, [data-base-ui-portal], [data-wp-compat-overlay-slot], .components-modal__screen-overlay)',
 							ignoreFiles: [
 								// Already hand-scoped; re-prefixing would double-nest it.
 								'odyssey-stats/src/app.scss',

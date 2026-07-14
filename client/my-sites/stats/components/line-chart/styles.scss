@@ -83,9 +83,13 @@
 		}
 
 		.module-content-list-item {
+			// Unlike the bar chart tooltip's date row (a `<li>` inside the same `<ul>` as the
+			// other rows, picking up `ul li`'s margin-bottom below), this one is a sibling `<div>`
+			// before the `<ul>` (see index.tsx), so it needs its own margin to match.
 			&.is-date-label {
 				font-weight: 600;
 				border-bottom: 0;
+				margin-bottom: 10px;
 			}
 
 			&.is-published {
