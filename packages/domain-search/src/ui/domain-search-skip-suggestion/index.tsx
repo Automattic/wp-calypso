@@ -85,12 +85,13 @@ const DomainSearchSkipSuggestion = ( {
 		);
 		showButton = false;
 	} else if ( freeSuggestion ) {
-		title = sprintf(
-			titleOverride ??
-				// translators: %(domain)s is the free WordPress.com subdomain
-				__( 'Start free with %(domain)s' ),
-			{ domain: freeSuggestion }
-		);
+		title = titleOverride
+			? titleOverride.replace( '%(domain)s', freeSuggestion )
+			: sprintf(
+					// translators: %(domain)s is the free WordPress.com subdomain
+					__( 'Start free with %(domain)s' ),
+					{ domain: freeSuggestion }
+			  );
 		subtitle = __( 'Upgrade to a custom domain name anytime.' );
 		buttonText = buttonTextOverride ?? __( 'Start Free' );
 		chevronOnMobile = true;
