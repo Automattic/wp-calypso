@@ -53,7 +53,7 @@ Odyssey routes API calls through Jetpack REST API, not `public-api.wordpress.com
 
 ### CSS Scoping
 
-Odyssey only owns the `#wpcom` subtree of a wp-admin page (wp-admin chrome is a sibling under the same `<body>`), so `webpack.config.js` runs a `postcss-prefix-selector` step scoping first-party component styles to `#wpcom` and known portal roots (`.color-scheme`, `.ReactModalPortal`, `[data-base-ui-portal]`, `[data-wp-compat-overlay-slot]`). Two lists there need updating as the app evolves:
+Odyssey only owns the `#wpcom` subtree of a wp-admin page (wp-admin chrome is a sibling under the same `<body>`), so `webpack.config.js` runs a `postcss-prefix-selector` step scoping first-party component styles to `.jp-stats-dashboard` and known portal roots (`.color-scheme`, `.ReactModalPortal`, `[data-base-ui-portal]`, `[data-wp-compat-overlay-slot]`). Two lists there need updating as the app evolves:
 
 - **Prefix target list** — add a new portal root if a component renders through one not already listed (e.g. a new `Popover`/`Dialog`/`Tooltip` library).
 - **`exclude` list** — add a pattern if a selector legitimately targets the real `<html>`/`<body>`/`:root` (RTL flags, `:lang()`, scroll-lock, etc.); prefixing those makes them permanently dead instead of just scoped.

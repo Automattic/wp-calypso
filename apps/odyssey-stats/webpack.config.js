@@ -101,16 +101,16 @@ module.exports = {
 					// own `postcss.config.js` that they use for their webpack bundling process.
 					config: false,
 					plugins: [
-						// Scopes this repo's own component styles to #wpcom (Odyssey's mount
-						// point), so generic classes (`.card`, `.button`, etc.) can't collide with
-						// wp-admin's own chrome. See AGENTS.md > CSS Scoping.
+						// Scopes this repo's own component styles to .jp-stats-dashboard (the class
+						// on Odyssey's mount point), so generic classes (`.card`, `.button`, etc.)
+						// can't collide with wp-admin's own chrome. See AGENTS.md > CSS Scoping.
 						prefixSelectorPlugin( {
-							// #wpcom for normal content. The rest are portal roots first-party
-							// components can render into: .color-scheme/.ReactModalPortal (Popover/
-							// Dialog), [data-base-ui-portal]/[data-wp-compat-overlay-slot] (@wordpress/ui
-							// Popover/Tooltip/Dialog, e.g. StatsInfotip).
+							// .jp-stats-dashboard for normal content. The rest are portal roots
+							// first-party components can render into: .color-scheme/.ReactModalPortal
+							// (Popover/Dialog), [data-base-ui-portal]/[data-wp-compat-overlay-slot]
+							// (@wordpress/ui Popover/Tooltip/Dialog, e.g. StatsInfotip).
 							prefix:
-								':where(#wpcom, .color-scheme, .ReactModalPortal, [data-base-ui-portal], [data-wp-compat-overlay-slot])',
+								':where(.jp-stats-dashboard, .color-scheme, .ReactModalPortal, [data-base-ui-portal], [data-wp-compat-overlay-slot])',
 							ignoreFiles: [
 								// Already hand-scoped; re-prefixing would double-nest it.
 								'odyssey-stats/src/app.scss',
