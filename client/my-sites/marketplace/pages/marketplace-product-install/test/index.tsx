@@ -2,19 +2,20 @@
  * @jest-environment jsdom
  */
 import { render, screen, act } from '@testing-library/react';
-import { transferStates } from 'calypso/state/automated-transfer/constants';
+import userEvent from '@testing-library/user-event';
 import MarketplaceProductInstall from '../index';
 
 const PLUGIN_SLUG = 'give';
-const SITE = { ID: 1, slug: 'example.wordpress.com' };
+const PLUGIN = { slug: PLUGIN_SLUG, id: 'give/give' };
+const SITE_ID = 1;
 const ADMIN_URL = 'https://example.wordpress.com/wp-admin/';
 
 // The state the component reads, as the mocked selectors below see it. A test moves the flow along
 // by changing this and re-rendering.
 const mockSite = {
-	transferStatus: transferStates.COMPLETE,
-	installedPlugin: null as { slug: string; id: string } | null,
+	installedPlugin: null as typeof PLUGIN | null,
 	pluginActive: false,
+	activationFailed: false,
 };
 
 const mockDispatch = jest.fn();
@@ -48,10 +49,11 @@ jest.mock( 'calypso/state/plugins/wporg/selectors', () => ( {
 jest.mock( 'calypso/state/plugins/installed/selectors-ts', () => ( {
 	getPluginOnSite: () => mockSite.installedPlugin,
 	getStatusForPlugin: () => null,
+	isPluginActionStatus: () => mockSite.activationFailed,
 	isPluginActive: () => mockSite.pluginActive,
 } ) );
 jest.mock( 'calypso/state/automated-transfer/selectors', () => ( {
-	getAutomatedTransferStatus: () => mockSite.transferStatus,
+	getAutomatedTransferStatus: () => 'complete',
 } ) );
 jest.mock( 'calypso/state/marketplace/purchase-flow/selectors', () => ( {
 	getPurchaseFlowState: () => ( {
@@ -133,34 +135,44 @@ jest.mock( 'calypso/lib/analytics/page-view-tracker', () => () => null );
 jest.mock( 'calypso/my-sites/marketplace/util', () => ( { waitFor: () => Promise.resolve() } ) );
 jest.mock( 'calypso/my-sites/marketplace/components/progressbar', () => ( {
 	__esModule: true,
-	default: ( { currentStep }: { currentStep: number } ) => (
-		<div data-testid="progress">{ currentStep }</div>
-	),
+	default: () => <div>Installing plugin</div>,
 } ) );
 
 const { activatePlugin, fetchSitePlugins } = jest.requireMock(
 	'calypso/state/plugins/installed/actions'
 );
 
-const renderInstallPage = () => render( <MarketplaceProductInstall pluginSlug={ PLUGIN_SLUG } /> );
+const install = () => render( <MarketplaceProductInstall pluginSlug={ PLUGIN_SLUG } /> );
 
-// The install page starts the transfer, then hands over to the effects that wait on it. Getting to
-// that point takes a render and a resolved promise, so let both settle.
-const startTransfer = async ( rendered: ReturnType< typeof renderInstallPage > ) => {
-	await act( async () => {} );
+// The store the component reads is mocked, so a change to it reaches the page on the next render.
+const settle = async ( rendered: ReturnType< typeof install > ) => {
 	rendered.rerender( <MarketplaceProductInstall pluginSlug={ PLUGIN_SLUG } /> );
 	await act( async () => {} );
 };
 
+// Getting the transfer under way takes a render and a resolved promise, so let both settle.
+const startTransfer = async ( rendered: ReturnType< typeof install > ) => {
+	await act( async () => {} );
+	await settle( rendered );
+};
+
+const advance = async ( ms: number ) => {
+	await act( async () => {
+		jest.advanceTimersByTime( ms );
+	} );
+};
+
 describe( 'MarketplaceProductInstall', () => {
 	let originalLocation: Location;
+	let user: ReturnType< typeof userEvent.setup >;
 
 	beforeEach( () => {
 		jest.useFakeTimers();
+		user = userEvent.setup( { advanceTimers: jest.advanceTimersByTime } );
 		jest.clearAllMocks();
-		mockSite.transferStatus = transferStates.COMPLETE;
 		mockSite.installedPlugin = null;
 		mockSite.pluginActive = false;
+		mockSite.activationFailed = false;
 		originalLocation = window.location;
 		Object.defineProperty( window, 'location', { value: { href: '' }, writable: true } );
 	} );
@@ -171,50 +183,59 @@ describe( 'MarketplaceProductInstall', () => {
 	} );
 
 	it( 'activates a plugin the transfer installed, and only then leaves the page', async () => {
-		const rendered = renderInstallPage();
+		const rendered = install();
 		await startTransfer( rendered );
 
-		// The transfer is done but the plugin has not been fetched yet, which is the whole bug: the
-		// page must not call this an install and leave for a list the plugin is missing from.
-		expect( window.location.href ).toBe( '' );
+		// The transfer is done but the plugin has not been fetched yet, which is the bug this guards
+		// against: the page must not call that an install and leave for a list the plugin is missing
+		// from. It polls for the plugin instead.
+		await advance( 50 * 1000 );
+		expect( fetchSitePlugins ).toHaveBeenCalledWith( SITE_ID );
 		expect( activatePlugin ).not.toHaveBeenCalled();
-
-		// It polls for the plugin instead.
-		await act( async () => {
-			jest.advanceTimersByTime( 3000 );
-		} );
-		expect( fetchSitePlugins ).toHaveBeenCalledWith( SITE.ID );
 		expect( window.location.href ).toBe( '' );
 
-		// A later poll finds it, so it is activated.
-		mockSite.installedPlugin = { slug: PLUGIN_SLUG, id: 'give/give' };
-		await act( async () => {
-			rendered.rerender( <MarketplaceProductInstall pluginSlug={ PLUGIN_SLUG } /> );
-		} );
-		expect( activatePlugin ).toHaveBeenCalledWith( SITE.ID, {
-			slug: PLUGIN_SLUG,
-			id: 'give/give',
-		} );
+		// A late poll finds it, so it is activated.
+		mockSite.installedPlugin = PLUGIN;
+		await settle( rendered );
+		expect( activatePlugin ).toHaveBeenCalledWith( SITE_ID, PLUGIN );
 		expect( window.location.href ).toBe( '' );
+
+		// Activating gets its own time to run, rather than what a slow install left over.
+		await advance( 30 * 1000 );
+		expect( screen.getByText( /Installing plugin/ ) ).toBeVisible();
 
 		mockSite.pluginActive = true;
-		await act( async () => {
-			rendered.rerender( <MarketplaceProductInstall pluginSlug={ PLUGIN_SLUG } /> );
-		} );
+		await settle( rendered );
 		expect( window.location.href ).toBe(
 			`${ ADMIN_URL }plugins.php?activate=true&plugin_status=active`
 		);
 	} );
 
-	it( 'stops waiting for an activation that never happens', async () => {
-		const rendered = renderInstallPage();
+	it( 'stops waiting for a plugin that never installs, and looks for it again on retry', async () => {
+		const rendered = install();
 		await startTransfer( rendered );
 
-		await act( async () => {
-			jest.advanceTimersByTime( 60 * 1000 );
-		} );
+		await advance( 60 * 1000 );
+		expect( screen.getByText( /taking longer than expected to install/ ) ).toBeVisible();
+		expect( window.location.href ).toBe( '' );
 
+		fetchSitePlugins.mockClear();
+		await user.click( screen.getByRole( 'button', { name: 'Try again' } ) );
+		expect( fetchSitePlugins ).toHaveBeenCalledWith( SITE_ID );
+	} );
+
+	it( 'reports a failed activation, and activates again on retry', async () => {
+		const rendered = install();
+		await startTransfer( rendered );
+
+		mockSite.installedPlugin = PLUGIN;
+		mockSite.activationFailed = true;
+		await settle( rendered );
 		expect( screen.getByText( /could not activate it/ ) ).toBeVisible();
 		expect( window.location.href ).toBe( '' );
+
+		activatePlugin.mockClear();
+		await user.click( screen.getByRole( 'button', { name: 'Try again' } ) );
+		expect( activatePlugin ).toHaveBeenCalledWith( SITE_ID, PLUGIN );
 	} );
 } );

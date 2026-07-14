@@ -21,6 +21,7 @@ import { useWPCOMPlugin } from 'calypso/data/marketplace/use-wpcom-plugins-query
 import Masterbar from 'calypso/layout/masterbar/masterbar';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { useInterval } from 'calypso/lib/interval';
+import { ACTIVATE_PLUGIN } from 'calypso/lib/plugins/constants';
 import { getProductSlugByPeriodVariation } from 'calypso/lib/plugins/utils';
 import MarketplaceProgressBar from 'calypso/my-sites/marketplace/components/progressbar';
 import useMarketplaceAdditionalSteps from 'calypso/my-sites/marketplace/pages/marketplace-product-install/use-marketplace-additional-steps';
@@ -40,8 +41,10 @@ import {
 import {
 	getPluginOnSite,
 	getStatusForPlugin,
+	isPluginActionStatus,
 	isPluginActive,
 } from 'calypso/state/plugins/installed/selectors-ts';
+import { PLUGIN_INSTALLATION_ERROR } from 'calypso/state/plugins/installed/status/constants';
 import { fetchPluginData as wporgFetchPluginData } from 'calypso/state/plugins/wporg/actions';
 import { getPlugin, isFetched } from 'calypso/state/plugins/wporg/selectors';
 import {
@@ -71,8 +74,8 @@ import './style.scss';
 import { MarketplacePluginInstallProps } from './types';
 import type { IAppState } from 'calypso/state/types';
 
-// How long to keep waiting for a transferred plugin to install and activate.
-const ACTIVATION_TIMEOUT = 60 * 1000;
+// How long to wait for the plugin to install, and then for it to activate.
+const SETUP_TIMEOUT = 60 * 1000;
 
 const MarketplaceProductInstall = ( {
 	pluginSlug = '',
@@ -331,34 +334,43 @@ const MarketplaceProductInstall = ( {
 		return siteHasFeature( state, selectedSite?.ID, WPCOM_FEATURES_MANAGE_PLUGINS );
 	} );
 
-	// The transfer installs the plugin on its own, so the site comes back with a plugin nothing here
-	// has fetched yet.
+	// The transfer installs the plugin itself, so the site comes back with a plugin nothing here has
+	// fetched yet.
 	const isTransferredPluginFlow =
-		atomicFlow &&
-		transferStates.COMPLETE === automatedTransferStatus &&
-		isAtomicTransferReady &&
-		canManagePlugins;
+		atomicFlow && transferStates.COMPLETE === automatedTransferStatus && isAtomicTransferReady;
 
-	const [ activationTimedOut, setActivationTimedOut ] = useState( false );
+	const [ setupTimedOut, setSetupTimedOut ] = useState( false );
+	const setupStage = installedPlugin ? 'activation' : 'installation';
 
-	// Poll until the plugin turns up, which is what lets the activation effect above run.
-	useInterval(
-		() => dispatch( fetchSitePlugins( siteId ) ),
-		( isMarketplacePluginFlow || ( isTransferredPluginFlow && ! activationTimedOut ) ) &&
-			! pluginActive
-			? 3000
-			: null
+	const activationFailed = useSelector(
+		( state ) =>
+			!! installedPlugin &&
+			isPluginActionStatus(
+				state,
+				siteId,
+				installedPlugin.id,
+				ACTIVATE_PLUGIN,
+				PLUGIN_INSTALLATION_ERROR
+			)
 	);
 
+	const isAwaitingPlugin =
+		( isTransferredPluginFlow || isMarketplacePluginFlow ) && ! pluginActive && ! setupTimedOut;
+
+	// Poll until the plugin turns up, which is what lets the activation effect above run.
+	useInterval( () => dispatch( fetchSitePlugins( siteId ) ), isAwaitingPlugin ? 3000 : null );
+
+	// Installing and activating are timed one after the other, so a slow install does not eat the
+	// time the activation that follows it gets.
 	useEffect( () => {
-		if ( ! isTransferredPluginFlow || pluginActive || activationTimedOut ) {
+		if ( ! isAwaitingPlugin ) {
 			return;
 		}
 
-		const timeout = setTimeout( () => setActivationTimedOut( true ), ACTIVATION_TIMEOUT );
+		const timeout = setTimeout( () => setSetupTimedOut( true ), SETUP_TIMEOUT );
 
 		return () => clearTimeout( timeout );
-	}, [ isTransferredPluginFlow, pluginActive, activationTimedOut ] );
+	}, [ isAwaitingPlugin, setupStage ] );
 
 	// Check completition of all flows and redirect to thank you page
 	useEffect( () => {
@@ -367,10 +379,9 @@ const MarketplaceProductInstall = ( {
 			// - Click on "Install and activate" button for any plugin on /plugins/<site_name>
 			// - Install with the help of uploading archive of a plugins
 			// - If it's simple site which doesn't support plugins, then installing and activation happens at the same time with upgrading to Business plan
+			// A transferred plugin also lands here, once polling has found it and activated it. It has to
+			// be active first: the page this leaves for lists active plugins, and would not show it.
 			( installedPlugin && pluginActive ) ||
-			// Transfer to atomic using a marketplace plugin. The plugin has to be active first: the page
-			// this lands on lists active plugins, and would not show the one just installed.
-			( isTransferredPluginFlow && pluginActive ) ||
 			// Transfer to atomic uploading a zip plugin
 			( uploadedPluginSlug &&
 				isPluginUploadFlow &&
@@ -390,7 +401,6 @@ const MarketplaceProductInstall = ( {
 	}, [
 		pluginActive,
 		automatedTransferStatus,
-		atomicFlow,
 		isPluginUploadFlow,
 		isAtomic,
 		canManagePlugins,
@@ -398,7 +408,6 @@ const MarketplaceProductInstall = ( {
 		uploadedPluginSlug,
 		pluginsUrlFinal,
 		isAtomicTransferReady,
-		isTransferredPluginFlow,
 	] ); // We need to trigger this hook also when `automatedTransferStatus` changes cause the plugin install is done on the background in that case.
 
 	// Validate theme is already active
@@ -435,27 +444,35 @@ const MarketplaceProductInstall = ( {
 	}, [ themeSlug, isPluginUploadFlow, translate ] );
 	const additionalSteps = useMarketplaceAdditionalSteps();
 
-	// Resuming the poll is enough to install a plugin that never turned up. One that did turn up is
-	// past its activation step, so activate it again by hand.
-	const retryActivation = () => {
-		setActivationTimedOut( false );
+	// A plugin that never turned up is looked for again. One that did turn up is past its activation
+	// step, so activate it again by hand.
+	const retryPluginSetup = () => {
+		setSetupTimedOut( false );
 
 		if ( installedPlugin ) {
 			dispatch( activatePlugin( siteId, { slug: installedPlugin.slug, id: installedPlugin.id } ) );
+		} else {
+			dispatch( fetchSitePlugins( siteId ) );
 		}
 	};
 
 	const renderError = () => {
 		// Evaluate error causes in priority order
-		if ( activationTimedOut && ! pluginActive ) {
+		if ( ( setupTimedOut || activationFailed ) && ! pluginActive ) {
 			return (
 				<EmptyContent
 					title={ null }
-					line={ translate(
-						'We installed the plugin, but we could not activate it. You can activate it yourself from your plugins.'
-					) }
+					line={
+						installedPlugin
+							? translate(
+									'We installed the plugin, but we could not activate it. You can activate it yourself from your plugins.'
+							  )
+							: translate(
+									'The plugin is taking longer than expected to install. You can check your plugins to see whether it arrived.'
+							  )
+					}
 					action={ translate( 'Try again' ) }
-					actionCallback={ retryActivation }
+					actionCallback={ retryPluginSetup }
 					secondaryAction={ translate( 'View all plugins' ) }
 					secondaryActionURL={ allPluginsUrl ?? undefined }
 				/>
