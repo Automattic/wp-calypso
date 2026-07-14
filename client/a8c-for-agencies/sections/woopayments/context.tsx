@@ -1,6 +1,6 @@
 import { createContext, useContext } from '@wordpress/element';
-import type { SitesWithWooPaymentsState } from './types';
 import type { WooPaymentsData } from '@automattic/api-core';
+import type { SitesWithWooPaymentsState } from 'calypso/dashboard/agency/earn/woopayments/types';
 
 interface WooPaymentsContextType {
 	woopaymentsData?: WooPaymentsData;

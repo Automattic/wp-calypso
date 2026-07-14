@@ -37,14 +37,11 @@ export default function ConsolidatedStatCard( {
 		<Card className="woopayments-stat-card">
 			<CardBody>
 				<VStack spacing={ 3 }>
-					<Heading level={ 2 } className="woopayments-stat-card__value">
-						{ isLoading ? <TextSkeleton length={ 8 } /> : value }
-					</Heading>
+					<Heading level={ 2 }>{ isLoading ? <TextSkeleton length={ 8 } /> : value }</Heading>
 					<HStack justify="flex-start" spacing={ 1 } expanded={ false }>
 						<Text variant="muted">{ footerText }</Text>
 						<Button
 							ref={ setInfoAnchor }
-							className="woopayments-stat-card__info-icon"
 							aria-label={ popoverTitle }
 							onClick={ () => setShowPopover( ( visible ) => ! visible ) }
 						>
@@ -52,14 +49,13 @@ export default function ConsolidatedStatCard( {
 						</Button>
 						{ showPopover && (
 							<Popover
-								className="woopayments-stat-card__popover"
 								anchor={ infoAnchor }
 								placement="bottom"
 								offset={ 12 }
 								focusOnMount
 								onFocusOutside={ () => setShowPopover( false ) }
 							>
-								{ popoverContent }
+								<div className="woopayments-stat-card__popover-content">{ popoverContent }</div>
 							</Popover>
 						) }
 					</HStack>

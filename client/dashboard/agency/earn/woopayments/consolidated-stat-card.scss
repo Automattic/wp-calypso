@@ -1,8 +1,7 @@
-.woopayments-stat-card__popover {
-	.components-popover__content {
-		width: 320px;
-		padding: 16px;
-	}
+.woopayments-stat-card__popover-content {
+	box-sizing: border-box;
+	width: 320px;
+	padding: 16px;
 }
 
 // Layout for the payout-cards popover description.

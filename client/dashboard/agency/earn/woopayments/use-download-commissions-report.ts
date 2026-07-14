@@ -1,12 +1,7 @@
 import { fetchAgencyWooPaymentsCommissionsReport } from '@automattic/api-core';
-import { activeAgencyQuery } from '@automattic/api-queries';
-import { useQuery } from '@tanstack/react-query';
 import { useCallback } from 'react';
 
-export function useDownloadCommissionsReport() {
-	const { data: agency } = useQuery( activeAgencyQuery() );
-	const agencyId = agency?.id ?? 0;
-
+export function useDownloadCommissionsReport( agencyId: number ) {
 	const downloadCommissionsReport = useCallback(
 		async ( siteId: number ): Promise< void > => {
 			if ( ! agencyId ) {

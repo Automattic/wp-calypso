@@ -1,3 +1,5 @@
+import { activeAgencyQuery } from '@automattic/api-queries';
+import { useQuery } from '@tanstack/react-query';
 import { __experimentalVStack as VStack } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { useMemo } from 'react';
@@ -14,6 +16,9 @@ import { useDownloadCommissionsReport } from './use-download-commissions-report'
 import useWooPaymentsDashboardData from './use-woopayments-dashboard-data';
 
 export default function EarnWooPayments() {
+	const { data: agency } = useQuery( activeAgencyQuery() );
+	const agencyId = agency?.id ?? 0;
+
 	const {
 		isLoading,
 		showEmptyState,
@@ -21,9 +26,9 @@ export default function EarnWooPayments() {
 		woopaymentsData,
 		isLoadingWooPaymentsData,
 		sitesWithPluginsStates,
-	} = useWooPaymentsDashboardData();
+	} = useWooPaymentsDashboardData( agencyId );
 	const { recordTracksEvent } = useAnalytics();
-	const { downloadCommissionsReport } = useDownloadCommissionsReport();
+	const { downloadCommissionsReport } = useDownloadCommissionsReport( agencyId );
 
 	const excludedSiteIds = useMemo(
 		() => sitesWithPluginsStates.map( ( site ) => site.blogId ),
@@ -35,7 +40,16 @@ export default function EarnWooPayments() {
 			title={ __( 'WooPayments commissions' ) }
 			description={ __( 'Earn revenue share from WooPayments on your clients’ stores.' ) }
 			actions={
-				hasSites ? <AddWooPaymentsToSite excludedSiteIds={ excludedSiteIds } /> : undefined
+				hasSites ? (
+					<AddWooPaymentsToSite
+						agencyId={ agencyId }
+						excludedSiteIds={ excludedSiteIds }
+						recordTracksEvent={ recordTracksEvent }
+						navigate={ ( url ) => {
+							window.location.href = url;
+						} }
+					/>
+				) : undefined
 			}
 		/>
 	);

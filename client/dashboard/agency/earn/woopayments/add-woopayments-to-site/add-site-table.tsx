@@ -2,26 +2,29 @@ import { RadioControl } from '@wordpress/components';
 import { filterSortAndPaginate } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
 import { useCallback, useMemo, useState } from 'react';
-import { useAnalytics } from '../../../../app/analytics';
 import { DataViews } from '../../../../components/dataviews';
 import { useFetchManagedSites, type WooPaymentsSiteItem } from './use-fetch-managed-sites';
+import type { RecordTracksEvent } from '../types';
 import type { Field, View } from '@wordpress/dataviews';
 
 export type { WooPaymentsSiteItem };
 
 interface AddWooPaymentsToSiteTableProps {
+	agencyId: number;
 	selectedSite: WooPaymentsSiteItem | null;
 	setSelectedSite: ( site: WooPaymentsSiteItem | null ) => void;
 	excludedSiteIds: number[];
+	recordTracksEvent: RecordTracksEvent;
 }
 
 export default function AddWooPaymentsToSiteTable( {
+	agencyId,
 	selectedSite,
 	setSelectedSite,
 	excludedSiteIds,
+	recordTracksEvent,
 }: AddWooPaymentsToSiteTableProps ) {
-	const { recordTracksEvent } = useAnalytics();
-	const { items, isLoading } = useFetchManagedSites();
+	const { items, isLoading } = useFetchManagedSites( agencyId );
 
 	// Sites that already have WooPayments are excluded from the picker.
 	const availableSites = useMemo(

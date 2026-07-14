@@ -1,4 +1,4 @@
-import { activeAgencyQuery, paginatedAgencySitesQuery } from '@automattic/api-queries';
+import { paginatedAgencySitesQuery } from '@automattic/api-queries';
 import { useQuery } from '@tanstack/react-query';
 import { useMemo } from 'react';
 import { urlToSlug } from '../../../../utils/url';
@@ -10,10 +10,7 @@ export type WooPaymentsSiteItem = {
 	rawSite: AgencySite;
 };
 
-export function useFetchManagedSites() {
-	const { data: agency } = useQuery( activeAgencyQuery() );
-	const agencyId = agency?.id ?? 0;
-
+export function useFetchManagedSites( agencyId: number ) {
 	// First fetch to discover the total number of managed sites so we can request all of them.
 	const firstFetch = useQuery( {
 		...paginatedAgencySitesQuery( { per_page: 1, page: 1 }, agencyId ),
