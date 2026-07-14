@@ -117,6 +117,11 @@ module.exports = {
 								// Calypso's global stylesheet (html/body reset, @wordpress/components
 								// CSS) — left unscoped for now.
 								'client/assets/stylesheets/style.scss',
+								// @visx/tooltip's TooltipInPortal (used by the line chart tooltip)
+								// portals to an unmarked <body> div, always wrapped in a `.visx-tooltip`
+								// element. This file already self-scopes under `.visx-tooltip` (like
+								// app.scss does under `[id="wpcom"]`) — re-prefixing would double-nest it.
+								'client/my-sites/stats/components/line-chart/styles.scss',
 								// Third-party CSS is out of scope here.
 								/node_modules/,
 							],
