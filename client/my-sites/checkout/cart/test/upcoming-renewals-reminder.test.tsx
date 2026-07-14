@@ -278,11 +278,6 @@ describe( 'UpcomingRenewalsReminder', () => {
 	} );
 
 	describe( 'urgent classification', () => {
-		test( 'includes a purchase whose status is expired, regardless of daysUntilExpiry', async () => {
-			renderReminder( { purchases: [ nonUrgentPlanPurchase( { expiry_status: 'expired' } ) ] } );
-			expect( await screen.findByText( 'Upcoming renewals' ) ).toBeVisible();
-		} );
-
 		test( 'excludes a perpetual purchase with no expiry (daysUntilExpiry null)', async () => {
 			renderReminder( { purchases: [ nonUrgentPlanPurchase( { days_until_expiry: null } ) ] } );
 			await expect( screen.findByText( 'Upcoming renewals' ) ).toNeverAppear();
@@ -296,6 +291,13 @@ describe( 'UpcomingRenewalsReminder', () => {
 		test( 'excludes a purchase exactly 10 days from expiry', async () => {
 			renderReminder( { purchases: [ nonUrgentPlanPurchase( { days_until_expiry: 10 } ) ] } );
 			await expect( screen.findByText( 'Upcoming renewals' ) ).toNeverAppear();
+		} );
+
+		test( 'includes an expired purchase in its grace period (negative daysUntilExpiry)', async () => {
+			renderReminder( {
+				purchases: [ nonUrgentPlanPurchase( { expiry_status: 'expired', days_until_expiry: -5 } ) ],
+			} );
+			expect( await screen.findByText( 'Upcoming renewals' ) ).toBeVisible();
 		} );
 	} );
 } );
