@@ -10,8 +10,21 @@ export type BlockEditorStore = {
 	__experimentalGetGlobalBlocksByName?: ( blockName: string ) => string[];
 };
 
-export function getEditorContentBlocks( blockEditor?: BlockEditorStore ): BlockSnapshot[] {
-	if ( ! blockEditor?.getBlocks ) {
+export type EditorStore = {
+	getCurrentPostType?: () => string | undefined;
+	getRenderingMode?: () => string | undefined;
+};
+
+const CONTENT_POST_TYPES = new Set( [ 'post', 'page' ] );
+
+export function getEditorContentBlocks(
+	blockEditor?: BlockEditorStore,
+	editor?: EditorStore
+): BlockSnapshot[] {
+	if (
+		! blockEditor?.getBlocks ||
+		! CONTENT_POST_TYPES.has( editor?.getCurrentPostType?.() ?? '' )
+	) {
 		return [];
 	}
 
@@ -20,9 +33,11 @@ export function getEditorContentBlocks( blockEditor?: BlockEditorStore ): BlockS
 		blockEditor.__experimentalGetGlobalBlocksByName?.( 'core/post-content' ) ??
 		[];
 
-	return postContentClientId
-		? blockEditor.getBlocks( postContentClientId )
-		: blockEditor.getBlocks();
+	if ( postContentClientId ) {
+		return blockEditor.getBlocks( postContentClientId );
+	}
+
+	return editor?.getRenderingMode?.() === 'template-locked' ? [] : blockEditor.getBlocks();
 }
 
 /** Flatten a block tree into a pre-order list, skipping nameless blocks. */

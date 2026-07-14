@@ -27,6 +27,7 @@ import {
 	flattenBlocks,
 	getEditorContentBlocks,
 	type BlockEditorStore,
+	type EditorStore,
 } from '../utils/blocks';
 import {
 	trackAiEditorialReviewItemAction,
@@ -409,7 +410,8 @@ export default function ReviewMediation( {
 	// Matches wpcom's recursive Review_Mediator_Ability::extract_blocks() order.
 	const blocks = useSelect( ( select ) => {
 		const contentBlocks = getEditorContentBlocks(
-			select( 'core/block-editor' ) as BlockEditorStore
+			select( 'core/block-editor' ) as BlockEditorStore,
+			select( 'core/editor' ) as EditorStore
 		);
 		return flattenBlocks( contentBlocks );
 	}, [] );

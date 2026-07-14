@@ -34,6 +34,7 @@ import {
 	flattenBlocks,
 	getEditorContentBlocks,
 	type BlockEditorStore,
+	type EditorStore,
 } from '../utils/blocks';
 import BlockRef, { type BlockSnapshot } from './block-ref';
 
@@ -237,7 +238,11 @@ export default function FeedbackList( {
 	const editSnapshots = useRef< Record< string, EditSnapshot > >( {} );
 
 	const blocks = useSelect(
-		( select ) => getEditorContentBlocks( select( 'core/block-editor' ) as BlockEditorStore ),
+		( select ) =>
+			getEditorContentBlocks(
+				select( 'core/block-editor' ) as BlockEditorStore,
+				select( 'core/editor' ) as EditorStore
+			),
 		[]
 	);
 	const currentPostId = useSelect(
