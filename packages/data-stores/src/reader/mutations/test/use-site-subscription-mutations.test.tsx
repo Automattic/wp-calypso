@@ -263,7 +263,7 @@ describe( 'site subscription mutations', () => {
 			( [ filters ] ) => filters?.queryKey
 		);
 		expect( invalidatedKeys ).toContainEqual( readFeedQueryKey( 456 ) );
-		expect( invalidatedKeys ).not.toContainEqual( [ 'read', 'feeds', 'search' ] );
+		expect( invalidatedKeys ).toContainEqual( [ 'read', 'feeds', 'search' ] );
 		expect( invalidatedKeys ).not.toContainEqual( [ 'read', 'feed', 'search' ] );
 	} );
 

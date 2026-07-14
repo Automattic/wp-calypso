@@ -80,10 +80,7 @@ export default function ReaderFeedItem( props: ReaderFeedItemProps ): JSX.Elemen
 		...readFeedQuery( feedId ),
 		enabled: queryFeed,
 	} );
-	const { data: site, isLoading: isSiteLoading } = useQuery( {
-		...readSiteQuery( Number( blogId ) ),
-		enabled: isWpcomFeed,
-	} );
+	const { data: site, isLoading: isSiteLoading } = useQuery( readSiteQuery( Number( blogId ) ) );
 
 	// Reader feed item fields to show in the UI.
 	const description = isWpcomFeed ? site?.description : feed?.description;

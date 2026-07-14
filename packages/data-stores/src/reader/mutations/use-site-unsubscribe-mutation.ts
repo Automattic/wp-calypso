@@ -243,6 +243,9 @@ const useSiteUnsubscribeMutation = () => {
 
 			queryClient.invalidateQueries( { queryKey: subscriptionsCountQueryKey } );
 			queryClient.invalidateQueries( {
+				queryKey: [ 'read', 'feeds', 'search' ],
+			} );
+			queryClient.invalidateQueries( {
 				queryKey: buildSiteSubscriptionDetailsQueryKey( params.subscriptionId, isLoggedIn, userId ),
 			} );
 		},
