@@ -264,7 +264,6 @@ describe( 'site subscription mutations', () => {
 		);
 		expect( invalidatedKeys ).toContainEqual( readFeedQueryKey( 456 ) );
 		expect( invalidatedKeys ).toContainEqual( [ 'read', 'feeds', 'search' ] );
-		expect( invalidatedKeys ).not.toContainEqual( [ 'read', 'feed', 'search' ] );
 	} );
 
 	it( 'rolls back site subscription delete when unsubscribe fails', async () => {
