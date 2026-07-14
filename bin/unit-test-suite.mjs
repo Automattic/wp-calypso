@@ -1,8 +1,31 @@
 #!/usr/bin/env node
+import { execSync } from 'node:child_process';
 import { basename, dirname } from 'node:path';
 import util from 'node:util';
 import glob from 'glob';
 import runTask from './teamcity-task-runner.mjs';
+
+// The ref the branch is compared against to determine which files changed. This
+// mirrors the diff base used elsewhere in CI (see .teamcity WebApp build steps).
+const PARENT_REF = 'refs/remotes/origin/trunk';
+
+// List the files touched by this branch relative to the parent ref, excluding
+// deletions (a deleted file has no tests left to relate to).
+function getChangedFiles() {
+	try {
+		return execSync( `git diff --name-only --diff-filter=d ${ PARENT_REF }...HEAD`, {
+			encoding: 'utf8',
+		} )
+			.split( '\n' )
+			.map( ( file ) => file.trim() )
+			.filter( Boolean );
+	} catch ( error ) {
+		console.warn( `Could not determine changed files, running the full suite: ${ error.message }` );
+		return [];
+	}
+}
+
+const changedFiles = getChangedFiles();
 
 // TEMPORARY: These apps *should* be type-checked, but there are existing issues that need to be
 // resolved.
@@ -37,10 +60,16 @@ function withTscInfo( { cmd, id } ) {
 }
 
 function withUnitTestInfo( cmd ) {
+	// Restrict each Jest run to the tests related to the files changed on this
+	// branch. When nothing changed (or the diff couldn't be resolved), fall back
+	// to the full suite since `--findRelatedTests` requires at least one path.
+	const relatedTests = changedFiles.length
+		? ` --findRelatedTests ${ changedFiles.join( ' ' ) }`
+		: '';
 	return {
 		testId: cmd.split( ' ' )[ 0 ],
 		name: 'yarn',
-		args: `${ cmd } --ci --reporters=default --reporters=jest-teamcity --silent`,
+		args: `${ cmd } --ci --reporters=default --reporters=jest-teamcity --silent${ relatedTests }`,
 	};
 }
 
