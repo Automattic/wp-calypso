@@ -1,4 +1,4 @@
-import { useEffect } from '@wordpress/element';
+import { useEffect, useRef } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { parseErrorUrl } from '../utils/parse-error-url';
 import {
@@ -17,6 +17,10 @@ type AddNoticeFunc = ( content: string, type: NoticeType, actions?: NoticeAction
  * @param addNotice - Function to add a notice to the store
  */
 export function useErrorNotice( error: unknown, addNotice: AddNoticeFunc ): void {
+	// The notice store dedupes by content, so repeated errors with the same
+	// message keep a single visible notice; mirror that here and count one
+	// impression per distinct message rather than one per error.
+	const trackedImpressions = useRef< Set< string > >( new Set() );
 	useEffect( () => {
 		if ( ! error ) {
 			return;
@@ -31,7 +35,10 @@ export function useErrorNotice( error: unknown, addNotice: AddNoticeFunc ): void
 
 		if ( url && isUpgradeUrl ) {
 			// Show upgrade notices as persistent warning notices
-			trackImageStudioUpgradeNoticeShown();
+			if ( ! trackedImpressions.current.has( content ) ) {
+				trackedImpressions.current.add( content );
+				trackImageStudioUpgradeNoticeShown();
+			}
 			addNotice( content, 'warning', [
 				{
 					label: isPlansPageUrl

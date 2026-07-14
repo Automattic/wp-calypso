@@ -15,6 +15,7 @@ import {
 import { useErrorNotice } from './use-error-notice';
 
 jest.mock( '@wordpress/element', () => ( {
+	...jest.requireActual( '@wordpress/element' ),
 	useEffect: ( fn: () => void ) => fn(),
 } ) );
 
@@ -276,6 +277,40 @@ describe( 'useErrorNotice', () => {
 			renderHook( () => useErrorNotice( 'Something went wrong', mockAddNotice ) );
 
 			expect( trackImageStudioUpgradeNoticeShown ).not.toHaveBeenCalled();
+		} );
+
+		it( 'tracks one impression per distinct message, not per repeated error', () => {
+			const { rerender } = renderHook( ( { error } ) => useErrorNotice( error, mockAddNotice ), {
+				initialProps: {
+					error: new Error(
+						'Limit reached https://jetpack.com/redirect/?source=jetpack-ai-yearly-tier-upgrade-nudge'
+					),
+				},
+			} );
+			// A fresh error object with the same message re-runs the effect but,
+			// like the store's content de-dupe, must not count a new impression.
+			rerender( {
+				error: new Error(
+					'Limit reached https://jetpack.com/redirect/?source=jetpack-ai-yearly-tier-upgrade-nudge'
+				),
+			} );
+
+			expect( trackImageStudioUpgradeNoticeShown ).toHaveBeenCalledTimes( 1 );
+		} );
+
+		it( 'tracks a second impression when the message differs', () => {
+			const { rerender } = renderHook( ( { error } ) => useErrorNotice( error, mockAddNotice ), {
+				initialProps: {
+					error: new Error(
+						'Limit reached https://jetpack.com/redirect/?source=jetpack-ai-yearly-tier-upgrade-nudge'
+					),
+				},
+			} );
+			rerender( {
+				error: new Error( 'Upgrade required https://wordpress.com/plans/example.com' ),
+			} );
+
+			expect( trackImageStudioUpgradeNoticeShown ).toHaveBeenCalledTimes( 2 );
 		} );
 
 		it( 'does not track impressions for non-upgrade URL errors', () => {
