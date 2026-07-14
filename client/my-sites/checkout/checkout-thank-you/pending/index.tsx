@@ -11,6 +11,7 @@ import { useTranslate } from 'i18n-calypso';
 import React, { useState, useEffect, useRef } from 'react';
 import Loading from 'calypso/components/loading';
 import Main from 'calypso/components/main';
+import { CHECKOUT_SUCCESS_FLASH_ID } from 'calypso/dashboard/app/checkout-success-flash-message';
 import { dashboardOrigins } from 'calypso/dashboard/utils/link';
 import { useInitialIsInStepContainerV2FlowContext } from 'calypso/layout/utils';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
@@ -128,11 +129,6 @@ function CheckoutPending( {
 function isValidOrderId( orderId: number | ':orderId' ): orderId is number {
 	return Number.isInteger( orderId );
 }
-
-// Flash id read by the Dashboard's `<CheckoutSuccessFlashMessage>` to show a
-// post-checkout success snackbar on arrival. Must match `CHECKOUT_SUCCESS_FLASH_ID`
-// in `client/dashboard/app/checkout-success-flash-message.tsx`.
-const DASHBOARD_CHECKOUT_SUCCESS_FLASH = 'checkout-success';
 
 // Whether the redirect destination is a page in the multi-site Dashboard (a
 // separate SPA reached via a full page load). The Dashboard doesn't read the
@@ -382,7 +378,7 @@ function useRedirectOnTransactionSuccess( {
 		// param and let `<CheckoutSuccessFlashMessage>` show the toast on arrival.
 		const isSuccessRedirect = ! redirectInstructions.isError && ! redirectInstructions.isUnknown;
 		if ( isSuccessRedirect && isDashboardUrl( finalUrl ) ) {
-			finalUrl = addQueryArgs( finalUrl, { flash: DASHBOARD_CHECKOUT_SUCCESS_FLASH } );
+			finalUrl = addQueryArgs( finalUrl, { flash: CHECKOUT_SUCCESS_FLASH_ID } );
 		}
 
 		const finalRedirectInstructions = { ...redirectInstructions, url: finalUrl };
