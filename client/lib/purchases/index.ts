@@ -287,7 +287,7 @@ export function getName( purchase: Purchase ): string {
 	}
 
 	if ( isPlan( purchase ) ) {
-		return i18n.translate( '%(productName) Plan', {
+		return i18n.translate( '%(productName)s Plan', {
 			args: {
 				productName: purchase.productName.replace( /\s*\(.*$/, '' ).trim(),
 			},
