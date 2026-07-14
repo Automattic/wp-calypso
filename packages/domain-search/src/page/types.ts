@@ -116,11 +116,16 @@ export interface DomainSearchConfig {
 	vendor: DomainSuggestionQueryVendor;
 	skippable: boolean;
 	/**
-	 * Whether skipping the domain leads to a genuinely free site. When false,
-	 * the free-subdomain skip card drops the "free" framing and its CTA becomes
-	 * a neutral "choose later" action (e.g. flows that require a paid plan).
+	 * Optional copy overrides for the free-subdomain skip card. When omitted, the
+	 * card keeps its default "Start free with %(domain)s" title and "Start Free"
+	 * CTA. `title` may include the `%(domain)s` placeholder, interpolated with the
+	 * free subdomain (e.g. flows that require a paid plan can drop the "free"
+	 * framing).
 	 */
-	canStartFree: boolean;
+	skipSuggestionCopy?: {
+		title?: string;
+		buttonText?: string;
+	};
 	deemphasizedTlds: string[];
 	priceRules: PriceRulesConfig;
 	includeDotBlogSubdomain: boolean;

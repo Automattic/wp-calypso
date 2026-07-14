@@ -199,7 +199,13 @@ const DomainSearchStep: StepType< {
 				! isDomainAndPlanFlow( flow ),
 			// AI Website Builder onboarding requires a paid plan, so skipping the
 			// domain doesn't start a free site — drop the "start free" framing.
-			canStartFree: ! isAIBuilderOnboardingFlow( flow ),
+			skipSuggestionCopy: isAIBuilderOnboardingFlow( flow )
+				? {
+						// translators: %(domain)s is the free WordPress.com subdomain
+						title: __( 'Start with %(domain)s' ),
+						buttonText: __( 'Choose a domain later' ),
+				  }
+				: undefined,
 			includeDotBlogSubdomain:
 				! isHundredYearPlanFlow( flow ) &&
 				! isHundredYearDomainFlow( flow ) &&
@@ -214,7 +220,7 @@ const DomainSearchStep: StepType< {
 				! isHundredYearPlanFlow( flow ) &&
 				( isHundredYearDomainFlow( flow ) ? !! query : true ),
 		};
-	}, [ flow, isCiab, isWooHostingSolutions, tldQuery, query, allowedTldsProp ] );
+	}, [ __, flow, isCiab, isWooHostingSolutions, tldQuery, query, allowedTldsProp ] );
 
 	const { submit } = navigation;
 

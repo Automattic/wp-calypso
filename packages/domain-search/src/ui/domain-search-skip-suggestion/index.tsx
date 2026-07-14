@@ -16,7 +16,13 @@ interface Props {
 	freeSuggestion?: string;
 	unavailableDomain?: string;
 	existingSiteUrl?: string;
-	canStartFree?: boolean;
+	/**
+	 * Overrides the default "Start free with %(domain)s" title of the
+	 * free-subdomain card. May include the `%(domain)s` placeholder.
+	 */
+	title?: string;
+	/** Overrides the default "Start Free" CTA of the free-subdomain card. */
+	buttonText?: string;
 	onSkip: () => void;
 	onSuggestionClick?: () => void;
 	disabled?: boolean;
@@ -27,7 +33,8 @@ const DomainSearchSkipSuggestion = ( {
 	freeSuggestion,
 	unavailableDomain,
 	existingSiteUrl,
-	canStartFree = true,
+	title: titleOverride,
+	buttonText: buttonTextOverride,
 	onSkip,
 	onSuggestionClick,
 	disabled,
@@ -78,19 +85,14 @@ const DomainSearchSkipSuggestion = ( {
 		);
 		showButton = false;
 	} else if ( freeSuggestion ) {
-		title = canStartFree
-			? sprintf(
-					// translators: %(domain)s is the free WordPress.com subdomain
-					__( 'Start free with %(domain)s' ),
-					{ domain: freeSuggestion }
-			  )
-			: sprintf(
-					// translators: %(domain)s is the free WordPress.com subdomain
-					__( 'Start with %(domain)s' ),
-					{ domain: freeSuggestion }
-			  );
+		title = sprintf(
+			titleOverride ??
+				// translators: %(domain)s is the free WordPress.com subdomain
+				__( 'Start free with %(domain)s' ),
+			{ domain: freeSuggestion }
+		);
 		subtitle = __( 'Upgrade to a custom domain name anytime.' );
-		buttonText = canStartFree ? __( 'Start Free' ) : __( 'Choose a domain later' );
+		buttonText = buttonTextOverride ?? __( 'Start Free' );
 		chevronOnMobile = true;
 	}
 

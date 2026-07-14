@@ -36,7 +36,8 @@ const SkipSuggestion = () => {
 			<DomainSearchSkipSuggestion
 				freeSuggestion={ suggestion.domain_name }
 				unavailableDomain={ isUnavailable ? query : undefined }
-				canStartFree={ config.canStartFree }
+				title={ config.skipSuggestionCopy?.title }
+				buttonText={ config.skipSuggestionCopy?.buttonText }
 				onSkip={ () => events.onSkip( suggestion ) }
 				onSuggestionClick={ () => setQuery( suggestion.domain_name ) }
 				disabled={ !! isMutating }
