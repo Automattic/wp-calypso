@@ -124,7 +124,7 @@ describe( 'site subscription mutations', () => {
 			( [ filters ] ) => filters?.queryKey
 		);
 		expect( invalidatedKeys ).toContainEqual( readFeedQueryKey( 456 ) );
-		expect( invalidatedKeys ).toContainEqual( [ 'read', 'feeds', 'search' ] );
+		expect( invalidatedKeys ).not.toContainEqual( [ 'read', 'feeds', 'search' ] );
 		expect( invalidatedKeys ).not.toContainEqual( [ 'read', 'feeds', 456 ] );
 	} );
 
@@ -153,7 +153,7 @@ describe( 'site subscription mutations', () => {
 			( [ filters ] ) => filters?.queryKey
 		);
 		expect( invalidatedKeys ).toContainEqual( [ 'read', 'sites', 99 ] );
-		expect( invalidatedKeys ).toContainEqual( [ 'read', 'feeds', 'search' ] );
+		expect( invalidatedKeys ).not.toContainEqual( [ 'read', 'feeds', 'search' ] );
 	} );
 
 	it( 'rolls back site subscription restore when subscribe fails', async () => {
@@ -263,7 +263,7 @@ describe( 'site subscription mutations', () => {
 			( [ filters ] ) => filters?.queryKey
 		);
 		expect( invalidatedKeys ).toContainEqual( readFeedQueryKey( 456 ) );
-		expect( invalidatedKeys ).toContainEqual( [ 'read', 'feeds', 'search' ] );
+		expect( invalidatedKeys ).not.toContainEqual( [ 'read', 'feeds', 'search' ] );
 		expect( invalidatedKeys ).not.toContainEqual( [ 'read', 'feed', 'search' ] );
 	} );
 

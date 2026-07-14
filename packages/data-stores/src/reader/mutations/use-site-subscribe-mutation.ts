@@ -182,7 +182,6 @@ const useSiteSubscribeMutation = () => {
 				} );
 			}
 
-			queryClient.invalidateQueries( { queryKey: [ 'read', 'feeds', 'search' ] } );
 			queryClient.invalidateQueries( { queryKey: subscriptionsCountCacheKey } );
 		},
 		onSuccess: ( data, params ) => {
