@@ -1136,12 +1136,14 @@ export class EditorPage {
 				this.page.waitForResponse(
 					async ( response ) =>
 						/v2\/(posts|pages)\/[\d]+/.test( response.url() ) &&
+						! /v2\/(posts|pages)\/[\d]+\/autosaves/.test( response.url() ) &&
 						response.request().method() === 'POST',
 					{ timeout: timeout }
 				),
 				this.page.waitForResponse(
 					async ( response ) =>
-						/.*v2\/sites\/[\d]+\/(posts|pages)\/[\d]+.*/.test( response.url() ) &&
+						/v2\/sites\/[\d]+\/(posts|pages)\/[\d]+/.test( response.url() ) &&
+						! /v2\/sites\/[\d]+\/(posts|pages)\/[\d]+\/autosaves/.test( response.url() ) &&
 						response.request().method() === 'PUT',
 					{ timeout: timeout }
 				),
