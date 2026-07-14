@@ -38,7 +38,7 @@ export default function AddWooPaymentsToSiteModal( {
 
 	const handleAddSite = () => {
 		if ( selectedSite ) {
-			recordTracksEvent( 'calypso_a4a_woopayments_add_site_button_click' );
+			recordTracksEvent( 'calypso_a4a_woopayments_add_site_confirm_click' );
 			navigate(
 				addQueryArgs( A4A_WOOPAYMENTS_SITE_SETUP_LINK, {
 					site_id: selectedSite.rawSite.blog_id,
