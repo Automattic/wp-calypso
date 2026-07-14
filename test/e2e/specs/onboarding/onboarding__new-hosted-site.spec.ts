@@ -103,10 +103,9 @@ test.describe(
 			await test.step( 'Then I wait for the Atomic transfer to complete', async () => {
 				await page.waitForURL( /.*transferring-hosted-site.*/ );
 
-				// The flow exits to wp-admin when the site's admin-interface option says
-				// so, and to the dashboard's site overview otherwise. Which one wins is
-				// a race on that option being loaded, so accept either: this test cares
-				// about the purchases that follow, not where the transfer lands.
+				// The transfer lands on wp-admin or on the dashboard's site overview,
+				// depending on a race over the site's admin-interface option. Either is
+				// fine here; this test is about the purchases that follow.
 				await page.waitForURL( /wp-admin|\/sites\/[^/?#]+/, { timeout: 180 * 1000 } );
 			} );
 

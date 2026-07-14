@@ -1,11 +1,10 @@
 import { Page } from 'playwright';
 
 /**
- * Represents the transient snackbar notices shown by the Multi-site Dashboard.
+ * Represents the snackbar notices shown by the Multi-site Dashboard.
  *
- * The dashboard reports the outcome of an action through a `@wordpress/notices`
- * snackbar, rather than through the classic Calypso notice that
- * `NoticeComponent` covers.
+ * The dashboard uses these instead of the classic Calypso notices covered by
+ * `NoticeComponent`.
  */
 export class SnackbarComponent {
 	private page: Page;
@@ -22,8 +21,7 @@ export class SnackbarComponent {
 	/**
 	 * Verifies that a snackbar with the given text is shown.
 	 *
-	 * Snackbars auto-dismiss, so this must be awaited while the snackbar is still
-	 * on screen — that is, as soon as the action that triggers it has resolved.
+	 * Snackbars auto-dismiss, so await this as soon as the triggering action resolves.
 	 *
 	 * @param {string} text Full or partial text to validate on page.
 	 * @param param1 Optional parameters.

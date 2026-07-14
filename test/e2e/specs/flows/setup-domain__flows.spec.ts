@@ -393,10 +393,7 @@ test.describe(
 			} );
 
 			await test.step( 'And I cancel the plan renewal', async function () {
-				// cancelAtomicPurchaseFlow blocks until the cancel-and-refund API
-				// request resolves, so by the time it returns the success snackbar is
-				// rendering. The snackbar still auto-dismisses, so keep a comfortable
-				// margin to observe it.
+				// The snackbar auto-dismisses, so keep a comfortable margin to observe it.
 				await cancelAtomicPurchaseFlow( page, {
 					reason: 'Another reason…',
 					customReasonText: 'E2E TEST CANCELLATION',
@@ -623,10 +620,7 @@ test.describe(
 			} );
 
 			await test.step( 'And I cancel the plan renewal', async function () {
-				// cancelAtomicPurchaseFlow blocks until the cancel-and-refund API
-				// request resolves, so by the time it returns the success snackbar is
-				// rendering. The snackbar still auto-dismisses, so keep a comfortable
-				// margin to observe it.
+				// The snackbar auto-dismisses, so keep a comfortable margin to observe it.
 				await cancelAtomicPurchaseFlow( page, {
 					reason: 'Another reason…',
 					customReasonText: 'E2E TEST CANCELLATION',
