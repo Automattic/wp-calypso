@@ -7,6 +7,6 @@ export const jetpackAgencyLicensesQuery = (
 	options: FetchJetpackLicensesOptions
 ) =>
 	queryOptions( {
-		queryKey: [ 'agency', agencyId, 'jetpack-licenses', options ],
+		queryKey: [ 'agency', agencyId, 'jetpack-agency-licenses', options ],
 		queryFn: () => fetchJetpackLicenses( agencyId, options ),
 	} );
