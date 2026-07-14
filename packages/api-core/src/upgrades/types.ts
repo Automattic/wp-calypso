@@ -447,10 +447,9 @@ export interface Purchase {
 	 * The billing processor class name for the stored card, or undefined for
 	 * the default (updatable) case.
 	 *
-	 * This is read in `cardProcessorSupportsUpdates` to decide whether the card
-	 * number can be updated. Cards processed via CC & Paygate can be updated (so
-	 * this stays undefined), but EBANX cards cannot, so this is set to
-	 * 'WPCOM_Billing_Ebanx' for them.
+	 * Used to determine whether the card number can be updated. Cards processed
+	 * via CC & Paygate can be updated, so this stays undefined; EBANX cards
+	 * cannot, so this is set to 'WPCOM_Billing_Ebanx' for them.
 	 */
 	payment_card_processor: string | undefined;
 
