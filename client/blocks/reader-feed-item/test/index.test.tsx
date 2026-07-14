@@ -181,4 +181,42 @@ describe( 'ReaderFeedItem', () => {
 
 		expect( screen.getByRole( 'button', { name: 'Unsubscribe' } ) ).toBeVisible();
 	} );
+
+	it( 'unsubscribes using the cache subscription id when only the feed URL matches', async () => {
+		const user = userEvent.setup();
+		// feed_ID on the result differs from the followed row; URL still matches.
+		const queryClient = makeQueryClient( [
+			{
+				ID: 55,
+				blog_ID: null,
+				feed_ID: 888,
+				URL: 'https://example.com/feed',
+				feed_URL: 'https://example.com/feed',
+				is_following: true,
+				isDeleted: false,
+			},
+		] );
+
+		renderWithProvider(
+			<ReaderFeedItem
+				feed={ makeFeedItem( {
+					blog_ID: '',
+					feed_ID: '10',
+					subscribe_URL: 'https://example.com/feed',
+				} ) }
+				source="reader-new-subscription"
+			/>,
+			{ queryClient }
+		);
+
+		await user.click( screen.getByRole( 'button', { name: 'Unsubscribe' } ) );
+
+		expect( mockUnsubscribeMutate ).toHaveBeenCalledWith(
+			expect.objectContaining( {
+				subscriptionId: 55,
+				feed_id: '10',
+				url: 'https://example.com/feed',
+			} )
+		);
+	} );
 } );

@@ -1,10 +1,4 @@
-import {
-	getIsSubscribedFromData,
-	getSiteSubscriptionByBlogIdFromData,
-	getSiteSubscriptionByFeedIdFromData,
-	readFeedQuery,
-	readSiteQuery,
-} from '@automattic/api-queries';
+import { getSiteSubscriptionFromData, readFeedQuery, readSiteQuery } from '@automattic/api-queries';
 import { recordTrainTracksInteract, recordTrainTracksRender } from '@automattic/calypso-analytics';
 import { ExternalLink } from '@automattic/components';
 import { Reader, SubscriptionManager } from '@automattic/data-stores';
@@ -97,28 +91,22 @@ export default function ReaderFeedItem( props: ReaderFeedItemProps ): JSX.Elemen
 	const filteredDisplayUrl = filterURLForDisplay( displayUrl ?? '' );
 	const feedUrl = feedId ? getFeedUrl( feedId ) : subscribeUrl;
 	const subscriptionId = feed?.subscription_id;
-	const isSubscribedFromCache = getIsSubscribedFromData( siteSubscriptionsData, {
+	const cachedSubscription = getSiteSubscriptionFromData( siteSubscriptionsData, {
 		feedUrl: subscribeUrl,
 		feedId,
 		blogId: isWpcomFeed ? blogId : null,
 	} );
-	const cachedSubscription =
-		( feedId ? getSiteSubscriptionByFeedIdFromData( siteSubscriptionsData, feedId ) : undefined ) ??
-		( isWpcomFeed && blogId
-			? getSiteSubscriptionByBlogIdFromData( siteSubscriptionsData, blogId )
-			: undefined );
-	const cachedSubscriptionId =
-		cachedSubscription?.is_following && cachedSubscription.ID
-			? Number( cachedSubscription.ID )
-			: undefined;
+	const cachedSubscriptionId = Number( cachedSubscription?.ID );
 	const currentSubscriptionId =
 		localSubscriptionId === null
 			? undefined
-			: localSubscriptionId ?? subscriptionId ?? cachedSubscriptionId;
-	const isSubscribed =
-		localSubscriptionId === null
-			? false
-			: Boolean( currentSubscriptionId ) || isSubscribedFromCache;
+			: localSubscriptionId ??
+			  subscriptionId ??
+			  ( Number.isFinite( cachedSubscriptionId ) && cachedSubscriptionId > 0
+					? cachedSubscriptionId
+					: undefined );
+	// Require an id so Unsubscribe is never shown without a workable unsubscribe target.
+	const isSubscribed = localSubscriptionId === null ? false : Boolean( currentSubscriptionId );
 	const iconUrl = isWpcomFeed ? site?.icon?.img ?? site?.icon?.ico : feed?.image;
 	const shouldTrackRecommendedSearch =
 		source === SOURCE_SUBSCRIPTIONS_SEARCH_RECOMMENDATION_LIST && railcar;
@@ -141,7 +129,7 @@ export default function ReaderFeedItem( props: ReaderFeedItemProps ): JSX.Elemen
 		}
 
 		const noticeOptions: NoticeOptions = { duration: 5000 };
-		if ( isSubscribed && currentSubscriptionId ) {
+		if ( currentSubscriptionId ) {
 			onUnsubscribe( {
 				subscriptionId: currentSubscriptionId,
 				blog_id: blogId || undefined,
