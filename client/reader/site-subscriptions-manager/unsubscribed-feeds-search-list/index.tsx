@@ -19,7 +19,7 @@ export const UnsubscribedFeedsSearchList = ( { hideTitle = false }: Props ) => {
 	const { searchTerm } = useSiteSubscriptionsQueryProps();
 	const { isPending: isUnsubscribing } = useSiteUnsubscribeMutation();
 	const translate = useTranslate();
-	const { subscriptions, isFetching: isFetchingSubscriptions } = useSiteSubscriptions( {
+	const { subscriptions, isLoading: isLoadingSubscriptions } = useSiteSubscriptions( {
 		fetchAllPages: true,
 	} );
 
@@ -38,10 +38,10 @@ export const UnsubscribedFeedsSearchList = ( { hideTitle = false }: Props ) => {
 	const noFeedsFound =
 		( unsubscribedFeedItems.length === 0 && ! isFetchingUnsubscribedFeeds ) || searchError;
 
+	// Site subscriptions: isLoading only — blanking on isFetching unmounts ReaderFeedItem
+	// observers, which remount and refetch (staleTime 0) in a spinner loop.
 	const shouldShowUnsubcribedFeedsListLoader =
-		isFetchingSubscriptions || // If site subscriptions are still fetching.
-		isFetchingUnsubscribedFeeds || // If unsubscribed feeds are still fetching.
-		isUnsubscribing; // If user is unsubscribing from subscriptions table.
+		isLoadingSubscriptions || isFetchingUnsubscribedFeeds || isUnsubscribing;
 
 	const hasSubscribedTableResults = subscriptions.some(
 		( subscription ) => ! subscription.isDeleted && subscription.is_following
