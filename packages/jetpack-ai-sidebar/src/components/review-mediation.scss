@@ -145,7 +145,7 @@
 		margin: 0;
 
 		.components-panel__body-toggle {
-			padding: 0.625rem 0;
+			padding: 0.625rem 1rem;
 			font-size: 12px;
 			font-weight: 600;
 			text-transform: uppercase;
@@ -542,8 +542,9 @@
 
 	// ---------- Stats strip ----------
 	// Bordered chips for status-at-a-glance. Wraps on narrow (350px) docked
-	// sidebars; collapses to one row at 50vw split-screen widths.
-	&__stats {
+	// sidebars; collapses to one row at 50vw split-screen widths. Doubled class
+	// lifts specificity above AM's `.Message-module_message ul` list styling.
+	& &__stats {
 		list-style: none;
 		padding: 0;
 		margin: 0 0 0.875rem;

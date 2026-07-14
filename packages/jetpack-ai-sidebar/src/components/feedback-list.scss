@@ -119,7 +119,7 @@
 	&__items {
 		display: flex;
 		flex-direction: column;
-		gap: 0.75rem;
+		gap: 1rem;
 	}
 
 	// The card sets no horizontal padding of its own so the "New"/"Suggestion"
@@ -406,6 +406,11 @@
 
 	&__status.is-failed {
 		color: #d63638;
+	}
+
+	// Card footer slot (e.g. AER reviewer chips) — match the actions-row inset.
+	&__footer-slot {
+		padding: 0 1rem 0.75rem;
 	}
 
 	&__footer {
