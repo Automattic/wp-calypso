@@ -63,8 +63,10 @@ function withUnitTestInfo( cmd ) {
 	// Restrict each Jest run to the tests related to the files changed on this
 	// branch. When nothing changed (or the diff couldn't be resolved), fall back
 	// to the full suite since `--findRelatedTests` requires at least one path.
+	// `--passWithNoTests` keeps a project green when none of the changed files
+	// map to tests in that project (otherwise Jest exits 1 with "No tests found").
 	const relatedTests = changedFiles.length
-		? ` --findRelatedTests ${ changedFiles.join( ' ' ) }`
+		? ` --passWithNoTests --findRelatedTests ${ changedFiles.join( ' ' ) }`
 		: '';
 	return {
 		testId: cmd.split( ' ' )[ 0 ],
