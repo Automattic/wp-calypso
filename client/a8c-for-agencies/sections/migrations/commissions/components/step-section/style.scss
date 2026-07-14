@@ -1,11 +1,9 @@
-@import "@wordpress/base-styles/breakpoints";
-@import "@wordpress/base-styles/mixins";
-@import "@wordpress/base-styles/variables";
+@import '@wordpress/base-styles/breakpoints';
+@import '@wordpress/base-styles/mixins';
+@import '@wordpress/base-styles/variables';
 
 .commissions-step-section {
 	.commissions-step-section-header {
-		display: flex;
-		align-items: center;
 		margin-block-end: 16px;
 		gap: 16px;
 
@@ -19,11 +17,11 @@
 		justify-content: center;
 		align-items: center;
 		@include heading-small;
-		background: var(--color-primary-50);
+		background: var( --color-primary-50 );
 		inline-size: 24px;
 		block-size: 24px;
 		border-radius: 50%;
-		color: var(--color-text-inverted);
+		color: var( --color-text-inverted );
 	}
 
 	.commissions-step-section-heading {

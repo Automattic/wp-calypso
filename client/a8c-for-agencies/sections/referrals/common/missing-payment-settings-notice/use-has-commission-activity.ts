@@ -6,6 +6,8 @@ import {
 	LicenseSortField,
 	LicenseSortDirection,
 } from 'calypso/jetpack-cloud/sections/partner-portal/types';
+import { useSelector } from 'calypso/state';
+import { getActiveAgencyId } from 'calypso/state/a8c-for-agencies/agency/selectors';
 import useFetchReferrals from '../../hooks/use-fetch-referrals';
 
 /**
@@ -16,6 +18,8 @@ import useFetchReferrals from '../../hooks/use-fetch-referrals';
  * the UI for brand-new accounts that have no context for it yet.
  */
 export default function useHasCommissionActivity() {
+	const agencyId = useSelector( getActiveAgencyId );
+
 	const { data: referrals, isLoading: isLoadingReferrals } = useFetchReferrals();
 
 	const { data: taggedSites, isLoading: isLoadingMigrations } = useFetchTaggedSitesForMigration();
@@ -31,7 +35,14 @@ export default function useHasCommissionActivity() {
 		useFetchSitesWithPlugins( [ 'woocommerce-payments/woocommerce-payments' ] );
 
 	const isLoading =
-		isLoadingReferrals || isLoadingMigrations || isLoadingLicenses || isLoadingSitesWithPlugin;
+		// The migration activity query is gated on the agency id, so treat the
+		// state as loading until it resolves — otherwise `hasMigratedSites` reads
+		// false too early and the notice can flash for agencies that do have activity.
+		! agencyId ||
+		isLoadingReferrals ||
+		isLoadingMigrations ||
+		isLoadingLicenses ||
+		isLoadingSitesWithPlugin;
 
 	const hasReferrals = !! referrals?.length;
 	const hasMigratedSites = !! taggedSites?.length;

@@ -36,20 +36,21 @@ function responsiveViewParts( isDesktop: boolean ): Pick< View, 'type' | 'layout
 	};
 }
 
-function buildCommissionsView( isDesktop: boolean ): View {
-	return {
-		search: '',
-		filters: [],
-		page: 1,
-		perPage: 50,
-		sort: { field: '', direction: 'asc' },
-		// `site` is the titleField (rendered as the primary column/title), so it
-		// must not also appear in the visible fields or it renders twice.
-		titleField: 'site',
-		fields: [ 'migratedOn', 'reviewStatus' ],
-		...responsiveViewParts( isDesktop ),
-	};
-}
+// The stable, user-mutable parts of the view. `type`/`layout` are viewport-derived
+// and applied in `responsiveView`, so the placeholders here are always overridden.
+const INITIAL_VIEW: View = {
+	search: '',
+	filters: [],
+	page: 1,
+	perPage: 50,
+	sort: { field: '', direction: 'asc' },
+	// `site` is the titleField (rendered as the primary column/title), so it
+	// must not also appear in the visible fields or it renders twice.
+	titleField: 'site',
+	fields: [ 'migratedOn', 'reviewStatus' ],
+	type: 'table',
+	layout: {},
+};
 
 export default function MigrationsCommissionsList( {
 	items,
@@ -60,7 +61,7 @@ export default function MigrationsCommissionsList( {
 } ) {
 	const isDesktop = useDesktopBreakpoint();
 
-	const [ view, setView ] = useState< View >( () => buildCommissionsView( isDesktop ) );
+	const [ view, setView ] = useState< View >( INITIAL_VIEW );
 
 	// `type`/`layout` follow the viewport; derive them at render so we don't sync
 	// derived state through an effect. User-driven view changes stay in `view`.

@@ -33,6 +33,7 @@ export const ReviewStatusColumn = ( {
 	rejectionReason?: string;
 } ) => {
 	const [ isPopoverVisible, setIsPopoverVisible ] = useState( false );
+	const [ infoButtonAnchor, setInfoButtonAnchor ] = useState< HTMLButtonElement | null >( null );
 
 	// Don't show a badge if status is empty
 	if ( ! reviewStatus ) {
@@ -75,6 +76,7 @@ export const ReviewStatusColumn = ( {
 			<HStack spacing={ 1 } justify="flex-start" expanded={ false }>
 				{ badge }
 				<Button
+					ref={ setInfoButtonAnchor }
 					size="small"
 					icon={ info }
 					iconSize={ 18 }
@@ -83,6 +85,7 @@ export const ReviewStatusColumn = ( {
 				/>
 				{ isPopoverVisible && (
 					<Popover
+						anchor={ infoButtonAnchor }
 						offset={ 12 }
 						placement="bottom"
 						focusOnMount

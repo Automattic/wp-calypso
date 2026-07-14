@@ -10,5 +10,6 @@ export default function useFetchTaggedSitesForMigration() {
 	return useQuery( {
 		...agencyMigrationCommissionSitesQuery( agencyId ),
 		select: selectCommissionSites,
+		refetchOnWindowFocus: false,
 	} );
 }

@@ -36,15 +36,21 @@ export const useFetchAllManagedSitesForCommission = () => {
 		enabled: isEnabled,
 	} );
 
-	const mappedSites: SiteItem[] = ( allSites.data?.sites ?? [] ).map( ( site ) => {
-		const foundSite = sites.find( ( s ) => s?.ID === site.blog_id );
-		return {
-			id: site.a4a_site_id as number,
-			site: urlToSlug( site.url ),
-			date: foundSite?.options?.created_at || '',
-			rawSite: site,
-		};
-	} );
+	// Unlike useFetchAllManagedSites, this hook does NOT filter out sites that
+	// are not in the Redux store - it includes all sites from the API. Sites
+	// without an `a4a_site_id` are dropped: the modal keys and selects rows by
+	// `id`, so an undefined id would collapse distinct sites together.
+	const mappedSites: SiteItem[] = ( allSites.data?.sites ?? [] )
+		.filter( ( site ) => site.a4a_site_id != null )
+		.map( ( site ) => {
+			const foundSite = sites.find( ( s ) => s?.ID === site.blog_id );
+			return {
+				id: site.a4a_site_id as number,
+				site: urlToSlug( site.url ),
+				date: foundSite?.options?.created_at || '',
+				rawSite: site,
+			};
+		} );
 
 	const showLoading = ! mappedSites.length && ( firstFetch.isFetching || allSites.isFetching );
 
