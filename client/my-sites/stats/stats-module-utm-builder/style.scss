@@ -20,6 +20,19 @@ $modal-content-padding: 32px;
 		}
 	}
 
+	// Follow the admin accent (not --color-primary from the shared form-input
+	// focus style) for the focused field's outline. The selector is scoped
+	// through the fields wrapper and `input` so it outranks the base
+	// `input[type].form-text-input:focus` rule.
+	.stats-utm-builder__fields input.form-text-input:focus {
+		border-color: var(--color-accent);
+		box-shadow: 0 0 0 2px var(--color-accent-10);
+
+		&:hover {
+			box-shadow: 0 0 0 2px var(--color-accent-20);
+		}
+	}
+
 	.components-modal__header {
 		font-family: $font-recoleta;
 	
