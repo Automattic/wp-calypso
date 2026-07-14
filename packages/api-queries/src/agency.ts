@@ -6,7 +6,6 @@ import {
 	updateAgencyMcpSettings,
 	fetchTipaltiIFrameUrl,
 	fetchTipaltiPayee,
-	updateAgencySiteTags,
 } from '@automattic/api-core';
 import { queryOptions, mutationOptions } from '@tanstack/react-query';
 import { queryClient } from './query-client';
@@ -112,15 +111,6 @@ export const mcpSettingsQuery = ( agencyId: number ) =>
 		queryKey: [ 'agency', agencyId, 'mcp-settings' ] as const,
 		queryFn: () => fetchAgencyMcpSettings( agencyId ),
 		enabled: !! agencyId,
-	} );
-
-// Pure mutation builder: callers invalidate the relevant site/list queries at
-// the call site because the classic A4A app provides Calypso's own QueryClient
-// rather than the `@automattic/api-queries` singleton.
-export const agencySiteTagsMutation = ( agencyId: number ) =>
-	mutationOptions( {
-		mutationFn: ( { siteId, tags }: { siteId: number; tags: string[] } ) =>
-			updateAgencySiteTags( agencyId, siteId, tags ),
 	} );
 
 export const agencyMcpSettingsMutation = ( agencyId: number ) => {

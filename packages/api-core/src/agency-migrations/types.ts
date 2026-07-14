@@ -1,4 +1,4 @@
-import type { AgencySiteTag } from '../agency/types';
+import type { AgencySiteTag } from '../agency-site-tags/types';
 
 export interface MigrationCommissionSite {
 	id: number;

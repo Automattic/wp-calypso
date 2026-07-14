@@ -23,7 +23,7 @@ export default function UntagSiteDialog( {
 	const dispatch = useDispatch();
 	const queryClient = useQueryClient();
 	const agencyId = useSelector( getActiveAgencyId );
-	const { mutate, isPending } = useMutation( agencySiteTagsMutation( agencyId as number ) );
+	const { mutate, isPending } = useMutation( agencySiteTagsMutation( agencyId ) );
 
 	const onConfirm = () => {
 		const newTags = site.tags.reduce( ( acc, tag ) => {
@@ -39,7 +39,7 @@ export default function UntagSiteDialog( {
 			{
 				onSuccess: () => {
 					queryClient.invalidateQueries( {
-						queryKey: agencyMigrationCommissionSitesQuery( agencyId as number ).queryKey,
+						queryKey: agencyMigrationCommissionSitesQuery( agencyId ).queryKey,
 					} );
 					onClose();
 					dispatch(

@@ -6,10 +6,11 @@ import {
 import { mutationOptions, queryOptions } from '@tanstack/react-query';
 import type { RequestReverificationInput, TagSitesForCommissionInput } from '@automattic/api-core';
 
-export const agencyMigrationCommissionSitesQuery = ( agencyId: number ) =>
+export const agencyMigrationCommissionSitesQuery = ( agencyId: number | undefined ) =>
 	queryOptions( {
 		queryKey: [ 'agency', agencyId, 'migration-commission-sites' ],
-		queryFn: () => fetchAgencyMigrationCommissionSites( agencyId ),
+		// `enabled` guarantees the query only runs once `agencyId` resolves.
+		queryFn: () => fetchAgencyMigrationCommissionSites( agencyId as number ),
 		enabled: !! agencyId,
 	} );
 
@@ -19,14 +20,22 @@ export const agencyMigrationCommissionSitesQuery = ( agencyId: number ) =>
 // the in-context client — callers invalidate
 // `agencyMigrationCommissionSitesQuery( agencyId ).queryKey` via `useQueryClient()`.
 
-export const tagAgencySitesForCommissionMutation = ( agencyId: number ) =>
+export const tagAgencySitesForCommissionMutation = ( agencyId: number | undefined ) =>
 	mutationOptions( {
-		mutationFn: ( input: TagSitesForCommissionInput ) =>
-			tagAgencySitesForCommission( agencyId, input ),
+		mutationFn: ( input: TagSitesForCommissionInput ) => {
+			if ( ! agencyId ) {
+				throw new Error( 'No active agency found for the current user.' );
+			}
+			return tagAgencySitesForCommission( agencyId, input );
+		},
 	} );
 
-export const requestMigrationReverificationMutation = ( agencyId: number ) =>
+export const requestMigrationReverificationMutation = ( agencyId: number | undefined ) =>
 	mutationOptions( {
-		mutationFn: ( input: RequestReverificationInput ) =>
-			requestMigrationReverification( agencyId, input ),
+		mutationFn: ( input: RequestReverificationInput ) => {
+			if ( ! agencyId ) {
+				throw new Error( 'No active agency found for the current user.' );
+			}
+			return requestMigrationReverification( agencyId, input );
+		},
 	} );

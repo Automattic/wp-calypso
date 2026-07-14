@@ -39,7 +39,7 @@ export default function MigrationsTagSitesModal( {
 	const agencyId = useSelector( getActiveAgencyId );
 
 	const { mutate: tagSitesForMigration, isPending } = useMutation(
-		tagAgencySitesForCommissionMutation( agencyId as number )
+		tagAgencySitesForCommissionMutation( agencyId )
 	);
 
 	const [ selectedSites, setSelectedSites ] = useState< SiteItem[] | [] >( [] );
@@ -77,7 +77,7 @@ export default function MigrationsTagSitesModal( {
 				onSuccess: () => {
 					// Refresh the commission list so the newly tagged sites appear.
 					queryClient.invalidateQueries( {
-						queryKey: agencyMigrationCommissionSitesQuery( agencyId as number ).queryKey,
+						queryKey: agencyMigrationCommissionSitesQuery( agencyId ).queryKey,
 					} );
 					dispatch(
 						recordTracksEvent( 'calypso_a8c_migrations_tag_sites_modal_add_sites_success', {

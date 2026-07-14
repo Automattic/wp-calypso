@@ -3,6 +3,7 @@ export * from './query-client';
 export * from './agency';
 export * from './agency-team';
 export * from './agency-sites';
+export * from './agency-site-tags';
 export * from './agency-woopayments';
 export * from './agency-migrations';
 export * from './akismet-api-key';

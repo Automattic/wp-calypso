@@ -8,7 +8,7 @@ export default function useFetchTaggedSitesForMigration() {
 	const agencyId = useSelector( getActiveAgencyId );
 
 	return useQuery( {
-		...agencyMigrationCommissionSitesQuery( agencyId as number ),
+		...agencyMigrationCommissionSitesQuery( agencyId ),
 		select: selectCommissionSites,
 	} );
 }

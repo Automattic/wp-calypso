@@ -7,7 +7,9 @@ const COMMISSION_INCENTIVE_STATUSES = [
 	'rejected',
 	'reverification',
 	'ineligible',
-];
+] as const;
+
+export type CommissionIncentiveStatus = ( typeof COMMISSION_INCENTIVE_STATUSES )[ number ];
 
 /**
  * Keeps only the sites that carry a known migration incentive status. The list
@@ -18,6 +20,6 @@ export function selectCommissionSites(
 	sites: MigrationCommissionSite[]
 ): MigrationCommissionSite[] {
 	return sites.filter( ( site ) =>
-		COMMISSION_INCENTIVE_STATUSES.includes( site.incentive_status || '' )
+		COMMISSION_INCENTIVE_STATUSES.some( ( status ) => status === site.incentive_status )
 	);
 }

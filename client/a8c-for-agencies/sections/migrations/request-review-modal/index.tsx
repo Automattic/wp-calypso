@@ -28,7 +28,7 @@ export default function RequestReviewModal( {
 	const agencyId = useSelector( getActiveAgencyId );
 
 	const { mutate: requestReview, isPending } = useMutation(
-		requestMigrationReverificationMutation( agencyId as number )
+		requestMigrationReverificationMutation( agencyId )
 	);
 
 	const [ reason, setReason ] = useState( '' );
@@ -44,7 +44,7 @@ export default function RequestReviewModal( {
 			{
 				onSuccess: () => {
 					queryClient.invalidateQueries( {
-						queryKey: agencyMigrationCommissionSitesQuery( agencyId as number ).queryKey,
+						queryKey: agencyMigrationCommissionSitesQuery( agencyId ).queryKey,
 					} );
 					dispatch(
 						recordTracksEvent( 'calypso_a4a_migrations_request_another_review_success', {
