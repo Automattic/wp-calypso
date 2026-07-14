@@ -45,7 +45,7 @@
 		"dashboard/force-opt-in-visibility": false,
 		"dashboard/opt-in-welcome-modal": true,
 		"dashboard/rollout-advance-notice": true,
-		"dashboard/simulate-full-rollout": true,
+		"dashboard/simulate-full-rollout": false,
 		"dashboard/wp-beta-program": true,
 		"dev/preferences-helper": true,
 		"dev/store-sandbox-helper": true,
