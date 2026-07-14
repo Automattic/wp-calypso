@@ -22,7 +22,7 @@ import {
 	cancelAtomicPurchaseFlow,
 } from '@automattic/calypso-e2e';
 import { expect, tags, test } from '../../lib/pw-base';
-import { apiCloseAccount } from '../shared';
+import { apiCloseAccount, apiForceDashboardOptOut } from '../shared';
 
 test.describe(
 	'Lifecycle: Premium theme signup, onboard, launch and cancel subscription',
@@ -128,6 +128,14 @@ test.describe(
 				);
 				const theme = await restAPIClient.getActiveTheme( newSiteDetails.blog_details.blogid );
 				expect( theme ).toContain( themeSlug );
+			} );
+
+			await test.step( 'Opt out of the hosting dashboard rollout', async () => {
+				const restAPIClient = new RestAPIClient(
+					{ username: testUser.username, password: testUser.password },
+					newUserDetails!.body.bearer_token
+				);
+				await apiForceDashboardOptOut( restAPIClient );
 			} );
 
 			await test.step( 'Navigate to Me > Purchases', async () => {

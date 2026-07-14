@@ -14,7 +14,7 @@ import {
 	cancelSubscriptionFlow,
 } from '@automattic/calypso-e2e';
 import { tags, test } from '../../lib/pw-base';
-import { apiCancelAtomicPlan, apiCloseAccount } from '../shared';
+import { apiCancelAtomicPlan, apiCloseAccount, apiForceDashboardOptOut } from '../shared';
 
 test.describe(
 	DataHelper.createSuiteTitle( 'New Hosted Site Flow: Purchase a hosted site and cancel it' ),
@@ -110,6 +110,14 @@ test.describe(
 			await test.step( 'Then I am in WP Admin', async () => {
 				await page.waitForURL( /wp-admin/ );
 				siteSlug = new URL( page.url() ).hostname;
+			} );
+
+			await test.step( 'When I opt out of the hosting dashboard rollout', async () => {
+				const restAPIClient = new RestAPIClient(
+					{ username: testUser.username, password: testUser.password },
+					newUserDetails!.body.bearer_token
+				);
+				await apiForceDashboardOptOut( restAPIClient );
 			} );
 
 			await test.step( 'When I navigate to Me > Purchases to cancel add-on', async () => {

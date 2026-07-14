@@ -5,7 +5,7 @@ import {
 	RestAPIClient,
 } from '@automattic/calypso-e2e';
 import { expect, tags, test } from '../../lib/pw-base';
-import { apiCloseAccount } from '../shared';
+import { apiCloseAccount, apiForceDashboardOptOut } from '../shared';
 
 test.describe(
 	'Signup: Lifecycle: Logged Out Home Page, signup, onboard, launch and cancel subscription',
@@ -130,6 +130,17 @@ test.describe(
 				);
 				const theme = await restAPIClient.getActiveTheme( newSiteDetails.blog_details.blogid );
 				expect( theme ).toBe( `pub/${ themeSlug }` );
+			} );
+
+			await test.step( 'And I opt out of the hosting dashboard rollout', async function () {
+				const restAPIClient = new RestAPIClient(
+					{
+						username: testUserThemeSignup.username,
+						password: testUserThemeSignup.password,
+					},
+					newUserThemeSignup.body.bearer_token
+				);
+				await apiForceDashboardOptOut( restAPIClient );
 			} );
 
 			await test.step( 'When I cancel my plan from the purchases page', async function () {

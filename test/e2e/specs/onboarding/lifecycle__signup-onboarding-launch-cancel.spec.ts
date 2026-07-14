@@ -21,7 +21,7 @@ import {
 	UserSignupPage,
 } from '@automattic/calypso-e2e';
 import { expect, tags, test } from '../../lib/pw-base';
-import { apiCloseAccount } from '../shared';
+import { apiCloseAccount, apiForceDashboardOptOut } from '../shared';
 
 /**
  * Checks the entire user lifecycle, from signup, onboarding, launch and plan cancellation.
@@ -204,6 +204,14 @@ test.describe(
 					return;
 				}
 				await myHomePage.validateTaskHeadingMessage( 'You launched your site!' );
+			} );
+
+			await test.step( 'When I opt out of the hosting dashboard rollout', async () => {
+				const restAPIClient = new RestAPIClient(
+					{ username: testUser.username, password: testUser.password },
+					newUserDetails!.body.bearer_token
+				);
+				await apiForceDashboardOptOut( restAPIClient );
 			} );
 
 			await test.step( 'When I navigate to Me > Purchases', async () => {
