@@ -114,6 +114,7 @@ export default function ReaderFeedItem( props: ReaderFeedItemProps ): JSX.Elemen
 			onUnsubscribe( {
 				subscriptionId: currentSubscriptionId,
 				blog_id: blogId ?? undefined,
+				feed_id: feedId,
 				url: subscribeUrl,
 				onSuccess: () => {
 					setLocalSubscriptionId( null );

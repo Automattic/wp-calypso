@@ -28,6 +28,7 @@ boot( {
 			learn: true,
 			mcp: true,
 			sites: true,
+			team: true,
 			earn: true,
 		},
 		agencyClient: { subscriptions: true },

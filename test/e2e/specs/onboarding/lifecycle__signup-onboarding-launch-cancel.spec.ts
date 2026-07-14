@@ -57,7 +57,10 @@ test.describe(
 			} );
 		} );
 
-		test( 'As a new user, I can sign up, onboard, launch, and cancel subscription', async ( {
+		// Skipped for now; can be updated once we're sure all onboarding tests will go
+		// through the MSD flow. See https://github.com/Automattic/wp-calypso/pull/112586
+		// and https://github.com/Automattic/wp-calypso/pull/112587.
+		test.skip( 'As a new user, I can sign up, onboard, launch, and cancel subscription', async ( {
 			page,
 			browser,
 		} ) => {

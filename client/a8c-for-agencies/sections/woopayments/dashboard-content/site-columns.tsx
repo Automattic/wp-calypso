@@ -12,7 +12,7 @@ import StatusBadge from 'calypso/a8c-for-agencies/components/step-section-item/s
 import { urlToSlug } from 'calypso/lib/url/http-utils';
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import type { WooPaymentsData } from '../types';
+import type { WooPaymentsData } from '@automattic/api-core';
 import type { TranslateResult } from 'i18n-calypso';
 
 import './style.scss';

@@ -184,6 +184,25 @@ export async function closeAccountAndRecordLeak(
 	accountDetails: AccountDetails,
 	leakDir: string
 ): Promise< void > {
+	const hasUserID = Number.isInteger( accountDetails.userID ) && accountDetails.userID > 0;
+	const username =
+		typeof accountDetails.username === 'string' ? accountDetails.username.trim() : '';
+	const email = typeof accountDetails.email === 'string' ? accountDetails.email.trim() : '';
+
+	if ( ! hasUserID || ! username || ! email ) {
+		console.warn( 'Skipping remote account teardown: account identity is incomplete.' );
+		if ( hasUserID || email ) {
+			recordAccountLeak( leakDir, {
+				...( hasUserID ? { userID: accountDetails.userID } : {} ),
+				username,
+				email,
+				error:
+					'Remote teardown skipped because the signup response contained an incomplete account identity.',
+			} );
+		}
+		return;
+	}
+
 	console.log( `Closing account ${ accountDetails.userID }.` );
 
 	// Track the wait so the terminal `[atomic-teardown]` breadcrumb reports how

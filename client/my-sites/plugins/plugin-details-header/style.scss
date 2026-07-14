@@ -22,7 +22,7 @@ $rating-star-color: #ffb514;
 
 	@include break-mobile {
 		flex-wrap: nowrap;
-		align-items: flex-start;
+		align-items: center;
 		justify-content: flex-start;
 		text-align: initial;
 	}
@@ -43,6 +43,7 @@ $rating-star-color: #ffb514;
 
 	.full-width-section & {
 		flex-wrap: nowrap;
+		align-items: flex-start;
 		.plugin-details-header__icon {
 			width: 80px;
 			height: 80px;
@@ -52,6 +53,30 @@ $rating-star-color: #ffb514;
 				width: 72px;
 				height: 72px;
 			}
+		}
+	}
+}
+
+// Below the mobile breakpoint, keep the classic (non-redesign) header inline —
+// icon beside a vertically-centered title — rather than stacking it centered.
+.is-plugin-details.is-wide-layout {
+	.plugin-details-header__main-info {
+		@include breakpoint-deprecated( "<480px" ) {
+			flex-wrap: nowrap;
+			align-items: center;
+			justify-content: flex-start;
+			text-align: initial;
+
+			.plugin-details-header__icon {
+				margin-right: 20px;
+				margin-bottom: 0;
+			}
+		}
+	}
+
+	.plugin-details-header__title-container {
+		@include breakpoint-deprecated( "<480px" ) {
+			margin-top: 0;
 		}
 	}
 }
@@ -111,7 +136,7 @@ $rating-star-color: #ffb514;
 }
 
 .plugin-details-header__description {
-	font-size: $font-title-small;
+	font-size: $font-body;
 	color: var(--studio-gray-80);
 	padding: 24px 0;
 

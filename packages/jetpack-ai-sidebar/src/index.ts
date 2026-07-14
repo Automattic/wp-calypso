@@ -95,12 +95,12 @@ let lastBlockTransformationSuggestionContext: {
 /** Default suggestion shown when no block is selected. */
 const OPTIMIZE_TITLE_SUGGESTION = {
 	id: 'optimize-title',
-	label: __( 'Optimize Title', 'jetpack' ),
+	label: __( 'Optimize Title', __i18n_text_domain__ ),
 	description: __(
 		'Refine the title based on your post’s content and SEO best practices.',
-		'jetpack'
+		__i18n_text_domain__
 	),
-	prompt: __( 'Optimize the title of this post', 'jetpack' ),
+	prompt: __( 'Optimize the title of this post', __i18n_text_domain__ ),
 };
 
 /**
@@ -111,9 +111,9 @@ const OPTIMIZE_TITLE_SUGGESTION = {
  */
 const GENERATE_EXCERPT_SUGGESTION = {
 	id: 'generate-excerpt',
-	label: __( 'Generate Excerpt', 'jetpack' ),
-	description: __( 'Generate an excerpt for your post.', 'jetpack' ),
-	prompt: __( 'Generate an excerpt for this post', 'jetpack' ),
+	label: __( 'Generate Excerpt', __i18n_text_domain__ ),
+	description: __( 'Generate an excerpt for your post.', __i18n_text_domain__ ),
+	prompt: __( 'Generate an excerpt for this post', __i18n_text_domain__ ),
 };
 
 /**
@@ -134,24 +134,30 @@ const GENERATE_EXCERPT_SUGGESTION = {
  */
 const SEO_ENHANCER_SUGGESTION = {
 	id: 'seo-enhancer',
-	label: __( 'SEO Enhancer', 'jetpack' ),
-	description: __( 'Generate metadata for the contents of the post to optimize SEO.', 'jetpack' ),
+	label: __( 'SEO Enhancer', __i18n_text_domain__ ),
+	description: __(
+		'Generate metadata for the contents of the post to optimize SEO.',
+		__i18n_text_domain__
+	),
 	prompt: '',
 	options: [
 		{
 			id: 'seo-title',
-			label: _x( 'Title', 'SEO Enhancer dropdown option', 'jetpack' ),
-			value: __( 'Generate an SEO title (meta title) for this post', 'jetpack' ),
+			label: _x( 'Title', 'SEO Enhancer dropdown option', __i18n_text_domain__ ),
+			value: __( 'Generate an SEO title (meta title) for this post', __i18n_text_domain__ ),
 		},
 		{
 			id: 'seo-description',
-			label: _x( 'Description', 'SEO Enhancer dropdown option', 'jetpack' ),
-			value: __( 'Generate an SEO meta description for this post', 'jetpack' ),
+			label: _x( 'Description', 'SEO Enhancer dropdown option', __i18n_text_domain__ ),
+			value: __( 'Generate an SEO meta description for this post', __i18n_text_domain__ ),
 		},
 		{
 			id: 'image-alt-text',
-			label: _x( 'Image Alt Text', 'SEO Enhancer dropdown option', 'jetpack' ),
-			value: __( 'Generate descriptive alt text for the images in this post', 'jetpack' ),
+			label: _x( 'Image Alt Text', 'SEO Enhancer dropdown option', __i18n_text_domain__ ),
+			value: __(
+				'Generate descriptive alt text for the images in this post',
+				__i18n_text_domain__
+			),
 		},
 	],
 };
@@ -164,31 +170,31 @@ const SEO_ENHANCER_SUGGESTION = {
  */
 const AI_EDITORIAL_REVIEW_SUGGESTION = {
 	id: 'mediate-review-notes',
-	label: __( 'Editorial Review', 'jetpack' ),
-	description: __( 'In-depth review against your content guidelines.', 'jetpack' ),
+	label: __( 'Editorial Review', __i18n_text_domain__ ),
+	description: __( 'In-depth review against your content guidelines.', __i18n_text_domain__ ),
 	prompt: __(
 		'Run an AI Editorial Review for this post. Check the content, reviewer notes, and site guidelines, then surface conflicts, implications, guideline issues, and suggested edits.',
-		'jetpack'
+		__i18n_text_domain__
 	),
 };
 
 const POST_FEEDBACK_SUGGESTION = {
 	id: 'generate-feedback',
-	label: __( 'Simple Review', 'jetpack' ),
-	description: __( 'Quick feedback on your content’s structure.', 'jetpack' ),
+	label: __( 'Simple Review', __i18n_text_domain__ ),
+	description: __( 'Quick feedback on your content’s structure.', __i18n_text_domain__ ),
 	prompt: __(
 		'Generate feedback for this saved post. Review the saved title and saved block content for content structure, reader clarity, completeness, media/caption/link issues, and obvious publishability concerns. Return practical feedback with one-click suggestions when safe.',
-		'jetpack'
+		__i18n_text_domain__
 	),
 };
 
 const PROOFREAD_SUGGESTION = {
 	id: 'proofread-content',
-	label: __( 'Proofread', 'jetpack' ),
-	description: __( 'Correct spelling, grammar, and punctuation.', 'jetpack' ),
+	label: __( 'Proofread', __i18n_text_domain__ ),
+	description: __( 'Correct spelling, grammar, and punctuation.', __i18n_text_domain__ ),
 	prompt: __(
 		'Proofread this saved post for spelling, grammar, and punctuation. Review the saved title and saved block content, and return practical fixes with one-click suggestions when safe.',
-		'jetpack'
+		__i18n_text_domain__
 	),
 };
 
@@ -894,61 +900,206 @@ type BlockSuggestion = {
 	prompt: string;
 	type: BlockTransformationSuggestionType;
 	condition: ( block: any ) => boolean;
+	options?: SuggestionOption[];
 };
+
+/** Change-tone dropdown options; `value` is the full localized prompt filled on selection. */
+const CHANGE_TONE_OPTIONS: SuggestionOption[] = [
+	{
+		id: 'formal',
+		label: `🎩 ${ _x( 'Formal', 'Change tone dropdown option', __i18n_text_domain__ ) }`,
+		value: __( 'Change the tone of this text to be more formal', __i18n_text_domain__ ),
+	},
+	{
+		id: 'informal',
+		label: `😊 ${ _x( 'Informal', 'Change tone dropdown option', __i18n_text_domain__ ) }`,
+		value: __( 'Change the tone of this text to be more informal', __i18n_text_domain__ ),
+	},
+	{
+		id: 'optimistic',
+		label: `😃 ${ _x( 'Optimistic', 'Change tone dropdown option', __i18n_text_domain__ ) }`,
+		value: __( 'Change the tone of this text to be more optimistic', __i18n_text_domain__ ),
+	},
+	{
+		id: 'humorous',
+		label: `😂 ${ _x( 'Humorous', 'Change tone dropdown option', __i18n_text_domain__ ) }`,
+		value: __( 'Change the tone of this text to be more humorous', __i18n_text_domain__ ),
+	},
+	{
+		id: 'serious',
+		label: `😐 ${ _x( 'Serious', 'Change tone dropdown option', __i18n_text_domain__ ) }`,
+		value: __( 'Change the tone of this text to be more serious', __i18n_text_domain__ ),
+	},
+	{
+		id: 'skeptical',
+		label: `🤨 ${ _x( 'Skeptical', 'Change tone dropdown option', __i18n_text_domain__ ) }`,
+		value: __( 'Change the tone of this text to be more skeptical', __i18n_text_domain__ ),
+	},
+	{
+		id: 'empathetic',
+		label: `💗 ${ _x( 'Empathetic', 'Change tone dropdown option', __i18n_text_domain__ ) }`,
+		value: __( 'Change the tone of this text to be more empathetic', __i18n_text_domain__ ),
+	},
+	{
+		id: 'confident',
+		label: `😎 ${ _x( 'Confident', 'Change tone dropdown option', __i18n_text_domain__ ) }`,
+		value: __( 'Change the tone of this text to be more confident', __i18n_text_domain__ ),
+	},
+	{
+		id: 'passionate',
+		label: `❤️ ${ _x( 'Passionate', 'Change tone dropdown option', __i18n_text_domain__ ) }`,
+		value: __( 'Change the tone of this text to be more passionate', __i18n_text_domain__ ),
+	},
+	{
+		id: 'provocative',
+		label: `🔥 ${ _x( 'Provocative', 'Change tone dropdown option', __i18n_text_domain__ ) }`,
+		value: __( 'Change the tone of this text to be more provocative', __i18n_text_domain__ ),
+	},
+];
+
+/** Translate dropdown target languages; `value` is the full localized prompt filled on selection. */
+const TRANSLATE_LANGUAGE_OPTIONS: SuggestionOption[] = [
+	{
+		id: 'en',
+		label: _x( 'English', 'Translate content dropdown option', __i18n_text_domain__ ),
+		value: __( 'Translate this block content to English', __i18n_text_domain__ ),
+	},
+	{
+		id: 'es',
+		label: _x( 'Spanish', 'Translate content dropdown option', __i18n_text_domain__ ),
+		value: __( 'Translate this block content to Spanish', __i18n_text_domain__ ),
+	},
+	{
+		id: 'fr',
+		label: _x( 'French', 'Translate content dropdown option', __i18n_text_domain__ ),
+		value: __( 'Translate this block content to French', __i18n_text_domain__ ),
+	},
+	{
+		id: 'de',
+		label: _x( 'German', 'Translate content dropdown option', __i18n_text_domain__ ),
+		value: __( 'Translate this block content to German', __i18n_text_domain__ ),
+	},
+	{
+		id: 'it',
+		label: _x( 'Italian', 'Translate content dropdown option', __i18n_text_domain__ ),
+		value: __( 'Translate this block content to Italian', __i18n_text_domain__ ),
+	},
+	{
+		id: 'pt',
+		label: _x( 'Portuguese', 'Translate content dropdown option', __i18n_text_domain__ ),
+		value: __( 'Translate this block content to Portuguese', __i18n_text_domain__ ),
+	},
+	{
+		id: 'ru',
+		label: _x( 'Russian', 'Translate content dropdown option', __i18n_text_domain__ ),
+		value: __( 'Translate this block content to Russian', __i18n_text_domain__ ),
+	},
+	{
+		id: 'zh',
+		label: _x( 'Chinese', 'Translate content dropdown option', __i18n_text_domain__ ),
+		value: __( 'Translate this block content to Chinese', __i18n_text_domain__ ),
+	},
+	{
+		id: 'ja',
+		label: _x( 'Japanese', 'Translate content dropdown option', __i18n_text_domain__ ),
+		value: __( 'Translate this block content to Japanese', __i18n_text_domain__ ),
+	},
+	{
+		id: 'ar',
+		label: _x( 'Arabic', 'Translate content dropdown option', __i18n_text_domain__ ),
+		value: __( 'Translate this block content to Arabic', __i18n_text_domain__ ),
+	},
+	{
+		id: 'hi',
+		label: _x( 'Hindi', 'Translate content dropdown option', __i18n_text_domain__ ),
+		value: __( 'Translate this block content to Hindi', __i18n_text_domain__ ),
+	},
+	{
+		id: 'ko',
+		label: _x( 'Korean', 'Translate content dropdown option', __i18n_text_domain__ ),
+		value: __( 'Translate this block content to Korean', __i18n_text_domain__ ),
+	},
+];
 
 /** Block-aware suggestion definitions with optional condition per block type. */
 const BLOCK_SUGGESTIONS: BlockSuggestion[] = [
 	{
 		id: 'translate',
-		label: __( 'Translate content', 'jetpack' ),
-		prompt: __( 'Translate this block content to:', 'jetpack' ),
+		label: __( 'Translate content', __i18n_text_domain__ ),
+		// Empty prompt — the picked option's `value` is the full prompt sent.
+		prompt: '',
 		type: 'text',
 		condition: ( block: any ) => TEXT_BLOCK_TYPES.includes( block?.name ),
+		options: TRANSLATE_LANGUAGE_OPTIONS,
 	},
 	{
 		id: 'change-tone',
-		label: __( 'Change tone', 'jetpack' ),
-		prompt: __( 'Change the tone of this text to be more:', 'jetpack' ),
+		label: __( 'Change tone', __i18n_text_domain__ ),
+		prompt: '',
 		type: 'text',
 		condition: ( block: any ) => TEXT_BLOCK_TYPES.includes( block?.name ),
+		options: CHANGE_TONE_OPTIONS,
 	},
 	{
 		id: 'check-grammar',
-		label: __( 'Check grammar', 'jetpack' ),
-		prompt: __( 'Check the grammar and spelling of this text', 'jetpack' ),
+		label: __( 'Check grammar', __i18n_text_domain__ ),
+		prompt: __( 'Check the grammar and spelling of this text', __i18n_text_domain__ ),
 		type: 'text',
 		condition: ( block: any ) => TEXT_BLOCK_TYPES.includes( block?.name ),
 	},
 	{
 		id: 'simplify-text',
-		label: __( 'Simplify text', 'jetpack' ),
-		prompt: __( 'Simplify this text to make it easier to read', 'jetpack' ),
+		label: __( 'Simplify text', __i18n_text_domain__ ),
+		prompt: __( 'Simplify this text to make it easier to read', __i18n_text_domain__ ),
 		type: 'text',
 		condition: ( block: any ) => TEXT_BLOCK_TYPES.includes( block?.name ),
 	},
 	{
 		id: 'generate-alt-text',
-		label: __( 'Generate alt text', 'jetpack' ),
-		prompt: __( 'Generate descriptive alt text for this image', 'jetpack' ),
+		label: __( 'Generate alt text', __i18n_text_domain__ ),
+		prompt: __( 'Generate descriptive alt text for this image', __i18n_text_domain__ ),
 		type: 'image',
 		condition: ( block: any ) => IMAGE_BLOCK_TYPES.includes( block?.name ),
 	},
 ];
 
-function matchesBlockTransformationSuggestion(
+type BlockTransformationSuggestionMatch = {
+	suggestion: BlockSuggestion;
+	option?: SuggestionOption;
+};
+
+/**
+ * Resolve a dispatched click value to its suggestion and the picked option.
+ * Option-bearing suggestions use an empty prompt, so the value is the option's.
+ */
+function matchBlockTransformationSuggestion(
 	suggestion: BlockSuggestion,
 	value: string
-): boolean {
-	return [ suggestion.id, suggestion.label, suggestion.prompt ].includes( value );
+): BlockTransformationSuggestionMatch | undefined {
+	const option = suggestion.options?.find( ( candidate ) => candidate.value === value );
+	if ( option ) {
+		return { suggestion, option };
+	}
+	// `filter( Boolean )` drops an empty prompt so a blank value can't false-match.
+	if (
+		[ suggestion.id, suggestion.label, suggestion.prompt ].filter( Boolean ).includes( value )
+	) {
+		return { suggestion };
+	}
+	return undefined;
 }
 
-function getBlockTransformationSuggestionForValue(
+function getBlockTransformationSuggestionMatchForValue(
 	value: string,
 	suggestions: BlockSuggestion[]
-): BlockSuggestion | undefined {
-	return suggestions.find( ( suggestion ) =>
-		matchesBlockTransformationSuggestion( suggestion, value )
-	);
+): BlockTransformationSuggestionMatch | undefined {
+	for ( const suggestion of suggestions ) {
+		const match = matchBlockTransformationSuggestion( suggestion, value );
+		if ( match ) {
+			return match;
+		}
+	}
+	return undefined;
 }
 
 function trackRenderedBlockTransformationSuggestions(
@@ -985,32 +1136,34 @@ function trackBlockTransformationSuggestionClickForValue( value: string ): void 
 
 	const selectedBlock = getSelectedOrRememberedBlock();
 	if ( typeof selectedBlock?.name === 'string' ) {
-		const selectedBlockSuggestion = getBlockTransformationSuggestionForValue(
+		const selectedBlockMatch = getBlockTransformationSuggestionMatchForValue(
 			value,
 			BLOCK_SUGGESTIONS.filter( ( suggestion ) => suggestion.condition( selectedBlock ) )
 		);
-		if ( selectedBlockSuggestion ) {
+		if ( selectedBlockMatch ) {
 			trackBlockTransformationSuggestionClick( {
-				suggestionId: selectedBlockSuggestion.id,
-				suggestionType: selectedBlockSuggestion.type,
+				suggestionId: selectedBlockMatch.suggestion.id,
+				suggestionType: selectedBlockMatch.suggestion.type,
 				blockType: selectedBlock.name,
+				optionId: selectedBlockMatch.option?.id,
 			} );
 			return;
 		}
 	}
 
 	const lastRenderedContext = lastBlockTransformationSuggestionContext;
-	const lastRenderedSuggestion = lastRenderedContext
-		? getBlockTransformationSuggestionForValue( value, lastRenderedContext.suggestions )
+	const lastRenderedMatch = lastRenderedContext
+		? getBlockTransformationSuggestionMatchForValue( value, lastRenderedContext.suggestions )
 		: undefined;
-	if ( ! lastRenderedContext || ! lastRenderedSuggestion ) {
+	if ( ! lastRenderedContext || ! lastRenderedMatch ) {
 		return;
 	}
 
 	trackBlockTransformationSuggestionClick( {
-		suggestionId: lastRenderedSuggestion.id,
-		suggestionType: lastRenderedSuggestion.type,
+		suggestionId: lastRenderedMatch.suggestion.id,
+		suggestionType: lastRenderedMatch.suggestion.type,
 		blockType: lastRenderedContext.blockType,
+		optionId: lastRenderedMatch.option?.id,
 	} );
 }
 
@@ -1163,7 +1316,8 @@ export function useSuggestions(
 		[ blockTransformationsEnabled, selectedBlock ]
 	);
 	const blockTransformationSuggestions = useMemo(
-		() => applicable.map( ( { id, label, prompt } ) => ( { id, label, prompt } ) ),
+		() =>
+			applicable.map( ( { id, label, prompt, options } ) => ( { id, label, prompt, options } ) ),
 		[ applicable ]
 	);
 	// Post-level reviews (Optimize Title, Generate Feedback, AI Editorial Review)
@@ -1172,10 +1326,15 @@ export function useSuggestions(
 		if ( hidden ) {
 			return [];
 		}
-		return applySuggestionLimit(
-			selectedBlock ? blockTransformationSuggestions : postLevelSuggestions,
-			maxSuggestions
-		);
+		// Both branches narrow to this shared shape; the explicit annotation lets
+		// the generic applySuggestionLimit infer a single element type across them.
+		const activeSuggestions: Array< {
+			id: string;
+			label: string;
+			prompt: string;
+			options?: SuggestionOption[];
+		} > = selectedBlock ? blockTransformationSuggestions : postLevelSuggestions;
+		return applySuggestionLimit( activeSuggestions, maxSuggestions );
 	}, [
 		blockTransformationSuggestions,
 		hidden,

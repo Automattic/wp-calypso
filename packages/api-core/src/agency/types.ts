@@ -29,6 +29,9 @@ export interface Agency {
 	influenced_revenue?: number;
 	created_at: string;
 	billing_system?: 'billingdragon' | 'legacy';
+	user?: {
+		capabilities: string[];
+	};
 }
 
 /**
@@ -94,4 +97,14 @@ export interface AgencyResourcesResponse {
 	status: string;
 	results: AgencyResource[];
 	total: number;
+}
+
+export interface TipaltiIFrameUrl {
+	iframe_url: string;
+}
+
+export interface TipaltiPayee {
+	Status: string;
+	IsPayable: boolean;
+	PayableReason: string[];
 }

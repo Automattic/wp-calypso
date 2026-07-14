@@ -161,10 +161,11 @@ function SpaceUpsertModalContent( {
 	// the current tab. Only meaningful in edit mode (we're on the space's URL).
 	const currentRoute = useSelector( getCurrentRoute );
 	const isCreate = mode === 'create';
-	// Resolve the space by its URL slug (edit mode), sharing the view's by-slug cache
-	// so opening the modal doesn't refetch. The numeric id — used by the update/delete
-	// mutations, which stay id-based — comes off the resolved detail.
-	const { data: space } = useSpaceBySlug( isCreate ? null : slug );
+	const spaceQuery = useSpaceBySlug( slug, {
+		enabled: ! isCreate,
+		refetchOnMount: 'always',
+	} );
+	const space = spaceQuery.data;
 	const editSpaceId = space?.id ?? null;
 	const spaces = useSpaces();
 	const createSpace = useCreateSpace();
@@ -200,8 +201,16 @@ function SpaceUpsertModalContent( {
 	// edit keeps the tabbed layout so any section is reachable directly.
 	const [ step, setStep ] = useState( 0 );
 
+	// Seed once the open-time refetch has settled, not from the cache it returns
+	// immediately — a stale snapshot can omit tags and would lock in empty fields.
 	useEffect( () => {
-		if ( ! isCreate && space && ! isSeeded ) {
+		if (
+			! isCreate &&
+			space &&
+			spaceQuery.isSuccess &&
+			spaceQuery.isFetchedAfterMount &&
+			! isSeeded
+		) {
 			setName( space.name );
 			setTags( space.tags );
 			// `?? []` guards a persisted React Query cache written before `languages`
@@ -215,7 +224,7 @@ function SpaceUpsertModalContent( {
 			setSelectedSources( space.sources.map( getSpaceSourceDraftItem ) );
 			setIsSeeded( true );
 		}
-	}, [ isCreate, isSeeded, space ] );
+	}, [ isCreate, isSeeded, space, spaceQuery.isFetchedAfterMount, spaceQuery.isSuccess ] );
 
 	const existingNames = useMemo(
 		() =>

@@ -1,12 +1,19 @@
 import {
+	FEATURE_CLOUD_CRITICAL_CSS,
+	FEATURE_SOCIAL_ENHANCED_PUBLISHING,
 	PLAN_JETPACK_SECURITY_T1_YEARLY,
 	PRODUCT_JETPACK_BACKUP_T1_YEARLY,
 	PRODUCT_JETPACK_BOOST,
 	PRODUCT_JETPACK_SEARCH,
 	PRODUCT_JETPACK_SOCIAL_BASIC,
 	PRODUCT_JETPACK_VIDEOPRESS,
+	WPCOM_FEATURES_ANTISPAM,
+	WPCOM_FEATURES_BACKUPS,
+	WPCOM_FEATURES_CLASSIC_SEARCH,
+	WPCOM_FEATURES_SCAN,
+	WPCOM_FEATURES_VIDEOPRESS,
 } from '@automattic/calypso-products';
-import { translate } from 'i18n-calypso';
+import { translate, TranslateResult } from 'i18n-calypso';
 import SecurityIcon from './icons/jetpack-icon-lock.svg';
 import BackupIcon from './icons/jetpack-product-icon-backup.svg';
 import BoostIcon from './icons/jetpack-product-icon-boost.svg';
@@ -15,7 +22,7 @@ import SocialIcon from './icons/jetpack-product-icon-social.svg';
 import VideoPressIcon from './icons/jetpack-product-icon-videopress.svg';
 
 export type Product = {
-	description: string;
+	description: TranslateResult;
 	href: string;
 	iconUrl: string;
 	isFree: boolean;
@@ -25,7 +32,7 @@ export type Product = {
 	// owned. The upsell is hidden when the site has all of them.
 	ownedFeatures: string[];
 	checkoutSlug: string;
-	checkoutUrl: string | null;
+	checkoutUrl?: string;
 };
 
 export function getAvailableUpsells() {
@@ -39,7 +46,7 @@ export function getAvailableUpsells() {
 			isFree: false,
 			slug: 'security',
 			title: 'Security',
-			ownedFeatures: [ 'backups', 'scan', 'antispam' ],
+			ownedFeatures: [ WPCOM_FEATURES_BACKUPS, WPCOM_FEATURES_SCAN, WPCOM_FEATURES_ANTISPAM ],
 			checkoutSlug: PLAN_JETPACK_SECURITY_T1_YEARLY,
 		},
 		{
@@ -51,7 +58,7 @@ export function getAvailableUpsells() {
 			isFree: false,
 			slug: 'backup',
 			title: 'Backup',
-			ownedFeatures: [ 'backups' ],
+			ownedFeatures: [ WPCOM_FEATURES_BACKUPS ],
 			checkoutSlug: PRODUCT_JETPACK_BACKUP_T1_YEARLY,
 		},
 		{
@@ -63,7 +70,7 @@ export function getAvailableUpsells() {
 			isFree: false,
 			slug: 'search',
 			title: 'Search',
-			ownedFeatures: [ 'search' ],
+			ownedFeatures: [ WPCOM_FEATURES_CLASSIC_SEARCH ],
 			checkoutSlug: PRODUCT_JETPACK_SEARCH,
 		},
 		{
@@ -75,7 +82,7 @@ export function getAvailableUpsells() {
 			isFree: false,
 			slug: 'video',
 			title: 'VideoPress',
-			ownedFeatures: [ 'videopress' ],
+			ownedFeatures: [ WPCOM_FEATURES_VIDEOPRESS ],
 			checkoutSlug: PRODUCT_JETPACK_VIDEOPRESS,
 		},
 		{
@@ -87,7 +94,7 @@ export function getAvailableUpsells() {
 			isFree: true,
 			slug: 'boost',
 			title: 'Boost',
-			ownedFeatures: [ 'cloud-critical-css' ],
+			ownedFeatures: [ FEATURE_CLOUD_CRITICAL_CSS ],
 			checkoutSlug: PRODUCT_JETPACK_BOOST,
 		},
 		{
@@ -99,17 +106,17 @@ export function getAvailableUpsells() {
 			isFree: true,
 			slug: 'social',
 			title: 'Social',
-			ownedFeatures: [ 'social-enhanced-publishing' ],
+			ownedFeatures: [ FEATURE_SOCIAL_ENHANCED_PUBLISHING ],
 			checkoutSlug: PRODUCT_JETPACK_SOCIAL_BASIC,
 		},
-	] as Product[];
+	] satisfies Product[];
 }
 
 // TODO: Reconfigure this to separate const data and translate calls.
 // Currently we end up calling getAvailableUpsells() twice per render.
 export function getUpsellFeatureSlugs(): string[] {
 	const upsells = getAvailableUpsells();
-	return upsells.flatMap( ( upsell ) => upsell.ownedFeatures );
+	return [ ...new Set( upsells.flatMap( ( upsell ) => upsell.ownedFeatures ) ) ];
 }
 
 export function filterUpsellsBySiteFeatures(

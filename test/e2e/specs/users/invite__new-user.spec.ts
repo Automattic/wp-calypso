@@ -21,7 +21,6 @@ test.describe( 'Invite: New User', { tag: [ tags.CALYPSO_PR ] }, () => {
 
 	let userManagementRevampFeature = false;
 	let acceptInviteLink: string;
-	let invitedSiteSlug: string;
 
 	// Accounts created during the run, closed via API in afterAll as a guaranteed
 	// teardown. The in-body UI close below stays as product coverage; the API close
@@ -43,7 +42,6 @@ test.describe( 'Invite: New User', { tag: [ tags.CALYPSO_PR ] }, () => {
 		pageAddPeople,
 		pageInvitePeople,
 		accountPreRelease,
-		helperData,
 	} ) => {
 		await test.step( 'Given I am logged in as a site owner', async function () {
 			await accountPreRelease.authenticate( page );
@@ -55,17 +53,6 @@ test.describe( 'Invite: New User', { tag: [ tags.CALYPSO_PR ] }, () => {
 
 		await test.step( 'When I navigate to Users > All Users', async function () {
 			await componentSidebar.navigate( 'Users', 'All Users' );
-			// Capture the site authenticate() landed on (not necessarily testSites.primary
-			// on the shared pre-release account) so the later removal targets the invited
-			// site. site_id accepts any non-slash value, so dotless/mapped slugs are valid.
-			const peopleUrl = new URL( page.url() );
-			const slugMatch = peopleUrl.pathname.match( /^\/people\/team\/([^/?#]+)/ );
-			if ( ! slugMatch ) {
-				throw new Error(
-					`Could not determine the invited site slug from the people URL: ${ peopleUrl.href }`
-				);
-			}
-			invitedSiteSlug = slugMatch[ 1 ];
 		} );
 
 		await test.step( `And I invite a new user with role ${ role }`, async function () {
@@ -154,12 +141,7 @@ test.describe( 'Invite: New User', { tag: [ tags.CALYPSO_PR ] }, () => {
 		} );
 
 		await test.step( 'Then I can see the invited user part of the team', async function () {
-			// Use direct navigation to avoid finding the user when there are over 100 team members piled up.
-			await pagePeople.visitTeamMemberUserDetails(
-				helperData.getCalypsoURL(),
-				invitedSiteSlug,
-				signedUpUsername
-			);
+			await pagePeople.visitTeamMemberUserDetails( signedUpUsername );
 		} );
 
 		await test.step( 'Then I can remove the team member from the site', async function () {

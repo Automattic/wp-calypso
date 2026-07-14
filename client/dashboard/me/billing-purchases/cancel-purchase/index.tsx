@@ -99,6 +99,7 @@ import RefundEligibilityNotice from './refund-eligibility-notice';
 import TimeRemainingNotice from './time-remaining-notice';
 import { useCancelMutationOnConfirm } from './use-cancel-mutation-on-confirm';
 import { useIsSplitCancelRemoveEnabled } from './use-is-split-cancel-remove-enabled';
+import { usePostRemovalNavigation } from './use-post-removal-navigation';
 import type { CancelPurchaseState } from './types';
 import type {
 	Purchase,
@@ -532,6 +533,8 @@ function CancelPurchaseInner() {
 
 		navigate( { to: purchasesRoute.to } );
 	}, [ purchase, navigate ] );
+
+	const { navigateAfterRemoval, invalidateSiteAfterRemoval } = usePostRemovalNavigation( purchase );
 
 	const track = useCallback( () => {
 		if ( productSlug ) {
@@ -1221,11 +1224,10 @@ function CancelPurchaseInner() {
 							cancelAllMarketplaceSubscriptions();
 						}
 						invokeSurvicateEvent( 'purchaseRefunded' );
-						navigate( {
-							to: purchaseSettingsRoute.fullPath,
-							params: { purchaseId: purchase.ID },
-							search: { refunded: true },
-						} );
+						invalidateSiteAfterRemoval();
+						navigateAfterRemoval(
+							__( 'Your refund has been processed and your purchase removed.' )
+						);
 					},
 					onError: ( error: Error ) => {
 						createErrorNotice( ( error as Error ).message, { type: 'snackbar' } );
@@ -1264,10 +1266,9 @@ function CancelPurchaseInner() {
 	};
 
 	const submitRemovePurchase = ( purchase: Purchase ) => {
-		if ( CANCEL_FLOW_TYPE.REMOVE !== flowType ) {
-			return;
-		}
-
+		// Callers gate this on the effective flow type (see onSurveyComplete). Don't
+		// re-guard on the base `flowType` heuristic — it diverges from the effective
+		// flow (e.g. refundable + auto-renew off) and would silently early-return.
 		setTimeout( () => {
 			// 1. Optimistic cache strip
 			const stripPurchaseFromList = () => {
@@ -1321,39 +1322,60 @@ function CancelPurchaseInner() {
 				queryClient.invalidateQueries( { queryKey: userPurchasesQuery().queryKey } );
 			}, CACHE_GUARD_DURATION_MS );
 
-			// 3. Navigate with notice params
+			// 3. Navigate away — the purchase is gone, so its settings page is no
+			//    longer useful. Atomic-revert removals still route to the purchases
+			//    list so the backup-download notice (with its export CTA) can show;
+			//    everything else follows the site-page / purchases-list rule.
 			invokeSurvicateEvent( 'purchaseRemoved' );
 			const productNoun = getProductNounForCategory( classifyPurchaseForCopy( purchase ) );
-			navigate( {
-				to: purchasesRoute.to,
-				search: {
-					removed: productNoun,
-					removedId: purchase.ID,
-					...( purchase.will_atomic_revert_after_removal
-						? { removedDomain: purchase.domain }
-						: {} ),
-				},
-			} );
+			if ( purchase.will_atomic_revert_after_removal ) {
+				navigate( {
+					to: purchasesRoute.to,
+					search: {
+						removed: productNoun,
+						removedId: purchase.ID,
+						removedDomain: purchase.domain,
+					},
+				} );
+			} else {
+				navigateAfterRemoval(
+					sprintf(
+						/* translators: %(productNoun)s is plan/domain/email/theme/plugin/subscription. */
+						__( 'Your %(productNoun)s has been removed.' ),
+						{ productNoun }
+					)
+				);
+			}
 
 			// 4. Fire mutation in background. On failure, restore the purchase to
-			//    the cache — the list watches userPurchasesQuery for reappearance
-			//    and self-dismisses its notice. The cache guard's re-strip happens
-			//    synchronously inside the QueryCache notify callback, so the list's
-			//    useEffect never observes transient successes-path reappearances.
-			removePurchaseMutator.mutateAsync( purchase.ID ).catch( () => {
-				cleanupGuard();
-				queryClient.setQueryData(
-					userPurchasesQuery().queryKey,
-					( old: Purchase[] | undefined ) => {
-						const list = old ?? [];
-						return list.some( ( p ) => p.ID === purchase.ID ) ? list : [ ...list, purchase ];
-					}
-				);
-				createErrorNotice( __( 'Failed to remove your purchase. Please try again.' ), {
-					type: 'snackbar',
+			//    the cache and surface an error snackbar (visible on whichever
+			//    destination the user landed on). When the atomic-revert path routed
+			//    to the purchases list, that list also watches userPurchasesQuery for
+			//    reappearance and self-dismisses its notice. The cache guard's
+			//    re-strip happens synchronously inside the QueryCache notify callback,
+			//    so the list's useEffect never observes transient success-path
+			//    reappearances.
+			removePurchaseMutator
+				.mutateAsync( purchase.ID )
+				.then( () => {
+					// The server has removed the purchase; refresh the site caches so
+					// the destination site page drops the now-defunct plan.
+					invalidateSiteAfterRemoval();
+				} )
+				.catch( () => {
+					cleanupGuard();
+					queryClient.setQueryData(
+						userPurchasesQuery().queryKey,
+						( old: Purchase[] | undefined ) => {
+							const list = old ?? [];
+							return list.some( ( p ) => p.ID === purchase.ID ) ? list : [ ...list, purchase ];
+						}
+					);
+					createErrorNotice( __( 'Failed to remove your purchase. Please try again.' ), {
+						type: 'snackbar',
+					} );
+					queryClient.invalidateQueries( { queryKey: userPurchasesQuery().queryKey } );
 				} );
-				queryClient.invalidateQueries( { queryKey: userPurchasesQuery().queryKey } );
-			} );
 		}, 1500 );
 	};
 
@@ -1394,16 +1416,19 @@ function CancelPurchaseInner() {
 		const effectiveFlowType = computeEffectiveFlowType( state.cancelIntent );
 
 		if ( shouldFireMutationOnConfirm() ) {
-			// Cancel intent: the mutation already fired at confirm-click via
-			// fireMutationFromConfirm. Navigate with the appropriate search param
-			// so the inline notice renders on the destination screen.
+			// The mutation already fired at confirm-click via fireMutationFromConfirm.
+			// A refund removes the purchase, so route away like the other removal
+			// paths; disabling auto-renew keeps it, so return to its settings page
+			// where the cancelled notice renders.
+			if ( effectiveFlowType === CANCEL_FLOW_TYPE.CANCEL_WITH_REFUND ) {
+				invalidateSiteAfterRemoval();
+				navigateAfterRemoval( __( 'Your refund has been processed and your purchase removed.' ) );
+				return;
+			}
 			navigate( {
 				to: purchaseSettingsRoute.fullPath,
 				params: { purchaseId: purchase.ID },
-				search:
-					effectiveFlowType === CANCEL_FLOW_TYPE.CANCEL_WITH_REFUND
-						? { refunded: true }
-						: getCancelledSearch(),
+				search: getCancelledSearch(),
 			} );
 			return;
 		}

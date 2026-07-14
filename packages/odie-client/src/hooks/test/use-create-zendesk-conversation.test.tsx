@@ -36,6 +36,9 @@ jest.mock( '@automattic/zendesk-client', () => ( {
 		isPending: false,
 		mutateAsync: mockSubmitUserFields,
 	} ),
+	ZENDESK_CUSTOM_FIELD_AI_CHAT_ID: 33538949515668,
+	ZENDESK_CUSTOM_FIELD_WEBSITE_URL: 22054927,
+	ZENDESK_SOURCE_URL_TICKET_FIELD_ID: 23752099174548,
 } ) );
 
 jest.mock( '../../context', () => ( {
@@ -170,6 +173,32 @@ describe( 'useCreateZendeskConversation — Smooch-not-ready retry loop', () => 
 		expect( error.smooch_waited_ms ).toBeLessThanOrEqual( 10_000 );
 		// The user is shown the try-again message.
 		expect( mockSetChat ).toHaveBeenCalled();
+	} );
+
+	it( 'duplicates the critical user fields as ticket-field metadata on the conversation', async () => {
+		smoochCreateConversation.mockResolvedValueOnce( { id: 'conv-1', metadata: {} } );
+
+		const { result } = renderHook( () => useCreateZendeskConversation() );
+
+		await expect( result.current( { createdFrom: 'automatic_escalation' } ) ).resolves.toBe(
+			'conv-1'
+		);
+
+		const {
+			ZENDESK_CUSTOM_FIELD_AI_CHAT_ID,
+			ZENDESK_CUSTOM_FIELD_WEBSITE_URL,
+			ZENDESK_SOURCE_URL_TICKET_FIELD_ID,
+		} = jest.requireMock( '@automattic/zendesk-client' );
+
+		expect( smoochCreateConversation ).toHaveBeenCalledWith( {
+			metadata: expect.objectContaining( {
+				supportInteractionId: 'int-1',
+				odieChatId: 'odie-1',
+				[ `zen:ticket_field:${ ZENDESK_CUSTOM_FIELD_WEBSITE_URL }` ]: 'https://example.com',
+				[ `zen:ticket_field:${ ZENDESK_SOURCE_URL_TICKET_FIELD_ID }` ]: window.location.href,
+				[ `zen:ticket_field:${ ZENDESK_CUSTOM_FIELD_AI_CHAT_ID }` ]: 'odie-1',
+			} ),
+		} );
 	} );
 
 	it( 'does not retry a non-transient error', async () => {

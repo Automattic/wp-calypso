@@ -2,11 +2,12 @@
  * @jest-environment jsdom
  */
 
-import { render, screen } from '@testing-library/react';
+import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { translate } from 'i18n-calypso';
 import MockDate from 'mockdate';
 import moment from 'moment';
+import { createRef } from 'react';
 import { DateRange } from '../index.jsx';
 
 jest.mock( '@wordpress/compose', () => ( {
@@ -18,19 +19,47 @@ function dateToLocaleString( date ) {
 	return moment.isDate( date ) || moment.isMoment( date ) ? moment( date ).format( 'L' ) : date;
 }
 
+function renderInContentArea( props = {}, initialRect = {} ) {
+	let contentAreaRect = {
+		left: 0,
+		width: window.innerWidth,
+		...initialRect,
+	};
+	const renderDateRange = () => (
+		<div className="main">
+			<DateRange moment={ moment } translate={ translate } { ...props } />
+		</div>
+	);
+	const result = render( renderDateRange() );
+	const contentArea = result.container.querySelector( '.main' );
+	jest.spyOn( contentArea, 'getBoundingClientRect' ).mockImplementation( () => contentAreaRect );
+
+	return {
+		...result,
+		setContentAreaRect: ( rect ) => {
+			contentAreaRect = { ...contentAreaRect, ...rect };
+		},
+		setPopoverContentDimensions: ( getDimensions ) => {
+			const popoverContent = screen
+				.getByRole( 'tooltip' )
+				.querySelector( '.date-range__popover-content' );
+			Object.defineProperties( popoverContent, {
+				scrollWidth: {
+					configurable: true,
+					get: () => getDimensions( popoverContent ).scrollWidth,
+				},
+				clientWidth: {
+					configurable: true,
+					get: () => getDimensions( popoverContent ).clientWidth,
+				},
+			} );
+			result.rerender( renderDateRange() );
+		},
+	};
+}
+
 describe( 'DateRange', () => {
 	beforeEach( () => {
-		// Mock matchMedia
-		window.matchMedia = jest.fn().mockImplementation( ( query ) => {
-			return {
-				matches: true,
-				media: query,
-				onchange: null,
-				addListener: jest.fn(),
-				removeListener: jest.fn(),
-			};
-		} );
-
 		// Set the clock for our test assertions so that new Date()
 		// will return a known deterministic date. This important
 		// for the component to render the expected calendars when
@@ -196,69 +225,118 @@ describe( 'DateRange', () => {
 		} );
 	} );
 
+	test( 'should pass guttered content-area boundaries to the Popover', () => {
+		const dateRangeRef = createRef();
+		const { setContentAreaRect } = renderInContentArea(
+			{ ref: dateRangeRef },
+			{ left: 160, width: 800 }
+		);
+		const { leftBoundary, rightBoundary } = dateRangeRef.current.renderPopover().props;
+
+		expect( leftBoundary ).toEqual( expect.any( Function ) );
+		expect( leftBoundary() ).toBe( 160 + window.scrollX + 16 );
+		expect( rightBoundary ).toEqual( expect.any( Function ) );
+		expect( rightBoundary() ).toBe( 160 + 800 + window.scrollX - 16 );
+
+		// An RTL admin sidebar sits on the right: the content area keeps its
+		// left edge but ends before the sidebar.
+		setContentAreaRect( { left: 0, width: 840 } );
+		expect( leftBoundary() ).toBe( 0 + window.scrollX + 16 );
+		expect( rightBoundary() ).toBe( 840 + window.scrollX - 16 );
+	} );
+
+	test( 'should cap the popover content width inside its gutters', async () => {
+		renderInContentArea( {}, { width: 800 } );
+
+		await userEvent.click( screen.getByLabelText( 'Select date range' ) );
+
+		const popoverContent = screen
+			.getByRole( 'tooltip' )
+			.querySelector( '.date-range__popover-content' );
+		expect( popoverContent ).toHaveStyle( { maxWidth: '768px' } );
+	} );
+
 	describe( 'DatePicker element', () => {
-		const matchMediaDefaults = {
-			onchange: null,
-			addListener: jest.fn(),
-			removeListener: jest.fn(),
-		};
-
-		test( 'should set 2 month calendar view on screens >480px by default', async () => {
-			window.matchMedia = jest.fn().mockImplementation( ( query ) => {
-				return {
-					...matchMediaDefaults,
-					matches: true, // > 480px
-					media: query,
-				};
-			} );
-
-			const selectedStartDate = moment( '10-01-2018', 'MM-DD-YYYY' );
-			const selectedEndDate = moment( '11-01-2018', 'MM-DD-YYYY' );
-
-			render(
-				<DateRange
-					selectedStartDate={ selectedStartDate }
-					selectedEndDate={ selectedEndDate }
-					translate={ translate }
-					moment={ moment }
-				/>
-			);
-
-			await userEvent.click( screen.getByLabelText( 'Select date range' ) );
-			const startMonthEl = screen.getByText( 'October 2018' );
-			const endMonthEl = screen.getByText( 'November 2018' );
-
-			expect( startMonthEl ).toBeVisible();
-			expect( endMonthEl ).toBeVisible();
+		const getSelectedDateProps = () => ( {
+			selectedStartDate: moment( '10-01-2018', 'MM-DD-YYYY' ),
+			selectedEndDate: moment( '11-01-2018', 'MM-DD-YYYY' ),
 		} );
 
-		test( 'should set 1 month calendar view on screens <480px by default', async () => {
-			window.matchMedia = jest.fn().mockImplementation( ( query ) => {
-				return {
-					...matchMediaDefaults,
-					matches: false, // < 480px
-					media: query,
-				};
+		test( 'should keep 2 months when the popover content does not overflow', async () => {
+			const { setPopoverContentDimensions } = renderInContentArea( getSelectedDateProps(), {
+				width: 800,
 			} );
 
-			const selectedStartDate = moment( '10-01-2018', 'MM-DD-YYYY' );
-			const selectedEndDate = moment( '11-01-2018', 'MM-DD-YYYY' );
+			await userEvent.click( screen.getByLabelText( 'Select date range' ) );
+			setPopoverContentDimensions( () => ( { scrollWidth: 600, clientWidth: 600 } ) );
 
-			render(
-				<DateRange
-					selectedStartDate={ selectedStartDate }
-					selectedEndDate={ selectedEndDate }
-					translate={ translate }
-					moment={ moment }
-				/>
+			const popover = screen.getByRole( 'tooltip' );
+			expect( popover.querySelectorAll( '.DayPicker-Month' ) ).toHaveLength( 2 );
+			expect( popover ).not.toHaveClass( 'date-range__popover--stacked' );
+		} );
+
+		test( 'should settle at 1 month when only the 2 month layout overflows', async () => {
+			const { setPopoverContentDimensions } = renderInContentArea( getSelectedDateProps(), {
+				width: 600,
+			} );
+
+			await userEvent.click( screen.getByLabelText( 'Select date range' ) );
+			setPopoverContentDimensions( ( content ) => ( {
+				scrollWidth: content.querySelectorAll( '.DayPicker-Month' ).length === 2 ? 700 : 600,
+				clientWidth: 600,
+			} ) );
+
+			await waitFor( () => {
+				const popover = screen.getByRole( 'tooltip' );
+				expect( popover.querySelectorAll( '.DayPicker-Month' ) ).toHaveLength( 1 );
+				expect( popover ).not.toHaveClass( 'date-range__popover--stacked' );
+			} );
+		} );
+
+		test( 'should stack when the 1 month layout still overflows', async () => {
+			const { setPopoverContentDimensions } = renderInContentArea( getSelectedDateProps(), {
+				width: 800,
+			} );
+
+			await userEvent.click( screen.getByLabelText( 'Select date range' ) );
+			setPopoverContentDimensions( () => ( { scrollWidth: 700, clientWidth: 600 } ) );
+
+			await waitFor( () => {
+				const popover = screen.getByRole( 'tooltip' );
+				expect( popover.querySelectorAll( '.DayPicker-Month' ) ).toHaveLength( 1 );
+				expect( popover ).toHaveClass( 'date-range__popover--stacked' );
+			} );
+		} );
+
+		test( 'should restore 2 months when reopening without overflow', async () => {
+			let isNarrow = true;
+			const getDimensions = ( content ) => ( {
+				scrollWidth:
+					isNarrow && content.querySelectorAll( '.DayPicker-Month' ).length === 2 ? 700 : 600,
+				clientWidth: 600,
+			} );
+			const { setContentAreaRect, setPopoverContentDimensions } = renderInContentArea(
+				getSelectedDateProps(),
+				{ width: 600 }
 			);
 
 			await userEvent.click( screen.getByLabelText( 'Select date range' ) );
-			const startMonthEl = screen.getByText( 'October 2018' );
-			const endMonthEl = screen.queryByText( 'November 2018' );
+			setPopoverContentDimensions( getDimensions );
+			await waitFor( () =>
+				expect( screen.getByRole( 'tooltip' ).querySelectorAll( '.DayPicker-Month' ) ).toHaveLength(
+					1
+				)
+			);
 
-			expect( startMonthEl ).toBeVisible();
-			expect( endMonthEl ).not.toBeInTheDocument();
+			await userEvent.click( screen.getByText( 'Apply' ) );
+			isNarrow = false;
+			setContentAreaRect( { width: 900 } );
+			await userEvent.click( screen.getByLabelText( 'Select date range' ) );
+			setPopoverContentDimensions( getDimensions );
+
+			const popover = screen.getByRole( 'tooltip' );
+			expect( popover.querySelectorAll( '.DayPicker-Month' ) ).toHaveLength( 2 );
+			expect( popover ).not.toHaveClass( 'date-range__popover--stacked' );
 		} );
 
 		test( 'should disable dates before firstSelectableDate when set', async () => {

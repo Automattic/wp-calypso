@@ -37,9 +37,11 @@ const mockUseSelector = useSelector as jest.Mock;
 function mockSite( {
 	isGatingBusinessQ1,
 	siteCreationFlow = 'onboarding',
+	createdAt = '2026-07-13 16:07:02',
 }: {
 	isGatingBusinessQ1?: boolean;
 	siteCreationFlow?: string | null;
+	createdAt?: string;
 } = {} ) {
 	mockUseSelector.mockImplementation( () =>
 		isGatingBusinessQ1 !== undefined
@@ -48,6 +50,7 @@ function mockSite( {
 					options: {
 						is_gating_business_q1: isGatingBusinessQ1,
 						site_creation_flow: siteCreationFlow,
+						...( createdAt && { created_at: createdAt } ),
 					},
 			  }
 			: null
@@ -93,6 +96,48 @@ describe( 'usePlansGridRedesignExperiment', () => {
 
 	test( 'is not eligible for logged-in plans pages when the site has the gating flag but was not created by onboarding', () => {
 		mockSite( { isGatingBusinessQ1: true, siteCreationFlow: 'newsletter' } );
+
+		const { result } = renderHook( () =>
+			usePlansGridRedesignExperiment( {
+				flowName: null,
+				isInSignup: false,
+				siteId: 123,
+			} )
+		);
+
+		expect( mockUseExperiment ).toHaveBeenCalledWith( 'calypso_pricing_differentiation_202607', {
+			isEligible: false,
+		} );
+		expect( result.current ).toEqual( INELIGIBLE_RESULT );
+	} );
+
+	test( 'is not eligible for logged-in plans pages when the onboarding-created site is not after the experiment launch', () => {
+		mockSite( {
+			isGatingBusinessQ1: true,
+			siteCreationFlow: 'onboarding',
+			createdAt: '2026-07-09 16:00:00',
+		} );
+
+		const { result } = renderHook( () =>
+			usePlansGridRedesignExperiment( {
+				flowName: null,
+				isInSignup: false,
+				siteId: 123,
+			} )
+		);
+
+		expect( mockUseExperiment ).toHaveBeenCalledWith( 'calypso_pricing_differentiation_202607', {
+			isEligible: false,
+		} );
+		expect( result.current ).toEqual( INELIGIBLE_RESULT );
+	} );
+
+	test( 'is not eligible for logged-in plans pages when the site has no creation date', () => {
+		mockSite( {
+			isGatingBusinessQ1: true,
+			siteCreationFlow: 'onboarding',
+			createdAt: '',
+		} );
 
 		const { result } = renderHook( () =>
 			usePlansGridRedesignExperiment( {

@@ -222,6 +222,10 @@ module.exports = {
 			path.resolve( __dirname, 'src/components/odyssey-query-site-purchases' )
 		),
 		new webpack.NormalModuleReplacementPlugin(
+			/^calypso\/components\/data\/query-sites$/,
+			path.resolve( __dirname, 'src/components/odyssey-query-sites' )
+		),
+		new webpack.NormalModuleReplacementPlugin(
 			/^calypso\/components\/data\/query-products-list$/,
 			path.resolve( __dirname, 'src/components/odyssey-query-products' )
 		),

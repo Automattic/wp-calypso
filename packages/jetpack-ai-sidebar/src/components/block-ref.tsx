@@ -81,7 +81,7 @@ export function getBlockTypeName( name: string ): string {
 		const rest = name.slice( 5 );
 		return rest.charAt( 0 ).toUpperCase() + rest.slice( 1 );
 	}
-	return name || __( 'Block', 'jetpack' );
+	return name || __( 'Block', __i18n_text_domain__ );
 }
 
 /**
@@ -147,7 +147,7 @@ export default function BlockRef( { index, blocks, onFocus, className = '' }: Bl
 	if ( index === null || index === undefined ) {
 		return (
 			<span className={ `jetpack-ai-block-ref is-post-wide ${ className }`.trim() }>
-				{ __( 'Post-wide', 'jetpack' ) }
+				{ __( 'Post-wide', __i18n_text_domain__ ) }
 			</span>
 		);
 	}
@@ -155,7 +155,7 @@ export default function BlockRef( { index, blocks, onFocus, className = '' }: Bl
 	if ( index < 0 || index >= blocks.length ) {
 		return (
 			<span className={ `jetpack-ai-block-ref is-stale ${ className }`.trim() }>
-				{ __( 'Block no longer present', 'jetpack' ) }
+				{ __( 'Block no longer present', __i18n_text_domain__ ) }
 			</span>
 		);
 	}
@@ -175,7 +175,7 @@ export default function BlockRef( { index, blocks, onFocus, className = '' }: Bl
 			type="button"
 			className={ `jetpack-ai-block-ref is-clickable ${ className }`.trim() }
 			onClick={ () => onFocus( index ) }
-			title={ __( 'Scroll to block in editor', 'jetpack' ) }
+			title={ __( 'Scroll to block in editor', __i18n_text_domain__ ) }
 		>
 			<BlockChipContent block={ block } />
 		</button>

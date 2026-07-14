@@ -834,10 +834,14 @@ export const normalizers = {
 		}
 
 		let data = [];
-		if ( payload.data ) {
-			data = payload.data.map( ( item ) => {
-				return { period: item[ 0 ], value: item[ 1 ] };
-			} );
+		// When the requested window has no rows at all, the endpoint returns a single
+		// `{ date, p }` object instead of the usual `[ date, value ]` tuples.
+		if ( Array.isArray( payload.data ) ) {
+			data = payload.data
+				.filter( ( item ) => Array.isArray( item ) )
+				.map( ( item ) => {
+					return { period: item[ 0 ], value: item[ 1 ] };
+				} );
 		}
 
 		let pages = [];
@@ -850,7 +854,9 @@ export const normalizers = {
 			} );
 		}
 
-		return { pages, data };
+		// The endpoint also returns the video's attachment post, which carries
+		// the title and upload date.
+		return { pages, data, post: payload.post ?? null };
 	},
 
 	/**

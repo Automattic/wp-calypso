@@ -55,7 +55,7 @@ export function InterimOmnibar( {
 	onToggleNotifications,
 }: Props ) {
 	const user = userProp ?? emptyUser;
-	const siteId = user.primary_blog ?? null;
+	const siteId = site?.ID ?? null;
 	const siteSlug = site?.slug ?? null;
 	const siteAdminUrl = site?.options?.admin_url ?? null;
 	const isUnlaunchedSite = !! site && site.launch_status === 'unlaunched' && ! site.is_a4a_dev_site;

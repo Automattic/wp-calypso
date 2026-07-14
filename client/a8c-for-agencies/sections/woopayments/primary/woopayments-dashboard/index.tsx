@@ -1,4 +1,10 @@
+import {
+	agencySitesWithPluginsQuery,
+	agencyWooPaymentsDataQuery,
+	jetpackAgencyLicensesQuery,
+} from '@automattic/api-queries';
 import { useDesktopBreakpoint } from '@automattic/viewport-react';
+import { useQuery } from '@tanstack/react-query';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { useMemo } from 'react';
@@ -6,10 +12,7 @@ import { LayoutWithGuidedTour as Layout } from 'calypso/a8c-for-agencies/compone
 import LayoutTop from 'calypso/a8c-for-agencies/components/layout/layout-with-payment-notification';
 import { PageBodyPlaceholder } from 'calypso/a8c-for-agencies/components/page-placeholder';
 import MobileSidebarNavigation from 'calypso/a8c-for-agencies/components/sidebar/mobile-sidebar-navigation';
-import useFetchAllLicenses from 'calypso/a8c-for-agencies/data/purchases/use-fetch-all-licenses';
-import useFetchSitesWithPlugins from 'calypso/a8c-for-agencies/data/sites/use-fetch-sites-with-plugins';
 import MissingPaymentSettingsNotice from 'calypso/a8c-for-agencies/sections/referrals/common/missing-payment-settings-notice';
-import { useFetchTestConnections } from 'calypso/a8c-for-agencies/sections/sites/hooks/use-fetch-test-connection';
 import {
 	LicenseFilter,
 	LicenseSortField,
@@ -20,13 +23,14 @@ import LayoutHeader, {
 	LayoutHeaderTitle as Title,
 	LayoutHeaderActions as Actions,
 } from 'calypso/layout/hosting-dashboard/header';
+import { useSelector } from 'calypso/state';
+import { getActiveAgencyId } from 'calypso/state/a8c-for-agencies/agency/selectors';
 import AddWooPaymentsToSite from '../../add-woopayments-to-site';
 import { WooPaymentsProvider } from '../../context';
 import WooPaymentsDashboardContent from '../../dashboard-content';
-import useFetchWooPaymentsData from '../../hooks/use-fetch-woopayments-data';
 import WooPaymentsDashboardEmptyState from './empty-state';
-import type { Site } from '../../../sites/types';
-import type { SitesWithWooPaymentsState, SitesWithWooPaymentsPlugins } from '../../types';
+import { useTestConnections } from './use-test-connections';
+import type { SitesWithWooPaymentsState } from '../../types';
 
 import './style.scss';
 
@@ -58,21 +62,36 @@ const WooPaymentsDashboard = () => {
 
 	const title = translate( 'WooPayments commissions' );
 
-	const { data: licensesWithWooPayments, isLoading: isLoadingLicensesWithWooPayments } =
-		useFetchAllLicenses(
-			LicenseFilter.Attached,
-			'woopayments',
-			LicenseSortField.IssuedAt,
-			LicenseSortDirection.Descending
-		);
+	const agencyId = useSelector( getActiveAgencyId );
 
-	const { isLoading: isLoadingSitesWithPlugins, data: sitesWithPlugins } = useFetchSitesWithPlugins(
-		[ 'woocommerce-payments/woocommerce-payments' ]
-	);
+	const { data: licenseSites, isLoading: isLoadingLicensesWithWooPayments } = useQuery( {
+		...jetpackAgencyLicensesQuery( agencyId ?? 0, {
+			filter: LicenseFilter.Attached,
+			search: 'woopayments',
+			sortField: LicenseSortField.IssuedAt,
+			sortDirection: LicenseSortDirection.Descending,
+		} ),
+		enabled: !! agencyId,
+		refetchOnWindowFocus: false,
+		select: ( licenses ) =>
+			licenses.map( ( license ) => ( {
+				blogId: license.blog_id ?? 0,
+				siteUrl: license.siteurl ?? '',
+				state: '',
+			} ) ),
+	} );
+
+	const { isLoading: isLoadingSitesWithPlugins, data: sitesWithPlugins } = useQuery( {
+		...agencySitesWithPluginsQuery( agencyId ?? 0, [
+			'woocommerce-payments/woocommerce-payments',
+		] ),
+		enabled: !! agencyId,
+		refetchOnWindowFocus: false,
+	} );
 
 	const sitesWithWooPaymentsPlugins = useMemo( () => {
 		return (
-			sitesWithPlugins?.map( ( site: SitesWithWooPaymentsPlugins ) => {
+			sitesWithPlugins?.map( ( site ) => {
 				return {
 					blogId: site.blog_id,
 					siteUrl: site.url,
@@ -82,27 +101,19 @@ const WooPaymentsDashboard = () => {
 		);
 	}, [ sitesWithPlugins ] );
 
-	// Combine sites with WooPayments licenses (assigned via A4A) and plugins
 	const allSitesWithWooPayments = useMemo( () => {
-		return [ ...( licensesWithWooPayments?.items || [] ), ...sitesWithWooPaymentsPlugins ];
-	}, [ licensesWithWooPayments, sitesWithWooPaymentsPlugins ] );
+		return [ ...( licenseSites || [] ), ...sitesWithWooPaymentsPlugins ];
+	}, [ licenseSites, sitesWithWooPaymentsPlugins ] );
 
-	const testConnections = useFetchTestConnections(
-		true,
-		allSitesWithWooPayments.map( ( site: SitesWithWooPaymentsState ) => {
-			return {
-				blog_id: site.blogId,
-				is_connection_healthy: true,
-			} as Site;
-		} ) || []
-	);
+	const testConnections = useTestConnections( allSitesWithWooPayments );
 
 	const isLoading = isLoadingLicensesWithWooPayments || isLoadingSitesWithPlugins;
 	const showEmptyState = ! isLoading && ! allSitesWithWooPayments.length;
 
-	const { data: woopaymentsData, isLoading: isLoadingWooPaymentsData } = useFetchWooPaymentsData(
-		!! allSitesWithWooPayments.length // Only fetch data if there are sites with WooPayments plugins or licenses
-	);
+	const { data: woopaymentsData, isLoading: isLoadingWooPaymentsData } = useQuery( {
+		...agencyWooPaymentsDataQuery( agencyId ?? 0 ),
+		enabled: !! agencyId && !! allSitesWithWooPayments.length,
+	} );
 
 	const sortedSitesWithWooPayments = useMemo( () => {
 		return Array.from(

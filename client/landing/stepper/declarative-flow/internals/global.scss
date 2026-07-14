@@ -120,7 +120,7 @@ button {
 			&.new-or-existing-site,
 			&.domains:not( .copy-site ):not( .ai-site-builder ):not( .domain-and-plan ):not(
 					.onboarding
-				):not( .newsletter ):not( .readymade-template ):not( .reblogging ):not( .start-writing ) {
+				):not( .newsletter ):not( .readymade-template ):not( .reblogging ) {
 				margin-top: -60px;
 			}
 		}

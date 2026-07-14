@@ -26,6 +26,10 @@ const loadStatsPostDetail = () =>
 	import(
 		/* webpackChunkName: "async-load-calypso-my-sites-stats-stats-post-detail" */ './stats-post-detail'
 	);
+const loadStatsVideoDetail = () =>
+	import(
+		/* webpackChunkName: "async-load-calypso-my-sites-stats-stats-video-detail" */ './stats-video-detail'
+	);
 const loadCommentFollows = () =>
 	import(
 		/* webpackChunkName: "async-load-calypso-my-sites-stats-comment-follows" */ './comment-follows'
@@ -335,8 +339,21 @@ export function summary( context, next ) {
 	);
 	const period = rangeOfPeriod( activeFilter.period, date );
 
-	const extraProps =
-		context.params.module === 'videodetails' ? { postId: parseInt( queryOptions.post, 10 ) } : {};
+	// Video details has its own dedicated page, modeled on the single post page.
+	if ( context.params.module === 'videodetails' ) {
+		context.primary = (
+			<StatsPageLoader>
+				<AsyncLoad
+					require={ loadStatsVideoDetail }
+					placeholder={ PageLoading }
+					postId={ parseInt( queryOptions.post, 10 ) }
+					period={ period }
+					context={ context }
+				/>
+			</StatsPageLoader>
+		);
+		return next();
+	}
 
 	// The option is used for stats queries only.
 	const statsQueryOptions = pick( queryOptions, [ 'num', 'summarize', 'geoMode', 'viewType' ] );
@@ -356,7 +373,6 @@ export function summary( context, next ) {
 				dateRange={ dateRange }
 				context={ context }
 				period={ period }
-				{ ...extraProps }
 			/>
 		</StatsPageLoader>
 	);
