@@ -101,55 +101,35 @@ module.exports = {
 					// own `postcss.config.js` that they use for their webpack bundling process.
 					config: false,
 					plugins: [
-						// Scopes every selector compiled from this repo's own Stats/Calypso
-						// component stylesheets to `#wpcom` (the app's own mount point), so generic
-						// classes shared across hundreds of components (`.card`, `.button`, `.notice`,
-						// etc.) can't collide with wp-admin's own chrome or other plugins' admin
-						// pages. Deliberately scoped to first-party code only — see `ignoreFiles`.
+						// Scopes this repo's own component styles to #wpcom (Odyssey's mount
+						// point), so generic classes (`.card`, `.button`, etc.) can't collide with
+						// wp-admin's own chrome. See AGENTS.md > CSS Scoping.
 						prefixSelectorPlugin( {
-							// `.color-scheme`/`.ReactModalPortal` cover the older Popover (`RootChild`)
-							// and Dialog (`react-modal`) portal roots. `[data-base-ui-portal]` and
-							// `[data-wp-compat-overlay-slot]` cover the newer `@wordpress/ui` floating
-							// components (`Popover`, `Tooltip`, `Dialog` — used by e.g. `StatsInfotip`,
-							// a first-party component), which are built on Base UI/Floating UI and
-							// portal straight to `<body>` with one of those two attributes as their
-							// only stable marker — verified against their source (`@base-ui/react` and
-							// `@wordpress/ui`'s `wp-compat-overlay-slot`), since neither renders inside
-							// `#wpcom` and neither carries a fixed class name.
+							// #wpcom for normal content. The rest are portal roots first-party
+							// components can render into: .color-scheme/.ReactModalPortal (Popover/
+							// Dialog), [data-base-ui-portal]/[data-wp-compat-overlay-slot] (@wordpress/ui
+							// Popover/Tooltip/Dialog, e.g. StatsInfotip).
 							prefix:
 								':where(#wpcom, .color-scheme, .ReactModalPortal, [data-base-ui-portal], [data-wp-compat-overlay-slot])',
 							ignoreFiles: [
-								// Already hand-scopes its own selectors (some deliberately target real
-								// wp-admin elements like `body.wp-admin #wpcontent`) — running this over
-								// it again would double-nest and break those.
+								// Already hand-scoped; re-prefixing would double-nest it.
 								'odyssey-stats/src/app.scss',
-								// Calypso's global stylesheet (typography/reset/color-schemes/RTL
-								// defaults applied to `html`, `body`, etc., plus the `@wordpress/components`
-								// build CSS it pulls in) is left as-is for now, not part of this pass.
+								// Calypso's global stylesheet (html/body reset, @wordpress/components
+								// CSS) — left unscoped for now.
 								'client/assets/stylesheets/style.scss',
-								// Third-party package CSS (charts, `@wordpress/components`, etc.) is out
-								// of scope here — only this repo's own component stylesheets are scoped.
+								// Third-party CSS is out of scope here.
 								/node_modules/,
 							],
-							// A handful of rules intentionally target the real `<html>`/`<body>`
-							// directly: RTL flags (`.rtl`, `[dir=rtl]`), `:lang()`/`[lang*=…]`
-							// language-based font overrides, and dark-mode `:root`/`:root[data-theme=…]`
-							// selectors — either from Reader components bundled in transitively, or
-							// (for `[lang*=…]`) from `@automattic/typography`'s font mixin, which
-							// first-party files `@import` directly, so its rules get compiled straight
-							// into those files rather than staying inside `node_modules` where the
-							// `ignoreFiles` entry above would otherwise catch them. All of these assume
-							// their target can appear anywhere in the document, not just under #wpcom.
-							// Prefixing them would require `:root`/`html`/`body` to be a descendant of
-							// `#wpcom`, which can never happen — the rule would just go dead. Leave
-							// them untouched instead; they stay unscoped, same as before this change.
+							// Selectors that target the real <html>/<body>/document root. Prefixing
+							// these would require #wpcom to be its own ancestor, which is impossible —
+							// the rule would just go dead. Leave them unscoped instead.
 							exclude: [
-								/^:root(?![\w-])/,
-								/(^|[\s,])(html|body)(?=$|[\s.[:#,])/,
-								/^\.rtl(?![\w-])/,
-								/^:lang\(/,
-								/^\[lang/,
-								/^\[dir[~|^$*]?=/,
+								/^:root(?![\w-])/, // :root, :root[data-theme=dark] .foo
+								/(^|[\s,])(html|body)(?=$|[\s.[:#,])/, // html.rtl, body.lockscroll
+								/^\.rtl(?![\w-])/, // .rtl button
+								/^:lang\(/, // :lang(he) .rtl
+								/^\[lang/, // [lang*=fr] .wp-brand-font
+								/^\[dir[~|^$*]?=/, // [dir=rtl] .chevron
 							],
 						} ),
 						autoprefixerPlugin(),
