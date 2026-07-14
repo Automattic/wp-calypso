@@ -53,6 +53,7 @@ import { OnboardingProgress } from '../components/onboarding-progress';
 import { useShowOnboardingProgress } from '../components/onboarding-progress/use-show-onboarding-progress';
 import { useOnboardingHelpExperiment } from '../components/use-onboarding-help-experiment';
 import HundredYearPlanStepWrapper from '../hundred-year-plan-step-wrapper';
+import { getSkipSuggestionCopy } from './get-skip-suggestion-copy';
 import type { Step as StepType } from '../../types';
 import type { FreeDomainSuggestion } from '@automattic/api-core';
 import type { HelpCenterSelect, OnboardSelect } from '@automattic/data-stores';
@@ -199,13 +200,7 @@ const DomainSearchStep: StepType< {
 				! isDomainAndPlanFlow( flow ),
 			// AI Website Builder onboarding requires a paid plan, so skipping the
 			// domain doesn't start a free site — drop the "start free" framing.
-			skipSuggestionCopy: isAIBuilderOnboardingFlow( flow )
-				? {
-						// translators: %(domain)s is the free WordPress.com subdomain
-						title: __( 'Start with %(domain)s' ),
-						buttonText: __( 'Choose a domain later' ),
-				  }
-				: undefined,
+			skipSuggestionCopy: getSkipSuggestionCopy( flow, __ ),
 			includeDotBlogSubdomain:
 				! isHundredYearPlanFlow( flow ) &&
 				! isHundredYearDomainFlow( flow ) &&
