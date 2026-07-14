@@ -9,6 +9,11 @@ import {
 import { useMutation, useQueries, useQuery, useQueryClient } from '@tanstack/react-query';
 import type { ReadSpace, ReadSpaceDetails } from '@automattic/api-core';
 
+type ReadSpaceQueryOptions = {
+	enabled?: boolean;
+	refetchOnMount?: boolean | 'always';
+};
+
 /**
  * The user's spaces for the sidebar and space views, from the live list
  * endpoint. Summary shape only (no sources or tags) — use `useSpaceBySlug` for those.
@@ -23,12 +28,14 @@ export function useSpaces(): ReadSpace[] {
  * This is how a slug-addressed space view resolves itself: the returned detail
  * carries the numeric `id` that then drives the streams and mutations. A 404
  * (unknown / renamed-away / not-yours slug) surfaces as the query's error, which
- * the view turns into the not-found state. Disabled until a slug is known.
+ * the view turns into the not-found state. `options` tunes the query config; the
+ * caller's `enabled` is ANDed with a known slug, so it never runs without one.
  */
-export function useSpaceBySlug( slug: string | null | undefined ) {
+export function useSpaceBySlug( slug: string | null | undefined, options?: ReadSpaceQueryOptions ) {
 	return useQuery( {
 		...readSpaceBySlugQuery( slug ?? '' ),
-		enabled: Boolean( slug ),
+		...options,
+		enabled: Boolean( slug ) && ( options?.enabled ?? true ),
 	} );
 }
 

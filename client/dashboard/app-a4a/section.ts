@@ -6,6 +6,7 @@ export const A4A_DASHBOARD_SECTION_DEFINITION = {
 export const A4A_DASHBOARD_SECTION_PATHS = [
 	'/',
 	'/sites',
+	'/team',
 	'/oauth/token',
 	'/overview',
 	'/marketplace/exclusive-offers',

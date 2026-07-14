@@ -44,6 +44,7 @@ import {
 	isSiteAction,
 	type SiteAction,
 } from '../../me/billing-purchases/site-level-actions/constants';
+import { getAppSetupTitle, getSMSSetupTitle } from '../../me/security-two-step-auth/title';
 import { isOptInToggleVisible } from '../../utils/hosting-dashboard-enrollment';
 import { isDashboardBackport } from '../../utils/is-dashboard-backport';
 import { reauthRequiredLink } from '../../utils/link';
@@ -721,7 +722,7 @@ export const securityTwoStepAuthAppRoute = createRoute( {
 	head: () => ( {
 		meta: [
 			{
-				title: __( 'Set up two-step authentication' ),
+				title: getAppSetupTitle(),
 			},
 		],
 	} ),
@@ -745,7 +746,7 @@ export const securityTwoStepAuthSMSRoute = createRoute( {
 	head: () => ( {
 		meta: [
 			{
-				title: __( 'Set up two-step authentication' ),
+				title: getSMSSetupTitle(),
 			},
 		],
 	} ),

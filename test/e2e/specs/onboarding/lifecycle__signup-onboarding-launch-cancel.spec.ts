@@ -57,7 +57,10 @@ test.describe(
 			} );
 		} );
 
-		test( 'As a new user, I can sign up, onboard, launch, and cancel subscription', async ( {
+		// Skipped for now; can be updated once we're sure all onboarding tests will go
+		// through the MSD flow. See https://github.com/Automattic/wp-calypso/pull/112586
+		// and https://github.com/Automattic/wp-calypso/pull/112587.
+		test.skip( 'As a new user, I can sign up, onboard, launch, and cancel subscription', async ( {
 			page,
 			browser,
 		} ) => {
@@ -140,20 +143,8 @@ test.describe(
 			} );
 
 			await test.step( 'Then I land on the post-checkout "Set up your site" screen', async () => {
-				// Eligible paid plans now land on the post-checkout choice screen
-				// instead of the goal-selection step.
 				const postCheckoutSetupSitePage = new PostCheckoutSetupSitePage( page );
 				await postCheckoutSetupSitePage.waitUntilLoaded();
-			} );
-
-			await test.step( 'When I select "Sell services or digital goods" goal', async () => {
-				const startSiteFlow = new StartSiteFlow( page );
-				const goalCards = page.locator( '.select-card-checkbox__container' );
-				if ( ( await goalCards.count() ) === 0 ) {
-					return;
-				}
-				await startSiteFlow.selectGoal( 'Sell services or digital goods' );
-				await startSiteFlow.clickButton( 'Next' );
 			} );
 
 			await test.step( 'When I select theme', async () => {

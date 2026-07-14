@@ -8,15 +8,37 @@ import { useAddBlogStickerMutation } from 'calypso/blocks/blog-stickers/use-add-
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { useSiteData } from 'calypso/landing/stepper/hooks/use-site-data';
 import { ONBOARD_STORE, SITE_STORE } from 'calypso/landing/stepper/stores';
+import { logToLogstash } from 'calypso/lib/logstash';
 import wpcom from 'calypso/lib/wp';
 import { useDispatch } from 'calypso/state';
 import { setSelectedSiteId } from 'calypso/state/ui/actions';
 import { stepsWithRequiredLogin } from '../../../utils/steps-with-required-login';
 import { STEPS } from '../../internals/steps';
+import { EARLY_PROVISION_TARGET_WPCOM_ATOMIC } from '../../internals/steps-repository/create-site/early-provisioning';
 import { ProcessingResult } from '../../internals/steps-repository/processing-step/constants';
 import { FlowV2, SubmitHandler } from '../../internals/types';
 
 const SiteIntent = Onboard.SiteIntent;
+
+function logEarlyWpcomAtomicEvent(
+	type: string,
+	siteId: string | number,
+	properties: Record< string, unknown > = {}
+): void {
+	const blogId = Number( siteId );
+
+	void logToLogstash( {
+		feature: 'calypso_client',
+		message: 'AI Site Builder early WPCOM Atomic provisioning',
+		severity: 'debug',
+		...( Number.isNaN( blogId ) ? {} : { blog_id: blogId } ),
+		properties: {
+			type: `ai_site_builder_early_wpcom_atomic_${ type }`,
+			...properties,
+		},
+	} ).catch( () => {} );
+}
+
 const deletePage = async ( siteId: string | number, pageId: number ): Promise< boolean > => {
 	try {
 		await wpcom.req.post( {
@@ -151,10 +173,15 @@ const aiSiteBuilder: FlowV2< typeof initialize > = {
 							}
 							// get the prompt from the get url
 							const prompt = queryParams.get( 'prompt' );
-							let promptParam = '';
+							let promptValue = prompt;
 
 							const source = queryParams.get( 'source' );
 							const specId = queryParams.get( 'spec_id' );
+							const provisionTarget =
+								queryParams.get( 'provision_target' ) ??
+								queryParams.get( 'early_provision_target' );
+							const isEarlyWpcomAtomicProvisioning =
+								provisionTarget === EARLY_PROVISION_TARGET_WPCOM_ATOMIC;
 
 							/**
 							 * Redirect behavior after site creation:
@@ -181,14 +208,14 @@ const aiSiteBuilder: FlowV2< typeof initialize > = {
 							 * | 1                  | (not set)            | /wp-admin/                                        |
 							 * | 1                  | 0                    | /wp-admin/site-editor.php?canvas=edit&ai-step=spec |
 							 * | 1                  | 1                    | /wp-admin/                                        |
+							 *
+							 * WPCOM Atomic provision targets use Easy Site Editor instead of the legacy
+							 * Big Sky site-editor surface.
 							 */
 							const triggerBackendBuildParam = queryParams.get( 'trigger_backend_build' );
 							const triggerBackendBuild = gardenName
 								? triggerBackendBuildParam !== '0' // Garden sites: default to /wp-admin/, opt-out with =0
 								: triggerBackendBuildParam === '1'; // Non-garden: default to site-editor, opt-in with =1
-
-							let sourceParam = '';
-							let specIdParam = '';
 
 							const pendingActions = [
 								resolveSelect( SITE_STORE ).getSite( siteId ), // To get the URL.
@@ -249,21 +276,12 @@ const aiSiteBuilder: FlowV2< typeof initialize > = {
 								}
 							}
 
-							if ( prompt ) {
-								promptParam = `&prompt=${ encodeURIComponent( prompt ) }`;
-							} else if ( window.sessionStorage.getItem( 'stored_ai_prompt' ) ) {
-								promptParam = `&prompt=${ encodeURIComponent(
-									window.sessionStorage.getItem( 'stored_ai_prompt' ) || ''
-								) }`;
+							const storedPrompt = window.sessionStorage.getItem( 'stored_ai_prompt' );
+							if ( ! prompt && storedPrompt ) {
+								promptValue = storedPrompt;
 								window.sessionStorage.removeItem( 'stored_ai_prompt' );
 							}
 
-							if ( source ) {
-								sourceParam = `&source=${ encodeURIComponent( source ) }`;
-							}
-							if ( specId ) {
-								specIdParam = `&spec_id=${ encodeURIComponent( specId ) }`;
-							}
 							if ( triggerBackendBuild ) {
 								const ph = queryParams.get( '_ph' );
 								window.location.replace(
@@ -272,9 +290,30 @@ const aiSiteBuilder: FlowV2< typeof initialize > = {
 									} )
 								);
 							} else {
-								window.location.replace(
-									`${ siteURL }/wp-admin/site-editor.php?canvas=edit&ai-step=spec&referrer=${ AI_SITE_BUILDER_FLOW }${ promptParam }${ sourceParam }${ specIdParam }`
-								);
+								const siteEditorUrl = isEarlyWpcomAtomicProvisioning
+									? addQueryArgs( `${ siteURL }/wp-admin/admin.php`, {
+											page: 'easy-site-editor',
+											referrer: AI_SITE_BUILDER_FLOW,
+											...( source ? { source } : {} ),
+											...( specId ? { spec_id: specId } : {} ),
+									  } )
+									: addQueryArgs( `${ siteURL }/wp-admin/site-editor.php`, {
+											canvas: 'edit',
+											p: '/',
+											'ai-step': 'spec',
+											referrer: AI_SITE_BUILDER_FLOW,
+											...( promptValue ? { prompt: promptValue } : {} ),
+											...( source ? { source } : {} ),
+											...( specId ? { spec_id: specId } : {} ),
+									  } );
+
+								if ( isEarlyWpcomAtomicProvisioning ) {
+									logEarlyWpcomAtomicEvent( 'easy_site_editor_redirect', siteId, {
+										spec_id: specId,
+									} );
+								}
+
+								window.location.replace( siteEditorUrl );
 							}
 						} else if ( providedDependencies.isLaunched ) {
 							const site = await resolveSelect( SITE_STORE ).getSite(

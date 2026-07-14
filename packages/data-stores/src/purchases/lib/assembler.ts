@@ -29,6 +29,8 @@ export function createPurchaseObject( purchase: RawPurchase ): Purchase {
 		expiryDate: purchase.expiry_date,
 		paymentExpiryDate: purchase.payment_expiry_date,
 		expiryStatus: snakeToCamelCase( purchase.expiry_status ),
+		daysUntilExpiry:
+			purchase.days_until_expiry == null ? null : Number( purchase.days_until_expiry ),
 		iapPurchaseManagementLink: purchase.iap_purchase_management_link,
 		includedDomain: purchase.included_domain,
 		includedDomainPurchaseAmount: purchase.included_domain_purchase_amount,

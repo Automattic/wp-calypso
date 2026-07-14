@@ -19,6 +19,7 @@ import './style.scss';
  * Module variables
  */
 const NO_DATE_SELECTED_VALUE = null;
+const POPOVER_GUTTER = 16;
 const noop = () => {};
 
 export class DateRange extends Component {
@@ -127,20 +128,24 @@ export class DateRange extends Component {
 			initialStartDate: startDate, // cache values in case we need to reset to them
 			initialEndDate: endDate, // cache values in case we need to reset to them
 			focusedMonth: this.props.focusedMonth,
-			numberOfMonths: this.getNumberOfMonths(),
+			availableWidth: null,
+			numberOfMonths: 2,
+			isPopoverStacked: false,
 		};
 
 		// Ref to the Trigger <button> used to position the Popover component
 		this.triggerButtonRef = createRef();
 		this.throttledHandleResize = debounce( () => {
-			this.setState( {
-				numberOfMonths: this.getNumberOfMonths(),
-			} );
+			this.setState( this.getOptimisticPopoverLayoutState() );
 		}, 250 );
 	}
 
 	componentDidMount() {
 		window.addEventListener( 'resize', this.throttledHandleResize );
+	}
+
+	componentDidUpdate() {
+		this.settleLayout();
 	}
 
 	componentWillUnmount() {
@@ -154,6 +159,7 @@ export class DateRange extends Component {
 	openPopover = () => {
 		const newState = {
 			popoverVisible: true,
+			...this.getOptimisticPopoverLayoutState(),
 		};
 		if ( this.props.trackExternalDateChanges ) {
 			newState.startDate = this.props.selectedStartDate;
@@ -267,7 +273,7 @@ export class DateRange extends Component {
 			return; // bail out
 		}
 
-		const numMonthsShowing = this.getNumberOfMonths(); // 2 or 1
+		const numMonthsShowing = this.state.numberOfMonths; // 2 or 1
 
 		// If we focused the endDate and we're showing more than 1 month
 		// then the picker should focus the month before
@@ -447,9 +453,55 @@ export class DateRange extends Component {
 		return this.getLocaleDateFormat(); // "MM/DD/YYY" or locale equivalent
 	}
 
-	getNumberOfMonths() {
-		return window.matchMedia( '(min-width: 520px)' ).matches ? 2 : 1;
+	getContentAreaElement() {
+		return (
+			this.triggerButtonRef?.current?.closest( '.main, #wpcontent, .layout__content' ) ||
+			document.body
+		);
 	}
+
+	getAvailableWidth() {
+		return this.getContentAreaElement().getBoundingClientRect().width || window.innerWidth;
+	}
+
+	getPopoverAvailableWidth( availableWidth ) {
+		return Math.max( 0, availableWidth - 2 * POPOVER_GUTTER );
+	}
+
+	getOptimisticPopoverLayoutState() {
+		return {
+			availableWidth: this.getAvailableWidth(),
+			numberOfMonths: 2,
+			isPopoverStacked: false,
+		};
+	}
+
+	setPopoverContentRef = ( element ) => {
+		this.popoverContentElement = element;
+
+		if ( element ) {
+			this.settleLayout();
+		}
+	};
+
+	settleLayout = () => {
+		const contentElement = this.popoverContentElement;
+		if ( ! this.state.popoverVisible || ! contentElement ) {
+			return;
+		}
+
+		// Ignore a single pixel of overflow caused by subpixel layout rounding.
+		if ( contentElement.scrollWidth <= contentElement.clientWidth + 1 ) {
+			return;
+		}
+
+		// A settle cycle only degrades; open and resize restore the optimistic layout.
+		if ( this.state.numberOfMonths === 2 ) {
+			this.setState( { numberOfMonths: 1 } );
+		} else if ( ! this.state.isPopoverStacked ) {
+			this.setState( { isPopoverStacked: true } );
+		}
+	};
 
 	handleDateRangeChange = ( startDate, endDate ) => {
 		this.setState( {
@@ -470,9 +522,12 @@ export class DateRange extends Component {
 		} );
 	};
 
-	// Expose closePopoverAndCommit to the parent component for shortcut clicks.
+	// Expose both close helpers to the parent component for shortcut clicks.
+	// Commit applies the shortcut's range; the plain close neither commits nor
+	// reverts (used by shortcuts that navigate elsewhere, e.g. "All time" —
+	// revert would fire onDateCommit with the stale range and navigate back).
 	handleShortcutClick = ( shortcut ) => {
-		this.props.onShortcutClick( shortcut, this.closePopoverAndCommit );
+		this.props.onShortcutClick( shortcut, this.closePopoverAndCommit, this.closePopover );
 	};
 
 	/**
@@ -480,6 +535,10 @@ export class DateRange extends Component {
 	 * @returns {import('react').Element} the Popover component
 	 */
 	renderPopover() {
+		const popoverMaxWidth =
+			this.state.availableWidth != null
+				? this.getPopoverAvailableWidth( this.state.availableWidth )
+				: undefined;
 		const headerProps = {
 			customTitle: this.props.customTitle,
 			startDate: this.state.startDate,
@@ -503,13 +562,27 @@ export class DateRange extends Component {
 
 		return (
 			<Popover
-				className="date-range__popover"
+				className={ clsx( 'date-range__popover', {
+					'date-range__popover--stacked': this.state.isPopoverStacked,
+				} ) }
 				isVisible={ this.state.popoverVisible }
 				context={ this.triggerButtonRef.current }
+				leftBoundary={ () => {
+					const contentAreaRect = this.getContentAreaElement().getBoundingClientRect();
+					return contentAreaRect.left + window.scrollX + POPOVER_GUTTER;
+				} }
+				rightBoundary={ () => {
+					const contentAreaRect = this.getContentAreaElement().getBoundingClientRect();
+					return contentAreaRect.left + contentAreaRect.width + window.scrollX - POPOVER_GUTTER;
+				} }
 				position="bottom"
 				onClose={ this.closePopover }
 			>
-				<div className="date-range__popover-content">
+				<div
+					ref={ this.setPopoverContentRef }
+					className="date-range__popover-content"
+					style={ popoverMaxWidth != null ? { maxWidth: popoverMaxWidth } : undefined }
+				>
 					<div
 						className={ clsx( 'date-range__popover-inner', {
 							'date-range__popover-inner__hasoverlay': !! this.props.overlay,

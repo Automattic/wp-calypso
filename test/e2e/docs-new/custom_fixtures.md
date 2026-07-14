@@ -34,14 +34,14 @@ All custom fixtures are located in `test/e2e/lib/pw-base.ts`. This file exports 
 Custom fixtures should be prefixed by the fixture type, for example `pageEditor`, or `accounti18n`.
 Using a consistent prefix convention helps new contributors quickly identify the purpose and scope of each fixture, improves code readability, and makes it easier to locate and maintain fixtures as the test suite grows. This approach also reduces confusion and potential naming conflicts by clearly distinguishing between different fixture types.
 
-| Prefix      | Types                                     | Example            |
-| ----------- | ----------------------------------------- | ------------------ |
-| account     | `TestAccount`                             | `accounti18n`      |
-| client      | `EmailClient` or `RestAPIClient`          | `clientEmail`      |
-| component   | `packages/calypso-e2e/src/lib/components` | `componentSidebar` |
-| environment | `EnvVariables`                            | `environment`      |
-| flow        | `packages/calypso-e2e/src/lib/flows`      | `flowStartWriting` |
-| helper      | `DataHelper` or `MediaHelper`             | `helperData`       |
-| page        | `packages/calypso-e2e/src/lib/pages`      | `pageAdvertising`  |
-| secrets     | `Secrets`                                 | `secrets`          |
-| site        | `NewSiteResponse`                         | `sitePublic`       |
+| Prefix      | Types                                     | Example               |
+| ----------- | ----------------------------------------- | --------------------- |
+| account     | `TestAccount`                             | `accounti18n`         |
+| client      | `EmailClient` or `RestAPIClient`          | `clientEmail`         |
+| component   | `packages/calypso-e2e/src/lib/components` | `componentSidebar`    |
+| environment | `EnvVariables`                            | `environment`         |
+| flow        | `packages/calypso-e2e/src/lib/flows`      | `flowLOHPThemeSignup` |
+| helper      | `DataHelper` or `MediaHelper`             | `helperData`          |
+| page        | `packages/calypso-e2e/src/lib/pages`      | `pageAdvertising`     |
+| secrets     | `Secrets`                                 | `secrets`             |
+| site        | `NewSiteResponse`                         | `sitePublic`          |

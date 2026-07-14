@@ -13,7 +13,7 @@ import { useDispatch, useSelect } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
 import clsx from 'clsx';
 import { Link, useLocation } from 'react-router-dom';
-import { hasAiChatEntryButton } from '../../hooks/use-admin-bar-integration';
+import useHasAiChatEntryButton from '../../hooks/use-has-ai-chat-entry-button';
 import useHelpSearchQuery from '../../hooks/use-help-search-query';
 import { AGENTS_MANAGER_STORE } from '../../stores';
 import ChatHeader, { type Options as ChatHeaderOptions } from '../chat-header';
@@ -127,7 +127,7 @@ export default function SupportGuides( {
 	}, [] );
 
 	// Without the AI chat entry button, use `collapsed` (a FAB) instead of `minimized`.
-	const closedChatState = hasAiChatEntryButton() ? 'minimized' : 'collapsed';
+	const closedChatState = useHasAiChatEntryButton() ? 'minimized' : 'collapsed';
 	const title = __( 'Support Guides', __i18n_text_domain__ );
 
 	return (

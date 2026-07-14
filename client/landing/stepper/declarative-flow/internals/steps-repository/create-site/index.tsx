@@ -13,7 +13,6 @@ import {
 	isNewHostedSiteCreationFlow,
 	isNewsletterFlow,
 	isReadymadeFlow,
-	isStartWritingFlow,
 	isWriteOnFlow,
 	isOnboardingFlow,
 	Step,
@@ -42,6 +41,11 @@ import { getUrlData } from 'calypso/state/imports/url-analyzer/selectors';
 import { useSimplifiedOnboarding } from '../../../../hooks/use-simplified-onboarding';
 import { shouldUseStepContainerV2 } from '../../../helpers/should-use-step-container-v2';
 import { SESSION_KEY_FROM_PLAYGROUND_PUBLISH } from '../playground/lib/constants';
+import {
+	EARLY_PROVISION_TARGET_WPCOM_ATOMIC,
+	getEarlyCreatedSiteId,
+	pollForAtomicProvisioning,
+} from './early-provisioning';
 import type { Step as StepType } from '../../types';
 import type { OnboardSelect } from '@automattic/data-stores';
 import './styles.scss';
@@ -49,8 +53,6 @@ import './styles.scss';
 const DEFAULT_SITE_MIGRATION_THEME = 'pub/zoologist';
 const DEFAULT_ENTREPRENEUR_FLOW = 'pub/twentytwentytwo';
 const DEFAULT_NEWSLETTER_THEME = 'pub/lettre';
-// Changing this? Consider also updating WRITE_INTENT_DEFAULT_DESIGN so the write *intent* matches the write flow
-const DEFAULT_START_WRITING_THEME = 'pub/poema';
 
 function hasSourceSlug( data: unknown ): data is { sourceSlug: string } {
 	if ( data && ( data as { sourceSlug: string } ).sourceSlug ) {
@@ -153,8 +155,6 @@ const CreateSite: StepType = function CreateSite( { navigation, flow, data } ) {
 		theme = DEFAULT_SITE_MIGRATION_THEME;
 	} else if ( isEntrepreneurFlow( flow ) ) {
 		theme = DEFAULT_ENTREPRENEUR_FLOW;
-	} else if ( isStartWritingFlow( flow ) ) {
-		theme = DEFAULT_START_WRITING_THEME;
 	} else if ( isNewsletterFlow( flow ) ) {
 		theme = DEFAULT_NEWSLETTER_THEME;
 	}
@@ -167,7 +167,6 @@ const CreateSite: StepType = function CreateSite( { navigation, flow, data } ) {
 	if (
 		isOnboardingFlow( flow ) ||
 		isCopySiteFlow( flow ) ||
-		isStartWritingFlow( flow ) ||
 		isWriteOnFlow( flow ) ||
 		isNewHostedSiteCreationFlow( flow ) ||
 		isReadymadeFlow( flow ) ||
@@ -189,9 +188,7 @@ const CreateSite: StepType = function CreateSite( { navigation, flow, data } ) {
 	const urlQueryParams = useQuery();
 	const platform = urlQueryParams.get( 'platform' ) || '';
 	const useThemeHeadstart =
-		! isStartWritingFlow( flow ) &&
-		! isNewHostedSiteCreationFlow( flow ) &&
-		! isNewSiteMigrationFlow( flow );
+		! isNewHostedSiteCreationFlow( flow ) && ! isNewSiteMigrationFlow( flow );
 	const shouldGoToCheckout = Boolean( planCartItem );
 	const [ , isSimplifiedOnboarding ] = useSimplifiedOnboarding();
 
@@ -222,20 +219,24 @@ const CreateSite: StepType = function CreateSite( { navigation, flow, data } ) {
 		// Flow A: The site was early-created during the AI chat session.
 		// Flow B: If early_created_site is absent, the regular createSiteWithCart path below handles creation.
 		const earlyCreatedSite = urlQueryParams.get( 'early_created_site' );
-		if ( flow === AI_SITE_BUILDER_FLOW && gardenName && earlyCreatedSite ) {
-			const blogId = parseInt( earlyCreatedSite, 10 );
+		const earlyProvisionTarget =
+			urlQueryParams.get( 'provision_target' ) ?? urlQueryParams.get( 'early_provision_target' );
+		const earlyCreatedSiteId = getEarlyCreatedSiteId( flow, earlyCreatedSite );
 
-			if ( isNaN( blogId ) ) {
-				throw new Error( 'Invalid early_created_site parameter.' );
+		if ( earlyCreatedSiteId ) {
+			let siteSlug = String( earlyCreatedSiteId );
+			if ( earlyProvisionTarget === EARLY_PROVISION_TARGET_WPCOM_ATOMIC ) {
+				const atomicSite = await pollForAtomicProvisioning( earlyCreatedSiteId );
+				siteSlug = atomicSite.siteSlug;
+			} else if ( gardenName ) {
+				// Poll until the provisioning is considered complete.
+				// Skip the initial delay since the site may have been provisioning for minutes already.
+				await pollForGardenProvisioning( earlyCreatedSiteId, 22, 5000, 0 );
 			}
 
-			// Poll until the provisioning is considered complete.
-			// Skip the initial delay since the site may have been provisioning for minutes already.
-			await pollForGardenProvisioning( blogId, 22, 5000, 0 );
-
 			return {
-				siteId: blogId,
-				siteSlug: String( blogId ),
+				siteId: earlyCreatedSiteId,
+				siteSlug,
 				goToCheckout: false,
 				siteCreated: true,
 			};
@@ -285,6 +286,11 @@ const CreateSite: StepType = function CreateSite( { navigation, flow, data } ) {
 
 		if ( ! site ) {
 			throw new Error( 'Failed to create site' );
+		}
+
+		if ( earlyProvisionTarget === EARLY_PROVISION_TARGET_WPCOM_ATOMIC ) {
+			const atomicSite = await pollForAtomicProvisioning( site.siteId );
+			site.siteSlug = atomicSite.siteSlug;
 		}
 
 		const additionalCartItems = [

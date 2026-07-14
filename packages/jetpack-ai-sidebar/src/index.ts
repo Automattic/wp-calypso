@@ -94,12 +94,12 @@ let lastBlockTransformationSuggestionContext: {
 /** Default suggestion shown when no block is selected. */
 const OPTIMIZE_TITLE_SUGGESTION = {
 	id: 'optimize-title',
-	label: __( 'Optimize Title', 'jetpack' ),
+	label: __( 'Optimize Title', __i18n_text_domain__ ),
 	description: __(
 		'Refine the title based on your post’s content and SEO best practices.',
-		'jetpack'
+		__i18n_text_domain__
 	),
-	prompt: __( 'Optimize the title of this post', 'jetpack' ),
+	prompt: __( 'Optimize the title of this post', __i18n_text_domain__ ),
 };
 
 /**
@@ -110,9 +110,9 @@ const OPTIMIZE_TITLE_SUGGESTION = {
  */
 const GENERATE_EXCERPT_SUGGESTION = {
 	id: 'generate-excerpt',
-	label: __( 'Generate Excerpt', 'jetpack' ),
-	description: __( 'Generate an excerpt for your post.', 'jetpack' ),
-	prompt: __( 'Generate an excerpt for this post', 'jetpack' ),
+	label: __( 'Generate Excerpt', __i18n_text_domain__ ),
+	description: __( 'Generate an excerpt for your post.', __i18n_text_domain__ ),
+	prompt: __( 'Generate an excerpt for this post', __i18n_text_domain__ ),
 };
 
 /**
@@ -133,24 +133,30 @@ const GENERATE_EXCERPT_SUGGESTION = {
  */
 const SEO_ENHANCER_SUGGESTION = {
 	id: 'seo-enhancer',
-	label: __( 'SEO Enhancer', 'jetpack' ),
-	description: __( 'Generate metadata for the contents of the post to optimize SEO.', 'jetpack' ),
+	label: __( 'SEO Enhancer', __i18n_text_domain__ ),
+	description: __(
+		'Generate metadata for the contents of the post to optimize SEO.',
+		__i18n_text_domain__
+	),
 	prompt: '',
 	options: [
 		{
 			id: 'seo-title',
-			label: _x( 'Title', 'SEO Enhancer dropdown option', 'jetpack' ),
-			value: __( 'Generate an SEO title (meta title) for this post', 'jetpack' ),
+			label: _x( 'Title', 'SEO Enhancer dropdown option', __i18n_text_domain__ ),
+			value: __( 'Generate an SEO title (meta title) for this post', __i18n_text_domain__ ),
 		},
 		{
 			id: 'seo-description',
-			label: _x( 'Description', 'SEO Enhancer dropdown option', 'jetpack' ),
-			value: __( 'Generate an SEO meta description for this post', 'jetpack' ),
+			label: _x( 'Description', 'SEO Enhancer dropdown option', __i18n_text_domain__ ),
+			value: __( 'Generate an SEO meta description for this post', __i18n_text_domain__ ),
 		},
 		{
 			id: 'image-alt-text',
-			label: _x( 'Image Alt Text', 'SEO Enhancer dropdown option', 'jetpack' ),
-			value: __( 'Generate descriptive alt text for the images in this post', 'jetpack' ),
+			label: _x( 'Image Alt Text', 'SEO Enhancer dropdown option', __i18n_text_domain__ ),
+			value: __(
+				'Generate descriptive alt text for the images in this post',
+				__i18n_text_domain__
+			),
 		},
 	],
 };
@@ -163,31 +169,31 @@ const SEO_ENHANCER_SUGGESTION = {
  */
 const AI_EDITORIAL_REVIEW_SUGGESTION = {
 	id: 'mediate-review-notes',
-	label: __( 'Editorial Review', 'jetpack' ),
-	description: __( 'In-depth review against your content guidelines.', 'jetpack' ),
+	label: __( 'Editorial Review', __i18n_text_domain__ ),
+	description: __( 'In-depth review against your content guidelines.', __i18n_text_domain__ ),
 	prompt: __(
 		'Run an AI Editorial Review for this post. Check the content, reviewer notes, and site guidelines, then surface conflicts, implications, guideline issues, and suggested edits.',
-		'jetpack'
+		__i18n_text_domain__
 	),
 };
 
 const POST_FEEDBACK_SUGGESTION = {
 	id: 'generate-feedback',
-	label: __( 'Simple Review', 'jetpack' ),
-	description: __( 'Quick feedback on your content’s structure.', 'jetpack' ),
+	label: __( 'Simple Review', __i18n_text_domain__ ),
+	description: __( 'Quick feedback on your content’s structure.', __i18n_text_domain__ ),
 	prompt: __(
 		'Generate feedback for this saved post. Review the saved title and saved block content for content structure, reader clarity, completeness, media/caption/link issues, and obvious publishability concerns. Return practical feedback with one-click suggestions when safe.',
-		'jetpack'
+		__i18n_text_domain__
 	),
 };
 
 const PROOFREAD_SUGGESTION = {
 	id: 'proofread-content',
-	label: __( 'Proofread', 'jetpack' ),
-	description: __( 'Correct spelling, grammar, and punctuation.', 'jetpack' ),
+	label: __( 'Proofread', __i18n_text_domain__ ),
+	description: __( 'Correct spelling, grammar, and punctuation.', __i18n_text_domain__ ),
 	prompt: __(
 		'Proofread this saved post for spelling, grammar, and punctuation. Review the saved title and saved block content, and return practical fixes with one-click suggestions when safe.',
-		'jetpack'
+		__i18n_text_domain__
 	),
 };
 
@@ -900,53 +906,53 @@ type BlockSuggestion = {
 const CHANGE_TONE_OPTIONS: SuggestionOption[] = [
 	{
 		id: 'formal',
-		label: `🎩 ${ __( 'Formal', 'jetpack' ) }`,
-		value: __( 'Change the tone of this text to be more formal', 'jetpack' ),
+		label: `🎩 ${ __( 'Formal', __i18n_text_domain__ ) }`,
+		value: __( 'Change the tone of this text to be more formal', __i18n_text_domain__ ),
 	},
 	{
 		id: 'informal',
-		label: `😊 ${ __( 'Informal', 'jetpack' ) }`,
-		value: __( 'Change the tone of this text to be more informal', 'jetpack' ),
+		label: `😊 ${ __( 'Informal', __i18n_text_domain__ ) }`,
+		value: __( 'Change the tone of this text to be more informal', __i18n_text_domain__ ),
 	},
 	{
 		id: 'optimistic',
-		label: `😃 ${ __( 'Optimistic', 'jetpack' ) }`,
-		value: __( 'Change the tone of this text to be more optimistic', 'jetpack' ),
+		label: `😃 ${ __( 'Optimistic', __i18n_text_domain__ ) }`,
+		value: __( 'Change the tone of this text to be more optimistic', __i18n_text_domain__ ),
 	},
 	{
 		id: 'humorous',
-		label: `😂 ${ __( 'Humorous', 'jetpack' ) }`,
-		value: __( 'Change the tone of this text to be more humorous', 'jetpack' ),
+		label: `😂 ${ __( 'Humorous', __i18n_text_domain__ ) }`,
+		value: __( 'Change the tone of this text to be more humorous', __i18n_text_domain__ ),
 	},
 	{
 		id: 'serious',
-		label: `😐 ${ __( 'Serious', 'jetpack' ) }`,
-		value: __( 'Change the tone of this text to be more serious', 'jetpack' ),
+		label: `😐 ${ __( 'Serious', __i18n_text_domain__ ) }`,
+		value: __( 'Change the tone of this text to be more serious', __i18n_text_domain__ ),
 	},
 	{
 		id: 'skeptical',
-		label: `🤨 ${ __( 'Skeptical', 'jetpack' ) }`,
-		value: __( 'Change the tone of this text to be more skeptical', 'jetpack' ),
+		label: `🤨 ${ __( 'Skeptical', __i18n_text_domain__ ) }`,
+		value: __( 'Change the tone of this text to be more skeptical', __i18n_text_domain__ ),
 	},
 	{
 		id: 'empathetic',
-		label: `💗 ${ __( 'Empathetic', 'jetpack' ) }`,
-		value: __( 'Change the tone of this text to be more empathetic', 'jetpack' ),
+		label: `💗 ${ __( 'Empathetic', __i18n_text_domain__ ) }`,
+		value: __( 'Change the tone of this text to be more empathetic', __i18n_text_domain__ ),
 	},
 	{
 		id: 'confident',
-		label: `😎 ${ __( 'Confident', 'jetpack' ) }`,
-		value: __( 'Change the tone of this text to be more confident', 'jetpack' ),
+		label: `😎 ${ __( 'Confident', __i18n_text_domain__ ) }`,
+		value: __( 'Change the tone of this text to be more confident', __i18n_text_domain__ ),
 	},
 	{
 		id: 'passionate',
-		label: `❤️ ${ __( 'Passionate', 'jetpack' ) }`,
-		value: __( 'Change the tone of this text to be more passionate', 'jetpack' ),
+		label: `❤️ ${ __( 'Passionate', __i18n_text_domain__ ) }`,
+		value: __( 'Change the tone of this text to be more passionate', __i18n_text_domain__ ),
 	},
 	{
 		id: 'provocative',
-		label: `🔥 ${ __( 'Provocative', 'jetpack' ) }`,
-		value: __( 'Change the tone of this text to be more provocative', 'jetpack' ),
+		label: `🔥 ${ __( 'Provocative', __i18n_text_domain__ ) }`,
+		value: __( 'Change the tone of this text to be more provocative', __i18n_text_domain__ ),
 	},
 ];
 
@@ -954,63 +960,63 @@ const CHANGE_TONE_OPTIONS: SuggestionOption[] = [
 const TRANSLATE_LANGUAGE_OPTIONS: SuggestionOption[] = [
 	{
 		id: 'en',
-		label: __( 'English', 'jetpack' ),
-		value: __( 'Translate this block content to English', 'jetpack' ),
+		label: __( 'English', __i18n_text_domain__ ),
+		value: __( 'Translate this block content to English', __i18n_text_domain__ ),
 	},
 	{
 		id: 'es',
-		label: __( 'Spanish', 'jetpack' ),
-		value: __( 'Translate this block content to Spanish', 'jetpack' ),
+		label: __( 'Spanish', __i18n_text_domain__ ),
+		value: __( 'Translate this block content to Spanish', __i18n_text_domain__ ),
 	},
 	{
 		id: 'fr',
-		label: __( 'French', 'jetpack' ),
-		value: __( 'Translate this block content to French', 'jetpack' ),
+		label: __( 'French', __i18n_text_domain__ ),
+		value: __( 'Translate this block content to French', __i18n_text_domain__ ),
 	},
 	{
 		id: 'de',
-		label: __( 'German', 'jetpack' ),
-		value: __( 'Translate this block content to German', 'jetpack' ),
+		label: __( 'German', __i18n_text_domain__ ),
+		value: __( 'Translate this block content to German', __i18n_text_domain__ ),
 	},
 	{
 		id: 'it',
-		label: __( 'Italian', 'jetpack' ),
-		value: __( 'Translate this block content to Italian', 'jetpack' ),
+		label: __( 'Italian', __i18n_text_domain__ ),
+		value: __( 'Translate this block content to Italian', __i18n_text_domain__ ),
 	},
 	{
 		id: 'pt',
-		label: __( 'Portuguese', 'jetpack' ),
-		value: __( 'Translate this block content to Portuguese', 'jetpack' ),
+		label: __( 'Portuguese', __i18n_text_domain__ ),
+		value: __( 'Translate this block content to Portuguese', __i18n_text_domain__ ),
 	},
 	{
 		id: 'ru',
-		label: __( 'Russian', 'jetpack' ),
-		value: __( 'Translate this block content to Russian', 'jetpack' ),
+		label: __( 'Russian', __i18n_text_domain__ ),
+		value: __( 'Translate this block content to Russian', __i18n_text_domain__ ),
 	},
 	{
 		id: 'zh',
-		label: __( 'Chinese', 'jetpack' ),
-		value: __( 'Translate this block content to Chinese', 'jetpack' ),
+		label: __( 'Chinese', __i18n_text_domain__ ),
+		value: __( 'Translate this block content to Chinese', __i18n_text_domain__ ),
 	},
 	{
 		id: 'ja',
-		label: __( 'Japanese', 'jetpack' ),
-		value: __( 'Translate this block content to Japanese', 'jetpack' ),
+		label: __( 'Japanese', __i18n_text_domain__ ),
+		value: __( 'Translate this block content to Japanese', __i18n_text_domain__ ),
 	},
 	{
 		id: 'ar',
-		label: __( 'Arabic', 'jetpack' ),
-		value: __( 'Translate this block content to Arabic', 'jetpack' ),
+		label: __( 'Arabic', __i18n_text_domain__ ),
+		value: __( 'Translate this block content to Arabic', __i18n_text_domain__ ),
 	},
 	{
 		id: 'hi',
-		label: __( 'Hindi', 'jetpack' ),
-		value: __( 'Translate this block content to Hindi', 'jetpack' ),
+		label: __( 'Hindi', __i18n_text_domain__ ),
+		value: __( 'Translate this block content to Hindi', __i18n_text_domain__ ),
 	},
 	{
 		id: 'ko',
-		label: __( 'Korean', 'jetpack' ),
-		value: __( 'Translate this block content to Korean', 'jetpack' ),
+		label: __( 'Korean', __i18n_text_domain__ ),
+		value: __( 'Translate this block content to Korean', __i18n_text_domain__ ),
 	},
 ];
 
@@ -1018,7 +1024,7 @@ const TRANSLATE_LANGUAGE_OPTIONS: SuggestionOption[] = [
 const BLOCK_SUGGESTIONS: BlockSuggestion[] = [
 	{
 		id: 'translate',
-		label: __( 'Translate content', 'jetpack' ),
+		label: __( 'Translate content', __i18n_text_domain__ ),
 		// Empty prompt — the picked option's `value` is the full prompt sent.
 		prompt: '',
 		type: 'text',
@@ -1027,7 +1033,7 @@ const BLOCK_SUGGESTIONS: BlockSuggestion[] = [
 	},
 	{
 		id: 'change-tone',
-		label: __( 'Change tone', 'jetpack' ),
+		label: __( 'Change tone', __i18n_text_domain__ ),
 		prompt: '',
 		type: 'text',
 		condition: ( block: any ) => TEXT_BLOCK_TYPES.includes( block?.name ),
@@ -1035,22 +1041,22 @@ const BLOCK_SUGGESTIONS: BlockSuggestion[] = [
 	},
 	{
 		id: 'check-grammar',
-		label: __( 'Check grammar', 'jetpack' ),
-		prompt: __( 'Check the grammar and spelling of this text', 'jetpack' ),
+		label: __( 'Check grammar', __i18n_text_domain__ ),
+		prompt: __( 'Check the grammar and spelling of this text', __i18n_text_domain__ ),
 		type: 'text',
 		condition: ( block: any ) => TEXT_BLOCK_TYPES.includes( block?.name ),
 	},
 	{
 		id: 'simplify-text',
-		label: __( 'Simplify text', 'jetpack' ),
-		prompt: __( 'Simplify this text to make it easier to read', 'jetpack' ),
+		label: __( 'Simplify text', __i18n_text_domain__ ),
+		prompt: __( 'Simplify this text to make it easier to read', __i18n_text_domain__ ),
 		type: 'text',
 		condition: ( block: any ) => TEXT_BLOCK_TYPES.includes( block?.name ),
 	},
 	{
 		id: 'generate-alt-text',
-		label: __( 'Generate alt text', 'jetpack' ),
-		prompt: __( 'Generate descriptive alt text for this image', 'jetpack' ),
+		label: __( 'Generate alt text', __i18n_text_domain__ ),
+		prompt: __( 'Generate descriptive alt text for this image', __i18n_text_domain__ ),
 		type: 'image',
 		condition: ( block: any ) => IMAGE_BLOCK_TYPES.includes( block?.name ),
 	},
