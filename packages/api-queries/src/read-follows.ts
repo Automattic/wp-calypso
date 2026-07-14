@@ -31,11 +31,7 @@ import {
 // offset) will paginate incorrectly.
 const ITEMS_PER_PAGE = 100;
 const MAX_ITEMS = 2000;
-// Fresh enough to heal stale IndexedDB rehydration on mount/focus, without a
-// 1h window of poison. Defaults already refetch when stale on mount and window
-// focus — do not use refetchOnMount: 'always' here; result lists gate on
-// isFetching and remount observers (e.g. ReaderFeedItem) which would loop.
-const STALE_TIME = 0;
+const STALE_TIME = 60 * 60 * 1000;
 const MAX_PAGES_TO_FETCH = MAX_ITEMS / ITEMS_PER_PAGE;
 
 export type SiteSubscriptionsInfiniteData = InfiniteData< SiteSubscriptionsPage, number >;

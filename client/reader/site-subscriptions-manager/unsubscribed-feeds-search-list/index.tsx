@@ -38,8 +38,6 @@ export const UnsubscribedFeedsSearchList = ( { hideTitle = false }: Props ) => {
 	const noFeedsFound =
 		( unsubscribedFeedItems.length === 0 && ! isFetchingUnsubscribedFeeds ) || searchError;
 
-	// Site subscriptions: isLoading only — blanking on isFetching unmounts ReaderFeedItem
-	// observers, which remount and refetch (staleTime 0) in a spinner loop.
 	const shouldShowUnsubcribedFeedsListLoader =
 		isLoadingSubscriptions || isFetchingUnsubscribedFeeds || isUnsubscribing;
 

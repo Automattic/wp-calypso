@@ -97,7 +97,6 @@ describe( 'siteSubscriptionsQuery', () => {
 		await waitFor( () => expect( result.current.isSuccess ).toBe( true ) );
 
 		expect( options.queryKey ).toEqual( [ 'read', 'site-subscriptions' ] );
-		expect( options.staleTime ).toBe( 0 );
 		expect( scope.isDone() ).toBe( true );
 		expect( result.current.data?.pages[ 0 ].subscriptions[ 0 ] ).toMatchObject( {
 			ID: 123,
