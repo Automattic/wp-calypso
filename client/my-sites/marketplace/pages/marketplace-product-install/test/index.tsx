@@ -2,7 +2,6 @@
  * @jest-environment jsdom
  */
 import { render, screen, act } from '@testing-library/react';
-import userEvent from '@testing-library/user-event';
 import MarketplaceProductInstall from '../index';
 
 const PLUGIN_SLUG = 'give';
@@ -15,7 +14,6 @@ const ADMIN_URL = 'https://example.wordpress.com/wp-admin/';
 const mockSite = {
 	installedPlugin: null as typeof PLUGIN | null,
 	pluginActive: false,
-	activationFailed: false,
 	// A paid marketplace plugin is not a wp.org one, and its site is already atomic: checkout
 	// transferred it and started the install.
 	isAtomic: false,
@@ -53,7 +51,6 @@ jest.mock( 'calypso/state/plugins/wporg/selectors', () => ( {
 jest.mock( 'calypso/state/plugins/installed/selectors-ts', () => ( {
 	getPluginOnSite: () => mockSite.installedPlugin,
 	getStatusForPlugin: () => null,
-	isPluginActionStatus: () => mockSite.activationFailed,
 	isPluginActive: () => mockSite.pluginActive,
 } ) );
 jest.mock( 'calypso/state/automated-transfer/selectors', () => ( {
@@ -168,15 +165,12 @@ const advance = async ( ms: number ) => {
 
 describe( 'MarketplaceProductInstall', () => {
 	let originalLocation: Location;
-	let user: ReturnType< typeof userEvent.setup >;
 
 	beforeEach( () => {
 		jest.useFakeTimers();
-		user = userEvent.setup( { advanceTimers: jest.advanceTimersByTime } );
 		jest.clearAllMocks();
 		mockSite.installedPlugin = null;
 		mockSite.pluginActive = false;
-		mockSite.activationFailed = false;
 		mockSite.isAtomic = false;
 		mockSite.isWporgPlugin = true;
 		originalLocation = window.location;
@@ -195,20 +189,17 @@ describe( 'MarketplaceProductInstall', () => {
 		// The transfer is done but the plugin has not been fetched yet, which is the bug this guards
 		// against: the page must not call that an install and leave for a list the plugin is missing
 		// from. It polls for the plugin instead.
-		await advance( 50 * 1000 );
+		await advance( 3000 );
 		expect( fetchSitePlugins ).toHaveBeenCalledWith( SITE_ID );
 		expect( activatePlugin ).not.toHaveBeenCalled();
+		expect( screen.getByText( /Installing plugin/ ) ).toBeVisible();
 		expect( window.location.href ).toBe( '' );
 
-		// A late poll finds it, so it is activated.
+		// A later poll finds it, so it is activated.
 		mockSite.installedPlugin = PLUGIN;
 		await settle( rendered );
 		expect( activatePlugin ).toHaveBeenCalledWith( SITE_ID, PLUGIN );
 		expect( window.location.href ).toBe( '' );
-
-		// Activating gets its own time to run, rather than what a slow install left over.
-		await advance( 30 * 1000 );
-		expect( screen.getByText( /Installing plugin/ ) ).toBeVisible();
 
 		mockSite.pluginActive = true;
 		await settle( rendered );
@@ -217,55 +208,24 @@ describe( 'MarketplaceProductInstall', () => {
 		);
 	} );
 
-	it( 'says an install is taking too long, and keeps waiting for it anyway', async () => {
+	it( 'keeps polling for a paid plugin, which checkout installs', async () => {
 		mockSite.isAtomic = true;
 		mockSite.isWporgPlugin = false;
 		const rendered = install();
 		await start( rendered );
 
-		await advance( 61 * 1000 );
-		expect( screen.getByText( /taking longer than expected to install/ ) ).toBeVisible();
-
-		// A paid plugin is installed by checkout, so a late one is still on its way. Keep polling.
-		fetchSitePlugins.mockClear();
-		await advance( 15 * 1000 );
+		await advance( 3000 );
 		expect( fetchSitePlugins ).toHaveBeenCalledWith( SITE_ID );
+		expect( window.location.href ).toBe( '' );
 
-		// It turns up, and is activated without the user having to do anything.
 		mockSite.installedPlugin = PLUGIN;
 		await settle( rendered );
 		expect( activatePlugin ).toHaveBeenCalledWith( SITE_ID, PLUGIN );
-		expect( screen.getByText( /Installing plugin/ ) ).toBeVisible();
 
 		mockSite.pluginActive = true;
 		await settle( rendered );
 		expect( window.location.href ).toBe(
 			`${ ADMIN_URL }plugins.php?activate=true&plugin_status=active`
 		);
-	} );
-
-	it( 'looks for a missing plugin again on retry', async () => {
-		const rendered = install();
-		await start( rendered );
-
-		await advance( 61 * 1000 );
-		fetchSitePlugins.mockClear();
-		await user.click( screen.getByRole( 'button', { name: 'Check again' } ) );
-		expect( fetchSitePlugins ).toHaveBeenCalledWith( SITE_ID );
-	} );
-
-	it( 'reports a failed activation, and activates again on retry', async () => {
-		const rendered = install();
-		await start( rendered );
-
-		mockSite.installedPlugin = PLUGIN;
-		mockSite.activationFailed = true;
-		await settle( rendered );
-		expect( screen.getByText( /could not activate it/ ) ).toBeVisible();
-		expect( window.location.href ).toBe( '' );
-
-		activatePlugin.mockClear();
-		await user.click( screen.getByRole( 'button', { name: 'Try activating again' } ) );
-		expect( activatePlugin ).toHaveBeenCalledWith( SITE_ID, PLUGIN );
 	} );
 } );

@@ -21,7 +21,6 @@ import { useWPCOMPlugin } from 'calypso/data/marketplace/use-wpcom-plugins-query
 import Masterbar from 'calypso/layout/masterbar/masterbar';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { useInterval } from 'calypso/lib/interval';
-import { ACTIVATE_PLUGIN } from 'calypso/lib/plugins/constants';
 import { getProductSlugByPeriodVariation } from 'calypso/lib/plugins/utils';
 import MarketplaceProgressBar from 'calypso/my-sites/marketplace/components/progressbar';
 import useMarketplaceAdditionalSteps from 'calypso/my-sites/marketplace/pages/marketplace-product-install/use-marketplace-additional-steps';
@@ -41,10 +40,8 @@ import {
 import {
 	getPluginOnSite,
 	getStatusForPlugin,
-	isPluginActionStatus,
 	isPluginActive,
 } from 'calypso/state/plugins/installed/selectors-ts';
-import { PLUGIN_INSTALLATION_ERROR } from 'calypso/state/plugins/installed/status/constants';
 import { fetchPluginData as wporgFetchPluginData } from 'calypso/state/plugins/wporg/actions';
 import { getPlugin, isFetched } from 'calypso/state/plugins/wporg/selectors';
 import {
@@ -73,14 +70,6 @@ import {
 import './style.scss';
 import { MarketplacePluginInstallProps } from './types';
 import type { IAppState } from 'calypso/state/types';
-
-// How long to wait for the plugin to install, and then for it to activate, before saying it is
-// taking too long. Waiting carries on after that, more slowly.
-const SETUP_TIMEOUT = 60 * 1000;
-const POLL_INTERVAL = 3 * 1000;
-const SLOW_POLL_INTERVAL = 15 * 1000;
-
-type SetupStage = 'installation' | 'activation';
 
 const MarketplaceProductInstall = ( {
 	pluginSlug = '',
@@ -321,9 +310,6 @@ const MarketplaceProductInstall = ( {
 	// Prefer fresh URL when available; if in atomic flow, wait for fresh URL
 	const pluginsUrlFinal = atomicFlow ? pluginsUrlFresh : pluginsUrlFresh || pluginsUrlSelector;
 
-	// An inactive plugin is missing from the active-only list the flow normally ends on.
-	const allPluginsUrl = freshAdminUrl ? `${ freshAdminUrl }plugins.php?plugin_status=all` : null;
-
 	// For marketplace plugins (e.g. sensei-pro), the atomic transfer + plugin install
 	// is initiated during checkout, not by this component. The wporg data is unavailable,
 	// so atomicFlow is never set. Once the site is atomic, poll for installed plugins
@@ -335,57 +321,20 @@ const MarketplaceProductInstall = ( {
 		!! freshSite?.is_wpcom_atomic &&
 		wporgPlugin?.wporg === false;
 
-	const canManagePlugins = useSelector( ( state ) => {
-		return siteHasFeature( state, selectedSite?.ID, WPCOM_FEATURES_MANAGE_PLUGINS );
-	} );
-
 	// The transfer installs the plugin itself, so the site comes back with a plugin nothing here has
 	// fetched yet.
 	const isTransferredPluginFlow =
 		atomicFlow && transferStates.COMPLETE === automatedTransferStatus && isAtomicTransferReady;
 
-	// The plugin has to be installed before it can be activated, and either one can be what the page
-	// is still waiting on.
-	const setupStage: SetupStage | null = pluginActive
-		? null
-		: ( installedPlugin && 'activation' ) || 'installation';
-
-	const isSetupPending = ( isTransferredPluginFlow || isMarketplacePluginFlow ) && !! setupStage;
-
-	const activationFailed = useSelector(
-		( state ) =>
-			!! installedPlugin &&
-			isPluginActionStatus(
-				state,
-				siteId,
-				installedPlugin.id,
-				ACTIVATE_PLUGIN,
-				PLUGIN_INSTALLATION_ERROR
-			)
+	// Poll until the plugin turns up, which is what lets the activation effect above run.
+	useInterval(
+		() => dispatch( fetchSitePlugins( siteId ) ),
+		( isTransferredPluginFlow || isMarketplacePluginFlow ) && ! pluginActive ? 3000 : null
 	);
 
-	const [ timedOutStage, setTimedOutStage ] = useState< SetupStage | null >( null );
-	const [ retries, setRetries ] = useState( 0 );
-
-	// Each stage gets its own time, so a slow install does not eat the time the activation that
-	// follows it gets. Running out of it says so and keeps waiting, since the work is the backend's
-	// and a late plugin should still land on its own.
-	useEffect( () => {
-		setTimedOutStage( null );
-
-		if ( ! isSetupPending || ! setupStage ) {
-			return;
-		}
-
-		const timeout = setTimeout( () => setTimedOutStage( setupStage ), SETUP_TIMEOUT );
-
-		return () => clearTimeout( timeout );
-	}, [ isSetupPending, setupStage, retries ] );
-
-	// Poll until the plugin turns up, which is what lets the activation effect above run.
-	const pollInterval = timedOutStage ? SLOW_POLL_INTERVAL : POLL_INTERVAL;
-	useInterval( () => dispatch( fetchSitePlugins( siteId ) ), isSetupPending ? pollInterval : null );
-
+	const canManagePlugins = useSelector( ( state ) => {
+		return siteHasFeature( state, selectedSite?.ID, WPCOM_FEATURES_MANAGE_PLUGINS );
+	} );
 	// Check completition of all flows and redirect to thank you page
 	useEffect( () => {
 		if (
@@ -458,44 +407,8 @@ const MarketplaceProductInstall = ( {
 	}, [ themeSlug, isPluginUploadFlow, translate ] );
 	const additionalSteps = useMarketplaceAdditionalSteps();
 
-	// A plugin that did turn up is past its activation step, so activate it again by hand. One that
-	// never turned up is only looked for again: finishing the install is the backend's to do, not
-	// this page's to ask for twice.
-	const retryPluginSetup = () => {
-		setRetries( ( count ) => count + 1 );
-
-		if ( installedPlugin ) {
-			dispatch( activatePlugin( siteId, { slug: installedPlugin.slug, id: installedPlugin.id } ) );
-			return;
-		}
-
-		dispatch( fetchSitePlugins( siteId ) );
-	};
-
 	const renderError = () => {
 		// Evaluate error causes in priority order
-		if ( timedOutStage || activationFailed ) {
-			return (
-				<EmptyContent
-					title={ null }
-					line={
-						installedPlugin
-							? translate(
-									'We installed the plugin, but we could not activate it. We are still trying, and you can activate it yourself from your plugins.'
-							  )
-							: translate(
-									'The plugin is taking longer than expected to install. We are still waiting for it, and you can check your plugins to see whether it arrived.'
-							  )
-					}
-					action={
-						installedPlugin ? translate( 'Try activating again' ) : translate( 'Check again' )
-					}
-					actionCallback={ retryPluginSetup }
-					secondaryAction={ translate( 'View all plugins' ) }
-					secondaryActionURL={ allPluginsUrl ?? undefined }
-				/>
-			);
-		}
 		if ( nonInstallablePlanError ) {
 			return (
 				<EmptyContent
