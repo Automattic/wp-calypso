@@ -55,6 +55,10 @@ jest.mock( '../../../../../hooks/use-site-data', () => ( {
 	useSiteData: jest.fn(),
 } ) );
 
+jest.mock( '../../../hooks/use-purchase-plan-notification', () => ( {
+	usePurchasePlanNotification: jest.fn(),
+} ) );
+
 describe( 'SetupYourSiteAIStep – Generate Theme (Automattician only)', () => {
 	const mockUseReactQuery = useReactQuery as jest.Mock;
 	const mockUseSiteData = useSiteData as jest.Mock;
