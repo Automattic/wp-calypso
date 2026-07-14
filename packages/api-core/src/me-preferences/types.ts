@@ -17,6 +17,11 @@ export interface ReaderLandingPage extends LandingPagePreference {
 	useReaderAsLandingPage: boolean;
 }
 
+export interface VisitCounter {
+	count: number;
+	lastUpdated: number | null; // Result of Date.now(), or null before the first visit
+}
+
 export interface UserPreferences {
 	recentSites?: number[];
 	'hosting-dashboard-color-scheme'?: 'light' | 'dark' | 'system';
@@ -24,6 +29,7 @@ export interface UserPreferences {
 	'hosting-dashboard-dark-mode-announcement-dismissed'?: string; // Timestamp when the user dismissed the notice
 	'hosting-dashboard-opt-in-welcome-modal-dismissed'?: string; // Timestamp when the user dismissed the modal
 	[ key: `hosting-dashboard-dataviews-view-${ string }` ]: View | undefined;
+	[ key: `hosting-dashboard-visit-count-${ string }` ]: VisitCounter | undefined;
 	[ key: `hosting-dashboard-overview-storage-notice-dismissed-${ number }` ]: string | undefined; // Timestamp when the user dismissed the notice
 	[ key: `hosting-dashboard-tours-${ string }` ]: string; // ISO date string when the user completed the tours
 	[ key: `hosting-dashboard-time-mismatch-warning-dismissed-${ number }` ]: string | undefined; // Timestamp when the user dismissed the notice

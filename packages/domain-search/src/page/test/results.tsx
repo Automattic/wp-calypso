@@ -6,7 +6,9 @@ import { buildCart, buildCartItem } from '../../test-helpers/factories/cart';
 import { buildFreeSuggestion, buildSuggestion } from '../../test-helpers/factories/suggestions';
 import { mockGetAvailabilityQuery } from '../../test-helpers/queries/availability';
 import {
+	mockGetBundleForDomainQuery,
 	mockGetBundleSuggestionQuery,
+	mockGetBundleTriggersQuery,
 	mockGetFreeSuggestionQuery,
 	mockGetSuggestionsQuery,
 } from '../../test-helpers/queries/suggestions';
@@ -904,19 +906,19 @@ describe( 'ResultsPage', () => {
 			const onAddBundle = jest.fn().mockResolvedValue( undefined );
 
 			mockGetSuggestionsQuery( {
-				params: { query: 'test' },
-				suggestions: [ buildSuggestion( { domain_name: 'test.com' } ) ],
+				params: { query: 'test-bundle-add.com' },
+				suggestions: [ buildSuggestion( { domain_name: 'test-bundle-add.com' } ) ],
 			} );
 			mockGetBundleSuggestionQuery( {
-				params: { query: 'test' },
-				bundleSuggestion: buildBundleSuggestion( 'test' ),
+				params: { query: 'test-bundle-add.com' },
+				bundleSuggestion: buildBundleSuggestion( 'test-bundle-add' ),
 			} );
 
 			render(
 				<TestDomainSearch
 					cart={ buildCart( { onAddBundle } ) }
 					config={ { showBundleSuggestions: true } }
-					query="test"
+					query="test-bundle-add.com"
 				>
 					<ResultsPage />
 				</TestDomainSearch>
@@ -933,12 +935,12 @@ describe( 'ResultsPage', () => {
 			// app layer untouched.
 			expect( onAddBundle ).toHaveBeenCalledWith(
 				expect.objectContaining( {
-					sld: 'test',
-					bundle_group_id: 'mock-test-group',
+					sld: 'test-bundle-add',
+					bundle_group_id: 'mock-test-bundle-add-group',
 					domains: expect.arrayContaining( [
-						expect.objectContaining( { domain: 'test.com' } ),
-						expect.objectContaining( { domain: 'test.net' } ),
-						expect.objectContaining( { domain: 'test.org' } ),
+						expect.objectContaining( { domain: 'test-bundle-add.com' } ),
+						expect.objectContaining( { domain: 'test-bundle-add.net' } ),
+						expect.objectContaining( { domain: 'test-bundle-add.org' } ),
 					] ),
 				} )
 			);
@@ -955,11 +957,11 @@ describe( 'ResultsPage', () => {
 				);
 
 			mockGetSuggestionsQuery( {
-				params: { query: 'test-bundle-error' },
+				params: { query: 'test-bundle-error.com' },
 				suggestions: [ buildSuggestion( { domain_name: 'test-bundle-error.com' } ) ],
 			} );
 			mockGetBundleSuggestionQuery( {
-				params: { query: 'test-bundle-error' },
+				params: { query: 'test-bundle-error.com' },
 				bundleSuggestion: buildBundleSuggestion( 'test-bundle-error' ),
 			} );
 
@@ -969,7 +971,7 @@ describe( 'ResultsPage', () => {
 				<TestDomainSearch
 					cart={ buildCart( { onAddBundle } ) }
 					config={ { showBundleSuggestions: true } }
-					query="test-bundle-error"
+					query="test-bundle-error.com"
 				>
 					<ResultsPage />
 				</TestDomainSearch>
@@ -992,11 +994,11 @@ describe( 'ResultsPage', () => {
 			const onAddBundle = jest.fn().mockRejectedValue( new Error( '' ) );
 
 			mockGetSuggestionsQuery( {
-				params: { query: 'test-bundle-fallback' },
+				params: { query: 'test-bundle-fallback.com' },
 				suggestions: [ buildSuggestion( { domain_name: 'test-bundle-fallback.com' } ) ],
 			} );
 			mockGetBundleSuggestionQuery( {
-				params: { query: 'test-bundle-fallback' },
+				params: { query: 'test-bundle-fallback.com' },
 				bundleSuggestion: buildBundleSuggestion( 'test-bundle-fallback' ),
 			} );
 
@@ -1004,7 +1006,7 @@ describe( 'ResultsPage', () => {
 				<TestDomainSearch
 					cart={ buildCart( { onAddBundle } ) }
 					config={ { showBundleSuggestions: true } }
-					query="test-bundle-fallback"
+					query="test-bundle-fallback.com"
 				>
 					<ResultsPage />
 				</TestDomainSearch>
@@ -1031,15 +1033,15 @@ describe( 'ResultsPage', () => {
 			);
 
 			mockGetSuggestionsQuery( {
-				params: { query: 'test-bundle-permanent' },
+				params: { query: 'test-bundle-permanent.com' },
 				suggestions: [ buildSuggestion( { domain_name: 'test-bundle-permanent.com' } ) ],
 			} );
 			mockGetBundleSuggestionQuery( {
-				params: { query: 'test-bundle-permanent' },
+				params: { query: 'test-bundle-permanent.com' },
 				bundleSuggestion: buildBundleSuggestion( 'test-bundle-permanent' ),
 			} );
 			const refetchRequest = mockGetBundleSuggestionQuery( {
-				params: { query: 'test-bundle-permanent' },
+				params: { query: 'test-bundle-permanent.com' },
 				bundleSuggestion: null,
 			} );
 
@@ -1047,7 +1049,7 @@ describe( 'ResultsPage', () => {
 				<TestDomainSearch
 					cart={ buildCart( { onAddBundle } ) }
 					config={ { showBundleSuggestions: true } }
-					query="test-bundle-permanent"
+					query="test-bundle-permanent.com"
 				>
 					<ResultsPage />
 				</TestDomainSearch>
@@ -1077,15 +1079,15 @@ describe( 'ResultsPage', () => {
 			);
 
 			mockGetSuggestionsQuery( {
-				params: { query: 'test-bundle-same-group' },
+				params: { query: 'test-bundle-same-group.com' },
 				suggestions: [ buildSuggestion( { domain_name: 'test-bundle-same-group.com' } ) ],
 			} );
 			mockGetBundleSuggestionQuery( {
-				params: { query: 'test-bundle-same-group' },
+				params: { query: 'test-bundle-same-group.com' },
 				bundleSuggestion: unavailableBundle,
 			} );
 			const refetchRequest = mockGetBundleSuggestionQuery( {
-				params: { query: 'test-bundle-same-group' },
+				params: { query: 'test-bundle-same-group.com' },
 				bundleSuggestion: unavailableBundle,
 			} );
 
@@ -1093,7 +1095,7 @@ describe( 'ResultsPage', () => {
 				<TestDomainSearch
 					cart={ buildCart( { onAddBundle } ) }
 					config={ { showBundleSuggestions: true } }
-					query="test-bundle-same-group"
+					query="test-bundle-same-group.com"
 				>
 					<ResultsPage />
 				</TestDomainSearch>
@@ -1129,24 +1131,24 @@ describe( 'ResultsPage', () => {
 			);
 
 			mockGetSuggestionsQuery( {
-				params: { query: 'test-bundle-late-stale' },
+				params: { query: 'test-bundle-late-stale.com' },
 				suggestions: [ buildSuggestion( { domain_name: 'test-bundle-late-stale.com' } ) ],
 			} );
 			mockGetBundleSuggestionQuery( {
-				params: { query: 'test-bundle-late-stale' },
+				params: { query: 'test-bundle-late-stale.com' },
 				bundleSuggestion: staleBundle,
 			} );
 
 			mockGetSuggestionsQuery( {
-				params: { query: 'test-bundle-late-fresh' },
+				params: { query: 'test-bundle-late-fresh.com' },
 				suggestions: [ buildSuggestion( { domain_name: 'test-bundle-late-fresh.com' } ) ],
 			} );
 			mockGetBundleSuggestionQuery( {
-				params: { query: 'test-bundle-late-fresh' },
+				params: { query: 'test-bundle-late-fresh.com' },
 				bundleSuggestion: freshBundle,
 			} );
 			const freshRefetchRequest = mockGetBundleSuggestionQuery( {
-				params: { query: 'test-bundle-late-fresh' },
+				params: { query: 'test-bundle-late-fresh.com' },
 				bundleSuggestion: null,
 			} );
 
@@ -1154,7 +1156,7 @@ describe( 'ResultsPage', () => {
 				<TestDomainSearch
 					cart={ buildCart( { onAddBundle } ) }
 					config={ { showBundleSuggestions: true } }
-					query="test-bundle-late-stale"
+					query="test-bundle-late-stale.com"
 				>
 					<ResultsPage />
 				</TestDomainSearch>
@@ -1168,7 +1170,7 @@ describe( 'ResultsPage', () => {
 				<TestDomainSearch
 					cart={ buildCart( { onAddBundle } ) }
 					config={ { showBundleSuggestions: true } }
-					query="test-bundle-late-fresh"
+					query="test-bundle-late-fresh.com"
 				>
 					<ResultsPage />
 				</TestDomainSearch>
@@ -1197,11 +1199,11 @@ describe( 'ResultsPage', () => {
 				.mockResolvedValueOnce( undefined );
 
 			mockGetSuggestionsQuery( {
-				params: { query: 'test-bundle-retry' },
+				params: { query: 'test-bundle-retry.com' },
 				suggestions: [ buildSuggestion( { domain_name: 'test-bundle-retry.com' } ) ],
 			} );
 			mockGetBundleSuggestionQuery( {
-				params: { query: 'test-bundle-retry' },
+				params: { query: 'test-bundle-retry.com' },
 				bundleSuggestion: buildBundleSuggestion( 'test-bundle-retry' ),
 			} );
 
@@ -1209,7 +1211,7 @@ describe( 'ResultsPage', () => {
 				<TestDomainSearch
 					cart={ buildCart( { onAddBundle } ) }
 					config={ { showBundleSuggestions: true } }
-					query="test-bundle-retry"
+					query="test-bundle-retry.com"
 				>
 					<ResultsPage />
 				</TestDomainSearch>
@@ -1236,19 +1238,19 @@ describe( 'ResultsPage', () => {
 			const cart = buildCart( { onAddBundle } );
 
 			mockGetSuggestionsQuery( {
-				params: { query: 'test-bundle-stale' },
+				params: { query: 'test-bundle-stale.com' },
 				suggestions: [ buildSuggestion( { domain_name: 'test-bundle-stale.com' } ) ],
 			} );
 			mockGetBundleSuggestionQuery( {
-				params: { query: 'test-bundle-stale' },
+				params: { query: 'test-bundle-stale.com' },
 				bundleSuggestion: buildBundleSuggestion( 'test-bundle-stale' ),
 			} );
 			mockGetSuggestionsQuery( {
-				params: { query: 'test-bundle-fresh' },
+				params: { query: 'test-bundle-fresh.com' },
 				suggestions: [ buildSuggestion( { domain_name: 'test-bundle-fresh.com' } ) ],
 			} );
 			mockGetBundleSuggestionQuery( {
-				params: { query: 'test-bundle-fresh' },
+				params: { query: 'test-bundle-fresh.com' },
 				bundleSuggestion: buildBundleSuggestion( 'test-bundle-fresh' ),
 			} );
 
@@ -1256,7 +1258,7 @@ describe( 'ResultsPage', () => {
 				<TestDomainSearch
 					cart={ cart }
 					config={ { showBundleSuggestions: true } }
-					query="test-bundle-stale"
+					query="test-bundle-stale.com"
 				>
 					<ResultsPage />
 				</TestDomainSearch>
@@ -1274,7 +1276,7 @@ describe( 'ResultsPage', () => {
 				<TestDomainSearch
 					cart={ cart }
 					config={ { showBundleSuggestions: true } }
-					query="test-bundle-fresh"
+					query="test-bundle-fresh.com"
 				>
 					<ResultsPage />
 				</TestDomainSearch>
@@ -1298,11 +1300,11 @@ describe( 'ResultsPage', () => {
 			);
 
 			mockGetSuggestionsQuery( {
-				params: { query: 'test-bundle-pending' },
+				params: { query: 'test-bundle-pending.com' },
 				suggestions: [ buildSuggestion( { domain_name: 'test-bundle-pending.com' } ) ],
 			} );
 			mockGetBundleSuggestionQuery( {
-				params: { query: 'test-bundle-pending' },
+				params: { query: 'test-bundle-pending.com' },
 				bundleSuggestion: buildBundleSuggestion( 'test-bundle-pending' ),
 			} );
 
@@ -1310,7 +1312,7 @@ describe( 'ResultsPage', () => {
 				<TestDomainSearch
 					cart={ buildCart( { onAddBundle } ) }
 					config={ { showBundleSuggestions: true } }
-					query="test-bundle-pending"
+					query="test-bundle-pending.com"
 				>
 					<ResultsPage />
 				</TestDomainSearch>
@@ -1336,11 +1338,11 @@ describe( 'ResultsPage', () => {
 			const onAddBundle = jest.fn().mockRejectedValue( new Error( 'Bundle add failed' ) );
 
 			mockGetSuggestionsQuery( {
-				params: { query: 'test-bundle-supersede' },
+				params: { query: 'test-bundle-supersede.com' },
 				suggestions: [ buildSuggestion( { domain_name: 'test-bundle-supersede.com' } ) ],
 			} );
 			mockGetBundleSuggestionQuery( {
-				params: { query: 'test-bundle-supersede' },
+				params: { query: 'test-bundle-supersede.com' },
 				bundleSuggestion: buildBundleSuggestion( 'test-bundle-supersede' ),
 			} );
 			mockGetAvailabilityQuery( {
@@ -1355,7 +1357,7 @@ describe( 'ResultsPage', () => {
 				<TestDomainSearch
 					cart={ buildCart( { onAddBundle } ) }
 					config={ { showBundleSuggestions: true } }
-					query="test-bundle-supersede"
+					query="test-bundle-supersede.com"
 				>
 					<ResultsPage />
 				</TestDomainSearch>
@@ -1383,11 +1385,11 @@ describe( 'ResultsPage', () => {
 			const onContinue = jest.fn();
 
 			mockGetSuggestionsQuery( {
-				params: { query: 'bundle-added' },
+				params: { query: 'bundle-added.com' },
 				suggestions: [ buildSuggestion( { domain_name: 'bundle-added.com' } ) ],
 			} );
 			mockGetBundleSuggestionQuery( {
-				params: { query: 'bundle-added' },
+				params: { query: 'bundle-added.com' },
 				bundleSuggestion: buildBundleSuggestion( 'bundle-added' ),
 			} );
 
@@ -1396,7 +1398,7 @@ describe( 'ResultsPage', () => {
 					cart={ buildCart( { hasItem: ( domain ) => domain.startsWith( 'bundle-added.' ) } ) }
 					config={ { showBundleSuggestions: true } }
 					events={ { onContinue } }
-					query="bundle-added"
+					query="bundle-added.com"
 				>
 					<ResultsPage />
 				</TestDomainSearch>
@@ -1416,11 +1418,11 @@ describe( 'ResultsPage', () => {
 
 		it( 'keeps Get bundle when only some members are in the cart', async () => {
 			mockGetSuggestionsQuery( {
-				params: { query: 'bundle-partial' },
+				params: { query: 'bundle-partial.com' },
 				suggestions: [ buildSuggestion( { domain_name: 'bundle-partial.com' } ) ],
 			} );
 			mockGetBundleSuggestionQuery( {
-				params: { query: 'bundle-partial' },
+				params: { query: 'bundle-partial.com' },
 				bundleSuggestion: buildBundleSuggestion( 'bundle-partial' ),
 			} );
 
@@ -1428,13 +1430,100 @@ describe( 'ResultsPage', () => {
 				<TestDomainSearch
 					cart={ buildCart( { hasItem: ( domain ) => domain === 'bundle-partial.com' } ) }
 					config={ { showBundleSuggestions: true } }
-					query="bundle-partial"
+					query="bundle-partial.com"
 				>
 					<ResultsPage />
 				</TestDomainSearch>
 			);
 
 			expect( await screen.findByRole( 'button', { name: 'Get bundle' } ) ).toBeInTheDocument();
+		} );
+	} );
+
+	describe( 'inline bundle', () => {
+		// A bare-term search whose cart holds a trigger domain (flowers.com) shows an
+		// inline bundle row beneath that domain's suggestion row, offering the
+		// companion extensions while pricing the full bundle.
+		const flowersBundle: BundleSuggestion = {
+			sld: 'flowers',
+			domains: [
+				{
+					domain: 'flowers.com',
+					cost: '$22.00',
+					raw_price: 22,
+					product_slug: 'domain_reg',
+					role: 'primary',
+				},
+				{
+					domain: 'flowers.net',
+					cost: '$18.00',
+					raw_price: 18,
+					product_slug: 'domain_reg',
+					role: 'companion',
+				},
+			],
+			bundle_price: 36,
+			original_price: 44,
+			discount_percent: 18,
+			category: 'business',
+			bundle_id: 'flowers-bundle',
+			bundle_group_id: 'v1.flowers.deadbeef',
+			catalogue_version: '1',
+		};
+
+		it( 'renders an inline bundle row beneath a trigger domain that is in the cart', async () => {
+			// Two other suggestions come first so flowers.com lands in the regular
+			// list (where the inline row is injected), not the featured grid.
+			mockGetSuggestionsQuery( {
+				params: { query: 'flowers' },
+				suggestions: [
+					buildSuggestion( { domain_name: 'flowers.io' } ),
+					buildSuggestion( { domain_name: 'flowers.co' } ),
+					buildSuggestion( { domain_name: 'flowers.com' } ),
+				],
+			} );
+			mockGetBundleTriggersQuery( { params: { query: 'flowers' }, bundleTriggers: [ 'com' ] } );
+			mockGetBundleForDomainQuery( { fqdn: 'flowers.com', bundleSuggestion: flowersBundle } );
+
+			render(
+				<TestDomainSearch
+					cart={ buildCart( {
+						items: [ buildCartItem( { domain: 'flowers', tld: 'com' } ) ],
+					} ) }
+					config={ { showBundleSuggestions: true } }
+					query="flowers"
+				>
+					<ResultsPage />
+				</TestDomainSearch>
+			);
+
+			expect( await screen.findByRole( 'button', { name: 'Get bundle' } ) ).toBeInTheDocument();
+			// The companion (.net) is offered; the primary (.com) is not chipped.
+			expect( screen.getByText( '.net' ) ).toBeInTheDocument();
+			expect(
+				screen.getByText( 'Secure popular domain extensions and protect your brand' )
+			).toBeInTheDocument();
+		} );
+
+		it( 'does not render an inline bundle row when no trigger domain is in the cart', async () => {
+			mockGetSuggestionsQuery( {
+				params: { query: 'flowers' },
+				suggestions: [
+					buildSuggestion( { domain_name: 'flowers.io' } ),
+					buildSuggestion( { domain_name: 'flowers.co' } ),
+					buildSuggestion( { domain_name: 'flowers.com' } ),
+				],
+			} );
+			mockGetBundleTriggersQuery( { params: { query: 'flowers' }, bundleTriggers: [ 'com' ] } );
+
+			render(
+				<TestDomainSearch config={ { showBundleSuggestions: true } } query="flowers">
+					<ResultsPage />
+				</TestDomainSearch>
+			);
+
+			expect( await screen.findByTitle( 'flowers.com' ) ).toBeInTheDocument();
+			expect( screen.queryByRole( 'button', { name: 'Get bundle' } ) ).not.toBeInTheDocument();
 		} );
 	} );
 
@@ -1504,11 +1593,11 @@ describe( 'ResultsPage', () => {
 			const onBundleShown = jest.fn();
 
 			mockGetSuggestionsQuery( {
-				params: { query: 'bundle-shown' },
+				params: { query: 'bundle-shown.com' },
 				suggestions: [ buildSuggestion( { domain_name: 'bundle-shown.com' } ) ],
 			} );
 			mockGetBundleSuggestionQuery( {
-				params: { query: 'bundle-shown' },
+				params: { query: 'bundle-shown.com' },
 				bundleSuggestion: buildBundleSuggestion( 'bundle-shown' ),
 			} );
 
@@ -1516,7 +1605,7 @@ describe( 'ResultsPage', () => {
 				<TestDomainSearch
 					events={ { onBundleShown } }
 					config={ { showBundleSuggestions: true } }
-					query="bundle-shown"
+					query="bundle-shown.com"
 				>
 					<ResultsPage />
 				</TestDomainSearch>
@@ -1566,11 +1655,11 @@ describe( 'ResultsPage', () => {
 			const onBundleAddToCart = jest.fn();
 
 			mockGetSuggestionsQuery( {
-				params: { query: 'bundle-accept' },
+				params: { query: 'bundle-accept.com' },
 				suggestions: [ buildSuggestion( { domain_name: 'bundle-accept.com' } ) ],
 			} );
 			mockGetBundleSuggestionQuery( {
-				params: { query: 'bundle-accept' },
+				params: { query: 'bundle-accept.com' },
 				bundleSuggestion: buildBundleSuggestion( 'bundle-accept' ),
 			} );
 
@@ -1579,7 +1668,7 @@ describe( 'ResultsPage', () => {
 					cart={ buildCart( { onAddBundle } ) }
 					events={ { onBundleAddToCart } }
 					config={ { showBundleSuggestions: true } }
-					query="bundle-accept"
+					query="bundle-accept.com"
 				>
 					<ResultsPage />
 				</TestDomainSearch>
@@ -1608,11 +1697,11 @@ describe( 'ResultsPage', () => {
 			const onBundleAddToCart = jest.fn();
 
 			mockGetSuggestionsQuery( {
-				params: { query: 'bundle-reject' },
+				params: { query: 'bundle-reject.com' },
 				suggestions: [ buildSuggestion( { domain_name: 'bundle-reject.com' } ) ],
 			} );
 			mockGetBundleSuggestionQuery( {
-				params: { query: 'bundle-reject' },
+				params: { query: 'bundle-reject.com' },
 				bundleSuggestion: buildBundleSuggestion( 'bundle-reject' ),
 			} );
 
@@ -1621,7 +1710,7 @@ describe( 'ResultsPage', () => {
 					cart={ buildCart( { onAddBundle } ) }
 					events={ { onBundleAddToCart } }
 					config={ { showBundleSuggestions: true } }
-					query="bundle-reject"
+					query="bundle-reject.com"
 				>
 					<ResultsPage />
 				</TestDomainSearch>
@@ -1643,11 +1732,11 @@ describe( 'ResultsPage', () => {
 			const onBundleAddToCart = jest.fn();
 
 			mockGetSuggestionsQuery( {
-				params: { query: 'bundle-no-handler' },
+				params: { query: 'bundle-no-handler.com' },
 				suggestions: [ buildSuggestion( { domain_name: 'bundle-no-handler.com' } ) ],
 			} );
 			mockGetBundleSuggestionQuery( {
-				params: { query: 'bundle-no-handler' },
+				params: { query: 'bundle-no-handler.com' },
 				bundleSuggestion: buildBundleSuggestion( 'bundle-no-handler' ),
 			} );
 
@@ -1656,7 +1745,7 @@ describe( 'ResultsPage', () => {
 					cart={ buildCart( { onAddBundle: undefined } ) }
 					events={ { onBundleAddToCart } }
 					config={ { showBundleSuggestions: true } }
-					query="bundle-no-handler"
+					query="bundle-no-handler.com"
 				>
 					<ResultsPage />
 				</TestDomainSearch>

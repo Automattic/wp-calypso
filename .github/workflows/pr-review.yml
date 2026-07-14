@@ -39,7 +39,7 @@ jobs:
     permissions:
       contents: read
       pull-requests: write
-      id-token: write
+      id-token: write # Required by claude-code-action for GitHub App token exchange.
     steps:
       - name: Validate area input
         env:
@@ -130,6 +130,7 @@ jobs:
         uses: anthropics/claude-code-action@567fe954a4527e81f132d87d1bdbcc94f7737434 # v1.0.107
         with:
           anthropic_api_key: ${{ secrets.anthropic_api_key }}
+          display_report: true
           prompt: |
             # Code Review Instructions
 
@@ -200,6 +201,7 @@ jobs:
         uses: anthropics/claude-code-action@567fe954a4527e81f132d87d1bdbcc94f7737434 # v1.0.107
         with:
           anthropic_api_key: ${{ secrets.anthropic_api_key }}
+          display_report: true
           prompt: |
             # Code Review Instructions (A4A)
 
@@ -268,6 +270,7 @@ jobs:
         uses: anthropics/claude-code-action@567fe954a4527e81f132d87d1bdbcc94f7737434 # v1.0.107
         with:
           anthropic_api_key: ${{ secrets.anthropic_api_key }}
+          display_report: true
           prompt: |
             # Code Review Instructions (General)
 

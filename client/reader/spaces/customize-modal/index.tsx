@@ -21,10 +21,11 @@ import {
 import { Icon, close } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, useMemo, useState } from 'react';
+import { StepIndicator } from 'calypso/reader/components/step-indicator';
 import {
 	useCreateSpace,
 	useDeleteSpace,
-	useSpace,
+	useSpaceBySlug,
 	useSpaces,
 	useUpdateSpace,
 } from 'calypso/reader/data/spaces';
@@ -36,34 +37,39 @@ import {
 import { getSpaceErrorMessage, validateName } from 'calypso/reader/spaces/form-helpers';
 import { SPACE_ICONS } from 'calypso/reader/spaces/icons';
 import { isKnownLanguageCode, toBaseLanguageCode } from 'calypso/reader/spaces/languages';
+import { getSpaceTabPath, parseSpaceTabFromPath } from 'calypso/reader/spaces/routes';
 import { useDispatch, useSelector } from 'calypso/state';
 import { getCurrentUserLocale } from 'calypso/state/current-user/selectors';
 import { successNotice } from 'calypso/state/notices/actions';
 import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
+import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import { DEFAULT_SPACE_FEED_LAYOUT } from '../feed/layouts/registry';
 import { ConfirmDeleteDialog } from './confirm-delete';
 import { DeleteTab } from './delete-tab';
 import { IdentityTab } from './identity-tab';
 import { DEFAULT_SPACE_WIDTH, getLayoutPresetTitle, LayoutTab } from './layout-tab';
 import { SourcesTab } from './sources-tab';
+import { TopicsTab } from './topics-tab';
 
 import './style.scss';
 
-export type CustomizeTab = 'identity' | 'layout' | 'sources' | 'delete';
+export type CustomizeTab = 'identity' | 'layout' | 'sources' | 'topics' | 'delete';
 
 // Ties the hidden Modal header's accessible name to our custom visible heading.
 const SPACE_MODAL_HEADING_ID = 'customize-space-modal__heading';
 
 interface CustomizeModalProps {
 	isOpen: boolean;
-	spaceId: string | null;
+	// The space's URL slug (edit mode resolves the detail by it, reusing the view's
+	// by-slug cache). Null while no space is addressed.
+	slug: string | null;
 	onClose: () => void;
 	initialTab?: CustomizeTab;
 }
 
 export function CustomizeModal( {
 	isOpen,
-	spaceId,
+	slug,
 	onClose,
 	initialTab = 'identity',
 }: CustomizeModalProps ) {
@@ -71,7 +77,7 @@ export function CustomizeModal( {
 		<SpaceUpsertModal
 			isOpen={ isOpen }
 			mode="edit"
-			spaceId={ spaceId }
+			slug={ slug }
 			onClose={ onClose }
 			initialTab={ initialTab }
 		/>
@@ -105,7 +111,7 @@ const getSpaceSourceDraftItem = ( source: SpaceSource ): SourceDraftItem => ( {
 interface SpaceUpsertModalProps {
 	isOpen: boolean;
 	mode: SpaceUpsertMode;
-	spaceId?: string | null;
+	slug?: string | null;
 	onClose: () => void;
 	onCreated?: ( space: ReadSpace ) => void;
 	initialTab?: CustomizeTab;
@@ -114,20 +120,20 @@ interface SpaceUpsertModalProps {
 export function SpaceUpsertModal( {
 	isOpen,
 	mode,
-	spaceId = null,
+	slug = null,
 	onClose,
 	onCreated,
 	initialTab = 'identity',
 }: SpaceUpsertModalProps ) {
 	// Mount fresh each open so the draft form state resets to the mode's values.
-	if ( ! isOpen || ( mode === 'edit' && ! spaceId ) ) {
+	if ( ! isOpen || ( mode === 'edit' && ! slug ) ) {
 		return null;
 	}
 
 	return (
 		<SpaceUpsertModalContent
 			mode={ mode }
-			spaceId={ spaceId }
+			slug={ slug }
 			onClose={ onClose }
 			onCreated={ onCreated }
 			initialTab={ initialTab }
@@ -137,13 +143,13 @@ export function SpaceUpsertModal( {
 
 function SpaceUpsertModalContent( {
 	mode,
-	spaceId,
+	slug,
 	onClose,
 	onCreated,
 	initialTab,
 }: {
 	mode: SpaceUpsertMode;
-	spaceId: string | null;
+	slug: string | null;
 	onClose: () => void;
 	onCreated?: ( space: ReadSpace ) => void;
 	initialTab: CustomizeTab;
@@ -151,9 +157,16 @@ function SpaceUpsertModalContent( {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 	const userLocale = useSelector( getCurrentUserLocale );
+	// The path we're on, so a rename can redirect to the new slug while preserving
+	// the current tab. Only meaningful in edit mode (we're on the space's URL).
+	const currentRoute = useSelector( getCurrentRoute );
 	const isCreate = mode === 'create';
-	const editSpaceId = isCreate ? null : spaceId;
-	const { data: space } = useSpace( editSpaceId, { enabled: ! isCreate } );
+	const spaceQuery = useSpaceBySlug( slug, {
+		enabled: ! isCreate,
+		refetchOnMount: 'always',
+	} );
+	const space = spaceQuery.data;
+	const editSpaceId = space?.id ?? null;
 	const spaces = useSpaces();
 	const createSpace = useCreateSpace();
 	const updateSpace = useUpdateSpace();
@@ -184,9 +197,20 @@ function SpaceUpsertModalContent( {
 	const [ width, setWidth ] = useState< SpaceLayoutWidth >( DEFAULT_SPACE_WIDTH );
 	const [ selectedSources, setSelectedSources ] = useState< SourceDraftItem[] >( [] );
 	const [ isConfirmingDelete, setIsConfirmingDelete ] = useState( false );
+	// Create is a guided wizard that walks through the sections one step at a time;
+	// edit keeps the tabbed layout so any section is reachable directly.
+	const [ step, setStep ] = useState( 0 );
 
+	// Seed once the open-time refetch has settled, not from the cache it returns
+	// immediately — a stale snapshot can omit tags and would lock in empty fields.
 	useEffect( () => {
-		if ( ! isCreate && space && ! isSeeded ) {
+		if (
+			! isCreate &&
+			space &&
+			spaceQuery.isSuccess &&
+			spaceQuery.isFetchedAfterMount &&
+			! isSeeded
+		) {
 			setName( space.name );
 			setTags( space.tags );
 			// `?? []` guards a persisted React Query cache written before `languages`
@@ -200,7 +224,7 @@ function SpaceUpsertModalContent( {
 			setSelectedSources( space.sources.map( getSpaceSourceDraftItem ) );
 			setIsSeeded( true );
 		}
-	}, [ isCreate, isSeeded, space ] );
+	}, [ isCreate, isSeeded, space, spaceQuery.isFetchedAfterMount, spaceQuery.isSuccess ] );
 
 	const existingNames = useMemo(
 		() =>
@@ -280,7 +304,7 @@ function SpaceUpsertModalContent( {
 				},
 			},
 			{
-				onSuccess: () => {
+				onSuccess: ( updatedSpace ) => {
 					const previousView = space.layout.view ?? DEFAULT_SPACE_FEED_LAYOUT;
 					if ( view !== previousView ) {
 						dispatch(
@@ -297,6 +321,15 @@ function SpaceUpsertModalContent( {
 					);
 					dispatch( successNotice( translate( 'Changes saved.' ), { duration: 5000 } ) );
 					onClose();
+					// The slug re-syncs to the (possibly renamed) title server-side, so if it
+					// changed, the URL we're on now points at the old slug — canonicalize it,
+					// keeping the tab we were viewing. The mutation seeded the new slug's cache,
+					// so this lands without a refetch flash.
+					if ( updatedSpace.slug !== space.slug ) {
+						page.replace(
+							getSpaceTabPath( updatedSpace.slug, parseSpaceTabFromPath( currentRoute ) )
+						);
+					}
 				},
 			}
 		);
@@ -325,7 +358,8 @@ function SpaceUpsertModalContent( {
 	const baseTabs: ModalTab[] = [
 		{ name: 'identity', title: translate( 'Identity' ) as string },
 		{ name: 'layout', title: translate( 'Layout' ) as string },
-		{ name: 'sources', title: translate( 'Sources' ) as string },
+		{ name: 'sources', title: translate( 'Feeds' ) as string },
+		{ name: 'topics', title: translate( 'Topics' ) as string },
 	];
 	const tabs: ModalTab[] = isCreate
 		? baseTabs
@@ -353,6 +387,16 @@ function SpaceUpsertModalContent( {
 				/>
 			);
 		}
+		if ( tabName === 'topics' ) {
+			return (
+				<TopicsTab
+					tags={ tags }
+					onTagsChange={ setTags }
+					languages={ languages }
+					onLanguagesChange={ setLanguages }
+				/>
+			);
+		}
 		if ( tabName === 'delete' && ! isCreate ) {
 			return (
 				<DeleteTab
@@ -366,10 +410,6 @@ function SpaceUpsertModalContent( {
 				name={ name }
 				onNameChange={ setName }
 				nameError={ nameError }
-				tags={ tags }
-				onTagsChange={ setTags }
-				languages={ languages }
-				onLanguagesChange={ setLanguages }
 				color={ color }
 				onColorChange={ setColor }
 				iconColor={ iconColor }
@@ -383,11 +423,26 @@ function SpaceUpsertModalContent( {
 	const sourceCount = selectedSources.length;
 	const footerSummary = [
 		getLayoutPresetTitle( view, translate ),
-		translate( '%(count)d source', '%(count)d sources', {
+		translate( '%(count)d feed', '%(count)d feeds', {
 			count: sourceCount,
 			args: { count: sourceCount },
 		} ),
 	].join( ' · ' );
+
+	// The create wizard walks the base sections in order; the current step maps to
+	// the matching entry in `baseTabs` for its heading.
+	const wizardSteps = baseTabs;
+	const isLastStep = step === wizardSteps.length - 1;
+	const currentStep = wizardSteps[ step ];
+
+	const goBack = () => setStep( ( current ) => Math.max( current - 1, 0 ) );
+	const goNext = () => {
+		if ( isLastStep ) {
+			handleSave();
+			return;
+		}
+		setStep( ( current ) => Math.min( current + 1, wizardSteps.length - 1 ) );
+	};
 
 	const modalTitle = isCreate ? translate( 'Create a new space' ) : translate( 'Customize space' );
 
@@ -415,17 +470,28 @@ function SpaceUpsertModalContent( {
 				<p className="customize-space-modal__subtitle">
 					{ isCreate
 						? translate( 'Set up a space for the feeds and tags you want to read together.' )
-						: translate( "Update this space's identity, layout and sources." ) }
+						: translate( "Update this space's identity, layout and feeds." ) }
 				</p>
 			</VStack>
 
-			<TabPanel className="customize-space-modal__tabs" initialTabName={ initialTab } tabs={ tabs }>
-				{ ( tab ) => (
-					<div className="customize-space-modal__panel">
-						{ renderTab( tab.name as CustomizeTab ) }
-					</div>
-				) }
-			</TabPanel>
+			{ isCreate ? (
+				<div className="customize-space-modal__step">
+					<h2 className="customize-space-modal__step-heading">{ currentStep.title }</h2>
+					<div className="customize-space-modal__panel">{ renderTab( currentStep.name ) }</div>
+				</div>
+			) : (
+				<TabPanel
+					className="customize-space-modal__tabs"
+					initialTabName={ initialTab }
+					tabs={ tabs }
+				>
+					{ ( tab ) => (
+						<div className="customize-space-modal__panel">
+							{ renderTab( tab.name as CustomizeTab ) }
+						</div>
+					) }
+				</TabPanel>
+			) }
 
 			{ createSpace.isError || updateSpace.isError ? (
 				<p className="customize-space-modal__error" role="alert">
@@ -433,46 +499,79 @@ function SpaceUpsertModalContent( {
 				</p>
 			) : null }
 
-			<HStack className="customize-space-modal__footer" justify="space-between" alignment="center">
+			{ isCreate ? (
 				<HStack
-					className="customize-space-modal__footer-space"
-					spacing={ 2 }
-					justify="flex-start"
-					expanded={ false }
+					className="customize-space-modal__footer"
+					justify="space-between"
+					alignment="center"
 				>
-					<span
-						className={ `customize-space-modal__footer-icon customize-space-modal__footer-icon--${ iconColor }` }
-						aria-hidden="true"
+					<StepIndicator totalSteps={ wizardSteps.length } currentStep={ step + 1 } />
+					<HStack spacing={ 2 } justify="flex-end" expanded={ false }>
+						<Button
+							__next40pxDefaultSize
+							variant="tertiary"
+							disabled={ isPending }
+							onClick={ step === 0 ? onClose : goBack }
+						>
+							{ step === 0 ? translate( 'Cancel' ) : translate( 'Back' ) }
+						</Button>
+						<Button
+							__next40pxDefaultSize
+							variant="primary"
+							isBusy={ isPending }
+							disabled={ !! nameError || isPending }
+							onClick={ goNext }
+						>
+							{ isLastStep ? translate( 'Create' ) : translate( 'Next' ) }
+						</Button>
+					</HStack>
+				</HStack>
+			) : (
+				<HStack
+					className="customize-space-modal__footer"
+					justify="space-between"
+					alignment="center"
+				>
+					<HStack
+						className="customize-space-modal__footer-space"
+						spacing={ 2 }
+						justify="flex-start"
+						expanded={ false }
 					>
-						<Icon icon={ SPACE_ICONS[ icon ] } size={ 18 } />
-					</span>
-					<VStack spacing={ 0 } className="customize-space-modal__footer-text">
-						<span className="customize-space-modal__footer-name">
-							{ name.trim() || translate( 'New space' ) }
+						<span
+							className={ `customize-space-modal__footer-icon customize-space-modal__footer-icon--${ iconColor }` }
+							aria-hidden="true"
+						>
+							<Icon icon={ SPACE_ICONS[ icon ] } size={ 18 } />
 						</span>
-						<span className="customize-space-modal__footer-summary">{ footerSummary }</span>
-					</VStack>
+						<VStack spacing={ 0 } className="customize-space-modal__footer-text">
+							<span className="customize-space-modal__footer-name">
+								{ name.trim() || translate( 'New space' ) }
+							</span>
+							<span className="customize-space-modal__footer-summary">{ footerSummary }</span>
+						</VStack>
+					</HStack>
+					<HStack spacing={ 2 } justify="flex-end" expanded={ false }>
+						<Button
+							__next40pxDefaultSize
+							variant="tertiary"
+							disabled={ isPending }
+							onClick={ onClose }
+						>
+							{ translate( 'Cancel' ) }
+						</Button>
+						<Button
+							__next40pxDefaultSize
+							variant="primary"
+							isBusy={ isPending }
+							disabled={ ! isSeeded || !! nameError || isPending }
+							onClick={ handleSave }
+						>
+							{ translate( 'Save changes' ) }
+						</Button>
+					</HStack>
 				</HStack>
-				<HStack spacing={ 2 } justify="flex-end" expanded={ false }>
-					<Button
-						__next40pxDefaultSize
-						variant="tertiary"
-						disabled={ isPending }
-						onClick={ onClose }
-					>
-						{ translate( 'Cancel' ) }
-					</Button>
-					<Button
-						__next40pxDefaultSize
-						variant="primary"
-						isBusy={ isPending }
-						disabled={ ! isSeeded || !! nameError || isPending }
-						onClick={ handleSave }
-					>
-						{ isCreate ? translate( 'Create' ) : translate( 'Save changes' ) }
-					</Button>
-				</HStack>
-			</HStack>
+			) }
 
 			{ isConfirmingDelete ? (
 				<ConfirmDeleteDialog

@@ -2,7 +2,7 @@ import { formatNumber } from '@automattic/number-formatters';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import React from 'react';
-import InfoPopover from 'calypso/components/info-popover';
+import StatsInfotip from 'calypso/my-sites/stats/components/stats-infotip';
 import usePlanUsageQuery from 'calypso/my-sites/stats/hooks/use-plan-usage-query';
 import useSiteTypes from 'calypso/my-sites/stats/hooks/use-site-types';
 
@@ -84,11 +84,16 @@ const PlanUsage: React.FC< PlanUsageProps > = ( {
 						productName: 'Stats',
 					},
 				} ) }
-				<InfoPopover className="plan-usage-heading-info" position="bottom" iconSize={ 18 }>
+				<StatsInfotip
+					className="plan-usage-heading-info"
+					iconSize={ 18 }
+					label={ translate( 'Learn more about billable views' ) }
+					side="bottom"
+				>
 					{ translate(
 						"Billable views are your total views minus your two highest-traffic days each billing cycle, so big spikes won't count against your limit. You'll only need to upgrade if you exceed your limit for three cycles in a row."
 					) }
-				</InfoPopover>
+				</StatsInfotip>
 			</h3>
 			<div className={ progressClassNames } key="progress">
 				<div

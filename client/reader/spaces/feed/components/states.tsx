@@ -54,13 +54,13 @@ export function SpaceFeedEmpty( {
 
 	return (
 		<div className="space-feed__status">
-			<p className="space-feed__status-title">{ translate( 'Add sources to get started' ) }</p>
+			<p className="space-feed__status-title">{ translate( 'Add feeds to get started' ) }</p>
 			<p className="space-feed__status-line">
 				{ translate( 'Follow blogs, tags, or sites to fill this space with posts you’ll love.' ) }
 			</p>
 			{ onAddSources && (
 				<Button variant="primary" onClick={ onAddSources }>
-					{ translate( 'Add sources' ) }
+					{ translate( 'Add feeds' ) }
 				</Button>
 			) }
 		</div>

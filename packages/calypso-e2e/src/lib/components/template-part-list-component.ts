@@ -1,12 +1,11 @@
 import { Page } from 'playwright';
 import { EditorComponent } from './editor-component';
 
-const parentSelector = '[aria-label="Template parts list - Content"]';
+const parentSelector = '.dataviews-wrapper';
 
 const selectors = {
-	deleteButton: '[aria-label="Actions"] button :text("Delete")',
-	actionsButtonForPart: ( partName: string ) =>
-		`.edit-site-list-table-row:has-text("${ partName }") button[aria-label="Actions"]`,
+	// Each template part is a card in the DataViews grid.
+	cardForPart: '.dataviews-view-grid__card',
 };
 
 /**
@@ -34,11 +33,20 @@ export class TemplatePartListComponent {
 	 */
 	async deleteTemplatePart( name: string ): Promise< void > {
 		const editorParent = await this.editor.parent();
-		const actionsButtonLocator = editorParent.locator( selectors.actionsButtonForPart( name ) );
-		await actionsButtonLocator.click();
+		// Substring match on the card. Template-part names are generated with a
+		// millisecond timestamp (see callers), so within a run the target name is
+		// unique and is not a substring of any accumulated leftover part's name.
+		const card = editorParent.locator( selectors.cardForPart ).filter( { hasText: name } );
+		await card.getByRole( 'button', { name: 'Actions' } ).click();
 
-		const deleteButtonLocator = editorParent.locator( selectors.deleteButton );
-		await deleteButtonLocator.click();
+		// The Actions dropdown exposes Delete/Edit/Duplicate/Rename menu items.
+		await editorParent.getByRole( 'menuitem', { name: 'Delete' } ).first().click();
+
+		// Deleting requires confirming in a dialog.
+		await editorParent
+			.getByRole( 'dialog' )
+			.getByRole( 'button', { name: 'Delete', exact: true } )
+			.click();
 	}
 
 	/**

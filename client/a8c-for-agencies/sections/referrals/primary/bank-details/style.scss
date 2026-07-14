@@ -6,18 +6,6 @@
 
 $iframe-background-color: #f7f7f7;
 
-.bank-details__iframe-container {
-	margin-block-start: 24px;
-	min-height: calc(100vh - 182px); // Take the full height & hide the scrollbar on the main page
-	height: 100%; // Setting the height to 100% to make sure the iFrame is always visible
-
-	.a4a-text-placeholder {
-		display: block;
-		min-height: calc(100vh - 182px); // Take the full height & hide the scrollbar on the main page
-		height: 100%;
-	}
-}
-
 .bank-details__layout.main.hosting-dashboard-layout {
 	height: 100%; // Setting the height to 100% to make sure the iFrame is always visible
 
@@ -33,11 +21,6 @@ $iframe-background-color: #f7f7f7;
 .bank-details__heading {
 	padding-block: 8px;
 	@include heading-x-large;
-}
-
-.bank-details__subheading {
-	@include body-large;
-	color: var(--color-neutral-60);
 }
 
 .bank-details__status {

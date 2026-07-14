@@ -5,6 +5,8 @@ import type {
 	AgencyResourcesResponse,
 	McpSettings,
 	McpSettingsUpdate,
+	TipaltiIFrameUrl,
+	TipaltiPayee,
 } from './types';
 
 export async function fetchAgency(): Promise< AgencyApiResponse > {
@@ -57,4 +59,21 @@ export async function updateAgencyMcpSettings(
 		},
 		input
 	);
+}
+
+export async function fetchTipaltiIFrameUrl( agencyId: number ): Promise< TipaltiIFrameUrl > {
+	return wpcom.req.get(
+		{
+			path: '/agency/embeds/tipalti',
+			apiNamespace: 'wpcom/v2',
+		},
+		{ agency_id: agencyId }
+	);
+}
+
+export async function fetchTipaltiPayee( agencyId: number ): Promise< TipaltiPayee > {
+	return wpcom.req.get( {
+		path: `/agency/${ agencyId }/tipalti`,
+		apiNamespace: 'wpcom/v2',
+	} );
 }

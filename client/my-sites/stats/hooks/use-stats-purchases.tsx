@@ -104,6 +104,10 @@ export const hasCompletePlan = ( ownedPurchases: Purchase[] ) => {
 	return areProductsOwned( ownedPurchases, [ ...JETPACK_COMPLETE_PLANS ] );
 };
 
+export const hasGrowthPlan = ( ownedPurchases: Purchase[] ) => {
+	return areProductsOwned( ownedPurchases, [ ...JETPACK_GROWTH_PLANS ] );
+};
+
 export const hasSecurityPlan = ( ownedPurchases: Purchase[] ) => {
 	return areProductsOwned( ownedPurchases, [ ...JETPACK_SECURITY_PLANS ] );
 };
@@ -167,6 +171,12 @@ export default function useStatsPurchases( siteId: number | null ) {
 		[ sitePurchases ]
 	);
 
+	// Which specific bundled plan (if any) is granting commercial Stats access, so purchase-page
+	// copy can name it instead of saying "your current plan".
+	const isCompletePlanOwned = useMemo( () => hasCompletePlan( sitePurchases ), [ sitePurchases ] );
+	const isGrowthPlanOwned = useMemo( () => hasGrowthPlan( sitePurchases ), [ sitePurchases ] );
+	const isBusinessPlanOwned = useMemo( () => hasBusinessPlan( sitePurchases ), [ sitePurchases ] );
+
 	const isLegacyCommercialLicense = useMemo( () => {
 		const purchases = filterPurchasesByProducts( sitePurchases, [
 			PRODUCT_JETPACK_STATS_MONTHLY,
@@ -186,6 +196,9 @@ export default function useStatsPurchases( siteId: number | null ) {
 		isPWYWOwned,
 		isCommercialOwned,
 		supportCommercialUse,
+		isCompletePlanOwned,
+		isGrowthPlanOwned,
+		isBusinessPlanOwned,
 		isLegacyCommercialLicense,
 		hasLoadedSitePurchases,
 		hasAnyPlan: isFreeOwned || isCommercialOwned || isPWYWOwned || supportCommercialUse,
@@ -194,8 +207,10 @@ export default function useStatsPurchases( siteId: number | null ) {
 	};
 }
 
-export const withStatsPurchases =
-	( WrappedComponent: ComponentClass ) => ( props: { siteId: number | null } ) => {
+export const withStatsPurchases = ( WrappedComponent: ComponentClass ) => {
+	function WithStatsPurchases( props: { siteId: number | null } ) {
 		const statsPurchases = useStatsPurchases( props.siteId );
 		return <WrappedComponent { ...props } { ...statsPurchases } />;
-	};
+	}
+	return WithStatsPurchases;
+};

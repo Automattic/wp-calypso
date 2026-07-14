@@ -1,26 +1,24 @@
-import { ComponentSwapper, SegmentedControl, SelectDropdown } from '@automattic/components';
-import { Icon, lock } from '@wordpress/icons';
+import { recordTracksEvent } from '@automattic/calypso-analytics';
 import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
 import { useMemo } from 'react';
 import { connect, useDispatch } from 'react-redux';
 import { compose } from 'redux';
-import { recordGoogleEvent } from 'calypso/state/analytics/actions';
-import { getSiteSlug } from 'calypso/state/sites/selectors';
+import { getShortcuts } from 'calypso/components/date-range/use-shortcuts';
+import StatsDateControl from 'calypso/components/stats-date-control';
+import { isJetpackSite, getSiteSlug } from 'calypso/state/sites/selectors';
 import { toggleUpsellModal } from 'calypso/state/stats/paid-stats-upsell/actions';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import {
-	STATS_FEATURE_SUMMARY_LINKS_30_DAYS,
-	STATS_FEATURE_SUMMARY_LINKS_7_DAYS,
+	DATE_FORMAT,
+	STATS_FEATURE_DATE_CONTROL,
 	STATS_FEATURE_SUMMARY_LINKS_ALL,
-	STATS_FEATURE_SUMMARY_LINKS_DAY,
-	STATS_FEATURE_SUMMARY_LINKS_QUARTER,
-	STATS_FEATURE_SUMMARY_LINKS_YEAR,
 } from '../constants';
 import { useMomentInSite } from '../hooks/use-moment-site-zone';
 import { shouldGateStats } from '../hooks/use-should-gate-stats';
+import StatsCardUpsell from '../stats-card-upsell';
 import DatePicker from '../stats-date-label';
-import { trackStatsAnalyticsEvent } from '../utils';
+import { addIsGatedFor } from '../stats-period-navigation';
 import './summary-nav.scss';
 
 export const StatsModuleSummaryLinks = ( props ) => {
@@ -32,194 +30,73 @@ export const StatsModuleSummaryLinks = ( props ) => {
 		period,
 		hideNavigation,
 		navigationSwap,
-		shouldGateOptions,
+		shortcutList,
+		gateDateControl,
+		gateAllTimeSummaryLink,
+		isSiteJetpackNotAtomic,
 		siteId,
 		context,
 	} = props;
 
 	const dispatch = useDispatch();
 	const momentInSite = useMomentInSite( siteId );
-	const getSummaryPeriodLabel = () => {
-		// Check for custom range in query or preserved custom range params.
-		const queryParams = new URLSearchParams( context.query );
-		const hasPreservedCustomRange =
-			queryParams.has( 'customRangeStart' ) && queryParams.has( 'customRangeEnd' );
 
-		if ( query.start_date || hasPreservedCustomRange ) {
-			return translate( 'Custom Range Summary' );
-		}
-		switch ( period.period ) {
-			case 'day':
-				return translate( 'Day Summary' );
-			case 'week':
-				return translate( 'Week Summary' );
-			case 'month':
-				return translate( 'Month Summary' );
-			case 'year':
-				return translate( 'Year Summary' );
-		}
-	};
+	const isAllTime = String( query?.num ) === '-1';
+	let chartStart;
+	let chartEnd;
+	if ( isAllTime ) {
+		// "All time" has no bounded range: leave the selection empty so the picker
+		// shows no dates (rather than defaulting to today).
+		chartStart = undefined;
+		chartEnd = undefined;
+	} else if ( query?.start_date ) {
+		chartStart = query.start_date;
+		chartEnd = query.date;
+	} else if ( Number( query?.num ) > 0 && query?.summarize ) {
+		// Legacy pill-era links (`?num=30&summarize=1`): seed the picker with the
+		// actual "N days ending {date}" range the page is summarizing.
+		chartEnd = momentInSite( query.date ).format( DATE_FORMAT );
+		chartStart = momentInSite( query.date )
+			.subtract( Number( query.num ) - 1, 'days' )
+			.format( DATE_FORMAT );
+	} else {
+		// Legacy single-date entry (e.g. default "View details", `?startDate={periodEnd}`) has no
+		// custom range: seed the picker from the summarized period instead of an empty range.
+		chartStart = period.startOf.format( DATE_FORMAT );
+		chartEnd = period.endOf.format( DATE_FORMAT );
+	}
+	const shortcutId = context.query?.shortcut || ( isAllTime ? 'all_time' : undefined );
+	const daysInRange =
+		chartStart && chartEnd
+			? momentInSite( chartEnd ).diff( momentInSite( chartStart ), 'days' ) + 1
+			: 0;
+	const dateRange = { chartStart, chartEnd, daysInRange, shortcutId };
 
-	const recordStats = ( item ) => {
-		props.recordGoogleEvent( 'Stats', `Clicked Summary Link: ${ path } ${ item.stat }` );
-		trackStatsAnalyticsEvent( 'stats_summary_nav_period_clicked', {
-			path,
-			stat_type: item.statType,
-		} );
-	};
-
-	const handleClick = ( item ) => ( event ) => {
-		if ( item.isGated ) {
-			event.preventDefault();
-			dispatch( toggleUpsellModal( siteId, item.statType ) );
-		}
-		recordStats( item );
-	};
-
-	const summaryPeriodPath = useMemo( () => {
-		let periodPath = `/stats/${
-			period.period
-		}/${ path }/${ siteSlug }?startDate=${ period.endOf.format( 'YYYY-MM-DD' ) }`;
-
-		// Override if custom range was used in query.
-		if ( query.start_date ) {
-			periodPath = `/stats/${ period.period }/${ path }/${ siteSlug }?startDate=${ query.start_date }&endDate=${ query.date }`;
-		}
-
-		// Check for preserved custom range params (when returning from a different period view).
-		const queryParams = new URLSearchParams( context.query );
-		if ( queryParams.has( 'customRangeStart' ) && queryParams.has( 'customRangeEnd' ) ) {
-			periodPath = `/stats/day/${ path }/${ siteSlug }?startDate=${ queryParams.get(
-				'customRangeStart'
-			) }&endDate=${ queryParams.get( 'customRangeEnd' ) }`;
-		}
-
-		return periodPath;
-	}, [ period.period, period.endOf, path, siteSlug, query, context.query ] );
-
-	const getSummaryPathForDaysRange = ( numberDays ) => {
-		const queryParams = new URLSearchParams( context.query );
-
-		// Preserve the custom date range (if any) to allow returning to it later.
-		// Only save if we're currently on a custom range (has startDate and endDate without num).
-		const hasCustomRange =
-			queryParams.has( 'startDate' ) && queryParams.has( 'endDate' ) && ! queryParams.has( 'num' );
-		const hasPreservedCustomRange =
-			queryParams.has( 'customRangeStart' ) && queryParams.has( 'customRangeEnd' );
-
-		if ( hasCustomRange && ! hasPreservedCustomRange ) {
-			queryParams.set( 'customRangeStart', queryParams.get( 'startDate' ) );
-			queryParams.set( 'customRangeEnd', queryParams.get( 'endDate' ) );
-		}
-
-		queryParams.set( 'startDate', momentInSite().format( 'YYYY-MM-DD' ) );
-		queryParams.set( 'summarize', 1 );
-		queryParams.set( 'num', numberDays );
-		queryParams.delete( 'endDate' );
-
-		return `/stats/day/${ path }/${ siteSlug }?${ queryParams.toString() }`;
-	};
-
-	const options = [
-		{
-			value: '0',
-			label: getSummaryPeriodLabel(),
-			path: summaryPeriodPath,
-			stat: 'Period Summary',
-			isGated: shouldGateOptions[ STATS_FEATURE_SUMMARY_LINKS_DAY ],
-			statType: STATS_FEATURE_SUMMARY_LINKS_DAY,
-		},
-		{
-			value: '7',
-			label: translate( '7 days' ),
-			path: getSummaryPathForDaysRange( 7 ),
-			stat: '7 Days',
-			isGated: shouldGateOptions[ STATS_FEATURE_SUMMARY_LINKS_7_DAYS ],
-			statType: STATS_FEATURE_SUMMARY_LINKS_7_DAYS,
-		},
-		{
-			value: '30',
-			label: translate( '30 days' ),
-			path: getSummaryPathForDaysRange( 30 ),
-			stat: '30 Days',
-			isGated: shouldGateOptions[ STATS_FEATURE_SUMMARY_LINKS_30_DAYS ],
-			statType: STATS_FEATURE_SUMMARY_LINKS_30_DAYS,
-		},
-		{
-			value: '90',
-			label: translate( 'Quarter' ),
-			path: getSummaryPathForDaysRange( 90 ),
-			stat: 'Quarter',
-			isGated: shouldGateOptions[ STATS_FEATURE_SUMMARY_LINKS_QUARTER ],
-			statType: STATS_FEATURE_SUMMARY_LINKS_QUARTER,
-		},
-		{
-			value: '365',
-			label: translate( 'Year' ),
-			path: getSummaryPathForDaysRange( 365 ),
-			stat: 'Year',
-			isGated: shouldGateOptions[ STATS_FEATURE_SUMMARY_LINKS_YEAR ],
-			statType: STATS_FEATURE_SUMMARY_LINKS_YEAR,
-		},
-		{
-			value: '-1',
-			label: translate( 'All Time' ),
-			path: getSummaryPathForDaysRange( -1 ),
-			stat: 'All Time',
-			isGated: shouldGateOptions[ STATS_FEATURE_SUMMARY_LINKS_ALL ],
-			statType: STATS_FEATURE_SUMMARY_LINKS_ALL,
-		},
-	];
-
-	const numberDays = query?.num ?? '0';
-	let selected = options.find( ( option ) => option.value === numberDays );
-	selected = selected || options[ 0 ];
-
-	const tabs = (
-		<SegmentedControl
-			primary
-			className={ clsx( 'stats-summary-nav__intervals' ) }
-			compact={ false }
-		>
-			{ options.map( ( i ) => (
-				<SegmentedControl.Item
-					key={ i.value }
-					path={ i.isGated ? '' : i.path }
-					selected={ i.value === selected.value }
-					onClick={ handleClick( i ) }
-				>
-					{ i.label }
-					{ i.isGated && <Icon icon={ lock } width={ 16 } height={ 16 } /> }
-				</SegmentedControl.Item>
-			) ) }
-		</SegmentedControl>
+	const fullShortcutList = useMemo(
+		() => [
+			...shortcutList,
+			{
+				id: 'all_time',
+				label: translate( 'All Time' ),
+				startDate: '',
+				endDate: '',
+				period: 'day',
+				isGated: gateAllTimeSummaryLink,
+				statType: STATS_FEATURE_SUMMARY_LINKS_ALL,
+			},
+		],
+		[ shortcutList, gateAllTimeSummaryLink, translate ]
 	);
-	const select = (
-		<SelectDropdown
-			className="section-nav-tabs__dropdown stats-summary-nav__select"
-			selectedText={ selected.label }
-		>
-			{ options.map( ( i, index ) => (
-				<SelectDropdown.Item
-					{ ...i }
-					key={ 'navTabsDropdown-' + index }
-					path={ i.path }
-					selected={ i.value === selected.value }
-					onClick={ handleClick( i ) }
-				>
-					{ i.label }
-					{ i.isGated && (
-						<Icon
-							className="stats-summary-nav__gated-icon"
-							icon={ lock }
-							width={ 16 }
-							height={ 16 }
-						/>
-					) }
-				</SelectDropdown.Item>
-			) ) }
-		</SelectDropdown>
-	);
+
+	const onGatedHandler = ( events, source, statType ) => {
+		// Stop the popup from showing for Jetpack sites.
+		if ( isSiteJetpackNotAtomic ) {
+			return;
+		}
+
+		events.forEach( ( event ) => recordTracksEvent( event.name, event.params ) );
+		dispatch( toggleUpsellModal( siteId, statType ) );
+	};
 
 	const navClassName = clsx( 'stats-summary-nav', {
 		[ 'stats-summary-nav--with-button' ]: hideNavigation && navigationSwap,
@@ -227,20 +104,34 @@ export const StatsModuleSummaryLinks = ( props ) => {
 
 	return (
 		<div className={ navClassName }>
-			{ ! hideNavigation && (
-				<ComponentSwapper
-					className={ clsx( 'stats-summary-nav__intervals-container' ) }
-					breakpoint="<660px"
-					breakpointActiveComponent={ select }
-					breakpointInactiveComponent={ tabs }
+			{ /* The container is row-reversed at wide widths, so the first child renders on the right. */ }
+			<div className="stats-summary-nav__date-control">
+				<StatsDateControl
+					slug={ siteSlug }
+					period={ period.period }
+					module={ path }
+					queryParams={ context.query }
+					dateRange={ dateRange }
+					shortcutList={ fullShortcutList }
+					onGatedHandler={ onGatedHandler }
+					overlay={
+						gateDateControl && (
+							<StatsCardUpsell
+								className="stats-module__upsell"
+								statType={ STATS_FEATURE_DATE_CONTROL }
+								siteId={ siteId }
+							/>
+						)
+					}
 				/>
-			) }
+			</div>
 			<div className="stats-summary-nav__header">
 				<DatePicker
 					period={ period.period }
 					date={ period.startOf }
 					path={ path }
 					query={ query }
+					dateRange={ dateRange }
 					summary={ false }
 				/>
 			</div>
@@ -249,46 +140,20 @@ export const StatsModuleSummaryLinks = ( props ) => {
 	);
 };
 
-const connectComponent = connect(
-	( state ) => {
-		const siteId = getSelectedSiteId( state );
-		const siteSlug = getSiteSlug( state, siteId );
-		const shouldGateOptions = {
-			[ STATS_FEATURE_SUMMARY_LINKS_DAY ]: shouldGateStats(
-				state,
-				siteId,
-				STATS_FEATURE_SUMMARY_LINKS_DAY
-			),
-			[ STATS_FEATURE_SUMMARY_LINKS_7_DAYS ]: shouldGateStats(
-				state,
-				siteId,
-				STATS_FEATURE_SUMMARY_LINKS_7_DAYS
-			),
-			[ STATS_FEATURE_SUMMARY_LINKS_30_DAYS ]: shouldGateStats(
-				state,
-				siteId,
-				STATS_FEATURE_SUMMARY_LINKS_30_DAYS
-			),
-			[ STATS_FEATURE_SUMMARY_LINKS_QUARTER ]: shouldGateStats(
-				state,
-				siteId,
-				STATS_FEATURE_SUMMARY_LINKS_QUARTER
-			),
-			[ STATS_FEATURE_SUMMARY_LINKS_YEAR ]: shouldGateStats(
-				state,
-				siteId,
-				STATS_FEATURE_SUMMARY_LINKS_YEAR
-			),
-			[ STATS_FEATURE_SUMMARY_LINKS_ALL ]: shouldGateStats(
-				state,
-				siteId,
-				STATS_FEATURE_SUMMARY_LINKS_ALL
-			),
-		};
+const connectComponent = connect( ( state ) => {
+	const siteId = getSelectedSiteId( state );
+	const siteSlug = getSiteSlug( state, siteId );
+	const { supportedShortcutList } = getShortcuts( state, {} );
+	const shortcutList = supportedShortcutList.map( addIsGatedFor( state, siteId ) );
 
-		return { siteId, siteSlug, shouldGateOptions };
-	},
-	{ recordGoogleEvent }
-);
+	return {
+		siteId,
+		siteSlug,
+		shortcutList,
+		gateDateControl: shouldGateStats( state, siteId, STATS_FEATURE_DATE_CONTROL ),
+		gateAllTimeSummaryLink: shouldGateStats( state, siteId, STATS_FEATURE_SUMMARY_LINKS_ALL ),
+		isSiteJetpackNotAtomic: isJetpackSite( state, siteId, { treatAtomicAsJetpackSite: false } ),
+	};
+} );
 
 export default compose( connectComponent, localize )( StatsModuleSummaryLinks );

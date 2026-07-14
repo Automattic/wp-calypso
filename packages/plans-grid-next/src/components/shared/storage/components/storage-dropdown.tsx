@@ -2,7 +2,7 @@
 import { type AddOnMeta, AddOns, WpcomPlansUI } from '@automattic/data-stores';
 import { CustomSelectControl } from '@wordpress/components';
 import { useDispatch, useSelect } from '@wordpress/data';
-import { useCallback, useEffect, useMemo } from '@wordpress/element';
+import { useCallback, useEffect, useMemo, useRef } from '@wordpress/element';
 import { useTranslate } from 'i18n-calypso';
 import { usePlansGridContext } from '../../../../grid-context';
 import DropdownOption from '../../../dropdown-option';
@@ -15,6 +15,7 @@ type StorageDropdownProps = {
 	planSlug: PlanSlug;
 	onStorageAddOnClick?: ( addOnSlug: AddOns.StorageAddOnSlug ) => void;
 	onStorageOptionChange?: () => void;
+	openOnMount?: boolean;
 };
 
 type StorageDropdownOptionProps = {
@@ -77,9 +78,12 @@ const StorageDropdown = ( {
 	planSlug,
 	onStorageAddOnClick,
 	onStorageOptionChange,
+	openOnMount,
 }: StorageDropdownProps ) => {
 	const translate = useTranslate();
 	const { siteId } = usePlansGridContext();
+	const containerRef = useRef< HTMLDivElement >( null );
+	const hasOpenedOnMount = useRef( false );
 
 	const { setSelectedStorageOptionForPlan } = useDispatch( WpcomPlansUI.store );
 	const storageAddOns = AddOns.useStorageAddOns( { siteId } );
@@ -141,6 +145,26 @@ const StorageDropdown = ( {
 		} );
 	}, [ availableStorageAddOns, defaultStorageOptionSlug, planStorage, storageAddOns ] );
 
+	useEffect( () => {
+		if ( ! openOnMount || hasOpenedOnMount.current || ! selectControlOptions?.length ) {
+			return;
+		}
+
+		const openDropdownTimeout = window.setTimeout( () => {
+			const trigger = containerRef.current?.querySelector< HTMLElement >( '[role="combobox"]' );
+
+			if ( ! trigger ) {
+				return;
+			}
+
+			hasOpenedOnMount.current = true;
+			trigger?.focus();
+			trigger?.click();
+		}, 0 );
+
+		return () => window.clearTimeout( openDropdownTimeout );
+	}, [ openOnMount, selectControlOptions?.length ] );
+
 	const selectedStorageAddOn = getSelectedStorageAddOn(
 		storageAddOns,
 		selectedStorageOptionForPlan
@@ -194,7 +218,7 @@ const StorageDropdown = ( {
 
 	return (
 		// eslint-disable-next-line jsx-a11y/no-noninteractive-tabindex
-		<div tabIndex={ 1 }>
+		<div ref={ containerRef } tabIndex={ 1 }>
 			<CustomSelectControl
 				__next40pxDefaultSize
 				hideLabelFromVision

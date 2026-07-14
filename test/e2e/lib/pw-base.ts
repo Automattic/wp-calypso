@@ -77,7 +77,6 @@ import {
 	SidebarComponent,
 	SiteSelectComponent,
 	SignupPickPlanPage,
-	StartWritingFlow,
 	TestAccount,
 	ThemesDetailPage,
 	ThemesPage,
@@ -195,10 +194,6 @@ export const test = base.extend<
 		 * Flow encapsulating the LOHP Theme Signup onboarding process.
 		 */
 		flowLOHPThemeSignup: LOHPThemeSignupFlow;
-		/**
-		 * Flow encapsulating the Start Writing onboarding process.
-		 */
-		flowStartWriting: StartWritingFlow;
 		/**
 		 * Helper data and utilities for tests.
 		 */
@@ -469,10 +464,6 @@ export const test = base.extend<
 		const lohpThemeSignupFlow = new LOHPThemeSignupFlow( page );
 		await use( lohpThemeSignupFlow );
 	},
-	flowStartWriting: async ( { page }, use ) => {
-		const startWritingFlow = new StartWritingFlow( page );
-		await use( startWritingFlow );
-	},
 	helperData: async ( {}, use ) => {
 		await use( DataHelper );
 	},
@@ -741,6 +732,21 @@ export function skipIfMailosaurLimitReached(): void {
 		envVariables.MAILOSAUR_LIMIT_REACHED,
 		'Skipping: Mailosaur daily email limit reached (sitePublic fixture requires email verification)'
 	);
+}
+
+/**
+ * Skips the current test suite when not running on trunk.
+ *
+ * @example
+ * ```typescript
+ * test.describe( 'My Test Suite', () => {
+ *   skipIfNotTrunk();
+ *   test( 'my test', async () => { ... });
+ * });
+ * ```
+ */
+export function skipIfNotTrunk(): void {
+	test.skip( ( process.env.BRANCH_NAME || '' ) !== 'trunk', 'Skipping: run only on trunk' );
 }
 
 /**

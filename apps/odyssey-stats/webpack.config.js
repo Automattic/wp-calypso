@@ -132,8 +132,18 @@ module.exports = {
 		new DependencyExtractionWebpackPlugin( {
 			injectPolyfill: true,
 			useDefaults: false,
-			requestToHandle: defaultRequestToHandle,
+			requestToHandle: ( request ) => {
+				if ( request === 'react-dom/client' ) {
+					return 'wp-element';
+				}
+
+				return defaultRequestToHandle( request );
+			},
 			requestToExternal: ( request ) => {
+				if ( request === 'react-dom/client' ) {
+					return [ 'wp', 'element' ];
+				}
+
 				if (
 					! [
 						'lodash',
@@ -210,6 +220,10 @@ module.exports = {
 		new webpack.NormalModuleReplacementPlugin(
 			/^calypso\/components\/data\/query-site-purchases$/,
 			path.resolve( __dirname, 'src/components/odyssey-query-site-purchases' )
+		),
+		new webpack.NormalModuleReplacementPlugin(
+			/^calypso\/components\/data\/query-sites$/,
+			path.resolve( __dirname, 'src/components/odyssey-query-sites' )
 		),
 		new webpack.NormalModuleReplacementPlugin(
 			/^calypso\/components\/data\/query-products-list$/,

@@ -17,7 +17,8 @@ test.describe(
 		test( 'As a user, I can view the Reader', async ( { page } ) => {
 			await test.step( 'Authenticate', async () => {
 				const testAccount = new TestAccount( accountName );
-				await testAccount.authenticate( page );
+				// No `waitForStability` needed because we will immediately navigate after authenticating.
+				await testAccount.authenticate( page, { waitUntilStable: false } );
 			} );
 
 			await test.step( 'Visit the Reader', async () => {

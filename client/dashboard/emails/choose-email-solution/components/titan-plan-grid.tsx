@@ -32,21 +32,22 @@ const getTierName = ( tier: TitanPlanTier ): string => {
 	}
 };
 
-// Placeholder descriptions and feature lists, final copy pending (DOTEMP-111).
+// Descriptions remain placeholder copy; feature lists reflect the tier
+// comparison from DOTEMP-111.
 const getTierDetails = ( tier: TitanPlanTier ): { description: string; features: string[] } => {
 	switch ( tier ) {
 		case TitanPlanTier.Pro:
 			return {
 				description: __( 'Everything you need to get started with professional, secure email.' ),
 				features: [
-					__( '30 GB storage' ),
-					__( 'Rich email' ),
-					__( 'Native mobile apps' ),
-					__( 'Integrated calendar' ),
-					__( 'Integrated contacts' ),
-					__( 'Guaranteed email delivery' ),
-					__( 'Advanced anti-spam' ),
-					__( 'Advanced anti-virus' ),
+					__( '30 GB / mailbox' ),
+					__( '10 read receipts' ),
+					__( '1 email template' ),
+					__( '1 contact group' ),
+					__( 'Blocklist' ),
+					__( 'Allowlist' ),
+					__( 'Grammar & spell check' ),
+					__( 'Undo send' ),
 				],
 			};
 		case TitanPlanTier.Premium:
@@ -55,27 +56,42 @@ const getTierDetails = ( tier: TitanPlanTier ): { description: string; features:
 					'Smarter tools to help your growing business stay organized and productive.'
 				),
 				features: [
-					__( '50 GB storage' ),
+					__( '50 GB / mailbox' ),
 					__( 'Unlimited read receipts' ),
 					__( 'Unlimited email templates' ),
 					__( 'Unlimited contact groups' ),
-					__( 'Follow up reminders' ),
-					__( 'Send later' ),
-					__( 'Grammar & spell check' ),
+					__( 'Two-factor authentication' ),
 					__( 'Priority inbox' ),
+					__( 'Business auto reply' ),
+					__( 'Titan Task' ),
+					__( 'Titan Drive (1 GB storage)' ),
+					__( 'Email labels' ),
+					__( 'Auto-clean' ),
+					__( 'Send later' ),
+					__( 'Follow-up reminders' ),
+					__( 'Turbo search' ),
+					__( 'Send as alias' ),
+					__( 'Undo send' ),
+					__( 'Branding' ),
+					__( 'Team chat' ),
 				],
 			};
 		case TitanPlanTier.Ultra:
 			return {
 				description: __( 'AI-powered email to scale your business and boost marketing impact.' ),
 				features: [
-					__( '100 GB storage' ),
-					__( 'AI email writer' ),
-					__( 'Appointment booking' ),
-					__( 'Email campaigns' ),
-					__( 'Attachment and link tracking' ),
-					__( 'Email designer' ),
+					__( '100 GB / mailbox' ),
+					__( 'Email backup (50 GB storage)' ),
+					__( 'File transfer' ),
+					__( 'Titan AI (compose, reply)' ),
+					__( 'AI summary' ),
+					__( 'Titan Booking' ),
+					__( 'Titan Drive (50 GB storage)' ),
 					__( 'Signature designer' ),
+					__( 'File and link tracking' ),
+					__( 'Email designer' ),
+					__( 'Email campaigns' ),
+					__( 'Invoice builder' ),
 				],
 			};
 	}

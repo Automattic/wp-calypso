@@ -48,11 +48,11 @@ describe( 'spaces controller', () => {
 	} );
 
 	it( 'mounts the view on the discover tab and forwards the parsed tab', () => {
-		const ctx = makeContext( { id: 'work-id', tab: 'discover' } );
+		const ctx = makeContext( { slug: 'work', tab: 'discover' } );
 		spaces( ctx, mockNext );
 		expect( ctx.primary ).not.toBeNull();
 		expect( ( ctx.primary as ReactElement ).props ).toMatchObject( {
-			id: 'work-id',
+			slug: 'work',
 			tab: 'discover',
 		} );
 		expect( mockNext ).toHaveBeenCalled();
@@ -60,9 +60,9 @@ describe( 'spaces controller', () => {
 	} );
 
 	it( 'redirects an unknown tab slug to the space’s canonical feed path', () => {
-		const ctx = makeContext( { id: 'work-id', tab: 'bogus' } );
+		const ctx = makeContext( { slug: 'work', tab: 'bogus' } );
 		spaces( ctx, mockNext );
-		expect( page.redirect ).toHaveBeenCalledWith( '/reader/spaces/work-id' );
+		expect( page.redirect ).toHaveBeenCalledWith( '/reader/spaces/work' );
 		expect( ctx.primary ).toBeNull();
 		expect( mockNext ).not.toHaveBeenCalled();
 	} );

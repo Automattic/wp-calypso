@@ -80,6 +80,7 @@ const PlanStorage = ( {
 			<StorageDropdown
 				planSlug={ planSlug }
 				onStorageAddOnClick={ onStorageAddOnClick }
+				openOnMount={ showFeatureCheckmarks }
 				onStorageOptionChange={
 					showFeatureCheckmarks ? () => setIsStorageDropdownVisible( false ) : undefined
 				}

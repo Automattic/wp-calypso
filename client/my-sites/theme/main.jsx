@@ -7,7 +7,7 @@ import {
 	WPCOM_FEATURES_COMMUNITY_THEMES,
 } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
-import { Button, Card, Gridicon } from '@automattic/components';
+import { Button, Card } from '@automattic/components';
 import { getThemeIdFromStylesheet, Onboard } from '@automattic/data-stores';
 import {
 	DEFAULT_GLOBAL_STYLES_VARIATION_SLUG,
@@ -127,6 +127,7 @@ import { getBackPath } from 'calypso/state/themes/themes-ui/selectors';
 import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { ReviewsModal } from '../marketplace/components/reviews-modal';
 import EligibilityWarningModal from '../themes/atomic-transfer-dialog';
+import ThemeActiveBadge from './theme-active-badge';
 import ThemeDownloadCard from './theme-download-card';
 import ThemeFeaturesCard from './theme-features-card';
 import ThemeNotFoundError from './theme-not-found-error';
@@ -680,16 +681,19 @@ class ThemeSheet extends Component {
 				<div className="theme__sheet-main">
 					<div className="theme__sheet-main-info">
 						<h1 className="theme__sheet-main-info-title">
-							<ThemeTierBadge
-								className="theme__sheet-main-info-type"
-								showUpgradeBadge
-								showPartnerPrice
-								themeId={ themeId }
-								siteId={ siteId }
-								siteSlug={ siteSlug }
-								isThemeRetired={ retired }
-								isThemeActiveForSite={ isActive }
-							/>
+							<div className="theme__sheet-main-info-badges">
+								{ isActive && <ThemeActiveBadge /> }
+								<ThemeTierBadge
+									className="theme__sheet-main-info-type"
+									showUpgradeBadge
+									showPartnerPrice
+									themeId={ themeId }
+									siteId={ siteId }
+									siteSlug={ siteSlug }
+									isThemeRetired={ retired }
+									isThemeActiveForSite={ isActive }
+								/>
+							</div>
 
 							{ title }
 							{ softLaunched && (
@@ -919,12 +923,7 @@ class ThemeSheet extends Component {
 	getDefaultOptionLabel = () => {
 		const { defaultOption, isActive, isLoggedIn, siteId, translate } = this.props;
 		if ( isActive ) {
-			return (
-				<span className="theme__sheet-customize-button">
-					<Gridicon icon="external" />
-					{ translate( 'Customize site' ) }
-				</span>
-			);
+			return translate( 'Customize site' );
 		} else if ( isLoggedIn && siteId ) {
 			return translate( 'Activate' );
 		}
@@ -984,7 +983,6 @@ class ThemeSheet extends Component {
 				primary
 				busy={ this.isRequestingActivatingTheme() }
 				disabled={ this.isLoading() }
-				target={ isActive ? '_blank' : null }
 			>
 				{ this.isLoaded() ? label : placeholder }
 			</Button>

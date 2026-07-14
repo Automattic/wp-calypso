@@ -1,6 +1,5 @@
 import config from '@automattic/calypso-config';
 import {
-	START_WRITING_FLOW,
 	CONNECT_DOMAIN_FLOW,
 	DOMAIN_FLOW,
 	NEW_HOSTED_SITE_FLOW,
@@ -24,6 +23,7 @@ import {
 	ART_PROMO_FLOW,
 	DIRECT_TO_CART_FLOW,
 	WRITE_ON_FLOW,
+	EDUCATION_FLOW,
 } from '@automattic/onboarding';
 import type { Flow, FlowV2 } from '../declarative-flow/internals/types';
 
@@ -35,6 +35,9 @@ const availableFlows: Record< string, () => Promise< { default: FlowV2< any > } 
 
 	[ DIRECT_TO_CART_FLOW ]: () =>
 		import( /* webpackChunkName: "direct-to-cart-flow" */ './flows/direct-to-cart/direct-to-cart' ),
+
+	[ EDUCATION_FLOW ]: () =>
+		import( /* webpackChunkName: "education-flow" */ './flows/education/education' ),
 
 	[ ONBOARDING_FLOW ]: () =>
 		import( /* webpackChunkName: "onboarding-flow" */ './flows/onboarding/onboarding' ),
@@ -114,9 +117,6 @@ export const deprecatedV1Flows: Record< string, () => Promise< { default: Flow }
 	build: () => import( /* webpackChunkName: "build-flow" */ './flows/build/build' ),
 
 	write: () => import( /* webpackChunkName: "write-flow" */ './flows/write/write' ),
-
-	[ START_WRITING_FLOW ]: () =>
-		import( /* webpackChunkName: "start-writing-flow" */ './flows/start-writing/start-writing' ),
 
 	[ CONNECT_DOMAIN_FLOW ]: () =>
 		import( /* webpackChunkName: "connect-domain" */ './flows/connect-domain/connect-domain' ),

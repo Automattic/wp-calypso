@@ -4,7 +4,6 @@ import { localize } from 'i18n-calypso';
 import { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
 import titlecase from 'to-title-case';
-import QueryMedia from 'calypso/components/data/query-media';
 import AnnualSiteStats from 'calypso/my-sites/stats/annual-site-stats';
 import Main from 'calypso/my-sites/stats/components/stats-main';
 import StatsModuleAuthors from 'calypso/my-sites/stats/features/modules/stats-authors';
@@ -18,7 +17,6 @@ import {
 	useStatsBreadcrumbTrail,
 	recordCurrentScreen,
 } from 'calypso/my-sites/stats/hooks/use-stats-navigation-history';
-import getMediaItem from 'calypso/state/selectors/get-media-item';
 import getEnvStatsFeatureSupportChecks from 'calypso/state/sites/selectors/get-env-stats-feature-supports';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import { STATS_FEATURE_DOWNLOAD_CSV } from '../constants';
@@ -39,8 +37,6 @@ import DownloadCsv from '../stats-download-csv';
 import DownloadCsvUpsell from '../stats-download-csv-upsell';
 import AllTimeNav from '../stats-module/all-time-nav';
 import PageViewTracker from '../stats-page-view-tracker';
-import VideoPlayDetails from '../stats-video-details';
-import StatsVideoSummary from '../stats-video-summary';
 import VideoPressStatsModule from '../videopress-stats-module';
 
 import './style.scss';
@@ -136,8 +132,6 @@ class StatsSummary extends Component {
 		const summaryViews = [];
 		let title;
 		let summaryView;
-		let chartTitle;
-		let barChart;
 		let path;
 		let statType;
 
@@ -304,13 +298,12 @@ class StatsSummary extends Component {
 				moduleQuery.complete_stats = 1;
 				summaryView = (
 					<Fragment key="videopress-stats-module">
-						{ /* For CSV button to work, video page needs to pass custom data to the button.
-								It can't use the shared header as long as the CSV download button stays there. */ }
+						{ this.renderSummaryHeader( path, statType, false, moduleQuery ) }
 						<VideoPressStatsModule
 							path={ path }
 							moduleStrings={ statsStrings.videoplays }
 							period={ this.props.period }
-							query={ query }
+							query={ moduleQuery }
 							statType={ statType }
 							summary
 							listItemClassName={ listItemClassName }
@@ -334,47 +327,6 @@ class StatsSummary extends Component {
 							listItemClassName={ listItemClassName }
 						/>
 					</Fragment>
-				);
-				break;
-
-			case 'videodetails':
-				title = translate( 'Video' );
-				if ( this.props.media ) {
-					title = this.props.media.title;
-				}
-
-				// TODO: a separate StatsSectionTitle component should be created
-				/* eslint-disable wpcalypso/jsx-classname-namespace */
-				chartTitle = (
-					<h3 key="summary-title" className="stats-section-title">
-						{ translate( 'Video Details' ) }
-					</h3>
-				);
-				/* eslint-enable wpcalypso/jsx-classname-namespace */
-
-				if ( siteId ) {
-					summaryViews.push(
-						<QueryMedia key="query-media" siteId={ siteId } mediaId={ this.props.postId } />
-					);
-				}
-				summaryViews.push( chartTitle );
-				barChart = (
-					<StatsVideoSummary
-						key="video-chart"
-						postId={ this.props.postId }
-						period={ this.props.period.period }
-						statType={ urlParams.get( 'statType' ) }
-					/>
-				);
-
-				summaryViews.push( barChart );
-				summaryView = (
-					<VideoPlayDetails
-						key="page-embeds"
-						postId={ this.props.postId }
-						period={ this.props.period.period }
-						statType={ urlParams.get( 'statType' ) }
-					/>
 				);
 				break;
 
@@ -503,7 +455,7 @@ class StatsSummary extends Component {
 }
 
 const StatsSummaryWrapper = ( props ) => {
-	const breadcrumbTrail = useStatsBreadcrumbTrail();
+	const breadcrumbTrail = useStatsBreadcrumbTrail( props.context?.query );
 	const statsStrings = useStatsStrings( { supportsArchiveStats: props.supportsArchiveStats } );
 
 	return (
@@ -511,7 +463,7 @@ const StatsSummaryWrapper = ( props ) => {
 	);
 };
 
-export default connect( ( state, { context, postId } ) => {
+export default connect( ( state ) => {
 	const siteId = getSelectedSiteId( state );
 
 	const { supportsUTMStats, supportsArchiveStats } = getEnvStatsFeatureSupportChecks(
@@ -522,7 +474,6 @@ export default connect( ( state, { context, postId } ) => {
 	return {
 		siteId: getSelectedSiteId( state ),
 		siteSlug: getSelectedSiteSlug( state, siteId ),
-		media: context.params.module === 'videodetails' ? getMediaItem( state, siteId, postId ) : false,
 		supportsUTMStats,
 		supportsArchiveStats,
 		shouldGateStatsCsvDownload: shouldGateStats( state, siteId, STATS_FEATURE_DOWNLOAD_CSV ),

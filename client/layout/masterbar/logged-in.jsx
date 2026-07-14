@@ -760,6 +760,8 @@ class MasterbarLoggedIn extends Component {
 
 	renderProfileMenu() {
 		const { translate, user, isGlobalSidebarVisible, siteAdminUrl } = this.props;
+		// No site admin URL (e.g. an account with no sites) means no profile.php to link to.
+		const canEditProfile = isGlobalSidebarVisible || !! siteAdminUrl;
 		const editProfileUrl = isGlobalSidebarVisible ? '/me' : `${ siteAdminUrl }profile.php`;
 		const profileActions = [
 			{
@@ -778,14 +780,20 @@ class MasterbarLoggedIn extends Component {
 							<span className="username" title={ user.username }>
 								{ user.username }
 							</span>
-							<span className="display-name edit-profile">
-								{ isGlobalSidebarVisible ? translate( 'My Profile' ) : translate( 'Edit Profile' ) }
-							</span>
+							{ canEditProfile && (
+								<span className="display-name edit-profile">
+									{ isGlobalSidebarVisible
+										? translate( 'My Profile' )
+										: translate( 'Edit Profile' ) }
+								</span>
+							) }
 						</div>
 					</div>
 				),
-				url: editProfileUrl,
-				onClick: () => this.props.recordTracksEvent( 'calypso_masterbar_edit_profile_clicked' ),
+				url: canEditProfile ? editProfileUrl : undefined,
+				onClick: canEditProfile
+					? () => this.props.recordTracksEvent( 'calypso_masterbar_edit_profile_clicked' )
+					: undefined,
 			},
 			{
 				label: translate( 'Log Out' ),
