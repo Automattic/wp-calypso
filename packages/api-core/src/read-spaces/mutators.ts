@@ -4,7 +4,6 @@ import type {
 	CreateReadSpaceParams,
 	ReadSpaceDeletionResult,
 	ReadSpaceDetails,
-	ReadSpaceSourceMutationParams,
 	UpdateReadSpaceParams,
 } from './types';
 
@@ -93,50 +92,4 @@ export async function deleteReadSpace( spaceId: string ): Promise< ReadSpaceDele
 		apiNamespace: 'wpcom/v2',
 		method: 'DELETE',
 	} );
-}
-
-/**
- * Add a followed feed to a space via `POST /reader/spaces/{id}/feeds`, returning
- * the updated detail. The feed is identified by the subscription's feed id
- * (falling back to its feed URL); the server resolves it.
- */
-export async function addReadSpaceSource( {
-	spaceId,
-	subscription,
-}: ReadSpaceSourceMutationParams ): Promise< ReadSpaceDetails > {
-	const item: ReadSpaceApiItem = await wpcom.req.post(
-		{
-			path: `/reader/spaces/${ encodeURIComponent( spaceId ) }/feeds`,
-			apiNamespace: 'wpcom/v2',
-		},
-		{ feed: subscription.feed_ID ?? subscription.feed_URL }
-	);
-
-	return adaptReadSpaceDetails( item );
-}
-
-/**
- * Remove a followed feed from a space via
- * `DELETE /reader/spaces/{id}/feeds/{feed_id}`, returning the updated detail.
- * Removal is keyed by the numeric feed id (from `follows[].feed_id`).
- */
-export async function deleteReadSpaceSource( {
-	spaceId,
-	subscription,
-}: ReadSpaceSourceMutationParams ): Promise< ReadSpaceDetails > {
-	// Removal is keyed strictly by the numeric feedbag feed id (from
-	// `follows[].feed_id`). `feed_ID` is loosely typed, so guard against a
-	// missing/non-numeric value rather than issuing a `/feeds/null` request.
-	const feedId = Number( subscription.feed_ID );
-	if ( ! Number.isInteger( feedId ) || feedId <= 0 ) {
-		throw new Error( 'Cannot remove a space feed without a numeric feed id.' );
-	}
-
-	const item: ReadSpaceApiItem = await wpcom.req.post( {
-		path: `/reader/spaces/${ encodeURIComponent( spaceId ) }/feeds/${ feedId }`,
-		apiNamespace: 'wpcom/v2',
-		method: 'DELETE',
-	} );
-
-	return adaptReadSpaceDetails( item );
 }

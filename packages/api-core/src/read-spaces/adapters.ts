@@ -1,4 +1,10 @@
-import type { ReadSpace, ReadSpaceDetails, SpaceLayout, SpaceSource } from './types';
+import type {
+	ReadSpace,
+	ReadSpaceDetails,
+	ReadSpaceMembership,
+	SpaceLayout,
+	SpaceSource,
+} from './types';
 
 /**
  * A followed feed as returned in a detail response's `follows` array. The client
@@ -77,5 +83,35 @@ export function adaptReadSpaceDetails( item: ReadSpaceApiItem ): ReadSpaceDetail
 		sources: ( item.follows ?? [] ).map( adaptSpaceSource ),
 		tags: item.tags ?? [],
 		languages: item.languages ?? [],
+	};
+}
+
+/**
+ * Wire shape of the membership lookup (`GET /reader/spaces/membership`): slim
+ * space entries (`id`, `title`, `slug`) plus the `exists` flag.
+ */
+export interface ReadSpaceMembershipApiEntry {
+	id: number;
+	title: string;
+	slug: string;
+}
+
+export interface ReadSpaceMembershipApiResponse {
+	exists: boolean;
+	spaces: ReadSpaceMembershipApiEntry[];
+}
+
+/** Map the membership lookup wire response onto the client `ReadSpaceMembership`. */
+export function adaptReadSpaceMembership(
+	response: ReadSpaceMembershipApiResponse
+): ReadSpaceMembership {
+	const spaces = Array.isArray( response?.spaces ) ? response.spaces : [];
+	return {
+		exists: Boolean( response?.exists ),
+		spaces: spaces.map( ( entry ) => ( {
+			id: String( entry.id ),
+			name: entry.title,
+			slug: entry.slug,
+		} ) ),
 	};
 }

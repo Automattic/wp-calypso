@@ -7,17 +7,16 @@ import {
 import { act, renderHook } from '@testing-library/react';
 import nock from 'nock';
 import {
-	addReadSpaceSourceMutation,
 	createReadSpaceMutation,
 	deleteReadSpaceMutation,
-	deleteReadSpaceSourceMutation,
 	readSpaceBySlugQuery,
+	readSpaceMembershipQuery,
 	readSpaceQuery,
 	readSpacesQuery,
 	updateReadSpaceMutation,
 } from '../read-spaces';
 import { getStreamInfiniteQueryKeyPrefix } from '../read-streams';
-import type { ReadSpace, ReadSpaceDetails, SiteSubscriptionItem } from '@automattic/api-core';
+import type { ReadSpace, ReadSpaceDetails } from '@automattic/api-core';
 import type { UseMutationOptions } from '@tanstack/react-query';
 import type { ReactNode } from 'react';
 
@@ -50,21 +49,7 @@ async function runMutation< TData, TError, TVars, TContext >(
 	} );
 }
 
-const makeSubscription = (
-	overrides: Partial< SiteSubscriptionItem > = {}
-): SiteSubscriptionItem => ( {
-	ID: 1,
-	URL: 'https://stratechery.com',
-	feed_URL: 'https://stratechery.com/feed',
-	blog_ID: 123,
-	feed_ID: 456,
-	name: 'Stratechery',
-	site_icon: 'https://stratechery.com/icon.png',
-	is_following: true,
-	...overrides,
-} );
-
-// A detail wire response (create/update/add-feed/remove-feed all return one).
+// A detail wire response (create/update both return one).
 const detailResponse = ( overrides: Record< string, unknown > = {} ) => ( {
 	id: 3,
 	slug: 'work',
@@ -134,6 +119,26 @@ describe( 'read spaces mutations', () => {
 
 			expect( encoded ).toEqual( [ 'read', 'spaces', 'detail-by-slug', 'привет' ] );
 			expect( encoded ).toEqual( decoded );
+		} );
+
+		it( 'keys the membership query by feed or tag and refetches on mount', () => {
+			expect( readSpaceMembershipQuery( { feed: 456 } ).queryKey ).toEqual( [
+				'read',
+				'spaces',
+				'membership',
+				'feed',
+				'456',
+			] );
+			expect( readSpaceMembershipQuery( { tag: 'photography' } ).queryKey ).toEqual( [
+				'read',
+				'spaces',
+				'membership',
+				'tag',
+				'photography',
+			] );
+			// Editing a space can stale membership, so it must refetch on each mount
+			// (i.e. each time the picker reopens).
+			expect( readSpaceMembershipQuery( { feed: 456 } ).refetchOnMount ).toBe( 'always' );
 		} );
 	} );
 
@@ -353,113 +358,6 @@ describe( 'read spaces mutations', () => {
 			expect( invalidateQueries ).toHaveBeenCalledWith( {
 				queryKey: readSpacesQuery().queryKey,
 			} );
-		} );
-	} );
-
-	describe( 'feed (source) mutations', () => {
-		it( 'writes the returned detail to the cache after adding a feed', async () => {
-			const client = newClient();
-			const resetQueries = jest.spyOn( client, 'resetQueries' );
-			const invalidateQueries = jest.spyOn( client, 'invalidateQueries' );
-			nock( BASE )
-				.post( '/wpcom/v2/reader/spaces/3/feeds' )
-				.reply(
-					200,
-					detailResponse( {
-						follows: [
-							{
-								feed_id: 456,
-								feed_url: 'https://stratechery.com/feed',
-								blog_id: 123,
-								name: 'Stratechery',
-								icon: null,
-							},
-						],
-					} )
-				);
-
-			await runMutation( client, addReadSpaceSourceMutation( client ), {
-				spaceId: '3',
-				subscription: makeSubscription(),
-			} );
-
-			expect(
-				client.getQueryData< ReadSpaceDetails >( readSpaceQuery( '3' ).queryKey )?.sources
-			).toEqual( [
-				{
-					feedId: 456,
-					feedUrl: 'https://stratechery.com/feed',
-					blogId: 123,
-					name: 'Stratechery',
-					siteIcon: null,
-				},
-			] );
-			expect( resetQueries ).toHaveBeenCalledWith( {
-				queryKey: getStreamInfiniteQueryKeyPrefix( 'space:3' ),
-			} );
-			expect( resetQueries ).toHaveBeenCalledWith( {
-				queryKey: getStreamInfiniteQueryKeyPrefix( 'space_discover:3' ),
-			} );
-			expect( invalidateQueries ).toHaveBeenCalledWith( {
-				queryKey: readSpaceQuery( '3' ).queryKey,
-			} );
-		} );
-
-		it( 'writes the returned detail to the cache after removing a feed', async () => {
-			const client = newClient();
-			const resetQueries = jest.spyOn( client, 'resetQueries' );
-			const invalidateQueries = jest.spyOn( client, 'invalidateQueries' );
-			nock( BASE )
-				.delete( '/wpcom/v2/reader/spaces/3/feeds/456' )
-				.reply( 200, detailResponse( { follows: [] } ) );
-
-			await runMutation( client, deleteReadSpaceSourceMutation( client ), {
-				spaceId: '3',
-				subscription: makeSubscription(),
-			} );
-
-			expect(
-				client.getQueryData< ReadSpaceDetails >( readSpaceQuery( '3' ).queryKey )?.sources
-			).toEqual( [] );
-			// Removing a feed reloads both streams, same as adding one.
-			expect( resetQueries ).toHaveBeenCalledWith( {
-				queryKey: getStreamInfiniteQueryKeyPrefix( 'space:3' ),
-			} );
-			expect( resetQueries ).toHaveBeenCalledWith( {
-				queryKey: getStreamInfiniteQueryKeyPrefix( 'space_discover:3' ),
-			} );
-			expect( invalidateQueries ).toHaveBeenCalledWith( {
-				queryKey: readSpaceQuery( '3' ).queryKey,
-			} );
-		} );
-
-		it( 'leaves the detail cache untouched when the add request fails', async () => {
-			const client = newClient();
-			const seeded: ReadSpaceDetails = {
-				id: '3',
-				name: 'Work',
-				layout: { color: 'blue', icon: 'inbox' },
-				sources: [],
-				tags: [],
-				languages: [],
-			};
-			client.setQueryData( readSpaceQuery( '3' ).queryKey, seeded );
-			nock( BASE )
-				.post( '/wpcom/v2/reader/spaces/3/feeds' )
-				.reply( 409, {
-					code: 'reader_spaces_duplicate_feed',
-					message: '…',
-					data: { status: 409 },
-				} );
-
-			await runMutation( client, addReadSpaceSourceMutation( client ), {
-				spaceId: '3',
-				subscription: makeSubscription(),
-			} );
-
-			expect( client.getQueryData< ReadSpaceDetails >( readSpaceQuery( '3' ).queryKey ) ).toEqual(
-				seeded
-			);
 		} );
 	} );
 } );

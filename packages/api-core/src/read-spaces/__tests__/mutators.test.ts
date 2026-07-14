@@ -1,30 +1,9 @@
 import nock from 'nock';
-import {
-	addReadSpaceSource,
-	createReadSpace,
-	deleteReadSpace,
-	deleteReadSpaceSource,
-	updateReadSpace,
-} from '../mutators';
-import type { SiteSubscriptionItem } from '../../read-follows';
+import { createReadSpace, deleteReadSpace, updateReadSpace } from '../mutators';
 
 const BASE = 'https://public-api.wordpress.com';
 
-const makeSubscription = (
-	overrides: Partial< SiteSubscriptionItem > = {}
-): SiteSubscriptionItem => ( {
-	ID: 1,
-	URL: 'https://stratechery.com',
-	feed_URL: 'https://stratechery.com/feed',
-	blog_ID: 123,
-	feed_ID: 456,
-	name: 'Stratechery',
-	site_icon: 'https://stratechery.com/icon.png',
-	is_following: true,
-	...overrides,
-} );
-
-// A detail wire response (returned by create/update/add-feed/remove-feed).
+// A detail wire response (returned by create/update).
 const detailResponse = ( overrides: Record< string, unknown > = {} ) => ( {
 	id: 42,
 	title: 'Work',
@@ -188,91 +167,6 @@ describe( 'read spaces mutators', () => {
 			await expect( deleteReadSpace( '999' ) ).rejects.toMatchObject( {
 				code: 'reader_spaces_not_found',
 			} );
-		} );
-	} );
-
-	describe( 'addReadSpaceSource', () => {
-		it( 'posts the feed id to feeds and adapts the returned detail', async () => {
-			let body: unknown;
-			nock( BASE )
-				.post( '/wpcom/v2/reader/spaces/3/feeds', ( sent ) => {
-					body = sent;
-					return true;
-				} )
-				.reply(
-					200,
-					detailResponse( {
-						id: 3,
-						follows: [
-							{
-								feed_id: 456,
-								feed_url: 'https://stratechery.com/feed',
-								blog_id: 123,
-								name: 'Stratechery',
-								icon: null,
-							},
-						],
-					} )
-				);
-
-			const space = await addReadSpaceSource( {
-				spaceId: '3',
-				subscription: makeSubscription(),
-			} );
-
-			expect( body ).toEqual( { feed: 456 } );
-			expect( space.sources ).toEqual( [
-				{
-					feedId: 456,
-					feedUrl: 'https://stratechery.com/feed',
-					blogId: 123,
-					name: 'Stratechery',
-					siteIcon: null,
-				},
-			] );
-		} );
-
-		it( 'falls back to the feed URL when the subscription has no feed id', async () => {
-			let body: unknown;
-			nock( BASE )
-				.post( '/wpcom/v2/reader/spaces/3/feeds', ( sent ) => {
-					body = sent;
-					return true;
-				} )
-				.reply( 200, detailResponse( { id: 3 } ) );
-
-			await addReadSpaceSource( {
-				spaceId: '3',
-				subscription: makeSubscription( { feed_ID: null } ),
-			} );
-
-			expect( body ).toEqual( { feed: 'https://stratechery.com/feed' } );
-		} );
-	} );
-
-	describe( 'deleteReadSpaceSource', () => {
-		it( 'DELETEs feeds/<feed_id> and adapts the returned detail', async () => {
-			const scope = nock( BASE )
-				.delete( '/wpcom/v2/reader/spaces/3/feeds/456' )
-				.reply( 200, detailResponse( { id: 3, follows: [] } ) );
-
-			const space = await deleteReadSpaceSource( {
-				spaceId: '3',
-				subscription: makeSubscription(),
-			} );
-
-			expect( scope.isDone() ).toBe( true );
-			expect( space.sources ).toEqual( [] );
-		} );
-
-		it( 'rejects without a request when the subscription has no numeric feed id', async () => {
-			// No nock interceptor: the guard must throw before any request is made.
-			await expect(
-				deleteReadSpaceSource( {
-					spaceId: '3',
-					subscription: makeSubscription( { feed_ID: null } ),
-				} )
-			).rejects.toThrow( 'numeric feed id' );
 		} );
 	} );
 } );

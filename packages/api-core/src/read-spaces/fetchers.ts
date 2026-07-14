@@ -1,6 +1,17 @@
 import { wpcom } from '../wpcom-fetcher';
-import { adaptReadSpace, adaptReadSpaceDetails, type ReadSpaceApiItem } from './adapters';
-import type { ReadSpace, ReadSpaceDetails } from './types';
+import {
+	adaptReadSpace,
+	adaptReadSpaceDetails,
+	adaptReadSpaceMembership,
+	type ReadSpaceApiItem,
+	type ReadSpaceMembershipApiResponse,
+} from './adapters';
+import type {
+	ReadSpace,
+	ReadSpaceDetails,
+	ReadSpaceMembership,
+	ReadSpaceMembershipLookup,
+} from './types';
 
 /**
  * Canonicalize a space slug to a single representation for cache keys and
@@ -65,4 +76,22 @@ export async function fetchReadSpaceBySlug( slug: string ): Promise< ReadSpaceDe
 	} );
 
 	return adaptReadSpaceDetails( item );
+}
+
+/**
+ * Look up which of the caller's spaces already contain a feed or tag via the
+ * wpcom/v2 `GET /reader/spaces/membership` endpoint. Pass exactly one of `feed`
+ * (feed id or url) or `tag` (a Reader tag slug). An unresolvable feed/tag is not
+ * an error — the server returns `{ exists: false, spaces: [] }` (200).
+ */
+export async function fetchReadSpaceMembership(
+	lookup: ReadSpaceMembershipLookup
+): Promise< ReadSpaceMembership > {
+	const query = 'feed' in lookup ? { feed: lookup.feed } : { tag: lookup.tag };
+	const response: ReadSpaceMembershipApiResponse = await wpcom.req.get(
+		{ path: '/reader/spaces/membership', apiNamespace: 'wpcom/v2' },
+		query
+	);
+
+	return adaptReadSpaceMembership( response );
 }

@@ -1,5 +1,3 @@
-import type { SiteSubscriptionItem } from '../read-follows';
-
 /**
  * Reader Spaces — a Space groups followed feeds (`sources`) and followed tags
  * under a name (see RSM-4110).
@@ -92,8 +90,8 @@ export interface ReadSpace {
 
 /**
  * A space plus its followed feeds (`sources`) and tags. Returned by every
- * endpoint except the list — the detail GET, create, update, and the feed
- * mutations all resolve a `ReadSpaceDetails`.
+ * endpoint except the list — the detail GET, create, and update all resolve a
+ * `ReadSpaceDetails`.
  */
 export interface ReadSpaceDetails extends ReadSpace {
 	sources: SpaceSource[];
@@ -159,7 +157,30 @@ export interface SpaceSource {
 	siteIcon: string | null;
 }
 
-export interface ReadSpaceSourceMutationParams {
-	spaceId: string;
-	subscription: SiteSubscriptionItem;
+/**
+ * A space as returned by the membership lookup (`GET /reader/spaces/membership`):
+ * the slim identity fields only (no layout, sources, or tags), enough to badge
+ * the space and deep-link to it by `slug` or `id`.
+ */
+export interface ReadSpaceMembershipEntry {
+	id: string;
+	name: string;
+	slug: string;
 }
+
+/**
+ * Result of the membership lookup: whether the feed/tag is in any of the caller's
+ * spaces, and which ones. An unresolvable feed/tag is not an error — it simply
+ * isn't in any space (`exists: false`, empty `spaces`).
+ */
+export interface ReadSpaceMembership {
+	exists: boolean;
+	spaces: ReadSpaceMembershipEntry[];
+}
+
+/**
+ * Membership lookup input — exactly one of `feed` (feed id or url) or `tag` (a
+ * Reader tag slug). Modeled as a discriminated union so the "exactly one"
+ * contract is enforced at the type level.
+ */
+export type ReadSpaceMembershipLookup = { feed: number | string } | { tag: string };
