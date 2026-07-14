@@ -21,25 +21,22 @@ const REGISTRATION_CHALLENGE_PATH = '/me/two-step/security-key/registration_chal
  * offered no matching credential and the user silently couldn't sign in
  * with it.
  *
- * The break shipped in a Multi-site Dashboard change and was mitigated by
- * disabling the MSD rollout (revert PR #112593). The root cause is still
- * live in the registration challenge, which derives rp id from a hostname
- * param instead of a fixed canonical value -- see
- * fetchTwoStepAuthSecurityKeyRegistrationChallenge in
- * packages/api-core/src/me-two-step/fetchers.ts and the `hostname` param
- * built in packages/api-queries/src/me-two-step.ts. That check only omits
- * the hostname override when `config( 'env_id' ) === 'production'`, but the
- * dashboard runs under `env_id: 'dashboard-production'`, not the literal
- * `'production'` value the check compares against. So the registration
- * challenge already requests a non-canonical rp id on the dashboard host
- * today, and this assertion fails against production until that check is
- * fixed.
+ * The break shipped in a Multi-site Dashboard change and was fixed by
+ * #112611 (the MSD rollout was also reverted in #112593). The fix scopes the
+ * registration challenge to the canonical host: getSecurityKeyHostname in
+ * client/dashboard/me/security-two-step-auth/utils.ts returns `undefined` for
+ * wordpress.com and its subdomains, so registerTwoStepAuthSecurityKeyMutation
+ * falls back to its `wordpress.com` default. Other hosts (local development,
+ * previews, the Woo variant) register against their own hostname, because
+ * wordpress.com is not a registrable suffix there. This spec is a regression
+ * guard: it passes against the fix and fails only if a key registered on the
+ * dashboard host stops being scoped to the canonical wordpress.com rp id.
  *
  * This test does not run a full WebAuthn ceremony -- CI has no authenticator
  * attached to answer navigator.credentials.create(). Instead it drives the
  * registration challenge from the dashboard host and inspects the network
- * response directly: the bug reproduces as soon as `rp.id` stops being the
- * canonical wordpress.com host.
+ * response directly: a regression surfaces as soon as `rp.id` stops being
+ * the canonical wordpress.com host.
  *
  * Gap / follow-up: no test account in this harness has a pre-registered
  * WebAuthn security key, and the login page only offers the security-key
