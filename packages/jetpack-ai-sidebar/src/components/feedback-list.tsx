@@ -79,8 +79,6 @@ export interface FeedbackListProps {
 	sectionFallbackTitle: string;
 	/** Warning shown when the reviewed post no longer matches the editor. */
 	staleWarning: string;
-	/** Per-item apply reason shown when the post context is stale. */
-	staleApplyReason: string;
 	/** Message shown when applying an item fails. */
 	failureMessage: string;
 	/** Extra notes rendered under the summary, each with its own class. */
@@ -191,7 +189,6 @@ export default function FeedbackList( {
 	postId,
 	sectionFallbackTitle,
 	staleWarning,
-	staleApplyReason,
 	failureMessage,
 	summaryNotes,
 	enableBulkApply = false,
@@ -412,8 +409,7 @@ export default function FeedbackList( {
 								// Item-level reason it can't be applied (backend flag or drift) — not the stale
 								// state, whose block refs point at the wrong post.
 								const itemManualReason = getApplyUnavailableReason( item, block );
-								const applyUnavailableReason = isPostStale ? staleApplyReason : itemManualReason;
-								const canApply = ! applyUnavailableReason;
+								const canApply = ! isPostStale && ! itemManualReason;
 								// Keep Apply while an apply is in flight, unless the post went stale mid-apply.
 								const showApply = canApply || ( ! isPostStale && status === 'applying' );
 								// Manual tag: always for a backend-manual item; a frontend reason only when fresh.

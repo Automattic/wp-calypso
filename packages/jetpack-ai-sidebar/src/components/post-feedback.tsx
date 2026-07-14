@@ -40,7 +40,6 @@ export default function PostFeedback( { summary, items, sections, postId }: Post
 				'Feedback context changed. Generate feedback again for this post.',
 				__i18n_text_domain__
 			) }
-			staleApplyReason={ __( 'Generate feedback again for this post.', __i18n_text_domain__ ) }
 			failureMessage={ __(
 				'Could not apply this rewrite. Check the text and try again.',
 				__i18n_text_domain__

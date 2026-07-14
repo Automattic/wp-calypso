@@ -30,6 +30,8 @@ export function useCopyToClipboard(): CopyToClipboard {
 	const [ copiedKey, setCopiedKey ] = useState< string | null >( null );
 	const resetTimer = useRef< ReturnType< typeof setTimeout > | undefined >( undefined );
 	const mounted = useRef( true );
+	// Monotonic id so a slow earlier write can't overwrite a newer copy's "Copied".
+	const lastRequest = useRef( 0 );
 
 	// Only offer Copy where the clipboard API can actually service it, so an
 	// advisory card never shows a Copy button that does nothing.
@@ -44,11 +46,13 @@ export function useCopyToClipboard(): CopyToClipboard {
 		if ( ! clipboard?.writeText ) {
 			return;
 		}
+		const requestId = ++lastRequest.current;
 		clipboard
 			.writeText( text )
 			.then( () => {
-				// The write may resolve after the card unmounts; don't touch state then.
-				if ( ! mounted.current ) {
+				// Ignore a write superseded by a newer copy() (or a post-unmount
+				// resolve) so "Copied" never lands on the wrong card.
+				if ( ! mounted.current || requestId !== lastRequest.current ) {
 					return;
 				}
 				setCopiedKey( key );

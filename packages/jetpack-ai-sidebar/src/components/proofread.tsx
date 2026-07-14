@@ -38,7 +38,6 @@ export default function Proofread( { summary, items, sections, postId }: Proofre
 				'Review context changed. Run the spelling and grammar check again for this post.',
 				__i18n_text_domain__
 			) }
-			staleApplyReason={ __( 'Run the check again for this post.', __i18n_text_domain__ ) }
 			failureMessage={ __(
 				'Could not apply this fix. Check the text and try again.',
 				__i18n_text_domain__
