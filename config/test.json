@@ -36,7 +36,7 @@
 		"cookie-banner": false,
 		"current-site/domain-warning": false,
 		"current-site/notice": true,
-		"dashboard/enable-percentage-rollout": true,
+		"dashboard/enable-percentage-rollout": false,
 		"dashboard/force-opt-in-visibility": false,
 		"dashboard/opt-in-welcome-modal": true,
 		"dashboard/rollout-advance-notice": false,
