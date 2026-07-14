@@ -100,16 +100,17 @@ test.describe(
 				await cartCheckoutPage!.purchase( { timeout: 90 * 1000 } );
 			} );
 
-			await test.step( 'Then I wait for the Atomic transfer to complete', async () => {
+			const purchasesPage = new PurchasesPage( page );
+			const snackbarComponent = new SnackbarComponent( page );
+
+			await test.step( 'Then the Atomic transfer completes', async () => {
 				await page.waitForURL( /.*transferring-hosted-site.*/ );
 
 				// The transfer lands on wp-admin or on the dashboard's site overview,
 				// depending on a race over the site's admin-interface option. Either is
 				// fine here; this test is about the purchases that follow.
 				await page.waitForURL( /wp-admin|\/sites\/[^/?#]+/, { timeout: 180 * 1000 } );
-			} );
 
-			await test.step( 'Then I capture the slug of the transferred site', async () => {
 				// wp-admin: https://<slug>/wp-admin/
 				// Site overview: https://my.wordpress.com/sites/<slug>
 				const url = new URL( page.url() );
@@ -119,16 +120,13 @@ test.describe(
 			} );
 
 			await test.step( 'When I navigate to the purchases page to cancel the add-on', async () => {
-				const purchasesPage = new PurchasesPage( page );
 				await purchasesPage.visit();
 			} );
 
 			await test.step( 'When I cancel storage add-on', async () => {
-				const purchasesPage = new PurchasesPage( page );
 				await purchasesPage.clickOnPurchase( 'Storage Add-On Space Upgrade 50 GB', siteSlug! );
 				await purchasesPage.cancelPurchase();
 				await cancelSubscriptionFlow( page );
-				const snackbarComponent = new SnackbarComponent( page );
 				await snackbarComponent.snackbarShown(
 					'Your refund has been processed and your purchase removed.',
 					{ timeout: 30 * 1000 }
@@ -136,19 +134,16 @@ test.describe(
 			} );
 
 			await test.step( 'When I navigate to the purchases page to cancel the plan', async () => {
-				const purchasesPage = new PurchasesPage( page );
 				await purchasesPage.visit();
 			} );
 
 			await test.step( 'When I cancel plan', async () => {
-				const purchasesPage = new PurchasesPage( page );
 				await purchasesPage.clickOnPurchase( `WordPress.com ${ planName }`, siteSlug! );
 				await purchasesPage.cancelPurchase();
 				await cancelAtomicPurchaseFlow( page, {
 					reason: 'Another reason…',
 					customReasonText: 'E2E TEST CANCELLATION',
 				} );
-				const snackbarComponent = new SnackbarComponent( page );
 				await snackbarComponent.snackbarShown(
 					'Your refund has been processed and your purchase removed.',
 					{ timeout: 30 * 1000 }

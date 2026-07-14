@@ -128,14 +128,13 @@ test.describe(
 				expect( theme ).toContain( themeSlug );
 			} );
 
+			const purchasesPage = new PurchasesPage( page );
+
 			await test.step( 'Navigate to the purchases page', async () => {
-				const purchasesPage = new PurchasesPage( page );
 				await purchasesPage.visit();
 			} );
 
 			await test.step( 'View details of purchased plan and cancel plan', async () => {
-				const purchasesPage = new PurchasesPage( page );
-
 				await purchasesPage.clickOnPurchase(
 					`WordPress.com ${ planName }`,
 					newSiteDetails.blog_details.site_slug

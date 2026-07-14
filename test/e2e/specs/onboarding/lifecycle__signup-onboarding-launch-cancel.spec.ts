@@ -205,13 +205,14 @@ test.describe(
 				await myHomePage.validateTaskHeadingMessage( 'You launched your site!' );
 			} );
 
+			const purchasesPage = new PurchasesPage( page );
+			const snackbarComponent = new SnackbarComponent( page );
+
 			await test.step( 'When I navigate to the purchases page', async () => {
-				const purchasesPage = new PurchasesPage( page );
 				await purchasesPage.visit();
 			} );
 
 			await test.step( 'When I view details of purchased plan', async () => {
-				const purchasesPage = new PurchasesPage( page );
 				await purchasesPage.clickOnPurchase(
 					`WordPress.com ${ planName }`,
 					newSiteDetails!.blog_details.site_slug
@@ -219,8 +220,6 @@ test.describe(
 			} );
 
 			await test.step( 'When I cancel plan renewal', async () => {
-				const purchasesPage = new PurchasesPage( page );
-				const snackbarComponent = new SnackbarComponent( page );
 				await purchasesPage.cancelPurchase();
 				await cancelAtomicPurchaseFlow( page, {
 					reason: 'Another reason…',
