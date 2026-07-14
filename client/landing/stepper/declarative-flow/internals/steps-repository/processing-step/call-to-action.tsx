@@ -1,4 +1,4 @@
-import { Button } from '@automattic/components';
+import { Button, Gridicon } from '@automattic/components';
 
 type ProcessingCallToActionProps = {
 	title: string;
@@ -19,8 +19,9 @@ export default function ProcessingCallToAction( {
 		<div className="processing-step__call-to-action">
 			<h2 className="processing-step__call-to-action-title">{ title }</h2>
 			<p className="processing-step__call-to-action-description">{ description }</p>
-			<Button primary href={ href } target="_blank" rel="noopener noreferrer" onClick={ onClick }>
+			<Button compact href={ href } target="_blank" rel="noopener noreferrer" onClick={ onClick }>
 				{ label }
+				<Gridicon icon="external" size={ 16 } />
 			</Button>
 		</div>
 	);

@@ -17,13 +17,18 @@
 	}
 
 	&__call-to-action {
-		margin: 40px auto 0;
+		margin: 36px auto 0;
 		max-width: 420px;
 		text-align: center;
+
+		.gridicon {
+			margin-left: 4px;
+			vertical-align: middle;
+		}
 	}
 
 	&__call-to-action-title {
-		font-size: 1.25rem;
+		font-size: 1rem;
 		font-weight: 500;
 		line-height: 1.4;
 		margin: 0;
@@ -33,7 +38,7 @@
 		color: var( --studio-gray-50 );
 		font-size: 0.875rem;
 		line-height: 1.5;
-		margin: 8px 0 16px;
+		margin: 6px 0 14px;
 	}
 }
 

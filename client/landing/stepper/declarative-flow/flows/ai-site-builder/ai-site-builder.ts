@@ -82,11 +82,11 @@ const aiSiteBuilder: FlowV2< typeof initialize > = {
 			[ STEPS.PROCESSING.slug ]: {
 				callToAction: {
 					id: 'connect_telegram',
-					title: __( 'Manage your site from Telegram' ),
+					title: __( 'Connect to WordPress Agent' ),
 					description: __(
-						'Connect Telegram to publish posts, check stats, and update your site from a chat.'
+						'We are creating your site. Meanwhile, connect your chat app now so you can manage it remotely on the go'
 					),
-					label: __( 'Connect Telegram' ),
+					label: __( 'Telegram' ),
 					href: TELEGRAM_CONNECTION_URL,
 				},
 			},
