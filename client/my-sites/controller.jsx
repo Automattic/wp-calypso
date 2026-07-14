@@ -707,7 +707,10 @@ export function siteSelection( context, next ) {
 				} else {
 					// If the site has loaded but siteId is still invalid then redirect to allSitesPath.
 					const siteFragmentOffset = context.path.indexOf( `/${ siteFragment }` );
-					const allSitesPath = context.path.substring( 0, siteFragmentOffset );
+					let allSitesPath = context.path.substring( 0, siteFragmentOffset );
+					if ( context.querystring ) {
+						allSitesPath += `?${ context.querystring }`;
+					}
 					page.redirect( allSitesPath );
 				}
 			} );
