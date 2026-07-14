@@ -41,6 +41,7 @@ import {
 	getPluginOnSite,
 	getStatusForPlugin,
 	isPluginActive,
+	isRequesting,
 } from 'calypso/state/plugins/installed/selectors-ts';
 import { fetchPluginData as wporgFetchPluginData } from 'calypso/state/plugins/wporg/actions';
 import { getPlugin, isFetched } from 'calypso/state/plugins/wporg/selectors';
@@ -118,9 +119,13 @@ const MarketplaceProductInstall = ( {
 		getAutomatedTransferStatus( state, siteId )
 	);
 
+	// Installing keys the status by the wporg plugin's id, activating by the installed plugin's, so
+	// the id to read a status under changes once the plugin is on the site.
+	const pluginStatusId = installedPlugin?.id ?? wporgPlugin?.id ?? pluginSlug;
 	const pluginInstallStatus = useSelector( ( state ) =>
-		getStatusForPlugin( state, siteId, pluginSlug )
+		getStatusForPlugin( state, siteId, pluginStatusId )
 	);
+	const isFetchingSitePlugins = useSelector( ( state ) => isRequesting( state, siteId ) );
 
 	const productsList = useSelector( getProductsList );
 	const isProductListFetched = Object.values( productsList ).length > 0;
@@ -277,12 +282,7 @@ const MarketplaceProductInstall = ( {
 			currentStep === 1 &&
 			( ! isPluginUploadFlow || ( isPluginUploadFlow && pluginUploadComplete ) )
 		) {
-			dispatch(
-				activatePlugin( siteId, {
-					slug: installedPlugin?.slug,
-					id: installedPlugin?.id,
-				} )
-			);
+			dispatch( activatePlugin( siteId, installedPlugin ) );
 			setCurrentStep( 2 );
 		}
 	}, [ pluginUploadComplete, installedPlugin, currentStep, isPluginUploadFlow, dispatch, siteId ] );
@@ -326,11 +326,14 @@ const MarketplaceProductInstall = ( {
 	const isTransferredPluginFlow =
 		atomicFlow && transferStates.COMPLETE === automatedTransferStatus && isAtomicTransferReady;
 
-	// Poll until the plugin turns up, which is what lets the activation effect above run.
-	useInterval(
-		() => dispatch( fetchSitePlugins( siteId ) ),
-		( isTransferredPluginFlow || isMarketplacePluginFlow ) && ! pluginActive ? 3000 : null
-	);
+	// Poll until the plugin turns up, which is what lets the activation effect above run. Activating
+	// it updates the store itself, so there is nothing left to poll for after that.
+	const shouldPollForPlugin =
+		( isTransferredPluginFlow || isMarketplacePluginFlow ) &&
+		! installedPlugin &&
+		! isFetchingSitePlugins;
+
+	useInterval( () => dispatch( fetchSitePlugins( siteId ) ), shouldPollForPlugin ? 3000 : null );
 
 	const canManagePlugins = useSelector( ( state ) => {
 		return siteHasFeature( state, selectedSite?.ID, WPCOM_FEATURES_MANAGE_PLUGINS );

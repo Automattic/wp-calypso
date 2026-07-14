@@ -14,6 +14,8 @@ const ADMIN_URL = 'https://example.wordpress.com/wp-admin/';
 const mockSite = {
 	installedPlugin: null as typeof PLUGIN | null,
 	pluginActive: false,
+	// Redux keys a plugin's status by its id, which is what an activation error comes back under.
+	failedPluginId: null as string | null,
 	// A paid marketplace plugin is not a wp.org one, and its site is already atomic: checkout
 	// transferred it and started the install.
 	isAtomic: false,
@@ -50,8 +52,10 @@ jest.mock( 'calypso/state/plugins/wporg/selectors', () => ( {
 } ) );
 jest.mock( 'calypso/state/plugins/installed/selectors-ts', () => ( {
 	getPluginOnSite: () => mockSite.installedPlugin,
-	getStatusForPlugin: () => null,
+	getStatusForPlugin: ( _state: unknown, _siteId: number, pluginId: string ) =>
+		pluginId === mockSite.failedPluginId ? { error: { message: 'Activation failed' } } : null,
 	isPluginActive: () => mockSite.pluginActive,
+	isRequesting: () => false,
 } ) );
 jest.mock( 'calypso/state/automated-transfer/selectors', () => ( {
 	getAutomatedTransferStatus: () => 'complete',
@@ -171,6 +175,7 @@ describe( 'MarketplaceProductInstall', () => {
 		jest.clearAllMocks();
 		mockSite.installedPlugin = null;
 		mockSite.pluginActive = false;
+		mockSite.failedPluginId = null;
 		mockSite.isAtomic = false;
 		mockSite.isWporgPlugin = true;
 		originalLocation = window.location;
@@ -206,6 +211,27 @@ describe( 'MarketplaceProductInstall', () => {
 		expect( window.location.href ).toBe(
 			`${ ADMIN_URL }plugins.php?activate=true&plugin_status=active`
 		);
+	} );
+
+	it( 'stops polling once the plugin is found, and reports an activation that fails', async () => {
+		const rendered = install();
+		await start( rendered );
+
+		await advance( 3000 );
+		expect( fetchSitePlugins ).toHaveBeenCalledWith( SITE_ID );
+
+		// Polling was only ever about finding the plugin. Activating it updates the store itself.
+		mockSite.installedPlugin = PLUGIN;
+		mockSite.failedPluginId = PLUGIN.id;
+		await settle( rendered );
+		expect( activatePlugin ).toHaveBeenCalledWith( SITE_ID, PLUGIN );
+
+		fetchSitePlugins.mockClear();
+		await advance( 10 * 1000 );
+		expect( fetchSitePlugins ).not.toHaveBeenCalled();
+
+		expect( screen.getByText( /An error occurred while installing the plugin/ ) ).toBeVisible();
+		expect( window.location.href ).toBe( '' );
 	} );
 
 	it( 'keeps polling for a paid plugin, which checkout installs', async () => {
