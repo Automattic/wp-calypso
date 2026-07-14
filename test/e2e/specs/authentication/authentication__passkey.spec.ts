@@ -1,4 +1,5 @@
 import { DataHelper, TestAccount } from '@automattic/calypso-e2e';
+import { snoozeAccountRecoveryInterstitial } from '../../lib/dashboard-helpers';
 import { getAccount } from '../../lib/get-account';
 import { expect, tags, test } from '../../lib/pw-base';
 
@@ -26,8 +27,13 @@ const REGISTRATION_CHALLENGE_PATH = '/me/two-step/security-key/registration_chal
  * param instead of a fixed canonical value -- see
  * fetchTwoStepAuthSecurityKeyRegistrationChallenge in
  * packages/api-core/src/me-two-step/fetchers.ts and the `hostname` param
- * built in packages/api-queries/src/me-two-step.ts. It will break the same
- * way again whenever the dashboard is rolled out more broadly.
+ * built in packages/api-queries/src/me-two-step.ts. That check only omits
+ * the hostname override when `config( 'env_id' ) === 'production'`, but the
+ * dashboard runs under `env_id: 'dashboard-production'`, not the literal
+ * `'production'` value the check compares against. So the registration
+ * challenge already requests a non-canonical rp id on the dashboard host
+ * today, and this assertion fails against production until that check is
+ * fixed.
  *
  * This test does not run a full WebAuthn ceremony -- CI has no authenticator
  * attached to answer navigator.credentials.create(). Instead it drives the
@@ -45,7 +51,7 @@ const REGISTRATION_CHALLENGE_PATH = '/me/two-step/security-key/registration_chal
  * use) rather than comparing two live responses. A dedicated passkey-capable
  * test account, plus optionally a CDP virtual-authenticator harness, would
  * let a future version complete the full round trip. Tracked as a follow-up
- * in the pull request that adds this spec.
+ * in TESTOPS-227.
  */
 
 test.describe(
@@ -71,7 +77,9 @@ test.describe(
 				// live TOTP code, to avoid an OTP-reuse collision with the TOTP
 				// account also used by authentication__totp.spec.ts.
 				const testAccount: TestAccount = await getAccount( page, 'totpUser' );
-				await testAccount.authenticate( page );
+				await snoozeAccountRecoveryInterstitial( testAccount.restAPI );
+				// Skip waiting for Calypso sidebar — we navigate to the dashboard immediately after.
+				await testAccount.authenticate( page, { waitUntilStable: false } );
 			} );
 
 			await test.step( 'When I open two-step authentication settings on the hosting dashboard', async function () {
