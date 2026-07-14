@@ -6,6 +6,7 @@ import {
 	Button,
 	Popover,
 } from '@wordpress/components';
+import { __ } from '@wordpress/i18n';
 import { Icon, info } from '@wordpress/icons';
 import { useState } from 'react';
 import { Card, CardBody } from '../../../components/card';
@@ -42,7 +43,7 @@ export default function ConsolidatedStatCard( {
 						<Text variant="muted">{ footerText }</Text>
 						<Button
 							ref={ setInfoAnchor }
-							aria-label={ popoverTitle }
+							aria-label={ popoverTitle ?? __( 'More information' ) }
 							onClick={ () => setShowPopover( ( visible ) => ! visible ) }
 						>
 							<Icon icon={ info } size={ 16 } />
