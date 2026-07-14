@@ -5,11 +5,12 @@ type CancelReason = 'Another reason…';
 /**
  * Clicks a button locator once it is both visible and actually enabled.
  *
- * The cancellation flow renders its primary buttons with the
+ * The cancellation survey renders its primary button with the
  * `@wordpress/components` "busy" state (`class="is-busy"` plus the `disabled`
- * attribute) while an async request is in flight. Such a button is visible but
- * not actionable, so `click()` alone can exhaust its action timeout before the
- * button settles. Waiting for the `disabled` attribute to be removed first
+ * attribute) while an async request is in flight, and keeps it disabled until
+ * the current step's required answers are filled in. Such a button is visible
+ * but not actionable, so `click()` alone can exhaust its action timeout before
+ * the button settles. Waiting for the `disabled` attribute to be removed first
  * guarantees the subsequent click targets an enabled element. The button may
  * also re-render between states; polling the live locator rides that out.
  *
@@ -35,51 +36,60 @@ async function clickWhenEnabled( button: Locator, timeout = 30 * 1000 ): Promise
 }
 
 /**
- * Completes the cancellation survey for a non-plan subscription (e.g. a storage
- * add-on), whose survey is a single step.
+ * Returns a locator matching the cancellation survey's primary step button.
  *
- * On the refund-and-remove (`intent=remove`) path the step button reads "Complete
- * removal"; legacy/other variants read "Submit" or "Complete". `surveyStepButton`
- * (scoped to the survey form) matches whichever renders, and `clickWhenEnabled`
- * rides out the busy/disabled state while the request is in flight.
- */
-export async function cancelSubscriptionFlow( page: Page ) {
-	await clickWhenEnabled( surveyStepButton( page ) );
-}
-
-/**
- * Returns a locator that matches the cancellation survey's primary step button.
- *
- * The button's label depends on the survey step and the active intent/variant:
- * - Legacy / `intent=cancel`: non-final step renders "Continue", final step
- *   renders "Submit" (legacy) or "Complete" (split cancel/remove).
- * - `intent=remove` (the refund-and-remove path this flow now drives): non-final
- *   step renders "Continue removal", final step renders "Complete removal".
- *
- * Matching all of these keeps the flow robust regardless of which variant is
- * served. `exact: true` ensures "Continue" does not also resolve "Continue
- * removal" (and vice versa).
- *
- * The locator is scoped to the survey's `.cancel-purchase-form` container. The
- * survey renders as an overlay on top of the cancellation confirmation screen,
- * whose own primary button can share a label (e.g. "Continue removal"); scoping
- * avoids matching that underlying button and tripping strict-mode violations.
+ * Every step of the dashboard survey — including the last — advances with
+ * "Continue". The "Complete" and "…removal" variants only render on the
+ * intent-driven paths gated behind the `purchases/split-cancel-remove` feature
+ * flag, which is off in every deployed environment.
  *
  * @param {Page} page Page object the survey is rendered on.
  * @returns {Locator} Locator matching the survey's primary step button.
  */
 function surveyStepButton( page: Page ): Locator {
-	const surveyForm = page.locator( '.cancel-purchase-form' );
-	return surveyForm
-		.getByRole( 'button', { name: 'Submit', exact: true } )
-		.or( surveyForm.getByRole( 'button', { name: 'Continue', exact: true } ) )
-		.or( surveyForm.getByRole( 'button', { name: 'Complete', exact: true } ) )
-		.or( surveyForm.getByRole( 'button', { name: 'Continue removal', exact: true } ) )
-		.or( surveyForm.getByRole( 'button', { name: 'Complete removal', exact: true } ) );
+	return page.getByRole( 'button', { name: 'Continue', exact: true } );
 }
 
 /**
- * Cancels a purchased Atomic site.
+ * Waits for the cancel-and-refund request fired by the final survey step.
+ *
+ * The dashboard cancels through `wpcom/v2/upgrades/<id>/cancel` (the classic UI
+ * used `purchases/<id>/cancel`). Callers must start listening *before* the click
+ * that fires it, so a fast response cannot be missed.
+ *
+ * @param {Page} page Page object the survey is rendered on.
+ * @returns {Promise} Promise resolving once the cancellation request resolves.
+ */
+function waitForCancelResponse( page: Page ) {
+	return page.waitForResponse( ( response ) => /\/upgrades\/\d+\/cancel/.test( response.url() ), {
+		// A refund is a real server round-trip and can be slow, so allow a
+		// generous window.
+		timeout: 60 * 1000,
+	} );
+}
+
+/**
+ * Completes the cancellation survey for a non-plan subscription (e.g. a storage
+ * add-on).
+ *
+ * Such purchases get a single survey step whose only field — "What's one thing
+ * we could have done better?" — is optional, so submitting it immediately fires
+ * the cancel-and-refund request.
+ */
+export async function cancelSubscriptionFlow( page: Page ) {
+	const cancelResponsePromise = waitForCancelResponse( page );
+
+	await clickWhenEnabled( surveyStepButton( page ) );
+
+	await cancelResponsePromise;
+}
+
+/**
+ * Completes the cancellation survey for a plan.
+ *
+ * A plan gets two survey steps: a reason for cancelling, then where the user is
+ * headed next. Both are required, and the step button stays disabled until they
+ * are answered.
  */
 export async function cancelAtomicPurchaseFlow(
 	page: Page,
@@ -88,60 +98,29 @@ export async function cancelAtomicPurchaseFlow(
 		customReasonText: string;
 	}
 ) {
-	// The feedback question is worded by intent: "Why would you like to cancel?"
-	// on the cancel path and "Why would you like to remove?" on the refund-and-
-	// remove (`intent=remove`) path this flow now drives. Match either.
-	await page
-		.getByRole( 'combobox', { name: /Why would you like to (cancel|remove)\?/ } )
-		.selectOption( feedback.reason );
-
+	// Choosing "Another reason…" reveals a free-text field and, unlike most of
+	// the other reasons, routes past the upsell step straight to the next one.
+	await page.getByRole( 'radio', { name: feedback.reason } ).check();
 	await page
 		.getByRole( 'textbox', { name: 'Can you please specify?' } )
 		.fill( feedback.customReasonText );
 
-	// Submit the feedback step. This is not the final step, so under the
-	// refund-and-remove (`intent=remove`) path the button is labelled "Continue
-	// removal"; other variants label it "Continue". `surveyStepButton` matches
-	// whichever renders.
 	await clickWhenEnabled( surveyStepButton( page ) );
 
 	// The next (and final) step asks where the user is headed next. Selecting an
 	// answer enables the final step button.
-	await page
-		.getByRole( 'combobox', { name: 'Where is your next adventure taking you?' } )
-		.selectOption( "I'm staying here and using the free plan." );
+	await page.getByRole( 'radio', { name: "I'm staying here and using the free plan." } ).check();
 
-	// Submitting the final step fires the cancel-and-refund request. Start
-	// listening for its response *before* clicking so the listener cannot miss
-	// a fast response. The request hits `wpcom/v2/purchases/<id>/cancel`; the
-	// API proxy URL contains `purchases/<id>/cancel`.
-	const cancelResponsePromise = page.waitForResponse(
-		( response ) => /\/purchases\/\d+\/cancel/.test( response.url() ),
-		// A refund is a real server round-trip and can be slow in the test
-		// environment, so allow a generous window.
-		{ timeout: 60 * 1000 }
-	);
+	// Submitting the final step fires the cancel-and-refund request. Listen for
+	// its response before clicking so a fast response cannot be missed.
+	const cancelResponsePromise = waitForCancelResponse( page );
 
-	// Submit the final step. The survey for a plan cancellation only has these
-	// two steps, so there is no third button to click. The final button renders
-	// visible but `disabled`/`is-busy` while the cancellation request is in
-	// flight, so visibility alone is not enough to click it reliably — wait for
-	// it to become enabled first.
 	await clickWhenEnabled( surveyStepButton( page ) );
 
-	// Confirming the cancellation does not trigger a full-page navigation: the
-	// purchases view updates in place as a single-page-app state change. The
-	// previous `page.waitForNavigation()` therefore never resolved and hung
-	// until its timeout.
-	//
-	// Clicking the final button only *fires* the survey's `onSurveyComplete`
-	// handler, which then `await`s the cancel-and-refund API request before
-	// rendering the success notice. Returning right after the click left the
-	// caller's `noticeShown()` assertion racing the entire refund round-trip:
-	// the success notice is created with a 10s auto-dismiss `duration`, so a
-	// slow refund could push the notice's brief visible window outside the
-	// assertion's budget. Block here until the cancel request actually
-	// resolves so the caller's notice assertion only has to cover the notice
-	// render, not the full network round-trip.
+	// Submitting only *fires* the survey's completion handler, which then awaits
+	// the cancel-and-refund request before showing the success snackbar and
+	// navigating away. The snackbar auto-dismisses, so returning right after the
+	// click would leave the caller's assertion racing the whole refund
+	// round-trip. Block until the request actually resolves.
 	await cancelResponsePromise;
 }

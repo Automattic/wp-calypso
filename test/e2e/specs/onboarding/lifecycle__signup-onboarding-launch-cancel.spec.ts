@@ -5,20 +5,19 @@ import {
 	DataHelper,
 	DomainSearchComponent,
 	LoginPage,
-	MeSidebarComponent,
 	MyHomePage,
-	MyProfilePage,
 	NewSiteResponse,
 	NewUserResponse,
-	NoticeComponent,
 	PostCheckoutSetupSitePage,
 	PurchasesPage,
 	RestAPIClient,
 	SecretsManager,
 	SignupPickPlanPage,
 	SiteSettingsPage,
+	SnackbarComponent,
 	StartSiteFlow,
 	UserSignupPage,
+	cancelAtomicPurchaseFlow,
 } from '@automattic/calypso-e2e';
 import { expect, tags, test } from '../../lib/pw-base';
 import { apiCloseAccount } from '../shared';
@@ -57,10 +56,7 @@ test.describe(
 			} );
 		} );
 
-		// Skipped for now; can be updated once we're sure all onboarding tests will go
-		// through the MSD flow. See https://github.com/Automattic/wp-calypso/pull/112586
-		// and https://github.com/Automattic/wp-calypso/pull/112587.
-		test.skip( 'As a new user, I can sign up, onboard, launch, and cancel subscription', async ( {
+		test( 'As a new user, I can sign up, onboard, launch, and cancel subscription', async ( {
 			page,
 			browser,
 		} ) => {
@@ -209,12 +205,9 @@ test.describe(
 				await myHomePage.validateTaskHeadingMessage( 'You launched your site!' );
 			} );
 
-			await test.step( 'When I navigate to Me > Purchases', async () => {
-				const mePage = new MyProfilePage( page );
-				await mePage.visit();
-				const meSidebarComponent = new MeSidebarComponent( page );
-				await meSidebarComponent.openMobileMenu();
-				await meSidebarComponent.navigate( 'Purchases' );
+			await test.step( 'When I navigate to the purchases page', async () => {
+				const purchasesPage = new PurchasesPage( page );
+				await purchasesPage.visit();
 			} );
 
 			await test.step( 'When I view details of purchased plan', async () => {
@@ -227,16 +220,16 @@ test.describe(
 
 			await test.step( 'When I cancel plan renewal', async () => {
 				const purchasesPage = new PurchasesPage( page );
-				const noticeComponent = new NoticeComponent( page );
-				await purchasesPage.cancelPurchase( 'Cancel plan' );
-				try {
-					await noticeComponent.noticeShown(
-						'Your refund has been processed and your purchase removed.',
-						{ timeout: 30 * 1000 }
-					);
-				} catch {
-					// Alternate flows may show different confirmation messaging.
-				}
+				const snackbarComponent = new SnackbarComponent( page );
+				await purchasesPage.cancelPurchase();
+				await cancelAtomicPurchaseFlow( page, {
+					reason: 'Another reason…',
+					customReasonText: 'E2E TEST CANCELLATION',
+				} );
+				await snackbarComponent.snackbarShown(
+					'Your refund has been processed and your purchase removed.',
+					{ timeout: 30 * 1000 }
+				);
 			} );
 		} );
 	}

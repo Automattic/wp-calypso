@@ -2,13 +2,11 @@ import {
 	BrowserManager,
 	CartCheckoutPage,
 	DataHelper,
-	MeSidebarComponent,
-	MyProfilePage,
 	NewUserResponse,
-	NoticeComponent,
 	PlansPage,
 	PurchasesPage,
 	RestAPIClient,
+	SnackbarComponent,
 	UserSignupPage,
 	cancelAtomicPurchaseFlow,
 	cancelSubscriptionFlow,
@@ -51,10 +49,7 @@ test.describe(
 			} );
 		} );
 
-		// Skipped for now; can be updated once we're sure all onboarding tests will go
-		// through the MSD flow. See https://github.com/Automattic/wp-calypso/pull/112586
-		// and https://github.com/Automattic/wp-calypso/pull/112587.
-		test.skip( 'As a new user, I can purchase a hosted site and cancel it', async ( { page } ) => {
+		test( 'As a new user, I can purchase a hosted site and cancel it', async ( { page } ) => {
 			// ~360s of dominant waits (90s purchase + 180s Atomic transfer + 30s
 			// checkout + two 30s refund notices) plus signup, billing and two
 			// cancellation navigations; 420s covers the worst case.
@@ -107,52 +102,55 @@ test.describe(
 
 			await test.step( 'Then I wait for the Atomic transfer to complete', async () => {
 				await page.waitForURL( /.*transferring-hosted-site.*/ );
-				await page.waitForURL( /wp-admin/, { timeout: 180 * 1000 } );
+
+				// The flow exits to wp-admin when the site's admin-interface option says
+				// so, and to the dashboard's site overview otherwise. Which one wins is
+				// a race on that option being loaded, so accept either: this test cares
+				// about the purchases that follow, not where the transfer lands.
+				await page.waitForURL( /wp-admin|\/sites\/[^/?#]+/, { timeout: 180 * 1000 } );
 			} );
 
-			await test.step( 'Then I am in WP Admin', async () => {
-				await page.waitForURL( /wp-admin/ );
-				siteSlug = new URL( page.url() ).hostname;
+			await test.step( 'Then I capture the slug of the transferred site', async () => {
+				// wp-admin: https://<slug>/wp-admin/
+				// Site overview: https://my.wordpress.com/sites/<slug>
+				const url = new URL( page.url() );
+				siteSlug = url.pathname.startsWith( '/sites/' )
+					? ( url.pathname.split( '/' ).pop() as string )
+					: url.hostname;
 			} );
 
-			await test.step( 'When I navigate to Me > Purchases to cancel add-on', async () => {
-				const mePage = new MyProfilePage( page );
-				await mePage.visit();
-				const meSidebarComponent = new MeSidebarComponent( page );
-				await meSidebarComponent.openMobileMenu();
-				await meSidebarComponent.navigate( 'Purchases' );
+			await test.step( 'When I navigate to the purchases page to cancel the add-on', async () => {
+				const purchasesPage = new PurchasesPage( page );
+				await purchasesPage.visit();
 			} );
 
 			await test.step( 'When I cancel storage add-on', async () => {
 				const purchasesPage = new PurchasesPage( page );
 				await purchasesPage.clickOnPurchase( 'Storage Add-On Space Upgrade 50 GB', siteSlug! );
-				await purchasesPage.cancelPurchase( 'Cancel subscription' );
+				await purchasesPage.cancelPurchase();
 				await cancelSubscriptionFlow( page );
-				const noticeComponent = new NoticeComponent( page );
-				await noticeComponent.noticeShown(
+				const snackbarComponent = new SnackbarComponent( page );
+				await snackbarComponent.snackbarShown(
 					'Your refund has been processed and your purchase removed.',
 					{ timeout: 30 * 1000 }
 				);
 			} );
 
-			await test.step( 'When I navigate to Me > Purchases to cancel plan', async () => {
-				const mePage = new MyProfilePage( page );
-				await mePage.visit();
-				const meSidebarComponent = new MeSidebarComponent( page );
-				await meSidebarComponent.openMobileMenu();
-				await meSidebarComponent.navigate( 'Purchases' );
+			await test.step( 'When I navigate to the purchases page to cancel the plan', async () => {
+				const purchasesPage = new PurchasesPage( page );
+				await purchasesPage.visit();
 			} );
 
 			await test.step( 'When I cancel plan', async () => {
 				const purchasesPage = new PurchasesPage( page );
 				await purchasesPage.clickOnPurchase( `WordPress.com ${ planName }`, siteSlug! );
-				await purchasesPage.cancelPurchase( 'Cancel plan' );
+				await purchasesPage.cancelPurchase();
 				await cancelAtomicPurchaseFlow( page, {
 					reason: 'Another reason…',
 					customReasonText: 'E2E TEST CANCELLATION',
 				} );
-				const noticeComponent = new NoticeComponent( page );
-				await noticeComponent.noticeShown(
+				const snackbarComponent = new SnackbarComponent( page );
+				await snackbarComponent.snackbarShown(
 					'Your refund has been processed and your purchase removed.',
 					{ timeout: 30 * 1000 }
 				);

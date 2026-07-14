@@ -22,10 +22,7 @@ test.describe(
 		let testUserThemeSignup: NewTestUserDetails;
 		let newSiteDetails: NewSiteResponse;
 
-		// Skipped for now; can be updated once we're sure all onboarding tests will go
-		// through the MSD flow. See https://github.com/Automattic/wp-calypso/pull/112586
-		// and https://github.com/Automattic/wp-calypso/pull/112587.
-		test.skip( 'One: As a new WordPress.com user I can sign up for a new Premium plan site using a theme from the Logged Out Home Page', async ( {
+		test( 'One: As a new WordPress.com user I can sign up for a new Premium plan site using a theme from the Logged Out Home Page', async ( {
 			flowLOHPThemeSignup,
 			helperData,
 			secrets,
@@ -142,7 +139,7 @@ test.describe(
 					`WordPress.com ${ planName }`,
 					newSiteDetails.blog_details.site_slug
 				);
-				await flowLOHPThemeSignup.purchasesPage.cancelPurchase( 'Cancel plan' );
+				await flowLOHPThemeSignup.purchasesPage.cancelPurchase();
 			} );
 
 			await test.step( 'And I confirm the cancellation', async function () {
@@ -150,7 +147,7 @@ test.describe(
 			} );
 
 			await test.step( 'Then I see a cancellation confirmation notice', async function () {
-				await flowLOHPThemeSignup.noticeComponent.noticeShown(
+				await flowLOHPThemeSignup.snackbarComponent.snackbarShown(
 					'Your refund has been processed and your purchase removed.',
 					{
 						timeout: 30000,

@@ -77,6 +77,7 @@ import {
 	SidebarComponent,
 	SiteSelectComponent,
 	SignupPickPlanPage,
+	SnackbarComponent,
 	TestAccount,
 	ThemesDetailPage,
 	ThemesPage,
@@ -178,6 +179,10 @@ export const test = base.extend<
 		 * Component for displaying notices (e.g., success/error messages).
 		 */
 		componentNotice: NoticeComponent;
+		/**
+		 * Component for the Dashboard's transient snackbar notices.
+		 */
+		componentSnackbar: SnackbarComponent;
 		/**
 		 * Component for selecting items in various flows.
 		 */
@@ -432,6 +437,10 @@ export const test = base.extend<
 	componentNotice: async ( { page }, use ) => {
 		const noticeComponent = new NoticeComponent( page );
 		await use( noticeComponent );
+	},
+	componentSnackbar: async ( { page }, use ) => {
+		const snackbarComponent = new SnackbarComponent( page );
+		await use( snackbarComponent );
 	},
 	componentPreview: async ( { page }, use ) => {
 		const previewComponent = new PreviewComponent( page );

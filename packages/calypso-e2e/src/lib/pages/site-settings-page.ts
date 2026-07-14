@@ -33,9 +33,17 @@ export class SiteSettingsPage {
 	/**
 	 * Start the site launch process.
 	 * Must be on the "Site visibility" sub-page.
+	 *
+	 * The launch control usually carries an href and so renders as a link, but on
+	 * the immediate-launch path it only has a click handler and renders as a
+	 * button. Match either.
 	 */
 	async launchSite(): Promise< void > {
-		const launchSite = this.page.getByRole( 'link', { name: 'Launch your site' } ).first();
+		const name = 'Launch your site';
+		const launchSite = this.page
+			.getByRole( 'link', { name } )
+			.or( this.page.getByRole( 'button', { name } ) )
+			.first();
 		await launchSite.click();
 	}
 

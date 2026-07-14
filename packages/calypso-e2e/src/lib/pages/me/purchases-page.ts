@@ -1,10 +1,13 @@
 import { Page } from 'playwright';
 import { getCalypsoURL } from '../../../data-helper';
 
-type PurchaseActions = 'Cancel plan' | 'Cancel subscription';
-
 /**
- * Represents the /me endpoint.
+ * Represents the Multi-site Dashboard's "Active upgrades" screens, rooted at
+ * `/me/billing/purchases`.
+ *
+ * Users enrolled in the hosting dashboard rollout — which now includes every
+ * newly registered user — are redirected here from the classic `/me/purchases`
+ * routes, so this is the only purchase management UI a new user can reach.
  */
 export class PurchasesPage {
 	private page: Page;
@@ -19,10 +22,16 @@ export class PurchasesPage {
 	}
 
 	/**
-	 * Visits the /me endpoint.
+	 * Visits the purchases list.
+	 *
+	 * Entered through the classic route so the app itself works out where the
+	 * dashboard lives: it is served from a different host, and which host that is
+	 * varies by environment. Following the redirect keeps this working everywhere
+	 * without the caller having to know the dashboard's origin.
 	 */
 	async visit() {
 		await this.page.goto( getCalypsoURL( 'me/purchases' ) );
+		await this.page.waitForURL( /\/me\/billing\/purchases/ );
 	}
 
 	/* Purchases list view */
@@ -30,62 +39,41 @@ export class PurchasesPage {
 	/**
 	 * Clicks on the matching purchase.
 	 *
+	 * The list renders as a DataViews table in which the product cell links to
+	 * the purchase and the description cell carries the site slug. Filtering the
+	 * row by slug and then matching the link by product name keeps the match
+	 * unambiguous for an account holding several purchases on the same site.
+	 *
 	 * @param {string} name Name of the purchased subscription.
 	 * @param {string} siteSlug Site slug.
 	 */
 	async clickOnPurchase( name: string, siteSlug: string ) {
 		await this.page
-			.locator( '#purchases-list .dataviews-view-table__row' )
-			.filter( { hasText: name } )
+			.getByRole( 'row' )
 			.filter( { hasText: siteSlug } )
-			.locator( '.purchase-item__title-link' )
+			.getByRole( 'link', { name } )
 			.click();
 	}
 
 	/* Purchase detail view */
 
 	/**
-	 * Clicks a cancellation action for the purchase and advances to its
-	 * cancellation survey via the refund-and-remove path.
+	 * Starts cancellation from the purchase detail view and confirms it, leaving
+	 * the page on the first step of the cancellation survey.
 	 *
-	 * "Cancel plan" / "Cancel subscription" lands on a cancellation confirmation
-	 * screen (`intent=cancel`) whose primary action only disables auto-renew — it
-	 * no longer issues a refund. To drive the immediate refund-and-remove path
-	 * (the one the cancellation specs assert), this follows the "Remove and claim
-	 * refund." notice link on that screen, which navigates to the same route under
-	 * `intent=remove` where the primary confirm button reads "Continue removal".
-	 * Confirming there begins the cancellation survey, which fires the refund on
-	 * completion.
-	 *
-	 * @param {PurchaseActions} action Action link to click on the purchase detail view.
+	 * The detail view lists the cancellation action under a "Cancel subscription"
+	 * heading whose button is labelled simply "Cancel" — for plans and add-ons
+	 * alike. Confirming lands on a screen whose primary button stays disabled
+	 * until the acknowledgement checkbox is ticked.
 	 */
-	async cancelPurchase( action: PurchaseActions ) {
-		await this.page.getByRole( 'link', { name: action } ).click();
+	async cancelPurchase() {
+		await this.page.getByRole( 'button', { name: 'Cancel', exact: true } ).click();
 
-		// Follow the refund-eligibility notice link to switch from the
-		// auto-renew-only `intent=cancel` screen to the refund-and-remove
-		// `intent=remove` screen. Matched by a copy-resilient pattern so wording
-		// tweaks to the notice don't break the flow.
-		await this.page.getByRole( 'button', { name: /claim refund/i } ).click();
+		// Matched on a copy-resilient fragment: the full label is the only checkbox
+		// on the confirmation screen for a plan or add-on, and its curly apostrophes
+		// are easy to mangle.
+		await this.page.getByRole( 'checkbox', { name: /reviewed what/i } ).check();
 
-		// The screen remounts under `intent=remove`. Wait for its primary
-		// "Continue removal" button before interacting.
-		const continueRemovalButton = this.page.getByRole( 'button', {
-			name: 'Continue removal',
-			exact: true,
-		} );
-		await continueRemovalButton.waitFor( { state: 'visible' } );
-
-		// Under the split-cancel-remove flag the confirm button is gated behind an
-		// "I've reviewed what I'll lose…" checkbox; without the flag there is no
-		// checkbox and the button is enabled immediately. Tick it only when present
-		// so the flow works regardless of the served variant.
-		const confirmCheckbox = this.page.locator( 'label.cancel-purchase__confirm-checkbox input' );
-		if ( ( await confirmCheckbox.count() ) > 0 ) {
-			await confirmCheckbox.check();
-		}
-
-		// Confirm. Clicking "Continue removal" begins the cancellation survey.
-		await continueRemovalButton.click();
+		await this.page.getByRole( 'button', { name: 'Cancel subscription', exact: true } ).click();
 	}
 }

@@ -7,9 +7,9 @@ import {
 	LoggedOutHomePage,
 	LoggedOutThemesPage,
 	MyHomePage,
-	NoticeComponent,
 	PurchasesPage,
 	SignupPickPlanPage,
+	SnackbarComponent,
 	ThemesDetailPage,
 	UserSignupPage,
 } from '../..';
@@ -28,7 +28,7 @@ export class LOHPThemeSignupFlow {
 	readonly themesDetailPage: ThemesDetailPage;
 	readonly myHomePage: MyHomePage;
 	readonly purchasesPage: PurchasesPage;
-	readonly noticeComponent: NoticeComponent;
+	readonly snackbarComponent: SnackbarComponent;
 
 	/**
 	 * Constructs an instance of the flow.
@@ -46,7 +46,7 @@ export class LOHPThemeSignupFlow {
 		this.themesDetailPage = new ThemesDetailPage( page );
 		this.myHomePage = new MyHomePage( page );
 		this.purchasesPage = new PurchasesPage( page );
-		this.noticeComponent = new NoticeComponent( page );
+		this.snackbarComponent = new SnackbarComponent( page );
 	}
 
 	/**

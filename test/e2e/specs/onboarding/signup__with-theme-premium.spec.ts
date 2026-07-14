@@ -8,15 +8,13 @@ import {
 	DataHelper,
 	DomainSearchComponent,
 	LoggedOutThemesPage,
-	MeSidebarComponent,
-	MyProfilePage,
 	NewSiteResponse,
 	NewUserResponse,
-	NoticeComponent,
 	PurchasesPage,
 	RestAPIClient,
 	SecretsManager,
 	SignupPickPlanPage,
+	SnackbarComponent,
 	ThemesPage,
 	UserSignupPage,
 	cancelAtomicPurchaseFlow,
@@ -52,10 +50,7 @@ test.describe(
 			} );
 		} );
 
-		// Skipped for now; can be updated once we're sure all onboarding tests will go
-		// through the MSD flow. See https://github.com/Automattic/wp-calypso/pull/112586
-		// and https://github.com/Automattic/wp-calypso/pull/112587.
-		test.skip( 'Signup, purchase, and cancel a Premium theme plan', async ( { page } ) => {
+		test( 'Signup, purchase, and cancel a Premium theme plan', async ( { page } ) => {
 			// Signup + purchase + atomic cancel stacks a 90s purchase timeout
 			// with several 30s waits; the 120s config default is not enough.
 			test.setTimeout( 240 * 1000 );
@@ -133,13 +128,9 @@ test.describe(
 				expect( theme ).toContain( themeSlug );
 			} );
 
-			await test.step( 'Navigate to Me > Purchases', async () => {
-				const mePage = new MyProfilePage( page );
-				await mePage.visit();
-
-				const meSidebarComponent = new MeSidebarComponent( page );
-				await meSidebarComponent.openMobileMenu();
-				await meSidebarComponent.navigate( 'Purchases' );
+			await test.step( 'Navigate to the purchases page', async () => {
+				const purchasesPage = new PurchasesPage( page );
+				await purchasesPage.visit();
 			} );
 
 			await test.step( 'View details of purchased plan and cancel plan', async () => {
@@ -149,13 +140,13 @@ test.describe(
 					`WordPress.com ${ planName }`,
 					newSiteDetails.blog_details.site_slug
 				);
-				await purchasesPage.cancelPurchase( 'Cancel plan' );
+				await purchasesPage.cancelPurchase();
 				await cancelAtomicPurchaseFlow( page, {
 					reason: 'Another reason…',
 					customReasonText: 'E2E TEST CANCELLATION',
 				} );
-				const noticeComponent = new NoticeComponent( page );
-				await noticeComponent.noticeShown(
+				const snackbarComponent = new SnackbarComponent( page );
+				await snackbarComponent.snackbarShown(
 					'Your refund has been processed and your purchase removed.',
 					{ timeout: 30 * 1000 }
 				);
