@@ -478,9 +478,11 @@ __metadata:
     autoprefixer: "npm:^10.4.21"
     babel-loader: "npm:^8.2.3"
     browserslist: "npm:^4.24.5"
+    core-js: "npm:^3.42.0"
     css-loader: "npm:^6.11.0"
     css-minimizer-webpack-plugin: "npm:^3.4.1"
     duplicate-package-checker-webpack-plugin: "npm:^3.0.0"
+    es-module-lexer: "npm:^1.7.0"
     gettext-parser: "npm:^6.0.0"
     mini-css-extract-plugin: "npm:^2.10.2"
     postcss-custom-properties: "npm:^12.1.11"
@@ -18025,7 +18027,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"es-module-lexer@npm:^1.5.0, es-module-lexer@npm:^1.5.4":
+"es-module-lexer@npm:^1.5.0, es-module-lexer@npm:^1.5.4, es-module-lexer@npm:^1.7.0":
   version: 1.7.0
   resolution: "es-module-lexer@npm:1.7.0"
   checksum: 4c935affcbfeba7fb4533e1da10fa8568043df1e3574b869385980de9e2d475ddc36769891936dbb07036edb3c3786a8b78ccf44964cd130dedc1f2c984b6c7b
