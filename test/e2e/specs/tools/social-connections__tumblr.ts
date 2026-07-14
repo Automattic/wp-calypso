@@ -40,7 +40,8 @@ skipDescribeIf( envVariables.ATOMIC_VARIATION === 'private' )(
 			const features = envToFeatureKey( envVariables );
 			const accountName = getTestAccountByFeature( features );
 			testAccount = new TestAccount( accountName );
-			await testAccount.authenticate( page );
+			// We navigate immediately after, so no need to wait for stability.
+			await testAccount.authenticate( page, { waitUntilStable: false } );
 
 			restAPIClient = new RestAPIClient( testAccount.credentials );
 

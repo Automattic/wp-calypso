@@ -38,7 +38,8 @@ skipDescribeIf( ! isGutenbergSimpleEdgeEnvironment )(
 			page = await browser.newPage();
 
 			const testAccount = new TestAccount( testAccountName );
-			await testAccount.authenticate( page );
+			// We navigate immediately after, so no need to wait for stability.
+			await testAccount.authenticate( page, { waitUntilStable: false } );
 
 			const postURL = `https://wordpress.com/post/${ testAccount.getSiteURL( {
 				protocol: false,

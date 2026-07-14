@@ -40,7 +40,8 @@ describe( 'CoBlocks: Extensions: Gutter Control', function () {
 		testAccount = new TestAccount( accountName );
 		editorPage = new EditorPage( page );
 
-		await testAccount.authenticate( page );
+		// We navigate immediately after, so no need to wait for stability.
+		await testAccount.authenticate( page, { waitUntilStable: false } );
 	} );
 
 	it( 'Go to the new post page', async () => {

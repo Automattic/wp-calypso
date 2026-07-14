@@ -18,7 +18,8 @@ test.describe(
 			);
 
 			await test.step( `Given I am authenticated as '${ accountGivenByEnvironment.accountName }'`, async function () {
-				await accountGivenByEnvironment.authenticate( page );
+				// We navigate immediately after, so no need to wait for stability.
+				await accountGivenByEnvironment.authenticate( page, { waitUntilStable: false } );
 			} );
 
 			await test.step( 'And I have cleared all widgets on my site', async function () {

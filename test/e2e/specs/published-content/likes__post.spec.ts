@@ -54,7 +54,8 @@ test.describe(
 			let publishedPostPage: PublishedPostPage;
 
 			await test.step( 'Authenticate and setup the test', async () => {
-				await postingUser.authenticate( page );
+				// We navigate immediately after, so no need to wait for stability.
+				await postingUser.authenticate( page, { waitUntilStable: false } );
 				restAPIClient = new RestAPIClient( postingUser.credentials );
 				otherUserRestAPIClient = new RestAPIClient( otherUser.credentials );
 				siteID = postingUser.credentials.testSites?.primary.id as number;

@@ -235,7 +235,8 @@ describe( DataHelper.createSuiteTitle( 'Feedback: Form Submission' ), function (
 		let isInSpam = false;
 
 		beforeAll( async function () {
-			await testAccount.authenticate( page );
+			// We navigate immediately after, so no need to wait for stability.
+			await testAccount.authenticate( page, { waitUntilStable: false } );
 
 			// Atomic tests sites might have local users, so the Jetpack SSO login will
 			// show up when visiting the Jetpack dashboard directly. We can bypass it if

@@ -35,7 +35,8 @@ describe(
 				const page = await browser.newPage();
 
 				const testAccount = new TestAccount( accountName );
-				await testAccount.authenticate( page );
+				// We navigate immediately after, so no need to wait for stability.
+				await testAccount.authenticate( page, { waitUntilStable: false } );
 
 				const fullSiteEditorPage = new FullSiteEditorPage( page );
 				await fullSiteEditorPage.visit( testAccount.getSiteURL( { protocol: true } ) );
@@ -59,7 +60,8 @@ describe(
 				page = await browser.newPage();
 
 				testAccount = new TestAccount( accountName );
-				await testAccount.authenticate( page );
+				// We navigate immediately after, so no need to wait for stability.
+				await testAccount.authenticate( page, { waitUntilStable: false } );
 
 				editorTracksEventManager = new EditorTracksEventManager( page );
 				fullSiteEditorPage = new FullSiteEditorPage( page );
@@ -113,7 +115,8 @@ describe(
 				page = await browser.newPage();
 
 				testAccount = new TestAccount( accountName );
-				await testAccount.authenticate( page );
+				// We navigate immediately after, so no need to wait for stability.
+				await testAccount.authenticate( page, { waitUntilStable: false } );
 
 				editorTracksEventManager = new EditorTracksEventManager( page );
 				fullSiteEditorPage = new FullSiteEditorPage( page );
@@ -201,7 +204,8 @@ describe(
 				page = await browser.newPage();
 
 				testAccount = new TestAccount( accountName );
-				await testAccount.authenticate( page );
+				// We navigate immediately after, so no need to wait for stability.
+				await testAccount.authenticate( page, { waitUntilStable: false } );
 
 				editorTracksEventManager = new EditorTracksEventManager( page );
 				fullSiteEditorPage = new FullSiteEditorPage( page );

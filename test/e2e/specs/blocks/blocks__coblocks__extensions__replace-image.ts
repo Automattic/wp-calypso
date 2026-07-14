@@ -45,7 +45,8 @@ describe( 'CoBlocks: Extensions: Replace Image', function () {
 		editorPage = new EditorPage( page );
 
 		testAccount = new TestAccount( accountName );
-		await testAccount.authenticate( page );
+		// We navigate immediately after, so no need to wait for stability.
+		await testAccount.authenticate( page, { waitUntilStable: false } );
 	} );
 
 	it( 'Go to the new post page', async () => {

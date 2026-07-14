@@ -32,7 +32,8 @@ describe(
 				page = await browser.newPage();
 
 				const testAccount = new TestAccount( accountName );
-				await testAccount.authenticate( page );
+				// We navigate immediately after, so no need to wait for stability.
+				await testAccount.authenticate( page, { waitUntilStable: false } );
 				siteSlug = testAccount.getSiteURL( { protocol: false } );
 
 				editorTracksEventManager = new EditorTracksEventManager( page );
@@ -89,7 +90,8 @@ describe(
 				page = await browser.newPage();
 
 				testAccount = new TestAccount( accountName );
-				await testAccount.authenticate( page );
+				// We navigate immediately after, so no need to wait for stability.
+				await testAccount.authenticate( page, { waitUntilStable: false } );
 
 				editorTracksEventManager = new EditorTracksEventManager( page );
 				fullSiteEditorPage = new FullSiteEditorPage( page );

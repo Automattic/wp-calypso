@@ -36,7 +36,8 @@ skipDescribeIf( envVariables.TEST_ON_ATOMIC !== true )(
 
 		beforeAll( async function () {
 			page = await browser.newPage();
-			await testAccount.authenticate( page );
+			// We navigate immediately after, so no need to wait for stability.
+			await testAccount.authenticate( page, { waitUntilStable: false } );
 
 			jetpackDashboardPage = new JetpackDashboardPage( page );
 

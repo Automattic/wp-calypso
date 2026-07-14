@@ -69,7 +69,8 @@ skipDescribeIf( envVariables.ATOMIC_VARIATION === 'private' )(
 				);
 			}
 
-			await testAccount.authenticate( page );
+			// We navigate immediately after, so no need to wait for stability.
+			await testAccount.authenticate( page, { waitUntilStable: false } );
 
 			advertisingPage = new AdvertisingPage( page );
 		} );

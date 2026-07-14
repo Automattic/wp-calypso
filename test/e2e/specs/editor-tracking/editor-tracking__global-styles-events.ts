@@ -30,7 +30,8 @@ describe( DataHelper.createSuiteTitle( 'Editor tracking: Global styles events' )
 			page = await browser.newPage();
 
 			testAccount = new TestAccount( accountName );
-			await testAccount.authenticate( page );
+			// We navigate immediately after, so no need to wait for stability.
+			await testAccount.authenticate( page, { waitUntilStable: false } );
 
 			editorTracksEventManager = new EditorTracksEventManager( page );
 			fullSiteEditorPage = new FullSiteEditorPage( page );
@@ -92,7 +93,8 @@ describe( DataHelper.createSuiteTitle( 'Editor tracking: Global styles events' )
 			page = await browser.newPage();
 
 			testAccount = new TestAccount( accountName );
-			await testAccount.authenticate( page );
+			// We navigate immediately after, so no need to wait for stability.
+			await testAccount.authenticate( page, { waitUntilStable: false } );
 
 			editorTracksEventManager = new EditorTracksEventManager( page );
 			fullSiteEditorPage = new FullSiteEditorPage( page );
@@ -162,7 +164,8 @@ describe( DataHelper.createSuiteTitle( 'Editor tracking: Global styles events' )
 			page = await browser.newPage();
 
 			testAccount = new TestAccount( accountName );
-			await testAccount.authenticate( page );
+			// We navigate immediately after, so no need to wait for stability.
+			await testAccount.authenticate( page, { waitUntilStable: false } );
 
 			editorTracksEventManager = new EditorTracksEventManager( page );
 			fullSiteEditorPage = new FullSiteEditorPage( page );
@@ -282,7 +285,8 @@ describe( DataHelper.createSuiteTitle( 'Editor tracking: Global styles events' )
 			page = await browser.newPage();
 
 			testAccount = new TestAccount( accountName );
-			await testAccount.authenticate( page );
+			// We navigate immediately after, so no need to wait for stability.
+			await testAccount.authenticate( page, { waitUntilStable: false } );
 
 			editorTracksEventManager = new EditorTracksEventManager( page );
 			fullSiteEditorPage = new FullSiteEditorPage( page );

@@ -26,7 +26,8 @@ test.describe( 'Plugins: Add multiple to cart', { tag: [ tags.CALYPSO_RELEASE ] 
 
 		await test.step( 'Setup: authenticate and clear cart', async () => {
 			testAccount = new TestAccount( 'simpleSiteFreePlanUser' );
-			await testAccount.authenticate( page );
+			// We navigate immediately after, so no need to wait for stability.
+			await testAccount.authenticate( page, { waitUntilStable: false } );
 
 			const restAPIClient = new RestAPIClient( testAccount.credentials );
 			await restAPIClient.clearShoppingCart(

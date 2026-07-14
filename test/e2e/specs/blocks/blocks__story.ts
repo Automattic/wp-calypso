@@ -41,7 +41,8 @@ describe( DataHelper.createSuiteTitle( 'Blocks: Jetpack Story' ), function () {
 		page = await browser.newPage();
 
 		testAccount = new TestAccount( accountName );
-		await testAccount.authenticate( page );
+		// We navigate immediately after, so no need to wait for stability.
+		await testAccount.authenticate( page, { waitUntilStable: false } );
 
 		for ( const path of [ TEST_IMAGE_PATH, ALT_TEST_IMAGE_PATH ] ) {
 			const testFile = await MediaHelper.createTestFile( path );

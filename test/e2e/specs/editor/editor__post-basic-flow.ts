@@ -44,7 +44,8 @@ describe( DataHelper.createSuiteTitle( 'Editor: Basic Post Flow' ), function () 
 		editorPage = new EditorPage( page );
 
 		testAccount = new TestAccount( accountName );
-		await testAccount.authenticate( page );
+		// We navigate immediately after, so no need to wait for stability.
+		await testAccount.authenticate( page, { waitUntilStable: false } );
 		siteSlug = testAccount.getSiteURL( { protocol: false } );
 	} );
 

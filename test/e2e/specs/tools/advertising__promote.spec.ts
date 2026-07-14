@@ -17,7 +17,8 @@ test.describe(
 			const snippet = Array( 2 ).fill( helperData.getRandomPhrase() ).toString();
 
 			await test.step( `Given I am authenticated as '${ accountSimpleSiteFreePlan.accountName }'`, async function () {
-				await accountSimpleSiteFreePlan.authenticate( page );
+				// We navigate immediately after, so no need to wait for stability.
+				await accountSimpleSiteFreePlan.authenticate( page, { waitUntilStable: false } );
 			} );
 
 			await test.step( 'And my site has a published post', async function () {

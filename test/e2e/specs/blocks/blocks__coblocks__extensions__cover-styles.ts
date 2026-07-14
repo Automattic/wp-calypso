@@ -42,7 +42,8 @@ describe( 'CoBlocks: Extensions: Cover Styles', function () {
 		page = await browser.newPage();
 
 		testAccount = new TestAccount( accountName );
-		await testAccount.authenticate( page );
+		// We navigate immediately after, so no need to wait for stability.
+		await testAccount.authenticate( page, { waitUntilStable: false } );
 
 		editorPage = new EditorPage( page );
 	} );

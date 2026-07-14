@@ -9,7 +9,8 @@ import { expect, tags, test } from '../../lib/pw-base';
 test.describe( 'Me: Smoke Test', { tag: [ tags.CALYPSO_PR, tags.CALYPSO_RELEASE ] }, () => {
 	test( 'Navigate to Me pages', async ( { accountGivenByEnvironment, page } ) => {
 		await test.step( `Given I am authenticated as '${ accountGivenByEnvironment.accountName }'`, async function () {
-			await accountGivenByEnvironment.authenticate( page );
+			// We navigate immediately after, so no need to wait for stability.
+			await accountGivenByEnvironment.authenticate( page, { waitUntilStable: false } );
 		} );
 
 		await test.step( 'When I navigate to /me', async function () {

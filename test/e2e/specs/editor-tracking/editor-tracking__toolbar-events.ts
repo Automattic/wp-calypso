@@ -35,7 +35,8 @@ skipDescribeIf( envVariables.VIEWPORT_NAME === 'mobile' )(
 
 				const accountName = getTestAccountByFeature( features );
 				const testAccount = new TestAccount( accountName );
-				await testAccount.authenticate( page );
+				// We navigate immediately after, so no need to wait for stability.
+				await testAccount.authenticate( page, { waitUntilStable: false } );
 				siteSlug = testAccount.getSiteURL( { protocol: false } );
 
 				editorTracksEventManager = new EditorTracksEventManager( page );
@@ -115,7 +116,8 @@ skipDescribeIf( envVariables.VIEWPORT_NAME === 'mobile' )(
 
 				const accountName = getTestAccountByFeature( { ...features, variant: 'siteEditor' } );
 				testAccount = new TestAccount( accountName );
-				await testAccount.authenticate( page );
+				// We navigate immediately after, so no need to wait for stability.
+				await testAccount.authenticate( page, { waitUntilStable: false } );
 
 				editorTracksEventManager = new EditorTracksEventManager( page );
 				fullSiteEditorPage = new FullSiteEditorPage( page );

@@ -102,7 +102,8 @@ skipDescribeIf( envVariables.ATOMIC_VARIATION === 'private' )(
 		describe( 'As publishing user', function () {
 			beforeAll( async function () {
 				// Authenticate as the publishing user.
-				await testAccount.authenticate( page );
+				// We navigate immediately after, so no need to wait for stability.
+				await testAccount.authenticate( page, { waitUntilStable: false } );
 
 				subscribersPage = new SubscribersPage( page );
 			} );

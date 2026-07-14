@@ -45,7 +45,8 @@ test.describe( 'Editor: Advanced Post Flow', { tag: [ tags.GUTENBERG, tags.CALYP
 
 		await test.step( 'Authenticate and setup the test', async () => {
 			testAccount = new TestAccount( accountName );
-			await testAccount.authenticate( page );
+			// We navigate immediately after, so no need to wait for stability.
+			await testAccount.authenticate( page, { waitUntilStable: false } );
 			siteSlug = testAccount.getSiteURL( { protocol: false } );
 		} );
 

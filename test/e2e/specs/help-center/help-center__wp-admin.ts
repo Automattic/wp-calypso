@@ -26,7 +26,8 @@ describe.skip( 'Help Center in WP Admin', () => {
 		testAccount = new TestAccount( 'defaultUser' );
 		pageUrl = `${ testAccount.getSiteURL( { protocol: true } ) }wp-admin/`;
 
-		await testAccount.authenticate( page, { waitUntilStable: true } );
+		// We navigate immediately after, so no need to wait for stability.
+		await testAccount.authenticate( page, { waitUntilStable: false } );
 		await page.goto( pageUrl );
 
 		helpCenterComponent = new HelpCenterComponent( page );

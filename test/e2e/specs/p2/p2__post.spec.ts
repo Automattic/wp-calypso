@@ -20,7 +20,8 @@ test.describe( 'P2: Post', { tag: [ tags.P2 ] }, () => {
 		accountP2,
 	} ) => {
 		await test.step( 'Given I am authenticated as a P2 user', async function () {
-			await accountP2.authenticate( page );
+			// We navigate immediately after, so no need to wait for stability.
+			await accountP2.authenticate( page, { waitUntilStable: false } );
 			accountUsed = accountP2;
 		} );
 

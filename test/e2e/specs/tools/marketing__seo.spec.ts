@@ -11,7 +11,8 @@ test.describe( 'Marketing: SEO', { tag: [ tags.CALYPSO_PR ] }, () => {
 		const externalPreviewText = helperData.getRandomPhrase();
 
 		await test.step( `Given I am authenticated as '${ accountAtomic.accountName }'`, async function () {
-			await accountAtomic.authenticate( page );
+			// We navigate immediately after, so no need to wait for stability.
+			await accountAtomic.authenticate( page, { waitUntilStable: false } );
 		} );
 
 		await test.step( 'When I visit the Tools > Marketing > Traffic page', async function () {
@@ -45,7 +46,8 @@ test.describe( 'Marketing: SEO', { tag: [ tags.CALYPSO_PR ] }, () => {
 		pageJetpackTraffic,
 	} ) => {
 		await test.step( `Given I am authenticated as '${ accountSimpleSiteFreePlan.accountName }'`, async function () {
-			await accountSimpleSiteFreePlan.authenticate( page );
+			// We navigate immediately after, so no need to wait for stability.
+			await accountSimpleSiteFreePlan.authenticate( page, { waitUntilStable: false } );
 		} );
 
 		await test.step( 'When I visit the Jetpack > Traffic page', async function () {

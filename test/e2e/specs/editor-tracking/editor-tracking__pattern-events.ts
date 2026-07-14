@@ -29,7 +29,8 @@ describe( DataHelper.createSuiteTitle( 'Editor tracking: Pattern-related events'
 			page = await browser.newPage();
 
 			const testAccount = new TestAccount( accountName );
-			await testAccount.authenticate( page );
+			// We navigate immediately after, so no need to wait for stability.
+			await testAccount.authenticate( page, { waitUntilStable: false } );
 			siteSlug = testAccount.getSiteURL( { protocol: false } );
 
 			eventManager = new EditorTracksEventManager( page );

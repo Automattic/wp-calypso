@@ -29,7 +29,8 @@ test.describe( 'Editor: Navbar', { tag: [ tags.GUTENBERG, tags.CALYPSO_PR ] }, (
 			editorPage = new EditorPage( page );
 
 			const testAccount = new TestAccount( accountName );
-			await testAccount.authenticate( page );
+			// We navigate immediately after, so no need to wait for stability.
+			await testAccount.authenticate( page, { waitUntilStable: false } );
 			siteSlug = testAccount.getSiteURL( { protocol: false } );
 		} );
 

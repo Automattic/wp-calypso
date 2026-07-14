@@ -38,7 +38,8 @@ describe( DataHelper.createSuiteTitle( 'Editor: Schedule' ), function () {
 		page = await context.newPage();
 
 		const testAccount = new TestAccount( accountName );
-		await testAccount.authenticate( page );
+		// We navigate immediately after, so no need to wait for stability.
+		await testAccount.authenticate( page, { waitUntilStable: false } );
 		siteSlug = testAccount.getSiteURL( { protocol: false } );
 	} );
 
@@ -155,7 +156,8 @@ describe( DataHelper.createSuiteTitle( 'Editor: Schedule' ), function () {
 			const tmpPage = await browser.newPage();
 
 			const testAccount = new TestAccount( 'defaultUser' );
-			await testAccount.authenticate( tmpPage );
+			// We navigate immediately after, so no need to wait for stability.
+			await testAccount.authenticate( tmpPage, { waitUntilStable: false } );
 
 			await tmpPage.goto( postURL.href );
 			await new PublishedPostPage( tmpPage ).validateTextInPost( postContent );
