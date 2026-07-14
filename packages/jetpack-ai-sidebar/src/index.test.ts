@@ -1696,6 +1696,147 @@ describe( 'useSuggestions', () => {
 		expect( getTracksCalls( 'jetpack_ai_block_transformation_suggestion_click' ) ).toEqual( [] );
 	} );
 
+	it( 'exposes tone and language dropdown options on the block suggestions', () => {
+		installAiEditorialReviewData();
+		mockSelectedBlock = { clientId: 'b-options', name: 'core/paragraph' };
+		const onSuggestions = jest.fn();
+
+		render( React.createElement( SuggestionsProbe, { onSuggestions } ) );
+
+		const latestSuggestions =
+			onSuggestions.mock.calls[ onSuggestions.mock.calls.length - 1 ]?.[ 0 ] ?? [];
+		const byId = ( id: string ) =>
+			latestSuggestions.find( ( suggestion: any ) => suggestion.id === id );
+
+		const changeTone = byId( 'change-tone' );
+		expect( changeTone ).toBeDefined();
+		// Empty prompt is the contract: each option's `value` is the full prompt.
+		expect( changeTone.prompt ).toBe( '' );
+		expect( changeTone.options.map( ( option: any ) => option.id ) ).toEqual( [
+			'formal',
+			'informal',
+			'optimistic',
+			'humorous',
+			'serious',
+			'skeptical',
+			'empathetic',
+			'confident',
+			'passionate',
+			'provocative',
+		] );
+		expect( changeTone.options[ 0 ] ).toEqual( {
+			id: 'formal',
+			label: '🎩 Formal',
+			value: 'Change the tone of this text to be more formal',
+		} );
+
+		const translate = byId( 'translate' );
+		expect( translate ).toBeDefined();
+		expect( translate.prompt ).toBe( '' );
+		expect( translate.options.map( ( option: any ) => option.id ) ).toEqual( [
+			'en',
+			'es',
+			'fr',
+			'de',
+			'it',
+			'pt',
+			'ru',
+			'zh',
+			'ja',
+			'ar',
+			'hi',
+			'ko',
+		] );
+		expect( translate.options[ 1 ] ).toEqual( {
+			id: 'es',
+			label: 'Spanish',
+			value: 'Translate this block content to Spanish',
+		} );
+	} );
+
+	it( 'tracks a change-tone dropdown selection with the chosen option_id', () => {
+		installAiEditorialReviewData();
+		installPostTypeMock( 'post' );
+		mockSelectedBlock = { clientId: 'b-tone', name: 'core/paragraph' };
+
+		render( React.createElement( SuggestionsProbe, { onSuggestions: jest.fn() } ) );
+		mockedRecordTracksEvent.mockClear();
+
+		act( () => {
+			window.dispatchEvent(
+				new CustomEvent( 'big-sky-inline-suggestion-click', {
+					detail: { value: 'Change the tone of this text to be more formal' },
+				} )
+			);
+		} );
+
+		expect( mockedRecordTracksEvent ).toHaveBeenCalledWith(
+			'jetpack_ai_block_transformation_suggestion_click',
+			{
+				suggestion_id: 'change-tone',
+				suggestion_type: 'text',
+				block_type: 'core/paragraph',
+				surface: 'jetpack_ai_sidebar',
+				option_id: 'formal',
+			}
+		);
+	} );
+
+	it( 'tracks a translate dropdown selection with the chosen option_id', () => {
+		installAiEditorialReviewData();
+		installPostTypeMock( 'post' );
+		mockSelectedBlock = { clientId: 'b-translate', name: 'core/paragraph' };
+
+		render( React.createElement( SuggestionsProbe, { onSuggestions: jest.fn() } ) );
+		mockedRecordTracksEvent.mockClear();
+
+		act( () => {
+			window.dispatchEvent(
+				new CustomEvent( 'big-sky-inline-suggestion-click', {
+					detail: { value: 'Translate this block content to Spanish' },
+				} )
+			);
+		} );
+
+		expect( mockedRecordTracksEvent ).toHaveBeenCalledWith(
+			'jetpack_ai_block_transformation_suggestion_click',
+			{
+				suggestion_id: 'translate',
+				suggestion_type: 'text',
+				block_type: 'core/paragraph',
+				surface: 'jetpack_ai_sidebar',
+				option_id: 'es',
+			}
+		);
+	} );
+
+	it( 'tracks a plain (no-dropdown) block transformation click without an option_id', () => {
+		installAiEditorialReviewData();
+		installPostTypeMock( 'post' );
+		mockSelectedBlock = { clientId: 'b-grammar', name: 'core/paragraph' };
+
+		render( React.createElement( SuggestionsProbe, { onSuggestions: jest.fn() } ) );
+		mockedRecordTracksEvent.mockClear();
+
+		act( () => {
+			window.dispatchEvent(
+				new CustomEvent( 'big-sky-inline-suggestion-click', {
+					detail: { value: 'Check the grammar and spelling of this text' },
+				} )
+			);
+		} );
+
+		expect( mockedRecordTracksEvent ).toHaveBeenCalledWith(
+			'jetpack_ai_block_transformation_suggestion_click',
+			{
+				suggestion_id: 'check-grammar',
+				suggestion_type: 'text',
+				block_type: 'core/paragraph',
+				surface: 'jetpack_ai_sidebar',
+			}
+		);
+	} );
+
 	it( 'does not open split-screen when Editorial Review is unavailable', () => {
 		installAiEditorialReviewData();
 		mockCurrentPostType = 'page';

@@ -1,6 +1,6 @@
 import { __experimentalHStack as HStack } from '@wordpress/components';
 import { filterSortAndPaginate } from '@wordpress/dataviews';
-import { useTranslate } from 'i18n-calypso';
+import { __ } from '@wordpress/i18n';
 import { useCallback, useMemo, useState } from 'react';
 import A4ATablePlaceholder from 'calypso/a8c-for-agencies/components/a4a-table-placeholder';
 import { initialDataViewsState } from 'calypso/a8c-for-agencies/components/items-dashboard/constants';
@@ -10,16 +10,10 @@ import { DataViews } from 'calypso/components/dataviews';
 import FormRadio from 'calypso/components/forms/form-radio';
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import { useFetchAllManagedSites } from '../../migrations/hooks/use-fetch-all-managed-sites';
 import { useWooPaymentsContext } from '../context';
-import type { Site } from '../../sites/types';
+import { useFetchManagedSites, type WooPaymentsSiteItem } from './use-fetch-managed-sites';
 
-export type WooPaymentsSiteItem = {
-	id: number;
-	site: string;
-	date: string;
-	rawSite: Site;
-};
+export type { WooPaymentsSiteItem };
 
 const AddWooPaymentsToSiteTable = ( {
 	selectedSite,
@@ -28,11 +22,9 @@ const AddWooPaymentsToSiteTable = ( {
 	selectedSite: WooPaymentsSiteItem | null;
 	setSelectedSite: ( site: WooPaymentsSiteItem | null ) => void;
 } ) => {
-	const translate = useTranslate();
-
 	const dispatch = useDispatch();
 
-	const { items, isLoading } = useFetchAllManagedSites();
+	const { items, isLoading } = useFetchManagedSites();
 
 	const { sitesWithPluginsStates: excludedSites } = useWooPaymentsContext();
 
@@ -63,7 +55,7 @@ const AddWooPaymentsToSiteTable = ( {
 	const fields = useMemo( () => {
 		const siteColumn = {
 			id: 'site',
-			label: translate( 'Site' ),
+			label: __( 'Site' ),
 			getValue: ( { item }: { item: WooPaymentsSiteItem } ) => item.site,
 			render: ( { item }: { item: WooPaymentsSiteItem } ) => (
 				<div>
@@ -82,7 +74,7 @@ const AddWooPaymentsToSiteTable = ( {
 		};
 
 		return [ siteColumn ];
-	}, [ onSelectSite, selectedSite?.id, translate ] );
+	}, [ onSelectSite, selectedSite?.id ] );
 
 	const { data: allSites, paginationInfo } = useMemo( () => {
 		return filterSortAndPaginate( availableSites as WooPaymentsSiteItem[], dataViewsState, fields );
