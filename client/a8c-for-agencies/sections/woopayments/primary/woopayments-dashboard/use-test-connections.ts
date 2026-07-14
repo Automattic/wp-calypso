@@ -7,8 +7,6 @@ export type SiteTestConnection = {
 	connected: boolean;
 };
 
-// Fetches the Jetpack connection status for each site in parallel and maps it
-// back onto the site's blog id, defaulting to connected when a result is missing.
 export const useTestConnections = ( sites: SitesWithWooPaymentsState[] ): SiteTestConnection[] => {
 	const connectedResults = useQueries( {
 		queries: sites.map( ( site ) => ( {

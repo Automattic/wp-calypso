@@ -101,7 +101,6 @@ const WooPaymentsDashboard = () => {
 		);
 	}, [ sitesWithPlugins ] );
 
-	// Combine sites with WooPayments licenses (assigned via A4A) and plugins
 	const allSitesWithWooPayments = useMemo( () => {
 		return [ ...( licenseSites || [] ), ...sitesWithWooPaymentsPlugins ];
 	}, [ licenseSites, sitesWithWooPaymentsPlugins ] );
@@ -111,7 +110,6 @@ const WooPaymentsDashboard = () => {
 	const isLoading = isLoadingLicensesWithWooPayments || isLoadingSitesWithPlugins;
 	const showEmptyState = ! isLoading && ! allSitesWithWooPayments.length;
 
-	// Only fetch data if there are sites with WooPayments plugins or licenses
 	const { data: woopaymentsData, isLoading: isLoadingWooPaymentsData } = useQuery( {
 		...agencyWooPaymentsDataQuery( agencyId ?? 0 ),
 		enabled: !! agencyId && !! allSitesWithWooPayments.length,

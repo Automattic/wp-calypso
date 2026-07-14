@@ -114,7 +114,6 @@ export const sitePluginInstallMutation = () =>
 		onSuccess: ( _data, vars: { siteId: number } ) => invalidatePluginsForSite( vars.siteId ),
 	} );
 
-// Install (and activate) a plugin via the WordPress Core (wp/v2) endpoint.
 export const siteCorePluginInstallMutation = () =>
 	mutationOptions( {
 		mutationFn: ( vars: { siteId: number; slug: string } ) =>
@@ -122,7 +121,6 @@ export const siteCorePluginInstallMutation = () =>
 		onSuccess: ( _data, vars: { siteId: number } ) => invalidateSiteCorePlugins( vars.siteId ),
 	} );
 
-// Activate a plugin via the WordPress Core (wp/v2) endpoint.
 export const siteCorePluginActivateMutation = () =>
 	mutationOptions( {
 		mutationFn: ( vars: { siteId: number; plugin: string } ) =>
