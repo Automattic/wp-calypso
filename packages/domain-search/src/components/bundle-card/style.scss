@@ -16,11 +16,15 @@
 }
 
 .bundle-card__members {
-	word-break: break-all;
+	// Break between domains (at the ", " separators) and only break inside a
+	// domain as a last resort for an over-long SLD — never mid-word by default.
+	overflow-wrap: anywhere;
 }
 
 .bundle-card__member-tld {
 	color: #2c3338;
+	// Keep the extension intact so it never splits across lines (".n" / "et").
+	white-space: nowrap;
 }
 
 .bundle-card__cta-wrapper {
