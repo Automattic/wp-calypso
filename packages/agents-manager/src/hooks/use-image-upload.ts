@@ -112,7 +112,7 @@ function createAbortError(): Error {
 }
 
 /**
- * Delete an attachment left behind by an aborted upload. Fire-and-forget:
+ * Delete an attachment left behind by an aborted or failed batch. Fire-and-forget:
  * an orphaned attachment is harmless, so failures are intentionally ignored.
  */
 function deleteAttachment( id: number ): void {
@@ -174,7 +174,8 @@ export function useImageUpload(): UseImageUploadResult {
 		}
 
 		// `uploadMedia` never fires a callback for an empty list — without this
-		// the promise would hang and leave the composer locked in `isUploadingImages`.
+		// the promise would hang with `isUploadingImages` stuck `true`, locking
+		// the composer.
 		if ( pendingImages.length === 0 ) {
 			return Promise.resolve( [] );
 		}
