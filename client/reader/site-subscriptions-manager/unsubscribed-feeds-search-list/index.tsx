@@ -1,6 +1,6 @@
 import './style.scss';
-import { getIsSubscribedFromData, readFeedSearchQuery } from '@automattic/api-queries';
-import { Reader, SubscriptionManager } from '@automattic/data-stores';
+import { readFeedSearchQuery } from '@automattic/api-queries';
+import { SubscriptionManager } from '@automattic/data-stores';
 import { useQuery } from '@tanstack/react-query';
 import { __experimentalVStack as VStack, Spinner } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
@@ -19,11 +19,9 @@ export const UnsubscribedFeedsSearchList = ( { hideTitle = false }: Props ) => {
 	const { searchTerm } = useSiteSubscriptionsQueryProps();
 	const { isPending: isUnsubscribing } = useSiteUnsubscribeMutation();
 	const translate = useTranslate();
-	const {
-		data: siteSubscriptionsData,
-		subscriptions,
-		isFetching: isFetchingSubscriptions,
-	} = useSiteSubscriptions( { fetchAllPages: true } );
+	const { subscriptions, isFetching: isFetchingSubscriptions } = useSiteSubscriptions( {
+		fetchAllPages: true,
+	} );
 
 	const {
 		data,
@@ -36,19 +34,9 @@ export const UnsubscribedFeedsSearchList = ( { hideTitle = false }: Props ) => {
 		} )
 	);
 
-	const unsubscribedFeedItems = data?.feeds;
+	const unsubscribedFeedItems = data?.feeds ?? [];
 	const noFeedsFound =
-		( unsubscribedFeedItems?.length === 0 && ! isFetchingUnsubscribedFeeds ) || searchError;
-
-	// To avoid showing duplicate feed items between subscribed and unsubscribed feeds.
-	const filteredUnsubscribedFeedItems = ( unsubscribedFeedItems ?? [] ).filter(
-		( feedItem: Reader.FeedItem ): boolean =>
-			! getIsSubscribedFromData( siteSubscriptionsData, {
-				feedUrl: feedItem.subscribe_URL,
-				feedId: feedItem.feed_ID,
-				blogId: feedItem.blog_ID || null,
-			} )
-	);
+		( unsubscribedFeedItems.length === 0 && ! isFetchingUnsubscribedFeeds ) || searchError;
 
 	const shouldShowUnsubcribedFeedsListLoader =
 		isFetchingSubscriptions || // If site subscriptions are still fetching.
@@ -64,12 +52,12 @@ export const UnsubscribedFeedsSearchList = ( { hideTitle = false }: Props ) => {
 			hideTitle ||
 			! hasSubscribedTableResults ||
 			noFeedsFound ||
-			filteredUnsubscribedFeedItems.length === 0
+			unsubscribedFeedItems.length === 0
 		) {
 			return null;
 		}
 
-		if ( filteredUnsubscribedFeedItems.length === 1 ) {
+		if ( unsubscribedFeedItems.length === 1 ) {
 			return translate( 'Here is one result that matches your search:' );
 		}
 
@@ -94,8 +82,8 @@ export const UnsubscribedFeedsSearchList = ( { hideTitle = false }: Props ) => {
 
 	const title = getTitle();
 
-	if ( filteredUnsubscribedFeedItems.length === 1 ) {
-		const feed = filteredUnsubscribedFeedItems[ 0 ];
+	if ( unsubscribedFeedItems.length === 1 ) {
+		const feed = unsubscribedFeedItems[ 0 ];
 		return (
 			<VStack spacing={ 4 }>
 				{ title && <h2 className="reader-unsubscribed-feeds-search-list-title">{ title }</h2> }
@@ -112,7 +100,7 @@ export const UnsubscribedFeedsSearchList = ( { hideTitle = false }: Props ) => {
 		<VStack spacing={ 4 }>
 			{ title && <h2 className="reader-unsubscribed-feeds-search-list-title">{ title }</h2> }
 			<VStack as="ul" className="reader-unsubscribed-feeds-search-list">
-				{ filteredUnsubscribedFeedItems?.map( ( feed, index ) => (
+				{ unsubscribedFeedItems.map( ( feed, index ) => (
 					<ReaderFeedItem
 						key={ `${ feed.blog_ID }-${ feed.feed_ID }` }
 						feed={ feed }

@@ -218,86 +218,38 @@ describe( 'UnsubscribedFeedsSearchList', () => {
 		).toBeVisible();
 	} );
 
-	it( 'filters out subscribed feeds matched by numeric feed_ID across string/number types', async () => {
-		const feedItems = [
-			createMockFeedItem( {
-				feed_ID: '123',
-				blog_ID: '1',
-				subscribe_URL: 'https://a.example/feed',
-			} ),
-			createMockFeedItem( { feed_ID: '2', blog_ID: '2', subscribe_URL: 'https://b.example/feed' } ),
-			createMockFeedItem( { feed_ID: '3', blog_ID: '3', subscribe_URL: 'https://c.example/feed' } ),
-		];
+	it( 'still renders a subscribed feed so ReaderFeedItem can show Unsubscribe', async () => {
+		const feedItem = createMockFeedItem( {
+			feed_ID: '123',
+			blog_ID: '456',
+			subscribe_URL: 'https://example.com/feed',
+		} );
 
 		nock( 'https://public-api.wordpress.com' )
 			.get( '/rest/v1.1/read/feed' )
 			.query( () => true )
 			.once()
 			.reply( 200, {
-				feeds: feedItems,
+				feeds: [ feedItem ],
 			} );
 
 		render( <UnsubscribedFeedsSearchList />, {
-			searchTerm: 'test',
+			searchTerm: 'https://example.com/feed',
 			subscriptions: [
 				createMockSubscription( {
 					feed_ID: 123,
-					blog_ID: 999,
-					URL: 'https://other.example',
-					feed_URL: 'https://other.example',
+					blog_ID: 456,
+					URL: 'https://example.com/feed',
+					feed_URL: 'https://example.com/feed',
 				} ),
 			],
 		} );
 
-		const feedItemElements = await screen.findAllByTestId( 'mock-reader-feed-item' );
-		expect( feedItemElements ).toHaveLength( 2 );
-		expect( feedItemElements[ 0 ] ).toHaveAttribute( 'data-feed-id', '2' );
-		expect( feedItemElements[ 1 ] ).toHaveAttribute( 'data-feed-id', '3' );
-	} );
-
-	it( 'filters out subscribed feeds matched by comparable URL', async () => {
-		const feedItems = [
-			createMockFeedItem( {
-				feed_ID: '1',
-				blog_ID: '1',
-				subscribe_URL: 'https://Example.com/feed/',
-			} ),
-			createMockFeedItem( {
-				feed_ID: '2',
-				blog_ID: '2',
-				subscribe_URL: 'https://other.example/feed',
-			} ),
-			createMockFeedItem( {
-				feed_ID: '3',
-				blog_ID: '3',
-				subscribe_URL: 'https://third.example/feed',
-			} ),
-		];
-
-		nock( 'https://public-api.wordpress.com' )
-			.get( '/rest/v1.1/read/feed' )
-			.query( () => true )
-			.once()
-			.reply( 200, {
-				feeds: feedItems,
-			} );
-
-		render( <UnsubscribedFeedsSearchList />, {
-			searchTerm: 'test',
-			subscriptions: [
-				createMockSubscription( {
-					feed_ID: 999,
-					blog_ID: 888,
-					URL: 'http://example.com/feed',
-					feed_URL: 'http://example.com/feed',
-				} ),
-			],
-		} );
-
-		const feedItemElements = await screen.findAllByTestId( 'mock-reader-feed-item' );
-		expect( feedItemElements ).toHaveLength( 2 );
-		expect( feedItemElements[ 0 ] ).toHaveAttribute( 'data-feed-id', '2' );
-		expect( feedItemElements[ 1 ] ).toHaveAttribute( 'data-feed-id', '3' );
+		expect( await screen.findByTestId( 'mock-feed-preview' ) ).toBeVisible();
+		expect( screen.getByTestId( 'mock-feed-preview' ) ).toHaveAttribute(
+			'data-url',
+			'https://example.com/feed'
+		);
 	} );
 
 	it( 'omits the recommendation list heading when hideTitle is set', async () => {
