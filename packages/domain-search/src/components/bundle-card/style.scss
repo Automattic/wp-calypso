@@ -58,4 +58,12 @@
 		flex-direction: column;
 		align-items: flex-start;
 	}
+
+	// Stack the price above the CTA instead of squeezing them onto one row,
+	// where the (often wider, translated) button crowded the price and floated
+	// mid-height against the multi-line price block.
+	.bundle-card .bundle-card__price-row {
+		flex-direction: column;
+		align-items: flex-start;
+	}
 }
