@@ -1,4 +1,10 @@
-import { readFeedQuery, readSiteQuery } from '@automattic/api-queries';
+import {
+	getIsSubscribedFromData,
+	getSiteSubscriptionByBlogIdFromData,
+	getSiteSubscriptionByFeedIdFromData,
+	readFeedQuery,
+	readSiteQuery,
+} from '@automattic/api-queries';
 import { recordTrainTracksInteract, recordTrainTracksRender } from '@automattic/calypso-analytics';
 import { ExternalLink } from '@automattic/components';
 import { Reader, SubscriptionManager } from '@automattic/data-stores';
@@ -22,6 +28,7 @@ import {
 	useRecordSiteTitleClicked,
 	useRecordSiteUrlClicked,
 } from 'calypso/landing/subscriptions/tracks';
+import { useSiteSubscriptions } from 'calypso/reader/data/site-subscriptions';
 import { getSiteName, getSiteUrl } from 'calypso/reader/get-helpers';
 import { getFeedUrl } from 'calypso/reader/route';
 import { isCurrentUserEmailVerified } from 'calypso/state/current-user/selectors';
@@ -71,6 +78,7 @@ export default function ReaderFeedItem( props: ReaderFeedItemProps ): JSX.Elemen
 	const recordSiteSubscribed = useRecordSiteSubscribed();
 	const recordSiteUnsubscribed = useRecordSiteUnsubscribed();
 	const [ localSubscriptionId, setLocalSubscriptionId ] = useState< number | null | undefined >();
+	const { data: siteSubscriptionsData } = useSiteSubscriptions();
 
 	// Fetch feed and site data.
 	const queryFeed: boolean = ! isWpcomFeed; // No need to query feed data for WPCOM feeds.
@@ -78,7 +86,10 @@ export default function ReaderFeedItem( props: ReaderFeedItemProps ): JSX.Elemen
 		...readFeedQuery( feedId ),
 		enabled: queryFeed,
 	} );
-	const { data: site, isLoading: isSiteLoading } = useQuery( readSiteQuery( Number( blogId ) ) );
+	const { data: site, isLoading: isSiteLoading } = useQuery( {
+		...readSiteQuery( Number( blogId ) ),
+		enabled: isWpcomFeed,
+	} );
 
 	// Reader feed item fields to show in the UI.
 	const description = isWpcomFeed ? site?.description : feed?.description;
@@ -86,8 +97,28 @@ export default function ReaderFeedItem( props: ReaderFeedItemProps ): JSX.Elemen
 	const filteredDisplayUrl = filterURLForDisplay( displayUrl ?? '' );
 	const feedUrl = feedId ? getFeedUrl( feedId ) : subscribeUrl;
 	const subscriptionId = feed?.subscription_id;
+	const isSubscribedFromCache = getIsSubscribedFromData( siteSubscriptionsData, {
+		feedUrl: subscribeUrl,
+		feedId,
+		blogId: isWpcomFeed ? blogId : null,
+	} );
+	const cachedSubscription =
+		( feedId ? getSiteSubscriptionByFeedIdFromData( siteSubscriptionsData, feedId ) : undefined ) ??
+		( isWpcomFeed && blogId
+			? getSiteSubscriptionByBlogIdFromData( siteSubscriptionsData, blogId )
+			: undefined );
+	const cachedSubscriptionId =
+		cachedSubscription?.is_following && cachedSubscription.ID
+			? Number( cachedSubscription.ID )
+			: undefined;
 	const currentSubscriptionId =
-		localSubscriptionId === null ? undefined : localSubscriptionId ?? subscriptionId;
+		localSubscriptionId === null
+			? undefined
+			: localSubscriptionId ?? subscriptionId ?? cachedSubscriptionId;
+	const isSubscribed =
+		localSubscriptionId === null
+			? false
+			: Boolean( currentSubscriptionId ) || isSubscribedFromCache;
 	const iconUrl = isWpcomFeed ? site?.icon?.img ?? site?.icon?.ico : feed?.image;
 	const shouldTrackRecommendedSearch =
 		source === SOURCE_SUBSCRIPTIONS_SEARCH_RECOMMENDATION_LIST && railcar;
@@ -110,10 +141,10 @@ export default function ReaderFeedItem( props: ReaderFeedItemProps ): JSX.Elemen
 		}
 
 		const noticeOptions: NoticeOptions = { duration: 5000 };
-		if ( currentSubscriptionId ) {
+		if ( isSubscribed && currentSubscriptionId ) {
 			onUnsubscribe( {
 				subscriptionId: currentSubscriptionId,
-				blog_id: blogId ?? undefined,
+				blog_id: blogId || undefined,
 				feed_id: feedId,
 				url: subscribeUrl,
 				onSuccess: () => {
@@ -148,10 +179,10 @@ export default function ReaderFeedItem( props: ReaderFeedItemProps ): JSX.Elemen
 					);
 				},
 			} );
-		} else {
+		} else if ( ! isSubscribed ) {
 			onSubscribe(
 				{
-					blog_id: blogId ?? undefined,
+					blog_id: blogId || undefined,
 					doNotInvalidateSiteSubscriptions: shouldHideOnSubscribedState,
 					feed_id: feedId,
 					url: subscribeUrl,
@@ -237,13 +268,13 @@ export default function ReaderFeedItem( props: ReaderFeedItemProps ): JSX.Elemen
 
 	const SubscribeButton = (): JSX.Element => (
 		<Button
-			variant={ currentSubscriptionId ? 'secondary' : 'primary' }
+			variant={ isSubscribed ? 'secondary' : 'primary' }
 			isBusy={ isSubscribing || isUnsubscribing }
 			disabled={ isSubscribing || isUnsubscribing }
 			onClick={ onSubscribeToggle }
 			__next40pxDefaultSize
 		>
-			{ currentSubscriptionId ? translate( 'Unsubscribe' ) : translate( 'Subscribe' ) }
+			{ isSubscribed ? translate( 'Unsubscribe' ) : translate( 'Subscribe' ) }
 		</Button>
 	);
 
@@ -264,7 +295,7 @@ export default function ReaderFeedItem( props: ReaderFeedItemProps ): JSX.Elemen
 		return null;
 	}
 
-	if ( currentSubscriptionId && shouldHideOnSubscribedState ) {
+	if ( isSubscribed && shouldHideOnSubscribedState ) {
 		return null;
 	}
 

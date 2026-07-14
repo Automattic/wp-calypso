@@ -2,16 +2,18 @@
  * @jest-environment jsdom
  */
 
+import { getSiteSubscriptionsQueryKey } from '@automattic/api-queries';
 import { Reader, SubscriptionManager } from '@automattic/data-stores';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { render as rtlRender, screen } from '@testing-library/react';
 import nock from 'nock';
 import { ComponentProps } from 'react';
+import { Provider } from 'react-redux';
+import { createStore } from 'redux';
 import ReaderFeedItem from 'calypso/blocks/reader-feed-item';
 import FeedPreview from 'calypso/landing/subscriptions/components/feed-preview';
 import { UnsubscribedFeedsSearchList } from '../index';
 
-const mockUseSiteSubscriptionsQuery = SubscriptionManager.useSiteSubscriptionsQuery as jest.Mock;
 const mockUseSiteUnsubscribeMutation = SubscriptionManager.useSiteUnsubscribeMutation as jest.Mock;
 
 jest.mock( '@automattic/data-stores', () => {
@@ -20,7 +22,6 @@ jest.mock( '@automattic/data-stores', () => {
 		...actual,
 		SubscriptionManager: {
 			...actual.SubscriptionManager,
-			useSiteSubscriptionsQuery: jest.fn(),
 			useSiteUnsubscribeMutation: jest.fn(),
 		},
 	};
@@ -68,51 +69,75 @@ const createMockFeedItem = ( overrides = {} ): Partial< Reader.FeedItem > => ( {
 } );
 
 const createMockSubscription = ( overrides = {} ) => ( {
-	ID: '1',
-	feed_ID: '999',
+	ID: 1,
+	feed_ID: 999,
+	blog_ID: 888,
 	URL: 'https://subscribed.example.com',
+	feed_URL: 'https://subscribed.example.com',
+	is_following: true,
 	isDeleted: false,
 	...overrides,
 } );
 
-const Wrapper =
-	( { searchTerm }: { searchTerm: string } ) =>
-	( { children }: { children: React.ReactNode } ) => (
-		<SubscriptionManager.SiteSubscriptionsQueryPropsProvider initialSearchTermState={ searchTerm }>
-			<QueryClientProvider
-				client={
-					new QueryClient( {
-						defaultOptions: {
-							queries: { retry: false },
-						},
-					} )
-				}
-			>
-				{ children }
-			</QueryClientProvider>
-		</SubscriptionManager.SiteSubscriptionsQueryPropsProvider>
-	);
+const makeSiteSubscriptionsData = (
+	subscriptions: ReturnType< typeof createMockSubscription >[]
+) => ( {
+	pages: [
+		{
+			subscriptions,
+			totalCount: subscriptions.length,
+			page: 1,
+			number: 100,
+		},
+	],
+	pageParams: [ 1 ],
+} );
 
 const render = (
 	ui: React.ReactNode,
-	renderOptions: Parameters< typeof Wrapper >[ 0 ] & {
+	renderOptions: {
+		searchTerm?: string;
 		subscriptions?: Array< ReturnType< typeof createMockSubscription > >;
 	} = { searchTerm: 'test' }
 ) => {
-	const { subscriptions = [], searchTerm } = renderOptions;
-	mockUseSiteSubscriptionsQuery.mockReturnValue( {
-		data: { subscriptions },
-		isFetching: false,
-	} );
+	const { subscriptions = [], searchTerm = 'test' } = renderOptions;
 	mockUseSiteUnsubscribeMutation.mockReturnValue( { isPending: false } );
 
-	return rtlRender( ui, { wrapper: Wrapper( { searchTerm } ) } );
+	const queryClient = new QueryClient( {
+		defaultOptions: {
+			queries: { retry: false },
+		},
+	} );
+	queryClient.setQueryData(
+		getSiteSubscriptionsQueryKey(),
+		makeSiteSubscriptionsData( subscriptions )
+	);
+
+	const store = createStore( () => ( {
+		currentUser: { id: 1 },
+	} ) );
+
+	return rtlRender( ui, {
+		wrapper: ( { children }: { children: React.ReactNode } ) => (
+			<Provider store={ store }>
+				<SubscriptionManager.SiteSubscriptionsQueryPropsProvider
+					initialSearchTermState={ searchTerm }
+				>
+					<QueryClientProvider client={ queryClient }>{ children }</QueryClientProvider>
+				</SubscriptionManager.SiteSubscriptionsQueryPropsProvider>
+			</Provider>
+		),
+	} );
 };
 
 describe( 'UnsubscribedFeedsSearchList', () => {
 	beforeEach( () => {
 		jest.clearAllMocks();
 		nock.disableNetConnect();
+	} );
+
+	afterEach( () => {
+		nock.cleanAll();
 	} );
 
 	it( 'shows the loading state', () => {
@@ -191,6 +216,88 @@ describe( 'UnsubscribedFeedsSearchList', () => {
 				name: 'Here are some other sites that match your search:',
 			} )
 		).toBeVisible();
+	} );
+
+	it( 'filters out subscribed feeds matched by numeric feed_ID across string/number types', async () => {
+		const feedItems = [
+			createMockFeedItem( {
+				feed_ID: '123',
+				blog_ID: '1',
+				subscribe_URL: 'https://a.example/feed',
+			} ),
+			createMockFeedItem( { feed_ID: '2', blog_ID: '2', subscribe_URL: 'https://b.example/feed' } ),
+			createMockFeedItem( { feed_ID: '3', blog_ID: '3', subscribe_URL: 'https://c.example/feed' } ),
+		];
+
+		nock( 'https://public-api.wordpress.com' )
+			.get( '/rest/v1.1/read/feed' )
+			.query( () => true )
+			.once()
+			.reply( 200, {
+				feeds: feedItems,
+			} );
+
+		render( <UnsubscribedFeedsSearchList />, {
+			searchTerm: 'test',
+			subscriptions: [
+				createMockSubscription( {
+					feed_ID: 123,
+					blog_ID: 999,
+					URL: 'https://other.example',
+					feed_URL: 'https://other.example',
+				} ),
+			],
+		} );
+
+		const feedItemElements = await screen.findAllByTestId( 'mock-reader-feed-item' );
+		expect( feedItemElements ).toHaveLength( 2 );
+		expect( feedItemElements[ 0 ] ).toHaveAttribute( 'data-feed-id', '2' );
+		expect( feedItemElements[ 1 ] ).toHaveAttribute( 'data-feed-id', '3' );
+	} );
+
+	it( 'filters out subscribed feeds matched by comparable URL', async () => {
+		const feedItems = [
+			createMockFeedItem( {
+				feed_ID: '1',
+				blog_ID: '1',
+				subscribe_URL: 'https://Example.com/feed/',
+			} ),
+			createMockFeedItem( {
+				feed_ID: '2',
+				blog_ID: '2',
+				subscribe_URL: 'https://other.example/feed',
+			} ),
+			createMockFeedItem( {
+				feed_ID: '3',
+				blog_ID: '3',
+				subscribe_URL: 'https://third.example/feed',
+			} ),
+		];
+
+		nock( 'https://public-api.wordpress.com' )
+			.get( '/rest/v1.1/read/feed' )
+			.query( () => true )
+			.once()
+			.reply( 200, {
+				feeds: feedItems,
+			} );
+
+		render( <UnsubscribedFeedsSearchList />, {
+			searchTerm: 'test',
+			subscriptions: [
+				createMockSubscription( {
+					feed_ID: 999,
+					blog_ID: 888,
+					URL: 'http://example.com/feed',
+					feed_URL: 'http://example.com/feed',
+				} ),
+			],
+		} );
+
+		const feedItemElements = await screen.findAllByTestId( 'mock-reader-feed-item' );
+		expect( feedItemElements ).toHaveLength( 2 );
+		expect( feedItemElements[ 0 ] ).toHaveAttribute( 'data-feed-id', '2' );
+		expect( feedItemElements[ 1 ] ).toHaveAttribute( 'data-feed-id', '3' );
 	} );
 
 	it( 'omits the recommendation list heading when hideTitle is set', async () => {

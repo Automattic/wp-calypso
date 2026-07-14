@@ -1,5 +1,5 @@
 import './style.scss';
-import { readFeedSearchQuery } from '@automattic/api-queries';
+import { getIsSubscribedFromData, readFeedSearchQuery } from '@automattic/api-queries';
 import { Reader, SubscriptionManager } from '@automattic/data-stores';
 import { useQuery } from '@tanstack/react-query';
 import { __experimentalVStack as VStack, Spinner } from '@wordpress/components';
@@ -7,9 +7,9 @@ import { useTranslate } from 'i18n-calypso';
 import ReaderFeedItem from 'calypso/blocks/reader-feed-item';
 import FeedPreview from 'calypso/landing/subscriptions/components/feed-preview';
 import { SOURCE_SUBSCRIPTIONS_SEARCH_RECOMMENDATION_LIST } from 'calypso/landing/subscriptions/tracks';
+import { useSiteSubscriptions } from 'calypso/reader/data/site-subscriptions';
 
-const { useSiteSubscriptionsQuery, useSiteUnsubscribeMutation, useSiteSubscriptionsQueryProps } =
-	SubscriptionManager;
+const { useSiteUnsubscribeMutation, useSiteSubscriptionsQueryProps } = SubscriptionManager;
 
 interface Props {
 	hideTitle?: boolean;
@@ -20,9 +20,10 @@ export const UnsubscribedFeedsSearchList = ( { hideTitle = false }: Props ) => {
 	const { isPending: isUnsubscribing } = useSiteUnsubscribeMutation();
 	const translate = useTranslate();
 	const {
-		data: { subscriptions },
+		data: siteSubscriptionsData,
+		subscriptions,
 		isFetching: isFetchingSubscriptions,
-	} = useSiteSubscriptionsQuery();
+	} = useSiteSubscriptions( { fetchAllPages: true } );
 
 	const {
 		data,
@@ -41,16 +42,12 @@ export const UnsubscribedFeedsSearchList = ( { hideTitle = false }: Props ) => {
 
 	// To avoid showing duplicate feed items between subscribed and unsubscribed feeds.
 	const filteredUnsubscribedFeedItems = ( unsubscribedFeedItems ?? [] ).filter(
-		( feedItem: Reader.FeedItem ): boolean => {
-			const isDuplicate = subscriptions.find(
-				( subscription ): boolean =>
-					! subscription.isDeleted &&
-					// For match either compare feed_ID or URL.
-					( subscription.feed_ID === feedItem.feed_ID ||
-						subscription.URL === feedItem.subscribe_URL )
-			);
-			return ! isDuplicate;
-		}
+		( feedItem: Reader.FeedItem ): boolean =>
+			! getIsSubscribedFromData( siteSubscriptionsData, {
+				feedUrl: feedItem.subscribe_URL,
+				feedId: feedItem.feed_ID,
+				blogId: feedItem.blog_ID || null,
+			} )
 	);
 
 	const shouldShowUnsubcribedFeedsListLoader =
@@ -59,7 +56,7 @@ export const UnsubscribedFeedsSearchList = ( { hideTitle = false }: Props ) => {
 		isUnsubscribing; // If user is unsubscribing from subscriptions table.
 
 	const hasSubscribedTableResults = subscriptions.some(
-		( subscription ) => ! subscription.isDeleted
+		( subscription ) => ! subscription.isDeleted && subscription.is_following
 	);
 
 	const getTitle = (): string | null => {
