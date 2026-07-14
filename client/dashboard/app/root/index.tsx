@@ -17,6 +17,7 @@ import { isDashboardBackport } from '../../utils/is-dashboard-backport';
 import NotFound from '../404';
 import AccountRecoveryInterstitial from '../account-recovery-interstitial';
 import { bumpStat } from '../analytics';
+import { CheckoutSuccessFlashMessage } from '../checkout-success-flash-message';
 import CommandPalette from '../command-palette';
 import { useAppContext } from '../context';
 import { useTrackVisitedAreas } from '../hooks/use-visit-counter';
@@ -195,6 +196,7 @@ function Root() {
 			{ supports.help && <OmnibarAgentsManager /> }
 			<OmnibarSiteSwitcher />
 			<Snackbars />
+			<CheckoutSuccessFlashMessage />
 			{ isAccountRecoveryInterstitialEnabled && <AccountRecoveryInterstitial /> }
 			{ isOptInWelcomeModalEnabled && <OptInWelcomeModal /> }
 			<PageViewTracker />
