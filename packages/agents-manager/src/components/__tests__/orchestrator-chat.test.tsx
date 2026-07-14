@@ -4,6 +4,7 @@
 /* eslint-disable import/order -- jest.mock calls must precede imports */
 import { act, fireEvent, render, screen, waitFor } from '@testing-library/react';
 import type { Suggestion } from '@automattic/agenttic-ui';
+import type { ComponentProps } from 'react';
 
 const mockUseAgentChat = jest.fn();
 const mockUseRegenerateAction = jest.fn();
@@ -128,48 +129,97 @@ jest.mock( '../agent-chat', () => ( {
 import { recordBigSkyTracksEvent } from '../../utils/tracks';
 import OrchestratorChat from '../orchestrator-chat';
 
+const chat = ( props: Partial< ComponentProps< typeof OrchestratorChat > > = {} ) => (
+	<OrchestratorChat
+		emptyViewSuggestions={ [] }
+		isDocked={ false }
+		isOpen
+		onClose={ jest.fn() }
+		onExpand={ jest.fn() }
+		chatHeaderOptions={ [] }
+		markdownComponents={ {} }
+		markdownExtensions={ {} }
+		isCompactMode={ false }
+		onHasMessagesChange={ jest.fn() }
+		{ ...props }
+	/>
+);
+
+const agentChatReturn = ( overrides: Record< string, unknown > = {} ) => ( {
+	addMessage: jest.fn(),
+	messages: [],
+	suggestions: [],
+	isProcessing: false,
+	error: null,
+	loadMessages: jest.fn(),
+	onSubmit: jest.fn(),
+	abortCurrentRequest: jest.fn(),
+	clearSuggestions: jest.fn(),
+	registerSuggestions: jest.fn(),
+	registerMessageActions: jest.fn(),
+	unregisterMessageActions: jest.fn(),
+	// Mirror production: agenttic hands back a real regenerate handler.
+	getRegenerateHandler: jest.fn( () => jest.fn() ),
+	progressMessage: null,
+	...overrides,
+} );
+
+// Show-component fixtures shared by the retention tests.
+const SHOW_COMPONENT_CONTENT = JSON.stringify( {
+	tool_id: 'big_sky__show_component',
+	tool_call_id: 'title-picker-call',
+	data: { type: 'titlePicker', summary: 'Optimize title' },
+} );
+
+const userMessage = {
+	id: 'user-1',
+	role: 'user',
+	content: [ { type: 'text', text: 'Optimize the title' } ],
+	timestamp: 0,
+	archived: false,
+	showIcon: true,
+};
+
+const showComponentMessage = ( id: string, content: string = SHOW_COMPONENT_CONTENT ) => ( {
+	id,
+	role: 'agent',
+	content: [ { type: 'text', text: content } ],
+	timestamp: 1,
+	archived: false,
+	showIcon: true,
+} );
+
+const countShowComponentMessages = () => {
+	const messages = mockAgentChat.mock.calls.at( -1 )![ 0 ].messages as Array< {
+		content?: Array< { text?: string } >;
+	} >;
+	return messages.filter( ( message ) => {
+		const text = message?.content?.[ 0 ]?.text;
+		if ( typeof text !== 'string' ) {
+			return false;
+		}
+		try {
+			return JSON.parse( text )?.tool_id === 'big_sky__show_component';
+		} catch ( _error ) {
+			return false;
+		}
+	} ).length;
+};
+
 describe( 'OrchestratorChat', () => {
 	beforeEach( () => {
 		jest.clearAllMocks();
 		// Default getter: contributes no actions.
 		mockUseRegenerateAction.mockReturnValue( () => [] );
 		mockUseConversation.mockReturnValue( { isLoading: false } );
-		mockUseAgentChat.mockReturnValue( {
-			addMessage: jest.fn(),
-			messages: [],
-			suggestions: [],
-			isProcessing: false,
-			error: null,
-			loadMessages: jest.fn(),
-			onSubmit: jest.fn(),
-			abortCurrentRequest: jest.fn(),
-			clearSuggestions: jest.fn(),
-			registerSuggestions: jest.fn(),
-			registerMessageActions: jest.fn(),
-			unregisterMessageActions: jest.fn(),
-			getRegenerateHandler: jest.fn(),
-			progressMessage: null,
-		} );
+		mockUseAgentChat.mockReturnValue( agentChatReturn() );
 	} );
 
 	it( 'dispatches the inline suggestion event when an Agenttic suggestion is clicked', () => {
 		const listener = jest.fn();
 		window.addEventListener( 'big-sky-inline-suggestion-click', listener );
 
-		render(
-			<OrchestratorChat
-				emptyViewSuggestions={ [] }
-				isDocked={ false }
-				isOpen
-				onClose={ jest.fn() }
-				onExpand={ jest.fn() }
-				chatHeaderOptions={ [] }
-				markdownComponents={ {} }
-				markdownExtensions={ {} }
-				isCompactMode={ false }
-				onHasMessagesChange={ jest.fn() }
-			/>
-		);
+		render( chat() );
 
 		fireEvent.click( screen.getByText( 'Click suggestion' ) );
 
@@ -186,20 +236,7 @@ describe( 'OrchestratorChat', () => {
 		const listener = jest.fn();
 		window.addEventListener( 'big-sky-inline-suggestion-click', listener );
 
-		render(
-			<OrchestratorChat
-				emptyViewSuggestions={ [] }
-				isDocked={ false }
-				isOpen
-				onClose={ jest.fn() }
-				onExpand={ jest.fn() }
-				chatHeaderOptions={ [] }
-				markdownComponents={ {} }
-				markdownExtensions={ {} }
-				isCompactMode={ false }
-				onHasMessagesChange={ jest.fn() }
-			/>
-		);
+		render( chat() );
 
 		fireEvent.click( screen.getByText( 'Click string suggestion' ) );
 
@@ -216,20 +253,7 @@ describe( 'OrchestratorChat', () => {
 		const listener = jest.fn();
 		window.addEventListener( 'big-sky-inline-suggestion-click', listener );
 
-		render(
-			<OrchestratorChat
-				emptyViewSuggestions={ [] }
-				isDocked={ false }
-				isOpen
-				onClose={ jest.fn() }
-				onExpand={ jest.fn() }
-				chatHeaderOptions={ [] }
-				markdownComponents={ {} }
-				markdownExtensions={ {} }
-				isCompactMode={ false }
-				onHasMessagesChange={ jest.fn() }
-			/>
-		);
+		render( chat() );
 
 		fireEvent.click( screen.getByText( 'Click auto-submit suggestion' ) );
 
@@ -252,21 +276,7 @@ describe( 'OrchestratorChat', () => {
 	it( 'passes the floating suggestion limit to external providers', () => {
 		const useSuggestions = jest.fn( () => ( { suggestions: [] } ) );
 
-		render(
-			<OrchestratorChat
-				emptyViewSuggestions={ [] }
-				isDocked={ false }
-				isOpen
-				onClose={ jest.fn() }
-				onExpand={ jest.fn() }
-				chatHeaderOptions={ [] }
-				markdownComponents={ {} }
-				markdownExtensions={ {} }
-				isCompactMode={ false }
-				useSuggestions={ useSuggestions }
-				onHasMessagesChange={ jest.fn() }
-			/>
-		);
+		render( chat( { useSuggestions: useSuggestions } ) );
 
 		expect( useSuggestions ).toHaveBeenCalledWith( 3, { suggestionsVisible: true } );
 	} );
@@ -274,21 +284,7 @@ describe( 'OrchestratorChat', () => {
 	it( 'does not limit external provider suggestions while docked', () => {
 		const useSuggestions = jest.fn( () => ( { suggestions: [] } ) );
 
-		render(
-			<OrchestratorChat
-				emptyViewSuggestions={ [] }
-				isDocked
-				isOpen
-				onClose={ jest.fn() }
-				onExpand={ jest.fn() }
-				chatHeaderOptions={ [] }
-				markdownComponents={ {} }
-				markdownExtensions={ {} }
-				isCompactMode={ false }
-				useSuggestions={ useSuggestions }
-				onHasMessagesChange={ jest.fn() }
-			/>
-		);
+		render( chat( { isDocked: true, useSuggestions: useSuggestions } ) );
 
 		expect( useSuggestions ).toHaveBeenCalledWith( undefined, { suggestionsVisible: true } );
 	} );
@@ -307,36 +303,9 @@ describe( 'OrchestratorChat', () => {
 
 		// Store is empty (as it is right after clearSuggestions()), no messages,
 		// and the input is empty — the empty-view fallback branch.
-		mockUseAgentChat.mockReturnValue( {
-			addMessage: jest.fn(),
-			messages: [],
-			suggestions: [],
-			isProcessing: false,
-			error: null,
-			loadMessages: jest.fn(),
-			onSubmit: jest.fn(),
-			abortCurrentRequest: jest.fn(),
-			clearSuggestions: jest.fn(),
-			registerSuggestions: jest.fn(),
-			registerMessageActions: jest.fn(),
-			progressMessage: null,
-		} );
+		mockUseAgentChat.mockReturnValue( agentChatReturn() );
 
-		render(
-			<OrchestratorChat
-				emptyViewSuggestions={ staticDefaults }
-				isDocked={ false }
-				isOpen
-				onClose={ jest.fn() }
-				onExpand={ jest.fn() }
-				chatHeaderOptions={ [] }
-				markdownComponents={ {} }
-				markdownExtensions={ {} }
-				isCompactMode={ false }
-				useSuggestions={ useSuggestions }
-				onHasMessagesChange={ jest.fn() }
-			/>
-		);
+		render( chat( { emptyViewSuggestions: staticDefaults, useSuggestions: useSuggestions } ) );
 
 		expect( screen.getByText( 'What needs my attention today?' ) ).toBeTruthy();
 		expect( screen.queryByText( 'Getting started with WordPress' ) ).toBeNull();
@@ -348,21 +317,7 @@ describe( 'OrchestratorChat', () => {
 		];
 		const useSuggestions = jest.fn( () => ( { suggestions: [] } ) );
 
-		render(
-			<OrchestratorChat
-				emptyViewSuggestions={ staticDefaults }
-				isDocked={ false }
-				isOpen
-				onClose={ jest.fn() }
-				onExpand={ jest.fn() }
-				chatHeaderOptions={ [] }
-				markdownComponents={ {} }
-				markdownExtensions={ {} }
-				isCompactMode={ false }
-				useSuggestions={ useSuggestions }
-				onHasMessagesChange={ jest.fn() }
-			/>
-		);
+		render( chat( { emptyViewSuggestions: staticDefaults, useSuggestions: useSuggestions } ) );
 
 		expect( screen.getByText( 'Getting started with WordPress' ) ).toBeTruthy();
 	} );
@@ -372,20 +327,7 @@ describe( 'OrchestratorChat', () => {
 			{ id: 'getting-started', label: 'Getting started with WordPress', prompt: 'getting-started' },
 		];
 
-		render(
-			<OrchestratorChat
-				emptyViewSuggestions={ staticDefaults }
-				isDocked={ false }
-				isOpen
-				onClose={ jest.fn() }
-				onExpand={ jest.fn() }
-				chatHeaderOptions={ [] }
-				markdownComponents={ {} }
-				markdownExtensions={ {} }
-				isCompactMode={ false }
-				onHasMessagesChange={ jest.fn() }
-			/>
-		);
+		render( chat( { emptyViewSuggestions: staticDefaults } ) );
 
 		expect( recordBigSkyTracksEvent ).toHaveBeenCalledWith( 'chat_suggestions_rendered', {
 			suggestions: '|getting-started|',
@@ -398,20 +340,7 @@ describe( 'OrchestratorChat', () => {
 			{ id: 'getting-started', label: 'Getting started with WordPress', prompt: 'getting-started' },
 		];
 
-		render(
-			<OrchestratorChat
-				emptyViewSuggestions={ staticDefaults }
-				isDocked={ false }
-				isOpen
-				onClose={ jest.fn() }
-				onExpand={ jest.fn() }
-				chatHeaderOptions={ [] }
-				markdownComponents={ {} }
-				markdownExtensions={ {} }
-				isCompactMode={ false }
-				onHasMessagesChange={ jest.fn() }
-			/>
-		);
+		render( chat( { emptyViewSuggestions: staticDefaults } ) );
 
 		expect( screen.queryByText( 'Getting started with WordPress' ) ).toBeNull();
 		expect( recordBigSkyTracksEvent ).not.toHaveBeenCalledWith(
@@ -425,20 +354,7 @@ describe( 'OrchestratorChat', () => {
 			{ id: 'getting-started', label: 'Getting started with WordPress', prompt: 'getting-started' },
 		];
 
-		render(
-			<OrchestratorChat
-				emptyViewSuggestions={ staticDefaults }
-				isDocked={ false }
-				isOpen={ false }
-				onClose={ jest.fn() }
-				onExpand={ jest.fn() }
-				chatHeaderOptions={ [] }
-				markdownComponents={ {} }
-				markdownExtensions={ {} }
-				isCompactMode={ false }
-				onHasMessagesChange={ jest.fn() }
-			/>
-		);
+		render( chat( { emptyViewSuggestions: staticDefaults, isOpen: false } ) );
 
 		expect( screen.queryByText( 'Getting started with WordPress' ) ).toBeNull();
 		expect( recordBigSkyTracksEvent ).not.toHaveBeenCalledWith(
@@ -461,21 +377,7 @@ describe( 'OrchestratorChat', () => {
 			uploadImagesToWordPress,
 		} );
 
-		render(
-			<OrchestratorChat
-				emptyViewSuggestions={ [] }
-				isDocked={ false }
-				isOpen
-				onClose={ jest.fn() }
-				onExpand={ jest.fn() }
-				chatHeaderOptions={ [] }
-				markdownComponents={ {} }
-				markdownExtensions={ {} }
-				isCompactMode={ false }
-				useImageUpload={ useImageUpload as never }
-				onHasMessagesChange={ jest.fn() }
-			/>
-		);
+		render( chat( { useImageUpload: useImageUpload as never } ) );
 
 		fireEvent.click( screen.getByText( 'Submit with images' ) );
 
@@ -488,20 +390,7 @@ describe( 'OrchestratorChat', () => {
 	} );
 
 	it( 'keeps regenerate disabled unless a provider opts in', () => {
-		render(
-			<OrchestratorChat
-				emptyViewSuggestions={ [] }
-				isDocked={ false }
-				isOpen
-				onClose={ jest.fn() }
-				onExpand={ jest.fn() }
-				chatHeaderOptions={ [] }
-				markdownComponents={ {} }
-				markdownExtensions={ {} }
-				isCompactMode={ false }
-				onHasMessagesChange={ jest.fn() }
-			/>
-		);
+		render( chat() );
 
 		expect( mockUseRegenerateAction ).toHaveBeenCalledWith(
 			expect.objectContaining( { enabled: false } )
@@ -509,21 +398,7 @@ describe( 'OrchestratorChat', () => {
 	} );
 
 	it( 'enables regenerate when a provider opts in', () => {
-		render(
-			<OrchestratorChat
-				emptyViewSuggestions={ [] }
-				isDocked={ false }
-				isOpen
-				onClose={ jest.fn() }
-				onExpand={ jest.fn() }
-				chatHeaderOptions={ [] }
-				markdownComponents={ {} }
-				markdownExtensions={ {} }
-				isCompactMode={ false }
-				capabilities={ { supportsRegenerateAction: true } }
-				onHasMessagesChange={ jest.fn() }
-			/>
-		);
+		render( chat( { capabilities: { supportsRegenerateAction: true } } ) );
 
 		expect( mockUseRegenerateAction ).toHaveBeenCalledWith(
 			expect.objectContaining( { enabled: true } )
@@ -547,54 +422,30 @@ describe( 'OrchestratorChat', () => {
 					  ]
 					: []
 		);
-		mockUseAgentChat.mockReturnValue( {
-			addMessage: jest.fn(),
-			messages: [
-				{
-					id: 'agent-1',
-					role: 'agent',
-					content: [ { type: 'text', text: 'First response' } ],
-					timestamp: 1,
-					archived: false,
-					showIcon: true,
-				},
-				{
-					id: 'agent-2',
-					role: 'agent',
-					content: [ { type: 'text', text: 'Second response' } ],
-					timestamp: 2,
-					archived: false,
-					showIcon: true,
-				},
-			],
-			suggestions: [],
-			isProcessing: false,
-			error: null,
-			loadMessages: jest.fn(),
-			onSubmit: jest.fn(),
-			abortCurrentRequest: jest.fn(),
-			clearSuggestions: jest.fn(),
-			registerSuggestions: jest.fn(),
-			registerMessageActions: jest.fn(),
-			getRegenerateHandler: jest.fn(),
-			progressMessage: null,
-		} );
-
-		render(
-			<OrchestratorChat
-				emptyViewSuggestions={ [] }
-				isDocked={ false }
-				isOpen
-				onClose={ jest.fn() }
-				onExpand={ jest.fn() }
-				chatHeaderOptions={ [] }
-				markdownComponents={ {} }
-				markdownExtensions={ {} }
-				isCompactMode={ false }
-				capabilities={ { supportsRegenerateAction: true } }
-				onHasMessagesChange={ jest.fn() }
-			/>
+		mockUseAgentChat.mockReturnValue(
+			agentChatReturn( {
+				messages: [
+					{
+						id: 'agent-1',
+						role: 'agent',
+						content: [ { type: 'text', text: 'First response' } ],
+						timestamp: 1,
+						archived: false,
+						showIcon: true,
+					},
+					{
+						id: 'agent-2',
+						role: 'agent',
+						content: [ { type: 'text', text: 'Second response' } ],
+						timestamp: 2,
+						archived: false,
+						showIcon: true,
+					},
+				],
+			} )
 		);
+
+		render( chat( { capabilities: { supportsRegenerateAction: true } } ) );
 
 		const messages = mockAgentChat.mock.calls[ 0 ][ 0 ].messages as Array< {
 			actions: Array< { id: string; disabled?: boolean } >;
@@ -617,54 +468,31 @@ describe( 'OrchestratorChat', () => {
 	it( 'tells the regenerate getter which message is latest and whether it is streaming', () => {
 		const getRegenerateActions = jest.fn( () => [] );
 		mockUseRegenerateAction.mockReturnValue( getRegenerateActions );
-		mockUseAgentChat.mockReturnValue( {
-			addMessage: jest.fn(),
-			messages: [
-				{
-					id: 'agent-1',
-					role: 'agent',
-					content: [ { type: 'text', text: 'First response' } ],
-					timestamp: 1,
-					archived: false,
-					showIcon: true,
-				},
-				{
-					id: 'agent-2',
-					role: 'agent',
-					content: [ { type: 'text', text: 'Streaming response' } ],
-					timestamp: 2,
-					archived: false,
-					showIcon: true,
-				},
-			],
-			suggestions: [],
-			isProcessing: true,
-			error: null,
-			loadMessages: jest.fn(),
-			onSubmit: jest.fn(),
-			abortCurrentRequest: jest.fn(),
-			clearSuggestions: jest.fn(),
-			registerSuggestions: jest.fn(),
-			registerMessageActions: jest.fn(),
-			getRegenerateHandler: jest.fn(),
-			progressMessage: null,
-		} );
-
-		render(
-			<OrchestratorChat
-				emptyViewSuggestions={ [] }
-				isDocked={ false }
-				isOpen
-				onClose={ jest.fn() }
-				onExpand={ jest.fn() }
-				chatHeaderOptions={ [] }
-				markdownComponents={ {} }
-				markdownExtensions={ {} }
-				isCompactMode={ false }
-				capabilities={ { supportsRegenerateAction: true } }
-				onHasMessagesChange={ jest.fn() }
-			/>
+		mockUseAgentChat.mockReturnValue(
+			agentChatReturn( {
+				messages: [
+					{
+						id: 'agent-1',
+						role: 'agent',
+						content: [ { type: 'text', text: 'First response' } ],
+						timestamp: 1,
+						archived: false,
+						showIcon: true,
+					},
+					{
+						id: 'agent-2',
+						role: 'agent',
+						content: [ { type: 'text', text: 'Streaming response' } ],
+						timestamp: 2,
+						archived: false,
+						showIcon: true,
+					},
+				],
+				isProcessing: true,
+			} )
 		);
+
+		render( chat( { capabilities: { supportsRegenerateAction: true } } ) );
 
 		expect( getRegenerateActions ).toHaveBeenCalledWith(
 			expect.objectContaining( { id: 'agent-1' } ),
@@ -677,173 +505,68 @@ describe( 'OrchestratorChat', () => {
 	} );
 
 	it( 'does not stack retained show-component messages across repeated regenerations', () => {
-		// A "show component" payload (e.g. a title picker). Its identity —
-		// tool_call_id|type|summary — is stable across regenerations even though
-		// each regenerated agent turn gets a fresh message id.
-		const showComponentContent = JSON.stringify( {
-			tool_id: 'big_sky__show_component',
-			tool_call_id: 'title-picker-call',
-			data: { type: 'titlePicker', summary: 'Optimize title' },
-		} );
-		const userMessage = {
-			id: 'user-1',
-			role: 'user',
-			content: [ { type: 'text', text: 'Optimize the title' } ],
-			timestamp: 0,
-			archived: false,
-			showIcon: true,
-		};
-		const showComponentMessage = ( id: string ) => ( {
-			id,
-			role: 'agent',
-			content: [ { type: 'text', text: showComponentContent } ],
-			timestamp: 1,
-			archived: false,
-			showIcon: true,
-		} );
-		const agentChatReturn = ( messages: unknown[], isProcessing: boolean ) => ( {
-			addMessage: jest.fn(),
-			messages,
-			suggestions: [],
-			isProcessing,
-			error: null,
-			loadMessages: jest.fn(),
-			onSubmit: jest.fn(),
-			abortCurrentRequest: jest.fn(),
-			clearSuggestions: jest.fn(),
-			registerSuggestions: jest.fn(),
-			registerMessageActions: jest.fn(),
-			getRegenerateHandler: jest.fn(),
-			progressMessage: null,
-		} );
-		const countShowComponentMessages = (
-			messages: Array< { content?: Array< { text?: string } > } >
-		) =>
-			messages.filter( ( message ) => {
-				const text = message?.content?.[ 0 ]?.text;
-				if ( typeof text !== 'string' ) {
-					return false;
-				}
-				try {
-					return JSON.parse( text )?.tool_id === 'big_sky__show_component';
-				} catch ( _error ) {
-					return false;
-				}
-			} ).length;
-		const chat = () => (
-			<OrchestratorChat
-				emptyViewSuggestions={ [] }
-				isDocked={ false }
-				isOpen
-				onClose={ jest.fn() }
-				onExpand={ jest.fn() }
-				chatHeaderOptions={ [] }
-				markdownComponents={ {} }
-				markdownExtensions={ {} }
-				isCompactMode={ false }
-				capabilities={ { supportsRegenerateAction: true } }
-				onHasMessagesChange={ jest.fn() }
-			/>
-		);
-
+		// The picker's identity — tool_call_id|type|summary — is stable across
+		// regenerations even though each regenerated turn gets a fresh message id.
 		// Steady state: the title picker is showing.
 		mockUseAgentChat.mockReturnValue(
-			agentChatReturn( [ userMessage, showComponentMessage( 'agent-1' ) ], false )
+			agentChatReturn( { messages: [ userMessage, showComponentMessage( 'agent-1' ) ] } )
 		);
 		const { rerender } = render( chat() );
 
 		// Regenerate: the picker briefly disappears while the new turn streams.
-		mockUseAgentChat.mockReturnValue( agentChatReturn( [ userMessage ], true ) );
+		mockUseAgentChat.mockReturnValue(
+			agentChatReturn( { messages: [ userMessage ], isProcessing: true } )
+		);
 		rerender( chat() );
 
 		// New picker arrives — same identity, fresh agent message id.
 		mockUseAgentChat.mockReturnValue(
-			agentChatReturn( [ userMessage, showComponentMessage( 'agent-2' ) ], false )
+			agentChatReturn( { messages: [ userMessage, showComponentMessage( 'agent-2' ) ] } )
 		);
 		rerender( chat() );
 
 		// Regenerate again: the picker disappears once more while streaming.
-		mockUseAgentChat.mockReturnValue( agentChatReturn( [ userMessage ], true ) );
+		mockUseAgentChat.mockReturnValue(
+			agentChatReturn( { messages: [ userMessage ], isProcessing: true } )
+		);
 		rerender( chat() );
 
-		const lastMessages = mockAgentChat.mock.calls.at( -1 )![ 0 ].messages as Array< {
-			content?: Array< { text?: string } >;
-		} >;
-		expect( countShowComponentMessages( lastMessages ) ).toBe( 1 );
+		expect( countShowComponentMessages() ).toBe( 1 );
 	} );
-
-	it( 'hides the previous component while a regeneration is processing', async () => {
-		const showComponentContent = JSON.stringify( {
-			tool_id: 'big_sky__show_component',
-			tool_call_id: 'title-picker-call',
-			data: { type: 'titlePicker', summary: 'Optimize title' },
-		} );
-		const userMessage = {
-			id: 'user-1',
-			role: 'user',
-			content: [ { type: 'text', text: 'Optimize the title' } ],
-			timestamp: 0,
-			archived: false,
-			showIcon: true,
-		};
-		const showComponentMessage = ( id: string ) => ( {
-			id,
-			role: 'agent',
-			content: [ { type: 'text', text: showComponentContent } ],
-			timestamp: 1,
-			archived: false,
-			showIcon: true,
-		} );
-		const agentChatReturn = ( messages: unknown[], isProcessing: boolean ) => ( {
-			addMessage: jest.fn(),
-			messages,
-			suggestions: [],
-			isProcessing,
-			error: null,
-			loadMessages: jest.fn(),
-			onSubmit: jest.fn(),
-			abortCurrentRequest: jest.fn(),
-			clearSuggestions: jest.fn(),
-			registerSuggestions: jest.fn(),
-			registerMessageActions: jest.fn(),
-			// Mirror production: agenttic hands back a real regenerate handler for
-			// the completed latest turn.
-			getRegenerateHandler: jest.fn( () => jest.fn() ),
-			progressMessage: null,
-		} );
-		const countShowComponentMessages = (
-			messages: Array< { content?: Array< { text?: string } > } >
-		) =>
-			messages.filter( ( message ) => {
-				const text = message?.content?.[ 0 ]?.text;
-				if ( typeof text !== 'string' ) {
-					return false;
-				}
-				try {
-					return JSON.parse( text )?.tool_id === 'big_sky__show_component';
-				} catch ( _error ) {
-					return false;
-				}
-			} ).length;
-		const chat = () => (
-			<OrchestratorChat
-				emptyViewSuggestions={ [] }
-				isDocked={ false }
-				isOpen
-				onClose={ jest.fn() }
-				onExpand={ jest.fn() }
-				chatHeaderOptions={ [] }
-				markdownComponents={ {} }
-				markdownExtensions={ {} }
-				isCompactMode={ false }
-				capabilities={ { supportsRegenerateAction: true } }
-				onHasMessagesChange={ jest.fn() }
-			/>
+	it( 'does not retain the live show-component message when the history is replaced', () => {
+		// The same picker serializes differently live (no tool_call_id) and in
+		// loaded history (with tool_call_id), so their identities never match.
+		// Server hydration replaces the whole history with freshly-id'd messages;
+		// that swap must not resurrect the live copy as a retained duplicate.
+		const livePicker = showComponentMessage(
+			'agent-live',
+			JSON.stringify( {
+				tool_id: 'big_sky__show_component',
+				data: { type: 'titlePicker', summary: 'Optimize title' },
+			} )
 		);
 
+		// Seeded from storage: the live-form picker is showing.
+		mockUseAgentChat.mockReturnValue(
+			agentChatReturn( { messages: [ userMessage, livePicker ] } )
+		);
+		const { rerender } = render( chat() );
+
+		// Server hydration replaces the whole history; every loaded message gets
+		// a fresh id, including the echoed user message.
+		mockUseAgentChat.mockReturnValue(
+			agentChatReturn( {
+				messages: [ { ...userMessage, id: 'user-loaded' }, showComponentMessage( 'agent-loaded' ) ],
+			} )
+		);
+		rerender( chat() );
+
+		expect( countShowComponentMessages() ).toBe( 1 );
+	} );
+	it( 'hides the previous component while a regeneration is processing', async () => {
 		// Steady state: the picker is showing for the completed turn.
 		mockUseAgentChat.mockReturnValue(
-			agentChatReturn( [ userMessage, showComponentMessage( 'agent-1' ) ], false )
+			agentChatReturn( { messages: [ userMessage, showComponentMessage( 'agent-1' ) ] } )
 		);
 		const { rerender } = render( chat() );
 
@@ -859,85 +582,17 @@ describe( 'OrchestratorChat', () => {
 
 		// agenttic rewinds the turn and streams the new response; the old picker is
 		// gone from the live messages while it processes.
-		mockUseAgentChat.mockReturnValue( agentChatReturn( [ userMessage ], true ) );
+		mockUseAgentChat.mockReturnValue(
+			agentChatReturn( { messages: [ userMessage ], isProcessing: true } )
+		);
 		rerender( chat() );
 
-		const lastMessages = mockAgentChat.mock.calls.at( -1 )![ 0 ].messages as Array< {
-			content?: Array< { text?: string } >;
-		} >;
-		expect( countShowComponentMessages( lastMessages ) ).toBe( 0 );
+		expect( countShowComponentMessages() ).toBe( 0 );
 	} );
-
 	it( 'restores component retention after a regeneration finishes', async () => {
-		const showComponentContent = JSON.stringify( {
-			tool_id: 'big_sky__show_component',
-			tool_call_id: 'title-picker-call',
-			data: { type: 'titlePicker', summary: 'Optimize title' },
-		} );
-		const userMessage = {
-			id: 'user-1',
-			role: 'user',
-			content: [ { type: 'text', text: 'Optimize the title' } ],
-			timestamp: 0,
-			archived: false,
-			showIcon: true,
-		};
-		const showComponentMessage = ( id: string ) => ( {
-			id,
-			role: 'agent',
-			content: [ { type: 'text', text: showComponentContent } ],
-			timestamp: 1,
-			archived: false,
-			showIcon: true,
-		} );
-		const agentChatReturn = ( messages: unknown[], isProcessing: boolean ) => ( {
-			addMessage: jest.fn(),
-			messages,
-			suggestions: [],
-			isProcessing,
-			error: null,
-			loadMessages: jest.fn(),
-			onSubmit: jest.fn(),
-			abortCurrentRequest: jest.fn(),
-			clearSuggestions: jest.fn(),
-			registerSuggestions: jest.fn(),
-			registerMessageActions: jest.fn(),
-			getRegenerateHandler: jest.fn( () => jest.fn() ),
-			progressMessage: null,
-		} );
-		const countShowComponentMessages = (
-			messages: Array< { content?: Array< { text?: string } > } >
-		) =>
-			messages.filter( ( message ) => {
-				const text = message?.content?.[ 0 ]?.text;
-				if ( typeof text !== 'string' ) {
-					return false;
-				}
-				try {
-					return JSON.parse( text )?.tool_id === 'big_sky__show_component';
-				} catch ( _error ) {
-					return false;
-				}
-			} ).length;
-		const chat = () => (
-			<OrchestratorChat
-				emptyViewSuggestions={ [] }
-				isDocked={ false }
-				isOpen
-				onClose={ jest.fn() }
-				onExpand={ jest.fn() }
-				chatHeaderOptions={ [] }
-				markdownComponents={ {} }
-				markdownExtensions={ {} }
-				isCompactMode={ false }
-				capabilities={ { supportsRegenerateAction: true } }
-				onHasMessagesChange={ jest.fn() }
-			/>
-		);
-
 		// Steady state, then a full regeneration cycle.
 		mockUseAgentChat.mockReturnValue(
-			agentChatReturn( [ userMessage, showComponentMessage( 'agent-1' ) ], false )
+			agentChatReturn( { messages: [ userMessage, showComponentMessage( 'agent-1' ) ] } )
 		);
 		const { rerender } = render( chat() );
 
@@ -950,21 +605,22 @@ describe( 'OrchestratorChat', () => {
 		} );
 
 		// Regeneration streams, then settles with the fresh component.
-		mockUseAgentChat.mockReturnValue( agentChatReturn( [ userMessage ], true ) );
+		mockUseAgentChat.mockReturnValue(
+			agentChatReturn( { messages: [ userMessage ], isProcessing: true } )
+		);
 		rerender( chat() );
 		mockUseAgentChat.mockReturnValue(
-			agentChatReturn( [ userMessage, showComponentMessage( 'agent-2' ) ], false )
+			agentChatReturn( { messages: [ userMessage, showComponentMessage( 'agent-2' ) ] } )
 		);
 		rerender( chat() );
 
 		// A later turn (not a regeneration) transiently drops the component —
-		// retention should cover it again now the flag has cleared.
-		mockUseAgentChat.mockReturnValue( agentChatReturn( [ userMessage ], true ) );
+		// retention should cover it again now the regeneration has settled.
+		mockUseAgentChat.mockReturnValue(
+			agentChatReturn( { messages: [ userMessage ], isProcessing: true } )
+		);
 		rerender( chat() );
 
-		const lastMessages = mockAgentChat.mock.calls.at( -1 )![ 0 ].messages as Array< {
-			content?: Array< { text?: string } >;
-		} >;
-		expect( countShowComponentMessages( lastMessages ) ).toBe( 1 );
+		expect( countShowComponentMessages() ).toBe( 1 );
 	} );
 } );

@@ -10,6 +10,8 @@ import {
 	removeSitePlugin,
 	fetchSiteCorePlugins,
 	fetchSitePlugin,
+	installSiteCorePlugin,
+	activateSiteCorePlugin,
 } from '@automattic/api-core';
 import { queryOptions, mutationOptions } from '@tanstack/react-query';
 import { queryClient } from './query-client';
@@ -49,6 +51,10 @@ export const invalidatePlugins = () => {
 
 export const invalidateSitePlugins = ( siteId: number ) => {
 	queryClient.invalidateQueries( sitePluginsQuery( siteId ) );
+};
+
+export const invalidateSiteCorePlugins = ( siteId: number ) => {
+	queryClient.invalidateQueries( siteCorePluginsQuery( siteId ) );
 };
 
 const invalidatePluginsForSite = ( siteId: number ) => {
@@ -106,6 +112,20 @@ export const sitePluginInstallMutation = () =>
 		mutationFn: ( vars: { siteId: number; pluginId: string } ) =>
 			installSitePlugin( vars.siteId, vars.pluginId ),
 		onSuccess: ( _data, vars: { siteId: number } ) => invalidatePluginsForSite( vars.siteId ),
+	} );
+
+export const siteCorePluginInstallMutation = () =>
+	mutationOptions( {
+		mutationFn: ( vars: { siteId: number; slug: string } ) =>
+			installSiteCorePlugin( vars.siteId, vars.slug ),
+		onSuccess: ( _data, vars: { siteId: number } ) => invalidateSiteCorePlugins( vars.siteId ),
+	} );
+
+export const siteCorePluginActivateMutation = () =>
+	mutationOptions( {
+		mutationFn: ( vars: { siteId: number; plugin: string } ) =>
+			activateSiteCorePlugin( vars.siteId, vars.plugin ),
+		onSuccess: ( _data, vars: { siteId: number } ) => invalidateSiteCorePlugins( vars.siteId ),
 	} );
 
 export const sitePluginRemoveMutation = ( invalidateQueriesOnSuccess = true ) =>

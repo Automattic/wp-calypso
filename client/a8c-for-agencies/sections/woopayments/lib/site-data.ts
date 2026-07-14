@@ -1,5 +1,5 @@
 import { areNextAndCurrentPayoutDatesEqual } from '../../referrals/lib/get-next-payout-date';
-import { WooPaymentsData } from '../types';
+import type { WooPaymentsData } from '@automattic/api-core';
 
 interface WooPaymentsSiteData {
 	transactions: number | null;
@@ -8,7 +8,7 @@ interface WooPaymentsSiteData {
 }
 
 export const getSiteData = (
-	woopaymentsData: WooPaymentsData,
+	woopaymentsData: WooPaymentsData | undefined,
 	siteId: number
 ): WooPaymentsSiteData => {
 	const siteData = woopaymentsData?.data?.total?.sites?.[ siteId ];
