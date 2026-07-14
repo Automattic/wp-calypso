@@ -8,10 +8,11 @@ export function useAiLaunchpad(
 ) {
 	const { data: site } = useQuery( {
 		...siteBySlugQuery( siteSlug ),
-		// The sites list primes this cache for every row; without a staleTime,
-		// the default staleTime of 0 would trigger a background refetch of each
-		// rendered site.
-		staleTime: 5 * 60 * 1000,
+		// Cache-only: the sites list primes this cache for every row and the site
+		// route loader ensures it, so never fire a request from here — a disabled
+		// query still returns cached data reactively. If the cache was never
+		// populated, the status stays null and legacy behavior applies.
+		enabled: false,
 	} );
 
 	const status = site ? getAiLaunchpadStatus( site ) : null;
