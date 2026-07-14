@@ -46,16 +46,20 @@ const getFeedsFromSearchCacheData = ( data: unknown ): CachedFeedSearchItem[] =>
 		return [];
 	}
 
-	if ( 'feeds' in data && Array.isArray( data.feeds ) ) {
-		return data.feeds;
+	// Explicit record access for opaque RQ cache blobs (`in` narrowing already satisfies tsc).
+	const record = data as Record< string, unknown >;
+
+	if ( Array.isArray( record.feeds ) ) {
+		return record.feeds;
 	}
 
-	if ( 'pages' in data && Array.isArray( data.pages ) ) {
-		return data.pages.flatMap( ( page: unknown ) => {
-			if ( page && typeof page === 'object' && 'feeds' in page && Array.isArray( page.feeds ) ) {
-				return page.feeds;
+	if ( Array.isArray( record.pages ) ) {
+		return record.pages.flatMap( ( page: unknown ) => {
+			if ( ! page || typeof page !== 'object' ) {
+				return [];
 			}
-			return [];
+			const pageRecord = page as Record< string, unknown >;
+			return Array.isArray( pageRecord.feeds ) ? pageRecord.feeds : [];
 		} );
 	}
 
