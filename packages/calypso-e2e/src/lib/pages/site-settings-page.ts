@@ -33,16 +33,9 @@ export class SiteSettingsPage {
 	/**
 	 * Start the site launch process.
 	 * Must be on the "Site visibility" sub-page.
-	 *
-	 * The launch control renders as a link or a button depending on the path, so
-	 * match either.
 	 */
 	async launchSite(): Promise< void > {
-		const name = 'Launch your site';
-		const launchSite = this.page
-			.getByRole( 'link', { name } )
-			.or( this.page.getByRole( 'button', { name } ) )
-			.first();
+		const launchSite = this.page.getByRole( 'link', { name: 'Launch your site' } ).first();
 		await launchSite.click();
 	}
 
