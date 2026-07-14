@@ -24,12 +24,14 @@ function InlineNotice( { notice, onDismiss }: { notice: NoticeType; onDismiss?: 
 			actions={
 				notice.actions?.map( ( action ) => ( {
 					label: action.label,
-					onClick: () => {
-						const newWindow = window.open( action.url, '_blank' );
-						if ( newWindow ) {
-							newWindow.opener = null;
-						}
-					},
+					onClick: action.onClick
+						? action.onClick
+						: () => {
+								const newWindow = window.open( action.url, '_blank' );
+								if ( newWindow ) {
+									newWindow.opener = null;
+								}
+						  },
 				} ) ) ?? []
 			}
 		>
@@ -75,12 +77,14 @@ export function ImageStudioNotice() {
 						...( notice.actions?.length && {
 							actions: notice.actions.map( ( action ) => ( {
 								label: action.label,
-								onClick: () => {
-									const newWindow = window.open( action.url, '_blank' );
-									if ( newWindow ) {
-										newWindow.opener = null;
-									}
-								},
+								onClick: action.onClick
+									? action.onClick
+									: () => {
+											const newWindow = window.open( action.url, '_blank' );
+											if ( newWindow ) {
+												newWindow.opener = null;
+											}
+									  },
 							} ) ),
 						} ),
 					} ) ) }
