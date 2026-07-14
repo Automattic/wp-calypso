@@ -1,9 +1,9 @@
 /* stylelint-disable-next-line scss/load-no-partial-leading-underscore */
-@import "calypso/assets/stylesheets/shared/_loading";
-@import "@automattic/onboarding/styles/mixins";
+@import 'calypso/assets/stylesheets/shared/_loading';
+@import '@automattic/onboarding/styles/mixins';
 
 .processing-step {
-	--wp-components-color-foreground: #3858E9;
+	--wp-components-color-foreground: #3858e9;
 	max-width: 540px;
 
 	&__progress-step {
@@ -14,6 +14,26 @@
 		text-align: center;
 		vertical-align: middle;
 		margin: 0;
+	}
+
+	&__call-to-action {
+		margin: 40px auto 0;
+		max-width: 420px;
+		text-align: center;
+	}
+
+	&__call-to-action-title {
+		font-size: 1.25rem;
+		font-weight: 500;
+		line-height: 1.4;
+		margin: 0;
+	}
+
+	&__call-to-action-description {
+		color: var( --studio-gray-50 );
+		font-size: 0.875rem;
+		line-height: 1.5;
+		margin: 8px 0 16px;
 	}
 }
 
@@ -33,7 +53,8 @@
 
 // Processing Copy Site Styles
 .copy-site.processing-copy {
-	.processing-step, .wpcom__loading {
+	.processing-step,
+	.wpcom__loading {
 		margin: 5vh auto 0;
 		max-width: 660px;
 	}

@@ -2,6 +2,7 @@ import { Onboard } from '@automattic/data-stores';
 import { addProductsToCart, AI_SITE_BUILDER_FLOW } from '@automattic/onboarding';
 import { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 import { resolveSelect, useDispatch as useWpDataDispatch, useSelect } from '@wordpress/data';
+import { useI18n } from '@wordpress/react-i18n';
 import { addQueryArgs } from '@wordpress/url';
 import { useEffect } from 'react';
 import { useAddBlogStickerMutation } from 'calypso/blocks/blog-stickers/use-add-blog-sticker-mutation';
@@ -19,6 +20,7 @@ import { ProcessingResult } from '../../internals/steps-repository/processing-st
 import { FlowV2, SubmitHandler } from '../../internals/types';
 
 const SiteIntent = Onboard.SiteIntent;
+const TELEGRAM_CONNECTION_URL = 'https://wordpress.com/me/developer';
 
 function logEarlyWpcomAtomicEvent(
 	type: string,
@@ -73,6 +75,23 @@ const aiSiteBuilder: FlowV2< typeof initialize > = {
 	 */
 	isSignupFlow: true,
 	__experimentalUseBuiltinAuth: true,
+	useStepsProps() {
+		const { __ } = useI18n();
+
+		return {
+			[ STEPS.PROCESSING.slug ]: {
+				callToAction: {
+					id: 'connect_telegram',
+					title: __( 'Manage your site from Telegram' ),
+					description: __(
+						'Connect Telegram to publish posts, check stats, and update your site from a chat.'
+					),
+					label: __( 'Connect Telegram' ),
+					href: TELEGRAM_CONNECTION_URL,
+				},
+			},
+		};
+	},
 	useSideEffect() {
 		const dispatch = useDispatch();
 		const { setGardenName, setGardenPartnerName } = useWpDataDispatch( ONBOARD_STORE );
