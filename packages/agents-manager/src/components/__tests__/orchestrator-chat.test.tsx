@@ -638,6 +638,26 @@ describe( 'OrchestratorChat', () => {
 		} );
 	} );
 
+	it( 'restores the message when a text-only dispatch fails', async () => {
+		mockUseAgentChat.mockReturnValue(
+			agentChatReturn( {
+				onSubmit: jest.fn().mockRejectedValue( new Error( 'dispatch failed' ) ),
+			} )
+		);
+
+		render( chat() );
+
+		fireEvent.click( screen.getByText( 'Type message' ) );
+		fireEvent.click( screen.getByText( 'Submit message' ) );
+
+		await waitFor( () => {
+			expect( mockUseAgentChat().onSubmit ).toHaveBeenCalled();
+		} );
+		await waitFor( () => {
+			expect( screen.getByTestId( 'input-value' ) ).toHaveTextContent( 'Describe these images' );
+		} );
+	} );
+
 	it( 'stops the upload instead of the agent request while images are uploading', () => {
 		const abortUpload = jest.fn( () => true );
 		const { abortCurrentRequest } = mockUseAgentChat();

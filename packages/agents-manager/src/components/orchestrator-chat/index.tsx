@@ -458,6 +458,7 @@ export default function OrchestratorChat( {
 	const onSubmitWithImages = useCallback(
 		async ( message: string ) => {
 			submitDispatchedRef.current = false;
+
 			// The composer is committed while a batch uploads — drop re-entrant
 			// sends (suggestion clicks, programmatic submits) instead of
 			// interleaving a second message.
@@ -474,10 +475,10 @@ export default function OrchestratorChat( {
 				has_images: pendingImages.length > 0,
 			} );
 
+			let imageData;
 			if ( pendingImages.length > 0 && uploadImagesToWordPress ) {
 				isUploadingRef.current = true;
 
-				let imageData;
 				try {
 					// Agenttic clears the (controlled) input on submit. When the message
 					// came from the composer, keep it visible while images upload: wait a
@@ -519,6 +520,7 @@ export default function OrchestratorChat( {
 						} );
 						return;
 					}
+
 					recordBigSkyTracksEvent( 'file_upload_error', {
 						count: pendingImages.length,
 					} );
@@ -534,24 +536,23 @@ export default function OrchestratorChat( {
 				// holds this message (a suggestion-driven send may have left an
 				// unrelated draft in it).
 				setInputValue( ( currentValue ) => ( currentValue === message ? '' : currentValue ) );
-
-				submitDispatchedRef.current = true;
-				try {
-					// Send with agenttic's `imageUrls` option — the resulting `FilePart`s
-					// persist in conversation history with their metadata.
-					await onSubmit( message, { imageUrls: imageData } );
-				} catch {
-					// Agent errors surface via agenttic's own error state; if the
-					// dispatch itself throws, put the message back for a retry.
-					submitDispatchedRef.current = false;
-					setInputValue( ( currentValue ) => ( currentValue === '' ? message : currentValue ) );
-					return;
-				}
-			} else {
-				submitDispatchedRef.current = true;
-				await onSubmit( message );
 			}
+
+			submitDispatchedRef.current = true;
+			try {
+				// Images dispatch via agenttic's `imageUrls` option — the resulting
+				// `FilePart`s persist in conversation history with their metadata.
+				await ( imageData ? onSubmit( message, { imageUrls: imageData } ) : onSubmit( message ) );
+			} catch {
+				// A rejected dispatch already surfaces via agenttic's error state;
+				// put the message back (unless a newer draft replaced it) for a retry.
+				submitDispatchedRef.current = false;
+				setInputValue( ( currentValue ) => ( currentValue === '' ? message : currentValue ) );
+				return;
+			}
+
 			consumeNextMessageExternalContextEntries();
+
 			if ( isReaderChat ) {
 				markSessionUsed( agentConfig?.agentId );
 			}
