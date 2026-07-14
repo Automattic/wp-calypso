@@ -42,12 +42,19 @@ const WebpackBuildMonitor = lazy(
 const SLOW_THRESHOLD_MS = 100;
 const VERY_SLOW_THRESHOLD_MS = 6000;
 
+// E2E tests append this suffix to the browser user agent (see
+// test/e2e playwright.config.ts). Detecting it lets us suppress the welcome
+// modal so it doesn't interfere with unrelated tests.
+function isE2ETest(): boolean {
+	return typeof navigator !== 'undefined' && navigator.userAgent.includes( 'wp-e2e-tests' );
+}
+
 function Root() {
 	const isAccountRecoveryInterstitialEnabled = isEnabled(
 		'dashboard/account-recovery-interstitial'
 	);
 	const isOptInWelcomeModalEnabled =
-		! isDashboardBackport() && isEnabled( 'dashboard/opt-in-welcome-modal' );
+		! isDashboardBackport() && ! isE2ETest() && isEnabled( 'dashboard/opt-in-welcome-modal' );
 	const { name, supports, LoadingLogo = WordPressLogo } = useAppContext();
 	const isFetching = useIsFetching();
 	const isMutating = useIsMutating();
