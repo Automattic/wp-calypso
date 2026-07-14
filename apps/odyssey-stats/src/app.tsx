@@ -25,7 +25,7 @@ import setLocale from './lib/set-locale';
 import { setupContextMiddleware } from './page-middleware/setup-context';
 import registerStatsPages from './routes';
 
-import './styles/calypso-global.scss';
+import 'calypso/assets/stylesheets/style.scss';
 import './app.scss';
 
 async function AppBoot() {

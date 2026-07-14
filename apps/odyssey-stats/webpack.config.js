@@ -101,30 +101,56 @@ module.exports = {
 					// own `postcss.config.js` that they use for their webpack bundling process.
 					config: false,
 					plugins: [
-						// Scopes every selector compiled from Stats/Calypso component stylesheets to
-						// `#wpcom` (the app's own mount point), so generic classes shared across
-						// hundreds of components (`.card`, `.button`, `.notice`, etc.) can't collide
-						// with wp-admin's own chrome or other plugins' admin pages. `app.scss` and
-						// `calypso-global.scss` are excluded because they already hand-scope their
-						// own selectors (including some that deliberately target real wp-admin
-						// elements like `body.wp-admin #wpcontent`) — running this over them again
-						// would double-nest and break those.
+						// Scopes every selector compiled from this repo's own Stats/Calypso
+						// component stylesheets to `#wpcom` (the app's own mount point), so generic
+						// classes shared across hundreds of components (`.card`, `.button`, `.notice`,
+						// etc.) can't collide with wp-admin's own chrome or other plugins' admin
+						// pages. Deliberately scoped to first-party code only — see `ignoreFiles`.
 						prefixSelectorPlugin( {
-							prefix: ':where(#wpcom, .color-scheme, .ReactModalPortal)',
+							// `.color-scheme`/`.ReactModalPortal` cover the older Popover (`RootChild`)
+							// and Dialog (`react-modal`) portal roots. `[data-base-ui-portal]` and
+							// `[data-wp-compat-overlay-slot]` cover the newer `@wordpress/ui` floating
+							// components (`Popover`, `Tooltip`, `Dialog` — used by e.g. `StatsInfotip`,
+							// a first-party component), which are built on Base UI/Floating UI and
+							// portal straight to `<body>` with one of those two attributes as their
+							// only stable marker — verified against their source (`@base-ui/react` and
+							// `@wordpress/ui`'s `wp-compat-overlay-slot`), since neither renders inside
+							// `#wpcom` and neither carries a fixed class name.
+							prefix:
+								':where(#wpcom, .color-scheme, .ReactModalPortal, [data-base-ui-portal], [data-wp-compat-overlay-slot])',
 							ignoreFiles: [
+								// Already hand-scopes its own selectors (some deliberately target real
+								// wp-admin elements like `body.wp-admin #wpcontent`) — running this over
+								// it again would double-nest and break those.
 								'odyssey-stats/src/app.scss',
-								'odyssey-stats/src/styles/calypso-global.scss',
+								// Calypso's global stylesheet (typography/reset/color-schemes/RTL
+								// defaults applied to `html`, `body`, etc., plus the `@wordpress/components`
+								// build CSS it pulls in) is left as-is for now, not part of this pass.
+								'client/assets/stylesheets/style.scss',
+								// Third-party package CSS (charts, `@wordpress/components`, etc.) is out
+								// of scope here — only this repo's own component stylesheets are scoped.
+								/node_modules/,
 							],
-							// `:root` carries Calypso's CSS custom properties (`--color-primary`, etc.).
-							// Leaving it unscoped keeps them on the real document root, which
-							// Popover/Dialog portals (siblings of #wpcom) also need to inherit from.
-							//
-							// A handful of component styles (RTL flags, scroll-lock, "blank canvas"
-							// mode) intentionally target the real `<html>`/`<body>` directly, since
-							// that's where the app's own JS toggles those classes. Prefixing those
-							// would require `html`/`body` to be a descendant of `#wpcom`, which can
-							// never happen — the rule would just go dead. Leave them untouched instead.
-							exclude: [ ':root', /(^|[\s,])(html|body)(?=$|[\s.[:#,])/ ],
+							// A handful of rules intentionally target the real `<html>`/`<body>`
+							// directly: RTL flags (`.rtl`, `[dir=rtl]`), `:lang()`/`[lang*=…]`
+							// language-based font overrides, and dark-mode `:root`/`:root[data-theme=…]`
+							// selectors — either from Reader components bundled in transitively, or
+							// (for `[lang*=…]`) from `@automattic/typography`'s font mixin, which
+							// first-party files `@import` directly, so its rules get compiled straight
+							// into those files rather than staying inside `node_modules` where the
+							// `ignoreFiles` entry above would otherwise catch them. All of these assume
+							// their target can appear anywhere in the document, not just under #wpcom.
+							// Prefixing them would require `:root`/`html`/`body` to be a descendant of
+							// `#wpcom`, which can never happen — the rule would just go dead. Leave
+							// them untouched instead; they stay unscoped, same as before this change.
+							exclude: [
+								/^:root(?![\w-])/,
+								/(^|[\s,])(html|body)(?=$|[\s.[:#,])/,
+								/^\.rtl(?![\w-])/,
+								/^:lang\(/,
+								/^\[lang/,
+								/^\[dir[~|^$*]?=/,
+							],
 						} ),
 						autoprefixerPlugin(),
 					],
