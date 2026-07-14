@@ -134,6 +134,7 @@
 		"plans/updated-storage-labels": true,
 		"plans/upgradeable-storage": true,
 		"plugins/plugin-compass": false,
+		"plugins/stepper-plans": false,
 		"plugins/universal-header": true,
 		"post-editor/checkout-overlay": true,
 		"post-list/qr-code-link": false,

@@ -93,6 +93,7 @@
 		"plans/migration-trial": true,
 		"plans/personal-plan": true,
 		"plugins/plugin-compass": true,
+		"plugins/stepper-plans": true,
 		"post-list/qr-code-link": false,
 		"press-this": true,
 		"publicize-preview": true,
