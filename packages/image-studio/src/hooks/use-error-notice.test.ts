@@ -8,6 +8,7 @@
  * - Upgrade URLs show persistent warning notice with correct label
  */
 import { renderHook } from '@testing-library/react';
+import { ImageStudioMode } from '../types';
 import {
 	trackImageStudioUpgradeNoticeShown,
 	trackImageStudioUpgradeNoticeClick,
@@ -38,43 +39,51 @@ describe( 'useErrorNotice', () => {
 
 	describe( 'no error', () => {
 		it( 'does not call addNotice when error is null', () => {
-			renderHook( () => useErrorNotice( null, mockAddNotice ) );
+			renderHook( () => useErrorNotice( null, mockAddNotice, ImageStudioMode.Generate ) );
 			expect( mockAddNotice ).not.toHaveBeenCalled();
 		} );
 
 		it( 'does not call addNotice when error is undefined', () => {
-			renderHook( () => useErrorNotice( undefined, mockAddNotice ) );
+			renderHook( () => useErrorNotice( undefined, mockAddNotice, ImageStudioMode.Generate ) );
 			expect( mockAddNotice ).not.toHaveBeenCalled();
 		} );
 
 		it( 'does not call addNotice when error is empty string', () => {
-			renderHook( () => useErrorNotice( '', mockAddNotice ) );
+			renderHook( () => useErrorNotice( '', mockAddNotice, ImageStudioMode.Generate ) );
 			expect( mockAddNotice ).not.toHaveBeenCalled();
 		} );
 	} );
 
 	describe( 'plain errors without URL', () => {
 		it( 'shows error snackbar for plain error message', () => {
-			renderHook( () => useErrorNotice( 'Something went wrong', mockAddNotice ) );
+			renderHook( () =>
+				useErrorNotice( 'Something went wrong', mockAddNotice, ImageStudioMode.Generate )
+			);
 
 			expect( mockAddNotice ).toHaveBeenCalledWith( 'Something went wrong', 'error' );
 		} );
 
 		it( 'extracts message from Error object', () => {
 			const error = new Error( 'Network failure' );
-			renderHook( () => useErrorNotice( error, mockAddNotice ) );
+			renderHook( () => useErrorNotice( error, mockAddNotice, ImageStudioMode.Generate ) );
 
 			expect( mockAddNotice ).toHaveBeenCalledWith( 'Network failure', 'error' );
 		} );
 
 		it( 'converts non-string errors to string', () => {
-			renderHook( () => useErrorNotice( 42, mockAddNotice ) );
+			renderHook( () => useErrorNotice( 42, mockAddNotice, ImageStudioMode.Generate ) );
 
 			expect( mockAddNotice ).toHaveBeenCalledWith( '42', 'error' );
 		} );
 
 		it( 'strips "Streaming error:" prefix from message', () => {
-			renderHook( () => useErrorNotice( 'Streaming error: Connection lost', mockAddNotice ) );
+			renderHook( () =>
+				useErrorNotice(
+					'Streaming error: Connection lost',
+					mockAddNotice,
+					ImageStudioMode.Generate
+				)
+			);
 
 			expect( mockAddNotice ).toHaveBeenCalledWith( 'Connection lost', 'error' );
 		} );
@@ -85,7 +94,8 @@ describe( 'useErrorNotice', () => {
 			renderHook( () =>
 				useErrorNotice(
 					'Error occurred. See https://wordpress.com/help for details.',
-					mockAddNotice
+					mockAddNotice,
+					ImageStudioMode.Generate
 				)
 			);
 
@@ -100,7 +110,11 @@ describe( 'useErrorNotice', () => {
 
 		it( 'extracts URL from middle of message', () => {
 			renderHook( () =>
-				useErrorNotice( 'Visit https://jetpack.com/docs for help', mockAddNotice )
+				useErrorNotice(
+					'Visit https://jetpack.com/docs for help',
+					mockAddNotice,
+					ImageStudioMode.Generate
+				)
 			);
 
 			expect( mockAddNotice ).toHaveBeenCalledWith( 'Visit for help', 'error', [
@@ -114,7 +128,11 @@ describe( 'useErrorNotice', () => {
 
 		it( 'shows plain error when URL domain is not allowed', () => {
 			renderHook( () =>
-				useErrorNotice( 'Error occurred. See https://example.com/help for details.', mockAddNotice )
+				useErrorNotice(
+					'Error occurred. See https://example.com/help for details.',
+					mockAddNotice,
+					ImageStudioMode.Generate
+				)
 			);
 
 			expect( mockAddNotice ).toHaveBeenCalledWith( 'Error occurred. See for details.', 'error' );
@@ -124,7 +142,11 @@ describe( 'useErrorNotice', () => {
 	describe( 'errors with upgrade URLs', () => {
 		it( 'shows warning notice with "See plans" for /plans/ URL', () => {
 			renderHook( () =>
-				useErrorNotice( 'Upgrade required https://wordpress.com/plans/example.com', mockAddNotice )
+				useErrorNotice(
+					'Upgrade required https://wordpress.com/plans/example.com',
+					mockAddNotice,
+					ImageStudioMode.Generate
+				)
 			);
 
 			expect( mockAddNotice ).toHaveBeenCalledWith( 'Upgrade required', 'warning', [
@@ -139,7 +161,11 @@ describe( 'useErrorNotice', () => {
 
 		it( 'shows warning notice with "Upgrade plan" for /upgrade URL', () => {
 			renderHook( () =>
-				useErrorNotice( 'Upgrade required https://wordpress.com/upgrade/premium', mockAddNotice )
+				useErrorNotice(
+					'Upgrade required https://wordpress.com/upgrade/premium',
+					mockAddNotice,
+					ImageStudioMode.Generate
+				)
 			);
 
 			expect( mockAddNotice ).toHaveBeenCalledWith( 'Upgrade required', 'warning', [
@@ -156,7 +182,8 @@ describe( 'useErrorNotice', () => {
 			renderHook( () =>
 				useErrorNotice(
 					'Limit reached https://jetpack.com/redirect/?source=jetpack-ai-yearly-tier-upgrade-nudge',
-					mockAddNotice
+					mockAddNotice,
+					ImageStudioMode.Generate
 				)
 			);
 
@@ -181,7 +208,8 @@ describe( 'useErrorNotice', () => {
 				renderHook( () =>
 					useErrorNotice(
 						'Please upgrade https://example.com/wp-admin/admin.php?page=my-jetpack#/add-jetpack-ai',
-						mockAddNotice
+						mockAddNotice,
+						ImageStudioMode.Generate
 					)
 				);
 
@@ -205,7 +233,8 @@ describe( 'useErrorNotice', () => {
 			renderHook( () =>
 				useErrorNotice(
 					'Streaming error: Congratulations on exploring Image Studio and reaching the free requests limit! Upgrade now to keep using it. https://jetpack.com/redirect/?source=jetpack-ai-yearly-tier-upgrade-nudge',
-					mockAddNotice
+					mockAddNotice,
+					ImageStudioMode.Generate
 				)
 			);
 
@@ -229,7 +258,7 @@ describe( 'useErrorNotice', () => {
 			const error = new Error(
 				'Quota exceeded. Upgrade at https://wordpress.com/plans/example.com'
 			);
-			renderHook( () => useErrorNotice( error, mockAddNotice ) );
+			renderHook( () => useErrorNotice( error, mockAddNotice, ImageStudioMode.Generate ) );
 
 			expect( mockAddNotice ).toHaveBeenCalledWith( 'Quota exceeded. Upgrade at', 'warning', [
 				{
@@ -243,7 +272,7 @@ describe( 'useErrorNotice', () => {
 
 		it( 'handles object with message property', () => {
 			const error = { message: 'Custom error object' };
-			renderHook( () => useErrorNotice( error, mockAddNotice ) );
+			renderHook( () => useErrorNotice( error, mockAddNotice, ImageStudioMode.Generate ) );
 
 			expect( mockAddNotice ).toHaveBeenCalledWith( 'Custom error object', 'error' );
 		} );
@@ -254,39 +283,52 @@ describe( 'useErrorNotice', () => {
 			renderHook( () =>
 				useErrorNotice(
 					'Limit reached https://jetpack.com/redirect/?source=jetpack-ai-yearly-tier-upgrade-nudge',
-					mockAddNotice
+					mockAddNotice,
+					ImageStudioMode.Generate
 				)
 			);
 
 			expect( trackImageStudioUpgradeNoticeShown ).toHaveBeenCalledTimes( 1 );
+			expect( trackImageStudioUpgradeNoticeShown ).toHaveBeenCalledWith( {
+				mode: ImageStudioMode.Generate,
+			} );
 		} );
 
 		it( 'wires the click tracker as the action onClick', () => {
 			renderHook( () =>
 				useErrorNotice(
 					'Limit reached https://jetpack.com/redirect/?source=jetpack-ai-yearly-tier-upgrade-nudge',
-					mockAddNotice
+					mockAddNotice,
+					ImageStudioMode.Generate
 				)
 			);
 
 			const actions = mockAddNotice.mock.calls[ 0 ][ 2 ];
-			expect( actions[ 0 ].onClick ).toBe( trackImageStudioUpgradeNoticeClick );
+			actions[ 0 ].onClick();
+			expect( trackImageStudioUpgradeNoticeClick ).toHaveBeenCalledWith( {
+				mode: ImageStudioMode.Generate,
+			} );
 		} );
 
 		it( 'does not track impressions for plain errors', () => {
-			renderHook( () => useErrorNotice( 'Something went wrong', mockAddNotice ) );
+			renderHook( () =>
+				useErrorNotice( 'Something went wrong', mockAddNotice, ImageStudioMode.Generate )
+			);
 
 			expect( trackImageStudioUpgradeNoticeShown ).not.toHaveBeenCalled();
 		} );
 
 		it( 'tracks one impression per distinct message, not per repeated error', () => {
-			const { rerender } = renderHook( ( { error } ) => useErrorNotice( error, mockAddNotice ), {
-				initialProps: {
-					error: new Error(
-						'Limit reached https://jetpack.com/redirect/?source=jetpack-ai-yearly-tier-upgrade-nudge'
-					),
-				},
-			} );
+			const { rerender } = renderHook(
+				( { error } ) => useErrorNotice( error, mockAddNotice, ImageStudioMode.Generate ),
+				{
+					initialProps: {
+						error: new Error(
+							'Limit reached https://jetpack.com/redirect/?source=jetpack-ai-yearly-tier-upgrade-nudge'
+						),
+					},
+				}
+			);
 			// A fresh error object with the same message re-runs the effect but,
 			// like the store's content de-dupe, must not count a new impression.
 			rerender( {
@@ -299,13 +341,16 @@ describe( 'useErrorNotice', () => {
 		} );
 
 		it( 'tracks a second impression when the message differs', () => {
-			const { rerender } = renderHook( ( { error } ) => useErrorNotice( error, mockAddNotice ), {
-				initialProps: {
-					error: new Error(
-						'Limit reached https://jetpack.com/redirect/?source=jetpack-ai-yearly-tier-upgrade-nudge'
-					),
-				},
-			} );
+			const { rerender } = renderHook(
+				( { error } ) => useErrorNotice( error, mockAddNotice, ImageStudioMode.Generate ),
+				{
+					initialProps: {
+						error: new Error(
+							'Limit reached https://jetpack.com/redirect/?source=jetpack-ai-yearly-tier-upgrade-nudge'
+						),
+					},
+				}
+			);
 			rerender( {
 				error: new Error( 'Upgrade required https://wordpress.com/plans/example.com' ),
 			} );
@@ -315,7 +360,11 @@ describe( 'useErrorNotice', () => {
 
 		it( 'does not track impressions for non-upgrade URL errors', () => {
 			renderHook( () =>
-				useErrorNotice( 'Visit https://jetpack.com/docs for help', mockAddNotice )
+				useErrorNotice(
+					'Visit https://jetpack.com/docs for help',
+					mockAddNotice,
+					ImageStudioMode.Generate
+				)
 			);
 
 			expect( trackImageStudioUpgradeNoticeShown ).not.toHaveBeenCalled();

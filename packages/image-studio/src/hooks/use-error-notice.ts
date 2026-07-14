@@ -6,6 +6,7 @@ import {
 	trackImageStudioUpgradeNoticeClick,
 } from '../utils/tracking';
 import type { NoticeAction, NoticeType } from '../store';
+import type { ImageStudioMode } from '../types';
 
 type AddNoticeFunc = ( content: string, type: NoticeType, actions?: NoticeAction[] ) => void;
 
@@ -15,8 +16,13 @@ type AddNoticeFunc = ( content: string, type: NoticeType, actions?: NoticeAction
  * Upgrade URLs show as persistent warning notices, other errors as snackbars.
  * @param error     - The error to display
  * @param addNotice - Function to add a notice to the store
+ * @param mode      - Image Studio mode ('edit' or 'generate') for tracking
  */
-export function useErrorNotice( error: unknown, addNotice: AddNoticeFunc ): void {
+export function useErrorNotice(
+	error: unknown,
+	addNotice: AddNoticeFunc,
+	mode: ImageStudioMode
+): void {
 	// The notice store dedupes by content, so repeated errors with the same
 	// message keep a single visible notice; mirror that here and count one
 	// impression per distinct message rather than one per error.
@@ -37,7 +43,7 @@ export function useErrorNotice( error: unknown, addNotice: AddNoticeFunc ): void
 			// Show upgrade notices as persistent warning notices
 			if ( ! trackedImpressions.current.has( content ) ) {
 				trackedImpressions.current.add( content );
-				trackImageStudioUpgradeNoticeShown();
+				trackImageStudioUpgradeNoticeShown( { mode } );
 			}
 			addNotice( content, 'warning', [
 				{
@@ -46,7 +52,7 @@ export function useErrorNotice( error: unknown, addNotice: AddNoticeFunc ): void
 						: __( 'Upgrade plan', __i18n_text_domain__ ),
 					url,
 					openInNewTab: true,
-					onClick: trackImageStudioUpgradeNoticeClick,
+					onClick: () => trackImageStudioUpgradeNoticeClick( { mode } ),
 				},
 			] );
 		} else if ( url ) {
@@ -62,5 +68,5 @@ export function useErrorNotice( error: unknown, addNotice: AddNoticeFunc ): void
 			// Plain errors show as snackbar
 			addNotice( content, 'error' );
 		}
-	}, [ error, addNotice ] );
+	}, [ error, addNotice, mode ] );
 }

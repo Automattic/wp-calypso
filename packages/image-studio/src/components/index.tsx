@@ -185,7 +185,7 @@ function ImageStudioAgentChat( {
 
 	const { error: agentError, ...agentUiProps } = agentChatProps;
 
-	useErrorNotice( agentError, addNotice );
+	useErrorNotice( agentError, addNotice, mode );
 
 	const isProcessing = agentChatProps.isProcessing || isAnnotationSaving;
 
