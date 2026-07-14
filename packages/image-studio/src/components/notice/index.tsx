@@ -25,7 +25,11 @@ function InlineNotice( { notice, onDismiss }: { notice: NoticeType; onDismiss?: 
 				notice.actions?.map( ( action ) => ( {
 					label: action.label,
 					onClick: () => {
-						action.onClick?.();
+						try {
+							action.onClick?.();
+						} catch {
+							// The callback (e.g. tracking) must never block the action URL.
+						}
 						const newWindow = window.open( action.url, '_blank' );
 						if ( newWindow ) {
 							newWindow.opener = null;
@@ -77,7 +81,11 @@ export function ImageStudioNotice() {
 							actions: notice.actions.map( ( action ) => ( {
 								label: action.label,
 								onClick: () => {
-									action.onClick?.();
+									try {
+										action.onClick?.();
+									} catch {
+										// The callback (e.g. tracking) must never block the action URL.
+									}
 									const newWindow = window.open( action.url, '_blank' );
 									if ( newWindow ) {
 										newWindow.opener = null;
