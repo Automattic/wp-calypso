@@ -9,9 +9,8 @@ import {
 	getName,
 	getRenewalPrice,
 	purchaseType,
-	isExpired,
-	isRenewing,
-	isInExpirationGracePeriod,
+	isRenewingBeforeExpiration,
+	isExpiredOrRemoved,
 } from 'calypso/lib/purchases';
 import { managePurchase } from '../paths';
 import type { Purchase } from 'calypso/lib/purchases/types';
@@ -39,18 +38,14 @@ function getExpiresText(
 	moment: ReturnType< typeof useLocalizedMoment >,
 	purchase: Purchase
 ): TranslateResult {
-	if ( isRenewing( purchase ) ) {
-		if ( isInExpirationGracePeriod( purchase ) ) {
-			return translate( 'pending renewal' );
-		}
-
+	if ( isRenewingBeforeExpiration( purchase ) ) {
 		return translate( 'renews %(renewDate)s', {
 			comment:
 				'"renewDate" is relative to the present time and it is already localized, eg. "in a year", "in a month"',
 			args: { renewDate: moment( purchase.renewDate ).fromNow() },
 		} );
 	}
-	if ( isExpired( purchase ) || isInExpirationGracePeriod( purchase ) ) {
+	if ( isExpiredOrRemoved( purchase ) ) {
 		return translate( 'expired %(expiry)s', {
 			comment:
 				'"expiry" is relative to the present time and it is already localized, eg. "in a year", "in a month", "a week ago"',
@@ -83,8 +78,8 @@ const UpcomingRenewalsDialog: FunctionComponent< Props > = ( {
 	const purchasesSortByRecentExpiryDate = useMemo(
 		() =>
 			[ ...purchases ].sort( ( a, b ) => {
-				const compareDateA = isRenewing( a ) ? a.renewDate : a.expiryDate;
-				const compareDateB = isRenewing( b ) ? b.renewDate : b.expiryDate;
+				const compareDateA = isRenewingBeforeExpiration( a ) ? a.renewDate : a.expiryDate;
+				const compareDateB = isRenewingBeforeExpiration( b ) ? b.renewDate : b.expiryDate;
 
 				return compareDateA?.localeCompare?.( compareDateB );
 			} ),
@@ -143,7 +138,7 @@ const UpcomingRenewalsDialog: FunctionComponent< Props > = ( {
 									{ getName( purchase ) }
 									<div className="upcoming-renewals-dialog__detail">
 										{ purchaseTypeText ? `${ purchaseTypeText }: ` : '' }
-										<span className={ isExpired( purchase ) ? 'expired' : '' }>
+										<span className={ isExpiredOrRemoved( purchase ) ? 'expired' : '' }>
 											{ purchaseTypeText ? expiresText : capitalize( expiresText ) }
 										</span>
 									</div>

@@ -85,6 +85,7 @@ describe( '<AccountDeletionSection>', () => {
 			mockPurchases( [
 				{
 					expiry_status: 'active',
+					subscription_status: 'active',
 					product_slug: 'pro_plan',
 					is_refundable: true,
 					is_cancelable: true,
@@ -98,6 +99,51 @@ describe( '<AccountDeletionSection>', () => {
 			expect(
 				await screen.findByText( 'You still have active purchases on your account.' )
 			).toBeVisible();
+		} );
+
+		test( 'blocks deletion when user has an expired purchase still in its grace period', async () => {
+			const user = userEvent.setup();
+			mockPurchases( [
+				{
+					expiry_status: 'expired',
+					subscription_status: 'active',
+					product_slug: 'pro_plan',
+					is_refundable: false,
+					is_cancelable: true,
+				},
+			] );
+
+			render( <AccountDeletionSection /> );
+
+			await user.click( screen.getByRole( 'button', { name: 'Delete account' } ) );
+
+			expect(
+				await screen.findByText( 'You still have active purchases on your account.' )
+			).toBeVisible();
+		} );
+
+		test( 'does not block deletion when the only purchase has been removed', async () => {
+			const user = userEvent.setup();
+			mockPurchases( [
+				{
+					expiry_status: 'expired',
+					subscription_status: 'inactive',
+					product_slug: 'pro_plan',
+					is_refundable: false,
+					is_cancelable: true,
+				},
+			] );
+
+			render( <AccountDeletionSection /> );
+
+			await user.click( screen.getByRole( 'button', { name: 'Delete account' } ) );
+
+			// A removed purchase is not "cancelable", so the user proceeds to the
+			// alternatives screen rather than being blocked.
+			await screen.findByRole( 'dialog', { name: 'Are you sure?' } );
+			expect(
+				screen.queryByText( 'You still have active purchases on your account.' )
+			).not.toBeInTheDocument();
 		} );
 	} );
 } );

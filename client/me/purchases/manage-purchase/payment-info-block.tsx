@@ -3,12 +3,12 @@ import { useTranslate } from 'i18n-calypso';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import PaymentLogo from 'calypso/components/payment-logo';
 import {
-	isExpiring,
 	isRechargeable,
 	isIncludedWithPlan,
 	isPaidWithCreditCard,
 	isPaidWithCredits,
 	isPaidWithPayPalDirect,
+	mightStillAutoRenew,
 	paymentLogoType,
 	hasPaymentMethod,
 } from 'calypso/lib/purchases';
@@ -52,17 +52,18 @@ export default function PaymentInfoBlock( {
 		);
 	}
 
+	const willNotBeBilled = ! mightStillAutoRenew( purchase );
+
 	if (
 		hasPaymentMethod( purchase ) &&
 		isPaidWithCreditCard( purchase ) &&
 		isRechargeable( purchase )
 	) {
 		const logoType = paymentLogoType( purchase );
-		const willNotBeBilled = !! ( isExpiring( purchase ) && purchase.payment.creditCard );
 		return (
 			<PaymentInfoBlockWrapper>
 				<span className="manage-purchase__payment-method">
-					<PaymentLogo type={ logoType } disabled={ isExpiring( purchase ) } />
+					<PaymentLogo type={ logoType } disabled={ willNotBeBilled } />
 					{ purchase.payment.creditCard?.number ?? '' }
 				</span>
 				{ willNotBeBilled && <WillNotBeBilledNotice /> }
@@ -77,7 +78,6 @@ export default function PaymentInfoBlock( {
 		isRechargeable( purchase )
 	) {
 		const logoType = paymentLogoType( purchase );
-		const willNotBeBilled = isExpiring( purchase );
 		return (
 			<PaymentInfoBlockWrapper>
 				<span className="manage-purchase__payment-method">
@@ -96,7 +96,6 @@ export default function PaymentInfoBlock( {
 
 	if ( hasPaymentMethod( purchase ) && isRechargeable( purchase ) ) {
 		const logoType = paymentLogoType( purchase );
-		const willNotBeBilled = isExpiring( purchase );
 		return (
 			<PaymentInfoBlockWrapper>
 				<PaymentLogo type={ logoType } disabled={ willNotBeBilled } />

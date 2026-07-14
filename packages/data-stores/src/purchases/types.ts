@@ -53,6 +53,16 @@ export interface Purchase {
 	 * time zone. Null for purchases with no expiry time (one-time and perpetual).
 	 */
 	daysUntilExpiry: number | null;
+
+	/**
+	 * True if the subscription's expiry date has already passed, whether it is
+	 * still active (i.e. in its post-expiry grace period) or has since been
+	 * removed. Closely tracks `expiryStatus === 'expired'`; the two only diverge
+	 * for a subscription removed before its expiry date (which reports 'expired'
+	 * while this stays false). Always false for purchases with no expiry time.
+	 */
+	isPastExpiryDate: boolean;
+
 	iapPurchaseManagementLink: string | null;
 	id: number;
 
@@ -74,6 +84,8 @@ export interface Purchase {
 	isLocked: boolean;
 	isPlan: boolean;
 	isPlanTypeDowngradable: boolean;
+	isPastLastAutoRenewAttemptDate: boolean;
+	mightStillAutoRenew: boolean;
 	isRechargeable: boolean;
 	isRefundable: boolean;
 	isWithinInitialRefundWindow: boolean;
@@ -144,13 +156,20 @@ export interface Purchase {
 	regularPriceInteger: number;
 
 	/**
-	 * The date this subscription will next attempt to auto-renew (ISO 8601).
+	 * The date of the next scheduled auto-renewal attempt (ISO 8601), or an
+	 * empty string when no renewal is scheduled.
 	 *
-	 * For active/auto-renewing subscriptions this is the next *renewal attempt*
-	 * date, NOT the expiry date: WordPress.com begins attempting renewals before
+	 * Populated only when the subscription is set to auto-renew and a renewal
+	 * attempt is still upcoming. WordPress.com begins attempting renewals before
 	 * a subscription expires (e.g. non-monthly WordPress.com plans first attempt
-	 * ~30 days before `expiryDate`). For subscriptions that are not renewing
-	 * (expiring, manual-renew, etc.) it falls back to the expiry date.
+	 * ~30 days before `expiryDate`) and can keep attempting during the
+	 * post-expiry grace period, so this date may fall before or after
+	 * `expiryDate`.
+	 *
+	 * An empty string means no attempt is scheduled: auto-renew is off, or the
+	 * subscription is in its grace period past the final auto-renewal attempt.
+	 * It does NOT fall back to the expiry date — read `expiryDate` explicitly
+	 * where an expiry date is wanted.
 	 */
 	renewDate: string;
 	saleAmount?: number;

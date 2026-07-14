@@ -10,7 +10,7 @@ import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import SectionHeader from 'calypso/components/section-header';
 import TrackComponentView from 'calypso/lib/analytics/track-component-view';
 import { getRenewalItemFromProduct } from 'calypso/lib/cart-values/cart-items';
-import { getName, isExpired, isRenewing, isInExpirationGracePeriod } from 'calypso/lib/purchases';
+import { getName, isRenewingBeforeExpiration, isExpiredOrRemoved } from 'calypso/lib/purchases';
 import UpcomingRenewalsDialog from 'calypso/me/purchases/upcoming-renewals/upcoming-renewals-dialog';
 import { PartialCart } from 'calypso/my-sites/checkout/src/components/secondary-cart-promotions';
 import { useSelector, useDispatch } from 'calypso/state';
@@ -85,15 +85,13 @@ const UpcomingRenewalsReminder: FunctionComponent< Props > = ( { cart, addItemTo
 	);
 
 	// Urgent = already expired, or expiring within 10 days. daysUntilExpiry is the
-	// server's day count (negative once past expiry); expiryStatus 'expired' is
-	// inactive-status, which is not the same as past the expiry date, so keep both.
+	// server's day count (negative during the post-expiry grace period).
 	const urgentPurchases = useMemo(
 		() =>
 			renewablePurchasesNotAlreadyInCart.filter(
 				( purchase ) =>
-					isExpired( purchase ) ||
-					( purchase.daysUntilExpiry != null &&
-						purchase.daysUntilExpiry < URGENT_RENEWAL_WINDOW_IN_DAYS )
+					purchase.daysUntilExpiry != null &&
+					purchase.daysUntilExpiry < URGENT_RENEWAL_WINDOW_IN_DAYS
 			),
 		[ renewablePurchasesNotAlreadyInCart ]
 	);
@@ -303,7 +301,7 @@ function getMessages( {
 		},
 	};
 
-	if ( isExpired( purchase ) || isInExpirationGracePeriod( purchase ) ) {
+	if ( isExpiredOrRemoved( purchase ) ) {
 		if ( isDomainRegistration( purchase ) ) {
 			message = translate(
 				'Your %(purchaseName)s domain expired %(expiry)s. Would you like to renew it now?',
@@ -320,7 +318,7 @@ function getMessages( {
 				translateOptions
 			);
 		}
-	} else if ( isRenewing( purchase ) ) {
+	} else if ( isRenewingBeforeExpiration( purchase ) ) {
 		const renewingTranslateOptions = {
 			comment:
 				'"relativeRenewDate" is relative to the present time and it is already localized, eg. "in a year", "in a month"',

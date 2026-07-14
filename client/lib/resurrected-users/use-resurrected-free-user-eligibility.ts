@@ -1,6 +1,6 @@
 import config from '@automattic/calypso-config';
 import { useEffect, useMemo } from '@wordpress/element';
-import { isRenewing, isSubscription } from 'calypso/lib/purchases';
+import { isRenewingBeforeExpiration, isSubscription } from 'calypso/lib/purchases';
 import { useDispatch, useSelector } from 'calypso/state';
 import { getCurrentUserId } from 'calypso/state/current-user/selectors';
 import { fetchUserPurchases } from 'calypso/state/purchases/actions';
@@ -33,7 +33,9 @@ function hasActivePaidSubscription( purchases: Purchase[] | null ): boolean | nu
 		return null;
 	}
 
-	return purchases.some( ( purchase ) => isSubscription( purchase ) && isRenewing( purchase ) );
+	return purchases.some(
+		( purchase ) => isSubscription( purchase ) && isRenewingBeforeExpiration( purchase )
+	);
 }
 
 export function useResurrectedFreeUserEligibility(): EligibilityResult {

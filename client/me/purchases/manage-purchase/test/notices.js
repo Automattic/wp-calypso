@@ -120,6 +120,7 @@ describe( 'PurchaseNotice', () => {
 			isRenewable: true,
 			isRechargeable: false,
 			expiryStatus: 'manualRenew',
+			subscriptionStatus: 'active',
 			payment: { type: 'credits' },
 		};
 		render(
@@ -149,6 +150,7 @@ describe( 'PurchaseNotice', () => {
 			isRenewable: true,
 			isRechargeable: true,
 			expiryStatus: 'manualRenew',
+			subscriptionStatus: 'active',
 			payment: {
 				type: 'credit_card',
 				creditCard: {
@@ -350,6 +352,7 @@ describe( 'PurchaseNotice', () => {
 			isRenewable: false,
 			isRechargeable: false,
 			expiryStatus: 'expiring',
+			subscriptionStatus: 'active',
 			payment: { type: 'credit_card' },
 		};
 		const purchase = {
@@ -359,6 +362,7 @@ describe( 'PurchaseNotice', () => {
 			isRenewable: false,
 			isRechargeable: false,
 			expiryStatus: 'included',
+			subscriptionStatus: 'active',
 			payment: { type: 'credit_card' },
 		};
 		render(
@@ -473,6 +477,7 @@ describe( 'PurchaseNotice', () => {
 			isRenewable: false,
 			isRechargeable: false,
 			expiryStatus: 'tofu',
+			subscriptionStatus: 'active',
 			expiryDate: purchaseExpiry.toISOString(),
 			payment: {
 				type: 'credit_card',

@@ -61,7 +61,8 @@ import {
 	hasAmountAvailableToRefund,
 	hasMarketplaceProduct,
 	isAgencyPartnerType,
-	isExpired,
+	isExpiredOrRemoved,
+	isRemoved,
 	isGSuiteOrGoogleWorkspaceProductSlug,
 	isJetpackHoldingSitePurchase,
 	isAkismetProduct,
@@ -264,7 +265,7 @@ function availableJetpackSurveySteps( purchase: Purchase, flowType: CancelFlowTy
 	// If the plan is already expired or is a temporary Jetpack purchase (license),
 	// we only need one "confirm" step for the survey is the removal confirmation
 	// A product that is not in use does not need to collect the survey or show benefits
-	if ( isExpired( purchase ) || isJetpackHoldingSitePurchase( purchase ) ) {
+	if ( isExpiredOrRemoved( purchase ) || isJetpackHoldingSitePurchase( purchase ) ) {
 		return [ CANCEL_CONFIRM_STEP ];
 	}
 
@@ -317,7 +318,7 @@ function getBasicSurveySteps( {
 	const isJetpack = purchase.is_jetpack_plan_or_product;
 	const downgradePlan = getDowngradePlanForPurchase( plans, purchase, upsell );
 	const isDowngradePlan = [ 'downgrade-monthly', 'downgrade-personal' ].includes( upsell ?? '' );
-	const hasExpired = purchase.expiry_status === 'expired';
+	const hasExpired = isExpiredOrRemoved( purchase );
 
 	if (
 		isPartnerPurchase( purchase ) &&
@@ -607,7 +608,7 @@ function CancelPurchaseInner() {
 
 		const [ firstStep ] = allSteps;
 
-		const hasExpired = purchase.expiry_status === 'expired';
+		const hasExpired = isExpiredOrRemoved( purchase );
 		// When intent is URL-sourced (user clicked Cancel or Remove on Purchase
 		// Settings), the pre-survey confirmation MUST render first — regardless
 		// of prior survey completion cache or expired state. The existing
@@ -1536,7 +1537,7 @@ function CancelPurchaseInner() {
 			! purchase.is_cancelable &&
 			! purchase.is_removable
 		) {
-			if ( purchase.subscription_status !== 'active' && ! createdErrorNoticeForRedirect.current ) {
+			if ( isRemoved( purchase ) && ! createdErrorNoticeForRedirect.current ) {
 				createErrorNotice(
 					__(
 						'This purchase has already been removed. Please contact support if you believe this to be in error.'
