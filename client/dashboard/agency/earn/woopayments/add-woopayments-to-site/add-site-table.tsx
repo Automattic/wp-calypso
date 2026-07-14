@@ -45,7 +45,7 @@ export default function AddWooPaymentsToSiteTable( {
 	const onSelectSite = useCallback(
 		( item: WooPaymentsSiteItem ) => {
 			setSelectedSite( item );
-			recordTracksEvent( 'calypso_a8c_woopayments_add_site_table_select_site_click' );
+			recordTracksEvent( 'calypso_a4a_woopayments_add_site_table_select_site_click' );
 		},
 		[ setSelectedSite, recordTracksEvent ]
 	);
