@@ -21,6 +21,8 @@ const mockSite = {
 	isWporgPlugin: true,
 	// Whether a site-plugins request is in flight, so a test can hold off the next poll.
 	isFetching: false,
+	// Whether the transferred atomic site is ready for its WP Admin URL.
+	isReady: true,
 };
 
 const mockDispatch = jest.fn();
@@ -122,7 +124,7 @@ jest.mock( '@tanstack/react-query', () => ( {
 	} ),
 } ) );
 jest.mock( 'calypso/dashboard/utils/site-atomic-transfers', () => ( {
-	isAtomicTransferredSite: () => true,
+	isAtomicTransferredSite: () => mockSite.isReady,
 } ) );
 jest.mock( '@automattic/api-queries', () => ( {
 	siteByIdQuery: () => ( { queryKey: [ 'site' ] } ),
@@ -177,6 +179,7 @@ describe( 'MarketplaceProductInstall', () => {
 		mockSite.isAtomic = false;
 		mockSite.isWporgPlugin = true;
 		mockSite.isFetching = false;
+		mockSite.isReady = true;
 		originalLocation = window.location;
 		Object.defineProperty( window, 'location', { value: { href: '' }, writable: true } );
 	} );
@@ -246,6 +249,25 @@ describe( 'MarketplaceProductInstall', () => {
 
 		mockSite.installedPlugin = ACTIVE_PLUGIN;
 		await settle( rendered );
+		expect( window.location.href ).toBe( ACTIVE_LIST_URL );
+	} );
+
+	it( 'does not act or redirect before the transferred atomic site is ready', async () => {
+		mockSite.isReady = false;
+		const rendered = install();
+		await start( rendered );
+
+		// The plugin already reads active, but the site is not ready, so it must not poll, activate, or
+		// send the user to a WP Admin URL that is not there yet.
+		mockSite.installedPlugin = ACTIVE_PLUGIN;
+		fetchSitePlugins.mockClear();
+		await advance( rendered, 6000 );
+		expect( fetchSitePlugins ).not.toHaveBeenCalled();
+		expect( window.location.href ).toBe( '' );
+
+		// Once the site is ready, it redirects.
+		mockSite.isReady = true;
+		await advance( rendered, 3000 );
 		expect( window.location.href ).toBe( ACTIVE_LIST_URL );
 	} );
 

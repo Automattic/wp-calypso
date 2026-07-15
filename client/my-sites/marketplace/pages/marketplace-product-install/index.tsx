@@ -322,6 +322,13 @@ const MarketplaceProductInstall = ( {
 		!! freshSite?.is_wpcom_atomic &&
 		wporgPlugin?.wporg === false;
 
+	// Unlike the theme flow, which only observes backend-owned activation, reconciling a plugin means
+	// dispatching activation and then leaving for a freshly discovered WP Admin URL. Gate both on the
+	// atomic site being ready, so we neither act nor redirect before that URL is real.
+	const canReconcilePlugin =
+		( ! atomicFlow || transferStates.COMPLETE === automatedTransferStatus ) &&
+		( ! ( atomicFlow || isMarketplacePluginFlow ) || isAtomicTransferReady );
+
 	// Poll the site plugins for the active state the same way the theme flow polls the active theme:
 	// once the flow is under way, until the server reports it active. The paid marketplace install is
 	// kicked off by checkout, so its step can still be 0 — cover it by its atomic-plugin shape too.
@@ -329,6 +336,7 @@ const MarketplaceProductInstall = ( {
 		!! pluginSlug &&
 		! pluginActive &&
 		! isFetchingSitePlugins &&
+		canReconcilePlugin &&
 		( currentStep !== 0 || isMarketplacePluginFlow );
 
 	useInterval( () => dispatch( fetchSitePlugins( siteId ) ), shouldFetchPlugin ? 3000 : null );
@@ -343,10 +351,10 @@ const MarketplaceProductInstall = ( {
 			// - Click on "Install and activate" button for any plugin on /plugins/<site_name>
 			// - Install with the help of uploading archive of a plugins
 			// - If it's simple site which doesn't support plugins, then installing and activation happens at the same time with upgrading to Business plan
-			// A transferred plugin lands here once the refreshed site plugins report it active. It must be
-			// active first: the page this leaves for lists active plugins, and would not show an inactive
-			// one.
-			installedPlugin?.active ||
+			// A transferred plugin lands here once the refreshed site plugins report it active, and the
+			// site is ready for the WP Admin URL below. It must be active first: the page this leaves for
+			// lists active plugins, and would not show an inactive one.
+			( installedPlugin?.active && canReconcilePlugin ) ||
 			// Transfer to atomic uploading a zip plugin
 			( uploadedPluginSlug &&
 				isPluginUploadFlow &&
@@ -373,6 +381,7 @@ const MarketplaceProductInstall = ( {
 		uploadedPluginSlug,
 		pluginsUrlFinal,
 		isAtomicTransferReady,
+		canReconcilePlugin,
 	] ); // We need to trigger this hook also when `automatedTransferStatus` changes cause the plugin install is done on the background in that case.
 
 	// Validate theme is already active
