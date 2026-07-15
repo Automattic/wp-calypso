@@ -88,7 +88,15 @@ export function useFloatingPanel( {
 		repositionForResize: ( deltaWidth ) =>
 			repositionForResizeRef.current( deltaWidth ),
 		onResize,
-		onResizeEnd,
+		// Free-drag persists an absolute x/y; a left/bottom-edge resize shifts x/y
+		// to pin the opposite edge, so report the moved position or a close→reopen
+		// restores the pre-resize spot. Already in-bounds (x floored at 0, y clamped).
+		onResizeEnd: ( newSize: ChatSize ) => {
+			onResizeEnd?.( newSize );
+			if ( freeDrag ) {
+				onFreeDragEnd?.( { x: x.get(), y: y.get() } );
+			}
+		},
 	} );
 
 	const position = useFloatingPanelPosition( {
