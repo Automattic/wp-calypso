@@ -111,7 +111,6 @@ const MarketplaceProductInstall = ( {
 	const installedPlugin = useSelector( ( state ) =>
 		getPluginOnSite( state, siteId, isPluginUploadFlow ? uploadedPluginSlug : pluginSlug )
 	);
-	const pluginActive = !! installedPlugin?.active;
 	const automatedTransferStatus = useSelector( ( state ) =>
 		getAutomatedTransferStatus( state, siteId )
 	);
@@ -297,7 +296,7 @@ const MarketplaceProductInstall = ( {
 	// For marketplace plugins (e.g. sensei-pro), the atomic transfer + plugin install
 	// is initiated during checkout, not by this component. The wporg data is unavailable,
 	// so atomicFlow is never set. Once the site is atomic, poll for installed plugins
-	// so that the existing redirect (installedPlugin && pluginActive) fires.
+	// so that the existing redirect (installedPlugin?.active) fires.
 	const isMarketplacePluginFlow =
 		! atomicFlow &&
 		! isPluginUploadFlow &&
@@ -327,7 +326,7 @@ const MarketplaceProductInstall = ( {
 	// a lost response can follow a server-side success, and the refreshed list is what confirms it.
 	const shouldFetchPlugin =
 		!! pluginSlug &&
-		! pluginActive &&
+		! installedPlugin?.active &&
 		! isFetchingSitePlugins &&
 		canReconcilePlugin &&
 		installUnderway;

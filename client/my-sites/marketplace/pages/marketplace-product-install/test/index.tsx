@@ -262,13 +262,18 @@ describe( 'MarketplaceProductInstall', () => {
 		await expectRedirectsOnceActive( rendered );
 	} );
 
-	it( 'does not activate or redirect before the transferred atomic site is ready', async () => {
-		mockSite.isReady = false;
+	// A transferred plugin must wait on two readiness signals before this page acts: the atomic site
+	// being ready for its WP Admin URL, and the manage-plugins capability having propagated.
+	it.each( [
+		[ 'the transferred atomic site is ready', 'isReady' as const ],
+		[ 'the manage-plugins capability propagates', 'canManage' as const ],
+	] )( 'does not activate or redirect before %s', async ( _label, gate ) => {
+		mockSite[ gate ] = false;
 		const rendered = install();
 		await start( rendered );
 
-		// The plugin has turned up, but the site is not ready, so it must not activate it, poll, or
-		// send the user to a WP Admin URL that is not there yet.
+		// The plugin has turned up, but the gate is not open, so it must not activate it, poll, or send
+		// the user to a WP Admin URL that is not there yet.
 		mockSite.installedPlugin = PLUGIN;
 		fetchSitePlugins.mockClear();
 		await advance( rendered, 6000 );
@@ -276,30 +281,8 @@ describe( 'MarketplaceProductInstall', () => {
 		expect( fetchSitePlugins ).not.toHaveBeenCalled();
 		expect( window.location.href ).toBe( '' );
 
-		// Once the site is ready, it activates the plugin and, once active, redirects.
-		mockSite.isReady = true;
-		await advance( rendered, 3000 );
-		expect( activatePlugin ).toHaveBeenCalledWith( SITE_ID, PLUGIN );
-
-		await expectRedirectsOnceActive( rendered );
-	} );
-
-	it( 'waits for the manage-plugins capability before activating or redirecting', async () => {
-		mockSite.canManage = false; // still propagating after the transfer
-		const rendered = install();
-		await start( rendered );
-
-		// Transfer complete and the site atomic-ready, but the capability has not propagated: the
-		// one-shot activation must not fire yet, and nothing should redirect.
-		mockSite.installedPlugin = PLUGIN;
-		fetchSitePlugins.mockClear();
-		await advance( rendered, 6000 );
-		expect( activatePlugin ).not.toHaveBeenCalled();
-		expect( fetchSitePlugins ).not.toHaveBeenCalled();
-		expect( window.location.href ).toBe( '' );
-
-		// Once it propagates, it activates and, once active, redirects.
-		mockSite.canManage = true;
+		// Once the gate opens, it activates the plugin and, once active, redirects.
+		mockSite[ gate ] = true;
 		await advance( rendered, 3000 );
 		expect( activatePlugin ).toHaveBeenCalledWith( SITE_ID, PLUGIN );
 
