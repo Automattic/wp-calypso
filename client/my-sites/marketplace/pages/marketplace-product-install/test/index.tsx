@@ -252,22 +252,27 @@ describe( 'MarketplaceProductInstall', () => {
 		expect( window.location.href ).toBe( ACTIVE_LIST_URL );
 	} );
 
-	it( 'does not act or redirect before the transferred atomic site is ready', async () => {
+	it( 'does not activate or redirect before the transferred atomic site is ready', async () => {
 		mockSite.isReady = false;
 		const rendered = install();
 		await start( rendered );
 
-		// The plugin already reads active, but the site is not ready, so it must not poll, activate, or
+		// The plugin has turned up, but the site is not ready, so it must not activate it, poll, or
 		// send the user to a WP Admin URL that is not there yet.
-		mockSite.installedPlugin = ACTIVE_PLUGIN;
+		mockSite.installedPlugin = PLUGIN;
 		fetchSitePlugins.mockClear();
 		await advance( rendered, 6000 );
+		expect( activatePlugin ).not.toHaveBeenCalled();
 		expect( fetchSitePlugins ).not.toHaveBeenCalled();
 		expect( window.location.href ).toBe( '' );
 
-		// Once the site is ready, it redirects.
+		// Once the site is ready, it activates the plugin and, once active, redirects.
 		mockSite.isReady = true;
 		await advance( rendered, 3000 );
+		expect( activatePlugin ).toHaveBeenCalledWith( SITE_ID, PLUGIN );
+
+		mockSite.installedPlugin = ACTIVE_PLUGIN;
+		await settle( rendered );
 		expect( window.location.href ).toBe( ACTIVE_LIST_URL );
 	} );
 

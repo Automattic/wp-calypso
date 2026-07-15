@@ -268,26 +268,6 @@ const MarketplaceProductInstall = ( {
 		isJetpack,
 	] );
 
-	// A completed transfer is not a finished installation: it leaves the plugin inactive, and the
-	// plugin only turns up here once polling below has fetched it. Finding it ends the install step.
-	// The ref makes the activation happen once, whatever the plugin state does between renders.
-	const activationAttempted = useRef( false );
-	useEffect( () => {
-		if (
-			currentStep !== 1 ||
-			! installedPlugin ||
-			installedPlugin.active ||
-			activationAttempted.current ||
-			( isPluginUploadFlow && ! pluginUploadComplete )
-		) {
-			return;
-		}
-
-		activationAttempted.current = true;
-		setCurrentStep( 2 );
-		dispatch( activatePlugin( siteId, installedPlugin ) );
-	}, [ currentStep, installedPlugin, isPluginUploadFlow, pluginUploadComplete, dispatch, siteId ] );
-
 	// Fetch fresh site data (including admin_url) post-transfer
 	const { data: freshSite } = useQuery( {
 		...siteByIdQuery( siteId ?? 0 ),
@@ -340,6 +320,35 @@ const MarketplaceProductInstall = ( {
 		( currentStep !== 0 || isMarketplacePluginFlow );
 
 	useInterval( () => dispatch( fetchSitePlugins( siteId ) ), shouldFetchPlugin ? 3000 : null );
+
+	// A completed transfer is not a finished installation: it leaves the plugin inactive, and the
+	// plugin only turns up here once polling above has fetched it. Finding it ends the install step.
+	// The ref makes the activation happen once, whatever the plugin state does between renders.
+	const activationAttempted = useRef( false );
+	useEffect( () => {
+		if (
+			! canReconcilePlugin ||
+			currentStep !== 1 ||
+			! installedPlugin ||
+			installedPlugin.active ||
+			activationAttempted.current ||
+			( isPluginUploadFlow && ! pluginUploadComplete )
+		) {
+			return;
+		}
+
+		activationAttempted.current = true;
+		setCurrentStep( 2 );
+		dispatch( activatePlugin( siteId, installedPlugin ) );
+	}, [
+		canReconcilePlugin,
+		currentStep,
+		installedPlugin,
+		isPluginUploadFlow,
+		pluginUploadComplete,
+		dispatch,
+		siteId,
+	] );
 
 	const canManagePlugins = useSelector( ( state ) => {
 		return siteHasFeature( state, selectedSite?.ID, WPCOM_FEATURES_MANAGE_PLUGINS );
