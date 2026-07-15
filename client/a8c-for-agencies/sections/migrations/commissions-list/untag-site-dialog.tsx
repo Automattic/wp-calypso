@@ -13,20 +13,20 @@ import {
 import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import useMinimizeHelpCenterOnMount from 'calypso/a8c-for-agencies/hooks/use-minimize-help-center-on-mount';
-import { useDispatch } from 'calypso/state';
-import { successNotice } from 'calypso/state/notices/actions';
 import type { TaggedSite } from '../types';
+import type { ReactNode } from 'react';
 
 export default function UntagSiteDialog( {
 	site,
 	migrationTags,
 	onClose,
+	onSuccess,
 }: {
 	site: TaggedSite;
 	migrationTags: string[];
 	onClose: () => void;
+	onSuccess: ( message: ReactNode ) => void;
 } ) {
-	const dispatch = useDispatch();
 	const queryClient = useQueryClient();
 	const { data: agency } = useQuery( activeAgencyQuery() );
 	const agencyId = agency?.id;
@@ -56,17 +56,14 @@ export default function UntagSiteDialog( {
 						queryKey: agencyMigrationCommissionSitesQuery( agencyId ).queryKey,
 					} );
 					onClose();
-					dispatch(
-						successNotice(
-							createInterpolateElement(
-								sprintf(
-									/* translators: %s: the site URL */
-									__( 'Successfully untagged <strong>%s</strong>.' ),
-									site.url
-								),
-								{ strong: <strong /> }
+					onSuccess(
+						createInterpolateElement(
+							sprintf(
+								/* translators: %s: the site URL */
+								__( 'Successfully untagged <strong>%s</strong>.' ),
+								site.url
 							),
-							{ id: 'a4a-commission-list-untag-success', duration: 5000 }
+							{ strong: <strong /> }
 						)
 					);
 				},
