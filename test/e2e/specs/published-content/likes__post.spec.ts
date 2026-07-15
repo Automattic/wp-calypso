@@ -13,7 +13,10 @@ import { tags, test } from '../../lib/pw-base';
 
 test.describe(
 	'Likes: Post',
-	{ tag: [ tags.GUTENBERG, tags.CALYPSO_PR, tags.CALYPSO_RELEASE ] },
+	{
+		// This test exercises the published Like widget, not the editor.
+		tag: [ tags.CALYPSO_PR, tags.CALYPSO_RELEASE ],
+	},
 	() => {
 		const features = envToFeatureKey( envVariables );
 		const accountName = getTestAccountByFeature( features, [
