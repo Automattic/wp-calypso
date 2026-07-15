@@ -2148,8 +2148,10 @@ __metadata:
     "@wordpress/core-data": "npm:^7.48.0"
     "@wordpress/dom": "npm:^4.48.0"
     "@wordpress/element": "npm:^8.0.0"
+    "@wordpress/html-entities": "npm:^4.48.0"
     "@wordpress/i18n": "npm:^6.21.0"
     "@wordpress/icons": "npm:^13.3.0"
+    "@wordpress/keycodes": "npm:^4.48.0"
     "@wordpress/url": "npm:^4.48.0"
     clsx: "npm:^2.1.1"
     copyfiles: "npm:^2.4.1"
@@ -2157,6 +2159,7 @@ __metadata:
     postcss: "npm:^8.5.15"
     route-recognizer: "npm:^0.3.4"
     storybook: "npm:^9.1.20"
+    tslib: "npm:^2.8.1"
     typescript: "npm:^6.0.3"
     webpack: "npm:^5.99.8"
   peerDependencies:
