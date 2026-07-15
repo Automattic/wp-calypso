@@ -1,3 +1,4 @@
+import { snoozeAccountRecoveryInterstitial } from '../../lib/dashboard-helpers';
 import { getAccount } from '../../lib/get-account';
 import { expect, tags, test } from '../../lib/pw-base';
 import type { Page } from 'playwright';
@@ -30,7 +31,7 @@ async function removeAllSecurityKeysViaCalypso(
 	page: Page,
 	calypsoBaseUrl: string
 ): Promise< void > {
-	await page.goto( `${ calypsoBaseUrl }/me/security` );
+	await page.goto( `${ calypsoBaseUrl }/me/security/two-step` );
 	// The section only renders once the keys have been fetched.
 	const section = page.locator( '.security-2fa-key' );
 	await section.waitFor();
@@ -48,16 +49,23 @@ test.describe(
 	{ tag: [ tags.DASHBOARD_PR, tags.CALYPSO_RELEASE ] },
 	() => {
 		test( 'As a WordPress.com user with two-step auth, I can register and remove a security key from the dashboard', async ( {
+			browserName,
 			environment,
 			page,
 			pageDashboard,
 		} ) => {
+			test.skip(
+				browserName !== 'chromium',
+				'CDP virtual authenticators are only available in Chromium'
+			);
+
 			const keyName = `e2e-key-${ Date.now() }`;
 			let keyMayExist = false;
 
 			try {
 				await test.step( 'Given I am authenticated with two-step authentication', async function () {
 					const testAccount = await getAccount( page, 'totpUser' );
+					await snoozeAccountRecoveryInterstitial( testAccount.restAPI );
 					await testAccount.authenticate( page, { waitUntilStable: false } );
 				} );
 
