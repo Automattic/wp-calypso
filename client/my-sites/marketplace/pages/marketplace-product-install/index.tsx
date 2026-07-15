@@ -21,6 +21,7 @@ import { useWPCOMPlugin } from 'calypso/data/marketplace/use-wpcom-plugins-query
 import Masterbar from 'calypso/layout/masterbar/masterbar';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { useInterval } from 'calypso/lib/interval';
+import { ACTIVATE_PLUGIN } from 'calypso/lib/plugins/constants';
 import { getProductSlugByPeriodVariation } from 'calypso/lib/plugins/utils';
 import MarketplaceProgressBar from 'calypso/my-sites/marketplace/components/progressbar';
 import useMarketplaceAdditionalSteps from 'calypso/my-sites/marketplace/pages/marketplace-product-install/use-marketplace-additional-steps';
@@ -42,6 +43,7 @@ import {
 	getStatusForPlugin,
 	isRequesting,
 } from 'calypso/state/plugins/installed/selectors-ts';
+import { PLUGIN_INSTALLATION_ERROR } from 'calypso/state/plugins/installed/status/constants';
 import { fetchPluginData as wporgFetchPluginData } from 'calypso/state/plugins/wporg/actions';
 import { getPlugin, isFetched } from 'calypso/state/plugins/wporg/selectors';
 import {
@@ -121,6 +123,23 @@ const MarketplaceProductInstall = ( {
 	const pluginInstallStatus = useSelector( ( state ) =>
 		getStatusForPlugin( state, siteId, pluginSlug )
 	);
+
+	// Activation status is recorded under the installed plugin's id, not the slug.
+	const activationStatus = useSelector( ( state ) =>
+		installedPlugin ? getStatusForPlugin( state, siteId, installedPlugin.id ) : undefined
+	);
+
+	// The declared error type is a string, but a failed activation stores the raw error object.
+	const activationError = activationStatus?.error as string | { error?: string } | undefined;
+	const activationErrorCode =
+		typeof activationError === 'object' ? activationError?.error : activationError;
+
+	// An activation_error means the plugin was already active, so it is not a failure: keep waiting
+	// for the refreshed active state. Any other activation error is real.
+	const activationFailed =
+		activationStatus?.action === ACTIVATE_PLUGIN &&
+		activationStatus.status === PLUGIN_INSTALLATION_ERROR &&
+		activationErrorCode !== 'activation_error';
 
 	const productsList = useSelector( getProductsList );
 	const isProductListFetched = Object.values( productsList ).length > 0;
@@ -270,27 +289,23 @@ const MarketplaceProductInstall = ( {
 
 	// A completed transfer is not a finished installation: it leaves the plugin inactive, and the
 	// plugin only turns up here once polling below has fetched it. Finding it ends the install step.
+	// The ref makes the activation happen once, whatever the plugin state does between renders.
+	const activationAttempted = useRef( false );
 	useEffect( () => {
 		if (
-			! installedPlugin ||
-			pluginActive ||
 			currentStep !== 1 ||
+			! installedPlugin ||
+			installedPlugin.active ||
+			activationAttempted.current ||
 			( isPluginUploadFlow && ! pluginUploadComplete )
 		) {
 			return;
 		}
 
+		activationAttempted.current = true;
 		setCurrentStep( 2 );
 		dispatch( activatePlugin( siteId, installedPlugin ) );
-	}, [
-		installedPlugin,
-		pluginActive,
-		currentStep,
-		isPluginUploadFlow,
-		pluginUploadComplete,
-		dispatch,
-		siteId,
-	] );
+	}, [ currentStep, installedPlugin, isPluginUploadFlow, pluginUploadComplete, dispatch, siteId ] );
 
 	// Fetch fresh site data (including admin_url) post-transfer
 	const { data: freshSite } = useQuery( {
@@ -334,8 +349,10 @@ const MarketplaceProductInstall = ( {
 	const shouldReconcilePlugin = isTransferredPluginFlow || isMarketplacePluginFlow;
 
 	// Poll until the plugin is active, not just present: an activation can be reported ambiguously, so
-	// only a refreshed active state ends the wait. Skip a tick while a request is already in flight.
-	const shouldFetchPlugin = shouldReconcilePlugin && ! pluginActive && ! isFetchingSitePlugins;
+	// a refreshed active state settles it. Stop on a genuine failure, and skip a tick while a request
+	// is already in flight.
+	const shouldFetchPlugin =
+		shouldReconcilePlugin && ! pluginActive && ! activationFailed && ! isFetchingSitePlugins;
 
 	useInterval( () => dispatch( fetchSitePlugins( siteId ) ), shouldFetchPlugin ? 3000 : null );
 
@@ -530,6 +547,7 @@ const MarketplaceProductInstall = ( {
 		if (
 			pluginUploadError ||
 			pluginInstallStatus?.error ||
+			activationFailed ||
 			( atomicFlow && automatedTransferStatus === transferStates.FAILURE )
 		) {
 			return (

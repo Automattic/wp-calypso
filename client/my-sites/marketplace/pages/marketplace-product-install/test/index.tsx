@@ -1,7 +1,7 @@
 /**
  * @jest-environment jsdom
  */
-import { render, act } from '@testing-library/react';
+import { render, screen, act } from '@testing-library/react';
 import MarketplaceProductInstall from '../index';
 
 const PLUGIN_SLUG = 'give';
@@ -21,6 +21,8 @@ const mockSite = {
 	isWporgPlugin: true,
 	// Whether a site-plugins request is in flight, so a test can hold off the next poll.
 	isFetching: false,
+	// The activation status the store reports for the installed plugin, keyed by its id.
+	activationStatus: null as { action: string; status: string; error?: unknown } | null,
 };
 
 const mockDispatch = jest.fn();
@@ -53,7 +55,9 @@ jest.mock( 'calypso/state/plugins/wporg/selectors', () => ( {
 } ) );
 jest.mock( 'calypso/state/plugins/installed/selectors-ts', () => ( {
 	getPluginOnSite: () => mockSite.installedPlugin,
-	getStatusForPlugin: () => null,
+	getStatusForPlugin: ( _state: unknown, _siteId: number, pluginId: string ) =>
+		// The installed plugin's id, which activation status is keyed by (PLUGIN.id).
+		pluginId === 'give/give' ? mockSite.activationStatus : null,
 	isRequesting: () => mockSite.isFetching,
 } ) );
 jest.mock( 'calypso/state/automated-transfer/selectors', () => ( {
@@ -177,6 +181,7 @@ describe( 'MarketplaceProductInstall', () => {
 		mockSite.isAtomic = false;
 		mockSite.isWporgPlugin = true;
 		mockSite.isFetching = false;
+		mockSite.activationStatus = null;
 		originalLocation = window.location;
 		Object.defineProperty( window, 'location', { value: { href: '' }, writable: true } );
 	} );
@@ -229,16 +234,21 @@ describe( 'MarketplaceProductInstall', () => {
 		expect( window.location.href ).toBe( ACTIVE_LIST_URL );
 	} );
 
-	it( 'redirects on a later active refresh even if activation looked like it failed', async () => {
+	it( 'keeps polling after an activation_error, which means the plugin was already active', async () => {
 		const rendered = install();
 		await start( rendered );
 
-		// Activation is dispatched, but the store still reports the plugin inactive: an activation
-		// response is not authoritative. The page waits for the refreshed active state, not the action.
 		mockSite.installedPlugin = PLUGIN;
 		await settle( rendered );
 		expect( activatePlugin ).toHaveBeenCalledWith( SITE_ID, PLUGIN );
 
+		// An activation_error is not a failure: it means already-active. The page keeps waiting for the
+		// refreshed active state rather than showing an error.
+		mockSite.activationStatus = {
+			action: 'ACTIVATE_PLUGIN',
+			status: 'error',
+			error: { error: 'activation_error' },
+		};
 		fetchSitePlugins.mockClear();
 		await advance( rendered, 3000 );
 		expect( fetchSitePlugins ).toHaveBeenCalledWith( SITE_ID );
@@ -247,6 +257,27 @@ describe( 'MarketplaceProductInstall', () => {
 		mockSite.installedPlugin = ACTIVE_PLUGIN;
 		await settle( rendered );
 		expect( window.location.href ).toBe( ACTIVE_LIST_URL );
+	} );
+
+	it( 'shows an error and stops polling on a genuine activation failure', async () => {
+		const rendered = install();
+		await start( rendered );
+
+		mockSite.installedPlugin = PLUGIN;
+		await settle( rendered );
+		expect( activatePlugin ).toHaveBeenCalledWith( SITE_ID, PLUGIN );
+
+		mockSite.activationStatus = {
+			action: 'ACTIVATE_PLUGIN',
+			status: 'error',
+			error: { error: 'some_other_failure' },
+		};
+		await settle( rendered );
+		fetchSitePlugins.mockClear();
+		await advance( rendered, 6000 );
+		expect( fetchSitePlugins ).not.toHaveBeenCalled();
+		expect( screen.getByText( /An error occurred while installing the plugin/ ) ).toBeVisible();
+		expect( window.location.href ).toBe( '' );
 	} );
 
 	it( 'does not start a new plugin fetch while one is already in flight', async () => {
