@@ -124,9 +124,15 @@ const MarketplaceProductInstall = ( {
 		getStatusForPlugin( state, siteId, pluginSlug )
 	);
 
+	// Guards the one activation this page dispatches. Also scopes the failure below to that attempt:
+	// the status persists by plugin id across the session, so a stale error from an earlier install
+	// must not count here — the checkout-driven flow, which never dispatches its own activation,
+	// would otherwise pick up someone else's failure.
+	const activationAttempted = useRef( false );
+
 	// Activation records a terminal status under the installed plugin's id. An activation_error just
 	// means the plugin was already active, so keep waiting for the refreshed active state; any other
-	// error is a real failure with no automatic recovery.
+	// error is a real failure of our own attempt.
 	const activationStatus = useSelector( ( state ) =>
 		installedPlugin ? getStatusForPlugin( state, siteId, installedPlugin.id ) : undefined
 	);
@@ -135,6 +141,7 @@ const MarketplaceProductInstall = ( {
 	const activationErrorCode =
 		typeof activationError === 'object' ? activationError?.error : activationError;
 	const activationFailed =
+		activationAttempted.current &&
 		activationStatus?.status === PLUGIN_INSTALLATION_ERROR &&
 		activationStatus.action === ACTIVATE_PLUGIN &&
 		activationErrorCode !== 'activation_error';
@@ -337,12 +344,11 @@ const MarketplaceProductInstall = ( {
 		( ! siteJustTransferred || ( isAtomicTransferReady && canManagePlugins ) );
 
 	// Poll for the active state like the theme flow polls the active theme: once the flow is under
-	// way, until the server reports it active. Stop on a genuine activation failure, which the error
-	// screen surfaces instead.
+	// way, until the server reports it active. Keep polling even after a reported activation failure:
+	// a lost response can follow a server-side success, and the refreshed list is what confirms it.
 	const shouldFetchPlugin =
 		!! pluginSlug &&
 		! pluginActive &&
-		! activationFailed &&
 		! isFetchingSitePlugins &&
 		canReconcilePlugin &&
 		installUnderway;
@@ -350,8 +356,8 @@ const MarketplaceProductInstall = ( {
 	useInterval( () => dispatch( fetchSitePlugins( siteId ) ), shouldFetchPlugin ? 3000 : null );
 
 	// A transfer leaves the plugin installed but inactive, and it only turns up here once polling has
-	// fetched it. The ref dispatches activation once, whatever the plugin state does between renders.
-	const activationAttempted = useRef( false );
+	// fetched it. The ref (above) dispatches activation once, whatever the plugin state does between
+	// renders.
 	useEffect( () => {
 		if (
 			! canReconcilePlugin ||
