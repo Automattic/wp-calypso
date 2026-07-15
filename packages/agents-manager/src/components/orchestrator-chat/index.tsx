@@ -369,7 +369,7 @@ export default function OrchestratorChat( {
 		},
 	} );
 
-	const areSuggestionsVisible = isOpen || isCompactMode;
+	const areSuggestionsVisible = isOpen || isCompactMode || isDocked;
 
 	// Use dynamic suggestions from the external provider (e.g., Big Sky block-based suggestions)
 	const maxDynamicSuggestions = isDocked ? undefined : 3;

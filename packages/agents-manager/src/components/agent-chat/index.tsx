@@ -13,9 +13,14 @@ import { useDispatch, useSelect } from '@wordpress/data';
 import { useCallback, useMemo, useRef } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import clsx from 'clsx';
+import {
+	getWritingSuggestionLabel,
+	WRITING_SUGGESTION_IDS,
+} from '../../hooks/use-empty-view-suggestions';
 import useHasAiChatEntryButton from '../../hooks/use-has-ai-chat-entry-button';
 import { AGENTS_MANAGER_STORE } from '../../stores';
 import { getAgentsManagerInlineData } from '../../utils/get-agents-manager-inline-data';
+import { isEditorPage } from '../../utils/is-editor-page';
 import { isReaderChatHost } from '../../utils/is-reader-chat-agent';
 import { recordBigSkyTracksEvent } from '../../utils/tracks';
 import ChatHeader, { type Options as ChatHeaderOptions } from '../chat-header';
@@ -194,6 +199,27 @@ export default function AgentChat( {
 		() => ( { a: CustomALink, ...markdownComponents } ),
 		[ markdownComponents ]
 	);
+	const shouldFormatWritingSuggestions = groupWritingSuggestions || isEditorPage();
+	const displayedSuggestions = useMemo(
+		() =>
+			suggestions.map( ( suggestion ) =>
+				shouldFormatWritingSuggestions && WRITING_SUGGESTION_IDS.has( suggestion.id )
+					? { ...suggestion, label: getWritingSuggestionLabel( suggestion ) }
+					: suggestion
+			),
+		[ shouldFormatWritingSuggestions, suggestions ]
+	);
+	const handleDisplayedSuggestionClick = useCallback(
+		( selectedSuggestion: Suggestion | string ) => {
+			const originalSuggestion =
+				typeof selectedSuggestion === 'string'
+					? selectedSuggestion
+					: suggestions.find( ( suggestion ) => suggestion.id === selectedSuggestion.id ) ??
+					  selectedSuggestion;
+			onSuggestionClick?.( originalSuggestion, suggestions );
+		},
+		[ onSuggestionClick, suggestions ]
+	);
 
 	const messageRenderer = useMemo(
 		() =>
@@ -287,9 +313,9 @@ export default function AgentChat( {
 			variant={ isDocked ? 'embedded' : 'floating' }
 			freeDrag={ ! isDocked }
 			resizable={ ! isDocked }
-			suggestions={ suggestions }
+			suggestions={ displayedSuggestions }
 			clearSuggestions={ clearSuggestions }
-			onSuggestionClick={ onSuggestionClick }
+			onSuggestionClick={ onSuggestionClick ? handleDisplayedSuggestionClick : undefined }
 			floatingChatState={ floatingChatState }
 			onClose={ onClose }
 			onExpand={ onExpand }
