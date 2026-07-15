@@ -156,12 +156,12 @@ describe( 'usePricingMetaForGridPlans', () => {
 			} ) );
 			// Yearly purchase: renewal 600/yr, active intro 120/yr.
 			Purchases.useSitePurchaseById.mockImplementation( () => ( {
-				priceInteger: 600,
-				currencyCode: 'USD',
-				billPeriodDays: 365,
-				introductoryOffer: {
-					isWithinPeriod: true,
-					costPerIntervalInteger: 120,
+				price_integer: 600,
+				currency_code: 'USD',
+				bill_period_days: 365,
+				introductory_offer: {
+					is_within_period: true,
+					cost_per_interval_integer: 120,
 				},
 			} ) );
 		} );

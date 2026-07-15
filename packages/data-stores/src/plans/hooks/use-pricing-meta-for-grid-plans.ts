@@ -1,3 +1,4 @@
+import { getPurchaseIntroductoryOffer } from '@automattic/api-core';
 import {
 	PLAN_MONTHLY_PERIOD,
 	type PlanSlug,
@@ -200,30 +201,31 @@ const usePricingMetaForGridPlans = ( {
 					let renewalPrice: Plans.PlanPricing[ 'originalPrice' ] | undefined;
 
 					if ( purchasedPlan ) {
+						const introductoryOffer = getPurchaseIntroductoryOffer( purchasedPlan );
 						const showIntroOfferHeadline =
 							!! showBillingDescriptionForIncreasedRenewalPrice &&
-							purchasedPlan.introductoryOffer?.isWithinPeriod;
+							introductoryOffer?.isWithinPeriod;
 						const currentTermPrice = showIntroOfferHeadline
-							? purchasedPlan.introductoryOffer!.costPerIntervalInteger
-							: purchasedPlan.priceInteger;
-						const isMonthly = purchasedPlan.billPeriodDays === PLAN_MONTHLY_PERIOD;
+							? introductoryOffer!.costPerIntervalInteger
+							: purchasedPlan.price_integer;
+						const isMonthly = purchasedPlan.bill_period_days === PLAN_MONTHLY_PERIOD;
 
 						if ( isMonthly && monthlyPrice !== currentTermPrice ) {
 							monthlyPrice = currentTermPrice;
 							fullPrice = parseFloat( ( currentTermPrice * 12 ).toFixed( 2 ) );
 						} else if ( fullPrice !== currentTermPrice ) {
-							const term = getTermFromDuration( purchasedPlan.billPeriodDays ) || '';
+							const term = getTermFromDuration( purchasedPlan.bill_period_days ) || '';
 							monthlyPrice = calculateMonthlyPrice( term, currentTermPrice );
 							fullPrice = currentTermPrice;
 						}
 
 						if ( showIntroOfferHeadline ) {
-							const renewalTerm = getTermFromDuration( purchasedPlan.billPeriodDays ) || '';
+							const renewalTerm = getTermFromDuration( purchasedPlan.bill_period_days ) || '';
 							renewalPrice = {
 								monthly: isMonthly
-									? purchasedPlan.priceInteger
-									: calculateMonthlyPrice( renewalTerm, purchasedPlan.priceInteger ),
-								full: purchasedPlan.priceInteger,
+									? purchasedPlan.price_integer
+									: calculateMonthlyPrice( renewalTerm, purchasedPlan.price_integer ),
+								full: purchasedPlan.price_integer,
 							};
 						}
 					}
@@ -240,7 +242,7 @@ const usePricingMetaForGridPlans = ( {
 								full: null,
 							},
 							currencyCode: purchasedPlan
-								? purchasedPlan?.currencyCode
+								? purchasedPlan?.currency_code
 								: plan?.pricing?.currencyCode,
 							...( renewalPrice && { renewalPrice } ),
 						},
