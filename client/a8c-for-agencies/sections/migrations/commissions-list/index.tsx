@@ -14,7 +14,7 @@ import type {
 	TaggedSite,
 } from 'calypso/dashboard/agency/earn/migrations/types';
 
-import '../commissions/components/dataviews/style.scss';
+import 'calypso/dashboard/agency/earn/migrations/components/dataviews/style.scss';
 
 type ActiveModal =
 	| { kind: 'untag'; site: TaggedSite }

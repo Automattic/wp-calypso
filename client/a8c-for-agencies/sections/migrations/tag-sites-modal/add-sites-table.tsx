@@ -14,7 +14,7 @@ import {
 import type { Field, View } from '@wordpress/dataviews';
 import type { RecordTracksEvent, TaggedSite } from 'calypso/dashboard/agency/earn/migrations/types';
 
-import '../commissions/components/dataviews/style.scss';
+import 'calypso/dashboard/agency/earn/migrations/components/dataviews/style.scss';
 
 export default function MigrationsAddSitesTable( {
 	selectedSites,
