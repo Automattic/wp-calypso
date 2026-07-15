@@ -34,7 +34,6 @@ import type {
 	GetChatComponent,
 	UseSuggestionsHook,
 	SiteBuildUtils,
-	ImageUploadHook,
 	UseCheckpointHook,
 	ProviderCapabilities,
 } from '../../utils/load-external-providers';
@@ -58,8 +57,6 @@ interface Props {
 	getChatComponent?: GetChatComponent;
 	/** Utilities for site building flow (e.g., progress tracking, site preview). */
 	siteBuildUtils?: SiteBuildUtils;
-	/** Hook for handling image uploads within the agent chat. */
-	useImageUpload?: ImageUploadHook;
 	/** Hook for saving and restoring editor state so that AI actions can be undone. */
 	useCheckpoint?: UseCheckpointHook;
 	/** Optional capability flags declared by one or more loaded providers. */
@@ -75,7 +72,6 @@ export default function AgentDock( {
 	getChatComponent,
 	useSuggestions,
 	siteBuildUtils,
-	useImageUpload,
 	useCheckpoint,
 	capabilities,
 }: Props ) {
@@ -334,7 +330,6 @@ export default function AgentDock( {
 			useSuggestions={ useSuggestions }
 			getChatComponent={ getChatComponent }
 			siteBuildUtils={ siteBuildUtils }
-			useImageUpload={ useImageUpload }
 			useCheckpoint={ useCheckpoint }
 			capabilities={ capabilities }
 			onHasMessagesChange={ handleChatHasMessagesChange }

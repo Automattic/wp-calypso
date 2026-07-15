@@ -17,11 +17,13 @@ import { isDashboardBackport } from '../../utils/is-dashboard-backport';
 import NotFound from '../404';
 import AccountRecoveryInterstitial from '../account-recovery-interstitial';
 import { bumpStat } from '../analytics';
+import { CheckoutSuccessFlashMessage } from '../checkout-success-flash-message';
 import CommandPalette from '../command-palette';
 import { useAppContext } from '../context';
 import { useTrackVisitedAreas } from '../hooks/use-visit-counter';
 import OmnibarAgentsManager from '../interim-omnibar/omnibar-agents-manager';
 import OmnibarHelpCenter from '../interim-omnibar/omnibar-help-center';
+import MutationErrorTracker from '../mutation-error-tracker';
 import { NavigationBlockerRegistry } from '../navigation-blocker';
 import Notifications from '../notifications';
 import { useOmnibarEvent } from '../omnibar/events';
@@ -195,9 +197,11 @@ function Root() {
 			{ supports.help && <OmnibarAgentsManager /> }
 			<OmnibarSiteSwitcher />
 			<Snackbars />
+			<CheckoutSuccessFlashMessage />
 			{ isAccountRecoveryInterstitialEnabled && <AccountRecoveryInterstitial /> }
 			{ isOptInWelcomeModalEnabled && <OptInWelcomeModal /> }
 			<PageViewTracker />
+			<MutationErrorTracker />
 			<NavigationBlockerRegistry />
 			{ 'development' === process.env.NODE_ENV && (
 				<Suspense fallback={ null }>

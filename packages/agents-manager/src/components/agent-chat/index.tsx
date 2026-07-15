@@ -94,6 +94,12 @@ interface Props {
 	onCancelFeedback?: () => void;
 	/** Alternative footer to render instead of the default footer. */
 	alternativeFooter?: React.ReactNode;
+	/**
+	 * AI-interaction disclosure shown below the input (EU AI Act Art. 50(1)).
+	 * Defaults to the shared "You're chatting with AI" line; pass `false` to
+	 * hide it on surfaces that connect the user to a human (e.g. Zendesk).
+	 */
+	complianceDisclosure?: React.ReactNode | false;
 	/** Called when a context card action button is clicked. */
 	onContextCardAction?: ( card: ExternalContextCard, action: ExternalContextCardAction ) => void;
 	/** Called when a context card's dismiss button is clicked. */
@@ -168,6 +174,7 @@ export default function AgentChat( {
 	onSubmitFeedbackText = () => Promise.resolve(),
 	onCancelFeedback = () => {},
 	alternativeFooter,
+	complianceDisclosure,
 	onContextCardAction,
 	onContextCardDismiss,
 }: Props ) {
@@ -201,9 +208,8 @@ export default function AgentChat( {
 		floatingChatState = 'compact';
 	}
 
-	// Image-upload tracking mirrors Big Sky's `file_upload_*` events. The
-	// uploader only renders on the editor surface (a provider supplies
-	// `useImageUpload`); reader-chat has no provider, but gate defensively so
+	// Image-upload tracking mirrors Big Sky's `file_upload_*` events.
+	// Reader chat gets no `imageUpload`, but gate defensively so
 	// `jetpack_big_sky_*` never fires from that surface.
 	const trackImageUpload = ! isReaderChatHost() && !! imageUpload;
 
@@ -313,7 +319,7 @@ export default function AgentChat( {
 				{ alternativeFooter ? (
 					alternativeFooter
 				) : (
-					<AgentUI.Footer>
+					<AgentUI.Footer complianceDisclosure={ complianceDisclosure }>
 						<AgentUI.Suggestions />
 						<AgentUI.Notice />
 						{ imageUpload && (
@@ -330,14 +336,18 @@ export default function AgentChat( {
 								acceptedFileTypes={ acceptedImageFileTypes }
 								showFileMetadata
 								allowDragToInsert={ false }
+								disabled={ imageUpload.isUploadingImages }
 								dropZoneRef={ conversationViewRef as RefObject< HTMLElement > }
 							/>
 						) }
 						<SelectedBlock />
+						{ /* `readOnly` (not `disabled`) so the stop button stays active while a batch uploads. */ }
 						<AgentUI.Input
 							imageUploaderRef={
 								imageUpload ? ( imageUploaderRef as RefObject< ImageUploaderHandle > ) : undefined
 							}
+							imageUploadDisabled={ imageUpload?.isUploadingImages }
+							readOnly={ imageUpload?.isUploadingImages }
 							disabled={ imageUpload?.pendingImages?.length ? false : undefined }
 						/>
 					</AgentUI.Footer>
