@@ -43,7 +43,8 @@ export default function MigrationsCommissions() {
 	);
 
 	const onSuccess = useCallback(
-		( message: ReactNode ) => dispatch( successNotice( message ) ),
+		( message: ReactNode, options?: { id?: string; duration?: number } ) =>
+			dispatch( successNotice( message, options ) ),
 		[ dispatch ]
 	);
 

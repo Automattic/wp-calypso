@@ -25,7 +25,7 @@ export default function UntagSiteDialog( {
 	site: TaggedSite;
 	migrationTags: string[];
 	onClose: () => void;
-	onSuccess: ( message: ReactNode ) => void;
+	onSuccess: ( message: ReactNode, options?: { id?: string; duration?: number } ) => void;
 } ) {
 	const queryClient = useQueryClient();
 	const { data: agency } = useQuery( activeAgencyQuery() );
@@ -64,7 +64,8 @@ export default function UntagSiteDialog( {
 								site.url
 							),
 							{ strong: <strong /> }
-						)
+						),
+						{ id: 'a4a-commission-list-untag-success', duration: 5000 }
 					);
 				},
 			}

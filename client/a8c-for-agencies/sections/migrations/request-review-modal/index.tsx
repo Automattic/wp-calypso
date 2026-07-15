@@ -29,7 +29,7 @@ export default function RequestReviewModal( {
 	onClose: () => void;
 	site: TaggedSite;
 	recordTracksEvent: RecordTracksEvent;
-	onSuccess: ( message: ReactNode ) => void;
+	onSuccess: ( message: ReactNode, options?: { id?: string; duration?: number } ) => void;
 	onError: ( message: ReactNode ) => void;
 } ) {
 	const queryClient = useQueryClient();
@@ -67,7 +67,8 @@ export default function RequestReviewModal( {
 								site.url
 							),
 							{ strong: <strong /> }
-						)
+						),
+						{ id: 'a4a-commission-request-review-success', duration: 5000 }
 					);
 					onClose();
 				},
