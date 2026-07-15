@@ -1,8 +1,9 @@
 import {
+	activeAgencyQuery,
 	agencyMigrationCommissionSitesQuery,
 	requestMigrationReverificationMutation,
 } from '@automattic/api-queries';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import {
 	Button,
 	Modal,
@@ -15,8 +16,7 @@ import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import { useState } from 'react';
 import useMinimizeHelpCenterOnMount from 'calypso/a8c-for-agencies/hooks/use-minimize-help-center-on-mount';
-import { useDispatch, useSelector } from 'calypso/state';
-import { getActiveAgencyId } from 'calypso/state/a8c-for-agencies/agency/selectors';
+import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 import type { TaggedSite } from '../types';
@@ -30,7 +30,8 @@ export default function RequestReviewModal( {
 } ) {
 	const dispatch = useDispatch();
 	const queryClient = useQueryClient();
-	const agencyId = useSelector( getActiveAgencyId );
+	const { data: agency } = useQuery( activeAgencyQuery() );
+	const agencyId = agency?.id;
 	useMinimizeHelpCenterOnMount();
 
 	const { mutate: requestReview, isPending } = useMutation(

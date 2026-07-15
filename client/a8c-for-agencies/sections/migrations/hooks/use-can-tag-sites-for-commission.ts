@@ -1,6 +1,6 @@
+import { activeAgencyQuery } from '@automattic/api-queries';
+import { useQuery } from '@tanstack/react-query';
 import { useMemo } from 'react';
-import { useSelector } from 'react-redux';
-import { getActiveAgency } from 'calypso/state/a8c-for-agencies/agency/selectors';
 import {
 	A4A_MIGRATED_SITE_TAG,
 	A4A_MIGRATED_SITE_TAG_PRESSABLE_INCENTIVE_2026,
@@ -37,9 +37,9 @@ export default function useCanTagSitesForCommission(): {
 	canTagSitesForCommission: boolean;
 	migrationTags: string[];
 } {
-	const activeAgency = useSelector( getActiveAgency );
+	const { data: agency } = useQuery( activeAgencyQuery() );
 
-	const pressableUsageStartDate = activeAgency?.third_party?.pressable?.usage?.start_date;
+	const pressableUsageStartDate = agency?.third_party?.pressable?.usage?.start_date;
 	const withinPurchaseCutoff = isWithinPressablePurchaseCutoff( pressableUsageStartDate );
 
 	return useMemo( () => {

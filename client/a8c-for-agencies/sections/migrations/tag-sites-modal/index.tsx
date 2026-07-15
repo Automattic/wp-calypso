@@ -1,8 +1,9 @@
 import {
+	activeAgencyQuery,
 	agencyMigrationCommissionSitesQuery,
 	tagAgencySitesForCommissionMutation,
 } from '@automattic/api-queries';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import {
 	Button,
 	Modal,
@@ -18,8 +19,7 @@ import { Icon, info } from '@wordpress/icons';
 import { useState } from 'react';
 import useMinimizeHelpCenterOnMount from 'calypso/a8c-for-agencies/hooks/use-minimize-help-center-on-mount';
 import { preventWidows } from 'calypso/lib/formatting';
-import { useDispatch, useSelector } from 'calypso/state';
-import { getActiveAgencyId } from 'calypso/state/a8c-for-agencies/agency/selectors';
+import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 import MigrationsAddSitesTable from './add-sites-table';
@@ -39,7 +39,8 @@ export default function MigrationsTagSitesModal( {
 } ) {
 	const dispatch = useDispatch();
 	const queryClient = useQueryClient();
-	const agencyId = useSelector( getActiveAgencyId );
+	const { data: agency } = useQuery( activeAgencyQuery() );
+	const agencyId = agency?.id;
 	useMinimizeHelpCenterOnMount();
 
 	const { mutate: tagSitesForMigration, isPending } = useMutation(
