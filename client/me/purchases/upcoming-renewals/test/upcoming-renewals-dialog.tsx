@@ -78,7 +78,7 @@ describe( '<UpcomingRenewalsDialog>', () => {
 		).toHaveTextContent( '$200' );
 		expect(
 			document.body.querySelectorAll( '.upcoming-renewals-dialog__name' )[ 1 ]
-		).toHaveTextContent( /WordPress.com Personal PlanExpires in 20 days/ );
+		).toHaveTextContent( /WordPress.com PersonalExpires in 20 days/ );
 		expect(
 			document.body.querySelectorAll( '.upcoming-renewals-dialog__price' )[ 1 ]
 		).toHaveTextContent( '$100' );
