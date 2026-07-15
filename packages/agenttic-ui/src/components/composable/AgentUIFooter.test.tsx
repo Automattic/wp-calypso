@@ -5,7 +5,7 @@ import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 import {
 	ComplianceDisclosure,
 	DefaultComplianceDisclosure,
-} from './AgentUIFooter';
+} from '../chat/ComplianceDisclosure';
 
 describe( 'ComplianceDisclosure', () => {
 	let container: HTMLDivElement;
