@@ -306,23 +306,27 @@ const MarketplaceProductInstall = ( {
 		siteHasFeature( state, selectedSite?.ID, WPCOM_FEATURES_MANAGE_PLUGINS )
 	);
 
+	// A checkout-driven marketplace install reaches this page on an already-transferred site without
+	// advancing the step machine, so it stands in for both "the site just transferred" and "the flow
+	// is under way" that the other flows express through atomicFlow and currentStep.
+	const siteJustTransferred = atomicFlow || isMarketplacePluginFlow;
+	const installUnderway = currentStep !== 0 || isMarketplacePluginFlow;
+
 	// Reconciling dispatches activation and then leaves for a freshly discovered WP Admin URL, so gate
-	// on the atomic site being ready and its manage-plugins capability having propagated: a rejected
-	// one-shot activation would never be retried.
+	// on the transferred site being ready and its manage-plugins capability having propagated: a
+	// rejected one-shot activation would never be retried.
 	const canReconcilePlugin =
 		( ! atomicFlow || transferStates.COMPLETE === automatedTransferStatus ) &&
-		( ! ( atomicFlow || isMarketplacePluginFlow ) ||
-			( isAtomicTransferReady && canManagePlugins ) );
+		( ! siteJustTransferred || ( isAtomicTransferReady && canManagePlugins ) );
 
 	// Poll for the active state like the theme flow polls the active theme: once the flow is under
-	// way, until the server reports it active. A checkout-driven marketplace install can sit at step 0,
-	// so cover it by its atomic-plugin shape too.
+	// way, until the server reports it active.
 	const shouldFetchPlugin =
 		!! pluginSlug &&
 		! pluginActive &&
 		! isFetchingSitePlugins &&
 		canReconcilePlugin &&
-		( currentStep !== 0 || isMarketplacePluginFlow );
+		installUnderway;
 
 	useInterval( () => dispatch( fetchSitePlugins( siteId ) ), shouldFetchPlugin ? 3000 : null );
 
@@ -381,7 +385,6 @@ const MarketplaceProductInstall = ( {
 			} );
 		}
 	}, [
-		pluginActive,
 		automatedTransferStatus,
 		isPluginUploadFlow,
 		isAtomic,

@@ -12,8 +12,8 @@ const ADMIN_URL = 'https://example.wordpress.com/wp-admin/';
 const ACTIVE_LIST_URL = `${ ADMIN_URL }plugins.php?activate=true&plugin_status=active`;
 
 // The state the component reads, as the mocked selectors below see it. A test moves the flow along
-// by changing this and re-rendering.
-const mockSite = {
+// by changing this and re-rendering; beforeEach restores these defaults.
+const DEFAULT_SITE = {
 	installedPlugin: null as ( typeof PLUGIN & { active?: boolean } ) | null,
 	// A paid marketplace plugin is not a wp.org one, and its site is already atomic: checkout
 	// transferred it and started the install.
@@ -29,6 +29,7 @@ const mockSite = {
 	// not start one and stays at step 0 — the marketplace poll path.
 	purchaseStatus: 'PENDING',
 };
+const mockSite = { ...DEFAULT_SITE };
 
 const mockDispatch = jest.fn();
 
@@ -175,19 +176,20 @@ const advance = async ( rendered: ReturnType< typeof install >, ms: number ) => 
 	await settle( rendered );
 };
 
+// The plugin going active is what ends every flow: the store reports it, and the page redirects.
+const expectRedirectsOnceActive = async ( rendered: ReturnType< typeof install > ) => {
+	mockSite.installedPlugin = ACTIVE_PLUGIN;
+	await settle( rendered );
+	expect( window.location.href ).toBe( ACTIVE_LIST_URL );
+};
+
 describe( 'MarketplaceProductInstall', () => {
 	let originalLocation: Location;
 
 	beforeEach( () => {
 		jest.useFakeTimers();
 		jest.clearAllMocks();
-		mockSite.installedPlugin = null;
-		mockSite.isAtomic = false;
-		mockSite.isWporgPlugin = true;
-		mockSite.isFetching = false;
-		mockSite.isReady = true;
-		mockSite.canManage = true;
-		mockSite.purchaseStatus = 'PENDING';
+		Object.assign( mockSite, DEFAULT_SITE );
 		originalLocation = window.location;
 		Object.defineProperty( window, 'location', { value: { href: '' }, writable: true } );
 	} );
@@ -216,9 +218,7 @@ describe( 'MarketplaceProductInstall', () => {
 		expect( window.location.href ).toBe( '' );
 
 		// Only the refreshed active state, not the activation call, ends the wait.
-		mockSite.installedPlugin = ACTIVE_PLUGIN;
-		await settle( rendered );
-		expect( window.location.href ).toBe( ACTIVE_LIST_URL );
+		await expectRedirectsOnceActive( rendered );
 	} );
 
 	it( 'polls a paid plugin that checkout installed, without starting its own install', async () => {
@@ -241,9 +241,7 @@ describe( 'MarketplaceProductInstall', () => {
 		expect( installPlugin ).not.toHaveBeenCalled();
 		expect( window.location.href ).toBe( '' );
 
-		mockSite.installedPlugin = ACTIVE_PLUGIN;
-		await settle( rendered );
-		expect( window.location.href ).toBe( ACTIVE_LIST_URL );
+		await expectRedirectsOnceActive( rendered );
 	} );
 
 	it( 'reconciles an install on an existing-plan site, redirecting once active', async () => {
@@ -261,9 +259,7 @@ describe( 'MarketplaceProductInstall', () => {
 		await settle( rendered );
 		expect( activatePlugin ).toHaveBeenCalledWith( SITE_ID, PLUGIN );
 
-		mockSite.installedPlugin = ACTIVE_PLUGIN;
-		await settle( rendered );
-		expect( window.location.href ).toBe( ACTIVE_LIST_URL );
+		await expectRedirectsOnceActive( rendered );
 	} );
 
 	it( 'does not activate or redirect before the transferred atomic site is ready', async () => {
@@ -285,9 +281,7 @@ describe( 'MarketplaceProductInstall', () => {
 		await advance( rendered, 3000 );
 		expect( activatePlugin ).toHaveBeenCalledWith( SITE_ID, PLUGIN );
 
-		mockSite.installedPlugin = ACTIVE_PLUGIN;
-		await settle( rendered );
-		expect( window.location.href ).toBe( ACTIVE_LIST_URL );
+		await expectRedirectsOnceActive( rendered );
 	} );
 
 	it( 'waits for the manage-plugins capability before activating or redirecting', async () => {
@@ -309,9 +303,7 @@ describe( 'MarketplaceProductInstall', () => {
 		await advance( rendered, 3000 );
 		expect( activatePlugin ).toHaveBeenCalledWith( SITE_ID, PLUGIN );
 
-		mockSite.installedPlugin = ACTIVE_PLUGIN;
-		await settle( rendered );
-		expect( window.location.href ).toBe( ACTIVE_LIST_URL );
+		await expectRedirectsOnceActive( rendered );
 	} );
 
 	it( 'does not start a new plugin fetch while one is already in flight', async () => {
