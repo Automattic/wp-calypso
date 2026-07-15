@@ -21,7 +21,6 @@ import { useWPCOMPlugin } from 'calypso/data/marketplace/use-wpcom-plugins-query
 import Masterbar from 'calypso/layout/masterbar/masterbar';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { useInterval } from 'calypso/lib/interval';
-import { ACTIVATE_PLUGIN } from 'calypso/lib/plugins/constants';
 import { getProductSlugByPeriodVariation } from 'calypso/lib/plugins/utils';
 import MarketplaceProgressBar from 'calypso/my-sites/marketplace/components/progressbar';
 import useMarketplaceAdditionalSteps from 'calypso/my-sites/marketplace/pages/marketplace-product-install/use-marketplace-additional-steps';
@@ -43,7 +42,6 @@ import {
 	getStatusForPlugin,
 	isRequesting,
 } from 'calypso/state/plugins/installed/selectors-ts';
-import { PLUGIN_INSTALLATION_ERROR } from 'calypso/state/plugins/installed/status/constants';
 import { fetchPluginData as wporgFetchPluginData } from 'calypso/state/plugins/wporg/actions';
 import { getPlugin, isFetched } from 'calypso/state/plugins/wporg/selectors';
 import {
@@ -124,24 +122,8 @@ const MarketplaceProductInstall = ( {
 		getStatusForPlugin( state, siteId, pluginSlug )
 	);
 
-	// The plugin this page activated, if any. Reading the activation status by this captured id keeps
-	// the failure stable while a poll is in flight (the installed-plugin selectors drop a site while
-	// its list is being fetched, so installedPlugin blinks out), and scopes it to our own attempt — a
-	// stale error from an earlier install, or the checkout-driven flow that never activates here, has
-	// no captured plugin and so does not count. The slug also survives the blink for the recovery link.
-	const activatedPlugin = useRef< { id: string; slug: string } | null >( null );
-
-	const activationStatus = useSelector( ( state ) =>
-		activatedPlugin.current
-			? getStatusForPlugin( state, siteId, activatedPlugin.current.id )
-			: undefined
-	);
-	// Every terminal activation error is surfaced: activation_error is not reliably "already active"
-	// (the API returns it for a missing plugin file too), and polling continues regardless, so an
-	// already-active plugin still redirects once the refreshed list confirms it.
-	const activationFailed =
-		activationStatus?.status === PLUGIN_INSTALLATION_ERROR &&
-		activationStatus.action === ACTIVATE_PLUGIN;
+	// Guards the one activation this page dispatches.
+	const activationAttempted = useRef( false );
 
 	const productsList = useSelector( getProductsList );
 	const isProductListFetched = Object.values( productsList ).length > 0;
@@ -353,21 +335,21 @@ const MarketplaceProductInstall = ( {
 	useInterval( () => dispatch( fetchSitePlugins( siteId ) ), shouldFetchPlugin ? 3000 : null );
 
 	// A transfer leaves the plugin installed but inactive, and it only turns up here once polling has
-	// fetched it. Capturing the id (above) both guards against a second dispatch and records which
-	// plugin we activated.
+	// fetched it. The ref (above) dispatches activation once, whatever the plugin state does between
+	// renders.
 	useEffect( () => {
 		if (
 			! canReconcilePlugin ||
 			currentStep !== 1 ||
 			! installedPlugin ||
 			installedPlugin.active ||
-			activatedPlugin.current !== null ||
+			activationAttempted.current ||
 			( isPluginUploadFlow && ! pluginUploadComplete )
 		) {
 			return;
 		}
 
-		activatedPlugin.current = { id: installedPlugin.id, slug: installedPlugin.slug };
+		activationAttempted.current = true;
 		setCurrentStep( 2 );
 		dispatch( activatePlugin( siteId, installedPlugin ) );
 	}, [
@@ -560,19 +542,6 @@ const MarketplaceProductInstall = ( {
 					secondaryActionURL={ `/plugins/upload/${ selectedSiteSlug }` }
 					action={ translate( 'Re-upload plugin' ) }
 					actionURL={ `https://${ selectedSiteSlug }/wp-admin/plugin-install.php?tab=upload` }
-				/>
-			);
-		}
-		// The plugin is installed, so the generic "upload it again" recovery below does not apply. Point
-		// at the plugin's own page, where it can be activated by hand. Skip this once it reports active,
-		// which redirects instead — an already-active plugin can report a terminal error first.
-		if ( activationFailed && ! pluginActive ) {
-			return (
-				<EmptyContent
-					title={ null }
-					line={ translate( 'We installed the plugin, but could not activate it.' ) }
-					action={ translate( 'View plugin' ) }
-					actionURL={ `/plugins/${ activatedPlugin.current?.slug }/${ selectedSiteSlug }` }
 				/>
 			);
 		}

@@ -1,7 +1,7 @@
 /**
  * @jest-environment jsdom
  */
-import { render, screen, act } from '@testing-library/react';
+import { render, act } from '@testing-library/react';
 import MarketplaceProductInstall from '../index';
 
 const PLUGIN_SLUG = 'give';
@@ -28,8 +28,6 @@ const DEFAULT_SITE = {
 	// The checkout install status. COMPLETED means checkout finished the install, so this page does
 	// not start one and stays at step 0 — the marketplace poll path.
 	purchaseStatus: 'PENDING',
-	// The status the store reports for the installed plugin's id, e.g. a failed activation.
-	activationStatus: null as { status: string; action: string; error?: unknown } | null,
 };
 const mockSite = { ...DEFAULT_SITE };
 
@@ -63,9 +61,7 @@ jest.mock( 'calypso/state/plugins/wporg/selectors', () => ( {
 } ) );
 jest.mock( 'calypso/state/plugins/installed/selectors-ts', () => ( {
 	getPluginOnSite: () => mockSite.installedPlugin,
-	// Install status is keyed by slug; activation status by the installed plugin's id (PLUGIN.id).
-	getStatusForPlugin: ( _state: unknown, _siteId: number, pluginId: string ) =>
-		pluginId === 'give/give' ? mockSite.activationStatus : null,
+	getStatusForPlugin: () => null,
 	isRequesting: () => mockSite.isFetching,
 } ) );
 jest.mock( 'calypso/state/automated-transfer/selectors', () => ( {
@@ -307,92 +303,6 @@ describe( 'MarketplaceProductInstall', () => {
 		await advance( rendered, 3000 );
 		expect( activatePlugin ).toHaveBeenCalledWith( SITE_ID, PLUGIN );
 
-		await expectRedirectsOnceActive( rendered );
-	} );
-
-	it( 'shows an error on a genuine activation failure, but keeps reconciling', async () => {
-		const rendered = install();
-		await start( rendered );
-
-		mockSite.installedPlugin = PLUGIN;
-		await settle( rendered );
-		expect( activatePlugin ).toHaveBeenCalledWith( SITE_ID, PLUGIN );
-
-		// Activation reports a real failure, so the page surfaces the error.
-		mockSite.activationStatus = {
-			status: 'error',
-			action: 'ACTIVATE_PLUGIN',
-			error: { error: 'some_failure' },
-		};
-		await settle( rendered );
-		expect( screen.getByText( /could not activate it/ ) ).toBeVisible();
-		// The message points at the plugin's own page rather than stranding the user or telling them to
-		// re-upload an already-installed plugin.
-		expect( screen.getByRole( 'link', { name: 'View plugin' } ) ).toHaveAttribute(
-			'href',
-			'/plugins/give/example.wordpress.com'
-		);
-
-		// The next poll drops the plugin from the installed-plugin selector, but the error must not
-		// flip back to the progress screen — it is read from the captured id, not the live plugin.
-		mockSite.installedPlugin = null;
-		mockSite.isFetching = true;
-		await settle( rendered );
-		expect( screen.getByText( /could not activate it/ ) ).toBeVisible();
-		expect( screen.queryByText( /Installing plugin/ ) ).toBeNull();
-		mockSite.isFetching = false;
-
-		// A lost response can follow a server-side success, so polling continues and a later active
-		// refresh still redirects.
-		mockSite.installedPlugin = PLUGIN;
-		await settle( rendered );
-		fetchSitePlugins.mockClear();
-		await advance( rendered, 3000 );
-		expect( fetchSitePlugins ).toHaveBeenCalledWith( SITE_ID );
-		await expectRedirectsOnceActive( rendered );
-	} );
-
-	it( 'ignores a stale activation error when checkout drives the install', async () => {
-		mockSite.isAtomic = true;
-		mockSite.isWporgPlugin = false;
-		mockSite.purchaseStatus = 'COMPLETED';
-		// A failure left over from an earlier attempt on the same plugin id, in the same session.
-		mockSite.activationStatus = {
-			status: 'error',
-			action: 'ACTIVATE_PLUGIN',
-			error: { error: 'some_failure' },
-		};
-		const rendered = install();
-		await start( rendered );
-
-		// This flow never dispatches its own activation, so the stale error is not ours: no error
-		// screen, and polling continues until the plugin is active.
-		mockSite.installedPlugin = PLUGIN;
-		fetchSitePlugins.mockClear();
-		await advance( rendered, 3000 );
-		expect( screen.queryByText( /could not activate it/ ) ).toBeNull();
-		expect( fetchSitePlugins ).toHaveBeenCalledWith( SITE_ID );
-		await expectRedirectsOnceActive( rendered );
-	} );
-
-	it( 'surfaces an activation_error, which the API also uses for a missing plugin file', async () => {
-		const rendered = install();
-		await start( rendered );
-
-		mockSite.installedPlugin = PLUGIN;
-		mockSite.activationStatus = {
-			status: 'error',
-			action: 'ACTIVATE_PLUGIN',
-			error: { error: 'activation_error' },
-		};
-		await settle( rendered );
-
-		// activation_error is not reliably "already active", so it is surfaced rather than left to poll
-		// forever. Polling still continues, so a genuinely-active plugin redirects on the next refresh.
-		expect( screen.getByText( /could not activate it/ ) ).toBeVisible();
-		fetchSitePlugins.mockClear();
-		await advance( rendered, 3000 );
-		expect( fetchSitePlugins ).toHaveBeenCalledWith( SITE_ID );
 		await expectRedirectsOnceActive( rendered );
 	} );
 
