@@ -1,14 +1,10 @@
-import MigrationsCommissionsList from 'calypso/dashboard/agency/earn/migrations/commissions-list';
-import MigrationsConsolidatedCommissions from 'calypso/dashboard/agency/earn/migrations/consolidated-commissions';
-import MigrationsCommissionsEmptyState from 'calypso/dashboard/agency/earn/migrations/empty-state';
-import MigrationsTagSitesModal from 'calypso/dashboard/agency/earn/migrations/tag-sites-modal';
-import { TextSkeleton } from 'calypso/dashboard/components/text-skeleton';
-import type {
-	RecordTracksEvent,
-	ShowSuccessNotice,
-	TaggedSite,
-} from 'calypso/dashboard/agency/earn/migrations/types';
-import type { ReactNode } from 'react';
+import { TextSkeleton } from '../../../components/text-skeleton';
+import MigrationsCommissionsList from './commissions-list';
+import MigrationsConsolidatedCommissions from './consolidated-commissions';
+import MigrationsCommissionsEmptyState from './empty-state';
+import MigrationsTagSitesModal from './tag-sites-modal';
+import type { RecordTracksEvent, ShowSuccessNotice, TaggedSite } from './types';
+import type { ComponentType, ReactNode } from 'react';
 
 interface MigrationsCommissionsContentProps {
 	taggedSites: TaggedSite[];
@@ -22,6 +18,8 @@ interface MigrationsCommissionsContentProps {
 	isAddSitesModalOpen: boolean;
 	onCloseAddSitesModal: () => void;
 	onOpenAddSitesModal: () => void;
+	TableWrapper?: ComponentType< { children: ReactNode } >;
+	onModalOpen?: () => void;
 }
 
 export default function MigrationsCommissionsContent( {
@@ -36,6 +34,8 @@ export default function MigrationsCommissionsContent( {
 	isAddSitesModalOpen,
 	onCloseAddSitesModal,
 	onOpenAddSitesModal,
+	TableWrapper,
+	onModalOpen,
 }: MigrationsCommissionsContentProps ) {
 	if ( isLoading ) {
 		return (
@@ -65,6 +65,8 @@ export default function MigrationsCommissionsContent( {
 						recordTracksEvent={ recordTracksEvent }
 						onSuccess={ onSuccess }
 						onError={ onError }
+						TableWrapper={ TableWrapper }
+						onModalOpen={ onModalOpen }
 					/>
 				</div>
 			) }
@@ -77,6 +79,7 @@ export default function MigrationsCommissionsContent( {
 					onSuccess={ onSuccess }
 					onError={ onError }
 					getSiteCreatedAt={ getSiteCreatedAt }
+					onModalOpen={ onModalOpen }
 				/>
 			) }
 		</>

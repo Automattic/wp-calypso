@@ -7,6 +7,7 @@ import LayoutTop from 'calypso/a8c-for-agencies/components/layout/layout-with-pa
 import MobileSidebarNavigation from 'calypso/a8c-for-agencies/components/sidebar/mobile-sidebar-navigation';
 import { A4A_MIGRATIONS_LINK } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
 import MissingPaymentSettingsNotice from 'calypso/a8c-for-agencies/sections/referrals/common/missing-payment-settings-notice';
+import MigrationsCommissionsContent from 'calypso/dashboard/agency/earn/migrations/commissions-content';
 import useCanTagSitesForCommission from 'calypso/dashboard/agency/earn/migrations/hooks/use-can-tag-sites-for-commission';
 import useFetchTaggedSitesForMigration from 'calypso/dashboard/agency/earn/migrations/hooks/use-fetch-tagged-sites-for-migration';
 import LayoutBody from 'calypso/layout/hosting-dashboard/body';
@@ -18,7 +19,6 @@ import { useDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 import getSites from 'calypso/state/selectors/get-sites';
-import MigrationsCommissionsContent from '../../commissions-content';
 import type { ReactNode } from 'react';
 
 import './style.scss';
