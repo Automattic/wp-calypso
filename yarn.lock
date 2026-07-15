@@ -758,7 +758,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@automattic/charts@npm:^1.10.0":
+"@automattic/charts@npm:^1.10.0, @automattic/charts@npm:^1.9.0":
   version: 1.10.1
   resolution: "@automattic/charts@npm:1.10.1"
   dependencies:
@@ -796,47 +796,6 @@ __metadata:
     react: ^18.0.0 || ^19.0.0
     react-dom: ^18.0.0 || ^19.0.0
   checksum: 897f0133e2a1f289bc5cd6fcdab84cf992d1efa18950196a9488537460316fe7f0b24378daf51b050d2abdce6e2f0c92c9d5c82a3783a36d87699f7fa02d40fd
-  languageName: node
-  linkType: hard
-
-"@automattic/charts@npm:^1.9.0":
-  version: 1.9.0
-  resolution: "@automattic/charts@npm:1.9.0"
-  dependencies:
-    "@automattic/number-formatters": "npm:^1.2.5"
-    "@babel/runtime": "npm:7.29.7"
-    "@react-spring/web": "npm:10.1.1"
-    "@visx/annotation": "npm:^4.0.0"
-    "@visx/axis": "npm:^4.0.0"
-    "@visx/curve": "npm:^4.0.0"
-    "@visx/event": "npm:^4.0.0"
-    "@visx/gradient": "npm:^4.0.0"
-    "@visx/grid": "npm:^4.0.0"
-    "@visx/group": "npm:^4.0.0"
-    "@visx/legend": "npm:^4.0.0"
-    "@visx/pattern": "npm:^4.0.0"
-    "@visx/responsive": "npm:^4.0.0"
-    "@visx/scale": "npm:^4.0.0"
-    "@visx/shape": "npm:^4.0.0"
-    "@visx/text": "npm:^4.0.0"
-    "@visx/tooltip": "npm:^4.0.0"
-    "@visx/vendor": "npm:^4.0.0"
-    "@visx/xychart": "npm:^4.0.0"
-    "@wordpress/i18n": "npm:^6.0.0"
-    "@wordpress/icons": "npm:^13.0.0"
-    "@wordpress/theme": "npm:0.15.1"
-    "@wordpress/ui": "npm:0.13.0"
-    clsx: "npm:2.1.1"
-    date-fns: "npm:^4.1.0"
-    deepmerge: "npm:4.3.1"
-    dompurify: "npm:^3.3.3"
-    fast-deep-equal: "npm:3.1.3"
-    react-google-charts: "npm:^5.2.1"
-    tslib: "npm:2.8.1"
-  peerDependencies:
-    react: ^18.0.0 || ^19.0.0
-    react-dom: ^18.0.0 || ^19.0.0
-  checksum: 4d1dfa082a7ea3e42b72631e060c47d7cac32139f6a7f706b00df4222cf15198bb30d1614bdfb79668cbbf830a066ea95eb854ff7190041cbafcb15ae8158c3f
   languageName: node
   linkType: hard
 
@@ -1826,18 +1785,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@automattic/number-formatters@npm:^1.2.0, @automattic/number-formatters@npm:^1.2.5":
-  version: 1.2.5
-  resolution: "@automattic/number-formatters@npm:1.2.5"
-  dependencies:
-    "@wordpress/date": "npm:^5.19.0"
-    debug: "npm:^4.4.0"
-    tslib: "npm:^2.5.0"
-  checksum: c05c4c53bd9c2a1f4043cd07c06abe220ea98336d8b6ec856555cecff5e092f848e1db48517ddccda4d23ac635f61c6d1893dd122c11d7b8f9a687853648b6ad
-  languageName: node
-  linkType: hard
-
-"@automattic/number-formatters@npm:^1.2.6":
+"@automattic/number-formatters@npm:^1.2.0, @automattic/number-formatters@npm:^1.2.6":
   version: 1.2.6
   resolution: "@automattic/number-formatters@npm:1.2.6"
   dependencies:
@@ -31944,7 +31892,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"tslib@npm:2.8.1, tslib@npm:>=2.8.1, tslib@npm:^2.0.0, tslib@npm:^2.0.1, tslib@npm:^2.0.3, tslib@npm:^2.1.0, tslib@npm:^2.2.0, tslib@npm:^2.4.0, tslib@npm:^2.4.1, tslib@npm:^2.5.0, tslib@npm:^2.6.2, tslib@npm:^2.8.1":
+"tslib@npm:2.8.1, tslib@npm:>=2.8.1, tslib@npm:^2.0.0, tslib@npm:^2.0.1, tslib@npm:^2.0.3, tslib@npm:^2.1.0, tslib@npm:^2.2.0, tslib@npm:^2.4.0, tslib@npm:^2.4.1, tslib@npm:^2.6.2, tslib@npm:^2.8.1":
   version: 2.8.1
   resolution: "tslib@npm:2.8.1"
   checksum: 9c4759110a19c53f992d9aae23aac5ced636e99887b51b9e61def52611732872ff7668757d4e4c61f19691e36f4da981cd9485e869b4a7408d689f6bf1f14e62
