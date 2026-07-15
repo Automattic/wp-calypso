@@ -4,6 +4,7 @@ import { useState } from '@wordpress/element';
 import { __, isRTL } from '@wordpress/i18n';
 import { Icon, chevronDown, chevronLeft, chevronRight } from '@wordpress/icons';
 import {
+	DESIGN_SUGGESTION_IDS,
 	getWritingSuggestionLabel,
 	GROUPED_VIEW_HIDDEN_SUGGESTION_IDS,
 	WRITING_SUGGESTION_IDS,
@@ -42,8 +43,12 @@ export default function GroupedEmptyView( {
 			...suggestion,
 			label: getWritingSuggestionLabel( suggestion ),
 		} ) );
+	// Grouping only helps when writing and design actions need separation.
+	const hasDesignSuggestions = suggestions.some( ( suggestion ) =>
+		DESIGN_SUGGESTION_IDS.has( suggestion.id )
+	);
 
-	if ( ! groupWritingSuggestions || writingSuggestions.length === 0 ) {
+	if ( ! groupWritingSuggestions || writingSuggestions.length === 0 || ! hasDesignSuggestions ) {
 		return (
 			<EmptyView
 				heading={ heading }

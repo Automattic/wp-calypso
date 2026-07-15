@@ -350,6 +350,31 @@ describe( 'AgentChat', () => {
 		expect( screen.queryByRole( 'button', { name: /Writing/ } ) ).toBeNull();
 	} );
 
+	it( 'keeps writing suggestions flat when there are no design suggestions', () => {
+		const suggestions = [
+			{
+				id: 'add-new-page',
+				label: 'Add new page',
+				prompt: 'Add a new page',
+			},
+			{
+				id: 'optimize-title',
+				label: 'Optimize Title',
+				prompt: 'Optimize the title of this post',
+			},
+		];
+
+		renderAgentChat( {
+			isOpen: true,
+			emptyViewSuggestions: suggestions,
+			groupWritingSuggestions: true,
+		} );
+
+		expect( screen.getByRole( 'button', { name: 'Add new page' } ) ).toBeInTheDocument();
+		expect( screen.getByRole( 'button', { name: 'Optimize Title' } ) ).toBeInTheDocument();
+		expect( screen.queryByRole( 'button', { name: /Writing/ } ) ).toBeNull();
+	} );
+
 	it( 'collapses to a button when closed without the AI chat entry button', () => {
 		renderAgentChat( { isOpen: false } );
 

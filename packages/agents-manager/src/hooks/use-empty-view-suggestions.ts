@@ -11,10 +11,14 @@ interface UseEmptyViewSuggestionsOptions {
 	loadedProviders: LoadedProviders | null;
 }
 
-const SITE_EDITOR_ONLY_SUGGESTION_IDS = new Set( [
+export const DESIGN_SUGGESTION_IDS = new Set( [
 	'customize-colors',
 	'choose-new-fonts',
 	'change-page-layout',
+] );
+
+const SITE_EDITOR_ONLY_SUGGESTION_IDS = new Set( [
+	...DESIGN_SUGGESTION_IDS,
 	'edit-pages',
 	'add-new-page',
 	'what-else-can-i-do',
