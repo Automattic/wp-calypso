@@ -3,10 +3,14 @@ import { __experimentalHStack as HStack } from '@wordpress/components';
 import { DataViews } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
 import { useCallback, useMemo, ReactNode, useState } from 'react';
+import {
+	MigratedOnColumn,
+	ReviewStatusColumn,
+	SiteColumn,
+} from 'calypso/dashboard/agency/earn/migrations/commissions-list/commission-columns';
+import useCommissionListActions from 'calypso/dashboard/agency/earn/migrations/commissions-list/use-commission-list-actions';
 import RequestReviewModal from '../request-review-modal';
-import { MigratedOnColumn, ReviewStatusColumn, SiteColumn } from './commission-columns';
 import UntagSiteDialog from './untag-site-dialog';
-import useCommissionListActions from './use-commission-list-actions';
 import type { Field, View } from '@wordpress/dataviews';
 import type {
 	RecordTracksEvent,

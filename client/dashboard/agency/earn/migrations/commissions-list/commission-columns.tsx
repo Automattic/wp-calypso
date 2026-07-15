@@ -9,20 +9,20 @@ import {
 import { __ } from '@wordpress/i18n';
 import { info } from '@wordpress/icons';
 import { useState } from 'react';
-import FormattedDate from 'calypso/components/formatted-date';
-import { urlToSlug } from 'calypso/lib/url/http-utils';
+import { useLocale } from '../../../../app/locale';
+import { formatDate } from '../../../../utils/datetime';
+import { urlToSlug } from '../../../../utils/url';
 
 import './commission-columns.scss';
-
-const DETAILS_DATE_FORMAT_SHORT = 'DD MMM YYYY';
 
 export const SiteColumn = ( { site }: { site: string } ) => {
 	return urlToSlug( site );
 };
 
 export const MigratedOnColumn = ( { migratedOn }: { migratedOn: number } ) => {
+	const locale = useLocale();
 	const date = new Date( migratedOn * 1000 );
-	return <FormattedDate date={ date } format={ DETAILS_DATE_FORMAT_SHORT } />;
+	return <>{ formatDate( date, locale, { day: '2-digit', month: 'short', year: 'numeric' } ) }</>;
 };
 
 export const ReviewStatusColumn = ( {
