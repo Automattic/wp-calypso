@@ -170,20 +170,36 @@ export function requestSite( siteFragment, atomicCapabilitiesRetriesLeft = 3 ) {
 	return ( dispatch, getState ) => {
 		dispatch( { type: SITE_REQUEST, siteId: siteFragment } );
 
-		const result = doRequest( false ).catch( ( error ) => {
-			// Missing Jetpack JSON API methods may arrive as ApiNotFoundError, or as
-			// JetpackNotFoundError when WPCOM detects that Jetpack core is not installed.
-			if (
-				( error?.status === 403 &&
-					error?.message === 'API calls to this blog have been disabled.' ) ||
-				( error?.status === 400 &&
-					( error?.name === 'ApiNotFoundError' || error?.name === 'JetpackNotFoundError' ) )
-			) {
-				return doRequest( true );
-			}
+		const result = doRequest( false )
+			.then( ( site ) => {
+				// Requests for Atomic sites are proxied to the site's own Jetpack by
+				// default, and proxied responses never contain difm_lite_site_options
+				// (the SAL getter is WPCOM-only). Refetch from wpcom so a single-site
+				// refresh does not overwrite the flag delivered by /me/sites.
+				if (
+					site?.jetpack &&
+					site.options?.is_difm_lite_in_progress &&
+					site.options.difm_lite_site_options === undefined
+				) {
+					return doRequest( true );
+				}
 
-			return Promise.reject( error );
-		} );
+				return site;
+			} )
+			.catch( ( error ) => {
+				// Missing Jetpack JSON API methods may arrive as ApiNotFoundError, or as
+				// JetpackNotFoundError when WPCOM detects that Jetpack core is not installed.
+				if (
+					( error?.status === 403 &&
+						error?.message === 'API calls to this blog have been disabled.' ) ||
+					( error?.status === 400 &&
+						( error?.name === 'ApiNotFoundError' || error?.name === 'JetpackNotFoundError' ) )
+				) {
+					return doRequest( true );
+				}
+
+				return Promise.reject( error );
+			} );
 
 		result
 			.then( ( site ) => {

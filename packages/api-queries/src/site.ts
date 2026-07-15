@@ -22,7 +22,22 @@ function isSiteNotFoundError( error: unknown ) {
 
 async function getSite( siteIdOrSlug: number | string ) {
 	try {
-		return await fetchSite( siteIdOrSlug );
+		const site = await fetchSite( siteIdOrSlug );
+
+		// Requests for Atomic sites are proxied to the site's own Jetpack by
+		// default, and proxied responses never contain difm_lite_site_options
+		// (the SAL getter is WPCOM-only). While a DIFM build is in progress the
+		// flag gates content browsing, so re-fetch the site from wpcom directly.
+		// At most one extra request, and only for sites with an active build.
+		if (
+			site.jetpack &&
+			site.options?.is_difm_lite_in_progress &&
+			site.options.difm_lite_site_options === undefined
+		) {
+			return await fetchSite( siteIdOrSlug, { force: 'wpcom' } );
+		}
+
+		return site;
 	} catch ( e ) {
 		// Force the site to be retrieved from wpcom if there is any issue with the Jetpack connection.
 		if ( isInaccessibleJetpackError( e ) ) {
