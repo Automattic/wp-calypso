@@ -120,7 +120,12 @@ const HeaderContainer = styled( Subheader )`
 		margin-top: -13px;
 		margin-bottom: 48px;
 		color: var( --color-text );
+		font-size: 14px;
 		font-weight: 400;
+
+		@media ( min-width: 960px ) {
+			font-size: 16px;
+		}
 
 		.plans-2023-tooltip__hover-area-container {
 			display: inline-flex;
@@ -249,11 +254,15 @@ const DifferentiatorIconContainer = styled.span`
 	display: inline-flex;
 	align-items: center;
 	text-align: left;
-	font-size: 16px;
+	font-size: 14px;
 	line-height: 20px;
 	font-weight: 400;
 	color: inherit;
 	white-space: nowrap;
+
+	@media ( min-width: 960px ) {
+		font-size: 16px;
+	}
 `;
 
 const DifferentiatorLabel = styled.span`
