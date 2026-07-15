@@ -1,5 +1,6 @@
 import {
 	activeAgencyQuery,
+	agencyProductsQuery,
 	referralsQuery,
 	referralCommissionPayoutQuery,
 } from '@automattic/api-queries';
@@ -7,6 +8,7 @@ import { useQuery } from '@tanstack/react-query';
 import { Link } from '@tanstack/react-router';
 import { __ } from '@wordpress/i18n';
 import { useState } from 'react';
+import { useAnalytics } from '../../../app/analytics';
 import { useLocale } from '../../../app/locale';
 import { DataViewsCard } from '../../../components/dataviews';
 import { PageHeader } from '../../../components/page-header';
@@ -30,6 +32,8 @@ export default function EarnReferrals() {
 	const { data: commissionPayout, isLoading: isLoadingCommissionPayout } = useQuery(
 		referralCommissionPayoutQuery( agencyId )
 	);
+	const { data: products } = useQuery( agencyProductsQuery( agencyId ) );
+	const { recordTracksEvent } = useAnalytics();
 
 	const [ view, setView ] = useState< View >( DEFAULT_VIEW );
 
@@ -64,6 +68,8 @@ export default function EarnReferrals() {
 						isLoading={ isLoading }
 						isLoadingCommissionPayout={ isLoadingCommissionPayout }
 						locale={ locale }
+						products={ products }
+						recordTracksEvent={ recordTracksEvent }
 					/>
 					<DataViewsCard>
 						<ReferralsList
