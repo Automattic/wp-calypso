@@ -1,5 +1,4 @@
 import { isEnabled } from '@automattic/calypso-config';
-import { Badge } from '@automattic/components';
 import {
 	category,
 	currencyDollar,
@@ -15,6 +14,7 @@ import {
 	chartBar,
 	box,
 	shortcode,
+	megaphone,
 } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { useMemo } from 'react';
@@ -33,7 +33,6 @@ import {
 	A4A_PURCHASES_LINK,
 	A4A_REFERRALS_LINK,
 	A4A_SITES_LINK,
-	A4A_MARKETPLACE_HOSTING_LINK,
 	A4A_MIGRATIONS_LINK,
 	A4A_SETTINGS_LINK,
 	A4A_PLUGINS_LINK,
@@ -46,6 +45,7 @@ import {
 	A4A_RESOURCES_LINK,
 	A4A_AGENT_STUDIO_LINK,
 	A4A_EXCLUSIVE_OFFERS_LINK,
+	A4A_AMPLIFY_LINK,
 } from '../lib/constants';
 import { createItem } from '../lib/utils';
 
@@ -153,24 +153,9 @@ const useMainMenuItems = ( path: string ) => {
 				  ]
 				: [] ),
 			{
-				icon: chartBar,
-				path: A4A_REPORTS_LINK,
-				link: A4A_REPORTS_LINK,
-				title: (
-					<div className="sidebar-menu-item__title-with-badge">
-						<span>{ translate( 'Reports' ) }</span>
-						<Badge type="info">{ translate( 'Beta' ) }</Badge>
-					</div>
-				),
-				trackEventProps: {
-					menu_item: 'Automattic for Agencies / Reports',
-				},
-				withChevron: true,
-			},
-			{
 				icon: tag,
 				path: A4A_MARKETPLACE_LINK,
-				link: A4A_MARKETPLACE_HOSTING_LINK,
+				link: A4A_MARKETPLACE_LINK,
 				title: translate( 'Marketplace' ),
 				trackEventProps: {
 					menu_item: 'Automattic for Agencies / Marketplace',
@@ -242,6 +227,32 @@ const useMainMenuItems = ( path: string ) => {
 						},
 				  ]
 				: [] ),
+			...( agency?.amplify?.allowed
+				? [
+						{
+							icon: megaphone,
+							path: A4A_AMPLIFY_LINK,
+							link: A4A_AMPLIFY_LINK,
+							title: translate( 'Amplify' ),
+							badge: translate( 'Beta' ),
+							trackEventProps: {
+								menu_item: 'Automattic for Agencies / Amplify',
+							},
+							withChevron: true,
+						},
+				  ]
+				: [] ),
+			{
+				icon: chartBar,
+				path: A4A_REPORTS_LINK,
+				link: A4A_REPORTS_LINK,
+				title: translate( 'Reports' ),
+				badge: translate( 'Beta' ),
+				trackEventProps: {
+					menu_item: 'Automattic for Agencies / Reports',
+				},
+				withChevron: true,
+			},
 		]
 			.map( ( item ) => createItem( item, path ) )
 			.filter( ( item ) => isPathAllowed( item.link, agency ) );

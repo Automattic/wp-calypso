@@ -35,7 +35,7 @@ const getParentElement = ( node: HTMLElement | null, pattern: RegExp ) => {
 	return parent;
 };
 
-const clickNavLinkEvent = ( target: HTMLElement ) => {
+const clickNavLinkEvent = ( target: HTMLElement, trackingText?: string ) => {
 	const props: { [ key: string ]: string | number } = {};
 
 	const container = getParentElement( target, /container/ );
@@ -54,7 +54,7 @@ const clickNavLinkEvent = ( target: HTMLElement ) => {
 
 	props.href = target.getAttribute( 'href' ) || '';
 	props.target = target.getAttribute( 'target' ) || '';
-	props.text = target.innerText || '';
+	props.text = trackingText || target.innerText || '';
 
 	if ( typeof window !== 'undefined' && window.location ) {
 		const currentPage = window.location.pathname || '';
@@ -75,6 +75,7 @@ export const ClickableItem = ( {
 	target,
 	tabIndex,
 	index,
+	trackingText,
 	onItemMouseEnter,
 	onItemFocus,
 }: ClickableItemProps ) => {
@@ -88,7 +89,7 @@ export const ClickableItem = ( {
 
 	const onClick = ( event: React.MouseEvent< HTMLAnchorElement > ) => {
 		const target = event.currentTarget;
-		clickNavLinkEvent( target );
+		clickNavLinkEvent( target, trackingText );
 		// Also emit the global-nav usage event; it resolves its props from the DOM
 		// so it reports correctly on either nav.
 		recordNavLinkClick( target );

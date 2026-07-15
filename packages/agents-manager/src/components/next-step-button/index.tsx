@@ -15,7 +15,7 @@ export default function NextStepButton( { onMoveToNextStep }: Props ) {
 
 	return (
 		<Button className="agents-manager-next-step-button" variant="primary" onClick={ handleClick }>
-			{ __( 'Move to next step', '__i18n_text_domain__' ) }
+			{ __( 'Move to next step', __i18n_text_domain__ ) }
 		</Button>
 	);
 }

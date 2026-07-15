@@ -1,4 +1,4 @@
-import { filter, mapValues } from 'lodash';
+import { mapValues } from '@automattic/js-utils';
 
 function validateAllFields( fieldValues, domainName, domain ) {
 	return mapValues( fieldValues, ( value, fieldName ) => {
@@ -154,7 +154,7 @@ function getFieldWithDot( field ) {
 }
 
 function isDeletingLastMXRecord( recordToDelete, records ) {
-	const currentMXRecords = filter( records, { type: 'MX' } );
+	const currentMXRecords = ( records ?? [] ).filter( ( record ) => record.type === 'MX' );
 
 	return recordToDelete.type === 'MX' && currentMXRecords.length === 1;
 }

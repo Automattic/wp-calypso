@@ -9,8 +9,8 @@ import SectionNav from 'calypso/components/section-nav';
 import NavItem from 'calypso/components/section-nav/item';
 import NavTabs from 'calypso/components/section-nav/tabs';
 import { decodeEntities } from 'calypso/lib/formatting';
-import { AuthorAchievementBadges } from 'calypso/reader/components/achievements/author-achievement-badges';
 import useAchievementsVisibility from 'calypso/reader/components/achievements/use-achievements-visibility';
+import { useProfileTabVisibility } from 'calypso/reader/data/user-profile';
 import { getUserProfileUrl } from 'calypso/reader/user-profile/user-profile.utils';
 import UserTopSites from '../top-sites';
 import type { ReaderUser } from '@automattic/api-core';
@@ -22,7 +22,11 @@ interface UserProfileHeaderProps {
 
 const UserProfileHeader = ( { user, view }: UserProfileHeaderProps ): JSX.Element => {
 	const translate = useTranslate();
-	const { isVisible: showAchievements } = useAchievementsVisibility( user.user_login );
+	const { isVisible: showAchievements, isPublic: isAchievementsPublic } = useAchievementsVisibility(
+		user.user_login
+	);
+	const { isOwnProfile, showPosts, isPostsPublic, showSites, isSitesPublic } =
+		useProfileTabVisibility( user.user_login );
 	const [ isExpanded, setIsExpanded ] = useState( false );
 	const [ showMoreToggle, setShowMoreToggle ] = useState( false );
 	const bioRef = useRef< HTMLParagraphElement >( null );
@@ -41,16 +45,26 @@ const UserProfileHeader = ( { user, view }: UserProfileHeaderProps ): JSX.Elemen
 
 	const userProfileUrl = getUserProfileUrl( user.user_login ?? String( user.ID ) );
 	const navigationItems = [
-		{
-			label: translate( 'Posts' ),
-			path: userProfileUrl,
-			selected: view === 'posts',
-		},
-		{
-			label: translate( 'Sites' ),
-			path: `${ userProfileUrl }/sites`,
-			selected: view === 'sites',
-		},
+		...( showPosts
+			? [
+					{
+						className: clsx( { 'is-private': ! isPostsPublic } ),
+						label: translate( 'Posts' ),
+						path: userProfileUrl,
+						selected: view === 'posts',
+					},
+			  ]
+			: [] ),
+		...( showSites
+			? [
+					{
+						className: clsx( { 'is-private': ! isSitesPublic } ),
+						label: translate( 'Sites' ),
+						path: `${ userProfileUrl }/sites`,
+						selected: view === 'sites',
+					},
+			  ]
+			: [] ),
 		{
 			label: translate( 'Lists' ),
 			path: `${ userProfileUrl }/lists`,
@@ -64,9 +78,19 @@ const UserProfileHeader = ( { user, view }: UserProfileHeaderProps ): JSX.Elemen
 		...( showAchievements
 			? [
 					{
+						className: clsx( { 'is-private': ! isAchievementsPublic } ),
 						label: translate( 'Achievements' ),
 						path: `${ userProfileUrl }/achievements`,
 						selected: view === 'achievements',
+					},
+			  ]
+			: [] ),
+		...( isOwnProfile
+			? [
+					{
+						label: translate( 'Settings' ),
+						path: `${ userProfileUrl }/settings`,
+						selected: view === 'settings',
 					},
 			  ]
 			: [] ),
@@ -96,7 +120,6 @@ const UserProfileHeader = ( { user, view }: UserProfileHeaderProps ): JSX.Elemen
 									/>
 								</a>
 							) }
-							<AuthorAchievementBadges authorLogin={ user.user_login } size="medium" />
 						</h1>
 						<p>
 							<span dir="ltr">@{ user.user_login }</span>
@@ -129,14 +152,23 @@ const UserProfileHeader = ( { user, view }: UserProfileHeaderProps ): JSX.Elemen
 					</AutoDirection>
 				) }
 
-				{ user.ID && user.user_login && (
-					<UserTopSites userId={ user.ID } userLogin={ user.user_login } />
+				{ showSites && user.ID && user.user_login && (
+					<UserTopSites
+						userId={ user.ID }
+						userLogin={ user.user_login }
+						isOwnProfile={ isOwnProfile }
+					/>
 				) }
 			</header>
 			<SectionNav enforceTabsView variation="minimal">
 				<NavTabs>
 					{ navigationItems.map( ( item ) => (
-						<NavItem key={ item.path } path={ item.path } selected={ item.selected }>
+						<NavItem
+							className={ item.className }
+							key={ item.path }
+							path={ item.path }
+							selected={ item.selected }
+						>
 							{ item.label }
 						</NavItem>
 					) ) }

@@ -17,6 +17,7 @@ import { useSelector } from 'react-redux';
 import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import { DESCRIBE_ROUTE_PREFIX } from '../constants';
 import { sparkleFilled } from '../sparkle-icon';
+import type { JSX } from 'react';
 
 import './style.scss';
 

@@ -1,7 +1,7 @@
 import { FormInputValidation, FormLabel } from '@automattic/components';
+import { isEmpty } from '@automattic/js-utils';
 import clsx from 'clsx';
 import { localize, translate } from 'i18n-calypso';
-import { isEmpty } from 'lodash';
 import { PureComponent } from 'react';
 import FormSelect from 'calypso/components/forms/form-select';
 import { gaRecordEvent } from 'calypso/lib/analytics/ga';

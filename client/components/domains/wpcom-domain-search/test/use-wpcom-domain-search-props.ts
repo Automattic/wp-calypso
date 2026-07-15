@@ -291,6 +291,37 @@ describe( 'useWPCOMDomainSearchProps', () => {
 			] );
 		} );
 
+		it( 'keeps config.priceRules.freeForFirstYearDomains set to the free domain after it has been added to the cart', () => {
+			mockUseShoppingCart.mockReturnValue(
+				buildShoppingCart( {
+					responseCart: {
+						products: [
+							buildProduct( {
+								uuid: 'dotcom',
+								product_slug: 'dotcom_domain',
+								meta: 'my-domain.com',
+								is_domain_registration: true,
+								item_original_cost_integer: 17100,
+								item_original_subtotal_integer: 17100,
+								item_subtotal_integer: 17100,
+							} ),
+						],
+					},
+				} )
+			);
+
+			const { result } = renderHookWithProvider( () =>
+				useWPCOMDomainSearchProps( { ...defaultProps, isFirstDomainFreeForFirstYear: true } )
+			);
+
+			// freeForFirstYear should be false (the free slot is taken),
+			// but freeForFirstYearDomains should contain the added domain so it still shows $0.
+			expect( result.current.config.priceRules.freeForFirstYear ).toBe( false );
+			expect( result.current.config.priceRules.freeForFirstYearDomains ).toEqual( [
+				'my-domain.com',
+			] );
+		} );
+
 		it( 'does not render any domain as free if there are only premium domains in the cart and config.priceRules.freeForFirstYear is true', () => {
 			mockUseShoppingCart.mockReturnValue(
 				buildShoppingCart( {
@@ -502,6 +533,89 @@ describe( 'useWPCOMDomainSearchProps', () => {
 				expect.objectContaining( { uuid: 'dotcom3', salePrice: '$0', price: '$10' } ),
 				expect.objectContaining( { uuid: 'dotcom2', salePrice: undefined, price: '$5' } ),
 			] );
+		} );
+	} );
+
+	describe( 'config.priceRules.freeForFirstYearTlds', () => {
+		it( 'passes through the flow-provided list while the credit is still available in the stepper', () => {
+			mockUseShoppingCart.mockReturnValue(
+				buildShoppingCart( { responseCart: { products: [] } } )
+			);
+
+			const { result } = renderHookWithProvider( () =>
+				useWPCOMDomainSearchProps( {
+					...defaultProps,
+					isFirstDomainFreeForFirstYear: true,
+					config: { priceRules: { freeForFirstYearTlds: [ 'blog', 'art' ] } },
+				} )
+			);
+
+			expect( result.current.config.priceRules.freeForFirstYearTlds ).toEqual( [ 'blog', 'art' ] );
+		} );
+
+		it( 'clears the flow-provided list once the free slot is taken in the stepper', () => {
+			mockUseShoppingCart.mockReturnValue(
+				buildShoppingCart( {
+					responseCart: {
+						products: [
+							buildProduct( {
+								uuid: 'dotblog',
+								product_slug: 'blog_domain',
+								meta: 'my-domain.blog',
+								is_domain_registration: true,
+								item_original_cost_integer: 1000,
+								item_subtotal_integer: 1000,
+							} ),
+						],
+					},
+				} )
+			);
+
+			const { result } = renderHookWithProvider( () =>
+				useWPCOMDomainSearchProps( {
+					...defaultProps,
+					isFirstDomainFreeForFirstYear: true,
+					config: { priceRules: { freeForFirstYearTlds: [ 'blog', 'art' ] } },
+				} )
+			);
+
+			expect( result.current.config.priceRules.freeForFirstYearTlds ).toBeUndefined();
+		} );
+
+		it( 'derives the list from next_domain_condition when the plan is in the cart and the credit is available', () => {
+			mockUseShoppingCart.mockReturnValue(
+				buildShoppingCart( {
+					responseCart: {
+						next_domain_is_free: true,
+						next_domain_condition: 'blog,art',
+						products: [ buildProduct( { product_slug: 'business-bundle' } ) ],
+					},
+				} )
+			);
+
+			const { result } = renderHookWithProvider( () =>
+				useWPCOMDomainSearchProps( { ...defaultProps, isFirstDomainFreeForFirstYear: true } )
+			);
+
+			expect( result.current.config.priceRules.freeForFirstYearTlds ).toEqual( [ 'blog', 'art' ] );
+		} );
+
+		it( 'does not restrict by TLD when the plan is in the cart but the credit has already been used', () => {
+			mockUseShoppingCart.mockReturnValue(
+				buildShoppingCart( {
+					responseCart: {
+						next_domain_is_free: false,
+						next_domain_condition: 'blog,art',
+						products: [ buildProduct( { product_slug: 'business-bundle' } ) ],
+					},
+				} )
+			);
+
+			const { result } = renderHookWithProvider( () =>
+				useWPCOMDomainSearchProps( { ...defaultProps, isFirstDomainFreeForFirstYear: true } )
+			);
+
+			expect( result.current.config.priceRules.freeForFirstYearTlds ).toBeUndefined();
 		} );
 	} );
 
@@ -1133,9 +1247,10 @@ describe( 'useWPCOMDomainSearchProps', () => {
 				} )
 			);
 
-			await expect( result.current.cart.onAddBundle?.( bundle ) ).rejects.toThrow(
-				'The domain bundle could not be added to the cart.'
-			);
+			await expect( result.current.cart.onAddBundle?.( bundle ) ).rejects.toMatchObject( {
+				message: 'The domain bundle could not be added to the cart.',
+				code: 'domain_bundle_unavailable',
+			} );
 
 			expect( onContinue ).not.toHaveBeenCalled();
 		} );

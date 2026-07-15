@@ -1,5 +1,3 @@
-import { get } from 'lodash';
-
 import 'calypso/state/route/init';
 
 /**
@@ -7,6 +5,6 @@ import 'calypso/state/route/init';
  * @param {Object} state - global redux state
  * @returns {string} current route value
  */
-export const getCurrentRoute = ( state ) => get( state, 'route.path.current', null );
+export const getCurrentRoute = ( state ) => state?.route?.path?.current ?? null;
 
 export default getCurrentRoute;

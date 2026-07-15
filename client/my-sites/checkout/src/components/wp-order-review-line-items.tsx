@@ -379,7 +379,7 @@ function LineItemWrapper( {
 
 	useEffect( () => {
 		const handleClickOutside =
-			( ref: RefObject< HTMLDivElement >, toggle: ( key: string | null ) => void ) =>
+			( ref: RefObject< HTMLDivElement | null >, toggle: ( key: string | null ) => void ) =>
 			( event: MouseEvent ): void => {
 				if ( ref.current && ! ref.current.contains( event.target as Node ) ) {
 					toggle( null );

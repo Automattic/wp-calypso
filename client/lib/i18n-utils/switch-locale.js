@@ -3,10 +3,10 @@ import { captureException } from '@automattic/calypso-sentry';
 import { getUrlFromParts, getUrlParts } from '@automattic/calypso-url';
 import { isDefaultLocale, getLanguage } from '@automattic/i18n-utils';
 import { setLocale as setLocaleNumberFormatters } from '@automattic/number-formatters';
+import { throttle } from '@wordpress/compose';
 import { defaultI18n } from '@wordpress/i18n';
 import debugFactory from 'debug';
 import i18n from 'i18n-calypso';
-import { forEach, throttle } from 'lodash';
 import { loadAndSetCurrencyOverrides } from 'calypso/lib/i18n-utils/load-currency-overrides';
 const debug = debugFactory( 'calypso:i18n' );
 
@@ -536,7 +536,7 @@ export function switchWebpackCSS( isRTL ) {
 	const currentLinks = document.querySelectorAll( 'link[rel="stylesheet"][data-webpack]' );
 	const shouldUseRtlCss = isRTL && window.RTL_CSS_ENABLED !== false;
 
-	forEach( currentLinks, async ( currentLink ) => {
+	Array.from( currentLinks ).forEach( async ( currentLink ) => {
 		const currentHref = currentLink.getAttribute( 'href' );
 		const newHref = setRTLFlagOnCSSLink( currentHref, shouldUseRtlCss );
 		const isNewHrefAdded = currentLink.parentElement?.querySelector( `[href = '${ newHref }']` );

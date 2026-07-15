@@ -4,7 +4,7 @@ import { useDispatch, useSelect } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
 import clsx from 'clsx';
 import { useAgentsManagerContext } from '../../contexts';
-import { hasAiChatEntryButton } from '../../hooks/use-admin-bar-integration';
+import useHasAiChatEntryButton from '../../hooks/use-has-ai-chat-entry-button';
 import { AGENTS_MANAGER_STORE } from '../../stores';
 import { LocalConversationListItem } from '../../types';
 import ChatHeader, { type Options as ChatHeaderOptions } from '../chat-header';
@@ -38,14 +38,15 @@ export default function AgentHistory( {
 }: Props ) {
 	const { resumeActiveChat } = useAgentsManagerContext();
 
-	const { setFloatingPosition } = useDispatch( AGENTS_MANAGER_STORE );
-	const { floatingPosition } = useSelect( ( select ) => {
+	const { setFloatingPosition, setFreeDragPosition } = useDispatch( AGENTS_MANAGER_STORE );
+	const { floatingPosition, freeDragPosition } = useSelect( ( select ) => {
 		const store: AgentsManagerSelect = select( AGENTS_MANAGER_STORE );
 		return store.getAgentsManagerState();
 	}, [] );
 
 	// Without the AI chat entry button, use `collapsed` (a FAB) instead of `minimized`.
-	const closedChatState = hasAiChatEntryButton() ? 'minimized' : 'collapsed';
+	const closedChatState = useHasAiChatEntryButton() ? 'minimized' : 'collapsed';
+	const title = __( 'Past chats', __i18n_text_domain__ );
 
 	const handleBack = () => resumeActiveChat();
 
@@ -53,13 +54,17 @@ export default function AgentHistory( {
 		<AgentUI.Container
 			initialChatPosition={ floatingPosition }
 			onChatPositionChange={ ( position ) => setFloatingPosition( position ) }
+			initialFreeDragPosition={ freeDragPosition ?? undefined }
+			onFreeDragEnd={ setFreeDragPosition }
 			className={ clsx( 'agenttic', { dark: isDocked } ) }
 			messages={ [] }
 			isProcessing={ false }
 			error={ null }
 			onSubmit={ () => {} }
 			variant={ isDocked ? 'embedded' : 'floating' }
+			freeDrag={ ! isDocked }
 			floatingChatState={ isOpen ? 'expanded' : closedChatState }
+			triggerTitle={ title }
 			onClose={ onClose }
 			onExpand={ onExpand }
 			onStop={ onAbort }
@@ -70,7 +75,8 @@ export default function AgentHistory( {
 					onClose={ onClose }
 					onBack={ handleBack }
 					options={ chatHeaderOptions }
-					title={ __( 'Past chats', '__i18n_text_domain__' ) }
+					title={ title }
+					isDocked={ isDocked }
 				/>
 				<ConversationHistoryView onSelectConversation={ onSelectConversation } />
 			</AgentUI.ConversationView>

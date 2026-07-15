@@ -70,17 +70,14 @@ describe( 'ReaderSidebar', () => {
 			.mockImplementation( ( feature: string ) => feature === 'reader/spaces' );
 	} );
 
-	it( 'renders Spaces as the second sidebar menu item when enabled', () => {
+	it( 'renders the four section labels as presentational headings', () => {
 		const instance = new ReaderSidebar( defaultProps );
 
 		render( instance.renderSidebarMenu() );
 
-		const menuItems = screen
-			.getAllByRole( 'listitem' )
-			.map( ( item ) => item.textContent )
-			.filter( Boolean );
-
-		expect( menuItems.slice( 0, 2 ) ).toEqual( [ 'Following', 'Spaces' ] );
+		[ 'Explore', 'Feeds', 'Library', 'Account' ].forEach( ( label ) => {
+			expect( screen.getByText( label ) ).toBeVisible();
+		} );
 	} );
 
 	describe( 'handleSidebarMenuClick', () => {

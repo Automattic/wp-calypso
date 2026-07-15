@@ -7,24 +7,16 @@ import { useRef } from 'react';
 import { loadBlackboxSdk } from '../blackbox-sdk';
 import { useBlackbox } from '../use-blackbox';
 
-jest.mock( '@automattic/calypso-config', () => {
-	const config = jest.fn( ( key ) => {
-		if ( key === 'blackbox_api_key' ) {
-			return 'test-api-key';
-		}
-		return undefined;
-	} );
-	config.isEnabled = jest.fn( ( flag ) => flag === 'blackbox-login' );
-	return config;
-} );
-
 jest.mock( '../blackbox-sdk', () => ( {
 	loadBlackboxSdk: jest.fn( () => Promise.resolve() ),
 } ) );
 
 function TestComponent() {
 	const containerRef = useRef( null );
-	const { hasChallengeContent, isChallengeActive, isLoading } = useBlackbox( { containerRef } );
+	const { hasChallengeContent, isChallengeActive, isLoading } = useBlackbox( {
+		containerRef,
+		enabled: true,
+	} );
 
 	return (
 		<>

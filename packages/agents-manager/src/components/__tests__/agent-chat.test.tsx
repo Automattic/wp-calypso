@@ -106,6 +106,10 @@ jest.mock( '@wordpress/data', () => ( {
 } ) );
 
 jest.mock( '@wordpress/i18n', () => ( { __: ( text: string ) => text } ) );
+jest.mock( '../../utils/tracks', () => ( {
+	recordBigSkyTracksEvent: jest.fn(),
+	recordAgentsManagerTracksEvent: jest.fn(),
+} ) );
 jest.mock( '../../stores', () => ( {
 	AGENTS_MANAGER_STORE: 'automattic/agents-manager',
 } ) );
@@ -134,8 +138,9 @@ jest.mock( '../../utils/is-plugin-compass-agent', () => ( {
 jest.mock( '../../utils/is-reader-chat-agent', () => ( {
 	isReaderChatHost: () => false,
 } ) );
-jest.mock( '../../hooks/use-admin-bar-integration', () => ( {
-	hasAiChatEntryButton: () => mockHasAiChatEntry(),
+jest.mock( '../../hooks/use-has-ai-chat-entry-button', () => ( {
+	__esModule: true,
+	default: () => mockHasAiChatEntry(),
 } ) );
 
 import AgentChat from '../agent-chat';

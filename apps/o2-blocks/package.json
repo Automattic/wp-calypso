@@ -37,7 +37,6 @@
 		"@wordpress/is-shallow-equal": "^5.48.0",
 		"@wordpress/primitives": "^4.48.0",
 		"clsx": "^2.1.1",
-		"lodash": "^4.17.21",
 		"moment": "^2.30.1",
 		"new-github-issue-url": "^0.2.1",
 		"react": "^18.3.1",
@@ -48,7 +47,7 @@
 		"@automattic/calypso-apps-builder": "workspace:^",
 		"@automattic/calypso-eslint-overrides": "workspace:^",
 		"@wordpress/readable-js-assets-webpack-plugin": "^3.24.0",
-		"postcss": "^8.5.3",
+		"postcss": "^8.5.15",
 		"webpack": "^5.99.8"
 	}
 }

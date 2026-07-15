@@ -5,6 +5,7 @@ const selectors = {
 	continue: 'button:text("Continue"),a:text("Continue")',
 	loginWithAnotherAccount: ':text("another account")',
 	useUsernamePasswordInstead: 'button:text("Use username and password instead")',
+	cookieBannerAccept: '.a8c-cookie-banner__ok-button, .a8c-cookie-banner__accept-all-button',
 };
 
 /**
@@ -59,6 +60,24 @@ export class LoginPage {
 	async submitVerificationCode( code: string ): Promise< void > {
 		await this.fillVerificationCode( code );
 		await Promise.all( [ this.page.waitForNavigation(), this.clickSubmit() ] );
+	}
+
+	/**
+	 * Dismisses the cookie consent banner if it is present.
+	 *
+	 * The banner is shown on logged-out WordPress.com pages and, on mobile
+	 * viewports, can overlay the login form's submit button, blocking the click.
+	 * Its appearance is not deterministic, so a missing banner is not an error.
+	 */
+	async dismissCookieBanner(): Promise< void > {
+		const locator = this.page.locator( selectors.cookieBannerAccept ).first();
+		try {
+			await locator.waitFor( { timeout: 5 * 1000 } );
+		} catch {
+			// Banner did not appear; nothing to dismiss.
+			return;
+		}
+		await locator.click();
 	}
 
 	/**

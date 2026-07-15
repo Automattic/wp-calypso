@@ -592,12 +592,95 @@ describe( 'Stepper dev warnings', () => {
 		spy.mockRestore();
 	} );
 
-	// NOTE: A test for the duplicate-value warning ("Two steps share value '...'") is
-	// deliberately omitted. useStepRegistration prevents duplicate entries at registration
-	// time (it bails out if a step with the same value is already in state), so the
-	// steps array that the useEffect in root.tsx inspects will never contain duplicates.
-	// The warning is unreachable in a JSDOM environment via normal JSX rendering, making
-	// any such test a never-fails assertion that proves nothing about real behaviour.
+	// NOTE: warning() dedupes messages process-wide, so these tests use step values
+	// unique to this file to make sure the expected message has not fired elsewhere.
+	it( 'warns when two steps share the same value', async () => {
+		const spy = jest.spyOn( console, 'warn' ).mockImplementation( () => {} );
+		render(
+			<Stepper.Root orientation="vertical" value="dup-warn" aria-label="Test">
+				<Stepper.Step value="dup-warn">
+					<Stepper.Indicator />
+				</Stepper.Step>
+				<Stepper.Step value="dup-warn">
+					<Stepper.Indicator />
+				</Stepper.Step>
+			</Stepper.Root>
+		);
+		await waitFor( () => {
+			expect( spy ).toHaveBeenCalledWith(
+				expect.stringContaining( "Two steps share value 'dup-warn'" )
+			);
+		} );
+		spy.mockRestore();
+	} );
+
+	it( 'keeps the original step registered when a duplicate step unmounts', async () => {
+		const spy = jest.spyOn( console, 'warn' ).mockImplementation( () => {} );
+		function Dynamic() {
+			const [ showDuplicate, setShowDuplicate ] = useState( true );
+			return (
+				<>
+					<button onClick={ () => setShowDuplicate( false ) }>Remove duplicate</button>
+					<Stepper.Root orientation="vertical" value="dup-unmount" aria-label="Test">
+						<Stepper.Step value="dup-unmount">
+							<Stepper.Indicator />
+						</Stepper.Step>
+						{ showDuplicate && (
+							<Stepper.Step value="dup-unmount">
+								<Stepper.Indicator />
+							</Stepper.Step>
+						) }
+						<Stepper.Step value="last">
+							<Stepper.Indicator />
+						</Stepper.Step>
+					</Stepper.Root>
+				</>
+			);
+		}
+		const user = userEvent.setup();
+		render( <Dynamic /> );
+		// The duplicate is rejected at registration time, so only two steps count.
+		await waitFor( () => expect( screen.getByText( 'Step 2 of 2' ) ).toBeInTheDocument() );
+		await user.click( screen.getByRole( 'button', { name: /remove duplicate/i } ) );
+		// Unmounting the rejected duplicate must not deregister the original step.
+		await waitFor( () => expect( screen.getByText( 'Step 2 of 2' ) ).toBeInTheDocument() );
+		expect( screen.getByText( 'Step 1 of 2' ) ).toBeInTheDocument();
+		spy.mockRestore();
+	} );
+
+	it( 'keeps the step registered when the original unmounts but a duplicate is still mounted', async () => {
+		const spy = jest.spyOn( console, 'warn' ).mockImplementation( () => {} );
+		function Dynamic() {
+			const [ showOriginal, setShowOriginal ] = useState( true );
+			return (
+				<>
+					<button onClick={ () => setShowOriginal( false ) }>Remove original</button>
+					<Stepper.Root orientation="vertical" value="dup-orig" aria-label="Test">
+						{ showOriginal && (
+							<Stepper.Step value="dup-orig">
+								<Stepper.Indicator />
+							</Stepper.Step>
+						) }
+						<Stepper.Step value="dup-orig">
+							<Stepper.Indicator />
+						</Stepper.Step>
+						<Stepper.Step value="last">
+							<Stepper.Indicator />
+						</Stepper.Step>
+					</Stepper.Root>
+				</>
+			);
+		}
+		const user = userEvent.setup();
+		render( <Dynamic /> );
+		// The duplicate is rejected at registration time, so only two steps count.
+		await waitFor( () => expect( screen.getByText( 'Step 2 of 2' ) ).toBeInTheDocument() );
+		await user.click( screen.getByRole( 'button', { name: /remove original/i } ) );
+		// The duplicate instance is still mounted, so the value must stay registered.
+		await waitFor( () => expect( screen.getByText( 'Step 2 of 2' ) ).toBeInTheDocument() );
+		expect( screen.getByText( 'Step 1 of 2' ) ).toBeInTheDocument();
+		spy.mockRestore();
+	} );
 } );
 
 describe( 'Stepper.Panel dev warnings', () => {

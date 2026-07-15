@@ -40,6 +40,41 @@ export function getPathWithUpdatedQueryString( query = {}, path = page.current )
 }
 
 /**
+ * Build a module "View details" summary link that forwards the current date range.
+ * When the source query carries a custom range we emit the modern `chartStart`/`chartEnd`
+ * (plus the matched `shortcut`) contract; otherwise we keep the legacy single-date `startDate`.
+ * @param {Object} params params
+ * @param {Object} params.period period object with `period` string and `endOf` moment
+ * @param {string} params.module module path segment (e.g. `referrers`)
+ * @param {string} params.siteSlug site slug
+ * @param {Object} params.query stats query (may carry `start_date`/`date`)
+ * @param {string} [params.shortcut] active shortcut id to forward
+ * @returns {string|undefined} the summary URL or undefined when required params are missing
+ */
+export function buildSummaryUrl( { period, module, siteSlug, query, shortcut } = {} ) {
+	if ( ! period?.period || ! module || ! siteSlug ) {
+		return undefined;
+	}
+
+	const url = `/stats/${ period.period }/${ module }/${ siteSlug }`;
+
+	if ( ! query?.start_date || ! query?.date ) {
+		return `${ url }?startDate=${ period.endOf.format( DATE_FORMAT ) }`;
+	}
+
+	// The range and shortcut originate from the URL, so serialize instead of interpolating.
+	const params = new URLSearchParams( {
+		chartStart: query.start_date,
+		chartEnd: query.date,
+	} );
+	if ( shortcut ) {
+		params.set( 'shortcut', shortcut );
+	}
+
+	return `${ url }?${ params.toString() }`;
+}
+
+/**
  * Add analytics event.
  * @param {*} eventName Analytics event name, automatically prefixed with 'jetpack_odyssey' or 'calypso'
  * @param {*} properties Analytics properties

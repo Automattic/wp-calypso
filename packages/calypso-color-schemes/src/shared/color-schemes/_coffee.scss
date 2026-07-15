@@ -67,6 +67,8 @@ The wp-admin highlight color hue is 27, while studio-orange ranges from 25 to 35
 	--color-masterbar-submenu-text: var(--theme-submenu-text-color);
 	--color-masterbar-icon: var(--theme-icon-color);
 	--color-masterbar-highlight: var(--theme-highlight-color);
+	--color-masterbar-submenu-group-background: #656463; /* wp-admin ul.ab-sub-secondary */
+	--color-global-masterbar-site-info-background: var(--color-masterbar-submenu-group-background);
 	--color-masterbar-unread-dot-background: var(--theme-notification-color);
 
 	--color-masterbar-item-hover-background: var(--theme-submenu-background-color);

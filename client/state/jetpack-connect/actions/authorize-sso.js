@@ -1,5 +1,5 @@
+import { pick } from '@automattic/js-utils';
 import debugFactory from 'debug';
-import { pick } from 'lodash';
 import wpcom from 'calypso/lib/wp';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import {

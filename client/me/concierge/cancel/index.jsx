@@ -1,6 +1,5 @@
 import { Button } from '@automattic/components';
 import { localize } from 'i18n-calypso';
-import { includes } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
@@ -73,8 +72,7 @@ class ConciergeCancel extends Component {
 
 			default: {
 				const disabledCancelling =
-					includes(
-						[ CONCIERGE_STATUS_CANCELLED, CONCIERGE_STATUS_CANCELLING ],
+					[ CONCIERGE_STATUS_CANCELLED, CONCIERGE_STATUS_CANCELLING ].includes(
 						signupForm.status
 					) ||
 					! appointmentDetails ||

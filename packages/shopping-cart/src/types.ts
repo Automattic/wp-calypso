@@ -493,7 +493,12 @@ export interface ResponseCart< P = ResponseCartProduct > {
 	cart_generated_at_timestamp: number;
 	tax: ResponseCartTaxData;
 	next_domain_is_free: boolean;
-	next_domain_condition: '' | 'blog';
+	/**
+	 * Comma-separated TLD allow-list the free-domain credit applies to ('' means no restriction).
+	 * The listed literals document known values for autocomplete; `string & {}` keeps the type from
+	 * collapsing to plain `string` so new backend values don't require a type change here.
+	 */
+	next_domain_condition: '' | 'blog' | 'blog,art' | ( string & {} );
 	bundled_domain?: string;
 
 	/**
@@ -947,6 +952,12 @@ export interface ResponseCartProductExtra {
 	isA4ADevSiteCheckout?: boolean;
 	referral_id?: number;
 	agency_id?: number;
+
+	/**
+	 * A4A Pressable PHP Memory add-on target domain.
+	 * Sent with checkout cart items so WPCOM can provision the add-on for the selected Pressable site.
+	 */
+	a4a_pressable_site_domain?: string;
 
 	/**
 	 * Marketplace properties

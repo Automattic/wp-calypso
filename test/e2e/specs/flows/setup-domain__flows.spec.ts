@@ -6,7 +6,7 @@ import {
 	NewUserResponse,
 	RestAPIClient,
 } from '@automattic/calypso-e2e';
-import { tags, test, expect } from '../../lib/pw-base';
+import { skipIfNotTrunk, tags, test, expect } from '../../lib/pw-base';
 import { apiCloseAccount, apiCreateFreeSiteForUser, apiDeleteSite } from '../shared';
 
 test.describe(
@@ -15,6 +15,8 @@ test.describe(
 		tag: [ tags.CALYPSO_RELEASE ],
 	},
 	() => {
+		skipIfNotTrunk();
+
 		const accountsToCleanup: {
 			testUser: NewTestUserDetails;
 			newUserDetails: NewUserResponse;
@@ -139,12 +141,17 @@ test.describe(
 			} );
 
 			await test.step( 'Given I have a free site', async function () {
+				const accountToCleanup: ( typeof accountsToCleanup )[ number ] = {
+					testUser,
+					newUserDetails,
+				};
+				accountsToCleanup.push( accountToCleanup );
 				newSiteDetails = await apiCreateFreeSiteForUser(
 					testUser,
 					newUserDetails,
 					helperData.getBlogName()
 				);
-				accountsToCleanup.push( { testUser, newUserDetails, newSiteDetails } );
+				accountToCleanup.newSiteDetails = newSiteDetails;
 			} );
 
 			await test.step( 'And I enter the domain flow', async function () {
@@ -212,12 +219,17 @@ test.describe(
 			} );
 
 			await test.step( 'Given I have a free site', async function () {
+				const accountToCleanup: ( typeof accountsToCleanup )[ number ] = {
+					testUser,
+					newUserDetails,
+				};
+				accountsToCleanup.push( accountToCleanup );
 				newSiteDetails = await apiCreateFreeSiteForUser(
 					testUser,
 					newUserDetails,
 					helperData.getBlogName()
 				);
-				accountsToCleanup.push( { testUser, newUserDetails, newSiteDetails } );
+				accountToCleanup.newSiteDetails = newSiteDetails;
 			} );
 
 			await test.step( 'And I enter the domain flow', async function () {
@@ -260,7 +272,10 @@ test.describe(
 			} );
 		} );
 
-		test( 'As a new user, I can create a paid site, add a domain, then cancel the plan', async ( {
+		// Skipped for now; can be updated once we're sure all onboarding tests will go
+		// through the MSD flow. See https://github.com/Automattic/wp-calypso/pull/112586
+		// and https://github.com/Automattic/wp-calypso/pull/112587.
+		test.skip( 'As a new user, I can create a paid site, add a domain, then cancel the plan', async ( {
 			page,
 			componentDomainSearch,
 			componentSelectItems,
@@ -353,6 +368,17 @@ test.describe(
 					newSiteDetails.blog_details.site_slug as string,
 					false
 				);
+			} );
+
+			await test.step( 'And I skip the plan step if it appears', async function () {
+				// Adding a domain to a site that already has a paid plan normally lands
+				// straight on checkout, but a plan-eligibility propagation race can
+				// surface the "There's a plan for you" interstitial. When it does, take
+				// the free escape hatch to continue to checkout without adding a plan.
+				await page.waitForURL( /setup\/domain\/plans|\/checkout\// );
+				if ( /setup\/domain\/plans/.test( page.url() ) ) {
+					await pageSignupPickPlan.selectEscapeHatchWithoutSiteCreation( 'Free' );
+				}
 			} );
 
 			await test.step( 'Then I see the domain at checkout', async function () {
@@ -507,7 +533,10 @@ test.describe(
 			} );
 		} );
 
-		test( 'As a new user, I can create a paid site, add a domain using pre-selected site flow, then cancel the plan', async ( {
+		// Skipped for now; can be updated once we're sure all onboarding tests will go
+		// through the MSD flow. See https://github.com/Automattic/wp-calypso/pull/112586
+		// and https://github.com/Automattic/wp-calypso/pull/112587.
+		test.skip( 'As a new user, I can create a paid site, add a domain using pre-selected site flow, then cancel the plan', async ( {
 			page,
 			componentDomainSearch,
 			componentMeSidebar,

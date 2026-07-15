@@ -1,5 +1,7 @@
 @import "@wordpress/base-styles/breakpoints";
 @import "@wordpress/base-styles/mixins";
+@import "@automattic/typography/styles/variables";
+@import "calypso/assets/stylesheets/shared/mixins/breakpoints";
 
 .is-section-me.is-global-sidebar-visible .purchases__cancel.main,
 .is-section-me.is-global-sidebar-visible .purchases__cancel-domain.main {

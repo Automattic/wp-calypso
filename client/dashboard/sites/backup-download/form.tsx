@@ -3,10 +3,10 @@ import { useMutation } from '@tanstack/react-query';
 import { Button, __experimentalVStack as VStack } from '@wordpress/components';
 import { useDispatch } from '@wordpress/data';
 import { DataForm } from '@wordpress/dataviews';
+import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
 import { useState } from 'react';
-import { siteBackupDownloadRoute } from '../../app/router/sites';
 import { ButtonStack } from '../../components/button-stack';
 import type { DownloadConfig } from '@automattic/api-core';
 import type { Field } from '@wordpress/dataviews';
@@ -50,12 +50,15 @@ const fields: Field< DownloadConfig >[] = [
 
 function SiteBackupDownloadForm( {
 	siteId,
+	rewindId,
+	downloadPointDate,
 	onDownloadInitiate,
 }: {
 	siteId: number;
+	rewindId: string;
+	downloadPointDate: string;
 	onDownloadInitiate: ( downloadId: number ) => void;
 } ) {
-	const { rewindId } = siteBackupDownloadRoute.useParams();
 	const { mutate: downloadMutation, isPending: isDownloadMutationPending } = useMutation(
 		siteBackupDownloadInitiateMutation( siteId )
 	);
@@ -108,7 +111,12 @@ function SiteBackupDownloadForm( {
 	return (
 		<form onSubmit={ handleSubmit }>
 			<VStack spacing={ 4 }>
-				<p>{ __( 'Choose the items you wish to include in the download:' ) }</p>
+				<p>
+					{ createInterpolateElement(
+						__( 'Choose what to download from your <downloadPointDate /> backup:' ),
+						{ downloadPointDate: <strong>{ downloadPointDate }</strong> }
+					) }
+				</p>
 				<DataForm< DownloadConfig >
 					data={ formData }
 					fields={ fields }

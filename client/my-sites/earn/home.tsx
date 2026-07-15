@@ -16,7 +16,6 @@ import { getCalypsoUrl } from '@automattic/calypso-url';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { addQueryArgs } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
-import { compact } from 'lodash';
 import { useState, useEffect } from 'react';
 import ClipboardButtonInput from 'calypso/components/clipboard-button-input';
 import QueryMembershipProducts from 'calypso/components/data/query-memberships';
@@ -537,7 +536,7 @@ const Home = () => {
 	};
 
 	const promos: PromoSectionProps = {
-		promos: compact( [
+		promos: [
 			getRecurringPaymentsCard(),
 			getDonationsCard(),
 			getPremiumContentCard(),
@@ -545,7 +544,7 @@ const Home = () => {
 			getSimplePaymentsCard(),
 			getAdsCard(),
 			getPeerReferralsCard(),
-		] ),
+		].filter( ( card ): card is PromoSectionCardProps => Boolean( card ) ),
 	};
 
 	if ( ! isUserAdmin ) {

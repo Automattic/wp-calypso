@@ -2,7 +2,6 @@ import { isDomainRegistration } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
 import { Card, CompactCard, FormLabel } from '@automattic/components';
 import { localize } from 'i18n-calypso';
-import { map, find } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
@@ -155,7 +154,9 @@ class ConfirmCancelDomain extends Component {
 	onReasonChange = ( event ) => {
 		const select = event.currentTarget;
 		this.setState( {
-			selectedReason: find( cancellationReasons, { value: select[ select.selectedIndex ].value } ),
+			selectedReason: cancellationReasons.find(
+				( reason ) => reason.value === select[ select.selectedIndex ].value
+			),
 		} );
 	};
 
@@ -295,7 +296,7 @@ class ConfirmCancelDomain extends Component {
 						<option disabled="disabled" value="disabled" key="disabled">
 							{ this.props.translate( 'Please let us know why you wish to cancel.' ) }
 						</option>
-						{ map( cancellationReasons, ( { value, label } ) => (
+						{ cancellationReasons.map( ( { value, label } ) => (
 							<option value={ value } key={ value }>
 								{ label }
 							</option>

@@ -10,8 +10,17 @@ import {
 import type { ColorScheme } from './shared';
 import type { ReactNode } from 'react';
 
-export function ColorSchemeProvider( { children }: { children: ReactNode } ) {
-	const { data: savedColorScheme, isError } = useQuery( userPreferenceQuery( PREFERENCE_KEY ) );
+export function ColorSchemeProvider( {
+	children,
+	enabled = true,
+}: {
+	children: ReactNode;
+	enabled?: boolean;
+} ) {
+	const { data: savedColorScheme, isError } = useQuery( {
+		...userPreferenceQuery( PREFERENCE_KEY ),
+		enabled,
+	} );
 	const { mutate: saveColorScheme, isPending } = useMutation(
 		userPreferenceOptimisticMutation( PREFERENCE_KEY )
 	);
@@ -34,6 +43,7 @@ export function ColorSchemeProvider( { children }: { children: ReactNode } ) {
 	return (
 		<ColorSchemeContextProvider
 			colorScheme={ colorScheme }
+			enabled={ enabled }
 			isReady={ isReady }
 			setColorScheme={ setColorScheme }
 			waitForReady

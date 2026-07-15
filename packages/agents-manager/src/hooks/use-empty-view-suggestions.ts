@@ -20,6 +20,14 @@ const SITE_EDITOR_ONLY_SUGGESTION_IDS = new Set( [
 	'what-else-can-i-do',
 ] );
 
+const SITE_EDITOR_POST_TYPES = new Set( [ 'wp_template', 'wp_template_part' ] );
+
+export const DEFAULT_EMPTY_VIEW_SUGGESTION_IDS = {
+	gettingStarted: 'getting-started',
+	createPost: 'create-post',
+	customizeSite: 'customize-site',
+} as const;
+
 /**
  * Hook to manage empty view suggestions, handling Big Sky's theme-dependent suggestions
  *
@@ -97,10 +105,9 @@ function getWindowPathname(): string {
 	return typeof window !== 'undefined' ? window.location.pathname : '';
 }
 
-function isPostEditorSurface( sectionName: string, currentRoute?: string ): boolean {
+function isPostEditorRoute( currentRoute?: string ): boolean {
 	const pathname = getWindowPathname();
 	return (
-		sectionName === 'gutenberg' ||
 		!! currentRoute?.includes( 'post.php' ) ||
 		!! currentRoute?.includes( 'post-new.php' ) ||
 		pathname.includes( 'post.php' ) ||
@@ -108,16 +115,29 @@ function isPostEditorSurface( sectionName: string, currentRoute?: string ): bool
 	);
 }
 
-function isSiteEditorSurface( sectionName: string, currentRoute?: string ): boolean {
-	if ( isPostEditorSurface( sectionName, currentRoute ) ) {
+function isSiteEditorRoute( currentRoute?: string ): boolean {
+	const pathname = getWindowPathname();
+	return !! currentRoute?.includes( 'site-editor.php' ) || pathname.includes( 'site-editor.php' );
+}
+
+function shouldShowSiteEditorSuggestionsForSurface(
+	sectionName: string,
+	currentRoute?: string,
+	currentPostType?: string
+): boolean {
+	if ( isSiteEditorRoute( currentRoute ) || SITE_EDITOR_POST_TYPES.has( currentPostType ?? '' ) ) {
+		return true;
+	}
+
+	if ( currentPostType ) {
+		return currentPostType === 'page';
+	}
+
+	if ( isPostEditorRoute( currentRoute ) ) {
 		return false;
 	}
 
-	return (
-		sectionName === 'site-editor' ||
-		!! currentRoute?.includes( 'site-editor.php' ) ||
-		getWindowPathname().includes( 'site-editor.php' )
-	);
+	return sectionName === 'site-editor';
 }
 
 function filterEmptyViewSuggestions(
@@ -137,25 +157,39 @@ export function useEmptyViewSuggestions( {
 }: UseEmptyViewSuggestionsOptions ): Suggestion[] | null {
 	const isReaderChat = isReaderChatHost();
 	const { sectionName, currentRoute } = useAgentsManagerContext();
-	const shouldShowSiteEditorSuggestions = isSiteEditorSurface( sectionName, currentRoute );
+	const currentPostType = useSelect( ( select ) => {
+		try {
+			const editorStore = select( 'core/editor' ) as {
+				getCurrentPostType?: () => string | undefined;
+			};
+			return editorStore?.getCurrentPostType?.();
+		} catch {
+			return undefined;
+		}
+	}, [] );
+	const shouldShowSiteEditorSuggestions = shouldShowSiteEditorSuggestionsForSurface(
+		sectionName,
+		currentRoute,
+		currentPostType
+	);
 
 	// Default suggestions - used when Big Sky doesn't provide custom ones
 	const defaultSuggestions = useMemo(
 		() => [
 			{
-				id: 'getting-started',
-				label: __( 'Getting started with WordPress', '__i18n_text_domain__' ),
-				prompt: __( 'How do I get started with WordPress?', '__i18n_text_domain__' ),
+				id: DEFAULT_EMPTY_VIEW_SUGGESTION_IDS.gettingStarted,
+				label: __( 'Getting started with WordPress', __i18n_text_domain__ ),
+				prompt: __( 'How do I get started with WordPress?', __i18n_text_domain__ ),
 			},
 			{
-				id: 'create-post',
-				label: __( 'Create a blog post', '__i18n_text_domain__' ),
-				prompt: __( 'How do I create a blog post?', '__i18n_text_domain__' ),
+				id: DEFAULT_EMPTY_VIEW_SUGGESTION_IDS.createPost,
+				label: __( 'Create a blog post', __i18n_text_domain__ ),
+				prompt: __( 'How do I create a blog post?', __i18n_text_domain__ ),
 			},
 			{
-				id: 'customize-site',
-				label: __( 'Customize my site', '__i18n_text_domain__' ),
-				prompt: __( 'How can I customize my site?', '__i18n_text_domain__' ),
+				id: DEFAULT_EMPTY_VIEW_SUGGESTION_IDS.customizeSite,
+				label: __( 'Customize my site', __i18n_text_domain__ ),
+				prompt: __( 'How can I customize my site?', __i18n_text_domain__ ),
 			},
 		],
 		[]
@@ -184,7 +218,7 @@ export function useEmptyViewSuggestions( {
 		[ hasBigSkySuggestions ]
 	);
 
-	// Compute empty view suggestions once when store is ready
+	// Compute empty view suggestions when store/context is ready.
 	const [ emptyViewSuggestions, setEmptyViewSuggestions ] = useState< Suggestion[] | null >( null );
 
 	// Signal that bumps whenever the host dispatches
@@ -203,6 +237,8 @@ export function useEmptyViewSuggestions( {
 		};
 	}, [ isReaderChat ] );
 
+	// Providers can key suggestions by entity type even when the coarse Site
+	// Editor surface flag stays true during client-side navigation.
 	useEffect( () => {
 		// Re-read override before the core-store readiness gate. Reader-chat
 		// suggestions come from the host page and do not depend on theme data.
@@ -222,13 +258,23 @@ export function useEmptyViewSuggestions( {
 			return;
 		}
 
-		if ( emptyViewSuggestions !== null ) {
-			return;
-		}
+		const setSuggestionsIfChanged = ( nextSuggestions: Suggestion[] ) => {
+			const nextKey = getSuggestionsKey( nextSuggestions );
+			const stateKey = getSuggestionsKey( emptyViewSuggestions );
+			if ( nextKey !== stateKey ) {
+				setEmptyViewSuggestions( nextSuggestions );
+			}
+		};
+
+		// Opt-out: a loaded provider can suppress the built-in defaults for
+		// its surfaces (e.g. WooCommerce AI doesn't want WordPress-flavored
+		// chips like "Create a blog post" on a Woo admin chat).
+		const suppressDefaults = loadedProviders.suppressEmptyViewDefaults === true;
+		const fallbackSuggestions = suppressDefaults ? [] : defaultSuggestions;
 
 		if ( ! hasBigSkySuggestions ) {
 			// No Big Sky suggestions provider, use defaults immediately
-			setEmptyViewSuggestions( defaultSuggestions );
+			setSuggestionsIfChanged( fallbackSuggestions );
 		} else {
 			// Big Sky provides suggestions and store is ready - get filtered suggestions
 			const providerSuggestions = loadedProviders.getEmptyViewSuggestions?.() ?? [];
@@ -237,18 +283,18 @@ export function useEmptyViewSuggestions( {
 				shouldShowSiteEditorSuggestions
 			);
 			if ( suggestions.length > 0 ) {
-				setEmptyViewSuggestions( suggestions );
+				setSuggestionsIfChanged( suggestions );
 			} else if ( providerSuggestions.length > 0 ) {
 				// The provider returned suggestions, but all of them are hidden
 				// on this surface (for example Site Editor suggestions in the
 				// post editor). Keep the empty view empty instead of falling
 				// back to generic suggestions.
-				setEmptyViewSuggestions( [] );
+				setSuggestionsIfChanged( [] );
 			} else {
 				// Provider exists but returned empty/undefined (e.g. lazy proxy
 				// race where the IIFE hasn't set window globals yet). Fall back
 				// to defaults so the AM still renders.
-				setEmptyViewSuggestions( defaultSuggestions );
+				setSuggestionsIfChanged( fallbackSuggestions );
 			}
 		}
 	}, [
@@ -259,6 +305,7 @@ export function useEmptyViewSuggestions( {
 		emptyViewSuggestions,
 		overrideVersion,
 		shouldShowSiteEditorSuggestions,
+		currentPostType,
 	] );
 
 	return emptyViewSuggestions;

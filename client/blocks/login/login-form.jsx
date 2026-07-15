@@ -2,21 +2,22 @@ import config from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
 import { Card, FormInputValidation, FormLabel, Gridicon } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
+import { capitalize } from '@automattic/js-utils';
 import { suggestEmailCorrection } from '@automattic/onboarding';
 import { Button } from '@wordpress/components';
+import { debounce } from '@wordpress/compose';
 import { Badge } from '@wordpress/ui';
 import clsx from 'clsx';
 import cookie from 'cookie';
 import emailValidator from 'email-validator';
 import { localize } from 'i18n-calypso';
-import { capitalize, defer, includes, get, debounce } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
 import { FormDivider } from 'calypso/blocks/authentication';
 import JetpackConnectSiteOnly from 'calypso/blocks/jetpack-connect-site-only';
-import BlackboxChallenge from 'calypso/blocks/login/blackbox-challenge';
 import LoginSubmitButton from 'calypso/blocks/login/login-submit-button';
+import { withBlackboxProtection } from 'calypso/blocks/login/with-blackbox-protection';
 import FormPasswordInput from 'calypso/components/forms/form-password-input';
 import FormTextInput from 'calypso/components/forms/form-text-input';
 import Notice from 'calypso/dashboard/components/notice';
@@ -75,6 +76,12 @@ import './login-form.scss';
 export class LoginForm extends Component {
 	static propTypes = {
 		accountType: PropTypes.string,
+		blackbox: PropTypes.shape( {
+			isSubmitBlocked: PropTypes.bool.isRequired,
+			challenge: PropTypes.node.isRequired,
+			getSessionId: PropTypes.func.isRequired,
+			reset: PropTypes.func.isRequired,
+		} ).isRequired,
 		disableAutoFocus: PropTypes.bool,
 		sendEmailLogin: PropTypes.func.isRequired,
 		formUpdate: PropTypes.func.isRequired,
@@ -114,12 +121,6 @@ export class LoginForm extends Component {
 		emailSuggestionError: false,
 		password: '',
 		lastUsedAuthenticationMethod: this.getLastUsedAuthenticationMethod(),
-		isBlackboxSubmitBlocked:
-			config.isEnabled( 'blackbox-login' ) && !! config( 'blackbox_api_key' ),
-	};
-
-	handleBlackboxSubmitBlockedChange = ( isBlocked ) => {
-		this.setState( { isBlackboxSubmitBlocked: isBlocked } );
 	};
 
 	componentDidMount() {
@@ -127,7 +128,8 @@ export class LoginForm extends Component {
 
 		// eslint-disable-next-line react/no-did-mount-set-state
 		this.setState( { isFormDisabledWhileLoading: false }, () => {
-			! disableAutoFocus && defer( () => this.usernameOrEmail && this.usernameOrEmail.focus() );
+			! disableAutoFocus &&
+				setTimeout( () => this.usernameOrEmail && this.usernameOrEmail.focus(), 0 );
 		} );
 		// Remove url param to keep the last used login consistent upon refresh
 		const url = new URL( window.location );
@@ -168,11 +170,12 @@ export class LoginForm extends Component {
 		}
 
 		if ( requestError.field === 'password' ) {
-			! disableAutoFocus && defer( () => this.password && this.password.focus() );
+			! disableAutoFocus && setTimeout( () => this.password && this.password.focus(), 0 );
 		}
 
 		if ( requestError.field === 'usernameOrEmail' ) {
-			! disableAutoFocus && defer( () => this.usernameOrEmail && this.usernameOrEmail.focus() );
+			! disableAutoFocus &&
+				setTimeout( () => this.usernameOrEmail && this.usernameOrEmail.focus(), 0 );
 		}
 
 		// User entered an email address or username that doesn't have a corresponding WPCOM account
@@ -202,11 +205,12 @@ export class LoginForm extends Component {
 		if ( this.props.hasAccountTypeLoaded && ! nextProps.hasAccountTypeLoaded ) {
 			this.setState( { password: '' } );
 
-			! disableAutoFocus && defer( () => this.usernameOrEmail && this.usernameOrEmail.focus() );
+			! disableAutoFocus &&
+				setTimeout( () => this.usernameOrEmail && this.usernameOrEmail.focus(), 0 );
 		}
 
 		if ( ! this.props.hasAccountTypeLoaded && isRegularAccount( nextProps.accountType ) ) {
-			! disableAutoFocus && defer( () => this.password && this.password.focus() );
+			! disableAutoFocus && setTimeout( () => this.password && this.password.focus(), 0 );
 		}
 
 		if ( nextProps.requestError ) {
@@ -318,7 +322,7 @@ export class LoginForm extends Component {
 
 		this.props.recordTracksEvent( 'calypso_login_block_login_form_submit' );
 		this.props
-			.loginUser( usernameOrEmail, password, redirectTo, domain )
+			.loginUser( usernameOrEmail, password, redirectTo, domain, this.props.blackbox )
 			.then( () => {
 				this.props.recordTracksEvent( 'calypso_login_block_login_form_success' );
 				onSuccess( redirectTo );
@@ -347,7 +351,7 @@ export class LoginForm extends Component {
 			} );
 
 			if ( this.props.isJetpack ) {
-				const isEmailAddress = includes( usernameOrEmail, '@' );
+				const isEmailAddress = usernameOrEmail.includes( '@' );
 
 				if ( isEmailAddress && isPasswordlessAccount( this.props.accountType ) ) {
 					this.jetpackCreateAccountWithMagicLink();
@@ -381,7 +385,7 @@ export class LoginForm extends Component {
 		// a username, we need to prompt the user specifically for an email address to proceed with
 		// the WPCOM account creation with magic links.
 
-		const isEmailAddress = includes( this.state.usernameOrEmail, '@' );
+		const isEmailAddress = this.state.usernameOrEmail.includes( '@' );
 		if ( isEmailAddress ) {
 			// With Magic Links, create the user a WPCOM account linked to the entered email address
 			this.props.sendEmailLogin( this.state.usernameOrEmail, {
@@ -462,7 +466,7 @@ export class LoginForm extends Component {
 				size="compact"
 			>
 				<Gridicon icon="arrow-left" size={ 18 } />
-				{ includes( this.state.usernameOrEmail, '@' )
+				{ this.state.usernameOrEmail.includes( '@' )
 					? this.props.translate( 'Change email address' )
 					: this.props.translate( 'Change username' ) }
 			</Button>
@@ -505,7 +509,7 @@ export class LoginForm extends Component {
 							locale: this.props.locale,
 							action: this.props.isWooJPC ? 'jetpack/lostpassword' : 'lostpassword',
 							oauth2ClientId: this.props.oauth2Client && this.props.oauth2Client.id,
-							from: get( this.props.currentQuery, 'from' ),
+							from: this.props.currentQuery?.from,
 						} )
 					);
 				} }
@@ -703,7 +707,7 @@ export class LoginForm extends Component {
 		const isFormDisabled = this.state.isFormDisabledWhileLoading || this.props.isFormDisabled;
 		const isEmailOrUsernameInputDisabled =
 			isFormDisabled || this.isPasswordView() || isGravatarFixedAccountLogin;
-		const isSubmitButtonDisabled = isFormDisabled || this.state.isBlackboxSubmitBlocked;
+		const isSubmitButtonDisabled = isFormDisabled || this.props.blackbox.isSubmitBlocked;
 		const isPasswordHidden = this.isUsernameOrEmailView();
 		const signupUrl = this.getSignupUrl();
 		const shouldRenderForgotPasswordLink = ! isPasswordHidden && isWoo;
@@ -898,7 +902,7 @@ export class LoginForm extends Component {
 
 				{ shouldRenderForgotPasswordLink && this.renderLostPasswordLink() }
 
-				<BlackboxChallenge onSubmitBlockedChange={ this.handleBlackboxSubmitBlockedChange } />
+				{ this.props.blackbox.challenge }
 
 				<div className="login__form-action">
 					<LoginSubmitButton
@@ -1027,7 +1031,7 @@ export default connect(
 			isFormDisabled: isFormDisabledSelector( state ),
 			oauth2Client,
 			isFromAutomatticForAgenciesPlugin:
-				'automattic-for-agencies-client' === get( getCurrentQueryArguments( state ), 'from' ),
+				'automattic-for-agencies-client' === getCurrentQueryArguments( state )?.from,
 			allowedSocialServices: getPartnerAllowedSocialServices( oauth2Client ),
 			isWooJPC: isWooJPCFlow( state ),
 			isWoo: getIsWoo( state ),
@@ -1044,7 +1048,7 @@ export default connect(
 			wccomFrom: getWccomFrom( state ),
 			currentQuery,
 			isBlazePro: getIsBlazePro( state ),
-			isOneTapAuth: !! get( getCurrentQueryArguments( state ), 'oneTapAuth' ),
+			isOneTapAuth: !! getCurrentQueryArguments( state )?.oneTapAuth,
 			isGravatarFixedAccountLogin:
 				isFromGravatar3rdPartyApp || isFromGravatarQuickEditor || isGravatarFlowWithEmail,
 			isGravPoweredClient: isGravPoweredOAuth2Client( oauth2Client ),
@@ -1062,4 +1066,4 @@ export default connect(
 		createSocialUserFailed,
 		loginSocialUser,
 	}
-)( localize( LoginForm ) );
+)( localize( withBlackboxProtection( LoginForm, { feature: 'blackbox-login' } ) ) );

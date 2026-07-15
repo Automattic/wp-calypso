@@ -1,5 +1,4 @@
 import { Card } from '@automattic/components';
-import { map } from 'lodash';
 import { PureComponent } from 'react';
 import PopoverMenuItem from 'calypso/components/popover-menu/item';
 import PopoverMenuSeparator from 'calypso/components/popover-menu/separator';
@@ -36,56 +35,53 @@ class SplitButtonExample extends PureComponent {
 					{ this.state.compactButtons ? 'Normal Buttons' : 'Compact Buttons' }
 				</button>
 				<Card>
-					{ map(
+					{ [
 						[
-							[
-								{ label: 'Split Button', icon: 'history' },
-								{ label: 'Split Button', primary: true },
-								{ label: 'Split Button with white separator', primary: true, whiteSeparator: true },
-								{ icon: 'globe' },
-							],
-							[
-								{ label: 'Split Button', primary: true, disableMain: true },
-								{ label: 'Split Button', icon: 'history', primary: true, disableMenu: true },
-							],
-							[
-								{ label: 'Split Button', primary: true, disabled: true },
-								{ icon: 'globe', primary: true, disabled: true },
-							],
-							[
-								{ label: 'Split Button', icon: 'history', scary: true },
-								{ label: 'Split Button', primary: true, scary: true },
-								{ icon: 'globe', scary: true },
-							],
-							[
-								{ label: 'Split Button', primary: true, disableMain: true, scary: true },
-								{
-									label: 'Split Button',
-									icon: 'history',
-									primary: true,
-									disableMenu: true,
-									scary: true,
-								},
-							],
-							[
-								{ label: 'Split Button', primary: true, disabled: true, scary: true },
-								{ icon: 'globe', primary: true, disabled: true, scary: true },
-							],
+							{ label: 'Split Button', icon: 'history' },
+							{ label: 'Split Button', primary: true },
+							{ label: 'Split Button with white separator', primary: true, whiteSeparator: true },
+							{ icon: 'globe' },
 						],
-						( row, rowIndex ) => (
-							<div className="docs__design-button-row" key={ `split-button-row-${ rowIndex }` }>
-								{ map( row, ( item, itemIndex ) => (
-									<SplitButton
-										key={ `split-button-item-${ rowIndex }-${ itemIndex }` }
-										{ ...item }
-										{ ...compact }
-									>
-										{ popoverItems }
-									</SplitButton>
-								) ) }
-							</div>
-						)
-					) }
+						[
+							{ label: 'Split Button', primary: true, disableMain: true },
+							{ label: 'Split Button', icon: 'history', primary: true, disableMenu: true },
+						],
+						[
+							{ label: 'Split Button', primary: true, disabled: true },
+							{ icon: 'globe', primary: true, disabled: true },
+						],
+						[
+							{ label: 'Split Button', icon: 'history', scary: true },
+							{ label: 'Split Button', primary: true, scary: true },
+							{ icon: 'globe', scary: true },
+						],
+						[
+							{ label: 'Split Button', primary: true, disableMain: true, scary: true },
+							{
+								label: 'Split Button',
+								icon: 'history',
+								primary: true,
+								disableMenu: true,
+								scary: true,
+							},
+						],
+						[
+							{ label: 'Split Button', primary: true, disabled: true, scary: true },
+							{ icon: 'globe', primary: true, disabled: true, scary: true },
+						],
+					].map( ( row, rowIndex ) => (
+						<div className="docs__design-button-row" key={ `split-button-row-${ rowIndex }` }>
+							{ row.map( ( item, itemIndex ) => (
+								<SplitButton
+									key={ `split-button-item-${ rowIndex }-${ itemIndex }` }
+									{ ...item }
+									{ ...compact }
+								>
+									{ popoverItems }
+								</SplitButton>
+							) ) }
+						</div>
+					) ) }
 				</Card>
 			</div>
 		);

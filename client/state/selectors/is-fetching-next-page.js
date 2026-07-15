@@ -1,5 +1,4 @@
 import { createSelector } from '@automattic/state-utils';
-import { get } from 'lodash';
 
 import 'calypso/state/media/init';
 
@@ -10,6 +9,6 @@ export default createSelector(
 	 * @param {number} siteId Site ID
 	 * @returns {boolean}           True if media is being requested
 	 */
-	( state, siteId ) => get( state.media.fetching, [ siteId, 'nextPage' ], false ),
+	( state, siteId ) => state.media.fetching?.[ siteId ]?.nextPage ?? false,
 	[ ( state, siteId ) => state.media.fetching?.[ siteId ] ]
 );

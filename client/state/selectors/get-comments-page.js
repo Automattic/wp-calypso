@@ -1,4 +1,3 @@
-import { get } from 'lodash';
 import { getFiltersKey } from 'calypso/state/comments/ui/utils';
 
 import 'calypso/state/comments/init';
@@ -19,7 +18,7 @@ export const getCommentsPage = ( state, siteId, query ) => {
 	const { page = 1, postId } = query;
 	const parent = postId || 'site';
 	const filter = getFiltersKey( query );
-	return get( state, [ 'comments', 'ui', 'queries', siteId, parent, filter, page ] );
+	return state?.comments?.ui?.queries?.[ siteId ]?.[ parent ]?.[ filter ]?.[ page ];
 };
 
 export default getCommentsPage;

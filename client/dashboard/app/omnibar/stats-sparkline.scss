@@ -1,0 +1,39 @@
+.wpcom-stats-sparkline {
+	vertical-align: middle;
+}
+
+.wpcom-stats-sparkline-bar {
+	fill: currentColor;
+}
+
+.wpcom-stats-sparkline-arrow {
+	fill: currentColor;
+}
+
+.wpcom-stats-sparkline-label {
+	fill: currentColor;
+}
+
+.wpcom-stats-sparkline-accessible-label {
+	border: 0;
+	clip: rect( 1px, 1px, 1px, 1px );
+	clip-path: inset( 50% );
+	height: 1px;
+	margin: -1px;
+	overflow: hidden;
+	padding: 0;
+	position: absolute;
+	white-space: nowrap;
+	width: 1px;
+}
+
+.omnibar__menu:hover,
+.omnibar__menu:focus-visible {
+	.wpcom-stats-sparkline {
+		overflow: visible;
+	}
+
+	.wpcom-stats-sparkline-peak {
+		opacity: 1;
+	}
+}

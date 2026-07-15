@@ -1,5 +1,5 @@
 import { Popover } from '@automattic/components';
-import { pick } from 'lodash';
+import { pick } from '@automattic/js-utils';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';

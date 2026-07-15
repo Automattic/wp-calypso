@@ -205,6 +205,84 @@ export async function reloadAndRetry(
 	return;
 }
 
+export type AvailabilityClock = {
+	now: () => number;
+	sleep: ( ms: number ) => Promise< void >;
+};
+
+const realAvailabilityClock: AvailabilityClock = {
+	now: () => Date.now(),
+	sleep: ( ms ) => new Promise( ( resolve ) => setTimeout( resolve, ms ) ),
+};
+
+/**
+ * Result of polling a single target for availability.
+ */
+export type ProbeTargetResult = {
+	label: string;
+	/** Time (relative to `AvailabilityProbe.measuredFrom`) at which the target first returned 200, or null if it never did within the cap. */
+	recoveredMs: number | null;
+	/** Last HTTP status seen: 200 when recovered, otherwise the final failing status, or -1 on network error. */
+	lastStatus: number;
+};
+
+/**
+ * Aggregate result of a post-publish availability probe.
+ */
+export type AvailabilityProbe = {
+	capMs: number;
+	measuredFrom: 'publish' | 'probe-start';
+	targets: ProbeTargetResult[];
+};
+
+/**
+ * Polls `getStatus` until it returns 200 or `capMs` elapses since the first call.
+ *
+ * Cap is strict: no poll starts and no sleep runs once the budget is exhausted.
+ * Each call receives the remaining budget so callers can clamp per-request timeouts.
+ * Clock is injectable for unit testing without real timers or network access.
+ */
+export async function pollUntilAvailable(
+	getStatus: ( remainingMs: number ) => Promise< number >,
+	{
+		capMs,
+		intervalMs,
+		clock = realAvailabilityClock,
+	}: { capMs: number; intervalMs: number; clock?: AvailabilityClock }
+): Promise< { recoveredAfterMs: number | null; lastStatus: number } > {
+	const start = clock.now();
+	const remaining = () => capMs - ( clock.now() - start );
+
+	let lastStatus = await getStatus( capMs );
+
+	while ( lastStatus !== 200 && remaining() > 0 ) {
+		await clock.sleep( Math.min( intervalMs, remaining() ) );
+		if ( remaining() <= 0 ) {
+			break;
+		}
+		lastStatus = await getStatus( remaining() );
+	}
+
+	if ( lastStatus === 200 ) {
+		return { recoveredAfterMs: clock.now() - start, lastStatus };
+	}
+	return { recoveredAfterMs: null, lastStatus };
+}
+
+/**
+ * Formats an availability probe for inclusion in a failure message.
+ */
+export function formatAvailabilityProbe( probe: AvailabilityProbe ): string {
+	const lines = probe.targets.map( ( target ) => {
+		if ( target.recoveredMs !== null ) {
+			return `  ${ target.label }: recovered after ${ target.recoveredMs }ms (since ${ probe.measuredFrom })`;
+		}
+		return `  ${ target.label }: not recovered within ${ probe.capMs }ms (last status ${ target.lastStatus })`;
+	} );
+
+	return [ `Availability probe (cap ${ probe.capMs }ms):`, ...lines ].join( '\n' );
+}
+
 /**
  * Gets and validates the block ID from a Locator to a parent Block element in the editor.
  *

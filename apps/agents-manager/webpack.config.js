@@ -48,6 +48,16 @@ function getIndividualConfig( options = {} ) {
 				},
 			],
 		},
+		resolve: {
+			...webpackConfig.resolve,
+			alias: {
+				...( webpackConfig.resolve?.alias || {} ),
+				// Share one Smooch instance with the Help Center bundle when both load
+				// together (e.g. the Site Editor). See smooch-shim.js.
+				// TODO: Remove once Agents Manager takes over the Help Center.
+				smooch$: path.join( __dirname, '../../build-tools/webpack/smooch-shim.js' ),
+			},
+		},
 		optimization: {
 			...webpackConfig.optimization,
 			// disable module concatenation so that instances of `__()` are not renamed
@@ -94,6 +104,18 @@ function getIndividualConfig( options = {} ) {
 					// self-hosted sites.
 					if ( request === '@wordpress/ui' ) {
 						return null;
+					}
+					// The plugin maps `react`/`react-dom` but not this deep import,
+					// so it would get bundled — a second react-dom copy (v19) that
+					// crashes against the page's external React. WordPress's
+					// `ReactDOM` global has included `createRoot` since WP 6.2.
+					if ( request === 'react-dom/client' ) {
+						return 'ReactDOM';
+					}
+				},
+				requestToHandle( request ) {
+					if ( request === 'react-dom/client' ) {
+						return 'react-dom';
 					}
 				},
 			} ),
@@ -144,6 +166,9 @@ function getReaderConfig( options = {} ) {
 			...webpackConfig.resolve,
 			alias: {
 				...( webpackConfig.resolve?.alias || {} ),
+				// Share one Smooch instance across bundles (see smooch-shim.js).
+				// TODO: Remove once Agents Manager takes over the Help Center.
+				smooch$: path.join( __dirname, '../../build-tools/webpack/smooch-shim.js' ),
 				'../agent-history': path.join( __dirname, 'reader-chat-route-stub.js' ),
 				'../support-guide': path.join( __dirname, 'reader-chat-route-stub.js' ),
 				'../support-guides': path.join( __dirname, 'reader-chat-route-stub.js' ),
@@ -203,7 +228,6 @@ function getWebpackConfig( env = { source: '' }, argv = {} ) {
 		getIndividualConfig( { env, argv, name: 'jetpack-ai-sidebar' } ),
 		getIndividualConfig( { env, argv, name: 'agents-manager-gutenberg-disconnected' } ),
 		getIndividualConfig( { env, argv, name: 'agents-manager-wp-admin-disconnected' } ),
-		getIndividualConfig( { env, argv, name: 'agents-manager-ciab-disconnected' } ),
 		getIndividualConfig( { env, argv, name: 'block-notes' } ),
 		getIndividualConfig( { env, argv, name: 'agents-manager-ciab' } ),
 		getIndividualConfig( { env, argv, name: 'agents-manager-wooai' } ),

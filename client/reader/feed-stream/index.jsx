@@ -36,8 +36,10 @@ const FeedStream = ( props ) => {
 	const { site, siteError } = useSite( siteId );
 
 	if ( feed ) {
-		// Add site icon to feed object so have icon for external feeds
-		feed = { ...feed, site_icon: followForFeed?.site_icon };
+		// Add site icon to feed object so have icon for external feeds. Preserve the
+		// feed's own icon when the subscription has none, so the feed image fallback
+		// in ReaderFeedHeader still applies.
+		feed = { ...feed, site_icon: followForFeed?.site_icon || feed.site_icon };
 	}
 
 	const siteTags = useSiteTags( siteId );

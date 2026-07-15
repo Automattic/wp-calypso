@@ -1,5 +1,5 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
-import { snakeCase } from 'lodash';
+import { snakeCase } from '@automattic/js-utils';
 
 type ThemeSearchQuery = {
 	search: string;

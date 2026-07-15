@@ -1,6 +1,6 @@
 import { Railcar } from '@automattic/calypso-analytics';
+import { pick } from '@automattic/js-utils';
 import debugFactory from 'debug';
-import { pick } from 'lodash';
 import { gaRecordEvent } from 'calypso/lib/analytics/ga';
 import { bumpStat, bumpStatWithPageView } from 'calypso/lib/analytics/mc';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';

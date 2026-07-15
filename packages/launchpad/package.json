@@ -1,6 +1,6 @@
 {
 	"name": "@automattic/launchpad",
-	"version": "1.2.2",
+	"version": "1.2.3",
 	"description": "Launchpad components.",
 	"homepage": "https://github.com/Automattic/wp-calypso",
 	"license": "GPL-2.0-or-later",
@@ -39,8 +39,6 @@
 	},
 	"dependencies": {
 		"@automattic/calypso-analytics": "workspace:^",
-		"@automattic/calypso-config": "workspace:^",
-		"@automattic/components": "workspace:^",
 		"@automattic/data-stores": "workspace:^",
 		"@automattic/i18n-utils": "workspace:^",
 		"@automattic/typography": "workspace:^",
@@ -49,11 +47,10 @@
 		"@wordpress/base-styles": "^9.1.0",
 		"@wordpress/components": "^35.0.0",
 		"@wordpress/icons": "^13.3.0",
-		"@wordpress/url": "^4.48.0",
+		"@wordpress/ui": "^0.17.0",
 		"clsx": "^2.1.1",
 		"social-logos": "^3.1.18",
 		"tslib": "^2.8.1",
-		"utility-types": "^3.10.0",
 		"wpcom-proxy-request": "workspace:^"
 	},
 	"devDependencies": {
@@ -63,7 +60,7 @@
 		"@storybook/addon-a11y": "^9.1.20",
 		"msw": "^2.1.7",
 		"msw-storybook-addon": "2.0.7",
-		"postcss": "^8.5.3",
+		"postcss": "^8.5.15",
 		"react": "^18.3.1",
 		"react-dom": "^18.3.1",
 		"storybook": "^9.1.20",
@@ -75,7 +72,7 @@
 		"@wordpress/element": "^8.0.0",
 		"@wordpress/i18n": "^6.21.0",
 		"debug": "^4.4.1",
-		"react": "^18.3.1",
-		"react-dom": "^18.3.1"
+		"react": "^18.3.1 || ^19.0.0",
+		"react-dom": "^18.3.1 || ^19.0.0"
 	}
 }

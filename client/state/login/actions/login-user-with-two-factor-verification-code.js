@@ -1,5 +1,4 @@
 import config from '@automattic/calypso-config';
-import { get } from 'lodash';
 import {
 	TWO_FACTOR_AUTHENTICATION_LOGIN_REQUEST,
 	TWO_FACTOR_AUTHENTICATION_LOGIN_REQUEST_FAILURE,
@@ -32,12 +31,12 @@ export const loginUserWithTwoFactorVerificationCode =
 			client_secret: config( 'wpcom_signup_key' ),
 		} )
 			.then( ( response ) => {
-				return remoteLoginUser( get( response, 'body.data.token_links', [] ) ).then( () => {
+				return remoteLoginUser( response?.body?.data?.token_links ?? [] ).then( () => {
 					dispatch( { type: TWO_FACTOR_AUTHENTICATION_LOGIN_REQUEST_SUCCESS } );
 				} );
 			} )
 			.catch( ( httpError ) => {
-				const twoStepNonce = get( httpError, 'response.body.data.two_step_nonce' );
+				const twoStepNonce = httpError?.response?.body?.data?.two_step_nonce;
 
 				if ( twoStepNonce ) {
 					dispatch( updateNonce( twoFactorAuthType, twoStepNonce ) );

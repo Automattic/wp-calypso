@@ -1,13 +1,27 @@
+import { getQueryArg } from '@wordpress/url';
+
+// The WordPress and Jetpack mobile apps share the same OAuth2 client IDs; the app
+// identity is not encoded in the client_id. Distinguish the Jetpack app from the
+// WordPress app by the redirect_uri scheme (jetpack:// vs wordpress://).
+// Keep these in sync with wpcom `.config/constants.php`.
+const IOS_APP_OAUTH2_CLIENT_IDS = [ 11, 29217, 36118, 55461 ];
+const ANDROID_APP_OAUTH2_CLIENT_IDS = [ 2697, 55462 ];
+
 export const isAkismetOAuth2Client = ( oauth2Client ) => {
 	return oauth2Client?.id === 973;
 };
 
 export const isAndroidOAuth2Client = ( oauth2Client ) => {
-	return oauth2Client?.id === 2697;
+	return !! oauth2Client && ANDROID_APP_OAUTH2_CLIENT_IDS.includes( oauth2Client.id );
 };
 
 export const isIosOAuth2Client = ( oauth2Client ) => {
-	return oauth2Client?.id === 11;
+	return !! oauth2Client && IOS_APP_OAUTH2_CLIENT_IDS.includes( oauth2Client.id );
+};
+
+// True for either mobile app (WordPress or Jetpack) on either platform.
+export const isSharedMobileAppOAuth2Client = ( oauth2Client ) => {
+	return isIosOAuth2Client( oauth2Client ) || isAndroidOAuth2Client( oauth2Client );
 };
 
 export const isCrowdsignalOAuth2Client = ( oauth2Client ) => {
@@ -77,4 +91,49 @@ export const isVIPOAuth2Client = ( oauth2Client ) => {
 export const isCiabOAuth2Client = ( oauth2Client ) => {
 	// 134404 => CIAB Dev, 134405 => CIAB Staging/Production.
 	return oauth2Client && [ 134404, 134405 ].includes( oauth2Client.id );
+};
+
+const JETPACK_APP_URI_SCHEME = 'jetpack://';
+
+// The redirect_uri reaches the login page nested inside redirect_to, where it is
+// often multiply percent-encoded (e.g. `jetpack%253A%252F%252F...`). Decode until
+// the value stops changing so the scheme is legible.
+const fullyDecode = ( value ) => {
+	let decoded = String( value );
+	for ( let i = 0; i < 5; i++ ) {
+		let next;
+		try {
+			next = decodeURIComponent( decoded );
+		} catch {
+			return decoded;
+		}
+		if ( next === decoded ) {
+			break;
+		}
+		decoded = next;
+	}
+	return decoded;
+};
+
+// Reads the app's OAuth2 callback (redirect_uri) out of a login query. It is
+// nested inside redirect_to, but may also appear as a direct query param.
+export const getOAuth2RedirectUri = ( query ) => {
+	if ( ! query ) {
+		return null;
+	}
+	if ( typeof query.redirect_uri === 'string' ) {
+		return query.redirect_uri;
+	}
+	if ( typeof query.redirect_to !== 'string' ) {
+		return null;
+	}
+	const redirectUri = getQueryArg( query.redirect_to, 'redirect_uri' );
+	return typeof redirectUri === 'string' ? redirectUri : null;
+};
+
+export const isJetpackAppRedirectUri = ( redirectUri ) => {
+	return (
+		typeof redirectUri === 'string' &&
+		fullyDecode( redirectUri ).toLowerCase().startsWith( JETPACK_APP_URI_SCHEME )
+	);
 };

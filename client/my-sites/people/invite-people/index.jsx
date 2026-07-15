@@ -2,9 +2,9 @@ import { isEnabled } from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
 import { Card, Button, FormLabel } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
+import { groupBy, pickBy } from '@automattic/js-utils';
 import debugModule from 'debug';
 import { localize, fixMe } from 'i18n-calypso';
-import { filter, get, groupBy, includes, pickBy, some } from 'lodash';
 import { createRef, Component, Fragment } from 'react';
 import { connect } from 'react-redux';
 import QueryJetpackModules from 'calypso/components/data/query-jetpack-modules';
@@ -161,7 +161,7 @@ class InvitePeople extends Component {
 			return filteredTokens.includes( key );
 		} );
 
-		const filteredSuccess = filter( success, ( successfulValidation ) => {
+		const filteredSuccess = success.filter( ( successfulValidation ) => {
 			return filteredTokens.includes( successfulValidation );
 		} );
 
@@ -229,7 +229,7 @@ class InvitePeople extends Component {
 		if ( errorToDisplay && value !== errorToDisplay ) {
 			return null;
 		}
-		return get( errors, [ value, 'message' ] );
+		return errors?.[ value ]?.message;
 	};
 
 	getTokensWithStatus = () => {
@@ -244,7 +244,7 @@ class InvitePeople extends Component {
 					onMouseEnter: () => this.setState( { errorToDisplay: value } ),
 				};
 			}
-			if ( ! includes( success, value ) ) {
+			if ( ! success.includes( value ) ) {
 				return {
 					value,
 					status: 'validating',
@@ -329,7 +329,7 @@ class InvitePeople extends Component {
 		this.sendInvites( this.props.siteId, usernamesOrEmails, role, message, isExternal );
 
 		const groupedInvitees = groupBy( usernamesOrEmails, ( invitee ) => {
-			return includes( invitee, '@' ) ? 'email' : 'username';
+			return invitee.includes( '@' ) ? 'email' : 'username';
 		} );
 
 		this.props.recordTracksEvent( 'calypso_invite_people_form_submit', {
@@ -361,8 +361,8 @@ class InvitePeople extends Component {
 
 		// If there are invitees, and there are no errors, let's check
 		// if there are any pending validations.
-		return some( usernamesOrEmails, ( value ) => {
-			return ! includes( success, value );
+		return usernamesOrEmails.some( ( value ) => {
+			return ! success.includes( value );
 		} );
 	};
 
@@ -374,7 +374,7 @@ class InvitePeople extends Component {
 	};
 
 	goBack = () => {
-		const siteSlug = get( this.props, 'site.slug' );
+		const siteSlug = this.props?.site?.slug;
 		const route = isEnabled( 'user-management-revamp' ) ? 'team' : 'team-members';
 		const fallback = siteSlug ? `/people/${ route }/${ siteSlug }` : `/people/${ route }`;
 
@@ -400,7 +400,7 @@ class InvitePeople extends Component {
 
 	isExternalRole = ( role ) => {
 		const roles = [ 'administrator', 'editor', 'author', 'contributor' ];
-		return includes( roles, role );
+		return roles.includes( role );
 	};
 
 	renderInviteForm = () => {

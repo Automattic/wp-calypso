@@ -1,6 +1,7 @@
 import { createContext, useCallback, useContext, useState } from '@wordpress/element';
 import { useNavigate } from 'react-router-dom';
 import { getSessionId } from '../utils/agent-session';
+import { setResolvedAgentId } from '../utils/resolved-agent-id';
 import type { UseAgentChatConfig } from '@automattic/agenttic-client';
 import type { AgentsManagerSite, CurrentUser } from '@automattic/data-stores';
 
@@ -29,6 +30,12 @@ export interface AgentsManagerContextType {
 	 * TODO: Implement with dedicated endpoint. Currently hardcoded to false.
 	 */
 	isEligibleForChat: boolean;
+	/** Zendesk conversation tags to apply when a new support conversation is created. */
+	zendeskConversationTags: string[];
+	/** Index selecting a dedicated Smooch integration for new support conversations (e.g. `woo`). */
+	zendeskSmoochIntegrationKey?: string;
+	/** Zendesk Product ticket-field value to apply to new support conversations. */
+	zendeskTicketProductFieldValue?: string;
 	/** The agent configuration created during setup. */
 	agentConfig: UseAgentChatConfig | null;
 	/** Sets the agent configuration (called from `AgentSetup` after initialization). */
@@ -47,6 +54,7 @@ const defaultContext: AgentsManagerContextType = {
 	sectionName: 'wp-admin',
 	currentRoute: undefined,
 	isEligibleForChat: false,
+	zendeskConversationTags: [],
 	agentConfig: null,
 	setAgentConfig: () => {},
 	getActiveSessionId: () => '',
@@ -58,7 +66,16 @@ const AgentsManagerContext = createContext< AgentsManagerContextType >( defaultC
 export interface AgentsManagerContextProviderProps {
 	children: React.ReactNode;
 	value: Partial<
-		Pick< AgentsManagerContextType, 'currentUser' | 'site' | 'currentRoute' | 'isEligibleForChat' >
+		Pick<
+			AgentsManagerContextType,
+			| 'currentUser'
+			| 'site'
+			| 'currentRoute'
+			| 'isEligibleForChat'
+			| 'zendeskConversationTags'
+			| 'zendeskSmoochIntegrationKey'
+			| 'zendeskTicketProductFieldValue'
+		>
 	> & { sectionName: string; siteKey: string };
 }
 
@@ -82,6 +99,12 @@ export const AgentsManagerContextProvider: React.FC< AgentsManagerContextProvide
 	const resumeActiveChat = useCallback( () => {
 		navigate( '/chat', { state: { sessionId: getActiveSessionId() } } );
 	}, [ navigate, getActiveSessionId ] );
+
+	// Publish the resolved agent id for non-React callers. Written in render (not a
+	// useEffect) so it lands in the same render that sets `agentConfig`, before the
+	// chat tree mounts and reads it from event handlers; a useEffect runs post-commit
+	// and could lag a synchronous child interaction. The write is idempotent, so safe in render.
+	setResolvedAgentId( agentConfig?.agentId );
 
 	return (
 		<AgentsManagerContext.Provider

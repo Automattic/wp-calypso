@@ -18,7 +18,6 @@ import UpsellCallout from '../../hosting-feature-gated-with-callout/upsell';
 import { hasBackendAccess } from '../backend-access';
 import { getBackendCalloutProps } from '../backend-callout';
 import { VIEWPORT_BREAKPOINTS } from '../constants';
-import PerformanceTabs from '../performance-tabs';
 import { mergeAggregates } from './aggregate';
 import BackendEmptyState from './backend-empty-state';
 import BackendStatusNotice from './backend-status';
@@ -187,7 +186,6 @@ export default function SitePerformanceBackend( {
 				/>
 			}
 		>
-			<PerformanceTabs siteSlug={ siteSlug } activeTab="backend" />
 			{ userHasBackendAccess ? (
 				<ApmDashboard site={ site } tab={ tab } timeframe={ timeframe } />
 			) : (

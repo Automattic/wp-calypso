@@ -17,6 +17,11 @@ export interface ReaderLandingPage extends LandingPagePreference {
 	useReaderAsLandingPage: boolean;
 }
 
+export interface VisitCounter {
+	count: number;
+	lastUpdated: number | null; // Result of Date.now(), or null before the first visit
+}
+
 export interface UserPreferences {
 	recentSites?: number[];
 	'hosting-dashboard-color-scheme'?: 'light' | 'dark' | 'system';
@@ -24,15 +29,20 @@ export interface UserPreferences {
 	'hosting-dashboard-dark-mode-announcement-dismissed'?: string; // Timestamp when the user dismissed the notice
 	'hosting-dashboard-opt-in-welcome-modal-dismissed'?: string; // Timestamp when the user dismissed the modal
 	[ key: `hosting-dashboard-dataviews-view-${ string }` ]: View | undefined;
+	[ key: `hosting-dashboard-visit-count-${ string }` ]: VisitCounter | undefined;
 	[ key: `hosting-dashboard-overview-storage-notice-dismissed-${ number }` ]: string | undefined; // Timestamp when the user dismissed the notice
 	[ key: `hosting-dashboard-tours-${ string }` ]: string; // ISO date string when the user completed the tours
 	[ key: `hosting-dashboard-time-mismatch-warning-dismissed-${ number }` ]: string | undefined; // Timestamp when the user dismissed the notice
 	[ key: `hosting-dashboard-wp-beta-notice-dismissed-${ number }` ]: string | undefined; // ISO timestamp when the user dismissed the beta notice for a site
 	'hosting-dashboard-welcome-notice-dismissed'?: string; // Timestamp when the user dismissed the notice
+	'account-recovery-interstitial-snoozed-until'?: number; // Unix timestamp (seconds) until which the account-recovery interstitial is snoozed; 0/unset means "never snoozed"
 	'reader-landing-page'?: ReaderLandingPage;
 	'sites-landing-page'?: SitesLandingPage;
 	[ key: `cancel-purchase-survey-completed-${ string | number }` ]: string | undefined;
 	[ key: `cancellation-offer-accepted-notice-dismissed-${ string | number }` ]: string | undefined;
 	'achievements-visibility'?: 'public' | 'private';
 	'achievements-global-notifications'?: 'enabled' | 'disabled';
+	'reader-profile-posts-visibility'?: 'public' | 'hidden';
+	'reader-profile-sites-visibility'?: 'public' | 'hidden';
+	'reader-profile-hidden-sites'?: number[];
 }

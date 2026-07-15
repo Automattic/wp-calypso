@@ -20,7 +20,7 @@ interface InsightContentProps {
 	AIGenerated: boolean;
 	hash: string;
 	url?: string;
-	chatId?: number;
+	chatId?: string;
 }
 
 export const InsightContent: React.FC< InsightContentProps > = ( props ) => {

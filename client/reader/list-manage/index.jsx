@@ -137,7 +137,12 @@ function ReaderListCreate() {
 
 	return (
 		<ReaderMain>
-			<NavigationHeader title={ translate( 'Create List' ) } />
+			<NavigationHeader
+				title={ translate( 'Create List' ) }
+				subtitle={ translate(
+					'Lists let you organize sites you follow into custom feeds around the topics you care about.'
+				) }
+			/>
 			<ListForm isCreateForm isSubmissionDisabled={ isCreatingList } onSubmit={ handleSubmit } />
 		</ReaderMain>
 	);

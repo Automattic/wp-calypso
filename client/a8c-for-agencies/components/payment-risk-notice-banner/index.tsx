@@ -1,10 +1,7 @@
 import { isEnabled } from '@automattic/calypso-config';
-import { HelpCenter } from '@automattic/data-stores';
 import { Button } from '@wordpress/components';
-import { useDispatch as useDataStoreDispatch } from '@wordpress/data';
 import { useTranslate } from 'i18n-calypso';
-import { useCallback, useEffect, type MouseEvent } from 'react';
-import { CONTACT_URL_HASH_FRAGMENT } from 'calypso/a8c-for-agencies/components/a4a-contact-support-widget';
+import { useCallback, useEffect, type ReactNode } from 'react';
 import LayoutBanner from 'calypso/a8c-for-agencies/components/layout/banner';
 import {
 	A4A_PAYMENT_METHODS_LINK,
@@ -16,7 +13,7 @@ import usePaymentRiskNotice from './use-payment-risk-notice';
 
 import './style.scss';
 
-const HELP_CENTER_STORE = HelpCenter.register();
+const isExternalUrl = ( url: string ) => /^https?:\/\//.test( url );
 
 type PaymentRiskNoticeBannerProps = {
 	isFullWidth?: boolean;
@@ -29,7 +26,6 @@ export default function PaymentRiskNoticeBanner( {
 }: PaymentRiskNoticeBannerProps ) {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
-	const { setShowHelpCenter, setNavigateToRoute } = useDataStoreDispatch( HELP_CENTER_STORE );
 	const paymentNotice = usePaymentRiskNotice();
 	const noticeState = paymentNotice?.state;
 	const noticeSeverity = paymentNotice?.severity;
@@ -49,70 +45,72 @@ export default function PaymentRiskNoticeBanner( {
 		}
 	}, [ dispatch, noticeState, noticeSeverity, source ] );
 
-	const onCtaClick = useCallback( () => {
-		if ( ! noticeState || ! noticeSeverity ) {
-			return;
-		}
-
-		dispatch(
-			recordTracksEvent( 'calypso_a4a_payment_risk_notice_banner_cta_click', {
-				source,
-				state: noticeState,
-				severity: noticeSeverity,
-			} )
-		);
-	}, [ dispatch, noticeState, noticeSeverity, source ] );
-
-	const onContactUsClick = useCallback(
-		( event: MouseEvent< HTMLAnchorElement > ) => {
-			event.preventDefault();
-
+	const onActionClick = useCallback(
+		( action: 'primary' | 'secondary' ) => {
 			if ( ! noticeState || ! noticeSeverity ) {
 				return;
 			}
 
-			setShowHelpCenter( true );
-			setNavigateToRoute( '/contact-form' );
 			dispatch(
-				recordTracksEvent( 'calypso_a4a_payment_risk_notice_banner_contact_us_click', {
+				recordTracksEvent( 'calypso_a4a_payment_risk_notice_banner_cta_click', {
+					action,
 					source,
 					state: noticeState,
 					severity: noticeSeverity,
 				} )
 			);
 		},
-		[ dispatch, noticeState, noticeSeverity, setNavigateToRoute, setShowHelpCenter, source ]
+		[ dispatch, noticeState, noticeSeverity, source ]
 	);
 
 	if ( ! paymentNotice || ! noticeState || ! noticeSeverity ) {
 		return null;
 	}
 
-	const fixPaymentMethodCta = (
-		<Button
-			key="update-payment-method"
-			variant="primary"
-			href={ ctaUrl }
-			onClick={ onCtaClick }
-			target="_blank"
-			rel="noopener noreferrer"
-			__next40pxDefaultSize
-		>
-			{ translate( 'Fix payment method' ) }
-		</Button>
-	);
+	const canManagePaymentMethod = paymentNotice.can_current_user_manage_payment_method !== false;
+	const primaryActionLabel =
+		paymentNotice.primary_action_label ??
+		paymentNotice.action_label ??
+		( canManagePaymentMethod ? translate( 'Fix payment method' ) : undefined );
+	const primaryActionUrl =
+		paymentNotice.primary_action_url ??
+		paymentNotice.action_url ??
+		( canManagePaymentMethod ? ctaUrl : undefined );
+	const actions: ReactNode[] = [];
 
-	const contactUsCta = (
-		<Button
-			key="contact-us"
-			variant="secondary"
-			href={ CONTACT_URL_HASH_FRAGMENT }
-			onClick={ onContactUsClick }
-			__next40pxDefaultSize
-		>
-			{ translate( 'Contact us' ) }
-		</Button>
-	);
+	if ( primaryActionLabel && primaryActionUrl ) {
+		actions.push(
+			<Button
+				key="primary-action"
+				variant="primary"
+				href={ primaryActionUrl }
+				onClick={ () => onActionClick( 'primary' ) }
+				target={ isExternalUrl( primaryActionUrl ) ? '_blank' : undefined }
+				rel={ isExternalUrl( primaryActionUrl ) ? 'noopener noreferrer' : undefined }
+				__next40pxDefaultSize
+			>
+				{ primaryActionLabel }
+			</Button>
+		);
+	}
+
+	if ( paymentNotice.secondary_action_label && paymentNotice.secondary_action_url ) {
+		actions.push(
+			<Button
+				key="secondary-action"
+				variant="secondary"
+				href={ paymentNotice.secondary_action_url }
+				onClick={ () => onActionClick( 'secondary' ) }
+				target={ isExternalUrl( paymentNotice.secondary_action_url ) ? '_blank' : undefined }
+				rel={
+					isExternalUrl( paymentNotice.secondary_action_url ) ? 'noopener noreferrer' : undefined
+				}
+				__next40pxDefaultSize
+			>
+				{ paymentNotice.secondary_action_label }
+			</Button>
+		);
+	}
 
 	return (
 		<LayoutBanner
@@ -123,7 +121,7 @@ export default function PaymentRiskNoticeBanner( {
 				paymentNotice.title ??
 				translate( 'Action required: We’re unable to renew your subscription(s)' )
 			}
-			actions={ [ fixPaymentMethodCta, contactUsCta ] }
+			actions={ actions }
 			hideCloseButton
 			allowTemporaryDismissal
 			preferenceName="a4a-payment-risk-notice-banner-temporary-dismissed"

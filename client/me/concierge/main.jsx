@@ -9,7 +9,7 @@
  * gather the data they need.
  */
 
-import { isEmpty } from 'lodash';
+import { isEmpty } from '@automattic/js-utils';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import QueryConciergeInitial from 'calypso/components/data/query-concierge-initial';

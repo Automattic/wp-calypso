@@ -1,6 +1,6 @@
 {
 	"name": "@automattic/plans-grid-next",
-	"version": "1.0.2",
+	"version": "1.0.3",
 	"description": "WordPress.com plans UI grid components and helpers.",
 	"homepage": "https://github.com/Automattic/wp-calypso",
 	"license": "GPL-2.0-or-later",
@@ -63,13 +63,13 @@
 		"clsx": "^2.1.1",
 		"i18n-calypso": "workspace:^",
 		"react-intersection-observer": "^9.4.3",
-		"react-transition-group": "^4.3.0"
+		"react-transition-group": "^4.4.5"
 	},
 	"peerDependencies": {
 		"@wordpress/i18n": "^6.21.0",
-		"postcss": "^8.5.3",
-		"react": "^18.3.1",
-		"react-dom": "^18.3.1"
+		"postcss": "^8.5.15",
+		"react": "^18.3.1 || ^19.0.0",
+		"react-dom": "^18.3.1 || ^19.0.0"
 	},
 	"devDependencies": {
 		"@automattic/calypso-build": "workspace:^",

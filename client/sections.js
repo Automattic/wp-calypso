@@ -178,7 +178,7 @@ const sections = [
 	},
 	{
 		name: 'settings-writing',
-		paths: [ '/settings/writing', '/settings/taxonomies' ],
+		paths: [ '/settings/writing' ],
 		module: 'calypso/my-sites/site-settings/settings-writing',
 		group: 'sites',
 	},
@@ -1004,6 +1004,12 @@ const sections = [
 		name: 'a8c-for-agencies-exclusive-offers',
 		paths: [ '/exclusive-offers' ],
 		module: 'calypso/a8c-for-agencies/sections/exclusive-offers',
+		group: 'a8c-for-agencies',
+	},
+	{
+		name: 'a8c-for-agencies-amplify',
+		paths: [ '/amplify' ],
+		module: 'calypso/a8c-for-agencies/sections/amplify',
 		group: 'a8c-for-agencies',
 	},
 ];

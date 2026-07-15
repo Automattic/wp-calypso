@@ -1,9 +1,9 @@
 import { getUrlParts } from '@automattic/calypso-url';
 import { Card } from '@automattic/components';
+import { uniqBy } from '@automattic/js-utils';
 import clsx from 'clsx';
 import closest from 'component-closest';
 import { localize } from 'i18n-calypso';
-import { forEach, uniqBy } from 'lodash';
 import PropTypes from 'prop-types';
 import { createRef, PureComponent } from 'react';
 import { connect } from 'react-redux';
@@ -134,7 +134,7 @@ class CrossPost extends PureComponent {
 
 		// Add any other x-post URLs we know about
 		if ( postKey.xPostUrls ) {
-			forEach( postKey.xPostUrls, ( xPostUrl ) => {
+			postKey.xPostUrls.forEach( ( xPostUrl ) => {
 				xPostedToList.push( {
 					siteURL: xPostUrl,
 					siteName: this.getSiteNameFromURL( xPostUrl ),
@@ -165,7 +165,12 @@ class CrossPost extends PureComponent {
 		const { post, translate, currentRoute, hasOrganization, isWPForTeamsItem } = this.props;
 
 		let isSeen = false;
-		if ( isEligibleForUnseen( { isWPForTeamsItem, currentRoute, hasOrganization } ) ) {
+		const isSeenEnabled = isEligibleForUnseen( {
+			isWPForTeamsItem,
+			currentRoute,
+			hasOrganization,
+		} );
+		if ( isSeenEnabled ) {
 			isSeen = post?.is_seen;
 		}
 		const articleClasses = clsx( {

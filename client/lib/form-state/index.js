@@ -1,16 +1,6 @@
+import { camelCase, mapValues, pickBy, isEmpty } from '@automattic/js-utils';
+import { debounce } from '@wordpress/compose';
 import update from 'immutability-helper';
-import {
-	camelCase,
-	debounce,
-	filter,
-	flatten,
-	isEmpty,
-	map,
-	mapValues,
-	pickBy,
-	property,
-	some,
-} from 'lodash';
 
 function Controller( options ) {
 	if ( ! ( this instanceof Controller ) ) {
@@ -234,7 +224,7 @@ function hasErrors( formState ) {
 }
 
 function needsValidation( formState ) {
-	return some( formState, function ( field ) {
+	return Object.values( formState ?? {} ).some( function ( field ) {
 		return field.errors === null || ! field.isShowingErrors || field.isPendingValidation;
 	} );
 }
@@ -267,7 +257,7 @@ function getFieldValue( formState, fieldName ) {
 }
 
 function getAllFieldValues( formState ) {
-	return mapValues( formState, 'value' );
+	return mapValues( formState, ( field ) => field.value );
 }
 
 function getFieldErrorMessages( formState, fieldName ) {
@@ -278,7 +268,7 @@ function getFieldErrorMessages( formState, fieldName ) {
 }
 
 function getFieldsValidating( formState ) {
-	return pickBy( formState, property( 'isValidating' ) );
+	return pickBy( formState, ( field ) => field?.isValidating );
 }
 
 function isInitialized( field ) {
@@ -308,14 +298,14 @@ function isFieldValidating( formState, fieldName ) {
 }
 
 function getInvalidFields( formState ) {
-	return filter( formState, function ( field, fieldName ) {
-		return isFieldInvalid( formState, fieldName );
-	} );
+	return Object.values(
+		pickBy( formState, ( field, fieldName ) => isFieldInvalid( formState, fieldName ) )
+	);
 }
 function getErrorMessages( formState ) {
 	const invalidFields = getInvalidFields( formState );
 
-	return flatten( map( invalidFields, 'errors' ) );
+	return invalidFields.flatMap( ( field ) => field?.errors );
 }
 
 function isSubmitButtonDisabled( formState ) {

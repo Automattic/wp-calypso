@@ -6,6 +6,7 @@ import { launch } from '../../components/icons';
 import OverviewCard from '../../components/overview-card';
 import { wpcomLink } from '../../utils/link';
 import { getSiteVisibilityURL } from '../../utils/site-url';
+import { useAiLaunchpad } from '../hooks/use-ai-launchpad';
 import JetpackConnectionWarningCard from '../overview-jetpack-connection-warning-card';
 import type { Site } from '@automattic/api-core';
 
@@ -32,14 +33,25 @@ function getLaunchpadChecklistSlug( site: Site ) {
 }
 
 function VisibilityCardUnlaunched( { site }: { site: Site } ) {
-	const { data: launchpad } = useQuery(
-		siteLaunchpadQuery( site.ID, getLaunchpadChecklistSlug( site ) )
-	);
+	const {
+		isActive: isAiLaunchpad,
+		setupUrl,
+		tasks: aiTasks,
+	} = useAiLaunchpad( site.slug, {
+		withTasks: true,
+	} );
 
-	const tasks = launchpad?.checklist ?? [];
+	const { data: launchpad } = useQuery( {
+		...siteLaunchpadQuery( site.ID, getLaunchpadChecklistSlug( site ) ),
+		enabled: ! isAiLaunchpad,
+	} );
+
+	const tasks = ( isAiLaunchpad ? aiTasks : launchpad?.checklist ) ?? [];
 	const numberOfTasks = tasks.length;
 	const completedTasks = tasks.filter( ( task ) => task.completed ).length;
 	const isLaunchpadCompleted = completedTasks && completedTasks === numberOfTasks;
+
+	const setupLink = setupUrl ?? wpcomLink( `/home/${ site.slug }` );
 
 	return (
 		<OverviewCard
@@ -53,7 +65,7 @@ function VisibilityCardUnlaunched( { site }: { site: Site } ) {
 				: {
 						heading: __( 'Coming soon' ),
 						description: __( 'Finish setting up your site.' ),
-						externalLink: wpcomLink( `/home/${ site.slug }` ),
+						externalLink: setupLink,
 				  } ) }
 			progress={ {
 				value: completedTasks,

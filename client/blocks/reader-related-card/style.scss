@@ -1,3 +1,10 @@
+@import "calypso/assets/stylesheets/shared/functions/z-index";
+
+@import "@automattic/typography/styles/variables";
+@import "calypso/assets/stylesheets/shared/mixins/breakpoints";
+@import "calypso/assets/stylesheets/shared/mixins/long-content-fade";
+@import "calypso/assets/stylesheets/shared/mixins/placeholder";
+
 .reader-related-card__heading {
 	color: var(--color-text-subtle);
 	font-size: $font-body-small;
