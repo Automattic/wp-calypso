@@ -15,11 +15,7 @@ import { AGENTS_MANAGER_STORE } from '../stores';
 import { clearSessionId, getOrCreateSessionId } from '../utils/agent-session';
 import { createAgentConfig } from '../utils/create-agent-config';
 import { isReaderChatAgent } from '../utils/is-reader-chat-agent';
-import {
-	loadExternalProviders,
-	type ImageUploadHook,
-	type LoadedProviders,
-} from '../utils/load-external-providers';
+import { loadExternalProviders, type LoadedProviders } from '../utils/load-external-providers';
 import AgentDock from './agent-dock';
 import { PersistentRouter } from './persistent-router';
 import type { JSX } from 'react';
@@ -37,10 +33,6 @@ export interface AgentsManagerProps {
 	currentSiteId?: number;
 	/** Explicit agent ID for hosts that must not fall back to Unified Chat. */
 	agentId?: string;
-	/** Called when the agent is closed. */
-	handleClose?: () => void;
-	/** The hook for handling image uploads. */
-	useImageUpload?: ImageUploadHook;
 	/** Zendesk conversation tags to apply when a new support conversation is created. */
 	zendeskConversationTags?: string[];
 	/** Index selecting a dedicated Smooch integration for new support conversations. */
@@ -62,7 +54,6 @@ export default function AgentsManager( {
 	currentRoute,
 	currentSiteId,
 	agentId,
-	useImageUpload,
 	zendeskConversationTags = EMPTY_ARRAY,
 	zendeskSmoochIntegrationKey,
 	zendeskTicketProductFieldValue,
@@ -95,7 +86,7 @@ export default function AgentsManager( {
 						zendeskTicketProductFieldValue,
 					} }
 				>
-					<AgentSetup agentId={ agentId } useImageUpload={ useImageUpload } />
+					<AgentSetup agentId={ agentId } />
 				</AgentsManagerContextProvider>
 			</PersistentRouter>
 		</QueryClientProvider>
@@ -103,13 +94,7 @@ export default function AgentsManager( {
 }
 
 // Separate component that uses hooks within `PersistentRouter` context
-function AgentSetup( {
-	agentId: hostAgentId,
-	useImageUpload: fallbackUseImageUpload,
-}: {
-	agentId?: string;
-	useImageUpload?: ImageUploadHook;
-} ): JSX.Element | null {
+function AgentSetup( { agentId: hostAgentId }: { agentId?: string } ): JSX.Element | null {
 	const { site, sectionName, currentRoute, agentConfig, setAgentConfig } =
 		useAgentsManagerContext();
 	const loadedProvidersRef = useRef< LoadedProviders | null >( null );
@@ -220,7 +205,6 @@ function AgentSetup( {
 			useSuggestions={ loadedProviders.useSuggestions }
 			getChatComponent={ loadedProviders.getChatComponent }
 			siteBuildUtils={ loadedProviders.siteBuildUtils }
-			useImageUpload={ loadedProviders.useImageUpload ?? fallbackUseImageUpload }
 			useCheckpoint={ loadedProviders.useCheckpoint }
 			capabilities={ loadedProviders.capabilities }
 		/>
