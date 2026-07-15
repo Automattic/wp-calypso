@@ -16,19 +16,22 @@ import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import { useState } from 'react';
 import useMinimizeHelpCenterOnMount from 'calypso/a8c-for-agencies/hooks/use-minimize-help-center-on-mount';
-import { useDispatch } from 'calypso/state';
-import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import { errorNotice, successNotice } from 'calypso/state/notices/actions';
-import type { TaggedSite } from '../types';
+import type { RecordTracksEvent, TaggedSite } from '../types';
+import type { ReactNode } from 'react';
 
 export default function RequestReviewModal( {
 	onClose,
 	site,
+	recordTracksEvent,
+	onSuccess,
+	onError,
 }: {
 	onClose: () => void;
 	site: TaggedSite;
+	recordTracksEvent: RecordTracksEvent;
+	onSuccess: ( message: ReactNode ) => void;
+	onError: ( message: ReactNode ) => void;
 } ) {
-	const dispatch = useDispatch();
 	const queryClient = useQueryClient();
 	const { data: agency } = useQuery( activeAgencyQuery() );
 	const agencyId = agency?.id;
@@ -53,41 +56,34 @@ export default function RequestReviewModal( {
 					queryClient.invalidateQueries( {
 						queryKey: agencyMigrationCommissionSitesQuery( agencyId ).queryKey,
 					} );
-					dispatch(
-						recordTracksEvent( 'calypso_a4a_migrations_request_another_review_success', {
-							site_id: site.id,
-						} )
-					);
-					dispatch(
-						successNotice(
-							createInterpolateElement(
-								sprintf(
-									/* translators: %s: the site URL */
-									__( 'Your verification request for <strong>%s</strong> has been submitted.' ),
-									site.url
-								),
-								{ strong: <strong /> }
+					recordTracksEvent( 'calypso_a4a_migrations_request_another_review_success', {
+						site_id: site.id,
+					} );
+					onSuccess(
+						createInterpolateElement(
+							sprintf(
+								/* translators: %s: the site URL */
+								__( 'Your verification request for <strong>%s</strong> has been submitted.' ),
+								site.url
 							),
-							{ id: 'a4a-commission-request-review-success', duration: 5000 }
+							{ strong: <strong /> }
 						)
 					);
 					onClose();
 				},
 				onError: ( error ) => {
-					dispatch( errorNotice( error.message ) );
+					onError( error.message );
 				},
 			}
 		);
-		dispatch(
-			recordTracksEvent( 'calypso_a4a_migrations_request_another_review_submit', {
-				site_id: site.id,
-			} )
-		);
+		recordTracksEvent( 'calypso_a4a_migrations_request_another_review_submit', {
+			site_id: site.id,
+		} );
 	};
 
 	const handleOnClose = () => {
 		onClose();
-		dispatch( recordTracksEvent( 'calypso_a4a_migrations_request_another_review_close' ) );
+		recordTracksEvent( 'calypso_a4a_migrations_request_another_review_close' );
 	};
 
 	return (
