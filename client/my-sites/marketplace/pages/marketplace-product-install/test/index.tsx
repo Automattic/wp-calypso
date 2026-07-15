@@ -6,15 +6,15 @@ import MarketplaceProductInstall from '../index';
 
 const PLUGIN_SLUG = 'give';
 const PLUGIN = { slug: PLUGIN_SLUG, id: 'give/give' };
+const ACTIVE_PLUGIN = { ...PLUGIN, active: true };
 const SITE_ID = 1;
 const ADMIN_URL = 'https://example.wordpress.com/wp-admin/';
 
 // The state the component reads, as the mocked selectors below see it. A test moves the flow along
 // by changing this and re-rendering.
 const mockSite = {
-	installedPlugin: null as typeof PLUGIN | null,
-	pluginActive: false,
-	// Redux keys a plugin's status by its id, which is what an activation error comes back under.
+	installedPlugin: null as ( typeof PLUGIN & { active?: boolean } ) | null,
+	// The id an install or activation failure is recorded under.
 	failedPluginId: null as string | null,
 	// A paid marketplace plugin is not a wp.org one, and its site is already atomic: checkout
 	// transferred it and started the install.
@@ -52,11 +52,8 @@ jest.mock( 'calypso/state/plugins/wporg/selectors', () => ( {
 } ) );
 jest.mock( 'calypso/state/plugins/installed/selectors-ts', () => ( {
 	getPluginOnSite: () => mockSite.installedPlugin,
-	getStatusForPlugin: ( _state: unknown, _siteId: number, pluginId: string ) =>
-		pluginId === mockSite.failedPluginId
-			? { status: 'error', action: 'ACTIVATE_PLUGIN', error: 'Activation failed' }
-			: null,
-	isPluginActive: () => mockSite.pluginActive,
+	isPluginActionStatus: ( _state: unknown, _siteId: number, pluginId: string ) =>
+		pluginId === mockSite.failedPluginId,
 	isRequesting: () => false,
 } ) );
 jest.mock( 'calypso/state/automated-transfer/selectors', () => ( {
@@ -176,7 +173,6 @@ describe( 'MarketplaceProductInstall', () => {
 		jest.useFakeTimers();
 		jest.clearAllMocks();
 		mockSite.installedPlugin = null;
-		mockSite.pluginActive = false;
 		mockSite.failedPluginId = null;
 		mockSite.isAtomic = false;
 		mockSite.isWporgPlugin = true;
@@ -208,7 +204,7 @@ describe( 'MarketplaceProductInstall', () => {
 		expect( activatePlugin ).toHaveBeenCalledWith( SITE_ID, PLUGIN );
 		expect( window.location.href ).toBe( '' );
 
-		mockSite.pluginActive = true;
+		mockSite.installedPlugin = ACTIVE_PLUGIN;
 		await settle( rendered );
 		expect( window.location.href ).toBe(
 			`${ ADMIN_URL }plugins.php?activate=true&plugin_status=active`
@@ -236,6 +232,20 @@ describe( 'MarketplaceProductInstall', () => {
 		expect( window.location.href ).toBe( '' );
 	} );
 
+	it( 'shows an install failure keyed by slug even after the plugin exists', async () => {
+		const rendered = install();
+		await start( rendered );
+
+		// An existing but inactive plugin can fail a slow update after activation begins. Its install
+		// status lives under the slug, not the installed id, so it still has to surface.
+		mockSite.installedPlugin = PLUGIN;
+		mockSite.failedPluginId = PLUGIN_SLUG;
+		await settle( rendered );
+
+		expect( screen.getByText( /An error occurred while installing the plugin/ ) ).toBeVisible();
+		expect( window.location.href ).toBe( '' );
+	} );
+
 	it( 'keeps polling for a paid plugin, which checkout installs', async () => {
 		mockSite.isAtomic = true;
 		mockSite.isWporgPlugin = false;
@@ -250,7 +260,7 @@ describe( 'MarketplaceProductInstall', () => {
 		await settle( rendered );
 		expect( activatePlugin ).toHaveBeenCalledWith( SITE_ID, PLUGIN );
 
-		mockSite.pluginActive = true;
+		mockSite.installedPlugin = ACTIVE_PLUGIN;
 		await settle( rendered );
 		expect( window.location.href ).toBe(
 			`${ ADMIN_URL }plugins.php?activate=true&plugin_status=active`

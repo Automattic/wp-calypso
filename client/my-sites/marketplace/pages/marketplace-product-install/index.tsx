@@ -40,8 +40,7 @@ import {
 } from 'calypso/state/plugins/installed/actions';
 import {
 	getPluginOnSite,
-	getStatusForPlugin,
-	isPluginActive,
+	isPluginActionStatus,
 	isRequesting,
 } from 'calypso/state/plugins/installed/selectors-ts';
 import { PLUGIN_INSTALLATION_ERROR } from 'calypso/state/plugins/installed/status/constants';
@@ -114,20 +113,35 @@ const MarketplaceProductInstall = ( {
 	const installedPlugin = useSelector( ( state ) =>
 		getPluginOnSite( state, siteId, isPluginUploadFlow ? uploadedPluginSlug : pluginSlug )
 	);
-	const pluginActive = useSelector( ( state ) =>
-		isPluginActive( state, siteId, isPluginUploadFlow ? uploadedPluginSlug : pluginSlug )
-	);
+	const pluginActive = !! installedPlugin?.active;
 	const automatedTransferStatus = useSelector( ( state ) =>
 		getAutomatedTransferStatus( state, siteId )
 	);
 
-	// Installing keys the status by the wporg plugin's id, activating by the installed plugin's, so
-	// the id to read a status under changes once the plugin is on the site.
-	const pluginStatusId = installedPlugin?.id ?? wporgPlugin?.id ?? pluginSlug;
-	const pluginInstallStatus = useSelector( ( state ) =>
-		getStatusForPlugin( state, siteId, pluginStatusId )
-	);
 	const isFetchingSitePlugins = useSelector( ( state ) => isRequesting( state, siteId ) );
+
+	// Installing keys its status by the wporg id, activating by the installed plugin's, so each
+	// failure is read under its own id and action rather than one guessed from the current step.
+	const installFailed = useSelector( ( state ) =>
+		isPluginActionStatus(
+			state,
+			siteId,
+			wporgPlugin?.id ?? pluginSlug,
+			INSTALL_PLUGIN,
+			PLUGIN_INSTALLATION_ERROR
+		)
+	);
+	const activationFailed = useSelector(
+		( state ) =>
+			!! installedPlugin &&
+			isPluginActionStatus(
+				state,
+				siteId,
+				installedPlugin.id,
+				ACTIVATE_PLUGIN,
+				PLUGIN_INSTALLATION_ERROR
+			)
+	);
 
 	const productsList = useSelector( getProductsList );
 	const isProductListFetched = Object.values( productsList ).length > 0;
@@ -275,9 +289,8 @@ const MarketplaceProductInstall = ( {
 		isJetpack,
 	] );
 
-	// Validate plugin is already installed and activate. A transfer installs the plugin without
-	// activating it, and the plugin only turns up here once polling below has fetched it, so this is
-	// what ends the install step: a completed transfer is not a finished installation.
+	// A completed transfer is not a finished installation: it leaves the plugin inactive, and the
+	// plugin only turns up here once polling below has fetched it. Finding it ends the install step.
 	useEffect( () => {
 		const pluginReady =
 			installedPlugin && currentStep === 1 && ( ! isPluginUploadFlow || pluginUploadComplete );
@@ -344,9 +357,8 @@ const MarketplaceProductInstall = ( {
 	const isWaitingForPlugin =
 		( isTransferredPluginFlow || isMarketplacePluginFlow ) && ! installedPlugin;
 
-	// Poll until the plugin turns up, which is what lets the activation effect above run. Activating
-	// it updates the store itself, so there is nothing left to poll for after that. The fetch flag
-	// keeps a slow request from overlapping the next tick.
+	// Poll until the plugin turns up, which lets the activation effect above run; activating it
+	// updates the store, so nothing is left to poll for. The fetch flag avoids overlapping requests.
 	const shouldFetchPlugin = isWaitingForPlugin && ! isFetchingSitePlugins;
 
 	useInterval( () => dispatch( fetchSitePlugins( siteId ) ), shouldFetchPlugin ? 3000 : null );
@@ -361,8 +373,8 @@ const MarketplaceProductInstall = ( {
 			// - Click on "Install and activate" button for any plugin on /plugins/<site_name>
 			// - Install with the help of uploading archive of a plugins
 			// - If it's simple site which doesn't support plugins, then installing and activation happens at the same time with upgrading to Business plan
-			// A transferred plugin also lands here, once polling has found it and activated it. It has to
-			// be active first: the page this leaves for lists active plugins, and would not show it.
+			// A transferred plugin lands here once polling has found and activated it. It must be active
+			// first: the page this leaves for lists active plugins, and would not show an inactive one.
 			( installedPlugin && pluginActive ) ||
 			// Transfer to atomic uploading a zip plugin
 			( uploadedPluginSlug &&
@@ -426,12 +438,7 @@ const MarketplaceProductInstall = ( {
 	}, [ themeSlug, isPluginUploadFlow, translate ] );
 	const additionalSteps = useMarketplaceAdditionalSteps();
 
-	// A retained error from an unrelated action should not surface, so match the failure to the step
-	// the page is on: installing on step 1, activating on step 2.
-	const pluginSetupFailed =
-		pluginInstallStatus?.status === PLUGIN_INSTALLATION_ERROR &&
-		( ( currentStep === 1 && pluginInstallStatus.action === INSTALL_PLUGIN ) ||
-			( currentStep === 2 && pluginInstallStatus.action === ACTIVATE_PLUGIN ) );
+	const pluginSetupFailed = installFailed || activationFailed;
 
 	const renderError = () => {
 		// Evaluate error causes in priority order
