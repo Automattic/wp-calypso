@@ -1533,6 +1533,7 @@ __metadata:
     "@types/allure-js-commons": "npm:^0.0.4"
     "@types/node": "npm:^24.12.2"
     allure-js-commons: "npm:2.0.0-beta.9"
+    jest-docblock: "npm:^29.7.0"
     typescript: "npm:^6.0.3"
   languageName: unknown
   linkType: soft
