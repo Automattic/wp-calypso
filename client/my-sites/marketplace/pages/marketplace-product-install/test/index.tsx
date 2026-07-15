@@ -325,7 +325,7 @@ describe( 'MarketplaceProductInstall', () => {
 			error: { error: 'some_failure' },
 		};
 		await settle( rendered );
-		expect( screen.getByText( /An error occurred while installing the plugin/ ) ).toBeVisible();
+		expect( screen.getByText( /could not activate it/ ) ).toBeVisible();
 
 		// A lost response can follow a server-side success, so polling continues and a later active
 		// refresh still redirects.
@@ -353,7 +353,7 @@ describe( 'MarketplaceProductInstall', () => {
 		mockSite.installedPlugin = PLUGIN;
 		fetchSitePlugins.mockClear();
 		await advance( rendered, 3000 );
-		expect( screen.queryByText( /An error occurred/ ) ).toBeNull();
+		expect( screen.queryByText( /could not activate it/ ) ).toBeNull();
 		expect( fetchSitePlugins ).toHaveBeenCalledWith( SITE_ID );
 		await expectRedirectsOnceActive( rendered );
 	} );

@@ -566,11 +566,21 @@ const MarketplaceProductInstall = ( {
 				/>
 			);
 		}
+		// The plugin is installed, so the generic "upload it again" recovery below does not apply.
+		if ( activationFailed ) {
+			return (
+				<EmptyContent
+					title={ null }
+					line={ translate(
+						'We installed the plugin, but could not activate it. You can activate it yourself from your plugins.'
+					) }
+				/>
+			);
+		}
 		// Catch the rest of the error cases.
 		if (
 			pluginUploadError ||
 			pluginInstallStatus?.error ||
-			activationFailed ||
 			( atomicFlow && automatedTransferStatus === transferStates.FAILURE )
 		) {
 			return (
