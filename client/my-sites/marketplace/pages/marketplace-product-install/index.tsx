@@ -21,6 +21,7 @@ import { useWPCOMPlugin } from 'calypso/data/marketplace/use-wpcom-plugins-query
 import Masterbar from 'calypso/layout/masterbar/masterbar';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { useInterval } from 'calypso/lib/interval';
+import { ACTIVATE_PLUGIN, INSTALL_PLUGIN } from 'calypso/lib/plugins/constants';
 import { getProductSlugByPeriodVariation } from 'calypso/lib/plugins/utils';
 import MarketplaceProgressBar from 'calypso/my-sites/marketplace/components/progressbar';
 import useMarketplaceAdditionalSteps from 'calypso/my-sites/marketplace/pages/marketplace-product-install/use-marketplace-additional-steps';
@@ -43,6 +44,7 @@ import {
 	isPluginActive,
 	isRequesting,
 } from 'calypso/state/plugins/installed/selectors-ts';
+import { PLUGIN_INSTALLATION_ERROR } from 'calypso/state/plugins/installed/status/constants';
 import { fetchPluginData as wporgFetchPluginData } from 'calypso/state/plugins/wporg/actions';
 import { getPlugin, isFetched } from 'calypso/state/plugins/wporg/selectors';
 import {
@@ -277,15 +279,28 @@ const MarketplaceProductInstall = ( {
 	// activating it, and the plugin only turns up here once polling below has fetched it, so this is
 	// what ends the install step: a completed transfer is not a finished installation.
 	useEffect( () => {
-		if (
-			installedPlugin &&
-			currentStep === 1 &&
-			( ! isPluginUploadFlow || ( isPluginUploadFlow && pluginUploadComplete ) )
-		) {
-			dispatch( activatePlugin( siteId, installedPlugin ) );
-			setCurrentStep( 2 );
+		const pluginReady =
+			installedPlugin && currentStep === 1 && ( ! isPluginUploadFlow || pluginUploadComplete );
+
+		if ( ! pluginReady ) {
+			return;
 		}
-	}, [ pluginUploadComplete, installedPlugin, currentStep, isPluginUploadFlow, dispatch, siteId ] );
+
+		setCurrentStep( 2 );
+
+		// A plugin that arrived already active needs no activation request.
+		if ( ! pluginActive ) {
+			dispatch( activatePlugin( siteId, installedPlugin ) );
+		}
+	}, [
+		installedPlugin,
+		pluginActive,
+		currentStep,
+		isPluginUploadFlow,
+		pluginUploadComplete,
+		dispatch,
+		siteId,
+	] );
 
 	// Fetch fresh site data (including admin_url) post-transfer
 	const { data: freshSite } = useQuery( {
@@ -326,14 +341,15 @@ const MarketplaceProductInstall = ( {
 	const isTransferredPluginFlow =
 		atomicFlow && transferStates.COMPLETE === automatedTransferStatus && isAtomicTransferReady;
 
-	// Poll until the plugin turns up, which is what lets the activation effect above run. Activating
-	// it updates the store itself, so there is nothing left to poll for after that.
-	const shouldPollForPlugin =
-		( isTransferredPluginFlow || isMarketplacePluginFlow ) &&
-		! installedPlugin &&
-		! isFetchingSitePlugins;
+	const isWaitingForPlugin =
+		( isTransferredPluginFlow || isMarketplacePluginFlow ) && ! installedPlugin;
 
-	useInterval( () => dispatch( fetchSitePlugins( siteId ) ), shouldPollForPlugin ? 3000 : null );
+	// Poll until the plugin turns up, which is what lets the activation effect above run. Activating
+	// it updates the store itself, so there is nothing left to poll for after that. The fetch flag
+	// keeps a slow request from overlapping the next tick.
+	const shouldFetchPlugin = isWaitingForPlugin && ! isFetchingSitePlugins;
+
+	useInterval( () => dispatch( fetchSitePlugins( siteId ) ), shouldFetchPlugin ? 3000 : null );
 
 	const canManagePlugins = useSelector( ( state ) => {
 		return siteHasFeature( state, selectedSite?.ID, WPCOM_FEATURES_MANAGE_PLUGINS );
@@ -409,6 +425,13 @@ const MarketplaceProductInstall = ( {
 		];
 	}, [ themeSlug, isPluginUploadFlow, translate ] );
 	const additionalSteps = useMarketplaceAdditionalSteps();
+
+	// A retained error from an unrelated action should not surface, so match the failure to the step
+	// the page is on: installing on step 1, activating on step 2.
+	const pluginSetupFailed =
+		pluginInstallStatus?.status === PLUGIN_INSTALLATION_ERROR &&
+		( ( currentStep === 1 && pluginInstallStatus.action === INSTALL_PLUGIN ) ||
+			( currentStep === 2 && pluginInstallStatus.action === ACTIVATE_PLUGIN ) );
 
 	const renderError = () => {
 		// Evaluate error causes in priority order
@@ -524,7 +547,7 @@ const MarketplaceProductInstall = ( {
 		// Catch the rest of the error cases.
 		if (
 			pluginUploadError ||
-			pluginInstallStatus?.error ||
+			pluginSetupFailed ||
 			( atomicFlow && automatedTransferStatus === transferStates.FAILURE )
 		) {
 			return (

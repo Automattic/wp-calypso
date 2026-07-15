@@ -53,7 +53,9 @@ jest.mock( 'calypso/state/plugins/wporg/selectors', () => ( {
 jest.mock( 'calypso/state/plugins/installed/selectors-ts', () => ( {
 	getPluginOnSite: () => mockSite.installedPlugin,
 	getStatusForPlugin: ( _state: unknown, _siteId: number, pluginId: string ) =>
-		pluginId === mockSite.failedPluginId ? { error: { message: 'Activation failed' } } : null,
+		pluginId === mockSite.failedPluginId
+			? { status: 'error', action: 'ACTIVATE_PLUGIN', error: 'Activation failed' }
+			: null,
 	isPluginActive: () => mockSite.pluginActive,
 	isRequesting: () => false,
 } ) );
