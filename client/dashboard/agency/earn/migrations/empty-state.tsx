@@ -2,9 +2,9 @@ import { Button, ExternalLink } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { useCallback } from 'react';
-import StepSection from 'calypso/dashboard/agency/earn/migrations/components/step-section';
-import StepSectionItem from 'calypso/dashboard/agency/earn/migrations/components/step-section-item';
-import type { RecordTracksEvent } from 'calypso/dashboard/agency/earn/migrations/types';
+import StepSection from './components/step-section';
+import StepSectionItem from './components/step-section-item';
+import type { RecordTracksEvent } from './types';
 
 export default function MigrationsCommissionsEmptyState( {
 	recordTracksEvent,
