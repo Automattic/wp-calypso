@@ -1,0 +1,177 @@
+import {
+	agencyProductsQuery,
+	archiveReferralMutation,
+	resendReferralEmailMutation,
+} from '@automattic/api-queries';
+import { Badge } from '@automattic/ui';
+import { useMutation, useQuery } from '@tanstack/react-query';
+import { useDispatch } from '@wordpress/data';
+import { __ } from '@wordpress/i18n';
+import { store as noticesStore } from '@wordpress/notices';
+import { useMemo, useState } from 'react';
+import ConfirmModal from '../../../../components/confirm-modal';
+import { DataViews, DataViewsCard } from '../../../../components/dataviews';
+import { PageHeader } from '../../../../components/page-header';
+import PageLayout from '../../../../components/page-layout';
+import { useReferral } from '../hooks/use-referral';
+import { getOrderSummary } from '../lib/get-order-summary';
+import { getReferralStatus } from '../lib/get-referral-status';
+import { sortReferralOrders } from '../lib/referral-orders';
+import ReferralNotFound from './not-found';
+import OrderSummary from './order-summary';
+import type { ReferralApiResponse } from '@automattic/api-core';
+import type { Action, Field, View } from '@wordpress/dataviews';
+
+const DEFAULT_VIEW: View = {
+	type: 'table',
+	page: 1,
+	perPage: 20,
+	titleField: 'summary',
+	fields: [ 'status' ],
+};
+
+export default function ReferralReferralsTab() {
+	const { referral, agencyId } = useReferral();
+	const { data: products } = useQuery( agencyProductsQuery( agencyId ) );
+	const [ view, setView ] = useState< View >( DEFAULT_VIEW );
+
+	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
+	const { mutate: archiveReferral } = useMutation( archiveReferralMutation( agencyId ) );
+	const { mutate: resendReferralEmail } = useMutation( resendReferralEmailMutation( agencyId ) );
+
+	const fields = useMemo< Field< ReferralApiResponse >[] >(
+		() => [
+			{
+				id: 'summary',
+				label: __( 'Referral' ),
+				enableHiding: false,
+				enableSorting: false,
+				getValue: ( { item } ) => getOrderSummary( item, products ),
+				render: ( { item } ) => <OrderSummary order={ item } products={ products } />,
+			},
+			{
+				id: 'status',
+				label: __( 'Status' ),
+				enableHiding: false,
+				enableSorting: false,
+				getValue: ( { item } ) => item.status,
+				render: ( { item } ) => {
+					const { status, type } = getReferralStatus( item.status );
+					return <Badge intent={ type }>{ status }</Badge>;
+				},
+			},
+		],
+		[ products ]
+	);
+
+	const actions = useMemo< Action< ReferralApiResponse >[] >(
+		() => [
+			{
+				id: 'resend-email',
+				label: __( 'Resend email' ),
+				isEligible: ( item ) => item.status === 'pending',
+				callback: ( items ) => {
+					const order = items[ 0 ];
+					if ( ! order ) {
+						return;
+					}
+					resendReferralEmail( order.id, {
+						onSuccess: () =>
+							createSuccessNotice( __( 'The referral email has been resent.' ), {
+								type: 'snackbar',
+							} ),
+						onError: () =>
+							createErrorNotice( __( 'Failed to resend the referral email.' ), {
+								type: 'snackbar',
+							} ),
+					} );
+				},
+			},
+			{
+				id: 'copy-link',
+				label: __( 'Copy link' ),
+				isEligible: ( item ) => item.status === 'pending' && !! item.checkout_url,
+				callback: ( items ) => {
+					const order = items[ 0 ];
+					if ( ! order?.checkout_url ) {
+						return;
+					}
+					navigator.clipboard
+						.writeText( order.checkout_url )
+						.then( () =>
+							createSuccessNotice( __( 'Link copied to clipboard.' ), { type: 'snackbar' } )
+						)
+						.catch( () =>
+							createErrorNotice( __( 'Could not copy the link to clipboard.' ), {
+								type: 'snackbar',
+							} )
+						);
+				},
+			},
+			{
+				id: 'archive',
+				label: __( 'Archive' ),
+				isDestructive: true,
+				isEligible: ( item ) => item.status !== 'archived' && item.status !== 'active',
+				RenderModal: ( { items, closeModal } ) => {
+					const order = items[ 0 ];
+					return (
+						<ConfirmModal
+							isOpen
+							title={ __( 'Archive referral' ) }
+							confirmButtonProps={ { children: __( 'Archive' ), isDestructive: true } }
+							onCancel={ () => closeModal?.() }
+							onConfirm={ () => {
+								if ( order ) {
+									archiveReferral( order.id, {
+										onSuccess: () =>
+											createSuccessNotice( __( 'The referral has been archived.' ), {
+												type: 'snackbar',
+											} ),
+										onError: () =>
+											createErrorNotice( __( 'Failed to archive the referral.' ), {
+												type: 'snackbar',
+											} ),
+									} );
+								}
+								closeModal?.();
+							} }
+						>
+							{ __(
+								"Your client won't be able to complete the purchases. If removed, you must create a new referral for any future purchases."
+							) }
+						</ConfirmModal>
+					);
+				},
+			},
+		],
+		[ archiveReferral, resendReferralEmail, createSuccessNotice, createErrorNotice ]
+	);
+
+	const orders = useMemo(
+		() => ( referral ? sortReferralOrders( referral.referrals ) : [] ),
+		[ referral ]
+	);
+
+	if ( ! referral ) {
+		return <ReferralNotFound />;
+	}
+
+	return (
+		<PageLayout header={ <PageHeader title={ __( 'Referrals' ) } /> }>
+			<DataViewsCard>
+				<DataViews< ReferralApiResponse >
+					data={ orders }
+					fields={ fields }
+					actions={ actions }
+					view={ view }
+					onChangeView={ setView }
+					search={ false }
+					getItemId={ ( item ) => String( item.id ) }
+					defaultLayouts={ { table: { titleField: 'summary' } } }
+					paginationInfo={ { totalItems: orders.length, totalPages: 1 } }
+				/>
+			</DataViewsCard>
+		</PageLayout>
+	);
+}

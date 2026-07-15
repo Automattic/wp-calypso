@@ -4,6 +4,7 @@ export * from './error';
 
 export * from './admin-bar';
 export * from './agency';
+export * from './agency-products';
 export * from './agency-referrals';
 export * from './agency-team';
 export * from './agency-sites';
