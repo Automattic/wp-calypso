@@ -21,6 +21,7 @@ import { useWPCOMPlugin } from 'calypso/data/marketplace/use-wpcom-plugins-query
 import Masterbar from 'calypso/layout/masterbar/masterbar';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { useInterval } from 'calypso/lib/interval';
+import { INSTALL_PLUGIN } from 'calypso/lib/plugins/constants';
 import { getProductSlugByPeriodVariation } from 'calypso/lib/plugins/utils';
 import MarketplaceProgressBar from 'calypso/my-sites/marketplace/components/progressbar';
 import useMarketplaceAdditionalSteps from 'calypso/my-sites/marketplace/pages/marketplace-product-install/use-marketplace-additional-steps';
@@ -42,6 +43,7 @@ import {
 	getStatusForPlugin,
 	isRequesting,
 } from 'calypso/state/plugins/installed/selectors-ts';
+import { PLUGIN_INSTALLATION_ERROR } from 'calypso/state/plugins/installed/status/constants';
 import { fetchPluginData as wporgFetchPluginData } from 'calypso/state/plugins/wporg/actions';
 import { getPlugin, isFetched } from 'calypso/state/plugins/wporg/selectors';
 import {
@@ -321,12 +323,25 @@ const MarketplaceProductInstall = ( {
 		( ! atomicFlow || transferStates.COMPLETE === automatedTransferStatus ) &&
 		( ! siteJustTransferred || ( isAtomicTransferReady && canManagePlugins ) );
 
+	// A local install this page started (not a transfer or checkout-driven one) that terminally failed
+	// with no plugin to show for it. Read the current status and action, not the error field the
+	// reducer keeps across retries, and scope it to our own attempt so a stale error elsewhere does
+	// not count. A partial success — a plugin exists and may still activate — is not a failure.
+	const localInstallFailed =
+		installFlowInitiatedRef.current &&
+		! atomicFlow &&
+		! isMarketplacePluginFlow &&
+		! installedPlugin &&
+		pluginInstallStatus?.status === PLUGIN_INSTALLATION_ERROR &&
+		pluginInstallStatus.action === INSTALL_PLUGIN;
+
 	// Poll for the active state like the theme flow polls the active theme: once the flow is under
 	// way, until the server reports it active. Keep polling even after a reported activation failure:
 	// a lost response can follow a server-side success, and the refreshed list is what confirms it.
 	const shouldFetchPlugin =
 		!! pluginSlug &&
 		! installedPlugin?.active &&
+		! localInstallFailed &&
 		! isFetchingSitePlugins &&
 		canReconcilePlugin &&
 		installUnderway;

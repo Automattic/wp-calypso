@@ -28,6 +28,8 @@ const DEFAULT_SITE = {
 	// The checkout install status. COMPLETED means checkout finished the install, so this page does
 	// not start one and stays at step 0 — the marketplace poll path.
 	purchaseStatus: 'PENDING',
+	// The install status the store reports for the plugin slug, e.g. a terminal install failure.
+	installStatus: null as { status: string; action: string } | null,
 };
 const mockSite = { ...DEFAULT_SITE };
 
@@ -61,7 +63,9 @@ jest.mock( 'calypso/state/plugins/wporg/selectors', () => ( {
 } ) );
 jest.mock( 'calypso/state/plugins/installed/selectors-ts', () => ( {
 	getPluginOnSite: () => mockSite.installedPlugin,
-	getStatusForPlugin: () => null,
+	// Install status is keyed by the plugin slug.
+	getStatusForPlugin: ( _state: unknown, _siteId: number, pluginId: string ) =>
+		pluginId === PLUGIN_SLUG ? mockSite.installStatus : null,
 	isRequesting: () => mockSite.isFetching,
 } ) );
 jest.mock( 'calypso/state/automated-transfer/selectors', () => ( {
@@ -287,6 +291,25 @@ describe( 'MarketplaceProductInstall', () => {
 		expect( activatePlugin ).toHaveBeenCalledWith( SITE_ID, PLUGIN );
 
 		await expectRedirectsOnceActive( rendered );
+	} );
+
+	it( 'stops polling when a local install fails with no plugin installed', async () => {
+		mockSite.isAtomic = true; // existing-plan site, so this page runs the install itself
+		mockSite.isWporgPlugin = true; // a free wp.org plugin, not a marketplace product
+		const rendered = install();
+		await start( rendered );
+
+		// It polls while the install is under way.
+		await advance( rendered, 3000 );
+		expect( fetchSitePlugins ).toHaveBeenCalledWith( SITE_ID );
+
+		// The install fails and leaves no plugin. That is terminal, so polling stops rather than
+		// requesting the list forever behind the error screen.
+		mockSite.installStatus = { status: 'error', action: 'INSTALL_PLUGIN' };
+		await settle( rendered );
+		fetchSitePlugins.mockClear();
+		await advance( rendered, 9000 );
+		expect( fetchSitePlugins ).not.toHaveBeenCalled();
 	} );
 
 	it( 'does not start a new plugin fetch while one is already in flight', async () => {
