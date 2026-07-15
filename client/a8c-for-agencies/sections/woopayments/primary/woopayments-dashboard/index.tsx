@@ -1,15 +1,4 @@
-import {
-	JetpackLicenseFilter,
-	JetpackLicenseSortField,
-	JetpackLicenseSortDirection,
-} from '@automattic/api-core';
-import {
-	agencySitesWithPluginsQuery,
-	agencyWooPaymentsDataQuery,
-	jetpackAgencyLicensesQuery,
-} from '@automattic/api-queries';
 import { useDesktopBreakpoint } from '@automattic/viewport-react';
-import { useQuery } from '@tanstack/react-query';
 import { __ } from '@wordpress/i18n';
 import clsx from 'clsx';
 import { useMemo } from 'react';
@@ -23,109 +12,27 @@ import LayoutHeader, {
 	LayoutHeaderTitle as Title,
 	LayoutHeaderActions as Actions,
 } from 'calypso/layout/hosting-dashboard/header';
-import { useSelector } from 'calypso/state';
-import { getActiveAgencyId } from 'calypso/state/a8c-for-agencies/agency/selectors';
 import AddWooPaymentsToSite from '../../add-woopayments-to-site';
 import { WooPaymentsProvider } from '../../context';
 import WooPaymentsDashboardContent from '../../dashboard-content';
+import useWooPaymentsDashboardData from '../../hooks/use-woopayments-dashboard-data';
 import WooPaymentsDashboardEmptyState from './empty-state';
-import { useTestConnections } from './use-test-connections';
-import type { SitesWithWooPaymentsState } from '../../types';
 
 import './style.scss';
-
-const sortByState = ( a: SitesWithWooPaymentsState, b: SitesWithWooPaymentsState ): number => {
-	// Order: sites without state, active, disconnected
-	const getStateOrder = ( state: string | undefined | null ): number => {
-		if ( ! state ) {
-			return 0;
-		}
-		if ( state === 'active' ) {
-			return 1;
-		}
-		if ( state === 'disconnected' ) {
-			return 2;
-		}
-		return 3;
-	};
-
-	const orderA = getStateOrder( a.state );
-	const orderB = getStateOrder( b.state );
-
-	return orderA - orderB;
-};
 
 const WooPaymentsDashboard = () => {
 	const isDesktop = useDesktopBreakpoint();
 
 	const title = __( 'WooPayments commissions' );
 
-	const agencyId = useSelector( getActiveAgencyId );
-
-	const { data: licenseSites, isLoading: isLoadingLicensesWithWooPayments } = useQuery( {
-		...jetpackAgencyLicensesQuery( agencyId ?? 0, {
-			filter: JetpackLicenseFilter.Attached,
-			search: 'woopayments',
-			sortField: JetpackLicenseSortField.IssuedAt,
-			sortDirection: JetpackLicenseSortDirection.Descending,
-		} ),
-		enabled: !! agencyId,
-		refetchOnWindowFocus: false,
-		select: ( licenses ) =>
-			licenses.map( ( license ) => ( {
-				blogId: license.blog_id ?? 0,
-				siteUrl: license.siteurl ?? '',
-				state: '',
-			} ) ),
-	} );
-
-	const { isLoading: isLoadingSitesWithPlugins, data: sitesWithPlugins } = useQuery( {
-		...agencySitesWithPluginsQuery( agencyId ?? 0, [
-			'woocommerce-payments/woocommerce-payments',
-		] ),
-		enabled: !! agencyId,
-		refetchOnWindowFocus: false,
-	} );
-
-	const sitesWithWooPaymentsPlugins = useMemo( () => {
-		return (
-			sitesWithPlugins?.map( ( site ) => {
-				return {
-					blogId: site.blog_id,
-					siteUrl: site.url,
-					state: site.state,
-				};
-			} ) || []
-		);
-	}, [ sitesWithPlugins ] );
-
-	const allSitesWithWooPayments = useMemo( () => {
-		return [ ...( licenseSites || [] ), ...sitesWithWooPaymentsPlugins ];
-	}, [ licenseSites, sitesWithWooPaymentsPlugins ] );
-
-	const testConnections = useTestConnections( allSitesWithWooPayments );
-
-	const isLoading = isLoadingLicensesWithWooPayments || isLoadingSitesWithPlugins;
-	const showEmptyState = ! isLoading && ! allSitesWithWooPayments.length;
-
-	const { data: woopaymentsData, isLoading: isLoadingWooPaymentsData } = useQuery( {
-		...agencyWooPaymentsDataQuery( agencyId ?? 0 ),
-		enabled: !! agencyId && !! allSitesWithWooPayments.length,
-	} );
-
-	const sortedSitesWithWooPayments = useMemo( () => {
-		return Array.from(
-			new Map( allSitesWithWooPayments.map( ( site ) => [ site.blogId, site ] ) ).values() // Remove duplicates
-		)
-			.map( ( site: SitesWithWooPaymentsState ) => {
-				const connection = testConnections?.find( ( connection ) => connection.ID === site.blogId );
-				return {
-					...site,
-					state: connection?.connected === false ? 'disconnected' : site.state,
-				};
-			} )
-			.sort( sortByState );
-	}, [ allSitesWithWooPayments, testConnections ] );
+	const {
+		isLoading,
+		showEmptyState,
+		hasSites,
+		woopaymentsData,
+		isLoadingWooPaymentsData,
+		sitesWithPluginsStates,
+	} = useWooPaymentsDashboardData();
 
 	const content = useMemo( () => {
 		if ( isLoading ) {
@@ -154,13 +61,11 @@ const WooPaymentsDashboard = () => {
 				value={ {
 					woopaymentsData,
 					isLoadingWooPaymentsData,
-					sitesWithPluginsStates: sortedSitesWithWooPayments,
+					sitesWithPluginsStates,
 				} }
 			>
 				<LayoutTop isFullWidth={ isFullWidth }>
-					{ !! allSitesWithWooPayments.length && (
-						<MissingPaymentSettingsNotice commissionType="woopayments" />
-					) }
+					{ hasSites && <MissingPaymentSettingsNotice commissionType="woopayments" /> }
 					<LayoutHeader>
 						<Title>{ title }</Title>
 						<Actions>

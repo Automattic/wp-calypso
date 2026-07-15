@@ -1,3 +1,4 @@
+import { errors } from 'playwright';
 import { getCalypsoURL } from '../../data-helper';
 import { waitForElementEnabled } from '../../element-helper';
 import type { PaymentDetails, RegistrarDetails } from '../../types/data-helper.types';
@@ -153,6 +154,32 @@ export class CartCheckoutPage {
 		if ( itemsCount !== totalItems ) {
 			throw new Error( `Expected ${ totalItems } items in cart, but found ${ itemsCount }` );
 		}
+	}
+
+	/**
+	 * Validates that the cart contains no plan line item.
+	 *
+	 * Plan rows carry `data-product-type="plan"`, so this asserts the
+	 * "plan was skipped" contract directly; a strict item count would break on
+	 * unrelated rows such as auto-added free-domain entitlements.
+	 */
+	async validateNoPlanInCart(): Promise< void > {
+		const cartItemsLocator = this.page.locator( selectors.cartItems );
+		await cartItemsLocator.first().waitFor( { state: 'visible', timeout: 30 * 1000 } );
+		const planItem = this.page.locator( `${ selectors.cartItems }[data-product-type="plan"]` );
+		try {
+			// Inverted wait: give a late cart update a bounded window to add a plan
+			// row; timing out here is the success path. A plan row added later than
+			// this window is not caught.
+			await planItem.first().waitFor( { state: 'visible', timeout: 5 * 1000 } );
+		} catch ( error ) {
+			if ( error instanceof errors.TimeoutError ) {
+				return;
+			}
+			throw error;
+		}
+		const planLabel = ( await planItem.first().innerText() ).split( '\n' )[ 0 ];
+		throw new Error( `Expected no plan in cart, but found: ${ planLabel }` );
 	}
 
 	/**

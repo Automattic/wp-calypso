@@ -33,7 +33,7 @@
 		"dark-mode": true,
 		"dashboard/account-recovery-interstitial": false,
 		"dashboard/dark-mode-rollout": false,
-		"dashboard/enable-percentage-rollout": true,
+		"dashboard/enable-percentage-rollout": false,
 		"dashboard/opt-in-welcome-modal": true,
 		"dashboard/simulate-full-rollout": false,
 		"dashboard/wp-beta-program": true,

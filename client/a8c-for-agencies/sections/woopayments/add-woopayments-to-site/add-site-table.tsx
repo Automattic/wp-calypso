@@ -1,4 +1,4 @@
-import { __experimentalHStack as HStack } from '@wordpress/components';
+import { __experimentalHStack as HStack, RadioControl } from '@wordpress/components';
 import { filterSortAndPaginate } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
 import { useCallback, useMemo, useState } from 'react';
@@ -7,7 +7,6 @@ import { initialDataViewsState } from 'calypso/a8c-for-agencies/components/items
 import ItemsDataViews from 'calypso/a8c-for-agencies/components/items-dashboard/items-dataviews';
 import { DataViewsState } from 'calypso/a8c-for-agencies/components/items-dashboard/items-dataviews/interfaces';
 import { DataViews } from 'calypso/components/dataviews';
-import FormRadio from 'calypso/components/forms/form-radio';
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { useWooPaymentsContext } from '../context';
@@ -58,15 +57,11 @@ const AddWooPaymentsToSiteTable = ( {
 			label: __( 'Site' ),
 			getValue: ( { item }: { item: WooPaymentsSiteItem } ) => item.site,
 			render: ( { item }: { item: WooPaymentsSiteItem } ) => (
-				<div>
-					<FormRadio
-						htmlFor={ `site-${ item.id }` }
-						id={ `site-${ item.id }` }
-						checked={ selectedSite?.id === item.id }
-						onChange={ () => onSelectSite( item ) }
-						label={ item.site }
-					/>
-				</div>
+				<RadioControl
+					selected={ selectedSite?.id === item.id ? String( item.id ) : '' }
+					options={ [ { label: item.site, value: String( item.id ) } ] }
+					onChange={ () => onSelectSite( item ) }
+				/>
 			),
 			enableGlobalSearch: true,
 			enableHiding: false,
@@ -81,7 +76,7 @@ const AddWooPaymentsToSiteTable = ( {
 	}, [ availableSites, dataViewsState, fields ] );
 
 	return (
-		<div className="redesigned-a8c-table show-overflow-overlay search-enabled">
+		<div className="redesigned-a8c-table search-enabled">
 			{ isLoading ? (
 				<A4ATablePlaceholder />
 			) : (

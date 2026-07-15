@@ -9,15 +9,25 @@ import type { ComponentProps } from 'react';
 const mockUseAgentChat = jest.fn();
 const mockUseRegenerateAction = jest.fn();
 const mockUseConversation = jest.fn();
+const mockUseImageUpload = jest.fn();
+const mockIsReaderChatAgent = jest.fn();
 const mockAgentChat = jest.fn(
 	( {
 		onSuggestionClick,
 		onSubmit,
+		onAbort,
+		error,
+		inputValue,
+		onInputChange,
 		emptyViewSuggestions = [],
 	}: {
 		messages?: unknown[];
 		onSuggestionClick: ( suggestion: Suggestion | string ) => void;
 		onSubmit: ( message: string ) => void;
+		onAbort?: () => void;
+		error?: string | null;
+		inputValue?: string;
+		onInputChange?: ( value: string ) => void;
 		emptyViewSuggestions?: Suggestion[];
 	} ) => (
 		<>
@@ -47,7 +57,11 @@ const mockAgentChat = jest.fn(
 			>
 				Click auto-submit suggestion
 			</button>
-			<button onClick={ () => onSubmit( 'Describe these images' ) }>Submit with images</button>
+			<button onClick={ () => onInputChange?.( 'Describe these images' ) }>Type message</button>
+			<button onClick={ () => onSubmit( 'Describe these images' ) }>Submit message</button>
+			<button onClick={ () => onAbort?.() }>Stop</button>
+			{ error && <div data-testid="chat-error">{ error }</div> }
+			<div data-testid="input-value">{ inputValue }</div>
 			<ul data-testid="empty-view-suggestions">
 				{ emptyViewSuggestions.map( ( suggestion ) => (
 					<li key={ suggestion.id }>{ suggestion.label }</li>
@@ -103,6 +117,9 @@ jest.mock( '../../hooks/use-regenerate-action', () => ( {
 	default: ( config: unknown ) => mockUseRegenerateAction( config ),
 } ) );
 jest.mock( '../../hooks/use-copy-action', () => () => () => [] );
+jest.mock( '../../hooks/use-image-upload', () => ( {
+	useImageUpload: () => mockUseImageUpload(),
+} ) );
 jest.mock( '../../hooks/use-sources-action', () => () => {} );
 jest.mock( '../../hooks/use-zoom-action', () => () => {} );
 jest.mock( '../../utils/agent-session', () => ( { markSessionUsed: jest.fn() } ) );
@@ -116,7 +133,7 @@ jest.mock( '../../utils/external-context', () => ( {
 	removeExternalContextEntry: jest.fn(),
 } ) );
 jest.mock( '../../utils/is-reader-chat-agent', () => ( {
-	isReaderChatAgent: () => false,
+	isReaderChatAgent: () => mockIsReaderChatAgent(),
 } ) );
 jest.mock( '../../utils/persist-last-activity', () => ( {
 	persistLastActivity: jest.fn(),
@@ -163,6 +180,22 @@ const agentChatReturn = ( overrides: Record< string, unknown > = {} ) => ( {
 	progressMessage: null,
 	...overrides,
 } );
+
+const createImageUpload = ( overrides: Record< string, unknown > = {} ) => ( {
+	pendingImages: [],
+	uploadingImages: [],
+	isUploadingImages: false,
+	handleFilesSelected: jest.fn(),
+	handleRemoveImage: jest.fn(),
+	uploadImagesToWordPress: jest.fn(),
+	abortUpload: jest.fn( () => false ),
+	...overrides,
+} );
+
+const renderWithImageUpload = ( imageUpload: ReturnType< typeof createImageUpload > ) => {
+	mockUseImageUpload.mockReturnValue( imageUpload );
+	return render( chat() );
+};
 
 // Show-component fixtures shared by the retention tests.
 const SHOW_COMPONENT_CONTENT = JSON.stringify( {
@@ -213,6 +246,8 @@ describe( 'OrchestratorChat', () => {
 		mockUseRegenerateAction.mockReturnValue( () => [] );
 		mockUseConversation.mockReturnValue( { isLoading: false } );
 		mockUseAgentChat.mockReturnValue( agentChatReturn() );
+		mockUseImageUpload.mockReturnValue( createImageUpload() );
+		mockIsReaderChatAgent.mockReturnValue( false );
 	} );
 
 	it( 'dispatches the inline suggestion event when an Agenttic suggestion is clicked', () => {
@@ -304,11 +339,110 @@ describe( 'OrchestratorChat', () => {
 		// Store is empty (as it is right after clearSuggestions()), no messages,
 		// and the input is empty — the empty-view fallback branch.
 		mockUseAgentChat.mockReturnValue( agentChatReturn() );
+		mockUseImageUpload.mockReturnValue( createImageUpload() );
+		mockIsReaderChatAgent.mockReturnValue( false );
 
 		render( chat( { emptyViewSuggestions: staticDefaults, useSuggestions: useSuggestions } ) );
 
 		expect( screen.getByText( 'What needs my attention today?' ) ).toBeTruthy();
 		expect( screen.queryByText( 'Getting started with WordPress' ) ).toBeNull();
+	} );
+
+	it( 'combines provider empty-view suggestions with dynamic suggestions', () => {
+		const emptySuggestions: Suggestion[] = [
+			{ id: 'customize-colors', label: 'Customize colors', prompt: 'Customize colors' },
+			{ id: 'change-page-layout', label: 'Change page layout', prompt: 'Change page layout' },
+		];
+		const dynamicSuggestions: Suggestion[] = [
+			{ id: 'dynamic-action', label: 'Dynamic action', prompt: 'Run the dynamic action' },
+		];
+		const useSuggestions = jest.fn( () => ( { suggestions: dynamicSuggestions } ) );
+
+		mockUseAgentChat.mockReturnValue( {
+			addMessage: jest.fn(),
+			messages: [],
+			suggestions: dynamicSuggestions,
+			isProcessing: false,
+			error: null,
+			loadMessages: jest.fn(),
+			onSubmit: jest.fn(),
+			abortCurrentRequest: jest.fn(),
+			clearSuggestions: jest.fn(),
+			registerSuggestions: jest.fn(),
+			registerMessageActions: jest.fn(),
+			progressMessage: null,
+		} );
+
+		render(
+			<OrchestratorChat
+				emptyViewSuggestions={ emptySuggestions }
+				isDocked={ false }
+				isOpen
+				onClose={ jest.fn() }
+				onExpand={ jest.fn() }
+				chatHeaderOptions={ [] }
+				markdownComponents={ {} }
+				markdownExtensions={ {} }
+				isCompactMode={ false }
+				useSuggestions={ useSuggestions }
+				onHasMessagesChange={ jest.fn() }
+			/>
+		);
+
+		expect( screen.getByText( 'Customize colors' ) ).toBeTruthy();
+		expect( screen.getByText( 'Change page layout' ) ).toBeTruthy();
+		expect( screen.getByText( 'Dynamic action' ) ).toBeTruthy();
+	} );
+
+	it( 'replaces provider empty-view suggestions with contextual dynamic suggestions', () => {
+		const emptySuggestions: Suggestion[] = [
+			{ id: 'simple-review', label: 'Simple Review', prompt: 'Review this page' },
+			{ id: 'proofread', label: 'Proofread', prompt: 'Proofread this page' },
+		];
+		const blockSuggestions: Suggestion[] = [
+			{ id: 'change-tone', label: 'Change tone', prompt: 'Change the tone' },
+			{ id: 'check-grammar', label: 'Check grammar', prompt: 'Check the grammar' },
+		];
+		const useSuggestions = jest.fn( () => ( {
+			suggestions: blockSuggestions,
+			replaceEmptyViewSuggestions: true,
+		} ) );
+
+		mockUseAgentChat.mockReturnValue( {
+			addMessage: jest.fn(),
+			messages: [],
+			suggestions: blockSuggestions,
+			isProcessing: false,
+			error: null,
+			loadMessages: jest.fn(),
+			onSubmit: jest.fn(),
+			abortCurrentRequest: jest.fn(),
+			clearSuggestions: jest.fn(),
+			registerSuggestions: jest.fn(),
+			registerMessageActions: jest.fn(),
+			progressMessage: null,
+		} );
+
+		render(
+			<OrchestratorChat
+				emptyViewSuggestions={ emptySuggestions }
+				isDocked={ false }
+				isOpen
+				onClose={ jest.fn() }
+				onExpand={ jest.fn() }
+				chatHeaderOptions={ [] }
+				markdownComponents={ {} }
+				markdownExtensions={ {} }
+				isCompactMode={ false }
+				useSuggestions={ useSuggestions }
+				onHasMessagesChange={ jest.fn() }
+			/>
+		);
+
+		expect( screen.queryByText( 'Simple Review' ) ).toBeNull();
+		expect( screen.queryByText( 'Proofread' ) ).toBeNull();
+		expect( screen.getByText( 'Change tone' ) ).toBeTruthy();
+		expect( screen.getByText( 'Check grammar' ) ).toBeTruthy();
 	} );
 
 	it( 'falls back to the static empty-view suggestions when the provider has none', () => {
@@ -363,23 +497,32 @@ describe( 'OrchestratorChat', () => {
 		);
 	} );
 
-	it( 'fires file_upload_success after images upload on send, with the uploaded media count', async () => {
+	it( 'sends the message directly when no images are pending', async () => {
+		const { onSubmit } = mockUseAgentChat();
+
+		render( chat() );
+
+		fireEvent.click( screen.getByText( 'Submit message' ) );
+
+		await waitFor( () => {
+			expect( onSubmit ).toHaveBeenCalledWith( 'Describe these images' );
+		} );
+	} );
+
+	it( 'fires `file_upload_success` after images upload on send, with the uploaded media count', async () => {
 		const uploadImagesToWordPress = jest.fn().mockResolvedValue( [
 			{ id: 1, url: 'a' },
 			{ id: 2, url: 'b' },
 		] );
-		const useImageUpload = () => ( {
-			pendingImages: [ { id: 'p1' }, { id: 'p2' } ],
-			uploadingImages: [],
-			isUploadingImages: false,
-			handleFilesSelected: jest.fn(),
-			handleRemoveImage: jest.fn(),
-			uploadImagesToWordPress,
-		} );
 
-		render( chat( { useImageUpload: useImageUpload as never } ) );
+		renderWithImageUpload(
+			createImageUpload( {
+				pendingImages: [ { id: 'p1' }, { id: 'p2' } ],
+				uploadImagesToWordPress,
+			} )
+		);
 
-		fireEvent.click( screen.getByText( 'Submit with images' ) );
+		fireEvent.click( screen.getByText( 'Submit message' ) );
 
 		await waitFor( () => {
 			expect( uploadImagesToWordPress ).toHaveBeenCalled();
@@ -387,6 +530,224 @@ describe( 'OrchestratorChat', () => {
 				count: 2,
 			} );
 		} );
+	} );
+
+	it( 'keeps the message in the input while uploading and clears it on dispatch', async () => {
+		let resolveUpload!: ( media: Array< { id: number; url: string } > ) => void;
+		const uploadImagesToWordPress = jest.fn(
+			() =>
+				new Promise( ( resolve ) => {
+					resolveUpload = resolve;
+				} )
+		);
+		const { onSubmit } = mockUseAgentChat();
+
+		renderWithImageUpload(
+			createImageUpload( {
+				pendingImages: [ { id: 'p1' } ],
+				uploadImagesToWordPress,
+			} )
+		);
+
+		fireEvent.click( screen.getByText( 'Type message' ) );
+		fireEvent.click( screen.getByText( 'Submit message' ) );
+
+		await waitFor( () => {
+			expect( screen.getByTestId( 'input-value' ) ).toHaveTextContent( 'Describe these images' );
+		} );
+
+		await act( async () => {
+			resolveUpload( [ { id: 1, url: 'a' } ] );
+		} );
+
+		expect( screen.getByTestId( 'input-value' ) ).toBeEmptyDOMElement();
+		expect( onSubmit ).toHaveBeenCalledWith(
+			'Describe these images',
+			expect.objectContaining( { imageUrls: expect.any( Array ) } )
+		);
+	} );
+
+	it( 'tracks `file_upload_cancel` and skips dispatch when the upload is aborted', async () => {
+		const abortError = new Error( 'Image upload aborted' );
+		abortError.name = 'AbortError';
+		const { onSubmit } = mockUseAgentChat();
+
+		renderWithImageUpload(
+			createImageUpload( {
+				pendingImages: [ { id: 'p1' } ],
+				uploadImagesToWordPress: jest.fn().mockRejectedValue( abortError ),
+			} )
+		);
+
+		fireEvent.click( screen.getByText( 'Submit message' ) );
+
+		await waitFor( () => {
+			expect( recordBigSkyTracksEvent ).toHaveBeenCalledWith( 'file_upload_cancel', {
+				count: 1,
+			} );
+		} );
+		expect( onSubmit ).not.toHaveBeenCalled();
+	} );
+
+	it( 'surfaces an upload error and skips dispatch when the upload fails', async () => {
+		const { onSubmit } = mockUseAgentChat();
+
+		renderWithImageUpload(
+			createImageUpload( {
+				pendingImages: [ { id: 'p1' } ],
+				uploadImagesToWordPress: jest.fn().mockRejectedValue( new Error( 'network' ) ),
+			} )
+		);
+
+		fireEvent.click( screen.getByText( 'Submit message' ) );
+
+		await waitFor( () => {
+			expect( screen.getByTestId( 'chat-error' ) ).toHaveTextContent(
+				'Failed to upload images. Please try again.'
+			);
+		} );
+		expect( recordBigSkyTracksEvent ).toHaveBeenCalledWith( 'file_upload_error', {
+			count: 1,
+		} );
+		expect( onSubmit ).not.toHaveBeenCalled();
+	} );
+
+	it( 'restores the message when dispatch fails after a successful upload', async () => {
+		const uploadImagesToWordPress = jest.fn().mockResolvedValue( [ { id: 1, url: 'a' } ] );
+		mockUseAgentChat.mockReturnValue(
+			agentChatReturn( {
+				onSubmit: jest.fn().mockRejectedValue( new Error( 'dispatch failed' ) ),
+			} )
+		);
+
+		renderWithImageUpload(
+			createImageUpload( {
+				pendingImages: [ { id: 'p1' } ],
+				uploadImagesToWordPress,
+			} )
+		);
+
+		fireEvent.click( screen.getByText( 'Type message' ) );
+		fireEvent.click( screen.getByText( 'Submit message' ) );
+
+		await waitFor( () => {
+			expect( mockUseAgentChat().onSubmit ).toHaveBeenCalled();
+		} );
+		await waitFor( () => {
+			expect( screen.getByTestId( 'input-value' ) ).toHaveTextContent( 'Describe these images' );
+		} );
+	} );
+
+	it( 'restores the message when a text-only dispatch fails', async () => {
+		mockUseAgentChat.mockReturnValue(
+			agentChatReturn( {
+				onSubmit: jest.fn().mockRejectedValue( new Error( 'dispatch failed' ) ),
+			} )
+		);
+
+		render( chat() );
+
+		fireEvent.click( screen.getByText( 'Type message' ) );
+		fireEvent.click( screen.getByText( 'Submit message' ) );
+
+		await waitFor( () => {
+			expect( mockUseAgentChat().onSubmit ).toHaveBeenCalled();
+		} );
+		await waitFor( () => {
+			expect( screen.getByTestId( 'input-value' ) ).toHaveTextContent( 'Describe these images' );
+		} );
+	} );
+
+	it( 'stops the upload instead of the agent request while images are uploading', () => {
+		const abortUpload = jest.fn( () => true );
+		const { abortCurrentRequest } = mockUseAgentChat();
+
+		renderWithImageUpload(
+			createImageUpload( {
+				uploadingImages: [ { id: 'p1' } ],
+				isUploadingImages: true,
+				abortUpload,
+			} )
+		);
+
+		fireEvent.click( screen.getByText( 'Stop' ) );
+
+		expect( abortUpload ).toHaveBeenCalled();
+		expect( abortCurrentRequest ).not.toHaveBeenCalled();
+	} );
+
+	it( 'stops the agent request when no upload is in flight', () => {
+		const { abortCurrentRequest } = mockUseAgentChat();
+
+		renderWithImageUpload( createImageUpload() );
+
+		fireEvent.click( screen.getByText( 'Stop' ) );
+
+		expect( abortCurrentRequest ).toHaveBeenCalled();
+	} );
+
+	it( 'drops a same-tick duplicate send before upload state propagates', async () => {
+		const uploadImagesToWordPress = jest.fn(
+			() => new Promise( () => {} ) // stays pending
+		);
+
+		renderWithImageUpload(
+			createImageUpload( {
+				pendingImages: [ { id: 'p1' } ],
+				uploadImagesToWordPress,
+			} )
+		);
+
+		fireEvent.click( screen.getByText( 'Submit message' ) );
+		fireEvent.click( screen.getByText( 'Submit message' ) );
+
+		await waitFor( () => {
+			expect( uploadImagesToWordPress ).toHaveBeenCalledTimes( 1 );
+		} );
+		expect( recordBigSkyTracksEvent ).not.toHaveBeenCalledWith(
+			'file_upload_error',
+			expect.anything()
+		);
+	} );
+
+	it( 'drops sends while an upload is in flight', () => {
+		const uploadImagesToWordPress = jest.fn();
+
+		renderWithImageUpload(
+			createImageUpload( {
+				uploadingImages: [ { id: 'p1' } ],
+				isUploadingImages: true,
+				uploadImagesToWordPress,
+			} )
+		);
+
+		fireEvent.click( screen.getByText( 'Submit message' ) );
+
+		expect( uploadImagesToWordPress ).not.toHaveBeenCalled();
+		expect( recordBigSkyTracksEvent ).not.toHaveBeenCalledWith(
+			'chat_input_send_message',
+			expect.anything()
+		);
+	} );
+
+	it( 'ignores staged images on reader chat', async () => {
+		mockIsReaderChatAgent.mockReturnValue( true );
+		const uploadImagesToWordPress = jest.fn();
+		const { onSubmit } = mockUseAgentChat();
+
+		renderWithImageUpload(
+			createImageUpload( {
+				pendingImages: [ { id: 'p1' } ],
+				uploadImagesToWordPress,
+			} )
+		);
+
+		fireEvent.click( screen.getByText( 'Submit message' ) );
+
+		await waitFor( () => {
+			expect( onSubmit ).toHaveBeenCalledWith( 'Describe these images' );
+		} );
+		expect( uploadImagesToWordPress ).not.toHaveBeenCalled();
 	} );
 
 	it( 'keeps regenerate disabled unless a provider opts in', () => {
