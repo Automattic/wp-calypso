@@ -127,6 +127,11 @@ const HeaderContainer = styled( Subheader )`
 			font-size: 16px;
 		}
 
+		@media ( max-width: 599px ) {
+			justify-content: flex-start;
+			text-align: left;
+		}
+
 		.plans-2023-tooltip__hover-area-container {
 			display: inline-flex;
 			align-items: center;
@@ -190,6 +195,10 @@ const DifferentiatorPrefix = styled.span`
 	line-height: 20px;
 	min-height: 20px;
 	white-space: nowrap;
+
+	@media ( max-width: 599px ) {
+		flex-basis: 100%;
+	}
 `;
 
 // Inline SVG components
