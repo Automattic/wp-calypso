@@ -326,6 +326,12 @@ describe( 'MarketplaceProductInstall', () => {
 		};
 		await settle( rendered );
 		expect( screen.getByText( /could not activate it/ ) ).toBeVisible();
+		// The message points at the plugin's own page rather than stranding the user or telling them to
+		// re-upload an already-installed plugin.
+		expect( screen.getByRole( 'link', { name: 'View plugin' } ) ).toHaveAttribute(
+			'href',
+			'/plugins/give/example.wordpress.com'
+		);
 
 		// A lost response can follow a server-side success, so polling continues and a later active
 		// refresh still redirects.

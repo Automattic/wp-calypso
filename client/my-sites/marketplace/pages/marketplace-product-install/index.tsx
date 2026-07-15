@@ -566,14 +566,15 @@ const MarketplaceProductInstall = ( {
 				/>
 			);
 		}
-		// The plugin is installed, so the generic "upload it again" recovery below does not apply.
+		// The plugin is installed, so the generic "upload it again" recovery below does not apply. Point
+		// at the plugin's own page, where it can be activated by hand.
 		if ( activationFailed ) {
 			return (
 				<EmptyContent
 					title={ null }
-					line={ translate(
-						'We installed the plugin, but could not activate it. You can activate it yourself from your plugins.'
-					) }
+					line={ translate( 'We installed the plugin, but could not activate it.' ) }
+					action={ translate( 'View plugin' ) }
+					actionURL={ `/plugins/${ pluginSlug }/${ selectedSiteSlug }` }
 				/>
 			);
 		}
