@@ -60,6 +60,7 @@ export default function MigrationsCommissionsList( {
 	recordTracksEvent,
 	onSuccess,
 	onError,
+	locale,
 	TableWrapper = DefaultTableWrapper,
 	onModalOpen,
 }: {
@@ -68,10 +69,11 @@ export default function MigrationsCommissionsList( {
 	recordTracksEvent: RecordTracksEvent;
 	onSuccess: ShowSuccessNotice;
 	onError: ( message: ReactNode ) => void;
+	locale: string;
 	TableWrapper?: ComponentType< { children: ReactNode } >;
 	onModalOpen?: () => void;
 } ) {
-	const isDesktop = useViewportMatch( 'medium' );
+	const isDesktop = useViewportMatch( 'large' );
 
 	const [ view, setView ] = useState< View >( INITIAL_VIEW );
 
@@ -116,7 +118,9 @@ export default function MigrationsCommissionsList( {
 				// We will change this when the MC tool is implemented and we have the migration date
 				label: __( 'Date added' ),
 				getValue: () => '-',
-				render: ( { item } ): ReactNode => <MigratedOnColumn migratedOn={ item.created_at } />,
+				render: ( { item } ): ReactNode => (
+					<MigratedOnColumn migratedOn={ item.created_at } locale={ locale } />
+				),
 				enableHiding: false,
 				enableSorting: false,
 			},
@@ -136,7 +140,7 @@ export default function MigrationsCommissionsList( {
 				enableSorting: false,
 			},
 		],
-		[]
+		[ locale ]
 	);
 
 	return (

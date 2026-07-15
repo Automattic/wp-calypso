@@ -16,7 +16,7 @@ export default function MigrationsConsolidatedCommissions( { items }: { items: T
 			// Consider only verified migrations for the current quarter
 			return (
 				item.incentive_status === 'verified' &&
-				getQuarter( new Date( item.created_at ) ) === getQuarter()
+				getQuarter( new Date( item.created_at * 1000 ) ) === getQuarter()
 			);
 		} ).length * 100; // FIXME: Consider the maximum commission value when the MC tool is implemented
 

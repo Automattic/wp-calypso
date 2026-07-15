@@ -9,7 +9,6 @@ import {
 import { __ } from '@wordpress/i18n';
 import { info } from '@wordpress/icons';
 import { useState } from 'react';
-import { useLocale } from '../../../../app/locale';
 import { formatDate } from '../../../../utils/datetime';
 import { urlToSlug } from '../../../../utils/url';
 
@@ -19,8 +18,13 @@ export const SiteColumn = ( { site }: { site: string } ) => {
 	return urlToSlug( site );
 };
 
-export const MigratedOnColumn = ( { migratedOn }: { migratedOn: number } ) => {
-	const locale = useLocale();
+export const MigratedOnColumn = ( {
+	migratedOn,
+	locale,
+}: {
+	migratedOn: number;
+	locale: string;
+} ) => {
 	const date = new Date( migratedOn * 1000 );
 	return <>{ formatDate( date, locale, { day: '2-digit', month: 'short', year: 'numeric' } ) }</>;
 };

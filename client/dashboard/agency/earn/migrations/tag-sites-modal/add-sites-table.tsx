@@ -7,7 +7,6 @@ import { useViewportMatch } from '@wordpress/compose';
 import { DataViews, filterSortAndPaginate } from '@wordpress/dataviews';
 import { __, sprintf } from '@wordpress/i18n';
 import { useCallback, useMemo, useState } from 'react';
-import { useLocale } from '../../../../app/locale';
 import { DataViewsCard } from '../../../../components/dataviews';
 import { formatDate } from '../../../../utils/datetime';
 import {
@@ -26,6 +25,7 @@ export default function MigrationsAddSitesTable( {
 	migrationSourceHost,
 	recordTracksEvent,
 	getSiteCreatedAt,
+	locale,
 }: {
 	selectedSites: SiteItem[];
 	setSelectedSites: ( sites: SiteItem[] ) => void;
@@ -33,9 +33,9 @@ export default function MigrationsAddSitesTable( {
 	migrationSourceHost: string;
 	recordTracksEvent: RecordTracksEvent;
 	getSiteCreatedAt: ( blogId: number ) => string | undefined;
+	locale: string;
 } ) {
-	const isDesktop = useViewportMatch( 'medium' );
-	const locale = useLocale();
+	const isDesktop = useViewportMatch( 'large' );
 
 	const { items, isLoading } = useFetchAllManagedSitesForCommission();
 
@@ -56,7 +56,9 @@ export default function MigrationsAddSitesTable( {
 						url.host.endsWith( domain )
 					);
 				} catch {
-					return false;
+					// If the URL can't be parsed we can't prove it's a staging site,
+					// so keep it rather than silently dropping an eligible site.
+					return true;
 				}
 			} );
 	}, [ items, taggedSitesIds ] );
@@ -101,7 +103,7 @@ export default function MigrationsAddSitesTable( {
 				<div>
 					<CheckboxControl
 						label={ __( 'Site' ) }
-						checked={ selectedSites.length === availableSites.length }
+						checked={ availableSites.length > 0 && selectedSites.length === availableSites.length }
 						onChange={ onSelectAllSites }
 						disabled={ false }
 					/>

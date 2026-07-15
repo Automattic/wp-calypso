@@ -32,6 +32,7 @@ export default function MigrationsTagSitesModal( {
 	onSuccess,
 	onError,
 	getSiteCreatedAt,
+	locale,
 	onModalOpen,
 }: {
 	onClose: () => void;
@@ -41,6 +42,7 @@ export default function MigrationsTagSitesModal( {
 	onSuccess: ( message: ReactNode ) => void;
 	onError: ( message: ReactNode ) => void;
 	getSiteCreatedAt: ( blogId: number ) => string | undefined;
+	locale: string;
 	onModalOpen?: () => void;
 } ) {
 	const queryClient = useQueryClient();
@@ -185,6 +187,7 @@ export default function MigrationsTagSitesModal( {
 						migrationSourceHost={ selectedMigrationSourceHost }
 						recordTracksEvent={ recordTracksEvent }
 						getSiteCreatedAt={ getSiteCreatedAt }
+						locale={ locale }
 					/>
 				) }
 			</VStack>

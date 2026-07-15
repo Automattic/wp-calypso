@@ -13,6 +13,7 @@ interface MigrationsCommissionsContentProps {
 	onSuccess: ShowSuccessNotice;
 	onError: ( message: ReactNode ) => void;
 	getSiteCreatedAt: ( blogId: number ) => string | undefined;
+	locale: string;
 	canTagSitesForCommission: boolean;
 	migrationTags: string[];
 	isAddSitesModalOpen: boolean;
@@ -29,6 +30,7 @@ export default function MigrationsCommissionsContent( {
 	onSuccess,
 	onError,
 	getSiteCreatedAt,
+	locale,
 	canTagSitesForCommission,
 	migrationTags,
 	isAddSitesModalOpen,
@@ -65,6 +67,7 @@ export default function MigrationsCommissionsContent( {
 						recordTracksEvent={ recordTracksEvent }
 						onSuccess={ onSuccess }
 						onError={ onError }
+						locale={ locale }
 						TableWrapper={ TableWrapper }
 						onModalOpen={ onModalOpen }
 					/>
@@ -79,6 +82,7 @@ export default function MigrationsCommissionsContent( {
 					onSuccess={ onSuccess }
 					onError={ onError }
 					getSiteCreatedAt={ getSiteCreatedAt }
+					locale={ locale }
 					onModalOpen={ onModalOpen }
 				/>
 			) }
