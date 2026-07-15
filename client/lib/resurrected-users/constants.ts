@@ -7,5 +7,12 @@ export const RESURRECTED_EVENT_6M = 'calypso_user_resurrected_6m';
 /** Rolled-out welcome-back modal variation (manual onboarding + continue). */
 export const WELCOME_BACK_VARIATION_MANUAL = 'treatment_manual_dual' as const;
 
+/* Variations for the new welcome-back modal experiment */
+export const WELCOME_BACK_VARIATIONS = {
+	themes: 'treatment_themes',
+};
+export type WelcomeBackVariation =
+	( typeof WELCOME_BACK_VARIATIONS )[ keyof typeof WELCOME_BACK_VARIATIONS ];
+
 /** Feature flag to force the welcome-back modal for local/testing. */
 export const WELCOME_BACK_MODAL_FORCE_FLAG = 'welcome-back-modal-manual';
