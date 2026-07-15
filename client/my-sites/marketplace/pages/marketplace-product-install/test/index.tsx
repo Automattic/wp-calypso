@@ -2,6 +2,9 @@
  * @jest-environment jsdom
  */
 import { render, screen, act } from '@testing-library/react';
+import { INSTALL_PLUGIN } from 'calypso/lib/plugins/constants';
+import { PLUGIN_INSTALL_REQUEST, PLUGIN_INSTALL_REQUEST_FAILURE } from 'calypso/state/action-types';
+import statusReducer from 'calypso/state/plugins/installed/status/reducer';
 import MarketplaceProductInstall from '../index';
 
 const PLUGIN_SLUG = 'give';
@@ -23,8 +26,10 @@ const mockSite = {
 	isFetching: false,
 	// Whether the transferred atomic site is ready for its WP Admin URL.
 	isReady: true,
-	// Whether the install status reports a terminal error.
-	installError: false,
+	// Whether the site's manage-plugins capability has propagated.
+	canManage: true,
+	// The install status the store reports, built from real reducer transitions.
+	installStatus: null as { status: string; action: string; error?: unknown } | null,
 };
 
 const mockDispatch = jest.fn();
@@ -57,7 +62,7 @@ jest.mock( 'calypso/state/plugins/wporg/selectors', () => ( {
 } ) );
 jest.mock( 'calypso/state/plugins/installed/selectors-ts', () => ( {
 	getPluginOnSite: () => mockSite.installedPlugin,
-	getStatusForPlugin: () => ( mockSite.installError ? { error: 'install failed' } : null ),
+	getStatusForPlugin: () => mockSite.installStatus,
 	isRequesting: () => mockSite.isFetching,
 } ) );
 jest.mock( 'calypso/state/automated-transfer/selectors', () => ( {
@@ -88,7 +93,8 @@ jest.mock( 'calypso/state/selectors/is-site-automated-transfer', () => ( {
 } ) );
 jest.mock( 'calypso/state/selectors/site-has-feature', () => ( {
 	__esModule: true,
-	default: () => true,
+	default: ( _state: unknown, _siteId: number, feature: string ) =>
+		feature === 'manage-plugins' ? mockSite.canManage : true,
 } ) );
 jest.mock( 'calypso/state/selectors/get-current-query-arguments', () => ( {
 	getCurrentQueryArguments: () => ( {} ),
@@ -182,7 +188,8 @@ describe( 'MarketplaceProductInstall', () => {
 		mockSite.isWporgPlugin = true;
 		mockSite.isFetching = false;
 		mockSite.isReady = true;
-		mockSite.installError = false;
+		mockSite.canManage = true;
+		mockSite.installStatus = null;
 		originalLocation = window.location;
 		Object.defineProperty( window, 'location', { value: { href: '' }, writable: true } );
 	} );
@@ -304,23 +311,68 @@ describe( 'MarketplaceProductInstall', () => {
 		expect( window.location.href ).toBe( ACTIVE_LIST_URL );
 	} );
 
-	it( 'stops polling when installation fails with nothing installed', async () => {
+	it( 'stops polling on a terminal install failure, and resumes when a retry begins', async () => {
 		mockSite.isAtomic = true; // existing-plan site, so the install runs through this page
 		mockSite.isWporgPlugin = true;
 		const rendered = install();
 		await start( rendered );
 
-		// It polls while the install is under way.
 		await advance( rendered, 3000 );
 		expect( fetchSitePlugins ).toHaveBeenCalledWith( SITE_ID );
 
-		// The install fails and leaves no plugin. That is terminal: the error shows and polling stops.
-		mockSite.installError = true;
+		// A real install failure with no plugin installed is terminal: the error shows, polling stops.
+		let statusState = statusReducer( undefined, {
+			type: PLUGIN_INSTALL_REQUEST_FAILURE,
+			siteId: SITE_ID,
+			pluginId: PLUGIN_SLUG,
+			action: INSTALL_PLUGIN,
+			error: { error: 'no_package' },
+		} );
+		mockSite.installStatus = statusState[ SITE_ID ][ PLUGIN_SLUG ];
 		await settle( rendered );
 		fetchSitePlugins.mockClear();
 		await advance( rendered, 9000 );
 		expect( fetchSitePlugins ).not.toHaveBeenCalled();
 		expect( screen.getByText( /An error occurred while installing the plugin/ ) ).toBeVisible();
+
+		// A retry moves the status back to in progress. The reducer keeps the old error field, so a
+		// check on error-presence would stay stuck — the current status must drive the decision.
+		statusState = statusReducer( statusState, {
+			type: PLUGIN_INSTALL_REQUEST,
+			siteId: SITE_ID,
+			pluginId: PLUGIN_SLUG,
+			action: INSTALL_PLUGIN,
+		} );
+		expect( statusState[ SITE_ID ][ PLUGIN_SLUG ].error ).toBeTruthy();
+		mockSite.installStatus = statusState[ SITE_ID ][ PLUGIN_SLUG ];
+		await settle( rendered );
+		fetchSitePlugins.mockClear();
+		await advance( rendered, 3000 );
+		expect( fetchSitePlugins ).toHaveBeenCalledWith( SITE_ID );
+	} );
+
+	it( 'waits for the manage-plugins capability before activating or redirecting', async () => {
+		mockSite.canManage = false; // still propagating after the transfer
+		const rendered = install();
+		await start( rendered );
+
+		// Transfer complete and the site atomic-ready, but the capability has not propagated: the
+		// one-shot activation must not fire yet, and nothing should redirect.
+		mockSite.installedPlugin = PLUGIN;
+		fetchSitePlugins.mockClear();
+		await advance( rendered, 6000 );
+		expect( activatePlugin ).not.toHaveBeenCalled();
+		expect( fetchSitePlugins ).not.toHaveBeenCalled();
+		expect( window.location.href ).toBe( '' );
+
+		// Once it propagates, it activates and, once active, redirects.
+		mockSite.canManage = true;
+		await advance( rendered, 3000 );
+		expect( activatePlugin ).toHaveBeenCalledWith( SITE_ID, PLUGIN );
+
+		mockSite.installedPlugin = ACTIVE_PLUGIN;
+		await settle( rendered );
+		expect( window.location.href ).toBe( ACTIVE_LIST_URL );
 	} );
 
 	it( 'does not start a new plugin fetch while one is already in flight', async () => {

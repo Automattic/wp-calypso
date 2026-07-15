@@ -21,6 +21,7 @@ import { useWPCOMPlugin } from 'calypso/data/marketplace/use-wpcom-plugins-query
 import Masterbar from 'calypso/layout/masterbar/masterbar';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { useInterval } from 'calypso/lib/interval';
+import { INSTALL_PLUGIN } from 'calypso/lib/plugins/constants';
 import { getProductSlugByPeriodVariation } from 'calypso/lib/plugins/utils';
 import MarketplaceProgressBar from 'calypso/my-sites/marketplace/components/progressbar';
 import useMarketplaceAdditionalSteps from 'calypso/my-sites/marketplace/pages/marketplace-product-install/use-marketplace-additional-steps';
@@ -42,6 +43,7 @@ import {
 	getStatusForPlugin,
 	isRequesting,
 } from 'calypso/state/plugins/installed/selectors-ts';
+import { PLUGIN_INSTALLATION_ERROR } from 'calypso/state/plugins/installed/status/constants';
 import { fetchPluginData as wporgFetchPluginData } from 'calypso/state/plugins/wporg/actions';
 import { getPlugin, isFetched } from 'calypso/state/plugins/wporg/selectors';
 import {
@@ -309,16 +311,26 @@ const MarketplaceProductInstall = ( {
 		!! freshSite?.is_wpcom_atomic &&
 		wporgPlugin?.wporg === false;
 
+	const canManagePlugins = useSelector( ( state ) =>
+		siteHasFeature( state, selectedSite?.ID, WPCOM_FEATURES_MANAGE_PLUGINS )
+	);
+
 	// Unlike the theme flow, which only observes backend-owned activation, reconciling a plugin means
 	// dispatching activation and then leaving for a freshly discovered WP Admin URL. Gate both on the
-	// atomic site being ready, so we neither act nor redirect before that URL is real.
+	// atomic site being ready, and its manage-plugins capability having propagated, so we neither act
+	// nor redirect before that is true — a rejected one-shot activation would never be retried.
 	const canReconcilePlugin =
 		( ! atomicFlow || transferStates.COMPLETE === automatedTransferStatus ) &&
-		( ! ( atomicFlow || isMarketplacePluginFlow ) || isAtomicTransferReady );
+		( ! ( atomicFlow || isMarketplacePluginFlow ) ||
+			( isAtomicTransferReady && canManagePlugins ) );
 
 	// A failed install with nothing installed is terminal — the error screen shows it, so stop
-	// polling. A failure that still left a plugin behind is a partial success worth reconciling.
-	const installFailed = !! pluginInstallStatus?.error && ! installedPlugin;
+	// polling. Read the current status, not a lingering error field the reducer keeps across a retry.
+	// A failure that still left a plugin behind is a partial success worth reconciling.
+	const installFailed =
+		pluginInstallStatus?.status === PLUGIN_INSTALLATION_ERROR &&
+		pluginInstallStatus.action === INSTALL_PLUGIN &&
+		! installedPlugin;
 
 	// Poll the site plugins for the active state the same way the theme flow polls the active theme:
 	// once the flow is under way, until the server reports it active. The paid marketplace install is
@@ -362,9 +374,6 @@ const MarketplaceProductInstall = ( {
 		siteId,
 	] );
 
-	const canManagePlugins = useSelector( ( state ) => {
-		return siteHasFeature( state, selectedSite?.ID, WPCOM_FEATURES_MANAGE_PLUGINS );
-	} );
 	// Check completition of all flows and redirect to thank you page
 	useEffect( () => {
 		if (
