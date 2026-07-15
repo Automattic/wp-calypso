@@ -201,9 +201,8 @@ export default function AgentChat( {
 		floatingChatState = 'compact';
 	}
 
-	// Image-upload tracking mirrors Big Sky's `file_upload_*` events. The
-	// uploader only renders on the editor surface (a provider supplies
-	// `useImageUpload`); reader-chat has no provider, but gate defensively so
+	// Image-upload tracking mirrors Big Sky's `file_upload_*` events.
+	// Reader chat gets no `imageUpload`, but gate defensively so
 	// `jetpack_big_sky_*` never fires from that surface.
 	const trackImageUpload = ! isReaderChatHost() && !! imageUpload;
 
@@ -330,14 +329,18 @@ export default function AgentChat( {
 								acceptedFileTypes={ acceptedImageFileTypes }
 								showFileMetadata
 								allowDragToInsert={ false }
+								disabled={ imageUpload.isUploadingImages }
 								dropZoneRef={ conversationViewRef as RefObject< HTMLElement > }
 							/>
 						) }
 						<SelectedBlock />
+						{ /* `readOnly` (not `disabled`) so the stop button stays active while a batch uploads. */ }
 						<AgentUI.Input
 							imageUploaderRef={
 								imageUpload ? ( imageUploaderRef as RefObject< ImageUploaderHandle > ) : undefined
 							}
+							imageUploadDisabled={ imageUpload?.isUploadingImages }
+							readOnly={ imageUpload?.isUploadingImages }
 							disabled={ imageUpload?.pendingImages?.length ? false : undefined }
 						/>
 					</AgentUI.Footer>

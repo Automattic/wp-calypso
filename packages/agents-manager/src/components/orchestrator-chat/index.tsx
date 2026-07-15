@@ -16,6 +16,7 @@ import useCheckpointAction from '../../hooks/use-checkpoint-action';
 import useConversation from '../../hooks/use-conversation';
 import useCopyAction from '../../hooks/use-copy-action';
 import useFeedbackAction from '../../hooks/use-feedback-action';
+import { useImageUpload } from '../../hooks/use-image-upload';
 import useRegenerateAction from '../../hooks/use-regenerate-action';
 import useSaveNewChatRoute from '../../hooks/use-save-new-chat-route';
 import useSourcesAction from '../../hooks/use-sources-action';
@@ -47,7 +48,6 @@ import type {
 	GetChatComponent,
 	UseSuggestionsHook,
 	SiteBuildUtils,
-	ImageUploadHook,
 	UseCheckpointHook,
 	ProviderCapabilities,
 } from '../../utils/load-external-providers';
@@ -158,8 +158,6 @@ interface Props {
 	getChatComponent?: GetChatComponent;
 	/** Utilities for site building flow (e.g., progress tracking, site preview). */
 	siteBuildUtils?: SiteBuildUtils;
-	/** Hook for handling image uploads within the agent chat. */
-	useImageUpload?: ImageUploadHook;
 	/** Hook for saving and restoring editor state so that AI actions can be undone. */
 	useCheckpoint?: UseCheckpointHook;
 	/** Optional capability flags declared by one or more loaded providers. */
@@ -183,7 +181,6 @@ export default function OrchestratorChat( {
 	useSuggestions,
 	getChatComponent,
 	siteBuildUtils,
-	useImageUpload,
 	useCheckpoint,
 	capabilities,
 	onHasMessagesChange,
@@ -427,71 +424,13 @@ export default function OrchestratorChat( {
 	// Register a "Sources" action on agent messages with sources data.
 	useSourcesAction( registerMessageActions, ! isReaderChat );
 
-	const imageUpload = useImageUpload?.();
+	const imageUploadResult = useImageUpload();
+	// Reader chat is a public blog frontend — visitors can't upload media.
+	const imageUpload = isReaderChat ? undefined : imageUploadResult;
 	const pendingImages = imageUpload?.pendingImages || [];
 	const uploadImagesToWordPress = imageUpload?.uploadImagesToWordPress;
-
-	const onSubmitWithImages = useCallback(
-		async ( message: string ) => {
-			setHasUserSentMessage( true );
-			persistLastActivity( siteKey );
-
-			recordBigSkyTracksEvent( 'chat_input_send_message', {
-				message_length: message?.length || 0,
-				has_images: pendingImages.length > 0,
-			} );
-
-			if ( pendingImages.length > 0 && uploadImagesToWordPress ) {
-				try {
-					// Upload files to WordPress media library
-					const mediaObjects = await uploadImagesToWordPress();
-
-					recordBigSkyTracksEvent( 'file_upload_success', {
-						count: mediaObjects.length,
-					} );
-
-					// Create image data objects with full metadata including attachment ID
-					const imageData = mediaObjects.map( ( media ) => ( {
-						url: media.url,
-						metadata: {
-							id: media.id, // WordPress attachment ID
-							title: media.title,
-							fileName: media.fileName,
-							fileType: media.fileType,
-							fileSize: media.fileSize,
-							dimensions: media.dimensions,
-							uploadDate: media.uploadDate,
-							alt: media.alt,
-							caption: media.caption,
-						},
-					} ) );
-
-					// Send message with images using agenttic's imageUrls option
-					// FileParts will be automatically persisted in conversation history with metadata
-					await onSubmit( message, { imageUrls: imageData } );
-				} catch ( uploadError ) {
-					throw new Error(
-						__( 'Failed to upload images. Please try again.', __i18n_text_domain__ )
-					);
-				}
-			} else {
-				// No images, just send normally
-				await onSubmit( message );
-			}
-			consumeNextMessageExternalContextEntries();
-			if ( isReaderChat ) {
-				markSessionUsed( agentConfig?.agentId );
-			}
-		},
-		[
-			agentConfig?.agentId,
-			isReaderChat,
-			onSubmit,
-			pendingImages.length,
-			siteKey,
-			uploadImagesToWordPress,
-		]
-	);
+	const isUploadingImages = imageUpload?.isUploadingImages ?? false;
+	const [ uploadError, setUploadError ] = useState< string | null >( null );
 
 	const setChatInput = useCallback( ( value: string ) => {
 		if ( typeof value !== 'string' ) {
@@ -509,6 +448,138 @@ export default function OrchestratorChat( {
 		}
 	}, [] );
 
+	// Whether the last `onSubmitWithImages` call actually dispatched — dropped,
+	// aborted, and failed sends deliberately leave the composer intact.
+	const submitDispatchedRef = useRef( false );
+	// Synchronous lock for the upload phase: same-tick re-entry (double-click,
+	// programmatic submit) lands before the `isUploadingImages` state does.
+	const isUploadingRef = useRef( false );
+
+	const onSubmitWithImages = useCallback(
+		async ( message: string ) => {
+			submitDispatchedRef.current = false;
+
+			// The composer is committed while a batch uploads — drop re-entrant
+			// sends (suggestion clicks, programmatic submits) instead of
+			// interleaving a second message.
+			if ( isUploadingRef.current || isUploadingImages ) {
+				return;
+			}
+
+			setHasUserSentMessage( true );
+			setUploadError( null );
+			persistLastActivity( siteKey );
+
+			recordBigSkyTracksEvent( 'chat_input_send_message', {
+				message_length: message?.length || 0,
+				has_images: pendingImages.length > 0,
+			} );
+
+			let imageData;
+			if ( pendingImages.length > 0 && uploadImagesToWordPress ) {
+				isUploadingRef.current = true;
+
+				try {
+					// Agenttic clears the (controlled) input on submit. When the message
+					// came from the composer, keep it visible while images upload: wait a
+					// microtask so the restore lands after that clear, and re-place the
+					// caret at the end (the clear leaves it at 0). Suggestion-driven and
+					// programmatic submits leave any draft alone. Agenttic dispatches the
+					// trimmed draft, hence the trim-compare.
+					if ( inputValue.trim() === message ) {
+						await Promise.resolve();
+						setChatInput( message );
+					}
+
+					const mediaObjects = await uploadImagesToWordPress();
+
+					recordBigSkyTracksEvent( 'file_upload_success', {
+						count: mediaObjects.length,
+					} );
+
+					imageData = mediaObjects.map( ( media ) => ( {
+						url: media.url,
+						metadata: {
+							id: media.id, // WordPress attachment ID
+							title: media.title,
+							fileName: media.fileName,
+							fileType: media.fileType,
+							fileSize: media.fileSize,
+							dimensions: media.dimensions,
+							uploadDate: media.uploadDate,
+							alt: media.alt,
+							caption: media.caption,
+						},
+					} ) );
+				} catch ( caughtError ) {
+					// Stop during upload: the previews are restored and a
+					// composer-typed message stays in the input — the composer is
+					// back to its pre-send state.
+					if ( caughtError instanceof Error && caughtError.name === 'AbortError' ) {
+						recordBigSkyTracksEvent( 'file_upload_cancel', {
+							count: pendingImages.length,
+						} );
+						return;
+					}
+
+					recordBigSkyTracksEvent( 'file_upload_error', {
+						count: pendingImages.length,
+					} );
+					setUploadError(
+						__( 'Failed to upload images. Please try again.', __i18n_text_domain__ )
+					);
+					return;
+				} finally {
+					isUploadingRef.current = false;
+				}
+
+				// The message dispatches now — clear the input only when it still
+				// holds this message (a suggestion-driven send may have left an
+				// unrelated draft in it).
+				setInputValue( ( currentValue ) => ( currentValue === message ? '' : currentValue ) );
+			}
+
+			submitDispatchedRef.current = true;
+			try {
+				// Images dispatch via agenttic's `imageUrls` option — the resulting
+				// `FilePart`s persist in conversation history with their metadata.
+				await ( imageData ? onSubmit( message, { imageUrls: imageData } ) : onSubmit( message ) );
+			} catch {
+				// A rejected dispatch already surfaces via agenttic's error state;
+				// put the message back (unless a newer draft replaced it) for a retry.
+				submitDispatchedRef.current = false;
+				setInputValue( ( currentValue ) => ( currentValue === '' ? message : currentValue ) );
+				return;
+			}
+
+			consumeNextMessageExternalContextEntries();
+
+			if ( isReaderChat ) {
+				markSessionUsed( agentConfig?.agentId );
+			}
+		},
+		[
+			agentConfig?.agentId,
+			inputValue,
+			isReaderChat,
+			isUploadingImages,
+			onSubmit,
+			pendingImages.length,
+			setChatInput,
+			siteKey,
+			uploadImagesToWordPress,
+		]
+	);
+
+	const handleAbort = useCallback( () => {
+		// `abortUpload` reports whether it stopped an in-flight batch, so a stop
+		// that lands just after the upload settles still aborts the agent request.
+		if ( imageUpload?.abortUpload?.() ) {
+			return;
+		}
+		abortCurrentRequest();
+	}, [ abortCurrentRequest, imageUpload ] );
+
 	const submitChatMessage = useCallback(
 		async ( message?: string ) => {
 			const submittedMessage = typeof message === 'string' ? message : inputValue;
@@ -518,7 +589,13 @@ export default function OrchestratorChat( {
 			}
 
 			await onSubmitWithImages( submittedMessage );
-			setInputValue( '' );
+			// Clear only a dispatched message — an aborted or failed send keeps
+			// the composer intact, and the user may have typed a new draft.
+			if ( submitDispatchedRef.current ) {
+				setInputValue( ( currentValue ) =>
+					currentValue === submittedMessage ? '' : currentValue
+				);
+			}
 		},
 		[ inputValue, onSubmitWithImages ]
 	);
@@ -851,11 +928,13 @@ export default function OrchestratorChat( {
 			messages={ displayedMessages }
 			suggestions={ suggestions }
 			emptyViewSuggestions={ displayedEmptyViewSuggestions }
-			isProcessing={ showProcessingIndicator }
-			thinkingMessage={ progressMessage }
-			error={ chatError }
+			isProcessing={ showProcessingIndicator || isUploadingImages }
+			thinkingMessage={
+				isUploadingImages ? __( 'Uploading images…', __i18n_text_domain__ ) : progressMessage
+			}
+			error={ chatError || uploadError }
 			onSubmit={ onSubmitWithImages }
-			onAbort={ abortCurrentRequest }
+			onAbort={ handleAbort }
 			isLoadingConversation={ isLoadingConversation }
 			isDocked={ isDocked }
 			isOpen={ isOpen }
