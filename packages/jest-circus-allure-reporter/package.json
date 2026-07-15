@@ -1,7 +1,7 @@
 {
 	"name": "@automattic/jest-circus-allure-reporter",
 	"author": "Automattic Inc.",
-	"version": "0.1.0",
+	"version": "0.2.0",
 	"description": "Allure reporter for Jest-Circus test runner.",
 	"main": "dist/esm/src/index.js",
 	"module": "dist/esm/src/index.js",
