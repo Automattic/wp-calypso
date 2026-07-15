@@ -25,6 +25,9 @@ const mockSite = {
 	isReady: true,
 	// Whether the site's manage-plugins capability has propagated.
 	canManage: true,
+	// The checkout install status. COMPLETED means checkout finished the install, so this page does
+	// not start one and stays at step 0 — the marketplace poll path.
+	purchaseStatus: 'PENDING',
 };
 
 const mockDispatch = jest.fn();
@@ -65,7 +68,7 @@ jest.mock( 'calypso/state/automated-transfer/selectors', () => ( {
 } ) );
 jest.mock( 'calypso/state/marketplace/purchase-flow/selectors', () => ( {
 	getPurchaseFlowState: () => ( {
-		pluginInstallationStatus: 'PENDING',
+		pluginInstallationStatus: mockSite.purchaseStatus,
 		productSlugInstalled: 'give',
 		primaryDomain: 'example.wordpress.com',
 	} ),
@@ -147,7 +150,7 @@ jest.mock( 'calypso/my-sites/marketplace/components/progressbar', () => ( {
 	default: () => <div>Installing plugin</div>,
 } ) );
 
-const { activatePlugin, fetchSitePlugins } = jest.requireMock(
+const { installPlugin, activatePlugin, fetchSitePlugins } = jest.requireMock(
 	'calypso/state/plugins/installed/actions'
 );
 
@@ -184,6 +187,7 @@ describe( 'MarketplaceProductInstall', () => {
 		mockSite.isFetching = false;
 		mockSite.isReady = true;
 		mockSite.canManage = true;
+		mockSite.purchaseStatus = 'PENDING';
 		originalLocation = window.location;
 		Object.defineProperty( window, 'location', { value: { href: '' }, writable: true } );
 	} );
@@ -217,11 +221,16 @@ describe( 'MarketplaceProductInstall', () => {
 		expect( window.location.href ).toBe( ACTIVE_LIST_URL );
 	} );
 
-	it( 'keeps polling a paid plugin until it is externally activated', async () => {
+	it( 'polls a paid plugin that checkout installed, without starting its own install', async () => {
 		mockSite.isAtomic = true;
 		mockSite.isWporgPlugin = false;
+		// Checkout finished the install, so this page starts none and stays at step 0. Polling then
+		// happens only through the marketplace path, which is what this exercises.
+		mockSite.purchaseStatus = 'COMPLETED';
 		const rendered = install();
 		await start( rendered );
+
+		expect( installPlugin ).not.toHaveBeenCalled();
 
 		// The plugin is present but inactive. Checkout activates it out of band, so the page must keep
 		// polling rather than leaving as soon as it appears.
@@ -229,6 +238,7 @@ describe( 'MarketplaceProductInstall', () => {
 		fetchSitePlugins.mockClear();
 		await advance( rendered, 3000 );
 		expect( fetchSitePlugins ).toHaveBeenCalledWith( SITE_ID );
+		expect( installPlugin ).not.toHaveBeenCalled();
 		expect( window.location.href ).toBe( '' );
 
 		mockSite.installedPlugin = ACTIVE_PLUGIN;
