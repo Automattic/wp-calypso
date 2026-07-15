@@ -32,7 +32,10 @@ export const SitesAddNewSitePopover = ( { showCompact, context }: Props ) => {
 				) }
 				renderContent={ () => (
 					<div className="sites-add-new-site__popover-content">
-						<AsyncContent context={ context } aiSiteBuilderPath="/setup/ai-site-builder" />
+						<AsyncContent
+							context={ context }
+							aiSiteBuilderPath="/setup/ai-site-builder-onboarding"
+						/>
 					</div>
 				) }
 				onToggle={ ( isOpen ) => {
