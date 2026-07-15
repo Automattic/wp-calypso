@@ -63,6 +63,7 @@ export const DRAG_CONSTANTS = {
 		'[data-slot="messages"]',
 		'[data-slot="chat-input"]',
 		'[data-slot="chat-footer"]',
+		'[data-slot="chat-compliance-disclosure"]',
 		'[data-slot="chat-header"] [data-slot="button"]',
 	].join( ', ' ),
 } as const;

@@ -8,6 +8,10 @@ import React, {
 import { __ } from '@wordpress/i18n';
 import type { AgentUIProps, Message, NoticeConfig, Suggestion } from '../types';
 import { LightweightMarkdownRenderer } from './LightweightMarkdownRenderer';
+import {
+	ComplianceDisclosure,
+	DefaultComplianceDisclosure,
+} from './composable/AgentUIFooter';
 import { SourcesCard } from './sources';
 
 interface EmbeddedAgentUIContextValue extends AgentUIProps {
@@ -381,25 +385,32 @@ export function EmbeddedAgentUIInput( {
 export function EmbeddedAgentUIFooter( {
 	children,
 	className,
+	complianceDisclosure = <DefaultComplianceDisclosure />,
 }: {
 	children?: React.ReactNode;
 	className?: string;
+	complianceDisclosure?: React.ReactNode | false;
 } = {} ) {
 	return (
-		<div
-			data-slot="chat-footer"
-			className={ [ 'agenttic-embedded__footer', className ]
-				.filter( Boolean )
-				.join( ' ' ) }
-		>
-			{ children ?? (
-				<>
-					<EmbeddedAgentUISuggestions />
-					<EmbeddedAgentUINotice />
-					<EmbeddedAgentUIInput />
-				</>
-			) }
-		</div>
+		<>
+			<div
+				data-slot="chat-footer"
+				className={ [ 'agenttic-embedded__footer', className ]
+					.filter( Boolean )
+					.join( ' ' ) }
+			>
+				{ children ?? (
+					<>
+						<EmbeddedAgentUISuggestions />
+						<EmbeddedAgentUINotice />
+						<EmbeddedAgentUIInput />
+					</>
+				) }
+			</div>
+			<ComplianceDisclosure>
+				{ complianceDisclosure }
+			</ComplianceDisclosure>
+		</>
 	);
 }
 
