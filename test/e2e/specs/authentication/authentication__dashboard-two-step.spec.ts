@@ -87,9 +87,12 @@ test.describe(
 	() => {
 		test.describe.configure( { mode: 'serial' } );
 
+		// The test drives the Multi-site Dashboard's `/me` two-step-auth screens,
+		// which are served from DASHBOARD_BASE_URL (my.wordpress.com in production),
+		// so gate on that origin rather than the Calypso login origin.
 		test.skip(
-			DataHelper.isCalypsoProduction() === false,
-			'Skipping unless running on WordPress.com'
+			new URL( DataHelper.getDashboardURL() ).hostname !== 'my.wordpress.com',
+			'Skipping unless the Multi-site Dashboard is served from my.wordpress.com'
 		);
 
 		const testUser = DataHelper.getNewTestUser( {
