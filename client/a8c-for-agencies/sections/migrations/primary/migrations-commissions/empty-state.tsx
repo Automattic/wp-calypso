@@ -2,26 +2,23 @@ import { Button, ExternalLink } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { useCallback } from 'react';
-import { useDispatch } from 'calypso/state';
-import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import StepSection from '../../commissions/components/step-section';
 import StepSectionItem from '../../commissions/components/step-section-item';
+import type { RecordTracksEvent } from '../../types';
 
 export default function MigrationsCommissionsEmptyState( {
-	setShowAddSitesModal,
+	recordTracksEvent,
+	onTagSitesClick,
 	canTagSitesForCommission,
 }: {
-	setShowAddSitesModal: ( show: boolean ) => void;
+	recordTracksEvent: RecordTracksEvent;
+	onTagSitesClick: () => void;
 	canTagSitesForCommission: boolean;
 } ) {
-	const dispatch = useDispatch();
-
 	const onTagMySelfMigratedSitesClick = useCallback( () => {
-		dispatch(
-			recordTracksEvent( 'calypso_a8c_migrations_commissions_tag_my_self_migrated_sites_click' )
-		);
-		setShowAddSitesModal( true );
-	}, [ dispatch, setShowAddSitesModal ] );
+		recordTracksEvent( 'calypso_a8c_migrations_commissions_tag_my_self_migrated_sites_click' );
+		onTagSitesClick();
+	}, [ recordTracksEvent, onTagSitesClick ] );
 
 	const a4aPluginUrl = 'https://wordpress.org/plugins/automattic-for-agencies-client';
 
@@ -54,10 +51,8 @@ export default function MigrationsCommissionsEmptyState( {
 													children={ null }
 													href={ a4aPluginUrl }
 													onClick={ () => {
-														dispatch(
-															recordTracksEvent(
-																'calypso_a8c_migrations_commissions_a4a_plugin_link_click'
-															)
+														recordTracksEvent(
+															'calypso_a8c_migrations_commissions_a4a_plugin_link_click'
 														);
 													} }
 												/>
