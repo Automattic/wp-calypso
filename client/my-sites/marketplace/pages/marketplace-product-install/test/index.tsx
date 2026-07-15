@@ -20,6 +20,8 @@ const mockSite = {
 	// transferred it and started the install.
 	isAtomic: false,
 	isWporgPlugin: true,
+	// Whether a site-plugins request is in flight, so a test can hold off the next poll.
+	isFetching: false,
 };
 
 const mockDispatch = jest.fn();
@@ -53,7 +55,7 @@ jest.mock( 'calypso/state/plugins/wporg/selectors', () => ( {
 jest.mock( 'calypso/state/plugins/installed/selectors-ts', () => ( {
 	getPluginOnSite: () => mockSite.installedPlugin,
 	getStatusForPlugin: () => null,
-	isRequesting: () => false,
+	isRequesting: () => mockSite.isFetching,
 } ) );
 jest.mock( 'calypso/state/automated-transfer/selectors', () => ( {
 	getAutomatedTransferStatus: () => 'complete',
@@ -177,6 +179,7 @@ describe( 'MarketplaceProductInstall', () => {
 		mockSite.installedPlugin = null;
 		mockSite.isAtomic = false;
 		mockSite.isWporgPlugin = true;
+		mockSite.isFetching = false;
 		originalLocation = window.location;
 		Object.defineProperty( window, 'location', { value: { href: '' }, writable: true } );
 	} );
@@ -247,6 +250,24 @@ describe( 'MarketplaceProductInstall', () => {
 		mockSite.installedPlugin = ACTIVE_PLUGIN;
 		await settle( rendered );
 		expect( window.location.href ).toBe( ACTIVE_LIST_URL );
+	} );
+
+	it( 'does not start a new plugin fetch while one is already in flight', async () => {
+		const rendered = install();
+		await start( rendered );
+
+		// A slow request is still running, so a tick must not pile a second one on top of it.
+		mockSite.isFetching = true;
+		await settle( rendered );
+		fetchSitePlugins.mockClear();
+		await advance( rendered, 6000 );
+		expect( fetchSitePlugins ).not.toHaveBeenCalled();
+
+		// Once it settles, polling picks back up.
+		mockSite.isFetching = false;
+		await settle( rendered );
+		await advance( rendered, 3000 );
+		expect( fetchSitePlugins ).toHaveBeenCalledWith( SITE_ID );
 	} );
 
 	it( 'times out installation and activation on their own deadlines, and retry resumes each', async () => {

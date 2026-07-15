@@ -339,30 +339,36 @@ const MarketplaceProductInstall = ( {
 
 	const shouldReconcilePlugin = isTransferredPluginFlow || isMarketplacePluginFlow;
 
-	// Two phases with one poll: find the plugin, then wait for it to be active. Its active state comes
-	// from the refreshed site plugins, which is authoritative in a way an activation response is not.
-	const reconciliationPhase = installedPlugin ? 'activation' : 'installation';
+	// The progress step is the stable phase signal: step 1 is installing, step 2 activating. Unlike
+	// whether the plugin is momentarily visible, it does not flicker between polls.
+	const setupPhase = currentStep === 2 ? 'activation' : 'installation';
 
-	const [ reconciliationTimedOut, setReconciliationTimedOut ] = useState( false );
+	const [ timedOutPhase, setTimedOutPhase ] = useState< 'installation' | 'activation' | null >(
+		null
+	);
 
 	// Poll until the plugin is active, not just present: an activation can be reported ambiguously, so
-	// only a refreshed active state ends the wait. The fetch flag avoids overlapping requests.
+	// only a refreshed active state ends the wait. Stop while this phase is timed out, and skip a tick
+	// while a request is already in flight.
 	const shouldFetchPlugin =
-		shouldReconcilePlugin && ! pluginActive && ! reconciliationTimedOut && ! isFetchingSitePlugins;
+		shouldReconcilePlugin &&
+		! pluginActive &&
+		timedOutPhase !== setupPhase &&
+		! isFetchingSitePlugins;
 
 	useInterval( () => dispatch( fetchSitePlugins( siteId ) ), shouldFetchPlugin ? 3000 : null );
 
-	// Each phase gets its own deadline: when the plugin appears the phase changes, discarding the
+	// Each phase gets its own deadline: when the step advances the phase changes, discarding the
 	// install timer so activation gets a fresh window. Timing out offers a way out, not a dead end.
 	useEffect( () => {
-		if ( ! shouldReconcilePlugin || pluginActive || reconciliationTimedOut ) {
+		if ( ! shouldReconcilePlugin || pluginActive || timedOutPhase === setupPhase ) {
 			return;
 		}
 
-		const timeout = setTimeout( () => setReconciliationTimedOut( true ), RECONCILIATION_TIMEOUT );
+		const timeout = setTimeout( () => setTimedOutPhase( setupPhase ), RECONCILIATION_TIMEOUT );
 
 		return () => clearTimeout( timeout );
-	}, [ shouldReconcilePlugin, pluginActive, reconciliationPhase, reconciliationTimedOut ] );
+	}, [ shouldReconcilePlugin, pluginActive, setupPhase, timedOutPhase ] );
 
 	const canManagePlugins = useSelector( ( state ) => {
 		return siteHasFeature( state, selectedSite?.ID, WPCOM_FEATURES_MANAGE_PLUGINS );
@@ -440,24 +446,25 @@ const MarketplaceProductInstall = ( {
 	}, [ themeSlug, isPluginUploadFlow, translate ] );
 	const additionalSteps = useMarketplaceAdditionalSteps();
 
-	// Restart the wait. A found-but-inactive plugin is sent back to the activation step so the effect
-	// runs again; a missing one just resumes polling once the deadline is cleared.
+	// Restart the wait. Clearing the phase resumes polling; a timed-out activation is dispatched
+	// again directly, since the step has already advanced past the effect that would do it.
 	const retryPluginSetup = () => {
-		setReconciliationTimedOut( false );
+		const phase = timedOutPhase;
+		setTimedOutPhase( null );
 
-		if ( installedPlugin && ! pluginActive ) {
-			setCurrentStep( 1 );
+		if ( phase === 'activation' && installedPlugin ) {
+			dispatch( activatePlugin( siteId, installedPlugin ) );
 		}
 	};
 
 	const renderError = () => {
 		// Evaluate error causes in priority order
-		if ( reconciliationTimedOut && ! pluginActive ) {
+		if ( timedOutPhase && ! pluginActive ) {
 			return (
 				<EmptyContent
 					title={ null }
 					line={
-						installedPlugin
+						timedOutPhase === 'activation'
 							? translate(
 									'The plugin was installed, but we could not activate it. You can activate it yourself from your plugins.'
 							  )
