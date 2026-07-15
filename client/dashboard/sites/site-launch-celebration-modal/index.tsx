@@ -88,7 +88,7 @@ export default function SiteLaunchCelebrationModal( {
 
 		if ( ! isPaidPlan && ! hasCustomDomain ) {
 			contentElement = (
-				<Text as="p" className="flex-shrink-safe">
+				<Text as="p">
 					{ createInterpolateElement(
 						__(
 							'Supercharge your website with a <strong>custom address</strong> that matches your blog, brand, or business.'
@@ -101,7 +101,7 @@ export default function SiteLaunchCelebrationModal( {
 			buttonHref = getAddSiteDomainUrl( site.slug );
 		} else if ( isPaidPlan && isBilledMonthly && ! hasCustomDomain ) {
 			contentElement = (
-				<Text as="p" className="flex-shrink-safe">
+				<Text as="p">
 					{ __(
 						'Interested in a custom domain? It’s free for the first year when you switch to annual billing.'
 					) }
@@ -111,7 +111,7 @@ export default function SiteLaunchCelebrationModal( {
 			buttonHref = getAddSiteDomainUrl( site.slug );
 		} else if ( isPaidPlan && ! hasCustomDomain ) {
 			contentElement = (
-				<Text as="p" className="flex-shrink-safe">
+				<Text as="p">
 					{ createInterpolateElement(
 						__(
 							'Your paid plan includes a domain name <strong>free for one year</strong>. Choose one that’s easy to remember and even easier to share.'
@@ -127,7 +127,7 @@ export default function SiteLaunchCelebrationModal( {
 		}
 
 		return (
-			<HStack spacing={ 3 } alignment="bottomRight">
+			<VStack spacing={ 4 } alignment="left">
 				{ contentElement }
 				<Button
 					variant="primary"
@@ -140,7 +140,7 @@ export default function SiteLaunchCelebrationModal( {
 				>
 					{ buttonText }
 				</Button>
-			</HStack>
+			</VStack>
 		);
 	};
 
