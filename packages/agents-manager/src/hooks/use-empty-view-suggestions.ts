@@ -22,6 +22,13 @@ const SITE_EDITOR_ONLY_SUGGESTION_IDS = new Set( [
 
 const SITE_EDITOR_POST_TYPES = new Set( [ 'wp_template', 'wp_template_part' ] );
 
+export const WRITING_SUGGESTION_IDS = new Set( [
+	'generate-excerpt',
+	'generate-feedback',
+	'proofread-content',
+	'mediate-review-notes',
+] );
+
 export const DEFAULT_EMPTY_VIEW_SUGGESTION_IDS = {
 	gettingStarted: 'getting-started',
 	createPost: 'create-post',
@@ -120,7 +127,7 @@ function isSiteEditorRoute( currentRoute?: string ): boolean {
 	return !! currentRoute?.includes( 'site-editor.php' ) || pathname.includes( 'site-editor.php' );
 }
 
-function shouldShowSiteEditorSuggestionsForSurface(
+export function isPageOrSiteEditorSurface(
 	sectionName: string,
 	currentRoute?: string,
 	currentPostType?: string
@@ -140,6 +147,29 @@ function shouldShowSiteEditorSuggestionsForSurface(
 	return sectionName === 'site-editor';
 }
 
+export function usePageOrSiteEditorSurface() {
+	const { sectionName, currentRoute } = useAgentsManagerContext();
+	const currentPostType = useSelect( ( select ) => {
+		try {
+			const editorStore = select( 'core/editor' ) as {
+				getCurrentPostType?: () => string | undefined;
+			};
+			return editorStore?.getCurrentPostType?.();
+		} catch {
+			return undefined;
+		}
+	}, [] );
+
+	return {
+		currentPostType,
+		isPageOrSiteEditorSurface: isPageOrSiteEditorSurface(
+			sectionName,
+			currentRoute,
+			currentPostType
+		),
+	};
+}
+
 function filterEmptyViewSuggestions(
 	suggestions: Suggestion[],
 	shouldShowSiteEditorSuggestions: boolean
@@ -156,22 +186,8 @@ export function useEmptyViewSuggestions( {
 	loadedProviders,
 }: UseEmptyViewSuggestionsOptions ): Suggestion[] | null {
 	const isReaderChat = isReaderChatHost();
-	const { sectionName, currentRoute } = useAgentsManagerContext();
-	const currentPostType = useSelect( ( select ) => {
-		try {
-			const editorStore = select( 'core/editor' ) as {
-				getCurrentPostType?: () => string | undefined;
-			};
-			return editorStore?.getCurrentPostType?.();
-		} catch {
-			return undefined;
-		}
-	}, [] );
-	const shouldShowSiteEditorSuggestions = shouldShowSiteEditorSuggestionsForSurface(
-		sectionName,
-		currentRoute,
-		currentPostType
-	);
+	const { currentPostType, isPageOrSiteEditorSurface: shouldShowSiteEditorSuggestions } =
+		usePageOrSiteEditorSurface();
 
 	// Default suggestions - used when Big Sky doesn't provide custom ones
 	const defaultSuggestions = useMemo(

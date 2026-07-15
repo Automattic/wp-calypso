@@ -72,6 +72,24 @@ jest.mock(
 			);
 		}
 
+		function MockSuggestions( {
+			suggestions = [],
+			onSubmit,
+		}: {
+			suggestions?: Suggestion[];
+			onSubmit?: ( selectedSuggestion: Suggestion, availableSuggestions: Suggestion[] ) => void;
+		} ) {
+			return (
+				<div>
+					{ suggestions.map( ( suggestion ) => (
+						<button key={ suggestion.id } onClick={ () => onSubmit?.( suggestion, suggestions ) }>
+							{ suggestion.label }
+						</button>
+					) ) }
+				</div>
+			);
+		}
+
 		function MockMessageRenderer( { children }: { children: ReactNode } ) {
 			return <>{ children }</>;
 		}
@@ -97,6 +115,7 @@ jest.mock(
 			},
 			createMessageRenderer: () => MockMessageRenderer,
 			EmptyView: MockEmptyView,
+			Suggestions: MockSuggestions,
 			ImageUploader: MockImageUploader,
 		};
 	},
@@ -113,7 +132,7 @@ jest.mock( '@wordpress/data', () => ( {
 		} ) ),
 } ) );
 
-jest.mock( '@wordpress/i18n', () => ( { __: ( text: string ) => text } ) );
+jest.mock( '@wordpress/i18n', () => ( { __: ( text: string ) => text, isRTL: () => false } ) );
 jest.mock( '../../utils/tracks', () => ( {
 	recordBigSkyTracksEvent: jest.fn(),
 	recordAgentsManagerTracksEvent: jest.fn(),
@@ -234,6 +253,76 @@ describe( 'AgentChat', () => {
 		renderAgentChat( { isOpen: true } );
 
 		expect( mockContainerProps ).toHaveBeenLastCalledWith( { floatingChatState: 'expanded' } );
+	} );
+
+	it( 'groups only writing suggestions while keeping design suggestions top level', async () => {
+		const user = userEvent.setup();
+		const designSuggestion = {
+			id: 'customize-colors',
+			label: 'Customize colors',
+			prompt: 'Customize colors',
+		};
+		const writingSuggestions = [
+			{
+				id: 'generate-excerpt',
+				label: 'Generate Excerpt',
+				prompt: 'Generate an excerpt',
+			},
+			{
+				id: 'generate-feedback',
+				label: 'Simple Review',
+				prompt: 'Review this saved content',
+			},
+			{
+				id: 'proofread-content',
+				label: 'Proofread',
+				prompt: 'Proofread this saved content',
+			},
+			{
+				id: 'mediate-review-notes',
+				label: 'Editorial Review',
+				prompt: 'Run an editorial review',
+			},
+		];
+		const suggestions = [ designSuggestion, ...writingSuggestions ];
+		const onSuggestionClick = jest.fn();
+
+		renderAgentChat( {
+			isOpen: true,
+			emptyViewSuggestions: suggestions,
+			groupWritingSuggestions: true,
+			onSuggestionClick,
+		} );
+
+		const designButton = screen.getByRole( 'button', { name: 'Customize colors' } );
+		expect( designButton.closest( '.agents-manager-writing-suggestions' ) ).toBeNull();
+		expect( screen.getByRole( 'button', { name: 'Writing 4' } ) ).toHaveAttribute(
+			'aria-expanded',
+			'true'
+		);
+
+		await user.click( screen.getByRole( 'button', { name: 'Proofread' } ) );
+		expect( onSuggestionClick ).toHaveBeenCalledWith( writingSuggestions[ 2 ], suggestions );
+
+		await user.click( screen.getByRole( 'button', { name: 'Writing 4' } ) );
+		expect( screen.queryByRole( 'button', { name: 'Proofread' } ) ).toBeNull();
+	} );
+
+	it( 'keeps the flat empty view when there are no writing suggestions', () => {
+		const suggestion = {
+			id: 'customize-colors',
+			label: 'Customize colors',
+			prompt: 'Customize colors',
+		};
+
+		renderAgentChat( {
+			isOpen: true,
+			emptyViewSuggestions: [ suggestion ],
+			groupWritingSuggestions: true,
+		} );
+
+		expect( screen.getByRole( 'button', { name: 'Customize colors' } ) ).toBeInTheDocument();
+		expect( screen.queryByRole( 'button', { name: /Writing/ } ) ).toBeNull();
 	} );
 
 	it( 'collapses to a button when closed without the AI chat entry button', () => {

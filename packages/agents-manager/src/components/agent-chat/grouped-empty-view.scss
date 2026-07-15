@@ -1,0 +1,63 @@
+.agents-manager-grouped-empty-view {
+	display: flex;
+	width: 100%;
+	flex-direction: column;
+	gap: var( --spacing-6 );
+
+	&__help {
+		margin: 0;
+		padding: var( --spacing ) var( --spacing-4 );
+		color: var( --color-foreground );
+		font-size: var( --text-sm );
+		font-weight: 400;
+		line-height: var( --text-sm--line-height );
+	}
+}
+
+.agents-manager-writing-suggestions {
+	width: 100%;
+	border-block: 1px solid var( --color-muted );
+
+	&__toggle {
+		display: grid;
+		width: 100%;
+		min-height: 52px;
+		grid-template-columns: minmax( 0, 1fr ) auto auto;
+		align-items: center;
+		gap: var( --spacing-2 );
+		padding: 0 var( --spacing-4 );
+		border: 0;
+		background: transparent;
+		color: var( --color-foreground );
+		cursor: pointer;
+		text-align: left;
+
+		&:hover {
+			background-color: color-mix( in srgb, var( --color-background ) 50%, var( --color-muted ) );
+		}
+
+		&:focus-visible {
+			outline: 2px solid var( --color-ring );
+			outline-offset: -2px;
+		}
+	}
+
+	&__title {
+		font-size: var( --text-sm );
+		font-weight: var( --font-weight-semibold );
+	}
+
+	&__count,
+	&__chevron {
+		color: var( --color-muted-foreground );
+	}
+
+	&__count {
+		font-size: var( --text-xs );
+		font-variant-numeric: tabular-nums;
+	}
+
+	&__list {
+		padding: 0 var( --spacing-2 ) var( --spacing-2 );
+	}
+}

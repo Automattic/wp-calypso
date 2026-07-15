@@ -1,7 +1,6 @@
 import {
 	AgentUI,
 	createMessageRenderer,
-	EmptyView,
 	ImageUploader,
 	type ImageUploaderHandle,
 	type MarkdownComponents,
@@ -26,6 +25,7 @@ import CustomALink from '../custom-a-link';
 import FeedbackInput from '../feedback-input';
 import { AI } from '../icons';
 import SelectedBlock from '../selected-block';
+import GroupedEmptyView from './grouped-empty-view';
 import type { UseImageUploadResult } from '../../hooks/use-image-upload';
 import type { ExternalContextCard, ExternalContextCardAction } from '../../utils/external-context';
 import type { Message, NoticeConfig } from '@automattic/agenttic-ui/dist/types';
@@ -43,6 +43,8 @@ interface Props {
 	chatHeaderOptions: ChatHeaderOptions;
 	/** Suggestions displayed when the chat is empty. */
 	emptyViewSuggestions?: Suggestion[];
+	/** Whether editor writing suggestions should render in a section. */
+	groupWritingSuggestions?: boolean;
 	/** Indicates if the chat is processing a request. */
 	isProcessing: boolean;
 	/** Custom thinking message to display while the agent is processing. */
@@ -149,6 +151,7 @@ export default function AgentChat( {
 	error = null,
 	chatHeaderOptions,
 	emptyViewSuggestions = [],
+	groupWritingSuggestions = false,
 	isProcessing,
 	thinkingMessage,
 	isLoadingConversation,
@@ -301,10 +304,11 @@ export default function AgentChat( {
 				isLoadingConversation ? (
 					<ChatMessageSkeleton count={ 3 } />
 				) : (
-					<EmptyView
+					<GroupedEmptyView
 						heading={ getEmptyViewHeading() }
 						help={ emptyViewSuggestions.length > 0 ? getEmptyViewHelp() : undefined }
 						suggestions={ emptyViewSuggestions }
+						groupWritingSuggestions={ groupWritingSuggestions }
 						onSuggestionClick={ onSuggestionClick }
 						icon={ <AI size={ 32 } /> }
 					/>
