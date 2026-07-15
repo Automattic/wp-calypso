@@ -1,4 +1,6 @@
+import { HelpCenter } from '@automattic/data-stores';
 import { Button } from '@wordpress/components';
+import { useDispatch as useDataStoreDispatch, useSelect } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
 import clsx from 'clsx';
 import { useCallback, useState } from 'react';
@@ -19,9 +21,16 @@ import { useDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 import getSites from 'calypso/state/selectors/get-sites';
+import type { HelpCenterSelect } from '@automattic/data-stores';
 import type { ReactNode } from 'react';
 
 import './style.scss';
+
+const HELP_CENTER_STORE = HelpCenter.register();
+
+const ClassicTableWrapper = ( { children }: { children: ReactNode } ) => (
+	<div className="redesigned-a8c-table full-width">{ children }</div>
+);
 
 export default function MigrationsCommissions() {
 	const dispatch = useDispatch();
@@ -57,6 +66,17 @@ export default function MigrationsCommissions() {
 		( blogId: number ) => sites.find( ( s ) => s?.ID === blogId )?.options?.created_at,
 		[ sites ]
 	);
+
+	const { setIsMinimized } = useDataStoreDispatch( HELP_CENTER_STORE );
+	const isHelpCenterShown = useSelect(
+		( select ) => ( select( HELP_CENTER_STORE ) as HelpCenterSelect ).isHelpCenterShown(),
+		[]
+	);
+	const onModalOpen = useCallback( () => {
+		if ( isHelpCenterShown ) {
+			setIsMinimized( true );
+		}
+	}, [ isHelpCenterShown, setIsMinimized ] );
 
 	const onTagSitesClick = useCallback( () => {
 		recordTracks( 'calypso_a8c_migrations_commissions_tag_sites_click' );
@@ -114,6 +134,8 @@ export default function MigrationsCommissions() {
 					isAddSitesModalOpen={ showAddSitesModal }
 					onCloseAddSitesModal={ () => setShowAddSitesModal( false ) }
 					onOpenAddSitesModal={ () => setShowAddSitesModal( true ) }
+					TableWrapper={ ClassicTableWrapper }
+					onModalOpen={ onModalOpen }
 				/>
 			</LayoutBody>
 		</Layout>
