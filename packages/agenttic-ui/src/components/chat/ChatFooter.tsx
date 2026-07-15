@@ -8,7 +8,7 @@ import { Suggestions } from './Suggestions';
 import {
 	ComplianceDisclosure,
 	DefaultComplianceDisclosure,
-} from '../composable/AgentUIFooter';
+} from './ComplianceDisclosure';
 import styles from './ChatFooter.module.css';
 
 interface ChatFooterProps {
@@ -70,10 +70,7 @@ export function ChatFooter( {
 	complianceDisclosure = <DefaultComplianceDisclosure />,
 }: ChatFooterProps ) {
 	const handleSuggestionSubmit = useCallback(
-		(
-			selectedSuggestion: Suggestion,
-			availableSuggestions: Suggestion[]
-		) => {
+		( selectedSuggestion: Suggestion ) => {
 			const value = selectedSuggestion.prompt ?? selectedSuggestion.label;
 			onInputChange( value );
 			clearSuggestions?.();

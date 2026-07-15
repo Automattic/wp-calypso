@@ -11,7 +11,7 @@ import { LightweightMarkdownRenderer } from './LightweightMarkdownRenderer';
 import {
 	ComplianceDisclosure,
 	DefaultComplianceDisclosure,
-} from './composable/AgentUIFooter';
+} from './chat/ComplianceDisclosure';
 import { SourcesCard } from './sources';
 
 interface EmbeddedAgentUIContextValue extends AgentUIProps {
