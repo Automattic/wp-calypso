@@ -1,24 +1,16 @@
-import { useDesktopBreakpoint } from '@automattic/viewport-react';
 import { __experimentalHStack as HStack } from '@wordpress/components';
+import { useViewportMatch } from '@wordpress/compose';
 import { DataViews } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
-import { useCallback, useMemo, ReactNode, useState } from 'react';
-import {
-	MigratedOnColumn,
-	ReviewStatusColumn,
-	SiteColumn,
-} from 'calypso/dashboard/agency/earn/migrations/commissions-list/commission-columns';
-import UntagSiteDialog from 'calypso/dashboard/agency/earn/migrations/commissions-list/untag-site-dialog';
-import useCommissionListActions from 'calypso/dashboard/agency/earn/migrations/commissions-list/use-commission-list-actions';
-import RequestReviewModal from 'calypso/dashboard/agency/earn/migrations/request-review-modal';
+import { useCallback, useMemo, type ComponentType, type ReactNode, useState } from 'react';
+import RequestReviewModal from '../request-review-modal';
+import { MigratedOnColumn, ReviewStatusColumn, SiteColumn } from './commission-columns';
+import UntagSiteDialog from './untag-site-dialog';
+import useCommissionListActions from './use-commission-list-actions';
+import type { RecordTracksEvent, ShowSuccessNotice, TaggedSite } from '../types';
 import type { Field, View } from '@wordpress/dataviews';
-import type {
-	RecordTracksEvent,
-	ShowSuccessNotice,
-	TaggedSite,
-} from 'calypso/dashboard/agency/earn/migrations/types';
 
-import 'calypso/dashboard/agency/earn/migrations/components/dataviews/style.scss';
+import '../components/dataviews/style.scss';
 
 type ActiveModal =
 	| { kind: 'untag'; site: TaggedSite }
@@ -60,20 +52,26 @@ const INITIAL_VIEW: View = {
 	layout: {},
 };
 
+const DefaultTableWrapper = ( { children }: { children: ReactNode } ) => <>{ children }</>;
+
 export default function MigrationsCommissionsList( {
 	items,
 	migrationTags,
 	recordTracksEvent,
 	onSuccess,
 	onError,
+	TableWrapper = DefaultTableWrapper,
+	onModalOpen,
 }: {
 	items: TaggedSite[];
 	migrationTags: string[];
 	recordTracksEvent: RecordTracksEvent;
 	onSuccess: ShowSuccessNotice;
 	onError: ( message: ReactNode ) => void;
+	TableWrapper?: ComponentType< { children: ReactNode } >;
+	onModalOpen?: () => void;
 } ) {
-	const isDesktop = useDesktopBreakpoint();
+	const isDesktop = useViewportMatch( 'medium' );
 
 	const [ view, setView ] = useState< View >( INITIAL_VIEW );
 
@@ -143,7 +141,7 @@ export default function MigrationsCommissionsList( {
 
 	return (
 		<>
-			<div className="redesigned-a8c-table full-width">
+			<TableWrapper>
 				<DataViews
 					data={ items }
 					view={ responsiveView }
@@ -167,7 +165,7 @@ export default function MigrationsCommissionsList( {
 					<DataViews.Layout />
 					<DataViews.Footer />
 				</DataViews>
-			</div>
+			</TableWrapper>
 
 			{ activeModal?.kind === 'untag' && (
 				<UntagSiteDialog
@@ -175,6 +173,7 @@ export default function MigrationsCommissionsList( {
 					migrationTags={ migrationTags }
 					onClose={ closeModal }
 					onSuccess={ onSuccess }
+					onModalOpen={ onModalOpen }
 				/>
 			) }
 
@@ -185,6 +184,7 @@ export default function MigrationsCommissionsList( {
 					recordTracksEvent={ recordTracksEvent }
 					onSuccess={ onSuccess }
 					onError={ onError }
+					onModalOpen={ onModalOpen }
 				/>
 			) }
 		</>

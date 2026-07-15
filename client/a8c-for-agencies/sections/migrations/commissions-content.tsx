@@ -1,6 +1,6 @@
+import MigrationsCommissionsList from 'calypso/dashboard/agency/earn/migrations/commissions-list';
 import MigrationsConsolidatedCommissions from 'calypso/dashboard/agency/earn/migrations/consolidated-commissions';
 import { TextSkeleton } from 'calypso/dashboard/components/text-skeleton';
-import MigrationsCommissionsList from './commissions-list';
 import MigrationsCommissionsEmptyState from './primary/migrations-commissions/empty-state';
 import MigrationsTagSitesModal from './tag-sites-modal';
 import type {
