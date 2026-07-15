@@ -1,4 +1,5 @@
 import config from '@automattic/calypso-config';
+import { captureException } from '@automattic/calypso-sentry';
 import { get as webauthn_auth } from '@github/webauthn-json';
 import { translate } from 'i18n-calypso';
 import {
@@ -83,6 +84,11 @@ export const loginUserWithSecurityKey = () => ( dispatch, getState ) => {
 					: httpError.name;
 				const message = errorMessages[ errorKey ] ?? errorMessages.default;
 				error = { code: httpError.name, message, field: 'global' };
+
+				captureException( httpError, {
+					tags: { flow: 'security-key-login', error_key: errorKey },
+					user: { id: loginParams.user_id?.toString() },
+				} );
 			} else {
 				error = getErrorFromHTTPError( httpError );
 			}
