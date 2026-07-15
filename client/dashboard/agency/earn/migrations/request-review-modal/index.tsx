@@ -14,13 +14,8 @@ import {
 } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
-import { useState } from 'react';
-import useMinimizeHelpCenterOnMount from 'calypso/a8c-for-agencies/hooks/use-minimize-help-center-on-mount';
-import type {
-	RecordTracksEvent,
-	ShowSuccessNotice,
-	TaggedSite,
-} from 'calypso/dashboard/agency/earn/migrations/types';
+import { useEffect, useState } from 'react';
+import type { RecordTracksEvent, ShowSuccessNotice, TaggedSite } from '../types';
 import type { ReactNode } from 'react';
 
 export default function RequestReviewModal( {
@@ -29,17 +24,22 @@ export default function RequestReviewModal( {
 	recordTracksEvent,
 	onSuccess,
 	onError,
+	onModalOpen,
 }: {
 	onClose: () => void;
 	site: TaggedSite;
 	recordTracksEvent: RecordTracksEvent;
 	onSuccess: ShowSuccessNotice;
 	onError: ( message: ReactNode ) => void;
+	onModalOpen?: () => void;
 } ) {
 	const queryClient = useQueryClient();
 	const { data: agency } = useQuery( activeAgencyQuery() );
 	const agencyId = agency?.id;
-	useMinimizeHelpCenterOnMount();
+	useEffect( () => {
+		onModalOpen?.();
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [] );
 
 	const { mutate: requestReview, isPending } = useMutation(
 		requestMigrationReverificationMutation( agencyId )

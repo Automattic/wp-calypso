@@ -12,24 +12,29 @@ import {
 } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
-import useMinimizeHelpCenterOnMount from 'calypso/a8c-for-agencies/hooks/use-minimize-help-center-on-mount';
-import type { ShowSuccessNotice, TaggedSite } from 'calypso/dashboard/agency/earn/migrations/types';
+import { useEffect } from 'react';
+import type { ShowSuccessNotice, TaggedSite } from '../types';
 
 export default function UntagSiteDialog( {
 	site,
 	migrationTags,
 	onClose,
 	onSuccess,
+	onModalOpen,
 }: {
 	site: TaggedSite;
 	migrationTags: string[];
 	onClose: () => void;
 	onSuccess: ShowSuccessNotice;
+	onModalOpen?: () => void;
 } ) {
 	const queryClient = useQueryClient();
 	const { data: agency } = useQuery( activeAgencyQuery() );
 	const agencyId = agency?.id;
-	useMinimizeHelpCenterOnMount();
+	useEffect( () => {
+		onModalOpen?.();
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [] );
 	const { mutate, isPending } = useMutation( agencySiteTagsMutation( agencyId ) );
 
 	const onConfirm = () => {

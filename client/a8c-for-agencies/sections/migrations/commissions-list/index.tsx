@@ -8,9 +8,9 @@ import {
 	ReviewStatusColumn,
 	SiteColumn,
 } from 'calypso/dashboard/agency/earn/migrations/commissions-list/commission-columns';
+import UntagSiteDialog from 'calypso/dashboard/agency/earn/migrations/commissions-list/untag-site-dialog';
 import useCommissionListActions from 'calypso/dashboard/agency/earn/migrations/commissions-list/use-commission-list-actions';
-import RequestReviewModal from '../request-review-modal';
-import UntagSiteDialog from './untag-site-dialog';
+import RequestReviewModal from 'calypso/dashboard/agency/earn/migrations/request-review-modal';
 import type { Field, View } from '@wordpress/dataviews';
 import type {
 	RecordTracksEvent,
