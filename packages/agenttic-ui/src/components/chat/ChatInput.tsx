@@ -10,6 +10,7 @@ import { ChevronUpIcon } from '../icons/ChevronUpIcon';
 import { __ } from '@wordpress/i18n';
 import { AnimatedPlaceholder } from './AnimatedPlaceholder';
 import { useAgentUIContext } from '../../context/AgentUIContext';
+import { cn } from '../../utils/classNames';
 
 interface ActionButton {
 	id: string;
@@ -40,6 +41,7 @@ interface ChatInputProps {
 	actionOrder?: 'before-submit' | 'after-submit';
 	onStop?: () => void; // Optional callback for stopping current request
 	disabled?: boolean; // Allow disabling submit button for validation
+	readOnly?: boolean; // Locks the textarea without disabling the submit/stop button
 	className?: string;
 	onMouseEnter?: () => void;
 	onMouseLeave?: () => void;
@@ -66,6 +68,7 @@ export function ChatInput( {
 	actionOrder = 'before-submit',
 	onStop,
 	disabled,
+	readOnly,
 	onMouseEnter,
 	onMouseLeave,
 	expandOnClick = false,
@@ -104,6 +107,12 @@ export function ChatInput( {
 				return;
 			}
 
+			// A read-only input keeps the stop button active but must not submit.
+			if ( readOnly && key === 'enter' && ! e.shiftKey ) {
+				e.preventDefault();
+				return;
+			}
+
 			// Stop undo/redo from bubbling to parent (e.g., Gutenberg editor)
 			// Supports: Cmd/Ctrl+Z, Cmd/Ctrl+Shift+Z, Ctrl+Y
 			const isUndoOrRedo =
@@ -115,7 +124,7 @@ export function ChatInput( {
 
 			onKeyDown( e );
 		},
-		[ canSubmit, onKeyDown ]
+		[ canSubmit, onKeyDown, readOnly ]
 	);
 
 	// Helper function to ensure text has ellipsis
@@ -147,15 +156,21 @@ export function ChatInput( {
 
 	const renderCustomActions = () => {
 		return customActions.map( ( action ) => (
-			<Button
+			<span
 				key={ action.id }
-				className={ action.className || styles.button }
-				onClick={ action.onClick }
-				disabled={ action.disabled }
-				variant={ action.variant || 'ghost' }
-				icon={ action.icon }
-				aria-label={ action[ 'aria-label' ] }
-			/>
+				className={ cn( styles.actionWrapper, {
+					[ styles.actionWrapperDisabled ]: action.disabled,
+				} ) }
+			>
+				<Button
+					className={ action.className || styles.button }
+					onClick={ action.onClick }
+					disabled={ action.disabled }
+					variant={ action.variant || 'ghost' }
+					icon={ action.icon }
+					aria-label={ action[ 'aria-label' ] }
+				/>
+			</span>
 		) );
 	};
 
@@ -239,6 +254,7 @@ export function ChatInput( {
 					id={ textareaId }
 					ref={ textareaRef }
 					value={ value }
+					readOnly={ readOnly }
 					onChange={ ( e ) => onChange( e.target.value ) }
 					onKeyDown={ handleTextareaKeyDown }
 					onBlur={ onBlur }
