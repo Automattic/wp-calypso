@@ -1,8 +1,7 @@
 /**
  * @jest-environment jsdom
  */
-import { render, screen, act } from '@testing-library/react';
-import userEvent from '@testing-library/user-event';
+import { render, act } from '@testing-library/react';
 import MarketplaceProductInstall from '../index';
 
 const PLUGIN_SLUG = 'give';
@@ -170,11 +169,9 @@ const advance = async ( rendered: ReturnType< typeof install >, ms: number ) => 
 
 describe( 'MarketplaceProductInstall', () => {
 	let originalLocation: Location;
-	let user: ReturnType< typeof userEvent.setup >;
 
 	beforeEach( () => {
 		jest.useFakeTimers();
-		user = userEvent.setup( { advanceTimers: jest.advanceTimersByTime } );
 		jest.clearAllMocks();
 		mockSite.installedPlugin = null;
 		mockSite.isAtomic = false;
@@ -189,14 +186,14 @@ describe( 'MarketplaceProductInstall', () => {
 		Object.defineProperty( window, 'location', { value: originalLocation, writable: true } );
 	} );
 
-	it( 'finds a transferred plugin, activates it, and redirects once it is active', async () => {
+	it( 'activates a transferred plugin that appears after a minute, and redirects once active', async () => {
 		const rendered = install();
 		await start( rendered );
 
 		// The transfer is done but the plugin has not been fetched yet, which is the bug this guards
 		// against: the page must not call that an install and leave for a list the plugin is missing
-		// from. It polls for the plugin instead.
-		await advance( rendered, 3000 );
+		// from. It keeps polling however long the install takes, with no cutoff.
+		await advance( rendered, 90 * 1000 );
 		expect( fetchSitePlugins ).toHaveBeenCalledWith( SITE_ID );
 		expect( activatePlugin ).not.toHaveBeenCalled();
 		expect( window.location.href ).toBe( '' );
@@ -268,37 +265,5 @@ describe( 'MarketplaceProductInstall', () => {
 		await settle( rendered );
 		await advance( rendered, 3000 );
 		expect( fetchSitePlugins ).toHaveBeenCalledWith( SITE_ID );
-	} );
-
-	it( 'times out installation and activation on their own deadlines, and retry resumes each', async () => {
-		const rendered = install();
-		await start( rendered );
-
-		// Installation runs long. The page says so and offers a way out, without redirecting.
-		await advance( rendered, 60 * 1000 );
-		expect( screen.getByText( /taking longer than expected to install/ ) ).toBeVisible();
-		expect( window.location.href ).toBe( '' );
-
-		// Retrying resumes polling.
-		fetchSitePlugins.mockClear();
-		await user.click( screen.getByRole( 'button', { name: 'Try again' } ) );
-		await advance( rendered, 3000 );
-		expect( fetchSitePlugins ).toHaveBeenCalledWith( SITE_ID );
-
-		// The plugin appears and is activated, and the deadline resets for the activation phase.
-		mockSite.installedPlugin = PLUGIN;
-		await advance( rendered, 3000 );
-		expect( activatePlugin ).toHaveBeenCalledWith( SITE_ID, PLUGIN );
-		expect( screen.getByText( /Installing plugin/ ) ).toBeVisible();
-
-		// Activation gets its own full window rather than what a long install left over.
-		await advance( rendered, 60 * 1000 );
-		expect( screen.getByText( /could not activate it/ ) ).toBeVisible();
-
-		// Retrying an inactive plugin re-enters the activation step.
-		activatePlugin.mockClear();
-		await user.click( screen.getByRole( 'button', { name: 'Try again' } ) );
-		await settle( rendered );
-		expect( activatePlugin ).toHaveBeenCalledWith( SITE_ID, PLUGIN );
 	} );
 } );

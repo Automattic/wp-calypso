@@ -71,9 +71,6 @@ import './style.scss';
 import { MarketplacePluginInstallProps } from './types';
 import type { IAppState } from 'calypso/state/types';
 
-// How long to wait for the plugin to install, and then for it to activate, before offering a way out.
-const RECONCILIATION_TIMEOUT = 60 * 1000;
-
 const MarketplaceProductInstall = ( {
 	pluginSlug = '',
 	themeSlug = '',
@@ -334,41 +331,13 @@ const MarketplaceProductInstall = ( {
 	const isTransferredPluginFlow =
 		atomicFlow && transferStates.COMPLETE === automatedTransferStatus && isAtomicTransferReady;
 
-	// An inactive plugin is missing from the active-only list the flow normally ends on.
-	const allPluginsUrl = freshAdminUrl ? `${ freshAdminUrl }plugins.php?plugin_status=all` : null;
-
 	const shouldReconcilePlugin = isTransferredPluginFlow || isMarketplacePluginFlow;
 
-	// The progress step is the stable phase signal: step 1 is installing, step 2 activating. Unlike
-	// whether the plugin is momentarily visible, it does not flicker between polls.
-	const setupPhase = currentStep === 2 ? 'activation' : 'installation';
-
-	const [ timedOutPhase, setTimedOutPhase ] = useState< 'installation' | 'activation' | null >(
-		null
-	);
-
 	// Poll until the plugin is active, not just present: an activation can be reported ambiguously, so
-	// only a refreshed active state ends the wait. Stop while this phase is timed out, and skip a tick
-	// while a request is already in flight.
-	const shouldFetchPlugin =
-		shouldReconcilePlugin &&
-		! pluginActive &&
-		timedOutPhase !== setupPhase &&
-		! isFetchingSitePlugins;
+	// only a refreshed active state ends the wait. Skip a tick while a request is already in flight.
+	const shouldFetchPlugin = shouldReconcilePlugin && ! pluginActive && ! isFetchingSitePlugins;
 
 	useInterval( () => dispatch( fetchSitePlugins( siteId ) ), shouldFetchPlugin ? 3000 : null );
-
-	// Each phase gets its own deadline: when the step advances the phase changes, discarding the
-	// install timer so activation gets a fresh window. Timing out offers a way out, not a dead end.
-	useEffect( () => {
-		if ( ! shouldReconcilePlugin || pluginActive || timedOutPhase === setupPhase ) {
-			return;
-		}
-
-		const timeout = setTimeout( () => setTimedOutPhase( setupPhase ), RECONCILIATION_TIMEOUT );
-
-		return () => clearTimeout( timeout );
-	}, [ shouldReconcilePlugin, pluginActive, setupPhase, timedOutPhase ] );
 
 	const canManagePlugins = useSelector( ( state ) => {
 		return siteHasFeature( state, selectedSite?.ID, WPCOM_FEATURES_MANAGE_PLUGINS );
@@ -446,39 +415,8 @@ const MarketplaceProductInstall = ( {
 	}, [ themeSlug, isPluginUploadFlow, translate ] );
 	const additionalSteps = useMarketplaceAdditionalSteps();
 
-	// Restart the wait. Clearing the phase resumes polling; a timed-out activation is dispatched
-	// again directly, since the step has already advanced past the effect that would do it.
-	const retryPluginSetup = () => {
-		const phase = timedOutPhase;
-		setTimedOutPhase( null );
-
-		if ( phase === 'activation' && installedPlugin ) {
-			dispatch( activatePlugin( siteId, installedPlugin ) );
-		}
-	};
-
 	const renderError = () => {
 		// Evaluate error causes in priority order
-		if ( timedOutPhase && ! pluginActive ) {
-			return (
-				<EmptyContent
-					title={ null }
-					line={
-						timedOutPhase === 'activation'
-							? translate(
-									'The plugin was installed, but we could not activate it. You can activate it yourself from your plugins.'
-							  )
-							: translate(
-									'The plugin is taking longer than expected to install. You can check your plugins to see whether it arrived.'
-							  )
-					}
-					action={ translate( 'Try again' ) }
-					actionCallback={ retryPluginSetup }
-					secondaryAction={ translate( 'View all plugins' ) }
-					secondaryActionURL={ allPluginsUrl ?? undefined }
-				/>
-			);
-		}
 		if ( nonInstallablePlanError ) {
 			return (
 				<EmptyContent
