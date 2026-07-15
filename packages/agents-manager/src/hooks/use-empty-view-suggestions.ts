@@ -22,12 +22,23 @@ const SITE_EDITOR_ONLY_SUGGESTION_IDS = new Set( [
 
 const SITE_EDITOR_POST_TYPES = new Set( [ 'wp_template', 'wp_template_part' ] );
 
-export const WRITING_SUGGESTION_IDS = new Set( [
-	'generate-excerpt',
-	'generate-feedback',
-	'proofread-content',
-	'mediate-review-notes',
-] );
+const WRITING_SUGGESTION_LABELS: Record< string, () => string > = {
+	'optimize-title': () => __( 'Optimize title', __i18n_text_domain__ ),
+	'generate-excerpt': () => __( 'Generate excerpt', __i18n_text_domain__ ),
+	'seo-enhancer': () => __( 'Optimize SEO', __i18n_text_domain__ ),
+	'generate-feedback': () => __( 'Simple review', __i18n_text_domain__ ),
+	'proofread-content': () => __( 'Proofread', __i18n_text_domain__ ),
+	'mediate-review-notes': () => __( 'Editorial review', __i18n_text_domain__ ),
+};
+
+export const WRITING_SUGGESTION_IDS = new Set( Object.keys( WRITING_SUGGESTION_LABELS ) );
+
+export const GROUPED_VIEW_HIDDEN_SUGGESTION_IDS = new Set( [ 'what-else-can-i-do' ] );
+
+// Keep compact, sentence-case labels limited to the grouped editor view.
+export function getWritingSuggestionLabel( suggestion: Suggestion ): string {
+	return WRITING_SUGGESTION_LABELS[ suggestion.id ]?.() ?? suggestion.label;
+}
 
 export const DEFAULT_EMPTY_VIEW_SUGGESTION_IDS = {
 	gettingStarted: 'getting-started',

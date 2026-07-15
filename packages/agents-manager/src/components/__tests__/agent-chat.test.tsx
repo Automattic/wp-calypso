@@ -262,11 +262,26 @@ describe( 'AgentChat', () => {
 			label: 'Customize colors',
 			prompt: 'Customize colors',
 		};
+		const whatElseSuggestion = {
+			id: 'what-else-can-i-do',
+			label: 'What else can you do?',
+			prompt: 'What else can you do?',
+		};
 		const writingSuggestions = [
+			{
+				id: 'optimize-title',
+				label: 'Optimize Title',
+				prompt: 'Optimize the title of this post',
+			},
 			{
 				id: 'generate-excerpt',
 				label: 'Generate Excerpt',
 				prompt: 'Generate an excerpt',
+			},
+			{
+				id: 'seo-enhancer',
+				label: 'SEO Enhancer',
+				prompt: 'Optimize this content for search engines',
 			},
 			{
 				id: 'generate-feedback',
@@ -284,7 +299,7 @@ describe( 'AgentChat', () => {
 				prompt: 'Run an editorial review',
 			},
 		];
-		const suggestions = [ designSuggestion, ...writingSuggestions ];
+		const suggestions = [ designSuggestion, whatElseSuggestion, ...writingSuggestions ];
 		const onSuggestionClick = jest.fn();
 
 		renderAgentChat( {
@@ -296,15 +311,25 @@ describe( 'AgentChat', () => {
 
 		const designButton = screen.getByRole( 'button', { name: 'Customize colors' } );
 		expect( designButton.closest( '.agents-manager-writing-suggestions' ) ).toBeNull();
-		expect( screen.getByRole( 'button', { name: 'Writing 4' } ) ).toHaveAttribute(
-			'aria-expanded',
-			'true'
-		);
+		expect( screen.queryByRole( 'button', { name: 'What else can you do?' } ) ).toBeNull();
+		expect( screen.getByText( 'Improve and refine your content.' ) ).toBeInTheDocument();
 
-		await user.click( screen.getByRole( 'button', { name: 'Proofread' } ) );
-		expect( onSuggestionClick ).toHaveBeenCalledWith( writingSuggestions[ 2 ], suggestions );
+		const writingToggle = screen.getByRole( 'button', { name: /Writing/ } );
+		expect( writingToggle ).toHaveAttribute( 'aria-expanded', 'false' );
+		expect( screen.queryByRole( 'button', { name: 'Optimize title' } ) ).toBeNull();
 
-		await user.click( screen.getByRole( 'button', { name: 'Writing 4' } ) );
+		await user.click( writingToggle );
+		expect( writingToggle ).toHaveAttribute( 'aria-expanded', 'true' );
+		expect( screen.getByRole( 'button', { name: 'Optimize title' } ) ).toBeInTheDocument();
+		expect( screen.getByRole( 'button', { name: 'Generate excerpt' } ) ).toBeInTheDocument();
+		expect( screen.getByRole( 'button', { name: 'Optimize SEO' } ) ).toBeInTheDocument();
+		expect( screen.getByRole( 'button', { name: 'Simple review' } ) ).toBeInTheDocument();
+		expect( screen.getByRole( 'button', { name: 'Editorial review' } ) ).toBeInTheDocument();
+
+		await user.click( screen.getByRole( 'button', { name: 'Optimize title' } ) );
+		expect( onSuggestionClick ).toHaveBeenCalledWith( writingSuggestions[ 0 ], suggestions );
+
+		await user.click( writingToggle );
 		expect( screen.queryByRole( 'button', { name: 'Proofread' } ) ).toBeNull();
 	} );
 
