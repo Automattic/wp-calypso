@@ -20699,6 +20699,7 @@ __metadata:
     react-dom: "npm:^18.3.1"
     react-test-renderer: "npm:^18.3.1"
     tannin: "npm:^1.2.0"
+    tslib: "npm:^2.8.1"
     typescript: "npm:^6.0.3"
     use-subscription: "npm:1.11.0"
   peerDependencies:
