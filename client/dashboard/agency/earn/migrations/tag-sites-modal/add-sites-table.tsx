@@ -1,20 +1,23 @@
-import { useDesktopBreakpoint } from '@automattic/viewport-react';
 import {
 	BaseControl,
 	CheckboxControl,
 	__experimentalSpacer as Spacer,
 } from '@wordpress/components';
+import { useViewportMatch } from '@wordpress/compose';
 import { DataViews, filterSortAndPaginate } from '@wordpress/dataviews';
 import { __, sprintf } from '@wordpress/i18n';
 import { useCallback, useMemo, useState } from 'react';
+import { useLocale } from '../../../../app/locale';
+import { DataViewsCard } from '../../../../components/dataviews';
+import { formatDate } from '../../../../utils/datetime';
 import {
 	useFetchAllManagedSitesForCommission,
 	type SiteItem,
-} from 'calypso/dashboard/agency/earn/migrations/hooks/use-fetch-all-managed-sites-for-commission';
+} from '../hooks/use-fetch-all-managed-sites-for-commission';
+import type { RecordTracksEvent, TaggedSite } from '../types';
 import type { Field, View } from '@wordpress/dataviews';
-import type { RecordTracksEvent, TaggedSite } from 'calypso/dashboard/agency/earn/migrations/types';
 
-import 'calypso/dashboard/agency/earn/migrations/components/dataviews/style.scss';
+import '../components/dataviews/style.scss';
 
 export default function MigrationsAddSitesTable( {
 	selectedSites,
@@ -31,7 +34,8 @@ export default function MigrationsAddSitesTable( {
 	recordTracksEvent: RecordTracksEvent;
 	getSiteCreatedAt: ( blogId: number ) => string | undefined;
 } ) {
-	const isDesktop = useDesktopBreakpoint();
+	const isDesktop = useViewportMatch( 'medium' );
+	const locale = useLocale();
 
 	const { items, isLoading } = useFetchAllManagedSitesForCommission();
 
@@ -124,7 +128,7 @@ export default function MigrationsAddSitesTable( {
 			getValue: () => '-',
 			render: ( { item }: { item: SiteItem } ) => {
 				const createdAt = getSiteCreatedAt( item.rawSite.blog_id );
-				return createdAt ? new Date( createdAt ).toLocaleDateString() : '-';
+				return createdAt ? formatDate( new Date( createdAt ), locale ) : '-';
 			},
 			enableHiding: false,
 			enableSorting: false,
@@ -138,6 +142,7 @@ export default function MigrationsAddSitesTable( {
 		onSelectSite,
 		selectedSites,
 		getSiteCreatedAt,
+		locale,
 	] );
 
 	const { data: allSites, paginationInfo } = useMemo( () => {
@@ -145,35 +150,37 @@ export default function MigrationsAddSitesTable( {
 	}, [ availableSites, view, fields ] );
 
 	return (
-		<div className="add-sites-table redesigned-a8c-table">
-			<BaseControl
-				label={ __( 'Select sites to tag' ) }
-				className="migrations-tag-sites-modal__table-control"
-			>
-				{ migrationSourceHost && (
-					<Spacer marginY={ 4 }>
-						<div className="migrations-tag-sites-modal__instruction">
-							{ sprintf(
-								/* translators: %s: the hosting provider name */
-								__( 'Make sure you only select sites previously hosted on %s' ),
-								migrationSourceHost
-							) }
-						</div>
-					</Spacer>
-				) }
-				<DataViews
-					data={ allSites }
-					view={ view }
-					onChangeView={ setView }
-					fields={ fields }
-					search={ false }
-					actions={ [] }
-					getItemId={ ( item ) => `${ item.id }` }
-					paginationInfo={ paginationInfo }
-					defaultLayouts={ { table: {} } }
-					isLoading={ isLoading }
-				/>
-			</BaseControl>
-		</div>
+		<DataViewsCard>
+			<div className="add-sites-table">
+				<BaseControl
+					label={ __( 'Select sites to tag' ) }
+					className="migrations-tag-sites-modal__table-control"
+				>
+					{ migrationSourceHost && (
+						<Spacer marginY={ 4 }>
+							<div className="migrations-tag-sites-modal__instruction">
+								{ sprintf(
+									/* translators: %s: the hosting provider name */
+									__( 'Make sure you only select sites previously hosted on %s' ),
+									migrationSourceHost
+								) }
+							</div>
+						</Spacer>
+					) }
+					<DataViews
+						data={ allSites }
+						view={ view }
+						onChangeView={ setView }
+						fields={ fields }
+						search={ false }
+						actions={ [] }
+						getItemId={ ( item ) => `${ item.id }` }
+						paginationInfo={ paginationInfo }
+						defaultLayouts={ { table: {} } }
+						isLoading={ isLoading }
+					/>
+				</BaseControl>
+			</div>
+		</DataViewsCard>
 	);
 }

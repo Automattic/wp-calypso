@@ -16,12 +16,10 @@ import {
 import { createInterpolateElement } from '@wordpress/element';
 import { __, _n, sprintf } from '@wordpress/i18n';
 import { Icon, info } from '@wordpress/icons';
-import { useState } from 'react';
-import useMinimizeHelpCenterOnMount from 'calypso/a8c-for-agencies/hooks/use-minimize-help-center-on-mount';
-import { preventWidows } from 'calypso/lib/formatting';
+import { useEffect, useState } from 'react';
 import MigrationsAddSitesTable from './add-sites-table';
-import type { SiteItem } from 'calypso/dashboard/agency/earn/migrations/hooks/use-fetch-all-managed-sites-for-commission';
-import type { RecordTracksEvent, TaggedSite } from 'calypso/dashboard/agency/earn/migrations/types';
+import type { SiteItem } from '../hooks/use-fetch-all-managed-sites-for-commission';
+import type { RecordTracksEvent, TaggedSite } from '../types';
 import type { ReactNode } from 'react';
 
 import './style.scss';
@@ -34,6 +32,7 @@ export default function MigrationsTagSitesModal( {
 	onSuccess,
 	onError,
 	getSiteCreatedAt,
+	onModalOpen,
 }: {
 	onClose: () => void;
 	taggedSites?: TaggedSite[];
@@ -42,11 +41,15 @@ export default function MigrationsTagSitesModal( {
 	onSuccess: ( message: ReactNode ) => void;
 	onError: ( message: ReactNode ) => void;
 	getSiteCreatedAt: ( blogId: number ) => string | undefined;
+	onModalOpen?: () => void;
 } ) {
 	const queryClient = useQueryClient();
 	const { data: agency } = useQuery( activeAgencyQuery() );
 	const agencyId = agency?.id;
-	useMinimizeHelpCenterOnMount();
+	useEffect( () => {
+		onModalOpen?.();
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [] );
 
 	const { mutate: tagSitesForMigration, isPending } = useMutation(
 		tagAgencySitesForCommissionMutation( agencyId )
@@ -154,10 +157,8 @@ export default function MigrationsTagSitesModal( {
 				<Text>{ __( 'Select the sites you moved on your own.' ) }</Text>
 				<div className="migrations-tag-sites-modal__instruction">
 					<Icon size={ 18 } icon={ info } />
-					{ preventWidows(
-						__(
-							"Can't find your transferred site? Ensure the Automattic for Agencies plugin is connected in WP-Admin to display the site here."
-						)
+					{ __(
+						"Can't find your transferred site? Ensure the Automattic for Agencies plugin is connected in WP-Admin to display the site here."
 					) }
 				</div>
 				<SelectControl

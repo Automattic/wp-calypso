@@ -1,8 +1,8 @@
 import MigrationsCommissionsList from 'calypso/dashboard/agency/earn/migrations/commissions-list';
 import MigrationsConsolidatedCommissions from 'calypso/dashboard/agency/earn/migrations/consolidated-commissions';
+import MigrationsTagSitesModal from 'calypso/dashboard/agency/earn/migrations/tag-sites-modal';
 import { TextSkeleton } from 'calypso/dashboard/components/text-skeleton';
 import MigrationsCommissionsEmptyState from './primary/migrations-commissions/empty-state';
-import MigrationsTagSitesModal from './tag-sites-modal';
 import type {
 	RecordTracksEvent,
 	ShowSuccessNotice,
