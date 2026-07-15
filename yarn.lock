@@ -133,8 +133,8 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@automattic/agents-manager@workspace:packages/agents-manager"
   dependencies:
-    "@automattic/agenttic-client": "npm:^0.1.79"
-    "@automattic/agenttic-ui": "npm:^0.1.79"
+    "@automattic/agenttic-client": "npm:^0.1.80"
+    "@automattic/agenttic-ui": "npm:^0.1.80"
     "@automattic/calypso-analytics": "workspace:^"
     "@automattic/calypso-typescript-config": "workspace:^"
     "@automattic/components": "workspace:^"
@@ -180,9 +180,9 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@automattic/agenttic-client@npm:^0.1.79":
-  version: 0.1.79
-  resolution: "@automattic/agenttic-client@npm:0.1.79"
+"@automattic/agenttic-client@npm:^0.1.80":
+  version: 0.1.80
+  resolution: "@automattic/agenttic-client@npm:0.1.80"
   dependencies:
     "@types/react": "npm:^18.0.0 || ^19.0.0"
     marked: "npm:^16.2.1"
@@ -195,13 +195,13 @@ __metadata:
   peerDependenciesMeta:
     "@wordpress/api-fetch":
       optional: true
-  checksum: 043a4ec8f0088fadff7023af4c012f5ae9ffb5655846143019d106faccd914dd5bad7ef490fe24317bed2ba65737e48b6523c8ab314d6ae3f3ff53ca43f1ace9
+  checksum: d4563b8c86a122c0e1a97fa7818facea3b101d5aaa6b8fcca8a41b6d0c874d2bf770151fd7ed4fddef24ffd3b2165aed0ca4e3938d48f0a135283f0e1c0934eb
   languageName: node
   linkType: hard
 
-"@automattic/agenttic-ui@npm:^0.1.79":
-  version: 0.1.79
-  resolution: "@automattic/agenttic-ui@npm:0.1.79"
+"@automattic/agenttic-ui@npm:^0.1.80":
+  version: 0.1.80
+  resolution: "@automattic/agenttic-ui@npm:0.1.80"
   dependencies:
     "@automattic/charts": "npm:^1.10.0"
     "@radix-ui/react-popover": "npm:^1.1.15"
@@ -224,7 +224,7 @@ __metadata:
   dependenciesMeta:
     marked:
       optional: true
-  checksum: 573ce9d379923e72b2d48b341e29aafe33de6ab653af4459d401f9d21b8580821c4710bc7aae6e4fe71f2d7ea504dcd4dbaea92c34b73b1c000425e587f3ef21
+  checksum: 79e7244f760c8ffee08f6817ef8a9e89af74626a951fa1ca76c2077012920ef692b09c33d2d1ac3fffb57f561d69f9ad6db01b88bcb30136c52798ff3ecf5e9b
   languageName: node
   linkType: hard
 
@@ -340,7 +340,7 @@ __metadata:
   resolution: "@automattic/block-notes@workspace:packages/block-notes"
   dependencies:
     "@automattic/agents-manager": "workspace:^"
-    "@automattic/agenttic-client": "npm:^0.1.79"
+    "@automattic/agenttic-client": "npm:^0.1.80"
     "@automattic/calypso-analytics": "workspace:^"
     "@automattic/calypso-typescript-config": "workspace:^"
     "@testing-library/react": "npm:^15.0.7"
@@ -1476,8 +1476,8 @@ __metadata:
   resolution: "@automattic/image-studio@workspace:packages/image-studio"
   dependencies:
     "@automattic/agents-manager": "workspace:^"
-    "@automattic/agenttic-client": "npm:^0.1.79"
-    "@automattic/agenttic-ui": "npm:^0.1.79"
+    "@automattic/agenttic-client": "npm:^0.1.80"
+    "@automattic/agenttic-ui": "npm:^0.1.80"
     "@automattic/calypso-analytics": "workspace:^"
     "@automattic/calypso-typescript-config": "workspace:^"
     "@automattic/oauth-token": "workspace:^"
@@ -1572,7 +1572,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@automattic/jetpack-ai-sidebar@workspace:packages/jetpack-ai-sidebar"
   dependencies:
-    "@automattic/agenttic-client": "npm:^0.1.79"
+    "@automattic/agenttic-client": "npm:^0.1.80"
     "@automattic/calypso-analytics": "workspace:^"
     "@automattic/calypso-typescript-config": "workspace:^"
     "@automattic/calypso-url": "workspace:^"
@@ -1839,7 +1839,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@automattic/odie-client@workspace:packages/odie-client"
   dependencies:
-    "@automattic/agenttic-ui": "npm:^0.1.79"
+    "@automattic/agenttic-ui": "npm:^0.1.80"
     "@automattic/calypso-typescript-config": "workspace:^"
     "@automattic/components": "workspace:^"
     "@automattic/i18n-utils": "workspace:^"
@@ -14372,7 +14372,7 @@ __metadata:
   dependencies:
     "@automattic/accessible-focus": "workspace:^"
     "@automattic/agents-manager": "workspace:^"
-    "@automattic/agenttic-ui": "npm:^0.1.79"
+    "@automattic/agenttic-ui": "npm:^0.1.80"
     "@automattic/api-core": "workspace:^"
     "@automattic/api-queries": "workspace:^"
     "@automattic/block-renderer": "workspace:^"
