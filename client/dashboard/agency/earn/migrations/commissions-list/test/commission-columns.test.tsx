@@ -1,7 +1,7 @@
 /**
  * @jest-environment jsdom
  *
- * Run: yarn test-client client/a8c-for-agencies/sections/migrations/commissions-list/test/commission-columns.test.tsx
+ * Run: yarn test-client client/dashboard/agency/earn/migrations/commissions-list/test/commission-columns.test.tsx
  */
 
 import { render, screen } from '@testing-library/react';

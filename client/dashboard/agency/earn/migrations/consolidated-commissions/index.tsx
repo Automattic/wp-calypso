@@ -1,10 +1,6 @@
-import {
-	Card,
-	CardBody,
-	__experimentalVStack as VStack,
-	__experimentalText as Text,
-} from '@wordpress/components';
+import { __experimentalVStack as VStack, __experimentalText as Text } from '@wordpress/components';
 import { __, sprintf } from '@wordpress/i18n';
+import { Card, CardBody } from '../../../../components/card';
 import type { TaggedSite } from '../types';
 
 import './style.scss';
