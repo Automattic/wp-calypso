@@ -52,8 +52,10 @@
 	}
 }
 
-// Overrides layout for WP Admin.
-.wp-admin {
+// Overrides layout for WP Admin. Scoped to `.jp-stats-dashboard` (the class Jetpack's PHP puts on
+// the Stats app's mount element) rather than `.wp-admin`, since WP core puts `.wp-admin` on the
+// real `<body>` — using it here would apply these overrides to the whole wp-admin page.
+.jp-stats-dashboard {
 	// CSS variable overrides.
 	--sidebar-width-max: 160px;
 	--sidebar-width-min: 36px;

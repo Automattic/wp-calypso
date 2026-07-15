@@ -1,4 +1,4 @@
-import { existsSync, mkdtempSync, readFileSync, rmSync } from 'node:fs';
+import { existsSync, mkdtempSync, readdirSync, readFileSync, rmSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import path from 'node:path';
 import { describe, expect, test, jest, beforeEach, afterEach } from '@jest/globals';
@@ -21,6 +21,8 @@ afterEach( () => {
 } );
 
 const markerFile = ( userID: number ): string => path.join( leakDir, `account-${ userID }.json` );
+const emailMarkerFile = ( email: string ): string =>
+	path.join( leakDir, `account-${ encodeURIComponent( email ) }.json` );
 
 const details = {
 	userID: 2001,
@@ -121,6 +123,68 @@ describe( 'teardown-markers: isAccountClosedError', () => {
 } );
 
 describe( 'closeAccountAndRecordLeak', () => {
+	test( 'no userID: records an email-keyed marker without accessing the account', async () => {
+		const closeAccount = jest.fn( async () => ( { success: true } ) );
+		const getMyAccountInformation = jest.fn( async () => ( {} ) );
+		const incompleteDetails = {
+			...details,
+			userID: undefined,
+		} as unknown as typeof details;
+
+		await closeAccountAndRecordLeak(
+			fakeClient( { closeAccount, getMyAccountInformation } ),
+			incompleteDetails,
+			leakDir
+		);
+
+		expect( closeAccount ).not.toHaveBeenCalled();
+		expect( getMyAccountInformation ).not.toHaveBeenCalled();
+		expect( existsSync( emailMarkerFile( details.email ) ) ).toBe( true );
+		const marker = JSON.parse( readFileSync( emailMarkerFile( details.email ), 'utf8' ) );
+		expect( marker.error ).toContain( 'incomplete account identity' );
+	} );
+
+	test( 'neither userID nor email: skips teardown and records nothing (no recordable key)', async () => {
+		const closeAccount = jest.fn( async () => ( { success: true } ) );
+		const getMyAccountInformation = jest.fn( async () => ( {} ) );
+		const unrecordableDetails = {
+			...details,
+			userID: undefined,
+			email: '',
+		} as unknown as typeof details;
+
+		await closeAccountAndRecordLeak(
+			fakeClient( { closeAccount, getMyAccountInformation } ),
+			unrecordableDetails,
+			leakDir
+		);
+
+		expect( closeAccount ).not.toHaveBeenCalled();
+		expect( getMyAccountInformation ).not.toHaveBeenCalled();
+		expect( readdirSync( leakDir ) ).toHaveLength( 0 );
+	} );
+
+	test( 'userID present but username/email missing: records a marker keyed by userID without accessing the account', async () => {
+		const closeAccount = jest.fn( async () => ( { success: true } ) );
+		const getMyAccountInformation = jest.fn( async () => ( {} ) );
+		const incompleteDetails = {
+			...details,
+			username: '',
+			email: '',
+		};
+
+		await closeAccountAndRecordLeak(
+			fakeClient( { closeAccount, getMyAccountInformation } ),
+			incompleteDetails,
+			leakDir
+		);
+
+		expect( closeAccount ).not.toHaveBeenCalled();
+		expect( getMyAccountInformation ).not.toHaveBeenCalled();
+		const marker = JSON.parse( readFileSync( markerFile( details.userID ), 'utf8' ) );
+		expect( marker.error ).toContain( 'incomplete account identity' );
+	} );
+
 	test( 'close succeeds: clears the marker and never probes', async () => {
 		const getMyAccountInformation = jest.fn( async () => ( {} ) );
 		await closeAccountAndRecordLeak(

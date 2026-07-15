@@ -45,8 +45,8 @@ test.describe( 'Domain: Upsell (Skip Plan)', { tag: [ tags.CALYPSO_RELEASE ] }, 
 			await pageCartCheckout.validateCartItem( selectedDomain );
 		} );
 
-		await test.step( 'And the cart contains only the domain (no plan)', async function () {
-			await pageCartCheckout.validateCartItemsCount( 1 );
+		await test.step( 'And no plan was added to the cart', async function () {
+			await pageCartCheckout.validateNoPlanInCart();
 		} );
 	} );
 } );

@@ -14,10 +14,16 @@ async function resolveAgencyId(): Promise< number > {
 	return agency.id;
 }
 
-export const paginatedAgencySitesQuery = ( options: FetchAgencySitesOptions = {} ) =>
+// Pass an explicit `agencyId` (e.g. from Redux in the classic A4A app) to skip
+// the async agency resolution; otherwise the active agency is resolved for you.
+// The full response (including `total`) is returned so callers can paginate.
+export const paginatedAgencySitesQuery = (
+	options: FetchAgencySitesOptions = {},
+	agencyId?: number
+) =>
 	queryOptions( {
-		queryKey: [ ...agencySitesQueryKey, 'paginated', options ],
-		queryFn: async () => fetchAgencySites( await resolveAgencyId(), options ),
+		queryKey: [ ...agencySitesQueryKey, 'paginated', agencyId ?? null, options ],
+		queryFn: async () => fetchAgencySites( agencyId ?? ( await resolveAgencyId() ), options ),
 	} );
 
 export const agencySitesQuery = ( options: FetchAgencySitesOptions = {} ) =>

@@ -17,9 +17,6 @@ jest.mock(
 	'calypso/a8c-for-agencies/sections/partner-directory/lib/lead-matching-visibility',
 	() => ( {
 		A4A_PARTNER_DIRECTORY_LEAD_MATCHING_FEATURE_FLAG: 'a4a-partner-directory-lead-matching',
-		A4A_PARTNER_DIRECTORY_LEAD_MATCHING_PILOT_AGENCY_IDS: new Set( [
-			232667176, 251102500, 234036126, 234278359, 232640028,
-		] ),
 	} )
 );
 
@@ -339,7 +336,7 @@ describe( 'a8c-for-agencies agency actions', () => {
 	} );
 
 	describe( '#receiveAgencies()', () => {
-		test( 'enables the lead matching feature flag for pilot agencies', () => {
+		test( 'enables the lead matching feature flag for allowed agencies', () => {
 			let state = createState( createAgency() );
 			const getState = () => state;
 			const dispatch: jest.Mock = jest.fn( ( actionOrThunk: unknown ) => {
@@ -363,14 +360,23 @@ describe( 'a8c-for-agencies agency actions', () => {
 				return actionOrThunk;
 			} );
 
-			receiveAgencies( [ createAgency( { id: 232667176 } ) ] )( dispatch, getState, undefined );
+			receiveAgencies( [
+				createAgency( {
+					lead_matching: {
+						allowed: true,
+						draft: null,
+						profile: null,
+						sync: undefined,
+					},
+				} ),
+			] )( dispatch, getState, undefined );
 
 			expect( mockedConfig.enable ).toHaveBeenCalledWith(
 				A4A_PARTNER_DIRECTORY_LEAD_MATCHING_FEATURE_FLAG
 			);
 		} );
 
-		test( 'does not enable the lead matching feature flag for non-pilot agencies', () => {
+		test( 'does not enable the lead matching feature flag when access is false', () => {
 			const getState = () => createState( createAgency() );
 			const dispatch: jest.Mock = jest.fn( ( actionOrThunk: unknown ) => {
 				if ( typeof actionOrThunk === 'function' ) {
@@ -380,7 +386,33 @@ describe( 'a8c-for-agencies agency actions', () => {
 				return actionOrThunk;
 			} );
 
-			receiveAgencies( [ createAgency( { id: 123 } ) ] )( dispatch, getState, undefined );
+			receiveAgencies( [
+				createAgency( {
+					lead_matching: {
+						allowed: false,
+						draft: null,
+						profile: null,
+						sync: undefined,
+					},
+				} ),
+			] )( dispatch, getState, undefined );
+
+			expect( mockedConfig.enable ).not.toHaveBeenCalledWith(
+				A4A_PARTNER_DIRECTORY_LEAD_MATCHING_FEATURE_FLAG
+			);
+		} );
+
+		test( 'does not enable the lead matching feature flag when access is missing', () => {
+			const getState = () => createState( createAgency() );
+			const dispatch: jest.Mock = jest.fn( ( actionOrThunk: unknown ) => {
+				if ( typeof actionOrThunk === 'function' ) {
+					return actionOrThunk( dispatch, getState, undefined );
+				}
+
+				return actionOrThunk;
+			} );
+
+			receiveAgencies( [ createAgency() ] )( dispatch, getState, undefined );
 
 			expect( mockedConfig.enable ).not.toHaveBeenCalledWith(
 				A4A_PARTNER_DIRECTORY_LEAD_MATCHING_FEATURE_FLAG

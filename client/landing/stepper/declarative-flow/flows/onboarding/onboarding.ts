@@ -28,6 +28,12 @@ import { isPlanProductFree } from '../../../../../../packages/data-stores/src/pl
 import { useFlowLocale } from '../../../hooks/use-flow-locale';
 import { useQuery } from '../../../hooks/use-query';
 import { ONBOARD_STORE, SITE_STORE } from '../../../stores';
+import {
+	getBuildWowSiteIdentifier,
+	getBuildWowSiteSpecUrl,
+	logBuildWowEvent,
+	requestBuildWowSite,
+} from '../../../utils/build-wow';
 import { stepsWithRequiredLogin } from '../../../utils/steps-with-required-login';
 import { getOnboardingPostCheckoutDestination } from '../../helpers/get-onboarding-post-checkout-destination';
 import { withLocale } from '../../helpers/with-locale';
@@ -80,14 +86,15 @@ const onboarding: FlowV2< typeof initialize > = {
 			} ),
 			[]
 		);
-		const coupon = useQuery().get( 'coupon' );
-		const refParameter = useQuery().get( 'ref' );
-		const diyLaunchpad = useQuery().get( 'diy-launchpad' );
-		const siteSlugParam = useQuery().get( 'siteSlug' );
+		const queryParams = useQuery();
+		const coupon = queryParams.get( 'coupon' );
+		const refParameter = queryParams.get( 'ref' );
+		const diyLaunchpad = queryParams.get( 'diy-launchpad' );
+		const siteSlugParam = queryParams.get( 'siteSlug' );
 
 		const { setShouldShowNotification } = usePurchasePlanNotification();
 
-		const playgroundId = useQuery().get( 'playground' );
+		const playgroundId = queryParams.get( 'playground' );
 
 		/**
 		 * Returns [destination, backDestination] for the post-checkout destination.
@@ -255,6 +262,46 @@ const onboarding: FlowV2< typeof initialize > = {
 								} )
 							);
 							return;
+						case 'generate-theme': {
+							// Automattician-only: provision an Atomic (WP Cloud) site up front so
+							// the custom AI-generated theme can be installed, then hand off to the
+							// build-wow site-spec step. Gated in the UI to Automatticians; the
+							// build-wow endpoint enforces the permission server-side.
+							const siteIdentifier = getBuildWowSiteIdentifier( {
+								siteSlug,
+								siteId,
+							} );
+
+							if ( ! siteIdentifier ) {
+								logBuildWowEvent( 'start_missing_site', {
+									site_slug: siteSlug,
+									site_id: siteId,
+								} );
+								return navigate( 'error' as typeof currentStepSlug );
+							}
+
+							try {
+								await requestBuildWowSite( siteIdentifier );
+								logBuildWowEvent( 'start_success', {
+									site_identifier: siteIdentifier,
+								} );
+							} catch ( error ) {
+								logBuildWowEvent( 'start_error', {
+									site_identifier: siteIdentifier,
+									error: error instanceof Error ? error.message : String( error ),
+								} );
+								return navigate( 'error' as typeof currentStepSlug );
+							}
+
+							window.location.assign(
+								getBuildWowSiteSpecUrl( {
+									siteSlug,
+									siteId,
+									ref: refParameter,
+								} )
+							);
+							return;
+						}
 						case 'blank-site':
 							if ( refParameter === WOO_HOSTING_SOLUTIONS_REF ) {
 								const site = await resolveSelect( SITE_STORE ).getSite( siteSlug );

@@ -1,5 +1,7 @@
+import { isAutomatticianQuery } from '@automattic/api-queries';
 import { BigSkyLogo, SummaryButton } from '@automattic/components';
 import { Step } from '@automattic/onboarding';
+import { useQuery as useReactQuery } from '@tanstack/react-query';
 import {
 	__experimentalVStack as VStack,
 	__experimentalHStack as HStack,
@@ -7,22 +9,31 @@ import {
 	Icon,
 	TextareaControl,
 } from '@wordpress/components';
-import { arrowUp, layout } from '@wordpress/icons';
+import { arrowUp, layout, brush } from '@wordpress/icons';
 import i18n, { useTranslate } from 'i18n-calypso';
 import { FormEvent, useState } from 'react';
 import { WOO_HOSTING_SOLUTIONS_REF } from 'calypso/landing/stepper/constants';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { useQuery } from '../../../../hooks/use-query';
 import { useSiteData } from '../../../../hooks/use-site-data';
+import { usePurchasePlanNotification } from '../../hooks/use-purchase-plan-notification';
 import type { Step as StepType } from '../../types';
 import './style.scss';
 
 const SetupYourSiteAIStep: StepType = ( { navigation } ) => {
-	const { siteSlug, siteId } = useSiteData();
+	const { site, siteSlug, siteId } = useSiteData();
 	const translate = useTranslate();
 	const ref = useQuery().get( 'ref' );
+
+	// After checkout the `post-checkout-onboarding` step flags the site for a
+	// "plan is now active" toast; consume it here since this is where the user
+	// lands post-purchase.
+	usePurchasePlanNotification( siteId, site?.plan?.product_slug );
 	const showPromptInput = ref === WOO_HOSTING_SOLUTIONS_REF;
 	const [ prompt, setPrompt ] = useState( '' );
+	// Automattician-only "Generate Theme" entry point that provisions a WP Cloud
+	// site up front and runs the build-wow AI theme generation flow.
+	const { data: isAutomattician } = useReactQuery( isAutomatticianQuery() );
 
 	const submitBuildWithAI = ( trimmedPrompt?: string ) => {
 		recordTracksEvent( 'calypso_onboarding_setup_your_site_with_ai_selection', {
@@ -55,6 +66,18 @@ const SetupYourSiteAIStep: StepType = ( { navigation } ) => {
 		navigation.submit( {
 			setupChoice: 'blank-site',
 			siteSlug,
+		} );
+	};
+
+	const handleGenerateTheme = () => {
+		recordTracksEvent( 'calypso_onboarding_setup_your_site_with_ai_selection', {
+			selection: 'generate-theme',
+		} );
+
+		navigation.submit( {
+			setupChoice: 'generate-theme',
+			siteSlug,
+			siteId,
 		} );
 	};
 
@@ -129,6 +152,14 @@ const SetupYourSiteAIStep: StepType = ( { navigation } ) => {
 				decoration={ <Icon icon={ layout } /> }
 				onClick={ handleBlankSite }
 			/>
+			{ isAutomattician && (
+				<SummaryButton
+					title="Generate Theme"
+					description="Automattician only: provision a WordPress.com Cloud site and generate a custom theme with AI."
+					decoration={ <Icon icon={ brush } /> }
+					onClick={ handleGenerateTheme }
+				/>
+			) }
 		</VStack>
 	);
 

@@ -123,7 +123,6 @@ export default function DropdownGroup( {
 				<SlotFillProvider>
 					<Popover.Slot />
 					<Dropdown
-						popoverProps={ { className: classes } }
 						renderToggle={ ( { onToggle } ) => (
 							<ToolbarButton
 								className={ clsx(

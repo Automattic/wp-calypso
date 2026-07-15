@@ -1,6 +1,9 @@
 export * from './query-client';
 
 export * from './agency';
+export * from './agency-team';
+export * from './agency-sites';
+export * from './agency-woopayments';
 export * from './akismet-api-key';
 export * from './big-sky-plugin';
 export * from './cancellation-offers';
@@ -30,6 +33,7 @@ export * from './emails';
 export * from './geo';
 export * from './github';
 export * from './hosting-update-schedules';
+export * from './jetpack-agency-licenses';
 export * from './jetpack-agency-sites';
 export * from './jetpack-site-collisions';
 export * from './jetpack-user-license';
@@ -97,6 +101,7 @@ export * from './site-address-change';
 export * from './site-apm';
 export * from './site-admin-bar';
 export * from './site-agency';
+export * from './site-ai-launchpad';
 export * from './site-atomic-transfers';
 export * from './site-automated-transfers-eligibility';
 export * from './site-backup-download';

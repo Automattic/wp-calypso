@@ -55,9 +55,6 @@ export function getFinalImporterUrl(
  */
 export function generateStepPath( stepName: string, stepSectionName?: string ) {
 	switch ( stepName ) {
-		case 'goals':
-			return 'goals';
-
 		case 'capture':
 			return BASE_ROUTE;
 

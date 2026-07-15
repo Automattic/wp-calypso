@@ -10,38 +10,60 @@ import {
 	type ReadSeenPostsResponse,
 } from '@automattic/api-core';
 import { mutationOptions, type QueryClient } from '@tanstack/react-query';
-import { getSiteSubscriptionsQueryKey } from './read-follows';
+import { patchSubscriptionSeenCount } from './read-follows';
 
 export const markReaderPostsAsSeenMutation = ( queryClient: QueryClient ) =>
 	mutationOptions< ReadSeenPostsResponse, Error, ReadSeenPostsFeedParams >( {
 		mutationFn: markReaderPostsAsSeen,
-		onSuccess: () => invalidateSiteSubscriptions( queryClient ),
+		onSuccess: ( _response, params ) => {
+			patchSubscriptionSeenCount(
+				queryClient,
+				{ feedIds: [ params.feedId ] },
+				( current ) => current - params.feedItemIds.length
+			);
+		},
 	} );
 
 export const markReaderPostsAsUnseenMutation = ( queryClient: QueryClient ) =>
 	mutationOptions< ReadSeenPostsResponse, Error, ReadSeenPostsFeedParams >( {
 		mutationFn: markReaderPostsAsUnseen,
-		onSuccess: () => invalidateSiteSubscriptions( queryClient ),
+		onSuccess: ( _response, params ) => {
+			patchSubscriptionSeenCount(
+				queryClient,
+				{ feedIds: [ params.feedId ] },
+				( current ) => current + params.feedItemIds.length
+			);
+		},
 	} );
 
 export const markReaderWpcomPostsAsSeenMutation = ( queryClient: QueryClient ) =>
 	mutationOptions< ReadSeenPostsResponse, Error, ReadSeenPostsBlogParams >( {
 		mutationFn: markReaderWpcomPostsAsSeen,
-		onSuccess: () => invalidateSiteSubscriptions( queryClient ),
+		onSuccess: ( _response, params ) => {
+			patchSubscriptionSeenCount(
+				queryClient,
+				{ blogId: params.blogId },
+				( current ) => current - params.postIds.length
+			);
+		},
 	} );
 
 export const markReaderWpcomPostsAsUnseenMutation = ( queryClient: QueryClient ) =>
 	mutationOptions< ReadSeenPostsResponse, Error, ReadSeenPostsBlogParams >( {
 		mutationFn: markReaderWpcomPostsAsUnseen,
-		onSuccess: () => invalidateSiteSubscriptions( queryClient ),
+		onSuccess: ( _response, params ) => {
+			patchSubscriptionSeenCount(
+				queryClient,
+				{ blogId: params.blogId },
+				( current ) => current + params.postIds.length
+			);
+		},
 	} );
 
 export const markAllReaderPostsAsSeenMutation = ( queryClient: QueryClient ) =>
 	mutationOptions< ReadSeenPostsResponse, Error, ReadSeenPostsAllParams >( {
 		mutationFn: markAllReaderPostsAsSeen,
-		onSuccess: () => invalidateSiteSubscriptions( queryClient ),
+		onSuccess: ( _response, params ) => {
+			patchSubscriptionSeenCount( queryClient, { feedIds: params.feedIds }, () => 0 );
+		},
 	} );
-
-function invalidateSiteSubscriptions( queryClient: QueryClient ): void {
-	queryClient.invalidateQueries( { queryKey: getSiteSubscriptionsQueryKey() } );
-}

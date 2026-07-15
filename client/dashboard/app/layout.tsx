@@ -18,7 +18,7 @@ import { dashboardChartTheme } from './chart-theme';
 import { AppProvider, useAppContext } from './context';
 import { I18nProvider } from './i18n';
 import { getRouter } from './router';
-import { useSurvicate } from './survicate';
+import { useSurvicate, useSurvicateVisitTraits } from './survicate';
 import type { AppConfig } from './context';
 
 function AnalyticsProviderWithClient( {
@@ -68,6 +68,7 @@ function AnalyticsProviderWithClient( {
 	);
 
 	useSurvicate();
+	useSurvicateVisitTraits();
 
 	return <AnalyticsProvider client={ analyticsClient }>{ children }</AnalyticsProvider>;
 }

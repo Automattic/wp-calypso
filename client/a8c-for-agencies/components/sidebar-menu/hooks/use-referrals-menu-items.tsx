@@ -3,7 +3,7 @@ import { useTranslate } from 'i18n-calypso';
 import { useMemo } from 'react';
 import StatusBadge from 'calypso/a8c-for-agencies/components/step-section-item/status-badge';
 import useGetTipaltiPayee from 'calypso/a8c-for-agencies/sections/referrals/hooks/use-get-tipalti-payee';
-import { getAccountStatus } from 'calypso/a8c-for-agencies/sections/referrals/lib/get-account-status';
+import { getAccountStatus } from 'calypso/dashboard/agency/earn/payout-settings/get-account-status';
 import {
 	A4A_REFERRALS_LINK,
 	A4A_REFERRALS_DASHBOARD,
@@ -16,7 +16,7 @@ const useReferralsMenuItems = ( path: string ) => {
 	const translate = useTranslate();
 
 	const { data } = useGetTipaltiPayee();
-	const accountStatus = getAccountStatus( data, translate );
+	const accountStatus = getAccountStatus( data );
 
 	const showIndicator = accountStatus?.actionRequired;
 

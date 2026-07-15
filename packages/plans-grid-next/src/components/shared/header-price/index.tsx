@@ -2,17 +2,23 @@ import {
 	getPlanSlugForTermVariant,
 	isFreePlan,
 	isWpcomEnterpriseGridPlan,
+	PLAN_ANNUAL_PERIOD,
+	PLAN_BIENNIAL_PERIOD,
+	PLAN_MONTHLY_PERIOD,
+	PLAN_TRIENNIAL_PERIOD,
 	PERIOD_LIST,
 	TERM_MONTHLY,
 	type PlanSlug,
 } from '@automattic/calypso-products';
 import { PlanPrice } from '@automattic/components';
 import { Plans } from '@automattic/data-stores';
+import { formatCurrency } from '@automattic/number-formatters';
 import { useEffect } from '@wordpress/element';
 import clsx from 'clsx';
-import { useTranslate } from 'i18n-calypso';
+import { type TranslateResult, useTranslate } from 'i18n-calypso';
 import { usePlansGridContext } from '../../../grid-context';
 import useIsLargeCurrency from '../../../hooks/use-is-large-currency';
+import { useManageTooltipToggle } from '../../../hooks/use-manage-tooltip-toggle';
 import { usePlanPricingInfoFromGridPlans } from '../../../hooks/use-plan-pricing-info-from-grid-plans';
 import {
 	calculateDiscountPercentage,
@@ -20,8 +26,10 @@ import {
 	getPlanPriceForDuration,
 } from '../../../lib/plan-pricing-utils';
 import ClientLogoList from '../../features-grid/client-logo-list';
+import { Plans2023Tooltip } from '../../plans-2023-tooltip';
 import { useHeaderPriceContext } from './header-price-context';
 import type { GridPlan } from '../../../types';
+import type { ReactNode } from 'react';
 import './style.scss';
 
 export const ALL_ENTERPRISE_LOGO_SLUGS = [
@@ -61,6 +69,92 @@ const useTermVariantPlanSlugForSavings = ( {
 	return null;
 };
 
+const HeaderPriceBadgeTooltip = ( {
+	children,
+	className,
+	planSlug,
+	text,
+	tooltipId,
+}: {
+	children: ReactNode;
+	className: string;
+	planSlug: PlanSlug;
+	text: TranslateResult;
+	tooltipId?: string;
+} ) => {
+	const [ activeTooltipId, setActiveTooltipId ] = useManageTooltipToggle();
+	const badge = <span className={ className }>{ children }</span>;
+
+	return (
+		<Plans2023Tooltip
+			id={ `plans-grid-next-header-price-badge-${ planSlug }-${ tooltipId ?? 'default' }` }
+			text={ text }
+			activeTooltipId={ activeTooltipId }
+			setActiveTooltipId={ setActiveTooltipId }
+		>
+			{ badge }
+		</Plans2023Tooltip>
+	);
+};
+
+const getPricingBadgeTooltipText = ( {
+	billingPeriod,
+	cheaperPrice,
+	currencyCode,
+	referencePrice,
+	translate,
+}: {
+	billingPeriod?: -1 | ( typeof PERIOD_LIST )[ number ];
+	cheaperPrice?: number | null;
+	currencyCode?: string | null;
+	referencePrice?: number | null;
+	translate: ReturnType< typeof useTranslate >;
+} ): TranslateResult | undefined => {
+	if (
+		! currencyCode ||
+		typeof cheaperPrice !== 'number' ||
+		typeof referencePrice !== 'number' ||
+		! Number.isFinite( cheaperPrice ) ||
+		! Number.isFinite( referencePrice )
+	) {
+		return undefined;
+	}
+	const args = {
+		cheaperPrice: formatCurrency( cheaperPrice, currencyCode, {
+			isSmallestUnit: true,
+			stripZeros: true,
+		} ),
+		referencePrice: formatCurrency( referencePrice, currencyCode, {
+			isSmallestUnit: true,
+			stripZeros: true,
+		} ),
+	};
+
+	switch ( billingPeriod ) {
+		case PLAN_MONTHLY_PERIOD:
+			return translate( '%(cheaperPrice)s/first month vs. %(referencePrice)s monthly after that', {
+				args,
+				comment: 'Example: $5/first month vs. $10 monthly after that',
+			} );
+		case PLAN_BIENNIAL_PERIOD:
+			return translate( '%(cheaperPrice)s/2 years vs. %(referencePrice)s paying monthly', {
+				args,
+				comment: 'Example: $200/2 years vs. $300 paying monthly',
+			} );
+		case PLAN_TRIENNIAL_PERIOD:
+			return translate( '%(cheaperPrice)s/3 years vs. %(referencePrice)s paying monthly', {
+				args,
+				comment: 'Example: $300/3 years vs. $450 paying monthly',
+			} );
+		case PLAN_ANNUAL_PERIOD:
+		default:
+			return translate( '%(cheaperPrice)s/year vs. %(referencePrice)s paying monthly', {
+				args,
+				comment: 'Example: $100/year vs. $150 paying monthly',
+			} );
+	}
+};
+
 const HeaderPrice = ( { planSlug, visibleGridPlans }: HeaderPriceProps ) => {
 	const translate = useTranslate();
 	const {
@@ -72,12 +166,14 @@ const HeaderPrice = ( { planSlug, visibleGridPlans }: HeaderPriceProps ) => {
 		helpers,
 		showBillingDescriptionForIncreasedRenewalPrice,
 		isExperimentVariant,
+		showFeatureCheckmarks,
 		isEnterpriseA4AIndia,
 	} = usePlansGridContext();
 
 	const pricingBadgeClassName = clsx( 'plans-grid-next-header-price__badge', {
 		'is-plan-differentiators-experiment-badge': isExperimentVariant,
 	} );
+	const showPricingBadgeTooltip = isExperimentVariant && showFeatureCheckmarks;
 	const { isAnyPlanPriceDiscounted, setIsAnyPlanPriceDiscounted } = useHeaderPriceContext();
 	const {
 		current,
@@ -115,13 +211,55 @@ const HeaderPrice = ( { planSlug, visibleGridPlans }: HeaderPriceProps ) => {
 		? fromPricingMetaForGridPlan( termVariantPricing )
 		: null;
 	const currentPlanInfo = fromPricingMetaForGridPlan( gridPlansIndex[ planSlug ].pricing );
-	let savings =
+	const termVariantReferencePrice =
 		termVariantInfo && currentPlanInfo
-			? calculateDiscountPercentage(
-					getPlanPriceForDuration( termVariantInfo, currentPlanInfo.termMonths ),
-					getPlanPriceForDuration( currentPlanInfo, currentPlanInfo.termMonths )
-			  ) ?? 0
+			? getPlanPriceForDuration( termVariantInfo, currentPlanInfo.termMonths )
+			: null;
+	const currentPlanPrice =
+		termVariantInfo && currentPlanInfo
+			? getPlanPriceForDuration( currentPlanInfo, currentPlanInfo.termMonths )
+			: null;
+	const termSavingsTooltipText = getPricingBadgeTooltipText( {
+		billingPeriod,
+		cheaperPrice: currentPlanPrice,
+		currencyCode,
+		referencePrice: termVariantReferencePrice,
+		translate,
+	} );
+	let savings =
+		termVariantReferencePrice && currentPlanPrice
+			? calculateDiscountPercentage( termVariantReferencePrice, currentPlanPrice ) ?? 0
 			: 0;
+
+	const renderPricingBadge = (
+		children: ReactNode,
+		{
+			isHidden = false,
+			tooltipText,
+			tooltipId,
+		}: {
+			isHidden?: boolean;
+			tooltipText?: TranslateResult;
+			tooltipId?: string;
+		} = {}
+	) => {
+		const className = clsx( pricingBadgeClassName, { 'is-hidden': isHidden } );
+
+		if ( isHidden || ! showPricingBadgeTooltip || ! tooltipText ) {
+			return <div className={ className }>{ children }</div>;
+		}
+
+		return (
+			<HeaderPriceBadgeTooltip
+				className={ className }
+				planSlug={ planSlug }
+				text={ tooltipText }
+				tooltipId={ tooltipId }
+			>
+				{ children }
+			</HeaderPriceBadgeTooltip>
+		);
+	};
 
 	useEffect( () => {
 		if (
@@ -171,6 +309,16 @@ const HeaderPrice = ( { planSlug, visibleGridPlans }: HeaderPriceProps ) => {
 			typeof discountedPrice.monthly === 'number'
 				? discountedPrice.monthly
 				: introOffer.rawPrice.monthly;
+		const introOfferTooltipText =
+			billingPeriod === PLAN_MONTHLY_PERIOD
+				? getPricingBadgeTooltipText( {
+						billingPeriod,
+						cheaperPrice: monthlyPrice,
+						currencyCode,
+						referencePrice: compareToMonthlyPrice,
+						translate,
+				  } )
+				: termSavingsTooltipText;
 		// Recalculate the savings for Monthly plans with introductory offers
 		// since we are comparing the introductory price with the same plan
 		// renewal price, instead of comparing yearly to monthly costs for
@@ -184,19 +332,22 @@ const HeaderPrice = ( { planSlug, visibleGridPlans }: HeaderPriceProps ) => {
 		}
 		return (
 			<div className="plans-grid-next-header-price">
-				{ ! current && (
-					<div className={ pricingBadgeClassName }>
-						{ showBillingDescriptionForIncreasedRenewalPrice
+				{ ! current &&
+					renderPricingBadge(
+						showBillingDescriptionForIncreasedRenewalPrice
 							? translate( 'Save %(savings)d%%', {
 									args: { savings },
 									comment: 'Example: Save 35%',
 							  } )
-							: translate( 'Special Offer' ) }
-					</div>
-				) }
-				{ current && visibleGridPlans.length > 1 && (
-					<div className={ clsx( pricingBadgeClassName, 'is-hidden' ) }>' '</div>
-				) }
+							: translate( 'Special Offer' ),
+						{ tooltipId: 'intro-offer', tooltipText: introOfferTooltipText }
+					) }
+				{ current &&
+					visibleGridPlans.length > 1 &&
+					renderPricingBadge( "' '", {
+						isHidden: true,
+						tooltipId: 'intro-offer-placeholder',
+					} ) }
 				<div
 					className={ clsx( 'plans-grid-next-header-price__pricing-group', {
 						'is-large-currency': isLargeCurrency,
@@ -235,17 +386,20 @@ const HeaderPrice = ( { planSlug, visibleGridPlans }: HeaderPriceProps ) => {
 				: originalPrice.monthly ?? 0;
 		return (
 			<div className="plans-grid-next-header-price">
-				{ ! current && savings > 0 && (
-					<div className={ pricingBadgeClassName }>
-						{ translate( 'Save %(savings)d%%', {
+				{ ! current &&
+					savings > 0 &&
+					renderPricingBadge(
+						translate( 'Save %(savings)d%%', {
 							args: { savings },
 							comment: 'Example: Save 35%',
-						} ) }
-					</div>
-				) }
-				{ ( ( ! current && savings <= 0 ) || ( current && visibleGridPlans.length > 1 ) ) && (
-					<div className={ clsx( pricingBadgeClassName, 'is-hidden' ) }>' '</div>
-				) }
+						} ),
+						{ tooltipId: 'renewal-savings', tooltipText: termSavingsTooltipText }
+					) }
+				{ ( ( ! current && savings <= 0 ) || ( current && visibleGridPlans.length > 1 ) ) &&
+					renderPricingBadge( "' '", {
+						isHidden: true,
+						tooltipId: 'renewal-savings-placeholder',
+					} ) }
 				<div
 					className={ clsx( 'plans-grid-next-header-price__pricing-group', {
 						'is-large-currency': isLargeCurrency,
@@ -279,7 +433,7 @@ const HeaderPrice = ( { planSlug, visibleGridPlans }: HeaderPriceProps ) => {
 	if ( isGridPlanOneTimeDiscounted ) {
 		return (
 			<div className="plans-grid-next-header-price">
-				<div className={ pricingBadgeClassName }>{ translate( 'One time discount' ) }</div>
+				{ renderPricingBadge( translate( 'One time discount' ) ) }
 				<div
 					className={ clsx( 'plans-grid-next-header-price__pricing-group', {
 						'is-large-currency': isLargeCurrency,
@@ -311,12 +465,13 @@ const HeaderPrice = ( { planSlug, visibleGridPlans }: HeaderPriceProps ) => {
 	if ( enableTermSavingsPriceDisplay && termVariantPricing && savings ) {
 		return (
 			<div className="plans-grid-next-header-price">
-				<div className={ pricingBadgeClassName }>
-					{ translate( 'Save %(savings)d%%', {
+				{ renderPricingBadge(
+					translate( 'Save %(savings)d%%', {
 						args: { savings },
 						comment: 'Example: Save 35%',
-					} ) }
-				</div>
+					} ),
+					{ tooltipId: 'term-savings', tooltipText: termSavingsTooltipText }
+				) }
 				<div
 					className={ clsx( 'plans-grid-next-header-price__pricing-group', {
 						'is-large-currency': isLargeCurrency,
@@ -348,16 +503,15 @@ const HeaderPrice = ( { planSlug, visibleGridPlans }: HeaderPriceProps ) => {
 	if ( isAnyPlanPriceDiscounted ) {
 		return (
 			<div className="plans-grid-next-header-price">
-				{ showBillingDescriptionForIncreasedRenewalPrice && savings ? (
-					<div className={ pricingBadgeClassName }>
-						{ translate( 'Save %(savings)d%%', {
-							args: { savings },
-							comment: 'Example: Save 35%',
-						} ) }
-					</div>
-				) : (
-					<div className={ clsx( pricingBadgeClassName, 'is-hidden' ) }>' '</div>
-				) }
+				{ showBillingDescriptionForIncreasedRenewalPrice && savings
+					? renderPricingBadge(
+							translate( 'Save %(savings)d%%', {
+								args: { savings },
+								comment: 'Example: Save 35%',
+							} ),
+							{ tooltipId: 'fallback-savings', tooltipText: termSavingsTooltipText }
+					  )
+					: renderPricingBadge( "' '", { isHidden: true, tooltipId: 'fallback-placeholder' } ) }
 				{ isLargeCurrency ? (
 					<div className="plans-grid-next-header-price__pricing-group is-large-currency">
 						<PlanPrice

@@ -71,6 +71,8 @@ export type UseSuggestionsHook = (
 	options?: { suggestionsVisible?: boolean }
 ) => {
 	suggestions: Suggestion[];
+	/** Whether contextual suggestions replace, rather than extend, the empty-view suggestions. */
+	replaceEmptyViewSuggestions?: boolean;
 } | void;
 
 export type SiteBuildUtils = {
@@ -205,8 +207,16 @@ export function mergeUseSuggestionsHooks(
 	return ( maxSuggestions?: number, options?: { suggestionsVisible?: boolean } ) => {
 		const combined: Suggestion[] = [];
 		const seenIds = new Set< string >();
-		for ( const hook of hooks ) {
-			const suggestions = hook( maxSuggestions, options )?.suggestions ?? [];
+		const results = hooks.map( ( hook ) => hook( maxSuggestions, options ) );
+		const replaceEmptyViewSuggestions = results.some(
+			( result ) => result?.replaceEmptyViewSuggestions === true
+		);
+
+		for ( const result of results ) {
+			if ( ! result || ( replaceEmptyViewSuggestions && ! result.replaceEmptyViewSuggestions ) ) {
+				continue;
+			}
+			const suggestions = result.suggestions ?? [];
 			for ( const s of suggestions ) {
 				if ( ! seenIds.has( s.id ) ) {
 					seenIds.add( s.id );
@@ -214,7 +224,10 @@ export function mergeUseSuggestionsHooks(
 				}
 			}
 		}
-		return { suggestions: combined };
+		return {
+			suggestions: combined,
+			...( replaceEmptyViewSuggestions && { replaceEmptyViewSuggestions: true } ),
+		};
 	};
 }
 

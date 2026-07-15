@@ -57,10 +57,10 @@ export default function TitlePicker( { titles, onComplete }: TitlePickerProps ) 
 
 	return (
 		<BaseSuggestionPicker
-			intro={ __( 'Choose a title for your post:', 'jetpack' ) }
+			intro={ __( 'Choose a title for your post:', __i18n_text_domain__ ) }
 			options={ titles.map( ( option ) => option.title ) }
 			onApply={ handleApply }
-			appliedMessage={ __( 'Title updated.', 'jetpack' ) }
+			appliedMessage={ __( 'Title updated.', __i18n_text_domain__ ) }
 			currentValue={ typeof currentTitle === 'string' ? currentTitle : undefined }
 		/>
 	);

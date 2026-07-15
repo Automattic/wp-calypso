@@ -30,6 +30,7 @@ export const HUNDRED_YEAR_DOMAIN_FLOW = 'hundred-year-domain';
 export const HUNDRED_YEAR_PLAN_FLOW = 'hundred-year-plan';
 export const BLOG_FLOW = 'blog';
 export const REBLOGGING_FLOW = 'reblogging';
+export const READER_FLOW = 'reader';
 export const DOMAIN_FOR_GRAVATAR_FLOW = 'domain-for-gravatar';
 export const ONBOARDING_FLOW = 'onboarding';
 export const EXAMPLE_FLOW = 'example';
