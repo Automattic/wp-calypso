@@ -59,9 +59,8 @@ function clearAnonDraft() {
 }
 
 function initialize() {
-	// Phase 1 is staging-only; the companion endpoint is proxy-gated so the
-	// flow has nothing to land users on in production. Redirect to the
-	// standard onboarding flow when the feature flag is off.
+	// The flag is a kill switch for the flow. When it is off, redirect to the
+	// standard onboarding flow so there is nothing to land users on.
 	if ( ! config.isEnabled( 'calypso/write-on-flow' ) ) {
 		recordTracksEvent( 'calypso_write_on_flow_blocked', { reason: 'flag_off' } );
 		window.location.replace( '/setup/onboarding' );

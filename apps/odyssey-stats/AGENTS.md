@@ -51,6 +51,15 @@ Routes use `#!/path` format (not `/path`) because app runs inside wp-admin. All 
 
 Odyssey routes API calls through Jetpack REST API, not `public-api.wordpress.com`. Use `getApi()` helper and test both Jetpack and WP.com Simple contexts.
 
+### CSS Scoping
+
+Odyssey only owns the `#wpcom` subtree of a wp-admin page (wp-admin chrome is a sibling under the same `<body>`), so `webpack.config.js` runs a `postcss-prefix-selector` step scoping first-party component styles to `.jp-stats-dashboard` and known portal roots (`.color-scheme`, `.ReactModalPortal`, `[data-base-ui-portal]`, `[data-wp-compat-overlay-slot]`, `.components-modal__screen-overlay` for `@wordpress/components` `Modal`). Two lists there need updating as the app evolves:
+
+- **Prefix target list** — add a new portal root if a component renders through one not already listed (e.g. a new `Popover`/`Dialog`/`Tooltip` library).
+- **`exclude` list** — add a pattern if a selector legitimately targets the real `<html>`/`<body>`/`:root` (RTL flags, `:lang()`, scroll-lock, etc.); prefixing those makes them permanently dead instead of just scoped.
+
+After changing either list, do a production build and grep the compiled CSS for the affected class to confirm it's scoped (or intentionally left unscoped), not silently dead.
+
 ## Conventions
 
 - New data fetching: use TanStack Query hooks in `src/hooks/`

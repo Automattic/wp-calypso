@@ -140,6 +140,10 @@ This code is shared with Odyssey Stats (`apps/odyssey-stats/`). When making chan
 - Be aware of API differences (WP.com vs Jetpack REST API)
 - Check for Odyssey-specific overrides in webpack config
 
+### Odyssey CSS Scoping and Portals
+
+Odyssey's build scopes first-party CSS to `.jp-stats-dashboard` plus a fixed list of known portal-root classes/attributes (see `apps/odyssey-stats/AGENTS.md` > CSS Scoping). Any new modal/dialog/popover/tooltip mechanism added here (e.g. `@wordpress/components` `Modal`, a new `Popover`/`Tooltip` library) that renders via `createPortal` to an *unlisted* root will silently lose its styling in Odyssey even though it looks fine in Calypso — update that prefix list when introducing one.
+
 ## Key Hooks Reference
 
 | Hook                          | Purpose                             |

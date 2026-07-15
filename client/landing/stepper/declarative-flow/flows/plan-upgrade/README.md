@@ -11,6 +11,7 @@ The plan upgrade flow is designed to provide a streamlined experience for existi
 - `siteSlug` - **Required** - The site slug for which to upgrade the plan
 - `redirect_to` - URL to redirect to after checkout completion
 - `feature` - Filter out all plans which don't provide this feature.
+- `products` - Comma-separated product slugs to check out alongside the selected plan, e.g. a paid plugin or theme. They go to checkout as given, on the term the caller chose: a marketplace subscription bills independently of the plan, so the grid's interval toggle governs the plan only.
 
 ### Flow Steps
 

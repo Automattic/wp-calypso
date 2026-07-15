@@ -5,12 +5,15 @@ import {
 } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
 import { Button } from '@automattic/components';
+import { PLAN_UPGRADE_FLOW } from '@automattic/onboarding';
 import { ToggleControl, Modal } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import React, { useCallback, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import EligibilityWarnings from 'calypso/blocks/eligibility-warnings';
+import { navigate } from 'calypso/lib/navigate';
 import { getProductSlugByPeriodVariation } from 'calypso/lib/plugins/utils';
+import { addQueryArgs } from 'calypso/lib/url';
 import useAtomicSiteHasEquivalentFeatureToPlugin from 'calypso/my-sites/plugins/use-atomic-site-has-equivalent-feature-to-plugin';
 import { recordGoogleEvent, recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getCurrentUserId } from 'calypso/state/current-user/selectors';
@@ -244,7 +247,23 @@ export default function CTAButton( { plugin, hasEligibilityMessages, disabled } 
 	);
 }
 
-function onClickInstallPlugin( {
+/**
+ * The plan upgrade flow: the plans grid over the current page, then checkout.
+ */
+export function getPlanUpgradeUrl( { siteSlug, productSlug, intervalType, redirectTo, cancelTo } ) {
+	return addQueryArgs(
+		{
+			siteSlug,
+			products: productSlug,
+			intervalType,
+			redirect_to: redirectTo,
+			cancel_to: cancelTo,
+		},
+		`/setup/${ PLAN_UPGRADE_FLOW }`
+	);
+}
+
+export function onClickInstallPlugin( {
 	dispatch,
 	selectedSite,
 	plugin,
@@ -281,35 +300,59 @@ function onClickInstallPlugin( {
 
 	dispatch( productToBeInstalled( plugin.slug, selectedSite.slug ) );
 
+	// We need to add the product to the cart.
+	// Plugin install is handled on the backend by activating the subscription.
+	const variationPeriod = getPeriodVariationValue( billingPeriod );
+	const variation = plugin?.variations?.[ variationPeriod ];
+	const productSlug = isMarketplaceProduct
+		? getProductSlugByPeriodVariation( variation, productsList )
+		: undefined;
+
+	const installPluginURL = `/marketplace/plugin/${ plugin.slug }/install/${ selectedSite.slug }`;
+
+	// A preinstalled premium plugin buys its own product rather than a plan.
+	const shouldUseStepperPlans =
+		upgradeAndInstall && ! isPreinstalledPremiumPlugin && isEnabled( 'plugins/stepper-plans' );
+
+	if ( shouldUseStepperPlans ) {
+		return navigate(
+			getPlanUpgradeUrl( {
+				siteSlug: selectedSite.slug,
+				productSlug,
+				intervalType: ( isMarketplaceProduct && variationPeriod ) || 'yearly',
+				// A paid plugin is in the cart, so checkout works out where to land — even if the user
+				// removes it before paying. A free plugin isn't, so name its installation page, and
+				// directInstall it: the state that normally authorizes the install is lost on the way
+				// out of Calypso.
+				redirectTo: isMarketplaceProduct
+					? undefined
+					: addQueryArgs( { directInstall: 1 }, installPluginURL ),
+				cancelTo: window.location.pathname + window.location.search,
+			} ),
+			false,
+			true
+		);
+	}
+
 	if ( isMarketplaceProduct ) {
-		// We need to add the product to the  cart.
-		// Plugin install is handled on the backend by activating the subscription.
-		const variationPeriod = getPeriodVariationValue( billingPeriod );
-
-		const variation = plugin?.variations?.[ variationPeriod ];
-		const product_slug = getProductSlugByPeriodVariation( variation, productsList );
-
 		if ( upgradeAndInstall ) {
 			// Redirect to plans page to let user choose a plan, then checkout with plan + plugin
-			const installPluginURL = `/marketplace/plugin/${ plugin.slug }/install/${ selectedSite.slug }`;
 			return page(
 				`/plans/${ selectedSite.slug }?plan=personal-bundle&plugin=${ encodeURIComponent(
-					product_slug
+					productSlug
 				) }&redirect_to=${ encodeURIComponent( installPluginURL ) }`
 			);
 		}
 
-		return page( `/checkout/${ selectedSite.slug }/${ product_slug }#step2` );
+		return page( `/checkout/${ selectedSite.slug }/${ productSlug }#step2` );
 	}
 
 	if ( isPreinstalledPremiumPlugin ) {
 		const checkoutUrl = `/checkout/${ selectedSite.slug }/${ preinstalledPremiumPluginProduct }`;
-		const installUrl = `/marketplace/plugin/${ plugin.slug }/install/${ selectedSite.slug }`;
-		return page( `${ checkoutUrl }?redirect_to=${ installUrl }#step2` );
+		return page( `${ checkoutUrl }?redirect_to=${ installPluginURL }#step2` );
 	}
 
 	// After buying a plan we need to redirect to the plugin install page.
-	const installPluginURL = `/marketplace/plugin/${ plugin.slug }/install/${ selectedSite.slug }`;
 	if ( upgradeAndInstall ) {
 		// Redirect to plans page to let user choose a plan, then redirect to plugin install
 		return page(

@@ -38,6 +38,13 @@
 	a {
 		display: flex;
 	}
+
+	// The icon clips its content with overflow: hidden, so put the keyboard
+	// focus ring on the container — its own outline is not clipped.
+	&:has( a:focus-visible ) {
+		outline: 2px solid var( --studio-blue-50 );
+		outline-offset: 2px;
+	}
 }
 
 .site-icon.is-transient .spinner {

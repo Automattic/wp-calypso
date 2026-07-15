@@ -86,7 +86,11 @@ jest.mock( '@wordpress/data', () => ( {
 				return { getBlocks: () => mockBlocks };
 			}
 			if ( store === 'core/editor' ) {
-				return { getCurrentPostId: () => mockCurrentPostId };
+				return {
+					getCurrentPostId: () => mockCurrentPostId,
+					getCurrentPostType: () => 'post',
+					getRenderingMode: () => 'post-only',
+				};
 			}
 			return {};
 		} ),

@@ -12,4 +12,9 @@
 		border-radius: 6px;
 		object-fit: contain;
 	}
+
+	&:focus-visible {
+		outline: 2px solid var( --studio-blue-50 );
+		outline-offset: 2px;
+	}
 }

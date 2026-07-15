@@ -495,7 +495,7 @@ describe( 'convertToolMessagesToComponents', () => {
 	const stalenessCases: Array< {
 		name: string;
 		data: Record< string, unknown >;
-		currentPostId?: number;
+		currentPostId?: number | string;
 		laterMessages?: UIMessage[];
 		disabled: boolean;
 	} > = [
@@ -514,6 +514,12 @@ describe( 'convertToolMessagesToComponents', () => {
 			name: 'stays enabled when `postId` matches `currentPostId`',
 			data: { type: 'my-component', isCurrent: true, postId: 10 },
 			currentPostId: 10,
+			disabled: false,
+		},
+		{
+			name: 'stays enabled when string `postId` matches `currentPostId`',
+			data: { type: 'my-component', isCurrent: true, postId: 'theme//front-page' },
+			currentPostId: 'theme//front-page',
 			disabled: false,
 		},
 		{

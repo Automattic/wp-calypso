@@ -1,3 +1,8 @@
+import {
+	JetpackLicenseFilter,
+	JetpackLicenseSortField,
+	JetpackLicenseSortDirection,
+} from '@automattic/api-core';
 import { jetpackAgencyLicensesQuery } from '@automattic/api-queries';
 import page from '@automattic/calypso-router';
 import { useQuery } from '@tanstack/react-query';
@@ -8,11 +13,6 @@ import {
 	A4A_WOOPAYMENTS_DASHBOARD_LINK,
 	A4A_WOOPAYMENTS_OVERVIEW_LINK,
 } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
-import {
-	LicenseFilter,
-	LicenseSortField,
-	LicenseSortDirection,
-} from 'calypso/jetpack-cloud/sections/partner-portal/types';
 import { useSelector } from 'calypso/state';
 import { getActiveAgencyId } from 'calypso/state/a8c-for-agencies/agency/selectors';
 
@@ -24,10 +24,10 @@ const WooPaymentsLanding = () => {
 
 	const { data: licenses, isFetched } = useQuery( {
 		...jetpackAgencyLicensesQuery( agencyId ?? 0, {
-			filter: LicenseFilter.Attached,
+			filter: JetpackLicenseFilter.Attached,
 			search: 'woopayments',
-			sortField: LicenseSortField.IssuedAt,
-			sortDirection: LicenseSortDirection.Descending,
+			sortField: JetpackLicenseSortField.IssuedAt,
+			sortDirection: JetpackLicenseSortDirection.Descending,
 		} ),
 		enabled: !! agencyId,
 		refetchOnWindowFocus: false,

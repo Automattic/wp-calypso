@@ -10,7 +10,6 @@ const queryClient = new QueryClient();
 const EMPTY_ARRAY = [];
 
 export default function AgentsManagerWithProvider( {
-	useImageUpload,
 	zendeskConversationTags = EMPTY_ARRAY,
 	zendeskSmoochIntegrationKey,
 	zendeskTicketProductFieldValue,
@@ -22,7 +21,6 @@ export default function AgentsManagerWithProvider( {
 				currentUser={ agentsManagerData.currentUser }
 				site={ agentsManagerData.site }
 				currentSiteId={ agentsManagerData.site?.ID }
-				useImageUpload={ useImageUpload }
 				zendeskConversationTags={ zendeskConversationTags }
 				zendeskSmoochIntegrationKey={ zendeskSmoochIntegrationKey }
 				zendeskTicketProductFieldValue={ zendeskTicketProductFieldValue }
