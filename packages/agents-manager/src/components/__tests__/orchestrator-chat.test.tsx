@@ -3,7 +3,7 @@
  */
 /* eslint-disable import/order -- jest.mock calls must precede imports */
 import { act, fireEvent, render, screen, waitFor } from '@testing-library/react';
-import type { Suggestion } from '@automattic/agenttic-ui';
+import type { Suggestion, SuggestionSelectionContext } from '@automattic/agenttic-ui';
 import type { ComponentProps } from 'react';
 
 const mockUseAgentChat = jest.fn();
@@ -22,7 +22,11 @@ const mockAgentChat = jest.fn(
 		emptyViewSuggestions = [],
 	}: {
 		messages?: unknown[];
-		onSuggestionClick: ( suggestion: Suggestion | string ) => void;
+		onSuggestionClick: (
+			suggestion: Suggestion | string,
+			availableSuggestions?: Suggestion[],
+			selectionContext?: SuggestionSelectionContext
+		) => void;
 		onSubmit: ( message: string ) => void;
 		onAbort?: () => void;
 		error?: string | null;
@@ -32,15 +36,88 @@ const mockAgentChat = jest.fn(
 	} ) => (
 		<>
 			<button
-				onClick={ () =>
-					onSuggestionClick( {
+				onClick={ () => {
+					const suggestion = {
 						id: 'simplify-text',
 						label: 'Simplify text',
 						prompt: 'Simplify this text to make it easier to read',
-					} )
-				}
+					};
+					onSuggestionClick( suggestion, [ suggestion ] );
+				} }
 			>
 				Click suggestion
+			</button>
+			<button
+				onClick={ () => {
+					const suggestion = {
+						id: 'check-grammar',
+						label: 'Check grammar',
+						prompt: 'Check the grammar and spelling of this text',
+						metadata: {
+							blockType: 'core/paragraph',
+							internalValue: 'not-forwarded',
+						},
+					};
+					onSuggestionClick( suggestion, [ suggestion ], {
+						metadata: suggestion.metadata,
+					} );
+				} }
+			>
+				Click block suggestion
+			</button>
+			<button
+				onClick={ () => {
+					const metadata = { blockType: 'core/paragraph' };
+					const option = {
+						id: 'formal',
+						label: 'Formal',
+						value: 'Change the tone of this text to be more formal',
+					};
+					const selectedSuggestion = {
+						id: 'change-tone',
+						label: 'Change tone Formal',
+						prompt: option.value,
+						metadata,
+					};
+					const availableSuggestion = {
+						id: 'change-tone',
+						label: 'Change tone',
+						prompt: '',
+						options: [ option ],
+						metadata,
+					};
+					onSuggestionClick( selectedSuggestion, [ availableSuggestion ], {
+						selectedOption: option,
+						metadata,
+					} );
+				} }
+			>
+				Click block dropdown suggestion
+			</button>
+			<button
+				onClick={ () => {
+					const option = {
+						id: 'seo-title',
+						label: 'Title',
+						value: 'Generate an SEO title for this post',
+					};
+					const selectedSuggestion = {
+						id: 'seo-enhancer',
+						label: 'SEO Enhancer Title',
+						prompt: option.value,
+					};
+					const availableSuggestion = {
+						id: 'seo-enhancer',
+						label: 'SEO Enhancer',
+						prompt: '',
+						options: [ option ],
+					};
+					onSuggestionClick( selectedSuggestion, [ availableSuggestion ], {
+						selectedOption: option,
+					} );
+				} }
+			>
+				Click post dropdown suggestion
 			</button>
 			<button onClick={ () => onSuggestionClick( 'Check the grammar and spelling of this text' ) }>
 				Click string suggestion
@@ -64,7 +141,20 @@ const mockAgentChat = jest.fn(
 			<div data-testid="input-value">{ inputValue }</div>
 			<ul data-testid="empty-view-suggestions">
 				{ emptyViewSuggestions.map( ( suggestion ) => (
-					<li key={ suggestion.id }>{ suggestion.label }</li>
+					<li key={ suggestion.id }>
+						<button
+							type="button"
+							onClick={ () =>
+								onSuggestionClick(
+									suggestion,
+									emptyViewSuggestions,
+									suggestion.metadata ? { metadata: suggestion.metadata } : undefined
+								)
+							}
+						>
+							{ suggestion.label }
+						</button>
+					</li>
 				) ) }
 			</ul>
 		</>
@@ -262,6 +352,12 @@ describe( 'OrchestratorChat', () => {
 		expect( ( listener.mock.calls[ 0 ][ 0 ] as CustomEvent ).detail ).toEqual( {
 			value: 'Simplify this text to make it easier to read',
 			autoSubmit: false,
+			suggestionId: 'simplify-text',
+		} );
+		expect( recordBigSkyTracksEvent ).toHaveBeenCalledWith( 'chat_suggestion_click', {
+			suggestion_text: 'Simplify this text to make it easier to read',
+			suggestion_id: 'simplify-text',
+			available_suggestions: '|simplify-text|',
 		} );
 
 		window.removeEventListener( 'big-sky-inline-suggestion-click', listener );
@@ -299,6 +395,7 @@ describe( 'OrchestratorChat', () => {
 		expect( ( listener.mock.calls[ 0 ][ 0 ] as CustomEvent ).detail ).toEqual( {
 			value: 'Walk me through the attached weekly brief',
 			autoSubmit: true,
+			suggestionId: 'weekly-brief',
 		} );
 		expect( recordBigSkyTracksEvent ).toHaveBeenCalledWith(
 			'chat_suggestion_click',
@@ -306,6 +403,69 @@ describe( 'OrchestratorChat', () => {
 		);
 
 		window.removeEventListener( 'big-sky-inline-suggestion-click', listener );
+	} );
+
+	it( 'records block context on a regular block suggestion', () => {
+		const listener = jest.fn();
+		window.addEventListener( 'big-sky-inline-suggestion-click', listener );
+
+		render( chat() );
+
+		fireEvent.click( screen.getByText( 'Click block suggestion' ) );
+
+		expect( recordBigSkyTracksEvent ).toHaveBeenCalledTimes( 1 );
+		expect( recordBigSkyTracksEvent ).toHaveBeenCalledWith( 'chat_suggestion_click', {
+			suggestion_text: 'Check the grammar and spelling of this text',
+			suggestion_id: 'check-grammar',
+			available_suggestions: '|check-grammar|',
+			block_type: 'core/paragraph',
+		} );
+		expect( ( listener.mock.calls[ 0 ][ 0 ] as CustomEvent ).detail ).toEqual( {
+			value: 'Check the grammar and spelling of this text',
+			autoSubmit: false,
+			suggestionId: 'check-grammar',
+		} );
+
+		window.removeEventListener( 'big-sky-inline-suggestion-click', listener );
+	} );
+
+	it( 'records the selected option and block context for a dropdown suggestion', () => {
+		const listener = jest.fn();
+		window.addEventListener( 'big-sky-inline-suggestion-click', listener );
+
+		render( chat() );
+
+		fireEvent.click( screen.getByText( 'Click block dropdown suggestion' ) );
+
+		expect( recordBigSkyTracksEvent ).toHaveBeenCalledTimes( 1 );
+		expect( recordBigSkyTracksEvent ).toHaveBeenCalledWith( 'chat_suggestion_click', {
+			suggestion_text: 'Change the tone of this text to be more formal',
+			suggestion_id: 'change-tone',
+			available_suggestions: '|change-tone|',
+			option_id: 'formal',
+			block_type: 'core/paragraph',
+		} );
+		expect( ( listener.mock.calls[ 0 ][ 0 ] as CustomEvent ).detail ).toEqual( {
+			value: 'Change the tone of this text to be more formal',
+			autoSubmit: false,
+			suggestionId: 'change-tone',
+		} );
+
+		window.removeEventListener( 'big-sky-inline-suggestion-click', listener );
+	} );
+
+	it( 'records a post-level dropdown option without block context', () => {
+		render( chat() );
+
+		fireEvent.click( screen.getByText( 'Click post dropdown suggestion' ) );
+
+		expect( recordBigSkyTracksEvent ).toHaveBeenCalledTimes( 1 );
+		expect( recordBigSkyTracksEvent ).toHaveBeenCalledWith( 'chat_suggestion_click', {
+			suggestion_text: 'Generate an SEO title for this post',
+			suggestion_id: 'seo-enhancer',
+			available_suggestions: '|seo-enhancer|',
+			option_id: 'seo-title',
+		} );
 	} );
 
 	it( 'passes the floating suggestion limit to external providers', () => {
@@ -322,6 +482,50 @@ describe( 'OrchestratorChat', () => {
 		render( chat( { isDocked: true, useSuggestions: useSuggestions } ) );
 
 		expect( useSuggestions ).toHaveBeenCalledWith( undefined, { suggestionsVisible: true } );
+	} );
+
+	it( 're-registers block suggestions when their block context changes', () => {
+		let blockType = 'core/paragraph';
+		let registeredSuggestions: Suggestion[] = [];
+		const registerSuggestions = jest.fn( ( suggestions: Suggestion[] ) => {
+			registeredSuggestions = suggestions;
+		} );
+		const useSuggestions = jest.fn( () => ( {
+			suggestions: [
+				{
+					id: 'context-switch-test',
+					label: 'Check grammar',
+					prompt: 'Check the grammar and spelling of this text',
+					metadata: { blockType },
+				},
+			],
+		} ) );
+		mockUseAgentChat.mockImplementation( () =>
+			agentChatReturn( {
+				messages: [ userMessage ],
+				suggestions: registeredSuggestions,
+				registerSuggestions,
+			} )
+		);
+
+		const { rerender } = render( chat( { useSuggestions } ) );
+		rerender( chat( { useSuggestions } ) );
+
+		blockType = 'core/heading';
+		rerender( chat( { useSuggestions } ) );
+		rerender( chat( { useSuggestions } ) );
+
+		fireEvent.click( screen.getByText( 'Check grammar' ) );
+
+		expect( registerSuggestions ).toHaveBeenLastCalledWith( [
+			expect.objectContaining( { metadata: { blockType: 'core/heading' } } ),
+		] );
+		expect( recordBigSkyTracksEvent ).toHaveBeenLastCalledWith( 'chat_suggestion_click', {
+			suggestion_text: 'Check the grammar and spelling of this text',
+			suggestion_id: 'context-switch-test',
+			available_suggestions: '|context-switch-test|',
+			block_type: 'core/heading',
+		} );
 	} );
 
 	it( 'keeps showing the provider suggestions in the empty view after the store is cleared', () => {

@@ -7,6 +7,7 @@ import {
 	type MarkdownComponents,
 	type MarkdownExtensions,
 	type Suggestion,
+	type SuggestionSelectionContext,
 	type ChatState,
 	type UploadedImage,
 } from '@automattic/agenttic-ui';
@@ -66,7 +67,8 @@ interface Props {
 	/** Called when a suggestion is clicked. */
 	onSuggestionClick?: (
 		selectedSuggestion: Suggestion | string,
-		availableSuggestions?: Suggestion[]
+		availableSuggestions?: Suggestion[],
+		selectionContext?: SuggestionSelectionContext
 	) => void;
 	/** Called when the typing status changes. */
 	onTypingStatusChange?: ( isTyping: boolean ) => void;

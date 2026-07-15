@@ -1,6 +1,7 @@
 import { getAgentManager, useAgentChat, type UIMessage } from '@automattic/agenttic-client';
 import {
 	type Suggestion,
+	type SuggestionSelectionContext,
 	type MarkdownComponents,
 	type MarkdownExtensions,
 } from '@automattic/agenttic-ui';
@@ -377,7 +378,7 @@ export default function OrchestratorChat( {
 	const dynamicSuggestionsList = dynamicSuggestions?.suggestions ?? [];
 	const replaceEmptyViewSuggestions = dynamicSuggestions?.replaceEmptyViewSuggestions === true;
 	const dynamicSuggestionsKey = JSON.stringify(
-		dynamicSuggestionsList.map( ( s ) => [ s.id, s.label, s.prompt ] )
+		dynamicSuggestionsList.map( ( s ) => [ s.id, s.label, s.prompt, s.metadata?.blockType ] )
 	);
 
 	// Register dynamic suggestions whenever they change
@@ -675,17 +676,30 @@ export default function OrchestratorChat( {
 	}, [] );
 
 	const handleSuggestionClick = useCallback(
-		( suggestion: Suggestion | string, availableSuggestions?: Suggestion[] ) => {
+		(
+			suggestion: Suggestion | string,
+			availableSuggestions?: Suggestion[],
+			selectionContext?: SuggestionSelectionContext
+		) => {
 			const value =
 				typeof suggestion === 'string' ? suggestion : suggestion.prompt ?? suggestion.label;
 
 			const autoSubmit = typeof suggestion !== 'string' && !! suggestion.autoSubmit;
+			const suggestionId = typeof suggestion !== 'string' ? suggestion.id : undefined;
+			const optionId =
+				typeof suggestion !== 'string' ? selectionContext?.selectedOption?.id : undefined;
+			const contextBlockType =
+				typeof suggestion !== 'string' ? selectionContext?.metadata?.blockType : undefined;
+			const blockType =
+				typeof contextBlockType === 'string' && contextBlockType ? contextBlockType : undefined;
 
 			if ( typeof suggestion !== 'string' ) {
 				recordBigSkyTracksEvent( 'chat_suggestion_click', {
 					suggestion_text: suggestion.prompt || '',
 					suggestion_id: suggestion.id || '',
 					available_suggestions: formatSuggestionIds( availableSuggestions ?? [] ),
+					...( optionId ? { option_id: optionId } : {} ),
+					...( blockType ? { block_type: blockType } : {} ),
 				} );
 			}
 
@@ -693,7 +707,13 @@ export default function OrchestratorChat( {
 			// clicked chip) still fire. `autoSubmit` tells the input listener to skip
 			// repopulating the composer, which the AgentUI already submitted and cleared.
 			window.dispatchEvent(
-				new CustomEvent( 'big-sky-inline-suggestion-click', { detail: { value, autoSubmit } } )
+				new CustomEvent( 'big-sky-inline-suggestion-click', {
+					detail: {
+						value,
+						autoSubmit,
+						...( suggestionId ? { suggestionId } : {} ),
+					},
+				} )
 			);
 		},
 		[]
