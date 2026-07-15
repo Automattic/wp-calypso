@@ -1,7 +1,7 @@
 /**
  * @jest-environment jsdom
  */
-import { render, screen, act } from '@testing-library/react';
+import { render, act } from '@testing-library/react';
 import MarketplaceProductInstall from '../index';
 
 const PLUGIN_SLUG = 'give';
@@ -275,31 +275,6 @@ describe( 'MarketplaceProductInstall', () => {
 		await advance( rendered, 3000 );
 		expect( activatePlugin ).toHaveBeenCalledWith( SITE_ID, PLUGIN );
 
-		mockSite.installedPlugin = ACTIVE_PLUGIN;
-		await settle( rendered );
-		expect( window.location.href ).toBe( ACTIVE_LIST_URL );
-	} );
-
-	it( 'offers a plugins-list escape five minutes after activation begins', async () => {
-		const rendered = install();
-		await start( rendered );
-
-		// The plugin appears and is activated, which advances to the activating step.
-		mockSite.installedPlugin = PLUGIN;
-		await settle( rendered );
-		expect( activatePlugin ).toHaveBeenCalledWith( SITE_ID, PLUGIN );
-
-		// Before five minutes there is no escape, and the flow is still going.
-		await advance( rendered, 4 * 60 * 1000 );
-		expect( screen.queryByText( /View all plugins/ ) ).toBeNull();
-
-		// After five minutes it offers the unfiltered plugins list, without stopping the progress.
-		await advance( rendered, 60 * 1000 );
-		const link = screen.getByRole( 'link', { name: /View all plugins/ } );
-		expect( link ).toHaveAttribute( 'href', `${ ADMIN_URL }plugins.php?plugin_status=all` );
-		expect( screen.getByText( /Installing plugin/ ) ).toBeVisible();
-
-		// If the plugin goes active, it redirects and the escape is moot.
 		mockSite.installedPlugin = ACTIVE_PLUGIN;
 		await settle( rendered );
 		expect( window.location.href ).toBe( ACTIVE_LIST_URL );

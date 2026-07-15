@@ -71,10 +71,6 @@ import './style.scss';
 import { MarketplacePluginInstallProps } from './types';
 import type { IAppState } from 'calypso/state/types';
 
-// How long after activation begins before offering a manual way to the plugins list. Not a failure
-// point: polling carries on, and this only appears for someone who does not want to keep waiting.
-const MANUAL_ESCAPE_DELAY = 5 * 60 * 1000;
-
 const MarketplaceProductInstall = ( {
 	pluginSlug = '',
 	themeSlug = '',
@@ -295,9 +291,6 @@ const MarketplaceProductInstall = ( {
 	// Prefer fresh URL when available; if in atomic flow, wait for fresh URL
 	const pluginsUrlFinal = atomicFlow ? pluginsUrlFresh : pluginsUrlFresh || pluginsUrlSelector;
 
-	// The unfiltered list, so an inactive plugin is still visible, for the manual escape below.
-	const allPluginsUrl = freshAdminUrl ? `${ freshAdminUrl }plugins.php?plugin_status=all` : null;
-
 	// For marketplace plugins (e.g. sensei-pro), the atomic transfer + plugin install
 	// is initiated during checkout, not by this component. The wporg data is unavailable,
 	// so atomicFlow is never set. Once the site is atomic, poll for installed plugins
@@ -399,21 +392,6 @@ const MarketplaceProductInstall = ( {
 		isAtomicTransferReady,
 		canReconcilePlugin,
 	] ); // We need to trigger this hook also when `automatedTransferStatus` changes cause the plugin install is done on the background in that case.
-
-	// Five minutes after activation is dispatched — the step advances to activating — reveal a manual
-	// way out. Clears itself if the plugin goes active first, which redirects instead.
-	const [ manualEscapeVisible, setManualEscapeVisible ] = useState( false );
-	useEffect( () => {
-		if ( currentStep !== 2 || pluginActive ) {
-			return;
-		}
-
-		const timer = setTimeout( () => setManualEscapeVisible( true ), MANUAL_ESCAPE_DELAY );
-
-		return () => clearTimeout( timer );
-	}, [ currentStep, pluginActive ] );
-
-	const showManualEscape = manualEscapeVisible && ! pluginActive && !! allPluginsUrl;
 
 	// Validate theme is already active
 	useEffect( () => {
@@ -605,22 +583,11 @@ const MarketplaceProductInstall = ( {
 			</Masterbar>
 			<div className="marketplace-plugin-install__root">
 				{ renderError() || (
-					<div className="marketplace-plugin-install__progress">
-						<MarketplaceProgressBar
-							steps={ steps }
-							currentStep={ currentStep }
-							additionalSteps={ additionalSteps }
-						/>
-						{ showManualEscape && (
-							<Button
-								plain
-								className="marketplace-plugin-install__manual-escape"
-								href={ allPluginsUrl ?? undefined }
-							>
-								{ translate( 'This is taking a while. View all plugins' ) }
-							</Button>
-						) }
-					</div>
+					<MarketplaceProgressBar
+						steps={ steps }
+						currentStep={ currentStep }
+						additionalSteps={ additionalSteps }
+					/>
 				) }
 			</div>
 		</ThemeProvider>
