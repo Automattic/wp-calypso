@@ -21,7 +21,6 @@ import { useWPCOMPlugin } from 'calypso/data/marketplace/use-wpcom-plugins-query
 import Masterbar from 'calypso/layout/masterbar/masterbar';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { useInterval } from 'calypso/lib/interval';
-import { ACTIVATE_PLUGIN, INSTALL_PLUGIN } from 'calypso/lib/plugins/constants';
 import { getProductSlugByPeriodVariation } from 'calypso/lib/plugins/utils';
 import MarketplaceProgressBar from 'calypso/my-sites/marketplace/components/progressbar';
 import useMarketplaceAdditionalSteps from 'calypso/my-sites/marketplace/pages/marketplace-product-install/use-marketplace-additional-steps';
@@ -40,10 +39,9 @@ import {
 } from 'calypso/state/plugins/installed/actions';
 import {
 	getPluginOnSite,
-	isPluginActionStatus,
+	getStatusForPlugin,
 	isRequesting,
 } from 'calypso/state/plugins/installed/selectors-ts';
-import { PLUGIN_INSTALLATION_ERROR } from 'calypso/state/plugins/installed/status/constants';
 import { fetchPluginData as wporgFetchPluginData } from 'calypso/state/plugins/wporg/actions';
 import { getPlugin, isFetched } from 'calypso/state/plugins/wporg/selectors';
 import {
@@ -72,6 +70,9 @@ import {
 import './style.scss';
 import { MarketplacePluginInstallProps } from './types';
 import type { IAppState } from 'calypso/state/types';
+
+// How long to wait for the plugin to install, and then for it to activate, before offering a way out.
+const RECONCILIATION_TIMEOUT = 60 * 1000;
 
 const MarketplaceProductInstall = ( {
 	pluginSlug = '',
@@ -120,27 +121,8 @@ const MarketplaceProductInstall = ( {
 
 	const isFetchingSitePlugins = useSelector( ( state ) => isRequesting( state, siteId ) );
 
-	// Installing keys its status by the wporg id, activating by the installed plugin's, so each
-	// failure is read under its own id and action rather than one guessed from the current step.
-	const installFailed = useSelector( ( state ) =>
-		isPluginActionStatus(
-			state,
-			siteId,
-			wporgPlugin?.id ?? pluginSlug,
-			INSTALL_PLUGIN,
-			PLUGIN_INSTALLATION_ERROR
-		)
-	);
-	const activationFailed = useSelector(
-		( state ) =>
-			!! installedPlugin &&
-			isPluginActionStatus(
-				state,
-				siteId,
-				installedPlugin.id,
-				ACTIVATE_PLUGIN,
-				PLUGIN_INSTALLATION_ERROR
-			)
+	const pluginInstallStatus = useSelector( ( state ) =>
+		getStatusForPlugin( state, siteId, pluginSlug )
 	);
 
 	const productsList = useSelector( getProductsList );
@@ -292,19 +274,17 @@ const MarketplaceProductInstall = ( {
 	// A completed transfer is not a finished installation: it leaves the plugin inactive, and the
 	// plugin only turns up here once polling below has fetched it. Finding it ends the install step.
 	useEffect( () => {
-		const pluginReady =
-			installedPlugin && currentStep === 1 && ( ! isPluginUploadFlow || pluginUploadComplete );
-
-		if ( ! pluginReady ) {
+		if (
+			! installedPlugin ||
+			pluginActive ||
+			currentStep !== 1 ||
+			( isPluginUploadFlow && ! pluginUploadComplete )
+		) {
 			return;
 		}
 
 		setCurrentStep( 2 );
-
-		// A plugin that arrived already active needs no activation request.
-		if ( ! pluginActive ) {
-			dispatch( activatePlugin( siteId, installedPlugin ) );
-		}
+		dispatch( activatePlugin( siteId, installedPlugin ) );
 	}, [
 		installedPlugin,
 		pluginActive,
@@ -354,14 +334,35 @@ const MarketplaceProductInstall = ( {
 	const isTransferredPluginFlow =
 		atomicFlow && transferStates.COMPLETE === automatedTransferStatus && isAtomicTransferReady;
 
-	const isWaitingForPlugin =
-		( isTransferredPluginFlow || isMarketplacePluginFlow ) && ! installedPlugin;
+	// An inactive plugin is missing from the active-only list the flow normally ends on.
+	const allPluginsUrl = freshAdminUrl ? `${ freshAdminUrl }plugins.php?plugin_status=all` : null;
 
-	// Poll until the plugin turns up, which lets the activation effect above run; activating it
-	// updates the store, so nothing is left to poll for. The fetch flag avoids overlapping requests.
-	const shouldFetchPlugin = isWaitingForPlugin && ! isFetchingSitePlugins;
+	const shouldReconcilePlugin = isTransferredPluginFlow || isMarketplacePluginFlow;
+
+	// Two phases with one poll: find the plugin, then wait for it to be active. Its active state comes
+	// from the refreshed site plugins, which is authoritative in a way an activation response is not.
+	const reconciliationPhase = installedPlugin ? 'activation' : 'installation';
+
+	const [ reconciliationTimedOut, setReconciliationTimedOut ] = useState( false );
+
+	// Poll until the plugin is active, not just present: an activation can be reported ambiguously, so
+	// only a refreshed active state ends the wait. The fetch flag avoids overlapping requests.
+	const shouldFetchPlugin =
+		shouldReconcilePlugin && ! pluginActive && ! reconciliationTimedOut && ! isFetchingSitePlugins;
 
 	useInterval( () => dispatch( fetchSitePlugins( siteId ) ), shouldFetchPlugin ? 3000 : null );
+
+	// Each phase gets its own deadline: when the plugin appears the phase changes, discarding the
+	// install timer so activation gets a fresh window. Timing out offers a way out, not a dead end.
+	useEffect( () => {
+		if ( ! shouldReconcilePlugin || pluginActive || reconciliationTimedOut ) {
+			return;
+		}
+
+		const timeout = setTimeout( () => setReconciliationTimedOut( true ), RECONCILIATION_TIMEOUT );
+
+		return () => clearTimeout( timeout );
+	}, [ shouldReconcilePlugin, pluginActive, reconciliationPhase, reconciliationTimedOut ] );
 
 	const canManagePlugins = useSelector( ( state ) => {
 		return siteHasFeature( state, selectedSite?.ID, WPCOM_FEATURES_MANAGE_PLUGINS );
@@ -373,9 +374,10 @@ const MarketplaceProductInstall = ( {
 			// - Click on "Install and activate" button for any plugin on /plugins/<site_name>
 			// - Install with the help of uploading archive of a plugins
 			// - If it's simple site which doesn't support plugins, then installing and activation happens at the same time with upgrading to Business plan
-			// A transferred plugin lands here once polling has found and activated it. It must be active
-			// first: the page this leaves for lists active plugins, and would not show an inactive one.
-			( installedPlugin && pluginActive ) ||
+			// A transferred plugin lands here once the refreshed site plugins report it active. It must be
+			// active first: the page this leaves for lists active plugins, and would not show an inactive
+			// one.
+			installedPlugin?.active ||
 			// Transfer to atomic uploading a zip plugin
 			( uploadedPluginSlug &&
 				isPluginUploadFlow &&
@@ -438,10 +440,38 @@ const MarketplaceProductInstall = ( {
 	}, [ themeSlug, isPluginUploadFlow, translate ] );
 	const additionalSteps = useMarketplaceAdditionalSteps();
 
-	const pluginSetupFailed = installFailed || activationFailed;
+	// Restart the wait. A found-but-inactive plugin is sent back to the activation step so the effect
+	// runs again; a missing one just resumes polling once the deadline is cleared.
+	const retryPluginSetup = () => {
+		setReconciliationTimedOut( false );
+
+		if ( installedPlugin && ! pluginActive ) {
+			setCurrentStep( 1 );
+		}
+	};
 
 	const renderError = () => {
 		// Evaluate error causes in priority order
+		if ( reconciliationTimedOut && ! pluginActive ) {
+			return (
+				<EmptyContent
+					title={ null }
+					line={
+						installedPlugin
+							? translate(
+									'The plugin was installed, but we could not activate it. You can activate it yourself from your plugins.'
+							  )
+							: translate(
+									'The plugin is taking longer than expected to install. You can check your plugins to see whether it arrived.'
+							  )
+					}
+					action={ translate( 'Try again' ) }
+					actionCallback={ retryPluginSetup }
+					secondaryAction={ translate( 'View all plugins' ) }
+					secondaryActionURL={ allPluginsUrl ?? undefined }
+				/>
+			);
+		}
 		if ( nonInstallablePlanError ) {
 			return (
 				<EmptyContent
@@ -554,7 +584,7 @@ const MarketplaceProductInstall = ( {
 		// Catch the rest of the error cases.
 		if (
 			pluginUploadError ||
-			pluginSetupFailed ||
+			pluginInstallStatus?.error ||
 			( atomicFlow && automatedTransferStatus === transferStates.FAILURE )
 		) {
 			return (
