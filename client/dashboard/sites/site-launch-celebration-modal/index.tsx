@@ -6,7 +6,7 @@ import {
 	Button,
 	Modal,
 } from '@wordpress/components';
-import { useEvent } from '@wordpress/compose';
+import { useEvent, useViewportMatch } from '@wordpress/compose';
 import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { copy, globe } from '@wordpress/icons';
@@ -42,6 +42,7 @@ export default function SiteLaunchCelebrationModal( {
 		select: ( data ) => data.filter( ( domain ) => domain.blog_id === site.ID ),
 	} );
 	const copyButtonRef = useRef< HTMLButtonElement >( null );
+	const isMobileViewport = useViewportMatch( 'small', '<' );
 
 	const onOpen = useEvent( () => {
 		externalOnOpen?.();
@@ -88,7 +89,7 @@ export default function SiteLaunchCelebrationModal( {
 
 		if ( ! isPaidPlan && ! hasCustomDomain ) {
 			contentElement = (
-				<Text as="p">
+				<Text as="p" className="flex-shrink-safe">
 					{ createInterpolateElement(
 						__(
 							'Supercharge your website with a <strong>custom address</strong> that matches your blog, brand, or business.'
@@ -101,7 +102,7 @@ export default function SiteLaunchCelebrationModal( {
 			buttonHref = getAddSiteDomainUrl( site.slug );
 		} else if ( isPaidPlan && isBilledMonthly && ! hasCustomDomain ) {
 			contentElement = (
-				<Text as="p">
+				<Text as="p" className="flex-shrink-safe">
 					{ __(
 						'Interested in a custom domain? It’s free for the first year when you switch to annual billing.'
 					) }
@@ -111,7 +112,7 @@ export default function SiteLaunchCelebrationModal( {
 			buttonHref = getAddSiteDomainUrl( site.slug );
 		} else if ( isPaidPlan && ! hasCustomDomain ) {
 			contentElement = (
-				<Text as="p">
+				<Text as="p" className="flex-shrink-safe">
 					{ createInterpolateElement(
 						__(
 							'Your paid plan includes a domain name <strong>free for one year</strong>. Choose one that’s easy to remember and even easier to share.'
@@ -126,21 +127,30 @@ export default function SiteLaunchCelebrationModal( {
 			return null;
 		}
 
-		return (
+		const upsellButton = (
+			<Button
+				variant="primary"
+				href={ buttonHref }
+				onClick={ () =>
+					recordTracksEvent( 'calypso_launchpad_celebration_modal_upsell_clicked', {
+						product_slug: site?.plan?.product_slug,
+					} )
+				}
+			>
+				{ buttonText }
+			</Button>
+		);
+
+		return isMobileViewport ? (
 			<VStack spacing={ 4 } alignment="left">
 				{ contentElement }
-				<Button
-					variant="primary"
-					href={ buttonHref }
-					onClick={ () =>
-						recordTracksEvent( 'calypso_launchpad_celebration_modal_upsell_clicked', {
-							product_slug: site?.plan?.product_slug,
-						} )
-					}
-				>
-					{ buttonText }
-				</Button>
+				{ upsellButton }
 			</VStack>
+		) : (
+			<HStack spacing={ 3 } alignment="bottomRight">
+				{ contentElement }
+				{ upsellButton }
+			</HStack>
 		);
 	};
 
