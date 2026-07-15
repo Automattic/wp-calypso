@@ -333,8 +333,19 @@ describe( 'MarketplaceProductInstall', () => {
 			'/plugins/give/example.wordpress.com'
 		);
 
+		// The next poll drops the plugin from the installed-plugin selector, but the error must not
+		// flip back to the progress screen — it is read from the captured id, not the live plugin.
+		mockSite.installedPlugin = null;
+		mockSite.isFetching = true;
+		await settle( rendered );
+		expect( screen.getByText( /could not activate it/ ) ).toBeVisible();
+		expect( screen.queryByText( /Installing plugin/ ) ).toBeNull();
+		mockSite.isFetching = false;
+
 		// A lost response can follow a server-side success, so polling continues and a later active
 		// refresh still redirects.
+		mockSite.installedPlugin = PLUGIN;
+		await settle( rendered );
 		fetchSitePlugins.mockClear();
 		await advance( rendered, 3000 );
 		expect( fetchSitePlugins ).toHaveBeenCalledWith( SITE_ID );
@@ -364,7 +375,7 @@ describe( 'MarketplaceProductInstall', () => {
 		await expectRedirectsOnceActive( rendered );
 	} );
 
-	it( 'keeps polling on an activation_error, which just means already active', async () => {
+	it( 'surfaces an activation_error, which the API also uses for a missing plugin file', async () => {
 		const rendered = install();
 		await start( rendered );
 
@@ -376,7 +387,9 @@ describe( 'MarketplaceProductInstall', () => {
 		};
 		await settle( rendered );
 
-		// activation_error is not a failure: keep waiting for the refreshed active state.
+		// activation_error is not reliably "already active", so it is surfaced rather than left to poll
+		// forever. Polling still continues, so a genuinely-active plugin redirects on the next refresh.
+		expect( screen.getByText( /could not activate it/ ) ).toBeVisible();
 		fetchSitePlugins.mockClear();
 		await advance( rendered, 3000 );
 		expect( fetchSitePlugins ).toHaveBeenCalledWith( SITE_ID );

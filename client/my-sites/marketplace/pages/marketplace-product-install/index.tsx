@@ -124,27 +124,24 @@ const MarketplaceProductInstall = ( {
 		getStatusForPlugin( state, siteId, pluginSlug )
 	);
 
-	// Guards the one activation this page dispatches. Also scopes the failure below to that attempt:
-	// the status persists by plugin id across the session, so a stale error from an earlier install
-	// must not count here — the checkout-driven flow, which never dispatches its own activation,
-	// would otherwise pick up someone else's failure.
-	const activationAttempted = useRef( false );
+	// The plugin this page activated, if any. Reading the activation status by this captured id keeps
+	// the failure stable while a poll is in flight (the installed-plugin selectors drop a site while
+	// its list is being fetched, so installedPlugin blinks out), and scopes it to our own attempt — a
+	// stale error from an earlier install, or the checkout-driven flow that never activates here, has
+	// no captured plugin and so does not count. The slug also survives the blink for the recovery link.
+	const activatedPlugin = useRef< { id: string; slug: string } | null >( null );
 
-	// Activation records a terminal status under the installed plugin's id. An activation_error just
-	// means the plugin was already active, so keep waiting for the refreshed active state; any other
-	// error is a real failure of our own attempt.
 	const activationStatus = useSelector( ( state ) =>
-		installedPlugin ? getStatusForPlugin( state, siteId, installedPlugin.id ) : undefined
+		activatedPlugin.current
+			? getStatusForPlugin( state, siteId, activatedPlugin.current.id )
+			: undefined
 	);
-	// The declared error type is a string, but a failed activation stores the raw error object.
-	const activationError = activationStatus?.error as string | { error?: string } | undefined;
-	const activationErrorCode =
-		typeof activationError === 'object' ? activationError?.error : activationError;
+	// Every terminal activation error is surfaced: activation_error is not reliably "already active"
+	// (the API returns it for a missing plugin file too), and polling continues regardless, so an
+	// already-active plugin still redirects once the refreshed list confirms it.
 	const activationFailed =
-		activationAttempted.current &&
 		activationStatus?.status === PLUGIN_INSTALLATION_ERROR &&
-		activationStatus.action === ACTIVATE_PLUGIN &&
-		activationErrorCode !== 'activation_error';
+		activationStatus.action === ACTIVATE_PLUGIN;
 
 	const productsList = useSelector( getProductsList );
 	const isProductListFetched = Object.values( productsList ).length > 0;
@@ -356,21 +353,21 @@ const MarketplaceProductInstall = ( {
 	useInterval( () => dispatch( fetchSitePlugins( siteId ) ), shouldFetchPlugin ? 3000 : null );
 
 	// A transfer leaves the plugin installed but inactive, and it only turns up here once polling has
-	// fetched it. The ref (above) dispatches activation once, whatever the plugin state does between
-	// renders.
+	// fetched it. Capturing the id (above) both guards against a second dispatch and records which
+	// plugin we activated.
 	useEffect( () => {
 		if (
 			! canReconcilePlugin ||
 			currentStep !== 1 ||
 			! installedPlugin ||
 			installedPlugin.active ||
-			activationAttempted.current ||
+			activatedPlugin.current !== null ||
 			( isPluginUploadFlow && ! pluginUploadComplete )
 		) {
 			return;
 		}
 
-		activationAttempted.current = true;
+		activatedPlugin.current = { id: installedPlugin.id, slug: installedPlugin.slug };
 		setCurrentStep( 2 );
 		dispatch( activatePlugin( siteId, installedPlugin ) );
 	}, [
@@ -567,14 +564,15 @@ const MarketplaceProductInstall = ( {
 			);
 		}
 		// The plugin is installed, so the generic "upload it again" recovery below does not apply. Point
-		// at the plugin's own page, where it can be activated by hand.
-		if ( activationFailed ) {
+		// at the plugin's own page, where it can be activated by hand. Skip this once it reports active,
+		// which redirects instead — an already-active plugin can report a terminal error first.
+		if ( activationFailed && ! pluginActive ) {
 			return (
 				<EmptyContent
 					title={ null }
 					line={ translate( 'We installed the plugin, but could not activate it.' ) }
 					action={ translate( 'View plugin' ) }
-					actionURL={ `/plugins/${ pluginSlug }/${ selectedSiteSlug }` }
+					actionURL={ `/plugins/${ activatedPlugin.current?.slug }/${ selectedSiteSlug }` }
 				/>
 			);
 		}
