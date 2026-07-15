@@ -165,6 +165,15 @@ describe( 'UnsubscribedFeedsSearchList', () => {
 		).toBeVisible();
 	} );
 
+	it( 'renders nothing when there is no active search term', () => {
+		const { container } = render( <UnsubscribedFeedsSearchList />, { searchTerm: '' } );
+
+		expect(
+			screen.queryByText( "Sorry, we couldn't find any sites related to your search." )
+		).not.toBeInTheDocument();
+		expect( container ).toBeEmptyDOMElement();
+	} );
+
 	it( 'renders error message when there is an error with the api', async () => {
 		nock( 'https://public-api.wordpress.com' )
 			.get( '/rest/v1.1/read/feed' )

@@ -19,8 +19,10 @@ export const UnsubscribedFeedsSearchList = ( { hideTitle = false }: Props ) => {
 	const { searchTerm } = useSiteSubscriptionsQueryProps();
 	const { isPending: isUnsubscribing } = useSiteUnsubscribeMutation();
 	const translate = useTranslate();
+	const hasSearchTerm = Boolean( searchTerm );
 	const { subscriptions, isFetching: isFetchingSubscriptions } = useSiteSubscriptions( {
 		fetchAllPages: true,
+		enabled: hasSearchTerm,
 	} );
 
 	const {
@@ -63,6 +65,12 @@ export const UnsubscribedFeedsSearchList = ( { hideTitle = false }: Props ) => {
 
 		return translate( 'Here are some other sites that match your search:' );
 	};
+
+	// Rendered unconditionally by ReaderSiteSubscriptions, so bail out when there's
+	// no active search — otherwise the empty feed list reads as "no results found".
+	if ( ! hasSearchTerm ) {
+		return null;
+	}
 
 	if ( noFeedsFound ) {
 		return (
