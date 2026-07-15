@@ -17,6 +17,7 @@ import {
 	getSiteSubscriptionsFromData,
 	getSiteSubscriptionsQueryKey,
 	getIsSubscribedFromData,
+	getSiteSubscriptionFromData,
 	getOrganizationSiteSubscriptionsFromData,
 	markSiteSubscriptionUnfollowed,
 	patchSiteSubscription,
@@ -290,6 +291,10 @@ describe( 'follow selectors and cache helpers', () => {
 		expect( getSiteSubscriptionsCountFromData( data ) ).toBe( 2 );
 		expect( getSiteSubscriptionByBlogIdFromData( data, 22 ) ).toBe( beta );
 		expect( getSiteSubscriptionByFeedIdFromData( data, 101 ) ).toBe( alpha );
+		expect( getSiteSubscriptionFromData( data, { feedUrl: 'https://alpha.example/feed/' } ) ).toBe(
+			alpha
+		);
+		expect( getSiteSubscriptionFromData( data, { feedId: 202 } ) ).toBe( beta );
 		expect( getSubscribedSitesFromData( data, null ) ).toEqual( [ alpha ] );
 		expect( getOrganizationSiteSubscriptionsFromData( data, 7 ) ).toEqual( [ beta ] );
 	} );

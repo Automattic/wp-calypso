@@ -1,0 +1,16 @@
+// Base styles shared by every BlockRef consumer (Generate Feedback / Proofreader
+// via FeedbackList, and AER via review-mediation). The block-type icon is added
+// by BlockRef itself, so give it a sensible default size + alignment here;
+// per-surface stylesheets can override (FeedbackList uses a larger pill icon).
+.jetpack-ai-block-ref__icon {
+	display: inline-flex;
+	flex: 0 0 auto;
+	align-items: center;
+	vertical-align: middle;
+
+	svg {
+		width: 16px;
+		height: 16px;
+		fill: currentColor;
+	}
+}

@@ -80,6 +80,15 @@ function appendBlockInRootLayout(
 
 jest.mock( '@wordpress/block-editor', () => ( {
 	store: 'core/block-editor',
+	// BlockRef renders the block-type icon via BlockIcon; a stub keeps these
+	// tests focused on the card structure rather than icon rendering.
+	BlockIcon: () => null,
+} ) );
+
+jest.mock( '@wordpress/blocks', () => ( {
+	// Nothing is registered in the test env, so block chips fall back to their
+	// prettified slug — which is all these tests assert about the block ref.
+	getBlockType: () => undefined,
 } ) );
 
 jest.mock( '@wordpress/components', () => {
@@ -381,60 +390,321 @@ describe( 'PostFeedback', () => {
 		delete ( window as any ).wp;
 	} );
 
-	it( 'renders backend flat feedback items', () => {
+	afterEach( () => {
+		// Some tests stub navigator.clipboard; clear it so it never leaks between tests.
+		delete ( globalThis.navigator as any ).clipboard;
+	} );
+
+	const findButton = ( container: HTMLElement, text: string ) =>
+		Array.from( container.querySelectorAll< HTMLButtonElement >( 'button' ) ).find(
+			( button ) => button.textContent === text
+		);
+
+	const diffTags = ( container: HTMLElement ) =>
+		Array.from( container.querySelectorAll( '.jetpack-ai-feedback-list__diff-tag' ) ).map(
+			( node ) => node.textContent
+		);
+
+	// The Undo button carries an aria-hidden icon, so match it by class.
+	const findUndo = ( container: HTMLElement ) =>
+		container.querySelector< HTMLButtonElement >(
+			'.jetpack-ai-feedback-list__action-button.is-undo'
+		);
+
+	it( 'renders an applicable card: category badge, Current/New diff, enabled Apply change', () => {
+		mockEditorBlocks = [
+			{ clientId: 'block-1', name: 'core/paragraph', attributes: { content: 'created.When' } },
+		];
 		const { container } = render(
 			React.createElement( PostFeedback, {
-				summary: 'The post needs a clearer activity line before publishing.',
+				summary: 'One spacing error was found.',
 				postId: 123,
 				items: [
 					{
-						title: 'Fix duplicated punctuation',
-						feedback: 'The activity sentence has duplicated punctuation.',
-						action: 'Replace the sentence with cleaner wording.',
+						title: 'Spacing',
+						feedback: 'Missing space after the period.',
+						action: 'Add a space between "created." and "When".',
 						block_index: 0,
-						current_text: 'There will be a lot of activities for children..',
-						suggested_text: 'There will be activities for children.',
-					},
-					{
-						title: 'Add missing event details',
-						feedback: 'The announcement would be more useful with confirmed event details.',
-						action: 'Add the time, venue, and registration details once confirmed.',
-						block_index: null,
-						requires_manual: true,
-						manual_reason: 'Needs confirmed event details from the author.',
+						current_text: 'created.When',
+						suggested_text: 'created. When',
 					},
 				],
 			} )
 		);
 
-		expect( container.textContent ).toContain( 'The post needs a clearer activity line' );
-		expect( container.textContent ).toContain( 'Summary' );
-		expect( container.textContent ).toContain( 'Feedback' );
-		expect( container.textContent ).toContain( 'Fix duplicated punctuation' );
-		expect( container.textContent ).toContain( 'Suggested rewrite' );
-		expect( container.textContent ).toContain(
-			'Needs manual edit: Needs confirmed event details from the author.'
-		);
-		const manualReasons = container.querySelectorAll( '.jetpack-ai-feedback-list__manual-reason' );
-		const acceptButtons = container.querySelectorAll(
-			'.jetpack-ai-feedback-list__action-button.is-primary'
-		);
-		expect( acceptButtons[ 1 ].hasAttribute( 'disabled' ) ).toBe( true );
-		expect( acceptButtons[ 1 ].getAttribute( 'aria-describedby' ) ).toBe(
-			manualReasons[ 1 ]?.getAttribute( 'id' )
-		);
+		const badge = container.querySelector( '.jetpack-ai-feedback-list__item-badge' );
+		expect( badge?.textContent ).toBe( 'Spacing (1/1)' );
+		// Applicable card: no "Manual edit" tag.
+		expect( container.querySelector( '.jetpack-ai-feedback-list__manual-tag' ) ).toBeNull();
+
+		// Why on top, then the Current/New diff.
+		expect( diffTags( container ) ).toEqual( [ 'Why', 'Current', 'New' ] );
+		expect( container.textContent ).toContain( 'Missing space after the period.' );
+		expect( container.querySelector( 'del' )?.textContent ).toBe( 'created.When' );
+		expect( container.querySelector( 'ins' )?.textContent ).toBe( 'created. When' );
+
+		const apply = findButton( container, 'Apply change' );
+		expect( apply?.classList.contains( 'is-primary' ) ).toBe( true );
+		expect( apply?.hasAttribute( 'disabled' ) ).toBe( false );
+		expect( findButton( container, 'Dismiss' ) ).toBeDefined();
+		expect( findButton( container, 'Go to section' ) ).toBeUndefined();
 	} );
 
-	it( 'does not duplicate the manual edit label when no manual reason is provided', () => {
+	it( 'renders an advisory Manual edit card: Why/Suggestion body, Go to section, no Apply', () => {
+		mockEditorBlocks = [
+			{ clientId: 'block-1', name: 'core/heading', attributes: { content: 'Untitled' } },
+		];
 		const { container } = render(
 			React.createElement( PostFeedback, {
 				summary: 'Summary.',
 				postId: 123,
 				items: [
 					{
-						title: 'Manual item',
-						feedback: 'Feedback.',
-						action: 'Action.',
+						title: 'Structure',
+						feedback: 'The post has no saved title, which hurts SEO and discoverability.',
+						action: "Add a descriptive title such as 'An Introduction to Ethics'.",
+						block_index: 0,
+						current_text: '',
+						suggested_text: '',
+						requires_manual: true,
+						manual_reason: 'Needs the author to choose a title.',
+					},
+				],
+			} )
+		);
+
+		// The category badge stays; "Manual edit" is a separate tag above the header.
+		const badge = container.querySelector( '.jetpack-ai-feedback-list__item-badge' );
+		expect( badge?.textContent ).toBe( 'Structure (1/1)' );
+		expect( container.querySelector( '.jetpack-ai-feedback-list__manual-tag' )?.textContent ).toBe(
+			'Manual edit'
+		);
+
+		expect( diffTags( container ) ).toEqual( [ 'Why', 'Suggestion' ] );
+		expect( container.textContent ).toContain(
+			'The post has no saved title, which hurts SEO and discoverability.'
+		);
+		expect( container.textContent ).toContain(
+			"Add a descriptive title such as 'An Introduction to Ethics'."
+		);
+		// No exact diff on a manual card.
+		expect( container.querySelector( 'del' ) ).toBeNull();
+
+		expect( findButton( container, 'Apply change' ) ).toBeUndefined();
+		const goto = findButton( container, 'Go to section' );
+		expect( goto?.classList.contains( 'is-primary' ) ).toBe( true );
+		expect( goto?.hasAttribute( 'disabled' ) ).toBe( false );
+		expect( findButton( container, 'Dismiss' ) ).toBeDefined();
+	} );
+
+	it( 'copies the Suggestion text and confirms with Copied on an advisory card', async () => {
+		const writeText = jest.fn().mockResolvedValue( undefined );
+		Object.defineProperty( globalThis.navigator, 'clipboard', {
+			configurable: true,
+			value: { writeText },
+		} );
+		mockEditorBlocks = [
+			{ clientId: 'block-1', name: 'core/paragraph', attributes: { content: 'A paragraph.' } },
+		];
+
+		const { container } = render(
+			React.createElement( PostFeedback, {
+				summary: 'Summary.',
+				postId: 123,
+				items: [
+					{
+						title: 'Structure',
+						feedback: 'The section reads awkwardly.',
+						action: 'Split it into two paragraphs.',
+						block_index: 0,
+						requires_manual: true,
+					},
+				],
+			} )
+		);
+
+		const copyButton = findButton( container, 'Copy' ) as HTMLButtonElement;
+		expect( copyButton ).toBeDefined();
+
+		await act( async () => {
+			fireEvent.click( copyButton );
+			await Promise.resolve();
+		} );
+
+		// Copies the Suggestion (the item's action), and confirms.
+		expect( writeText ).toHaveBeenCalledWith( 'Split it into two paragraphs.' );
+		expect( findButton( container, 'Copied' ) ).toBeDefined();
+	} );
+
+	it( 'copies the replacement text (not the action) on a card that can no longer be applied', async () => {
+		const writeText = jest.fn().mockResolvedValue( undefined );
+		Object.defineProperty( globalThis.navigator, 'clipboard', {
+			configurable: true,
+			value: { writeText },
+		} );
+		// A query block can't host the exact fix, so the card becomes Manual edit and
+		// shows the Suggestion; Copy still copies the replacement (New) text.
+		mockEditorBlocks = [ { clientId: 'block-1', name: 'core/query', attributes: { queryId: 1 } } ];
+
+		const { container } = render(
+			React.createElement( PostFeedback, {
+				summary: 'Summary.',
+				postId: 123,
+				items: [
+					{
+						title: 'Spacing',
+						feedback: 'Missing space.',
+						action: 'Add a space.',
+						block_index: 0,
+						current_text: 'a.b',
+						suggested_text: 'a. b',
+					},
+				],
+			} )
+		);
+
+		await act( async () => {
+			fireEvent.click( findButton( container, 'Copy' ) as HTMLButtonElement );
+			await Promise.resolve();
+		} );
+
+		// Copies the New (suggested_text), not the rationale/action.
+		expect( writeText ).toHaveBeenCalledWith( 'a. b' );
+	} );
+
+	it( 'omits Copy when the clipboard API is unavailable, keeping Go to section + Dismiss', () => {
+		// jsdom exposes no navigator.clipboard, so Copy must not render a dead button.
+		mockEditorBlocks = [
+			{ clientId: 'block-1', name: 'core/paragraph', attributes: { content: 'A paragraph.' } },
+		];
+		const { container } = render(
+			React.createElement( PostFeedback, {
+				summary: 'Summary.',
+				postId: 123,
+				items: [
+					{
+						title: 'Structure',
+						feedback: 'The section reads awkwardly.',
+						action: 'Split it into two paragraphs.',
+						block_index: 0,
+						requires_manual: true,
+					},
+				],
+			} )
+		);
+
+		expect( findButton( container, 'Copy' ) ).toBeUndefined();
+		expect( findButton( container, 'Go to section' ) ).toBeDefined();
+		expect( findButton( container, 'Dismiss' ) ).toBeDefined();
+	} );
+
+	const copyButtons = ( container: HTMLElement ) =>
+		Array.from(
+			container.querySelectorAll< HTMLButtonElement >(
+				'.jetpack-ai-feedback-list__action-button.is-copy'
+			)
+		).map( ( button ) => button.textContent );
+
+	const twoAdvisoryItems = [
+		{
+			title: 'One',
+			feedback: 'f',
+			action: 'first suggestion',
+			block_index: 0,
+			requires_manual: true,
+		},
+		{
+			title: 'Two',
+			feedback: 'f',
+			action: 'second suggestion',
+			block_index: 1,
+			requires_manual: true,
+		},
+	];
+
+	it( 'reverts a previous Copied when a different item is copied', async () => {
+		const writeText = jest.fn().mockResolvedValue( undefined );
+		Object.defineProperty( globalThis.navigator, 'clipboard', {
+			configurable: true,
+			value: { writeText },
+		} );
+		mockEditorBlocks = [
+			{ clientId: 'block-1', name: 'core/paragraph', attributes: { content: 'A.' } },
+			{ clientId: 'block-2', name: 'core/paragraph', attributes: { content: 'B.' } },
+		];
+
+		const { container } = render(
+			React.createElement( PostFeedback, {
+				summary: 'Summary.',
+				postId: 123,
+				items: twoAdvisoryItems,
+			} )
+		);
+		const clickCopy = ( index: number ) =>
+			act( () => {
+				fireEvent.click(
+					container.querySelectorAll< HTMLButtonElement >(
+						'.jetpack-ai-feedback-list__action-button.is-copy'
+					)[ index ]
+				);
+				return Promise.resolve();
+			} );
+
+		await clickCopy( 0 );
+		expect( copyButtons( container ) ).toEqual( [ 'Copied', 'Copy' ] );
+
+		await clickCopy( 1 );
+		// Only the newly-copied item shows Copied; the first reverts.
+		expect( copyButtons( container ) ).toEqual( [ 'Copy', 'Copied' ] );
+	} );
+
+	it( 'reverts Copied back to Copy after the reset delay', async () => {
+		jest.useFakeTimers();
+		const writeText = jest.fn().mockResolvedValue( undefined );
+		Object.defineProperty( globalThis.navigator, 'clipboard', {
+			configurable: true,
+			value: { writeText },
+		} );
+		mockEditorBlocks = [
+			{ clientId: 'block-1', name: 'core/paragraph', attributes: { content: 'A.' } },
+			{ clientId: 'block-2', name: 'core/paragraph', attributes: { content: 'B.' } },
+		];
+
+		const { container } = render(
+			React.createElement( PostFeedback, {
+				summary: 'Summary.',
+				postId: 123,
+				items: twoAdvisoryItems,
+			} )
+		);
+
+		await act( async () => {
+			fireEvent.click(
+				container.querySelector< HTMLButtonElement >(
+					'.jetpack-ai-feedback-list__action-button.is-copy'
+				) as HTMLButtonElement
+			);
+			await Promise.resolve();
+		} );
+		expect( copyButtons( container ) ).toEqual( [ 'Copied', 'Copy' ] );
+
+		await act( async () => {
+			jest.advanceTimersByTime( 2500 );
+		} );
+		expect( copyButtons( container ) ).toEqual( [ 'Copy', 'Copy' ] );
+		jest.useRealTimers();
+	} );
+
+	it( 'shows Go to section but disables it for a post-wide advisory item', () => {
+		const { container } = render(
+			React.createElement( PostFeedback, {
+				summary: 'Summary.',
+				postId: 123,
+				items: [
+					{
+						title: 'Structure',
+						feedback: 'The post has no saved title.',
+						action: 'Add a descriptive title.',
 						block_index: null,
 						requires_manual: true,
 					},
@@ -442,13 +712,151 @@ describe( 'PostFeedback', () => {
 			} )
 		);
 
-		expect( container.textContent ).toContain(
-			'Needs manual edit: This item cannot be applied automatically.'
+		expect( container.querySelector( '.jetpack-ai-feedback-list__block-ref' )?.textContent ).toBe(
+			'Post-wide'
 		);
-		expect( container.textContent ).not.toContain( 'Needs manual edit: Needs manual edit.' );
+		const goto = findButton( container, 'Go to section' );
+		expect( goto ).toBeDefined();
+		expect( goto?.hasAttribute( 'disabled' ) ).toBe( true );
 	} );
 
-	it( 'marks the item failed when the block editor store cannot apply the edit', async () => {
+	it( 'anchors the editor to the block when Go to section is clicked', () => {
+		mockEditorBlocks = [
+			{ clientId: 'block-1', name: 'core/paragraph', attributes: { content: 'A paragraph.' } },
+		];
+		const { layout, block } = appendBlockInRootLayout( 'block-1' );
+		const { container } = render(
+			React.createElement( PostFeedback, {
+				summary: 'Summary.',
+				postId: 123,
+				items: [
+					{
+						title: 'Clarity',
+						feedback: 'Unclear phrasing.',
+						action: 'Rephrase for clarity.',
+						block_index: 0,
+						requires_manual: true,
+					},
+				],
+			} )
+		);
+
+		( findButton( container, 'Go to section' ) as HTMLButtonElement ).click();
+		expect( mockSelectBlock ).toHaveBeenCalledWith( 'block-1' );
+		expect( block.scrollIntoView ).toHaveBeenCalled();
+		expect( layout.classList.contains( 'is-focus-mode' ) ).toBe( true );
+	} );
+
+	it( 'never renders a dead Apply: an unappliable applicable card offers Go to section', () => {
+		// A query block has no editable text target, so the exact fix cannot be
+		// applied, but the block still exists so navigation stays available.
+		mockEditorBlocks = [ { clientId: 'block-1', name: 'core/query', attributes: { queryId: 1 } } ];
+		const { container } = render(
+			React.createElement( PostFeedback, {
+				summary: 'Summary.',
+				postId: 123,
+				items: [
+					{
+						title: 'Spacing',
+						feedback: 'Missing space.',
+						action: 'Add a space.',
+						block_index: 0,
+						current_text: 'a.b',
+						suggested_text: 'a. b',
+					},
+				],
+			} )
+		);
+
+		expect( container.querySelector( '.jetpack-ai-feedback-list__item-badge' )?.textContent ).toBe(
+			'Spacing (1/1)'
+		);
+		// No editable target → Manual edit, so the body is Why + Suggestion, not a diff.
+		expect( diffTags( container ) ).toEqual( [ 'Why', 'Suggestion' ] );
+		expect( findButton( container, 'Apply change' ) ).toBeUndefined();
+		const goto = findButton( container, 'Go to section' );
+		expect( goto ).toBeDefined();
+		expect( goto?.hasAttribute( 'disabled' ) ).toBe( false );
+		// Frontend-unappliable reads as Manual edit, with a note explaining why.
+		expect( container.querySelector( '.jetpack-ai-feedback-list__manual-tag' )?.textContent ).toBe(
+			'Manual edit'
+		);
+		expect(
+			container.querySelector( '.jetpack-ai-feedback-list__reason-note' )?.textContent
+		).toContain( 'unsupported edit target' );
+	} );
+
+	it( 'does not tag a card "Manual edit" just because the review is stale', () => {
+		// postId 999 !== the editor's 123 → the whole review is stale. The editor is
+		// on a DIFFERENT post whose block does NOT contain the item's source text, so
+		// the item WOULD look "manual" (source changed) if the tag weren't gated on
+		// !isPostStale. It must still render without the tag / reason note.
+		mockEditorBlocks = [
+			{
+				clientId: 'block-1',
+				name: 'core/paragraph',
+				attributes: { content: 'A different paragraph.' },
+			},
+		];
+		const { container } = render(
+			React.createElement( PostFeedback, {
+				summary: 'Summary.',
+				postId: 999,
+				items: [
+					{
+						title: 'Spacing',
+						feedback: 'Missing space after the period.',
+						action: 'Add a space.',
+						block_index: 0,
+						current_text: 'created.When',
+						suggested_text: 'created. When',
+					},
+				],
+			} )
+		);
+
+		// Stale banner is shown, but the card keeps its category badge and no tag.
+		expect( container.textContent ).toContain( 'Feedback context changed' );
+		expect( container.querySelector( '.jetpack-ai-feedback-list__item-badge' )?.textContent ).toBe(
+			'Spacing (1/1)'
+		);
+		expect( container.querySelector( '.jetpack-ai-feedback-list__manual-tag' ) ).toBeNull();
+		expect( container.querySelector( '.jetpack-ai-feedback-list__reason-note' ) ).toBeNull();
+		// Stale → not one-click applicable: Go to section instead of Apply change.
+		expect( findButton( container, 'Apply change' ) ).toBeUndefined();
+	} );
+
+	it( 'uses the Why/Suggestion body with a category badge for a non-manual item without a rewrite', () => {
+		mockEditorBlocks = [
+			{ clientId: 'block-1', name: 'core/paragraph', attributes: { content: 'A paragraph.' } },
+		];
+		const { container } = render(
+			React.createElement( PostFeedback, {
+				summary: 'Summary.',
+				postId: 123,
+				items: [
+					{
+						title: 'Clarity',
+						feedback: 'This sentence is hard to follow.',
+						action: 'Split it into two shorter sentences.',
+						block_index: 0,
+						// No current_text/suggested_text and not requires_manual: not an
+						// exact diff, but still a category (not "Manual edit").
+					},
+				],
+			} )
+		);
+
+		expect( container.querySelector( '.jetpack-ai-feedback-list__item-badge' )?.textContent ).toBe(
+			'Clarity (1/1)'
+		);
+		expect( diffTags( container ) ).toEqual( [ 'Why', 'Suggestion' ] );
+		expect( container.querySelector( 'del' ) ).toBeNull();
+		expect( findButton( container, 'Apply change' ) ).toBeUndefined();
+		expect( findButton( container, 'Go to section' )?.hasAttribute( 'disabled' ) ).toBe( false );
+	} );
+
+	it( 'marks the item failed and offers Retry when the edit cannot be committed', async () => {
 		mockEditorBlocks = [
 			{
 				clientId: 'block-1',
@@ -475,7 +883,7 @@ describe( 'PostFeedback', () => {
 				postId: 123,
 				items: [
 					{
-						title: 'Apply item',
+						title: 'Spacing',
 						feedback: 'Feedback.',
 						action: 'Action.',
 						block_index: 0,
@@ -485,28 +893,42 @@ describe( 'PostFeedback', () => {
 				],
 			} )
 		);
-		const acceptButton = Array.from( container.querySelectorAll( 'button' ) ).find(
-			( button ) => button.textContent === 'Accept'
-		);
-		expect( acceptButton ).toBeDefined();
 
 		await act( async () => {
-			fireEvent.click( acceptButton as HTMLButtonElement );
+			fireEvent.click( findButton( container, 'Apply change' ) as HTMLButtonElement );
 			await Promise.resolve();
 		} );
 
-		expect( container.textContent ).toContain( 'Retry' );
+		expect( findButton( container, 'Retry' ) ).toBeDefined();
 		expect( container.textContent ).toContain( 'Could not apply this rewrite.' );
 	} );
 
-	it( 'explains when a referenced block has no editable text target', () => {
+	it( 'labels the section with its suggestion count', () => {
+		const { container } = render(
+			React.createElement( PostFeedback, {
+				summary: 'Summary.',
+				postId: 123,
+				items: [
+					{ title: 'A', feedback: 'f', action: 'a', block_index: null, requires_manual: true },
+					{ title: 'B', feedback: 'f', action: 'a', block_index: null, requires_manual: true },
+				],
+			} )
+		);
+
+		const headings = Array.from( container.querySelectorAll( 'section > h3' ) ).map(
+			( node ) => node.textContent
+		);
+		expect( headings ).toContain( 'Suggested edits (2)' );
+	} );
+
+	it( 'keeps the header and shows an undoable Applied row after applying, then restores on Undo', async () => {
+		jest.useFakeTimers();
 		mockEditorBlocks = [
-			{
-				clientId: 'block-1',
-				name: 'core/query',
-				attributes: { queryId: 1 },
-			},
+			{ clientId: 'block-1', name: 'core/paragraph', attributes: { content: 'children..' } },
 		];
+		installWpDataMockWithBlockEditor( {
+			'block-1': { name: 'core/paragraph', attributes: { content: 'children..' } },
+		} );
 
 		const { container } = render(
 			React.createElement( PostFeedback, {
@@ -514,22 +936,80 @@ describe( 'PostFeedback', () => {
 				postId: 123,
 				items: [
 					{
-						title: 'Unsupported block item',
-						feedback: 'Feedback.',
-						action: 'Action.',
+						title: 'Punctuation',
+						feedback: 'Doubled period.',
+						action: 'Remove the extra period.',
 						block_index: 0,
-						current_text: 'Original list content.',
-						suggested_text: 'Updated list content.',
+						current_text: 'children..',
+						suggested_text: 'children.',
 					},
 				],
 			} )
 		);
 
-		expect( container.textContent ).toContain( 'Needs manual edit - unsupported edit target.' );
-		const acceptButton = Array.from( container.querySelectorAll( 'button' ) ).find(
-			( button ) => button.textContent === 'Accept'
+		await act( async () => {
+			fireEvent.click( findButton( container, 'Apply change' ) as HTMLButtonElement );
+		} );
+		// applyReviewEdit commits the edit behind an 800ms shimmer delay.
+		await act( async () => {
+			jest.advanceTimersByTime( 1000 );
+		} );
+
+		const item = container.querySelector( '.jetpack-ai-feedback-list__item' );
+		expect( item?.classList.contains( 'is-resolved' ) ).toBe( true );
+		// The header (badge) is retained; the diff body is gone.
+		expect( container.querySelector( '.jetpack-ai-feedback-list__item-badge' )?.textContent ).toBe(
+			'Punctuation (1/1)'
 		);
-		expect( acceptButton?.hasAttribute( 'disabled' ) ).toBe( true );
+		expect( container.querySelector( '.jetpack-ai-feedback-list__diff' ) ).toBeNull();
+		expect(
+			container.querySelector( '.jetpack-ai-feedback-list__resolution.is-accepted' )?.textContent
+		).toContain( 'Applied' );
+		expect( findUndo( container ) ).not.toBeNull();
+
+		await act( async () => {
+			fireEvent.click( findUndo( container ) as HTMLButtonElement );
+		} );
+		expect( findButton( container, 'Apply change' ) ).toBeDefined();
+		expect( container.querySelector( '.jetpack-ai-feedback-list__resolution' ) ).toBeNull();
+		jest.useRealTimers();
+	} );
+
+	it( 'collapses to an undoable Dismissed row on Dismiss and restores on Undo', () => {
+		mockEditorBlocks = [
+			{ clientId: 'block-1', name: 'core/paragraph', attributes: { content: 'children..' } },
+		];
+		const { container } = render(
+			React.createElement( PostFeedback, {
+				summary: 'Summary.',
+				postId: 123,
+				items: [
+					{
+						title: 'Punctuation',
+						feedback: 'Doubled period.',
+						action: 'Remove the extra period.',
+						block_index: 0,
+						current_text: 'children..',
+						suggested_text: 'children.',
+					},
+				],
+			} )
+		);
+
+		act( () => {
+			( findButton( container, 'Dismiss' ) as HTMLButtonElement ).click();
+		} );
+
+		expect(
+			container.querySelector( '.jetpack-ai-feedback-list__resolution.is-dismissed' )?.textContent
+		).toContain( 'Dismissed' );
+		expect( container.querySelector( '.jetpack-ai-feedback-list__item-badge' ) ).not.toBeNull();
+		expect( findButton( container, 'Apply change' ) ).toBeUndefined();
+
+		act( () => {
+			( findUndo( container ) as HTMLButtonElement ).click();
+		} );
+		expect( findButton( container, 'Apply change' ) ).toBeDefined();
 	} );
 
 	it( 'toggles sidebar-owned block focus from the referenced block', () => {
@@ -714,9 +1194,9 @@ describe( 'PostFeedback', () => {
 		expect( layoutElement.classList.contains( 'is-focus-mode' ) ).toBe( true );
 		mockClearSelectedBlock.mockClear();
 
-		const dismissButton = container.querySelectorAll(
-			'.jetpack-ai-feedback-list__action-button'
-		)[ 1 ] as HTMLButtonElement;
+		const dismissButton = Array.from(
+			container.querySelectorAll< HTMLButtonElement >( '.jetpack-ai-feedback-list__action-button' )
+		).find( ( button ) => button.textContent === 'Dismiss' ) as HTMLButtonElement;
 		fireEvent.mouseDown( dismissButton );
 		act( () => {
 			dismissButton.click();
@@ -768,6 +1248,115 @@ describe( 'PostFeedback', () => {
 			)
 		).toEqual( [ 'true', 'true', 'true' ] );
 	} );
+
+	const findApplyAllButton = ( container: HTMLElement ) =>
+		Array.from( container.querySelectorAll( 'button' ) ).find(
+			( button ) => button.textContent?.startsWith( 'Apply all' )
+		);
+
+	it( 'shows an enabled Apply all button when one-click rewrites are available', () => {
+		mockEditorBlocks = [
+			{
+				clientId: 'block-1',
+				name: 'core/paragraph',
+				attributes: { content: 'There will be a lot of activities for children..' },
+			},
+		];
+
+		const { container } = render(
+			React.createElement( PostFeedback, {
+				summary: 'Summary.',
+				postId: 123,
+				items: [
+					{
+						title: 'Punctuation',
+						feedback: 'Doubled period.',
+						action: 'Remove the extra period.',
+						block_index: 0,
+						current_text: 'There will be a lot of activities for children..',
+						suggested_text: 'There will be a lot of activities for children.',
+					},
+				],
+			} )
+		);
+
+		const applyAll = findApplyAllButton( container );
+		expect( applyAll ).toBeTruthy();
+		expect( applyAll?.hasAttribute( 'disabled' ) ).toBe( false );
+	} );
+
+	it( 'hides Apply all when no one-click rewrites are available', () => {
+		const { container } = render(
+			React.createElement( PostFeedback, {
+				summary: 'Summary.',
+				postId: 123,
+				items: [
+					{
+						title: 'Manual item',
+						feedback: 'Feedback.',
+						action: 'Action.',
+						block_index: null,
+						requires_manual: true,
+						manual_reason: 'Needs author review.',
+					},
+				],
+			} )
+		);
+
+		expect( findApplyAllButton( container ) ).toBeUndefined();
+	} );
+
+	it( 'applies pending one-click rewrites and marks them Applied on Apply all', async () => {
+		jest.useFakeTimers();
+		mockEditorBlocks = [
+			{
+				clientId: 'block-1',
+				name: 'core/paragraph',
+				attributes: { content: 'There will be a lot of activities for children..' },
+			},
+		];
+		const { blockUpdates } = installWpDataMockWithBlockEditor( {
+			'block-1': {
+				name: 'core/paragraph',
+				attributes: { content: 'There will be a lot of activities for children..' },
+			},
+		} );
+
+		const { container } = render(
+			React.createElement( PostFeedback, {
+				summary: 'Summary.',
+				postId: 123,
+				items: [
+					{
+						title: 'Punctuation',
+						feedback: 'Doubled period.',
+						action: 'Remove the extra period.',
+						block_index: 0,
+						current_text: 'There will be a lot of activities for children..',
+						suggested_text: 'There will be a lot of activities for children.',
+					},
+				],
+			} )
+		);
+
+		const applyAll = findApplyAllButton( container ) as HTMLButtonElement;
+		await act( async () => {
+			fireEvent.click( applyAll );
+		} );
+		// applyReviewEdit commits the edit behind an 800ms shimmer delay.
+		await act( async () => {
+			jest.advanceTimersByTime( 1000 );
+		} );
+
+		expect( blockUpdates ).toEqual( [
+			{
+				clientId: 'block-1',
+				attrs: { content: 'There will be a lot of activities for children.' },
+			},
+		] );
+		expect( container.textContent ).toContain( 'Applied' );
+		jest.useRealTimers();
+	} );
 } );
 
 describe( 'Proofread', () => {
@@ -799,16 +1388,16 @@ describe( 'Proofread', () => {
 		expect( container.textContent ).toContain( 'Found a duplicated period.' );
 		expect( container.textContent ).toContain( 'Spelling and grammar check complete.' );
 		expect( container.textContent ).toContain( 'Reviews your last saved version.' );
-		expect( container.textContent ).toContain( 'Spelling & grammar' );
+		expect( container.textContent ).toContain( 'Suggested edits' );
 		expect( container.textContent ).toContain( 'Punctuation' );
 	} );
 
-	const findAcceptAllButton = ( container: HTMLElement ) =>
+	const findApplyAllButton = ( container: HTMLElement ) =>
 		Array.from( container.querySelectorAll( 'button' ) ).find(
-			( button ) => button.textContent?.startsWith( 'Accept all' )
+			( button ) => button.textContent?.startsWith( 'Apply all' )
 		);
 
-	it( 'shows an enabled Accept all button when one-click fixes are available', () => {
+	it( 'shows an enabled Apply all button when one-click fixes are available', () => {
 		mockEditorBlocks = [
 			{
 				clientId: 'block-1',
@@ -834,12 +1423,12 @@ describe( 'Proofread', () => {
 			} )
 		);
 
-		const acceptAll = findAcceptAllButton( container );
+		const acceptAll = findApplyAllButton( container );
 		expect( acceptAll ).toBeTruthy();
 		expect( acceptAll?.hasAttribute( 'disabled' ) ).toBe( false );
 	} );
 
-	it( 'hides Accept all when no one-click fixes are available', () => {
+	it( 'hides Apply all when no one-click fixes are available', () => {
 		const { container } = render(
 			React.createElement( Proofread, {
 				summary: 'Summary.',
@@ -857,7 +1446,7 @@ describe( 'Proofread', () => {
 			} )
 		);
 
-		expect( findAcceptAllButton( container ) ).toBeUndefined();
+		expect( findApplyAllButton( container ) ).toBeUndefined();
 	} );
 
 	const findButtonByText = ( container: HTMLElement, text: string ) =>
@@ -865,7 +1454,7 @@ describe( 'Proofread', () => {
 			( button ) => button.textContent === text
 		) as HTMLButtonElement | undefined;
 
-	it( 'applies pending one-click items and marks them Applied on Accept all', async () => {
+	it( 'applies pending one-click items and marks them Applied on Apply all', async () => {
 		jest.useFakeTimers();
 		mockEditorBlocks = [
 			{
@@ -898,7 +1487,7 @@ describe( 'Proofread', () => {
 			} )
 		);
 
-		const acceptAll = findAcceptAllButton( container ) as HTMLButtonElement;
+		const acceptAll = findApplyAllButton( container ) as HTMLButtonElement;
 		await act( async () => {
 			fireEvent.click( acceptAll );
 		} );
@@ -918,7 +1507,7 @@ describe( 'Proofread', () => {
 		jest.useRealTimers();
 	} );
 
-	it( 'shows a steady Accepting state while the bulk run is in progress', async () => {
+	it( 'shows a steady Applying state while the bulk run is in progress', async () => {
 		jest.useFakeTimers();
 		mockEditorBlocks = [
 			{ clientId: 'block-1', name: 'core/paragraph', attributes: { content: 'children..' } },
@@ -944,23 +1533,23 @@ describe( 'Proofread', () => {
 			} )
 		);
 
-		const acceptAll = findAcceptAllButton( container ) as HTMLButtonElement;
+		const acceptAll = findApplyAllButton( container ) as HTMLButtonElement;
 		await act( async () => {
 			fireEvent.click( acceptAll );
 		} );
 
 		// Mid-run the footer stays put with a steady label rather than showing a
-		// decrementing "Accept all (N)" count that vanishes as items resolve.
+		// decrementing "Apply all (N)" count that vanishes as items resolve.
 		expect( container.querySelector( '.jetpack-ai-feedback-list__footer' ) ).not.toBeNull();
-		expect( container.textContent ).toContain( 'Accepting…' );
-		expect( container.textContent ).not.toContain( 'Accept all (' );
+		expect( container.textContent ).toContain( 'Applying…' );
+		expect( container.textContent ).not.toContain( 'Apply all (' );
 
 		await act( async () => {
 			jest.advanceTimersByTime( 1000 );
 		} );
 
 		expect( container.textContent ).toContain( 'Applied' );
-		expect( findAcceptAllButton( container ) ).toBeUndefined();
+		expect( findApplyAllButton( container ) ).toBeUndefined();
 		jest.useRealTimers();
 	} );
 
@@ -1000,24 +1589,25 @@ describe( 'Proofread', () => {
 			} )
 		);
 
-		// Accept item A on its own so it collapses into an Applied row with Undo.
+		// Apply item A on its own so it collapses into an Applied row with Undo.
 		await act( async () => {
-			fireEvent.click( findButtonByText( container, 'Accept' ) as HTMLButtonElement );
+			fireEvent.click( findButtonByText( container, 'Apply change' ) as HTMLButtonElement );
 		} );
 		await act( async () => {
 			jest.advanceTimersByTime( 1000 );
 		} );
-		const undoBeforeRun = findButtonByText( container, 'Undo' );
-		expect( undoBeforeRun ).toBeDefined();
+		const undoSelector = '.jetpack-ai-feedback-list__action-button.is-undo';
+		const undoBeforeRun = container.querySelector< HTMLButtonElement >( undoSelector );
+		expect( undoBeforeRun ).not.toBeNull();
 		expect( undoBeforeRun?.hasAttribute( 'disabled' ) ).toBe( false );
 
 		// Start a bulk run over the remaining item B. While it is in flight the Undo
 		// on the already-applied item A must be locked so it cannot race the edit.
 		await act( async () => {
-			fireEvent.click( findAcceptAllButton( container ) as HTMLButtonElement );
+			fireEvent.click( findApplyAllButton( container ) as HTMLButtonElement );
 		} );
-		const undoDuringRun = findButtonByText( container, 'Undo' );
-		expect( undoDuringRun ).toBeDefined();
+		const undoDuringRun = container.querySelector< HTMLButtonElement >( undoSelector );
+		expect( undoDuringRun ).not.toBeNull();
 		expect( undoDuringRun?.hasAttribute( 'disabled' ) ).toBe( true );
 
 		await act( async () => {
