@@ -97,7 +97,7 @@ export default function GroupedEmptyView( {
 				>
 					<span className="agents-manager-writing-suggestions__content">
 						<span className="agents-manager-writing-suggestions__title">
-							{ __( 'Writing', __i18n_text_domain__ ) }
+							{ __( 'Writing tools', __i18n_text_domain__ ) }
 						</span>
 						<span className="agents-manager-writing-suggestions__description">
 							{ __( 'Improve and refine your content.', __i18n_text_domain__ ) }
