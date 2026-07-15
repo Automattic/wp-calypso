@@ -821,6 +821,7 @@ __metadata:
     "@automattic/number-formatters": "npm:^1.2.0"
     "@automattic/typography": "workspace:^"
     "@automattic/ui": "workspace:^"
+    "@automattic/viewport": "workspace:^"
     "@automattic/viewport-react": "workspace:^"
     "@emotion/css": "npm:^11.11.2"
     "@emotion/react": "npm:^11.11.1"
@@ -840,7 +841,9 @@ __metadata:
     "@wordpress/i18n": "npm:^6.21.0"
     "@wordpress/icons": "npm:^13.3.0"
     "@wordpress/primitives": "npm:^4.48.0"
+    "@wordpress/private-apis": "npm:^1.48.0"
     "@wordpress/react-i18n": "npm:^4.48.0"
+    "@wordpress/ui": "npm:^0.17.0"
     "@wordpress/url": "npm:^4.48.0"
     "@wordpress/warning": "npm:3.48.0"
     canvas-confetti: "npm:^1.6.0"
@@ -850,16 +853,19 @@ __metadata:
     fast-deep-equal: "npm:^3.1.3"
     gridicons: "npm:^3.4.2"
     i18n-calypso: "workspace:^"
+    lodash: "npm:^4.18.1"
     postcss: "npm:^8.5.15"
     prop-types: "npm:^15.8.1"
     react-modal: "npm:^3.16.3"
     react-router-dom: "npm:6.30.4"
     storybook: "npm:^9.1.20"
+    tslib: "npm:^2.8.1"
     typescript: "npm:^6.0.3"
     utility-types: "npm:^3.10.0"
     webpack: "npm:^5.99.8"
   peerDependencies:
     "@wordpress/data": ^10.48.0
+    "@wordpress/element": ^8.0.0
     react: ^18.3.1 || ^19.0.0
     react-dom: ^18.3.1 || ^19.0.0
   languageName: unknown
