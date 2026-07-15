@@ -11,6 +11,7 @@ import {
 } from '../../utils/external-context';
 import { isReaderChatAgent } from '../../utils/is-reader-chat-agent';
 import { setSiteEditorAction } from '../../utils/site-editor-context';
+import { useBroadcastChatVisibility } from '../use-broadcast-chat-visibility';
 import type { AgentsManagerSelect } from '@automattic/data-stores';
 
 /**
@@ -201,6 +202,10 @@ export function useSetupCustomActions( {
 	// Whether the chat is visible (open and not minimized). Entry points outside
 	// the bundle (e.g. the Calypso masterbar) read this to toggle.
 	const isChatVisible = useCallback( () => isOpen && ! isMinimized, [ isOpen, isMinimized ] );
+
+	// Let those out-of-bundle entry points reflect open/closed (e.g. a pressed
+	// toolbar button).
+	useBroadcastChatVisibility( isOpen && ! isMinimized );
 
 	// The chat's current route (e.g. `/chat`), so callers can detect a same-route re-click.
 	const getCurrentRoute = useCallback( () => locationRef.current.pathname, [] );

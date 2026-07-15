@@ -67,6 +67,29 @@ window.addEventListener( 'agents-manager-conversation-changed', resync );
 
 Dispatched by `OrchestratorChat` as the transcript grows. Prefer this over the provider contract for chat interactions — providers are reserved for agent setup.
 
+## Chat visibility
+
+`agents-manager-chat-visibility-changed` fires on `window` whenever the chat opens or closes (including minimize/restore, and from any entry point — the masterbar, docking, or the chat's own close button). Entry points in other bundles use it to reflect the open/closed state, e.g. a pressed toolbar toggle button.
+
+Unlike the conversation event, this one **carries the new value in `event.detail`**:
+
+```ts
+interface ChatVisibilityEventDetail {
+	isVisible: boolean;
+}
+```
+
+Read `event.detail.isVisible` — **do not** re-read `isChatVisible()` when it fires. The event is broadcast from an effect that runs _before_ the effect refreshing `window.__agentsManagerActions`, so at dispatch time the API still holds the previous value. The detail is the source of truth.
+
+```js
+function onVisibilityChange( event ) {
+	const isVisible = Boolean( event.detail?.isVisible );
+	// reflect `isVisible` in your UI
+}
+
+window.addEventListener( 'agents-manager-chat-visibility-changed', onVisibilityChange );
+```
+
 ## Initial values
 
 Pre-set these on `window.__agentsManagerActions` **before** Agents Manager mounts:

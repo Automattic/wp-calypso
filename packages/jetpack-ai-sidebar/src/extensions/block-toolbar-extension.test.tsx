@@ -3,7 +3,7 @@
  */
 
 import '@testing-library/jest-dom';
-import { fireEvent, render, screen } from '@testing-library/react';
+import { act, fireEvent, render, screen } from '@testing-library/react';
 import React from 'react';
 import { withJetpackAiToolbarButton } from './block-toolbar-extension';
 
@@ -26,12 +26,19 @@ jest.mock( '@wordpress/components', () => ( {
 		icon,
 		label,
 		onClick,
+		isPressed,
 	}: {
 		icon?: React.ReactNode;
 		label: string;
 		onClick: () => void;
+		isPressed?: boolean;
 	} ) => (
-		<button aria-label={ label } data-testid="toolbar-button" onClick={ onClick }>
+		<button
+			aria-label={ label }
+			aria-pressed={ isPressed }
+			data-testid="toolbar-button"
+			onClick={ onClick }
+		>
 			{ icon }
 		</button>
 	),
@@ -58,6 +65,7 @@ declare global {
 		__agentsManagerActions?: {
 			isReady?: boolean;
 			setChatOpen?: ( isOpen: boolean ) => void;
+			isChatVisible?: () => boolean;
 			submitChatMessage?: ( message?: string ) => Promise< void >;
 			setChatInput?: ( value: string ) => void;
 		};
@@ -154,7 +162,39 @@ describe( 'withJetpackAiToolbarButton', () => {
 		}
 	);
 
-	it( 'opens Agents Manager in its current state when actions are ready', () => {
+	it( 'opens Agents Manager when the chat is not visible and actions are ready', () => {
+		const setChatOpen = jest.fn();
+		window.__agentsManagerActions = {
+			isReady: true,
+			setChatOpen,
+			isChatVisible: () => false,
+		};
+
+		enableToolbarButton();
+		renderToolbar();
+		fireEvent.click( screen.getByRole( 'button', { name: 'Ask AI' } ) );
+
+		// The toolbar entry only opens the chat — it does not reshape its layout.
+		expect( setChatOpen ).toHaveBeenCalledWith( true );
+	} );
+
+	it( 'closes Agents Manager when the chat is already visible', () => {
+		const setChatOpen = jest.fn();
+		window.__agentsManagerActions = {
+			isReady: true,
+			setChatOpen,
+			isChatVisible: () => true,
+		};
+
+		enableToolbarButton();
+		renderToolbar();
+		fireEvent.click( screen.getByRole( 'button', { name: 'Ask AI' } ) );
+
+		// Clicking the toolbar entry while the chat is visible toggles it closed.
+		expect( setChatOpen ).toHaveBeenCalledWith( false );
+	} );
+
+	it( 'opens Agents Manager when actions are ready but expose no visibility state', () => {
 		const setChatOpen = jest.fn();
 		window.__agentsManagerActions = {
 			isReady: true,
@@ -165,7 +205,7 @@ describe( 'withJetpackAiToolbarButton', () => {
 		renderToolbar();
 		fireEvent.click( screen.getByRole( 'button', { name: 'Ask AI' } ) );
 
-		// The toolbar entry only opens the chat — it does not reshape its layout.
+		// Without an `isChatVisible` action, treat the chat as not visible and open it.
 		expect( setChatOpen ).toHaveBeenCalledWith( true );
 	} );
 
@@ -211,5 +251,191 @@ describe( 'withJetpackAiToolbarButton', () => {
 		expect( setChatOpen ).toHaveBeenCalledWith( true );
 		expect( submitChatMessage ).not.toHaveBeenCalled();
 		expect( setChatInput ).not.toHaveBeenCalled();
+	} );
+
+	it( 'renders the button as pressed when the chat is already visible on mount', () => {
+		window.__agentsManagerActions = {
+			isReady: true,
+			setChatOpen: jest.fn(),
+			isChatVisible: () => true,
+		};
+
+		enableToolbarButton();
+		renderToolbar();
+
+		expect( screen.getByRole( 'button', { name: 'Ask AI' } ) ).toHaveAttribute(
+			'aria-pressed',
+			'true'
+		);
+	} );
+
+	it( 'renders the button as not pressed when the chat is not visible', () => {
+		window.__agentsManagerActions = {
+			isReady: true,
+			setChatOpen: jest.fn(),
+			isChatVisible: () => false,
+		};
+
+		enableToolbarButton();
+		renderToolbar();
+
+		expect( screen.getByRole( 'button', { name: 'Ask AI' } ) ).toHaveAttribute(
+			'aria-pressed',
+			'false'
+		);
+	} );
+
+	it( 'updates the pressed state from the chat visibility event detail', () => {
+		window.__agentsManagerActions = {
+			isReady: true,
+			setChatOpen: jest.fn(),
+			isChatVisible: () => false,
+		};
+
+		enableToolbarButton();
+		renderToolbar();
+
+		expect( screen.getByRole( 'button', { name: 'Ask AI' } ) ).toHaveAttribute(
+			'aria-pressed',
+			'false'
+		);
+
+		// Agents Manager opens the chat elsewhere (e.g. the masterbar) and
+		// broadcasts the new value in the event detail.
+		act( () => {
+			window.dispatchEvent(
+				new CustomEvent( 'agents-manager-chat-visibility-changed', {
+					detail: { isVisible: true },
+				} )
+			);
+		} );
+
+		expect( screen.getByRole( 'button', { name: 'Ask AI' } ) ).toHaveAttribute(
+			'aria-pressed',
+			'true'
+		);
+	} );
+
+	it( 'un-presses when the chat is closed and re-presses when re-opened', () => {
+		// Regression: the button must track every toggle, not just the state at
+		// load. It reads each new value from the event detail rather than
+		// re-reading the actions API, which is refreshed a beat later.
+		window.__agentsManagerActions = {
+			isReady: true,
+			setChatOpen: jest.fn(),
+			isChatVisible: () => true,
+		};
+
+		enableToolbarButton();
+		renderToolbar();
+
+		const button = screen.getByRole( 'button', { name: 'Ask AI' } );
+		expect( button ).toHaveAttribute( 'aria-pressed', 'true' );
+
+		// Close the chat.
+		act( () => {
+			window.dispatchEvent(
+				new CustomEvent( 'agents-manager-chat-visibility-changed', {
+					detail: { isVisible: false },
+				} )
+			);
+		} );
+		expect( button ).toHaveAttribute( 'aria-pressed', 'false' );
+
+		// Re-open it.
+		act( () => {
+			window.dispatchEvent(
+				new CustomEvent( 'agents-manager-chat-visibility-changed', {
+					detail: { isVisible: true },
+				} )
+			);
+		} );
+		expect( button ).toHaveAttribute( 'aria-pressed', 'true' );
+	} );
+
+	it( 'reflects the visible chat once Agents Manager becomes ready', () => {
+		enableToolbarButton();
+		renderToolbar();
+
+		expect( screen.getByRole( 'button', { name: 'Ask AI' } ) ).toHaveAttribute(
+			'aria-pressed',
+			'false'
+		);
+
+		// Agents Manager loads after the button, with the chat already visible.
+		window.__agentsManagerActions = {
+			isReady: true,
+			setChatOpen: jest.fn(),
+			isChatVisible: () => true,
+		};
+		act( () => {
+			window.dispatchEvent( new CustomEvent( 'agents-manager-ready' ) );
+		} );
+
+		expect( screen.getByRole( 'button', { name: 'Ask AI' } ) ).toHaveAttribute(
+			'aria-pressed',
+			'true'
+		);
+	} );
+
+	it( 'shares a single window subscription across every block on the page', () => {
+		window.__agentsManagerActions = {
+			isReady: true,
+			setChatOpen: jest.fn(),
+			isChatVisible: () => false,
+		};
+		const addEventListenerSpy = jest.spyOn( window, 'addEventListener' );
+
+		enableToolbarButton();
+		const Component = withJetpackAiToolbarButton( BlockEdit );
+		render(
+			<>
+				<Component name="core/paragraph" />
+				<Component name="core/heading" />
+				<Component name="core/image" />
+			</>
+		);
+
+		// The toolbar HOC wraps every block, but only one shared listener is added
+		// for the visibility event regardless of how many blocks are on the page.
+		const visibilityListeners = addEventListenerSpy.mock.calls.filter(
+			( [ type ] ) => type === 'agents-manager-chat-visibility-changed'
+		);
+		expect( visibilityListeners ).toHaveLength( 1 );
+
+		// A single broadcast updates every block's button.
+		act( () => {
+			window.dispatchEvent(
+				new CustomEvent( 'agents-manager-chat-visibility-changed', {
+					detail: { isVisible: true },
+				} )
+			);
+		} );
+
+		const buttons = screen.getAllByRole( 'button', { name: 'Ask AI' } );
+		expect( buttons ).toHaveLength( 3 );
+		buttons.forEach( ( button ) => expect( button ).toHaveAttribute( 'aria-pressed', 'true' ) );
+	} );
+
+	it( 'removes its window listeners once the last block unmounts', () => {
+		window.__agentsManagerActions = {
+			isReady: true,
+			setChatOpen: jest.fn(),
+			isChatVisible: () => false,
+		};
+		const removeEventListenerSpy = jest.spyOn( window, 'removeEventListener' );
+
+		enableToolbarButton();
+		const { unmount } = renderToolbar();
+		unmount();
+
+		expect( removeEventListenerSpy ).toHaveBeenCalledWith(
+			'agents-manager-chat-visibility-changed',
+			expect.any( Function )
+		);
+		expect( removeEventListenerSpy ).toHaveBeenCalledWith(
+			'agents-manager-ready',
+			expect.any( Function )
+		);
 	} );
 } );
