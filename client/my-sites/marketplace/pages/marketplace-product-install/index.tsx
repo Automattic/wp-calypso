@@ -21,7 +21,6 @@ import { useWPCOMPlugin } from 'calypso/data/marketplace/use-wpcom-plugins-query
 import Masterbar from 'calypso/layout/masterbar/masterbar';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { useInterval } from 'calypso/lib/interval';
-import { INSTALL_PLUGIN } from 'calypso/lib/plugins/constants';
 import { getProductSlugByPeriodVariation } from 'calypso/lib/plugins/utils';
 import MarketplaceProgressBar from 'calypso/my-sites/marketplace/components/progressbar';
 import useMarketplaceAdditionalSteps from 'calypso/my-sites/marketplace/pages/marketplace-product-install/use-marketplace-additional-steps';
@@ -43,7 +42,6 @@ import {
 	getStatusForPlugin,
 	isRequesting,
 } from 'calypso/state/plugins/installed/selectors-ts';
-import { PLUGIN_INSTALLATION_ERROR } from 'calypso/state/plugins/installed/status/constants';
 import { fetchPluginData as wporgFetchPluginData } from 'calypso/state/plugins/wporg/actions';
 import { getPlugin, isFetched } from 'calypso/state/plugins/wporg/selectors';
 import {
@@ -315,39 +313,28 @@ const MarketplaceProductInstall = ( {
 		siteHasFeature( state, selectedSite?.ID, WPCOM_FEATURES_MANAGE_PLUGINS )
 	);
 
-	// Unlike the theme flow, which only observes backend-owned activation, reconciling a plugin means
-	// dispatching activation and then leaving for a freshly discovered WP Admin URL. Gate both on the
-	// atomic site being ready, and its manage-plugins capability having propagated, so we neither act
-	// nor redirect before that is true — a rejected one-shot activation would never be retried.
+	// Reconciling dispatches activation and then leaves for a freshly discovered WP Admin URL, so gate
+	// on the atomic site being ready and its manage-plugins capability having propagated: a rejected
+	// one-shot activation would never be retried.
 	const canReconcilePlugin =
 		( ! atomicFlow || transferStates.COMPLETE === automatedTransferStatus ) &&
 		( ! ( atomicFlow || isMarketplacePluginFlow ) ||
 			( isAtomicTransferReady && canManagePlugins ) );
 
-	// A failed install with nothing installed is terminal — the error screen shows it, so stop
-	// polling. Read the current status, not a lingering error field the reducer keeps across a retry.
-	// A failure that still left a plugin behind is a partial success worth reconciling.
-	const installFailed =
-		pluginInstallStatus?.status === PLUGIN_INSTALLATION_ERROR &&
-		pluginInstallStatus.action === INSTALL_PLUGIN &&
-		! installedPlugin;
-
-	// Poll the site plugins for the active state the same way the theme flow polls the active theme:
-	// once the flow is under way, until the server reports it active. The paid marketplace install is
-	// kicked off by checkout, so its step can still be 0 — cover it by its atomic-plugin shape too.
+	// Poll for the active state like the theme flow polls the active theme: once the flow is under
+	// way, until the server reports it active. A checkout-driven marketplace install can sit at step 0,
+	// so cover it by its atomic-plugin shape too.
 	const shouldFetchPlugin =
 		!! pluginSlug &&
 		! pluginActive &&
-		! installFailed &&
 		! isFetchingSitePlugins &&
 		canReconcilePlugin &&
 		( currentStep !== 0 || isMarketplacePluginFlow );
 
 	useInterval( () => dispatch( fetchSitePlugins( siteId ) ), shouldFetchPlugin ? 3000 : null );
 
-	// A completed transfer is not a finished installation: it leaves the plugin inactive, and the
-	// plugin only turns up here once polling above has fetched it. Finding it ends the install step.
-	// The ref makes the activation happen once, whatever the plugin state does between renders.
+	// A transfer leaves the plugin installed but inactive, and it only turns up here once polling has
+	// fetched it. The ref dispatches activation once, whatever the plugin state does between renders.
 	const activationAttempted = useRef( false );
 	useEffect( () => {
 		if (
@@ -381,9 +368,8 @@ const MarketplaceProductInstall = ( {
 			// - Click on "Install and activate" button for any plugin on /plugins/<site_name>
 			// - Install with the help of uploading archive of a plugins
 			// - If it's simple site which doesn't support plugins, then installing and activation happens at the same time with upgrading to Business plan
-			// A transferred plugin lands here once the refreshed site plugins report it active, and the
-			// site is ready for the WP Admin URL below. It must be active first: the page this leaves for
-			// lists active plugins, and would not show an inactive one.
+			// A transferred plugin lands here once it reports active and the site is ready for the WP
+			// Admin URL below — active first, since that page lists only active plugins.
 			( installedPlugin?.active && canReconcilePlugin ) ||
 			// Transfer to atomic uploading a zip plugin
 			( uploadedPluginSlug &&
