@@ -9,6 +9,7 @@ import {
 	GROUPED_VIEW_HIDDEN_SUGGESTION_IDS,
 	WRITING_SUGGESTION_IDS,
 } from '../../hooks/use-empty-view-suggestions';
+import { isEditorPage } from '../../utils/is-editor-page';
 import type { ReactNode } from 'react';
 import './grouped-empty-view.scss';
 
@@ -37,35 +38,19 @@ export default function GroupedEmptyView( {
 		GroupedEmptyView,
 		'agents-manager-writing-suggestion-list'
 	);
-	const writingSuggestions = suggestions
-		.filter( ( suggestion ) => WRITING_SUGGESTION_IDS.has( suggestion.id ) )
-		.map( ( suggestion ) => ( {
-			...suggestion,
-			label: getWritingSuggestionLabel( suggestion ),
-		} ) );
+	const shouldFormatWritingSuggestions = groupWritingSuggestions || isEditorPage();
+	const displaySuggestions = suggestions.map( ( suggestion ) =>
+		shouldFormatWritingSuggestions && WRITING_SUGGESTION_IDS.has( suggestion.id )
+			? { ...suggestion, label: getWritingSuggestionLabel( suggestion ) }
+			: suggestion
+	);
+	const writingSuggestions = displaySuggestions.filter( ( suggestion ) =>
+		WRITING_SUGGESTION_IDS.has( suggestion.id )
+	);
 	// Grouping only helps when writing and design actions need separation.
 	const hasDesignSuggestions = suggestions.some( ( suggestion ) =>
 		DESIGN_SUGGESTION_IDS.has( suggestion.id )
 	);
-
-	if ( ! groupWritingSuggestions || writingSuggestions.length === 0 || ! hasDesignSuggestions ) {
-		return (
-			<EmptyView
-				heading={ heading }
-				help={ help }
-				suggestions={ suggestions }
-				onSuggestionClick={ onSuggestionClick }
-				icon={ icon }
-			/>
-		);
-	}
-
-	const topLevelSuggestions = suggestions.filter(
-		( suggestion ) =>
-			! WRITING_SUGGESTION_IDS.has( suggestion.id ) &&
-			! GROUPED_VIEW_HIDDEN_SUGGESTION_IDS.has( suggestion.id )
-	);
-	const collapsedIcon = isRTL() ? chevronLeft : chevronRight;
 	const handleSuggestionClick = ( selectedSuggestion: Suggestion | string ) => {
 		const originalSuggestion =
 			typeof selectedSuggestion === 'string'
@@ -74,6 +59,25 @@ export default function GroupedEmptyView( {
 				  selectedSuggestion;
 		onSuggestionClick?.( originalSuggestion, suggestions );
 	};
+
+	if ( ! groupWritingSuggestions || writingSuggestions.length === 0 || ! hasDesignSuggestions ) {
+		return (
+			<EmptyView
+				heading={ heading }
+				help={ help }
+				suggestions={ displaySuggestions }
+				onSuggestionClick={ handleSuggestionClick }
+				icon={ icon }
+			/>
+		);
+	}
+
+	const topLevelSuggestions = displaySuggestions.filter(
+		( suggestion ) =>
+			! WRITING_SUGGESTION_IDS.has( suggestion.id ) &&
+			! GROUPED_VIEW_HIDDEN_SUGGESTION_IDS.has( suggestion.id )
+	);
+	const collapsedIcon = isRTL() ? chevronLeft : chevronRight;
 
 	return (
 		<div className="agents-manager-grouped-empty-view">

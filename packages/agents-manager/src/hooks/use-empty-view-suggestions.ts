@@ -39,7 +39,7 @@ export const WRITING_SUGGESTION_IDS = new Set( Object.keys( WRITING_SUGGESTION_L
 
 export const GROUPED_VIEW_HIDDEN_SUGGESTION_IDS = new Set( [ 'what-else-can-i-do' ] );
 
-// Keep compact, sentence-case labels limited to the grouped editor view.
+// Keep writing action labels consistent across flat and grouped editor views.
 export function getWritingSuggestionLabel( suggestion: Suggestion ): string {
 	return WRITING_SUGGESTION_LABELS[ suggestion.id ]?.() ?? suggestion.label;
 }

@@ -198,6 +198,7 @@ describe( 'AgentChat', () => {
 	beforeEach( () => {
 		jest.clearAllMocks();
 		mockHasAiChatEntry.mockReturnValue( false );
+		document.body.className = '';
 	} );
 
 	const imageUpload = ( isUploadingImages: boolean ) =>
@@ -371,8 +372,45 @@ describe( 'AgentChat', () => {
 		} );
 
 		expect( screen.getByRole( 'button', { name: 'Add new page' } ) ).toBeInTheDocument();
-		expect( screen.getByRole( 'button', { name: 'Optimize Title' } ) ).toBeInTheDocument();
+		expect( screen.getByRole( 'button', { name: 'Optimize title' } ) ).toBeInTheDocument();
 		expect( screen.queryByRole( 'button', { name: /Writing/ } ) ).toBeNull();
+	} );
+
+	it( 'uses sentence-case writing labels in ungrouped editor views', async () => {
+		const user = userEvent.setup();
+		document.body.classList.add( 'post-php', 'post-type-post' );
+		const suggestion = {
+			id: 'optimize-title',
+			label: 'Optimize Title',
+			prompt: 'Optimize the title of this post',
+		};
+		const onSuggestionClick = jest.fn();
+
+		renderAgentChat( {
+			isOpen: true,
+			emptyViewSuggestions: [ suggestion ],
+			groupWritingSuggestions: false,
+			onSuggestionClick,
+		} );
+
+		await user.click( screen.getByRole( 'button', { name: 'Optimize title' } ) );
+		expect( onSuggestionClick ).toHaveBeenCalledWith( suggestion, [ suggestion ] );
+	} );
+
+	it( 'keeps provider writing labels in ungrouped non-editor views', () => {
+		renderAgentChat( {
+			isOpen: true,
+			emptyViewSuggestions: [
+				{
+					id: 'optimize-title',
+					label: 'Optimize Title',
+					prompt: 'Optimize the title of this post',
+				},
+			],
+			groupWritingSuggestions: false,
+		} );
+
+		expect( screen.getByRole( 'button', { name: 'Optimize Title' } ) ).toBeInTheDocument();
 	} );
 
 	it( 'collapses to a button when closed without the AI chat entry button', () => {
