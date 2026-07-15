@@ -4,7 +4,7 @@ import { __ } from '@wordpress/i18n';
 import { useCallback } from 'react';
 import StepSection from '../../commissions/components/step-section';
 import StepSectionItem from '../../commissions/components/step-section-item';
-import type { RecordTracksEvent } from '../../types';
+import type { RecordTracksEvent } from 'calypso/dashboard/agency/earn/migrations/types';
 
 export default function MigrationsCommissionsEmptyState( {
 	recordTracksEvent,

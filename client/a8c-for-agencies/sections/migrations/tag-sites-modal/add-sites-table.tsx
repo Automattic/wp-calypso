@@ -10,9 +10,9 @@ import { useCallback, useMemo, useState } from 'react';
 import {
 	useFetchAllManagedSitesForCommission,
 	type SiteItem,
-} from '../hooks/use-fetch-all-managed-sites-for-commission';
-import type { RecordTracksEvent, TaggedSite } from '../types';
+} from 'calypso/dashboard/agency/earn/migrations/hooks/use-fetch-all-managed-sites-for-commission';
 import type { Field, View } from '@wordpress/dataviews';
+import type { RecordTracksEvent, TaggedSite } from 'calypso/dashboard/agency/earn/migrations/types';
 
 import '../commissions/components/dataviews/style.scss';
 

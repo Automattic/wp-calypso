@@ -13,7 +13,7 @@ import {
 import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import useMinimizeHelpCenterOnMount from 'calypso/a8c-for-agencies/hooks/use-minimize-help-center-on-mount';
-import type { ShowSuccessNotice, TaggedSite } from '../types';
+import type { ShowSuccessNotice, TaggedSite } from 'calypso/dashboard/agency/earn/migrations/types';
 
 export default function UntagSiteDialog( {
 	site,

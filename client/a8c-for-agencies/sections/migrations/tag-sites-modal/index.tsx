@@ -20,8 +20,8 @@ import { useState } from 'react';
 import useMinimizeHelpCenterOnMount from 'calypso/a8c-for-agencies/hooks/use-minimize-help-center-on-mount';
 import { preventWidows } from 'calypso/lib/formatting';
 import MigrationsAddSitesTable from './add-sites-table';
-import type { SiteItem } from '../hooks/use-fetch-all-managed-sites-for-commission';
-import type { RecordTracksEvent, TaggedSite } from '../types';
+import type { SiteItem } from 'calypso/dashboard/agency/earn/migrations/hooks/use-fetch-all-managed-sites-for-commission';
+import type { RecordTracksEvent, TaggedSite } from 'calypso/dashboard/agency/earn/migrations/types';
 import type { ReactNode } from 'react';
 
 import './style.scss';

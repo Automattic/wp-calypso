@@ -3,7 +3,11 @@ import MigrationsCommissionsList from './commissions-list';
 import MigrationsConsolidatedCommissions from './consolidated-commissions';
 import MigrationsCommissionsEmptyState from './primary/migrations-commissions/empty-state';
 import MigrationsTagSitesModal from './tag-sites-modal';
-import type { RecordTracksEvent, ShowSuccessNotice, TaggedSite } from './types';
+import type {
+	RecordTracksEvent,
+	ShowSuccessNotice,
+	TaggedSite,
+} from 'calypso/dashboard/agency/earn/migrations/types';
 import type { ReactNode } from 'react';
 
 interface MigrationsCommissionsContentProps {

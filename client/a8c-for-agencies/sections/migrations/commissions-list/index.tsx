@@ -7,8 +7,12 @@ import RequestReviewModal from '../request-review-modal';
 import { MigratedOnColumn, ReviewStatusColumn, SiteColumn } from './commission-columns';
 import UntagSiteDialog from './untag-site-dialog';
 import useCommissionListActions from './use-commission-list-actions';
-import type { RecordTracksEvent, ShowSuccessNotice, TaggedSite } from '../types';
 import type { Field, View } from '@wordpress/dataviews';
+import type {
+	RecordTracksEvent,
+	ShowSuccessNotice,
+	TaggedSite,
+} from 'calypso/dashboard/agency/earn/migrations/types';
 
 import '../commissions/components/dataviews/style.scss';
 

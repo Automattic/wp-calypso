@@ -1,6 +1,6 @@
 import { paginatedAgencySitesQuery } from '@automattic/api-queries';
 import { useQuery } from '@tanstack/react-query';
-import { urlToSlug } from 'calypso/lib/url/http-utils';
+import { urlToSlug } from '../../../../utils/url';
 import type { AgencySite } from '@automattic/api-core';
 
 export type SiteItem = {
