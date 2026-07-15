@@ -177,7 +177,12 @@ export class SiteAddressChanger extends Component {
 	}
 
 	onFieldChange = ( event ) => {
-		const domainFieldValue = ( event?.target?.value ?? '' ).toLowerCase();
+		// Strip any characters not allowed in a subdomain (a-z, 0-9, hyphens) before
+		// lowercasing, so that browser/OS spellcheck substitutions (e.g. Swedish "ö"
+		// replacing "o") are silently dropped rather than reaching the validation step.
+		const domainFieldValue = ( event?.target?.value ?? '' )
+			.toLowerCase()
+			.replace( /[^a-z0-9-]/g, '' );
 		this.handleDomainChange( domainFieldValue );
 	};
 
@@ -447,6 +452,9 @@ export class SiteAddressChanger extends Component {
 						placeholder={ currentDomainPrefix }
 						isError={ shouldShowValidationMessage && ! isAvailable }
 						disabled={ ! isEmailVerified }
+						autoCorrect="off"
+						autoCapitalize="off"
+						spellCheck="false"
 						noWrap
 					/>
 					{ shouldShowValidationMessage && (
