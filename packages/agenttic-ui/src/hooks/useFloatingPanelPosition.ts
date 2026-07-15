@@ -39,8 +39,8 @@ export interface UseFloatingPanelPositionResult {
 	currentSide: ChatPosition;
 	isDragging: boolean;
 	dragControls: ReturnType< typeof useDragControls >;
-	chatRef: React.RefObject< HTMLDivElement >;
-	constraintsRef: React.RefObject< HTMLDivElement >;
+	chatRef: React.RefObject< HTMLDivElement | null >;
+	constraintsRef: React.RefObject< HTMLDivElement | null >;
 	handlePointerDown: ( event: React.PointerEvent< HTMLDivElement > ) => void;
 	handleDragStart: () => void;
 	handleDragEnd: ( event: unknown, info: PanInfo ) => void;

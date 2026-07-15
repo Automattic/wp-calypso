@@ -18,7 +18,7 @@ export interface AgentUIContextValue {
 	inputValue: string;
 	setInputValue: ( value: string ) => void;
 	clearInput: () => void;
-	textareaRef: React.RefObject< HTMLTextAreaElement >;
+	textareaRef: React.RefObject< HTMLTextAreaElement | null >;
 	handleKeyDown: ( e: React.KeyboardEvent< HTMLTextAreaElement > ) => void;
 
 	// Actions

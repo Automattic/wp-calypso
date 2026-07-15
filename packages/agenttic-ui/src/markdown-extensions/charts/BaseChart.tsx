@@ -23,13 +23,13 @@ export interface CurrencyOptions {
 	symbolPosition: 'left' | 'right';
 }
 
+export type ChartTooltipParams = RenderTooltipParams< DataPointDate >;
+
 export interface BaseChartProps
 	extends Omit< AutomatticBaseChartProps< SeriesData[] >, 'data' > {
 	data: SeriesData[];
 	currency?: CurrencyOptions;
-	renderTooltip?: (
-		params: RenderTooltipParams< DataPointDate >
-	) => React.ReactNode;
+	renderTooltip?: ( params: ChartTooltipParams ) => React.ReactNode;
 	error?: {
 		message: string;
 		details?: string;

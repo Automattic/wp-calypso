@@ -208,7 +208,7 @@ export interface UseInputReturn {
 	value: string;
 	setValue: ( value: string ) => void;
 	clear: () => void;
-	textareaRef: React.RefObject< HTMLTextAreaElement >;
+	textareaRef: React.RefObject< HTMLTextAreaElement | null >;
 	handleKeyDown: ( e: React.KeyboardEvent< HTMLTextAreaElement > ) => void;
 	adjustHeight: () => void;
 }

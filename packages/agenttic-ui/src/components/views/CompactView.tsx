@@ -12,7 +12,7 @@ interface CompactViewProps {
 	onChange: ( value: string ) => void;
 	onSubmit: () => void;
 	onKeyDown: ( e: React.KeyboardEvent< HTMLTextAreaElement > ) => void;
-	textareaRef: React.RefObject< HTMLTextAreaElement >;
+	textareaRef: React.RefObject< HTMLTextAreaElement | null >;
 	placeholder?: string | string[];
 	isProcessing: boolean;
 	onBlur?: () => void;

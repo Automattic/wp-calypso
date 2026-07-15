@@ -19,7 +19,7 @@ interface EmbeddedAgentUIContextValue extends AgentUIProps {
 	setInputValue: ( value: string ) => void;
 	files: File[];
 	setFiles: ( files: File[] ) => void;
-	fileInputRef: React.RefObject< HTMLInputElement >;
+	fileInputRef: React.RefObject< HTMLInputElement | null >;
 	submit: ( message?: string ) => Promise< void >;
 }
 

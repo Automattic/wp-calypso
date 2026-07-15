@@ -51,6 +51,7 @@
 	"devDependencies": {
 		"@wordpress/api-fetch": "^7.0.0",
 		"autoprefixer": "^10.4.0",
+		"react": "^18.0.0",
 		"typescript": "^5.0.0",
 		"unified": "^11.0.5",
 		"vite": "^5.0.0",
@@ -58,15 +59,14 @@
 		"vitest": "^1.0.0"
 	},
 	"dependencies": {
-		"@types/react": "^18.0.0",
-		"react": "^18.0.0"
+		"@types/react": "^18.0.0 || ^19.0.0"
 	},
 	"optionalDependencies": {
 		"marked": "^16.2.1"
 	},
 	"peerDependencies": {
 		"@wordpress/api-fetch": "^6.0.0 || ^7.0.0",
-		"react": "^18.0.0"
+		"react": "^18.0.0 || ^19.0.0"
 	},
 	"peerDependenciesMeta": {
 		"@wordpress/api-fetch": {

@@ -33,7 +33,6 @@ export default defineConfig( {
 				'@radix-ui/react-popover',
 				'@radix-ui/react-scroll-area',
 				'@radix-ui/react-slot',
-				'@visx/xychart',
 				'@wordpress/i18n',
 				'class-variance-authority',
 				'clsx',
