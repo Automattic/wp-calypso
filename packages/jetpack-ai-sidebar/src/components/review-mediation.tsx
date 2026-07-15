@@ -22,7 +22,13 @@ import {
 	toggleBlockReferenceFocus,
 	undoBlockEdit,
 } from '../utils/block-actions';
-import { countOccurrences, flattenBlocks } from '../utils/blocks';
+import {
+	countOccurrences,
+	flattenBlocks,
+	getEditorContentBlocks,
+	type BlockEditorStore,
+	type EditorStore,
+} from '../utils/blocks';
 import {
 	trackAiEditorialReviewItemAction,
 	trackAiEditorialReviewResultRendered,
@@ -83,6 +89,8 @@ interface GuidelineViolation {
 	issue: string;
 }
 
+type EditorPostId = number | string;
+
 interface ReviewMediationProps {
 	summary: string;
 	conflicts: Conflict[];
@@ -91,7 +99,7 @@ interface ReviewMediationProps {
 	guideline_violations: GuidelineViolation[];
 	review_context?: ReviewContext;
 	/** Source post the review was generated for. Used to detect navigation to a different post. */
-	postId?: number;
+	postId?: EditorPostId;
 	/**
 	 * Server-built map keyed by reviewer display name. Optional — older
 	 * mediations or the empty-state payload may omit it; consumers degrade
@@ -109,7 +117,7 @@ interface ReviewMediationProps {
 }
 
 type EditStatus = 'pending' | 'applying' | 'accepted' | 'dismissed' | 'failed';
-type WpCurrentPostStore = { getCurrentPostId?: () => number | null };
+type WpCurrentPostStore = { getCurrentPostId?: () => EditorPostId | null };
 type WpGlobal = Window & {
 	wp?: {
 		data?: {
@@ -118,12 +126,22 @@ type WpGlobal = Window & {
 	};
 };
 
-function getCurrentEditorPostIdFromStore(): number | undefined {
+function normalizeEditorPostId( postId: unknown ): EditorPostId | undefined {
+	if ( typeof postId === 'number' && postId > 0 ) {
+		return postId;
+	}
+	if ( typeof postId === 'string' && postId.trim() ) {
+		return postId;
+	}
+	return undefined;
+}
+
+function getCurrentEditorPostIdFromStore(): EditorPostId | undefined {
 	if ( typeof window === 'undefined' ) {
 		return undefined;
 	}
 	const wp = ( window as WpGlobal ).wp;
-	return wp?.data?.select?.( 'core/editor' )?.getCurrentPostId?.() ?? undefined;
+	return normalizeEditorPostId( wp?.data?.select?.( 'core/editor' )?.getCurrentPostId?.() );
 }
 
 /**
@@ -313,20 +331,17 @@ export default function ReviewMediation( {
 	reviewers_metadata,
 	cached_at,
 }: ReviewMediationProps ) {
-	// Review actions are only safe when the result can be tied to the current editor post.
-	const currentPostId = useSelect(
-		( select ) =>
-			(
-				select( 'core/editor' ) as { getCurrentPostId?: () => number | null }
-			 )?.getCurrentPostId?.() ?? undefined,
-		[]
-	);
-	const isPostStale = ! postId || ! currentPostId || postId !== currentPostId;
+	// Review actions are only safe when the result can be tied to the current editor entity.
+	const currentPostId = useSelect( ( select ) => {
+		const editor = select( 'core/editor' ) as WpCurrentPostStore;
+		return normalizeEditorPostId( editor?.getCurrentPostId?.() );
+	}, [] );
+	const isPostStale = ! postId || ! currentPostId || String( postId ) !== String( currentPostId );
 	const isLatestPostContextStale = useCallback( () => {
 		// Async edit guards must read the editor store at call time so navigation
 		// between the click and delayed block write is observed immediately.
 		const latestCurrentPostId = getCurrentEditorPostIdFromStore() ?? currentPostId;
-		return ! postId || ! latestCurrentPostId || postId !== latestCurrentPostId;
+		return ! postId || ! latestCurrentPostId || String( postId ) !== String( latestCurrentPostId );
 	}, [ currentPostId, postId ] );
 
 	const [ editStatuses, setEditStatuses ] = useState< Record< number, EditStatus > >( {} );
@@ -394,10 +409,11 @@ export default function ReviewMediation( {
 	// Flat pre-order list of blocks; ability's `block_index` maps to this array.
 	// Matches wpcom's recursive Review_Mediator_Ability::extract_blocks() order.
 	const blocks = useSelect( ( select ) => {
-		// eslint-disable-next-line @typescript-eslint/no-explicit-any
-		const rootBlocks = ( ( select as any )( 'core/block-editor' ).getBlocks?.() ??
-			[] ) as BlockSnapshot[];
-		return flattenBlocks( rootBlocks );
+		const contentBlocks = getEditorContentBlocks(
+			select( 'core/block-editor' ) as BlockEditorStore,
+			select( 'core/editor' ) as EditorStore
+		);
+		return flattenBlocks( contentBlocks );
 	}, [] );
 
 	const getBlock = useCallback(

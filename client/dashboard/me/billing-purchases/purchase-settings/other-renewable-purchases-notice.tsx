@@ -692,7 +692,7 @@ export function OtherRenewablePurchasesNotice( {
 		if ( currentPurchase.payment_card_id ) {
 			const cardDetails = {
 				cardType: purchase.payment_card_type ?? '',
-				cardNumber: Number( purchase.payment_card_id ) || 0,
+				cardNumber: Number( purchase.payment_details ) || 0,
 				cardExpiry: purchase.payment_expiry ?? '',
 			};
 
@@ -944,7 +944,7 @@ export function OtherRenewablePurchasesNotice( {
 		if ( currentPurchase.payment_card_id ) {
 			const cardDetails = {
 				cardType: purchase.payment_card_type ?? '',
-				cardNumber: Number( purchase.payment_card_id ) || 0,
+				cardNumber: Number( purchase.payment_details ) || 0,
 				cardExpiry: purchase.payment_expiry ?? '',
 			};
 

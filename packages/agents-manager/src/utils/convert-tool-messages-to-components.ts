@@ -15,7 +15,7 @@ export interface AgentsManagerUIMessage extends UIMessage {
 interface Options {
 	messages: UIMessage[];
 	getChatComponent?: GetChatComponent;
-	currentPostId?: number;
+	currentPostId?: number | string;
 }
 
 interface MessageWithContextFlags extends UIMessage {
@@ -212,7 +212,8 @@ export default function convertToolMessagesToComponents( {
 			// In the site editor, React-Query caching keeps past conversations alive when the
 			// user navigates to a different page. Compare the picker's `postId` with the
 			// current editor page to disable pickers that no longer belong to this page.
-			const isPageChanged = !! postId && !! currentPostId && postId !== currentPostId;
+			const isPageChanged =
+				!! postId && !! currentPostId && String( postId ) !== String( currentPostId );
 			const isStale = hasUserReplied || ! isCurrent || isPageChanged;
 
 			const componentMessage: AgentsManagerUIMessage = {

@@ -32,6 +32,7 @@ import {
 	type ExternalContextCardAction,
 } from '../../utils/external-context';
 import { isReaderChatAgent } from '../../utils/is-reader-chat-agent';
+import { mergeEmptyViewSuggestions } from '../../utils/merge-empty-view-suggestions';
 import { getOrchestratorErrorMessage } from '../../utils/orchestrator-error-message';
 import { persistLastActivity } from '../../utils/persist-last-activity';
 import { getReaderChatErrorMessage } from '../../utils/reader-chat-error-message';
@@ -201,7 +202,8 @@ export default function OrchestratorChat( {
 	const [ isRegenerating, setIsRegenerating ] = useState( false );
 	const [ hasUserSentMessage, setHasUserSentMessage ] = useState( false );
 	const currentPostId = useSelect( ( select ) => {
-		return ( select( 'core/editor' ) as { getCurrentPostId?: () => number } )?.getCurrentPostId?.();
+		const editor = select( 'core/editor' ) as { getCurrentPostId?: () => number | string };
+		return editor?.getCurrentPostId?.();
 	}, [] );
 
 	const {
@@ -376,6 +378,7 @@ export default function OrchestratorChat( {
 		suggestionsVisible: areSuggestionsVisible,
 	} );
 	const dynamicSuggestionsList = dynamicSuggestions?.suggestions ?? [];
+	const replaceEmptyViewSuggestions = dynamicSuggestions?.replaceEmptyViewSuggestions === true;
 	const dynamicSuggestionsKey = JSON.stringify(
 		dynamicSuggestionsList.map( ( s ) => [ s.id, s.label, s.prompt ] )
 	);
@@ -794,28 +797,32 @@ export default function OrchestratorChat( {
 		( isProcessing || ( isThinking && ! isBuildingSite ) ) && ! shouldSuppressTransientThinking;
 
 	// Determine which suggestions to show following Big Sky's logic:
-	// - When there are dynamic suggestions (from block selection, etc.), show those
-	// - Otherwise, show empty view suggestions only when there are no messages AND no input text
+	// - Empty chat: show provider empty-view chips plus dynamic chips.
+	// - Active chat/input: show dynamic suggestions only.
 	let displayedEmptyViewSuggestions: Suggestion[] = [];
 	if ( ! areSuggestionsVisible ) {
 		// Minimized/collapsed: the chat renders no suggestions, so leave the list
 		// empty to avoid firing chat_suggestions_rendered for hidden chips.
 		displayedEmptyViewSuggestions = [];
-	} else if ( suggestions.length > 0 ) {
-		displayedEmptyViewSuggestions = suggestions;
 	} else if (
 		! isLoadingConversation &&
 		displayedMessages.length === 0 &&
 		inputValue.length === 0
 	) {
-		// Read straight from the live `useSuggestions` output rather than the
-		// registered store. Clicking a suggestion calls `clearSuggestions()`,
-		// which empties the store, and the re-registration effect is keyed on
-		// the (unchanged) hook output so it won't restore it. Persistent
-		// empty-view chips must survive that clear; fall back to the static
-		// defaults only when the hook genuinely has none.
-		displayedEmptyViewSuggestions =
-			dynamicSuggestionsList.length > 0 ? dynamicSuggestionsList : emptyViewSuggestions;
+		// Prefer the registered store, but fall back to the live `useSuggestions`
+		// output when the store is empty. Clicking a suggestion calls
+		// `clearSuggestions()`, which empties the store, and the re-registration
+		// effect is keyed on the (unchanged) hook output so it won't restore it.
+		// Persistent empty-view chips must survive that clear.
+		displayedEmptyViewSuggestions = mergeEmptyViewSuggestions(
+			emptyViewSuggestions,
+			replaceEmptyViewSuggestions || suggestions.length === 0
+				? dynamicSuggestionsList
+				: suggestions,
+			replaceEmptyViewSuggestions
+		);
+	} else if ( suggestions.length > 0 ) {
+		displayedEmptyViewSuggestions = suggestions;
 	}
 
 	// Track when a set of suggestions is rendered — the dynamic block-context

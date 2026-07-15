@@ -14,13 +14,17 @@ import { __ } from '@wordpress/i18n';
 /**
  * Internal dependencies
  */
-import FeedbackList, { type FeedbackListItem, type FeedbackListSection } from './feedback-list';
+import FeedbackList, {
+	type EditorPostId,
+	type FeedbackListItem,
+	type FeedbackListSection,
+} from './feedback-list';
 
 export interface PostFeedbackProps {
 	summary: string;
 	items?: FeedbackListItem[];
 	sections?: FeedbackListSection[];
-	postId?: number;
+	postId?: EditorPostId;
 }
 
 /**
