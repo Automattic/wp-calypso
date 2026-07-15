@@ -23,6 +23,8 @@ const mockSite = {
 	isFetching: false,
 	// Whether the transferred atomic site is ready for its WP Admin URL.
 	isReady: true,
+	// Whether the install status reports a terminal error.
+	installError: false,
 };
 
 const mockDispatch = jest.fn();
@@ -55,7 +57,7 @@ jest.mock( 'calypso/state/plugins/wporg/selectors', () => ( {
 } ) );
 jest.mock( 'calypso/state/plugins/installed/selectors-ts', () => ( {
 	getPluginOnSite: () => mockSite.installedPlugin,
-	getStatusForPlugin: () => null,
+	getStatusForPlugin: () => ( mockSite.installError ? { error: 'install failed' } : null ),
 	isRequesting: () => mockSite.isFetching,
 } ) );
 jest.mock( 'calypso/state/automated-transfer/selectors', () => ( {
@@ -180,6 +182,7 @@ describe( 'MarketplaceProductInstall', () => {
 		mockSite.isWporgPlugin = true;
 		mockSite.isFetching = false;
 		mockSite.isReady = true;
+		mockSite.installError = false;
 		originalLocation = window.location;
 		Object.defineProperty( window, 'location', { value: { href: '' }, writable: true } );
 	} );
@@ -299,6 +302,25 @@ describe( 'MarketplaceProductInstall', () => {
 		mockSite.installedPlugin = ACTIVE_PLUGIN;
 		await settle( rendered );
 		expect( window.location.href ).toBe( ACTIVE_LIST_URL );
+	} );
+
+	it( 'stops polling when installation fails with nothing installed', async () => {
+		mockSite.isAtomic = true; // existing-plan site, so the install runs through this page
+		mockSite.isWporgPlugin = true;
+		const rendered = install();
+		await start( rendered );
+
+		// It polls while the install is under way.
+		await advance( rendered, 3000 );
+		expect( fetchSitePlugins ).toHaveBeenCalledWith( SITE_ID );
+
+		// The install fails and leaves no plugin. That is terminal: the error shows and polling stops.
+		mockSite.installError = true;
+		await settle( rendered );
+		fetchSitePlugins.mockClear();
+		await advance( rendered, 9000 );
+		expect( fetchSitePlugins ).not.toHaveBeenCalled();
+		expect( screen.getByText( /An error occurred while installing the plugin/ ) ).toBeVisible();
 	} );
 
 	it( 'does not start a new plugin fetch while one is already in flight', async () => {

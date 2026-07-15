@@ -316,12 +316,17 @@ const MarketplaceProductInstall = ( {
 		( ! atomicFlow || transferStates.COMPLETE === automatedTransferStatus ) &&
 		( ! ( atomicFlow || isMarketplacePluginFlow ) || isAtomicTransferReady );
 
+	// A failed install with nothing installed is terminal — the error screen shows it, so stop
+	// polling. A failure that still left a plugin behind is a partial success worth reconciling.
+	const installFailed = !! pluginInstallStatus?.error && ! installedPlugin;
+
 	// Poll the site plugins for the active state the same way the theme flow polls the active theme:
 	// once the flow is under way, until the server reports it active. The paid marketplace install is
 	// kicked off by checkout, so its step can still be 0 — cover it by its atomic-plugin shape too.
 	const shouldFetchPlugin =
 		!! pluginSlug &&
 		! pluginActive &&
+		! installFailed &&
 		! isFetchingSitePlugins &&
 		canReconcilePlugin &&
 		( currentStep !== 0 || isMarketplacePluginFlow );
