@@ -286,15 +286,6 @@ export function getName( purchase: Purchase ): string {
 		return purchase.meta ?? '';
 	}
 
-	if ( isPlan( purchase ) ) {
-		return i18n.translate( '%(productName)s Plan', {
-			textOnly: true,
-			args: {
-				productName: purchase.productName.replace( /\s*\(.*$/, '' ).trim(),
-			},
-		} );
-	}
-
 	return purchase.productName;
 }
 
@@ -338,6 +329,14 @@ export function getDisplayName( purchase: Purchase ): TranslateResult {
 
 	if ( isAkismetPro500( purchase ) ) {
 		return getAkismetPro500ProductDisplayName( productName, purchaseRenewalQuantity );
+	}
+
+	if ( isPlan( purchase ) && productName ) {
+		return i18n.translate( '%(productName)s Plan', {
+			args: {
+				productName: productName.replace( /\s*\(.*$/, '' ).trim(),
+			},
+		} );
 	}
 
 	return getName( purchase );
