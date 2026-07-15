@@ -168,7 +168,6 @@ function WeChatPayButton( {
 					stripZeros: true,
 				} ) }
 			/>
-			<div className="we-chat-modal-target" />
 		</Button>
 	);
 }

@@ -311,7 +311,6 @@ function PixPayButton( {
 			fullWidth
 		>
 			{ submitButtonContent }
-			<div className="pix-modal-target" />
 		</Button>
 	);
 }
@@ -356,7 +355,6 @@ function PixAutomaticoPayButton( {
 			fullWidth
 		>
 			{ submitButtonContent }
-			<div className="pix-automatico-modal-target" />
 		</Button>
 	);
 }
