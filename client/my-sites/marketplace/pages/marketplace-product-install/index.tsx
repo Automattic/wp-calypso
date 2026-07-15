@@ -21,6 +21,7 @@ import { useWPCOMPlugin } from 'calypso/data/marketplace/use-wpcom-plugins-query
 import Masterbar from 'calypso/layout/masterbar/masterbar';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { useInterval } from 'calypso/lib/interval';
+import { ACTIVATE_PLUGIN } from 'calypso/lib/plugins/constants';
 import { getProductSlugByPeriodVariation } from 'calypso/lib/plugins/utils';
 import MarketplaceProgressBar from 'calypso/my-sites/marketplace/components/progressbar';
 import useMarketplaceAdditionalSteps from 'calypso/my-sites/marketplace/pages/marketplace-product-install/use-marketplace-additional-steps';
@@ -42,6 +43,7 @@ import {
 	getStatusForPlugin,
 	isRequesting,
 } from 'calypso/state/plugins/installed/selectors-ts';
+import { PLUGIN_INSTALLATION_ERROR } from 'calypso/state/plugins/installed/status/constants';
 import { fetchPluginData as wporgFetchPluginData } from 'calypso/state/plugins/wporg/actions';
 import { getPlugin, isFetched } from 'calypso/state/plugins/wporg/selectors';
 import {
@@ -121,6 +123,21 @@ const MarketplaceProductInstall = ( {
 	const pluginInstallStatus = useSelector( ( state ) =>
 		getStatusForPlugin( state, siteId, pluginSlug )
 	);
+
+	// Activation records a terminal status under the installed plugin's id. An activation_error just
+	// means the plugin was already active, so keep waiting for the refreshed active state; any other
+	// error is a real failure with no automatic recovery.
+	const activationStatus = useSelector( ( state ) =>
+		installedPlugin ? getStatusForPlugin( state, siteId, installedPlugin.id ) : undefined
+	);
+	// The declared error type is a string, but a failed activation stores the raw error object.
+	const activationError = activationStatus?.error as string | { error?: string } | undefined;
+	const activationErrorCode =
+		typeof activationError === 'object' ? activationError?.error : activationError;
+	const activationFailed =
+		activationStatus?.status === PLUGIN_INSTALLATION_ERROR &&
+		activationStatus.action === ACTIVATE_PLUGIN &&
+		activationErrorCode !== 'activation_error';
 
 	const productsList = useSelector( getProductsList );
 	const isProductListFetched = Object.values( productsList ).length > 0;
@@ -320,10 +337,12 @@ const MarketplaceProductInstall = ( {
 		( ! siteJustTransferred || ( isAtomicTransferReady && canManagePlugins ) );
 
 	// Poll for the active state like the theme flow polls the active theme: once the flow is under
-	// way, until the server reports it active.
+	// way, until the server reports it active. Stop on a genuine activation failure, which the error
+	// screen surfaces instead.
 	const shouldFetchPlugin =
 		!! pluginSlug &&
 		! pluginActive &&
+		! activationFailed &&
 		! isFetchingSitePlugins &&
 		canReconcilePlugin &&
 		installUnderway;
@@ -545,6 +564,7 @@ const MarketplaceProductInstall = ( {
 		if (
 			pluginUploadError ||
 			pluginInstallStatus?.error ||
+			activationFailed ||
 			( atomicFlow && automatedTransferStatus === transferStates.FAILURE )
 		) {
 			return (

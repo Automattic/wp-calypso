@@ -1,7 +1,7 @@
 /**
  * @jest-environment jsdom
  */
-import { render, act } from '@testing-library/react';
+import { render, screen, act } from '@testing-library/react';
 import MarketplaceProductInstall from '../index';
 
 const PLUGIN_SLUG = 'give';
@@ -28,6 +28,8 @@ const DEFAULT_SITE = {
 	// The checkout install status. COMPLETED means checkout finished the install, so this page does
 	// not start one and stays at step 0 — the marketplace poll path.
 	purchaseStatus: 'PENDING',
+	// The status the store reports for the installed plugin's id, e.g. a failed activation.
+	activationStatus: null as { status: string; action: string; error?: unknown } | null,
 };
 const mockSite = { ...DEFAULT_SITE };
 
@@ -61,7 +63,9 @@ jest.mock( 'calypso/state/plugins/wporg/selectors', () => ( {
 } ) );
 jest.mock( 'calypso/state/plugins/installed/selectors-ts', () => ( {
 	getPluginOnSite: () => mockSite.installedPlugin,
-	getStatusForPlugin: () => null,
+	// Install status is keyed by slug; activation status by the installed plugin's id (PLUGIN.id).
+	getStatusForPlugin: ( _state: unknown, _siteId: number, pluginId: string ) =>
+		pluginId === 'give/give' ? mockSite.activationStatus : null,
 	isRequesting: () => mockSite.isFetching,
 } ) );
 jest.mock( 'calypso/state/automated-transfer/selectors', () => ( {
@@ -303,6 +307,47 @@ describe( 'MarketplaceProductInstall', () => {
 		await advance( rendered, 3000 );
 		expect( activatePlugin ).toHaveBeenCalledWith( SITE_ID, PLUGIN );
 
+		await expectRedirectsOnceActive( rendered );
+	} );
+
+	it( 'shows an error and stops polling on a genuine activation failure', async () => {
+		const rendered = install();
+		await start( rendered );
+
+		mockSite.installedPlugin = PLUGIN;
+		await settle( rendered );
+		expect( activatePlugin ).toHaveBeenCalledWith( SITE_ID, PLUGIN );
+
+		// Activation comes back with a real failure, so the page stops polling and shows the error.
+		mockSite.activationStatus = {
+			status: 'error',
+			action: 'ACTIVATE_PLUGIN',
+			error: { error: 'some_failure' },
+		};
+		await settle( rendered );
+		fetchSitePlugins.mockClear();
+		await advance( rendered, 9000 );
+		expect( fetchSitePlugins ).not.toHaveBeenCalled();
+		expect( screen.getByText( /An error occurred while installing the plugin/ ) ).toBeVisible();
+		expect( window.location.href ).toBe( '' );
+	} );
+
+	it( 'keeps polling on an activation_error, which just means already active', async () => {
+		const rendered = install();
+		await start( rendered );
+
+		mockSite.installedPlugin = PLUGIN;
+		mockSite.activationStatus = {
+			status: 'error',
+			action: 'ACTIVATE_PLUGIN',
+			error: { error: 'activation_error' },
+		};
+		await settle( rendered );
+
+		// activation_error is not a failure: keep waiting for the refreshed active state.
+		fetchSitePlugins.mockClear();
+		await advance( rendered, 3000 );
+		expect( fetchSitePlugins ).toHaveBeenCalledWith( SITE_ID );
 		await expectRedirectsOnceActive( rendered );
 	} );
 
