@@ -152,6 +152,8 @@ describe( 'SiteSpec early provisioning step', () => {
 			},
 			remote_option_ready: true,
 		} );
+		// The redirect waits for the big_sky_wow_site_ready blog sticker.
+		( wpcom.req.get as jest.Mock ).mockResolvedValue( [ 'big_sky_wow_site_ready' ] );
 
 		renderSiteSpec();
 
@@ -185,7 +187,6 @@ describe( 'SiteSpec early provisioning step', () => {
 					type: 'build_wow_spec_confirm_response',
 					spec_id: 'spec-456',
 					site_identifier: 'example.wordpress.com',
-					ready_for_editor: true,
 					atomic_ready_for_editor: true,
 					remote_option_ready: true,
 					is_atomic: true,

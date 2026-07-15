@@ -1,8 +1,10 @@
+import wpcom from 'calypso/lib/wp';
 import {
+	BUILD_WOW_READY_STICKER,
 	getBuildWowSiteIdentifier,
 	getBuildWowSiteSpecUrl,
 	isBuildWowEnabled,
-	isBuildWowSiteEditorReady,
+	waitForBuildWowSiteEditorReady,
 } from '../build-wow';
 
 jest.mock( 'calypso/lib/logstash', () => ( {
@@ -18,6 +20,12 @@ jest.mock( 'calypso/lib/wp', () => ( {
 		},
 	},
 } ) );
+
+const wpcomGetMock = wpcom.req.get as jest.Mock;
+
+beforeEach( () => {
+	jest.clearAllMocks();
+} );
 
 describe( 'build-wow utilities', () => {
 	it( 'detects the build_wow query parameter', () => {
@@ -67,23 +75,29 @@ describe( 'build-wow utilities', () => {
 		expect( url.searchParams.get( 'source' ) ).toBe( 'vega' );
 	} );
 
-	it( 'treats Atomic sites with a ready remote option as editor-ready', () => {
-		expect(
-			isBuildWowSiteEditorReady( {
-				atomic: {
-					is_atomic: true,
-				},
-				remote_option_ready: true,
-			} )
-		).toBe( true );
+	it( 'resolves once the site-ready blog sticker is present', async () => {
+		wpcomGetMock.mockResolvedValue( [ 'big-sky-enabled', BUILD_WOW_READY_STICKER ] );
 
-		expect(
-			isBuildWowSiteEditorReady( {
-				atomic: {
-					is_atomic: false,
-				},
-				remote_option_ready: true,
+		await expect(
+			waitForBuildWowSiteEditorReady( 'example.wordpress.com' )
+		).resolves.toBeUndefined();
+
+		expect( wpcomGetMock ).toHaveBeenCalledWith(
+			expect.objectContaining( {
+				path: '/sites/example.wordpress.com/blog-stickers',
 			} )
-		).toBe( false );
+		);
+	} );
+
+	it( 'keeps polling until the site-ready blog sticker appears', async () => {
+		wpcomGetMock
+			.mockResolvedValueOnce( [ 'big-sky-enabled' ] )
+			.mockResolvedValueOnce( [ 'big-sky-enabled', BUILD_WOW_READY_STICKER ] );
+
+		await expect(
+			waitForBuildWowSiteEditorReady( 'example.wordpress.com', { pollIntervalMs: 1 } )
+		).resolves.toBeUndefined();
+
+		expect( wpcomGetMock ).toHaveBeenCalledTimes( 2 );
 	} );
 } );

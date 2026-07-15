@@ -10,7 +10,6 @@ import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import {
 	getBuildWowSiteIdentifier,
 	isBuildWowEnabled,
-	isBuildWowSiteEditorReady,
 	logBuildWowEvent,
 	requestBuildWowSite,
 	waitForBuildWowSiteEditorReady,
@@ -265,7 +264,6 @@ const SiteSpec: StepType = function SiteSpec() {
 
 				const response = await requestBuildWowSite( buildWowSiteIdentifier, specId );
 				responseBlogId = response.blog_id;
-				const isReadyForEditor = isBuildWowSiteEditorReady( response );
 
 				logBuildWowEvent(
 					'spec_confirm_response',
@@ -273,7 +271,6 @@ const SiteSpec: StepType = function SiteSpec() {
 						spec_id: specId,
 						site_identifier: buildWowSiteIdentifier,
 						elapsed_ms: elapsedMs(),
-						ready_for_editor: isReadyForEditor,
 						atomic_ready_for_editor: response.atomic?.ready_for_editor,
 						remote_option_ready: response.remote_option_ready,
 						is_atomic: response.atomic?.is_atomic,
@@ -283,35 +280,33 @@ const SiteSpec: StepType = function SiteSpec() {
 					response.blog_id
 				);
 
-				if ( ! isReadyForEditor ) {
-					const waitStartTime = Date.now();
-					logBuildWowEvent(
-						'site_editor_ready_wait_start',
-						{
-							spec_id: specId,
-							site_identifier: buildWowSiteIdentifier,
-							elapsed_ms: elapsedMs(),
-							ready_for_editor: isReadyForEditor,
-							remote_option_ready: response.remote_option_ready,
-							is_atomic: response.atomic?.is_atomic,
-							is_transfer_active: response.atomic?.is_transfer_active,
-						},
-						response.blog_id
-					);
+				const waitStartTime = Date.now();
+				logBuildWowEvent(
+					'site_editor_ready_wait_start',
+					{
+						spec_id: specId,
+						site_identifier: buildWowSiteIdentifier,
+						elapsed_ms: elapsedMs(),
+						is_atomic: response.atomic?.is_atomic,
+						is_transfer_active: response.atomic?.is_transfer_active,
+					},
+					response.blog_id
+				);
 
-					await waitForBuildWowSiteEditorReady( buildWowSiteIdentifier );
+				// Redirect only once the site is fully built, signalled by the
+				// big_sky_wow_site_ready blog sticker, rather than at transfer time.
+				await waitForBuildWowSiteEditorReady( buildWowSiteIdentifier );
 
-					logBuildWowEvent(
-						'site_editor_ready_wait_complete',
-						{
-							spec_id: specId,
-							site_identifier: buildWowSiteIdentifier,
-							elapsed_ms: elapsedMs(),
-							wait_elapsed_ms: Date.now() - waitStartTime,
-						},
-						response.blog_id
-					);
-				}
+				logBuildWowEvent(
+					'site_editor_ready_wait_complete',
+					{
+						spec_id: specId,
+						site_identifier: buildWowSiteIdentifier,
+						elapsed_ms: elapsedMs(),
+						wait_elapsed_ms: Date.now() - waitStartTime,
+					},
+					response.blog_id
+				);
 
 				if ( ! response.site_editor_url ) {
 					throw new Error( 'Build-wow response is missing the Site Editor URL.' );

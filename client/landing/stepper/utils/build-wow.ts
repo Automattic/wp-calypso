@@ -6,6 +6,10 @@ import { pollUntil, PollTimeoutError } from './poll-until';
 export const BUILD_WOW_QUERY_VALUE = '1';
 const BUILD_WOW_SITE_SPEC_PATH = '/setup/ai-site-builder-spec/site-spec';
 
+// Blog sticker the backend adds once the build-wow site is fully built and ready
+// for the Site Editor. Calypso waits for this sticker before redirecting.
+export const BUILD_WOW_READY_STICKER = 'big_sky_wow_site_ready';
+
 type BuildWowAtomicState = {
 	is_atomic?: boolean;
 	is_transfer_active?: boolean;
@@ -21,17 +25,6 @@ export type BuildWowResponse = {
 	build?: {
 		status?: string;
 	};
-};
-
-type SiteResponse = {
-	is_wpcom_atomic?: boolean;
-	options?: {
-		is_wpcom_atomic?: boolean;
-	};
-};
-
-type BigSkyPluginStatus = {
-	remote_option_ready?: boolean;
 };
 
 export function isBuildWowEnabled(
@@ -79,13 +72,6 @@ export function getBuildWowSiteSpecUrl( {
 	} );
 }
 
-export function isBuildWowSiteEditorReady( response: BuildWowResponse ): boolean {
-	return (
-		response.atomic?.ready_for_editor === true ||
-		( response.atomic?.is_atomic === true && response.remote_option_ready !== false )
-	);
-}
-
 export async function requestBuildWowSite(
 	siteIdentifier: string,
 	specId?: string
@@ -103,8 +89,7 @@ export async function waitForBuildWowSiteEditorReady(
 	siteIdentifier: string,
 	{ totalTimeoutSeconds = 300, pollIntervalMs = 3000 } = {}
 ): Promise< void > {
-	let lastIsAtomic: boolean | undefined;
-	let lastRemoteOptionReady: boolean | undefined;
+	let lastStickers: string[] | undefined;
 	let lastError: string | undefined;
 
 	try {
@@ -112,29 +97,13 @@ export async function waitForBuildWowSiteEditorReady(
 			async () => {
 				lastError = undefined;
 				try {
-					const site = ( await wpcom.req.get(
-						{
-							path: `/sites/${ siteIdentifier }`,
-							apiVersion: '1.1',
-						},
-						{
-							fields: 'ID,URL,slug,is_wpcom_atomic,options',
-							options: 'is_wpcom_atomic',
-						}
-					) ) as SiteResponse;
-					lastIsAtomic = site?.is_wpcom_atomic || site?.options?.is_wpcom_atomic;
-
-					if ( ! lastIsAtomic ) {
-						return undefined;
-					}
-
-					const status = ( await wpcom.req.get( {
-						path: `/sites/${ siteIdentifier }/big-sky-plugin`,
+					const stickers = ( await wpcom.req.get( {
+						path: `/sites/${ siteIdentifier }/blog-stickers`,
 						apiVersion: '1.1',
-					} ) ) as BigSkyPluginStatus;
-					lastRemoteOptionReady = status.remote_option_ready;
+					} ) ) as string[];
+					lastStickers = Array.isArray( stickers ) ? stickers : undefined;
 
-					return status.remote_option_ready !== false ? true : undefined;
+					return lastStickers?.includes( BUILD_WOW_READY_STICKER ) ? true : undefined;
 				} catch ( error ) {
 					lastError = error instanceof Error ? error.message : String( error );
 					return undefined;
@@ -143,17 +112,15 @@ export async function waitForBuildWowSiteEditorReady(
 			{
 				maxAttempts: Math.ceil( ( totalTimeoutSeconds * 1000 ) / pollIntervalMs ),
 				intervalMs: pollIntervalMs,
-				initialDelayMs: pollIntervalMs,
+				initialDelayMs: 0,
 			}
 		);
 	} catch ( error ) {
 		if ( error instanceof PollTimeoutError ) {
 			throw new Error(
-				`Timed out waiting for build-wow site editor readiness. Last state: is_atomic=${ String(
-					lastIsAtomic
-				) }, remote_option_ready=${ String( lastRemoteOptionReady ) }, error=${
-					lastError ?? 'none'
-				}.`
+				`Timed out waiting for the ${ BUILD_WOW_READY_STICKER } blog sticker. Last stickers: ${
+					lastStickers ? lastStickers.join( ', ' ) || 'none' : 'unknown'
+				}, error=${ lastError ?? 'none' }.`
 			);
 		}
 		throw error;
