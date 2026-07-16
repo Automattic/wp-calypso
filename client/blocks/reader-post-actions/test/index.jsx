@@ -1,6 +1,7 @@
 /**
  * @jest-environment jsdom
  */
+import { readTeamsQuery } from '@automattic/api-queries';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
@@ -23,9 +24,6 @@ jest.mock( 'calypso/state/reader/analytics/actions', () => ( {
 jest.mock( 'calypso/blocks/comment-button', () => () => <div data-testid="comment-button" /> );
 jest.mock( 'calypso/blocks/reader-share', () => () => <div data-testid="share-button" /> );
 jest.mock( 'calypso/reader/like-button', () => () => <div data-testid="like-button" /> );
-jest.mock( 'calypso/blocks/reader-freshly-pressed-button', () => ( {
-	ReaderFreshlyPressedButton: () => <div data-testid="freshly-pressed-button" />,
-} ) );
 jest.mock( 'calypso/reader/spaces/subscribe-with-space/space-picker-modal', () => ( {
 	SpacePickerModal: () => null,
 } ) );
@@ -118,6 +116,33 @@ describe( 'ReaderPostActions', () => {
 
 			expect( queryByTestId( 'comment-button' ) ).toBeInTheDocument();
 		} );
+	} );
+
+	it( 'does not render the Freshly Pressed suggestion action in a full post', () => {
+		const store = createMockStore();
+		const queryClient = createQueryClient();
+		const teamsQuery = readTeamsQuery();
+		queryClient.setQueryDefaults( teamsQuery.queryKey, { staleTime: Infinity } );
+		queryClient.setQueryData( teamsQuery.queryKey, { teams: [ { slug: 'a8c' } ] } );
+		queryClient.setQueryDefaults( [ 'freshly-pressed', 'eligibility' ], {
+			staleTime: Infinity,
+		} );
+		queryClient.setQueryData( [ 'freshly-pressed', 'eligibility', 456, 123 ], {
+			eligible: true,
+			details: null,
+		} );
+
+		render(
+			<QueryClientProvider client={ queryClient }>
+				<Provider store={ store }>
+					<ReaderPostActions { ...defaultProps } fullPost />
+				</Provider>
+			</QueryClientProvider>
+		);
+
+		expect(
+			screen.queryByRole( 'button', { name: 'Suggest: Freshly Pressed' } )
+		).not.toBeInTheDocument();
 	} );
 
 	it( 'tracks when the spaces button is clicked', async () => {
