@@ -45,7 +45,6 @@
 		"@automattic/calypso-analytics": "workspace:^",
 		"@automattic/components": "workspace:^",
 		"@automattic/data-stores": "workspace:^",
-		"@automattic/help-center": "workspace:^",
 		"@automattic/i18n-utils": "workspace:^",
 		"@automattic/urls": "workspace:^",
 		"@automattic/zendesk-client": "workspace:^",
