@@ -1,6 +1,6 @@
 {
 	"name": "i18n-calypso",
-	"version": "8.0.0",
+	"version": "8.1.0",
 	"description": "I18n JavaScript library on top of Tannin originally used in Calypso.",
 	"main": "dist/cjs/index.js",
 	"module": "dist/esm/index.js",
@@ -41,7 +41,11 @@
 		"hash.js": "^1.1.7",
 		"lru": "^3.1.0",
 		"tannin": "^1.2.0",
+		"tslib": "^2.8.1",
 		"use-subscription": "1.11.0"
+	},
+	"peerDependencies": {
+		"react": "^18.3.1 || ^19.0.0"
 	},
 	"devDependencies": {
 		"@automattic/calypso-typescript-config": "workspace:^",
@@ -53,8 +57,5 @@
 		"react-dom": "^18.3.1",
 		"react-test-renderer": "^18.3.1",
 		"typescript": "^6.0.3"
-	},
-	"peerDependencies": {
-		"react": "^18.3.1 || ^19.0.0"
 	}
 }
