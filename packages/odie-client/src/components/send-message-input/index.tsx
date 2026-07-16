@@ -1,7 +1,6 @@
 import '@automattic/agenttic-ui/index.css';
 import { useInput } from '@automattic/agenttic-ui';
 import { HelpCenterSelect } from '@automattic/data-stores';
-import { EmailFallbackNotice } from '@automattic/help-center/src/components/notices';
 import { HELP_CENTER_STORE } from '@automattic/help-center/src/stores';
 import { useConnectionStatusNotice } from '@automattic/zendesk-client';
 import { useSelect } from '@wordpress/data';
@@ -12,6 +11,7 @@ import Smooch from 'smooch';
 import { useOdieAssistantContext } from '../../context';
 import { useSendChatMessage } from '../../hooks';
 import { AgentUIFooter } from '../chat-footer';
+import { EmailFallbackNotice } from '../email-fallback-notice';
 import { useMessageSizeErrorNotice } from '../notices';
 import { useAttachmentHandler } from './use-attachment-handler';
 import { useSendMessageHandler } from './use-send-message-handler';
@@ -30,7 +30,8 @@ const getTextAreaPlaceholder = (
 
 export const OdieSendMessageButton = () => {
 	const divContainerRef = useRef< HTMLDivElement >( null );
-	const { trackEvent, chat, canConnectToZendesk, forceEmailSupport } = useOdieAssistantContext();
+	const { trackEvent, chat, canConnectToZendesk, forceEmailSupport, isChatRestricted } =
+		useOdieAssistantContext();
 	const cantTransferToZendesk =
 		( chat.messages?.[ chat.messages.length - 1 ]?.context?.flags?.forward_to_human_support &&
 			! canConnectToZendesk ) ??
@@ -177,7 +178,7 @@ export const OdieSendMessageButton = () => {
 		<>
 			<div className="odie-chat-message-input-container agenttic" ref={ divContainerRef }>
 				{ isEmailFallback ? (
-					<EmailFallbackNotice />
+					<EmailFallbackNotice isChatRestricted={ isChatRestricted } />
 				) : (
 					<AgentUIFooter
 						value={ inputValue }
