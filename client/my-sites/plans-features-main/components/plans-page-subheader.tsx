@@ -117,8 +117,7 @@ const HeaderContainer = styled( Subheader )`
 		flex-wrap: wrap;
 		align-items: center;
 		gap: 12px 8px;
-		margin-top: -13px;
-		margin-bottom: 48px;
+		margin: -2rem 0 3rem;
 		color: var( --color-text );
 		font-size: 14px;
 		font-weight: 400;
