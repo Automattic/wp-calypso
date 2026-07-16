@@ -914,10 +914,38 @@ describe( 'Checkout', () => {
 			await waitFor( () => {
 				expect( scrollIntoView ).toHaveBeenCalledWith( { behavior: 'smooth', block: 'start' } );
 			} );
-			// The active step (step 1) is the first incomplete step, so it is the scroll target.
+			// The active step (step 1) validates successfully, so it completes and we
+			// advance to step 2, the next incomplete step, which becomes the scroll target.
 			expect( ( scrollIntoView.mock.instances[ 0 ] as HTMLElement ).id ).toBe(
-				'custom-contact-step'
+				'custom-incomplete-step'
 			);
+		} );
+
+		it( 'tries to complete the active step and stays on it when it fails to validate', async () => {
+			const scrollIntoView = jest.fn();
+			window.HTMLElement.prototype.scrollIntoView = scrollIntoView;
+			const isCompleteCallback = jest.fn( () => false );
+			// The active (first numbered) step is invalid; a later step follows it so the
+			// summary shows "Continue" rather than the Pay button.
+			const invalidActiveStep = { ...steps[ 3 ], isCompleteCallback };
+			const { container } = render(
+				<ContinueCheckout withProp steps={ [ steps[ 0 ], invalidActiveStep, steps[ 1 ] ] } />
+			);
+			const submitArea = getSubmitArea( container );
+			const user = userEvent.setup();
+			await user.click( getByTextInNode( submitArea, 'Continue' ) );
+
+			// The active step's own completion callback runs (the fix): previously
+			// makeStepActive would no-op on the active step and never validate it.
+			await waitFor( () => {
+				expect( isCompleteCallback ).toHaveBeenCalled();
+			} );
+			// Validation failed, so we stay on the active step and scroll to it.
+			await waitFor( () => {
+				expect( ( scrollIntoView.mock.instances[ 0 ] as HTMLElement ).id ).toBe(
+					'custom-incomplete-step'
+				);
+			} );
 		} );
 
 		it( 'renders the payment method submit button when the last step is active', () => {
