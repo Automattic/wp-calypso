@@ -15,8 +15,8 @@ export function getPurchaseTotal(
 	const product = products?.find( ( item ) => item.product_id === purchase.product_id );
 
 	let amount = Number( product?.amount );
-	let currency = 'USD';
-	let interval = 'month';
+	let currency = product?.currency ?? 'USD';
+	let interval = product?.price_interval ?? 'month';
 
 	if ( purchase.subscription?.purchase_price ) {
 		amount = Number( purchase.subscription.purchase_price );

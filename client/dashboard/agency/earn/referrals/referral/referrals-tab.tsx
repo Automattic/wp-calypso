@@ -6,9 +6,11 @@ import {
 import { Badge } from '@automattic/ui';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { useDispatch } from '@wordpress/data';
+import { filterSortAndPaginate } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
 import { useMemo, useState } from 'react';
+import { useAnalytics } from '../../../../app/analytics';
 import ConfirmModal from '../../../../components/confirm-modal';
 import { DataViews, DataViewsCard } from '../../../../components/dataviews';
 import { PageHeader } from '../../../../components/page-header';
@@ -35,6 +37,7 @@ export default function ReferralReferralsTab() {
 	const { data: products } = useQuery( agencyProductsQuery( agencyId ) );
 	const [ view, setView ] = useState< View >( DEFAULT_VIEW );
 
+	const { recordTracksEvent } = useAnalytics();
 	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
 	const { mutate: archiveReferral } = useMutation( archiveReferralMutation( agencyId ) );
 	const { mutate: resendReferralEmail } = useMutation( resendReferralEmailMutation( agencyId ) );
@@ -75,6 +78,7 @@ export default function ReferralReferralsTab() {
 					if ( ! order ) {
 						return;
 					}
+					recordTracksEvent( 'calypso_a4a_referrals_resend_email_button_click' );
 					resendReferralEmail( order.id, {
 						onSuccess: () =>
 							createSuccessNotice( __( 'The referral email has been resent.' ), {
@@ -96,13 +100,14 @@ export default function ReferralReferralsTab() {
 					if ( ! order?.checkout_url ) {
 						return;
 					}
+					recordTracksEvent( 'calypso_a4a_referrals_copy_link_button_click' );
 					navigator.clipboard
 						.writeText( order.checkout_url )
 						.then( () =>
 							createSuccessNotice( __( 'Link copied to clipboard.' ), { type: 'snackbar' } )
 						)
 						.catch( () =>
-							createErrorNotice( __( 'Could not copy the link to clipboard.' ), {
+							createErrorNotice( __( 'Failed to copy the link to clipboard.' ), {
 								type: 'snackbar',
 							} )
 						);
@@ -123,6 +128,7 @@ export default function ReferralReferralsTab() {
 							onCancel={ () => closeModal?.() }
 							onConfirm={ () => {
 								if ( order ) {
+									recordTracksEvent( 'calypso_a4a_referrals_archive_referral_button_click' );
 									archiveReferral( order.id, {
 										onSuccess: () =>
 											createSuccessNotice( __( 'The referral has been archived.' ), {
@@ -145,12 +151,23 @@ export default function ReferralReferralsTab() {
 				},
 			},
 		],
-		[ archiveReferral, resendReferralEmail, createSuccessNotice, createErrorNotice ]
+		[
+			archiveReferral,
+			resendReferralEmail,
+			createSuccessNotice,
+			createErrorNotice,
+			recordTracksEvent,
+		]
 	);
 
 	const orders = useMemo(
 		() => ( referral ? sortReferralOrders( referral.referrals ) : [] ),
 		[ referral ]
+	);
+
+	const { data: paginatedOrders, paginationInfo } = useMemo(
+		() => filterSortAndPaginate( orders, view, fields ),
+		[ orders, view, fields ]
 	);
 
 	if ( ! referral ) {
@@ -161,7 +178,7 @@ export default function ReferralReferralsTab() {
 		<PageLayout header={ <PageHeader title={ __( 'Referrals' ) } /> }>
 			<DataViewsCard>
 				<DataViews< ReferralApiResponse >
-					data={ orders }
+					data={ paginatedOrders }
 					fields={ fields }
 					actions={ actions }
 					view={ view }
@@ -169,7 +186,7 @@ export default function ReferralReferralsTab() {
 					search={ false }
 					getItemId={ ( item ) => String( item.id ) }
 					defaultLayouts={ { table: { titleField: 'summary' } } }
-					paginationInfo={ { totalItems: orders.length, totalPages: 1 } }
+					paginationInfo={ paginationInfo }
 				/>
 			</DataViewsCard>
 		</PageLayout>

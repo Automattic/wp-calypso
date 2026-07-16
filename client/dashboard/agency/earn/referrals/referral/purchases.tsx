@@ -1,5 +1,6 @@
 import { agencyProductsQuery } from '@automattic/api-queries';
 import { useQuery } from '@tanstack/react-query';
+import { filterSortAndPaginate } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
 import { useMemo, useState } from 'react';
 import { useLocale } from '../../../../app/locale';
@@ -79,6 +80,11 @@ export default function ReferralPurchases() {
 		[ locale, products ]
 	);
 
+	const { data: paginatedItems, paginationInfo } = useMemo(
+		() => filterSortAndPaginate( items, view, fields ),
+		[ items, view, fields ]
+	);
+
 	if ( ! referral ) {
 		return <ReferralNotFound />;
 	}
@@ -87,14 +93,14 @@ export default function ReferralPurchases() {
 		<PageLayout header={ <PageHeader title={ __( 'Purchases' ) } /> }>
 			<DataViewsCard>
 				<DataViews< PurchaseItem >
-					data={ items }
+					data={ paginatedItems }
 					fields={ fields }
 					view={ view }
 					onChangeView={ setView }
 					search={ false }
 					getItemId={ ( item ) => item._id }
 					defaultLayouts={ { table: { titleField: 'product' } } }
-					paginationInfo={ { totalItems: items.length, totalPages: 1 } }
+					paginationInfo={ paginationInfo }
 				/>
 			</DataViewsCard>
 		</PageLayout>

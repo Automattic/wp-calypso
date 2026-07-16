@@ -11,8 +11,7 @@ function flattenFamilies( families: AgencyProductFamily[] ): AgencyProduct[] {
 export const agencyProductsQuery = ( agencyId: number ) =>
 	queryOptions( {
 		queryKey: [ 'agency', agencyId, 'products' ] as const,
-		queryFn: () => fetchAgencyProducts( agencyId ),
-		select: flattenFamilies,
+		queryFn: async () => flattenFamilies( await fetchAgencyProducts( agencyId ) ),
 		enabled: !! agencyId,
 		staleTime: 5 * 60 * 1000,
 	} );

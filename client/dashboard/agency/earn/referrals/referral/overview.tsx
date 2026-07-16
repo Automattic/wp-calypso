@@ -78,7 +78,9 @@ const getPurchaseFields = ( products?: AgencyProduct[] ): Field< PurchaseItem >[
 export default function ReferralOverview() {
 	const locale = useLocale();
 	const { referral, agencyId } = useReferral();
-	const { data: commissionPayout } = useQuery( referralCommissionPayoutQuery( agencyId ) );
+	const { data: commissionPayout, isLoading: isLoadingCommissionPayout } = useQuery(
+		referralCommissionPayoutQuery( agencyId )
+	);
 	const { data: products } = useQuery( agencyProductsQuery( agencyId ) );
 
 	const referralFields = useMemo( () => getReferralFields( products ), [ products ] );
@@ -115,6 +117,7 @@ export default function ReferralOverview() {
 				isSingleClient
 				referrals={ [ referral ] }
 				referralCommissionPayout={ commissionPayout }
+				isLoadingCommissionPayout={ isLoadingCommissionPayout }
 				locale={ locale }
 			/>
 			<Grid templateColumns="repeat(auto-fit, minmax(320px, 1fr))" gap={ 6 } align="start">
