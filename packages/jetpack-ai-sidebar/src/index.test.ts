@@ -1987,12 +1987,6 @@ describe( 'useSuggestions', () => {
 			'Check grammar',
 			'Simplify text',
 		] );
-		expect( latestSuggestions.map( ( suggestion: any ) => suggestion.metadata ) ).toEqual( [
-			{ blockType: 'core/paragraph' },
-			{ blockType: 'core/paragraph' },
-			{ blockType: 'core/paragraph' },
-			{ blockType: 'core/paragraph' },
-		] );
 		expect( getTracksCalls( 'jetpack_ai_editorial_review_suggestion_rendered' ) ).toEqual( [] );
 		expect( getTracksCalls( 'jetpack_ai_block_transformation_suggestion_rendered' ) ).toEqual( [] );
 	} );
@@ -2196,7 +2190,6 @@ describe( 'useSuggestions', () => {
 			'Simple Review',
 			'Editorial Review',
 		] );
-		expect( latestSuggestions.every( ( suggestion: any ) => ! suggestion.metadata ) ).toBe( true );
 	} );
 
 	it( 'tracks rendered image block transformation suggestions', () => {
@@ -2338,7 +2331,6 @@ describe( 'useSuggestions', () => {
 
 		const changeTone = byId( 'change-tone' );
 		expect( changeTone ).toBeDefined();
-		expect( changeTone.metadata ).toEqual( { blockType: 'core/paragraph' } );
 		// Empty prompt is the contract: each option's `value` is the full prompt.
 		expect( changeTone.prompt ).toBe( '' );
 		expect( changeTone.options.map( ( option: any ) => option.id ) ).toEqual( [
@@ -2361,7 +2353,6 @@ describe( 'useSuggestions', () => {
 
 		const translate = byId( 'translate' );
 		expect( translate ).toBeDefined();
-		expect( translate.metadata ).toEqual( { blockType: 'core/paragraph' } );
 		expect( translate.prompt ).toBe( '' );
 		expect( translate.options.map( ( option: any ) => option.id ) ).toEqual( [
 			'en',

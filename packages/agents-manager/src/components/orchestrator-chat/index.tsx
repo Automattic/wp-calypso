@@ -1,7 +1,6 @@
 import { getAgentManager, useAgentChat, type UIMessage } from '@automattic/agenttic-client';
 import {
 	type Suggestion,
-	type SuggestionSelectionContext,
 	type MarkdownComponents,
 	type MarkdownExtensions,
 } from '@automattic/agenttic-ui';
@@ -69,6 +68,22 @@ function getLatestAgentMessageId( messages: UIMessage[] ): string | null {
  */
 function formatSuggestionIds( suggestions: Suggestion[] ): string {
 	return '|' + suggestions.map( ( s ) => s.id ).join( '|' ) + '|';
+}
+
+/**
+ * Resolve a dropdown option from the original suggestion configuration that
+ * Agenttic returns alongside the selected, combined suggestion.
+ */
+function getSelectedOptionId(
+	selectedSuggestion: Suggestion,
+	availableSuggestions: Suggestion[]
+): string | undefined {
+	const originalSuggestion = availableSuggestions.find(
+		( suggestion ) => suggestion.id === selectedSuggestion.id
+	);
+	return originalSuggestion?.options?.find(
+		( option ) => option.value === selectedSuggestion.prompt
+	)?.id;
 }
 
 function getToolMessageData( message: Pick< UIMessage, 'content' > ):
@@ -202,6 +217,13 @@ export default function OrchestratorChat( {
 	const currentPostId = useSelect( ( select ) => {
 		const editor = select( 'core/editor' ) as { getCurrentPostId?: () => number | string };
 		return editor?.getCurrentPostId?.();
+	}, [] );
+	const selectedBlockType = useSelect( ( select ) => {
+		const blockEditor = select( 'core/block-editor' ) as {
+			getSelectedBlock?: () => { name?: unknown } | null;
+		};
+		const blockName = blockEditor?.getSelectedBlock?.()?.name;
+		return typeof blockName === 'string' && blockName ? blockName : undefined;
 	}, [] );
 
 	const {
@@ -378,7 +400,16 @@ export default function OrchestratorChat( {
 	const dynamicSuggestionsList = dynamicSuggestions?.suggestions ?? [];
 	const replaceEmptyViewSuggestions = dynamicSuggestions?.replaceEmptyViewSuggestions === true;
 	const dynamicSuggestionsKey = JSON.stringify(
-		dynamicSuggestionsList.map( ( s ) => [ s.id, s.label, s.prompt, s.metadata?.blockType ] )
+		dynamicSuggestionsList.map( ( s ) => [ s.id, s.label, s.prompt ] )
+	);
+	const contextualSuggestionIds = useMemo(
+		() =>
+			replaceEmptyViewSuggestions
+				? new Set( dynamicSuggestionsList.map( ( suggestion ) => suggestion.id ) )
+				: new Set< string >(),
+		// Track suggestion content rather than an unstable provider array.
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+		[ dynamicSuggestionsKey, replaceEmptyViewSuggestions ]
 	);
 
 	// Register dynamic suggestions whenever they change
@@ -676,23 +707,19 @@ export default function OrchestratorChat( {
 	}, [] );
 
 	const handleSuggestionClick = useCallback(
-		(
-			suggestion: Suggestion | string,
-			availableSuggestions?: Suggestion[],
-			selectionContext?: SuggestionSelectionContext
-		) => {
+		( suggestion: Suggestion | string, availableSuggestions?: Suggestion[] ) => {
 			const value =
 				typeof suggestion === 'string' ? suggestion : suggestion.prompt ?? suggestion.label;
 
 			const autoSubmit = typeof suggestion !== 'string' && !! suggestion.autoSubmit;
 			const suggestionId = typeof suggestion !== 'string' ? suggestion.id : undefined;
 			const optionId =
-				typeof suggestion !== 'string' ? selectionContext?.selectedOption?.id : undefined;
-			const suggestionBlockType =
-				typeof suggestion !== 'string' ? suggestion.metadata?.blockType : undefined;
+				typeof suggestion !== 'string'
+					? getSelectedOptionId( suggestion, availableSuggestions ?? [] )
+					: undefined;
 			const blockType =
-				typeof suggestionBlockType === 'string' && suggestionBlockType
-					? suggestionBlockType
+				typeof suggestion !== 'string' && contextualSuggestionIds.has( suggestion.id )
+					? selectedBlockType
 					: undefined;
 
 			if ( typeof suggestion !== 'string' ) {
@@ -718,7 +745,7 @@ export default function OrchestratorChat( {
 				} )
 			);
 		},
-		[]
+		[ contextualSuggestionIds, selectedBlockType ]
 	);
 
 	// Invoke abilities setup hook to register hook-based abilities that utilize React context.

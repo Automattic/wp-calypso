@@ -3,7 +3,7 @@
  */
 /* eslint-disable import/order -- jest.mock calls must precede imports */
 import { act, fireEvent, render, screen, waitFor } from '@testing-library/react';
-import type { Suggestion, SuggestionSelectionContext } from '@automattic/agenttic-ui';
+import type { Suggestion } from '@automattic/agenttic-ui';
 import type { ComponentProps } from 'react';
 
 const mockUseAgentChat = jest.fn();
@@ -11,6 +11,7 @@ const mockUseRegenerateAction = jest.fn();
 const mockUseConversation = jest.fn();
 const mockUseImageUpload = jest.fn();
 const mockIsReaderChatAgent = jest.fn();
+let mockSelectedBlockType: string | undefined;
 const mockAgentChat = jest.fn(
 	( {
 		onSuggestionClick,
@@ -24,8 +25,7 @@ const mockAgentChat = jest.fn(
 		messages?: unknown[];
 		onSuggestionClick: (
 			suggestion: Suggestion | string,
-			availableSuggestions?: Suggestion[],
-			selectionContext?: SuggestionSelectionContext
+			availableSuggestions?: Suggestion[]
 		) => void;
 		onSubmit: ( message: string ) => void;
 		onAbort?: () => void;
@@ -53,10 +53,6 @@ const mockAgentChat = jest.fn(
 						id: 'check-grammar',
 						label: 'Check grammar',
 						prompt: 'Check the grammar and spelling of this text',
-						metadata: {
-							blockType: 'core/paragraph',
-							internalValue: 'not-forwarded',
-						},
 					};
 					onSuggestionClick( suggestion, [ suggestion ] );
 				} }
@@ -65,7 +61,6 @@ const mockAgentChat = jest.fn(
 			</button>
 			<button
 				onClick={ () => {
-					const metadata = { blockType: 'core/paragraph' };
 					const option = {
 						id: 'formal',
 						label: 'Formal',
@@ -75,18 +70,14 @@ const mockAgentChat = jest.fn(
 						id: 'change-tone',
 						label: 'Change tone Formal',
 						prompt: option.value,
-						metadata,
 					};
 					const availableSuggestion = {
 						id: 'change-tone',
 						label: 'Change tone',
 						prompt: '',
 						options: [ option ],
-						metadata,
 					};
-					onSuggestionClick( selectedSuggestion, [ availableSuggestion ], {
-						selectedOption: option,
-					} );
+					onSuggestionClick( selectedSuggestion, [ availableSuggestion ] );
 				} }
 			>
 				Click block dropdown suggestion
@@ -109,9 +100,7 @@ const mockAgentChat = jest.fn(
 						prompt: '',
 						options: [ option ],
 					};
-					onSuggestionClick( selectedSuggestion, [ availableSuggestion ], {
-						selectedOption: option,
-					} );
+					onSuggestionClick( selectedSuggestion, [ availableSuggestion ] );
 				} }
 			>
 				Click post dropdown suggestion
@@ -163,7 +152,16 @@ jest.mock(
 	{ virtual: true }
 );
 jest.mock( '@wordpress/data', () => ( {
-	useSelect: () => undefined,
+	useSelect: ( mapSelect: ( select: ( storeName: string ) => object ) => unknown ) =>
+		mapSelect( ( storeName: string ) => {
+			if ( storeName === 'core/block-editor' ) {
+				return {
+					getSelectedBlock: () =>
+						mockSelectedBlockType ? { name: mockSelectedBlockType } : null,
+				};
+			}
+			return {};
+		} ),
 } ) );
 jest.mock( '@wordpress/element', () => jest.requireActual( 'react' ) );
 jest.mock( '@wordpress/i18n', () => ( { __: ( text: string ) => text } ) );
@@ -329,6 +327,7 @@ describe( 'OrchestratorChat', () => {
 		mockUseAgentChat.mockReturnValue( agentChatReturn() );
 		mockUseImageUpload.mockReturnValue( createImageUpload() );
 		mockIsReaderChatAgent.mockReturnValue( false );
+		mockSelectedBlockType = undefined;
 	} );
 
 	it( 'dispatches the inline suggestion event when an Agenttic suggestion is clicked', () => {
@@ -397,10 +396,25 @@ describe( 'OrchestratorChat', () => {
 	} );
 
 	it( 'records block context on a regular block suggestion', () => {
+		mockSelectedBlockType = 'core/paragraph';
 		const listener = jest.fn();
 		window.addEventListener( 'big-sky-inline-suggestion-click', listener );
 
-		render( chat() );
+		render(
+			chat( {
+				useSuggestions: () => ( {
+					suggestions: [
+						{
+							id: 'check-grammar',
+							label: 'Check grammar',
+							prompt: 'Check the grammar and spelling of this text',
+						},
+					],
+					replaceEmptyViewSuggestions: true,
+				} ),
+			} )
+		);
+		jest.mocked( recordBigSkyTracksEvent ).mockClear();
 
 		fireEvent.click( screen.getByText( 'Click block suggestion' ) );
 
@@ -421,10 +435,32 @@ describe( 'OrchestratorChat', () => {
 	} );
 
 	it( 'records the selected option and block context for a dropdown suggestion', () => {
+		mockSelectedBlockType = 'core/paragraph';
 		const listener = jest.fn();
 		window.addEventListener( 'big-sky-inline-suggestion-click', listener );
 
-		render( chat() );
+		render(
+			chat( {
+				useSuggestions: () => ( {
+					suggestions: [
+						{
+							id: 'change-tone',
+							label: 'Change tone',
+							prompt: '',
+							options: [
+								{
+									id: 'formal',
+									label: 'Formal',
+									value: 'Change the tone of this text to be more formal',
+								},
+							],
+						},
+					],
+					replaceEmptyViewSuggestions: true,
+				} ),
+			} )
+		);
+		jest.mocked( recordBigSkyTracksEvent ).mockClear();
 
 		fireEvent.click( screen.getByText( 'Click block dropdown suggestion' ) );
 
@@ -445,7 +481,8 @@ describe( 'OrchestratorChat', () => {
 		window.removeEventListener( 'big-sky-inline-suggestion-click', listener );
 	} );
 
-	it( 'records a post-level dropdown option without block context', () => {
+	it( 'does not add block context to a post-level dropdown when a block is selected', () => {
+		mockSelectedBlockType = 'core/paragraph';
 		render( chat() );
 
 		fireEvent.click( screen.getByText( 'Click post dropdown suggestion' ) );
@@ -475,46 +512,28 @@ describe( 'OrchestratorChat', () => {
 		expect( useSuggestions ).toHaveBeenCalledWith( undefined, { suggestionsVisible: true } );
 	} );
 
-	it( 're-registers block suggestions when their block context changes', () => {
-		let blockType = 'core/paragraph';
-		let registeredSuggestions: Suggestion[] = [];
-		const registerSuggestions = jest.fn( ( suggestions: Suggestion[] ) => {
-			registeredSuggestions = suggestions;
-		} );
-		const useSuggestions = jest.fn( () => ( {
+	it( 'uses the current Gutenberg block type when the selected block changes', () => {
+		mockSelectedBlockType = 'core/paragraph';
+		const useSuggestions = () => ( {
 			suggestions: [
 				{
-					id: 'context-switch-test',
+					id: 'check-grammar',
 					label: 'Check grammar',
 					prompt: 'Check the grammar and spelling of this text',
-					metadata: { blockType },
 				},
 			],
-		} ) );
-		mockUseAgentChat.mockImplementation( () =>
-			agentChatReturn( {
-				messages: [ userMessage ],
-				suggestions: registeredSuggestions,
-				registerSuggestions,
-			} )
-		);
-
+			replaceEmptyViewSuggestions: true,
+		} );
 		const { rerender } = render( chat( { useSuggestions } ) );
-		rerender( chat( { useSuggestions } ) );
 
-		blockType = 'core/heading';
+		mockSelectedBlockType = 'core/heading';
 		rerender( chat( { useSuggestions } ) );
-		rerender( chat( { useSuggestions } ) );
+		fireEvent.click( screen.getByText( 'Click block suggestion' ) );
 
-		fireEvent.click( screen.getByText( 'Check grammar' ) );
-
-		expect( registerSuggestions ).toHaveBeenLastCalledWith( [
-			expect.objectContaining( { metadata: { blockType: 'core/heading' } } ),
-		] );
 		expect( recordBigSkyTracksEvent ).toHaveBeenLastCalledWith( 'chat_suggestion_click', {
 			suggestion_text: 'Check the grammar and spelling of this text',
-			suggestion_id: 'context-switch-test',
-			available_suggestions: '|context-switch-test|',
+			suggestion_id: 'check-grammar',
+			available_suggestions: '|check-grammar|',
 			block_type: 'core/heading',
 		} );
 	} );

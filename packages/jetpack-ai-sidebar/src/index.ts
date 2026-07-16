@@ -1132,7 +1132,6 @@ export function useSuggestions(
 		description?: string;
 		prompt?: string;
 		options?: SuggestionOption[];
-		metadata?: Record< string, unknown >;
 	} >;
 	replaceEmptyViewSuggestions: boolean;
 } {
@@ -1248,14 +1247,8 @@ export function useSuggestions(
 	);
 	const blockTransformationSuggestions = useMemo(
 		() =>
-			applicable.map( ( { id, label, prompt, options } ) => ( {
-				id,
-				label,
-				prompt,
-				options,
-				metadata: { blockType: selectedBlock.name },
-			} ) ),
-		[ applicable, selectedBlock?.name ]
+			applicable.map( ( { id, label, prompt, options } ) => ( { id, label, prompt, options } ) ),
+		[ applicable ]
 	);
 	// Editor-level reviews (Optimize Title, Generate Feedback, AI Editorial Review)
 	// show only with no block selected; a selected block shows block transforms.
@@ -1270,7 +1263,6 @@ export function useSuggestions(
 			label: string;
 			prompt: string;
 			options?: SuggestionOption[];
-			metadata?: Record< string, unknown >;
 		} > = selectedBlock ? blockTransformationSuggestions : postLevelSuggestions;
 		return applySuggestionLimit( activeSuggestions, maxSuggestions );
 	}, [
