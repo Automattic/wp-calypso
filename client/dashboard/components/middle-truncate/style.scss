@@ -1,12 +1,10 @@
+// The flex row and `min-width: 0` on the children come from the HStack wrapper.
 .dashboard-middle-truncate {
-	display: inline-flex;
 	max-width: 100%;
 	min-width: 0;
-	vertical-align: bottom;
 }
 
 .dashboard-middle-truncate__head {
-	min-width: 0;
 	overflow: hidden;
 	text-overflow: ellipsis;
 	white-space: nowrap;
