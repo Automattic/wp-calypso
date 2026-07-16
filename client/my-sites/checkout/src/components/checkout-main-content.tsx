@@ -1473,6 +1473,17 @@ const StepContainerV2CheckoutFixer = styled.div< {
 				font-weight: 400;
 				color: ${ colorStudio.colors[ 'Gray 100' ] };
 			}
+			/* "Have a coupon?" — match the secondary-link treatment above (Gray 100)
+			   instead of the lighter shared default, and drop the 24px area padding
+			   that leaves it stranded and inset from the rest of the column. */
+			.checkout__coupon-area {
+				padding-block: 8px;
+				padding-inline: 0;
+			}
+			.wp-checkout-order-review__show-coupon-field-button {
+				line-height: 20px;
+				color: ${ colorStudio.colors[ 'Gray 100' ] };
+			}
 		` }
 
 	${ ( props ) =>

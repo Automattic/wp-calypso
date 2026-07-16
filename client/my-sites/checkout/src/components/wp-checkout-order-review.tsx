@@ -268,7 +268,7 @@ export function CouponFieldArea( {
 
 	if ( isCouponFieldVisible ) {
 		return (
-			<CouponAreaWrapper>
+			<CouponAreaWrapper className="checkout__coupon-area">
 				<CouponField
 					id="order-review-coupon"
 					disabled={ formStatus !== FormStatus.READY }
@@ -280,7 +280,7 @@ export function CouponFieldArea( {
 	}
 
 	return (
-		<CouponAreaWrapper>
+		<CouponAreaWrapper className="checkout__coupon-area">
 			<CouponLinkWrapper>
 				<CouponEnableButton
 					className="wp-checkout-order-review__show-coupon-field-button"
