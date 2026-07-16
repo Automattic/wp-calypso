@@ -2647,7 +2647,6 @@ __metadata:
     "@automattic/calypso-config": "workspace:^"
     "@automattic/calypso-typescript-config": "workspace:^"
     "@automattic/data-stores": "workspace:^"
-    "@automattic/help-center": "workspace:^"
     "@automattic/load-script": "workspace:^"
     "@tanstack/react-query": "npm:^5.83.0"
     "@wordpress/api-fetch": "npm:^7.48.0"

@@ -37,7 +37,6 @@
 		"@automattic/calypso-analytics": "workspace:^",
 		"@automattic/calypso-config": "workspace:^",
 		"@automattic/data-stores": "workspace:^",
-		"@automattic/help-center": "workspace:^",
 		"@automattic/load-script": "workspace:^",
 		"@tanstack/react-query": "^5.83.0",
 		"@wordpress/api-fetch": "^7.48.0",
