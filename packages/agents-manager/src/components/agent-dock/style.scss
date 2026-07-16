@@ -76,15 +76,7 @@
 	}
 }
 
-// Docked mode removes document scroll, so `#adminmenuwrap` scrolls its own
-// overflow — which would clip the flyout submenus rendered inside it. Open
-// flyouts switch to `position: fixed` (viewport-positioned boxes escape
-// ancestor overflow); `--am-flyout-top` is set per menu item by
-// `observe-admin-menu-flyouts`. Core's bottom-edge correction
-// (`adjustSubmenu()` inline margin-top) assumes document scroll, so it's
-// neutralized. The whole treatment is gated on `$admin-menu-scrollable-class`
-// (added to <body> by the util) so core behavior stays untouched until the
-// script is ready to position the flyouts.
+// While docked, wp-admin’s menu becomes its own scroll container; flyout submenus are positioned with CSS vars set by `observe-admin-menu-flyouts`.
 $admin-menu-scrollable-class: 'agents-manager-admin-menu-scrollable';
 
 @mixin admin-menu-flyout( $admin-menu-width ) {
