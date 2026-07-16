@@ -74,8 +74,11 @@ class SecurityKeyRegister extends Component {
 					</h2>
 					<p className="security-key-register__text">
 						{ translate(
-							'You’re signed in. Register a new security key now so you can use it to log in from now on.'
+							'Due to a small setup issue, some of your security keys were linked to the wrong WordPress.com domain. This isn’t a security concern — your account and data are safe.'
 						) }
+					</p>
+					<p className="security-key-register__text">
+						{ translate( 'Register a new key now so you can keep using it to log in.' ) }
 					</p>
 
 					<FormFieldset>
