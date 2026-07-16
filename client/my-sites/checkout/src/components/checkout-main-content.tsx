@@ -1363,6 +1363,10 @@ const StepContainerV2CheckoutFixer = styled.div< {
 				padding-block: 2rem;
 			}
 
+			.checkout-step.is-active.checkout__payment-method-step {
+				padding-bottom: 16px;
+			}
+
 			.checkout-steps__submit-button-wrapper {
 				max-width: 100%;
 				padding-inline: var( --step-container-v2-content-inline-padding );
@@ -1377,8 +1381,16 @@ const StepContainerV2CheckoutFixer = styled.div< {
 		! props.isLargeViewport &&
 		props.isMobileCheckoutStickySummary &&
 		css`
+			/* The submit button is portaled into the fixed sticky bar, so the native
+			   last-step reservation for it (--submit-button-height) is dead weight —
+			   zero it, or it stacks with the padding below into an odd trailing gap.
+			   The terms block already leaves most of the clearance; a small top-up
+			   lifts the last line clear of the bar. */
 			.checkout-main-content {
-				padding-block-end: 160px;
+				padding-block-end: 60px;
+			}
+			.checkout__step-wrapper.checkout__step-wrapper--last-step {
+				margin-bottom: 0;
 			}
 			/* Figma 2392:15311/15425/15448 — under the mobile sticky experiment
 			   every step renders as a plain heading; the stepper circle (number
