@@ -1,6 +1,6 @@
-@import "@wordpress/base-styles/breakpoints";
-@import "@wordpress/base-styles/mixins";
-@import "@wordpress/base-styles/variables";
+@import '@wordpress/base-styles/breakpoints';
+@import '@wordpress/base-styles/mixins';
+@import '@wordpress/base-styles/variables';
 
 .product-listing-section__content,
 .product-listing-section__header {
@@ -36,7 +36,7 @@
 .product-listing-section__header-subtitle {
 	@include body-medium;
 
-	color: var(--color-neutral-60);
+	color: var( --color-neutral-60 );
 	display: none;
 
 	@include break-medium {
@@ -51,11 +51,11 @@
 	margin-block-end: 32px;
 
 	@include break-large {
-		grid-template-columns: repeat(2, 1fr);
+		grid-template-columns: repeat( 2, 1fr );
 	}
 
 	@include break-huge {
-		grid-template-columns: repeat(3, 1fr);
+		grid-template-columns: repeat( 3, 1fr );
 	}
 }
 
@@ -80,5 +80,188 @@
 .product-listing-empty__message-description {
 	@include body-medium;
 
-	color: var(--color-neutral-50);
+	color: var( --color-neutral-50 );
+}
+
+.titan-inbox-domain-selector-modal.components-modal__frame {
+	width: min( 1040px, calc( 100vw - 32px ) );
+	max-height: calc( 100vh - 48px );
+}
+
+.titan-inbox-domain-selector-modal .components-modal__content {
+	padding: 0 32px 32px;
+}
+
+.titan-inbox-domain-selector-modal__layout {
+	display: grid;
+	grid-template-columns: 1fr;
+	gap: 40px;
+
+	@include break-large {
+		grid-template-columns: minmax( 0, 1fr ) 340px;
+	}
+}
+
+.titan-inbox-domain-selector-modal__main,
+.titan-inbox-domain-selector-modal__aside,
+.titan-inbox-domain-selector-modal__summary,
+.titan-inbox-domain-selector-modal__quantity-copy {
+	display: flex;
+	flex-direction: column;
+	gap: 16px;
+}
+
+.titan-inbox-domain-selector-modal__intro {
+	display: flex;
+	align-items: flex-start;
+	gap: 12px;
+	color: var( --color-neutral-60 );
+}
+
+.titan-inbox-domain-selector-modal__intro img {
+	width: 28px;
+	height: 28px;
+}
+
+.titan-inbox-domain-selector-modal__intro p {
+	margin: 0;
+}
+
+.titan-inbox-domain-selector-modal__domains {
+	display: flex;
+	flex-direction: column;
+	gap: 8px;
+	max-height: 360px;
+	overflow-y: auto;
+}
+
+.titan-inbox-domain-selector-modal__domain-option {
+	display: flex;
+	justify-content: space-between;
+	gap: 16px;
+	width: 100%;
+	padding: 14px 16px;
+	border: 1px solid var( --color-neutral-10 );
+	border-radius: 4px;
+	background: var( --color-surface );
+	color: var( --color-text );
+	text-align: start;
+	cursor: pointer;
+}
+
+.titan-inbox-domain-selector-modal__domain-option:hover,
+.titan-inbox-domain-selector-modal__domain-option:focus-visible,
+.titan-inbox-domain-selector-modal__domain-option.is-selected {
+	border-color: var( --color-primary );
+	box-shadow: 0 0 0 1px var( --color-primary );
+}
+
+.titan-inbox-domain-selector-modal__domain-primary,
+.titan-inbox-domain-selector-modal__domain-meta {
+	display: flex;
+	flex-direction: column;
+	gap: 4px;
+}
+
+.titan-inbox-domain-selector-modal__domain-name,
+.titan-inbox-domain-selector-modal__product-name,
+.titan-inbox-domain-selector-modal__summary-value,
+.titan-inbox-domain-selector-modal__quantity-label {
+	font-weight: 600;
+}
+
+.titan-inbox-domain-selector-modal__domain-site,
+.titan-inbox-domain-selector-modal__domain-meta,
+.titan-inbox-domain-selector-modal__interval,
+.titan-inbox-domain-selector-modal__summary-label,
+.titan-inbox-domain-selector-modal__summary-note,
+.titan-inbox-domain-selector-modal__quantity-description,
+.titan-inbox-domain-selector-modal__empty {
+	color: var( --color-neutral-60 );
+	font-size: 13px;
+}
+
+.titan-inbox-domain-selector-modal__domain-meta {
+	align-items: flex-end;
+	text-align: end;
+}
+
+.titan-inbox-domain-selector-modal__aside {
+	padding: 24px;
+	background: var( --color-neutral-0 );
+	border-radius: 4px;
+}
+
+.titan-inbox-domain-selector-modal__price-box {
+	padding: 18px;
+	border: 1px solid var( --color-primary );
+	border-radius: 4px;
+	background: var( --color-surface );
+}
+
+.titan-inbox-domain-selector-modal__price {
+	margin-block-start: 12px;
+	font-size: 24px;
+	font-weight: 600;
+	line-height: 1.2;
+}
+
+.titan-inbox-domain-selector-modal__summary {
+	padding-block: 8px;
+}
+
+.titan-inbox-domain-selector-modal__quantity {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	gap: 16px;
+	padding: 16px;
+	border: 1px solid var( --color-neutral-10 );
+	border-radius: 4px;
+	background: var( --color-surface );
+}
+
+.titan-inbox-domain-selector-modal__quantity-copy {
+	gap: 4px;
+}
+
+.titan-inbox-domain-selector-modal__quantity .a4a-number-input-v2 {
+	flex-shrink: 0;
+	width: 104px;
+}
+
+.titan-inbox-domain-selector-modal__aside .components-button {
+	justify-content: center;
+	width: 100%;
+}
+
+.titan-inbox-domain-selector-modal__empty {
+	padding: 24px;
+	border: 1px dashed var( --color-neutral-20 );
+	border-radius: 4px;
+	text-align: center;
+}
+
+@include break-mobile {
+	.titan-inbox-domain-selector-modal .components-modal__content {
+		padding: 0 20px 24px;
+	}
+
+	.titan-inbox-domain-selector-modal__domain-option {
+		flex-direction: column;
+	}
+
+	.titan-inbox-domain-selector-modal__domain-meta {
+		align-items: flex-start;
+		text-align: start;
+	}
+
+	.titan-inbox-domain-selector-modal__quantity {
+		align-items: stretch;
+		flex-direction: column;
+	}
+
+	.titan-inbox-domain-selector-modal__quantity .a4a-number-input-v2 {
+		width: 100%;
+	}
 }
