@@ -50,6 +50,7 @@ describe( '<AuthProvider> stats', () => {
 	afterEach( () => {
 		config.disable( 'wpcom-user-bootstrap' );
 		delete window.currentUser;
+		window.sessionStorage.clear();
 	} );
 
 	test( 'bumps a success stat when the bootstrapped user is available', async () => {
@@ -98,6 +99,39 @@ describe( '<AuthProvider> stats', () => {
 			expect( mockedBumpStat ).toHaveBeenCalledWith( 'dashboard-auth', 'bounce:unauthorized' )
 		);
 		expect( window.location.href ).toContain( '/log-in?redirect_to=' );
+	} );
+
+	test( 'does not bump a loop stat on the first bounce', async () => {
+		config.enable( 'wpcom-user-bootstrap' );
+
+		renderAuth();
+
+		await waitFor( () =>
+			expect( mockedBumpStat ).toHaveBeenCalledWith( 'dashboard-auth', 'bounce:bootstrap' )
+		);
+		expect( mockedBumpStat ).not.toHaveBeenCalledWith( 'dashboard-auth', 'loop' );
+	} );
+
+	test( 'bumps a loop stat when a bounce repeats without a successful auth in between', async () => {
+		config.enable( 'wpcom-user-bootstrap' );
+		window.sessionStorage.setItem( 'wpcom_auth_bounce_count', '1' );
+
+		renderAuth();
+
+		await waitFor( () => expect( mockedBumpStat ).toHaveBeenCalledWith( 'dashboard-auth', 'loop' ) );
+	} );
+
+	test( 'resets the bounce count when auth succeeds', async () => {
+		config.enable( 'wpcom-user-bootstrap' );
+		window.currentUser = testUser;
+		window.sessionStorage.setItem( 'wpcom_auth_bounce_count', '1' );
+
+		renderAuth();
+
+		expect( await screen.findByText( 'signed in' ) ).toBeVisible();
+		await waitFor( () =>
+			expect( window.sessionStorage.getItem( 'wpcom_auth_bounce_count' ) ).toBeNull()
+		);
 	} );
 
 	test( 'bumps a bounce stat when the session expires mid-app', async () => {

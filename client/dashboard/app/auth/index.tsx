@@ -22,6 +22,29 @@ export const AUTH_QUERY_KEY = [ 'auth', 'user' ];
 
 const BOOTSTRAP_ERROR_MESSAGE = 'Failed to bootstrap user object';
 
+const AUTH_BOUNCE_COUNT_KEY = 'wpcom_auth_bounce_count';
+
+function trackAuthBounce() {
+	try {
+		const count = Number( window.sessionStorage.getItem( AUTH_BOUNCE_COUNT_KEY ) ) + 1;
+		window.sessionStorage.setItem( AUTH_BOUNCE_COUNT_KEY, String( count ) );
+
+		if ( count >= 2 ) {
+			bumpStat( 'dashboard-auth', 'loop' );
+		}
+	} catch {
+		// sessionStorage can be unavailable in private contexts.
+	}
+}
+
+function clearAuthBounceCount() {
+	try {
+		window.sessionStorage.removeItem( AUTH_BOUNCE_COUNT_KEY );
+	} catch {
+		// sessionStorage can be unavailable in private contexts.
+	}
+}
+
 function getOAuthAuthorizeUrl( {
 	state,
 	next = '',
@@ -138,6 +161,7 @@ export function AuthProvider( { children }: { children: React.ReactNode } ) {
 			authErrorHandled.current = true;
 
 			bumpStat( 'dashboard-auth', `bounce:${ reason }` );
+			trackAuthBounce();
 
 			if ( config.isEnabled( 'oauth' ) ) {
 				const state = crypto.randomUUID();
@@ -203,6 +227,7 @@ export function AuthProvider( { children }: { children: React.ReactNode } ) {
 			if ( ! successStatBumped.current ) {
 				successStatBumped.current = true;
 				bumpStat( 'dashboard-auth', shouldUseBootstrap() ? 'success:bootstrap' : 'success:fetch' );
+				clearAuthBounceCount();
 			}
 		}
 	}, [ user ] );
