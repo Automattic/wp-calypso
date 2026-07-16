@@ -3,8 +3,6 @@ import clsx from 'clsx';
 import { getTld } from '../../utils/domain';
 import type { CSSProperties } from 'react';
 
-// The flex row and `min-width: 0` on the children come from HStack; the head's ellipsis comes
-// from `Text truncate`. Only the wrapper's width clamp and the pinned tail need styling.
 const wrapperStyle: CSSProperties = { maxWidth: '100%', minWidth: 0 };
 const tailStyle: CSSProperties = { flexShrink: 0, whiteSpace: 'nowrap' };
 
