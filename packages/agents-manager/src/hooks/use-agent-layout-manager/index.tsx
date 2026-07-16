@@ -1,4 +1,3 @@
-import { useWindowDimensions } from '@automattic/viewport';
 import { Button } from '@wordpress/components';
 import { useMediaQuery } from '@wordpress/compose';
 import {
@@ -13,6 +12,7 @@ import {
 } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { AI } from '../../components/icons';
+import observeAdminMenuFlyouts from '../../utils/observe-admin-menu-flyouts';
 import observeEditorCanvasPointerDown from '../../utils/observe-editor-canvas-pointerdown';
 
 const SIDEBAR_TRANSITION_DURATION_MS = 200;
@@ -54,27 +54,12 @@ function subscribeToBodyClasses( notify: () => void ): () => void {
  */
 const useCanDock = ( { desktopMediaQuery }: { desktopMediaQuery: string } ) => {
 	const isDesktop = useMediaQuery( desktopMediaQuery );
-	const { height } = useWindowDimensions();
-	const [ adminMenuHeight, setAdminMenuHeight ] = useState( 0 );
-	const hasEnoughHeight = height >= adminMenuHeight;
 	const isFullscreenGateOpen = useSyncExternalStore(
 		subscribeToBodyClasses,
 		getIsFullscreenGateOpen
 	);
 
-	const calculateAdminMenuHeight = useCallback( () => {
-		const adminMenu = document.getElementById( 'adminmenu' );
-		if ( adminMenu ) {
-			const adminBar = document.getElementById( 'wpadminbar' );
-			const adminBarHeight = adminBar ? adminBar.offsetHeight : 32;
-			setAdminMenuHeight( adminMenu.offsetHeight + adminBarHeight + 20 );
-		}
-	}, [] );
-
-	return {
-		canDock: isDesktop && hasEnoughHeight && isFullscreenGateOpen,
-		calculateAdminMenuHeight,
-	};
+	return isDesktop && isFullscreenGateOpen;
 };
 
 interface Options {
@@ -116,7 +101,7 @@ export default function useAgentLayoutManager( {
 	const portalRef = useRef< HTMLDivElement | undefined >( undefined );
 	const [ isPortalReady, setIsPortalReady ] = useState( false );
 	const [ isDocked, setIsDocked ] = useState< boolean | null >( null );
-	const { canDock, calculateAdminMenuHeight } = useCanDock( { desktopMediaQuery } );
+	const canDock = useCanDock( { desktopMediaQuery } );
 	const shouldRenderSidebar = canDock && isDocked;
 	const openSidebarTimeoutRef = useRef< ReturnType< typeof setTimeout > | undefined >( undefined );
 	const closeSidebarTimeoutRef = useRef< ReturnType< typeof setTimeout > | undefined >( undefined );
@@ -151,8 +136,6 @@ export default function useAgentLayoutManager( {
 		if ( ! isReady || ! container ) {
 			return;
 		}
-
-		calculateAdminMenuHeight();
 
 		// Set initial docked state
 		if ( isDocked === null ) {
@@ -250,6 +233,16 @@ export default function useAgentLayoutManager( {
 			stopCanvasObserver();
 		};
 	}, [ isPortalReady, shouldRenderSidebar ] );
+
+	// While docked, the wp-admin menu scrolls its own overflow and its flyout
+	// submenus need viewport coordinates — see `observe-admin-menu-flyouts`.
+	useEffect( () => {
+		if ( ! shouldRenderSidebar ) {
+			return;
+		}
+
+		return observeAdminMenuFlyouts();
+	}, [ shouldRenderSidebar ] );
 
 	// Reflect split-screen state on the container as `is-split-screen`.
 	useLayoutEffect( () => {

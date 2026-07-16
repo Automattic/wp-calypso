@@ -4,7 +4,7 @@
 
 **Key behavior**: On desktop (≥1200px), the chat can be docked as a sidebar or floating. On mobile/tablet, the chat is always floating.
 
-In order to prevent issues with the WP admin sidebar the hook will also use floating mode if the page height is less than that of the sidebar.
+While docked in wp-admin, the hook makes the admin menu scroll its own overflow (the docked frame removes document scroll) and keeps its flyout submenus positioned in viewport coordinates so they aren't clipped — see `src/utils/observe-admin-menu-flyouts.ts`.
 
 On Gutenberg editor screens (`post-php`, `post-new-php`, `site-editor-php`), docking also requires fullscreen mode (`body.is-fullscreen-mode`) — without it, wp-admin's chrome leaves too little room for the editor alongside the chat. The gate is re-evaluated whenever the `body` class list changes, so toggling fullscreen at runtime switches the chat between docked and floating.
 
@@ -148,7 +148,7 @@ The hook returns an object with the following properties:
 
 - **`isDocked`** (`boolean`) - `true` when the chat is in docked (sidebar) mode. Requires `canDock` to be `true` AND docked mode to be enabled (via `defaultDocked` or `dock()`).
 
-- **`canDock`** (`boolean`) - `true` when docking is possible. Requires a desktop viewport (matches `desktopMediaQuery`), enough vertical space for the docked sidebar, and — on Gutenberg editor screens (`post-php`, `post-new-php`, `site-editor-php`) — fullscreen mode (`body.is-fullscreen-mode`). Updates dynamically as these conditions change. Use this to show or hide dock/undock UI controls.
+- **`canDock`** (`boolean`) - `true` when docking is possible. Requires a desktop viewport (matches `desktopMediaQuery`) and — on Gutenberg editor screens (`post-php`, `post-new-php`, `site-editor-php`) — fullscreen mode (`body.is-fullscreen-mode`). Updates dynamically as these conditions change. Use this to show or hide dock/undock UI controls.
 
 - **`dock`** (`() => void`) - Switches to sidebar mode. When on desktop, this enables the docked layout and automatically opens the sidebar. No-op when `isReady` is `false` or `sidebarContainer` is not found.
 

@@ -76,6 +76,24 @@
 	}
 }
 
+// Docked mode removes document scroll, so `#adminmenuwrap` scrolls its own
+// overflow — which would clip the flyout submenus rendered inside it. Open
+// flyouts switch to `position: fixed` (viewport-positioned boxes escape
+// ancestor overflow); `--am-flyout-top` is set per menu item by
+// `observe-admin-menu-flyouts`. Core's bottom-edge correction
+// (`adjustSubmenu()` inline margin-top) assumes document scroll, so it's
+// neutralized. The whole treatment is gated on `$admin-menu-scrollable-class`
+// (added to <body> by the util) so core behavior stays untouched until the
+// script is ready to position the flyouts.
+$admin-menu-scrollable-class: 'agents-manager-admin-menu-scrollable';
+
+@mixin admin-menu-flyout( $admin-menu-width ) {
+	position: fixed;
+	top: var( --am-flyout-top, auto );
+	left: calc( $layout-spacing + $admin-menu-width );
+	margin-top: 0 !important;
+}
+
 // Mixin for wp-admin sidebar open styles
 @mixin wp-admin-sidebar-open-specific( $admin-menu-width ) {
 	#wpcontent {
@@ -85,6 +103,19 @@
 	#wpbody {
 		left: calc( $admin-menu-width + $layout-spacing );
 		width: calc( 100% - $admin-menu-width - $layout-spacing - $sidebar-width ) !important;
+	}
+
+	// The current item's submenu renders inline and must stay in the scroll flow.
+	&.#{$admin-menu-scrollable-class}
+		#adminmenu
+		li.opensub:not( .wp-has-current-submenu )
+		> .wp-submenu,
+	&.#{$admin-menu-scrollable-class}
+		#adminmenu
+		li:not( .wp-has-current-submenu )
+		> a.menu-top:focus
+		+ .wp-submenu {
+		@include admin-menu-flyout( $admin-menu-width );
 	}
 }
 
@@ -125,6 +156,14 @@ body.wp-admin.agents-manager-sidebar-container--sidebar-open:not( .modal-open ) 
 		border-left: 1px solid $admin-border-color;
 		border-bottom: 1px solid $admin-border-color;
 		border-bottom-left-radius: $main-border-radius;
+	}
+
+	// `hidden` on the x-axis: the closed flyouts sit at `left: <menu width>`
+	// inside the wrap and would otherwise create horizontal scroll distance.
+	// Open flyouts are `position: fixed`, so they escape the clip entirely.
+	&.#{$admin-menu-scrollable-class} #adminmenuwrap {
+		overflow: hidden auto;
+		scrollbar-width: thin;
 	}
 
 	#wpcontent {
@@ -171,6 +210,17 @@ body.wp-admin.agents-manager-sidebar-container--sidebar-open:not( .modal-open ) 
 
 	&.folded {
 		@include wp-admin-sidebar-open-specific( $admin-menu-width-folded );
+
+		// When folded, the current item's submenu is a flyout too (core reverts
+		// it from inline to `position: absolute`).
+		&.#{$admin-menu-scrollable-class} #adminmenu li.opensub.wp-has-current-submenu > .wp-submenu,
+		&.#{$admin-menu-scrollable-class}
+			#adminmenu
+			li.wp-has-current-submenu
+			> a.menu-top:focus
+			+ .wp-submenu {
+			@include admin-menu-flyout( $admin-menu-width-folded );
+		}
 	}
 }
 

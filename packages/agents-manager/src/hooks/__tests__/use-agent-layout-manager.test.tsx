@@ -5,10 +5,7 @@ import { renderHook, act } from '@testing-library/react';
 import useAgentLayoutManager from '../use-agent-layout-manager/index';
 
 // Stub out viewport/responsive deps so `canDock` depends only on the hook's
-// own logic (viewport is always desktop, window is always tall enough).
-jest.mock( '@automattic/viewport', () => ( {
-	useWindowDimensions: () => ( { width: 1920, height: 1080 } ),
-} ) );
+// own logic (viewport is always desktop).
 jest.mock( '@wordpress/compose', () => ( {
 	useMediaQuery: () => true,
 } ) );

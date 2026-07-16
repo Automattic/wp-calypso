@@ -143,7 +143,6 @@ __metadata:
     "@automattic/oauth-token": "workspace:^"
     "@automattic/support-articles": "workspace:^"
     "@automattic/urls": "workspace:^"
-    "@automattic/viewport": "workspace:^"
     "@automattic/zendesk-client": "workspace:^"
     "@tanstack/react-query": "npm:^5.83.0"
     "@testing-library/dom": "npm:^10.4.1"
