@@ -39,17 +39,16 @@ export default function PostFeedback( { summary, items, sections, postId }: Post
 			items={ items }
 			sections={ sections }
 			postId={ postId }
-			sectionFallbackTitle={ __( 'Feedback', __i18n_text_domain__ ) }
-			rewriteLabel={ __( 'Suggested rewrite', __i18n_text_domain__ ) }
+			sectionFallbackTitle={ __( 'Suggested edits', __i18n_text_domain__ ) }
 			staleWarning={ __(
 				'Feedback context changed. Generate feedback again for this post.',
 				__i18n_text_domain__
 			) }
-			staleApplyReason={ __( 'Generate feedback again for this post.', __i18n_text_domain__ ) }
 			failureMessage={ __(
 				'Could not apply this rewrite. Check the text and try again.',
 				__i18n_text_domain__
 			) }
+			enableBulkApply
 		/>
 	);
 }

@@ -1,11 +1,19 @@
 // Styles for the FeedbackList component, shared by the Generate Feedback and
-// Proofreader flows. The summary-note and "Accept all" footer rules apply only
-// when those elements render (Proofreader), and are inert otherwise.
+// Proofreader flows. Cards come in two families: applicable (Current/New diff +
+// Apply change) and advisory / "Manual edit" (Why/Suggestion + Go to section).
 .jetpack-ai-feedback-list {
-	--jetpack-ai-feedback-list-border: color-mix( in srgb, currentColor 18%, transparent );
-	--jetpack-ai-feedback-list-border-hover: color-mix( in srgb, currentColor 34%, transparent );
+	--jetpack-ai-feedback-list-border: color-mix( in srgb, currentColor 14%, transparent );
+	--jetpack-ai-feedback-list-border-hover: color-mix( in srgb, currentColor 30%, transparent );
+	// Matches the Figma color/muted-border token (white 10% on dark).
+	--jetpack-ai-feedback-list-muted-border: color-mix( in srgb, currentColor 10%, transparent );
 	--jetpack-ai-feedback-list-primary: var( --color-primary, var( --wp-admin-theme-color, #3858e9 ) );
 	--jetpack-ai-feedback-list-primary-foreground: var( --color-primary-foreground, #fff );
+	--jetpack-ai-feedback-list-band: color-mix(
+		in srgb,
+		var( --jetpack-ai-feedback-list-primary ) 12%,
+		transparent
+	);
+	--jetpack-ai-feedback-list-applied: #079d2c;
 
 	display: flex;
 	flex-direction: column;
@@ -55,7 +63,7 @@
 		margin: 0;
 
 		.components-panel__body-toggle {
-			padding: 0.625rem 0;
+			padding: 0.625rem 1rem;
 			font-size: 12px;
 			font-weight: 600;
 			text-transform: uppercase;
@@ -111,169 +119,234 @@
 	&__items {
 		display: flex;
 		flex-direction: column;
-		gap: 0.75rem;
+		gap: 1rem;
 	}
 
+	// The card sets no horizontal padding of its own so the "New"/"Suggestion"
+	// band can span edge to edge; each row supplies its own inset instead.
+	// The card is self-contained: the design tokens are redeclared here (not only
+	// on the root) so ReviewCard renders correctly outside a FeedbackList too
+	// (e.g. inside AI Editorial Review).
 	&__item {
+		--jetpack-ai-feedback-list-border: color-mix( in srgb, currentColor 14%, transparent );
+		--jetpack-ai-feedback-list-border-hover: color-mix( in srgb, currentColor 30%, transparent );
+		--jetpack-ai-feedback-list-muted-border: color-mix( in srgb, currentColor 10%, transparent );
+		--jetpack-ai-feedback-list-primary: var( --color-primary, var( --wp-admin-theme-color, #3858e9 ) );
+		--jetpack-ai-feedback-list-primary-foreground: var( --color-primary-foreground, #fff );
+		--jetpack-ai-feedback-list-band: color-mix(
+			in srgb,
+			var( --jetpack-ai-feedback-list-primary ) 12%,
+			transparent
+		);
+		--jetpack-ai-feedback-list-applied: #079d2c;
+
 		border: 1px solid var( --jetpack-ai-feedback-list-border );
 		border-radius: 8px;
-		padding: 0.875rem 1rem;
+		overflow: hidden;
 		background: transparent;
 		transition:
 			border-color 0.15s ease,
-			background 0.15s ease,
 			opacity 0.15s ease;
 
-		> * + * {
-			margin-top: 0.625rem;
-		}
-
 		&.is-applying {
-			border-color: var( --jetpack-ai-feedback-list-primary );
-			opacity: 0.85;
-		}
-
-		&.is-accepted {
-			border-color: rgba( 74, 184, 102, 0.7 );
-		}
-
-		&.is-dismissed {
-			opacity: 0.55;
+			opacity: 0.8;
 		}
 
 		&.is-failed {
-			border-color: rgba( 214, 54, 56, 0.7 );
-		}
-
-		&.is-collapsed {
-			display: flex;
-			align-items: center;
-			gap: 8px;
-			min-height: 38px;
-			padding: 0.625rem 0.75rem;
-			font-size: 12px;
-			line-height: 1.4;
-			background: color-mix( in srgb, currentColor 3%, transparent );
-
-			> * + * {
-				margin-top: 0;
-			}
+			border-color: rgba( 214, 54, 56, 0.6 );
 		}
 	}
 
 	&__item-header {
 		display: flex;
-		align-items: flex-start;
+		align-items: center;
 		justify-content: space-between;
 		gap: 0.75rem;
+		padding: 0.75rem 1rem 0.5rem;
 	}
 
-	&__item-title {
+	// Applicable badge: plain category + position, e.g. "Spacing (1/1)".
+	&__item-badge {
 		margin: 0;
+		min-width: 0;
 		font-size: 13px;
 		font-weight: 600;
 		line-height: 1.4;
+		overflow: hidden;
+		text-overflow: ellipsis;
+		white-space: nowrap;
 	}
 
-	&__block-ref,
-	&__feedback,
-	&__action,
-	&__manual-reason,
-	&__status {
+	// "Manual edit" tag above the header — a warning-tinted pill shown when the
+	// edit can't be one-click applied. The category badge stays on the row below.
+	&__manual-tag {
+		display: inline-block;
+		margin: 0.75rem 1rem 0;
+		padding: 0.125rem 0.5rem;
+		border-radius: 4px;
+		background: #fdf8ee;
+		color: #9a6a1a;
 		font-size: 12px;
+		font-weight: 600;
+		line-height: 1.4;
+		white-space: nowrap;
 	}
 
-	&__block-ref,
-	&__feedback {
-		opacity: 0.75;
+	// Block reference chip: icon + truncated content, or "Post-wide". Scoped to
+	// the card (two classes) so it lifts specificity above AER's base
+	// `.jetpack-ai-block-ref` rule regardless of stylesheet order, and works
+	// wherever a card renders (not only inside a FeedbackList root).
+	&__item &__block-ref {
+		display: inline-flex;
+		align-items: center;
+		gap: 4px;
+		flex: 0 1 auto;
+		max-width: 150px;
+		min-width: 0;
+		overflow: hidden;
+		padding: 4px;
+		border: 1px solid var( --jetpack-ai-feedback-list-muted-border );
+		border-radius: 8px;
+		background: transparent;
+		color: inherit;
+		font-family: inherit;
+		font-style: normal;
+		text-decoration: none;
+		white-space: nowrap;
+		opacity: 1;
+
+		&.is-clickable {
+			cursor: pointer;
+			text-decoration: none;
+
+			&:hover,
+			&:focus-visible {
+				border-color: var( --jetpack-ai-feedback-list-border-hover );
+				background: color-mix( in srgb, currentColor 6%, transparent );
+				text-decoration: none;
+				opacity: 1;
+				outline: none;
+			}
+		}
+
+		&.is-post-wide,
+		&.is-stale {
+			font-style: normal;
+			opacity: 0.75;
+		}
+
+		.jetpack-ai-block-ref__icon svg {
+			width: 20px;
+			height: 20px;
+			fill: currentColor;
+		}
+
+		.jetpack-ai-block-ref__label {
+			min-width: 0;
+			overflow: hidden;
+			text-overflow: ellipsis;
+			white-space: nowrap;
+			font-size: 11px;
+			font-weight: 400;
+			line-height: 1;
+			letter-spacing: 0.07px;
+		}
 	}
 
-	&__action {
-		font-weight: 500;
+	&__diff {
+		display: flex;
+		flex-direction: column;
 	}
 
-	&__rewrite {
-		border-left: 3px solid var( --jetpack-ai-feedback-list-primary );
-		background: color-mix( in srgb, var( --jetpack-ai-feedback-list-primary ) 10%, transparent );
-		padding: 0.625rem 0.75rem;
-		border-radius: 0 4px 4px 0;
+	&__diff-row {
+		display: flex;
+		flex-direction: column;
+		gap: 0.25rem;
+		padding: 0.625rem 1rem;
+
+		// The second row (New / Suggestion) is the highlighted band.
+		&.is-new {
+			background: var( --jetpack-ai-feedback-list-band );
+		}
 
 		del,
-		ins {
+		ins,
+		.jetpack-ai-feedback-list__diff-text {
 			display: block;
-			padding: 0.25rem 0.35rem;
-			border-radius: 3px;
 			white-space: pre-wrap;
+			overflow-wrap: anywhere;
 		}
 
 		del {
-			margin-top: 0.35rem;
-			background: rgba( 214, 54, 56, 0.18 );
 			text-decoration: line-through;
+			opacity: 0.55;
 		}
 
 		ins {
-			margin-top: 0.35rem;
-			background: rgba( 74, 184, 102, 0.18 );
 			text-decoration: none;
 		}
 	}
 
-	&__rewrite-label {
+	// Matches Figma: SF Pro Medium 11px, uppercase, line-height 150%, and the
+	// muted-foreground token (~#8E8E8E, i.e. currentColor at ~0.55). Figma's 510
+	// weight rounds to the design-system's 500 (Medium).
+	&__diff-tag {
 		font-size: 11px;
-		font-weight: 600;
+		font-weight: 500;
+		line-height: 1.5;
 		text-transform: uppercase;
-		letter-spacing: 0.04em;
-		opacity: 0.75;
+		letter-spacing: 0;
+		opacity: 0.55;
 	}
 
-	& &__manual-reason {
-		color: var( --jetpack-ai-feedback-list-primary );
-		font-weight: 600;
+	// Note explaining why an edit can't be one-click applied (e.g. "source text
+	// changed"). Muted; sits under the body, above the actions.
+	&__reason-note {
+		margin: 0;
+		padding: 0 1rem 0.75rem;
+		font-size: 12px;
+		opacity: 0.7;
 	}
 
 	&__actions {
 		display: flex;
+		flex-wrap: wrap;
+		align-items: center;
 		gap: 0.5rem;
+		padding: 0.75rem 1rem;
 	}
 
-	&__action-button,
-	&__small-action,
-	&__footer-action {
+	// Buttons are tertiary (text) by default; primary and resolution states opt in.
+	&__action-button {
+		display: inline-flex;
+		align-items: center;
+		gap: 0.25rem;
 		min-height: 32px;
-		border: 1px solid var( --jetpack-ai-feedback-list-border );
+		padding: 0.4rem 0.75rem;
+		border: 0;
 		border-radius: 4px;
 		background: transparent;
 		color: inherit;
 		font-family: inherit;
-		font-size: 12px;
+		font-size: 13px;
 		font-weight: 500;
 		cursor: pointer;
 		transition:
-			border-color 0.15s ease,
 			background 0.15s ease,
 			opacity 0.15s ease;
 
 		&:hover:not( :disabled ),
 		&:focus-visible:not( :disabled ) {
-			border-color: var( --jetpack-ai-feedback-list-border-hover );
-			background: color-mix( in srgb, currentColor 6%, transparent );
+			background: color-mix( in srgb, currentColor 8%, transparent );
 			outline: none;
 		}
 
 		&:disabled {
 			cursor: default;
-			opacity: 0.55;
+			opacity: 0.5;
 		}
-	}
-
-	&__action-button {
-		flex: 1 1 0;
-		min-width: 0;
-		padding: 0.45rem 0.75rem;
 
 		&.is-primary {
-			border-color: var( --jetpack-ai-feedback-list-primary );
 			background: var( --jetpack-ai-feedback-list-primary );
 			color: var( --jetpack-ai-feedback-list-primary-foreground );
 
@@ -282,31 +355,62 @@
 				background: color-mix( in srgb, var( --jetpack-ai-feedback-list-primary ) 88%, #000 );
 			}
 		}
+
+		// Copy is a link-style button in the accent colour (Figma variant "link").
+		&.is-copy {
+			color: var( --jetpack-ai-feedback-list-primary );
+		}
+
+		// Dismiss stays on the far right of the action row.
+		&.is-dismiss {
+			margin-left: auto;
+		}
 	}
 
-	&__small-action {
-		margin-left: auto;
-		padding: 0.25rem 0.625rem;
-	}
-
-	&__collapsed-status {
+	&__undo-icon {
 		flex: 0 0 auto;
-		font-size: 11px;
-		font-weight: 600;
-		text-transform: uppercase;
-		letter-spacing: 0.04em;
+		fill: currentColor;
 	}
 
-	&__collapsed-title {
-		min-width: 0;
-		overflow: hidden;
-		text-overflow: ellipsis;
-		white-space: nowrap;
-		opacity: 0.8;
+	// Applied / Dismissed resolution chip that replaces the card body.
+	&__resolution {
+		display: inline-flex;
+		align-items: center;
+		gap: 0.25rem;
+		min-height: 32px;
+		padding: 0.4rem 0.75rem;
+		border-radius: 4px;
+		font-size: 13px;
+		font-weight: 600;
+
+		&.is-accepted {
+			background: color-mix( in srgb, var( --jetpack-ai-feedback-list-applied ) 20%, transparent );
+			color: var( --jetpack-ai-feedback-list-applied );
+		}
+
+		&.is-dismissed {
+			background: color-mix( in srgb, currentColor 8%, transparent );
+			opacity: 0.75;
+		}
+	}
+
+	&__resolution-check {
+		flex: 0 0 auto;
+		fill: currentColor;
+	}
+
+	&__status {
+		padding: 0 1rem 0.75rem;
+		font-size: 12px;
 	}
 
 	&__status.is-failed {
 		color: #d63638;
+	}
+
+	// Card footer slot (e.g. AER reviewer chips) — match the actions-row inset.
+	&__footer-slot {
+		padding: 0 1rem 0.75rem;
 	}
 
 	&__footer {
@@ -317,11 +421,22 @@
 
 	&__footer-action {
 		width: 100%;
+		min-height: 32px;
 		padding: 0.5rem 0.75rem;
+		border: 0;
+		border-radius: 4px;
+		font-family: inherit;
+		font-size: 12px;
 		font-weight: 600;
+		cursor: pointer;
+		transition: background 0.15s ease;
+
+		&:disabled {
+			cursor: default;
+			opacity: 0.55;
+		}
 
 		&.is-accept {
-			border-color: var( --jetpack-ai-feedback-list-primary );
 			background: var( --jetpack-ai-feedback-list-primary );
 			color: var( --jetpack-ai-feedback-list-primary-foreground );
 

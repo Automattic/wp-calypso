@@ -1,6 +1,6 @@
 {
 	"name": "@automattic/site-admin",
-	"version": "0.1.5",
+	"version": "0.2.0",
 	"description": "A reusable UI package providing essential resources for building a modern administrative interface within the WordPress admin. It offers structured components, a routing system, and layout utilities.",
 	"main": "dist/cjs/index.js",
 	"module": "dist/esm/index.js",
@@ -47,6 +47,24 @@
 	"license": "GPL-2.0-or-later",
 	"bugs": "https://github.com/Automattic/wp-calypso/issues",
 	"homepage": "https://github.com/Automattic/wp-calypso/tree/HEAD/packages/site-admin#readme",
+	"dependencies": {
+		"@wordpress/base-styles": "^9.1.0",
+		"@wordpress/commands": "^1.48.0",
+		"@wordpress/components": "^35.0.0",
+		"@wordpress/compose": "^8.2.0",
+		"@wordpress/core-data": "^7.48.0",
+		"@wordpress/dom": "^4.48.0",
+		"@wordpress/element": "^8.0.0",
+		"@wordpress/html-entities": "^4.48.0",
+		"@wordpress/i18n": "^6.21.0",
+		"@wordpress/icons": "^13.3.0",
+		"@wordpress/keycodes": "^4.48.0",
+		"@wordpress/url": "^4.48.0",
+		"clsx": "^2.1.1",
+		"history": "^5.3.0",
+		"route-recognizer": "^0.3.4",
+		"tslib": "^2.8.1"
+	},
 	"peerDependencies": {
 		"@wordpress/data": "^10.48.0",
 		"react": "^18.3.1 || ^19.0.0",
@@ -61,20 +79,5 @@
 		"storybook": "^9.1.20",
 		"typescript": "^6.0.3",
 		"webpack": "^5.99.8"
-	},
-	"dependencies": {
-		"@wordpress/base-styles": "^9.1.0",
-		"@wordpress/commands": "^1.48.0",
-		"@wordpress/components": "^35.0.0",
-		"@wordpress/compose": "^8.2.0",
-		"@wordpress/core-data": "^7.48.0",
-		"@wordpress/dom": "^4.48.0",
-		"@wordpress/element": "^8.0.0",
-		"@wordpress/i18n": "^6.21.0",
-		"@wordpress/icons": "^13.3.0",
-		"@wordpress/url": "^4.48.0",
-		"clsx": "^2.1.1",
-		"history": "^5.3.0",
-		"route-recognizer": "^0.3.4"
 	}
 }

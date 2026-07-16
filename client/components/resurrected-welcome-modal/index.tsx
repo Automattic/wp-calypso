@@ -5,6 +5,11 @@ import { close } from '@wordpress/icons';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { useResurrectedFreeUserEligibility } from 'calypso/lib/resurrected-users';
+import {
+	WELCOME_BACK_VARIATIONS,
+	WELCOME_BACK_VARIATION_MANUAL,
+	type WelcomeBackVariation,
+} from 'calypso/lib/resurrected-users/constants';
 
 import './style.scss';
 
@@ -29,6 +34,7 @@ type VariationConfig = {
 };
 
 const ONBOARDING_URL = '/setup/onboarding';
+const THEMES_SHOWCASE_URL = '/themes';
 
 // Rolled-out variation: MANUAL only.
 const MANUAL_VARIATION_CONFIG: VariationConfig = {
@@ -51,6 +57,30 @@ const MANUAL_VARIATION_CONFIG: VariationConfig = {
 			variant: 'tertiary',
 		},
 	],
+};
+
+const VARIATION_CONTENT: Partial< Record< WelcomeBackVariation, VariationConfig > > = {
+	[ WELCOME_BACK_VARIATIONS.themes ]: {
+		getTitle: ( translate ) => translate( 'Welcome back!' ),
+		getDescription: ( translate ) =>
+			translate(
+				"We've added beautiful new themes since your last visit. Browse around and find what feels right for your site."
+			),
+		ctas: [
+			{
+				id: 'manual-new',
+				getLabel: ( translate ) => translate( 'Browse new themes' ),
+				href: THEMES_SHOWCASE_URL,
+				variant: 'primary',
+			},
+			{
+				id: 'manual-continue',
+				getLabel: ( translate ) => translate( 'Create a new site' ),
+				href: ONBOARDING_URL,
+				variant: 'tertiary',
+			},
+		],
+	},
 };
 
 const getInitialDismissState = () => {
@@ -79,11 +109,15 @@ export const ResurrectedWelcomeModalGate = ( {
 	const previousVisibilityRef = useRef( false );
 
 	const variationName = eligibility.variationName;
-	const variationConfig = variationName ? MANUAL_VARIATION_CONFIG : undefined;
+	let variationConfig = variationName ? MANUAL_VARIATION_CONFIG : undefined;
+	if ( variationName && variationName in VARIATION_CONTENT ) {
+		variationConfig = VARIATION_CONTENT[ variationName ];
+	}
+
 	const variationClassName = variationName
 		? `resurrected-welcome-modal--${ variationName.replace( /_/g, '-' ) }`
 		: null;
-	const hasDarkHero = true; // MANUAL variation uses dark hero
+	const hasDarkHero = variationName === WELCOME_BACK_VARIATION_MANUAL;
 
 	const shouldDisplay =
 		! eligibility.isLoading &&

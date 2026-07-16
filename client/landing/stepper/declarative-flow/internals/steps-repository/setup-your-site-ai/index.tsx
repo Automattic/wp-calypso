@@ -16,13 +16,19 @@ import { WOO_HOSTING_SOLUTIONS_REF } from 'calypso/landing/stepper/constants';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { useQuery } from '../../../../hooks/use-query';
 import { useSiteData } from '../../../../hooks/use-site-data';
+import { usePurchasePlanNotification } from '../../hooks/use-purchase-plan-notification';
 import type { Step as StepType } from '../../types';
 import './style.scss';
 
 const SetupYourSiteAIStep: StepType = ( { navigation } ) => {
-	const { siteSlug, siteId } = useSiteData();
+	const { site, siteSlug, siteId } = useSiteData();
 	const translate = useTranslate();
 	const ref = useQuery().get( 'ref' );
+
+	// After checkout the `post-checkout-onboarding` step flags the site for a
+	// "plan is now active" toast; consume it here since this is where the user
+	// lands post-purchase.
+	usePurchasePlanNotification( siteId, site?.plan?.product_slug );
 	const showPromptInput = ref === WOO_HOSTING_SOLUTIONS_REF;
 	const [ prompt, setPrompt ] = useState( '' );
 	// Automattician-only "Generate Theme" entry point that provisions a WP Cloud

@@ -38,8 +38,9 @@ export default function AgentHistory( {
 }: Props ) {
 	const { resumeActiveChat } = useAgentsManagerContext();
 
-	const { setFloatingPosition, setFreeDragPosition } = useDispatch( AGENTS_MANAGER_STORE );
-	const { floatingPosition, freeDragPosition } = useSelect( ( select ) => {
+	const { setFloatingPosition, setFreeDragPosition, setFloatingSize } =
+		useDispatch( AGENTS_MANAGER_STORE );
+	const { floatingPosition, freeDragPosition, floatingSize } = useSelect( ( select ) => {
 		const store: AgentsManagerSelect = select( AGENTS_MANAGER_STORE );
 		return store.getAgentsManagerState();
 	}, [] );
@@ -56,6 +57,8 @@ export default function AgentHistory( {
 			onChatPositionChange={ ( position ) => setFloatingPosition( position ) }
 			initialFreeDragPosition={ freeDragPosition ?? undefined }
 			onFreeDragEnd={ setFreeDragPosition }
+			defaultSize={ floatingSize ?? undefined }
+			onResizeEnd={ setFloatingSize }
 			className={ clsx( 'agenttic', { dark: isDocked } ) }
 			messages={ [] }
 			isProcessing={ false }
@@ -63,6 +66,7 @@ export default function AgentHistory( {
 			onSubmit={ () => {} }
 			variant={ isDocked ? 'embedded' : 'floating' }
 			freeDrag={ ! isDocked }
+			resizable={ ! isDocked }
 			floatingChatState={ isOpen ? 'expanded' : closedChatState }
 			triggerTitle={ title }
 			onClose={ onClose }

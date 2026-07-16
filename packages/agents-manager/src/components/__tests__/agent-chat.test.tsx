@@ -10,6 +10,8 @@ import type { ComponentProps, ReactNode, Ref } from 'react';
 
 const mockSetFloatingPosition = jest.fn();
 const mockContainerProps = jest.fn();
+const mockInputProps = jest.fn();
+const mockImageUploaderProps = jest.fn();
 const mockHasAiChatEntry = jest.fn();
 
 jest.mock(
@@ -74,7 +76,10 @@ jest.mock(
 			return <>{ children }</>;
 		}
 
-		const MockImageUploader = React.forwardRef( () => null );
+		const MockImageUploader = React.forwardRef( ( props: unknown ) => {
+			mockImageUploaderProps( props );
+			return null;
+		} );
 		MockImageUploader.displayName = 'MockImageUploader';
 
 		return {
@@ -85,7 +90,10 @@ jest.mock(
 				Footer: MockFooter,
 				Suggestions: () => null,
 				Notice: () => null,
-				Input: () => null,
+				Input: ( props: unknown ) => {
+					mockInputProps( props );
+					return null;
+				},
 			},
 			createMessageRenderer: () => MockMessageRenderer,
 			EmptyView: MockEmptyView,
@@ -169,11 +177,41 @@ function renderAgentChat( props: Partial< ComponentProps< typeof AgentChat > > =
 
 describe( 'AgentChat', () => {
 	beforeEach( () => {
+		jest.clearAllMocks();
 		mockHasAiChatEntry.mockReturnValue( false );
 	} );
 
-	afterEach( () => {
-		mockContainerProps.mockClear();
+	const imageUpload = ( isUploadingImages: boolean ) =>
+		( {
+			pendingImages: [],
+			uploadingImages: isUploadingImages ? [ { id: 'p1' } ] : [],
+			isUploadingImages,
+			handleFilesSelected: jest.fn(),
+			handleRemoveImage: jest.fn(),
+			uploadImagesToWordPress: jest.fn(),
+			abortUpload: jest.fn( () => isUploadingImages ),
+		} ) as never;
+
+	it( 'locks the composer, the upload action, and the uploader while images upload', () => {
+		renderAgentChat( { isOpen: true, imageUpload: imageUpload( true ) } );
+
+		expect( mockInputProps ).toHaveBeenCalledWith(
+			expect.objectContaining( { readOnly: true, imageUploadDisabled: true } )
+		);
+		expect( mockImageUploaderProps ).toHaveBeenCalledWith(
+			expect.objectContaining( { disabled: true } )
+		);
+	} );
+
+	it( 'unlocks the composer when no upload is in flight', () => {
+		renderAgentChat( { isOpen: true, imageUpload: imageUpload( false ) } );
+
+		expect( mockInputProps ).toHaveBeenCalledWith(
+			expect.objectContaining( { readOnly: false, imageUploadDisabled: false } )
+		);
+		expect( mockImageUploaderProps ).toHaveBeenCalledWith(
+			expect.objectContaining( { disabled: false } )
+		);
 	} );
 
 	it( 'forwards empty view suggestion clicks to the shared suggestion handler', async () => {
@@ -190,6 +228,12 @@ describe( 'AgentChat', () => {
 		await user.click( screen.getByRole( 'button', { name: 'Check grammar' } ) );
 
 		expect( onSuggestionClick ).toHaveBeenCalledWith( suggestion, [ suggestion ] );
+	} );
+
+	it( 'expands when open', () => {
+		renderAgentChat( { isOpen: true } );
+
+		expect( mockContainerProps ).toHaveBeenLastCalledWith( { floatingChatState: 'expanded' } );
 	} );
 
 	it( 'collapses to a button when closed without the AI chat entry button', () => {

@@ -2,7 +2,7 @@ import { expect, tags, test } from '../../lib/pw-base';
 import { TEST_IMAGE_PATH } from '../constants';
 
 test.describe(
-	'Advertising: Promote',
+	'Blaze Ads: Promote',
 	{ tag: [ tags.CALYPSO_PR, tags.JETPACK_WPCOM_INTEGRATION ] },
 	() => {
 		test( 'As a WordPress.com free plan user with a simple site, I can promote my content using Jetpack Blaze', async ( {
@@ -37,11 +37,11 @@ test.describe(
 				}
 			} );
 
-			await test.step( 'When I visit the Tools > Advertising page', async function () {
+			await test.step( 'When I visit the Tools > Blaze Ads page', async function () {
 				await pageAdvertising.visit( accountSimpleSiteFreePlan.getSiteURL( { protocol: false } ) );
 			} );
 
-			await test.step( 'Then I see the Advertising page for my site', async function () {
+			await test.step( 'Then I see the Blaze Ads page for my site', async function () {
 				await expect( pageAdvertising.advertisingHeading ).toBeVisible();
 			} );
 
