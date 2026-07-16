@@ -27,6 +27,10 @@
 	/* puts the portaled dropdown above chat content and above host-page UI. */
 	z-index: 1000;
 	box-shadow: var(--shadow-lg);
+	/* Cap to the space Radix measures to the collision boundary, then scroll */
+	/* the overflow so long option lists don't spill off-screen. */
+	max-height: var(--radix-popover-content-available-height);
+	overflow-y: auto;
 }
 
 :global(.agenttic.dark) .dropdown {
