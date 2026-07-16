@@ -1,6 +1,5 @@
 import { __experimentalHStack as HStack } from '@wordpress/components';
 import clsx from 'clsx';
-import { getTld } from '../../utils/domain';
 import type { CSSProperties } from 'react';
 
 // Domains and emails are LTR identifiers; force LTR and isolate them so RTL locales don't
@@ -33,6 +32,13 @@ interface MiddleTruncateProps {
 	 * `createInterpolateElement` mapping, where the value arrives as element children.
 	 */
 	children?: string;
+	/**
+	 * The registrable (root) domain of `text`, when the caller already knows it (e.g. from the
+	 * API). It is kept whole as the pinned suffix, which handles multi-level public suffixes like
+	 * `co.jp` correctly. Without it, the tail falls back to the last dot — enough to keep the TLD,
+	 * and free of any public-suffix table so this component stays cheap in shared bundles.
+	 */
+	rootDomain?: string;
 	className?: string;
 }
 
@@ -41,30 +47,25 @@ interface MiddleTruncateProps {
  * identifier, so the truncated middle never eats it:
  *
  * - Email: the domain, from the `@` (`me@example.com` → pins `@example.com`).
- * - Domain with a subdomain: the registrable domain, i.e. the label before the public suffix
- *   plus the suffix (`my.shop.domain.co.jp` → pins `.domain.co.jp`). `getTld` resolves
- *   multi-level suffixes like `co.jp` so they are kept whole.
- * - Bare registrable domain: just the public suffix, so the second-level label can be the part
- *   that truncates instead (`myverylongstore.com` → pins `.com`).
+ * - Domain under a known root: the whole registrable domain (`my.shop.domain.co.jp` with root
+ *   `domain.co.jp` → pins `.domain.co.jp`).
+ * - Otherwise: the last dot, which still keeps the TLD (`myverylongstore.com` → pins `.com`).
  *
  * Returns -1 when there is no natural boundary to pin (e.g. a value with no dot).
  */
-function getTailStart( value: string ): number {
+function getTailStart( value: string, rootDomain?: string ): number {
 	const at = value.lastIndexOf( '@' );
 	if ( at > 0 ) {
 		return at;
 	}
 
-	const tld = getTld( value );
-	if ( ! tld ) {
-		return -1;
+	if ( rootDomain && value.length > rootDomain.length && value.endsWith( rootDomain ) ) {
+		// Pin the whole registrable domain, dropping the subdomain into the head.
+		return value.length - rootDomain.length - 1;
 	}
 
-	// Everything up to (but not including) the public suffix and its leading dot.
-	const withoutTld = value.slice( 0, value.length - tld.length - 1 );
-	const subdomainBoundary = withoutTld.lastIndexOf( '.' );
-
-	return subdomainBoundary === -1 ? withoutTld.length : subdomainBoundary;
+	const dot = value.lastIndexOf( '.' );
+	return dot > 0 ? dot : -1;
 }
 
 /**
@@ -74,9 +75,14 @@ function getTailStart( value: string ): number {
  * or the domain of an email (`myverylongemail@example.com` → `myverylonge…@example.com`) — so
  * the value stays recognizable. The full text is revealed on hover via the title tooltip.
  */
-export default function MiddleTruncate( { text, children, className }: MiddleTruncateProps ) {
+export default function MiddleTruncate( {
+	text,
+	children,
+	rootDomain,
+	className,
+}: MiddleTruncateProps ) {
 	const value = text ?? ( typeof children === 'string' ? children : '' );
-	const tailStart = getTailStart( value );
+	const tailStart = getTailStart( value, rootDomain );
 	const head = tailStart > 0 ? value.slice( 0, tailStart ) : value;
 	const tail = tailStart > 0 ? value.slice( tailStart ) : '';
 

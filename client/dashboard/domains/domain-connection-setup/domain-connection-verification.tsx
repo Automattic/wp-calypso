@@ -71,7 +71,10 @@ export default function DomainConnectionVerification( {
 							icon={ status === 'verifying' ? swatch : published }
 						/>
 						<Text className="dashboard-domain-connection-verification__title" size={ 10 }>
-							<MiddleTruncate text={ domainName } />
+							<MiddleTruncate
+								text={ domainName }
+								rootDomain={ domainConnectionSetupInfo.root_domain }
+							/>
 						</Text>
 						<Badge
 							className="dashboard-domain-connection-verification__badge"
