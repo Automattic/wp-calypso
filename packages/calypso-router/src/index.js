@@ -1179,3 +1179,41 @@ Route.prototype.match = function ( path, params ) {
  */
 const globalPage = createPage();
 export default globalPage;
+
+/**
+ * Create a registry that pairs route registration with a queryable record of the
+ * registered paths. `registry.page( path, ...callbacks )` behaves exactly like
+ * `page( path, ...callbacks )` but also records the path; `registry.has( path )`
+ * reports whether any recorded route matches `path`, using the same matching
+ * semantics as dispatch.
+ *
+ * Useful for section-scoped catch-alls that must distinguish real routes from
+ * unknown paths — e.g. lazily-loaded sibling sections registering under a shared
+ * prefix, where a plain catch-all would shadow routes appended later.
+ * @param {Function} pageInstance - Page instance to register routes on (defaults to the global instance)
+ * @returns {{ page: Function, has: Function }} The registry
+ */
+export function createRouteRegistry( pageInstance = globalPage ) {
+	const recordedPaths = new Set();
+	const matchers = [];
+
+	function record( path ) {
+		// Idempotent so re-registration (e.g. dev hot reload) doesn't grow the registry.
+		if ( recordedPaths.has( path ) ) {
+			return;
+		}
+		recordedPaths.add( path );
+		const route = new Route( path, null, pageInstance );
+		matchers.push( ( candidate ) => route.match( candidate, {} ) );
+	}
+
+	return {
+		page( path, ...callbacks ) {
+			( Array.isArray( path ) ? path : [ path ] ).forEach( record );
+			pageInstance( path, ...callbacks );
+		},
+		has( path ) {
+			return matchers.some( ( match ) => match( path ) );
+		},
+	};
+}

@@ -1,3 +1,4 @@
+import page from '@automattic/calypso-router';
 import { getAnyLanguageRouteParam } from '@automattic/i18n-utils';
 import AsyncLoad from 'calypso/components/async-load';
 import {
@@ -15,6 +16,7 @@ import {
 	trackUpdatesLoaded,
 	trackScrollPage,
 } from 'calypso/reader/controller-helper';
+import { readerNotFound } from 'calypso/reader/lib/reader-router';
 import { recordTrack } from 'calypso/reader/stats';
 import { getCurrentTabFromURL } from 'calypso/reader/utils';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
@@ -99,4 +101,7 @@ export default function ( router ) {
 
 	//
 	router( getDiscoverRoutes( anyLangParam ), ...commonMiddleware );
+
+	// Catch-all for unrecognized /discover/* paths.
+	page( '/discover/*', readerNotFound );
 }

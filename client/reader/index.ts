@@ -30,6 +30,7 @@ import {
 	loadNewSubscriptionPage,
 } from './controller';
 import postCacheMiddleware from './data/post/middleware';
+import { readerNotFound } from './lib/reader-router';
 import {
 	createList,
 	deleteList,
@@ -218,6 +219,12 @@ export default async function (): Promise< void > {
 	);
 
 	setupReaderRedirects();
+
+	// Catch-all: render a 404 for unrecognized /reader/* and /read/* paths instead of
+	// hanging. `readerNotFound` yields to sibling reader sections (search,
+	// conversations, …) that own the path, so only truly unknown paths render the 404.
+	page( '/reader/*', readerNotFound );
+	page( '/read/*', readerNotFound );
 }
 
 /**
