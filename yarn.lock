@@ -254,18 +254,24 @@ __metadata:
   resolution: "@automattic/api-queries@workspace:packages/api-queries"
   dependencies:
     "@automattic/api-core": "workspace:^"
+    "@automattic/calypso-config": "workspace:^"
     "@automattic/calypso-support-session": "workspace:^"
     "@automattic/calypso-typescript-config": "workspace:^"
+    "@github/webauthn-json": "npm:^2.1.1"
     "@tanstack/query-sync-storage-persister": "npm:^5.83.0"
     "@tanstack/react-query": "npm:^5.83.0"
     "@tanstack/react-query-persist-client": "npm:^5.83.0"
+    "@tanstack/react-router": "npm:^1.114.34"
     "@wordpress/html-entities": "npm:^4.48.0"
+    deepmerge: "npm:^4.3.1"
     fast-deep-equal: "npm:^3.1.3"
     react: "npm:^18.3.1"
+    react-dom: "npm:^18.3.1"
     tslib: "npm:^2.8.1"
     typescript: "npm:^6.0.3"
   peerDependencies:
     react: ^18.3.1 || ^19.0.0
+    react-dom: ^18.3.1 || ^19.0.0
   languageName: unknown
   linkType: soft
 
@@ -742,6 +748,7 @@ __metadata:
   resolution: "@automattic/calypso-support-session@workspace:packages/calypso-support-session"
   dependencies:
     "@automattic/calypso-typescript-config": "workspace:^"
+    debug: "npm:^4.4.1"
     tslib: "npm:^2.8.1"
     typescript: "npm:^6.0.3"
   languageName: unknown
