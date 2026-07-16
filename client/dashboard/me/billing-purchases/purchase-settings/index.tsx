@@ -524,7 +524,9 @@ function UpgradeActionButton( { purchase }: { purchase: Purchase } ) {
 
 function ReSubscribeActionButton( { purchase }: { purchase: Purchase } ) {
 	const { recordTracksEvent } = useAnalytics();
-	if ( ! isExpiredOrRemoved( purchase ) ) {
+	// @todo Conditionally show this for expired purchases in the grace period
+	// too, but some additional fixes are needed first.
+	if ( ! isRemoved( purchase ) ) {
 		return null;
 	}
 	// When "Change plan" is offered (downgrade-eligible), it supersedes the
