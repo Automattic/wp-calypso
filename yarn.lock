@@ -2704,6 +2704,7 @@ __metadata:
     "@tanstack/react-query": "npm:^5.83.0"
     "@wordpress/api-fetch": "npm:^7.48.0"
     "@wordpress/components": "npm:^35.0.0"
+    "@wordpress/data": "npm:^10.48.0"
     "@wordpress/element": "npm:^8.0.0"
     "@wordpress/i18n": "npm:^6.21.0"
     "@wordpress/icons": "npm:^13.3.0"
@@ -2712,14 +2713,15 @@ __metadata:
     clsx: "npm:^2.1.1"
     dompurify: "npm:3.4.11"
     react: "npm:^18.3.1"
+    react-dom: "npm:^18.3.1"
     react-router-dom: "npm:6.30.4"
     smooch: "npm:^5.7.17"
     tslib: "npm:^2.8.1"
     typescript: "npm:^6.0.3"
     wpcom-proxy-request: "workspace:^"
   peerDependencies:
-    "@wordpress/data": ^10.48.0
     react: ^18.3.1 || ^19.0.0
+    react-dom: ^18.3.1 || ^19.0.0
   languageName: unknown
   linkType: soft
 
