@@ -1,4 +1,6 @@
 import { useMemo } from 'react';
+import { useLocale } from '../../../../app/locale';
+import { formatDate } from '../../../../utils/datetime';
 import {
 	getCurrentCyclePayoutDate,
 	getCurrentCycleActivityWindow,
@@ -7,40 +9,34 @@ import {
 	areNextAndCurrentPayoutDatesEqual,
 } from '../lib/get-next-payout-date';
 
-const formatDateWithYear = ( date: Date ) =>
-	date.toLocaleString( 'default', {
-		month: 'short',
-		day: 'numeric',
-		year: 'numeric',
-	} );
-
-const formatDateRange = ( start: Date, finish: Date ) => {
-	return `${ formatDateWithYear( start ) } - ${ formatDateWithYear( finish ) }`;
+const DATE_FORMAT: Intl.DateTimeFormatOptions = {
+	month: 'short',
+	day: 'numeric',
+	year: 'numeric',
 };
 
 export default function useGetPayoutData() {
+	const locale = useLocale();
+
 	return useMemo( () => {
+		const formatDay = ( date: Date ) => formatDate( date, locale, DATE_FORMAT );
+		const formatRange = ( start: Date, finish: Date ) =>
+			`${ formatDay( start ) } - ${ formatDay( finish ) }`;
+
 		const now = new Date();
-
-		// Get raw dates
-		const nextPayoutDateRaw = getNextPayoutDate( now );
-		const currentCyclePayoutDateRaw = getCurrentCyclePayoutDate( now );
-
-		// Get activity windows
 		const nextPayoutWindow = getNextPayoutDateActivityWindow( now );
 		const currentCycleWindow = getCurrentCycleActivityWindow( now );
 
 		return {
-			nextPayoutActivityWindow: formatDateRange( nextPayoutWindow.start, nextPayoutWindow.finish ),
-			nextPayoutDate: formatDateWithYear( nextPayoutDateRaw ),
-			currentCyclePayoutDate: formatDateWithYear( currentCyclePayoutDateRaw ),
-			currentCycleActivityWindow: formatDateRange(
+			nextPayoutActivityWindow: formatRange( nextPayoutWindow.start, nextPayoutWindow.finish ),
+			nextPayoutDate: formatDay( getNextPayoutDate( now ) ),
+			currentCyclePayoutDate: formatDay( getCurrentCyclePayoutDate( now ) ),
+			currentCycleActivityWindow: formatRange(
 				currentCycleWindow.start,
 				currentCycleWindow.finish
 			),
 			areNextAndCurrentPayoutDatesEqual: areNextAndCurrentPayoutDatesEqual( now ),
-			isFullQuarter:
-				new Date().toLocaleDateString() === currentCycleWindow.finish.toLocaleDateString(),
+			isFullQuarter: now.toDateString() === currentCycleWindow.finish.toDateString(),
 		};
-	}, [] );
+	}, [ locale ] );
 }

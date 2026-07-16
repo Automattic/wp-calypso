@@ -5,10 +5,6 @@ import type { Referral } from '@automattic/api-core';
 import type { Field } from '@wordpress/dataviews';
 import type { ReactNode } from 'react';
 
-/**
- * The client cell is rendered by the host app so navigation stays app-specific
- * (MSD routes to a detail page; A4A opens a preview pane). Defaults to plain text.
- */
 export function getReferralFields(
 	renderClient: ( item: Referral ) => ReactNode = ( item ) => item.client.email
 ): Field< Referral >[] {

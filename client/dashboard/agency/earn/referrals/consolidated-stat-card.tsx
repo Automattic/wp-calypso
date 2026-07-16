@@ -37,7 +37,7 @@ export default function ConsolidatedStatCard( {
 		<Card className="referrals-stat-card">
 			<CardBody>
 				<VStack spacing={ 2 }>
-					<Heading level={ 2 } size={ 20 } weight={ 500 } className="referrals-stat-card__value">
+					<Heading level={ 2 } size={ 20 } weight={ 500 }>
 						{ isLoading ? <TextSkeleton length={ 8 } /> : value }
 					</Heading>
 					<HStack justify="flex-start" spacing={ 1 } expanded={ false }>
@@ -45,7 +45,6 @@ export default function ConsolidatedStatCard( {
 						<Button
 							size="small"
 							ref={ setInfoAnchor }
-							className="referrals-stat-card__info-icon"
 							aria-label={ popoverTitle }
 							onClick={ () => setShowPopover( ( visible ) => ! visible ) }
 						>
@@ -53,14 +52,15 @@ export default function ConsolidatedStatCard( {
 						</Button>
 						{ showPopover && (
 							<Popover
-								className="referrals-stat-card__popover"
 								anchor={ infoAnchor }
 								placement="bottom"
 								offset={ 12 }
+								shift
+								resize={ false }
 								focusOnMount
 								onFocusOutside={ () => setShowPopover( false ) }
 							>
-								{ popoverContent }
+								<div className="referrals-stat-card__popover-content">{ popoverContent }</div>
 							</Popover>
 						) }
 					</HStack>

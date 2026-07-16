@@ -1,11 +1,8 @@
-.referrals-stat-card__popover {
-	.components-popover__content {
-		width: 320px;
-		padding: 16px;
-	}
+.referrals-stat-card__popover-content {
+	width: min(320px, calc(100vw - 32px));
+	padding: 16px;
 }
 
-// Layout for the payout-cards popover description.
 .payout-cards__description {
 	display: flex;
 	flex-direction: column;

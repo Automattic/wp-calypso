@@ -1,13 +1,15 @@
 import { formatCurrency } from '@automattic/number-formatters';
 import { Tooltip } from '@wordpress/components';
 import { sprintf, __ } from '@wordpress/i18n';
+import { useMemo } from 'react';
 import useConsolidatedPayoutData from './hooks/use-consolidated-payout-data';
 import useGetPayoutData from './hooks/use-payout-data';
 import type { Referral } from '@automattic/api-core';
 
 export default function CommissionsCell( { referral }: { referral: Referral } ) {
+	const referrals = useMemo( () => [ referral ], [ referral ] );
 	const { previousQuarterExpectedCommission, currentQuarterExpectedCommission } =
-		useConsolidatedPayoutData( [ referral ] );
+		useConsolidatedPayoutData( referrals );
 	const { areNextAndCurrentPayoutDatesEqual } = useGetPayoutData();
 
 	const totalPendingCommission = areNextAndCurrentPayoutDatesEqual
