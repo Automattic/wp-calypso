@@ -1,6 +1,6 @@
 {
 	"name": "@automattic/api-core",
-	"version": "1.0.0",
+	"version": "1.1.0",
 	"description": "Data layer for the Automattic ecosystem.",
 	"homepage": "https://github.com/Automattic/wp-calypso",
 	"license": "GPL-2.0-or-later",
@@ -35,11 +35,15 @@
 		"watch": "tsc --build ./tsconfig.json --watch"
 	},
 	"dependencies": {
+		"@automattic/i18n-utils": "workspace:^",
+		"@automattic/languages": "workspace:^",
 		"@automattic/shopping-cart": "workspace:^",
 		"@wordpress/dataviews": "^16.0.0",
 		"@wordpress/html-entities": "^4.48.0",
 		"@wordpress/i18n": "^6.21.0",
+		"@wordpress/url": "^4.48.0",
 		"he": "^1.2.0",
+		"qs": "^6.15.2",
 		"tslib": "^2.8.1"
 	},
 	"devDependencies": {

@@ -1,6 +1,6 @@
 {
 	"name": "@automattic/calypso-e2e",
-	"version": "0.1.1",
+	"version": "0.2.0",
 	"description": "Tools for e2e tests.",
 	"main": "dist/cjs/src/index.js",
 	"module": "dist/esm/src/index.js",
@@ -19,15 +19,21 @@
 	],
 	"license": "GPL-2.0-or-later",
 	"dependencies": {
+		"@automattic/jest-circus-allure-reporter": "workspace:^",
 		"@jest/types": "^29.6.3",
 		"@playwright/browser-chromium": "1.57.0",
 		"@playwright/browser-firefox": "1.57.0",
 		"@types/totp-generator": "^0.0.8",
+		"@wordpress/i18n": "^6.21.0",
+		"asana-phrase": "^0.0.8",
+		"chalk": "^4.1.2",
 		"form-data": "^4.0.6",
 		"jest-docblock": "^29.7.0",
+		"jest-environment-node": "^29.7.0",
 		"mailosaur": "^8.4.0",
 		"playwright": "1.57.0",
-		"totp-generator": "^0.0.14"
+		"totp-generator": "^0.0.14",
+		"tslib": "^2.8.1"
 	},
 	"devDependencies": {
 		"@automattic/calypso-eslint-overrides": "workspace:^",
@@ -36,8 +42,6 @@
 		"@automattic/zendesk-client": "workspace:^",
 		"@jest/globals": "^29.7.0",
 		"@types/node": "^24.12.2",
-		"@wordpress/i18n": "^6.21.0",
-		"asana-phrase": "^0.0.8",
 		"nock": "^14.0.15",
 		"typescript": "^6.0.3"
 	},
