@@ -1,3 +1,4 @@
+import { ReadFeedSearchSort } from '@automattic/api-core';
 import {
 	QueryClient,
 	QueryClientProvider,
@@ -159,7 +160,10 @@ describe( 'read feed queries', () => {
 		const { result } = renderHook(
 			() =>
 				useInfiniteQuery(
-					readFeedSearchInfiniteQuery( { query: 'wordpress', sort: 'last_updated' as never } )
+					readFeedSearchInfiniteQuery( {
+						query: 'wordpress',
+						sort: ReadFeedSearchSort.LastUpdated,
+					} )
 				),
 			{ wrapper: makeWrapper( client ) }
 		);
