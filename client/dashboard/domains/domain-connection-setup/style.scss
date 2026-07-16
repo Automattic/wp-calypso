@@ -9,6 +9,18 @@
 		}
 	}
 
+	// The title is the only flexible child; the icon and badge stay fixed so the domain
+	// truncates instead of squeezing them.
+	.dashboard-domain-connection-verification__icon,
+	.dashboard-domain-connection-verification__badge {
+		flex-shrink: 0;
+	}
+
+	.dashboard-domain-connection-verification__title {
+		flex-shrink: 1;
+		min-width: 0;
+	}
+
 	.summary-button.components-button .summary-button-title {
 		font-weight: 500;
 	}

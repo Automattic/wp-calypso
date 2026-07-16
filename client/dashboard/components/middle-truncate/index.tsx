@@ -3,8 +3,19 @@ import clsx from 'clsx';
 import { getTld } from '../../utils/domain';
 import type { CSSProperties } from 'react';
 
-const wrapperStyle: CSSProperties = { maxWidth: '100%', minWidth: 0 };
-const tailStyle: CSSProperties = { flexShrink: 0, whiteSpace: 'nowrap' };
+// Domains and emails are LTR identifiers; force LTR and isolate them so RTL locales don't
+// reverse the head/tail order. `overflow: hidden` is the final clip if even the tail can't fit.
+const wrapperStyle: CSSProperties = {
+	maxWidth: '100%',
+	minWidth: 0,
+	overflow: 'hidden',
+	direction: 'ltr',
+	unicodeBidi: 'isolate',
+};
+// The head absorbs the shrink first (high flex-shrink), so the pinned tail is only forced to
+// truncate as a last resort, once the head has fully collapsed.
+const headStyle: CSSProperties = { flexShrink: 999, minWidth: 0 };
+const tailStyle: CSSProperties = { minWidth: 0 };
 
 interface MiddleTruncateProps {
 	/** The text to display, e.g. "my.shop.domain.co.jp" or "me@example.com". */
@@ -71,8 +82,14 @@ export default function MiddleTruncate( { text, children, className }: MiddleTru
 			style={ wrapperStyle }
 			title={ value }
 		>
-			<Text truncate>{ head }</Text>
-			{ tail && <Text style={ tailStyle }>{ tail }</Text> }
+			<Text truncate style={ headStyle }>
+				{ head }
+			</Text>
+			{ tail && (
+				<Text truncate style={ tailStyle }>
+					{ tail }
+				</Text>
+			) }
 		</HStack>
 	);
 }

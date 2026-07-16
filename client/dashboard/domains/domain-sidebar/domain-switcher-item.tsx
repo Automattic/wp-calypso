@@ -1,6 +1,7 @@
 import { __experimentalHStack as HStack, Button, Icon } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { chevronUpDown, globe } from '@wordpress/icons';
+import MiddleTruncate from '../../components/middle-truncate';
 import { SidebarMenuSwitcherItem } from '../../components/sidebar';
 import { Text } from '../../components/text';
 import DomainSwitcher from '../domain-switcher';
@@ -33,9 +34,9 @@ export default function DomainSwitcherItem( { domain }: { domain: Domain } ) {
 			}
 		>
 			<HStack justify="flex-start" alignment="center">
-				<Icon className="domain-icon" icon={ globe } size={ 24 } />
-				<Text weight={ 500 } truncate numberOfLines={ 1 }>
-					{ domain.domain }
+				<Icon className="domain-icon" icon={ globe } size={ 24 } style={ { flexShrink: 0 } } />
+				<Text weight={ 500 }>
+					<MiddleTruncate text={ domain.domain } />
 				</Text>
 			</HStack>
 		</SidebarMenuSwitcherItem>

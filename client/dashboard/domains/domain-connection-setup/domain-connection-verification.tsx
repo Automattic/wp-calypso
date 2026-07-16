@@ -73,7 +73,10 @@ export default function DomainConnectionVerification( {
 						<Text className="dashboard-domain-connection-verification__title" size={ 10 }>
 							<MiddleTruncate text={ domainName } />
 						</Text>
-						<Badge intent={ status === 'connected' ? 'success' : 'warning' }>
+						<Badge
+							className="dashboard-domain-connection-verification__badge"
+							intent={ status === 'connected' ? 'success' : 'warning' }
+						>
 							{ status === 'connected' ? __( 'Active' ) : __( 'Verifying' ) }
 						</Badge>
 					</HStack>
