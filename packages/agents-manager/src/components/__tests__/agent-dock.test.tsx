@@ -64,6 +64,7 @@ jest.mock( '../../hooks/use-agent-layout-manager', () => ( options: unknown ) =>
 	mockUseAgentLayoutManager( options );
 	return {
 		isDocked: mockLayoutIsDocked,
+		isSidebarOpen: mockLayoutIsDocked && mockAgentsManagerState.isOpen !== false,
 		canDock: mockLayoutIsDocked,
 		dock: jest.fn(),
 		undock: jest.fn(),

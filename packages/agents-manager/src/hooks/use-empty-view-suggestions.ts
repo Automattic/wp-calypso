@@ -17,11 +17,13 @@ export const DESIGN_SUGGESTION_IDS = new Set( [
 	'change-page-layout',
 ] );
 
+const WHAT_ELSE_CAN_I_DO_SUGGESTION_ID = 'what-else-can-i-do';
+
 const SITE_EDITOR_ONLY_SUGGESTION_IDS = new Set( [
 	...DESIGN_SUGGESTION_IDS,
 	'edit-pages',
 	'add-new-page',
-	'what-else-can-i-do',
+	WHAT_ELSE_CAN_I_DO_SUGGESTION_ID,
 ] );
 
 const SITE_EDITOR_POST_TYPES = new Set( [ 'wp_template', 'wp_template_part' ] );
@@ -37,11 +39,26 @@ const WRITING_SUGGESTION_LABELS: Record< string, () => string > = {
 
 export const WRITING_SUGGESTION_IDS = new Set( Object.keys( WRITING_SUGGESTION_LABELS ) );
 
-export const GROUPED_VIEW_HIDDEN_SUGGESTION_IDS = new Set( [ 'what-else-can-i-do' ] );
+export const GROUPED_VIEW_HIDDEN_SUGGESTION_IDS = new Set( [ WHAT_ELSE_CAN_I_DO_SUGGESTION_ID ] );
 
 // Keep writing action labels consistent across flat and grouped editor views.
 export function getWritingSuggestionLabel( suggestion: Suggestion ): string {
 	return WRITING_SUGGESTION_LABELS[ suggestion.id ]?.() ?? suggestion.label;
+}
+
+export function formatWritingSuggestionLabels(
+	suggestions: Suggestion[],
+	shouldFormat: boolean
+): Suggestion[] {
+	if ( ! shouldFormat ) {
+		return suggestions;
+	}
+
+	return suggestions.map( ( suggestion ) =>
+		WRITING_SUGGESTION_IDS.has( suggestion.id )
+			? { ...suggestion, label: getWritingSuggestionLabel( suggestion ) }
+			: suggestion
+	);
 }
 
 export const DEFAULT_EMPTY_VIEW_SUGGESTION_IDS = {

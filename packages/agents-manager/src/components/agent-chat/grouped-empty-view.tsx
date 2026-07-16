@@ -5,7 +5,7 @@ import { __, isRTL } from '@wordpress/i18n';
 import { Icon, chevronDown, chevronLeft, chevronRight } from '@wordpress/icons';
 import {
 	DESIGN_SUGGESTION_IDS,
-	getWritingSuggestionLabel,
+	formatWritingSuggestionLabels,
 	GROUPED_VIEW_HIDDEN_SUGGESTION_IDS,
 	WRITING_SUGGESTION_IDS,
 } from '../../hooks/use-empty-view-suggestions';
@@ -39,10 +39,9 @@ export default function GroupedEmptyView( {
 		'agents-manager-writing-suggestion-list'
 	);
 	const shouldFormatWritingSuggestions = groupWritingSuggestions || isEditorPage();
-	const displaySuggestions = suggestions.map( ( suggestion ) =>
-		shouldFormatWritingSuggestions && WRITING_SUGGESTION_IDS.has( suggestion.id )
-			? { ...suggestion, label: getWritingSuggestionLabel( suggestion ) }
-			: suggestion
+	const displaySuggestions = formatWritingSuggestionLabels(
+		suggestions,
+		shouldFormatWritingSuggestions
 	);
 	const writingSuggestions = displaySuggestions.filter( ( suggestion ) =>
 		WRITING_SUGGESTION_IDS.has( suggestion.id )
@@ -97,10 +96,10 @@ export default function GroupedEmptyView( {
 				>
 					<span className="agents-manager-writing-suggestions__content">
 						<span className="agents-manager-writing-suggestions__title">
-							{ __( 'Writing tools', __i18n_text_domain__ ) }
+							{ __( 'Writing assistance', __i18n_text_domain__ ) }
 						</span>
 						<span className="agents-manager-writing-suggestions__description">
-							{ __( 'Improve and refine your content.', __i18n_text_domain__ ) }
+							{ __( 'Enhance and review your content.', __i18n_text_domain__ ) }
 						</span>
 					</span>
 					<span className="agents-manager-writing-suggestions__count">

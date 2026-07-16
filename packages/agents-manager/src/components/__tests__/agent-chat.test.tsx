@@ -313,7 +313,7 @@ describe( 'AgentChat', () => {
 		const designButton = screen.getByRole( 'button', { name: 'Customize colors' } );
 		expect( designButton.closest( '.agents-manager-writing-suggestions' ) ).toBeNull();
 		expect( screen.queryByRole( 'button', { name: 'What else can you do?' } ) ).toBeNull();
-		expect( screen.getByText( 'Improve and refine your content.' ) ).toBeInTheDocument();
+		expect( screen.getByText( 'Enhance and review your content.' ) ).toBeInTheDocument();
 
 		const writingToggle = screen.getByRole( 'button', { name: /Writing/ } );
 		expect( writingToggle ).toHaveAttribute( 'aria-expanded', 'false' );

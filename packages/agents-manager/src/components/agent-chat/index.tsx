@@ -13,10 +13,7 @@ import { useDispatch, useSelect } from '@wordpress/data';
 import { useCallback, useMemo, useRef } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import clsx from 'clsx';
-import {
-	getWritingSuggestionLabel,
-	WRITING_SUGGESTION_IDS,
-} from '../../hooks/use-empty-view-suggestions';
+import { formatWritingSuggestionLabels } from '../../hooks/use-empty-view-suggestions';
 import useHasAiChatEntryButton from '../../hooks/use-has-ai-chat-entry-button';
 import { AGENTS_MANAGER_STORE } from '../../stores';
 import { getAgentsManagerInlineData } from '../../utils/get-agents-manager-inline-data';
@@ -201,12 +198,7 @@ export default function AgentChat( {
 	);
 	const shouldFormatWritingSuggestions = groupWritingSuggestions || isEditorPage();
 	const displayedSuggestions = useMemo(
-		() =>
-			suggestions.map( ( suggestion ) =>
-				shouldFormatWritingSuggestions && WRITING_SUGGESTION_IDS.has( suggestion.id )
-					? { ...suggestion, label: getWritingSuggestionLabel( suggestion ) }
-					: suggestion
-			),
+		() => formatWritingSuggestionLabels( suggestions, shouldFormatWritingSuggestions ),
 		[ shouldFormatWritingSuggestions, suggestions ]
 	);
 	const handleDisplayedSuggestionClick = useCallback(

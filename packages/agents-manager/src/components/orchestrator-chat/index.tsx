@@ -137,6 +137,8 @@ interface Props {
 	isDocked: boolean;
 	/** Indicates if the chat is expanded (floating mode). */
 	isOpen: boolean;
+	/** Indicates if suggestions are visible in the current layout. */
+	suggestionsVisible: boolean;
 	/** Called when the chat is closed. */
 	onClose: () => void;
 	/** Called when the chat is expanded (floating mode). */
@@ -171,6 +173,7 @@ export default function OrchestratorChat( {
 	emptyViewSuggestions,
 	isDocked,
 	isOpen,
+	suggestionsVisible,
 	onClose,
 	onExpand,
 	chatHeaderOptions,
@@ -369,12 +372,10 @@ export default function OrchestratorChat( {
 		},
 	} );
 
-	const areSuggestionsVisible = isOpen || isCompactMode || isDocked;
-
 	// Use dynamic suggestions from the external provider (e.g., Big Sky block-based suggestions)
 	const maxDynamicSuggestions = isDocked ? undefined : 3;
 	const dynamicSuggestions = useSuggestions?.( maxDynamicSuggestions, {
-		suggestionsVisible: areSuggestionsVisible,
+		suggestionsVisible,
 	} );
 	const dynamicSuggestionsList = dynamicSuggestions?.suggestions ?? [];
 	const replaceEmptyViewSuggestions = dynamicSuggestions?.replaceEmptyViewSuggestions === true;
@@ -879,7 +880,7 @@ export default function OrchestratorChat( {
 	// - Empty chat: show provider empty-view chips plus dynamic chips.
 	// - Active chat/input: show dynamic suggestions only.
 	let displayedEmptyViewSuggestions: Suggestion[] = [];
-	if ( ! areSuggestionsVisible ) {
+	if ( ! suggestionsVisible ) {
 		// Minimized/collapsed: the chat renders no suggestions, so leave the list
 		// empty to avoid firing chat_suggestions_rendered for hidden chips.
 		displayedEmptyViewSuggestions = [];
