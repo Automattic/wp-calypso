@@ -267,3 +267,35 @@ describe( 'useAgentLayoutManager — split-screen class', () => {
 		expect( container.classList.contains( SPLIT_SCREEN_CLASS ) ).toBe( false );
 	} );
 } );
+
+describe( 'useAgentLayoutManager — scrollable admin menu', () => {
+	const SCROLLABLE_CLASS = 'agents-manager-admin-menu-scrollable';
+	let adminMenuWrap: HTMLElement;
+
+	beforeEach( () => {
+		adminMenuWrap = document.createElement( 'div' );
+		adminMenuWrap.id = 'adminmenuwrap';
+		const adminMenu = document.createElement( 'ul' );
+		adminMenu.id = 'adminmenu';
+		adminMenuWrap.appendChild( adminMenu );
+		document.body.appendChild( adminMenuWrap );
+	} );
+
+	afterEach( () => {
+		adminMenuWrap.remove();
+	} );
+
+	it( 'applies the scrollable-menu treatment only while the sidebar renders docked', () => {
+		const { result, unmount } = render();
+		expect( document.body.classList.contains( SCROLLABLE_CLASS ) ).toBe( true );
+
+		act( () => result.current.undock() );
+		expect( document.body.classList.contains( SCROLLABLE_CLASS ) ).toBe( false );
+
+		act( () => result.current.dock() );
+		expect( document.body.classList.contains( SCROLLABLE_CLASS ) ).toBe( true );
+
+		act( () => unmount() );
+		expect( document.body.classList.contains( SCROLLABLE_CLASS ) ).toBe( false );
+	} );
+} );

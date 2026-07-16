@@ -1,4 +1,5 @@
 const FLYOUT_TOP_VAR = '--am-flyout-top';
+const FLYOUT_MAX_HEIGHT_VAR = '--am-flyout-max-height';
 // Gates the docked scrollable-menu CSS in `agent-dock/style.scss`; keep in sync
 // with `$admin-menu-scrollable-class` there.
 const SCROLLABLE_CLASS = 'agents-manager-admin-menu-scrollable';
@@ -36,10 +37,17 @@ export default function observeAdminMenuFlyouts(): ( () => void ) | undefined {
 		}
 
 		const itemTop = item.getBoundingClientRect().top;
-		const maxTop = window.innerHeight - VIEWPORT_GAP - submenu.offsetHeight;
+		// `scrollHeight` so an earlier max-height cap doesn't skew the measurement.
+		const maxTop = window.innerHeight - VIEWPORT_GAP - submenu.scrollHeight;
 		const minTop = wrap.getBoundingClientRect().top;
 		const top = Math.max( minTop, Math.min( itemTop, maxTop ) );
 		item.style.setProperty( FLYOUT_TOP_VAR, `${ top }px` );
+		// Cap a flyout taller than the remaining viewport so it scrolls internally —
+		// nothing else can bring the tail of a fixed box into view.
+		item.style.setProperty(
+			FLYOUT_MAX_HEIGHT_VAR,
+			`${ window.innerHeight - VIEWPORT_GAP - top }px`
+		);
 	};
 
 	const handlePointerOrFocus = ( event: Event ) => {
@@ -82,6 +90,7 @@ export default function observeAdminMenuFlyouts(): ( () => void ) | undefined {
 		wrap.removeEventListener( 'scroll', handleScroll );
 		menu.querySelectorAll< HTMLElement >( 'li.menu-top' ).forEach( ( item ) => {
 			item.style.removeProperty( FLYOUT_TOP_VAR );
+			item.style.removeProperty( FLYOUT_MAX_HEIGHT_VAR );
 		} );
 	};
 }

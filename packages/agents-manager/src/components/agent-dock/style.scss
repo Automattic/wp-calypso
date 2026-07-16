@@ -91,6 +91,10 @@ $admin-menu-scrollable-class: 'agents-manager-admin-menu-scrollable';
 	position: fixed;
 	top: var( --am-flyout-top, auto );
 	left: calc( $layout-spacing + $admin-menu-width );
+	// Set by the util when the flyout can't fit the viewport; it scrolls
+	// internally instead of running off-screen.
+	max-height: var( --am-flyout-max-height, none );
+	overflow-y: auto;
 	margin-top: 0 !important;
 }
 
