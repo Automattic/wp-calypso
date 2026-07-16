@@ -12,8 +12,11 @@ const noop = () => {};
 // Calypso's Reader scrolls inside an inner overflow container, not the window.
 // Resolve the list's nearest scrollable ancestor so the virtualizer observes the
 // right element; a window virtualizer never sees scroll here, so the stream would
-// render trailing placeholders that never page in (READ-601). Falls back to the
-// document scroller when no scrollable ancestor exists (e.g. a window-scrolled host).
+// render trailing placeholders that never page in (READ-601). If no scrollable
+// ancestor is found, fall back to the document scroller as a best-effort default
+// so the list still renders — note this element virtualizer won't observe true
+// window scroll (that needs a window virtualizer), but the only consumer (the
+// search sites column) always has an inner scroll container, so that's moot.
 const getScrollParent = ( node ) => {
 	let current = node?.parentElement ?? null;
 	while ( current ) {
