@@ -6,6 +6,9 @@
 	"main": "dist/esm/src/index.js",
 	"module": "dist/esm/src/index.js",
 	"types": "dist/types/src/index.d.ts",
+	"publishConfig": {
+		"access": "public"
+	},
 	"homepage": "https://github.com/Automattic/wp-calypso",
 	"repository": {
 		"type": "git",
