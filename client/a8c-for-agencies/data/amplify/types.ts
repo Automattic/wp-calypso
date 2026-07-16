@@ -37,6 +37,10 @@ export interface StartAmplifyAnalysisParams {
 	mode: AmplifyMode;
 }
 
+export interface ArchiveAmplifyReportParams {
+	reportId: string;
+}
+
 export interface AmplifyApiError {
 	status: number;
 	code: string | null;
