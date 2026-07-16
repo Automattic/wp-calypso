@@ -74,10 +74,6 @@ const loadTwoFactorContent = () =>
 	import(
 		/* webpackChunkName: "async-load-calypso-blocks-login-two-factor-authentication-two-factor-content" */ './two-factor-authentication/two-factor-content'
 	);
-const loadSecurityKeyRegister = () =>
-	import(
-		/* webpackChunkName: "async-load-calypso-blocks-login-two-factor-authentication-security-key-register" */ './two-factor-authentication/security-key-register'
-	);
 
 class Login extends Component {
 	static propTypes = {
@@ -121,7 +117,6 @@ class Login extends Component {
 
 	state = {
 		isBrowserSupported: isWebAuthnSupported(),
-		showSecurityKeyRegistration: false,
 	};
 
 	static defaultProps = {
@@ -306,8 +301,8 @@ class Login extends Component {
 			this.handleSocialConnectStart();
 		} else if ( this.props.securityKeyReregisterRequired && this.state.isBrowserSupported ) {
 			// The account's security key was scoped to the wrong relying party. Now that the user has
-			// signed in with a fallback method, prompt them to register a fresh key before redirecting.
-			this.setState( { showSecurityKeyRegistration: true } );
+			// signed in with a fallback method, send them to the register-key step before redirecting.
+			this.handleTwoFactorRequested( 'security-key' );
 		} else {
 			this.rebootAfterLogin();
 		}
@@ -432,16 +427,6 @@ class Login extends Component {
 		} = this.props;
 
 		const signupLink = this.getSignupLinkComponent();
-
-		if ( this.state.showSecurityKeyRegistration ) {
-			return (
-				<AsyncLoad
-					require={ loadSecurityKeyRegister }
-					placeholder={ null }
-					onFinish={ this.rebootAfterLogin }
-				/>
-			);
-		}
 
 		if ( socialConnect ) {
 			return <AsyncLoad require={ loadSocialConnectPrompt } onSuccess={ this.handleValidLogin } />;

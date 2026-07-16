@@ -266,5 +266,11 @@ export function getHeaderText( {
 		headerText = translate( 'Log in to Automattic for Agencies' );
 	}
 
+	// The post-2FA step that prompts re-registering a misscoped security key; its heading applies
+	// regardless of client, so keep it last.
+	if ( twoFactorAuthType === 'security-key' ) {
+		headerText = translate( 'Register a new security key' );
+	}
+
 	return headerText;
 }

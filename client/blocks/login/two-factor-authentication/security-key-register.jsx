@@ -52,12 +52,6 @@ class SecurityKeyRegister extends Component {
 			} );
 	};
 
-	handleSkip = ( event ) => {
-		event.preventDefault();
-		this.props.recordTracksEvent( 'calypso_login_security_key_register_skip_click' );
-		this.props.onFinish();
-	};
-
 	render() {
 		const { translate } = this.props;
 		const { keyName, isRegistering, error } = this.state;
@@ -69,9 +63,6 @@ class SecurityKeyRegister extends Component {
 		return (
 			<form onSubmit={ this.handleRegister }>
 				<Card className="two-factor-authentication__security-key-register">
-					<h2 className="security-key-register__heading">
-						{ translate( 'Register a new security key' ) }
-					</h2>
 					<p className="security-key-register__text">
 						{ translate(
 							'Due to a small setup issue, some of your security keys were linked to the wrong WordPress.com domain. This isn’t a security concern — your account and data are safe.'
@@ -104,12 +95,6 @@ class SecurityKeyRegister extends Component {
 						__next40pxDefaultSize
 					>
 						{ translate( 'Register security key' ) }
-					</Button>
-				</Card>
-
-				<Card className="two-factor-authentication__security-key-register-skip">
-					<Button variant="link" onClick={ this.handleSkip } disabled={ isRegistering }>
-						{ translate( 'Skip for now' ) }
 					</Button>
 				</Card>
 			</form>

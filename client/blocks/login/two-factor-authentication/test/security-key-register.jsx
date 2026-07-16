@@ -24,9 +24,9 @@ describe( 'SecurityKeyRegister', () => {
 	test( 'renders the registration form', () => {
 		render( <SecurityKeyRegister onFinish={ jest.fn() } /> );
 
-		expect( screen.getByRole( 'heading', { name: 'Register a new security key' } ) ).toBeVisible();
+		expect( screen.getByRole( 'textbox' ) ).toBeVisible();
 		expect( screen.getByRole( 'button', { name: 'Register security key' } ) ).toBeVisible();
-		expect( screen.getByRole( 'button', { name: 'Skip for now' } ) ).toBeVisible();
+		expect( screen.queryByRole( 'button', { name: 'Skip for now' } ) ).not.toBeInTheDocument();
 	} );
 
 	test( 'renders nothing when WebAuthn is unsupported', () => {
@@ -48,18 +48,6 @@ describe( 'SecurityKeyRegister', () => {
 
 		await waitFor( () => expect( onFinish ).toHaveBeenCalled() );
 		expect( registerSecurityKey ).toHaveBeenCalledWith( 'My laptop' );
-	} );
-
-	test( 'skips (finishes without registering) when "Skip for now" is clicked', async () => {
-		const user = userEvent.setup();
-		const onFinish = jest.fn();
-
-		render( <SecurityKeyRegister onFinish={ onFinish } /> );
-
-		await user.click( screen.getByRole( 'button', { name: 'Skip for now' } ) );
-
-		expect( onFinish ).toHaveBeenCalled();
-		expect( registerSecurityKey ).not.toHaveBeenCalled();
 	} );
 
 	test( 'shows an error and does not finish when registration fails', async () => {

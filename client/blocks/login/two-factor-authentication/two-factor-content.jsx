@@ -1,6 +1,7 @@
 import { localize } from 'i18n-calypso';
 import PushNotificationApprovalPoller from './push-notification-approval-poller';
 import SecurityKeyForm from './security-key-form';
+import SecurityKeyRegister from './security-key-register';
 import VerificationCodeForm from './verification-code-form';
 import WaitingTwoFactorNotificationApproval from './waiting-notification-approval';
 
@@ -14,6 +15,14 @@ function TwoFactorContent( {
 	isGravPoweredClient,
 	translate,
 } ) {
+	if ( twoFactorAuthType === 'security-key' ) {
+		return (
+			<div>
+				<SecurityKeyRegister onFinish={ rebootAfterLogin } />
+			</div>
+		);
+	}
+
 	if ( twoFactorAuthType === 'webauthn' && isBrowserSupported ) {
 		return (
 			<div>

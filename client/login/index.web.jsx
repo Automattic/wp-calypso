@@ -124,15 +124,15 @@ export default ( router ) => {
 
 	router(
 		[
-			`/log-in/:twoFactorAuthType(authenticator|backup|email|sms|push|webauthn)/${ lang }`,
+			`/log-in/:twoFactorAuthType(authenticator|backup|email|sms|push|webauthn|security-key)/${ lang }`,
 			`/log-in/:flow(social-connect)/${ lang }`,
 			`/log-in/:socialService(google|apple|github|paypal)/callback/${ lang }`,
 			`/log-in/:isJetpack(jetpack)/${ lang }`,
 			`/log-in/:isJetpack(jetpack)/:socialService(google|apple|github|paypal)/${ lang }`,
-			`/log-in/:isJetpack(jetpack)/:twoFactorAuthType(authenticator|backup|email|sms|push|webauthn)/${ lang }`,
+			`/log-in/:isJetpack(jetpack)/:twoFactorAuthType(authenticator|backup|email|sms|push|webauthn|security-key)/${ lang }`,
 			`/log-in/:isJetpack(jetpack)/:action(lostpassword)/${ lang }`,
 			`/log-in/:isGutenboarding(new)/${ lang }`,
-			`/log-in/:isGutenboarding(new)/:twoFactorAuthType(authenticator|backup|email|sms|push|webauthn)/${ lang }`,
+			`/log-in/:isGutenboarding(new)/:twoFactorAuthType(authenticator|backup|email|sms|push|webauthn|security-key)/${ lang }`,
 			`/log-in/:action(lostpassword)/${ lang }`,
 			`/log-in/${ lang }`,
 		],
