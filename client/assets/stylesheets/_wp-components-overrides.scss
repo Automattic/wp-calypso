@@ -140,8 +140,8 @@
 			&:hover {
 				color: var(--color-passport-accent);
 			}
-		}	
-	
+		}
+
 		.components-button.is-link {
 			color: var(--color-passport-base);
 		}
@@ -219,7 +219,6 @@
 .components-radio-control {
 	&__input[type="radio"] {
 		padding: 6px;
-		cursor: pointer;
 
 		&:checked {
 			border-color: var(--color-accent);
