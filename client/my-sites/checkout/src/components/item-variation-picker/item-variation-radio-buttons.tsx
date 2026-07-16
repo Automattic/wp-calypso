@@ -105,7 +105,9 @@ const ProductVariant: FunctionComponent< ProductVariantProps > = ( {
 				checked={ isChecked }
 				disabled={ isDisabled }
 				onChange={ () => {
-					! isDisabled && onChangeItemVariant( selectedItem.uuid, productSlug, productId );
+					if ( ! isDisabled ) {
+						onChangeItemVariant( selectedItem.uuid, productSlug, productId );
+					}
 				} }
 				label={ <ItemVariantRadioPrice variant={ productVariant } compareTo={ compareTo } /> }
 				highlighted
