@@ -58,12 +58,14 @@ async function continueWithSecurityKey( page: Page ): Promise< void > {
 	const switchToSecurityKey = page.getByRole( 'button', {
 		name: /Continue with your security.key/,
 	} );
-	if ( await switchToSecurityKey.isVisible().catch( () => false ) ) {
+	const canSwitchToSecurityKey = await switchToSecurityKey.isVisible();
+	if ( canSwitchToSecurityKey ) {
 		await switchToSecurityKey.click();
 	}
 
 	const continueButton = page.getByRole( 'button', { name: 'Continue with security key' } );
-	if ( await continueButton.isEnabled().catch( () => false ) ) {
+	const isContinueButtonVisible = await continueButton.isVisible();
+	if ( isContinueButtonVisible ) {
 		await continueButton.click();
 	}
 
