@@ -3,16 +3,13 @@
  */
 
 import { renderHook } from '@testing-library/react';
-import * as getEstimatedCommission from '../../lib/get-estimated-commission';
+import { getEstimatedCommission } from '../../lib/get-estimated-commission';
 import useGetConsolidatedPayoutData from '../use-consolidated-payout-data';
 import type { Referral } from '@automattic/api-core';
 
 jest.mock( '../../lib/get-estimated-commission' );
 
-const mockGetEstimatedCommission =
-	getEstimatedCommission.getEstimatedCommission as jest.MockedFunction<
-		typeof getEstimatedCommission.getEstimatedCommission
-	>;
+const mockGetEstimatedCommission = getEstimatedCommission as jest.Mock;
 
 describe( 'useGetConsolidatedPayoutData', () => {
 	const mockReferrals: Referral[] = [
