@@ -78,6 +78,9 @@ function assignExperiment( variationName: string | null = null ) {
 describe( '<AccountRecoveryInterstitial>', () => {
 	beforeEach( () => {
 		assignExperiment();
+		// On in the test config by default; the non-welcome-modal tests expect it off so the nudge is
+		// not held back. Tests that need it explicitly enable it.
+		disable( 'dashboard/opt-in-welcome-modal' );
 	} );
 
 	afterEach( () => {
