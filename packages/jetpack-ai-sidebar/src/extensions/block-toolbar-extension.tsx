@@ -101,8 +101,9 @@ function useAgentsManagerChatVisible(): boolean {
 
 function handleAgentsManagerReady() {
 	isWaitingForAgentsManagerReady = false;
-	// Just became ready, so the chat can't already be open — open it.
-	( window as WindowWithAgentsManagerActions ).__agentsManagerActions?.setChatOpen?.( true );
+	// Apply the queued click as a toggle, so it stays correct however the chat
+	// loaded.
+	toggleAgentsManagerChat();
 }
 
 export function toggleJetpackAiSidebarChat(): void {

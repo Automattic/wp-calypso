@@ -12,6 +12,9 @@ export interface ChatVisibilityEventDetail {
  * reflect the state. The new value rides in `event.detail.isVisible`; listeners
  * must not re-read `isChatVisible()`, which is refreshed a beat later and still
  * holds the previous value at dispatch time. See `hooks/custom-actions/README.md`.
+ *
+ * The jetpack-ai-sidebar bundle hard-codes this same literal (no cross-bundle
+ * import), so renaming it means updating `block-toolbar-extension.tsx` too.
  */
 export const CHAT_VISIBILITY_EVENT = 'agents-manager-chat-visibility-changed';
 

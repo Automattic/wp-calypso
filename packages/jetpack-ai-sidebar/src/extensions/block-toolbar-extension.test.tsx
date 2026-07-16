@@ -233,6 +233,27 @@ describe( 'withJetpackAiToolbarButton', () => {
 		expect( setChatOpen ).toHaveBeenCalledWith( true );
 	} );
 
+	it( 'applies the queued click as a toggle when the ready event fires', () => {
+		const setChatOpen = jest.fn();
+
+		enableToolbarButton();
+		renderToolbar();
+		// Click before the actions are ready: the toggle is queued.
+		fireEvent.click( screen.getByRole( 'button', { name: 'Ask AI' } ) );
+		expect( setChatOpen ).not.toHaveBeenCalled();
+
+		// If the chat is already visible by the time the actions load, applying the
+		// queued click closes it rather than blindly re-opening.
+		window.__agentsManagerActions = {
+			isReady: true,
+			setChatOpen,
+			isChatVisible: () => true,
+		};
+		window.dispatchEvent( new CustomEvent( 'agents-manager-ready' ) );
+
+		expect( setChatOpen ).toHaveBeenCalledWith( false );
+	} );
+
 	it( 'does not submit or prefill chat when clicked', () => {
 		const setChatOpen = jest.fn();
 		const submitChatMessage = jest.fn();
