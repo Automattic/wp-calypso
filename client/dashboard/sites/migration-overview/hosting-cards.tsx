@@ -14,7 +14,7 @@ const GRID_CARDS = [
 	{
 		title: __( 'Unmetered bandwidth' ),
 		description: __(
-			‘With 99.999% uptime and entirely unmetered bandwidth and traffic on every plan, you’ll never need to worry about being too successful.’
+			'With 99.999% uptime and entirely unmetered bandwidth and traffic on every plan, you’ll never need to worry about being too successful.'
 		),
 	},
 	{
