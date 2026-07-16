@@ -58,9 +58,7 @@ const mockAgentChat = jest.fn(
 							internalValue: 'not-forwarded',
 						},
 					};
-					onSuggestionClick( suggestion, [ suggestion ], {
-						metadata: suggestion.metadata,
-					} );
+					onSuggestionClick( suggestion, [ suggestion ] );
 				} }
 			>
 				Click block suggestion
@@ -88,7 +86,6 @@ const mockAgentChat = jest.fn(
 					};
 					onSuggestionClick( selectedSuggestion, [ availableSuggestion ], {
 						selectedOption: option,
-						metadata,
 					} );
 				} }
 			>
@@ -144,13 +141,7 @@ const mockAgentChat = jest.fn(
 					<li key={ suggestion.id }>
 						<button
 							type="button"
-							onClick={ () =>
-								onSuggestionClick(
-									suggestion,
-									emptyViewSuggestions,
-									suggestion.metadata ? { metadata: suggestion.metadata } : undefined
-								)
-							}
+							onClick={ () => onSuggestionClick( suggestion, emptyViewSuggestions ) }
 						>
 							{ suggestion.label }
 						</button>

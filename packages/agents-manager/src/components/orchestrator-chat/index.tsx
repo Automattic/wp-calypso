@@ -688,10 +688,12 @@ export default function OrchestratorChat( {
 			const suggestionId = typeof suggestion !== 'string' ? suggestion.id : undefined;
 			const optionId =
 				typeof suggestion !== 'string' ? selectionContext?.selectedOption?.id : undefined;
-			const contextBlockType =
-				typeof suggestion !== 'string' ? selectionContext?.metadata?.blockType : undefined;
+			const suggestionBlockType =
+				typeof suggestion !== 'string' ? suggestion.metadata?.blockType : undefined;
 			const blockType =
-				typeof contextBlockType === 'string' && contextBlockType ? contextBlockType : undefined;
+				typeof suggestionBlockType === 'string' && suggestionBlockType
+					? suggestionBlockType
+					: undefined;
 
 			if ( typeof suggestion !== 'string' ) {
 				recordBigSkyTracksEvent( 'chat_suggestion_click', {
