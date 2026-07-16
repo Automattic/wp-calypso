@@ -7,6 +7,7 @@ import { useQuery } from '@tanstack/react-query';
 import { Link } from '@tanstack/react-router';
 import { __ } from '@wordpress/i18n';
 import { useState } from 'react';
+import { useLocale } from '../../../app/locale';
 import { DataViewsCard } from '../../../components/dataviews';
 import { PageHeader } from '../../../components/page-header';
 import PageLayout from '../../../components/page-layout';
@@ -19,6 +20,7 @@ import ReferralsList from './referrals-list';
 import type { View } from '@wordpress/dataviews';
 
 export default function EarnReferrals() {
+	const locale = useLocale();
 	const { data: agency } = useQuery( activeAgencyQuery() );
 	const agencyId = agency?.id ?? 0;
 
@@ -59,6 +61,7 @@ export default function EarnReferrals() {
 						referrals={ referrals }
 						referralCommissionPayout={ commissionPayout }
 						isLoading={ isLoading }
+						locale={ locale }
 					/>
 					<DataViewsCard>
 						<ReferralsList

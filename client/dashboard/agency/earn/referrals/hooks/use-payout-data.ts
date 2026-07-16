@@ -1,5 +1,4 @@
 import { useMemo } from 'react';
-import { useLocale } from '../../../../app/locale';
 import { formatDate } from '../../../../utils/datetime';
 import {
 	getCurrentCyclePayoutDate,
@@ -15,9 +14,9 @@ const DATE_FORMAT: Intl.DateTimeFormatOptions = {
 	year: 'numeric',
 };
 
-export default function useGetPayoutData() {
-	const locale = useLocale();
-
+// Shared with A4A, which has no MSD app context, so the locale is a parameter
+// rather than coming from `useLocale()`.
+export default function useGetPayoutData( locale: string = 'en' ) {
 	return useMemo( () => {
 		const formatDay = ( date: Date ) => formatDate( date, locale, DATE_FORMAT );
 		const formatRange = ( start: Date, finish: Date ) =>

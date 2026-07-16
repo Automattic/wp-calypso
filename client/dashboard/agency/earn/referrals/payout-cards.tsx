@@ -1,6 +1,7 @@
 import { formatCurrency } from '@automattic/number-formatters';
 import { Button } from '@wordpress/components';
 import { __, sprintf } from '@wordpress/i18n';
+import { formatDate } from '../../../utils/datetime';
 import ConsolidatedStatCard from './consolidated-stat-card';
 import useGetPayoutData from './hooks/use-payout-data';
 
@@ -16,6 +17,7 @@ function PayoutAmount( {
 	footerAction,
 	popoverTitle,
 	handleHalfQuarter,
+	locale,
 }: {
 	expectedCommission: number;
 	activityWindow: string;
@@ -25,6 +27,7 @@ function PayoutAmount( {
 	footerAction?: React.ReactNode;
 	popoverTitle: string;
 	handleHalfQuarter?: boolean;
+	locale?: string;
 } ) {
 	return (
 		<ConsolidatedStatCard
@@ -48,7 +51,7 @@ function PayoutAmount( {
 								{ sprintf(
 									/* translators: %s is the current date, e.g. "Jan 5" */
 									__( '(Earnings shown up to %s)' ),
-									new Date().toLocaleString( 'default', {
+									formatDate( new Date(), locale ?? 'en', {
 										month: 'short',
 										day: 'numeric',
 									} )
@@ -86,12 +89,14 @@ export default function PayoutCards( {
 	currentQuarterExpectedCommission,
 	isWooPayments,
 	footerAction,
+	locale,
 }: {
 	isFetching: boolean;
 	previousQuarterExpectedCommission: number;
 	currentQuarterExpectedCommission: number;
 	isWooPayments?: boolean;
 	footerAction?: React.ReactNode;
+	locale?: string;
 } ) {
 	const {
 		nextPayoutActivityWindow,
@@ -100,7 +105,7 @@ export default function PayoutCards( {
 		currentCycleActivityWindow,
 		areNextAndCurrentPayoutDatesEqual,
 		isFullQuarter,
-	} = useGetPayoutData();
+	} = useGetPayoutData( locale );
 
 	const previousQuarterTitle = __( 'Estimated earnings in previous quarter' );
 
@@ -121,6 +126,7 @@ export default function PayoutCards( {
 					footerText={ previousQuarterTitle }
 					footerAction={ footerAction }
 					popoverTitle={ previousQuarterTitle }
+					locale={ locale }
 				/>
 			) }
 			<PayoutAmount
@@ -131,6 +137,7 @@ export default function PayoutCards( {
 				footerText={ currentQuarterTitle }
 				popoverTitle={ currentQuarterTitle }
 				handleHalfQuarter={ handleHalfQuarter }
+				locale={ locale }
 			/>
 		</>
 	);
