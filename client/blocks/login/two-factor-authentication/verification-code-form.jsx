@@ -8,13 +8,18 @@ import { connect } from 'react-redux';
 import ActionPanelLink from 'calypso/components/action-panel/link';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormVerificationCodeInput from 'calypso/components/forms/form-verification-code-input';
+import Notice from 'calypso/components/notice';
 import { recordTracksEventWithClientId as recordTracksEvent } from 'calypso/state/analytics/actions';
 import {
 	formUpdate,
 	loginUserWithTwoFactorVerificationCode,
 	sendSmsCode,
 } from 'calypso/state/login/actions';
-import { getTwoFactorAuthNonce, getTwoFactorAuthRequestError } from 'calypso/state/login/selectors';
+import {
+	getTwoFactorAuthNonce,
+	getTwoFactorAuthRequestError,
+	isSecurityKeyReregisterRequired,
+} from 'calypso/state/login/selectors';
 import TwoFactorActions from './two-factor-actions';
 
 import './verification-code-form.scss';
@@ -30,6 +35,7 @@ class VerificationCodeForm extends Component {
 		translate: PropTypes.func.isRequired,
 		twoFactorAuthRequestError: PropTypes.object,
 		twoFactorAuthType: PropTypes.string.isRequired,
+		securityKeyReregisterRequired: PropTypes.bool,
 		verificationCodeInputPlaceholder: PropTypes.string,
 	};
 
@@ -103,6 +109,7 @@ class VerificationCodeForm extends Component {
 			twoFactorAuthType,
 			switchTwoFactorAuthType,
 			twoFactorEmailNonce,
+			securityKeyReregisterRequired,
 		} = this.props;
 
 		let buttonText = translate( 'Continue' );
@@ -145,6 +152,17 @@ class VerificationCodeForm extends Component {
 				className="two-factor-authentication__verification-code-form-wrapper"
 				onSubmit={ this.onSubmitForm }
 			>
+				{ securityKeyReregisterRequired && (
+					<Notice
+						className="verification-code-form__reregister-notice"
+						status="is-info"
+						showDismiss={ false }
+					>
+						{ translate(
+							'Your security key needs to be re-registered, so we couldn’t use it to sign you in. Enter the code below to continue, then register a new key.'
+						) }
+					</Notice>
+				) }
 				<Card className="two-factor-authentication__verification-code-form">
 					<p className="verification-code-form__help-text">{ helpText }</p>
 
@@ -194,6 +212,7 @@ export default connect(
 	( state ) => ( {
 		twoFactorAuthRequestError: getTwoFactorAuthRequestError( state ),
 		twoFactorEmailNonce: getTwoFactorAuthNonce( state, 'email' ),
+		securityKeyReregisterRequired: isSecurityKeyReregisterRequired( state ),
 	} ),
 	{
 		formUpdate,
