@@ -15,6 +15,7 @@ import { useAppContext } from '../../app/context';
 import { siteDomainsRoute, siteOverviewRoute } from '../../app/router/sites';
 import { Card, CardBody } from '../../components/card';
 import InlineSupportLink from '../../components/inline-support-link';
+import MiddleTruncate from '../../components/middle-truncate';
 import Notice from '../../components/notice';
 import RouterLinkSummaryButton from '../../components/router-link-summary-button';
 import DnsPropagationProgressBar from './components/dns-propagation-progress-bar';
@@ -70,7 +71,7 @@ export default function DomainConnectionVerification( {
 							icon={ status === 'verifying' ? swatch : published }
 						/>
 						<Text className="dashboard-domain-connection-verification__title" size={ 10 }>
-							{ domainName }
+							<MiddleTruncate text={ domainName } />
 						</Text>
 						<Badge intent={ status === 'connected' ? 'success' : 'warning' }>
 							{ status === 'connected' ? __( 'Active' ) : __( 'Verifying' ) }

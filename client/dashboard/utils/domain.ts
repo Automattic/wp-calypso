@@ -329,7 +329,7 @@ function parseDomainAgainstTldList( domainFragment: string, tldList: string[] ):
  * and falls back to a simplistic "everything after the last dot" approach
  * if the list of explicitly allowed TLDs failed.
  */
-function getTld( domainName: string ): string {
+export function getTld( domainName: string ): string {
 	const lastIndexOfDot = domainName.lastIndexOf( '.' );
 
 	if ( lastIndexOfDot === -1 ) {

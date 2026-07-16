@@ -1,0 +1,18 @@
+.dashboard-middle-truncate {
+	display: inline-flex;
+	max-width: 100%;
+	min-width: 0;
+	vertical-align: bottom;
+}
+
+.dashboard-middle-truncate__head {
+	min-width: 0;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+
+.dashboard-middle-truncate__tail {
+	flex-shrink: 0;
+	white-space: nowrap;
+}

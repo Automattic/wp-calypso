@@ -9,6 +9,15 @@
 		}
 	}
 
+	.dashboard-domain-connection-verification__icon {
+		flex-shrink: 0;
+	}
+
+	.dashboard-domain-connection-verification__title {
+		min-width: 0;
+		flex-shrink: 1;
+	}
+
 	.summary-button.components-button .summary-button-title {
 		font-weight: 500;
 	}
