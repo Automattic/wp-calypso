@@ -6,7 +6,12 @@ import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import { recordTracksEventWithClientId as recordTracksEvent } from 'calypso/state/analytics/actions';
-import { formUpdate, loginUserWithSecurityKey } from 'calypso/state/login/actions';
+import {
+	formUpdate,
+	loginUserWithSecurityKey,
+	NO_SCOPED_SECURITY_KEY_ERROR,
+} from 'calypso/state/login/actions';
+import SecurityKeyReregister from './security-key-reregister';
 import TwoFactorActions from './two-factor-actions';
 import './verification-code-form.scss';
 import './security-key-form.scss';
@@ -29,6 +34,7 @@ class SecurityKeyForm extends Component {
 
 	state = {
 		isAuthenticating: false,
+		needsReregister: false,
 	};
 
 	componentDidMount() {
@@ -41,11 +47,20 @@ class SecurityKeyForm extends Component {
 		this.props
 			.loginUserWithSecurityKey()
 			.then( () => onSuccess() )
-			.catch( () => this.setState( { isAuthenticating: false } ) );
+			.catch( ( error ) => {
+				this.setState( {
+					isAuthenticating: false,
+					needsReregister: error?.code === NO_SCOPED_SECURITY_KEY_ERROR,
+				} );
+			} );
 	};
 
 	render() {
 		const { translate, isWoo, switchTwoFactorAuthType } = this.props;
+
+		if ( this.state.needsReregister ) {
+			return <SecurityKeyReregister switchTwoFactorAuthType={ switchTwoFactorAuthType } />;
+		}
 
 		return (
 			<form

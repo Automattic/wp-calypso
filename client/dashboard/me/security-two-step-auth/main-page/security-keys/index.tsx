@@ -12,6 +12,7 @@ import {
 import { useDispatch } from '@wordpress/data';
 import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
+import { Icon, cautionFilled as warning } from '@wordpress/icons';
 import { store as noticesStore } from '@wordpress/notices';
 import { useState } from 'react';
 import { useAnalytics } from '../../../../app/analytics';
@@ -19,7 +20,7 @@ import { ActionList } from '../../../../components/action-list';
 import ConfirmModal from '../../../../components/confirm-modal';
 import InlineSupportLink from '../../../../components/inline-support-link';
 import { SectionHeader } from '../../../../components/section-header';
-import { isWebAuthnSupported } from '../../utils';
+import { isWebAuthnSupported, isSecurityKeyMisscoped } from '../../utils';
 import EnhancedSecurity from '../enhanced-security';
 import RegisterKey from './register-key';
 import type { UserTwoStepAuthSecurityKeys } from '@automattic/api-core';
@@ -42,9 +43,21 @@ const SecurityKeyItem = ( {
 		onRemove();
 	};
 
+	const isMisscoped = isSecurityKeyMisscoped( item.rp_id );
+
 	return (
 		<ActionList.ActionItem
 			title={ item.name }
+			description={
+				isMisscoped
+					? __( 'This key must be re-registered before it can be used to log in.' )
+					: undefined
+			}
+			decoration={
+				isMisscoped ? (
+					<Icon icon={ warning } size={ 24 } style={ { fill: 'var(--color-warning)' } } />
+				) : undefined
+			}
 			actions={
 				<Button variant="secondary" size="compact" isDestructive onClick={ handleRemoveClick }>
 					{ __( 'Remove' ) }

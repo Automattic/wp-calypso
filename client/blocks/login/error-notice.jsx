@@ -7,6 +7,7 @@ import { connect } from 'react-redux';
 import Notice from 'calypso/components/notice';
 import { getSignupUrl } from 'calypso/lib/login';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { NO_SCOPED_SECURITY_KEY_ERROR } from 'calypso/state/login/actions';
 import {
 	getRequestError,
 	getTwoFactorAuthRequestError,
@@ -79,6 +80,12 @@ class ErrorNotice extends Component {
 		 * The relevant messages are displayed inline in LoginForm.
 		 */
 		if ( error.code === 'user_exists' ) {
+			return null;
+		}
+
+		// A security key that isn't scoped to this site is handled by a dedicated re-register
+		// interstitial in SecurityKeyForm, so suppress the redundant global error notice.
+		if ( error.code === NO_SCOPED_SECURITY_KEY_ERROR ) {
 			return null;
 		}
 

@@ -1,0 +1,37 @@
+@import "@wordpress/base-styles/variables";
+
+.security-key-reregister {
+	padding: $grid-unit-30 $grid-unit-20;
+
+	@media (min-width: 480px) {
+		padding: $grid-unit-40 $grid-unit-30;
+	}
+
+	.security-key-reregister__heading {
+		margin-bottom: $grid-unit-20;
+		font-size: $font-title-small;
+		font-weight: 600;
+	}
+
+	.security-key-reregister__text {
+		margin-bottom: $grid-unit-15;
+		color: var(--color-text-subtle);
+	}
+
+	.security-key-reregister__actions {
+		display: flex;
+		flex-direction: column;
+		gap: $grid-unit-10;
+		margin-top: $grid-unit-30;
+
+		button {
+			width: 100%;
+			justify-content: center;
+		}
+	}
+
+	.security-key-reregister__support {
+		margin-top: $grid-unit-20;
+		text-align: center;
+	}
+}

@@ -1,0 +1,33 @@
+@import '@wordpress/base-styles/variables';
+
+.security-key-reregister-interstitial {
+	.components-modal__content {
+		padding: 0;
+	}
+}
+
+.security-key-reregister-interstitial__body {
+	padding: $grid-unit-30;
+}
+
+.security-key-reregister-interstitial__icon {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 48px;
+	height: 48px;
+	border-radius: 8px;
+	background: var(--color-neutral-0);
+	color: var(--color-primary);
+
+	svg {
+		fill: currentColor;
+	}
+}
+
+.security-key-reregister-interstitial__actions {
+	.components-button {
+		width: 100%;
+		justify-content: center;
+	}
+}

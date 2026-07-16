@@ -13,6 +13,11 @@ import { getErrorFromHTTPError, postLoginRequest } from 'calypso/state/login/uti
 
 import 'calypso/state/login/init';
 
+// Error code surfaced when the account requires a security key but none is scoped to this site
+// (e.g. a key registered before scoping was fixed). The WebAuthn prompt can never succeed, so the
+// login UI shows a dedicated "re-register your security key" recovery interstitial instead.
+export const NO_SCOPED_SECURITY_KEY_ERROR = 'no_scoped_security_key';
+
 export const loginUserWithSecurityKey = () => ( dispatch, getState ) => {
 	const twoFactorAuthType = 'webauthn';
 	dispatch( { type: TWO_FACTOR_AUTHENTICATION_LOGIN_REQUEST } );
@@ -33,6 +38,16 @@ export const loginUserWithSecurityKey = () => ( dispatch, getState ) => {
 			if ( twoStepNonce ) {
 				dispatch( updateNonce( twoFactorAuthType, twoStepNonce ) );
 			}
+
+			// We received a challenge, but no credential is scoped to this site's relying party, so
+			// the browser has nothing to prompt for. Signal the recovery interstitial rather than
+			// firing a doomed challenge.
+			if ( parameters?.challenge && ! parameters?.allowCredentials?.length ) {
+				const error = new Error( 'No security key is scoped to this site.' );
+				error.name = NO_SCOPED_SECURITY_KEY_ERROR;
+				throw error;
+			}
+
 			return webauthn_auth( { publicKey: parameters } );
 		} )
 		.then( ( assertion ) => {
@@ -72,6 +87,9 @@ export const loginUserWithSecurityKey = () => ( dispatch, getState ) => {
 				),
 				TypeError: translate(
 					'There was an issue with the request. Please refresh the page and try again.'
+				),
+				[ NO_SCOPED_SECURITY_KEY_ERROR ]: translate(
+					'Your security key needs to be re-registered. Please sign in with another method, then register it again.'
 				),
 				default: translate( 'Oops! Something went wrong. Please try again.' ),
 			};

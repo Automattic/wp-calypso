@@ -23,3 +23,13 @@ export function getSecurityKeyHostname() {
 		? undefined
 		: hostname;
 }
+
+// The relying party ID a newly registered key is scoped to. Keys registered before scoping was
+// fixed can carry a different rp_id (e.g. my.wordpress.com), which leaves them unusable at login.
+export function getExpectedSecurityKeyRpId() {
+	return getSecurityKeyHostname() ?? 'wordpress.com';
+}
+
+export function isSecurityKeyMisscoped( rpId: string ) {
+	return rpId !== getExpectedSecurityKeyRpId();
+}

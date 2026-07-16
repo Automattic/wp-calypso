@@ -8,7 +8,10 @@ export { disconnectSocialUser } from 'calypso/state/login/actions/disconnect-soc
 export { formUpdate } from 'calypso/state/login/actions/form-update';
 export { loginSocialUser } from 'calypso/state/login/actions/login-social-user';
 export { loginUser } from 'calypso/state/login/actions/login-user';
-export { loginUserWithSecurityKey } from 'calypso/state/login/actions/login-user-with-security-key';
+export {
+	loginUserWithSecurityKey,
+	NO_SCOPED_SECURITY_KEY_ERROR,
+} from 'calypso/state/login/actions/login-user-with-security-key';
 export { loginUserWithTwoFactorVerificationCode } from 'calypso/state/login/actions/login-user-with-two-factor-verification-code';
 export { sendSmsCode } from 'calypso/state/login/actions/send-sms-code';
 export { updateNonce } from 'calypso/state/login/actions/update-nonce';

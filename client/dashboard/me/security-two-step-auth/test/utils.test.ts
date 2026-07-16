@@ -1,7 +1,7 @@
 /**
  * @jest-environment jsdom
  */
-import { getSecurityKeyHostname } from '../utils';
+import { getSecurityKeyHostname, isSecurityKeyMisscoped } from '../utils';
 
 /**
  * Regression guard for the WebAuthn passkey rp-id fix (#112611).
@@ -52,4 +52,19 @@ describe( 'getSecurityKeyHostname', () => {
 			expect( getSecurityKeyHostname() ).toBe( hostname );
 		}
 	);
+} );
+
+describe( 'isSecurityKeyMisscoped', () => {
+	test( 'flags a key scoped to a wordpress.com subdomain', () => {
+		expect( isSecurityKeyMisscoped( 'my.wordpress.com' ) ).toBe( true );
+	} );
+
+	test( 'accepts a key scoped to wordpress.com', () => {
+		expect( isSecurityKeyMisscoped( 'wordpress.com' ) ).toBe( false );
+	} );
+
+	test( 'does not flag a non-wordpress.com key (e.g. a local dev host)', () => {
+		expect( isSecurityKeyMisscoped( 'my.localhost' ) ).toBe( false );
+		expect( isSecurityKeyMisscoped( 'calypso.localhost' ) ).toBe( false );
+	} );
 } );
