@@ -1,4 +1,4 @@
-import { __experimentalHStack as HStack, __experimentalText as Text } from '@wordpress/components';
+import { __experimentalHStack as HStack } from '@wordpress/components';
 import clsx from 'clsx';
 import { getTld } from '../../utils/domain';
 import type { CSSProperties } from 'react';
@@ -12,10 +12,18 @@ const wrapperStyle: CSSProperties = {
 	direction: 'ltr',
 	unicodeBidi: 'isolate',
 };
+const ellipsis: CSSProperties = {
+	minWidth: 0,
+	overflow: 'hidden',
+	textOverflow: 'ellipsis',
+	whiteSpace: 'nowrap',
+};
 // The head absorbs the shrink first (high flex-shrink), so the pinned tail is only forced to
 // truncate as a last resort, once the head has fully collapsed.
-const headStyle: CSSProperties = { flexShrink: 999, minWidth: 0 };
-const tailStyle: CSSProperties = { minWidth: 0 };
+const headStyle: CSSProperties = { ...ellipsis, flexShrink: 999 };
+// If the tail must truncate, clip it from the start (direction: rtl) so the TLD suffix survives;
+// the inner <bdi> keeps the text in its natural LTR order.
+const tailStyle: CSSProperties = { ...ellipsis, direction: 'rtl' };
 
 interface MiddleTruncateProps {
 	/** The text to display, e.g. "my.shop.domain.co.jp" or "me@example.com". */
@@ -82,13 +90,11 @@ export default function MiddleTruncate( { text, children, className }: MiddleTru
 			style={ wrapperStyle }
 			title={ value }
 		>
-			<Text truncate style={ headStyle }>
-				{ head }
-			</Text>
+			<span style={ headStyle }>{ head }</span>
 			{ tail && (
-				<Text truncate style={ tailStyle }>
-					{ tail }
-				</Text>
+				<span style={ tailStyle }>
+					<bdi>{ tail }</bdi>
+				</span>
 			) }
 		</HStack>
 	);
