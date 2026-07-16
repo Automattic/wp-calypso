@@ -1,6 +1,6 @@
 {
 	"name": "@automattic/privacy-toolset",
-	"version": "2.1.1",
+	"version": "2.2.0",
 	"description": "Privacy tools and components for Automattic solutions.",
 	"homepage": "https://github.com/Automattic/wp-calypso",
 	"license": "GPL-2.0-or-later",
@@ -42,7 +42,10 @@
 		"storybook:start": "storybook dev"
 	},
 	"dependencies": {
-		"clsx": "^2.1.1"
+		"@wordpress/components": "^35.0.0",
+		"clsx": "^2.1.1",
+		"react-modal": "^3.16.3",
+		"tslib": "^2.8.1"
 	},
 	"peerDependencies": {
 		"react": "^18.3.1 || ^19.0.0",

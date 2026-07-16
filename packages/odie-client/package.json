@@ -1,6 +1,6 @@
 {
 	"name": "@automattic/odie-client",
-	"version": "1.0.1",
+	"version": "1.1.0",
 	"description": "Odie client to chat with bots.",
 	"homepage": "https://github.com/Automattic/wp-calypso",
 	"license": "GPL-2.0-or-later",
@@ -42,24 +42,38 @@
 	},
 	"dependencies": {
 		"@automattic/agenttic-ui": "^0.1.80",
+		"@automattic/calypso-analytics": "workspace:^",
 		"@automattic/components": "workspace:^",
+		"@automattic/data-stores": "workspace:^",
 		"@automattic/i18n-utils": "workspace:^",
+		"@automattic/urls": "workspace:^",
 		"@automattic/zendesk-client": "workspace:^",
 		"@tanstack/react-query": "^5.83.0",
 		"@wordpress/api-fetch": "7.48.0",
+		"@wordpress/components": "^35.0.0",
 		"@wordpress/data": "^10.48.0",
 		"@wordpress/element": "^8.0.0",
+		"@wordpress/html-entities": "^4.48.0",
 		"@wordpress/i18n": "^6.21.0",
 		"@wordpress/icons": "^13.3.0",
+		"@wordpress/react-i18n": "^4.48.0",
+		"@wordpress/url": "^4.48.0",
 		"autosize": "^6.0.1",
+		"classnames": "^2.5.1",
 		"clsx": "^2.1.1",
 		"dompurify": "3.4.11",
 		"framer-motion": "^12.23.12",
 		"react-intersection-observer": "^9.4.3",
 		"react-markdown": "^9.0.1",
 		"react-redux": "^9.2.0",
+		"react-router-dom": "6.30.4",
 		"smooch": "^5.7.17",
+		"tslib": "^2.8.1",
 		"wpcom-proxy-request": "^7.0.5"
+	},
+	"peerDependencies": {
+		"react": "^18.3.1 || ^19.0.0",
+		"react-dom": "^18.3.1 || ^19.0.0"
 	},
 	"devDependencies": {
 		"@automattic/calypso-typescript-config": "workspace:^",
@@ -72,9 +86,5 @@
 		"react": "^18.3.1",
 		"react-dom": "^18.3.1",
 		"typescript": "^6.0.3"
-	},
-	"peerDependencies": {
-		"react": "^18.3.1 || ^19.0.0",
-		"react-dom": "^18.3.1 || ^19.0.0"
 	}
 }
