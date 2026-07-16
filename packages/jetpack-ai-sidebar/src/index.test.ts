@@ -2248,7 +2248,7 @@ describe( 'useSuggestions', () => {
 		] );
 	} );
 
-	it( 'keeps Simple Review on the backend path when clicked', () => {
+	it( 'keeps Simple Review on the backend path without opening split-screen when clicked', () => {
 		installAiEditorialReviewData();
 		installPostTypeMock( 'post' );
 		const addMessage = jest.fn();
@@ -2274,12 +2274,12 @@ describe( 'useSuggestions', () => {
 			);
 		} );
 
-		expect( mockSetIsSplitScreen ).toHaveBeenCalledWith( true );
+		expect( mockSetIsSplitScreen ).not.toHaveBeenCalled();
 		expect( clearSuggestions ).toHaveBeenCalled();
 		expect( addMessage ).not.toHaveBeenCalled();
 	} );
 
-	it( 'opens split-screen when the Proofread suggestion is clicked', () => {
+	it( 'does not open split-screen when the Proofread suggestion is clicked', () => {
 		installAiEditorialReviewData( { proofreadContent: true } );
 		installPostTypeMock( 'post' );
 		const proofreadPrompt = getEmptyViewSuggestions().find(
@@ -2296,10 +2296,10 @@ describe( 'useSuggestions', () => {
 			);
 		} );
 
-		expect( mockSetIsSplitScreen ).toHaveBeenCalledWith( true );
+		expect( mockSetIsSplitScreen ).not.toHaveBeenCalled();
 	} );
 
-	it( 'opens split-screen when the Editorial Review suggestion is clicked', () => {
+	it( 'does not open split-screen when the Editorial Review suggestion is clicked', () => {
 		installAiEditorialReviewData();
 		installPostTypeMock( 'post' );
 		const mediationPrompt = getEmptyViewSuggestions().find(
@@ -2316,7 +2316,7 @@ describe( 'useSuggestions', () => {
 			);
 		} );
 
-		expect( mockSetIsSplitScreen ).toHaveBeenCalledWith( true );
+		expect( mockSetIsSplitScreen ).not.toHaveBeenCalled();
 		expect( mockedRecordTracksEvent ).toHaveBeenCalledWith(
 			'jetpack_ai_editorial_review_suggestion_click',
 			{}

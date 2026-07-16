@@ -447,3 +447,23 @@
 		}
 	}
 }
+
+body.agents-manager-sidebar-container:not( .is-split-screen )
+	.agents-manager-chat--docked
+	.jetpack-ai-feedback-list__actions:has( .jetpack-ai-feedback-list__action-button.is-copy ) {
+	flex-wrap: nowrap;
+	align-items: stretch;
+	gap: 0.25rem;
+
+	.jetpack-ai-feedback-list__action-button {
+		justify-content: center;
+		min-width: 0;
+		padding-inline: 0.5rem;
+		text-align: center;
+		white-space: normal;
+
+		&.is-copy {
+			padding-inline: 0.25rem;
+		}
+	}
+}

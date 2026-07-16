@@ -9,7 +9,7 @@
 /**
  * WordPress dependencies
  */
-import { dispatch, useSelect } from '@wordpress/data';
+import { useSelect } from '@wordpress/data';
 import { useState, useEffect, useMemo } from '@wordpress/element';
 import { __, _x } from '@wordpress/i18n';
 /**
@@ -1238,22 +1238,11 @@ export function useSuggestions(
 				trackBlockTransformationSuggestionClickForValue( value );
 			}
 
-			// Auto-expand the review-style chip flows below to 50vw.
 			if ( typeof value === 'string' && value === POST_FEEDBACK_SUGGESTION.prompt ) {
 				suppressCurrentPageContentForNextContext = true;
-				try {
-					( dispatch as any )( 'automattic/agents-manager' ).setIsSplitScreen( true );
-				} catch {
-					// Store not registered yet (e.g. tests); split-screen is demo polish.
-				}
 			}
 			if ( typeof value === 'string' && value === PROOFREAD_SUGGESTION.prompt ) {
 				suppressCurrentPageContentForNextContext = true;
-				try {
-					( dispatch as any )( 'automattic/agents-manager' ).setIsSplitScreen( true );
-				} catch {
-					// Store not registered yet (e.g. tests); split-screen is demo polish.
-				}
 			}
 			if (
 				isAiEditorialReviewAvailable() &&
@@ -1261,12 +1250,6 @@ export function useSuggestions(
 				value === AI_EDITORIAL_REVIEW_SUGGESTION.prompt
 			) {
 				trackAiEditorialReviewSuggestionClick();
-				try {
-					( dispatch as any )( 'automattic/agents-manager' ).setIsSplitScreen( true );
-				} catch {
-					// Store not registered yet (e.g. tests); split-screen is a
-					// polish feature, so a silent no-op is the right fallback.
-				}
 			}
 		};
 		window.addEventListener( 'big-sky-inline-suggestion-click', handleSuggestionClick, true );
