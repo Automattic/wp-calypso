@@ -12,7 +12,6 @@ import {
 	updateUserSettings,
 	sendTwoStepAuthSMSCode,
 } from '@automattic/api-core';
-import { create } from '@github/webauthn-json';
 import { queryOptions, mutationOptions } from '@tanstack/react-query';
 import { userSettingsQuery } from './me-settings';
 import { queryClient } from './query-client';
@@ -33,11 +32,14 @@ export const registerTwoStepAuthSecurityKeyMutation = ( hostname = 'wordpress.co
 			const options = await fetchTwoStepAuthSecurityKeyRegistrationChallenge( { hostname } );
 
 			// Create the WebAuthn credential
-			const credential = await create( { publicKey: options } );
+			const publicKey = PublicKeyCredential.parseCreationOptionsFromJSON( options );
+			const credential = ( await navigator.credentials.create( {
+				publicKey,
+			} ) ) as PublicKeyCredential;
 
 			// Validate the registration with the server
 			const validationData = {
-				data: JSON.stringify( credential ),
+				data: JSON.stringify( credential.toJSON() ),
 				name: keyName,
 				hostname,
 			};

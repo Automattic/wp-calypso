@@ -1,10 +1,10 @@
 import config from '@automattic/calypso-config';
-import { get as webauthn_auth } from '@github/webauthn-json';
 import debugFactory from 'debug';
 import { bumpStat } from 'calypso/lib/analytics/mc';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import emitter from 'calypso/lib/mixins/emitter';
 import { reduxDispatch } from 'calypso/lib/redux-bridge';
+import { webauthnGet } from 'calypso/lib/webauthn';
 import wp from 'calypso/lib/wp';
 import { accountRecoverySettingsFetch } from 'calypso/state/account-recovery/settings/actions';
 import { requestConnectedApplications } from 'calypso/state/connected-applications/actions';
@@ -108,7 +108,7 @@ TwoStepAuthorization.prototype.loginUserWithSecurityKey = function ( args ) {
 			if ( typeof this.data.two_step_webauthn_nonce === 'undefined' ) {
 				return Promise.reject( response );
 			}
-			return webauthn_auth( { publicKey: parameters } );
+			return webauthnGet( parameters );
 		} )
 		.then( ( assertion ) => {
 			return this.postLoginRequest( 'webauthn-authentication-endpoint', {

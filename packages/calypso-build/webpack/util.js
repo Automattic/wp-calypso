@@ -69,7 +69,6 @@ const nodeModulesToTranspile = [
 	// In some cases we do want prefix style matching (e.g. `foo.` to match `foo.bar`)
 	'@automattic/calypso-polyfills/',
 	'@automattic/lasagna/',
-	'@github/webauthn-json/',
 	'acorn-jsx/',
 	'chalk/',
 	'd3-array/',

@@ -41,7 +41,6 @@
 		"@automattic/api-core": "workspace:^",
 		"@automattic/calypso-config": "workspace:^",
 		"@automattic/calypso-support-session": "workspace:^",
-		"@github/webauthn-json": "^2.1.1",
 		"@tanstack/query-sync-storage-persister": "^5.83.0",
 		"@tanstack/react-query": "^5.83.0",
 		"@tanstack/react-query-persist-client": "^5.83.0",

@@ -1,5 +1,4 @@
 import config from '@automattic/calypso-config';
-import { create, supported } from '@github/webauthn-json';
 import { translate } from 'i18n-calypso';
 import wpcom from 'calypso/lib/wp';
 
@@ -39,12 +38,29 @@ function isBrowser() {
 }
 
 export function isWebAuthnSupported() {
-	return isBrowser() && supported();
+	return (
+		isBrowser() &&
+		typeof window.PublicKeyCredential !== 'undefined' &&
+		typeof window.PublicKeyCredential.parseCreationOptionsFromJSON === 'function' &&
+		typeof window.PublicKeyCredential.parseRequestOptionsFromJSON === 'function'
+	);
+}
+
+async function webauthnCreate( options ) {
+	const publicKey = window.PublicKeyCredential.parseCreationOptionsFromJSON( options );
+	const credential = await navigator.credentials.create( { publicKey } );
+	return credential.toJSON();
+}
+
+export async function webauthnGet( options ) {
+	const publicKey = window.PublicKeyCredential.parseRequestOptionsFromJSON( options );
+	const assertion = await navigator.credentials.get( { publicKey } );
+	return assertion.toJSON();
 }
 
 export function registerSecurityKey( keyName = null ) {
 	return wpcomApiRequest( '/me/two-step/security-key/registration_challenge' )
-		.then( ( options ) => create( { publicKey: options } ) )
+		.then( ( options ) => webauthnCreate( options ) )
 		.then( ( response ) => {
 			return wpcomApiRequest(
 				'/me/two-step/security-key/registration_validate',

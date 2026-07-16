@@ -1,5 +1,3 @@
-import { supported } from '@github/webauthn-json';
-
 function isBrowser() {
 	try {
 		if ( ! window ) {
@@ -12,7 +10,12 @@ function isBrowser() {
 }
 
 export function isWebAuthnSupported() {
-	return isBrowser() && supported();
+	return (
+		isBrowser() &&
+		typeof window.PublicKeyCredential !== 'undefined' &&
+		typeof window.PublicKeyCredential.parseCreationOptionsFromJSON === 'function' &&
+		typeof window.PublicKeyCredential.parseRequestOptionsFromJSON === 'function'
+	);
 }
 
 // WebAuthn requires the relying party ID to be a registrable suffix of the current origin, so
