@@ -73,8 +73,9 @@ export default function observeAdminMenuFlyouts(): ( () => void ) | undefined {
 		positionFlyout( item );
 	};
 
-	// Keep an open flyout glued to its item while the menu scrolls under it.
-	const handleScroll = () => {
+	// Keep an open flyout glued to its item while the menu scrolls under it or
+	// the viewport resizes.
+	const handleScrollOrResize = () => {
 		// The wrap must never rest horizontally scrolled (it hides the menu with
 		// no scrollbar to recover); focus-driven scrolling can still nudge it.
 		if ( wrap.scrollLeft !== 0 ) {
@@ -102,13 +103,15 @@ export default function observeAdminMenuFlyouts(): ( () => void ) | undefined {
 
 	menu.addEventListener( 'pointerover', handlePointerOrFocus );
 	menu.addEventListener( 'focusin', handlePointerOrFocus );
-	wrap.addEventListener( 'scroll', handleScroll, { passive: true } );
+	wrap.addEventListener( 'scroll', handleScrollOrResize, { passive: true } );
+	window.addEventListener( 'resize', handleScrollOrResize );
 
 	return () => {
 		document.body.classList.remove( SCROLLABLE_CLASS );
 		menu.removeEventListener( 'pointerover', handlePointerOrFocus );
 		menu.removeEventListener( 'focusin', handlePointerOrFocus );
-		wrap.removeEventListener( 'scroll', handleScroll );
+		wrap.removeEventListener( 'scroll', handleScrollOrResize );
+		window.removeEventListener( 'resize', handleScrollOrResize );
 		menu.querySelectorAll< HTMLElement >( 'li.menu-top' ).forEach( ( item ) => {
 			item.style.removeProperty( FLYOUT_TOP_VAR );
 			item.style.removeProperty( FLYOUT_MAX_HEIGHT_VAR );

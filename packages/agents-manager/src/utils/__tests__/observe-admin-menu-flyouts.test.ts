@@ -196,6 +196,23 @@ describe( 'observeAdminMenuFlyouts', () => {
 		cleanup();
 	} );
 
+	it( 'reclamps an open flyout when the viewport resizes', () => {
+		const { menu } = buildMenu();
+		const { item } = addItem( menu, { top: 700, submenuHeight: 200 } );
+		item.classList.add( 'opensub' );
+		const cleanup = attach();
+
+		// The window shrinks while the flyout is open: 500 − 16 − 200 = 284.
+		window.innerHeight = 500;
+		window.dispatchEvent( new Event( 'resize' ) );
+		expect( item.style.getPropertyValue( TOP_VAR ) ).toBe( '284px' );
+
+		cleanup();
+		window.innerHeight = 500 + 1;
+		window.dispatchEvent( new Event( 'resize' ) );
+		expect( item.style.getPropertyValue( TOP_VAR ) ).toBe( '' );
+	} );
+
 	it( 'resets horizontal scroll on the wrap (focus-driven scrolling can nudge it)', () => {
 		const { wrap, menu } = buildMenu();
 		addItem( menu, { top: 200, submenuHeight: 200 } );
