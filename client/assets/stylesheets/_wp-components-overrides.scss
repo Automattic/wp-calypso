@@ -23,14 +23,6 @@
 	transition: opacity 1ms;
 }
 
-/* @wordpress/components FormToggle overrides ----------------------------------------- */
-.components-form-toggle {
-	input[type="checkbox"] {
-		cursor: pointer;
-
-	}
-}
-
 /* @wordpress/components Button overrides --------------------------------------------- */
 .components-button {
 	justify-content: center;
