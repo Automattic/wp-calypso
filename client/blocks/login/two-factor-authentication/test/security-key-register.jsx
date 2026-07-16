@@ -3,6 +3,7 @@
  */
 import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { reloadProxy } from 'wpcom-proxy-request';
 import SecurityKeyRegister from 'calypso/blocks/login/two-factor-authentication/security-key-register';
 import { isWebAuthnSupported, registerSecurityKey } from 'calypso/lib/webauthn';
 import loginReducer from 'calypso/state/login/reducer';
@@ -11,6 +12,11 @@ import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 jest.mock( 'calypso/lib/webauthn', () => ( {
 	isWebAuthnSupported: jest.fn( () => true ),
 	registerSecurityKey: jest.fn(),
+} ) );
+
+jest.mock( 'wpcom-proxy-request', () => ( {
+	reloadProxy: jest.fn(),
+	requestAllBlogsAccess: jest.fn(),
 } ) );
 
 const render = ( el ) => renderWithProvider( el, { reducers: { login: loginReducer } } );
@@ -27,6 +33,12 @@ describe( 'SecurityKeyRegister', () => {
 		expect( screen.getByRole( 'textbox' ) ).toBeVisible();
 		expect( screen.getByRole( 'button', { name: 'Register security key' } ) ).toBeVisible();
 		expect( screen.queryByRole( 'button', { name: 'Skip for now' } ) ).not.toBeInTheDocument();
+	} );
+
+	test( 'reloads the proxy on mount so the registration request is authenticated', () => {
+		render( <SecurityKeyRegister onFinish={ jest.fn() } /> );
+
+		expect( reloadProxy ).toHaveBeenCalled();
 	} );
 
 	test( 'renders nothing when WebAuthn is unsupported', () => {

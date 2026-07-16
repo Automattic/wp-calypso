@@ -1,9 +1,11 @@
+import config from '@automattic/calypso-config';
 import { Card, FormInputValidation, FormLabel } from '@automattic/components';
 import { Button } from '@wordpress/components';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
+import { reloadProxy, requestAllBlogsAccess } from 'wpcom-proxy-request';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormTextInput from 'calypso/components/forms/form-text-input';
 import { isWebAuthnSupported, registerSecurityKey } from 'calypso/lib/webauthn';
@@ -26,6 +28,14 @@ class SecurityKeyRegister extends Component {
 
 	componentDidMount() {
 		this.props.recordTracksEvent( 'calypso_login_security_key_register_prompt_show' );
+
+		// The proxy iframe was loaded before the user authenticated during login, so it doesn't carry
+		// the API cookie yet and requests would omit the auth token. Reload it (as the social-connect
+		// flow does) so the registration request to /me/two-step is authenticated.
+		if ( ! config.isEnabled( 'oauth' ) ) {
+			reloadProxy();
+			requestAllBlogsAccess();
+		}
 	}
 
 	handleNameChange = ( event ) => {
