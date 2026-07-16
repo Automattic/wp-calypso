@@ -837,6 +837,7 @@ __metadata:
     "@wordpress/components": "npm:^35.0.0"
     "@wordpress/compose": "npm:^8.2.0"
     "@wordpress/date": "npm:5.48.0"
+    "@wordpress/element": "npm:^8.0.0"
     "@wordpress/html-entities": "npm:4.48.0"
     "@wordpress/i18n": "npm:^6.21.0"
     "@wordpress/icons": "npm:^13.3.0"
@@ -865,7 +866,6 @@ __metadata:
     webpack: "npm:^5.99.8"
   peerDependencies:
     "@wordpress/data": ^10.48.0
-    "@wordpress/element": ^8.0.0
     react: ^18.3.1 || ^19.0.0
     react-dom: ^18.3.1 || ^19.0.0
   languageName: unknown

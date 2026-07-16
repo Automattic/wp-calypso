@@ -62,6 +62,7 @@
 		"@wordpress/components": "^35.0.0",
 		"@wordpress/compose": "^8.2.0",
 		"@wordpress/date": "5.48.0",
+		"@wordpress/element": "^8.0.0",
 		"@wordpress/html-entities": "4.48.0",
 		"@wordpress/i18n": "^6.21.0",
 		"@wordpress/icons": "^13.3.0",
@@ -87,7 +88,6 @@
 	},
 	"peerDependencies": {
 		"@wordpress/data": "^10.48.0",
-		"@wordpress/element": "^8.0.0",
 		"react": "^18.3.1 || ^19.0.0",
 		"react-dom": "^18.3.1 || ^19.0.0"
 	},
