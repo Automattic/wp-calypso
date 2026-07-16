@@ -72,9 +72,16 @@ function attach(): () => void {
 const hover = ( el: HTMLElement ) =>
 	el.dispatchEvent( new Event( 'pointerover', { bubbles: true } ) );
 
+const setViewportHeight = ( height: number ) =>
+	Object.defineProperty( window, 'innerHeight', {
+		value: height,
+		configurable: true,
+		writable: true,
+	} );
+
 describe( 'observeAdminMenuFlyouts', () => {
 	beforeEach( () => {
-		window.innerHeight = VIEWPORT_HEIGHT;
+		setViewportHeight( VIEWPORT_HEIGHT );
 	} );
 
 	afterEach( () => {
@@ -139,7 +146,7 @@ describe( 'observeAdminMenuFlyouts', () => {
 	} );
 
 	it( 'never emits a negative max-height on an extremely short viewport', () => {
-		window.innerHeight = 40; // Shorter than the frame top itself.
+		setViewportHeight( 40 ); // Shorter than the frame top itself.
 		const { menu } = buildMenu();
 		const { item, link } = addItem( menu, { top: 100, submenuHeight: 200 } );
 		const cleanup = attach();
@@ -203,12 +210,12 @@ describe( 'observeAdminMenuFlyouts', () => {
 		const cleanup = attach();
 
 		// The window shrinks while the flyout is open: 500 − 16 − 200 = 284.
-		window.innerHeight = 500;
+		setViewportHeight( 500 );
 		window.dispatchEvent( new Event( 'resize' ) );
 		expect( item.style.getPropertyValue( TOP_VAR ) ).toBe( '284px' );
 
 		cleanup();
-		window.innerHeight = 500 + 1;
+		setViewportHeight( 500 + 1 );
 		window.dispatchEvent( new Event( 'resize' ) );
 		expect( item.style.getPropertyValue( TOP_VAR ) ).toBe( '' );
 	} );
