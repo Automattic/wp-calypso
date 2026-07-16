@@ -2256,9 +2256,12 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@automattic/subscriber@workspace:packages/subscriber"
   dependencies:
+    "@automattic/calypso-analytics": "workspace:^"
     "@automattic/calypso-color-schemes": "workspace:^"
     "@automattic/calypso-typescript-config": "workspace:^"
     "@automattic/components": "workspace:^"
+    "@automattic/data-stores": "workspace:^"
+    "@automattic/i18n-utils": "workspace:^"
     "@automattic/onboarding": "workspace:^"
     "@automattic/viewport": "workspace:^"
     "@automattic/viewport-react": "workspace:^"
@@ -2273,6 +2276,7 @@ __metadata:
     "@wordpress/react-i18n": "npm:^4.48.0"
     clsx: "npm:^2.1.1"
     debug: "npm:^4.4.1"
+    email-validator: "npm:^2.0.4"
     react-popper: "npm:^2.3.0"
     typescript: "npm:^6.0.3"
   peerDependencies:
