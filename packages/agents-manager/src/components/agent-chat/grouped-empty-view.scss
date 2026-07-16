@@ -21,6 +21,25 @@
 		font-weight: 400;
 		line-height: var( --text-sm--line-height );
 	}
+
+	&__final-suggestion {
+		margin-top: -1px;
+		padding: 0;
+	}
+
+	&--has-final-suggestion {
+		.agents-manager-writing-suggestions__toggle {
+			border-end-start-radius: 0;
+			border-end-end-radius: 0;
+		}
+
+		.agents-manager-writing-suggestions__list
+			> div:last-of-type
+			[class*='Suggestions-module_button'] {
+			border-end-start-radius: 0;
+			border-end-end-radius: 0;
+		}
+	}
 }
 
 .agents-manager-writing-suggestions {
@@ -97,6 +116,13 @@
 
 // Match Agenttic UI's specificity so the nested list joins the disclosure row.
 .agents-manager-writing-suggestions__list.agents-manager-writing-suggestions__list
+	> div:first-of-type
+	[class*='Suggestions-module_button'] {
+	border-start-start-radius: 0;
+	border-start-end-radius: 0;
+}
+
+.agents-manager-grouped-empty-view__final-suggestion.agents-manager-grouped-empty-view__final-suggestion
 	> div:first-of-type
 	[class*='Suggestions-module_button'] {
 	border-start-start-radius: 0;

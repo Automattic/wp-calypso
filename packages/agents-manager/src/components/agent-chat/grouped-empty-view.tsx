@@ -6,7 +6,7 @@ import { Icon, chevronDown, chevronLeft, chevronRight } from '@wordpress/icons';
 import {
 	DESIGN_SUGGESTION_IDS,
 	formatWritingSuggestionLabels,
-	GROUPED_VIEW_HIDDEN_SUGGESTION_IDS,
+	WHAT_ELSE_CAN_I_DO_SUGGESTION_ID,
 	WRITING_SUGGESTION_IDS,
 } from '../../hooks/use-empty-view-suggestions';
 import { isEditorPage } from '../../utils/is-editor-page';
@@ -46,6 +46,9 @@ export default function GroupedEmptyView( {
 	const writingSuggestions = displaySuggestions.filter( ( suggestion ) =>
 		WRITING_SUGGESTION_IDS.has( suggestion.id )
 	);
+	const finalSuggestion = displaySuggestions.find(
+		( suggestion ) => suggestion.id === WHAT_ELSE_CAN_I_DO_SUGGESTION_ID
+	);
 	// Grouping only helps when writing and design actions need separation.
 	const hasDesignSuggestions = suggestions.some( ( suggestion ) =>
 		DESIGN_SUGGESTION_IDS.has( suggestion.id )
@@ -74,12 +77,16 @@ export default function GroupedEmptyView( {
 	const topLevelSuggestions = displaySuggestions.filter(
 		( suggestion ) =>
 			! WRITING_SUGGESTION_IDS.has( suggestion.id ) &&
-			! GROUPED_VIEW_HIDDEN_SUGGESTION_IDS.has( suggestion.id )
+			suggestion.id !== WHAT_ELSE_CAN_I_DO_SUGGESTION_ID
 	);
 	const collapsedIcon = isRTL() ? chevronLeft : chevronRight;
 
 	return (
-		<div className="agents-manager-grouped-empty-view">
+		<div
+			className={ `agents-manager-grouped-empty-view${
+				finalSuggestion ? ' agents-manager-grouped-empty-view--has-final-suggestion' : ''
+			}` }
+		>
 			<EmptyView
 				heading={ heading }
 				suggestions={ topLevelSuggestions }
@@ -121,6 +128,15 @@ export default function GroupedEmptyView( {
 					/>
 				</div>
 			</section>
+			{ finalSuggestion && (
+				<Suggestions
+					className="agents-manager-grouped-empty-view__final-suggestion"
+					layout="vertical"
+					translateY={ 0 }
+					suggestions={ [ finalSuggestion ] }
+					onSubmit={ handleSuggestionClick }
+				/>
+			) }
 			{ help && <p className="agents-manager-grouped-empty-view__help">{ help }</p> }
 		</div>
 	);

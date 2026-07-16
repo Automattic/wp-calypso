@@ -17,7 +17,7 @@ export const DESIGN_SUGGESTION_IDS = new Set( [
 	'change-page-layout',
 ] );
 
-const WHAT_ELSE_CAN_I_DO_SUGGESTION_ID = 'what-else-can-i-do';
+export const WHAT_ELSE_CAN_I_DO_SUGGESTION_ID = 'what-else-can-i-do';
 
 const SITE_EDITOR_ONLY_SUGGESTION_IDS = new Set( [
 	...DESIGN_SUGGESTION_IDS,
@@ -38,8 +38,6 @@ const WRITING_SUGGESTION_LABELS: Record< string, () => string > = {
 };
 
 export const WRITING_SUGGESTION_IDS = new Set( Object.keys( WRITING_SUGGESTION_LABELS ) );
-
-export const GROUPED_VIEW_HIDDEN_SUGGESTION_IDS = new Set( [ WHAT_ELSE_CAN_I_DO_SUGGESTION_ID ] );
 
 // Keep writing action labels consistent across flat and grouped editor views.
 export function getWritingSuggestionLabel( suggestion: Suggestion ): string {
