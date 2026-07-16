@@ -61,9 +61,8 @@ function getClientReferrals( referrals: ReferralApiResponse[] ): Referral[] {
 export const referralsQuery = ( agencyId: number ) =>
 	queryOptions( {
 		queryKey: [ 'agency', agencyId, 'referrals' ] as const,
-		queryFn: () => fetchReferrals( agencyId ),
+		queryFn: async () => getClientReferrals( await fetchReferrals( agencyId ) ),
 		enabled: !! agencyId,
-		select: getClientReferrals,
 	} );
 
 export const referralCommissionPayoutQuery = ( agencyId: number ) =>
@@ -79,22 +78,28 @@ export const archiveReferralMutation = ( agencyId: number ) => {
 		mutationFn: ( referralId: number ) => archiveReferral( agencyId, referralId ),
 		onMutate: async ( referralId: number ) => {
 			await queryClient.cancelQueries( { queryKey } );
-			const previous = queryClient.getQueryData< ReferralApiResponse[] >( queryKey );
+			const previous = queryClient.getQueryData< Referral[] >( queryKey );
 			if ( previous ) {
 				queryClient.setQueryData(
 					queryKey,
-					previous.map( ( referral ) =>
-						referral.id === referralId ? { ...referral, status: 'archived' } : referral
-					)
+					previous.map( ( client ) => {
+						if ( ! client.referrals.some( ( order ) => order.id === referralId ) ) {
+							return client;
+						}
+						const referrals = client.referrals.map( ( order ) =>
+							order.id === referralId ? { ...order, status: 'archived' } : order
+						);
+						return {
+							...client,
+							referrals,
+							referralStatuses: referrals.map( ( order ) => order.status ),
+						};
+					} )
 				);
 			}
 			return { previous };
 		},
-		onError: (
-			_error: unknown,
-			_referralId: number,
-			context?: { previous?: ReferralApiResponse[] }
-		) => {
+		onError: ( _error: unknown, _referralId: number, context?: { previous?: Referral[] } ) => {
 			if ( context?.previous ) {
 				queryClient.setQueryData( queryKey, context.previous );
 			}
