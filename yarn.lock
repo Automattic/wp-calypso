@@ -2012,6 +2012,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@automattic/plans-grid-next@workspace:packages/plans-grid-next"
   dependencies:
+    "@automattic/calypso-analytics": "workspace:^"
     "@automattic/calypso-build": "workspace:^"
     "@automattic/calypso-color-schemes": "workspace:^"
     "@automattic/calypso-products": "workspace:^"
@@ -2029,6 +2030,7 @@ __metadata:
     "@testing-library/jest-dom": "npm:^6.9.1"
     "@testing-library/react": "npm:^16.3.2"
     "@testing-library/user-event": "npm:^14.6.1"
+    "@wordpress/components": "npm:^35.0.0"
     "@wordpress/data": "npm:^10.48.0"
     "@wordpress/element": "npm:^8.0.0"
     "@wordpress/icons": "npm:^13.3.0"
@@ -2043,6 +2045,7 @@ __metadata:
     react-transition-group: "npm:^4.4.5"
     resize-observer-polyfill: "npm:^1.5.1"
     storybook: "npm:^9.1.20"
+    tslib: "npm:^2.8.1"
     typescript: "npm:^6.0.3"
     webpack: "npm:^5.99.8"
   peerDependencies:
