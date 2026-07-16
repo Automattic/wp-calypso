@@ -1,4 +1,4 @@
-import { __experimentalHStack as HStack } from '@wordpress/components';
+import { __experimentalHStack as HStack, __experimentalText as Text } from '@wordpress/components';
 import clsx from 'clsx';
 import { getTld } from '../../utils/domain';
 
@@ -68,8 +68,8 @@ export default function MiddleTruncate( { text, children, className }: MiddleTru
 			className={ clsx( 'dashboard-middle-truncate', className ) }
 			title={ value }
 		>
-			<span className="dashboard-middle-truncate__head">{ head }</span>
-			{ tail && <span className="dashboard-middle-truncate__tail">{ tail }</span> }
+			<Text truncate>{ head }</Text>
+			{ tail && <Text className="dashboard-middle-truncate__tail">{ tail }</Text> }
 		</HStack>
 	);
 }
