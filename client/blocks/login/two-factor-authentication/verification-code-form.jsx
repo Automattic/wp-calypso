@@ -70,12 +70,23 @@ class VerificationCodeForm extends Component {
 		this.setState( { [ name ]: value } );
 	};
 
+	// The auth type for the step the user is actually on. Each method (email, backup, SMS…) has its
+	// own step and nonce, so a pending email code — e.g. the security-key fallback, which also offers
+	// backup codes — must not hijack a backup/SMS submission. Only the legacy authenticator default
+	// falls back to email when an email code is pending.
+	getEffectiveAuthType() {
+		const { twoFactorAuthType, twoFactorEmailNonce } = this.props;
+		return twoFactorAuthType === 'authenticator' && twoFactorEmailNonce
+			? 'email'
+			: twoFactorAuthType;
+	}
+
 	onSubmitForm = ( event ) => {
 		event.preventDefault();
 
-		const { onSuccess, twoFactorAuthType: _twoFactorAuthType, twoFactorEmailNonce } = this.props;
+		const { onSuccess } = this.props;
 		const { twoStepCode } = this.state;
-		const twoFactorAuthType = twoFactorEmailNonce ? 'email' : _twoFactorAuthType;
+		const twoFactorAuthType = this.getEffectiveAuthType();
 
 		this.props.recordTracksEvent( 'calypso_login_two_factor_verification_code_submit' );
 
@@ -108,16 +119,17 @@ class VerificationCodeForm extends Component {
 			twoFactorAuthRequestError: requestError,
 			twoFactorAuthType,
 			switchTwoFactorAuthType,
-			twoFactorEmailNonce,
 			securityKeyReregisterRequired,
 		} = this.props;
+
+		const isEmailStep = this.getEffectiveAuthType() === 'email';
 
 		let buttonText = translate( 'Continue' );
 		let helpText = translate( 'Enter the code from your authenticator app.' );
 		let labelText = translate( '6-Digit code' );
 		let smallPrint;
 
-		if ( twoFactorEmailNonce ) {
+		if ( isEmailStep ) {
 			helpText = translate( 'Enter the code from the email we sent you.' );
 			labelText = translate( '9-Digit code' );
 		}
