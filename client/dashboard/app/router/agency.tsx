@@ -27,6 +27,7 @@ import {
 import { isEnabled } from '@automattic/calypso-config';
 import { createRoute, createLazyRoute, notFound, Outlet } from '@tanstack/react-router';
 import { __ } from '@wordpress/i18n';
+import { getSiteTypeFeatureSupports } from '../../utils/site-type-feature-support';
 import { dashboardRedirect, redirectAsNotAllowed } from './redirect';
 import { rootRoute } from './root';
 import type { AgencyCapability } from '@automattic/api-core';
@@ -412,8 +413,33 @@ export const agencySiteRoute = createRoute( {
 	staticData: { requiresAgencyCapability: 'a4a_read_managed_sites' },
 	getParentRoute: () => agencyRoute,
 	path: 'sites/$siteSlug',
+	beforeLoad: async ( { cause, params: { siteSlug }, matches } ) => {
+		if ( cause === 'preload' ) {
+			return;
+		}
+
+		let site;
+		try {
+			site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
+		} catch {
+			// Do nothing and propagate the error through the loader function.
+			return;
+		}
+
+		const siteTypeSupports = getSiteTypeFeatureSupports( site );
+		for ( const match of matches ) {
+			const required = match.staticData?.requiresSiteTypeSupport;
+			if ( required && ! siteTypeSupports[ required ] ) {
+				throw redirectAsNotAllowed( { to: `/sites/${ siteSlug }` } );
+			}
+		}
+	},
 	loader: async ( { params: { siteSlug } } ) => {
-		const site = await queryClient.ensureQueryData( agencySiteQuery( siteSlug ) );
+		// The sidebar needs the full site to decide section visibility before first paint.
+		const [ site ] = await Promise.all( [
+			queryClient.ensureQueryData( agencySiteQuery( siteSlug ) ),
+			queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) ),
+		] );
 		if ( ! site ) {
 			throw notFound();
 		}
@@ -617,14 +643,12 @@ export const agencySiteScanHistoryRoute = createRoute( {
 	)
 );
 
-// `/sites/$siteSlug/performance` – layout gated by the site's Performance hosting feature
+// `/sites/$siteSlug/performance` – layout hosting the Frontend and Backend views
 const agencySitePerformanceRoute = createRoute( {
+	staticData: { requiresSiteTypeSupport: 'performance' },
 	head: () => ( { meta: [ { title: __( 'Performance' ) } ] } ),
 	getParentRoute: () => agencySiteRoute,
 	path: 'performance',
-	loader: async ( { params: { siteSlug } } ) => {
-		await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
-	},
 } ).lazy( () =>
 	import( '../../agency/sites/site/performance' ).then( ( d ) =>
 		createLazyRoute( 'agency-site-performance' )( {
