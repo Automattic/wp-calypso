@@ -1,7 +1,7 @@
 import { FormStatus, useFormStatus } from '@automattic/composite-checkout';
 import { CardNumberElement } from '@stripe/react-stripe-js';
 import { useSelect } from '@wordpress/data';
-import { Icon, lock, payment } from '@wordpress/icons';
+import { Icon, lock } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
 import CreditCardNumberInput from 'calypso/components/upgrades/credit-card-number-input';
 import { useMobileCheckoutStickySummaryExperiment } from 'calypso/my-sites/checkout/src/hooks/use-mobile-checkout-sticky-summary-experiment';
@@ -70,24 +70,12 @@ export default function CreditCardNumberField( {
 				hasError={ !! cardNumberError }
 				isDisabled={ isDisabled }
 			>
-				{ isMobileCheckoutStickySummary && (
-					/* Figma 3971:13271 — Core credit-card glyph on the left of
-					   the input. Stripe's built-in `showIcon` would render a
-					   brand-specific icon instead; under the experiment we
-					   disable it (see options below) and render the @wordpress/
-					   icons `payment` glyph ourselves so the visual matches
-					   Figma. */
-					<span className="credit-card-number-field__brand-icon" aria-hidden="true">
-						<Icon icon={ payment } size={ 24 } />
-					</span>
-				) }
 				<CardNumberElement
 					options={ {
 						style: stripeElementStyle,
 						disabled: isDisabled,
 						// Required for EU co-brand network-choice compliance: enables Stripe's in-Element picker for co-branded cards.
-						// Disabled under the mobile sticky experiment so we can render the Figma-spec placeholder icon ourselves.
-						showIcon: ! isMobileCheckoutStickySummary,
+						showIcon: true,
 					} }
 					onReady={ () => {
 						setIsStripeFullyLoaded( true );

@@ -1091,11 +1091,9 @@ export function LineItemSublabelAndPrice( {
 			isSmallestUnit: true,
 			stripZeros: true,
 		} );
-		// Under the mobile sticky experiment the sublabel row is just
-		// "€X billed annually" — the monthly-cycle strikethrough surfaces
-		// inline next to the live price instead (see the main-column
-		// `mobileStickyMonthlyCycleCrossedOutDisplay` path below). Without
-		// this gate it would render in both places.
+		// Gated off for the sticky summary: the strikethrough moves inline next to
+		// the price (see mobileStickyMonthlyCycleCrossedOutDisplay), so without this
+		// it would render in both places.
 		const showCrossedOutPrice =
 			! isMobileStickySummary &&
 			product.item_original_subtotal_integer / ( product.months_per_bill_period ?? 1 ) !==
@@ -1644,10 +1642,9 @@ function LineItemPriceContent( {
 				<LineItemPrice
 					actualAmount={ monthlyAmountDisplay }
 					crossedOutAmount={
-						mobileStickyMonthlyCycleCrossedOutDisplay ??
-						( isDiscounted && ! isRenewalPricingExperiment
+						isDiscounted && ! isRenewalPricingExperiment
 							? originalMonthlyAmountDisplay
-							: undefined )
+							: mobileStickyMonthlyCycleCrossedOutDisplay
 					}
 				/>
 				{ isMobileStickySummary ? translate( '/mo' ) : <> { translate( '/month' ) }</> }
@@ -1785,12 +1782,13 @@ function CheckoutLineItem( {
 		itemSubtotalInteger < originalAmountInteger && originalAmountDisplay
 	);
 
-	// Under the mobile sticky experiment the "savings vs. monthly cycle"
-	// strikethrough is surfaced inline next to the live monthly amount in
-	// the main price column (matching Figma 3838:3619/3620), instead of
-	// being a separate column on the right side of the sublabel row.
+	// Monthly-cycle strikethrough shown inline in the main price column (Figma
+	// 3838:3619/3620). Only fills in where control shows none — the consumer keeps
+	// the pre-discount strikethrough ahead of this. Gated on isRenewalPricingExperiment
+	// so it doesn't leak a strikethrough into that experiment's arm.
 	const mobileStickyMonthlyCycleCrossedOutDisplay =
 		isMobileStickySummary &&
+		! isRenewalPricingExperiment &&
 		shouldShowComparison &&
 		compareToPrice &&
 		pricePerMonth !== compareToPrice

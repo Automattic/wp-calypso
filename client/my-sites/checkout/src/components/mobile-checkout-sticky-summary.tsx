@@ -1,10 +1,14 @@
-import { localizeUrl } from '@automattic/i18n-utils';
+import { FormStatus, useFormStatus } from '@automattic/composite-checkout';
 import { formatCurrency } from '@automattic/number-formatters';
 import { useShoppingCart, type ResponseCart } from '@automattic/shopping-cart';
 import {
 	filterCostOverridesForLineItem,
+	getCouponLineItemFromCart,
+	getCreditsLineItemFromCart,
 	getLabel,
+	getTaxBreakdownLineItemsFromCart,
 	getTotalLineItemFromCart,
+	isBillingInfoEmpty,
 	LineItemBillingInterval,
 	LineItemPrice,
 } from '@automattic/wpcom-checkout';
@@ -14,6 +18,7 @@ import { useTranslate } from 'i18n-calypso';
 import { Fragment, useId, useState } from 'react';
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
 import { useSubmitButtonSlot } from '../lib/submit-button-slot';
+import { PriceLoadingIndicator } from './wp-checkout-order-summary';
 
 const Wrapper = styled.div`
 	position: fixed;
@@ -22,7 +27,7 @@ const Wrapper = styled.div`
 	inset-inline-end: 0;
 	z-index: 100;
 	background: var( --color-surface );
-	border-block-start: 1px solid rgba( 0, 0, 0, 0.08 );
+	border-block-start: 1px solid var( --color-border-subtle );
 	padding: 16px;
 	display: flex;
 	flex-direction: column;
@@ -104,30 +109,29 @@ const SubmitRow = styled.div`
 		inline-size: 100%;
 	}
 
+	/* SubmitButtonHeader is display:none until a '.checkout__step-wrapper--last-step'
+	   ancestor reveals it; the portal moves it out of that ancestor, so reveal it
+	   here. */
+	.checkout-steps__submit-button-header {
+		display: block;
+		margin-block: 12px 0;
+	}
+
+	/* Match the guarantee (14px) to the terms line (13px). Scoped here, not on the
+	   shared wrapper, which control also uses. */
+	.checkout-steps__submit-footer-wrapper {
+		font-size: 13px;
+		text-align: center;
+	}
+
+	.checkout-steps__submit-footer-wrapper p {
+		font-size: 13px;
+	}
+
 	.checkout-steps__submit-button-wrapper > button,
 	.checkout-submit-button,
 	.checkout-submit-button button {
-		width: 100%;
-	}
-`;
-
-const TosWrapper = styled.div`
-	inline-size: 100%;
-	margin-block-start: 12px;
-	font-size: 12px;
-	line-height: 20px;
-	color: var( --studio-gray-50 );
-	text-align: center;
-
-	a,
-	button {
-		color: var( --studio-gray-100 );
-		text-decoration: underline;
-		background: none;
-		border: none;
-		padding: 0;
-		font: inherit;
-		cursor: pointer;
+		inline-size: 100%;
 	}
 `;
 
@@ -203,8 +207,51 @@ const TotalPriceGroup = styled.span`
 	gap: 8px;
 `;
 
-function StickyOrderSummary( { responseCart }: { responseCart: ResponseCart } ) {
+/**
+ * A cart-level row (coupon, tax, credits) below the products. Built from the same
+ * pieces as the product rows so its type treatment can't drift from them. Omit
+ * `formattedAmount` for a label-only row like "Tax: to be calculated".
+ */
+function SummaryLineItemRow( {
+	label,
+	formattedAmount,
+	isCartUpdating,
+}: {
+	label: string;
+	formattedAmount?: string;
+	isCartUpdating: boolean;
+} ) {
+	return (
+		<>
+			<Divider />
+			<ProductRow>
+				<ProductInfo>
+					<ProductName>{ label }</ProductName>
+				</ProductInfo>
+				{ formattedAmount !== undefined &&
+					( isCartUpdating ? (
+						<PriceLoadingIndicator width="50px" />
+					) : (
+						<LineItemPrice actualAmount={ formattedAmount } />
+					) ) }
+			</ProductRow>
+		</>
+	);
+}
+
+function StickyOrderSummary( {
+	responseCart,
+	isCartUpdating,
+}: {
+	responseCart: ResponseCart;
+	isCartUpdating: boolean;
+} ) {
 	const translate = useTranslate();
+	// Coupons/tax/credits, so the panel reconciles with the tax-inclusive,
+	// discount-net total in the bar. Same helpers and conditions control uses.
+	const couponLineItem = getCouponLineItemFromCart( responseCart );
+	const taxLineItems = getTaxBreakdownLineItemsFromCart( responseCart );
+	const creditsLineItem = getCreditsLineItemFromCart( responseCart );
 
 	return (
 		<Summary>
@@ -237,11 +284,47 @@ function StickyOrderSummary( { responseCart }: { responseCart: ResponseCart } ) 
 									</ProductDiscount>
 								) ) }
 							</ProductInfo>
-							<LineItemPrice actualAmount={ actualAmount } crossedOutAmount={ crossedOutAmount } />
+							{ isCartUpdating ? (
+								<PriceLoadingIndicator width="60px" />
+							) : (
+								<LineItemPrice
+									actualAmount={ actualAmount }
+									crossedOutAmount={ crossedOutAmount }
+								/>
+							) }
 						</ProductRow>
 					</Fragment>
 				);
 			} ) }
+			{ /* Order mirrors control: coupon, tax, credits. */ }
+			{ couponLineItem && (
+				<SummaryLineItemRow
+					label={ couponLineItem.label }
+					formattedAmount={ couponLineItem.formattedAmount }
+					isCartUpdating={ isCartUpdating }
+				/>
+			) }
+			{ taxLineItems.map( ( taxLineItem ) => (
+				<SummaryLineItemRow
+					key={ taxLineItem.id }
+					label={ taxLineItem.label }
+					formattedAmount={ taxLineItem.formattedAmount }
+					isCartUpdating={ isCartUpdating }
+				/>
+			) ) }
+			{ isBillingInfoEmpty( responseCart ) && (
+				<SummaryLineItemRow
+					label={ String( translate( 'Tax: to be calculated', { textOnly: true } ) ) }
+					isCartUpdating={ isCartUpdating }
+				/>
+			) }
+			{ creditsLineItem && responseCart.sub_total_integer > 0 && (
+				<SummaryLineItemRow
+					label={ creditsLineItem.label }
+					formattedAmount={ creditsLineItem.formattedAmount }
+					isCartUpdating={ isCartUpdating }
+				/>
+			) }
 		</Summary>
 	);
 }
@@ -265,12 +348,16 @@ export function MobileCheckoutStickySummary() {
 	const { setSlotEl } = useSubmitButtonSlot();
 	const [ isOpen, setIsOpen ] = useState( false );
 	const panelId = useId();
+	const { formStatus } = useFormStatus();
+	// The bar is fixed on screen for the whole checkout, so a stale price here is
+	// far more visible than in the sidebar. Mirror the summary's own handling.
+	const isCartUpdating = FormStatus.VALIDATING === formStatus;
 
 	return (
 		<Wrapper>
 			<Panel isOpen={ isOpen } id={ panelId } aria-hidden={ ! isOpen }>
 				<PanelInner isOpen={ isOpen }>
-					<StickyOrderSummary responseCart={ responseCart } />
+					<StickyOrderSummary responseCart={ responseCart } isCartUpdating={ isCartUpdating } />
 				</PanelInner>
 			</Panel>
 
@@ -288,34 +375,25 @@ export function MobileCheckoutStickySummary() {
 			>
 				<span>{ translate( 'Total:' ) }</span>
 				<TotalPriceGroup>
-					<LineItemPrice
-						actualAmount={ totalLineItem.formattedAmount }
-						crossedOutAmount={ crossedOutTotal }
-					/>
+					{ isCartUpdating ? (
+						<PriceLoadingIndicator width="80px" height="22px" />
+					) : (
+						<LineItemPrice
+							actualAmount={ totalLineItem.formattedAmount }
+							crossedOutAmount={ crossedOutTotal }
+						/>
+					) }
 					<ChevronWrapper isOpen={ isOpen } aria-hidden="true">
 						<Icon icon={ chevronUp } size={ 24 } />
 					</ChevronWrapper>
 				</TotalPriceGroup>
 			</ToggleRow>
 
+			{ /* The submit button portals in here with control's terms line and
+			     guarantee, so the bar renders no terms copy of its own. */ }
 			<SubmitRow>
-				<div ref={ setSlotEl } style={ { width: '100%' } } />
+				<div ref={ setSlotEl } style={ { inlineSize: '100%' } } />
 			</SubmitRow>
-
-			<TosWrapper>
-				{ translate( 'By continuing, you agree to our {{a}}Terms of Service{{/a}}.', {
-					components: {
-						a: (
-							// eslint-disable-next-line jsx-a11y/anchor-has-content
-							<a
-								href={ localizeUrl( 'https://wordpress.com/tos/' ) }
-								target="_blank"
-								rel="noopener noreferrer"
-							/>
-						),
-					},
-				} ) }
-			</TosWrapper>
 		</Wrapper>
 	);
 }

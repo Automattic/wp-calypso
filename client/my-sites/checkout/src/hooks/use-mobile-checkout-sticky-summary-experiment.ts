@@ -1,4 +1,5 @@
 import { useViewportMatch } from '@wordpress/compose';
+import { useInitialIsInStepContainerV2FlowContext } from 'calypso/layout/utils';
 import { useExperiment } from 'calypso/lib/explat';
 
 const EXPERIMENT_NAME = 'calypso_mobile_checkout_sticky_summary_v1';
@@ -10,24 +11,22 @@ export interface MobileCheckoutStickySummaryExperiment {
 }
 
 /**
- * Returns the current assignment for the mobile sticky checkout summary
- * experiment. `isLoading` is true while ExPlat is still resolving the
- * assignment — callers must suppress both treatment and control UI until
- * it resolves to avoid layout shift and metric self-bias.
+ * `isLoading` is load-bearing: callers must suppress both treatment and control
+ * UI until it resolves, or the treatment cohort is measured partly on control UI.
  *
- * The experiment only affects mobile viewports. On desktop the hook
- * returns `{ isLoading: false, isMobileCheckoutStickySummary: false }`
- * immediately. The `?mobile_checkout_sticky_summary=1` query-param debug
- * shortcut only works on a mobile viewport — enable devtools' mobile
- * mode to preview on desktop.
+ * Eligibility is gated to where the treatment can actually show — mobile inside a
+ * StepContainerV2 flow. These components also render on `/me/purchases` (via
+ * `useCreateCreditCard`), where enrolling would fire an exposure nobody can see.
  */
 export function useMobileCheckoutStickySummaryExperiment(): MobileCheckoutStickySummaryExperiment {
 	const isMobileViewport = useViewportMatch( 'small', '<' );
+	const isStepContainerV2 = useInitialIsInStepContainerV2FlowContext();
+	const isEligible = isMobileViewport && isStepContainerV2;
 	const [ isLoading, assignment ] = useExperiment( EXPERIMENT_NAME, {
-		isEligible: isMobileViewport,
+		isEligible,
 	} );
 
-	if ( ! isMobileViewport ) {
+	if ( ! isEligible ) {
 		return { isLoading: false, isMobileCheckoutStickySummary: false };
 	}
 

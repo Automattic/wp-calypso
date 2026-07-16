@@ -65,21 +65,19 @@ const CreditCardLabel: React.FC< {
 function CreditCardLogos( { currency }: { currency: string | null } ) {
 	const { isMobileCheckoutStickySummary } = useMobileCheckoutStickySummaryExperiment();
 
-	// Under the mobile sticky experiment (Figma 3971:13250) the brand strip
-	// renders as a fixed three-chip set — VISA / MasterCard / AMEX — with
-	// a "+N" pill summarising the remaining card brands the platform
-	// accepts. The N below mirrors what `PaymentLogo` knows how to draw
-	// (cartes_bancaires, jcb, diners, discover, unionpay, plus any
-	// currency-specific extras the default branch already conditionally
-	// renders) so the count reads accurately regardless of currency.
+	// VISA / MasterCard / AMEX + a "+N" pill (Figma 3971:13250). N counts only what
+	// the control strip advertises for this currency (CB on EUR, JCB on JPY) — the
+	// pill is a claim about accepted cards, so it must not overcount.
 	if ( isMobileCheckoutStickySummary ) {
-		const overflowCount = currency === 'EUR' || currency === 'JPY' ? 3 : 2;
+		const overflowCount = currency === 'EUR' || currency === 'JPY' ? 1 : 0;
 		return (
 			<PaymentMethodLogos className="credit-card__logos">
 				<VisaLogo />
 				<MastercardLogo />
 				<AmexLogo />
-				<span className="credit-card__logos-overflow">{ `+${ overflowCount }` }</span>
+				{ overflowCount > 0 && (
+					<span className="credit-card__logos-overflow">{ `+${ overflowCount }` }</span>
+				) }
 			</PaymentMethodLogos>
 		);
 	}
