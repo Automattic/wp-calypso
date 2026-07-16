@@ -1,5 +1,7 @@
 import { Onboard } from '@automattic/data-stores';
 import {
+	isAIBuilderFlow,
+	isAIBuilderOnboardingFlow,
 	isNewHostedSiteCreationFlow,
 	isTransferringHostedSiteCreationFlow,
 } from '@automattic/onboarding';
@@ -22,6 +24,23 @@ export function useProcessingLoadingMessages( flow?: string | null ): LoadingMes
 
 	if ( flow && isNewHostedSiteCreationFlow( flow ) ) {
 		return [ { title: __( 'Creating your site' ), duration: Infinity } ];
+	}
+
+	// The AI build happens after the user reaches the AI Website Builder, so
+	// avoid the default messages that imply the site is being designed here.
+	if ( flow && isAIBuilderOnboardingFlow( flow ) ) {
+		return [
+			{ title: __( 'Creating your site' ), duration: 4000 },
+			{ title: __( 'Getting the AI Website Builder ready' ), duration: 5000 },
+			{ title: __( 'Taking you to checkout' ), duration: Infinity },
+		];
+	}
+
+	if ( flow && isAIBuilderFlow( flow ) ) {
+		return [
+			{ title: __( 'Creating your site' ), duration: 4000 },
+			{ title: __( 'Getting the AI Website Builder ready' ), duration: Infinity },
+		];
 	}
 
 	if ( flow && isTransferringHostedSiteCreationFlow( flow ) ) {
