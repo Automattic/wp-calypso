@@ -86,7 +86,6 @@ export const loginUserWithSecurityKey = () => ( dispatch, getState ) => {
 				error = { code: httpError.name, message, field: 'global' };
 
 				captureException( httpError, {
-					tags: { calypso_section: 'login' },
 					user: { id: loginParams.user_id?.toString() },
 				} );
 			} else {
