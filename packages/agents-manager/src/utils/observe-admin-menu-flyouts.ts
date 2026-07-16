@@ -60,6 +60,12 @@ export default function observeAdminMenuFlyouts(): ( () => void ) | undefined {
 
 	// Keep an open flyout glued to its item while the menu scrolls under it.
 	const handleScroll = () => {
+		// The wrap must never rest horizontally scrolled (it hides the menu with
+		// no scrollbar to recover); focus-driven scrolling can still nudge it.
+		if ( wrap.scrollLeft !== 0 ) {
+			wrap.scrollLeft = 0;
+		}
+
 		const openItem = menu.querySelector< HTMLElement >( 'li.opensub' );
 
 		if ( openItem ) {

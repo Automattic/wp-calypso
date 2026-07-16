@@ -162,6 +162,18 @@ describe( 'observeAdminMenuFlyouts', () => {
 		cleanup();
 	} );
 
+	it( 'resets horizontal scroll on the wrap (focus-driven scrolling can nudge it)', () => {
+		const { wrap, menu } = buildMenu();
+		addItem( menu, { top: 200, submenuHeight: 200 } );
+		const cleanup = attach();
+
+		wrap.scrollLeft = 80;
+		wrap.dispatchEvent( new Event( 'scroll' ) );
+		expect( wrap.scrollLeft ).toBe( 0 );
+
+		cleanup();
+	} );
+
 	it( 'positions a flyout already open on attach (hover during app load)', () => {
 		const { menu } = buildMenu();
 		const { item } = addItem( menu, { top: 250, submenuHeight: 200 } );

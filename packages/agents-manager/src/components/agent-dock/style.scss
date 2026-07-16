@@ -110,15 +110,18 @@ $admin-menu-scrollable-class: 'agents-manager-admin-menu-scrollable';
 	}
 
 	// The current item's submenu renders inline and must stay in the scroll flow.
+	// `:focus-within` (not just the anchor's `:focus`) keeps the flyout fixed for
+	// the whole keyboard pass: if it fell back to core's absolute positioning
+	// while a submenu link is focused, the browser would scroll the wrap
+	// horizontally to reveal it, pushing the menu out of view.
 	&.#{$admin-menu-scrollable-class}
 		#adminmenu
 		li.opensub:not( .wp-has-current-submenu )
 		> .wp-submenu,
 	&.#{$admin-menu-scrollable-class}
 		#adminmenu
-		li:not( .wp-has-current-submenu )
-		> a.menu-top:focus
-		+ .wp-submenu {
+		li:not( .wp-has-current-submenu ):focus-within
+		> .wp-submenu {
 		@include admin-menu-flyout( $admin-menu-width );
 	}
 }
@@ -220,9 +223,8 @@ body.wp-admin.agents-manager-sidebar-container--sidebar-open:not( .modal-open ) 
 		&.#{$admin-menu-scrollable-class} #adminmenu li.opensub.wp-has-current-submenu > .wp-submenu,
 		&.#{$admin-menu-scrollable-class}
 			#adminmenu
-			li.wp-has-current-submenu
-			> a.menu-top:focus
-			+ .wp-submenu {
+			li.wp-has-current-submenu:focus-within
+			> .wp-submenu {
 			@include admin-menu-flyout( $admin-menu-width-folded );
 		}
 	}
