@@ -43,12 +43,16 @@ export const isTwoFactorEnabled = ( state ) => state?.login?.twoFactorAuth != nu
 
 /**
  * Whether the account's registered security key is scoped to the wrong relying party and can't be
- * used to log in, so the user should be prompted to register a fresh one after signing in.
+ * used to log in, so the user should be prompted to register a fresh one after signing in. Driven by
+ * the backend's `two_step_webauthn_scoped_key_missing` flag on the 2FA response (which also replaces
+ * `webauthn` with `email` in the supported auth types); falls back to the client-detected flag for
+ * older backends that still return an empty `allowCredentials` challenge.
  * @param  {Object}   state  Global state tree
  * @returns {boolean}         Whether a security-key re-registration is required.
  */
 export const isSecurityKeyReregisterRequired = ( state ) =>
-	state?.login?.securityKeyReregisterRequired ?? false;
+	!! state?.login?.twoFactorAuth?.two_step_webauthn_scoped_key_missing ||
+	( state?.login?.securityKeyReregisterRequired ?? false );
 
 /**
  * Returns the error for a request to authenticate 2FA.

@@ -183,7 +183,23 @@ describe( 'selectors', () => {
 			expect( isSecurityKeyReregisterRequired( EMPTY_STATE ) ).toBe( false );
 		} );
 
-		test( 'should return true when the flag is set', () => {
+		test( 'should return true from the backend two_step_webauthn_scoped_key_missing flag', () => {
+			expect(
+				isSecurityKeyReregisterRequired( {
+					login: { twoFactorAuth: { two_step_webauthn_scoped_key_missing: true } },
+				} )
+			).toBe( true );
+		} );
+
+		test( 'should return false when the backend flag is present but false', () => {
+			expect(
+				isSecurityKeyReregisterRequired( {
+					login: { twoFactorAuth: { two_step_webauthn_scoped_key_missing: false } },
+				} )
+			).toBe( false );
+		} );
+
+		test( 'should return true from the client-detected fallback flag', () => {
 			expect(
 				isSecurityKeyReregisterRequired( {
 					login: { securityKeyReregisterRequired: true },

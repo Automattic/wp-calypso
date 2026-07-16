@@ -268,6 +268,7 @@ const twoFactorProperties = [
 	'two_step_nonce_authenticator',
 	'two_step_nonce_push',
 	'two_step_nonce_webauthn',
+	'two_step_webauthn_scoped_key_missing',
 	'user_id',
 ];
 
