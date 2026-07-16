@@ -1,7 +1,6 @@
 import '@automattic/agenttic-ui/index.css';
 import { useInput } from '@automattic/agenttic-ui';
 import { HelpCenterSelect } from '@automattic/data-stores';
-import { EmailFallbackNotice } from '@automattic/help-center/src/components/notices';
 import { HELP_CENTER_STORE } from '@automattic/help-center/src/stores';
 import { useConnectionStatusNotice } from '@automattic/zendesk-client';
 import { useSelect } from '@wordpress/data';
@@ -30,7 +29,7 @@ const getTextAreaPlaceholder = (
 
 export const OdieSendMessageButton = () => {
 	const divContainerRef = useRef< HTMLDivElement >( null );
-	const { trackEvent, chat, canConnectToZendesk, forceEmailSupport } = useOdieAssistantContext();
+	const { trackEvent, chat, canConnectToZendesk } = useOdieAssistantContext();
 	const cantTransferToZendesk =
 		( chat.messages?.[ chat.messages.length - 1 ]?.context?.flags?.forward_to_human_support &&
 			! canConnectToZendesk ) ??
@@ -133,8 +132,6 @@ export const OdieSendMessageButton = () => {
 
 	const customActions = showAttachmentButton ? [ attachmentAction ] : undefined;
 
-	const isEmailFallback = chat?.provider === 'zendesk' && forceEmailSupport;
-
 	// Handle key events including Enter submission and paste
 	const handleKeyDown = useCallback(
 		( e: React.KeyboardEvent< HTMLTextAreaElement > ) => {
@@ -176,25 +173,21 @@ export const OdieSendMessageButton = () => {
 	return (
 		<>
 			<div className="odie-chat-message-input-container agenttic" ref={ divContainerRef }>
-				{ isEmailFallback ? (
-					<EmailFallbackNotice />
-				) : (
-					<AgentUIFooter
-						value={ inputValue }
-						onChange={ setInputValue }
-						onSubmit={ sendMessageHandler }
-						attachmentPreviews={ attachmentPreviews }
-						onKeyDown={ handleKeyDown }
-						textareaRef={ textareaRef }
-						disabled={ isDisabled }
-						notice={ notice }
-						placeholder={ textAreaPlaceholder }
-						isProcessing={ isProcessing }
-						focusOnMount={ ! isInitialLoading }
-						customActions={ customActions }
-						actionOrder="before-submit"
-					/>
-				) }
+				<AgentUIFooter
+					value={ inputValue }
+					onChange={ setInputValue }
+					onSubmit={ sendMessageHandler }
+					attachmentPreviews={ attachmentPreviews }
+					onKeyDown={ handleKeyDown }
+					textareaRef={ textareaRef }
+					disabled={ isDisabled }
+					notice={ notice }
+					placeholder={ textAreaPlaceholder }
+					isProcessing={ isProcessing }
+					focusOnMount={ ! isInitialLoading }
+					customActions={ customActions }
+					actionOrder="before-submit"
+				/>
 			</div>
 			<AttachmentDropZone />
 		</>
