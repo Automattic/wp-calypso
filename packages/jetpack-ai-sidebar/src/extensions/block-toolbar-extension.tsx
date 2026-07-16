@@ -2,7 +2,8 @@ import { BigSkyLogo } from '@automattic/components';
 import { BlockControls } from '@wordpress/block-editor';
 import { ToolbarButton, ToolbarGroup } from '@wordpress/components';
 import { createHigherOrderComponent } from '@wordpress/compose';
-import { Component, useSyncExternalStore } from '@wordpress/element';
+import { useSelect } from '@wordpress/data';
+import { Component } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { isBlockToolbarButtonEnabled } from '../utils/preview-features';
 import type { ComponentType } from 'react';
@@ -20,10 +21,15 @@ type WindowWithAgentsManagerActions = Window & {
 	};
 };
 
-// Agents Manager broadcasts this on open/close; the new value rides in
-// `event.detail.isVisible`. Mirrors `CHAT_VISIBILITY_EVENT` in
-// `@automattic/agents-manager` — duplicated to stay decoupled across bundles.
-const CHAT_VISIBILITY_EVENT = 'agents-manager-chat-visibility-changed';
+// Agents Manager registers this store on the shared `wp.data` registry; the
+// sidebar bundle already dispatches to it (see `index.ts`). We read it for the
+// reactive pressed state, and drive open/close through `__agentsManagerActions`
+// (below), which also handles dock/minimize layout.
+const AGENTS_MANAGER_STORE = 'automattic/agents-manager';
+
+type AgentsManagerStoreSelectors = {
+	getAgentsManagerState: () => { isOpen?: boolean; isMinimized?: boolean };
+};
 
 let isWaitingForAgentsManagerReady = false;
 
@@ -40,63 +46,19 @@ function toggleAgentsManagerChat() {
 }
 
 /**
- * Chat visibility as a single shared store. The toolbar HOC wraps every block,
- * so one store with one pair of window listeners feeds every button — versus a
- * window listener per block. Consumed via `useSyncExternalStore`.
+ * Whether the chat is on screen (open and not minimized), tracked reactively so
+ * the toolbar button reflects a pressed state. Reads the shared Agents Manager
+ * store; returns `false` until that store is registered.
  */
-const chatVisibilityStore = ( () => {
-	let isVisible = false;
-	let hasSeeded = false;
-	const listeners = new Set< () => void >();
-
-	const update = ( next: boolean ) => {
-		if ( next === isVisible ) {
-			return;
-		}
-		isVisible = next;
-		listeners.forEach( ( listener ) => listener() );
-	};
-
-	// `agents-manager-ready` and the first subscribe read the (now stable) API.
-	const syncFromActions = () => update( isAgentsManagerChatVisible() );
-
-	// Read from the detail, never `isChatVisible()`: the API is refreshed a beat
-	// after this event fires, so re-reading it here yields the previous value.
-	const syncFromEvent = ( event: Event ) =>
-		update( Boolean( ( event as CustomEvent< { isVisible?: boolean } > ).detail?.isVisible ) );
-
-	return {
-		subscribe( listener: () => void ): () => void {
-			if ( listeners.size === 0 ) {
-				window.addEventListener( 'agents-manager-ready', syncFromActions );
-				window.addEventListener( CHAT_VISIBILITY_EVENT, syncFromEvent );
-				// Reconcile in case the chat opened before the first button mounted.
-				syncFromActions();
-			}
-			listeners.add( listener );
-
-			return () => {
-				listeners.delete( listener );
-				if ( listeners.size === 0 ) {
-					window.removeEventListener( 'agents-manager-ready', syncFromActions );
-					window.removeEventListener( CHAT_VISIBILITY_EVENT, syncFromEvent );
-				}
-			};
-		},
-		getSnapshot(): boolean {
-			// Seed once from live state so an already-open chat paints pressed on
-			// first render; stay cached afterward so the snapshot is stable.
-			if ( ! hasSeeded ) {
-				hasSeeded = true;
-				isVisible = isAgentsManagerChatVisible();
-			}
-			return isVisible;
-		},
-	};
-} )();
-
 function useAgentsManagerChatVisible(): boolean {
-	return useSyncExternalStore( chatVisibilityStore.subscribe, chatVisibilityStore.getSnapshot );
+	return useSelect( ( select ) => {
+		const store = select( AGENTS_MANAGER_STORE ) as AgentsManagerStoreSelectors | undefined;
+		if ( ! store?.getAgentsManagerState ) {
+			return false;
+		}
+		const { isOpen, isMinimized } = store.getAgentsManagerState();
+		return Boolean( isOpen ) && ! isMinimized;
+	}, [] );
 }
 
 function handleAgentsManagerReady() {

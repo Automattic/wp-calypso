@@ -3,7 +3,7 @@
  */
 
 import '@testing-library/jest-dom';
-import { act, fireEvent, render, screen } from '@testing-library/react';
+import { fireEvent, render, screen } from '@testing-library/react';
 import React from 'react';
 import { withJetpackAiToolbarButton } from './block-toolbar-extension';
 
@@ -48,6 +48,19 @@ jest.mock( '@wordpress/components', () => ( {
 jest.mock( '@wordpress/compose', () => ( {
 	createHigherOrderComponent: ( fn: ( component: React.ComponentType ) => React.ComponentType ) =>
 		fn,
+} ) );
+
+// Reactive pressed state comes from the shared Agents Manager store. `undefined`
+// models the store not being registered yet.
+let mockChatState: { isOpen?: boolean; isMinimized?: boolean } | undefined;
+
+jest.mock( '@wordpress/data', () => ( {
+	useSelect: ( mapSelect: ( select: ( store: string ) => unknown ) => unknown ) =>
+		mapSelect( ( store: string ) =>
+			store === 'automattic/agents-manager' && mockChatState
+				? { getAgentsManagerState: () => mockChatState }
+				: undefined
+		),
 } ) );
 
 jest.mock( '@wordpress/element', () => ( {
@@ -96,6 +109,7 @@ describe( 'withJetpackAiToolbarButton', () => {
 	beforeEach( () => {
 		delete ( globalThis as Record< string, unknown > ).agentsManagerData;
 		delete window.__agentsManagerActions;
+		mockChatState = undefined;
 		jest.restoreAllMocks();
 	} );
 
@@ -274,12 +288,8 @@ describe( 'withJetpackAiToolbarButton', () => {
 		expect( setChatInput ).not.toHaveBeenCalled();
 	} );
 
-	it( 'renders the button as pressed when the chat is already visible on mount', () => {
-		window.__agentsManagerActions = {
-			isReady: true,
-			setChatOpen: jest.fn(),
-			isChatVisible: () => true,
-		};
+	it( 'renders the button as pressed when the chat is open in the store', () => {
+		mockChatState = { isOpen: true, isMinimized: false };
 
 		enableToolbarButton();
 		renderToolbar();
@@ -290,12 +300,8 @@ describe( 'withJetpackAiToolbarButton', () => {
 		);
 	} );
 
-	it( 'renders the button as not pressed when the chat is not visible', () => {
-		window.__agentsManagerActions = {
-			isReady: true,
-			setChatOpen: jest.fn(),
-			isChatVisible: () => false,
-		};
+	it( 'renders the button as not pressed when the chat is closed', () => {
+		mockChatState = { isOpen: false, isMinimized: false };
 
 		enableToolbarButton();
 		renderToolbar();
@@ -306,12 +312,8 @@ describe( 'withJetpackAiToolbarButton', () => {
 		);
 	} );
 
-	it( 'updates the pressed state from the chat visibility event detail', () => {
-		window.__agentsManagerActions = {
-			isReady: true,
-			setChatOpen: jest.fn(),
-			isChatVisible: () => false,
-		};
+	it( 'renders the button as not pressed when the chat is minimized', () => {
+		mockChatState = { isOpen: true, isMinimized: true };
 
 		enableToolbarButton();
 		renderToolbar();
@@ -320,143 +322,17 @@ describe( 'withJetpackAiToolbarButton', () => {
 			'aria-pressed',
 			'false'
 		);
-
-		// Agents Manager opens the chat elsewhere (e.g. the masterbar) and
-		// broadcasts the new value in the event detail.
-		act( () => {
-			window.dispatchEvent(
-				new CustomEvent( 'agents-manager-chat-visibility-changed', {
-					detail: { isVisible: true },
-				} )
-			);
-		} );
-
-		expect( screen.getByRole( 'button', { name: 'Ask AI' } ) ).toHaveAttribute(
-			'aria-pressed',
-			'true'
-		);
 	} );
 
-	it( 'un-presses when the chat is closed and re-presses when re-opened', () => {
-		// Regression: the button must track every toggle, not just the state at
-		// load. It reads each new value from the event detail rather than
-		// re-reading the actions API, which is refreshed a beat later.
-		window.__agentsManagerActions = {
-			isReady: true,
-			setChatOpen: jest.fn(),
-			isChatVisible: () => true,
-		};
+	it( 'renders the button as not pressed when the store is not registered yet', () => {
+		mockChatState = undefined;
 
-		enableToolbarButton();
-		renderToolbar();
-
-		const button = screen.getByRole( 'button', { name: 'Ask AI' } );
-		expect( button ).toHaveAttribute( 'aria-pressed', 'true' );
-
-		// Close the chat.
-		act( () => {
-			window.dispatchEvent(
-				new CustomEvent( 'agents-manager-chat-visibility-changed', {
-					detail: { isVisible: false },
-				} )
-			);
-		} );
-		expect( button ).toHaveAttribute( 'aria-pressed', 'false' );
-
-		// Re-open it.
-		act( () => {
-			window.dispatchEvent(
-				new CustomEvent( 'agents-manager-chat-visibility-changed', {
-					detail: { isVisible: true },
-				} )
-			);
-		} );
-		expect( button ).toHaveAttribute( 'aria-pressed', 'true' );
-	} );
-
-	it( 'reflects the visible chat once Agents Manager becomes ready', () => {
 		enableToolbarButton();
 		renderToolbar();
 
 		expect( screen.getByRole( 'button', { name: 'Ask AI' } ) ).toHaveAttribute(
 			'aria-pressed',
 			'false'
-		);
-
-		// Agents Manager loads after the button, with the chat already visible.
-		window.__agentsManagerActions = {
-			isReady: true,
-			setChatOpen: jest.fn(),
-			isChatVisible: () => true,
-		};
-		act( () => {
-			window.dispatchEvent( new CustomEvent( 'agents-manager-ready' ) );
-		} );
-
-		expect( screen.getByRole( 'button', { name: 'Ask AI' } ) ).toHaveAttribute(
-			'aria-pressed',
-			'true'
-		);
-	} );
-
-	it( 'shares a single window subscription across every block on the page', () => {
-		window.__agentsManagerActions = {
-			isReady: true,
-			setChatOpen: jest.fn(),
-			isChatVisible: () => false,
-		};
-		const addEventListenerSpy = jest.spyOn( window, 'addEventListener' );
-
-		enableToolbarButton();
-		const Component = withJetpackAiToolbarButton( BlockEdit );
-		render(
-			<>
-				<Component name="core/paragraph" />
-				<Component name="core/heading" />
-				<Component name="core/image" />
-			</>
-		);
-
-		// The toolbar HOC wraps every block, but only one shared listener is added
-		// for the visibility event regardless of how many blocks are on the page.
-		const visibilityListeners = addEventListenerSpy.mock.calls.filter(
-			( [ type ] ) => type === 'agents-manager-chat-visibility-changed'
-		);
-		expect( visibilityListeners ).toHaveLength( 1 );
-
-		// A single broadcast updates every block's button.
-		act( () => {
-			window.dispatchEvent(
-				new CustomEvent( 'agents-manager-chat-visibility-changed', {
-					detail: { isVisible: true },
-				} )
-			);
-		} );
-
-		const buttons = screen.getAllByRole( 'button', { name: 'Ask AI' } );
-		expect( buttons ).toHaveLength( 3 );
-		buttons.forEach( ( button ) => expect( button ).toHaveAttribute( 'aria-pressed', 'true' ) );
-	} );
-
-	it( 'removes its window listeners once the last block unmounts', () => {
-		window.__agentsManagerActions = {
-			isReady: true,
-			setChatOpen: jest.fn(),
-			isChatVisible: () => false,
-		};
-		const removeEventListenerSpy = jest.spyOn( window, 'removeEventListener' );
-
-		enableToolbarButton();
-		const { unmount } = renderToolbar();
-		unmount();
-
-		expect( removeEventListenerSpy ).toHaveBeenCalledWith(
-			'agents-manager-chat-visibility-changed',
-			expect.any( Function )
-		);
-		expect( removeEventListenerSpy ).toHaveBeenCalledWith(
-			'agents-manager-ready',
-			expect.any( Function )
 		);
 	} );
 } );

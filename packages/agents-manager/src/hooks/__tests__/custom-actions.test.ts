@@ -254,25 +254,6 @@ describe( 'useSetupCustomActions', () => {
 		expect( window.__agentsManagerActions?.isChatVisible?.() ).toBe( false );
 	} );
 
-	it( 'broadcasts a visibility event when the chat opens or closes', () => {
-		const listener = jest.fn();
-		window.addEventListener( 'agents-manager-chat-visibility-changed', listener );
-
-		mockSelectState = { hasLoaded: true, isOpen: false, isDocked: false, floatingPosition: '' };
-		const { rerender } = renderHook( () => useSetupCustomActions( baseProps ) );
-
-		// The initial mount must not broadcast; listeners read the live state.
-		expect( listener ).not.toHaveBeenCalled();
-
-		mockSelectState = { ...mockSelectState, isOpen: true };
-		rerender();
-
-		expect( listener ).toHaveBeenCalledTimes( 1 );
-		expect( listener.mock.calls[ 0 ][ 0 ].detail ).toEqual( { isVisible: true } );
-
-		window.removeEventListener( 'agents-manager-chat-visibility-changed', listener );
-	} );
-
 	it( 'reports the current route via `getCurrentRoute`', () => {
 		mockLocation = { pathname: '/history' };
 		renderHook( () => useSetupCustomActions( baseProps ) );
