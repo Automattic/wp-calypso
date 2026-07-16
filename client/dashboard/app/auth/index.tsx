@@ -5,6 +5,7 @@ import { setUser } from '@automattic/calypso-sentry';
 import { isSupportUserSession } from '@automattic/calypso-support-session';
 import { magnificentNonEnLocales } from '@automattic/i18n-utils';
 import {
+	hashKey,
 	useQuery,
 	useQueryClient,
 	type QueryCacheNotifyEvent,
@@ -12,11 +13,14 @@ import {
 } from '@tanstack/react-query';
 import { createContext, useContext, useMemo, useEffect, useRef, useCallback } from 'react';
 import { wpcomLink } from '../../utils/link';
+import { bumpStat } from '../analytics';
 import { useAppContext } from '../context';
 import { OAUTH_CALLBACK_PATH } from './oauth-callback';
 import type { WPError } from '@automattic/api-core';
 
 export const AUTH_QUERY_KEY = [ 'auth', 'user' ];
+
+const BOOTSTRAP_ERROR_MESSAGE = 'Failed to bootstrap user object';
 
 function getOAuthAuthorizeUrl( {
 	state,
@@ -56,20 +60,35 @@ interface AuthContextType {
 }
 export const AuthContext = createContext< AuthContextType | undefined >( undefined );
 
-export async function initializeCurrentUser(): Promise< User > {
+function shouldUseBootstrap(): boolean {
 	// In support user session the `currentUser` refers to the wrong person so we should request
 	// the user object. Note we do not check `isSupportNextSession()` because in "next" support
 	// sessions the server does bootstrap the correct `currentUser`.
-	const useBootstrap = ! isSupportUserSession() && config.isEnabled( 'wpcom-user-bootstrap' );
+	return ! isSupportUserSession() && config.isEnabled( 'wpcom-user-bootstrap' );
+}
 
-	if ( useBootstrap ) {
+export async function initializeCurrentUser(): Promise< User > {
+	if ( shouldUseBootstrap() ) {
 		if ( window.currentUser ) {
 			return window.currentUser;
 		}
-		throw new Error( 'Failed to bootstrap user object' );
+		throw new Error( BOOTSTRAP_ERROR_MESSAGE );
 	}
 
 	return fetchUser();
+}
+
+function getAuthErrorReason( error: unknown ): string {
+	if ( error instanceof Error && error.message === BOOTSTRAP_ERROR_MESSAGE ) {
+		return 'bootstrap';
+	}
+	if (
+		isWpError( error ) &&
+		( error.error === 'authorization_required' || error.statusCode === 401 )
+	) {
+		return 'unauthorized';
+	}
+	return 'error';
 }
 
 /**
@@ -87,6 +106,7 @@ export function AuthProvider( { children }: { children: React.ReactNode } ) {
 		data: user,
 		isLoading: userIsLoading,
 		isError: userIsError,
+		error: userError,
 	} = useQuery( {
 		queryKey: AUTH_QUERY_KEY,
 		queryFn: initializeCurrentUser,
@@ -108,37 +128,42 @@ export function AuthProvider( { children }: { children: React.ReactNode } ) {
 		};
 	}, [ user ] );
 
-	const handleAuthError = useCallback( () => {
-		// Prevents repeated calls to redirect
-		if ( authErrorHandled.current ) {
-			return;
-		}
+	const handleAuthError = useCallback(
+		( reason: string ) => {
+			// Prevents repeated calls to redirect
+			if ( authErrorHandled.current ) {
+				return;
+			}
 
-		authErrorHandled.current = true;
+			authErrorHandled.current = true;
 
-		if ( config.isEnabled( 'oauth' ) ) {
-			const state = crypto.randomUUID();
-			sessionStorage.setItem( 'wpcom_oauth_state', state );
+			bumpStat( 'hd-auth', `bounce:${ reason }` );
 
-			// Default to the signup screen rather than the login screen for certain routes.
-			const isNewUser =
-				supports.startStoreRoute === true && window.location.pathname === '/start-store';
+			if ( config.isEnabled( 'oauth' ) ) {
+				const state = crypto.randomUUID();
+				sessionStorage.setItem( 'wpcom_oauth_state', state );
 
-			window.location.replace(
-				getOAuthAuthorizeUrl( {
-					state,
-					isNewUser,
-					next: window.location.pathname + window.location.search,
-				} )
-			);
-			return;
-		}
+				// Default to the signup screen rather than the login screen for certain routes.
+				const isNewUser =
+					supports.startStoreRoute === true && window.location.pathname === '/start-store';
 
-		const currentPath = window.location.href;
-		const path = config( 'wpcom_login_url' ) || wpcomLink( '/log-in' );
-		const loginUrl = `${ path }?redirect_to=${ encodeURIComponent( currentPath ) }`;
-		window.location.href = loginUrl;
-	}, [ supports.startStoreRoute ] );
+				window.location.replace(
+					getOAuthAuthorizeUrl( {
+						state,
+						isNewUser,
+						next: window.location.pathname + window.location.search,
+					} )
+				);
+				return;
+			}
+
+			const currentPath = window.location.href;
+			const path = config( 'wpcom_login_url' ) || wpcomLink( '/log-in' );
+			const loginUrl = `${ path }?redirect_to=${ encodeURIComponent( currentPath ) }`;
+			window.location.href = loginUrl;
+		},
+		[ supports.startStoreRoute ]
+	);
 
 	// Subscribe to network errors and when errors occur due to being logged
 	// out, redirect the user to the log in screen.
@@ -148,13 +173,18 @@ export function AuthProvider( { children }: { children: React.ReactNode } ) {
 		};
 
 		const handleEvent = ( event: MutationCacheNotifyEvent | QueryCacheNotifyEvent ) => {
+			// Errors fetching the user object itself are handled (and classified) below.
+			if ( 'query' in event && event.query.queryHash === hashKey( AUTH_QUERY_KEY ) ) {
+				return;
+			}
+
 			if (
 				event.type === 'updated' &&
 				event.action.type === 'error' &&
 				isWpError( event.action.error ) &&
 				isAuthError( event.action.error )
 			) {
-				handleAuthError();
+				handleAuthError( 'expired' );
 			}
 		};
 		const unsubMutationCache = queryClient.getMutationCache().subscribe( handleEvent );
@@ -165,9 +195,15 @@ export function AuthProvider( { children }: { children: React.ReactNode } ) {
 		};
 	}, [ queryClient, handleAuthError ] );
 
+	const successStatBumped = useRef( false );
 	useEffect( () => {
 		if ( user?.ID ) {
 			setUser( { id: user.ID.toString() } );
+
+			if ( ! successStatBumped.current ) {
+				successStatBumped.current = true;
+				bumpStat( 'hd-auth', shouldUseBootstrap() ? 'success:bootstrap' : 'success:fetch' );
+			}
 		}
 	}, [ user ] );
 
@@ -175,7 +211,7 @@ export function AuthProvider( { children }: { children: React.ReactNode } ) {
 	// `authorization_required` errors or not.
 	if ( userIsError ) {
 		if ( typeof window !== 'undefined' ) {
-			handleAuthError();
+			handleAuthError( getAuthErrorReason( userError ) );
 		}
 		return null;
 	}
