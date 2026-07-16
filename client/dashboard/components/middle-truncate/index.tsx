@@ -1,8 +1,12 @@
 import { __experimentalHStack as HStack, __experimentalText as Text } from '@wordpress/components';
 import clsx from 'clsx';
 import { getTld } from '../../utils/domain';
+import type { CSSProperties } from 'react';
 
-import './style.scss';
+// The flex row and `min-width: 0` on the children come from HStack; the head's ellipsis comes
+// from `Text truncate`. Only the wrapper's width clamp and the pinned tail need styling.
+const wrapperStyle: CSSProperties = { maxWidth: '100%', minWidth: 0 };
+const tailStyle: CSSProperties = { flexShrink: 0, whiteSpace: 'nowrap' };
 
 interface MiddleTruncateProps {
 	/** The text to display, e.g. "my.shop.domain.co.jp" or "me@example.com". */
@@ -66,10 +70,11 @@ export default function MiddleTruncate( { text, children, className }: MiddleTru
 			spacing={ 0 }
 			expanded={ false }
 			className={ clsx( 'dashboard-middle-truncate', className ) }
+			style={ wrapperStyle }
 			title={ value }
 		>
 			<Text truncate>{ head }</Text>
-			{ tail && <Text className="dashboard-middle-truncate__tail">{ tail }</Text> }
+			{ tail && <Text style={ tailStyle }>{ tail }</Text> }
 		</HStack>
 	);
 }
