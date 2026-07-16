@@ -236,7 +236,9 @@ export default function useAgentLayoutManager( {
 
 	// While docked, the wp-admin menu scrolls its own overflow and its flyout
 	// submenus need viewport coordinates — see `observe-admin-menu-flyouts`.
-	useEffect( () => {
+	// `useLayoutEffect` so the treatment lands in the same frame as the docked
+	// classes applied above.
+	useLayoutEffect( () => {
 		if ( ! shouldRenderSidebar ) {
 			return;
 		}
