@@ -44,9 +44,10 @@ export default function observeAdminMenuFlyouts(): ( () => void ) | undefined {
 		item.style.setProperty( FLYOUT_TOP_VAR, `${ top }px` );
 		// Cap a flyout taller than the remaining viewport so it scrolls internally —
 		// nothing else can bring the tail of a fixed box into view.
+		// Floored at 0: a negative length is invalid CSS and would drop the cap.
 		item.style.setProperty(
 			FLYOUT_MAX_HEIGHT_VAR,
-			`${ window.innerHeight - VIEWPORT_GAP - top }px`
+			`${ Math.max( 0, window.innerHeight - VIEWPORT_GAP - top ) }px`
 		);
 	};
 

@@ -138,6 +138,18 @@ describe( 'observeAdminMenuFlyouts', () => {
 		cleanup();
 	} );
 
+	it( 'never emits a negative max-height on an extremely short viewport', () => {
+		window.innerHeight = 40; // Shorter than the frame top itself.
+		const { menu } = buildMenu();
+		const { item, link } = addItem( menu, { top: 100, submenuHeight: 200 } );
+		const cleanup = attach();
+
+		hover( link );
+		expect( item.style.getPropertyValue( MAX_HEIGHT_VAR ) ).toBe( '0px' );
+
+		cleanup();
+	} );
+
 	it( 'skips repositioning on pointer moves within the same item', () => {
 		const { menu } = buildMenu();
 		const { item, link } = addItem( menu, { top: 100, submenuHeight: 200 } );
