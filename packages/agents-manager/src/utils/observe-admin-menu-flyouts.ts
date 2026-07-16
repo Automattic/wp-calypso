@@ -51,11 +51,25 @@ export default function observeAdminMenuFlyouts(): ( () => void ) | undefined {
 	};
 
 	const handlePointerOrFocus = ( event: Event ) => {
-		const item = ( event.target as Element ).closest< HTMLElement >( 'li.menu-top' );
-
-		if ( item ) {
-			positionFlyout( item );
+		if ( ! ( event.target instanceof Element ) ) {
+			return;
 		}
+
+		const item = event.target.closest< HTMLElement >( 'li.menu-top' );
+
+		if ( ! item ) {
+			return;
+		}
+
+		// pointerover/focusin re-fire for every move between descendants of the
+		// same item; the flyout is already positioned, so skip the layout reads.
+		const from = ( event as MouseEvent | FocusEvent ).relatedTarget;
+
+		if ( from instanceof Element && item.contains( from ) ) {
+			return;
+		}
+
+		positionFlyout( item );
 	};
 
 	// Keep an open flyout glued to its item while the menu scrolls under it.

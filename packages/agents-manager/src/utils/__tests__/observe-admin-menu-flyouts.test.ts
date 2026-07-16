@@ -138,6 +138,28 @@ describe( 'observeAdminMenuFlyouts', () => {
 		cleanup();
 	} );
 
+	it( 'skips repositioning on pointer moves within the same item', () => {
+		const { menu } = buildMenu();
+		const { item, link } = addItem( menu, { top: 100, submenuHeight: 200 } );
+		const cleanup = attach();
+
+		hover( link );
+		expect( item.style.getPropertyValue( TOP_VAR ) ).toBe( '100px' );
+
+		// Pointer moves from the link to the submenu of the same item: no re-read.
+		item.getBoundingClientRect = rect( 130 );
+		link.dispatchEvent( new MouseEvent( 'pointerover', { bubbles: true, relatedTarget: item } ) );
+		expect( item.style.getPropertyValue( TOP_VAR ) ).toBe( '100px' );
+
+		// Coming from outside the item repositions again.
+		link.dispatchEvent(
+			new MouseEvent( 'pointerover', { bubbles: true, relatedTarget: document.body } )
+		);
+		expect( item.style.getPropertyValue( TOP_VAR ) ).toBe( '130px' );
+
+		cleanup();
+	} );
+
 	it( 'positions on keyboard focus', () => {
 		const { menu } = buildMenu();
 		const { item, link } = addItem( menu, { top: 150, submenuHeight: 200 } );
