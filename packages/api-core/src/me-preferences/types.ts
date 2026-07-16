@@ -36,7 +36,6 @@ export interface UserPreferences {
 	[ key: `hosting-dashboard-wp-beta-notice-dismissed-${ number }` ]: string | undefined; // ISO timestamp when the user dismissed the beta notice for a site
 	'hosting-dashboard-welcome-notice-dismissed'?: string; // Timestamp when the user dismissed the notice
 	'account-recovery-interstitial-snoozed-until'?: number; // Unix timestamp (seconds) until which the account-recovery interstitial is snoozed; 0/unset means "never snoozed"
-	'security-key-reregister-interstitial-snoozed-until'?: number; // Unix timestamp (seconds) until which the security-key re-register interstitial is snoozed; 0/unset means "never snoozed"
 	'reader-landing-page'?: ReaderLandingPage;
 	'sites-landing-page'?: SitesLandingPage;
 	[ key: `cancel-purchase-survey-completed-${ string | number }` ]: string | undefined;

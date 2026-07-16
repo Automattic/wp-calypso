@@ -30,7 +30,6 @@ import { useOmnibarEvent } from '../omnibar/events';
 import OmnibarSiteSwitcher from '../omnibar/omnibar-site-switcher';
 import { useInitializeOmnibarSite } from '../omnibar/site';
 import ResponsiveSidebar from '../responsive-sidebar';
-import SecurityKeyReregisterInterstitial from '../security-key-reregister-interstitial';
 import Snackbars from '../snackbars';
 import { OptInWelcomeModal } from '../welcome-modal';
 import './style.scss';
@@ -200,7 +199,6 @@ function Root() {
 			<Snackbars />
 			<CheckoutSuccessFlashMessage />
 			{ isAccountRecoveryInterstitialEnabled && <AccountRecoveryInterstitial /> }
-			<SecurityKeyReregisterInterstitial />
 			{ isOptInWelcomeModalEnabled && <OptInWelcomeModal /> }
 			<PageViewTracker />
 			<MutationErrorTracker />
