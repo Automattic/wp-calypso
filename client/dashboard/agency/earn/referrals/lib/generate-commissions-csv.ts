@@ -21,13 +21,7 @@ const UTF8_BOM = '\uFEFF';
  */
 const FORMULA_TRIGGERS = [ '=', '+', '-', '@', '\t', '\r' ];
 
-/**
- * Escapes a value for CSV format.
- * Neutralizes formula injection by prefixing a single quote to fields that begin with a
- * formula trigger character (spreadsheets render the leading quote-prefixed value as a literal string).
- * Wraps in quotes if the value contains commas, quotes, or newlines.
- * Doubles any existing quotes.
- */
+/** Neutralizes formula injection by prefixing fields that begin with a trigger character. */
 function csvEscape( value: unknown ): string {
 	let str = value == null ? '' : String( value );
 	// A lone trigger character (e.g. the '-' placeholder used for missing values) is not a
@@ -111,7 +105,6 @@ function findMatchingPurchase(
 	return { referral, purchase, product };
 }
 
-/** One row per invoice; supplemental fields come from the matching referral purchase. */
 function buildRowsFromApi(
 	referralCommissionPayout: ReferralCommissionPayout,
 	referrals: Referral[],
@@ -170,7 +163,6 @@ function buildRowsFromApi(
 	return rows;
 }
 
-/** Returns a headers-only CSV when there is no payout data. */
 export function generateCommissionsCsv(
 	referrals: Referral[],
 	products: AgencyProduct[],

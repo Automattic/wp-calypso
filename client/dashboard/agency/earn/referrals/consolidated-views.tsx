@@ -34,10 +34,7 @@ interface ConsolidatedViewsProps {
 	isLoadingCommissionPayout?: boolean;
 	/** Each app passes its own user locale for date formatting. */
 	locale?: string;
-	/**
-	 * The product catalog, needed to resolve each commission's rate. Without it
-	 * the CSV download is hidden, since the rows would be incomplete.
-	 */
+	/** Product catalog for resolving commission rates in the CSV export. */
 	products?: AgencyProduct[];
 	/** Each app passes its own analytics client. */
 	recordTracksEvent?: ( eventName: string, properties?: Record< string, unknown > ) => void;
