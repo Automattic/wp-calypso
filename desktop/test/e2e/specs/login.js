@@ -35,6 +35,12 @@ const HAR_PATH = path.join( __dirname, '../results/network.har' );
 const WP_DEBUG_LOG = path.resolve( __dirname, '../results/app.log' );
 
 const BASE_URL = process.env.WP_DESKTOP_BASE_URL?.replace( /\/$/, '' ) ?? 'https://wordpress.com';
+const LAUNCH_ARGS = [ '--disable-http-cache', '--start-maximized' ];
+
+// Linux CI lacks Electron's SUID sandbox setup.
+if ( process.platform === 'linux' ) {
+	LAUNCH_ARGS.push( '--no-sandbox' );
+}
 
 const skipIfOAuthLogin = config.oauthLoginEnabled ? it.skip : it;
 const runIfOAuthLogin = config.oauthLoginEnabled ? it : it.skip;
@@ -52,7 +58,7 @@ describe( 'User Can log in', () => {
 
 		electronApp = await electron.launch( {
 			executablePath: APP_PATH,
-			args: [ '--disable-http-cache', '--start-maximized' ],
+			args: LAUNCH_ARGS,
 			timeout: 0,
 			recordHar: {
 				path: HAR_PATH,

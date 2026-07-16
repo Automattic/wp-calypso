@@ -3,11 +3,11 @@ import config from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
 import clsx from 'clsx';
 import { localize, withRtl } from 'i18n-calypso';
-import { flowRight } from 'lodash';
 import PropTypes from 'prop-types';
 import qs from 'qs';
 import { PureComponent } from 'react';
 import { connect } from 'react-redux';
+import { compose } from 'redux';
 import { getShortcuts } from 'calypso/components/date-range/use-shortcuts';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
 import StatsDateControl from 'calypso/components/stats-date-control';
@@ -393,7 +393,7 @@ class StatsPeriodNavigation extends PureComponent {
 	}
 }
 
-const addIsGatedFor = ( state, siteId ) => ( shortcut ) => ( {
+export const addIsGatedFor = ( state, siteId ) => ( shortcut ) => ( {
 	...shortcut,
 	isGated: shouldGateStats( state, siteId, `${ STATS_FEATURE_DATE_CONTROL }/${ shortcut.id }` ),
 	statType: `${ STATS_FEATURE_DATE_CONTROL }/${ shortcut.id }`,
@@ -427,7 +427,7 @@ const connectComponent = connect(
 	{ recordGoogleEvent: recordGoogleEventAction, toggleUpsellModal }
 );
 
-export default flowRight(
+export default compose(
 	localize,
 	connectComponent,
 	withRtl,

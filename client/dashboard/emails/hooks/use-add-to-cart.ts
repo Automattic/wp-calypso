@@ -1,4 +1,4 @@
-import { useParams, useRouter } from '@tanstack/react-router';
+import { useParams, useRouter, useSearch } from '@tanstack/react-router';
 import { useDispatch } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
@@ -17,9 +17,10 @@ export const useAddToCart = () => {
 	const { recordTracksEvent } = useAnalytics();
 	const { createErrorNotice } = useDispatch( noticesStore );
 	const { provider, interval } = useParams( { strict: false } );
+	const { tier } = useSearch( { strict: false } );
 	const { domain, domainName, site } = useDomainFromUrlParam();
 
-	const emailProduct = useEmailProduct( provider, interval, domain );
+	const emailProduct = useEmailProduct( provider, interval, domain, tier );
 	const router = useRouter();
 
 	const addToCart = async ( {
@@ -29,6 +30,14 @@ export const useAddToCart = () => {
 		mailboxOperations: MailboxOperations;
 		onFinally: () => void;
 	} ) => {
+		// The cart item reads product_slug off the product, so bail if it hasn't
+		// resolved (e.g. a tier whose product isn't available).
+		const product = emailProduct.product;
+		if ( ! product ) {
+			onFinally();
+			return;
+		}
+
 		const { shoppingCartManagerClient } = await import(
 			/* webpackChunkName: "async-load-shopping-cart" */ '../../app/shopping-cart'
 		);
@@ -38,7 +47,7 @@ export const useAddToCart = () => {
 		const emailProperties = getEmailProductProperties(
 			provider,
 			domain,
-			emailProduct.product,
+			product,
 			numberOfMailboxes
 		);
 

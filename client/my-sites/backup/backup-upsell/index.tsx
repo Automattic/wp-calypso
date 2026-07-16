@@ -20,7 +20,6 @@ import { UpsellComponentProps } from 'calypso/components/jetpack/upsell-switch';
 import WPCOMBusinessAT from 'calypso/components/jetpack/wpcom-business-at';
 import Main from 'calypso/components/main';
 import SidebarNavigation from 'calypso/components/sidebar-navigation';
-import { recordLogRocketEvent } from 'calypso/lib/analytics/logrocket';
 import { useSelector, useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
@@ -79,7 +78,6 @@ const BackupsUpsellBody: FunctionComponent = () => {
 
 	const onClick = useCallback( () => {
 		dispatch( recordTracksEvent( 'calypso_jetpack_backup_upsell_click' ) );
-		recordLogRocketEvent( 'calypso_jetpack_backup_upsell_click' );
 	}, [ dispatch ] );
 
 	return (

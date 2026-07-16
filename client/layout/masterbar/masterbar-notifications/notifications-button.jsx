@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import TranslatableString from 'calypso/components/translatable/proptype';
+import { wpcomLink } from 'calypso/dashboard/utils/link';
 import { setUnseenCount } from 'calypso/state/notifications/actions';
 import getUnseenCount from 'calypso/state/selectors/get-notification-unseen-count';
 import hasUnseenNotifications from 'calypso/state/selectors/has-unseen-notifications';
@@ -94,7 +95,7 @@ class MasterbarItemNotifications extends Component {
 		return (
 			<>
 				<MasterbarItem
-					url="/notifications"
+					url={ wpcomLink( '/notifications' ) }
 					icon={ <BellIcon newItems={ this.state.newNote } active={ this.props.isActive } /> }
 					onClick={ this.toggleNotesFrame }
 					isActive={ this.props.isActive }

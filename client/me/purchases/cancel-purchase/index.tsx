@@ -14,7 +14,6 @@ import {
 import page from '@automattic/calypso-router';
 import { Button, Card } from '@automattic/components';
 import { HelpCenter } from '@automattic/data-stores';
-import { localizeUrl } from '@automattic/i18n-utils';
 import { formatCurrency } from '@automattic/number-formatters';
 import { invokeSurvicateEvent } from '@automattic/survicate';
 import { useCanConnectToZendeskMessaging } from '@automattic/zendesk-client';
@@ -1261,7 +1260,7 @@ class CancelPurchase extends Component< CancelPurchaseAllProps, CancelPurchaseSt
 					<p className="cancel-purchase__support-text">
 						{ translate( 'Our support team is here for you. {{a}}Contact us{{/a}}', {
 							components: {
-								a: isSplitCancelRemoveEnabled ? (
+								a: (
 									<ContactSupportButton
 										purchase={ {
 											siteId: purchase.siteId,
@@ -1269,12 +1268,6 @@ class CancelPurchase extends Component< CancelPurchaseAllProps, CancelPurchaseSt
 											productName: purchase.productName,
 										} }
 										displayVariant={ displayVariant }
-									/>
-								) : (
-									<a
-										href={ localizeUrl( 'https://wordpress.com/help/contact' ) }
-										target="_blank"
-										rel="noopener noreferrer"
 									/>
 								),
 							},

@@ -9,7 +9,7 @@ First, display a `jsx` code block to show an example of usage, including import 
 ```jsx
 import DateRange from 'calypso/components/date-range';
 
-export default class extends React.Component {
+export default class DateRangeExample extends React.Component {
 	render() {
 		return <DateRange />;
 	}
@@ -58,7 +58,7 @@ General guidelines should be a list of tips and best practices. Example:
 - If you need to heavily customise the look and feel consider using one of the render prop overides to customise the appropriate aspect.
 - You can restrict the picker to certain date ranges using either/both of the `firstSelectableDate` and `lastSelectableDate` props to define a restriction.
 - The underlying `DatePicker` uses [React Day Picker](http://react-day-picker.js.org/)/
-- By default the layout will switch to a single calendar view at screens smaller than <480px
+- The popover opens with a two calendar view and automatically drops to a single calendar (and then stacks the shortcuts) when the measured content area around the trigger is too narrow to fit it
 
 ## Related components
 

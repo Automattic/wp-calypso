@@ -61,6 +61,8 @@ interface TrackBlockTransformationSuggestionOptions {
 	suggestionId: string;
 	suggestionType: BlockTransformationSuggestionType;
 	blockType: string;
+	/** Dropdown option chosen (e.g. tone/language), when the click came from one. */
+	optionId?: string;
 }
 
 /**
@@ -103,17 +105,20 @@ export function trackBlockTransformationSuggestionRendered( {
  * @param options.suggestionId   - Stable suggestion identifier.
  * @param options.suggestionType - Transformation category.
  * @param options.blockType      - Core block type the suggestion applies to.
+ * @param options.optionId       - Dropdown option chosen (tone/language), if any.
  */
 export function trackBlockTransformationSuggestionClick( {
 	suggestionId,
 	suggestionType,
 	blockType,
+	optionId,
 }: TrackBlockTransformationSuggestionOptions ): void {
 	recordTracksEvent( 'ai_block_transformation_suggestion_click', {
 		suggestion_id: suggestionId,
 		suggestion_type: suggestionType,
 		block_type: blockType,
 		surface: 'jetpack_ai_sidebar',
+		...( optionId ? { option_id: optionId } : {} ),
 	} );
 }
 

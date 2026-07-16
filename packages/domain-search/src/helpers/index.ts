@@ -1,5 +1,6 @@
 export { getRootDomain } from './get-root-domain';
 export { getTld } from './get-tld';
+export { isFqdnQuery } from './is-fqdn-query';
 export { isSubdomain } from './is-subdomain';
 export {
 	isBlogSubdomainQuery,

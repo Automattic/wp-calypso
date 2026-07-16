@@ -1,5 +1,4 @@
 import { localize } from 'i18n-calypso';
-import { includes } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import PlanStorage from 'calypso/blocks/plan-storage';
@@ -91,7 +90,7 @@ export class MediaLibraryFilterBar extends Component {
 
 	isFilterDisabled( filter ) {
 		const { enabledFilters } = this.props;
-		return enabledFilters && ( ! filter.length || ! includes( enabledFilters, filter ) );
+		return enabledFilters && ( ! filter.length || ! enabledFilters.includes( filter ) );
 	}
 
 	shouldSkipFilters() {

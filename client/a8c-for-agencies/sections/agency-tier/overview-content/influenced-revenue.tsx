@@ -9,10 +9,10 @@ import A4APopover from 'calypso/a8c-for-agencies/components/a4a-popover';
 import A4APopoverTrigger from 'calypso/a8c-for-agencies/components/a4a-popover/trigger';
 import { Stat } from 'calypso/a8c-for-agencies/components/stat';
 import useHelpCenter from 'calypso/a8c-for-agencies/hooks/use-help-center';
+import getCurrentAgencyTier from 'calypso/dashboard/agency/tiers/get-current-agency-tier';
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import getCurrentAgencyTier from '../lib/get-current-agency-tier';
-import type { AgencyTierType } from './types';
+import type { AgencyTierType } from 'calypso/dashboard/agency/tiers/types';
 
 import './influenced-revenue.scss';
 

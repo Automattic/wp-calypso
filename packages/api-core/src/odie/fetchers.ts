@@ -1,6 +1,11 @@
 import { wpcom } from '../wpcom-fetcher';
 import type { PerformanceMetricAudit } from '../site-performance';
 
+interface A2APart {
+	type?: string;
+	text?: string;
+}
+
 export async function fetchOdieAssistantPerformanceProfiler( {
 	hash,
 	insight,
@@ -16,22 +21,46 @@ export async function fetchOdieAssistantPerformanceProfiler( {
 } ) {
 	const response = await wpcom.req.post(
 		{
-			path: '/odie/assistant/performance-profiler',
+			path: '/ai/agent/performance-audits',
 			apiNamespace: 'wpcom/v2',
 		},
+		{},
 		{
-			hash,
-		},
-		{
-			insight,
-			is_wpcom: isWpcom,
-			locale,
-			device_strategy: device,
+			jsonrpc: '2.0',
+			id: 1,
+			method: 'message/send',
+			params: {
+				message: {
+					role: 'user',
+					parts: [
+						{ type: 'text', text: 'Recommend a fix for this performance audit.' },
+						{
+							type: 'data',
+							data: {
+								clientContext: {
+									constructorArguments: {
+										hash,
+										insight,
+										is_wpcom: isWpcom,
+										device_strategy: device,
+										locale,
+									},
+								},
+							},
+						},
+					],
+				},
+			},
 		}
 	);
 
+	const parts: A2APart[] = response?.result?.status?.message?.parts ?? [];
+	const textPart = parts.find( ( part ) => part.type === 'text' );
+
 	return {
-		messages: response.messages?.[ 0 ]?.content ?? '',
-		chatId: response.chat_id,
+		messages: textPart?.text ?? '',
+		// A2A returns a session UUID instead of a numeric chat id; it is logged as
+		// chat_id on the rating Tracks events.
+		chatId: response?.result?.sessionId ?? '',
 	};
 }

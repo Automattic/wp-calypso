@@ -5,7 +5,6 @@ import {
 } from '@automattic/sites';
 import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
-import { defer } from 'lodash';
 import React, { useState, useEffect } from 'react';
 import ConfirmModal from 'calypso/blocks/importer/components/confirm-modal';
 import DocumentHead from 'calypso/components/data/document-head';
@@ -98,7 +97,7 @@ const SitePickerStep: Step< {
 				setShowConfirmModal( false );
 			} }
 			onConfirm={ () => {
-				defer( () => destinationSite && selectSite( destinationSite ) );
+				setTimeout( () => destinationSite && selectSite( destinationSite ), 0 );
 			} }
 		>
 			<p>

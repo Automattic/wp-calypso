@@ -1,3 +1,4 @@
+import { camelCase } from '@automattic/js-utils';
 import {
 	tryToGuessPostalCodeFormat,
 	getCountryPostalCodeSupport,
@@ -7,7 +8,6 @@ import {
 import { Notice } from '@wordpress/components';
 import debugFactory from 'debug';
 import { localize, LocalizeProps } from 'i18n-calypso';
-import { camelCase } from 'lodash';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import QueryDomainCountries from 'calypso/components/data/query-countries/domains';

@@ -1,8 +1,8 @@
 import { Button, Gridicon, SegmentedControl } from '@automattic/components';
+import { pickBy } from '@automattic/js-utils';
 import { Icon, published } from '@wordpress/icons';
 import clsx from 'clsx';
 import { translate } from 'i18n-calypso';
-import { get, size, delay, pickBy } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component, createRef } from 'react';
 import ConversationFollowButton from 'calypso/blocks/conversation-follow-button';
@@ -209,9 +209,9 @@ class PostCommentList extends Component {
 	scrollWhenDOMReady = () => {
 		if ( this.props.startingCommentId && ! this.hasScrolledToComment ) {
 			if ( this.commentIsOnDOM( this.props.startingCommentId ) ) {
-				delay( () => this.scrollToComment(), 50 );
+				setTimeout( () => this.scrollToComment(), 50 );
 			}
-			delay( this.scrollWhenDOMReady, 100 );
+			setTimeout( this.scrollWhenDOMReady, 100 );
 		}
 	};
 
@@ -303,8 +303,8 @@ class PostCommentList extends Component {
 	};
 
 	setActiveReplyComment = ( commentId ) => {
-		const siteId = get( this.props, 'post.site_ID' );
-		const postId = get( this.props, 'post.ID' );
+		const siteId = this.props?.post?.site_ID;
+		const postId = this.props?.post?.ID;
 
 		if ( ! siteId || ! postId ) {
 			return;
@@ -440,9 +440,7 @@ class PostCommentList extends Component {
 		// we always count prevSum, children sum, and +1 for the current processed comment
 		return commentIds.reduce(
 			( prevSum, commentId ) =>
-				prevSum +
-				this.getCommentsCount( get( this.props.commentsTree, [ commentId, 'children' ] ) ) +
-				1,
+				prevSum + this.getCommentsCount( this.props.commentsTree?.[ commentId ]?.children ) + 1,
 			0
 		);
 	};
@@ -589,7 +587,7 @@ class PostCommentList extends Component {
 		// orphans (parent deleted/unapproved), that comment will become unreachable but still counted.
 		const showViewMoreComments =
 			! this.props.expandableView &&
-			( size( commentsTree.children ) > amountOfCommentsToTake ||
+			( commentsTree.children.length > amountOfCommentsToTake ||
 				haveEarlierCommentsToFetch ||
 				haveLaterCommentsToFetch ) &&
 			displayedCommentsCount > 0;

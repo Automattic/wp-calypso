@@ -11,7 +11,7 @@ import {
 	PLAN_BLOGGER_2_YEARS,
 	PLAN_PERSONAL_2_YEARS,
 } from '@automattic/calypso-products';
-import { filter, map, pick, sortBy } from 'lodash';
+import { pick, sortBy } from '@automattic/js-utils';
 import isA8CForAgencies from 'calypso/lib/a8c-for-agencies/is-a8c-for-agencies';
 import { decodeEntities, parseHtml } from 'calypso/lib/formatting';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
@@ -151,7 +151,7 @@ export function extractScreenshots( screenshotsHtml ) {
 	if ( ! list ) {
 		return null;
 	}
-	let screenshots = map( list, function ( li ) {
+	let screenshots = Array.from( list ).map( function ( li ) {
 		const img = li.querySelectorAll( 'img' );
 		const captionP = li.querySelectorAll( 'p' );
 
@@ -271,7 +271,7 @@ export function normalizePluginsList( pluginsList ) {
 	if ( ! pluginsList ) {
 		return [];
 	}
-	return map( pluginsList, ( pluginData ) => normalizePluginData( pluginData ) );
+	return Object.values( pluginsList ).map( ( pluginData ) => normalizePluginData( pluginData ) );
 }
 
 /**
@@ -282,7 +282,7 @@ export function normalizePluginsList( pluginsList ) {
  * @returns {Array} Array of filtered logs that match the criteria
  */
 export function filterNotices( logs, siteId, pluginId ) {
-	return filter( logs, filterNoticesBy.bind( this, siteId, pluginId ) );
+	return ( logs ?? [] ).filter( filterNoticesBy.bind( this, siteId, pluginId ) );
 }
 
 /**

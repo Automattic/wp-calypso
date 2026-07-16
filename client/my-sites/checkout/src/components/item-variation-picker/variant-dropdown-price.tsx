@@ -8,10 +8,13 @@ import {
 	fromVariantPriceData,
 	getPlanPriceForDuration,
 } from '@automattic/plans-grid-next';
+import { useShoppingCart } from '@automattic/shopping-cart';
 import { useMobileBreakpoint } from '@automattic/viewport-react';
+import { LoadingCopy } from '@automattic/wpcom-checkout';
 import { useTranslate } from 'i18n-calypso';
 import { FunctionComponent } from 'react';
 import { preventWidows } from 'calypso/lib/formatting';
+import useCartKey from '../../../use-cart-key';
 import {
 	Discount,
 	DoNotPayThis,
@@ -44,6 +47,9 @@ export const ItemVariantDropDownPrice: FunctionComponent< {
 	product: ResponseCartProduct;
 } > = ( { variant, compareTo, product } ) => {
 	const isMobile = useMobileBreakpoint();
+	const cartKey = useCartKey();
+	const { couponStatus } = useShoppingCart( cartKey );
+	const isApplyingCoupon = couponStatus === 'pending';
 	const compareToInfo = compareTo ? fromVariantPriceData( compareTo ) : null;
 	const variantInfo = fromVariantPriceData( variant );
 	const compareToPriceForVariantTerm = compareToInfo
@@ -206,21 +212,27 @@ export const ItemVariantDropDownPrice: FunctionComponent< {
 				{ hasDiscount && isMobile && <DiscountPercentage percent={ discountPercentage } /> }
 			</Label>
 			<PriceTextContainer>
-				{ hasDiscount && ! isMobile && canDisplayDiscountPercentage && (
-					<DiscountPercentage percent={ discountPercentage } />
-				) }
-				{ hasDiscount && ! isIntroductoryOffer && (
-					<DoNotPayThis>{ formattedCompareToPriceForVariantTerm }</DoNotPayThis>
-				) }
+				{ isApplyingCoupon ? (
+					<LoadingCopy width="80px" height="16px" noMargin />
+				) : (
+					<>
+						{ hasDiscount && ! isMobile && canDisplayDiscountPercentage && (
+							<DiscountPercentage percent={ discountPercentage } />
+						) }
+						{ hasDiscount && ! isIntroductoryOffer && (
+							<DoNotPayThis>{ formattedCompareToPriceForVariantTerm }</DoNotPayThis>
+						) }
 
-				<Price aria-hidden={ isIntroductoryOffer }>{ formattedCurrentPrice }</Price>
-				<IntroPricing>
-					{ ! isMultiYearDomain && ! isA4ACheckout && (
-						<IntroPricingText>
-							{ isIntroductoryOffer && translatedIntroOfferDetails() }
-						</IntroPricingText>
-					) }
-				</IntroPricing>
+						<Price aria-hidden={ isIntroductoryOffer }>{ formattedCurrentPrice }</Price>
+						<IntroPricing>
+							{ ! isMultiYearDomain && ! isA4ACheckout && (
+								<IntroPricingText>
+									{ isIntroductoryOffer && translatedIntroOfferDetails() }
+								</IntroPricingText>
+							) }
+						</IntroPricing>
+					</>
+				) }
 			</PriceTextContainer>
 		</Variant>
 	);

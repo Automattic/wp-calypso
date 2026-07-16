@@ -1,4 +1,3 @@
-import { delay } from 'lodash';
 import { AUTOMATED_TRANSFER_STATUS_REQUEST } from 'calypso/state/action-types';
 import {
 	fetchAutomatedTransferStatus,
@@ -28,7 +27,7 @@ export const receiveStatus =
 
 		dispatch( setAutomatedTransferStatus( siteId, status, pluginId ) );
 		if ( status !== transferStates.ERROR && status !== transferStates.COMPLETE ) {
-			delay( dispatch, 3000, fetchAutomatedTransferStatus( siteId ) );
+			setTimeout( dispatch, 3000, fetchAutomatedTransferStatus( siteId ) );
 		}
 
 		if ( status === transferStates.COMPLETE ) {

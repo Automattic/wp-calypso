@@ -1,5 +1,5 @@
+import { uniqBy } from '@automattic/js-utils';
 import { localize } from 'i18n-calypso';
-import { map, get, last, uniqBy, size, filter, compact } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { isAncestor } from 'calypso/blocks/comments/utils';
@@ -27,13 +27,13 @@ class ConversationCaterpillarComponent extends Component {
 	getExpandableComments = () => {
 		const { comments, commentsToShow, parentCommentId, commentsTree } = this.props;
 		const isRoot = ! parentCommentId;
-		const parentComment = get( commentsTree, [ parentCommentId, 'data' ] );
+		const parentComment = commentsTree?.[ parentCommentId ]?.data;
 
 		const childComments = isRoot
 			? comments
-			: filter( comments, ( child ) => isAncestor( parentComment, child, commentsTree ) );
+			: comments.filter( ( child ) => isAncestor( parentComment, child, commentsTree ) );
 
-		const commentsToExpand = filter( childComments, ( comment ) => ! commentsToShow[ comment.ID ] );
+		const commentsToExpand = childComments.filter( ( comment ) => ! commentsToShow[ comment.ID ] );
 
 		return commentsToExpand;
 	};
@@ -46,14 +46,14 @@ class ConversationCaterpillarComponent extends Component {
 		this.props.expandComments( {
 			siteId: blogId,
 			postId,
-			commentIds: map( commentsToExpand, 'ID' ),
+			commentIds: commentsToExpand.map( ( c ) => c?.ID ),
 			displayType: POST_COMMENT_DISPLAY_TYPES.excerpt,
 		} );
 		// for each of those comments, expand the comment's parent to singleLine
 		this.props.expandComments( {
 			siteId: blogId,
 			postId,
-			commentIds: compact( map( commentsToExpand, ( c ) => get( c, 'parent.ID', null ) ) ),
+			commentIds: commentsToExpand.map( ( c ) => c?.parent?.ID ?? null ).filter( Boolean ),
 			displayType: POST_COMMENT_DISPLAY_TYPES.excerpt,
 		} );
 		recordAction( 'comment_caterpillar_click' );
@@ -69,15 +69,18 @@ class ConversationCaterpillarComponent extends Component {
 		const allExpandableComments = this.getExpandableComments();
 		const expandableComments = allExpandableComments.slice( -1 * NUMBER_TO_EXPAND );
 		const isRoot = ! parentCommentId;
-		const numberUnfetchedComments = this.props.commentCount - size( comments );
+		const numberUnfetchedComments = this.props.commentCount - comments.length;
 		const commentCount = isRoot
-			? numberUnfetchedComments + size( allExpandableComments )
-			: size( allExpandableComments );
+			? numberUnfetchedComments + allExpandableComments.length
+			: allExpandableComments.length;
 
 		// Only display each author once
-		const uniqueAuthors = uniqBy( map( expandableComments, 'author' ), 'avatar_URL' );
-		const uniqueAuthorsCount = size( uniqueAuthors );
-		const lastAuthorName = get( last( uniqueAuthors ), 'name' );
+		const uniqueAuthors = uniqBy(
+			expandableComments.map( ( c ) => c?.author ),
+			'avatar_URL'
+		);
+		const uniqueAuthorsCount = uniqueAuthors.length;
+		const lastAuthorName = uniqueAuthors.at( -1 )?.name;
 
 		return (
 			<div className="conversation-caterpillar">

@@ -46,6 +46,7 @@ import {
 } from '@automattic/calypso-products';
 import { getTld } from '@automattic/domain-search';
 import { isDomainForGravatarFlow, isHundredYearDomainFlow } from '@automattic/onboarding';
+import { parseNextDomainCondition } from '@automattic/shopping-cart';
 import { isWpComProductRenewal as isRenewal } from '@automattic/wpcom-checkout';
 import { domainProductSlugs } from 'calypso/lib/domains/constants';
 import type { WithCamelCaseSlug, WithSnakeCaseSlug } from '@automattic/calypso-products';
@@ -708,8 +709,9 @@ export function isNextDomainFree( cart?: ResponseCart, domain = '' ): boolean {
 		return false;
 	}
 
-	if ( cart.next_domain_condition === 'blog' ) {
-		if ( getTld( domain ) !== 'blog' ) {
+	if ( cart.next_domain_condition ) {
+		const eligibleTlds = parseNextDomainCondition( cart.next_domain_condition );
+		if ( ! eligibleTlds.includes( getTld( domain ) ) ) {
 			return false;
 		}
 	}

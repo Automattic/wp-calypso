@@ -35,8 +35,8 @@ interface Nav2026MobileMenuProps {
 	__: Translate;
 	variant: 'default' | 'minimal';
 	mobilePlatform: 'ios' | 'android' | null;
-	mobileFooterRef: React.RefObject< HTMLDivElement >;
-	closeMobileMenu: ( reason?: string ) => void;
+	mobileFooterRef: React.RefObject< HTMLDivElement | null >;
+	closeMobileMenu: ( reason: string ) => void;
 	setCurrentDropdown: ( name: string | null ) => void;
 }
 
@@ -197,10 +197,22 @@ export function Nav2026MobileMenu( {
 												>
 													<ClickableItem
 														titleValue=""
-														content={ item.label }
+														content={
+															item.badge ? (
+																<>
+																	{ item.label }
+																	<span className="x-menu-mobile-dropdown-badge-new">
+																		{ item.badge }
+																	</span>
+																</>
+															) : (
+																item.label
+															)
+														}
 														urlValue={ item.url }
 														type="menu"
 														typeClassName="x-menu-mobile-dropdown-link x-link"
+														trackingText={ item.label }
 														target={ item.target }
 														tabIndex={ isActive ? mobileMenuTabIndex : -1 }
 													/>

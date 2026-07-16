@@ -19,7 +19,7 @@ This package exports the **AM provider contract** — a set of functions the Age
 | `toolProvider`            | Surfaces Jetpack AI's client-side abilities to AM         |
 | `contextProvider`         | Sends Gutenberg editor state to the orchestrator          |
 | `getChatComponent`        | Maps `type` strings → React components for show-component |
-| `useCheckpoint`           | Post-title snapshots for AM's native Undo action          |
+| `useCheckpoint`           | Post title/excerpt snapshots for AM's native Undo action  |
 | `getEmptyViewSuggestions` | Static suggestions shown before conversation starts       |
 | `useSuggestions`          | Block-aware dynamic suggestions during conversation       |
 
@@ -97,7 +97,7 @@ Changes here affect AI response quality. The orchestrator uses `selectedBlockCli
 
 ## Checkpoint / Undo
 
-`useCheckpoint` exposes a minimal subset of AM's `UseCheckpointReturn` interface — only `setCheckpoint` / `hasCheckpoint` / `restoreCheckpoint` are implemented; the Big Sky page/navigation stubs are no-ops. Snapshots are stored in a module-level `titleSnapshots` map keyed by checkpoint id (the tool call id), so the sync `handleShowComponent` callback and the async React restore path share state.
+`useCheckpoint` exposes a minimal subset of AM's `UseCheckpointReturn` interface — only `setCheckpoint` / `hasCheckpoint` / `restoreCheckpoint` are implemented; the Big Sky page/navigation stubs are no-ops. Snapshots capture only the fields the triggering picker writes (title by default, excerpt for the excerpt picker) and are stored in a module-level `postSnapshots` map keyed by checkpoint id (the tool call id), so the sync `handleShowComponent` callback and the async React restore path share state — and restoring one picker's checkpoint never clobbers another field's later edits.
 
 ## Suggestions
 
@@ -115,7 +115,7 @@ The block editor may run inside an iframe (`editor-canvas`). `findBlockElement` 
 ## Conventions
 
 - **`any` types**: Used at WordPress API boundaries (`wp.data`, `wp.abilities`) where no upstream types exist. This is intentional — don't add `@ts-ignore` or overly specific types for untyped APIs.
-- **`@wordpress/i18n`**: All user-facing strings use `__()` with `'jetpack'` text domain.
+- **`@wordpress/i18n`**: All user-facing strings use `__()` with the `__i18n_text_domain__` text domain placeholder, which the Agents Manager webpack `DefinePlugin` replaces with `'default'` at build time. Do not hardcode a literal domain like `'jetpack'`.
 - **`@wordpress/components`**: Use for standard UI (Button, etc.).
 - **Styling**: Component styles in `.scss` files alongside the component.
 - **Tests must be TypeScript**: `.test.ts` / `.test.tsx`.

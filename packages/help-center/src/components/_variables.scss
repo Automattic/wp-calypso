@@ -11,7 +11,13 @@ $font-title-small: 1.25em;
 $root-font-size: 1em;
 
 $head-foot-height: 56px;
-$help-center-z-index: 500000;
+// Shared overlay-panel stacking, mirrored in Agents Manager
+// (packages/agents-manager/src/styles/variables.scss). A focused panel must
+// always beat an unfocused one, so they share one base + focused offset.
+$overlay-panel-z-index-base: 999990;
+$overlay-panel-z-index-focused: 999995;
+$help-center-z-index: $overlay-panel-z-index-base;
+$help-center-z-index-focused: $overlay-panel-z-index-focused;
 $help-center-blue: #3858e9;
 $help-center-notice-background: #FDF7E9;
 $help-center-notice-color: #644B1C;

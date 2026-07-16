@@ -2,7 +2,6 @@
  * @jest-environment jsdom
  */
 
-import { startsWith } from 'lodash';
 import {
 	getLanguageFilePathUrl,
 	getLanguageFileUrl,
@@ -39,7 +38,7 @@ describe( 'getLanguageFileUrl()', () => {
 			hasMockedWindow = true;
 		}
 
-		expect( startsWith( getLanguageFileUrl( 'ja' ), '//' ) ).toBe( true );
+		expect( getLanguageFileUrl( 'ja' ).startsWith( '//' ) ).toBe( true );
 
 		if ( hasMockedWindow ) {
 			global.window = null;

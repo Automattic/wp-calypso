@@ -12,26 +12,20 @@
  */
 
 import { getAgentManager, UIMessage } from '@automattic/agenttic-client';
+import { getAgentsManagerInlineData } from './get-agents-manager-inline-data';
 import { isReaderChatAgent } from './is-reader-chat-agent';
 import { useReaderFollowupSuggestions } from './reader-followup-hook';
-import type { ImageUploadHook } from '../hooks/use-image-upload';
-import type { ToolProvider, ContextProvider, Suggestion, BigSkyMessage } from '../types';
+import type {
+	ToolProvider,
+	ContextProvider,
+	ClientContextType,
+	ContextEntry,
+	Suggestion,
+	BigSkyMessage,
+} from '../types';
 import type { UseAgentChatReturn } from '@automattic/agenttic-client';
 import type { MarkdownComponents, MarkdownExtensions } from '@automattic/agenttic-ui';
-
-/**
- * Check if the unified experience flag is set via agentsManagerData.
- *
- * This is used on wp-admin environments (Atomic, Garden, Simple sites) where
- * the flag is injected server-side by Jetpack's Agents Manager.
- * @returns The useUnifiedExperience value, or undefined if not available.
- */
-export function getUseUnifiedExperienceFromInlineData(): boolean | undefined {
-	if ( typeof agentsManagerData !== 'undefined' ) {
-		return agentsManagerData?.useUnifiedExperience;
-	}
-	return undefined;
-}
+import type { ReactNode } from 'react';
 
 /**
  * Hook that resumes the conversation after a full page navigation
@@ -76,6 +70,8 @@ export type UseSuggestionsHook = (
 	options?: { suggestionsVisible?: boolean }
 ) => {
 	suggestions: Suggestion[];
+	/** Whether contextual suggestions replace, rather than extend, the empty-view suggestions. */
+	replaceEmptyViewSuggestions?: boolean;
 } | void;
 
 export type SiteBuildUtils = {
@@ -124,12 +120,12 @@ export type UseCheckpointReturn = {
 /** Hook that returns checkpoint utilities for the current editor session. */
 export type UseCheckpointHook = () => UseCheckpointReturn;
 
-export type { ImageUploadHook };
-
 /** Optional flags providers can declare to opt into AM chat-dock features. */
 export interface ProviderCapabilities {
 	/** Adds the "Split screen sidebar" chat-header menu item when true. */
 	supportsSplitScreen?: boolean;
+	/** Adds Agenttic's built-in regenerate action to agent messages when true. */
+	supportsRegenerateAction?: boolean;
 }
 
 /**
@@ -146,13 +142,29 @@ export function mergeCapabilitiesInto( merged: ProviderCapabilities, capabilitie
 	if ( caps.supportsSplitScreen === true ) {
 		merged.supportsSplitScreen = true;
 	}
+	if ( caps.supportsRegenerateAction === true ) {
+		merged.supportsRegenerateAction = true;
+	}
 }
 
 export interface LoadedProviders {
+	/** Optional stable provider identifier exported by a provider module. */
+	providerId?: string;
+	/** Stable IDs for the provider modules that were successfully loaded. */
+	providerIds?: string[];
 	toolProvider?: ToolProvider;
 	contextProvider?: ContextProvider;
 	/** Function to get empty view suggestions. Called when component is ready. */
 	getEmptyViewSuggestions?: () => Suggestion[];
+	/**
+	 * Opt out of the built-in empty-view default suggestions ("Getting started
+	 * with WordPress" etc.) for this provider's surfaces. When any loaded
+	 * provider sets this to `true`, `useEmptyViewSuggestions` returns `[]`
+	 * instead of the defaults whenever it would otherwise fall back to them.
+	 * Provider-specific `getEmptyViewSuggestions` still wins when it returns
+	 * non-empty filtered suggestions.
+	 */
+	suppressEmptyViewDefaults?: boolean;
 	markdownComponents?: MarkdownComponents;
 	markdownExtensions?: MarkdownExtensions;
 	useNavigationContinuation?: NavigationContinuationHook;
@@ -160,10 +172,22 @@ export interface LoadedProviders {
 	useSuggestions?: UseSuggestionsHook;
 	getChatComponent?: GetChatComponent;
 	siteBuildUtils?: SiteBuildUtils;
-	useImageUpload?: ImageUploadHook;
 	useCheckpoint?: UseCheckpointHook;
+	/**
+	 * Streamed task-update callback, forwarded to useAgentChat's `onTaskUpdate`.
+	 * Lets a provider react to streamed tool-argument deltas as they arrive — e.g.
+	 * paint streamed page-design block markup into the editor. First-write-wins
+	 * across providers (a singleton: the delta stream must be processed once, not
+	 * fanned out to every provider).
+	 */
+	onTaskUpdate?: ( update: unknown ) => void | Promise< void >;
 	capabilities?: ProviderCapabilities;
 }
+
+type LoadedProviderModule = {
+	module: LoadedProviders;
+	providerId?: string;
+};
 
 export function mergeUseSuggestionsHooks(
 	hooks: UseSuggestionsHook[]
@@ -179,8 +203,16 @@ export function mergeUseSuggestionsHooks(
 	return ( maxSuggestions?: number, options?: { suggestionsVisible?: boolean } ) => {
 		const combined: Suggestion[] = [];
 		const seenIds = new Set< string >();
-		for ( const hook of hooks ) {
-			const suggestions = hook( maxSuggestions, options )?.suggestions ?? [];
+		const results = hooks.map( ( hook ) => hook( maxSuggestions, options ) );
+		const replaceEmptyViewSuggestions = results.some(
+			( result ) => result?.replaceEmptyViewSuggestions === true
+		);
+
+		for ( const result of results ) {
+			if ( ! result || ( replaceEmptyViewSuggestions && ! result.replaceEmptyViewSuggestions ) ) {
+				continue;
+			}
+			const suggestions = result.suggestions ?? [];
 			for ( const s of suggestions ) {
 				if ( ! seenIds.has( s.id ) ) {
 					seenIds.add( s.id );
@@ -188,8 +220,211 @@ export function mergeUseSuggestionsHooks(
 				}
 			}
 		}
-		return { suggestions: combined };
+		return {
+			suggestions: combined,
+			...( replaceEmptyViewSuggestions && { replaceEmptyViewSuggestions: true } ),
+		};
 	};
+}
+
+function isRecord( value: unknown ): value is Record< string, unknown > {
+	return typeof value === 'object' && value !== null;
+}
+
+function getValidProviderId( providerId: unknown ): string | undefined {
+	if ( typeof providerId !== 'string' ) {
+		return undefined;
+	}
+
+	const trimmedProviderId = providerId.trim();
+	return trimmedProviderId ? trimmedProviderId : undefined;
+}
+
+function getProviderEntryId( providerEntry: string | LoadedProviders ): string | undefined {
+	if ( ! isRecord( providerEntry ) ) {
+		return undefined;
+	}
+
+	return getValidProviderId( providerEntry.providerId );
+}
+
+function addProviderId( providerIds: string[], providerId?: string ): void {
+	if ( ! providerId || providerIds.includes( providerId ) ) {
+		return;
+	}
+
+	providerIds.push( providerId );
+}
+
+function mergeContextEntries(
+	firstEntries: ContextEntry[] | undefined,
+	nextEntries: ContextEntry[] | undefined
+): ContextEntry[] | undefined {
+	const entries = [ ...( firstEntries || [] ) ];
+	const seenIds = new Set( entries.map( ( entry ) => entry.id ) );
+
+	for ( const entry of nextEntries || [] ) {
+		if ( seenIds.has( entry.id ) ) {
+			continue;
+		}
+		seenIds.add( entry.id );
+		entries.push( entry );
+	}
+
+	return entries.length ? entries : undefined;
+}
+
+function getConstructorArguments(
+	context: ClientContextType
+): Record< string, unknown > | undefined {
+	const constructorArguments = context.constructorArguments;
+	return isRecord( constructorArguments ) ? constructorArguments : undefined;
+}
+
+function mergeClientContexts( contexts: ClientContextType[] ): ClientContextType {
+	const [ firstContext, ...remainingContexts ] = contexts;
+	let mergedContext = { ...firstContext };
+
+	for ( const context of remainingContexts ) {
+		const contextEntries = mergeContextEntries(
+			mergedContext.contextEntries,
+			context.contextEntries
+		);
+		const constructorArguments = {
+			...( getConstructorArguments( context ) || {} ),
+			...( getConstructorArguments( mergedContext ) || {} ),
+		};
+
+		mergedContext = {
+			...context,
+			...mergedContext,
+			...( contextEntries && { contextEntries } ),
+			...( Object.keys( constructorArguments ).length > 0 && { constructorArguments } ),
+		};
+	}
+
+	return mergedContext;
+}
+
+function getFallbackClientContext(): ClientContextType {
+	const location =
+		typeof window !== 'undefined' ? window.location : { href: '', pathname: '', search: '' };
+
+	return {
+		url: location.href,
+		pathname: location.pathname,
+		search: location.search,
+		environment: 'wp-admin',
+	};
+}
+
+export function mergeContextProviders(
+	contextProviders: ContextProvider[]
+): ContextProvider | undefined {
+	if ( contextProviders.length === 0 ) {
+		return undefined;
+	}
+
+	if ( contextProviders.length === 1 ) {
+		return contextProviders[ 0 ];
+	}
+
+	return {
+		getClientContext: () => {
+			const contexts: ClientContextType[] = [];
+
+			for ( const contextProvider of contextProviders ) {
+				try {
+					contexts.push( contextProvider.getClientContext() );
+				} catch ( error ) {
+					// eslint-disable-next-line no-console
+					console.warn( '[AgentsManager] Failed to load context from provider:', error );
+				}
+			}
+
+			return contexts.length ? mergeClientContexts( contexts ) : getFallbackClientContext();
+		},
+	};
+}
+
+function isPlainMarkdownFallback( value: unknown, componentName: string ): boolean {
+	return isRecord( value ) && value.type === componentName;
+}
+
+function composeMarkdownCodeComponents( components: unknown[] ): unknown {
+	const callableComponents = components.filter(
+		( component ): component is ( props: Record< string, unknown > ) => ReactNode =>
+			typeof component === 'function'
+	);
+
+	if ( callableComponents.length !== components.length ) {
+		return components[ 0 ];
+	}
+
+	return ( props: Record< string, unknown > ) => {
+		let firstFallback: ReactNode | undefined;
+
+		for ( const component of callableComponents ) {
+			const result = component( props );
+			if ( ! isPlainMarkdownFallback( result, 'code' ) ) {
+				return result;
+			}
+
+			if ( firstFallback === undefined ) {
+				firstFallback = result;
+			}
+		}
+
+		return firstFallback ?? null;
+	};
+}
+
+export function mergeMarkdownComponentsFromProviders(
+	componentGroups: MarkdownComponents[]
+): MarkdownComponents | undefined {
+	if ( componentGroups.length === 0 ) {
+		return undefined;
+	}
+
+	if ( componentGroups.length === 1 ) {
+		return componentGroups[ 0 ];
+	}
+
+	const componentsByName = new Map< string, unknown[] >();
+	for ( const components of componentGroups ) {
+		for ( const [ name, component ] of Object.entries( components ) ) {
+			const existing = componentsByName.get( name ) || [];
+			existing.push( component );
+			componentsByName.set( name, existing );
+		}
+	}
+
+	const mergedComponents: Record< string, unknown > = {};
+	for ( const [ name, components ] of componentsByName ) {
+		mergedComponents[ name ] =
+			name === 'code' && components.length > 1
+				? composeMarkdownCodeComponents( components )
+				: components[ 0 ];
+	}
+
+	return mergedComponents as MarkdownComponents;
+}
+
+export function mergeMarkdownExtensionsFromProviders(
+	extensionGroups: MarkdownExtensions[]
+): MarkdownExtensions | undefined {
+	if ( extensionGroups.length === 0 ) {
+		return undefined;
+	}
+
+	if ( extensionGroups.length === 1 ) {
+		return extensionGroups[ 0 ];
+	}
+
+	return extensionGroups.reduce< MarkdownExtensions >(
+		( merged, extensions ) => ( { ...extensions, ...merged } ),
+		{}
+	);
 }
 
 /**
@@ -206,19 +441,14 @@ export function mergeUseSuggestionsHooks(
  * @returns Promise resolving to merged providers or empty object if none found.
  */
 export async function loadExternalProviders(): Promise< LoadedProviders > {
-	const agentProviders =
-		typeof agentsManagerData !== 'undefined' ? agentsManagerData?.agentProviders || [] : [];
+	const rawAgentProviders = getAgentsManagerInlineData()?.agentProviders;
+	const agentProviders = Array.isArray( rawAgentProviders ) ? rawAgentProviders : [];
 
 	// Only the public reader-chat entry registers the follow-up chip globals
 	// (`window.__jetpackReaderFollowupChips` / `reader-chat-followups-updated`).
 	// Register the bridge for every reader-chat agent variant that uses the
 	// public reader-chat entry.
-	const registerReaderFollowups =
-		typeof window !== 'undefined' &&
-		isReaderChatAgent(
-			( window as unknown as { agentsManagerData?: { agentId?: string } } ).agentsManagerData
-				?.agentId
-		);
+	const registerReaderFollowups = isReaderChatAgent( getAgentsManagerInlineData()?.agentId );
 
 	if ( registerReaderFollowups ) {
 		// Reader Chat runs on the public frontend and should not inherit editor providers
@@ -231,53 +461,65 @@ export async function loadExternalProviders(): Promise< LoadedProviders > {
 	}
 
 	let mergedToolProvider: ToolProvider | undefined;
-	let mergedContextProvider: ContextProvider | undefined;
 	let mergedGetEmptyViewSuggestions: ( () => Suggestion[] ) | undefined;
-	let mergedMarkdownComponents: MarkdownComponents | undefined;
-	let mergedMarkdownExtensions: MarkdownExtensions | undefined;
 	let mergedNavigationContinuation: NavigationContinuationHook | undefined;
 	let mergedAbilitiesSetup: AbilitiesSetupHook | undefined;
 	let mergedGetChatComponent: GetChatComponent | undefined;
 	let mergedSiteBuildUtils: SiteBuildUtils | undefined;
-	let mergedImageUpload: ImageUploadHook | undefined;
 	let mergedUseCheckpoint: UseCheckpointHook | undefined;
+	let mergedOnTaskUpdate: LoadedProviders[ 'onTaskUpdate' ] | undefined;
 	// OR-merged across all providers.
 	const mergedCapabilities: ProviderCapabilities = {};
+	let mergedSuppressEmptyViewDefaults = false;
 
 	// Collect exports that need to be merged across all providers.
 	const allToolProviders: ToolProvider[] = [];
+	const allContextProviders: ContextProvider[] = [];
+	const allMarkdownComponents: MarkdownComponents[] = [];
+	const allMarkdownExtensions: MarkdownExtensions[] = [];
 	const allGetChatComponents: GetChatComponent[] = [];
 	const allAbilitiesSetups: AbilitiesSetupHook[] = [];
 	const allUseSuggestions: UseSuggestionsHook[] = [];
 	const allGetEmptyViewSuggestions: ( () => Suggestion[] )[] = [];
+	const allProviderIds: string[] = [];
 
 	// Load all providers in parallel to avoid serializing network/module fetches.
 	// Results are processed in registration order to preserve first-write-wins semantics.
-	const loadedModules = await Promise.all(
+	const loadedModules = ( await Promise.all(
 		agentProviders.map( async ( providerEntry ) => {
+			// Already-loaded provider object: use it directly and read its own ID.
 			if ( typeof providerEntry === 'object' && providerEntry !== null ) {
-				return providerEntry;
+				return {
+					module: providerEntry as LoadedProviders,
+					providerId: getProviderEntryId( providerEntry ),
+				};
 			}
 
 			try {
 				// Dynamic import of registered script module
 				// The webpackIgnore comment tells webpack not to bundle this - it's loaded at runtime
-				const module = await import( /* webpackIgnore: true */ providerEntry );
+				const module = ( await import(
+					/* webpackIgnore: true */ providerEntry
+				) ) as LoadedProviders;
 				// eslint-disable-next-line no-console
 				console.log( `[AgentsManager] Loaded provider "${ providerEntry }"` );
-				return module;
+				// The provider module is the source of truth for its own stable ID.
+				return { module, providerId: getProviderEntryId( module ) };
 			} catch ( error ) {
 				// eslint-disable-next-line no-console
 				console.warn( `[AgentsManager] Failed to load provider "${ providerEntry }":`, error );
 				return null;
 			}
 		} )
-	);
+	) ) as ( LoadedProviderModule | null )[];
 
-	for ( const module of loadedModules ) {
-		if ( ! module ) {
+	for ( const loadedModule of loadedModules ) {
+		if ( ! loadedModule ) {
 			continue;
 		}
+
+		const { module, providerId } = loadedModule;
+		addProviderId( allProviderIds, providerId );
 
 		// These exports are merged across all providers.
 		if ( module.toolProvider ) {
@@ -295,86 +537,97 @@ export async function loadExternalProviders(): Promise< LoadedProviders > {
 		if ( module.getEmptyViewSuggestions ) {
 			allGetEmptyViewSuggestions.push( module.getEmptyViewSuggestions );
 		}
+		if ( module.contextProvider ) {
+			allContextProviders.push( module.contextProvider );
+		}
+		if ( module.markdownComponents ) {
+			allMarkdownComponents.push( module.markdownComponents );
+		}
+		if ( module.markdownExtensions ) {
+			allMarkdownExtensions.push( module.markdownExtensions );
+		}
 
 		// First-write-wins for singleton exports.
-		if ( module.contextProvider && ! mergedContextProvider ) {
-			mergedContextProvider = module.contextProvider;
-		}
-		if ( module.markdownComponents && ! mergedMarkdownComponents ) {
-			mergedMarkdownComponents = module.markdownComponents;
-		}
-		if ( module.markdownExtensions && ! mergedMarkdownExtensions ) {
-			mergedMarkdownExtensions = module.markdownExtensions;
-		}
 		if ( module.useNavigationContinuation && ! mergedNavigationContinuation ) {
 			mergedNavigationContinuation = module.useNavigationContinuation;
 		}
 		if ( module.siteBuildUtils && ! mergedSiteBuildUtils ) {
 			mergedSiteBuildUtils = module.siteBuildUtils;
 		}
-		if ( module.useImageUpload && ! mergedImageUpload ) {
-			mergedImageUpload = module.useImageUpload;
-		}
 		if ( module.useCheckpoint && ! mergedUseCheckpoint ) {
 			mergedUseCheckpoint = module.useCheckpoint;
 		}
+		if ( module.onTaskUpdate && ! mergedOnTaskUpdate ) {
+			mergedOnTaskUpdate = module.onTaskUpdate;
+		}
 
 		mergeCapabilitiesInto( mergedCapabilities, module.capabilities );
+
+		// Strict `=== true` because `module` arrives untyped from runtime
+		// imports; a stray `'false'` string would otherwise opt in.
+		if ( module.suppressEmptyViewDefaults === true ) {
+			mergedSuppressEmptyViewDefaults = true;
+		}
 	}
 
+	const mergedContextProvider = mergeContextProviders( allContextProviders );
+	const mergedMarkdownComponents = mergeMarkdownComponentsFromProviders( allMarkdownComponents );
+	const mergedMarkdownExtensions = mergeMarkdownExtensionsFromProviders( allMarkdownExtensions );
+
 	// Merge toolProviders: first-write-wins by ability name, matching the
-	// resolution order of every other merged provider export (contextProvider,
-	// getChatComponent, useSuggestions, etc). Providers are processed in the
-	// order they were registered; earlier providers win on ability-name
-	// collisions.
+	// resolution order of colliding provider exports. Providers are processed
+	// in the order they were registered; earlier providers win on collisions.
 	if ( allToolProviders.length === 1 ) {
 		mergedToolProvider = allToolProviders[ 0 ];
 	} else if ( allToolProviders.length > 1 ) {
-		// Fetch all abilities once and build a name→provider map so that
-		// executeAbility can look up the owning provider in O(1) instead of
-		// re-querying getAbilities() on every call.
-		const allAbilityResults = await Promise.all(
-			allToolProviders.map( async ( tp ) => {
-				try {
-					return await tp.getAbilities();
-				} catch ( error ) {
-					// eslint-disable-next-line no-console
-					console.warn( '[AgentsManager] Failed to load abilities from provider:', error );
-					return [];
-				}
-			} )
-		);
-		const abilityProviderMap = new Map< string, ToolProvider >();
-		const seenAbilities = new Map< string, unknown >();
-		// Normalize ability names: AM converts `/` → `__` and `-` → `_`
-		// when routing tool calls. Index both raw and normalized forms
-		// so executeAbility matches regardless of which form the caller uses.
+		// Normalize ability names: AM converts `/` → `__` and `-` → `_` when
+		// routing tool calls, so we match on either the raw or normalized form.
 		const normalize = ( name: string ) => name.replace( /\//g, '__' ).replace( /-/g, '_' );
-		for ( let i = 0; i < allToolProviders.length; i++ ) {
-			for ( const ability of allAbilityResults[ i ] ) {
-				if ( ! abilityProviderMap.has( ability.name ) ) {
-					abilityProviderMap.set( ability.name, allToolProviders[ i ] );
-					const normalized = normalize( ability.name );
-					if ( normalized !== ability.name ) {
-						abilityProviderMap.set( normalized, allToolProviders[ i ] );
+
+		// Query providers live on each call rather than snapshotting at load.
+		// agenttic-client calls getAbilities()/executeAbility() fresh every turn,
+		// so abilities registered later stay visible. Big Sky, for one, registers
+		// its editor abilities (big-sky/apply-block-edits and friends) from a
+		// React effect that runs after loadExternalProviders(); a captured list
+		// would freeze those out and the agent's calls would silently not dispatch.
+		const collectAbilityResults = async () =>
+			Promise.all(
+				allToolProviders.map( async ( tp ) => {
+					try {
+						return await tp.getAbilities();
+					} catch ( error ) {
+						// eslint-disable-next-line no-console
+						console.warn( '[AgentsManager] Failed to load abilities from provider:', error );
+						return [];
 					}
-					seenAbilities.set( ability.name, ability );
-				}
-			}
-		}
-		const cachedAbilities = [ ...seenAbilities.values() ] as Awaited<
-			ReturnType< ToolProvider[ 'getAbilities' ] >
-		>;
+				} )
+			);
 
 		mergedToolProvider = {
-			getAbilities: async () => cachedAbilities,
+			getAbilities: async () => {
+				const results = await collectAbilityResults();
+				// Dedupe by ability name; earlier providers win on collisions.
+				const seenAbilities = new Map< string, ( typeof results )[ number ][ number ] >();
+				for ( const abilities of results ) {
+					for ( const ability of abilities ) {
+						if ( ! seenAbilities.has( ability.name ) ) {
+							seenAbilities.set( ability.name, ability );
+						}
+					}
+				}
+				return [ ...seenAbilities.values() ];
+			},
 			executeAbility: async ( name: string, args: unknown ) => {
-				// Use the pre-built map — avoids re-querying getAbilities() on
-				// every call and surfaces real errors from the owning provider
-				// instead of silently swallowing them.
-				const provider = abilityProviderMap.get( name );
-				if ( provider ) {
-					return provider.executeAbility( name, args );
+				// Resolve the owning provider live, in registration order, so the
+				// earliest provider that currently exposes the ability handles it.
+				const results = await collectAbilityResults();
+				for ( let i = 0; i < allToolProviders.length; i++ ) {
+					const owns = results[ i ].some(
+						( ability ) => ability.name === name || normalize( ability.name ) === name
+					);
+					if ( owns ) {
+						return allToolProviders[ i ].executeAbility( name, args );
+					}
 				}
 				throw new Error( `No provider handled ability: ${ name }` );
 			},
@@ -435,14 +688,16 @@ export async function loadExternalProviders(): Promise< LoadedProviders > {
 		getEmptyViewSuggestions: mergedGetEmptyViewSuggestions,
 		markdownComponents: mergedMarkdownComponents,
 		markdownExtensions: mergedMarkdownExtensions,
+		providerIds: allProviderIds.length ? allProviderIds : undefined,
 		useNavigationContinuation: mergedNavigationContinuation,
 		useAbilitiesSetup: mergedAbilitiesSetup,
+		onTaskUpdate: mergedOnTaskUpdate,
 		useSuggestions: mergedUseSuggestions,
 		getChatComponent: mergedGetChatComponent,
 		siteBuildUtils: mergedSiteBuildUtils,
-		useImageUpload: mergedImageUpload,
 		useCheckpoint: mergedUseCheckpoint,
 		// Match peer fields: undefined when no provider opted in.
 		capabilities: Object.keys( mergedCapabilities ).length ? mergedCapabilities : undefined,
+		suppressEmptyViewDefaults: mergedSuppressEmptyViewDefaults ? true : undefined,
 	};
 }

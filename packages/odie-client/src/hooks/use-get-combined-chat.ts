@@ -1,11 +1,14 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { HelpCenterSelect } from '@automattic/data-stores';
-import { HELP_CENTER_STORE } from '@automattic/help-center/src/stores';
 import { useIsMutating } from '@tanstack/react-query';
 import { useSelect } from '@wordpress/data';
 import { useState, useEffect, useRef, useCallback } from '@wordpress/element';
 import { getMessageUniqueIdentifier } from '../components/message/utils/get-message-unique-identifier';
-import { getOdieTransferMessages, getZendeskChatStartedMetaMessage } from '../constants';
+import {
+	HELP_CENTER_STORE,
+	getOdieTransferMessages,
+	getZendeskChatStartedMetaMessage,
+} from '../constants';
 import { emptyChat } from '../context';
 import { useGetZendeskConversation, useManageSupportInteraction, useOdieChat } from '../data';
 import { useCurrentSupportInteraction } from '../data/use-current-support-interaction';
@@ -60,8 +63,8 @@ export const useGetCombinedChat = (
 			connectionStatus: store.getZendeskConnectionStatus(),
 		};
 	}, [] );
-	const previousUuidRef = useRef< string | undefined >();
-	const previousOdieIdRef = useRef< string | null | undefined >();
+	const previousUuidRef = useRef< string | undefined >( undefined );
+	const previousOdieIdRef = useRef< string | null | undefined >( undefined );
 	const wasChatLoadedRef = useRef( isChatLoaded );
 	const [ mainChatState, setMainChatState ] = useState< Chat >( emptyChat );
 	const conversationId = getConversationIdFromInteraction( currentSupportInteraction );

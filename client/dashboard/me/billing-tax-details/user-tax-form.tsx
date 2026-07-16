@@ -6,10 +6,10 @@ import {
 	userTaxDetailsMutation,
 } from '@automattic/api-queries';
 import { localizeUrl } from '@automattic/i18n-utils';
-import { CALYPSO_CONTACT } from '@automattic/urls';
 import { useSuspenseQuery, useMutation } from '@tanstack/react-query';
 import {
 	Button,
+	ExternalLink,
 	__experimentalHStack as HStack,
 	__experimentalInputControl as InputControl,
 	__experimentalInputControlPrefixWrapper as InputControlPrefixWrapper,
@@ -26,8 +26,11 @@ import { createContext, useContext, useState, useCallback, useMemo } from 'react
 import { useAnalytics } from '../../app/analytics';
 import { useHelpCenter } from '../../app/help-center';
 import InlineSupportLink from '../../components/inline-support-link';
+import { wpcomLink } from '../../utils/link';
 import { getTaxName, getDataFormCountryCodes, stripCountryCodeFromVatId } from '../../utils/tax';
 import type { UserTaxDetails, UserTaxFormData } from '@automattic/api-core';
+
+const SUPPORT_CONTACT_URL = wpcomLink( '/support/contact' );
 
 export type UserTaxFormControlProps = DataFormControlProps< UserTaxFormData >;
 
@@ -97,10 +100,9 @@ function VatIdControl( { data, field, onChange }: UserTaxFormControlProps ) {
 			),
 			{
 				contactSupportLink: (
-					<a
-						target="_blank"
-						href={ CALYPSO_CONTACT }
-						rel="noreferrer"
+					<ExternalLink
+						href={ SUPPORT_CONTACT_URL }
+						children={ null }
 						onClick={ () => {
 							recordTracksEvent( 'calypso_dashboard_vat_details_support_click' );
 						} }
@@ -312,7 +314,7 @@ export default function UserTaxForm() {
 						{
 							contactSupportLink: (
 								<a
-									href="/help"
+									href={ wpcomLink( '/help' ) }
 									title={ contactSupportLinkTitle }
 									onClick={ handleOpenCenterChat }
 								/>

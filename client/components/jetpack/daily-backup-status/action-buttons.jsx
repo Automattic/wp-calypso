@@ -92,10 +92,19 @@ const CloneButton = ( { disabled, rewindId, primary, onClickClone } ) => {
 	);
 };
 
+/**
+ * @param {Object} props
+ * @param {string | null} [props.rewindId]
+ * @param {boolean} [props.disabled]
+ * @param {boolean} [props.isMultiSite]
+ * @param {boolean} [props.hasWarnings]
+ * @param {string[]} [props.availableActions]
+ * @param {( rewindId: string | null ) => void} [props.onClickClone]
+ */
 const ActionButtons = ( {
-	rewindId,
+	rewindId = null,
 	disabled = false,
-	isMultiSite,
+	isMultiSite = false,
 	hasWarnings = false,
 	availableActions = [ 'rewind', 'download' ],
 	onClickClone = () => {},

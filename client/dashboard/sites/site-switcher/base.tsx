@@ -1,4 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
+import { __ } from '@wordpress/i18n';
 import { useState } from 'react';
 import { useAnalytics } from '../../app/analytics';
 import { useAppContext } from '../../app/context';
@@ -64,6 +65,7 @@ export const SiteSwitcherBase = (
 			items={ sites }
 			value={ site }
 			searchableFields={ searchableFields }
+			headerTitle={ __( 'Switch site' ) }
 			getItemUrl={ ( site ) => {
 				if ( canManageSite( site ) ) {
 					return buildCurrentRouteLink( { params: { siteSlug: site.slug } } );

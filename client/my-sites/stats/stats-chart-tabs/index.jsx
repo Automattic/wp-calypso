@@ -1,12 +1,13 @@
 import config from '@automattic/calypso-config';
+import { memoize } from '@automattic/js-utils';
 import { withMobileBreakpoint } from '@automattic/viewport-react';
 import clsx from 'clsx';
 import { localize, translate } from 'i18n-calypso';
-import { flowRight, memoize } from 'lodash';
 import moment from 'moment';
 import PropTypes from 'prop-types';
 import { Component, useRef } from 'react';
 import { connect } from 'react-redux';
+import { compose } from 'redux';
 import AsyncLoad from 'calypso/components/async-load';
 import Chart from 'calypso/components/chart';
 import { DEFAULT_HEARTBEAT } from 'calypso/components/data/query-site-stats/constants';
@@ -414,8 +415,8 @@ const withCssColors = ( WrappedComponent ) => {
 	const WithCssColorsComponent = ( props ) => {
 		const chartContainerRef = useRef( null );
 
-		const primaryColor = useCssVariable( '--color-primary-light', chartContainerRef.current );
-		const secondaryColor = useCssVariable( '--color-primary-dark', chartContainerRef.current );
+		const primaryColor = useCssVariable( '--color-accent-light', chartContainerRef.current );
+		const secondaryColor = useCssVariable( '--color-accent-dark', chartContainerRef.current );
 
 		return (
 			<WrappedComponent
@@ -434,7 +435,7 @@ const withCssColors = ( WrappedComponent ) => {
 	return WithCssColorsComponent;
 };
 
-export default flowRight(
+export default compose(
 	localize,
 	connectComponent
 )( withMobileBreakpoint( withPerformanceTrackerStop( withCssColors( StatModuleChartTabs ) ) ) );

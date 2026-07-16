@@ -22,7 +22,10 @@ test.describe(
 		let testUserThemeSignup: NewTestUserDetails;
 		let newSiteDetails: NewSiteResponse;
 
-		test( 'One: As a new WordPress.com user I can sign up for a new Premium plan site using a theme from the Logged Out Home Page', async ( {
+		// Skipped for now; can be updated once we're sure all onboarding tests will go
+		// through the MSD flow. See https://github.com/Automattic/wp-calypso/pull/112586
+		// and https://github.com/Automattic/wp-calypso/pull/112587.
+		test.skip( 'One: As a new WordPress.com user I can sign up for a new Premium plan site using a theme from the Logged Out Home Page', async ( {
 			flowLOHPThemeSignup,
 			helperData,
 			secrets,

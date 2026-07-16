@@ -1,5 +1,5 @@
 import { isMagnificentLocale, addLocaleToPath } from '@automattic/i18n-utils';
-import { mapValues } from 'lodash';
+import { mapValues } from '@automattic/js-utils';
 import titlecase from 'to-title-case';
 import { THEME_TIERS } from 'calypso/components/theme-tier/constants';
 import { gaRecordEvent } from 'calypso/lib/analytics/ga';

@@ -1,5 +1,5 @@
+import { omit, isEmpty } from '@automattic/js-utils';
 import debugFactory from 'debug';
-import { isEmpty, omit } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component, createElement } from 'react';
 import { TourContext } from '../context';

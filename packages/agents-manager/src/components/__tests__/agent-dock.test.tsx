@@ -9,8 +9,11 @@ import type { AgentsManagerContextType } from '../../contexts';
 const mockAbortCurrentRequest = jest.fn();
 const mockSetIsOpen = jest.fn();
 const mockSetIsDocked = jest.fn();
+const mockSetIsMinimized = jest.fn();
 const mockUseAgentLayoutManager = jest.fn();
 const mockResumeActiveChat = jest.fn();
+const mockCloseSidebar = jest.fn();
+let mockLayoutIsDocked = false;
 let mockContext: Partial< AgentsManagerContextType > = {};
 let mockAgentsManagerState: {
 	isOpen?: boolean;
@@ -34,7 +37,7 @@ jest.mock( '@wordpress/data', () => ( {
 	useDispatch: () => ( {
 		setIsOpen: mockSetIsOpen,
 		setIsDocked: mockSetIsDocked,
-		setIsMinimized: jest.fn(),
+		setIsMinimized: mockSetIsMinimized,
 	} ),
 	useSelect: () => mockAgentsManagerState,
 } ) );
@@ -49,6 +52,10 @@ jest.mock( '@wordpress/icons', () => ( {
 jest.mock( '../../contexts', () => ( {
 	useAgentsManagerContext: () => mockContext,
 } ) );
+jest.mock( '../../utils/tracks', () => ( {
+	recordBigSkyTracksEvent: jest.fn(),
+	recordAgentsManagerTracksEvent: jest.fn(),
+} ) );
 jest.mock( '../../hooks/use-admin-bar-integration', () => ( {
 	__esModule: true,
 	default: () => mockHasAdminBar,
@@ -56,12 +63,12 @@ jest.mock( '../../hooks/use-admin-bar-integration', () => ( {
 jest.mock( '../../hooks/use-agent-layout-manager', () => ( options: unknown ) => {
 	mockUseAgentLayoutManager( options );
 	return {
-		isDocked: false,
-		canDock: false,
+		isDocked: mockLayoutIsDocked,
+		canDock: mockLayoutIsDocked,
 		dock: jest.fn(),
 		undock: jest.fn(),
 		openSidebar: jest.fn(),
-		closeSidebar: jest.fn(),
+		closeSidebar: mockCloseSidebar,
 		createAgentPortal: ( children: React.ReactNode ) => children,
 	};
 } );
@@ -76,31 +83,45 @@ jest.mock( '../../utils/persist-last-activity', () => ( {
 	persistLastActivity: jest.fn(),
 } ) );
 jest.mock( '../agent-dock/style.scss', () => ( {} ) );
+jest.mock( '../editor-ai-chat-button', () => ( {
+	__esModule: true,
+	default: () => null,
+} ) );
+jest.mock( '../editor-help-center-button', () => ( {
+	__esModule: true,
+	default: () => null,
+} ) );
 jest.mock( '../orchestrator-chat', () => ( {
 	__esModule: true,
 	default: ( {
 		chatHeaderOptions,
 		isOpen,
 		onExpand,
+		onClose,
 	}: {
 		chatHeaderOptions: { title: string }[];
 		isOpen: boolean;
 		onExpand: () => void;
+		onClose: () => void;
 	} ) => (
 		<div data-testid="orchestrator-chat" data-chat-open={ String( isOpen ) }>
 			{ chatHeaderOptions.map( ( option ) => option.title ).join( '|' ) }
 			<button onClick={ onExpand }>Expand chat</button>
+			<button onClick={ onClose }>Close chat</button>
 		</div>
 	),
 } ) );
+
 jest.mock( '../zendesk-chat', () => ( {
 	__esModule: true,
-	default: ( { onExpand }: { onExpand: () => void } ) => (
-		<div data-testid="zendesk-chat">
-			Zendesk chat
-			<button onClick={ onExpand }>Expand Zendesk</button>
-		</div>
-	),
+	default: ( { onExpand }: { onExpand: () => void } ) => {
+		return (
+			<div data-testid="zendesk-chat">
+				Zendesk chat
+				<button onClick={ onExpand }>Expand Zendesk</button>
+			</div>
+		);
+	},
 } ) );
 jest.mock( '../agent-history', () => ( {
 	__esModule: true,
@@ -126,6 +147,9 @@ jest.mock( '../support-guides', () => ( {
 } ) );
 
 import AgentDock from '../agent-dock';
+import { recordBigSkyTracksEvent } from '../../utils/tracks';
+
+const mockRecordBigSkyTracksEvent = recordBigSkyTracksEvent as jest.Mock;
 
 function LocationProbe() {
 	const { pathname } = useLocation();
@@ -151,6 +175,7 @@ function useWpAdminAgent() {
 		},
 		getActiveSessionId: () => 'session-123',
 		resumeActiveChat: mockResumeActiveChat,
+		zendeskConversationTags: [],
 	} as unknown as Partial< AgentsManagerContextType >;
 }
 
@@ -159,6 +184,7 @@ describe( 'AgentDock', () => {
 		jest.clearAllMocks();
 		mockHasAdminBar = false;
 		mockShouldUseUnifiedAgent = false;
+		mockLayoutIsDocked = false;
 		mockAgentsManagerState = { isOpen: true, isDocked: false };
 		mockContext = {
 			siteKey: 'site-1',
@@ -168,6 +194,7 @@ describe( 'AgentDock', () => {
 			},
 			getActiveSessionId: () => 'session-123',
 			resumeActiveChat: mockResumeActiveChat,
+			zendeskConversationTags: [],
 		} as unknown as Partial< AgentsManagerContextType >;
 	} );
 
@@ -219,7 +246,7 @@ describe( 'AgentDock', () => {
 		expect( screen.getByTestId( 'orchestrator-chat' ).dataset.chatOpen ).toBe( 'true' );
 	} );
 
-	it( 'resumes the active session when expanding from the minimized state', () => {
+	it( 'keeps the chat history view when expanding from the minimized state', () => {
 		useWpAdminAgent();
 		mockHasAdminBar = true;
 		mockAgentsManagerState = { isOpen: true, isDocked: false, isMinimized: true };
@@ -227,7 +254,9 @@ describe( 'AgentDock', () => {
 		renderAgentDock( '/history' );
 		fireEvent.click( screen.getByText( 'Expand history' ) );
 
-		expect( mockResumeActiveChat ).toHaveBeenCalled();
+		// Expanding restores the last view instead of jumping back to the chat.
+		expect( mockResumeActiveChat ).not.toHaveBeenCalled();
+		expect( screen.getByTestId( 'location' ).textContent ).toBe( '/history' );
 	} );
 
 	it( 'keeps the current route when opening the docked sidebar', () => {
@@ -242,7 +271,7 @@ describe( 'AgentDock', () => {
 		expect( screen.getByTestId( 'location' ).textContent ).toBe( '/history' );
 	} );
 
-	it( 'resumes the active session when expanding from the support guides view', () => {
+	it( 'keeps the support guides view when expanding from the minimized state', () => {
 		useWpAdminAgent();
 		mockShouldUseUnifiedAgent = true;
 		mockHasAdminBar = true;
@@ -251,18 +280,51 @@ describe( 'AgentDock', () => {
 		renderAgentDock( '/support-guides' );
 		fireEvent.click( screen.getByText( 'Expand guides' ) );
 
-		expect( mockResumeActiveChat ).toHaveBeenCalled();
+		expect( mockResumeActiveChat ).not.toHaveBeenCalled();
+		expect( screen.getByTestId( 'location' ).textContent ).toBe( '/support-guides' );
 	} );
 
-	it( 'hides the support guides list without the WP admin bar trigger', () => {
-		// `mockHasAdminBar` stays false, so the list route is unavailable and
-		// unknown paths fall back to `/chat`.
+	it( 'keeps the support guides list without the WP admin bar trigger', () => {
+		// The route stays registered even without an entry button, so a
+		// mid-session entry-button change (Site Editor navigation) can't
+		// redirect a user off the list.
 		useWpAdminAgent();
+		mockShouldUseUnifiedAgent = true;
+
+		renderAgentDock( '/support-guides' );
+
+		expect( screen.getByTestId( 'support-guides' ) ).toBeInTheDocument();
+		expect( screen.getByTestId( 'location' ).textContent ).toBe( '/support-guides' );
+	} );
+
+	it( 'hides the support guides list without the unified agent', () => {
+		// Unknown paths fall back to `/chat`.
+		useWpAdminAgent();
+		mockHasAdminBar = true;
 
 		renderAgentDock( '/support-guides' );
 
 		expect( screen.queryByTestId( 'support-guides' ) ).toBeNull();
 		expect( screen.getByTestId( 'location' ).textContent ).toBe( '/chat' );
+	} );
+
+	it( 'clears the minimized flag when the entry button disappears mid-session', () => {
+		useWpAdminAgent();
+		mockHasAdminBar = true;
+		mockAgentsManagerState = { isOpen: true, isDocked: false, isMinimized: true };
+
+		const { rerender } = renderAgentDock();
+		expect( mockSetIsMinimized ).not.toHaveBeenCalled();
+
+		mockHasAdminBar = false;
+		rerender(
+			<MemoryRouter initialEntries={ [ '/chat' ] }>
+				<AgentDock />
+				<LocationProbe />
+			</MemoryRouter>
+		);
+
+		expect( mockSetIsMinimized ).toHaveBeenCalledWith( false );
 	} );
 
 	it( 'keeps the /post viewer available without the WP admin bar trigger', () => {
@@ -302,6 +364,33 @@ describe( 'AgentDock', () => {
 		expect( mockUseAgentLayoutManager ).toHaveBeenCalledWith(
 			expect.objectContaining( { defaultDocked: false } )
 		);
+	} );
+
+	it( 'fires only dock_back_button_click when closing while undocked', () => {
+		useWpAdminAgent();
+		mockLayoutIsDocked = false;
+
+		renderAgentDock();
+		fireEvent.click( screen.getByText( 'Close chat' ) );
+
+		// Undocked close collapses the floating panel and tracks the back button.
+		expect( mockRecordBigSkyTracksEvent ).toHaveBeenCalledWith( 'dock_back_button_click' );
+		expect( mockRecordBigSkyTracksEvent ).not.toHaveBeenCalledWith( 'sidebar_close_click' );
+		expect( mockCloseSidebar ).not.toHaveBeenCalled();
+		expect( mockSetIsOpen ).toHaveBeenCalledWith( false, true );
+	} );
+
+	it( 'collapses the sidebar without dock_back_button_click when closing while docked', () => {
+		useWpAdminAgent();
+		mockLayoutIsDocked = true;
+
+		renderAgentDock();
+		fireEvent.click( screen.getByText( 'Close chat' ) );
+
+		// Docked close goes through closeSidebar, which fires sidebar_close_click
+		// via onCloseSidebar — so dock_back_button_click must not fire here.
+		expect( mockCloseSidebar ).toHaveBeenCalledTimes( 1 );
+		expect( mockRecordBigSkyTracksEvent ).not.toHaveBeenCalledWith( 'dock_back_button_click' );
 	} );
 
 	it( 'opens regular agents and saves shared Agents Manager state', () => {

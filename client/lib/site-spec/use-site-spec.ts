@@ -35,7 +35,7 @@ function resolveContainer( target: string | HTMLElement ): HTMLElement | null {
 type UseSiteSpecOptions = {
 	container?: string | HTMLElement;
 	onMessage?: ( message: unknown ) => void;
-	onSpecConfirm?: ( specData: unknown ) => void;
+	onSpecConfirm?: ( specData: unknown ) => void | Promise< void >;
 	onError?: ( error: unknown ) => void;
 	siteSpecConfig?: SiteSpecConfig;
 };

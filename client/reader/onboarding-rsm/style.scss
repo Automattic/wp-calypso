@@ -5,14 +5,33 @@
 	margin-bottom: 24px;
 	padding: 20px 20px 5px 20px;
 
+	&__header {
+		display: flex;
+		align-items: center;
+	}
+
+	&__header h2 {
+		flex: 1;
+	}
+
+	&__header-actions {
+		display: flex;
+		flex-direction: row;
+		align-items: center;
+		gap: 20px;
+		flex-shrink: 0;
+	}
+
+	&__dismiss-button {
+		align-items: center;
+		display: flex;
+		padding: 0;
+		height: 24px;
+	}
+
 	h2 {
 		font-weight: 600;
 		clear: initial;
-	}
-
-	.circular__progress-bar {
-		float: right;
-		margin: 5px 5px 5px 10px;
 	}
 }
 

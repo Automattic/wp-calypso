@@ -40,7 +40,15 @@ import { useSelect, useDispatch } from '@wordpress/data';
 import { pencil } from '@wordpress/icons';
 import debugFactory from 'debug';
 import { useTranslate } from 'i18n-calypso';
-import { useCallback, useMemo, useState } from 'react';
+import {
+	useCallback,
+	useMemo,
+	useRef,
+	useState,
+	type JSX,
+	type PropsWithChildren,
+	type ReactNode,
+} from 'react';
 import { createPortal } from 'react-dom';
 import Loading from 'calypso/components/loading';
 import { OnboardingProgress } from 'calypso/landing/stepper/declarative-flow/internals/steps-repository/components/onboarding-progress';
@@ -125,7 +133,6 @@ import type {
 	ResponseCart,
 } from '@automattic/shopping-cart';
 import type { CountryListItem } from '@automattic/wpcom-checkout';
-import type { PropsWithChildren, ReactNode } from 'react';
 
 const debug = debugFactory( 'calypso:wp-checkout' );
 
@@ -494,8 +501,24 @@ export default function CheckoutMainContent( {
 
 	const checkoutActions = useDispatch( CHECKOUT_STORE );
 
-	const [ shouldShowContactDetailsValidationErrors, setShouldShowContactDetailsValidationErrors ] =
-		useState( true );
+	const [
+		shouldShowContactDetailsValidationErrors,
+		setShouldShowContactDetailsValidationErrorsState,
+	] = useState( true );
+	// Mirror the flag in a ref so the step-completion validation — which runs
+	// synchronously right after the contact-form autocomplete sets this to
+	// `false` — reads the current value instead of a stale render closure. Under
+	// React 19's update timing the state setter hasn't propagated to the
+	// `isCompleteCallback` closure yet, which would otherwise surface validation
+	// errors for cached details the user never entered.
+	// See `use-prefill-checkout-contact-form`.
+	const shouldShowContactDetailsValidationErrorsRef = useRef(
+		shouldShowContactDetailsValidationErrors
+	);
+	const setShouldShowContactDetailsValidationErrors = useCallback( ( value: boolean ) => {
+		shouldShowContactDetailsValidationErrorsRef.current = value;
+		setShouldShowContactDetailsValidationErrorsState( value );
+	}, [] );
 
 	// The "Summary" view is displayed in the sidebar at desktop (wide) widths
 	// and before the first step at mobile (smaller) widths. At smaller widths it
@@ -810,8 +833,13 @@ export default function CheckoutMainContent( {
 							stepId="contact-form"
 							onPageLoadError={ onPageLoadError }
 							isCompleteCallback={ async () => {
+								// Read from the ref: autocomplete suppresses errors by setting the
+								// flag to `false` immediately before invoking this callback, and the
+								// state update would not yet be visible in this closure.
+								const shouldDisplayValidationErrors =
+									shouldShowContactDetailsValidationErrorsRef.current;
 								// Touch the fields so they display validation errors
-								if ( shouldShowContactDetailsValidationErrors ) {
+								if ( shouldDisplayValidationErrors ) {
 									touchContactFields();
 								}
 								const validationResponse = await validateContactDetails(
@@ -823,7 +851,7 @@ export default function CheckoutMainContent( {
 									clearDomainContactErrorMessages,
 									reduxDispatch,
 									translate,
-									shouldShowContactDetailsValidationErrors
+									shouldDisplayValidationErrors
 								);
 								if ( validationResponse ) {
 									// When the contact details change, update the VAT details on the server.
@@ -837,10 +865,18 @@ export default function CheckoutMainContent( {
 										}
 									} catch ( error ) {
 										reduxDispatch( removeNotice( 'vat_info_notice' ) );
-										if ( shouldShowContactDetailsValidationErrors ) {
-											reduxDispatch(
-												errorNotice( ( error as Error ).message, { id: 'vat_info_notice' } )
-											);
+										if ( shouldDisplayValidationErrors ) {
+											const vatError = error as { error?: string; message: string };
+											// `invalid_vat` means the VAT ID could not be validated right now
+											// (service down/busy), so the shopper can still finish without one.
+											const vatErrorMessage =
+												vatError.error === 'invalid_vat'
+													? `${ vatError.message } ${ translate(
+															'You can uncheck “Add VAT details” to finish your purchase now without a VAT ID.',
+															{ textOnly: true }
+													  ) }`
+													: vatError.message;
+											reduxDispatch( errorNotice( vatErrorMessage, { id: 'vat_info_notice' } ) );
 										}
 										return false;
 									}

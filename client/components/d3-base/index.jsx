@@ -1,6 +1,6 @@
+import { isEmpty } from '@automattic/js-utils';
 import clsx from 'clsx';
 import { select as d3Select } from 'd3-selection';
-import { isEmpty } from 'lodash';
 import PropTypes from 'prop-types';
 import { createRef, Component } from 'react';
 

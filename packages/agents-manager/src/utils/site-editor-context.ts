@@ -11,6 +11,18 @@ export function isSiteEditorContext( environment?: string, currentRoute?: string
 	);
 }
 
+/**
+ * True on the Site Editor navigation view (`site-editor.php` without
+ * `?canvas=edit`) — the screen with the left nav menu, where the editor toolbar
+ * is hidden. False in the editing canvas and on all other pages.
+ */
+export function isSiteEditorNavigationView(): boolean {
+	return (
+		isSiteEditorContext() &&
+		new URLSearchParams( window.location.search ).get( 'canvas' ) !== 'edit'
+	);
+}
+
 export function getClientConstructorArguments(
 	environment?: string,
 	currentRoute?: string

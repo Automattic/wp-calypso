@@ -1,6 +1,7 @@
 import { formatCurrency } from '@automattic/number-formatters';
 import { Button } from '@wordpress/components';
-import { useTranslate } from 'i18n-calypso';
+import { createInterpolateElement } from '@wordpress/element';
+import { __ } from '@wordpress/i18n';
 import {
 	ConsolidatedStatsCard,
 	ConsolidatedStatsGroup,
@@ -10,7 +11,6 @@ import PayoutCards from '../../referrals/consolidated-view/payout-cards';
 import { useWooPaymentsContext } from '../context';
 
 const WooPaymentsConsolidatedViews = () => {
-	const translate = useTranslate();
 	const { showSupportGuide } = useHelpCenter();
 
 	const { woopaymentsData, isLoadingWooPaymentsData } = useWooPaymentsContext();
@@ -24,25 +24,24 @@ const WooPaymentsConsolidatedViews = () => {
 		<ConsolidatedStatsGroup className="consolidated-view">
 			<ConsolidatedStatsCard
 				value={ formatCurrency( totalCommission, 'USD' ) }
-				footerText={ translate( 'Total WooPayments commissions paid' ) }
-				popoverTitle={ translate( 'Total WooPayments commissions paid' ) }
-				popoverContent={ translate(
-					'The total amount of transactions processed through WooPayments across all your client sites. ' +
-						'{{br/}}{{br/}}{{a}}Learn more{{/a}}',
+				footerText={ __( 'Total WooPayments commissions paid' ) }
+				popoverTitle={ __( 'Total WooPayments commissions paid' ) }
+				popoverContent={ createInterpolateElement(
+					__(
+						'The total amount of transactions processed through WooPayments across all your client sites. <br/><br/><a>Learn more</a>'
+					),
 					{
-						components: {
-							a: (
-								<Button
-									variant="link"
-									onClick={ () =>
-										showSupportGuide(
-											'https://agencieshelp.automattic.com/knowledge-base/earn-revenue-share-when-clients-use-woopayments/'
-										)
-									}
-								/>
-							),
-							br: <br />,
-						},
+						br: <br />,
+						a: (
+							<Button
+								variant="link"
+								onClick={ () =>
+									showSupportGuide(
+										'https://agencieshelp.automattic.com/knowledge-base/earn-revenue-share-when-clients-use-woopayments/'
+									)
+								}
+							/>
+						),
 					}
 				) }
 				isLoading={ isLoadingWooPaymentsData }

@@ -205,6 +205,14 @@ export interface Purchase {
 	 */
 	is_past_expiry_date: boolean;
 
+	/**
+	 * Whole days until the subscription expires, rounded down. Uses a UTC midnight
+	 * basis, so it can go negative up to a day before `is_past_expiry_date`
+	 * (end-of-day basis) does, and can read up to a day off from the viewer's local
+	 * time zone. Null for purchases with no expiry time (one-time and perpetual).
+	 */
+	days_until_expiry: number | null;
+
 	iap_purchase_management_link: string | null;
 
 	/**
@@ -360,6 +368,16 @@ export interface Purchase {
 	refund_period_in_days: number;
 	regular_price_text: string;
 	regular_price_integer: number;
+
+	/**
+	 * The date this subscription will next attempt to auto-renew (ISO 8601).
+	 *
+	 * For active/auto-renewing subscriptions this is the next *renewal attempt*
+	 * date, NOT the expiry date: WordPress.com begins attempting renewals before
+	 * a subscription expires (e.g. non-monthly WordPress.com plans first attempt
+	 * ~30 days before `expiry_date`). For subscriptions that are not renewing
+	 * (expiring, manual-renew, etc.) it falls back to the expiry date.
+	 */
 	renew_date: string;
 
 	sale_amount?: number;
@@ -409,9 +427,38 @@ export interface Purchase {
 	 */
 	is_auto_renew_enabled: boolean;
 
+	/**
+	 * The ID of the stored payment method used for this subscription (the
+	 * `stored_details_id` of the underlying payment method).
+	 *
+	 * Only set when the payment method is a stored card; undefined otherwise.
+	 */
 	payment_card_id: number | string | undefined;
+
+	/**
+	 * The lowercased card type/brand of the stored card (eg: 'visa' or
+	 * 'mastercard').
+	 *
+	 * Only set when the payment method is a stored card; undefined otherwise.
+	 */
 	payment_card_type: string | undefined;
+
+	/**
+	 * The billing processor class name for the stored card, or undefined for
+	 * the default (updatable) case.
+	 *
+	 * Used to determine whether the card number can be updated. Cards processed
+	 * via CC & Paygate can be updated, so this stays undefined; EBANX cards
+	 * cannot, so this is set to 'WPCOM_Billing_Ebanx' for them.
+	 */
 	payment_card_processor: string | undefined;
+
+	/**
+	 * A human-readable display string for the stored card, currently its last 4
+	 * digits.
+	 *
+	 * Only set when the payment method is a stored card; undefined otherwise.
+	 */
 	payment_details: string | undefined;
 
 	/**
@@ -485,6 +532,19 @@ export interface Purchase {
 	 * number.
 	 */
 	cancellation_offer_notice_discount_percentage: number | null;
+
+	/**
+	 * True when a delayed downgrade has been scheduled for this subscription.
+	 * The plan will be downgraded at the next renewal rather than immediately.
+	 * See `delayed_downgrade_to_product_slug` for the target plan.
+	 */
+	is_delayed_downgrade_pending: boolean;
+
+	/**
+	 * The product slug of the plan this subscription will downgrade to at
+	 * renewal, or null when no delayed downgrade is scheduled.
+	 */
+	delayed_downgrade_to_product_slug: string | null;
 }
 
 export type RawPurchase = Purchase & {

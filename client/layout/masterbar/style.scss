@@ -274,7 +274,19 @@ body.is-mobile-app-view {
 			line-height: 2;
 
 			&.masterbar__item-subitems-item--odd {
-				background: var(--color-sidebar-submenu-background, var(--color-masterbar-item-hover-background));
+				background: var(
+					--color-masterbar-submenu-group-background,
+					var(--color-sidebar-submenu-background, var(--color-masterbar-item-hover-background))
+				);
+			}
+
+			&:not(.masterbar__item-subitems-item--odd) + .masterbar__item-subitems-item--odd {
+				margin-top: 6px;
+				padding-top: 6px;
+			}
+
+			&.masterbar__item-subitems-item--odd:last-child {
+				padding-bottom: 6px;
 			}
 
 			a,
@@ -299,8 +311,11 @@ body.is-mobile-app-view {
 				}
 			}
 
-			&:hover {
+			&:not(.masterbar__item-subitems-item--odd):hover {
 				background: var(--color-global-masterbar-submenu-hover-background, var(--color-masterbar-item-hover-background));
+			}
+
+			&:hover {
 				a {
 					color: var(--color-masterbar-submenu-hover-text, var(--color-masterbar-highlight));
 				}
@@ -314,6 +329,10 @@ body.is-mobile-app-view {
 				padding: 8px 16px;
 			}
 		}
+	}
+
+	& + .masterbar__item-subitems:has(> .masterbar__item-subitems-item--odd:last-child) {
+		padding-bottom: 0;
 	}
 
 	.masterbar--is-checkout & {
@@ -387,7 +406,8 @@ body.is-mobile-app-view {
 
 	// The hover colors are supposed to be the same as those in wp-admin.
 	&:hover,
-	&.is-open {
+	&.is-open,
+	&:has(+ .masterbar__item-subitems:hover) {
 		svg path,
 		.gridicon {
 			fill: var(--color-masterbar-highlight);
@@ -431,23 +451,6 @@ body.is-mobile-app-view {
 
 	&.is-active {
 		background: var(--color-masterbar-item-active-background);
-	}
-
-	&:hover .masterbar__item-bubble {
-		border-color: var(--color-masterbar-item-hover-background);
-	}
-
-	&.has-unseen .masterbar__item-bubble {
-		display: block;
-		background: var(--color-masterbar-unread-dot-background);
-	}
-
-	&.is-active .masterbar__item-bubble {
-		display: none;
-	}
-
-	&.is-initial-load .masterbar__item-bubble {
-		animation: none;
 	}
 
 	&.masterbar__close-button {
@@ -690,6 +693,56 @@ body.is-mobile-app-view {
 .masterbar__item-subitems {
 	a {
 		text-decoration: none;
+	}
+}
+
+// In the global sidebar the submenu group background is white (matching the panel),
+// which suits the user menu but leaves the W-icon dropdown's second group (About
+// WordPress / Get Involved) looking like a stray gap. Give just that group a light
+// grey so it reads as a distinct section.
+.is-global-sidebar-visible .masterbar__item-my-sites + .masterbar__item-subitems {
+	--color-masterbar-submenu-group-background: #{$gray-100};
+}
+
+.masterbar__item-stats-sparkline {
+	padding: 0 10px;
+
+	.masterbar__item-content {
+		display: flex;
+		align-items: center;
+		height: 100%;
+	}
+
+	.wpcom-stats-sparkline {
+		width: auto;
+		height: auto;
+	}
+
+	.wpcom-stats-sparkline-bar {
+		fill: var(--color-masterbar-icon);
+	}
+
+	.wpcom-stats-sparkline-arrow {
+		fill: var(--color-masterbar-icon);
+	}
+
+	.wpcom-stats-sparkline-label {
+		fill: var(--color-masterbar-icon);
+	}
+
+	&:hover,
+	&:focus-visible {
+		.wpcom-stats-sparkline {
+			overflow: visible;
+		}
+
+		.wpcom-stats-sparkline-peak {
+			opacity: 1;
+		}
+	}
+
+	@media only screen and (max-width: 781px) {
+		display: none;
 	}
 }
 
@@ -965,14 +1018,14 @@ body.is-mobile-app-view {
 	min-width: 248px;
 	padding: 12px;
 
-	.masterbar__site-info-label {
-		margin-bottom: 4px;
-	}
-
 	.masterbar__info-badges {
 		display: flex;
+		flex: 1;
 		flex-wrap: wrap;
 		gap: 4px;
+		justify-content: flex-end;
+		margin-left: 16px;
+		min-width: 0;
 	}
 
 	// TODO: Remove this once the new Badge APIs are implemented (DS-203).
@@ -1149,7 +1202,7 @@ a.masterbar__quick-language-switcher {
 		}
 
 		.masterbar--is-wpcom & {
-			transform: translateY(1px);
+			transform: translateY(0.5px);
 			margin-left: 16px;
 		}
 
@@ -1169,54 +1222,14 @@ a.masterbar__quick-language-switcher {
 }
 
 .masterbar--is-checkout-redesign-v1 {
-	padding-inline-start: 1.5em;
+	// The checkout masterbar reuses StepContainerV2's Step.TopBar as its header
+	// (see client/layout/masterbar/checkout.tsx). Step.TopBar reads these custom
+	// properties for its spacing; they are normally provided by the
+	// .step-container-v2 root, which isn't an ancestor here, so define them.
+	--step-container-v2-top-bar-padding: 1rem;
+	--step-container-v2-top-bar-content-height: 24px;
 
-	.masterbar__secure-checkout {
-		gap: 0;
-	}
-
-	.masterbar__wp-circle-logo {
-		display: block;
-		fill: currentColor;
-	}
-
-	.masterbar__redesign-divider {
-		width: 1px;
-		height: 16px;
-		background-color: currentColor;
-		opacity: 0.3;
-		margin-inline: 12px;
-	}
-
-	.masterbar__back-button {
-		display: flex;
-		align-items: center;
-		gap: 2px;
-		background: none;
-		border: none;
-		cursor: pointer;
-		font-size: 0.875rem;
-		font-weight: 500;
-		color: inherit;
-		padding: 0;
-		line-height: 1;
-
-		svg {
-			fill: currentColor;
-		}
-	}
-
-	.masterbar__need-help-button {
-		margin-left: auto;
-		background: none;
-		border: none;
-		cursor: pointer;
-		font-size: 0.875rem;
-		font-weight: 400;
-		text-decoration: underline;
-		color: inherit;
-		padding: 0;
-	}
+	padding: 0;
 }
 
 .masterbar__item-help {

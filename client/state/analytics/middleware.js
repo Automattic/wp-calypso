@@ -4,7 +4,6 @@ import {
 } from 'calypso/lib/analytics/ad-tracking';
 import { gaRecordEvent, gaRecordPageView } from 'calypso/lib/analytics/ga';
 import { addHotJarScript } from 'calypso/lib/analytics/hotjar';
-import { maybeAddLogRocketScript } from 'calypso/lib/analytics/logrocket';
 import { bumpStat } from 'calypso/lib/analytics/mc';
 import { recordPageView } from 'calypso/lib/analytics/page-view';
 import { addSurvicate } from 'calypso/lib/analytics/survicate';
@@ -33,10 +32,6 @@ const pageViewServices = {
 const loadTrackingTool = ( trackingTool, store ) => {
 	if ( trackingTool === 'HotJar' ) {
 		addHotJarScript();
-	}
-
-	if ( trackingTool === 'LogRocket' ) {
-		maybeAddLogRocketScript();
 	}
 
 	if ( trackingTool === 'Survicate' ) {

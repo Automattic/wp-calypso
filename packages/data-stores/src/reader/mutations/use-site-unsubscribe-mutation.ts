@@ -1,5 +1,6 @@
 import {
 	getSiteSubscriptionsQueryKey,
+	readFeedQueryKey,
 	type SiteSubscriptionsInfiniteData,
 } from '@automattic/api-queries';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
@@ -12,6 +13,7 @@ type UnsubscribeParams = {
 	subscriptionId: number;
 	url?: string;
 	blog_id?: number | string;
+	feed_id?: number | string;
 	doNotInvalidateSiteSubscriptions?: boolean;
 	emailId?: string;
 	onSuccess?: () => void;
@@ -233,9 +235,15 @@ const useSiteUnsubscribeMutation = () => {
 				} );
 			}
 
+			if ( isValidId( params.feed_id ) ) {
+				queryClient.invalidateQueries( {
+					queryKey: readFeedQueryKey( params.feed_id ),
+				} );
+			}
+
 			queryClient.invalidateQueries( { queryKey: subscriptionsCountQueryKey } );
 			queryClient.invalidateQueries( {
-				queryKey: [ 'read', 'feed', 'search' ],
+				queryKey: [ 'read', 'feeds', 'search' ],
 			} );
 			queryClient.invalidateQueries( {
 				queryKey: buildSiteSubscriptionDetailsQueryKey( params.subscriptionId, isLoggedIn, userId ),

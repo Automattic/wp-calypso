@@ -6,9 +6,9 @@ import {
 	isDomainRegistration,
 } from '@automattic/calypso-products';
 import { Plans } from '@automattic/data-stores';
+import { shuffle } from '@automattic/js-utils';
 import { Button as GutenbergButton, Spinner } from '@wordpress/components';
 import { localize } from 'i18n-calypso';
-import { shuffle } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';

@@ -66,6 +66,7 @@ export function getPurchasesFieldDefinitions( {
 	getManagePurchaseUrlFor,
 	fieldIds,
 	transferredOwnershipPurchases = [],
+	visibleFields,
 }: {
 	translate: LocalizeProps[ 'translate' ];
 	moment: ReturnType< typeof useLocalizedMoment >;
@@ -74,6 +75,7 @@ export function getPurchasesFieldDefinitions( {
 	getManagePurchaseUrlFor: GetManagePurchaseUrlFor;
 	fieldIds?: string[];
 	transferredOwnershipPurchases?: Purchases.Purchase[];
+	visibleFields?: string[];
 } ): Fields< Purchases.Purchase > {
 	const getListTitle = ( item: Purchases.Purchase ) => {
 		if ( item.isDomainRegistration && item.meta ) {
@@ -213,11 +215,22 @@ export function getPurchasesFieldDefinitions( {
 				return item.siteName + ' ' + ( item.siteSlug || item.domain ) + ' ' + ( site?.URL ?? '' );
 			},
 			render: ( { item }: { item: Purchases.Purchase } ) => {
+				const site = sites.find( ( s ) => s.ID === item.siteId );
 				return (
 					<div className="purchase-item__information">
 						<div className="purchase-item__purchase-type">
 							<PurchaseItemRowProduct purchase={ item } translate={ translate } />
 						</div>
+						{ ! visibleFields?.includes( 'status' ) && (
+							<div className="purchase-item__status purchase-item__inline-status">
+								<PurchaseItemStatus
+									purchase={ item }
+									translate={ translate }
+									moment={ moment }
+									isDisconnectedSite={ ! site }
+								/>
+							</div>
+						) }
 					</div>
 				);
 			},

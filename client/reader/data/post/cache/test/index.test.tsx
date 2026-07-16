@@ -195,6 +195,59 @@ describe( 'reader post cache', () => {
 		} );
 	} );
 
+	it( 'keeps feed stream posts distinct when blog post IDs are zero', async () => {
+		const queryClient = makeQueryClient();
+		const feedId = 101852522;
+		const siteId = 162509141;
+		const posts = [
+			{
+				ID: 0,
+				site_ID: siteId,
+				feed_ID: feedId,
+				feed_item_ID: 6110855097,
+				global_ID: 'global-feed-item-1',
+				title: 'First TIME post',
+				is_external: false,
+			},
+			{
+				ID: 0,
+				site_ID: siteId,
+				feed_ID: feedId,
+				feed_item_ID: 6110855098,
+				global_ID: 'global-feed-item-2',
+				title: 'Second TIME post',
+				is_external: false,
+			},
+		];
+
+		upsertPostCache( queryClient, posts );
+
+		expect( getCachedPost( queryClient, { feedId, postId: 6110855097 } ) ).toMatchObject( {
+			title: 'First TIME post',
+			feed_item_ID: 6110855097,
+		} );
+		expect( getCachedPost( queryClient, { feedId, postId: 6110855098 } ) ).toMatchObject( {
+			title: 'Second TIME post',
+			feed_item_ID: 6110855098,
+		} );
+		expect( getCachedPost( queryClient, { blogId: siteId, postId: 0 } ) ).toBeNull();
+
+		const postKeys = [
+			{ feedId, postId: 6110855097 },
+			{ feedId, postId: 6110855098 },
+		];
+		const { result } = renderHook( () => useCachedPosts( postKeys ), {
+			wrapper: makeWrapper( queryClient ),
+		} );
+
+		await waitFor( () => {
+			expect( result.current ).toEqual( [
+				expect.objectContaining( { title: 'First TIME post' } ),
+				expect.objectContaining( { title: 'Second TIME post' } ),
+			] );
+		} );
+	} );
+
 	it( 'exposes dynamic cached post lists through useCachedPosts', async () => {
 		const queryClient = makeQueryClient();
 		const postKeys = [

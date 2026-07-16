@@ -1,4 +1,3 @@
-import { delay } from 'lodash';
 import wpcom from 'calypso/lib/wp';
 import { recordTracksEvent, withAnalytics } from 'calypso/state/analytics/actions';
 import { requestSite } from 'calypso/state/sites/actions';
@@ -217,11 +216,11 @@ export function pollThemeTransferStatus(
 						}
 
 						// poll again
-						return delay( pollStatus, interval, resolve, reject );
+						return setTimeout( pollStatus, interval, resolve, reject );
 					}
 					if ( status !== 'complete' ) {
 						dispatch( transferStatus( siteId, transferId, status, message, uploaded_theme_slug ) );
-						return delay( pollStatus, interval, resolve, reject );
+						return setTimeout( pollStatus, interval, resolve, reject );
 					}
 
 					tryThemeFetch( uploaded_theme_slug, resolve );

@@ -1,5 +1,4 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
-import { Popover } from '@automattic/components';
 import { updateLaunchpadSettings } from '@automattic/data-stores';
 import { useQueryClient } from '@tanstack/react-query';
 import {
@@ -12,7 +11,7 @@ import {
 } from '@wordpress/components';
 import { __, sprintf } from '@wordpress/i18n';
 import { copy, share, check } from '@wordpress/icons';
-import { useState, useRef, useMemo, useCallback } from 'react';
+import { useState, useMemo, useCallback } from 'react';
 import { SocialLogo } from 'social-logos';
 import type { Task } from '../../types';
 import type { SiteDetails } from '@automattic/data-stores';
@@ -127,7 +126,7 @@ const getShareData = ( site: SiteDetails | null ) => {
 	return {
 		title: siteSlug,
 		text: sprintf(
-			/* translators: siteSlug is the short form of the site URL with the https:// */
+			/* translators: %(siteSlug)s is the short form of the site URL with the https:// */
 			__( 'Please visit my site: %(siteSlug)s', 'launchpad' ),
 			{
 				siteSlug,
@@ -158,7 +157,6 @@ const ShareSiteModal = ( { setModalIsOpen, site, task }: ShareSiteModalProps ) =
 	);
 
 	const [ clipboardCopied, setClipboardCopied ] = useState( false );
-	const clipboardTextEl = useRef( null );
 	const copyHandler = () => {
 		navigator.clipboard.writeText( shareData.url );
 		setClipboardCopied( true );
@@ -204,20 +202,11 @@ const ShareSiteModal = ( { setModalIsOpen, site, task }: ShareSiteModalProps ) =
 		>
 			<VStack className="share-site-modal__modal-content" spacing={ 4 }>
 				<VStack className="share-site-modal__modal-actions" spacing={ 4 }>
-					<Popover
-						className="share-site-modal__popover"
-						isVisible={ clipboardCopied }
-						context={ clipboardTextEl.current }
-						position="top"
-					>
-						{ __( 'Copied to clipboard!', 'launchpad' ) }
-					</Popover>
 					<InputControl
 						className="share-site-modal__modal-input-container"
 						__next40pxDefaultSize
 						value={ shareData.title }
 						label={ __( 'Site URL', 'launchpad' ) }
-						ref={ clipboardTextEl }
 						readOnly
 						hideLabelFromVision
 						suffix={

@@ -1,4 +1,4 @@
-import { memoize, pick, shuffle, values } from 'lodash';
+import { memoize, pick, shuffle } from '@automattic/js-utils';
 import PropTypes from 'prop-types';
 import { useEffect, useState } from 'react';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
@@ -14,7 +14,7 @@ const shuffleAnswers = memoize(
 	},
 	( answers ) =>
 		answers
-			.map( ( answer ) => values( pick( answer, 'id', 'doNotShuffle' ) ).join( '_' ) )
+			.map( ( answer ) => Object.values( pick( answer, 'id', 'doNotShuffle' ) ).join( '_' ) )
 			.join( '-' )
 );
 

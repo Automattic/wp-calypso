@@ -1,7 +1,7 @@
 import { CompactCard, Count } from '@automattic/components';
+import { uniqBy } from '@automattic/js-utils';
 import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
-import { uniqBy } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
@@ -57,9 +57,7 @@ class PluginItem extends Component {
 	doing() {
 		const { translate, progress } = this.props;
 		const log = progress[ 0 ];
-		const uniqLogs = uniqBy( progress, function ( uniqLog ) {
-			return uniqLog.siteId;
-		} );
+		const uniqLogs = uniqBy( progress, 'siteId' );
 		const translationArgs = {
 			args: { count: uniqLogs.length },
 			count: uniqLogs.length,

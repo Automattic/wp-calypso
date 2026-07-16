@@ -53,9 +53,7 @@ const getIsVisible = () => {
 
 const isDesktop = config.isEnabled( 'desktop' );
 
-// Keep the legacy panel in the Electron desktop app for now; the redesign is
-// only enabled in the browser.
-const isRedesignEnabled = config.isEnabled( 'notifications/redesign' ) && ! isDesktop;
+const isRedesignEnabled = config.isEnabled( 'notifications/redesign' );
 
 let notificationAppModule;
 
@@ -240,8 +238,8 @@ export class Notifications extends Component {
 		],
 		VIEW_SETTINGS: [
 			() => {
-				this.props.checkToggle();
-				page( '/me/notifications' );
+				// Open in a new tab so the current notification state is preserved.
+				window.open( '/me/notifications', '_blank' );
 			},
 		],
 		EDIT_COMMENT: [

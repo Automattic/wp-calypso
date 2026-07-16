@@ -168,7 +168,7 @@ function BackupPaymentMethodNotice() {
 	const noticeText = createInterpolateElement(
 		__( 'If the renewal fails, a <link>backup payment method</link> may be used.' ),
 		{
-			link: <a href="/me/purchases/payment-methods" />,
+			link: <Link to="/me/billing/payment-methods" />,
 		}
 	);
 	return <BillingPurchaseInfoPopover>{ noticeText }</BillingPurchaseInfoPopover>;
@@ -238,11 +238,13 @@ export function getFields( {
 	paymentMethods,
 	transferredPurchases,
 	siteFilter,
+	visibleFields,
 }: {
 	sites: Site[];
 	paymentMethods: Array< StoredPaymentMethod >;
 	transferredPurchases: Array< Purchase >;
 	siteFilter?: number;
+	visibleFields?: string[];
 } ): Fields< Purchase > {
 	const backupPaymentMethods = paymentMethods.filter(
 		( paymentMethod ) => paymentMethod.is_backup === true
@@ -329,7 +331,16 @@ export function getFields( {
 			},
 			render: ( { item }: { item: Purchase } ) => {
 				const site = sites.find( ( site ) => site.ID === item.blog_id );
-				return <PurchaseProduct purchase={ item } site={ site } />;
+				return (
+					<>
+						<PurchaseProduct purchase={ item } site={ site } />
+						{ ! visibleFields?.includes( 'status' ) && (
+							<div className="billing-purchase__inline-status">
+								<PurchaseExpiryStatus purchase={ item } isSiteMissing={ ! site } />
+							</div>
+						) }
+					</>
+				);
 			},
 		},
 		{
@@ -451,7 +462,7 @@ export function getFields( {
 				// Allows sorting by card number or payment partner (eg: `type === 'paypal'`).
 				return item.expiry_status === 'expired'
 					? // Do not return card number for expired purchases because it
-					  // will not be displayed so it will look wierd if we sort
+					  // will not be displayed so it will look weird if we sort
 					  // expired purchases with active ones that have the same card.
 					  'expired'
 					: item.payment_details ?? item.payment_card_type ?? 'no-payment-method';

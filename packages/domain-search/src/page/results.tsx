@@ -11,11 +11,31 @@ import { SearchNotice } from '../components/search-notice';
 import { SearchResults } from '../components/search-results';
 import { SkipSuggestion } from '../components/skip-suggestion';
 import { UnavailableSearchResult } from '../components/unavailable-search-result';
+import { isFqdnQuery } from '../helpers';
 import { useIsCurrentMutation } from '../hooks/use-is-current-mutation';
 import { useRequestTracking } from '../hooks/use-request-tracking';
 import { useSuggestionsList } from '../hooks/use-suggestions-list';
+import { DOMAIN_BUNDLE_UNAVAILABLE_ERROR_CODE } from './constants';
 import { useDomainSearch } from './context';
 import type { BundleSuggestion } from '@automattic/api-core';
+
+const hasErrorCode = ( error: unknown, code: string ) =>
+	typeof error === 'object' &&
+	error !== null &&
+	'code' in error &&
+	( error as { code?: unknown } ).code === code;
+
+const isBundleUnavailableError = ( error: unknown ) =>
+	hasErrorCode( error, DOMAIN_BUNDLE_UNAVAILABLE_ERROR_CODE );
+
+type AddBundleToCartVariables = {
+	bundle: BundleSuggestion;
+	query: string;
+};
+
+type AddBundleToCartResult = {
+	wasAdded: boolean;
+};
 
 const StickyCompactBanner = () => {
 	const { __ } = useI18n();
@@ -66,8 +86,20 @@ export const ResultsPage = () => {
 		meta: {
 			mutationId,
 		},
-		mutationFn: async ( bundle: BundleSuggestion ) => {
-			await cart.onAddBundle?.( bundle );
+		mutationFn: async ( {
+			bundle,
+		}: AddBundleToCartVariables ): Promise< AddBundleToCartResult > => {
+			if ( ! cart.onAddBundle ) {
+				return { wasAdded: false };
+			}
+
+			await cart.onAddBundle( bundle );
+			return { wasAdded: true };
+		},
+		onSuccess: ( { wasAdded }, { bundle } ) => {
+			if ( wasAdded ) {
+				events.onBundleAddToCart( bundle );
+			}
 		},
 		networkMode: 'always',
 		retry: false,
@@ -81,14 +113,30 @@ export const ResultsPage = () => {
 		resetAddBundle();
 	}, [ query, resetAddBundle ] );
 
-	// The cart rejects with the server's first cart message (a CartActionError),
-	// which is already user-facing copy. Fall back when it's missing. Clicking
-	// "Get bundle" again re-fires the mutation, which clears the error state.
-	const bundleErrorMessage =
-		isCurrentMutation && addBundleError
-			? addBundleError.message ||
-			  __( 'Sorry, we couldn’t add the bundle to your cart. Please try again.' )
-			: undefined;
+	// Turn an add failure into a notice on the card rather than silently doing
+	// nothing. The "unavailable" case (the backend stripped an incomplete bundle
+	// group, so fewer members came back than were sent) only carries a generic
+	// internal message ("The domain bundle could not be added to the cart."), so
+	// override it with friendlier, more actionable copy; every other error
+	// surfaces the cart's own message (a CartActionError, already user-facing)
+	// with a generic fallback. Clicking "Get bundle" again re-fires the mutation,
+	// which clears the error state.
+	const bundleErrorMessage = ( () => {
+		if ( ! isCurrentMutation || ! addBundleError ) {
+			return undefined;
+		}
+
+		if ( isBundleUnavailableError( addBundleError ) ) {
+			return __(
+				'This bundle is no longer available — one or more of the domains may have just been registered.'
+			);
+		}
+
+		return (
+			addBundleError.message ||
+			__( 'Sorry, we couldn’t add the bundle to your cart. Please try again.' )
+		);
+	} )();
 
 	const {
 		isLoading: isLoadingSuggestions,
@@ -96,6 +144,13 @@ export const ResultsPage = () => {
 		regularSuggestions,
 		bundleSuggestion,
 	} = useSuggestionsList();
+	// The top BundleCard is the FQDN path only; a bare-term search shows inline
+	// bundle rows beneath trigger suggestions instead (see useInlineBundles).
+	const isFqdn = isFqdnQuery( query );
+	// A failed add keeps the card mounted (with an error notice) rather than
+	// hiding it, so the user sees the failure instead of the offer silently
+	// vanishing. See bundleErrorMessage above.
+	const visibleBundleSuggestion = isFqdn ? bundleSuggestion : undefined;
 	const numberOfInitialVisibleSuggestions =
 		config.numberOfDomainsResultsPerPage - featuredSuggestions.length;
 
@@ -105,13 +160,13 @@ export const ResultsPage = () => {
 	// the group id so a new bundle (different query/experiment arm) re-fires, but
 	// re-renders of the same bundle do not.
 	const shownBundleGroupId =
-		! isLoadingSuggestions && bundleSuggestion && bundleSuggestion.domains.length > 0
-			? bundleSuggestion.bundle_group_id
+		! isLoadingSuggestions && visibleBundleSuggestion && visibleBundleSuggestion.domains.length > 0
+			? visibleBundleSuggestion.bundle_group_id
 			: undefined;
 
 	useEffect( () => {
-		if ( shownBundleGroupId && bundleSuggestion ) {
-			events.onBundleShown( bundleSuggestion );
+		if ( shownBundleGroupId && visibleBundleSuggestion ) {
+			events.onBundleShown( visibleBundleSuggestion );
 		}
 		// Intentionally keyed only on the group id: we want exactly one event per
 		// bundle that appears, not one per render or per `events`/object identity change.
@@ -156,23 +211,23 @@ export const ResultsPage = () => {
 				{ isLoadingSuggestions ? (
 					<FeaturedSearchResults.Placeholder />
 				) : (
-					<FeaturedSearchResults suggestions={ featuredSuggestions } />
-				) }
-				{ ! isLoadingSuggestions && bundleSuggestion && (
-					<BundleCard
-						suggestion={ bundleSuggestion }
-						onAddToCart={ ( bundle ) => {
-							events.onBundleAddToCart( bundle );
-							addBundleToCart( bundle );
-						} }
-						isAddedToCart={ bundleSuggestion.domains.every( ( { domain } ) =>
-							cart.hasItem( domain )
+					<FeaturedSearchResults suggestions={ featuredSuggestions }>
+						{ visibleBundleSuggestion && (
+							<BundleCard
+								suggestion={ visibleBundleSuggestion }
+								onAddToCart={ ( bundle ) => {
+									addBundleToCart( { bundle, query } );
+								} }
+								isAddedToCart={ visibleBundleSuggestion.domains.every( ( { domain } ) =>
+									cart.hasItem( domain )
+								) }
+								onContinue={ events.onContinue }
+								isBusy={ isAddingBundle }
+								disabled={ isMutating }
+								errorMessage={ bundleErrorMessage }
+							/>
 						) }
-						onContinue={ events.onContinue }
-						isBusy={ isAddingBundle }
-						disabled={ isMutating }
-						errorMessage={ bundleErrorMessage }
-					/>
+					</FeaturedSearchResults>
 				) }
 				{ isLoadingSuggestions ? (
 					<SearchResults.Placeholder />

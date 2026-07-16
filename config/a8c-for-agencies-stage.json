@@ -28,12 +28,10 @@
 	"oauth_client_id": 95931,
 	"features": {
 		"a4a-agent-studio": false,
-		"a4a-ai-mcp": true,
 		"a4a-benchmarks": false,
 		"a4a-bd-checkout": false,
 		"a4a-bd-term-pricing": true,
 		"a4a-migrations-request-verification": true,
-		"a4a-payment-risk-notice-banner": false,
 		"a4a-partner-directory": false,
 		"a4a-partner-directory-lead-matching": false,
 		"a4a-pressable-referrals": true,
@@ -78,7 +76,8 @@
 		"a8c-for-agencies-express-checkout": false,
 		"a8c-for-agencies-learn": true,
 		"a8c-for-agencies-dev-tools": true,
-		"a8c-for-agencies-exclusive-offers": true
+		"a8c-for-agencies-exclusive-offers": true,
+		"a8c-for-agencies-amplify": true
 	},
 	"site_filter": [],
 	"theme": "a8c-for-agencies",

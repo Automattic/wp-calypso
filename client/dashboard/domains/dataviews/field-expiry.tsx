@@ -4,6 +4,7 @@ import { __experimentalVStack as VStack } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { purchaseSettingsRoute } from '../../app/router/me';
 import { Text } from '../../components/text';
+import { canEnableAutoRenew } from '../../utils/domain';
 import type { DomainSummary } from '@automattic/api-core';
 
 export const DomainExpiryField = ( {
@@ -31,21 +32,21 @@ export const DomainExpiryField = ( {
 		return '-';
 	}
 
+	const renewLabel = domain.auto_renewing
+		? __( 'Auto-renew is on' )
+		: canEnableAutoRenew( domain ) && (
+				<Link
+					to={ purchaseSettingsRoute.fullPath }
+					params={ { purchaseId: domain.subscription_id } }
+				>
+					{ __( 'Turn on auto-renew' ) }
+				</Link>
+		  );
+
 	return (
 		<VStack justify="flex-start" alignment="left" spacing={ 1 }>
 			<Text intent={ domain.expired ? 'error' : undefined }>{ value }</Text>
-			<Text variant="muted">
-				{ domain.auto_renewing ? (
-					__( 'Auto-renew is on' )
-				) : (
-					<Link
-						to={ purchaseSettingsRoute.fullPath }
-						params={ { purchaseId: domain.subscription_id } }
-					>
-						{ __( 'Turn on auto-renew' ) }
-					</Link>
-				) }
-			</Text>
+			{ renewLabel && <Text variant="muted">{ renewLabel }</Text> }
 		</VStack>
 	);
 };

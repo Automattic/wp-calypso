@@ -1,6 +1,6 @@
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
-import { Children, forwardRef } from 'react';
+import { type JSX, Children, forwardRef } from 'react';
 
 import './style.scss';
 

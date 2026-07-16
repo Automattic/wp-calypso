@@ -1,5 +1,13 @@
 import type { IntroductoryOfferTerms } from '@automattic/shopping-cart';
 
+export interface TaxBreakdownEntry {
+	label: string;
+	rate: number;
+	rate_display: string;
+	local_tax_collected: number;
+	local_tax_collected_integer: number;
+}
+
 export interface TaxVendorInfo {
 	/**
 	 * The country code for this info.
@@ -79,6 +87,8 @@ export interface ReceiptItem {
 	introductory_offer_terms: IntroductoryOfferTerms | null;
 	price_tier_slug: string;
 	saas_redirect_url: string;
+	is_plan: boolean;
+	is_domain_registration: boolean;
 }
 
 export interface Receipt {
@@ -109,6 +119,7 @@ export interface Receipt {
 	credit: string;
 	items: ReceiptItem[];
 	tax_vendor_info?: TaxVendorInfo;
+	tax_breakdown?: TaxBreakdownEntry[];
 	checkout_type?: string;
 	/**
 	 * Line items that failed to provision during checkout, keyed by site (blog) ID.
