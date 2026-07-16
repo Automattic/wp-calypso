@@ -31,6 +31,7 @@ import {
 	TWO_FACTOR_AUTHENTICATION_SEND_SMS_CODE_REQUEST_FAILURE,
 	TWO_FACTOR_AUTHENTICATION_SEND_SMS_CODE_REQUEST_SUCCESS,
 	TWO_FACTOR_AUTHENTICATION_UPDATE_NONCE,
+	TWO_FACTOR_SECURITY_KEY_REREGISTER_REQUIRED,
 	CURRENT_USER_RECEIVE,
 } from 'calypso/state/action-types';
 import { combineReducers } from 'calypso/state/utils';
@@ -436,6 +437,21 @@ export const lastCheckedUsernameOrEmail = ( state = null, action ) => {
 	return state;
 };
 
+// Set when a WebAuthn challenge returns no credential scoped to this site, meaning the account's
+// registered security key can never satisfy login. Persists across the page.js route change to a
+// fallback 2FA method so we can prompt the user to register a fresh key once they sign in. Reset on
+// each new login attempt.
+export const securityKeyReregisterRequired = ( state = false, action ) => {
+	switch ( action.type ) {
+		case TWO_FACTOR_SECURITY_KEY_REREGISTER_REQUIRED:
+			return true;
+		case LOGIN_REQUEST:
+			return false;
+	}
+
+	return state;
+};
+
 const combinedReducer = combineReducers( {
 	authAccountType,
 	isFormDisabled,
@@ -446,6 +462,7 @@ const combinedReducer = combineReducers( {
 	requestError,
 	requestNotice,
 	requestSuccess,
+	securityKeyReregisterRequired,
 	socialAccount,
 	socialAccountLink,
 	twoFactorAuth,

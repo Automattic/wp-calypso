@@ -1,0 +1,25 @@
+.two-factor-authentication__security-key-register {
+	.security-key-register__heading {
+		margin-bottom: 8px;
+		font-size: 1.25rem;
+		font-weight: 600;
+	}
+
+	.security-key-register__text {
+		margin-bottom: 16px;
+		color: var(--color-text-subtle);
+	}
+
+	.components-button.is-primary {
+		width: 100%;
+		justify-content: center;
+	}
+}
+
+.two-factor-authentication__security-key-register-skip {
+	text-align: center;
+
+	.components-button {
+		justify-content: center;
+	}
+}

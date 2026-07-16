@@ -3,6 +3,7 @@ import {
 	LOGIN_REQUEST_FAILURE,
 	LOGIN_REQUEST_SUCCESS,
 	TWO_FACTOR_AUTHENTICATION_UPDATE_NONCE,
+	TWO_FACTOR_SECURITY_KEY_REREGISTER_REQUIRED,
 	TWO_FACTOR_AUTHENTICATION_LOGIN_REQUEST,
 	TWO_FACTOR_AUTHENTICATION_LOGIN_REQUEST_FAILURE,
 	TWO_FACTOR_AUTHENTICATION_LOGIN_REQUEST_SUCCESS,
@@ -25,6 +26,7 @@ import reducer, {
 	requestError,
 	requestNotice,
 	requestSuccess,
+	securityKeyReregisterRequired,
 	twoFactorAuth,
 	twoFactorAuthRequestError,
 	socialAccount,
@@ -44,12 +46,37 @@ describe( 'reducer', () => {
 				'requestError',
 				'requestNotice',
 				'requestSuccess',
+				'securityKeyReregisterRequired',
 				'socialAccount',
 				'socialAccountLink',
 				'twoFactorAuth',
 				'twoFactorAuthRequestError',
 			] )
 		);
+	} );
+
+	describe( 'securityKeyReregisterRequired', () => {
+		test( 'should default to false', () => {
+			expect( securityKeyReregisterRequired( undefined, {} ) ).toBe( false );
+		} );
+
+		test( 'should be set to true when a re-register is required', () => {
+			expect(
+				securityKeyReregisterRequired( false, {
+					type: TWO_FACTOR_SECURITY_KEY_REREGISTER_REQUIRED,
+				} )
+			).toBe( true );
+		} );
+
+		test( 'should reset to false on a new login request', () => {
+			expect( securityKeyReregisterRequired( true, { type: LOGIN_REQUEST } ) ).toBe( false );
+		} );
+
+		test( 'should persist across other actions', () => {
+			expect(
+				securityKeyReregisterRequired( true, { type: TWO_FACTOR_AUTHENTICATION_LOGIN_REQUEST } )
+			).toBe( true );
+		} );
 	} );
 
 	describe( 'isRequesting', () => {

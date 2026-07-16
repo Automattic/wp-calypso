@@ -10,6 +10,7 @@ import {
 	isRequesting,
 	isTwoFactorAuthTypeSupported,
 	isTwoFactorEnabled,
+	isSecurityKeyReregisterRequired,
 	isFormDisabled,
 	getSocialAccountLinkAuthInfo,
 	getCreateSocialAccountError,
@@ -174,6 +175,20 @@ describe( 'selectors', () => {
 			} );
 
 			expect( twoFactorEnabled ).toBe( true );
+		} );
+	} );
+
+	describe( 'isSecurityKeyReregisterRequired()', () => {
+		test( 'should return false by default', () => {
+			expect( isSecurityKeyReregisterRequired( EMPTY_STATE ) ).toBe( false );
+		} );
+
+		test( 'should return true when the flag is set', () => {
+			expect(
+				isSecurityKeyReregisterRequired( {
+					login: { securityKeyReregisterRequired: true },
+				} )
+			).toBe( true );
 		} );
 	} );
 

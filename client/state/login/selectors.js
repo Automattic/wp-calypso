@@ -42,6 +42,15 @@ export const getTwoFactorPushToken = ( state ) => state.login.twoFactorAuth?.pus
 export const isTwoFactorEnabled = ( state ) => state?.login?.twoFactorAuth != null;
 
 /**
+ * Whether the account's registered security key is scoped to the wrong relying party and can't be
+ * used to log in, so the user should be prompted to register a fresh one after signing in.
+ * @param  {Object}   state  Global state tree
+ * @returns {boolean}         Whether a security-key re-registration is required.
+ */
+export const isSecurityKeyReregisterRequired = ( state ) =>
+	state?.login?.securityKeyReregisterRequired ?? false;
+
+/**
  * Returns the error for a request to authenticate 2FA.
  * @param  {Object}   state  Global state tree
  * @returns {?string}         Error for the request.

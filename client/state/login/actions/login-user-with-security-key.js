@@ -5,6 +5,7 @@ import {
 	TWO_FACTOR_AUTHENTICATION_LOGIN_REQUEST,
 	TWO_FACTOR_AUTHENTICATION_LOGIN_REQUEST_FAILURE,
 	TWO_FACTOR_AUTHENTICATION_LOGIN_REQUEST_SUCCESS,
+	TWO_FACTOR_SECURITY_KEY_REREGISTER_REQUIRED,
 } from 'calypso/state/action-types';
 import { remoteLoginUser } from 'calypso/state/login/actions/remote-login-user';
 import { updateNonce } from 'calypso/state/login/actions/update-nonce';
@@ -40,9 +41,11 @@ export const loginUserWithSecurityKey = () => ( dispatch, getState ) => {
 			}
 
 			// We received a challenge, but no credential is scoped to this site's relying party, so
-			// the browser has nothing to prompt for. Signal the recovery interstitial rather than
-			// firing a doomed challenge.
+			// the browser has nothing to prompt for. Flag the account so we prompt the user to
+			// register a fresh key once they sign in with a fallback method, and signal the recovery
+			// interstitial rather than firing a doomed challenge.
 			if ( parameters?.challenge && ! parameters?.allowCredentials?.length ) {
+				dispatch( { type: TWO_FACTOR_SECURITY_KEY_REREGISTER_REQUIRED } );
 				const error = new Error( 'No security key is scoped to this site.' );
 				error.name = NO_SCOPED_SECURITY_KEY_ERROR;
 				throw error;

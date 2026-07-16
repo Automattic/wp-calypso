@@ -37,6 +37,7 @@ import {
 	getTwoFactorNotificationSent,
 	isTwoFactorEnabled,
 	isTwoFactorAuthTypeSupported,
+	isSecurityKeyReregisterRequired,
 	getSocialAccountIsLinking,
 	getSocialAccountLinkService,
 } from 'calypso/state/login/selectors';
@@ -73,6 +74,10 @@ const loadTwoFactorContent = () =>
 	import(
 		/* webpackChunkName: "async-load-calypso-blocks-login-two-factor-authentication-two-factor-content" */ './two-factor-authentication/two-factor-content'
 	);
+const loadSecurityKeyRegister = () =>
+	import(
+		/* webpackChunkName: "async-load-calypso-blocks-login-two-factor-authentication-security-key-register" */ './two-factor-authentication/security-key-register'
+	);
 
 class Login extends Component {
 	static propTypes = {
@@ -95,6 +100,7 @@ class Login extends Component {
 		twoFactorEnabled: PropTypes.bool,
 		twoFactorNotificationSent: PropTypes.string,
 		isSecurityKeySupported: PropTypes.bool,
+		securityKeyReregisterRequired: PropTypes.bool,
 		userEmail: PropTypes.string,
 		onSocialConnectStart: PropTypes.func,
 		onTwoFactorRequested: PropTypes.func,
@@ -115,6 +121,7 @@ class Login extends Component {
 
 	state = {
 		isBrowserSupported: isWebAuthnSupported(),
+		showSecurityKeyRegistration: false,
 	};
 
 	static defaultProps = {
@@ -297,6 +304,10 @@ class Login extends Component {
 	handleValid2FACode = () => {
 		if ( this.props.isLinking ) {
 			this.handleSocialConnectStart();
+		} else if ( this.props.securityKeyReregisterRequired && this.state.isBrowserSupported ) {
+			// The account's security key was scoped to the wrong relying party. Now that the user has
+			// signed in with a fallback method, prompt them to register a fresh key before redirecting.
+			this.setState( { showSecurityKeyRegistration: true } );
 		} else {
 			this.rebootAfterLogin();
 		}
@@ -421,6 +432,16 @@ class Login extends Component {
 		} = this.props;
 
 		const signupLink = this.getSignupLinkComponent();
+
+		if ( this.state.showSecurityKeyRegistration ) {
+			return (
+				<AsyncLoad
+					require={ loadSecurityKeyRegister }
+					placeholder={ null }
+					onFinish={ this.rebootAfterLogin }
+				/>
+			);
+		}
 
 		if ( socialConnect ) {
 			return <AsyncLoad require={ loadSocialConnectPrompt } onSuccess={ this.handleValidLogin } />;
@@ -622,6 +643,7 @@ export default connect(
 		isLinking: getSocialAccountIsLinking( state ),
 		isManualRenewalImmediateLoginAttempt: wasManualRenewalImmediateLoginAttempted( state ),
 		isSecurityKeySupported: isTwoFactorAuthTypeSupported( state, 'webauthn' ),
+		securityKeyReregisterRequired: isSecurityKeyReregisterRequired( state ),
 		linkingSocialService: getSocialAccountLinkService( state ),
 		partnerSlug: getPartnerSlugFromQuery( state ),
 		isFromAkismet: isAkismetRedirect(
