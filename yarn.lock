@@ -1362,6 +1362,7 @@ __metadata:
     "@wordpress/compose": "npm:^8.2.0"
     postcss: "npm:^8.5.15"
     storybook: "npm:^9.1.20"
+    tslib: "npm:^2.8.1"
     typescript: "npm:^6.0.3"
     webpack: "npm:^5.99.8"
   peerDependencies:
