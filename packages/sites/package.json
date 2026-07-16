@@ -1,6 +1,6 @@
 {
 	"name": "@automattic/sites",
-	"version": "1.0.1",
+	"version": "1.1.0",
 	"description": "Automattic Sites utilities.",
 	"homepage": "https://github.com/Automattic/wp-calypso",
 	"license": "GPL-2.0-or-later",
@@ -32,7 +32,9 @@
 	"bugs": "https://github.com/Automattic/wp-calypso/issues",
 	"dependencies": {
 		"@automattic/data-stores": "workspace:^",
-		"@automattic/search": "workspace:^"
+		"@automattic/search": "workspace:^",
+		"@wordpress/compose": "^8.2.0",
+		"@wordpress/react-i18n": "^4.48.0"
 	},
 	"peerDependencies": {
 		"@wordpress/data": "^10.48.0",
