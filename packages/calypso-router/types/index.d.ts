@@ -297,7 +297,7 @@ interface RouteRegistry {
 	 * Register route(s) like `page( path, ...callbacks )`, also recording the path
 	 * so `has()` can match against it.
 	 */
-	page( path: string | string[], ...callbacks: Callback[] ): void;
+	page( path: string | string[] | RegExp, ...callbacks: Callback[] ): void;
 	/**
 	 * Whether any recorded route matches `path` (same matching semantics as dispatch).
 	 */

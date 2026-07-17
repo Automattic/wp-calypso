@@ -1,4 +1,4 @@
-import { createRouteRegistry, type Context } from '@automattic/calypso-router';
+import { createRouteRegistry, type Context, type RouteRegistry } from '@automattic/calypso-router';
 import { makeLayout, notFound, render as clientRender } from 'calypso/controller';
 import { composeHandlers } from 'calypso/controller/shared';
 import { sidebar } from 'calypso/reader/controller';
@@ -14,7 +14,7 @@ const readerRoutes = createRouteRegistry();
  * `calypso/reader` catch-all). Routes that precede their own module's catch-all don't
  * need it, and pass-through wildcards must stay on plain `page` so they aren't recorded.
  */
-export const readerPage = readerRoutes.page;
+export const readerPage: RouteRegistry[ 'page' ] = readerRoutes.page;
 
 export function isKnownReaderRoute( path: string ): boolean {
 	return readerRoutes.has( path );

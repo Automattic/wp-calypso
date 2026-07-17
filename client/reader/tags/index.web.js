@@ -1,4 +1,3 @@
-import page from '@automattic/calypso-router';
 import { getLanguageRouteParam } from '@automattic/i18n-utils';
 import {
 	makeLayout,
@@ -25,6 +24,5 @@ export default function ( router ) {
 		clientRender
 	);
 
-	// Catch-all for unrecognized /tags/* paths.
-	page( '/tags/*', readerNotFound );
+	router( '/tags/*', readerNotFound );
 }

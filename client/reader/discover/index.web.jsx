@@ -1,4 +1,3 @@
-import page from '@automattic/calypso-router';
 import { getAnyLanguageRouteParam } from '@automattic/i18n-utils';
 import AsyncLoad from 'calypso/components/async-load';
 import {
@@ -102,6 +101,5 @@ export default function ( router ) {
 	//
 	router( getDiscoverRoutes( anyLangParam ), ...commonMiddleware );
 
-	// Catch-all for unrecognized /discover/* paths.
-	page( '/discover/*', readerNotFound );
+	router( '/discover/*', readerNotFound );
 }
