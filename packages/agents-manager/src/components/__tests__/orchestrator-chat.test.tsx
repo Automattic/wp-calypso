@@ -12,6 +12,7 @@ const mockUseConversation = jest.fn();
 const mockUseImageUpload = jest.fn();
 const mockIsReaderChatAgent = jest.fn();
 let mockSelectedBlockType: string | undefined;
+let mockBlockEditorStoreThrows = false;
 const mockAgentChat = jest.fn(
 	( {
 		onSuggestionClick,
@@ -155,6 +156,9 @@ jest.mock( '@wordpress/data', () => ( {
 	useSelect: ( mapSelect: ( select: ( storeName: string ) => object ) => unknown ) =>
 		mapSelect( ( storeName: string ) => {
 			if ( storeName === 'core/block-editor' ) {
+				if ( mockBlockEditorStoreThrows ) {
+					throw new Error( 'Block editor store unavailable' );
+				}
 				return {
 					getSelectedBlock: () =>
 						mockSelectedBlockType ? { name: mockSelectedBlockType } : null,
@@ -329,6 +333,7 @@ describe( 'OrchestratorChat', () => {
 		mockUseImageUpload.mockReturnValue( createImageUpload() );
 		mockIsReaderChatAgent.mockReturnValue( false );
 		mockSelectedBlockType = undefined;
+		mockBlockEditorStoreThrows = false;
 	} );
 
 	it( 'dispatches the inline suggestion event when an Agenttic suggestion is clicked', () => {
@@ -433,6 +438,18 @@ describe( 'OrchestratorChat', () => {
 		} );
 
 		window.removeEventListener( 'big-sky-inline-suggestion-click', listener );
+	} );
+
+	it( 'keeps suggestion clicks working when the block editor store cannot be read', () => {
+		mockBlockEditorStoreThrows = true;
+
+		render( chat() );
+		fireEvent.click( screen.getByText( 'Click suggestion' ) );
+
+		expect( recordBigSkyTracksEvent ).toHaveBeenCalledWith(
+			'chat_suggestion_click',
+			expect.objectContaining( { suggestion_id: 'simplify-text' } )
+		);
 	} );
 
 	it( 'records the selected option and block context for a dropdown suggestion', () => {

@@ -226,11 +226,15 @@ export default function OrchestratorChat( {
 		return editor?.getCurrentPostId?.();
 	}, [] );
 	const selectedBlockType = useSelect( ( select ) => {
-		const blockEditor = select( 'core/block-editor' ) as {
-			getSelectedBlock?: () => { name?: unknown } | null;
-		};
-		const blockName = blockEditor?.getSelectedBlock?.()?.name;
-		return typeof blockName === 'string' && blockName ? blockName : undefined;
+		try {
+			const blockEditor = select( 'core/block-editor' ) as {
+				getSelectedBlock?: () => { name?: unknown } | null;
+			};
+			const blockName = blockEditor?.getSelectedBlock?.()?.name;
+			return typeof blockName === 'string' && blockName ? blockName : undefined;
+		} catch {
+			return undefined;
+		}
 	}, [] );
 	const { isPageOrSiteEditorSurface: groupWritingSuggestions } = usePageOrSiteEditorSurface();
 
