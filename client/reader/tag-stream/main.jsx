@@ -19,8 +19,7 @@ import EmptyContent from './empty';
 import TagStreamHeader from './header';
 import './style.scss';
 
-// Matches emoji, including keycap sequences (digit/# /* + U+FE0F + U+20E3), so that
-// emoji tag titles can be detected and converted to their text equivalent.
+// Matches emoji and keycap sequences (# / * / 0-9 + optional U+FE0F + U+20E3).
 const EMOJI_TITLE_PATTERN =
 	/\p{Emoji_Presentation}|\p{Extended_Pictographic}|[#*0-9]\uFE0F?\u20E3/u;
 
