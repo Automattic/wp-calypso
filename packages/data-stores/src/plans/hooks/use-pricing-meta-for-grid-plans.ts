@@ -78,20 +78,36 @@ function logUnknownBillPeriodDays(
 	purchase: Purchases.RawPurchase,
 	siteId: number | null | undefined
 ): void {
-	const key = `${ siteId ?? '' }-${ purchase.ID }-${ purchase.bill_period_days }`;
+	const shape = purchase as unknown as Record< string, unknown >;
+	const purchaseId = shape.ID ?? shape.id;
+	const key = `${ siteId ?? '' }-${ String( purchaseId ) }-${ String(
+		shape.bill_period_days ?? shape.billPeriodDays
+	) }`;
 	if ( loggedUnknownBillPeriods.has( key ) ) {
 		return;
 	}
 	loggedUnknownBillPeriods.add( key );
+	const win =
+		typeof window !== 'undefined'
+			? ( window as unknown as { COMMIT_SHA?: string; location?: Location } )
+			: undefined;
 	logToLogstash( {
 		feature: 'calypso_client',
 		message: 'usePricingMetaForGridPlans: purchase has an unknown bill_period_days',
 		site_id: siteId ?? undefined,
 		extra: {
 			plan_slug: planSlug,
-			product_slug: purchase.product_slug,
-			bill_period_days: purchase.bill_period_days,
-			purchase_id: purchase.ID,
+			purchase_id: String( purchaseId ),
+			object_keys: Object.keys( shape ).sort().join( ',' ),
+			bill_period_days_snake: String( shape.bill_period_days ),
+			bill_period_days_camel: String( shape.billPeriodDays ),
+			product_slug_snake: String( shape.product_slug ),
+			product_slug_camel: String( shape.productSlug ),
+			expiry_status: String( shape.expiry_status ?? shape.expiryStatus ),
+			path: win?.location?.pathname ?? '',
+			commit_sha: String( win?.COMMIT_SHA ?? '' ),
+			caller_stack:
+				new Error( 'unknown-bill-period' ).stack?.split( '\n' ).slice( 0, 20 ).join( '\n' ) ?? '',
 		},
 		tags: [ 'unknown-term', 'bill-period-days' ],
 	} ).catch( () => {} );

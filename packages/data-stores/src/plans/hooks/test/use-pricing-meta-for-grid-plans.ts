@@ -265,7 +265,9 @@ describe( 'usePricingMetaForGridPlans', () => {
 				site_id: siteId,
 				extra: expect.objectContaining( {
 					plan_slug: PLAN_BUSINESS,
-					bill_period_days: 999,
+					purchase_id: '1234',
+					bill_period_days_snake: '999',
+					object_keys: expect.stringContaining( 'bill_period_days' ),
 				} ),
 			} )
 		);
