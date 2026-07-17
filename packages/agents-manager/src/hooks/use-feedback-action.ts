@@ -18,6 +18,7 @@ const FEEDBACK_API_BASE = 'https://public-api.wordpress.com/wpcom/v2/ai/feedback
 export interface UseFeedbackActionConfig {
 	registerMessageActions: UseAgentChatReturn[ 'registerMessageActions' ];
 	messages: Message[];
+	getTraceIdForMessage?: ( messageId: string ) => string | undefined;
 }
 
 export interface UseFeedbackActionReturn {
@@ -33,7 +34,8 @@ export async function rateMessage(
 	messageId: string,
 	rating: 'up' | 'down',
 	messageText?: string,
-	metadata?: Record< string, string >
+	metadata?: Record< string, string >,
+	traceId?: string
 ): Promise< void > {
 	const headers = await authProvider();
 	const url = `${ FEEDBACK_API_BASE }/${ encodeURIComponent( sessionId ) }/rate`;
@@ -43,6 +45,7 @@ export async function rateMessage(
 		rating: 'up' | 'down';
 		message_text?: string;
 		metadata?: Record< string, string >;
+		trace_id?: string;
 	} = { message_id: messageId, rating };
 
 	if ( messageText ) {
@@ -51,6 +54,10 @@ export async function rateMessage(
 
 	if ( metadata ) {
 		body.metadata = metadata;
+	}
+
+	if ( traceId ) {
+		body.trace_id = traceId;
 	}
 
 	fetch( url, {
@@ -70,7 +77,8 @@ export async function submitFeedback(
 	sessionId: string,
 	messageId: string,
 	feedback: string,
-	previousMessages?: PreviousMessage[]
+	previousMessages?: PreviousMessage[],
+	traceId?: string
 ): Promise< void > {
 	const headers = await authProvider();
 	const url = `${ FEEDBACK_API_BASE }/${ encodeURIComponent( sessionId ) }/text`;
@@ -79,6 +87,9 @@ export async function submitFeedback(
 		message_id: messageId,
 		feedback,
 	};
+	if ( traceId ) {
+		data.trace_id = traceId;
+	}
 	if ( previousMessages && previousMessages.length > 0 ) {
 		data.previous_messages = previousMessages;
 	}
@@ -168,6 +179,7 @@ function getPreviousMessages( messages: Message[], targetMessageId: string ): Pr
 
 export default function useFeedbackAction( {
 	messages,
+	getTraceIdForMessage,
 }: UseFeedbackActionConfig ): UseFeedbackActionReturn {
 	const { agentConfig, isLoggedIn, getActiveSessionId } = useAgentsManagerContext();
 	const { sessionId, authProvider } = agentConfig!;
@@ -177,8 +189,10 @@ export default function useFeedbackAction( {
 	// Keep refs to avoid recreating the feedback manager on every render
 	const messagesRef = useRef( messages );
 	const authProviderRef = useRef( authProvider );
+	const getTraceIdForMessageRef = useRef( getTraceIdForMessage );
 	messagesRef.current = messages;
 	authProviderRef.current = authProvider;
+	getTraceIdForMessageRef.current = getTraceIdForMessage;
 
 	const handleFeedback = useCallback(
 		( messageId: string, feedback: 'up' | 'down' ) => {
@@ -196,13 +210,16 @@ export default function useFeedbackAction( {
 
 			const message = messagesRef.current.find( ( m ) => m.id === messageId );
 			const messageText = message ? getMessageText( message ) : undefined;
+			const traceId = getTraceIdForMessageRef.current?.( messageId );
 
 			rateMessage(
 				currentAuthProvider,
 				currentSessionId,
 				messageId,
 				feedback,
-				messageText ?? undefined
+				messageText ?? undefined,
+				undefined,
+				traceId
 			);
 
 			if ( feedback === 'down' ) {
@@ -289,13 +306,15 @@ export default function useFeedbackAction( {
 			}
 
 			const previousMessages = getPreviousMessages( messagesRef.current, currentMessageId );
+			const traceId = getTraceIdForMessageRef.current?.( currentMessageId );
 
 			await submitFeedback(
 				currentAuthProvider,
 				currentSessionId,
 				currentMessageId,
 				feedbackText.trim(),
-				previousMessages
+				previousMessages,
+				traceId
 			);
 
 			recordAgentsManagerTracksEvent( 'response_feedback_submitted', {
