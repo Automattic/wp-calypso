@@ -1,11 +1,10 @@
 /**
  * Data layer for the logged-out account-recovery password reset flow.
  *
- * Wraps the public `wpcom/v2/account-recovery/*` REST endpoints
- * (`lookup` → `request-reset` → `validate` → `reset`) as plain
+ * Wraps the public `wpcom/v2/account-recovery/*` REST endpoints as plain
  * promise-returning functions. By design this uses direct `wp.req` calls with
  * no Redux: the flow is logged-out and ephemeral, so the calling components own
- * their loading/error/step state. See `plan-phase2.md` §3 (decided 2026-06-09).
+ * their loading/error/step state.
  */
 
 import { useMemo } from 'react';
