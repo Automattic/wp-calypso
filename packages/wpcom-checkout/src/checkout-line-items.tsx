@@ -1161,11 +1161,20 @@ export function LineItemSublabelAndPrice( {
 			return (
 				<>
 					<LineItemSublabelTitle>
-						{ isRenewalPricingExperiment
-							? translate( 'Auto-renews at %(price)s/month. Billed every 24 months.', {
-									args: { price: actualMonthlyPrice },
-							  } )
-							: translate( 'Billed every 2 years' ) }
+						{ isRenewalPricingExperiment &&
+							translate( 'Auto-renews at %(price)s/month. Billed every 24 months.', {
+								args: { price: actualMonthlyPrice },
+							} ) }
+						{ ! isRenewalPricingExperiment &&
+							isMobileStickySummary &&
+							translate( '%(price)s billed every two years', {
+								args: { price: actualSubtotal },
+								comment:
+									"Total price formatted with the currency (e.g. '$99.99'); shown as the sublabel of a two-year plan line item in the mobile sticky checkout summary.",
+							} ) }
+						{ ! isRenewalPricingExperiment &&
+							! isMobileStickySummary &&
+							translate( 'Billed every 2 years' ) }
 					</LineItemSublabelTitle>
 					{ showCrossedOutPrice && (
 						<s>
@@ -1180,11 +1189,20 @@ export function LineItemSublabelAndPrice( {
 			return (
 				<>
 					<LineItemSublabelTitle>
-						{ isRenewalPricingExperiment
-							? translate( 'Auto-renews at %(price)s/month. Billed every 36 months.', {
-									args: { price: actualMonthlyPrice },
-							  } )
-							: translate( 'Billed every 3 years' ) }
+						{ isRenewalPricingExperiment &&
+							translate( 'Auto-renews at %(price)s/month. Billed every 36 months.', {
+								args: { price: actualMonthlyPrice },
+							} ) }
+						{ ! isRenewalPricingExperiment &&
+							isMobileStickySummary &&
+							translate( '%(price)s billed every three years', {
+								args: { price: actualSubtotal },
+								comment:
+									"Total price formatted with the currency (e.g. '$99.99'); shown as the sublabel of a three-year plan line item in the mobile sticky checkout summary.",
+							} ) }
+						{ ! isRenewalPricingExperiment &&
+							! isMobileStickySummary &&
+							translate( 'Billed every 3 years' ) }
 					</LineItemSublabelTitle>
 					{ showCrossedOutPrice && (
 						<s>
