@@ -1,5 +1,4 @@
 import config from '@automattic/calypso-config';
-import { captureException } from '@automattic/calypso-sentry';
 import { get as webauthn_auth } from '@github/webauthn-json';
 import { translate } from 'i18n-calypso';
 import {
@@ -7,6 +6,7 @@ import {
 	TWO_FACTOR_AUTHENTICATION_LOGIN_REQUEST_FAILURE,
 	TWO_FACTOR_AUTHENTICATION_LOGIN_REQUEST_SUCCESS,
 } from 'calypso/state/action-types';
+import { recordTracksEventWithClientId as recordTracksEvent } from 'calypso/state/analytics/actions';
 import { remoteLoginUser } from 'calypso/state/login/actions/remote-login-user';
 import { updateNonce } from 'calypso/state/login/actions/update-nonce';
 import { getTwoFactorAuthNonce, getTwoFactorUserId } from 'calypso/state/login/selectors';
@@ -85,9 +85,11 @@ export const loginUserWithSecurityKey = () => ( dispatch, getState ) => {
 				const message = errorMessages[ errorKey ] ?? errorMessages.default;
 				error = { code: httpError.name, message, field: 'global' };
 
-				captureException( httpError, {
-					user: { id: loginParams.user_id?.toString() },
-				} );
+				dispatch(
+					recordTracksEvent( 'calypso_login_security_key_failure', {
+						error: errorKey,
+					} )
+				);
 			} else {
 				error = getErrorFromHTTPError( httpError );
 			}
