@@ -197,8 +197,10 @@ object CalypsoE2ETestsBuildTemplate : Template({
 				find output -name 'account-*.json' -delete 2>/dev/null || true
 				echo "CALYPSO_BASE_URL=%CALYPSO_BASE_URL%"
 				export CALYPSO_BASE_URL="%CALYPSO_BASE_URL%"
-				echo "DASHBOARD_BASE_URL=%DASHBOARD_BASE_URL%"
-				export DASHBOARD_BASE_URL="%DASHBOARD_BASE_URL%"
+				if [[ -n "%DASHBOARD_BASE_URL%" ]]; then
+					echo "DASHBOARD_BASE_URL=%DASHBOARD_BASE_URL%"
+					export DASHBOARD_BASE_URL="%DASHBOARD_BASE_URL%"
+				fi
 				echo "Running Playwright tests for project: %PROJECT%"
 				yarn test:pw:%PROJECT% ${'$'}GREP_FLAG
 				"""
