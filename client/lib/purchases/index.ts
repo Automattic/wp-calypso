@@ -7,7 +7,6 @@ import {
 	isDomainTransfer,
 	isGSuiteOrGoogleWorkspace,
 	isMonthlyProduct,
-	isPlan,
 	isThemePurchase,
 	isTitanMail,
 	isConciergeSession,
@@ -267,6 +266,7 @@ export function getName( purchase: Purchase ): string {
 	if ( isDomainRegistration( purchase ) || isDomainMapping( purchase ) ) {
 		return purchase.meta ?? '';
 	}
+
 	return purchase.productName;
 }
 
@@ -310,6 +310,14 @@ export function getDisplayName( purchase: Purchase ): TranslateResult {
 
 	if ( isAkismetPro500( purchase ) ) {
 		return getAkismetPro500ProductDisplayName( productName, purchaseRenewalQuantity );
+	}
+
+	if ( purchase.isPlan && productName ) {
+		return i18n.translate( '%(productName)s Plan', {
+			args: {
+				productName: productName.replace( /\s*\(.*$/, '' ).trim(),
+			},
+		} );
 	}
 
 	return getName( purchase );
@@ -1032,8 +1040,8 @@ export function purchaseType( purchase: Purchase ): string | null {
 		return i18n.translate( 'Host Managed Plan' );
 	}
 
-	if ( isPlan( purchase ) ) {
-		return i18n.translate( 'Site Plan' );
+	if ( purchase.isPlan ) {
+		return null;
 	}
 
 	if ( isDomainRegistration( purchase ) ) {
