@@ -392,7 +392,7 @@ function HelpSearchResults( {
 				<div className="help-center-search-results__empty-results">
 					<p>
 						{ __(
-							'Sorry, we couldn’t find any matches. Double-check your search or try asking your AI assistant about it.',
+							'Sorry, we couldn’t find any matches. Double-check your search or try asking WordPress Agent about it.',
 							__i18n_text_domain__
 						) }
 					</p>
@@ -403,7 +403,7 @@ function HelpSearchResults( {
 						}
 						className="show-more-button"
 					>
-						{ __( 'Ask AI assistant', __i18n_text_domain__ ) }
+						{ __( 'Ask WordPress Agent', __i18n_text_domain__ ) }
 					</Button>
 				</div>
 			) : null }

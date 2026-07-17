@@ -390,8 +390,8 @@ export default function AIToolsSettings( { siteSlug }: { siteSlug: string } ) {
 		...bigSkyPluginMutation( site.ID ),
 		meta: {
 			snackbar: {
-				success: ! isEnabled ? __( 'AI assistant enabled.' ) : __( 'AI assistant disabled.' ),
-				error: __( 'Failed to save AI assistant settings.' ),
+				success: ! isEnabled ? __( 'WordPress Agent enabled.' ) : __( 'WordPress Agent disabled.' ),
+				error: __( 'Failed to save WordPress Agent settings.' ),
 			},
 		},
 	} );
@@ -453,7 +453,7 @@ export default function AIToolsSettings( { siteSlug }: { siteSlug: string } ) {
 					<CardBody>
 						<VStack spacing={ 4 }>
 							<SectionHeader
-								title={ __( 'AI assistant' ) }
+								title={ __( 'WordPress Agent' ) }
 								description={ __( 'Helps with site setup, content, design, and more.' ) }
 								level={ 3 }
 							/>
@@ -461,7 +461,7 @@ export default function AIToolsSettings( { siteSlug }: { siteSlug: string } ) {
 								__nextHasNoMarginBottom
 								checked={ isEnabled }
 								disabled={ mutation.isPending }
-								label={ __( 'Enable AI assistant' ) }
+								label={ __( 'Enable WordPress Agent' ) }
 								onChange={ handleToggle }
 							/>
 						</VStack>
@@ -554,13 +554,13 @@ export default function AIToolsSettings( { siteSlug }: { siteSlug: string } ) {
 						onCancel={ () => setIsConfirmModalOpen( false ) }
 						onConfirm={ () => handleToggle( false ) }
 						confirmButtonProps={ {
-							label: __( 'Disable AI assistant' ),
+							label: __( 'Disable WordPress Agent' ),
 							isBusy: mutation.isPending,
 							disabled: mutation.isPending,
 						} }
 					>
 						{ __(
-							'You are on a free trial. If you disable AI assistant, you will not be able to turn it back on without a paid plan.'
+							'You are on a free trial. If you disable WordPress Agent, you will not be able to turn it back on without a paid plan.'
 						) }
 					</ConfirmModal>
 				) }

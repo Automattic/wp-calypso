@@ -96,10 +96,10 @@ export default function DisconnectedSite() {
 					<p className="blaze-disconnected-site__features-description">
 						{ isWooStore
 							? translate(
-									'Create ads directly from your product catalog or upload custom images to showcase your brand. The AI assistant helps draft compelling copy, while geographic and interest targeting connects you with the customers most likely to buy.'
+									'Create ads directly from your product catalog or upload custom images to showcase your brand. WordPress Agent helps draft compelling copy, while geographic and interest targeting connects you with the customers most likely to buy.'
 							  )
 							: translate(
-									'Instantly turn your existing posts into ads, or upload custom images. The AI assistant helps refine your message, while interest targeting ensures you connect with the people who matter most.'
+									'Instantly turn your existing posts into ads, or upload custom images. WordPress Agent helps refine your message, while interest targeting ensures you connect with the people who matter most.'
 							  ) }
 					</p>
 				</div>

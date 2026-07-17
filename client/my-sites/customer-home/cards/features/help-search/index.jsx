@@ -84,7 +84,7 @@ export default function HelpSearch() {
 			<div className="customer-home-help-search__footer">
 				<p>
 					{ translate(
-						'Our AI assistant is here to answer your questions and help you find solutions.'
+						'WordPress Agent is here to answer your questions and help you find solutions.'
 					) }
 				</p>
 				<Button variant="secondary" className="help-search__cta" onClick={ onClick }>

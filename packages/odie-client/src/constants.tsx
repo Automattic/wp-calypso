@@ -136,7 +136,7 @@ export const getOdieTransferMessages = ( botSlug?: OdieAllBotSlugs ): Message[] 
 		},
 		{
 			content: __(
-				'They can see your chat with our AI assistant but please share any extra details while you wait so we can assist you better.',
+				'They can see your chat with WordPress Agent but please share any extra details while you wait so we can assist you better.',
 				__i18n_text_domain__
 			),
 			role: 'bot' as const,
@@ -252,7 +252,7 @@ export const getOdieInitialMessage = (
 				name: displayName || 'there',
 			}
 		) }** \n\n ${ __(
-			"I'm your personal AI assistant. I can help with any questions about your site or account.",
+			"I'm your personal WordPress Agent. I can help with any questions about your site or account.",
 			__i18n_text_domain__
 		) }`,
 		role: 'bot',

@@ -114,7 +114,7 @@ export default function ThemeSupportTab( { themeId } ) {
 								{ translate( 'Contact support' ) }
 								<small>
 									{ translate(
-										'Get answers from our AI assistant, with access to 24/7 expert human support on paid plans.'
+										'Get answers from WordPress Agent, with access to 24/7 expert human support on paid plans.'
 									) }
 								</small>
 							</div>
