@@ -1,62 +1,36 @@
-/**
- * @group legal
- */
 import { DataHelper } from '@automattic/calypso-e2e';
-import { Page, Browser } from 'playwright';
 import uploadScreenshotsToBlog from '../../lib/martech-tos-helper';
+import { expect, tags, test } from '../../lib/pw-base';
 
-const selectors = { isSignup: 'body.is-section-stepper' };
-declare const browser: Browser;
+test.describe(
+	DataHelper.createSuiteTitle( 'ToS acceptance tracking screenshots' ),
+	{ tag: [ tags.LEGAL, tags.DESKTOP_ONLY ] },
+	() => {
+		test.describe.configure( { mode: 'serial', timeout: 1_800_000 } );
 
-describe( DataHelper.createSuiteTitle( 'ToS acceptance tracking screenshots' ), function () {
-	let page: Page;
-
-	beforeAll( async () => {
-		page = await browser.newPage();
-	} );
-
-	describe( 'ToS screenshots of WP.com signup in desktop, tablet, and mobile viewports', function () {
-		jest.setTimeout( 1800000 );
-		const magnificientNonEnLocales = [
-			'pt-br',
-			'fr',
-			'es',
-			'de',
-			'he',
-			'ja',
-			'it',
-			'nl',
-			'ru',
-			'tr',
-			'id',
-			'zh-cn',
-			'zh-tw',
-			'ko',
-			'ar',
-			'sv',
-		];
-
-		it( 'Screenshot white background signup page in en and Mag-16 locales', async function () {
-			for ( const locale of [ ...magnificientNonEnLocales, 'en' ] ) {
-				page.setViewportSize( { width: 1280, height: 720 } );
+		test( 'Screenshot white background signup page in en and Mag-16 locales', async ( {
+			page,
+		} ) => {
+			for ( const locale of DataHelper.getMag16Locales() ) {
+				await page.setViewportSize( { width: 1280, height: 720 } );
 				await page.goto( DataHelper.getCalypsoURL( `start/${ locale }` ), {
 					waitUntil: 'domcontentloaded',
 				} );
-				await page.waitForSelector( selectors.isSignup );
+				await page.locator( 'body.is-section-stepper' ).waitFor();
 				await page.screenshot( {
 					path: `tos_white_signup_desktop_${ locale }.png`,
 					fullPage: true,
 					type: 'jpeg',
 					quality: 20,
 				} );
-				page.setViewportSize( { width: 410, height: 820 } );
+				await page.setViewportSize( { width: 410, height: 820 } );
 				await page.screenshot( {
 					path: `tos_white_signup_mobile_${ locale }.png`,
 					fullPage: true,
 					type: 'jpeg',
 					quality: 20,
 				} );
-				page.setViewportSize( { width: 1024, height: 1366 } );
+				await page.setViewportSize( { width: 1024, height: 1366 } );
 				await page.screenshot( {
 					path: `tos_white_signup_tablet_${ locale }.png`,
 					fullPage: true,
@@ -66,13 +40,15 @@ describe( DataHelper.createSuiteTitle( 'ToS acceptance tracking screenshots' ), 
 			}
 		} );
 
-		it( 'Zip screenshots and upload', async function () {
-			const filetnameTitle = 'tos-screenshots-signup';
-			const zipFilename = `${ filetnameTitle }.zip`;
-			const result = await uploadScreenshotsToBlog( zipFilename, 'tos_white_signup_*' );
+		test( 'Zip screenshots and upload', async () => {
+			const filenameTitle = 'tos-screenshots-signup';
+			const result = await uploadScreenshotsToBlog(
+				`${ filenameTitle }.zip`,
+				'tos_white_signup_*'
+			);
 
-			expect( result?.media?.[ 0 ]?.title ).toStrictEqual( filetnameTitle );
+			expect( result?.media?.[ 0 ]?.title ).toStrictEqual( filenameTitle );
 			expect( result?.media?.[ 0 ]?.mime_type ).toStrictEqual( 'application/zip' );
 		} );
-	} );
-} );
+	}
+);
