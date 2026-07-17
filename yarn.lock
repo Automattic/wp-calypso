@@ -14634,7 +14634,6 @@ __metadata:
     html-loader: "npm:^5.1.0"
     i18n-calypso: "workspace:^"
     ignore-loader: "npm:^0.1.2"
-    immutability-helper: "npm:^3.0.1"
     inherits: "npm:^2.0.4"
     is-my-json-valid: "npm:^2.20.6"
     jest: "npm:^29.7.0"
@@ -20874,15 +20873,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"immutability-helper@npm:^3.0.1":
-  version: 3.0.1
-  resolution: "immutability-helper@npm:3.0.1"
-  dependencies:
-    invariant: "npm:^2.2.4"
-  checksum: bda92b76a232556f9de87c616bd28f90bdd27e80a584b4b229ef4c8f8e6001e87ab7e2f139588aee2f90d86b6fd2798a532e95cd2042f79ced197994103d4ab6
-  languageName: node
-  linkType: hard
-
 "immutable@npm:3.8.3":
   version: 3.8.3
   resolution: "immutable@npm:3.8.3"
@@ -21083,15 +21073,6 @@ __metadata:
   version: 2.2.0
   resolution: "interpret@npm:2.2.0"
   checksum: c0ef90daec6c4120bb7a226fa09a9511f6b5618aa9c94cf4641472f486948e643bb3b36efbd0136bbffdee876435af9fdf7bbb4622f5a16778eed5397f8a1946
-  languageName: node
-  linkType: hard
-
-"invariant@npm:^2.2.4":
-  version: 2.2.4
-  resolution: "invariant@npm:2.2.4"
-  dependencies:
-    loose-envify: "npm:^1.0.0"
-  checksum: 5af133a917c0bcf65e84e7f23e779e7abc1cd49cb7fdc62d00d1de74b0d8c1b5ee74ac7766099fb3be1b05b26dfc67bab76a17030d2fe7ea2eef867434362dfc
   languageName: node
   linkType: hard
 
