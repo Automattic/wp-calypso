@@ -50,6 +50,7 @@ jest.mock( '@automattic/data-stores', () => ( {
 		...jest.requireActual( '@automattic/data-stores' ).Plans,
 		usePlans: jest.fn(),
 		usePricingMetaForGridPlans: jest.fn(),
+		useCurrentPlan: jest.fn(),
 	},
 	AddOns: {
 		...jest.requireActual( '@automattic/data-stores' ).AddOns,
@@ -216,6 +217,40 @@ describe( 'PlansFeaturesMain', () => {
 					PLAN_ECOMMERCE_2_YEARS,
 					PLAN_ENTERPRISE_GRID_WPCOM,
 				] )
+			);
+		} );
+	} );
+
+	describe( 'PlansFeaturesMain. Downgrade flow (plans-upgrade-or-downgrade intent)', () => {
+		// The dashboard "Change plan" button sends owners to the plan-upgrade
+		// stepper flow with allow_downgrade=true, which resolves to the
+		// 'plans-upgrade-or-downgrade' intent. Unlike 'plans-upgrade', that intent
+		// must keep lower-tier plans visible so the user can downgrade. These tests
+		// guard that behavior against Plans page UX changes.
+		beforeEach( () => {
+			Plans.useCurrentPlan.mockImplementation( () => ( { planSlug: PLAN_BUSINESS } ) );
+		} );
+
+		test( 'shows lower-tier plans (below the current plan) for the downgrade intent', () => {
+			renderWithProvider( <PlansFeaturesMain { ...props } intent="plans-upgrade-or-downgrade" /> );
+
+			expect( screen.getByTestId( 'visible-plans' ) ).toHaveTextContent(
+				JSON.stringify( [
+					PLAN_FREE,
+					PLAN_PERSONAL,
+					PLAN_PREMIUM,
+					PLAN_BUSINESS,
+					PLAN_ECOMMERCE,
+					PLAN_ENTERPRISE_GRID_WPCOM,
+				] )
+			);
+		} );
+
+		test( 'hides lower-tier plans for the upgrade-only intent (contrast)', () => {
+			renderWithProvider( <PlansFeaturesMain { ...props } intent="plans-upgrade" /> );
+
+			expect( screen.getByTestId( 'visible-plans' ) ).toHaveTextContent(
+				JSON.stringify( [ PLAN_BUSINESS, PLAN_ECOMMERCE, PLAN_ENTERPRISE_GRID_WPCOM ] )
 			);
 		} );
 	} );
