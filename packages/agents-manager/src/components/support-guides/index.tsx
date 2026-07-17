@@ -120,8 +120,9 @@ export default function SupportGuides( {
 	const [ searchInput, setSearchInput, debouncedSearchInput ] = useDebouncedInput(
 		state?.searchQuery ?? ''
 	);
-	const { setFloatingPosition, setFreeDragPosition } = useDispatch( AGENTS_MANAGER_STORE );
-	const { floatingPosition, freeDragPosition } = useSelect( ( select ) => {
+	const { setFloatingPosition, setFreeDragPosition, setFloatingSize } =
+		useDispatch( AGENTS_MANAGER_STORE );
+	const { floatingPosition, freeDragPosition, floatingSize } = useSelect( ( select ) => {
 		const store: AgentsManagerSelect = select( AGENTS_MANAGER_STORE );
 		return store.getAgentsManagerState();
 	}, [] );
@@ -136,6 +137,8 @@ export default function SupportGuides( {
 			onChatPositionChange={ ( position ) => setFloatingPosition( position ) }
 			initialFreeDragPosition={ freeDragPosition ?? undefined }
 			onFreeDragEnd={ setFreeDragPosition }
+			defaultSize={ floatingSize ?? undefined }
+			onResizeEnd={ setFloatingSize }
 			className={ clsx( 'agenttic', { dark: isDocked } ) }
 			messages={ [] }
 			isProcessing={ false }
@@ -143,6 +146,7 @@ export default function SupportGuides( {
 			onSubmit={ () => {} }
 			variant={ isDocked ? 'embedded' : 'floating' }
 			freeDrag={ ! isDocked }
+			resizable={ ! isDocked }
 			floatingChatState={ isOpen ? 'expanded' : closedChatState }
 			triggerTitle={ title }
 			onClose={ onClose }

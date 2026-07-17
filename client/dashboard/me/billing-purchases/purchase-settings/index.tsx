@@ -1558,7 +1558,7 @@ export default function PurchaseSettings() {
 				icon={ <Icon icon={ layout } /> }
 				title={ __( 'Attach to a site' ) }
 				heading={ __( 'No site attached' ) }
-				description={ __( 'Attach this domain name to an existing site.' ) }
+				description={ __( 'Attach this domain name to a new or existing site.' ) }
 				link={ `/domains/${ purchase.meta }/transfer/other-site` }
 				intent="upsell"
 			/>

@@ -4,7 +4,6 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import nock from 'nock';
 import { Provider } from 'react-redux';
 import { createStore } from 'redux';
 import ReaderPostActions from '../index';
@@ -23,9 +22,6 @@ jest.mock( 'calypso/state/reader/analytics/actions', () => ( {
 jest.mock( 'calypso/blocks/comment-button', () => () => <div data-testid="comment-button" /> );
 jest.mock( 'calypso/blocks/reader-share', () => () => <div data-testid="share-button" /> );
 jest.mock( 'calypso/reader/like-button', () => () => <div data-testid="like-button" /> );
-jest.mock( 'calypso/blocks/reader-freshly-pressed-button', () => ( {
-	ReaderFreshlyPressedButton: () => <div data-testid="freshly-pressed-button" />,
-} ) );
 jest.mock( 'calypso/reader/spaces/subscribe-with-space/space-picker-modal', () => ( {
 	SpacePickerModal: () => null,
 } ) );
@@ -54,21 +50,9 @@ const defaultProps = {
 };
 
 describe( 'ReaderPostActions', () => {
-	beforeAll( () => {
-		nock.disableNetConnect();
-	} );
-
 	beforeEach( () => {
 		mockReaderSpacesEnabled = false;
 		mockRecordReaderTracksEvent.mockClear();
-		nock.cleanAll();
-		nock( 'https://public-api.wordpress.com' )
-			.get( '/rest/v1.2/read/teams' )
-			.reply( 200, { number: 0, teams: [] } );
-	} );
-
-	afterAll( () => {
-		nock.enableNetConnect();
 	} );
 
 	describe( 'when comments API is disabled', () => {

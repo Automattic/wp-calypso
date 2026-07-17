@@ -230,6 +230,7 @@ const chat = ( props: Partial< ComponentProps< typeof OrchestratorChat > > = {} 
 		emptyViewSuggestions={ [] }
 		isDocked={ false }
 		isOpen
+		suggestionsVisible
 		onClose={ jest.fn() }
 		onExpand={ jest.fn() }
 		chatHeaderOptions={ [] }
@@ -592,6 +593,7 @@ describe( 'OrchestratorChat', () => {
 				emptyViewSuggestions={ emptySuggestions }
 				isDocked={ false }
 				isOpen
+				suggestionsVisible
 				onClose={ jest.fn() }
 				onExpand={ jest.fn() }
 				chatHeaderOptions={ [] }
@@ -642,6 +644,7 @@ describe( 'OrchestratorChat', () => {
 				emptyViewSuggestions={ emptySuggestions }
 				isDocked={ false }
 				isOpen
+				suggestionsVisible
 				onClose={ jest.fn() }
 				onExpand={ jest.fn() }
 				chatHeaderOptions={ [] }
@@ -702,7 +705,9 @@ describe( 'OrchestratorChat', () => {
 			{ id: 'getting-started', label: 'Getting started with WordPress', prompt: 'getting-started' },
 		];
 
-		render( chat( { emptyViewSuggestions: staticDefaults, isOpen: false } ) );
+		render(
+			chat( { emptyViewSuggestions: staticDefaults, isOpen: false, suggestionsVisible: false } )
+		);
 
 		expect( screen.queryByText( 'Getting started with WordPress' ) ).toBeNull();
 		expect( recordBigSkyTracksEvent ).not.toHaveBeenCalledWith(

@@ -127,10 +127,11 @@ export const UserMessage = ( {
 				<>
 					{ showGetSupport && (
 						<GetSupport
-							onClickAdditionalEvent={ ( destination ) => {
+							onClickAdditionalEvent={ ( destination, props ) => {
 								trackEvent( 'chat_get_support', {
 									location: 'user-message',
 									destination,
+									...props,
 								} );
 							} }
 						/>

@@ -56,7 +56,7 @@ function CreateAndBuildActions() {
 				actions={
 					<Button
 						variant="secondary"
-						href={ addQueryArgs( wpcomLink( '/setup/ai-site-builder' ), {
+						href={ addQueryArgs( wpcomLink( '/setup/ai-site-builder-onboarding' ), {
 							source: CONTEXT,
 							ref: EMPTY_STATE_REF,
 						} ) }

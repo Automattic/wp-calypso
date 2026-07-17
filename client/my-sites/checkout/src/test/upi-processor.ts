@@ -20,6 +20,22 @@ import {
 } from './util';
 
 describe( 'upiProcessor', () => {
+	// jsdom does not implement the native <dialog> showModal/close API, so
+	// polyfill them to mirror a browser that supports dialogs.
+	beforeAll( () => {
+		if ( ! HTMLDialogElement.prototype.showModal ) {
+			HTMLDialogElement.prototype.showModal = function showModal() {
+				this.open = true;
+			};
+		}
+		if ( ! HTMLDialogElement.prototype.close ) {
+			HTMLDialogElement.prototype.close = function close() {
+				this.open = false;
+				this.dispatchEvent( new Event( 'close' ) );
+			};
+		}
+	} );
+
 	const product = getEmptyResponseCartProduct();
 	const domainProduct = {
 		...getEmptyResponseCartProduct(),
@@ -97,7 +113,7 @@ describe( 'upiProcessor', () => {
 			mockTransactionsRedirectResponse( orderId )
 		);
 		const expected = {
-			payload: "Sorry, we couldn't process your payment. Please try again later.",
+			payload: 'Payment failed. Please check your account and try again.',
 			type: 'ERROR',
 		};
 
@@ -155,6 +171,38 @@ describe( 'upiProcessor', () => {
 		} );
 	} );
 
+	it( 'does not require a pre-existing modal target to be rendered', async () => {
+		// Intentionally do NOT render a `.upi-modal-target` element. In
+		// production that element is rendered by the outer checkout React tree,
+		// and mounting the dialog root into it breaks under React 19 (the outer
+		// re-render wipes the nested root). The processor must create its own
+		// modal container so it never depends on an outer-owned node.
+		mockTransactionsEndpoint( () => [
+			400,
+			{
+				error: 'test_error',
+				message: 'test error',
+			},
+		] );
+		const expected = { payload: 'test error', type: 'ERROR' };
+
+		await act( async () => {
+			await expect(
+				upiProcessor(
+					submitData,
+					{
+						...options,
+						contactDetails: {
+							countryCode,
+							postalCode,
+						},
+					},
+					translate
+				)
+			).resolves.toStrictEqual( expected );
+		} );
+	} );
+
 	it( 'sends the correct data to the endpoint with a site and one product', async () => {
 		// The processor renders the dialog into a div so that div must be
 		// present to avoid errors.
@@ -172,7 +220,7 @@ describe( 'upiProcessor', () => {
 			mockTransactionsRedirectResponse( orderId )
 		);
 		const expected = {
-			payload: "Sorry, we couldn't process your payment. Please try again later.",
+			payload: 'Payment failed. Please check your account and try again.',
 			type: 'ERROR',
 		};
 
@@ -229,7 +277,7 @@ describe( 'upiProcessor', () => {
 			mockTransactionsRedirectResponse( orderId )
 		);
 		const expected = {
-			payload: "Sorry, we couldn't process your payment. Please try again later.",
+			payload: 'Payment failed. Please check your account and try again.',
 			type: 'ERROR',
 		};
 
@@ -297,7 +345,7 @@ describe( 'upiProcessor', () => {
 			mockTransactionsRedirectResponse( orderId )
 		);
 		const expected = {
-			payload: "Sorry, we couldn't process your payment. Please try again later.",
+			payload: 'Payment failed. Please check your account and try again.',
 			type: 'ERROR',
 		};
 

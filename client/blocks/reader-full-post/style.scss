@@ -304,8 +304,7 @@ $reader-full-post-desktop-min: $reader-full-post-sidebar-width + $reader-full-po
 	.post-edit-button__label,
 	.reader-full-post__view-original-button-label,
 	.follow-button__label,
-	.reader-full-post__seen-button,
-	.freshly-pressed__button {
+	.reader-full-post__seen-button {
 		font-size: $font-body-small;
 		color: var( --color-text-subtle );
 	}
@@ -318,8 +317,7 @@ $reader-full-post-desktop-min: $reader-full-post-sidebar-width + $reader-full-po
 	.like-button:hover .like-button__label,
 	.post-edit-button:hover .post-edit-button__label,
 	.reader-full-post__view-original-button:hover .reader-full-post__view-original-button-label,
-	.reader-full-post__seen-button:hover,
-	.freshly-pressed__button:hover {
+	.reader-full-post__seen-button:hover {
 		color: var( --color-link );
 	}
 

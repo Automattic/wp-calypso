@@ -133,8 +133,8 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@automattic/agents-manager@workspace:packages/agents-manager"
   dependencies:
-    "@automattic/agenttic-client": "npm:^0.1.77"
-    "@automattic/agenttic-ui": "npm:^0.1.77"
+    "@automattic/agenttic-client": "npm:^0.1.80"
+    "@automattic/agenttic-ui": "npm:^0.1.80"
     "@automattic/calypso-analytics": "workspace:^"
     "@automattic/calypso-typescript-config": "workspace:^"
     "@automattic/components": "workspace:^"
@@ -180,55 +180,51 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@automattic/agenttic-client@npm:^0.1.77":
-  version: 0.1.77
-  resolution: "@automattic/agenttic-client@npm:0.1.77"
+"@automattic/agenttic-client@npm:^0.1.80":
+  version: 0.1.80
+  resolution: "@automattic/agenttic-client@npm:0.1.80"
   dependencies:
-    "@types/react": "npm:^18.0.0"
+    "@types/react": "npm:^18.0.0 || ^19.0.0"
     marked: "npm:^16.2.1"
-    react: "npm:^18.0.0"
   peerDependencies:
     "@wordpress/api-fetch": ^6.0.0 || ^7.0.0
-    react: ^18.0.0
+    react: ^18.0.0 || ^19.0.0
   dependenciesMeta:
     marked:
       optional: true
   peerDependenciesMeta:
     "@wordpress/api-fetch":
       optional: true
-  checksum: 927d4e2bc08d20ffd121f5d68cac65978371ade946ba675d880d6c3af3422b2997e4fb713c013e0b84e49f4acc0955b9f8158105c39464c7876045990dfb0ad5
+  checksum: d4563b8c86a122c0e1a97fa7818facea3b101d5aaa6b8fcca8a41b6d0c874d2bf770151fd7ed4fddef24ffd3b2165aed0ca4e3938d48f0a135283f0e1c0934eb
   languageName: node
   linkType: hard
 
-"@automattic/agenttic-ui@npm:^0.1.77":
-  version: 0.1.77
-  resolution: "@automattic/agenttic-ui@npm:0.1.77"
+"@automattic/agenttic-ui@npm:^0.1.80":
+  version: 0.1.80
+  resolution: "@automattic/agenttic-ui@npm:0.1.80"
   dependencies:
     "@automattic/charts": "npm:^1.10.0"
     "@radix-ui/react-popover": "npm:^1.1.15"
     "@radix-ui/react-scroll-area": "npm:^1.2.9"
     "@radix-ui/react-slot": "npm:^1.2.3"
-    "@visx/xychart": "npm:^4.0.0"
     "@wordpress/i18n": "npm:^6.1.0"
     class-variance-authority: "npm:^0.7.1"
     clsx: "npm:^2.1.1"
     framer-motion: "npm:^12.23.0"
     lucide-react: "npm:^0.525.0"
     marked: "npm:^16.2.1"
-    react: "npm:^18.0.0"
-    react-dom: "npm:^18.0.0"
     react-markdown: "npm:^10.1.0"
     react-textarea-autosize: "npm:^8.5.9"
     remark-gfm: "npm:^4.0.1"
     unified: "npm:^11.0.5"
     use-debounce: "npm:^10.0.6"
   peerDependencies:
-    react: ^18.0.0
-    react-dom: ^18.0.0
+    react: ^18.0.0 || ^19.0.0
+    react-dom: ^18.0.0 || ^19.0.0
   dependenciesMeta:
     marked:
       optional: true
-  checksum: fedd09f2a133c9b733a775c2fc0b20a13517aba30c5d4f1a4bc32c609e6827ec7dacb1e76d85b2c8db758f007b15fbb93978674ccbc748ef12ccaf6c1423c1f3
+  checksum: 79e7244f760c8ffee08f6817ef8a9e89af74626a951fa1ca76c2077012920ef692b09c33d2d1ac3fffb57f561d69f9ad6db01b88bcb30136c52798ff3ecf5e9b
   languageName: node
   linkType: hard
 
@@ -237,11 +233,15 @@ __metadata:
   resolution: "@automattic/api-core@workspace:packages/api-core"
   dependencies:
     "@automattic/calypso-typescript-config": "workspace:^"
+    "@automattic/i18n-utils": "workspace:^"
+    "@automattic/languages": "workspace:^"
     "@automattic/shopping-cart": "workspace:^"
     "@wordpress/dataviews": "npm:^16.0.0"
     "@wordpress/html-entities": "npm:^4.48.0"
     "@wordpress/i18n": "npm:^6.21.0"
+    "@wordpress/url": "npm:^4.48.0"
     he: "npm:^1.2.0"
+    qs: "npm:^6.15.2"
     react: "npm:^18.3.1"
     react-dom: "npm:^18.3.1"
     tslib: "npm:^2.8.1"
@@ -254,18 +254,24 @@ __metadata:
   resolution: "@automattic/api-queries@workspace:packages/api-queries"
   dependencies:
     "@automattic/api-core": "workspace:^"
+    "@automattic/calypso-config": "workspace:^"
     "@automattic/calypso-support-session": "workspace:^"
     "@automattic/calypso-typescript-config": "workspace:^"
+    "@github/webauthn-json": "npm:^2.1.1"
     "@tanstack/query-sync-storage-persister": "npm:^5.83.0"
     "@tanstack/react-query": "npm:^5.83.0"
     "@tanstack/react-query-persist-client": "npm:^5.83.0"
+    "@tanstack/react-router": "npm:^1.114.34"
     "@wordpress/html-entities": "npm:^4.48.0"
+    deepmerge: "npm:^4.3.1"
     fast-deep-equal: "npm:^3.1.3"
     react: "npm:^18.3.1"
+    react-dom: "npm:^18.3.1"
     tslib: "npm:^2.8.1"
     typescript: "npm:^6.0.3"
   peerDependencies:
     react: ^18.3.1 || ^19.0.0
+    react-dom: ^18.3.1 || ^19.0.0
   languageName: unknown
   linkType: soft
 
@@ -344,7 +350,7 @@ __metadata:
   resolution: "@automattic/block-notes@workspace:packages/block-notes"
   dependencies:
     "@automattic/agents-manager": "workspace:^"
-    "@automattic/agenttic-client": "npm:^0.1.77"
+    "@automattic/agenttic-client": "npm:^0.1.80"
     "@automattic/calypso-analytics": "workspace:^"
     "@automattic/calypso-typescript-config": "workspace:^"
     "@testing-library/react": "npm:^15.0.7"
@@ -553,6 +559,7 @@ __metadata:
   dependencies:
     "@automattic/calypso-eslint-overrides": "workspace:^"
     "@automattic/calypso-typescript-config": "workspace:^"
+    "@automattic/jest-circus-allure-reporter": "workspace:^"
     "@automattic/languages": "workspace:^"
     "@automattic/zendesk-client": "workspace:^"
     "@jest/globals": "npm:^29.7.0"
@@ -563,12 +570,15 @@ __metadata:
     "@types/totp-generator": "npm:^0.0.8"
     "@wordpress/i18n": "npm:^6.21.0"
     asana-phrase: "npm:^0.0.8"
+    chalk: "npm:^4.1.2"
     form-data: "npm:^4.0.6"
     jest-docblock: "npm:^29.7.0"
+    jest-environment-node: "npm:^29.7.0"
     mailosaur: "npm:^8.4.0"
     nock: "npm:^14.0.15"
     playwright: "npm:1.57.0"
     totp-generator: "npm:^0.0.14"
+    tslib: "npm:^2.8.1"
     typescript: "npm:^6.0.3"
   languageName: unknown
   linkType: soft
@@ -660,6 +670,7 @@ __metadata:
     i18n-calypso: "workspace:^"
     react: "npm:^18.3.1"
     react-dom: "npm:^18.3.1"
+    tslib: "npm:^2.8.1"
     typescript: "npm:^6.0.3"
   peerDependencies:
     "@wordpress/data": ^10.48.0
@@ -737,6 +748,7 @@ __metadata:
   resolution: "@automattic/calypso-support-session@workspace:packages/calypso-support-session"
   dependencies:
     "@automattic/calypso-typescript-config": "workspace:^"
+    debug: "npm:^4.4.1"
     tslib: "npm:^2.8.1"
     typescript: "npm:^6.0.3"
   languageName: unknown
@@ -825,6 +837,7 @@ __metadata:
     "@automattic/number-formatters": "npm:^1.2.0"
     "@automattic/typography": "workspace:^"
     "@automattic/ui": "workspace:^"
+    "@automattic/viewport": "workspace:^"
     "@automattic/viewport-react": "workspace:^"
     "@emotion/css": "npm:^11.11.2"
     "@emotion/react": "npm:^11.11.1"
@@ -840,11 +853,14 @@ __metadata:
     "@wordpress/components": "npm:^35.0.0"
     "@wordpress/compose": "npm:^8.2.0"
     "@wordpress/date": "npm:5.48.0"
+    "@wordpress/element": "npm:^8.0.0"
     "@wordpress/html-entities": "npm:4.48.0"
     "@wordpress/i18n": "npm:^6.21.0"
     "@wordpress/icons": "npm:^13.3.0"
     "@wordpress/primitives": "npm:^4.48.0"
+    "@wordpress/private-apis": "npm:^1.48.0"
     "@wordpress/react-i18n": "npm:^4.48.0"
+    "@wordpress/ui": "npm:^0.17.0"
     "@wordpress/url": "npm:^4.48.0"
     "@wordpress/warning": "npm:3.48.0"
     canvas-confetti: "npm:^1.6.0"
@@ -854,11 +870,13 @@ __metadata:
     fast-deep-equal: "npm:^3.1.3"
     gridicons: "npm:^3.4.2"
     i18n-calypso: "workspace:^"
+    lodash: "npm:^4.18.1"
     postcss: "npm:^8.5.15"
     prop-types: "npm:^15.8.1"
     react-modal: "npm:^3.16.3"
     react-router-dom: "npm:6.30.4"
     storybook: "npm:^9.1.20"
+    tslib: "npm:^2.8.1"
     typescript: "npm:^6.0.3"
     utility-types: "npm:^3.10.0"
     webpack: "npm:^5.99.8"
@@ -1150,13 +1168,16 @@ __metadata:
   resolution: "@automattic/domain-search@workspace:packages/domain-search"
   dependencies:
     "@automattic/api-core": "workspace:^"
+    "@automattic/api-queries": "workspace:^"
     "@automattic/calypso-eslint-overrides": "workspace:^"
     "@automattic/calypso-products": "workspace:^"
     "@automattic/calypso-storybook": "workspace:^"
     "@automattic/calypso-typescript-config": "workspace:^"
+    "@automattic/components": "workspace:^"
     "@automattic/explat-client": "workspace:^"
     "@automattic/explat-client-react-helpers": "workspace:^"
     "@automattic/i18n-utils": "workspace:^"
+    "@automattic/number-formatters": "npm:^1.2.0"
     "@automattic/urls": "workspace:^"
     "@storybook/addon-a11y": "npm:^9.1.20"
     "@tanstack/react-query": "npm:^5.83.0"
@@ -1166,7 +1187,10 @@ __metadata:
     "@wordpress/base-styles": "npm:^9.1.0"
     "@wordpress/components": "npm:^35.0.0"
     "@wordpress/compose": "npm:^8.2.0"
+    "@wordpress/data": "npm:^10.48.0"
+    "@wordpress/element": "npm:^8.0.0"
     "@wordpress/icons": "npm:^13.3.0"
+    "@wordpress/primitives": "npm:^4.48.0"
     "@wordpress/react-i18n": "npm:^4.48.0"
     clsx: "npm:^2.1.1"
     copyfiles: "npm:^2.4.1"
@@ -1357,6 +1381,7 @@ __metadata:
     "@wordpress/compose": "npm:^8.2.0"
     postcss: "npm:^8.5.15"
     storybook: "npm:^9.1.20"
+    tslib: "npm:^2.8.1"
     typescript: "npm:^6.0.3"
     webpack: "npm:^5.99.8"
   peerDependencies:
@@ -1480,8 +1505,8 @@ __metadata:
   resolution: "@automattic/image-studio@workspace:packages/image-studio"
   dependencies:
     "@automattic/agents-manager": "workspace:^"
-    "@automattic/agenttic-client": "npm:^0.1.77"
-    "@automattic/agenttic-ui": "npm:^0.1.77"
+    "@automattic/agenttic-client": "npm:^0.1.80"
+    "@automattic/agenttic-ui": "npm:^0.1.80"
     "@automattic/calypso-analytics": "workspace:^"
     "@automattic/calypso-typescript-config": "workspace:^"
     "@automattic/oauth-token": "workspace:^"
@@ -1537,6 +1562,7 @@ __metadata:
     "@types/allure-js-commons": "npm:^0.0.4"
     "@types/node": "npm:^24.12.2"
     allure-js-commons: "npm:2.0.0-beta.9"
+    jest-docblock: "npm:^29.7.0"
     typescript: "npm:^6.0.3"
   languageName: unknown
   linkType: soft
@@ -1554,16 +1580,22 @@ __metadata:
     "@testing-library/dom": "npm:^10.4.1"
     "@testing-library/jest-dom": "npm:^6.9.1"
     "@testing-library/react": "npm:^16.3.2"
+    "@wordpress/components": "npm:^35.0.0"
+    "@wordpress/i18n": "npm:^6.21.0"
+    "@wordpress/icons": "npm:^13.3.0"
     clsx: "npm:^2.1.1"
     debug: "npm:^4.4.1"
     postcss: "npm:^8.5.15"
     react: "npm:^18.3.1"
     react-dom: "npm:^18.3.1"
+    tslib: "npm:^2.8.1"
     typescript: "npm:^6.0.3"
     webpack: "npm:^5.99.8"
+    wpcom-proxy-request: "workspace:^"
   peerDependencies:
     "@babel/runtime": ^7.27.1
     "@wordpress/data": ^10.48.0
+    "@wordpress/element": ^8.0.0
     react: ^18.3.1 || ^19.0.0
     react-dom: ^18.3.1 || ^19.0.0
   peerDependenciesMeta:
@@ -1576,7 +1608,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@automattic/jetpack-ai-sidebar@workspace:packages/jetpack-ai-sidebar"
   dependencies:
-    "@automattic/agenttic-client": "npm:^0.1.77"
+    "@automattic/agenttic-client": "npm:^0.1.80"
     "@automattic/calypso-analytics": "workspace:^"
     "@automattic/calypso-typescript-config": "workspace:^"
     "@automattic/calypso-url": "workspace:^"
@@ -1734,11 +1766,11 @@ __metadata:
     "@wordpress/react-i18n": "npm:^4.48.0"
     debug: "npm:^4.4.1"
     i18n-calypso: "workspace:^"
-    react: "npm:^18.3.1"
     react-dom: "npm:^18.3.1"
     typescript: "npm:^6.0.3"
   peerDependencies:
     "@emotion/react": ^11.4.1
+    react: ^18.3.1 || ^19.0.0
   languageName: unknown
   linkType: soft
 
@@ -1843,10 +1875,13 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@automattic/odie-client@workspace:packages/odie-client"
   dependencies:
-    "@automattic/agenttic-ui": "npm:^0.1.77"
+    "@automattic/agenttic-ui": "npm:^0.1.80"
+    "@automattic/calypso-analytics": "workspace:^"
     "@automattic/calypso-typescript-config": "workspace:^"
     "@automattic/components": "workspace:^"
+    "@automattic/data-stores": "workspace:^"
     "@automattic/i18n-utils": "workspace:^"
+    "@automattic/urls": "workspace:^"
     "@automattic/zendesk-client": "workspace:^"
     "@tanstack/react-query": "npm:^5.83.0"
     "@testing-library/jest-dom": "npm:^6.9.1"
@@ -1855,11 +1890,16 @@ __metadata:
     "@types/react": "npm:^18.3.23"
     "@types/smooch": "npm:^5.6.0"
     "@wordpress/api-fetch": "npm:7.48.0"
+    "@wordpress/components": "npm:^35.0.0"
     "@wordpress/data": "npm:^10.48.0"
     "@wordpress/element": "npm:^8.0.0"
+    "@wordpress/html-entities": "npm:^4.48.0"
     "@wordpress/i18n": "npm:^6.21.0"
     "@wordpress/icons": "npm:^13.3.0"
+    "@wordpress/react-i18n": "npm:^4.48.0"
+    "@wordpress/url": "npm:^4.48.0"
     autosize: "npm:^6.0.1"
+    classnames: "npm:^2.5.1"
     clsx: "npm:^2.1.1"
     dompurify: "npm:3.4.11"
     framer-motion: "npm:^12.23.12"
@@ -1869,7 +1909,9 @@ __metadata:
     react-intersection-observer: "npm:^9.4.3"
     react-markdown: "npm:^9.0.1"
     react-redux: "npm:^9.2.0"
+    react-router-dom: "npm:6.30.4"
     smooch: "npm:^5.7.17"
+    tslib: "npm:^2.8.1"
     typescript: "npm:^6.0.3"
     wpcom-proxy-request: "npm:^7.0.5"
   peerDependencies:
@@ -1950,12 +1992,16 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@automattic/onboarding@workspace:packages/onboarding"
   dependencies:
+    "@automattic/calypso-analytics": "workspace:^"
     "@automattic/calypso-config": "workspace:^"
     "@automattic/calypso-storybook": "workspace:^"
     "@automattic/calypso-typescript-config": "workspace:^"
+    "@automattic/calypso-url": "workspace:^"
     "@automattic/components": "workspace:^"
     "@automattic/data-stores": "workspace:^"
     "@automattic/domain-search": "workspace:^"
+    "@automattic/i18n-utils": "workspace:^"
+    "@automattic/shopping-cart": "workspace:^"
     "@automattic/typography": "workspace:^"
     "@automattic/viewport": "workspace:^"
     "@storybook/addon-a11y": "npm:^9.1.20"
@@ -1963,14 +2009,19 @@ __metadata:
     "@testing-library/react": "npm:^16.3.2"
     "@wordpress/base-styles": "npm:^9.1.0"
     "@wordpress/components": "npm:^35.0.0"
+    "@wordpress/compose": "npm:^8.2.0"
     "@wordpress/data": "npm:^10.48.0"
     "@wordpress/icons": "npm:^13.3.0"
     "@wordpress/react-i18n": "npm:^4.48.0"
+    "@wordpress/url": "npm:^4.48.0"
     clsx: "npm:^2.1.1"
     copyfiles: "npm:^2.4.1"
     css-loader: "npm:^6.11.0"
+    debug: "npm:^4.4.1"
+    i18n-calypso: "workspace:^"
     react: "npm:^18.3.1"
     react-dom: "npm:^18.3.1"
+    react-router: "npm:6.30.4"
     react-router-dom: "npm:6.30.4"
     redux: "npm:^5.0.1"
     sass-loader: "npm:^14.2.1"
@@ -1990,6 +2041,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@automattic/plans-grid-next@workspace:packages/plans-grid-next"
   dependencies:
+    "@automattic/calypso-analytics": "workspace:^"
     "@automattic/calypso-build": "workspace:^"
     "@automattic/calypso-color-schemes": "workspace:^"
     "@automattic/calypso-products": "workspace:^"
@@ -2007,6 +2059,7 @@ __metadata:
     "@testing-library/jest-dom": "npm:^6.9.1"
     "@testing-library/react": "npm:^16.3.2"
     "@testing-library/user-event": "npm:^14.6.1"
+    "@wordpress/components": "npm:^35.0.0"
     "@wordpress/data": "npm:^10.48.0"
     "@wordpress/element": "npm:^8.0.0"
     "@wordpress/icons": "npm:^13.3.0"
@@ -2021,6 +2074,7 @@ __metadata:
     react-transition-group: "npm:^4.4.5"
     resize-observer-polyfill: "npm:^1.5.1"
     storybook: "npm:^9.1.20"
+    tslib: "npm:^2.8.1"
     typescript: "npm:^6.0.3"
     webpack: "npm:^5.99.8"
   peerDependencies:
@@ -2062,10 +2116,13 @@ __metadata:
     "@testing-library/dom": "npm:^10.4.1"
     "@testing-library/jest-dom": "npm:^6.9.1"
     "@testing-library/react": "npm:^16.3.2"
+    "@wordpress/components": "npm:^35.0.0"
     clsx: "npm:^2.1.1"
     postcss: "npm:^8.5.15"
+    react-modal: "npm:^3.16.3"
     require-from-string: "npm:^2.0.2"
     storybook: "npm:^9.1.20"
+    tslib: "npm:^2.8.1"
     typescript: "npm:^6.0.3"
     webpack: "npm:^5.99.8"
   peerDependencies:
@@ -2152,8 +2209,10 @@ __metadata:
     "@wordpress/core-data": "npm:^7.48.0"
     "@wordpress/dom": "npm:^4.48.0"
     "@wordpress/element": "npm:^8.0.0"
+    "@wordpress/html-entities": "npm:^4.48.0"
     "@wordpress/i18n": "npm:^6.21.0"
     "@wordpress/icons": "npm:^13.3.0"
+    "@wordpress/keycodes": "npm:^4.48.0"
     "@wordpress/url": "npm:^4.48.0"
     clsx: "npm:^2.1.1"
     copyfiles: "npm:^2.4.1"
@@ -2161,6 +2220,7 @@ __metadata:
     postcss: "npm:^8.5.15"
     route-recognizer: "npm:^0.3.4"
     storybook: "npm:^9.1.20"
+    tslib: "npm:^2.8.1"
     typescript: "npm:^6.0.3"
     webpack: "npm:^5.99.8"
   peerDependencies:
@@ -2180,6 +2240,8 @@ __metadata:
     "@testing-library/dom": "npm:^10.4.1"
     "@testing-library/jest-dom": "npm:^6.9.1"
     "@testing-library/react": "npm:^16.3.2"
+    "@wordpress/compose": "npm:^8.2.0"
+    "@wordpress/react-i18n": "npm:^4.48.0"
     typescript: "npm:^6.0.3"
   peerDependencies:
     "@wordpress/data": ^10.48.0
@@ -2223,9 +2285,12 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@automattic/subscriber@workspace:packages/subscriber"
   dependencies:
+    "@automattic/calypso-analytics": "workspace:^"
     "@automattic/calypso-color-schemes": "workspace:^"
     "@automattic/calypso-typescript-config": "workspace:^"
     "@automattic/components": "workspace:^"
+    "@automattic/data-stores": "workspace:^"
+    "@automattic/i18n-utils": "workspace:^"
     "@automattic/onboarding": "workspace:^"
     "@automattic/viewport": "workspace:^"
     "@automattic/viewport-react": "workspace:^"
@@ -2240,6 +2305,7 @@ __metadata:
     "@wordpress/react-i18n": "npm:^4.48.0"
     clsx: "npm:^2.1.1"
     debug: "npm:^4.4.1"
+    email-validator: "npm:^2.0.4"
     react-popper: "npm:^2.3.0"
     typescript: "npm:^6.0.3"
   peerDependencies:
@@ -2539,6 +2605,7 @@ __metadata:
     "@automattic/calypso-typescript-config": "workspace:^"
     "@automattic/components": "workspace:^"
     "@automattic/composite-checkout": "workspace:^"
+    "@automattic/i18n-utils": "workspace:^"
     "@automattic/js-utils": "workspace:^"
     "@automattic/number-formatters": "npm:^1.2.0"
     "@automattic/shopping-cart": "workspace:^"
@@ -2549,6 +2616,7 @@ __metadata:
     "@testing-library/dom": "npm:^10.4.1"
     "@testing-library/jest-dom": "npm:^6.9.1"
     "@testing-library/react": "npm:^16.3.2"
+    "@wordpress/components": "npm:^35.0.0"
     "@wordpress/data": "npm:^10.48.0"
     "@wordpress/i18n": "npm:^6.21.0"
     "@wordpress/react-i18n": "npm:^4.48.0"
@@ -2556,12 +2624,12 @@ __metadata:
     i18n-calypso: "workspace:^"
     postcss: "npm:^8.5.15"
     prop-types: "npm:^15.8.1"
-    react: "npm:^18.3.1"
     react-dom: "npm:^18.3.1"
     typescript: "npm:^6.0.3"
     webpack: "npm:^5.99.8"
   peerDependencies:
     "@emotion/react": ^11.4.1
+    react: ^18.3.1 || ^19.0.0
   languageName: unknown
   linkType: soft
 
@@ -2646,17 +2714,33 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@automattic/zendesk-client@workspace:packages/zendesk-client"
   dependencies:
+    "@automattic/agenttic-ui": "npm:^0.1.80"
     "@automattic/calypso-analytics": "workspace:^"
+    "@automattic/calypso-config": "workspace:^"
     "@automattic/calypso-typescript-config": "workspace:^"
+    "@automattic/data-stores": "workspace:^"
+    "@automattic/load-script": "workspace:^"
     "@tanstack/react-query": "npm:^5.83.0"
     "@wordpress/api-fetch": "npm:^7.48.0"
+    "@wordpress/components": "npm:^35.0.0"
+    "@wordpress/data": "npm:^10.48.0"
     "@wordpress/element": "npm:^8.0.0"
+    "@wordpress/i18n": "npm:^6.21.0"
+    "@wordpress/icons": "npm:^13.3.0"
+    "@wordpress/react-i18n": "npm:^4.48.0"
     "@wordpress/url": "npm:^4.48.0"
+    clsx: "npm:^2.1.1"
+    dompurify: "npm:3.4.11"
     react: "npm:^18.3.1"
+    react-dom: "npm:^18.3.1"
+    react-router-dom: "npm:6.30.4"
+    smooch: "npm:^5.7.17"
+    tslib: "npm:^2.8.1"
     typescript: "npm:^6.0.3"
     wpcom-proxy-request: "workspace:^"
   peerDependencies:
     react: ^18.3.1 || ^19.0.0
+    react-dom: ^18.3.1 || ^19.0.0
   languageName: unknown
   linkType: soft
 
@@ -14376,7 +14460,7 @@ __metadata:
   dependencies:
     "@automattic/accessible-focus": "workspace:^"
     "@automattic/agents-manager": "workspace:^"
-    "@automattic/agenttic-ui": "npm:^0.1.77"
+    "@automattic/agenttic-ui": "npm:^0.1.80"
     "@automattic/api-core": "workspace:^"
     "@automattic/api-queries": "workspace:^"
     "@automattic/block-renderer": "workspace:^"
@@ -15029,7 +15113,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"classnames@npm:^2.3.1":
+"classnames@npm:^2.3.1, classnames@npm:^2.5.1":
   version: 2.5.1
   resolution: "classnames@npm:2.5.1"
   checksum: afff4f77e62cea2d79c39962980bf316bacb0d7c49e13a21adaadb9221e1c6b9d3cdb829d8bb1b23c406f4e740507f37e1dcf506f7e3b7113d17c5bab787aa69
@@ -20703,6 +20787,7 @@ __metadata:
     react-dom: "npm:^18.3.1"
     react-test-renderer: "npm:^18.3.1"
     tannin: "npm:^1.2.0"
+    tslib: "npm:^2.8.1"
     typescript: "npm:^6.0.3"
     use-subscription: "npm:1.11.0"
   peerDependencies:

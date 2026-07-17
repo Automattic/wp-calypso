@@ -1,6 +1,6 @@
 {
 	"name": "@automattic/subscriber",
-	"version": "0.0.2",
+	"version": "0.1.0",
 	"description": "Subscriber importer.",
 	"homepage": "https://github.com/Automattic/wp-calypso",
 	"license": "GPL-2.0-or-later",
@@ -37,7 +37,10 @@
 		"watch": "tsc --build ./tsconfig.json --watch"
 	},
 	"dependencies": {
+		"@automattic/calypso-analytics": "workspace:^",
 		"@automattic/components": "workspace:^",
+		"@automattic/data-stores": "workspace:^",
+		"@automattic/i18n-utils": "workspace:^",
 		"@automattic/onboarding": "workspace:^",
 		"@automattic/viewport": "workspace:^",
 		"@automattic/viewport-react": "workspace:^",
@@ -52,17 +55,18 @@
 		"@wordpress/react-i18n": "^4.48.0",
 		"clsx": "^2.1.1",
 		"debug": "^4.4.1",
+		"email-validator": "^2.0.4",
 		"react-popper": "^2.3.0"
-	},
-	"devDependencies": {
-		"@automattic/calypso-color-schemes": "workspace:^",
-		"@automattic/calypso-typescript-config": "workspace:^",
-		"typescript": "^6.0.3"
 	},
 	"peerDependencies": {
 		"@wordpress/data": "^10.48.0",
 		"react": "^18.3.1 || ^19.0.0",
 		"react-dom": "^18.3.1 || ^19.0.0",
 		"redux": "^5.0.1"
+	},
+	"devDependencies": {
+		"@automattic/calypso-color-schemes": "workspace:^",
+		"@automattic/calypso-typescript-config": "workspace:^",
+		"typescript": "^6.0.3"
 	}
 }

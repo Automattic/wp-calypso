@@ -1,6 +1,6 @@
 {
 	"name": "@automattic/launchpad",
-	"version": "1.2.3",
+	"version": "1.2.4",
 	"description": "Launchpad components.",
 	"homepage": "https://github.com/Automattic/wp-calypso",
 	"license": "GPL-2.0-or-later",
