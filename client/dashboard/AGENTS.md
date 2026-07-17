@@ -23,7 +23,7 @@ Use `withSnackbar()` from `app/snackbars/with-snackbar` to attach a snackbar to 
 useMutation( withSnackbar( sitePhpVersionMutation( siteId ), { success: __( 'Saved.' ) } ) );
 ```
 
-Every `@automattic/api-queries` mutation carries a `meta.statId` naming its failure stat. Spreading a factory and then setting `meta` replaces the whole object rather than merging, so the `statId` is lost and the failure is reported as `missing`. `withSnackbar()` merges instead. A `no-restricted-syntax` rule in `.eslintrc.js` enforces this.
+Every `@automattic/api-queries` mutation carries a `meta.statId` naming its failure stat. Spreading a factory and then setting `meta` replaces the whole object rather than merging, so the `statId` is lost. `withSnackbar()` merges instead. A `no-restricted-syntax` rule in `.eslintrc.js` enforces this.
 
 If the mutation needs other options too, wrap only the factory:
 
