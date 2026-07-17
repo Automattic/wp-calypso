@@ -98,16 +98,14 @@ const SiteCriticalError = ( { siteSlug }: { siteSlug: string } ) => {
 	const recoveryErrors = isAdmin ? getJetpackRecoverySessionErrors( site ) : [];
 
 	const items: Item[] = [];
-	if ( isAdmin ) {
+	if ( isAdmin && site.options?.admin_url ) {
 		items.push( {
 			icon: external,
 			text: createInterpolateElement(
 				// translators: <a/> is a link to the site's wp-admin with the text "Visit your site"
 				__( '<a>Visit your site</a> to check available recovery options.' ),
 				{
-					a: (
-						<a href={ site.options?.admin_url ?? '#' } target="_blank" rel="noopener noreferrer" />
-					),
+					a: <a href={ site.options.admin_url } target="_blank" rel="noopener noreferrer" />,
 				}
 			),
 		} );
