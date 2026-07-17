@@ -35,7 +35,7 @@ describe( '<UpcomingRenewalsDialog>', () => {
 			expiryStatus: 'expiring',
 			renewDate: '',
 			productSlug: 'personal-bundle',
-			productName: 'Personal Plan',
+			productName: 'WordPress.com Personal',
 			amount: 100,
 		},
 		{
@@ -78,7 +78,7 @@ describe( '<UpcomingRenewalsDialog>', () => {
 		).toHaveTextContent( '$200' );
 		expect(
 			document.body.querySelectorAll( '.upcoming-renewals-dialog__name' )[ 1 ]
-		).toHaveTextContent( /Personal PlanSite Plan: expires in 20 days/ );
+		).toHaveTextContent( /WordPress.com PersonalExpires in 20 days/ );
 		expect(
 			document.body.querySelectorAll( '.upcoming-renewals-dialog__price' )[ 1 ]
 		).toHaveTextContent( '$100' );
