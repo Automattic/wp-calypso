@@ -73,15 +73,6 @@ class SecurityKeyRegister extends Component {
 		return (
 			<form onSubmit={ this.handleRegister }>
 				<Card className="two-factor-authentication__security-key-register">
-					<p className="security-key-register__text">
-						{ translate(
-							'Due to a small setup issue, some of your security keys were linked to the wrong WordPress.com domain. This isn’t a security concern — your account and data are safe.'
-						) }
-					</p>
-					<p className="security-key-register__text">
-						{ translate( 'Register a new key now so you can keep using it to log in.' ) }
-					</p>
-
 					<FormFieldset>
 						<FormLabel htmlFor="security-key-name">
 							{ translate( 'Give the key a name to help you remember it' ) }

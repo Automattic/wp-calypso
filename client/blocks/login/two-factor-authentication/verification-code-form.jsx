@@ -171,7 +171,8 @@ class VerificationCodeForm extends Component {
 						showDismiss={ false }
 					>
 						{ translate(
-							'Your security key needs to be re-registered, so we couldn’t use it to sign you in. Enter the code below to continue, then register a new key.'
+							'{{strong}}Security key alert:{{/strong}} This key was registered to a different WordPress.com domain and cannot be used to log in. Your account is still secure — just sign in with your backup authenticator, then we’ll set up a new key.',
+							{ components: { strong: <strong /> } }
 						) }
 					</Notice>
 				) }
