@@ -34,6 +34,7 @@ import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import {
 	getDisplayName,
 	isExpiredOrRemoved,
+	isExpiredWithNoAutoRenewAttemptsLeft,
 	isExpiring,
 	isRechargeable,
 	isIncludedWithPlan,
@@ -701,6 +702,7 @@ export function PurchaseItemPaymentMethod( {
 	if (
 		purchase.isAutoRenewEnabled &&
 		( ! hasPaymentMethod( purchase ) || isPaidWithCredits( purchase ) ) &&
+		! isExpiredWithNoAutoRenewAttemptsLeft( purchase ) &&
 		! isPartnerPurchase( purchase ) &&
 		! isAkismetFreeProduct( purchase )
 	) {
