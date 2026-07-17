@@ -1,5 +1,4 @@
 import { pick } from '@automattic/js-utils';
-import update from 'immutability-helper';
 import {
 	DOMAINS_DNS_ADD,
 	DOMAINS_DNS_ADD_COMPLETED,
@@ -86,13 +85,10 @@ export const initialState = {
 };
 
 function updateDomainState( state, domainName, dns ) {
-	const command = {
-		[ domainName ]: {
-			$set: Object.assign( {}, state[ domainName ] || initialState, dns ),
-		},
+	return {
+		...state,
+		[ domainName ]: Object.assign( {}, state[ domainName ] || initialState, dns ),
 	};
-
-	return update( state, command );
 }
 
 function addDns( state, domainName, record ) {
@@ -100,60 +96,56 @@ function addDns( state, domainName, record ) {
 		isBeingAdded: true,
 	} );
 
-	return update( state, {
+	const domainState = state[ domainName ];
+	const added = domainState.records.concat( [ newRecord ] );
+
+	return {
+		...state,
 		[ domainName ]: {
-			isSubmittingForm: { $set: true },
-			records: {
-				$apply: ( records ) => {
-					const added = records.concat( [ newRecord ] );
-					return removeDuplicateWpcomRecords( domainName, added );
-				},
-			},
+			...domainState,
+			isSubmittingForm: true,
+			records: removeDuplicateWpcomRecords( domainName, added ),
 		},
-	} );
+	};
 }
 
 function deleteDns( state, domainName, record ) {
-	const index = findDnsIndex( state[ domainName ].records, record );
+	const domainState = state[ domainName ];
+	const index = findDnsIndex( domainState.records, record );
 
 	if ( index === -1 ) {
 		return state;
 	}
 
-	const command = {
-		[ domainName ]: {
-			records: {
-				$apply: ( records ) => {
-					const deleted = records.filter( ( _, current ) => index !== current );
+	const deleted = domainState.records.filter( ( _, current ) => index !== current );
 
-					return addMissingWpcomRecords( domainName, deleted );
-				},
-			},
+	return {
+		...state,
+		[ domainName ]: {
+			...domainState,
+			records: addMissingWpcomRecords( domainName, deleted ),
 		},
 	};
-
-	return update( state, command );
 }
 
 function updateDnsState( state, domainName, record, updatedFields ) {
-	const index = findDnsIndex( state[ domainName ].records, record );
+	const domainState = state[ domainName ];
+	const index = findDnsIndex( domainState.records, record );
 	const updatedRecord = Object.assign( {}, record, updatedFields );
 
 	if ( index === -1 ) {
 		return state;
 	}
 
-	const command = {
+	return {
+		...state,
 		[ domainName ]: {
-			records: {
-				[ index ]: {
-					$merge: updatedRecord,
-				},
-			},
+			...domainState,
+			records: domainState.records.map( ( currentRecord, currentIndex ) =>
+				currentIndex === index ? { ...currentRecord, ...updatedRecord } : currentRecord
+			),
 		},
 	};
-
-	return update( state, command );
 }
 
 function findDnsIndex( records, record ) {
