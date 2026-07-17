@@ -3,20 +3,6 @@ import { useQueryClient } from '@tanstack/react-query';
 import { useEffect } from 'react';
 import { bumpStat } from '../analytics';
 
-function getMutationKeyLabel( key: unknown ): string {
-	if ( ! Array.isArray( key ) ) {
-		return 'unknown';
-	}
-	const leading: string[] = [];
-	for ( const part of key ) {
-		if ( typeof part !== 'string' ) {
-			break;
-		}
-		leading.push( part );
-	}
-	return leading.length ? leading.join( ':' ) : 'unknown';
-}
-
 export default function MutationErrorTracker() {
 	const queryClient = useQueryClient();
 
@@ -28,11 +14,18 @@ export default function MutationErrorTracker() {
 
 			const { mutation } = event;
 			const error = event.action.error;
+			const trackingId = mutation.meta?.trackingId;
 
-			const keyLabel = getMutationKeyLabel( mutation.options.mutationKey );
-			const name = isWpError( error ) ? `${ keyLabel }:${ error.status }` : keyLabel;
+			if ( ! trackingId ) {
+				return;
+			}
 
-			bumpStat( 'hd-mutation-error', name );
+			// Only track server-side errors now.
+			if ( ! isWpError( error ) || Math.floor( error.status / 100 ) !== 5 ) {
+				return;
+			}
+
+			bumpStat( 'dashboard-mutation-error', trackingId );
 		} );
 	}, [ queryClient ] );
 

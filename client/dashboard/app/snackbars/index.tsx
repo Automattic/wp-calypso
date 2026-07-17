@@ -1,4 +1,4 @@
-import { useQueryClient } from '@tanstack/react-query';
+import { useQueryClient, type MutationMeta } from '@tanstack/react-query';
 import { SnackbarList } from '@wordpress/components';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { Icon, published, error } from '@wordpress/icons';
@@ -18,8 +18,19 @@ declare module '@tanstack/react-query' {
 				success?: string;
 				error?: string | { source: 'server' };
 			};
+			trackingId?: string;
 		};
 	}
+}
+
+export function withSnackbar< TOptions extends { meta?: MutationMeta } >(
+	options: TOptions,
+	snackbar: NonNullable< MutationMeta[ 'snackbar' ] >
+): TOptions {
+	return {
+		...options,
+		meta: { ...options.meta, snackbar },
+	};
 }
 
 export default function Snackbars() {

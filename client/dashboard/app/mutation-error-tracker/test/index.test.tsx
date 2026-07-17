@@ -17,21 +17,52 @@ function wpError( fields: { status: number; statusCode: number; error?: string }
 }
 
 describe( '<MutationErrorTracker>', () => {
-	test( 'bumps a KEY:status stat when a keyed WPError mutation fails', async () => {
+	test( 'bumps the trackingId stat when a WPError mutation fails', async () => {
 		const { queryClient } = render( <MutationErrorTracker /> );
 
 		const error = wpError( { status: 500, statusCode: 500, error: 'internal_server_error' } );
 		const mutation = queryClient.getMutationCache().build( queryClient, {
-			mutationKey: [ 'PULL_FROM_STAGING', 12345 ],
+			meta: { trackingId: 'registerTwoStepAuthSecurityKey' },
 			mutationFn: () => Promise.reject( error ),
 		} );
 
 		await expect( mutation.execute( undefined ) ).rejects.toBe( error );
 
-		expect( mockedBumpStat ).toHaveBeenCalledWith( 'hd-mutation-error', 'PULL_FROM_STAGING:500' );
+		expect( mockedBumpStat ).toHaveBeenCalledWith(
+			'dashboard-mutation-error',
+			'registerTwoStepAuthSecurityKey'
+		);
 	} );
 
-	test( 'bumps the key label alone for an unkeyed, non-WPError failure', async () => {
+	test( 'does not bump anything for a 4xx WPError failure', async () => {
+		const { queryClient } = render( <MutationErrorTracker /> );
+
+		const error = wpError( { status: 403, statusCode: 403, error: 'forbidden' } );
+		const mutation = queryClient.getMutationCache().build( queryClient, {
+			meta: { trackingId: 'registerTwoStepAuthSecurityKey' },
+			mutationFn: () => Promise.reject( error ),
+		} );
+
+		await expect( mutation.execute( undefined ) ).rejects.toBe( error );
+
+		expect( mockedBumpStat ).not.toHaveBeenCalled();
+	} );
+
+	test( 'does not bump anything for a non-WPError failure', async () => {
+		const { queryClient } = render( <MutationErrorTracker /> );
+
+		const error = new Error( 'NotAllowedError' );
+		const mutation = queryClient.getMutationCache().build( queryClient, {
+			meta: { trackingId: 'registerTwoStepAuthSecurityKey' },
+			mutationFn: () => Promise.reject( error ),
+		} );
+
+		await expect( mutation.execute( undefined ) ).rejects.toBe( error );
+
+		expect( mockedBumpStat ).not.toHaveBeenCalled();
+	} );
+
+	test( 'does not bump anything for a failure without a trackingId', async () => {
 		const { queryClient } = render( <MutationErrorTracker /> );
 
 		const error = new Error( 'plain' );
@@ -41,7 +72,7 @@ describe( '<MutationErrorTracker>', () => {
 
 		await expect( mutation.execute( undefined ) ).rejects.toBe( error );
 
-		expect( mockedBumpStat ).toHaveBeenCalledWith( 'hd-mutation-error', 'unknown' );
+		expect( mockedBumpStat ).not.toHaveBeenCalled();
 	} );
 
 	test( 'does not bump anything when a mutation succeeds', async () => {
