@@ -90,6 +90,7 @@ import {
 	apiCloseAccount,
 	apiWaitForBearerTokenAcceptance,
 	apiWaitForEmailVerification,
+	visitEmailActivationLink,
 } from '../specs/shared';
 import { useBlackboxTestKeyForCollect } from './blackbox-test-key';
 import { snoozeAccountRecoveryInterstitial } from './dashboard-helpers';
@@ -637,7 +638,7 @@ export const test = base.extend<
 			const activationLink = links.find( ( link: string ) =>
 				link.includes( 'activate' )
 			) as string;
-			await page.goto( activationLink );
+			await visitEmailActivationLink( page, activationLink, testUser.email );
 			await apiWaitForEmailVerification( restAPIClient, testUser.email );
 			// Fresh accounts have no recovery method set up, so the dashboard's
 			// account-recovery interstitial would mount over every route and block

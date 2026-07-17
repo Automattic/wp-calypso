@@ -1,7 +1,9 @@
 import type { MyAccountInformationResponse, RestAPIClient } from '@automattic/calypso-e2e';
+import type { Page, Request } from 'playwright';
 
 const POLL_INTERVAL = 1000;
 const POLL_TIMEOUT = 30 * 1000;
+const LOG_PREFIX = '[email-verification]';
 
 // `RestAPIClient` surfaces API failures as `Error( '<code>: <message>' )`
 // without the HTTP status, so transient failures are recognized by known
@@ -25,6 +27,119 @@ function isTransientError( error: unknown ): boolean {
 	return TRANSIENT_ERROR_PATTERNS.some( ( pattern ) => pattern.test( message ) );
 }
 
+function sanitizeURL( url: string ): string {
+	try {
+		const parsedURL = new URL( url );
+		const pathname = parsedURL.pathname.replace( /(\/activate\/)[^/]+/gi, '$1[redacted]' );
+		return `${ parsedURL.origin }${ pathname }`;
+	} catch {
+		return '[invalid-url]';
+	}
+}
+
+function getURLSecrets( url: string ): string[] {
+	try {
+		const parsedURL = new URL( url );
+		const values = [ ...parsedURL.searchParams.values() ];
+		const activationKeys = [ parsedURL.pathname, ...values ].flatMap( ( value ) =>
+			[ ...value.matchAll( /\/activate\/([^/?#]+)/gi ) ].map( ( match ) => match[ 1 ] )
+		);
+		return [ ...values, parsedURL.hash.slice( 1 ), ...activationKeys ].filter( Boolean );
+	} catch {
+		return [];
+	}
+}
+
+function sanitizeText( text: string, redactions: string[] = [] ): string {
+	for ( const redaction of redactions ) {
+		text = text.replaceAll( redaction, '[redacted]' );
+	}
+	return text
+		.replace( /Bearer\s+\S+/gi, 'Bearer [redacted]' )
+		.replace( /https?:\/\/[^\s"'<>]+/g, sanitizeURL );
+}
+
+function getErrorDetails(
+	error: unknown,
+	redactions?: string[]
+): { class: string; message: string } {
+	return {
+		class: error instanceof Error ? error.name : typeof error,
+		message: sanitizeText( error instanceof Error ? error.message : String( error ), redactions ),
+	};
+}
+
+function logEmailVerification( record: Record< string, unknown > ): void {
+	console.log( `${ LOG_PREFIX } ${ JSON.stringify( record ) }` );
+}
+
+async function getRedirectChain( request: Request | null | undefined ) {
+	const requests: Request[] = [];
+	for ( let current = request; current; current = current.redirectedFrom() ) {
+		requests.unshift( current );
+	}
+
+	return Promise.all(
+		requests.map( async ( current ) => ( {
+			url: sanitizeURL( current.url() ),
+			status: ( await current.response().catch( () => null ) )?.status() ?? null,
+		} ) )
+	);
+}
+
+/**
+ * Visits an email activation link and logs sanitized navigation diagnostics.
+ */
+export async function visitEmailActivationLink(
+	page: Page,
+	activationLink: string,
+	expectedEmail: string
+): Promise< void > {
+	const startedAt = Date.now();
+	const activationSecrets = getURLSecrets( activationLink );
+	let lastNavigationRequest: Request | undefined;
+	let navigationError: unknown;
+	let navigationSucceeded = false;
+	const trackNavigationRequest = ( request: Request ) => {
+		if ( request.isNavigationRequest() && request.frame() === page.mainFrame() ) {
+			lastNavigationRequest = request;
+		}
+	};
+
+	page.on( 'request', trackNavigationRequest );
+	try {
+		const response = await page.goto( activationLink );
+		lastNavigationRequest = response?.request() ?? lastNavigationRequest;
+		navigationSucceeded = true;
+	} catch ( error ) {
+		navigationError = error;
+	} finally {
+		page.off( 'request', trackNavigationRequest );
+	}
+
+	const endedAt = Date.now();
+	const title = await page.title().catch( () => null );
+
+	logEmailVerification( {
+		event: 'activation',
+		expectedEmail,
+		startedAt: new Date( startedAt ).toISOString(),
+		endedAt: new Date( endedAt ).toISOString(),
+		durationMs: endedAt - startedAt,
+		result: navigationSucceeded ? 'response' : 'error',
+		redirectChain: await getRedirectChain( lastNavigationRequest ),
+		finalUrl: sanitizeURL( page.url() ),
+		title: title === null ? null : sanitizeText( title, activationSecrets ),
+		...( navigationSucceeded
+			? {}
+			: { error: getErrorDetails( navigationError, activationSecrets ) } ),
+	} );
+
+	if ( ! navigationSucceeded ) {
+		throw navigationError;
+	}
+}
+
 /**
  * Polls the read-only `/me` endpoint until `until` holds for its response,
  * absorbing transient errors along the way.
@@ -41,19 +156,66 @@ function isTransientError( error: unknown ): boolean {
 async function pollMyAccountInformation(
 	client: RestAPIClient,
 	until: ( me: MyAccountInformationResponse ) => boolean,
-	timeoutMessage: string
+	timeoutMessage: string,
+	diagnostics?: { expectedEmail: string }
 ): Promise< void > {
-	const deadline = Date.now() + POLL_TIMEOUT;
+	const startedAt = Date.now();
+	const deadline = startedAt + POLL_TIMEOUT;
+	let attempts = 0;
 	let lastError: unknown = null;
 	while ( true ) {
+		attempts++;
+		const attemptStartedAt = Date.now();
 		try {
-			if ( until( await client.getMyAccountInformation() ) ) {
+			const me = await client.getMyAccountInformation();
+			const complete = until( me );
+			if ( diagnostics ) {
+				logEmailVerification( {
+					event: 'poll-attempt',
+					expectedEmail: diagnostics.expectedEmail,
+					attempt: attempts,
+					timestamp: new Date( attemptStartedAt ).toISOString(),
+					durationMs: Date.now() - attemptStartedAt,
+					result: 'response',
+					me: {
+						ID: me.ID,
+						email: me.email,
+						email_verified: me.email_verified,
+						emailMatchesExpected: me.email === diagnostics.expectedEmail,
+					},
+				} );
+			}
+			if ( complete ) {
+				if ( diagnostics ) {
+					const endedAt = Date.now();
+					logEmailVerification( {
+						event: 'poll-complete',
+						expectedEmail: diagnostics.expectedEmail,
+						result: 'complete',
+						attempts,
+						startedAt: new Date( startedAt ).toISOString(),
+						endedAt: new Date( endedAt ).toISOString(),
+						durationMs: endedAt - startedAt,
+					} );
+				}
 				return;
 			}
 			// The call succeeded; the awaited flag has just not flipped yet.
 			lastError = null;
 		} catch ( error ) {
-			if ( ! isTransientError( error ) ) {
+			const transient = isTransientError( error );
+			if ( diagnostics ) {
+				logEmailVerification( {
+					event: 'poll-attempt',
+					expectedEmail: diagnostics.expectedEmail,
+					attempt: attempts,
+					timestamp: new Date( attemptStartedAt ).toISOString(),
+					durationMs: Date.now() - attemptStartedAt,
+					result: transient ? 'transient-error' : 'fatal-error',
+					error: getErrorDetails( error ),
+				} );
+			}
+			if ( ! transient ) {
 				throw error;
 			}
 			lastError = error;
@@ -62,6 +224,18 @@ async function pollMyAccountInformation(
 			break;
 		}
 		await new Promise( ( resolve ) => setTimeout( resolve, POLL_INTERVAL ) );
+	}
+	if ( diagnostics ) {
+		const endedAt = Date.now();
+		logEmailVerification( {
+			event: 'poll-timeout',
+			expectedEmail: diagnostics.expectedEmail,
+			result: 'timeout',
+			attempts,
+			startedAt: new Date( startedAt ).toISOString(),
+			endedAt: new Date( endedAt ).toISOString(),
+			durationMs: endedAt - startedAt,
+		} );
 	}
 	throw new Error( lastError ? `${ timeoutMessage } Last error: ${ lastError }` : timeoutMessage );
 }
@@ -109,6 +283,7 @@ export async function apiWaitForEmailVerification(
 	await pollMyAccountInformation(
 		client,
 		( me ) => me.email_verified === true,
-		`Email verification for ${ email } did not propagate after visiting the activation link.`
+		`Email verification for ${ email } did not propagate after visiting the activation link.`,
+		{ expectedEmail: email }
 	);
 }

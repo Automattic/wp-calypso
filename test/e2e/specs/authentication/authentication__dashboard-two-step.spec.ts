@@ -5,6 +5,7 @@ import {
 	apiCloseAccount,
 	apiWaitForBearerTokenAcceptance,
 	apiWaitForEmailVerification,
+	visitEmailActivationLink,
 } from '../shared';
 import type { LoginPage } from '@automattic/calypso-e2e';
 import type { CDPSession, Page } from 'playwright';
@@ -157,7 +158,7 @@ test.describe(
 				} );
 				const links = await clientEmail.getLinksFromMessage( message );
 				const activationLink = links.find( ( link ) => link.includes( 'activate' ) ) as string;
-				await page.goto( activationLink );
+				await visitEmailActivationLink( page, activationLink, testUser.email );
 				await apiWaitForEmailVerification( restAPIClient!, testUser.email );
 
 				// A fresh account has no recovery method, so the dashboard's
