@@ -15,7 +15,7 @@ function TwoFactorContent( {
 	isGravPoweredClient,
 	translate,
 } ) {
-	if ( twoFactorAuthType === 'security-key' ) {
+	if ( twoFactorAuthType === 'security-key-register' ) {
 		return (
 			<div>
 				<SecurityKeyRegister onFinish={ rebootAfterLogin } />

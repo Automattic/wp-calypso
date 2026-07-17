@@ -302,7 +302,7 @@ class Login extends Component {
 		} else if ( this.props.securityKeyReregisterRequired && this.state.isBrowserSupported ) {
 			// The account's security key was scoped to the wrong relying party. Now that the user has
 			// signed in with a fallback method, send them to the register-key step before redirecting.
-			this.handleTwoFactorRequested( 'security-key' );
+			this.handleTwoFactorRequested( 'security-key-register' );
 		} else {
 			this.rebootAfterLogin();
 		}
