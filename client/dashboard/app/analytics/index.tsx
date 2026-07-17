@@ -56,9 +56,8 @@ export function bumpStat( group: string, value: string ) {
  *
  * Example:
  * ```ts
- * bumpMultipleStats(
+ *   [ 'error', 'failed' ],
  *   [ 'my-stat', 'failed' ],
- *   [ 'error', 'failed' ]
  *   [ 'interesting', 'true' ]
  * );
  * ```
