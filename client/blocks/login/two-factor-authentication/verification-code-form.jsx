@@ -167,13 +167,17 @@ class VerificationCodeForm extends Component {
 				{ securityKeyReregisterRequired && (
 					<Notice
 						className="verification-code-form__reregister-notice"
-						status="is-info"
+						status="is-warning"
 						showDismiss={ false }
 					>
-						{ translate(
-							'{{strong}}Security key alert:{{/strong}} This key was registered to a different WordPress.com domain and cannot be used to log in. Your account is still secure — just sign in with your backup authenticator, then we’ll set up a new key.',
-							{ components: { strong: <strong /> } }
-						) }
+						<strong className="verification-code-form__reregister-notice-title">
+							{ translate( 'Security key alert' ) }
+						</strong>
+						<span className="verification-code-form__reregister-notice-text">
+							{ translate(
+								'This key was registered to a different WordPress.com domain and cannot be used to log in. Your account is still secure — just sign in with your backup authenticator, then we’ll set up a new key.'
+							) }
+						</span>
 					</Notice>
 				) }
 				<Card className="two-factor-authentication__verification-code-form">

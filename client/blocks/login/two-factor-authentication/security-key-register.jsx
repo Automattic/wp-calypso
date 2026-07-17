@@ -73,6 +73,11 @@ class SecurityKeyRegister extends Component {
 		return (
 			<form onSubmit={ this.handleRegister }>
 				<Card className="two-factor-authentication__security-key-register">
+					<p className="security-key-register__text">
+						{ translate(
+							'Set up a new security key to finish. Then delete the old key in your security settings, since it’s no longer active and can safely be removed.'
+						) }
+					</p>
 					<FormFieldset>
 						<FormLabel htmlFor="security-key-name">
 							{ translate( 'Give the key a name to help you remember it' ) }

@@ -1,6 +1,6 @@
-@import "@automattic/typography/styles/variables";
-@import "@automattic/color-studio/dist/color-variables";
-@import "two-factor-content";
+@import '@automattic/typography/styles/variables';
+@import '@automattic/color-studio/dist/color-variables';
+@import 'two-factor-content';
 
 .two-factor-authentication__small-print {
 	clear: both;
@@ -16,6 +16,11 @@
 
 .verification-code-form__reregister-notice {
 	margin-bottom: 16px;
+
+	.verification-code-form__reregister-notice-title {
+		display: block;
+		margin-bottom: 4px;
+	}
 }
 
 .two-factor-authentication__verification-code-form {
@@ -49,7 +54,7 @@
 		margin-bottom: 40px;
 	}
 
-	@media screen and (max-width: 660px) {
+	@media screen and ( max-width: 660px ) {
 		text-align: left;
 	}
 
@@ -84,7 +89,7 @@
 
 	.form-fieldset,
 	.form-button {
-		@media screen and (max-width: 617px) {
+		@media screen and ( max-width: 617px ) {
 			margin-left: 0;
 			margin-right: 0;
 			width: 100%;
@@ -102,10 +107,10 @@
 
 		.button {
 			border: 1px solid #c3c4c7;
-			color: var(--color-gray-100);
+			color: var( --color-gray-100 );
 			font-weight: 500;
 			line-height: 20px;
-			box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+			box-shadow: 0 1px 2px rgba( 0, 0, 0, 0.05 );
 			width: 100%;
 			max-width: 404px;
 		}
@@ -113,7 +118,7 @@
 
 	.two-factor-authentication__small-print {
 		a {
-			color: var(--woo-purple-40);
+			color: var( --woo-purple-40 );
 		}
 	}
 }

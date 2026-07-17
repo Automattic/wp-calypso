@@ -1,4 +1,9 @@
 .two-factor-authentication__security-key-register {
+	.security-key-register__text {
+		margin-bottom: 16px;
+		color: var(--color-text-subtle);
+	}
+
 	.components-button.is-primary {
 		width: 100%;
 		justify-content: center;
