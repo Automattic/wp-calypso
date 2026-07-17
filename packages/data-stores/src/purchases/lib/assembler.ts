@@ -1,4 +1,3 @@
-import { isPlan } from '@automattic/calypso-products';
 import { snakeToCamelCase } from '@automattic/js-utils';
 import type { PurchasePriceTier, Purchase, RawPurchase } from '../types';
 
@@ -64,7 +63,7 @@ export function createPurchaseObject( purchase: RawPurchase ): Purchase {
 		isHundredYearDomain: Boolean( purchase.is_hundred_year_domain ),
 		isLocked: Boolean( purchase.is_locked ),
 		isInAppPurchase: Boolean( purchase.is_iap_purchase ),
-		isPlan: isPlan( purchase ),
+		isPlan: purchase.is_plan,
 		isPlanTypeDowngradable: Boolean( purchase.is_plan_type_downgradable ),
 		isRechargeable: Boolean( purchase.is_rechargeable ),
 		isRefundable: Boolean( purchase.is_refundable ),
