@@ -4,12 +4,28 @@ import { QueryClient, defaultShouldDehydrateQuery } from '@tanstack/react-query'
 import { persistQueryClient } from '@tanstack/react-query-persist-client';
 import { startSiteCollisionListener } from './site-collision-listener';
 
+// Open to augmentation: apps consuming this package add their own meta by extending
+// these interfaces rather than TanStack's `Register`, which only allows one
+// `mutationMeta`/`queryMeta` declaration repo-wide.
+//
+// Extending `Record< string, unknown >` is required because TanStack derives
+// `MutationMeta` via `Register extends { mutationMeta: infer T } ? T extends
+// Record< string, unknown > ? T : ... `, and interfaces get no implicit index
+// signature (microsoft/TypeScript#15300). Drop it and every `meta` read silently
+// degrades to `{}`.
+
+export interface ApiQueriesMutationMeta extends Record< string, unknown > {
+	statId?: string;
+}
+
+export interface ApiQueriesQueryMeta extends Record< string, unknown > {
+	persist?: boolean | ( ( data: any ) => boolean );
+}
+
 declare module '@tanstack/react-query' {
 	interface Register {
-		queryMeta: {
-			persist?: boolean | ( ( data: any ) => boolean );
-			fullPageLoader?: boolean;
-		};
+		mutationMeta: ApiQueriesMutationMeta;
+		queryMeta: ApiQueriesQueryMeta;
 	}
 }
 

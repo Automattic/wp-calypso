@@ -15,6 +15,7 @@ import { __ } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
 import { useState } from 'react';
 import { useAnalytics } from '../../../../app/analytics';
+import { withSnackbar } from '../../../../app/snackbars/with-snackbar';
 import { ActionList } from '../../../../components/action-list';
 import ConfirmModal from '../../../../components/confirm-modal';
 import InlineSupportLink from '../../../../components/inline-support-link';
@@ -117,14 +118,11 @@ export default function SecurityKeys() {
 
 	const registrations = securityKeys?.registrations ?? [];
 
-	const { mutate: deleteSecurityKey, isPending: isDeletingSecurityKey } = useMutation( {
-		...deleteTwoStepAuthSecurityKeyMutation(),
-		meta: {
-			snackbar: {
-				success: __( 'Security key deleted.' ),
-			},
-		},
-	} );
+	const { mutate: deleteSecurityKey, isPending: isDeletingSecurityKey } = useMutation(
+		withSnackbar( deleteTwoStepAuthSecurityKeyMutation(), {
+			success: __( 'Security key deleted.' ),
+		} )
+	);
 
 	const handleRemoveKey = ( item: SecurityKeyRegistration ) => {
 		setSelectedKeyToRemove( item );

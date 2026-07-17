@@ -6,21 +6,12 @@ import { store as noticesStore } from '@wordpress/notices';
 import { useEffect } from 'react';
 import './style.scss';
 
+import type {} from './with-snackbar';
+
 const statusIcon: Record< string, React.JSX.Element > = {
 	success: published,
 	error,
 };
-
-declare module '@tanstack/react-query' {
-	interface Register {
-		mutationMeta: {
-			snackbar?: {
-				success?: string;
-				error?: string | { source: 'server' };
-			};
-		};
-	}
-}
 
 export default function Snackbars() {
 	const notices = useSelect( ( select ) => select( noticesStore ).getNotices(), [] );
