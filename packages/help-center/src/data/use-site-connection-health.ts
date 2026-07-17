@@ -14,7 +14,7 @@ interface APIFetchOptions {
 const SITE_UNREACHABLE_ERRORS = [ 'fatal_error', 'database_error', 'http_error', 'dns_error' ];
 
 interface ConnectionHealth {
-	is_healthy: boolean;
+	is_healthy?: boolean;
 	error?: string;
 }
 
@@ -57,7 +57,7 @@ export function useSiteConnectionHealth( enabled = true ) {
 	} );
 
 	const isSiteUnreachable = Boolean(
-		data && data.is_healthy === false && SITE_UNREACHABLE_ERRORS.includes( data.error ?? '' )
+		data && ! data.is_healthy && SITE_UNREACHABLE_ERRORS.includes( data.error ?? '' )
 	);
 
 	return { isSiteUnreachable, isLoading };
