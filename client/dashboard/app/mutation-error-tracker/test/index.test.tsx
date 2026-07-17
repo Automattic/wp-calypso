@@ -22,16 +22,16 @@ describe( '<MutationErrorTracker>', () => {
 
 		const error = wpError( { status: 500, statusCode: 500, error: 'internal_server_error' } );
 		const mutation = queryClient.getMutationCache().build( queryClient, {
-			meta: { statId: '2fa-security-key-delete-mut' },
+			meta: { statId: '2fa-security-key-delete' },
 			mutationFn: () => Promise.reject( error ),
 		} );
 
 		await expect( mutation.execute( undefined ) ).rejects.toBe( error );
 
 		expect( mockedBumpMultipleStats ).toHaveBeenCalledWith(
-			[ 'hd-mutation-error', '2fa-security-key-delete-mut' ],
-			[ 'hd-mutation-error-status', '2fa-security-key-delete-mut.500' ],
-			[ 'hd-mutation-error-5xx', '2fa-security-key-delete-mut' ]
+			[ 'hd-mutation-error', '2fa-security-key-delete' ],
+			[ 'hd-mutation-error-status', '2fa-security-key-delete.500' ],
+			[ 'hd-mutation-error-5xx', '2fa-security-key-delete' ]
 		);
 	} );
 
@@ -40,16 +40,16 @@ describe( '<MutationErrorTracker>', () => {
 
 		const error = wpError( { status: 403, statusCode: 403, error: 'forbidden' } );
 		const mutation = queryClient.getMutationCache().build( queryClient, {
-			meta: { statId: '2fa-security-key-reg-mut' },
+			meta: { statId: '2fa-security-key-register' },
 			mutationFn: () => Promise.reject( error ),
 		} );
 
 		await expect( mutation.execute( undefined ) ).rejects.toBe( error );
 
 		expect( mockedBumpMultipleStats ).toHaveBeenCalledWith(
-			[ 'hd-mutation-error', '2fa-security-key-reg-mut' ],
-			[ 'hd-mutation-error-status', '2fa-security-key-reg-mut.403' ],
-			[ 'hd-mutation-error-4xx', '2fa-security-key-reg-mut' ]
+			[ 'hd-mutation-error', '2fa-security-key-register' ],
+			[ 'hd-mutation-error-status', '2fa-security-key-register.403' ],
+			[ 'hd-mutation-error-4xx', '2fa-security-key-register' ]
 		);
 	} );
 
@@ -58,15 +58,15 @@ describe( '<MutationErrorTracker>', () => {
 
 		const error = new Error( 'plain' );
 		const mutation = queryClient.getMutationCache().build( queryClient, {
-			meta: { statId: '2fa-security-key-reg-mut' },
+			meta: { statId: '2fa-security-key-register' },
 			mutationFn: () => Promise.reject( error ),
 		} );
 
 		await expect( mutation.execute( undefined ) ).rejects.toBe( error );
 
 		expect( mockedBumpMultipleStats ).toHaveBeenCalledWith(
-			[ 'hd-mutation-error', '2fa-security-key-reg-mut' ],
-			[ 'hd-mutation-error-not-http', '2fa-security-key-reg-mut' ]
+			[ 'hd-mutation-error', '2fa-security-key-register' ],
+			[ 'hd-mutation-error-not-http', '2fa-security-key-register' ]
 		);
 	} );
 
@@ -91,7 +91,7 @@ describe( '<MutationErrorTracker>', () => {
 		const { queryClient } = render( <MutationErrorTracker /> );
 
 		const mutation = queryClient.getMutationCache().build( queryClient, {
-			meta: { statId: '2fa-security-key-reg-mut' },
+			meta: { statId: '2fa-security-key-register' },
 			mutationFn: () => Promise.resolve( 'ok' ),
 		} );
 

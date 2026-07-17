@@ -28,7 +28,7 @@ export const twoStepAuthSecurityKeysQuery = () =>
 // usable at login, not to whichever host the dashboard is served from.
 export const registerTwoStepAuthSecurityKeyMutation = ( hostname = 'wordpress.com' ) =>
 	mutationOptions( {
-		meta: { statId: '2fa-security-key-reg-mut' },
+		meta: { statId: '2fa-security-key-register' },
 		mutationFn: async ( keyName: string ) => {
 			// First, fetch the registration challenge
 			const options = await fetchTwoStepAuthSecurityKeyRegistrationChallenge( { hostname } );
@@ -52,7 +52,7 @@ export const registerTwoStepAuthSecurityKeyMutation = ( hostname = 'wordpress.co
 
 export const deleteTwoStepAuthSecurityKeyMutation = () =>
 	mutationOptions( {
-		meta: { statId: '2fa-security-key-delete-mut' },
+		meta: { statId: '2fa-security-key-delete' },
 		mutationFn: deleteTwoStepAuthSecurityKey,
 		onSuccess: () => {
 			queryClient.invalidateQueries( twoStepAuthSecurityKeysQuery() );
