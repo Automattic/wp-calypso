@@ -109,23 +109,14 @@ const SubmitRow = styled.div`
 		inline-size: 100%;
 	}
 
-	/* SubmitButtonHeader is display:none until a '.checkout__step-wrapper--last-step'
-	   ancestor reveals it; the portal moves it out of that ancestor, so reveal it
-	   here. */
+	/* The terms line rides the header slot, above the CTA, left-aligned. Its wrapper
+	   is display:none until a '.checkout__step-wrapper--last-step' ancestor reveals
+	   it; the portal moves it out of that ancestor, so reveal it here. (The
+	   money-back guarantee is surfaced up in the payment step, not below the CTA.) */
 	.checkout-steps__submit-button-header {
 		display: block;
-		margin-block: 12px 0;
-	}
-
-	/* Match the guarantee (14px) to the terms line (13px). Scoped here, not on the
-	   shared wrapper, which control also uses. */
-	.checkout-steps__submit-footer-wrapper {
-		font-size: 13px;
-		text-align: center;
-	}
-
-	.checkout-steps__submit-footer-wrapper p {
-		font-size: 13px;
+		margin-block: 0 12px;
+		text-align: start;
 	}
 
 	.checkout-steps__submit-button-wrapper > button,

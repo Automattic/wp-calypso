@@ -119,6 +119,7 @@ import { LeaveCheckoutModal, useCheckoutLeaveModal } from './leave-checkout-moda
 import { MobileCheckoutStickySummary } from './mobile-checkout-sticky-summary';
 import BeforeSubmitCheckoutHeader from './payment-method-step';
 import { PaymentMethodFilter } from './payment-methods-filter';
+import { getRefundWindowCopy } from './refund-policies';
 import SecondaryCartPromotions from './secondary-cart-promotions';
 import WPCheckoutOrderReview, { CouponFieldArea } from './wp-checkout-order-review';
 import {
@@ -433,9 +434,11 @@ export function ChangePaymentMethodFooter( { stepId }: { stepId: string } ) {
 // button — no hidden main-column button, no querySelector click proxy.
 function PortaledCheckoutFormSubmit( {
 	validateForm,
+	submitButtonHeader,
 	submitButtonFooter,
 }: {
 	validateForm?: () => Promise< boolean >;
+	submitButtonHeader?: ReactNode;
 	submitButtonFooter?: ReactNode;
 } ) {
 	const { slotEl } = useSubmitButtonSlot();
@@ -446,6 +449,7 @@ function PortaledCheckoutFormSubmit( {
 		<CheckoutFormSubmit
 			validateForm={ validateForm }
 			continueToNextIncompleteStep
+			submitButtonHeader={ submitButtonHeader }
 			submitButtonFooter={ submitButtonFooter }
 		/>,
 		slotEl
@@ -877,23 +881,30 @@ export default function CheckoutMainContent( {
 		</WPCheckoutSidebarContent>
 	);
 
-	// The portal carries mobile's footer (guarantee/seals) and terms line into the
-	// sticky bar; without this, treatment drops trust surfaces control shows and
-	// confounds the conversion metric. Terms sits below the CTA here, so it rides
-	// the footer slot rather than the header slot.
+	// Control (and the non-portaled mobile fallback below) shows the money-back
+	// guarantee under the submit button.
 	const mobileSubmitButtonFooter = hasCartJetpackProductsOnly ? (
 		<JetpackCheckoutSeals />
 	) : (
 		<CheckoutMoneyBackGuarantee cart={ responseCart } />
 	);
+	// In the sticky bar the terms line rides above the CTA (header slot). The
+	// money-back guarantee is surfaced up in the payment step instead (see
+	// paymentStepRefundCopy) — reassurance at the moment of entering card
+	// details — so the footer slot below the CTA stays empty.
+	const portaledSubmitButtonHeader = isLargeViewport ? undefined : <SubmitButtonHeader />;
 	const portaledSubmitButtonFooter = isLargeViewport ? (
 		<ChangePaymentMethodFooter stepId="payment-method-step" />
-	) : (
-		<>
-			<SubmitButtonHeader />
-			{ mobileSubmitButtonFooter }
-		</>
+	) : undefined;
+	// Refund copy, no icon, that continues the secure-encryption notice at payment
+	// entry. getRefundWindowCopy is null when no refund window applies; mirror
+	// CheckoutMoneyBackGuarantee's all-domains guard.
+	const refundWindowCopy = getRefundWindowCopy( responseCart, translate );
+	const allCartItemsAreDomains = responseCart.products.every(
+		( product ) => product.is_domain_registration === true
 	);
+	const paymentStepRefundCopy =
+		refundWindowCopy && ! allCartItemsAreDomains ? refundWindowCopy : null;
 
 	const checkoutMainContent = (
 		<RestorableProductsProvider>
@@ -1107,6 +1118,9 @@ export default function CheckoutMainContent( {
 								<>
 									<p className="checkout-payment-method__secure-notice">
 										{ translate( 'All transactions are secure and encrypted.' ) }
+										{ /* getRefundWindowCopy is a badge label (no terminal stop), so it
+										     needs one to sit in prose here. */ }
+										{ paymentStepRefundCopy ? <> { paymentStepRefundCopy }.</> : null }
 									</p>
 									<CheckoutPaymentMethods
 										onPageLoadError={ onPageLoadError }
@@ -1147,6 +1161,7 @@ export default function CheckoutMainContent( {
 					( isStepContainerV2 && ! isLargeViewport && isMobileCheckoutStickySummary ) ? (
 						<PortaledCheckoutFormSubmit
 							validateForm={ validateForm }
+							submitButtonHeader={ portaledSubmitButtonHeader }
 							submitButtonFooter={ portaledSubmitButtonFooter }
 						/>
 					) : (
