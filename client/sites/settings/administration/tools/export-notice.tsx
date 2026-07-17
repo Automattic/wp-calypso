@@ -7,10 +7,14 @@ export default function ExportNotice( {
 	siteId,
 	siteSlug,
 	warningText,
+	isClassicView,
+	siteAdminUrl,
 }: {
 	siteId: number;
 	siteSlug: string;
 	warningText: string;
+	isClassicView?: boolean;
+	siteAdminUrl?: string | null;
 } ) {
 	const checkSiteLoaded = ( event: MouseEvent< HTMLAnchorElement > ) => {
 		if ( ! siteId ) {
@@ -18,9 +22,12 @@ export default function ExportNotice( {
 		}
 	};
 
+	const exportHref =
+		isClassicView && siteAdminUrl ? `${ siteAdminUrl }export.php` : `/export/${ siteSlug }`;
+
 	return (
 		<Notice status="is-warning" showDismiss={ false } text={ warningText }>
-			<NoticeAction onClick={ checkSiteLoaded } href={ `/export/${ siteSlug }` }>
+			<NoticeAction onClick={ checkSiteLoaded } href={ exportHref }>
 				{ translate( 'Export content' ) }
 			</NoticeAction>
 		</Notice>

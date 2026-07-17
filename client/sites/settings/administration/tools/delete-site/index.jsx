@@ -18,7 +18,12 @@ import hasCancelableSitePurchases from 'calypso/state/selectors/has-cancelable-s
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
 import { deleteSite } from 'calypso/state/sites/actions';
 import { isTrialSite } from 'calypso/state/sites/plans/selectors';
-import { getSite, getSiteDomain } from 'calypso/state/sites/selectors';
+import {
+	getSite,
+	getSiteAdminUrl,
+	getSiteDomain,
+	isAdminInterfaceWPAdmin,
+} from 'calypso/state/sites/selectors';
 import { hasSitesAsLandingPage } from 'calypso/state/sites/selectors/has-sites-as-landing-page';
 import { setSelectedSiteId } from 'calypso/state/ui/actions';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
@@ -39,6 +44,8 @@ class DeleteSite extends Component {
 		siteSlug: PropTypes.string,
 		translate: PropTypes.func.isRequired,
 		isTrialSite: PropTypes.bool,
+		isClassicView: PropTypes.bool,
+		siteAdminUrl: PropTypes.string,
 	};
 
 	state = {
@@ -47,7 +54,7 @@ class DeleteSite extends Component {
 	};
 
 	renderNotice() {
-		const { siteDomain, siteId } = this.props;
+		const { siteDomain, siteId, isClassicView, siteAdminUrl } = this.props;
 
 		if ( ! siteDomain ) {
 			return null;
@@ -60,6 +67,8 @@ class DeleteSite extends Component {
 				warningText={ translate(
 					'Before deleting your site, consider exporting your content as a backup.'
 				) }
+				isClassicView={ isClassicView }
+				siteAdminUrl={ siteAdminUrl }
 			/>
 		);
 	}
@@ -258,6 +267,8 @@ export default connect(
 			hasCancelablePurchases: hasCancelableSitePurchases( state, siteId ),
 			useSitesAsLandingPage: hasSitesAsLandingPage( state ),
 			isTrialSite: isTrialSite( state, siteId ),
+			isClassicView: isAdminInterfaceWPAdmin( state, siteId ),
+			siteAdminUrl: getSiteAdminUrl( state, siteId ),
 		};
 	},
 	{

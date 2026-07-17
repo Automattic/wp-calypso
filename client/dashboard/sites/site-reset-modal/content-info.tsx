@@ -13,14 +13,36 @@ type ContentType = [ keyof SiteResetContentSummary, string, string ];
 export default function ContentInfo( {
 	siteContent,
 	siteDomain,
+	isClassicView,
+	siteAdminUrl,
 }: {
 	siteContent: SiteResetContentSummary;
 	siteDomain: string;
+	isClassicView?: boolean;
+	siteAdminUrl?: string;
 } ) {
 	const types: ContentType[] = [
-		[ 'post_count', 'post', wpcomLink( `/posts/${ siteDomain }` ) ],
-		[ 'page_count', 'page', wpcomLink( `/pages/${ siteDomain }` ) ],
-		[ 'media_count', 'media item', wpcomLink( `/media/${ siteDomain }` ) ],
+		[
+			'post_count',
+			'post',
+			isClassicView && siteAdminUrl
+				? `${ siteAdminUrl }edit.php`
+				: wpcomLink( `/posts/${ siteDomain }` ),
+		],
+		[
+			'page_count',
+			'page',
+			isClassicView && siteAdminUrl
+				? `${ siteAdminUrl }edit.php?post_type=page`
+				: wpcomLink( `/pages/${ siteDomain }` ),
+		],
+		[
+			'media_count',
+			'media item',
+			isClassicView && siteAdminUrl
+				? `${ siteAdminUrl }upload.php`
+				: wpcomLink( `/media/${ siteDomain }` ),
+		],
 		[ 'plugin_count', 'plugin', `https://${ siteDomain }/wp-admin/plugins.php` ],
 	];
 
