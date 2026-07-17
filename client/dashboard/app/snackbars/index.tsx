@@ -6,8 +6,6 @@ import { store as noticesStore } from '@wordpress/notices';
 import { useEffect } from 'react';
 import './style.scss';
 
-import type {} from './with-snackbar';
-
 const statusIcon: Record< string, React.JSX.Element > = {
 	success: published,
 	error,
