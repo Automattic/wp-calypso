@@ -17,7 +17,11 @@ import { Icon, chevronUp } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { Fragment, useId, useState } from 'react';
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
+import useEquivalentMonthlyTotals, {
+	getSimulatedCostBeforeDiscounts,
+} from 'calypso/my-sites/checkout/utils/use-equivalent-monthly-totals';
 import { useSubmitButtonSlot } from '../lib/submit-button-slot';
+import { getLineItemPriceDisplay } from './cost-overrides-list';
 import { PriceLoadingIndicator } from './wp-checkout-order-summary';
 
 const Wrapper = styled.div`
@@ -233,9 +237,11 @@ function SummaryLineItemRow( {
 function StickyOrderSummary( {
 	responseCart,
 	isCartUpdating,
+	monthlyPrices,
 }: {
 	responseCart: ResponseCart;
 	isCartUpdating: boolean;
+	monthlyPrices: Record< string, number >;
 } ) {
 	const translate = useTranslate();
 	// Coupons/tax/credits, so the panel reconciles with the tax-inclusive,
@@ -243,22 +249,19 @@ function StickyOrderSummary( {
 	const couponLineItem = getCouponLineItemFromCart( responseCart );
 	const taxLineItems = getTaxBreakdownLineItemsFromCart( responseCart );
 	const creditsLineItem = getCreditsLineItemFromCart( responseCart );
+	// Per-product amounts come from control's own getLineItemPriceDisplay so the two
+	// arms can't disagree — it excludes the coupon (shown on its own row below),
+	// and handles introductory offers and monthly-equivalent crossed-out prices.
 
 	return (
 		<Summary>
 			<SummaryTitle>{ translate( 'Order summary' ) }</SummaryTitle>
 			{ responseCart.products.map( ( product, index ) => {
-				const isDiscounted = product.item_subtotal_integer < product.item_original_subtotal_integer;
-				const actualAmount = formatCurrency( product.item_subtotal_integer, product.currency, {
-					isSmallestUnit: true,
-					stripZeros: true,
-				} );
-				const crossedOutAmount = isDiscounted
-					? formatCurrency( product.item_original_subtotal_integer, product.currency, {
-							isSmallestUnit: true,
-							stripZeros: true,
-					  } )
-					: undefined;
+				const { actualAmountDisplay, crossedOutAmountDisplay } = getLineItemPriceDisplay(
+					product,
+					responseCart,
+					monthlyPrices
+				);
 				const costOverrides = filterCostOverridesForLineItem( product, translate );
 				return (
 					<Fragment key={ product.uuid }>
@@ -279,8 +282,8 @@ function StickyOrderSummary( {
 								<PriceLoadingIndicator width="60px" />
 							) : (
 								<LineItemPrice
-									actualAmount={ actualAmount }
-									crossedOutAmount={ crossedOutAmount }
+									actualAmount={ actualAmountDisplay }
+									crossedOutAmount={ crossedOutAmountDisplay }
 								/>
 							) }
 						</ProductRow>
@@ -325,13 +328,19 @@ export function MobileCheckoutStickySummary() {
 	const cartKey = useCartKey();
 	const { responseCart } = useShoppingCart( cartKey );
 	const totalLineItem = getTotalLineItemFromCart( responseCart );
-	const originalTotalInteger = responseCart.products.reduce(
-		( total, product ) => total + product.item_original_subtotal_integer,
-		0
-	);
+	// Call this once with the cart's own array: it memoizes on `products` by
+	// reference, so a fresh `[ product ]` per row would recompute every render.
+	const monthlyPrices = useEquivalentMonthlyTotals( responseCart.products );
+	// The crossed-out total uses control's subtotal-before-discounts basis, so the
+	// bar and the panel quote the same numbers.
+	const subtotalBeforeDiscounts = responseCart.products.reduce( ( subtotal, product ) => {
+		const originalAmountInteger = getSimulatedCostBeforeDiscounts( product, monthlyPrices );
+		// In specific cases (e.g. premium domains) the original price (renewal) is lower than the due price.
+		return subtotal + Math.max( product.item_subtotal_integer, originalAmountInteger );
+	}, 0 );
 	const crossedOutTotal =
-		originalTotalInteger > responseCart.total_cost_integer
-			? formatCurrency( originalTotalInteger, responseCart.currency, {
+		subtotalBeforeDiscounts > responseCart.sub_total_integer
+			? formatCurrency( subtotalBeforeDiscounts, responseCart.currency, {
 					isSmallestUnit: true,
 					stripZeros: true,
 			  } )
@@ -348,7 +357,11 @@ export function MobileCheckoutStickySummary() {
 		<Wrapper>
 			<Panel isOpen={ isOpen } id={ panelId } aria-hidden={ ! isOpen }>
 				<PanelInner isOpen={ isOpen }>
-					<StickyOrderSummary responseCart={ responseCart } isCartUpdating={ isCartUpdating } />
+					<StickyOrderSummary
+						responseCart={ responseCart }
+						isCartUpdating={ isCartUpdating }
+						monthlyPrices={ monthlyPrices }
+					/>
 				</PanelInner>
 			</Panel>
 
