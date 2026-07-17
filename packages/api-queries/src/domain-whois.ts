@@ -16,6 +16,7 @@ export const domainWhoisQuery = ( domainName: string ) =>
 
 export const domainWhoisValidateMutation = ( domainNames: string[] ) =>
 	mutationOptions( {
+		meta: { statId: 'domain-whois-validate' },
 		mutationFn: ( domainContactDetails: DomainContactDetails ) => {
 			const contactInformation = mapRecordKeysRecursively(
 				domainContactDetails,
@@ -27,6 +28,7 @@ export const domainWhoisValidateMutation = ( domainNames: string[] ) =>
 
 export const domainWhoisMutation = ( domainName: string ) =>
 	mutationOptions( {
+		meta: { statId: 'domain-whois-update' },
 		mutationFn: ( {
 			domainContactDetails,
 			transferLock,

@@ -50,6 +50,7 @@ export const userPreferenceQuery = < P extends keyof UserPreferences >( preferen
 
 export const userPreferenceMutation = < P extends keyof UserPreferences >( preferenceName: P ) =>
 	mutationOptions( {
+		meta: { statId: 'user-pref-update' },
 		mutationFn: ( data: UserPreferences[ P ] ) =>
 			updatePreferences( {
 				[ preferenceName ]: data ?? null, // null means deleting the preference
@@ -65,6 +66,7 @@ export const userPreferenceOptimisticMutation = < P extends keyof UserPreference
 	preferenceName: P
 ) =>
 	mutationOptions( {
+		meta: { statId: 'user-pref-opt-update' },
 		mutationFn: userPreferenceMutation( preferenceName ).mutationFn,
 		onMutate: async ( value ) => {
 			await queryClient.cancelQueries( { queryKey: rawUserPreferencesQuery().queryKey } );
@@ -86,6 +88,7 @@ export const userPreferenceOptimisticMutation = < P extends keyof UserPreference
 
 export const userPreferencesMutation = () =>
 	mutationOptions( {
+		meta: { statId: 'user-prefs-update' },
 		mutationFn: ( data: Partial< UserPreferences > ) => updatePreferences( data ),
 		onSuccess: ( newData ) => {
 			queryClient.setQueryData( rawUserPreferencesQuery().queryKey, ( oldData ) =>

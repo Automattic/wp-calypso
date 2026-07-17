@@ -45,12 +45,14 @@ function invalidateSubscribedLists( queryClient: QueryClient ): Promise< void > 
 
 export const createReadListMutation = ( queryClient: QueryClient ) =>
 	mutationOptions( {
+		meta: { statId: 'read-list-create' },
 		mutationFn: createReadList,
 		onSuccess: () => invalidateSubscribedLists( queryClient ),
 	} );
 
 export const updateReadListMutation = ( queryClient: QueryClient ) =>
 	mutationOptions( {
+		meta: { statId: 'read-list-update' },
 		mutationFn: updateReadList,
 		onSuccess: ( data ) => {
 			queryClient.setQueryData( readListQuery( data.list.owner, data.list.slug ).queryKey, data );
@@ -60,6 +62,7 @@ export const updateReadListMutation = ( queryClient: QueryClient ) =>
 
 export const followReadListMutation = ( queryClient: QueryClient ) =>
 	mutationOptions( {
+		meta: { statId: 'read-list-follow' },
 		mutationFn: ( { owner, slug }: { owner: string; slug: string } ) =>
 			followReadList( owner, slug ),
 		onSuccess: () => invalidateSubscribedLists( queryClient ),
@@ -67,6 +70,7 @@ export const followReadListMutation = ( queryClient: QueryClient ) =>
 
 export const unfollowReadListMutation = ( queryClient: QueryClient ) =>
 	mutationOptions( {
+		meta: { statId: 'read-list-unfollow' },
 		mutationFn: ( { owner, slug }: { owner: string; slug: string } ) =>
 			unfollowReadList( owner, slug ),
 		onSuccess: () => invalidateSubscribedLists( queryClient ),
@@ -74,6 +78,7 @@ export const unfollowReadListMutation = ( queryClient: QueryClient ) =>
 
 export const deleteReadListMutation = ( queryClient: QueryClient ) =>
 	mutationOptions( {
+		meta: { statId: 'read-list-delete' },
 		mutationFn: ( { owner, slug }: { owner: string; slug: string } ) =>
 			deleteReadList( owner, slug ),
 		onSuccess: ( _data, { owner, slug } ) => {

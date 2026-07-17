@@ -12,6 +12,7 @@ export const bigSkyPluginQuery = ( siteId: number ) =>
 
 export const bigSkyPluginMutation = ( siteId: number ) =>
 	mutationOptions( {
+		meta: { statId: 'big-sky-plugin-update' },
 		mutationFn: ( data: BigSkyPluginUpdateRequest ) => updateBigSkyPlugin( siteId, data ),
 		onSuccess: () => {
 			// Invalidate the big-sky-plugin query to refresh the UI

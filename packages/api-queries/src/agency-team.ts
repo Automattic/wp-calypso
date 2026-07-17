@@ -60,30 +60,35 @@ function invalidateActiveAgency() {
 
 export const agencyTeamInviteMutation = ( agencyId: number ) =>
 	mutationOptions( {
+		meta: { statId: 'agcy-team-invite' },
 		mutationFn: ( input: AgencyTeamInviteInput ) => inviteAgencyTeamMember( agencyId, input ),
 		onSuccess: () => invalidateAgencyTeam( agencyId ),
 	} );
 
 export const agencyTeamResendInviteMutation = ( agencyId: number ) =>
 	mutationOptions( {
+		meta: { statId: 'agcy-team-invite-resend' },
 		mutationFn: ( inviteId: number ) => resendAgencyTeamInvite( agencyId, inviteId ),
 		onSuccess: () => invalidateAgencyTeam( agencyId ),
 	} );
 
 export const agencyTeamCancelInviteMutation = ( agencyId: number ) =>
 	mutationOptions( {
+		meta: { statId: 'agcy-team-invite-cancel' },
 		mutationFn: ( inviteId: number ) => cancelAgencyTeamInvite( agencyId, inviteId ),
 		onSuccess: () => invalidateAgencyTeam( agencyId ),
 	} );
 
 export const agencyTeamRemoveMemberMutation = ( agencyId: number ) =>
 	mutationOptions( {
+		meta: { statId: 'agcy-team-member-remove' },
 		mutationFn: ( userId: number ) => removeAgencyTeamMember( agencyId, userId ),
 		onSuccess: () => invalidateAgencyTeam( agencyId ),
 	} );
 
 export const agencyTeamTransferOwnershipMutation = ( agencyId: number ) =>
 	mutationOptions( {
+		meta: { statId: 'agcy-team-ownership-xfer' },
 		mutationFn: ( newOwnerId: number ) => transferAgencyOwnership( agencyId, newOwnerId ),
 		onSuccess: () => {
 			invalidateAgencyTeam( agencyId );

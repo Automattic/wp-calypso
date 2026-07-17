@@ -80,6 +80,7 @@ function slugify( tag: string ): string {
 
 export const followReadTagMutation = ( queryClient: QueryClient ) =>
 	mutationOptions( {
+		meta: { statId: 'read-tag-follow' },
 		mutationFn: async ( tag: string ) => {
 			const slug = slugify( tag );
 			try {
@@ -98,6 +99,7 @@ export const followReadTagMutation = ( queryClient: QueryClient ) =>
 
 export const unfollowReadTagMutation = ( queryClient: QueryClient ) =>
 	mutationOptions( {
+		meta: { statId: 'read-tag-unfollow' },
 		mutationFn: ( tag: string ) => unfollowReadTag( slugify( tag ) ),
 		onSuccess: () => invalidateFollowedTags( queryClient ),
 	} );
