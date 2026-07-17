@@ -2,6 +2,9 @@
  * @jest-environment jsdom
  */
 
+/* eslint-disable no-restricted-syntax -- these fixtures stand in for the merged
+   `meta` the mutation cache holds, not for a mutation call site. */
+
 import { useQueryClient } from '@tanstack/react-query';
 import { act, render } from '@testing-library/react';
 import { SnackbarList } from '@wordpress/components';

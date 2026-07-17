@@ -13,6 +13,7 @@ import {
 } from '../../../me/mcp/utils';
 import { useAnalytics } from '../../app/analytics';
 import Breadcrumbs from '../../app/breadcrumbs';
+import { withSnackbar } from '../../app/snackbars/with-snackbar';
 import { Card, CardBody, CardDivider } from '../../components/card';
 import ComponentViewTracker from '../../components/component-view-tracker';
 import { PageHeader } from '../../components/page-header';
@@ -100,15 +101,12 @@ function McpComponent() {
 	const readBadge = getReadBadge( readTools );
 	const writeBadge = getWriteBadge( writeTools );
 
-	const mutation = useMutation( {
-		...userSettingsMutation(),
-		meta: {
-			snackbar: {
-				success: __( 'Settings saved.' ),
-				error: __( 'Failed to save settings.' ),
-			},
-		},
-	} );
+	const mutation = useMutation(
+		withSnackbar( userSettingsMutation(), {
+			success: __( 'Settings saved.' ),
+			error: __( 'Failed to save settings.' ),
+		} )
+	);
 
 	const handleMcpToggle = ( enabled: boolean ) => {
 		const overrides = getOverridesToMatch( Object.entries( mcpAbilities ), enabled ) as

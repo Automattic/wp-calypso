@@ -7,6 +7,7 @@ import {
 } from '@wordpress/components';
 import { __, sprintf } from '@wordpress/i18n';
 import { useAnalytics } from '../../app/analytics';
+import { withSnackbar } from '../../app/snackbars/with-snackbar';
 import { ButtonStack } from '../../components/button-stack';
 import type { DomainForwarding } from '@automattic/api-core';
 
@@ -21,16 +22,13 @@ const DomainForwardingDeleteModal = ( {
 	domainForwarding,
 	onClose,
 }: DomainForwardingDeleteModalProps ) => {
-	const deleteMutation = useMutation( {
-		...domainForwardingDeleteMutation( domainName ),
-		meta: {
-			snackbar: {
-				/* translators: %s is the domain name */
-				success: sprintf( __( 'Domain forwarding rule for %s deleted.' ), domainName ),
-				error: { source: 'server' },
-			},
-		},
-	} );
+	const deleteMutation = useMutation(
+		withSnackbar( domainForwardingDeleteMutation( domainName ), {
+			/* translators: %s is the domain name */
+			success: sprintf( __( 'Domain forwarding rule for %s deleted.' ), domainName ),
+			error: { source: 'server' },
+		} )
+	);
 	const { recordTracksEvent } = useAnalytics();
 
 	const onConfirm = () => {

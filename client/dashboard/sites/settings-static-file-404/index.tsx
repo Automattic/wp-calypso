@@ -11,6 +11,7 @@ import { __ } from '@wordpress/i18n';
 import { useState } from 'react';
 import Breadcrumbs from '../../app/breadcrumbs';
 import { NavigationBlocker } from '../../app/navigation-blocker';
+import { withSnackbar } from '../../app/snackbars/with-snackbar';
 import { ButtonStack } from '../../components/button-stack';
 import { Card, CardBody } from '../../components/card';
 import { PageHeader } from '../../components/page-header';
@@ -57,15 +58,12 @@ export default function SiteStaticFile404Settings( { siteSlug }: { siteSlug: str
 		...siteStaticFile404SettingQuery( site.ID ),
 		enabled: hasHostingFeature( site, HostingFeatures.STATIC_FILE_404 ),
 	} );
-	const mutation = useMutation( {
-		...siteStaticFile404SettingMutation( site.ID ),
-		meta: {
-			snackbar: {
-				success: __( 'Nonexistent assets settings saved.' ),
-				error: __( 'Failed to save nonexistent asset settings.' ),
-			},
-		},
-	} );
+	const mutation = useMutation(
+		withSnackbar( siteStaticFile404SettingMutation( site.ID ), {
+			success: __( 'Nonexistent assets settings saved.' ),
+			error: __( 'Failed to save nonexistent asset settings.' ),
+		} )
+	);
 
 	const [ formData, setFormData ] = useState< { setting: string } >( {
 		setting: currentSetting ?? 'default',
