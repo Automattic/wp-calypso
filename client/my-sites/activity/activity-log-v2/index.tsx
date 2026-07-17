@@ -16,6 +16,7 @@ import isA8CForAgencies from 'calypso/lib/a8c-for-agencies/is-a8c-for-agencies';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { preventWidows } from 'calypso/lib/formatting';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
+import ActivityLogDataViews from 'calypso/my-sites/activity/activity-log-dataviews';
 import { useSelector, useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { hasJetpackPartnerAccess as hasJetpackPartnerAccessSelector } from 'calypso/state/partner-portal/partner/selectors';
@@ -101,12 +102,16 @@ const ActivityLogV2: FunctionComponent = () => {
 				) }
 				{ settingsUrl && <TimeMismatchWarning siteId={ siteId } settingsUrl={ settingsUrl } /> }
 				<div className="activity-log-v2__content">
-					<ActivityCardList
-						logs={ logs }
-						pageSize={ 10 }
-						showFilter={ siteHasFullActivityLog }
-						siteId={ siteId }
-					/>
+					{ isJetpackCloud() ? (
+						<ActivityLogDataViews showFilters={ !! siteHasFullActivityLog } />
+					) : (
+						<ActivityCardList
+							logs={ logs }
+							pageSize={ 10 }
+							showFilter={ siteHasFullActivityLog }
+							siteId={ siteId }
+						/>
+					) }
 				</div>
 			</Page>
 		</Main>
