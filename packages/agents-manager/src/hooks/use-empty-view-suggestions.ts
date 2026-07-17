@@ -11,16 +11,53 @@ interface UseEmptyViewSuggestionsOptions {
 	loadedProviders: LoadedProviders | null;
 }
 
-const SITE_EDITOR_ONLY_SUGGESTION_IDS = new Set( [
+export const DESIGN_SUGGESTION_IDS = new Set( [
 	'customize-colors',
 	'choose-new-fonts',
 	'change-page-layout',
+] );
+
+export const WHAT_ELSE_CAN_I_DO_SUGGESTION_ID = 'what-else-can-i-do';
+
+const SITE_EDITOR_ONLY_SUGGESTION_IDS = new Set( [
+	...DESIGN_SUGGESTION_IDS,
 	'edit-pages',
 	'add-new-page',
-	'what-else-can-i-do',
+	WHAT_ELSE_CAN_I_DO_SUGGESTION_ID,
 ] );
 
 const SITE_EDITOR_POST_TYPES = new Set( [ 'wp_template', 'wp_template_part' ] );
+
+const WRITING_SUGGESTION_LABELS: Record< string, () => string > = {
+	'optimize-title': () => __( 'Optimize title', __i18n_text_domain__ ),
+	'generate-excerpt': () => __( 'Generate excerpt', __i18n_text_domain__ ),
+	'seo-enhancer': () => __( 'Optimize SEO', __i18n_text_domain__ ),
+	'generate-feedback': () => __( 'Simple review', __i18n_text_domain__ ),
+	'proofread-content': () => __( 'Proofread', __i18n_text_domain__ ),
+	'mediate-review-notes': () => __( 'Editorial review', __i18n_text_domain__ ),
+};
+
+export const WRITING_SUGGESTION_IDS = new Set( Object.keys( WRITING_SUGGESTION_LABELS ) );
+
+// Keep writing action labels consistent across flat and grouped editor views.
+export function getWritingSuggestionLabel( suggestion: Suggestion ): string {
+	return WRITING_SUGGESTION_LABELS[ suggestion.id ]?.() ?? suggestion.label;
+}
+
+export function formatWritingSuggestionLabels(
+	suggestions: Suggestion[],
+	shouldFormat: boolean
+): Suggestion[] {
+	if ( ! shouldFormat ) {
+		return suggestions;
+	}
+
+	return suggestions.map( ( suggestion ) =>
+		WRITING_SUGGESTION_IDS.has( suggestion.id )
+			? { ...suggestion, label: getWritingSuggestionLabel( suggestion ) }
+			: suggestion
+	);
+}
 
 export const DEFAULT_EMPTY_VIEW_SUGGESTION_IDS = {
 	gettingStarted: 'getting-started',
@@ -120,7 +157,7 @@ function isSiteEditorRoute( currentRoute?: string ): boolean {
 	return !! currentRoute?.includes( 'site-editor.php' ) || pathname.includes( 'site-editor.php' );
 }
 
-function shouldShowSiteEditorSuggestionsForSurface(
+export function isPageOrSiteEditorSurface(
 	sectionName: string,
 	currentRoute?: string,
 	currentPostType?: string
@@ -140,6 +177,29 @@ function shouldShowSiteEditorSuggestionsForSurface(
 	return sectionName === 'site-editor';
 }
 
+export function usePageOrSiteEditorSurface() {
+	const { sectionName, currentRoute } = useAgentsManagerContext();
+	const currentPostType = useSelect( ( select ) => {
+		try {
+			const editorStore = select( 'core/editor' ) as {
+				getCurrentPostType?: () => string | undefined;
+			};
+			return editorStore?.getCurrentPostType?.();
+		} catch {
+			return undefined;
+		}
+	}, [] );
+
+	return {
+		currentPostType,
+		isPageOrSiteEditorSurface: isPageOrSiteEditorSurface(
+			sectionName,
+			currentRoute,
+			currentPostType
+		),
+	};
+}
+
 function filterEmptyViewSuggestions(
 	suggestions: Suggestion[],
 	shouldShowSiteEditorSuggestions: boolean
@@ -156,22 +216,8 @@ export function useEmptyViewSuggestions( {
 	loadedProviders,
 }: UseEmptyViewSuggestionsOptions ): Suggestion[] | null {
 	const isReaderChat = isReaderChatHost();
-	const { sectionName, currentRoute } = useAgentsManagerContext();
-	const currentPostType = useSelect( ( select ) => {
-		try {
-			const editorStore = select( 'core/editor' ) as {
-				getCurrentPostType?: () => string | undefined;
-			};
-			return editorStore?.getCurrentPostType?.();
-		} catch {
-			return undefined;
-		}
-	}, [] );
-	const shouldShowSiteEditorSuggestions = shouldShowSiteEditorSuggestionsForSurface(
-		sectionName,
-		currentRoute,
-		currentPostType
-	);
+	const { currentPostType, isPageOrSiteEditorSurface: shouldShowSiteEditorSuggestions } =
+		usePageOrSiteEditorSurface();
 
 	// Default suggestions - used when Big Sky doesn't provide custom ones
 	const defaultSuggestions = useMemo(

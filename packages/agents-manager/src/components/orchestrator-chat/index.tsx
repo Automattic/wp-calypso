@@ -15,6 +15,7 @@ import { useBroadcastConversationActivity } from '../../hooks/use-broadcast-conv
 import useCheckpointAction from '../../hooks/use-checkpoint-action';
 import useConversation from '../../hooks/use-conversation';
 import useCopyAction from '../../hooks/use-copy-action';
+import { usePageOrSiteEditorSurface } from '../../hooks/use-empty-view-suggestions';
 import useFeedbackAction from '../../hooks/use-feedback-action';
 import { useImageUpload } from '../../hooks/use-image-upload';
 import useRegenerateAction from '../../hooks/use-regenerate-action';
@@ -68,6 +69,25 @@ function getLatestAgentMessageId( messages: UIMessage[] ): string | null {
  */
 function formatSuggestionIds( suggestions: Suggestion[] ): string {
 	return '|' + suggestions.map( ( s ) => s.id ).join( '|' ) + '|';
+}
+
+/**
+ * Get `option_id` by matching Agenttic's selected prompt to the original options.
+ * The current tracked dropdowns have an empty parent prompt, so Agenttic copies the
+ * selected option's configured value unchanged. For example, selecting Formal
+ * returns that option's value, which maps directly to the stable id `formal`.
+ * Provider tests enforce the empty parent prompt requirement.
+ */
+function getSelectedOptionId(
+	selectedSuggestion: Suggestion,
+	availableSuggestions: Suggestion[]
+): string | undefined {
+	const originalSuggestion = availableSuggestions.find(
+		( suggestion ) => suggestion.id === selectedSuggestion.id
+	);
+	return originalSuggestion?.options?.find(
+		( option ) => option.value === selectedSuggestion.prompt
+	)?.id;
 }
 
 function getToolMessageData( message: Pick< UIMessage, 'content' > ):
@@ -136,6 +156,8 @@ interface Props {
 	isDocked: boolean;
 	/** Indicates if the chat is expanded (floating mode). */
 	isOpen: boolean;
+	/** Indicates if suggestions are visible in the current layout. */
+	suggestionsVisible: boolean;
 	/** Called when the chat is closed. */
 	onClose: () => void;
 	/** Called when the chat is expanded (floating mode). */
@@ -170,6 +192,7 @@ export default function OrchestratorChat( {
 	emptyViewSuggestions,
 	isDocked,
 	isOpen,
+	suggestionsVisible,
 	onClose,
 	onExpand,
 	chatHeaderOptions,
@@ -202,6 +225,18 @@ export default function OrchestratorChat( {
 		const editor = select( 'core/editor' ) as { getCurrentPostId?: () => number | string };
 		return editor?.getCurrentPostId?.();
 	}, [] );
+	const selectedBlockType = useSelect( ( select ) => {
+		try {
+			const blockEditor = select( 'core/block-editor' ) as {
+				getSelectedBlock?: () => { name?: unknown } | null;
+			};
+			const blockName = blockEditor?.getSelectedBlock?.()?.name;
+			return typeof blockName === 'string' && blockName ? blockName : undefined;
+		} catch {
+			return undefined;
+		}
+	}, [] );
+	const { isPageOrSiteEditorSurface: groupWritingSuggestions } = usePageOrSiteEditorSurface();
 
 	const {
 		addMessage,
@@ -367,17 +402,24 @@ export default function OrchestratorChat( {
 		},
 	} );
 
-	const areSuggestionsVisible = isOpen || isCompactMode;
-
 	// Use dynamic suggestions from the external provider (e.g., Big Sky block-based suggestions)
 	const maxDynamicSuggestions = isDocked ? undefined : 3;
 	const dynamicSuggestions = useSuggestions?.( maxDynamicSuggestions, {
-		suggestionsVisible: areSuggestionsVisible,
+		suggestionsVisible,
 	} );
 	const dynamicSuggestionsList = dynamicSuggestions?.suggestions ?? [];
 	const replaceEmptyViewSuggestions = dynamicSuggestions?.replaceEmptyViewSuggestions === true;
 	const dynamicSuggestionsKey = JSON.stringify(
 		dynamicSuggestionsList.map( ( s ) => [ s.id, s.label, s.prompt ] )
+	);
+	const contextualSuggestionIds = useMemo(
+		() =>
+			replaceEmptyViewSuggestions
+				? new Set( dynamicSuggestionsList.map( ( suggestion ) => suggestion.id ) )
+				: new Set< string >(),
+		// Track suggestion content rather than an unstable provider array.
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+		[ dynamicSuggestionsKey, replaceEmptyViewSuggestions ]
 	);
 
 	// Register dynamic suggestions whenever they change
@@ -680,12 +722,23 @@ export default function OrchestratorChat( {
 				typeof suggestion === 'string' ? suggestion : suggestion.prompt ?? suggestion.label;
 
 			const autoSubmit = typeof suggestion !== 'string' && !! suggestion.autoSubmit;
+			const suggestionId = typeof suggestion !== 'string' ? suggestion.id : undefined;
+			const optionId =
+				typeof suggestion !== 'string'
+					? getSelectedOptionId( suggestion, availableSuggestions ?? [] )
+					: undefined;
+			const blockType =
+				typeof suggestion !== 'string' && contextualSuggestionIds.has( suggestion.id )
+					? selectedBlockType
+					: undefined;
 
 			if ( typeof suggestion !== 'string' ) {
 				recordBigSkyTracksEvent( 'chat_suggestion_click', {
 					suggestion_text: suggestion.prompt || '',
 					suggestion_id: suggestion.id || '',
 					available_suggestions: formatSuggestionIds( availableSuggestions ?? [] ),
+					...( optionId ? { option_id: optionId } : {} ),
+					...( blockType ? { block_type: blockType } : {} ),
 				} );
 			}
 
@@ -693,10 +746,16 @@ export default function OrchestratorChat( {
 			// clicked chip) still fire. `autoSubmit` tells the input listener to skip
 			// repopulating the composer, which the AgentUI already submitted and cleared.
 			window.dispatchEvent(
-				new CustomEvent( 'big-sky-inline-suggestion-click', { detail: { value, autoSubmit } } )
+				new CustomEvent( 'big-sky-inline-suggestion-click', {
+					detail: {
+						value,
+						autoSubmit,
+						...( suggestionId ? { suggestionId } : {} ),
+					},
+				} )
 			);
 		},
-		[]
+		[ contextualSuggestionIds, selectedBlockType ]
 	);
 
 	// Invoke abilities setup hook to register hook-based abilities that utilize React context.
@@ -877,7 +936,7 @@ export default function OrchestratorChat( {
 	// - Empty chat: show provider empty-view chips plus dynamic chips.
 	// - Active chat/input: show dynamic suggestions only.
 	let displayedEmptyViewSuggestions: Suggestion[] = [];
-	if ( ! areSuggestionsVisible ) {
+	if ( ! suggestionsVisible ) {
 		// Minimized/collapsed: the chat renders no suggestions, so leave the list
 		// empty to avoid firing chat_suggestions_rendered for hidden chips.
 		displayedEmptyViewSuggestions = [];
@@ -948,6 +1007,7 @@ export default function OrchestratorChat( {
 			inputValue={ inputValue }
 			onInputChange={ setInputValue }
 			isCompactMode={ isCompactMode }
+			groupWritingSuggestions={ groupWritingSuggestions }
 			imageUpload={ imageUpload }
 			showFeedbackInput={ showFeedbackInput }
 			onSubmitFeedbackText={ submitFeedbackText }

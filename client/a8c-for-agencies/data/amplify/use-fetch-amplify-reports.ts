@@ -4,10 +4,18 @@ import { useSelector } from 'calypso/state';
 import { getActiveAgencyId } from 'calypso/state/a8c-for-agencies/agency/selectors';
 import type { AmplifyReport, AmplifyReportsResponse } from './types';
 
+// While any report is still `in_progress`, poll so a running analysis flips
+// to its terminal status (`completed` / `failed`) without a manual refresh.
+const POLL_INTERVAL = 15 * 1000;
+
 export const getAmplifyReportsQueryKey = ( agencyId?: number ) => [
 	'a4a-amplify-reports',
 	agencyId,
 ];
+
+export function hasInProgressReports( reports?: AmplifyReport[] ): boolean {
+	return !! reports?.some( ( report ) => report.status === 'in_progress' );
+}
 
 function fetchAmplifyReports( agencyId: number ): Promise< AmplifyReport[] > {
 	return wpcom.req
@@ -26,5 +34,7 @@ export default function useFetchAmplifyReports() {
 		queryFn: () => fetchAmplifyReports( agencyId as number ),
 		enabled: !! agencyId,
 		refetchOnWindowFocus: false,
+		refetchInterval: ( query ) =>
+			hasInProgressReports( query.state.data ) ? POLL_INTERVAL : false,
 	} );
 }

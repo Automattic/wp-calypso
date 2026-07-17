@@ -115,29 +115,37 @@ export default function AgentDock( {
 		[ isReaderChat, setIsOpen ]
 	);
 
-	const { isDocked, canDock, dock, undock, openSidebar, closeSidebar, createAgentPortal } =
-		useAgentLayoutManager( {
-			defaultDocked: isReaderChat ? false : isPersistedDocked,
-			defaultOpen: isPersistedOpen,
-			desktopMediaQuery,
-			// Only open the sidebar; keep the current route. Admin-bar items
-			// set their own route (e.g. history) before opening it.
-			onOpenSidebar: () => {
-				recordBigSkyTracksEvent( 'sidebar_open_click' );
-				setOpenState( true );
-			},
-			onCloseSidebar: () => {
-				recordBigSkyTracksEvent( 'sidebar_close_click' );
-				setOpenState( false );
-			},
-			onDock: () => {
-				recordBigSkyTracksEvent( 'ai_chat_docked' );
-			},
-			onUndock: () => {
-				recordBigSkyTracksEvent( 'ai_chat_undocked' );
-			},
-			isSplitScreen,
-		} );
+	const {
+		isDocked,
+		isSidebarOpen,
+		canDock,
+		dock,
+		undock,
+		openSidebar,
+		closeSidebar,
+		createAgentPortal,
+	} = useAgentLayoutManager( {
+		defaultDocked: isReaderChat ? false : isPersistedDocked,
+		defaultOpen: isPersistedOpen,
+		desktopMediaQuery,
+		// Only open the sidebar; keep the current route. Admin-bar items
+		// set their own route (e.g. history) before opening it.
+		onOpenSidebar: () => {
+			recordBigSkyTracksEvent( 'sidebar_open_click' );
+			setOpenState( true );
+		},
+		onCloseSidebar: () => {
+			recordBigSkyTracksEvent( 'sidebar_close_click' );
+			setOpenState( false );
+		},
+		onDock: () => {
+			recordBigSkyTracksEvent( 'ai_chat_docked' );
+		},
+		onUndock: () => {
+			recordBigSkyTracksEvent( 'ai_chat_undocked' );
+		},
+		isSplitScreen,
+	} );
 
 	// Docked close fires `sidebar_close_click` (via `onCloseSidebar`); undocked
 	// close fires `dock_back_button_click`. Matches Big Sky.
@@ -319,6 +327,7 @@ export default function AgentDock( {
 			emptyViewSuggestions={ emptyViewSuggestions }
 			isDocked={ isDocked }
 			isOpen={ chatIsOpen }
+			suggestionsVisible={ isDocked ? isSidebarOpen : chatIsOpen || isCompactMode }
 			onClose={ handleClose }
 			onExpand={ handleExpand }
 			chatHeaderOptions={ chatHeaderOptions }

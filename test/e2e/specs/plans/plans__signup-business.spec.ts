@@ -1,10 +1,10 @@
-import { BrowserManager, RestAPIClient } from '@automattic/calypso-e2e';
+import { BrowserManager, DataHelper, RestAPIClient } from '@automattic/calypso-e2e';
 import { expect, tags, test } from '../../lib/pw-base';
 import { apiCancelAtomicPlan, apiDeleteSite } from '../shared';
 import type { NewSiteResponse, TestAccount } from '@automattic/calypso-e2e';
 
 test.describe(
-	'Plans: Create a WordPress.com/Business site as existing user',
+	DataHelper.createSuiteTitle( 'Plans: Create a WordPress.com/Business site as existing user' ),
 	{
 		tag: [ tags.CALYPSO_RELEASE ],
 	},
