@@ -24,12 +24,10 @@ export function getSecurityKeyHostname() {
 		: hostname;
 }
 
-// The relying party ID a newly registered key is scoped to. Keys registered before scoping was
-// fixed can carry a different rp_id (e.g. my.wordpress.com), which leaves them unusable at login.
-export function getExpectedSecurityKeyRpId() {
-	return getSecurityKeyHostname() ?? 'wordpress.com';
-}
-
+// Keys registered before scoping was fixed can be scoped to a wordpress.com subdomain
+// (e.g. my.wordpress.com) instead of wordpress.com, which leaves them unusable at login. We key
+// off the rp_id alone rather than the current host so we don't flag valid keys on non-wordpress.com
+// hosts (e.g. a local dev origin).
 export function isSecurityKeyMisscoped( rpId: string ) {
-	return rpId !== getExpectedSecurityKeyRpId();
+	return rpId !== 'wordpress.com' && rpId.endsWith( '.wordpress.com' );
 }
