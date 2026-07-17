@@ -13,6 +13,7 @@ const {
 	defaultRequestToHandle,
 } = require( '@wordpress/dependency-extraction-webpack-plugin/lib/util' );
 const autoprefixerPlugin = require( 'autoprefixer' );
+const MomentTimezoneDataPlugin = require( 'moment-timezone-data-webpack-plugin' );
 const webpack = require( 'webpack' );
 const { BundleAnalyzerPlugin } = require( 'webpack-bundle-analyzer' );
 const cacheIdentifier = require( '../../build-tools/babel/babel-loader-cache-identifier' );
@@ -186,6 +187,11 @@ module.exports = {
 			'calypso/lib/explat/internals/logger-browser-replacement'
 		),
 		new webpack.IgnorePlugin( { resourceRegExp: /^\.\/locale$/, contextRegExp: /moment$/ } ),
+		new MomentTimezoneDataPlugin( {
+			startYear: 2000,
+			endYear: 2030,
+			cacheDir: path.resolve( cachePath, 'moment-timezone' ),
+		} ),
 		new ExtensiveLodashReplacementPlugin(),
 		new InlineConstantExportsPlugin( /\/client\/state\/action-types.[tj]s$/ ),
 		new InlineConstantExportsPlugin( /\/client\/state\/themes\/action-types.[tj]s$/ ),
