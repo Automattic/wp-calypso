@@ -1,6 +1,4 @@
-import crc32 from 'crc32';
 import debugFactory from 'debug';
-import seed from 'seed-random';
 
 const debug = debugFactory( 'photon' );
 
@@ -74,7 +72,9 @@ export default function photon( imageUrl: string, opts?: PhotonOpts ): string | 
 			formattedUrl = parsedUrl.pathname;
 		}
 		photonUrl.pathname = formattedUrl;
-		photonUrl.hostname = serverFromUrlParts( formattedUrl, photonUrl.protocol === 'https:' );
+		// The Photon URL is always constructed over https here, so requests go to
+		// i0, which benefits from HTTP/2 multiplexing.
+		photonUrl.hostname = 'i0.wp.com';
 		if ( wasSecure ) {
 			photonUrl.searchParams.set( 'ssl', '1' );
 		}
@@ -102,25 +102,4 @@ export default function photon( imageUrl: string, opts?: PhotonOpts ): string | 
 
 function isAlreadyPhotoned( host: string ) {
 	return /^i[0-2]\.wp\.com$/.test( host );
-}
-
-/**
- * Determine which Photon server to connect to: `i0`, `i1`, or `i2`.
- *
- * Statically hash the subdomain based on the URL, to optimize browser caches.
- * Only use i0 when using photon over https, based on the assumption that https
- * maps to http/2 (or later)
- * @param  {string} pathname The pathname to use
- * @param  {boolean} isSecure Whether we're constructing a HTTPS URL or a HTTP one
- * @returns {string}          The hostname for the pathname
- */
-function serverFromUrlParts( pathname: string, isSecure: boolean ) {
-	if ( isSecure ) {
-		return 'i0.wp.com';
-	}
-	const hash = crc32( pathname );
-	const rng = seed( hash );
-	const server = 'i' + Math.floor( rng() * 3 );
-	debug( 'determined server "%s" to use with "%s"', server, pathname );
-	return server + '.wp.com';
 }
