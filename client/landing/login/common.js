@@ -3,6 +3,7 @@ import { getUrlParts } from '@automattic/calypso-url';
 import debugFactory from 'debug';
 import { initializeAnalytics } from 'calypso/lib/analytics/init';
 import getSuperProps from 'calypso/lib/analytics/super-props';
+import { setupErrorLogger } from 'calypso/lib/error-logger/setup-error-logger';
 import loadDevHelpers from 'calypso/lib/load-dev-helpers';
 import { setCurrentUser } from 'calypso/state/current-user/actions';
 import { setRoute } from 'calypso/state/route/actions';
@@ -79,5 +80,6 @@ export function setupMiddlewares( currentUser, reduxStore ) {
 	setupContextMiddleware();
 	setRouteMiddleware( reduxStore );
 	setAnalyticsMiddleware( currentUser, reduxStore );
+	setupErrorLogger( reduxStore );
 	loadDevHelpers( reduxStore );
 }
