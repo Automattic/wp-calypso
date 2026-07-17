@@ -72,8 +72,11 @@ function formatSuggestionIds( suggestions: Suggestion[] ): string {
 }
 
 /**
- * Resolve a dropdown option from the original suggestion configuration that
- * Agenttic returns alongside the selected, combined suggestion.
+ * Get `option_id` by matching Agenttic's selected prompt to the original options.
+ * The current tracked dropdowns have an empty parent prompt, so Agenttic copies the
+ * selected option's configured value unchanged. For example, selecting Formal
+ * returns that option's value, which maps directly to the stable id `formal`.
+ * Provider tests enforce the empty parent prompt requirement.
  */
 function getSelectedOptionId(
 	selectedSuggestion: Suggestion,
