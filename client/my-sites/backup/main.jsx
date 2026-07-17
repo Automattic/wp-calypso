@@ -17,6 +17,7 @@ import QuerySiteFeatures from 'calypso/components/data/query-site-features';
 import QuerySiteProducts from 'calypso/components/data/query-site-products';
 import QuerySiteSettings from 'calypso/components/data/query-site-settings';
 import BackupActionsToolbar from 'calypso/components/jetpack/backup-actions-toolbar';
+import BackupGettingStarted from 'calypso/components/jetpack/backup-getting-started';
 import BackupPlaceholder from 'calypso/components/jetpack/backup-placeholder';
 import JetpackFooter from 'calypso/components/jetpack/jetpack-footer';
 import JetpackTitle from 'calypso/components/jetpack-title';
@@ -37,6 +38,7 @@ import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-t
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { useSelectedSiteSelector } from 'calypso/state/sites/hooks';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
+import BackupsDataViews from './backup-dataviews';
 import BackupDatePicker from './backup-date-picker';
 import BackupsMadeRealtimeBanner from './banners/backups-made-realtime-banner';
 import EnableRestoresBanner from './banners/enable-restores-banner';
@@ -89,7 +91,7 @@ const BackupPage = ( { queryDate } ) => {
 				actions={ showHeader ? <BackupActionsToolbar siteId={ siteId } /> : undefined }
 			>
 				<TimeMismatchWarning siteId={ siteId } settingsUrl={ siteSettingsUrl } />
-				<AdminContent selectedDate={ selectedDate } />
+				<AdminContent selectedDate={ selectedDate } queryDate={ queryDate } />
 			</Page>
 			{ showHeader && <JetpackFooter /> }
 		</Main>
@@ -112,7 +114,7 @@ const isFilterEmpty = ( filter ) => {
 	return true;
 };
 
-function AdminContent( { selectedDate } ) {
+function AdminContent( { selectedDate, queryDate } ) {
 	const translate = useTranslate();
 	const siteId = useSelector( getSelectedSiteId );
 	const siteSlug = useSelector( getSelectedSiteSlug );
@@ -153,6 +155,7 @@ function AdminContent( { selectedDate } ) {
 						onDateChange={ onDateChange }
 						selectedDate={ selectedDate }
 						needCredentials={ needCredentials }
+						queryDate={ queryDate }
 					/>
 				</>
 			) }
@@ -160,7 +163,7 @@ function AdminContent( { selectedDate } ) {
 	);
 }
 
-function BackupStatus( { selectedDate, needCredentials, onDateChange } ) {
+function BackupStatus( { selectedDate, needCredentials, onDateChange, queryDate } ) {
 	const isFetchingSiteFeatures = useSelectedSiteSelector( isRequestingSiteFeatures );
 	const isPoliciesInitialized = useSelectedSiteSelector( isRewindPoliciesInitialized );
 	const siteId = useSelector( getSelectedSiteId );
@@ -175,9 +178,34 @@ function BackupStatus( { selectedDate, needCredentials, onDateChange } ) {
 		return <BackupPlaceholder showDatePicker />;
 	}
 
+	if ( isJetpackCloud() ) {
+		return (
+			<div className="backup__main-wrap">
+				<div className="backup__header">
+					<div className="backup__header-left">
+						<div className="backup__header-title">{ translate( 'Latest Backups' ) }</div>
+						<div className="backup__header-text">
+							{ translate( 'This is a list of your latest generated backups' ) }
+						</div>
+					</div>
+					<div className="backup__header-right">
+						<BackupActionsToolbar siteId={ siteId } />
+					</div>
+				</div>
+
+				{ needCredentials && <EnableRestoresBanner /> }
+				{ ! needCredentials && hasRealtimeBackups && <BackupsMadeRealtimeBanner /> }
+
+				<BackupStorageSpace />
+				<BackupsDataViews queryDate={ queryDate } />
+				{ hasRealtimeBackups && <BackupGettingStarted /> }
+			</div>
+		);
+	}
+
 	return (
 		<div className="backup__main-wrap">
-			{ ( isJetpackCloud() || isA8CForAgencies() ) && (
+			{ isA8CForAgencies() && (
 				<div className="backup__header">
 					<div className="backup__header-left">
 						<div className="backup__header-title">{ translate( 'Latest Backups' ) }</div>
