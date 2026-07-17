@@ -10,8 +10,7 @@ import {
 import { tags, test } from '../../lib/pw-base';
 import type { Page } from 'playwright';
 
-// Remote installs currently redirect to Jetpack SSO instead of the Calypso confirmation flow.
-test.describe.fixme(
+test.describe(
 	DataHelper.createSuiteTitle( 'Jetpack: Plugin' ),
 	{ tag: [ tags.JETPACK_REMOTE_SITE ] },
 	() => {
