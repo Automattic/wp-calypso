@@ -77,7 +77,7 @@ describe( 'handleOnCatch', () => {
 			tags: [ 'dashboard' ],
 			properties: {
 				dashboard_backport: false,
-				env: 'development',
+				env_id: 'development',
 				message: 'Boom',
 				stack: 'at SitePage',
 				path: 'https://example.com/',
