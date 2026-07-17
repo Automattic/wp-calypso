@@ -1124,6 +1124,7 @@ export type DomainContactDetailsExtra = {
 	ca?: CaDomainContactExtraDetails | null;
 	uk?: UkDomainContactExtraDetails | null;
 	fr?: FrDomainContactExtraDetails | null;
+	in?: InDomainContactExtraDetails | null;
 };
 
 export type CaDomainContactExtraDetails = {
@@ -1143,6 +1144,11 @@ export type FrDomainContactExtraDetails = {
 	registrantVatId?: string;
 	trademarkNumber?: string;
 	sirenSiret?: string;
+};
+
+export type InDomainContactExtraDetails = {
+	nexusDeclaration?: boolean;
+	nexusConnectionType?: string;
 };
 
 export interface TermsOfServiceRecord {
