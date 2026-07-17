@@ -62,9 +62,7 @@ import {
 } from './utils/tool-provider';
 import {
 	type BlockTransformationSuggestionType,
-	trackAiEditorialReviewSuggestionClick,
 	trackAiEditorialReviewSuggestionRendered,
-	trackBlockTransformationSuggestionClick,
 	trackBlockTransformationSuggestionRendered,
 } from './utils/tracking';
 import type { SuggestionOption } from '@automattic/agenttic-client';
@@ -85,11 +83,6 @@ let suggestionRenderedFiredOnce = false;
 
 /** Block transformation suggestions whose rendered event has fired this page life. */
 const blockTransformationSuggestionRenderedKeys = new Set< string >();
-
-let lastBlockTransformationSuggestionContext: {
-	blockType: string;
-	suggestions: BlockSuggestion[];
-} | null = null;
 
 /** Default suggestion shown when no block is selected. */
 const OPTIMIZE_TITLE_SUGGESTION = {
@@ -1086,45 +1079,6 @@ const BLOCK_SUGGESTIONS: BlockSuggestion[] = [
 	},
 ];
 
-type BlockTransformationSuggestionMatch = {
-	suggestion: BlockSuggestion;
-	option?: SuggestionOption;
-};
-
-/**
- * Resolve a dispatched click value to its suggestion and the picked option.
- * Option-bearing suggestions use an empty prompt, so the value is the option's.
- */
-function matchBlockTransformationSuggestion(
-	suggestion: BlockSuggestion,
-	value: string
-): BlockTransformationSuggestionMatch | undefined {
-	const option = suggestion.options?.find( ( candidate ) => candidate.value === value );
-	if ( option ) {
-		return { suggestion, option };
-	}
-	// `filter( Boolean )` drops an empty prompt so a blank value can't false-match.
-	if (
-		[ suggestion.id, suggestion.label, suggestion.prompt ].filter( Boolean ).includes( value )
-	) {
-		return { suggestion };
-	}
-	return undefined;
-}
-
-function getBlockTransformationSuggestionMatchForValue(
-	value: string,
-	suggestions: BlockSuggestion[]
-): BlockTransformationSuggestionMatch | undefined {
-	for ( const suggestion of suggestions ) {
-		const match = matchBlockTransformationSuggestion( suggestion, value );
-		if ( match ) {
-			return match;
-		}
-	}
-	return undefined;
-}
-
 function trackRenderedBlockTransformationSuggestions(
 	suggestions: BlockSuggestion[],
 	block: any
@@ -1132,11 +1086,6 @@ function trackRenderedBlockTransformationSuggestions(
 	if ( typeof block?.name !== 'string' ) {
 		return;
 	}
-
-	lastBlockTransformationSuggestionContext = {
-		blockType: block.name,
-		suggestions,
-	};
 
 	suggestions.forEach( ( suggestion ) => {
 		const renderedKey = `${ suggestion.id }:${ block.name }`;
@@ -1149,44 +1098,6 @@ function trackRenderedBlockTransformationSuggestions(
 			suggestionType: suggestion.type,
 			blockType: block.name,
 		} );
-	} );
-}
-
-function trackBlockTransformationSuggestionClickForValue( value: string ): void {
-	if ( ! isBlockTransformationsEnabled() ) {
-		return;
-	}
-
-	const selectedBlock = getSelectedOrRememberedBlock();
-	if ( typeof selectedBlock?.name === 'string' ) {
-		const selectedBlockMatch = getBlockTransformationSuggestionMatchForValue(
-			value,
-			BLOCK_SUGGESTIONS.filter( ( suggestion ) => suggestion.condition( selectedBlock ) )
-		);
-		if ( selectedBlockMatch ) {
-			trackBlockTransformationSuggestionClick( {
-				suggestionId: selectedBlockMatch.suggestion.id,
-				suggestionType: selectedBlockMatch.suggestion.type,
-				blockType: selectedBlock.name,
-				optionId: selectedBlockMatch.option?.id,
-			} );
-			return;
-		}
-	}
-
-	const lastRenderedContext = lastBlockTransformationSuggestionContext;
-	const lastRenderedMatch = lastRenderedContext
-		? getBlockTransformationSuggestionMatchForValue( value, lastRenderedContext.suggestions )
-		: undefined;
-	if ( ! lastRenderedContext || ! lastRenderedMatch ) {
-		return;
-	}
-
-	trackBlockTransformationSuggestionClick( {
-		suggestionId: lastRenderedMatch.suggestion.id,
-		suggestionType: lastRenderedMatch.suggestion.type,
-		blockType: lastRenderedContext.blockType,
-		optionId: lastRenderedMatch.option?.id,
 	} );
 }
 
@@ -1228,18 +1139,17 @@ export function useSuggestions(
 
 	useEffect( () => {
 		const handleSuggestionClick = ( event: Event ) => {
-			const value = ( event as CustomEvent ).detail?.value;
+			const { suggestionId, value } = ( event as CustomEvent ).detail ?? {};
+			const matchesSuggestion = ( suggestion: { id: string; prompt: string } ) =>
+				suggestionId === suggestion.id ||
+				( ! suggestionId && typeof value === 'string' && value === suggestion.prompt );
 
 			setHidden( true );
 			clearSuggestionsFn?.();
 			suppressCurrentPageContentForNextContext = false;
 
-			if ( typeof value === 'string' ) {
-				trackBlockTransformationSuggestionClickForValue( value );
-			}
-
 			// Auto-expand the review-style chip flows below to 50vw.
-			if ( typeof value === 'string' && value === POST_FEEDBACK_SUGGESTION.prompt ) {
+			if ( matchesSuggestion( POST_FEEDBACK_SUGGESTION ) ) {
 				suppressCurrentPageContentForNextContext = true;
 				try {
 					( dispatch as any )( 'automattic/agents-manager' ).setIsSplitScreen( true );
@@ -1247,7 +1157,7 @@ export function useSuggestions(
 					// Store not registered yet (e.g. tests); split-screen is demo polish.
 				}
 			}
-			if ( typeof value === 'string' && value === PROOFREAD_SUGGESTION.prompt ) {
+			if ( matchesSuggestion( PROOFREAD_SUGGESTION ) ) {
 				suppressCurrentPageContentForNextContext = true;
 				try {
 					( dispatch as any )( 'automattic/agents-manager' ).setIsSplitScreen( true );
@@ -1255,12 +1165,7 @@ export function useSuggestions(
 					// Store not registered yet (e.g. tests); split-screen is demo polish.
 				}
 			}
-			if (
-				isAiEditorialReviewAvailable() &&
-				typeof value === 'string' &&
-				value === AI_EDITORIAL_REVIEW_SUGGESTION.prompt
-			) {
-				trackAiEditorialReviewSuggestionClick();
+			if ( isAiEditorialReviewAvailable() && matchesSuggestion( AI_EDITORIAL_REVIEW_SUGGESTION ) ) {
 				try {
 					( dispatch as any )( 'automattic/agents-manager' ).setIsSplitScreen( true );
 				} catch {

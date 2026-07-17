@@ -2291,7 +2291,7 @@ describe( 'useSuggestions', () => {
 		act( () => {
 			window.dispatchEvent(
 				new CustomEvent( 'big-sky-inline-suggestion-click', {
-					detail: { value: proofreadPrompt },
+					detail: { value: proofreadPrompt, suggestionId: 'proofread-content' },
 				} )
 			);
 		} );
@@ -2302,126 +2302,18 @@ describe( 'useSuggestions', () => {
 	it( 'opens split-screen when the Editorial Review suggestion is clicked', () => {
 		installAiEditorialReviewData();
 		installPostTypeMock( 'post' );
-		const mediationPrompt = getEmptyViewSuggestions().find(
-			( suggestion ) => suggestion.id === 'mediate-review-notes'
-		)?.prompt;
-
 		render( React.createElement( SuggestionsProbe, { onSuggestions: jest.fn() } ) );
 
 		act( () => {
 			window.dispatchEvent(
 				new CustomEvent( 'big-sky-inline-suggestion-click', {
-					detail: { value: mediationPrompt },
+					detail: { suggestionId: 'mediate-review-notes' },
 				} )
 			);
 		} );
 
 		expect( mockSetIsSplitScreen ).toHaveBeenCalledWith( true );
-		expect( mockedRecordTracksEvent ).toHaveBeenCalledWith(
-			'jetpack_ai_editorial_review_suggestion_click',
-			{}
-		);
-		expect( getTracksCalls( 'jetpack_ai_block_transformation_suggestion_click' ) ).toEqual( [] );
-	} );
-
-	it( 'tracks block transformation suggestion clicks', () => {
-		installAiEditorialReviewData();
-		installPostTypeMock( 'post' );
-		mockSelectedBlock = { clientId: 'b3', name: 'core/heading' };
-
-		render( React.createElement( SuggestionsProbe, { onSuggestions: jest.fn() } ) );
-		mockedRecordTracksEvent.mockClear();
-
-		act( () => {
-			window.dispatchEvent(
-				new CustomEvent( 'big-sky-inline-suggestion-click', {
-					detail: { value: 'Simplify this text to make it easier to read' },
-				} )
-			);
-		} );
-
-		expect( mockedRecordTracksEvent ).toHaveBeenCalledWith(
-			'jetpack_ai_block_transformation_suggestion_click',
-			{
-				suggestion_id: 'simplify-text',
-				suggestion_type: 'text',
-				block_type: 'core/heading',
-				surface: 'jetpack_ai_sidebar',
-			}
-		);
-	} );
-
-	it( 'tracks block transformation suggestion clicks by label', () => {
-		installAiEditorialReviewData();
-		installPostTypeMock( 'post' );
-		mockSelectedBlock = { clientId: 'b4', name: 'core/paragraph' };
-
-		render( React.createElement( SuggestionsProbe, { onSuggestions: jest.fn() } ) );
-		mockedRecordTracksEvent.mockClear();
-
-		act( () => {
-			window.dispatchEvent(
-				new CustomEvent( 'big-sky-inline-suggestion-click', {
-					detail: { value: 'Check grammar' },
-				} )
-			);
-		} );
-
-		expect( mockedRecordTracksEvent ).toHaveBeenCalledWith(
-			'jetpack_ai_block_transformation_suggestion_click',
-			{
-				suggestion_id: 'check-grammar',
-				suggestion_type: 'text',
-				block_type: 'core/paragraph',
-				surface: 'jetpack_ai_sidebar',
-			}
-		);
-	} );
-
-	it( 'tracks block transformation suggestion clicks after block selection is cleared', () => {
-		installAiEditorialReviewData();
-		installPostTypeMock( 'post' );
-		mockSelectedBlock = { clientId: 'b5', name: 'core/paragraph' };
-
-		render( React.createElement( SuggestionsProbe, { onSuggestions: jest.fn() } ) );
-		mockedRecordTracksEvent.mockClear();
-		mockSelectedBlock = null;
-
-		act( () => {
-			window.dispatchEvent(
-				new CustomEvent( 'big-sky-inline-suggestion-click', {
-					detail: { value: 'Check the grammar and spelling of this text' },
-				} )
-			);
-		} );
-
-		expect( mockedRecordTracksEvent ).toHaveBeenCalledWith(
-			'jetpack_ai_block_transformation_suggestion_click',
-			{
-				suggestion_id: 'check-grammar',
-				suggestion_type: 'text',
-				block_type: 'core/paragraph',
-				surface: 'jetpack_ai_sidebar',
-			}
-		);
-	} );
-
-	it( 'does not track block transformation clicks for unknown prompt values', () => {
-		installAiEditorialReviewData();
-		installPostTypeMock( 'post' );
-		mockSelectedBlock = { clientId: 'b6', name: 'core/heading' };
-
-		render( React.createElement( SuggestionsProbe, { onSuggestions: jest.fn() } ) );
-		mockedRecordTracksEvent.mockClear();
-
-		act( () => {
-			window.dispatchEvent(
-				new CustomEvent( 'big-sky-inline-suggestion-click', {
-					detail: { value: 'Write an unrelated prompt' },
-				} )
-			);
-		} );
-
+		expect( getTracksCalls( 'jetpack_ai_editorial_review_suggestion_click' ) ).toEqual( [] );
 		expect( getTracksCalls( 'jetpack_ai_block_transformation_suggestion_click' ) ).toEqual( [] );
 	} );
 
@@ -2483,89 +2375,6 @@ describe( 'useSuggestions', () => {
 		} );
 	} );
 
-	it( 'tracks a change-tone dropdown selection with the chosen option_id', () => {
-		installAiEditorialReviewData();
-		installPostTypeMock( 'post' );
-		mockSelectedBlock = { clientId: 'b-tone', name: 'core/paragraph' };
-
-		render( React.createElement( SuggestionsProbe, { onSuggestions: jest.fn() } ) );
-		mockedRecordTracksEvent.mockClear();
-
-		act( () => {
-			window.dispatchEvent(
-				new CustomEvent( 'big-sky-inline-suggestion-click', {
-					detail: { value: 'Change the tone of this text to be more formal' },
-				} )
-			);
-		} );
-
-		expect( mockedRecordTracksEvent ).toHaveBeenCalledWith(
-			'jetpack_ai_block_transformation_suggestion_click',
-			{
-				suggestion_id: 'change-tone',
-				suggestion_type: 'text',
-				block_type: 'core/paragraph',
-				surface: 'jetpack_ai_sidebar',
-				option_id: 'formal',
-			}
-		);
-	} );
-
-	it( 'tracks a translate dropdown selection with the chosen option_id', () => {
-		installAiEditorialReviewData();
-		installPostTypeMock( 'post' );
-		mockSelectedBlock = { clientId: 'b-translate', name: 'core/paragraph' };
-
-		render( React.createElement( SuggestionsProbe, { onSuggestions: jest.fn() } ) );
-		mockedRecordTracksEvent.mockClear();
-
-		act( () => {
-			window.dispatchEvent(
-				new CustomEvent( 'big-sky-inline-suggestion-click', {
-					detail: { value: 'Translate this block content to Spanish' },
-				} )
-			);
-		} );
-
-		expect( mockedRecordTracksEvent ).toHaveBeenCalledWith(
-			'jetpack_ai_block_transformation_suggestion_click',
-			{
-				suggestion_id: 'translate',
-				suggestion_type: 'text',
-				block_type: 'core/paragraph',
-				surface: 'jetpack_ai_sidebar',
-				option_id: 'es',
-			}
-		);
-	} );
-
-	it( 'tracks a plain (no-dropdown) block transformation click without an option_id', () => {
-		installAiEditorialReviewData();
-		installPostTypeMock( 'post' );
-		mockSelectedBlock = { clientId: 'b-grammar', name: 'core/paragraph' };
-
-		render( React.createElement( SuggestionsProbe, { onSuggestions: jest.fn() } ) );
-		mockedRecordTracksEvent.mockClear();
-
-		act( () => {
-			window.dispatchEvent(
-				new CustomEvent( 'big-sky-inline-suggestion-click', {
-					detail: { value: 'Check the grammar and spelling of this text' },
-				} )
-			);
-		} );
-
-		expect( mockedRecordTracksEvent ).toHaveBeenCalledWith(
-			'jetpack_ai_block_transformation_suggestion_click',
-			{
-				suggestion_id: 'check-grammar',
-				suggestion_type: 'text',
-				block_type: 'core/paragraph',
-				surface: 'jetpack_ai_sidebar',
-			}
-		);
-	} );
-
 	it( 'does not open split-screen when Editorial Review is unavailable', () => {
 		installAiEditorialReviewData();
 		mockCurrentPostType = 'product';
@@ -2576,7 +2385,7 @@ describe( 'useSuggestions', () => {
 		act( () => {
 			window.dispatchEvent(
 				new CustomEvent( 'big-sky-inline-suggestion-click', {
-					detail: { value: 'unavailable suggestion prompt' },
+					detail: { suggestionId: 'mediate-review-notes' },
 				} )
 			);
 		} );
@@ -2631,7 +2440,7 @@ describe( 'useSuggestions', () => {
 		act( () => {
 			window.dispatchEvent(
 				new CustomEvent( 'big-sky-inline-suggestion-click', {
-					detail: { value: proofreadPrompt },
+					detail: { value: proofreadPrompt, suggestionId: 'proofread-content' },
 				} )
 			);
 			useAbilitiesSetup( {
@@ -2733,7 +2542,7 @@ describe( 'contextProvider', () => {
 		act( () => {
 			window.dispatchEvent(
 				new CustomEvent( 'big-sky-inline-suggestion-click', {
-					detail: { value: feedbackPrompt },
+					detail: { value: feedbackPrompt, suggestionId: 'generate-feedback' },
 				} )
 			);
 		} );
@@ -2757,7 +2566,7 @@ describe( 'contextProvider', () => {
 		act( () => {
 			window.dispatchEvent(
 				new CustomEvent( 'big-sky-inline-suggestion-click', {
-					detail: { value: proofreadPrompt },
+					detail: { value: proofreadPrompt, suggestionId: 'proofread-content' },
 				} )
 			);
 		} );
@@ -2785,12 +2594,12 @@ describe( 'contextProvider', () => {
 		act( () => {
 			window.dispatchEvent(
 				new CustomEvent( 'big-sky-inline-suggestion-click', {
-					detail: { value: feedbackPrompt },
+					detail: { value: feedbackPrompt, suggestionId: 'generate-feedback' },
 				} )
 			);
 			window.dispatchEvent(
 				new CustomEvent( 'big-sky-inline-suggestion-click', {
-					detail: { value: mediationPrompt },
+					detail: { value: mediationPrompt, suggestionId: 'mediate-review-notes' },
 				} )
 			);
 		} );
