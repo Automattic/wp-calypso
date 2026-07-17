@@ -32,7 +32,26 @@ describe( 'Jetpack Cloud settings controller', () => {
 		expect( context.primary.props.backHref ).toBe(
 			'/settings/disconnect-site/wildfowl-of-salmons.jurassic.ninja?site_id=254548256&site_url=wildfowl-of-salmons.jurassic.ninja&type=down'
 		);
+		expect( context.primary.props.isBroken ).toBe( true );
 		expect( context.primary.props.skipRedirectNonJetpack ).toBe( true );
+		expect( next ).toHaveBeenCalledTimes( 1 );
+	} );
+
+	test( 'does not mark generic disconnected-site confirmation routes as broken', () => {
+		const context = {
+			params: {
+				site: 'wildfowl-of-salmons.jurassic.ninja',
+			},
+			query: {
+				type: 'down',
+			},
+		};
+		const next = jest.fn();
+
+		disconnectSiteConfirm( context, next );
+
+		expect( context.primary.props.isBroken ).toBe( false );
+		expect( context.primary.props.skipRedirectNonJetpack ).toBe( false );
 		expect( next ).toHaveBeenCalledTimes( 1 );
 	} );
 

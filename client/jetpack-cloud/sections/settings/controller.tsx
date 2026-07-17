@@ -162,6 +162,7 @@ export const disconnectSiteConfirm: Callback = ( context, next ) => {
 			//@ts-ignore
 			backHref={ backHref }
 			reason={ reason }
+			isBroken={ hasAgencySiteId && type === 'down' }
 			siteId={ siteId }
 			siteSlug={ siteSlug }
 			siteTitle={ siteSlug }

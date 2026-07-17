@@ -24,6 +24,7 @@ class ConfirmDisconnection extends Component {
 		text: PropTypes.oneOfType( [ PropTypes.string, PropTypes.arrayOf( PropTypes.string ) ] ),
 		backHref: PropTypes.string,
 		disconnectHref: PropTypes.string,
+		isBroken: PropTypes.bool,
 		stayConnectedHref: PropTypes.string,
 		// Provided by HOCs
 		purchase: PropTypes.object,
@@ -67,6 +68,7 @@ class ConfirmDisconnection extends Component {
 		const {
 			backHref: suppliedBackHref,
 			disconnectHref,
+			isBroken,
 			siteId,
 			siteSlug,
 			siteTitle,
@@ -93,7 +95,7 @@ class ConfirmDisconnection extends Component {
 
 				<DisconnectJetpack
 					disconnectHref={ disconnectHref ?? '/sites' }
-					isBroken={ type === 'down' }
+					isBroken={ isBroken }
 					onDisconnectClick={ this.submitSurvey }
 					showTitle={ false }
 					siteId={ siteId }
