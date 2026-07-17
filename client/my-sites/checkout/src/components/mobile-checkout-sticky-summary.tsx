@@ -32,6 +32,9 @@ const Wrapper = styled.div`
 	z-index: 100;
 	background: var( --color-surface );
 	border-block-start: 1px solid var( --color-border-subtle );
+	/* Lift the bar off the content it overlaps, same shadow as the native fixed
+	   submit bar. Kept in both states so the sheet reads as one raised surface. */
+	box-shadow: 0 -3px 10px 0 #0000001f;
 	padding: 16px;
 	display: flex;
 	flex-direction: column;
@@ -136,7 +139,10 @@ const Summary = styled.div`
 	gap: 16px;
 	max-block-size: 70vh;
 	overflow-y: auto;
+	/* Separates the open sheet from the Total/CTA row below it. */
+	padding-block-end: 16px;
 	margin-block-end: 16px;
+	border-block-end: 1px solid var( --studio-gray-5 );
 `;
 
 const SummaryTitle = styled.p`
@@ -174,6 +180,9 @@ const ProductInfo = styled.div`
 `;
 
 const ProductName = styled.div`
+	/* Domains are long unbroken strings and would otherwise overflow into the
+	   price — same treatment as the shared LineItemTitle. */
+	overflow-wrap: anywhere;
 	font-weight: 500;
 	color: var( --studio-gray-100 );
 `;
