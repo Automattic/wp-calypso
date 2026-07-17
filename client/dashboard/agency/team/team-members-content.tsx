@@ -56,6 +56,7 @@ export default function TeamMembersContent( {
 								? __( 'Try adjusting your search or filters.' )
 								: __( 'Invite a team member to get started.' )
 						}
+						isBorderless
 					/>
 				}
 			>
