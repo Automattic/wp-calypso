@@ -95,6 +95,13 @@ function getRenewalDescription( item: Purchase, action: SiteAction, locale: stri
 		if ( ! item.expiry_date ) {
 			return '';
 		}
+		if ( item.is_past_expiry_date ) {
+			return sprintf(
+				/* translators: %s: formatted date */
+				__( 'Expired on %s.' ),
+				formatDate( new Date( item.expiry_date ), locale, { dateStyle: 'long' } )
+			);
+		}
 		return sprintf(
 			/* translators: %s: formatted date */
 			__( 'Expires on %s.' ),

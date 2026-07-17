@@ -7,6 +7,7 @@ import {
 	getSingleItemCancelCopy,
 	getSingleItemRemoveCopy,
 } from 'calypso/dashboard/me/billing-purchases/cancel-purchase/get-confirmation-copy';
+import { isExpiredAndInGracePeriod } from 'calypso/lib/purchases';
 import { toPurchaseForCopy } from './to-purchase-for-copy';
 import type { CancellationFeature } from '@automattic/api-core';
 import type { Purchases } from '@automattic/data-stores';
@@ -22,6 +23,7 @@ const CancelPurchaseFeatureList = ( {
 	cancellationFeatures: CancellationFeature[];
 } ) => {
 	const adapted = toPurchaseForCopy( purchase );
+	const inGracePeriod = isExpiredAndInGracePeriod( purchase );
 	// When the server returns no features, fall back to a per-product-type item.
 	const items: Array< { key: string; title: string } > = cancellationFeatures.length
 		? cancellationFeatures.map( ( feature ) => ( {
@@ -46,7 +48,7 @@ const CancelPurchaseFeatureList = ( {
 		const singleItemCopy =
 			displayVariant === 'remove'
 				? getSingleItemRemoveCopy( adapted )
-				: getSingleItemCancelCopy( adapted, fullExpiryDate );
+				: getSingleItemCancelCopy( adapted, fullExpiryDate, inGracePeriod );
 		return (
 			<div className="cancel-purchase__features">
 				<p>{ singleItemCopy }</p>
@@ -57,7 +59,7 @@ const CancelPurchaseFeatureList = ( {
 	const intro =
 		displayVariant === 'remove'
 			? getRemoveLossIntro( adapted )
-			: getCancelLossIntro( adapted, fullExpiryDate );
+			: getCancelLossIntro( adapted, fullExpiryDate, inGracePeriod );
 
 	return (
 		<div className="cancel-purchase__features">

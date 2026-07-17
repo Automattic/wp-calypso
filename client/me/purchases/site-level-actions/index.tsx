@@ -192,6 +192,11 @@ export default function SiteActionInterstitial( {
 
 	const getRenewalText = ( p: Purchase ) => {
 		if ( isRemove ) {
+			if ( p.isPastExpiryDate ) {
+				return translate( 'Expired on %(date)s', {
+					args: { date: moment( p.expiryDate ).format( 'LL' ) },
+				} );
+			}
 			return translate( 'Expires on %(date)s', {
 				args: { date: moment( p.expiryDate ).format( 'LL' ) },
 			} );
