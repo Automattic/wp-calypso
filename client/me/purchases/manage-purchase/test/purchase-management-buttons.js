@@ -7,6 +7,7 @@ import {
 	PRODUCT_AKISMET_ENTERPRISE_GT2M_MONTHLY,
 	PRODUCT_AKISMET_ENTERPRISE_GT2M_YEARLY,
 	AKISMET_UPGRADES_PRODUCTS_MAP,
+	JETPACK_SECURITY_T1_PLANS,
 } from '@automattic/calypso-products';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { render, screen } from '@testing-library/react';
@@ -506,4 +507,37 @@ describe( 'Purchase Management Buttons', () => {
 		await findPaymentMethodNavItem();
 		expect( screen.queryByText( /Upgrade/ ) ).not.toBeInTheDocument();
 	} );
+
+	test.each( JETPACK_SECURITY_T1_PLANS )(
+		'routes Jetpack Security T1 plan (%s) upgrade to /plans/[site], not /plans/storage/[site]',
+		( product_slug ) => {
+			nock( 'https://public-api.wordpress.com' )
+				.get( '/rest/v1.2/me/payment-methods?expired=include' )
+				.reply( 200 );
+
+			const store = createMockReduxStoreForPurchase( {
+				...purchase,
+				product_slug,
+				product_type: 'bundle',
+				is_auto_renew_enabled: true,
+				can_explicit_renew: true,
+			} );
+
+			render(
+				<QueryClientProvider client={ queryClient }>
+					<ReduxProvider store={ store }>
+						<ManagePurchase
+							purchaseId={ Number( purchase.ID ) }
+							isSiteLevel
+							siteSlug="onecooltestsite.com"
+						/>
+					</ReduxProvider>
+				</QueryClientProvider>
+			);
+
+			const upgradeButton = screen.getByText( 'Upgrade' );
+			expect( upgradeButton ).toHaveAttribute( 'href', '/plans/onecooltestsite.com' );
+			expect( upgradeButton ).not.toHaveAttribute( 'href', '/plans/storage/onecooltestsite.com' );
+		}
+	);
 } );

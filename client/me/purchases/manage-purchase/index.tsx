@@ -26,7 +26,6 @@ import {
 	JETPACK_PLANS,
 	JETPACK_LEGACY_PLANS,
 	JETPACK_PRODUCTS_LIST,
-	JETPACK_SECURITY_T1_PLANS,
 	isP2Plus,
 	getMonthlyPlanByYearly,
 	hasMarketplaceProduct,
@@ -572,9 +571,6 @@ class ManagePurchase extends Component<
 		const isUpgradeableBackupProduct = (
 			JETPACK_BACKUP_T1_PRODUCTS as ReadonlyArray< string >
 		 ).includes( purchase.productSlug );
-		const isUpgradeableSecurityPlan = (
-			JETPACK_SECURITY_T1_PLANS as ReadonlyArray< string >
-		 ).includes( purchase.productSlug );
 
 		if ( isAkismetProduct( purchase ) ) {
 			// For the first Iteration of Calypso Akismet checkout we are only suggesting
@@ -605,7 +601,7 @@ class ManagePurchase extends Component<
 			return `/checkout/${ siteSlug }/${ upgradePlan }`;
 		}
 
-		if ( isUpgradeableBackupProduct || isUpgradeableSecurityPlan ) {
+		if ( isUpgradeableBackupProduct ) {
 			return `/plans/storage/${ siteSlug }`;
 		}
 
