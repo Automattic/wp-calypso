@@ -29,9 +29,9 @@ describe( '<MutationErrorTracker>', () => {
 		await expect( mutation.execute( undefined ) ).rejects.toBe( error );
 
 		expect( mockedBumpMultipleStats ).toHaveBeenCalledWith(
-			[ 'hd-mutation-error', '2fa-security-key-delete' ],
-			[ 'hd-mutation-error-status', '2fa-security-key-delete.500' ],
-			[ 'hd-mutation-error-5xx', '2fa-security-key-delete' ]
+			[ 'dashboard-mutation-error', '2fa-security-key-delete' ],
+			[ 'dashboard-mutation-error-status', '2fa-security-key-delete.500' ],
+			[ 'dashboard-mutation-error-5xx', '2fa-security-key-delete' ]
 		);
 	} );
 
@@ -47,13 +47,13 @@ describe( '<MutationErrorTracker>', () => {
 		await expect( mutation.execute( undefined ) ).rejects.toBe( error );
 
 		expect( mockedBumpMultipleStats ).toHaveBeenCalledWith(
-			[ 'hd-mutation-error', '2fa-security-key-register' ],
-			[ 'hd-mutation-error-status', '2fa-security-key-register.403' ],
-			[ 'hd-mutation-error-4xx', '2fa-security-key-register' ]
+			[ 'dashboard-mutation-error', '2fa-security-key-register' ],
+			[ 'dashboard-mutation-error-status', '2fa-security-key-register.403' ],
+			[ 'dashboard-mutation-error-4xx', '2fa-security-key-register' ]
 		);
 	} );
 
-	test( 'flags a non-WPError failure as not-http rather than by status', async () => {
+	test( 'flags a non-WPError failure as other rather than by status', async () => {
 		const { queryClient } = render( <MutationErrorTracker /> );
 
 		const error = new Error( 'plain' );
@@ -65,8 +65,8 @@ describe( '<MutationErrorTracker>', () => {
 		await expect( mutation.execute( undefined ) ).rejects.toBe( error );
 
 		expect( mockedBumpMultipleStats ).toHaveBeenCalledWith(
-			[ 'hd-mutation-error', '2fa-security-key-register' ],
-			[ 'hd-mutation-error-not-http', '2fa-security-key-register' ]
+			[ 'dashboard-mutation-error', '2fa-security-key-register' ],
+			[ 'dashboard-mutation-error-other', '2fa-security-key-register' ]
 		);
 	} );
 
@@ -81,9 +81,9 @@ describe( '<MutationErrorTracker>', () => {
 		await expect( mutation.execute( undefined ) ).rejects.toBe( error );
 
 		expect( mockedBumpMultipleStats ).toHaveBeenCalledWith(
-			[ 'hd-mutation-error', 'missing' ],
-			[ 'hd-mutation-error-status', 'missing.500' ],
-			[ 'hd-mutation-error-5xx', 'missing' ]
+			[ 'dashboard-mutation-error', 'missing' ],
+			[ 'dashboard-mutation-error-status', 'missing.500' ],
+			[ 'dashboard-mutation-error-5xx', 'missing' ]
 		);
 	} );
 

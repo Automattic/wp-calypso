@@ -20,21 +20,21 @@ export default function MutationErrorTracker() {
 			const value = mutation.meta?.statId ?? 'missing';
 			const stats = [] as [ string, string ][];
 
-			stats.push( [ 'hd-mutation-error', value ] );
+			stats.push( [ 'dashboard-mutation-error', value ] );
 
 			if ( ! isWpError( error ) ) {
 				// Not a network error response. Could be a logic bug, but could equally be a
 				// user-driven failure (a declined browser permission, a cancelled WebAuthn
 				// prompt), so monitor the rate rather than reporting each one to Sentry.
-				stats.push( [ 'hd-mutation-error-not-http', value ] );
+				stats.push( [ 'dashboard-mutation-error-other', value ] );
 			} else {
 				// Groups mutation failures with their error code e.g. `domain-dnssec-mut.401`
-				stats.push( [ 'hd-mutation-error-status', `${ value }.${ error.status }` ] );
+				stats.push( [ 'dashboard-mutation-error-status', `${ value }.${ error.status }` ] );
 
 				if ( error.status >= 400 && error.status < 500 ) {
-					stats.push( [ 'hd-mutation-error-4xx', value ] );
+					stats.push( [ 'dashboard-mutation-error-4xx', value ] );
 				} else if ( error.status >= 500 && error.status < 600 ) {
-					stats.push( [ 'hd-mutation-error-5xx', value ] );
+					stats.push( [ 'dashboard-mutation-error-5xx', value ] );
 				}
 			}
 
