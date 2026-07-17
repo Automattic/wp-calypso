@@ -71,29 +71,38 @@ function getTotalPrice( planPrice: number | null | undefined, addOnPrice = 0 ): 
 	return null !== planPrice && undefined !== planPrice ? planPrice + addOnPrice : null;
 }
 
-const loggedUnknownBillPeriods = new Set< string >();
+const loggedUnexpectedPurchases = new Set< string >();
 
-function logUnknownBillPeriodDays(
+/**
+ * `usePricingMetaForGridPlans` expects the raw (snake_case) purchase shape, but
+ * is sometimes handed the legacy camelCase-assembled `Purchase` instead (see the
+ * `normalizePurchaseForPricing` fallbacks). This logs the offending purchase —
+ * with enough detail to identify the shape and its origin — so the source can be
+ * tracked down. Deduped per message + purchase to keep the REST call rare.
+ */
+function logUnexpectedCurrentPlanPurchase(
+	message: string,
+	tags: string[],
 	planSlug: string,
 	purchase: Purchases.RawPurchase,
 	siteId: number | null | undefined
 ): void {
 	const shape = purchase as unknown as Record< string, unknown >;
 	const purchaseId = shape.ID ?? shape.id;
-	const key = `${ siteId ?? '' }-${ String( purchaseId ) }-${ String(
+	const key = `${ message }-${ siteId ?? '' }-${ String( purchaseId ) }-${ String(
 		shape.bill_period_days ?? shape.billPeriodDays
 	) }`;
-	if ( loggedUnknownBillPeriods.has( key ) ) {
+	if ( loggedUnexpectedPurchases.has( key ) ) {
 		return;
 	}
-	loggedUnknownBillPeriods.add( key );
+	loggedUnexpectedPurchases.add( key );
 	const win =
 		typeof window !== 'undefined'
 			? ( window as unknown as { COMMIT_SHA?: string; location?: Location } )
 			: undefined;
 	logToLogstash( {
 		feature: 'calypso_client',
-		message: 'usePricingMetaForGridPlans: purchase has an unknown bill_period_days',
+		message,
 		site_id: siteId ?? undefined,
 		extra: {
 			plan_slug: planSlug,
@@ -106,11 +115,43 @@ function logUnknownBillPeriodDays(
 			expiry_status: String( shape.expiry_status ?? shape.expiryStatus ),
 			path: win?.location?.pathname ?? '',
 			commit_sha: String( win?.COMMIT_SHA ?? '' ),
-			caller_stack:
-				new Error( 'unknown-bill-period' ).stack?.split( '\n' ).slice( 0, 20 ).join( '\n' ) ?? '',
+			caller_stack: new Error( message ).stack?.split( '\n' ).slice( 0, 20 ).join( '\n' ) ?? '',
 		},
-		tags: [ 'unknown-term', 'bill-period-days' ],
+		tags,
 	} ).catch( () => {} );
+}
+
+interface NormalizedPurchasePricing {
+	billPeriodDays: number;
+	priceInteger: number;
+	introductoryOffer: { isWithinPeriod: boolean; costPerIntervalInteger: number } | null;
+	/**
+	 * True when the purchase arrived in the legacy camelCase-assembled shape
+	 * rather than the raw (snake_case) shape this hook expects.
+	 */
+	isAssembledShape: boolean;
+}
+
+/**
+ * Reads the pricing-relevant fields off a purchase, tolerating both the raw
+ * (snake_case) shape and the legacy camelCase-assembled shape. The hook is
+ * supposed to only ever receive the raw shape, but some callers still supply the
+ * assembled one; normalizing here keeps current-plan pricing correct either way.
+ */
+function normalizePurchaseForPricing( purchase: Purchases.RawPurchase ): NormalizedPurchasePricing {
+	const shape = purchase as unknown as Record< string, unknown >;
+	const isAssembledShape =
+		shape.bill_period_days === undefined && shape.billPeriodDays !== undefined;
+	const assembledOffer = shape.introductoryOffer as
+		| { isWithinPeriod: boolean; costPerIntervalInteger: number }
+		| null
+		| undefined;
+	return {
+		billPeriodDays: Number( shape.bill_period_days ?? shape.billPeriodDays ),
+		priceInteger: Number( shape.price_integer ?? shape.priceInteger ),
+		introductoryOffer: getPurchaseIntroductoryOffer( purchase ) ?? assembledOffer ?? null,
+		isAssembledShape,
+	};
 }
 
 /**
@@ -243,19 +284,33 @@ const usePricingMetaForGridPlans = ( {
 					let renewalPrice: Plans.PlanPricing[ 'originalPrice' ] | undefined;
 
 					if ( purchasedPlan ) {
-						const introductoryOffer = getPurchaseIntroductoryOffer( purchasedPlan );
-						const billPeriodDays = Number( purchasedPlan.bill_period_days );
+						const { billPeriodDays, priceInteger, introductoryOffer, isAssembledShape } =
+							normalizePurchaseForPricing( purchasedPlan );
 						const term = getTermFromDuration( billPeriodDays );
 						const showIntroOfferHeadline =
 							!! showBillingDescriptionForIncreasedRenewalPrice &&
 							introductoryOffer?.isWithinPeriod;
 						const currentTermPrice = showIntroOfferHeadline
 							? introductoryOffer!.costPerIntervalInteger
-							: purchasedPlan.price_integer;
+							: priceInteger;
 						const isMonthly = billPeriodDays === PLAN_MONTHLY_PERIOD;
 
-						if ( ! term ) {
-							logUnknownBillPeriodDays( planSlug, purchasedPlan, siteId );
+						if ( isAssembledShape ) {
+							logUnexpectedCurrentPlanPurchase(
+								'usePricingMetaForGridPlans: current plan purchase has an unexpected assembled shape',
+								[ 'shape-mismatch', 'assembled-purchase' ],
+								planSlug,
+								purchasedPlan,
+								siteId
+							);
+						} else if ( ! term ) {
+							logUnexpectedCurrentPlanPurchase(
+								'usePricingMetaForGridPlans: purchase has an unknown bill_period_days',
+								[ 'unknown-term', 'bill-period-days' ],
+								planSlug,
+								purchasedPlan,
+								siteId
+							);
 						}
 
 						if ( isMonthly && monthlyPrice !== currentTermPrice ) {
@@ -269,10 +324,8 @@ const usePricingMetaForGridPlans = ( {
 						if ( showIntroOfferHeadline ) {
 							renewalPrice = {
 								monthly:
-									isMonthly || ! term
-										? purchasedPlan.price_integer
-										: calculateMonthlyPrice( term, purchasedPlan.price_integer ),
-								full: purchasedPlan.price_integer,
+									isMonthly || ! term ? priceInteger : calculateMonthlyPrice( term, priceInteger ),
+								full: priceInteger,
 							};
 						}
 					}

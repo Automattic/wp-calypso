@@ -273,6 +273,46 @@ describe( 'usePricingMetaForGridPlans', () => {
 		);
 	} );
 
+	it( 'should price from the purchase and log a shape mismatch when the current plan purchase is in the assembled camelCase shape', () => {
+		Plans.useCurrentPlan.mockImplementation( () => ( {
+			productSlug: PLAN_BUSINESS,
+			planSlug: PLAN_BUSINESS,
+			purchaseId: 1234,
+		} ) );
+		Purchases.useSitePurchaseById.mockImplementation( () => ( {
+			id: 1234,
+			productSlug: PLAN_BUSINESS,
+			priceInteger: 600,
+			currencyCode: 'USD',
+			billPeriodDays: 365,
+		} ) );
+
+		const pricingMeta = usePricingMetaForGridPlans( {
+			planSlugs: [ PLAN_BUSINESS ],
+			siteId,
+			coupon: undefined,
+			useCheckPlanAvailabilityForPurchase,
+		} );
+
+		// 600/yr resolves to 50/mo, i.e. it used the purchase price, not the untouched site plan price.
+		expect( pricingMeta?.[ PLAN_BUSINESS ]?.originalPrice ).toEqual( {
+			full: 600,
+			monthly: 50,
+		} );
+		expect( logToLogstash ).toHaveBeenCalledWith(
+			expect.objectContaining( {
+				message:
+					'usePricingMetaForGridPlans: current plan purchase has an unexpected assembled shape',
+				extra: expect.objectContaining( {
+					plan_slug: PLAN_BUSINESS,
+					bill_period_days_snake: 'undefined',
+					bill_period_days_camel: '365',
+				} ),
+				tags: expect.arrayContaining( [ 'shape-mismatch' ] ),
+			} )
+		);
+	} );
+
 	it( 'should return the original price as the site plan price and discounted price as Null for plans not available for purchase', () => {
 		Plans.useCurrentPlan.mockImplementation( () => ( {
 			productSlug: PLAN_BUSINESS,
