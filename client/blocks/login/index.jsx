@@ -65,9 +65,9 @@ const loadSocialConnectPrompt = () =>
 	import(
 		/* webpackChunkName: "async-load-calypso-blocks-login-social-connect-prompt" */ './social-connect-prompt'
 	);
-const loadLostPasswordForm = () =>
+const loadLostPasswordContent = () =>
 	import(
-		/* webpackChunkName: "async-load-calypso-blocks-login-lost-password-form" */ './lost-password-form'
+		/* webpackChunkName: "async-load-calypso-blocks-login-lost-password-content" */ './lost-password/lost-password-content'
 	);
 const loadTwoFactorContent = () =>
 	import(
@@ -431,7 +431,7 @@ class Login extends Component {
 				<Fragment>
 					<div className="login__lost-password-form-wrapper">
 						<AsyncLoad
-							require={ loadLostPasswordForm }
+							require={ loadLostPasswordContent }
 							redirectToAfterLoginUrl={ this.props.redirectTo }
 							oauth2ClientId={ this.props.oauth2Client && this.props.oauth2Client.id }
 							locale={ locale }
