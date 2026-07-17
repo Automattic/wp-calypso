@@ -23,7 +23,6 @@ object MarTech : Project({
 
 object ToSAcceptanceTracking : BuildType({
 	templates(CalypsoE2ETestsBuildTemplate)
-	id("calypso_ToSAcceptanceTracking")
 	name = "ToS Acceptance Tracking"
 	description = "Captures screenshots of locations where Terms of Service are shown."
 
