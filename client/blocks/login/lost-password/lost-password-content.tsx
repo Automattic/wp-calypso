@@ -25,7 +25,7 @@ export default function LostPasswordContent( props: LostPasswordContentProps ) {
 	if ( mode === 'recovery-email' ) {
 		return (
 			<>
-				<RecoverViaEmailForm locale={ props.locale } />
+				<RecoverViaEmailForm />
 				<div className="login__form-help">
 					<Button variant="link" onClick={ () => setMode( 'reset' ) }>
 						{ translate( 'Back' ) }
