@@ -72,10 +72,16 @@ const [ disablePersistQueryClient, persistQueryClientPromise ] = persistQueryCli
 	dehydrateOptions: {
 		shouldRedactErrors: () => false,
 		shouldDehydrateQuery: ( query ) => {
-			if ( query.meta?.persist === false ) {
+			const persist = query.meta?.persist;
+			if ( persist === false ) {
 				return false;
 			}
-			return defaultShouldDehydrateQuery( query );
+			// Gate the predicate behind the default check so it is never handed the
+			// data of a query that hasn't succeeded.
+			if ( ! defaultShouldDehydrateQuery( query ) ) {
+				return false;
+			}
+			return typeof persist === 'function' ? persist( query.state.data ) : true;
 		},
 	},
 } );
