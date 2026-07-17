@@ -1425,6 +1425,7 @@ const PlansFeaturesMain = ( {
 					renderFreePlanCtaInStepContainerV2={ renderFreePlanCtaInStepContainerV2 }
 					onFreePlanCTAClick={ onFreePlanCTAClick }
 					intent={ intent }
+					isPlansGridRedesign={ usePlansGridRedesign }
 					showDifferentiatorHeader={
 						showDifferentiatorHeader || showPlansGridRedesignDifferentiatorHeader
 					}

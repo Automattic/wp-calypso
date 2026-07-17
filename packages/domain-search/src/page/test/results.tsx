@@ -1024,7 +1024,7 @@ describe( 'ResultsPage', () => {
 			} );
 		} );
 
-		it( 'clears the bundle card and refetches the bundle suggestion when the bundle is permanently unavailable', async () => {
+		it( 'keeps the bundle card and shows a notice when the bundle is no longer available', async () => {
 			const user = userEvent.setup();
 			const onAddBundle = jest.fn().mockRejectedValue(
 				Object.assign( new Error( 'The domain bundle could not be added to the cart.' ), {
@@ -1040,12 +1040,8 @@ describe( 'ResultsPage', () => {
 				params: { query: 'test-bundle-permanent.com' },
 				bundleSuggestion: buildBundleSuggestion( 'test-bundle-permanent' ),
 			} );
-			const refetchRequest = mockGetBundleSuggestionQuery( {
-				params: { query: 'test-bundle-permanent.com' },
-				bundleSuggestion: null,
-			} );
 
-			render(
+			const { container } = render(
 				<TestDomainSearch
 					cart={ buildCart( { onAddBundle } ) }
 					config={ { showBundleSuggestions: true } }
@@ -1059,60 +1055,18 @@ describe( 'ResultsPage', () => {
 
 			await user.click( screen.getByRole( 'button', { name: 'Get bundle' } ) );
 
+			// The card stays put and surfaces a tailored notice rather than silently
+			// disappearing, so the user sees the add failed. See DOMAINS-2221.
 			await waitFor( () => {
-				expect( refetchRequest.isDone() ).toBe( true );
+				expect(
+					getByText(
+						container,
+						'This bundle is no longer available — one or more of the domains may have just been registered.'
+					)
+				).toBeInTheDocument();
 			} );
-
-			await waitFor( () => {
-				expect( screen.queryByRole( 'button', { name: 'Get bundle' } ) ).not.toBeInTheDocument();
-			} );
-			expect( queryBundleMember( 'test-bundle-permanent.net' ) ).not.toBeInTheDocument();
-		} );
-
-		it( 'keeps the stale bundle hidden when the permanent-failure refetch returns the same bundle group', async () => {
-			const user = userEvent.setup();
-			const unavailableBundle = buildBundleSuggestion( 'test-bundle-same-group' );
-			const onAddBundle = jest.fn().mockRejectedValue(
-				Object.assign( new Error( 'The domain bundle could not be added to the cart.' ), {
-					code: 'domain_bundle_unavailable',
-				} )
-			);
-
-			mockGetSuggestionsQuery( {
-				params: { query: 'test-bundle-same-group.com' },
-				suggestions: [ buildSuggestion( { domain_name: 'test-bundle-same-group.com' } ) ],
-			} );
-			mockGetBundleSuggestionQuery( {
-				params: { query: 'test-bundle-same-group.com' },
-				bundleSuggestion: unavailableBundle,
-			} );
-			const refetchRequest = mockGetBundleSuggestionQuery( {
-				params: { query: 'test-bundle-same-group.com' },
-				bundleSuggestion: unavailableBundle,
-			} );
-
-			render(
-				<TestDomainSearch
-					cart={ buildCart( { onAddBundle } ) }
-					config={ { showBundleSuggestions: true } }
-					query="test-bundle-same-group.com"
-				>
-					<ResultsPage />
-				</TestDomainSearch>
-			);
-
-			expect( await findBundleMember( 'test-bundle-same-group.net' ) ).toBeInTheDocument();
-
-			await user.click( screen.getByRole( 'button', { name: 'Get bundle' } ) );
-
-			await waitFor( () => {
-				expect( refetchRequest.isDone() ).toBe( true );
-			} );
-
-			await waitFor( () => {
-				expect( screen.queryByRole( 'button', { name: 'Get bundle' } ) ).not.toBeInTheDocument();
-			} );
-			expect( queryBundleMember( 'test-bundle-same-group.net' ) ).not.toBeInTheDocument();
+			expect( queryBundleMember( 'test-bundle-permanent.net' ) ).toBeInTheDocument();
+			expect( screen.getByRole( 'button', { name: 'Get bundle' } ) ).toBeInTheDocument();
 		} );
 
 		it( 'does not hide or refetch the next query when an old bundle add fails permanently', async () => {
@@ -1188,7 +1142,11 @@ describe( 'ResultsPage', () => {
 
 			expect( freshRefetchRequest.isDone() ).toBe( false );
 			expect( getBundleMember( 'test-bundle-late-fresh.net' ) ).toBeInTheDocument();
-			expect( screen.getByRole( 'button', { name: 'Get bundle' } ) ).toBeEnabled();
+			// Once the stale mutation settles, no add is in flight, so the fresh
+			// card's CTA is enabled again.
+			await waitFor( () => {
+				expect( screen.getByRole( 'button', { name: 'Get bundle' } ) ).toBeEnabled();
+			} );
 		} );
 
 		it( 'clears the error when retrying succeeds', async () => {

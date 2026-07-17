@@ -12,7 +12,7 @@ class SiteResults extends Component {
 		query: PropTypes.string,
 		sort: PropTypes.string,
 		searchResults: PropTypes.array,
-		searchResultsCount: PropTypes.number,
+		hasNextPage: PropTypes.bool,
 		fetchNextPage: PropTypes.func,
 		isLoggedIn: PropTypes.bool,
 		width: PropTypes.number.isRequired,
@@ -30,7 +30,11 @@ class SiteResults extends Component {
 		if ( this.isLoginPromptVisible( offset ) ) {
 			return false;
 		}
-		return offset < ( this.props.searchResultsCount ?? 0 );
+		// Defer to the infinite query's own stop condition (driven by the
+		// endpoint's `next_page` handle) rather than comparing the deduped offset
+		// to the inflated ES `total`, which never resolves and leaves the stream
+		// rendering permanent loading placeholders (READ-601).
+		return Boolean( this.props.hasNextPage );
 	};
 
 	isLoginPromptVisible( offset ) {

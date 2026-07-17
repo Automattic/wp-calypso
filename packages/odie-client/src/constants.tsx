@@ -344,6 +344,11 @@ export const getZendeskChatStartedMetaMessage = (): Message => ( {
 export const ODIE_THUMBS_DOWN_RATING_VALUE = 0;
 export const ODIE_THUMBS_UP_RATING_VALUE = 1;
 
+// The Help Center @wordpress/data store key. Defined here rather than imported
+// from @automattic/help-center (which depends back on this package, a workspace
+// cycle). Mirrors STORE_KEY in @automattic/data-stores' help-center store.
+export const HELP_CENTER_STORE = 'automattic/help-center';
+
 /**
  * NOTE: NEVER CHANGE THIS VALUE.
  * This value should never be changed. Otherwise the old interactions will be broken and users will not be able to continue their conversations.

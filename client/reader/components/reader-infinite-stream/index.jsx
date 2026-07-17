@@ -1,12 +1,33 @@
 import { pickBy } from '@automattic/js-utils';
-import { useWindowVirtualizer } from '@tanstack/react-virtual';
+import { useVirtualizer } from '@tanstack/react-virtual';
 import { debounce } from '@wordpress/compose';
 import PropTypes from 'prop-types';
 import { useCallback, useEffect, useImperativeHandle, useMemo, useRef, useState } from 'react';
+import { useScrollMargin } from 'calypso/reader/hooks/use-infinite-list/use-scroll-margin';
 import { recordTracksRailcarRender } from 'calypso/reader/stats';
 import './style.scss';
 
 const noop = () => {};
+
+// Calypso's Reader scrolls inside an inner overflow container, not the window.
+// Resolve the list's nearest scrollable ancestor so the virtualizer observes the
+// right element; a window virtualizer never sees scroll here, so the stream would
+// render trailing placeholders that never page in (READ-601). If no scrollable
+// ancestor is found, fall back to the document scroller as a best-effort default
+// so the list still renders — note this element virtualizer won't observe true
+// window scroll (that needs a window virtualizer), but the only consumer (the
+// search sites column) always has an inner scroll container, so that's moot.
+const getScrollParent = ( node ) => {
+	let current = node?.parentElement ?? null;
+	while ( current ) {
+		const { overflowY } = window.getComputedStyle( current );
+		if ( overflowY === 'auto' || overflowY === 'scroll' || overflowY === 'overlay' ) {
+			return current;
+		}
+		current = current.parentElement;
+	}
+	return ( typeof document !== 'undefined' && document.scrollingElement ) || null;
+};
 
 // Rows rendered above and below the visible range, mirroring the prefetch feel
 // of react-virtualized's default overscan.
@@ -64,11 +85,12 @@ MeasuredRow.propTypes = {
 };
 
 /**
- * A window-scrolled, dynamically-measured infinite stream built on TanStack
- * Virtual. The list lays out at its full content height within the page flow
- * and the window itself is the scroll container. Row heights are seeded from
- * `minHeight` and then measured from the DOM (via a ResizeObserver-backed
- * `measureElement`), so variable, content-driven heights reflow automatically.
+ * A dynamically-measured infinite stream built on TanStack Virtual. The list
+ * lays out at its full content height within the page flow and virtualizes
+ * against its nearest scrollable ancestor (Reader content scrolls in an inner
+ * container, not the window). Row heights are seeded from `minHeight` and then
+ * measured from the DOM (via a ResizeObserver-backed `measureElement`), so
+ * variable, content-driven heights reflow automatically.
  *
  * Public API (consumed by other Reader components — preserve this contract):
  * @param {Object} props
@@ -95,26 +117,19 @@ function ReaderInfiniteStream( {
 	extraRenderItemProps,
 	minHeight = 70,
 } ) {
-	// State (not a ref) so the scroll margin recomputes once the list attaches.
+	// State (not a ref) so the scroll container / margin recompute once the list attaches.
 	const [ listElement, setListElement ] = useState( null );
-	const [ scrollMargin, setScrollMargin ] = useState( 0 );
+	const [ scrollElement, setScrollElement ] = useState( null );
 
-	// Offset (px) from the document top to the top of the list, so window scroll
-	// maps to the right items even when a header sits above the stream.
+	// Resolve the scroll container from the mounted list. Reader content scrolls in
+	// an inner element, so the virtualizer must observe it rather than the window.
 	useEffect( () => {
-		if ( ! listElement ) {
-			return;
-		}
-		const measure = () => {
-			const next = listElement.getBoundingClientRect().top + window.scrollY;
-			setScrollMargin( ( current ) => ( current === next ? current : next ) );
-		};
-		measure();
-		const observer = new ResizeObserver( measure );
-		observer.observe( listElement );
-		observer.observe( document.body );
-		return () => observer.disconnect();
+		setScrollElement( listElement ? getScrollParent( listElement ) : null );
 	}, [ listElement ] );
+
+	// Offset (px) from the top of the scroll container to the top of the list, so
+	// the scroll position maps to the right items even when a header sits above it.
+	const scrollMargin = useScrollMargin( listElement, scrollElement );
 
 	const itemsLength = items.length;
 	const moreToLoad = hasNextPage( itemsLength );
@@ -122,8 +137,9 @@ function ReaderInfiniteStream( {
 
 	const estimateSize = useCallback( () => minHeight, [ minHeight ] );
 
-	const virtualizer = useWindowVirtualizer( {
+	const virtualizer = useVirtualizer( {
 		count: rowCount,
+		getScrollElement: () => scrollElement,
 		estimateSize,
 		overscan: OVERSCAN_ROW_COUNT,
 		scrollMargin,

@@ -46,6 +46,8 @@ yarn start
 yarn start-dashboard
 ```
 
+If `yarn start` fails with `Ineffective mark-compacts near heap limit Allocation failed - JavaScript heap out of memory`, increase the Node heap size by running `NODE_OPTIONS=--max-old-space-size=8192 yarn start`. For other errors, run `yarn calypso-doctor` to diagnose and fix common environment issues.
+
 ## Testing instructions
 
 > **Note**: E2E tests require a local Calypso development instance to be running.

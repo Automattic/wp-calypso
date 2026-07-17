@@ -51,7 +51,10 @@ test.describe(
 			} );
 		} );
 
-		test( 'As a new user, I can purchase a hosted site and cancel it', async ( { page } ) => {
+		// Skipped for now; can be updated once we're sure all onboarding tests will go
+		// through the MSD flow. See https://github.com/Automattic/wp-calypso/pull/112586
+		// and https://github.com/Automattic/wp-calypso/pull/112587.
+		test.skip( 'As a new user, I can purchase a hosted site and cancel it', async ( { page } ) => {
 			// ~360s of dominant waits (90s purchase + 180s Atomic transfer + 30s
 			// checkout + two 30s refund notices) plus signup, billing and two
 			// cancellation navigations; 420s covers the worst case.

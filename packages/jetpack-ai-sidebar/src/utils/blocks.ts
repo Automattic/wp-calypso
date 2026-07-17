@@ -4,6 +4,42 @@
 
 import type { BlockSnapshot } from '../components/block-ref';
 
+export type BlockEditorStore = {
+	getBlocks?: ( rootClientId?: string ) => BlockSnapshot[];
+	getBlocksByName?: ( blockName: string ) => string[];
+	__experimentalGetGlobalBlocksByName?: ( blockName: string ) => string[];
+};
+
+export type EditorStore = {
+	getCurrentPostType?: () => string | undefined;
+	getRenderingMode?: () => string | undefined;
+};
+
+const CONTENT_POST_TYPES = new Set( [ 'post', 'page' ] );
+
+export function getEditorContentBlocks(
+	blockEditor?: BlockEditorStore,
+	editor?: EditorStore
+): BlockSnapshot[] {
+	if (
+		! blockEditor?.getBlocks ||
+		! CONTENT_POST_TYPES.has( editor?.getCurrentPostType?.() ?? '' )
+	) {
+		return [];
+	}
+
+	const [ postContentClientId ] =
+		blockEditor.getBlocksByName?.( 'core/post-content' ) ??
+		blockEditor.__experimentalGetGlobalBlocksByName?.( 'core/post-content' ) ??
+		[];
+
+	if ( postContentClientId ) {
+		return blockEditor.getBlocks( postContentClientId );
+	}
+
+	return editor?.getRenderingMode?.() === 'template-locked' ? [] : blockEditor.getBlocks();
+}
+
 /** Flatten a block tree into a pre-order list, skipping nameless blocks. */
 export function flattenBlocks( blocks: BlockSnapshot[] ): BlockSnapshot[] {
 	const out: BlockSnapshot[] = [];

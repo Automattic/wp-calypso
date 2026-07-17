@@ -11,12 +11,15 @@ import { Text } from '../../../components/text';
 import { useEmailProduct } from '../../hooks/use-email-product';
 import poweredByTitanLogo from '../../resources/powered-by-titan-caps.svg';
 import { IntervalLength, MailboxProvider, TitanPlanTier } from '../../types';
-import type { Domain, Product } from '@automattic/api-core';
+import { getTrialMonths } from '../../utils/get-trial-months';
+import { isEligibleForIntroductoryOffer } from '../../utils/is-eligible-for-introductory-offer';
+import type { Domain, EmailSubscription, Product } from '@automattic/api-core';
 
 interface TitanPlan {
 	tier: TitanPlanTier;
 	product?: Product;
 	hasFreeTrial: boolean;
+	trialMonths: number;
 	isPopular: boolean;
 	everythingInName?: string;
 }
@@ -32,21 +35,22 @@ const getTierName = ( tier: TitanPlanTier ): string => {
 	}
 };
 
-// Placeholder descriptions and feature lists, final copy pending (DOTEMP-111).
+// Descriptions remain placeholder copy; feature lists reflect the tier
+// comparison from DOTEMP-111.
 const getTierDetails = ( tier: TitanPlanTier ): { description: string; features: string[] } => {
 	switch ( tier ) {
 		case TitanPlanTier.Pro:
 			return {
 				description: __( 'Everything you need to get started with professional, secure email.' ),
 				features: [
-					__( '30 GB storage' ),
-					__( 'Rich email' ),
-					__( 'Native mobile apps' ),
-					__( 'Integrated calendar' ),
-					__( 'Integrated contacts' ),
-					__( 'Guaranteed email delivery' ),
-					__( 'Advanced anti-spam' ),
-					__( 'Advanced anti-virus' ),
+					__( '30 GB / mailbox' ),
+					__( '10 read receipts' ),
+					__( '1 email template' ),
+					__( '1 contact group' ),
+					__( 'Blocklist' ),
+					__( 'Allowlist' ),
+					__( 'Grammar & spell check' ),
+					__( 'Undo send' ),
 				],
 			};
 		case TitanPlanTier.Premium:
@@ -55,27 +59,42 @@ const getTierDetails = ( tier: TitanPlanTier ): { description: string; features:
 					'Smarter tools to help your growing business stay organized and productive.'
 				),
 				features: [
-					__( '50 GB storage' ),
+					__( '50 GB / mailbox' ),
 					__( 'Unlimited read receipts' ),
 					__( 'Unlimited email templates' ),
 					__( 'Unlimited contact groups' ),
-					__( 'Follow up reminders' ),
-					__( 'Send later' ),
-					__( 'Grammar & spell check' ),
+					__( 'Two-factor authentication' ),
 					__( 'Priority inbox' ),
+					__( 'Business auto reply' ),
+					__( 'Titan Task' ),
+					__( 'Titan Drive (1 GB storage)' ),
+					__( 'Email labels' ),
+					__( 'Auto-clean' ),
+					__( 'Send later' ),
+					__( 'Follow-up reminders' ),
+					__( 'Turbo search' ),
+					__( 'Send as alias' ),
+					__( 'Undo send' ),
+					__( 'Branding' ),
+					__( 'Team chat' ),
 				],
 			};
 		case TitanPlanTier.Ultra:
 			return {
 				description: __( 'AI-powered email to scale your business and boost marketing impact.' ),
 				features: [
-					__( '100 GB storage' ),
-					__( 'AI email writer' ),
-					__( 'Appointment booking' ),
-					__( 'Email campaigns' ),
-					__( 'Attachment and link tracking' ),
-					__( 'Email designer' ),
+					__( '100 GB / mailbox' ),
+					__( 'Email backup (50 GB storage)' ),
+					__( 'File transfer' ),
+					__( 'Titan AI (compose, reply)' ),
+					__( 'AI summary' ),
+					__( 'Titan Booking' ),
+					__( 'Titan Drive (50 GB storage)' ),
 					__( 'Signature designer' ),
+					__( 'File and link tracking' ),
+					__( 'Email designer' ),
+					__( 'Email campaigns' ),
+					__( 'Invoice builder' ),
 				],
 			};
 	}
@@ -94,8 +113,6 @@ export function TitanPlanGrid( {
 	domainName,
 	interval,
 	available,
-	hasProFreeTrial,
-	proTrialMonths,
 	currentTier,
 	onUpgrade,
 }: {
@@ -103,8 +120,6 @@ export function TitanPlanGrid( {
 	domainName: string;
 	interval: IntervalLength;
 	available: boolean;
-	hasProFreeTrial: boolean;
-	proTrialMonths: number;
 	// The tier the user is currently subscribed to. When set, the grid is in
 	// upgrade mode: lower tiers are hidden, the current tier is labeled, and higher
 	// tiers offer an upgrade.
@@ -133,24 +148,31 @@ export function TitanPlanGrid( {
 		TitanPlanTier.Ultra
 	);
 
+	const emailSubscription = domain?.titan_mail_subscription as EmailSubscription | undefined;
+	const hasFreeTrial = ( product?: Product ) =>
+		isEligibleForIntroductoryOffer( { emailSubscription, product } );
+
 	const plans: TitanPlan[] = [
 		{
 			tier: TitanPlanTier.Pro,
 			product: proProduct,
-			hasFreeTrial: hasProFreeTrial,
+			hasFreeTrial: hasFreeTrial( proProduct ),
+			trialMonths: getTrialMonths( proProduct ),
 			isPopular: false,
 		},
 		{
 			tier: TitanPlanTier.Premium,
 			product: premiumProduct,
-			hasFreeTrial: false,
+			hasFreeTrial: hasFreeTrial( premiumProduct ),
+			trialMonths: getTrialMonths( premiumProduct ),
 			isPopular: true,
 			everythingInName: getTierName( TitanPlanTier.Pro ),
 		},
 		{
 			tier: TitanPlanTier.Ultra,
 			product: ultraProduct,
-			hasFreeTrial: false,
+			hasFreeTrial: hasFreeTrial( ultraProduct ),
+			trialMonths: getTrialMonths( ultraProduct ),
 			isPopular: false,
 			everythingInName: getTierName( TitanPlanTier.Premium ),
 		},
@@ -163,6 +185,16 @@ export function TitanPlanGrid( {
 				( plan ) => TIER_ORDER.indexOf( plan.tier ) >= TIER_ORDER.indexOf( currentTier )
 		  )
 		: plans;
+
+	// The tier that gets the emphasized (primary) button: the recommended plan when
+	// buying, or the recommended upgrade target when upgrading. The current plan is
+	// never emphasized because its button is disabled.
+	const primaryTier = ( () => {
+		const candidates = currentTier
+			? visiblePlans.filter( ( plan ) => plan.tier !== currentTier )
+			: visiblePlans;
+		return ( candidates.find( ( plan ) => plan.isPopular ) ?? candidates[ 0 ] )?.tier;
+	} )();
 
 	const getMonthlyPrice = ( product?: Product ) => {
 		if ( ! product?.cost ) {
@@ -244,7 +276,7 @@ export function TitanPlanGrid( {
 									{ sprintf(
 										/* translators: %d is the number of free trial months. */
 										__( '%d month free trial' ),
-										proTrialMonths
+										plan.trialMonths
 									) }
 								</div>
 							) }
@@ -255,7 +287,7 @@ export function TitanPlanGrid( {
 						<Button
 							__next40pxDefaultSize
 							className="email-provider-action"
-							variant={ plan.isPopular ? 'primary' : 'secondary' }
+							variant={ plan.tier === primaryTier ? 'primary' : 'secondary' }
 							disabled={ ! available || isCurrentPlan }
 							onClick={ () => {
 								// Upgrade mode goes to checkout for the picked tier; otherwise the

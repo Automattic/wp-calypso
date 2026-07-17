@@ -52,7 +52,10 @@ test.describe(
 			} );
 		} );
 
-		test( 'Signup, purchase, and cancel a Premium theme plan', async ( { page } ) => {
+		// Skipped for now; can be updated once we're sure all onboarding tests will go
+		// through the MSD flow. See https://github.com/Automattic/wp-calypso/pull/112586
+		// and https://github.com/Automattic/wp-calypso/pull/112587.
+		test.skip( 'Signup, purchase, and cancel a Premium theme plan', async ( { page } ) => {
 			// Signup + purchase + atomic cancel stacks a 90s purchase timeout
 			// with several 30s waits; the 120s config default is not enough.
 			test.setTimeout( 240 * 1000 );

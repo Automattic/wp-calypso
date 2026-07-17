@@ -21,7 +21,6 @@ export type {
 } from './types';
 
 export { useShouldUseUnifiedAgent } from './hooks/use-should-use-unified-agent';
-export { useImageUpload } from './hooks/use-image-upload';
 
 // Feedback exports
 export {

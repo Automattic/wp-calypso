@@ -163,19 +163,18 @@ export const getAliasedSiteSubscriptionFeedUrl = (
 		subscriptionMatchesFeedUrl( subscription, feedUrl )
 	)?.feed_URL;
 
-export const getIsSubscribedFromData = (
+type SiteSubscriptionLookup = {
+	feedUrl?: string | null;
+	feedId?: number | string | null;
+	blogId?: number | string | null;
+};
+
+/** Followed subscription matching feed URL, feed id, or blog id. */
+export const getSiteSubscriptionFromData = (
 	data: SiteSubscriptionsInfiniteData | undefined,
-	{
-		feedUrl,
-		feedId,
-		blogId,
-	}: {
-		feedUrl?: string | null;
-		feedId?: number | string | null;
-		blogId?: number | string | null;
-	}
-): boolean =>
-	getSiteSubscriptionsFromData( data ).some( ( subscription ) => {
+	{ feedUrl, feedId, blogId }: SiteSubscriptionLookup
+): SiteSubscriptionItem | undefined =>
+	getSiteSubscriptionsFromData( data ).find( ( subscription ) => {
 		if ( ! subscription.is_following ) {
 			return false;
 		}
@@ -199,6 +198,11 @@ export const getIsSubscribedFromData = (
 
 		return false;
 	} );
+
+export const getIsSubscribedFromData = (
+	data: SiteSubscriptionsInfiniteData | undefined,
+	lookup: SiteSubscriptionLookup
+): boolean => Boolean( getSiteSubscriptionFromData( data, lookup ) );
 
 export const getSubscribedSitesFromData = (
 	data: SiteSubscriptionsInfiniteData | undefined,

@@ -4,7 +4,11 @@
 @import "./styles/typography";
 @import "@wordpress/base-styles/breakpoints";
 
-.wp-admin {
+// Scoped to `.jp-stats-dashboard` (the class Jetpack's PHP puts on the Stats app's own mount
+// element) rather than `.wp-admin`, since WP core already puts a `wp-admin` class on the real
+// `<body>` — using it here would apply these rules to the whole wp-admin page, not just the Stats
+// app.
+.jp-stats-dashboard {
 	.card {
 		border: 0;
 		max-width: initial;
@@ -127,7 +131,9 @@
 	}
 }
 
-.inner-notice-container .card.banner.is-jetpack {
+// Scoped with `:where()` so it adds zero specificity, rather than the class-level weight
+// `.jp-stats-dashboard` carries on its own.
+:where(.jp-stats-dashboard) .inner-notice-container .card.banner.is-jetpack {
 	border-left: 3px solid var(--color-jetpack);
 }
 

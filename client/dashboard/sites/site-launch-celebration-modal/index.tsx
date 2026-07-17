@@ -6,7 +6,7 @@ import {
 	Button,
 	Modal,
 } from '@wordpress/components';
-import { useEvent } from '@wordpress/compose';
+import { useEvent, useViewportMatch } from '@wordpress/compose';
 import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { copy, globe } from '@wordpress/icons';
@@ -42,6 +42,7 @@ export default function SiteLaunchCelebrationModal( {
 		select: ( data ) => data.filter( ( domain ) => domain.blog_id === site.ID ),
 	} );
 	const copyButtonRef = useRef< HTMLButtonElement >( null );
+	const isMobileViewport = useViewportMatch( 'small', '<' );
 
 	const onOpen = useEvent( () => {
 		externalOnOpen?.();
@@ -126,20 +127,29 @@ export default function SiteLaunchCelebrationModal( {
 			return null;
 		}
 
-		return (
+		const upsellButton = (
+			<Button
+				variant="primary"
+				href={ buttonHref }
+				onClick={ () =>
+					recordTracksEvent( 'calypso_launchpad_celebration_modal_upsell_clicked', {
+						product_slug: site?.plan?.product_slug,
+					} )
+				}
+			>
+				{ buttonText }
+			</Button>
+		);
+
+		return isMobileViewport ? (
+			<VStack spacing={ 4 } alignment="left">
+				{ contentElement }
+				{ upsellButton }
+			</VStack>
+		) : (
 			<HStack spacing={ 3 } alignment="bottomRight">
 				{ contentElement }
-				<Button
-					variant="primary"
-					href={ buttonHref }
-					onClick={ () =>
-						recordTracksEvent( 'calypso_launchpad_celebration_modal_upsell_clicked', {
-							product_slug: site?.plan?.product_slug,
-						} )
-					}
-				>
-					{ buttonText }
-				</Button>
+				{ upsellButton }
 			</HStack>
 		);
 	};

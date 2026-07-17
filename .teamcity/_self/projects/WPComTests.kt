@@ -423,6 +423,7 @@ private object I18NTests : BuildType({
 	params {
 		param("PROJECT", "i18n")
 		param("CALYPSO_BASE_URL", "https://wordpress.com")
+		param("DASHBOARD_BASE_URL", "https://my.wordpress.com")
 		param("env.E2E_CTRF_APP_NAME", "i18n (calypso)")
 	}
 
@@ -466,6 +467,7 @@ private object P2E2ETests : BuildType({
 	params {
 		param("PROJECT", "p2")
 		param("CALYPSO_BASE_URL", "https://wpcalypso.wordpress.com")
+		param("DASHBOARD_BASE_URL", "https://my.wordpress.com")
 		param("env.E2E_CTRF_APP_NAME", "p2 (calypso)")
 	}
 
@@ -516,6 +518,7 @@ private object GutenbergPlaywrightTests : BuildType({
 	params {
 		param("TEST_GROUP", "@gutenberg")
 		param("CALYPSO_BASE_URL", "https://wordpress.com")
+		param("DASHBOARD_BASE_URL", "https://my.wordpress.com")
 		param("env.E2E_CTRF_APP_NAME", "gutenberg (calypso)")
 		param("env.AUTHENTICATE_ACCOUNTS", "gutenbergSimpleSiteEdgeUser,gutenbergSimpleSiteUser,simpleSitePersonalPlanUser,gutenbergAtomicSiteUser,gutenbergAtomicSiteEdgeUser,gutenbergAtomicSiteEdgeNightliesUser")
 		password("GB_E2E_ANNOUNCEMENT_SLACK_API_TOKEN", "credentialsJSON:8196e9b8-cf0a-4ab5-9547-95145134f04a", display = ParameterDisplay.HIDDEN);

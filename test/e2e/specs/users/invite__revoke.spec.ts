@@ -2,7 +2,7 @@ import { DataHelper, RestAPIClient, SecretsManager } from '@automattic/calypso-e
 import { expect, skipIfMailosaurLimitReached, tags, test } from '../../lib/pw-base';
 
 test.describe(
-	'Invite: Revoke',
+	DataHelper.createSuiteTitle( 'Invite: Revoke' ),
 	{ tag: [ tags.CALYPSO_PR, tags.CALYPSO_RELEASE, tags.DESKTOP_ONLY ] },
 	() => {
 		skipIfMailosaurLimitReached();

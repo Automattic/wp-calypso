@@ -21,6 +21,7 @@ import { useOpenInteractionStatusMap } from '../hooks/use-open-interaction-statu
 import { generateUUID, getOdieIdFromInteraction, getIsRequestingHumanSupport } from '../utils';
 import { hasRecentEscalationAttempt } from '../utils/chat-utils';
 import { getOpenLiveInteractions } from '../utils/get-open-live-interactions';
+import { getIsAgentsManagerAvailable } from '../utils/is-agents-manager-available';
 import { useCurrentSupportInteraction } from './use-current-support-interaction';
 import { useManageSupportInteraction, broadcastOdieMessage } from '.';
 import type { Chat, Message, ReturnedChat, SupportInteraction } from '../types';
@@ -215,6 +216,7 @@ export const useSendOdieMessage = ( signal: AbortSignal ) => {
 					! hasBeenWarnedAboutExistingConversation &&
 					! hasTriedToEscalateToSupport
 				) {
+					trackEvent( 'chat_existing_conversation_prompt' );
 					setChat( ( prevChat ) => ( {
 						...prevChat,
 						...props,
@@ -267,6 +269,8 @@ export const useSendOdieMessage = ( signal: AbortSignal ) => {
 			const pathname = window.location.pathname;
 
 			const currentScreen = { url };
+			const isAgentsManagerAvailable = getIsAgentsManagerAvailable();
+			const context = { selectedSiteId, currentScreen, pathname, isAgentsManagerAvailable };
 
 			return canAccessWpcomApis()
 				? wpcomRequest< ReturnedChat >( {
@@ -280,7 +284,7 @@ export const useSendOdieMessage = ( signal: AbortSignal ) => {
 							...( sessionId && { session_id: sessionId } ),
 							...( externalChatProvider && { external_chat_provider: externalChatProvider } ),
 							...( externalChatId && { external_chat_id: externalChatId } ),
-							context: { selectedSiteId, currentScreen, pathname },
+							context,
 						},
 				  } )
 				: apiFetch< ReturnedChat >( {
@@ -293,7 +297,7 @@ export const useSendOdieMessage = ( signal: AbortSignal ) => {
 							...( sessionId && { session_id: sessionId } ),
 							...( externalChatProvider && { external_chat_provider: externalChatProvider } ),
 							...( externalChatId && { external_chat_id: externalChatId } ),
-							context: { selectedSiteId, currentScreen, pathname },
+							context,
 						},
 				  } );
 		},

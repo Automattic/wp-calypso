@@ -1,4 +1,4 @@
-import { EmailSubscription, Product } from '@automattic/api-core';
+import { EmailSubscription } from '@automattic/api-core';
 import config from '@automattic/calypso-config';
 import { useNavigate } from '@tanstack/react-router';
 import {
@@ -34,6 +34,7 @@ import { useEmailProduct } from '../hooks/use-email-product';
 import poweredByTitanLogo from '../resources/powered-by-titan-caps.svg';
 import { IntervalLength, MailboxProvider, TitanPlanTier } from '../types';
 import { getTitanTierUpgradeUrl } from '../utils/get-tier-upgrade-url';
+import { getTrialMonths } from '../utils/get-trial-months';
 import { isEligibleForIntroductoryOffer } from '../utils/is-eligible-for-introductory-offer';
 import { isMonthlyEmailProduct } from '../utils/is-monthly-email-product';
 import { getTitanTierFromSlug } from '../utils/titan-tiers';
@@ -42,9 +43,6 @@ import { GoogleWorkspaceCard } from './components/google-workspace-card';
 import { TitanPlanGrid } from './components/titan-plan-grid';
 
 import './style.scss';
-
-const getTrialMonths = ( product?: Product ) =>
-	product?.introductory_offer?.interval_unit === 'year' ? 12 : 3;
 
 export default function ChooseEmailSolution() {
 	const { domain, domainName, site } = useDomainFromUrlParam();
@@ -62,12 +60,11 @@ export default function ChooseEmailSolution() {
 	const { intent } = chooseEmailSolutionRoute.useSearch();
 	const isUpgradeIntent = intent === 'upgrade' && hasTitanMailWithUs( domain );
 
-	// An upgrade keeps the existing subscription's billing cycle, so lock the
-	// interval to it (the billing-interval toggle is hidden during an upgrade).
+	// Yearly -> monthly billing downgrade is not supported during an upgrade.
+	const isUpgradingFromMonthly = isUpgradeIntent && isMonthlyEmailProduct( titanEmailSubscription );
+	const showIntervalSelector = ! isUpgradeIntent || isUpgradingFromMonthly;
 	const [ billingInterval, setBillingInterval ] = useState< IntervalLength >(
-		isUpgradeIntent && isMonthlyEmailProduct( titanEmailSubscription )
-			? IntervalLength.Monthly
-			: IntervalLength.Annually
+		isUpgradingFromMonthly ? IntervalLength.Monthly : IntervalLength.Annually
 	);
 
 	const { bestAnnualSavings } = useAnnualSavings( domain );
@@ -271,7 +268,7 @@ export default function ChooseEmailSolution() {
 			}
 		>
 			{ /* Billing interval selector */ }
-			{ ! isUpgradeIntent &&
+			{ showIntervalSelector &&
 				( isTitanPlanSelectionEnabled ? (
 					<div className="choose-email-solution-narrow">{ intervalSelector }</div>
 				) : (
@@ -285,8 +282,6 @@ export default function ChooseEmailSolution() {
 						domainName={ domainName }
 						interval={ billingInterval }
 						available={ isTitanAvailable }
-						hasProFreeTrial={ hasTitanFreeTrial }
-						proTrialMonths={ getTrialMonths( titanProduct ) }
 						currentTier={
 							isUpgradeIntent
 								? getTitanTierFromSlug( titanEmailSubscription?.product_slug )

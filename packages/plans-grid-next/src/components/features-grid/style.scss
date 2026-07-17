@@ -797,6 +797,10 @@ $redesign-table-cell-max-width: 280px;
 
 			&.has-4-cols .plans-grid-next-features-grid__bottom-plan-card {
 				max-width: $redesign-table-cell-max-width * 4;
+
+				&.is-enterprise-bottom-card {
+					--enterprise-bottom-card-logo-column-gap: 54px;
+				}
 			}
 
 			&.has-5-cols .plans-grid-next-features-grid__bottom-plan-card {
@@ -905,7 +909,7 @@ $redesign-table-cell-max-width: 280px;
 	.plans-grid-next-features-grid__bottom-plan-card-media .plans-grid-next-client-logo-list {
 		--bottom-plan-card-logo-height: 40px;
 		align-items: center;
-		column-gap: 64px;
+		column-gap: var( --enterprise-bottom-card-logo-column-gap, 64px );
 		justify-content: flex-end;
 		max-width: 1015px;
 		row-gap: 16px;
@@ -918,6 +922,39 @@ $redesign-table-cell-max-width: 280px;
 
 		.plans-grid-next-client-logo-list__item {
 			--adjustment-unit: calc( var( --bottom-plan-card-logo-height ) / 60 );
+		}
+	}
+
+	@media ( max-width: 1019px ) {
+		&:not(.is-small) {
+			.plan-features-2023-grid__content.has-4-cols.has-bottom-plan-card {
+				.plans-grid-next-features-grid__bottom-plan-card.is-enterprise-bottom-card {
+					--enterprise-bottom-card-logo-column-gap: 34px;
+				}
+			}
+		}
+	}
+
+	@media ( max-width: 930px ) {
+		&:not(.is-small) {
+			.plan-features-2023-grid__content.has-4-cols.has-bottom-plan-card {
+				.plans-grid-next-features-grid__bottom-plan-card.is-enterprise-bottom-card {
+					--enterprise-bottom-card-logo-column-gap: 14px;
+				}
+			}
+		}
+	}
+
+	@media ( max-width: 769px ) {
+		&:not(.is-small) {
+			.plan-features-2023-grid__content.has-4-cols.has-bottom-plan-card {
+				.plans-grid-next-features-grid__bottom-plan-card.is-enterprise-bottom-card {
+					.plans-grid-next-features-grid__bottom-plan-card-media
+						.plans-grid-next-client-logo-list {
+						--bottom-plan-card-logo-height: 24px;
+					}
+				}
+			}
 		}
 	}
 
@@ -1303,6 +1340,15 @@ $redesign-table-cell-max-width: 280px;
 	&.is-medium,
 	&.is-large,
 	&.is-xlarge {
+		.plan-features-2023-grid__table-item.is-top-buttons .plan-features-2023-grid__actions-button {
+			margin-top: 0;
+		}
+
+		.plans-grid-next-features-grid__feature-group-row.is-first-feature-group-row.is-reduced-feature-group-spacing
+			> .plan-features-2023-grid__table-item {
+			padding-top: 0;
+		}
+
 		thead tr:first-child .plan-features-2023-grid__table-item.popular-plan-parent-class {
 			height: 0;
 			padding: 0;
@@ -1334,7 +1380,7 @@ $redesign-table-cell-max-width: 280px;
 					height: 24px;
 					justify-content: center;
 					left: 16px;
-					letter-spacing: 0;
+					letter-spacing: 0.25px;
 					line-height: 20px;
 					padding: 0 8px;
 					position: absolute;
@@ -1377,6 +1423,10 @@ $redesign-table-cell-max-width: 280px;
 			padding-block: 24px;
 
 			.plan-features-2023-grid__popular-badge {
+				.plans-grid__plan-pill {
+					letter-spacing: 0.25px;
+				}
+
 				&.is-premium-plan .plans-grid__plan-pill,
 				&.is-wooexpress-medium-plan .plans-grid__plan-pill {
 					background-color: var( --studio-white );

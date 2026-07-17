@@ -8,11 +8,12 @@
 	position: relative;
 
 	@include breakpoint-deprecated( "<960px" ) {
-		margin-bottom: -16px;
-		padding: 0 0 0 24px;
+		padding: 0 24px;
 
 		&::after {
 			@include long-content-fade( $direction: right, $size: 24px );
+			// must equal padding.
+			margin-right: 24px;
 			height: 100%;
 		}
 	}

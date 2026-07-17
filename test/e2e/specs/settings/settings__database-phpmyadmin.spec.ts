@@ -1,4 +1,5 @@
 import {
+	DataHelper,
 	TestAccount,
 	envVariables,
 	getTestAccountByFeature,
@@ -16,7 +17,7 @@ import { expect, tags, test } from '../../lib/pw-base';
  * Keywords: Settings, Jetpack, Hosting Configuration, phpMyAdmin
  */
 test.describe(
-	'Settings: Access phpMyAdmin',
+	DataHelper.createSuiteTitle( 'Settings: Access phpMyAdmin' ),
 	{ tag: [ tags.JETPACK_WPCOM_INTEGRATION, tags.CALYPSO_PR ] },
 	() => {
 		const accountName = getTestAccountByFeature( envToFeatureKey( envVariables ) );

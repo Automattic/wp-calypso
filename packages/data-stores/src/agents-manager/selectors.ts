@@ -10,6 +10,7 @@ export const getAgentsManagerState = ( state: State ) => ( {
 	hasLoaded: state.hasLoaded,
 	floatingPosition: state.floatingPosition,
 	freeDragPosition: state.freeDragPosition,
+	floatingSize: state.floatingSize,
 	isSplitScreen: state.isSplitScreen,
 } );
 export const getIsOpen = ( state: State ) => state.isOpen;
@@ -32,3 +33,4 @@ export const getIsLoading = ( state: State ) => state.isLoading;
 export const getHasLoaded = ( state: State ) => state.hasLoaded;
 export const getFloatingPosition = ( state: State ) => state.floatingPosition;
 export const getFreeDragPosition = ( state: State ) => state.freeDragPosition;
+export const getFloatingSize = ( state: State ) => state.floatingSize;

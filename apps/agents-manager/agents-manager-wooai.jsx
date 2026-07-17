@@ -9,7 +9,6 @@
  * without touching the admin bar or Site Hub.
  */
 
-import { useImageUpload } from '@automattic/agents-manager';
 import { createRoot } from 'react-dom/client';
 import AgentsManagerWithProvider from './agents-manager-with-provider';
 
@@ -23,7 +22,6 @@ const ZENDESK_TICKET_PRODUCT_FIELD_VALUE = 'woocommerce_core_product';
 const renderAssistant = () => {
 	createRoot( container ).render(
 		<AgentsManagerWithProvider
-			useImageUpload={ useImageUpload }
 			zendeskConversationTags={ ZENDESK_CONVERSATION_TAGS }
 			zendeskSmoochIntegrationKey="woo"
 			zendeskTicketProductFieldValue={ ZENDESK_TICKET_PRODUCT_FIELD_VALUE }

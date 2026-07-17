@@ -223,8 +223,9 @@ export default function PromotedPosts( { tab, receiptId }: Props ) {
 						: translate( 'Site is private' )
 				}
 				line={ translate(
-					'To start using Blaze, you must make your site public. You can do that from {{sitePrivacySettingsLink}}here{{/sitePrivacySettingsLink}}.',
+					'To start using %(productName)s, you must make your site public. You can do that from {{sitePrivacySettingsLink}}here{{/sitePrivacySettingsLink}}.',
 					{
+						args: { productName: 'Blaze Ads' },
 						components: {
 							sitePrivacySettingsLink: (
 								<a href={ `/settings/reading/${ selectedSite.domain }` } rel="noreferrer" />
@@ -265,7 +266,7 @@ export default function PromotedPosts( { tab, receiptId }: Props ) {
 
 	return (
 		<MainWrapper>
-			<DocumentHead title={ translate( 'Advertising' ) } />
+			<DocumentHead title="Blaze Ads" />
 
 			<BlazePage
 				actions={
