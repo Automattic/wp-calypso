@@ -58,6 +58,10 @@ img.payment-method-image {
 	width: fit-content;
 }
 
+.dataviews-view-table__cell-content-wrapper .billing-purchase__inline-status {
+	margin-top: 4px;
+}
+
 button.purchase-payment-method__update {
 	// This button is inside a flexbox (HStack) which has `min-width: 0` set on
 	// all its children, but this overrides the default of `min-width: auto`

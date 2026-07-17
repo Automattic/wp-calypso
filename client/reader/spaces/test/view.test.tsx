@@ -46,9 +46,16 @@ jest.mock( 'calypso/reader/data/spaces', () => {
 		...actual,
 		useSpaceBySlug: ( ...args: Parameters< typeof actual.useSpaceBySlug > ) => {
 			const result = actual.useSpaceBySlug( ...args );
-			return mockSpaceError.current !== undefined
-				? { ...result, error: mockSpaceError.current }
-				: result;
+			if ( mockSpaceError.current !== undefined ) {
+				return { ...result, error: mockSpaceError.current };
+			}
+			// Tests seed the by-slug cache directly rather than serving the open-time
+			// refetch, so present that seeded detail as a settled successful fetch —
+			// the Customize modal only seeds its draft once the fetch has succeeded.
+			if ( result.data !== undefined ) {
+				return { ...result, isSuccess: true, isFetchedAfterMount: true };
+			}
+			return result;
 		},
 	};
 } );
@@ -223,7 +230,7 @@ describe( 'SpacesView', () => {
 		expect( within( dialog ).getByLabelText( 'Name' ) ).toHaveValue( 'Work' );
 	} );
 
-	it( 'opens the Customize modal on the Sources tab from the feed Add sources CTA', async () => {
+	it( 'opens the Customize modal on the Feeds tab from the feed Add feeds CTA', async () => {
 		render( <SpacesView slug={ WORK.slug } /> );
 
 		// The feed tab's SpaceFeed is wired with the empty-state CTA handler.
@@ -238,7 +245,7 @@ describe( 'SpacesView', () => {
 		);
 
 		const dialog = await screen.findByRole( 'dialog', { name: 'Customize space' } );
-		expect( within( dialog ).getByRole( 'tab', { name: 'Sources' } ) ).toHaveAttribute(
+		expect( within( dialog ).getByRole( 'tab', { name: 'Feeds' } ) ).toHaveAttribute(
 			'aria-selected',
 			'true'
 		);

@@ -105,11 +105,10 @@ Flows capture a process that spans across multiple pages or components. Its purp
 
 ```typescript
 /**
- * Class encapsulating the flow when starting a new writing blog (`/setup/start-writing`)
+ * Class encapsulating the flow when starting a new site (`/start`)
  */
-export class StartWritingFlow {
+export class StartSiteFlow {
 	private page: Page;
-	readonly yourBlogsReadyHeading: Locator;
 
 	/**
 	 * Constructs an instance of the flow.
@@ -118,15 +117,15 @@ export class StartWritingFlow {
 	 */
 	constructor( page: Page ) {
 		this.page = page;
-		this.yourBlogsReadyHeading = this.page.getByRole( 'heading', { name: 'Your blog’s ready!' } );
 	}
 
 	/**
-	 * Navigates to the /setup/start-writing endpoint.
+	 * Clicks a button with the specified name.
+	 * @param {string} name Name of the button.
 	 * @returns {Promise<void>}
 	 */
-	async visit(): Promise< void > {
-		await this.page.goto( DataHelper.getCalypsoURL( '/setup/start-writing' ) );
+	async clickButton( name: string ): Promise< void > {
+		await this.page.getByRole( 'button', { name } ).click();
 	}
 }
 ```

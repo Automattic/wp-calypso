@@ -5,7 +5,7 @@ const selectors = {
 	mySiteButton: '[data-tip-target="my-sites"]',
 	mobileMenuButton: '[data-tip-target="mobile-menu"]',
 	editorBackButton: '[data-tip-target="back-home"]',
-	notificationsButton: 'a[href="/notifications"]',
+	notificationsButton: 'a.masterbar-notifications',
 	meButton: 'a[data-tip-target="me"]',
 };
 /**

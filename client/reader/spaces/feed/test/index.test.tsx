@@ -173,7 +173,7 @@ describe( 'SpaceFeed', () => {
 		);
 	} );
 
-	it( 'shows an actionable empty state with an Add sources CTA when the feed has no posts', async () => {
+	it( 'shows an actionable empty state with an Add feeds CTA when the feed has no posts', async () => {
 		const user = userEvent.setup();
 		const onAddSources = jest.fn();
 		const queryClient = new QueryClient( { defaultOptions: { queries: { retry: false } } } );
@@ -183,14 +183,14 @@ describe( 'SpaceFeed', () => {
 			initialState: { currentUser: { id: 1 } },
 		} );
 
-		expect( screen.getByText( 'Add sources to get started' ) ).toBeVisible();
+		expect( screen.getByText( 'Add feeds to get started' ) ).toBeVisible();
 
-		await user.click( screen.getByRole( 'button', { name: 'Add sources' } ) );
+		await user.click( screen.getByRole( 'button', { name: 'Add feeds' } ) );
 
 		expect( onAddSources ).toHaveBeenCalledTimes( 1 );
 	} );
 
-	it( 'shows the Add sources CTA in the legacy layout empty state', async () => {
+	it( 'shows the Add feeds CTA in the legacy layout empty state', async () => {
 		const user = userEvent.setup();
 		const onAddSources = jest.fn();
 		const legacy = makeSpace( 'work-id', 'Work', 'legacy' );
@@ -201,12 +201,12 @@ describe( 'SpaceFeed', () => {
 			initialState: { currentUser: { id: 1 } },
 		} );
 
-		await user.click( screen.getByRole( 'button', { name: 'Add sources' } ) );
+		await user.click( screen.getByRole( 'button', { name: 'Add feeds' } ) );
 
 		expect( onAddSources ).toHaveBeenCalledTimes( 1 );
 	} );
 
-	it( 'shows the Discover empty state without an Add sources CTA', () => {
+	it( 'shows the Discover empty state without an Add feeds CTA', () => {
 		const queryClient = new QueryClient( { defaultOptions: { queries: { retry: false } } } );
 
 		renderWithProvider(
@@ -215,7 +215,7 @@ describe( 'SpaceFeed', () => {
 		);
 
 		expect( screen.getByText( 'Nothing here yet' ) ).toBeVisible();
-		expect( screen.queryByRole( 'button', { name: 'Add sources' } ) ).not.toBeInTheDocument();
+		expect( screen.queryByRole( 'button', { name: 'Add feeds' } ) ).not.toBeInTheDocument();
 	} );
 
 	it( 'requests the space posts stream keyed by the space id', () => {
@@ -355,7 +355,7 @@ describe( 'SpaceFeed', () => {
 	it( 'shows the empty state for the legacy layout when the legacy stream has no posts', () => {
 		render( makeSpace( 'work-id', 'Work', 'legacy' ) );
 
-		expect( screen.getByText( 'Add sources to get started' ) ).toBeVisible();
+		expect( screen.getByText( 'Add feeds to get started' ) ).toBeVisible();
 	} );
 
 	it( 'shows an error with a retry for the legacy layout when the legacy stream fails', async () => {

@@ -71,13 +71,6 @@ export function trackAiEditorialReviewSuggestionRendered(): void {
 }
 
 /**
- * Tracks a user clicking the "AI Editorial Review" suggestion.
- */
-export function trackAiEditorialReviewSuggestionClick(): void {
-	recordTracksEvent( 'ai_editorial_review_suggestion_click' );
-}
-
-/**
  * Tracks a block transformation suggestion appearing for a selected block.
  * @param options                - Tracking options
  * @param options.suggestionId   - Stable suggestion identifier.
@@ -90,26 +83,6 @@ export function trackBlockTransformationSuggestionRendered( {
 	blockType,
 }: TrackBlockTransformationSuggestionOptions ): void {
 	recordTracksEvent( 'ai_block_transformation_suggestion_rendered', {
-		suggestion_id: suggestionId,
-		suggestion_type: suggestionType,
-		block_type: blockType,
-		surface: 'jetpack_ai_sidebar',
-	} );
-}
-
-/**
- * Tracks a user clicking a block transformation suggestion.
- * @param options                - Tracking options
- * @param options.suggestionId   - Stable suggestion identifier.
- * @param options.suggestionType - Transformation category.
- * @param options.blockType      - Core block type the suggestion applies to.
- */
-export function trackBlockTransformationSuggestionClick( {
-	suggestionId,
-	suggestionType,
-	blockType,
-}: TrackBlockTransformationSuggestionOptions ): void {
-	recordTracksEvent( 'ai_block_transformation_suggestion_click', {
 		suggestion_id: suggestionId,
 		suggestion_type: suggestionType,
 		block_type: blockType,

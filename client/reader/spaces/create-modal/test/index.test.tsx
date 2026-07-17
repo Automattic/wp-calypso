@@ -107,6 +107,23 @@ function setup( {
 	return { queryClient, onClose, onCreated, user };
 }
 
+type User = ReturnType< typeof userEvent.setup >;
+
+// Walk from the opening Identity step to the Feeds step. The name is required to
+// leave the first step, so it is entered here.
+async function reachFeedsStep( user: User, name = 'Reading' ) {
+	await user.type( screen.getByLabelText( 'Name' ), name );
+	await user.click( screen.getByRole( 'button', { name: 'Next' } ) ); // Identity → Layout
+	await user.click( screen.getByRole( 'button', { name: 'Next' } ) ); // Layout → Feeds
+}
+
+// Walk all the way to the final Topics step, where Create lives.
+async function reachTopicsStep( user: User, name = 'Reading' ) {
+	await reachFeedsStep( user, name );
+	await user.click( screen.getByRole( 'button', { name: 'Next' } ) ); // Feeds → Topics
+	await screen.findByRole( 'button', { name: 'Create' } );
+}
+
 describe( 'CreateSpaceModal', () => {
 	beforeEach( () => {
 		mockSubscriptions = [];
@@ -121,46 +138,65 @@ describe( 'CreateSpaceModal', () => {
 		expect( screen.queryByRole( 'dialog' ) ).not.toBeInTheDocument();
 	} );
 
-	it( 'keeps Create disabled until a valid name is entered', async () => {
+	it( 'keeps Next disabled until a valid name is entered', async () => {
 		const { user } = setup();
 
-		expect( screen.getByRole( 'button', { name: 'Create' } ) ).toBeDisabled();
+		expect( screen.getByRole( 'button', { name: 'Next' } ) ).toBeDisabled();
 
 		await user.type( screen.getByLabelText( 'Name' ), 'Reading' );
 
-		expect( screen.getByRole( 'button', { name: 'Create' } ) ).toBeEnabled();
+		expect( screen.getByRole( 'button', { name: 'Next' } ) ).toBeEnabled();
 	} );
 
-	it( 'uses the shared tabbed upsert modal while creating', async () => {
+	it( 'steps through the identity, layout, feeds and topics sections', async () => {
 		mockSubscriptions = [ mockSubscription ];
 		const { user } = setup();
 
 		const dialog = screen.getByRole( 'dialog', { name: 'Create a new space' } );
 
-		expect( within( dialog ).getByRole( 'tab', { name: 'Identity' } ) ).toBeVisible();
-		expect( within( dialog ).getByRole( 'tab', { name: 'Layout' } ) ).toBeVisible();
-		expect( within( dialog ).getByRole( 'tab', { name: 'Sources' } ) ).toBeVisible();
-		expect( within( dialog ).queryByRole( 'tab', { name: 'Delete' } ) ).not.toBeInTheDocument();
+		// The wizard replaces the tab strip with one step at a time.
+		expect( within( dialog ).queryByRole( 'tab' ) ).not.toBeInTheDocument();
+		expect( within( dialog ).getByLabelText( 'Name' ) ).toBeVisible();
+		expect( within( dialog ).getByLabelText( 'Step 1 of 4' ) ).toBeInTheDocument();
 
-		await user.click( within( dialog ).getByRole( 'tab', { name: 'Layout' } ) );
+		await user.type( within( dialog ).getByLabelText( 'Name' ), 'Reading' );
+		await user.click( within( dialog ).getByRole( 'button', { name: 'Next' } ) );
+
+		// Layout step.
 		expect( within( dialog ).getByRole( 'radio', { name: /Classic/ } ) ).toBeChecked();
+		await user.click( within( dialog ).getByRole( 'button', { name: 'Next' } ) );
 
-		await user.click( within( dialog ).getByRole( 'tab', { name: 'Sources' } ) );
+		// Feeds step: only the subscription picker.
 		expect(
-			within( dialog ).getByText( 'Choose which of your subscriptions appear in this space.' )
+			within( dialog ).getByText(
+				'Pick the subscriptions whose posts make up this space’s main feed.'
+			)
 		).toBeVisible();
+		expect( within( dialog ).getByRole( 'button', { name: 'All subscriptions' } ) ).toBeVisible();
 		expect( within( dialog ).getByRole( 'listitem', { name: 'Example Blog' } ) ).toBeVisible();
+		expect( within( dialog ).queryByRole( 'combobox', { name: 'Tags' } ) ).not.toBeInTheDocument();
+		await user.click( within( dialog ).getByRole( 'button', { name: 'Next' } ) );
+
+		// Topics step is last, so it carries the Create button.
+		expect( within( dialog ).getByRole( 'combobox', { name: 'Tags' } ) ).toBeVisible();
+		expect( within( dialog ).getByRole( 'combobox', { name: 'Languages' } ) ).toBeVisible();
+		expect( await within( dialog ).findByRole( 'button', { name: 'Create' } ) ).toBeVisible();
+
+		// Back returns to the previous step.
+		await user.click( within( dialog ).getByRole( 'button', { name: 'Back' } ) );
+		expect( within( dialog ).getByRole( 'button', { name: 'All subscriptions' } ) ).toBeVisible();
 	} );
 
-	it( 'shows a required error once the name is cleared', async () => {
+	it( 'cannot advance past the identity step without a name', async () => {
 		const { user } = setup();
 
-		const input = screen.getByLabelText( 'Name' );
-		await user.type( input, 'Reading' );
-		await user.clear( input );
+		expect( screen.getByRole( 'button', { name: 'Next' } ) ).toBeDisabled();
+
+		await user.type( screen.getByLabelText( 'Name' ), 'Reading' );
+		await user.clear( screen.getByLabelText( 'Name' ) );
 
 		expect( await screen.findByText( 'Name is required' ) ).toBeVisible();
-		expect( screen.getByRole( 'button', { name: 'Create' } ) ).toBeDisabled();
+		expect( screen.getByRole( 'button', { name: 'Next' } ) ).toBeDisabled();
 	} );
 
 	it( 'rejects a name longer than the maximum length', async () => {
@@ -169,7 +205,7 @@ describe( 'CreateSpaceModal', () => {
 		await user.type( screen.getByLabelText( 'Name' ), 'a'.repeat( 51 ) );
 
 		expect( await screen.findByText( /50 characters or fewer/ ) ).toBeVisible();
-		expect( screen.getByRole( 'button', { name: 'Create' } ) ).toBeDisabled();
+		expect( screen.getByRole( 'button', { name: 'Next' } ) ).toBeDisabled();
 	} );
 
 	it( 'rejects a duplicate name regardless of case', async () => {
@@ -178,7 +214,7 @@ describe( 'CreateSpaceModal', () => {
 		await user.type( screen.getByLabelText( 'Name' ), 'work' );
 
 		expect( await screen.findByText( 'A space with this name already exists' ) ).toBeVisible();
-		expect( screen.getByRole( 'button', { name: 'Create' } ) ).toBeDisabled();
+		expect( screen.getByRole( 'button', { name: 'Next' } ) ).toBeDisabled();
 	} );
 
 	it( 'creates a space with identity and layout settings, updates the caches, and closes', async () => {
@@ -187,6 +223,7 @@ describe( 'CreateSpaceModal', () => {
 		const onBody = jest.fn();
 		mockCreateEndpoint( 'Reading', onBody );
 
+		// Identity step.
 		await user.type( screen.getByLabelText( 'Name' ), 'Reading' );
 		await user.click(
 			within( screen.getByRole( 'radiogroup', { name: 'Accent color' } ) ).getByRole( 'radio', {
@@ -194,10 +231,17 @@ describe( 'CreateSpaceModal', () => {
 			} )
 		);
 		await user.click( screen.getByRole( 'radio', { name: 'Star' } ) );
-		await user.click( screen.getByRole( 'tab', { name: 'Layout' } ) );
+		await user.click( screen.getByRole( 'button', { name: 'Next' } ) );
+
+		// Layout step.
 		await user.click( screen.getByRole( 'radio', { name: /Classic/ } ) );
-		await user.click( screen.getByRole( 'tab', { name: 'Sources' } ) );
+		await user.click( screen.getByRole( 'button', { name: 'Next' } ) );
+
+		// Feeds step.
 		await user.click( screen.getByRole( 'button', { name: 'Add Example Blog' } ) );
+		await user.click( screen.getByRole( 'button', { name: 'Next' } ) );
+
+		// Topics step (last) carries the Create button.
 		await user.click( screen.getByRole( 'button', { name: 'Create' } ) );
 
 		await waitFor( () => expect( onClose ).toHaveBeenCalled() );
@@ -243,10 +287,11 @@ describe( 'CreateSpaceModal', () => {
 		const onBody = jest.fn();
 		mockCreateEndpoint( 'Leitura', onBody );
 
+		// The languages field lives on the final Topics step.
+		await reachTopicsStep( user, 'Leitura' );
 		const dialog = screen.getByRole( 'dialog', { name: 'Create a new space' } );
 		expect( within( dialog ).getByText( 'Português' ) ).toBeVisible();
 
-		await user.type( screen.getByLabelText( 'Name' ), 'Leitura' );
 		await user.click( screen.getByRole( 'button', { name: 'Create' } ) );
 
 		await waitFor( () => expect( onClose ).toHaveBeenCalled() );
@@ -255,12 +300,31 @@ describe( 'CreateSpaceModal', () => {
 		);
 	} );
 
+	it( 'sends topics entered in the wizard when creating', async () => {
+		const { user, onClose } = setup();
+		const onBody = jest.fn();
+		mockCreateEndpoint( 'Reading', onBody );
+
+		await reachTopicsStep( user );
+		await user.type( screen.getByRole( 'combobox', { name: 'Tags' } ), 'design[Enter]' );
+		await user.type( screen.getByRole( 'combobox', { name: 'Languages' } ), 'English[Enter]' );
+		await user.click( screen.getByRole( 'button', { name: 'Create' } ) );
+
+		await waitFor( () => expect( onClose ).toHaveBeenCalled() );
+		expect( onBody ).toHaveBeenCalledWith(
+			expect.objectContaining( {
+				tags: [ 'design' ],
+				languages: [ 'en' ],
+			} )
+		);
+	} );
+
 	it( 'sends no languages when the account has no locale', async () => {
 		const { user, onClose } = setup();
 		const onBody = jest.fn();
 		mockCreateEndpoint( 'Reading', onBody );
 
-		await user.type( screen.getByLabelText( 'Name' ), 'Reading' );
+		await reachTopicsStep( user );
 		await user.click( screen.getByRole( 'button', { name: 'Create' } ) );
 
 		await waitFor( () => expect( onClose ).toHaveBeenCalled() );
@@ -271,7 +335,7 @@ describe( 'CreateSpaceModal', () => {
 		const { user, onCreated } = setup();
 		mockCreateEndpoint( 'Reading' );
 
-		await user.type( screen.getByLabelText( 'Name' ), 'Reading' );
+		await reachTopicsStep( user );
 		await user.click( screen.getByRole( 'button', { name: 'Create' } ) );
 
 		await waitFor( () =>

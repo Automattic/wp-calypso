@@ -24,7 +24,7 @@ cd apps/agents-manager && yarn dev --sync
 
 ## Conventions
 
-- **i18n**: Use `@wordpress/i18n` with text domain `'__i18n_text_domain__'`. This placeholder is replaced at build time.
+- **i18n**: Use `@wordpress/i18n` with the `__i18n_text_domain__` text domain placeholder — passed unquoted as it is a global constant, not a string literal. The webpack `DefinePlugin` replaces it with `'default'` at build time.
 - **Curly quotes**: Preserve `""` `''` exactly as they appear. Do not convert to unicode escapes or ASCII equivalents.
 
 ## Pitfalls

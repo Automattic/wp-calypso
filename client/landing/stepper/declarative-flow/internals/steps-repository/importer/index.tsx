@@ -205,12 +205,7 @@ export function withImporterWrapper( Importer: ImporterCompType ) {
 			}
 
 			if ( ! hasPermission() ) {
-				return (
-					<NotAuthorized
-						onStartBuilding={ stepNavigator?.goToGoalsPage }
-						onBackToStart={ stepNavigator?.goToImportCapturePage }
-					/>
-				);
+				return <NotAuthorized onBackToStart={ stepNavigator?.goToImportCapturePage } />;
 			}
 
 			return (

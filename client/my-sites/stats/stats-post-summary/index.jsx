@@ -7,6 +7,7 @@ import { connect } from 'react-redux';
 import QueryPostStats from 'calypso/components/data/query-post-stats';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
 import { getPostStats, isRequestingPostStats } from 'calypso/state/stats/posts/selectors';
+import { STATS_SUMMARY_MAX_BARS } from '../constants';
 import StatsModuleUTM from '../features/modules/stats-utm';
 import { StatsGlobalValuesContext } from '../pages/providers/global-provider';
 import DatePicker from '../stats-date-label';
@@ -23,6 +24,7 @@ function* statsByMonth( stats, moment ) {
 			yield {
 				period: firstDayOfMonth.format( 'MMM YYYY' ),
 				periodLabel: firstDayOfMonth.format( 'MMMM YYYY' ),
+				startDate: firstDayOfMonth.format( 'YYYY-MM-DD' ),
 				value: stats.years[ year ]?.months[ month ] ?? 0,
 			};
 		}
@@ -37,10 +39,7 @@ class StatsPostSummary extends Component {
 		supportsUTMStats: PropTypes.bool,
 	};
 
-	static MAX_RECORDS_PER_DAY = 10;
-
 	state = {
-		selectedRecord: null,
 		period: 'day',
 		page: 1,
 	};
@@ -48,84 +47,110 @@ class StatsPostSummary extends Component {
 	selectPeriod( period ) {
 		return () =>
 			this.setState( {
-				selectedRecord: null,
 				period,
+				page: 1,
 			} );
 	}
 
-	selectRecord = ( record ) => {
-		this.setState( { selectedRecord: record } );
-	};
-
+	// Arrows page the whole visible window of bars (like the Traffic chart's
+	// date-range navigation), they never step through individual bars.
 	onPeriodChange = ( { direction } ) => {
-		let chartData = this.getChartData();
-		if ( ! chartData.length ) {
-			return;
-		}
-
-		let selectedRecord = this.state.selectedRecord;
-		if ( ! selectedRecord ) {
-			selectedRecord = chartData[ chartData.length - 1 ];
-		}
-
-		const recordIndex = chartData.findIndex( ( item ) => item.period === selectedRecord.period );
-
-		if ( 'previous' === direction ) {
-			if ( recordIndex > 0 ) {
-				this.setState( { selectedRecord: chartData[ recordIndex - 1 ] } );
-			} else {
-				const nextPage = this.state.page + 1;
-				chartData = this.getChartData( nextPage );
-				if ( chartData ) {
-					this.setState( { selectedRecord: chartData[ chartData.length - 1 ] } );
-				}
-			}
-		} else if ( 'next' === direction ) {
-			if ( recordIndex < chartData.length - 1 ) {
-				this.setState( { selectedRecord: chartData[ recordIndex + 1 ] } );
-			} else {
-				const nextPage = this.state.page - 1;
-				chartData = this.getChartData( nextPage );
-				this.setState( { selectedRecord: chartData[ 0 ] } );
-			}
+		const maxPages = this.getMaxPages();
+		if ( 'previous' === direction && this.state.page < maxPages ) {
+			this.setState( { page: this.state.page + 1 } );
+		} else if ( 'next' === direction && this.state.page > 1 ) {
+			this.setState( { page: this.state.page - 1 } );
 		}
 	};
 
-	getChartData( newPage = 0 ) {
+	getMaxPages() {
+		return Math.max( Math.ceil( this.getTotalRecordCount() / STATS_SUMMARY_MAX_BARS ), 1 );
+	}
+
+	// Days can run to thousands of entries for an old post, so their count is
+	// read directly off stats.data rather than built into record objects.
+	getTotalRecordCount() {
+		return this.state.period === 'day'
+			? this.props.stats?.data?.length ?? 0
+			: this.getAllRecordsForPeriod().length;
+	}
+
+	// [start, end) slice bounds for the current page within a period's full,
+	// most-recent-last record list.
+	getPageSliceBounds( totalCount ) {
+		const { page } = this.state;
+		const dataStart = Math.max( totalCount - STATS_SUMMARY_MAX_BARS * page, 0 );
+		const dataEnd = Math.max( totalCount - STATS_SUMMARY_MAX_BARS * ( page - 1 ), 0 );
+		return [ dataStart, dataEnd ];
+	}
+
+	// Days are paged directly off the raw stats.data pairs, formatting only
+	// the bars for the current page rather than the post's entire history.
+	getPagedDayRecords() {
+		const { moment, stats } = this.props;
+		const data = stats?.data ?? [];
+		const [ dataStart, dataEnd ] = this.getPageSliceBounds( data.length );
+
+		const records = data.slice( dataStart, dataEnd ).map( ( [ date, value ] ) => {
+			const momentDate = moment( date );
+			return {
+				period: momentDate.format( 'MMM D' ),
+				periodLabel: momentDate.format( 'LL' ),
+				startDate: date,
+				value,
+			};
+		} );
+
+		return { records, totalCount: data.length };
+	}
+
+	// The current page of bars for the active period, plus the total record
+	// count it was sliced from (used to compute max pages).
+	getPagedRecords() {
+		if ( this.state.period === 'day' ) {
+			return this.getPagedDayRecords();
+		}
+
+		const allRecords = this.getAllRecordsForPeriod();
+		const [ dataStart, dataEnd ] = this.getPageSliceBounds( allRecords.length );
+		return { records: allRecords.slice( dataStart, dataEnd ), totalCount: allRecords.length };
+	}
+
+	getAllRecordsForPeriod() {
 		const { moment, stats } = this.props;
 		if ( ! stats ) {
 			return [];
 		}
 
-		let page = this.state.page;
-		if ( newPage ) {
-			page = newPage;
-			this.setState( { page: newPage } );
-		}
-
 		switch ( this.state.period ) {
-			case 'day': {
+			// stats.weeks only ever covers a fixed recent 7-week window
+			// (hard-coded server-side; no request param widens it — see
+			// WPCOM_JSON_API_Stats_V1_1_Post_Views_Endpoint), so weeks are
+			// aggregated from the full daily history instead, to allow
+			// paging back to the post's actual publish date.
+			case 'week': {
 				if ( ! stats.data ) {
 					return [];
 				}
 
-				const dataStart = Math.max(
-					stats.data.length - StatsPostSummary.MAX_RECORDS_PER_DAY * page,
-					0
-				);
-				const dataEnd = Math.max(
-					stats.data.length - StatsPostSummary.MAX_RECORDS_PER_DAY * ( page - 1 ),
-					0
-				);
-				return stats.data.slice( dataStart, dataEnd ).map( ( [ date, value ] ) => {
-					const momentDate = moment( date );
-					return {
-						period: momentDate.format( 'MMM D' ),
-						periodLabel: momentDate.format( 'LL' ),
-						startDate: date,
-						value,
-					};
-				} );
+				const totals = new Map();
+				for ( const [ date, value ] of stats.data ) {
+					const key = moment( date ).startOf( 'isoWeek' ).format( 'YYYY-MM-DD' );
+					totals.set( key, ( totals.get( key ) ?? 0 ) + value );
+				}
+
+				return Array.from( totals.entries() )
+					.sort( ( [ a ], [ b ] ) => a.localeCompare( b ) )
+					.map( ( [ key, value ] ) => {
+						const start = moment( key );
+						return {
+							period: start.format( 'MMM D' ),
+							periodLabel:
+								start.format( 'L' ) + ' - ' + moment( key ).add( 6, 'days' ).format( 'L' ),
+							startDate: key,
+							value,
+						};
+					} );
 			}
 			case 'year':
 				if ( ! stats.years ) {
@@ -136,6 +161,7 @@ class StatsPostSummary extends Component {
 					return {
 						period: year,
 						periodLabel: year,
+						startDate: moment( year, 'YYYY' ).startOf( 'year' ).format( 'YYYY-MM-DD' ),
 						value: stats.years[ year ].total,
 					};
 				} );
@@ -144,106 +170,87 @@ class StatsPostSummary extends Component {
 					return [];
 				}
 
-				const months = [ ...statsByMonth( stats, moment ) ];
-				const firstNotEmpty = months.findIndex( ( item ) => item.value !== 0 );
-				const reverseLastNotEmpty = [ ...months ]
-					.reverse()
-					.findIndex( ( item ) => item.value !== 0 );
-				const lastNotEmpty =
-					reverseLastNotEmpty === -1
-						? reverseLastNotEmpty
-						: months.length - ( reverseLastNotEmpty + 1 );
-
-				return months.slice( firstNotEmpty, lastNotEmpty + 1 );
+				// statsByMonth() expands every year in stats.years to a full
+				// 12 months, which for the current year includes months that
+				// haven't happened yet; drop those rather than paginating
+				// into fake future bars.
+				const today = moment();
+				return [ ...statsByMonth( stats, moment ) ].filter( ( record ) =>
+					moment( record.startDate ).isSameOrBefore( today, 'month' )
+				);
 			}
-			case 'week':
-				if ( ! stats.weeks ) {
-					return [];
-				}
-
-				return stats.weeks.map( ( week ) => {
-					const firstDay = moment( week.days[ 0 ].day );
-					return {
-						period: firstDay.format( 'MMM D' ),
-						periodLabel: firstDay.format( 'L' ) + ' - ' + firstDay.add( 6, 'days' ).format( 'L' ),
-						startDate: moment( week.days[ 0 ].day ).format( 'YYYY/MM/DD' ),
-						value: week.total,
-					};
-				} );
 			default:
 				return [];
 		}
 	}
 
-	getQuery() {
-		let selectedRecord = this.state.selectedRecord;
+	// The start/end of a page of bars, used to keep the header label and the
+	// UTM breakdown showing the same range (mirrors the Traffic page's
+	// start_date/date/summarize query for its date-range UTM module) instead
+	// of a single selected bar.
+	getPageDateRange( chartData ) {
 		const { period } = this.state;
 		const { moment } = this.props;
-		const query = {
-			period,
-			max: 0,
-		};
 
-		if ( ! selectedRecord ) {
-			const chartData = this.getChartData();
-
-			if ( chartData.length ) {
-				selectedRecord = chartData[ chartData.length - 1 ];
-			} else {
-				return query;
-			}
+		if ( ! chartData.length ) {
+			return null;
 		}
 
-		let date = selectedRecord.startDate;
+		const start = moment( chartData[ 0 ].startDate );
+		let end = moment( chartData[ chartData.length - 1 ].startDate );
 
 		switch ( period ) {
 			case 'week':
-				date = moment( date ).add( 6, 'days' ).format( 'YYYY/MM/DD' );
+				end = end.add( 6, 'days' );
 				break;
 			case 'month':
-				date = moment( date ).endOf( 'month' ).format( 'YYYY/MM/DD' );
+				end = end.endOf( 'month' );
 				break;
 			case 'year':
-				date = moment( date ).endOf( 'year' ).format( 'YYYY/MM/DD' );
+				end = end.endOf( 'year' );
 				break;
-			case 'day':
 			default:
 				break;
 		}
 
+		// Don't extend the range into the future when the last bar is still
+		// the current, in-progress period (e.g. this month before it ends).
+		const today = moment();
+		if ( end.isAfter( today, 'day' ) ) {
+			end = today;
+		}
+
+		return { start, end };
+	}
+
+	getQuery( pageDateRange ) {
+		if ( ! pageDateRange ) {
+			return { period: 'day', max: 0, summarize: 1 };
+		}
+
 		return {
-			...query,
-			date,
+			period: 'day',
+			start_date: pageDateRange.start.format( 'YYYY-MM-DD' ),
+			date: pageDateRange.end.format( 'YYYY-MM-DD' ),
+			summarize: 1,
+			max: 0,
 		};
 	}
 
 	render() {
-		const { isRequesting, postId, siteId, translate, stats } = this.props;
+		const { isRequesting, postId, siteId, translate } = this.props;
 		const periods = [
 			{ id: 'day', label: translate( 'Days' ) },
 			{ id: 'week', label: translate( 'Weeks' ) },
 			{ id: 'month', label: translate( 'Months' ) },
 			{ id: 'year', label: translate( 'Years' ) },
 		];
-		const chartData = this.getChartData();
-		let selectedRecord = this.state.selectedRecord;
-		if ( ! this.state.selectedRecord && chartData.length ) {
-			selectedRecord = chartData[ chartData.length - 1 ];
-		}
+		const { records: chartData, totalCount } = this.getPagedRecords();
+		const pageDateRange = this.getPageDateRange( chartData );
 
-		let disablePreviousArrow = false;
-		let disableNextArrow = false;
-		const selectedRecordIndex = chartData.findIndex(
-			( item ) => item.period === selectedRecord.period
-		);
-		if ( 'day' === this.state.period && stats.data ) {
-			const maxPages = Math.ceil( stats.data.length / StatsPostSummary.MAX_RECORDS_PER_DAY );
-			disablePreviousArrow = this.state.page >= maxPages && selectedRecordIndex === 0;
-			disableNextArrow = 1 === this.state.page && selectedRecordIndex === chartData.length - 1;
-		} else {
-			disablePreviousArrow = selectedRecordIndex === 0;
-			disableNextArrow = selectedRecordIndex === chartData.length - 1;
-		}
+		const maxPages = Math.max( Math.ceil( totalCount / STATS_SUMMARY_MAX_BARS ), 1 );
+		const disablePreviousArrow = this.state.page >= maxPages;
+		const disableNextArrow = this.state.page <= 1;
 
 		const summaryWrapperClass = clsx( 'stats-post-summary', 'is-chart-tabs', {
 			'is-period-year': this.state.period === 'year',
@@ -262,7 +269,18 @@ class StatsPostSummary extends Component {
 							disableNextArrow={ disableNextArrow }
 							date={ null }
 						>
-							<DatePicker period={ this.state.period } date={ selectedRecord?.startDate } isShort />
+							<DatePicker
+								period={ this.state.period }
+								dateRange={
+									pageDateRange
+										? {
+												chartStart: pageDateRange.start.format( 'YYYY-MM-DD' ),
+												chartEnd: pageDateRange.end.format( 'YYYY-MM-DD' ),
+										  }
+										: undefined
+								}
+								isShort
+							/>
 						</StatsPeriodNavigation>
 						<SegmentedControl primary>
 							{ periods.map( ( { id, label } ) => (
@@ -285,8 +303,6 @@ class StatsPostSummary extends Component {
 						labelKey="periodLabel"
 						chartType="views"
 						sectionClass="is-views"
-						selected={ selectedRecord }
-						onClick={ this.selectRecord }
 						tabLabel={ translate( 'Views' ) }
 						type="post"
 					/>
@@ -300,7 +316,7 @@ class StatsPostSummary extends Component {
 									siteId={ siteId }
 									postId={ postId }
 									period={ this.state.period }
-									query={ this.getQuery() }
+									query={ this.getQuery( pageDateRange ) }
 									context={ this.props.context }
 								/>
 							</div>

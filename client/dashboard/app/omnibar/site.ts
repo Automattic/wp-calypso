@@ -1,6 +1,7 @@
 import {
 	omnibarSiteIdQuery,
 	queryClient,
+	siteByIdQuery,
 	userPreferenceQuery,
 	userPreferenceOptimisticMutation,
 } from '@automattic/api-queries';
@@ -11,6 +12,11 @@ import { useEffect } from 'react';
 import { AUTH_QUERY_KEY } from '../auth';
 import type { Site, User } from '@automattic/api-core';
 
+function isMemberOfSite( site: Site ) {
+	// If the user is a member of the site, the capabilities property will exist
+	return !! site.capabilities;
+}
+
 /**
  * Initializes the current site for the omnibar, which is extracted from the URL,
  * or the most recent sites, or the user's primary blog, in that priority.
@@ -18,7 +24,10 @@ import type { Site, User } from '@automattic/api-core';
 export function useInitializeOmnibarSite() {
 	const user = queryClient.getQueryData< User >( AUTH_QUERY_KEY );
 
-	const { data: recentSiteIds } = useQuery( userPreferenceQuery( 'recentSites' ), queryClient );
+	const { data: recentSiteIds, isLoading: isLoadingRecentSiteIds } = useQuery(
+		userPreferenceQuery( 'recentSites' ),
+		queryClient
+	);
 	const { mutate: updateRecentSites } = useMutation(
 		userPreferenceOptimisticMutation( 'recentSites' ),
 		queryClient
@@ -39,13 +48,23 @@ export function useInitializeOmnibarSite() {
 		( location.search as Record< string, string | undefined > ).origin_site_id
 	);
 	const originSiteId = originSiteIdParam > 0 ? originSiteIdParam : undefined;
+	const recentSiteId =
+		queryClient.getQueryData< number | null >( omnibarSiteIdQuery().queryKey ) ||
+		recentSiteIds?.[ 0 ];
 
-	const selectedSiteId = routeSite?.ID || originSiteId;
-	const fallbackSiteId = recentSiteIds?.[ 0 ] || user?.primary_blog;
+	const { data: originSite, isLoading: isLoadingOriginSite } = useQuery( {
+		...siteByIdQuery( originSiteId ?? 0 ),
+		enabled: !! originSiteId,
+	} );
+
+	const { data: recentSite, isLoading: isLoadingRecentSite } = useQuery( {
+		...siteByIdQuery( recentSiteId ?? 0 ),
+		enabled: !! recentSiteId,
+	} );
 
 	useEffect( () => {
-		// Wait until the route and recent sites are fully loaded, to avoid flicker.
-		if ( ! isRouteLoaded || ! recentSiteIds ) {
+		// Wait until the required data are fully loaded, to avoid flicker.
+		if ( ! isRouteLoaded || isLoadingRecentSiteIds || isLoadingOriginSite || isLoadingRecentSite ) {
 			return;
 		}
 
@@ -53,10 +72,12 @@ export function useInitializeOmnibarSite() {
 		// queryFn resolves to `null`. If it's still in flight when we write here,
 		// the resolution will overwrite our value and the omnibar loses the site.
 		queryClient.cancelQueries( { queryKey: omnibarSiteIdQuery().queryKey } );
-		queryClient.setQueryData(
-			omnibarSiteIdQuery().queryKey,
-			( currentSiteId ) => selectedSiteId || currentSiteId || fallbackSiteId
+
+		const omnibarSite = [ routeSite, originSite, recentSite ].find(
+			( site ) => site && isMemberOfSite( site )
 		);
+		const omnibarSiteId = omnibarSite?.ID ?? user?.primary_blog;
+		queryClient.setQueryData( omnibarSiteIdQuery().queryKey, () => omnibarSiteId );
 
 		// Remove the `origin_site_id` query param from the URL.
 		if ( originSiteId ) {
@@ -67,16 +88,22 @@ export function useInitializeOmnibarSite() {
 			);
 		}
 
-		// Push the selected site id as the most recent site.
-		if ( selectedSiteId && selectedSiteId !== recentSiteIds[ 0 ] ) {
-			updateRecentSites( [ ...new Set( [ selectedSiteId, ...recentSiteIds ] ) ].slice( 0, 5 ) );
+		if ( omnibarSiteId && omnibarSiteId !== recentSiteIds?.[ 0 ] ) {
+			updateRecentSites(
+				[ ...new Set( [ omnibarSiteId, ...( recentSiteIds || [] ) ] ) ].slice( 0, 5 )
+			);
 		}
 	}, [
 		isRouteLoaded,
+		routeSite,
 		originSiteId,
-		selectedSiteId,
-		fallbackSiteId,
+		originSite,
+		isLoadingOriginSite,
+		recentSite,
+		isLoadingRecentSite,
 		recentSiteIds,
+		isLoadingRecentSiteIds,
+		user,
 		updateRecentSites,
 	] );
 }

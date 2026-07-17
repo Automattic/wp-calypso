@@ -17,6 +17,7 @@ import { ButtonStack } from '../../components/button-stack';
 import { Card, CardBody } from '../../components/card';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
+import { getCreateSiteFromDomainOnlyUrl } from '../../utils/domain-url';
 import { SelectSite } from './select-site';
 import type { Site } from '@automattic/api-core';
 
@@ -63,6 +64,17 @@ export default function DomainTransferToOtherSite() {
 						__( 'Attach %s to a site you’re an administrator of:' ),
 						domainName
 					) }
+					actions={
+						domain?.is_domain_only_site ? (
+							<Button
+								__next40pxDefaultSize
+								variant="primary"
+								href={ getCreateSiteFromDomainOnlyUrl( domain ) }
+							>
+								{ __( 'Add a new site' ) }
+							</Button>
+						) : undefined
+					}
 				/>
 			}
 		>

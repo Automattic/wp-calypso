@@ -20,7 +20,7 @@ import { TEST_IMAGE_PATH, TEST_AUDIO_PATH } from '../constants';
  * Keywords: Media, Video, VideoPress, Image, Audio, File
  */
 test.describe(
-	'Blocks: Media (Upload)',
+	DataHelper.createSuiteTitle( 'Blocks: Media (Upload)' ),
 	{ tag: [ tags.CALYPSO_PR, tags.GUTENBERG, tags.JETPACK_WPCOM_INTEGRATION ] },
 	() => {
 		skipIfNotTrunk();

@@ -19,6 +19,7 @@ import {
 	domainsContactInfoRoute,
 } from '../../app/router/domains';
 import { getCurrentDashboard } from '../../app/routing';
+import ComponentViewTracker from '../../components/component-view-tracker';
 import { isDomainRenewable, canSetAsPrimary, getDomainRenewalUrl } from '../../utils/domain';
 import { isTransferrableToWpcom } from '../../utils/domain-types';
 import { redirectToDashboardLink, wpcomLink } from '../../utils/link';
@@ -70,6 +71,12 @@ export const useActions = ( { user, sites }: { user: User; sites?: Site[] } ) =>
 				label: __( 'Renew' ),
 				callback: ( items: DomainSummary[] ) => {
 					const domain = items[ 0 ];
+
+					recordTracksEvent( 'calypso_dashboard_domains_action_click', {
+						action: 'renew',
+						domain: domain.domain,
+					} );
+
 					const purchase = purchases?.find(
 						( p ) => p.ID === parseInt( domain.subscription_id ?? '0', 10 )
 					);
@@ -88,6 +95,11 @@ export const useActions = ( { user, sites }: { user: User; sites?: Site[] } ) =>
 				label: __( 'Set up' ),
 				callback: ( items: DomainSummary[] ) => {
 					const domain = items[ 0 ];
+
+					recordTracksEvent( 'calypso_dashboard_domains_action_click', {
+						action: 'setup',
+						domain: domain.domain,
+					} );
 
 					router.navigate( {
 						to: domainConnectionSetupRoute.fullPath,
@@ -113,6 +125,11 @@ export const useActions = ( { user, sites }: { user: User; sites?: Site[] } ) =>
 				callback: ( items: DomainSummary[] ) => {
 					const domain = items[ 0 ];
 
+					recordTracksEvent( 'calypso_dashboard_domains_action_click', {
+						action: 'manage-domain',
+						domain: domain.domain,
+					} );
+
 					const targetRoute =
 						domain.subtype.id === DomainSubtype.DOMAIN_TRANSFER &&
 						config.isEnabled( 'domain-transfer-redesign' )
@@ -137,6 +154,11 @@ export const useActions = ( { user, sites }: { user: User; sites?: Site[] } ) =>
 				callback: ( items: DomainSummary[] ) => {
 					const domain = items[ 0 ];
 
+					recordTracksEvent( 'calypso_dashboard_domains_action_click', {
+						action: 'manage-dns-settings',
+						domain: domain.domain,
+					} );
+
 					router.navigate( {
 						to: domainDnsRoute.fullPath,
 						params: {
@@ -158,6 +180,11 @@ export const useActions = ( { user, sites }: { user: User; sites?: Site[] } ) =>
 				callback: ( domains: DomainSummary[] ) => {
 					const domain = domains[ 0 ];
 					const site = sitesByBlogId[ domain.blog_id ];
+
+					recordTracksEvent( 'calypso_dashboard_domains_action_click', {
+						action: 'set-primary-site-address',
+						domain: domain.domain,
+					} );
 
 					if ( ! site ) {
 						return;
@@ -214,6 +241,12 @@ export const useActions = ( { user, sites }: { user: User; sites?: Site[] } ) =>
 				supportsBulk: false,
 				callback: ( items: DomainSummary[] ) => {
 					const domain = items[ 0 ];
+
+					recordTracksEvent( 'calypso_dashboard_domains_action_click', {
+						action: 'transfer-domain',
+						domain: domain.domain,
+					} );
+
 					const siteSlug = sitesByBlogId[ domain.blog_id ]?.slug ?? domain.site_slug;
 					const queryArgs: Record< string, string > = {
 						initialQuery: domain.domain,
@@ -242,6 +275,11 @@ export const useActions = ( { user, sites }: { user: User; sites?: Site[] } ) =>
 				callback: ( items: DomainSummary[] ) => {
 					const domain = items[ 0 ];
 
+					recordTracksEvent( 'calypso_dashboard_domains_action_click', {
+						action: 'connect-to-site',
+						domain: domain.domain,
+					} );
+
 					router.navigate( {
 						to: domainTransferToOtherSiteRoute.fullPath,
 						params: {
@@ -269,6 +307,10 @@ export const useActions = ( { user, sites }: { user: User; sites?: Site[] } ) =>
 					const site = sitesByBlogId[ items[ 0 ].blog_id ];
 					return site ? (
 						<Suspense fallback={ null }>
+							<ComponentViewTracker
+								eventName="calypso_dashboard_domains_action_click"
+								properties={ { action: 'change-site-address', domain: items[ 0 ].domain } }
+							/>
 							<SiteChangeAddressContent
 								site={ site }
 								domain={ items[ 0 ] }
@@ -286,6 +328,11 @@ export const useActions = ( { user, sites }: { user: User; sites?: Site[] } ) =>
 					if ( domains.length === 0 ) {
 						return;
 					}
+
+					recordTracksEvent( 'calypso_dashboard_domains_action_click', {
+						action: 'manage-contact-info',
+						domain: domains[ 0 ].domain,
+					} );
 
 					if ( domains.length === 1 ) {
 						return router.navigate( {
@@ -316,13 +363,19 @@ export const useActions = ( { user, sites }: { user: User; sites?: Site[] } ) =>
 				supportsBulk: true,
 				callback: () => {},
 				RenderModal: ( { items, closeModal = noop, onActionPerformed = noop } ) => (
-					<AutoRenewModal
-						items={ items }
-						onSuccess={ () => {
-							onActionPerformed( items );
-							closeModal();
-						} }
-					/>
+					<>
+						<ComponentViewTracker
+							eventName="calypso_dashboard_domains_action_click"
+							properties={ { action: 'manage-auto-renew', domain: items[ 0 ].domain } }
+						/>
+						<AutoRenewModal
+							items={ items }
+							onSuccess={ () => {
+								onActionPerformed( items );
+								closeModal();
+							} }
+						/>
+					</>
 				),
 				isEligible: ( item ) => isDomainRenewable( item ),
 			},

@@ -77,7 +77,6 @@ import {
 	SidebarComponent,
 	SiteSelectComponent,
 	SignupPickPlanPage,
-	StartWritingFlow,
 	TestAccount,
 	ThemesDetailPage,
 	ThemesPage,
@@ -195,10 +194,6 @@ export const test = base.extend<
 		 * Flow encapsulating the LOHP Theme Signup onboarding process.
 		 */
 		flowLOHPThemeSignup: LOHPThemeSignupFlow;
-		/**
-		 * Flow encapsulating the Start Writing onboarding process.
-		 */
-		flowStartWriting: StartWritingFlow;
 		/**
 		 * Helper data and utilities for tests.
 		 */
@@ -468,10 +463,6 @@ export const test = base.extend<
 	flowLOHPThemeSignup: async ( { page }, use ) => {
 		const lohpThemeSignupFlow = new LOHPThemeSignupFlow( page );
 		await use( lohpThemeSignupFlow );
-	},
-	flowStartWriting: async ( { page }, use ) => {
-		const startWritingFlow = new StartWritingFlow( page );
-		await use( startWritingFlow );
 	},
 	helperData: async ( {}, use ) => {
 		await use( DataHelper );

@@ -541,7 +541,7 @@ export class FullPostView extends Component {
 		}
 
 		if ( ! this.hasLoaded && post && post._state !== 'pending' ) {
-			if ( this.isSeenEnabled() ) {
+			if ( this.isSeenEnabled() && ! post.is_seen ) {
 				this.markAsSeen();
 			}
 
@@ -726,7 +726,7 @@ export class FullPostView extends Component {
 		/*eslint-disable react/jsx-no-target-blank */
 		return (
 			// add extra div wrapper for consistent content frame layout/styling for reader.
-			<div style={ { position: 'relative' } }>
+			<div>
 				<ReaderMain className={ clsx( classes ) } forwardRef={ this.readerMainWrapper }>
 					{ ! post || post._state === 'pending' ? (
 						<DocumentHead title={ translate( 'Loading' ) } />

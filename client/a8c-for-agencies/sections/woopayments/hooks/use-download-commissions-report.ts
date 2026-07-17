@@ -1,7 +1,6 @@
+import { fetchAgencyWooPaymentsCommissionsReport } from '@automattic/api-core';
 import debugFactory from 'debug';
 import { useCallback } from 'react';
-import { addQueryArgs } from 'calypso/lib/url';
-import wpcom from 'calypso/lib/wp';
 import { useSelector } from 'calypso/state';
 import { getActiveAgencyId } from 'calypso/state/a8c-for-agencies/agency/selectors';
 
@@ -12,17 +11,15 @@ export function useDownloadCommissionsReport() {
 
 	const downloadCommissionsReport = useCallback(
 		async ( siteId: number ): Promise< void > => {
+			if ( ! agencyId ) {
+				return;
+			}
+
 			try {
-				const response = await wpcom.req.get( {
-					apiNamespace: 'wpcom/v2',
-					path: addQueryArgs(
-						{ format: 'csv' },
-						`/agency/${ agencyId }/woocommerce/woopayments/${ siteId }`
-					),
-				} );
+				const response = await fetchAgencyWooPaymentsCommissionsReport( agencyId, siteId );
 
 				// CSV content is in response.data as a string
-				const csvContent = response.data as string;
+				const csvContent = response.data;
 
 				// Convert string to Blob with CSV MIME type
 				const blob = new Blob( [ csvContent ], { type: 'text/csv;charset=utf-8;' } );
@@ -31,7 +28,7 @@ export function useDownloadCommissionsReport() {
 				const url = window.URL.createObjectURL( blob );
 				const link = document.createElement( 'a' );
 				link.href = url;
-				link.download = response.filename as string;
+				link.download = response.filename;
 
 				// Trigger download
 				document.body.appendChild( link );

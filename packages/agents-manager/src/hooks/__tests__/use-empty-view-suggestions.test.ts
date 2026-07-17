@@ -7,6 +7,7 @@ let mockContext = {
 	sectionName: 'gutenberg',
 	currentRoute: undefined as string | undefined,
 };
+let mockCurrentPostType: string | undefined;
 
 jest.mock( '@wordpress/data', () => ( {
 	useSelect: (
@@ -45,11 +46,39 @@ const siteEditorSuggestion = {
 	prompt: 'Show me color palettes for my site that are:',
 };
 
+const jetpackSuggestion = {
+	id: 'proofread-content',
+	label: 'Proofread',
+	prompt: 'Proofread this saved content.',
+};
+
+const UNSUPPORTED_POST_LEVEL_SUGGESTION_TYPES: Array<
+	[ label: string, postType: string | undefined ]
+> = [
+	[ 'templates', 'wp_template' ],
+	[ 'template parts', 'wp_template_part' ],
+	[ 'patterns', 'wp_block' ],
+	[ 'navigation', 'wp_navigation' ],
+	[ 'global styles', 'wp_global_styles' ],
+	[ 'Site Editor dashboard/list views', undefined ],
+	[ 'Jetpack Forms', 'jetpack_form' ],
+	[ 'Jetpack Search overlays', 'jp_search_overlay' ],
+	[ 'other custom post types', 'custom_post_type' ],
+];
+
 function mockCoreStoreReady( isReady: boolean ) {
 	mockUseSelect.mockImplementation( ( mapSelect ) =>
-		mapSelect( () => ( {
-			getCurrentTheme: () => ( isReady ? { stylesheet: 'pub/theme' } : null ),
-		} ) )
+		mapSelect( ( storeName: string ) => {
+			if ( storeName === 'core/editor' ) {
+				return {
+					getCurrentPostType: () => mockCurrentPostType,
+				};
+			}
+
+			return {
+				getCurrentTheme: () => ( isReady ? { stylesheet: 'pub/theme' } : null ),
+			};
+		} )
 	);
 }
 
@@ -68,6 +97,7 @@ describe( 'useEmptyViewSuggestions', () => {
 			sectionName: 'gutenberg',
 			currentRoute: undefined,
 		};
+		mockCurrentPostType = undefined;
 		mockCoreStoreReady( true );
 	} );
 
@@ -135,6 +165,7 @@ describe( 'useEmptyViewSuggestions', () => {
 	} );
 
 	it( 'filters site-editor-only provider suggestions in the post editor even if section is misreported', async () => {
+		mockCurrentPostType = 'post';
 		mockContext = {
 			sectionName: 'site-editor',
 			currentRoute: '/wp-admin/post.php?post=1&action=edit',
@@ -167,6 +198,56 @@ describe( 'useEmptyViewSuggestions', () => {
 		await waitFor( () => expect( result.current ).toEqual( [] ) );
 	} );
 
+	it( 'keeps site-editor-only provider suggestions in the page editor', async () => {
+		mockCurrentPostType = 'page';
+		mockContext = {
+			sectionName: 'gutenberg',
+			currentRoute: '/wp-admin/post.php?post=1&action=edit',
+		};
+		const getEmptyViewSuggestions = jest.fn( () => [ siteEditorSuggestion, bigSkySuggestion ] );
+		const loadedProviders = { getEmptyViewSuggestions } as unknown as LoadedProviders;
+
+		const { result } = renderHook( () => useEmptyViewSuggestions( { loadedProviders } ) );
+
+		await waitFor( () =>
+			expect( result.current ).toEqual( [ siteEditorSuggestion, bigSkySuggestion ] )
+		);
+	} );
+
+	it( 'filters site-editor-only provider suggestions for non-page post types', async () => {
+		mockCurrentPostType = 'product';
+		mockContext = {
+			sectionName: 'gutenberg',
+			currentRoute: '/wp-admin/post.php?post=1&action=edit',
+		};
+		const getEmptyViewSuggestions = jest.fn( () => [ siteEditorSuggestion, bigSkySuggestion ] );
+		const loadedProviders = { getEmptyViewSuggestions } as unknown as LoadedProviders;
+
+		const { result } = renderHook( () => useEmptyViewSuggestions( { loadedProviders } ) );
+
+		await waitFor( () => expect( result.current ).toEqual( [ bigSkySuggestion ] ) );
+	} );
+
+	it( 'updates site-editor-only provider suggestions when the page editor post type resolves', async () => {
+		mockContext = {
+			sectionName: 'gutenberg',
+			currentRoute: '/wp-admin/post.php?post=1&action=edit',
+		};
+		const getEmptyViewSuggestions = jest.fn( () => [ siteEditorSuggestion, bigSkySuggestion ] );
+		const loadedProviders = { getEmptyViewSuggestions } as unknown as LoadedProviders;
+
+		const { result, rerender } = renderHook( () => useEmptyViewSuggestions( { loadedProviders } ) );
+
+		await waitFor( () => expect( result.current ).toEqual( [ bigSkySuggestion ] ) );
+
+		mockCurrentPostType = 'page';
+		rerender();
+
+		await waitFor( () =>
+			expect( result.current ).toEqual( [ siteEditorSuggestion, bigSkySuggestion ] )
+		);
+	} );
+
 	it( 'keeps site-editor-only provider suggestions in Site Editor', async () => {
 		mockContext = {
 			sectionName: 'site-editor',
@@ -197,4 +278,57 @@ describe( 'useEmptyViewSuggestions', () => {
 			expect( result.current ).toEqual( [ siteEditorSuggestion, bigSkySuggestion ] )
 		);
 	} );
+
+	it.each( [ 'wp_template', 'wp_template_part' ] )(
+		'keeps site-editor-only provider suggestions for the %s post type',
+		async ( postType ) => {
+			mockCurrentPostType = postType;
+			mockContext = {
+				sectionName: 'site-editor',
+				currentRoute: `/wp-admin/site-editor.php?postType=${ postType }`,
+			};
+			const getEmptyViewSuggestions = jest.fn( () => [ siteEditorSuggestion, bigSkySuggestion ] );
+			const loadedProviders = { getEmptyViewSuggestions } as unknown as LoadedProviders;
+
+			const { result } = renderHook( () => useEmptyViewSuggestions( { loadedProviders } ) );
+
+			await waitFor( () =>
+				expect( result.current ).toEqual( [ siteEditorSuggestion, bigSkySuggestion ] )
+			);
+		}
+	);
+
+	it.each( UNSUPPORTED_POST_LEVEL_SUGGESTION_TYPES )(
+		'refreshes provider suggestions when navigating from a page to %s and back',
+		async ( _label, postType ) => {
+			window.history.pushState( {}, '', '/wp-admin/site-editor.php' );
+			mockContext = {
+				sectionName: 'site-editor',
+				currentRoute: '/wp-admin/site-editor.php',
+			};
+			mockCurrentPostType = 'page';
+			const getEmptyViewSuggestions = jest.fn( () => [
+				siteEditorSuggestion,
+				...( mockCurrentPostType === 'page' ? [ jetpackSuggestion ] : [] ),
+			] );
+			const loadedProviders = { getEmptyViewSuggestions } as unknown as LoadedProviders;
+			const { result, rerender } = renderHook( () =>
+				useEmptyViewSuggestions( { loadedProviders } )
+			);
+
+			await waitFor( () =>
+				expect( result.current ).toEqual( [ siteEditorSuggestion, jetpackSuggestion ] )
+			);
+
+			mockCurrentPostType = postType;
+			rerender();
+			await waitFor( () => expect( result.current ).toEqual( [ siteEditorSuggestion ] ) );
+
+			mockCurrentPostType = 'page';
+			rerender();
+			await waitFor( () =>
+				expect( result.current ).toEqual( [ siteEditorSuggestion, jetpackSuggestion ] )
+			);
+		}
+	);
 } );

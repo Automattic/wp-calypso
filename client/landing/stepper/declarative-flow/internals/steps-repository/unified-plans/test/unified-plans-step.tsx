@@ -7,6 +7,7 @@ jest.mock( '@automattic/onboarding/src/step-container', () => () => (
 jest.mock( 'calypso/components/marketing-message', () => 'marketing-message' );
 jest.mock( 'calypso/lib/wp', () => ( { req: { post: () => {} } } ) );
 
+import { PLAN_BUSINESS } from '@automattic/calypso-products';
 import { screen, waitFor } from '@testing-library/react';
 import React from 'react';
 import { renderStep } from '../../test/helpers';
@@ -49,6 +50,32 @@ describe( 'Plans basic tests', () => {
 
 	test( 'should not blow up in Stepper and have proper CSS class', async () => {
 		_render( { ...props, useStepperWrapper: true } );
+		const stepWrapper = await waitFor( () => screen.getByTestId( 'stepper-step-wrapper' ) );
+		expect( stepWrapper ).toBeVisible();
+		expect( stepWrapper.parentNode ).toHaveClass( 'plans-step' );
+	} );
+} );
+
+describe( 'Plans accepts-props', () => {
+	beforeEach( () => {
+		jest.clearAllMocks();
+	} );
+
+	test( 'renders with copy overrides, hide toggles, interval, and tag overrides without blowing up', async () => {
+		_render( {
+			...props,
+			useStepperWrapper: true,
+			headerText: 'Custom plans header',
+			subHeaderText: 'Custom plans subheader',
+			hideFreePlan: true,
+			hideEnterprisePlan: true,
+			hidePersonalPlan: true,
+			hidePremiumPlan: true,
+			hideEcommercePlan: true,
+			hidePlanTypeSelector: true,
+			intervalType: '2yearly',
+			highlightLabelOverrides: { [ PLAN_BUSINESS ]: 'Best for stores' },
+		} );
 		const stepWrapper = await waitFor( () => screen.getByTestId( 'stepper-step-wrapper' ) );
 		expect( stepWrapper ).toBeVisible();
 		expect( stepWrapper.parentNode ).toHaveClass( 'plans-step' );

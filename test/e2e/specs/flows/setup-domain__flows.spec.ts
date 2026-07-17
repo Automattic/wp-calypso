@@ -141,12 +141,17 @@ test.describe(
 			} );
 
 			await test.step( 'Given I have a free site', async function () {
+				const accountToCleanup: ( typeof accountsToCleanup )[ number ] = {
+					testUser,
+					newUserDetails,
+				};
+				accountsToCleanup.push( accountToCleanup );
 				newSiteDetails = await apiCreateFreeSiteForUser(
 					testUser,
 					newUserDetails,
 					helperData.getBlogName()
 				);
-				accountsToCleanup.push( { testUser, newUserDetails, newSiteDetails } );
+				accountToCleanup.newSiteDetails = newSiteDetails;
 			} );
 
 			await test.step( 'And I enter the domain flow', async function () {
@@ -214,12 +219,17 @@ test.describe(
 			} );
 
 			await test.step( 'Given I have a free site', async function () {
+				const accountToCleanup: ( typeof accountsToCleanup )[ number ] = {
+					testUser,
+					newUserDetails,
+				};
+				accountsToCleanup.push( accountToCleanup );
 				newSiteDetails = await apiCreateFreeSiteForUser(
 					testUser,
 					newUserDetails,
 					helperData.getBlogName()
 				);
-				accountsToCleanup.push( { testUser, newUserDetails, newSiteDetails } );
+				accountToCleanup.newSiteDetails = newSiteDetails;
 			} );
 
 			await test.step( 'And I enter the domain flow', async function () {
@@ -262,7 +272,10 @@ test.describe(
 			} );
 		} );
 
-		test( 'As a new user, I can create a paid site, add a domain, then cancel the plan', async ( {
+		// Skipped for now; can be updated once we're sure all onboarding tests will go
+		// through the MSD flow. See https://github.com/Automattic/wp-calypso/pull/112586
+		// and https://github.com/Automattic/wp-calypso/pull/112587.
+		test.skip( 'As a new user, I can create a paid site, add a domain, then cancel the plan', async ( {
 			page,
 			componentDomainSearch,
 			componentSelectItems,
@@ -520,7 +533,10 @@ test.describe(
 			} );
 		} );
 
-		test( 'As a new user, I can create a paid site, add a domain using pre-selected site flow, then cancel the plan', async ( {
+		// Skipped for now; can be updated once we're sure all onboarding tests will go
+		// through the MSD flow. See https://github.com/Automattic/wp-calypso/pull/112586
+		// and https://github.com/Automattic/wp-calypso/pull/112587.
+		test.skip( 'As a new user, I can create a paid site, add a domain using pre-selected site flow, then cancel the plan', async ( {
 			page,
 			componentDomainSearch,
 			componentMeSidebar,

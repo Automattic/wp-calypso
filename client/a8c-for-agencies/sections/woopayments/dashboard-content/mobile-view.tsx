@@ -1,4 +1,4 @@
-import { useTranslate } from 'i18n-calypso';
+import { __ } from '@wordpress/i18n';
 import {
 	ListItemCards,
 	ListItemCard,
@@ -26,7 +26,6 @@ export default function SitesWithWooPaymentsMobileView( {
 	items: SitesWithWooPaymentsState[];
 	actions: Action[];
 } ) {
-	const translate = useTranslate();
 	const { woopaymentsData, isLoadingWooPaymentsData } = useWooPaymentsContext();
 
 	return (
@@ -35,12 +34,12 @@ export default function SitesWithWooPaymentsMobileView( {
 				{ items.map( ( item ) => (
 					<ListItemCard key={ item.blogId }>
 						<ListItemCardActions actions={ actions } item={ item } />
-						<ListItemCardContent title={ translate( 'Site' ) }>
+						<ListItemCardContent title={ __( 'Site' ) }>
 							<div className="sites-with-woopayments-list-mobile-view__column">
 								<SiteColumn site={ item.siteUrl } />
 							</div>
 						</ListItemCardContent>
-						<ListItemCardContent title={ translate( 'Transactions' ) }>
+						<ListItemCardContent title={ __( 'Transactions' ) }>
 							<div className="sites-with-woopayments-list-mobile-view__column">
 								{ isLoadingWooPaymentsData ? (
 									<TextPlaceholder />
@@ -51,7 +50,7 @@ export default function SitesWithWooPaymentsMobileView( {
 								) }
 							</div>
 						</ListItemCardContent>
-						<ListItemCardContent title={ translate( 'Commissions paid' ) }>
+						<ListItemCardContent title={ __( 'Commissions paid' ) }>
 							<div className="sites-with-woopayments-list-mobile-view__column">
 								{ isLoadingWooPaymentsData ? (
 									<TextPlaceholder />
@@ -62,7 +61,7 @@ export default function SitesWithWooPaymentsMobileView( {
 								) }
 							</div>
 						</ListItemCardContent>
-						<ListItemCardContent title={ translate( 'Timeframe commissions' ) }>
+						<ListItemCardContent title={ __( 'Timeframe commissions' ) }>
 							<div className="sites-with-woopayments-list-mobile-view__column">
 								{ isLoadingWooPaymentsData ? (
 									<TextPlaceholder />
@@ -73,10 +72,10 @@ export default function SitesWithWooPaymentsMobileView( {
 								) }
 							</div>
 						</ListItemCardContent>
-						<ListItemCardContent title={ translate( 'WooPayments status' ) }>
+						<ListItemCardContent title={ __( 'WooPayments status' ) }>
 							<WooPaymentsStatusColumn state={ item.state } siteId={ item.blogId } />
 						</ListItemCardContent>
-						<ListItemCardContent title={ translate( 'Commission eligibility' ) }>
+						<ListItemCardContent title={ __( 'Commission eligibility' ) }>
 							<CommissionEligibilityColumn
 								state={ item.state }
 								siteId={ item.blogId }

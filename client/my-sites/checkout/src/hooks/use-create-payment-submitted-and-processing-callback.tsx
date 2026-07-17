@@ -12,6 +12,7 @@ import {
 	clearSignupDestinationCookie,
 } from 'calypso/signup/storageUtils';
 import { useSelector, useDispatch } from 'calypso/state';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { clearPurchases } from 'calypso/state/purchases/actions';
 import { fetchReceiptCompleted } from 'calypso/state/receipts/actions';
 import hasGravatarDomainQueryParam from 'calypso/state/selectors/has-gravatar-domain-query-param';
@@ -196,6 +197,7 @@ export default function useCreatePaymentSubmittedAndProcessingCallback( {
 			) {
 				debug( 'fetching receipt' );
 				reduxDispatch( fetchReceiptCompleted( receiptId, transactionResult ) );
+				recordDomainBundlePurchasedEvents( responseCart, reduxDispatch );
 			}
 
 			if ( siteId ) {
@@ -339,6 +341,34 @@ async function recordPaymentCompleteAnalytics( {
 			recordCompositeCheckoutErrorDuringAnalytics( {
 				errorObject: err as Error,
 				failureDescription: 'useCreatePaymentSubmittedAndProcessingCallback',
+			} )
+		);
+	}
+}
+
+/**
+ * Completes the domain bundle funnel (shown -> accepted -> purchased) by firing one
+ * `calypso_domain_bundle_purchased` Tracks event per distinct bundle in the purchased cart.
+ * Matches the shape of the `shown`/`accepted` events emitted during domain search.
+ */
+function recordDomainBundlePurchasedEvents(
+	responseCart: ResponseCart,
+	reduxDispatch: CalypsoDispatch
+) {
+	const domainCountByBundle = new Map< string, number >();
+	for ( const product of responseCart.products ) {
+		const groupId = product.extra?.domain_bundle_group_id;
+		if ( ! groupId ) {
+			continue;
+		}
+		domainCountByBundle.set( groupId, ( domainCountByBundle.get( groupId ) ?? 0 ) + 1 );
+	}
+
+	for ( const [ groupId, domainCount ] of domainCountByBundle ) {
+		reduxDispatch(
+			recordTracksEvent( 'calypso_domain_bundle_purchased', {
+				domain_bundle_group_id: groupId,
+				domain_count: domainCount,
 			} )
 		);
 	}

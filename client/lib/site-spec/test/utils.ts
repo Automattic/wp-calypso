@@ -8,11 +8,14 @@
  * - Error handling for missing configurations
  *
  */
+import config from '@automattic/calypso-config';
 import {
 	isSiteSpecEnabled,
 	getSiteSpecUrl,
 	getSiteSpecUrlByType,
 	getDefaultSiteSpecConfig,
+	getEarlyProvisionSiteSpecConfig,
+	getBuildWowSiteSpecConfig,
 } from '../utils';
 
 interface MockWithIsEnabled extends jest.Mock {
@@ -26,7 +29,7 @@ jest.mock( '@automattic/calypso-config', () => {
 } );
 
 describe( 'SiteSpec Utils', () => {
-	const mockConfig = require( '@automattic/calypso-config' );
+	const mockConfig = config as unknown as MockWithIsEnabled;
 
 	beforeEach( () => {
 		// Reset all mocks
@@ -183,6 +186,39 @@ describe( 'SiteSpec Utils', () => {
 			expect( overrides ).toEqual( {
 				client: 'calypso',
 			} );
+		} );
+	} );
+
+	describe( 'getEarlyProvisionSiteSpecConfig', () => {
+		it( 'should route confirmed specs back through the WPCOM Atomic Site Spec flow', () => {
+			const result = getEarlyProvisionSiteSpecConfig();
+
+			expect( result ).toMatchObject( {
+				agentUrl: 'https://api.example.com/agent',
+				agentId: 'test-agent',
+				buildSiteUrl:
+					'/setup/ai-site-builder-spec/site-spec?provision_target=wpcom-atomic&spec_id=',
+			} );
+		} );
+	} );
+
+	describe( 'getBuildWowSiteSpecConfig', () => {
+		it( 'should route confirmed specs through the build-wow Site Spec flow', () => {
+			const result = getBuildWowSiteSpecConfig( {
+				siteSlug: 'example.wordpress.com',
+				siteId: 123,
+				ref: 'referrer',
+				source: 'vega',
+			} );
+			const buildSiteUrl = new URL( result.buildSiteUrl ?? '', 'https://wordpress.com' );
+
+			expect( buildSiteUrl.pathname ).toBe( '/setup/ai-site-builder-spec/site-spec' );
+			expect( buildSiteUrl.searchParams.get( 'build_wow' ) ).toBe( '1' );
+			expect( buildSiteUrl.searchParams.get( 'siteSlug' ) ).toBe( 'example.wordpress.com' );
+			expect( buildSiteUrl.searchParams.get( 'siteId' ) ).toBe( '123' );
+			expect( buildSiteUrl.searchParams.get( 'ref' ) ).toBe( 'referrer' );
+			expect( buildSiteUrl.searchParams.get( 'source' ) ).toBe( 'vega' );
+			expect( result.buildSiteUrl ).toContain( 'spec_id=' );
 		} );
 	} );
 } );
