@@ -202,25 +202,26 @@ const usePricingMetaForGridPlans = ( {
 
 					if ( purchasedPlan ) {
 						const introductoryOffer = getPurchaseIntroductoryOffer( purchasedPlan );
+						const billPeriodDays = Number( purchasedPlan.bill_period_days );
 						const showIntroOfferHeadline =
 							!! showBillingDescriptionForIncreasedRenewalPrice &&
 							introductoryOffer?.isWithinPeriod;
 						const currentTermPrice = showIntroOfferHeadline
 							? introductoryOffer!.costPerIntervalInteger
 							: purchasedPlan.price_integer;
-						const isMonthly = purchasedPlan.bill_period_days === PLAN_MONTHLY_PERIOD;
+						const isMonthly = billPeriodDays === PLAN_MONTHLY_PERIOD;
 
 						if ( isMonthly && monthlyPrice !== currentTermPrice ) {
 							monthlyPrice = currentTermPrice;
 							fullPrice = parseFloat( ( currentTermPrice * 12 ).toFixed( 2 ) );
 						} else if ( fullPrice !== currentTermPrice ) {
-							const term = getTermFromDuration( purchasedPlan.bill_period_days ) || '';
+							const term = getTermFromDuration( billPeriodDays ) || '';
 							monthlyPrice = calculateMonthlyPrice( term, currentTermPrice );
 							fullPrice = currentTermPrice;
 						}
 
 						if ( showIntroOfferHeadline ) {
-							const renewalTerm = getTermFromDuration( purchasedPlan.bill_period_days ) || '';
+							const renewalTerm = getTermFromDuration( billPeriodDays ) || '';
 							renewalPrice = {
 								monthly: isMonthly
 									? purchasedPlan.price_integer

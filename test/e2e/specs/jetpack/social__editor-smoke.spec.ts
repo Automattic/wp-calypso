@@ -1,4 +1,5 @@
 import {
+	DataHelper,
 	EditorPage,
 	envToFeatureKey,
 	envVariables,
@@ -13,7 +14,7 @@ import { expect, tags, test } from '../../lib/pw-base';
  * Keywords: Social, Jetpack, Publicize
  */
 test.describe(
-	'Social: Editor Smoke test',
+	DataHelper.createSuiteTitle( 'Social: Editor Smoke test' ),
 	{ tag: [ tags.CALYPSO_PR, tags.JETPACK_WPCOM_INTEGRATION ] },
 	() => {
 		test( 'As a user, I can see the Social UI in the editor', async ( { page } ) => {

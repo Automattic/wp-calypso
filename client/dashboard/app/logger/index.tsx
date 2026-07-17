@@ -61,7 +61,7 @@ export function handleOnCatch(
 		tags: [ 'dashboard' ],
 		properties: {
 			dashboard_backport: options.dashboard_backport,
-			env: calypsoConfig( 'env_id' ),
+			env_id: calypsoConfig( 'env_id' ),
 			message: error.message,
 			stack: errorInfo.componentStack,
 			path: window.location.href,

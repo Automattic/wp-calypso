@@ -9,7 +9,7 @@ import { ElementHandle } from 'playwright';
 import { tags, test } from '../../lib/pw-base';
 import type { TestAccount } from '@automattic/calypso-e2e';
 
-test.describe( 'P2: Post', { tag: [ tags.P2 ] }, () => {
+test.describe( DataHelper.createSuiteTitle( 'P2: Post' ), { tag: [ tags.P2 ] }, () => {
 	const postContent = DataHelper.getTimestamp();
 
 	let publishedPostURL: string | undefined;
