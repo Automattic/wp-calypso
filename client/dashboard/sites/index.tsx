@@ -215,7 +215,10 @@ export default function Sites() {
 			<InviteAcceptedFlashMessage />
 			{ isModalOpen && (
 				<Modal title={ __( 'Add new site' ) } onRequestClose={ () => setIsModalOpen( false ) }>
-					<AddNewSite context="sites-dashboard" aiSiteBuilderPath="/setup/ai-site-builder" />
+					<AddNewSite
+						context="sites-dashboard"
+						aiSiteBuilderPath="/setup/ai-site-builder-onboarding"
+					/>
 				</Modal>
 			) }
 			<PageLayout

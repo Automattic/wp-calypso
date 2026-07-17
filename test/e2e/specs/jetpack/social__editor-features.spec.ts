@@ -87,7 +87,7 @@ if ( envVariables.JETPACK_TARGET === 'wpcom-deployment' ) {
  * Keywords: Social, Jetpack, Publicize, Editor
  */
 test.describe(
-	'Social: Editor features',
+	DataHelper.createSuiteTitle( 'Social: Editor features' ),
 	{ tag: [ tags.CALYPSO_PR, tags.JETPACK_WPCOM_INTEGRATION ] },
 	() => {
 		for ( const { plan, platform, testAccountName, features, isPrivate } of testCases ) {

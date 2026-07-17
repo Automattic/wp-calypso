@@ -23,14 +23,6 @@
 	transition: opacity 1ms;
 }
 
-/* @wordpress/components FormToggle overrides ----------------------------------------- */
-.components-form-toggle {
-	input[type="checkbox"] {
-		cursor: pointer;
-
-	}
-}
-
 /* @wordpress/components Button overrides --------------------------------------------- */
 .components-button {
 	justify-content: center;
@@ -148,8 +140,8 @@
 			&:hover {
 				color: var(--color-passport-accent);
 			}
-		}	
-	
+		}
+
 		.components-button.is-link {
 			color: var(--color-passport-base);
 		}
@@ -227,7 +219,6 @@
 .components-radio-control {
 	&__input[type="radio"] {
 		padding: 6px;
-		cursor: pointer;
 
 		&:checked {
 			border-color: var(--color-accent);

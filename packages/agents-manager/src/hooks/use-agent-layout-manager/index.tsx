@@ -93,6 +93,7 @@ interface Options {
 
 interface ReturnValue {
 	isDocked: boolean;
+	isSidebarOpen: boolean;
 	canDock: boolean;
 	dock: () => void;
 	undock: () => void;
@@ -144,6 +145,9 @@ export default function useAgentLayoutManager( {
 				: sidebarContainer,
 		[ sidebarContainer ]
 	);
+	const [ isSidebarOpen, setIsSidebarOpen ] = useState(
+		() => defaultOpen || container?.classList.contains( SIDEBAR_OPEN_CLASS ) || false
+	);
 
 	// Initialize docked state, setup portal element, and handle dock/undock changes
 	// Use `useLayoutEffect` to prevent flickering
@@ -169,10 +173,6 @@ export default function useAgentLayoutManager( {
 			if ( shouldRenderSidebar ) {
 				container.classList.add( SIDEBAR_CONTAINER_CLASS );
 				portalRef.current.classList.add( 'agents-manager-chat--docked' );
-
-				if ( defaultOpenRef.current ) {
-					container.classList.add( SIDEBAR_OPEN_CLASS );
-				}
 			} else {
 				portalRef.current.classList.add( 'agents-manager-chat--undocked' );
 			}
@@ -189,7 +189,7 @@ export default function useAgentLayoutManager( {
 			portalRef.current.classList.remove( 'agents-manager-chat--undocked' );
 
 			if ( defaultOpenRef.current ) {
-				container.classList.add( SIDEBAR_OPEN_CLASS );
+				setIsSidebarOpen( true );
 			}
 
 			onDockRef.current();
@@ -205,10 +205,15 @@ export default function useAgentLayoutManager( {
 			);
 			portalRef.current.classList.add( 'agents-manager-chat--undocked' );
 			portalRef.current.classList.remove( 'agents-manager-chat--docked' );
+			setIsSidebarOpen( false );
 
 			onUndockRef.current();
 		}
 	}, [ container, isDocked, isReady, shouldRenderSidebar ] );
+
+	useLayoutEffect( () => {
+		container?.classList.toggle( SIDEBAR_OPEN_CLASS, !! shouldRenderSidebar && isSidebarOpen );
+	}, [ container, isSidebarOpen, shouldRenderSidebar ] );
 
 	// Track focus on the chat panel so the floating chat can raise its z-index. `pointerdown` also
 	// covers clicks on non-focusable regions (e.g. scroll areas) that skip `focusin`
@@ -293,7 +298,7 @@ export default function useAgentLayoutManager( {
 
 		clearTimeout( closeSidebarTimeoutRef.current );
 		container.classList.remove( SIDEBAR_CLOSING_CLASS );
-		container.classList.add( SIDEBAR_OPEN_CLASS );
+		setIsSidebarOpen( true );
 
 		onOpenSidebarRef.current();
 	}, [ canDock, container, isReady ] );
@@ -303,9 +308,8 @@ export default function useAgentLayoutManager( {
 			return;
 		}
 
-		const wasSidebarOpen = container.classList.contains( SIDEBAR_OPEN_CLASS );
-
-		container.classList.remove( SIDEBAR_OPEN_CLASS );
+		const wasSidebarOpen = isSidebarOpen;
+		setIsSidebarOpen( false );
 
 		// Only suppress admin bar pointer events during an actual sidebar-close transition.
 		if ( wasSidebarOpen ) {
@@ -317,7 +321,7 @@ export default function useAgentLayoutManager( {
 		}
 
 		onCloseSidebarRef.current();
-	}, [ canDock, container, isReady ] );
+	}, [ canDock, container, isReady, isSidebarOpen ] );
 
 	const dock = useCallback( () => {
 		if ( ! isReady || ! container ) {
@@ -370,6 +374,7 @@ export default function useAgentLayoutManager( {
 
 	return {
 		isDocked: !! shouldRenderSidebar,
+		isSidebarOpen: !! shouldRenderSidebar && isSidebarOpen,
 		canDock,
 		dock,
 		undock,

@@ -1,7 +1,6 @@
 import {
 	AgentUI,
 	createMessageRenderer,
-	EmptyView,
 	ImageUploader,
 	type ImageUploaderHandle,
 	type MarkdownComponents,
@@ -14,9 +13,11 @@ import { useDispatch, useSelect } from '@wordpress/data';
 import { useCallback, useMemo, useRef } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import clsx from 'clsx';
+import { formatWritingSuggestionLabels } from '../../hooks/use-empty-view-suggestions';
 import useHasAiChatEntryButton from '../../hooks/use-has-ai-chat-entry-button';
 import { AGENTS_MANAGER_STORE } from '../../stores';
 import { getAgentsManagerInlineData } from '../../utils/get-agents-manager-inline-data';
+import { isEditorPage } from '../../utils/is-editor-page';
 import { isReaderChatHost } from '../../utils/is-reader-chat-agent';
 import { recordBigSkyTracksEvent } from '../../utils/tracks';
 import ChatHeader, { type Options as ChatHeaderOptions } from '../chat-header';
@@ -26,6 +27,7 @@ import CustomALink from '../custom-a-link';
 import FeedbackInput from '../feedback-input';
 import { AI } from '../icons';
 import SelectedBlock from '../selected-block';
+import GroupedEmptyView from './grouped-empty-view';
 import type { UseImageUploadResult } from '../../hooks/use-image-upload';
 import type { ExternalContextCard, ExternalContextCardAction } from '../../utils/external-context';
 import type { Message, NoticeConfig } from '@automattic/agenttic-ui/dist/types';
@@ -43,6 +45,8 @@ interface Props {
 	chatHeaderOptions: ChatHeaderOptions;
 	/** Suggestions displayed when the chat is empty. */
 	emptyViewSuggestions?: Suggestion[];
+	/** Whether editor writing suggestions should render in a section. */
+	groupWritingSuggestions?: boolean;
 	/** Indicates if the chat is processing a request. */
 	isProcessing: boolean;
 	/** Custom thinking message to display while the agent is processing. */
@@ -149,6 +153,7 @@ export default function AgentChat( {
 	error = null,
 	chatHeaderOptions,
 	emptyViewSuggestions = [],
+	groupWritingSuggestions = false,
 	isProcessing,
 	thinkingMessage,
 	isLoadingConversation,
@@ -190,6 +195,22 @@ export default function AgentChat( {
 	const mergedComponents = useMemo(
 		() => ( { a: CustomALink, ...markdownComponents } ),
 		[ markdownComponents ]
+	);
+	const shouldFormatWritingSuggestions = groupWritingSuggestions || isEditorPage();
+	const displayedSuggestions = useMemo(
+		() => formatWritingSuggestionLabels( suggestions, shouldFormatWritingSuggestions ),
+		[ shouldFormatWritingSuggestions, suggestions ]
+	);
+	const handleDisplayedSuggestionClick = useCallback(
+		( selectedSuggestion: Suggestion | string ) => {
+			const originalSuggestion =
+				typeof selectedSuggestion === 'string'
+					? selectedSuggestion
+					: suggestions.find( ( suggestion ) => suggestion.id === selectedSuggestion.id ) ??
+					  selectedSuggestion;
+			onSuggestionClick?.( originalSuggestion, suggestions );
+		},
+		[ onSuggestionClick, suggestions ]
 	);
 
 	const messageRenderer = useMemo(
@@ -284,9 +305,9 @@ export default function AgentChat( {
 			variant={ isDocked ? 'embedded' : 'floating' }
 			freeDrag={ ! isDocked }
 			resizable={ ! isDocked }
-			suggestions={ suggestions }
+			suggestions={ displayedSuggestions }
 			clearSuggestions={ clearSuggestions }
-			onSuggestionClick={ onSuggestionClick }
+			onSuggestionClick={ onSuggestionClick ? handleDisplayedSuggestionClick : undefined }
 			floatingChatState={ floatingChatState }
 			onClose={ onClose }
 			onExpand={ onExpand }
@@ -301,10 +322,11 @@ export default function AgentChat( {
 				isLoadingConversation ? (
 					<ChatMessageSkeleton count={ 3 } />
 				) : (
-					<EmptyView
+					<GroupedEmptyView
 						heading={ getEmptyViewHeading() }
 						help={ emptyViewSuggestions.length > 0 ? getEmptyViewHelp() : undefined }
 						suggestions={ emptyViewSuggestions }
+						groupWritingSuggestions={ groupWritingSuggestions }
 						onSuggestionClick={ onSuggestionClick }
 						icon={ <AI size={ 32 } /> }
 					/>

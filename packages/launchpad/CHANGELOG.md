@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.2.4
+
+- Drop the direct `@automattic/components` dependency, resolving a duplicate/mismatched version in the installed dependency tree ([#111979](https://github.com/Automattic/wp-calypso/pull/111979)).
+- Drop unused and trivially-replaceable dependencies ([#111976](https://github.com/Automattic/wp-calypso/pull/111976)).
+
 ## 1.2.3
 
 - Declare React 19 compatibility for package consumers (#111721).

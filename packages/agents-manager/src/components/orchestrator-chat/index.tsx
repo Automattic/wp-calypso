@@ -15,6 +15,7 @@ import { useBroadcastConversationActivity } from '../../hooks/use-broadcast-conv
 import useCheckpointAction from '../../hooks/use-checkpoint-action';
 import useConversation from '../../hooks/use-conversation';
 import useCopyAction from '../../hooks/use-copy-action';
+import { usePageOrSiteEditorSurface } from '../../hooks/use-empty-view-suggestions';
 import useFeedbackAction from '../../hooks/use-feedback-action';
 import { useImageUpload } from '../../hooks/use-image-upload';
 import useRegenerateAction from '../../hooks/use-regenerate-action';
@@ -136,6 +137,8 @@ interface Props {
 	isDocked: boolean;
 	/** Indicates if the chat is expanded (floating mode). */
 	isOpen: boolean;
+	/** Indicates if suggestions are visible in the current layout. */
+	suggestionsVisible: boolean;
 	/** Called when the chat is closed. */
 	onClose: () => void;
 	/** Called when the chat is expanded (floating mode). */
@@ -170,6 +173,7 @@ export default function OrchestratorChat( {
 	emptyViewSuggestions,
 	isDocked,
 	isOpen,
+	suggestionsVisible,
 	onClose,
 	onExpand,
 	chatHeaderOptions,
@@ -202,6 +206,7 @@ export default function OrchestratorChat( {
 		const editor = select( 'core/editor' ) as { getCurrentPostId?: () => number | string };
 		return editor?.getCurrentPostId?.();
 	}, [] );
+	const { isPageOrSiteEditorSurface: groupWritingSuggestions } = usePageOrSiteEditorSurface();
 
 	const {
 		addMessage,
@@ -367,12 +372,10 @@ export default function OrchestratorChat( {
 		},
 	} );
 
-	const areSuggestionsVisible = isOpen || isCompactMode;
-
 	// Use dynamic suggestions from the external provider (e.g., Big Sky block-based suggestions)
 	const maxDynamicSuggestions = isDocked ? undefined : 3;
 	const dynamicSuggestions = useSuggestions?.( maxDynamicSuggestions, {
-		suggestionsVisible: areSuggestionsVisible,
+		suggestionsVisible,
 	} );
 	const dynamicSuggestionsList = dynamicSuggestions?.suggestions ?? [];
 	const replaceEmptyViewSuggestions = dynamicSuggestions?.replaceEmptyViewSuggestions === true;
@@ -877,7 +880,7 @@ export default function OrchestratorChat( {
 	// - Empty chat: show provider empty-view chips plus dynamic chips.
 	// - Active chat/input: show dynamic suggestions only.
 	let displayedEmptyViewSuggestions: Suggestion[] = [];
-	if ( ! areSuggestionsVisible ) {
+	if ( ! suggestionsVisible ) {
 		// Minimized/collapsed: the chat renders no suggestions, so leave the list
 		// empty to avoid firing chat_suggestions_rendered for hidden chips.
 		displayedEmptyViewSuggestions = [];
@@ -948,6 +951,7 @@ export default function OrchestratorChat( {
 			inputValue={ inputValue }
 			onInputChange={ setInputValue }
 			isCompactMode={ isCompactMode }
+			groupWritingSuggestions={ groupWritingSuggestions }
 			imageUpload={ imageUpload }
 			showFeedbackInput={ showFeedbackInput }
 			onSubmitFeedbackText={ submitFeedbackText }
