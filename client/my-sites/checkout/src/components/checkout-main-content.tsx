@@ -1378,6 +1378,14 @@ const StepContainerV2CheckoutFixer = styled.div< {
 				padding-block: 2rem;
 			}
 
+			.checkout-contact-form-step {
+				padding-block: 0 32px;
+			}
+
+			.checkout__payment-method-step {
+				padding-block-start: 0;
+			}
+
 			.checkout-step.is-active.checkout__payment-method-step {
 				padding-bottom: 16px;
 			}
@@ -1445,7 +1453,8 @@ const StepContainerV2CheckoutFixer = styled.div< {
 			   first cart row (vs. the default 24px from WPOrderReviewList), and
 			   drop the first row's top padding so the gap is exactly the list's
 			   margin, not stacked with the line item's own padding. Subsequent
-			   rows keep their 16px+16px rhythm. */
+			   rows keep their 16px+16px rhythm; the last row drops its trailing
+			   padding so it sits flush against the section end. */
 			.wp-checkout__review-order-step .order-review-line-items {
 				margin-block-start: 32px;
 			}
@@ -1454,6 +1463,9 @@ const StepContainerV2CheckoutFixer = styled.div< {
 				> li:first-child
 				.checkout-line-item {
 				padding-block-start: 0;
+			}
+			.wp-checkout__review-order-step .order-review-line-items > li:last-child .checkout-line-item {
+				padding-block-end: 0;
 			}
 			/* Figma 2392:15320 — product name typography. LineItemTitle is an
 			   unclassed styled.div; target it as the first child div of each
