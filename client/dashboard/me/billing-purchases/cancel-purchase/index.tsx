@@ -61,7 +61,6 @@ import {
 	hasAmountAvailableToRefund,
 	hasMarketplaceProduct,
 	isAgencyPartnerType,
-	isExpiredOrRemoved,
 	isRemoved,
 	isGSuiteOrGoogleWorkspaceProductSlug,
 	isJetpackHoldingSitePurchase,
@@ -262,10 +261,13 @@ function getOfferDiscountBasedOnPurchasePrice(
 function availableJetpackSurveySteps( purchase: Purchase, flowType: CancelFlowType ): string[] {
 	const availableSteps = [];
 
-	// If the plan is already expired or is a temporary Jetpack purchase (license),
-	// we only need one "confirm" step for the survey is the removal confirmation
-	// A product that is not in use does not need to collect the survey or show benefits
-	if ( isExpiredOrRemoved( purchase ) || isJetpackHoldingSitePurchase( purchase ) ) {
+	// If the subscription has already been removed or is a temporary Jetpack
+	// purchase (license), we only need one "confirm" step for the survey — the
+	// removal confirmation. A product that is not in use does not need to collect
+	// the survey or show benefits. Note we intentionally do NOT short-circuit for
+	// purchases that are merely past expiry (in the grace period): those still go
+	// through the normal removal flow.
+	if ( isRemoved( purchase ) || isJetpackHoldingSitePurchase( purchase ) ) {
 		return [ CANCEL_CONFIRM_STEP ];
 	}
 
@@ -318,7 +320,7 @@ function getBasicSurveySteps( {
 	const isJetpack = purchase.is_jetpack_plan_or_product;
 	const downgradePlan = getDowngradePlanForPurchase( plans, purchase, upsell );
 	const isDowngradePlan = [ 'downgrade-monthly', 'downgrade-personal' ].includes( upsell ?? '' );
-	const hasExpired = isExpiredOrRemoved( purchase );
+	const hasBeenRemoved = isRemoved( purchase );
 
 	if (
 		isPartnerPurchase( purchase ) &&
@@ -336,11 +338,11 @@ function getBasicSurveySteps( {
 	if ( ! isGSuiteOrGoogleWorkspaceProductSlug( purchase.product_slug ) && ! purchase.is_plan ) {
 		return [ NEXT_ADVENTURE_STEP ];
 	}
-	if ( upsell && ! hasExpired && ! isDowngradePlan ) {
+	if ( upsell && ! hasBeenRemoved && ! isDowngradePlan ) {
 		return [ FEEDBACK_STEP, UPSELL_STEP, NEXT_ADVENTURE_STEP ];
 	}
 	// NOTE: downgradePlan only ever exists if upsell is true (see getDowngradePlanForPurchase).
-	if ( upsell && ! hasExpired && downgradePlan ) {
+	if ( upsell && ! hasBeenRemoved && downgradePlan ) {
 		return [ FEEDBACK_STEP, UPSELL_STEP, NEXT_ADVENTURE_STEP ];
 	}
 	if ( hasQuestionTwo ) {
@@ -608,14 +610,19 @@ function CancelPurchaseInner() {
 
 		const [ firstStep ] = allSteps;
 
-		const hasExpired = isExpiredOrRemoved( purchase );
+		// A grace-period (past-expiry but still active) removal should still go
+		// through the normal flow with its pre-survey confirmation; only fully-
+		// removed purchases short-circuit here. This matches behavior from before
+		// the server began reporting grace-period purchases as "expired".
+		const hasBeenRemoved = isRemoved( purchase );
 		// When intent is URL-sourced (user clicked Cancel or Remove on Purchase
 		// Settings), the pre-survey confirmation MUST render first — regardless
-		// of prior survey completion cache or expired state. The existing
+		// of prior survey completion cache or removed state. The existing
 		// short-circuit (surveyShown: true when REMOVE_PLAN_STEP is first, or
-		// when expired) bypasses our confirmation screen. Gate it on intent
-		// absence so flag-on users always see the matching confirmation.
-		const shortCircuitToSurvey = REMOVE_PLAN_STEP === firstStep || hasExpired;
+		// when the subscription has been removed) bypasses our confirmation
+		// screen. Gate it on intent absence so flag-on users always see the
+		// matching confirmation.
+		const shortCircuitToSurvey = REMOVE_PLAN_STEP === firstStep || hasBeenRemoved;
 		const surveyShownInitial = intent ? false : shortCircuitToSurvey;
 
 		const newState: CancelPurchaseState = {
