@@ -19,6 +19,7 @@
 		}
 	},
 	"i18n_default_locale_slug": "en",
+	"mc_analytics_enabled": true,
 	"wpcom_signup_id": "39911",
 	"wpcom_signup_key": "cOaYKdrkgXz8xY7aysv4fU6wL6sK5J8a6ojReEIAPwggsznj4Cb6mW0nffTxtYT8",
 	"wpcom_url": "https://wordpress.com",
@@ -33,7 +34,7 @@
 		"dark-mode": true,
 		"dashboard/account-recovery-interstitial": false,
 		"dashboard/dark-mode-rollout": false,
-		"dashboard/enable-percentage-rollout": true,
+		"dashboard/enable-percentage-rollout": false,
 		"dashboard/opt-in-welcome-modal": true,
 		"dashboard/simulate-full-rollout": false,
 		"dashboard/wp-beta-program": true,

@@ -19,6 +19,10 @@ import EmptyContent from './empty';
 import TagStreamHeader from './header';
 import './style.scss';
 
+// Matches emoji and keycap sequences (# / * / 0-9 + optional U+FE0F + U+20E3).
+const EMOJI_TITLE_PATTERN =
+	/\p{Emoji_Presentation}|\p{Extended_Pictographic}|[#*0-9]\uFE0F?\u20E3/u;
+
 class TagStream extends Component {
 	static propTypes = {
 		encodedTagSlug: PropTypes.string,
@@ -26,7 +30,7 @@ class TagStream extends Component {
 	};
 
 	state = {
-		isEmojiTitle: false,
+		emojiText: null,
 	};
 
 	_isMounted = false;
@@ -38,29 +42,10 @@ class TagStream extends Component {
 				this.setState( { emojiText: emojiText.default } );
 			}
 		} );
-		import( /* webpackChunkName: "async-load-twemoji" */ 'twemoji' ).then( ( twemoji ) => {
-			if ( this._isMounted ) {
-				const title = this.props.decodedTagSlug;
-				this.setState( {
-					twemoji: twemoji.default,
-					isEmojiTitle: title && twemoji.default.test( title ),
-				} );
-			}
-		} );
 	}
 
 	componentWillUnmount() {
 		this._isMounted = false;
-	}
-
-	static getDerivedStateFromProps( nextProps, prevState ) {
-		if ( ! prevState.twemoji || ! nextProps.decodedTagSlug ) {
-			return null;
-		}
-
-		return {
-			isEmojiTitle: prevState.twemoji.test( nextProps.decodedTagSlug ),
-		};
 	}
 
 	isSubscribed = () => {
@@ -105,7 +90,9 @@ class TagStream extends Component {
 		let encodedTagSlug = this.props.encodedTagSlug;
 
 		// If the tag contains emoji, convert to text equivalent
-		if ( this.state.emojiText && this.state.isEmojiTitle ) {
+		const isEmojiTitle =
+			!! this.props.decodedTagSlug && EMOJI_TITLE_PATTERN.test( this.props.decodedTagSlug );
+		if ( this.state.emojiText && isEmojiTitle ) {
 			encodedTagSlug = this.state.emojiText.convert( this.props.decodedTagSlug, {
 				delimiter: '',
 			} );

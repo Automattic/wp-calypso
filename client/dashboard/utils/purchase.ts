@@ -357,6 +357,13 @@ export function getTitleForDisplay( purchase: Purchase ): string {
 		} );
 	}
 
+	if ( purchase.is_plan ) {
+		/* translators: %(productName)s is the product name "WordPress.com Personal" */
+		return sprintf( __( '%(productName)s Plan' ), {
+			productName: purchase.product_name.replace( /\s*\(.*$/, '' ).trim(),
+		} );
+	}
+
 	return purchase.product_name;
 }
 
@@ -397,7 +404,7 @@ export function getSubtitleForDisplay( purchase: Purchase ): string | null {
 	}
 
 	if ( purchase.is_plan ) {
-		return __( 'Site plan' );
+		return null;
 	}
 
 	if ( purchase.is_domain_registration ) {

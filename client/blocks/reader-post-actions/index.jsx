@@ -1,6 +1,4 @@
-import { readTeamsQuery } from '@automattic/api-queries';
 import { isEnabled } from '@automattic/calypso-config';
-import { useQuery } from '@tanstack/react-query';
 import { Button } from '@wordpress/components';
 import { category } from '@wordpress/icons';
 import clsx from 'clsx';
@@ -10,7 +8,6 @@ import CommentButton from 'calypso/blocks/comment-button';
 import ReaderSaveButton from 'calypso/blocks/reader-save-button';
 import ShareButton from 'calypso/blocks/reader-share';
 import ReaderCommentIcon from 'calypso/reader/components/icons/comment-icon';
-import { isAutomatticTeamMember } from 'calypso/reader/lib/teams';
 import LikeButton from 'calypso/reader/like-button';
 import {
 	isCommentsOpen,
@@ -21,7 +18,6 @@ import {
 import { useSpacePicker } from 'calypso/reader/spaces/subscribe-with-space/use-space-picker';
 import { useSelector } from 'calypso/state';
 import getPrimarySiteId from 'calypso/state/selectors/get-primary-site-id';
-import { ReaderFreshlyPressedButton } from '../reader-freshly-pressed-button';
 import './style.scss';
 
 /**
@@ -55,9 +51,6 @@ const ReaderPostActions = ( {
 		'is-discreet': variant === 'discreet',
 		'is-split': split,
 	} );
-	const { data } = useQuery( readTeamsQuery() );
-	const isAutomattician = isAutomatticTeamMember( data?.teams ?? [] );
-	const shouldShowFreshlyPressed = fullPost && isAutomattician && showShare;
 
 	return (
 		<>
@@ -125,11 +118,6 @@ const ReaderPostActions = ( {
 							showZeroCount={ false }
 							likeSource="reader"
 						/>
-					</li>
-				) }
-				{ shouldShowFreshlyPressed && (
-					<li className="reader-post-actions__item">
-						<ReaderFreshlyPressedButton blogId={ post.site_ID } postId={ post.ID } />
 					</li>
 				) }
 			</ul>

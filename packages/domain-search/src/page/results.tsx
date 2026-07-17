@@ -1,4 +1,4 @@
-import { useIsMutating, useMutation, useQueryClient } from '@tanstack/react-query';
+import { useIsMutating, useMutation } from '@tanstack/react-query';
 import { __experimentalVStack as VStack } from '@wordpress/components';
 import { chevronDown, chevronUp, Icon } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
@@ -37,11 +37,6 @@ type AddBundleToCartResult = {
 	wasAdded: boolean;
 };
 
-type UnavailableBundle = {
-	groupId: string;
-	query: string;
-};
-
 const StickyCompactBanner = () => {
 	const { __ } = useI18n();
 	const [ isExpanded, setIsExpanded ] = useState( false );
@@ -74,9 +69,7 @@ const StickyCompactBanner = () => {
 
 export const ResultsPage = () => {
 	const { __ } = useI18n();
-	const { slots, config, events, cart, query, queries } = useDomainSearch();
-	const queryClient = useQueryClient();
-	const [ unavailableBundle, setUnavailableBundle ] = useState< UnavailableBundle >();
+	const { slots, config, events, cart, query } = useDomainSearch();
 
 	const { mutationId, isCurrentMutation } = useIsCurrentMutation();
 
@@ -108,16 +101,6 @@ export const ResultsPage = () => {
 				events.onBundleAddToCart( bundle );
 			}
 		},
-		onError: async ( error, { bundle, query: failedQuery } ) => {
-			if ( ! isBundleUnavailableError( error ) ) {
-				return;
-			}
-
-			setUnavailableBundle( { groupId: bundle.bundle_group_id, query: failedQuery } );
-			await queryClient.invalidateQueries( {
-				queryKey: queries.bundleSuggestion( failedQuery ).queryKey,
-			} );
-		},
 		networkMode: 'always',
 		retry: false,
 	} );
@@ -128,17 +111,32 @@ export const ResultsPage = () => {
 	// query produces a new bundle suggestion, so drop the stale error.
 	useEffect( () => {
 		resetAddBundle();
-		setUnavailableBundle( undefined );
 	}, [ query, resetAddBundle ] );
 
-	// The cart rejects with the server's first cart message (a CartActionError),
-	// which is already user-facing copy. Fall back when it's missing. Clicking
-	// "Get bundle" again re-fires the mutation, which clears the error state.
-	const bundleErrorMessage =
-		isCurrentMutation && addBundleError && ! isBundleUnavailableError( addBundleError )
-			? addBundleError.message ||
-			  __( 'Sorry, we couldn’t add the bundle to your cart. Please try again.' )
-			: undefined;
+	// Turn an add failure into a notice on the card rather than silently doing
+	// nothing. The "unavailable" case (the backend stripped an incomplete bundle
+	// group, so fewer members came back than were sent) only carries a generic
+	// internal message ("The domain bundle could not be added to the cart."), so
+	// override it with friendlier, more actionable copy; every other error
+	// surfaces the cart's own message (a CartActionError, already user-facing)
+	// with a generic fallback. Clicking "Get bundle" again re-fires the mutation,
+	// which clears the error state.
+	const bundleErrorMessage = ( () => {
+		if ( ! isCurrentMutation || ! addBundleError ) {
+			return undefined;
+		}
+
+		if ( isBundleUnavailableError( addBundleError ) ) {
+			return __(
+				'This bundle is no longer available — one or more of the domains may have just been registered.'
+			);
+		}
+
+		return (
+			addBundleError.message ||
+			__( 'Sorry, we couldn’t add the bundle to your cart. Please try again.' )
+		);
+	} )();
 
 	const {
 		isLoading: isLoadingSuggestions,
@@ -149,13 +147,10 @@ export const ResultsPage = () => {
 	// The top BundleCard is the FQDN path only; a bare-term search shows inline
 	// bundle rows beneath trigger suggestions instead (see useInlineBundles).
 	const isFqdn = isFqdnQuery( query );
-	const visibleBundleSuggestion =
-		! isFqdn ||
-		( unavailableBundle &&
-			bundleSuggestion?.bundle_group_id === unavailableBundle.groupId &&
-			query === unavailableBundle.query )
-			? undefined
-			: bundleSuggestion;
+	// A failed add keeps the card mounted (with an error notice) rather than
+	// hiding it, so the user sees the failure instead of the offer silently
+	// vanishing. See bundleErrorMessage above.
+	const visibleBundleSuggestion = isFqdn ? bundleSuggestion : undefined;
 	const numberOfInitialVisibleSuggestions =
 		config.numberOfDomainsResultsPerPage - featuredSuggestions.length;
 

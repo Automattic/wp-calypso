@@ -22,9 +22,6 @@ import {
 	usePaymentMethod,
 	useTransactionStatus,
 	TransactionStatus,
-	useAvailablePaymentMethodIds,
-	useMakeStepActive,
-	useNextIncompleteStepId,
 } from '@automattic/composite-checkout';
 import { formatCurrency } from '@automattic/number-formatters';
 import { ONBOARDING_FLOW, Step } from '@automattic/onboarding';
@@ -354,57 +351,6 @@ function CheckoutSidebarNudge( {
 	);
 }
 
-const ChangePaymentMethodButton = styled.button`
-	display: block;
-	margin: 12px auto 0;
-	padding: 0;
-	border: none;
-	background: none;
-	color: ${ ( props ) => props.theme.colors.highlight };
-	font-size: 14px;
-	text-align: center;
-	text-decoration: underline;
-	cursor: pointer;
-
-	&:hover {
-		text-decoration: none;
-	}
-`;
-
-// A "Use a different payment method" link rendered below the submit button via
-// CheckoutFormSubmit's generic `submitButtonFooter` slot. This is WP.com-specific
-// UX (the concept of a "payment method step", the count heuristic, the analytics
-// event), so it lives here rather than in the generic composite-checkout package.
-export function ChangePaymentMethodFooter( { stepId }: { stepId: string } ) {
-	const translate = useTranslate();
-	const reduxDispatch = useReduxDispatch();
-	const makeStepActive = useMakeStepActive();
-	const availablePaymentMethodIds = useAvailablePaymentMethodIds();
-	// Hide the link while the submit area is showing "Continue" (i.e. there is an
-	// earlier incomplete step) so it only appears alongside the final Pay button.
-	const nextIncompleteStepId = useNextIncompleteStepId();
-
-	if ( availablePaymentMethodIds.length <= 1 || nextIncompleteStepId ) {
-		return null;
-	}
-
-	const goToChangePaymentMethod = async () => {
-		reduxDispatch( recordTracksEvent( 'calypso_checkout_composite_change_payment_method_click' ) );
-		await makeStepActive( stepId );
-		document.getElementById( stepId )?.scrollIntoView?.( { behavior: 'smooth', block: 'start' } );
-	};
-
-	return (
-		<ChangePaymentMethodButton
-			type="button"
-			className="checkout-steps__change-payment-method-button"
-			onClick={ goToChangePaymentMethod }
-		>
-			{ translate( 'Use a different payment method' ) }
-		</ChangePaymentMethodButton>
-	);
-}
-
 // Renders CheckoutFormSubmit inside CheckoutStepGroup (so it keeps full step-state
 // awareness) while portaling its output into the sidebar slot registered via
 // SubmitButtonSlotContext. The sidebar button IS the active payment-method submit
@@ -419,11 +365,7 @@ function PortaledCheckoutFormSubmit( {
 		return null;
 	}
 	return createPortal(
-		<CheckoutFormSubmit
-			validateForm={ validateForm }
-			continueToNextIncompleteStep
-			submitButtonFooter={ <ChangePaymentMethodFooter stepId="payment-method-step" /> }
-		/>,
+		<CheckoutFormSubmit validateForm={ validateForm } continueToNextIncompleteStep />,
 		slotEl
 	);
 }

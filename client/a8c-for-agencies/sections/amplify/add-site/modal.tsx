@@ -29,9 +29,9 @@ export default function AmplifyAddSiteModal( { onClose }: { onClose: () => void 
 	const handleTargetChange = useCallback( ( url: string ) => setTargetUrl( url ), [] );
 
 	const mutation = useStartAmplifyAnalysis( {
-		// The run is seeded into the jobs cache by the hook, so closing this
-		// modal reveals the in-progress row. Here we just switch to the
-		// progress view instead of showing a notice.
+		// The new report is seeded into the reports cache by the hook, so
+		// closing this modal reveals the in-progress row. Here we just switch
+		// to the progress view instead of showing a notice.
 		onSuccess: () => setInProgress( true ),
 		onError: () => {
 			dispatch(

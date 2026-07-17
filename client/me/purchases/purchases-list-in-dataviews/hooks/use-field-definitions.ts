@@ -13,10 +13,12 @@ export function usePurchasesFieldDefinitions( {
 	sites,
 	transferredOwnershipPurchases = [],
 	getManagePurchaseUrlFor,
+	visibleFields,
 }: {
 	sites: SiteDetails[];
 	transferredOwnershipPurchases?: Purchases.Purchase[];
 	getManagePurchaseUrlFor: GetManagePurchaseUrlFor;
+	visibleFields?: string[];
 } ) {
 	const translate = useTranslate();
 	const moment = useLocalizedMoment();
@@ -30,6 +32,7 @@ export function usePurchasesFieldDefinitions( {
 			getManagePurchaseUrlFor,
 			sites,
 			transferredOwnershipPurchases,
+			visibleFields,
 		} );
 		return fieldDefinitions;
 	}, [
@@ -39,6 +42,7 @@ export function usePurchasesFieldDefinitions( {
 		sites,
 		transferredOwnershipPurchases,
 		getManagePurchaseUrlFor,
+		visibleFields,
 	] );
 }
 

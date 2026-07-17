@@ -18,7 +18,7 @@ export default function useGetPurchasedStorageAddOn( {
 		return null;
 	}
 
-	const purchase: Purchases.Purchase = Object.values( matchingPurchases )[ 0 ];
-	const storageAddOnQuantity = purchase.purchaseRenewalQuantity;
+	const purchase: Purchases.RawPurchase = Object.values( matchingPurchases )[ 0 ];
+	const storageAddOnQuantity = purchase.renewal_price_tier_usage_quantity;
 	return storageAddOns.find( ( addOn ) => addOn?.quantity === storageAddOnQuantity ) ?? null;
 }

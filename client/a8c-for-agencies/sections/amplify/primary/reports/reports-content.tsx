@@ -17,13 +17,16 @@ import {
 } from 'calypso/a8c-for-agencies/components/items-dashboard/constants';
 import ItemsDataViews from 'calypso/a8c-for-agencies/components/items-dashboard/items-dataviews';
 import { DataViewsState } from 'calypso/a8c-for-agencies/components/items-dashboard/items-dataviews/interfaces';
+import useArchiveAmplifyReport from 'calypso/a8c-for-agencies/data/amplify/use-archive-amplify-report';
 import { DataViews } from 'calypso/components/dataviews';
 import EmptyState from 'calypso/dashboard/components/empty-state';
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { errorNotice, successNotice } from 'calypso/state/notices/actions';
+import ArchiveReportConfirmationDialog from './archive-report-confirmation-dialog';
 import useAmplifyReportRows, { AmplifyReportRow } from './use-report-rows';
 import type { BadgeType } from '@automattic/components';
-import type { Field } from '@wordpress/dataviews';
+import type { Action, Field } from '@wordpress/dataviews';
 import type { AmplifyMode } from 'calypso/a8c-for-agencies/data/amplify/types';
 import type { ReactNode } from 'react';
 
@@ -35,7 +38,7 @@ function modeLabel( mode: AmplifyMode ): string {
 			return __( 'Human' );
 		case 'ai':
 			return __( 'AI' );
-		case 'fullanalysis':
+		case 'full':
 			return __( 'Full' );
 		default:
 			return mode;
@@ -45,7 +48,7 @@ function modeLabel( mode: AmplifyMode ): string {
 const MODE_BADGE_TYPE: Record< AmplifyMode, BadgeType > = {
 	human: 'info-blue',
 	ai: 'info-purple',
-	fullanalysis: 'info-green',
+	full: 'info-green',
 };
 
 function formatTimestamp( iso: string ): string {
@@ -85,6 +88,9 @@ export default function AmplifyReportsContent() {
 	const dispatch = useDispatch();
 	const { rows, isLoading, error } = useAmplifyReportRows();
 
+	const [ reportToArchive, setReportToArchive ] = useState< AmplifyReportRow | null >( null );
+	const { mutate: archiveReport, isPending: isArchiving } = useArchiveAmplifyReport();
+
 	// Align the toolbar controls with the table's column padding: 64px on wide
 	// viewports, 16px once the table switches to its narrow padding.
 	const isNarrowView = useBreakpoint( '<660px' );
@@ -111,20 +117,11 @@ export default function AmplifyReportsContent() {
 			{
 				id: 'site',
 				label: __( 'Site' ),
-				// Join name + url so the search box matches either token.
-				getValue: ( { item }: { item: AmplifyReportRow } ) =>
-					[ item.agencyName, item.url ].filter( Boolean ).join( ' ' ),
+				getValue: ( { item }: { item: AmplifyReportRow } ) => item.url,
 				render: ( { item }: { item: AmplifyReportRow } ): ReactNode => (
-					<VStack spacing={ 0 }>
-						<Text weight={ 500 } truncate>
-							{ item.agencyName || item.url }
-						</Text>
-						{ item.agencyName && (
-							<Text variant="muted" size={ 12 } truncate>
-								{ item.url }
-							</Text>
-						) }
-					</VStack>
+					<Text weight={ 500 } truncate>
+						{ item.url }
+					</Text>
 				),
 				enableHiding: false,
 				enableSorting: true,
@@ -159,7 +156,7 @@ export default function AmplifyReportsContent() {
 					}
 					return (
 						<HStack spacing={ 2 } justify="flex-start" expanded={ false } wrap>
-							{ item.mode === 'fullanalysis' ? (
+							{ item.mode === 'full' ? (
 								<>
 									<ScoreBadge score={ item.humanScore } label={ __( 'Human' ) } />
 									<ScoreBadge score={ item.aiScore } label={ __( 'AI' ) } />
@@ -181,7 +178,7 @@ export default function AmplifyReportsContent() {
 				label: __( 'Time & date' ),
 				getValue: ( { item }: { item: AmplifyReportRow } ) => item.timestamp,
 				render: ( { item }: { item: AmplifyReportRow } ): ReactNode => (
-					<Text variant="muted">{ formatTimestamp( item.timestamp ) }</Text>
+					<Text variant="muted">{ item.timestamp ? formatTimestamp( item.timestamp ) : '—' }</Text>
 				),
 				enableHiding: false,
 				enableSorting: true,
@@ -198,11 +195,15 @@ export default function AmplifyReportsContent() {
 							</Badge>
 						);
 					}
-					if ( item.rowStatus === 'pending' ) {
+					if ( item.rowStatus === 'pending' || item.rowStatus === 'in_progress' ) {
 						return (
 							<HStack spacing={ 2 } justify="flex-start" expanded={ false }>
 								<Spinner />
-								<Text variant="muted">{ __( 'Analysis in progress' ) }</Text>
+								<Text variant="muted">
+									{ item.rowStatus === 'pending'
+										? __( 'Waiting to start' )
+										: __( 'Analysis in progress' ) }
+								</Text>
 							</HStack>
 						);
 					}
@@ -235,6 +236,61 @@ export default function AmplifyReportsContent() {
 		],
 		[ dispatch ]
 	);
+
+	const actions: Action< AmplifyReportRow >[] = useMemo(
+		() => [
+			{
+				id: 'archive-report',
+				label: __( 'Archive' ),
+				isPrimary: false,
+				callback: ( items: AmplifyReportRow[] ) => {
+					dispatch(
+						recordTracksEvent( 'calypso_a4a_amplify_report_archive_click', {
+							report_id: items[ 0 ].id,
+							mode: items[ 0 ].mode,
+						} )
+					);
+					setReportToArchive( items[ 0 ] );
+				},
+			},
+		],
+		[ dispatch ]
+	);
+
+	const handleArchiveConfirm = () => {
+		if ( ! reportToArchive ) {
+			return;
+		}
+		dispatch(
+			recordTracksEvent( 'calypso_a4a_amplify_report_archive_confirm', {
+				report_id: reportToArchive.id,
+				mode: reportToArchive.mode,
+			} )
+		);
+		archiveReport(
+			{ reportId: reportToArchive.id },
+			{
+				onSuccess: () => {
+					dispatch(
+						successNotice( __( 'The report has been archived.' ), {
+							id: 'amplify-archive-report-success',
+							duration: 5000,
+						} )
+					);
+					setReportToArchive( null );
+				},
+				onError: ( archiveError ) => {
+					dispatch(
+						errorNotice( archiveError.message || __( 'Something went wrong. Please try again.' ), {
+							id: 'amplify-archive-report-error',
+							duration: 5000,
+						} )
+					);
+					setReportToArchive( null );
+				},
+			}
+		);
+	};
 
 	const { data: items, paginationInfo: pagination } = useMemo(
 		() => filterSortAndPaginate( rows, dataViewsState, fields ),
@@ -277,8 +333,9 @@ export default function AmplifyReportsContent() {
 					getItemId: ( item: AmplifyReportRow ) => item.id,
 					pagination,
 					enableSearch: true,
-					searchLabel: __( 'Search by site or URL' ),
+					searchLabel: __( 'Search by URL' ),
 					fields,
+					actions,
 					setDataViewsState,
 					dataViewsState,
 					defaultLayouts: { table: {} },
@@ -295,6 +352,14 @@ export default function AmplifyReportsContent() {
 				<DataViews.Layout />
 				<DataViews.Footer />
 			</ItemsDataViews>
+			{ reportToArchive && (
+				<ArchiveReportConfirmationDialog
+					report={ reportToArchive }
+					onClose={ () => setReportToArchive( null ) }
+					onConfirm={ handleArchiveConfirm }
+					isLoading={ isArchiving }
+				/>
+			) }
 		</div>
 	);
 }

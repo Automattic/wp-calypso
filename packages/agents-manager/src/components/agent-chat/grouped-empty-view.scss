@@ -1,0 +1,130 @@
+.agents-manager-grouped-empty-view {
+	display: flex;
+	width: 100%;
+	flex-direction: column;
+	gap: 0;
+
+	// Agenttic UI does not expose stable hooks for joining its suggestion rows.
+	> [class*='EmptyView-module_container']
+		[class*='Suggestions-module_vertical']
+		> div:last-of-type
+		[class*='Suggestions-module_button'] {
+		border-end-start-radius: 0;
+		border-end-end-radius: 0;
+	}
+
+	&__help {
+		margin: var( --spacing-6 ) 0 0;
+		padding: var( --spacing ) var( --spacing-4 );
+		color: var( --color-foreground );
+		font-size: var( --text-sm );
+		font-weight: 400;
+		line-height: var( --text-sm--line-height );
+	}
+
+	&__final-suggestion {
+		margin-top: -1px;
+		padding: 0;
+	}
+
+	&--has-final-suggestion {
+		.agents-manager-writing-suggestions__toggle {
+			border-end-start-radius: 0;
+			border-end-end-radius: 0;
+		}
+
+		.agents-manager-writing-suggestions__list
+			> div:last-of-type
+			[class*='Suggestions-module_button'] {
+			border-end-start-radius: 0;
+			border-end-end-radius: 0;
+		}
+	}
+}
+
+.agents-manager-writing-suggestions {
+	width: 100%;
+
+	&__toggle {
+		display: grid;
+		width: 100%;
+		grid-template-columns: minmax( 0, 1fr ) auto auto;
+		align-items: center;
+		gap: var( --spacing-2 );
+		margin-top: -1px;
+		padding: 14px 16px;
+		border: 1px solid var( --color-muted );
+		border-radius: 0 0 var( --radius-sm ) var( --radius-sm );
+		background: var( --color-background );
+		color: var( --color-foreground );
+		cursor: pointer;
+		text-align: left;
+
+		&[aria-expanded='true'] {
+			border-end-start-radius: 0;
+			border-end-end-radius: 0;
+		}
+
+		&:hover {
+			background-color: color-mix( in srgb, var( --color-background ) 50%, var( --color-muted ) );
+		}
+
+		&:focus-visible {
+			outline: 2px solid var( --color-ring );
+			outline-offset: -2px;
+		}
+	}
+
+	&__title {
+		font-size: var( --text-xs );
+		font-weight: var( --font-weight-medium );
+	}
+
+	&__content {
+		display: flex;
+		min-width: 0;
+		flex-direction: column;
+	}
+
+	&__description {
+		color: var( --color-muted-foreground );
+		font-size: var( --text-xs );
+		font-weight: 400;
+		line-height: 20px;
+	}
+
+	&__count {
+		color: var( --color-muted-foreground );
+		font-size: var( --text-xs );
+		font-variant-numeric: tabular-nums;
+	}
+
+	&__chevron {
+		color: var( --color-foreground );
+		fill: currentColor;
+
+		path {
+			fill: currentColor;
+		}
+	}
+
+	&__list {
+		margin-top: -1px;
+		padding: 0;
+	}
+}
+
+// Match Agenttic UI's specificity so the nested list joins the disclosure row.
+.agents-manager-writing-suggestions__list.agents-manager-writing-suggestions__list
+	> div:first-of-type
+	[class*='Suggestions-module_button'] {
+	border-start-start-radius: 0;
+	border-start-end-radius: 0;
+}
+
+.agents-manager-grouped-empty-view__final-suggestion.agents-manager-grouped-empty-view__final-suggestion
+	> div:first-of-type
+	[class*='Suggestions-module_button'] {
+	border-start-start-radius: 0;
+	border-start-end-radius: 0;
+}

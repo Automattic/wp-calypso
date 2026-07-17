@@ -23,6 +23,10 @@ export function isAdminBarInEditor(): boolean {
  * Whether an editor toolbar entry point can show at all: on a block editor page, on desktop, and
  * with the omnibar off (when it's on, the entries live in the editor admin bar instead). All
  * checks are synchronous, so it's safe to read during render — e.g. from `hasAiChatEntryButton()`.
+ *
+ * Intentionally stays `true` on the Site Editor navigation view, where the toolbar is hidden:
+ * the entry `Fill`s must stay registered so the buttons appear once the canvas toolbar mounts.
+ * `hasAiChatEntryButton()` excludes that view on its own.
  */
 function isEditorEntryVisible(): boolean {
 	return (

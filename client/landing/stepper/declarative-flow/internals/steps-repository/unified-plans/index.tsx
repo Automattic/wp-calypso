@@ -1,3 +1,4 @@
+import { getIntervalTypeForTerm, getPlan, isFreePlan } from '@automattic/calypso-products';
 import { OnboardSelect } from '@automattic/data-stores';
 import { DOMAIN_FLOW, ONBOARDING_FLOW, Step, useStepPersistedState } from '@automattic/onboarding';
 import { useSelect, useDispatch as useWPDispatch } from '@wordpress/data';
@@ -170,9 +171,9 @@ const PlansStepAdaptor: StepType< {
 	const isUsingStepContainerV2 =
 		shouldUseStepContainerV2( props.flow ) || props.flow === DOMAIN_FLOW;
 
-	// The downgrade flow only lets users move between paid plans on the same billing
-	// term, so hide the free and enterprise plans (not valid downgrade targets) and
-	// the billing term selector.
+	// The downgrade flow only lets users move between paid plans, so hide the free
+	// and enterprise plans (not valid downgrade targets) and default the billing
+	// term selector to the currently active plan's term.
 	const isDowngradeFlow = defaultPlansIntent === 'plans-upgrade-or-downgrade';
 
 	const themeHideProps: {
@@ -180,6 +181,18 @@ const PlansStepAdaptor: StepType< {
 		hidePersonalPlan?: boolean;
 		hidePremiumPlan?: boolean;
 	} = getHidePlanPropsBasedOnThemeType( selectedThemeType || '' );
+
+	const currentPlanSlug = site?.plan?.product_slug;
+	const currentPlanIntervalType =
+		currentPlanSlug && ! isFreePlan( currentPlanSlug )
+			? getIntervalTypeForTerm( getPlan( currentPlanSlug )?.term ?? '' )
+			: null;
+
+	useEffect( () => {
+		if ( isDowngradeFlow && planInterval === undefined && currentPlanIntervalType ) {
+			setPlanInterval( currentPlanIntervalType );
+		}
+	}, [ isDowngradeFlow, planInterval, currentPlanIntervalType ] );
 
 	if ( isLoadingSelectedTheme ) {
 		return isUsingStepContainerV2 ? <Step.Loading /> : <Loading />;
@@ -192,7 +205,7 @@ const PlansStepAdaptor: StepType< {
 			hidePersonalPlan={ hidePersonalPlanOverride || themeHideProps.hidePersonalPlan }
 			hidePremiumPlan={ hidePremiumPlanOverride || themeHideProps.hidePremiumPlan }
 			hideEcommercePlan={ hideEcommercePlanOverride }
-			hidePlanTypeSelector={ hidePlanTypeSelectorOverride || isDowngradeFlow }
+			hidePlanTypeSelector={ hidePlanTypeSelectorOverride }
 			headerText={ headerText }
 			subHeaderText={ subHeaderText }
 			highlightLabelOverrides={ highlightLabelOverrides }
