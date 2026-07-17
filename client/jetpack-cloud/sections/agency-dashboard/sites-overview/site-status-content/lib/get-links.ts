@@ -41,7 +41,7 @@ const getLinks = (
 			isExternalLink = isWPCOMAtomicSiteCreationEnabled && isAtomicSite;
 
 			if ( siteError && siteId && ! isExternalLink ) {
-				link = addQueryArgs( `/settings/disconnect-site/confirm/${ siteSlug }`, {
+				link = addQueryArgs( `/settings/disconnect-site/${ siteSlug }`, {
 					site_id: siteId,
 					site_url: siteSlug,
 					type: 'down',

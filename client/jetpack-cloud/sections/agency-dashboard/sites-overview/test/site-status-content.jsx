@@ -52,7 +52,7 @@ describe( 'SiteStatusContent', () => {
 		expect( href ).toBe( '/activity-log/mycoolsite.example::wordpress' );
 	} );
 
-	it( 'renders a remove-site link for disconnected agency sites', () => {
+	it( 'renders a troubleshooting link for disconnected agency sites', () => {
 		const SITE_URL = 'metalcoreminute.example';
 		const SITE_ID = 987654321;
 
@@ -84,7 +84,7 @@ describe( 'SiteStatusContent', () => {
 		const button = screen.getByText( SITE_URL, { role: 'button' } );
 		const href = button.getAttribute( 'href' );
 		expect( href ).toBe(
-			`/settings/disconnect-site/confirm/${ SITE_URL }?site_id=${ SITE_ID }&site_url=${ SITE_URL }&type=down`
+			`/settings/disconnect-site/${ SITE_URL }?site_id=${ SITE_ID }&site_url=${ SITE_URL }&type=down`
 		);
 	} );
 } );
