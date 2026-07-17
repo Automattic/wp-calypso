@@ -26,7 +26,7 @@ if ( 'contact' === $current_page_slug ) {
 						</svg>
 					</div>
 					<h3 class="support-footer__card-title"><?php esc_html_e( 'Contact WordPress.com customer support', 'happy-blocks' ); ?></h3>
-					<p class="support-footer__card-description"><?php esc_html_e( 'Get answers from WordPress Agent, with access to 24/7 expert human support on paid plans.', 'happy-blocks' ); ?></p>
+					<p class="support-footer__card-description"><?php esc_html_e( 'Get answers from our AI assistant, with access to 24/7 expert human support on paid plans.', 'happy-blocks' ); ?></p>
 				</div>
 			</a>
 			<a href="<?php echo esc_url( localized_wpcom_url( 'https://wordpress.com/wp-login.php?action=recovery' ) ); ?>" class="support-content-resource" data-track-destination="login_recovery">
@@ -78,7 +78,7 @@ if ( 'contact' === $current_page_slug ) {
 							</svg>
 						</div>
 						<h3 class="support-footer__card-title"><?php esc_html_e( 'Contact us', 'happy-blocks' ); ?></h3>
-						<p class="support-footer__card-description"><?php esc_html_e( 'Get answers from WordPress Agent, with access to 24/7 expert human support on paid plans.', 'happy-blocks' ); ?></p>
+						<p class="support-footer__card-description"><?php esc_html_e( 'Get answers from our AI assistant, with access to 24/7 expert human support on paid plans.', 'happy-blocks' ); ?></p>
 					</div>
 				</a>
 			<?php if ( 'support-forums' === $current_page_slug ) : ?>

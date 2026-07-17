@@ -42,12 +42,12 @@ export default function SupportCard() {
 		<HostingCard className="support-card" title={ translate( 'Need some help?' ) }>
 			<p>
 				{ hasEnTranslation(
-					'WordPress Agent can answer your questions and connect you to our Happiness Engineers for further assistance.'
+					'Our AI assistant can answer your questions and connect you to our Happiness Engineers for further assistance.'
 				)
 					? translate(
-							'WordPress Agent can answer your questions and connect you to our Happiness Engineers for further assistance.'
+							'Our AI assistant can answer your questions and connect you to our Happiness Engineers for further assistance.'
 					  )
-					: translate( 'WordPress Agent can help, or connect you to our support team.' ) }
+					: translate( 'Our AI assistant can help, or connect you to our support team.' ) }
 			</p>
 			<Button onClick={ onClick }>{ translate( 'Get help' ) }</Button>
 		</HostingCard>

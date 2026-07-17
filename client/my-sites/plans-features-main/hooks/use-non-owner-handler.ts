@@ -85,7 +85,7 @@ function getOdieInitialPromptForPlan( {
 	availableForPurchase: boolean;
 } ) {
 	return `
-${ translate( 'Hello, I am Wapuu, your WordPress Agent!' ) }
+${ translate( "Hello, I am Wapuu, WordPress.com's AI assistant!" ) }
 
 ${
 	availableForPurchase

@@ -93,7 +93,7 @@ function getTranslatedTitle( id: string, translate: ( s: string ) => string ): s
 		case 'built-by':
 			return translate( 'Let us build for you' );
 		case 'ask-ai-assistant':
-			return translate( 'Ask WordPress Agent' );
+			return translate( 'Ask our AI assistant' );
 		case 'upgrade-for-full-access':
 			return translate( 'Pick another paid plan for access to more features' );
 		case 'get-theme-addon':
@@ -133,7 +133,7 @@ function getTranslatedSubtitle(
 		case 'built-by':
 			return translate( 'Our team can build your site so you can focus on what matters.' );
 		case 'ask-ai-assistant':
-			return translate( 'Use WordPress Agent to quickly find solutions.' );
+			return translate( 'Use our AI assistant to quickly find solutions.' );
 		case 'upgrade-for-full-access':
 			return translate( 'Get the business plan to access all available plugins and themes.' );
 		case 'get-theme-addon':

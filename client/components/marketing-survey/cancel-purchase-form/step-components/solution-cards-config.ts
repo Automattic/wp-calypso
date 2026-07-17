@@ -125,8 +125,8 @@ export const SOLUTION_CARD_CONFIG: SolutionCardConfigEntry[] = [
 	},
 	{
 		id: 'ask-ai-assistant',
-		title: 'Ask WordPress Agent',
-		subtitle: 'Use WordPress Agent to quickly find solutions.',
+		title: 'Ask our AI assistant',
+		subtitle: 'Use our AI assistant to quickly find solutions.',
 		onClick: ( ctx ) => {
 			ctx.setOpenOdieWithContext( {
 				initialMessage:
