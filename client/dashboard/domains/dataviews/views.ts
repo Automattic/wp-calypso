@@ -41,6 +41,12 @@ export function recordDomainViewChanges(
 	newView: View,
 	recordTracksEvent: AnalyticsClient[ 'recordTracksEvent' ]
 ) {
+	// Fire once when the user starts searching (empty -> non-empty), rather than
+	// on every keystroke, and without logging the term itself.
+	if ( ! oldView.search && newView.search ) {
+		recordTracksEvent( 'calypso_dashboard_domains_search' );
+	}
+
 	if (
 		oldView.sort?.field !== newView.sort?.field ||
 		oldView.sort?.direction !== newView.sort?.direction
