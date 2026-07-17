@@ -1,8 +1,9 @@
+import { DataHelper } from '@automattic/calypso-e2e';
 import { expect, tags, test } from '../../lib/pw-base';
 import { TEST_IMAGE_PATH } from '../constants';
 
 test.describe(
-	'Blaze Ads: Promote',
+	DataHelper.createSuiteTitle( 'Blaze Ads: Promote' ),
 	{ tag: [ tags.CALYPSO_PR, tags.JETPACK_WPCOM_INTEGRATION ] },
 	() => {
 		test( 'As a WordPress.com free plan user with a simple site, I can promote my content using Jetpack Blaze', async ( {

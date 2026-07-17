@@ -11,6 +11,8 @@ const mockUseRegenerateAction = jest.fn();
 const mockUseConversation = jest.fn();
 const mockUseImageUpload = jest.fn();
 const mockIsReaderChatAgent = jest.fn();
+let mockSelectedBlockType: string | undefined;
+let mockBlockEditorStoreThrows = false;
 const mockAgentChat = jest.fn(
 	( {
 		onSuggestionClick,
@@ -22,7 +24,10 @@ const mockAgentChat = jest.fn(
 		emptyViewSuggestions = [],
 	}: {
 		messages?: unknown[];
-		onSuggestionClick: ( suggestion: Suggestion | string ) => void;
+		onSuggestionClick: (
+			suggestion: Suggestion | string,
+			availableSuggestions?: Suggestion[]
+		) => void;
 		onSubmit: ( message: string ) => void;
 		onAbort?: () => void;
 		error?: string | null;
@@ -32,15 +37,74 @@ const mockAgentChat = jest.fn(
 	} ) => (
 		<>
 			<button
-				onClick={ () =>
-					onSuggestionClick( {
+				onClick={ () => {
+					const suggestion = {
 						id: 'simplify-text',
 						label: 'Simplify text',
 						prompt: 'Simplify this text to make it easier to read',
-					} )
-				}
+					};
+					onSuggestionClick( suggestion, [ suggestion ] );
+				} }
 			>
 				Click suggestion
+			</button>
+			<button
+				onClick={ () => {
+					const suggestion = {
+						id: 'check-grammar',
+						label: 'Check grammar',
+						prompt: 'Check the grammar and spelling of this text',
+					};
+					onSuggestionClick( suggestion, [ suggestion ] );
+				} }
+			>
+				Click block suggestion
+			</button>
+			<button
+				onClick={ () => {
+					const option = {
+						id: 'formal',
+						label: 'Formal',
+						value: 'Change the tone of this text to be more formal',
+					};
+					const selectedSuggestion = {
+						id: 'change-tone',
+						label: 'Change tone Formal',
+						prompt: option.value,
+					};
+					const availableSuggestion = {
+						id: 'change-tone',
+						label: 'Change tone',
+						prompt: '',
+						options: [ option ],
+					};
+					onSuggestionClick( selectedSuggestion, [ availableSuggestion ] );
+				} }
+			>
+				Click block dropdown suggestion
+			</button>
+			<button
+				onClick={ () => {
+					const option = {
+						id: 'seo-title',
+						label: 'Title',
+						value: 'Generate an SEO title for this post',
+					};
+					const selectedSuggestion = {
+						id: 'seo-enhancer',
+						label: 'SEO Enhancer Title',
+						prompt: option.value,
+					};
+					const availableSuggestion = {
+						id: 'seo-enhancer',
+						label: 'SEO Enhancer',
+						prompt: '',
+						options: [ option ],
+					};
+					onSuggestionClick( selectedSuggestion, [ availableSuggestion ] );
+				} }
+			>
+				Click post dropdown suggestion
 			</button>
 			<button onClick={ () => onSuggestionClick( 'Check the grammar and spelling of this text' ) }>
 				Click string suggestion
@@ -64,7 +128,14 @@ const mockAgentChat = jest.fn(
 			<div data-testid="input-value">{ inputValue }</div>
 			<ul data-testid="empty-view-suggestions">
 				{ emptyViewSuggestions.map( ( suggestion ) => (
-					<li key={ suggestion.id }>{ suggestion.label }</li>
+					<li key={ suggestion.id }>
+						<button
+							type="button"
+							onClick={ () => onSuggestionClick( suggestion, emptyViewSuggestions ) }
+						>
+							{ suggestion.label }
+						</button>
+					</li>
 				) ) }
 			</ul>
 		</>
@@ -82,7 +153,19 @@ jest.mock(
 	{ virtual: true }
 );
 jest.mock( '@wordpress/data', () => ( {
-	useSelect: () => undefined,
+	useSelect: ( mapSelect: ( select: ( storeName: string ) => object ) => unknown ) =>
+		mapSelect( ( storeName: string ) => {
+			if ( storeName === 'core/block-editor' ) {
+				if ( mockBlockEditorStoreThrows ) {
+					throw new Error( 'Block editor store unavailable' );
+				}
+				return {
+					getSelectedBlock: () =>
+						mockSelectedBlockType ? { name: mockSelectedBlockType } : null,
+				};
+			}
+			return {};
+		} ),
 } ) );
 jest.mock( '@wordpress/element', () => jest.requireActual( 'react' ) );
 jest.mock( '@wordpress/i18n', () => ( { __: ( text: string ) => text } ) );
@@ -249,6 +332,8 @@ describe( 'OrchestratorChat', () => {
 		mockUseAgentChat.mockReturnValue( agentChatReturn() );
 		mockUseImageUpload.mockReturnValue( createImageUpload() );
 		mockIsReaderChatAgent.mockReturnValue( false );
+		mockSelectedBlockType = undefined;
+		mockBlockEditorStoreThrows = false;
 	} );
 
 	it( 'dispatches the inline suggestion event when an Agenttic suggestion is clicked', () => {
@@ -263,6 +348,12 @@ describe( 'OrchestratorChat', () => {
 		expect( ( listener.mock.calls[ 0 ][ 0 ] as CustomEvent ).detail ).toEqual( {
 			value: 'Simplify this text to make it easier to read',
 			autoSubmit: false,
+			suggestionId: 'simplify-text',
+		} );
+		expect( recordBigSkyTracksEvent ).toHaveBeenCalledWith( 'chat_suggestion_click', {
+			suggestion_text: 'Simplify this text to make it easier to read',
+			suggestion_id: 'simplify-text',
+			available_suggestions: '|simplify-text|',
 		} );
 
 		window.removeEventListener( 'big-sky-inline-suggestion-click', listener );
@@ -300,6 +391,7 @@ describe( 'OrchestratorChat', () => {
 		expect( ( listener.mock.calls[ 0 ][ 0 ] as CustomEvent ).detail ).toEqual( {
 			value: 'Walk me through the attached weekly brief',
 			autoSubmit: true,
+			suggestionId: 'weekly-brief',
 		} );
 		expect( recordBigSkyTracksEvent ).toHaveBeenCalledWith(
 			'chat_suggestion_click',
@@ -307,6 +399,119 @@ describe( 'OrchestratorChat', () => {
 		);
 
 		window.removeEventListener( 'big-sky-inline-suggestion-click', listener );
+	} );
+
+	it( 'records block context on a regular block suggestion', () => {
+		mockSelectedBlockType = 'core/paragraph';
+		const listener = jest.fn();
+		window.addEventListener( 'big-sky-inline-suggestion-click', listener );
+
+		render(
+			chat( {
+				useSuggestions: () => ( {
+					suggestions: [
+						{
+							id: 'check-grammar',
+							label: 'Check grammar',
+							prompt: 'Check the grammar and spelling of this text',
+						},
+					],
+					replaceEmptyViewSuggestions: true,
+				} ),
+			} )
+		);
+		jest.mocked( recordBigSkyTracksEvent ).mockClear();
+
+		fireEvent.click( screen.getByText( 'Click block suggestion' ) );
+
+		expect( recordBigSkyTracksEvent ).toHaveBeenCalledTimes( 1 );
+		expect( recordBigSkyTracksEvent ).toHaveBeenCalledWith( 'chat_suggestion_click', {
+			suggestion_text: 'Check the grammar and spelling of this text',
+			suggestion_id: 'check-grammar',
+			available_suggestions: '|check-grammar|',
+			block_type: 'core/paragraph',
+		} );
+		expect( ( listener.mock.calls[ 0 ][ 0 ] as CustomEvent ).detail ).toEqual( {
+			value: 'Check the grammar and spelling of this text',
+			autoSubmit: false,
+			suggestionId: 'check-grammar',
+		} );
+
+		window.removeEventListener( 'big-sky-inline-suggestion-click', listener );
+	} );
+
+	it( 'keeps suggestion clicks working when the block editor store cannot be read', () => {
+		mockBlockEditorStoreThrows = true;
+
+		render( chat() );
+		fireEvent.click( screen.getByText( 'Click suggestion' ) );
+
+		expect( recordBigSkyTracksEvent ).toHaveBeenCalledWith(
+			'chat_suggestion_click',
+			expect.objectContaining( { suggestion_id: 'simplify-text' } )
+		);
+	} );
+
+	it( 'records the selected option and block context for a dropdown suggestion', () => {
+		mockSelectedBlockType = 'core/paragraph';
+		const listener = jest.fn();
+		window.addEventListener( 'big-sky-inline-suggestion-click', listener );
+
+		render(
+			chat( {
+				useSuggestions: () => ( {
+					suggestions: [
+						{
+							id: 'change-tone',
+							label: 'Change tone',
+							prompt: '',
+							options: [
+								{
+									id: 'formal',
+									label: 'Formal',
+									value: 'Change the tone of this text to be more formal',
+								},
+							],
+						},
+					],
+					replaceEmptyViewSuggestions: true,
+				} ),
+			} )
+		);
+		jest.mocked( recordBigSkyTracksEvent ).mockClear();
+
+		fireEvent.click( screen.getByText( 'Click block dropdown suggestion' ) );
+
+		expect( recordBigSkyTracksEvent ).toHaveBeenCalledTimes( 1 );
+		expect( recordBigSkyTracksEvent ).toHaveBeenCalledWith( 'chat_suggestion_click', {
+			suggestion_text: 'Change the tone of this text to be more formal',
+			suggestion_id: 'change-tone',
+			available_suggestions: '|change-tone|',
+			option_id: 'formal',
+			block_type: 'core/paragraph',
+		} );
+		expect( ( listener.mock.calls[ 0 ][ 0 ] as CustomEvent ).detail ).toEqual( {
+			value: 'Change the tone of this text to be more formal',
+			autoSubmit: false,
+			suggestionId: 'change-tone',
+		} );
+
+		window.removeEventListener( 'big-sky-inline-suggestion-click', listener );
+	} );
+
+	it( 'does not add block context to a post-level dropdown when a block is selected', () => {
+		mockSelectedBlockType = 'core/paragraph';
+		render( chat() );
+
+		fireEvent.click( screen.getByText( 'Click post dropdown suggestion' ) );
+
+		expect( recordBigSkyTracksEvent ).toHaveBeenCalledTimes( 1 );
+		expect( recordBigSkyTracksEvent ).toHaveBeenCalledWith( 'chat_suggestion_click', {
+			suggestion_text: 'Generate an SEO title for this post',
+			suggestion_id: 'seo-enhancer',
+			available_suggestions: '|seo-enhancer|',
+			option_id: 'seo-title',
+		} );
 	} );
 
 	it( 'passes the floating suggestion limit to external providers', () => {
@@ -323,6 +528,32 @@ describe( 'OrchestratorChat', () => {
 		render( chat( { isDocked: true, useSuggestions: useSuggestions } ) );
 
 		expect( useSuggestions ).toHaveBeenCalledWith( undefined, { suggestionsVisible: true } );
+	} );
+
+	it( 'uses the current Gutenberg block type when the selected block changes', () => {
+		mockSelectedBlockType = 'core/paragraph';
+		const useSuggestions = () => ( {
+			suggestions: [
+				{
+					id: 'check-grammar',
+					label: 'Check grammar',
+					prompt: 'Check the grammar and spelling of this text',
+				},
+			],
+			replaceEmptyViewSuggestions: true,
+		} );
+		const { rerender } = render( chat( { useSuggestions } ) );
+
+		mockSelectedBlockType = 'core/heading';
+		rerender( chat( { useSuggestions } ) );
+		fireEvent.click( screen.getByText( 'Click block suggestion' ) );
+
+		expect( recordBigSkyTracksEvent ).toHaveBeenLastCalledWith( 'chat_suggestion_click', {
+			suggestion_text: 'Check the grammar and spelling of this text',
+			suggestion_id: 'check-grammar',
+			available_suggestions: '|check-grammar|',
+			block_type: 'core/heading',
+		} );
 	} );
 
 	it( 'keeps showing the provider suggestions in the empty view after the store is cleared', () => {
