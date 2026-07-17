@@ -24,8 +24,10 @@ import {
 	SupportedIntervalTypes,
 } from './util';
 import type { Step as StepType } from '../../types';
+import type { PlanSlug } from '@automattic/calypso-products';
 import type { PlansIntent } from '@automattic/plans-grid-next';
 import type { MinimalRequestCartProduct } from '@automattic/shopping-cart';
+import type { TranslateResult } from 'i18n-calypso';
 import './style.scss';
 
 type ProvidedDependencies = {
@@ -40,6 +42,16 @@ const PlansStepAdaptor: StepType< {
 		isStepperUpgradeFlow?: boolean;
 		selectedFeature?: string;
 		displayedIntervals?: SupportedIntervalTypes[];
+		headerText?: string;
+		subHeaderText?: string;
+		hideFreePlan?: boolean;
+		hideEnterprisePlan?: boolean;
+		hidePersonalPlan?: boolean;
+		hidePremiumPlan?: boolean;
+		hideEcommercePlan?: boolean;
+		hidePlanTypeSelector?: boolean;
+		defaultInterval?: SupportedIntervalTypes;
+		highlightLabelOverrides?: { [ K in PlanSlug ]?: TranslateResult };
 		wrapperProps?: {
 			hideBack?: boolean;
 			goBack?: () => void;
@@ -48,8 +60,23 @@ const PlansStepAdaptor: StepType< {
 		};
 	};
 } > = ( props ) => {
-	const { displayedIntervals, isInSignup, isStepperUpgradeFlow, selectedFeature, wrapperProps } =
-		props;
+	const {
+		displayedIntervals,
+		isInSignup,
+		isStepperUpgradeFlow,
+		selectedFeature,
+		wrapperProps,
+		headerText,
+		subHeaderText,
+		hideFreePlan: hideFreePlanOverride,
+		hideEnterprisePlan: hideEnterprisePlanOverride,
+		hidePersonalPlan: hidePersonalPlanOverride,
+		hidePremiumPlan: hidePremiumPlanOverride,
+		hideEcommercePlan: hideEcommercePlanOverride,
+		hidePlanTypeSelector: hidePlanTypeSelectorOverride,
+		defaultInterval,
+		highlightLabelOverrides,
+	} = props;
 	const [ stepState, setStepState ] = useStepPersistedState< ProvidedDependencies >( 'plans-step' );
 	const siteSlug = useSiteSlug();
 
@@ -106,7 +133,7 @@ const PlansStepAdaptor: StepType< {
 
 	const site = useSite( postSignUpSiteSlugParam || postSignUpSiteIdParam );
 	const customerType = useQuery().get( 'customerType' ) ?? undefined;
-	const [ planInterval, setPlanInterval ] = useState< string | undefined >( undefined );
+	const [ planInterval, setPlanInterval ] = useState< string | undefined >( defaultInterval );
 
 	useQueryTheme( 'wpcom', selectedDesign?.slug );
 
@@ -149,6 +176,12 @@ const PlansStepAdaptor: StepType< {
 	// term selector to the currently active plan's term.
 	const isDowngradeFlow = defaultPlansIntent === 'plans-upgrade-or-downgrade';
 
+	const themeHideProps: {
+		hideFreePlan?: boolean;
+		hidePersonalPlan?: boolean;
+		hidePremiumPlan?: boolean;
+	} = getHidePlanPropsBasedOnThemeType( selectedThemeType || '' );
+
 	const currentPlanSlug = site?.plan?.product_slug;
 	const currentPlanIntervalType =
 		currentPlanSlug && ! isFreePlan( currentPlanSlug )
@@ -167,9 +200,15 @@ const PlansStepAdaptor: StepType< {
 
 	return (
 		<UnifiedPlansStep
-			{ ...getHidePlanPropsBasedOnThemeType( selectedThemeType || '' ) }
-			hideFreePlan={ hideFreePlan || isDowngradeFlow }
-			hideEnterprisePlan={ isDowngradeFlow }
+			hideFreePlan={ hideFreePlanOverride || hideFreePlan || isDowngradeFlow }
+			hideEnterprisePlan={ hideEnterprisePlanOverride || isDowngradeFlow }
+			hidePersonalPlan={ hidePersonalPlanOverride || themeHideProps.hidePersonalPlan }
+			hidePremiumPlan={ hidePremiumPlanOverride || themeHideProps.hidePremiumPlan }
+			hideEcommercePlan={ hideEcommercePlanOverride }
+			hidePlanTypeSelector={ hidePlanTypeSelectorOverride }
+			headerText={ headerText }
+			subHeaderText={ subHeaderText }
+			highlightLabelOverrides={ highlightLabelOverrides }
 			selectedSite={ site ?? undefined }
 			saveSignupStep={ ( step ) => {
 				setStepState( ( mostRecentState = { ...stepState, ...step } as ProvidedDependencies ) );

@@ -5,6 +5,7 @@ import { Button, Dropdown, MenuItem } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { search, globe, chevronUp, chevronDown } from '@wordpress/icons';
 import { addQueryArgs } from '@wordpress/url';
+import { useAnalytics } from '../app/analytics';
 import { useAppContext } from '../app/context';
 import { siteRoute } from '../app/router/sites';
 import { getCurrentDashboard } from '../app/routing';
@@ -92,6 +93,8 @@ function AddDomainDropdown( {
 	onTransferOrConnectClick: () => void;
 	transferLabel: string;
 } ) {
+	const { recordTracksEvent } = useAnalytics();
+
 	return (
 		<Dropdown
 			renderToggle={ ( { isOpen, onToggle } ) => (
@@ -100,7 +103,12 @@ function AddDomainDropdown( {
 					iconPosition="right"
 					variant="primary"
 					__next40pxDefaultSize
-					onClick={ onToggle }
+					onClick={ () => {
+						if ( ! isOpen ) {
+							recordTracksEvent( 'calypso_dashboard_domains_add_domain_clicked' );
+						}
+						onToggle();
+					} }
 					aria-expanded={ isOpen }
 				>
 					{ __( 'Add domain name' ) }
@@ -108,10 +116,28 @@ function AddDomainDropdown( {
 			) }
 			renderContent={ () => (
 				<>
-					<MenuItem iconPosition="left" icon={ search } onClick={ onSearchClick }>
+					<MenuItem
+						iconPosition="left"
+						icon={ search }
+						onClick={ () => {
+							recordTracksEvent( 'calypso_dashboard_domains_add_domain_option_clicked', {
+								option: 'search',
+							} );
+							onSearchClick();
+						} }
+					>
 						{ __( 'Search domain names' ) }
 					</MenuItem>
-					<MenuItem iconPosition="left" icon={ globe } onClick={ onTransferOrConnectClick }>
+					<MenuItem
+						iconPosition="left"
+						icon={ globe }
+						onClick={ () => {
+							recordTracksEvent( 'calypso_dashboard_domains_add_domain_option_clicked', {
+								option: 'transfer_or_connect',
+							} );
+							onTransferOrConnectClick();
+						} }
+					>
 						{ transferLabel }
 					</MenuItem>
 				</>
