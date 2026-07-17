@@ -9,7 +9,7 @@ import {
 } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
-import { Icon, envelope, formatListBullets, help } from '@wordpress/icons';
+import { Icon, envelope, external, formatListBullets, help } from '@wordpress/icons';
 import { Fragment, useEffect } from 'react';
 import { useAnalytics } from '../../app/analytics';
 import { useHelpCenter } from '../../app/help-center';
@@ -98,6 +98,20 @@ const SiteCriticalError = ( { siteSlug }: { siteSlug: string } ) => {
 	const recoveryErrors = isAdmin ? getJetpackRecoverySessionErrors( site ) : [];
 
 	const items: Item[] = [];
+	if ( isAdmin ) {
+		items.push( {
+			icon: external,
+			text: createInterpolateElement(
+				// translators: <a/> is a link to the site's wp-admin with the text "Visit your site"
+				__( '<a>Visit your site</a> to check available recovery options.' ),
+				{
+					a: (
+						<a href={ site.options?.admin_url ?? '#' } target="_blank" rel="noopener noreferrer" />
+					),
+				}
+			),
+		} );
+	}
 	if ( isAdmin ) {
 		items.push( {
 			icon: envelope,
