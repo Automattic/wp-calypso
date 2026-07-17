@@ -1,10 +1,9 @@
+import page from '@automattic/calypso-router';
 import { Button } from '@wordpress/components';
+import { addQueryArgs, removeQueryArgs } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
-import { useState } from 'react';
 import LostPasswordFormUntyped from '../lost-password-form';
 import RecoverViaEmailForm from './recover-via-email-form';
-
-type Mode = 'reset' | 'recovery-email';
 
 interface LostPasswordContentProps {
 	redirectToAfterLoginUrl?: string;
@@ -14,20 +13,28 @@ interface LostPasswordContentProps {
 	isWooJPC?: boolean;
 	isWoo?: boolean;
 	isJetpack?: boolean;
+	showRecoveryEmail?: boolean;
 }
 
 const LostPasswordForm = LostPasswordFormUntyped as React.ComponentType< LostPasswordContentProps >;
 
-export default function LostPasswordContent( props: LostPasswordContentProps ) {
-	const translate = useTranslate();
-	const [ mode, setMode ] = useState< Mode >( 'reset' );
+const currentUrl = () => window.location.pathname + window.location.search;
 
-	if ( mode === 'recovery-email' ) {
+export default function LostPasswordContent( {
+	showRecoveryEmail,
+	...formProps
+}: LostPasswordContentProps ) {
+	const translate = useTranslate();
+
+	if ( showRecoveryEmail ) {
 		return (
 			<>
 				<RecoverViaEmailForm />
 				<div className="login__form-help">
-					<Button variant="link" onClick={ () => setMode( 'reset' ) }>
+					<Button
+						variant="link"
+						onClick={ () => page( removeQueryArgs( currentUrl(), 'recovery_email' ) ) }
+					>
 						{ translate( 'Back' ) }
 					</Button>
 				</div>
@@ -37,9 +44,12 @@ export default function LostPasswordContent( props: LostPasswordContentProps ) {
 
 	return (
 		<>
-			<LostPasswordForm { ...props } />
+			<LostPasswordForm { ...formProps } />
 			<div className="login__form-help">
-				<Button variant="link" onClick={ () => setMode( 'recovery-email' ) }>
+				<Button
+					variant="link"
+					onClick={ () => page( addQueryArgs( currentUrl(), { recovery_email: 1 } ) ) }
+				>
 					{ translate( 'Access with your recovery email' ) }
 				</Button>
 			</div>

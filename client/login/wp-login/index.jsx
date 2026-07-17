@@ -447,6 +447,7 @@ function getInitialHeadingState( props, translate ) {
 		partnerConfig,
 		isFromJetpackConnector,
 		connectorPlugins,
+		currentQuery,
 	} );
 
 	return {

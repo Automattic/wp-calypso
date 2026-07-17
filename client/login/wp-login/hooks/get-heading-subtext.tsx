@@ -2,6 +2,7 @@ import { localizeUrl } from '@automattic/i18n-utils';
 import { type LocalizeProps } from 'i18n-calypso';
 import { getLoginCopy } from 'calypso/jetpack-connect/connection-content';
 import type { PartnerConfig } from 'calypso/lib/partner-branding';
+import type getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
 
 interface Props {
 	isSocialFirst: boolean;
@@ -11,6 +12,7 @@ interface Props {
 	partnerConfig?: PartnerConfig | null;
 	isFromJetpackConnector?: boolean;
 	connectorPlugins?: string[];
+	currentQuery?: ReturnType< typeof getCurrentQueryArguments >;
 	translate: LocalizeProps[ 'translate' ];
 }
 
@@ -26,6 +28,7 @@ const getHeadingSubText = ( {
 	partnerConfig,
 	isFromJetpackConnector,
 	connectorPlugins,
+	currentQuery,
 }: Props ) => {
 	if ( ! isSocialFirst || twoFactorAuthType ) {
 		return null;
@@ -100,13 +103,17 @@ const getHeadingSubText = ( {
 
 	const secondary = isWooJPC && 'lostpassword' !== action ? tos : null;
 
+	let lostPasswordPrimary = translate(
+		"Please enter your username or email address. You'll receive a link to create a new password via email."
+	);
+	if ( currentQuery?.recovery_email === '1' ) {
+		lostPasswordPrimary = translate(
+			'Enter your account email address or username and we’ll send a password reset link to the recovery email on your account.'
+		);
+	}
+
 	return {
-		primary:
-			'lostpassword' === action
-				? translate(
-						"Please enter your username or email address. You'll receive a link to create a new password via email."
-				  )
-				: primary,
+		primary: 'lostpassword' === action ? lostPasswordPrimary : primary,
 		secondary,
 	};
 };

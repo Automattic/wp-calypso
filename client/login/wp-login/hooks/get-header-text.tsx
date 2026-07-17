@@ -179,7 +179,10 @@ export function getHeaderText( {
 	}
 
 	if ( action === 'lostpassword' ) {
-		headerText = translate( 'Lost your password?' );
+		headerText =
+			currentQuery?.recovery_email === '1'
+				? translate( 'Access with your recovery email' )
+				: translate( 'Lost your password?' );
 	} else if ( currentQuery?.lostpassword_flow === 'true' ) {
 		headerText = translate( "You've got mail" );
 	} else if ( oauth2Client ) {

@@ -439,6 +439,7 @@ class Login extends Component {
 							isWooJPC={ isWooJPC }
 							from={ get( currentQuery, 'from' ) }
 							isJetpack={ isJetpack }
+							showRecoveryEmail={ get( currentQuery, 'recovery_email' ) === '1' }
 						/>
 					</div>
 				</Fragment>
