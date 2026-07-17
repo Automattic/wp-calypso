@@ -86,8 +86,8 @@ export const HelpCenterContactButton = () => {
 			{ showContactHumanButton ? (
 				<Button
 					onClick={ handleContactHumanClick }
-					variant="primary"
-					className="button help-center-contact-page__button is-contact-human"
+					variant="secondary"
+					className="button help-center-contact-page__button"
 					__next40pxDefaultSize
 				>
 					{ __( 'Contact a Happiness Engineer', __i18n_text_domain__ ) }

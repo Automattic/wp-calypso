@@ -30,8 +30,4 @@
 	.help-center-contact-page__button {
 		background: unset;
 	}
-
-	.help-center-contact-page__button.is-contact-human {
-		background: var(--wp-components-color-accent, var(--wp-admin-theme-color, $help-center-blue));
-	}
 }
