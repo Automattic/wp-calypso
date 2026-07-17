@@ -16,10 +16,6 @@ function wpError( fields: { status: number; statusCode: number; error?: string }
 	return Object.assign( new Error( 'boom' ), fields );
 }
 
-beforeEach( () => {
-	jest.clearAllMocks();
-} );
-
 describe( '<MutationErrorTracker>', () => {
 	test( 'names the stat from meta.statId and buckets a 5xx WPError', async () => {
 		const { queryClient } = render( <MutationErrorTracker /> );
