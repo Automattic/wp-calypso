@@ -27,7 +27,9 @@ export default function EarnReferrals() {
 	const { data: referrals = [], isLoading: isLoadingReferrals } = useQuery(
 		referralsQuery( agencyId )
 	);
-	const { data: commissionPayout } = useQuery( referralCommissionPayoutQuery( agencyId ) );
+	const { data: commissionPayout, isLoading: isLoadingCommissionPayout } = useQuery(
+		referralCommissionPayoutQuery( agencyId )
+	);
 
 	const [ view, setView ] = useState< View >( DEFAULT_VIEW );
 
@@ -61,6 +63,7 @@ export default function EarnReferrals() {
 						referrals={ referrals }
 						referralCommissionPayout={ commissionPayout }
 						isLoading={ isLoading }
+						isLoadingCommissionPayout={ isLoadingCommissionPayout }
 						locale={ locale }
 					/>
 					<DataViewsCard>

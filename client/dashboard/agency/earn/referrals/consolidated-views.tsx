@@ -32,6 +32,7 @@ interface ConsolidatedViewsProps {
 	referralCommissionPayout?: ReferralCommissionPayout;
 	isSingleClient?: boolean;
 	isLoading?: boolean;
+	isLoadingCommissionPayout?: boolean;
 	/** Each app passes its own user locale for date formatting. */
 	locale?: string;
 }
@@ -41,6 +42,7 @@ export default function ConsolidatedViews( {
 	referralCommissionPayout,
 	isSingleClient,
 	isLoading,
+	isLoadingCommissionPayout,
 	locale,
 }: ConsolidatedViewsProps ) {
 	const { previousQuarterExpectedCommission, currentQuarterExpectedCommission, pendingOrders } =
@@ -67,7 +69,7 @@ export default function ConsolidatedViews( {
 						a: <Button variant="link" href={ AGENCY_EARNINGS_LEARN_MORE_LINK } target="_blank" />,
 					}
 				) }
-				isLoading={ isLoading }
+				isLoading={ isLoading || isLoadingCommissionPayout }
 			/>
 			<PayoutCards
 				isFetching={ !! isLoading }

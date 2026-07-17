@@ -71,7 +71,11 @@ export default function ReferralsList( {
 			{ /* Free composition: the layout switcher is intentionally omitted so the
 			   layout stays app-controlled (A4A switches to a list while its preview
 			   pane is open) rather than user-switchable. */ }
-			<HStack className="dataviews__view-actions" justify="space-between" alignment="center">
+			<HStack
+				className="dataviews__view-actions referrals-list__view-actions"
+				justify="space-between"
+				alignment="center"
+			>
 				<WPDataViews.Search />
 				<WPDataViews.ViewConfig />
 			</HStack>

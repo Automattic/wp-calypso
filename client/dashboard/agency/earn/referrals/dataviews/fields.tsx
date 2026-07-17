@@ -1,5 +1,7 @@
 import { __ } from '@wordpress/i18n';
 import CommissionsCell from '../commissions-cell';
+import { getEstimatedCommission } from '../lib/get-estimated-commission';
+import { areNextAndCurrentPayoutDatesEqual } from '../lib/get-next-payout-date';
 import SubscriptionStatus from '../subscription-status';
 import type { Referral } from '@automattic/api-core';
 import type { Field } from '@wordpress/dataviews';
@@ -13,7 +15,7 @@ export function getReferralFields(
 			id: 'client',
 			label: __( 'Client' ),
 			enableHiding: false,
-			enableSorting: false,
+			enableSorting: true,
 			enableGlobalSearch: true,
 			getValue: ( { item } ) => item.client.email,
 			render: ( { item } ) => renderClient( item ),
@@ -21,31 +23,37 @@ export function getReferralFields(
 		{
 			id: 'completed-orders',
 			label: __( 'Purchases' ),
-			enableHiding: false,
-			enableSorting: false,
+			enableHiding: true,
+			enableSorting: true,
 			getValue: ( { item } ) =>
 				item.referralStatuses.filter( ( status ) => status === 'active' ).length,
 		},
 		{
 			id: 'pending-orders',
 			label: __( 'Pending orders' ),
-			enableHiding: false,
-			enableSorting: false,
+			enableHiding: true,
+			enableSorting: true,
 			getValue: ( { item } ) =>
 				item.referralStatuses.filter( ( status ) => status === 'pending' ).length,
 		},
 		{
 			id: 'estimated-commissions',
 			label: __( 'Estimated commissions' ),
-			enableHiding: false,
-			enableSorting: false,
-			getValue: () => '',
+			enableHiding: true,
+			enableSorting: true,
+			// Mirrors the total that CommissionsCell displays.
+			getValue: ( { item } ) => {
+				const currentQuarter = getEstimatedCommission( [ item ] );
+				return areNextAndCurrentPayoutDatesEqual( new Date() )
+					? currentQuarter
+					: getEstimatedCommission( [ item ], true ) + currentQuarter;
+			},
 			render: ( { item } ) => <CommissionsCell referral={ item } />,
 		},
 		{
 			id: 'subscription-status',
 			label: __( 'Subscription status' ),
-			enableHiding: false,
+			enableHiding: true,
 			enableSorting: false,
 			getValue: () => '',
 			render: ( { item } ) => <SubscriptionStatus item={ item } />,
