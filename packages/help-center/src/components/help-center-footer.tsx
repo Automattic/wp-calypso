@@ -6,6 +6,7 @@ import { useI18n } from '@wordpress/react-i18n';
 import { Route, Routes, useNavigate } from 'react-router-dom';
 import { useHelpCenterContext } from '../contexts/HelpCenterContext';
 import { useSiteConnectionHealth } from '../data/use-site-connection-health';
+import { useSupportStatus } from '../data/use-support-status';
 import { useChatStatus, useGetHistoryChats, useStillNeedHelpURL } from '../hooks';
 import { HELP_CENTER_STORE } from '../stores';
 import { getChatLinkFromConversation } from './utils';
@@ -18,8 +19,12 @@ export const HelpCenterContactButton = () => {
 	const { sectionName, site } = useHelpCenterContext();
 	const navigate = useNavigate();
 	const { setMessage, setNewMessagingChat } = useDispatch( HELP_CENTER_STORE );
+	const isOdieRoute = url === '/odie';
 	const { isEligibleForChat } = useChatStatus();
-	const { isSiteUnreachable } = useSiteConnectionHealth( url === '/odie' && isEligibleForChat );
+	const { isLoading: isLoadingSupportStatus } = useSupportStatus();
+	const { isSiteUnreachable, isLoading: isCheckingConnectionHealth } = useSiteConnectionHealth(
+		isOdieRoute && isEligibleForChat
+	);
 	const searchQuery = useSelect(
 		( select ) => ( select( HELP_CENTER_STORE ) as HelpCenterSelect ).getMessage(),
 		[]
@@ -28,14 +33,20 @@ export const HelpCenterContactButton = () => {
 
 	// Users whose site is unreachable need a human, not the AI assistant:
 	// offer paid-support-eligible users a direct line to a Happiness Engineer.
-	const showContactHumanButton = url === '/odie' && isEligibleForChat && isSiteUnreachable;
+	const showContactHumanButton = isOdieRoute && isEligibleForChat && isSiteUnreachable;
+
+	// On the Odie route the footer may still resolve to the human CTA once
+	// eligibility and connection health settle. Block the AI button until then
+	// so a fast click can't slip the user into Odie before the human route surfaces.
+	const isResolvingHumanRoute =
+		isOdieRoute && ( isLoadingSupportStatus || isCheckingConnectionHealth );
 
 	const handleContactHumanClick = () => {
 		recordTracksEvent( 'calypso_inlinehelp_morehelp_click', {
 			force_site_id: true,
 			location: 'help-center',
 			section: sectionName,
-			button_type: 'Contact a Happiness Engineer',
+			button_type: 'human',
 		} );
 
 		setNewMessagingChat( {
@@ -52,7 +63,7 @@ export const HelpCenterContactButton = () => {
 			force_site_id: true,
 			location: 'help-center',
 			section: sectionName,
-			button_type: 'Still need help?',
+			button_type: 'ai',
 		} );
 
 		const openRecentConversation = recentConversations.find(
@@ -72,7 +83,7 @@ export const HelpCenterContactButton = () => {
 
 	return (
 		<CardFooter className="help-center__container-footer">
-			{ showContactHumanButton && (
+			{ showContactHumanButton ? (
 				<Button
 					onClick={ handleContactHumanClick }
 					variant="primary"
@@ -81,15 +92,19 @@ export const HelpCenterContactButton = () => {
 				>
 					{ __( 'Contact a Happiness Engineer', __i18n_text_domain__ ) }
 				</Button>
+			) : (
+				<Button
+					onClick={ handleClick }
+					variant="secondary"
+					className="button help-center-contact-page__button"
+					disabled={ isResolvingHumanRoute }
+					isBusy={ isResolvingHumanRoute }
+					accessibleWhenDisabled
+					__next40pxDefaultSize
+				>
+					{ __( 'Get help', __i18n_text_domain__ ) }
+				</Button>
 			) }
-			<Button
-				onClick={ handleClick }
-				variant="secondary"
-				className="button help-center-contact-page__button"
-				__next40pxDefaultSize
-			>
-				{ __( 'Get help', __i18n_text_domain__ ) }
-			</Button>
 		</CardFooter>
 	);
 };
