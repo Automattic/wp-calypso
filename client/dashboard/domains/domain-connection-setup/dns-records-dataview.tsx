@@ -14,10 +14,16 @@ import { matchCurrentToTargetValues } from './utils/match-records';
 
 import './components/dns-records-table-style.scss';
 
-const baseSuggestedView: Pick< ViewTable, 'type' | 'page' | 'perPage' > = {
+const baseSuggestedView: Pick< ViewTable, 'type' | 'page' | 'perPage' | 'layout' > = {
 	type: 'table',
 	page: 1,
 	perPage: 10,
+	layout: {
+		styles: {
+			updateTo: { width: '100%' },
+			copy: { width: '1%' },
+		},
+	},
 };
 
 const getSuggestedView = ( includeName: boolean ): ViewTable => {

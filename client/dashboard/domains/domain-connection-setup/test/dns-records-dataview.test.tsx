@@ -192,7 +192,10 @@ describe( 'DNSRecordsDataView - Suggested Mode (Nameservers)', () => {
 
 		// Check for column headers
 		expect( await screen.findByText( 'Current value' ) ).toBeInTheDocument();
-		expect( screen.getByText( 'Change to' ) ).toBeInTheDocument();
+		const changeToHeader = screen.getByRole( 'columnheader', { name: 'Change to' } );
+		const columnHeaders = screen.getAllByRole( 'columnheader' );
+		expect( changeToHeader ).toHaveStyle( { width: '100%' } );
+		expect( columnHeaders[ 3 ] ).toHaveStyle( { width: '1%' } );
 		expect( screen.queryByText( 'Name' ) ).not.toBeInTheDocument();
 	} );
 
