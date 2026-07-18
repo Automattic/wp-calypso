@@ -121,7 +121,7 @@ export const getOdieTransferMessages = ( botSlug?: OdieAllBotSlugs ): Message[] 
 		baseMessage,
 		{
 			content: __(
-				"We're connecting you with our support team. A Happiness Engineer will join the chat as soon as they're available.",
+				'A Happiness Engineer will reply as soon as they are available, either here or by email.',
 				__i18n_text_domain__
 			),
 			role: 'bot' as const,
@@ -136,7 +136,7 @@ export const getOdieTransferMessages = ( botSlug?: OdieAllBotSlugs ): Message[] 
 		},
 		{
 			content: __(
-				'They can see your chat with our AI assistant but please share any extra details while you wait so we can assist you better.',
+				'They can see this conversation, so please add any other details that may help.',
 				__i18n_text_domain__
 			),
 			role: 'bot' as const,
