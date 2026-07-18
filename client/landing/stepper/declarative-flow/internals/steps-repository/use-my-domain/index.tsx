@@ -205,12 +205,12 @@ const UseMyDomain: StepType< {
 
 		if ( useMyDomainMode === 'domain-input' ) {
 			columnWidth = 4 as const;
-			headingText = __( 'Your domain name' );
-			subText = __( 'Enter the domain name your visitors already know.' );
+			headingText = __( 'Enter your domain' );
+			subText = __( 'Type the domain you already own, like yourdomain.com.' );
 		} else {
 			columnWidth = 6 as const;
-			headingText = __( 'Use a domain name I own' );
-			subText = __( 'Make your domain name part of something bigger.' );
+			headingText = __( 'Set up your domain' );
+			subText = __( 'Transfer your domain, or connect it from your current provider.' );
 		}
 
 		const getTopBarLeftElement = () => {
