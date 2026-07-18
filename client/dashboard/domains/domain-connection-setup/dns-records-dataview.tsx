@@ -3,10 +3,10 @@ import {
 	DomainMappingSetupInfo,
 	DomainMappingStatus,
 } from '@automattic/api-core';
-import { __experimentalText as Text } from '@wordpress/components';
+import { Button, __experimentalText as Text } from '@wordpress/components';
 import { DataViews, type Field, type ViewTable } from '@wordpress/dataviews';
-import { __ } from '@wordpress/i18n';
-import { Icon, arrowRight } from '@wordpress/icons';
+import { __, sprintf } from '@wordpress/i18n';
+import { Icon, arrowRight, copySmall } from '@wordpress/icons';
 import { useMemo } from 'react';
 import { DataViewsCard } from '../../components/dataviews';
 import { useDnsRecordNames } from './hooks/use-dns-record-names';
@@ -24,14 +24,14 @@ const getSuggestedView = ( includeName: boolean ): ViewTable => {
 	return {
 		...baseSuggestedView,
 		fields: includeName
-			? [ 'name', 'currentValue', 'arrow', 'updateTo' ]
-			: [ 'currentValue', 'arrow', 'updateTo' ],
+			? [ 'name', 'currentValue', 'arrow', 'updateTo', 'copy' ]
+			: [ 'currentValue', 'arrow', 'updateTo', 'copy' ],
 	};
 };
 
 const viewAdvanced: ViewTable = {
 	...baseSuggestedView,
-	fields: [ 'type', 'name', 'currentValue', 'arrow', 'updateTo' ],
+	fields: [ 'type', 'name', 'currentValue', 'arrow', 'updateTo', 'copy' ],
 };
 
 interface DNSRecord {
@@ -142,7 +142,7 @@ export default function DNSRecordsDataView( {
 			},
 			{
 				id: 'currentValue',
-				label: __( 'Current values' ),
+				label: __( 'Current value' ),
 				enableHiding: false,
 				enableSorting: false,
 				render: ( { item } ) => {
@@ -161,12 +161,32 @@ export default function DNSRecordsDataView( {
 			},
 			{
 				id: 'updateTo',
-				label: __( 'Update to' ),
+				label: __( 'Change to' ),
 				enableHiding: false,
 				enableSorting: false,
 				render: ( { item } ) => {
 					return <Text>{ item.updateTo }</Text>;
 				},
+			},
+			{
+				id: 'copy',
+				label: '',
+				enableHiding: false,
+				enableSorting: false,
+				header: <></>,
+				render: ( { item } ) => (
+					<Button
+						className="dns-records-table__copy-button"
+						icon={ copySmall }
+						size="compact"
+						aria-label={ sprintf(
+							// translators: %s is a DNS record value
+							__( 'Copy %s' ),
+							item.updateTo
+						) }
+						onClick={ () => void navigator.clipboard?.writeText( item.updateTo ) }
+					/>
+				),
 			},
 		],
 		[]

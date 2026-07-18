@@ -1,10 +1,44 @@
-@import "@wordpress/base-styles/breakpoints";
+@import '@wordpress/base-styles/breakpoints';
 
 .connection-mode-card__body {
 	padding-top: 16px;
 	padding-bottom: 16px;
+
 	@include break-medium {
 		padding-top: 24px;
 		padding-bottom: 24px;
 	}
+}
+
+.setup-step__number {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	box-sizing: border-box;
+	width: 20px;
+	height: 20px;
+	flex: 0 0 20px;
+	border: 1px solid var( --dashboard-overview__divider-color );
+	border-radius: 50%;
+	color: var( --dashboard-menu-item__color );
+	font-size: 12px;
+	line-height: 1;
+
+	&.is-current {
+		border-color: var( --dashboard-menu-item__color );
+		background: var( --dashboard-menu-item__color );
+		color: var( --dashboard-surface__background-color );
+	}
+}
+
+.setup-step__completed-icon {
+	flex: 0 0 20px;
+	color: var( --dashboard__background-color-success );
+	fill: var( --dashboard__background-color-success );
+}
+
+.setup-step__pending-icon {
+	flex: 0 0 20px;
+	color: var( --dashboard-menu-item__color );
+	fill: var( --dashboard-menu-item__color );
 }

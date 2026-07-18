@@ -27,14 +27,14 @@ const getSuggestedView = ( includeName: boolean ): ViewTable => {
 	return {
 		...baseSuggestedView,
 		fields: includeName
-			? [ 'name', 'currentValue', 'expectedValue', 'status' ]
-			: [ 'currentValue', 'expectedValue', 'status' ],
+			? [ 'name', 'expectedValue', 'currentValue', 'status' ]
+			: [ 'expectedValue', 'currentValue', 'status' ],
 	};
 };
 
 const viewAdvanced: ViewTable = {
 	...baseSuggestedView,
-	fields: [ 'type', 'name', 'currentValue', 'expectedValue', 'status' ],
+	fields: [ 'type', 'name', 'expectedValue', 'currentValue', 'status' ],
 };
 
 interface DnsRecordVerification {

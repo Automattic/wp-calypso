@@ -191,8 +191,8 @@ describe( 'DNSRecordsDataView - Suggested Mode (Nameservers)', () => {
 		);
 
 		// Check for column headers
-		expect( await screen.findByText( 'Current values' ) ).toBeInTheDocument();
-		expect( screen.getByText( 'Update to' ) ).toBeInTheDocument();
+		expect( await screen.findByText( 'Current value' ) ).toBeInTheDocument();
+		expect( screen.getByText( 'Change to' ) ).toBeInTheDocument();
 		expect( screen.queryByText( 'Name' ) ).not.toBeInTheDocument();
 	} );
 
@@ -301,14 +301,14 @@ describe( 'DNSRecordsDataView - Suggested Mode (Nameservers)', () => {
 		expect( screen.getByText( 'Name' ) ).toBeInTheDocument();
 
 		// Should have the basic columns
-		expect( screen.getByText( 'Current values' ) ).toBeInTheDocument();
-		expect( screen.getByText( 'Update to' ) ).toBeInTheDocument();
+		expect( screen.getByText( 'Current value' ) ).toBeInTheDocument();
+		expect( screen.getByText( 'Change to' ) ).toBeInTheDocument();
 
 		// Verify column count in header row
 		const rows = within( table ).getAllByRole( 'row' );
 		const headerCells = within( rows[ 0 ] ).getAllByRole( 'columnheader' );
-		// Should have 4 columns: Name, Current values, arrow (empty header), Update to
-		expect( headerCells ).toHaveLength( 4 );
+		// Name, current value, arrow, change to, and copy action
+		expect( headerCells ).toHaveLength( 5 );
 	} );
 
 	test( 'shows subdomain name in name column when connecting a subdomain', async () => {
@@ -645,8 +645,8 @@ describe( 'DNSRecordsDataView - Advanced Mode (A and CNAME Records)', () => {
 		// Check for column headers
 		expect( await screen.findByText( 'Type' ) ).toBeInTheDocument();
 		expect( screen.getByText( 'Name' ) ).toBeInTheDocument();
-		expect( screen.getByText( 'Current values' ) ).toBeInTheDocument();
-		expect( screen.getByText( 'Update to' ) ).toBeInTheDocument();
+		expect( screen.getByText( 'Current value' ) ).toBeInTheDocument();
+		expect( screen.getByText( 'Change to' ) ).toBeInTheDocument();
 	} );
 
 	test( 'handles empty current IP addresses array', async () => {
@@ -765,7 +765,7 @@ describe( 'DNSRecordsDataView - Advanced Mode (A and CNAME Records)', () => {
 		expect( within( row3Cells[ 4 ] ).getByText( 'example.com' ) ).toBeInTheDocument();
 	} );
 
-	test( 'renders all 5 columns in advanced mode (including type/name)', async () => {
+	test( 'renders all 6 columns in advanced mode (including type/name)', async () => {
 		const domainMappingStatus = createMockDomainMappingStatus( [ '192.0.78.24' ] );
 		const domainConnectionSetupInfo = createMockDomainConnectionSetupInfo();
 
@@ -784,13 +784,13 @@ describe( 'DNSRecordsDataView - Advanced Mode (A and CNAME Records)', () => {
 		// Should have ALL columns in advanced mode
 		expect( await screen.findByText( 'Type' ) ).toBeInTheDocument();
 		expect( screen.getByText( 'Name' ) ).toBeInTheDocument();
-		expect( screen.getByText( 'Current values' ) ).toBeInTheDocument();
-		expect( screen.getByText( 'Update to' ) ).toBeInTheDocument();
+		expect( screen.getByText( 'Current value' ) ).toBeInTheDocument();
+		expect( screen.getByText( 'Change to' ) ).toBeInTheDocument();
 
 		// Verify column count in header row
 		const rows = within( table ).getAllByRole( 'row' );
 		const headerCells = within( rows[ 0 ] ).getAllByRole( 'columnheader' );
-		// Should have 5 columns: Type, Name, Current values, arrow (empty header), Update to
-		expect( headerCells ).toHaveLength( 5 );
+		// Type, name, current value, arrow, change to, and copy action
+		expect( headerCells ).toHaveLength( 6 );
 	} );
 } );

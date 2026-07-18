@@ -26,6 +26,7 @@ interface ConnectionModeCardProps {
 	mode: DomainConnectionSetupModeValue;
 	title: string;
 	description: string;
+	heading?: string;
 	infoText: string;
 	steps: ConnectionModeStep[];
 	stepsCompleted: boolean[];
@@ -42,6 +43,7 @@ export default function ConnectionModeCard( {
 	mode,
 	title,
 	description,
+	heading,
 	infoText,
 	steps,
 	stepsCompleted,
@@ -55,34 +57,22 @@ export default function ConnectionModeCard( {
 }: ConnectionModeCardProps ) {
 	const isSelected = selectedMode === mode;
 
-	// Track which steps are expanded (first step expanded by default)
 	const [ stepsExpanded, setStepsExpanded ] = useState< boolean[] >(
 		steps.map( ( _, index ) => index === 0 )
 	);
 
 	const handleStepChange = ( index: number, checked: boolean ) => {
 		onStepChange( index, checked );
-
-		// When a step is checked, collapse all steps and expand the next one
-		if ( checked ) {
-			const newStepsExpanded = steps.map( () => false );
-
-			// If not the last step, expand the next one
-			if ( index < steps.length - 1 ) {
-				newStepsExpanded[ index + 1 ] = true;
-			} else {
-				// If it's the last step, keep it expanded
-				newStepsExpanded[ index ] = true;
-			}
-
-			setStepsExpanded( newStepsExpanded );
-		}
 	};
 
 	const handleStepToggle = ( index: number, expanded: boolean ) => {
 		setStepsExpanded( ( prev ) => {
+			if ( expanded ) {
+				return steps.map( ( _, stepIndex ) => stepIndex === index );
+			}
+
 			const newState = [ ...prev ];
-			newState[ index ] = expanded;
+			newState[ index ] = false;
 			return newState;
 		} );
 	};
@@ -130,17 +120,22 @@ export default function ConnectionModeCard( {
 						<>
 							<CardDivider />
 							<VStack spacing={ 6 }>
+								{ heading && (
+									<Text size="medium" weight={ 500 }>
+										{ heading }
+									</Text>
+								) }
 								{ mode === DomainConnectionSetupMode.SUGGESTED && ! hasEmailOrOtherServices && (
-									<Notice variant="info" title="No email or other services detected">
+									<Notice variant="info" title={ __( 'No email or other services detected' ) }>
 										<Text>
 											{ __(
-												'You can safely connect your domain without affecting anything else.'
+												'You can safely connect your domain without affecting other services.'
 											) }
 										</Text>
 									</Notice>
 								) }
 								{ mode === DomainConnectionSetupMode.SUGGESTED && hasEmailOrOtherServices && (
-									<Notice variant="info" title="Email or other services detected">
+									<Notice variant="info" title={ __( 'Email or other services detected' ) }>
 										<Text>
 											{ __(
 												'We detected email services attached to your domain. If you want to continue with this setup, we recommend copying over your DNS records before proceeding to avoid any disruptions.'
@@ -149,7 +144,7 @@ export default function ConnectionModeCard( {
 									</Notice>
 								) }
 								{ mode === DomainConnectionSetupMode.ADVANCED && hasEmailOrOtherServices && (
-									<Notice variant="info" title="Email or other services detected">
+									<Notice variant="info" title={ __( 'Email or other services detected' ) }>
 										<Text>
 											{ __(
 												'To avoid disruption, this is the safest way to connect your domain name.'
@@ -165,6 +160,7 @@ export default function ConnectionModeCard( {
 										<SetupStep
 											expanded={ stepsExpanded[ index ] }
 											completed={ stepsCompleted[ index ] }
+											stepNumber={ index + 1 }
 											onCheckboxChange={ ( checked ) => handleStepChange( index, checked ) }
 											onToggle={ ( expanded ) => handleStepToggle( index, expanded ) }
 											title={ step.title }
@@ -187,7 +183,7 @@ export default function ConnectionModeCard( {
 									isBusy={ isUpdatingConnectionMode }
 									disabled={ verificationDisabled }
 								>
-									{ __( 'Verify Connection' ) }
+									{ __( 'Verify connection' ) }
 								</Button>
 							</ButtonStack>
 						</>

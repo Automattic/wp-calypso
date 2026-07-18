@@ -72,6 +72,19 @@ export function isMappingVerificationSuccess(
 	return !! ( hasCloudflareIpAddresses && resolvesToWpcom );
 }
 
+export type DomainConnectionStatus = 'verifying' | 'connecting' | 'active';
+
+export function getDomainConnectionStatus(
+	mode: DomainConnectionSetupModeValue | null,
+	verificationStatus: DomainMappingStatus | undefined
+): DomainConnectionStatus {
+	if ( ! isMappingVerificationSuccess( mode, verificationStatus ) ) {
+		return 'verifying';
+	}
+
+	return verificationStatus?.resolves_to_wpcom ? 'active' : 'connecting';
+}
+
 export const resolveStepName = (
 	connectionMode: DomainConnectionSetupModeValue | null,
 	supportsDomainConnect: boolean,

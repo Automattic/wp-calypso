@@ -22,6 +22,7 @@ import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import DomainConnectionSetup from './domain-connection-setup';
 import DomainConnectionVerification from './domain-connection-verification';
+import { getDomainConnectionStatus } from './utils';
 
 import './style.scss';
 
@@ -176,20 +177,25 @@ export default function DomainConnection() {
 
 	// If the connection mode is not null, it means we are on the verification step
 	const isVerificationStep = !! connectionMode;
+	const connectionStatus = getDomainConnectionStatus( connectionMode, domainMappingStatus );
+	let pageHeaderDescription: string = __(
+		'We’ll tailor the next steps based on how your domain is used.'
+	);
+
+	if ( isVerificationStep ) {
+		pageHeaderDescription =
+			connectionStatus === 'active'
+				? __( 'Your domain is connected and ready to use.' )
+				: __( 'Your domain is connecting in the background. We’ll email you when it’s active.' );
+	}
 
 	return (
 		<PageLayout
 			size="small"
 			header={
 				<PageHeader
-					title={
-						isVerificationStep ? __( 'Connection verification' ) : __( 'Connect your domain name' )
-					}
-					description={
-						isVerificationStep
-							? null
-							: __( 'We’ll tailor the next steps based on how your domain name is currently used.' )
-					}
+					title={ isVerificationStep ? __( 'Connection status' ) : __( 'Connect your domain' ) }
+					description={ pageHeaderDescription }
 				/>
 			}
 		>

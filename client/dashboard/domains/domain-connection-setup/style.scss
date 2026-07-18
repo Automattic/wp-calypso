@@ -1,16 +1,42 @@
-@import "@wordpress/base-styles/colors";
-@import "@wordpress/base-styles/variables";
+@import '@wordpress/base-styles/colors';
+@import '@wordpress/base-styles/variables';
 
 .dashboard-domain-connection-verification {
-	&--connected {
-		.dashboard-domain-connection-verification__icon {
-			color: var(--dashboard__background-color-success);
-			fill: var(--dashboard__background-color-success);
+	&--verifying,
+	&--connecting {
+		.dashboard-domain-connection-verification__status-card {
+			border-color: color-mix(
+				in srgb,
+				var( --dashboard__background-color-warning ) 55%,
+				transparent
+			);
+			background: color-mix(
+				in srgb,
+				var( --dashboard__background-color-warning ) 4%,
+				var( --dashboard-surface__background-color )
+			);
 		}
 	}
 
-	.summary-button.components-button .summary-button-title {
-		font-weight: 500;
+	&--active .dashboard-domain-connection-verification__status-card {
+		border-color: color-mix(
+			in srgb,
+			var( --dashboard__background-color-success ) 65%,
+			transparent
+		);
+		background: color-mix(
+			in srgb,
+			var( --dashboard__background-color-success ) 4%,
+			var( --dashboard-surface__background-color )
+		);
+	}
+
+	.components-button.is-link {
+		width: fit-content;
+		height: auto;
+		min-height: 0;
+		justify-content: flex-start;
+		padding: 0;
 	}
 }
 
@@ -18,7 +44,7 @@
 	.icon-list-item {
 		padding: $grid-unit-10;
 	}
-	.icon-list-item__decoration + span > span > span:last-child{
+	.icon-list-item__decoration + span > span > span:last-child {
 		font-size: $font-size-small;
 	}
 }

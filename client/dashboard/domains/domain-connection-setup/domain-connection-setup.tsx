@@ -17,6 +17,7 @@ import { __, sprintf } from '@wordpress/i18n';
 import { globe } from '@wordpress/icons';
 import { useState } from 'react';
 import { Card, CardBody } from '../../components/card';
+import InlineSupportLink from '../../components/inline-support-link';
 import ConnectionModeCard from './connection-mode-card';
 import DNSRecordsDataView from './dns-records-dataview';
 import DomainConnectCard from './domain-connect-card';
@@ -66,56 +67,54 @@ export default function DomainConnectionSetup( {
 	const registrar = domainConnectionSetupInfo.reseller || domainConnectionSetupInfo.registrar;
 	const registrar_url = domainConnectionSetupInfo.registrar_url;
 
-	const commonSteps = [
-		{
-			title: registrar
-				? sprintf(
-						// translators: %s is the registrar name
-						__( '1. Login to %s' ),
-						registrar
-				  )
-				: __( '1. Login to your domain name provider' ),
-			label: __( 'I have opened the DNS settings' ),
-			content: (
-				<Text>
-					{ createInterpolateElement(
-						// translators: <registrar/> is the domain name provider, <domain/> is the domain name
-						__( 'Log in to <registrar/> and open DNS management for <domain/>.' ),
+	const loginStepTitle = registrar
+		? sprintf(
+				// translators: %s is the registrar name
+				__( 'Log in to %s' ),
+				registrar
+		  )
+		: __( 'Log in to your domain provider' );
 
-						{
-							registrar:
-								! isReseller && registrar_url ? (
-									<ExternalLink href={ registrar_url }> { registrar } </ExternalLink>
-								) : (
-									<>{ registrar || __( 'your domain name provider' ) }</>
-								),
-							domain: <>{ domainName }</>,
-						}
-					) }
-				</Text>
-			),
-		},
+	const suggestedLoginStep = {
+		title: loginStepTitle,
+		label: __( 'I have opened the name server settings' ),
+		content: (
+			<Text>
+				{ createInterpolateElement(
+					// translators: <domain/> is the domain name and <guide/> is a support link
+					__(
+						'Open the name server settings for <domain/>. Some registrars call this DNS settings. Need help? <guide>Follow our guide.</guide>'
+					),
+					{
+						domain: <>{ domainName }</>,
+						guide: <InlineSupportLink supportContext="map-domain-setup-instructions" />,
+					}
+				) }
+			</Text>
+		),
+	};
+
+	const suggestedModeSteps = [
+		suggestedLoginStep,
 		{
-			title: __( '2. Back up DNS records' ),
-			label: __( 'I have downloaded the DNS records' ),
+			title: __( 'Save your current name servers' ),
+			label: __( 'I have saved a copy of my name servers' ),
 			content: (
 				<Text>
 					{ __(
-						'It’s rare, but things can go sideways. Download your DNS records as a fallback, just in case.'
+						'Before making changes, save a copy of your current name servers. You can take a screenshot, copy them into a document, or write them down.'
 					) }
 				</Text>
 			),
 		},
-	];
-
-	const suggestedModeSteps = [
-		...commonSteps,
 		{
-			title: __( '3. Update name servers' ),
+			title: __( 'Update name servers' ),
 			label: __( 'I have updated the name servers' ),
 			content: (
 				<VStack spacing={ 6 }>
-					<Text>{ __( 'Replace all name server records with the values below.' ) }</Text>
+					<Text>
+						{ __( 'Replace your current name servers with the WordPress.com name servers below.' ) }
+					</Text>
 					<DNSRecordsDataView
 						domainName={ domainName }
 						domainMappingStatus={ domainMappingStatus }
@@ -127,10 +126,43 @@ export default function DomainConnectionSetup( {
 		},
 	];
 
+	const advancedLoginStep = {
+		title: loginStepTitle,
+		label: __( 'I have opened the DNS settings' ),
+		content: (
+			<Text>
+				{ createInterpolateElement(
+					// translators: <registrar/> is the domain provider and <domain/> is the domain name
+					__( 'Log in to <registrar/> and open DNS management for <domain/>.' ),
+					{
+						registrar:
+							! isReseller && registrar_url ? (
+								<ExternalLink href={ registrar_url }>{ registrar }</ExternalLink>
+							) : (
+								<>{ registrar || __( 'your domain provider' ) }</>
+							),
+						domain: <>{ domainName }</>,
+					}
+				) }
+			</Text>
+		),
+	};
+
 	const advancedModeSteps = [
-		...commonSteps,
+		advancedLoginStep,
 		{
-			title: __( '3. Update DNS records' ),
+			title: __( 'Back up DNS records' ),
+			label: __( 'I have downloaded the DNS records' ),
+			content: (
+				<Text>
+					{ __(
+						'It’s rare, but things can go sideways. Download your DNS records as a fallback, just in case.'
+					) }
+				</Text>
+			),
+		},
+		{
+			title: __( 'Update DNS records' ),
 			label: __( 'I have updated the DNS settings' ),
 			content: (
 				<VStack spacing={ 6 }>
@@ -221,12 +253,13 @@ export default function DomainConnectionSetup( {
 					) }
 					<ConnectionModeCard
 						mode={ DomainConnectionSetupMode.SUGGESTED }
-						title={ __( 'I only use this domain name for my website' ) }
-						description={ __( 'You’ll update your name servers to point to WordPress.com' ) }
+						title={ __( 'I only use this domain for my website' ) }
+						description={ __( 'You’ll update name servers' ) }
+						heading={ __( 'Connect with name servers' ) }
 						infoText={ sprintf(
 							// translators: %s is the domain name
 							__(
-								'Name servers connect your domain name to your site. It may take up to 72 hours for %s to become visible across the internet. We’ll email you when it’s done.'
+								'Name servers connect your domain to your website. After verification starts, %s can take up to 72 hours to appear across the internet.'
 							),
 							domainName
 						) }
@@ -243,8 +276,8 @@ export default function DomainConnectionSetup( {
 
 					<ConnectionModeCard
 						mode={ DomainConnectionSetupMode.ADVANCED }
-						title={ __( 'I use this domain name for email or other services' ) }
-						description={ __( 'You’ll update DNS records (CNAME and A)' ) }
+						title={ __( 'I use this domain for my website, email, or other services' ) }
+						description={ __( 'You’ll update DNS records' ) }
 						infoText={ sprintf(
 							// translators: %s is the domain name
 							__(

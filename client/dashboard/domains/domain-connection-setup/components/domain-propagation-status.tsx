@@ -6,9 +6,10 @@ import {
 	__experimentalGrid as Grid,
 	__experimentalVStack as VStack,
 } from '@wordpress/components';
-import { __ } from '@wordpress/i18n';
-import { Card, CardBody } from '../../../components/card';
+import { __, sprintf } from '@wordpress/i18n';
+import { Card, CardBody, CardDivider } from '../../../components/card';
 import { useTimeSince } from '../../../components/time-since';
+import type { DomainConnectionStatus } from '../utils';
 
 function PropagationStatusIndicator( { propagated }: { propagated: boolean } ) {
 	return (
@@ -25,7 +26,13 @@ function PropagationStatusIndicator( { propagated }: { propagated: boolean } ) {
 	);
 }
 
-export default function DomainPropagationStatus( { domainName }: { domainName: string } ) {
+export default function DomainPropagationStatus( {
+	domainName,
+	status = 'connecting',
+}: {
+	domainName: string;
+	status?: DomainConnectionStatus;
+} ) {
 	const { data, isLoading, isError } = useQuery( domainPropagationStatusQuery( domainName ) );
 	const lastChecked = useTimeSince( data?.last_updated ?? '' );
 
@@ -40,20 +47,36 @@ export default function DomainPropagationStatus( { domainName }: { domainName: s
 			</Text>
 			<Card>
 				<CardBody>
-					<Grid columns={ 4 } gap={ 4 }>
+					<Grid gap={ 4 } style={ { gridTemplateColumns: 'repeat(auto-fit, minmax(110px, 1fr))' } }>
 						{ data.propagation_status.map( ( area ) => (
 							<HStack key={ area.area_code } spacing={ 2 } justify="flex-start">
-								<PropagationStatusIndicator propagated={ area.propagated } />
+								<PropagationStatusIndicator
+									propagated={
+										status === 'active' || ( status === 'connecting' && area.propagated )
+									}
+								/>
 								<Text>{ area.area_name }</Text>
 							</HStack>
 						) ) }
 					</Grid>
 				</CardBody>
+				{ status !== 'active' && (
+					<>
+						<CardDivider />
+						<CardBody>
+							<Text variant="muted" size={ 12 }>
+								{ status === 'verifying'
+									? __( 'Propagation begins once verification is complete.' )
+									: sprintf(
+											// translators: %s is the time the status was last checked
+											__( 'Last checked %s' ),
+											lastChecked
+									  ) }
+							</Text>
+						</CardBody>
+					</>
+				) }
 			</Card>
-			<Text variant="muted" size={ 12 }>
-				{ /* translators: %s is the time the status was last checked */ }
-				{ __( 'Last checked' ) } { lastChecked }
-			</Text>
 		</VStack>
 	);
 }
