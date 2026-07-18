@@ -1,4 +1,4 @@
-import { siteByIdQuery } from '@automattic/api-queries';
+import { siteByIdQuery, sitePluginActiveQuery } from '@automattic/api-queries';
 import {
 	PLAN_BUSINESS,
 	WPCOM_FEATURES_ATOMIC,
@@ -33,16 +33,8 @@ import { transferStates } from 'calypso/state/automated-transfer/constants';
 import { getAutomatedTransferStatus } from 'calypso/state/automated-transfer/selectors';
 import { getPurchaseFlowState } from 'calypso/state/marketplace/purchase-flow/selectors';
 import { MARKETPLACE_ASYNC_PROCESS_STATUS } from 'calypso/state/marketplace/types';
-import {
-	installPlugin,
-	activatePlugin,
-	fetchSitePlugins,
-} from 'calypso/state/plugins/installed/actions';
-import {
-	getPluginOnSite,
-	getStatusForPlugin,
-	isRequesting,
-} from 'calypso/state/plugins/installed/selectors-ts';
+import { installPlugin, activatePlugin } from 'calypso/state/plugins/installed/actions';
+import { getPluginOnSite, getStatusForPlugin } from 'calypso/state/plugins/installed/selectors-ts';
 import { PLUGIN_INSTALLATION_ERROR } from 'calypso/state/plugins/installed/status/constants';
 import { fetchPluginData as wporgFetchPluginData } from 'calypso/state/plugins/wporg/actions';
 import { getPlugin, isFetched } from 'calypso/state/plugins/wporg/selectors';
@@ -72,6 +64,17 @@ import {
 import './style.scss';
 import { MarketplacePluginInstallProps } from './types';
 import type { IAppState } from 'calypso/state/types';
+
+// The plugin-active endpoint returns 503 for a transient read failure (keep polling) and 502/other
+// for a terminal one (stop and surface it).
+function isTerminalPluginActiveError( error: unknown ): boolean {
+	const status = ( error as { status?: number } | null | undefined )?.status;
+	return status != null && status !== 503;
+}
+
+// How many times to (re)dispatch activation while the endpoint keeps reporting the plugin inactive
+// before treating it as a failed activation. The poll interval spaces the attempts out.
+const MAX_ACTIVATION_ATTEMPTS = 3;
 
 const MarketplaceProductInstall = ( {
 	pluginSlug = '',
@@ -117,8 +120,6 @@ const MarketplaceProductInstall = ( {
 		getAutomatedTransferStatus( state, siteId )
 	);
 
-	const isFetchingSitePlugins = useSelector( ( state ) => isRequesting( state, siteId ) );
-
 	const pluginInstallStatus = useSelector( ( state ) =>
 		getStatusForPlugin( state, siteId, pluginSlug )
 	);
@@ -155,6 +156,15 @@ const MarketplaceProductInstall = ( {
 			productSlugInstalled &&
 			[ pluginSlug, themeSlug ].includes( productSlugInstalled ) &&
 			primaryDomain === selectedSiteSlug
+		);
+	} );
+
+	// A checkout handed this plugin off to this page for installation, whether that install is still
+	// in progress or already completed (so it is broader than marketplaceInstallationInProgress).
+	const marketplacePluginHandoff = useSelector( ( state ) => {
+		const { productSlugInstalled, primaryDomain } = getPurchaseFlowState( state as IAppState );
+		return (
+			!! pluginSlug && productSlugInstalled === pluginSlug && primaryDomain === selectedSiteSlug
 		);
 	} );
 
@@ -295,65 +305,98 @@ const MarketplaceProductInstall = ( {
 	// Prefer fresh URL when available; if in atomic flow, wait for fresh URL
 	const pluginsUrlFinal = atomicFlow ? pluginsUrlFresh : pluginsUrlFresh || pluginsUrlSelector;
 
-	// For marketplace plugins (e.g. sensei-pro), the atomic transfer + plugin install
-	// is initiated during checkout, not by this component. The wporg data is unavailable,
-	// so atomicFlow is never set. Once the site is atomic, poll for installed plugins
-	// so that the existing redirect (installedPlugin?.active) fires.
-	const isMarketplacePluginFlow =
-		! atomicFlow &&
-		! isPluginUploadFlow &&
-		!! pluginSlug &&
-		!! freshSite?.is_wpcom_atomic &&
-		wporgPlugin?.wporg === false;
-
 	const canManagePlugins = useSelector( ( state ) =>
 		siteHasFeature( state, selectedSite?.ID, WPCOM_FEATURES_MANAGE_PLUGINS )
 	);
 
-	// A checkout-driven marketplace install reaches this page on an already-transferred site without
-	// advancing the step machine, so it stands in for both "the site just transferred" and "the flow
-	// is under way" that the other flows express through atomicFlow and currentStep.
-	const siteJustTransferred = atomicFlow || isMarketplacePluginFlow;
-	const installUnderway = currentStep !== 0 || isMarketplacePluginFlow;
+	// An install was actually requested through this page — it started one (so the step left 0), or a
+	// checkout handed one off — rather than the user simply opening the install URL.
+	const installationRequested = currentStep !== 0 || marketplacePluginHandoff;
 
-	// Reconciling dispatches activation and then leaves for a freshly discovered WP Admin URL, so gate
-	// on the transferred site being ready and its manage-plugins capability having propagated: a
-	// rejected one-shot activation would never be retried.
-	const canReconcilePlugin =
-		( ! atomicFlow || transferStates.COMPLETE === automatedTransferStatus ) &&
-		( ! siteJustTransferred || ( isAtomicTransferReady && canManagePlugins ) );
+	// The transferred site is ready for its WP Admin URL and can manage plugins. Stronger than
+	// is_wpcom_atomic: isAtomicTransferReady also requires the manage_options capability to have
+	// propagated, so we neither activate nor redirect before WP Admin is usable.
+	const canReconcilePlugin = isAtomicTransferReady && canManagePlugins;
 
-	// A local install this page started (not a transfer or checkout-driven one) that terminally failed
-	// with no plugin to show for it. Read the current status and action, not the error field the
-	// reducer keeps across retries, and scope it to our own attempt so a stale error elsewhere does
-	// not count. A partial success — a plugin exists and may still activate — is not a failure.
+	// A local install this page started that terminally failed with no plugin to reconcile. Read the
+	// current status and action, not the error field the reducer keeps across retries.
 	const localInstallFailed =
 		installFlowInitiatedRef.current &&
-		! atomicFlow &&
-		! isMarketplacePluginFlow &&
 		! installedPlugin &&
 		pluginInstallStatus?.status === PLUGIN_INSTALLATION_ERROR &&
 		pluginInstallStatus.action === INSTALL_PLUGIN;
 
-	// Poll for the active state like the theme flow polls the active theme: once the flow is under
-	// way, until the server reports it active. Keep polling even after a reported activation failure:
-	// a lost response can follow a server-side success, and the refreshed list is what confirms it.
-	const shouldFetchPlugin =
+	// Activation retries are bounded (below); once exhausted, stop polling and show the failure.
+	const [ activationFailed, setActivationFailed ] = useState( false );
+
+	// Poll the read-only active-status endpoint to learn when the plugin is on, for the Atomic
+	// wp.org-slug flows. It never installs or activates — the transfer-with-software step does — so
+	// this replaces inferring state from the plugin list. The query itself is ephemeral so a stale
+	// `complete` from an earlier install can't drive an immediate redirect.
+	const shouldPollPluginActive =
 		!! pluginSlug &&
-		! installedPlugin?.active &&
-		! localInstallFailed &&
-		! isFetchingSitePlugins &&
+		! isPluginUploadFlow &&
+		installationRequested &&
 		canReconcilePlugin &&
-		installUnderway;
+		! localInstallFailed &&
+		! activationFailed;
 
-	useInterval( () => dispatch( fetchSitePlugins( siteId ) ), shouldFetchPlugin ? 3000 : null );
+	const {
+		data: pluginActiveState,
+		error: pluginActiveError,
+		dataUpdatedAt: pluginActiveUpdatedAt,
+	} = useQuery( {
+		...sitePluginActiveQuery( siteId, pluginSlug ),
+		enabled: shouldPollPluginActive,
+		refetchInterval: ( query ) => {
+			// Stop once active or on a terminal read error; keep polling otherwise (incl. a transient 503).
+			if (
+				query.state.data?.status === 'complete' ||
+				isTerminalPluginActiveError( query.state.error )
+			) {
+				return false;
+			}
+			return 3000;
+		},
+		retry: false,
+	} );
 
-	// A transfer leaves the plugin installed but inactive, and it only turns up here once polling has
-	// fetched it. The ref (above) dispatches activation once, whatever the plugin state does between
-	// renders.
+	const pluginActiveStatus = pluginActiveState?.status;
+	const pluginReconcileFailed = isTerminalPluginActiveError( pluginActiveError );
+
+	// `inactive` means installed but not active: dispatch the targeted activation the page always
+	// used, with the id the endpoint returns. Each poll that still reports inactive retries it, up to
+	// a cap; after that it's a failed activation, not an endless spinner. Keyed on dataUpdatedAt so a
+	// fresh inactive result — not just a re-render — drives each retry.
+	const activationAttemptsRef = useRef( 0 );
+	useEffect( () => {
+		const installedId = pluginActiveState?.plugin?.id;
+		if ( pluginActiveStatus !== 'inactive' || ! installedId || activationFailed ) {
+			return;
+		}
+		if ( activationAttemptsRef.current >= MAX_ACTIVATION_ATTEMPTS ) {
+			setActivationFailed( true );
+			return;
+		}
+		activationAttemptsRef.current += 1;
+		setCurrentStep( 2 );
+		dispatch( activatePlugin( siteId, { id: installedId, slug: pluginSlug } ) );
+	}, [
+		pluginActiveUpdatedAt,
+		pluginActiveStatus,
+		pluginActiveState,
+		activationFailed,
+		dispatch,
+		siteId,
+		pluginSlug,
+	] );
+
+	// For flows the active-status endpoint can't reach — self-hosted Jetpack sites (not Atomic) and
+	// zip uploads (no wp.org slug) — keep the page's existing plugin-list activation: activate the
+	// installed plugin once it turns up.
 	useEffect( () => {
 		if (
-			! canReconcilePlugin ||
+			shouldPollPluginActive ||
 			currentStep !== 1 ||
 			! installedPlugin ||
 			installedPlugin.active ||
@@ -365,9 +408,9 @@ const MarketplaceProductInstall = ( {
 
 		activationAttempted.current = true;
 		setCurrentStep( 2 );
-		dispatch( activatePlugin( siteId, installedPlugin ) );
+		dispatch( activatePlugin( siteId, { id: installedPlugin.id, slug: installedPlugin.slug } ) );
 	}, [
-		canReconcilePlugin,
+		shouldPollPluginActive,
 		currentStep,
 		installedPlugin,
 		isPluginUploadFlow,
@@ -376,43 +419,49 @@ const MarketplaceProductInstall = ( {
 		siteId,
 	] );
 
-	// Check completition of all flows and redirect to thank you page
+	// Redirect once the plugin is active, or once a zip-upload transfer completes.
 	useEffect( () => {
-		if (
-			// Happens in 3 cases:
-			// - Click on "Install and activate" button for any plugin on /plugins/<site_name>
-			// - Install with the help of uploading archive of a plugins
-			// - If it's simple site which doesn't support plugins, then installing and activation happens at the same time with upgrading to Business plan
-			// A transferred plugin lands here once it reports active and the site is ready for the WP
-			// Admin URL below — active first, since that page lists only active plugins.
-			( installedPlugin?.active && canReconcilePlugin ) ||
-			// Transfer to atomic uploading a zip plugin
-			( uploadedPluginSlug &&
-				isPluginUploadFlow &&
-				! isAtomic &&
-				transferStates.COMPLETE === automatedTransferStatus &&
-				canManagePlugins &&
-				isAtomicTransferReady )
-		) {
-			// Require a resolved pluginsUrlFinal before redirecting
-			if ( ! pluginsUrlFinal ) {
-				return;
-			}
-			waitFor( 1 ).then( () => {
-				window.location.href = pluginsUrlFinal as string;
-			} );
+		const active =
+			// The active-status endpoint reports the plugin on (Atomic wp.org flow, readiness already
+			// gated by the query being enabled).
+			pluginActiveStatus === 'complete' ||
+			// Flows the endpoint can't reach: the plugin list reports it active.
+			( ! shouldPollPluginActive && installedPlugin?.active );
+		const zipUploadTransferred =
+			uploadedPluginSlug &&
+			isPluginUploadFlow &&
+			! isAtomic &&
+			transferStates.COMPLETE === automatedTransferStatus &&
+			canManagePlugins &&
+			isAtomicTransferReady;
+
+		if ( ( ! active && ! zipUploadTransferred ) || ! pluginsUrlFinal ) {
+			return;
 		}
+
+		// A short delay lets the final progress render before navigating; cancel it if this effect
+		// re-runs (e.g. a fresh fetch supersedes a stale result) before it fires.
+		let cancelled = false;
+		waitFor( 1 ).then( () => {
+			if ( ! cancelled ) {
+				window.location.href = pluginsUrlFinal as string;
+			}
+		} );
+		return () => {
+			cancelled = true;
+		};
 	}, [
+		pluginActiveStatus,
+		shouldPollPluginActive,
+		installedPlugin,
 		automatedTransferStatus,
 		isPluginUploadFlow,
 		isAtomic,
 		canManagePlugins,
-		installedPlugin,
 		uploadedPluginSlug,
 		pluginsUrlFinal,
 		isAtomicTransferReady,
-		canReconcilePlugin,
-	] ); // We need to trigger this hook also when `automatedTransferStatus` changes cause the plugin install is done on the background in that case.
+	] );
 
 	// Validate theme is already active
 	useEffect( () => {
@@ -556,6 +605,32 @@ const MarketplaceProductInstall = ( {
 					secondaryActionURL={ `/plugins/upload/${ selectedSiteSlug }` }
 					action={ translate( 'Re-upload plugin' ) }
 					actionURL={ `https://${ selectedSiteSlug }/wp-admin/plugin-install.php?tab=upload` }
+				/>
+			);
+		}
+		// Activation was retried and never took. The plugin is installed, so point at its page to
+		// activate it by hand rather than telling the user to re-upload.
+		if ( activationFailed ) {
+			return (
+				<EmptyContent
+					title={ null }
+					line={ translate( 'We installed the plugin, but could not activate it.' ) }
+					action={ translate( 'View plugin' ) }
+					actionURL={ `/plugins/${ pluginSlug }/${ selectedSiteSlug }` }
+				/>
+			);
+		}
+		// The active-status read failed terminally. The plugin may already be installed or active, so
+		// this is not an install failure — point at its page rather than telling the user to re-upload.
+		if ( pluginReconcileFailed ) {
+			return (
+				<EmptyContent
+					title={ null }
+					line={ translate(
+						'We could not verify the plugin’s status. Check it from your plugins.'
+					) }
+					action={ translate( 'View plugin' ) }
+					actionURL={ `/plugins/${ pluginSlug }/${ selectedSiteSlug }` }
 				/>
 			);
 		}

@@ -1,5 +1,5 @@
 import { wpcom } from '../wpcom-fetcher';
-import type { SitePluginsResponse, CorePlugin, SitePlugin } from './types';
+import type { SitePluginsResponse, CorePlugin, SitePlugin, SitePluginActive } from './types';
 
 export async function fetchSitePlugin( siteId: number, pluginSlug: string ): Promise< SitePlugin > {
 	return await wpcom.req.get( {
@@ -16,5 +16,17 @@ export async function fetchSiteCorePlugins( siteId: number ): Promise< CorePlugi
 	return await wpcom.req.get( {
 		path: `/sites/${ siteId }/plugins`,
 		apiNamespace: 'wp/v2',
+	} );
+}
+
+// Reports whether a plugin is active on an Atomic site, without mutating anything. Poll this after a
+// marketplace transfer to learn when to redirect the user into the plugin.
+export async function fetchSitePluginActive(
+	siteId: number,
+	pluginSlug: string
+): Promise< SitePluginActive > {
+	return wpcom.req.get( {
+		path: `/sites/${ siteId }/plugins/${ encodeURIComponent( pluginSlug ) }/active`,
+		apiNamespace: 'wpcom/v2',
 	} );
 }

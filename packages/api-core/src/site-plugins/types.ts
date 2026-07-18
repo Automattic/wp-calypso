@@ -50,3 +50,17 @@ export type CorePlugin = {
 	is_managed?: boolean;
 	_links: { self: { [ key: number ]: { href: string } } };
 };
+
+export type SitePluginActiveStatus = 'complete' | 'inactive' | 'processing';
+
+export interface SitePluginActive {
+	// `complete` — active; `inactive` — installed but not active (activate it); `processing` — not
+	// installed yet (keep polling).
+	status: SitePluginActiveStatus;
+	plugin: {
+		slug: string;
+		id?: string;
+		installed?: boolean;
+		active?: boolean;
+	};
+}

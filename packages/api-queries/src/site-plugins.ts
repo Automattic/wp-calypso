@@ -12,6 +12,7 @@ import {
 	fetchSitePlugin,
 	installSiteCorePlugin,
 	activateSiteCorePlugin,
+	fetchSitePluginActive,
 } from '@automattic/api-core';
 import { queryOptions, mutationOptions } from '@tanstack/react-query';
 import { queryClient } from './query-client';
@@ -137,4 +138,14 @@ export const sitePluginRemoveMutation = ( invalidateQueriesOnSuccess = true ) =>
 				invalidatePluginsForSite( vars.siteId );
 			}
 		},
+	} );
+
+// Whether a plugin is active on a site, keyed by (site, slug). Poll it after a marketplace transfer
+// until the status is `complete`. Ephemeral: a reinstall must never observe a stale `complete`.
+export const sitePluginActiveQuery = ( siteId: number, pluginSlug: string ) =>
+	queryOptions( {
+		queryKey: [ 'site', siteId, 'plugins', pluginSlug, 'active' ],
+		queryFn: () => fetchSitePluginActive( siteId, pluginSlug ),
+		gcTime: 0,
+		meta: { persist: false },
 	} );
