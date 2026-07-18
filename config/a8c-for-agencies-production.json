@@ -43,6 +43,7 @@
 		"ad-tracking": true,
 		"checkout/stripe-upi": true,
 		"cookie-banner": true,
+		"jetpack/agency-core-updates-filter": false,
 		"jetpack/crm-downloads": true,
 		"oauth": true,
 		"upgrades/redirect-payments": true

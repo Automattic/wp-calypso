@@ -15,4 +15,5 @@ export const filtersMap: AgencyDashboardFilterMap[] = [
 	{ filterType: 'site_disconnected', ref: 5 },
 	{ filterType: 'site_down', ref: 6 },
 	{ filterType: 'plugin_updates', ref: 7 },
+	{ filterType: 'core_updates', ref: 8 },
 ];

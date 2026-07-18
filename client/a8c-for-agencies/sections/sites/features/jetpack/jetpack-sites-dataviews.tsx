@@ -1,4 +1,5 @@
 import config from '@automattic/calypso-config';
+import { Badge } from '@automattic/components';
 import { __experimentalHStack as HStack } from '@wordpress/components';
 import { Icon, starFilled } from '@wordpress/icons';
 import clsx from 'clsx';
@@ -38,6 +39,7 @@ export const JetpackSitesDataViews = ( {
 	onRefetchSite,
 }: SitesDataViewsProps ) => {
 	const translate = useTranslate();
+	const isCoreUpdatesFilterEnabled = config.isEnabled( 'jetpack/agency-core-updates-filter' );
 
 	const { showOnlyFavorites, showOnlyDevelopmentSites } = useContext( SitesDashboardContext );
 	const totalSites = ( () => {
@@ -121,7 +123,7 @@ export const JetpackSitesDataViews = ( {
 	const [ scanRef, setScanRef ] = useState< HTMLElement | null >();
 	const [ pluginsRef, setPluginsRef ] = useState< HTMLElement | null >();
 
-	const fields = useMemo< Field< SiteData >[] >(
+	const baseFields = useMemo< Field< SiteData >[] >(
 		() => [
 			{
 				id: 'status',
@@ -137,6 +139,9 @@ export const JetpackSitesDataViews = ( {
 					{ value: 5, label: translate( 'Site disconnected' ) },
 					{ value: 6, label: translate( 'Site down' ) },
 					{ value: 7, label: translate( 'Plugins needing updates' ) },
+					...( isCoreUpdatesFilterEnabled
+						? [ { value: 8, label: translate( 'WordPress needing updates' ) } ]
+						: [] ),
 				],
 				filterBy: {
 					operators: [ 'is' ],
@@ -383,12 +388,60 @@ export const JetpackSitesDataViews = ( {
 			scanRef,
 			pluginsRef,
 			isLoading,
+			isCoreUpdatesFilterEnabled,
 			dataViewsState.selectedItem?.blog_id,
 			openSitePreviewPane,
 			getSiteErrors,
 			renderField,
 		]
 	);
+
+	const fields = useMemo< Field< SiteData >[] >( () => {
+		if ( ! isCoreUpdatesFilterEnabled ) {
+			return baseFields;
+		}
+
+		const wpVersionField: Field< SiteData > = {
+			id: 'wp_version',
+			label: translate( 'WP version' ),
+			getValue: ( { item } ) => item.site.value.wordpress_version,
+			render: ( { item } ) => {
+				if ( isLoading ) {
+					return <TextPlaceholder />;
+				}
+
+				const {
+					wordpress_version: wpVersion,
+					is_core_update_available: hasCoreUpdate,
+					latest_wordpress_version: latestVersion,
+				} = item.site.value;
+
+				if ( ! wpVersion ) {
+					return <span className="sites-dataview__wp-version">-</span>;
+				}
+
+				return (
+					<HStack spacing={ 2 } justify="flex-start">
+						<span className="sites-dataview__wp-version">{ wpVersion }</span>
+						{ hasCoreUpdate && (
+							<Badge type="warning">
+								{ latestVersion
+									? translate( 'Update to %(version)s', { args: { version: latestVersion } } )
+									: translate( 'Update available' ) }
+							</Badge>
+						) }
+					</HStack>
+				);
+			},
+			enableHiding: true,
+			enableSorting: false,
+		};
+
+		const favoriteIndex = baseFields.findIndex( ( field ) => field.id === 'favorite' );
+		const insertAt = favoriteIndex === -1 ? baseFields.length : favoriteIndex;
+
+		return [ ...baseFields.slice( 0, insertAt ), wpVersionField, ...baseFields.slice( insertAt ) ];
+	}, [ baseFields, isCoreUpdatesFilterEnabled, isLoading, translate ] );
 
 	const urlParams = new URLSearchParams( window.location.search );
 	const isOnboardingTourActive = urlParams.get( 'tour' ) !== null;
