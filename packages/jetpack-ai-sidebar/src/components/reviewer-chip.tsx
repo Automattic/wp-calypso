@@ -13,7 +13,7 @@ export interface ReviewerMetadata {
 }
 
 interface ReviewerChipProps {
-	/** The display name exactly as it appears in the mediation payload. */
+	/** The display name exactly as it appears in the review payload. */
 	name: string;
 	/** Server-provided metadata keyed by name; may be missing for some reviewers. */
 	metadata?: ReviewerMetadata | null;

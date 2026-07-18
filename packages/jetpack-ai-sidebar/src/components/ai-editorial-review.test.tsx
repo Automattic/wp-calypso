@@ -8,7 +8,7 @@ import '@testing-library/jest-dom';
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { render, screen, fireEvent, waitFor, act } from '@testing-library/react';
 import React from 'react';
-import ReviewMediation from './review-mediation';
+import AiEditorialReview from './ai-editorial-review';
 
 jest.mock( '@automattic/calypso-analytics', () => ( {
 	recordTracksEvent: jest.fn(),
@@ -152,8 +152,8 @@ const blocks = [
 ];
 
 function basePayload(
-	overrides: Partial< React.ComponentProps< typeof ReviewMediation > > = {}
-): React.ComponentProps< typeof ReviewMediation > {
+	overrides: Partial< React.ComponentProps< typeof AiEditorialReview > > = {}
+): React.ComponentProps< typeof AiEditorialReview > {
 	return {
 		summary: 'Two reviewers disagree on the procedural framing.',
 		postId: 1,
@@ -192,9 +192,9 @@ afterEach( () => {
 	delete ( window as any ).wp;
 } );
 
-describe( 'ReviewMediation — smoke render', () => {
+describe( 'AiEditorialReview — smoke render', () => {
 	it( 'renders the summary and no stats chips when payload is empty', () => {
-		render( <ReviewMediation { ...basePayload() } /> );
+		render( <AiEditorialReview { ...basePayload() } /> );
 
 		expect(
 			screen.getByText( 'Two reviewers disagree on the procedural framing.' )
@@ -210,7 +210,7 @@ describe( 'ReviewMediation — smoke render', () => {
 
 	it( 'renders all five sections when the payload is fully populated', () => {
 		render(
-			<ReviewMediation
+			<AiEditorialReview
 				{ ...basePayload( {
 					conflicts: [
 						{
@@ -268,7 +268,7 @@ describe( 'ReviewMediation — smoke render', () => {
 
 	it( 'tracks the rendered result with aggregate counts', async () => {
 		render(
-			<ReviewMediation
+			<AiEditorialReview
 				{ ...basePayload( {
 					review_context: 'notes_and_guidelines',
 					conflicts: [
@@ -323,7 +323,7 @@ describe( 'ReviewMediation — smoke render', () => {
 	it( 'marks a review for another post as stale and non-actionable', () => {
 		// Review was generated for post 2 (postId prop); editor is currently on post 1 (mockCurrentPostId).
 		render(
-			<ReviewMediation
+			<AiEditorialReview
 				{ ...basePayload( {
 					postId: 2,
 					conflicts: [
@@ -388,7 +388,7 @@ describe( 'ReviewMediation — smoke render', () => {
 
 	it( 'marks a review without source post context as stale', () => {
 		render(
-			<ReviewMediation
+			<AiEditorialReview
 				{ ...basePayload( {
 					postId: undefined,
 					suggested_edits: [
@@ -422,7 +422,7 @@ describe( 'ReviewMediation — smoke render', () => {
 		// !isPostStale gate the card would wrongly show a "Manual edit" tag.
 		mockCurrentPostId = 999;
 		render(
-			<ReviewMediation
+			<AiEditorialReview
 				{ ...basePayload( {
 					suggested_edits: [
 						{
@@ -450,7 +450,7 @@ describe( 'ReviewMediation — smoke render', () => {
 		'filters guideline violations without a rendered guideline quote when the value is %s',
 		( _label, quote ) => {
 			render(
-				<ReviewMediation
+				<AiEditorialReview
 					{ ...basePayload( {
 						guideline_violations: [
 							{
@@ -476,10 +476,10 @@ describe( 'ReviewMediation — smoke render', () => {
 	);
 } );
 
-describe( 'ReviewMediation — stats strip', () => {
+describe( 'AiEditorialReview — stats strip', () => {
 	it( 'renders one button per non-empty section with the correct count', () => {
 		render(
-			<ReviewMediation
+			<AiEditorialReview
 				{ ...basePayload( {
 					conflicts: [
 						{
@@ -518,7 +518,7 @@ describe( 'ReviewMediation — stats strip', () => {
 
 	it( 'scrolls the matching section into view when a stat chip is clicked', () => {
 		render(
-			<ReviewMediation
+			<AiEditorialReview
 				{ ...basePayload( {
 					suggested_edits: [
 						{
@@ -543,7 +543,7 @@ describe( 'ReviewMediation — stats strip', () => {
 	} );
 } );
 
-describe( 'ReviewMediation — suggested-edit accept flow', () => {
+describe( 'AiEditorialReview — suggested-edit accept flow', () => {
 	const editsPayload = basePayload( {
 		suggested_edits: [
 			{
@@ -559,7 +559,7 @@ describe( 'ReviewMediation — suggested-edit accept flow', () => {
 	it( 'applies the edit and collapses the card on Accept', async () => {
 		mockApplyReviewEdit.mockResolvedValueOnce( { success: true } );
 
-		render( <ReviewMediation { ...editsPayload } /> );
+		render( <AiEditorialReview { ...editsPayload } /> );
 
 		// Pre-accept: full card visible with rationale.
 		expect( screen.getByText( 'Concise.' ) ).toBeInTheDocument();
@@ -598,7 +598,7 @@ describe( 'ReviewMediation — suggested-edit accept flow', () => {
 		// A never-resolving apply keeps the card in the in-flight "Applying…" state.
 		mockApplyReviewEdit.mockReturnValueOnce( new Promise( () => undefined ) );
 
-		const { rerender } = render( <ReviewMediation { ...editsPayload } /> );
+		const { rerender } = render( <AiEditorialReview { ...editsPayload } /> );
 		await act( async () => {
 			fireEvent.click( screen.getByRole( 'button', { name: 'Apply change' } ) );
 		} );
@@ -606,7 +606,7 @@ describe( 'ReviewMediation — suggested-edit accept flow', () => {
 
 		// The editor navigates to another post while the apply is still in flight.
 		mockCurrentPostId = 999;
-		rerender( <ReviewMediation { ...editsPayload } /> );
+		rerender( <AiEditorialReview { ...editsPayload } /> );
 
 		// No stuck Apply/Applying button — Go to section (disabled) stands in.
 		expect( screen.queryByRole( 'button', { name: 'Apply change' } ) ).not.toBeInTheDocument();
@@ -628,7 +628,7 @@ describe( 'ReviewMediation — suggested-edit accept flow', () => {
 		} );
 
 		render(
-			<ReviewMediation
+			<AiEditorialReview
 				{ ...basePayload( {
 					suggested_edits: [
 						{
@@ -661,7 +661,7 @@ describe( 'ReviewMediation — suggested-edit accept flow', () => {
 	it( 'restores the full card from the collapsed row on Undo', async () => {
 		mockApplyReviewEdit.mockResolvedValueOnce( { success: true } );
 
-		render( <ReviewMediation { ...editsPayload } /> );
+		render( <AiEditorialReview { ...editsPayload } /> );
 
 		await act( async () => {
 			fireEvent.click( screen.getByRole( 'button', { name: 'Apply change' } ) );
@@ -685,7 +685,7 @@ describe( 'ReviewMediation — suggested-edit accept flow', () => {
 			contentAfter: 'The council voted on Tuesday on the procedural matter.',
 		} );
 
-		render( <ReviewMediation { ...editsPayload } /> );
+		render( <AiEditorialReview { ...editsPayload } /> );
 
 		await act( async () => {
 			fireEvent.click( screen.getByRole( 'button', { name: 'Apply change' } ) );
@@ -713,7 +713,7 @@ describe( 'ReviewMediation — suggested-edit accept flow', () => {
 		} );
 		mockUndoBlockEdit.mockReturnValueOnce( false ).mockReturnValueOnce( true );
 
-		render( <ReviewMediation { ...editsPayload } /> );
+		render( <AiEditorialReview { ...editsPayload } /> );
 
 		await act( async () => {
 			fireEvent.click( screen.getByRole( 'button', { name: 'Apply change' } ) );
@@ -740,7 +740,7 @@ describe( 'ReviewMediation — suggested-edit accept flow', () => {
 	it( 'marks the row failed (and not collapsed) when applyReviewEdit rejects', async () => {
 		mockApplyReviewEdit.mockResolvedValueOnce( { success: false } );
 
-		render( <ReviewMediation { ...editsPayload } /> );
+		render( <AiEditorialReview { ...editsPayload } /> );
 
 		await act( async () => {
 			fireEvent.click( screen.getByRole( 'button', { name: 'Apply change' } ) );
@@ -761,7 +761,7 @@ describe( 'ReviewMediation — suggested-edit accept flow', () => {
 		mockBlocks = [ ...blocks, { clientId: 'b3', name: 'core/query', attributes: { queryId: 1 } } ];
 
 		render(
-			<ReviewMediation
+			<AiEditorialReview
 				{ ...basePayload( {
 					suggested_edits: [
 						{
@@ -787,7 +787,7 @@ describe( 'ReviewMediation — suggested-edit accept flow', () => {
 
 	it( 'renders manual suggested edits without making them auto-applicable', () => {
 		render(
-			<ReviewMediation
+			<AiEditorialReview
 				{ ...basePayload( {
 					suggested_edits: [
 						{
@@ -819,7 +819,7 @@ describe( 'ReviewMediation — suggested-edit accept flow', () => {
 
 	it( 'badges edits with feedback_category and keeps that category on a Manual edit', () => {
 		render(
-			<ReviewMediation
+			<AiEditorialReview
 				{ ...basePayload( {
 					suggested_edits: [
 						{
@@ -852,7 +852,7 @@ describe( 'ReviewMediation — suggested-edit accept flow', () => {
 	} );
 
 	it( 'keeps block focus on the explicit block reference button', () => {
-		render( <ReviewMediation { ...editsPayload } /> );
+		render( <AiEditorialReview { ...editsPayload } /> );
 
 		const card = screen.getByText( 'Concise.' ).closest( '.jetpack-ai-feedback-list__item' );
 		expect( card ).toBeInTheDocument();
@@ -897,7 +897,7 @@ describe( 'ReviewMediation — suggested-edit accept flow', () => {
 		mockApplyReviewEdit.mockResolvedValueOnce( { success: true } );
 
 		render(
-			<ReviewMediation
+			<AiEditorialReview
 				{ ...basePayload( {
 					suggested_edits: [
 						{
@@ -928,7 +928,7 @@ describe( 'ReviewMediation — suggested-edit accept flow', () => {
 
 	it( 'offers Go to section instead of Apply when the source text no longer matches', () => {
 		render(
-			<ReviewMediation
+			<AiEditorialReview
 				{ ...basePayload( {
 					suggested_edits: [
 						{
@@ -952,7 +952,7 @@ describe( 'ReviewMediation — suggested-edit accept flow', () => {
 	} );
 
 	it( 'collapses the card on Dismiss without calling applyReviewEdit', () => {
-		render( <ReviewMediation { ...editsPayload } /> );
+		render( <AiEditorialReview { ...editsPayload } /> );
 
 		fireEvent.click( screen.getByRole( 'button', { name: 'Dismiss' } ) );
 
@@ -962,7 +962,7 @@ describe( 'ReviewMediation — suggested-edit accept flow', () => {
 	} );
 } );
 
-describe( 'ReviewMediation — guideline violations', () => {
+describe( 'AiEditorialReview — guideline violations', () => {
 	const violationsPayload = basePayload( {
 		guideline_violations: [
 			{
@@ -977,7 +977,7 @@ describe( 'ReviewMediation — guideline violations', () => {
 	} );
 
 	it( 'renders a violation as an advisory card — badge, struck excerpt, why, guideline, no Apply', () => {
-		render( <ReviewMediation { ...violationsPayload } /> );
+		render( <AiEditorialReview { ...violationsPayload } /> );
 
 		// Section heading carries the count, like the other grouped sections.
 		expect( screen.getByText( /Guideline violations \(1\)/ ) ).toBeInTheDocument();
@@ -999,14 +999,14 @@ describe( 'ReviewMediation — guideline violations', () => {
 	} );
 
 	it( 'focuses the referenced block when Go to section is clicked', () => {
-		render( <ReviewMediation { ...violationsPayload } /> );
+		render( <AiEditorialReview { ...violationsPayload } /> );
 
 		fireEvent.click( screen.getByRole( 'button', { name: 'Go to section' } ) );
 		expect( mockToggleBlockReferenceFocus ).toHaveBeenCalledWith( 'b1' );
 	} );
 
 	it( 'collapses to a Dismissed row on Dismiss and restores the card on Undo', () => {
-		render( <ReviewMediation { ...violationsPayload } /> );
+		render( <AiEditorialReview { ...violationsPayload } /> );
 
 		fireEvent.click( screen.getByRole( 'button', { name: 'Dismiss' } ) );
 
@@ -1025,7 +1025,7 @@ describe( 'ReviewMediation — guideline violations', () => {
 
 	it( 'disables Go to section when the referenced block is gone and omits the excerpt row', () => {
 		render(
-			<ReviewMediation
+			<AiEditorialReview
 				{ ...basePayload( {
 					guideline_violations: [
 						{
@@ -1049,7 +1049,7 @@ describe( 'ReviewMediation — guideline violations', () => {
 	} );
 } );
 
-describe( 'ReviewMediation — conflict resolutions', () => {
+describe( 'AiEditorialReview — conflict resolutions', () => {
 	const conflictPayload = basePayload( {
 		conflicts: [
 			{
@@ -1087,7 +1087,7 @@ describe( 'ReviewMediation — conflict resolutions', () => {
 	it( 'applies the per-reviewer candidate when its button is clicked', async () => {
 		mockApplyReviewEdit.mockResolvedValueOnce( { success: true } );
 
-		render( <ReviewMediation { ...conflictPayload } /> );
+		render( <AiEditorialReview { ...conflictPayload } /> );
 
 		await act( async () => {
 			fireEvent.click( screen.getByRole( 'button', { name: "Accept Marcus's wording" } ) );
@@ -1109,7 +1109,7 @@ describe( 'ReviewMediation — conflict resolutions', () => {
 	it( 'applies the AI candidate when its button is clicked', async () => {
 		mockApplyReviewEdit.mockResolvedValueOnce( { success: true } );
 
-		render( <ReviewMediation { ...conflictPayload } /> );
+		render( <AiEditorialReview { ...conflictPayload } /> );
 
 		await act( async () => {
 			fireEvent.click( screen.getByRole( 'button', { name: 'Accept AI resolution' } ) );
@@ -1130,7 +1130,7 @@ describe( 'ReviewMediation — conflict resolutions', () => {
 		// must stay in their own group and the AI + Dismiss pair must stay fixed,
 		// so the pairing never depends on the reviewer count's parity.
 		render(
-			<ReviewMediation
+			<AiEditorialReview
 				{ ...basePayload( {
 					conflicts: [
 						{
@@ -1169,10 +1169,10 @@ describe( 'ReviewMediation — conflict resolutions', () => {
 		);
 
 		const candidates = document.querySelector(
-			'.jetpack-ai-review-mediation__conflict-candidates'
+			'.jetpack-ai-editorial-review__conflict-candidates'
 		);
 		const resolve = document.querySelector(
-			'.jetpack-ai-review-mediation__conflict-resolution .jetpack-ai-review-mediation__actions'
+			'.jetpack-ai-editorial-review__conflict-resolution .jetpack-ai-editorial-review__actions'
 		);
 		expect( candidates ).toBeInTheDocument();
 		expect( resolve ).toBeInTheDocument();
@@ -1200,7 +1200,7 @@ describe( 'ReviewMediation — conflict resolutions', () => {
 	it( 'resolves in place on accept — keeps the header, shows Applied + Undo, and Undo restores the options', async () => {
 		mockApplyReviewEdit.mockResolvedValueOnce( { success: true } );
 
-		render( <ReviewMediation { ...conflictPayload } /> );
+		render( <AiEditorialReview { ...conflictPayload } /> );
 
 		await act( async () => {
 			fireEvent.click( screen.getByRole( 'button', { name: 'Accept AI resolution' } ) );
@@ -1235,7 +1235,7 @@ describe( 'ReviewMediation — conflict resolutions', () => {
 		} );
 		mockUndoBlockEdit.mockReturnValueOnce( false ).mockReturnValueOnce( true );
 
-		render( <ReviewMediation { ...conflictPayload } /> );
+		render( <AiEditorialReview { ...conflictPayload } /> );
 
 		await act( async () => {
 			fireEvent.click( screen.getByRole( 'button', { name: 'Accept AI resolution' } ) );
@@ -1273,7 +1273,7 @@ describe( 'ReviewMediation — conflict resolutions', () => {
 		];
 
 		render(
-			<ReviewMediation
+			<AiEditorialReview
 				{ ...basePayload( {
 					conflicts: [
 						{
@@ -1309,7 +1309,7 @@ describe( 'ReviewMediation — conflict resolutions', () => {
 
 	it( 'renders post-wide conflict candidates as manual guidance without accept buttons', () => {
 		render(
-			<ReviewMediation
+			<AiEditorialReview
 				{ ...basePayload( {
 					conflicts: [
 						{
@@ -1346,7 +1346,7 @@ describe( 'ReviewMediation — conflict resolutions', () => {
 
 	it( 'renders conflict candidates without exact source text as manual guidance', () => {
 		render(
-			<ReviewMediation
+			<AiEditorialReview
 				{ ...basePayload( {
 					conflicts: [
 						{
@@ -1395,7 +1395,7 @@ describe( 'ReviewMediation — conflict resolutions', () => {
 			];
 
 			render(
-				<ReviewMediation
+				<AiEditorialReview
 					{ ...basePayload( {
 						conflicts: [
 							{
@@ -1434,7 +1434,7 @@ describe( 'ReviewMediation — conflict resolutions', () => {
 	);
 } );
 
-describe( 'ReviewMediation — bulk Apply all', () => {
+describe( 'AiEditorialReview — bulk Apply all', () => {
 	it( 'applies only supported pending edits sequentially', async () => {
 		mockApplyReviewEdit.mockResolvedValue( { success: true } );
 		mockBlocks = [
@@ -1444,7 +1444,7 @@ describe( 'ReviewMediation — bulk Apply all', () => {
 		];
 
 		render(
-			<ReviewMediation
+			<AiEditorialReview
 				{ ...basePayload( {
 					conflicts: [
 						{
@@ -1574,7 +1574,7 @@ describe( 'ReviewMediation — bulk Apply all', () => {
 				},
 			],
 		} );
-		const { rerender } = render( <ReviewMediation { ...payload } /> );
+		const { rerender } = render( <AiEditorialReview { ...payload } /> );
 
 		await act( async () => {
 			fireEvent.click( screen.getByRole( 'button', { name: /Apply all \(2\)/ } ) );
@@ -1585,7 +1585,7 @@ describe( 'ReviewMediation — bulk Apply all', () => {
 		} );
 
 		mockCurrentPostId = 2;
-		rerender( <ReviewMediation { ...payload } /> );
+		rerender( <AiEditorialReview { ...payload } /> );
 
 		await act( async () => {
 			resolveFirstApply( { success: true } );
@@ -1601,17 +1601,17 @@ describe( 'ReviewMediation — bulk Apply all', () => {
 	} );
 } );
 
-describe( 'ReviewMediation — cached-run hint', () => {
+describe( 'AiEditorialReview — cached-run hint', () => {
 	it( 'renders a relative-time note when cached_at is set', () => {
 		// 10 minutes ago.
 		const cached_at = Math.floor( Date.now() / 1000 ) - 600;
-		render( <ReviewMediation { ...basePayload( { cached_at } ) } /> );
+		render( <AiEditorialReview { ...basePayload( { cached_at } ) } /> );
 
 		expect( screen.getByText( /Reusing review from .* ago/ ) ).toBeInTheDocument();
 	} );
 
 	it( 'omits the note when cached_at is not provided', () => {
-		render( <ReviewMediation { ...basePayload() } /> );
+		render( <AiEditorialReview { ...basePayload() } /> );
 		expect( screen.queryByText( /Reusing review/ ) ).not.toBeInTheDocument();
 	} );
 } );

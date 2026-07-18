@@ -156,7 +156,7 @@ describe( 'withJetpackAiToolbarButton', () => {
 
 	it.each( [
 		[ 'preview is disabled', { blockTransformations: true, blockToolbarButton: true }, false ],
-		[ 'only editorial review is enabled', { aiEditorialReview: true }, true ],
+		[ 'only AI Editorial Review is enabled', { aiEditorialReview: true }, true ],
 		[ 'toolbar button is missing', { blockTransformations: true }, true ],
 		[
 			'toolbar button is disabled',

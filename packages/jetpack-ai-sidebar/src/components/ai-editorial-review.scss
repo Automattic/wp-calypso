@@ -98,7 +98,7 @@
 	}
 }
 
-.jetpack-ai-review-mediation {
+.jetpack-ai-editorial-review {
 	--jetpack-ai-review-action-border: color-mix(in srgb, currentColor 25%, transparent);
 	--jetpack-ai-review-action-border-hover: color-mix(in srgb, currentColor 45%, transparent);
 	--jetpack-ai-review-action-bg-hover: color-mix(in srgb, currentColor 6%, transparent);
@@ -112,9 +112,9 @@
 	color: inherit;
 
 	&.is-post-stale {
-		.jetpack-ai-review-mediation__stats,
-		.jetpack-ai-review-mediation__panel,
-		.jetpack-ai-review-mediation__footer {
+		.jetpack-ai-editorial-review__stats,
+		.jetpack-ai-editorial-review__panel,
+		.jetpack-ai-editorial-review__footer {
 			opacity: 0.5;
 		}
 	}
@@ -177,8 +177,8 @@
 	// Content region bottom spacing. Keep cards out of this broad PanelBody
 	// rule so their own internal padding is not overwritten.
 	.components-panel__body.is-opened
-		> :not(.components-panel__body-title):not(.jetpack-ai-review-mediation__card):not(
-			.jetpack-ai-review-mediation__conflict-card
+		> :not(.components-panel__body-title):not(.jetpack-ai-editorial-review__card):not(
+			.jetpack-ai-editorial-review__conflict-card
 		) {
 		padding: 0 0 0.75rem;
 	}

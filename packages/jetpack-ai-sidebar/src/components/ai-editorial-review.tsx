@@ -1,6 +1,6 @@
 /**
- * ReviewMediation — renders the AI Editorial Review card. Mounted by
- * `getChatComponent('review-mediation')` from a show-component response.
+ * AiEditorialReview — renders the AI Editorial Review card. Mounted by
+ * `getChatComponent('ai-editorial-review')` from a show-component response.
  */
 
 /**
@@ -41,7 +41,7 @@ import ReviewCard, { type ReviewCardRow } from './review-card';
 import ReviewerChip, { type ReviewerMetadata } from './reviewer-chip';
 
 /**
- * Types mirroring the wpcom `Review_Mediator_Ability` structured output.
+ * Types mirroring the wpcom `AI_Editorial_Review_Ability` structured output.
  */
 interface ReviewerPosition {
 	reviewer: string;
@@ -96,7 +96,7 @@ interface GuidelineViolation {
 
 type EditorPostId = number | string;
 
-interface ReviewMediationProps {
+interface AiEditorialReviewProps {
 	summary: string;
 	conflicts: Conflict[];
 	implications: Implication[];
@@ -107,7 +107,7 @@ interface ReviewMediationProps {
 	postId?: EditorPostId;
 	/**
 	 * Server-built map keyed by reviewer display name. Optional — older
-	 * mediations or the empty-state payload may omit it; consumers degrade
+	 * reviews or the empty-state payload may omit it; consumers degrade
 	 * gracefully (fall back to the deterministic-colour pill).
 	 */
 	reviewers_metadata?: Record< string, ReviewerMetadata >;
@@ -291,10 +291,10 @@ function getConflictApplyUnavailableReason(
 
 /**
  * Main component.
- * @param {ReviewMediationProps} props - Structured mediation output.
+ * @param {AiEditorialReviewProps} props - Structured review output.
  * @returns {import('react').ReactElement} The rendered component.
  */
-export default function ReviewMediation( {
+export default function AiEditorialReview( {
 	summary,
 	conflicts,
 	implications,
@@ -304,7 +304,7 @@ export default function ReviewMediation( {
 	postId,
 	reviewers_metadata,
 	cached_at,
-}: ReviewMediationProps ) {
+}: AiEditorialReviewProps ) {
 	// Review actions are only safe when the result can be tied to the current editor entity.
 	const currentPostId = useSelect( ( select ) => {
 		const editor = select( 'core/editor' ) as WpCurrentPostStore;
@@ -387,7 +387,7 @@ export default function ReviewMediation( {
 	);
 
 	// Flat pre-order list of blocks; ability's `block_index` maps to this array.
-	// Matches wpcom's recursive Review_Mediator_Ability::extract_blocks() order.
+	// Matches wpcom's recursive AI_Editorial_Review_Ability::extract_blocks() order.
 	const blocks = useSelect( ( select ) => {
 		const contentBlocks = getEditorContentBlocks(
 			select( 'core/block-editor' ) as BlockEditorStore,
@@ -458,7 +458,7 @@ export default function ReviewMediation( {
 		clearActiveBlockFocusUnlessBlockReferenceClick( event.target );
 	}, [] );
 
-	// Clear sidebar-created block focus when the mediation session ends.
+	// Clear sidebar-created block focus when the review session ends.
 	useEffect( () => {
 		return () => {
 			clearActiveBlockFocus();
@@ -520,12 +520,12 @@ export default function ReviewMediation( {
 				}
 				if ( result?.error ) {
 					// eslint-disable-next-line no-console
-					console.warn( '[ReviewMediation] applyReviewEdit failed', result.error );
+					console.warn( '[AiEditorialReview] applyReviewEdit failed', result.error );
 				}
 				return { success: false };
 			} catch ( err ) {
 				// eslint-disable-next-line no-console
-				console.warn( '[ReviewMediation] applyReviewEdit threw', err );
+				console.warn( '[AiEditorialReview] applyReviewEdit threw', err );
 				return { success: false };
 			}
 		},
@@ -983,12 +983,12 @@ export default function ReviewMediation( {
 
 	return (
 		<div
-			className={ `jetpack-ai-review-mediation${ isPostStale ? ' is-post-stale' : '' }` }
+			className={ `jetpack-ai-editorial-review${ isPostStale ? ' is-post-stale' : '' }` }
 			aria-disabled={ isPostStale || undefined }
 			onMouseDownCapture={ handleRootMouseDown }
 		>
 			{ isPostStale && (
-				<p className="jetpack-ai-review-mediation__stale-warning" role="note">
+				<p className="jetpack-ai-editorial-review__stale-warning" role="note">
 					{ __(
 						'Review context changed. Start a new chat and re-run this review.',
 						__i18n_text_domain__
@@ -1003,19 +1003,19 @@ export default function ReviewMediation( {
 			 * so they stay informational `<li>`s.
 			 */ }
 			<ul
-				className="jetpack-ai-review-mediation__stats"
+				className="jetpack-ai-editorial-review__stats"
 				aria-label={ __( 'Review stats', __i18n_text_domain__ ) }
 			>
 				{ conflicts.length > 0 && (
 					<li>
 						<button
 							type="button"
-							className="jetpack-ai-review-mediation__stat is-conflicts is-clickable"
+							className="jetpack-ai-editorial-review__stat is-conflicts is-clickable"
 							disabled={ isPostStale }
 							onClick={ () => handleStatClick( 'conflicts' ) }
 							title={ __( 'Jump to conflicts', __i18n_text_domain__ ) }
 						>
-							<span className="jetpack-ai-review-mediation__stat-count">{ conflicts.length }</span>{ ' ' }
+							<span className="jetpack-ai-editorial-review__stat-count">{ conflicts.length }</span>{ ' ' }
 							{ _n( 'conflict', 'conflicts', conflicts.length, __i18n_text_domain__ ) }
 						</button>
 					</li>
@@ -1024,12 +1024,12 @@ export default function ReviewMediation( {
 					<li>
 						<button
 							type="button"
-							className="jetpack-ai-review-mediation__stat is-clickable"
+							className="jetpack-ai-editorial-review__stat is-clickable"
 							disabled={ isPostStale }
 							onClick={ () => handleStatClick( 'implications' ) }
 							title={ __( 'Jump to implications', __i18n_text_domain__ ) }
 						>
-							<span className="jetpack-ai-review-mediation__stat-count">
+							<span className="jetpack-ai-editorial-review__stat-count">
 								{ implications.length }
 							</span>{ ' ' }
 							{ _n( 'implication', 'implications', implications.length, __i18n_text_domain__ ) }
@@ -1040,12 +1040,12 @@ export default function ReviewMediation( {
 					<li>
 						<button
 							type="button"
-							className="jetpack-ai-review-mediation__stat is-clickable"
+							className="jetpack-ai-editorial-review__stat is-clickable"
 							disabled={ isPostStale }
 							onClick={ () => handleStatClick( 'edits' ) }
 							title={ __( 'Jump to suggested edits', __i18n_text_domain__ ) }
 						>
-							<span className="jetpack-ai-review-mediation__stat-count">
+							<span className="jetpack-ai-editorial-review__stat-count">
 								{ suggested_edits.length }
 							</span>{ ' ' }
 							{ _n( 'edit', 'edits', suggested_edits.length, __i18n_text_domain__ ) }
@@ -1056,12 +1056,12 @@ export default function ReviewMediation( {
 					<li>
 						<button
 							type="button"
-							className="jetpack-ai-review-mediation__stat is-clickable"
+							className="jetpack-ai-editorial-review__stat is-clickable"
 							disabled={ isPostStale }
 							onClick={ () => handleStatClick( 'violations' ) }
 							title={ __( 'Jump to guideline violations', __i18n_text_domain__ ) }
 						>
-							<span className="jetpack-ai-review-mediation__stat-count">
+							<span className="jetpack-ai-editorial-review__stat-count">
 								{ renderedGuidelineViolations.length }
 							</span>{ ' ' }
 							{ _n(
@@ -1074,20 +1074,20 @@ export default function ReviewMediation( {
 					</li>
 				) }
 				{ acceptedCount > 0 && (
-					<li className="jetpack-ai-review-mediation__stat is-accepted">
-						<span className="jetpack-ai-review-mediation__stat-count">{ acceptedCount }</span>{ ' ' }
+					<li className="jetpack-ai-editorial-review__stat is-accepted">
+						<span className="jetpack-ai-editorial-review__stat-count">{ acceptedCount }</span>{ ' ' }
 						{ __( 'accepted', __i18n_text_domain__ ) }
 					</li>
 				) }
 				{ dismissedCount > 0 && (
-					<li className="jetpack-ai-review-mediation__stat is-dismissed">
-						<span className="jetpack-ai-review-mediation__stat-count">{ dismissedCount }</span>{ ' ' }
+					<li className="jetpack-ai-editorial-review__stat is-dismissed">
+						<span className="jetpack-ai-editorial-review__stat-count">{ dismissedCount }</span>{ ' ' }
 						{ __( 'dismissed', __i18n_text_domain__ ) }
 					</li>
 				) }
 			</ul>
 
-			<Panel className="jetpack-ai-review-mediation__panel">
+			<Panel className="jetpack-ai-editorial-review__panel">
 				<div
 					ref={ ( el ) => {
 						sectionRefs.current.summary = el;
@@ -1095,14 +1095,14 @@ export default function ReviewMediation( {
 				>
 					<PanelBody
 						title={ __( 'Review summary', __i18n_text_domain__ ) }
-						className="jetpack-ai-review-mediation__summary"
+						className="jetpack-ai-editorial-review__summary"
 						opened={ openSections.summary }
 						onToggle={ ( next: boolean ) => setSectionOpen( 'summary', next ) }
 					>
 						<p>{ summary }</p>
 						{ cached_at && (
 							<p
-								className="jetpack-ai-review-mediation__cached-hint"
+								className="jetpack-ai-editorial-review__cached-hint"
 								title={ __(
 									'The inputs (post content, notes, comments, guidelines) have not changed since the previous run, so the saved result is being reused to avoid a duplicate LLM call.',
 									__i18n_text_domain__
@@ -1128,7 +1128,7 @@ export default function ReviewMediation( {
 							>
 								<PanelBody
 									title={ __( 'Conflicts', __i18n_text_domain__ ) }
-									className="jetpack-ai-review-mediation__conflicts"
+									className="jetpack-ai-editorial-review__conflicts"
 									opened={ openSections.conflicts }
 									onToggle={ ( next: boolean ) => setSectionOpen( 'conflicts', next ) }
 								>
@@ -1178,22 +1178,22 @@ export default function ReviewMediation( {
 											: getConflictApplyUnavailableReason(
 													candidateStates.map( ( state ) => state.disabledReason )
 											  ) || __( 'Needs manual edit.', __i18n_text_domain__ );
-										const applyUnavailableReasonId = `review-mediation-conflict-${ i }-apply-reason`;
+										const applyUnavailableReasonId = `ai-editorial-review-conflict-${ i }-apply-reason`;
 										const isResolved = status === 'accepted' || status === 'dismissed';
 										if ( isResolved ) {
 											return (
 												<article
-													className={ `jetpack-ai-review-mediation__conflict-card is-${ status } is-resolved` }
+													className={ `jetpack-ai-editorial-review__conflict-card is-${ status } is-resolved` }
 													key={ `conflict-${ i }` }
 												>
-													<header className="jetpack-ai-review-mediation__conflict-header">
+													<header className="jetpack-ai-editorial-review__conflict-header">
 														<span
-															className="jetpack-ai-review-mediation__conflict-icon"
+															className="jetpack-ai-editorial-review__conflict-icon"
 															aria-hidden="true"
 														>
 															⚠
 														</span>
-														<h4 className="jetpack-ai-review-mediation__conflict-title">
+														<h4 className="jetpack-ai-editorial-review__conflict-title">
 															{ conflict.subject }
 														</h4>
 														{ headerBlockIndex !== null && (
@@ -1201,17 +1201,17 @@ export default function ReviewMediation( {
 																index={ headerBlockIndex }
 																blocks={ blocks }
 																onFocus={ focusCurrentPostBlock }
-																className="jetpack-ai-review-mediation__conflict-block-ref"
+																className="jetpack-ai-editorial-review__conflict-block-ref"
 															/>
 														) }
 													</header>
-													<div className="jetpack-ai-review-mediation__actions">
+													<div className="jetpack-ai-editorial-review__actions">
 														<span
-															className={ `jetpack-ai-review-mediation__resolution is-${ status }` }
+															className={ `jetpack-ai-editorial-review__resolution is-${ status }` }
 														>
 															{ status === 'accepted' && (
 																<Icon
-																	className="jetpack-ai-review-mediation__resolution-check"
+																	className="jetpack-ai-editorial-review__resolution-check"
 																	icon={ check }
 																	size={ 20 }
 																/>
@@ -1222,7 +1222,7 @@ export default function ReviewMediation( {
 														</span>
 														<button
 															type="button"
-															className="jetpack-ai-review-mediation__resolution-undo"
+															className="jetpack-ai-editorial-review__resolution-undo"
 															disabled={ isPostStale || bulkRunning }
 															onClick={ () => handleUndoConflict( i ) }
 															title={
@@ -1235,7 +1235,7 @@ export default function ReviewMediation( {
 															}
 														>
 															<Icon
-																className="jetpack-ai-review-mediation__undo-icon"
+																className="jetpack-ai-editorial-review__undo-icon"
 																icon={ undo }
 																size={ 20 }
 															/>
@@ -1247,17 +1247,17 @@ export default function ReviewMediation( {
 										}
 										return (
 											<article
-												className={ `jetpack-ai-review-mediation__conflict-card is-${ status }` }
+												className={ `jetpack-ai-editorial-review__conflict-card is-${ status }` }
 												key={ `conflict-${ i }` }
 											>
-												<header className="jetpack-ai-review-mediation__conflict-header">
+												<header className="jetpack-ai-editorial-review__conflict-header">
 													<span
-														className="jetpack-ai-review-mediation__conflict-icon"
+														className="jetpack-ai-editorial-review__conflict-icon"
 														aria-hidden="true"
 													>
 														⚠
 													</span>
-													<h4 className="jetpack-ai-review-mediation__conflict-title">
+													<h4 className="jetpack-ai-editorial-review__conflict-title">
 														{ conflict.subject }
 													</h4>
 													{ headerBlockIndex !== null && (
@@ -1265,21 +1265,21 @@ export default function ReviewMediation( {
 															index={ headerBlockIndex }
 															blocks={ blocks }
 															onFocus={ focusCurrentPostBlock }
-															className="jetpack-ai-review-mediation__conflict-block-ref"
+															className="jetpack-ai-editorial-review__conflict-block-ref"
 														/>
 													) }
 												</header>
-												<ul className="jetpack-ai-review-mediation__positions">
+												<ul className="jetpack-ai-editorial-review__positions">
 													{ conflict.positions.map( ( pos, j ) => (
 														<li
-															className="jetpack-ai-review-mediation__position"
+															className="jetpack-ai-editorial-review__position"
 															key={ `pos-${ i }-${ j }` }
 														>
 															<ReviewerChip
 																name={ pos.reviewer }
 																metadata={ getReviewerMetadata( pos.reviewer ) }
 															/>
-															<span className="jetpack-ai-review-mediation__position-text">
+															<span className="jetpack-ai-editorial-review__position-text">
 																{ pos.position }
 															</span>
 														</li>
@@ -1287,18 +1287,18 @@ export default function ReviewMediation( {
 												</ul>
 
 												{ ( aiCandidate || conflict.recommended_resolution ) && (
-													<div className="jetpack-ai-review-mediation__ai-inset">
-														<p className="jetpack-ai-review-mediation__ai-label">
-															<span className="jetpack-ai-review-mediation__ai-badge">
+													<div className="jetpack-ai-editorial-review__ai-inset">
+														<p className="jetpack-ai-editorial-review__ai-label">
+															<span className="jetpack-ai-editorial-review__ai-badge">
 																{ __( 'AI', __i18n_text_domain__ ) }
 															</span>{ ' ' }
 															{ __( 'Recommended resolution', __i18n_text_domain__ ) }
 														</p>
-														<p className="jetpack-ai-review-mediation__ai-text">
+														<p className="jetpack-ai-editorial-review__ai-text">
 															{ aiCandidate?.text || conflict.recommended_resolution }
 														</p>
 														{ conflict.guideline_anchor && (
-															<blockquote className="jetpack-ai-review-mediation__guideline-anchor">
+															<blockquote className="jetpack-ai-editorial-review__guideline-anchor">
 																{ conflict.guideline_anchor }
 															</blockquote>
 														) }
@@ -1308,20 +1308,20 @@ export default function ReviewMediation( {
 												{ applyUnavailableReason && (
 													<p
 														id={ applyUnavailableReasonId }
-														className="jetpack-ai-review-mediation__status is-manual"
+														className="jetpack-ai-editorial-review__status is-manual"
 													>
 														{ applyUnavailableReason }
 													</p>
 												) }
 
-												<div className="jetpack-ai-review-mediation__conflict-resolution">
+												<div className="jetpack-ai-editorial-review__conflict-resolution">
 													{ reviewerCandidateStates.length > 0 && (
-														<div className="jetpack-ai-review-mediation__conflict-candidates">
+														<div className="jetpack-ai-editorial-review__conflict-candidates">
 															{ reviewerCandidateStates.map( ( { candidate }, k ) => {
 																return (
 																	<button
 																		type="button"
-																		className="jetpack-ai-review-mediation__action is-reviewer"
+																		className="jetpack-ai-editorial-review__action is-reviewer"
 																		key={ `candidate-${ i }-${ k }` }
 																		disabled={ actionsDisabled }
 																		onClick={ () => handleAcceptCandidate( i, candidate ) }
@@ -1336,11 +1336,11 @@ export default function ReviewMediation( {
 															} ) }
 														</div>
 													) }
-													<div className="jetpack-ai-review-mediation__actions">
+													<div className="jetpack-ai-editorial-review__actions">
 														{ aiCandidate && (
 															<button
 																type="button"
-																className="jetpack-ai-review-mediation__action is-accept"
+																className="jetpack-ai-editorial-review__action is-accept"
 																disabled={ actionsDisabled }
 																onClick={ () => handleAcceptCandidate( i, aiCandidate ) }
 															>
@@ -1349,7 +1349,7 @@ export default function ReviewMediation( {
 														) }
 														<button
 															type="button"
-															className="jetpack-ai-review-mediation__action is-dismiss"
+															className="jetpack-ai-editorial-review__action is-dismiss"
 															disabled={ actionsDisabled }
 															onClick={ () => handleDismissConflict( i ) }
 														>
@@ -1374,7 +1374,7 @@ export default function ReviewMediation( {
 							>
 								<PanelBody
 									title={ __( 'Implications', __i18n_text_domain__ ) }
-									className="jetpack-ai-review-mediation__implications"
+									className="jetpack-ai-editorial-review__implications"
 									opened={ openSections.implications }
 									onToggle={ ( next: boolean ) => setSectionOpen( 'implications', next ) }
 								>
@@ -1383,7 +1383,7 @@ export default function ReviewMediation( {
 											<li key={ `imp-${ i }` }>
 												<strong>{ imp.change }</strong> — { imp.implies }
 												{ imp.affected_blocks.length > 0 && (
-													<span className="jetpack-ai-review-mediation__affected-blocks">
+													<span className="jetpack-ai-editorial-review__affected-blocks">
 														{ ' ' }
 														{ __( 'Affects:', __i18n_text_domain__ ) }{ ' ' }
 														{ imp.affected_blocks.map( ( b, j ) => (
@@ -1413,7 +1413,7 @@ export default function ReviewMediation( {
 							>
 								<PanelBody
 									title={ __( 'Suggested edits', __i18n_text_domain__ ) }
-									className="jetpack-ai-review-mediation__edits"
+									className="jetpack-ai-editorial-review__edits"
 									opened={ openSections.edits }
 									onToggle={ ( next: boolean ) => setSectionOpen( 'edits', next ) }
 								>
@@ -1497,7 +1497,7 @@ export default function ReviewMediation( {
 										}
 										const footer =
 											edit.supported_by_reviewers.length > 0 ? (
-												<p className="jetpack-ai-review-mediation__reviewers">
+												<p className="jetpack-ai-editorial-review__reviewers">
 													{ __( 'Requested by:', __i18n_text_domain__ ) }{ ' ' }
 													{ edit.supported_by_reviewers.map( ( r, j ) => (
 														<span key={ `edit-${ i }-rev-${ j }` }>
@@ -1564,7 +1564,7 @@ export default function ReviewMediation( {
 										__( 'Guideline violations', __i18n_text_domain__ ),
 										renderedGuidelineViolations.length
 									) }
-									className="jetpack-ai-review-mediation__violations"
+									className="jetpack-ai-editorial-review__violations"
 									opened={ openSections.violations }
 									onToggle={ ( next: boolean ) => setSectionOpen( 'violations', next ) }
 								>
@@ -1642,10 +1642,10 @@ export default function ReviewMediation( {
 			</Panel>
 
 			{ totalPendingCount > 0 && (
-				<footer className="jetpack-ai-review-mediation__footer">
+				<footer className="jetpack-ai-editorial-review__footer">
 					<button
 						type="button"
-						className="jetpack-ai-review-mediation__footer-action is-accept"
+						className="jetpack-ai-editorial-review__footer-action is-accept"
 						disabled={ isPostStale || bulkRunning || totalPendingCount === 0 }
 						onClick={ handleAcceptAllAi }
 					>

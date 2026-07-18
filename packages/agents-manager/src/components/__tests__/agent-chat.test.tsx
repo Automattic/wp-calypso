@@ -295,9 +295,9 @@ describe( 'AgentChat', () => {
 				prompt: 'Proofread this saved content',
 			},
 			{
-				id: 'mediate-review-notes',
-				label: 'Editorial Review',
-				prompt: 'Run an editorial review',
+				id: 'ai-editorial-review',
+				label: 'AI Editorial Review',
+				prompt: 'Run an AI Editorial Review',
 			},
 		];
 		const suggestions = [ designSuggestion, whatElseSuggestion, ...writingSuggestions ];
@@ -328,7 +328,7 @@ describe( 'AgentChat', () => {
 		expect( screen.getByRole( 'button', { name: 'Generate excerpt' } ) ).toBeInTheDocument();
 		expect( screen.getByRole( 'button', { name: 'Optimize SEO' } ) ).toBeInTheDocument();
 		expect( screen.getByRole( 'button', { name: 'Simple review' } ) ).toBeInTheDocument();
-		expect( screen.getByRole( 'button', { name: 'Editorial review' } ) ).toBeInTheDocument();
+		expect( screen.getByRole( 'button', { name: 'AI Editorial Review' } ) ).toBeInTheDocument();
 
 		await user.click( screen.getByRole( 'button', { name: 'Optimize title' } ) );
 		expect( onSuggestionClick ).toHaveBeenCalledWith( writingSuggestions[ 0 ], suggestions );
