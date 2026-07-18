@@ -137,7 +137,7 @@ describe( 'ReaderSidebarListsListItem', () => {
 			],
 		};
 
-		it( 'marks the list feeds as seen using the list stream key', async () => {
+		it( 'marks the list feeds as seen', async () => {
 			const user = userEvent.setup();
 			renderWithProvider( <ReaderSidebarListsListItem list={ listWithUnseen } path="/reader" /> );
 
@@ -145,7 +145,7 @@ describe( 'ReaderSidebarListsListItem', () => {
 			await user.click( screen.getByRole( 'menuitem', { name: 'Mark all as seen' } ) );
 
 			expect( mockMarkAllAsSeen ).toHaveBeenCalledWith( {
-				identifier: 'list:' + JSON.stringify( { owner: 'bob', slug: 'favorites' } ),
+				identifier: 'sidebar-list',
 				feedIds: [ 1, 2 ],
 				feedUrls: [],
 			} );
