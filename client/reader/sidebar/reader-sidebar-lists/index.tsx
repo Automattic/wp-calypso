@@ -6,6 +6,7 @@ import { useQuery } from '@tanstack/react-query';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import ExpandableSidebarMenu from 'calypso/layout/sidebar/expandable';
+import { MoreMenuActions } from '../more-menu-actions';
 import ReaderSidebarListsList from './list';
 
 interface ReaderSidebarListsProps {
@@ -38,6 +39,8 @@ const ReaderSidebarLists = ( {
 				( list.feeds?.reduce( ( total, feed ) => total + ( feed.unseen_count ?? 0 ), 0 ) ?? 0 ),
 			0 // Initial value of the list unseen count accumulator.
 		) || 0;
+	const allFeedIds =
+		lists?.flatMap( ( list ) => list.feeds?.map( ( feed ) => feed.feed_id ) ?? [] ) ?? [];
 
 	return (
 		<li>
@@ -52,6 +55,14 @@ const ReaderSidebarLists = ( {
 					'sidebar__menu--selected': ! isOpen && ( isChildSelected || path === '/reader/list/new' ),
 				} ) }
 				expandableIconClick={ onClick }
+				moreMenuActions={
+					<MoreMenuActions
+						identifier="sidebar-lists"
+						feedIds={ allFeedIds }
+						feedUrls={ [] }
+						unseenCount={ totalUnseenCount }
+					/>
+				}
 			>
 				<ReaderSidebarListsList path={ path } lists={ lists } { ...passedProps } />
 			</ExpandableSidebarMenu>

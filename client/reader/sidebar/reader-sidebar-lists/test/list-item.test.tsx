@@ -3,12 +3,23 @@
  */
 import { ReadList } from '@automattic/api-core';
 import { screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import ReaderSidebarListsListItem from '../list-item';
 
 jest.mock( 'calypso/reader/stats', () => ( {
 	recordAction: jest.fn(),
 	recordGaEvent: jest.fn(),
+} ) );
+
+const mockMarkAllAsSeen = jest.fn();
+jest.mock( 'calypso/reader/data/seen-posts', () => ( {
+	useMarkAllAsSeenMutation: () => ( { mutate: mockMarkAllAsSeen } ),
+} ) );
+
+const mockRecordReaderTracksEvent = jest.fn();
+jest.mock( 'calypso/state/reader/analytics/useRecordReaderTracksEvent', () => ( {
+	useRecordReaderTracksEvent: () => mockRecordReaderTracksEvent,
 } ) );
 
 jest.mock( '@automattic/api-queries', () => ( {
@@ -35,6 +46,7 @@ describe( 'ReaderSidebarListsListItem', () => {
 	let scrollIntoView: jest.Mock;
 
 	beforeEach( () => {
+		jest.clearAllMocks();
 		// jsdom does not implement scrollIntoView.
 		scrollIntoView = jest.fn();
 		window.HTMLElement.prototype.scrollIntoView = scrollIntoView;
@@ -113,6 +125,47 @@ describe( 'ReaderSidebarListsListItem', () => {
 			);
 
 			expect( container.querySelector( '.a8c-count' ) ).toHaveTextContent( '5' );
+		} );
+	} );
+
+	describe( 'mark all as seen', () => {
+		const listWithUnseen: ReadList = {
+			...list,
+			feeds: [
+				{ feed_id: 1, unseen_count: 2 },
+				{ feed_id: 2, unseen_count: 3 },
+			],
+		};
+
+		it( 'marks the list feeds as seen using the list stream key', async () => {
+			const user = userEvent.setup();
+			renderWithProvider( <ReaderSidebarListsListItem list={ listWithUnseen } path="/reader" /> );
+
+			await user.click( screen.getByRole( 'button', { name: 'More actions' } ) );
+			await user.click( screen.getByRole( 'menuitem', { name: 'Mark all as seen' } ) );
+
+			expect( mockMarkAllAsSeen ).toHaveBeenCalledWith( {
+				identifier: 'list:' + JSON.stringify( { owner: 'bob', slug: 'favorites' } ),
+				feedIds: [ 1, 2 ],
+				feedUrls: [],
+			} );
+		} );
+
+		it( 'disables the action when the list is fully seen', async () => {
+			const user = userEvent.setup();
+			renderWithProvider(
+				<ReaderSidebarListsListItem
+					list={ { ...list, feeds: [ { feed_id: 1, unseen_count: 0 } ] } }
+					path="/reader"
+				/>
+			);
+
+			await user.click( screen.getByRole( 'button', { name: 'More actions' } ) );
+
+			expect( screen.getByRole( 'menuitem', { name: 'Mark all as seen' } ) ).toHaveAttribute(
+				'aria-disabled',
+				'true'
+			);
 		} );
 	} );
 } );

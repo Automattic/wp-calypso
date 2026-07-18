@@ -11,6 +11,7 @@ import { getCurrentUser } from 'calypso/state/current-user/selectors';
 import { useRecordReaderTracksEvent } from 'calypso/state/reader/analytics/useRecordReaderTracksEvent';
 import ReaderSidebarHelper from '../helper';
 import { MenuItem, MenuItemLink } from '../menu';
+import { MoreMenuActions } from '../more-menu-actions';
 
 interface ReaderSidebarListsListItemProps {
 	list: ReadList;
@@ -71,6 +72,7 @@ const ReaderSidebarListsListItem = ( {
 	const displayTitle = isOwnedByCurrentUser ? list.title : `${ list.title } (${ list.owner })`;
 	const isSeenEnabled = isAutomattician;
 	const unseenCount = list.feeds?.reduce( ( t, feed ) => t + ( feed.unseen_count ?? 0 ), 0 ) ?? 0;
+	const feedIds = list.feeds?.map( ( feed ) => feed.feed_id ) ?? [];
 
 	return (
 		<MenuItem
@@ -94,8 +96,18 @@ const ReaderSidebarListsListItem = ( {
 					<div className="sidebar__menu-item-title" title={ displayTitle }>
 						{ displayTitle }
 					</div>
-					{ isSeenEnabled && unseenCount > 0 && <Count count={ unseenCount } compact /> }
 				</AutoDirection>
+				{ isSeenEnabled && (
+					<span className="sidebar__actions-and-count">
+						<MoreMenuActions
+							identifier="sidebar-list"
+							feedIds={ feedIds }
+							feedUrls={ [] }
+							unseenCount={ unseenCount }
+						/>
+						{ unseenCount > 0 && <Count count={ unseenCount } compact /> }
+					</span>
+				) }
 			</MenuItemLink>
 		</MenuItem>
 	);
