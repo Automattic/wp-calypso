@@ -16,6 +16,8 @@ import { Card, CardBody, CardDivider } from '../../components/card';
 import Notice from '../../components/notice';
 import SetupStep from './setup-step';
 
+import './connection-mode-card.scss';
+
 interface ConnectionModeStep {
 	title: string;
 	label: string;
