@@ -115,4 +115,46 @@ describe( 'ReaderSidebarListsListItem', () => {
 			expect( container.querySelector( '.a8c-count' ) ).toHaveTextContent( '5' );
 		} );
 	} );
+
+	describe( 'recommended-blogs list', () => {
+		const currentUserState = { currentUser: { id: 1, user: { ID: 1, username: 'bob' } } };
+
+		it( "renders nothing when the current user owns the 'recommended-blogs' list", () => {
+			const recommended: ReadList = {
+				...list,
+				owner: 'bob',
+				slug: 'recommended-blogs',
+				title: 'Recommended blogs',
+			};
+
+			renderWithProvider( <ReaderSidebarListsListItem list={ recommended } path="/reader" />, {
+				initialState: currentUserState,
+			} );
+
+			expect( screen.queryByRole( 'link' ) ).not.toBeInTheDocument();
+		} );
+
+		it( "renders the 'recommended-blogs' list when it belongs to another user", () => {
+			const recommended: ReadList = {
+				...list,
+				owner: 'alice',
+				slug: 'recommended-blogs',
+				title: 'Recommended blogs',
+			};
+
+			renderWithProvider( <ReaderSidebarListsListItem list={ recommended } path="/reader" />, {
+				initialState: currentUserState,
+			} );
+
+			expect( screen.getByRole( 'link', { name: /Recommended blogs/ } ) ).toBeVisible();
+		} );
+
+		it( "renders the current user's other owned lists", () => {
+			renderWithProvider( <ReaderSidebarListsListItem list={ list } path="/reader" />, {
+				initialState: currentUserState,
+			} );
+
+			expect( screen.getByRole( 'link', { name: /Favorites/ } ) ).toBeVisible();
+		} );
+	} );
 } );
