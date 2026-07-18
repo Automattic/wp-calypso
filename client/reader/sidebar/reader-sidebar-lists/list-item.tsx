@@ -66,6 +66,7 @@ const ReaderSidebarListsListItem = ( {
 	// Show author name in parentheses if the list is owned by someone other than the current user
 	const isOwnedByCurrentUser = currentUser && list.owner === currentUser.username;
 	const displayTitle = isOwnedByCurrentUser ? list.title : `${ list.title } (${ list.owner })`;
+	const unseenCount = list.feeds?.reduce( ( t, feed ) => t + ( feed.unseen_count ?? 0 ), 0 ) ?? 0;
 
 	return (
 		<MenuItem
@@ -89,7 +90,7 @@ const ReaderSidebarListsListItem = ( {
 					<div className="sidebar__menu-item-title" title={ displayTitle }>
 						{ displayTitle }
 					</div>
-					{ list.unseen_count > 0 && <Count count={ list.unseen_count } compact /> }
+					{ unseenCount > 0 && <Count count={ unseenCount } compact /> }
 				</AutoDirection>
 			</MenuItemLink>
 		</MenuItem>

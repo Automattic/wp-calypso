@@ -19,7 +19,10 @@ export type ReaderList = {
 	is_owner?: boolean;
 	is_public?: boolean;
 	is_immutable?: boolean;
-	unseen_count: number;
+	feeds: {
+		id: number;
+		unseen_count: number;
+	}[];
 };
 
 export type Item = {

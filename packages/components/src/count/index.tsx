@@ -5,14 +5,14 @@ import clsx from 'clsx';
 import { HTMLAttributes } from 'react';
 
 interface CountProps extends HTMLAttributes< HTMLSpanElement > {
-	count: number;
+	count?: number;
 	primary?: boolean;
 	compact?: boolean;
 	numberFormat?: ( count: number ) => string;
 }
 
 export function Count( {
-	count,
+	count = 0,
 	primary,
 	compact,
 	numberFormat: numberFormatFromProps,

@@ -26,8 +26,14 @@ const ReaderSidebarLists = ( {
 	const isChildSelected = lists?.some( ( list ) =>
 		path.startsWith( `/reader/list/${ list.owner }/${ list.slug }` )
 	);
+	// Calculate the total unseen count across all lists and their feeds.
 	const totalUnseenCount: number =
-		lists?.reduce( ( total, list ) => total + ( list.unseen_count ?? 0 ), 0 ) || 0;
+		lists?.reduce(
+			( total, list ) =>
+				total +
+				( list.feeds?.reduce( ( total, feed ) => total + ( feed.unseen_count ?? 0 ), 0 ) ?? 0 ),
+			0 // Initial value of the list unseen count accumulator.
+		) || 0;
 
 	return (
 		<li>
