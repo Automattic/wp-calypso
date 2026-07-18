@@ -1,6 +1,11 @@
 @import '@wordpress/base-styles/colors';
 @import '@wordpress/base-styles/variables';
 
+.domain-connection-setup__page-header {
+	padding-block-end: $grid-unit-15;
+	text-align: center;
+}
+
 .dashboard-domain-connection-verification {
 	&--verifying,
 	&--connecting {

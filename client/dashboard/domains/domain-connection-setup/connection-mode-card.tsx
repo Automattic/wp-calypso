@@ -65,6 +65,11 @@ export default function ConnectionModeCard( {
 
 	const handleStepChange = ( index: number, checked: boolean ) => {
 		onStepChange( index, checked );
+
+		if ( checked ) {
+			const nextStepIndex = Math.min( index + 1, steps.length - 1 );
+			setStepsExpanded( steps.map( ( _, stepIndex ) => stepIndex === nextStepIndex ) );
+		}
 	};
 
 	const handleStepToggle = ( index: number, expanded: boolean ) => {

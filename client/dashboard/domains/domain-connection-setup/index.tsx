@@ -188,15 +188,22 @@ export default function DomainConnection() {
 				? __( 'Your domain is connected and ready to use.' )
 				: __( 'Your domain is connecting in the background. We’ll email you when it’s active.' );
 	}
+	const pageHeader = (
+		<PageHeader
+			title={ isVerificationStep ? __( 'Connection status' ) : __( 'Connect your domain' ) }
+			description={ pageHeaderDescription }
+		/>
+	);
 
 	return (
 		<PageLayout
 			size="small"
 			header={
-				<PageHeader
-					title={ isVerificationStep ? __( 'Connection status' ) : __( 'Connect your domain' ) }
-					description={ pageHeaderDescription }
-				/>
+				isVerificationStep ? (
+					pageHeader
+				) : (
+					<div className="domain-connection-setup__page-header">{ pageHeader }</div>
+				)
 			}
 		>
 			{ isVerificationStep && ! queryError ? (
