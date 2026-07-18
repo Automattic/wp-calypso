@@ -364,14 +364,14 @@ describe( 'OrchestratorChat', () => {
 		window.addEventListener( 'big-sky-inline-suggestion-click', listener );
 		const suggestion = {
 			id: 'ai-editorial-review',
-			label: 'AI Editorial Review',
+			label: 'Editorial Review',
 			prompt: 'Run an AI Editorial Review',
 		};
 
 		render( chat( { emptyViewSuggestions: [ suggestion ] } ) );
 		jest.mocked( recordBigSkyTracksEvent ).mockClear();
 
-		fireEvent.click( screen.getByRole( 'button', { name: 'AI Editorial Review' } ) );
+		fireEvent.click( screen.getByRole( 'button', { name: 'Editorial Review' } ) );
 
 		expect( listener ).toHaveBeenCalledTimes( 1 );
 		expect( ( listener.mock.calls[ 0 ][ 0 ] as CustomEvent ).detail ).toEqual( {

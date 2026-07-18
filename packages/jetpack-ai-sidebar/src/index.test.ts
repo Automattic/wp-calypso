@@ -1701,10 +1701,10 @@ describe( 'getEmptyViewSuggestions', () => {
 	it( 'hides post suggestions without a sidebar config', () => {
 		const labels = getEmptyViewSuggestions().map( ( suggestion ) => suggestion.label );
 		expect( labels ).not.toContain( 'Optimize Title' );
-		expect( labels ).not.toContain( 'AI Editorial Review' );
+		expect( labels ).not.toContain( 'Editorial Review' );
 	} );
 
-	it( 'returns one canonical AI Editorial Review suggestion', () => {
+	it( 'returns one canonical AI Editorial Review suggestion with the existing UX label', () => {
 		installAiEditorialReviewData();
 		installPostTypeMock( 'post' );
 
@@ -1714,7 +1714,7 @@ describe( 'getEmptyViewSuggestions', () => {
 		);
 
 		expect( aiEditorialReviewSuggestions ).toEqual( [
-			expect.objectContaining( { label: 'AI Editorial Review' } ),
+			expect.objectContaining( { label: 'Editorial Review' } ),
 		] );
 	} );
 
@@ -1723,7 +1723,7 @@ describe( 'getEmptyViewSuggestions', () => {
 		installPostTypeMock( 'post' );
 		const labels = getEmptyViewSuggestions().map( ( suggestion ) => suggestion.label );
 		expect( labels ).not.toContain( 'Optimize Title' );
-		expect( labels ).toContain( 'AI Editorial Review' );
+		expect( labels ).toContain( 'Editorial Review' );
 		expect( labels ).toContain( 'Simple Review' );
 	} );
 
@@ -1734,7 +1734,7 @@ describe( 'getEmptyViewSuggestions', () => {
 		const labels = getEmptyViewSuggestions().map( ( suggestion ) => suggestion.label );
 
 		expect( labels ).not.toContain( 'Optimize Title' );
-		expect( labels ).toContain( 'AI Editorial Review' );
+		expect( labels ).toContain( 'Editorial Review' );
 		expect( labels ).toContain( 'Simple Review' );
 	} );
 
@@ -1753,7 +1753,7 @@ describe( 'getEmptyViewSuggestions', () => {
 			'Generate Excerpt',
 			'Simple Review',
 			'Proofread',
-			'AI Editorial Review',
+			'Editorial Review',
 		] );
 	} );
 
@@ -1781,7 +1781,7 @@ describe( 'getEmptyViewSuggestions', () => {
 		const labels = getEmptyViewSuggestions().map( ( suggestion ) => suggestion.label );
 
 		expect( labels ).not.toContain( 'Optimize Title' );
-		expect( labels ).not.toContain( 'AI Editorial Review' );
+		expect( labels ).not.toContain( 'Editorial Review' );
 	} );
 
 	it( 'hides Simple Review until the editor entity has a saved ID', () => {
@@ -1791,7 +1791,7 @@ describe( 'getEmptyViewSuggestions', () => {
 		const labels = getEmptyViewSuggestions().map( ( suggestion ) => suggestion.label );
 
 		expect( labels ).not.toContain( 'Simple Review' );
-		expect( labels ).toContain( 'AI Editorial Review' );
+		expect( labels ).toContain( 'Editorial Review' );
 	} );
 
 	it( 'hides Simple Review when the preview feature disables it', () => {
@@ -1801,7 +1801,7 @@ describe( 'getEmptyViewSuggestions', () => {
 		const labels = getEmptyViewSuggestions().map( ( suggestion ) => suggestion.label );
 
 		expect( labels ).not.toContain( 'Simple Review' );
-		expect( labels ).toContain( 'AI Editorial Review' );
+		expect( labels ).toContain( 'Editorial Review' );
 	} );
 
 	it( 'hides Proofread by default and shows it when the preview feature enables it', () => {
@@ -1834,7 +1834,7 @@ describe( 'getEmptyViewSuggestions', () => {
 		const labels = getEmptyViewSuggestions().map( ( suggestion ) => suggestion.label );
 
 		expect( labels ).not.toContain( 'Optimize Title' );
-		expect( labels ).not.toContain( 'AI Editorial Review' );
+		expect( labels ).not.toContain( 'Editorial Review' );
 	} );
 
 	it( 'treats missing features as disabled', () => {
@@ -1849,7 +1849,7 @@ describe( 'getEmptyViewSuggestions', () => {
 		const labels = getEmptyViewSuggestions().map( ( suggestion ) => suggestion.label );
 
 		expect( labels ).not.toContain( 'Optimize Title' );
-		expect( labels ).toContain( 'AI Editorial Review' );
+		expect( labels ).toContain( 'Editorial Review' );
 		expect( labels ).not.toContain( 'Simple Review' );
 	} );
 
@@ -1870,7 +1870,7 @@ describe( 'getEmptyViewSuggestions', () => {
 			'Optimize Title',
 			'Proofread',
 			'Simple Review',
-			'AI Editorial Review',
+			'Editorial Review',
 			'SEO Enhancer',
 			'Generate Excerpt',
 		].forEach( ( label ) => {
@@ -2273,7 +2273,7 @@ describe( 'useSuggestions', () => {
 			onSuggestions.mock.calls[ onSuggestions.mock.calls.length - 1 ]?.[ 0 ] ?? [];
 		expect( latestSuggestions.map( ( suggestion: any ) => suggestion.label ) ).toEqual( [
 			'Simple Review',
-			'AI Editorial Review',
+			'Editorial Review',
 		] );
 	} );
 
@@ -2329,7 +2329,7 @@ describe( 'useSuggestions', () => {
 		const latestSuggestions =
 			onSuggestions.mock.calls[ onSuggestions.mock.calls.length - 1 ]?.[ 0 ] ?? [];
 		expect( latestSuggestions.map( ( suggestion: any ) => suggestion.label ) ).toEqual( [
-			'AI Editorial Review',
+			'Editorial Review',
 		] );
 	} );
 

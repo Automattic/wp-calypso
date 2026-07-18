@@ -157,7 +157,7 @@ const SEO_ENHANCER_SUGGESTION = {
 /** Editor-level suggestion to run AI Editorial Review on saved content. */
 const AI_EDITORIAL_REVIEW_SUGGESTION = {
 	id: 'ai-editorial-review',
-	label: __( 'AI Editorial Review', __i18n_text_domain__ ),
+	label: __( 'Editorial Review', __i18n_text_domain__ ),
 	description: __( 'In-depth review against your content guidelines.', __i18n_text_domain__ ),
 	prompt: __(
 		'Run an AI Editorial Review for this post. Check the content, reviewer notes, and site guidelines, then surface conflicts, implications, guideline issues, and suggested edits.',
