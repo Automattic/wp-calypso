@@ -829,6 +829,19 @@
 		margin: 0 0 0.5rem;
 	}
 
+	// Host styles can assign weights to nested inline formats. Keep descendants
+	// inheriting semantic bold without enumerating every possible nested tag.
+	&__ai-inset &__ai-text {
+		b,
+		strong {
+			font-weight: bold;
+
+			* {
+				font-weight: inherit;
+			}
+		}
+	}
+
 	// Within the AI inset, bump the blockquote to match the darker inset
 	// surface — default styling (a rgba(255,255,255,0.05) fill) would be
 	// nearly invisible against its parent here.

@@ -413,7 +413,11 @@ describe( 'PostFeedback', () => {
 
 	it( 'renders an applicable card: category badge, Current/New diff, enabled Apply change', () => {
 		mockEditorBlocks = [
-			{ clientId: 'block-1', name: 'core/paragraph', attributes: { content: 'created.When' } },
+			{
+				clientId: 'block-1',
+				name: 'core/paragraph',
+				attributes: { content: '<strong>created.</strong><em>When</em>' },
+			},
 		];
 		const { container } = render(
 			React.createElement( PostFeedback, {
@@ -425,8 +429,8 @@ describe( 'PostFeedback', () => {
 						feedback: 'Missing space after the period.',
 						action: 'Add a space between "created." and "When".',
 						block_index: 0,
-						current_text: 'created.When',
-						suggested_text: 'created. When',
+						current_text: '<strong>created.</strong><em>When</em>',
+						suggested_text: '<strong>created.</strong> <em>When</em>',
 					},
 				],
 			} )
@@ -440,8 +444,13 @@ describe( 'PostFeedback', () => {
 		// Why on top, then the Current/New diff.
 		expect( diffTags( container ) ).toEqual( [ 'Why', 'Current', 'New' ] );
 		expect( container.textContent ).toContain( 'Missing space after the period.' );
-		expect( container.querySelector( 'del' )?.textContent ).toBe( 'created.When' );
-		expect( container.querySelector( 'ins' )?.textContent ).toBe( 'created. When' );
+		const currentText = container.querySelector( 'del' );
+		const suggestedText = container.querySelector( 'ins' );
+		expect( currentText?.querySelector( 'strong' ) ).toHaveTextContent( 'created.' );
+		expect( currentText?.querySelector( 'em' ) ).toHaveTextContent( 'When' );
+		expect( suggestedText?.querySelector( 'strong' ) ).toHaveTextContent( 'created.' );
+		expect( suggestedText?.querySelector( 'em' ) ).toHaveTextContent( 'When' );
+		expect( suggestedText?.textContent ).toBe( 'created. When' );
 
 		const apply = findButton( container, 'Apply change' );
 		expect( apply?.classList.contains( 'is-primary' ) ).toBe( true );
@@ -495,6 +504,44 @@ describe( 'PostFeedback', () => {
 		expect( goto?.classList.contains( 'is-primary' ) ).toBe( true );
 		expect( goto?.hasAttribute( 'disabled' ) ).toBe( false );
 		expect( findButton( container, 'Dismiss' ) ).toBeDefined();
+	} );
+
+	it( 'formats a verified manual Current fragment while keeping proposed guidance literal', () => {
+		const currentFragment = '<strong><em>Consultation</em></strong> openss next week.';
+		mockEditorBlocks = [
+			{
+				clientId: 'block-1',
+				name: 'core/paragraph',
+				attributes: { content: currentFragment },
+			},
+		];
+
+		const { container } = render(
+			React.createElement( PostFeedback, {
+				summary: 'Summary.',
+				postId: 123,
+				items: [
+					{
+						title: 'Spelling',
+						feedback: 'The spelling needs author review.',
+						action: 'Confirm the intended wording.',
+						block_index: 0,
+						current_text: currentFragment,
+						suggested_text: 'Rewrite this while keeping the <em> emphasis markers.',
+						requires_manual: true,
+					},
+				],
+			} )
+		);
+
+		const current = container.querySelector( 'del' );
+		const suggestion = container.querySelector( 'ins' );
+		expect( current?.querySelector( 'strong em' ) ).toHaveTextContent( 'Consultation' );
+		expect( suggestion?.querySelector( 'em' ) ).toBeNull();
+		expect( suggestion ).toHaveTextContent(
+			'Rewrite this while keeping the <em> emphasis markers.'
+		);
+		expect( findButton( container, 'Apply change' ) ).toBeUndefined();
 	} );
 
 	it( 'copies the Suggestion text and confirms with Copied on an advisory card', async () => {

@@ -10,6 +10,7 @@
  */
 import { __ } from '@wordpress/i18n';
 import { Icon, check, undo } from '@wordpress/icons';
+import DOMPurify from 'dompurify';
 import { type ReactNode } from 'react';
 /**
  * Internal dependencies
@@ -26,6 +27,8 @@ export interface ReviewCardRow {
 	variant: 'current' | 'new';
 	/** Semantic element: an exact diff uses del/ins, advisory copy uses text. */
 	element: 'del' | 'ins' | 'text';
+	/** Client-side display contract. Only exact `html` opts into sanitized HTML rendering. */
+	contentFormat: 'html' | 'text';
 }
 
 export interface ReviewCardModel {
@@ -162,16 +165,26 @@ export default function ReviewCard( {
 			{ header }
 			{ bodyRows.length > 0 && (
 				<div className={ `${ classPrefix }__diff` }>
-					{ bodyRows.map( ( row, i ) => (
-						<div key={ i } className={ `${ classPrefix }__diff-row is-${ row.variant }` }>
-							<span className={ `${ classPrefix }__diff-tag` }>{ row.tag }</span>
-							{ row.element === 'del' && <del>{ row.text }</del> }
-							{ row.element === 'ins' && <ins>{ row.text }</ins> }
-							{ row.element === 'text' && (
-								<span className={ `${ classPrefix }__diff-text` }>{ row.text }</span>
-							) }
-						</div>
-					) ) }
+					{ bodyRows.map( ( row, i ) => {
+						const RowContentElement = row.element === 'text' ? 'span' : row.element;
+						const contentClassName = `${ classPrefix }__diff-content${
+							row.element === 'text' ? ` ${ classPrefix }__diff-text` : ''
+						}`;
+						return (
+							<div key={ i } className={ `${ classPrefix }__diff-row is-${ row.variant }` }>
+								<span className={ `${ classPrefix }__diff-tag` }>{ row.tag }</span>
+								{ row.contentFormat === 'html' ? (
+									<RowContentElement
+										className={ contentClassName }
+										// eslint-disable-next-line react/no-danger
+										dangerouslySetInnerHTML={ { __html: DOMPurify.sanitize( row.text ) } }
+									/>
+								) : (
+									<RowContentElement className={ contentClassName }>{ row.text }</RowContentElement>
+								) }
+							</div>
+						);
+					} ) }
 				</div>
 			) }
 			{ reasonNote && <p className={ `${ classPrefix }__reason-note` }>{ reasonNote }</p> }

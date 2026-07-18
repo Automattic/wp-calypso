@@ -11,6 +11,7 @@ import { useSelect } from '@wordpress/data';
 import { useState, useCallback, useEffect, useMemo, useRef } from '@wordpress/element';
 import { __, _n, sprintf } from '@wordpress/i18n';
 import { Icon, check, undo } from '@wordpress/icons';
+import DOMPurify from 'dompurify';
 /**
  * Internal dependencies
  */
@@ -1294,9 +1295,19 @@ export default function ReviewMediation( {
 															</span>{ ' ' }
 															{ __( 'Recommended resolution', __i18n_text_domain__ ) }
 														</p>
-														<p className="jetpack-ai-review-mediation__ai-text">
-															{ aiCandidate?.text || conflict.recommended_resolution }
-														</p>
+														{ aiCandidate?.text ? (
+															<p
+																className="jetpack-ai-review-mediation__ai-text"
+																// eslint-disable-next-line react/no-danger
+																dangerouslySetInnerHTML={ {
+																	__html: DOMPurify.sanitize( aiCandidate.text ),
+																} }
+															/>
+														) : (
+															<p className="jetpack-ai-review-mediation__ai-text">
+																{ conflict.recommended_resolution }
+															</p>
+														) }
 														{ conflict.guideline_anchor && (
 															<blockquote className="jetpack-ai-review-mediation__guideline-anchor">
 																{ conflict.guideline_anchor }
@@ -1472,20 +1483,25 @@ export default function ReviewMediation( {
 												text: edit.rationale,
 												variant: 'current',
 												element: 'text',
+												contentFormat: 'text',
 											} );
 										}
+										// WPCOM validates only non-manual replacements as content-ready HTML.
+										const suggestedContentFormat = requiresManual ? 'text' : 'html';
 										if ( showDiff ) {
 											bodyRows.push( {
 												tag: __( 'Current', __i18n_text_domain__ ),
 												text: edit.current_text,
 												variant: 'current',
 												element: 'del',
+												contentFormat: 'html',
 											} );
 											bodyRows.push( {
 												tag: __( 'New', __i18n_text_domain__ ),
 												text: edit.suggested_text,
 												variant: 'new',
 												element: 'ins',
+												contentFormat: suggestedContentFormat,
 											} );
 										} else if ( edit.suggested_text ) {
 											bodyRows.push( {
@@ -1493,6 +1509,7 @@ export default function ReviewMediation( {
 												text: edit.suggested_text,
 												variant: 'new',
 												element: 'text',
+												contentFormat: suggestedContentFormat,
 											} );
 										}
 										const footer =
@@ -1580,6 +1597,7 @@ export default function ReviewMediation( {
 												text: v.issue,
 												variant: 'current',
 												element: 'text',
+												contentFormat: 'text',
 											} );
 											if ( v.violating_text ) {
 												bodyRows.push( {
@@ -1587,6 +1605,7 @@ export default function ReviewMediation( {
 													text: v.violating_text,
 													variant: 'current',
 													element: 'del',
+													contentFormat: 'text',
 												} );
 											}
 											if ( hasGuideline && v.guideline_quote ) {
@@ -1595,6 +1614,7 @@ export default function ReviewMediation( {
 													text: v.guideline_quote,
 													variant: 'new',
 													element: 'text',
+													contentFormat: 'text',
 												} );
 											}
 											return (

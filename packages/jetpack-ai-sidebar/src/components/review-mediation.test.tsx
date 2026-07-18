@@ -1615,3 +1615,127 @@ describe( 'ReviewMediation — cached-run hint', () => {
 		expect( screen.queryByText( /Reusing review/ ) ).not.toBeInTheDocument();
 	} );
 } );
+
+describe( 'ReviewMediation — HTML fragment display', () => {
+	const currentFragment =
+		'<strong><em>Consultation</em></strong> <em>openss</em> on next week, <s>not this week</s>, ref<sup>2</sup>';
+	const replacementFragment =
+		'<strong><em>Consultation</em></strong> <em>opens</em> on next week, <s>not this week</s>, ref<sup>2</sup>';
+	const formattedBlocks = [
+		{
+			clientId: 'f0',
+			name: 'core/list-item',
+			attributes: { content: currentFragment },
+		},
+	];
+
+	it( 'renders formatted Current/New rows and applies the raw strings', async () => {
+		mockBlocks = formattedBlocks;
+		mockApplyReviewEdit.mockResolvedValueOnce( { success: true } );
+
+		const { container } = render(
+			<ReviewMediation
+				{ ...basePayload( {
+					suggested_edits: [
+						{
+							block_index: 0,
+							current_text: currentFragment,
+							suggested_text: replacementFragment,
+							rationale: 'Confirm the <date> placeholder.',
+							supported_by_reviewers: [],
+						},
+					],
+				} ) }
+			/>
+		);
+
+		const del = container.querySelector( '.jetpack-ai-feedback-list__diff-row.is-current del' );
+		const ins = container.querySelector( '.jetpack-ai-feedback-list__diff-row.is-new ins' );
+		expect( del?.querySelector( 'strong em' ) ).toHaveTextContent( 'Consultation' );
+		expect( del?.querySelectorAll( 'em' )[ 1 ] ).toHaveTextContent( 'openss' );
+		expect( del?.querySelector( 's' ) ).toHaveTextContent( 'not this week' );
+		expect( del?.querySelector( 'sup' ) ).toHaveTextContent( '2' );
+		expect( ins?.querySelector( 'strong em' ) ).toHaveTextContent( 'Consultation' );
+		expect( ins?.querySelectorAll( 'em' )[ 1 ] ).toHaveTextContent( 'opens' );
+		expect( ins?.querySelector( 's' ) ).toHaveTextContent( 'not this week' );
+		expect( ins?.querySelector( 'sup' ) ).toHaveTextContent( '2' );
+		// Prose rationale keeps literal tags.
+		expect( screen.getByText( 'Confirm the <date> placeholder.' ) ).toBeInTheDocument();
+
+		await act( async () => {
+			fireEvent.click( screen.getByRole( 'button', { name: 'Apply change' } ) );
+		} );
+
+		// Apply receives the raw HTML strings, untouched by display sanitization.
+		expect( mockApplyReviewEdit ).toHaveBeenCalledWith(
+			'f0',
+			replacementFragment,
+			undefined,
+			currentFragment,
+			expect.any( Function ),
+			undefined
+		);
+	} );
+
+	it( 'formats a verified manual Current fragment and keeps its guidance escaped', () => {
+		mockBlocks = formattedBlocks;
+		const { container } = render(
+			<ReviewMediation
+				{ ...basePayload( {
+					suggested_edits: [
+						{
+							block_index: 0,
+							current_text: currentFragment,
+							suggested_text: 'Rewrite the intro; keep the <em> emphasis markers.',
+							rationale: 'Needs author judgment.',
+							supported_by_reviewers: [],
+							requires_manual: true,
+						},
+					],
+				} ) }
+			/>
+		);
+
+		expect( container.querySelector( 'del strong em' ) ).toHaveTextContent( 'Consultation' );
+		expect(
+			screen.getByText( 'Rewrite the intro; keep the <em> emphasis markers.' )
+		).toBeInTheDocument();
+		expect( container.querySelector( 'ins em' ) ).toBeNull();
+		expect( screen.queryByRole( 'button', { name: 'Apply change' } ) ).not.toBeInTheDocument();
+	} );
+
+	it( 'renders the conflict AI candidate text with formatting', () => {
+		mockBlocks = formattedBlocks;
+		render(
+			<ReviewMediation
+				{ ...basePayload( {
+					conflicts: [
+						{
+							subject: 'Framing',
+							positions: [ { reviewer: 'Marcus', position: 'Softer.' } ],
+							guideline_anchor: null,
+							recommended_resolution: 'Use the softer wording.',
+							candidate_resolutions: [
+								{
+									source: 'ai',
+									reviewer_name: null,
+									label: 'AI resolution',
+									block_index: 0,
+									current_text: currentFragment,
+									text: replacementFragment,
+									rationale: 'Grounded.',
+								},
+							],
+						},
+					],
+				} ) }
+			/>
+		);
+
+		const aiText = document.querySelector( '.jetpack-ai-review-mediation__ai-text' );
+		expect( aiText?.querySelector( 'strong em' ) ).toHaveTextContent( 'Consultation' );
+		expect( aiText?.querySelectorAll( 'em' )[ 1 ] ).toHaveTextContent( 'opens' );
+		expect( aiText?.querySelector( 's' ) ).toHaveTextContent( 'not this week' );
+		expect( aiText?.querySelector( 'sup' ) ).toHaveTextContent( '2' );
+	} );
+} );
