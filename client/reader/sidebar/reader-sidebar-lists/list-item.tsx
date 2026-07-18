@@ -1,5 +1,7 @@
 import { ReadList } from '@automattic/api-core';
+import { isAutomatticianQuery } from '@automattic/api-queries';
 import { Count } from '@automattic/components';
+import { useQuery } from '@tanstack/react-query';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, useRef } from 'react';
 import { useSelector } from 'react-redux';
@@ -25,6 +27,7 @@ const ReaderSidebarListsListItem = ( {
 }: ReaderSidebarListsListItemProps ) => {
 	const translate = useTranslate();
 	const recordReaderTracksEvent = useRecordReaderTracksEvent();
+	const { data: isAutomattician } = useQuery( isAutomatticianQuery() );
 	const currentUser = useSelector( getCurrentUser );
 	const itemRef = useRef< HTMLLIElement >( null );
 
@@ -66,6 +69,7 @@ const ReaderSidebarListsListItem = ( {
 	// Show author name in parentheses if the list is owned by someone other than the current user
 	const isOwnedByCurrentUser = currentUser && list.owner === currentUser.username;
 	const displayTitle = isOwnedByCurrentUser ? list.title : `${ list.title } (${ list.owner })`;
+	const isSeenEnabled = isAutomattician;
 	const unseenCount = list.feeds?.reduce( ( t, feed ) => t + ( feed.unseen_count ?? 0 ), 0 ) ?? 0;
 
 	return (
@@ -90,7 +94,7 @@ const ReaderSidebarListsListItem = ( {
 					<div className="sidebar__menu-item-title" title={ displayTitle }>
 						{ displayTitle }
 					</div>
-					{ unseenCount > 0 && <Count count={ unseenCount } compact /> }
+					{ isSeenEnabled && unseenCount > 0 && <Count count={ unseenCount } compact /> }
 				</AutoDirection>
 			</MenuItemLink>
 		</MenuItem>

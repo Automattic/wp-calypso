@@ -1,6 +1,8 @@
 import './style.scss';
 
 import { ReadList } from '@automattic/api-core';
+import { isAutomatticianQuery } from '@automattic/api-queries';
+import { useQuery } from '@tanstack/react-query';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import ExpandableSidebarMenu from 'calypso/layout/sidebar/expandable';
@@ -23,10 +25,12 @@ const ReaderSidebarLists = ( {
 	...passedProps
 }: ReaderSidebarListsProps ): JSX.Element => {
 	const translate = useTranslate();
+	const { data: isAutomattician } = useQuery( isAutomatticianQuery() );
 	const isChildSelected = lists?.some( ( list ) =>
 		path.startsWith( `/reader/list/${ list.owner }/${ list.slug }` )
 	);
 	// Calculate the total unseen count across all lists and their feeds.
+	const isSeenEnabled = isAutomattician;
 	const totalUnseenCount: number =
 		lists?.reduce(
 			( total, list ) =>
@@ -40,7 +44,7 @@ const ReaderSidebarLists = ( {
 			<ExpandableSidebarMenu
 				expanded={ isOpen ?? false }
 				title={ translate( 'Lists' ) }
-				count={ totalUnseenCount }
+				count={ isSeenEnabled ? totalUnseenCount : 0 }
 				compactCount
 				onClick={ onClick }
 				disableFlyout

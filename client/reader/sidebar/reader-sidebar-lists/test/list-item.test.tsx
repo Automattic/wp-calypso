@@ -11,6 +11,15 @@ jest.mock( 'calypso/reader/stats', () => ( {
 	recordGaEvent: jest.fn(),
 } ) );
 
+jest.mock( '@automattic/api-queries', () => ( {
+	...jest.requireActual( '@automattic/api-queries' ),
+	isAutomatticianQuery: () => ( {
+		queryKey: [ 'is-automattician' ],
+		queryFn: () => true,
+		initialData: true,
+	} ),
+} ) );
+
 const list: ReadList = {
 	ID: 123,
 	slug: 'favorites',
@@ -19,7 +28,7 @@ const list: ReadList = {
 	description: '',
 	is_owner: true,
 	is_public: true,
-	unseen_count: 0,
+	feeds: [],
 };
 
 describe( 'ReaderSidebarListsListItem', () => {
@@ -63,5 +72,47 @@ describe( 'ReaderSidebarListsListItem', () => {
 		);
 
 		expect( scrollIntoView ).not.toHaveBeenCalled();
+	} );
+
+	describe( 'unseen count', () => {
+		it( 'does not show a count when the list has no feeds', () => {
+			const { container } = renderWithProvider(
+				<ReaderSidebarListsListItem list={ { ...list, feeds: [] } } path="/reader" />
+			);
+
+			expect( container.querySelector( '.a8c-count' ) ).toBeNull();
+		} );
+
+		it( 'does not show a count when every feed is fully seen', () => {
+			const listNoUnseen: ReadList = {
+				...list,
+				feeds: [
+					{ id: 1, unseen_count: 0 },
+					{ id: 2, unseen_count: 0 },
+				],
+			};
+
+			const { container } = renderWithProvider(
+				<ReaderSidebarListsListItem list={ listNoUnseen } path="/reader" />
+			);
+
+			expect( container.querySelector( '.a8c-count' ) ).toBeNull();
+		} );
+
+		it( 'shows the unseen count summed across the list feeds', () => {
+			const listWithUnseen: ReadList = {
+				...list,
+				feeds: [
+					{ id: 1, unseen_count: 2 },
+					{ id: 2, unseen_count: 3 },
+				],
+			};
+
+			const { container } = renderWithProvider(
+				<ReaderSidebarListsListItem list={ listWithUnseen } path="/reader" />
+			);
+
+			expect( container.querySelector( '.a8c-count' ) ).toHaveTextContent( '5' );
+		} );
 	} );
 } );
