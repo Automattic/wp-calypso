@@ -19,7 +19,7 @@ jest.mock( '@automattic/api-queries', () => ( {
 	} ),
 } ) );
 
-function makeList( ID: number, feeds: { id: number; unseen_count: number }[] ): ReadList {
+function makeList( ID: number, feeds: { feed_id: number; unseen_count: number }[] ): ReadList {
 	return {
 		ID,
 		slug: `list-${ ID }`,
@@ -49,7 +49,7 @@ describe( 'ReaderSidebarLists', () => {
 		} );
 
 		it( 'shows no header count when no list has unseen items', () => {
-			const lists = [ makeList( 1, [ { id: 10, unseen_count: 0 } ] ), makeList( 2, [] ) ];
+			const lists = [ makeList( 1, [ { feed_id: 10, unseen_count: 0 } ] ), makeList( 2, [] ) ];
 
 			const { container } = renderWithProvider(
 				<ReaderSidebarLists lists={ lists } path="/reader" isOpen />
@@ -61,10 +61,10 @@ describe( 'ReaderSidebarLists', () => {
 		it( 'sums the unseen count across every list and its feeds', () => {
 			const lists = [
 				makeList( 1, [
-					{ id: 10, unseen_count: 2 },
-					{ id: 11, unseen_count: 3 },
+					{ feed_id: 10, unseen_count: 2 },
+					{ feed_id: 11, unseen_count: 3 },
 				] ),
-				makeList( 2, [ { id: 20, unseen_count: 4 } ] ),
+				makeList( 2, [ { feed_id: 20, unseen_count: 4 } ] ),
 			];
 
 			const { container } = renderWithProvider(

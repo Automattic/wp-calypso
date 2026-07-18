@@ -87,8 +87,8 @@ describe( 'ReaderSidebarListsListItem', () => {
 			const listNoUnseen: ReadList = {
 				...list,
 				feeds: [
-					{ id: 1, unseen_count: 0 },
-					{ id: 2, unseen_count: 0 },
+					{ feed_id: 1, unseen_count: 0 },
+					{ feed_id: 2, unseen_count: 0 },
 				],
 			};
 
@@ -103,8 +103,8 @@ describe( 'ReaderSidebarListsListItem', () => {
 			const listWithUnseen: ReadList = {
 				...list,
 				feeds: [
-					{ id: 1, unseen_count: 2 },
-					{ id: 2, unseen_count: 3 },
+					{ feed_id: 1, unseen_count: 2 },
+					{ feed_id: 2, unseen_count: 3 },
 				],
 			};
 
