@@ -89,7 +89,6 @@
 		"@emotion/react": "^11.11.1",
 		"@emotion/styled": "^11.11.0",
 		"@fingerprintjs/fingerprintjs": "3.4.2",
-		"@github/webauthn-json": "^2.1.1",
 		"@paypal/react-paypal-js": "^8.7.0",
 		"@stripe/react-stripe-js": "^6.6.0",
 		"@stripe/stripe-js": "^9.8.0",

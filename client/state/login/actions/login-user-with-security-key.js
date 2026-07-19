@@ -1,6 +1,6 @@
 import config from '@automattic/calypso-config';
-import { get as webauthn_auth } from '@github/webauthn-json';
 import { translate } from 'i18n-calypso';
+import { webauthnGet } from 'calypso/lib/webauthn';
 import {
 	TWO_FACTOR_AUTHENTICATION_LOGIN_REQUEST,
 	TWO_FACTOR_AUTHENTICATION_LOGIN_REQUEST_FAILURE,
@@ -33,7 +33,7 @@ export const loginUserWithSecurityKey = () => ( dispatch, getState ) => {
 			if ( twoStepNonce ) {
 				dispatch( updateNonce( twoFactorAuthType, twoStepNonce ) );
 			}
-			return webauthn_auth( { publicKey: parameters } );
+			return webauthnGet( parameters );
 		} )
 		.then( ( assertion ) => {
 			const response = assertion.response;

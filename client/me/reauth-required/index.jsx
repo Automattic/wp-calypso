@@ -1,5 +1,4 @@
 import { Button, Card, Dialog, FormInputValidation, FormLabel } from '@automattic/components';
-import { supported } from '@github/webauthn-json';
 import debugFactory from 'debug';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
@@ -12,6 +11,7 @@ import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormVerificationCodeInput from 'calypso/components/forms/form-verification-code-input';
 import Notice from 'calypso/components/notice';
 import WarningCard from 'calypso/components/warning-card';
+import { isWebAuthnSupported } from 'calypso/lib/webauthn';
 import { recordGoogleEvent } from 'calypso/state/analytics/actions';
 import { redirectToLogout } from 'calypso/state/current-user/actions';
 import SecurityKeyForm from './security-key-form';
@@ -260,7 +260,7 @@ class ReauthRequired extends Component {
 		const enhancedSecurity = this.props.twoStepAuthorization.data?.two_step_enhanced_security;
 		const method = this.props.twoStepAuthorization.isTwoStepSMSEnabled() ? 'sms' : 'authenticator';
 		const isSecurityKeySupported =
-			this.props.twoStepAuthorization.isSecurityKeyEnabled() && supported();
+			this.props.twoStepAuthorization.isSecurityKeyEnabled() && isWebAuthnSupported();
 		const twoFactorAuthType = enhancedSecurity ? 'webauthn' : this.state.twoFactorAuthType;
 		// This enables the SMS button on the security key form regardless if we can send SMS or not.
 		// Otherwise, there's no way to go back to the verification form if smsRequestsAllowed is false.
