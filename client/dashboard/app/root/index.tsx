@@ -85,6 +85,7 @@ function Root() {
 			state: { __TSR_index: 0 },
 		} );
 		const { foundRoute } = router.getMatchedRoutes( parsedLocation );
+
 		if ( foundRoute ) {
 			event.preventDefault();
 			router.navigate( { to: path } );
