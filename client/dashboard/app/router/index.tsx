@@ -29,7 +29,6 @@ declare module '@tanstack/react-router' {
 		 */
 		requiresSiteTypeSupport?: SiteTypeFeature;
 		availableToInaccessibleJetpackSites?: boolean;
-		isFallbackNotFoundRoute?: boolean;
 	}
 }
 
@@ -54,7 +53,6 @@ const catchAllRoute = createRoute( {
 	getParentRoute: () => rootRoute,
 	path: '$',
 	component: NotFound,
-	staticData: { isFallbackNotFoundRoute: true },
 } );
 
 const createRouteTree = ( config: AppConfig ) => {

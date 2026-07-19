@@ -85,12 +85,7 @@ function Root() {
 			state: { __TSR_index: 0 },
 		} );
 		const { foundRoute } = router.getMatchedRoutes( parsedLocation );
-		const isFallbackNotFoundRoute = foundRoute?.options.staticData?.isFallbackNotFoundRoute;
-
-		// The catch-all route exists only to render the Dashboard 404 shell. Do not
-		// treat it as a real SPA destination; otherwise button-like omnibar anchors
-		// such as `/notifications` are intercepted before their own click handlers run.
-		if ( foundRoute && ! isFallbackNotFoundRoute ) {
+		if ( foundRoute ) {
 			event.preventDefault();
 			router.navigate( { to: path } );
 		}
