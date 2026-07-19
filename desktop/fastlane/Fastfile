@@ -101,6 +101,20 @@ platform :mac do
     )
   end
 
+  # Verify that the .app bundles electron-builder produced are signed with our
+  # Developer ID and carry a notarization ticket.
+  #
+  # `electron-builder` only warns when it can't find a valid signing identity: it
+  # skips signing and the build "passes" with binaries Apple's notary service
+  # later rejects. Run this right after the build so that fails the job here.
+  #
+  lane :verify_code_signing do
+    macos_verify_code_signing(
+      app_path: Dir[File.join(PROJECT_ROOT_FOLDER, 'release', 'mac*', '*.app')],
+      expected_authority: "Developer ID Application: Automattic, Inc. (#{TEAM_ID})"
+    )
+  end
+
   # Notarize and staple the .dmg artifacts produced by electron-builder.
   #
   # The `.app` is notarized and stapled earlier, in electron-builder's
