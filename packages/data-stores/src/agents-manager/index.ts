@@ -1,7 +1,7 @@
 import { registerStore } from '@wordpress/data';
 import { controls } from '@wordpress/data-controls';
 import { registerPlugins } from '../plugins';
-import { isE2ETest, isInSupportSession } from '../utils';
+import { isE2ETest } from '../utils';
 import { controls as wpcomRequestControls } from '../wpcom-request-controls';
 import * as actions from './actions';
 import { STORE_KEY } from './constants';
@@ -18,8 +18,6 @@ export function register(): typeof STORE_KEY {
 		return STORE_KEY;
 	}
 
-	const enabledPersistedOpenState = ! isE2ETest() && ! isInSupportSession();
-
 	registerPlugins();
 
 	registerStore( STORE_KEY, {
@@ -29,7 +27,7 @@ export function register(): typeof STORE_KEY {
 		selectors,
 		persist: [],
 		// Don't persist the open state for e2e users, because parallel tests will start interfering with each other.
-		resolvers: enabledPersistedOpenState ? { getAgentsManagerState } : undefined,
+		resolvers: isE2ETest() ? undefined : { getAgentsManagerState },
 	} );
 
 	isRegistered = true;
