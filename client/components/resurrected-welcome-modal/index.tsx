@@ -81,6 +81,27 @@ const VARIATION_CONTENT: Partial< Record< WelcomeBackVariation, VariationConfig 
 			},
 		],
 	},
+	[ WELCOME_BACK_VARIATIONS.control ]: {
+		getTitle: ( translate ) => translate( 'Welcome back!' ),
+		getDescription: ( translate ) =>
+			translate(
+				'Ready to explore our latest upgrades? All paid plans now include access to new themes and plugins. Pick up where you left off or start fresh with our latest tools.'
+			),
+		ctas: [
+			{
+				id: 'control-new',
+				getLabel: ( translate ) => translate( 'Create a new site' ),
+				href: ONBOARDING_URL,
+				variant: 'primary',
+			},
+			{
+				id: 'control-continue',
+				getLabel: ( translate ) => translate( 'Continue where I left off' ),
+				isDismissOnly: true,
+				variant: 'tertiary',
+			},
+		],
+	},
 };
 
 const getInitialDismissState = () => {
