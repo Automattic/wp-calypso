@@ -62,8 +62,9 @@ export function SpacesView( { slug, tab = 'feed' }: Props ) {
 		setCustomizeTab( null );
 	};
 
+	const detail = spaceQuery.data;
 	useEffect( () => {
-		if ( ! id || ! icon || ! color ) {
+		if ( ! id || ! icon || ! color || ! detail ) {
 			return;
 		}
 
@@ -74,9 +75,10 @@ export function SpacesView( { slug, tab = 'feed' }: Props ) {
 				icon,
 				color,
 				tab,
+				languages: detail.languages,
 			} )
 		);
-	}, [ color, dispatch, icon, id, layoutView, tab ] );
+	}, [ color, detail, dispatch, icon, id, layoutView, tab ] );
 
 	if ( slug && isSpaceUnavailable( spaceQuery.error ) ) {
 		return <SpaceError slug={ slug } error={ spaceQuery.error } />;
