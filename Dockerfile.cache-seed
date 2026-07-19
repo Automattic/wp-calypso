@@ -73,6 +73,12 @@ ENV PROFILE=$profile
 ENV CALYPSO_ENV=production
 ENV BUILD_TRANSLATION_CHUNKS=true
 ENV WORKERS=$workers
+# With WORKERS webpack worker children and libuv's default 4-thread pool, the
+# worker-pool shutdown can deadlock under CPU/threadpool contention: the children
+# never exit, their IPC pipes keep the finished parent's event loop alive, and the
+# build hangs idle until it hits the 65-min timeout. Give the pool enough threads
+# that the teardown can't starve.
+ENV UV_THREADPOOL_SIZE=32
 ENV NODE_OPTIONS=--max-old-space-size=$node_memory
 ENV COMMIT_SHA=$commit_sha
 
