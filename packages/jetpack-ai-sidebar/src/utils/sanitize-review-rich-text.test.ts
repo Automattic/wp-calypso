@@ -71,7 +71,7 @@ describe( 'sanitizeReviewRichText', () => {
 		);
 	} );
 
-	it( 'keeps link text and semantics but removes navigation attributes', () => {
+	it( 'keeps link text while removing navigation attributes', () => {
 		expect(
 			sanitizeReviewRichText(
 				'<a href="https://example.com" target="_blank" rel="noopener">link</a>'
