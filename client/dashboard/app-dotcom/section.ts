@@ -22,6 +22,7 @@ export const DOTCOM_DASHBOARD_SECTION_DEFINITION = {
 
 export const DOTCOM_DASHBOARD_SECTION_PATHS = [
 	'/',
+	'/discover',
 	'/sites',
 	'/domains',
 	'/emails',

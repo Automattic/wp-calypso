@@ -1,0 +1,186 @@
+@import "@wordpress/base-styles/colors";
+
+// Readable amber for warning text and scores; the raw $alert-yellow is too
+// light against a white surface.
+$dev-overview-warning-text: color-mix( in srgb, $alert-red 55%, $alert-yellow );
+
+.dev-overview-env__rows {
+	display: flex;
+	flex-direction: column;
+	gap: 8px;
+}
+
+// Cards that sit in a grid row with footers: the wp Card wraps its
+// header/body/footer in an unclassed inner view, so the flex column goes on
+// that wrapper. The body absorbs the stretch and the footers bottom-align
+// across the row.
+.dev-overview-fill,
+.dev-overview-env {
+	> div:first-child {
+		display: flex;
+		flex-direction: column;
+	}
+
+	.components-card__body {
+		flex-grow: 1;
+	}
+}
+
+// Urgency color for vitals that deserve attention.
+.dev-overview-vital.is-warning .dashboard-stat__metric {
+	color: $dev-overview-warning-text;
+}
+
+// Business upsell banner for developers: dark surface, terminal mock instead
+// of the creator-flavored illustrations.
+.dev-overview-promo {
+	box-sizing: border-box;
+	display: grid;
+	grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr);
+	gap: 48px;
+	align-items: center;
+	border-radius: 8px;
+	padding: 48px;
+	background: linear-gradient(
+		120deg,
+		$gray-900 0%,
+		color-mix( in srgb, var( --wp-admin-theme-color ) 35%, $black ) 100%
+	);
+
+	@media ( max-width: 782px ) {
+		grid-template-columns: minmax(0, 1fr);
+		gap: 24px;
+		padding: 24px;
+	}
+}
+
+h2.dev-overview-promo__title {
+	margin: 0;
+	color: $white;
+	font-size: 28px;
+	font-weight: 600;
+	line-height: 1.25;
+}
+
+p.dev-overview-promo__body {
+	margin: 0;
+	color: $gray-200;
+	font-size: 14px;
+	line-height: 20px;
+	max-inline-size: 480px;
+}
+
+.dev-overview-promo .components-button.dev-overview-promo__button {
+	align-self: flex-start;
+	background: $white;
+	color: $gray-900;
+
+	&:hover:not( :disabled ),
+	&:focus:not( :disabled ) {
+		background: $gray-100;
+		color: $gray-900;
+	}
+}
+
+.dev-overview-promo__terminal {
+	border-radius: 8px;
+	padding: 16px 20px 20px;
+	background: color-mix( in srgb, $black 50%, $gray-900 );
+	box-shadow: 0 8px 24px color-mix( in srgb, $black 35%, transparent );
+	overflow-x: auto;
+}
+
+.dev-overview-promo__terminal-bar {
+	display: flex;
+	gap: 5px;
+	margin-block-end: 12px;
+
+	i {
+		inline-size: 8px;
+		block-size: 8px;
+		border-radius: 50%;
+		background: $gray-700;
+	}
+}
+
+p.dev-overview-promo__terminal-line {
+	margin: 0 0 8px;
+	font-family: monospace;
+	font-size: 12px;
+	line-height: 18px;
+	color: $gray-100;
+	white-space: nowrap;
+
+	&:last-child {
+		margin-block-end: 0;
+	}
+}
+
+.dev-overview-promo__prompt {
+	color: $alert-green;
+}
+
+.dev-overview-promo__comment {
+	color: $gray-600;
+}
+
+// Same table treatment as the Logs pages: severity badge, date, message.
+table.dev-overview-logs__table {
+	inline-size: 100%;
+	border-collapse: collapse;
+
+	th {
+		padding: 8px 24px 8px 0;
+		text-align: start;
+		font-size: 11px;
+		font-weight: 500;
+		line-height: 16px;
+		text-transform: uppercase;
+		color: $gray-700;
+	}
+
+	td {
+		padding: 12px 24px 12px 0;
+		border-block-start: 1px solid $gray-100;
+		font-size: 13px;
+		line-height: 20px;
+		vertical-align: middle;
+	}
+
+	th:last-child,
+	td:last-child {
+		padding-inline-end: 0;
+	}
+}
+
+.dev-overview-logs__date {
+	color: $gray-700;
+	white-space: nowrap;
+}
+
+// Severity badge colors, matching the Logs pages' overrides.
+.dev-overview-logs {
+	.badge--warning {
+		--base-color: var(--studio-yellow-50);
+		background-color: var(--studio-yellow-5);
+		color: var(--studio-yellow-80);
+	}
+
+	.badge--deprecated {
+		--base-color: var(--color-deprecated-blue-50);
+		background-color: var(--color-deprecated-blue-5);
+		color: var(--color-deprecated-blue-80);
+	}
+
+	.badge--deploy {
+		--base-color: var(--studio-green-50);
+		background-color: var(--studio-green-5);
+		color: var(--studio-green-80);
+	}
+
+	.badge--crawler {
+		--base-color: var(--studio-gray-50);
+		background-color: var(--studio-gray-5);
+		color: var(--studio-gray-80);
+	}
+}

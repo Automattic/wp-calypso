@@ -22,6 +22,7 @@ import { omnibarEvents, useOmnibarEvent } from '../omnibar/events';
 import { getUserLanguage } from '../shared-locale-loader';
 import { OmnibarLaunchButton } from './omnibar-launch-button';
 import { createOmnibarStore } from './omnibar-store';
+import { OmnibarWorkspaceItem } from './omnibar-workspace-item';
 import type { User, Site } from '@automattic/api-core';
 
 const LocalizedMasterbarLoggedIn = localize( MasterbarLoggedIn );
@@ -186,6 +187,9 @@ export function InterimOmnibar( {
 					isMigrationInProgress={ false }
 					migrationStatus={ null }
 					adminMenu={ null }
+					additionalProfileMenuItems={ [
+						{ label: <OmnibarWorkspaceItem />, className: 'masterbar__workspace' },
+					] }
 					// Actions
 					setNextLayoutFocus={ noop }
 					activateNextLayoutFocus={ () => onToggleMenu?.() }

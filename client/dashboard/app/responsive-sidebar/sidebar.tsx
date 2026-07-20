@@ -1,6 +1,6 @@
 import { __experimentalHStack as HStack } from '@wordpress/components';
 import { __, sprintf } from '@wordpress/i18n';
-import { brush, envelope, globe, layout, plugins } from '@wordpress/icons';
+import { brush, envelope, globe, layout, navigation, plugins } from '@wordpress/icons';
 import { useRef } from 'react';
 import AgencySiteSidebar from '../../agency/sites/site-sidebar';
 import RouterLinkButton from '../../components/router-link-button';
@@ -69,6 +69,9 @@ function PrimaryMenuSidebar() {
 		<SidebarMenu>
 			{ supports.agency && <AgencySidebar /> }
 			{ supports.agencyClient && <AgencyClientSidebar /> }
+			<SidebarMenuItem icon={ navigation } to="/discover">
+				{ __( 'Discover' ) }
+			</SidebarMenuItem>
 			{ supports.sites && (
 				<SidebarMenuItem icon={ layout } to="/sites">
 					{ __( 'Sites' ) }
