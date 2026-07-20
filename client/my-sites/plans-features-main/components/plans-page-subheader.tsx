@@ -117,10 +117,19 @@ const HeaderContainer = styled( Subheader )`
 		flex-wrap: wrap;
 		align-items: center;
 		gap: 12px 8px;
-		margin-top: -13px;
-		margin-bottom: 48px;
+		margin: -2rem 0 3rem;
 		color: var( --color-text );
+		font-size: 14px;
 		font-weight: 400;
+
+		@media ( min-width: 960px ) {
+			font-size: 16px;
+		}
+
+		@media ( max-width: 599px ) {
+			justify-content: flex-start;
+			text-align: left;
+		}
 
 		.plans-2023-tooltip__hover-area-container {
 			display: inline-flex;
@@ -185,6 +194,10 @@ const DifferentiatorPrefix = styled.span`
 	line-height: 20px;
 	min-height: 20px;
 	white-space: nowrap;
+
+	@media ( max-width: 599px ) {
+		flex-basis: 100%;
+	}
 `;
 
 // Inline SVG components
@@ -249,11 +262,15 @@ const DifferentiatorIconContainer = styled.span`
 	display: inline-flex;
 	align-items: center;
 	text-align: left;
-	font-size: 16px;
+	font-size: 14px;
 	line-height: 20px;
 	font-weight: 400;
 	color: inherit;
 	white-space: nowrap;
+
+	@media ( min-width: 960px ) {
+		font-size: 16px;
+	}
 `;
 
 const DifferentiatorLabel = styled.span`

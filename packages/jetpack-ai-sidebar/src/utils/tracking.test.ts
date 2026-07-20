@@ -10,9 +10,7 @@ import { recordTracksEvent } from '@automattic/calypso-analytics';
 import {
 	trackAiEditorialReviewItemAction,
 	trackAiEditorialReviewResultRendered,
-	trackAiEditorialReviewSuggestionClick,
 	trackAiEditorialReviewSuggestionRendered,
-	trackBlockTransformationSuggestionClick,
 	trackBlockTransformationSuggestionRendered,
 } from './tracking';
 
@@ -64,18 +62,6 @@ describe( 'AI Editorial Review tracking', () => {
 
 		expect( mockedRecordTracksEvent ).toHaveBeenCalledWith(
 			'jetpack_ai_editorial_review_suggestion_rendered',
-			{
-				sessionid: 'test-session-id',
-			}
-		);
-		expectPrivacySafePayload( mockedRecordTracksEvent.mock.calls[ 0 ][ 1 ] );
-	} );
-
-	it( 'tracks suggestion click with only session context', () => {
-		trackAiEditorialReviewSuggestionClick();
-
-		expect( mockedRecordTracksEvent ).toHaveBeenCalledWith(
-			'jetpack_ai_editorial_review_suggestion_click',
 			{
 				sessionid: 'test-session-id',
 			}
@@ -142,26 +128,6 @@ describe( 'AI Editorial Review tracking', () => {
 				suggestion_id: 'check-grammar',
 				suggestion_type: 'text',
 				block_type: 'core/paragraph',
-				surface: 'jetpack_ai_sidebar',
-				sessionid: 'test-session-id',
-			}
-		);
-		expectPrivacySafePayload( mockedRecordTracksEvent.mock.calls[ 0 ][ 1 ] );
-	} );
-
-	it( 'tracks block transformation suggestion clicks with stable metadata', () => {
-		trackBlockTransformationSuggestionClick( {
-			suggestionId: 'simplify-text',
-			suggestionType: 'text',
-			blockType: 'core/heading',
-		} );
-
-		expect( mockedRecordTracksEvent ).toHaveBeenCalledWith(
-			'jetpack_ai_block_transformation_suggestion_click',
-			{
-				suggestion_id: 'simplify-text',
-				suggestion_type: 'text',
-				block_type: 'core/heading',
 				surface: 'jetpack_ai_sidebar',
 				sessionid: 'test-session-id',
 			}

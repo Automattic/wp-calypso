@@ -1,5 +1,5 @@
-@import "@wordpress/base-styles/mixins";
-@import "@wordpress/base-styles/variables";
+@import '@wordpress/base-styles/mixins';
+@import '@wordpress/base-styles/variables';
 
 .migrations-commissions {
 	.consolidated-commissions {
@@ -7,22 +7,12 @@
 		gap: 24px;
 		flex-direction: column;
 
-		.card {
-			/* stylelint-disable-next-line scales/radii */
-			border-radius: 6px;
+		.consolidated-commissions__card {
 			width: 100%;
-			padding: 24px;
+		}
 
-			.consolidated-commissions__value {
-				@include heading-x-large;
-				color: var(--color-accent-100);
-				margin-block-end: 8px;
-			}
-			.consolidated-commissions__label {
-				@include body-medium;
-				color: var(--color-accent);
-				text-wrap: nowrap;
-			}
+		.consolidated-commissions__label {
+			text-wrap: nowrap;
 		}
 	}
 }

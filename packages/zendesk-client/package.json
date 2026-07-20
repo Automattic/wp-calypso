@@ -6,6 +6,9 @@
 	"module": "dist/esm/index.js",
 	"calypso:src": "src/index.ts",
 	"types": "dist/types",
+	"publishConfig": {
+		"access": "public"
+	},
 	"exports": {
 		".": {
 			"calypso:src": "./src/index.ts",

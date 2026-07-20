@@ -35,8 +35,8 @@ const useAddOnPurchaseStatus = ( { addOnMeta, selectedSiteId }: Props ): AddOnPu
 	 */
 	if ( matchingPurchases ) {
 		if ( addOnMeta.quantity ) {
-			const purchase: Purchases.Purchase = Object.values( matchingPurchases )[ 0 ];
-			if ( purchase.purchaseRenewalQuantity === addOnMeta.quantity ) {
+			const purchase: Purchases.RawPurchase = Object.values( matchingPurchases )[ 0 ];
+			if ( purchase.renewal_price_tier_usage_quantity === addOnMeta.quantity ) {
 				return { available: false, text: translate( 'Purchased' ) };
 			}
 		} else {

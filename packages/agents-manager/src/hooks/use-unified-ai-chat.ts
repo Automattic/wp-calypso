@@ -1,4 +1,4 @@
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, type QueryClient } from '@tanstack/react-query';
 import wpcomRequest, { canAccessWpcomApis } from 'wpcom-proxy-request';
 import { getAgentsManagerInlineData } from '../utils/get-agents-manager-inline-data';
 
@@ -21,31 +21,34 @@ interface AgentsManagerStateResponse {
  * The rollout logic lives in Agents Manager (Jetpack) via the
  * `agents_manager_use_unified_experience` filter.
  */
-export function useUnifiedAiChat( enabled = true ) {
-	return useQuery< boolean, Error >( {
-		queryKey: [ 'unified-ai-chat' ],
-		queryFn: async () => {
-			// 1. Check inline script first (available on wp-admin via Jetpack's Agents Manager)
-			const inlineValue = getAgentsManagerInlineData()?.useUnifiedExperience;
-			if ( inlineValue !== undefined ) {
-				return inlineValue;
-			}
+export function useUnifiedAiChat( enabled = true, queryClient?: QueryClient ) {
+	return useQuery< boolean, Error >(
+		{
+			queryKey: [ 'unified-ai-chat' ],
+			queryFn: async () => {
+				// 1. Check inline script first (available on wp-admin via Jetpack's Agents Manager)
+				const inlineValue = getAgentsManagerInlineData()?.useUnifiedExperience;
+				if ( inlineValue !== undefined ) {
+					return inlineValue;
+				}
 
-			// 2. Fall back to /agents-manager/state endpoint for Calypso app (wordpress.com)
-			if ( canAccessWpcomApis() ) {
-				const response: AgentsManagerStateResponse = await wpcomRequest( {
-					path: '/agents-manager/state?key=unified_ai_chat',
-					apiNamespace: 'wpcom/v2',
-				} );
+				// 2. Fall back to /agents-manager/state endpoint for Calypso app (wordpress.com)
+				if ( canAccessWpcomApis() ) {
+					const response: AgentsManagerStateResponse = await wpcomRequest( {
+						path: '/agents-manager/state?key=unified_ai_chat',
+						apiNamespace: 'wpcom/v2',
+					} );
 
-				return response.unified_ai_chat ?? false;
-			}
+					return response.unified_ai_chat ?? false;
+				}
 
-			// 3. No data available - default to false
-			return false;
+				// 3. No data available - default to false
+				return false;
+			},
+			enabled,
+			refetchOnWindowFocus: false,
+			staleTime: 300000, // 5 minutes
 		},
-		enabled,
-		refetchOnWindowFocus: false,
-		staleTime: 300000, // 5 minutes
-	} );
+		queryClient
+	);
 }

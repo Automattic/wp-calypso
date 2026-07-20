@@ -49,8 +49,7 @@
 		"@wordpress/core-data": "^7.48.0",
 		"@wordpress/editor": "^14.48.0",
 		"@wordpress/hooks": "^4.48.0",
-		"@wordpress/i18n": "^6.21.0",
-		"nanoid": "^3.3.11"
+		"@wordpress/i18n": "^6.21.0"
 	},
 	"devDependencies": {
 		"@automattic/calypso-typescript-config": "workspace:^",

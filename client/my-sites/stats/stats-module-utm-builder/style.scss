@@ -41,6 +41,21 @@ $modal-content-padding: 32px;
 	}
 }
 
+// Focused-field outline follows the admin accent. Deliberately not nested
+// under `.stats-utm-builder__overlay`: that class is the Modal's portal root,
+// and Odyssey prefixes CSS with the portal root as an ancestor — nesting would
+// ask for the overlay inside itself and never match. Leading with the fields
+// wrapper keeps a valid descendant chain; `input[type="text"]` outranks the
+// base `.form-text-input:focus` rule.
+.stats-utm-builder__fields input[type="text"].form-text-input:focus {
+	border-color: var(--color-accent);
+	box-shadow: 0 0 0 2px var(--color-accent-10);
+
+	&:hover {
+		box-shadow: 0 0 0 2px var(--color-accent-20);
+	}
+}
+
 .stats-utm-builder__fields {
 	flex: 1 0 55%;
 	padding: 0 32px 0 0;

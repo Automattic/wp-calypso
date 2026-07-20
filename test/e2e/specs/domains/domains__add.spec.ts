@@ -1,8 +1,8 @@
-import { DomainsPage } from '@automattic/calypso-e2e';
+import { DataHelper, DomainsPage } from '@automattic/calypso-e2e';
 import { expect, skipIfMailosaurLimitReached, skipIfNotTrunk, tags, test } from '../../lib/pw-base';
 
 test.describe(
-	'Domains: Add to current site',
+	DataHelper.createSuiteTitle( 'Domains: Add to current site' ),
 	{
 		tag: [ tags.CALYPSO_RELEASE ],
 	},

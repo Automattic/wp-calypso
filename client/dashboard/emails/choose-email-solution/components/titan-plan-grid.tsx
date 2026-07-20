@@ -11,12 +11,15 @@ import { Text } from '../../../components/text';
 import { useEmailProduct } from '../../hooks/use-email-product';
 import poweredByTitanLogo from '../../resources/powered-by-titan-caps.svg';
 import { IntervalLength, MailboxProvider, TitanPlanTier } from '../../types';
-import type { Domain, Product } from '@automattic/api-core';
+import { getTrialMonths } from '../../utils/get-trial-months';
+import { isEligibleForIntroductoryOffer } from '../../utils/is-eligible-for-introductory-offer';
+import type { Domain, EmailSubscription, Product } from '@automattic/api-core';
 
 interface TitanPlan {
 	tier: TitanPlanTier;
 	product?: Product;
 	hasFreeTrial: boolean;
+	trialMonths: number;
 	isPopular: boolean;
 	everythingInName?: string;
 }
@@ -110,8 +113,6 @@ export function TitanPlanGrid( {
 	domainName,
 	interval,
 	available,
-	hasProFreeTrial,
-	proTrialMonths,
 	currentTier,
 	onUpgrade,
 }: {
@@ -119,8 +120,6 @@ export function TitanPlanGrid( {
 	domainName: string;
 	interval: IntervalLength;
 	available: boolean;
-	hasProFreeTrial: boolean;
-	proTrialMonths: number;
 	// The tier the user is currently subscribed to. When set, the grid is in
 	// upgrade mode: lower tiers are hidden, the current tier is labeled, and higher
 	// tiers offer an upgrade.
@@ -149,24 +148,31 @@ export function TitanPlanGrid( {
 		TitanPlanTier.Ultra
 	);
 
+	const emailSubscription = domain?.titan_mail_subscription as EmailSubscription | undefined;
+	const hasFreeTrial = ( product?: Product ) =>
+		isEligibleForIntroductoryOffer( { emailSubscription, product } );
+
 	const plans: TitanPlan[] = [
 		{
 			tier: TitanPlanTier.Pro,
 			product: proProduct,
-			hasFreeTrial: hasProFreeTrial,
+			hasFreeTrial: hasFreeTrial( proProduct ),
+			trialMonths: getTrialMonths( proProduct ),
 			isPopular: false,
 		},
 		{
 			tier: TitanPlanTier.Premium,
 			product: premiumProduct,
-			hasFreeTrial: false,
+			hasFreeTrial: hasFreeTrial( premiumProduct ),
+			trialMonths: getTrialMonths( premiumProduct ),
 			isPopular: true,
 			everythingInName: getTierName( TitanPlanTier.Pro ),
 		},
 		{
 			tier: TitanPlanTier.Ultra,
 			product: ultraProduct,
-			hasFreeTrial: false,
+			hasFreeTrial: hasFreeTrial( ultraProduct ),
+			trialMonths: getTrialMonths( ultraProduct ),
 			isPopular: false,
 			everythingInName: getTierName( TitanPlanTier.Premium ),
 		},
@@ -270,7 +276,7 @@ export function TitanPlanGrid( {
 									{ sprintf(
 										/* translators: %d is the number of free trial months. */
 										__( '%d month free trial' ),
-										proTrialMonths
+										plan.trialMonths
 									) }
 								</div>
 							) }

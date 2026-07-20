@@ -382,6 +382,17 @@ flows keep working unchanged:
   default-safe; the same prop is applied across all three render paths
   (HundredYearPlanStepWrapper, V2 `Step.CenteredColumnLayout`, V1 `StepContainer`). See
   [`steps-repository/domain-search/index.tsx`](/client/landing/stepper/declarative-flow/internals/steps-repository/domain-search/index.tsx).
+- The `unified-plans` (`plans`) step exposes `headerText` and `subHeaderText` (override the
+  per-intent header/subheader chains in `getHeaderText()` / `getSubheaderText()`), the
+  plan-visibility toggles `hideFreePlan`, `hideEnterprisePlan`, `hidePersonalPlan`,
+  `hidePremiumPlan`, `hideEcommercePlan` and `hidePlanTypeSelector` (each OR-ed over today's
+  computed value, so passing nothing preserves the theme- and downgrade-based defaults),
+  `defaultInterval` (seeds the billing term — `monthly` / `yearly` / `2yearly` / `3yearly` —
+  while the URL still wins once the user switches), and `highlightLabelOverrides` (a
+  `{ [PlanSlug]: TranslateResult }` map that re-labels a plan's highlight tag, threaded through
+  `PlansFeaturesMain` into the existing `plans-grid-next` override path). All optional and
+  default-safe. See
+  [`steps-repository/unified-plans/index.tsx`](/client/landing/stepper/declarative-flow/internals/steps-repository/unified-plans/index.tsx).
 
 #### Renaming steps
 

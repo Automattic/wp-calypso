@@ -48,7 +48,6 @@
 		"plans/expired-downgrade": true,
 		"plans/hosting-trial": true,
 		"plans/migration-trial": true,
-		"plans/personal-plan": true,
 		"plans/updated-storage-labels": true,
 		"plans/upgradeable-storage": true,
 		"posthog-tracking": true,

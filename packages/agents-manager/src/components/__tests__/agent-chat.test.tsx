@@ -23,15 +23,23 @@ jest.mock(
 			children,
 			emptyView,
 			floatingChatState,
+			suggestions = [],
+			onSuggestionClick,
 		}: {
 			children: ReactNode;
 			emptyView: ReactNode;
 			floatingChatState?: string;
+			suggestions?: Suggestion[];
+			onSuggestionClick?: (
+				selectedSuggestion: Suggestion,
+				availableSuggestions: Suggestion[]
+			) => void;
 		} ) {
 			mockContainerProps( { floatingChatState } );
 			return (
 				<div>
 					{ emptyView }
+					<MockSuggestionButtons suggestions={ suggestions } onSubmit={ onSuggestionClick } />
 					{ children }
 				</div>
 			);
@@ -48,6 +56,57 @@ jest.mock(
 			return <div>{ children }</div>;
 		}
 
+		function MockSuggestionButtons( {
+			suggestions = [],
+			onSubmit,
+		}: {
+			suggestions?: Suggestion[];
+			onSubmit?: ( selectedSuggestion: Suggestion, availableSuggestions: Suggestion[] ) => void;
+		} ) {
+			return (
+				<div>
+					{ suggestions.flatMap( ( suggestion ) => {
+						const { options, ...suggestionWithoutOptions } = suggestion;
+						if ( ! options?.length ) {
+							return (
+								<button
+									key={ suggestion.id }
+									onClick={ () => onSubmit?.( suggestion, suggestions ) }
+								>
+									{ suggestion.label }
+								</button>
+							);
+						}
+
+						return options.map( ( option ) => {
+							const parentPrompt = suggestion.prompt ?? suggestion.label;
+							const separator =
+								parentPrompt &&
+								option.value &&
+								! /\s$/.test( parentPrompt ) &&
+								! /^\s/.test( option.value )
+									? ' '
+									: '';
+							const selectedSuggestion = {
+								...suggestionWithoutOptions,
+								label: `${ suggestion.label } ${ option.label }`,
+								prompt: `${ parentPrompt }${ separator }${ option.value }`,
+							};
+
+							return (
+								<button
+									key={ `${ suggestion.id }-${ option.id }` }
+									onClick={ () => onSubmit?.( selectedSuggestion, suggestions ) }
+								>
+									{ suggestion.label }: { option.label }
+								</button>
+							);
+						} );
+					} ) }
+				</div>
+			);
+		}
+
 		function MockEmptyView( {
 			suggestions = [],
 			onSuggestionClick,
@@ -58,18 +117,17 @@ jest.mock(
 				availableSuggestions: Suggestion[]
 			) => void;
 		} ) {
-			return (
-				<div>
-					{ suggestions.map( ( suggestion ) => (
-						<button
-							key={ suggestion.id }
-							onClick={ () => onSuggestionClick?.( suggestion, suggestions ) }
-						>
-							{ suggestion.label }
-						</button>
-					) ) }
-				</div>
-			);
+			return <MockSuggestionButtons suggestions={ suggestions } onSubmit={ onSuggestionClick } />;
+		}
+
+		function MockSuggestions( {
+			suggestions = [],
+			onSubmit,
+		}: {
+			suggestions?: Suggestion[];
+			onSubmit?: ( selectedSuggestion: Suggestion, availableSuggestions: Suggestion[] ) => void;
+		} ) {
+			return <MockSuggestionButtons suggestions={ suggestions } onSubmit={ onSubmit } />;
 		}
 
 		function MockMessageRenderer( { children }: { children: ReactNode } ) {
@@ -97,6 +155,7 @@ jest.mock(
 			},
 			createMessageRenderer: () => MockMessageRenderer,
 			EmptyView: MockEmptyView,
+			Suggestions: MockSuggestions,
 			ImageUploader: MockImageUploader,
 		};
 	},
@@ -113,7 +172,7 @@ jest.mock( '@wordpress/data', () => ( {
 		} ) ),
 } ) );
 
-jest.mock( '@wordpress/i18n', () => ( { __: ( text: string ) => text } ) );
+jest.mock( '@wordpress/i18n', () => ( { __: ( text: string ) => text, isRTL: () => false } ) );
 jest.mock( '../../utils/tracks', () => ( {
 	recordBigSkyTracksEvent: jest.fn(),
 	recordAgentsManagerTracksEvent: jest.fn(),
@@ -179,6 +238,7 @@ describe( 'AgentChat', () => {
 	beforeEach( () => {
 		jest.clearAllMocks();
 		mockHasAiChatEntry.mockReturnValue( false );
+		document.body.className = '';
 	} );
 
 	const imageUpload = ( isUploadingImages: boolean ) =>
@@ -230,10 +290,223 @@ describe( 'AgentChat', () => {
 		expect( onSuggestionClick ).toHaveBeenCalledWith( suggestion, [ suggestion ] );
 	} );
 
+	it( 'preserves the selected prompt from an inline dropdown suggestion', async () => {
+		const user = userEvent.setup();
+		const option = {
+			id: 'formal',
+			label: 'Formal',
+			value: 'Change the tone of this text to be more formal',
+		};
+		const suggestion = {
+			id: 'change-tone',
+			label: 'Change tone',
+			prompt: '',
+			options: [ option ],
+		};
+		const onSuggestionClick = jest.fn();
+
+		renderAgentChat( { isOpen: true, suggestions: [ suggestion ], onSuggestionClick } );
+
+		await user.click( screen.getByRole( 'button', { name: 'Change tone: Formal' } ) );
+
+		expect( onSuggestionClick ).toHaveBeenCalledWith( { ...suggestion, prompt: option.value }, [
+			suggestion,
+		] );
+	} );
+
+	it( 'preserves the selected prompt from an empty-view dropdown suggestion', async () => {
+		const user = userEvent.setup();
+		document.body.classList.add( 'post-php', 'post-type-post' );
+		const option = {
+			id: 'seo-description',
+			label: 'Description',
+			value: 'Generate an SEO meta description for this post',
+		};
+		const suggestion = {
+			id: 'seo-enhancer',
+			label: 'SEO Enhancer',
+			prompt: '',
+			options: [ option ],
+		};
+		const onSuggestionClick = jest.fn();
+
+		renderAgentChat( {
+			isOpen: true,
+			emptyViewSuggestions: [ suggestion ],
+			onSuggestionClick,
+		} );
+
+		await user.click( screen.getByRole( 'button', { name: 'Optimize SEO: Description' } ) );
+
+		expect( onSuggestionClick ).toHaveBeenCalledWith( { ...suggestion, prompt: option.value }, [
+			suggestion,
+		] );
+	} );
+
 	it( 'expands when open', () => {
 		renderAgentChat( { isOpen: true } );
 
 		expect( mockContainerProps ).toHaveBeenLastCalledWith( { floatingChatState: 'expanded' } );
+	} );
+
+	it( 'groups only writing suggestions while keeping design suggestions top level', async () => {
+		const user = userEvent.setup();
+		const designSuggestion = {
+			id: 'customize-colors',
+			label: 'Customize colors',
+			prompt: 'Customize colors',
+		};
+		const whatElseSuggestion = {
+			id: 'what-else-can-i-do',
+			label: 'What else can you do?',
+			prompt: 'What else can you do?',
+		};
+		const writingSuggestions = [
+			{
+				id: 'optimize-title',
+				label: 'Optimize Title',
+				prompt: 'Optimize the title of this post',
+			},
+			{
+				id: 'generate-excerpt',
+				label: 'Generate Excerpt',
+				prompt: 'Generate an excerpt',
+			},
+			{
+				id: 'seo-enhancer',
+				label: 'SEO Enhancer',
+				prompt: 'Optimize this content for search engines',
+			},
+			{
+				id: 'generate-feedback',
+				label: 'Simple Review',
+				prompt: 'Review this saved content',
+			},
+			{
+				id: 'proofread-content',
+				label: 'Proofread',
+				prompt: 'Proofread this saved content',
+			},
+			{
+				id: 'mediate-review-notes',
+				label: 'Editorial Review',
+				prompt: 'Run an editorial review',
+			},
+		];
+		const suggestions = [ designSuggestion, whatElseSuggestion, ...writingSuggestions ];
+		const onSuggestionClick = jest.fn();
+
+		renderAgentChat( {
+			isOpen: true,
+			emptyViewSuggestions: suggestions,
+			groupWritingSuggestions: true,
+			onSuggestionClick,
+		} );
+
+		const designButton = screen.getByRole( 'button', { name: 'Customize colors' } );
+		expect( designButton.closest( '.agents-manager-writing-suggestions' ) ).toBeNull();
+		expect( screen.getByText( 'Enhance and review your content.' ) ).toBeInTheDocument();
+
+		const writingToggle = screen.getByRole( 'button', { name: /Writing/ } );
+		const whatElseButton = screen.getByRole( 'button', { name: 'What else can you do?' } );
+		expect( writingToggle.compareDocumentPosition( whatElseButton ) ).toBe(
+			Node.DOCUMENT_POSITION_FOLLOWING
+		);
+		expect( writingToggle ).toHaveAttribute( 'aria-expanded', 'false' );
+		expect( screen.queryByRole( 'button', { name: 'Optimize title' } ) ).toBeNull();
+
+		await user.click( writingToggle );
+		expect( writingToggle ).toHaveAttribute( 'aria-expanded', 'true' );
+		expect( screen.getByRole( 'button', { name: 'Optimize title' } ) ).toBeInTheDocument();
+		expect( screen.getByRole( 'button', { name: 'Generate excerpt' } ) ).toBeInTheDocument();
+		expect( screen.getByRole( 'button', { name: 'Optimize SEO' } ) ).toBeInTheDocument();
+		expect( screen.getByRole( 'button', { name: 'Simple review' } ) ).toBeInTheDocument();
+		expect( screen.getByRole( 'button', { name: 'Editorial review' } ) ).toBeInTheDocument();
+
+		await user.click( screen.getByRole( 'button', { name: 'Optimize title' } ) );
+		expect( onSuggestionClick ).toHaveBeenCalledWith( writingSuggestions[ 0 ], suggestions );
+
+		await user.click( writingToggle );
+		expect( screen.queryByRole( 'button', { name: 'Proofread' } ) ).toBeNull();
+	} );
+
+	it( 'keeps the flat empty view when there are no writing suggestions', () => {
+		const suggestion = {
+			id: 'customize-colors',
+			label: 'Customize colors',
+			prompt: 'Customize colors',
+		};
+
+		renderAgentChat( {
+			isOpen: true,
+			emptyViewSuggestions: [ suggestion ],
+			groupWritingSuggestions: true,
+		} );
+
+		expect( screen.getByRole( 'button', { name: 'Customize colors' } ) ).toBeInTheDocument();
+		expect( screen.queryByRole( 'button', { name: /Writing/ } ) ).toBeNull();
+	} );
+
+	it( 'keeps writing suggestions flat when there are no design suggestions', () => {
+		const suggestions = [
+			{
+				id: 'add-new-page',
+				label: 'Add new page',
+				prompt: 'Add a new page',
+			},
+			{
+				id: 'optimize-title',
+				label: 'Optimize Title',
+				prompt: 'Optimize the title of this post',
+			},
+		];
+
+		renderAgentChat( {
+			isOpen: true,
+			emptyViewSuggestions: suggestions,
+			groupWritingSuggestions: true,
+		} );
+
+		expect( screen.getByRole( 'button', { name: 'Add new page' } ) ).toBeInTheDocument();
+		expect( screen.getByRole( 'button', { name: 'Optimize title' } ) ).toBeInTheDocument();
+		expect( screen.queryByRole( 'button', { name: /Writing/ } ) ).toBeNull();
+	} );
+
+	it( 'uses sentence-case writing labels in ungrouped editor views', async () => {
+		const user = userEvent.setup();
+		document.body.classList.add( 'post-php', 'post-type-post' );
+		const suggestion = {
+			id: 'optimize-title',
+			label: 'Optimize Title',
+			prompt: 'Optimize the title of this post',
+		};
+		const onSuggestionClick = jest.fn();
+
+		renderAgentChat( {
+			isOpen: true,
+			emptyViewSuggestions: [ suggestion ],
+			groupWritingSuggestions: false,
+			onSuggestionClick,
+		} );
+
+		await user.click( screen.getByRole( 'button', { name: 'Optimize title' } ) );
+		expect( onSuggestionClick ).toHaveBeenCalledWith( suggestion, [ suggestion ] );
+	} );
+
+	it( 'keeps provider writing labels in ungrouped non-editor views', () => {
+		renderAgentChat( {
+			isOpen: true,
+			emptyViewSuggestions: [
+				{
+					id: 'optimize-title',
+					label: 'Optimize Title',
+					prompt: 'Optimize the title of this post',
+				},
+			],
+			groupWritingSuggestions: false,
+		} );
+
+		expect( screen.getByRole( 'button', { name: 'Optimize Title' } ) ).toBeInTheDocument();
 	} );
 
 	it( 'collapses to a button when closed without the AI chat entry button', () => {
