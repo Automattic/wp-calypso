@@ -1,8 +1,4 @@
-@import "variables";
-
 .stats-widget-content.color-scheme {
-	@include odyssey-stats-base-vars;
-
 	--color-primary: var(--color-accent);
 	--color-primary-dark: var(--color-accent-dark);
 	--color-primary-light: var(--color-accent-light);
