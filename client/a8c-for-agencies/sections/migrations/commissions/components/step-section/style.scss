@@ -4,9 +4,6 @@
 
 .commissions-step-section {
 	.commissions-step-section-header {
-		margin-block-end: 16px;
-		gap: 16px;
-
 		@include break-large {
 			gap: 8px;
 		}
@@ -25,7 +22,6 @@
 	}
 
 	.commissions-step-section-heading {
-		@include heading-large;
 		text-wrap: pretty;
 	}
 }

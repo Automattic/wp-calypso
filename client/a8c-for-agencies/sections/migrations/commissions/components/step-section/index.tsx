@@ -1,4 +1,8 @@
-import { __experimentalHStack as HStack, __experimentalText as Text } from '@wordpress/components';
+import {
+	__experimentalHStack as HStack,
+	__experimentalVStack as VStack,
+	__experimentalText as Text,
+} from '@wordpress/components';
 import clsx from 'clsx';
 import React from 'react';
 
@@ -18,12 +22,26 @@ export default function StepSection( {
 	className,
 }: StepSectionProps ) {
 	return (
-		<div className={ clsx( 'commissions-step-section', className ) }>
-			<HStack className="commissions-step-section-header" alignment="center" justify="flex-start">
+		<VStack className={ clsx( 'commissions-step-section', className ) } spacing={ 4 }>
+			<HStack
+				className="commissions-step-section-header"
+				alignment="center"
+				justify="flex-start"
+				spacing={ 4 }
+			>
 				{ !! stepCount && <div className="commissions-step-section-step-count">{ stepCount }</div> }
-				<Text className="commissions-step-section-heading">{ heading }</Text>
+				<Text
+					className="commissions-step-section-heading"
+					size={ 15 }
+					weight={ 500 }
+					lineHeight="20px"
+				>
+					{ heading }
+				</Text>
 			</HStack>
-			<div className="commissions-step-section-content">{ children }</div>
-		</div>
+			<VStack className="commissions-step-section-content" spacing={ 4 }>
+				{ children }
+			</VStack>
+		</VStack>
 	);
 }

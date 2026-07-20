@@ -1,3 +1,4 @@
+import { __experimentalVStack as VStack, __experimentalText as Text } from '@wordpress/components';
 import clsx from 'clsx';
 import React from 'react';
 
@@ -18,10 +19,17 @@ export default function StepSectionItem( {
 }: StepSectionItemProps ) {
 	return (
 		<div className={ clsx( 'commissions-step-section-item', className ) }>
-			<div className="commissions-step-section-item-content">
-				<div className="commissions-step-section-item-heading">{ heading }</div>
+			<VStack className="commissions-step-section-item-content" spacing={ 1 }>
+				<Text
+					className="commissions-step-section-item-heading"
+					size={ 15 }
+					weight={ 500 }
+					lineHeight="20px"
+				>
+					{ heading }
+				</Text>
 				<div className="commissions-step-section-item-description">{ description }</div>
-			</div>
+			</VStack>
 			{ children }
 		</div>
 	);

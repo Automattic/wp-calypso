@@ -30,7 +30,7 @@ export default function MigrationsCommissionsEmptyState( {
 			<StepSectionItem
 				heading={ __( 'Concierge Migrations' ) }
 				description={ __(
-					"If you picked the concierge service, we'll move your sites for you. Once we're done, you'll see them here and they'll be available for tagging."
+					'If you picked the concierge service, we’ll move your sites for you. Once we’re done, you’ll see them here and they’ll be available for tagging.'
 				) }
 			/>
 			{ canTagSitesForCommission && (
