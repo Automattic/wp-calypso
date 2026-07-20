@@ -5,7 +5,6 @@ import {
 	RestAPIClient,
 	SecretsManager,
 	TestAccount,
-	envVariables,
 } from '@automattic/calypso-e2e';
 import { tags, test } from '../../lib/pw-base';
 import type { Page } from 'playwright';
@@ -16,12 +15,22 @@ test.describe(
 	() => {
 		test.describe.configure( { mode: 'serial' } );
 
-		const pluginName = envVariables.VIEWPORT_NAME === 'desktop' ? 'Hello Dolly' : 'Developer';
+		let pluginName: string;
 		let page: Page;
 		let pluginsPage: PluginsPage;
 		let siteURL: string;
 
 		test.beforeAll( async ( { browser } ) => {
+			// beforeAll cannot request the per-test `page` fixture, so the project's viewport
+			// and device options are not applied automatically. Derive them from the project
+			// config so each matrix leg (chrome/desktop, pixel/mobile) targets a distinct plugin
+			// and runs against the matching device context.
+			const { viewportName = 'desktop', ...contextOptions } = test.info().project.use as {
+				viewportName?: string;
+			};
+			process.env.VIEWPORT_NAME = viewportName;
+			pluginName = viewportName === 'desktop' ? 'Hello Dolly' : 'Developer';
+
 			const restAPIClient = new RestAPIClient(
 				SecretsManager.secrets.testAccounts.jetpackRemoteSiteUser
 			);
@@ -35,7 +44,8 @@ test.describe(
 				console.log( `Unable to remove the plugin '${ pluginName }'; no action performed.` );
 			}
 
-			page = await browser.newPage();
+			const context = await browser.newContext( contextOptions );
+			page = await context.newPage();
 			const testAccount = new TestAccount( 'jetpackRemoteSiteUser' );
 			await testAccount.authenticate( page );
 			siteURL = SecretsManager.secrets.testAccounts.jetpackRemoteSiteUser.testSites?.primary
