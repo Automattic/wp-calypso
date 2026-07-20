@@ -21,6 +21,7 @@
 	display: inline-flex;
 	align-items: center;
 	justify-content: center;
+	box-sizing: border-box;
 	width: var( --a8c-ui-stepper-indicator-size );
 	height: var( --a8c-ui-stepper-indicator-size );
 	border-radius: 50%;
