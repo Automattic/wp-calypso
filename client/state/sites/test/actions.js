@@ -375,6 +375,21 @@ describe( 'actions', () => {
 					jetpack: true,
 					capabilities: {},
 					options: { is_difm_lite_in_progress: true },
+				} )
+				// Jetpack DIFM site whose optional wpcom refetch fails: preserve
+				// the usable proxied response and keep the pre-submit routes locked.
+				.get( '/rest/v1.2/sites/90005' )
+				.reply( 200, {
+					ID: 90005,
+					jetpack: true,
+					capabilities: {},
+					options: { is_difm_lite_in_progress: true },
+				} )
+				.get( '/rest/v1.2/sites/90005' )
+				.query( { force: 'wpcom' } )
+				.reply( 500, {
+					error: 'server_error',
+					message: 'Something went wrong.',
 				} );
 		} );
 
@@ -431,6 +446,22 @@ describe( 'actions', () => {
 			expect( spy ).toHaveBeenCalledWith( {
 				type: SITE_REQUEST_SUCCESS,
 				siteId: 90004,
+			} );
+		} );
+
+		test( 'preserves the proxied response when the forced refetch fails', async () => {
+			const site = await requestSite( 90005 )( spy, () => {} );
+
+			expect( site ).toEqual( {
+				ID: 90005,
+				jetpack: true,
+				capabilities: {},
+				options: { is_difm_lite_in_progress: true },
+			} );
+			expect( spy ).toHaveBeenCalledWith( receiveSite( site ) );
+			expect( spy ).toHaveBeenCalledWith( {
+				type: SITE_REQUEST_SUCCESS,
+				siteId: 90005,
 			} );
 		} );
 	} );

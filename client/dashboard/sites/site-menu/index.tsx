@@ -44,17 +44,19 @@ const SiteMenu = ( { site }: { site: Site } ) => {
 					{ __( 'Site building' ) }
 				</ResponsiveMenu.Item>
 				{ shouldShowContentCollectionLinks && (
-					<>
-						<ResponsiveMenu.Item href={ wpcomLink( `/posts/${ siteSlug }` ) }>
-							{ __( 'Posts' ) }
-						</ResponsiveMenu.Item>
-						<ResponsiveMenu.Item href={ wpcomLink( `/media/${ siteSlug }` ) }>
-							{ __( 'Media' ) }
-						</ResponsiveMenu.Item>
-						<ResponsiveMenu.Item href={ wpcomLink( `/pages/${ siteSlug }` ) }>
-							{ __( 'Pages' ) }
-						</ResponsiveMenu.Item>
-					</>
+					<ResponsiveMenu.Item href={ wpcomLink( `/posts/${ siteSlug }` ) }>
+						{ __( 'Posts' ) }
+					</ResponsiveMenu.Item>
+				) }
+				{ shouldShowContentCollectionLinks && (
+					<ResponsiveMenu.Item href={ wpcomLink( `/media/${ siteSlug }` ) }>
+						{ __( 'Media' ) }
+					</ResponsiveMenu.Item>
+				) }
+				{ shouldShowContentCollectionLinks && (
+					<ResponsiveMenu.Item href={ wpcomLink( `/pages/${ siteSlug }` ) }>
+						{ __( 'Pages' ) }
+					</ResponsiveMenu.Item>
 				) }
 				{ siteTypeSupports.domains && (
 					<ResponsiveMenu.Item to={ `/sites/${ siteSlug }/domains` }>

@@ -130,4 +130,23 @@ describe( 'siteByIdQuery DIFM pre-submit flag refetch', () => {
 		expect( proxied.isDone() ).toBe( true );
 		expect( forced.isDone() ).toBe( true );
 	} );
+
+	test( 'preserves the proxied response when the forced refetch fails', async () => {
+		const proxiedSite = makeSite( {
+			ID: 90005,
+			jetpack: true,
+			options: { is_difm_lite_in_progress: true },
+		} );
+		const proxied = mockGetSite( 90005, proxiedSite );
+		const forced = nock( 'https://public-api.wordpress.com' )
+			.get( '/rest/v1.1/sites/90005' )
+			.query( ( query ) => query.force === 'wpcom' )
+			.reply( 500, { error: 'server_error' } );
+
+		const site = ( await queryClient.fetchQuery( siteByIdQuery( 90005 ) ) ) as Site;
+
+		expect( site ).toEqual( proxiedSite );
+		expect( proxied.isDone() ).toBe( true );
+		expect( forced.isDone() ).toBe( true );
+	} );
 } );

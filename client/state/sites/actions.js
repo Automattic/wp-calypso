@@ -181,7 +181,7 @@ export function requestSite( siteFragment, atomicCapabilitiesRetriesLeft = 3 ) {
 					site.options?.is_difm_lite_in_progress &&
 					site.options.difm_lite_site_options === undefined
 				) {
-					return doRequest( true );
+					return doRequest( true ).catch( () => site );
 				}
 
 				return site;

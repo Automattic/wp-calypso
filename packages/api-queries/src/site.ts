@@ -34,7 +34,7 @@ async function getSite( siteIdOrSlug: number | string ) {
 			site.options?.is_difm_lite_in_progress &&
 			site.options.difm_lite_site_options === undefined
 		) {
-			return await fetchSite( siteIdOrSlug, { force: 'wpcom' } );
+			return await fetchSite( siteIdOrSlug, { force: 'wpcom' } ).catch( () => site );
 		}
 
 		return site;
