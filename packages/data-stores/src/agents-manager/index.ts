@@ -26,7 +26,7 @@ export function register(): typeof STORE_KEY {
 		controls: { ...controls, ...wpcomRequestControls },
 		selectors,
 		persist: [],
-		// Don't persist the open state for e2e users, because parallel tests will start interfering with each other.
+		// Don't restore persisted state for e2e users, because parallel tests will start interfering with each other.
 		resolvers: isE2ETest() ? undefined : { getAgentsManagerState },
 	} );
 
