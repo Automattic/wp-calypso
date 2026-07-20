@@ -1,5 +1,5 @@
 @import "variables";
 
 .stats-widget-content {
-	@include jetpack-theme-for-odyssey-stats;
+	@include odyssey-stats-base-vars;
 }
