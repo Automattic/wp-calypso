@@ -74,10 +74,6 @@ const ReaderSidebarListsListItem = ( {
 	const unseenCount = list.feeds?.reduce( ( t, feed ) => t + ( feed.unseen_count ?? 0 ), 0 ) ?? 0;
 	const feedIds = list.feeds?.map( ( feed ) => feed.feed_id ) ?? [];
 
-	if ( isOwnedByCurrentUser && list.slug === 'recommended-blogs' ) {
-		return null;
-	}
-
 	return (
 		<MenuItem
 			ref={ itemRef }
