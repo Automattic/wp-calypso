@@ -1,5 +1,5 @@
 import { __, sprintf } from '@wordpress/i18n';
-import { brush, envelope, globe, layout, plugins } from '@wordpress/icons';
+import { brush, envelope, globe, layout, navigation, plugins } from '@wordpress/icons';
 import { useRef } from 'react';
 import ReferralSidebar from '../../agency/earn/referrals/referral-sidebar';
 import AgencySiteSidebar from '../../agency/sites/site-sidebar';
@@ -72,6 +72,9 @@ function PrimaryMenuSidebar() {
 		<SidebarMenu>
 			{ supports.agency && <AgencySidebar /> }
 			{ supports.agencyClient && <AgencyClientSidebar /> }
+			<SidebarMenuItem icon={ navigation } to="/discover">
+				{ __( 'Discover' ) }
+			</SidebarMenuItem>
 			{ supports.sites && (
 				<SidebarMenuItem icon={ layout } to="/sites">
 					{ __( 'Sites' ) }

@@ -85,3 +85,113 @@ body:has(#wpcom-omnibar) #wpcom {
 	--color-masterbar-submenu-group-background: #704000;
 	--color-global-masterbar-site-info-background: #704000;
 }
+
+// The masterbar indents the Howdy menu's Log Out row (left: 85px) to tuck it
+// under the account details beside the gravatar. With the Workspace row
+// inserted above it, that indent reads as misalignment — flush it to the start.
+#wpcom-omnibar .masterbar__item-subitems-item.logout-link {
+	top: 0;
+	// Physical on purpose: it overrides the masterbar's physical `left: 85px`,
+	// and both go through the same rtlcss flip for RTL builds.
+	// stylelint-disable-next-line property-disallowed-list
+	left: 0;
+	margin-bottom: 0;
+}
+
+// "Workspace" entry in the Howdy menu, with a wp-admin style nested flyout.
+// The flyout opens to the left because the Howdy menu hugs the screen edge.
+#wpcom-omnibar .masterbar__item-subitems-item.masterbar__workspace {
+	position: relative;
+
+	// Same hover treatment as the menu's links (e.g. Log Out): highlight the text.
+	&:hover .omnibar-workspace__row,
+	&:focus-within .omnibar-workspace__row {
+		color: var(--color-masterbar-submenu-hover-text, var(--color-masterbar-highlight));
+	}
+
+	.omnibar-workspace__row {
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+		gap: 16px;
+		padding: 0 6px;
+		color: var(--color-masterbar-submenu-text, var(--color-masterbar-text));
+		cursor: default;
+	}
+
+	.omnibar-workspace__current {
+		display: inline-flex;
+		align-items: center;
+		opacity: 0.7;
+
+		svg {
+			fill: currentColor;
+		}
+	}
+
+	.omnibar-workspace__submenu {
+		display: none;
+		position: absolute;
+		inset-block-start: -6px;
+		inset-inline-end: 100%;
+		margin: 0;
+		padding: 6px 0;
+		min-width: 220px;
+		list-style: none;
+		background: var(--color-global-masterbar-submenu-background, var(--color-masterbar-item-hover-background));
+		box-shadow: 0 3px 5px rgba(0, 0, 0, 0.2);
+
+		li {
+			margin: 0;
+		}
+
+		button {
+			display: flex;
+			align-items: flex-start;
+			gap: 4px;
+			width: 100%;
+			padding: 6px 12px 6px 6px;
+			border: none;
+			background: none;
+			text-align: start;
+			cursor: pointer;
+			color: var(--color-masterbar-submenu-text, var(--color-masterbar-text));
+
+			&:hover,
+			&:focus-visible {
+				background: var(--color-global-masterbar-submenu-hover-background, var(--color-masterbar-item-hover-background));
+				color: var(--color-masterbar-submenu-hover-text, var(--color-masterbar-highlight));
+			}
+
+			&[aria-current='true'] .omnibar-workspace__option-label {
+				font-weight: 600;
+				color: var(--color-masterbar-highlight);
+			}
+		}
+	}
+
+	&:hover .omnibar-workspace__submenu,
+	&:focus-within .omnibar-workspace__submenu {
+		display: block;
+	}
+
+	.omnibar-workspace__option-check {
+		flex: 0 0 18px;
+		block-size: 18px;
+
+		svg {
+			fill: var(--color-masterbar-highlight);
+		}
+	}
+
+	.omnibar-workspace__option-text {
+		display: flex;
+		flex-direction: column;
+		line-height: 1.5;
+	}
+
+	.omnibar-workspace__option-description {
+		font-size: 11px;
+		opacity: 0.7;
+	}
+}

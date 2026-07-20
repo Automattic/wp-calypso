@@ -295,6 +295,11 @@ class MasterbarLoggedIn extends Component {
 			: [
 					[
 						{
+							label: translate( 'Discover' ),
+							url: dashboardOptIn ? dashboardLink( '/discover' ) : '/discover',
+							onClick: () => this.props.recordTracksEvent( 'calypso_masterbar_discover_clicked' ),
+						},
+						{
 							label: translate( 'Sites' ),
 							url: dashboardOptIn ? dashboardLink( '/sites' ) : '/sites',
 							onClick: () => this.props.recordTracksEvent( 'calypso_masterbar_sites_clicked' ),
@@ -303,6 +308,11 @@ class MasterbarLoggedIn extends Component {
 							label: translate( 'Domains' ),
 							url: dashboardOptIn ? dashboardLink( '/domains' ) : '/domains/manage',
 							onClick: () => this.props.recordTracksEvent( 'calypso_masterbar_domains_clicked' ),
+						},
+						{
+							label: translate( 'Emails' ),
+							url: dashboardOptIn ? dashboardLink( '/emails' ) : '/mailboxes',
+							onClick: () => this.props.recordTracksEvent( 'calypso_masterbar_emails_clicked' ),
 						},
 					],
 					...( this.props.isSimpleSite
@@ -795,6 +805,7 @@ class MasterbarLoggedIn extends Component {
 					? () => this.props.recordTracksEvent( 'calypso_masterbar_edit_profile_clicked' )
 					: undefined,
 			},
+			...( this.props.additionalProfileMenuItems ?? [] ),
 			{
 				label: translate( 'Log Out' ),
 				onClick: () => {
