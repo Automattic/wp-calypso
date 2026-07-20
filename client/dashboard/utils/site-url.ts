@@ -65,6 +65,20 @@ export function getSiteVisibilityURL( site: Site ) {
 }
 
 /**
+ * Returns the URL for the site's repositories settings page.
+ */
+export function getSiteSettingsRepositoriesURL( siteSlug: string ) {
+	return `/sites/${ siteSlug }/settings/repositories`;
+}
+
+/**
+ * Returns the URL for configuring a connected repository.
+ */
+export function getSiteRepositoryConfigurationURL( siteSlug: string, deploymentId: number ) {
+	return `/sites/${ siteSlug }/settings/repositories/manage/${ deploymentId }`;
+}
+
+/**
  * Given a site and its current plan's purchase (if any), this function does the following:
  *
  * - If the site is a wpcom site without a purchase, returns the URL to upgrade the site plan.

@@ -854,6 +854,35 @@ export const agencySiteMonitoringRoute = createRoute( {
 	)
 );
 
+// `/sites/$siteSlug/deployments` – layout gating on the Deployments hosting feature
+const agencySiteDeploymentsRoute = createRoute( {
+	staticData: { requiresSiteTypeSupport: 'deployments' },
+	head: () => ( { meta: [ { title: __( 'Deployments' ) } ] } ),
+	getParentRoute: () => agencySiteRoute,
+	path: 'deployments',
+} ).lazy( () =>
+	import( '../../sites/deployments' ).then( ( d ) =>
+		createLazyRoute( 'agency-site-deployments' )( {
+			component: d.default,
+		} )
+	)
+);
+
+const agencySiteDeploymentsListRoute = createRoute( {
+	getParentRoute: () => agencySiteDeploymentsRoute,
+	path: '/',
+	loader: async ( { params: { siteSlug } } ) => {
+		const site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
+		queryClient.prefetchQuery( codeDeploymentsQuery( site.ID ) );
+	},
+} ).lazy( () =>
+	import( '../../sites/deployments-list' ).then( ( d ) =>
+		createLazyRoute( 'agency-site-deployments-list' )( {
+			component: d.default,
+		} )
+	)
+);
+
 // `/sites/$siteSlug/settings` – settings hub, mirroring the dotcom dashboard's settings tree
 export const agencySiteSettingsRoute = createRoute( {
 	staticData: { requiresSiteTypeSupport: 'settings' },
@@ -1545,6 +1574,7 @@ export const createAgencyRoutes = () => [
 			] ),
 			agencySiteMonitoringRoute,
 			agencySiteLogsRoute.addChildren( [ agencySiteLogsIndexRoute, agencySiteActivityRoute ] ),
+			agencySiteDeploymentsRoute.addChildren( [ agencySiteDeploymentsListRoute ] ),
 			agencySiteSettingsRoute.addChildren( [
 				agencySiteSettingsIndexRoute,
 				agencySiteSettingsTransferSiteRoute,
