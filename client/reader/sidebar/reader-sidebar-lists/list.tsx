@@ -1,5 +1,5 @@
 import { ReadList } from '@automattic/api-core';
-import ListItem from './list-item';
+import ReaderSidebarListsListItem from './list-item';
 import ListItemCreateLink from './list-item-create-link';
 
 interface ReaderSidebarListsListProps {
@@ -19,7 +19,7 @@ function ReaderSidebarListsList( props: ReaderSidebarListsListProps ): JSX.Eleme
 	return (
 		<>
 			{ lists.map( ( list ) => (
-				<ListItem
+				<ReaderSidebarListsListItem
 					key={ list.ID }
 					list={ list }
 					path={ path }
