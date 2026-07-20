@@ -71,7 +71,7 @@
 		"current-site/domain-warning": false,
 		"current-site/notice": true,
 		"dark-mode": false,
-		"dashboard/enable-percentage-rollout": false,
+		"dashboard/enable-percentage-rollout": true,
 		"dashboard/force-opt-in-visibility": true,
 		"dashboard/omnibar-radical": false,
 		"dashboard/opt-in-welcome-modal": true,

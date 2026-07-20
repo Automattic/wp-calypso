@@ -44,7 +44,7 @@
 		"current-site/domain-warning": false,
 		"current-site/notice": true,
 		"dark-mode": false,
-		"dashboard/enable-percentage-rollout": false,
+		"dashboard/enable-percentage-rollout": true,
 		"dashboard/opt-in-welcome-modal": true,
 		"dashboard/rollout-advance-notice": true,
 		"dashboard/simulate-full-rollout": false,
