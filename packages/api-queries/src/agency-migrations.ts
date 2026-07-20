@@ -9,7 +9,6 @@ import type { RequestReverificationInput, TagSitesForCommissionInput } from '@au
 export const agencyMigrationCommissionSitesQuery = ( agencyId: number | undefined ) =>
 	queryOptions( {
 		queryKey: [ 'agency', agencyId, 'migration-commission-sites' ],
-		// `enabled` guarantees the query only runs once `agencyId` resolves.
 		queryFn: () => fetchAgencyMigrationCommissionSites( agencyId as number ),
 		enabled: !! agencyId,
 	} );

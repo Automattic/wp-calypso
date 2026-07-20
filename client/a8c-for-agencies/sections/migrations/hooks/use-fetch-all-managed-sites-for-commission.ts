@@ -23,24 +23,19 @@ export type SiteItem = {
  * use the `useFetchAllManagedSites` hook instead.
  */
 export const useFetchAllManagedSitesForCommission = () => {
-	// The main sites list, used to backfill each site's creation date.
 	const sites = useSelector( getSites );
 
-	// First fetch to get the total number of sites so we can fetch all of them.
+	// Fetch a single site first to learn the total, then request them all.
 	const firstFetch = useQuery( paginatedAgencySitesQuery( { page: 1, per_page: 1 } ) );
 
 	const total = firstFetch.data?.total ?? 0;
 
-	// Second fetch to get all sites, once we know the total and the first fetch
-	// has settled.
 	const isEnabled = !! total && ! firstFetch.isFetching;
 	const allSites = useQuery( {
 		...paginatedAgencySitesQuery( { page: 1, per_page: total } ),
 		enabled: isEnabled,
 	} );
 
-	// Unlike useFetchAllManagedSites, this hook does NOT filter out sites that
-	// are not in the Redux store - it includes all sites from the API.
 	const mappedSites: SiteItem[] = ( allSites.data?.sites ?? [] ).map( ( site ) => {
 		const foundSite = sites.find( ( s ) => s?.ID === site.blog_id );
 		return {
