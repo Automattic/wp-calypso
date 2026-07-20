@@ -32,7 +32,6 @@ export default function MigrationsTagSitesModal( {
 	onSuccess,
 	onError,
 	getSiteCreatedAt,
-	locale,
 }: {
 	onClose: () => void;
 	taggedSites?: TaggedSite[];
@@ -41,7 +40,6 @@ export default function MigrationsTagSitesModal( {
 	onSuccess: ( message: ReactNode ) => void;
 	onError: ( message: ReactNode ) => void;
 	getSiteCreatedAt: ( blogId: number ) => string | undefined;
-	locale: string;
 } ) {
 	const queryClient = useQueryClient();
 	const { data: agency } = useQuery( activeAgencyQuery() );
@@ -181,7 +179,6 @@ export default function MigrationsTagSitesModal( {
 						migrationSourceHost={ selectedMigrationSourceHost }
 						recordTracksEvent={ recordTracksEvent }
 						getSiteCreatedAt={ getSiteCreatedAt }
-						locale={ locale }
 					/>
 				) }
 			</VStack>

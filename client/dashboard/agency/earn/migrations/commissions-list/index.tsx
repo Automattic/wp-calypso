@@ -2,7 +2,7 @@ import { __experimentalHStack as HStack } from '@wordpress/components';
 import { useViewportMatch } from '@wordpress/compose';
 import { DataViews } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
-import { useCallback, useMemo, type ComponentType, type ReactNode, useState } from 'react';
+import { useCallback, useMemo, type ReactNode, useState } from 'react';
 import RequestReviewModal from '../request-review-modal';
 import { MigratedOnColumn, ReviewStatusColumn, SiteColumn } from './commission-columns';
 import UntagSiteDialog from './untag-site-dialog';
@@ -52,24 +52,18 @@ const INITIAL_VIEW: View = {
 	layout: {},
 };
 
-const DefaultTableWrapper = ( { children }: { children: ReactNode } ) => <>{ children }</>;
-
 export default function MigrationsCommissionsList( {
 	items,
 	migrationTags,
 	recordTracksEvent,
 	onSuccess,
 	onError,
-	locale,
-	TableWrapper = DefaultTableWrapper,
 }: {
 	items: TaggedSite[];
 	migrationTags: string[];
 	recordTracksEvent: RecordTracksEvent;
 	onSuccess: ShowSuccessNotice;
 	onError: ( message: ReactNode ) => void;
-	locale: string;
-	TableWrapper?: ComponentType< { children: ReactNode } >;
 } ) {
 	const isDesktop = useViewportMatch( 'large' );
 
@@ -116,9 +110,7 @@ export default function MigrationsCommissionsList( {
 				// We will change this when the MC tool is implemented and we have the migration date
 				label: __( 'Date added' ),
 				getValue: () => '-',
-				render: ( { item } ): ReactNode => (
-					<MigratedOnColumn migratedOn={ item.created_at } locale={ locale } />
-				),
+				render: ( { item } ): ReactNode => <MigratedOnColumn migratedOn={ item.created_at } />,
 				enableHiding: false,
 				enableSorting: false,
 			},
@@ -138,12 +130,12 @@ export default function MigrationsCommissionsList( {
 				enableSorting: false,
 			},
 		],
-		[ locale ]
+		[]
 	);
 
 	return (
 		<>
-			<TableWrapper>
+			<div className="redesigned-a8c-table full-width">
 				<DataViews
 					data={ items }
 					view={ responsiveView }
@@ -167,7 +159,7 @@ export default function MigrationsCommissionsList( {
 					<DataViews.Layout />
 					<DataViews.Footer />
 				</DataViews>
-			</TableWrapper>
+			</div>
 
 			{ activeModal?.kind === 'untag' && (
 				<UntagSiteDialog

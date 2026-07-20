@@ -13,7 +13,6 @@ const baseProps = {
 	onSuccess: () => {},
 	onError: () => {},
 	getSiteCreatedAt: () => undefined,
-	locale: 'en',
 	canTagSitesForCommission: true,
 	migrationTags: [ 'tag' ],
 	isAddSitesModalOpen: false,

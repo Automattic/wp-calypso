@@ -1,4 +1,3 @@
-import { useLocale } from '@automattic/i18n-utils';
 import { Button } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import clsx from 'clsx';
@@ -24,14 +23,9 @@ import type { ReactNode } from 'react';
 
 import './style.scss';
 
-const ClassicTableWrapper = ( { children }: { children: ReactNode } ) => (
-	<div className="redesigned-a8c-table full-width">{ children }</div>
-);
-
 export default function MigrationsCommissions() {
 	const dispatch = useDispatch();
 	const sites = useSelector( getSites );
-	const locale = useLocale();
 
 	const [ showAddSitesModal, setShowAddSitesModal ] = useState( false );
 	const {
@@ -115,13 +109,11 @@ export default function MigrationsCommissions() {
 					onSuccess={ onSuccess }
 					onError={ onError }
 					getSiteCreatedAt={ getSiteCreatedAt }
-					locale={ locale }
 					canTagSitesForCommission={ canTagSitesForCommission }
 					migrationTags={ migrationTags }
 					isAddSitesModalOpen={ showAddSitesModal }
 					onCloseAddSitesModal={ () => setShowAddSitesModal( false ) }
 					onOpenAddSitesModal={ () => setShowAddSitesModal( true ) }
-					TableWrapper={ ClassicTableWrapper }
 				/>
 			</LayoutBody>
 		</Layout>

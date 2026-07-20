@@ -4,7 +4,7 @@ import MigrationsConsolidatedCommissions from './consolidated-commissions';
 import MigrationsCommissionsEmptyState from './empty-state';
 import MigrationsTagSitesModal from './tag-sites-modal';
 import type { RecordTracksEvent, ShowSuccessNotice, TaggedSite } from './types';
-import type { ComponentType, ReactNode } from 'react';
+import type { ReactNode } from 'react';
 
 interface MigrationsCommissionsContentProps {
 	taggedSites: TaggedSite[];
@@ -13,13 +13,11 @@ interface MigrationsCommissionsContentProps {
 	onSuccess: ShowSuccessNotice;
 	onError: ( message: ReactNode ) => void;
 	getSiteCreatedAt: ( blogId: number ) => string | undefined;
-	locale: string;
 	canTagSitesForCommission: boolean;
 	migrationTags: string[];
 	isAddSitesModalOpen: boolean;
 	onCloseAddSitesModal: () => void;
 	onOpenAddSitesModal: () => void;
-	TableWrapper?: ComponentType< { children: ReactNode } >;
 }
 
 export default function MigrationsCommissionsContent( {
@@ -29,13 +27,11 @@ export default function MigrationsCommissionsContent( {
 	onSuccess,
 	onError,
 	getSiteCreatedAt,
-	locale,
 	canTagSitesForCommission,
 	migrationTags,
 	isAddSitesModalOpen,
 	onCloseAddSitesModal,
 	onOpenAddSitesModal,
-	TableWrapper,
 }: MigrationsCommissionsContentProps ) {
 	if ( isLoading ) {
 		return (
@@ -65,8 +61,6 @@ export default function MigrationsCommissionsContent( {
 						recordTracksEvent={ recordTracksEvent }
 						onSuccess={ onSuccess }
 						onError={ onError }
-						locale={ locale }
-						TableWrapper={ TableWrapper }
 					/>
 				</div>
 			) }
@@ -79,7 +73,6 @@ export default function MigrationsCommissionsContent( {
 					onSuccess={ onSuccess }
 					onError={ onError }
 					getSiteCreatedAt={ getSiteCreatedAt }
-					locale={ locale }
 				/>
 			) }
 		</>
