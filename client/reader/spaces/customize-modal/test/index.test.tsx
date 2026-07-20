@@ -339,7 +339,7 @@ describe( 'CustomizeModal', () => {
 		expect( cached?.layout.view ).toBe( 'legacy' );
 		expect( mockRecordReaderTracksEvent ).toHaveBeenCalledWith(
 			'calypso_reader_spaces_space_updated',
-			{ tag_count: 1, language_count: 1, source_count: 0, layout: 'legacy' }
+			{ tag_count: 1, language_count: 1, languages: [ 'en' ], source_count: 0, layout: 'legacy' }
 		);
 		expect( mockRecordReaderTracksEvent ).toHaveBeenCalledWith(
 			'calypso_reader_spaces_layout_changed',

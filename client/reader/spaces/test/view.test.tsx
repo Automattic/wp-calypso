@@ -215,6 +215,7 @@ describe( 'SpacesView', () => {
 					icon: 'inbox',
 					color: 'blue',
 					tab: 'feed',
+					languages: [],
 				}
 			)
 		);

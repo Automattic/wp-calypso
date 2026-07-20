@@ -62,21 +62,23 @@ export function SpacesView( { slug, tab = 'feed' }: Props ) {
 		setCustomizeTab( null );
 	};
 
+	const detail = spaceQuery.data;
 	useEffect( () => {
-		if ( ! id || ! icon || ! color ) {
+		if ( ! id || ! icon || ! color || ! detail ) {
 			return;
 		}
 
-		dispatch(
-			recordReaderTracksEvent( 'calypso_reader_spaces_page_viewed', {
-				space_id: id,
-				layout: layoutView,
-				icon,
-				color,
-				tab,
-			} )
-		);
-	}, [ color, dispatch, icon, id, layoutView, tab ] );
+		languages: detail.languages,
+			dispatch(
+				recordReaderTracksEvent( 'calypso_reader_spaces_page_viewed', {
+					space_id: id,
+					layout: layoutView,
+					icon,
+					color,
+					tab,
+				} )
+			);
+	}, [ color, detail, dispatch, icon, id, layoutView, tab ] );
 
 	if ( slug && isSpaceUnavailable( spaceQuery.error ) ) {
 		return <SpaceError slug={ slug } error={ spaceQuery.error } />;
