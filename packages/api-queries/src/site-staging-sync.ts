@@ -8,7 +8,7 @@ export const PULL_FROM_STAGING = 'pull-from-staging-site-mutation-key';
 
 export const pushToStagingMutation = ( productionSiteId: number, stagingSiteId: number ) =>
 	mutationOptions( {
-		meta: { statId: 'staging-push' },
+		meta: { statId: 'staging-site-push' },
 		mutationKey: [ PUSH_TO_STAGING, stagingSiteId ],
 		mutationFn: ( options: StagingSyncOptions ) =>
 			pushToStaging( productionSiteId, stagingSiteId, options ),
@@ -21,7 +21,7 @@ export const pushToStagingMutation = ( productionSiteId: number, stagingSiteId: 
 
 export const pullFromStagingMutation = ( productionSiteId: number, stagingSiteId: number ) =>
 	mutationOptions( {
-		meta: { statId: 'staging-pull' },
+		meta: { statId: 'staging-site-pull' },
 		mutationKey: [ PULL_FROM_STAGING, stagingSiteId ],
 		mutationFn: ( options: StagingSyncOptions ) =>
 			pullFromStaging( productionSiteId, stagingSiteId, options ),

@@ -115,7 +115,7 @@ export function useCreateConnectionMutation() {
 	const client = useQueryClient();
 	return useMutation< AtmosphereCreateConnectionResponse, AtmosphereError, CreateConnectionParams >(
 		{
-			meta: { statId: 'conn-create' },
+			meta: { statId: 'atmo-conn-create' },
 			mutationFn: createConnection,
 			onSuccess: () => {
 				client.invalidateQueries( { queryKey: readerAtmosphereKeys.connections() } );
@@ -1057,7 +1057,7 @@ export function useCreateLikeMutation( connectionId: number ) {
 		{ postUri: string; postCid: string },
 		OptimisticContext
 	>( {
-		meta: { statId: 'like-create' },
+		meta: { statId: 'atmo-like-create' },
 		mutationFn: ( { postUri, postCid } ) => createLike( { connectionId, postUri, postCid } ),
 		onMutate: async ( { postUri } ) => {
 			await queryClient.cancelQueries( {
@@ -1089,7 +1089,7 @@ export function useDeleteLikeMutation( connectionId: number ) {
 	const queryClient = useQueryClient();
 	return useMutation< void, AtmosphereError, { rkey: string; postUri: string }, OptimisticContext >(
 		{
-			meta: { statId: 'like-delete' },
+			meta: { statId: 'atmo-like-delete' },
 			mutationFn: ( { rkey } ) => deleteLike( { connectionId, rkey } ),
 			onMutate: async ( { postUri } ) => {
 				await queryClient.cancelQueries( {
@@ -1117,7 +1117,7 @@ export function useCreateRepostMutation( connectionId: number ) {
 		{ postUri: string; postCid: string },
 		OptimisticContext
 	>( {
-		meta: { statId: 'repost-create' },
+		meta: { statId: 'atmo-repost-create' },
 		mutationFn: ( { postUri, postCid } ) => createRepost( { connectionId, postUri, postCid } ),
 		onMutate: async ( { postUri } ) => {
 			await queryClient.cancelQueries( {
@@ -1149,7 +1149,7 @@ export function useDeleteRepostMutation( connectionId: number ) {
 	const queryClient = useQueryClient();
 	return useMutation< void, AtmosphereError, { rkey: string; postUri: string }, OptimisticContext >(
 		{
-			meta: { statId: 'repost-delete' },
+			meta: { statId: 'atmo-repost-delete' },
 			mutationFn: ( { rkey } ) => deleteRepost( { connectionId, rkey } ),
 			onMutate: async ( { postUri } ) => {
 				await queryClient.cancelQueries( {
@@ -1306,7 +1306,7 @@ export function useDeletePostMutation(
 ) {
 	const queryClient = useQueryClient();
 	return useMutation< void, AtmosphereError, DeletePostMutationVars, RemovalContext >( {
-		meta: { statId: 'post-delete' },
+		meta: { statId: 'atmo-post-delete' },
 		mutationFn: ( { rkey } ) => deletePost( { connectionId, rkey } ),
 		onMutate: async ( { postUri, replyParentUri } ) => {
 			await queryClient.cancelQueries( { queryKey: readerAtmosphereKeys.all } );
@@ -1733,7 +1733,7 @@ export function removePlaceholder< P extends { items: AtmosphereFeedItem[] } >(
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 export const uploadBlobMutation = ( _queryClient: QueryClient ) =>
 	mutationOptions< UploadBlobResult, AtmosphereError, UploadBlobParams >( {
-		meta: { statId: 'blob-upload' },
+		meta: { statId: 'atmo-blob-upload' },
 		mutationFn: uploadBlob,
 	} );
 
@@ -1763,7 +1763,7 @@ export const uploadBlobMutation = ( _queryClient: QueryClient ) =>
  */
 export const createPostMutation = ( queryClient: QueryClient ) =>
 	mutationOptions< CreatePostResult, AtmosphereError, CreatePostParams, CreatePostContext >( {
-		meta: { statId: 'post-create' },
+		meta: { statId: 'atmo-post-create' },
 		mutationFn: createPost,
 		onMutate: async ( vars ) => {
 			await queryClient.cancelQueries( { queryKey: readerAtmosphereKeys.all } );

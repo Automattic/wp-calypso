@@ -41,7 +41,7 @@ export const siteScanEnqueueMutation = ( siteId: number ) =>
 
 export const ignoreThreatMutation = ( siteId: number ) =>
 	mutationOptions( {
-		meta: { statId: 'threat-ignore' },
+		meta: { statId: 'site-threat-ignore' },
 		mutationFn: ( threatId: number ) => ignoreThreat( siteId, threatId ),
 		onSuccess: () => {
 			queryClient.invalidateQueries( siteScanQuery( siteId ) );
@@ -51,7 +51,7 @@ export const ignoreThreatMutation = ( siteId: number ) =>
 
 export const unignoreThreatMutation = ( siteId: number ) =>
 	mutationOptions( {
-		meta: { statId: 'threat-unignore' },
+		meta: { statId: 'site-threat-unignore' },
 		mutationFn: ( threatId: number ) => unignoreThreat( siteId, threatId ),
 		onSuccess: () => {
 			queryClient.invalidateQueries( siteScanQuery( siteId ) );
@@ -61,7 +61,7 @@ export const unignoreThreatMutation = ( siteId: number ) =>
 
 export const fixThreatMutation = ( siteId: number ) =>
 	mutationOptions( {
-		meta: { statId: 'threat-fix' },
+		meta: { statId: 'site-threat-fix' },
 		mutationFn: ( threatId: number ) => fixThreat( siteId, threatId ),
 		onSuccess: () => {
 			queryClient.invalidateQueries( siteScanQuery( siteId ) );
@@ -71,7 +71,7 @@ export const fixThreatMutation = ( siteId: number ) =>
 
 export const fixThreatsMutation = ( siteId: number ) =>
 	mutationOptions( {
-		meta: { statId: 'threats-fix' },
+		meta: { statId: 'site-threats-fix' },
 		mutationFn: ( threatIds: number[] ) => fixThreats( siteId, threatIds ),
 	} );
 

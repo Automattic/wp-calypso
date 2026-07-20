@@ -123,7 +123,7 @@ export const extendPurchaseWithFreeMonthMutation = () =>
 
 export const setDelayedDowngradeMutation = () =>
 	mutationOptions( {
-		meta: { statId: 'downgrade-delayed-set' },
+		meta: { statId: 'purch-downgrade-delayed-set' },
 		mutationFn: (
 			params: { purchaseId: number } & (
 				| { enabled: true; toProductId: number }

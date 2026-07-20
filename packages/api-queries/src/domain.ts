@@ -27,7 +27,7 @@ export const disconnectDomainMutation = ( domainName: string ) =>
 
 export const resendIcannVerificationEmailMutation = ( domainName: string ) =>
 	mutationOptions( {
-		meta: { statId: 'icann-verify-resend' },
+		meta: { statId: 'domain-icann-verify-resend' },
 		mutationFn: () => resendIcannVerificationEmail( domainName ),
 	} );
 

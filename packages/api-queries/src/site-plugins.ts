@@ -122,7 +122,7 @@ export const sitePluginInstallMutation = () =>
 
 export const siteCorePluginInstallMutation = () =>
 	mutationOptions( {
-		meta: { statId: 'core-plugin-install' },
+		meta: { statId: 'site-core-plugin-install' },
 		mutationFn: ( vars: { siteId: number; slug: string } ) =>
 			installSiteCorePlugin( vars.siteId, vars.slug ),
 		onSuccess: ( _data, vars: { siteId: number } ) => invalidateSiteCorePlugins( vars.siteId ),
@@ -130,7 +130,7 @@ export const siteCorePluginInstallMutation = () =>
 
 export const siteCorePluginActivateMutation = () =>
 	mutationOptions( {
-		meta: { statId: 'core-plugin-activate' },
+		meta: { statId: 'site-core-plugin-activate' },
 		mutationFn: ( vars: { siteId: number; plugin: string } ) =>
 			activateSiteCorePlugin( vars.siteId, vars.plugin ),
 		onSuccess: ( _data, vars: { siteId: number } ) => invalidateSiteCorePlugins( vars.siteId ),

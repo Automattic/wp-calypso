@@ -29,6 +29,10 @@ export const sitePluginActivateMutation = ( siteId: number ) =>
 
 Noun first is what makes the stats display group usefully — every `site-plugin-*` mutation sorts together, where a verb-first `activate-site-plugin` would sort beside `activate-account`.
 
+### Lead with the scope
+
+When a mutation is scoped to one kind of thing, that scope is the start of the noun: `site-` for anything acting on a site, `domain-` for a domain, `purch-` for a purchase. Keep it even when the export name or file leaves it implicit — `deploy-create` in `site-deployments.ts` is `site-deploy-create`, `ssl-cert-provision` is `domain-ssl-provision`. It groups the family and tells a human reading the stat what surface failed. Drop the scope prefix only when the ID overflows the length limit and nothing else will give (see below).
+
 ### Describe the call, not the factory
 
 The ID is written by hand and is **deliberately not derived from the export name**. Nothing checks the two against each other, and they are expected to disagree:

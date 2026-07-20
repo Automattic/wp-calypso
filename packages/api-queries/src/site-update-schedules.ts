@@ -79,7 +79,7 @@ export const siteUpdateScheduleSetActiveMutation = () =>
 // Batch create across multiple sites
 export const updateSchedulesBatchCreateMutation = ( siteIds: number[] ) =>
 	mutationOptions( {
-		meta: { statId: 'upd-scheds-batch-create' },
+		meta: { statId: 'site-upd-sched-batch-create' },
 		mutationFn: async ( body: CreateSiteUpdateScheduleBody ) => {
 			const results = await Promise.all(
 				siteIds.map( async ( siteId ) => {

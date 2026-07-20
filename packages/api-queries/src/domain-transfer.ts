@@ -18,7 +18,7 @@ import type { Domain } from '@automattic/api-core';
 
 export const domainLockMutation = ( domain: string ) =>
 	mutationOptions( {
-		meta: { statId: 'domain-lock' },
+		meta: { statId: 'domain-xfer-lock-update' },
 		mutationFn: ( enabled: boolean ) => updateDomainLock( domain, enabled ),
 		onSuccess: ( _, enabled ) => {
 			const oldDomain = queryClient.getQueryData( domainQuery( domain ).queryKey );
@@ -44,7 +44,7 @@ export const ipsTagListQuery = () =>
 
 export const ipsTagMutation = ( domain: string ) =>
 	mutationOptions( {
-		meta: { statId: 'ips-tag-save' },
+		meta: { statId: 'domain-xfer-ips-tag-save' },
 		mutationFn: ( ipsTag: string ) => saveIpsTag( domain, ipsTag ),
 	} );
 
