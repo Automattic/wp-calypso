@@ -48,6 +48,35 @@ async function getUnusedTOTPCode(
 }
 
 /**
+ * Submits authenticator codes at the login second-factor screen until the login
+ * proceeds. A code an earlier step already consumed lands in the same 30s window
+ * and reads as invalid, so this rotates to the next code on rejection and fails
+ * fast rather than hanging on `submitVerificationCode`'s open-ended navigation wait.
+ */
+async function submitLoginTOTPCode(
+	page: Page,
+	pageLogin: LoginPage,
+	totpSecret: string,
+	previousCode: string
+): Promise< void > {
+	const totpClient = new TOTPClient( totpSecret );
+	for ( let attempt = 0; attempt < 3; attempt++ ) {
+		const code = await getUnusedTOTPCode( page, totpClient, previousCode );
+		previousCode = code;
+		await pageLogin.fillVerificationCode( code );
+		await pageLogin.clickSubmit();
+		const proceeded = await page
+			.waitForURL( ( url ) => ! url.pathname.includes( '/log-in' ), { timeout: 15_000 } )
+			.then( () => true )
+			.catch( () => false );
+		if ( proceeded ) {
+			return;
+		}
+	}
+	throw new Error( 'Login second-factor code was not accepted after retries.' );
+}
+
+/**
  * Completes the security-key second factor at login. With both a TOTP app and a
  * security key registered, the login flow may default to either method, so this
  * switches to the security-key form when needed. The form auto-initiates the
@@ -73,14 +102,47 @@ async function continueWithSecurityKey( page: Page ): Promise< void > {
 }
 
 /**
+ * Answers the two-step reauthentication challenge once, as a user would: a fresh
+ * authenticator code typed in and verified. Opening the security area with a
+ * freshly two-step-enabled session bounces to the classic Calypso
+ * `me/reauth-required` screen, keyed here on its "Not you? Log out" control. No-op
+ * (returns an empty string) when the challenge is absent. Returns the code it
+ * submitted so the caller can avoid replaying it on the next attempt (the endpoint
+ * rejects a code already consumed within its 30s window).
+ */
+async function satisfyReauthChallenge(
+	page: Page,
+	totpSecret: string,
+	previousCode: string
+): Promise< string > {
+	const logOut = page.getByText( 'Not you? Log out' );
+	if ( ! ( await logOut.isVisible().catch( () => false ) ) ) {
+		return '';
+	}
+	const code = await getUnusedTOTPCode( page, new TOTPClient( totpSecret ), previousCode );
+	await page.getByLabel( 'Verification code' ).fill( code );
+	await page.getByRole( 'button', { name: 'Verify' } ).click();
+	await logOut.waitFor( { state: 'hidden', timeout: 15_000 } ).catch( () => undefined );
+	return code;
+}
+
+/**
  * Asserts that the current session is authenticated and has two-step
  * authentication enabled: the dashboard's two-step-auth screen is a
  * behind-login route that only renders the "Register key" control once
  * `two_step_enabled` is true.
  */
-async function assertTwoStepEnabledAndLoggedIn( page: Page ): Promise< void > {
+async function assertTwoStepEnabledAndLoggedIn( page: Page, totpSecret: string ): Promise< void > {
 	await page.goto( DataHelper.getDashboardURL( '/me/security/two-step-auth' ) );
-	await expect( page.getByRole( 'button', { name: 'Register key' } ) ).toBeVisible();
+	const registerKeyButton = page.getByRole( 'button', { name: 'Register key' } );
+	// Opening the security area can bounce to the reauth challenge, sometimes only
+	// after briefly rendering the settings, and it can prompt again, so keep
+	// answering it until the settings actually render.
+	let previousCode = '';
+	await expect( async () => {
+		previousCode = await satisfyReauthChallenge( page, totpSecret, previousCode );
+		await expect( registerKeyButton ).toBeVisible( { timeout: 3_000 } );
+	} ).toPass( { timeout: 90_000 } );
 }
 
 test.describe(
@@ -190,10 +252,16 @@ test.describe(
 			} );
 
 			await test.step( 'Then two-step authentication is enabled', async function () {
-				await assertTwoStepEnabledAndLoggedIn( page );
+				await assertTwoStepEnabledAndLoggedIn( page, totpSecret );
 			} );
 
 			await test.step( 'When I log out and log in again using a TOTP code', async function () {
+				// signupSocialFirstWithEmail creates a passwordless account, so a
+				// password login has no field to fill. Set the generated password
+				// (which must be the only setting in the request) here, right before
+				// logging out: changing it invalidates the signup session that the
+				// enable and assert steps above rely on, so it cannot be done earlier.
+				await restAPIClient!.setMySettings( { password: testUser.password } );
 				await page.context().clearCookies();
 				await logInWithPassword(
 					page,
@@ -202,12 +270,11 @@ test.describe(
 					testUser.password
 				);
 
-				const code = await getUnusedTOTPCode( page, new TOTPClient( totpSecret ), enableCode );
-				await pageLogin.submitVerificationCode( code );
+				await submitLoginTOTPCode( page, pageLogin, totpSecret, enableCode );
 			} );
 
 			await test.step( 'Then I am logged in with the TOTP app', async function () {
-				await assertTwoStepEnabledAndLoggedIn( page );
+				await assertTwoStepEnabledAndLoggedIn( page, totpSecret );
 			} );
 
 			await test.step( 'When I register a security key in the dashboard', async function () {
@@ -249,7 +316,7 @@ test.describe(
 			} );
 
 			await test.step( 'Then I am logged in with the security key', async function () {
-				await assertTwoStepEnabledAndLoggedIn( page );
+				await assertTwoStepEnabledAndLoggedIn( page, totpSecret );
 			} );
 		} );
 	}
