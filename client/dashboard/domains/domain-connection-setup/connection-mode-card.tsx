@@ -67,8 +67,15 @@ export default function ConnectionModeCard( {
 		onStepChange( index, checked );
 
 		if ( checked ) {
-			const nextStepIndex = Math.min( index + 1, steps.length - 1 );
-			setStepsExpanded( steps.map( ( _, stepIndex ) => stepIndex === nextStepIndex ) );
+			const newStepsExpanded = steps.map( () => false );
+
+			if ( index < steps.length - 1 ) {
+				newStepsExpanded[ index + 1 ] = true;
+			} else {
+				newStepsExpanded[ index ] = true;
+			}
+
+			setStepsExpanded( newStepsExpanded );
 		}
 	};
 

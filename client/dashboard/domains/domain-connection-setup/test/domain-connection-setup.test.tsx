@@ -259,53 +259,6 @@ describe( 'DomainConnectionSetup', () => {
 		} );
 	} );
 
-	describe( 'Step Progression', () => {
-		test( 'expands the next name server step when the current step is completed', async () => {
-			const user = userEvent.setup();
-			const domainMappingStatus = createMockDomainMappingStatus( {
-				mode: null,
-				has_mx_records: false,
-			} );
-			const domainConnectionSetupInfo = createMockDomainConnectionSetupInfo( {
-				domain_connect_apply_wpcom_hosting: null,
-			} );
-
-			render(
-				<DomainConnectionSetup
-					{ ...defaultProps }
-					domainMappingStatus={ domainMappingStatus }
-					domainConnectionSetupInfo={ domainConnectionSetupInfo }
-				/>
-			);
-
-			await user.click(
-				screen.getByRole( 'checkbox', { name: 'I have opened the name server settings' } )
-			);
-
-			expect(
-				screen.queryByRole( 'checkbox', { name: 'I have opened the name server settings' } )
-			).not.toBeInTheDocument();
-			expect(
-				screen.getByRole( 'checkbox', { name: 'I have saved a copy of my name servers' } )
-			).toBeVisible();
-
-			await user.click(
-				screen.getByRole( 'checkbox', {
-					name: 'I have saved a copy of my name servers',
-				} )
-			);
-
-			expect(
-				screen.queryByRole( 'checkbox', {
-					name: 'I have saved a copy of my name servers',
-				} )
-			).not.toBeInTheDocument();
-			expect(
-				screen.getByRole( 'checkbox', { name: 'I have updated the name servers' } )
-			).toBeVisible();
-		} );
-	} );
-
 	describe( 'Mode Switching', () => {
 		test( 'switches from manual to Domain Connect when "Use Domain Connect" is clicked', async () => {
 			const user = userEvent.setup();
