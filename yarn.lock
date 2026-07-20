@@ -117,6 +117,7 @@ __metadata:
     "@wordpress/plugins": "npm:^7.48.0"
     "@wordpress/readable-js-assets-webpack-plugin": "npm:^3.24.0"
     copy-webpack-plugin: "npm:^10.2.4"
+    postcss-prefix-selector: "npm:^1.16.1"
     webpack: "npm:^5.99.8"
   peerDependencies:
     "@automattic/calypso-router": "workspace:^"

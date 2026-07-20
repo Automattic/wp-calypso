@@ -139,9 +139,7 @@ function ReaderListCreate() {
 		<ReaderMain>
 			<NavigationHeader
 				title={ translate( 'Create List' ) }
-				subtitle={ translate(
-					'Lists let you organize sites you follow into custom feeds around the topics you care about.'
-				) }
+				subtitle={ translate( 'Lists let you organize multiple sites into custom feeds.' ) }
 			/>
 			<ListForm isCreateForm isSubmissionDisabled={ isCreatingList } onSubmit={ handleSubmit } />
 		</ReaderMain>

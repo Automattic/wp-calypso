@@ -1,5 +1,6 @@
 import { Button, ExternalLink } from '@wordpress/components';
-import { useTranslate } from 'i18n-calypso';
+import { createInterpolateElement } from '@wordpress/element';
+import { __ } from '@wordpress/i18n';
 import { useCallback } from 'react';
 import StepSection from 'calypso/a8c-for-agencies/components/step-section';
 import StepSectionItem from 'calypso/a8c-for-agencies/components/step-section-item';
@@ -14,7 +15,6 @@ export default function MigrationsCommissionsEmptyState( {
 	setShowAddSitesModal: ( show: boolean ) => void;
 	canTagSitesForCommission: boolean;
 } ) {
-	const translate = useTranslate();
 	const dispatch = useDispatch();
 
 	const onTagMySelfMigratedSitesClick = useCallback( () => {
@@ -27,52 +27,52 @@ export default function MigrationsCommissionsEmptyState( {
 	const a4aPluginUrl = 'https://wordpress.org/plugins/automattic-for-agencies-client';
 
 	return (
-		<StepSection heading={ translate( 'View your migrated websites and commisions right here.' ) }>
+		<StepSection heading={ __( 'View your migrated websites and commissions right here.' ) }>
 			<StepSectionItem
-				heading={ translate( 'Concierge Migrations' ) }
+				heading={ __( 'Concierge Migrations' ) }
 				description={ preventWidows(
-					translate(
+					__(
 						"If you picked the concierge service, we'll move your sites for you. Once we're done, you'll see them here and they'll be available for tagging."
 					)
 				) }
 			/>
 			{ canTagSitesForCommission && (
 				<StepSectionItem
-					heading={ translate( 'Tag your transferred sites so we can pay you for them.' ) }
+					heading={ __( 'Tag your transferred sites so we can pay you for them.' ) }
 					description={
 						<>
-							{ translate(
+							{ __(
 								'If you transferred sites by yourself, follow these two steps to indicate which ones we should pay you for.'
 							) }
 
 							<ul>
 								<li>
-									{ translate(
-										'Ensure the {{a}}Automattic for Agencies plugin{{/a}} is installed and connected to each site.',
+									{ createInterpolateElement(
+										__(
+											'Ensure the <a>Automattic for Agencies plugin</a> is installed and connected to each site.'
+										),
 										{
-											components: {
-												a: (
-													<ExternalLink
-														href={ a4aPluginUrl }
-														onClick={ () => {
-															dispatch(
-																recordTracksEvent(
-																	'calypso_a8c_migrations_commissions_a4a_plugin_link_click'
-																)
-															);
-														} }
-														children={ null }
-													/>
-												),
-											},
+											a: (
+												<ExternalLink
+													children={ null }
+													href={ a4aPluginUrl }
+													onClick={ () => {
+														dispatch(
+															recordTracksEvent(
+																'calypso_a8c_migrations_commissions_a4a_plugin_link_click'
+															)
+														);
+													} }
+												/>
+											),
 										}
 									) }
 								</li>
-								<li>{ translate( 'Tag the connected sites using the button below.' ) }</li>
+								<li>{ __( 'Tag the connected sites using the button below.' ) }</li>
 							</ul>
 
 							<Button variant="primary" onClick={ onTagMySelfMigratedSitesClick }>
-								{ translate( 'Tag my self-migrated sites' ) }
+								{ __( 'Tag my self-migrated sites' ) }
 							</Button>
 						</>
 					}

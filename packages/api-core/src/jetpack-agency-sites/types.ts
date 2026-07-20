@@ -1,6 +1,7 @@
 export interface AgencySite {
 	blog_id: number;
 	a4a_site_id?: number;
+	a4a_is_dev_site?: boolean;
 	url: string;
 	blogname?: string;
 	url_with_scheme?: string;

@@ -1,26 +1,44 @@
-import { useTranslate } from 'i18n-calypso';
-import { A4AConfirmationDialog } from 'calypso/a8c-for-agencies/components/a4a-confirmation-dialog';
-import { useDispatch } from 'calypso/state';
+import {
+	agencyMigrationCommissionSitesQuery,
+	agencySiteTagsMutation,
+} from '@automattic/api-queries';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+import {
+	__experimentalConfirmDialog as ConfirmDialog,
+	__experimentalHeading as Heading,
+	__experimentalVStack as VStack,
+	__experimentalText as Text,
+} from '@wordpress/components';
+import { createInterpolateElement } from '@wordpress/element';
+import { __, sprintf } from '@wordpress/i18n';
+import useMinimizeHelpCenterOnMount from 'calypso/a8c-for-agencies/hooks/use-minimize-help-center-on-mount';
+import { useDispatch, useSelector } from 'calypso/state';
+import { getActiveAgencyId } from 'calypso/state/a8c-for-agencies/agency/selectors';
 import { successNotice } from 'calypso/state/notices/actions';
-import useUpdateSiteTagsMutation from '../../sites/site-preview-pane/hooks/use-update-site-tags-mutation';
 import type { TaggedSite } from '../types';
 
 export default function UntagSiteDialog( {
 	site,
 	migrationTags,
-	fetchMigratedSites,
 	onClose,
 }: {
 	site: TaggedSite;
 	migrationTags: string[];
-	fetchMigratedSites: () => void;
 	onClose: () => void;
 } ) {
-	const translate = useTranslate();
 	const dispatch = useDispatch();
-	const { mutate, isPending } = useUpdateSiteTagsMutation();
+	const queryClient = useQueryClient();
+	const agencyId = useSelector( getActiveAgencyId );
+	useMinimizeHelpCenterOnMount();
+	const { mutate, isPending } = useMutation( agencySiteTagsMutation( agencyId ) );
 
 	const onConfirm = () => {
+		// ConfirmDialog has no busy state on its confirm button, so guard against
+		// a second submit while the first is still in flight.
+		if ( isPending ) {
+			return;
+		}
+
 		const newTags = site.tags.reduce( ( acc, tag ) => {
 			if ( migrationTags.includes( tag.name ) ) {
 				return acc;
@@ -33,14 +51,20 @@ export default function UntagSiteDialog( {
 			{ siteId: site.id, tags: newTags },
 			{
 				onSuccess: () => {
-					fetchMigratedSites();
+					queryClient.invalidateQueries( {
+						queryKey: agencyMigrationCommissionSitesQuery( agencyId ).queryKey,
+					} );
 					onClose();
 					dispatch(
 						successNotice(
-							translate( 'Successfully untagged {{strong}}%(siteUrl)s{{/strong}}.', {
-								components: { strong: <strong /> },
-								args: { siteUrl: site.url },
-							} ),
+							createInterpolateElement(
+								sprintf(
+									/* translators: %s: the site URL */
+									__( 'Successfully untagged <strong>%s</strong>.' ),
+									site.url
+								),
+								{ strong: <strong /> }
+							),
 							{ id: 'a4a-commission-list-untag-success', duration: 5000 }
 						)
 					);
@@ -50,23 +74,29 @@ export default function UntagSiteDialog( {
 	};
 
 	return (
-		<A4AConfirmationDialog
-			onClose={ onClose }
+		<ConfirmDialog
+			isOpen
+			confirmButtonText={ __( 'Confirm' ) }
+			onCancel={ onClose }
 			onConfirm={ onConfirm }
-			isLoading={ isPending }
-			isDisabled={ isPending }
-			title={ translate( 'Untag site' ) }
 		>
-			{ translate(
-				'Are you sure you want to untag {{b}}%(site)s{{/b}}? This will stop it from being considered for a migration payout.',
-				{
-					args: { site: site.url },
-					components: {
-						b: <b />,
-					},
-					comment: '%(site)s is the site name',
-				}
-			) }
-		</A4AConfirmationDialog>
+			<VStack spacing={ 3 }>
+				<Heading level={ 2 } size={ 20 }>
+					{ __( 'Untag site' ) }
+				</Heading>
+				<Text>
+					{ createInterpolateElement(
+						sprintf(
+							/* translators: %s: the site name */
+							__(
+								'Are you sure you want to untag <b>%s</b>? This will stop it from being considered for a migration payout.'
+							),
+							site.url
+						),
+						{ b: <b /> }
+					) }
+				</Text>
+			</VStack>
+		</ConfirmDialog>
 	);
 }
