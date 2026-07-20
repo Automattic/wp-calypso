@@ -506,7 +506,7 @@ describe( 'PostFeedback', () => {
 		expect( findButton( container, 'Dismiss' ) ).toBeDefined();
 	} );
 
-	it( 'formats a verified manual Current fragment while keeping proposed guidance literal', () => {
+	it( 'formats manual Current and Suggestion content without using the apply flag', () => {
 		const currentFragment = '<strong><em>Consultation</em></strong> openss next week.';
 		mockEditorBlocks = [
 			{
@@ -527,7 +527,7 @@ describe( 'PostFeedback', () => {
 						action: 'Confirm the intended wording.',
 						block_index: 0,
 						current_text: currentFragment,
-						suggested_text: 'Rewrite this while keeping the <em> emphasis markers.',
+						suggested_text: 'Rewrite this while keeping <em>emphasis</em>.',
 						requires_manual: true,
 					},
 				],
@@ -537,10 +537,8 @@ describe( 'PostFeedback', () => {
 		const current = container.querySelector( 'del' );
 		const suggestion = container.querySelector( 'ins' );
 		expect( current?.querySelector( 'strong em' ) ).toHaveTextContent( 'Consultation' );
-		expect( suggestion?.querySelector( 'em' ) ).toBeNull();
-		expect( suggestion ).toHaveTextContent(
-			'Rewrite this while keeping the <em> emphasis markers.'
-		);
+		expect( suggestion?.querySelector( 'em' ) ).toHaveTextContent( 'emphasis' );
+		expect( suggestion ).toHaveTextContent( 'Rewrite this while keeping emphasis.' );
 		expect( findButton( container, 'Apply change' ) ).toBeUndefined();
 	} );
 

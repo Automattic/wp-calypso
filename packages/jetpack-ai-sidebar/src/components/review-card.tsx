@@ -8,13 +8,13 @@
 /**
  * External dependencies
  */
+import { safeHTML } from '@wordpress/dom';
 import { __ } from '@wordpress/i18n';
 import { Icon, check, undo } from '@wordpress/icons';
 import { type ReactNode } from 'react';
 /**
  * Internal dependencies
  */
-import { sanitizeReviewRichText } from '../utils/sanitize-review-rich-text';
 import BlockRef, { type BlockSnapshot } from './block-ref';
 
 export type ReviewCardStatus = 'pending' | 'applying' | 'accepted' | 'dismissed' | 'failed';
@@ -27,8 +27,8 @@ export interface ReviewCardRow {
 	variant: 'current' | 'new';
 	/** Semantic element: an exact diff uses del/ins, advisory copy uses text. */
 	element: 'del' | 'ins' | 'text';
-	/** Client-side display contract. Only exact `html` opts into sanitized HTML rendering. */
-	contentFormat: 'html' | 'text';
+	/** Whether the row contains block content or explanatory prose. */
+	contentType: 'rich-text' | 'plain-text';
 }
 
 export interface ReviewCardModel {
@@ -173,11 +173,11 @@ export default function ReviewCard( {
 						return (
 							<div key={ i } className={ `${ classPrefix }__diff-row is-${ row.variant }` }>
 								<span className={ `${ classPrefix }__diff-tag` }>{ row.tag }</span>
-								{ row.contentFormat === 'html' ? (
+								{ row.contentType === 'rich-text' ? (
 									<RowContentElement
 										className={ contentClassName }
 										// eslint-disable-next-line react/no-danger
-										dangerouslySetInnerHTML={ { __html: sanitizeReviewRichText( row.text ) } }
+										dangerouslySetInnerHTML={ { __html: safeHTML( row.text ) } }
 									/>
 								) : (
 									<RowContentElement className={ contentClassName }>{ row.text }</RowContentElement>

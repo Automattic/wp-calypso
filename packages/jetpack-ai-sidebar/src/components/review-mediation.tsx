@@ -8,6 +8,7 @@
  */
 import { Panel, PanelBody } from '@wordpress/components';
 import { useSelect } from '@wordpress/data';
+import { safeHTML } from '@wordpress/dom';
 import { useState, useCallback, useEffect, useMemo, useRef } from '@wordpress/element';
 import { __, _n, sprintf } from '@wordpress/i18n';
 import { Icon, check, undo } from '@wordpress/icons';
@@ -30,7 +31,6 @@ import {
 	type BlockEditorStore,
 	type EditorStore,
 } from '../utils/blocks';
-import { sanitizeReviewRichText } from '../utils/sanitize-review-rich-text';
 import {
 	trackAiEditorialReviewItemAction,
 	trackAiEditorialReviewResultRendered,
@@ -1300,7 +1300,7 @@ export default function ReviewMediation( {
 																className="jetpack-ai-review-mediation__ai-text"
 																// eslint-disable-next-line react/no-danger
 																dangerouslySetInnerHTML={ {
-																	__html: sanitizeReviewRichText( aiCandidate.text ),
+																	__html: safeHTML( aiCandidate.text ),
 																} }
 															/>
 														) : (
@@ -1483,25 +1483,23 @@ export default function ReviewMediation( {
 												text: edit.rationale,
 												variant: 'current',
 												element: 'text',
-												contentFormat: 'text',
+												contentType: 'plain-text',
 											} );
 										}
-										// WPCOM validates only non-manual replacements as content-ready HTML.
-										const suggestedContentFormat = requiresManual ? 'text' : 'html';
 										if ( showDiff ) {
 											bodyRows.push( {
 												tag: __( 'Current', __i18n_text_domain__ ),
 												text: edit.current_text,
 												variant: 'current',
 												element: 'del',
-												contentFormat: 'html',
+												contentType: 'rich-text',
 											} );
 											bodyRows.push( {
 												tag: __( 'New', __i18n_text_domain__ ),
 												text: edit.suggested_text,
 												variant: 'new',
 												element: 'ins',
-												contentFormat: suggestedContentFormat,
+												contentType: 'rich-text',
 											} );
 										} else if ( edit.suggested_text ) {
 											bodyRows.push( {
@@ -1509,7 +1507,7 @@ export default function ReviewMediation( {
 												text: edit.suggested_text,
 												variant: 'new',
 												element: 'text',
-												contentFormat: suggestedContentFormat,
+												contentType: 'rich-text',
 											} );
 										}
 										const footer =
@@ -1597,7 +1595,7 @@ export default function ReviewMediation( {
 												text: v.issue,
 												variant: 'current',
 												element: 'text',
-												contentFormat: 'text',
+												contentType: 'plain-text',
 											} );
 											if ( v.violating_text ) {
 												bodyRows.push( {
@@ -1605,7 +1603,7 @@ export default function ReviewMediation( {
 													text: v.violating_text,
 													variant: 'current',
 													element: 'del',
-													contentFormat: 'text',
+													contentType: 'plain-text',
 												} );
 											}
 											if ( hasGuideline && v.guideline_quote ) {
@@ -1614,7 +1612,7 @@ export default function ReviewMediation( {
 													text: v.guideline_quote,
 													variant: 'new',
 													element: 'text',
-													contentFormat: 'text',
+													contentType: 'plain-text',
 												} );
 											}
 											return (

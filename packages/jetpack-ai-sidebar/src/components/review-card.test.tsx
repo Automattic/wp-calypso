@@ -44,7 +44,7 @@ function renderCard( bodyRows: ReviewCardRow[] ) {
 	return render( <ReviewCard { ...props } /> );
 }
 
-describe( 'ReviewCard HTML rows', () => {
+describe( 'ReviewCard rich-text rows', () => {
 	it( 'renders inline formatting as elements instead of literal tags', () => {
 		const { container } = renderCard( [
 			{
@@ -52,14 +52,14 @@ describe( 'ReviewCard HTML rows', () => {
 				text: '<strong>Consultation</strong> opens on next week.',
 				variant: 'current',
 				element: 'del',
-				contentFormat: 'html',
+				contentType: 'rich-text',
 			},
 			{
 				tag: 'New',
 				text: '<strong>Consultation</strong> <em>opens</em> on 1 May.',
 				variant: 'new',
 				element: 'ins',
-				contentFormat: 'html',
+				contentType: 'rich-text',
 			},
 		] );
 
@@ -79,11 +79,30 @@ describe( 'ReviewCard HTML rows', () => {
 				text: 'Fees &amp; charges',
 				variant: 'new',
 				element: 'ins',
-				contentFormat: 'html',
+				contentType: 'rich-text',
 			},
 		] );
 
 		expect( container.querySelector( 'ins' )?.textContent ).toBe( 'Fees & charges' );
+	} );
+
+	it( 'preserves formatting elements and attributes without a client-side allowlist', () => {
+		const { container } = renderCard( [
+			{
+				tag: 'New',
+				text: '<mark class="has-inline-color" style="color:red">colour</mark> <span style="text-decoration:underline">underlined</span> <s>removed</s> ref<sup>2</sup> <a href="https://example.com">linked</a>',
+				variant: 'new',
+				element: 'ins',
+				contentType: 'rich-text',
+			},
+		] );
+
+		const richText = container.querySelector( 'ins' );
+		expect( richText?.querySelector( 'mark.has-inline-color' ) ).toHaveStyle( 'color: red' );
+		expect( richText?.querySelector( 'span' ) ).toHaveStyle( 'text-decoration: underline' );
+		expect( richText?.querySelector( 's' ) ).toHaveTextContent( 'removed' );
+		expect( richText?.querySelector( 'sup' ) ).toHaveTextContent( '2' );
+		expect( richText?.querySelector( 'a' ) ).toHaveAttribute( 'href', 'https://example.com' );
 	} );
 
 	it( 'renders an HTML Suggestion text row with formatting', () => {
@@ -93,7 +112,7 @@ describe( 'ReviewCard HTML rows', () => {
 				text: 'Use <strong>bold</strong> sparingly.',
 				variant: 'new',
 				element: 'text',
-				contentFormat: 'html',
+				contentType: 'rich-text',
 			},
 		] );
 
@@ -109,20 +128,20 @@ describe( 'ReviewCard HTML rows', () => {
 				text: 'Change the <h3> to an <h2>.',
 				variant: 'current',
 				element: 'text',
-				contentFormat: 'text',
+				contentType: 'plain-text',
 			},
 		] );
 
 		expect( screen.getByText( 'Change the <h3> to an <h2>.' ) ).toBeInTheDocument();
 	} );
 
-	it( 'fails closed to literal text for an unknown runtime content format', () => {
+	it( 'fails closed to literal text for an unknown runtime content type', () => {
 		const row = {
 			tag: 'New',
 			text: '<strong>Consultation</strong>',
 			variant: 'new',
 			element: 'ins',
-			contentFormat: 'markdown',
+			contentType: 'markdown',
 		} as unknown as ReviewCardRow;
 		const { container } = renderCard( [ row ] );
 
@@ -130,14 +149,14 @@ describe( 'ReviewCard HTML rows', () => {
 		expect( container.querySelector( 'ins' ) ).toHaveTextContent( '<strong>Consultation</strong>' );
 	} );
 
-	it( 'sanitizes scripts and event handlers out of HTML rows', () => {
+	it( 'strips scripts and event handlers from native rich-text HTML', () => {
 		const { container } = renderCard( [
 			{
 				tag: 'New',
 				text: 'safe<script>window.pwned = true;</script><strong onclick="window.pwned = true">format</strong>',
 				variant: 'new',
 				element: 'ins',
-				contentFormat: 'html',
+				contentType: 'rich-text',
 			},
 		] );
 

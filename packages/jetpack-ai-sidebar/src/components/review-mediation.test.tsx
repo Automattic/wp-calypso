@@ -1618,7 +1618,7 @@ describe( 'ReviewMediation — cached-run hint', () => {
 
 describe( 'ReviewMediation — HTML fragment display', () => {
 	const currentFragment =
-		'<strong><em>Consultation</em></strong> <em>openss</em> on next week, <s>not this week</s>, ref<sup>2</sup>';
+		'<strong><em>Consultation</em></strong> <em>opens</em>s on next week, <s>not this week</s>, ref<sup>2</sup>';
 	const replacementFragment =
 		'<strong><em>Consultation</em></strong> <em>opens</em> on next week, <s>not this week</s>, ref<sup>2</sup>';
 	const formattedBlocks = [
@@ -1652,13 +1652,15 @@ describe( 'ReviewMediation — HTML fragment display', () => {
 		const del = container.querySelector( '.jetpack-ai-feedback-list__diff-row.is-current del' );
 		const ins = container.querySelector( '.jetpack-ai-feedback-list__diff-row.is-new ins' );
 		expect( del?.querySelector( 'strong em' ) ).toHaveTextContent( 'Consultation' );
-		expect( del?.querySelectorAll( 'em' )[ 1 ] ).toHaveTextContent( 'openss' );
+		expect( del?.querySelectorAll( 'em' )[ 1 ] ).toHaveTextContent( 'opens' );
 		expect( del?.querySelector( 's' ) ).toHaveTextContent( 'not this week' );
 		expect( del?.querySelector( 'sup' ) ).toHaveTextContent( '2' );
 		expect( ins?.querySelector( 'strong em' ) ).toHaveTextContent( 'Consultation' );
 		expect( ins?.querySelectorAll( 'em' )[ 1 ] ).toHaveTextContent( 'opens' );
 		expect( ins?.querySelector( 's' ) ).toHaveTextContent( 'not this week' );
 		expect( ins?.querySelector( 'sup' ) ).toHaveTextContent( '2' );
+		expect( del ).toHaveTextContent( 'Consultation openss on next week, not this week, ref2' );
+		expect( ins ).toHaveTextContent( 'Consultation opens on next week, not this week, ref2' );
 		// Prose rationale keeps literal tags.
 		expect( screen.getByText( 'Confirm the <date> placeholder.' ) ).toBeInTheDocument();
 
@@ -1677,7 +1679,7 @@ describe( 'ReviewMediation — HTML fragment display', () => {
 		);
 	} );
 
-	it( 'formats a verified manual Current fragment and keeps its guidance escaped', () => {
+	it( 'formats manual Current and Suggestion content without using the apply flag', () => {
 		mockBlocks = formattedBlocks;
 		const { container } = render(
 			<ReviewMediation
@@ -1686,7 +1688,7 @@ describe( 'ReviewMediation — HTML fragment display', () => {
 						{
 							block_index: 0,
 							current_text: currentFragment,
-							suggested_text: 'Rewrite the intro; keep the <em> emphasis markers.',
+							suggested_text: 'Rewrite the intro; keep <em>emphasis</em>.',
 							rationale: 'Needs author judgment.',
 							supported_by_reviewers: [],
 							requires_manual: true,
@@ -1697,10 +1699,10 @@ describe( 'ReviewMediation — HTML fragment display', () => {
 		);
 
 		expect( container.querySelector( 'del strong em' ) ).toHaveTextContent( 'Consultation' );
-		expect(
-			screen.getByText( 'Rewrite the intro; keep the <em> emphasis markers.' )
-		).toBeInTheDocument();
-		expect( container.querySelector( 'ins em' ) ).toBeNull();
+		expect( container.querySelector( 'ins em' ) ).toHaveTextContent( 'emphasis' );
+		expect( container.querySelector( 'ins' ) ).toHaveTextContent(
+			'Rewrite the intro; keep emphasis.'
+		);
 		expect( screen.queryByRole( 'button', { name: 'Apply change' } ) ).not.toBeInTheDocument();
 	} );
 

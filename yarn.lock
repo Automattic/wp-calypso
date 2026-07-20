@@ -1620,10 +1620,10 @@ __metadata:
     "@wordpress/blocks": "npm:^15.21.0"
     "@wordpress/components": "npm:^35.0.0"
     "@wordpress/compose": "npm:^7.23.0"
+    "@wordpress/dom": "npm:^4.48.0"
     "@wordpress/hooks": "npm:^4.46.0"
     "@wordpress/i18n": "npm:^6.21.0"
     "@wordpress/icons": "npm:^13.3.0"
-    dompurify: "npm:3.4.11"
     typescript: "npm:^6.0.3"
   peerDependencies:
     "@wordpress/data": ^10.48.0

@@ -471,25 +471,23 @@ export default function FeedbackList( {
 										text: feedbackReason,
 										variant: 'current',
 										element: 'text',
-										contentFormat: 'text',
+										contentType: 'plain-text',
 									} );
 								}
-								// WPCOM validates only non-manual replacements as content-ready HTML.
-								const suggestedContentFormat = item.requires_manual ? 'text' : 'html';
 								if ( showDiff ) {
 									bodyRows.push( {
 										tag: __( 'Current', __i18n_text_domain__ ),
 										text: item.current_text ?? '',
 										variant: 'current',
 										element: 'del',
-										contentFormat: 'html',
+										contentType: 'rich-text',
 									} );
 									bodyRows.push( {
 										tag: __( 'New', __i18n_text_domain__ ),
 										text: item.suggested_text ?? '',
 										variant: 'new',
 										element: 'ins',
-										contentFormat: suggestedContentFormat,
+										contentType: 'rich-text',
 									} );
 								} else if ( suggestionText ) {
 									bodyRows.push( {
@@ -497,7 +495,7 @@ export default function FeedbackList( {
 										text: suggestionText,
 										variant: 'new',
 										element: 'text',
-										contentFormat: item.suggested_text ? suggestedContentFormat : 'text',
+										contentType: item.suggested_text ? 'rich-text' : 'plain-text',
 									} );
 								}
 

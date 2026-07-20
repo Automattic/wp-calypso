@@ -287,14 +287,9 @@
 		}
 	}
 
-	// Host styles can assign weights to nested inline formats. Keep descendants
-	// inheriting semantic bold without enumerating every possible nested tag.
-	&__diff-row &__diff-content {
-		a {
-			color: inherit;
-			text-decoration: underline;
-		}
-
+	&__diff-content {
+		// Host styles can assign weights to nested inline formats. Keep descendants
+		// inheriting semantic bold without enumerating every possible nested tag.
 		b,
 		strong {
 			font-weight: bold;
