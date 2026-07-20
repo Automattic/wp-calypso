@@ -22,6 +22,7 @@ test.describe.fixme(
 		let page: Page;
 		let pluginsPage: PluginsPage;
 		let siteURL: string;
+		let previousViewportName: string | undefined;
 
 		test.beforeAll( async ( { browser } ) => {
 			// beforeAll cannot request the per-test `page` fixture, so the project's viewport
@@ -31,6 +32,7 @@ test.describe.fixme(
 			const { viewportName = 'desktop', ...contextOptions } = test.info().project.use as {
 				viewportName?: string;
 			};
+			previousViewportName = process.env.VIEWPORT_NAME;
 			process.env.VIEWPORT_NAME = viewportName;
 			pluginName = viewportName === 'desktop' ? 'Hello Dolly' : 'Developer';
 
@@ -55,6 +57,15 @@ test.describe.fixme(
 				.url as string;
 			pluginsPage = new PluginsPage( page );
 			await pluginsPage.visit( siteURL );
+		} );
+
+		test.afterAll( async () => {
+			await page?.context().close();
+			if ( previousViewportName === undefined ) {
+				delete process.env.VIEWPORT_NAME;
+			} else {
+				process.env.VIEWPORT_NAME = previousViewportName;
+			}
 		} );
 
 		test( 'Install plugin', async () => {
