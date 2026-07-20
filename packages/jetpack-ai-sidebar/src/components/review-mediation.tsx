@@ -1299,7 +1299,6 @@ export default function ReviewMediation( {
 														{ aiCandidate?.text ? (
 															<RichText.Content
 																tagName="div"
-																role="paragraph"
 																className="jetpack-ai-review-mediation__ai-text"
 																value={ sanitizeReviewRichText( aiCandidate.text ) }
 															/>

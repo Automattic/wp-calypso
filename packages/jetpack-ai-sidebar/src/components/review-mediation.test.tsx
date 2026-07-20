@@ -1756,7 +1756,7 @@ describe( 'ReviewMediation — HTML fragment display', () => {
 
 		const aiText = document.querySelector( '.jetpack-ai-review-mediation__ai-text' );
 		expect( aiText?.tagName ).toBe( 'DIV' );
-		expect( aiText ).toHaveAttribute( 'role', 'paragraph' );
+		expect( aiText ).not.toHaveAttribute( 'role' );
 		expect( document.querySelector( 'p > div' ) ).not.toBeInTheDocument();
 		expect( aiText?.querySelector( 'strong em' ) ).toHaveTextContent( 'Consultation' );
 		expect( aiText?.querySelectorAll( 'em' )[ 1 ] ).toHaveTextContent( 'opens' );
