@@ -78,7 +78,6 @@
 		"migration/ssh-migration": false,
 		"oauth/unified-experience": false,
 		"onboarding/create-course": false,
-		"onboarding/import": true,
 		"onboarding/import-from-blogger": true,
 		"onboarding/import-from-medium": true,
 		"onboarding/import-from-squarespace": true,
@@ -91,12 +90,10 @@
 		"plans/expired-downgrade": false,
 		"plans/hosting-trial": true,
 		"plans/migration-trial": true,
-		"plans/personal-plan": true,
 		"plugins/plugin-compass": true,
 		"plugins/stepper-plans": true,
 		"post-list/qr-code-link": false,
 		"press-this": true,
-		"publicize-preview": true,
 		"purchases/new-payment-methods": true,
 		"purchases/split-cancel-remove": false,
 		"reader/social": true,
@@ -109,7 +106,6 @@
 		"redirect-fallback-browsers": true,
 		"rum-tracking/logstash": false,
 		"security/security-checkup": true,
-		"seller-experience": true,
 		"server-side-rendering": true,
 		"settings/security/monitor": true,
 		"signup/social": true,
@@ -124,7 +120,6 @@
 		"themes/showcase-modern": true,
 		"upgrades/redirect-payments": true,
 		"upgrades/upcoming-renewals-notices": true,
-		"upgrades/wpcom-monthly-plans": true,
 		"wpcom-user-bootstrap": false
 	}
 }
