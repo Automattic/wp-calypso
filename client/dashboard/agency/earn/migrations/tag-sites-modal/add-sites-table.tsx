@@ -7,7 +7,6 @@ import { useViewportMatch } from '@wordpress/compose';
 import { DataViews, filterSortAndPaginate } from '@wordpress/dataviews';
 import { __, sprintf } from '@wordpress/i18n';
 import { useCallback, useMemo, useState } from 'react';
-import { DataViewsCard } from '../../../../components/dataviews';
 import { formatDate } from '../../../../utils/datetime';
 import {
 	useFetchAllManagedSitesForCommission,
@@ -56,9 +55,7 @@ export default function MigrationsAddSitesTable( {
 						url.host.endsWith( domain )
 					);
 				} catch {
-					// If the URL can't be parsed we can't prove it's a staging site,
-					// so keep it rather than silently dropping an eligible site.
-					return true;
+					return false;
 				}
 			} );
 	}, [ items, taggedSitesIds ] );
@@ -152,37 +149,35 @@ export default function MigrationsAddSitesTable( {
 	}, [ availableSites, view, fields ] );
 
 	return (
-		<DataViewsCard>
-			<div className="add-sites-table">
-				<BaseControl
-					label={ __( 'Select sites to tag' ) }
-					className="migrations-tag-sites-modal__table-control"
-				>
-					{ migrationSourceHost && (
-						<Spacer marginY={ 4 }>
-							<div className="migrations-tag-sites-modal__instruction">
-								{ sprintf(
-									/* translators: %s: the hosting provider name */
-									__( 'Make sure you only select sites previously hosted on %s' ),
-									migrationSourceHost
-								) }
-							</div>
-						</Spacer>
-					) }
-					<DataViews
-						data={ allSites }
-						view={ view }
-						onChangeView={ setView }
-						fields={ fields }
-						search={ false }
-						actions={ [] }
-						getItemId={ ( item ) => `${ item.id }` }
-						paginationInfo={ paginationInfo }
-						defaultLayouts={ { table: {} } }
-						isLoading={ isLoading }
-					/>
-				</BaseControl>
-			</div>
-		</DataViewsCard>
+		<div className="add-sites-table redesigned-a8c-table">
+			<BaseControl
+				label={ __( 'Select sites to tag' ) }
+				className="migrations-tag-sites-modal__table-control"
+			>
+				{ migrationSourceHost && (
+					<Spacer marginY={ 4 }>
+						<div className="migrations-tag-sites-modal__instruction">
+							{ sprintf(
+								/* translators: %s: the hosting provider name */
+								__( 'Make sure you only select sites previously hosted on %s' ),
+								migrationSourceHost
+							) }
+						</div>
+					</Spacer>
+				) }
+				<DataViews
+					data={ allSites }
+					view={ view }
+					onChangeView={ setView }
+					fields={ fields }
+					search={ false }
+					actions={ [] }
+					getItemId={ ( item ) => `${ item.id }` }
+					paginationInfo={ paginationInfo }
+					defaultLayouts={ { table: {} } }
+					isLoading={ isLoading }
+				/>
+			</BaseControl>
+		</div>
 	);
 }

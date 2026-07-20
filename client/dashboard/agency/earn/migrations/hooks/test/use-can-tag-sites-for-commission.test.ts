@@ -34,16 +34,25 @@ function mockActiveAgency( startDate?: string | null ) {
 	};
 }
 
-function mockAgencyQuery(
-	agency: ReturnType< typeof mockActiveAgency > | null,
-	isLoading = false
-) {
-	mockUseQuery.mockReturnValue( { data: agency, isLoading } as unknown as UseQueryResult );
+function mockAgencyQuery( agency: ReturnType< typeof mockActiveAgency > | null ) {
+	mockUseQuery.mockReturnValue( { data: agency, isLoading: false } as unknown as UseQueryResult );
 }
 
 describe( 'useCanTagSitesForCommission', () => {
 	beforeEach( () => {
 		jest.clearAllMocks();
+	} );
+
+	it( 'returns false and omits the incentive tag while the agency is still loading', () => {
+		mockUseQuery.mockReturnValue( {
+			data: undefined,
+			isLoading: true,
+		} as unknown as UseQueryResult );
+
+		const { result } = renderHook( () => useCanTagSitesForCommission() );
+
+		expect( result.current.canTagSitesForCommission ).toBe( false );
+		expect( result.current.migrationTags ).toEqual( [ A4A_MIGRATED_SITE_TAG ] );
 	} );
 
 	it( 'returns canTagSitesForCommission true and includes incentive tag when no start_date', () => {
@@ -100,13 +109,5 @@ describe( 'useCanTagSitesForCommission', () => {
 		expect( result.current.migrationTags ).toContain(
 			A4A_MIGRATED_SITE_TAG_PRESSABLE_INCENTIVE_2026
 		);
-	} );
-
-	it( 'surfaces the agency query loading state', () => {
-		mockAgencyQuery( null, true );
-
-		const { result } = renderHook( () => useCanTagSitesForCommission() );
-
-		expect( result.current.isLoading ).toBe( true );
 	} );
 } );
