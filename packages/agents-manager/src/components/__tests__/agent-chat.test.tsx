@@ -23,15 +23,23 @@ jest.mock(
 			children,
 			emptyView,
 			floatingChatState,
+			suggestions = [],
+			onSuggestionClick,
 		}: {
 			children: ReactNode;
 			emptyView: ReactNode;
 			floatingChatState?: string;
+			suggestions?: Suggestion[];
+			onSuggestionClick?: (
+				selectedSuggestion: Suggestion,
+				availableSuggestions: Suggestion[]
+			) => void;
 		} ) {
 			mockContainerProps( { floatingChatState } );
 			return (
 				<div>
 					{ emptyView }
+					<MockSuggestionButtons suggestions={ suggestions } onSubmit={ onSuggestionClick } />
 					{ children }
 				</div>
 			);
@@ -48,6 +56,57 @@ jest.mock(
 			return <div>{ children }</div>;
 		}
 
+		function MockSuggestionButtons( {
+			suggestions = [],
+			onSubmit,
+		}: {
+			suggestions?: Suggestion[];
+			onSubmit?: ( selectedSuggestion: Suggestion, availableSuggestions: Suggestion[] ) => void;
+		} ) {
+			return (
+				<div>
+					{ suggestions.flatMap( ( suggestion ) => {
+						const { options, ...suggestionWithoutOptions } = suggestion;
+						if ( ! options?.length ) {
+							return (
+								<button
+									key={ suggestion.id }
+									onClick={ () => onSubmit?.( suggestion, suggestions ) }
+								>
+									{ suggestion.label }
+								</button>
+							);
+						}
+
+						return options.map( ( option ) => {
+							const parentPrompt = suggestion.prompt ?? suggestion.label;
+							const separator =
+								parentPrompt &&
+								option.value &&
+								! /\s$/.test( parentPrompt ) &&
+								! /^\s/.test( option.value )
+									? ' '
+									: '';
+							const selectedSuggestion = {
+								...suggestionWithoutOptions,
+								label: `${ suggestion.label } ${ option.label }`,
+								prompt: `${ parentPrompt }${ separator }${ option.value }`,
+							};
+
+							return (
+								<button
+									key={ `${ suggestion.id }-${ option.id }` }
+									onClick={ () => onSubmit?.( selectedSuggestion, suggestions ) }
+								>
+									{ suggestion.label }: { option.label }
+								</button>
+							);
+						} );
+					} ) }
+				</div>
+			);
+		}
+
 		function MockEmptyView( {
 			suggestions = [],
 			onSuggestionClick,
@@ -58,18 +117,7 @@ jest.mock(
 				availableSuggestions: Suggestion[]
 			) => void;
 		} ) {
-			return (
-				<div>
-					{ suggestions.map( ( suggestion ) => (
-						<button
-							key={ suggestion.id }
-							onClick={ () => onSuggestionClick?.( suggestion, suggestions ) }
-						>
-							{ suggestion.label }
-						</button>
-					) ) }
-				</div>
-			);
+			return <MockSuggestionButtons suggestions={ suggestions } onSubmit={ onSuggestionClick } />;
 		}
 
 		function MockSuggestions( {
@@ -79,15 +127,7 @@ jest.mock(
 			suggestions?: Suggestion[];
 			onSubmit?: ( selectedSuggestion: Suggestion, availableSuggestions: Suggestion[] ) => void;
 		} ) {
-			return (
-				<div>
-					{ suggestions.map( ( suggestion ) => (
-						<button key={ suggestion.id } onClick={ () => onSubmit?.( suggestion, suggestions ) }>
-							{ suggestion.label }
-						</button>
-					) ) }
-				</div>
-			);
+			return <MockSuggestionButtons suggestions={ suggestions } onSubmit={ onSubmit } />;
 		}
 
 		function MockMessageRenderer( { children }: { children: ReactNode } ) {
@@ -248,6 +288,59 @@ describe( 'AgentChat', () => {
 		await user.click( screen.getByRole( 'button', { name: 'Check grammar' } ) );
 
 		expect( onSuggestionClick ).toHaveBeenCalledWith( suggestion, [ suggestion ] );
+	} );
+
+	it( 'preserves the selected prompt from an inline dropdown suggestion', async () => {
+		const user = userEvent.setup();
+		const option = {
+			id: 'formal',
+			label: 'Formal',
+			value: 'Change the tone of this text to be more formal',
+		};
+		const suggestion = {
+			id: 'change-tone',
+			label: 'Change tone',
+			prompt: '',
+			options: [ option ],
+		};
+		const onSuggestionClick = jest.fn();
+
+		renderAgentChat( { isOpen: true, suggestions: [ suggestion ], onSuggestionClick } );
+
+		await user.click( screen.getByRole( 'button', { name: 'Change tone: Formal' } ) );
+
+		expect( onSuggestionClick ).toHaveBeenCalledWith( { ...suggestion, prompt: option.value }, [
+			suggestion,
+		] );
+	} );
+
+	it( 'preserves the selected prompt from an empty-view dropdown suggestion', async () => {
+		const user = userEvent.setup();
+		document.body.classList.add( 'post-php', 'post-type-post' );
+		const option = {
+			id: 'seo-description',
+			label: 'Description',
+			value: 'Generate an SEO meta description for this post',
+		};
+		const suggestion = {
+			id: 'seo-enhancer',
+			label: 'SEO Enhancer',
+			prompt: '',
+			options: [ option ],
+		};
+		const onSuggestionClick = jest.fn();
+
+		renderAgentChat( {
+			isOpen: true,
+			emptyViewSuggestions: [ suggestion ],
+			onSuggestionClick,
+		} );
+
+		await user.click( screen.getByRole( 'button', { name: 'Optimize SEO: Description' } ) );
+
+		expect( onSuggestionClick ).toHaveBeenCalledWith( { ...suggestion, prompt: option.value }, [
+			suggestion,
+		] );
 	} );
 
 	it( 'expands when open', () => {

@@ -44,16 +44,46 @@ export function useAnalytics() {
 	return context;
 }
 
-export function bumpStat( group: string, name: string ) {
+/**
+ * Bump an anonymous stat.
+ */
+export function bumpStat( group: string, value: string ) {
+	bumpMultipleStats( [ group, value ] );
+}
+
+/**
+ * Bumps multiple anon stats at once to save on network requests.
+ *
+ * Example:
+ * ```ts
+ *   [ 'error', 'failed' ],
+ *   [ 'my-stat', 'failed' ],
+ *   [ 'interesting', 'true' ]
+ * );
+ * ```
+ */
+export function bumpMultipleStats( ...groupValuePairs: [ string, string ][] ) {
 	if ( typeof window === 'undefined' || ! config( 'mc_analytics_enabled' ) ) {
 		return;
 	}
 
-	const url = addQueryArgs( document.location.protocol + '//pixel.wp.com/g.gif', {
-		v: 'wpcom-no-pv',
-		[ `x_${ group }` ]: name,
-		t: Math.random().toString(),
-	} );
+	const queryArgs = groupValuePairs.reduce(
+		( acc, [ group, value ] ) => {
+			if ( group.length > 32 ) {
+				captureException( new Error( `stat group name too long: ${ group }` ) );
+			}
+			if ( value.length > 32 ) {
+				captureException( new Error( `stat value name too long: ${ value }` ) );
+			}
+			return { ...acc, [ `x_${ group }` ]: value };
+		},
+		{
+			v: 'wpcom-no-pv',
+			t: Math.random().toString(),
+		}
+	);
+
+	const url = addQueryArgs( document.location.protocol + '//pixel.wp.com/g.gif', queryArgs );
 
 	new window.Image().src = url;
 }
