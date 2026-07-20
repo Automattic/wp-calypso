@@ -157,6 +157,7 @@ const buildApp = ( environment ) => {
 			( key ) =>
 				( {
 					hostname: 'valid.hostname',
+					wpcom_url: 'https://wordpress.com',
 					magnificent_non_en_locales: [ 'ar', 'es' ],
 					port: 3000,
 					env_id: environment,
@@ -209,6 +210,9 @@ const buildApp = ( environment ) => {
 					),
 					'entry-dashboard-dotcom': assetsList.map( ( asset ) =>
 						asset.replace( 'entry-main', 'entry-dashboard-dotcom' )
+					),
+					'entry-login': assetsList.map( ( asset ) =>
+						asset.replace( 'entry-main', 'entry-login' )
 					),
 					...Object.fromEntries(
 						sections.map( ( section ) => [
@@ -1104,6 +1108,18 @@ describe( 'main app', () => {
 		} );
 	} );
 
+	describe( 'Route /log-in', () => {
+		// Uses a dotcom dashboard hostname so the guard is the environment gate, not
+		// the host gate: in the classic env the redirect route must not be registered.
+		it( 'does not redirect to WordPress.com in the classic (non-dashboard) environment', async () => {
+			const { response } = await app.run( {
+				request: { url: '/log-in', hostname: 'my.wordpress.com' },
+			} );
+
+			expect( response.redirect ).not.toHaveBeenCalled();
+		} );
+	} );
+
 	describe( 'Route /menus', () => {
 		it( 'redirects to menus when there is a site', async () => {
 			const { response } = await app.run( { request: { url: '/menus/my-site' } } );
@@ -1607,5 +1623,27 @@ describe( 'dashboard app', () => {
 		expect( request.context.sectionName ).toBe( 'dashboard-dotcom' );
 		expect( response.statusCode ).not.toBe( 404 );
 		expect( app.getMocks().serverRender ).toHaveBeenCalled();
+	} );
+
+	it( 'redirects /log-in on the dotcom dashboard host to the WordPress.com login', async () => {
+		const { response } = await app.run( {
+			request: { url: '/log-in', hostname: 'my.wordpress.com' },
+		} );
+
+		expect( response.redirect ).toHaveBeenCalledWith( 'https://wordpress.com/log-in' );
+		expect( app.getMocks().serverRender ).not.toHaveBeenCalled();
+	} );
+
+	it( 'preserves the sub-path and query string when redirecting /log-in', async () => {
+		const { response } = await app.run( {
+			request: {
+				url: '/log-in/jetpack?redirect_to=%2Fhome',
+				hostname: 'my.wordpress.com',
+			},
+		} );
+
+		expect( response.redirect ).toHaveBeenCalledWith(
+			'https://wordpress.com/log-in/jetpack?redirect_to=%2Fhome'
+		);
 	} );
 } );

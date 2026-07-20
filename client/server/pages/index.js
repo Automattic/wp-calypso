@@ -893,30 +893,45 @@ const render404 =
 		res.status( 404 ).send( renderJsx( '404', ctx ) );
 	};
 
+// Each dashboard variant is an SPA served on its own hosts. A variant declares:
+//   definition/entrypoint — the section + webpack entry to render
+//   paths                 — section paths the variant renders itself
+//   devEnv                — the local dev env (besides the dashboard envs) that
+//                           also serves this variant, e.g. under `yarn start`
+//   isAllowedHostname     — hostnames the variant owns
+//   extraMiddleware       — middleware appended to the render chain
+//   redirects             — paths the variant does NOT serve and sends elsewhere
 const DASHBOARD_VARIANTS = [
 	{
+		name: 'dotcom',
 		definition: DOTCOM_DASHBOARD_SECTION_DEFINITION,
 		paths: DOTCOM_DASHBOARD_SECTION_PATHS,
 		entrypoint: 'entry-dashboard-dotcom',
 		devEnv: 'development',
 		isAllowedHostname: isAllowedDotcomDashboardHostname,
 		extraMiddleware: [ loadDashboardLocaleData ],
+		// my.wordpress.com has no login page of its own; send /log-in to WordPress.com.
+		redirects: [ { path: '/log-in', target: ( req ) => config( 'wpcom_url' ) + req.originalUrl } ],
 	},
 	{
+		name: 'ciab',
 		definition: CIAB_DASHBOARD_SECTION_DEFINITION,
 		paths: CIAB_DASHBOARD_SECTION_PATHS,
 		entrypoint: 'entry-dashboard-ciab',
 		devEnv: 'development',
 		isAllowedHostname: isAllowedCiabDashboardHostname,
 		extraMiddleware: [ loadDashboardLocaleData ],
+		redirects: [],
 	},
 	{
+		name: 'a4a',
 		definition: A4A_DASHBOARD_SECTION_DEFINITION,
 		paths: A4A_DASHBOARD_SECTION_PATHS,
 		entrypoint: 'entry-dashboard-a4a',
 		devEnv: 'a8c-for-agencies-development',
 		isAllowedHostname: isAllowedA4ADashboardHostname,
 		extraMiddleware: [],
+		redirects: [],
 	},
 ];
 
@@ -1209,6 +1224,90 @@ function wpcomPages( app ) {
 	} );
 }
 
+// Registers routes on the Express app: section renders, host-scoped redirects,
+// and the 404 shell, so the middleware chain and env/host gating live in one place.
+function createRouteRegistry( app ) {
+	const asRegExp = ( route ) => ( route instanceof RegExp ? route : pathToRegExp( route ) );
+
+	// Render `sectionDef` for each path. `isAllowedHost` scopes it to matching hosts
+	// (others fall through); `notFound` serves the shell with a 404 status.
+	const section = (
+		sectionDef,
+		paths,
+		{ entrypoint, isAllowedHost, middleware = [], notFound = false } = {}
+	) => {
+		const extra = notFound
+			? [ setNotFoundStatus, ...[].concat( middleware ) ]
+			: [].concat( middleware );
+		[].concat( paths ).forEach( ( route ) => {
+			const pathRegex = asRegExp( route );
+			app.get(
+				pathRegex,
+				( req, res, next ) =>
+					! isAllowedHost || isAllowedHost( req ) ? next() : next( 'route' ),
+				setupDefaultContext( entrypoint, sectionDef.name ),
+				setUpSectionContext( sectionDef, entrypoint ),
+				// Logged-out isomorphic sections are resolved by the serverRouter (SSR).
+				( req, res, next ) => {
+					if ( ! req.context.isLoggedIn && sectionDef.isomorphic ) {
+						return next( 'route' );
+					}
+					debug( `Using non-SSR pipeline for path ${ req.path } with handler ${ pathRegex }` );
+					next();
+				},
+				setUpRoute, // For SSR requests, this will happen in the serverRouter.
+				...extra,
+				serverRender
+			);
+		} );
+	};
+
+	// Redirect each path to `target(req)`. `isAllowedHost` scopes it; other hosts fall through.
+	const redirect = ( paths, target, { isAllowedHost, status } = {} ) => {
+		[].concat( paths ).forEach( ( route ) => {
+			app.get( asRegExp( route ), ( req, res, next ) => {
+				if ( isAllowedHost && ! isAllowedHost( req ) ) {
+					return next( 'route' );
+				}
+				return status ? res.redirect( status, target( req ) ) : res.redirect( target( req ) );
+			} );
+		} );
+	};
+
+	// Register rows in match order. Each row: `when` (env gate, skips the row),
+	// `isAllowedHost` (host gate), and either `render` a section or `redirect`.
+	const register = ( rows ) =>
+		rows.forEach( ( row ) => {
+			if ( row.when && ! row.when() ) {
+				return;
+			}
+			if ( row.redirect ) {
+				redirect( row.path, row.redirect, {
+					isAllowedHost: row.isAllowedHost,
+					status: row.status,
+				} );
+			} else {
+				section( row.render, row.path, {
+					entrypoint: row.entry,
+					isAllowedHost: row.isAllowedHost,
+					middleware: row.middleware,
+					notFound: row.notFound,
+				} );
+			}
+		} );
+
+	return { section, redirect, register };
+}
+
+// Environment predicates — does THIS server register the route at all?
+const inDashboardOrDevEnv = ( devEnv ) => isDashboardEnv() || calypsoEnv === devEnv;
+const dashboardVariantEnabled = ( variant ) => inDashboardOrDevEnv( variant.devEnv );
+
+// Host predicates — at request time, does this hostname belong to the route?
+const isA4ADashboardHost = ( req ) => isAllowedA4ADashboardHostname( req.hostname );
+const isAllowedDashboardRequest = ( req ) =>
+	isAllowedDashboardRoute( { hostname: req.hostname, path: req.path } );
+
 export default function pages() {
 	const app = express();
 
@@ -1225,93 +1324,69 @@ export default function pages() {
 		wpcomPages( app );
 	}
 
-	/**
-	 * Given information about a section, register the given path as an express
-	 * route and define a basic middleware chain. The chain sets up any request
-	 * context and renders the basic DOM structure, ultimately resolving the request.
-	 *
-	 * For SSR requests -- e.g. the section is compatible with SSR and the request
-	 * is logged out -- it skips the rendering portion of the chain, because that
-	 * is explicitly handled by the serverRouter. In SSR contexts, this chain is
-	 * still responsible for setting up some basic info like the context and the
-	 * bootstrapped user, but not for resolving the request.
-	 *
-	 * This approach allows requests to an SSR section to skip any section-specific
-	 * SSR middleware if the request wasn't going to be resolved with SSR anyways.
-	 */
-	function handleSectionPath( section, sectionPath, entrypoint, reqFilter, extraMiddleware ) {
-		const pathRegex = sectionPath instanceof RegExp ? sectionPath : pathToRegExp( sectionPath );
+	const routes = createRouteRegistry( app );
 
-		app.get(
-			pathRegex,
-			( req, res, next ) => ( ! reqFilter || reqFilter( req ) ? next() : next( 'route' ) ),
-			setupDefaultContext( entrypoint, section.name ),
-			setUpSectionContext( section, entrypoint ),
-			// Skip the rest of the middleware chain if SSR compatible. Further
-			// SSR checks aren't accounted for here, but happen in the SSR pipeline
-			// itself (see serverRouter). But if we know at a basic level that SSR
-			// won't be used, we can boost performance by rendering the page here.
-			( req, res, next ) => {
-				if ( ! req.context.isLoggedIn && section.isomorphic ) {
-					return next( 'route' );
-				}
-				debug( `Using non-SSR pipeline for path ${ req.path } with handler ${ pathRegex }` );
-				next();
-			},
-			setUpRoute, // For SSR requests, this will happen in the serverRouter.
-			...( extraMiddleware ? [].concat( extraMiddleware ) : [] ),
-			serverRender
-		);
-	}
+	// Render/redirect policy for the dashboard hosts (dotcom → my.wordpress.com,
+	// ciab, a4a). Registered before the shared Calypso and login routes below so a
+	// host-scoped row wins the match; the not-found catch-all comes after login.
+	const signupSection = sections.find( ( s ) => s.name === 'signup' );
+	const checkoutSection = sections.find( ( s ) => s.name === 'checkout' );
+	const a4aSignupSection = sections.find( ( s ) => s.name === 'a8c-for-agencies-signup' );
+	const inDotcomEnv = () => inDashboardOrDevEnv( 'development' );
+	const inA4AEnv = () => inDashboardOrDevEnv( 'a8c-for-agencies-development' );
 
-	// Special Calypso routes which also appear on `my.wordpress.com`
-	if ( isDashboardEnv() || calypsoEnv === 'development' ) {
-		const signupSectionDefinition = sections.find( ( s ) => s.name === 'signup' );
-		handleSectionPath( signupSectionDefinition, '/start', undefined, ( req ) =>
-			isAllowedDashboardRoute( { hostname: req.hostname, path: req.path } )
-		);
-		const checkoutSectionDefinition = sections.find( ( s ) => s.name === 'checkout' );
-		handleSectionPath( checkoutSectionDefinition, '/checkout', undefined, ( req ) =>
-			isAllowedDashboardRoute( { hostname: req.hostname, path: req.path } )
-		);
-		handleSectionPath( STEPPER_SECTION_DEFINITION, '/setup', 'entry-stepper', ( req ) =>
-			isAllowedDashboardRoute( { hostname: req.hostname, path: req.path } )
-		);
-	}
-
-	// Multi-site Dashboard (A4A) routing.
-	if ( isDashboardEnv() || calypsoEnv === 'a8c-for-agencies-development' ) {
-		const a4aSignupSectionDefinition = sections.find(
-			( s ) => s.name === 'a8c-for-agencies-signup'
-		);
-		A4A_SIGNUP_PATHS.forEach( ( a4aSignupPath ) => {
-			handleSectionPath( a4aSignupSectionDefinition, a4aSignupPath, undefined, ( req ) =>
-				isAllowedA4ADashboardHostname( req.hostname )
-			);
-		} );
-	}
-
-	// Register each dashboard variant's explicit section paths.
-	DASHBOARD_VARIANTS.forEach( ( variant ) => {
-		if ( ! ( isDashboardEnv() || calypsoEnv === variant.devEnv ) ) {
-			return;
-		}
-		variant.paths.forEach( ( route ) =>
-			handleSectionPath(
-				variant.definition,
-				route,
-				variant.entrypoint,
-				( req ) => variant.isAllowedHostname( req.hostname ),
-				variant.extraMiddleware
-			)
-		);
-	} );
+	routes.register( [
+		// Classic Calypso sections that are also exposed on dashboard hosts.
+		{
+			path: '/start',
+			when: inDotcomEnv,
+			isAllowedHost: isAllowedDashboardRequest,
+			render: signupSection,
+		},
+		{
+			path: '/checkout',
+			when: inDotcomEnv,
+			isAllowedHost: isAllowedDashboardRequest,
+			render: checkoutSection,
+		},
+		{
+			path: '/setup',
+			when: inDotcomEnv,
+			isAllowedHost: isAllowedDashboardRequest,
+			render: STEPPER_SECTION_DEFINITION,
+			entry: 'entry-stepper',
+		},
+		{
+			path: A4A_SIGNUP_PATHS,
+			when: inA4AEnv,
+			isAllowedHost: isA4ADashboardHost,
+			render: a4aSignupSection,
+		},
+		// Each dashboard variant renders its own SPA section paths...
+		...DASHBOARD_VARIANTS.map( ( variant ) => ( {
+			path: variant.paths,
+			when: () => dashboardVariantEnabled( variant ),
+			isAllowedHost: ( req ) => variant.isAllowedHostname( req.hostname ),
+			render: variant.definition,
+			entry: variant.entrypoint,
+			middleware: variant.extraMiddleware,
+		} ) ),
+		// ...and redirects any path it has no page for (e.g. dotcom has no /log-in).
+		...DASHBOARD_VARIANTS.flatMap( ( variant ) =>
+			variant.redirects.map( ( r ) => ( {
+				path: r.path,
+				when: () => dashboardVariantEnabled( variant ),
+				isAllowedHost: ( req ) => variant.isAllowedHostname( req.hostname ),
+				redirect: r.target,
+			} ) )
+		),
+	] );
 
 	sections
 		.filter( ( section ) => ! section.envId || section.envId.indexOf( config( 'env_id' ) ) > -1 )
 		.filter( isSectionEnabled )
 		.forEach( ( section ) => {
-			section.paths.forEach( ( sectionPath ) => handleSectionPath( section, sectionPath ) );
+			routes.section( section, section.paths );
 
 			if ( section.isomorphic ) {
 				// section.load() uses require on the server side so we also need to access the
@@ -1323,42 +1398,34 @@ export default function pages() {
 			}
 		} );
 
-	// The dashboard host has no login page; send /log-in to WordPress.com.
-	if ( isDashboardEnv() || calypsoEnv === 'development' ) {
-		app.get( pathToRegExp( '/log-in' ), ( req, res, next ) => {
-			if ( ! isAllowedDotcomDashboardHostname( req.hostname ) ) {
-				return next( 'route' );
-			}
-			res.redirect( config( 'wpcom_url' ) + req.originalUrl );
-		} );
-	}
-
-	// Set up login routing.
-	handleSectionPath( LOGIN_SECTION_DEFINITION, '/log-in', 'entry-login' );
+	// Login on every host; dotcom already redirected /log-in in the routes above.
+	routes.section( LOGIN_SECTION_DEFINITION, '/log-in', { entrypoint: 'entry-login' } );
 	loginRouter( serverRouter( app, setUpRoute, null ) );
 
 	// Register CSP report route
 	registerCspReportRoute( app );
 
-	// Multi-site Dashboard routing.
+	// Dashboard server is self-contained: unmatched paths serve the SPA shell as a
+	// 404 (client renders its own page), then we return before the Calypso routes.
 	if ( isDashboardEnv() ) {
-		// Serve the dashboard shell for any otherwise-unmatched path so the client
-		// router renders its own not-found page, instead of falling through to default.
-		DASHBOARD_VARIANTS.forEach( ( variant ) =>
-			handleSectionPath(
-				variant.definition,
-				/.*/,
-				variant.entrypoint,
-				( req ) => variant.isAllowedHostname( req.hostname ),
-				[ setNotFoundStatus, ...variant.extraMiddleware ]
-			)
+		routes.register(
+			DASHBOARD_VARIANTS.map( ( variant ) => ( {
+				path: /.*/,
+				isAllowedHost: ( req ) => variant.isAllowedHostname( req.hostname ),
+				render: variant.definition,
+				entry: variant.entrypoint,
+				middleware: variant.extraMiddleware,
+				notFound: true,
+			} ) )
 		);
 
 		return app;
 	}
 
-	handleSectionPath( STEPPER_SECTION_DEFINITION, '/setup', 'entry-stepper' );
-	handleSectionPath( SUBSCRIPTIONS_SECTION_DEFINITION, '/subscriptions', 'entry-subscriptions' );
+	routes.section( STEPPER_SECTION_DEFINITION, '/setup', { entrypoint: 'entry-stepper' } );
+	routes.section( SUBSCRIPTIONS_SECTION_DEFINITION, '/subscriptions', {
+		entrypoint: 'entry-subscriptions',
+	} );
 
 	// Redirect legacy `/new` routes to the corresponding `/start`
 	app.get( [ '/new', '/new/*' ], ( req, res ) => {
