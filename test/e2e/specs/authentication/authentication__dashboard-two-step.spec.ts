@@ -73,7 +73,9 @@ async function submitLoginTOTPCode(
 			return;
 		}
 	}
-	throw new Error( 'Login second-factor code was not accepted after retries.' );
+	throw new Error(
+		`Login second-factor code was not accepted after retries; still at ${ page.url() }.`
+	);
 }
 
 /**
