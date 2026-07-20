@@ -824,9 +824,17 @@
 	}
 
 	&__ai-text {
+		color: inherit;
+		// Keep retained inline positioning inside the preview in docked and floating layouts.
+		contain: paint;
 		font-size: 12px;
 		line-height: 1.6;
 		margin: 0 0 0.5rem;
+		text-wrap-style: pretty;
+
+		&:last-child {
+			margin-bottom: 0;
+		}
 
 		// Host styles can assign weights to nested inline formats. Keep descendants
 		// inheriting semantic bold without enumerating every possible nested tag.

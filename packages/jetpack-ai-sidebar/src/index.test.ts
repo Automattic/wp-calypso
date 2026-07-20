@@ -83,6 +83,18 @@ jest.mock( '@wordpress/block-editor', () => ( {
 	// BlockRef renders the block-type icon via BlockIcon; a stub keeps these
 	// tests focused on the card structure rather than icon rendering.
 	BlockIcon: () => null,
+	RichText: {
+		Content: ( { tagName = 'div', value, ...props }: Record< string, unknown > ) => {
+			const react = jest.requireActual< typeof import('react') >( 'react' );
+			const { RawHTML } =
+				jest.requireActual< typeof import('@wordpress/element') >( '@wordpress/element' );
+			return react.createElement(
+				tagName as string,
+				props,
+				react.createElement( RawHTML, null, value as string )
+			);
+		},
+	},
 } ) );
 
 jest.mock( '@wordpress/blocks', () => ( {
@@ -1435,6 +1447,46 @@ describe( 'Proofread', () => {
 		expect( container.textContent ).toContain( 'Reviews your last saved version.' );
 		expect( container.textContent ).toContain( 'Suggested edits' );
 		expect( container.textContent ).toContain( 'Punctuation' );
+	} );
+
+	it( 'renders formatted backend fragments in Current and New rows', () => {
+		const currentText =
+			'<strong><em>Consultation</em></strong> <a href="https://example.com"><strong><em>opens</em>s</strong></a> next week, <s>not this week</s>, ref<sup>2</sup>';
+		const suggestedText =
+			'<strong><em>Consultation</em></strong> <a href="https://example.com"><strong><em>opens</em></strong></a> next week, <s>not this week</s>, ref<sup>2</sup>';
+		mockEditorBlocks = [
+			{
+				clientId: 'block-1',
+				name: 'core/list-item',
+				attributes: { content: currentText },
+			},
+		];
+
+		const { container } = render(
+			React.createElement( Proofread, {
+				summary: 'Found a spelling error.',
+				postId: 123,
+				items: [
+					{
+						title: 'Spelling',
+						feedback: 'The word has an extra letter.',
+						action: 'Remove the extra letter.',
+						block_index: 0,
+						current_text: currentText,
+						suggested_text: suggestedText,
+					},
+				],
+			} )
+		);
+
+		const current = container.querySelector( 'del' );
+		const suggestion = container.querySelector( 'ins' );
+		expect( current?.querySelector( 'strong em' ) ).toHaveTextContent( 'Consultation' );
+		expect( current?.querySelector( 'a strong em' ) ).toHaveTextContent( 'opens' );
+		expect( suggestion?.querySelector( 'a' ) ).toHaveAttribute( 'href', 'https://example.com' );
+		expect( suggestion?.querySelector( 'a strong em' ) ).toHaveTextContent( 'opens' );
+		expect( suggestion?.querySelector( 's' ) ).toHaveTextContent( 'not this week' );
+		expect( suggestion?.querySelector( 'sup' ) ).toHaveTextContent( '2' );
 	} );
 
 	const findApplyAllButton = ( container: HTMLElement ) =>

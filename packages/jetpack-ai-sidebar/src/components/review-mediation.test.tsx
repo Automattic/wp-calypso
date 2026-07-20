@@ -108,6 +108,18 @@ jest.mock( '@wordpress/data', () => ( {
 jest.mock( '@wordpress/block-editor', () => ( {
 	store: 'core/block-editor',
 	BlockIcon: () => null,
+	RichText: {
+		Content: ( { tagName = 'div', value, ...props }: Record< string, unknown > ) => {
+			const react = jest.requireActual< typeof import('react') >( 'react' );
+			const { RawHTML } =
+				jest.requireActual< typeof import('@wordpress/element') >( '@wordpress/element' );
+			return react.createElement(
+				tagName as string,
+				props,
+				react.createElement( RawHTML, null, value as string )
+			);
+		},
+	},
 } ) );
 jest.mock( '@wordpress/blocks', () => ( {
 	getBlockType: () => undefined,
@@ -934,7 +946,7 @@ describe( 'ReviewMediation — suggested-edit accept flow', () => {
 						{
 							block_index: 1,
 							current_text: 'outdated text',
-							suggested_text: 'fresh text',
+							suggested_text: '<strong>fresh</strong> text',
 							rationale: 'Avoid stale source edits.',
 							supported_by_reviewers: [],
 						},
@@ -946,6 +958,12 @@ describe( 'ReviewMediation — suggested-edit accept flow', () => {
 		// The drifted source can't apply, so no Apply change; Go to section stands in.
 		expect( screen.queryByRole( 'button', { name: 'Apply change' } ) ).not.toBeInTheDocument();
 		expect( screen.getByRole( 'button', { name: 'Go to section' } ) ).not.toBeDisabled();
+		const suggestion = document.querySelector(
+			'.jetpack-ai-feedback-list__diff-row.is-new .jetpack-ai-feedback-list__diff-content'
+		);
+		expect( suggestion?.tagName ).toBe( 'DIV' );
+		expect( suggestion?.querySelector( 'strong' ) ).toHaveTextContent( 'fresh' );
+		expect( document.querySelector( 'span > div' ) ).not.toBeInTheDocument();
 
 		expect( mockApplyReviewEdit ).not.toHaveBeenCalled();
 		expect( screen.queryByText( /Apply all/ ) ).not.toBeInTheDocument();
@@ -1706,8 +1724,10 @@ describe( 'ReviewMediation — HTML fragment display', () => {
 		expect( screen.queryByRole( 'button', { name: 'Apply change' } ) ).not.toBeInTheDocument();
 	} );
 
-	it( 'renders the conflict AI candidate text with formatting', () => {
+	it( 'sanitizes the conflict AI candidate preview without changing the apply value', async () => {
 		mockBlocks = formattedBlocks;
+		mockApplyReviewEdit.mockResolvedValueOnce( { success: true } );
+		const candidateFragment = `${ replacementFragment }<iframe srcdoc="<script>window.pwned = true;</script>"></iframe><a href="javascript:window.pwned = true">unsafe link</a>`;
 		render(
 			<ReviewMediation
 				{ ...basePayload( {
@@ -1724,7 +1744,7 @@ describe( 'ReviewMediation — HTML fragment display', () => {
 									label: 'AI resolution',
 									block_index: 0,
 									current_text: currentFragment,
-									text: replacementFragment,
+									text: candidateFragment,
 									rationale: 'Grounded.',
 								},
 							],
@@ -1735,9 +1755,27 @@ describe( 'ReviewMediation — HTML fragment display', () => {
 		);
 
 		const aiText = document.querySelector( '.jetpack-ai-review-mediation__ai-text' );
+		expect( aiText?.tagName ).toBe( 'DIV' );
+		expect( aiText ).toHaveAttribute( 'role', 'paragraph' );
+		expect( document.querySelector( 'p > div' ) ).not.toBeInTheDocument();
 		expect( aiText?.querySelector( 'strong em' ) ).toHaveTextContent( 'Consultation' );
 		expect( aiText?.querySelectorAll( 'em' )[ 1 ] ).toHaveTextContent( 'opens' );
 		expect( aiText?.querySelector( 's' ) ).toHaveTextContent( 'not this week' );
 		expect( aiText?.querySelector( 'sup' ) ).toHaveTextContent( '2' );
+		expect( aiText?.querySelector( 'iframe' ) ).toBeNull();
+		expect( aiText?.querySelector( 'a' ) ).not.toHaveAttribute( 'href' );
+
+		await act( async () => {
+			fireEvent.click( screen.getByRole( 'button', { name: 'Accept AI resolution' } ) );
+		} );
+
+		expect( mockApplyReviewEdit ).toHaveBeenCalledWith(
+			'f0',
+			candidateFragment,
+			undefined,
+			currentFragment,
+			expect.any( Function ),
+			undefined
+		);
 	} );
 } );

@@ -14,8 +14,18 @@ jest.mock( '@wordpress/blocks', () => ( {
 } ) );
 jest.mock( '@wordpress/block-editor', () => {
 	const react = jest.requireActual< typeof import('react') >( 'react' );
+	const { RawHTML } =
+		jest.requireActual< typeof import('@wordpress/element') >( '@wordpress/element' );
 	return {
 		BlockIcon: () => react.createElement( 'span', { 'data-testid': 'block-icon' } ),
+		RichText: {
+			Content: ( { tagName = 'div', value, ...props }: Record< string, unknown > ) =>
+				react.createElement(
+					tagName as string,
+					props,
+					react.createElement( RawHTML, null, value as string )
+				),
+		},
 	};
 } );
 
@@ -117,6 +127,8 @@ describe( 'ReviewCard rich-text rows', () => {
 		] );
 
 		const text = container.querySelector( '.jetpack-ai-feedback-list__diff-text' );
+		expect( text?.tagName ).toBe( 'DIV' );
+		expect( container.querySelector( 'span > div' ) ).not.toBeInTheDocument();
 		expect( text?.querySelector( 'strong' ) ).toHaveTextContent( 'bold' );
 		expect( text?.textContent ).toBe( 'Use bold sparingly.' );
 	} );
@@ -149,11 +161,11 @@ describe( 'ReviewCard rich-text rows', () => {
 		expect( container.querySelector( 'ins' ) ).toHaveTextContent( '<strong>Consultation</strong>' );
 	} );
 
-	it( 'strips scripts and event handlers from native rich-text HTML', () => {
+	it( 'removes active content and unsafe URLs from rich-text HTML', () => {
 		const { container } = renderCard( [
 			{
 				tag: 'New',
-				text: 'safe<script>window.pwned = true;</script><strong onclick="window.pwned = true">format</strong>',
+				text: 'safe<script>window.pwned = true;</script><iframe srcdoc="<script>window.pwned = true;</script>"></iframe><svg><style>body{display:none}</style><text>svg</text></svg><math><mstyle><style>body{display:none}</style></mstyle></math><a href="javascript:window.pwned = true">link</a><strong onclick="window.pwned = true">format</strong>',
 				variant: 'new',
 				element: 'ins',
 				contentType: 'rich-text',
@@ -162,7 +174,10 @@ describe( 'ReviewCard rich-text rows', () => {
 
 		const ins = container.querySelector( 'ins' );
 		expect( ins?.querySelector( 'script' ) ).toBeNull();
-		expect( ins?.textContent ).toBe( 'safeformat' );
+		expect( ins?.querySelector( 'iframe' ) ).toBeNull();
+		expect( ins?.querySelector( 'svg, math, style' ) ).toBeNull();
+		expect( ins?.textContent ).toBe( 'safelinkformat' );
+		expect( ins?.querySelector( 'a' ) ).not.toHaveAttribute( 'href' );
 		const strong = ins?.querySelector( 'strong' );
 		expect( strong ).not.toBeNull();
 		expect( strong?.getAttribute( 'onclick' ) ).toBeNull();

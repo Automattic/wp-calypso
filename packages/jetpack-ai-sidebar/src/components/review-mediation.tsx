@@ -6,9 +6,9 @@
 /**
  * External dependencies
  */
+import { RichText } from '@wordpress/block-editor';
 import { Panel, PanelBody } from '@wordpress/components';
 import { useSelect } from '@wordpress/data';
-import { safeHTML } from '@wordpress/dom';
 import { useState, useCallback, useEffect, useMemo, useRef } from '@wordpress/element';
 import { __, _n, sprintf } from '@wordpress/i18n';
 import { Icon, check, undo } from '@wordpress/icons';
@@ -31,6 +31,7 @@ import {
 	type BlockEditorStore,
 	type EditorStore,
 } from '../utils/blocks';
+import { sanitizeReviewRichText } from '../utils/sanitize-review-rich-text';
 import {
 	trackAiEditorialReviewItemAction,
 	trackAiEditorialReviewResultRendered,
@@ -1296,12 +1297,11 @@ export default function ReviewMediation( {
 															{ __( 'Recommended resolution', __i18n_text_domain__ ) }
 														</p>
 														{ aiCandidate?.text ? (
-															<p
+															<RichText.Content
+																tagName="div"
+																role="paragraph"
 																className="jetpack-ai-review-mediation__ai-text"
-																// eslint-disable-next-line react/no-danger
-																dangerouslySetInnerHTML={ {
-																	__html: safeHTML( aiCandidate.text ),
-																} }
+																value={ sanitizeReviewRichText( aiCandidate.text ) }
 															/>
 														) : (
 															<p className="jetpack-ai-review-mediation__ai-text">

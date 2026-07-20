@@ -8,13 +8,14 @@
 /**
  * External dependencies
  */
-import { safeHTML } from '@wordpress/dom';
+import { RichText } from '@wordpress/block-editor';
 import { __ } from '@wordpress/i18n';
 import { Icon, check, undo } from '@wordpress/icons';
 import { type ReactNode } from 'react';
 /**
  * Internal dependencies
  */
+import { sanitizeReviewRichText } from '../utils/sanitize-review-rich-text';
 import BlockRef, { type BlockSnapshot } from './block-ref';
 
 export type ReviewCardStatus = 'pending' | 'applying' | 'accepted' | 'dismissed' | 'failed';
@@ -166,7 +167,11 @@ export default function ReviewCard( {
 			{ bodyRows.length > 0 && (
 				<div className={ `${ classPrefix }__diff` }>
 					{ bodyRows.map( ( row, i ) => {
-						const RowContentElement = row.element === 'text' ? 'span' : row.element;
+						let RowContentElement: 'del' | 'div' | 'ins' | 'span' =
+							row.element === 'text' ? 'span' : row.element;
+						if ( row.element === 'text' && row.contentType === 'rich-text' ) {
+							RowContentElement = 'div';
+						}
 						const contentClassName = `${ classPrefix }__diff-content${
 							row.element === 'text' ? ` ${ classPrefix }__diff-text` : ''
 						}`;
@@ -174,10 +179,10 @@ export default function ReviewCard( {
 							<div key={ i } className={ `${ classPrefix }__diff-row is-${ row.variant }` }>
 								<span className={ `${ classPrefix }__diff-tag` }>{ row.tag }</span>
 								{ row.contentType === 'rich-text' ? (
-									<RowContentElement
+									<RichText.Content
+										tagName={ RowContentElement }
 										className={ contentClassName }
-										// eslint-disable-next-line react/no-danger
-										dangerouslySetInnerHTML={ { __html: safeHTML( row.text ) } }
+										value={ sanitizeReviewRichText( row.text ) }
 									/>
 								) : (
 									<RowContentElement className={ contentClassName }>{ row.text }</RowContentElement>

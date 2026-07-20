@@ -288,6 +288,10 @@
 	}
 
 	&__diff-content {
+		color: inherit;
+		// Keep retained inline positioning inside the preview in docked and floating layouts.
+		contain: paint;
+
 		// Host styles can assign weights to nested inline formats. Keep descendants
 		// inheriting semantic bold without enumerating every possible nested tag.
 		b,
