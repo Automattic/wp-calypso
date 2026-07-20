@@ -4,7 +4,7 @@ import {
 	siteCrontabUpdateMutation,
 } from '@automattic/api-queries';
 import { useMutation, useSuspenseQuery } from '@tanstack/react-query';
-import { useNavigate } from '@tanstack/react-router';
+import { useNavigate, useParams } from '@tanstack/react-router';
 import { __experimentalVStack as VStack, Button, TextControl } from '@wordpress/components';
 import { DataForm, type Field } from '@wordpress/dataviews';
 import { createInterpolateElement } from '@wordpress/element';
@@ -12,7 +12,6 @@ import { __ } from '@wordpress/i18n';
 import { useMemo, useState } from 'react';
 import Breadcrumbs from '../../app/breadcrumbs';
 import {
-	siteRoute,
 	siteSettingsCrontabAddRoute,
 	siteSettingsCrontabEditRoute,
 	siteSettingsCrontabRoute,
@@ -33,7 +32,7 @@ interface CrontabFormProps {
 
 export default function CrontabForm( { crontab }: CrontabFormProps ) {
 	const isEditMode = !! crontab;
-	const { siteSlug } = siteRoute.useParams();
+	const { siteSlug } = useParams( { strict: false } ) as { siteSlug: string };
 	const { data: site } = useSuspenseQuery( siteBySlugQuery( siteSlug ) );
 	const navigate = useNavigate( {
 		from: isEditMode ? siteSettingsCrontabEditRoute.fullPath : siteSettingsCrontabAddRoute.fullPath,

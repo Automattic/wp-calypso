@@ -8,7 +8,7 @@ import {
 	codeDeploymentsQuery,
 } from '@automattic/api-queries';
 import { useQuery, useSuspenseQuery, UseMutationResult } from '@tanstack/react-query';
-import { useNavigate } from '@tanstack/react-router';
+import { useNavigate, useParams } from '@tanstack/react-router';
 import {
 	Button,
 	ComboboxControl,
@@ -36,7 +36,6 @@ import {
 	useCallback,
 	useRef,
 } from 'react';
-import { siteRoute } from '../../app/router/sites';
 import { SectionHeader } from '../../components/section-header';
 import { AdvancedWorkflowStyle } from './advanced-workflow-style';
 import { useInstallGithub } from './use-install-github';
@@ -239,7 +238,7 @@ export const ConnectRepositoryForm = ( {
 }: ConnectRepositoryFormProps ) => {
 	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
 	const navigate = useNavigate( { from: navigateFrom } );
-	const { siteSlug } = siteRoute.useParams();
+	const { siteSlug } = useParams( { strict: false } ) as { siteSlug: string };
 	const { data: site } = useSuspenseQuery( siteBySlugQuery( siteSlug ) );
 	const {
 		data: installations = [],
