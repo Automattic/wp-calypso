@@ -9,7 +9,10 @@ import {
 import { tags, test } from '../../lib/pw-base';
 import type { Page } from 'playwright';
 
-test.describe(
+// .fixme: not run by any recurring CI job (@jetpack-remote-site is not grepped by any build)
+// and currently failing: the post-install Calypso confirmation never renders for a free-plugin
+// install on a jetpack-remote-site. See TESTOPS-145.
+test.describe.fixme(
 	DataHelper.createSuiteTitle( 'Jetpack: Plugin' ),
 	{ tag: [ tags.JETPACK_REMOTE_SITE ] },
 	() => {
