@@ -1,4 +1,5 @@
 import {
+	DataHelper,
 	envVariables,
 	SidebarComponent,
 	TestAccount,
@@ -19,7 +20,7 @@ import { tags, test } from '../../lib/pw-base';
  * Keywords: FSE, Full Site Editor, Gutenberg
  */
 test.describe(
-	'Site Editor Smoke Test',
+	DataHelper.createSuiteTitle( 'Site Editor Smoke Test' ),
 	{ tag: [ tags.CALYPSO_PR, tags.GUTENBERG, tags.JETPACK_WPCOM_INTEGRATION ] },
 	() => {
 		const features = envToFeatureKey( envVariables );

@@ -1,4 +1,5 @@
 import { userPreferenceQuery, userPreferenceMutation } from '@automattic/api-queries';
+import { localizeUrl } from '@automattic/i18n-utils';
 import { useSuspenseQuery, useMutation } from '@tanstack/react-query';
 import { useMatch } from '@tanstack/react-router';
 import {
@@ -6,6 +7,7 @@ import {
 	__experimentalHStack as HStack,
 	__experimentalText as Text,
 	Button,
+	ExternalLink,
 	Guide,
 } from '@wordpress/components';
 import { __, isRTL } from '@wordpress/i18n';
@@ -92,6 +94,16 @@ export function OptInWelcomeModal() {
 										'It’s built to make everyday management tasks faster and easier across your sites, domains, plugins and account.'
 									) }
 								</Text>
+								<ExternalLink
+									href={ localizeUrl( 'https://wordpress.com/support/navigate-wordpress-com/' ) }
+									onClick={ () => {
+										recordTracksEvent(
+											'calypso_dashboard_opt_in_welcome_modal_blog_post_link_click'
+										);
+									} }
+								>
+									{ __( 'Learn more' ) }
+								</ExternalLink>
 							</VStack>
 							<HStack justify="end">
 								<Button variant="primary" __next40pxDefaultSize onClick={ handleDismiss }>

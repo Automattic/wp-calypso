@@ -32,14 +32,6 @@ jest.mock( '@automattic/calypso-analytics', () => ( {
 	recordTracksEvent: jest.fn(),
 } ) );
 
-jest.mock(
-	'@automattic/help-center/src/stores',
-	() => ( {
-		HELP_CENTER_STORE: 'help-center-store',
-	} ),
-	{ virtual: true }
-);
-
 jest.mock( '../use-logged-out-session', () => ( {
 	useLoggedOutSession: () => ( {
 		loggedOutOdieChatId: undefined,
@@ -69,6 +61,7 @@ jest.mock( '../../utils', () => ( {
 } ) );
 
 jest.mock( '../../constants', () => ( {
+	HELP_CENTER_STORE: 'automattic/help-center',
 	getOdieTransferMessages: () => [],
 	getZendeskChatStartedMetaMessage: () => ( {
 		content: 'chat-started',

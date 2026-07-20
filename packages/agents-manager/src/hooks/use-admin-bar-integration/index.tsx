@@ -1,10 +1,12 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { useSelect } from '@wordpress/data';
-import { useEffect, useRef, useState } from '@wordpress/element';
+import { useEffect, useRef } from '@wordpress/element';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useAgentsManagerContext } from '../../contexts';
 import { AGENTS_MANAGER_STORE } from '../../stores';
-import { isEditorAiEntryEnabled } from '../../utils/editor-entry-points';
+import useHasAiChatEntryButton, {
+	ADMIN_BAR_AI_CHAT_BUTTON_ID,
+} from '../use-has-ai-chat-entry-button';
 import type { AgentsManagerSelect } from '@automattic/data-stores';
 import './style.scss';
 
@@ -13,23 +15,6 @@ const ADMIN_BAR_BUTTON_ID = 'wp-admin-bar-agents-manager';
 const ADMIN_BAR_CHAT_ITEM_ID = 'wp-admin-bar-agents-manager-chat-support';
 const ADMIN_BAR_HISTORY_ITEM_ID = 'wp-admin-bar-agents-manager-chat-history';
 const ADMIN_BAR_GUIDES_ITEM_ID = 'wp-admin-bar-agents-manager-support-guides';
-
-// The standalone AI chat button — the chat's entry point, separate from the Help
-// menu. The wp-admin bar exposes it by ID; Calypso's masterbar by class.
-const ADMIN_BAR_AI_CHAT_BUTTON_ID = 'wp-admin-bar-agents-manager-ai-chat';
-const MASTERBAR_AI_CHAT_BUTTON_SELECTOR = '.masterbar__item-agents-manager-ai-chat';
-
-/**
- * Whether an AI chat entry button (wp-admin bar, Calypso masterbar, or editor toolbar) is
- * present. If so, the chat hides on close and reopens from it instead of a floating bubble.
- */
-export function hasAiChatEntryButton(): boolean {
-	return (
-		isEditorAiEntryEnabled() ||
-		!! document.getElementById( ADMIN_BAR_AI_CHAT_BUTTON_ID ) ||
-		!! document.querySelector( MASTERBAR_AI_CHAT_BUTTON_SELECTOR )
-	);
-}
 
 // CSS class name
 const OPEN_CLICK_CLASS = 'open-click';
@@ -74,8 +59,7 @@ export default function useAdminBarIntegration( {
 	const resumeActiveChatRef = useRef( resumeActiveChat );
 	resumeActiveChatRef.current = resumeActiveChat;
 
-	// Whether the AI chat entry button is present (captured once on mount).
-	const [ hasAiChatEntry ] = useState( hasAiChatEntryButton );
+	const hasAiChatEntry = useHasAiChatEntryButton();
 
 	// Whether the chat is visible (open and not minimized), read inside the
 	// one-time DOM click handlers below to decide whether a click opens or closes.

@@ -427,9 +427,38 @@ export interface Purchase {
 	 */
 	is_auto_renew_enabled: boolean;
 
+	/**
+	 * The ID of the stored payment method used for this subscription (the
+	 * `stored_details_id` of the underlying payment method).
+	 *
+	 * Only set when the payment method is a stored card; undefined otherwise.
+	 */
 	payment_card_id: number | string | undefined;
+
+	/**
+	 * The lowercased card type/brand of the stored card (eg: 'visa' or
+	 * 'mastercard').
+	 *
+	 * Only set when the payment method is a stored card; undefined otherwise.
+	 */
 	payment_card_type: string | undefined;
+
+	/**
+	 * The billing processor class name for the stored card, or undefined for
+	 * the default (updatable) case.
+	 *
+	 * Used to determine whether the card number can be updated. Cards processed
+	 * via CC & Paygate can be updated, so this stays undefined; EBANX cards
+	 * cannot, so this is set to 'WPCOM_Billing_Ebanx' for them.
+	 */
 	payment_card_processor: string | undefined;
+
+	/**
+	 * A human-readable display string for the stored card, currently its last 4
+	 * digits.
+	 *
+	 * Only set when the payment method is a stored card; undefined otherwise.
+	 */
 	payment_details: string | undefined;
 
 	/**

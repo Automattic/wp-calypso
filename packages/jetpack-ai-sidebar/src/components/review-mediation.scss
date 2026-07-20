@@ -145,7 +145,7 @@
 		margin: 0;
 
 		.components-panel__body-toggle {
-			padding: 0.625rem 0;
+			padding: 0.625rem 1rem;
 			font-size: 12px;
 			font-weight: 600;
 			text-transform: uppercase;
@@ -399,110 +399,62 @@
 		opacity: 0.7;
 	}
 
-	// ---------- Collapsed accepted / dismissed rows ----------
-	// Compact one-liner for terminal-state rows so reviewers don't scroll
-	// past completed cards. Applies to both `__card` and `__conflict-card`.
-	&__card.is-collapsed,
-	&__conflict-card.is-collapsed {
-		display: flex;
+	// ---------- Resolved (accepted / dismissed) row ----------
+	// On accept/dismiss the card keeps its header and swaps the body for a
+	// resolution chip + Undo — the same shape the shared review-card uses in
+	// Generate Feedback / Proofreader, tuned for the dark chat surface.
+	&__resolution {
+		display: inline-flex;
 		align-items: center;
-		flex-wrap: wrap;
-		gap: 8px 10px;
-		padding: 0.75rem 1rem;
-		min-height: auto;
-		font-size: 12px;
-		line-height: 1.4;
-		opacity: 0.7;
-		transition: opacity 0.15s ease;
+		gap: 0.25rem;
+		min-height: 32px;
+		padding: 0.4rem 0.75rem;
+		border-radius: 4px;
+		font-size: 13px;
+		font-weight: 600;
 
-		// The parent `&__card { > * + * { margin-top } }` rule injects vertical
-		// rhythm between stacked children. In a flex-row collapsed layout it
-		// pushes the wrapped second line away from the first; reset.
-		> * + * {
-			margin-top: 0;
-		}
-
-		// Hover lifts opacity slightly so the row is more legible while the
-		// reviewer scans for an Undo target.
-		&:hover {
-			opacity: 0.95;
-		}
-
-		// Replaces the per-status border tint with a softer treatment so
-		// completed rows don't shout.
-		border-color: rgba(255, 255, 255, 0.12);
-		background: rgba(255, 255, 255, 0.02);
-
-		// Per-status accent on the icon only (kept off the border to avoid
-		// fighting for attention with the full-card variants above).
-		&.is-accepted .jetpack-ai-review-mediation__collapsed-icon {
+		&.is-accepted {
+			background: rgba(74, 184, 102, 0.2);
 			color: #4ab866;
 		}
 
-		&.is-dismissed .jetpack-ai-review-mediation__collapsed-icon {
-			color: #cc1818;
-			opacity: 0.7;
+		&.is-dismissed {
+			background: rgba(255, 255, 255, 0.08);
+			opacity: 0.75;
 		}
-
-		// The full-card `is-clickable` cursor would mislead the user into
-		// thinking the whole row triggers an action. Reset.
-		cursor: default;
 	}
 
-	&__collapsed-icon {
-		font-weight: 700;
-		font-size: 14px;
-		line-height: 1;
+	&__resolution-check,
+	&__undo-icon {
+		flex: 0 0 auto;
+		fill: currentColor;
 	}
 
-	&__collapsed-status {
-		font-weight: 600;
-		text-transform: uppercase;
-		letter-spacing: 0.04em;
-		font-size: 11px;
-	}
-
-	&__collapsed-sep {
-		opacity: 0.4;
-	}
-
-	&__collapsed-snippet {
-		font-style: italic;
-		opacity: 0.85;
-		// Cap the visible length on narrow rails so the Undo button never
-		// pushes off-screen.
-		overflow: hidden;
-		text-overflow: ellipsis;
-		white-space: nowrap;
-		max-width: 50%;
-		min-width: 0;
-		flex: 0 1 auto;
-	}
-
-	&__collapsed-undo {
-		margin-left: auto;
-		padding: 2px 8px;
-		font-size: 11px;
-		font-weight: 500;
-		color: inherit;
-		background: transparent;
-		border: 1px solid rgba(255, 255, 255, 0.25);
+	&__resolution-undo {
+		display: inline-flex;
+		align-items: center;
+		gap: 0.25rem;
+		min-height: 32px;
+		padding: 0.4rem 0.75rem;
+		border: 0;
 		border-radius: 4px;
+		background: transparent;
+		color: inherit;
+		font-family: inherit;
+		font-size: 13px;
+		font-weight: 500;
 		cursor: pointer;
-		transition:
-			border-color 0.15s ease,
-			background 0.15s ease;
+		transition: background 0.15s ease;
 
 		&:hover:not(:disabled),
 		&:focus-visible:not(:disabled) {
-			border-color: rgba(255, 255, 255, 0.5);
-			background: rgba(255, 255, 255, 0.06);
+			background: rgba(255, 255, 255, 0.08);
 			outline: none;
 		}
 
 		&:disabled {
 			cursor: default;
-			opacity: 0.55;
+			opacity: 0.5;
 		}
 	}
 
@@ -590,8 +542,9 @@
 
 	// ---------- Stats strip ----------
 	// Bordered chips for status-at-a-glance. Wraps on narrow (350px) docked
-	// sidebars; collapses to one row at 50vw split-screen widths.
-	&__stats {
+	// sidebars; collapses to one row at 50vw split-screen widths. Doubled class
+	// lifts specificity above AM's `.Message-module_message ul` list styling.
+	& &__stats {
 		list-style: none;
 		padding: 0;
 		margin: 0 0 0.875rem;
@@ -709,6 +662,14 @@
 		&.is-failed {
 			border-color: rgba(214, 54, 56, 0.7);
 		}
+
+		// Resolved cards keep full opacity + a neutral surface — the state is
+		// carried by the chip, matching the shared review-card silhouette.
+		&.is-resolved {
+			opacity: 1;
+			border-color: rgba(255, 255, 255, 0.12);
+			background: rgba(255, 255, 255, 0.02);
+		}
 	}
 
 	// Keep the intended card padding anchored to this component root without
@@ -723,7 +684,9 @@
 
 	&__conflict-header {
 		display: flex;
-		align-items: baseline;
+		// Center so the bordered anchor pill lines up with the heading, matching
+		// the shared review-card header (badge left, block-ref pill right).
+		align-items: center;
 		gap: 8px;
 		margin: 0 0 0.75rem;
 		flex-wrap: wrap;
@@ -750,13 +713,47 @@
 		min-width: 0;
 	}
 
-	&__conflict-block-ref {
-		font-size: 11px;
-		// `flex-shrink: 0` would force the row to overflow on docked widths
-		// when the block label is long; let it shrink + wrap with the row.
-		flex: 1 1 100%;
+	// Anchor pill, top-right of the header — the same button treatment the shared
+	// review-card block-ref uses, tuned for the dark chat surface. Two classes so
+	// it lifts above the ghost `.jetpack-ai-block-ref.is-clickable` base rule.
+	&__conflict-header &__conflict-block-ref {
+		display: inline-flex;
+		align-items: center;
+		gap: 4px;
+		flex: 0 1 auto;
+		max-width: 160px;
 		min-width: 0;
-		opacity: 0.7;
+		overflow: hidden;
+		padding: 3px 8px;
+		border: 1px solid rgba(255, 255, 255, 0.2);
+		border-radius: 8px;
+		background: transparent;
+		font-size: 11px;
+		font-weight: 400;
+		line-height: 1;
+		white-space: nowrap;
+		opacity: 0.85;
+		text-decoration: none;
+
+		&.is-clickable {
+			cursor: pointer;
+			text-decoration: none;
+
+			&:hover,
+			&:focus-visible {
+				border-color: rgba(255, 255, 255, 0.4);
+				background: rgba(255, 255, 255, 0.06);
+				opacity: 1;
+				outline: none;
+			}
+		}
+
+		.jetpack-ai-block-ref__label {
+			min-width: 0;
+			overflow: hidden;
+			text-overflow: ellipsis;
+			white-space: nowrap;
+		}
 	}
 
 	// Positions list — each row gets healthy internal spacing so reviewer
@@ -845,13 +842,37 @@
 	// ---------- Conflict action buttons ----------
 	// is-reviewer (ghost) / is-accept (primary AI) / is-dismiss (ghost). Wrap
 	// to multiple rows on narrow sidebars; extra padding for two-line labels.
-	&__conflict-card &__actions {
+	// Resolution controls stack in two groups: reviewer options wrap two-up,
+	// then a fixed [Accept AI resolution][Dismiss] pair — so that pairing never
+	// depends on the parity of the reviewer count.
+	&__conflict-resolution {
+		display: flex;
+		flex-direction: column;
+		gap: 0.5rem;
+		margin-top: 1rem;
+	}
+
+	&__conflict-candidates {
+		display: flex;
 		flex-wrap: wrap;
 		gap: 0.5rem;
 	}
 
-	&__conflict-card &__action {
+	&__conflict-candidates &__action {
 		flex: 1 1 45%;
+		min-height: 42px;
+		padding: 0.625rem 0.875rem;
+	}
+
+	// The AI + Dismiss row: an even, fixed pair (or Dismiss alone when there is
+	// no AI recommendation). The parent column owns the top spacing.
+	&__conflict-resolution &__actions {
+		margin-top: 0;
+		gap: 0.5rem;
+	}
+
+	&__conflict-resolution &__actions &__action {
+		flex: 1 1 0;
 		min-height: 42px;
 		padding: 0.625rem 0.875rem;
 	}

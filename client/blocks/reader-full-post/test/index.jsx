@@ -7,7 +7,7 @@ import { createStore } from 'redux';
 import { usePostCommentsApiDisabled } from 'calypso/reader/data/comments';
 import { usePost } from 'calypso/reader/data/post';
 import { useStreamPostKeySelection } from 'calypso/reader/stream/use-stream-post-key-selection';
-import { mapStateToFullPostProps, withFullPostNavigation } from '../index';
+import { FullPostView, mapStateToFullPostProps, withFullPostNavigation } from '../index';
 
 jest.mock( 'calypso/reader/data/comments', () => ( {
 	usePostCommentsApiDisabled: jest.fn(),
@@ -19,6 +19,12 @@ jest.mock( 'calypso/reader/data/post', () => ( {
 
 jest.mock( 'calypso/reader/stream/use-stream-post-key-selection', () => ( {
 	useStreamPostKeySelection: jest.fn(),
+} ) );
+
+jest.mock( 'calypso/reader/stats', () => ( {
+	recordAction: jest.fn(),
+	recordGaEvent: jest.fn(),
+	recordTrackForPost: jest.fn(),
 } ) );
 
 // Mock the entire FullPostView component to focus on the specific logic we're testing
@@ -241,5 +247,63 @@ describe( 'FullPostView Comments API Disabled Logic', () => {
 
 			expect( queryByTestId( 'comment-button' ) ).toBeInTheDocument();
 		} );
+	} );
+} );
+
+describe( 'FullPostView automatic mark-as-seen on view', () => {
+	// `hasOrganization` makes `isSeenEnabled()` return true via
+	// `isEligibleForUnseen`, and the post carrying an `is_seen` field satisfies
+	// `canBeMarkedAsSeen`, so the only thing gating the request is `post.is_seen`.
+	const baseProps = {
+		hasOrganization: true,
+		teams: [],
+		referralStream: '',
+		setViewingFullPostKey: jest.fn(),
+	};
+
+	const feedPost = {
+		is_seen: false,
+		feed_ID: 1,
+		feed_URL: 'https://example.com/feed',
+		feed_item_ID: 10,
+		global_ID: 'global-1',
+	};
+
+	// Drive the automatic path directly: skip the pageview branch (needs a site)
+	// by pretending it already ran, and force the not-yet-loaded state.
+	const runAttemptToSendPageView = ( instance ) => {
+		instance.hasSentPageView = true;
+		instance.hasLoaded = false;
+		instance.attemptToSendPageView();
+	};
+
+	it( 'marks an unseen post as seen when the full post is viewed', () => {
+		const requestMarkAsSeen = jest.fn();
+		const instance = new FullPostView( {
+			...baseProps,
+			requestMarkAsSeen,
+			requestMarkAsSeenBlog: jest.fn(),
+			post: { ...feedPost, is_seen: false },
+		} );
+
+		runAttemptToSendPageView( instance );
+
+		expect( requestMarkAsSeen ).toHaveBeenCalledTimes( 1 );
+	} );
+
+	it( 'does not hit the seen endpoint when the post is already seen', () => {
+		const requestMarkAsSeen = jest.fn();
+		const requestMarkAsSeenBlog = jest.fn();
+		const instance = new FullPostView( {
+			...baseProps,
+			requestMarkAsSeen,
+			requestMarkAsSeenBlog,
+			post: { ...feedPost, is_seen: true },
+		} );
+
+		runAttemptToSendPageView( instance );
+
+		expect( requestMarkAsSeen ).not.toHaveBeenCalled();
+		expect( requestMarkAsSeenBlog ).not.toHaveBeenCalled();
 	} );
 } );

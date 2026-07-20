@@ -238,11 +238,13 @@ export function getFields( {
 	paymentMethods,
 	transferredPurchases,
 	siteFilter,
+	visibleFields,
 }: {
 	sites: Site[];
 	paymentMethods: Array< StoredPaymentMethod >;
 	transferredPurchases: Array< Purchase >;
 	siteFilter?: number;
+	visibleFields?: string[];
 } ): Fields< Purchase > {
 	const backupPaymentMethods = paymentMethods.filter(
 		( paymentMethod ) => paymentMethod.is_backup === true
@@ -329,7 +331,16 @@ export function getFields( {
 			},
 			render: ( { item }: { item: Purchase } ) => {
 				const site = sites.find( ( site ) => site.ID === item.blog_id );
-				return <PurchaseProduct purchase={ item } site={ site } />;
+				return (
+					<>
+						<PurchaseProduct purchase={ item } site={ site } />
+						{ ! visibleFields?.includes( 'status' ) && (
+							<div className="billing-purchase__inline-status">
+								<PurchaseExpiryStatus purchase={ item } isSiteMissing={ ! site } />
+							</div>
+						) }
+					</>
+				);
 			},
 		},
 		{

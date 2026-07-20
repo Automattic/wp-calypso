@@ -107,12 +107,15 @@ describe( 'useAgentLayoutManager — open / close', () => {
 	it( 'toggles the sidebar-open class via open/close', () => {
 		const { result } = render();
 		expect( container.classList.contains( OPEN_CLASS ) ).toBe( true );
+		expect( result.current.isSidebarOpen ).toBe( true );
 
 		act( () => result.current.closeSidebar() );
 		expect( container.classList.contains( OPEN_CLASS ) ).toBe( false );
+		expect( result.current.isSidebarOpen ).toBe( false );
 
 		act( () => result.current.openSidebar() );
 		expect( container.classList.contains( OPEN_CLASS ) ).toBe( true );
+		expect( result.current.isSidebarOpen ).toBe( true );
 	} );
 
 	it( 'adds --closing when closing an open sidebar, and removes it after the transition', () => {
@@ -204,6 +207,7 @@ describe( 'useAgentLayoutManager — open-state sync on dock transition', () => 
 		await setBodyClass( FULLSCREEN_BODY_CLASS, true );
 		expect( result.current.isDocked ).toBe( true );
 		expect( container.classList.contains( OPEN_CLASS ) ).toBe( true );
+		expect( result.current.isSidebarOpen ).toBe( true );
 	} );
 
 	it( 'keeps the docked sidebar closed when the shared open state is false as it becomes dockable', async () => {
@@ -214,6 +218,7 @@ describe( 'useAgentLayoutManager — open-state sync on dock transition', () => 
 		await setBodyClass( FULLSCREEN_BODY_CLASS, true );
 		expect( result.current.isDocked ).toBe( true );
 		expect( container.classList.contains( OPEN_CLASS ) ).toBe( false );
+		expect( result.current.isSidebarOpen ).toBe( false );
 	} );
 } );
 

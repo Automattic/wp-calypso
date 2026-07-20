@@ -10,6 +10,7 @@ import EmptyContent from 'calypso/components/empty-content';
 import Main from 'calypso/components/main';
 import { makeLayout, render as clientRender } from 'calypso/controller';
 import { dashboardLink } from 'calypso/dashboard/utils/link';
+import { bumpStat } from 'calypso/lib/analytics/mc';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { sectionify } from 'calypso/lib/route';
 import CalypsoShoppingCartProvider from 'calypso/my-sites/checkout/calypso-shopping-cart-provider';
@@ -376,6 +377,7 @@ const maybeRedirectToDashboard = ( context, next ) => {
 
 	dispatch( waitForPrefs() ).finally( () => {
 		if ( hasDashboardOptIn( getState() ) ) {
+			bumpStat( 'dashboard-redirect', 'domain-list' );
 			window.location.replace( dashboardLink( '/domains' ) );
 			return;
 		}

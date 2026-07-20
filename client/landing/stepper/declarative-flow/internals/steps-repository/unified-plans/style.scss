@@ -47,6 +47,14 @@
 		--step-container-v2-content-inline-padding: clamp( 1rem, 2vw, 2rem );
 	}
 
+	.step-container-v2__content-wrapper.axis-vertical:has(
+		.plans-grid-next.is-plans-grid-redesign-experiment
+	) {
+		.plans-features-main__free-plan-cta {
+			font-weight: inherit;
+		}
+	}
+
 	// Style the inline `start with a free plan` CTA inside Step.Heading subText
 	// to look like a link instead of a default borderless button. The legacy
 	// <PlansPageSubheader> applied equivalent styles to the same button via its
@@ -57,6 +65,10 @@
 		font-size: inherit;
 		font-weight: 500;
 		text-decoration: underline;
+
+		@media ( min-width: 960px ) {
+			padding: 1px 0;
+		}
 
 		&:hover,
 		&:focus {

@@ -6,8 +6,28 @@
 
 import '@testing-library/jest-dom';
 import { render, screen, fireEvent } from '@testing-library/react';
-import React from 'react';
+import { getBlockType } from '@wordpress/blocks';
 import BlockRef, { type BlockSnapshot } from './block-ref';
+
+// Mock the block registry + icon renderer so the chip's icon/title lookups are
+// deterministic and don't pull in the full editor. `getBlockType` returns
+// undefined by default (nothing registered), which each test can override.
+jest.mock( '@wordpress/blocks', () => ( {
+	getBlockType: jest.fn(),
+} ) );
+jest.mock( '@wordpress/block-editor', () => {
+	const react = jest.requireActual< typeof import('react') >( 'react' );
+	return {
+		BlockIcon: ( { icon }: { icon?: unknown } ) =>
+			react.createElement(
+				'span',
+				{ 'data-testid': 'block-icon' },
+				typeof icon === 'string' ? icon : ''
+			),
+	};
+} );
+
+const mockGetBlockType = getBlockType as unknown as jest.Mock;
 
 const blocks: BlockSnapshot[] = [
 	{
@@ -19,12 +39,6 @@ const blocks: BlockSnapshot[] = [
 		clientId: 'a2',
 		name: 'core/heading',
 		attributes: { content: 'Revenue Highlights', level: 2 },
-	},
-	{
-		clientId: 'a3',
-		name: 'core/heading',
-		// Intentionally no level — should render `Heading — "…"` (no H-number)
-		attributes: { content: 'No-level heading' },
 	},
 	{
 		clientId: 'a4',
@@ -44,47 +58,54 @@ const blocks: BlockSnapshot[] = [
 ];
 
 describe( 'BlockRef', () => {
-	it( 'renders "Post-wide" for null index, non-clickable', () => {
+	beforeEach( () => {
+		mockGetBlockType.mockReset();
+		mockGetBlockType.mockReturnValue( undefined );
+	} );
+
+	it( 'renders "Post-wide" for null index, non-clickable, with no block icon', () => {
 		render( <BlockRef index={ null } blocks={ blocks } /> );
 		const el = screen.getByText( 'Post-wide' );
 		expect( el.tagName ).toBe( 'SPAN' );
+		expect( screen.queryByTestId( 'block-icon' ) ).not.toBeInTheDocument();
 	} );
 
-	it( 'renders a paragraph label with a truncated content snippet', () => {
+	it( 'renders the block icon plus a content-only snippet (no type prefix)', () => {
+		mockGetBlockType.mockReturnValue( { title: 'Paragraph', icon: 'paragraph' } );
 		render( <BlockRef index={ 0 } blocks={ blocks } /> );
-		// 40-char snippet + ellipsis; content is 70 chars long.
-		expect( screen.getByText( /Paragraph — .+…/ ) ).toBeInTheDocument();
+		// 40-char snippet + ellipsis; content is 67 chars long.
+		expect( screen.getByText( /^Revenue grew 23% YoY to \$48\.2M,.+…$/ ) ).toBeInTheDocument();
+		// No "Paragraph — " prefix — the icon conveys the type.
+		expect( screen.queryByText( /Paragraph —/ ) ).not.toBeInTheDocument();
+		expect( screen.getByTestId( 'block-icon' ) ).toHaveTextContent( 'paragraph' );
 	} );
 
-	it( 'renders a heading label with the level when set', () => {
+	it( 'shows the full content snippet for short headings', () => {
 		render( <BlockRef index={ 1 } blocks={ blocks } /> );
-		expect( screen.getByText( /Heading \(H2\) — .+/ ) ).toBeInTheDocument();
+		expect( screen.getByText( 'Revenue Highlights' ) ).toBeInTheDocument();
 	} );
 
-	it( 'renders a heading label without a level when none is set (honours "do not assume")', () => {
+	it( 'uses image alt text as the snippet', () => {
 		render( <BlockRef index={ 2 } blocks={ blocks } /> );
-		expect( screen.getByText( /^Heading — / ) ).toBeInTheDocument();
-		expect( screen.queryByText( /\(H\d+\)/ ) ).not.toBeInTheDocument();
+		expect( screen.getByText( 'Revenue by Region chart' ) ).toBeInTheDocument();
 	} );
 
-	it( 'uses alt text for images when available', () => {
+	it( 'falls back to the prettified slug when no content and no registered title', () => {
 		render( <BlockRef index={ 3 } blocks={ blocks } /> );
-		expect( screen.getByText( /Image — .+Revenue by Region.+/ ) ).toBeInTheDocument();
-	} );
-
-	it( 'falls back to a plain label for core/list (no suitable snippet source)', () => {
-		render( <BlockRef index={ 4 } blocks={ blocks } /> );
 		expect( screen.getByText( 'List' ) ).toBeInTheDocument();
 	} );
 
-	it( 'shows a prettified slug for unknown core/* blocks (first-letter uppercased)', () => {
-		render( <BlockRef index={ 5 } blocks={ blocks } /> );
-		expect( screen.getByText( 'Custom-block' ) ).toBeInTheDocument();
+	it( 'prefers the registered block title over the slug for content-less blocks', () => {
+		mockGetBlockType.mockReturnValue( { title: 'Custom Widget', icon: 'star' } );
+		render( <BlockRef index={ 4 } blocks={ blocks } /> );
+		expect( screen.getByText( 'Custom Widget' ) ).toBeInTheDocument();
+		expect( screen.queryByText( 'Custom-block' ) ).not.toBeInTheDocument();
 	} );
 
 	it( 'renders "Block no longer present" when the index is out of bounds', () => {
 		render( <BlockRef index={ 99 } blocks={ blocks } /> );
 		expect( screen.getByText( 'Block no longer present' ) ).toBeInTheDocument();
+		expect( screen.queryByTestId( 'block-icon' ) ).not.toBeInTheDocument();
 	} );
 
 	it( 'fires onFocus with the index when clicked', () => {
@@ -92,6 +113,14 @@ describe( 'BlockRef', () => {
 		render( <BlockRef index={ 1 } blocks={ blocks } onFocus={ onFocus } /> );
 		fireEvent.click( screen.getByRole( 'button' ) );
 		expect( onFocus ).toHaveBeenCalledWith( 1 );
+	} );
+
+	it( 'renders the icon and snippet inside the clickable button variant', () => {
+		mockGetBlockType.mockReturnValue( { title: 'Paragraph', icon: 'paragraph' } );
+		render( <BlockRef index={ 1 } blocks={ blocks } onFocus={ jest.fn() } /> );
+		const button = screen.getByRole( 'button' );
+		expect( button.querySelector( '[data-testid="block-icon"]' ) ).not.toBeNull();
+		expect( button ).toHaveTextContent( 'Revenue Highlights' );
 	} );
 
 	it( 'renders a plain span (not a button) when onFocus is omitted', () => {

@@ -425,8 +425,9 @@
 
 .reader__content .reader-post-card__tag-link {
 	color: var(--color-neutral-100);
-	&:focus {
-		outline: dotted 1px;
+	&:focus-visible {
+		outline: 2px solid var( --studio-blue-50 );
+		outline-offset: 2px;
 	}
 }
 
@@ -442,8 +443,15 @@
 	text-decoration: none;
 }
 
-.reader-feed-header__seen-button:focus {
-	outline: dotted 1px;
+.reader-feed-header__seen-button:focus-visible {
+	outline: 2px solid var( --studio-blue-50 );
+	outline-offset: 2px;
+}
+
+.reader-post-card__byline-secondary-item:focus-visible,
+.reader-post-card__byline-site:has( a:focus-visible ) {
+	outline: 2px solid var( --studio-blue-50 );
+	outline-offset: 2px;
 }
 
 .reader-post-card__byline-secondary-item {
@@ -586,6 +594,11 @@
 
 	&:hover {
 		color: var(--color-neutral-70);
+	}
+
+	&:focus-visible {
+		outline: 2px solid var( --studio-blue-50 );
+		outline-offset: 2px;
 	}
 }
 

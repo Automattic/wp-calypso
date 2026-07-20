@@ -2,6 +2,7 @@ import { DomainSubtype, DomainStatus } from '@automattic/api-core';
 import { Link } from '@tanstack/react-router';
 import { __experimentalVStack as VStack } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
+import { useAnalytics } from '../../app/analytics';
 import { purchaseSettingsRoute } from '../../app/router/me';
 import { Text } from '../../components/text';
 import { canEnableAutoRenew } from '../../utils/domain';
@@ -16,6 +17,8 @@ export const DomainExpiryField = ( {
 	domain: DomainSummary;
 	value: string;
 } ) => {
+	const { recordTracksEvent } = useAnalytics();
+
 	// Site Overview does not show the Status column, so we use this column for error messages.
 	if (
 		inOverview &&
@@ -38,6 +41,11 @@ export const DomainExpiryField = ( {
 				<Link
 					to={ purchaseSettingsRoute.fullPath }
 					params={ { purchaseId: domain.subscription_id } }
+					onClick={ () =>
+						recordTracksEvent( 'calypso_dashboard_domains_turn_on_auto_renew_click', {
+							domain: domain.domain,
+						} )
+					}
 				>
 					{ __( 'Turn on auto-renew' ) }
 				</Link>

@@ -196,7 +196,7 @@
 					&:hover,
 					&:focus {
 						color: var(--color-text-inverted);
-						background-color: var(--color-primary);
+						background-color: var(--color-accent);
 						opacity: 0.65;
 					}
 				}
@@ -232,7 +232,7 @@
 				&:hover,
 				&:focus {
 					color: var(--color-text-inverted);
-					background-color: var(--color-primary);
+					background-color: var(--color-accent);
 					opacity: 0.65;
 
 					.button {

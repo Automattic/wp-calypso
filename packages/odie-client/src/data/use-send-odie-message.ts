@@ -216,6 +216,7 @@ export const useSendOdieMessage = ( signal: AbortSignal ) => {
 					! hasBeenWarnedAboutExistingConversation &&
 					! hasTriedToEscalateToSupport
 				) {
+					trackEvent( 'chat_existing_conversation_prompt' );
 					setChat( ( prevChat ) => ( {
 						...prevChat,
 						...props,

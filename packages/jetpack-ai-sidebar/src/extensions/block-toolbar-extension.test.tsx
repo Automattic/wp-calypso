@@ -26,12 +26,19 @@ jest.mock( '@wordpress/components', () => ( {
 		icon,
 		label,
 		onClick,
+		isPressed,
 	}: {
 		icon?: React.ReactNode;
 		label: string;
 		onClick: () => void;
+		isPressed?: boolean;
 	} ) => (
-		<button aria-label={ label } data-testid="toolbar-button" onClick={ onClick }>
+		<button
+			aria-label={ label }
+			aria-pressed={ isPressed }
+			data-testid="toolbar-button"
+			onClick={ onClick }
+		>
 			{ icon }
 		</button>
 	),
@@ -41,6 +48,19 @@ jest.mock( '@wordpress/components', () => ( {
 jest.mock( '@wordpress/compose', () => ( {
 	createHigherOrderComponent: ( fn: ( component: React.ComponentType ) => React.ComponentType ) =>
 		fn,
+} ) );
+
+// Reactive pressed state comes from the shared Agents Manager store. `undefined`
+// models the store not being registered yet.
+let mockChatState: { isOpen?: boolean; isMinimized?: boolean } | undefined;
+
+jest.mock( '@wordpress/data', () => ( {
+	useSelect: ( mapSelect: ( select: ( store: string ) => unknown ) => unknown ) =>
+		mapSelect( ( store: string ) =>
+			store === 'automattic/agents-manager' && mockChatState
+				? { getAgentsManagerState: () => mockChatState }
+				: undefined
+		),
 } ) );
 
 jest.mock( '@wordpress/element', () => ( {
@@ -58,6 +78,7 @@ declare global {
 		__agentsManagerActions?: {
 			isReady?: boolean;
 			setChatOpen?: ( isOpen: boolean ) => void;
+			isChatVisible?: () => boolean;
 			submitChatMessage?: ( message?: string ) => Promise< void >;
 			setChatInput?: ( value: string ) => void;
 		};
@@ -88,6 +109,7 @@ describe( 'withJetpackAiToolbarButton', () => {
 	beforeEach( () => {
 		delete ( globalThis as Record< string, unknown > ).agentsManagerData;
 		delete window.__agentsManagerActions;
+		mockChatState = undefined;
 		jest.restoreAllMocks();
 	} );
 
@@ -154,7 +176,39 @@ describe( 'withJetpackAiToolbarButton', () => {
 		}
 	);
 
-	it( 'opens Agents Manager in its current state when actions are ready', () => {
+	it( 'opens Agents Manager when the chat is not visible and actions are ready', () => {
+		const setChatOpen = jest.fn();
+		window.__agentsManagerActions = {
+			isReady: true,
+			setChatOpen,
+			isChatVisible: () => false,
+		};
+
+		enableToolbarButton();
+		renderToolbar();
+		fireEvent.click( screen.getByRole( 'button', { name: 'Ask AI' } ) );
+
+		// The toolbar entry only opens the chat — it does not reshape its layout.
+		expect( setChatOpen ).toHaveBeenCalledWith( true );
+	} );
+
+	it( 'closes Agents Manager when the chat is already visible', () => {
+		const setChatOpen = jest.fn();
+		window.__agentsManagerActions = {
+			isReady: true,
+			setChatOpen,
+			isChatVisible: () => true,
+		};
+
+		enableToolbarButton();
+		renderToolbar();
+		fireEvent.click( screen.getByRole( 'button', { name: 'Ask AI' } ) );
+
+		// Clicking the toolbar entry while the chat is visible toggles it closed.
+		expect( setChatOpen ).toHaveBeenCalledWith( false );
+	} );
+
+	it( 'opens Agents Manager when actions are ready but expose no visibility state', () => {
 		const setChatOpen = jest.fn();
 		window.__agentsManagerActions = {
 			isReady: true,
@@ -165,7 +219,7 @@ describe( 'withJetpackAiToolbarButton', () => {
 		renderToolbar();
 		fireEvent.click( screen.getByRole( 'button', { name: 'Ask AI' } ) );
 
-		// The toolbar entry only opens the chat — it does not reshape its layout.
+		// Without an `isChatVisible` action, treat the chat as not visible and open it.
 		expect( setChatOpen ).toHaveBeenCalledWith( true );
 	} );
 
@@ -193,6 +247,27 @@ describe( 'withJetpackAiToolbarButton', () => {
 		expect( setChatOpen ).toHaveBeenCalledWith( true );
 	} );
 
+	it( 'applies the queued click as a toggle when the ready event fires', () => {
+		const setChatOpen = jest.fn();
+
+		enableToolbarButton();
+		renderToolbar();
+		// Click before the actions are ready: the toggle is queued.
+		fireEvent.click( screen.getByRole( 'button', { name: 'Ask AI' } ) );
+		expect( setChatOpen ).not.toHaveBeenCalled();
+
+		// If the chat is already visible by the time the actions load, applying the
+		// queued click closes it rather than blindly re-opening.
+		window.__agentsManagerActions = {
+			isReady: true,
+			setChatOpen,
+			isChatVisible: () => true,
+		};
+		window.dispatchEvent( new CustomEvent( 'agents-manager-ready' ) );
+
+		expect( setChatOpen ).toHaveBeenCalledWith( false );
+	} );
+
 	it( 'does not submit or prefill chat when clicked', () => {
 		const setChatOpen = jest.fn();
 		const submitChatMessage = jest.fn();
@@ -211,5 +286,53 @@ describe( 'withJetpackAiToolbarButton', () => {
 		expect( setChatOpen ).toHaveBeenCalledWith( true );
 		expect( submitChatMessage ).not.toHaveBeenCalled();
 		expect( setChatInput ).not.toHaveBeenCalled();
+	} );
+
+	it( 'renders the button as pressed when the chat is open in the store', () => {
+		mockChatState = { isOpen: true, isMinimized: false };
+
+		enableToolbarButton();
+		renderToolbar();
+
+		expect( screen.getByRole( 'button', { name: 'Ask AI' } ) ).toHaveAttribute(
+			'aria-pressed',
+			'true'
+		);
+	} );
+
+	it( 'renders the button as not pressed when the chat is closed', () => {
+		mockChatState = { isOpen: false, isMinimized: false };
+
+		enableToolbarButton();
+		renderToolbar();
+
+		expect( screen.getByRole( 'button', { name: 'Ask AI' } ) ).toHaveAttribute(
+			'aria-pressed',
+			'false'
+		);
+	} );
+
+	it( 'renders the button as not pressed when the chat is minimized', () => {
+		mockChatState = { isOpen: true, isMinimized: true };
+
+		enableToolbarButton();
+		renderToolbar();
+
+		expect( screen.getByRole( 'button', { name: 'Ask AI' } ) ).toHaveAttribute(
+			'aria-pressed',
+			'false'
+		);
+	} );
+
+	it( 'renders the button as not pressed when the store is not registered yet', () => {
+		mockChatState = undefined;
+
+		enableToolbarButton();
+		renderToolbar();
+
+		expect( screen.getByRole( 'button', { name: 'Ask AI' } ) ).toHaveAttribute(
+			'aria-pressed',
+			'false'
+		);
 	} );
 } );

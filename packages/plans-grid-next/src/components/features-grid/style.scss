@@ -797,6 +797,10 @@ $redesign-table-cell-max-width: 280px;
 
 			&.has-4-cols .plans-grid-next-features-grid__bottom-plan-card {
 				max-width: $redesign-table-cell-max-width * 4;
+
+				&.is-enterprise-bottom-card {
+					--enterprise-bottom-card-logo-column-gap: 54px;
+				}
 			}
 
 			&.has-5-cols .plans-grid-next-features-grid__bottom-plan-card {
@@ -905,7 +909,7 @@ $redesign-table-cell-max-width: 280px;
 	.plans-grid-next-features-grid__bottom-plan-card-media .plans-grid-next-client-logo-list {
 		--bottom-plan-card-logo-height: 40px;
 		align-items: center;
-		column-gap: 64px;
+		column-gap: var( --enterprise-bottom-card-logo-column-gap, 64px );
 		justify-content: flex-end;
 		max-width: 1015px;
 		row-gap: 16px;
@@ -918,6 +922,39 @@ $redesign-table-cell-max-width: 280px;
 
 		.plans-grid-next-client-logo-list__item {
 			--adjustment-unit: calc( var( --bottom-plan-card-logo-height ) / 60 );
+		}
+	}
+
+	@media ( max-width: 1019px ) {
+		&:not(.is-small) {
+			.plan-features-2023-grid__content.has-4-cols.has-bottom-plan-card {
+				.plans-grid-next-features-grid__bottom-plan-card.is-enterprise-bottom-card {
+					--enterprise-bottom-card-logo-column-gap: 34px;
+				}
+			}
+		}
+	}
+
+	@media ( max-width: 930px ) {
+		&:not(.is-small) {
+			.plan-features-2023-grid__content.has-4-cols.has-bottom-plan-card {
+				.plans-grid-next-features-grid__bottom-plan-card.is-enterprise-bottom-card {
+					--enterprise-bottom-card-logo-column-gap: 14px;
+				}
+			}
+		}
+	}
+
+	@media ( max-width: 769px ) {
+		&:not(.is-small) {
+			.plan-features-2023-grid__content.has-4-cols.has-bottom-plan-card {
+				.plans-grid-next-features-grid__bottom-plan-card.is-enterprise-bottom-card {
+					.plans-grid-next-features-grid__bottom-plan-card-media
+						.plans-grid-next-client-logo-list {
+						--bottom-plan-card-logo-height: 24px;
+					}
+				}
+			}
 		}
 	}
 
