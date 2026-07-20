@@ -4,11 +4,10 @@ import {
 	createCodeDeploymentMutation,
 } from '@automattic/api-queries';
 import { useSuspenseQuery, useQuery, useMutation } from '@tanstack/react-query';
-import { useNavigate } from '@tanstack/react-router';
+import { useNavigate, useParams } from '@tanstack/react-router';
 import { __, sprintf } from '@wordpress/i18n';
 import Breadcrumbs from '../../app/breadcrumbs';
 import {
-	siteRoute,
 	siteSettingsRepositoriesConnectRoute,
 	siteSettingsRepositoriesRoute,
 } from '../../app/router/sites';
@@ -19,7 +18,7 @@ import { ConnectRepositoryForm } from './connect-repository-form';
 import type { ConnectRepositoryFormData } from './connect-repository-form';
 
 export default function ConnectRepository() {
-	const { siteSlug } = siteRoute.useParams();
+	const { siteSlug } = useParams( { strict: false } ) as { siteSlug: string };
 	const { data: site } = useSuspenseQuery( siteBySlugQuery( siteSlug ) );
 	const { data: installations = [] } = useQuery( githubInstallationsQuery() );
 	const navigateFrom = siteSettingsRepositoriesConnectRoute.fullPath;
