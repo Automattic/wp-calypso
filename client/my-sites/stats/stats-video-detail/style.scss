@@ -214,7 +214,7 @@ $border-radius: 5px; // stylelint-disable-line scales/radii
 
 	&.is-selected {
 		background: var(--color-surface);
-		border-color: var(--color-primary);
+		border-color: var(--color-accent);
 
 		.stats-video-metric-tabs__header {
 			color: var(--studio-black);

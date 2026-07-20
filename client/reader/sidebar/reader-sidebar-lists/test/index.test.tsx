@@ -91,7 +91,6 @@ describe( 'ReaderSidebarLists', () => {
 		beforeEach( () => {
 			jest.clearAllMocks();
 		} );
-
 		it( 'marks every feed across all lists as seen from the header action', async () => {
 			const user = userEvent.setup();
 			const lists = [

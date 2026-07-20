@@ -54,7 +54,7 @@
 		width: 100%;
 	}
 	&:hover {
-		background-color: var(--color-primary-0);
+		background-color: var(--color-accent-0);
 	}
 	& + & {
 		// Prevent overlap between outline and hover.

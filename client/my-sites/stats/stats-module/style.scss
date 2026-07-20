@@ -230,7 +230,7 @@ ul.module-header-actions {
 	// Hover state
 	@include breakpoint-deprecated( ">480px" ) {
 		.stats-module:hover & .module-header-action-link {
-			color: var(--color-primary);
+			color: var(--color-link);
 		}
 
 		.module-header & .module-header-action-link:hover {
@@ -454,12 +454,12 @@ ul.module-header-actions {
 		.stats-module & td.has-no-data:hover, // 1
 		tbody tr:hover td,
 		.stats-module & tbody tr:hover th:first-child {
-			background: var(--color-primary-0);
+			background: var(--color-accent-0);
 		}
 
 		.stats-module & td.highest-count:hover,
 		tbody tr td:hover {
-			background: var(--color-primary-0);
+			background: var(--color-accent-0);
 			color: var(--color-neutral-70);
 		}
 	}

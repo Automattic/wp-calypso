@@ -10,6 +10,7 @@ import {
 	WRITING_SUGGESTION_IDS,
 } from '../../hooks/use-empty-view-suggestions';
 import { isEditorPage } from '../../utils/is-editor-page';
+import getSuggestionClickPayload from './get-suggestion-click-payload';
 import type { ReactNode } from 'react';
 import './grouped-empty-view.scss';
 
@@ -54,12 +55,10 @@ export default function GroupedEmptyView( {
 		DESIGN_SUGGESTION_IDS.has( suggestion.id )
 	);
 	const handleSuggestionClick = ( selectedSuggestion: Suggestion | string ) => {
-		const originalSuggestion =
-			typeof selectedSuggestion === 'string'
-				? selectedSuggestion
-				: suggestions.find( ( suggestion ) => suggestion.id === selectedSuggestion.id ) ??
-				  selectedSuggestion;
-		onSuggestionClick?.( originalSuggestion, suggestions );
+		onSuggestionClick?.(
+			getSuggestionClickPayload( selectedSuggestion, suggestions ),
+			suggestions
+		);
 	};
 
 	if ( ! groupWritingSuggestions || writingSuggestions.length === 0 || ! hasDesignSuggestions ) {
