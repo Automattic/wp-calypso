@@ -1,4 +1,3 @@
-import { isEnabled } from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
 import { useTranslate } from 'i18n-calypso';
 import DocumentHead from 'calypso/components/data/document-head';
@@ -7,8 +6,6 @@ import { setNextLayoutFocus } from 'calypso/state/ui/layout-focus/actions';
 import { getCurrentLayoutFocus } from 'calypso/state/ui/layout-focus/selectors';
 import { getSelectedSite, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import EditTeamMember from './edit-team-member-form';
-import InvitePeople from './invite-people';
-import PeopleList from './main';
 import PeopleInviteDetails from './people-invite-details';
 import PeopleInvites from './people-invites';
 import PeopleInvitesPending from './people-invites-pending';
@@ -102,12 +99,7 @@ function renderPeopleList( context, next ) {
 	context.primary = (
 		<>
 			<PeopleListTitle />
-			{ ! isEnabled( 'user-management-revamp' ) && (
-				<PeopleList filter={ context.params.filter } search={ context.query.s } />
-			) }
-			{ isEnabled( 'user-management-revamp' ) && (
-				<SubscribersTeam filter={ context.params.filter } search={ context.query.s } />
-			) }
+			<SubscribersTeam filter={ context.params.filter } search={ context.query.s } />
 		</>
 	);
 	next();
@@ -126,8 +118,7 @@ function renderInvitePeople( context, next ) {
 	context.primary = (
 		<>
 			<InvitePeopleTitle />
-			{ ! isEnabled( 'user-management-revamp' ) && <InvitePeople key={ site.ID } site={ site } /> }
-			{ isEnabled( 'user-management-revamp' ) && <TeamInvite key={ site.ID } site={ site } /> }
+			<TeamInvite key={ site.ID } site={ site } />
 		</>
 	);
 	next();

@@ -235,7 +235,6 @@
 		"upgrades/redirect-payments": true,
 		"upgrades/upcoming-renewals-notices": true,
 		"upgrades/wpcom-monthly-plans": true,
-		"user-management-revamp": true,
 		"wordpress-ai-tools": true,
 		"wpcom-user-bootstrap": false
 	}
