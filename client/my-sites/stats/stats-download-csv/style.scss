@@ -8,7 +8,7 @@
 		gap: 4px;
 
 		@media (min-width: $break-mobile) {
-			color: var(--color-primary-50)
+			color: var(--color-link);
 		}
 
 		&:disabled {

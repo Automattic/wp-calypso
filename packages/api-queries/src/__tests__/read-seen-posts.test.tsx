@@ -2,6 +2,7 @@ import { QueryClient, QueryClientProvider, useMutation } from '@tanstack/react-q
 import { act, renderHook } from '@testing-library/react';
 import nock from 'nock';
 import { patchSubscriptionSeenCount } from '../read-follows';
+import { patchListsSeenCount } from '../read-lists';
 import {
 	markAllReaderPostsAsSeenMutation,
 	markReaderPostsAsSeenMutation,
@@ -15,9 +16,14 @@ jest.mock( '../read-follows', () => ( {
 	patchSubscriptionSeenCount: jest.fn(),
 } ) );
 
+jest.mock( '../read-lists', () => ( {
+	patchListsSeenCount: jest.fn(),
+} ) );
+
 const BASE = 'https://public-api.wordpress.com';
 const SOURCE = 'reader-web';
 const patchSubscriptionSeenCountSpy = patchSubscriptionSeenCount as jest.Mock;
+const patchListsSeenCountSpy = patchListsSeenCount as jest.Mock;
 
 const makeWrapper = ( client: QueryClient ) =>
 	function Wrapper( { children }: { children: ReactNode } ) {
@@ -26,7 +32,11 @@ const makeWrapper = ( client: QueryClient ) =>
 
 const newClient = () => new QueryClient( { defaultOptions: { queries: { retry: false } } } );
 
-beforeEach( () => patchSubscriptionSeenCountSpy.mockClear() );
+beforeEach( () => {
+	patchSubscriptionSeenCountSpy.mockClear();
+	patchListsSeenCountSpy.mockClear();
+} );
+
 afterEach( () => nock.cleanAll() );
 
 describe( 'markReaderPostsAsSeenMutation', () => {
@@ -61,6 +71,11 @@ describe( 'markReaderPostsAsSeenMutation', () => {
 		);
 		const update = patchSubscriptionSeenCountSpy.mock.calls[ 0 ][ 2 ];
 		expect( update( 10 ) ).toBe( 7 );
+
+		expect( patchListsSeenCountSpy ).toHaveBeenCalledTimes( 1 );
+		expect( patchListsSeenCountSpy ).toHaveBeenCalledWith( client, [ 42 ], expect.any( Function ) );
+		const listUpdate = patchListsSeenCountSpy.mock.calls[ 0 ][ 2 ];
+		expect( listUpdate( 10 ) ).toBe( 7 );
 	} );
 } );
 
@@ -96,6 +111,11 @@ describe( 'markReaderPostsAsUnseenMutation', () => {
 		);
 		const update = patchSubscriptionSeenCountSpy.mock.calls[ 0 ][ 2 ];
 		expect( update( 10 ) ).toBe( 12 );
+
+		expect( patchListsSeenCountSpy ).toHaveBeenCalledTimes( 1 );
+		expect( patchListsSeenCountSpy ).toHaveBeenCalledWith( client, [ 42 ], expect.any( Function ) );
+		const listUpdate = patchListsSeenCountSpy.mock.calls[ 0 ][ 2 ];
+		expect( listUpdate( 10 ) ).toBe( 12 );
 	} );
 } );
 
@@ -132,6 +152,8 @@ describe( 'markReaderWpcomPostsAsSeenMutation', () => {
 		);
 		const update = patchSubscriptionSeenCountSpy.mock.calls[ 0 ][ 2 ];
 		expect( update( 10 ) ).toBe( 8 );
+
+		expect( patchListsSeenCountSpy ).not.toHaveBeenCalled();
 	} );
 } );
 
@@ -168,6 +190,8 @@ describe( 'markReaderWpcomPostsAsUnseenMutation', () => {
 		);
 		const update = patchSubscriptionSeenCountSpy.mock.calls[ 0 ][ 2 ];
 		expect( update( 10 ) ).toBe( 11 );
+
+		expect( patchListsSeenCountSpy ).not.toHaveBeenCalled();
 	} );
 } );
 
@@ -202,5 +226,14 @@ describe( 'markAllReaderPostsAsSeenMutation', () => {
 		);
 		const update = patchSubscriptionSeenCountSpy.mock.calls[ 0 ][ 2 ];
 		expect( update( 10 ) ).toBe( 0 );
+
+		expect( patchListsSeenCountSpy ).toHaveBeenCalledTimes( 1 );
+		expect( patchListsSeenCountSpy ).toHaveBeenCalledWith(
+			client,
+			[ 10, 30 ],
+			expect.any( Function )
+		);
+		const listUpdate = patchListsSeenCountSpy.mock.calls[ 0 ][ 2 ];
+		expect( listUpdate( 10 ) ).toBe( 0 );
 	} );
 } );

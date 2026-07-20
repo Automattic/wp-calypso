@@ -1,46 +1,79 @@
 import clsx from 'clsx';
-import PropTypes from 'prop-types';
-import { Children, createRef, useMemo, useState, useRef, useLayoutEffect } from 'react';
-import TranslatableString from 'calypso/components/translatable/proptype';
+import {
+	Children,
+	createRef,
+	isValidElement,
+	useMemo,
+	useState,
+	useRef,
+	useLayoutEffect,
+} from 'react';
 import SidebarMenu from 'calypso/layout/sidebar/menu';
 import HoverIntent from 'calypso/lib/hover-intent';
 import { hasTouch } from 'calypso/lib/touch-detect';
 import ExpandableSidebarHeading from './expandable-heading';
+import type { TranslateResult } from 'i18n-calypso';
+import type { MouseEvent, ReactNode } from 'react';
 
 const isTouch = hasTouch();
 
-function containsSelectedSidebarItem( children ) {
+interface SidebarChildProps {
+	selected?: boolean;
+	children?: ReactNode;
+}
+
+interface ExpandableSidebarMenuProps {
+	className?: string;
+	title: TranslateResult;
+	count?: number;
+	countLabel?: string;
+	compactCount?: boolean;
+	onClick?: ( event?: MouseEvent< HTMLAnchorElement > ) => void;
+	icon?: string | null;
+	materialIcon?: string | null;
+	materialIconStyle?: string | null;
+	customIcon?: ReactNode;
+	children?: ReactNode;
+	disableFlyout?: boolean;
+	expanded?: boolean | null;
+	expandableIconClick?: () => void;
+	prependContent?: ReactNode;
+	appendContent?: ReactNode;
+	moreMenuActions?: JSX.Element;
+}
+
+function containsSelectedSidebarItem( children: ReactNode ): boolean {
 	let selectedItemFound = false;
 
 	Children.forEach( children, ( child ) => {
 		if ( selectedItemFound ) {
-			return true;
+			return;
 		}
 
-		if ( child?.props?.selected ) {
-			selectedItemFound = true;
-		} else {
-			const descendants = child?.props?.children;
+		const props = isValidElement< SidebarChildProps >( child ) ? child.props : undefined;
 
-			if ( descendants ) {
-				selectedItemFound = containsSelectedSidebarItem( descendants );
-			}
+		if ( props?.selected ) {
+			selectedItemFound = true;
+		} else if ( props?.children ) {
+			selectedItemFound = containsSelectedSidebarItem( props.children );
 		}
 	} );
 
 	return selectedItemFound;
 }
 
-const offScreen = ( submenu ) => {
+const offScreen = ( submenu: HTMLElement ) => {
 	const rect = submenu.getBoundingClientRect();
 	return rect.y + rect.height > window.innerHeight;
 };
 
-export const ExpandableSidebarMenu = ( menuProps ) => {
+export const ExpandableSidebarMenu = ( menuProps: ExpandableSidebarMenuProps ) => {
 	const {
 		className,
 		title,
 		count,
+		countLabel,
+		compactCount,
 		onClick,
 		icon,
 		materialIcon,
@@ -48,24 +81,22 @@ export const ExpandableSidebarMenu = ( menuProps ) => {
 		customIcon,
 		children,
 		disableFlyout,
+		expanded: expandedProp,
 		prependContent,
 		appendContent,
 		moreMenuActions,
 		...props
 	} = menuProps;
-	let { expanded } = props;
-	const menu = createRef(); // Needed for HoverIntent.
-	const submenu = useRef();
+	// A `null` `expanded` prop means "auto-detect" from whether a child is selected.
+	const expanded = null === expandedProp ? containsSelectedSidebarItem( children ) : expandedProp;
+	const menu = createRef< HTMLUListElement >(); // Needed for HoverIntent.
+	const submenu = useRef< HTMLLIElement >( null );
 	const [ submenuHovered, setSubmenuHovered ] = useState( false );
 
 	if ( submenu.current ) {
 		// Sets flyout to expand towards bottom.
 		submenu.current.style.bottom = 'auto';
-		submenu.current.style.top = 0;
-	}
-
-	if ( null === expanded ) {
-		expanded = containsSelectedSidebarItem( children );
+		submenu.current.style.top = '0';
 	}
 
 	const classes = clsx( className, {
@@ -94,9 +125,9 @@ export const ExpandableSidebarMenu = ( menuProps ) => {
 	const menuId = useMemo( () => 'menu' + crypto.randomUUID(), [] );
 
 	useLayoutEffect( () => {
-		if ( submenuHovered && offScreen( submenu.current ) ) {
+		if ( submenuHovered && submenu.current && offScreen( submenu.current ) ) {
 			// Sets flyout to expand towards top.
-			submenu.current.style.bottom = 0;
+			submenu.current.style.bottom = '0';
 			submenu.current.style.top = 'auto';
 		}
 	}, [ submenuHovered ] );
@@ -113,6 +144,8 @@ export const ExpandableSidebarMenu = ( menuProps ) => {
 				<ExpandableSidebarHeading
 					title={ title }
 					count={ count }
+					countLabel={ countLabel }
+					compactCount={ compactCount }
 					onClick={
 						typeof onClick === 'function'
 							? ( event ) => {
@@ -144,24 +177,6 @@ export const ExpandableSidebarMenu = ( menuProps ) => {
 			</SidebarMenu>
 		</HoverIntent>
 	);
-};
-
-ExpandableSidebarMenu.propTypes = {
-	className: PropTypes.string,
-	title: PropTypes.oneOfType( [ TranslatableString, PropTypes.element ] ).isRequired,
-	count: PropTypes.number,
-	onClick: PropTypes.func,
-	customIcon: PropTypes.node,
-	icon: PropTypes.string,
-	materialIcon: PropTypes.string,
-	materialIconStyle: PropTypes.string,
-	expanded: PropTypes.bool,
-	disableFlyout: PropTypes.bool,
-	expandableIconClick: PropTypes.func,
-	prependContent: PropTypes.node,
-	appendContent: PropTypes.node,
-	moreMenuActions: PropTypes.node,
-	children: PropTypes.node,
 };
 
 export default ExpandableSidebarMenu;

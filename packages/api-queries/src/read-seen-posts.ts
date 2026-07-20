@@ -11,16 +11,15 @@ import {
 } from '@automattic/api-core';
 import { mutationOptions, type QueryClient } from '@tanstack/react-query';
 import { patchSubscriptionSeenCount } from './read-follows';
+import { patchListsSeenCount } from './read-lists';
 
 export const markReaderPostsAsSeenMutation = ( queryClient: QueryClient ) =>
 	mutationOptions< ReadSeenPostsResponse, Error, ReadSeenPostsFeedParams >( {
 		mutationFn: markReaderPostsAsSeen,
 		onSuccess: ( _response, params ) => {
-			patchSubscriptionSeenCount(
-				queryClient,
-				{ feedIds: [ params.feedId ] },
-				( current ) => current - params.feedItemIds.length
-			);
+			const update = ( current: number ) => current - params.feedItemIds.length;
+			patchSubscriptionSeenCount( queryClient, { feedIds: [ params.feedId ] }, update );
+			patchListsSeenCount( queryClient, [ params.feedId ], update );
 		},
 	} );
 
@@ -28,11 +27,9 @@ export const markReaderPostsAsUnseenMutation = ( queryClient: QueryClient ) =>
 	mutationOptions< ReadSeenPostsResponse, Error, ReadSeenPostsFeedParams >( {
 		mutationFn: markReaderPostsAsUnseen,
 		onSuccess: ( _response, params ) => {
-			patchSubscriptionSeenCount(
-				queryClient,
-				{ feedIds: [ params.feedId ] },
-				( current ) => current + params.feedItemIds.length
-			);
+			const update = ( current: number ) => current + params.feedItemIds.length;
+			patchSubscriptionSeenCount( queryClient, { feedIds: [ params.feedId ] }, update );
+			patchListsSeenCount( queryClient, [ params.feedId ], update );
 		},
 	} );
 
@@ -65,5 +62,6 @@ export const markAllReaderPostsAsSeenMutation = ( queryClient: QueryClient ) =>
 		mutationFn: markAllReaderPostsAsSeen,
 		onSuccess: ( _response, params ) => {
 			patchSubscriptionSeenCount( queryClient, { feedIds: params.feedIds }, () => 0 );
+			patchListsSeenCount( queryClient, params.feedIds, () => 0 );
 		},
 	} );

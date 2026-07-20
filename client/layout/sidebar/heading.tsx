@@ -1,10 +1,19 @@
-const SidebarHeading = ( { children, onClick, ...props } ) => {
+import type { KeyboardEvent, KeyboardEventHandler, MouseEvent } from 'react';
+
+interface SidebarHeadingProps {
+	children?: React.ReactNode;
+	navigationLabel?: string;
+	url?: string;
+	onClick?: ( event?: MouseEvent< HTMLAnchorElement > ) => void;
+}
+
+const SidebarHeading = ( { children, onClick, ...props }: SidebarHeadingProps ) => {
 	const tabIndex = onClick ? 0 : -1;
 
-	let onKeyDown = null;
+	let onKeyDown: KeyboardEventHandler< HTMLAnchorElement > | undefined;
 
 	if ( onClick ) {
-		onKeyDown = ( event ) => {
+		onKeyDown = ( event: KeyboardEvent< HTMLAnchorElement > ) => {
 			// Trigger click for enter, similarly to default brower behavior for <a> or <button>
 			if ( 13 === event.keyCode ) {
 				event.preventDefault();

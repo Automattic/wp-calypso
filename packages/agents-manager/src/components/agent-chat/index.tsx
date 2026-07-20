@@ -27,6 +27,7 @@ import CustomALink from '../custom-a-link';
 import FeedbackInput from '../feedback-input';
 import { AI } from '../icons';
 import SelectedBlock from '../selected-block';
+import getSuggestionClickPayload from './get-suggestion-click-payload';
 import GroupedEmptyView from './grouped-empty-view';
 import type { UseImageUploadResult } from '../../hooks/use-image-upload';
 import type { ExternalContextCard, ExternalContextCardAction } from '../../utils/external-context';
@@ -203,12 +204,10 @@ export default function AgentChat( {
 	);
 	const handleDisplayedSuggestionClick = useCallback(
 		( selectedSuggestion: Suggestion | string ) => {
-			const originalSuggestion =
-				typeof selectedSuggestion === 'string'
-					? selectedSuggestion
-					: suggestions.find( ( suggestion ) => suggestion.id === selectedSuggestion.id ) ??
-					  selectedSuggestion;
-			onSuggestionClick?.( originalSuggestion, suggestions );
+			onSuggestionClick?.(
+				getSuggestionClickPayload( selectedSuggestion, suggestions ),
+				suggestions
+			);
 		},
 		[ onSuggestionClick, suggestions ]
 	);

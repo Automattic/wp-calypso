@@ -11,13 +11,13 @@ describe( 'Count', () => {
 		expect( numberFormatSpy ).toHaveBeenCalledWith( 23 );
 	} );
 
-	test( 'should call `i18n.numberFormat` with `compact` if `true`', () => {
+	test( 'should render compact number formatting when `compact` is `true`', () => {
 		const { container } = render( <Count count={ 1000 } compact /> );
 		expect( container.firstChild ).toHaveTextContent( '1K' );
 	} );
 
 	test( 'should render with primary class', () => {
-		const { container } = render( <Count count={ 23 } primary numberFormat={ () => {} } /> );
+		const { container } = render( <Count count={ 23 } primary numberFormat={ () => '' } /> );
 		expect( container.firstChild ).toHaveClass( 'is-primary' );
 	} );
 } );

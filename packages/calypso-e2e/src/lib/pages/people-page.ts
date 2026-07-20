@@ -16,7 +16,6 @@ export class PeoplePage {
 
 	// Header
 	readonly addPeopleButton: Locator;
-	readonly invitePeopleButton: Locator;
 
 	/**
 	 * Constructs an instance of the component.
@@ -32,7 +31,6 @@ export class PeoplePage {
 
 		// Header
 		this.addPeopleButton = this.page.locator( 'a:text("Add a user")' );
-		this.invitePeopleButton = this.page.locator( '.people-list-section-header__add-button' );
 	}
 
 	/**
@@ -80,10 +78,10 @@ export class PeoplePage {
 	/**
 	 * Waits for an invitation to appear in the pending invites list. Reloads the page until the invitation is found or the timeout is reached.
 	 *
-	 * On the user-management-revamp /people/team/<site> page, the invites widget only
-	 * renders the most recent invite (singleInviteView), so a test invite is invisible
-	 * whenever a concurrent test on the same shared site creates a newer one. Hop to
-	 * /people/pending-invites/<site> first, which lists every pending invite.
+	 * On the /people/team/<site> page, the invites widget only renders the most recent
+	 * invite (singleInviteView), so a test invite is invisible whenever a concurrent test
+	 * on the same shared site creates a newer one. Hop to /people/pending-invites/<site>
+	 * first, which lists every pending invite.
 	 *
 	 * @param emailaddress Email address of the invited user.
 	 * @param timeout Maximum time to wait in milliseconds (default: 60000).
@@ -185,13 +183,6 @@ export class PeoplePage {
 			await this.clearUserButton.click();
 			await this.page.getByText( 'Invite deleted' ).waitFor( { state: 'visible' } );
 		}
-	}
-
-	/**
-	 * Click on the `Invite` button to navigate to the invite user page.
-	 */
-	async clickInviteUser(): Promise< void > {
-		await Promise.all( [ this.page.waitForNavigation(), this.invitePeopleButton.click() ] );
 	}
 
 	/**
