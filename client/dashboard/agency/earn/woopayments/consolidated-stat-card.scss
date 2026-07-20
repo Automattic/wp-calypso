@@ -1,19 +1,6 @@
 .woopayments-stat-card__popover-content {
 	box-sizing: border-box;
 	width: 320px;
+	max-width: calc( 100vw - 32px );
 	padding: 16px;
-}
-
-// Layout for the payout-cards popover description.
-.payout-cards__description {
-	display: flex;
-	flex-direction: column;
-	gap: 12px;
-	line-height: 1.4;
-
-	.payout-cards__description-item {
-		display: flex;
-		flex-direction: column;
-		gap: 2px;
-	}
 }

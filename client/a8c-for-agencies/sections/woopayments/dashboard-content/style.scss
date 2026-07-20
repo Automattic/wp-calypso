@@ -1,6 +1,7 @@
 @import '@wordpress/base-styles/breakpoints';
 @import '@wordpress/base-styles/mixins';
 @import '@wordpress/base-styles/variables';
+@import 'calypso/assets/stylesheets/shared/mixins/breakpoints';
 
 // The commissions table renders the shared dashboard CommissionsTable (bare
 // @wordpress/dataviews). The dashboard loads DataViews styles globally, but
@@ -21,9 +22,24 @@
 		}
 	}
 
+	// The shared CommissionsTable renders the bare @wordpress/dataviews toolbar,
+	// which sits flush while .redesigned-a8c-table insets the table columns. Match
+	// the toolbar padding to that inset so the search box lines up with the first
+	// column and the view-options cog with the actions column. (The dashboard app
+	// handles this globally via app/dataviews-overrides.scss.)
+	.redesigned-a8c-table .dataviews__view-actions {
+		padding-inline: 16px;
+	}
+
 	&.full-width-layout-with-table {
 		.consolidated-view {
 			padding: 16px 64px 48px;
+		}
+
+		.redesigned-a8c-table .dataviews__view-actions {
+			@include breakpoint-deprecated( ">660px" ) {
+				padding-inline: 64px;
+			}
 		}
 	}
 }

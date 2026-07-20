@@ -62,8 +62,9 @@ export default function CommissionsTable( {
 			{
 				id: 'site',
 				label: __( 'Site' ),
-				getValue: () => '-',
+				getValue: ( { item } ) => item.siteUrl,
 				render: ( { item } ) => <SiteColumn site={ item.siteUrl } />,
+				enableGlobalSearch: true,
 				enableHiding: false,
 				enableSorting: false,
 			},
@@ -200,7 +201,6 @@ export default function CommissionsTable( {
 				data={ data }
 				getItemId={ ( item ) => `${ item.blogId }` }
 				paginationInfo={ paginationInfo }
-				search={ false }
 				fields={ fields }
 				actions={ actions }
 				view={ view }

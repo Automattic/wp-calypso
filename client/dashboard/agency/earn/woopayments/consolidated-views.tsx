@@ -1,6 +1,10 @@
 import { formatCurrency } from '@automattic/number-formatters';
-import { __experimentalHStack as HStack, Button } from '@wordpress/components';
-import { createInterpolateElement } from '@wordpress/element';
+import {
+	__experimentalHStack as HStack,
+	__experimentalText as Text,
+	__experimentalVStack as VStack,
+	Button,
+} from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import ConsolidatedStatCard from './consolidated-stat-card';
 import PayoutCards from './payout-cards';
@@ -32,15 +36,20 @@ export default function ConsolidatedViews( {
 				value={ formatCurrency( totalCommission, 'USD' ) }
 				footerText={ __( 'Total WooPayments commissions paid' ) }
 				popoverTitle={ __( 'Total WooPayments commissions paid' ) }
-				popoverContent={ createInterpolateElement(
-					__(
-						'The total amount of transactions processed through WooPayments across all your client sites. <br/><br/><a>Learn more</a>'
-					),
-					{
-						br: <br />,
-						a: <Button variant="link" href={ WOOPAYMENTS_LEARN_MORE_LINK } target="_blank" />,
-					}
-				) }
+				popoverContent={
+					<VStack spacing={ 3 }>
+						<Text>
+							{ __(
+								'The total amount of transactions processed through WooPayments across all your client sites.'
+							) }
+						</Text>
+						<div>
+							<Button variant="link" href={ WOOPAYMENTS_LEARN_MORE_LINK } target="_blank">
+								{ __( 'Learn more' ) }
+							</Button>
+						</div>
+					</VStack>
+				}
 				isLoading={ isLoading }
 			/>
 			<PayoutCards

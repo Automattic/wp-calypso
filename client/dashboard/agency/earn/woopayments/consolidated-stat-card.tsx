@@ -37,8 +37,10 @@ export default function ConsolidatedStatCard( {
 	return (
 		<Card className="woopayments-stat-card">
 			<CardBody>
-				<VStack spacing={ 3 }>
-					<Heading level={ 2 }>{ isLoading ? <TextSkeleton length={ 8 } /> : value }</Heading>
+				<VStack spacing={ 2 }>
+					<Heading level={ 2 } size={ 20 } weight={ 500 }>
+						{ isLoading ? <TextSkeleton length={ 8 } /> : value }
+					</Heading>
 					<HStack justify="flex-start" spacing={ 1 } expanded={ false }>
 						<Text variant="muted">{ footerText }</Text>
 						<Button
@@ -53,6 +55,8 @@ export default function ConsolidatedStatCard( {
 								anchor={ infoAnchor }
 								placement="bottom"
 								offset={ 12 }
+								shift
+								resize={ false }
 								focusOnMount
 								onFocusOutside={ () => setShowPopover( false ) }
 							>
