@@ -1,3 +1,4 @@
+import { clearHostingDashboardStorage } from 'calypso/lib/user/clear-hosting-dashboard-storage';
 import { filterUserObject, getLogoutUrl, rawCurrentUserFetch } from 'calypso/lib/user/shared-utils';
 import {
 	clearStore,
@@ -67,7 +68,7 @@ export function redirectToLogout( postLogoutRedirectUrl ) {
 
 		// Clear any data stored locally within the user data module or localStorage
 		disablePersistence();
-		await clearStore();
+		await Promise.all( [ clearStore(), clearHostingDashboardStorage() ] );
 
 		window.location.href = logoutUrl;
 	};

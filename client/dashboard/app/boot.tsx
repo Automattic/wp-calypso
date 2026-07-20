@@ -1,4 +1,4 @@
-import { persistQueryClientPromise } from '@automattic/api-queries';
+import { persistQueryClientPromise, validateQueryCacheOwner } from '@automattic/api-queries';
 import { isEnabled } from '@automattic/calypso-config';
 import { captureException, initSentry } from '@automattic/calypso-sentry';
 import { maybeInitializeSupportSession } from '@automattic/calypso-support-session';
@@ -26,6 +26,12 @@ import '@automattic/omnibar/style.scss';
 function boot( config: AppConfig ) {
 	if ( handleOAuthCallback() ) {
 		return;
+	}
+
+	// Validate before anything renders; with user bootstrap the user is known
+	// synchronously. OAuth variants are covered by `initializeCurrentUser`.
+	if ( window.currentUser ) {
+		validateQueryCacheOwner( window.currentUser.ID );
 	}
 
 	maybeInitializeSupportSession( wpcom );

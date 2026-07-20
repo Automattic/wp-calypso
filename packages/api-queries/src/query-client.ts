@@ -34,6 +34,11 @@ declare module '@tanstack/react-query' {
 // of breaking changes to the default key in the future.
 const reactQueryCacheKey = 'REACT_QUERY_OFFLINE_CACHE';
 
+// Tracks which user the persisted cache belongs to. Logout on another origin
+// (e.g. wordpress.com) can't clear this origin's storage, so ownership is
+// validated here at boot instead.
+const cacheOwnerKey = 'REACT_QUERY_CACHE_OWNER';
+
 const queryClient = new QueryClient( {
 	defaultOptions: {
 		queries: {
@@ -93,5 +98,28 @@ export { queryClient, disablePersistQueryClient, persistQueryClientPromise };
 export function clearQueryClient() {
 	if ( typeof window !== 'undefined' && ! isSupportSession() ) {
 		localStorage.removeItem( reactQueryCacheKey );
+		localStorage.removeItem( cacheOwnerKey );
 	}
+}
+
+/**
+ * Wipes the persisted and in-memory query caches unless they belong to the
+ * given user, then records that user as the cache owner. Pending queries are
+ * kept: they hold no previous-user data and removing in-flight queries (like
+ * the auth query calling this) would trigger refetch loops.
+ */
+export function validateQueryCacheOwner( userId: number ) {
+	if ( typeof window === 'undefined' || isSupportSession() ) {
+		return;
+	}
+
+	const owner = localStorage.getItem( cacheOwnerKey );
+	if ( owner === String( userId ) ) {
+		return;
+	}
+
+	localStorage.removeItem( reactQueryCacheKey );
+	queryClient.removeQueries( { predicate: ( query ) => query.state.status !== 'pending' } );
+	queryClient.getMutationCache().clear();
+	localStorage.setItem( cacheOwnerKey, String( userId ) );
 }

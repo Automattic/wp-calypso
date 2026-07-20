@@ -24,6 +24,7 @@ import SidebarFooter from 'calypso/layout/sidebar/footer';
 import SidebarItem from 'calypso/layout/sidebar/item';
 import SidebarMenu from 'calypso/layout/sidebar/menu';
 import SidebarRegion from 'calypso/layout/sidebar/region';
+import { clearHostingDashboardStorage } from 'calypso/lib/user/clear-hosting-dashboard-storage';
 import { clearStore, disablePersistence } from 'calypso/lib/user/store';
 import ProfileGravatar from 'calypso/me/profile-gravatar';
 import { purchasesRoot } from 'calypso/me/purchases/paths';
@@ -75,7 +76,7 @@ class MeSidebar extends Component {
 		try {
 			const { redirect_to } = await this.props.logoutUser( redirectTo );
 			disablePersistence();
-			await clearStore();
+			await Promise.all( [ clearStore(), clearHostingDashboardStorage() ] );
 			window.location.href = redirect_to || '/';
 		} catch {
 			// The logout endpoint might fail if the nonce has expired.

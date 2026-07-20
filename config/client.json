@@ -7,6 +7,7 @@
 	"facebook_api_key",
 	"features",
 	"hostname",
+	"hosting_dashboard_clear_storage_url",
 	"hotjar_enabled",
 	"i18n_default_locale_slug",
 	"jetpack_support_blog",
