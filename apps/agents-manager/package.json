@@ -40,7 +40,8 @@
 		"@wordpress/compose": "^8.2.0",
 		"@wordpress/data": "^10.48.0",
 		"@wordpress/i18n": "^6.21.0",
-		"@wordpress/plugins": "^7.48.0"
+		"@wordpress/plugins": "^7.48.0",
+		"moment-timezone": "^0.5.48"
 	},
 	"devDependencies": {
 		"@automattic/calypso-apps-builder": "workspace:^",
@@ -49,6 +50,7 @@
 		"@wordpress/dependency-extraction-webpack-plugin": "^6.24.0",
 		"@wordpress/readable-js-assets-webpack-plugin": "^3.24.0",
 		"copy-webpack-plugin": "^10.2.4",
+		"moment-timezone-data-webpack-plugin": "^1.5.1",
 		"webpack": "^5.99.8"
 	},
 	"peerDependencies": {

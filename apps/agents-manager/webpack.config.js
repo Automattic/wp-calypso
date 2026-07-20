@@ -3,6 +3,7 @@ const getBaseWebpackConfig = require( '@automattic/calypso-build/webpack.config.
 const DependencyExtractionWebpackPlugin = require( '@wordpress/dependency-extraction-webpack-plugin' );
 const ReadableJsAssetsWebpackPlugin = require( '@wordpress/readable-js-assets-webpack-plugin' );
 const CopyPlugin = require( 'copy-webpack-plugin' );
+const MomentTimezoneDataPlugin = require( 'moment-timezone-data-webpack-plugin' );
 const webpack = require( 'webpack' );
 const GenerateChunksMapPlugin = require( '../../build-tools/webpack/generate-chunks-map-plugin' );
 
@@ -120,6 +121,11 @@ function getIndividualConfig( options = {} ) {
 				},
 			} ),
 			new ReadableJsAssetsWebpackPlugin(),
+			new MomentTimezoneDataPlugin( {
+				startYear: 2000,
+				endYear: 2030,
+				cacheDir: path.resolve( __dirname, '.cache', 'moment-timezone' ),
+			} ),
 		],
 	};
 }
@@ -191,6 +197,11 @@ function getReaderConfig( options = {} ) {
 				'process.env.NODE_DEBUG': JSON.stringify( process.env.NODE_DEBUG || false ),
 			} ),
 			new ReadableJsAssetsWebpackPlugin(),
+			new MomentTimezoneDataPlugin( {
+				startYear: 2000,
+				endYear: 2030,
+				cacheDir: path.resolve( __dirname, '.cache', 'moment-timezone' ),
+			} ),
 			// Intentionally NO DependencyExtractionWebpackPlugin — all WP deps are bundled.
 		],
 	};
