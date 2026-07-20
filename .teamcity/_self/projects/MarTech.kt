@@ -2,11 +2,10 @@ package _self.projects
 
 import _self.CalypsoE2ETestsBuildTemplate
 import _self.bashNodeScript
+import _self.lib.utils.*
 import jetbrains.buildServer.configs.kotlin.v2019_2.BuildType
 import jetbrains.buildServer.configs.kotlin.v2019_2.Project
 import jetbrains.buildServer.configs.kotlin.v2019_2.buildFeatures.notifications
-import jetbrains.buildServer.configs.kotlin.v2019_2.failureConditions.BuildFailureOnMetric
-import jetbrains.buildServer.configs.kotlin.v2019_2.failureConditions.failOnMetricChange
 import jetbrains.buildServer.configs.kotlin.v2019_2.triggers.schedule
 
 object MarTech : Project({
@@ -91,22 +90,6 @@ object ToSAcceptanceTracking : BuildType({
 	}
 
 	failureConditions {
-		executionTimeoutMin = 20
-		// Don't fail if the runner exists with a non zero code. This allows a build to pass if the failed tests have been muted previously.
-		nonZeroExitCode = false
-
-		// Support retrying only the failed tests.
-		supportTestRetry = true
-
-		// Fail if the number of passing tests is 50% or less than the last build. This will catch the case where the test runner crashes and no tests are run.
-		failOnMetricChange {
-			metric = BuildFailureOnMetric.MetricType.PASSED_TEST_COUNT
-			threshold = 50
-			units = BuildFailureOnMetric.MetricUnit.PERCENTS
-			comparison = BuildFailureOnMetric.MetricComparison.LESS
-			compareTo = build {
-				buildRule = lastSuccessful()
-			}
-		}
+		defaultE2eFailureConditions()
 	}
 })
