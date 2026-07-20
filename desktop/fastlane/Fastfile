@@ -79,7 +79,7 @@ platform :mac do
   #
   lane :verify_code_signing do
     macos_verify_code_signing(
-      app_path: Dir[File.join(PROJECT_ROOT_FOLDER, 'release', 'mac*', '*.app')],
+      artifact_path: Dir[File.join(PROJECT_ROOT_FOLDER, 'release', 'mac*', '*.app')],
       expected_authority: "Developer ID Application: Automattic, Inc. (#{TEAM_ID})"
     )
   end
@@ -96,7 +96,9 @@ platform :mac do
 
     api_key = app_store_connect_api_key
 
-    Dir[File.join(PROJECT_ROOT_FOLDER, 'release', '**', '*.dmg')].each do |path|
+    dmg_paths = Dir[File.join(PROJECT_ROOT_FOLDER, 'release', '**', '*.dmg')]
+
+    dmg_paths.each do |path|
       notarize(
         bundle_id: 'com.automattic.wordpress',
         package: path,
@@ -104,5 +106,9 @@ platform :mac do
         print_log: true
       )
     end
+
+    # `electron-builder` leaves the disk images themselves unsigned — only the app
+    # inside them is signed — so the stapled ticket is all there is to check here.
+    macos_verify_code_signing(artifact_path: dmg_paths)
   end
 end
