@@ -11,7 +11,6 @@ import { useSelect } from '@wordpress/data';
 import { useState, useCallback, useEffect, useMemo, useRef } from '@wordpress/element';
 import { __, _n, sprintf } from '@wordpress/i18n';
 import { Icon, check, undo } from '@wordpress/icons';
-import DOMPurify from 'dompurify';
 /**
  * Internal dependencies
  */
@@ -31,6 +30,7 @@ import {
 	type BlockEditorStore,
 	type EditorStore,
 } from '../utils/blocks';
+import { sanitizeReviewRichText } from '../utils/sanitize-review-rich-text';
 import {
 	trackAiEditorialReviewItemAction,
 	trackAiEditorialReviewResultRendered,
@@ -1300,7 +1300,7 @@ export default function ReviewMediation( {
 																className="jetpack-ai-review-mediation__ai-text"
 																// eslint-disable-next-line react/no-danger
 																dangerouslySetInnerHTML={ {
-																	__html: DOMPurify.sanitize( aiCandidate.text ),
+																	__html: sanitizeReviewRichText( aiCandidate.text ),
 																} }
 															/>
 														) : (

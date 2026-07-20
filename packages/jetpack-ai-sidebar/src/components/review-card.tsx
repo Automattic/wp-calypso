@@ -10,11 +10,11 @@
  */
 import { __ } from '@wordpress/i18n';
 import { Icon, check, undo } from '@wordpress/icons';
-import DOMPurify from 'dompurify';
 import { type ReactNode } from 'react';
 /**
  * Internal dependencies
  */
+import { sanitizeReviewRichText } from '../utils/sanitize-review-rich-text';
 import BlockRef, { type BlockSnapshot } from './block-ref';
 
 export type ReviewCardStatus = 'pending' | 'applying' | 'accepted' | 'dismissed' | 'failed';
@@ -177,7 +177,7 @@ export default function ReviewCard( {
 									<RowContentElement
 										className={ contentClassName }
 										// eslint-disable-next-line react/no-danger
-										dangerouslySetInnerHTML={ { __html: DOMPurify.sanitize( row.text ) } }
+										dangerouslySetInnerHTML={ { __html: sanitizeReviewRichText( row.text ) } }
 									/>
 								) : (
 									<RowContentElement className={ contentClassName }>{ row.text }</RowContentElement>

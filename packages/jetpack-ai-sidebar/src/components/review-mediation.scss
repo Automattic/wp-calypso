@@ -832,6 +832,11 @@
 	// Host styles can assign weights to nested inline formats. Keep descendants
 	// inheriting semantic bold without enumerating every possible nested tag.
 	&__ai-inset &__ai-text {
+		a {
+			color: inherit;
+			text-decoration: underline;
+		}
+
 		b,
 		strong {
 			font-weight: bold;
