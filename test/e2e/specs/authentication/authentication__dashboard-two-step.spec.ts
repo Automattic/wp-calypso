@@ -118,7 +118,7 @@ async function satisfyReauthChallenge(
 	previousCode: string
 ): Promise< string > {
 	const logOut = page.getByText( 'Not you? Log out' );
-	if ( ! ( await logOut.isVisible().catch( () => false ) ) ) {
+	if ( ! ( await logOut.isVisible() ) ) {
 		return '';
 	}
 	const code = await getUnusedTOTPCode( page, new TOTPClient( totpSecret ), previousCode );
@@ -142,7 +142,10 @@ async function assertTwoStepEnabledAndLoggedIn( page: Page, totpSecret: string )
 	// answering it until the settings actually render.
 	let previousCode = '';
 	await expect( async () => {
-		previousCode = await satisfyReauthChallenge( page, totpSecret, previousCode );
+		const code = await satisfyReauthChallenge( page, totpSecret, previousCode );
+		if ( code ) {
+			previousCode = code;
+		}
 		await expect( registerKeyButton ).toBeVisible( { timeout: 3_000 } );
 	} ).toPass( { timeout: 90_000 } );
 }
