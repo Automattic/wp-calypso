@@ -5,7 +5,7 @@ import {
 	githubInstallationsQuery,
 } from '@automattic/api-queries';
 import { useQuery, useSuspenseQuery } from '@tanstack/react-query';
-import { useNavigate, useRouter } from '@tanstack/react-router';
+import { useNavigate, useParams, useRouter, useSearch } from '@tanstack/react-router';
 import { Button } from '@wordpress/components';
 import { filterSortAndPaginate } from '@wordpress/dataviews';
 import { createInterpolateElement } from '@wordpress/element';
@@ -14,7 +14,6 @@ import Breadcrumbs from '../../app/breadcrumbs';
 import { usePersistentView } from '../../app/hooks/use-persistent-view';
 import {
 	siteDeploymentsListRoute,
-	siteRoute,
 	siteSettingsRepositoriesConnectRoute,
 	siteSettingsRepositoriesManageRoute,
 	siteSettingsRepositoriesRoute,
@@ -34,13 +33,13 @@ import type { RenderModalProps, Action } from '@wordpress/dataviews';
 
 function RepositoriesList() {
 	const router = useRouter();
-	const { siteSlug } = siteRoute.useParams();
+	const { siteSlug } = useParams( { strict: false } ) as { siteSlug: string };
 	const { data: site } = useSuspenseQuery( siteBySlugQuery( siteSlug ) );
 	const { error: githubInstallationsError, isLoading: isLoadingInstallations } = useQuery(
 		githubInstallationsQuery()
 	);
 
-	const searchParams = siteSettingsRepositoriesRoute.useSearch();
+	const searchParams = useSearch( { strict: false } );
 	const { view, updateView, resetView } = usePersistentView( {
 		slug: 'site-settings-repositories',
 		defaultView: DEFAULT_VIEW,
@@ -162,7 +161,7 @@ function RepositoriesList() {
 }
 
 function SiteRepositories() {
-	const { siteSlug } = siteRoute.useParams();
+	const { siteSlug } = useParams( { strict: false } ) as { siteSlug: string };
 	const { data: site } = useSuspenseQuery( siteBySlugQuery( siteSlug ) );
 	const navigate = useNavigate( { from: siteSettingsRepositoriesRoute.fullPath } );
 	const canConnect = hasHostingFeature( site, HostingFeatures.DEPLOYMENT );
