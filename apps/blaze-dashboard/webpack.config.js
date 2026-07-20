@@ -161,10 +161,6 @@ module.exports = {
 						'@wordpress/is-shallow-equal',
 						'@wordpress/primitives',
 						'@wordpress/url',
-						// Externalize the singletons WordPress already provides. Bundling our own
-						// copy gives the app a second private-apis registry: the host's
-						// `wp.components` locks its private APIs into its registry, our `unlock`
-						// reads the empty one back and throws ("Cannot read properties of undefined").
 						'@wordpress/private-apis',
 						'@wordpress/element',
 						'@wordpress/data',
