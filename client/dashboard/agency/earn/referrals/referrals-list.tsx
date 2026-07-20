@@ -14,20 +14,8 @@ interface Props {
 	onChangeView: ( view: View ) => void;
 	onReset?: () => void;
 	isLoading?: boolean;
-	/**
-	 * Renders the client cell. The host app injects navigation (MSD links to a
-	 * detail route; A4A opens a preview pane).
-	 */
 	renderClient?: ( item: Referral ) => ReactNode;
-	/**
-	 * Row actions. The host app injects these (e.g. A4A adds a "View details"
-	 * action that opens its preview pane).
-	 */
 	actions?: Action< Referral >[];
-	/**
-	 * Selected item ids. Drives the row highlight and makes rows clickable, which
-	 * A4A uses to keep the list in sync with its preview pane.
-	 */
 	selection?: string[];
 	onChangeSelection?: ( ids: string[] ) => void;
 }
@@ -65,12 +53,11 @@ export default function ReferralsList( {
 				<DataViewsEmptyStateLayout
 					title={ __( 'No referrals' ) }
 					description={ __( 'Referrals from your clients will appear here.' ) }
+					isBorderless
 				/>
 			}
 		>
-			{ /* Free composition: the layout switcher is intentionally omitted so the
-			   layout stays app-controlled (A4A switches to a list while its preview
-			   pane is open) rather than user-switchable. */ }
+			{ /* The layout switcher is intentionally omitted: the layout is app-controlled. */ }
 			<HStack
 				className="dataviews__view-actions referrals-list__view-actions"
 				justify="space-between"

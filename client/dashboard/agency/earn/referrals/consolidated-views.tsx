@@ -1,13 +1,11 @@
 import { formatCurrency } from '@automattic/number-formatters';
-import { __experimentalHStack as HStack, Button } from '@wordpress/components';
+import { __experimentalGrid as Grid, Button } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import ConsolidatedStatCard from './consolidated-stat-card';
 import useConsolidatedPayoutData from './hooks/use-consolidated-payout-data';
 import PayoutCards from './payout-cards';
 import type { Referral, ReferralCommissionPayout } from '@automattic/api-core';
-
-import './consolidated-views.scss';
 
 const AGENCY_EARNINGS_LEARN_MORE_LINK =
 	'https://agencieshelp.automattic.com/knowledge-base/automattic-for-agencies-earnings/';
@@ -53,7 +51,11 @@ export default function ConsolidatedViews( {
 		: referralCommissionPayout?.total_commission;
 
 	return (
-		<HStack className="referrals-consolidated-views" alignment="stretch" spacing={ 4 } wrap>
+		<Grid
+			className="referrals-consolidated-views"
+			templateColumns="repeat(auto-fit, minmax(240px, 1fr))"
+			gap={ 4 }
+		>
 			<ConsolidatedStatCard
 				value={ formatCurrency( totalPayouts ?? 0, 'USD' ) }
 				footerText={
@@ -92,6 +94,6 @@ export default function ConsolidatedViews( {
 				) }
 				isLoading={ isLoading }
 			/>
-		</HStack>
+		</Grid>
 	);
 }

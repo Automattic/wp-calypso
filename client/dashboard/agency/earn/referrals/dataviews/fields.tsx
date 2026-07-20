@@ -41,7 +41,6 @@ export function getReferralFields(
 			label: __( 'Estimated commissions' ),
 			enableHiding: true,
 			enableSorting: true,
-			// Mirrors the total that CommissionsCell displays.
 			getValue: ( { item } ) => {
 				const currentQuarter = getEstimatedCommission( [ item ] );
 				return areNextAndCurrentPayoutDatesEqual( new Date() )

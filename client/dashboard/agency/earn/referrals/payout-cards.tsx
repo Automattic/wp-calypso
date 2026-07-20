@@ -1,5 +1,5 @@
 import { formatCurrency } from '@automattic/number-formatters';
-import { Button } from '@wordpress/components';
+import { __experimentalVStack as VStack, Button } from '@wordpress/components';
 import { __, sprintf } from '@wordpress/i18n';
 import { formatDate } from '../../../utils/datetime';
 import ConsolidatedStatCard from './consolidated-stat-card';
@@ -36,15 +36,15 @@ function PayoutAmount( {
 			footerAction={ footerAction }
 			popoverTitle={ popoverTitle }
 			popoverContent={
-				<div className="payout-cards__description">
+				<VStack spacing={ 3 }>
 					<div>
 						{ __(
 							'When your client buys products or hosting from Automattic for Agencies, they are billed on the first of every month rather than immediately. We estimate the commission based on the active use for the current month.'
 						) }
 					</div>
 
-					<div className="payout-cards__description-item">
-						{ __( 'Payout range:' ) }
+					<VStack spacing={ 1 }>
+						<span>{ __( 'Payout range:' ) }</span>
 						<strong>{ activityWindow }</strong>
 						{ handleHalfQuarter && (
 							<div>
@@ -58,12 +58,12 @@ function PayoutAmount( {
 								) }
 							</div>
 						) }
-					</div>
+					</VStack>
 
-					<div className="payout-cards__description-item">
-						{ __( 'Payout date:' ) }
+					<VStack spacing={ 1 }>
+						<span>{ __( 'Payout date:' ) }</span>
 						<strong>{ payoutDate }*</strong>
-					</div>
+					</VStack>
 
 					<div>
 						{ __(
@@ -76,7 +76,7 @@ function PayoutAmount( {
 							{ __( 'Learn more' ) }
 						</Button>
 					</div>
-				</div>
+				</VStack>
 			}
 			isLoading={ isFetching }
 		/>

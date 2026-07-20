@@ -33,8 +33,7 @@ export default function EarnReferrals() {
 
 	const [ view, setView ] = useState< View >( DEFAULT_VIEW );
 
-	// Treat the pre-agency window as loading so we don't flash the empty state
-	// before the referrals query is enabled.
+	// Counts the pre-agency window as loading, so the empty state doesn't flash.
 	const isLoading = agency === undefined || isLoadingReferrals;
 	const hasReferrals = referrals.length > 0;
 
