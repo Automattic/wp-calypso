@@ -1323,6 +1323,16 @@ export default function pages() {
 			}
 		} );
 
+	// The dashboard host has no login page; send /log-in to WordPress.com.
+	if ( isDashboardEnv() || calypsoEnv === 'development' ) {
+		app.get( pathToRegExp( '/log-in' ), ( req, res, next ) => {
+			if ( ! isAllowedDotcomDashboardHostname( req.hostname ) ) {
+				return next( 'route' );
+			}
+			res.redirect( config( 'wpcom_url' ) + req.originalUrl );
+		} );
+	}
+
 	// Set up login routing.
 	handleSectionPath( LOGIN_SECTION_DEFINITION, '/log-in', 'entry-login' );
 	loginRouter( serverRouter( app, setUpRoute, null ) );
