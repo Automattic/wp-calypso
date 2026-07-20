@@ -100,12 +100,18 @@ describe( 'injectScopedReset', () => {
 
 		expect( css ).toContain( 'font-size: 16px !important;' );
 		expect( css ).toContain( '--base-font-size: 16px !important;' );
-		expect( css ).toContain( '.agents-manager-chat .components-button.has-icon' );
+		expect( css ).toContain(
+			'.agents-manager-chat .components-button.has-icon:not(.components-dropdown-menu__menu-item)'
+		);
+		expect( css ).toContain(
+			'.agents-manager-chat .agents-manager-chat-header .components-button.has-icon:not(.components-dropdown-menu__menu-item)'
+		);
 		expect( css ).toContain(
 			'.agents-manager-chat .agents-manager-copy-action-button.components-button.has-icon'
 		);
 		expect( css ).toContain( 'text-transform: none !important;' );
 		expect( css ).toContain( 'letter-spacing: inherit !important;' );
+		expect( css ).toContain( '.agents-manager-chat textarea::placeholder' );
 		expect( css ).toContain( 'background: transparent !important;' );
 		expect( css ).toContain( 'color: var( --color-foreground, #1e1e1e ) !important;' );
 		expect( css ).toContain(
@@ -113,6 +119,10 @@ describe( 'injectScopedReset', () => {
 		);
 		expect( css ).toContain( ':not([aria-disabled="true"])' );
 		expect( css ).toContain( '.agents-manager-chat-header__menu-popover' );
+		expect( css ).toContain(
+			'.agents-manager-chat .agents-manager-chat-header .components-dropdown-menu__menu .components-dropdown-menu__menu-item'
+		);
+		expect( css ).toContain( 'white-space: nowrap !important;' );
 		expect( css ).toContain(
 			'.agents-manager-chat-header__menu-popover .components-dropdown-menu__menu-item[aria-disabled="true"]'
 		);

@@ -31,78 +31,96 @@ export const CANCEL_FLOW_TYPE = {
 } as const;
 export type CancelFlowType = ( typeof CANCEL_FLOW_TYPE )[ keyof typeof CANCEL_FLOW_TYPE ];
 
-export function isRenewing( purchase: Purchase ): boolean {
+/**
+ * Returns true if the purchase is auto-renewing and not yet expired.
+ */
+export function isRenewingBeforeExpiration( purchase: Purchase ): boolean {
 	return [ 'active', 'auto-renewing' ].includes( purchase.expiry_status );
 }
 
 /**
- * Returns true if the purchase is in grace period with a failed or missing auto-renewal.
- */
-export function isFailedAutoRenewal( purchase: Purchase ): boolean {
-	return (
-		isInExpirationGracePeriod( purchase ) &&
-		( isRenewing( purchase ) || ( purchase.is_auto_renew_enabled && ! purchase.payment_type ) )
-	);
-}
-
-/**
- * Returns true if the purchase is still active but headed toward lapsing: it
- * either requires a manual renewal or is expiring soon without auto-renew.
+ * Returns true if the purchase is still active but will lapse unless renewed,
+ * because it is not set to auto-renew. Covers an `expiry_status` of either
+ * `manual-renew` (not auto-renewing, with the expiry date not yet imminent) or
+ * `expiring` (not auto-renewing and expiring soon — the "needs attention"
+ * state).
  *
- * Note this also covers purchases that are active but already PAST their expiry
- * date (in the grace period), because the backend reports those as 'expiring'
- * rather than 'expired'. It does NOT cover already-lapsed purchases — see
- * {@link isExpired}. To test specifically for past-expiry, use the
- * `is_past_expiry_date` flag on the purchase.
+ * Note this describes a purchase that has not yet passed its expiry date — once
+ * the expiry date passes without renewal the status becomes `expired` (see
+ * {@link isExpiredAndInGracePeriod} and {@link isRemoved}).
  */
 export function isExpiring( purchase: Purchase ) {
 	return [ 'manual-renew', 'expiring' ].includes( purchase.expiry_status );
 }
 
 /**
- * Returns true only if the underlying subscription is no longer active (the
- * backend `expiry_status` is 'expired').
+ * Returns true if the purchase has passed its expiration date but is still
+ * active — this covers the post-expiry grace period during which a
+ * subscription can still be renewed before being fully removed.
  *
- * Important: this is NOT the same as the purchase being past its expiry date. A
- * subscription that is still active but past its expiry date (i.e. in its grace
- * period) reports as 'expiring', not 'expired', so this returns false for it —
- * see {@link isExpiring} and {@link isInExpirationGracePeriod}. To test whether
- * the expiry date itself has passed (regardless of active/lapsed state), use the
- * `is_past_expiry_date` flag on the purchase.
+ * If you also want to know whether the purchase could still have upcoming
+ * AUTO-RENEW attempts (which can occur even during the grace period), see
+ * {@link mightStillAutoRenew} or {@link isExpiredWithNoAutoRenewAttemptsLeft}.
+ *
+ * Note that during the grace period, the `purchase.renew_date` property may be
+ * empty even for subscriptions that auto-renew (this happens once the final
+ * auto-renewal attempt has passed), but regardless of whether it's empty, the
+ * focus of the user interface during this phase should not be on showing
+ * scheduled auto-renewal dates (which aren't very likely to succeed at this
+ * point anyway) but rather on encouraging the customer to manually renew.
  */
-export function isExpired( purchase: Purchase ) {
-	return 'expired' === purchase.expiry_status;
+export function isExpiredAndInGracePeriod( purchase: Purchase ): boolean {
+	return 'expired' === purchase.expiry_status && 'active' === purchase.subscription_status;
 }
 
 /**
- * Returns true if the purchase is past its expiry date but the subscription is
- * still active — the post-expiry grace period during which it can still be
- * renewed before fully lapsing.
- *
- * This is the "active but already past expiry" case that {@link isExpired} does
- * NOT cover: such purchases report an `expiry_status` of 'expiring' (or
- * 'manual-renew'), not 'expired'. Equivalent to `is_past_expiry_date` being
- * true while {@link isExpired} is false (excluding Akismet free products).
+ * Returns true if the purchase's subscription is no longer active (removed).
  */
-export function isInExpirationGracePeriod( purchase: Purchase ): boolean {
-	if ( ! purchase.expiry_date ) {
-		return false;
-	}
+export function isRemoved( purchase: Purchase ): boolean {
+	return 'active' !== purchase.subscription_status;
+}
 
-	if ( new Date( purchase.expiry_date ) >= new Date() ) {
-		return false;
-	}
-	if ( isExpired( purchase ) ) {
-		return false;
-	}
-	if ( ! isRenewing( purchase ) && ! isExpiring( purchase ) ) {
-		return false;
-	}
-	if ( isAkismetFreeProduct( purchase ) ) {
-		return false;
-	}
+/**
+ * Convenience check for "expired in any way" — either still active but past the
+ * expiration date (grace period), or fully removed.
+ */
+export function isExpiredOrRemoved( purchase: Purchase ): boolean {
+	return isExpiredAndInGracePeriod( purchase ) || isRemoved( purchase );
+}
 
-	return true;
+/**
+ * Returns true if the purchase may still auto-renew — i.e. a charge will
+ * actually be attempted: the subscription is active, auto-renew is enabled, a
+ * rechargeable payment method is attached, and it is not past its final
+ * auto-renewal attempt date.
+ *
+ * This is the "will be billed" signal and is a superset of the renewing
+ * `expiry_status` values (`active`/`auto-renewing` already require a chargeable
+ * payment method on the backend), so it holds for both not-yet-expired
+ * auto-renewing purchases and grace-period purchases that may still recover.
+ * "Might" is intentional: the underlying dates are day-granular and a charge can
+ * still fail.
+ */
+export function mightStillAutoRenew( purchase: Purchase ): boolean {
+	return purchase.might_still_auto_renew;
+}
+
+/**
+ * Returns true if the purchase has passed its expiry date (and is still in its
+ * grace period, not removed) with no remaining auto-renewal attempts on the
+ * schedule. This is the "expired and the auto-renew schedule is exhausted"
+ * state, independent of whether auto-renew is currently enabled or a payment
+ * method is attached.
+ *
+ * If this returns false, then there is still hope -- even if the purchase has
+ * auto-renew turned off or doesn't have a chargeable payment method attached,
+ * those are things which can be fixed and still end up with a successful
+ * auto-renewal in the end. Therefore, this is useful to check when deciding
+ * whether to allow the customer to do things like add a payment method or
+ * enable auto-renew on an already-expired subscription.
+ */
+export function isExpiredWithNoAutoRenewAttemptsLeft( purchase: Purchase ): boolean {
+	return isExpiredAndInGracePeriod( purchase ) && purchase.is_past_last_auto_renew_attempt_date;
 }
 
 export function isIncludedWithPlan( purchase: Purchase ) {
@@ -730,7 +748,7 @@ export function hasAmountAvailableToRefund( purchase: Purchase ) {
  * downgrades are also offered for plans that were paid with credits or are
  * otherwise free, where no money would be refunded.
  *
- * This is distinct from {@link isInExpirationGracePeriod}, which gates the
+ * This is distinct from {@link isExpiredAndInGracePeriod}, which gates the
  * downgrade-to-checkout flow for plans whose expiry date has already passed.
  */
 export function isWithinRefundWindowDowngradeEligible( purchase: Purchase ): boolean {
@@ -738,8 +756,7 @@ export function isWithinRefundWindowDowngradeEligible( purchase: Purchase ): boo
 		purchase.is_plan_type_downgradable &&
 		purchase.is_plan &&
 		purchase.is_within_initial_refund_window &&
-		! isExpired( purchase ) &&
-		! isInExpirationGracePeriod( purchase )
+		! isExpiredOrRemoved( purchase )
 	);
 }
 
@@ -747,18 +764,21 @@ export function isWithinRefundWindowDowngradeEligible( purchase: Purchase ): boo
  * Returns the purchase cancellation flow.
  */
 export function getPurchaseCancellationFlowType( purchase: Purchase ): CancelFlowType {
-	// Expired or grace-period purchases use the removal flow, matching the "Remove" button on the details page.
-	if ( isExpired( purchase ) || isInExpirationGracePeriod( purchase ) ) {
-		return CANCEL_FLOW_TYPE.REMOVE;
-	}
-
 	const isPlanRefundable = purchase.is_refundable;
 	const isPlanAutoRenewing = purchase.is_auto_renew_enabled;
 
 	if ( isPlanRefundable && hasAmountAvailableToRefund( purchase ) ) {
 		// If the subscription is refundable the subscription should be removed immediately.
 		return CANCEL_FLOW_TYPE.CANCEL_WITH_REFUND;
-	} else if ( ! isPlanRefundable && isPlanAutoRenewing ) {
+	}
+
+	// Expired purchases (that aren't refundable) use the removal flow, matching
+	// the "Remove" button on the details page.
+	if ( isExpiredOrRemoved( purchase ) ) {
+		return CANCEL_FLOW_TYPE.REMOVE;
+	}
+
+	if ( ! isPlanRefundable && isPlanAutoRenewing ) {
 		// If the subscription is not refundable and auto-renew is on turn off auto-renew.
 		return CANCEL_FLOW_TYPE.CANCEL_AUTORENEW;
 	}

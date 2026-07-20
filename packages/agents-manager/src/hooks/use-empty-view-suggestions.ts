@@ -34,7 +34,7 @@ const WRITING_SUGGESTION_LABELS: Record< string, () => string > = {
 	'seo-enhancer': () => __( 'Optimize SEO', __i18n_text_domain__ ),
 	'generate-feedback': () => __( 'Simple review', __i18n_text_domain__ ),
 	'proofread-content': () => __( 'Proofread', __i18n_text_domain__ ),
-	'mediate-review-notes': () => __( 'Editorial review', __i18n_text_domain__ ),
+	'ai-editorial-review': () => __( 'Editorial review', __i18n_text_domain__ ),
 };
 
 export const WRITING_SUGGESTION_IDS = new Set( Object.keys( WRITING_SUGGESTION_LABELS ) );

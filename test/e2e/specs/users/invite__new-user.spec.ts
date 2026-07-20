@@ -3,7 +3,6 @@ import {
 	CloseAccountFlow,
 	RestAPIClient,
 	RoleValue,
-	Roles,
 	UserSignupPage,
 } from '@automattic/calypso-e2e';
 import { expect, skipIfMailosaurLimitReached, skipIfNotTrunk, tags, test } from '../../lib/pw-base';
@@ -22,7 +21,6 @@ test.describe(
 			usernamePrefix: 'invited',
 		} );
 
-		let userManagementRevampFeature = false;
 		let acceptInviteLink: string;
 
 		// Accounts created during the run, closed via API in afterAll as a guaranteed
@@ -43,15 +41,10 @@ test.describe(
 			pageIncognito,
 			pagePeople,
 			pageAddPeople,
-			pageInvitePeople,
 			accountPreRelease,
 		} ) => {
 			await test.step( 'Given I am logged in as a site owner', async function () {
 				await accountPreRelease.authenticate( page );
-
-				userManagementRevampFeature = await page.evaluate(
-					"configData.features['user-management-revamp']"
-				);
 			} );
 
 			await test.step( 'When I navigate to Users > All Users', async function () {
@@ -59,28 +52,16 @@ test.describe(
 			} );
 
 			await test.step( `And I invite a new user with role ${ role }`, async function () {
-				if ( userManagementRevampFeature ) {
-					await pagePeople.clickAddTeamMember();
-					await pageAddPeople.addTeamMember( {
-						email: testUser.email,
-						role: role.toLowerCase() as RoleValue,
-						message: `Test invite for role of ${ role }`,
-					} );
-				} else {
-					await pagePeople.clickInviteUser();
-					await pageInvitePeople.invite( {
-						email: testUser.email,
-						role: role as Roles,
-						message: `Test invite for role of ${ role }`,
-					} );
-				}
+				await pagePeople.clickAddTeamMember();
+				await pageAddPeople.addTeamMember( {
+					email: testUser.email,
+					role: role.toLowerCase() as RoleValue,
+					message: `Test invite for role of ${ role }`,
+				} );
 			} );
 
 			await test.step( 'When I navigate to Users > All Users', async function () {
 				await componentSidebar.navigate( 'Users', 'All Users' );
-				if ( ! userManagementRevampFeature ) {
-					await pagePeople.clickTab( 'Invites' );
-				}
 				await pagePeople.clickViewAllIfAvailable();
 			} );
 

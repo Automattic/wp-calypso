@@ -1,5 +1,10 @@
 import { CANCEL_FLOW_TYPE } from 'calypso/components/marketing-survey/cancel-purchase-form/constants';
-import { getCancelIntentFromQuery, getDisplayVariant, getMutationFlowType } from '../utils';
+import {
+	getCancelIntentFromQuery,
+	getDisplayVariant,
+	getMutationFlowType,
+	getPurchaseCancellationFlowType,
+} from '../utils';
 import type { Purchase } from '../types';
 
 function makePurchase( overrides: Partial< Purchase > = {} ): Purchase {
@@ -8,6 +13,7 @@ function makePurchase( overrides: Partial< Purchase > = {} ): Purchase {
 		isRefundable: false,
 		refundAmount: 0,
 		expiryStatus: 'autoRenewing',
+		subscriptionStatus: 'active',
 		...overrides,
 	} as Purchase;
 }
@@ -124,5 +130,62 @@ describe( 'getMutationFlowType', () => {
 				makePurchase( { isAutoRenewEnabled: false, isRefundable: false } )
 			)
 		).toBe( CANCEL_FLOW_TYPE.REMOVE );
+	} );
+
+	test( 'intent absent → expired/grace or removed purchases route to REMOVE', () => {
+		// Grace period (expired but still active) with auto-renew on: routes to
+		// removal rather than disabling auto-renew, matching the Dashboard.
+		expect(
+			getMutationFlowType(
+				null,
+				makePurchase( {
+					expiryStatus: 'expired',
+					subscriptionStatus: 'active',
+					isAutoRenewEnabled: true,
+				} )
+			)
+		).toBe( CANCEL_FLOW_TYPE.REMOVE );
+	} );
+} );
+
+describe( 'getPurchaseCancellationFlowType', () => {
+	test( 'refundable → CANCEL_WITH_REFUND', () => {
+		expect(
+			getPurchaseCancellationFlowType( makePurchase( { isRefundable: true, refundAmount: 50 } ) )
+		).toBe( CANCEL_FLOW_TYPE.CANCEL_WITH_REFUND );
+	} );
+
+	test( 'refundable grace-period purchase → CANCEL_WITH_REFUND (refund wins over removal)', () => {
+		expect(
+			getPurchaseCancellationFlowType(
+				makePurchase( {
+					expiryStatus: 'expired',
+					subscriptionStatus: 'active',
+					isRefundable: true,
+					refundAmount: 50,
+				} )
+			)
+		).toBe( CANCEL_FLOW_TYPE.CANCEL_WITH_REFUND );
+	} );
+
+	test( 'non-refundable grace-period purchase → REMOVE', () => {
+		expect(
+			getPurchaseCancellationFlowType(
+				makePurchase( {
+					expiryStatus: 'expired',
+					subscriptionStatus: 'active',
+					isRefundable: false,
+					refundAmount: 0,
+				} )
+			)
+		).toBe( CANCEL_FLOW_TYPE.REMOVE );
+	} );
+
+	test( 'non-refundable auto-renewing purchase → CANCEL_AUTORENEW', () => {
+		expect(
+			getPurchaseCancellationFlowType(
+				makePurchase( { isAutoRenewEnabled: true, isRefundable: false, refundAmount: 0 } )
+			)
+		).toBe( CANCEL_FLOW_TYPE.CANCEL_AUTORENEW );
 	} );
 } );

@@ -4,7 +4,7 @@ import { Fields } from '@wordpress/dataviews';
 import { fixMe, LocalizeProps } from 'i18n-calypso';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import { logToLogstash } from 'calypso/lib/logstash';
-import { getDisplayName, isExpired, isRenewing, purchaseType } from 'calypso/lib/purchases';
+import { getDisplayName, mightStillAutoRenew, purchaseType } from 'calypso/lib/purchases';
 import { GetManagePurchaseUrlFor, MembershipSubscription } from 'calypso/lib/purchases/types';
 import { useSelector } from 'calypso/state';
 import { getSite } from 'calypso/state/sites/selectors';
@@ -321,10 +321,6 @@ export function getPurchasesFieldDefinitions( {
 			enableHiding: false,
 			filterBy: false,
 			getValue: ( { item }: { item: Purchases.Purchase } ) => {
-				if ( isExpired( item ) ) {
-					// Prefix expired items with a z so they sort to the end of the list.
-					return 'zzz ' + item.expiryStatus + ' ' + item.expiryDate;
-				}
 				// Include date in value to sort similar expiries together.
 				return item.expiryDate + ' ' + item.expiryStatus;
 			},
@@ -363,10 +359,10 @@ export function getPurchasesFieldDefinitions( {
 					return 'no-payment-method';
 				}
 				// Allows sorting by card number or payment partner (eg: `type === 'paypal'`).
-				return isExpired( item )
-					? // Do not return card number for expired purchases because it
-					  // will not be displayed so it will look wierd if we sort
-					  // expired purchases with active ones that have the same card.
+				return ! mightStillAutoRenew( item )
+					? // Do not return the card number when the payment method isn't in
+					  // use, since it won't be displayed; sorting it alongside active
+					  // purchases that have the same card would look wrong.
 					  'expired'
 					: item.payment.creditCard?.number ?? item.payment.type ?? 'no-payment-method';
 			},
@@ -385,7 +381,9 @@ export function getPurchasesFieldDefinitions( {
 				return (
 					<div className="purchase-item__payment-method">
 						<PurchaseItemPaymentMethod purchase={ item } translate={ translate } />
-						{ isBackupMethodAvailable && isRenewing( item ) && <BackupPaymentMethodNotice /> }
+						{ isBackupMethodAvailable && mightStillAutoRenew( item ) && (
+							<BackupPaymentMethodNotice />
+						) }
 					</div>
 				);
 			},

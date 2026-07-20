@@ -7,6 +7,12 @@ import {
 	getCancelIntentFromSearch,
 	getDisplayVariant,
 	getMutationFlowType,
+	getPurchaseCancellationFlowType,
+	isExpiredAndInGracePeriod,
+	isExpiredOrRemoved,
+	isRemoved,
+	mightStillAutoRenew,
+	isExpiredWithNoAutoRenewAttemptsLeft,
 } from '../purchase';
 import type { Purchase } from '@automattic/api-core';
 
@@ -16,6 +22,7 @@ function makePurchase( overrides: Partial< Purchase > = {} ): Purchase {
 		is_refundable: false,
 		refund_amount: 0,
 		expiry_status: 'auto-renewing',
+		subscription_status: 'active',
 		...overrides,
 	} as Purchase;
 }
@@ -147,5 +154,160 @@ describe( 'getMutationFlowType', () => {
 				makePurchase( { is_auto_renew_enabled: false, expiry_status: 'expired' } )
 			)
 		).toBe( CANCEL_FLOW_TYPE.REMOVE );
+	} );
+} );
+
+describe( 'getPurchaseCancellationFlowType', () => {
+	test( 'refundable → CANCEL_WITH_REFUND', () => {
+		expect(
+			getPurchaseCancellationFlowType( makePurchase( { is_refundable: true, refund_amount: 50 } ) )
+		).toBe( CANCEL_FLOW_TYPE.CANCEL_WITH_REFUND );
+	} );
+
+	test( 'refundable grace-period purchase → CANCEL_WITH_REFUND (refund wins over removal)', () => {
+		expect(
+			getPurchaseCancellationFlowType(
+				makePurchase( {
+					expiry_status: 'expired',
+					subscription_status: 'active',
+					is_refundable: true,
+					refund_amount: 50,
+				} )
+			)
+		).toBe( CANCEL_FLOW_TYPE.CANCEL_WITH_REFUND );
+	} );
+
+	test( 'non-refundable grace-period purchase → REMOVE', () => {
+		expect(
+			getPurchaseCancellationFlowType(
+				makePurchase( {
+					expiry_status: 'expired',
+					subscription_status: 'active',
+					is_refundable: false,
+					refund_amount: 0,
+				} )
+			)
+		).toBe( CANCEL_FLOW_TYPE.REMOVE );
+	} );
+
+	test( 'non-refundable auto-renewing purchase → CANCEL_AUTORENEW', () => {
+		expect(
+			getPurchaseCancellationFlowType(
+				makePurchase( { is_auto_renew_enabled: true, is_refundable: false, refund_amount: 0 } )
+			)
+		).toBe( CANCEL_FLOW_TYPE.CANCEL_AUTORENEW );
+	} );
+} );
+
+describe( 'isRemoved', () => {
+	test( 'is true when the subscription is no longer active', () => {
+		expect( isRemoved( makePurchase( { subscription_status: 'inactive' } ) ) ).toBe( true );
+	} );
+	test( 'is false when the subscription is still active (including grace period)', () => {
+		expect( isRemoved( makePurchase( { subscription_status: 'active' } ) ) ).toBe( false );
+	} );
+} );
+
+describe( 'isExpiredAndInGracePeriod', () => {
+	test( 'is true when expired but the subscription is still active', () => {
+		expect(
+			isExpiredAndInGracePeriod(
+				makePurchase( { expiry_status: 'expired', subscription_status: 'active' } )
+			)
+		).toBe( true );
+	} );
+	test( 'is false when expired and the subscription has been removed', () => {
+		expect(
+			isExpiredAndInGracePeriod(
+				makePurchase( { expiry_status: 'expired', subscription_status: 'inactive' } )
+			)
+		).toBe( false );
+	} );
+	test( 'is false when not expired', () => {
+		expect(
+			isExpiredAndInGracePeriod(
+				makePurchase( { expiry_status: 'active', subscription_status: 'active' } )
+			)
+		).toBe( false );
+	} );
+} );
+
+describe( 'isExpiredOrRemoved', () => {
+	test( 'is true for a purchase in its grace period', () => {
+		expect(
+			isExpiredOrRemoved(
+				makePurchase( { expiry_status: 'expired', subscription_status: 'active' } )
+			)
+		).toBe( true );
+	} );
+	test( 'is true for a removed purchase', () => {
+		expect(
+			isExpiredOrRemoved(
+				makePurchase( { expiry_status: 'expired', subscription_status: 'inactive' } )
+			)
+		).toBe( true );
+	} );
+	test( 'is false for an active purchase', () => {
+		expect(
+			isExpiredOrRemoved(
+				makePurchase( { expiry_status: 'active', subscription_status: 'active' } )
+			)
+		).toBe( false );
+	} );
+} );
+
+describe( 'mightStillAutoRenew', () => {
+	test( 'reflects the server-provided might_still_auto_renew flag', () => {
+		expect( mightStillAutoRenew( makePurchase( { might_still_auto_renew: true } ) ) ).toBe( true );
+		expect( mightStillAutoRenew( makePurchase( { might_still_auto_renew: false } ) ) ).toBe(
+			false
+		);
+	} );
+} );
+
+describe( 'isExpiredWithNoAutoRenewAttemptsLeft', () => {
+	test( 'is true when expired in grace period and past the last attempt date', () => {
+		expect(
+			isExpiredWithNoAutoRenewAttemptsLeft(
+				makePurchase( {
+					expiry_status: 'expired',
+					subscription_status: 'active',
+					is_past_last_auto_renew_attempt_date: true,
+				} )
+			)
+		).toBe( true );
+	} );
+	test( 'is false when attempts may still remain', () => {
+		expect(
+			isExpiredWithNoAutoRenewAttemptsLeft(
+				makePurchase( {
+					expiry_status: 'expired',
+					subscription_status: 'active',
+					is_past_last_auto_renew_attempt_date: false,
+				} )
+			)
+		).toBe( false );
+	} );
+	test( 'is false when the subscription has been removed', () => {
+		expect(
+			isExpiredWithNoAutoRenewAttemptsLeft(
+				makePurchase( {
+					expiry_status: 'expired',
+					subscription_status: 'inactive',
+					is_past_last_auto_renew_attempt_date: true,
+				} )
+			)
+		).toBe( false );
+	} );
+	test( 'is false when not expired', () => {
+		expect(
+			isExpiredWithNoAutoRenewAttemptsLeft(
+				makePurchase( {
+					expiry_status: 'active',
+					subscription_status: 'active',
+					is_past_last_auto_renew_attempt_date: true,
+				} )
+			)
+		).toBe( false );
 	} );
 } );

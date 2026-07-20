@@ -32,6 +32,8 @@ export default function TeamMembersContent( {
 }: TeamMembersContentProps ) {
 	const fields = useTeamFields();
 	const { data: filteredData, paginationInfo } = filterSortAndPaginate( members, view, fields );
+	const isFiltered =
+		!! view.search || !! view.filters?.some( ( filter ) => filter.value !== undefined );
 
 	return (
 		<DataViewsCard>
@@ -48,14 +50,13 @@ export default function TeamMembersContent( {
 				defaultLayouts={ DEFAULT_LAYOUTS }
 				empty={
 					<DataViewsEmptyStateLayout
-						title={
-							view.search ? __( 'No team members match your search' ) : __( 'No team members' )
-						}
+						title={ isFiltered ? __( 'No team members found' ) : __( 'No team members' ) }
 						description={
-							view.search
-								? __( 'Try a different search term.' )
+							isFiltered
+								? __( 'Try adjusting your search or filters.' )
 								: __( 'Invite a team member to get started.' )
 						}
+						isBorderless
 					/>
 				}
 			>

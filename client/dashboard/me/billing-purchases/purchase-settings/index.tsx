@@ -80,8 +80,7 @@ import {
 	getTitleForDisplay,
 	getSubtitleForDisplay,
 	isExpiring,
-	isExpired,
-	isRenewing,
+	isRenewingBeforeExpiration,
 	isIncludedWithPlan,
 	isOneTimePurchase,
 	isMarketplaceHoldingSitePurchase,
@@ -96,7 +95,11 @@ import {
 	isJetpackT1SecurityPlan,
 	isWpcomFlexSubscription,
 	isAkismetFreeProduct,
-	isInExpirationGracePeriod,
+	isExpiredAndInGracePeriod,
+	isExpiredWithNoAutoRenewAttemptsLeft,
+	isRemoved,
+	isExpiredOrRemoved,
+	mightStillAutoRenew,
 	isWithinRefundWindowDowngradeEligible,
 	isA4ABillingDragonPurchase,
 	isCentennialPurchase,
@@ -183,53 +186,14 @@ function getWpcomPlanGridUrl( purchase: Purchase ): string {
 	} );
 }
 
-function isAutoRenewToggleDisabled(
-	purchase: Purchase,
-	user: User,
-	isSplitCancelRemoveEnabled: boolean
-): boolean {
+function isAutoRenewToggleDisabled( purchase: Purchase, user: User ): boolean {
 	if ( String( user.ID ) !== String( purchase.user_id ) ) {
 		return true;
 	}
-	if ( isExpired( purchase ) && shouldAllowExpiredAutoRenewToggle( purchase ) ) {
-		// Special case!
-		return false;
-	}
-	// Under the split-cancel-remove experiment, keep the toggle active in both
-	// directions — matches legacy Calypso. The server's `can_disable_auto_renew`
-	// and `can_reenable_auto_renewal` go false during pending-renewal retries,
-	// but the actual disable/re-enable endpoints accept the call (verified in
-	// wpcom-billing backend trace). Off-experiment we preserve trunk's behavior of
-	// trusting the server flags.
-	if ( ! isSplitCancelRemoveEnabled ) {
-		if ( purchase.is_auto_renew_enabled && ! purchase.can_disable_auto_renew ) {
-			return true;
-		}
-		if ( ! purchase.is_auto_renew_enabled && ! purchase.can_reenable_auto_renewal ) {
-			return true;
-		}
-	}
-	return false;
-}
 
-/**
- * Sometimes the auto-renew toggle will read "Re-activate subscription" in
- * which case we should allow toggling it even if the subscription has expired.
- */
-function shouldAllowExpiredAutoRenewToggle( purchase: Purchase ): boolean {
-	if ( ! purchase.is_auto_renew_enabled ) {
-		return false;
-	}
-	if ( ! purchase.is_jetpack_plan_or_product ) {
-		return false;
-	}
-	if ( purchase.is_renewable ) {
-		return true;
-	}
-	if ( ! purchase.is_jetpack_plan_or_product ) {
-		return true;
-	}
-	return false;
+	return purchase.is_auto_renew_enabled
+		? ! purchase.can_disable_auto_renew
+		: ! purchase.can_reenable_auto_renewal;
 }
 
 function upgradePurchase( upgradeUrl: string ): void {
@@ -275,7 +239,7 @@ function PurchaseActionMenu( { purchase }: { purchase: Purchase } ) {
 			<MenuItem
 				onClick={ () => {
 					recordTracksEvent( 'calypso_purchases_upgrade_plan', {
-						status: isExpired( purchase ) ? 'expired' : 'active',
+						status: isExpiredOrRemoved( purchase ) ? 'expired' : 'active',
 						plan: purchase.product_name,
 					} );
 					upgradePurchase( upgradeUrl );
@@ -322,6 +286,12 @@ function CancelOrRemoveActionButton( { purchase }: { purchase: Purchase } ) {
 		return null;
 	}
 
+	// A fully removed subscription (no longer active) has nothing left to
+	// cancel or remove.
+	if ( isRemoved( purchase ) ) {
+		return null;
+	}
+
 	// WordAds and non-primary domain warnings are shown inline on the confirmation screen
 	// under purchases/split-cancel-remove (see cancellation-main-content.tsx).
 	// FIXME: render "Domain transfers can take anywhere from five to seven days to complete." next to cancel button (see domainTransferDuration)
@@ -341,18 +311,25 @@ function CancelOrRemoveActionButton( { purchase }: { purchase: Purchase } ) {
 		// dashboard). Remove button is unaffected — a completed transfer with
 		// auto-renew off can still be removed below.
 		const isTransferNonRefundable = isDomainTransfer( purchase ) && ! hasRefund;
-		// Visibility is driven purely by what the user controls:
+		// Visibility is driven mainly by what the user controls:
 		// - Cancel: auto-renew is on (stopping it halts any upcoming retry too).
 		// - Remove: auto-renew is already off (cancelled subscriptions awaiting
-		//   removal, expired-grace, etc.).
+		//   removal, etc.).
+		// During the post-expiration grace period, we force the "Remove"
+		// option, though; given how close the subscription is to being removed
+		// anyway, turning off auto-renew via a "cancel" option would be
+		// confusing. (If the subscription still has grace period renewal
+		// attempts scheduled, the user can still disable auto-renew via the
+		// dedicated toggle instead.)
 		// When a refund is available with auto-renew still on, the refund path is
 		// surfaced inside the cancel flow via RefundEligibilityNotice instead of
 		// a second CTA here.
 		// Verified against wpcom-billing backend — cancel / disable-auto-renew /
 		// delete endpoints all accept the call in pending-renewal state, so we
 		// don't need to special-case it.
-		const showCancel = autoRenewOn && ! isTransferNonRefundable;
-		const showRemove = ! autoRenewOn;
+		const showCancel =
+			autoRenewOn && ! isTransferNonRefundable && ! isExpiredAndInGracePeriod( purchase );
+		const showRemove = ! autoRenewOn || isExpiredAndInGracePeriod( purchase );
 
 		if ( ! showCancel && ! showRemove ) {
 			return null;
@@ -532,7 +509,7 @@ function UpgradeActionButton( { purchase }: { purchase: Purchase } ) {
 					size="compact"
 					onClick={ () => {
 						recordTracksEvent( 'calypso_purchases_upgrade_plan', {
-							status: isExpired( purchase ) ? 'expired' : 'active',
+							status: isExpiredOrRemoved( purchase ) ? 'expired' : 'active',
 							plan: purchase.product_name,
 						} );
 						upgradePurchase( upgradeUrl );
@@ -547,7 +524,14 @@ function UpgradeActionButton( { purchase }: { purchase: Purchase } ) {
 
 function ReSubscribeActionButton( { purchase }: { purchase: Purchase } ) {
 	const { recordTracksEvent } = useAnalytics();
-	if ( ! isExpired( purchase ) ) {
+	// @todo Conditionally show this for expired purchases in the grace period
+	// too, but some additional fixes are needed first.
+	if ( ! isRemoved( purchase ) ) {
+		return null;
+	}
+	// When "Change plan" is offered (downgrade-eligible), it supersedes the
+	// resubscribe action.
+	if ( shouldShowChangePlan( purchase ) ) {
 		return null;
 	}
 	return (
@@ -560,7 +544,7 @@ function ReSubscribeActionButton( { purchase }: { purchase: Purchase } ) {
 					size="compact"
 					onClick={ () => {
 						recordTracksEvent( 'calypso_purchases_upgrade_plan', {
-							status: isExpired( purchase ) ? 'expired' : 'active',
+							status: isExpiredOrRemoved( purchase ) ? 'expired' : 'active',
 							plan: purchase.product_name,
 						} );
 						window.location.href = getExpiredNewPlanUrl( purchase );
@@ -736,22 +720,11 @@ function PurchaseSettingsActions( { purchase }: { purchase: Purchase } ) {
 		return null;
 	}
 
-	if ( ! isOwner && ( isExpired( purchase ) || ! hasProductAction ) ) {
+	// Users who don't own the purchase are only supposed to get a limited set
+	// of management links; if they aren't available, skip the card entirely so
+	// we don't render an empty shell.
+	if ( ! isOwner && ! hasProductAction ) {
 		return null;
-	}
-
-	// Expired purchases get only the "Pick another plan/product" CTA — the
-	// other actions (reinstall, upgrade, renew, cancel/remove) don't apply
-	// once the purchase has lapsed.
-	if ( isExpired( purchase ) ) {
-		return (
-			<VStack spacing={ 4 }>
-				<ActionList>
-					<ChangePlanActionItem purchase={ purchase } />
-					<ReSubscribeActionButton purchase={ purchase } />
-				</ActionList>
-			</VStack>
-		);
 	}
 
 	return (
@@ -760,7 +733,7 @@ function PurchaseSettingsActions( { purchase }: { purchase: Purchase } ) {
 				<ReinstallButton purchase={ purchase } />
 				<JetpackCRMDownloadsButton purchase={ purchase } />
 				<UpgradeActionButton purchase={ purchase } />
-				{ isEmailPlanManagementEnabled( purchase ) && (
+				{ ! isExpiredOrRemoved( purchase ) && isEmailPlanManagementEnabled( purchase ) && (
 					<AddMailboxesActionItem purchase={ purchase } />
 				) }
 				<ReSubscribeActionButton purchase={ purchase } />
@@ -825,10 +798,25 @@ function WPComResourceMeters( {
 function getFields( {
 	isMutationPending,
 	user,
+	purchase,
 }: {
 	isMutationPending?: boolean;
 	user: User;
+	purchase: Purchase;
 } ): Field< Purchase >[] {
+	if ( isRemoved( purchase ) ) {
+		return [];
+	}
+
+	// We need to allow auto-renew to be disabled and the payment method to be
+	// changed if there might still be upcoming renewal attempts, but if the
+	// subscription is past expiration and there are no remaining renewal
+	// attempts we don't even want to show those options because they don't
+	// have any effect.
+	if ( isExpiredWithNoAutoRenewAttemptsLeft( purchase ) ) {
+		return [];
+	}
+
 	return [
 		{
 			id: 'is_auto_renew_enabled',
@@ -836,17 +824,13 @@ function getFields( {
 			Edit: ( { field, data: purchase, onChange } ) => {
 				const locale = useLocale();
 				const navigate = useNavigate();
-				const isSplitCancelRemoveEnabled = useIsSplitCancelRemoveEnabled();
 				const { getValue } = field;
 				const helpText = ( () => {
 					if (
 						purchase.is_auto_renew_enabled &&
 						Boolean( purchase.renew_date ) &&
-						isRenewing( purchase )
+						isRenewingBeforeExpiration( purchase )
 					) {
-						if ( isInExpirationGracePeriod( purchase ) ) {
-							return __( 'Pending renewal' );
-						}
 						// translators: %(date)s is a formatted date string
 						return sprintf( __( 'You will be billed on %(date)s' ), {
 							date: formatDate( new Date( purchase.renew_date ), locale, { dateStyle: 'long' } ),
@@ -856,7 +840,7 @@ function getFields( {
 						const date = formatDate( new Date( purchase.expiry_date ), locale, {
 							dateStyle: 'long',
 						} );
-						if ( isExpired( purchase ) || isInExpirationGracePeriod( purchase ) ) {
+						if ( isExpiredOrRemoved( purchase ) ) {
 							return sprintf(
 								// translators: %(date)s is a formatted expiry date
 								__( 'Expired on %(date)s.' ),
@@ -904,16 +888,13 @@ function getFields( {
 						className="purchase-settings__toggle-control"
 						label={
 							! purchase.is_auto_renew_enabled &&
-							isExpired( purchase ) &&
+							isExpiredAndInGracePeriod( purchase ) &&
 							purchase.is_jetpack_plan_or_product
 								? __( 'Re-activate subscription' )
 								: field.label
 						}
 						checked={ getValue( { item: purchase } ) }
-						disabled={
-							isMutationPending ||
-							isAutoRenewToggleDisabled( purchase, user, isSplitCancelRemoveEnabled )
-						}
+						disabled={ isMutationPending || isAutoRenewToggleDisabled( purchase, user ) }
 						onChange={ ( value: boolean ) => onChange( { is_auto_renew_enabled: value } ) }
 						help={ helpText }
 					/>
@@ -957,12 +938,16 @@ function ManageSubscriptionCard( { purchase }: { purchase: Purchase } ) {
 		return null;
 	}
 
+	const fields = getFields( { isMutationPending, user, purchase } );
+	if ( fields.length === 0 && ! error ) {
+		return null;
+	}
 	return (
 		<Card>
 			<CardBody>
 				<DataForm< Purchase >
 					data={ purchase }
-					fields={ getFields( { isMutationPending, user } ) }
+					fields={ fields }
 					form={ form }
 					onChange={ ( newData ) => {
 						if ( newData.is_auto_renew_enabled !== purchase.is_auto_renew_enabled ) {
@@ -992,25 +977,10 @@ function ManageSubscriptionCard( { purchase }: { purchase: Purchase } ) {
 function PurchasePriceCard( { purchase }: { purchase: Purchase } ) {
 	const isCentennial = isCentennialPurchase( purchase );
 	// Email plans are billed per mailbox; show the per-mailbox renewal price.
-	if (
-		isEmailPlanManagementEnabled( purchase ) &&
-		! isExpired( purchase ) &&
-		! purchase.is_trial_plan
-	) {
+	if ( isEmailPlanManagementEnabled( purchase ) && ! purchase.is_trial_plan ) {
 		return <EmailPlanPriceCard purchase={ purchase } />;
 	}
 	if ( isCentennial ) {
-		return (
-			<OverviewCard
-				icon={ currencyDollar }
-				title={ __( 'Price' ) }
-				heading={ formatCurrency( purchase.price_integer, purchase.currency_code, {
-					isSmallestUnit: true,
-				} ) }
-			/>
-		);
-	}
-	if ( isExpired( purchase ) ) {
 		return (
 			<OverviewCard
 				icon={ currencyDollar }
@@ -1493,8 +1463,12 @@ export default function PurchaseSettings() {
 	const formattedParentExpiry = useFormattedTime( parentPurchase?.expiry_date ?? '' );
 	const formattedParentRenewal = useFormattedTime( parentPurchase?.renew_date ?? '' );
 	const upgradeUrl = getSitePurchaseUpgradeUrl( purchase, getUpgradedPurchaseRedirectUrl() );
-	const willRenew = Boolean(
-		! isExpired( purchase ) && purchase.renew_date && ! isExpiring( purchase )
+	// During the expiration grace period, we don't want to display the
+	// purchase.renew_date from the server even if there is an upcoming
+	// auto-renewal attempt (since we want to communicate the urgency of the
+	// renewal).
+	const displayRenewDate = Boolean(
+		! isExpiredOrRemoved( purchase ) && purchase.renew_date && ! isExpiring( purchase )
 	);
 	const parentWillRenew = parentPurchase
 		? Boolean(
@@ -1507,16 +1481,13 @@ export default function PurchaseSettings() {
 		if ( isIncluded && parentPurchase ) {
 			return parentWillRenew ? __( 'Renews' ) : __( 'Expires' );
 		}
-		if ( isExpired( purchase ) ) {
-			return __( 'Expired' );
-		}
-		if ( isInExpirationGracePeriod( purchase ) ) {
+		if ( isExpiredOrRemoved( purchase ) ) {
 			return __( 'Expired' );
 		}
 		if ( isCentennialPurchase( purchase ) ) {
 			return __( 'Paid until' );
 		}
-		if ( willRenew ) {
+		if ( displayRenewDate ) {
 			return __( 'Renews' );
 		}
 		return __( 'Expires' );
@@ -1644,7 +1615,7 @@ export default function PurchaseSettings() {
 					{ ! isEmailPlan && siteCard }
 					{ ! isEmailPlan && ownerOrMailboxCard }
 					{ hasExpiryInfo &&
-						( isExpired( purchase ) ? (
+						( isRemoved( purchase ) ? (
 							<OverviewCard icon={ info } title={ __( 'Status' ) } heading={ __( 'Removed' ) } />
 						) : (
 							<OverviewCard
@@ -1654,16 +1625,18 @@ export default function PurchaseSettings() {
 									if ( isIncluded && parentPurchase ) {
 										return parentWillRenew ? formattedParentRenewal : formattedParentExpiry;
 									}
+									// Past-expiry purchases show their expiry date, keeping the heading
+									// consistent with the "Expired" title above.
+									if ( isExpiredAndInGracePeriod( purchase ) ) {
+										return formattedExpiry;
+									}
 									if ( isOneTimePurchase( purchase ) || isAkismetFreeProduct( purchase ) ) {
 										return __( 'Never expires' );
 									}
-									if ( isInExpirationGracePeriod( purchase ) ) {
-										return formattedExpiry;
-									}
-									if ( willRenew ) {
+									if ( displayRenewDate ) {
 										return formattedRenewal;
 									}
-									if ( purchase.subscription_status !== 'active' ) {
+									if ( isRemoved( purchase ) ) {
 										return __( 'Inactive' );
 									}
 									return formattedExpiry;
@@ -1672,10 +1645,12 @@ export default function PurchaseSettings() {
 									if ( isCentennial ) {
 										return undefined;
 									}
-									if ( purchase.is_auto_renew_enabled && isInExpirationGracePeriod( purchase ) ) {
-										return __( 'Pending renewal' );
+									if ( purchase.is_auto_renew_enabled && isExpiredAndInGracePeriod( purchase ) ) {
+										// Only "pending" while an auto-renew attempt may still be coming;
+										// past the last attempt, nothing is pending (and the toggle is hidden).
+										return mightStillAutoRenew( purchase ) ? __( 'Pending renewal' ) : undefined;
 									}
-									if ( purchase.is_auto_renew_enabled && isRenewing( purchase ) ) {
+									if ( purchase.is_auto_renew_enabled && isRenewingBeforeExpiration( purchase ) ) {
 										return __( 'Auto-renew is enabled' );
 									}
 									if ( isIncluded && purchase.attached_to_purchase_id ) {
@@ -1691,6 +1666,9 @@ export default function PurchaseSettings() {
 										);
 									}
 									if ( purchase.is_trial_plan || isAkismetFreeProduct( purchase ) ) {
+										return undefined;
+									}
+									if ( isExpiredWithNoAutoRenewAttemptsLeft( purchase ) ) {
 										return undefined;
 									}
 									if ( purchase.is_auto_renew_enabled ) {
@@ -1710,18 +1688,15 @@ export default function PurchaseSettings() {
 						<AkismetApiKeyCard />
 					) }
 				</Grid>
-				{ ( ( site && purchase.subscription_status === 'active' ) ||
-					( features && features.length > 0 ) ) && (
+				{ ( ( site && ! isRemoved( purchase ) ) || ( features && features.length > 0 ) ) && (
 					<WPComResourceMeters purchase={ purchase } site={ site } features={ features } />
 				) }
 				{ isWpcomFlexSubscription( purchase ) && (
 					<BillingFlexUsageCard purchaseId={ purchase.ID } />
 				) }
-				{ ! purchase.is_trial_plan &&
-					! isCentennial &&
-					purchase.subscription_status === 'active' && (
-						<ManageSubscriptionCard purchase={ purchase } />
-					) }
+				{ ! purchase.is_trial_plan && ! isCentennial && ! isRemoved( purchase ) && (
+					<ManageSubscriptionCard purchase={ purchase } />
+				) }
 				<PurchaseSettingsActions purchase={ purchase } />
 			</VStack>
 		</PageLayout>

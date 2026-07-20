@@ -112,8 +112,12 @@
 		margin: 0;
 		color: inherit;
 	}
+}
 
-	// Offset margin of menu items set in Calypso.
+// Counteracts the `ul ul { margin-left: 1.5em }` that Calypso's unscoped global stylesheet leaks
+// onto wp-admin's flyout submenus. `#adminmenu` lives outside `.jp-stats-dashboard`, so this one
+// override must stay at `.wp-admin` scope until the global styles are scoped.
+.wp-admin {
 	ul.wp-submenu,
 	ul.wp-submenu-wrap {
 		margin-left: 0;

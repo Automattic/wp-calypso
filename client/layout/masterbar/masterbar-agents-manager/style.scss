@@ -21,11 +21,17 @@
 		display: none;
 	}
 
-	.masterbar__help-menu-divider {
+	// Remove the alternating-group shading; this menu only needs a plain separator.
+	.masterbar__item-subitems .masterbar__item-subitems-item.masterbar__help-menu-divider {
+		background: none;
+
 		hr {
-			background: var( --color-masterbar-submenu-hover-text, var( --color-masterbar-highlight ) );
-			opacity: 0.2;
+			// Override the app-wide `hr` rule. Fixed neutral gray (not a text/theme
+			// token, which dark mode can remap to low contrast) so it stays visible.
 			margin: 0;
+			border: 0;
+			height: 1px;
+			background: var( --studio-gray-10 );
 		}
 	}
 

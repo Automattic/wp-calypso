@@ -8,6 +8,7 @@ import {
 } from 'calypso/controller';
 import { setLocaleMiddleware } from 'calypso/controller/shared';
 import { sidebar } from 'calypso/reader/controller';
+import { readerPage } from 'calypso/reader/lib/reader-router';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { fetchTrendingTags } from '../tags/controller';
 import { search } from './controller';
@@ -27,7 +28,7 @@ export default function () {
 	// Invalid language
 	page( `/${ anyLangParam }/reader/search/`, redirectInvalidLanguage );
 
-	page(
+	readerPage(
 		[ '/reader/search', `/${ langParam }/reader/search` ],
 		redirectWithoutLocaleParamInFrontIfLoggedIn,
 		setLocaleMiddleware(),
