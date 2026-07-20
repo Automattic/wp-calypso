@@ -7,7 +7,6 @@ import { useTranslate } from 'i18n-calypso';
 import { useResurrectedFreeUserEligibility } from 'calypso/lib/resurrected-users';
 import {
 	WELCOME_BACK_VARIATIONS,
-	WELCOME_BACK_VARIATION_MANUAL,
 	type WelcomeBackVariation,
 } from 'calypso/lib/resurrected-users/constants';
 
@@ -160,7 +159,7 @@ export const ResurrectedWelcomeModalGate = ( {
 	const variationClassName = variationName
 		? `resurrected-welcome-modal--${ variationName.replace( /_/g, '-' ) }`
 		: null;
-	const hasDarkHero = variationName === WELCOME_BACK_VARIATION_MANUAL;
+	const hasDarkHero = true;
 
 	const shouldDisplay =
 		! eligibility.isLoading &&
