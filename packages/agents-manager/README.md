@@ -99,7 +99,8 @@ See `src/hooks/custom-actions/README.md` for details.
 import { useShouldUseUnifiedAgent, getAgentsManagerInlineData } from '@automattic/agents-manager';
 
 function MyComponent() {
-	// Check if the unified agent experience is active
+	// Check if the unified agent experience is active. Outside a
+	// `QueryClientProvider`, pass a client: `useShouldUseUnifiedAgent( queryClient )`.
 	const shouldUseUnifiedAgent = useShouldUseUnifiedAgent();
 
 	// Read the unified experience flag from inline script data (non-hook)
