@@ -11,6 +11,7 @@ import { useNavigate } from 'react-router-dom';
 import { LOCAL_TOOL_RUNNING_MESSAGE } from '../../constants';
 import { useAgentsManagerContext } from '../../contexts';
 import { useRegisterCustomActions } from '../../hooks/custom-actions';
+import useAgentTraceIds from '../../hooks/use-agent-trace-ids';
 import { useBroadcastConversationActivity } from '../../hooks/use-broadcast-conversation-activity';
 import useCheckpointAction from '../../hooks/use-checkpoint-action';
 import useConversation from '../../hooks/use-conversation';
@@ -254,6 +255,7 @@ export default function OrchestratorChat( {
 		progressMessage,
 	} = useAgentChat( agentConfig! );
 	const messagesRef = useRef( messages );
+	const getTraceIdForMessage = useAgentTraceIds( agentConfig );
 	const previousMessagesRef = useRef( messages );
 	const showComponentOrderRef = useRef< Map< string, number > >( new Map() );
 	const nextShowComponentOrderRef = useRef( 0 );
@@ -447,6 +449,7 @@ export default function OrchestratorChat( {
 		useFeedbackAction( {
 			registerMessageActions,
 			messages,
+			getTraceIdForMessage,
 		} );
 
 	// Add Agenttic's built-in regenerate action on agent messages for providers
@@ -867,8 +870,11 @@ export default function OrchestratorChat( {
 		const latestAgentMessageId = getLatestAgentMessageId( currentMessages );
 
 		currentMessages = currentMessages.map( ( message ) => {
+			const traceId = getTraceIdForMessage( message.id );
+			const messageWithTraceId = traceId ? { ...message, traceId } : message;
+
 			if ( message.id.endsWith( '-next-step' ) ) {
-				return message;
+				return messageWithTraceId;
 			}
 
 			const directActions = [
@@ -880,7 +886,7 @@ export default function OrchestratorChat( {
 				} ),
 			];
 			if ( directActions.length === 0 ) {
-				return message;
+				return messageWithTraceId;
 			}
 
 			const existingActions = message.actions?.filter(
@@ -891,7 +897,7 @@ export default function OrchestratorChat( {
 			);
 
 			return {
-				...message,
+				...messageWithTraceId,
 				actions: [ ...( existingActions ?? [] ), ...directActions ].sort(
 					( actionA, actionB ) => ( actionA.order ?? Infinity ) - ( actionB.order ?? Infinity )
 				),
@@ -906,6 +912,7 @@ export default function OrchestratorChat( {
 		getCopyActionsForMessage,
 		getShowComponentOrder,
 		getFeedbackActionsForMessage,
+		getTraceIdForMessage,
 		getRegenerateActionsForMessage,
 		isBuildingSite,
 		isProcessing,
