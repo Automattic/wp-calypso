@@ -1,14 +1,14 @@
-import { Icon, cautionFilled as warning } from '@wordpress/icons';
+import { Button } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import PaymentLogo from 'calypso/components/payment-logo';
 import {
-	isExpiring,
 	isRechargeable,
 	isIncludedWithPlan,
 	isPaidWithCreditCard,
 	isPaidWithCredits,
 	isPaidWithPayPalDirect,
+	mightStillAutoRenew,
 	paymentLogoType,
 	hasPaymentMethod,
 } from 'calypso/lib/purchases';
@@ -19,9 +19,13 @@ import type { ReactNode } from 'react';
 export default function PaymentInfoBlock( {
 	purchase,
 	cards,
+	addPaymentMethodUrl,
+	onAddPaymentMethodClick,
 }: {
 	purchase: Purchase;
 	cards: StoredPaymentMethod[];
+	addPaymentMethodUrl?: string;
+	onAddPaymentMethodClick?: () => void;
 } ) {
 	const translate = useTranslate();
 	const moment = useLocalizedMoment();
@@ -40,13 +44,15 @@ export default function PaymentInfoBlock( {
 	if ( hasPaymentMethod( purchase ) && isPaidWithCredits( purchase ) ) {
 		return (
 			<PaymentInfoBlockWrapper>
-				<div className="manage-purchase__no-payment-method">
-					<Icon icon={ warning } />
-					{ translate( 'You don’t have a payment method to renew this subscription' ) }
-				</div>
+				<NoPaymentMethodWarning
+					addPaymentMethodUrl={ addPaymentMethodUrl }
+					onAddPaymentMethodClick={ onAddPaymentMethodClick }
+				/>
 			</PaymentInfoBlockWrapper>
 		);
 	}
+
+	const willNotBeBilled = ! mightStillAutoRenew( purchase );
 
 	if (
 		hasPaymentMethod( purchase ) &&
@@ -54,11 +60,10 @@ export default function PaymentInfoBlock( {
 		isRechargeable( purchase )
 	) {
 		const logoType = paymentLogoType( purchase );
-		const willNotBeBilled = !! ( isExpiring( purchase ) && purchase.payment.creditCard );
 		return (
 			<PaymentInfoBlockWrapper>
 				<span className="manage-purchase__payment-method">
-					<PaymentLogo type={ logoType } disabled={ isExpiring( purchase ) } />
+					<PaymentLogo type={ logoType } disabled={ willNotBeBilled } />
 					{ purchase.payment.creditCard?.number ?? '' }
 				</span>
 				{ willNotBeBilled && <WillNotBeBilledNotice /> }
@@ -73,7 +78,6 @@ export default function PaymentInfoBlock( {
 		isRechargeable( purchase )
 	) {
 		const logoType = paymentLogoType( purchase );
-		const willNotBeBilled = isExpiring( purchase );
 		return (
 			<PaymentInfoBlockWrapper>
 				<span className="manage-purchase__payment-method">
@@ -92,7 +96,6 @@ export default function PaymentInfoBlock( {
 
 	if ( hasPaymentMethod( purchase ) && isRechargeable( purchase ) ) {
 		const logoType = paymentLogoType( purchase );
-		const willNotBeBilled = isExpiring( purchase );
 		return (
 			<PaymentInfoBlockWrapper>
 				<PaymentLogo type={ logoType } disabled={ willNotBeBilled } />
@@ -109,10 +112,10 @@ export default function PaymentInfoBlock( {
 	if ( purchase.isAutoRenewEnabled && ! hasPaymentMethod( purchase ) ) {
 		return (
 			<PaymentInfoBlockWrapper>
-				<div className="manage-purchase__no-payment-method">
-					<Icon icon={ warning } />
-					{ translate( 'You don’t have a payment method to renew this subscription' ) }
-				</div>
+				<NoPaymentMethodWarning
+					addPaymentMethodUrl={ addPaymentMethodUrl }
+					onAddPaymentMethodClick={ onAddPaymentMethodClick }
+				/>
 			</PaymentInfoBlockWrapper>
 		);
 	}
@@ -124,10 +127,10 @@ export default function PaymentInfoBlock( {
 	) {
 		return (
 			<PaymentInfoBlockWrapper>
-				<div className="manage-purchase__no-payment-method">
-					<Icon icon={ warning } />
-					{ translate( 'You don’t have a payment method to renew this subscription' ) }
-				</div>
+				<NoPaymentMethodWarning
+					addPaymentMethodUrl={ addPaymentMethodUrl }
+					onAddPaymentMethodClick={ onAddPaymentMethodClick }
+				/>
 			</PaymentInfoBlockWrapper>
 		);
 	}
@@ -141,6 +144,31 @@ function PaymentInfoBlockWrapper( { children }: { children: ReactNode } ) {
 			<em className="manage-purchase__detail-label">{ translate( 'Payment method' ) }</em>
 			<span className="manage-purchase__detail">{ children }</span>
 		</aside>
+	);
+}
+
+function NoPaymentMethodWarning( {
+	addPaymentMethodUrl,
+	onAddPaymentMethodClick,
+}: {
+	addPaymentMethodUrl?: string;
+	onAddPaymentMethodClick?: () => void;
+} ) {
+	const translate = useTranslate();
+	return (
+		<div className="manage-purchase__no-payment-method">
+			{ translate( 'You don’t have a payment method to renew this subscription' ) }
+			{ addPaymentMethodUrl && (
+				<Button
+					className="manage-purchase__add-payment-method-link"
+					variant="link"
+					href={ addPaymentMethodUrl }
+					onClick={ onAddPaymentMethodClick }
+				>
+					{ translate( 'Add payment method' ) }
+				</Button>
+			) }
+		</div>
 	);
 }
 

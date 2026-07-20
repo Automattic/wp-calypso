@@ -15,13 +15,10 @@ import { AGENTS_MANAGER_STORE } from '../stores';
 import { clearSessionId, getOrCreateSessionId } from '../utils/agent-session';
 import { createAgentConfig } from '../utils/create-agent-config';
 import { isReaderChatAgent } from '../utils/is-reader-chat-agent';
-import {
-	loadExternalProviders,
-	type ImageUploadHook,
-	type LoadedProviders,
-} from '../utils/load-external-providers';
+import { loadExternalProviders, type LoadedProviders } from '../utils/load-external-providers';
 import AgentDock from './agent-dock';
 import { PersistentRouter } from './persistent-router';
+import type { JSX } from 'react';
 
 export interface AgentsManagerProps {
 	/** The name of the current section (e.g., 'wp-admin', 'gutenberg'). */
@@ -36,13 +33,19 @@ export interface AgentsManagerProps {
 	currentSiteId?: number;
 	/** Explicit agent ID for hosts that must not fall back to Unified Chat. */
 	agentId?: string;
-	/** Called when the agent is closed. */
-	handleClose?: () => void;
-	/** The hook for handling image uploads. */
-	useImageUpload?: ImageUploadHook;
+	/** Zendesk conversation tags to apply when a new support conversation is created. */
+	zendeskConversationTags?: string[];
+	/** Index selecting a dedicated Smooch integration for new support conversations. */
+	zendeskSmoochIntegrationKey?: string;
+	/** Zendesk Product ticket-field value to apply to new support conversations. */
+	zendeskTicketProductFieldValue?: string;
 }
 
 const queryClient = new QueryClient();
+
+// Stable empty-array reference so the default prop doesn't change identity on
+// every render and retrigger downstream conversation effects.
+const EMPTY_ARRAY: string[] = [];
 
 export default function AgentsManager( {
 	sectionName,
@@ -51,7 +54,9 @@ export default function AgentsManager( {
 	currentRoute,
 	currentSiteId,
 	agentId,
-	useImageUpload,
+	zendeskConversationTags = EMPTY_ARRAY,
+	zendeskSmoochIntegrationKey,
+	zendeskTicketProductFieldValue,
 }: AgentsManagerProps ): JSX.Element | null {
 	// Wait for the store to load before rendering PersistentRouter
 	// This ensures router history is restored from persisted state
@@ -67,27 +72,31 @@ export default function AgentsManager( {
 	const siteKey = currentSiteId ? String( currentSiteId ) : 'no-site';
 
 	return (
-		<AgentsManagerContextProvider
-			value={ { sectionName, currentUser, site, siteKey, currentRoute } }
-		>
-			<QueryClientProvider client={ queryClient }>
-				<PersistentRouter siteKey={ siteKey }>
-					<AgentSetup agentId={ agentId } useImageUpload={ useImageUpload } />
-				</PersistentRouter>
-			</QueryClientProvider>
-		</AgentsManagerContextProvider>
+		<QueryClientProvider client={ queryClient }>
+			<PersistentRouter siteKey={ siteKey }>
+				<AgentsManagerContextProvider
+					value={ {
+						sectionName,
+						currentUser,
+						site,
+						siteKey,
+						currentRoute,
+						zendeskConversationTags,
+						zendeskSmoochIntegrationKey,
+						zendeskTicketProductFieldValue,
+					} }
+				>
+					<AgentSetup agentId={ agentId } />
+				</AgentsManagerContextProvider>
+			</PersistentRouter>
+		</QueryClientProvider>
 	);
 }
 
 // Separate component that uses hooks within `PersistentRouter` context
-function AgentSetup( {
-	agentId: hostAgentId,
-	useImageUpload: fallbackUseImageUpload,
-}: {
-	agentId?: string;
-	useImageUpload?: ImageUploadHook;
-} ): JSX.Element | null {
-	const { site, currentRoute, agentConfig, setAgentConfig } = useAgentsManagerContext();
+function AgentSetup( { agentId: hostAgentId }: { agentId?: string } ): JSX.Element | null {
+	const { site, sectionName, currentRoute, agentConfig, setAgentConfig } =
+		useAgentsManagerContext();
 	const loadedProvidersRef = useRef< LoadedProviders | null >( null );
 	const navigate = useNavigate();
 	const { pathname, state } = useLocation();
@@ -151,9 +160,11 @@ function AgentSetup( {
 				currentRoute,
 				toolProvider: providers.toolProvider,
 				contextProvider: providers.contextProvider,
-				environment: 'calypso',
+				providerIds: providers.providerIds,
+				environment: sectionName || 'calypso',
 				agentId,
 				version,
+				onTaskUpdate: providers.onTaskUpdate,
 			} );
 
 			setAgentConfig( config );
@@ -167,6 +178,7 @@ function AgentSetup( {
 		isNewChat,
 		navigate,
 		sessionId,
+		sectionName,
 		setAgentConfig,
 		site?.ID,
 		hostAgentId,
@@ -193,7 +205,6 @@ function AgentSetup( {
 			useSuggestions={ loadedProviders.useSuggestions }
 			getChatComponent={ loadedProviders.getChatComponent }
 			siteBuildUtils={ loadedProviders.siteBuildUtils }
-			useImageUpload={ loadedProviders.useImageUpload ?? fallbackUseImageUpload }
 			useCheckpoint={ loadedProviders.useCheckpoint }
 			capabilities={ loadedProviders.capabilities }
 		/>

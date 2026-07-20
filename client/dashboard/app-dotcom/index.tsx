@@ -22,6 +22,8 @@ boot( {
 	mainRoute: '/sites',
 	Logo,
 	supports: {
+		agency: false,
+		agencyClient: false,
 		sites: true,
 		domains: true,
 		emails: true,
@@ -42,7 +44,7 @@ boot( {
 		commandPalette: false,
 		domainOnlySites: true,
 		siteOverview: {
-			preview: ! isEnabled( 'dashboard/omnibar' ),
+			preview: false,
 		},
 		colorScheme: isEnabled( 'dark-mode' ),
 		darkMode: isEnabled( 'dark-mode' ),

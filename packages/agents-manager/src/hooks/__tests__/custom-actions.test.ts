@@ -2,31 +2,43 @@
  * @jest-environment jsdom
  */
 import { renderHook } from '@testing-library/react';
+import { clearSiteEditorActions, getSiteEditorActions } from '../../utils/site-editor-context';
 import { useRegisterCustomActions, useSetupCustomActions } from '../custom-actions';
 
 const mockSetIsOpen = jest.fn();
 const mockSetIsDocked = jest.fn();
+const mockSetIsMinimized = jest.fn();
 let mockContext = {
 	getActiveSessionId: jest.fn( () => 'session-123' ),
+	resumeActiveChat: jest.fn(),
 	agentConfig: { agentId: 'reader-chat' },
 };
-let mockSelectState = {
+let mockSelectState: {
+	hasLoaded: boolean;
+	isOpen: boolean;
+	isDocked: boolean;
+	isMinimized?: boolean;
+	floatingPosition: string;
+} = {
 	hasLoaded: true,
 	isOpen: false,
 	isDocked: false,
 	floatingPosition: '',
 };
+let mockLocation = { pathname: '/chat' };
 
 jest.mock( '@wordpress/data', () => ( {
 	useSelect: jest.fn( () => mockSelectState ),
 	useDispatch: jest.fn( () => ( {
 		setIsOpen: mockSetIsOpen,
 		setIsDocked: mockSetIsDocked,
+		setIsMinimized: mockSetIsMinimized,
 	} ) ),
 } ) );
 
 jest.mock( 'react-router-dom', () => ( {
 	useNavigate: jest.fn( () => jest.fn() ),
+	useLocation: jest.fn( () => mockLocation ),
 } ) );
 
 jest.mock( '../../contexts', () => ( {
@@ -44,7 +56,7 @@ const baseProps = {
 	closeSidebar: jest.fn(),
 	canDock: true,
 	setIsCompactMode: jest.fn(),
-	setShouldRenderChat: jest.fn(),
+	setIsChatEnabled: jest.fn(),
 	setDesktopMediaQuery: jest.fn(),
 };
 
@@ -52,11 +64,14 @@ describe( 'useSetupCustomActions', () => {
 	beforeEach( () => {
 		jest.clearAllMocks();
 		delete window.__agentsManagerActions;
+		clearSiteEditorActions();
 		mockContext = {
 			getActiveSessionId: jest.fn( () => 'session-123' ),
+			resumeActiveChat: jest.fn(),
 			agentConfig: { agentId: 'reader-chat' },
 		};
 		mockSelectState = { hasLoaded: true, isOpen: false, isDocked: false, floatingPosition: '' };
+		mockLocation = { pathname: '/chat' };
 	} );
 
 	it( 'sets `isReady` on the global after mount', () => {
@@ -99,6 +114,7 @@ describe( 'useSetupCustomActions', () => {
 
 		expect( snapshot?.setChatOpen ).toBeInstanceOf( Function );
 		expect( snapshot?.setChatDocked ).toBeInstanceOf( Function );
+		expect( snapshot?.resumeChat ).toBe( mockContext.resumeActiveChat );
 		expect( snapshot?.isReady ).toBe( true );
 	} );
 
@@ -113,6 +129,7 @@ describe( 'useSetupCustomActions', () => {
 	it( 'opens regular agents while preserving shared Agents Manager state persistence', () => {
 		mockContext = {
 			getActiveSessionId: jest.fn( () => 'session-123' ),
+			resumeActiveChat: jest.fn(),
 			agentConfig: { agentId: 'wp-orchestrator' },
 		};
 		renderHook( () => useSetupCustomActions( { ...baseProps, canDock: false } ) );
@@ -120,6 +137,42 @@ describe( 'useSetupCustomActions', () => {
 		window.__agentsManagerActions?.setChatOpen?.( true );
 
 		expect( mockSetIsOpen ).toHaveBeenCalledWith( true, true );
+	} );
+
+	it( 'expands a minimized chat with a single save: un-minimize, no redundant open', () => {
+		mockSelectState = {
+			hasLoaded: true,
+			isOpen: true,
+			isDocked: false,
+			isMinimized: true,
+			floatingPosition: '',
+		};
+		renderHook( () => useSetupCustomActions( { ...baseProps, canDock: false } ) );
+
+		window.__agentsManagerActions?.setChatOpen?.( true );
+
+		expect( mockSetIsMinimized ).toHaveBeenCalledWith( false );
+		// Open is unchanged, so no second (racing) save.
+		expect( mockSetIsOpen ).not.toHaveBeenCalled();
+	} );
+
+	it( 'opens a closed chat without a redundant minimized save', () => {
+		mockSelectState = { hasLoaded: true, isOpen: false, isDocked: false, floatingPosition: '' };
+		renderHook( () => useSetupCustomActions( { ...baseProps, canDock: false } ) );
+
+		window.__agentsManagerActions?.setChatOpen?.( true );
+
+		expect( mockSetIsMinimized ).not.toHaveBeenCalled();
+		expect( mockSetIsOpen ).toHaveBeenCalled();
+	} );
+
+	it( 'leaves the minimized state untouched when closing', () => {
+		mockSelectState = { hasLoaded: true, isOpen: true, isDocked: false, floatingPosition: '' };
+		renderHook( () => useSetupCustomActions( { ...baseProps, canDock: false } ) );
+
+		window.__agentsManagerActions?.setChatOpen?.( false );
+
+		expect( mockSetIsMinimized ).not.toHaveBeenCalled();
 	} );
 
 	it( 'removes its actions from the global on unmount', () => {
@@ -173,6 +226,39 @@ describe( 'useSetupCustomActions', () => {
 			isDocked: false,
 			floatingPosition: 'br',
 		} );
+	} );
+
+	it( 'exposes a site editor action recorder on the actions API', () => {
+		renderHook( () => useSetupCustomActions( baseProps ) );
+
+		window.__agentsManagerActions?.setSiteEditorAction?.( 'colorPickerItemSelected', 'Ruby' );
+
+		expect( getSiteEditorActions() ).toEqual( {
+			colorPickerItemSelected: 'Ruby',
+		} );
+	} );
+
+	it( '`isChatVisible` is true only when open and not minimized', () => {
+		mockSelectState = {
+			hasLoaded: true,
+			isOpen: true,
+			isDocked: false,
+			isMinimized: false,
+			floatingPosition: '',
+		};
+		const { rerender } = renderHook( () => useSetupCustomActions( baseProps ) );
+		expect( window.__agentsManagerActions?.isChatVisible?.() ).toBe( true );
+
+		mockSelectState = { ...mockSelectState, isMinimized: true };
+		rerender();
+		expect( window.__agentsManagerActions?.isChatVisible?.() ).toBe( false );
+	} );
+
+	it( 'reports the current route via `getCurrentRoute`', () => {
+		mockLocation = { pathname: '/history' };
+		renderHook( () => useSetupCustomActions( baseProps ) );
+
+		expect( window.__agentsManagerActions?.getCurrentRoute?.() ).toBe( '/history' );
 	} );
 } );
 

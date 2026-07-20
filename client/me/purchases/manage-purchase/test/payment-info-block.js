@@ -6,6 +6,7 @@
 /* eslint-disable jest/valid-title */
 
 import { render, screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import PaymentInfoBlock from '../payment-info-block';
 
 describe( 'PaymentInfoBlock', () => {
@@ -19,6 +20,7 @@ describe( 'PaymentInfoBlock', () => {
 				payment: { type: 'credits' },
 				isRechargeable: false,
 				isAutoRenewEnabled: autoRenewStatus === 'enabled',
+				mightStillAutoRenew: autoRenewStatus === 'enabled',
 			};
 
 			it(
@@ -49,6 +51,7 @@ describe( 'PaymentInfoBlock', () => {
 			const purchase = {
 				expiryStatus: 'included',
 				isAutoRenewEnabled: autoRenewStatus === 'enabled',
+				mightStillAutoRenew: autoRenewStatus === 'enabled',
 			};
 
 			it( 'renders "Included with plan"', () => {
@@ -72,6 +75,7 @@ describe( 'PaymentInfoBlock', () => {
 				isRechargeable: false,
 				payment: {},
 				isAutoRenewEnabled: autoRenewStatus === 'enabled',
+				mightStillAutoRenew: autoRenewStatus === 'enabled',
 			};
 
 			it(
@@ -104,6 +108,7 @@ describe( 'PaymentInfoBlock', () => {
 				payment: { type: 'ideal' },
 				isRechargeable: false,
 				isAutoRenewEnabled: autoRenewStatus === 'enabled',
+				mightStillAutoRenew: autoRenewStatus === 'enabled',
 			};
 
 			it(
@@ -141,6 +146,7 @@ describe( 'PaymentInfoBlock', () => {
 				},
 				isRechargeable: true,
 				isAutoRenewEnabled: autoRenewStatus === 'enabled',
+				mightStillAutoRenew: autoRenewStatus === 'enabled',
 			};
 
 			it( 'renders the credit card last4', () => {
@@ -187,6 +193,7 @@ describe( 'PaymentInfoBlock', () => {
 					},
 					isRechargeable: true,
 					isAutoRenewEnabled: autoRenewStatus === 'enabled',
+					mightStillAutoRenew: autoRenewStatus === 'enabled',
 				};
 				render( <PaymentInfoBlock purchase={ purchase } cards={ [] } /> );
 				if ( expiryStatus === 'manualRenew' ) {
@@ -205,6 +212,7 @@ describe( 'PaymentInfoBlock', () => {
 				},
 				isRechargeable: true,
 				isAutoRenewEnabled: autoRenewStatus === 'enabled',
+				mightStillAutoRenew: autoRenewStatus === 'enabled',
 			};
 
 			it( 'renders PayPal logo', () => {
@@ -242,6 +250,7 @@ describe( 'PaymentInfoBlock', () => {
 				},
 				isRechargeable: true,
 				isAutoRenewEnabled: autoRenewStatus === 'enabled',
+				mightStillAutoRenew: autoRenewStatus === 'enabled',
 			};
 			render( <PaymentInfoBlock purchase={ purchase } cards={ [] } /> );
 			expect( screen.getByLabelText( 'Payment method' ) ).toHaveTextContent( '1234' );
@@ -258,6 +267,7 @@ describe( 'PaymentInfoBlock', () => {
 				},
 				isRechargeable: true,
 				isAutoRenewEnabled: autoRenewStatus === 'enabled',
+				mightStillAutoRenew: autoRenewStatus === 'enabled',
 			};
 			render( <PaymentInfoBlock purchase={ purchase } cards={ [] } /> );
 			expect( screen.getByLabelText( 'Payment method' ) ).toHaveTextContent( '1234' );
@@ -274,6 +284,7 @@ describe( 'PaymentInfoBlock', () => {
 				},
 				isRechargeable: true,
 				isAutoRenewEnabled: autoRenewStatus === 'enabled',
+				mightStillAutoRenew: autoRenewStatus === 'enabled',
 			};
 
 			it( 'renders the expiration date', () => {
@@ -374,5 +385,48 @@ describe( 'PaymentInfoBlock', () => {
 		expect(
 			screen.getByText( 'You don’t have a payment method to renew this subscription' )
 		).toBeInTheDocument();
+	} );
+
+	describe( 'the inline "Add payment method" link', () => {
+		const noMethodPurchase = {
+			expiryStatus: undefined,
+			payment: { type: 'none' },
+			isRechargeable: false,
+			isAutoRenewEnabled: true,
+		};
+
+		it( 'renders a link with the given href when addPaymentMethodUrl is provided', () => {
+			render(
+				<PaymentInfoBlock
+					purchase={ noMethodPurchase }
+					cards={ [] }
+					addPaymentMethodUrl="/me/purchases/add-payment-method/example.com/123"
+				/>
+			);
+			const link = screen.getByRole( 'link', { name: 'Add payment method' } );
+			expect( link ).toBeVisible();
+			expect( link ).toHaveAttribute( 'href', '/me/purchases/add-payment-method/example.com/123' );
+		} );
+
+		it( 'does not render the link when addPaymentMethodUrl is absent', () => {
+			render( <PaymentInfoBlock purchase={ noMethodPurchase } cards={ [] } /> );
+			expect(
+				screen.queryByRole( 'link', { name: 'Add payment method' } )
+			).not.toBeInTheDocument();
+		} );
+
+		it( 'calls onAddPaymentMethodClick when the link is clicked', async () => {
+			const onClick = jest.fn();
+			render(
+				<PaymentInfoBlock
+					purchase={ noMethodPurchase }
+					cards={ [] }
+					addPaymentMethodUrl="/me/purchases/add-payment-method/example.com/123"
+					onAddPaymentMethodClick={ onClick }
+				/>
+			);
+			await userEvent.click( screen.getByRole( 'link', { name: 'Add payment method' } ) );
+			expect( onClick ).toHaveBeenCalledTimes( 1 );
+		} );
 	} );
 } );

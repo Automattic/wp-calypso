@@ -78,7 +78,7 @@ function MyComponent() {
 
 The Agents Manager exposes a `window.__agentsManagerActions` API for controlling the UI from outside the React tree (e.g., from a host app, legacy code, or a separate bundle).
 
-See `src/hooks/use-setup-custom-actions/README.md` for details.
+See `src/hooks/custom-actions/README.md` for details.
 
 ## API Reference
 
@@ -96,17 +96,15 @@ See `src/hooks/use-setup-custom-actions/README.md` for details.
 ### Exported Hooks and Utilities
 
 ```tsx
-import {
-	useShouldUseUnifiedAgent,
-	getUseUnifiedExperienceFromInlineData,
-} from '@automattic/agents-manager';
+import { useShouldUseUnifiedAgent, getAgentsManagerInlineData } from '@automattic/agents-manager';
 
 function MyComponent() {
-	// Check if the unified agent experience is active
+	// Check if the unified agent experience is active. Outside a
+	// `QueryClientProvider`, pass a client: `useShouldUseUnifiedAgent( queryClient )`.
 	const shouldUseUnifiedAgent = useShouldUseUnifiedAgent();
 
 	// Read the unified experience flag from inline script data (non-hook)
-	const useUnifiedExperience = getUseUnifiedExperienceFromInlineData();
+	const useUnifiedExperience = getAgentsManagerInlineData()?.useUnifiedExperience;
 }
 ```
 
@@ -123,6 +121,8 @@ import type {
 	BaseContextEntry,
 	ContextEntry,
 	Suggestion,
+	UseFeedbackActionConfig,
+	UseFeedbackActionReturn,
 } from '@automattic/agents-manager';
 ```
 

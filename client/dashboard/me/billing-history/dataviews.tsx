@@ -3,7 +3,7 @@ import { useMutation } from '@tanstack/react-query';
 import { Link, useNavigate } from '@tanstack/react-router';
 import { __experimentalText as Text, __experimentalVStack as VStack } from '@wordpress/components';
 import { __, sprintf } from '@wordpress/i18n';
-import { useMemo } from 'react';
+import { useMemo, type JSX } from 'react';
 import { receiptRoute } from '../../app/router/me';
 import { isAkismetPro500Plan } from '../../utils/akismet';
 import { getTaxName } from '../../utils/tax';
@@ -98,7 +98,8 @@ export function useActions() {
 export function getFields(
 	receipts: Receipt[],
 	countryList: CountryListItem[] = [],
-	visibleFields: string[] = WIDE_FIELDS
+	visibleFields: string[] = WIDE_FIELDS,
+	locale: string
 ): Fields< Receipt > {
 	return [
 		{
@@ -116,12 +117,12 @@ export function getFields(
 			filterBy: {
 				operators: [ 'is' as Operator ],
 			},
-			elements: getDatesForFiltering( receipts ),
+			elements: getDatesForFiltering( receipts, locale ),
 			getValue: ( { item }: { item: Receipt } ) => {
-				return getDateForFiltering( item );
+				return getDateForFiltering( item, locale );
 			},
 			render: ( { item }: { item: Receipt } ) => {
-				return <time>{ formatReceiptDate( item ) }</time>;
+				return <time>{ formatReceiptDate( item, locale ) }</time>;
 			},
 		},
 		{
@@ -156,7 +157,7 @@ export function getFields(
 						>
 							{ renderServiceNameDescription( item ) }
 						</Link>
-						{ renderInlineHiddenFields( item, visibleFields ) }
+						{ renderInlineHiddenFields( item, visibleFields, locale ) }
 					</VStack>
 				);
 			},
@@ -206,7 +207,12 @@ export function getFields(
 				return search_data;
 			},
 			render: ( { item }: { item: Receipt } ) =>
-				renderReceiptAmount( item, getTaxName( countryList, item.tax_country_code ) ),
+				renderReceiptAmount(
+					item,
+					item.tax_breakdown?.length
+						? item.tax_breakdown.map( ( e ) => e.label ).join( ' + ' )
+						: getTaxName( countryList, item.tax_country_code )
+				),
 		},
 		{
 			id: 'extra_receipt_data_for_search',
@@ -229,14 +235,14 @@ export function getFields(
 				// Date field: Add the full date in a couple of formats, so
 				// it's possible to search for e.g. "October 23" or "Oct 23".
 				search_data.push(
-					new Date( item.date ).toLocaleDateString( undefined, {
+					new Date( item.date ).toLocaleDateString( locale, {
 						year: 'numeric',
 						month: 'long',
 						day: 'numeric',
 					} )
 				);
 				search_data.push(
-					new Date( item.date ).toLocaleDateString( undefined, {
+					new Date( item.date ).toLocaleDateString( locale, {
 						year: 'numeric',
 						month: 'short',
 						day: 'numeric',
@@ -271,11 +277,14 @@ export function getFields(
 	];
 }
 
-function getDatesForFiltering( receipts: Receipt[] ): Array< { value: string; label: string } > {
+function getDatesForFiltering(
+	receipts: Receipt[],
+	locale: string
+): Array< { value: string; label: string } > {
 	const datesForFiltering = new Map< string, Date >();
 
 	receipts.forEach( ( receipt ) => {
-		const key = getDateForFiltering( receipt );
+		const key = getDateForFiltering( receipt, locale );
 		const date = new Date( receipt.date );
 		datesForFiltering.set( key, date );
 	} );
@@ -288,16 +297,16 @@ function getDatesForFiltering( receipts: Receipt[] ): Array< { value: string; la
 		} ) );
 }
 
-function getDateForFiltering( receipt: Receipt ): string {
+function getDateForFiltering( receipt: Receipt, locale: string ): string {
 	// Filter by year and month only.
-	return new Date( receipt.date ).toLocaleDateString( undefined, {
+	return new Date( receipt.date ).toLocaleDateString( locale, {
 		year: 'numeric',
 		month: 'long',
 	} );
 }
 
-function formatReceiptDate( receipt: Receipt ): string {
-	return new Date( receipt.date ).toLocaleDateString( undefined, {
+function formatReceiptDate( receipt: Receipt, locale: string ): string {
+	return new Date( receipt.date ).toLocaleDateString( locale, {
 		year: 'numeric',
 		month: 'short',
 		day: 'numeric',
@@ -372,11 +381,13 @@ function renderInlineHiddenField( key: string, label: string, value: string ) {
 	);
 }
 
-function renderInlineHiddenFields( receipt: Receipt, visibleFields: string[] ) {
+function renderInlineHiddenFields( receipt: Receipt, visibleFields: string[], locale: string ) {
 	const lines: JSX.Element[] = [];
 
 	if ( ! visibleFields.includes( 'date' ) ) {
-		lines.push( renderInlineHiddenField( 'date', __( 'Date' ), formatReceiptDate( receipt ) ) );
+		lines.push(
+			renderInlineHiddenField( 'date', __( 'Date' ), formatReceiptDate( receipt, locale ) )
+		);
 	}
 	if ( ! visibleFields.includes( 'type' ) ) {
 		lines.push(

@@ -6,6 +6,7 @@ import { ButtonStack } from '../../../../components/button-stack';
 import { SectionHeader } from '../../../../components/section-header';
 import {
 	CANCEL_FLOW_TYPE,
+	isExpiredOrRemoved,
 	type CancelFlowType,
 	type CancelIntent,
 } from '../../../../utils/purchase';
@@ -265,25 +266,27 @@ function SurveyContent( {
 						}
 					) }
 				</span>
-				<span className="cancel-purchase-form__remove-plan-text">
-					{ createInterpolateElement(
-						sprintf(
-							/* Translators: %(planName)s: name of the plan being canceled, eg: "WordPress.com Business". %(purchaseRenewalDate)s: date when the plan will expire, eg: "January 1, 2022" */
-							__(
-								'If you keep your plan, you will be able to continue using your %(planName)s plan features until <strong>%(purchaseRenewalDate)s</strong>.'
+				{ ! isExpiredOrRemoved( purchase ) && (
+					<span className="cancel-purchase-form__remove-plan-text">
+						{ createInterpolateElement(
+							sprintf(
+								/* Translators: %(planName)s: name of the plan being canceled, eg: "WordPress.com Business". %(purchaseRenewalDate)s: date when the plan will expire, eg: "January 1, 2022" */
+								__(
+									'If you keep your plan, you will be able to continue using your %(planName)s plan features until <strong>%(purchaseRenewalDate)s</strong>.'
+								),
+								{
+									planName: productName,
+									purchaseRenewalDate: intlFormat( purchase.expiry_date, {
+										dateStyle: 'medium',
+									} ),
+								}
 							),
 							{
-								planName: productName,
-								purchaseRenewalDate: intlFormat( purchase.expiry_date, {
-									dateStyle: 'medium',
-								} ),
+								strong: <strong className="is-highlighted" />,
 							}
-						),
-						{
-							strong: <strong className="is-highlighted" />,
-						}
-					) }
-				</span>
+						) }
+					</span>
+				) }
 			</>
 		);
 	}

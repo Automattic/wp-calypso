@@ -22,6 +22,8 @@ export type OdieAssistantContextInterface = {
 	selectedSiteURL?: string | null;
 	userFieldMessage?: string | null;
 	userFieldFlowName?: string | null;
+	externalChatProvider?: string | null;
+	externalChatId?: string | null;
 	forceEmailSupport: boolean;
 	isChatRestricted: boolean;
 	setExperimentVariationName: ( variationName: string | null | undefined ) => void;
@@ -44,6 +46,8 @@ export type OdieAssistantProviderProps = {
 	selectedSiteURL?: string | null;
 	userFieldMessage?: string | null;
 	userFieldFlowName?: string | null;
+	externalChatProvider?: string | null;
+	externalChatId?: string | null;
 	version?: string | null;
 	forceEmailSupport?: boolean;
 	isChatRestricted?: boolean;
@@ -88,7 +92,7 @@ type InquiryType =
 	| 'unrelated-to-wordpress'
 	| 'request-for-human-support';
 
-type InteractionStatus = 'open' | 'closed' | 'solved';
+export type InteractionStatus = 'open' | 'closed' | 'solved';
 
 type ClassificationResults = {
 	inquiry_type?: InquiryType;
@@ -145,6 +149,7 @@ export type ChatFeedbackActions = {
 export type Message = {
 	content: ReactNode;
 	context?: Context;
+	displayName?: string;
 	internal_message_id?: string;
 	message_id?: number;
 	meta?: Record< string, string >;

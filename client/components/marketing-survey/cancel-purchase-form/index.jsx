@@ -6,9 +6,9 @@ import {
 	isDomainRegistration,
 } from '@automattic/calypso-products';
 import { Plans } from '@automattic/data-stores';
+import { shuffle } from '@automattic/js-utils';
 import { Button as GutenbergButton, Spinner } from '@wordpress/components';
 import { localize } from 'i18n-calypso';
-import { shuffle } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
@@ -21,6 +21,7 @@ import { getSolutionsForReason } from 'calypso/dashboard/me/billing-purchases/ca
 import { useIsSplitCancelRemoveEnabled } from 'calypso/dashboard/me/billing-purchases/cancel-purchase/use-is-split-cancel-remove-enabled';
 import {
 	isAgencyPartnerType,
+	isExpiredOrRemoved,
 	isPartnerPurchase,
 	isRefundable,
 	hasAmountAvailableToRefund,
@@ -532,23 +533,25 @@ class CancelPurchaseForm extends Component {
 										)
 									}
 								</span>
-								<span className="cancel-purchase-form__remove-plan-text">
-									{
-										// Translators: %(planName)s: name of the plan being canceled, eg: "WordPress.com Business". %(purchaseRenewalDate)s: date when the plan will expire, eg: "January 1, 2022"
-										translate(
-											'If you keep your plan, you will be able to continue using your %(planName)s plan features until {{strong}}%(purchaseRenewalDate)s{{/strong}}.',
-											{
-												args: {
-													planName: productName,
-													purchaseRenewalDate: moment( purchase.expiryDate ).format( 'LL' ),
-												},
-												components: {
-													strong: <strong className="is-highlighted" />,
-												},
-											}
-										)
-									}
-								</span>
+								{ ! isExpiredOrRemoved( purchase ) && (
+									<span className="cancel-purchase-form__remove-plan-text">
+										{
+											// Translators: %(planName)s: name of the plan being canceled, eg: "WordPress.com Business". %(purchaseRenewalDate)s: date when the plan will expire, eg: "January 1, 2022"
+											translate(
+												'If you keep your plan, you will be able to continue using your %(planName)s plan features until {{strong}}%(purchaseRenewalDate)s{{/strong}}.',
+												{
+													args: {
+														planName: productName,
+														purchaseRenewalDate: moment( purchase.expiryDate ).format( 'LL' ),
+													},
+													components: {
+														strong: <strong className="is-highlighted" />,
+													},
+												}
+											)
+										}
+									</span>
+								) }
 							</>
 						}
 					/>

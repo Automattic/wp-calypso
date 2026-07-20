@@ -1,5 +1,6 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { ClickableItemProps, MenuItemProps } from '../types';
+import { recordNavLinkClick } from './nav-2026/tracks';
 
 export const NonClickableItem = ( {
 	content,
@@ -34,7 +35,7 @@ const getParentElement = ( node: HTMLElement | null, pattern: RegExp ) => {
 	return parent;
 };
 
-const clickNavLinkEvent = ( target: HTMLElement ) => {
+const clickNavLinkEvent = ( target: HTMLElement, trackingText?: string ) => {
 	const props: { [ key: string ]: string | number } = {};
 
 	const container = getParentElement( target, /container/ );
@@ -53,7 +54,7 @@ const clickNavLinkEvent = ( target: HTMLElement ) => {
 
 	props.href = target.getAttribute( 'href' ) || '';
 	props.target = target.getAttribute( 'target' ) || '';
-	props.text = target.innerText || '';
+	props.text = trackingText || target.innerText || '';
 
 	if ( typeof window !== 'undefined' && window.location ) {
 		const currentPage = window.location.pathname || '';
@@ -74,6 +75,9 @@ export const ClickableItem = ( {
 	target,
 	tabIndex,
 	index,
+	trackingText,
+	onItemMouseEnter,
+	onItemFocus,
 }: ClickableItemProps ) => {
 	let liClassName = '';
 	if ( type === 'menu' ) {
@@ -83,14 +87,18 @@ export const ClickableItem = ( {
 		liClassName = liClassName + ' ' + className;
 	}
 
-	const onClick = ( event: React.MouseEvent< HTMLElement > ) => {
+	const onClick = ( event: React.MouseEvent< HTMLAnchorElement > ) => {
 		const target = event.currentTarget;
-		clickNavLinkEvent( target );
+		clickNavLinkEvent( target, trackingText );
+		// Also emit the global-nav usage event; it resolves its props from the DOM
+		// so it reports correctly on either nav.
+		recordNavLinkClick( target );
 	};
 	return (
 		<li
 			className={ liClassName }
 			role="none"
+			onMouseEnter={ onItemMouseEnter }
 			style={
 				index !== undefined ? ( { '--stagger-index': index } as React.CSSProperties ) : undefined
 			}
@@ -102,6 +110,7 @@ export const ClickableItem = ( {
 				title={ titleValue }
 				target={ target }
 				onClick={ onClick }
+				onFocus={ onItemFocus }
 				tabIndex={ tabIndex }
 			>
 				{ content }

@@ -129,12 +129,13 @@ export default function GoogleLogin( {
 			state: nonce,
 			callback: async ( response: { error: string; code: string; state: string } ) => {
 				if ( response.error ) {
-					setShowLoading( false );
 					return;
 				}
+				setShowLoading( true );
 				handleAuthorizationCode( { auth_code: response.code, state: response.state } );
 			},
 		} );
+		setShowLoading( false );
 		client?.requestCode();
 	};
 

@@ -15,6 +15,8 @@ import { MIN_NAME_SERVERS_LENGTH, MAX_NAME_SERVERS_LENGTH, FormData, NameServerK
 import UpsellNudge from './upsell-nudge';
 import { validateHostname } from './utils';
 
+const EMPTY_DEFAULT_NAME_SERVERS: string[] = [];
+
 const createNameServerField = ( index: number, formData: FormData, isBusy?: boolean ) => {
 	const baseField = {
 		id: `nameServer${ index }` as NameServerKey,
@@ -102,7 +104,7 @@ export default function NameServersForm( {
 	domainSiteSlug,
 	showUpsellNudge,
 	nameServers = [],
-	defaultNameServers = [],
+	defaultNameServers = EMPTY_DEFAULT_NAME_SERVERS,
 	isUsingDefaultNameServers = false,
 	isBusy,
 	onSubmit,
@@ -138,87 +140,86 @@ export default function NameServersForm( {
 		[]
 	);
 
+	// Separate memo (no formData dep) keeps the Edit reference stable across
+	// keystrokes, so DataForm doesn't remount it and reload the UpsellNudge image.
+	const wpcomNameServersField = useMemo< Field< FormData > >(
+		() => ( {
+			id: 'useWpcomNameServers',
+			label: __( 'Use WordPress.com name servers' ),
+			type: 'boolean',
+			Edit: ( { onChange, data } ) => {
+				return (
+					<VStack spacing={ 4 }>
+						<ToggleControl
+							__nextHasNoMarginBottom
+							label={ __( 'Use WordPress.com name servers' ) }
+							checked={ data.useWpcomNameServers }
+							disabled={ isBusy }
+							onChange={ ( value ) => {
+								// Track toggle button click
+								recordTracksEvent(
+									'calypso_dashboard_domain_management_name_servers_wpcom_name_servers_toggle_button_click',
+									{
+										domain: domainName,
+										enabled: value,
+									}
+								);
+
+								// Create nameServer fields dynamically
+								const ns = Object.fromEntries(
+									Array.from( { length: MAX_NAME_SERVERS_LENGTH }, ( _, i ) => [
+										`nameServer${ i + 1 }` as NameServerKey,
+										value ? defaultNameServers[ i ] ?? '' : '',
+									] )
+								);
+
+								onChange( {
+									useWpcomNameServers: value,
+									...ns,
+								} );
+							} }
+						/>
+						{ showUpsellNudge && (
+							<UpsellNudge domainName={ domainName } domainSiteSlug={ domainSiteSlug } />
+						) }
+						{ ! data.useWpcomNameServers && (
+							<Text>
+								{ createInterpolateElement(
+									/* translators: <link> will be replaced with an anchor tag to open the support article in a new tab */
+									__( '<link>Look up</link> the name servers for popular hosts.' ),
+									{
+										link: (
+											<InlineSupportLink
+												supportContext="change-name-servers-finding-out-new-ns"
+												onClick={ () => {
+													recordTracksEvent(
+														'calypso_dashboard_domain_management_name_servers_wpcom_name_servers_look_up_click',
+														{
+															domain: domainName,
+														}
+													);
+												} }
+											/>
+										),
+									}
+								) }
+							</Text>
+						) }
+					</VStack>
+				);
+			},
+		} ),
+		[ isBusy, showUpsellNudge, domainName, domainSiteSlug, recordTracksEvent, defaultNameServers ]
+	);
+
 	const fields = useMemo(
 		(): Field< FormData >[] => [
-			{
-				id: 'useWpcomNameServers',
-				label: __( 'Use WordPress.com name servers' ),
-				type: 'boolean',
-				Edit: ( { onChange, data } ) => {
-					return (
-						<VStack spacing={ 4 }>
-							<ToggleControl
-								__nextHasNoMarginBottom
-								label={ __( 'Use WordPress.com name servers' ) }
-								checked={ data.useWpcomNameServers }
-								disabled={ isBusy }
-								onChange={ ( value ) => {
-									// Track toggle button click
-									recordTracksEvent(
-										'calypso_dashboard_domain_management_name_servers_wpcom_name_servers_toggle_button_click',
-										{
-											domain: domainName,
-											enabled: value,
-										}
-									);
-
-									// Create nameServer fields dynamically
-									const ns = Object.fromEntries(
-										Array.from( { length: MAX_NAME_SERVERS_LENGTH }, ( _, i ) => [
-											`nameServer${ i + 1 }` as NameServerKey,
-											value ? defaultNameServers[ i ] : '',
-										] )
-									);
-
-									onChange( {
-										useWpcomNameServers: value,
-										...ns,
-									} );
-								} }
-							/>
-							{ showUpsellNudge && (
-								<UpsellNudge domainName={ domainName } domainSiteSlug={ domainSiteSlug } />
-							) }
-							{ ! data.useWpcomNameServers && (
-								<Text>
-									{ createInterpolateElement(
-										/* translators: <link> will be replaced with an anchor tag to open the support article in a new tab */
-										__( '<link>Look up</link> the name servers for popular hosts.' ),
-										{
-											link: (
-												<InlineSupportLink
-													supportContext="change-name-servers-finding-out-new-ns"
-													onClick={ () => {
-														recordTracksEvent(
-															'calypso_dashboard_domain_management_name_servers_wpcom_name_servers_look_up_click',
-															{
-																domain: domainName,
-															}
-														);
-													} }
-												/>
-											),
-										}
-									) }
-								</Text>
-							) }
-						</VStack>
-					);
-				},
-			},
+			wpcomNameServersField,
 			...Array.from( { length: MAX_NAME_SERVERS_LENGTH }, ( _, i ) =>
 				createNameServerField( i + 1, formData, isBusy )
 			),
 		],
-		[
-			formData,
-			isBusy,
-			showUpsellNudge,
-			domainName,
-			domainSiteSlug,
-			recordTracksEvent,
-			defaultNameServers,
-		]
+		[ wpcomNameServersField, formData, isBusy ]
 	);
 
 	const handleSubmit = useCallback(

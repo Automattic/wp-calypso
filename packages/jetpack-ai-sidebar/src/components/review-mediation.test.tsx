@@ -24,8 +24,9 @@ global.requestAnimationFrame = jest.fn( ( cb ) => {
 } );
 
 const mockApplyReviewEdit = jest.fn();
-const mockFindBlockElement = jest.fn();
-const mockFindBlockListLayout = jest.fn();
+const mockClearActiveBlockFocus = jest.fn();
+const mockClearActiveBlockFocusUnlessBlockReferenceClick = jest.fn();
+const mockToggleBlockReferenceFocus = jest.fn();
 const mockUndoBlockEdit = jest.fn();
 const mockedRecordTracksEvent = recordTracksEvent as jest.MockedFunction<
 	typeof recordTracksEvent
@@ -33,10 +34,44 @@ const mockedRecordTracksEvent = recordTracksEvent as jest.MockedFunction<
 
 jest.mock( '../utils/block-actions', () => ( {
 	applyReviewEdit: ( ...args: any[] ) => mockApplyReviewEdit( ...args ),
-	findBlockElement: ( ...args: any[] ) => mockFindBlockElement( ...args ),
-	findBlockListLayout: ( ...args: any[] ) => mockFindBlockListLayout( ...args ),
-	isSupportedEditBlockType: ( blockName?: string | null ) =>
-		[ 'core/paragraph', 'core/heading' ].includes( blockName ?? '' ),
+	clearActiveBlockFocus: ( ...args: any[] ) => mockClearActiveBlockFocus( ...args ),
+	clearActiveBlockFocusUnlessBlockReferenceClick: ( ...args: any[] ) =>
+		mockClearActiveBlockFocusUnlessBlockReferenceClick( ...args ),
+	getEditableBlockContent: ( block: any, attributeName?: string, currentText?: string ) => {
+		if ( attributeName ) {
+			return block?.attributes?.[ attributeName ] ?? '';
+		}
+		const attributeNames = Object.keys( block?.attributes ?? {} ).filter(
+			( key ) => typeof block?.attributes?.[ key ] === 'string'
+		);
+		const currentTextMatches = attributeNames.filter(
+			( key ) => currentText && block.attributes[ key ].includes( currentText )
+		);
+		if ( currentTextMatches.length === 1 ) {
+			return block.attributes[ currentTextMatches[ 0 ] ];
+		}
+		return (
+			block?.attributes?.content ??
+			( attributeNames.length === 1 ? block.attributes[ attributeNames[ 0 ] ] : '' )
+		);
+	},
+	hasEditableBlockTarget: ( block: any, attributeName?: string, currentText?: string ) => {
+		if ( attributeName ) {
+			return typeof block?.attributes?.[ attributeName ] === 'string';
+		}
+		const attributeNames = Object.keys( block?.attributes ?? {} ).filter(
+			( key ) => typeof block?.attributes?.[ key ] === 'string'
+		);
+		const currentTextMatches = attributeNames.filter(
+			( key ) => currentText && block.attributes[ key ].includes( currentText )
+		);
+		return (
+			currentTextMatches.length === 1 ||
+			typeof block?.attributes?.content === 'string' ||
+			attributeNames.length === 1
+		);
+	},
+	toggleBlockReferenceFocus: ( ...args: any[] ) => mockToggleBlockReferenceFocus( ...args ),
 	undoBlockEdit: ( ...args: any[] ) => mockUndoBlockEdit( ...args ),
 } ) );
 
@@ -51,7 +86,11 @@ jest.mock( '@wordpress/data', () => ( {
 				return { getBlocks: () => mockBlocks };
 			}
 			if ( store === 'core/editor' ) {
-				return { getCurrentPostId: () => mockCurrentPostId };
+				return {
+					getCurrentPostId: () => mockCurrentPostId,
+					getCurrentPostType: () => 'post',
+					getRenderingMode: () => 'post-only',
+				};
 			}
 			return {};
 		} ),
@@ -63,10 +102,21 @@ jest.mock( '@wordpress/data', () => ( {
 	},
 } ) );
 
+// BlockRef renders the block-type icon via BlockIcon; stub it and the block
+// registry so the real block-editor module (which needs @wordpress/data) is not
+// pulled in under the mocked data store.
+jest.mock( '@wordpress/block-editor', () => ( {
+	store: 'core/block-editor',
+	BlockIcon: () => null,
+} ) );
+jest.mock( '@wordpress/blocks', () => ( {
+	getBlockType: () => undefined,
+} ) );
+
 // Stub @wordpress/components: real one transitively boots rich-text + data.
 // PanelBody honours the controlled `opened` prop so toggle tests work.
 jest.mock( '@wordpress/components', () => {
-	const React = require( 'react' );
+	const React = jest.requireActual< typeof import('react') >( 'react' );
 	return {
 		Panel: ( { children, className }: any ) =>
 			React.createElement( 'div', { className }, children ),
@@ -117,8 +167,9 @@ function basePayload(
 
 beforeEach( () => {
 	mockApplyReviewEdit.mockReset();
-	mockFindBlockElement.mockReset();
-	mockFindBlockListLayout.mockReset();
+	mockClearActiveBlockFocus.mockReset();
+	mockClearActiveBlockFocusUnlessBlockReferenceClick.mockReset();
+	mockToggleBlockReferenceFocus.mockReset();
 	mockUndoBlockEdit.mockReset();
 	mockUndoBlockEdit.mockReturnValue( true );
 	mockSelectBlock.mockReset();
@@ -154,7 +205,7 @@ describe( 'ReviewMediation — smoke render', () => {
 		expect( screen.queryByText( /^Conflicts$/ ) ).not.toBeInTheDocument();
 		expect( screen.queryByText( /Suggested edits/ ) ).not.toBeInTheDocument();
 		// Footer "Accept all" only renders when totalPendingCount > 0.
-		expect( screen.queryByText( /Accept all AI resolutions/ ) ).not.toBeInTheDocument();
+		expect( screen.queryByText( /Apply all/ ) ).not.toBeInTheDocument();
 	} );
 
 	it( 'renders all five sections when the payload is fully populated', () => {
@@ -207,9 +258,12 @@ describe( 'ReviewMediation — smoke render', () => {
 		expect( screen.getByText( 'Implications' ) ).toBeInTheDocument();
 		expect( screen.getByText( 'Suggested edits' ) ).toBeInTheDocument();
 		expect( screen.getByText( /Guideline violations/ ) ).toBeInTheDocument();
-		expect( screen.getByText( 'Copy' ) ).toBeInTheDocument();
-		// Violating excerpt rendered in its own blockquote.
+		// The violation renders as a card badged with its category + position.
+		expect( screen.getByText( 'Copy (1/1)' ) ).toBeInTheDocument();
+		// The violating excerpt is shown (struck through) and the guideline is quoted.
 		expect( screen.getByText( 'was voted upon' ) ).toBeInTheDocument();
+		expect( screen.getByText( 'Avoid passive voice.' ) ).toBeInTheDocument();
+		expect( screen.getByText( 'Passive voice detected.' ) ).toBeInTheDocument();
 	} );
 
 	it( 'tracks the rendered result with aggregate counts', async () => {
@@ -310,13 +364,16 @@ describe( 'ReviewMediation — smoke render', () => {
 		expect( screen.getByTitle( 'Jump to conflicts' ) ).toBeDisabled();
 		expect( screen.getByTitle( 'Jump to suggested edits' ) ).toBeDisabled();
 		expect( screen.getByRole( 'button', { name: 'Accept AI resolution' } ) ).toBeDisabled();
-		expect( screen.getByRole( 'button', { name: 'Accept' } ) ).toBeDisabled();
+		// Stale → the edit can't one-click apply EVEN THOUGH the current post still
+		// contains the source text: Go to section (disabled) stands in for a dead
+		// Apply, and the card is not tagged "Manual edit".
+		expect( screen.queryByRole( 'button', { name: 'Apply change' } ) ).not.toBeInTheDocument();
+		expect( screen.getByRole( 'button', { name: 'Go to section' } ) ).toBeDisabled();
+		expect( screen.queryByText( 'Manual edit' ) ).not.toBeInTheDocument();
 		screen
 			.getAllByRole( 'button', { name: 'Dismiss' } )
 			.forEach( ( button ) => expect( button ).toBeDisabled() );
-		expect(
-			screen.getByRole( 'button', { name: /Accept all AI resolutions \(2\)/ } )
-		).toBeDisabled();
+		expect( screen.getByRole( 'button', { name: /Apply all \(2\)/ } ) ).toBeDisabled();
 
 		fireEvent.click( screen.getByRole( 'button', { name: 'Suggested edits' } ) );
 		expect( screen.queryByText( 'Concise.' ) ).not.toBeInTheDocument();
@@ -324,8 +381,7 @@ describe( 'ReviewMediation — smoke render', () => {
 		fireEvent.click( screen.getByRole( 'button', { name: 'Suggested edits' } ) );
 		expect( screen.getByText( 'Concise.' ) ).toBeInTheDocument();
 
-		fireEvent.click( screen.getByRole( 'button', { name: 'Accept' } ) );
-
+		// Nothing was applied.
 		expect( mockApplyReviewEdit ).not.toHaveBeenCalled();
 		expect( mockedRecordTracksEvent ).not.toHaveBeenCalled();
 	} );
@@ -352,12 +408,38 @@ describe( 'ReviewMediation — smoke render', () => {
 			screen.getByText( 'Review context changed. Start a new chat and re-run this review.' )
 		).toBeInTheDocument();
 		expect( screen.getByTitle( 'Jump to suggested edits' ) ).toBeDisabled();
-		expect( screen.getByRole( 'button', { name: 'Accept' } ) ).toBeDisabled();
-
-		fireEvent.click( screen.getByRole( 'button', { name: 'Accept' } ) );
+		// Stale (no source post) → Go to section (disabled), not a dead Apply.
+		expect( screen.queryByRole( 'button', { name: 'Apply change' } ) ).not.toBeInTheDocument();
+		expect( screen.getByRole( 'button', { name: 'Go to section' } ) ).toBeDisabled();
 
 		expect( mockApplyReviewEdit ).not.toHaveBeenCalled();
 		expect( mockedRecordTracksEvent ).not.toHaveBeenCalled();
+	} );
+
+	it( 'does not tag a stale AER edit "Manual edit" even when the source text is absent', () => {
+		// Editor moved to post 999 (stale) AND the current block doesn't contain the
+		// edit's source text — so the frontend reason is truthy. Without the
+		// !isPostStale gate the card would wrongly show a "Manual edit" tag.
+		mockCurrentPostId = 999;
+		render(
+			<ReviewMediation
+				{ ...basePayload( {
+					suggested_edits: [
+						{
+							block_index: 1,
+							current_text: 'text that is not present in this block',
+							suggested_text: 'a replacement',
+							rationale: 'Concise.',
+							supported_by_reviewers: [],
+						},
+					],
+				} ) }
+			/>
+		);
+
+		expect( screen.queryByText( 'Manual edit' ) ).not.toBeInTheDocument();
+		expect( screen.queryByRole( 'button', { name: 'Apply change' } ) ).not.toBeInTheDocument();
+		expect( screen.getByRole( 'button', { name: 'Go to section' } ) ).toBeDisabled();
 	} );
 
 	it.each( [
@@ -388,9 +470,8 @@ describe( 'ReviewMediation — smoke render', () => {
 				screen.queryByText( /Reviewer-asserted with no matching site clause/ )
 			).not.toBeInTheDocument();
 			expect( screen.queryByText( /Guideline violations/ ) ).not.toBeInTheDocument();
-			expect(
-				document.querySelector( '.jetpack-ai-review-mediation__guideline-anchor' )
-			).toBeNull();
+			// No card renders for the filtered violation, so its excerpt is absent too.
+			expect( screen.queryByText( 'was voted upon' ) ).not.toBeInTheDocument();
 		}
 	);
 } );
@@ -484,7 +565,7 @@ describe( 'ReviewMediation — suggested-edit accept flow', () => {
 		expect( screen.getByText( 'Concise.' ) ).toBeInTheDocument();
 
 		await act( async () => {
-			fireEvent.click( screen.getByRole( 'button', { name: 'Accept' } ) );
+			fireEvent.click( screen.getByRole( 'button', { name: 'Apply change' } ) );
 		} );
 
 		expect( mockApplyReviewEdit ).toHaveBeenCalledWith(
@@ -492,11 +573,12 @@ describe( 'ReviewMediation — suggested-edit accept flow', () => {
 			'voted on Tuesday',
 			undefined,
 			'voted last Tuesday',
-			expect.any( Function )
+			expect.any( Function ),
+			undefined
 		);
 
 		await waitFor( () => {
-			expect( screen.getByText( 'Accepted' ) ).toBeInTheDocument();
+			expect( screen.getByText( 'Applied' ) ).toBeInTheDocument();
 		} );
 		expect( mockedRecordTracksEvent ).toHaveBeenCalledWith(
 			'jetpack_ai_editorial_review_item_action',
@@ -512,13 +594,77 @@ describe( 'ReviewMediation — suggested-edit accept flow', () => {
 		expect( screen.getByText( 'Undo' ) ).toBeInTheDocument();
 	} );
 
+	it( 'falls to Go to section, not a stuck Applying, if the review goes stale mid-apply', async () => {
+		// A never-resolving apply keeps the card in the in-flight "Applying…" state.
+		mockApplyReviewEdit.mockReturnValueOnce( new Promise( () => undefined ) );
+
+		const { rerender } = render( <ReviewMediation { ...editsPayload } /> );
+		await act( async () => {
+			fireEvent.click( screen.getByRole( 'button', { name: 'Apply change' } ) );
+		} );
+		expect( screen.getByRole( 'button', { name: 'Applying…' } ) ).toBeInTheDocument();
+
+		// The editor navigates to another post while the apply is still in flight.
+		mockCurrentPostId = 999;
+		rerender( <ReviewMediation { ...editsPayload } /> );
+
+		// No stuck Apply/Applying button — Go to section (disabled) stands in.
+		expect( screen.queryByRole( 'button', { name: 'Apply change' } ) ).not.toBeInTheDocument();
+		expect( screen.queryByRole( 'button', { name: 'Applying…' } ) ).not.toBeInTheDocument();
+		expect( screen.getByRole( 'button', { name: 'Go to section' } ) ).toBeDisabled();
+	} );
+
+	it( 'passes the editable attribute from the payload to one-click edits', async () => {
+		mockBlocks = [
+			{
+				clientId: 'image-1',
+				name: 'core/image',
+				attributes: { caption: 'Outdoor map activity' },
+			},
+		];
+		mockApplyReviewEdit.mockResolvedValueOnce( {
+			success: true,
+			editableAttribute: 'caption',
+		} );
+
+		render(
+			<ReviewMediation
+				{ ...basePayload( {
+					suggested_edits: [
+						{
+							block_index: 0,
+							editable_attribute: 'caption',
+							current_text: 'Outdoor map activity',
+							suggested_text: 'Children exploring an outdoor map',
+							rationale: 'Clarify image context.',
+							supported_by_reviewers: [],
+						},
+					],
+				} ) }
+			/>
+		);
+
+		await act( async () => {
+			fireEvent.click( screen.getByRole( 'button', { name: 'Apply change' } ) );
+		} );
+
+		expect( mockApplyReviewEdit ).toHaveBeenCalledWith(
+			'image-1',
+			'Children exploring an outdoor map',
+			undefined,
+			'Outdoor map activity',
+			expect.any( Function ),
+			'caption'
+		);
+	} );
+
 	it( 'restores the full card from the collapsed row on Undo', async () => {
 		mockApplyReviewEdit.mockResolvedValueOnce( { success: true } );
 
 		render( <ReviewMediation { ...editsPayload } /> );
 
 		await act( async () => {
-			fireEvent.click( screen.getByRole( 'button', { name: 'Accept' } ) );
+			fireEvent.click( screen.getByRole( 'button', { name: 'Apply change' } ) );
 		} );
 
 		await waitFor( () => {
@@ -529,7 +675,7 @@ describe( 'ReviewMediation — suggested-edit accept flow', () => {
 
 		// Back to pending: rationale + Accept button restored.
 		expect( screen.getByText( 'Concise.' ) ).toBeInTheDocument();
-		expect( screen.getByRole( 'button', { name: 'Accept' } ) ).toBeInTheDocument();
+		expect( screen.getByRole( 'button', { name: 'Apply change' } ) ).toBeInTheDocument();
 	} );
 
 	it( 'reverts the block content via undoBlockEdit on Undo', async () => {
@@ -542,7 +688,7 @@ describe( 'ReviewMediation — suggested-edit accept flow', () => {
 		render( <ReviewMediation { ...editsPayload } /> );
 
 		await act( async () => {
-			fireEvent.click( screen.getByRole( 'button', { name: 'Accept' } ) );
+			fireEvent.click( screen.getByRole( 'button', { name: 'Apply change' } ) );
 		} );
 
 		await waitFor( () => {
@@ -554,7 +700,8 @@ describe( 'ReviewMediation — suggested-edit accept flow', () => {
 		expect( mockUndoBlockEdit ).toHaveBeenCalledWith(
 			'b1',
 			'The council voted last Tuesday on the procedural matter.',
-			'The council voted on Tuesday on the procedural matter.'
+			'The council voted on Tuesday on the procedural matter.',
+			undefined
 		);
 	} );
 
@@ -569,7 +716,7 @@ describe( 'ReviewMediation — suggested-edit accept flow', () => {
 		render( <ReviewMediation { ...editsPayload } /> );
 
 		await act( async () => {
-			fireEvent.click( screen.getByRole( 'button', { name: 'Accept' } ) );
+			fireEvent.click( screen.getByRole( 'button', { name: 'Apply change' } ) );
 		} );
 
 		await waitFor( () => {
@@ -579,7 +726,7 @@ describe( 'ReviewMediation — suggested-edit accept flow', () => {
 		fireEvent.click( screen.getByText( 'Undo' ) );
 
 		expect( mockUndoBlockEdit ).toHaveBeenCalledTimes( 1 );
-		expect( screen.getByText( 'Accepted' ) ).toBeInTheDocument();
+		expect( screen.getByText( 'Applied' ) ).toBeInTheDocument();
 		expect( screen.queryByText( 'Concise.' ) ).not.toBeInTheDocument();
 		expect( screen.getByText( 'Undo' ) ).toBeInTheDocument();
 
@@ -587,7 +734,7 @@ describe( 'ReviewMediation — suggested-edit accept flow', () => {
 
 		expect( mockUndoBlockEdit ).toHaveBeenCalledTimes( 2 );
 		expect( screen.getByText( 'Concise.' ) ).toBeInTheDocument();
-		expect( screen.getByRole( 'button', { name: 'Accept' } ) ).toBeInTheDocument();
+		expect( screen.getByRole( 'button', { name: 'Apply change' } ) ).toBeInTheDocument();
 	} );
 
 	it( 'marks the row failed (and not collapsed) when applyReviewEdit rejects', async () => {
@@ -596,7 +743,7 @@ describe( 'ReviewMediation — suggested-edit accept flow', () => {
 		render( <ReviewMediation { ...editsPayload } /> );
 
 		await act( async () => {
-			fireEvent.click( screen.getByRole( 'button', { name: 'Accept' } ) );
+			fireEvent.click( screen.getByRole( 'button', { name: 'Apply change' } ) );
 		} );
 
 		await waitFor( () => {
@@ -610,11 +757,8 @@ describe( 'ReviewMediation — suggested-edit accept flow', () => {
 		expect( screen.queryByRole( 'button', { name: 'Undo' } ) ).not.toBeInTheDocument();
 	} );
 
-	it( 'disables Accept for unsupported block targets', () => {
-		mockBlocks = [
-			...blocks,
-			{ clientId: 'b3', name: 'core/list', attributes: { content: 'List content' } },
-		];
+	it( 'offers Go to section instead of Apply when the block has no editable text target', () => {
+		mockBlocks = [ ...blocks, { clientId: 'b3', name: 'core/query', attributes: { queryId: 1 } } ];
 
 		render(
 			<ReviewMediation
@@ -632,13 +776,13 @@ describe( 'ReviewMediation — suggested-edit accept flow', () => {
 			/>
 		);
 
-		expect( screen.getByText( 'Needs manual edit — unsupported block type' ) ).toBeInTheDocument();
-		const accept = screen.getByRole( 'button', { name: 'Accept' } );
-		expect( accept ).toBeDisabled();
-		fireEvent.click( accept );
+		// No dead Apply: the fix can't apply, so Go to section stands in (block exists).
+		expect( screen.queryByRole( 'button', { name: 'Apply change' } ) ).not.toBeInTheDocument();
+		const goToSection = screen.getByRole( 'button', { name: 'Go to section' } );
+		expect( goToSection ).not.toBeDisabled();
 
 		expect( mockApplyReviewEdit ).not.toHaveBeenCalled();
-		expect( screen.queryByText( /Accept all AI resolutions/ ) ).not.toBeInTheDocument();
+		expect( screen.queryByText( /Apply all/ ) ).not.toBeInTheDocument();
 	} );
 
 	it( 'renders manual suggested edits without making them auto-applicable', () => {
@@ -659,36 +803,69 @@ describe( 'ReviewMediation — suggested-edit accept flow', () => {
 			/>
 		);
 
+		// Manual-edit badge; WHY = rationale, SUGGESTION = the proposed wording.
+		expect( screen.getByText( 'Manual edit' ) ).toBeInTheDocument();
+		expect( screen.getByText( 'Marcus raised this as a policy concern.' ) ).toBeInTheDocument();
 		expect(
 			screen.getByText( 'Review the paragraph against the concern before publishing.' )
 		).toBeInTheDocument();
-		expect( screen.getByText( 'Marcus raised this as a policy concern.' ) ).toBeInTheDocument();
 		expect( screen.getByText( 'Requested by:' ) ).toBeInTheDocument();
 
-		expect( screen.getByText( 'Needs manual edit.' ) ).toBeInTheDocument();
-		expect( screen.queryByRole( 'button', { name: 'Needs manual edit' } ) ).not.toBeInTheDocument();
-		expect( screen.queryByRole( 'button', { name: 'Accept' } ) ).not.toBeInTheDocument();
-		expect( screen.queryByText( /Accept all AI resolutions/ ) ).not.toBeInTheDocument();
+		// No in-place Apply on a manual card; Go to section instead.
+		expect( screen.queryByRole( 'button', { name: 'Apply change' } ) ).not.toBeInTheDocument();
+		expect( screen.getByRole( 'button', { name: 'Go to section' } ) ).toBeInTheDocument();
+		expect( screen.queryByText( /Apply all/ ) ).not.toBeInTheDocument();
+	} );
+
+	it( 'badges edits with feedback_category and keeps that category on a Manual edit', () => {
+		render(
+			<ReviewMediation
+				{ ...basePayload( {
+					suggested_edits: [
+						{
+							block_index: 1,
+							current_text: 'voted last Tuesday',
+							suggested_text: 'voted on Tuesday',
+							rationale: 'Concise.',
+							supported_by_reviewers: [],
+							feedback_category: 'Tone',
+						},
+						{
+							block_index: 1,
+							current_text: '',
+							suggested_text: 'Rework this paragraph before publishing.',
+							rationale: 'Needs author judgment.',
+							supported_by_reviewers: [],
+							requires_manual: true,
+							feedback_category: 'Clarity',
+						},
+					],
+				} ) }
+			/>
+		);
+
+		// Applicable edit: badge is its feedback_category, no "Manual edit" tag.
+		expect( screen.getByText( 'Tone (1/2)' ) ).toBeInTheDocument();
+		// Manual edit: the category badge STAYS; "Manual edit" is a separate tag.
+		expect( screen.getByText( 'Clarity (2/2)' ) ).toBeInTheDocument();
+		expect( screen.getByText( 'Manual edit' ) ).toBeInTheDocument();
 	} );
 
 	it( 'keeps block focus on the explicit block reference button', () => {
-		const blockElement = document.createElement( 'div' );
-		const layoutElement = document.createElement( 'div' );
-		mockFindBlockElement.mockReturnValue( blockElement );
-		mockFindBlockListLayout.mockReturnValue( layoutElement );
-
 		render( <ReviewMediation { ...editsPayload } /> );
 
-		const card = screen.getByText( 'Concise.' ).closest( '.jetpack-ai-review-mediation__card' );
+		const card = screen.getByText( 'Concise.' ).closest( '.jetpack-ai-feedback-list__item' );
 		expect( card ).toBeInTheDocument();
 
-		fireEvent.click( card! );
+		fireEvent.mouseDown( card! );
 		expect( mockSelectBlock ).not.toHaveBeenCalled();
+		expect( mockToggleBlockReferenceFocus ).not.toHaveBeenCalled();
+		expect( mockClearActiveBlockFocusUnlessBlockReferenceClick ).toHaveBeenCalledWith( card );
 
-		fireEvent.click( screen.getByTitle( 'Scroll to block in editor' ) );
-		expect( mockSelectBlock ).toHaveBeenCalledWith( 'b1' );
-		expect( mockFindBlockElement ).toHaveBeenCalledWith( 'b1' );
-		expect( layoutElement.classList.contains( 'is-focus-mode' ) ).toBe( true );
+		const blockRef = screen.getByTitle( 'Scroll to block in editor' );
+		fireEvent.mouseDown( blockRef );
+		fireEvent.click( blockRef );
+		expect( mockToggleBlockReferenceFocus ).toHaveBeenCalledWith( 'b1' );
 	} );
 
 	it( 'maps block_index against the recursive flattened block tree', async () => {
@@ -736,7 +913,7 @@ describe( 'ReviewMediation — suggested-edit accept flow', () => {
 		);
 
 		await act( async () => {
-			fireEvent.click( screen.getByRole( 'button', { name: 'Accept' } ) );
+			fireEvent.click( screen.getByRole( 'button', { name: 'Apply change' } ) );
 		} );
 
 		expect( mockApplyReviewEdit ).toHaveBeenCalledWith(
@@ -744,11 +921,12 @@ describe( 'ReviewMediation — suggested-edit accept flow', () => {
 			'Updated nested paragraph text.',
 			undefined,
 			'Nested paragraph text.',
-			expect.any( Function )
+			expect.any( Function ),
+			undefined
 		);
 	} );
 
-	it( 'disables Accept when the source text no longer matches the block content', () => {
+	it( 'offers Go to section instead of Apply when the source text no longer matches', () => {
 		render(
 			<ReviewMediation
 				{ ...basePayload( {
@@ -765,13 +943,12 @@ describe( 'ReviewMediation — suggested-edit accept flow', () => {
 			/>
 		);
 
-		expect( screen.getByText( 'Needs manual edit — source text changed' ) ).toBeInTheDocument();
-		const accept = screen.getByRole( 'button', { name: 'Accept' } );
-		expect( accept ).toBeDisabled();
-		fireEvent.click( accept );
+		// The drifted source can't apply, so no Apply change; Go to section stands in.
+		expect( screen.queryByRole( 'button', { name: 'Apply change' } ) ).not.toBeInTheDocument();
+		expect( screen.getByRole( 'button', { name: 'Go to section' } ) ).not.toBeDisabled();
 
 		expect( mockApplyReviewEdit ).not.toHaveBeenCalled();
-		expect( screen.queryByText( /Accept all AI resolutions/ ) ).not.toBeInTheDocument();
+		expect( screen.queryByText( /Apply all/ ) ).not.toBeInTheDocument();
 	} );
 
 	it( 'collapses the card on Dismiss without calling applyReviewEdit', () => {
@@ -782,6 +959,93 @@ describe( 'ReviewMediation — suggested-edit accept flow', () => {
 		expect( mockApplyReviewEdit ).not.toHaveBeenCalled();
 		expect( screen.getByText( 'Dismissed' ) ).toBeInTheDocument();
 		expect( screen.queryByText( 'Concise.' ) ).not.toBeInTheDocument();
+	} );
+} );
+
+describe( 'ReviewMediation — guideline violations', () => {
+	const violationsPayload = basePayload( {
+		guideline_violations: [
+			{
+				category: 'copy',
+				block_name: null,
+				guideline_quote: 'Write in the active voice.',
+				block_index: 1,
+				violating_text: 'was voted upon',
+				issue: 'Passive voice detected.',
+			},
+		],
+	} );
+
+	it( 'renders a violation as an advisory card — badge, struck excerpt, why, guideline, no Apply', () => {
+		render( <ReviewMediation { ...violationsPayload } /> );
+
+		// Section heading carries the count, like the other grouped sections.
+		expect( screen.getByText( /Guideline violations \(1\)/ ) ).toBeInTheDocument();
+		// Category + position badge instead of a standalone pill.
+		expect( screen.getByText( 'Copy (1/1)' ) ).toBeInTheDocument();
+		// The violating excerpt is struck through; WHY (issue) + GUIDELINE (quote) rows follow.
+		const excerpt = screen.getByText( 'was voted upon' );
+		expect( excerpt.tagName ).toBe( 'DEL' );
+		expect( screen.getByText( 'Passive voice detected.' ) ).toBeInTheDocument();
+		expect( screen.getByText( 'Write in the active voice.' ) ).toBeInTheDocument();
+		// Why-first order: Why (issue) → struck excerpt → guideline quote.
+		const tags = Array.from(
+			document.querySelectorAll( '.jetpack-ai-feedback-list__diff-tag' )
+		).map( ( n ) => n.textContent );
+		expect( tags ).toEqual( [ 'Why', 'Current', 'Guideline' ] );
+		// Advisory: nothing to apply, so Go to section stands in for Apply change.
+		expect( screen.queryByRole( 'button', { name: 'Apply change' } ) ).not.toBeInTheDocument();
+		expect( screen.getByRole( 'button', { name: 'Go to section' } ) ).not.toBeDisabled();
+	} );
+
+	it( 'focuses the referenced block when Go to section is clicked', () => {
+		render( <ReviewMediation { ...violationsPayload } /> );
+
+		fireEvent.click( screen.getByRole( 'button', { name: 'Go to section' } ) );
+		expect( mockToggleBlockReferenceFocus ).toHaveBeenCalledWith( 'b1' );
+	} );
+
+	it( 'collapses to a Dismissed row on Dismiss and restores the card on Undo', () => {
+		render( <ReviewMediation { ...violationsPayload } /> );
+
+		fireEvent.click( screen.getByRole( 'button', { name: 'Dismiss' } ) );
+
+		// Resolved: body hidden, Dismissed + Undo shown, and no block mutation ran.
+		expect( screen.queryByText( 'Passive voice detected.' ) ).not.toBeInTheDocument();
+		expect( screen.getByText( 'Dismissed' ) ).toBeInTheDocument();
+		expect( mockApplyReviewEdit ).not.toHaveBeenCalled();
+		expect( mockUndoBlockEdit ).not.toHaveBeenCalled();
+
+		fireEvent.click( screen.getByRole( 'button', { name: 'Undo' } ) );
+
+		// Back to the active advisory card.
+		expect( screen.getByText( 'Passive voice detected.' ) ).toBeInTheDocument();
+		expect( screen.getByRole( 'button', { name: 'Go to section' } ) ).toBeInTheDocument();
+	} );
+
+	it( 'disables Go to section when the referenced block is gone and omits the excerpt row', () => {
+		render(
+			<ReviewMediation
+				{ ...basePayload( {
+					guideline_violations: [
+						{
+							category: 'images',
+							block_name: null,
+							guideline_quote: 'Provide descriptive alt text.',
+							block_index: 42,
+							violating_text: '',
+							issue: 'Alt text missing.',
+						},
+					],
+				} ) }
+			/>
+		);
+
+		// Out-of-range block index → nothing to anchor to.
+		expect( screen.getByRole( 'button', { name: 'Go to section' } ) ).toBeDisabled();
+		// Empty violating_text → no struck excerpt row, but the issue still renders.
+		expect( screen.getByText( 'Alt text missing.' ) ).toBeInTheDocument();
+		expect( screen.queryByText( 'was voted upon' ) ).not.toBeInTheDocument();
 	} );
 } );
 
@@ -834,10 +1098,11 @@ describe( 'ReviewMediation — conflict resolutions', () => {
 			'voted softly on Tuesday',
 			undefined,
 			'voted last Tuesday',
-			expect.any( Function )
+			expect.any( Function ),
+			undefined
 		);
 		await waitFor( () => {
-			expect( screen.getByText( 'Accepted' ) ).toBeInTheDocument();
+			expect( screen.getByText( 'Applied' ) ).toBeInTheDocument();
 		} );
 	} );
 
@@ -855,8 +1120,111 @@ describe( 'ReviewMediation — conflict resolutions', () => {
 			'voted on Tuesday',
 			undefined,
 			'voted last Tuesday',
-			expect.any( Function )
+			expect.any( Function ),
+			undefined
 		);
+	} );
+
+	it( 'groups reviewer options separately from the fixed AI + Dismiss pair', () => {
+		// Three reviewers (odd count) + an AI recommendation: the reviewer options
+		// must stay in their own group and the AI + Dismiss pair must stay fixed,
+		// so the pairing never depends on the reviewer count's parity.
+		render(
+			<ReviewMediation
+				{ ...basePayload( {
+					conflicts: [
+						{
+							subject: 'Procedural framing',
+							positions: [
+								{ reviewer: 'Ada', position: 'A.' },
+								{ reviewer: 'Ben', position: 'B.' },
+								{ reviewer: 'Cai', position: 'C.' },
+							],
+							guideline_anchor: null,
+							recommended_resolution: 'Use neutral phrasing.',
+							candidate_resolutions: [
+								...[ 'Ada', 'Ben', 'Cai' ].map( ( name ) => ( {
+									source: 'reviewer' as const,
+									reviewer_name: name,
+									label: `${ name }'s wording`,
+									block_index: 1,
+									current_text: 'voted last Tuesday',
+									text: `voted per ${ name }`,
+									rationale: '',
+								} ) ),
+								{
+									source: 'ai' as const,
+									reviewer_name: null,
+									label: 'AI resolution',
+									block_index: 1,
+									current_text: 'voted last Tuesday',
+									text: 'voted on Tuesday',
+									rationale: '',
+								},
+							],
+						},
+					],
+				} ) }
+			/>
+		);
+
+		const candidates = document.querySelector(
+			'.jetpack-ai-review-mediation__conflict-candidates'
+		);
+		const resolve = document.querySelector(
+			'.jetpack-ai-review-mediation__conflict-resolution .jetpack-ai-review-mediation__actions'
+		);
+		expect( candidates ).toBeInTheDocument();
+		expect( resolve ).toBeInTheDocument();
+
+		// All three reviewer options are in the candidates group, none in the pair.
+		for ( const name of [
+			"Accept Ada's wording",
+			"Accept Ben's wording",
+			"Accept Cai's wording",
+		] ) {
+			const btn = screen.getByRole( 'button', { name } );
+			expect( candidates ).toContainElement( btn );
+			expect( resolve ).not.toContainElement( btn );
+		}
+
+		// AI + Dismiss are the fixed pair, not mixed into the reviewer grid.
+		const ai = screen.getByRole( 'button', { name: 'Accept AI resolution' } );
+		const dismiss = screen.getByRole( 'button', { name: 'Dismiss' } );
+		expect( resolve ).toContainElement( ai );
+		expect( resolve ).toContainElement( dismiss );
+		expect( candidates ).not.toContainElement( ai );
+		expect( candidates ).not.toContainElement( dismiss );
+	} );
+
+	it( 'resolves in place on accept — keeps the header, shows Applied + Undo, and Undo restores the options', async () => {
+		mockApplyReviewEdit.mockResolvedValueOnce( { success: true } );
+
+		render( <ReviewMediation { ...conflictPayload } /> );
+
+		await act( async () => {
+			fireEvent.click( screen.getByRole( 'button', { name: 'Accept AI resolution' } ) );
+		} );
+
+		await waitFor( () => {
+			expect( screen.getByText( 'Applied' ) ).toBeInTheDocument();
+		} );
+		// Not collapsed to a one-liner: the subject header stays, and the row
+		// offers Undo — the shared resolved shape from GF / Proofreader.
+		expect( screen.getByText( 'Procedural framing' ) ).toBeInTheDocument();
+		// The undo icon is an aria-hidden SVG, so match the button by its text.
+		const undoBtn = screen.getByText( 'Undo' );
+		expect( undoBtn ).toBeInTheDocument();
+		// The active resolution options are gone while resolved.
+		expect(
+			screen.queryByRole( 'button', { name: 'Accept AI resolution' } )
+		).not.toBeInTheDocument();
+
+		fireEvent.click( undoBtn );
+
+		// Undo brings back the active card with its resolution options.
+		expect( screen.getByRole( 'button', { name: 'Accept AI resolution' } ) ).toBeInTheDocument();
+		expect( screen.queryByText( 'Applied' ) ).not.toBeInTheDocument();
 	} );
 
 	it( 'keeps the accepted conflict and snapshot when undoBlockEdit fails', async () => {
@@ -882,10 +1250,11 @@ describe( 'ReviewMediation — conflict resolutions', () => {
 		expect( mockUndoBlockEdit ).toHaveBeenCalledWith(
 			'b1',
 			'The council voted last Tuesday on the procedural matter.',
-			'The council voted on Tuesday on the procedural matter.'
+			'The council voted on Tuesday on the procedural matter.',
+			undefined
 		);
 		expect( mockUndoBlockEdit ).toHaveBeenCalledTimes( 1 );
-		expect( screen.getByText( 'Accepted' ) ).toBeInTheDocument();
+		expect( screen.getByText( 'Applied' ) ).toBeInTheDocument();
 		expect(
 			screen.queryByRole( 'button', { name: 'Accept AI resolution' } )
 		).not.toBeInTheDocument();
@@ -928,14 +1297,14 @@ describe( 'ReviewMediation — conflict resolutions', () => {
 			/>
 		);
 
-		expect( screen.getByText( 'Needs manual edit — unsupported block type' ) ).toBeInTheDocument();
+		expect( screen.getByText( 'Needs manual edit — no exact source text' ) ).toBeInTheDocument();
 		expect(
 			screen.queryByRole( 'button', { name: 'Accept AI resolution' } )
 		).not.toBeInTheDocument();
 		expect( screen.getByRole( 'button', { name: 'Dismiss' } ) ).toBeInTheDocument();
 
 		expect( mockApplyReviewEdit ).not.toHaveBeenCalled();
-		expect( screen.queryByText( /Accept all AI resolutions/ ) ).not.toBeInTheDocument();
+		expect( screen.queryByText( /Apply all/ ) ).not.toBeInTheDocument();
 	} );
 
 	it( 'renders post-wide conflict candidates as manual guidance without accept buttons', () => {
@@ -972,7 +1341,7 @@ describe( 'ReviewMediation — conflict resolutions', () => {
 		expect( screen.getByRole( 'button', { name: 'Dismiss' } ) ).toBeInTheDocument();
 
 		expect( mockApplyReviewEdit ).not.toHaveBeenCalled();
-		expect( screen.queryByText( /Accept all AI resolutions/ ) ).not.toBeInTheDocument();
+		expect( screen.queryByText( /Apply all/ ) ).not.toBeInTheDocument();
 	} );
 
 	it( 'renders conflict candidates without exact source text as manual guidance', () => {
@@ -1008,7 +1377,7 @@ describe( 'ReviewMediation — conflict resolutions', () => {
 		expect( screen.getByRole( 'button', { name: 'Dismiss' } ) ).toBeInTheDocument();
 
 		expect( mockApplyReviewEdit ).not.toHaveBeenCalled();
-		expect( screen.queryByText( /Accept all AI resolutions/ ) ).not.toBeInTheDocument();
+		expect( screen.queryByText( /Apply all/ ) ).not.toBeInTheDocument();
 	} );
 
 	it.each( [
@@ -1060,12 +1429,12 @@ describe( 'ReviewMediation — conflict resolutions', () => {
 			expect( screen.getByRole( 'button', { name: 'Dismiss' } ) ).toBeInTheDocument();
 
 			expect( mockApplyReviewEdit ).not.toHaveBeenCalled();
-			expect( screen.queryByText( /Accept all AI resolutions/ ) ).not.toBeInTheDocument();
+			expect( screen.queryByText( /Apply all/ ) ).not.toBeInTheDocument();
 		}
 	);
 } );
 
-describe( 'ReviewMediation — bulk Accept all AI resolutions', () => {
+describe( 'ReviewMediation — bulk Apply all', () => {
 	it( 'applies only supported pending edits sequentially', async () => {
 		mockApplyReviewEdit.mockResolvedValue( { success: true } );
 		mockBlocks = [
@@ -1133,7 +1502,7 @@ describe( 'ReviewMediation — bulk Accept all AI resolutions', () => {
 		);
 
 		// Two pending: 1 AI conflict + 1 suggested edit.
-		const footer = screen.getByRole( 'button', { name: /Accept all AI resolutions \(2\)/ } );
+		const footer = screen.getByRole( 'button', { name: /Apply all \(2\)/ } );
 		await act( async () => {
 			fireEvent.click( footer );
 		} );
@@ -1147,7 +1516,8 @@ describe( 'ReviewMediation — bulk Accept all AI resolutions', () => {
 			'AI rewrite',
 			undefined,
 			'voted last Tuesday',
-			expect.any( Function )
+			expect.any( Function ),
+			undefined
 		);
 		expect( mockApplyReviewEdit ).toHaveBeenNthCalledWith(
 			2,
@@ -1155,12 +1525,13 @@ describe( 'ReviewMediation — bulk Accept all AI resolutions', () => {
 			'tighter copy',
 			undefined,
 			'Funding',
-			expect.any( Function )
+			expect.any( Function ),
+			undefined
 		);
 
 		// Footer disappears once everything is accepted (totalPendingCount === 0).
 		await waitFor( () => {
-			expect( screen.queryByText( /Accept all AI resolutions/ ) ).not.toBeInTheDocument();
+			expect( screen.queryByText( /Apply all/ ) ).not.toBeInTheDocument();
 		} );
 	} );
 
@@ -1206,7 +1577,7 @@ describe( 'ReviewMediation — bulk Accept all AI resolutions', () => {
 		const { rerender } = render( <ReviewMediation { ...payload } /> );
 
 		await act( async () => {
-			fireEvent.click( screen.getByRole( 'button', { name: /Accept all AI resolutions \(2\)/ } ) );
+			fireEvent.click( screen.getByRole( 'button', { name: /Apply all \(2\)/ } ) );
 		} );
 
 		await waitFor( () => {
@@ -1226,9 +1597,7 @@ describe( 'ReviewMediation — bulk Accept all AI resolutions', () => {
 			).toBeInTheDocument();
 		} );
 		expect( mockApplyReviewEdit ).toHaveBeenCalledTimes( 1 );
-		expect(
-			screen.getByRole( 'button', { name: /Accept all AI resolutions \(2\)/ } )
-		).toBeDisabled();
+		expect( screen.getByRole( 'button', { name: /Apply all \(2\)/ } ) ).toBeDisabled();
 	} );
 } );
 

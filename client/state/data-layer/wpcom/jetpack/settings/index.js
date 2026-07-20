@@ -1,5 +1,5 @@
+import { omit } from '@automattic/js-utils';
 import { translate } from 'i18n-calypso';
-import { get, omit, startsWith } from 'lodash';
 import { trailingslashit } from 'calypso/lib/route';
 import { JETPACK_SETTINGS_REQUEST, JETPACK_SETTINGS_SAVE } from 'calypso/state/action-types';
 import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
@@ -81,7 +81,9 @@ export const saveJetpackSettings = ( action ) => ( dispatch, getState ) => {
 	const previousSettings = getJetpackSettings( getState(), siteId );
 
 	// We don't want any legacy Jetpack Onboarding credentials in our Jetpack Settings Redux state.
-	const settingsWithoutCredentials = omit( settings, [ 'onboarding.jpUser', 'onboarding.token' ] );
+	const settingsWithoutCredentials = settings.onboarding
+		? { ...settings, onboarding: omit( settings.onboarding, [ 'jpUser', 'token' ] ) }
+		: settings;
 	dispatch( updateJetpackSettings( siteId, settingsWithoutCredentials ) );
 	dispatch(
 		http(
@@ -131,8 +133,8 @@ export const retryOrAnnounceSaveFailure = ( action, { message: errorMessage } ) 
 	// since it might just be a slow server that actually ends up installing it
 	// properly, in which case a subsequent request will return 'success'.
 	if (
-		get( settings, [ 'onboarding', 'installWooCommerce' ] ) !== true ||
-		! startsWith( errorMessage, 'cURL error 28' ) || // cURL timeout
+		settings?.onboarding?.installWooCommerce !== true ||
+		! ( errorMessage ?? '' ).startsWith( 'cURL error 28' ) || // cURL timeout
 		retryCount > MAX_WOOCOMMERCE_INSTALL_RETRIES
 	) {
 		return handleSaveFailure( { siteId }, action );

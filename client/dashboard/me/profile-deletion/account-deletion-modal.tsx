@@ -1,13 +1,9 @@
 import { useState } from 'react';
+import { isRemoved } from '../../utils/purchase';
 import AlternativesModal from './alternatives-modal';
 import FinalConfirmationModal from './final-confirmation-modal';
 import PurchasesModal from './purchases-modal';
 import type { Purchase } from '@automattic/api-core';
-
-type PurchaseLike = Pick<
-	Purchase,
-	'expiry_status' | 'product_slug' | 'is_cancelable' | 'is_refundable'
->;
 
 interface AccountDeletionModalProps {
 	onClose: () => void;
@@ -15,7 +11,7 @@ interface AccountDeletionModalProps {
 	username: string;
 	isDeleting: boolean;
 	siteCount: number;
-	purchases: PurchaseLike[];
+	purchases: Purchase[];
 }
 
 export default function AccountDeletionModal( {
@@ -29,7 +25,10 @@ export default function AccountDeletionModal( {
 	const [ showAlternatives, setShowAlternatives ] = useState( true );
 
 	const hasCancelablePurchases = purchases.some( ( p ) => {
-		if ( p.expiry_status === 'expired' ) {
+		// Skip only fully-removed purchases. An expired-but-still-active purchase
+		// (in its grace period) can still be renewed, so it should require action
+		// before the account is deleted.
+		if ( isRemoved( p ) ) {
 			return false;
 		}
 		if ( p.product_slug === 'premium_theme' && ! p.is_refundable ) {

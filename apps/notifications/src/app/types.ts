@@ -25,7 +25,7 @@ type Media = {
 	width?: string | number;
 };
 
-type Subject = {
+export type Subject = {
 	text: string;
 	ranges?: Range[];
 	media?: Media[];
@@ -130,7 +130,9 @@ export interface Client {
 	isVisible: boolean;
 	isShowing: boolean;
 	lastSeenTime: number;
-	noteRequestLimit: number;
+	filter: Record< string, unknown > | null;
+	filteredHasMore: boolean;
+	gettingFilteredNotes: boolean;
 	retries: number;
 	subscribeTry: number;
 	subscribeTries: number;
@@ -145,6 +147,8 @@ export interface Client {
 	getNote: ( note_id: number ) => void;
 	getNotes: () => void;
 	getNotesList: () => void;
+	getFilteredNotes: () => void;
+	setFilter: ( filter: Record< string, unknown > | null ) => void;
 	updateLastSeenTime: ( proposedTime: number, fromStorage: boolean ) => boolean;
 	loadMore: () => void;
 	hasMoreNotes: () => boolean;

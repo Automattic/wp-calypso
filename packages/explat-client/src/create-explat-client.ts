@@ -113,7 +113,7 @@ export function createExPlatClient( config: Config ): ExPlatClient {
 	/**
 	 * This bit of code is the heavy lifting behind loadExperimentAssignment, allowing it to be used intuitively.
 	 *
-	 * Using asyncOneAtATime, is how we ensure for each experiment that there is only ever one fetch process occuring.
+	 * Using asyncOneAtATime, is how we ensure for each experiment that there is only ever one fetch process occurring.
 	 * @param experimentName The experiment's name
 	 */
 	const createWrappedExperimentAssignmentFetchAndStore = ( experimentName: string ) =>

@@ -9,6 +9,7 @@ import { __, sprintf } from '@wordpress/i18n';
 import { intlFormat } from 'date-fns';
 import { SectionHeader } from '../../../../../components/section-header';
 import { Text } from '../../../../../components/text';
+import { wpcomLink } from '../../../../../utils/link';
 import { BillingPurchaseInfoPopover } from '../../../dataviews';
 import type { AtomicTransfer, Purchase } from '@automattic/api-core';
 
@@ -177,7 +178,7 @@ export function AtomicRevertStep( props: Props ) {
 							),
 							{
 								backupLink: (
-									<Button variant="link" href={ `/backup/${ siteSlug }` }>
+									<Button variant="link" href={ wpcomLink( `/backup/${ siteSlug }` ) }>
 										{ __( 'download a backup' ) }
 									</Button>
 								),

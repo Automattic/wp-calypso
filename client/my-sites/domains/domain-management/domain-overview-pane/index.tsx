@@ -53,7 +53,7 @@ export function showDomainManagementPage( route: string ) {
 }
 
 type BtnProps = {
-	focusRef: React.RefObject< HTMLButtonElement >;
+	focusRef: React.RefObject< HTMLButtonElement | null >;
 	itemData: ItemData;
 };
 
@@ -194,9 +194,11 @@ const DomainOverviewPane = ( {
 			<ItemView
 				itemData={ itemData }
 				closeItemView={ () => {
-					inSiteContext
-						? page.show( '/sites' )
-						: page.show( addQueryArgs( queryParams, paths.domainManagementRoot() ) );
+					if ( inSiteContext ) {
+						page.show( '/sites' );
+					} else {
+						page.show( addQueryArgs( queryParams, paths.domainManagementRoot() ) );
+					}
 				} }
 				features={ features }
 				enforceTabsView

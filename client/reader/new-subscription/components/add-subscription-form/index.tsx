@@ -3,7 +3,7 @@ import { getSiteSubscriptionsQueryKey } from '@automattic/api-queries';
 import { SubscriptionManager } from '@automattic/data-stores';
 import { useQueryClient } from '@tanstack/react-query';
 import { useTranslate } from 'i18n-calypso';
-import { useCallback, useState } from 'react';
+import { useCallback, useState, type JSX } from 'react';
 import Notice from 'calypso/components/notice';
 import { AddSitesForm } from 'calypso/landing/subscriptions/components/add-sites-form';
 import { SiteSubscriptionsList } from 'calypso/landing/subscriptions/components/site-subscriptions-list';
@@ -130,7 +130,7 @@ export default function AddSubscriptionForm( props: AddSubscriptionFormProps ): 
 									<SiteSubscriptionsList layout="compact" />
 								</>
 							) }
-							{ shouldShowRelatedSitesList && <UnsubscribedFeedsSearchList /> }
+							{ shouldShowRelatedSitesList && <UnsubscribedFeedsSearchList hideTitle /> }
 						</>
 					) ) }
 			</SubscriptionManagerContextProvider>

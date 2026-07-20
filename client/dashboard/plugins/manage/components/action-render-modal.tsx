@@ -365,7 +365,7 @@ export default function ActionRenderModal( {
 				const prefix = buildSuccessPrefix( actionId, items );
 				createSuccessNotice(
 					sprintf(
-						// translators: %d is the number of sites.
+						// translators: %1$s: the action performed, %2$d: the number of sites.
 						_n( '%1$s on %2$d site', '%1$s on %2$d sites', successCount, 'next-admin' ),
 						prefix,
 						successCount
@@ -379,7 +379,7 @@ export default function ActionRenderModal( {
 				const errorPrefix = buildErrorPrefix( actionId, items );
 				createErrorNotice(
 					sprintf(
-						// translators: %d is the number of sites.
+						// translators: %1$s: the action performed, %2$d: the number of sites.
 						_n( '%1$s on %2$d site', '%1$s on %2$d sites', errorCount, 'next-admin' ),
 						errorPrefix,
 						errorCount

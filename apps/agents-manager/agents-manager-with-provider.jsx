@@ -5,7 +5,15 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
 const queryClient = new QueryClient();
 
-export default function AgentsManagerWithProvider( { useImageUpload } ) {
+// Stable empty-array reference so the default prop doesn't change identity on
+// every render and trigger needless downstream re-renders.
+const EMPTY_ARRAY = [];
+
+export default function AgentsManagerWithProvider( {
+	zendeskConversationTags = EMPTY_ARRAY,
+	zendeskSmoochIntegrationKey,
+	zendeskTicketProductFieldValue,
+} ) {
 	return (
 		<QueryClientProvider client={ queryClient }>
 			<AgentsManager
@@ -13,7 +21,9 @@ export default function AgentsManagerWithProvider( { useImageUpload } ) {
 				currentUser={ agentsManagerData.currentUser }
 				site={ agentsManagerData.site }
 				currentSiteId={ agentsManagerData.site?.ID }
-				useImageUpload={ useImageUpload }
+				zendeskConversationTags={ zendeskConversationTags }
+				zendeskSmoochIntegrationKey={ zendeskSmoochIntegrationKey }
+				zendeskTicketProductFieldValue={ zendeskTicketProductFieldValue }
 			/>
 		</QueryClientProvider>
 	);

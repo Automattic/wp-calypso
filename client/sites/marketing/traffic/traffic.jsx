@@ -1,6 +1,6 @@
+import { pick } from '@automattic/js-utils';
 import { Page } from '@wordpress/admin-ui';
 import { localize } from 'i18n-calypso';
-import { pick } from 'lodash';
 import { useEffect } from 'react';
 import { connect } from 'react-redux';
 import blazeIllustration from 'calypso/assets/images/customer-home/illustration--blaze.svg';
@@ -25,7 +25,8 @@ import Sitemaps from 'calypso/my-sites/site-settings/sitemaps';
 import wrapSettingsForm from 'calypso/my-sites/site-settings/wrap-settings-form';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import isBlazeEnabled from 'calypso/state/selectors/is-blaze-enabled';
-import { isJetpackSite } from 'calypso/state/sites/selectors';
+import isSiteComingSoon from 'calypso/state/selectors/is-site-coming-soon';
+import { getSiteSlug, isJetpackSite } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
 import './style.scss';
@@ -34,6 +35,18 @@ const loadForm = () =>
 	import(
 		/* webpackChunkName: "async-load-calypso-my-sites-site-settings-seo-settings-form" */ 'calypso/my-sites/site-settings/seo-settings/form'
 	);
+
+export const shouldShowBlazeAdvertisingOption = ( state, siteId ) => {
+	return isBlazeEnabled( state, siteId ) || isSiteComingSoon( state, siteId );
+};
+
+export const getBlazeAdvertisingUrl = ( { siteSlug, wpAdminAdvertisingUrl } ) => {
+	if ( siteSlug ) {
+		return `/advertising/${ siteSlug }`;
+	}
+
+	return wpAdminAdvertisingUrl;
+};
 
 const SiteSettingsTraffic = ( {
 	fields,
@@ -46,6 +59,7 @@ const SiteSettingsTraffic = ( {
 	isSavingSettings,
 	setFieldValue,
 	siteId,
+	siteSlug,
 	shouldShowAdvertisingOption,
 	translate,
 } ) => {
@@ -57,6 +71,10 @@ const SiteSettingsTraffic = ( {
 	}, [] );
 
 	const advertisingUrl = useAdvertisingUrl();
+	const blazeAdvertisingUrl = getBlazeAdvertisingUrl( {
+		siteSlug,
+		wpAdminAdvertisingUrl: advertisingUrl,
+	} );
 
 	return (
 		// eslint-disable-next-line wpcalypso/jsx-classname-namespace
@@ -91,11 +109,12 @@ const SiteSettingsTraffic = ( {
 							clickEvent="calypso_marketing_traffic_blaze_banner_click"
 							headerText={ translate( 'Reach new readers and customers' ) }
 							contentText={ translate(
-								'Use WordPress Blaze to increase your reach by promoting your work to the larger WordPress.com community of blogs and sites. '
+								'Use %(productName)s to increase your reach by promoting your work to the larger WordPress.com community of blogs and sites. ',
+								{ args: { productName: 'Blaze Ads' } }
 							) }
 							ctaText={ translate( 'Get started' ) }
 							image={ blazeIllustration }
-							href={ advertisingUrl }
+							href={ blazeAdvertisingUrl }
 						/>
 					) }
 					{ isAdmin && (
@@ -142,14 +161,16 @@ const connectComponent = connect( ( state ) => {
 	const isAdmin = canCurrentUser( state, siteId, 'manage_options' );
 	const isJetpack = isJetpackSite( state, siteId );
 	const isJetpackAdmin = isJetpack && isAdmin;
-	const shouldShowAdvertisingOption = isBlazeEnabled( state, siteId );
+	const siteSlug = getSiteSlug( state, siteId );
+	const showAdvertisingOption = shouldShowBlazeAdvertisingOption( state, siteId );
 
 	return {
 		siteId,
 		isAdmin,
 		isJetpack,
 		isJetpackAdmin,
-		shouldShowAdvertisingOption,
+		siteSlug,
+		shouldShowAdvertisingOption: showAdvertisingOption,
 	};
 } );
 

@@ -1,3 +1,5 @@
+@import "calypso/assets/stylesheets/shared/mixins/breakpoints";
+
 @include breakpoint-deprecated( ">480px" ) {
 	.wordads .stats-tabs .stats-tab {
 		width: 33.33%;
@@ -6,7 +8,7 @@
 	.earnings_history td:hover,
 	.earnings_history tbody tr:hover td,
 	.earnings_history tbody tr:hover th:first-child {
-		background: var(--color-primary-0);
+		background: var(--color-accent-0);
 	}
 
 	.earnings_history tbody tr:nth-child(odd) {

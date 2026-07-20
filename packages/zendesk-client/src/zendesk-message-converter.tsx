@@ -104,6 +104,7 @@ export const zendeskMessageConverter = ( message: ZendeskMessage ) => {
 		...message,
 		content: getContentMessage( message ),
 		context: { site_id: null },
+		displayName: message.displayName,
 		role,
 		type: message.type as MessageType,
 		quotedMessageId: message.id,

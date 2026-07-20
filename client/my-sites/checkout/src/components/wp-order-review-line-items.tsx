@@ -230,6 +230,14 @@ export function WPOrderReviewLineItems( {
 									)
 								}
 								removeProductFromCart={ removeProductFromCart }
+								onRemoveBundle={ ( groupId, memberCount ) => {
+									reduxDispatch(
+										recordTracksEvent( 'calypso_domain_bundle_removed_from_cart', {
+											domain_bundle_group_id: groupId,
+											domain_count: memberCount,
+										} )
+									);
+								} }
 							/>
 						</WPOrderReviewListItem>
 					);
@@ -371,7 +379,7 @@ function LineItemWrapper( {
 
 	useEffect( () => {
 		const handleClickOutside =
-			( ref: RefObject< HTMLDivElement >, toggle: ( key: string | null ) => void ) =>
+			( ref: RefObject< HTMLDivElement | null >, toggle: ( key: string | null ) => void ) =>
 			( event: MouseEvent ): void => {
 				if ( ref.current && ! ref.current.contains( event.target as Node ) ) {
 					toggle( null );

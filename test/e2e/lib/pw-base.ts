@@ -56,7 +56,6 @@ import {
 	ImportLetUsMigrateYourSitePage,
 	ImportPlansPage,
 	IncognitoPage,
-	InvitePeoplePage,
 	JetpackTrafficPage,
 	LaunchCelebrationComponent,
 	LoginPage,
@@ -77,8 +76,6 @@ import {
 	SidebarComponent,
 	SiteSelectComponent,
 	SignupPickPlanPage,
-	StartImportFlow,
-	StartWritingFlow,
 	TestAccount,
 	ThemesDetailPage,
 	ThemesPage,
@@ -89,8 +86,13 @@ import {
 	SelectItemsComponent,
 } from '@automattic/calypso-e2e';
 import { test as base, expect } from '@playwright/test';
-import { apiCloseAccount } from '../specs/shared';
+import {
+	apiCloseAccount,
+	apiWaitForBearerTokenAcceptance,
+	apiWaitForEmailVerification,
+} from '../specs/shared';
 import { useBlackboxTestKeyForCollect } from './blackbox-test-key';
+import { snoozeAccountRecoveryInterstitial } from './dashboard-helpers';
 import { getAccount } from './get-account';
 
 export type CustomOptions = {
@@ -191,14 +193,6 @@ export const test = base.extend<
 		 * Flow encapsulating the LOHP Theme Signup onboarding process.
 		 */
 		flowLOHPThemeSignup: LOHPThemeSignupFlow;
-		/**
-		 * Flow encapsulating the Start Import onboarding process.
-		 */
-		flowStartImport: StartImportFlow;
-		/**
-		 * Flow encapsulating the Start Writing onboarding process.
-		 */
-		flowStartWriting: StartWritingFlow;
 		/**
 		 * Helper data and utilities for tests.
 		 */
@@ -308,10 +302,6 @@ export const test = base.extend<
 		 */
 		pageAddPeople: AddPeoplePage;
 		/**
-		 * Page object representing the WordPress.com Invite People page.
-		 */
-		pageInvitePeople: InvitePeoplePage;
-		/**
 		 * Page object representing the WordPress.com My Home page.
 		 */
 		pageMyHome: MyHomePage;
@@ -355,6 +345,11 @@ export const test = base.extend<
 		 * Creates a new site with public visibility for testing.
 		 */
 		sitePublic: NewSiteResponse;
+		/**
+		 * Like `sitePublic`, but reuses a persistent, already-verified account and
+		 * only creates an ephemeral site: no signup or email-verification round trip.
+		 */
+		sitePublicShared: NewSiteResponse;
 	}
 >( {
 	viewportName: [ 'desktop', { option: true } ],
@@ -463,14 +458,6 @@ export const test = base.extend<
 	flowLOHPThemeSignup: async ( { page }, use ) => {
 		const lohpThemeSignupFlow = new LOHPThemeSignupFlow( page );
 		await use( lohpThemeSignupFlow );
-	},
-	flowStartImport: async ( { page }, use ) => {
-		const startImportFlow = new StartImportFlow( page );
-		await use( startImportFlow );
-	},
-	flowStartWriting: async ( { page }, use ) => {
-		const startWritingFlow = new StartWritingFlow( page );
-		await use( startWritingFlow );
 	},
 	helperData: async ( {}, use ) => {
 		await use( DataHelper );
@@ -585,10 +572,6 @@ export const test = base.extend<
 		const addPeoplePage = new AddPeoplePage( page );
 		await use( addPeoplePage );
 	},
-	pageInvitePeople: async ( { page }, use ) => {
-		const invitePeoplePage = new InvitePeoplePage( page );
-		await use( invitePeoplePage );
-	},
 	pagePeople: async ( { page }, use ) => {
 		const peoplePage = new PeoplePage( page );
 		await use( peoplePage );
@@ -635,29 +618,71 @@ export const test = base.extend<
 			{ username: testUser.username, password: testUser.password },
 			newUserDetails.body.bearer_token
 		);
-		const site = await restAPIClient.createSite( {
-			name: siteName,
-			title: siteName,
-		} );
-		const message = await clientEmail.getLastMatchingMessage( {
-			inboxId: testUser.inboxId,
-			sentTo: testUser.email,
-			subject: 'Activate',
-		} );
-		const links = await clientEmail.getLinksFromMessage( message );
-		const activationLink = links.find( ( link: string ) => link.includes( 'activate' ) ) as string;
-		await page.goto( activationLink );
-		await use( site );
-		await restAPIClient.deleteSite( {
-			id: site.blog_details.blogid,
-			domain: site.blog_details.url,
-		} );
+		// The account exists from this point on: any throw in the remaining setup
+		// would skip a teardown placed after `use()` and leak the test user (and
+		// the site, once created). The try/finally attempts cleanup either way.
+		let site: NewSiteResponse | undefined;
+		try {
+			await apiWaitForBearerTokenAcceptance( restAPIClient, testUser.email );
+			site = await restAPIClient.createSite( {
+				name: siteName,
+				title: siteName,
+			} );
+			const message = await clientEmail.getLastMatchingMessage( {
+				inboxId: testUser.inboxId,
+				sentTo: testUser.email,
+				subject: 'Activate',
+			} );
+			const links = await clientEmail.getLinksFromMessage( message );
+			const activationLink = links.find( ( link: string ) =>
+				link.includes( 'activate' )
+			) as string;
+			await page.goto( activationLink );
+			await apiWaitForEmailVerification( restAPIClient, testUser.email );
+			// Fresh accounts have no recovery method set up, so the dashboard's
+			// account-recovery interstitial would mount over every route and block
+			// specs that load the dashboard with this fixture. Snooze it up front.
+			await snoozeAccountRecoveryInterstitial( restAPIClient );
+			await use( site );
+		} finally {
+			if ( site ) {
+				try {
+					await restAPIClient.deleteSite( {
+						id: site.blog_details.blogid,
+						domain: site.blog_details.url,
+					} );
+				} catch ( error ) {
+					// Do not throw from the finally: it would mask the error that
+					// brought us here. `apiCloseAccount` below also deletes any
+					// remaining sites of the user.
+					console.warn( `Failed to delete site ${ site.blog_details.url }: ${ error }` );
+				}
+			}
+			// Never throws: errors are caught and logged internally.
+			await apiCloseAccount( restAPIClient, {
+				userID: newUserDetails.body.user_id,
+				username: newUserDetails.body.username,
+				email: testUser.email,
+			} );
+		}
+	},
+	sitePublicShared: async ( { page, helperData }, use ) => {
+		// getAccount persists auth cookies on first login so parallel tests reuse
+		// them instead of each re-logging-in; authenticate then loads them onto
+		// this test's page (needed by the import navigation).
+		const account = await getAccount( page, 'defaultUser' );
+		await account.authenticate( page );
 
-		await apiCloseAccount( restAPIClient, {
-			userID: newUserDetails.body.user_id,
-			username: newUserDetails.body.username,
-			email: testUser.email,
-		} );
+		// createSite is the first line that creates a real resource. From here on
+		// everything is wrapped so the site is deleted no matter what happens next:
+		// the test failing, timing out, or a later line throwing.
+		const siteName = helperData.getBlogName();
+		const site = await account.restAPI.createSite( { name: siteName, title: siteName } );
+		try {
+			await use( site );
+		} finally {
+			await deleteSiteBestEffort( account.restAPI, site );
+		}
 	},
 } );
 
@@ -668,6 +693,7 @@ export const tags = {
 	CALYPSO_RELEASE: '@calypso-release',
 	DASHBOARD_PR: '@dashboard-pr',
 	DESKTOP_ONLY: '@desktop-only',
+	EDITOR_TRACKING: '@editor-tracking',
 	EXAMPLE_BLOCKS: '@example-blocks',
 	GUTENBERG: '@gutenberg',
 	I18N: '@i18n',
@@ -676,6 +702,7 @@ export const tags = {
 	JETPACK_WPCOM_INTEGRATION: '@jetpack-wpcom-integration',
 	LEGAL: '@legal',
 	P2: '@p2',
+	QUARANTINED: '@quarantined',
 	SETTINGS: '@settings',
 };
 
@@ -696,6 +723,61 @@ export function skipIfMailosaurLimitReached(): void {
 		envVariables.MAILOSAUR_LIMIT_REACHED,
 		'Skipping: Mailosaur daily email limit reached (sitePublic fixture requires email verification)'
 	);
+}
+
+/**
+ * Skips the current test suite when not running on trunk.
+ *
+ * @example
+ * ```typescript
+ * test.describe( 'My Test Suite', () => {
+ *   skipIfNotTrunk();
+ *   test( 'my test', async () => { ... });
+ * });
+ * ```
+ */
+export function skipIfNotTrunk(): void {
+	test.skip( ( process.env.BRANCH_NAME || '' ) !== 'trunk', 'Skipping: run only on trunk' );
+}
+
+/**
+ * Deletes an ephemeral test site. Retries transient failures and never throws:
+ * it runs from fixture teardown, which Playwright executes even when the test
+ * fails or times out, so a cleanup hiccup must not redden a passing test. On
+ * unrecoverable failure it logs a greppable `LEAKED` line and leaves the site
+ * for the external prune rather than masking the test result.
+ *
+ * @param {RestAPIClient} client Client authenticated as the site owner.
+ * @param {NewSiteResponse} site The site to delete.
+ */
+async function deleteSiteBestEffort(
+	client: RestAPIClient,
+	site: NewSiteResponse
+): Promise< void > {
+	const target = { id: site.blog_details.blogid, domain: site.blog_details.url };
+	for ( let attempt = 1; attempt <= 3; attempt++ ) {
+		let reason: string;
+		try {
+			// `deleteSite` returns null (without throwing) when it declines to act,
+			// e.g. the just-created site is not yet visible in `/all-domains/` so its
+			// ownership guard cannot confirm it. Treat that as a retryable failure so
+			// the site is not leaked silently.
+			if ( await client.deleteSite( target ) ) {
+				return;
+			}
+			reason = 'deletion declined (site ownership not yet confirmable)';
+		} catch ( error ) {
+			reason = String( error );
+		}
+		if ( attempt === 3 ) {
+			console.warn(
+				`LEAKED test site ${ target.domain } (id ${ target.id }): ` +
+					`not deleted after ${ attempt } attempts: ${ reason }`
+			);
+			return;
+		}
+		await new Promise( ( resolve ) => setTimeout( resolve, 1000 ) );
+	}
 }
 
 export { expect };

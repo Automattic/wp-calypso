@@ -1,5 +1,6 @@
 import { default as apiFetchPromise } from '@wordpress/api-fetch';
 import { select } from '@wordpress/data';
+import { isCookieAuthMissing } from 'wpcom-proxy-request';
 import { isE2ETest } from '../utils';
 import { default as wpcomRequestPromise, canAccessWpcomApis } from '../wpcom-request';
 import { PREFERENCES_KEY, STORE_KEY } from './constants';
@@ -12,11 +13,35 @@ const memoryStore: Preferences[ 'calypso_preferences' ] = {
 	help_center_router_history: null,
 };
 
+let helpCenterAppId: string | undefined;
+
+export function setHelpCenterAppId( appId: string | undefined ): void {
+	helpCenterAppId = appId;
+}
+
+function scopedKey( key: string ): string {
+	return helpCenterAppId ? `${ key }_${ helpCenterAppId }` : key;
+}
+
+/**
+ * Reads the app-scoped preference, falling back to the shared (unscoped) one.
+ */
+function readScoped< T extends keyof Preferences[ 'calypso_preferences' ] >(
+	preferences: Preferences[ 'calypso_preferences' ],
+	key: T
+): Preferences[ 'calypso_preferences' ][ T ] | undefined {
+	// The scoped key is dynamic, so the cast is confined here to keep callers typed.
+	const scoped = (
+		preferences as unknown as Record< string, Preferences[ 'calypso_preferences' ][ T ] >
+	 )[ scopedKey( key ) ];
+	return scoped ?? preferences[ key ];
+}
+
 export function deleteValuesSafely(): void {
 	try {
-		window.localStorage.removeItem( PREFERENCES_KEY + 'help_center_open' );
-		window.localStorage.removeItem( PREFERENCES_KEY + 'help_center_minimized' );
-		window.localStorage.removeItem( PREFERENCES_KEY + 'help_center_router_history' );
+		window.localStorage.removeItem( PREFERENCES_KEY + scopedKey( 'help_center_open' ) );
+		window.localStorage.removeItem( PREFERENCES_KEY + scopedKey( 'help_center_minimized' ) );
+		window.localStorage.removeItem( PREFERENCES_KEY + scopedKey( 'help_center_router_history' ) );
 	} catch ( error ) {
 		memoryStore.help_center_open = undefined;
 		memoryStore.help_center_minimized = false;
@@ -29,7 +54,7 @@ export function persistValueSafely< T extends keyof Preferences[ 'calypso_prefer
 	value: Preferences[ 'calypso_preferences' ][ T ]
 ): void {
 	try {
-		window.localStorage.setItem( PREFERENCES_KEY + key, JSON.stringify( value ) );
+		window.localStorage.setItem( PREFERENCES_KEY + scopedKey( key ), JSON.stringify( value ) );
 	} catch ( error ) {
 		memoryStore[ key ] = value;
 	}
@@ -39,7 +64,11 @@ export function retrieveValueSafely< T extends keyof Preferences[ 'calypso_prefe
 	key: T
 ): Preferences[ 'calypso_preferences' ][ T ] | undefined {
 	try {
-		const value = window.localStorage.getItem( PREFERENCES_KEY + key );
+		// Prefer this app's scoped value, falling back to the shared (unscoped)
+		// one when it hasn't stored its own yet.
+		const value =
+			window.localStorage.getItem( PREFERENCES_KEY + scopedKey( key ) ) ??
+			window.localStorage.getItem( PREFERENCES_KEY + key );
 		return value ? JSON.parse( value ) : undefined;
 	} catch ( error ) {
 		return memoryStore[ key ];
@@ -67,6 +96,11 @@ function getCalypsoPreferences(): Promise< Preferences[ 'calypso_preferences' ] 
 		} as APIFetchOptions );
 	}
 
+	// Don't cache a failed request — clear it so a later read retries.
+	cachedPreferencesPromise.catch( () => {
+		cachedPreferencesPromise = undefined;
+	} );
+
 	return cachedPreferencesPromise;
 }
 
@@ -75,9 +109,11 @@ export async function getPersistedPreference<
 >( key: T ): Promise< Preferences[ 'calypso_preferences' ][ T ] | undefined > {
 	const isLoggedIn = ( select( STORE_KEY ) as unknown as HelpCenterSelect ).getIsLoggedIn();
 
-	if ( isLoggedIn ) {
+	// When the proxy session has no auth cookie (e.g. right after in-stepper signup) the
+	// authed request 401s; fall back to localStorage instead, as for logged-out users.
+	if ( isLoggedIn && ! isCookieAuthMissing() ) {
 		const preferences = await getCalypsoPreferences();
-		return preferences[ key ];
+		return readScoped( preferences, key );
 	}
 
 	return retrieveValueSafely( key );
@@ -96,7 +132,7 @@ export function persistPreference< T extends keyof Preferences[ 'calypso_prefere
 		return;
 	}
 
-	const newPreferences = { [ preference ]: value };
+	const newPreferences = { [ scopedKey( preference ) ]: value };
 
 	const isLoggedIn = ( select( STORE_KEY ) as unknown as HelpCenterSelect ).getIsLoggedIn();
 

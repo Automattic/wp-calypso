@@ -13,8 +13,8 @@ import {
 	TextControl,
 	ToggleControl,
 } from '@wordpress/components';
+import isEqual from 'fast-deep-equal/es6';
 import { useTranslate } from 'i18n-calypso';
-import { isEqual } from 'lodash';
 import { Fragment, useState, useEffect, ChangeEvent, FormEvent, ReactNode } from 'react';
 import QueryWordadsSettings from 'calypso/components/data/query-wordads-settings';
 import FormSectionHeading from 'calypso/components/forms/form-section-heading';

@@ -198,10 +198,6 @@ module.exports = {
 			/^calypso\/components\/jetpack-colophon$/,
 			'calypso/components/jetpack/jetpack-footer'
 		),
-		new webpack.NormalModuleReplacementPlugin(
-			/^calypso\/components\/formatted-header$/,
-			path.resolve( __dirname, 'src/components/generic-header' )
-		),
 		...excludedPackagePlugins,
 		shouldEmitStats &&
 			new BundleAnalyzerPlugin( {

@@ -104,7 +104,7 @@ interface UseFooterHeightArgs {
 	isMobileMenuOpen: boolean;
 	isLoggedIn: boolean;
 	mobilePlatform: 'ios' | 'android' | null;
-	footerRef: React.RefObject< HTMLDivElement >;
+	footerRef: React.RefObject< HTMLDivElement | null >;
 }
 
 // Publish the overlaid footer's height so the scroller can clear it.
@@ -147,11 +147,12 @@ interface UseDropdownFlipArgs {
 export function useDropdownFlip( {
 	nav2026,
 	activeDropdown,
-}: UseDropdownFlipArgs ): React.RefObject< HTMLDivElement > {
+}: UseDropdownFlipArgs ): React.RefObject< HTMLDivElement | null > {
 	const dropdownRef = useRef< HTMLDivElement >( null );
-	// `prevDropdown` tells first-open from switch; `prevHeight` is the FLIP `from`.
 	const prevDropdownRef = useRef< string | null >( null );
-	const prevHeightRef = useRef< number >( 0 );
+	// React has already rendered the next panel, so cache previous panel heights.
+	const heightByNameRef = useRef< Record< string, number > >( {} );
+	const releaseRef = useRef< ( () => void ) | null >( null );
 
 	useIsomorphicLayoutEffect( () => {
 		if ( ! nav2026 || typeof window === 'undefined' ) {
@@ -169,89 +170,96 @@ export function useDropdownFlip( {
 			return;
 		}
 
-		// Read the CSS var, not `transitionDuration` — that's a comma list (visibility, height)
-		// and `parseFloat` would grab visibility, not the height value we want.
-		const morphMs = () => {
-			const raw = getComputedStyle( el ).getPropertyValue( '--x-dropdown-2026-panel-duration' );
-			return parseFloat( raw ) * 1000 || 280;
+		const cssMs = ( property: string, fallback: number ) => {
+			const raw = getComputedStyle( el ).getPropertyValue( property ).trim();
+			const value = parseFloat( raw );
+			if ( ! value ) {
+				return fallback;
+			}
+			return /ms$/.test( raw ) ? value : value * 1000;
+		};
+		const morphMs = () => cssMs( '--x-dropdown-2026-panel-duration', 280 );
+		const closeMs = () => cssMs( '--x-dropdown-2026-close-duration', morphMs() );
+
+		// Clear any in-flight inline height before measuring.
+		releaseRef.current?.();
+
+		const animateHeight = ( from: number, to: number, duration: number ) => {
+			if ( from === to || window.matchMedia( '( prefers-reduced-motion: reduce )' ).matches ) {
+				return;
+			}
+
+			const node = el;
+			node.style.overflow = 'hidden';
+			node.style.height = `${ from }px`;
+			void node.offsetHeight;
+			node.style.height = `${ to }px`;
+
+			let released = false;
+			const fallback = window.setTimeout( release, duration + 50 );
+			function release() {
+				if ( released ) {
+					return;
+				}
+				released = true;
+				node.removeEventListener( 'transitionend', onEnd );
+				window.clearTimeout( fallback );
+				node.style.height = '';
+				node.style.overflow = '';
+				releaseRef.current = null;
+			}
+			function onEnd( e: TransitionEvent ) {
+				if ( e.target === node && e.propertyName === 'height' ) {
+					release();
+				}
+			}
+
+			node.addEventListener( 'transitionend', onEnd );
+			releaseRef.current = release;
+			return release;
 		};
 
-		// Closed → open: let CSS grow the panel; flag the unroll so items wait for it.
+		// Closed -> open.
 		if ( prev === null && next !== null ) {
 			el.classList.add( 'is-dropdown-first-open' );
 			const timer = setTimeout(
 				() => el.classList.remove( 'is-dropdown-first-open' ),
 				morphMs() + 50
 			);
+			const to = el.offsetHeight;
+			heightByNameRef.current[ next ] = to;
+
+			const release = to ? animateHeight( 0, to, morphMs() ) : undefined;
 			return () => {
 				clearTimeout( timer );
-				prevHeightRef.current = el.offsetHeight;
+				release?.();
 			};
 		}
 
-		// Open → closed: nothing to morph.
+		// Open -> closed.
 		if ( prev !== null && next === null ) {
 			el.classList.remove( 'is-dropdown-first-open' );
-			return;
+			const held = heightByNameRef.current[ prev ];
+			if ( ! held ) {
+				return;
+			}
+			// CSS close selectors rely on this serializing to `height: 0px`.
+			return animateHeight( held, 0, closeMs() );
 		}
 
-		// Open → open: FLIP the wrapper height between the two menus.
+		// Open -> open.
 		if ( prev !== null && next !== null && prev !== next ) {
 			el.classList.remove( 'is-dropdown-first-open' );
-			// Reduced motion: snap instead of animate.
-			if ( window.matchMedia( '( prefers-reduced-motion: reduce )' ).matches ) {
-				return () => {
-					prevHeightRef.current = el.offsetHeight;
-				};
-			}
-			const from = prevHeightRef.current;
 			const to = el.offsetHeight;
-			if ( ! from || from === to ) {
-				return () => {
-					prevHeightRef.current = el.offsetHeight;
-				};
-			}
-			// Alias keeps `el`'s non-null narrowing inside the closures.
-			const node = el;
-			node.style.overflow = 'hidden';
-			node.style.height = `${ from }px`;
-			void node.offsetHeight; // force reflow so the height change transitions
-			node.style.height = `${ to }px`;
-			// `release` snaps back to auto height; idempotent, so listener or fallback can win.
-			let released = false;
-			// AbortController over `{ once: true }` — a stale once-handler could fire on the
-			// next morph's transitionend and release it early.
-			const listenerAbort = new AbortController();
-			const release = () => {
-				if ( released ) {
-					return;
-				}
-				released = true;
-				listenerAbort.abort();
-				node.style.height = '';
-				node.style.overflow = '';
-			};
-			node.addEventListener(
-				'transitionend',
-				( e: TransitionEvent ) => {
-					if ( e.target === node && e.propertyName === 'height' ) {
-						release();
-					}
-				},
-				{ signal: listenerAbort.signal }
-			);
-			const fallback = window.setTimeout( release, morphMs() + 50 );
-			return () => {
-				// `to` is the settled height — the next switch's `from`, no re-measure.
-				clearTimeout( fallback );
-				release();
-				prevHeightRef.current = to;
-			};
-		}
+			const from = heightByNameRef.current[ prev ] ?? to;
+			heightByNameRef.current[ next ] = to;
 
-		return () => {
-			prevHeightRef.current = el.offsetHeight;
-		};
+			if ( ! from ) {
+				return;
+			}
+
+			return animateHeight( from, to, morphMs() );
+		}
 	}, [ nav2026, activeDropdown ] );
 
 	return dropdownRef;

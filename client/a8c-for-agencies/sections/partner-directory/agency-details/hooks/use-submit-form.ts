@@ -45,7 +45,7 @@ export default function useSubmitForm( { formData, onSubmitSuccess, onSubmitErro
 
 			const file = await getImageFile( agencyId ?? 0, formData.logoUrl );
 			const upload = await uploadLogo( agencyId, file );
-			newLogo = upload?.logo_url;
+			newLogo = upload?.url;
 
 			setIsUploadingImage( false );
 		}

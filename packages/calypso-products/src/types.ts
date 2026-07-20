@@ -76,7 +76,7 @@ import {
 } from './constants';
 import { PriceTierEntry } from './get-price-tier-for-units';
 import type { TranslateResult } from 'i18n-calypso';
-import type { ReactElement, MemoExoticComponent } from 'react';
+import type { JSX, ReactElement, MemoExoticComponent } from 'react';
 
 export type Feature = string;
 
@@ -130,14 +130,10 @@ export type WPComSpaceUpgradeProductSlug = ( typeof WPCOM_SPACE_UPGRADE_PRODUCTS
 export type WPComOtherProductSlug = ( typeof WPCOM_OTHER_PRODUCTS )[ number ];
 
 export interface WPComPlan extends Plan {
-	getAudience?: () => TranslateResult;
-	getBlogAudience?: () => TranslateResult;
-	getPortfolioAudience?: () => TranslateResult;
-	getStoreAudience?: () => TranslateResult;
 	getPlanTagline?: () => TranslateResult;
 	getNewsletterTagLine?: () => TranslateResult;
+	/** @deprecated The blog-onboarding plans intent is no longer produced by any flow; retained only for external consumers. */
 	getBlogOnboardingTagLine?: () => TranslateResult;
-	getSubTitle?: () => TranslateResult;
 	getPlanCompareFeatures?: (
 		experiment?: string,
 		options?: Record< string, string | boolean[] >
@@ -147,13 +143,15 @@ export interface WPComPlan extends Plan {
 	getPortfolioSignupFeatures?: () => Feature[];
 	getNewsletterSignupFeatures?: () => Feature[];
 	getNewsletterHighlightedFeatures?: () => Feature[];
+	/** @deprecated The blog-onboarding plans intent is no longer produced by any flow; retained only for external consumers. */
 	getBlogOnboardingSignupFeatures?: () => Feature[];
+	/** @deprecated The blog-onboarding plans intent is no longer produced by any flow; retained only for external consumers. */
 	getBlogOnboardingHighlightedFeatures?: () => Feature[];
+	/** @deprecated The blog-onboarding plans intent is no longer produced by any flow; retained only for external consumers. */
 	getBlogOnboardingSignupJetpackFeatures?: () => Feature[];
 	getSenseiFeatures?: ( term?: Product[ 'term' ] ) => () => Feature[];
 	getSenseiHighlightedFeatures?: () => Feature[];
 	getPromotedFeatures?: () => Feature[];
-	getPathSlug: () => string;
 	getAnnualPlansOnlyFeatures?: () => string[];
 	get2023PricingGridSignupWpcomFeatures?: () => Feature[];
 	getHostingSignupFeatures?: ( term?: Product[ 'term' ] ) => () => Feature[];
@@ -221,7 +219,6 @@ export interface JetpackPlan extends Plan {
 	getAnnualSlug?: () => JetpackPlanSlug;
 	getMonthlySlug?: () => JetpackPlanSlug;
 	getPlanCardFeatures?: () => Feature[];
-	getPathSlug: () => string;
 	getWhatIsIncluded: () => Array< TranslateResult >;
 	getBenefits: () => Array< TranslateResult >;
 	getRecommendedFor: () => Array< JetpackTag >;
@@ -390,11 +387,9 @@ export type Plan = BillingTerm & {
 		isCurrentPlan?: boolean
 	) => WPComPlanStorageFeatureSlug;
 	getProductId: () => number;
-	getPathSlug?: () => string;
 	getStoreSlug: () => PlanSlug;
 	getTitle: () => TranslateResult;
 	getDescription: () => TranslateResult;
-	getShortDescription?: () => TranslateResult;
 	getFeaturedDescription?: () => TranslateResult;
 	getLightboxDescription?: () => TranslateResult;
 	getPlanCancellationDescription?: () => TranslateResult;
@@ -421,8 +416,11 @@ export type Plan = BillingTerm & {
 	 */
 	getInferiorFeatures?: () => Feature[];
 	getNewsletterSignupFeatures?: () => Feature[];
+	/** @deprecated The blog-onboarding plans intent is no longer produced by any flow; retained only for external consumers. */
 	getBlogOnboardingSignupFeatures?: () => Feature[];
+	/** @deprecated The blog-onboarding plans intent is no longer produced by any flow; retained only for external consumers. */
 	getBlogOnboardingHighlightedFeatures?: () => Feature[];
+	/** @deprecated The blog-onboarding plans intent is no longer produced by any flow; retained only for external consumers. */
 	getBlogOnboardingSignupJetpackFeatures?: () => Feature[];
 
 	/**

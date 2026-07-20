@@ -30,7 +30,7 @@ test.describe( 'I18N: Editor', { tag: [ tags.I18N, tags.DESKTOP_ONLY ] }, () => 
 			pageEditor,
 		} ) => {
 			await test.step( `Given I am authenticated as '${ accounti18n.accountName }'`, async function () {
-				await accounti18n.authenticate( page );
+				await accounti18n.authenticate( page, { waitUntilStable: false } );
 			} );
 
 			await test.step( `And I update my locale settings to ${ locale }`, async function () {

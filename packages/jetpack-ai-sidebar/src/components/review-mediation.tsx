@@ -7,28 +7,38 @@
  * External dependencies
  */
 import { Panel, PanelBody } from '@wordpress/components';
-import { useDispatch, useSelect } from '@wordpress/data';
+import { useSelect } from '@wordpress/data';
 import { useState, useCallback, useEffect, useMemo, useRef } from '@wordpress/element';
 import { __, _n, sprintf } from '@wordpress/i18n';
+import { Icon, check, undo } from '@wordpress/icons';
 /**
  * Internal dependencies
  */
 import {
 	applyReviewEdit,
-	findBlockElement,
-	findBlockListLayout,
-	isSupportedEditBlockType,
+	clearActiveBlockFocus,
+	clearActiveBlockFocusUnlessBlockReferenceClick,
+	getEditableBlockContent,
+	hasEditableBlockTarget,
+	toggleBlockReferenceFocus,
 	undoBlockEdit,
 } from '../utils/block-actions';
+import {
+	countOccurrences,
+	flattenBlocks,
+	getEditorContentBlocks,
+	type BlockEditorStore,
+	type EditorStore,
+} from '../utils/blocks';
 import {
 	trackAiEditorialReviewItemAction,
 	trackAiEditorialReviewResultRendered,
 	type ReviewContext,
 } from '../utils/tracking';
-import BlockRef, { type BlockSnapshot } from './block-ref';
+import { useCopyToClipboard } from '../utils/use-copy-to-clipboard';
+import BlockRef, { getBlockTypeName, type BlockSnapshot } from './block-ref';
+import ReviewCard, { type ReviewCardRow } from './review-card';
 import ReviewerChip, { type ReviewerMetadata } from './reviewer-chip';
-
-const FOCUS_MODE_CLASS = 'is-focus-mode';
 
 /**
  * Types mirroring the wpcom `Review_Mediator_Ability` structured output.
@@ -43,6 +53,7 @@ interface CandidateResolution {
 	reviewer_name: string | null;
 	label: string;
 	block_index: number | null;
+	editable_attribute?: string;
 	current_text?: string;
 	text: string;
 	rationale: string;
@@ -64,11 +75,14 @@ interface Implication {
 
 interface SuggestedEdit {
 	block_index: number | null;
+	editable_attribute?: string;
 	current_text: string;
 	suggested_text: string;
 	rationale: string;
 	supported_by_reviewers: string[];
 	requires_manual?: boolean;
+	/** Optional short editorial category for the card badge (e.g. "Tone"). */
+	feedback_category?: string;
 }
 
 interface GuidelineViolation {
@@ -80,6 +94,8 @@ interface GuidelineViolation {
 	issue: string;
 }
 
+type EditorPostId = number | string;
+
 interface ReviewMediationProps {
 	summary: string;
 	conflicts: Conflict[];
@@ -88,7 +104,7 @@ interface ReviewMediationProps {
 	guideline_violations: GuidelineViolation[];
 	review_context?: ReviewContext;
 	/** Source post the review was generated for. Used to detect navigation to a different post. */
-	postId?: number;
+	postId?: EditorPostId;
 	/**
 	 * Server-built map keyed by reviewer display name. Optional — older
 	 * mediations or the empty-state payload may omit it; consumers degrade
@@ -106,7 +122,7 @@ interface ReviewMediationProps {
 }
 
 type EditStatus = 'pending' | 'applying' | 'accepted' | 'dismissed' | 'failed';
-type WpCurrentPostStore = { getCurrentPostId?: () => number | null };
+type WpCurrentPostStore = { getCurrentPostId?: () => EditorPostId | null };
 type WpGlobal = Window & {
 	wp?: {
 		data?: {
@@ -115,12 +131,22 @@ type WpGlobal = Window & {
 	};
 };
 
-function getCurrentEditorPostIdFromStore(): number | undefined {
+function normalizeEditorPostId( postId: unknown ): EditorPostId | undefined {
+	if ( typeof postId === 'number' && postId > 0 ) {
+		return postId;
+	}
+	if ( typeof postId === 'string' && postId.trim() ) {
+		return postId;
+	}
+	return undefined;
+}
+
+function getCurrentEditorPostIdFromStore(): EditorPostId | undefined {
 	if ( typeof window === 'undefined' ) {
 		return undefined;
 	}
 	const wp = ( window as WpGlobal ).wp;
-	return wp?.data?.select?.( 'core/editor' )?.getCurrentPostId?.() ?? undefined;
+	return normalizeEditorPostId( wp?.data?.select?.( 'core/editor' )?.getCurrentPostId?.() );
 }
 
 /**
@@ -139,13 +165,13 @@ type SectionKey = 'summary' | 'conflicts' | 'implications' | 'edits' | 'violatio
 function formatRelativeTime( timestamp: number ): string {
 	const deltaSeconds = Math.max( 0, Math.floor( Date.now() / 1000 - timestamp ) );
 	if ( deltaSeconds < 45 ) {
-		return __( 'just now', 'jetpack' );
+		return __( 'just now', __i18n_text_domain__ );
 	}
 	const minutes = Math.round( deltaSeconds / 60 );
 	if ( minutes < 60 ) {
 		return sprintf(
 			/* translators: %d is a minute count */
-			_n( '%d minute ago', '%d minutes ago', minutes, 'jetpack' ),
+			_n( '%d minute ago', '%d minutes ago', minutes, __i18n_text_domain__ ),
 			minutes
 		);
 	}
@@ -153,48 +179,30 @@ function formatRelativeTime( timestamp: number ): string {
 	if ( hours < 24 ) {
 		return sprintf(
 			/* translators: %d is an hour count */
-			_n( '%d hour ago', '%d hours ago', hours, 'jetpack' ),
+			_n( '%d hour ago', '%d hours ago', hours, __i18n_text_domain__ ),
 			hours
 		);
 	}
 	const days = Math.round( hours / 24 );
 	return sprintf(
 		/* translators: %d is a day count */
-		_n( '%d day ago', '%d days ago', days, 'jetpack' ),
+		_n( '%d day ago', '%d days ago', days, __i18n_text_domain__ ),
 		days
 	);
-}
-
-/**
- * Truncate a snippet of free text to a sane preview length. Collapses repeated
- * whitespace and appends an ellipsis when over the limit.
- * @param text  Raw text.
- * @param limit Character budget.
- * @returns The truncated string.
- */
-function truncateText( text: string, limit = 60 ): string {
-	if ( ! text ) {
-		return '';
-	}
-	const stripped = text.replace( /\s+/g, ' ' ).trim();
-	if ( stripped.length <= limit ) {
-		return stripped;
-	}
-	return stripped.slice( 0, limit ).trimEnd() + '…';
 }
 
 function getGuidelineCategoryLabel( category: GuidelineViolation[ 'category' ] ): string {
 	switch ( category ) {
 		case 'site':
-			return __( 'Site', 'jetpack' );
+			return __( 'Site', __i18n_text_domain__ );
 		case 'copy':
-			return __( 'Copy', 'jetpack' );
+			return __( 'Copy', __i18n_text_domain__ );
 		case 'images':
-			return __( 'Images', 'jetpack' );
+			return __( 'Images', __i18n_text_domain__ );
 		case 'additional':
-			return __( 'Additional', 'jetpack' );
+			return __( 'Additional', __i18n_text_domain__ );
 		case 'block':
-			return __( 'Block', 'jetpack' );
+			return __( 'Block', __i18n_text_domain__ );
 		default:
 			return String( category );
 	}
@@ -209,73 +217,36 @@ function getGuidelineCategoryLabel( category: GuidelineViolation[ 'category' ] )
 function getAiButtonLabel( status: EditStatus ): string {
 	switch ( status ) {
 		case 'applying':
-			return __( 'Applying…', 'jetpack' );
+			return __( 'Applying…', __i18n_text_domain__ );
 		case 'accepted':
-			return __( 'Accepted', 'jetpack' );
+			return __( 'Accepted', __i18n_text_domain__ );
 		case 'failed':
-			return __( 'Retry AI resolution', 'jetpack' );
+			return __( 'Retry AI resolution', __i18n_text_domain__ );
 		default:
-			return __( 'Accept AI resolution', 'jetpack' );
-	}
-}
-
-function flattenBlocks( blocks: BlockSnapshot[] ): BlockSnapshot[] {
-	const out: BlockSnapshot[] = [];
-	const walk = ( items: BlockSnapshot[] ) => {
-		items.forEach( ( block ) => {
-			if ( ! block.name ) {
-				return;
-			}
-			out.push( block );
-			if ( Array.isArray( block.innerBlocks ) && block.innerBlocks.length > 0 ) {
-				walk( block.innerBlocks );
-			}
-		} );
-	};
-	walk( blocks );
-	return out;
-}
-
-function getBlockEditableContent( block: BlockSnapshot | null ): string {
-	const raw = block?.attributes?.content;
-	if ( typeof raw === 'string' ) {
-		return raw;
-	}
-	if ( raw && typeof raw.toHTMLString === 'function' ) {
-		return raw.toHTMLString();
-	}
-	return '';
-}
-
-function countOccurrences( source: string, needle: string ): number {
-	if ( needle === '' ) {
-		return 0;
-	}
-	let count = 0;
-	let pos = 0;
-	while ( true ) {
-		const found = source.indexOf( needle, pos );
-		if ( found === -1 ) {
-			return count;
-		}
-		count++;
-		pos = found + 1;
+			return __( 'Accept AI resolution', __i18n_text_domain__ );
 	}
 }
 
 function getTextTargetDisabledReason(
 	block: BlockSnapshot | null,
-	currentText?: string
+	currentText?: string,
+	editableAttribute?: string
 ): string | undefined {
 	if ( typeof currentText !== 'string' || currentText === '' ) {
-		return __( 'Needs manual edit — no exact source text', 'jetpack' );
+		return __( 'Needs manual edit — no exact source text', __i18n_text_domain__ );
 	}
-	const occurrences = countOccurrences( getBlockEditableContent( block ), currentText );
+	if ( ! hasEditableBlockTarget( block, editableAttribute, currentText ) ) {
+		return __( 'Needs manual edit — unsupported edit target', __i18n_text_domain__ );
+	}
+	const occurrences = countOccurrences(
+		getEditableBlockContent( block, editableAttribute, currentText ),
+		currentText
+	);
 	if ( occurrences === 0 ) {
-		return __( 'Needs manual edit — source text changed', 'jetpack' );
+		return __( 'Needs manual edit — source text changed', __i18n_text_domain__ );
 	}
 	if ( occurrences > 1 ) {
-		return __( 'Needs manual edit — source text appears more than once', 'jetpack' );
+		return __( 'Needs manual edit — source text appears more than once', __i18n_text_domain__ );
 	}
 	return undefined;
 }
@@ -305,19 +276,6 @@ function deriveResultOutcome(
 	return 'success';
 }
 
-function getSuggestedEditApplyUnavailableReason(
-	isManual: boolean,
-	disabledReason?: string
-): string | undefined {
-	if ( isManual ) {
-		return __( 'Needs manual edit.', 'jetpack' );
-	}
-	if ( disabledReason ) {
-		return disabledReason;
-	}
-	return undefined;
-}
-
 function getConflictApplyUnavailableReason(
 	reasons: Array< string | undefined >
 ): string | undefined {
@@ -328,7 +286,7 @@ function getConflictApplyUnavailableReason(
 	if ( uniqueReasons.length === 1 ) {
 		return uniqueReasons[ 0 ];
 	}
-	return __( 'Some resolutions need manual edit.', 'jetpack' );
+	return __( 'Some resolutions need manual edit.', __i18n_text_domain__ );
 }
 
 /**
@@ -347,27 +305,35 @@ export default function ReviewMediation( {
 	reviewers_metadata,
 	cached_at,
 }: ReviewMediationProps ) {
-	// Review actions are only safe when the result can be tied to the current editor post.
-	const currentPostId = useSelect(
-		( select ) =>
-			(
-				select( 'core/editor' ) as { getCurrentPostId?: () => number | null }
-			 )?.getCurrentPostId?.() ?? undefined,
-		[]
-	);
-	const isPostStale = ! postId || ! currentPostId || postId !== currentPostId;
+	// Review actions are only safe when the result can be tied to the current editor entity.
+	const currentPostId = useSelect( ( select ) => {
+		const editor = select( 'core/editor' ) as WpCurrentPostStore;
+		return normalizeEditorPostId( editor?.getCurrentPostId?.() );
+	}, [] );
+	const isPostStale = ! postId || ! currentPostId || String( postId ) !== String( currentPostId );
 	const isLatestPostContextStale = useCallback( () => {
 		// Async edit guards must read the editor store at call time so navigation
 		// between the click and delayed block write is observed immediately.
 		const latestCurrentPostId = getCurrentEditorPostIdFromStore() ?? currentPostId;
-		return ! postId || ! latestCurrentPostId || postId !== latestCurrentPostId;
+		return ! postId || ! latestCurrentPostId || String( postId ) !== String( latestCurrentPostId );
 	}, [ currentPostId, postId ] );
 
 	const [ editStatuses, setEditStatuses ] = useState< Record< number, EditStatus > >( {} );
 	const [ conflictStatuses, setConflictStatuses ] = useState< Record< number, EditStatus > >( {} );
+	// Guideline violations are advisory (no apply); they can only be Dismissed/Undone.
+	const [ violationStatuses, setViolationStatuses ] = useState< Record< number, EditStatus > >(
+		{}
+	);
 	const [ bulkRunning, setBulkRunning ] = useState( false );
+	// Only one card shows "Copied" at a time; the shared hook owns that state.
+	const { clipboardSupported, copiedKey, copy: copyToClipboard } = useCopyToClipboard();
 
-	type UndoSnapshot = { clientId: string; contentBefore: string; contentAfter: string };
+	type UndoSnapshot = {
+		clientId: string;
+		contentBefore: string;
+		contentAfter: string;
+		editableAttribute?: string;
+	};
 	const editSnapshots = useRef< Record< number, UndoSnapshot > >( {} );
 	const conflictSnapshots = useRef< Record< number, UndoSnapshot > >( {} );
 
@@ -423,14 +389,12 @@ export default function ReviewMediation( {
 	// Flat pre-order list of blocks; ability's `block_index` maps to this array.
 	// Matches wpcom's recursive Review_Mediator_Ability::extract_blocks() order.
 	const blocks = useSelect( ( select ) => {
-		// eslint-disable-next-line @typescript-eslint/no-explicit-any
-		const rootBlocks = ( ( select as any )( 'core/block-editor' ).getBlocks?.() ??
-			[] ) as BlockSnapshot[];
-		return flattenBlocks( rootBlocks );
+		const contentBlocks = getEditorContentBlocks(
+			select( 'core/block-editor' ) as BlockEditorStore,
+			select( 'core/editor' ) as EditorStore
+		);
+		return flattenBlocks( contentBlocks );
 	}, [] );
-
-	// eslint-disable-next-line @typescript-eslint/no-explicit-any
-	const { selectBlock } = useDispatch( 'core/block-editor' ) as any;
 
 	const getBlock = useCallback(
 		( blockIndex: number | null ): BlockSnapshot | null => {
@@ -446,18 +410,19 @@ export default function ReviewMediation( {
 		[ getBlock ]
 	);
 	const getBlockEditDisabledReason = useCallback(
-		( blockIndex: number | null, currentText?: string ): string | undefined => {
+		(
+			blockIndex: number | null,
+			currentText?: string,
+			editableAttribute?: string
+		): string | undefined => {
 			if ( blockIndex === null ) {
-				return __( 'Needs manual edit — no single block target', 'jetpack' );
+				return __( 'Needs manual edit — no single block target', __i18n_text_domain__ );
 			}
 			const block = getBlock( blockIndex );
 			if ( ! block ) {
-				return __( 'Needs manual edit — block no longer present', 'jetpack' );
+				return __( 'Needs manual edit — block no longer present', __i18n_text_domain__ );
 			}
-			if ( ! isSupportedEditBlockType( block.name ) ) {
-				return __( 'Needs manual edit — unsupported block type', 'jetpack' );
-			}
-			return getTextTargetDisabledReason( block, currentText );
+			return getTextTargetDisabledReason( block, currentText, editableAttribute );
 		},
 		[ getBlock ]
 	);
@@ -471,14 +436,9 @@ export default function ReviewMediation( {
 			if ( ! clientId ) {
 				return;
 			}
-			selectBlock?.( clientId );
-			const el = findBlockElement( clientId );
-			el?.scrollIntoView?.( { behavior: 'smooth', block: 'center' } );
-			// Mirror block-notes' dim-others UX — class-level toggle (see
-			// index.ts commentary for why we don't use the private spotlight action).
-			findBlockListLayout()?.classList.add( FOCUS_MODE_CLASS );
+			toggleBlockReferenceFocus( clientId );
 		},
-		[ getClientId, isPostStale, selectBlock ]
+		[ getClientId, isPostStale ]
 	);
 	const focusCurrentPostBlock = isPostStale ? undefined : focusBlock;
 
@@ -494,10 +454,14 @@ export default function ReviewMediation( {
 		[]
 	);
 
-	// Clear focus-mode when the mediation session ends.
+	const handleRootMouseDown = useCallback( ( event: { target: EventTarget | null } ) => {
+		clearActiveBlockFocusUnlessBlockReferenceClick( event.target );
+	}, [] );
+
+	// Clear sidebar-created block focus when the mediation session ends.
 	useEffect( () => {
 		return () => {
-			findBlockListLayout()?.classList.remove( FOCUS_MODE_CLASS );
+			clearActiveBlockFocus();
 		};
 	}, [] );
 
@@ -512,17 +476,19 @@ export default function ReviewMediation( {
 		async (
 			blockIndex: number | null,
 			text: string,
-			currentText?: string
+			currentText?: string,
+			editableAttribute?: string
 		): Promise< {
 			success: boolean;
 			clientId?: string;
 			contentBefore?: string;
 			contentAfter?: string;
+			editableAttribute?: string;
 		} > => {
 			if ( isPostStale || isLatestPostContextStale() ) {
 				return { success: false };
 			}
-			if ( getBlockEditDisabledReason( blockIndex, currentText ) ) {
+			if ( getBlockEditDisabledReason( blockIndex, currentText, editableAttribute ) ) {
 				return { success: false };
 			}
 			const clientId = getClientId( blockIndex );
@@ -530,9 +496,16 @@ export default function ReviewMediation( {
 				return { success: false };
 			}
 			try {
-				const result = await applyReviewEdit( clientId, text, undefined, currentText, () => {
-					return ! isLatestPostContextStale();
-				} );
+				const result = await applyReviewEdit(
+					clientId,
+					text,
+					undefined,
+					currentText,
+					() => {
+						return ! isLatestPostContextStale();
+					},
+					editableAttribute
+				);
 				if ( isLatestPostContextStale() ) {
 					return { success: false };
 				}
@@ -542,6 +515,7 @@ export default function ReviewMediation( {
 						clientId: result.clientId ?? clientId,
 						contentBefore: result.contentBefore,
 						contentAfter: result.contentAfter,
+						editableAttribute: result.editableAttribute,
 					};
 				}
 				if ( result?.error ) {
@@ -580,7 +554,8 @@ export default function ReviewMediation( {
 			const result = await applyTextToBlock(
 				edit.block_index,
 				edit.suggested_text,
-				edit.current_text
+				edit.current_text,
+				edit.editable_attribute
 			);
 			if (
 				result.success &&
@@ -592,6 +567,7 @@ export default function ReviewMediation( {
 					clientId: result.clientId,
 					contentBefore: result.contentBefore,
 					contentAfter: result.contentAfter,
+					editableAttribute: result.editableAttribute,
 				};
 			}
 			fireItemAction( {
@@ -610,7 +586,14 @@ export default function ReviewMediation( {
 			}
 			const snap = editSnapshots.current[ editIndex ];
 			if ( snap ) {
-				if ( ! undoBlockEdit( snap.clientId, snap.contentBefore, snap.contentAfter ) ) {
+				if (
+					! undoBlockEdit(
+						snap.clientId,
+						snap.contentBefore,
+						snap.contentAfter,
+						snap.editableAttribute
+					)
+				) {
 					fireItemAction( {
 						action: 'undo',
 						target: 'edit',
@@ -644,13 +627,32 @@ export default function ReviewMediation( {
 		[ fireItemAction, isPostStale, setEditStatus ]
 	);
 
+	const handleDismissViolation = useCallback(
+		( index: number ) => {
+			if ( isPostStale ) {
+				return;
+			}
+			setViolationStatuses( ( prev ) => ( { ...prev, [ index ]: 'dismissed' } ) );
+		},
+		[ isPostStale ]
+	);
+	const handleUndoViolation = useCallback( ( index: number ) => {
+		setViolationStatuses( ( prev ) => ( { ...prev, [ index ]: 'pending' } ) );
+	}, [] );
+
 	// ---------- Conflict handlers ----------
 	const handleAcceptCandidate = useCallback(
 		async ( conflictIndex: number, candidate: CandidateResolution ) => {
 			if ( isPostStale ) {
 				return;
 			}
-			if ( getBlockEditDisabledReason( candidate.block_index, candidate.current_text ) ) {
+			if (
+				getBlockEditDisabledReason(
+					candidate.block_index,
+					candidate.current_text,
+					candidate.editable_attribute
+				)
+			) {
 				setConflictStatus( conflictIndex, 'failed' );
 				fireItemAction( {
 					action: 'accept',
@@ -663,7 +665,8 @@ export default function ReviewMediation( {
 			const result = await applyTextToBlock(
 				candidate.block_index,
 				candidate.text,
-				candidate.current_text
+				candidate.current_text,
+				candidate.editable_attribute
 			);
 			if (
 				result.success &&
@@ -675,6 +678,7 @@ export default function ReviewMediation( {
 					clientId: result.clientId,
 					contentBefore: result.contentBefore,
 					contentAfter: result.contentAfter,
+					editableAttribute: result.editableAttribute,
 				};
 			}
 			fireItemAction( {
@@ -693,7 +697,14 @@ export default function ReviewMediation( {
 			}
 			const snap = conflictSnapshots.current[ conflictIndex ];
 			if ( snap ) {
-				if ( ! undoBlockEdit( snap.clientId, snap.contentBefore, snap.contentAfter ) ) {
+				if (
+					! undoBlockEdit(
+						snap.clientId,
+						snap.contentBefore,
+						snap.contentAfter,
+						snap.editableAttribute
+					)
+				) {
 					fireItemAction( {
 						action: 'undo',
 						target: 'conflict',
@@ -735,7 +746,9 @@ export default function ReviewMediation( {
 				return acc;
 			}
 			const aiCandidate = conflict.candidate_resolutions?.find(
-				( c ) => c.source === 'ai' && ! getBlockEditDisabledReason( c.block_index, c.current_text )
+				( c ) =>
+					c.source === 'ai' &&
+					! getBlockEditDisabledReason( c.block_index, c.current_text, c.editable_attribute )
 			);
 			return aiCandidate ? acc + 1 : acc;
 		}, 0 );
@@ -750,7 +763,13 @@ export default function ReviewMediation( {
 			if ( isManualSuggestedEdit( edit ) ) {
 				return acc;
 			}
-			return getBlockEditDisabledReason( edit.block_index, edit.current_text ) ? acc : acc + 1;
+			return getBlockEditDisabledReason(
+				edit.block_index,
+				edit.current_text,
+				edit.editable_attribute
+			)
+				? acc
+				: acc + 1;
 		}, 0 );
 	}, [ suggested_edits, editStatuses, getBlockEditDisabledReason ] );
 
@@ -788,7 +807,8 @@ export default function ReviewMediation( {
 				}
 				const aiCandidate = conflicts[ i ].candidate_resolutions?.find(
 					( c ) =>
-						c.source === 'ai' && ! getBlockEditDisabledReason( c.block_index, c.current_text )
+						c.source === 'ai' &&
+						! getBlockEditDisabledReason( c.block_index, c.current_text, c.editable_attribute )
 				);
 				if ( ! aiCandidate ) {
 					continue;
@@ -798,7 +818,8 @@ export default function ReviewMediation( {
 				const result = await applyTextToBlock(
 					aiCandidate.block_index,
 					aiCandidate.text,
-					aiCandidate.current_text
+					aiCandidate.current_text,
+					aiCandidate.editable_attribute
 				);
 				if ( isLatestPostContextStale() ) {
 					setConflictStatus( i, status );
@@ -814,6 +835,7 @@ export default function ReviewMediation( {
 						clientId: result.clientId,
 						contentBefore: result.contentBefore,
 						contentAfter: result.contentAfter,
+						editableAttribute: result.editableAttribute,
 					};
 				}
 				if ( ! result.success ) {
@@ -835,7 +857,9 @@ export default function ReviewMediation( {
 				if ( isManualSuggestedEdit( edit ) ) {
 					continue;
 				}
-				if ( getBlockEditDisabledReason( edit.block_index, edit.current_text ) ) {
+				if (
+					getBlockEditDisabledReason( edit.block_index, edit.current_text, edit.editable_attribute )
+				) {
 					continue;
 				}
 				setEditStatus( i, 'applying' );
@@ -843,7 +867,8 @@ export default function ReviewMediation( {
 				const result = await applyTextToBlock(
 					edit.block_index,
 					edit.suggested_text,
-					edit.current_text
+					edit.current_text,
+					edit.editable_attribute
 				);
 				if ( isLatestPostContextStale() ) {
 					setEditStatus( i, status );
@@ -859,6 +884,7 @@ export default function ReviewMediation( {
 						clientId: result.clientId,
 						contentBefore: result.contentBefore,
 						contentAfter: result.contentAfter,
+						editableAttribute: result.editableAttribute,
 					};
 				}
 				if ( ! result.success ) {
@@ -959,10 +985,14 @@ export default function ReviewMediation( {
 		<div
 			className={ `jetpack-ai-review-mediation${ isPostStale ? ' is-post-stale' : '' }` }
 			aria-disabled={ isPostStale || undefined }
+			onMouseDownCapture={ handleRootMouseDown }
 		>
 			{ isPostStale && (
 				<p className="jetpack-ai-review-mediation__stale-warning" role="note">
-					{ __( 'Review context changed. Start a new chat and re-run this review.', 'jetpack' ) }
+					{ __(
+						'Review context changed. Start a new chat and re-run this review.',
+						__i18n_text_domain__
+					) }
 				</p>
 			) }
 			{ /* ---------- Stats strip ---------- *
@@ -974,7 +1004,7 @@ export default function ReviewMediation( {
 			 */ }
 			<ul
 				className="jetpack-ai-review-mediation__stats"
-				aria-label={ __( 'Review stats', 'jetpack' ) }
+				aria-label={ __( 'Review stats', __i18n_text_domain__ ) }
 			>
 				{ conflicts.length > 0 && (
 					<li>
@@ -983,10 +1013,10 @@ export default function ReviewMediation( {
 							className="jetpack-ai-review-mediation__stat is-conflicts is-clickable"
 							disabled={ isPostStale }
 							onClick={ () => handleStatClick( 'conflicts' ) }
-							title={ __( 'Jump to conflicts', 'jetpack' ) }
+							title={ __( 'Jump to conflicts', __i18n_text_domain__ ) }
 						>
 							<span className="jetpack-ai-review-mediation__stat-count">{ conflicts.length }</span>{ ' ' }
-							{ _n( 'conflict', 'conflicts', conflicts.length, 'jetpack' ) }
+							{ _n( 'conflict', 'conflicts', conflicts.length, __i18n_text_domain__ ) }
 						</button>
 					</li>
 				) }
@@ -997,12 +1027,12 @@ export default function ReviewMediation( {
 							className="jetpack-ai-review-mediation__stat is-clickable"
 							disabled={ isPostStale }
 							onClick={ () => handleStatClick( 'implications' ) }
-							title={ __( 'Jump to implications', 'jetpack' ) }
+							title={ __( 'Jump to implications', __i18n_text_domain__ ) }
 						>
 							<span className="jetpack-ai-review-mediation__stat-count">
 								{ implications.length }
 							</span>{ ' ' }
-							{ _n( 'implication', 'implications', implications.length, 'jetpack' ) }
+							{ _n( 'implication', 'implications', implications.length, __i18n_text_domain__ ) }
 						</button>
 					</li>
 				) }
@@ -1013,12 +1043,12 @@ export default function ReviewMediation( {
 							className="jetpack-ai-review-mediation__stat is-clickable"
 							disabled={ isPostStale }
 							onClick={ () => handleStatClick( 'edits' ) }
-							title={ __( 'Jump to suggested edits', 'jetpack' ) }
+							title={ __( 'Jump to suggested edits', __i18n_text_domain__ ) }
 						>
 							<span className="jetpack-ai-review-mediation__stat-count">
 								{ suggested_edits.length }
 							</span>{ ' ' }
-							{ _n( 'edit', 'edits', suggested_edits.length, 'jetpack' ) }
+							{ _n( 'edit', 'edits', suggested_edits.length, __i18n_text_domain__ ) }
 						</button>
 					</li>
 				) }
@@ -1029,25 +1059,30 @@ export default function ReviewMediation( {
 							className="jetpack-ai-review-mediation__stat is-clickable"
 							disabled={ isPostStale }
 							onClick={ () => handleStatClick( 'violations' ) }
-							title={ __( 'Jump to guideline violations', 'jetpack' ) }
+							title={ __( 'Jump to guideline violations', __i18n_text_domain__ ) }
 						>
 							<span className="jetpack-ai-review-mediation__stat-count">
 								{ renderedGuidelineViolations.length }
 							</span>{ ' ' }
-							{ _n( 'violation', 'violations', renderedGuidelineViolations.length, 'jetpack' ) }
+							{ _n(
+								'violation',
+								'violations',
+								renderedGuidelineViolations.length,
+								__i18n_text_domain__
+							) }
 						</button>
 					</li>
 				) }
 				{ acceptedCount > 0 && (
 					<li className="jetpack-ai-review-mediation__stat is-accepted">
 						<span className="jetpack-ai-review-mediation__stat-count">{ acceptedCount }</span>{ ' ' }
-						{ __( 'accepted', 'jetpack' ) }
+						{ __( 'accepted', __i18n_text_domain__ ) }
 					</li>
 				) }
 				{ dismissedCount > 0 && (
 					<li className="jetpack-ai-review-mediation__stat is-dismissed">
 						<span className="jetpack-ai-review-mediation__stat-count">{ dismissedCount }</span>{ ' ' }
-						{ __( 'dismissed', 'jetpack' ) }
+						{ __( 'dismissed', __i18n_text_domain__ ) }
 					</li>
 				) }
 			</ul>
@@ -1059,7 +1094,7 @@ export default function ReviewMediation( {
 					} }
 				>
 					<PanelBody
-						title={ __( 'Review summary', 'jetpack' ) }
+						title={ __( 'Review summary', __i18n_text_domain__ ) }
 						className="jetpack-ai-review-mediation__summary"
 						opened={ openSections.summary }
 						onToggle={ ( next: boolean ) => setSectionOpen( 'summary', next ) }
@@ -1070,12 +1105,12 @@ export default function ReviewMediation( {
 								className="jetpack-ai-review-mediation__cached-hint"
 								title={ __(
 									'The inputs (post content, notes, comments, guidelines) have not changed since the previous run, so the saved result is being reused to avoid a duplicate LLM call.',
-									'jetpack'
+									__i18n_text_domain__
 								) }
 							>
 								{ sprintf(
 									/* translators: %s is a short relative-time phrase, e.g. "3 minutes ago" */
-									__( 'Reusing review from %s. Edit the post to re-run.', 'jetpack' ),
+									__( 'Reusing review from %s. Edit the post to re-run.', __i18n_text_domain__ ),
 									formatRelativeTime( cached_at )
 								) }
 							</p>
@@ -1092,7 +1127,7 @@ export default function ReviewMediation( {
 								} }
 							>
 								<PanelBody
-									title={ __( 'Conflicts', 'jetpack' ) }
+									title={ __( 'Conflicts', __i18n_text_domain__ ) }
 									className="jetpack-ai-review-mediation__conflicts"
 									opened={ openSections.conflicts }
 									onToggle={ ( next: boolean ) => setSectionOpen( 'conflicts', next ) }
@@ -1101,7 +1136,11 @@ export default function ReviewMediation( {
 										const status = conflictStatuses[ i ] ?? 'pending';
 										const candidates = conflict.candidate_resolutions ?? [];
 										const getCandidateDisabledReason = ( candidate: CandidateResolution ) =>
-											getBlockEditDisabledReason( candidate.block_index, candidate.current_text );
+											getBlockEditDisabledReason(
+												candidate.block_index,
+												candidate.current_text,
+												candidate.editable_attribute
+											);
 										const candidateStates = candidates.map( ( candidate ) => ( {
 											candidate,
 											disabledReason: getCandidateDisabledReason( candidate ),
@@ -1138,66 +1177,71 @@ export default function ReviewMediation( {
 											? undefined
 											: getConflictApplyUnavailableReason(
 													candidateStates.map( ( state ) => state.disabledReason )
-											  ) || __( 'Needs manual edit.', 'jetpack' );
+											  ) || __( 'Needs manual edit.', __i18n_text_domain__ );
 										const applyUnavailableReasonId = `review-mediation-conflict-${ i }-apply-reason`;
-										const isCollapsed = status === 'accepted' || status === 'dismissed';
-										if ( isCollapsed ) {
+										const isResolved = status === 'accepted' || status === 'dismissed';
+										if ( isResolved ) {
 											return (
 												<article
-													className={ `jetpack-ai-review-mediation__conflict-card is-${ status } is-collapsed` }
+													className={ `jetpack-ai-review-mediation__conflict-card is-${ status } is-resolved` }
 													key={ `conflict-${ i }` }
 												>
-													<span
-														className="jetpack-ai-review-mediation__collapsed-icon"
-														aria-hidden="true"
-													>
-														{ status === 'accepted' ? '✓' : '×' }
-													</span>
-													<span className="jetpack-ai-review-mediation__collapsed-status">
-														{ status === 'accepted'
-															? __( 'Accepted', 'jetpack' )
-															: __( 'Dismissed', 'jetpack' ) }
-													</span>
-													<span
-														className="jetpack-ai-review-mediation__collapsed-sep"
-														aria-hidden="true"
-													>
-														·
-													</span>
-													{ headerBlockIndex !== null && (
-														<>
+													<header className="jetpack-ai-review-mediation__conflict-header">
+														<span
+															className="jetpack-ai-review-mediation__conflict-icon"
+															aria-hidden="true"
+														>
+															⚠
+														</span>
+														<h4 className="jetpack-ai-review-mediation__conflict-title">
+															{ conflict.subject }
+														</h4>
+														{ headerBlockIndex !== null && (
 															<BlockRef
 																index={ headerBlockIndex }
 																blocks={ blocks }
 																onFocus={ focusCurrentPostBlock }
+																className="jetpack-ai-review-mediation__conflict-block-ref"
 															/>
-															<span
-																className="jetpack-ai-review-mediation__collapsed-sep"
-																aria-hidden="true"
-															>
-																·
-															</span>
-														</>
-													) }
-													<span className="jetpack-ai-review-mediation__collapsed-snippet">
-														{ truncateText( conflict.subject ) }
-													</span>
-													<button
-														type="button"
-														className="jetpack-ai-review-mediation__collapsed-undo"
-														disabled={ isPostStale }
-														onClick={ () => handleUndoConflict( i ) }
-														title={
-															status === 'accepted'
-																? __(
-																		'Revert the block change and re-show this conflict.',
-																		'jetpack'
-																  )
-																: __( 'Re-show this conflict.', 'jetpack' )
-														}
-													>
-														{ __( 'Undo', 'jetpack' ) }
-													</button>
+														) }
+													</header>
+													<div className="jetpack-ai-review-mediation__actions">
+														<span
+															className={ `jetpack-ai-review-mediation__resolution is-${ status }` }
+														>
+															{ status === 'accepted' && (
+																<Icon
+																	className="jetpack-ai-review-mediation__resolution-check"
+																	icon={ check }
+																	size={ 20 }
+																/>
+															) }
+															{ status === 'accepted'
+																? __( 'Applied', __i18n_text_domain__ )
+																: __( 'Dismissed', __i18n_text_domain__ ) }
+														</span>
+														<button
+															type="button"
+															className="jetpack-ai-review-mediation__resolution-undo"
+															disabled={ isPostStale || bulkRunning }
+															onClick={ () => handleUndoConflict( i ) }
+															title={
+																status === 'accepted'
+																	? __(
+																			'Revert the block change and re-show this conflict.',
+																			__i18n_text_domain__
+																	  )
+																	: __( 'Re-show this conflict.', __i18n_text_domain__ )
+															}
+														>
+															<Icon
+																className="jetpack-ai-review-mediation__undo-icon"
+																icon={ undo }
+																size={ 20 }
+															/>
+															{ __( 'Undo', __i18n_text_domain__ ) }
+														</button>
+													</div>
 												</article>
 											);
 										}
@@ -1246,9 +1290,9 @@ export default function ReviewMediation( {
 													<div className="jetpack-ai-review-mediation__ai-inset">
 														<p className="jetpack-ai-review-mediation__ai-label">
 															<span className="jetpack-ai-review-mediation__ai-badge">
-																{ __( 'AI', 'jetpack' ) }
+																{ __( 'AI', __i18n_text_domain__ ) }
 															</span>{ ' ' }
-															{ __( 'Recommended resolution', 'jetpack' ) }
+															{ __( 'Recommended resolution', __i18n_text_domain__ ) }
 														</p>
 														<p className="jetpack-ai-review-mediation__ai-text">
 															{ aiCandidate?.text || conflict.recommended_resolution }
@@ -1270,44 +1314,50 @@ export default function ReviewMediation( {
 													</p>
 												) }
 
-												<div className="jetpack-ai-review-mediation__actions">
-													{ reviewerCandidateStates.map( ( { candidate }, k ) => {
-														return (
+												<div className="jetpack-ai-review-mediation__conflict-resolution">
+													{ reviewerCandidateStates.length > 0 && (
+														<div className="jetpack-ai-review-mediation__conflict-candidates">
+															{ reviewerCandidateStates.map( ( { candidate }, k ) => {
+																return (
+																	<button
+																		type="button"
+																		className="jetpack-ai-review-mediation__action is-reviewer"
+																		key={ `candidate-${ i }-${ k }` }
+																		disabled={ actionsDisabled }
+																		onClick={ () => handleAcceptCandidate( i, candidate ) }
+																	>
+																		{ sprintf(
+																			/* translators: %s is a short label, e.g. "Marcus's wording" */
+																			__( 'Accept %s', __i18n_text_domain__ ),
+																			candidate.label
+																		) }
+																	</button>
+																);
+															} ) }
+														</div>
+													) }
+													<div className="jetpack-ai-review-mediation__actions">
+														{ aiCandidate && (
 															<button
 																type="button"
-																className="jetpack-ai-review-mediation__action is-reviewer"
-																key={ `candidate-${ i }-${ k }` }
+																className="jetpack-ai-review-mediation__action is-accept"
 																disabled={ actionsDisabled }
-																onClick={ () => handleAcceptCandidate( i, candidate ) }
+																onClick={ () => handleAcceptCandidate( i, aiCandidate ) }
 															>
-																{ sprintf(
-																	/* translators: %s is a short label, e.g. "Marcus's wording" */
-																	__( 'Accept %s', 'jetpack' ),
-																	candidate.label
-																) }
+																{ getAiButtonLabel( status ) }
 															</button>
-														);
-													} ) }
-													{ aiCandidate && (
+														) }
 														<button
 															type="button"
-															className="jetpack-ai-review-mediation__action is-accept"
+															className="jetpack-ai-review-mediation__action is-dismiss"
 															disabled={ actionsDisabled }
-															onClick={ () => handleAcceptCandidate( i, aiCandidate ) }
+															onClick={ () => handleDismissConflict( i ) }
 														>
-															{ getAiButtonLabel( status ) }
+															{ /* status can never be 'dismissed' here — the
+															collapsed branch above renders for that case */ }
+															{ __( 'Dismiss', __i18n_text_domain__ ) }
 														</button>
-													) }
-													<button
-														type="button"
-														className="jetpack-ai-review-mediation__action is-dismiss"
-														disabled={ actionsDisabled }
-														onClick={ () => handleDismissConflict( i ) }
-													>
-														{ /* status can never be 'dismissed' here — the
-														collapsed branch above renders for that case */ }
-														{ __( 'Dismiss', 'jetpack' ) }
-													</button>
+													</div>
 												</div>
 											</article>
 										);
@@ -1323,7 +1373,7 @@ export default function ReviewMediation( {
 								} }
 							>
 								<PanelBody
-									title={ __( 'Implications', 'jetpack' ) }
+									title={ __( 'Implications', __i18n_text_domain__ ) }
 									className="jetpack-ai-review-mediation__implications"
 									opened={ openSections.implications }
 									onToggle={ ( next: boolean ) => setSectionOpen( 'implications', next ) }
@@ -1335,7 +1385,7 @@ export default function ReviewMediation( {
 												{ imp.affected_blocks.length > 0 && (
 													<span className="jetpack-ai-review-mediation__affected-blocks">
 														{ ' ' }
-														{ __( 'Affects:', 'jetpack' ) }{ ' ' }
+														{ __( 'Affects:', __i18n_text_domain__ ) }{ ' ' }
 														{ imp.affected_blocks.map( ( b, j ) => (
 															<span key={ `imp-${ i }-aff-${ j }` }>
 																{ j > 0 && ', ' }
@@ -1362,186 +1412,139 @@ export default function ReviewMediation( {
 								} }
 							>
 								<PanelBody
-									title={ __( 'Suggested edits', 'jetpack' ) }
+									title={ __( 'Suggested edits', __i18n_text_domain__ ) }
 									className="jetpack-ai-review-mediation__edits"
 									opened={ openSections.edits }
 									onToggle={ ( next: boolean ) => setSectionOpen( 'edits', next ) }
 								>
 									{ suggested_edits.map( ( edit, i ) => {
 										const status = editStatuses[ i ] ?? 'pending';
-										const isManual = isManualSuggestedEdit( edit );
-										const isPostWide = edit.block_index === null;
-										const acceptDisabledReason = isManual
+										const requiresManual = isManualSuggestedEdit( edit );
+										const targetBlock =
+											edit.block_index !== null ? getBlock( edit.block_index ) : null;
+										// Item-level reason it can't be applied (drift / block gone / ambiguous) — not stale.
+										const disabledReason = requiresManual
 											? undefined
-											: getBlockEditDisabledReason( edit.block_index, edit.current_text );
-										const applyUnavailableReason = getSuggestedEditApplyUnavailableReason(
-											isManual,
-											acceptDisabledReason
+											: getBlockEditDisabledReason(
+													edit.block_index,
+													edit.current_text,
+													edit.editable_attribute
+											  );
+										// Stale can't apply anything (block refs point at the wrong post) even if the
+										// current post still contains the text — so Go to section, never a dead Apply.
+										const canApply = ! requiresManual && ! disabledReason && ! isPostStale;
+										// Manual tag reflects the edit, not staleness (disabledReason is against the current post).
+										const isManualEdit = requiresManual || ( ! isPostStale && !! disabledReason );
+										// Keep Apply while an apply is in flight, unless the review went stale mid-apply.
+										const showApply = canApply || ( ! isPostStale && status === 'applying' );
+										const canGoToSection = !! focusCurrentPostBlock && !! targetBlock;
+										// Show the diff only while the exact source text is still present in the post.
+										const currentTextPresent =
+											!! edit.current_text &&
+											!! targetBlock &&
+											countOccurrences(
+												getEditableBlockContent(
+													targetBlock,
+													edit.editable_attribute,
+													edit.current_text
+												),
+												edit.current_text
+											) >= 1;
+										const showDiff = currentTextPresent && !! edit.suggested_text;
+										const suggestionText = edit.suggested_text;
+										const key = `edit-${ i }`;
+										const categoryLabel =
+											edit.feedback_category ||
+											( targetBlock
+												? getBlockTypeName( targetBlock.name ?? '' )
+												: __( 'Suggested edit', __i18n_text_domain__ ) );
+										const categoryBadge = sprintf(
+											/* translators: 1: editorial category, 2: position in the run, 3: total edits. */
+											__( '%1$s (%2$d/%3$d)', __i18n_text_domain__ ),
+											categoryLabel,
+											i + 1,
+											suggested_edits.length
 										);
-										const applyUnavailableReasonId = `review-mediation-edit-${ i }-apply-reason`;
-										const clickable = ! isPostWide;
-										const isCollapsed = status === 'accepted' || status === 'dismissed';
-										const acceptDisabled =
-											isPostStale ||
-											!! acceptDisabledReason ||
-											status === 'applying' ||
-											status === 'accepted' ||
-											status === 'dismissed' ||
-											bulkRunning;
-										const dismissDisabled =
-											isPostStale ||
-											status === 'applying' ||
-											status === 'accepted' ||
-											status === 'dismissed' ||
-											bulkRunning;
-										if ( isCollapsed ) {
-											// Compact row for done items. Undo on accepted rows reverts
-											// the block content via the pre-accept snapshot.
-											return (
-												<article
-													className={ `jetpack-ai-review-mediation__card is-${ status } is-collapsed` }
-													key={ `edit-${ i }` }
-												>
-													<span
-														className="jetpack-ai-review-mediation__collapsed-icon"
-														aria-hidden="true"
-													>
-														{ status === 'accepted' ? '✓' : '×' }
-													</span>
-													<span className="jetpack-ai-review-mediation__collapsed-status">
-														{ status === 'accepted'
-															? __( 'Accepted', 'jetpack' )
-															: __( 'Dismissed', 'jetpack' ) }
-													</span>
-													<span
-														className="jetpack-ai-review-mediation__collapsed-sep"
-														aria-hidden="true"
-													>
-														·
-													</span>
-													<BlockRef
-														index={ edit.block_index }
-														blocks={ blocks }
-														onFocus={ clickable ? focusCurrentPostBlock : undefined }
-													/>
-													{ edit.suggested_text && (
-														<>
-															<span
-																className="jetpack-ai-review-mediation__collapsed-sep"
-																aria-hidden="true"
-															>
-																·
-															</span>
-															<span className="jetpack-ai-review-mediation__collapsed-snippet">
-																“{ truncateText( edit.suggested_text ) }”
-															</span>
-														</>
-													) }
-													<button
-														type="button"
-														className="jetpack-ai-review-mediation__collapsed-undo"
-														disabled={ isPostStale }
-														onClick={ () => handleUndoEdit( i ) }
-														title={
-															status === 'accepted'
-																? __(
-																		'Revert the block change and re-show this suggestion.',
-																		'jetpack'
-																  )
-																: __( 'Re-show this suggestion.', 'jetpack' )
-														}
-													>
-														{ __( 'Undo', 'jetpack' ) }
-													</button>
-												</article>
-											);
+										const bodyRows: ReviewCardRow[] = [];
+										if ( edit.rationale ) {
+											bodyRows.push( {
+												tag: __( 'Why', __i18n_text_domain__ ),
+												text: edit.rationale,
+												variant: 'current',
+												element: 'text',
+											} );
 										}
+										if ( showDiff ) {
+											bodyRows.push( {
+												tag: __( 'Current', __i18n_text_domain__ ),
+												text: edit.current_text,
+												variant: 'current',
+												element: 'del',
+											} );
+											bodyRows.push( {
+												tag: __( 'New', __i18n_text_domain__ ),
+												text: edit.suggested_text,
+												variant: 'new',
+												element: 'ins',
+											} );
+										} else if ( edit.suggested_text ) {
+											bodyRows.push( {
+												tag: __( 'Suggestion', __i18n_text_domain__ ),
+												text: edit.suggested_text,
+												variant: 'new',
+												element: 'text',
+											} );
+										}
+										const footer =
+											edit.supported_by_reviewers.length > 0 ? (
+												<p className="jetpack-ai-review-mediation__reviewers">
+													{ __( 'Requested by:', __i18n_text_domain__ ) }{ ' ' }
+													{ edit.supported_by_reviewers.map( ( r, j ) => (
+														<span key={ `edit-${ i }-rev-${ j }` }>
+															{ j > 0 && ' ' }
+															<ReviewerChip
+																name={ r }
+																metadata={ getReviewerMetadata( r ) }
+																variant="compact"
+															/>
+														</span>
+													) ) }
+												</p>
+											) : undefined;
+
 										return (
-											<article
-												className={ `jetpack-ai-review-mediation__card is-${ status }${
-													isManual ? ' is-manual' : ''
-												}` }
-												key={ `edit-${ i }` }
-											>
-												<p className="jetpack-ai-review-mediation__block-ref">
-													<BlockRef
-														index={ edit.block_index }
-														blocks={ blocks }
-														onFocus={ clickable ? focusCurrentPostBlock : undefined }
-													/>
-												</p>
-												{ edit.current_text && (
-													<p className="jetpack-ai-review-mediation__current">
-														<del>{ edit.current_text }</del>
-													</p>
+											<ReviewCard
+												key={ key }
+												model={ {
+													badge: categoryBadge,
+													isManualEdit,
+													blockIndex: edit.block_index,
+													bodyRows,
+													reasonNote: isPostStale ? undefined : disabledReason,
+												} }
+												blocks={ blocks }
+												status={ status }
+												showApply={ showApply }
+												canGoToSection={ canGoToSection }
+												showCopy={ !! suggestionText && clipboardSupported }
+												copied={ copiedKey === key }
+												disabled={ isPostStale || bulkRunning }
+												failureMessage={ __(
+													'Could not apply automatically. The original text may have changed.',
+													__i18n_text_domain__
 												) }
-												<p
-													className={ `jetpack-ai-review-mediation__suggested${
-														isManual ? ' is-manual' : ''
-													}` }
-												>
-													{ isManual ? edit.suggested_text : <ins>{ edit.suggested_text }</ins> }
-												</p>
-												<p className="jetpack-ai-review-mediation__rationale">{ edit.rationale }</p>
-												{ applyUnavailableReason && (
-													<p
-														id={ applyUnavailableReasonId }
-														className="jetpack-ai-review-mediation__status is-manual"
-													>
-														{ applyUnavailableReason }
-													</p>
-												) }
-												{ status === 'failed' && (
-													<p className="jetpack-ai-review-mediation__status is-failed">
-														{ __(
-															'Could not apply automatically. The original text may have changed.',
-															'jetpack'
-														) }
-													</p>
-												) }
-												{ edit.supported_by_reviewers.length > 0 && (
-													<p className="jetpack-ai-review-mediation__reviewers">
-														{ __( 'Requested by:', 'jetpack' ) }{ ' ' }
-														{ edit.supported_by_reviewers.map( ( r, j ) => (
-															<span key={ `edit-${ i }-rev-${ j }` }>
-																{ j > 0 && ' ' }
-																<ReviewerChip
-																	name={ r }
-																	metadata={ getReviewerMetadata( r ) }
-																	variant="compact"
-																/>
-															</span>
-														) ) }
-													</p>
-												) }
-												<div className="jetpack-ai-review-mediation__actions">
-													{ ! isManual && (
-														<button
-															type="button"
-															className="jetpack-ai-review-mediation__action is-accept"
-															disabled={ acceptDisabled }
-															aria-describedby={
-																acceptDisabledReason ? applyUnavailableReasonId : undefined
-															}
-															onClick={ () => handleAcceptEdit( edit, i ) }
-														>
-															{ /* `accepted`/`dismissed` are unreachable here — the
-																collapsed branch above renders for those */ }
-															{ status === 'applying' && __( 'Applying…', 'jetpack' ) }
-															{ status === 'failed' && __( 'Retry', 'jetpack' ) }
-															{ status === 'pending' && __( 'Accept', 'jetpack' ) }
-														</button>
-													) }
-													<button
-														type="button"
-														className="jetpack-ai-review-mediation__action is-dismiss"
-														disabled={ dismissDisabled }
-														onClick={ () => handleDismissEdit( i ) }
-													>
-														{ __( 'Dismiss', 'jetpack' ) }
-													</button>
-												</div>
-											</article>
+												onApply={ () => handleAcceptEdit( edit, i ) }
+												onGoToSection={ () => focusBlock( edit.block_index ) }
+												onCopy={ () => {
+													if ( suggestionText ) {
+														copyToClipboard( key, suggestionText );
+													}
+												} }
+												onDismiss={ () => handleDismissEdit( i ) }
+												onUndo={ () => handleUndoEdit( i ) }
+												onFocusBlock={ focusCurrentPostBlock }
+												footer={ footer }
+											/>
 										);
 									} ) }
 								</PanelBody>
@@ -1555,55 +1558,82 @@ export default function ReviewMediation( {
 								} }
 							>
 								<PanelBody
-									title={ `${ __( 'Guideline violations', 'jetpack' ) } (${
+									title={ sprintf(
+										/* translators: 1: section label, 2: number of violations. */
+										__( '%1$s (%2$d)', __i18n_text_domain__ ),
+										__( 'Guideline violations', __i18n_text_domain__ ),
 										renderedGuidelineViolations.length
-									})` }
+									) }
 									className="jetpack-ai-review-mediation__violations"
 									opened={ openSections.violations }
 									onToggle={ ( next: boolean ) => setSectionOpen( 'violations', next ) }
 								>
-									<ul className="jetpack-ai-review-mediation__violations-list">
-										{ renderedGuidelineViolations.map( ( v, i ) => (
-											<li key={ `violation-${ i }` }>
-												<p className="jetpack-ai-review-mediation__violation-issue">
-													<span
-														className={ `jetpack-ai-review-mediation__category-pill is-${ v.category }` }
-													>
-														{ getGuidelineCategoryLabel( v.category ) }
-													</span>
-													{ v.block_name && (
-														<span className="jetpack-ai-review-mediation__violation-block-name">
-															{ v.block_name }
-														</span>
-													) }{ ' ' }
-													{ v.issue }
-													{ v.block_index !== null && (
-														<>
-															{ ' ' }
-															<BlockRef
-																index={ v.block_index }
-																blocks={ blocks }
-																onFocus={ focusCurrentPostBlock }
-															/>
-														</>
-													) }
-												</p>
-												{ hasRenderableGuidelineQuote( v.guideline_quote ) && (
-													<blockquote className="jetpack-ai-review-mediation__guideline-anchor">
-														{ v.guideline_quote }
-													</blockquote>
-												) }
-												{ v.violating_text && (
-													<blockquote
-														className="jetpack-ai-review-mediation__violating-text"
-														aria-label={ __( 'Excerpt that violates the guideline', 'jetpack' ) }
-													>
-														{ v.violating_text }
-													</blockquote>
-												) }
-											</li>
-										) ) }
-									</ul>
+									<div className="jetpack-ai-feedback-list__items">
+										{ renderedGuidelineViolations.map( ( v, i ) => {
+											const status = violationStatuses[ i ] ?? 'pending';
+											const key = `violation-${ i }`;
+											const targetBlock = v.block_index !== null ? getBlock( v.block_index ) : null;
+											const hasGuideline = hasRenderableGuidelineQuote( v.guideline_quote );
+											const bodyRows: ReviewCardRow[] = [];
+											bodyRows.push( {
+												tag: __( 'Why', __i18n_text_domain__ ),
+												text: v.issue,
+												variant: 'current',
+												element: 'text',
+											} );
+											if ( v.violating_text ) {
+												bodyRows.push( {
+													tag: __( 'Current', __i18n_text_domain__ ),
+													text: v.violating_text,
+													variant: 'current',
+													element: 'del',
+												} );
+											}
+											if ( hasGuideline && v.guideline_quote ) {
+												bodyRows.push( {
+													tag: __( 'Guideline', __i18n_text_domain__ ),
+													text: v.guideline_quote,
+													variant: 'new',
+													element: 'text',
+												} );
+											}
+											return (
+												<ReviewCard
+													key={ key }
+													model={ {
+														badge: sprintf(
+															/* translators: 1: guideline category, 2: position, 3: total violations. */
+															__( '%1$s (%2$d/%3$d)', __i18n_text_domain__ ),
+															getGuidelineCategoryLabel( v.category ),
+															i + 1,
+															renderedGuidelineViolations.length
+														),
+														isManualEdit: false,
+														blockIndex: v.block_index,
+														bodyRows,
+													} }
+													blocks={ blocks }
+													status={ status }
+													showApply={ false }
+													canGoToSection={ !! focusCurrentPostBlock && !! targetBlock }
+													showCopy={ hasGuideline && clipboardSupported }
+													copied={ copiedKey === key }
+													disabled={ isPostStale || bulkRunning }
+													failureMessage=""
+													onApply={ () => undefined }
+													onGoToSection={ () => focusBlock( v.block_index ) }
+													onCopy={ () => {
+														if ( v.guideline_quote ) {
+															copyToClipboard( key, v.guideline_quote );
+														}
+													} }
+													onDismiss={ () => handleDismissViolation( i ) }
+													onUndo={ () => handleUndoViolation( i ) }
+													onFocusBlock={ focusCurrentPostBlock }
+												/>
+											);
+										} ) }
+									</div>
 								</PanelBody>
 							</div>
 						) }
@@ -1620,10 +1650,10 @@ export default function ReviewMediation( {
 						onClick={ handleAcceptAllAi }
 					>
 						{ bulkRunning
-							? __( 'Applying…', 'jetpack' )
+							? __( 'Applying…', __i18n_text_domain__ )
 							: sprintf(
 									/* translators: %d is the count of pending AI-resolution + suggested-edit items */
-									__( 'Accept all AI resolutions (%d)', 'jetpack' ),
+									__( 'Apply all (%d)', __i18n_text_domain__ ),
 									totalPendingCount
 							  ) }
 					</button>

@@ -4,6 +4,7 @@ import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import FormButton from 'calypso/components/forms/form-button';
+import { logToLogstash } from 'calypso/lib/logstash';
 import { getCurrentUserId } from 'calypso/state/current-user/selectors';
 
 import './security-key-form.scss';
@@ -36,13 +37,32 @@ export class SecurityKeyForm extends Component {
 							this.initiateSecurityKeyAuthentication( false );
 						} else {
 							// We only retry once, so let's show the original error.
+							this.logAuthenticationFailure( error );
 							this.setState( { isAuthenticating: false, showError: true } );
 						}
 					} );
 					return;
 				}
+				this.logAuthenticationFailure( error );
 				this.setState( { isAuthenticating: false, showError: true } );
 			} );
+	};
+
+	logAuthenticationFailure = ( error ) => {
+		// User cancellations/timeouts (webauthn DOMExceptions) are expected, not faults.
+		const isUserAbort =
+			error instanceof Error && [ 'NotAllowedError', 'AbortError' ].includes( error.name );
+
+		logToLogstash( {
+			feature: 'calypso_client',
+			message: 'Reauth required: security key authentication failed',
+			severity: isUserAbort ? 'warning' : 'error',
+			extra: {
+				type: 'reauth_security_key_error',
+				error_name: error instanceof Error ? error.name : undefined,
+				error: error instanceof Error ? error.message : JSON.stringify( error ?? null ),
+			},
+		} ).catch( () => undefined );
 	};
 
 	render() {

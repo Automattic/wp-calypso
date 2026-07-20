@@ -1,3 +1,5 @@
+@import "calypso/assets/stylesheets/shared/mixins/breakpoints";
+
 // Making sure the styles below overwrite the .section-nav rules by increasing the selector
 // specificity with .section-nav, since we can't rely on the order stylesheets are loaded.
 .portal-nav.section-nav {

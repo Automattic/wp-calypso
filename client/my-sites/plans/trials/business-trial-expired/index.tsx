@@ -6,7 +6,7 @@ import {
 import page from '@automattic/calypso-router';
 import { Button, Gridicon } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
-import React, { useCallback, useMemo } from 'react';
+import React, { useCallback, useMemo, type JSX } from 'react';
 import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
 import Main from 'calypso/components/main';
 import BodySectionCssClass from 'calypso/layout/body-section-css-class';

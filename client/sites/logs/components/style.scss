@@ -30,6 +30,24 @@
 	}
 }
 
+.site-logs__empty {
+	text-align: center;
+}
+
+.site-logs__empty-title {
+	font-weight: 600;
+	margin-block-end: 2px;
+}
+
+.site-logs__empty-description {
+	margin-block-start: 0;
+	color: var( --color-text-subtle );
+
+	code {
+		font-size: inherit;
+	}
+}
+
 // This is to compensate the padding set by the wrapper .hosting-dashboard-item-view__content
 // `.wpcom-site` is included to match the broad rule's (0,4,0) specificity so
 // the `padding-inline: 0` override below actually wins on `.dataviews-filters__container`

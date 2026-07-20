@@ -1,23 +1,19 @@
-import { Domain, GoogleWorkspaceSlugs, Product, TitanMailSlugs } from '@automattic/api-core';
+import { Domain, GoogleWorkspaceSlugs, Product } from '@automattic/api-core';
 import { productsQuery, siteProductsQuery } from '@automattic/api-queries';
 import { useQuery } from '@tanstack/react-query';
-import { MailboxProvider, IntervalLength } from '../types';
+import { MailboxProvider, IntervalLength, TitanPlanTier } from '../types';
+import { TITAN_TIER_SLUGS } from '../utils/titan-tiers';
 
-const EMAIL_PRODUCTS = {
-	[ MailboxProvider.Titan ]: {
-		monthly: TitanMailSlugs.TITAN_MAIL_MONTHLY_SLUG,
-		annually: TitanMailSlugs.TITAN_MAIL_YEARLY_SLUG,
-	},
-	[ MailboxProvider.Google ]: {
-		monthly: GoogleWorkspaceSlugs.GOOGLE_WORKSPACE_BUSINESS_STARTER_MONTHLY,
-		annually: GoogleWorkspaceSlugs.GOOGLE_WORKSPACE_BUSINESS_STARTER_YEARLY,
-	},
+const GOOGLE_PRODUCTS = {
+	monthly: GoogleWorkspaceSlugs.GOOGLE_WORKSPACE_BUSINESS_STARTER_MONTHLY,
+	annually: GoogleWorkspaceSlugs.GOOGLE_WORKSPACE_BUSINESS_STARTER_YEARLY,
 };
 
 export const useEmailProduct = (
 	provider: MailboxProvider,
 	interval: IntervalLength,
-	domain?: Domain
+	domain?: Domain,
+	tier: TitanPlanTier = TitanPlanTier.Pro
 ) => {
 	const siteId = domain?.blog_id;
 	const { data: siteProducts } = useQuery( {
@@ -29,8 +25,11 @@ export const useEmailProduct = (
 		enabled: ! siteId,
 	} );
 
-	const productSlug = EMAIL_PRODUCTS[ provider ]?.[ interval ];
-	const product = ( siteId ? siteProducts : products )?.[ productSlug ] as Product;
+	const productSlug =
+		provider === MailboxProvider.Titan
+			? TITAN_TIER_SLUGS[ tier ]?.[ interval ]
+			: GOOGLE_PRODUCTS[ interval ];
+	const product = ( siteId ? siteProducts : products )?.[ productSlug ] as Product | undefined;
 
 	return {
 		product,

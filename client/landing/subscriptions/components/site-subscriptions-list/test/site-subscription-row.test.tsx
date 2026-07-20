@@ -186,14 +186,14 @@ const makeSiteSubscription = (
 	...overrides,
 } );
 
-const renderRow = ( queryClient: QueryClient ) => {
+const renderRow = ( queryClient: QueryClient, overrides: Partial< SiteSubscriptionItem > = {} ) => {
 	const store = createStore( ( state = {} ) => state );
 
 	return render(
 		<Provider store={ store }>
 			<QueryClientProvider client={ queryClient }>
 				<SubscriptionManagerContextProvider portal={ SubscriptionsPortal.Reader }>
-					<SiteSubscriptionRow { ...makeSiteSubscription() } />
+					<SiteSubscriptionRow { ...makeSiteSubscription( overrides ) } />
 				</SubscriptionManagerContextProvider>
 			</QueryClientProvider>
 		</Provider>
@@ -216,5 +216,49 @@ describe( 'SiteSubscriptionRow', () => {
 		await user.click( screen.getByTitle( 'Unsubscribe' ) );
 
 		expect( getCachedFollow( queryClient )?.is_following ).toBe( false );
+	} );
+
+	it( 'shows the delivery frequency in the email frequency column when email delivery is enabled', () => {
+		const queryClient = makeQueryClient();
+
+		renderRow( queryClient, {
+			delivery_methods: {
+				email: {
+					post_delivery_frequency: Reader.EmailDeliveryFrequency.Instantly,
+					send_posts: true,
+				},
+			},
+		} );
+
+		expect( screen.getByText( 'Instantly' ) ).toBeVisible();
+	} );
+
+	it( 'defaults the email frequency column to Instantly when enabled without a stored frequency', () => {
+		const queryClient = makeQueryClient();
+
+		renderRow( queryClient, {
+			delivery_methods: {
+				email: {
+					send_posts: true,
+				},
+			},
+		} );
+
+		expect( screen.getByText( 'Instantly' ) ).toBeVisible();
+	} );
+
+	it( 'shows Paused in the email frequency column when email delivery is disabled', () => {
+		const queryClient = makeQueryClient();
+
+		renderRow( queryClient, {
+			delivery_methods: {
+				email: {
+					post_delivery_frequency: Reader.EmailDeliveryFrequency.Instantly,
+					send_posts: false,
+				},
+			},
+		} );
+
+		expect( screen.getByText( 'Paused' ) ).toBeVisible();
 	} );
 } );

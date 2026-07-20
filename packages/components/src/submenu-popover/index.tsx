@@ -92,7 +92,7 @@ export function useSubmenuPopoverProps< T extends HTMLElement >(
 ) {
 	const { offset, inline, flip, resize } = options;
 	const [ isVisible, setIsVisible ] = useState( false );
-	const anchor = useRef< T >();
+	const anchor = useRef< T >( undefined );
 	const parentElement = anchor?.current;
 	const hasRightSpace = useHasRightSpace( parentElement, isVisible );
 	const closeSubmenuA11y = useCloseSubmenuA11y();

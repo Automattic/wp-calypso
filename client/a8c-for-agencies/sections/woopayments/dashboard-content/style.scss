@@ -2,6 +2,12 @@
 @import '@wordpress/base-styles/mixins';
 @import '@wordpress/base-styles/variables';
 
+// The commissions table renders bare @wordpress/dataviews. The dashboard loads
+// DataViews styles globally, but a8c-for-agencies loads them per-page, so pull
+// them in here (otherwise the table loses its styling on a full page load).
+@import '@wordpress/theme/design-tokens.css';
+@import '@wordpress/dataviews/build-style/style.css';
+
 .sites-with-woopayments-list-mobile-view__column {
 	@include body-medium;
 }
@@ -119,12 +125,20 @@
 	.woopayments-status-popover__link {
 		@include body-medium;
 		display: inline-flex;
-		justify-content: left;
+		align-self: flex-start;
+		justify-content: flex-start;
 		gap: 4px;
 		color: var( --color-primary );
 
 		&:hover {
 			color: var( --color-primary-dark );
 		}
+	}
+}
+
+.woopayments-eligibility-popover {
+	.components-popover__content {
+		width: 300px;
+		padding: 16px;
 	}
 }

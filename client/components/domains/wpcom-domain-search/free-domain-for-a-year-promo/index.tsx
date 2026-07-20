@@ -10,10 +10,23 @@ import { createInterpolateElement } from '@wordpress/element';
 import { useI18n } from '@wordpress/react-i18n';
 import freeDomainForAYearPromoCiabImage from './graphic-ciab.svg';
 import freeDomainForAYearPromoImage from './graphic.svg';
+import type { ReactNode } from 'react';
 
 import './style.scss';
 
-export const FreeDomainForAYearPromo = ( { textOnly = false, isCiab = false } ) => {
+type FreeDomainForAYearPromoProps = {
+	textOnly?: boolean;
+	isCiab?: boolean;
+	title?: ReactNode;
+	subtitle?: ReactNode;
+};
+
+export const FreeDomainForAYearPromo = ( {
+	textOnly = false,
+	isCiab = false,
+	title: titleOverride,
+	subtitle: subtitleOverride,
+}: FreeDomainForAYearPromoProps = {} ) => {
 	const { containerRef, activeQuery } = useDomainSuggestionContainer();
 
 	const { __ } = useI18n();
@@ -30,25 +43,27 @@ export const FreeDomainForAYearPromo = ( { textOnly = false, isCiab = false } ) 
 		);
 	}
 
-	const title = __( 'Claim your first domain—Free!' );
+	const title = titleOverride ?? __( 'Claim your first domain—Free!' );
 
-	const subtitle = isCiab
-		? createInterpolateElement(
-				__(
-					'With your annual plan purchase, the first year of domain registration is on us!<br />Discount automatically applied at checkout.'
-				),
-				{
-					br: <br />,
-				}
-		  )
-		: createInterpolateElement(
-				__(
-					"Choose a domain, then purchase an annual plan, and your first year's domain registration is on us!<br />Discount automatically applied at checkout."
-				),
-				{
-					br: <br />,
-				}
-		  );
+	const subtitle =
+		subtitleOverride ??
+		( isCiab
+			? createInterpolateElement(
+					__(
+						'With your annual plan purchase, the first year of domain registration is on us!<br />Discount automatically applied at checkout.'
+					),
+					{
+						br: <br />,
+					}
+			  )
+			: createInterpolateElement(
+					__(
+						"Choose a domain, then purchase an annual plan, and your first year's domain registration is on us!<br />Discount automatically applied at checkout."
+					),
+					{
+						br: <br />,
+					}
+			  ) );
 
 	return (
 		<Card ref={ containerRef } size="small" className="free-domain-for-a-year-promo">

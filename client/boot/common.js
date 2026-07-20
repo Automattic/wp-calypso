@@ -13,6 +13,7 @@ import debugFactory from 'debug';
 import Modal from 'react-modal';
 import store from 'store';
 import emailVerification from 'calypso/components/email-verification';
+import { isAllowedA4ADashboardHostname } from 'calypso/dashboard/app-a4a/routing';
 import isA8CForAgencies from 'calypso/lib/a8c-for-agencies/is-a8c-for-agencies';
 import { initializeAnalytics } from 'calypso/lib/analytics/init';
 import getSuperProps from 'calypso/lib/analytics/super-props';
@@ -136,10 +137,14 @@ function saveOauthFlags() {
 }
 
 function authorizePath() {
-	const redirectUri = new URL(
-		isJetpackCloud() || isA8CForAgencies() ? '/connect/oauth/token' : '/api/oauth/token',
-		window.location
-	);
+	const isA4ADashboard = isAllowedA4ADashboardHostname( window.location.hostname );
+	let redirectPath = '/api/oauth/token';
+	if ( isJetpackCloud() || isA8CForAgencies() ) {
+		redirectPath = '/connect/oauth/token';
+	} else if ( isA4ADashboard ) {
+		redirectPath = '/signup/oauth/token';
+	}
+	const redirectUri = new URL( redirectPath, window.location );
 	redirectUri.search = new URLSearchParams( {
 		next: window.location.pathname + window.location.search,
 	} ).toString();
@@ -176,7 +181,7 @@ const oauthTokenMiddleware = () => {
 			} );
 		}
 
-		if ( isA8CForAgencies() ) {
+		if ( isA8CForAgencies() || isAllowedA4ADashboardHostname( window.location.hostname ) ) {
 			loggedOutRoutes.push( ...A4A_PUBLIC_ROUTES );
 		}
 

@@ -1,7 +1,6 @@
 import { Button, Gridicon } from '@automattic/components';
 import { useQueryClient } from '@tanstack/react-query';
 import { localize } from 'i18n-calypso';
-import { map } from 'lodash';
 import PropTypes from 'prop-types';
 import { PureComponent } from 'react';
 import { useDispatch } from 'react-redux';
@@ -50,14 +49,14 @@ export class RecommendedPosts extends PureComponent {
 		const { posts } = this.props;
 
 		return (
-			<div className="reader-stream__recommended-posts">
+			<div ref={ this.props.itemRef } className="reader-stream__recommended-posts">
 				<h1 className="reader-stream__recommended-posts-header">
 					<Gridicon icon="thumbs-up" size={ 18 } />
 					&nbsp;
 					{ this.props.translate( 'Recommended Posts' ) }
 				</h1>
 				<ul className="reader-stream__recommended-posts-list">
-					{ map( posts, ( post, index ) => {
+					{ posts.map( ( post, index ) => {
 						const uiIndex = this.props.index + index;
 						const recommendationKey = this.props.recommendations?.[ index ];
 						return (

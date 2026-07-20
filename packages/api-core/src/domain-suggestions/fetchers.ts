@@ -1,7 +1,6 @@
 import { wpcom } from '../wpcom-fetcher';
 import type {
 	BundleSuggestion,
-	BundleSuggestionDomain,
 	DomainSuggestion,
 	DomainSuggestionQuery,
 	FreeDomainSuggestion,
@@ -79,53 +78,80 @@ export async function fetchAvailableTlds( search?: string, vendor?: string ): Pr
 /**
  * Fetch a bundle suggestion for a search query.
  *
- * M1a placeholder: returns hardcoded fixture data shaped like the
- * `with_bundles=1` payload (DOMAINS-2166) so the search flow can render the
- * bundle card end-to-end before the backend is wired up. M1b replaces the body
- * with a real network call without changing this signature.
+ * Calls the `with_bundles=1` opt-in on `/domains/suggestions` (DOMAINS-2166),
+ * which wraps the response as `{ domain_suggestions, bundle_suggestion }`. We
+ * only need the `bundle_suggestion` portion here. The backend gates the bundle
+ * on its own feature flag and returns `null` when no bundle applies; the
+ * frontend `domain-bundling` flag additionally gates whether this fetcher runs
+ * at all (see the `bundleSuggestionQuery` consumer).
  * @param search The domain search query (an SLD or FQDN).
  * @returns A bundle suggestion, or null when no bundle applies.
  */
 export async function fetchBundleSuggestion( search: string ): Promise< BundleSuggestion | null > {
-	const sld = search.trim().toLowerCase().split( '.' )[ 0 ];
-
-	if ( ! sld ) {
-		return null;
-	}
-
-	const domains: BundleSuggestionDomain[] = [
+	const response: { bundle_suggestion?: BundleSuggestion | null } = await wpcom.req.get(
 		{
-			domain: `${ sld }.com`,
-			cost: '$22.00',
-			raw_price: 22,
-			product_slug: 'domain_reg',
-			supports_privacy: true,
+			apiVersion: '1.1',
+			path: '/domains/suggestions',
 		},
 		{
-			domain: `${ sld }.net`,
-			cost: '$18.00',
-			raw_price: 18,
-			product_slug: 'domain_reg',
-			supports_privacy: true,
+			query: search.trim().toLocaleLowerCase(),
+			vendor: 'variation2_front',
+			with_bundles: 1,
+		}
+	);
+
+	return response.bundle_suggestion ?? null;
+}
+
+/**
+ * Fetch the inline-bundle trigger TLDs for a search query.
+ *
+ * Reads the `bundle_triggers` field off the same `with_bundles=1` opt-in on
+ * `/domains/suggestions` (DOMAINS-2207). This is a cheap, catalogue-only list of
+ * the TLDs (currently just `com`) that, when added to the cart from a bare-term
+ * search, offer an inline bundle. The backend returns `[]` when the discounts
+ * flag is off; this fetcher normalises a missing field to `[]` as well.
+ * @param search The bare-term domain search query.
+ * @returns The trigger TLDs, or an empty array when no triggers apply.
+ */
+export async function fetchBundleTriggers( search: string ): Promise< string[] > {
+	const response: { bundle_triggers?: string[] } = await wpcom.req.get(
+		{
+			apiVersion: '1.1',
+			path: '/domains/suggestions',
 		},
 		{
-			domain: `${ sld }.org`,
-			cost: '$20.00',
-			raw_price: 20,
-			product_slug: 'domain_reg',
-			supports_privacy: true,
-		},
-	];
+			query: search.trim().toLocaleLowerCase(),
+			vendor: 'variation2_front',
+			with_bundles: 1,
+		}
+	);
 
-	return {
-		sld,
-		domains,
-		bundle_price: 48,
-		original_price: 60,
-		discount_percent: 20,
-		category: 'business',
-		bundle_id: `${ sld }_business`,
-		bundle_group_id: `mock-${ sld }-group`,
-		catalogue_version: '1',
-	};
+	return response.bundle_triggers ?? [];
+}
+
+/**
+ * Fetch the bundle suggestion for a single fully-qualified domain.
+ *
+ * Calls the per-FQDN `GET /wpcom/v2/domains/bundle` endpoint (DOMAINS-2207),
+ * used lazily by the inline-bundle frontend once the user adds a trigger domain
+ * (e.g. `flowers.com`) to the cart. The endpoint is logged-in only (401 when
+ * anonymous), flag-gated (404 when off) and query-guarded (400 on empty query);
+ * it returns `{ bundle_suggestion: BundleSuggestion | null }`, where the added
+ * domain is the `primary` member and the rest are `companion`s.
+ * @param fqdn The fully-qualified trigger domain (e.g. "flowers.com").
+ * @returns A bundle suggestion, or null when no bundle applies.
+ */
+export async function fetchBundleForDomain( fqdn: string ): Promise< BundleSuggestion | null > {
+	const response: { bundle_suggestion?: BundleSuggestion | null } = await wpcom.req.get(
+		{
+			path: '/domains/bundle',
+			apiNamespace: 'wpcom/v2',
+		},
+		{
+			query: fqdn.trim().toLocaleLowerCase(),
+		}
+	);
+
+	return response.bundle_suggestion ?? null;
 }

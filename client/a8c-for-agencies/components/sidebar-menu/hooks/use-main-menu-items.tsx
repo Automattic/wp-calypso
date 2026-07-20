@@ -1,5 +1,4 @@
 import { isEnabled } from '@automattic/calypso-config';
-import { Badge } from '@automattic/components';
 import {
 	category,
 	currencyDollar,
@@ -15,14 +14,12 @@ import {
 	chartBar,
 	box,
 	shortcode,
+	megaphone,
 } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { useMemo } from 'react';
-import {
-	isPaymentRiskNoticeBannerEnabled,
-	PAYMENT_RISK_NOTICE_SEVERITY,
-} from 'calypso/a8c-for-agencies/components/payment-risk-notice-banner/constants';
 import PaymentRiskNoticeMenuIndicator from 'calypso/a8c-for-agencies/components/payment-risk-notice-banner/menu-indicator';
+import usePaymentRiskNotice from 'calypso/a8c-for-agencies/components/payment-risk-notice-banner/use-payment-risk-notice';
 import { isPathAllowed } from 'calypso/a8c-for-agencies/lib/permission';
 import { A4A_REPORTS_LINK } from 'calypso/a8c-for-agencies/sections/reports/constants';
 import wooPaymentsIcon from 'calypso/assets/images/a8c-for-agencies/woopayments/woo-sidebar-icon.svg';
@@ -36,7 +33,6 @@ import {
 	A4A_PURCHASES_LINK,
 	A4A_REFERRALS_LINK,
 	A4A_SITES_LINK,
-	A4A_MARKETPLACE_HOSTING_LINK,
 	A4A_MIGRATIONS_LINK,
 	A4A_SETTINGS_LINK,
 	A4A_PLUGINS_LINK,
@@ -44,12 +40,12 @@ import {
 	A4A_REFERRALS_DASHBOARD,
 	A4A_TEAM_LINK,
 	A4A_AGENCY_TIER_LINK,
-	A4A_MIGRATIONS_OVERVIEW_LINK,
 	A4A_WOOPAYMENTS_LINK,
 	A4A_LEARN_LINK,
 	A4A_RESOURCES_LINK,
 	A4A_AGENT_STUDIO_LINK,
 	A4A_EXCLUSIVE_OFFERS_LINK,
+	A4A_AMPLIFY_LINK,
 } from '../lib/constants';
 import { createItem } from '../lib/utils';
 
@@ -57,7 +53,8 @@ const useMainMenuItems = ( path: string ) => {
 	const translate = useTranslate();
 
 	const agency = useSelector( getActiveAgency );
-	const showPaymentRiskIndicator = isPaymentRiskNoticeBannerEnabled();
+	const paymentNotice = usePaymentRiskNotice();
+	const paymentNoticeSeverity = paymentNotice?.severity;
 
 	const menuItems = useMemo( () => {
 		let referralItems = [] as any[];
@@ -81,7 +78,7 @@ const useMainMenuItems = ( path: string ) => {
 			? {
 					icon: moveTo,
 					path: A4A_MIGRATIONS_LINK,
-					link: A4A_MIGRATIONS_OVERVIEW_LINK,
+					link: A4A_MIGRATIONS_LINK,
 					title: translate( 'Migrations' ),
 					trackEventProps: {
 						menu_item: 'Automattic for Agencies / Migrations',
@@ -156,24 +153,9 @@ const useMainMenuItems = ( path: string ) => {
 				  ]
 				: [] ),
 			{
-				icon: chartBar,
-				path: A4A_REPORTS_LINK,
-				link: A4A_REPORTS_LINK,
-				title: (
-					<div className="sidebar-menu-item__title-with-badge">
-						<span>{ translate( 'Reports' ) }</span>
-						<Badge type="info">{ translate( 'Beta' ) }</Badge>
-					</div>
-				),
-				trackEventProps: {
-					menu_item: 'Automattic for Agencies / Reports',
-				},
-				withChevron: true,
-			},
-			{
 				icon: tag,
 				path: A4A_MARKETPLACE_LINK,
-				link: A4A_MARKETPLACE_HOSTING_LINK,
+				link: A4A_MARKETPLACE_LINK,
 				title: translate( 'Marketplace' ),
 				trackEventProps: {
 					menu_item: 'Automattic for Agencies / Marketplace',
@@ -184,10 +166,10 @@ const useMainMenuItems = ( path: string ) => {
 				icon: currencyDollar,
 				path: A4A_PURCHASES_LINK,
 				link: A4A_LICENSES_LINK,
-				title: showPaymentRiskIndicator ? (
+				title: paymentNoticeSeverity ? (
 					<span className="a4a-payment-risk-notice-menu-title">
 						<span>{ translate( 'Purchases' ) }</span>
-						<PaymentRiskNoticeMenuIndicator severity={ PAYMENT_RISK_NOTICE_SEVERITY } />
+						<PaymentRiskNoticeMenuIndicator severity={ paymentNoticeSeverity } />
 					</span>
 				) : (
 					translate( 'Purchases' )
@@ -245,10 +227,36 @@ const useMainMenuItems = ( path: string ) => {
 						},
 				  ]
 				: [] ),
+			...( agency?.amplify?.allowed
+				? [
+						{
+							icon: megaphone,
+							path: A4A_AMPLIFY_LINK,
+							link: A4A_AMPLIFY_LINK,
+							title: translate( 'Amplify' ),
+							badge: translate( 'Beta' ),
+							trackEventProps: {
+								menu_item: 'Automattic for Agencies / Amplify',
+							},
+							withChevron: true,
+						},
+				  ]
+				: [] ),
+			{
+				icon: chartBar,
+				path: A4A_REPORTS_LINK,
+				link: A4A_REPORTS_LINK,
+				title: translate( 'Reports' ),
+				badge: translate( 'Beta' ),
+				trackEventProps: {
+					menu_item: 'Automattic for Agencies / Reports',
+				},
+				withChevron: true,
+			},
 		]
 			.map( ( item ) => createItem( item, path ) )
 			.filter( ( item ) => isPathAllowed( item.link, agency ) );
-	}, [ agency, path, showPaymentRiskIndicator, translate ] );
+	}, [ agency, path, paymentNoticeSeverity, translate ] );
 	return menuItems;
 };
 

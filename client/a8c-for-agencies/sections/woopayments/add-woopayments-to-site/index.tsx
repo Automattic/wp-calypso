@@ -1,14 +1,13 @@
 import page from '@automattic/calypso-router';
 import { Button } from '@wordpress/components';
+import { __ } from '@wordpress/i18n';
 import { getQueryArg, removeQueryArgs } from '@wordpress/url';
-import { useTranslate } from 'i18n-calypso';
 import { useCallback, useEffect, useState } from 'react';
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import AddWooPaymentsToSiteModal from './modal';
 
 const AddWooPaymentsToSite = () => {
-	const translate = useTranslate();
 	const dispatch = useDispatch();
 
 	const showModal = getQueryArg( window.location.href, 'add-woopayments-to-site' ) === 'true';
@@ -34,7 +33,7 @@ const AddWooPaymentsToSite = () => {
 	return (
 		<>
 			<Button __next40pxDefaultSize variant="primary" onClick={ handleOpenModal }>
-				{ translate( 'Add WooPayments to site' ) }
+				{ __( 'Add WooPayments to site' ) }
 			</Button>
 
 			{ isOpen && <AddWooPaymentsToSiteModal onClose={ () => setIsOpen( false ) } /> }

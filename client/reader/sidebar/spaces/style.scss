@@ -1,0 +1,63 @@
+@use 'calypso/reader/spaces/colors' as space-colors;
+
+.sidebar-spaces__link {
+	display: flex;
+	align-items: center;
+	gap: 12px;
+}
+
+.sidebar-spaces__icon {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	flex-shrink: 0;
+	block-size: 22px;
+	border-radius: 8px;
+	background: var( --space-color-bg );
+	color: var( --space-color );
+}
+
+.sidebar-spaces__text {
+	display: flex;
+	flex-direction: column;
+	min-inline-size: 0;
+	flex: 1;
+}
+
+.sidebar-spaces__name {
+	color: var( --color-text );
+	font-weight: 500;
+	line-height: 1.2;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+
+// Each space exposes its accent colour as two custom properties — `--space-color`
+// (foreground: the icon glyph and the active row's name) and `--space-color-bg`
+// (the icon's surface tint). The modifier classes below only redefine those two
+// values (via the shared `space-accent-color` mixin); the icon/name rules above
+// consume them, so colours live in one place (`colors.scss`).
+@each $color in space-colors.$space-colors {
+	.sidebar-spaces__item--#{$color} {
+		@include space-colors.space-accent-color( $color );
+	}
+}
+
+// Active row: tint the whole row with the space's own accent so the current
+// space is unmistakable. The shared sidebar only paints a selected background in
+// dark mode, so in light mode this is the only active-state cue — without it the
+// current space reads no differently from the rest until hovered.
+//
+// The name keeps the neutral `--color-text` (just bolder): the accent foreground
+// is the dark `-80` step, which is illegible on the dark selected row, and the
+// row tint + weight + coloured icon already mark the active space.
+.sidebar-spaces__item.selected {
+	.sidebar-spaces__link {
+		background-color: var( --space-color-bg );
+	}
+
+	.sidebar-spaces__name {
+		font-weight: 600;
+	}
+}

@@ -34,7 +34,7 @@ jest.mock( 'calypso/state/purchases/selectors', () => ( {
 
 jest.mock( 'calypso/lib/purchases', () => ( {
 	isSubscription: ( purchase: { type: string } ) => purchase.type === 'subscription',
-	isRenewing: ( purchase: { status: string } ) => purchase.status === 'active',
+	isRenewingBeforeExpiration: ( purchase: { status: string } ) => purchase.status === 'active',
 } ) );
 
 jest.mock( 'calypso/state/purchases/actions', () => ( {

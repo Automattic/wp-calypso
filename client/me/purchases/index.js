@@ -188,14 +188,6 @@ export default ( router ) => {
 	);
 
 	router(
-		paths.downgradePurchase( ':site', ':purchaseId' ),
-		sidebar,
-		controller.downgradePurchase,
-		makeLayout,
-		clientRender
-	);
-
-	router(
 		paths.confirmCancelDomain( ':site', ':purchaseId' ),
 		setupPreferences,
 		maybeRedirectToMultiSiteDashboard(

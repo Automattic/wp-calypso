@@ -1,6 +1,5 @@
 /* eslint-disable jsdoc/no-undefined-types */
 
-import { map, compact, includes, some, filter } from 'lodash';
 import getEmbedMetadata from 'calypso/lib/get-video-id';
 import { READER_CONTENT_WIDTH } from 'calypso/reader/data/post/sizes';
 import { iframeIsAllowed, maxWidthPhotonishURL, deduceImageWidthAndHeight } from './utils';
@@ -33,8 +32,8 @@ function isCandidateForContentImage( image ) {
 
 	const imageUrl = image.getAttribute( 'src' );
 
-	const imageShouldBeExcludedFromCandidacy = some( ineligibleCandidateUrlParts, ( urlPart ) =>
-		includes( imageUrl.toLowerCase(), urlPart )
+	const imageShouldBeExcludedFromCandidacy = ineligibleCandidateUrlParts.some( ( urlPart ) =>
+		imageUrl.toLowerCase().includes( urlPart )
 	);
 
 	return ! ( isTrackingPixel( image ) || imageShouldBeExcludedFromCandidacy );
@@ -67,7 +66,7 @@ const getAutoplayIframe = ( iframe ) => {
 	const KNOWN_SERVICES = [ 'youtube', 'vimeo', 'videopress', 'pocketcasts' ];
 	const metadata = getEmbedMetadata( iframe.src );
 
-	if ( metadata && includes( KNOWN_SERVICES, metadata.service ) ) {
+	if ( metadata && KNOWN_SERVICES.includes( metadata.service ) ) {
 		const autoplayIframe = iframe.cloneNode();
 		if ( autoplayIframe.src.indexOf( '?' ) === -1 ) {
 			autoplayIframe.src += '?autoplay=1';
@@ -147,7 +146,7 @@ export default function detectMedia( post, dom ) {
 	const embedSelector = 'iframe';
 	const media = dom.querySelectorAll( `${ imageSelector }, ${ embedSelector }` );
 
-	const contentMedia = map( media, ( element ) => {
+	const contentMedia = Array.from( media ).map( ( element ) => {
 		const nodeName = element.nodeName.toLowerCase();
 
 		if ( nodeName === 'iframe' ) {
@@ -158,9 +157,9 @@ export default function detectMedia( post, dom ) {
 		return false;
 	} );
 
-	post.content_media = compact( contentMedia );
-	post.content_embeds = filter( post.content_media, ( m ) => m.mediaType === 'video' );
-	post.content_images = filter( post.content_media, ( m ) => m.mediaType === 'image' );
+	post.content_media = contentMedia.filter( Boolean );
+	post.content_embeds = post.content_media.filter( ( m ) => m.mediaType === 'video' );
+	post.content_images = post.content_media.filter( ( m ) => m.mediaType === 'image' );
 
 	// TODO: figure out a more sane way of combining featured_image + content media
 	// so that changes to logic don't need to exist in multiple places

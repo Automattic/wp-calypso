@@ -44,11 +44,11 @@ interface Props {
 
 export default function SiteProfilerV2( props: Props ) {
 	const { routerDomain, hash, routerOrigin } = props;
-	const hostingRef = useRef( null );
-	const domainRef = useRef( null );
-	const perfomanceMetricsRef = useRef( null );
-	const healthMetricsRef = useRef( null );
-	const securityMetricsRef = useRef( null );
+	const hostingRef = useRef< HTMLElement >( null );
+	const domainRef = useRef< HTMLElement >( null );
+	const perfomanceMetricsRef = useRef< HTMLElement >( null );
+	const healthMetricsRef = useRef< HTMLElement >( null );
+	const securityMetricsRef = useRef< HTMLElement >( null );
 	const [ isGetReportFormOpen, setIsGetReportFormOpen ] = useState( false );
 
 	const {
@@ -122,7 +122,11 @@ export default function SiteProfilerV2( props: Props ) {
 	const updateDomainRouteParam = ( value: string ) => {
 		// Update the domain param;
 		// URL param is the source of truth
-		value ? page( `/site-profiler/${ value }` ) : page( '/site-profiler' );
+		if ( value ) {
+			page( `/site-profiler/${ value }` );
+		} else {
+			page( '/site-profiler' );
+		}
 	};
 
 	const { is_wpcom: isWpCom = false, is_wordpress: isWordPress = false } = performanceMetrics ?? {};

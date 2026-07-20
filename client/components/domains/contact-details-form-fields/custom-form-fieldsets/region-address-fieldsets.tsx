@@ -1,5 +1,4 @@
 import { localize, LocalizeProps } from 'i18n-calypso';
-import { includes } from 'lodash';
 import { Component } from 'react';
 import { Input, HiddenInput } from 'calypso/my-sites/domains/components/form';
 import {
@@ -41,18 +40,18 @@ export class RegionAddressFieldsets extends Component<
 	};
 
 	inputRefCallback( input: { focus: () => void } | undefined | null ) {
-		input && input.focus();
+		input?.focus();
 	}
 
 	getRegionAddressFieldset() {
 		const { countryCode, hasCountryStates } = this.props;
 
 		if ( ! hasCountryStates ) {
-			if ( includes( CHECKOUT_EU_ADDRESS_FORMAT_COUNTRY_CODES, countryCode ) ) {
+			if ( CHECKOUT_EU_ADDRESS_FORMAT_COUNTRY_CODES.includes( countryCode ) ) {
 				return <EuAddressFieldset { ...this.props } />;
 			}
 
-			if ( includes( CHECKOUT_UK_ADDRESS_FORMAT_COUNTRY_CODES, countryCode ) ) {
+			if ( CHECKOUT_UK_ADDRESS_FORMAT_COUNTRY_CODES.includes( countryCode ) ) {
 				return <UkAddressFieldset { ...this.props } />;
 			}
 		}

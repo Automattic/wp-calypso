@@ -19,6 +19,7 @@ import { RouteProvider } from 'calypso/components/route';
 import { dashboardLink } from 'calypso/dashboard/utils/link';
 import Layout from 'calypso/layout';
 import LayoutLoggedOut from 'calypso/layout/logged-out';
+import { bumpStat } from 'calypso/lib/analytics/mc';
 import { logToLogstash } from 'calypso/lib/logstash';
 import { navigate } from 'calypso/lib/navigate';
 import { createAccountUrl, login } from 'calypso/lib/paths';
@@ -63,13 +64,12 @@ export const ProviderWrappedLayout = ( {
 	secondary,
 	renderHeaderSection,
 	redirectUri,
-	beforePrimary,
 } ) => {
 	const state = store.getState();
 	const userLoggedIn = isUserLoggedIn( state );
 
 	const layout = userLoggedIn ? (
-		<Layout primary={ primary } secondary={ secondary } beforePrimary={ beforePrimary } />
+		<Layout primary={ primary } secondary={ secondary } />
 	) : (
 		<LayoutLoggedOut
 			primary={ primary }
@@ -582,6 +582,7 @@ export const maybeRedirectToMultiSiteDashboard = ( path ) => ( context, next ) =
 	const state = context.store.getState();
 	if ( hasDashboardForcedOptIn( state ) ) {
 		const redirectUrl = typeof path === 'function' ? path( context.params, context.query ) : path;
+		bumpStat( 'dashboard-redirect', 'forced-opt-in' );
 		return navigate( dashboardLink( redirectUrl ?? context.path ) );
 	}
 

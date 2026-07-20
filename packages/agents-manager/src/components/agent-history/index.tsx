@@ -3,8 +3,8 @@ import { AgentsManagerSelect } from '@automattic/data-stores';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
 import clsx from 'clsx';
-import { useNavigate } from 'react-router-dom';
 import { useAgentsManagerContext } from '../../contexts';
+import useHasAiChatEntryButton from '../../hooks/use-has-ai-chat-entry-button';
 import { AGENTS_MANAGER_STORE } from '../../stores';
 import { LocalConversationListItem } from '../../types';
 import ChatHeader, { type Options as ChatHeaderOptions } from '../chat-header';
@@ -36,30 +36,39 @@ export default function AgentHistory( {
 	onExpand,
 	onSelectConversation,
 }: Props ) {
-	const { getActiveSessionId } = useAgentsManagerContext();
+	const { resumeActiveChat } = useAgentsManagerContext();
 
-	const { setFloatingPosition } = useDispatch( AGENTS_MANAGER_STORE );
-	const { floatingPosition } = useSelect( ( select ) => {
+	const { setFloatingPosition, setFreeDragPosition, setFloatingSize } =
+		useDispatch( AGENTS_MANAGER_STORE );
+	const { floatingPosition, freeDragPosition, floatingSize } = useSelect( ( select ) => {
 		const store: AgentsManagerSelect = select( AGENTS_MANAGER_STORE );
 		return store.getAgentsManagerState();
 	}, [] );
-	const navigate = useNavigate();
 
-	const handleBack = () => {
-		navigate( '/chat', { state: { sessionId: getActiveSessionId() } } );
-	};
+	// Without the AI chat entry button, use `collapsed` (a FAB) instead of `minimized`.
+	const closedChatState = useHasAiChatEntryButton() ? 'minimized' : 'collapsed';
+	const title = __( 'Past chats', __i18n_text_domain__ );
+
+	const handleBack = () => resumeActiveChat();
 
 	return (
 		<AgentUI.Container
 			initialChatPosition={ floatingPosition }
 			onChatPositionChange={ ( position ) => setFloatingPosition( position ) }
+			initialFreeDragPosition={ freeDragPosition ?? undefined }
+			onFreeDragEnd={ setFreeDragPosition }
+			defaultSize={ floatingSize ?? undefined }
+			onResizeEnd={ setFloatingSize }
 			className={ clsx( 'agenttic', { dark: isDocked } ) }
 			messages={ [] }
 			isProcessing={ false }
 			error={ null }
 			onSubmit={ () => {} }
 			variant={ isDocked ? 'embedded' : 'floating' }
-			floatingChatState={ isOpen ? 'expanded' : 'minimized' }
+			freeDrag={ ! isDocked }
+			resizable={ ! isDocked }
+			floatingChatState={ isOpen ? 'expanded' : closedChatState }
+			triggerTitle={ title }
 			onClose={ onClose }
 			onExpand={ onExpand }
 			onStop={ onAbort }
@@ -70,7 +79,8 @@ export default function AgentHistory( {
 					onClose={ onClose }
 					onBack={ handleBack }
 					options={ chatHeaderOptions }
-					title={ __( 'Past chats', '__i18n_text_domain__' ) }
+					title={ title }
+					isDocked={ isDocked }
 				/>
 				<ConversationHistoryView onSelectConversation={ onSelectConversation } />
 			</AgentUI.ConversationView>

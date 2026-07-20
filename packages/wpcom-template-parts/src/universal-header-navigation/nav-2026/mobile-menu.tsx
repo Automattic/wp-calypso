@@ -35,8 +35,8 @@ interface Nav2026MobileMenuProps {
 	__: Translate;
 	variant: 'default' | 'minimal';
 	mobilePlatform: 'ios' | 'android' | null;
-	mobileFooterRef: React.RefObject< HTMLDivElement >;
-	closeMobileMenu: () => void;
+	mobileFooterRef: React.RefObject< HTMLDivElement | null >;
+	closeMobileMenu: ( reason: string ) => void;
 	setCurrentDropdown: ( name: string | null ) => void;
 }
 
@@ -75,7 +75,11 @@ export function Nav2026MobileMenu( {
 			aria-hidden={ ! isMobileMenuOpen }
 		>
 			{ /* eslint-disable-next-line jsx-a11y/no-static-element-interactions */ }
-			<div className="x-menu-overlay" onKeyDown={ closeMobileMenu } onClick={ closeMobileMenu } />
+			<div
+				className="x-menu-overlay"
+				onKeyDown={ () => closeMobileMenu( 'overlay' ) }
+				onClick={ () => closeMobileMenu( 'overlay' ) }
+			/>
 			<div className="x-menu-content">
 				<div className="x-menu-mobile-main">
 					{ /* Sticky header; inside the scroller so it stickies as the list scrolls. */ }
@@ -110,7 +114,7 @@ export function Nav2026MobileMenu( {
 							<button
 								type="button"
 								className="x-menu-button x-menu-mobile-close x-link"
-								onClick={ closeMobileMenu }
+								onClick={ () => closeMobileMenu( 'close_button' ) }
 								tabIndex={ mobileMenuTabIndex }
 							>
 								<span className="x-hidden">{ __( 'Close menu', __i18n_text_domain__ ) }</span>
@@ -193,10 +197,22 @@ export function Nav2026MobileMenu( {
 												>
 													<ClickableItem
 														titleValue=""
-														content={ item.label }
+														content={
+															item.badge ? (
+																<>
+																	{ item.label }
+																	<span className="x-menu-mobile-dropdown-badge-new">
+																		{ item.badge }
+																	</span>
+																</>
+															) : (
+																item.label
+															)
+														}
 														urlValue={ item.url }
 														type="menu"
 														typeClassName="x-menu-mobile-dropdown-link x-link"
+														trackingText={ item.label }
 														target={ item.target }
 														tabIndex={ isActive ? mobileMenuTabIndex : -1 }
 													/>
@@ -209,8 +225,10 @@ export function Nav2026MobileMenu( {
 					) }
 				</div>
 				<div className="x-menu-mobile-footer" ref={ mobileFooterRef }>
+					{ /* Top-level screen only; hidden while a category is drilled into. */ }
 					<Nav2026AppBanner
 						mobilePlatform={ mobilePlatform }
+						isHidden={ !! activeCategory }
 						tabIndex={ mobileMenuTabIndex }
 						localizeUrl={ localizeUrl }
 						__={ __ }

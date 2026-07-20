@@ -5,7 +5,7 @@ import {
 	type Suggestion,
 } from '@automattic/agenttic-ui';
 import { useDispatch, useSelect } from '@wordpress/data';
-import { useCallback, useState } from '@wordpress/element';
+import { useCallback, useEffect, useRef, useState } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { columns, comment, drawerRight, login } from '@wordpress/icons';
 import { Routes, Route, Navigate, useLocation, useNavigate } from 'react-router-dom';
@@ -18,10 +18,12 @@ import { useShouldUseUnifiedAgent } from '../../hooks/use-should-use-unified-age
 import { AGENTS_MANAGER_STORE } from '../../stores';
 import { LocalConversationListItem } from '../../types';
 import { isReaderChatAgent } from '../../utils/is-reader-chat-agent';
-import { isJetpackAiSidebarPreviewFeatureEnabled } from '../../utils/jetpack-ai-sidebar-preview';
 import { persistLastActivity } from '../../utils/persist-last-activity';
+import { recordBigSkyTracksEvent } from '../../utils/tracks';
 import AgentHistory from '../agent-history';
 import { type Options as ChatHeaderOptions } from '../chat-header';
+import EditorAiChatButton from '../editor-ai-chat-button';
+import EditorHelpCenterButton from '../editor-help-center-button';
 import OrchestratorChat from '../orchestrator-chat';
 import SupportGuide from '../support-guide';
 import SupportGuides from '../support-guides';
@@ -32,7 +34,6 @@ import type {
 	GetChatComponent,
 	UseSuggestionsHook,
 	SiteBuildUtils,
-	ImageUploadHook,
 	UseCheckpointHook,
 	ProviderCapabilities,
 } from '../../utils/load-external-providers';
@@ -56,8 +57,6 @@ interface Props {
 	getChatComponent?: GetChatComponent;
 	/** Utilities for site building flow (e.g., progress tracking, site preview). */
 	siteBuildUtils?: SiteBuildUtils;
-	/** Hook for handling image uploads within the agent chat. */
-	useImageUpload?: ImageUploadHook;
 	/** Hook for saving and restoring editor state so that AI actions can be undone. */
 	useCheckpoint?: UseCheckpointHook;
 	/** Optional capability flags declared by one or more loaded providers. */
@@ -73,16 +72,15 @@ export default function AgentDock( {
 	getChatComponent,
 	useSuggestions,
 	siteBuildUtils,
-	useImageUpload,
 	useCheckpoint,
 	capabilities,
 }: Props ) {
-	const { siteKey, sectionName, agentConfig, getActiveSessionId } = useAgentsManagerContext();
+	const { siteKey, agentConfig } = useAgentsManagerContext();
 
 	const [ isCompactMode, setIsCompactMode ] = useState(
 		window.__agentsManagerActions?.isCompactMode ?? false
 	);
-	const [ shouldRenderChat, setShouldRenderChat ] = useState(
+	const [ isChatEnabled, setIsChatEnabled ] = useState(
 		window.__agentsManagerActions?.isChatEnabled ?? true
 	);
 	const [ desktopMediaQuery, setDesktopMediaQuery ] = useState< string | undefined >(
@@ -92,10 +90,10 @@ export default function AgentDock( {
 	const { setIsOpen, setIsDocked, setIsMinimized, setIsSplitScreen } =
 		useDispatch( AGENTS_MANAGER_STORE );
 	const {
-		isOpen: isPersistedOpen = false,
-		isDocked: isPersistedDocked = false,
-		isMinimized = false,
-		isSplitScreen = false,
+		isOpen: isPersistedOpen,
+		isDocked: isPersistedDocked,
+		isMinimized,
+		isSplitScreen,
 	} = useSelect( ( select ) => {
 		const store: AgentsManagerSelect = select( AGENTS_MANAGER_STORE );
 		return store.getAgentsManagerState();
@@ -104,59 +102,108 @@ export default function AgentDock( {
 	const navigate = useNavigate();
 	const shouldUseUnifiedAgent = useShouldUseUnifiedAgent();
 
-	// `agentConfig` is guaranteed non-null here because AgentSetup guards rendering
+	// `agentConfig` is guaranteed non-null here because `AgentSetup` guards rendering.
 	const agentId = agentConfig!.agentId;
 
-	// Reader-chat runs on public blog frontends where there's no wp-admin
-	// sidebar to dock into. Detect that context so we can hide options that
-	// don't apply and avoid persisting open/close state through the logged-in
-	// Agents Manager REST state endpoint.
+	// Reader chat runs on public blog frontends with no wp-admin sidebar. We
+	// detect it to hide docking options and skip persisting open/close state to
+	// the logged-in REST endpoint.
 	const isReaderChat = isReaderChatAgent( agentId );
-	const showChatHistory =
-		! isReaderChat && isJetpackAiSidebarPreviewFeatureEnabled( 'chatHistory' );
-	const showSupportGuides =
-		! isReaderChat && isJetpackAiSidebarPreviewFeatureEnabled( 'supportGuides' );
-
-	// Woo AI sites (sectionName 'wooai-admin') don't have HVM tagging yet,
-	// so Zendesk escalation is disabled until routing is in place.
-	const isWooAiAdmin = sectionName === 'wooai-admin';
-	const shouldShowUnifiedSupport = shouldUseUnifiedAgent && ! isReaderChat && ! isWooAiAdmin;
 
 	const setOpenState = useCallback(
 		( isOpen: boolean ) => setIsOpen( isOpen, ! isReaderChat ),
 		[ isReaderChat, setIsOpen ]
 	);
 
-	const { isDocked, canDock, dock, undock, openSidebar, closeSidebar, createAgentPortal } =
-		useAgentLayoutManager( {
-			defaultDocked: isReaderChat ? false : isPersistedDocked,
-			defaultOpen: isPersistedOpen,
-			desktopMediaQuery,
-			// Only open the sidebar; keep the current route. Admin-bar items
-			// set their own route (e.g. history) before opening it.
-			onOpenSidebar: () => setOpenState( true ),
-			onCloseSidebar: () => setOpenState( false ),
-			isSplitScreen,
-		} );
-
-	// WP admin bar integration. Returns whether a trigger button can reopen the chat.
-	const hasAdminBarTrigger = useAdminBarIntegration( {
-		isOpen: isPersistedOpen,
-		sectionName,
-		maybeOpenChat: () => {
-			if ( isMinimized ) {
-				setIsMinimized( false );
-			}
-			if ( ! isPersistedOpen ) {
-				if ( isDocked ) {
-					openSidebar();
-				} else {
-					setOpenState( true );
-				}
-			}
+	const {
+		isDocked,
+		isSidebarOpen,
+		canDock,
+		dock,
+		undock,
+		openSidebar,
+		closeSidebar,
+		createAgentPortal,
+	} = useAgentLayoutManager( {
+		defaultDocked: isReaderChat ? false : isPersistedDocked,
+		defaultOpen: isPersistedOpen,
+		desktopMediaQuery,
+		// Only open the sidebar; keep the current route. Admin-bar items
+		// set their own route (e.g. history) before opening it.
+		onOpenSidebar: () => {
+			recordBigSkyTracksEvent( 'sidebar_open_click' );
+			setOpenState( true );
 		},
-		navigate,
+		onCloseSidebar: () => {
+			recordBigSkyTracksEvent( 'sidebar_close_click' );
+			setOpenState( false );
+		},
+		onDock: () => {
+			recordBigSkyTracksEvent( 'ai_chat_docked' );
+		},
+		onUndock: () => {
+			recordBigSkyTracksEvent( 'ai_chat_undocked' );
+		},
+		isSplitScreen,
 	} );
+
+	// Docked close fires `sidebar_close_click` (via `onCloseSidebar`); undocked
+	// close fires `dock_back_button_click`. Matches Big Sky.
+	const handleClose = () => {
+		if ( isDocked ) {
+			closeSidebar();
+		} else {
+			recordBigSkyTracksEvent( 'dock_back_button_click' );
+			setOpenState( false );
+		}
+	};
+
+	// Open/un-minimize the chat panel, leaving the route unchanged.
+	const openChat = () => {
+		if ( isMinimized ) {
+			setIsMinimized( false );
+		}
+
+		// Skip a redundant save when the chat is already open.
+		if ( ! isPersistedOpen ) {
+			if ( isDocked ) {
+				openSidebar();
+			} else {
+				setOpenState( true );
+			}
+		}
+	};
+
+	// WP admin bar integration. Returns whether the AI chat entry button is present.
+	const hasAiChatEntry = useAdminBarIntegration( { closeChat: handleClose, openChat } );
+
+	// `isMinimized` only matters next to an entry button — without one the chat
+	// shows regardless. When the button disappears mid-session (Site Editor
+	// canvas → navigation view), clear the stale flag so re-entering the canvas
+	// doesn't instantly re-minimize the chat the user is looking at.
+	const prevHasAiChatEntryRef = useRef( hasAiChatEntry );
+	useEffect( () => {
+		if ( prevHasAiChatEntryRef.current && ! hasAiChatEntry && isMinimized ) {
+			setIsMinimized( false );
+		}
+		prevHasAiChatEntryRef.current = hasAiChatEntry;
+	}, [ hasAiChatEntry, isMinimized, setIsMinimized ] );
+
+	// Route visibility. All are hidden in reader chat (public blog frontends);
+	// some add a further requirement, noted below. Ordered to match the routes.
+	//
+	// `/zendesk` also needs the unified agent.
+	const showZendeskChat = shouldUseUnifiedAgent && ! isReaderChat;
+	// `/support-guides` (the list) also needs the unified agent. Registered even
+	// without an entry button: unregistering it mid-session (Site Editor
+	// navigation) would yank the route from under a user viewing it, and the
+	// wildcard redirect would reset their chat.
+	const showSupportGuides = shouldUseUnifiedAgent && ! isReaderChat;
+	// `/post` (the viewer) opens a guide or link from in-chat links and sources,
+	// so unlike the list it doesn't need the unified agent.
+	const showSupportGuide = ! isReaderChat;
+	// `/history` matches the chat header's history button.
+	const showChatHistory = ! isReaderChat;
 
 	useSetupCustomActions( {
 		canDock,
@@ -165,7 +212,7 @@ export default function AgentDock( {
 		openSidebar,
 		closeSidebar,
 		setIsCompactMode,
-		setShouldRenderChat,
+		setIsChatEnabled,
 		setDesktopMediaQuery,
 	} );
 
@@ -185,18 +232,15 @@ export default function AgentDock( {
 		[]
 	);
 
-	const handleClose = isDocked ? closeSidebar : () => setOpenState( false );
-
 	const handleExpand = () => {
+		recordBigSkyTracksEvent( 'dock_assistant_icon_click' );
 		if ( isMinimized ) {
 			setIsMinimized( false );
 		}
-		setOpenState( true );
-
-		// Return to the active chat, resuming its session — unless already
-		// on a live chat/Zendesk view.
-		if ( pathname !== '/chat' && pathname !== '/zendesk' ) {
-			navigate( '/chat', { state: { sessionId: getActiveSessionId() } } );
+		// Skip a redundant save when the chat is already open (e.g. expanding
+		// from the minimized bar).
+		if ( ! isPersistedOpen ) {
+			setOpenState( true );
 		}
 	};
 
@@ -219,9 +263,14 @@ export default function AgentDock( {
 		return [
 			{
 				icon: comment,
-				title: __( 'New chat', '__i18n_text_domain__' ),
+				title: __( 'New chat', __i18n_text_domain__ ),
 				isDisabled: pathname === '/chat' && isOrchestratorChatEmpty,
-				onClick: () => navigate( '/' ),
+				onClick: () => {
+					recordBigSkyTracksEvent( 'ai_chat_more_options_click', {
+						type: 'reset_chat',
+					} );
+					navigate( '/' );
+				},
 			},
 			// Sidebar docking only makes sense in wp-admin where a block-editor
 			// sidebar slot exists. On public reader-chat frontends there's no
@@ -229,8 +278,11 @@ export default function AgentDock( {
 			! isReaderChat &&
 				isDocked && {
 					icon: login,
-					title: __( 'Pop out sidebar', '__i18n_text_domain__' ),
+					title: __( 'Pop out sidebar', __i18n_text_domain__ ),
 					onClick: () => {
+						recordBigSkyTracksEvent( 'ai_chat_more_options_click', {
+							type: 'undock',
+						} );
 						undock();
 						setIsDocked( false );
 					},
@@ -239,8 +291,11 @@ export default function AgentDock( {
 				! isDocked &&
 				canDock && {
 					icon: drawerRight,
-					title: __( 'Move to sidebar', '__i18n_text_domain__' ),
+					title: __( 'Move to sidebar', __i18n_text_domain__ ),
 					onClick: () => {
+						recordBigSkyTracksEvent( 'ai_chat_more_options_click', {
+							type: 'dock',
+						} );
 						dock();
 						setIsDocked( true );
 					},
@@ -252,8 +307,8 @@ export default function AgentDock( {
 				capabilities?.supportsSplitScreen && {
 					icon: columns,
 					title: isSplitScreen
-						? __( 'Exit split screen', '__i18n_text_domain__' )
-						: __( 'Split screen sidebar', '__i18n_text_domain__' ),
+						? __( 'Exit split screen', __i18n_text_domain__ )
+						: __( 'Split screen sidebar', __i18n_text_domain__ ),
 					onClick: () => setIsSplitScreen( ! isSplitScreen ),
 				},
 		].filter( Boolean ) as ChatHeaderOptions;
@@ -261,10 +316,10 @@ export default function AgentDock( {
 
 	const chatHeaderOptions = getChatHeaderOptions();
 
-	// The WP admin bar trigger can reopen the chat, so it gates two behaviors:
-	// hide it on close, and minimize it to the bar.
-	const isChatVisible = isPersistedOpen || ! hasAdminBarTrigger;
-	const isMinimizedActive = hasAdminBarTrigger && isMinimized;
+	// With the AI chat entry button, the chat hides on close and can minimize to
+	// the bar. Without one, it stays mounted and collapses to a button instead.
+	const isChatVisible = isPersistedOpen || ! hasAiChatEntry;
+	const isMinimizedActive = hasAiChatEntry && isMinimized;
 	const chatIsOpen = isPersistedOpen && ! isMinimizedActive;
 
 	const OrchestratorChatRoute = (
@@ -272,6 +327,7 @@ export default function AgentDock( {
 			emptyViewSuggestions={ emptyViewSuggestions }
 			isDocked={ isDocked }
 			isOpen={ chatIsOpen }
+			suggestionsVisible={ isDocked ? isSidebarOpen : chatIsOpen || isCompactMode }
 			onClose={ handleClose }
 			onExpand={ handleExpand }
 			chatHeaderOptions={ chatHeaderOptions }
@@ -283,8 +339,8 @@ export default function AgentDock( {
 			useSuggestions={ useSuggestions }
 			getChatComponent={ getChatComponent }
 			siteBuildUtils={ siteBuildUtils }
-			useImageUpload={ useImageUpload }
 			useCheckpoint={ useCheckpoint }
+			capabilities={ capabilities }
 			onHasMessagesChange={ handleChatHasMessagesChange }
 		/>
 	);
@@ -335,19 +391,31 @@ export default function AgentDock( {
 		/>
 	);
 
+	// When the chat is disabled there's nothing to open, so render nothing — the editor
+	// entry-point buttons would otherwise be dead.
+	if ( ! isChatEnabled ) {
+		return null;
+	}
+
 	return (
-		shouldRenderChat &&
-		isChatVisible &&
-		createAgentPortal(
-			// NOTE: Use route state to pass data that needs to be accessed throughout the app.
-			<Routes>
-				<Route path="/chat" element={ OrchestratorChatRoute } />
-				{ showSupportGuides && <Route path="/post" element={ SupportGuideRoute } /> }
-				{ shouldShowUnifiedSupport && <Route path="/zendesk" element={ ZendeskChatRoute } /> }
-				{ showSupportGuides && <Route path="/support-guides" element={ SupportGuidesRoute } /> }
-				{ showChatHistory && <Route path="/history" element={ HistoryRoute } /> }
-				<Route path="*" element={ <Navigate to="/chat" state={ { isNewChat: true } } replace /> } />
-			</Routes>
-		)
+		<>
+			<EditorHelpCenterButton onClose={ handleClose } onOpenChat={ openChat } />
+			<EditorAiChatButton onClose={ handleClose } onOpenChat={ openChat } />
+			{ isChatVisible &&
+				createAgentPortal(
+					// NOTE: Use route state to pass data that needs to be accessed throughout the app.
+					<Routes>
+						<Route path="/chat" element={ OrchestratorChatRoute } />
+						{ showZendeskChat && <Route path="/zendesk" element={ ZendeskChatRoute } /> }
+						{ showSupportGuides && <Route path="/support-guides" element={ SupportGuidesRoute } /> }
+						{ showSupportGuide && <Route path="/post" element={ SupportGuideRoute } /> }
+						{ showChatHistory && <Route path="/history" element={ HistoryRoute } /> }
+						<Route
+							path="*"
+							element={ <Navigate to="/chat" state={ { isNewChat: true } } replace /> }
+						/>
+					</Routes>
+				) }
+		</>
 	);
 }

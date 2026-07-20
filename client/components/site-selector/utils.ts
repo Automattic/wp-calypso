@@ -1,10 +1,12 @@
-import { get } from 'lodash';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import type { UserData } from 'calypso/lib/user/user';
 
-const prependKeyForJetpackCloud = ( key: string ): string => `jetpack_${ key }`;
+type SiteCountKey = 'site_count' | 'visible_site_count';
 
-const chooseKeyForPlatform = ( key: string ): string =>
+const prependKeyForJetpackCloud = < K extends SiteCountKey >( key: K ): `jetpack_${ K }` =>
+	`jetpack_${ key }`;
+
+const chooseKeyForPlatform = < K extends SiteCountKey >( key: K ): K | `jetpack_${ K }` =>
 	isJetpackCloud() ? prependKeyForJetpackCloud( key ) : key;
 
 /**
@@ -14,7 +16,7 @@ const chooseKeyForPlatform = ( key: string ): string =>
  * @returns {number} Site count
  */
 export function getUserSiteCountForPlatform( user: UserData ): number {
-	return get( user, chooseKeyForPlatform( 'site_count' ), 0 );
+	return user?.[ chooseKeyForPlatform( 'site_count' ) ] ?? 0;
 }
 
 /**
@@ -24,5 +26,5 @@ export function getUserSiteCountForPlatform( user: UserData ): number {
  * @returns {number} Visible site count
  */
 export function getUserVisibleSiteCountForPlatform( user: UserData ): number {
-	return get( user, chooseKeyForPlatform( 'visible_site_count' ), 0 );
+	return user?.[ chooseKeyForPlatform( 'visible_site_count' ) ] ?? 0;
 }

@@ -2,7 +2,7 @@ import PropTypes from 'prop-types';
 
 import './suggestion.scss';
 
-const UserMentionsSuggestion = ( { avatarUrl, fullName, query, username } ) => {
+const UserMentionsSuggestion = ( { avatarUrl = '', fullName = '', query = '', username = '' } ) => {
 	const highlight = ( content, type ) => {
 		const expressions = {
 			username: `(^${ query })(\\w*)\\s*`,
@@ -51,13 +51,6 @@ UserMentionsSuggestion.propTypes = {
 	fullName: PropTypes.string,
 	query: PropTypes.string,
 	username: PropTypes.string,
-};
-
-UserMentionsSuggestion.defaultProps = {
-	avatarUrl: '',
-	fullName: '',
-	query: '',
-	username: '',
 };
 
 export default UserMentionsSuggestion;

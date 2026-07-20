@@ -1,4 +1,4 @@
-import { pick } from 'lodash';
+import { pick } from '@automattic/js-utils';
 import { WORDADS_STATUS_REQUEST, WORDADS_STATUS_RECEIVE } from 'calypso/state/action-types';
 
 import 'calypso/state/data-layer/wpcom/wordads/status';

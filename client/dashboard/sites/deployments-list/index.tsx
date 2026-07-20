@@ -3,13 +3,20 @@ import {
 	codeDeploymentsQuery,
 	codeDeploymentRunsQuery,
 } from '@automattic/api-queries';
-import { useSuspenseQuery, useQuery, useQueries, useQueryClient } from '@tanstack/react-query';
+import {
+	useSuspenseQuery,
+	useQuery,
+	useQueries,
+	useQueryClient,
+	type UseQueryResult,
+} from '@tanstack/react-query';
+import { Link } from '@tanstack/react-router';
 import { Button, Modal } from '@wordpress/components';
 import { filterSortAndPaginate } from '@wordpress/dataviews';
 import { createInterpolateElement } from '@wordpress/element';
-import { __ } from '@wordpress/i18n';
+import { __, sprintf } from '@wordpress/i18n';
 import { Icon, seen } from '@wordpress/icons';
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useCallback, type ReactNode } from 'react';
 import { usePersistentView } from '../../app/hooks/use-persistent-view';
 import { PerformanceTrackerStop } from '../../app/performance-tracking';
 import {
@@ -17,7 +24,7 @@ import {
 	siteSettingsRepositoriesRoute,
 	siteDeploymentsListRoute,
 } from '../../app/router/sites';
-import { DataViews, DataViewsCard } from '../../components/dataviews';
+import { DataViews, DataViewsCard, DataViewsEmptyStateLayout } from '../../components/dataviews';
 import InlineSupportLink from '../../components/inline-support-link';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
@@ -30,6 +37,39 @@ import type {
 	DeploymentRunWithDeploymentInfo,
 	CodeDeploymentData,
 } from '@automattic/api-core';
+import type { View } from '@wordpress/dataviews';
+
+function DeploymentsEmptyState( { view, siteSlug }: { view: View; siteSlug: string } ) {
+	let title: string = __( 'No deployments yet' );
+	let description: ReactNode = createInterpolateElement(
+		__(
+			'Deployments from your <repositoriesLink>connected repositories</repositoriesLink> will appear here.'
+		),
+		{
+			repositoriesLink: (
+				<Link to={ siteSettingsRepositoriesRoute.fullPath } params={ { siteSlug } } />
+			),
+		}
+	);
+
+	if ( ( view.filters && view.filters.length > 0 ) || view.search ) {
+		title = __( 'No deployments found' );
+
+		if ( view.search ) {
+			description = sprintf(
+				/** translators: %s: search query string */
+				__( 'Your search for “%s” did not return any results.' ),
+				view.search
+			);
+		}
+
+		if ( view.filters && view.filters.length > 0 ) {
+			description = __( 'No deployments found for the selected filters.' );
+		}
+	}
+
+	return <DataViewsEmptyStateLayout isBorderless title={ title } description={ description } />;
+}
 
 function DeploymentsList() {
 	const { siteSlug } = siteRoute.useParams();
@@ -48,8 +88,41 @@ function DeploymentsList() {
 		codeDeploymentsQuery( site.ID )
 	);
 
-	// Fetch all deployment runs in parallel
-	const deploymentRunsQueries = useQueries( {
+	const combineDeploymentRuns = useCallback(
+		( results: UseQueryResult< DeploymentRun[] >[] ) => {
+			const allRuns: DeploymentRunWithDeploymentInfo[] = [];
+
+			results.forEach( ( query, index ) => {
+				const deployment = deployments[ index ];
+				if ( query.data && deployment ) {
+					const runsWithInfo = query.data.map( ( run: DeploymentRun ) => {
+						const isActiveDeployment =
+							deployment.current_deployment_run?.id === run.id ||
+							( ! deployment.current_deployment_run &&
+								deployment.current_deployed_run?.id === run.id );
+
+						return {
+							...run,
+							repository_name: deployment.repository_name,
+							branch_name: deployment.branch_name,
+							is_automated: deployment.is_automated,
+							is_active_deployment: isActiveDeployment,
+						};
+					} );
+					allRuns.push( ...runsWithInfo );
+				}
+			} );
+
+			return {
+				deploymentRuns: allRuns,
+				isLoadingRuns: results.some( ( query ) => query.isLoading ),
+			};
+		},
+		[ deployments ]
+	);
+
+	// Fetch all deployment runs in parallel and transform via the memoized combiner.
+	const { deploymentRuns, isLoadingRuns } = useQueries( {
 		queries: deployments.map( ( deployment: CodeDeploymentData ) => ( {
 			...codeDeploymentRunsQuery( site.ID, deployment.id ),
 			refetchInterval: 5000,
@@ -57,38 +130,10 @@ function DeploymentsList() {
 				persist: false,
 			},
 		} ) ),
+		combine: combineDeploymentRuns,
 	} );
 
-	// Transform the data to include deployment info and mark active deployments
-	const deploymentRuns: DeploymentRunWithDeploymentInfo[] = useMemo( () => {
-		const allRuns: DeploymentRunWithDeploymentInfo[] = [];
-
-		deploymentRunsQueries.forEach( ( query, index ) => {
-			const deployment = deployments[ index ];
-			if ( query.data && deployment ) {
-				const runsWithInfo = query.data.map( ( run: DeploymentRun ) => {
-					const isActiveDeployment =
-						deployment.current_deployment_run?.id === run.id ||
-						( ! deployment.current_deployment_run &&
-							deployment.current_deployed_run?.id === run.id );
-
-					return {
-						...run,
-						repository_name: deployment.repository_name,
-						branch_name: deployment.branch_name,
-						is_automated: deployment.is_automated,
-						is_active_deployment: isActiveDeployment,
-					};
-				} );
-				allRuns.push( ...runsWithInfo );
-			}
-		} );
-
-		return allRuns;
-	}, [ deployments, deploymentRunsQueries ] );
-
-	const isLoading =
-		isLoadingDeployments || deploymentRunsQueries.some( ( query ) => query.isLoading );
+	const isLoading = isLoadingDeployments || isLoadingRuns;
 
 	const repositoryOptions = useMemo( () => {
 		return Array.from( new Set( deploymentRuns.map( ( item ) => item.repository_name ) ) )
@@ -154,7 +199,6 @@ function DeploymentsList() {
 							<RouterLinkButton
 								to={ siteSettingsRepositoriesRoute.fullPath }
 								params={ { siteSlug } }
-								search={ { back_to: 'site-deployments' } }
 								variant="secondary"
 								__next40pxDefaultSize
 							>
@@ -206,13 +250,7 @@ function DeploymentsList() {
 					defaultLayouts={ DEFAULT_LAYOUTS }
 					paginationInfo={ paginationInfo }
 					getItemId={ ( item ) => item.id.toString() }
-					empty={
-						<p>
-							{ ( view.filters && view.filters.length > 0 ) || view.search
-								? __( 'No deployments found' )
-								: __( 'No deployments yet' ) }
-						</p>
-					}
+					empty={ <DeploymentsEmptyState view={ view } siteSlug={ siteSlug } /> }
 				/>
 			</DataViewsCard>
 

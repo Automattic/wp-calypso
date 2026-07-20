@@ -12,8 +12,8 @@ import {
 	isExpiring,
 	isCloseToExpiration,
 	isRecentMonthlyPurchase,
+	isAkismetFreeProduct,
 	getRenewalUrlFromPurchase,
-	isInExpirationGracePeriod,
 } from '../../../utils/purchase';
 import { RenewNoticeAction, shouldShowRenewNoticeAction } from './renew-notice-action';
 import type { Purchase } from '@automattic/api-core';
@@ -35,7 +35,7 @@ export function shouldShowExpiringNotice(
 	if (
 		! isExpiring( currentPurchase ) ||
 		currentPurchase?.is_trial_plan ||
-		isInExpirationGracePeriod( currentPurchase )
+		isAkismetFreeProduct( currentPurchase )
 	) {
 		return false;
 	}
@@ -163,7 +163,7 @@ function ExpiringText( {
 
 		if ( purchase.is_attached_to_holding_site ) {
 			return sprintf(
-				// translators: purchaseName is the name of the plan and daysToExpiry is a number of days
+				// translators: %(purchaseName)s: the name of the plan, %(daysToExpiry)d: a number of days
 				__( '%(purchaseName)s will expire and be removed in %(daysToExpiry)d days.' ),
 				{
 					purchaseName,
@@ -173,11 +173,11 @@ function ExpiringText( {
 		}
 
 		const message = isDomainWithoutSite
-			? // translators: purchaseName is the name of the domain and daysToExpiry is a number of days
+			? // translators: %(purchaseName)s: the name of the domain, %(daysToExpiry)d: a number of days
 			  __(
 					'%(purchaseName)s will expire and be removed from your account in %(daysToExpiry)d days.'
 			  )
-			: // translators: purchaseName is the name of the plan and daysToExpiry is a number of days
+			: // translators: %(purchaseName)s: the name of the plan, %(daysToExpiry)d: a number of days
 			  __(
 					'%(purchaseName)s will expire and be removed from your site in %(daysToExpiry)d days.'
 			  );

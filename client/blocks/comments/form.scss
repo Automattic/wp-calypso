@@ -1,5 +1,9 @@
 @use "calypso/assets/stylesheets/shared/mixins/dark-theme" as ui-mixins;
 
+@import "calypso/assets/stylesheets/shared/functions/z-index";
+
+@import "@automattic/typography/styles/variables";
+
 // Add a New Comment Form
 .comments__form {
 	position: relative;

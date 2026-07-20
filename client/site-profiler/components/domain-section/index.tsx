@@ -11,7 +11,7 @@ interface DomainSectionProps {
 	whois: WhoIs;
 	hostingProvider?: HostingProvider;
 	urlData?: UrlData;
-	domainRef: React.RefObject< HTMLObjectElement >;
+	domainRef: React.RefObject< HTMLElement | null >;
 }
 
 export const DomainSection: React.FC< DomainSectionProps > = ( props ) => {

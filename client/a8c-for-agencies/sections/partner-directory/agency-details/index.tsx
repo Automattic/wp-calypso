@@ -1,6 +1,12 @@
 import page from '@automattic/calypso-router';
 import { SearchableDropdown } from '@automattic/components';
-import { TextareaControl, TextControl, ToggleControl, Button } from '@wordpress/components';
+import {
+	TextareaControl,
+	TextControl,
+	ToggleControl,
+	Button,
+	ExternalLink,
+} from '@wordpress/components';
 import { addQueryArgs } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback } from 'react';
@@ -210,14 +216,7 @@ const AgencyDetailsForm = ( { initialFormData }: Props ) => {
 						'Basic Markdown syntax is supported. {{a}}Learn more about Markdown.{{/a}}',
 						{
 							components: {
-								a: (
-									<Button
-										variant="link"
-										href="https://commonmark.org/help/"
-										target="_blank"
-										rel="noreferrer noopener"
-									/>
-								),
+								a: <ExternalLink href="https://commonmark.org/help/" children={ null } />,
 							},
 						}
 					) }

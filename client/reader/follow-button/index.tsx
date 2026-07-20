@@ -1,5 +1,5 @@
 import { Railcar } from '@automattic/calypso-analytics';
-import { cloneElement } from 'react';
+import { cloneElement, type JSX } from 'react';
 import { useSelector } from 'react-redux';
 import FollowButtonContainer from 'calypso/blocks/follow-button';
 import ReaderFollowFeedIcon from 'calypso/reader/components/icons/follow-feed-icon';
@@ -13,7 +13,9 @@ import getPreviousPath from 'calypso/state/selectors/get-previous-path';
 
 interface ReaderFollowButtonProps {
 	className?: string;
+	disabled?: boolean;
 	feedId?: number;
+	followApiSource?: string;
 	followSource?: string;
 	followIcon?: JSX.Element;
 	followingIcon?: JSX.Element;

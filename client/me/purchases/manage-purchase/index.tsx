@@ -40,6 +40,10 @@ import {
 	is100Year,
 	isJetpackGrowthPlan,
 	JETPACK_GROWTH_UPGRADE_MAP,
+	PLAN_MONTHLY_PERIOD,
+	PLAN_ANNUAL_PERIOD,
+	PLAN_BIENNIAL_PERIOD,
+	PLAN_TRIENNIAL_PERIOD,
 } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
 import {
@@ -58,21 +62,11 @@ import { localizeUrl } from '@automattic/i18n-utils';
 import { DOMAIN_CANCEL, SUPPORT_ROOT } from '@automattic/urls';
 import { useQuery } from '@tanstack/react-query';
 import { hasTranslation } from '@wordpress/i18n';
-import {
-	check,
-	column,
-	download,
-	Icon,
-	payment,
-	reusableBlock,
-	tool,
-	trash,
-	upload,
-} from '@wordpress/icons';
+import { check, column, Icon, payment, reusableBlock, tool, trash, upload } from '@wordpress/icons';
 import clsx from 'clsx';
 import { localize, LocalizeProps, useTranslate } from 'i18n-calypso';
 import moment from 'moment';
-import { Component, ComponentProps, Fragment, ReactElement } from 'react';
+import { Component, ComponentProps, Fragment, ReactElement, type JSX } from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import googleWorkspaceIcon from 'calypso/assets/images/email-providers/google-workspace/icon.svg';
@@ -108,7 +102,11 @@ import {
 	hasPaymentMethod,
 	isPaidWithCredits,
 	canAutoRenewBeTurnedOff,
-	isExpired,
+	isExpiredAndInGracePeriod,
+	isExpiredOrRemoved,
+	isExpiredWithNoAutoRenewAttemptsLeft,
+	isRemoved,
+	isWithinRefundWindowDowngradeEligible,
 	isOneTimePurchase,
 	isPartnerPurchase,
 	isRenewable,
@@ -133,7 +131,6 @@ import useCheckPlanAvailabilityForPurchase from 'calypso/my-sites/plans-features
 import {
 	getCancelPurchaseUrlFor,
 	getAddNewPaymentMethodUrlFor,
-	getDowngradeUrlFor,
 } from 'calypso/my-sites/purchases/paths';
 import { useSelector } from 'calypso/state';
 import { NON_PRIMARY_DOMAINS_TO_FREE_USERS } from 'calypso/state/current-user/constants';
@@ -168,7 +165,7 @@ import { getCanonicalTheme } from 'calypso/state/themes/selectors';
 import { CalypsoDispatch, IAppState } from 'calypso/state/types';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { isRequestingWordAdsApprovalForSite } from 'calypso/state/wordads/approve/selectors';
-import { cancelPurchase, downgradePurchase, managePurchase, purchasesRoot } from '../paths';
+import { cancelPurchase, managePurchase, purchasesRoot } from '../paths';
 import PurchaseSiteHeader from '../purchases-site/header';
 import RemovePurchase from '../remove-purchase';
 import {
@@ -209,7 +206,6 @@ export interface ManagePurchaseProps {
 	cardTitle?: string;
 	getAddNewPaymentMethodUrlFor?: typeof getAddNewPaymentMethodUrlFor;
 	getCancelPurchaseUrlFor?: typeof getCancelPurchaseUrlFor;
-	getDowngradeUrlFor?: typeof getDowngradeUrlFor;
 	getChangePaymentMethodUrlFor?: GetChangePaymentMethodUrlFor;
 	getManagePurchaseUrlFor?: GetManagePurchaseUrlFor;
 	isSiteLevel?: boolean;
@@ -279,6 +275,24 @@ interface ManagePurchaseState {
 	isRemoving: boolean;
 	isCancelSurveyVisible: boolean;
 	isReinstalling: boolean;
+}
+
+// Map the purchase's billing term to the plan grid's `intervalType` param so the
+// Stepper grid opens on the same term as the current plan. Downgrades only work
+// within the same term, and the grid hides the term selector in the downgrade flow.
+function getPlanGridIntervalType( billPeriodDays: number ): string | undefined {
+	switch ( billPeriodDays ) {
+		case PLAN_MONTHLY_PERIOD:
+			return 'monthly';
+		case PLAN_ANNUAL_PERIOD:
+			return 'yearly';
+		case PLAN_BIENNIAL_PERIOD:
+			return '2yearly';
+		case PLAN_TRIENNIAL_PERIOD:
+			return '3yearly';
+		default:
+			return undefined;
+	}
 }
 
 class ManagePurchase extends Component<
@@ -447,7 +461,7 @@ class ManagePurchase extends Component<
 			return null;
 		}
 
-		if ( isExpired( purchase ) ) {
+		if ( isExpiredOrRemoved( purchase ) ) {
 			return null;
 		}
 
@@ -546,7 +560,7 @@ class ManagePurchase extends Component<
 		}
 
 		recordTracksEvent( 'calypso_purchases_upgrade_plan', {
-			status: isExpired( purchase ) ? 'expired' : 'active',
+			status: isExpiredOrRemoved( purchase ) ? 'expired' : 'active',
 			plan: purchase.productName,
 		} );
 	};
@@ -600,13 +614,69 @@ class ManagePurchase extends Component<
 		return `/plans/${ siteSlug }`;
 	}
 
+	shouldRenderDowngradeOption(): boolean {
+		const { purchase } = this.props;
+		if ( ! purchase || ! isPlan( purchase ) ) {
+			return false;
+		}
+		if ( ! purchase.isPlanTypeDowngradable ) {
+			return false;
+		}
+		const expiredOrRefundDowngrade =
+			config.isEnabled( 'plans/expired-downgrade' ) &&
+			( isExpiredAndInGracePeriod( purchase ) ||
+				isWithinRefundWindowDowngradeEligible( purchase ) );
+		const delayedDowngrade = config.isEnabled( 'plans/delayed-downgrade' );
+		return expiredOrRefundDowngrade || delayedDowngrade;
+	}
+
+	renderChangePlanNavItem() {
+		const { purchase, siteSlug, getManagePurchaseUrlFor = managePurchase, translate } = this.props;
+		if ( ! this.shouldRenderDowngradeOption() || ! purchase ) {
+			return null;
+		}
+		// Route to the Stepper plan-upgrade flow, whose plan grid and downgrade
+		// dialog are more polished than the classic `/plans` page. The downgrade
+		// logic itself is shared (both pages render `PlansFeaturesMain`), and it
+		// reads `redirect_to`/`cancel_to` straight off the URL, so we still land
+		// back on this manage-purchase page afterwards. The `:purchaseId`
+		// placeholder is substituted with the newly-provisioned plan's purchase by
+		// either the instant-downgrade handler or the checkout pending page
+		// (analogous to `:receiptId`).
+		const redirectTo = getManagePurchaseUrlFor( siteSlug, ':purchaseId' ) + '?plan_changed=true';
+		const cancelTo = getManagePurchaseUrlFor( siteSlug, purchase.id );
+		const intervalType = getPlanGridIntervalType( purchase.billPeriodDays );
+		const href = addQueryArgs(
+			{
+				siteSlug,
+				allow_downgrade: 'true',
+				redirect_to: redirectTo,
+				cancel_to: cancelTo,
+				...( intervalType && { intervalType } ),
+			},
+			'/setup/plan-upgrade'
+		);
+		return (
+			<CompactCard tagName="a" displayAsLink href={ href }>
+				<Icon icon={ column } className="card__icon" />
+				{ translate( 'Change plan' ) }
+			</CompactCard>
+		);
+	}
+
 	renderUpgradeNavItem() {
 		const { purchase, translate } = this.props;
+		if ( this.shouldRenderDowngradeOption() ) {
+			return null;
+		}
 		if ( ! purchase ) {
 			return null;
 		}
-
-		if ( isPartnerPurchase( purchase ) || isA4ABillingDragonPurchase( purchase ) ) {
+		if (
+			isJetpackHoldingSitePurchase( purchase ) ||
+			isPartnerPurchase( purchase ) ||
+			isA4ABillingDragonPurchase( purchase )
+		) {
 			return null;
 		}
 
@@ -631,7 +701,7 @@ class ManagePurchase extends Component<
 		let icon;
 		let buttonText;
 
-		if ( isExpired( purchase ) ) {
+		if ( isExpiredOrRemoved( purchase ) ) {
 			icon = column;
 			buttonText = isUpgradeablePlan
 				? translate( 'Pick another plan' )
@@ -786,11 +856,13 @@ class ManagePurchase extends Component<
 
 		// Visibility:
 		//   Off flag → mutually exclusive with Cancel (preserves today's behavior).
-		//   On flag  → Remove only when auto-renew is already off. The refund-eligible
-		//              case is surfaced inside the cancel flow via
+		//   On flag  → Remove when auto-renew is off, OR when the purchase is in its
+		//              post-expiry grace period (Cancel is not offered there, so Remove
+		//              is the only way to act on it — matching the Dashboard). The
+		//              refund-eligible case is surfaced inside the cancel flow via
 		//              RefundEligibilityNotice instead of a parallel Remove CTA.
 		if ( isSplitEnabled ) {
-			if ( autoRenewOn ) {
+			if ( autoRenewOn && ! isExpiredAndInGracePeriod( purchase ) ) {
 				return null;
 			}
 		} else if ( canAutoRenewBeTurnedOff( purchase ) ) {
@@ -860,7 +932,7 @@ class ManagePurchase extends Component<
 				{ text }
 				{ this.renderActionDetails(
 					String(
-						purchase.expiryStatus === 'expired'
+						isExpiredOrRemoved( purchase )
 							? translate( 'Expired purchase will be removed.' )
 							: translate( 'Will expire immediately and be removed' )
 					)
@@ -1113,30 +1185,6 @@ class ManagePurchase extends Component<
 								} )
 							)
 					  ) }
-			</CompactCard>
-		);
-	}
-
-	renderDowngradeNavItem() {
-		const { purchase, translate } = this.props;
-		if ( ! purchase ) {
-			return null;
-		}
-
-		if ( ! ( isBusiness( purchase ) || isPremium( purchase ) || isEcommerce( purchase ) ) ) {
-			return null;
-		}
-
-		const link = ( this.props.getDowngradeUrlFor ?? downgradePurchase )(
-			this.props.siteSlug,
-			purchase.id
-		);
-
-		return (
-			<CompactCard href={ link }>
-				<Icon icon={ download } className="card__icon" />
-				{ translate( 'Downgrade plan' ) }
-				{ this.renderActionDetails() }
 			</CompactCard>
 		);
 	}
@@ -1490,11 +1538,16 @@ class ManagePurchase extends Component<
 		const isActive100YearPurchase = is100Year( purchase ) && ! isCloseToExpiration( purchase );
 
 		const classes = clsx( 'manage-purchase__info', {
-			'is-expired': purchase && isExpired( purchase ),
-			'is-personal': purchase && isPersonal( purchase ),
-			'is-premium': purchase && isPremium( purchase ),
-			'is-business': purchase && isBusiness( purchase ),
-			'is-jetpack-product': purchase && isJetpackProduct( purchase ),
+			// Style the purchase as expired only once it is removed, or once its
+			// post-expiry grace period ends with no auto-renewal attempts left.
+			// While attempts remain it is still recoverable (the user can fix the
+			// payment method and/or turn auto-renew back on, and the toggle is shown
+			// in that state), so we do not style it as dead.
+			'is-expired': isRemoved( purchase ) || isExpiredWithNoAutoRenewAttemptsLeft( purchase ),
+			'is-personal': isPersonal( purchase ),
+			'is-premium': isPremium( purchase ),
+			'is-business': isBusiness( purchase ),
+			'is-jetpack-product': isJetpackProduct( purchase ),
 		} );
 		const siteName = purchase.siteName;
 		const siteId = purchase.siteId;
@@ -1569,6 +1622,7 @@ class ManagePurchase extends Component<
 				) }
 				{ isProductOwner && ! purchase.isLocked && (
 					<>
+						{ this.renderChangePlanNavItem() }
 						{ ! preventRenewal &&
 							! renderMonthlyRenewalOption &&
 							! isActive100YearPurchase &&
@@ -1576,17 +1630,12 @@ class ManagePurchase extends Component<
 							this.renderRenewNowNavItem() }
 						{ ! preventRenewal && renderMonthlyRenewalOption && this.renderRenewAnnuallyNavItem() }
 						{ ! preventRenewal && renderMonthlyRenewalOption && this.renderRenewMonthlyNavItem() }
-						{ /* We don't want to show the Renew/Upgrade nav item for "Jetpack" temporary sites, but we DO
-						show it for "Akismet" temporary sites. (And all other types of purchases) */ }
 						{ /* TODO: Add ability to Renew Akismet subscription */ }
-						{ ! isJetpackHoldingSitePurchase( purchase ) && this.renderUpgradeNavItem() }
+						{ this.renderUpgradeNavItem() }
 						{ this.renderEditPaymentMethodNavItem() }
 						{ config.isEnabled( 'jetpack/crm-downloads' ) && this.renderCrmDownloadsNavItem() }
 						{ this.renderReinstall() }
 						<div className="manage-purchase__downgrade-products">
-							{ config.isEnabled( 'plans/self-service-downgrade' ) && ! isPersonal( purchase )
-								? this.renderDowngradeNavItem()
-								: null }
 							{ this.renderCancelPurchaseNavItem() }
 							{ this.renderRemovePurchaseNavItem() }
 							{ this.renderCancelSurvey() }

@@ -18,7 +18,9 @@ const BlazePressStrings = () => {
 		'Learn more about the {{linkAdvertisingPolicy}}Advertising Policy{{/linkAdvertisingPolicy}}.'
 	);
 	translate( 'Creating campaign…' );
-	translate( 'Make the most of your Blaze campaign' );
+	translate( 'Make the most of your %(productName)s campaign', {
+		args: { productName: 'Blaze Ads' },
+	} );
 	translate( 'Choose an eye-catching image for your ad' );
 	translate( 'Adjust your title to make it more engaging' );
 	translate( 'Pick the right audience, budget and duration' );
@@ -38,7 +40,8 @@ const BlazePressStrings = () => {
 	translate( 'No posts found.' );
 	translate( 'Select post to promote' );
 	translate(
-		'Blaze is syncing your content as part of first-time setup – this can take up to 15 minutes or a few hours.'
+		'%(productName)s is syncing your content as part of first-time setup. This may take anywhere from 15 minutes to a few hours',
+		{ args: { productName: 'Blaze Ads' } }
 	);
 	translate( 'Post' );
 	translate( 'Type' );
@@ -135,6 +138,9 @@ const BlazePressStrings = () => {
 	translate( 'Duration (days)' );
 	translate( 'Weekly Total' );
 	translate( 'Daily budget' );
+	translate( '%(amount)s/day' );
+	translate( '%(amount)s weekly total' );
+	translate( '%(amount)s per day' );
 	translate( 'Total spend for the campaign duration' );
 	translate( 'Weekly click estimate' );
 	translate( 'Estimated clicks for the campaign duration' );
@@ -155,6 +161,7 @@ const BlazePressStrings = () => {
 	translate( 'day' );
 	translate( 'Weekly' );
 	translate( 'Total' );
+	translate( '%(amount)s total' );
 	translate( 'Est. weekly clicks' );
 	translate( 'Estimated clicks' );
 	translate( 'Tumblr Post views weekly' );
@@ -216,6 +223,17 @@ const BlazePressStrings = () => {
 	translate(
 		'By clicking "Submit campaign" you agree to our {{linkTos}}Terms of Service{{/linkTos}} and {{linkAdvertisingPolicy}}Advertising Policy{{/linkAdvertisingPolicy}}, and authorize charges to your payment method at regular intervals for the specified budget and duration, until cancellation. {{linkMoreAboutAds}}Learn more{{/linkMoreAboutAds}}.'
 	);
+	translate( '%(productName)s campaigns are billed in USD.', {
+		args: { productName: 'Blaze Ads' },
+	} );
+	translate(
+		'I agree to recurring weekly charges of up to %(maxBudgetFormatted)s per week starting %(formattedDate)s.'
+	);
+	translate(
+		'I agree to be charged up to %(maxBudgetFormatted)s starting %(formattedDate)s. Charges may be made in one or more payments.'
+	);
+	translate( 'Charges continue until I cancel' );
+	translate( 'The campaign can be canceled at any time' );
 	translate( 'Creating campaign' );
 	translate( 'Submit campaign' );
 	translate( 'Content suggested with the help of AI.' );

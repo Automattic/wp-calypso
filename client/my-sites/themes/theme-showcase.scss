@@ -1,3 +1,5 @@
+@import "calypso/assets/stylesheets/shared/mixins/breakpoints";
+@import "calypso/assets/stylesheets/shared/mixins/long-content-fade";
 @import '@wordpress/base-styles/colors';
 @import '@automattic/typography/styles/variables';
 @import '@wordpress/base-styles/breakpoints';
@@ -122,6 +124,12 @@
 		margin-bottom: 0;
 	}
 }
+
+// Logged-in /themes has no hero; tint the fixed-nav band to the header backdrop.
+.layout.is-logged-in.is-section-themes:has( .x-nav--2026-redesign ) .layout__header-section {
+	background-color: var( --color-primary-5 );
+}
+
 .is-logged-out {
 	--color-surface-backdrop: var( --color-primary-5 );
 

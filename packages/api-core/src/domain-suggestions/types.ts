@@ -247,6 +247,16 @@ export interface BundleSuggestionDomain {
 	 * Whether this domain supports privacy
 	 */
 	supports_privacy?: boolean;
+
+	/**
+	 * The domain's role within the bundle. The `primary` member is the anchor
+	 * (the trigger domain the user searched/added); the `companion` members are
+	 * the additional extensions offered alongside it. Present on the per-FQDN
+	 * `/domains/bundle` (v2) response; the inline bundle row shows only the
+	 * companions while pricing the full bundle.
+	 * @example "primary"
+	 */
+	role?: 'primary' | 'companion';
 }
 
 export interface BundleSuggestion {
@@ -268,10 +278,22 @@ export interface BundleSuggestion {
 	bundle_price: number;
 
 	/**
+	 * Formatted total bundle price
+	 * @example "$60"
+	 */
+	bundle_cost?: string;
+
+	/**
 	 * Combined original price before bundle discount (raw numeric)
 	 * @example 75
 	 */
 	original_price: number;
+
+	/**
+	 * Formatted combined original price before bundle discount
+	 * @example "$75"
+	 */
+	original_cost?: string;
 
 	/**
 	 * Bundle discount as a whole-number percent

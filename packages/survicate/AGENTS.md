@@ -42,6 +42,53 @@ and each needs its own guard:
    "show after N seconds", etc.). This **never touches our code**, so an invoke-time
    guard can't catch it. The only universal hook is the SDK's `survey_displayed` event.
 
+## Visit-count traits (area-based survey targeting)
+
+To show a survey only after a user has visited a dashboard area at least X times
+(reducing survey overload and giving users enough exposure to answer), the MSD
+publishes a per-area visit count as a numeric visitor trait. The "≥ X" threshold
+is configured **per survey in the Survicate dashboard**, not in code — so it's
+tunable without a deploy, and multi-area audiences (`msd_visits_a >= 3 AND
+msd_visits_b >= 3`) need no code change.
+
+- **Registry / resolver**: `client/dashboard/app/survicate/visit-areas.ts` —
+  `VISIT_AREAS` maps each area slug to its `msd_visits_<slug>` trait;
+  `resolveVisitAreaSlug( pathname )` maps a route to its area (deepest match
+  wins, so overlaps like `logs/activity` resolve correctly). Add an area by
+  adding a registry entry and a resolver case — nothing else changes.
+- **Counting**: `client/dashboard/app/hooks/use-visit-counter.ts` —
+  `useTrackVisitedAreas()` (mounted once in the root route component) increments
+  the current area's counter at most once per calendar day, persisted to the
+  `hosting-dashboard-visit-count-<slug>` user preference. Gated on
+  `survicate_enabled`.
+- **Publishing**: `useSurvicateVisitTraits()` in
+  `client/dashboard/app/survicate/index.tsx` (mounted in the layout) reads those
+  preferences and pushes `{ msd_visits_<slug>: count }` via
+  `setSurvicateVisitorTraits`, re-pushing when counts change. Incrementing and
+  publishing are deliberately decoupled — they share only the preference store.
+
+`setSurvicateVisitorTraits` accepts an arbitrary `Record<string, string | number>`,
+so any trait (email, account age, visit counts) flows through the same
+deferred-until-`SurvicateReady` path.
+
+### Two separate trait pushes are expected
+
+Visitor traits are published from **two** independent `setSurvicateVisitorTraits`
+call sites, and this is intentional — don't consolidate them into one:
+
+- `useSurvicate` pushes **identity** traits (`email`, `account_age_in_days`) once
+  from the authenticated user, right after the script loads, next to the
+  `calypso_survicate_user_not_available_error` tracks event that fires when the
+  email is missing at load time.
+- `useSurvicateVisitTraits` pushes **behavioral** traits (`msd_visits_<slug>`)
+  reactively, re-pushing whenever a preference-backed visit count changes.
+
+They have different sources and lifecycles (set-once identity vs. reactive
+counts), so keeping them apart keeps each concern where it belongs. This is safe
+because `_sva.setVisitorTraits` **merges** traits across calls (upsert), rather
+than replacing the whole set — so the visit-count push does not clobber the
+email/account-age traits, and vice versa.
+
 ## Help Center coordination (defense-in-depth)
 
 Surveys must not cover the Help Center while a user is actively seeking support. Three

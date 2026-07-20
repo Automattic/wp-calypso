@@ -9,7 +9,7 @@ type Props = {
 	mainButtonLabelText?: string;
 	isMenuVisible: boolean;
 	toggleMenu: () => void;
-	popoverMenuContext: React.RefObject< HTMLButtonElement >;
+	popoverMenuContext: React.RefObject< HTMLButtonElement | null >;
 };
 
 const AddNewSiteButton: React.FC< Props > = ( {

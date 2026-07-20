@@ -1,8 +1,14 @@
 @use "calypso/assets/stylesheets/shared/mixins/dark-theme" as ui-mixins;
 
+@import "calypso/assets/stylesheets/shared/functions/z-index";
+@import "@automattic/typography/styles/variables";
+
+@import "@wordpress/base-styles/breakpoints";
+@import "calypso/assets/stylesheets/shared/mixins/placeholder";
+@import "calypso/assets/stylesheets/shared/mixins/tooltip";
+
 // Styles targeted at story content
 @import './content';
-@import "@wordpress/base-styles/breakpoints";
 
 // Since we cannot use css variables in media queries, we need to define the valuess in scss.
 $reader-full-post-sidebar-width: 220px;
@@ -63,6 +69,11 @@ $reader-full-post-desktop-min: $reader-full-post-sidebar-width + $reader-full-po
 
 	@include breakpoint-deprecated( '<660px' ) {
 		top: 12px;
+	}
+
+	&:focus-visible {
+		outline: 2px solid var( --studio-blue-50 );
+		outline-offset: 2px;
 	}
 }
 
@@ -131,6 +142,11 @@ $reader-full-post-desktop-min: $reader-full-post-sidebar-width + $reader-full-po
 	&:visited {
 		color: var( --color-text );
 	}
+
+	&:focus-visible {
+		outline: 2px solid var( --studio-blue-50 );
+		outline-offset: 2px;
+	}
 }
 
 .reader-full-post__header-meta-separator {
@@ -162,6 +178,7 @@ $reader-full-post-desktop-min: $reader-full-post-sidebar-width + $reader-full-po
 	.post-edit-button,
 	.reader-full-post__view-original-button,
 	.reader-full-post__seen-button,
+	.reader-subscribe-with-space__spaces,
 	.follow-button {
 		margin: 0;
 		padding: 8px 16px;
@@ -287,8 +304,7 @@ $reader-full-post-desktop-min: $reader-full-post-sidebar-width + $reader-full-po
 	.post-edit-button__label,
 	.reader-full-post__view-original-button-label,
 	.follow-button__label,
-	.reader-full-post__seen-button,
-	.freshly-pressed__button {
+	.reader-full-post__seen-button {
 		font-size: $font-body-small;
 		color: var( --color-text-subtle );
 	}
@@ -301,8 +317,7 @@ $reader-full-post-desktop-min: $reader-full-post-sidebar-width + $reader-full-po
 	.like-button:hover .like-button__label,
 	.post-edit-button:hover .post-edit-button__label,
 	.reader-full-post__view-original-button:hover .reader-full-post__view-original-button-label,
-	.reader-full-post__seen-button:hover,
-	.freshly-pressed__button:hover {
+	.reader-full-post__seen-button:hover {
 		color: var( --color-link );
 	}
 
@@ -398,6 +413,11 @@ $reader-full-post-desktop-min: $reader-full-post-sidebar-width + $reader-full-po
 	&:hover .reader-full-post__view-original-button-icon {
 		fill: var( --color-link );
 	}
+
+	&:focus-visible {
+		outline: 2px solid var( --studio-blue-50 );
+		outline-offset: 2px;
+	}
 }
 
 @media ( max-width: $break-large ) {
@@ -417,6 +437,11 @@ $reader-full-post-desktop-min: $reader-full-post-sidebar-width + $reader-full-po
 	color: var( --color-neutral-70 );
 	font-size: rem( 17px );
 	line-height: 28px;
+
+	a:focus-visible {
+		outline: 2px solid var( --studio-blue-50 );
+		outline-offset: 2px;
+	}
 
 	figure.wp-block-table {
 		overflow: auto;
@@ -697,6 +722,11 @@ $reader-full-post-desktop-min: $reader-full-post-sidebar-width + $reader-full-po
 	.reader-full-post__header-title-link {
 		display: block;
 		text-decoration: none;
+
+		&:focus-visible {
+			outline: 2px solid var( --studio-blue-50 );
+			outline-offset: 2px;
+		}
 
 		&::after {
 			content: "↗";

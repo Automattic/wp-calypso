@@ -19,7 +19,7 @@ import {
 import { DataForm } from '@wordpress/dataviews';
 import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, type JSX } from 'react';
 import Breadcrumbs from '../../app/breadcrumbs';
 import { NavigationBlocker } from '../../app/navigation-blocker';
 import { ActionList } from '../../components/action-list';

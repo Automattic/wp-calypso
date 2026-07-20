@@ -1,5 +1,10 @@
 import { isEnabled } from '@automattic/calypso-config';
 import { DomainSearch } from '@automattic/domain-search';
+import {
+	isDomainForGravatarFlow,
+	isHundredYearDomainFlow,
+	isHundredYearPlanFlow,
+} from '@automattic/onboarding';
 import { ResponseCartProduct } from '@automattic/shopping-cart';
 import { useMemo, type ComponentProps, useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
@@ -64,25 +69,40 @@ export const useWPCOMDomainSearchProps = ( {
 		[ dispatch, analyticsSection, externalOnContinue ]
 	);
 
-	const { cart, isNextDomainFree, onContinue } = useWPCOMDomainSearchCart( {
-		cartKey: getCartKey( { isLoggedIn, currentSiteId } ),
-		flowName,
-		isFirstDomainFreeForFirstYear,
-		flowAllowsMultipleDomainsInCart,
-		onContinue: onContinueWithStepSubmissionTracking,
-		beforeAddDomainToCart: externalBeforeAddDomainToCart,
-	} );
+	const { cart, isNextDomainFree, freeDomainName, freeForFirstYearTlds, onContinue } =
+		useWPCOMDomainSearchCart( {
+			cartKey: getCartKey( { isLoggedIn, currentSiteId } ),
+			flowName,
+			isFirstDomainFreeForFirstYear,
+			freeForFirstYearTlds: externalConfig?.priceRules?.freeForFirstYearTlds,
+			flowAllowsMultipleDomainsInCart,
+			onContinue: onContinueWithStepSubmissionTracking,
+			beforeAddDomainToCart: externalBeforeAddDomainToCart,
+		} );
 
 	const config = useMemo( () => {
+		// Bundles are fixed one-year registrations of multiple TLDs, so they
+		// don't fit flows that sell a single special-purpose registration —
+		// and those flows' beforeAddDomainToCart transforms (100-year term,
+		// Gravatar extras) are not applied to bundle members.
+		const flowSupportsBundles =
+			! isHundredYearPlanFlow( flowName ) &&
+			! isHundredYearDomainFlow( flowName ) &&
+			! isDomainForGravatarFlow( flowName );
+
 		return {
 			...externalConfig,
-			showBundleSuggestions: isEnabled( 'domain-bundling' ),
+			showBundleSuggestions: isEnabled( 'domain-bundling' ) && flowSupportsBundles,
 			priceRules: {
 				...externalConfig?.priceRules,
 				freeForFirstYear: isNextDomainFree,
+				// Keep the already-added free domain showing as $0 in the suggestion list,
+				// matching what the user saw when they clicked and what appears in their cart.
+				freeForFirstYearDomains: freeDomainName ? [ freeDomainName ] : undefined,
+				freeForFirstYearTlds,
 			},
 		};
-	}, [ externalConfig, isNextDomainFree ] );
+	}, [ externalConfig, isNextDomainFree, freeDomainName, freeForFirstYearTlds, flowName ] );
 
 	const analyticsEvents = useWPCOMDomainSearchEvents( {
 		vendor: config.vendor,

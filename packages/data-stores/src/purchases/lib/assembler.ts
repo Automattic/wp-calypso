@@ -29,6 +29,8 @@ export function createPurchaseObject( purchase: RawPurchase ): Purchase {
 		expiryDate: purchase.expiry_date,
 		paymentExpiryDate: purchase.payment_expiry_date,
 		expiryStatus: snakeToCamelCase( purchase.expiry_status ),
+		daysUntilExpiry:
+			purchase.days_until_expiry == null ? null : Number( purchase.days_until_expiry ),
 		iapPurchaseManagementLink: purchase.iap_purchase_management_link,
 		includedDomain: purchase.included_domain,
 		includedDomainPurchaseAmount: purchase.included_domain_purchase_amount,
@@ -61,6 +63,9 @@ export function createPurchaseObject( purchase: RawPurchase ): Purchase {
 		isHundredYearDomain: Boolean( purchase.is_hundred_year_domain ),
 		isLocked: Boolean( purchase.is_locked ),
 		isInAppPurchase: Boolean( purchase.is_iap_purchase ),
+		isPastExpiryDate: Boolean( purchase.is_past_expiry_date ),
+		isPlan: purchase.is_plan,
+		isPlanTypeDowngradable: Boolean( purchase.is_plan_type_downgradable ),
 		isRechargeable: Boolean( purchase.is_rechargeable ),
 		isRefundable: Boolean( purchase.is_refundable ),
 		isWithinInitialRefundWindow: Boolean( purchase.is_within_initial_refund_window ),
@@ -120,8 +125,12 @@ export function createPurchaseObject( purchase: RawPurchase ): Purchase {
 		purchaseRenewalQuantity: purchase.renewal_price_tier_usage_quantity || null,
 		userId: Number( purchase.user_id ),
 		isAutoRenewEnabled: purchase.is_auto_renew_enabled,
+		isPastLastAutoRenewAttemptDate: purchase.is_past_last_auto_renew_attempt_date,
+		mightStillAutoRenew: purchase.might_still_auto_renew,
 		isJetpackPlanOrProduct: purchase.is_jetpack_plan_or_product,
 		isAttachedToHoldingSite: Boolean( purchase.is_attached_to_holding_site ),
+		isDelayedDowngradePending: Boolean( purchase.is_delayed_downgrade_pending ),
+		delayedDowngradeToProductSlug: purchase.delayed_downgrade_to_product_slug ?? null,
 	};
 
 	if ( isCreditCardPurchase( purchase ) ) {

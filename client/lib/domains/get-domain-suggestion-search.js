@@ -1,4 +1,3 @@
-import { includes } from 'lodash';
 import { getFixedDomainSearch } from './get-fixed-domain-search';
 
 /*
@@ -19,7 +18,7 @@ export function getDomainSuggestionSearch( search, minLength = 2 ) {
 	// Ignore any searches for generic URL prefixes
 	// getFixedDomainSearch will already have stripped http(s):// and www.
 	const ignoreList = [ 'www', 'http', 'https' ];
-	if ( includes( ignoreList, cleanedSearch ) ) {
+	if ( ignoreList.includes( cleanedSearch ) ) {
 		return '';
 	}
 

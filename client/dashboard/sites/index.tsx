@@ -20,7 +20,6 @@ import { usePersistentView } from '../app/hooks/use-persistent-view';
 import { sitesRoute } from '../app/router/sites';
 import { DataViewsEmptyStateLayout } from '../components/dataviews';
 import InlineSupportLink from '../components/inline-support-link';
-import OptInSurvey, { useShouldShowOptInSurvey } from '../components/opt-in-survey';
 import { PageHeader } from '../components/page-header';
 import PageLayout from '../components/page-layout';
 import { isDashboardBackport } from '../utils/is-dashboard-backport';
@@ -35,8 +34,8 @@ import {
 } from './dataviews';
 import { EmptySitesStateContent, EmptySitesSearchStateContent } from './empty-sites-state';
 import { InviteAcceptedFlashMessage } from './invite-accepted-flash-message';
-import { SitesNotices } from './notices';
-import { OptInWelcomeModal } from './welcome-modal';
+import { SitesNoticeArbiter } from './notice-arbiter';
+import { RestoringSitesNotices } from './restoring-sites-notice';
 import type { FetchPaginatedSitesOptions, Site, DashboardFilters } from '@automattic/api-core';
 import type { View, Filter } from '@wordpress/dataviews';
 
@@ -69,6 +68,9 @@ const getFetchPaginatedSitesOptions = (
 		// See: https://github.com/Automattic/wp-calypso/pull/104220.
 		site_visibility: view.search || shouldIncludeA8COwned || isRestoringAccount ? 'all' : 'visible',
 		include_a8c_owned: shouldIncludeA8COwned,
+		// Exclude staging sites from the standalone dashboard list; the classic
+		// Calypso backport keeps them (the API includes them by default).
+		...( ! isDashboardBackport() && { include_staging: false } ),
 		search: view.search,
 		sort_field: view.sort?.field,
 		sort_direction: view.sort?.direction,
@@ -193,7 +195,6 @@ export default function Sites() {
 	};
 
 	const userHasSites = user.site_count > 0;
-	const shouldShowOptInSurvey = useShouldShowOptInSurvey();
 
 	const { data: filteredData, paginationInfo } = filterSortAndPaginateSites(
 		sites ?? [],
@@ -211,11 +212,13 @@ export default function Sites() {
 
 	return (
 		<>
-			{ ! isDashboardBackport() && <OptInWelcomeModal /> }
 			<InviteAcceptedFlashMessage />
 			{ isModalOpen && (
 				<Modal title={ __( 'Add new site' ) } onRequestClose={ () => setIsModalOpen( false ) }>
-					<AddNewSite context="sites-dashboard" aiSiteBuilderPath="/setup/ai-site-builder" />
+					<AddNewSite
+						context="sites-dashboard"
+						aiSiteBuilderPath="/setup/ai-site-builder-onboarding"
+					/>
 				</Modal>
 			) }
 			<PageLayout
@@ -226,7 +229,10 @@ export default function Sites() {
 							userHasSites && (
 								<Button
 									variant="primary"
-									onClick={ () => setIsModalOpen( true ) }
+									onClick={ () => {
+										recordTracksEvent( 'calypso_dashboard_sites_add_new_site_clicked' );
+										setIsModalOpen( true );
+									} }
 									__next40pxDefaultSize
 								>
 									{ __( 'Add new site' ) }
@@ -236,10 +242,9 @@ export default function Sites() {
 					/>
 				}
 				notices={
-					<>
-						<SitesNotices />
-						{ ! isDashboardBackport() && shouldShowOptInSurvey && <OptInSurvey /> }
-					</>
+					<SitesNoticeArbiter>
+						{ ! isDashboardBackport() && isRestoringAccount && <RestoringSitesNotices /> }
+					</SitesNoticeArbiter>
 				}
 			>
 				{ userHasSites || hasActiveQuery ? (

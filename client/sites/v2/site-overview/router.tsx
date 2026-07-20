@@ -12,9 +12,11 @@ import CriticalErrorOverview from 'calypso/sites/overview/components/critical-er
 import { rootRoute, dashboardSitesCompatibilityRoute, siteRoute } from '../router';
 import siteSettingsRouter from '../site-settings/router';
 import { getRouterOptions, createBrowserHistoryAndMemoryRouterSync } from '../utils/router';
-import type { WPBreakpoint } from '@wordpress/compose/build-types/hooks/use-viewport-match';
+import type { useViewportMatch } from '@wordpress/compose';
 import type { AppConfig } from 'calypso/dashboard/app/context';
 import type { ErrorInfo } from 'react';
+
+type WPBreakpoint = Parameters< typeof useViewportMatch >[ 0 ];
 
 const siteOverviewRoute = createRoute( {
 	...appRouterSites.siteOverviewRoute.options,

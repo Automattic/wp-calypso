@@ -1,6 +1,6 @@
+import { omitBy } from '@automattic/js-utils';
 import clsx from 'clsx';
 import { localize, translate } from 'i18n-calypso';
-import { omitBy } from 'lodash';
 import PropTypes from 'prop-types';
 import { createElement, PureComponent } from 'react';
 import LikeIcons from './icons';
@@ -102,6 +102,7 @@ class LikeButton extends PureComponent {
 					onMouseEnter,
 					onMouseLeave,
 					'aria-label': this.props.liked ? translate( 'Liked' ) : translate( 'Like' ),
+					'aria-pressed': ! isLink ? this.props.liked : null,
 					'data-tooltip': showTooltip ? translate( 'Like' ) : undefined,
 				},
 				( prop ) => prop === null

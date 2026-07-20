@@ -17,7 +17,6 @@ import {
 	receiptView,
 	paymentMethods,
 	addPaymentMethod,
-	planDowngrade,
 	crmDownloads,
 } from './controller';
 
@@ -44,14 +43,6 @@ export default ( router ) => {
 		'/purchases/subscriptions/:site/:purchaseId/cancel',
 		...commonHandlers,
 		purchaseCancel,
-		makeLayout,
-		clientRender
-	);
-
-	page(
-		'/purchases/subscriptions/:site/:purchaseId/downgrade',
-		...commonHandlers,
-		planDowngrade,
 		makeLayout,
 		clientRender
 	);

@@ -1121,7 +1121,7 @@ Context.prototype.save = function () {
  * - `sensitive`    enable case-sensitive routes
  * - `strict`       enable strict matching for trailing slashes
  * @class
- * @param {string} path
+ * @param {string|RegExp} path
  * @param {Object=} options
  */
 function Route( path, options, pageInstance ) {
@@ -1179,3 +1179,74 @@ Route.prototype.match = function ( path, params ) {
  */
 const globalPage = createPage();
 export default globalPage;
+
+/**
+ * Create a registry that pairs route registration with a queryable record of the
+ * registered paths. `registry.page( path, ...callbacks )` behaves exactly like
+ * `page( path, ...callbacks )` but also records string and RegExp paths;
+ * `registry.has( path )` reports whether any recorded route matches `path`,
+ * using the same matching semantics as dispatch.
+ *
+ * Useful for section-scoped catch-alls that must distinguish real routes from
+ * unknown paths — e.g. lazily-loaded sibling sections registering under a shared
+ * prefix, where a plain catch-all would shadow routes appended later.
+ * @param {Function} pageInstance - Page instance to register routes on (defaults to the global instance)
+ * @returns {{ page: Function, has: Function }} The registry
+ */
+export function createRouteRegistry( pageInstance = globalPage ) {
+	const recordedPaths = new Set();
+	const staticPaths = new Set();
+	const strictStaticPaths = new Set();
+	const matchers = [];
+
+	function getStrict() {
+		return typeof pageInstance.strict === 'function' ? pageInstance.strict() : pageInstance._strict;
+	}
+
+	function isStaticPath( path ) {
+		return typeof path === 'string' && ! /[:*()]/.test( path );
+	}
+
+	function normalizeStaticPath( path, strict ) {
+		const qsIndex = path.indexOf( '?' );
+		let pathname = qsIndex !== -1 ? path.slice( 0, qsIndex ) : path;
+		pathname = decodeURIComponent( pathname ).toLowerCase();
+
+		if ( ! strict && pathname.length > 1 && pathname.endsWith( '/' ) ) {
+			return pathname.slice( 0, -1 );
+		}
+
+		return pathname;
+	}
+
+	function record( path ) {
+		// Idempotent so re-registration (e.g. dev hot reload) doesn't grow the registry.
+		if ( recordedPaths.has( path ) ) {
+			return;
+		}
+		recordedPaths.add( path );
+		const strict = getStrict();
+		if ( isStaticPath( path ) ) {
+			( strict ? strictStaticPaths : staticPaths ).add( normalizeStaticPath( path, strict ) );
+			return;
+		}
+		const route = new Route( path, { strict }, pageInstance );
+		matchers.push( ( candidate ) => route.match( candidate, {} ) );
+	}
+
+	return {
+		page( path, ...callbacks ) {
+			( Array.isArray( path ) ? path : [ path ] ).forEach( record );
+			pageInstance( path, ...callbacks );
+		},
+		has( path ) {
+			if (
+				staticPaths.has( normalizeStaticPath( path, false ) ) ||
+				strictStaticPaths.has( normalizeStaticPath( path, true ) )
+			) {
+				return true;
+			}
+			return matchers.some( ( match ) => match( path ) );
+		},
+	};
+}
