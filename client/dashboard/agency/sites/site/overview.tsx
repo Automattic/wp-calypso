@@ -6,7 +6,9 @@ import { agencySiteRoute } from '../../../app/router/agency';
 import { PageHeader } from '../../../components/page-header';
 import PageLayout from '../../../components/page-layout';
 import PerformanceCard from '../../../sites/overview-performance-card';
-import { getDisplayUrl, getSiteName } from '../dataviews/site-data';
+import SiteOverviewFields from '../../../sites/overview-site-fields';
+import VisibilityCard from '../../../sites/overview-visibility-card';
+import { getSiteName } from '../dataviews/site-data';
 import ActivityCard from './activity-card';
 import BackupCard from './backup-card';
 import ScanCard from './scan-card';
@@ -19,9 +21,15 @@ export default function AgencySiteOverview() {
 
 	return (
 		<PageLayout
-			header={ <PageHeader title={ getSiteName( site ) } description={ getDisplayUrl( site ) } /> }
+			header={
+				<PageHeader
+					title={ getSiteName( site ) }
+					description={ <SiteOverviewFields site={ fullSite } /> }
+				/>
+			}
 		>
 			<Grid columns={ isSmallViewport ? 1 : 2 } gap={ isSmallViewport ? 4 : 6 }>
+				{ ! fullSite.is_wpcom_flex && <VisibilityCard site={ fullSite } /> }
 				<BackupCard site={ site } />
 				<ScanCard site={ site } siteSlug={ siteSlug } />
 				<PerformanceCard site={ fullSite } />
