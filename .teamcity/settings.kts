@@ -496,21 +496,29 @@ object BuildCacheSeedImages : BuildType({
 		script {
 			name = "Build cache-seed image (with retry)"
 			// The webpack build occasionally hangs at worker-pool shutdown and would
-			// otherwise sit until the job timeout, leaving cache-seed:latest stale and
-			// forcing slow, timing-out cold app builds. Retry once, with a per-attempt
-			// timeout, so a hung attempt self-heals in minutes instead of running the clock out.
+			// otherwise sit until the 65-min job timeout, leaving cache-seed:latest stale
+			// and forcing slow, timing-out cold app builds. Retry once on a timeout kill so
+			// the job self-heals without a human re-run. A hang burns the full ~28-min
+			// attempt first, so the self-heal is ~40-45 min, not instant.
 			scriptContent = """
 				#!/usr/bin/env bash
-				set -uo pipefail
+				set -euo pipefail
 
 				build_cache_seed() {
 					timeout --kill-after=1m 28m docker build --target cache-seed $commonArgs -t registry.a8c.com/calypso/cache-seed:%build.number% -f Dockerfile.cache-seed .
 				}
 
-				if build_cache_seed; then
+				rc=0
+				build_cache_seed || rc=${'$'}?
+				if [[ ${'$'}rc -eq 0 ]]; then
 					exit 0
 				fi
-				echo "cache-seed build failed or hung; retrying once."
+				# Only a timeout kill (124, or 137 from --kill-after's SIGKILL) is a hang
+				# worth retrying; surface a genuine build failure immediately.
+				if [[ ${'$'}rc -ne 124 && ${'$'}rc -ne 137 ]]; then
+					exit ${'$'}rc
+				fi
+				echo "cache-seed build timed out; retrying once."
 				build_cache_seed
 			""".trimIndent()
 		}
