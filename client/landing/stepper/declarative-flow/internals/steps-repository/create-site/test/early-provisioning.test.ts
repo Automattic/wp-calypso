@@ -1,8 +1,10 @@
 import { AI_SITE_BUILDER_FLOW } from '@automattic/onboarding';
 import wpcom from 'calypso/lib/wp';
 import {
+	EARLY_PROVISION_TARGET_WPCOM_ATOMIC,
 	getAtomicProvisionedSiteSlug,
 	getEarlyCreatedSiteId,
+	getSiteProvisionTarget,
 	pollForAtomicProvisioning,
 } from '../early-provisioning';
 
@@ -28,6 +30,26 @@ describe( 'getEarlyCreatedSiteId', () => {
 
 	it( 'allows regular AI Site Builder creation when WPCOM Atomic early provisioning is not requested', () => {
 		expect( getEarlyCreatedSiteId( AI_SITE_BUILDER_FLOW, null ) ).toBeNull();
+	} );
+} );
+
+describe( 'getSiteProvisionTarget', () => {
+	it( 'provisions Playground sites on WPCOM Atomic', () => {
+		expect( getSiteProvisionTarget( new URLSearchParams( 'playground=123' ) ) ).toBe(
+			EARLY_PROVISION_TARGET_WPCOM_ATOMIC
+		);
+	} );
+
+	it( 'keeps an explicitly requested provision target outside Playground flows', () => {
+		expect( getSiteProvisionTarget( new URLSearchParams( 'provision_target=custom' ) ) ).toBe(
+			'custom'
+		);
+	} );
+
+	it( 'supports the legacy early provision target parameter', () => {
+		expect( getSiteProvisionTarget( new URLSearchParams( 'early_provision_target=custom' ) ) ).toBe(
+			'custom'
+		);
 	} );
 } );
 

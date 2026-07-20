@@ -45,6 +45,7 @@ import { SESSION_KEY_FROM_PLAYGROUND_PUBLISH } from '../playground/lib/constants
 import {
 	EARLY_PROVISION_TARGET_WPCOM_ATOMIC,
 	getEarlyCreatedSiteId,
+	getSiteProvisionTarget,
 	pollForAtomicProvisioning,
 } from './early-provisioning';
 import type { Step as StepType } from '../../types';
@@ -220,13 +221,12 @@ const CreateSite: StepType = function CreateSite( { navigation, flow, data } ) {
 		// Flow A: The site was early-created during the AI chat session.
 		// Flow B: If early_created_site is absent, the regular createSiteWithCart path below handles creation.
 		const earlyCreatedSite = urlQueryParams.get( 'early_created_site' );
-		const earlyProvisionTarget =
-			urlQueryParams.get( 'provision_target' ) ?? urlQueryParams.get( 'early_provision_target' );
+		const provisionTarget = getSiteProvisionTarget( urlQueryParams );
 		const earlyCreatedSiteId = getEarlyCreatedSiteId( flow, earlyCreatedSite );
 
 		if ( earlyCreatedSiteId ) {
 			let siteSlug = String( earlyCreatedSiteId );
-			if ( earlyProvisionTarget === EARLY_PROVISION_TARGET_WPCOM_ATOMIC ) {
+			if ( provisionTarget === EARLY_PROVISION_TARGET_WPCOM_ATOMIC ) {
 				const atomicSite = await pollForAtomicProvisioning( earlyCreatedSiteId );
 				siteSlug = atomicSite.siteSlug;
 			} else if ( gardenName ) {
@@ -291,7 +291,7 @@ const CreateSite: StepType = function CreateSite( { navigation, flow, data } ) {
 			gardenPartnerName,
 			urlQueryParams.get( 'spec_id' ),
 			isPlaygroundPublish ? 'playground-publish' : undefined,
-			undefined, // provisionTarget
+			provisionTarget,
 			launchpadPersonalizationVariation === 'ai_launchpad'
 		);
 
@@ -299,7 +299,7 @@ const CreateSite: StepType = function CreateSite( { navigation, flow, data } ) {
 			throw new Error( 'Failed to create site' );
 		}
 
-		if ( earlyProvisionTarget === EARLY_PROVISION_TARGET_WPCOM_ATOMIC ) {
+		if ( provisionTarget === EARLY_PROVISION_TARGET_WPCOM_ATOMIC ) {
 			const atomicSite = await pollForAtomicProvisioning( site.siteId );
 			site.siteSlug = atomicSite.siteSlug;
 		}

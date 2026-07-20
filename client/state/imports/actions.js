@@ -65,7 +65,7 @@ export const uploadExportFile = ( siteId, params ) =>
 
 		const formData = [
 			[ 'importStatus', JSON.stringify( params.importStatus ) ],
-			[ 'import', params.file ],
+			params.mediaID ? [ 'mediaID', params.mediaID ] : [ 'import', params.file ],
 		];
 
 		if ( params.url ) {

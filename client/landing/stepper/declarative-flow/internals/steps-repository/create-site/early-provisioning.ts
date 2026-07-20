@@ -5,6 +5,14 @@ import wpcom from 'calypso/lib/wp';
 
 export const EARLY_PROVISION_TARGET_WPCOM_ATOMIC = 'wpcom-atomic';
 
+export function getSiteProvisionTarget( queryParams: URLSearchParams ): string | null {
+	if ( queryParams.has( 'playground' ) ) {
+		return EARLY_PROVISION_TARGET_WPCOM_ATOMIC;
+	}
+
+	return queryParams.get( 'provision_target' ) ?? queryParams.get( 'early_provision_target' );
+}
+
 type AtomicProvisioningSite = {
 	URL?: string;
 	slug?: string;

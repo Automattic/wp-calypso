@@ -35,6 +35,31 @@ export async function getSiteZip( playground: PlaygroundClient ) {
 	return new File( [ zipBytes ], 'site.zip', { type: 'application/zip' } );
 }
 
+export async function uploadSiteZip( siteId: number, siteZip: File ): Promise< number > {
+	const response = await wpcomRequest< { media?: Array< { ID?: number } > } >( {
+		path: `/sites/${ siteId }/media/new`,
+		apiVersion: '1.1',
+		method: 'POST',
+		formData: [ [ 'media[]', siteZip ] ],
+	} );
+	const mediaId = response.media?.[ 0 ]?.ID;
+
+	if ( ! mediaId ) {
+		throw new Error( 'No media ID returned after uploading the Playground export.' );
+	}
+
+	return mediaId;
+}
+
+export async function createPlaygroundImport( siteId: number, siteZip: File ) {
+	const mediaId = await uploadSiteZip( siteId, siteZip );
+
+	return uploadExportFile( siteId, {
+		importStatus: { importStatus: 'importer-ready-for-upload', siteId, type: 'wordpress' },
+		mediaID: mediaId,
+	} );
+}
+
 export async function removeSandboxPlugins( playground: PlaygroundClient ): Promise< void > {
 	// Haydi and wccom-ai-connector are sandbox-only tools — remove them from the
 	// in-memory filesystem before exporting so they don't land on the live site.
@@ -85,11 +110,7 @@ export async function importPlaygroundSite(
 	{ waitForCompletion = false }: { waitForCompletion?: boolean } = {}
 ): Promise< string | undefined > {
 	const siteZip = await getSiteZip( playground );
-
-	const importer = await uploadExportFile( siteId, {
-		importStatus: { importStatus: 'importer-ready-for-upload', siteId, type: 'wordpress' },
-		file: siteZip,
-	} );
+	const importer = await createPlaygroundImport( siteId, siteZip );
 
 	if ( ! waitForCompletion ) {
 		return importer.importId;
