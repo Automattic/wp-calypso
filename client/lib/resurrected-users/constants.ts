@@ -10,6 +10,7 @@ export const WELCOME_BACK_VARIATION_MANUAL = 'treatment_manual_dual' as const;
 /* Variations for the new welcome-back modal experiment */
 export const WELCOME_BACK_VARIATIONS = {
 	themes: 'treatment_themes',
+	design: 'treatment_design',
 	control: 'control',
 };
 export type WelcomeBackVariation =
