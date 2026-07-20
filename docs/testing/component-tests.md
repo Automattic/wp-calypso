@@ -63,12 +63,12 @@ For example, to assert that clicking a button updates the rendered output:
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 
-test( 'should remove tokens when X icon clicked', async () => {
+test( 'should remove an item when its Remove button is clicked', async () => {
 	const user = userEvent.setup();
-	render( <MyTokenField /> );
+	render( <MyComponent /> );
 	await user.click( screen.getAllByRole( 'button', { name: 'Remove' } )[ 0 ] );
-	const tokenField = screen.getByRole( 'textbox', { name: 'Your Field' } );
-	expect( tokenField ).toHaveValue( 'bar' );
+	const field = screen.getByRole( 'textbox', { name: 'Your Field' } );
+	expect( field ).toHaveValue( 'bar' );
 } );
 ```
 
