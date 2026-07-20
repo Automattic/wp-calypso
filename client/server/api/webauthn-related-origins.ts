@@ -7,6 +7,9 @@ const RELATED_ORIGINS = [ 'https://wordpress.com' ];
 
 export default function ( app: Express ) {
 	return app.get( '/.well-known/webauthn', ( request: Request, response: Response ) => {
+		// The browser fetches this document cross-origin from the related origin
+		// performing the ceremony, so it must be readable from that origin.
+		response.set( 'Access-Control-Allow-Origin', 'https://wordpress.com' );
 		response.json( { origins: RELATED_ORIGINS } );
 	} );
 }
