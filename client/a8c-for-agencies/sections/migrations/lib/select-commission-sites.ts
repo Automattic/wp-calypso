@@ -9,8 +9,6 @@ const COMMISSION_INCENTIVE_STATUSES = [
 	'ineligible',
 ] as const;
 
-export type CommissionIncentiveStatus = ( typeof COMMISSION_INCENTIVE_STATUSES )[ number ];
-
 /**
  * Keeps only the sites that carry a known migration incentive status. The list
  * endpoint returns every agency site, so this narrows it to the ones relevant
