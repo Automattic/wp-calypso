@@ -1,6 +1,7 @@
 import config from '@automattic/calypso-config';
 import globalPageInstance from '@automattic/calypso-router';
 import { dashboardLink } from 'calypso/dashboard/utils/link';
+import { bumpStat } from 'calypso/lib/analytics/mc';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { hasDashboardOptIn } from 'calypso/state/dashboard/selectors';
 import { fetchPreferences } from 'calypso/state/preferences/actions';
@@ -96,6 +97,7 @@ const getSitesLink = ( isDashboardOptIn ) => {
 	// As a temporary workaround, we send them to the v1 /sites instead.
 	// TODO: The workaround will need to change once we deprecate v1 /sites.
 	if ( isDashboardOptIn && ! [ 'development', 'wpcalypso' ].includes( config( 'env_id' ) ) ) {
+		bumpStat( 'dashboard-redirect', 'landing-page' );
 		return dashboardLink( '/sites' );
 	}
 
