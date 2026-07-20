@@ -8,11 +8,11 @@
 		padding-bottom: 0;
 	}
 
-	// `.redesigned-a8c-table.search-enabled` collapses the DataViews view-actions
-	// padding to 1px, which leaves the search field glued to the table header.
-	// Restore the block-end padding so the list has room to breathe.
-	.redesigned-a8c-table.search-enabled .dataviews__view-actions {
-		padding-block-end: 16px;
+	// The DataViews toolbar (search + view options) has its own inline padding, so
+	// the search box and cog sit indented from the modal title and description.
+	// Remove it so they line up flush with the rest of the modal content.
+	.dataviews__view-actions {
+		padding-inline: 0;
 	}
 }
 

@@ -1,5 +1,9 @@
 import { formatCurrency } from '@automattic/number-formatters';
-import { Button } from '@wordpress/components';
+import {
+	__experimentalText as Text,
+	__experimentalVStack as VStack,
+	Button,
+} from '@wordpress/components';
 import { __, sprintf } from '@wordpress/i18n';
 import ConsolidatedStatCard from './consolidated-stat-card';
 import useGetPayoutData from './lib/use-get-payout-data';
@@ -33,18 +37,18 @@ function PayoutAmount( {
 			footerAction={ footerAction }
 			popoverTitle={ popoverTitle }
 			popoverContent={
-				<div className="payout-cards__description">
-					<div>
+				<VStack spacing={ 3 }>
+					<Text>
 						{ __(
 							'When your client buys products or hosting from Automattic for Agencies, they are billed on the first of every month rather than immediately. We estimate the commission based on the active use for the current month.'
 						) }
-					</div>
+					</Text>
 
-					<div className="payout-cards__description-item">
-						{ __( 'Payout range:' ) }
-						<strong>{ activityWindow }</strong>
+					<VStack spacing={ 0.5 }>
+						<Text>{ __( 'Payout range:' ) }</Text>
+						<Text weight={ 600 }>{ activityWindow }</Text>
 						{ handleHalfQuarter && (
-							<div>
+							<Text>
 								{ sprintf(
 									/* translators: %s is the current date, e.g. "Jan 5" */
 									__( '(Earnings shown up to %s)' ),
@@ -53,27 +57,27 @@ function PayoutAmount( {
 										day: 'numeric',
 									} )
 								) }
-							</div>
+							</Text>
 						) }
-					</div>
+					</VStack>
 
-					<div className="payout-cards__description-item">
-						{ __( 'Payout date:' ) }
-						<strong>{ payoutDate }*</strong>
-					</div>
+					<VStack spacing={ 0.5 }>
+						<Text>{ __( 'Payout date:' ) }</Text>
+						<Text weight={ 600 }>{ payoutDate }*</Text>
+					</VStack>
 
-					<div>
+					<Text>
 						{ __(
 							'*Commissions are paid quarterly, after a 60-day waiting period, excluding refunds and chargebacks.'
 						) }
-					</div>
+					</Text>
 
 					<div>
 						<Button variant="link" href={ AGENCY_EARNINGS_LEARN_MORE_LINK } target="_blank">
 							{ __( 'Learn more' ) }
 						</Button>
 					</div>
-				</div>
+				</VStack>
 			}
 			isLoading={ isFetching }
 		/>

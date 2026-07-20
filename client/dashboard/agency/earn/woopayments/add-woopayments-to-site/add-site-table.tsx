@@ -35,11 +35,12 @@ export default function AddWooPaymentsToSiteTable( {
 	const [ view, setView ] = useState< View >( {
 		type: 'table',
 		page: 1,
-		perPage: 10,
+		perPage: 50,
 		search: '',
 		filters: [],
 		sort: { field: '', direction: 'asc' },
 		fields: [ 'site' ],
+		layout: { density: 'compact' },
 	} );
 
 	const onSelectSite = useCallback(
