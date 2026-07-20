@@ -19,7 +19,7 @@ export default function loadHelpCenter() {
 	} else if ( helpCenterData.isWooCommerceCom ) {
 		product = 'woocommerce-com';
 		// Slug injected Woo-side so Ceres can iterate the agent without a Calypso PR.
-		botProps = { newInteractionsBotSlug: helpCenterData.botSlug };
+		botProps = helpCenterData.botSlug ? { newInteractionsBotSlug: helpCenterData.botSlug } : {};
 	}
 
 	return import( '@automattic/help-center' ).then( ( { default: HelpCenter } ) =>
