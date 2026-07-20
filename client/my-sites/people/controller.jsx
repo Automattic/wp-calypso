@@ -14,6 +14,8 @@ import SubscribersTeam from './subscribers-team';
 import TeamInvite from './team-invite';
 import ViewerDetails from './viewer-details';
 
+import './style.scss';
+
 export default {
 	redirectToTeam,
 
