@@ -31,13 +31,7 @@ export const HelpCenterContactButton = () => {
 	);
 	const { recentConversations } = useGetHistoryChats();
 
-	// Users whose site is unreachable need a human, not the AI assistant:
-	// offer paid-support-eligible users a direct line to a Happiness Engineer.
 	const showContactHumanButton = isOdieRoute && isEligibleForChat && isSiteUnreachable;
-
-	// On the Odie route the footer may still resolve to the human CTA once
-	// eligibility and connection health settle. Block the AI button until then
-	// so a fast click can't slip the user into Odie before the human route surfaces.
 	const isResolvingHumanRoute =
 		isOdieRoute && ( isLoadingSupportStatus || isCheckingConnectionHealth );
 
