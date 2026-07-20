@@ -104,6 +104,7 @@ ENV PROFILE=$profile
 ENV COMMIT_SHA $commit_sha
 ENV CALYPSO_ENV production
 ENV WORKERS $workers
+ENV UV_THREADPOOL_SIZE $workers
 ENV BUILD_TRANSLATION_CHUNKS true
 ENV NODE_OPTIONS --max-old-space-size=$node_memory
 ENV IS_CI=true
