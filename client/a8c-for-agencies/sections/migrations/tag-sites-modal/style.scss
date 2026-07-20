@@ -4,15 +4,11 @@
 // The Modal content is the scrolling element and has no dedicated footer slot.
 // Pin the actions to the bottom of that scroll area with an opaque background so
 // they stay reachable and the list does not peek through beneath the buttons.
-.migrations-tag-sites-modal .components-modal__content {
-	padding-block-end: 0;
-}
-
 .migrations-tag-sites-modal__footer {
 	position: sticky;
 	inset-block-end: 0;
 	z-index: 1;
-	padding-block: 16px 24px;
+	padding-block-start: 16px;
 	background: var( --color-surface );
 }
 
