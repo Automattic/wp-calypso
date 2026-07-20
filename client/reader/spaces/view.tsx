@@ -68,16 +68,16 @@ export function SpacesView( { slug, tab = 'feed' }: Props ) {
 			return;
 		}
 
-		languages: detail.languages,
-			dispatch(
-				recordReaderTracksEvent( 'calypso_reader_spaces_page_viewed', {
-					space_id: id,
-					layout: layoutView,
-					icon,
-					color,
-					tab,
-				} )
-			);
+		dispatch(
+			recordReaderTracksEvent( 'calypso_reader_spaces_page_viewed', {
+				space_id: id,
+				layout: layoutView,
+				icon,
+				color,
+				tab,
+				languages: detail.languages ?? [],
+			} )
+		);
 	}, [ color, detail, dispatch, icon, id, layoutView, tab ] );
 
 	if ( slug && isSpaceUnavailable( spaceQuery.error ) ) {
