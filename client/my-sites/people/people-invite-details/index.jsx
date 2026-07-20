@@ -40,7 +40,7 @@ export class PeopleInviteDetails extends PureComponent {
 
 	goBack = () => {
 		const siteSlug = this.props?.site?.slug;
-		const fallback = siteSlug ? `/people/team-members/${ siteSlug }` : '/people/team-members/';
+		const fallback = siteSlug ? `/people/team/${ siteSlug }` : '/people/team/';
 
 		// Go back to last route with provided route as the fallback
 		page.back( fallback );

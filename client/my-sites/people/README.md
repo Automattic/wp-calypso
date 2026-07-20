@@ -1,22 +1,29 @@
 # People
 
-The components in this folder handle the `/people` section of calypso. 'People' refers to users, followers,
+The components in this folder handle the `/people` section of Calypso. 'People' refers to users, followers,
 viewers, and invites.
 
-index.js provides all the routes for this section. controller.js decides which component to render, and main.js
-is the main component used for rendering the different lists in this section.
+`index.js` provides all the routes for this section. `controller.jsx` decides which component to render for each
+route.
 
-## People List
+## Users list
 
-main.js handles rendering of a list of people. The rendered list depends on the chosen filter in PeopleSectionNav. For example,
-the `people/team` route will render a TeamList component.
+`subscribers-team` renders the unified Users list, covering team members, followers, and email subscribers. The
+list shown depends on the chosen filter in `people-section-nav`. Each entry is a `people-list-item` component,
+grouped under `people-list-section-header`.
 
-Every list will be a collection of PeopleListItem components.
+## Invites
+
+`team-invite` renders the invite flow (inviting users by email and generating a shareable invite link).
+`people-invites` and `people-invites-pending` list pending invites, and `people-invite-details` shows a single
+invite.
+
+## Editing and details
+
+`edit-team-member-form` edits a user's role and profile details. `subscriber-details` and `viewer-details` render
+the detail views for subscribers and viewers.
 
 ## Data
 
-Each list fetches it's list items from the API using slightly different methods.
-By default, the data is managed via a data component ( `client/components/data` ).
-For example, the FollowersList gets data from `client/components/data/followers-data`.
-
-The TeamList is an exception. It's data is retrieved via `client/components/sites-user-fetcher`.
+Data is fetched through the shared query hooks (e.g. site users, external contributors, and invites), which wrap
+the WordPress.com REST API.

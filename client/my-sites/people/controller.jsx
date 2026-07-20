@@ -53,10 +53,6 @@ export default {
 		renderPendingInvites( context, next );
 	},
 
-	teamMembers( context, next ) {
-		renderTeamMembers( context, next );
-	},
-
 	viewerTeamMember( context, next ) {
 		renderViewerTeamMember( context, next );
 	},
@@ -156,22 +152,6 @@ function renderPendingInvites( context, next ) {
 		<>
 			<PeopleInvitesTitle />
 			<PeopleInvitesPending site={ site } />
-		</>
-	);
-	next();
-}
-
-function renderTeamMembers( context, next ) {
-	const TeamMembersTitle = () => {
-		const translate = useTranslate();
-
-		return <DocumentHead title={ translate( 'Users', { textOnly: true } ) } />;
-	};
-
-	context.primary = (
-		<>
-			<TeamMembersTitle />
-			<SubscribersTeam filter={ context.params.filter } search={ context.query.s } />
 		</>
 	);
 	next();

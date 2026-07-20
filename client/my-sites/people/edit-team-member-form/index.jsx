@@ -40,10 +40,10 @@ export const EditTeamMemberForm = ( {
 			return;
 		}
 		if ( siteSlug ) {
-			page( `/people/team-members/${ siteSlug }` );
+			page( `/people/team/${ siteSlug }` );
 			return;
 		}
-		page( '/people/team-members' );
+		page( '/people/team' );
 	};
 
 	const { markChanged, markSaved } = useProtectForm();
