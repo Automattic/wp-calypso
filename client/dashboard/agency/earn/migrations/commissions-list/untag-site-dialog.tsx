@@ -12,7 +12,6 @@ import {
 } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
-import { useEffect } from 'react';
 import type { ShowSuccessNotice, TaggedSite } from '../types';
 
 export default function UntagSiteDialog( {
@@ -20,21 +19,15 @@ export default function UntagSiteDialog( {
 	migrationTags,
 	onClose,
 	onSuccess,
-	onModalOpen,
 }: {
 	site: TaggedSite;
 	migrationTags: string[];
 	onClose: () => void;
 	onSuccess: ShowSuccessNotice;
-	onModalOpen?: () => void;
 } ) {
 	const queryClient = useQueryClient();
 	const { data: agency } = useQuery( activeAgencyQuery() );
 	const agencyId = agency?.id;
-	useEffect( () => {
-		onModalOpen?.();
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [] );
 	const { mutate, isPending } = useMutation( agencySiteTagsMutation( agencyId ) );
 
 	const onConfirm = () => {

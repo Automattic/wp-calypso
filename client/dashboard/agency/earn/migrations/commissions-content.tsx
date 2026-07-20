@@ -20,7 +20,6 @@ interface MigrationsCommissionsContentProps {
 	onCloseAddSitesModal: () => void;
 	onOpenAddSitesModal: () => void;
 	TableWrapper?: ComponentType< { children: ReactNode } >;
-	onModalOpen?: () => void;
 }
 
 export default function MigrationsCommissionsContent( {
@@ -37,7 +36,6 @@ export default function MigrationsCommissionsContent( {
 	onCloseAddSitesModal,
 	onOpenAddSitesModal,
 	TableWrapper,
-	onModalOpen,
 }: MigrationsCommissionsContentProps ) {
 	if ( isLoading ) {
 		return (
@@ -69,7 +67,6 @@ export default function MigrationsCommissionsContent( {
 						onError={ onError }
 						locale={ locale }
 						TableWrapper={ TableWrapper }
-						onModalOpen={ onModalOpen }
 					/>
 				</div>
 			) }
@@ -83,7 +80,6 @@ export default function MigrationsCommissionsContent( {
 					onError={ onError }
 					getSiteCreatedAt={ getSiteCreatedAt }
 					locale={ locale }
-					onModalOpen={ onModalOpen }
 				/>
 			) }
 		</>

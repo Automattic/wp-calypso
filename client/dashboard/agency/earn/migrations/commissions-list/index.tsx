@@ -62,7 +62,6 @@ export default function MigrationsCommissionsList( {
 	onError,
 	locale,
 	TableWrapper = DefaultTableWrapper,
-	onModalOpen,
 }: {
 	items: TaggedSite[];
 	migrationTags: string[];
@@ -71,7 +70,6 @@ export default function MigrationsCommissionsList( {
 	onError: ( message: ReactNode ) => void;
 	locale: string;
 	TableWrapper?: ComponentType< { children: ReactNode } >;
-	onModalOpen?: () => void;
 } ) {
 	const isDesktop = useViewportMatch( 'large' );
 
@@ -177,7 +175,6 @@ export default function MigrationsCommissionsList( {
 					migrationTags={ migrationTags }
 					onClose={ closeModal }
 					onSuccess={ onSuccess }
-					onModalOpen={ onModalOpen }
 				/>
 			) }
 
@@ -188,7 +185,6 @@ export default function MigrationsCommissionsList( {
 					recordTracksEvent={ recordTracksEvent }
 					onSuccess={ onSuccess }
 					onError={ onError }
-					onModalOpen={ onModalOpen }
 				/>
 			) }
 		</>

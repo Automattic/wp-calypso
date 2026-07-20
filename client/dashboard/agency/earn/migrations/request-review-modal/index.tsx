@@ -14,7 +14,7 @@ import {
 } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import type { RecordTracksEvent, ShowSuccessNotice, TaggedSite } from '../types';
 import type { ReactNode } from 'react';
 
@@ -24,22 +24,16 @@ export default function RequestReviewModal( {
 	recordTracksEvent,
 	onSuccess,
 	onError,
-	onModalOpen,
 }: {
 	onClose: () => void;
 	site: TaggedSite;
 	recordTracksEvent: RecordTracksEvent;
 	onSuccess: ShowSuccessNotice;
 	onError: ( message: ReactNode ) => void;
-	onModalOpen?: () => void;
 } ) {
 	const queryClient = useQueryClient();
 	const { data: agency } = useQuery( activeAgencyQuery() );
 	const agencyId = agency?.id;
-	useEffect( () => {
-		onModalOpen?.();
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [] );
 
 	const { mutate: requestReview, isPending } = useMutation(
 		requestMigrationReverificationMutation( agencyId )

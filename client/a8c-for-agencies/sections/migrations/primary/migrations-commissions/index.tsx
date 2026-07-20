@@ -7,7 +7,6 @@ import { LayoutWithGuidedTour as Layout } from 'calypso/a8c-for-agencies/compone
 import LayoutTop from 'calypso/a8c-for-agencies/components/layout/layout-with-payment-notification';
 import MobileSidebarNavigation from 'calypso/a8c-for-agencies/components/sidebar/mobile-sidebar-navigation';
 import { A4A_MIGRATIONS_LINK } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
-import { useMinimizeHelpCenter } from 'calypso/a8c-for-agencies/hooks/use-minimize-help-center-on-mount';
 import MissingPaymentSettingsNotice from 'calypso/a8c-for-agencies/sections/referrals/common/missing-payment-settings-notice';
 import MigrationsCommissionsContent from 'calypso/dashboard/agency/earn/migrations/commissions-content';
 import useCanTagSitesForCommission from 'calypso/dashboard/agency/earn/migrations/hooks/use-can-tag-sites-for-commission';
@@ -64,8 +63,6 @@ export default function MigrationsCommissions() {
 		( blogId: number ) => sites.find( ( s ) => s?.ID === blogId )?.options?.created_at,
 		[ sites ]
 	);
-
-	const onModalOpen = useMinimizeHelpCenter();
 
 	const onTagSitesClick = useCallback( () => {
 		recordTracks( 'calypso_a8c_migrations_commissions_tag_sites_click' );
@@ -125,7 +122,6 @@ export default function MigrationsCommissions() {
 					onCloseAddSitesModal={ () => setShowAddSitesModal( false ) }
 					onOpenAddSitesModal={ () => setShowAddSitesModal( true ) }
 					TableWrapper={ ClassicTableWrapper }
-					onModalOpen={ onModalOpen }
 				/>
 			</LayoutBody>
 		</Layout>

@@ -16,7 +16,7 @@ import {
 import { createInterpolateElement } from '@wordpress/element';
 import { __, _n, sprintf } from '@wordpress/i18n';
 import { Icon, info } from '@wordpress/icons';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import MigrationsAddSitesTable from './add-sites-table';
 import type { SiteItem } from '../hooks/use-fetch-all-managed-sites-for-commission';
 import type { RecordTracksEvent, TaggedSite } from '../types';
@@ -33,7 +33,6 @@ export default function MigrationsTagSitesModal( {
 	onError,
 	getSiteCreatedAt,
 	locale,
-	onModalOpen,
 }: {
 	onClose: () => void;
 	taggedSites?: TaggedSite[];
@@ -43,15 +42,10 @@ export default function MigrationsTagSitesModal( {
 	onError: ( message: ReactNode ) => void;
 	getSiteCreatedAt: ( blogId: number ) => string | undefined;
 	locale: string;
-	onModalOpen?: () => void;
 } ) {
 	const queryClient = useQueryClient();
 	const { data: agency } = useQuery( activeAgencyQuery() );
 	const agencyId = agency?.id;
-	useEffect( () => {
-		onModalOpen?.();
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [] );
 
 	const { mutate: tagSitesForMigration, isPending } = useMutation(
 		tagAgencySitesForCommissionMutation( agencyId )
