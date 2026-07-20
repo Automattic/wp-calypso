@@ -24,9 +24,6 @@ export default function AgencySiteOverview() {
 			<Grid columns={ isSmallViewport ? 1 : 2 } gap={ isSmallViewport ? 4 : 6 }>
 				<BackupCard site={ site } />
 				<ScanCard site={ site } siteSlug={ siteSlug } />
-				{ /* TODO (A4A): for private/coming-soon/unlaunched sites this card links to
-				     `/sites/$slug/settings/site-visibility`, which has no route in the agency
-				     site view yet. Guard the link (or add settings) once A4A settings lands. */ }
 				<PerformanceCard site={ fullSite } />
 			</Grid>
 			<ActivityCard />

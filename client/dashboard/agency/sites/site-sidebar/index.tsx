@@ -2,7 +2,15 @@ import { agencySiteQuery, siteBySlugQuery } from '@automattic/api-queries';
 import { useQuery } from '@tanstack/react-query';
 import { __experimentalVStack as VStack } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
-import { backup, category, chartBar, formatListBullets, pending, shield } from '@wordpress/icons';
+import {
+	backup,
+	category,
+	chartBar,
+	formatListBullets,
+	pending,
+	settings,
+	shield,
+} from '@wordpress/icons';
 import { agencySiteRoute } from '../../../app/router/agency';
 import {
 	SidebarBackButton,
@@ -19,6 +27,9 @@ export default function AgencySiteSidebar() {
 	const { data: fullSite } = useQuery( siteBySlugQuery( siteSlug ) );
 	const supportsPerformance = fullSite ? siteTypeSupportsFeature( fullSite, 'performance' ) : false;
 	const supportsMonitoring = fullSite ? siteTypeSupportsFeature( fullSite, 'monitoring' ) : false;
+	const supportsSettings = fullSite
+		? siteTypeSupportsFeature( fullSite, 'settings' ) && !! fullSite.capabilities?.manage_options
+		: false;
 
 	return (
 		<VStack spacing={ 2 }>
@@ -74,6 +85,11 @@ export default function AgencySiteSidebar() {
 								{ __( 'Activity' ) }
 							</SidebarMenuItem>
 						</SidebarExpandableMenuItem>
+						{ supportsSettings && (
+							<SidebarMenuItem icon={ settings } to={ `/sites/${ siteSlug }/settings` }>
+								{ __( 'Settings' ) }
+							</SidebarMenuItem>
+						) }
 					</SidebarMenu>
 				</VStack>
 			) }
