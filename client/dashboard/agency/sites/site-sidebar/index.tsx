@@ -7,6 +7,7 @@ import {
 	backup,
 	category,
 	chartBar,
+	code,
 	formatListBullets,
 	pending,
 	settings,
@@ -28,6 +29,7 @@ export default function AgencySiteSidebar() {
 	const { data: fullSite } = useQuery( siteBySlugQuery( siteSlug ) );
 	const supportsPerformance = fullSite ? siteTypeSupportsFeature( fullSite, 'performance' ) : false;
 	const supportsMonitoring = fullSite ? siteTypeSupportsFeature( fullSite, 'monitoring' ) : false;
+	const supportsDeployments = fullSite ? siteTypeSupportsFeature( fullSite, 'deployments' ) : false;
 	const supportsSettings = fullSite
 		? siteTypeSupportsFeature( fullSite, 'settings' ) && !! fullSite.capabilities?.manage_options
 		: false;
@@ -101,6 +103,11 @@ export default function AgencySiteSidebar() {
 								{ __( 'Activity' ) }
 							</SidebarMenuItem>
 						</SidebarExpandableMenuItem>
+						{ supportsDeployments && (
+							<SidebarMenuItem icon={ code } to={ `/sites/${ siteSlug }/deployments` }>
+								{ __( 'Deployments' ) }
+							</SidebarMenuItem>
+						) }
 						{ supportsSettings && (
 							<SidebarMenuItem icon={ settings } to={ `/sites/${ siteSlug }/settings` }>
 								{ __( 'Settings' ) }
