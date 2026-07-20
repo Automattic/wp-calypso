@@ -4,11 +4,10 @@ import {
 	codeDeploymentQuery,
 } from '@automattic/api-queries';
 import { useSuspenseQuery, useMutation } from '@tanstack/react-query';
-import { useNavigate } from '@tanstack/react-router';
+import { useNavigate, useParams } from '@tanstack/react-router';
 import { __, sprintf } from '@wordpress/i18n';
 import Breadcrumbs from '../../app/breadcrumbs';
 import {
-	siteRoute,
 	siteSettingsRepositoriesRoute,
 	siteSettingsRepositoriesManageRoute,
 } from '../../app/router/sites';
@@ -18,7 +17,10 @@ import PageLayout from '../../components/page-layout';
 import { ConnectRepositoryForm } from './connect-repository-form';
 
 export default function ConfigureRepository() {
-	const { siteSlug, deploymentId } = siteRoute.useParams();
+	const { siteSlug, deploymentId } = useParams( { strict: false } ) as {
+		siteSlug: string;
+		deploymentId: number;
+	};
 	const { data: site } = useSuspenseQuery( siteBySlugQuery( siteSlug ) );
 	const { data: existingDeployment } = useSuspenseQuery(
 		codeDeploymentQuery( site.ID, deploymentId )
