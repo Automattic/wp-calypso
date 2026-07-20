@@ -14,15 +14,6 @@ else
 	export RELEASE_BUILD=false
 fi
 
-# Force `electron-builder` to sign even on PR builds, so reviewers can
-# install and exercise the produced app.
-#
-# SECURITY TODO: this lets any PR have its code signed with the org's
-# Developer ID cert. It's set only while we validate the new Buildkite
-# pipeline; remove it as soon as the full end-to-end tag-driven release
-# build is available and PRs can stay unsigned again.
-export CSC_FOR_PULL_REQUEST=true
-
 cd desktop
 corepack enable
 yarn install --immutable --inline-builds
