@@ -377,7 +377,7 @@ const maybeRedirectToDashboard = ( context, next ) => {
 
 	dispatch( waitForPrefs() ).finally( () => {
 		if ( hasDashboardOptIn( getState() ) ) {
-			bumpStat( 'hd-redirect', 'domains' );
+			bumpStat( 'dashboard-redirect', 'domain-list' );
 			window.location.replace( dashboardLink( '/domains' ) );
 			return;
 		}

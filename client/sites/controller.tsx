@@ -189,7 +189,7 @@ export const maybeRedirectToDashboard = ( context: PageJSContext, next: () => vo
 
 	dispatch( waitForPrefs() ).finally( () => {
 		if ( hasDashboardOptIn( getState() ) ) {
-			bumpStat( 'hd-redirect', 'sites' );
+			bumpStat( 'dashboard-redirect', 'site-list' );
 			window.location.replace( dashboardLink( '/sites' ) );
 			return;
 		}
