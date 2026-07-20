@@ -3689,10 +3689,9 @@ describe( 'applyReviewEdit', () => {
 			error: 'currentText not found in block content',
 		} );
 		expect( blockUpdates ).toEqual( [] );
-		expect( warn ).toHaveBeenCalledWith(
-			'[AiEditorialReview] currentText not found in block content',
-			{ clientId: '550e8400-e29b-41d4-a716-446655440000' }
-		);
+		expect( warn ).toHaveBeenCalledWith( '[Jetpack AI] currentText not found in block content', {
+			clientId: '550e8400-e29b-41d4-a716-446655440000',
+		} );
 		warn.mockRestore();
 	} );
 
@@ -3720,10 +3719,9 @@ describe( 'applyReviewEdit', () => {
 			error: 'currentText not found in block content',
 		} );
 		expect( blockUpdates ).toEqual( [] );
-		expect( warn ).toHaveBeenCalledWith(
-			'[AiEditorialReview] currentText not found in block content',
-			{ clientId: '550e8400-e29b-41d4-a716-446655440000' }
-		);
+		expect( warn ).toHaveBeenCalledWith( '[Jetpack AI] currentText not found in block content', {
+			clientId: '550e8400-e29b-41d4-a716-446655440000',
+		} );
 		warn.mockRestore();
 	} );
 
@@ -3760,7 +3758,7 @@ describe( 'applyReviewEdit', () => {
 			} );
 			expect( blockUpdates ).toEqual( [] );
 			expect( warn ).toHaveBeenCalledWith(
-				'[AiEditorialReview] currentText matches multiple spans in block content',
+				'[Jetpack AI] currentText matches multiple spans in block content',
 				{ clientId: '550e8400-e29b-41d4-a716-446655440000' }
 			);
 			warn.mockRestore();

@@ -627,7 +627,7 @@ export function handleUpdateBlockContent( input: any ): any {
 			const fallback = findBlockSnapshotByCurrentText( currentText, editableAttribute );
 			if ( fallback.error ) {
 				// eslint-disable-next-line no-console
-				console.warn( '[AiEditorialReview] currentText matches multiple spans in block content', {
+				console.warn( '[Jetpack AI] currentText matches multiple spans in block content', {
 					clientId,
 				} );
 				return {
@@ -640,7 +640,7 @@ export function handleUpdateBlockContent( input: any ): any {
 				targetClientId = fallback.snapshot.clientId;
 				snapshot = fallback.snapshot;
 				// eslint-disable-next-line no-console
-				console.warn( '[AiEditorialReview] stale clientId matched by currentText', {
+				console.warn( '[Jetpack AI] stale clientId matched by currentText', {
 					clientId,
 					targetClientId,
 				} );
@@ -666,7 +666,7 @@ export function handleUpdateBlockContent( input: any ): any {
 		const matchCount = countOccurrences( snapshot.content, currentText );
 		if ( matchCount === 0 ) {
 			// eslint-disable-next-line no-console
-			console.warn( '[AiEditorialReview] currentText not found in block content', { clientId } );
+			console.warn( '[Jetpack AI] currentText not found in block content', { clientId } );
 			return {
 				success: false,
 				error: 'currentText not found in block content',
@@ -675,7 +675,7 @@ export function handleUpdateBlockContent( input: any ): any {
 		}
 		if ( matchCount > 1 ) {
 			// eslint-disable-next-line no-console
-			console.warn( '[AiEditorialReview] currentText matches multiple spans in block content', {
+			console.warn( '[Jetpack AI] currentText matches multiple spans in block content', {
 				clientId,
 			} );
 			return {
@@ -727,7 +727,7 @@ export function handleUpdateBlockContent( input: any ): any {
 				const matchCount = countOccurrences( latestSnapshot.content, currentText );
 				if ( matchCount === 0 ) {
 					// eslint-disable-next-line no-console
-					console.warn( '[AiEditorialReview] currentText not found in block content', {
+					console.warn( '[Jetpack AI] currentText not found in block content', {
 						clientId: targetClientId,
 					} );
 					resolveFailure( 'currentText not found in block content' );
@@ -735,7 +735,7 @@ export function handleUpdateBlockContent( input: any ): any {
 				}
 				if ( matchCount > 1 ) {
 					// eslint-disable-next-line no-console
-					console.warn( '[AiEditorialReview] currentText matches multiple spans in block content', {
+					console.warn( '[Jetpack AI] currentText matches multiple spans in block content', {
 						clientId: targetClientId,
 					} );
 					resolveFailure( 'currentText matches multiple spans in block content' );
@@ -744,7 +744,7 @@ export function handleUpdateBlockContent( input: any ): any {
 				nextContent = latestSnapshot.content.replace( currentText, content );
 			} else if ( latestSnapshot.content !== snapshot.content ) {
 				// eslint-disable-next-line no-console
-				console.warn( '[AiEditorialReview] block content changed while applying edit', {
+				console.warn( '[Jetpack AI] block content changed while applying edit', {
 					clientId: targetClientId,
 				} );
 				resolveFailure( 'block content changed while applying edit' );
