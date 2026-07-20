@@ -15,7 +15,7 @@ test.describe(
 			for ( const locale of DataHelper.getMag16Locales() ) {
 				await page.setViewportSize( { width: 1280, height: 720 } );
 				await pageLogin.visit( { path: locale } );
-				await page.locator( '.is-section-login' ).waitFor();
+				await page.locator( 'body.is-section-login' ).waitFor();
 				await page.screenshot( {
 					path: `tos_white_login_desktop_${ locale }.png`,
 					fullPage: true,
