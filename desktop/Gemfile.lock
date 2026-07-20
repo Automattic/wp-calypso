@@ -1,6 +1,6 @@
 GIT
   remote: https://github.com/wordpress-mobile/release-toolkit
-  revision: 419d130cce350b26e30c74a3ac4239f3bdfed111
+  revision: 22b05990529cf5acba4597958c1135c54c56f5bd
   branch: mokagio/ainfra-2709-macos-verify-signing
   specs:
     fastlane-plugin-wpmreleasetoolkit (14.10.0)
