@@ -14,6 +14,7 @@ import {
 	getRemoveLossIntro,
 	getSingleItemCancelCopy,
 	getSingleItemRemoveCopy,
+	getTitanCancellationLossItems,
 } from './get-confirmation-copy';
 import type { Purchase, CancellationFeature } from '@automattic/api-core';
 
@@ -33,17 +34,24 @@ const CancelPurchaseFeatureList = ( {
 	cancellationFeatures: CancellationFeature[];
 	cancellationChanges: FeatureObject[];
 } ) => {
-	// When the server returns no feature list, fall back to a per-product-type
-	// item so every confirmation screen shows at least one concrete thing the
-	// user is giving up.
-	const lossItems: Array< { key: string; title: string } > = cancellationFeatures.length
-		? cancellationFeatures
-				.filter( ( feature ): feature is CancellationFeature => Boolean( feature ) )
-				.map( ( feature ) => ( { key: String( feature.feature_id ), title: feature.title } ) )
-		: getFallbackLossItems( purchase ).map( ( title, idx ) => ( {
-				key: `fallback-${ idx }`,
-				title,
-		  } ) );
+	// Titan's server-provided feature list is tier-unaware, so for Titan
+	// purchases we derive the loss list from the tier the user is on. Everything
+	// else uses the server list, falling back to a per-product-type item so every
+	// confirmation screen shows at least one concrete thing the user is giving up.
+	const titanLossItems = getTitanCancellationLossItems( purchase );
+	let lossItems: Array< { key: string; title: string } >;
+	if ( titanLossItems ) {
+		lossItems = titanLossItems.map( ( title, idx ) => ( { key: `titan-${ idx }`, title } ) );
+	} else if ( cancellationFeatures.length ) {
+		lossItems = cancellationFeatures
+			.filter( ( feature ): feature is CancellationFeature => Boolean( feature ) )
+			.map( ( feature ) => ( { key: String( feature.feature_id ), title: feature.title } ) );
+	} else {
+		lossItems = getFallbackLossItems( purchase ).map( ( title, idx ) => ( {
+			key: `fallback-${ idx }`,
+			title,
+		} ) );
+	}
 
 	if ( ! lossItems.length && ! cancellationChanges.length ) {
 		return null;

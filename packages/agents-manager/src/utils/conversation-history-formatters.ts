@@ -47,14 +47,14 @@ function formatConversationDate( dateTime: string ): string {
 	const today = new Date();
 
 	if ( isSameLocalDay( date, today ) ) {
-		return __( 'Today', '__i18n_text_domain__' );
+		return __( 'Today', __i18n_text_domain__ );
 	}
 
 	const yesterday = new Date( today );
 	yesterday.setDate( yesterday.getDate() - 1 );
 
 	if ( isSameLocalDay( date, yesterday ) ) {
-		return __( 'Yesterday', '__i18n_text_domain__' );
+		return __( 'Yesterday', __i18n_text_domain__ );
 	}
 
 	return getShortDateString( date.getTime(), getLocaleSlug() ?? 'en' );
@@ -70,7 +70,7 @@ export function generateConversationTitle( messageContent: string ): string {
 	const title = messageContent?.trim();
 
 	if ( ! title ) {
-		return __( 'Untitled conversation', '__i18n_text_domain__' );
+		return __( 'Untitled conversation', __i18n_text_domain__ );
 	}
 
 	return title;
@@ -88,7 +88,7 @@ export function generateConversationSubtitle( dateTime: string, isHe?: boolean )
 	if ( isHe ) {
 		return sprintf(
 			/* translators: %s: date of the conversation */
-			__( 'Happiness chat · %s', '__i18n_text_domain__' ),
+			__( 'Happiness chat · %s', __i18n_text_domain__ ),
 			date
 		);
 	}

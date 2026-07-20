@@ -50,3 +50,39 @@
 		}
 	}
 }
+
+// On mobile, let the page body scroll instead of the list.
+@media ( max-width: 600px ) {
+	.is-section-sites-dashboard:has( .sites-dashboard__layout.preview-hidden ) .layout__content {
+		overflow: visible;
+	}
+
+	.main.hosting-dashboard-layout.sites-dashboard.sites-dashboard__layout.preview-hidden {
+		height: auto;
+		overflow: visible;
+
+		.hosting-dashboard-layout-with-columns__container,
+		.hosting-dashboard-layout-column.sites-overview {
+			height: auto;
+			overflow: visible;
+		}
+
+		.hosting-dashboard-layout-column.sites-overview .hosting-dashboard-layout-column__container {
+			height: auto;
+		}
+	}
+
+	.dashboard-backport-sites-list {
+		height: auto;
+		overflow: visible;
+
+		.dashboard-page-layout {
+			height: auto;
+		}
+
+		.dataviews-wrapper {
+			height: auto;
+			flex-grow: 0;
+		}
+	}
+}

@@ -17,11 +17,16 @@ import { buildStreamQueryParams } from '../../build-query-params';
 import { extractPageHandle, normalizeStreamPage } from '../../normalization';
 import { combineXPosts } from '../../utils';
 import type { StreamItem } from '../../types';
-import type { ReadStreamQueryParams, ReadStreamResponse } from '@automattic/api-core';
+import type {
+	ReadStreamPost,
+	ReadStreamQueryParams,
+	ReadStreamResponse,
+} from '@automattic/api-core';
 import type { Dispatch } from 'redux';
 
 export interface UseInfiniteStreamResult {
 	items: StreamItem[];
+	posts: ReadStreamPost[];
 	pages: ReadStreamResponse[];
 	isLoading: boolean;
 	isFetching: boolean;
@@ -185,6 +190,18 @@ export const useInfiniteStream = ( {
 		return combineXPosts( collected ) as StreamItem[];
 	}, [ query.data, streamType ] );
 
+	// The stream's posts, parsed once from the same `normalizeStreamPage` that feeds
+	// `syncStreamPage` — so consumers don't re-parse the raw pages themselves.
+	const posts: ReadStreamPost[] = useMemo( () => {
+		const pages = query.data?.pages ?? [];
+		const collected: ReadStreamPost[] = [];
+		for ( const page of pages ) {
+			const { streamPosts } = normalizeStreamPage( page as ReadStreamResponse, streamType );
+			collected.push( ...( streamPosts as unknown as ReadStreamPost[] ) );
+		}
+		return collected;
+	}, [ query.data, streamType ] );
+
 	const queryKey = queryOptions.queryKey;
 	const invalidate = useCallback( () => {
 		queryClient.invalidateQueries( { queryKey, refetchType: 'none' } );
@@ -192,6 +209,7 @@ export const useInfiniteStream = ( {
 
 	return {
 		items,
+		posts,
 		pages: ( query.data?.pages ?? [] ) as ReadStreamResponse[],
 		isLoading: query.isLoading,
 		isFetching: query.isFetching,

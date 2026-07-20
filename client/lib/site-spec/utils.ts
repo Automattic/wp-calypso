@@ -1,6 +1,7 @@
 import config from '@automattic/calypso-config';
 import { WooLogo } from '@automattic/components';
 import { __ } from '@wordpress/i18n';
+import { addQueryArgs } from '@wordpress/url';
 import { createElement, type ReactElement } from 'react';
 
 // Raw config structure from the server
@@ -116,7 +117,7 @@ export interface SiteSpecConfig {
 	tracking?: {
 		enabled: boolean;
 		prefix: string;
-		getOverrides?: ( event: string ) => Record< string, any >;
+		getOverrides?: ( event: string ) => Record< string, unknown >;
 	};
 	backButton?: BackButtonConfig;
 	exitButton?: {
@@ -316,5 +317,53 @@ export function getCiabSiteSpecConfig(): SiteSpecConfig {
 		tosConfig: {
 			showToS: true,
 		},
+	};
+}
+
+/**
+ * Retrieves the SiteSpec configuration for WPCOM Atomic site provisioning.
+ *
+ * The widget may either call `onSpecConfirm` or navigate to `buildSiteUrl`
+ * with the spec id appended. Keep the navigation inside the Site Spec route so
+ * Calypso can pass the confirmed spec to the regular AI site builder flow.
+ * @returns {SiteSpecConfig} Configuration object for WPCOM Atomic site provisioning.
+ */
+export function getEarlyProvisionSiteSpecConfig(): SiteSpecConfig {
+	return {
+		...getDefaultSiteSpecConfig(),
+		buildSiteUrl: '/setup/ai-site-builder-spec/site-spec?provision_target=wpcom-atomic&spec_id=',
+	};
+}
+
+/**
+ * Retrieves the SiteSpec configuration for post-checkout build-wow provisioning.
+ *
+ * The widget may either call `onSpecConfirm` or navigate to `buildSiteUrl`
+ * with the spec id appended. Keep that navigation inside the Site Spec route
+ * so Calypso can attach the confirmed spec to the existing post-checkout site.
+ * @returns {SiteSpecConfig} Configuration object for build-wow provisioning.
+ */
+export function getBuildWowSiteSpecConfig( {
+	siteSlug,
+	siteId,
+	ref,
+	source,
+}: {
+	siteSlug?: string | null;
+	siteId?: string | number | null;
+	ref?: string | null;
+	source?: string | null;
+} = {} ): SiteSpecConfig {
+	const buildSiteUrl = addQueryArgs( '/setup/ai-site-builder-spec/site-spec', {
+		build_wow: '1',
+		...( siteSlug ? { siteSlug } : {} ),
+		...( siteId && String( siteId ) !== '0' ? { siteId } : {} ),
+		...( ref ? { ref } : {} ),
+		...( source ? { source } : {} ),
+	} );
+
+	return {
+		...getDefaultSiteSpecConfig(),
+		buildSiteUrl: `${ buildSiteUrl }${ buildSiteUrl.includes( '?' ) ? '&' : '?' }spec_id=`,
 	};
 }

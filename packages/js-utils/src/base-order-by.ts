@@ -14,11 +14,11 @@ interface Decorated< T > {
 	value: T;
 }
 
-// Port of lodash `compareAscending`: orders two values with `undefined` after
-// defined, `null` after non-null, `NaN` last, and symbols after comparable
-// values — so mixed/missing criteria sort like lodash. The `as number` casts
-// only satisfy the relational operators; at runtime the native comparison
-// handles strings, dates, etc. correctly.
+// Orders two values with `undefined` after defined, `null` after non-null,
+// `NaN` last, and symbols after comparable values, so mixed/missing criteria
+// sort deterministically. The `as number` casts only satisfy the relational
+// operators; at runtime the native comparison handles strings, dates, etc.
+// correctly.
 const compareAscending = ( value: unknown, other: unknown ): number => {
 	if ( value !== other ) {
 		const valIsDefined = value !== undefined;
@@ -77,13 +77,13 @@ const resolveIteratee = < T >(
 	iteratee: Iteratee< T > | null | undefined
 ): ( ( value: T ) => unknown ) => {
 	if ( iteratee == null ) {
-		// A nullish iteratee sorts by identity, like lodash.
+		// A nullish iteratee sorts by identity.
 		return identity;
 	}
 	if ( typeof iteratee === 'function' ) {
 		return iteratee;
 	}
-	// A property name, index, or path — resolved per value (lodash `castPath` is
+	// A property name, index, or path — resolved per value (`castPath` is
 	// object-dependent: a literal key present on the value is used whole).
 	return ( value ) => baseGet( value, iteratee );
 };
@@ -104,7 +104,7 @@ const compareMultiple = < T >(
 			return result * ( orders[ index ] === 'desc' ? -1 : 1 );
 		}
 	}
-	// Tie-break by original index to keep the sort stable, like lodash.
+	// Tie-break by original index to keep the sort stable.
 	return object.index - other.index;
 };
 
@@ -125,7 +125,7 @@ const baseOrderBy = < T >(
 		values = [];
 	} else if ( Array.isArray( collection ) ) {
 		// `Array.from` materializes holes in sparse arrays as `undefined`, so they
-		// are sorted (last) rather than skipped by `map`, matching lodash.
+		// are sorted (last) rather than skipped by `map`.
 		values = Array.from( collection );
 	} else {
 		values = Object.values( collection );

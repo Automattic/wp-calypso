@@ -4,12 +4,9 @@ import { A4AConfirmationDialog } from 'calypso/a8c-for-agencies/components/a4a-c
 import { useSelector } from 'calypso/state';
 import { getActiveAgency } from 'calypso/state/a8c-for-agencies/agency/selectors';
 import useHandleMemberAction from '../../hooks/use-handle-member-action';
-import { TeamMember } from '../../types';
+import type { TeamActionRequest } from 'calypso/dashboard/agency/team/dataviews/actions';
 
-export type TeamActionRequest =
-	| { kind: 'cancel-invite'; member: TeamMember }
-	| { kind: 'transfer-ownership'; member: TeamMember }
-	| { kind: 'remove-member'; member: TeamMember; isSelf: boolean };
+export type { TeamActionRequest };
 
 export default function TeamActionDialog( {
 	request,

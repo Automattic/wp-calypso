@@ -5,6 +5,10 @@ import { close } from '@wordpress/icons';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { useResurrectedFreeUserEligibility } from 'calypso/lib/resurrected-users';
+import {
+	WELCOME_BACK_VARIATIONS,
+	type WelcomeBackVariation,
+} from 'calypso/lib/resurrected-users/constants';
 
 import './style.scss';
 
@@ -29,6 +33,8 @@ type VariationConfig = {
 };
 
 const ONBOARDING_URL = '/setup/onboarding';
+const THEMES_SHOWCASE_URL = '/themes';
+const SITE_EDITOR_URL = '/site-editor';
 
 // Rolled-out variation: MANUAL only.
 const MANUAL_VARIATION_CONFIG: VariationConfig = {
@@ -51,6 +57,72 @@ const MANUAL_VARIATION_CONFIG: VariationConfig = {
 			variant: 'tertiary',
 		},
 	],
+};
+
+const VARIATION_CONTENT: Partial< Record< WelcomeBackVariation, VariationConfig > > = {
+	[ WELCOME_BACK_VARIATIONS.themes ]: {
+		getTitle: ( translate ) => translate( 'Welcome back!' ),
+		getDescription: ( translate ) =>
+			translate(
+				"We've added beautiful new themes since your last visit. Browse around and find what feels right for your site."
+			),
+		ctas: [
+			{
+				id: 'manual-new',
+				getLabel: ( translate ) => translate( 'Browse new themes' ),
+				href: THEMES_SHOWCASE_URL,
+				variant: 'primary',
+			},
+			{
+				id: 'manual-continue',
+				getLabel: ( translate ) => translate( 'Create a new site' ),
+				href: ONBOARDING_URL,
+				variant: 'tertiary',
+			},
+		],
+	},
+	[ WELCOME_BACK_VARIATIONS.design ]: {
+		getTitle: ( translate ) => translate( 'Welcome back!' ),
+		getDescription: ( translate ) =>
+			translate(
+				"We've made it easier than ever to update your colors, fonts, and layout. A few small tweaks can make a big difference for your site."
+			),
+		ctas: [
+			{
+				id: 'design-site-editor',
+				getLabel: ( translate ) => translate( 'Refresh your site design' ),
+				href: SITE_EDITOR_URL,
+				variant: 'primary',
+			},
+			{
+				id: 'design-new',
+				getLabel: ( translate ) => translate( 'Create a new site' ),
+				href: ONBOARDING_URL,
+				variant: 'tertiary',
+			},
+		],
+	},
+	[ WELCOME_BACK_VARIATIONS.control ]: {
+		getTitle: ( translate ) => translate( 'Welcome back!' ),
+		getDescription: ( translate ) =>
+			translate(
+				'Ready to explore our latest upgrades? All paid plans now include access to new themes and plugins. Pick up where you left off or start fresh with our latest tools.'
+			),
+		ctas: [
+			{
+				id: 'control-new',
+				getLabel: ( translate ) => translate( 'Create a new site' ),
+				href: ONBOARDING_URL,
+				variant: 'primary',
+			},
+			{
+				id: 'control-continue',
+				getLabel: ( translate ) => translate( 'Continue where I left off' ),
+				isDismissOnly: true,
+				variant: 'tertiary',
+			},
+		],
+	},
 };
 
 const getInitialDismissState = () => {
@@ -79,11 +151,15 @@ export const ResurrectedWelcomeModalGate = ( {
 	const previousVisibilityRef = useRef( false );
 
 	const variationName = eligibility.variationName;
-	const variationConfig = variationName ? MANUAL_VARIATION_CONFIG : undefined;
+	let variationConfig = variationName ? MANUAL_VARIATION_CONFIG : undefined;
+	if ( variationName && variationName in VARIATION_CONTENT ) {
+		variationConfig = VARIATION_CONTENT[ variationName ];
+	}
+
 	const variationClassName = variationName
 		? `resurrected-welcome-modal--${ variationName.replace( /_/g, '-' ) }`
 		: null;
-	const hasDarkHero = true; // MANUAL variation uses dark hero
+	const hasDarkHero = true;
 
 	const shouldDisplay =
 		! eligibility.isLoading &&

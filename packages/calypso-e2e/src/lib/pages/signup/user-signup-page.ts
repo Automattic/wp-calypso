@@ -16,6 +16,56 @@ class TransientSignupError extends Error {}
 // matches (Bad Gateway / Service Unavailable / Gateway Timeout).
 const TRANSIENT_UPSTREAM_STATUSES = [ 502, 503, 504 ];
 
+/** Returns whether a value is a non-null object (arrays included). */
+function isRecord( value: unknown ): value is Record< string, unknown > {
+	return typeof value === 'object' && value !== null;
+}
+
+/**
+ * Validates that a `/users/new` response created an account with the identity
+ * and bearer token required by subsequent authenticated setup calls.
+ *
+ * @param {unknown} response Raw JSON response from `/users/new`.
+ * @returns {NewUserResponse} Validated successful signup response.
+ */
+export function assertSuccessfulNewUserResponse( response: unknown ): NewUserResponse {
+	const responseBody = isRecord( response ) && isRecord( response.body ) ? response.body : null;
+	// `/users/new` is untyped JSON off the wire; user_id can arrive as a numeric
+	// string, so coerce before validating (mirrors the blogid handling below).
+	// Only a number or string coerces; a boolean/array must not slip through
+	// (`Number( true )` is 1, `Number( [ 123 ] )` is 123).
+	const rawUserID = responseBody?.user_id;
+	const userID =
+		typeof rawUserID === 'number' || typeof rawUserID === 'string' ? Number( rawUserID ) : NaN;
+	const username = responseBody?.username;
+	const bearerToken = responseBody?.bearer_token;
+
+	if (
+		responseBody &&
+		responseBody.success === true &&
+		Number.isInteger( userID ) &&
+		userID > 0 &&
+		typeof username === 'string' &&
+		username.trim() !== '' &&
+		typeof bearerToken === 'string' &&
+		bearerToken.trim() !== ''
+	) {
+		// Normalize a numeric-string user_id to a number so downstream integer
+		// checks (e.g. teardown's Number.isInteger) treat the account as closeable
+		// rather than ID-less (mirrors the blogid handling below).
+		responseBody.user_id = userID;
+		return response as NewUserResponse;
+	}
+
+	const details = [ responseBody?.error, responseBody?.message ]
+		.filter( ( value ): value is string => typeof value === 'string' && value.trim() !== '' )
+		.join( ': ' );
+
+	throw new Error(
+		`User signup did not create a usable account${ details ? `: ${ details }` : '.' }`
+	);
+}
+
 /**
  * This object represents multiple pages on WordPress.com:
  * 	- regular (/start/user)
@@ -62,9 +112,41 @@ export class UserSignupPage {
 	/**
 	 * Waits for the signup form to be ready for interaction.
 	 * We consider the form ready when either the "Create your account" heading
-	 * or the email input is visible and actionable.
+	 * or the email input is visible and actionable. On a hydration timeout,
+	 * reloads the page once and retries; any other failure (an unrelated
+	 * exception, or a 5xx error page) is left for the caller's fail-fast/retry
+	 * machinery to handle.
 	 */
 	private async waitForSignupForm(): Promise< void > {
+		try {
+			await this.attemptWaitForSignupForm();
+		} catch ( error ) {
+			// Only reload for a genuine hydration flake: a TimeoutError (email input
+			// never attached) on a page that is not itself a 5xx error page. Rethrow
+			// everything else so it surfaces instead of being masked behind a reload.
+			if (
+				( error as Error ).name !== 'TimeoutError' ||
+				( await this.isServerErrorPage( false ) )
+			) {
+				throw error;
+			}
+			// A reload recovers the un-hydrated form; retry once. Safe: no account is
+			// created until submit.
+			console.warn(
+				`Signup form did not become ready, reloading and retrying once: ${
+					( error as Error ).message
+				}`
+			);
+			await this.page.reload( { waitUntil: 'domcontentloaded' } );
+			await this.attemptWaitForSignupForm();
+		}
+	}
+
+	/**
+	 * Single attempt at waiting for the signup form to be ready. See
+	 * waitForSignupForm for the retry wrapper.
+	 */
+	private async attemptWaitForSignupForm(): Promise< void > {
 		const continueWithEmailButton = this.page.getByRole( 'button', {
 			name: /continue with email/i,
 		} );
@@ -150,7 +232,7 @@ export class UserSignupPage {
 				// exceed 10s on a slow CI runner.
 				{ timeout: 60_000 }
 			)
-			.then( ( response ) => response.json() );
+			.then( async ( response ) => assertSuccessfulNewUserResponse( await response.json() ) );
 	}
 
 	/**
@@ -229,20 +311,24 @@ export class UserSignupPage {
 			throw new TransientSignupError( 'Signup page returned a transient server error.' );
 		}
 
-		// Register the response capture before any page interactions so it cannot
-		// miss the /users/new? POST if the form or network responds quickly.
-		const responsePromise = this.captureNewUserResponse();
-		// Watch for a 5xx /users/new? response so we can fail fast and retry
-		// instead of waiting out the full capture timeout.
-		const serverErrorPromise = this.captureUsersNewServerError();
-		// Keep the abandoned promises from becoming unhandled rejections when the
-		// other settles first (or a step below throws before they are awaited).
-		responsePromise.catch( () => undefined );
-		serverErrorPromise.catch( () => undefined );
-
 		try {
 			await this.waitForSignupForm();
 			await this.emailInput.fill( email );
+
+			// Register the response capture immediately before the click that
+			// triggers the /users/new? POST. Registering earlier would start the
+			// 60s capture timeout before waitForSignupForm() (which may reload and
+			// retry) finishes, so a recovered-but-slow form load could expire the
+			// capture before submit. The POST only fires on the click, so this
+			// cannot miss the response.
+			const responsePromise = this.captureNewUserResponse();
+			// Watch for a 5xx /users/new? response so we can fail fast and retry
+			// instead of waiting out the full capture timeout.
+			const serverErrorPromise = this.captureUsersNewServerError();
+			// Keep the abandoned promises from becoming unhandled rejections when
+			// the other settles first (or a step below throws before they are awaited).
+			responsePromise.catch( () => undefined );
+			serverErrorPromise.catch( () => undefined );
 
 			// Trigger the signup.
 			await this.submitButton.click();
@@ -289,23 +375,33 @@ export class UserSignupPage {
 	}
 
 	/**
-	 * Detects whether the page is currently showing a transient upstream
-	 * server-error page (502/503/504), e.g. the nginx "502 Bad Gateway" page.
+	 * Detects whether the page is currently showing a server-error page.
 	 *
-	 * @returns {Promise<boolean>} True when a server-error page is detected.
+	 * By default matches only the transient upstream errors (502/503/504), e.g.
+	 * the nginx "502 Bad Gateway" page, which the retry machinery keys on. Pass
+	 * transientUpstreamServerErrorOnly=false to also match the 500 "Internal
+	 * Server Error" app-crash page (used by the hydration reload-retry so it does
+	 * not mask a genuine error page behind a reload).
+	 *
+	 * @param {boolean} transientUpstreamServerErrorOnly When true (default),
+	 * match only 502/503/504; when false, also match 500 Internal Server Error.
+	 * @returns {Promise<boolean>} True when a matching server-error page is detected.
 	 */
-	private async isServerErrorPage(): Promise< boolean > {
+	private async isServerErrorPage( transientUpstreamServerErrorOnly = true ): Promise< boolean > {
 		return this.page
-			.evaluate( () => {
+			.evaluate( ( transientOnly ) => {
 				const title = document.title || '';
 				const heading = document.querySelector( 'h1' )?.textContent || '';
+				const haystack = `${ title } ${ heading }`;
 				// Match the upstream error phrases (e.g. nginx "502 Bad Gateway")
 				// rather than a bare status number, which could appear incidentally
 				// in legitimate page text.
-				return /Bad Gateway|Service (Temporarily )?Unavailable|Gateway Time-?out/i.test(
-					`${ title } ${ heading }`
-				);
-			} )
+				const transient = /Bad Gateway|Service (Temporarily )?Unavailable|Gateway Time-?out/i;
+				if ( transientOnly ) {
+					return transient.test( haystack );
+				}
+				return transient.test( haystack ) || /Internal Server Error/i.test( haystack );
+			}, transientUpstreamServerErrorOnly )
 			.catch( () => false );
 	}
 
@@ -414,18 +510,23 @@ export class UserSignupPage {
 			this.page.on( 'framenavigated', handler );
 		} );
 
-		// Ensure response is captured correctly
-		const responsePromise = this.page.waitForResponse( /\/users\/new\?[^?]*$/ );
-		await this.submitButton.click();
+		// Read the response body as soon as it arrives; waiting for the redirect
+		// first lets the navigation evict the body from the browser cache.
+		const responseBodyPromise = this.page
+			.waitForResponse( /\/users\/new\?[^?]*$/ )
+			.then( ( response ): Promise< NewUserResponse > => response.json() );
 
-		const [ response ] = await Promise.all( [ responsePromise, redirectDetected ] );
+		const [ responseBody ] = await Promise.all( [
+			responseBodyPromise,
+			redirectDetected,
+			this.submitButton.click(),
+		] );
 
-		if ( ! response ) {
+		if ( ! responseBody ) {
 			throw new Error( 'Failed to create new user at WooCommerce using WPCC.' );
 		}
 
-		const responseBody: NewUserResponse = await response.json();
-		return responseBody;
+		return assertSuccessfulNewUserResponse( responseBody );
 	}
 
 	/**

@@ -1,8 +1,8 @@
 import { type Callback } from '@automattic/calypso-router';
 import PageViewTracker from 'calypso/a8c-for-agencies/components/a4a-page-view-tracker';
 import AmplifySidebar from 'calypso/a8c-for-agencies/components/sidebar-menu/amplify';
-import AmplifyOverview from './primary/amplify-overview';
-import AmplifyReports from './primary/amplify-reports';
+import AmplifyOverview from './primary/overview';
+import AmplifyReports from './primary/reports';
 
 export const amplifyOverviewContext: Callback = ( context, next ) => {
 	context.primary = (

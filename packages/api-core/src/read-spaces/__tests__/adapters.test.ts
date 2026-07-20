@@ -2,6 +2,7 @@ import { adaptReadSpace, adaptReadSpaceDetails, type ReadSpaceApiItem } from '..
 
 const wireSpace = ( overrides: Partial< ReadSpaceApiItem > = {} ): ReadSpaceApiItem => ( {
 	id: 3,
+	slug: 'work',
 	title: 'Work',
 	layout: { color: 'blue', icon: 'inbox' },
 	...overrides,
@@ -20,6 +21,7 @@ describe( 'read spaces adapters', () => {
 		it( 'maps the wire fields onto the client ReadSpace shape', () => {
 			expect( adaptReadSpace( wireSpace() ) ).toEqual( {
 				id: '3',
+				slug: 'work',
 				name: 'Work',
 				layout: { color: 'blue', icon: 'inbox' },
 			} );
@@ -46,6 +48,20 @@ describe( 'read spaces adapters', () => {
 			expect( layout ).toEqual( { color: 'celadon', icon: 'star', view: 'gallery' } );
 		} );
 
+		it( 'passes through the optional column width when present', () => {
+			const { layout } = adaptReadSpace(
+				wireSpace( { layout: { color: 'celadon', icon: 'star', width: 'regular' } } )
+			);
+
+			expect( layout ).toEqual( { color: 'celadon', icon: 'star', width: 'regular' } );
+		} );
+
+		it( 'omits the column width when absent', () => {
+			const { layout } = adaptReadSpace( wireSpace() );
+
+			expect( layout ).not.toHaveProperty( 'width' );
+		} );
+
 		it( 'carries neither sources nor tags on the summary shape', () => {
 			const summary = adaptReadSpace( wireSpace() );
 			expect( summary ).not.toHaveProperty( 'sources' );
@@ -57,13 +73,19 @@ describe( 'read spaces adapters', () => {
 		it( 'maps the wire follows array onto sources and carries tags', () => {
 			expect(
 				adaptReadSpaceDetails(
-					wireSpace( { follows: [ wireFollow ], tags: [ 'photography', 'travel' ] } )
+					wireSpace( {
+						follows: [ wireFollow ],
+						tags: [ 'photography', 'travel' ],
+						languages: [ 'en', 'pt' ],
+					} )
 				)
 			).toEqual( {
 				id: '3',
+				slug: 'work',
 				name: 'Work',
 				layout: { color: 'blue', icon: 'inbox' },
 				tags: [ 'photography', 'travel' ],
+				languages: [ 'en', 'pt' ],
 				sources: [
 					{
 						feedId: 9981,
@@ -100,13 +122,15 @@ describe( 'read spaces adapters', () => {
 			} );
 		} );
 
-		it( 'defaults sources and tags to empty arrays when absent', () => {
+		it( 'defaults sources, tags, and languages to empty arrays when absent', () => {
 			expect( adaptReadSpaceDetails( wireSpace() ) ).toEqual( {
 				id: '3',
+				slug: 'work',
 				name: 'Work',
 				layout: { color: 'blue', icon: 'inbox' },
 				sources: [],
 				tags: [],
+				languages: [],
 			} );
 		} );
 	} );

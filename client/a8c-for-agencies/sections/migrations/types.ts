@@ -1,14 +1,7 @@
-interface Tag {
-	name: string;
-}
+import type { MigrationCommissionSite } from '@automattic/api-core';
 
-export interface TaggedSite {
-	id: number;
-	blog_id: number;
-	created_at: number;
-	url: string;
-	state: string;
-	tags: Tag[];
-	incentive_status: string;
-	incentive_rejection_reason?: string;
-}
+/**
+ * @deprecated Prefer importing `MigrationCommissionSite` from `@automattic/api-core`.
+ * Kept as an alias so existing imports across the migrations section keep working.
+ */
+export type TaggedSite = MigrationCommissionSite;

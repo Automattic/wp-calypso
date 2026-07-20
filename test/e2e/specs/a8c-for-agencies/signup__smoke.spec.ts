@@ -34,9 +34,9 @@ test.describe( 'Automattic For Agencies: Sign Up Page', { tag: [ tags.A8C_FOR_AG
 		} );
 
 		await test.step( 'Then the form values display what I have entered', async () => {
-			expect( await page.getByPlaceholder( 'Your first name' ).inputValue() ).toBe( firstName );
-			expect( await page.getByPlaceholder( 'Your last name' ).inputValue() ).toBe( lastName );
-			expect( await page.getByPlaceholder( 'Business URL' ).inputValue() ).toBe( businessURL );
+			await expect( page.getByPlaceholder( 'Your first name' ) ).toHaveValue( firstName );
+			await expect( page.getByPlaceholder( 'Your last name' ) ).toHaveValue( lastName );
+			await expect( page.getByPlaceholder( 'Business URL' ) ).toHaveValue( businessURL );
 		} );
 	} );
 } );

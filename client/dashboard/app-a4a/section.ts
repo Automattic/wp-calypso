@@ -6,6 +6,7 @@ export const A4A_DASHBOARD_SECTION_DEFINITION = {
 export const A4A_DASHBOARD_SECTION_PATHS = [
 	'/',
 	'/sites',
+	'/team',
 	'/oauth/token',
 	'/overview',
 	'/marketplace/exclusive-offers',
@@ -14,6 +15,11 @@ export const A4A_DASHBOARD_SECTION_PATHS = [
 	'/resources/ai-mcp',
 	'/resources/ai-mcp/tools',
 	'/resources/ai-mcp/connect',
+	'/earn',
+	'/earn/referrals',
+	'/earn/woopayments',
+	'/earn/migrations',
+	'/earn/payout-settings',
 	'/client',
 	'/client/subscriptions',
 ];

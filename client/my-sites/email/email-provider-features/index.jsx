@@ -18,6 +18,9 @@ EmailProviderFeature.propTypes = {
 	title: PropTypes.string.isRequired,
 };
 
+/**
+ * @param {{ features: Array< import('react').ReactNode >; logos?: Array< { image: string; imageAltText?: string; title?: string } > }} props
+ */
 function EmailProviderFeatures( { features, logos } ) {
 	if ( ! features ) {
 		return null;

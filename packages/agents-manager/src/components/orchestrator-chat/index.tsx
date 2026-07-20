@@ -15,7 +15,9 @@ import { useBroadcastConversationActivity } from '../../hooks/use-broadcast-conv
 import useCheckpointAction from '../../hooks/use-checkpoint-action';
 import useConversation from '../../hooks/use-conversation';
 import useCopyAction from '../../hooks/use-copy-action';
+import { usePageOrSiteEditorSurface } from '../../hooks/use-empty-view-suggestions';
 import useFeedbackAction from '../../hooks/use-feedback-action';
+import { useImageUpload } from '../../hooks/use-image-upload';
 import useRegenerateAction from '../../hooks/use-regenerate-action';
 import useSaveNewChatRoute from '../../hooks/use-save-new-chat-route';
 import useSourcesAction from '../../hooks/use-sources-action';
@@ -32,6 +34,7 @@ import {
 	type ExternalContextCardAction,
 } from '../../utils/external-context';
 import { isReaderChatAgent } from '../../utils/is-reader-chat-agent';
+import { mergeEmptyViewSuggestions } from '../../utils/merge-empty-view-suggestions';
 import { getOrchestratorErrorMessage } from '../../utils/orchestrator-error-message';
 import { persistLastActivity } from '../../utils/persist-last-activity';
 import { getReaderChatErrorMessage } from '../../utils/reader-chat-error-message';
@@ -46,7 +49,6 @@ import type {
 	GetChatComponent,
 	UseSuggestionsHook,
 	SiteBuildUtils,
-	ImageUploadHook,
 	UseCheckpointHook,
 	ProviderCapabilities,
 } from '../../utils/load-external-providers';
@@ -67,6 +69,25 @@ function getLatestAgentMessageId( messages: UIMessage[] ): string | null {
  */
 function formatSuggestionIds( suggestions: Suggestion[] ): string {
 	return '|' + suggestions.map( ( s ) => s.id ).join( '|' ) + '|';
+}
+
+/**
+ * Get `option_id` by matching Agenttic's selected prompt to the original options.
+ * The current tracked dropdowns have an empty parent prompt, so Agenttic copies the
+ * selected option's configured value unchanged. For example, selecting Formal
+ * returns that option's value, which maps directly to the stable id `formal`.
+ * Provider tests enforce the empty parent prompt requirement.
+ */
+function getSelectedOptionId(
+	selectedSuggestion: Suggestion,
+	availableSuggestions: Suggestion[]
+): string | undefined {
+	const originalSuggestion = availableSuggestions.find(
+		( suggestion ) => suggestion.id === selectedSuggestion.id
+	);
+	return originalSuggestion?.options?.find(
+		( option ) => option.value === selectedSuggestion.prompt
+	)?.id;
 }
 
 function getToolMessageData( message: Pick< UIMessage, 'content' > ):
@@ -135,6 +156,8 @@ interface Props {
 	isDocked: boolean;
 	/** Indicates if the chat is expanded (floating mode). */
 	isOpen: boolean;
+	/** Indicates if suggestions are visible in the current layout. */
+	suggestionsVisible: boolean;
 	/** Called when the chat is closed. */
 	onClose: () => void;
 	/** Called when the chat is expanded (floating mode). */
@@ -157,8 +180,6 @@ interface Props {
 	getChatComponent?: GetChatComponent;
 	/** Utilities for site building flow (e.g., progress tracking, site preview). */
 	siteBuildUtils?: SiteBuildUtils;
-	/** Hook for handling image uploads within the agent chat. */
-	useImageUpload?: ImageUploadHook;
 	/** Hook for saving and restoring editor state so that AI actions can be undone. */
 	useCheckpoint?: UseCheckpointHook;
 	/** Optional capability flags declared by one or more loaded providers. */
@@ -171,6 +192,7 @@ export default function OrchestratorChat( {
 	emptyViewSuggestions,
 	isDocked,
 	isOpen,
+	suggestionsVisible,
 	onClose,
 	onExpand,
 	chatHeaderOptions,
@@ -182,7 +204,6 @@ export default function OrchestratorChat( {
 	useSuggestions,
 	getChatComponent,
 	siteBuildUtils,
-	useImageUpload,
 	useCheckpoint,
 	capabilities,
 	onHasMessagesChange,
@@ -201,8 +222,21 @@ export default function OrchestratorChat( {
 	const [ isRegenerating, setIsRegenerating ] = useState( false );
 	const [ hasUserSentMessage, setHasUserSentMessage ] = useState( false );
 	const currentPostId = useSelect( ( select ) => {
-		return ( select( 'core/editor' ) as { getCurrentPostId?: () => number } )?.getCurrentPostId?.();
+		const editor = select( 'core/editor' ) as { getCurrentPostId?: () => number | string };
+		return editor?.getCurrentPostId?.();
 	}, [] );
+	const selectedBlockType = useSelect( ( select ) => {
+		try {
+			const blockEditor = select( 'core/block-editor' ) as {
+				getSelectedBlock?: () => { name?: unknown } | null;
+			};
+			const blockName = blockEditor?.getSelectedBlock?.()?.name;
+			return typeof blockName === 'string' && blockName ? blockName : undefined;
+		} catch {
+			return undefined;
+		}
+	}, [] );
+	const { isPageOrSiteEditorSurface: groupWritingSuggestions } = usePageOrSiteEditorSurface();
 
 	const {
 		addMessage,
@@ -225,6 +259,14 @@ export default function OrchestratorChat( {
 	const nextShowComponentOrderRef = useRef( 0 );
 	const wasProcessingRef = useRef( isProcessing );
 	messagesRef.current = messages;
+
+	// Drop all retained placeholders, keeping the map reference stable when
+	// already empty so no re-render is triggered.
+	const clearRetainedShowComponentMessages = useCallback( () => {
+		setRetainedShowComponentMessages( ( previousRetainedMessages ) =>
+			previousRetainedMessages.size > 0 ? new Map() : previousRetainedMessages
+		);
+	}, [] );
 
 	// A regeneration is finished once its streaming turn settles — either the new
 	// response arrives or an error restores the previous one. Re-enable component
@@ -252,13 +294,11 @@ export default function OrchestratorChat( {
 				// Drop any retained placeholders up front; the turn is being
 				// rewound, so a leftover picker would otherwise reappear once
 				// regeneration settles if the new response omits the component.
-				setRetainedShowComponentMessages( ( previousRetainedMessages ) =>
-					previousRetainedMessages.size > 0 ? new Map() : previousRetainedMessages
-				);
+				clearRetainedShowComponentMessages();
 				await handler();
 			};
 		},
-		[ getRegenerateHandler ]
+		[ clearRetainedShowComponentMessages, getRegenerateHandler ]
 	);
 
 	const getShowComponentOrder = useCallback( ( message: UIMessage ): number | undefined => {
@@ -278,15 +318,28 @@ export default function OrchestratorChat( {
 	}, [] );
 
 	useEffect( () => {
+		const previousMessages = previousMessagesRef.current;
+
+		// A full history replacement (server hydration, clearing the chat) swaps
+		// every message id at once. Nothing in it was transiently dropped, and
+		// the same picker can carry a different identity in loaded history than
+		// it did live — retaining across the swap would show it as a duplicate.
+		const previousMessageIds = new Set( previousMessages.map( ( message ) => message.id ) );
+		const isHistoryReplaced =
+			previousMessages.length > 0 &&
+			! messages.some( ( message ) => previousMessageIds.has( message.id ) );
+
 		// While regenerating, the dropped component is being replaced, not lost —
-		// don't retain it. Keep the ref current so the next non-regenerating run
-		// compares against the post-regeneration messages.
-		if ( isRegenerating ) {
+		// don't retain it either. Keep the ref current so the next run compares
+		// against the latest messages.
+		if ( isRegenerating || isHistoryReplaced ) {
+			if ( isHistoryReplaced ) {
+				clearRetainedShowComponentMessages();
+			}
 			previousMessagesRef.current = messages;
 			return;
 		}
 
-		const previousMessages = previousMessagesRef.current;
 		messages.filter( isShowComponentMessage ).forEach( getShowComponentOrder );
 
 		const currentShowComponentIdentities = new Set(
@@ -318,7 +371,7 @@ export default function OrchestratorChat( {
 		}
 
 		previousMessagesRef.current = messages;
-	}, [ getShowComponentOrder, messages, isRegenerating ] );
+	}, [ clearRetainedShowComponentMessages, getShowComponentOrder, messages, isRegenerating ] );
 
 	// Reader-chat sessions are short (usually < 50 messages) — don't waste
 	// time paginating 10 pages deep. One page covers typical use.
@@ -352,11 +405,21 @@ export default function OrchestratorChat( {
 	// Use dynamic suggestions from the external provider (e.g., Big Sky block-based suggestions)
 	const maxDynamicSuggestions = isDocked ? undefined : 3;
 	const dynamicSuggestions = useSuggestions?.( maxDynamicSuggestions, {
-		suggestionsVisible: isOpen || isCompactMode,
+		suggestionsVisible,
 	} );
 	const dynamicSuggestionsList = dynamicSuggestions?.suggestions ?? [];
+	const replaceEmptyViewSuggestions = dynamicSuggestions?.replaceEmptyViewSuggestions === true;
 	const dynamicSuggestionsKey = JSON.stringify(
 		dynamicSuggestionsList.map( ( s ) => [ s.id, s.label, s.prompt ] )
+	);
+	const contextualSuggestionIds = useMemo(
+		() =>
+			replaceEmptyViewSuggestions
+				? new Set( dynamicSuggestionsList.map( ( suggestion ) => suggestion.id ) )
+				: new Set< string >(),
+		// Track suggestion content rather than an unstable provider array.
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+		[ dynamicSuggestionsKey, replaceEmptyViewSuggestions ]
 	);
 
 	// Register dynamic suggestions whenever they change
@@ -371,19 +434,6 @@ export default function OrchestratorChat( {
 		// return a fresh empty array on each render.
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [ dynamicSuggestionsKey, registerSuggestions, clearSuggestions ] );
-
-	// Track when a new set of suggestions is rendered. Keyed on the rendered
-	// ids so re-renders that don't change the set don't re-fire.
-	const renderedSuggestionsKey = suggestions.map( ( s ) => s.id ).join( '|' );
-	useEffect( () => {
-		if ( suggestions.length > 0 ) {
-			recordBigSkyTracksEvent( 'chat_suggestions_rendered', {
-				suggestions: formatSuggestionIds( suggestions ),
-			} );
-		}
-		// `suggestions` identity is unstable; key on its rendered ids instead.
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [ renderedSuggestionsKey ] );
 
 	// Persist the chat route so the conversation can be resumed later.
 	useSaveNewChatRoute( hasUserSentMessage );
@@ -416,71 +466,13 @@ export default function OrchestratorChat( {
 	// Register a "Sources" action on agent messages with sources data.
 	useSourcesAction( registerMessageActions, ! isReaderChat );
 
-	const imageUpload = useImageUpload?.();
+	const imageUploadResult = useImageUpload();
+	// Reader chat is a public blog frontend — visitors can't upload media.
+	const imageUpload = isReaderChat ? undefined : imageUploadResult;
 	const pendingImages = imageUpload?.pendingImages || [];
 	const uploadImagesToWordPress = imageUpload?.uploadImagesToWordPress;
-
-	const onSubmitWithImages = useCallback(
-		async ( message: string ) => {
-			setHasUserSentMessage( true );
-			persistLastActivity( siteKey );
-
-			recordBigSkyTracksEvent( 'chat_input_send_message', {
-				message_length: message?.length || 0,
-				has_images: pendingImages.length > 0,
-			} );
-
-			if ( pendingImages.length > 0 && uploadImagesToWordPress ) {
-				try {
-					// Upload files to WordPress media library
-					const mediaObjects = await uploadImagesToWordPress();
-
-					recordBigSkyTracksEvent( 'file_upload_success', {
-						count: mediaObjects.length,
-					} );
-
-					// Create image data objects with full metadata including attachment ID
-					const imageData = mediaObjects.map( ( media ) => ( {
-						url: media.url,
-						metadata: {
-							id: media.id, // WordPress attachment ID
-							title: media.title,
-							fileName: media.fileName,
-							fileType: media.fileType,
-							fileSize: media.fileSize,
-							dimensions: media.dimensions,
-							uploadDate: media.uploadDate,
-							alt: media.alt,
-							caption: media.caption,
-						},
-					} ) );
-
-					// Send message with images using agenttic's imageUrls option
-					// FileParts will be automatically persisted in conversation history with metadata
-					await onSubmit( message, { imageUrls: imageData } );
-				} catch ( uploadError ) {
-					throw new Error(
-						__( 'Failed to upload images. Please try again.', '__i18n_text_domain__' )
-					);
-				}
-			} else {
-				// No images, just send normally
-				await onSubmit( message );
-			}
-			consumeNextMessageExternalContextEntries();
-			if ( isReaderChat ) {
-				markSessionUsed( agentConfig?.agentId );
-			}
-		},
-		[
-			agentConfig?.agentId,
-			isReaderChat,
-			onSubmit,
-			pendingImages.length,
-			siteKey,
-			uploadImagesToWordPress,
-		]
-	);
+	const isUploadingImages = imageUpload?.isUploadingImages ?? false;
+	const [ uploadError, setUploadError ] = useState< string | null >( null );
 
 	const setChatInput = useCallback( ( value: string ) => {
 		if ( typeof value !== 'string' ) {
@@ -498,6 +490,138 @@ export default function OrchestratorChat( {
 		}
 	}, [] );
 
+	// Whether the last `onSubmitWithImages` call actually dispatched — dropped,
+	// aborted, and failed sends deliberately leave the composer intact.
+	const submitDispatchedRef = useRef( false );
+	// Synchronous lock for the upload phase: same-tick re-entry (double-click,
+	// programmatic submit) lands before the `isUploadingImages` state does.
+	const isUploadingRef = useRef( false );
+
+	const onSubmitWithImages = useCallback(
+		async ( message: string ) => {
+			submitDispatchedRef.current = false;
+
+			// The composer is committed while a batch uploads — drop re-entrant
+			// sends (suggestion clicks, programmatic submits) instead of
+			// interleaving a second message.
+			if ( isUploadingRef.current || isUploadingImages ) {
+				return;
+			}
+
+			setHasUserSentMessage( true );
+			setUploadError( null );
+			persistLastActivity( siteKey );
+
+			recordBigSkyTracksEvent( 'chat_input_send_message', {
+				message_length: message?.length || 0,
+				has_images: pendingImages.length > 0,
+			} );
+
+			let imageData;
+			if ( pendingImages.length > 0 && uploadImagesToWordPress ) {
+				isUploadingRef.current = true;
+
+				try {
+					// Agenttic clears the (controlled) input on submit. When the message
+					// came from the composer, keep it visible while images upload: wait a
+					// microtask so the restore lands after that clear, and re-place the
+					// caret at the end (the clear leaves it at 0). Suggestion-driven and
+					// programmatic submits leave any draft alone. Agenttic dispatches the
+					// trimmed draft, hence the trim-compare.
+					if ( inputValue.trim() === message ) {
+						await Promise.resolve();
+						setChatInput( message );
+					}
+
+					const mediaObjects = await uploadImagesToWordPress();
+
+					recordBigSkyTracksEvent( 'file_upload_success', {
+						count: mediaObjects.length,
+					} );
+
+					imageData = mediaObjects.map( ( media ) => ( {
+						url: media.url,
+						metadata: {
+							id: media.id, // WordPress attachment ID
+							title: media.title,
+							fileName: media.fileName,
+							fileType: media.fileType,
+							fileSize: media.fileSize,
+							dimensions: media.dimensions,
+							uploadDate: media.uploadDate,
+							alt: media.alt,
+							caption: media.caption,
+						},
+					} ) );
+				} catch ( caughtError ) {
+					// Stop during upload: the previews are restored and a
+					// composer-typed message stays in the input — the composer is
+					// back to its pre-send state.
+					if ( caughtError instanceof Error && caughtError.name === 'AbortError' ) {
+						recordBigSkyTracksEvent( 'file_upload_cancel', {
+							count: pendingImages.length,
+						} );
+						return;
+					}
+
+					recordBigSkyTracksEvent( 'file_upload_error', {
+						count: pendingImages.length,
+					} );
+					setUploadError(
+						__( 'Failed to upload images. Please try again.', __i18n_text_domain__ )
+					);
+					return;
+				} finally {
+					isUploadingRef.current = false;
+				}
+
+				// The message dispatches now — clear the input only when it still
+				// holds this message (a suggestion-driven send may have left an
+				// unrelated draft in it).
+				setInputValue( ( currentValue ) => ( currentValue === message ? '' : currentValue ) );
+			}
+
+			submitDispatchedRef.current = true;
+			try {
+				// Images dispatch via agenttic's `imageUrls` option — the resulting
+				// `FilePart`s persist in conversation history with their metadata.
+				await ( imageData ? onSubmit( message, { imageUrls: imageData } ) : onSubmit( message ) );
+			} catch {
+				// A rejected dispatch already surfaces via agenttic's error state;
+				// put the message back (unless a newer draft replaced it) for a retry.
+				submitDispatchedRef.current = false;
+				setInputValue( ( currentValue ) => ( currentValue === '' ? message : currentValue ) );
+				return;
+			}
+
+			consumeNextMessageExternalContextEntries();
+
+			if ( isReaderChat ) {
+				markSessionUsed( agentConfig?.agentId );
+			}
+		},
+		[
+			agentConfig?.agentId,
+			inputValue,
+			isReaderChat,
+			isUploadingImages,
+			onSubmit,
+			pendingImages.length,
+			setChatInput,
+			siteKey,
+			uploadImagesToWordPress,
+		]
+	);
+
+	const handleAbort = useCallback( () => {
+		// `abortUpload` reports whether it stopped an in-flight batch, so a stop
+		// that lands just after the upload settles still aborts the agent request.
+		if ( imageUpload?.abortUpload?.() ) {
+			return;
+		}
+		abortCurrentRequest();
+	}, [ abortCurrentRequest, imageUpload ] );
+
 	const submitChatMessage = useCallback(
 		async ( message?: string ) => {
 			const submittedMessage = typeof message === 'string' ? message : inputValue;
@@ -507,7 +631,13 @@ export default function OrchestratorChat( {
 			}
 
 			await onSubmitWithImages( submittedMessage );
-			setInputValue( '' );
+			// Clear only a dispatched message — an aborted or failed send keeps
+			// the composer intact, and the user may have typed a new draft.
+			if ( submitDispatchedRef.current ) {
+				setInputValue( ( currentValue ) =>
+					currentValue === submittedMessage ? '' : currentValue
+				);
+			}
 		},
 		[ inputValue, onSubmitWithImages ]
 	);
@@ -562,8 +692,10 @@ export default function OrchestratorChat( {
 	// Listen for inline suggestion clicks dispatched by external providers or the Agenttic bridge below.
 	useEffect( () => {
 		const handleInlineSuggestionClick = ( event: Event ) => {
-			const { value } = ( event as CustomEvent ).detail;
-			if ( value ) {
+			const { value, autoSubmit } = ( event as CustomEvent ).detail;
+			// Auto-submit suggestions are already sent and the input cleared by the
+			// AgentUI; repopulating it here would leave the prompt stuck in the composer.
+			if ( value && ! autoSubmit ) {
 				const inputValue = value.endsWith( ' ' ) ? value : `${ value } `;
 				setInputValue( inputValue );
 
@@ -589,19 +721,41 @@ export default function OrchestratorChat( {
 			const value =
 				typeof suggestion === 'string' ? suggestion : suggestion.prompt ?? suggestion.label;
 
+			const autoSubmit = typeof suggestion !== 'string' && !! suggestion.autoSubmit;
+			const suggestionId = typeof suggestion !== 'string' ? suggestion.id : undefined;
+			const optionId =
+				typeof suggestion !== 'string'
+					? getSelectedOptionId( suggestion, availableSuggestions ?? [] )
+					: undefined;
+			const blockType =
+				typeof suggestion !== 'string' && contextualSuggestionIds.has( suggestion.id )
+					? selectedBlockType
+					: undefined;
+
 			if ( typeof suggestion !== 'string' ) {
 				recordBigSkyTracksEvent( 'chat_suggestion_click', {
 					suggestion_text: suggestion.prompt || '',
 					suggestion_id: suggestion.id || '',
 					available_suggestions: formatSuggestionIds( availableSuggestions ?? [] ),
+					...( optionId ? { option_id: optionId } : {} ),
+					...( blockType ? { block_type: blockType } : {} ),
 				} );
 			}
 
+			// Always dispatch so click listeners (e.g. the Jetpack sidebar hiding the
+			// clicked chip) still fire. `autoSubmit` tells the input listener to skip
+			// repopulating the composer, which the AgentUI already submitted and cleared.
 			window.dispatchEvent(
-				new CustomEvent( 'big-sky-inline-suggestion-click', { detail: { value } } )
+				new CustomEvent( 'big-sky-inline-suggestion-click', {
+					detail: {
+						value,
+						autoSubmit,
+						...( suggestionId ? { suggestionId } : {} ),
+					},
+				} )
 			);
 		},
-		[]
+		[ contextualSuggestionIds, selectedBlockType ]
 	);
 
 	// Invoke abilities setup hook to register hook-based abilities that utilize React context.
@@ -708,7 +862,6 @@ export default function OrchestratorChat( {
 			messages: currentMessages,
 			getChatComponent,
 			currentPostId,
-			onSubmit: onSubmitWithImages,
 		} );
 
 		const latestAgentMessageId = getLatestAgentMessageId( currentMessages );
@@ -757,7 +910,6 @@ export default function OrchestratorChat( {
 		isBuildingSite,
 		isProcessing,
 		messages,
-		onSubmitWithImages,
 		retainedShowComponentMessages,
 		siteBuildUtils,
 		thinkingMessage,
@@ -781,32 +933,67 @@ export default function OrchestratorChat( {
 		( isProcessing || ( isThinking && ! isBuildingSite ) ) && ! shouldSuppressTransientThinking;
 
 	// Determine which suggestions to show following Big Sky's logic:
-	// - When there are dynamic suggestions (from block selection, etc.), show those
-	// - Otherwise, show empty view suggestions only when there are no messages AND no input text
+	// - Empty chat: show provider empty-view chips plus dynamic chips.
+	// - Active chat/input: show dynamic suggestions only.
 	let displayedEmptyViewSuggestions: Suggestion[] = [];
-	if ( suggestions.length > 0 ) {
+	if ( ! suggestionsVisible ) {
+		// Minimized/collapsed: the chat renders no suggestions, so leave the list
+		// empty to avoid firing chat_suggestions_rendered for hidden chips.
+		displayedEmptyViewSuggestions = [];
+	} else if (
+		! isLoadingConversation &&
+		displayedMessages.length === 0 &&
+		inputValue.length === 0
+	) {
+		// Prefer the registered store, but fall back to the live `useSuggestions`
+		// output when the store is empty. Clicking a suggestion calls
+		// `clearSuggestions()`, which empties the store, and the re-registration
+		// effect is keyed on the (unchanged) hook output so it won't restore it.
+		// Persistent empty-view chips must survive that clear.
+		displayedEmptyViewSuggestions = mergeEmptyViewSuggestions(
+			emptyViewSuggestions,
+			replaceEmptyViewSuggestions || suggestions.length === 0
+				? dynamicSuggestionsList
+				: suggestions,
+			replaceEmptyViewSuggestions
+		);
+	} else if ( suggestions.length > 0 ) {
 		displayedEmptyViewSuggestions = suggestions;
-	} else if ( displayedMessages.length === 0 && inputValue.length === 0 ) {
-		// Read straight from the live `useSuggestions` output rather than the
-		// registered store. Clicking a suggestion calls `clearSuggestions()`,
-		// which empties the store, and the re-registration effect is keyed on
-		// the (unchanged) hook output so it won't restore it. Persistent
-		// empty-view chips must survive that clear; fall back to the static
-		// defaults only when the hook genuinely has none.
-		displayedEmptyViewSuggestions =
-			dynamicSuggestionsList.length > 0 ? dynamicSuggestionsList : emptyViewSuggestions;
 	}
+
+	// Track when a set of suggestions is rendered — the dynamic block-context
+	// suggestions or, on an empty chat, the empty-view starter chips. Mirrors
+	// Big Sky, which tracked the empty view too. Dedupe on the rendered ids so
+	// re-renders with the same set don't re-fire; a set that empties and returns
+	// to the same content isn't re-tracked.
+	const displayedSuggestionIds = displayedEmptyViewSuggestions.map( ( s ) => s.id ).join( '|' );
+	const lastTrackedSuggestionsRef = useRef< string | null >( null );
+	useEffect( () => {
+		if ( displayedEmptyViewSuggestions.length === 0 ) {
+			return;
+		}
+		if ( lastTrackedSuggestionsRef.current !== displayedSuggestionIds ) {
+			recordBigSkyTracksEvent( 'chat_suggestions_rendered', {
+				suggestions: formatSuggestionIds( displayedEmptyViewSuggestions ),
+			} );
+			lastTrackedSuggestionsRef.current = displayedSuggestionIds;
+		}
+		// `displayedEmptyViewSuggestions` identity is unstable; key on its ids.
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [ displayedSuggestionIds ] );
 
 	return (
 		<AgentChat
 			messages={ displayedMessages }
 			suggestions={ suggestions }
 			emptyViewSuggestions={ displayedEmptyViewSuggestions }
-			isProcessing={ showProcessingIndicator }
-			thinkingMessage={ progressMessage }
-			error={ chatError }
+			isProcessing={ showProcessingIndicator || isUploadingImages }
+			thinkingMessage={
+				isUploadingImages ? __( 'Uploading images…', __i18n_text_domain__ ) : progressMessage
+			}
+			error={ chatError || uploadError }
 			onSubmit={ onSubmitWithImages }
-			onAbort={ abortCurrentRequest }
+			onAbort={ handleAbort }
 			isLoadingConversation={ isLoadingConversation }
 			isDocked={ isDocked }
 			isOpen={ isOpen }
@@ -820,6 +1007,7 @@ export default function OrchestratorChat( {
 			inputValue={ inputValue }
 			onInputChange={ setInputValue }
 			isCompactMode={ isCompactMode }
+			groupWritingSuggestions={ groupWritingSuggestions }
 			imageUpload={ imageUpload }
 			showFeedbackInput={ showFeedbackInput }
 			onSubmitFeedbackText={ submitFeedbackText }

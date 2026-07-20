@@ -5,6 +5,13 @@ import type { AccountClosureResponse, AccountDetails } from './types';
 
 const MAX_ERROR_LENGTH = 300;
 
+// An account with an active Atomic site cannot be closed. Cancelling the plan
+// (done by the spec) deprovisions the site asynchronously, so the close keeps
+// returning `atomic-site` until that completes (~80s in CI). Retry over this
+// window before treating the failure as a leak; the margin absorbs variance.
+const ATOMIC_DEPROVISION_TIMEOUT_MS = 180 * 1000;
+const ATOMIC_DEPROVISION_POLL_MS = 15 * 1000;
+
 export interface AccountLeak {
 	/**
 	 * Numeric user ID; absent when a signup response created an account but did
@@ -67,6 +74,26 @@ function errorMessage( error: unknown ): string {
 }
 
 /**
+ * Whether a failed account close was rejected because the account still owns an
+ * active Atomic site (WordPress.com error code `atomic-site`). `closeAccount`
+ * returns the raw API response, so the code arrives as `{ error: 'atomic-site' }`;
+ * the serialized-message fallback covers a thrown error carrying the same code.
+ *
+ * @param {unknown} error The close error or response value.
+ * @returns {boolean} True when the close was blocked by an active Atomic site.
+ */
+function isActiveAtomicSiteError( error: unknown ): boolean {
+	if (
+		error &&
+		typeof error === 'object' &&
+		( error as { error?: unknown } ).error === 'atomic-site'
+	) {
+		return true;
+	}
+	return /atomic-site|active atomic sites/i.test( errorMessage( error ) );
+}
+
+/**
  * Whether an error from a `/me` request indicates the account is gone (a dead or
  * invalid bearer token), as opposed to a transient/network/server error.
  *
@@ -88,7 +115,12 @@ function errorMessage( error: unknown ): string {
  */
 export function isAccountClosedError( error: unknown ): boolean {
 	const message = error instanceof Error ? error.message : String( error ?? '' );
-	return /invalid_token|authorization_required|unauthorized|user_not_found/i.test( message );
+	// `invalid_username` is included because it means the account never existed
+	// (a rejected/throttled signup, surfaced via the bearer-token login fallback),
+	// so like the auth codes above it is a "nothing to leak" signal, not a bug.
+	return /invalid_token|authorization_required|unauthorized|user_not_found|invalid_username/i.test(
+		message
+	);
 }
 
 /**
@@ -152,24 +184,80 @@ export async function closeAccountAndRecordLeak(
 	accountDetails: AccountDetails,
 	leakDir: string
 ): Promise< void > {
+	const hasUserID = Number.isInteger( accountDetails.userID ) && accountDetails.userID > 0;
+	const username =
+		typeof accountDetails.username === 'string' ? accountDetails.username.trim() : '';
+	const email = typeof accountDetails.email === 'string' ? accountDetails.email.trim() : '';
+
+	if ( ! hasUserID || ! username || ! email ) {
+		console.warn( 'Skipping remote account teardown: account identity is incomplete.' );
+		if ( hasUserID || email ) {
+			recordAccountLeak( leakDir, {
+				...( hasUserID ? { userID: accountDetails.userID } : {} ),
+				username,
+				email,
+				error:
+					'Remote teardown skipped because the signup response contained an incomplete account identity.',
+			} );
+		}
+		return;
+	}
+
 	console.log( `Closing account ${ accountDetails.userID }.` );
 
+	// Track the wait so the terminal `[atomic-teardown]` breadcrumb reports how
+	// long the Atomic deprovision took, surfacing drift if that timing changes.
+	const startedAt = Date.now();
+	const deadline = startedAt + ATOMIC_DEPROVISION_TIMEOUT_MS;
 	let closeError: unknown;
-	try {
-		const response: AccountClosureResponse = await client.closeAccount( accountDetails );
+	let attempts = 0;
+	let sawAtomicSite = false;
+	for (;;) {
+		closeError = undefined;
+		attempts += 1;
+		try {
+			const response: AccountClosureResponse = await client.closeAccount( accountDetails );
 
-		if ( response.success === true ) {
-			console.log( `Successfully deleted user ID ${ accountDetails.userID }` );
-			clearAccountLeak( leakDir, accountDetails.userID );
-			return;
+			if ( response.success === true ) {
+				if ( sawAtomicSite ) {
+					console.log(
+						`[atomic-teardown] user ${
+							accountDetails.userID
+						} closed after ${ attempts } attempt(s) over ${
+							Date.now() - startedAt
+						}ms of Atomic deprovision wait.`
+					);
+				}
+				console.log( `Successfully deleted user ID ${ accountDetails.userID }` );
+				clearAccountLeak( leakDir, accountDetails.userID );
+				return;
+			}
+
+			console.warn( `Failed to delete user ID ${ accountDetails.userID }` );
+			console.warn( response );
+			closeError = response;
+		} catch ( error ) {
+			console.warn( `Error closing account ${ accountDetails.userID }: ${ error }` );
+			closeError = error;
 		}
 
-		console.warn( `Failed to delete user ID ${ accountDetails.userID }` );
-		console.warn( response );
-		closeError = response;
-	} catch ( error ) {
-		console.warn( `Error closing account ${ accountDetails.userID }: ${ error }` );
-		closeError = error;
+		// Only an active-Atomic-site rejection is worth waiting on; every other
+		// failure is terminal and falls through to the leak probe immediately.
+		if ( ! isActiveAtomicSiteError( closeError ) || Date.now() >= deadline ) {
+			break;
+		}
+		sawAtomicSite = true;
+		await new Promise( ( resolve ) => setTimeout( resolve, ATOMIC_DEPROVISION_POLL_MS ) );
+	}
+
+	if ( sawAtomicSite ) {
+		console.log(
+			`[atomic-teardown] user ${
+				accountDetails.userID
+			} still blocked by an Atomic site after ${ attempts } attempt(s) over ${
+				Date.now() - startedAt
+			}ms; recording leak.`
+		);
 	}
 
 	try {

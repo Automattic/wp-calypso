@@ -23,9 +23,19 @@
 }
 
 .space-feed-gallery__card {
+	position: relative;
 	min-inline-size: 0;
 	block-size: 270px;
 	color: inherit;
+}
+
+.space-feed-gallery__card[data-selected]::before {
+	content: '';
+	position: absolute;
+	inset-block: 0;
+	inset-inline-start: -16px;
+	inline-size: 2px;
+	background: var(--color-primary);
 }
 
 .space-feed-gallery__thumb {

@@ -814,15 +814,25 @@ export function CheckoutFormSubmit( {
 		if ( ! targetStepId ) {
 			return;
 		}
-		const didActivateTarget = await makeStepActive( targetStepId );
-		// If activation failed, makeStepActive stopped on an intervening step that
-		// did not validate and left it active. Scroll to whichever step actually
-		// ended up active (read from the live store) so the user lands on the step
-		// that needs attention rather than a step that stayed collapsed. Desktop
-		// does not auto-scroll on step changes, so we always scroll explicitly.
-		const stepIdToScrollTo = didActivateTarget
-			? targetStepId
-			: getStepIdFromNumber( state.activeStepNumber ) ?? targetStepId;
+		if ( stepIdMap[ targetStepId ] === activeStepNumber ) {
+			// The active step is itself the step that still needs completing.
+			// makeStepActive would be a no-op here because it only runs completion
+			// callbacks for the steps *before* its target, so it would never validate
+			// the active step. Run the active step's own completion callback instead so
+			// the button always tries to complete the step: surfacing inline validation
+			// errors when invalid and advancing when valid, exactly like the step's
+			// inline "Continue" button.
+			await getStepCompleteCallback( activeStepNumber )();
+		} else {
+			// makeStepActive walks forward from the active step, completing each step
+			// until it reaches the target or stops on an intervening step that fails to
+			// validate (leaving that step active).
+			await makeStepActive( targetStepId );
+		}
+		// Scroll to whichever step ended up active (read from the live store): the step
+		// we advanced to on success, or the step that still needs attention on failure.
+		// Desktop does not auto-scroll on step changes, so we always scroll explicitly.
+		const stepIdToScrollTo = getStepIdFromNumber( state.activeStepNumber ) ?? targetStepId;
 		document
 			.getElementById( stepIdToScrollTo )
 			?.scrollIntoView?.( { behavior: 'smooth', block: 'start' } );

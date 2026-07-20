@@ -1,7 +1,7 @@
 import { agencyQuery, activeAgencyQuery } from '@automattic/api-queries';
 import { useSuspenseQuery } from '@tanstack/react-query';
 import { __ } from '@wordpress/i18n';
-import { home, globe, layout, pages, tag } from '@wordpress/icons';
+import { home, globe, layout, pages, tag, currencyDollar, people } from '@wordpress/icons';
 import { SidebarExpandableMenuItem, SidebarMenuItem } from '../../components/sidebar';
 import { useAppContext } from '../context';
 
@@ -23,6 +23,11 @@ export default function AgencySidebar() {
 			{ supports.agency.sites && (
 				<SidebarMenuItem icon={ layout } to="/sites">
 					{ __( 'Sites' ) }
+				</SidebarMenuItem>
+			) }
+			{ supports.agency.team && (
+				<SidebarMenuItem icon={ people } to="/team">
+					{ __( 'Team' ) }
 				</SidebarMenuItem>
 			) }
 			{ supports.agency.tiers && (
@@ -49,6 +54,17 @@ export default function AgencySidebar() {
 					{ canAccessMcp && (
 						<SidebarMenuItem to="/resources/ai-mcp">{ __( 'MCP' ) }</SidebarMenuItem>
 					) }
+				</SidebarExpandableMenuItem>
+			) }
+			{ supports.agency.earn && (
+				<SidebarExpandableMenuItem label={ __( 'Earn' ) } icon={ currencyDollar } to="/earn">
+					<SidebarMenuItem to="/earn" activeOptions={ { exact: true } }>
+						{ __( 'Overview' ) }
+					</SidebarMenuItem>
+					<SidebarMenuItem to="/earn/referrals">{ __( 'Referrals' ) }</SidebarMenuItem>
+					<SidebarMenuItem to="/earn/woopayments">{ __( 'WooPayments' ) }</SidebarMenuItem>
+					<SidebarMenuItem to="/earn/migrations">{ __( 'Migrations' ) }</SidebarMenuItem>
+					<SidebarMenuItem to="/earn/payout-settings">{ __( 'Payout settings' ) }</SidebarMenuItem>
 				</SidebarExpandableMenuItem>
 			) }
 		</>

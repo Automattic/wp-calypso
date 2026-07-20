@@ -5,7 +5,7 @@ import {
 	type Suggestion,
 } from '@automattic/agenttic-ui';
 import { useDispatch, useSelect } from '@wordpress/data';
-import { useCallback, useState } from '@wordpress/element';
+import { useCallback, useEffect, useRef, useState } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { columns, comment, drawerRight, login } from '@wordpress/icons';
 import { Routes, Route, Navigate, useLocation, useNavigate } from 'react-router-dom';
@@ -34,7 +34,6 @@ import type {
 	GetChatComponent,
 	UseSuggestionsHook,
 	SiteBuildUtils,
-	ImageUploadHook,
 	UseCheckpointHook,
 	ProviderCapabilities,
 } from '../../utils/load-external-providers';
@@ -58,8 +57,6 @@ interface Props {
 	getChatComponent?: GetChatComponent;
 	/** Utilities for site building flow (e.g., progress tracking, site preview). */
 	siteBuildUtils?: SiteBuildUtils;
-	/** Hook for handling image uploads within the agent chat. */
-	useImageUpload?: ImageUploadHook;
 	/** Hook for saving and restoring editor state so that AI actions can be undone. */
 	useCheckpoint?: UseCheckpointHook;
 	/** Optional capability flags declared by one or more loaded providers. */
@@ -75,7 +72,6 @@ export default function AgentDock( {
 	getChatComponent,
 	useSuggestions,
 	siteBuildUtils,
-	useImageUpload,
 	useCheckpoint,
 	capabilities,
 }: Props ) {
@@ -84,7 +80,7 @@ export default function AgentDock( {
 	const [ isCompactMode, setIsCompactMode ] = useState(
 		window.__agentsManagerActions?.isCompactMode ?? false
 	);
-	const [ shouldRenderChat, setShouldRenderChat ] = useState(
+	const [ isChatEnabled, setIsChatEnabled ] = useState(
 		window.__agentsManagerActions?.isChatEnabled ?? true
 	);
 	const [ desktopMediaQuery, setDesktopMediaQuery ] = useState< string | undefined >(
@@ -119,29 +115,37 @@ export default function AgentDock( {
 		[ isReaderChat, setIsOpen ]
 	);
 
-	const { isDocked, canDock, dock, undock, openSidebar, closeSidebar, createAgentPortal } =
-		useAgentLayoutManager( {
-			defaultDocked: isReaderChat ? false : isPersistedDocked,
-			defaultOpen: isPersistedOpen,
-			desktopMediaQuery,
-			// Only open the sidebar; keep the current route. Admin-bar items
-			// set their own route (e.g. history) before opening it.
-			onOpenSidebar: () => {
-				recordBigSkyTracksEvent( 'sidebar_open_click' );
-				setOpenState( true );
-			},
-			onCloseSidebar: () => {
-				recordBigSkyTracksEvent( 'sidebar_close_click' );
-				setOpenState( false );
-			},
-			onDock: () => {
-				recordBigSkyTracksEvent( 'ai_chat_docked' );
-			},
-			onUndock: () => {
-				recordBigSkyTracksEvent( 'ai_chat_undocked' );
-			},
-			isSplitScreen,
-		} );
+	const {
+		isDocked,
+		isSidebarOpen,
+		canDock,
+		dock,
+		undock,
+		openSidebar,
+		closeSidebar,
+		createAgentPortal,
+	} = useAgentLayoutManager( {
+		defaultDocked: isReaderChat ? false : isPersistedDocked,
+		defaultOpen: isPersistedOpen,
+		desktopMediaQuery,
+		// Only open the sidebar; keep the current route. Admin-bar items
+		// set their own route (e.g. history) before opening it.
+		onOpenSidebar: () => {
+			recordBigSkyTracksEvent( 'sidebar_open_click' );
+			setOpenState( true );
+		},
+		onCloseSidebar: () => {
+			recordBigSkyTracksEvent( 'sidebar_close_click' );
+			setOpenState( false );
+		},
+		onDock: () => {
+			recordBigSkyTracksEvent( 'ai_chat_docked' );
+		},
+		onUndock: () => {
+			recordBigSkyTracksEvent( 'ai_chat_undocked' );
+		},
+		isSplitScreen,
+	} );
 
 	// Docked close fires `sidebar_close_click` (via `onCloseSidebar`); undocked
 	// close fires `dock_back_button_click`. Matches Big Sky.
@@ -173,16 +177,30 @@ export default function AgentDock( {
 	// WP admin bar integration. Returns whether the AI chat entry button is present.
 	const hasAiChatEntry = useAdminBarIntegration( { closeChat: handleClose, openChat } );
 
+	// `isMinimized` only matters next to an entry button — without one the chat
+	// shows regardless. When the button disappears mid-session (Site Editor
+	// canvas → navigation view), clear the stale flag so re-entering the canvas
+	// doesn't instantly re-minimize the chat the user is looking at.
+	const prevHasAiChatEntryRef = useRef( hasAiChatEntry );
+	useEffect( () => {
+		if ( prevHasAiChatEntryRef.current && ! hasAiChatEntry && isMinimized ) {
+			setIsMinimized( false );
+		}
+		prevHasAiChatEntryRef.current = hasAiChatEntry;
+	}, [ hasAiChatEntry, isMinimized, setIsMinimized ] );
+
 	// Route visibility. All are hidden in reader chat (public blog frontends);
 	// some add a further requirement, noted below. Ordered to match the routes.
 	//
-	// `/zendesk` also needs the unified agent or using Woo AI.
+	// `/zendesk` also needs the unified agent.
 	const showZendeskChat = shouldUseUnifiedAgent && ! isReaderChat;
-	// `/support-guides` (the list) also needs the unified agent, and is only
-	// reachable from the AI chat entry button (WP admin bar or Calypso masterbar).
-	const showSupportGuides = shouldUseUnifiedAgent && ! isReaderChat && hasAiChatEntry;
+	// `/support-guides` (the list) also needs the unified agent. Registered even
+	// without an entry button: unregistering it mid-session (Site Editor
+	// navigation) would yank the route from under a user viewing it, and the
+	// wildcard redirect would reset their chat.
+	const showSupportGuides = shouldUseUnifiedAgent && ! isReaderChat;
 	// `/post` (the viewer) opens a guide or link from in-chat links and sources,
-	// so unlike the list it isn't tied to the admin bar.
+	// so unlike the list it doesn't need the unified agent.
 	const showSupportGuide = ! isReaderChat;
 	// `/history` matches the chat header's history button.
 	const showChatHistory = ! isReaderChat;
@@ -194,7 +212,7 @@ export default function AgentDock( {
 		openSidebar,
 		closeSidebar,
 		setIsCompactMode,
-		setShouldRenderChat,
+		setIsChatEnabled,
 		setDesktopMediaQuery,
 	} );
 
@@ -245,7 +263,7 @@ export default function AgentDock( {
 		return [
 			{
 				icon: comment,
-				title: __( 'New chat', '__i18n_text_domain__' ),
+				title: __( 'New chat', __i18n_text_domain__ ),
 				isDisabled: pathname === '/chat' && isOrchestratorChatEmpty,
 				onClick: () => {
 					recordBigSkyTracksEvent( 'ai_chat_more_options_click', {
@@ -260,7 +278,7 @@ export default function AgentDock( {
 			! isReaderChat &&
 				isDocked && {
 					icon: login,
-					title: __( 'Pop out sidebar', '__i18n_text_domain__' ),
+					title: __( 'Pop out sidebar', __i18n_text_domain__ ),
 					onClick: () => {
 						recordBigSkyTracksEvent( 'ai_chat_more_options_click', {
 							type: 'undock',
@@ -273,7 +291,7 @@ export default function AgentDock( {
 				! isDocked &&
 				canDock && {
 					icon: drawerRight,
-					title: __( 'Move to sidebar', '__i18n_text_domain__' ),
+					title: __( 'Move to sidebar', __i18n_text_domain__ ),
 					onClick: () => {
 						recordBigSkyTracksEvent( 'ai_chat_more_options_click', {
 							type: 'dock',
@@ -289,8 +307,8 @@ export default function AgentDock( {
 				capabilities?.supportsSplitScreen && {
 					icon: columns,
 					title: isSplitScreen
-						? __( 'Exit split screen', '__i18n_text_domain__' )
-						: __( 'Split screen sidebar', '__i18n_text_domain__' ),
+						? __( 'Exit split screen', __i18n_text_domain__ )
+						: __( 'Split screen sidebar', __i18n_text_domain__ ),
 					onClick: () => setIsSplitScreen( ! isSplitScreen ),
 				},
 		].filter( Boolean ) as ChatHeaderOptions;
@@ -309,6 +327,7 @@ export default function AgentDock( {
 			emptyViewSuggestions={ emptyViewSuggestions }
 			isDocked={ isDocked }
 			isOpen={ chatIsOpen }
+			suggestionsVisible={ isDocked ? isSidebarOpen : chatIsOpen || isCompactMode }
 			onClose={ handleClose }
 			onExpand={ handleExpand }
 			chatHeaderOptions={ chatHeaderOptions }
@@ -320,7 +339,6 @@ export default function AgentDock( {
 			useSuggestions={ useSuggestions }
 			getChatComponent={ getChatComponent }
 			siteBuildUtils={ siteBuildUtils }
-			useImageUpload={ useImageUpload }
 			useCheckpoint={ useCheckpoint }
 			capabilities={ capabilities }
 			onHasMessagesChange={ handleChatHasMessagesChange }
@@ -373,9 +391,9 @@ export default function AgentDock( {
 		/>
 	);
 
-	// When chat rendering is disabled there's nothing to open, so render nothing — the editor
+	// When the chat is disabled there's nothing to open, so render nothing — the editor
 	// entry-point buttons would otherwise be dead.
-	if ( ! shouldRenderChat ) {
+	if ( ! isChatEnabled ) {
 		return null;
 	}
 

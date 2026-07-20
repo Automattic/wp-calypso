@@ -90,4 +90,8 @@ export const STATS_DO_YOU_LOVE_JETPACK_STATS_NOTICE = 'DoYouLoveJetpackStatsNoti
 
 export const DATE_FORMAT = 'YYYY-MM-DD';
 
+// Shared by the Post Details and Video Details summary charts so both show
+// the same amount of history per view (page or window) for a given period.
+export const STATS_SUMMARY_MAX_BARS = 10;
+
 export const NAVIGATION_METHOD_ARROW = 'arrow';

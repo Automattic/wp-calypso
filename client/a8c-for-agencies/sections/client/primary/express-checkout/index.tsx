@@ -1,5 +1,6 @@
 import { StripeHookProvider } from '@automattic/calypso-stripe';
 import { CheckoutErrorBoundary } from '@automattic/composite-checkout';
+import { addQueryArgs } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
 import { getStripeConfiguration } from 'calypso/lib/store-transactions';
 import CalypsoShoppingCartProvider from 'calypso/my-sites/checkout/calypso-shopping-cart-provider';
@@ -16,7 +17,9 @@ function ClientExpressCheckoutContent() {
 	const translate = useTranslate();
 	const userLoggedIn = useSelector( isUserLoggedIn );
 
-	const { isReady, error } = useClientCheckout( { expressMode: ! userLoggedIn } );
+	const { isReady, error, wpcomHostingProductSlug } = useClientCheckout( {
+		expressMode: ! userLoggedIn,
+	} );
 
 	if ( ! isReady ) {
 		return <ClientCheckoutV2Placeholder />;
@@ -26,10 +29,16 @@ function ClientExpressCheckoutContent() {
 		return <ClientCheckoutV2Error title={ translate( 'Error' ) } message={ error } />;
 	}
 
+	const redirectTo = wpcomHostingProductSlug
+		? addQueryArgs( EXPRESS_CHECKOUT_REDIRECT_URL, {
+				wpcom_plan_purchased: wpcomHostingProductSlug,
+		  } )
+		: EXPRESS_CHECKOUT_REDIRECT_URL;
+
 	return (
 		<CheckoutMain
 			sitelessCheckoutType="a4a"
-			redirectTo={ EXPRESS_CHECKOUT_REDIRECT_URL }
+			redirectTo={ redirectTo }
 			customizedPreviousPath={ EXPRESS_CHECKOUT_REDIRECT_URL }
 			isLoggedOutCart={ ! userLoggedIn }
 			siteSlug=""

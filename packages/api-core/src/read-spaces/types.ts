@@ -53,6 +53,13 @@ export type SpaceIcon =
 export type SpaceFeedLayout = 'standard-list' | 'gallery' | 'board' | 'legacy';
 
 /**
+ * Column width of the space feed — `regular` is the narrow single reading column
+ * shared with the rest of the Reader; `wide` is the roomy layout. Unset falls
+ * back to `wide` so spaces created before this shipped keep their current width.
+ */
+export type SpaceLayoutWidth = 'regular' | 'wide';
+
+/**
  * Presentation settings for a space, grouped so they can grow beyond color and
  * icon (e.g. cover image, sort order) without widening `ReadSpace` itself.
  */
@@ -65,6 +72,8 @@ export interface SpaceLayout {
 	icon: SpaceIcon;
 	// Which feed layout to render.
 	view?: SpaceFeedLayout;
+	// Column width of the space feed. Unset falls back to `wide`.
+	width?: SpaceLayoutWidth;
 }
 
 /**
@@ -73,6 +82,10 @@ export interface SpaceLayout {
  */
 export interface ReadSpace {
 	id: string;
+	// `sanitize_title( name )`, derived and kept unique-per-owner server-side. Used
+	// to address a space in the URL; it re-syncs on every rename (so it can change),
+	// while `id` stays the stable key for mutations and streams.
+	slug: string;
 	name: string;
 	layout: SpaceLayout;
 }
@@ -85,6 +98,12 @@ export interface ReadSpace {
 export interface ReadSpaceDetails extends ReadSpace {
 	sources: SpaceSource[];
 	tags: string[];
+	// Base ES language codes (e.g. `en`, `pt`) the space's tag results are
+	// filtered to. The server normalizes whatever it's sent to base codes (region
+	// stripped, lowercased, validated, de-duped) and echoes the canonical list
+	// back here, so it may differ from what was submitted. Empty means unset (the
+	// server falls back to the viewer's interface locale).
+	languages: string[];
 }
 
 export interface CreateReadSpaceParams {
@@ -94,6 +113,9 @@ export interface CreateReadSpaceParams {
 	// if unresolvable.
 	tags?: string[];
 	feeds?: Array< number | string >;
+	// Base ES language codes (e.g. `en`, `pt`). The server normalizes to base
+	// codes and silently drops unknown ones, so the persisted set may be a subset.
+	languages?: string[];
 	layout?: Partial< SpaceLayout >;
 }
 
@@ -107,6 +129,10 @@ export interface UpdateReadSpaceParams {
 	name?: string;
 	tags?: string[];
 	feeds?: Array< number | string >;
+	// Full replace of the space's base language codes (pass `[]` to clear). The
+	// server normalizes to base codes and drops unknown ones; see
+	// `CreateReadSpaceParams.languages`.
+	languages?: string[];
 	layout?: Partial< SpaceLayout >;
 }
 

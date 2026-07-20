@@ -1,0 +1,264 @@
+@import "@wordpress/base-styles/breakpoints";
+@import "@automattic/typography/styles/fonts";
+@import "@automattic/components/src/styles/typography";
+@import "@automattic/components/src/styles/mixins";
+
+$card-padding: 24px;
+$border-radius: 5px; // stylelint-disable-line scales/radii
+
+@keyframes stats-video-details-card-shine {
+	to {
+		background-position-x: -200%;
+	}
+}
+
+.stats-video-detail {
+	display: flex;
+	flex-direction: column;
+	gap: 24px;
+
+	// The Card base has `margin: 0 auto`; inside a flex column the auto
+	// inline margins absorb the free space and shrink the card to its content
+	// width instead of stretching, so zero them out.
+	> .card {
+		margin-inline: 0;
+	}
+}
+
+// The x-axis places labels at equal-slot centers (chart width / bar count),
+// but `.is-chart-tabs` caps bars at 156px and lays them out space-between, so
+// with few bars (e.g. ~5 weekly buckets) bars drift away from their labels.
+// space-around keeps every capped bar centered in its slot.
+.stats-video-summary.is-chart-tabs .chart__bars {
+	justify-content: space-around;
+}
+
+.stats-video-summary {
+	.stats__period-header {
+		justify-content: space-between;
+
+		// Keep the period switcher pinned to the right edge when the header
+		// wraps on narrow widths (the base style centers wrapped content).
+		.segmented-control {
+			margin-inline-start: auto;
+		}
+	}
+
+	.is-summary-chart {
+		margin-top: 24px;
+		// Both the loading placeholder (228px) and the chart (200px bars +
+		// 28px x-axis) render inside; pin the height and hide the chart while
+		// loading (as .is-chart-tabs.is-loading does for the traffic chart)
+		// so the two never stack and resize the page.
+		min-height: 228px;
+
+		&.is-loading .chart {
+			display: none;
+		}
+	}
+}
+
+.stats-video-details-card {
+	border-color: var(--studio-gray-5);
+	border-radius: $border-radius;
+	display: flex;
+	flex-direction: column;
+	font-family: $font-sf-pro-text;
+	font-size: $font-body-small;
+	margin-bottom: 0;
+	max-width: 100%;
+	padding: $card-padding;
+	gap: $card-padding;
+
+	&.card::after {
+		display: none;
+	}
+}
+
+.stats-video-details-card__heading {
+	color: var(--studio-gray-100);
+	font-family: $font-sf-pro-display;
+	font-size: $font-size-header-small;
+	font-weight: 500;
+	line-height: 1.3;
+	// wp-admin core styles give h4 a `margin: 1.33em 0` in Odyssey Stats.
+	margin: 0;
+}
+
+.stats-video-details-card.is-loading {
+	.stats-video-details-card__title,
+	.stats-video-details-card__date {
+		position: relative;
+		max-width: 480px;
+
+		&::after {
+			content: "";
+			position: absolute;
+			inset: 0;
+			background: linear-gradient(94deg, var(--studio-gray-5) 8%, var(--studio-gray-0) 18%, var(--studio-gray-5) 33%);
+			border-radius: 4px;
+			background-size: 200% 100%;
+			animation: 1.5s stats-video-details-card-shine linear infinite;
+		}
+	}
+
+	.stats-video-details-card__title {
+		min-height: 32px;
+	}
+
+	.stats-video-details-card__date {
+		min-height: 20px;
+		margin-top: 4px;
+	}
+}
+
+.stats-video-details-card__info {
+	.stats-video-details-card__title {
+		@include stats-section-header;
+		display: block;
+		margin-bottom: 4px;
+	}
+
+	.stats-video-details-card__date {
+		color: var(--studio-gray-60);
+		font-weight: 400;
+		line-height: 1.5;
+	}
+}
+
+.stats-video-embeds-card {
+	border-color: var(--studio-gray-5);
+	border-radius: 5px; /* stylelint-disable-line scales/radii */
+	font-family: $font-sf-pro-text;
+	font-size: $font-body-small;
+	padding: 24px;
+
+	&.card::after {
+		display: none;
+	}
+}
+
+.stats-video-embeds-card__heading {
+	color: var(--studio-gray-100);
+	font-family: $font-sf-pro-display;
+	font-size: $font-size-header-small;
+	font-weight: 500;
+	line-height: 1.3;
+	// wp-admin core styles give h4 a `margin: 1.33em 0` in Odyssey Stats.
+	margin: 0 0 16px;
+}
+
+.stats-video-embeds-card__list {
+	list-style: none;
+	margin: 0;
+	padding: 0;
+}
+
+.stats-video-embeds-card__item {
+	line-height: 1.5;
+	margin: 0;
+	overflow-wrap: anywhere;
+
+	+ .stats-video-embeds-card__item {
+		margin-top: 12px;
+	}
+}
+
+.stats-video-embeds-card__empty {
+	color: var(--studio-gray-60);
+	line-height: 1.5;
+}
+
+.stats-video-metric-tabs {
+	display: grid;
+	grid-template-columns: repeat(3, 1fr);
+	gap: 16px;
+	list-style: none;
+	// The chart's 42px-wide x-axis labels wrap onto a second line for
+	// 'MMM YYYY' month labels (as on the post details page); leave room for
+	// the overflowing line, matching the spacing below the post details chart.
+	margin: 40px 0 0;
+	padding: 0;
+}
+
+.stats-video-metric-tabs__item {
+	// Stretch the button to the row height so cards stay uniform when a
+	// label or value wraps inside one of them.
+	display: flex;
+	margin: 0;
+	min-width: 0;
+}
+
+.stats-video-metric-tabs__tab {
+	flex: 1;
+	background: var(--color-neutral-0);
+	border: 1.5px solid transparent;
+	border-radius: 4px;
+	box-sizing: border-box;
+	cursor: pointer;
+	display: flex;
+	flex-direction: column;
+	font-family: $font-sf-pro-text;
+	gap: 8px;
+	padding: 8px 16px;
+	text-align: start;
+	width: 100%;
+
+	&:hover {
+		border-color: var(--color-neutral-10);
+
+		.stats-video-metric-tabs__header {
+			color: var(--studio-black);
+		}
+	}
+
+	&.is-selected {
+		background: var(--color-surface);
+		border-color: var(--color-accent);
+
+		.stats-video-metric-tabs__header {
+			color: var(--studio-black);
+		}
+	}
+}
+
+.stats-video-metric-tabs__header {
+	align-items: center;
+	color: var(--color-neutral-60);
+	display: flex;
+	font-size: $font-body-small;
+	gap: 8px;
+	letter-spacing: -0.15px;
+	line-height: 20px;
+
+	svg {
+		fill: currentColor;
+	}
+}
+
+.stats-video-metric-tabs__value {
+	color: var(--studio-black);
+	font-size: $font-title-medium;
+	font-weight: 500;
+	line-height: 40px;
+}
+
+@media (max-width: $break-medium) {
+	.stats-video-metric-tabs {
+		grid-template-columns: repeat(2, 1fr);
+		// The page container (.stats-summary__positioned) only adds side
+		// padding above this breakpoint, so pad the cards off the viewport
+		// edges ourselves.
+		padding: 0 16px;
+	}
+}
+
+@media (max-width: $break-small) {
+	.stats-video-metric-tabs {
+		grid-template-columns: 1fr;
+	}
+
+	.stats-video-details-card {
+		gap: 12px;
+	}
+}

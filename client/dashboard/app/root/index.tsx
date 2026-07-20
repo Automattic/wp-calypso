@@ -13,13 +13,17 @@ import {
 } from 'react';
 import { LoadingLine } from '../../components/loading-line';
 import { PageViewTracker } from '../../components/page-view-tracker';
+import { isDashboardBackport } from '../../utils/is-dashboard-backport';
 import NotFound from '../404';
 import AccountRecoveryInterstitial from '../account-recovery-interstitial';
 import { bumpStat } from '../analytics';
+import { CheckoutSuccessFlashMessage } from '../checkout-success-flash-message';
 import CommandPalette from '../command-palette';
 import { useAppContext } from '../context';
+import { useTrackVisitedAreas } from '../hooks/use-visit-counter';
 import OmnibarAgentsManager from '../interim-omnibar/omnibar-agents-manager';
 import OmnibarHelpCenter from '../interim-omnibar/omnibar-help-center';
+import MutationErrorTracker from '../mutation-error-tracker';
 import { NavigationBlockerRegistry } from '../navigation-blocker';
 import Notifications from '../notifications';
 import { useOmnibarEvent } from '../omnibar/events';
@@ -27,6 +31,7 @@ import OmnibarSiteSwitcher from '../omnibar/omnibar-site-switcher';
 import { useInitializeOmnibarSite } from '../omnibar/site';
 import ResponsiveSidebar from '../responsive-sidebar';
 import Snackbars from '../snackbars';
+import { OptInWelcomeModal } from '../welcome-modal';
 import './style.scss';
 
 const WebpackBuildMonitor = lazy(
@@ -39,10 +44,19 @@ const WebpackBuildMonitor = lazy(
 const SLOW_THRESHOLD_MS = 100;
 const VERY_SLOW_THRESHOLD_MS = 6000;
 
+// E2E tests append this suffix to the browser user agent (see
+// test/e2e playwright.config.ts). Detecting it lets us suppress the welcome
+// modal so it doesn't interfere with unrelated tests.
+function isE2ETest(): boolean {
+	return typeof navigator !== 'undefined' && navigator.userAgent.includes( 'wp-e2e-tests' );
+}
+
 function Root() {
 	const isAccountRecoveryInterstitialEnabled = isEnabled(
 		'dashboard/account-recovery-interstitial'
 	);
+	const isOptInWelcomeModalEnabled =
+		! isDashboardBackport() && ! isE2ETest() && isEnabled( 'dashboard/opt-in-welcome-modal' );
 	const { name, supports, LoadingLogo = WordPressLogo } = useAppContext();
 	const isFetching = useIsFetching();
 	const isMutating = useIsMutating();
@@ -53,6 +67,7 @@ function Root() {
 	const closeSidebar = useCallback( () => setIsSidebarOpen( false ), [ setIsSidebarOpen ] );
 
 	useInitializeOmnibarSite();
+	useTrackVisitedAreas();
 	useOmnibarEvent( 'mobileMenu', () => setIsSidebarOpen( ( v ) => ! v ) );
 	useOmnibarEvent( 'linkClick', ( { href, event } ) => {
 		const url = new URL( href, window.location.origin );
@@ -182,8 +197,11 @@ function Root() {
 			{ supports.help && <OmnibarAgentsManager /> }
 			<OmnibarSiteSwitcher />
 			<Snackbars />
+			<CheckoutSuccessFlashMessage />
 			{ isAccountRecoveryInterstitialEnabled && <AccountRecoveryInterstitial /> }
+			{ isOptInWelcomeModalEnabled && <OptInWelcomeModal /> }
 			<PageViewTracker />
+			<MutationErrorTracker />
 			<NavigationBlockerRegistry />
 			{ 'development' === process.env.NODE_ENV && (
 				<Suspense fallback={ null }>

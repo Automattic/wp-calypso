@@ -1,8 +1,7 @@
 package _self
 
 import _self.lib.utils.mergeTrunk
-import _self.lib.utils.passMergeQueueBranchesEarly
-import _self.lib.utils.skipOnMergeQueueBranch
+import _self.lib.utils.allBranchesExceptMergeQueue
 
 import jetbrains.buildServer.configs.kotlin.v2019_2.*
 import jetbrains.buildServer.configs.kotlin.v2019_2.buildFeatures.*
@@ -16,6 +15,7 @@ object CalypsoE2ETestsBuildTemplate : Template({
 
 	vcs {
 		root(Settings.WpCalypso)
+		branchFilter = allBranchesExceptMergeQueue()
 		cleanCheckout = true
 	}
 
@@ -56,8 +56,7 @@ object CalypsoE2ETestsBuildTemplate : Template({
 	}
 
   	steps {
-		passMergeQueueBranchesEarly()
-		mergeTrunk( skipIfConflict = true ).skipOnMergeQueueBranch()
+		mergeTrunk( skipIfConflict = true )
 
     	bashNodeScript {
 			name = "Prepare environment"
@@ -73,7 +72,7 @@ object CalypsoE2ETestsBuildTemplate : Template({
 				yarn workspace @automattic/calypso-e2e build
 			""".trimIndent()
 			dockerImage = "%docker_image_e2e%"
-		}.skipOnMergeQueueBranch()
+		}
 
 		bashNodeScript {
 			name = "Determine Calypso URL"
@@ -112,7 +111,7 @@ object CalypsoE2ETestsBuildTemplate : Template({
 				echo "##teamcity[setParameter name='CALYPSO_BASE_URL' value='${'$'}FINAL_URL']"
 			""".trimIndent()
 			dockerImage = "%docker_image_e2e%"
-		}.skipOnMergeQueueBranch()
+		}
 
 		bashNodeScript {
 			name = "Determine Dashboard URL"
@@ -154,30 +153,8 @@ object CalypsoE2ETestsBuildTemplate : Template({
 				echo "##teamcity[setParameter name='DASHBOARD_BASE_URL' value='${'$'}FINAL_URL']"
 			""".trimIndent()
 			dockerImage = "%docker_image_e2e%"
-		}.skipOnMergeQueueBranch()
+		}
 
-		bashNodeScript {
-			name = "Determine test group"
-			id = "determine_test_group"
-			scriptContent = """
-				# Check if IGNORE_TEST_GROUP_FOR_E2E_CHANGES param is "true"
-				if [[ "%IGNORE_TEST_GROUP_FOR_E2E_CHANGES%" == "true" ]]; then
-					echo "IGNORE_TEST_GROUP_FOR_E2E_CHANGES is true, checking for E2E changes..."
-
-					# Check if test/e2e or packages/calypso-e2e files have been changed
-					CHANGED_FILES=${'$'}(git diff --name-only refs/remotes/origin/trunk...HEAD)
-					if echo "${'$'}CHANGED_FILES" | grep -q -E "^(test/e2e/|packages/calypso-e2e/)"; then
-						echo "Changes detected in test/e2e/ or packages/calypso-e2e/, clearing TEST_GROUP"
-						echo "##teamcity[setParameter name='TEST_GROUP' value='']"
-					else
-						echo "No changes in test/e2e/ or packages/calypso-e2e/, keeping TEST_GROUP as is"
-					fi
-				else
-					echo "IGNORE_TEST_GROUP_FOR_E2E_CHANGES is false, keeping TEST_GROUP as is"
-				fi
-				"""
-			dockerImage = "%docker_image_e2e%"
-		}.skipOnMergeQueueBranch()
 
 		bashNodeScript {
 			name = "Set extra environment variables"
@@ -194,21 +171,24 @@ object CalypsoE2ETestsBuildTemplate : Template({
 				fi
 			""".trimIndent()
 			dockerImage = "%docker_image_e2e%"
-		}.skipOnMergeQueueBranch()
+		}
 
 		bashNodeScript {
 			name = "Run e2e tests"
 			id = "run_tests"
 			scriptContent = """
 
-				# Check TEST_GROUP param
-				if [[ -n "%TEST_GROUP%" ]]; then
-					echo "TEST_GROUP is set to: %TEST_GROUP%"
+				# Resolve the Playwright grep flag. When IGNORE_TEST_GROUP_FOR_E2E_CHANGES is
+				# "true", adapt TEST_GROUP to the changed E2E files (union with changed specs,
+				# or clear to run all on a non-spec change); otherwise use TEST_GROUP as is.
+				if [[ "%IGNORE_TEST_GROUP_FOR_E2E_CHANGES%" == "true" ]]; then
+					GREP_FLAG=${'$'}(TEST_GROUP="%TEST_GROUP%" ./bin/e2e-grep-flag.sh)
+				elif [[ -n "%TEST_GROUP%" ]]; then
 					GREP_FLAG="--grep=%TEST_GROUP%"
 				else
-					echo "TEST_GROUP is not set, running all tests"
 					GREP_FLAG=""
 				fi
+				echo "Playwright grep flag: ${'$'}{GREP_FLAG:-(none, running all tests)}"
 
 				cd test/e2e
 				# Clear any stale teardown-leak markers from a reused checkout before this run.
@@ -223,7 +203,7 @@ object CalypsoE2ETestsBuildTemplate : Template({
 				yarn test:pw:%PROJECT% ${'$'}GREP_FLAG
 				"""
 			dockerImage = "%docker_image_e2e%"
-		}.skipOnMergeQueueBranch()
+		}
 
 		bashNodeScript {
 			name = "Check for E2E teardown leaks"
@@ -244,9 +224,9 @@ object CalypsoE2ETestsBuildTemplate : Template({
 					# (nonZeroExitCode = false). Do NOT add 'exit 1': this ALWAYS step must leave green runs green.
 					echo "##teamcity[buildProblem description='E2E teardown leak: ${'$'}COUNT test user(s) not closed - see %PROJECT%/output' identity='e2e_teardown_leak']"
 				fi
-				""".trimIndent()
+			""".trimIndent()
 			dockerImage = "%docker_image_e2e%"
-		}.skipOnMergeQueueBranch()
+		}
 
 		bashNodeScript {
 			name = "Upload CTRF report"
@@ -269,7 +249,7 @@ object CalypsoE2ETestsBuildTemplate : Template({
 
 			""".trimIndent()
 			dockerImage = "%docker_image_e2e%"
-		}.skipOnMergeQueueBranch()
+		}
   }
 
   	artifactRules = """

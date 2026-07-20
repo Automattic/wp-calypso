@@ -7,7 +7,7 @@ import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions'
 import { getSpaceTabPath, SPACE_TABS, type SpaceTab } from './routes';
 
 interface Props {
-	spaceId: string;
+	spaceSlug: string;
 	selectedTab: SpaceTab;
 }
 
@@ -17,7 +17,7 @@ interface Props {
  * refresh and can be linked to directly — mirroring the Mastodon/ATmosphere
  * account navigations.
  */
-export function SpaceNavigation( { spaceId, selectedTab }: Props ) {
+export function SpaceNavigation( { spaceSlug, selectedTab }: Props ) {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 
@@ -42,7 +42,7 @@ export function SpaceNavigation( { spaceId, selectedTab }: Props ) {
 					<NavItem
 						key={ tab }
 						selected={ selectedTab === tab }
-						path={ getSpaceTabPath( spaceId, tab ) }
+						path={ getSpaceTabPath( spaceSlug, tab ) }
 						onClick={ () => recordTabClick( tab ) }
 					>
 						{ labels[ tab ] }

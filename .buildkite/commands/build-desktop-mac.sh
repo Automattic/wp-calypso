@@ -14,14 +14,6 @@ else
 	export RELEASE_BUILD=false
 fi
 
-# `desktop/.ruby-version` pins 3.3.0 but the a8c Buildkite mac VM image only
-# ships 3.2.2 (default) and 3.3.4. Override here so `bundle` resolves.
-# TODO: remove this and bump `desktop/.ruby-version` to 3.3.4 once
-# CircleCI's `wp-desktop-mac` job is decommissioned (its build runs
-# `rbenv global $(cat .ruby-version)`, and the cimg xcode-15.4 image
-# may not have 3.3.4, so we can't bump `.ruby-version` until then).
-export RBENV_VERSION=3.3.4
-
 # Force `electron-builder` to sign even on PR builds, so reviewers can
 # install and exercise the produced app.
 #
@@ -35,7 +27,10 @@ cd desktop
 corepack enable
 yarn install --immutable --inline-builds
 
-bundle install
+echo "--- :ruby: Setting up Ruby tooling"
+install_gems
+
+echo "--- Configuring code signing"
 bundle exec fastlane configure_code_signing
 
 # Notarize and staple the `.app` inside electron-builder's afterSign hook
@@ -56,9 +51,13 @@ export APP_STORE_CONNECT_API_KEY_PATH="$ASC_KEY_PATH"
 
 echo "RELEASE_BUILD=$RELEASE_BUILD"
 
+echo "--- Building the app"
 yarn run ci:build-mac
+
+echo "--- Running E2E smoke tests"
 yarn run test:e2e
 
+echo "--- Code signing"
 # The afterSign hook already notarized and stapled the app; this notarizes and
 # staples the `.dmg` wrapper for offline Gatekeeper checks on first mount.
 bundle exec fastlane notarize_app

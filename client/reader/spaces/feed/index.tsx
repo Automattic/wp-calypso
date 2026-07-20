@@ -1,9 +1,18 @@
+import { isDefaultLocale } from '@automattic/i18n-utils';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
-import { useCallback, useMemo, useState } from 'react';
-import { useSpace } from 'calypso/reader/data/spaces';
+import { useCallback, useState } from 'react';
+import { useSelector } from 'react-redux';
 import { useInfiniteStream } from 'calypso/reader/data/stream';
 import { ScrollDebugOverlay } from 'calypso/reader/hooks/use-infinite-list';
+import { keyForPost, keysAreEqual } from 'calypso/reader/post-key';
+import { useSelectedPostCommands } from 'calypso/reader/stream/use-selected-post-commands';
+import { useStreamKeyboardShortcuts } from 'calypso/reader/stream/use-stream-keyboard-shortcuts';
+import { useStreamPostKeySelection } from 'calypso/reader/stream/use-stream-post-key-selection';
+import { useDispatch } from 'calypso/state';
+import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
+import getCurrentLocaleSlug from 'calypso/state/selectors/get-current-locale-slug';
+import isNotificationsOpen from 'calypso/state/selectors/is-notifications-open';
 import { SpaceFeedSourceNotice } from './components/source-notice';
 import {
 	SpaceFeedEmpty,
@@ -18,33 +27,24 @@ import {
 	getLayoutPageSize,
 	getLayoutSkeleton,
 } from './layouts/registry';
-import type { ReadStreamPost, ReadStreamResponse, SpaceFeedLayout } from '@automattic/api-core';
+import type { ReadSpace, ReadStreamPost } from '@automattic/api-core';
 
 import './style.scss';
 
 interface Props {
-	spaceId: string;
-	layoutView?: SpaceFeedLayout;
+	// The space, already resolved by the view (list summary or by-slug detail). Only
+	// its `id` (keys the streams) and `layout` (selects the layout) are read here, so
+	// the summary shape is enough — no re-fetch by id.
+	space: ReadSpace;
+	// Retry the space detail; backs the stream error state's retry alongside the
+	// stream's own refetch. Owned by the view (the by-slug query's `refetch`).
+	onRetrySpace?: () => void;
 	// Which per-space stream to render: the posts feed (`space:<id>`, followed
 	// feeds + tags) or Discover (`space_discover:<id>`, recommended on-topic posts
 	// the user doesn't follow). Both share this shell and the same layouts.
 	variant?: 'feed' | 'discover';
-}
-
-export function collectPosts( pages: ReadStreamResponse[] ): ReadStreamPost[] {
-	const posts: ReadStreamPost[] = [];
-	for ( const page of pages ) {
-		if ( page.cards?.length ) {
-			for ( const card of page.cards ) {
-				if ( card.type === 'post' ) {
-					posts.push( card.data );
-				}
-			}
-		} else if ( page.posts?.length ) {
-			posts.push( ...page.posts );
-		}
-	}
-	return posts;
+	// Opens the Customize modal's Sources tab; wired to the Feed empty-state CTA.
+	onAddSources?: () => void;
 }
 
 /**
@@ -52,18 +52,14 @@ export function collectPosts( pages: ReadStreamResponse[] ): ReadStreamPost[] {
  * per-space stream — the posts feed (`/reader/spaces/<id>/posts`, keyed
  * `space:<id>`, built server-side from the space's followed feeds and tags) or
  * Discover (`/reader/spaces/<id>/discover`, keyed `space_discover:<id>`,
- * recommended on-topic posts the user doesn't follow). The stream is keyed by the
- * route's `spaceId`, so it loads in parallel with the space detail rather than
- * waiting for it. The detail only refines the layout (`space.layout.view`, chosen
- * via the Customize modal); `layoutView` — the summary value from the spaces list
- * — is the layout while the detail is still loading or missing that field. Both
- * variants share the same layouts.
+ * recommended on-topic posts the user doesn't follow). The space detail is resolved
+ * once by the view (from the URL slug) and passed in: its numeric `id` keys the
+ * stream (`space:<id>`) and `layout.view` selects the layout. Both variants share
+ * the same layouts.
  */
-export function SpaceFeed( { spaceId, layoutView, variant = 'feed' }: Props ) {
-	// The detail loads in parallel with the stream and only refines the layout, so
-	// the feed never blocks on it. `refetchSpace` backs the stream's retry.
-	const { data: space, refetch: refetchSpace } = useSpace( spaceId );
-	const layout = space?.layout.view ?? layoutView ?? DEFAULT_SPACE_FEED_LAYOUT;
+export function SpaceFeed( { space, onRetrySpace, variant = 'feed', onAddSources }: Props ) {
+	const spaceId = space.id;
+	const layout = space.layout.view ?? DEFAULT_SPACE_FEED_LAYOUT;
 
 	// The Space's own stream. Keyed by the route's `spaceId` (not gated on the
 	// detail), so it fetches immediately, in parallel with the detail. The legacy
@@ -72,12 +68,62 @@ export function SpaceFeed( { spaceId, layoutView, variant = 'feed' }: Props ) {
 	const isDiscover = variant === 'discover';
 	const streamKey = isDiscover ? `space_discover:${ spaceId }` : `space:${ spaceId }`;
 	const isLegacy = layout === 'legacy';
+	const dispatch = useDispatch();
+	const rawLocale = useSelector( getCurrentLocaleSlug );
+	const localeSlug = rawLocale && ! isDefaultLocale( rawLocale ) ? rawLocale : null;
 	const stream = useInfiniteStream( {
 		streamKey,
+		localeSlug,
 		perPage: getLayoutPageSize( layout ),
 		options: { enabled: ! isLegacy },
 	} );
-	const posts = useMemo( () => collectPosts( stream.pages ), [ stream.pages ] );
+	// The shell only needs the stream's posts for the list's structure and ordering
+	// (parsed by the stream hook); each card reads its own normalized post from the
+	// cache (see the card components).
+	const posts = stream.posts;
+
+	const { selectedPostKey, selectPostKey, selectNextPost, selectPreviousPost } =
+		useStreamPostKeySelection( { streamKey, localeSlug, items: stream.items } );
+	const isPostSelected = useCallback(
+		( post: ReadStreamPost ) =>
+			selectedPostKey != null && keysAreEqual( keyForPost( post ), selectedPostKey ),
+		[ selectedPostKey ]
+	);
+	const selectPost = useCallback(
+		( post: ReadStreamPost ) => {
+			const postKey = keyForPost( post );
+			if ( postKey ) {
+				const streamItem = stream.items.find(
+					( item ) => keysAreEqual( item, postKey ) || keysAreEqual( item.xPostMetadata, postKey )
+				);
+				selectPostKey( streamItem ?? postKey );
+			}
+			dispatch(
+				recordReaderTracksEvent(
+					'calypso_reader_spaces_post_opened',
+					{ space_id: spaceId, layout, variant },
+					{ post }
+				)
+			);
+		},
+		[ dispatch, selectPostKey, stream.items, spaceId, layout, variant ]
+	);
+
+	const notificationsOpen = useSelector( isNotificationsOpen );
+	const { openSelected, openSelectedInNewTab, toggleSelectedLike } =
+		useSelectedPostCommands( selectedPostKey );
+
+	// Reading shortcuts for the curated layouts (the shell owns their selection).
+	// The legacy layout's ReaderStreamV2 registers its own set, so gate on
+	// `! isLegacy` to avoid a double handler on the same keys.
+	useStreamKeyboardShortcuts( {
+		enabled: ! isLegacy && ! notificationsOpen,
+		onNext: selectNextPost,
+		onPrevious: selectPreviousPost,
+		onOpen: openSelected,
+		onOpenInNewTab: openSelectedInNewTab,
+		onToggleLike: toggleSelectedLike,
+	} );
 
 	// Scroll on the Reader's main bounded container (`.layout__primary > div`, which
 	// has a fixed height) — the same scrollbar the rest of the Reader uses — instead
@@ -122,6 +168,10 @@ export function SpaceFeed( { spaceId, layoutView, variant = 'feed' }: Props ) {
 					isLoadingMore={ false }
 					loadMore={ () => {} }
 					restoreKey={ `${ spaceId }:${ variant }:${ layout }` }
+					isPostSelected={ isPostSelected }
+					selectPost={ selectPost }
+					showTimestamp={ ! isDiscover }
+					emptyContent={ <SpaceFeedEmpty variant={ variant } onAddSources={ onAddSources } /> }
 				/>
 			);
 		}
@@ -143,14 +193,14 @@ export function SpaceFeed( { spaceId, layoutView, variant = 'feed' }: Props ) {
 			return (
 				<SpaceFeedError
 					onRetry={ () => {
-						refetchSpace();
+						onRetrySpace?.();
 						stream.refetch();
 					} }
 				/>
 			);
 		}
 		if ( posts.length === 0 ) {
-			return <SpaceFeedEmpty variant={ variant } />;
+			return <SpaceFeedEmpty variant={ variant } onAddSources={ onAddSources } />;
 		}
 		return (
 			<Layout
@@ -161,6 +211,9 @@ export function SpaceFeed( { spaceId, layoutView, variant = 'feed' }: Props ) {
 				isLoadingMore={ stream.isFetchingNextPage }
 				loadMore={ stream.fetchNextPage }
 				restoreKey={ `${ spaceId }:${ variant }:${ layout }` }
+				isPostSelected={ isPostSelected }
+				selectPost={ selectPost }
+				showTimestamp={ ! isDiscover }
 			/>
 		);
 	};
@@ -169,7 +222,7 @@ export function SpaceFeed( { spaceId, layoutView, variant = 'feed' }: Props ) {
 		<div
 			className={ clsx(
 				'space-feed',
-				space && space.layout.color !== 'none' && `space-feed--${ space.layout.color }`
+				space.layout.color !== 'none' && `space-feed--${ space.layout.color }`
 			) }
 		>
 			{ /* The source notice reports followed-feed failures; Discover isn't built

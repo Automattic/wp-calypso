@@ -29,20 +29,21 @@ only, and wired to the real `wpcom/v2` backend.
 
 ## Editing a space (RSM-4117)
 
-`customize-modal/` is the **single upsert editor** for a space: a `TabPanel` with
-**Identity** (name, tags, accent color, icon), **Layout** (the feed-layout
-presets), **Sources** (the subscription add/remove list — migrated here from the
-old standalone `sources-modal/`, which no longer exists), and **Delete** (edit
-mode only, destructive _Delete space_ action that confirms via
-`confirm-delete.tsx`). The **Customize** header button opens edit mode on
-Identity. `create-modal/index.tsx` is a thin wrapper around the same upsert modal
-in create mode; after create, the sidebar navigates to the new space route
-without an action hash.
+`customize-modal/` is the **single upsert editor** for a space. Edit mode uses a
+`TabPanel` with **Identity** (name, accent color, icon), **Layout** (the
+feed-layout presets), **Feeds** (the subscription add/remove list — internally
+still keyed as `sources` because the API/client model maps wire `follows` to
+`sources`), **Topics** (tags and languages), and **Delete** (edit mode only,
+destructive _Delete space_ action that confirms via `confirm-delete.tsx`). The
+**Customize** header button opens edit mode on Identity. `create-modal/index.tsx`
+is a thin wrapper around the same upsert modal in create mode, rendered as a
+step-by-step wizard over Identity → Layout → Feeds → Topics; after create, the
+sidebar navigates to the new space route without an action hash.
 
 - **Save/Create batches the editable fields.** "Save changes" and "Create" send
   the same draft model: `name`, `tags`, `feeds`, and
-  `layout: { color, icon, view }`. Source add/remove in the modal updates local
-  draft state only; the endpoint receives the final `feeds` list on submit.
+  `layout: { color, iconColor, icon, view, width }`. Source add/remove in the modal
+  updates local draft state only; the endpoint receives the final `feeds` list on submit.
 - **Draft state is seeded once** (a `isSeeded` flag), not on every `space` change,
   so a source add/remove (which rewrites the detail cache) can't clobber unsaved
   identity/layout edits.
@@ -55,8 +56,13 @@ without an action hash.
   When adding a color/icon, update `colors.ts` (`SPACE_COLORS` + labels) /
   `icons.ts` and the `icon-picker.tsx` label map (typed `Record< SpaceIcon, … >`,
   so a missing label is a type error).
-- **Not yet built (no backend):** description, AI tag auto-fill, text size, and
-  column layout shown in the design mockups are intentionally omitted.
+- **Column width** (`layout.width`, `'regular' | 'wide'`) is chosen in the Layout
+  tab and consumed by `view.tsx` as `wideLayout={ width === 'wide' }` on
+  `ReaderMain`. Unset falls back to `'wide'` (`DEFAULT_SPACE_WIDTH` in
+  `customize-modal/layout-tab.tsx`) so existing spaces keep their current width;
+  `wide` → `.main.is-wide-layout` (1040px), `regular` → the Reader default (768px).
+- **Not yet built (no backend):** description, AI tag auto-fill, and text size
+  shown in the design mockups are intentionally omitted.
 
 ## Conventions
 
@@ -100,8 +106,8 @@ without an action hash.
 
 - Create and edit share the upsert implementation in `customize-modal/index.tsx`;
   `create-modal/index.tsx` only adapts the existing public `CreateSpaceModal`
-  export to create mode. Keep Identity/Layout/Sources behavior in the shared
-  upsert modal so create and edit do not drift.
+  export to create mode. Keep the Identity/Layout/Feeds/Topics draft behavior in
+  the shared upsert modal so create and edit do not drift.
 - Validation: name required, <= `MAX_SPACE_NAME_LENGTH`, and case-insensitive
   duplicate against the existing names (edit passes the list with the current
   space removed). The error message is rendered manually

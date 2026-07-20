@@ -27,7 +27,7 @@
 
 		&:hover,
 		&:focus {
-			background-color: var(--theme-highlight-color);
+			background-color: var(--color-accent);
 			color: var(--studio-white);
 
 			@media (min-width: 481px) {
@@ -83,7 +83,7 @@
 			height: 100%;
 			content: "";
 			border-radius: 2px;
-			background-color: color-mix(in srgb, var(--color-primary) 15%, transparent);
+			background-color: color-mix(in srgb, var(--color-accent) 15%, transparent);
 			position: absolute;
 			left: 0;
 			z-index: 0;
@@ -129,7 +129,7 @@
 }
 
 .horizontal-bar-list-item--indicated {
-	box-shadow: inset $item-indicator-width 0 0 var(--color-primary);
+	box-shadow: inset $item-indicator-width 0 0 var(--color-accent);
 }
 
 .horizontal-bar-list-item--static {

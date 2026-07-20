@@ -6,7 +6,7 @@ import {
 	Button,
 	Modal,
 } from '@wordpress/components';
-import { useEvent } from '@wordpress/compose';
+import { useEvent, useViewportMatch } from '@wordpress/compose';
 import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { copy, globe } from '@wordpress/icons';
@@ -15,6 +15,7 @@ import { useEffect, useState, useRef } from 'react';
 import { useAnalytics } from '../../app/analytics';
 import { useAppContext } from '../../app/context';
 import ConfettiAnimation from '../../components/confetti';
+import { getAddSiteDomainUrl } from '../../utils/domain-url';
 import type { Site } from '@automattic/api-core';
 import './styles.scss';
 
@@ -41,6 +42,7 @@ export default function SiteLaunchCelebrationModal( {
 		select: ( data ) => data.filter( ( domain ) => domain.blog_id === site.ID ),
 	} );
 	const copyButtonRef = useRef< HTMLButtonElement >( null );
+	const isMobileViewport = useViewportMatch( 'small', '<' );
 
 	const onOpen = useEvent( () => {
 		externalOnOpen?.();
@@ -97,7 +99,7 @@ export default function SiteLaunchCelebrationModal( {
 				</Text>
 			);
 			buttonText = __( 'Get your domain' );
-			buttonHref = `/domains/add/${ site.slug }`;
+			buttonHref = getAddSiteDomainUrl( site.slug );
 		} else if ( isPaidPlan && isBilledMonthly && ! hasCustomDomain ) {
 			contentElement = (
 				<Text as="p" className="flex-shrink-safe">
@@ -107,7 +109,7 @@ export default function SiteLaunchCelebrationModal( {
 				</Text>
 			);
 			buttonText = __( 'Get your domain' );
-			buttonHref = `/domains/add/${ site.slug }`;
+			buttonHref = getAddSiteDomainUrl( site.slug );
 		} else if ( isPaidPlan && ! hasCustomDomain ) {
 			contentElement = (
 				<Text as="p" className="flex-shrink-safe">
@@ -120,25 +122,34 @@ export default function SiteLaunchCelebrationModal( {
 				</Text>
 			);
 			buttonText = __( 'Get your free domain' );
-			buttonHref = `/domains/add/${ site.slug }`;
+			buttonHref = getAddSiteDomainUrl( site.slug );
 		} else {
 			return null;
 		}
 
-		return (
+		const upsellButton = (
+			<Button
+				variant="primary"
+				href={ buttonHref }
+				onClick={ () =>
+					recordTracksEvent( 'calypso_launchpad_celebration_modal_upsell_clicked', {
+						product_slug: site?.plan?.product_slug,
+					} )
+				}
+			>
+				{ buttonText }
+			</Button>
+		);
+
+		return isMobileViewport ? (
+			<VStack spacing={ 4 } alignment="left">
+				{ contentElement }
+				{ upsellButton }
+			</VStack>
+		) : (
 			<HStack spacing={ 3 } alignment="bottomRight">
 				{ contentElement }
-				<Button
-					variant="primary"
-					href={ buttonHref }
-					onClick={ () =>
-						recordTracksEvent( 'calypso_launchpad_celebration_modal_upsell_clicked', {
-							product_slug: site?.plan?.product_slug,
-						} )
-					}
-				>
-					{ buttonText }
-				</Button>
+				{ upsellButton }
 			</HStack>
 		);
 	};

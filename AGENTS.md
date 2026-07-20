@@ -46,6 +46,8 @@ yarn start
 yarn start-dashboard
 ```
 
+If `yarn start` fails with `Ineffective mark-compacts near heap limit Allocation failed - JavaScript heap out of memory`, increase the Node heap size by running `NODE_OPTIONS=--max-old-space-size=8192 yarn start`. For other errors, run `yarn calypso-doctor` to diagnose and fix common environment issues.
+
 ## Testing instructions
 
 > **Note**: E2E tests require a local Calypso development instance to be running.
@@ -75,6 +77,10 @@ yarn reformat-files   # Fix formatting with Prettier
 yarn typecheck-client # Type-check client
 ```
 
+## Conventions
+
+- Do NOT add any verbose code comments that narrate what the change does or why it was made (e.g. `// Added this to fix X`, `// Changed from Y to Z`, restating the code in prose). Such explanation belongs in the PR description, not the source. Only keep comments that a future reader genuinely needs — non-obvious rationale, gotchas, links to context — and match the comment density and style of the surrounding code.
+
 ## Pre-PR checks
 
 Before pushing a branch or running `gh pr create`, run the type-check that CI will run. PRs touching `client/` may fail the `type_check_client` CI check after opening, so verify locally first:
@@ -88,7 +94,6 @@ If it fails, fix the type errors at the source — do not silence them with `// 
 
 ## Creating Pull Requests
 
-- Before pushing the changes, remove any verbose code comments that narrate what the change does or why it was made (e.g. `// Added this to fix X`, `// Changed from Y to Z`, restating the code in prose). Such explanation belongs in the PR description, not the source. Only keep comments that a future reader genuinely needs — non-obvious rationale, gotchas, links to context — and match the comment density and style of the surrounding code.
 - Create PRs as draft. Follow the template in .github/PULL_REQUEST_TEMPLATE.md.
 - Follow the branch naming conventions in docs/git-workflow.md.
 - In the PR description:

@@ -118,6 +118,7 @@ const LostPasswordForm = ( {
 			const result = await lostPasswordRequest();
 			setBusy( false );
 			if ( result.includes( 'Unable to reset password' ) ) {
+				blackbox.reset();
 				return setError(
 					translate( "I'm sorry, but we weren't able to find a user with that login information." )
 				);

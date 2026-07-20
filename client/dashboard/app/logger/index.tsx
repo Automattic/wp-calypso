@@ -3,7 +3,7 @@ import calypsoConfig from '@automattic/calypso-config';
 import { captureException } from '@automattic/calypso-sentry';
 import { camelToSnakeCase } from '@automattic/js-utils';
 import { logToLogstash } from 'calypso/lib/logstash';
-import { maybeReloadForChunkError } from './chunk-reload';
+import { maybeReloadForChunkError } from '../chunk-load-recovery';
 import type { AnyRouter } from '@tanstack/react-router';
 import type { ErrorInfo } from 'react';
 
@@ -61,7 +61,7 @@ export function handleOnCatch(
 		tags: [ 'dashboard' ],
 		properties: {
 			dashboard_backport: options.dashboard_backport,
-			env: calypsoConfig( 'env_id' ),
+			env_id: calypsoConfig( 'env_id' ),
 			message: error.message,
 			stack: errorInfo.componentStack,
 			path: window.location.href,

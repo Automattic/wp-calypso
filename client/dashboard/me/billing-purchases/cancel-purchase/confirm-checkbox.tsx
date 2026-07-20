@@ -1,4 +1,3 @@
-import { localizeUrl } from '@automattic/i18n-utils';
 import {
 	Button,
 	CheckboxControl,
@@ -78,11 +77,7 @@ export default function ConfirmCheckbox( {
 					{ createInterpolateElement(
 						__( 'Our support team is here for you. <contactLink>Contact us</contactLink>' ),
 						{
-							contactLink: isSplitEnabled ? (
-								<Button variant="link" onClick={ handleContactClick } />
-							) : (
-								<a href={ localizeUrl( 'https://wordpress.com/support' ) } />
-							),
+							contactLink: <Button variant="link" onClick={ handleContactClick } />,
 						}
 					) }
 				</Text>

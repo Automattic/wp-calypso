@@ -5,8 +5,6 @@ import debugModule from 'debug';
 import { localize } from 'i18n-calypso';
 import { Component } from 'react';
 import { connect } from 'react-redux';
-import FormButton from 'calypso/components/forms/form-button';
-import FormButtonsBar from 'calypso/components/forms/form-buttons-bar';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormTextInput from 'calypso/components/forms/form-text-input';
 import useAddExternalContributorMutation from 'calypso/data/external-contributors/use-add-external-contributor-mutation';
@@ -206,7 +204,6 @@ class EditUserForm extends Component {
 				returnField = (
 					<RoleSelect
 						key="role-select"
-						formControlType={ this.props.roleSelectControlType }
 						explanation
 						id={ fieldKeys.roles }
 						name={ fieldKeys.roles }
@@ -295,10 +292,8 @@ class EditUserForm extends Component {
 
 	onFormChange() {
 		this.props.markChanged();
-		if ( this.props.autoSave ) {
-			// defer to pick up the most recent form values
-			setTimeout( () => this.updateUser(), 0 );
-		}
+		// defer to pick up the most recent form values
+		setTimeout( () => this.updateUser(), 0 );
 	}
 
 	render() {
@@ -312,7 +307,7 @@ class EditUserForm extends Component {
 			return null;
 		}
 
-		const { autoSave, currentUser, user, translate, hasWPCOMAccountLinked, disabled, isUpdating } =
+		const { currentUser, user, translate, hasWPCOMAccountLinked, disabled, isUpdating } =
 			this.props;
 
 		return (
@@ -329,15 +324,6 @@ class EditUserForm extends Component {
 							'This user has a WordPress.com account. Only they are allowed to update their personal information through their WordPress.com profile settings.'
 						) }
 					</p>
-				) }
-				{ ! autoSave && (
-					<FormButtonsBar>
-						<FormButton disabled={ ! this.hasUnsavedSettings() || isUpdating }>
-							{ this.props.translate( 'Save changes', {
-								context: 'Button label that prompts user to save form',
-							} ) }
-						</FormButton>
-					</FormButtonsBar>
 				) }
 			</form>
 		);

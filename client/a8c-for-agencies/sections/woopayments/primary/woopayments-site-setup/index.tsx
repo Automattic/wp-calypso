@@ -1,5 +1,11 @@
+import {
+	siteCorePluginActivateMutation,
+	siteCorePluginInstallMutation,
+	siteCorePluginsQuery,
+} from '@automattic/api-queries';
 import page from '@automattic/calypso-router';
 import { SiteDetails } from '@automattic/data-stores';
+import { useMutation, useQuery } from '@tanstack/react-query';
 import { Button } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, useState } from 'react';
@@ -10,9 +16,6 @@ import { A4A_WOOPAYMENTS_DASHBOARD_LINK } from 'calypso/a8c-for-agencies/compone
 import StepSection from 'calypso/a8c-for-agencies/components/step-section';
 import StepSectionItem from 'calypso/a8c-for-agencies/components/step-section-item';
 import TextPlaceholder from 'calypso/a8c-for-agencies/components/text-placeholder';
-import useFetchSitePlugins from 'calypso/a8c-for-agencies/data/sites/use-fetch-site-plugins';
-import useActivatePluginToSiteMutation from 'calypso/a8c-for-agencies/hooks/use-activate-plugin-to-site';
-import useInstallPluginToSiteMutation from 'calypso/a8c-for-agencies/hooks/use-install-plugin-to-site';
 import LayoutBody from 'calypso/layout/hosting-dashboard/body';
 import LayoutHeader, {
 	LayoutHeaderBreadcrumb as Breadcrumb,
@@ -32,16 +35,21 @@ const WooPaymentsSiteSetup = ( { siteId }: { siteId: string } ) => {
 	const dispatch = useDispatch();
 	const sites = useSelector( getSites );
 
-	const { mutateAsync: installPluginToSite, isPending: isPendingInstall } =
-		useInstallPluginToSiteMutation();
-	const { mutateAsync: activatePluginToSite, isPending: isPendingActivate } =
-		useActivatePluginToSiteMutation();
+	const { mutateAsync: installPluginToSite, isPending: isPendingInstall } = useMutation(
+		siteCorePluginInstallMutation()
+	);
+	const { mutateAsync: activatePluginToSite, isPending: isPendingActivate } = useMutation(
+		siteCorePluginActivateMutation()
+	);
 	const [ error, setError ] = useState( false );
 	const [ isInstalled, setIsInstalled ] = useState( false );
 
 	const [ selectedSite, setSelectedSite ] = useState< SiteDetails | null | undefined >( null );
 
-	const { data: plugins, isLoading: isLoadingPlugins } = useFetchSitePlugins( parseInt( siteId ) );
+	const { data: plugins, isLoading: isLoadingPlugins } = useQuery( {
+		...siteCorePluginsQuery( parseInt( siteId ) ),
+		enabled: !! siteId,
+	} );
 
 	const woocommercePlugin = plugins?.find(
 		( { plugin }: { plugin: string } ) => plugin === 'woocommerce/woocommerce'
@@ -81,7 +89,7 @@ const WooPaymentsSiteSetup = ( { siteId }: { siteId: string } ) => {
 			if ( ! woocommercePlugin ) {
 				await installPluginToSite( {
 					siteId: parseInt( siteId ),
-					pluginSlug: 'woocommerce',
+					slug: 'woocommerce',
 				} );
 			}
 
@@ -89,7 +97,7 @@ const WooPaymentsSiteSetup = ( { siteId }: { siteId: string } ) => {
 			if ( isWooCommerceInactive ) {
 				await activatePluginToSite( {
 					siteId: parseInt( siteId ),
-					pluginSlug: WOOCOMMERCE_PLUGIN_SLUG,
+					plugin: WOOCOMMERCE_PLUGIN_SLUG,
 				} );
 			}
 
@@ -97,7 +105,7 @@ const WooPaymentsSiteSetup = ( { siteId }: { siteId: string } ) => {
 			if ( ! woocommercePaymentsPlugin ) {
 				await installPluginToSite( {
 					siteId: parseInt( siteId ),
-					pluginSlug: 'woocommerce-payments',
+					slug: 'woocommerce-payments',
 				} );
 			}
 
@@ -105,7 +113,7 @@ const WooPaymentsSiteSetup = ( { siteId }: { siteId: string } ) => {
 			if ( isWooPaymentsInactive ) {
 				await activatePluginToSite( {
 					siteId: parseInt( siteId ),
-					pluginSlug: WOOCOMMERCE_PAYMENTS_PLUGIN_SLUG,
+					plugin: WOOCOMMERCE_PAYMENTS_PLUGIN_SLUG,
 				} );
 			}
 			// Open WooPayments setup page

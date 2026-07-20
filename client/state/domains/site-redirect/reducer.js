@@ -1,4 +1,3 @@
-import update from 'immutability-helper';
 import {
 	DOMAINS_SITE_REDIRECT_FETCH,
 	DOMAINS_SITE_REDIRECT_FETCH_COMPLETED,
@@ -10,13 +9,10 @@ import {
 } from 'calypso/state/action-types';
 
 function updateStateForSite( state, siteId, data ) {
-	const command = state[ siteId ] ? '$merge' : '$set';
-
-	return update( state, {
-		[ siteId ]: {
-			[ command ]: data,
-		},
-	} );
+	return {
+		...state,
+		[ siteId ]: state[ siteId ] ? { ...state[ siteId ], ...data } : data,
+	};
 }
 
 export const initialStateForSite = {

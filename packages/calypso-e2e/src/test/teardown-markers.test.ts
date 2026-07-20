@@ -1,4 +1,4 @@
-import { existsSync, mkdtempSync, readFileSync, rmSync } from 'node:fs';
+import { existsSync, mkdtempSync, readdirSync, readFileSync, rmSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import path from 'node:path';
 import { describe, expect, test, jest, beforeEach, afterEach } from '@jest/globals';
@@ -21,6 +21,8 @@ afterEach( () => {
 } );
 
 const markerFile = ( userID: number ): string => path.join( leakDir, `account-${ userID }.json` );
+const emailMarkerFile = ( email: string ): string =>
+	path.join( leakDir, `account-${ encodeURIComponent( email ) }.json` );
 
 const details = {
 	userID: 2001,
@@ -105,6 +107,7 @@ describe( 'teardown-markers: isAccountClosedError', () => {
 		'authorization_required: An active access token must be used.',
 		'Request was unauthorized',
 		'user_not_found: account is gone',
+		'invalid_username: no such account (rejected signup)',
 	] )( 'returns true for a dead-token / auth error (%s)', ( message ) => {
 		expect( isAccountClosedError( new Error( message ) ) ).toBe( true );
 	} );
@@ -120,6 +123,68 @@ describe( 'teardown-markers: isAccountClosedError', () => {
 } );
 
 describe( 'closeAccountAndRecordLeak', () => {
+	test( 'no userID: records an email-keyed marker without accessing the account', async () => {
+		const closeAccount = jest.fn( async () => ( { success: true } ) );
+		const getMyAccountInformation = jest.fn( async () => ( {} ) );
+		const incompleteDetails = {
+			...details,
+			userID: undefined,
+		} as unknown as typeof details;
+
+		await closeAccountAndRecordLeak(
+			fakeClient( { closeAccount, getMyAccountInformation } ),
+			incompleteDetails,
+			leakDir
+		);
+
+		expect( closeAccount ).not.toHaveBeenCalled();
+		expect( getMyAccountInformation ).not.toHaveBeenCalled();
+		expect( existsSync( emailMarkerFile( details.email ) ) ).toBe( true );
+		const marker = JSON.parse( readFileSync( emailMarkerFile( details.email ), 'utf8' ) );
+		expect( marker.error ).toContain( 'incomplete account identity' );
+	} );
+
+	test( 'neither userID nor email: skips teardown and records nothing (no recordable key)', async () => {
+		const closeAccount = jest.fn( async () => ( { success: true } ) );
+		const getMyAccountInformation = jest.fn( async () => ( {} ) );
+		const unrecordableDetails = {
+			...details,
+			userID: undefined,
+			email: '',
+		} as unknown as typeof details;
+
+		await closeAccountAndRecordLeak(
+			fakeClient( { closeAccount, getMyAccountInformation } ),
+			unrecordableDetails,
+			leakDir
+		);
+
+		expect( closeAccount ).not.toHaveBeenCalled();
+		expect( getMyAccountInformation ).not.toHaveBeenCalled();
+		expect( readdirSync( leakDir ) ).toHaveLength( 0 );
+	} );
+
+	test( 'userID present but username/email missing: records a marker keyed by userID without accessing the account', async () => {
+		const closeAccount = jest.fn( async () => ( { success: true } ) );
+		const getMyAccountInformation = jest.fn( async () => ( {} ) );
+		const incompleteDetails = {
+			...details,
+			username: '',
+			email: '',
+		};
+
+		await closeAccountAndRecordLeak(
+			fakeClient( { closeAccount, getMyAccountInformation } ),
+			incompleteDetails,
+			leakDir
+		);
+
+		expect( closeAccount ).not.toHaveBeenCalled();
+		expect( getMyAccountInformation ).not.toHaveBeenCalled();
+		const marker = JSON.parse( readFileSync( markerFile( details.userID ), 'utf8' ) );
+		expect( marker.error ).toContain( 'incomplete account identity' );
+	} );
+
 	test( 'close succeeds: clears the marker and never probes', async () => {
 		const getMyAccountInformation = jest.fn( async () => ( {} ) );
 		await closeAccountAndRecordLeak(
@@ -206,6 +271,56 @@ describe( 'closeAccountAndRecordLeak', () => {
 			leakDir
 		);
 		expect( existsSync( markerFile( details.userID ) ) ).toBe( false );
+	} );
+
+	test( 'retries while the close is blocked by an active Atomic site, then clears once it succeeds', async () => {
+		jest.useFakeTimers();
+		try {
+			let calls = 0;
+			const closeAccount = jest.fn( async () => {
+				calls += 1;
+				return calls < 3
+					? { error: 'atomic-site', message: 'active atomic sites' }
+					: { success: true };
+			} );
+			const promise = closeAccountAndRecordLeak(
+				fakeClient( { closeAccount, getMyAccountInformation: jest.fn( async () => ( {} ) ) } ),
+				details,
+				leakDir
+			);
+			// Drive the poll waits to completion; closeAccount succeeds on the 3rd call.
+			await jest.advanceTimersByTimeAsync( 90 * 1000 );
+			await promise;
+
+			expect( closeAccount ).toHaveBeenCalledTimes( 3 );
+			expect( existsSync( markerFile( details.userID ) ) ).toBe( false );
+		} finally {
+			jest.useRealTimers();
+		}
+	} );
+
+	test( 'records a leak when the Atomic site never deprovisions within the retry window', async () => {
+		jest.useFakeTimers();
+		try {
+			const promise = closeAccountAndRecordLeak(
+				fakeClient( {
+					closeAccount: jest.fn( async () => ( {
+						error: 'atomic-site',
+						message: 'active atomic sites',
+					} ) ),
+					getMyAccountInformation: jest.fn( async () => ( {} ) ),
+				} ),
+				details,
+				leakDir
+			);
+			// Advance past the full retry window so the loop reaches its deadline.
+			await jest.advanceTimersByTimeAsync( 200 * 1000 );
+			await promise;
+
+			expect( existsSync( markerFile( details.userID ) ) ).toBe( true );
+		} finally {
+			jest.useRealTimers();
+		}
 	} );
 
 	test( 'never throws even when the client throws', async () => {

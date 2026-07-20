@@ -2,6 +2,7 @@ import { HostingFeatures, LogType, type Site, type SiteSettings } from '@automat
 import { siteBySlugQuery, siteSettingsQuery } from '@automattic/api-queries';
 import { DateRangePicker, isLast7Days } from '@automattic/date-range-picker';
 import { useSuspenseQuery } from '@tanstack/react-query';
+import { useSearch } from '@tanstack/react-router';
 import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { useEffect, useState } from 'react';
@@ -85,6 +86,7 @@ function SiteLogsContent( {
 	);
 
 	const siteId = site.ID;
+	const activitySearchParams = useSearch( { strict: false } );
 	const showTimeMismatchNotice = useShouldShowTimeMismatchNotice( {
 		siteTime: gmtOffset,
 		siteId,
@@ -126,6 +128,7 @@ function SiteLogsContent( {
 		timezoneString,
 		gmtOffset,
 		autoRefresh,
+		defaultDays: logType === LogType.ACTIVITY ? 30 : 7,
 	} );
 	// this is used to track changes across the dateRange to ensure the components can react to changes when they are triggered by a change in the DateRangePicker
 	const [ dateRangeVersion, setDateRangeVersion ] = useState( 0 );
@@ -239,6 +242,7 @@ function SiteLogsContent( {
 								timezoneString={ timezoneString }
 								site={ site }
 								hasActivityLogsAccess={ hasActivityLogAccess }
+								searchParams={ activitySearchParams }
 							/>
 						</>
 					) }

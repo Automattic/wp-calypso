@@ -1,7 +1,11 @@
 import page from '@automattic/calypso-router';
 import { useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { recordDSPEntryPoint, useDspOriginProps } from 'calypso/lib/promote-post';
+import {
+	recordDSPEntryPoint,
+	useDspOriginProps,
+	useJetpackBlazeVersionCheck,
+} from 'calypso/lib/promote-post';
 import { useRouteModal } from 'calypso/lib/route-modal';
 import { getSiteAdminUrl } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
@@ -21,6 +25,12 @@ const useOpenPromoteWidget = ( { keyValue, entrypoint, external }: Props ) => {
 	const siteSlug = useSelector( getSelectedSiteSlug );
 	const dspOriginProps = useDspOriginProps();
 	const siteAdminUrl = useSelector( ( state ) => getSiteAdminUrl( state, siteId ) );
+	// Versions that move the dashboard from tools.php to admin.php: Jetpack
+	// (Automattic/jetpack#49584) and the Blaze Ads plugin (Automattic/blaze-ads#93).
+	// Keep these at or above the actual release versions: a too-low gate links to
+	// admin.php on sites that still serve tools.php (no back-redirect), breaking it.
+	const hasNewAdminPage = useJetpackBlazeVersionCheck( siteId, '16.1', '0.10.0' );
+	const adminPagePath = hasNewAdminPage ? 'admin.php' : 'tools.php';
 	const dispatch = useDispatch();
 
 	const onOpenPromoteWidget = useCallback( () => {
@@ -33,7 +43,7 @@ const useOpenPromoteWidget = ( { keyValue, entrypoint, external }: Props ) => {
 				const query = encodeURIComponent( `blazepress-widget=${ keyValue }` );
 				window.location.href = isAtomic
 					? `https://jetpack.com/redirect/?source=jetpack-blaze&site=${ siteSlug }&query=${ query }`
-					: `${ siteAdminUrl }tools.php?page=advertising#!${ blazeURL }`;
+					: `${ siteAdminUrl }${ adminPagePath }?page=advertising#!${ blazeURL }`;
 			} else {
 				page( blazeURL );
 			}
@@ -47,6 +57,7 @@ const useOpenPromoteWidget = ( { keyValue, entrypoint, external }: Props ) => {
 		dspOriginProps,
 		external,
 		siteAdminUrl,
+		adminPagePath,
 		isRunningInWpAdmin,
 		openModal,
 		dispatch,

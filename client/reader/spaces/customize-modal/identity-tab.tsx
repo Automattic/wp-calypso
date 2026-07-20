@@ -1,4 +1,4 @@
-import { FormTokenField, TextControl, __experimentalVStack as VStack } from '@wordpress/components';
+import { TextControl, __experimentalVStack as VStack } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
 import { SpaceColorPicker } from 'calypso/reader/spaces/color-picker';
@@ -9,8 +9,6 @@ interface Props {
 	name: string;
 	onNameChange: ( name: string ) => void;
 	nameError: string | null;
-	tags: string[];
-	onTagsChange: ( tags: string[] ) => void;
 	color: SpaceTextColor;
 	onColorChange: ( color: SpaceTextColor ) => void;
 	iconColor: SpaceColor;
@@ -23,8 +21,6 @@ export function IdentityTab( {
 	name,
 	onNameChange,
 	nameError,
-	tags,
-	onTagsChange,
 	color,
 	onColorChange,
 	iconColor,
@@ -54,18 +50,6 @@ export function IdentityTab( {
 						{ nameError }
 					</p>
 				) : null }
-				<FormTokenField
-					__next40pxDefaultSize
-					label={ translate( 'Tags' ) }
-					value={ tags }
-					placeholder={ translate( 'Add tags' ) }
-					onChange={ ( tokens ) =>
-						onTagsChange(
-							tokens.map( ( token ) => ( typeof token === 'string' ? token : token.value ) )
-						)
-					}
-					help={ translate( 'Type and press Enter to add; click x to remove.' ) }
-				/>
 			</VStack>
 
 			<VStack spacing={ 2 }>
@@ -83,12 +67,10 @@ export function IdentityTab( {
 				/>
 			</VStack>
 
-			<VStack spacing={ 2 }>
+			<VStack spacing={ 2 } className="customize-space-modal__color-selection">
 				<span className="customize-space-modal__field-label">{ translate( 'Accent color' ) }</span>
 				<p className="customize-space-modal__field-help">
-					{ translate(
-						'Changes the color of post titles and actions in this space. Choose None to keep the feed neutral.'
-					) }
+					{ translate( 'Changes the color of post titles and actions in this space.' ) }
 				</p>
 				<SpaceColorPicker
 					value={ color }

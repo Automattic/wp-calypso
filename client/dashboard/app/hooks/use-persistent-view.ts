@@ -228,6 +228,7 @@ function removeTransientPropertiesFromView( view: View ): View {
 	const viewToPersist = { ...view };
 
 	delete viewToPersist.page;
+	delete viewToPersist.startPosition;
 	delete viewToPersist.search;
 
 	return viewToPersist;

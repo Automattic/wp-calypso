@@ -21,6 +21,8 @@ export type AgencySupports = {
 	learn: boolean;
 	mcp: boolean;
 	sites: boolean;
+	team: boolean;
+	earn: boolean;
 };
 
 export type AgencyClientSupports = {
@@ -78,7 +80,7 @@ export type AppConfig = {
 	components: {
 		sites?: () => Promise< { default: React.FC } >;
 		// eslint-disable-next-line @typescript-eslint/no-explicit-any
-		siteSwitcher: () => Promise< { default: React.FC< any > } >;
+		siteSwitcher?: () => Promise< { default: React.FC< any > } >;
 	};
 	queries: {
 		sitesQuery: ( fetchSiteOptions?: FetchSitesOptions ) => ReturnType< typeof sitesQuery >;

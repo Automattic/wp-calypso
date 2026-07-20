@@ -13,7 +13,6 @@ import { __ } from '@wordpress/i18n';
 import { useMemo, useState } from 'react';
 import Breadcrumbs from '../../app/breadcrumbs';
 import { PerformanceTrackerStop } from '../../app/performance-tracking';
-import { OptInWelcome } from '../../components/opt-in-welcome';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import { usePlugin } from '../plugin/use-plugin';
@@ -146,7 +145,6 @@ export default function PluginsList() {
 						prefix={ pluginSlug ? <Breadcrumbs length={ 2 } /> : null }
 					/>
 				}
-				notices={ <OptInWelcome tracksContext="plugins" /> }
 			>
 				{ pluginSlug ? (
 					<PluginSites selectedPluginSlug={ selectedPluginSlug } />
@@ -173,7 +171,6 @@ export default function PluginsList() {
 					description={ __( 'Install, activate, and manage plugins across your sites.' ) }
 				/>
 			}
-			notices={ <OptInWelcome tracksContext="plugins" /> }
 		>
 			<Grid columns={ 2 } gap={ 3 } templateColumns="392px 1fr">
 				<PluginSwitcher

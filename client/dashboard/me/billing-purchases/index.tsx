@@ -102,6 +102,7 @@ export default function PurchasesList() {
 		paymentMethods,
 		transferredPurchases,
 		siteFilter: currentSearchParams.site,
+		visibleFields: view.fields,
 	} );
 
 	const allSubscriptions = useMemo( () => {

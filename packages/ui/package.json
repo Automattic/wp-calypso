@@ -46,7 +46,7 @@
 		"@wordpress/i18n": "^6.21.0",
 		"@wordpress/icons": "^13.3.0",
 		"@wordpress/primitives": "^4.48.0",
-		"@wordpress/ui": "0.13.0",
+		"@wordpress/ui": "^0.17.0",
 		"clsx": "^2.1.1",
 		"date-fns": "^4.1.0",
 		"react-day-picker": "^9.7.0"
@@ -65,7 +65,7 @@
 		"@testing-library/user-event": "^14.6.1",
 		"esbuild": "^0.25.5",
 		"esbuild-sass-plugin": "^3.1.0",
-		"postcss": "^8.5.3",
+		"postcss": "^8.5.15",
 		"postcss-modules": "^6.0.1",
 		"sass-embedded": "^1.89.0",
 		"storybook": "^9.1.20",

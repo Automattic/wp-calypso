@@ -23,6 +23,15 @@
 	color: inherit;
 }
 
+.space-feed-board__item[data-selected]::before {
+	content: '';
+	position: absolute;
+	inset-block: 20px;
+	inset-inline-start: 8px;
+	inline-size: 2px;
+	background: var(--color-primary);
+}
+
 .space-feed-board__actions {
 	margin-block-start: 12px;
 }
@@ -77,7 +86,7 @@
 	margin: 8px 0 0;
 	font-size: 0.875rem;
 	line-height: 1.45;
-	color: var(--color-text-subtle);
+	color: var(--color-neutral-80);
 }
 
 .space-feed-board__excerpt p {

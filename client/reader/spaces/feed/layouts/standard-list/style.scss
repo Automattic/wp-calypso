@@ -20,8 +20,18 @@
 }
 
 .space-feed-standard-list__row {
+	position: relative;
 	padding-block: 18px;
 	border-block-end: 1px solid var(--color-border-subtle);
+}
+
+.space-feed-standard-list__row[data-selected]::before {
+	content: '';
+	position: absolute;
+	inset-block: 0;
+	inset-inline-start: -16px;
+	inline-size: 2px;
+	background: var(--color-primary);
 }
 
 .space-feed-standard-list__item[data-first='true'] .space-feed-standard-list__row {
@@ -63,7 +73,7 @@
 .space-feed-standard-list__excerpt {
 	font-size: 0.875rem;
 	line-height: 1.4;
-	color: var(--color-text-subtle);
+	color: var(--color-neutral-80);
 	overflow: hidden;
 	display: -webkit-box;
 	-webkit-line-clamp: 2;
