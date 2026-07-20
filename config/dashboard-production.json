@@ -56,7 +56,7 @@
 		"rum-tracking/logstash": true,
 		"site-spec": true,
 		"two-factor/enhanced-security": true,
-		"webauthn/related-origin-requests": true,
+		"webauthn/related-origin-requests": false,
 		"wordpress-ai-tools": true,
 		"wpcom-user-bootstrap": true
 	},
