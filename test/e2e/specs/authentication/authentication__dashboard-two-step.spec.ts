@@ -176,7 +176,12 @@ test.describe(
 				await page.goto( DataHelper.getDashboardURL( '/me/security/two-step-auth/app' ) );
 
 				const setupResponse = await setupResponsePromise;
-				totpSecret = ( await setupResponse.json() ).time_code;
+				// wpcom-proxy-request replies in http_envelope form, so the payload is
+				// under `body` and the transport is 200 regardless of the inner status.
+				const { code, body } = await setupResponse.json();
+				expect( code ).toBe( 200 );
+				// time_code is the secret space-grouped; strip it for TOTPClient's base32 decoder.
+				totpSecret = body.time_code.replace( /\s/g, '' );
 				expect( totpSecret ).toBeTruthy();
 
 				enableCode = new TOTPClient( totpSecret ).getToken();
