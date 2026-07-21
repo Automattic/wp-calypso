@@ -31,19 +31,35 @@ function compileStylesheet( stylesheet ) {
 }
 
 function getDeclarations( css, selector ) {
-	let declarations;
+	const declarations = new Map();
+	let selectorFound = false;
+
 	css.walkRules( ( rule ) => {
 		if ( rule.selectors.includes( selector ) ) {
-			declarations = new Map();
+			selectorFound = true;
 			rule.walkDecls( ( declaration ) => {
 				declarations.set( declaration.prop, declaration.value );
 			} );
 		}
 	} );
 
-	expect( declarations ).toBeDefined();
+	expect( selectorFound ).toBe( true );
 	return declarations;
 }
+
+describe( 'getDeclarations', () => {
+	it( 'combines repeated selector declarations in source order', () => {
+		const css = postcss.parse( `
+			.repeated-selector { color: red; display: block; }
+			.repeated-selector { color: blue; }
+		` );
+
+		const declarations = getDeclarations( css, '.repeated-selector' );
+
+		expect( declarations.get( 'display' ) ).toBe( 'block' );
+		expect( declarations.get( 'color' ) ).toBe( 'blue' );
+	} );
+} );
 
 describe.each( COMPONENTS )( '$name layout CSS contract', ( component ) => {
 	const css = compileStylesheet( component.stylesheet );
