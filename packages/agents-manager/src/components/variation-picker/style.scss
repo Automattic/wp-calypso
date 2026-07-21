@@ -53,7 +53,8 @@
 				background-color: var( --color-muted );
 			}
 
-			&:focus {
+			// Hide the ring after mouse clicks but keep the keyboard focus ring.
+			&:focus:not( :focus-visible ) {
 				box-shadow: none;
 			}
 		}
