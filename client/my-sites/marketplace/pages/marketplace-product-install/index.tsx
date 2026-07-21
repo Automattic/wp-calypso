@@ -316,16 +316,15 @@ const MarketplaceProductInstall = ( {
 	// Prefer fresh URL when available; if in atomic flow, wait for fresh URL
 	const pluginsUrlFinal = atomicFlow ? pluginsUrlFresh : pluginsUrlFresh || pluginsUrlSelector;
 
-	// For marketplace plugins (e.g. sensei-pro), the atomic transfer + plugin install
-	// is initiated during checkout, not by this component. The wporg data is unavailable,
-	// so atomicFlow is never set. Once the site is atomic, poll for installed plugins
-	// so that the existing redirect (installedPlugin && pluginActive) fires.
+	// For marketplace plugins (e.g. sensei-pro, js-composer), the atomic transfer +
+	// plugin install is initiated during checkout, not by this component, so atomicFlow
+	// is never set. Once the site is atomic, poll for installed plugins so that the
+	// existing redirect (installedPlugin && pluginActive) fires. Do not gate this on the
+	// wporg lookup: wordpress.org answers 200 with an empty body for marketplace-only
+	// slugs, which gets normalized into `wporg: true`, so `wporg === false` never holds
+	// for exactly the plugins this fallback targets (DOTCOM-17744).
 	const isMarketplacePluginFlow =
-		! atomicFlow &&
-		! isPluginUploadFlow &&
-		!! pluginSlug &&
-		!! freshSite?.is_wpcom_atomic &&
-		wporgPlugin?.wporg === false;
+		! atomicFlow && ! isPluginUploadFlow && !! pluginSlug && !! freshSite?.is_wpcom_atomic;
 
 	useInterval(
 		() => dispatch( fetchSitePlugins( siteId ) ),
@@ -522,7 +521,10 @@ const MarketplaceProductInstall = ( {
 				/>
 			);
 		}
-		// Catch the rest of the error cases.
+		// Catch the rest of the error cases. The FAILURE check stays gated on atomicFlow:
+		// the automated-transfer status slice is persisted and never refreshed by the
+		// checkout-initiated path, so reading it un-gated would surface stale failures
+		// from old transfers as false errors.
 		if (
 			pluginUploadError ||
 			pluginInstallStatus?.error ||
