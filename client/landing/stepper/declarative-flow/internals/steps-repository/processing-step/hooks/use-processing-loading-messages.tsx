@@ -1,6 +1,5 @@
 import { Onboard } from '@automattic/data-stores';
 import {
-	isAIBuilderFlow,
 	isAIBuilderOnboardingFlow,
 	isNewHostedSiteCreationFlow,
 	isTransferringHostedSiteCreationFlow,
@@ -33,13 +32,6 @@ export function useProcessingLoadingMessages( flow?: string | null ): LoadingMes
 			{ title: __( 'Getting things ready' ), duration: 4000 },
 			{ title: __( 'Waking up the website builder' ), duration: 5000 },
 			{ title: __( 'Heading to checkout' ), duration: Infinity },
-		];
-	}
-
-	if ( flow && isAIBuilderFlow( flow ) ) {
-		return [
-			{ title: __( 'Getting things ready' ), duration: 4000 },
-			{ title: __( 'Waking up the website builder' ), duration: Infinity },
 		];
 	}
 
