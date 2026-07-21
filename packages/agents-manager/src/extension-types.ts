@@ -80,8 +80,8 @@ export interface ClientContextType {
 		| string;
 
 	/**
-	 * Optional context entries (sitemap, entities, etc.)
-	 * These use lazy evaluation via `getData` closures
+	 * Optional context entries (sitemap, entities, etc.).
+	 * These use lazy evaluation via `getData` closures.
 	 */
 	contextEntries?: ContextEntry[];
 
