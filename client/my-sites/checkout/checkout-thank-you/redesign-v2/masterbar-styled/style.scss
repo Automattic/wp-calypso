@@ -13,10 +13,12 @@
 	}
 
 	.checkout-thank-you__item-wrapper {
+		// Fills the bar so the contact link is pushed to the far edge, but the
+		// button inside must stay label-width — it is the hover and click target.
 		flex: 1;
+		display: flex;
 
 		.checkout-thank-you__item {
-			width: 100%;
 			justify-content: start;
 			cursor: pointer;
 			font-size: 14px;
