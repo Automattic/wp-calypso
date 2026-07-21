@@ -1,9 +1,9 @@
 import config from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
 import { Button as CalypsoButton } from '@automattic/components';
-import { Button, CheckboxControl } from '@wordpress/components';
+import { Button } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
-import React, { useState } from 'react';
+import React from 'react';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { STATS_PRODUCT_NAME } from 'calypso/my-sites/stats/constants';
 import { useJetpackConnectionStatus } from 'calypso/my-sites/stats/hooks/use-jetpack-connection-status';
@@ -44,10 +44,6 @@ const PersonalPurchase = ( {
 	from,
 }: PersonalPurchaseProps ) => {
 	const translate = useTranslate();
-	const [ isAdsChecked, setAdsChecked ] = useState( false );
-	const [ isSellingChecked, setSellingChecked ] = useState( false );
-	const [ isBusinessChecked, setBusinessChecked ] = useState( false );
-	const [ isDonationChecked, setDonationChecked ] = useState( false );
 	const isOdysseyStats = config.isEnabled( 'is_running_in_jetpack_site' );
 	const { hasAnyStatsPlan } = useStatsPurchases( siteId );
 	const isWPCOMSite = useSelector( ( state ) => siteId && getIsSiteWPCOM( state, siteId ) );
@@ -55,9 +51,6 @@ const PersonalPurchase = ( {
 	const { data: connectionStatus } = useJetpackConnectionStatus( siteId, !! isSimpleSite );
 	// The button of @automattic/components has built-in color scheme support for Calypso.
 	const ButtonComponent = isWPCOMSite ? CalypsoButton : Button;
-	// The opt-out form on the commercial page already collects this same pledge (and only lets the
-	// user through once all four boxes are checked), so don't make them repeat it here.
-	const hasConfirmedNonCommercialUsage = from === 'switch-from-commercial';
 
 	const continueButtonText = translate( 'Contribute now and continue' );
 
@@ -104,7 +97,7 @@ const PersonalPurchase = ( {
 
 			<div className={ `${ COMPONENT_CLASS_NAME }__notice` }>
 				{ translate(
-					'This plan is for non-commercial sites only. Sites with any commercial activity {{Button}}require a commercial license{{/Button}}.',
+					'To unlock features like commercial use and priority support, {{Button}}upgrade to a commercial plan{{/Button}}.',
 					{
 						components: {
 							Button: <Button variant="link" href="#" onClick={ handleClick } />,
@@ -123,67 +116,11 @@ const PersonalPurchase = ( {
 				onSliderChange={ handleSliderChanged }
 			/>
 
-			{ subscriptionValue === 0 && ! hasConfirmedNonCommercialUsage && (
-				<div className={ `${ COMPONENT_CLASS_NAME }__personal-checklist` }>
-					<p>
-						<strong>
-							{ translate( 'Please confirm non-commercial usage by checking each box:' ) }
-						</strong>
-					</p>
-					<ul>
-						<li>
-							<CheckboxControl
-								className={ `${ COMPONENT_CLASS_NAME }__control--checkbox` }
-								checked={ isAdsChecked }
-								label={ translate( "I don't have ads on my site" ) }
-								onChange={ ( value ) => {
-									setAdsChecked( value );
-								} }
-							/>
-						</li>
-						<li>
-							<CheckboxControl
-								className={ `${ COMPONENT_CLASS_NAME }__control--checkbox` }
-								checked={ isSellingChecked }
-								label={ translate( "I don't sell products/services on my site" ) }
-								onChange={ ( value ) => {
-									setSellingChecked( value );
-								} }
-							/>
-						</li>
-						<li>
-							<CheckboxControl
-								className={ `${ COMPONENT_CLASS_NAME }__control--checkbox` }
-								checked={ isBusinessChecked }
-								label={ translate( "I don't promote a business on my site" ) }
-								onChange={ ( value ) => {
-									setBusinessChecked( value );
-								} }
-							/>
-						</li>
-						<li>
-							<CheckboxControl
-								className={ `${ COMPONENT_CLASS_NAME }__control--checkbox` }
-								checked={ isDonationChecked }
-								label={ translate( "I don't solicit donations or sponsorships on my site" ) }
-								onChange={ ( value ) => {
-									setDonationChecked( value );
-								} }
-							/>
-						</li>
-					</ul>
-				</div>
-			) }
-
 			{ subscriptionValue === 0 ? (
 				<div className={ `${ COMPONENT_CLASS_NAME }__actions` }>
 					<ButtonComponent
 						variant="primary"
 						primary={ isWPCOMSite ? true : undefined }
-						disabled={
-							! hasConfirmedNonCommercialUsage &&
-							( ! isAdsChecked || ! isSellingChecked || ! isBusinessChecked || ! isDonationChecked )
-						}
 						onClick={ () =>
 							gotoCheckoutPage( {
 								from,
@@ -244,6 +181,12 @@ function StatsBenefitsListing( {
 				</li>
 				<li className={ `${ COMPONENT_CLASS_NAME }__benefits-item--included` }>
 					{ translate( 'GDPR compliance' ) }
+				</li>
+				<li className={ `${ COMPONENT_CLASS_NAME }__benefits-item--included` }>
+					{ translate( 'More granular location stats' ) }
+				</li>
+				<li className={ `${ COMPONENT_CLASS_NAME }__benefits-item--included` }>
+					{ translate( 'Device attribution' ) }
 				</li>
 				{ subscriptionValue >= defaultStartingValue ? (
 					<li className={ `${ COMPONENT_CLASS_NAME }__benefits-item--included` }>
