@@ -66,7 +66,9 @@ const ALL_STATS_NOTICES: StatsNoticeType[] = [
 				!! ( showUpgradeNoticeForJetpackSites || showUpgradeNoticeForWpcomSites ) && ! hasPaidStats
 			);
 		},
-		disabled: false,
+		// The commercial + traffic classifier paywall is no longer enforced (STATS-342);
+		// this notice is kept in place, disabled, as a reversible kill switch.
+		disabled: true,
 	},
 	{
 		component: DoYouLoveJetpackStatsNotice,
