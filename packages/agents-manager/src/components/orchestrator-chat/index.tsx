@@ -766,6 +766,9 @@ export default function OrchestratorChat( {
 	// Provides chat action handlers to the external providers' ability setups
 	// (Big Sky, jetpack-ai-sidebar) — permanent provider infrastructure. The hook
 	// is stable as `OrchestratorChat` only renders after providers have loaded.
+	// TODO: After Big Sky's abilities migrate, prune this object to the fields
+	// other providers consume (jetpack-ai-sidebar reads only `clearSuggestions`
+	// and `isProcessing`) and drop the `BigSkyMessage` conversion.
 	useAbilitiesSetup?.( {
 		addMessage: ( message: BigSkyMessage ) => {
 			// Transform Big Sky message format to `UIMessage` format and add to chat.
