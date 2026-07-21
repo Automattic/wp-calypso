@@ -17,12 +17,6 @@
 		text-wrap: nowrap;
 	}
 
-	.product-price-with-discount__free {
-		margin-block-end: 1.5rem;
-		@include heading-x-large;
-		color: var(--studio-black);
-	}
-
 	.product-price-with-discount__price-discount {
 		margin-inline-start: 8px;
 		@include heading-large;

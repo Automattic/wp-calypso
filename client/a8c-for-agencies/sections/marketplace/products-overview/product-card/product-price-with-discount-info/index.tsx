@@ -48,12 +48,13 @@ function ProductPriceWithDiscount( {
 
 	if ( isFree ) {
 		return (
-			<div className={ clsx( 'product-price-with-discount__price', { 'is-compact': compact } ) }>
-				{ isFetching ? (
-					<TextPlaceholder />
-				) : (
-					<p className="product-price-with-discount__free">{ translate( 'Free' ) }</p>
-				) }
+			<div>
+				<div className={ clsx( 'product-price-with-discount__price', { 'is-compact': compact } ) }>
+					{ isFetching ? <TextPlaceholder /> : translate( 'Free' ) }
+				</div>
+				<div className="product-price-with-discount__price-interval" aria-hidden="true">
+					&nbsp;
+				</div>
 			</div>
 		);
 	}
