@@ -5,16 +5,21 @@ import {
 } from '@automattic/api-queries';
 import { Badge } from '@automattic/ui';
 import { useMutation, useQuery } from '@tanstack/react-query';
+import {
+	__experimentalHStack as HStack,
+	__experimentalVStack as VStack,
+	Button,
+} from '@wordpress/components';
 import { useDispatch } from '@wordpress/data';
 import { filterSortAndPaginate } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
 import { useMemo, useState } from 'react';
 import { useAnalytics } from '../../../../app/analytics';
-import ConfirmModal from '../../../../components/confirm-modal';
 import { DataViews, DataViewsCard } from '../../../../components/dataviews';
 import { PageHeader } from '../../../../components/page-header';
 import PageLayout from '../../../../components/page-layout';
+import { Text } from '../../../../components/text';
 import { useReferral } from '../hooks/use-referral';
 import { getOrderSummary } from '../lib/get-order-summary';
 import { getReferralStatus } from '../lib/get-referral-status';
@@ -39,7 +44,9 @@ export default function ReferralReferralsTab() {
 
 	const { recordTracksEvent } = useAnalytics();
 	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
-	const { mutate: archiveReferral } = useMutation( archiveReferralMutation( agencyId ) );
+	const { mutate: archiveReferral, isPending: isArchiving } = useMutation(
+		archiveReferralMutation( agencyId )
+	);
 	const { mutate: resendReferralEmail } = useMutation( resendReferralEmailMutation( agencyId ) );
 
 	const fields = useMemo< Field< ReferralApiResponse >[] >(
@@ -120,39 +127,60 @@ export default function ReferralReferralsTab() {
 				isEligible: ( item ) => item.status !== 'archived' && item.status !== 'active',
 				RenderModal: ( { items, closeModal } ) => {
 					const order = items[ 0 ];
+					const onConfirm = () => {
+						if ( ! order ) {
+							return;
+						}
+						recordTracksEvent( 'calypso_a4a_referrals_archive_referral_button_click' );
+						archiveReferral( order.id, {
+							onSuccess: () =>
+								createSuccessNotice( __( 'The referral has been archived.' ), {
+									type: 'snackbar',
+								} ),
+							onError: () =>
+								createErrorNotice( __( 'Failed to archive the referral.' ), {
+									type: 'snackbar',
+								} ),
+						} );
+						closeModal?.();
+					};
 					return (
-						<ConfirmModal
-							isOpen
-							title={ __( 'Archive referral' ) }
-							confirmButtonProps={ { children: __( 'Archive' ), isDestructive: true } }
-							onCancel={ () => closeModal?.() }
-							onConfirm={ () => {
-								if ( order ) {
-									recordTracksEvent( 'calypso_a4a_referrals_archive_referral_button_click' );
-									archiveReferral( order.id, {
-										onSuccess: () =>
-											createSuccessNotice( __( 'The referral has been archived.' ), {
-												type: 'snackbar',
-											} ),
-										onError: () =>
-											createErrorNotice( __( 'Failed to archive the referral.' ), {
-												type: 'snackbar',
-											} ),
-									} );
-								}
-								closeModal?.();
-							} }
-						>
-							{ __(
-								"Your client won't be able to complete the purchases. If removed, you must create a new referral for any future purchases."
-							) }
-						</ConfirmModal>
+						<VStack spacing={ 4 }>
+							<Text>
+								{ __(
+									"Your client won't be able to complete the purchases. If removed, you must create a new referral for any future purchases."
+								) }
+							</Text>
+							<HStack justify="right">
+								<Button
+									__next40pxDefaultSize
+									variant="tertiary"
+									onClick={ () => closeModal?.() }
+									disabled={ isArchiving }
+									accessibleWhenDisabled
+								>
+									{ __( 'Cancel' ) }
+								</Button>
+								<Button
+									__next40pxDefaultSize
+									variant="primary"
+									onClick={ onConfirm }
+									isBusy={ isArchiving }
+									disabled={ isArchiving }
+									accessibleWhenDisabled
+									isDestructive
+								>
+									{ __( 'Archive' ) }
+								</Button>
+							</HStack>
+						</VStack>
 					);
 				},
 			},
 		],
 		[
 			archiveReferral,
+			isArchiving,
 			resendReferralEmail,
 			createSuccessNotice,
 			createErrorNotice,
