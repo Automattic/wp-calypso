@@ -3,8 +3,7 @@
 	pointer-events: all;
 	min-height: unset;
 	container-type: inline-size;
-	// Cap the picker in wide chats (e.g. split screen) so cards keep a sensible
-	// size; past 520px the grid switches to 4 columns instead of growing cards.
+	// Cap width in wide chats so cards stay card-sized (4 columns past 520px).
 	max-width: 640px;
 
 	&__grid {
