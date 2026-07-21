@@ -97,7 +97,7 @@ const PersonalPurchase = ( {
 
 			<div className={ `${ COMPONENT_CLASS_NAME }__notice` }>
 				{ translate(
-					'To unlock priority support and custom date ranges, {{Button}}upgrade to a commercial plan{{/Button}}.',
+					'To unlock UTM tracking, device attribution and more, {{Button}}upgrade to a commercial plan{{/Button}}.',
 					{
 						components: {
 							Button: <Button variant="link" href="#" onClick={ handleClick } />,
