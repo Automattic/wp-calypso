@@ -1,3 +1,4 @@
+import { isWpError, type Site, type User } from '@automattic/api-core';
 import {
 	omnibarSiteIdQuery,
 	queryClient,
@@ -5,12 +6,13 @@ import {
 	userPreferenceQuery,
 	userPreferenceOptimisticMutation,
 } from '@automattic/api-queries';
+import calypsoConfig from '@automattic/calypso-config';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { useRouterState } from '@tanstack/react-router';
 import { removeQueryArgs } from '@wordpress/url';
 import { useEffect } from 'react';
+import { logToLogstash } from 'calypso/lib/logstash';
 import { AUTH_QUERY_KEY } from '../auth';
-import type { Site, User } from '@automattic/api-core';
 
 function isMemberOfSite( site: Site ) {
 	// If the user is a member of the site, the capabilities property will exist
@@ -90,7 +92,25 @@ export function useInitializeOmnibarSite() {
 
 		if ( omnibarSiteId && omnibarSiteId !== recentSiteIds?.[ 0 ] ) {
 			updateRecentSites(
-				[ ...new Set( [ omnibarSiteId, ...( recentSiteIds || [] ) ] ) ].slice( 0, 5 )
+				[ ...new Set( [ omnibarSiteId, ...( recentSiteIds || [] ) ] ) ].slice( 0, 5 ),
+				{
+					onError: ( error ) => {
+						logToLogstash( {
+							feature: 'calypso_client',
+							message: error.message,
+							tags: [ 'dashboard', 'recent-sites-update-fail' ],
+							properties: {
+								status: isWpError( error ) ? error.status : undefined,
+								error_name: isWpError( error ) ? error.name : undefined,
+								env_id: calypsoConfig( 'env_id' ),
+								message: error.message,
+								path: window.location.href,
+								omnibar_site_id: omnibarSiteId,
+								recent_site_ids: recentSiteIds,
+							},
+						} );
+					},
+				}
 			);
 		}
 	}, [
