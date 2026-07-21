@@ -24,9 +24,6 @@ interface CheckpointState {
 	globalStylesSettings?: Record< string, unknown >;
 	globalStylesStyles?: Record< string, unknown >;
 	blocks?: BlockSnapshot;
-	newPageId?: string;
-	pageRename?: { pageId: string; oldTitle: string; newTitle: string };
-	pageRemoval?: { pageId: string; pageTitle: string; shouldRestoreNavigation?: boolean };
 	[ key: string ]: unknown;
 }
 
@@ -34,18 +31,8 @@ interface CheckpointState {
  * Return type of the `useCheckpoint` hook.
  */
 export interface UseCheckpointReturn {
-	getLastEditorState: () => CheckpointState | undefined;
 	setCheckpoint: ( id: string, keys?: string[] ) => void;
-	addCheckpointKeys: ( id: string, keys: string[] ) => void;
 	restoreCheckpoint: ( id: string ) => Promise< void >;
-	addNewPageToCheckpoint: ( pageId: string ) => void;
-	addPageRenameToCheckpoint: ( pageId: string, oldTitle: string, newTitle: string ) => void;
-	addPageRemovalToCheckpoint: (
-		pageId: string,
-		pageTitle: string,
-		options?: { shouldRestoreNavigation?: boolean }
-	) => void;
-	clearCheckpoint: ( id: string ) => void;
 	hasCheckpoint: ( id: string ) => boolean;
 }
 
@@ -117,15 +104,6 @@ export default function useCheckpoint(): UseCheckpointReturn {
 		};
 	}, [ cloneBlocks, getSectionRootClientId, findTemplatePart ] );
 
-	/** Merge partial data into the last `CheckpointState` entry. */
-	const updateLastCheckpoint = useCallback( ( patch: Partial< CheckpointState > ) => {
-		const entries = Array.from( sharedCheckpoints.entries() );
-		if ( entries.length > 0 ) {
-			const [ lastId, lastState ] = entries[ entries.length - 1 ];
-			sharedCheckpoints.set( lastId, { ...lastState, ...patch } );
-		}
-	}, [] );
-
 	const setCheckpoint = useCallback(
 		( id: string, keys: string[] = [] ) => {
 			if ( ! id || ! globalStylesId ) {
@@ -184,60 +162,14 @@ export default function useCheckpoint(): UseCheckpointReturn {
 		]
 	);
 
-	const getLastEditorState = useCallback( () => {
-		const entries = Array.from( sharedCheckpoints.entries() );
-		return entries.length > 0 ? entries[ entries.length - 1 ][ 1 ] : undefined;
-	}, [] );
-
-	const addCheckpointKeys = useCallback( ( id: string, keys: string[] ) => {
-		const existing = sharedCheckpoints.get( id );
-		if ( existing ) {
-			sharedCheckpoints.set( id, {
-				...existing,
-				checkpointKeys: [ ...new Set( [ ...existing.checkpointKeys, ...keys ] ) ],
-			} );
-		}
-	}, [] );
-
-	const addNewPageToCheckpoint = useCallback(
-		( pageId: string ) => updateLastCheckpoint( { newPageId: pageId } ),
-		[ updateLastCheckpoint ]
-	);
-
-	const addPageRenameToCheckpoint = useCallback(
-		( pageId: string, oldTitle: string, newTitle: string ) =>
-			updateLastCheckpoint( { pageRename: { pageId, oldTitle, newTitle } } ),
-		[ updateLastCheckpoint ]
-	);
-
-	const addPageRemovalToCheckpoint = useCallback(
-		( pageId: string, pageTitle: string, options?: { shouldRestoreNavigation?: boolean } ) =>
-			updateLastCheckpoint( {
-				pageRemoval: {
-					pageId,
-					pageTitle,
-					shouldRestoreNavigation: options?.shouldRestoreNavigation,
-				},
-			} ),
-		[ updateLastCheckpoint ]
-	);
-
-	const clearCheckpoint = useCallback( ( id: string ) => sharedCheckpoints.delete( id ), [] );
-
 	const hasCheckpoint = useCallback(
 		( id: string ) => !! sharedCheckpoints.get( id )?.checkpointKeys?.length,
 		[]
 	);
 
 	return {
-		getLastEditorState,
 		setCheckpoint,
-		addCheckpointKeys,
 		restoreCheckpoint,
-		addNewPageToCheckpoint,
-		addPageRenameToCheckpoint,
-		addPageRemovalToCheckpoint,
-		clearCheckpoint,
 		hasCheckpoint,
 	};
 }

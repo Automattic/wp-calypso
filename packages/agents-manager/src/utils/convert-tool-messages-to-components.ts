@@ -1,8 +1,8 @@
+import { __ } from '@wordpress/i18n';
 import ButtonPicker from '../components/button-picker';
 import ColorPicker from '../components/color-picker';
 import { EscalationButton } from '../components/escalation-button';
 import FontPicker from '../components/font-picker';
-import PatternPicker from '../components/pattern-picker';
 import UnavailableToolMessage from '../components/unavailable-tool-message';
 import isAmAbilitiesEnabled from './is-am-abilities-enabled';
 import { isEditorPage } from './is-editor-page';
@@ -30,8 +30,6 @@ function getAmComponent( type: ShowComponentType ): React.ComponentType | null {
 			return ColorPicker as React.ComponentType;
 		case 'font-picker':
 			return FontPicker as React.ComponentType;
-		case 'pattern-picker':
-			return PatternPicker as React.ComponentType;
 		default:
 			return null;
 	}
@@ -229,12 +227,31 @@ export default function convertToolMessagesToComponents( {
 				? getAmComponent( contentType )
 				: getChatComponent?.( contentType );
 
-			// No matching component found for this content type — drop the message to avoid showing raw JSON.
-			if ( ! Component ) {
-				return [];
-			}
-
 			const summaryText = typeof summary === 'string' ? summary.trim() || undefined : undefined;
+
+			// No matching component found for this content type.
+			if ( ! Component ) {
+				// External providers own their component set — drop the message to avoid showing raw JSON.
+				if ( ! useAmAbilities ) {
+					return [];
+				}
+
+				// Deprecated picker types (e.g. `pattern-picker` in restored history) —
+				// show the stored summary or a short notice instead.
+				return [
+					{
+						...message,
+						content: [
+							{
+								type: 'text' as const,
+								text:
+									summaryText ?? __( 'This option is no longer available.', __i18n_text_domain__ ),
+							},
+						],
+						suppressThinking: true,
+					},
+				];
+			}
 
 			// A picker only stays interactive until the user replies past it — after
 			// that it documents a previous step. Hidden context messages (e.g.

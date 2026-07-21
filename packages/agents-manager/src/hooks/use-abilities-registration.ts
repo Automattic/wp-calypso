@@ -6,7 +6,6 @@ import useCheckpoint from './use-checkpoint';
 import type { ShowComponentDeps } from '../abilities/show-component/create-callback';
 
 interface AbilitiesDeps {
-	getClientIdMap: () => Record< string, string >;
 	isBuildingSite: boolean;
 }
 
@@ -16,10 +15,7 @@ let hasRegistered = false;
 /**
  * Registers agents-manager abilities via `@wordpress/abilities`.
  */
-export default function useAbilitiesRegistration( {
-	getClientIdMap,
-	isBuildingSite,
-}: AbilitiesDeps ): void {
+export default function useAbilitiesRegistration( { isBuildingSite }: AbilitiesDeps ): void {
 	const checkpoint = useCheckpoint();
 	const currentPostId = useSelect( ( select ) => {
 		return ( select( 'core/editor' ) as { getCurrentPostId?: () => number } )?.getCurrentPostId?.();
@@ -27,7 +23,6 @@ export default function useAbilitiesRegistration( {
 
 	const showComponentDeps: ShowComponentDeps = {
 		currentPostId,
-		getClientIdMap,
 		checkpoint,
 		isBuildingSite,
 	};

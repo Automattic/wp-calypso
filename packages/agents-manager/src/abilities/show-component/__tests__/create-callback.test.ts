@@ -11,10 +11,8 @@ jest.mock( '../../../utils/canvas-zoom', () => ( {
 
 const makeDeps = ( overrides: Partial< ShowComponentDeps > = {} ): ShowComponentDeps => ( {
 	currentPostId: 42,
-	getClientIdMap: () => ( {} ),
 	checkpoint: {
 		setCheckpoint: jest.fn(),
-		addNewPageToCheckpoint: jest.fn(),
 	},
 	isBuildingSite: false,
 	...overrides,
@@ -81,37 +79,9 @@ describe( 'show-component/create-callback', () => {
 		expect( JSON.parse( result.agentMessage! ).data.calypsoCheckpointId ).toBe( 'toolu_1' );
 	} );
 
-	it( 'resolves compressed `clientId` from the map', async () => {
-		const deps = makeDeps( {
-			getClientIdMap: () => ( { abc123: 'real-block-id-456' } ),
-		} );
-		const result = await createCallback( deps )( makeInput( { clientId: 'abc123' } ) );
-
-		const parsed = JSON.parse( result.agentMessage! );
-		expect( parsed.data.props.clientId ).toBe( 'real-block-id-456' );
-	} );
-
-	it( 'does not set `clientId` when compressed ID is not in the map', async () => {
-		const deps = makeDeps( {
-			getClientIdMap: () => ( { abc123: 'real-id' } ),
-		} );
-		const result = await createCallback( deps )( makeInput( { clientId: 'unknown' } ) );
-
-		const parsed = JSON.parse( result.agentMessage! );
-		expect( parsed.data.props.clientId ).toBeUndefined();
-	} );
-
-	it( 'attaches `insertIndex` to props when provided', async () => {
-		const deps = makeDeps();
-		const result = await createCallback( deps )( makeInput( { insertIndex: 3 } ) );
-
-		const parsed = JSON.parse( result.agentMessage! );
-		expect( parsed.data.props.insertIndex ).toBe( 3 );
-	} );
-
 	it( 'calls `zoomOut` when `shouldZoomOut` is true', async () => {
 		const deps = makeDeps( { isBuildingSite: true } );
-		await createCallback( deps )( makeInput( { type: 'pattern-picker', zoomOut: true } ) );
+		await createCallback( deps )( makeInput( { type: 'button-picker', zoomOut: true } ) );
 
 		expect( mockZoomOut ).toHaveBeenCalledWith( { blockDoubleClick: true } );
 	} );
@@ -125,7 +95,7 @@ describe( 'show-component/create-callback', () => {
 	);
 
 	it( 'does not call `zoomOut` by default', async () => {
-		await createCallback( makeDeps() )( makeInput( { type: 'pattern-picker' } ) );
+		await createCallback( makeDeps() )( makeInput( { type: 'button-picker' } ) );
 		expect( mockZoomOut ).not.toHaveBeenCalled();
 	} );
 
@@ -136,7 +106,6 @@ describe( 'show-component/create-callback', () => {
 			[ 'color-picker', 'color' ],
 			[ 'font-picker', 'font' ],
 			[ 'button-picker', 'button' ],
-			[ 'pattern-picker', 'blocks' ],
 		] as const ) {
 			jest.clearAllMocks();
 			await createCallback( deps )( makeInput( { type, messageId: 'msg-1' } ) );
@@ -150,20 +119,6 @@ describe( 'show-component/create-callback', () => {
 		expect( deps.checkpoint.setCheckpoint ).not.toHaveBeenCalled();
 	} );
 
-	it( 'uses "page" checkpoint key and adds new page for `pattern-picker` with `newPageId`', async () => {
-		const deps = makeDeps();
-		await createCallback( deps )(
-			makeInput( {
-				type: 'pattern-picker',
-				props: { layouts: [], newPageId: 'page-99' },
-				messageId: 'msg-2',
-			} )
-		);
-
-		expect( deps.checkpoint.setCheckpoint ).toHaveBeenCalledWith( 'msg-2', [ 'page' ] );
-		expect( deps.checkpoint.addNewPageToCheckpoint ).toHaveBeenCalledWith( 'page-99' );
-	} );
-
 	it( 'returns a structured error result when props is empty', async () => {
 		const result = await createCallback( makeDeps() )( makeInput( { props: {} } ) );
 
@@ -174,14 +129,5 @@ describe( 'show-component/create-callback', () => {
 		expect( result.result.error ).toContain( 'Props must be an object with properties' );
 		expect( result.returnToAgent ).toBe( true );
 		expect( result.agentMessage ).toBeUndefined();
-	} );
-
-	it( 'does not mutate the input props object', async () => {
-		const inputProps = { variations: [] };
-		await createCallback( makeDeps() )(
-			makeInput( { props: inputProps, insertIndex: 5, clientId: 'x' } )
-		);
-
-		expect( inputProps ).toEqual( { variations: [] } );
 	} );
 } );

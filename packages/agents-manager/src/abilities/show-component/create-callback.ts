@@ -9,8 +9,6 @@ export interface ShowComponentInput {
 	summary?: string;
 	followUpTasks?: boolean;
 	zoomOut?: boolean;
-	clientId?: string;
-	insertIndex?: number;
 	/** Injected by the agenttic client — not part of the model-facing schema. */
 	messageId?: string;
 	/** Injected by the agenttic client — not part of the model-facing schema. */
@@ -23,7 +21,6 @@ const CHECKPOINT_KEYS: Record< ShowComponentType, string > = {
 	'button-picker': 'button',
 	'font-picker': 'font',
 	'color-picker': 'color',
-	'pattern-picker': 'blocks',
 };
 
 /**
@@ -32,10 +29,8 @@ const CHECKPOINT_KEYS: Record< ShowComponentType, string > = {
 export interface ShowComponentDeps {
 	/** The current post ID from the editor. */
 	currentPostId?: number;
-	/** Get the map of compressed client IDs to real block client IDs. */
-	getClientIdMap: () => Record< string, string >;
 	/** Checkpoint utilities for undo support. */
-	checkpoint: Pick< UseCheckpointReturn, 'setCheckpoint' | 'addNewPageToCheckpoint' >;
+	checkpoint: Pick< UseCheckpointReturn, 'setCheckpoint' >;
 	/** Whether a site is currently being built. Blocks double-click during zoom-out. */
 	isBuildingSite?: boolean;
 }
@@ -48,18 +43,13 @@ export function createCallback( deps: ShowComponentDeps ): ShowComponentCallback
 	return async ( input: ShowComponentInput ): Promise< AbilityResult > => {
 		const {
 			type,
-			props: inputProps = {},
+			props = {},
 			summary,
 			followUpTasks,
 			zoomOut: shouldZoomOut = false,
-			clientId,
 			messageId,
 			toolCallId,
-			insertIndex,
 		} = input;
-
-		// Shallow copy to avoid mutating the caller's object.
-		const props = { ...inputProps };
 
 		try {
 			if ( typeof props !== 'object' || Object.keys( props ).length === 0 ) {
@@ -72,26 +62,10 @@ export function createCallback( deps: ShowComponentDeps ): ShowComponentCallback
 				zoomOut( { blockDoubleClick: deps.isBuildingSite } );
 			}
 
-			// Resolve compressed `clientId` and attach `insertIndex` if provided.
-			const resolvedClientId = clientId ? deps.getClientIdMap()[ clientId ] : undefined;
-			if ( resolvedClientId ) {
-				props.clientId = resolvedClientId;
-			}
-			if ( insertIndex !== undefined && insertIndex >= 0 ) {
-				props.insertIndex = insertIndex;
-			}
-
 			// Set checkpoint so the action can be undone.
 			const checkpointId = toolCallId || messageId;
 			if ( checkpointId ) {
-				const isNewPage = type === 'pattern-picker' && !! props?.newPageId;
-				const checkpointKey = isNewPage ? 'page' : CHECKPOINT_KEYS[ type ];
-
-				deps.checkpoint.setCheckpoint( checkpointId, [ checkpointKey ] );
-
-				if ( isNewPage ) {
-					deps.checkpoint.addNewPageToCheckpoint( props.newPageId as string );
-				}
+				deps.checkpoint.setCheckpoint( checkpointId, [ CHECKPOINT_KEYS[ type ] ] );
 			}
 
 			const successMessage =

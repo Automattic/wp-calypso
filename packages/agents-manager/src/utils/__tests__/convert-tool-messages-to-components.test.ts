@@ -20,15 +20,10 @@ jest.mock( '../is-am-abilities-enabled' );
 jest.mock( '../../components/button-picker', () => ( { __esModule: true, default: jest.fn() } ) );
 jest.mock( '../../components/color-picker', () => ( { __esModule: true, default: jest.fn() } ) );
 jest.mock( '../../components/font-picker', () => ( { __esModule: true, default: jest.fn() } ) );
-jest.mock( '../../components/pattern-picker', () => ( {
-	__esModule: true,
-	default: jest.fn(),
-} ) );
 
 import ButtonPicker from '../../components/button-picker';
 import ColorPicker from '../../components/color-picker';
 import FontPicker from '../../components/font-picker';
-import PatternPicker from '../../components/pattern-picker';
 import UnavailableToolMessage from '../../components/unavailable-tool-message';
 import convertToolMessagesToComponents from '../convert-tool-messages-to-components';
 import isAmAbilitiesEnabled from '../is-am-abilities-enabled';
@@ -628,7 +623,6 @@ describe( 'convertToolMessagesToComponents', () => {
 			[ 'button-picker', ButtonPicker ],
 			[ 'color-picker', ColorPicker ],
 			[ 'font-picker', FontPicker ],
-			[ 'pattern-picker', PatternPicker ],
 		] )( 'resolves %s to its AM component', ( type, expected ) => {
 			const message = createToolMessage( SHOW_COMPONENT_TOOL_ID, {
 				type,
@@ -662,7 +656,26 @@ describe( 'convertToolMessagesToComponents', () => {
 			} );
 		} );
 
-		it( 'drops unknown component types', () => {
+		it( 'renders the stored summary for deprecated component types', () => {
+			const message = createToolMessage( SHOW_COMPONENT_TOOL_ID, {
+				type: 'pattern-picker',
+				props: { layouts: [] },
+				summary: 'Here are some layouts to choose from.',
+				isCurrent: true,
+			} );
+
+			const result = convertToolMessagesToComponents( {
+				messages: [ message ],
+			} );
+
+			expect( result ).toHaveLength( 1 );
+			expect( result[ 0 ].content ).toEqual( [
+				{ type: 'text', text: 'Here are some layouts to choose from.' },
+			] );
+			expect( result[ 0 ].suppressThinking ).toBe( true );
+		} );
+
+		it( 'renders a short notice for deprecated component types without a summary', () => {
 			const message = createToolMessage( SHOW_COMPONENT_TOOL_ID, {
 				type: 'unknown',
 				props: {},
@@ -673,7 +686,10 @@ describe( 'convertToolMessagesToComponents', () => {
 				messages: [ message ],
 			} );
 
-			expect( result ).toEqual( [] );
+			expect( result ).toHaveLength( 1 );
+			expect( result[ 0 ].content ).toEqual( [
+				{ type: 'text', text: 'This option is no longer available.' },
+			] );
 		} );
 
 		it( 'does not call `getChatComponent`', () => {

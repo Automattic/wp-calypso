@@ -768,9 +768,6 @@ export default function OrchestratorChat( {
 	if ( isAmAbilitiesEnabled() ) {
 		// eslint-disable-next-line react-hooks/rules-of-hooks -- stable conditional (URL param)
 		useAbilitiesRegistration( {
-			// TODO: compressed block IDs must match what the context provider sends to the LLM.
-			// Currently big-sky owns the context provider — decouple them together.
-			getClientIdMap: () => ( {} ),
 			// TODO: big-sky sets this when a site build starts. AM needs its own lifecycle trigger.
 			isBuildingSite,
 		} );

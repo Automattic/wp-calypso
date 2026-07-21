@@ -22,7 +22,7 @@ export const showComponentAbility = ( getDeps: () => ShowComponentDeps ): Abilit
 			type: {
 				type: 'string',
 				description: 'The type of component to show',
-				enum: [ 'button-picker', 'font-picker', 'color-picker', 'pattern-picker' ],
+				enum: [ 'button-picker', 'font-picker', 'color-picker' ],
 			},
 			props: {
 				type: 'object',
@@ -41,14 +41,6 @@ export const showComponentAbility = ( getDeps: () => ShowComponentDeps ): Abilit
 				type: 'boolean',
 				description:
 					'Whether to zoom out before showing the component. Ignored for color-picker and font-picker.',
-			},
-			clientId: {
-				type: 'string',
-				description: 'The compressed client ID of the block to target',
-			},
-			insertIndex: {
-				type: 'number',
-				description: 'The index at which to insert the component',
 			},
 		},
 		required: [ 'type', 'props' ],

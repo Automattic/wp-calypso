@@ -61,9 +61,6 @@ describe( 'useCheckpoint', () => {
 				mockGlobalStylesId
 			);
 			expect( result.current.hasCheckpoint( 'msg-1' ) ).toBe( true );
-
-			const state = result.current.getLastEditorState();
-			expect( state?.blocks ).toBeDefined();
 		} );
 
 		it( 'does nothing when `id` is empty', () => {
@@ -128,71 +125,6 @@ describe( 'useCheckpoint', () => {
 			} );
 
 			expect( result.current.hasCheckpoint( 'msg-1' ) ).toBe( true );
-		} );
-	} );
-
-	describe( 'addCheckpointKeys', () => {
-		it( 'deduplicates keys', () => {
-			const { result } = renderHook( () => useCheckpoint() );
-
-			act( () => {
-				result.current.setCheckpoint( 'msg-1', [ 'color' ] );
-				result.current.addCheckpointKeys( 'msg-1', [ 'color', 'font' ] );
-			} );
-
-			const state = result.current.getLastEditorState();
-			expect( state?.checkpointKeys ).toEqual( [ 'color', 'font' ] );
-		} );
-	} );
-
-	describe( 'addNewPageToCheckpoint', () => {
-		it( 'adds `newPageId` to the last checkpoint', () => {
-			const { result } = renderHook( () => useCheckpoint() );
-
-			act( () => {
-				result.current.setCheckpoint( 'msg-1', [ 'blocks' ] );
-				result.current.addNewPageToCheckpoint( 'page-123' );
-			} );
-
-			const state = result.current.getLastEditorState();
-			expect( state?.newPageId ).toBe( 'page-123' );
-		} );
-	} );
-
-	describe( 'clearCheckpoint', () => {
-		it( 'removes a checkpoint by ID', () => {
-			const { result } = renderHook( () => useCheckpoint() );
-
-			act( () => {
-				result.current.setCheckpoint( 'msg-1', [ 'color' ] );
-			} );
-
-			expect( result.current.hasCheckpoint( 'msg-1' ) ).toBe( true );
-
-			act( () => {
-				result.current.clearCheckpoint( 'msg-1' );
-			} );
-
-			expect( result.current.hasCheckpoint( 'msg-1' ) ).toBe( false );
-		} );
-	} );
-
-	describe( 'getLastEditorState', () => {
-		it( 'returns `undefined` when no checkpoints exist', () => {
-			const { result } = renderHook( () => useCheckpoint() );
-			expect( result.current.getLastEditorState() ).toBeUndefined();
-		} );
-
-		it( 'returns the most recently added checkpoint', () => {
-			const { result } = renderHook( () => useCheckpoint() );
-
-			act( () => {
-				result.current.setCheckpoint( 'msg-1', [ 'color' ] );
-				result.current.setCheckpoint( 'msg-2', [ 'font' ] );
-			} );
-
-			const state = result.current.getLastEditorState();
-			expect( state?.checkpointKeys ).toEqual( [ 'font' ] );
 		} );
 	} );
 } );
