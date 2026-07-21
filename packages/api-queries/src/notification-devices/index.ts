@@ -29,6 +29,7 @@ export const notificationDeviceQuery = () =>
  */
 export const notificationDeviceRemovalMutation = () =>
 	mutationOptions( {
+		meta: { statId: 'notif-device-remove' },
 		mutationFn: ( deviceId: string ) => deleteNotificationsDevice( deviceId ),
 		onMutate: () => {
 			const previousData = queryClient.getQueryData( notificationDeviceQuery().queryKey );
@@ -63,6 +64,7 @@ export const notificationPushPermissionStateQuery = () => {
  */
 export const notificationDeviceRegistrationMutation = () =>
 	mutationOptions< NotificationsDeviceResponse, Error >( {
+		meta: { statId: 'notif-device-register' },
 		mutationFn: async () => {
 			const subscription = await startBrowserSubscription();
 

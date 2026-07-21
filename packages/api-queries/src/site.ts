@@ -126,6 +126,7 @@ export const siteQueryFilter = ( siteId: number ) => ( {
 
 export const siteDeleteMutation = ( siteId: number ) =>
 	mutationOptions( {
+		meta: { statId: 'site-delete' },
 		mutationFn: () => deleteSite( siteId ),
 		onSuccess: () => {
 			// Delay the invalidation for the redirection to complete first
@@ -139,6 +140,7 @@ export const siteDeleteMutation = ( siteId: number ) =>
 
 export const siteLaunchMutation = ( siteId: number ) =>
 	mutationOptions( {
+		meta: { statId: 'site-launch' },
 		mutationFn: () => launchSite( siteId ),
 		onSuccess: () => {
 			queryClient.invalidateQueries( siteQueryFilter( siteId ) );
@@ -147,6 +149,7 @@ export const siteLaunchMutation = ( siteId: number ) =>
 
 export const siteRestoreMutation = ( siteId: number ) =>
 	mutationOptions( {
+		meta: { statId: 'site-restore' },
 		mutationFn: () => restoreSite( siteId ),
 		onSuccess: () => {
 			queryClient.invalidateQueries( siteQueryFilter( siteId ) );

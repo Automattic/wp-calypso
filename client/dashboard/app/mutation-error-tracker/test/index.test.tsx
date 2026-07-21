@@ -1,6 +1,7 @@
 /**
  * @jest-environment jsdom
  */
+import { captureException } from '@automattic/calypso-sentry';
 import { render } from '../../../test-utils';
 import { bumpMultipleStats } from '../../analytics';
 import MutationErrorTracker from '../index';
@@ -10,7 +11,12 @@ jest.mock( '../../analytics', () => ( {
 	bumpMultipleStats: jest.fn(),
 } ) );
 
+jest.mock( '@automattic/calypso-sentry', () => ( {
+	captureException: jest.fn(),
+} ) );
+
 const mockedBumpMultipleStats = jest.mocked( bumpMultipleStats );
+const mockedCaptureException = jest.mocked( captureException );
 
 function wpError( fields: { status: number; statusCode: number; error?: string } ) {
 	return Object.assign( new Error( 'boom' ), fields );
@@ -68,13 +74,15 @@ describe( '<MutationErrorTracker>', () => {
 			[ 'dashboard-mutation-error', '2fa-security-key-register' ],
 			[ 'dashboard-mutation-error-other', '2fa-security-key-register' ]
 		);
+		expect( mockedCaptureException ).not.toHaveBeenCalled();
 	} );
 
-	test( 'falls back to `missing` for a mutation with no statId', async () => {
+	test( 'falls back to `missing` and reports a mutation with no statId', async () => {
 		const { queryClient } = render( <MutationErrorTracker /> );
 
 		const error = wpError( { status: 500, statusCode: 500 } );
 		const mutation = queryClient.getMutationCache().build( queryClient, {
+			mutationKey: [ 'PULL_FROM_STAGING', 12345 ],
 			mutationFn: () => Promise.reject( error ),
 		} );
 
@@ -85,6 +93,33 @@ describe( '<MutationErrorTracker>', () => {
 			[ 'dashboard-mutation-error-status', 'missing.500' ],
 			[ 'dashboard-mutation-error-5xx', 'missing' ]
 		);
+		expect( mockedCaptureException ).toHaveBeenCalledWith(
+			expect.objectContaining( {
+				message: 'Failed mutation is missing a meta.statId property',
+			} ),
+			expect.objectContaining( {
+				extra: expect.objectContaining( {
+					mutation_key: [ 'PULL_FROM_STAGING', 12345 ],
+					error_message: 'boom',
+					error_status: 500,
+					error_stack: error.stack,
+				} ),
+			} )
+		);
+	} );
+
+	test( 'does not report a failure that has a statId', async () => {
+		const { queryClient } = render( <MutationErrorTracker /> );
+
+		const error = wpError( { status: 404, statusCode: 404, error: 'not_found' } );
+		const mutation = queryClient.getMutationCache().build( queryClient, {
+			meta: { statId: '2fa-security-key-register' },
+			mutationFn: () => Promise.reject( error ),
+		} );
+
+		await expect( mutation.execute( undefined ) ).rejects.toBe( error );
+
+		expect( mockedCaptureException ).not.toHaveBeenCalled();
 	} );
 
 	test( 'does not bump anything when a mutation succeeds', async () => {
@@ -98,5 +133,6 @@ describe( '<MutationErrorTracker>', () => {
 		await mutation.execute( undefined );
 
 		expect( mockedBumpMultipleStats ).not.toHaveBeenCalled();
+		expect( mockedCaptureException ).not.toHaveBeenCalled();
 	} );
 } );

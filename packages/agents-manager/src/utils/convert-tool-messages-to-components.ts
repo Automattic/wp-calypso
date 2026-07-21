@@ -172,6 +172,14 @@ export default function convertToolMessagesToComponents( {
 			return [ message ];
 		}
 
+		if (
+			typeof textData !== 'object' ||
+			textData === null ||
+			typeof textData.tool_id !== 'string'
+		) {
+			return [ message ];
+		}
+
 		// Handle `show-component` tool message
 		if ( isShowComponentTool( textData.tool_id ) ) {
 			// If not on an editor page, show an unavailable tool message instead of the component

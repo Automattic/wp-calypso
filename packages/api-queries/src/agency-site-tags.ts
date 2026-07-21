@@ -6,6 +6,7 @@ import { mutationOptions } from '@tanstack/react-query';
 // rather than the `@automattic/api-queries` singleton.
 export const agencySiteTagsMutation = ( agencyId: number | undefined ) =>
 	mutationOptions( {
+		meta: { statId: 'agcy-site-tags-update' },
 		mutationFn: ( { siteId, tags }: { siteId: number; tags: string[] } ) => {
 			if ( ! agencyId ) {
 				throw new Error( 'No active agency found for the current user.' );

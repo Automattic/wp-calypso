@@ -15,6 +15,27 @@ This is the new hosting dashboard for WordPress.com.
   2. If the behavior genuinely differs per dashboard variant, add a property to `AppConfig` that each variant provides, and branch on that property instead of the name.
   3. Before doing either, ask: if this UX is better for one variant, wouldn't it be better for all users? Prefer a single code path when possible.
 
+### Mutation snackbars
+
+Use `withSnackbar()` from `app/snackbars/with-snackbar` to attach a snackbar to a mutation. Never write `meta: { snackbar }` by hand:
+
+```ts
+useMutation( withSnackbar( sitePhpVersionMutation( siteId ), { success: __( 'Saved.' ) } ) );
+```
+
+Every `@automattic/api-queries` mutation carries a `meta.statId` naming its failure stat. Spreading a factory and then setting `meta` replaces the whole object rather than merging, so the `statId` is lost. `withSnackbar()` merges instead. A `no-restricted-syntax` rule in `.eslintrc.js` enforces this.
+
+If the mutation needs other options too, wrap only the factory:
+
+```ts
+useMutation( {
+	...withSnackbar( sitePhpVersionMutation( siteId ), { success: __( 'Saved.' ) } ),
+	onSuccess: () => {
+		/* … */
+	},
+} );
+```
+
 ### Internationalization
 
 - When calling locale-aware formatting functions (`toLocaleDateString`, `toLocaleString`, `Intl.*`, etc.), prefer passing the user's locale from `useLocale()` (`app/locale`) rather than `undefined`. Passing `undefined` falls back to the browser/OS locale, so output silently drifts from the user's WordPress.com language setting.

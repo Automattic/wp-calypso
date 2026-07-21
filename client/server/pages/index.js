@@ -56,6 +56,7 @@ import {
 	attachBuildTimestamp,
 	attachHead,
 	attachI18n,
+	bumpStat,
 } from 'calypso/server/render';
 import sanitize from 'calypso/server/sanitize';
 import stateCache from 'calypso/server/state-cache';
@@ -880,6 +881,8 @@ const setUpSectionContext = ( section, entrypoint ) => ( req, res, next ) => {
 
 const setNotFoundStatus = ( req, res, next ) => {
 	res.status( 404 );
+	// bumpStat only accepts 32 chars max for the value
+	bumpStat( 'dashboard-404', req.path.slice( 0, 32 ) );
 	next();
 };
 

@@ -18,6 +18,7 @@ export const blockedSitesInfiniteQuery = ( perPage: number ) =>
 
 export const unblockSiteMutation = () =>
 	mutationOptions( {
+		meta: { statId: 'site-unblock' },
 		mutationFn: ( siteId: number ) => unblockSite( siteId ),
 		onSuccess: () => {
 			queryClient.invalidateQueries( { queryKey: [ 'me', 'blocked-sites' ] } );

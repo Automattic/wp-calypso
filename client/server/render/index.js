@@ -67,7 +67,7 @@ export const markupCache = new Lru( {
 	maxAge: HOUR_IN_MS,
 } );
 
-function bumpStat( group, name ) {
+export function bumpStat( group, name ) {
 	const statUrl = `http://pixel.wp.com/g.gif?v=wpcom-no-pv&x_${ group }=${ name }&t=${ Math.random() }`;
 
 	if ( process.env.NODE_ENV === 'production' ) {

@@ -19,5 +19,6 @@ export function withSnackbar< T extends { meta?: ApiQueriesMutationMeta } >(
 	options: T,
 	snackbar: Snackbar
 ): T {
+	// eslint-disable-next-line no-restricted-syntax -- this is the merge the rule points at.
 	return { ...options, meta: { ...options.meta, snackbar } };
 }

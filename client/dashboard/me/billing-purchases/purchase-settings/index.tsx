@@ -62,6 +62,7 @@ import {
 	purchaseSettingsRoute,
 } from '../../../app/router/me';
 import { getCurrentDashboard } from '../../../app/routing';
+import { withSnackbar } from '../../../app/snackbars/with-snackbar';
 import { ActionList } from '../../../components/action-list';
 import { Card, CardBody } from '../../../components/card';
 import ClipboardInputControl from '../../../components/clipboard-input-control';
@@ -624,15 +625,12 @@ function JetpackCRMDownloadsButton( { purchase }: { purchase: Purchase } ) {
 }
 
 function ReinstallButton( { purchase }: { purchase: Purchase } ) {
-	const { mutate: reinstallPlugins, isPending: isMutationPending } = useMutation( {
-		...reinstallMarketplacePluginsQuery( purchase.blog_id ),
-		meta: {
-			snackbar: {
-				success: __( 'Plugins reinstalled.' ),
-				error: __( 'Failed to reinstall plugins.' ),
-			},
-		},
-	} );
+	const { mutate: reinstallPlugins, isPending: isMutationPending } = useMutation(
+		withSnackbar( reinstallMarketplacePluginsQuery( purchase.blog_id ), {
+			success: __( 'Plugins reinstalled.' ),
+			error: __( 'Failed to reinstall plugins.' ),
+		} )
+	);
 	if ( ! isMarketplacePlugin( purchase ) ) {
 		return null;
 	}

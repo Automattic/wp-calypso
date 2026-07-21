@@ -15,6 +15,7 @@ import { DataForm, Field, Form } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
 import { useState, useMemo, useCallback } from 'react';
 import { NavigationBlocker } from '../../app/navigation-blocker';
+import { withSnackbar } from '../../app/snackbars/with-snackbar';
 import { Card, CardBody } from '../../components/card';
 import FlashMessage from '../../components/flash-message';
 import { SectionHeader } from '../../components/section-header';
@@ -32,15 +33,12 @@ export default function PersonalDetailsSection() {
 	const [ edits, setEdits ] = useState< Partial< UserSettings > >( {} );
 	const [ isEmailValid, setIsEmailValid ] = useState< boolean >( true );
 
-	const mutation = useMutation( {
-		...userSettingsMutation(),
-		meta: {
-			snackbar: {
-				success: __( 'Settings saved.' ),
-				error: { source: 'server' },
-			},
-		},
-	} );
+	const mutation = useMutation(
+		withSnackbar( userSettingsMutation(), {
+			success: __( 'Settings saved.' ),
+			error: { source: 'server' },
+		} )
+	);
 
 	const data = useMemo( () => ( { ...userSettings, ...edits } ), [ userSettings, edits ] );
 

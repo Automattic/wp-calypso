@@ -2,7 +2,7 @@
  * @jest-environment jsdom
  */
 import config from '@automattic/calypso-config';
-import { screen, waitFor } from '@testing-library/react';
+import { act, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import cookie from 'cookie';
 import LoginForm from 'calypso/blocks/login/login-form';
@@ -306,6 +306,25 @@ describe( 'LoginForm', () => {
 			await userEvent.click( screen.getByRole( 'button', { name: /Log In/i } ) );
 
 			await waitFor( () => expect( window.Blackbox.reset ).toHaveBeenCalledTimes( 1 ) );
+		} );
+
+		test( 'sends only one login request when the form is submitted twice', async () => {
+			getBlackboxSessionId.mockResolvedValue( 'ABCDEFGHIJKLMNOPQRSTuv' );
+			mockFetch.mockResolvedValue( {
+				ok: false,
+				status: 400,
+				text: jest.fn().mockResolvedValue( '' ),
+			} );
+
+			renderRegularLoginForm();
+
+			const form = document.querySelector( 'form[method="post"]' );
+			act( () => {
+				form.requestSubmit();
+				form.requestSubmit();
+			} );
+
+			await waitFor( () => expect( mockFetch ).toHaveBeenCalledTimes( 1 ) );
 		} );
 	} );
 } );

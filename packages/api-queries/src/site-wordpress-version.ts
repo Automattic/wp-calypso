@@ -23,6 +23,7 @@ export const siteWordPressVersionMutation = (
 	options?: { deferUntilBackupComplete?: boolean }
 ) =>
 	mutationOptions( {
+		meta: { statId: 'site-wp-version-update' },
 		mutationFn: ( version: string ) =>
 			updateWordPressVersion( siteId, version, options?.deferUntilBackupComplete ),
 		onSuccess: () => {

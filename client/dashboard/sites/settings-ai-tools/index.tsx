@@ -45,6 +45,7 @@ import {
 import { useAnalytics } from '../../app/analytics';
 import Breadcrumbs from '../../app/breadcrumbs';
 import { useHelpCenter } from '../../app/help-center';
+import { withSnackbar } from '../../app/snackbars/with-snackbar';
 import { Card, CardBody, CardDivider, CardFooter } from '../../components/card';
 import ClipboardInputControl from '../../components/clipboard-input-control';
 import ConfirmModal from '../../components/confirm-modal';
@@ -192,15 +193,12 @@ function EmailAssistantCard( {
 	const vCardHref = agentEmailAddress ? getVCardDataUrl( site.slug, agentEmailAddress ) : undefined;
 	const vCardFileName = getVCardFileName( site.slug );
 
-	const emailAddressMutation = useMutation( {
-		...sitePostByEmailSettingsMutation( site ),
-		meta: {
-			snackbar: {
-				success: __( 'AI agent email address settings saved.' ),
-				error: __( 'Failed to save AI agent email address settings.' ),
-			},
-		},
-	} );
+	const emailAddressMutation = useMutation(
+		withSnackbar( sitePostByEmailSettingsMutation( site ), {
+			success: __( 'AI agent email address settings saved.' ),
+			error: __( 'Failed to save AI agent email address settings.' ),
+		} )
+	);
 	const isEmailAddressActionDisabled =
 		isPostByEmailSettingsLoading || emailAddressMutation.isPending;
 
@@ -342,17 +340,14 @@ export default function AIToolsSettings( { siteSlug }: { siteSlug: string } ) {
 		: { text: __( 'Disabled' ) };
 	const readBadge = hasSiteAbilityOverrides ? getReadBadge( readTools ) : defaultBadge;
 	const writeBadge = hasSiteAbilityOverrides ? getWriteBadge( writeTools ) : defaultBadge;
-	const mcpMutation = useMutation( {
-		...userSettingsMutation(),
-		meta: {
-			snackbar: {
-				success: isMcpEnabled
-					? __( 'MCP access disabled for this site.' )
-					: __( 'MCP access enabled for this site.' ),
-				error: __( 'Failed to save MCP settings.' ),
-			},
-		},
-	} );
+	const mcpMutation = useMutation(
+		withSnackbar( userSettingsMutation(), {
+			success: isMcpEnabled
+				? __( 'MCP access disabled for this site.' )
+				: __( 'MCP access enabled for this site.' ),
+			error: __( 'Failed to save MCP settings.' ),
+		} )
+	);
 
 	const handleMcpToggle = ( enabled: boolean ) => {
 		const abilities: Record< string, boolean > = {};
@@ -386,15 +381,12 @@ export default function AIToolsSettings( { siteSlug }: { siteSlug: string } ) {
 		);
 	};
 
-	const mutation = useMutation( {
-		...bigSkyPluginMutation( site.ID ),
-		meta: {
-			snackbar: {
-				success: ! isEnabled ? __( 'AI assistant enabled.' ) : __( 'AI assistant disabled.' ),
-				error: __( 'Failed to save AI assistant settings.' ),
-			},
-		},
-	} );
+	const mutation = useMutation(
+		withSnackbar( bigSkyPluginMutation( site.ID ), {
+			success: ! isEnabled ? __( 'AI assistant enabled.' ) : __( 'AI assistant disabled.' ),
+			error: __( 'Failed to save AI assistant settings.' ),
+		} )
+	);
 
 	const description = isAvailable
 		? createInterpolateElement(
