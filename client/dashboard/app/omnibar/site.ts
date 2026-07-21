@@ -10,7 +10,7 @@ import calypsoConfig from '@automattic/calypso-config';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { useRouterState } from '@tanstack/react-router';
 import { removeQueryArgs } from '@wordpress/url';
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import { logToLogstash } from 'calypso/lib/logstash';
 import { AUTH_QUERY_KEY } from '../auth';
 
@@ -34,6 +34,11 @@ export function useInitializeOmnibarSite() {
 		userPreferenceOptimisticMutation( 'recentSites' ),
 		queryClient
 	);
+
+	// Tracks the last site id we tried to record as most recent. On failure the
+	// optimistic mutation rolls `recentSites` back, which would otherwise re-trigger
+	// this effect and retry the same write forever. We only attempt each site once.
+	const lastRecordedSiteIdRef = useRef< number | undefined >( undefined );
 
 	const { location, routeSite, isRouteLoaded } = useRouterState( {
 		select: ( state ) => ( {
@@ -90,7 +95,12 @@ export function useInitializeOmnibarSite() {
 			);
 		}
 
-		if ( omnibarSiteId && omnibarSiteId !== recentSiteIds?.[ 0 ] ) {
+		if (
+			omnibarSiteId &&
+			omnibarSiteId !== recentSiteIds?.[ 0 ] &&
+			omnibarSiteId !== lastRecordedSiteIdRef.current
+		) {
+			lastRecordedSiteIdRef.current = omnibarSiteId;
 			updateRecentSites(
 				[ ...new Set( [ omnibarSiteId, ...( recentSiteIds || [] ) ] ) ].slice( 0, 5 ),
 				{
