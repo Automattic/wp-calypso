@@ -37,11 +37,6 @@ export const showComponentAbility = ( getDeps: () => ShowComponentDeps ): Abilit
 				description:
 					'Deprecated. This tool always returns to the agent with a success or error message.',
 			},
-			zoomOut: {
-				type: 'boolean',
-				description:
-					'Whether to zoom out before showing the component. Ignored for color-picker and font-picker.',
-			},
 		},
 		required: [ 'type', 'props' ],
 	},

@@ -4,17 +4,11 @@
 import { createCallback } from '../create-callback';
 import type { ShowComponentDeps, ShowComponentInput } from '../create-callback';
 
-const mockZoomOut = jest.fn();
-jest.mock( '../../../utils/canvas-zoom', () => ( {
-	zoomOut: ( ...args: unknown[] ) => mockZoomOut( ...args ),
-} ) );
-
 const makeDeps = ( overrides: Partial< ShowComponentDeps > = {} ): ShowComponentDeps => ( {
 	currentPostId: 42,
 	checkpoint: {
 		setCheckpoint: jest.fn(),
 	},
-	isBuildingSite: false,
 	...overrides,
 } );
 
@@ -77,26 +71,6 @@ describe( 'show-component/create-callback', () => {
 
 		expect( deps.checkpoint.setCheckpoint ).toHaveBeenCalledWith( 'toolu_1' );
 		expect( JSON.parse( result.agentMessage! ).data.calypsoCheckpointId ).toBe( 'toolu_1' );
-	} );
-
-	it( 'calls `zoomOut` when `shouldZoomOut` is true', async () => {
-		const deps = makeDeps( { isBuildingSite: true } );
-		await createCallback( deps )( makeInput( { type: 'button-picker', zoomOut: true } ) );
-
-		expect( mockZoomOut ).toHaveBeenCalledWith( { blockDoubleClick: true } );
-	} );
-
-	it.each( [ 'color-picker', 'font-picker' ] as const )(
-		'skips auto-zoom for %s',
-		async ( type ) => {
-			await createCallback( makeDeps() )( makeInput( { type, zoomOut: true } ) );
-			expect( mockZoomOut ).not.toHaveBeenCalled();
-		}
-	);
-
-	it( 'does not call `zoomOut` by default', async () => {
-		await createCallback( makeDeps() )( makeInput( { type: 'button-picker' } ) );
-		expect( mockZoomOut ).not.toHaveBeenCalled();
 	} );
 
 	it( 'sets a checkpoint for each picker type', async () => {

@@ -1,5 +1,4 @@
 import { __ } from '@wordpress/i18n';
-import { zoomOut } from '../../utils/canvas-zoom';
 import type { UseCheckpointReturn } from '../../hooks/use-checkpoint';
 import type { AbilityResult, ShowComponentType } from '../types';
 
@@ -8,7 +7,6 @@ export interface ShowComponentInput {
 	props: Record< string, unknown >;
 	summary?: string;
 	followUpTasks?: boolean;
-	zoomOut?: boolean;
 	/** Injected by the agenttic client — not part of the model-facing schema. */
 	messageId?: string;
 	/** Injected by the agenttic client — not part of the model-facing schema. */
@@ -25,8 +23,6 @@ export interface ShowComponentDeps {
 	currentPostId?: number;
 	/** Checkpoint utilities for undo support. */
 	checkpoint: Pick< UseCheckpointReturn, 'setCheckpoint' >;
-	/** Whether a site is currently being built. Blocks double-click during zoom-out. */
-	isBuildingSite?: boolean;
 }
 
 /**
@@ -35,25 +31,11 @@ export interface ShowComponentDeps {
  */
 export function createCallback( deps: ShowComponentDeps ): ShowComponentCallback {
 	return async ( input: ShowComponentInput ): Promise< AbilityResult > => {
-		const {
-			type,
-			props = {},
-			summary,
-			followUpTasks,
-			zoomOut: shouldZoomOut = false,
-			messageId,
-			toolCallId,
-		} = input;
+		const { type, props = {}, summary, followUpTasks, messageId, toolCallId } = input;
 
 		try {
 			if ( typeof props !== 'object' || Object.keys( props ).length === 0 ) {
 				throw new Error( '[AgentsManager] Props must be an object with properties' );
-			}
-
-			// Color and font pickers skip auto-zoom because they are lightweight
-			// style pickers and zooming disrupts the editing context.
-			if ( shouldZoomOut && type !== 'color-picker' && type !== 'font-picker' ) {
-				zoomOut( { blockDoubleClick: deps.isBuildingSite } );
 			}
 
 			// Set checkpoint so the action can be undone.

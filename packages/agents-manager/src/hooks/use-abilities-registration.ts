@@ -5,10 +5,6 @@ import { showComponentAbility } from '../abilities/show-component';
 import useCheckpoint from './use-checkpoint';
 import type { ShowComponentDeps } from '../abilities/show-component/create-callback';
 
-interface AbilitiesDeps {
-	isBuildingSite: boolean;
-}
-
 // Shared across all component instances to prevent duplicate registration.
 let hasRegistered = false;
 
@@ -19,7 +15,7 @@ let hasRegistered = false;
  * have loaded, so AM's implementations override same-name provider copies —
  * AM is the single source of truth for each migrated ability.
  */
-export default function useAbilitiesRegistration( { isBuildingSite }: AbilitiesDeps ): void {
+export default function useAbilitiesRegistration(): void {
 	const checkpoint = useCheckpoint();
 	const currentPostId = useSelect( ( select ) => {
 		return ( select( 'core/editor' ) as { getCurrentPostId?: () => number } )?.getCurrentPostId?.();
@@ -28,7 +24,6 @@ export default function useAbilitiesRegistration( { isBuildingSite }: AbilitiesD
 	const showComponentDeps: ShowComponentDeps = {
 		currentPostId,
 		checkpoint,
-		isBuildingSite,
 	};
 
 	// Updated every render so the one-time `useEffect` reads fresh values.

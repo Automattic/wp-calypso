@@ -813,10 +813,7 @@ export default function OrchestratorChat( {
 	// Register AM-owned abilities after the providers' setup — the abilities
 	// registry is last-write-wins, so AM's implementations override same-name
 	// provider copies during the gradual migration.
-	useAbilitiesRegistration( {
-		// TODO: big-sky sets this when a site build starts. AM needs its own lifecycle trigger.
-		isBuildingSite,
-	} );
+	useAbilitiesRegistration();
 
 	const displayedMessages = useMemo< AgentsManagerUIMessage[] >( () => {
 		let currentMessages: AgentsManagerUIMessage[] = messages;
