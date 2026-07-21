@@ -1,4 +1,5 @@
 import { NoticeIdType } from 'calypso/my-sites/stats/hooks/use-notice-visibility-query';
+import { COMMERCIAL_PAYWALL_KILLED } from '../constants';
 import CommercialSiteUpgradeNotice from './commercial-site-upgrade-notice';
 import DoYouLoveJetpackStatsNotice from './do-you-love-jetpack-stats-notice';
 import FreePlanPurchaseSuccessJetpackStatsNotice from './free-plan-purchase-success-notice';
@@ -66,9 +67,7 @@ const ALL_STATS_NOTICES: StatsNoticeType[] = [
 				!! ( showUpgradeNoticeForJetpackSites || showUpgradeNoticeForWpcomSites ) && ! hasPaidStats
 			);
 		},
-		// The commercial + traffic classifier paywall is no longer enforced (STATS-342);
-		// this notice is kept in place, disabled, as a reversible kill switch.
-		disabled: true,
+		disabled: COMMERCIAL_PAYWALL_KILLED,
 	},
 	{
 		component: DoYouLoveJetpackStatsNotice,

@@ -22,6 +22,12 @@ import {
 	STAT_TYPE_TOP_AUTHORS,
 	STAT_TYPE_SEARCH_TERMS,
 	STAT_TYPE_VIDEO_PLAYS,
+	STAT_TYPE_INSIGHTS_ALL_TIME_STATS,
+	STAT_TYPE_INSIGHTS_MOST_POPULAR_TIME,
+	STAT_TYPE_INSIGHTS_MOST_POPULAR_DAY,
+	STAT_TYPE_INSIGHTS_ALL_TIME_INSIGHTS,
+	STAT_TYPE_TAGS,
+	STAT_TYPE_COMMENTS,
 	STATS_TYPE_DEVICE_STATS,
 	STATS_FEATURE_UTM_STATS,
 	STATS_FEATURE_DATE_CONTROL,
@@ -43,8 +49,13 @@ import {
 	STATS_FEATURE_SUMMARY_LINKS_7_DAYS,
 	STATS_FEATURE_LOCATION_REGION_VIEWS,
 	STATS_FEATURE_LOCATION_CITY_VIEWS,
+	COMMERCIAL_PAYWALL_KILLED,
 } from '../constants';
-import { hasSupportedCommercialUse, hasSupportedVideoPressUse } from './use-stats-purchases';
+import {
+	hasSupportedCommercialUse,
+	hasSupportedVideoPressUse,
+	shouldShowPaywallAfterGracePeriod,
+} from './use-stats-purchases';
 
 const defaultDateControlGates = [
 	STATS_FEATURE_DATE_CONTROL,
@@ -62,6 +73,38 @@ const jetpackStatsAdvancedPaywall = [
 	STATS_FEATURE_UTM_STATS,
 	STATS_FEATURE_LOCATION_REGION_VIEWS,
 	STATS_FEATURE_LOCATION_CITY_VIEWS,
+];
+
+// If Jetpack commerical sites don't have any purchase that supports commercial use,
+// gate modules or cards accordingly. Unused while COMMERCIAL_PAYWALL_KILLED is true (STATS-342).
+const jetpackStatsCommercialPaywall = [
+	STAT_TYPE_TOP_POSTS,
+	STAT_TYPE_COUNTRY_VIEWS,
+	STAT_TYPE_REFERRERS,
+	STAT_TYPE_CLICKS,
+	STAT_TYPE_TOP_AUTHORS,
+	STAT_TYPE_SEARCH_TERMS,
+	STAT_TYPE_VIDEO_PLAYS,
+	STAT_TYPE_INSIGHTS_ALL_TIME_STATS,
+	STAT_TYPE_INSIGHTS_MOST_POPULAR_TIME,
+	STAT_TYPE_INSIGHTS_MOST_POPULAR_DAY,
+	STAT_TYPE_INSIGHTS_ALL_TIME_INSIGHTS,
+	STAT_TYPE_TAGS,
+	STAT_TYPE_COMMENTS,
+	STATS_TYPE_DEVICE_STATS,
+	STATS_FEATURE_UTM_STATS,
+	STATS_FEATURE_LOCATION_REGION_VIEWS,
+	STATS_FEATURE_LOCATION_CITY_VIEWS,
+];
+
+// If Jetpack commerical sites don't have any purchase that supports commercial use,
+// gate controls accordingly. Unused while COMMERCIAL_PAYWALL_KILLED is true (STATS-342).
+const granularControlForJetpackStatsCommercialPaywall = [
+	...defaultDateControlGates,
+	STATS_FEATURE_INTERVAL_DROPDOWN_WEEK,
+	STATS_FEATURE_INTERVAL_DROPDOWN_MONTH,
+	STATS_FEATURE_INTERVAL_DROPDOWN_YEAR,
+	STATS_FEATURE_DOWNLOAD_CSV,
 ];
 
 // wpcom: All stats are gated for WPCOM sites without the STATS_FREE, STATS_BASIC, STATS_PAID or STATS_COMMERCIAL feature.
@@ -183,8 +226,20 @@ export const shouldGateStats = ( state: object, siteId: number | null, statType:
 			return false;
 		}
 
-		// The commercial + traffic classifier paywall is no longer enforced (STATS-342);
-		// commercial classification doesn't gate anything beyond the baseline advanced paywall.
+		const isSiteCommercial = getSiteOption( state, siteId, 'is_commercial' ) || false;
+		if ( isSiteCommercial && ! COMMERCIAL_PAYWALL_KILLED ) {
+			// Paywall basic stats for commercial sites with:
+			// 1. Monthly views reached the paywall threshold.
+			// 2. Current usage passed over grace period days.
+			if ( shouldShowPaywallAfterGracePeriod( state, siteId ) ) {
+				return [
+					...jetpackStatsCommercialPaywall,
+					...granularControlForJetpackStatsCommercialPaywall,
+				].includes( statType );
+			}
+		}
+
+		// Paywall advanced stats for all other Jetpack sites without a supporting purchase.
 		return jetpackStatsAdvancedPaywall.includes( statType );
 	}
 
