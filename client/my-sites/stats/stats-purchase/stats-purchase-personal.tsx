@@ -97,7 +97,7 @@ const PersonalPurchase = ( {
 
 			<div className={ `${ COMPONENT_CLASS_NAME }__notice` }>
 				{ translate(
-					'To unlock UTM tracking, device attribution, commercial use and more, {{Button}}upgrade to a commercial plan{{/Button}}.',
+					'To unlock UTM tracking, device attribution, commercial use and more, {{Button}}upgrade to a commercial license{{/Button}}.',
 					{
 						components: {
 							Button: <Button variant="link" href="#" onClick={ handleClick } />,
