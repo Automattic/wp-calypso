@@ -1,12 +1,16 @@
 import { registerAbility, registerAbilityCategory } from '@wordpress/abilities';
 import { useSelect } from '@wordpress/data';
-import { useEffect, useRef } from '@wordpress/element';
+import { useEffect } from '@wordpress/element';
 import { showComponentAbility } from '../abilities/show-component';
 import useCheckpoint from './use-checkpoint';
 import type { ShowComponentDeps } from '../abilities/show-component/create-callback';
 
 // Shared across all component instances to prevent duplicate registration.
 let hasRegistered = false;
+
+// Module-scoped so the registered abilities — which outlive any single
+// component instance — always read the latest deps from the mounted one.
+let showComponentDeps: ShowComponentDeps = { checkpoint: { setCheckpoint: () => {} } };
 
 /**
  * Registers AM-owned abilities via `@wordpress/abilities`.
@@ -21,14 +25,7 @@ export default function useAbilitiesRegistration(): void {
 		return ( select( 'core/editor' ) as { getCurrentPostId?: () => number } )?.getCurrentPostId?.();
 	}, [] );
 
-	const showComponentDeps: ShowComponentDeps = {
-		currentPostId,
-		checkpoint,
-	};
-
-	// Updated every render so the one-time `useEffect` reads fresh values.
-	const depsRef = useRef( { showComponent: showComponentDeps } );
-	depsRef.current = { showComponent: showComponentDeps };
+	showComponentDeps = { currentPostId, checkpoint };
 
 	useEffect( () => {
 		if ( hasRegistered ) {
@@ -36,7 +33,7 @@ export default function useAbilitiesRegistration(): void {
 		}
 		hasRegistered = true;
 
-		const abilities = [ showComponentAbility( () => depsRef.current.showComponent ) ];
+		const abilities = [ showComponentAbility( () => showComponentDeps ) ];
 
 		// Register category before abilities (required ordering).
 		// Uses `big-sky` to match the backend route configuration.
