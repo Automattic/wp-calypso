@@ -121,8 +121,8 @@ export function TitanPlanGrid( {
 	interval: IntervalLength;
 	available: boolean;
 	// The tier the user is currently subscribed to. When set, the grid is in
-	// upgrade mode: lower tiers are hidden, the current tier is labeled, and higher
-	// tiers offer an upgrade.
+	// upgrade mode: lower tiers are shown with a disabled button, the current
+	// tier is labeled, and higher tiers offer an upgrade.
 	currentTier?: TitanPlanTier;
 	// Called when a higher tier is selected in upgrade mode (currentTier set).
 	onUpgrade?: ( tier: TitanPlanTier ) => void;
