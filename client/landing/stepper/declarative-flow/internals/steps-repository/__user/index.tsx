@@ -9,7 +9,9 @@ import { useDispatch } from 'react-redux';
 import { AnyAction } from 'redux';
 import { reloadProxy, requestAllBlogsAccess } from 'wpcom-proxy-request';
 import OneTapAuthLoaderOverlay from 'calypso/blocks/login/one-tap-auth-loader-overlay';
-import SignupFormSocialFirst from 'calypso/blocks/signup-form/signup-form-social-first';
+import SignupFormSocialFirst, {
+	MobileCompactTosNotice,
+} from 'calypso/blocks/signup-form/signup-form-social-first';
 import FormattedHeader from 'calypso/components/formatted-header';
 import LocaleSuggestions from 'calypso/components/locale-suggestions';
 import { WOO_HOSTING_SOLUTIONS_REF } from 'calypso/landing/stepper/constants';
@@ -30,6 +32,7 @@ import { Step as StepType } from '../../types';
 import { useHandleSocialResponse } from './handle-social-response';
 import { SignupSlider } from './signup-slider';
 import useAccountCreationExperiment from './use-account-creation-experiment';
+import useMobileLayoutExperiment from './use-mobile-layout-experiment';
 import { useSocialService } from './use-social-service';
 import type { SignupAllowedService } from 'calypso/components/social-buttons/utils';
 
@@ -111,22 +114,27 @@ const UserStepComponent: StepType = function UserStep( {
 
 	const isStepContainerV2 = shouldUseStepContainerV2( flow );
 	const isLargeViewport = useViewportMatch( 'large' );
-	const isMobileViewport = useViewportMatch( 'small', '<' );
 
-	// Thumb-friendly compact layout for mobile signup. Woo referrers keep their
-	// permanent email-first treatment and partner-branded flows keep their own
-	// SSO providers, ToS, and heading copy — both are excluded so the compact
-	// layout never overrides them.
-	const isMobileCompactLayout =
-		isStepContainerV2 && isMobileViewport && ! isWooReferrer && ! partnerConfig;
+	// While the mobile-layout assignment is loading we defer both the heading and
+	// the form — otherwise the brief flash of control-shape UI before treatment
+	// paints would self-bias the social-conversion metric this experiment measures.
+	const {
+		isLoading: isMobileLayoutExperimentLoading,
+		isEligible: isMobileLayoutExperimentEligible,
+		isMobileTreatment,
+		isMobileTreatmentTosTop,
+	} = useMobileLayoutExperiment( { flow, isPartnerFlow: !! partnerConfig } );
+	const shouldDeferMobileReveal =
+		isMobileLayoutExperimentEligible && isMobileLayoutExperimentLoading;
 
 	const emailLabelText = isStepContainerV2 ? translate( 'Enter your email' ) : undefined;
-	// Partner branding always wins: isMobileCompactLayout is already false whenever
-	// partnerConfig is set, so the ! partnerConfig check here is belt-and-suspenders
-	// — it keeps the "partners never get the compact SSO set" invariant local to
-	// this line and safe if the eligibility above is ever refactored.
+	// Partner branding always wins over the experiment. useMobileLayoutExperiment
+	// already excludes partner flows from eligibility (so isMobileTreatment is
+	// false whenever partnerConfig is set), making the ! partnerConfig check
+	// belt-and-suspenders: it keeps the "partners never get the treatment SSO set"
+	// invariant local to this line and safe if eligibility is ever refactored.
 	const allowedSocialServices =
-		isMobileCompactLayout && ! partnerConfig ? MOBILE_SOCIAL_SERVICES : partnerConfig?.ssoProviders;
+		isMobileTreatment && ! partnerConfig ? MOBILE_SOCIAL_SERVICES : partnerConfig?.ssoProviders;
 	// customTosElement is reserved for partner branding (legal); the form's
 	// mobile-compact branch renders MobileCompactTosNotice as its own fallback
 	// when no customTosElement is provided. Routing the notice through
@@ -134,28 +142,31 @@ const UserStepComponent: StepType = function UserStep( {
 	const stepContent = (
 		<>
 			{ !! queryArgs.get( 'oneTapAuth' ) && ! notice && <OneTapAuthLoaderOverlay /> }
-			<SignupFormSocialFirst
-				stepName={ stepName }
-				flowName={ flow }
-				goToNextStep={ setWpAccountCreateResponse }
-				passDataToNextStep
-				logInUrl={ loginLink }
-				handleSocialResponse={ handleSocialResponse }
-				socialServiceResponse={ socialServiceResponse }
-				redirectToAfterLoginUrl={ window.location.href }
-				queryArgs={ {} }
-				userEmail={ queryArgs.get( 'user_email' ) || '' }
-				notice={ notice }
-				isSocialFirst
-				onCreateAccountSuccess={ handleCreateAccountSuccess }
-				backButtonInFooter={ ! isStepContainerV2 }
-				emailLabelText={ emailLabelText }
-				isEmailFirstVariant={ isEmailFirstVariant }
-				isEmailAtBottom={ isEmailAtBottom }
-				isMobileCompactVariant={ isMobileCompactLayout }
-				allowedSocialServices={ allowedSocialServices }
-				customTosElement={ signupTosElement }
-			/>
+			{ ! shouldDeferMobileReveal && (
+				<SignupFormSocialFirst
+					stepName={ stepName }
+					flowName={ flow }
+					goToNextStep={ setWpAccountCreateResponse }
+					passDataToNextStep
+					logInUrl={ loginLink }
+					handleSocialResponse={ handleSocialResponse }
+					socialServiceResponse={ socialServiceResponse }
+					redirectToAfterLoginUrl={ window.location.href }
+					queryArgs={ {} }
+					userEmail={ queryArgs.get( 'user_email' ) || '' }
+					notice={ notice }
+					isSocialFirst
+					onCreateAccountSuccess={ handleCreateAccountSuccess }
+					backButtonInFooter={ ! isStepContainerV2 }
+					emailLabelText={ emailLabelText }
+					isEmailFirstVariant={ isEmailFirstVariant }
+					isEmailAtBottom={ isEmailAtBottom }
+					isMobileCompactVariant={ isMobileTreatment }
+					hideTosElement={ isMobileTreatmentTosTop && ! signupTosElement }
+					allowedSocialServices={ allowedSocialServices }
+					customTosElement={ signupTosElement }
+				/>
+			) }
 			{ accountCreateResponse && 'bearer_token' in accountCreateResponse && (
 				<WpcomLoginForm
 					authorization={ 'Bearer ' + accountCreateResponse.bearer_token }
@@ -174,11 +185,16 @@ const UserStepComponent: StepType = function UserStep( {
 				args: { partner: partnerConfig.displayName },
 				textOnly: true,
 			} );
-		} else if ( isMobileCompactLayout ) {
+		} else if ( isMobileTreatment ) {
 			headingText = translate( 'Welcome to WordPress.com' );
 			headingSubText = translate( 'Sign up free to start creating your site.' );
 		}
-		const heading = (
+		// While the mobile experiment is resolving we render the layout without the
+		// heading so neither cohort sees the other variant's copy flash on cold visits.
+		// For the top-position arm, the ToS sits as a second <p> after Step.Heading
+		// (not inside subText, which Step.Heading wraps in a single <p>). Partner
+		// branding suppresses the experiment ToS — partners have their own copy.
+		const heading = shouldDeferMobileReveal ? null : (
 			// The locale suggestions are going to be reworked. Don't worry about it now.
 			<>
 				{ localeSuggestions }
@@ -187,6 +203,9 @@ const UserStepComponent: StepType = function UserStep( {
 					subText={ headingSubText }
 					align={ isEmailFirstVariant ? 'left' : undefined }
 				/>
+				{ isMobileTreatmentTosTop && ! signupTosElement && (
+					<MobileCompactTosNotice position="below" />
+				) }
 			</>
 		);
 
@@ -232,7 +251,7 @@ const UserStepComponent: StepType = function UserStep( {
 		return (
 			<Step.CenteredColumnLayout
 				className={ clsx( 'step-container-v2--user', {
-					'step-container-v2--user-mobile': isMobileCompactLayout,
+					'step-container-v2--user-mobile-treatment': isMobileTreatment,
 				} ) }
 				verticalAlign="center"
 				columnWidth={ 4 }

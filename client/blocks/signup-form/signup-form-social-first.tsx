@@ -52,6 +52,7 @@ interface SignupFormSocialFirst {
 	isEmailFirstVariant?: boolean;
 	isEmailAtBottom?: boolean;
 	isMobileCompactVariant?: boolean;
+	hideTosElement?: boolean;
 	allowedSocialServices?: SignupAllowedService[];
 	customTosElement?: JSX.Element;
 }
@@ -77,17 +78,26 @@ const options = {
 
 type Screen = 'initial' | 'email';
 
-// ToS copy for the mobile-compact signup layout. Rendered inside the form below
-// the sign-up options, kept as its own component so the legal links and the
+// ToS copy for the mobile-layout experiment. Same component is rendered in two
+// places depending on the variant — inside the form (`position='above'`) or in
+// the parent's heading slot (`position='below'`) — so the legal links and the
 // translation string live in one location.
-export const MobileCompactTosNotice = () => {
+export const MobileCompactTosNotice = ( { position }: { position: 'above' | 'below' } ) => {
 	const { __ } = useI18n();
-	const tosText = createInterpolateElement(
-		__(
-			'By continuing with any of the options above, you agree to our <tosLink>Terms of Service</tosLink> and have read our <privacyLink>Privacy Policy</privacyLink>.'
-		),
-		options
-	);
+	const tosText =
+		position === 'above'
+			? createInterpolateElement(
+					__(
+						'By continuing with any of the options above, you agree to our <tosLink>Terms of Service</tosLink> and have read our <privacyLink>Privacy Policy</privacyLink>.'
+					),
+					options
+			  )
+			: createInterpolateElement(
+					__(
+						'By continuing with any of the options below, you agree to our <tosLink>Terms of Service</tosLink> and have read our <privacyLink>Privacy Policy</privacyLink>.'
+					),
+					options
+			  );
 	return <p className="signup-form-social-first__tos-link">{ tosText }</p>;
 };
 
@@ -110,6 +120,7 @@ const SignupFormSocialFirst = ( {
 	isEmailFirstVariant,
 	isEmailAtBottom,
 	isMobileCompactVariant,
+	hideTosElement,
 	allowedSocialServices,
 	customTosElement,
 }: SignupFormSocialFirst ) => {
@@ -226,9 +237,18 @@ const SignupFormSocialFirst = ( {
 	);
 
 	if ( isMobileCompactVariant ) {
-		// In-form ToS: partner branding wins via customTosElement (rendered by
-		// renderTermsOfService); otherwise the compact "options above" notice.
-		const inFormTosElement = customTosElement ? renderTermsOfService() : <MobileCompactTosNotice />;
+		// In-form ToS:
+		//   - hideTosElement → parent renders the ToS elsewhere (top-position arm).
+		//   - customTosElement → partner branding wins (rendered by renderTermsOfService).
+		//   - otherwise → bottom-position "above" copy.
+		let inFormTosElement = null;
+		if ( ! hideTosElement ) {
+			inFormTosElement = customTosElement ? (
+				renderTermsOfService()
+			) : (
+				<MobileCompactTosNotice position="above" />
+			);
+		}
 		// Mobile compact: no "Have an account? Log in" link inside the form —
 		// the Log in link in the top bar covers that affordance per the Figma.
 		return (
