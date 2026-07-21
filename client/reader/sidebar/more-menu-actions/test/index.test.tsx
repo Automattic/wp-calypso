@@ -20,6 +20,7 @@ jest.mock( 'calypso/state/reader/analytics/useRecordReaderTracksEvent', () => ( 
 
 const defaultProps: ComponentProps< typeof MoreMenuActions > = {
 	identifier: 'following',
+	isSingleFeed: false,
 	feedIds: [ 1, 2 ],
 	feedUrls: [ 'https://example.com/feed', 'https://another.example.com/feed' ],
 	unseenCount: 3,
@@ -98,9 +99,9 @@ describe( 'MoreMenuActions', () => {
 	} );
 
 	describe( 'action title', () => {
-		test( 'uses the plural title when there is more than one feed', async () => {
+		test( 'uses the plural title when isSingleFeed is false', async () => {
 			const user = userEvent.setup();
-			renderMoreMenuActions( { feedIds: [ 1, 2 ] } );
+			renderMoreMenuActions( { isSingleFeed: false } );
 
 			await openMoreActionsMenu( user );
 
@@ -108,9 +109,9 @@ describe( 'MoreMenuActions', () => {
 			expect( screen.queryByRole( 'menuitem', { name: 'Mark as read' } ) ).not.toBeInTheDocument();
 		} );
 
-		test( 'uses the singular title when there is exactly one feed', async () => {
+		test( 'uses the singular title when isSingleFeed is true', async () => {
 			const user = userEvent.setup();
-			renderMoreMenuActions( { feedIds: [ 1 ] } );
+			renderMoreMenuActions( { isSingleFeed: true } );
 
 			await openMoreActionsMenu( user );
 
@@ -120,9 +121,9 @@ describe( 'MoreMenuActions', () => {
 			).not.toBeInTheDocument();
 		} );
 
-		test( 'uses the singular title when there are no feeds', async () => {
+		test( 'defaults to the singular title when isSingleFeed is not provided', async () => {
 			const user = userEvent.setup();
-			renderMoreMenuActions( { feedIds: [] } );
+			renderMoreMenuActions( { isSingleFeed: undefined } );
 
 			await openMoreActionsMenu( user );
 

@@ -58,6 +58,7 @@ const ReaderSidebarLists = ( {
 				moreMenuActions={
 					<MoreMenuActions
 						identifier="sidebar-lists"
+						isSingleFeed={ false }
 						feedIds={ allFeedIds }
 						feedUrls={ [] }
 						unseenCount={ totalUnseenCount }
