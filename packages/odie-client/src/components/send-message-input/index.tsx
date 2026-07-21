@@ -2,8 +2,15 @@ import '@automattic/agenttic-ui/index.css';
 import { useInput } from '@automattic/agenttic-ui';
 import { HelpCenterSelect } from '@automattic/data-stores';
 import { useConnectionStatusNotice } from '@automattic/zendesk-client';
+import { ExternalLink } from '@wordpress/components';
 import { useSelect } from '@wordpress/data';
-import { useCallback, useEffect, useRef, useState } from '@wordpress/element';
+import {
+	createInterpolateElement,
+	useCallback,
+	useEffect,
+	useRef,
+	useState,
+} from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { useSearchParams } from 'react-router-dom';
 import Smooch from 'smooch';
@@ -15,6 +22,23 @@ import { EmailFallbackNotice } from '../email-fallback-notice';
 import { useMessageSizeErrorNotice } from '../notices';
 import { useAttachmentHandler } from './use-attachment-handler';
 import { useSendMessageHandler } from './use-send-message-handler';
+
+const AiDisclosure = () => (
+	<div className="odie-ai-disclosure">
+		{ createInterpolateElement(
+			__(
+				'You’re chatting with an AI assistant. Responses may be inaccurate. <a>Learn more</a>',
+				__i18n_text_domain__
+			),
+			{
+				a: (
+					// @ts-expect-error Children must be passed to External link. This is done by createInterpolateElement, but the types don't see that.
+					<ExternalLink href="https://automattic.com/ai-guidelines" />
+				),
+			}
+		) }
+	</div>
+);
 
 const getTextAreaPlaceholder = (
 	shouldDisableInputField: boolean,
@@ -196,6 +220,7 @@ export const OdieSendMessageButton = () => {
 						actionOrder="before-submit"
 					/>
 				) }
+				{ ! isLiveChat && ! isEmailFallback && <AiDisclosure /> }
 			</div>
 			<AttachmentDropZone />
 		</>
