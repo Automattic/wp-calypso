@@ -30,16 +30,16 @@ export function useProcessingLoadingMessages( flow?: string | null ): LoadingMes
 	// avoid the default messages that imply the site is being designed here.
 	if ( flow && isAIBuilderOnboardingFlow( flow ) ) {
 		return [
-			{ title: __( 'Creating your site' ), duration: 4000 },
-			{ title: __( 'Getting the AI Website Builder ready' ), duration: 5000 },
-			{ title: __( 'Taking you to checkout' ), duration: Infinity },
+			{ title: __( 'Getting things ready' ), duration: 4000 },
+			{ title: __( 'Waking up the website builder' ), duration: 5000 },
+			{ title: __( 'Heading to checkout' ), duration: Infinity },
 		];
 	}
 
 	if ( flow && isAIBuilderFlow( flow ) ) {
 		return [
-			{ title: __( 'Creating your site' ), duration: 4000 },
-			{ title: __( 'Getting the AI Website Builder ready' ), duration: Infinity },
+			{ title: __( 'Getting things ready' ), duration: 4000 },
+			{ title: __( 'Waking up the website builder' ), duration: Infinity },
 		];
 	}
 
