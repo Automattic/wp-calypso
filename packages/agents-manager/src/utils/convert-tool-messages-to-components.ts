@@ -219,6 +219,8 @@ export default function convertToolMessagesToComponents( {
 			const { type: contentType, props, followUpTasks, isCurrent, postId, summary } = toolData;
 			// Big Sky's pattern picker no longer renders in AM chats (its ability is
 			// backend-dead on AM surfaces) — history messages get the notice below.
+			// TODO: Remove once Big Sky drops its pattern-picker chat component; the
+			// fallthrough then resolves nothing and the notice happens on its own.
 			const isDeprecatedType = contentType === 'pattern-picker';
 			const amComponent = getAmComponent( contentType );
 			// AM components take precedence; other types resolve through the external

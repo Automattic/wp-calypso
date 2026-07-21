@@ -86,9 +86,11 @@ type ChatComponentType =
 	| 'button-picker'
 	| 'font-picker'
 	| 'color-picker'
-	| 'pattern-picker'
 	| 'chat-suggestions'
-	| 'next-step-button';
+	| 'next-step-button'
+	| 'open-help-center-button'
+	| 'title-picker'
+	| 'seo-title-picker';
 
 /**
  * Get a chat component by type for rendering in agent messages.
