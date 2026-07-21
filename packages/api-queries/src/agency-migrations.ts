@@ -21,6 +21,7 @@ export const agencyMigrationCommissionSitesQuery = ( agencyId: number | undefine
 
 export const tagAgencySitesForCommissionMutation = ( agencyId: number | undefined ) =>
 	mutationOptions( {
+		meta: { statId: 'agcy-mig-commission-tag' },
 		mutationFn: ( input: TagSitesForCommissionInput ) => {
 			if ( ! agencyId ) {
 				throw new Error( 'No active agency found for the current user.' );
@@ -31,6 +32,7 @@ export const tagAgencySitesForCommissionMutation = ( agencyId: number | undefine
 
 export const requestMigrationReverificationMutation = ( agencyId: number | undefined ) =>
 	mutationOptions( {
+		meta: { statId: 'agcy-mig-reverify-request' },
 		mutationFn: ( input: RequestReverificationInput ) => {
 			if ( ! agencyId ) {
 				throw new Error( 'No active agency found for the current user.' );
