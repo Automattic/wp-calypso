@@ -4,8 +4,9 @@
 
 	// Descendant selector out-specifies the `Grid` component's own class.
 	.agents-manager-variation-picker__grid {
-		// As many card-sized columns as fit: 2 in the docked sidebar,
-		// 4 at the max width.
+		// As many card-sized columns as fit: 2 in the docked sidebar, 4 at the
+		// max width. `auto-fill` keeps empty tracks, so partial pages render
+		// cards at the same size instead of stretching them.
 		grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
 
 		.block-editor-iframe__scale-container {
