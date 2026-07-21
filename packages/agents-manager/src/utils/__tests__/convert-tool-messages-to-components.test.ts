@@ -16,7 +16,6 @@ jest.mock( '../../components/escalation-button', () => ( {
 	EscalationButton: mockEscalationButton,
 } ) );
 jest.mock( '../is-editor-page' );
-jest.mock( '../is-am-abilities-enabled' );
 jest.mock( '../../components/button-picker', () => ( { __esModule: true, default: jest.fn() } ) );
 jest.mock( '../../components/color-picker', () => ( { __esModule: true, default: jest.fn() } ) );
 jest.mock( '../../components/font-picker', () => ( { __esModule: true, default: jest.fn() } ) );
@@ -26,7 +25,6 @@ import ColorPicker from '../../components/color-picker';
 import FontPicker from '../../components/font-picker';
 import UnavailableToolMessage from '../../components/unavailable-tool-message';
 import convertToolMessagesToComponents from '../convert-tool-messages-to-components';
-import isAmAbilitiesEnabled from '../is-am-abilities-enabled';
 import { isEditorPage } from '../is-editor-page';
 import {
 	BIG_SKY_SHOW_COMPONENT_TOOL_ID,
@@ -60,7 +58,6 @@ describe( 'convertToolMessagesToComponents', () => {
 	beforeEach( () => {
 		jest.clearAllMocks();
 		( isEditorPage as jest.Mock ).mockReturnValue( true );
-		( isAmAbilitiesEnabled as jest.Mock ).mockReturnValue( false );
 	} );
 
 	it( 'passes through user messages unchanged', () => {
@@ -216,7 +213,7 @@ describe( 'convertToolMessagesToComponents', () => {
 		expect( result[ 0 ].suppressThinking ).toBe( false );
 	} );
 
-	it( 'filters out unregistered components', () => {
+	it( 'renders a short notice when no component resolves on either side', () => {
 		const message = createToolMessage( LEGACY_SHOW_COMPONENT_TOOL_ID, {
 			type: 'unknown-component',
 		} );
@@ -227,7 +224,10 @@ describe( 'convertToolMessagesToComponents', () => {
 			getChatComponent,
 		} );
 
-		expect( result ).toEqual( [] );
+		expect( result ).toHaveLength( 1 );
+		expect( result[ 0 ].content ).toEqual( [
+			{ type: 'text', text: 'This option is no longer available.' },
+		] );
 	} );
 
 	it( 'renders consecutive follow-up pickers as components', () => {
@@ -614,11 +614,7 @@ describe( 'convertToolMessagesToComponents', () => {
 		}
 	);
 
-	describe( 'AM path', () => {
-		beforeEach( () => {
-			( isAmAbilitiesEnabled as jest.Mock ).mockReturnValue( true );
-		} );
-
+	describe( 'AM-owned components', () => {
 		it.each( [
 			[ 'button-picker', ButtonPicker ],
 			[ 'color-picker', ColorPicker ],

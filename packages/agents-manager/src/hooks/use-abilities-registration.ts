@@ -13,7 +13,11 @@ interface AbilitiesDeps {
 let hasRegistered = false;
 
 /**
- * Registers agents-manager abilities via `@wordpress/abilities`.
+ * Registers AM-owned abilities via `@wordpress/abilities`.
+ *
+ * The registry is last-write-wins and this hook runs after external providers
+ * have loaded, so AM's implementations override same-name provider copies —
+ * AM is the single source of truth for each migrated ability.
  */
 export default function useAbilitiesRegistration( { isBuildingSite }: AbilitiesDeps ): void {
 	const checkpoint = useCheckpoint();

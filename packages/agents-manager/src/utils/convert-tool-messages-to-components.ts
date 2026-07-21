@@ -4,7 +4,6 @@ import ColorPicker from '../components/color-picker';
 import { EscalationButton } from '../components/escalation-button';
 import FontPicker from '../components/font-picker';
 import UnavailableToolMessage from '../components/unavailable-tool-message';
-import isAmAbilitiesEnabled from './is-am-abilities-enabled';
 import { isEditorPage } from './is-editor-page';
 import { isShowComponentTool } from './show-component-tools';
 import { getDisplayMessageFromToolData, isDisplayableToolMessageTool } from './tool-message-utils';
@@ -21,6 +20,8 @@ export interface AgentsManagerUIMessage extends UIMessage {
 
 /**
  * Resolves a `ShowComponentType` to its AM-owned React component.
+ * AM components take precedence over provider components — AM is the
+ * single source of truth for each migrated type.
  */
 function getAmComponent( type: ShowComponentType ): React.ComponentType | null {
 	switch ( type ) {
@@ -222,22 +223,15 @@ export default function convertToolMessagesToComponents( {
 
 			const toolData = textData.data ?? {};
 			const { type: contentType, props, followUpTasks, isCurrent, postId, summary } = toolData;
-			const useAmAbilities = isAmAbilitiesEnabled();
-			const Component = useAmAbilities
-				? getAmComponent( contentType )
-				: getChatComponent?.( contentType );
+			const amComponent = getAmComponent( contentType );
+			const Component = amComponent ?? getChatComponent?.( contentType );
 
 			const summaryText = typeof summary === 'string' ? summary.trim() || undefined : undefined;
 
-			// No matching component found for this content type.
+			// No matching component on either side (e.g. a deprecated type in
+			// restored history) — show the stored summary or a short notice
+			// instead of raw JSON.
 			if ( ! Component ) {
-				// External providers own their component set — drop the message to avoid showing raw JSON.
-				if ( ! useAmAbilities ) {
-					return [];
-				}
-
-				// Deprecated picker types (e.g. `pattern-picker` in restored history) —
-				// show the stored summary or a short notice instead.
 				return [
 					{
 						...message,
@@ -286,7 +280,8 @@ export default function convertToolMessagesToComponents( {
 						componentProps: {
 							...props,
 							...( summaryText && { summary: summaryText } ),
-							...( ! useAmAbilities && { contentType } ),
+							// Provider components resolve by `contentType`; AM components are pre-resolved.
+							...( ! amComponent && { contentType } ),
 							...( isStale && { isMessageStale: true } ),
 						},
 					},

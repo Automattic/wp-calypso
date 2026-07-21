@@ -1,7 +1,6 @@
 import { createElement, useEffect, useRef } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { undo, Icon } from '@wordpress/icons';
-import isAmAbilitiesEnabled from '../utils/is-am-abilities-enabled';
 import { recordBigSkyTracksEvent } from '../utils/tracks';
 import useCheckpoint from './use-checkpoint';
 import type { UseCheckpointReturn } from './use-checkpoint';
@@ -41,25 +40,30 @@ export default function useCheckpointAction(
 	externalCheckpoint?: CheckpointActions
 ): void {
 	const amCheckpoint = useCheckpoint();
-	const checkpoint = isAmAbilitiesEnabled() ? amCheckpoint : externalCheckpoint;
 
-	// Ref ensures the `useEffect` closure always reads the latest checkpoint.
-	const checkpointRef = useRef( checkpoint );
-	checkpointRef.current = checkpoint;
+	// A message's checkpoint lives in whichever bundle's ability created it,
+	// so resolve per message: AM's store first, then the provider's.
+	// Ref avoids infinite re-renders caused by unstable checkpoint references.
+	const storesRef = useRef< Array< CheckpointActions | undefined > >( [] );
+	storesRef.current = [ amCheckpoint, externalCheckpoint ];
 
 	useEffect( () => {
 		registerMessageActions( {
 			id: 'agents-manager-checkpoint',
 			actions: ( message: UIMessage ) => {
-				const currentCheckpoint = checkpointRef.current;
-
-				if ( ! currentCheckpoint || message.role !== 'agent' ) {
+				if ( message.role !== 'agent' ) {
 					return [];
 				}
 
 				const checkpointId = getCheckpointId( message );
+				if ( ! checkpointId ) {
+					return [];
+				}
 
-				if ( ! checkpointId || ! currentCheckpoint.hasCheckpoint( checkpointId ) ) {
+				const checkpoint = storesRef.current.find(
+					( store ) => store?.hasCheckpoint( checkpointId )
+				);
+				if ( ! checkpoint ) {
 					return [];
 				}
 
@@ -76,7 +80,7 @@ export default function useCheckpointAction(
 								id: checkpointId,
 							} );
 							try {
-								await checkpointRef.current?.restoreCheckpoint( checkpointId );
+								await checkpoint.restoreCheckpoint( checkpointId );
 							} catch ( error ) {
 								// eslint-disable-next-line no-console
 								console.error( '[useCheckpointAction] Failed to restore checkpoint:', error );
