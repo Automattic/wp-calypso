@@ -96,6 +96,7 @@ const agencyOverviewRoute = createRoute( {
 
 // `/tiers` – agency tiers & benefits
 const agencyTiersRoute = createRoute( {
+	staticData: { requiresAgencyCapability: 'a4a_read_agency_tier' },
 	head: () => ( {
 		meta: [
 			{
@@ -116,6 +117,7 @@ const agencyTiersRoute = createRoute( {
 
 // `/marketplace/exclusive-offers` – partner offers (Refer / Resell)
 const exclusiveOffersRoute = createRoute( {
+	staticData: { requiresAgencyCapability: 'a4a_read_exclusive_offers' },
 	head: () => ( {
 		meta: [
 			{
@@ -135,6 +137,7 @@ const exclusiveOffersRoute = createRoute( {
 
 // `/resources/learn` – guides, articles, and training for agencies
 const learnRoute = createRoute( {
+	staticData: { requiresAgencyCapability: 'a4a_read_learn' },
 	head: () => ( {
 		meta: [
 			{
@@ -163,6 +166,7 @@ const ensureMcpSettings = async () => {
 };
 
 const mcpRoute = createRoute( {
+	staticData: { requiresAgencyCapability: 'a4a_read_learn' },
 	head: () => ( { meta: [ { title: __( 'MCP' ) } ] } ),
 	getParentRoute: () => agencyRoute,
 	path: 'resources/ai-mcp',
@@ -211,6 +215,7 @@ const mcpConnectRoute = createRoute( {
 
 // `/sites` – agency-managed sites
 export const agencySitesRoute = createRoute( {
+	staticData: { requiresAgencyCapability: 'a4a_read_managed_sites' },
 	head: () => ( {
 		meta: [ { title: __( 'Sites' ) } ],
 	} ),
@@ -244,6 +249,7 @@ export const agencyTeamRoute = createRoute( {
 
 // `/earn` – summary of the agency's earning programs (default Earn screen)
 const earnOverviewRoute = createRoute( {
+	staticData: { requiresAgencyCapability: [ 'a4a_read_referrals', 'a4a_read_migrations' ] },
 	head: () => ( { meta: [ { title: __( 'Overview' ) } ] } ),
 	getParentRoute: () => agencyRoute,
 	path: 'earn',
@@ -255,6 +261,7 @@ const earnOverviewRoute = createRoute( {
 
 // `/earn/referrals` – referral commissions
 const earnReferralsRoute = createRoute( {
+	staticData: { requiresAgencyCapability: 'a4a_read_referrals' },
 	head: () => ( { meta: [ { title: __( 'Referrals' ) } ] } ),
 	getParentRoute: () => agencyRoute,
 	path: 'earn/referrals',
@@ -266,6 +273,8 @@ const earnReferralsRoute = createRoute( {
 
 // `/earn/woopayments` – WooPayments revenue share
 const earnWooPaymentsRoute = createRoute( {
+	// TODO: replace with a dedicated WooPayments capability when one exists.
+	staticData: { requiresAgencyCapability: 'a4a_read_referrals' },
 	head: () => ( { meta: [ { title: __( 'WooPayments' ) } ] } ),
 	getParentRoute: () => agencyRoute,
 	path: 'earn/woopayments',
@@ -277,6 +286,7 @@ const earnWooPaymentsRoute = createRoute( {
 
 // `/earn/migrations` – migration commissions
 const earnMigrationsRoute = createRoute( {
+	staticData: { requiresAgencyCapability: 'a4a_read_migrations' },
 	head: () => ( { meta: [ { title: __( 'Migrations' ) } ] } ),
 	getParentRoute: () => agencyRoute,
 	path: 'earn/migrations',
@@ -288,6 +298,7 @@ const earnMigrationsRoute = createRoute( {
 
 // `/earn/payout-settings` – where and how the agency gets paid
 const earnPayoutSettingsRoute = createRoute( {
+	staticData: { requiresAgencyCapability: [ 'a4a_read_referrals', 'a4a_read_migrations' ] },
 	head: () => ( { meta: [ { title: __( 'Payout settings' ) } ] } ),
 	getParentRoute: () => agencyRoute,
 	path: 'earn/payout-settings',
@@ -347,6 +358,7 @@ const earnReferralPurchasesRoute = createRoute( {
 
 // `/sites/$siteSlug` – agency site detail (a layout that hosts the section routes)
 export const agencySiteRoute = createRoute( {
+	staticData: { requiresAgencyCapability: 'a4a_read_managed_sites' },
 	getParentRoute: () => agencyRoute,
 	path: 'sites/$siteSlug',
 	loader: async ( { params: { siteSlug } } ) => {
