@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import { DESKTOP_BREAKPOINT } from '@automattic/viewport';
 import { useBreakpoint } from '@automattic/viewport-react';
 import { ReactNode, useEffect, useState } from 'react';
@@ -30,8 +31,15 @@ interface Props {
 	featurePreview?: ReactNode | null;
 }
 
-const buildFilters = ( { issueTypes }: { issueTypes: string } ): Filter[] => {
-	const issueTypesArray = issueTypes?.split( ',' );
+export const buildFilters = ( { issueTypes }: { issueTypes: string } ): Filter[] => {
+	// The endpoint ignores unknown filters and would return every site, so a disabled
+	// filter must be dropped here rather than merely hidden from the filter menu.
+	const issueTypesArray = issueTypes
+		?.split( ',' )
+		.filter(
+			( issueType ) =>
+				issueType !== 'core_updates' || config.isEnabled( 'jetpack/agency-core-updates-filter' )
+		);
 
 	return (
 		issueTypesArray?.map( ( issueType ) => {
@@ -90,7 +98,16 @@ export const SitesDashboardProvider = ( {
 
 	// Limit fields on breakpoints smaller than 960px wide.
 	const isDesktop = useBreakpoint( DESKTOP_BREAKPOINT );
-	const desktopFields = [ 'stats', 'boost', 'backup', 'monitor', 'scan', 'plugins', 'favorite' ];
+	const desktopFields = [
+		'stats',
+		'boost',
+		'backup',
+		'monitor',
+		'scan',
+		'plugins',
+		...( config.isEnabled( 'jetpack/agency-core-updates-filter' ) ? [ 'wp_version' ] : [] ),
+		'favorite',
+	];
 	const getFieldsByBreakpoint = ( isDesktop: boolean ) =>
 		isDesktop ? desktopFields : EMPTY_ARRAY;
 

@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import { localize, translate } from 'i18n-calypso';
 import { connect } from 'react-redux';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
@@ -38,6 +39,14 @@ const IssueTypeSelector: React.FunctionComponent< Props > = ( props ) => {
 			key: 'plugin_updates',
 			name: translate( 'Plugin needs updates' ),
 		},
+		...( config.isEnabled( 'jetpack/agency-core-updates-filter' )
+			? [
+					{
+						key: 'core_updates',
+						name: translate( 'WordPress needs updates' ),
+					},
+			  ]
+			: [] ),
 	];
 	return (
 		<TypeSelector

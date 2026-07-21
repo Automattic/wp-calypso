@@ -109,6 +109,9 @@ export interface Site {
 	php_version_num: number;
 	php_version: string;
 	wordpress_version: string;
+	// Populated by the sites endpoint only once core-update reporting ships; treat as unknown when absent.
+	latest_wordpress_version?: string;
+	is_core_update_available?: boolean;
 	hosting_provider_guess: string;
 	has_paid_agency_monitor: boolean;
 	is_atomic: boolean;
@@ -282,7 +285,8 @@ export type AgencyDashboardFilterOption =
 	| 'threats_found'
 	| 'site_disconnected'
 	| 'site_down'
-	| 'plugin_updates';
+	| 'plugin_updates'
+	| 'core_updates';
 
 export interface AgencyDashboardFilterMap {
 	filterType: AgencyDashboardFilterOption;

@@ -38,6 +38,7 @@
 		"importers/newsletter": true,
 		"individual-subscriber-stats": true,
 		"jetpack-cloud": true,
+		"jetpack/agency-core-updates-filter": false,
 		"jetpack/backup-messaging-i3": true,
 		"jetpack/backup-restore-preflight-checks": true,
 		"jetpack/backup-retention-settings": true,

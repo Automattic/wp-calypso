@@ -46,6 +46,7 @@
 		"dev/auth-helper": true,
 		"dev/preferences-helper": true,
 		"dev/store-sandbox-helper": true,
+		"jetpack/agency-core-updates-filter": false,
 		"jetpack/crm-downloads": true,
 		"oauth": false,
 		"upgrades/redirect-payments": true
