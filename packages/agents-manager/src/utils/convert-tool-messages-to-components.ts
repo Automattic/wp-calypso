@@ -224,6 +224,8 @@ export default function convertToolMessagesToComponents( {
 			const toolData = textData.data ?? {};
 			const { type: contentType, props, followUpTasks, isCurrent, postId, summary } = toolData;
 			const amComponent = getAmComponent( contentType );
+			// TODO: Remove the `getChatComponent` fallthrough once all component
+			// types are migrated into AM.
 			const Component = amComponent ?? getChatComponent?.( contentType );
 
 			const summaryText = typeof summary === 'string' ? summary.trim() || undefined : undefined;

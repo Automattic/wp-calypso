@@ -764,6 +764,7 @@ export default function OrchestratorChat( {
 	// Invoke abilities setup hook to register hook-based abilities that utilize React context.
 	// Provides custom action handlers for agent and chat interaction within Big Sky's AI store.
 	// The hook is stable as `OrchestratorChat` only renders after external providers have been loaded.
+	// TODO: Remove once all Big Sky abilities are migrated into AM.
 	useAbilitiesSetup?.( {
 		addMessage: ( message: BigSkyMessage ) => {
 			// Transform Big Sky message format to `UIMessage` format and add to chat.

@@ -43,6 +43,8 @@ export default function useCheckpointAction(
 
 	// A message's checkpoint lives in whichever bundle's ability created it,
 	// so resolve per message: AM's store first, then the provider's.
+	// TODO: Remove `externalCheckpoint` once the remaining checkpoint-creating
+	// provider abilities are migrated into AM.
 	// Ref avoids infinite re-renders caused by unstable checkpoint references.
 	const storesRef = useRef< Array< CheckpointActions | undefined > >( [] );
 	storesRef.current = [ amCheckpoint, externalCheckpoint ];
