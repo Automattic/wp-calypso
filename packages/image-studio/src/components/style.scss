@@ -550,13 +550,15 @@ body.js.is-image-studio-open {
 		align-items: center;
 		padding: 2px 8px;
 		font-size: 11px;
-		font-weight: 500;
+		font-weight: 600;
 		line-height: 1.4;
 		letter-spacing: 0.02em;
 		white-space: nowrap;
-		color: #ffd7ac;
-		background: rgba(255, 166, 70, 0.18);
-		border: 1px solid rgba(255, 166, 70, 0.35);
+		// Solid amber fill (same hue the badge already used, at full strength)
+		// with the dark-brown text ExperimentalBadge uses — reuses existing
+		// colors, just at higher contrast so the badge reads at thumbnail size.
+		color: #7d4d00;
+		background: #ffa646;
 		border-radius: 2px;
 	}
 
