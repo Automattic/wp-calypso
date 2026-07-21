@@ -87,11 +87,11 @@ describe( 'ReaderSidebarLists', () => {
 		} );
 	} );
 
-	describe( 'mark all as seen', () => {
+	describe( 'mark all as read', () => {
 		beforeEach( () => {
 			jest.clearAllMocks();
 		} );
-		it( 'marks every feed across all lists as seen from the header action', async () => {
+		it( 'marks every feed across all lists as read from the header action', async () => {
 			const user = userEvent.setup();
 			const lists = [
 				makeList( 1, [
@@ -106,7 +106,7 @@ describe( 'ReaderSidebarLists', () => {
 			// The header's "More actions" button is the first one in the DOM,
 			// ahead of the per-list actions inside the expandable content.
 			await user.click( screen.getAllByRole( 'button', { name: 'More actions' } )[ 0 ] );
-			await user.click( screen.getByRole( 'menuitem', { name: 'Mark all as seen' } ) );
+			await user.click( screen.getByRole( 'menuitem', { name: 'Mark all as read' } ) );
 
 			expect( mockMarkAllAsSeen ).toHaveBeenCalledWith( {
 				identifier: 'sidebar-lists',
@@ -115,7 +115,7 @@ describe( 'ReaderSidebarLists', () => {
 			} );
 		} );
 
-		it( 'disables the header action when all lists are fully seen', async () => {
+		it( 'disables the header action when all lists are fully read', async () => {
 			const user = userEvent.setup();
 			const lists = [ makeList( 1, [ { feed_id: 10, unseen_count: 0 } ] ) ];
 
@@ -123,7 +123,7 @@ describe( 'ReaderSidebarLists', () => {
 
 			await user.click( screen.getAllByRole( 'button', { name: 'More actions' } )[ 0 ] );
 
-			expect( screen.getByRole( 'menuitem', { name: 'Mark all as seen' } ) ).toHaveAttribute(
+			expect( screen.getByRole( 'menuitem', { name: 'Mark all as read' } ) ).toHaveAttribute(
 				'aria-disabled',
 				'true'
 			);

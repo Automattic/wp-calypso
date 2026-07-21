@@ -53,7 +53,7 @@ describe( 'MoreMenuActions', () => {
 		jest.clearAllMocks();
 	} );
 
-	test( 'renders the mark all as seen action', async () => {
+	test( 'renders the mark all as read action', async () => {
 		const user = userEvent.setup();
 		renderMoreMenuActions();
 
@@ -61,7 +61,7 @@ describe( 'MoreMenuActions', () => {
 
 		await openMoreActionsMenu( user );
 
-		expect( screen.getByRole( 'menuitem', { name: 'Mark all as seen' } ) ).toBeEnabled();
+		expect( screen.getByRole( 'menuitem', { name: 'Mark all as read' } ) ).toBeEnabled();
 	} );
 
 	test( 'marks all posts as seen and records the tracks event', async () => {
@@ -69,7 +69,7 @@ describe( 'MoreMenuActions', () => {
 		renderMoreMenuActions();
 
 		await openMoreActionsMenu( user );
-		await user.click( screen.getByRole( 'menuitem', { name: 'Mark all as seen' } ) );
+		await user.click( screen.getByRole( 'menuitem', { name: 'Mark all as read' } ) );
 
 		expect( mockRecordReaderTracksEvent ).toHaveBeenCalledWith(
 			'calypso_reader_mark_all_as_seen_clicked',
@@ -88,12 +88,48 @@ describe( 'MoreMenuActions', () => {
 
 		await openMoreActionsMenu( user );
 
-		const markAllAsSeenButton = screen.getByRole( 'menuitem', { name: 'Mark all as seen' } );
+		const markAllAsSeenButton = screen.getByRole( 'menuitem', { name: 'Mark all as read' } );
 		expect( markAllAsSeenButton ).toHaveAttribute( 'aria-disabled', 'true' );
 
 		await user.click( markAllAsSeenButton );
 
 		expect( mockRecordReaderTracksEvent ).not.toHaveBeenCalled();
 		expect( mockMarkAllAsSeen ).not.toHaveBeenCalled();
+	} );
+
+	describe( 'action title', () => {
+		test( 'uses the plural title when there is more than one feed', async () => {
+			const user = userEvent.setup();
+			renderMoreMenuActions( { feedIds: [ 1, 2 ] } );
+
+			await openMoreActionsMenu( user );
+
+			expect( screen.getByRole( 'menuitem', { name: 'Mark all as read' } ) ).toBeInTheDocument();
+			expect( screen.queryByRole( 'menuitem', { name: 'Mark as read' } ) ).not.toBeInTheDocument();
+		} );
+
+		test( 'uses the singular title when there is exactly one feed', async () => {
+			const user = userEvent.setup();
+			renderMoreMenuActions( { feedIds: [ 1 ] } );
+
+			await openMoreActionsMenu( user );
+
+			expect( screen.getByRole( 'menuitem', { name: 'Mark as read' } ) ).toBeInTheDocument();
+			expect(
+				screen.queryByRole( 'menuitem', { name: 'Mark all as read' } )
+			).not.toBeInTheDocument();
+		} );
+
+		test( 'uses the singular title when there are no feeds', async () => {
+			const user = userEvent.setup();
+			renderMoreMenuActions( { feedIds: [] } );
+
+			await openMoreActionsMenu( user );
+
+			expect( screen.getByRole( 'menuitem', { name: 'Mark as read' } ) ).toBeInTheDocument();
+			expect(
+				screen.queryByRole( 'menuitem', { name: 'Mark all as read' } )
+			).not.toBeInTheDocument();
+		} );
 	} );
 } );
