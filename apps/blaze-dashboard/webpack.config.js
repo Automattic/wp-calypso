@@ -58,7 +58,7 @@ module.exports = {
 	},
 	optimization: {
 		minimize: ! isDevelopment,
-		concatenateModules: ! shouldEmitStats,
+		concatenateModules: false,
 		minimizer: Minify(),
 		splitChunks: false,
 	},
