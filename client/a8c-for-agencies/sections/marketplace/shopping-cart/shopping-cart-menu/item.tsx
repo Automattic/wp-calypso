@@ -9,6 +9,7 @@ import {
 	useGetProductPricingInfo,
 	useTermPricingText,
 } from '../../hooks/use-marketplace';
+import { getMaxCartItemCount } from '../../lib/cart-items';
 import type { ShoppingCartItem, TermPricingType } from '../../types';
 
 import './style.scss';
@@ -55,7 +56,11 @@ export default function ShoppingCartMenuItem( {
 		termPricing
 	);
 
-	const showQuantityStepper = !! ( onIncrementItem && onDecrementItem );
+	// Pressable RAM addons are purchased once per site, so their max is 1 and the
+	// stepper is hidden entirely.
+	const maxQuantity = getMaxCartItemCount( item );
+	const showQuantityStepper = !! ( onIncrementItem && onDecrementItem ) && maxQuantity > 1;
+	const isAtMaxQuantity = count >= maxQuantity;
 
 	return (
 		<li className="shopping-cart__menu-list-item">
@@ -103,6 +108,7 @@ export default function ShoppingCartMenuItem( {
 							icon={ plus }
 							label={ translate( 'Add one' ) }
 							onClick={ () => onIncrementItem?.( item ) }
+							disabled={ isAtMaxQuantity }
 							size="small"
 						/>
 					</div>

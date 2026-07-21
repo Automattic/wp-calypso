@@ -17,7 +17,7 @@ import { useProductTermAvailabilityTooltip } from '../../hooks/use-marketplace';
 import usePressableAddonVisibility, {
 	canShowPressableAddonsInMarketplace,
 } from '../../hooks/use-pressable-addon-visibility';
-import { isSameCartItem, removeCartItemGroup, setCartItemCount } from '../../lib/cart-items';
+import { addCartItem } from '../../lib/cart-items';
 import { SelectedFilters } from '../../lib/product-filter';
 import useProductAndPlansWithPressableVisibility from '../hooks/use-product-and-plans-with-pressable-visibility';
 import { getSupportedBundleSizes } from '../hooks/use-product-bundle-size';
@@ -144,8 +144,6 @@ export default function ProductListing( {
 		[ filteredProductsAndBundles, selectedCartItems, selectedSite ]
 	);
 
-	// Referral mode keeps the original toggle behavior (one copy per product). Agency
-	// mode adds, adjusts, and removes copies through the dedicated handlers below.
 	const handleSelectBundleLicense = useCallback(
 		( product: APIProductFamilyProduct ) => {
 			const productBundle = {
@@ -153,10 +151,28 @@ export default function ProductListing( {
 				quantity,
 			};
 
+			// In agency-purchase (regular) mode the button is additive: each click adds
+			// another copy so agencies can buy multiple licenses of the same product at
+			// once. Adjusting the count or removing items happens in the cart.
+			if ( ! isReferralMode ) {
+				setSelectedCartItems( addCartItem( selectedCartItems, productBundle ) );
+				dispatch(
+					recordTracksEvent( 'calypso_a4a_marketplace_products_overview_select_product', {
+						product: product.slug,
+						quantity,
+						purchase_mode: marketplaceType,
+						term_pricing: termPricing,
+					} )
+				);
+				return;
+			}
+
+			// Referral mode keeps the original toggle behavior (one copy per product).
 			const index = selectedCartItems.findIndex(
 				( item ) => item.quantity === productBundle.quantity && item.slug === productBundle.slug
 			);
 			if ( index === -1 ) {
+				// Item doesn't exist, add it
 				setSelectedCartItems( [ ...selectedCartItems, productBundle ] );
 				dispatch(
 					recordTracksEvent( 'calypso_a4a_marketplace_products_overview_select_product', {
@@ -167,6 +183,7 @@ export default function ProductListing( {
 					} )
 				);
 			} else {
+				// Item exists, remove it
 				setSelectedCartItems( selectedCartItems.filter( ( _, i ) => i !== index ) );
 				dispatch(
 					recordTracksEvent( 'calypso_a4a_marketplace_products_overview_unselect_product', {
@@ -178,62 +195,15 @@ export default function ProductListing( {
 				);
 			}
 		},
-		[ dispatch, marketplaceType, quantity, selectedCartItems, setSelectedCartItems, termPricing ]
-	);
-
-	const handleAddToCart = useCallback(
-		( product: APIProductFamilyProduct, bundleQuantity: number, copies: number ) => {
-			const productBundle = { ...product, quantity: bundleQuantity };
-			const copiesToAdd = Array.from( { length: copies }, () => productBundle );
-			setSelectedCartItems( [ ...selectedCartItems, ...copiesToAdd ] );
-			dispatch(
-				recordTracksEvent( 'calypso_a4a_marketplace_products_overview_select_product', {
-					product: product.slug,
-					quantity: bundleQuantity,
-					count: copies,
-					purchase_mode: marketplaceType,
-					term_pricing: termPricing,
-				} )
-			);
-		},
-		[ dispatch, marketplaceType, selectedCartItems, setSelectedCartItems, termPricing ]
-	);
-
-	const handleUpdateCartItemCount = useCallback(
-		( product: APIProductFamilyProduct, bundleQuantity: number, count: number ) => {
-			const productBundle = { ...product, quantity: bundleQuantity };
-			const previousCount = selectedCartItems.filter( ( item ) =>
-				isSameCartItem( item, productBundle )
-			).length;
-			setSelectedCartItems( setCartItemCount( selectedCartItems, productBundle, count ) );
-			dispatch(
-				recordTracksEvent( 'calypso_a4a_marketplace_products_overview_update_product_quantity', {
-					product: product.slug,
-					quantity: bundleQuantity,
-					previous_count: previousCount,
-					count,
-					purchase_mode: marketplaceType,
-					term_pricing: termPricing,
-				} )
-			);
-		},
-		[ dispatch, marketplaceType, selectedCartItems, setSelectedCartItems, termPricing ]
-	);
-
-	const handleRemoveFromCart = useCallback(
-		( product: APIProductFamilyProduct, bundleQuantity: number ) => {
-			const productBundle = { ...product, quantity: bundleQuantity };
-			setSelectedCartItems( removeCartItemGroup( selectedCartItems, productBundle ) );
-			dispatch(
-				recordTracksEvent( 'calypso_a4a_marketplace_products_overview_unselect_product', {
-					product: product.slug,
-					quantity: bundleQuantity,
-					purchase_mode: marketplaceType,
-					term_pricing: termPricing,
-				} )
-			);
-		},
-		[ dispatch, marketplaceType, selectedCartItems, setSelectedCartItems, termPricing ]
+		[
+			dispatch,
+			isReferralMode,
+			marketplaceType,
+			quantity,
+			selectedCartItems,
+			setSelectedCartItems,
+			termPricing,
+		]
 	);
 
 	const onSelectOrReplaceProduct = useCallback(
@@ -349,41 +319,27 @@ export default function ProductListing( {
 					? translate( 'This product does not offer volume discounts.' )
 					: undefined );
 
-			const effectiveQuantity = productDoNotHaveSupportedBundles ? 1 : quantity;
-			const optionSlugs = options.map( ( { slug } ) => slug );
-			const count = selectedCartItems.filter(
-				( item ) => optionSlugs.includes( item.slug ) && item.quantity === effectiveQuantity
-			).length;
-
 			return (
 				<ProductCard
 					asReferral={ isReferralMode }
 					termPricing={ termPricing }
-					key={ optionSlugs.join( ',' ) }
+					key={ options.map( ( { slug } ) => slug ).join( ',' ) }
 					products={ options }
 					onSelectProduct={ onSelectOrReplaceProduct }
 					onVariantChange={ onClickVariantOption }
-					isSelected={ isSelected( optionSlugs ) }
+					isSelected={ isSelected( options.map( ( { slug } ) => slug ) ) }
 					isDisabled={
 						productDoNotHaveSupportedBundles ||
 						! isReady ||
 						( isIncompatibleProduct( productOption, incompatibleProducts ) &&
-							! isSelected( optionSlugs ) )
+							! isSelected( options.map( ( { slug } ) => slug ) ) )
 					}
 					hideDiscount={ isSingleLicenseView }
 					suggestedProduct={ suggestedProduct }
-					quantity={ effectiveQuantity }
+					quantity={ productDoNotHaveSupportedBundles ? 1 : quantity }
 					withCustomCard={ withCustomCard }
 					tooltip={ tooltip }
 					tooltipPosition="bottom"
-					count={ count }
-					onAddToCart={ ( product, copies ) =>
-						handleAddToCart( product, effectiveQuantity, copies )
-					}
-					onUpdateCartItemCount={ ( product, newCount ) =>
-						handleUpdateCartItemCount( product, effectiveQuantity, newCount )
-					}
-					onRemoveFromCart={ ( product ) => handleRemoveFromCart( product, effectiveQuantity ) }
 				/>
 			);
 		} );

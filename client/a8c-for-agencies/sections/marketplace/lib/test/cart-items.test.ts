@@ -1,10 +1,11 @@
 import {
 	addCartItem,
 	decrementCartItem,
+	getMaxCartItemCount,
 	groupCartItems,
 	isSameCartItem,
+	MAX_CART_ITEM_COUNT,
 	removeCartItemGroup,
-	setCartItemCount,
 } from '../cart-items';
 import type { ShoppingCartItem } from '../../types';
 
@@ -39,6 +40,32 @@ describe( 'cart-items', () => {
 			const cart = [ buildItem() ];
 			addCartItem( cart, buildItem() );
 			expect( cart ).toHaveLength( 1 );
+		} );
+
+		it( 'stops adding once the maximum copy count is reached', () => {
+			const item = buildItem();
+			const cart = Array.from( { length: MAX_CART_ITEM_COUNT }, () => item );
+			expect( addCartItem( cart, item ) ).toBe( cart );
+		} );
+
+		it( 'does not add a second copy of a Pressable RAM addon', () => {
+			const addon = buildItem( {
+				slug: 'pressable-addon-php-memory-2gb',
+				site_domain: 'example.com',
+			} );
+			expect( addCartItem( [ addon ], addon ) ).toEqual( [ addon ] );
+		} );
+	} );
+
+	describe( 'getMaxCartItemCount', () => {
+		it( 'caps Pressable RAM addons at a single copy', () => {
+			expect( getMaxCartItemCount( buildItem( { slug: 'pressable-addon-php-memory-2gb' } ) ) ).toBe(
+				1
+			);
+		} );
+
+		it( 'allows the global maximum for other products', () => {
+			expect( getMaxCartItemCount( buildItem() ) ).toBe( MAX_CART_ITEM_COUNT );
 		} );
 	} );
 
@@ -100,57 +127,6 @@ describe( 'cart-items', () => {
 			const scan = buildItem( { slug: 'jetpack-scan' } );
 			const result = removeCartItemGroup( [ backup, scan, backup ], backup );
 			expect( result ).toEqual( [ scan ] );
-		} );
-	} );
-
-	describe( 'setCartItemCount', () => {
-		it( 'appends copies to reach the target count', () => {
-			const item = buildItem();
-			const result = setCartItemCount( [ item ], item, 3 );
-			expect( result ).toEqual( [ item, item, item ] );
-		} );
-
-		it( 'adds copies to an empty cart', () => {
-			const item = buildItem();
-			const result = setCartItemCount( [], item, 2 );
-			expect( result ).toEqual( [ item, item ] );
-		} );
-
-		it( 'drops extra copies to reach a smaller target count', () => {
-			const item = buildItem();
-			const result = setCartItemCount( [ item, item, item ], item, 1 );
-			expect( result ).toEqual( [ item ] );
-		} );
-
-		it( 'removes the group when the target count is zero', () => {
-			const item = buildItem();
-			const result = setCartItemCount( [ item, item ], item, 0 );
-			expect( result ).toEqual( [] );
-		} );
-
-		it( 'returns the same array reference when the count is unchanged', () => {
-			const cart = [ buildItem(), buildItem() ];
-			expect( setCartItemCount( cart, buildItem(), 2 ) ).toBe( cart );
-		} );
-
-		it( 'leaves other items untouched when growing', () => {
-			const backup = buildItem();
-			const scan = buildItem( { slug: 'jetpack-scan' } );
-			const result = setCartItemCount( [ backup, scan ], backup, 2 );
-			expect( result ).toEqual( [ backup, scan, backup ] );
-		} );
-
-		it( 'leaves other items untouched when shrinking', () => {
-			const backup = buildItem();
-			const scan = buildItem( { slug: 'jetpack-scan' } );
-			const result = setCartItemCount( [ backup, scan, backup ], backup, 1 );
-			expect( result ).toEqual( [ scan, backup ] );
-		} );
-
-		it( 'does not mutate the original cart array', () => {
-			const cart = [ buildItem() ];
-			setCartItemCount( cart, buildItem(), 3 );
-			expect( cart ).toHaveLength( 1 );
 		} );
 	} );
 } );

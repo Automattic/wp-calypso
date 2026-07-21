@@ -1,5 +1,19 @@
-import { getPressableMemoryTarget } from './pressable-memory-addon';
+import { getPressableMemoryTarget, isPressablePhpMemoryAddon } from './pressable-memory-addon';
 import type { ShoppingCartItem } from '../types';
+
+/**
+ * The most copies of a single product an agency can add to the cart.
+ */
+export const MAX_CART_ITEM_COUNT = 10;
+
+/**
+ * The most copies allowed for a given item. Pressable RAM addons are purchased
+ * once per site, so they are capped at a single copy; everything else shares the
+ * global maximum.
+ */
+export function getMaxCartItemCount( item: Pick< ShoppingCartItem, 'slug' > ): number {
+	return isPressablePhpMemoryAddon( item ) ? 1 : MAX_CART_ITEM_COUNT;
+}
 
 /**
  * Whether two cart items represent the same purchasable line, and so should be
@@ -15,13 +29,20 @@ export function isSameCartItem( a: ShoppingCartItem, b: ShoppingCartItem ): bool
 }
 
 /**
- * Append one more copy of a product to the cart. Unlike a toggle, this always
- * adds, so an agency can buy multiple copies of the same product at once.
+ * Append one more copy of a product to the cart, so an agency can buy multiple
+ * copies of the same product at once. Adding stops at the item's maximum copy
+ * count; once reached the cart is returned unchanged.
  */
 export function addCartItem(
 	items: ShoppingCartItem[],
 	item: ShoppingCartItem
 ): ShoppingCartItem[] {
+	const current = items.filter( ( cartItem ) => isSameCartItem( cartItem, item ) ).length;
+
+	if ( current >= getMaxCartItemCount( item ) ) {
+		return items;
+	}
+
 	return [ ...items, item ];
 }
 
@@ -69,35 +90,4 @@ export function removeCartItemGroup(
 	item: ShoppingCartItem
 ): ShoppingCartItem[] {
 	return items.filter( ( cartItem ) => ! isSameCartItem( cartItem, item ) );
-}
-
-/**
- * Add or remove copies of the item matching `item` so the cart holds exactly
- * `count` of them, leaving other items in place. A count of zero removes the
- * group entirely. Returns the same array reference when the count is unchanged.
- */
-export function setCartItemCount(
-	items: ShoppingCartItem[],
-	item: ShoppingCartItem,
-	count: number
-): ShoppingCartItem[] {
-	const current = items.filter( ( cartItem ) => isSameCartItem( cartItem, item ) ).length;
-
-	if ( count === current ) {
-		return items;
-	}
-
-	if ( count < current ) {
-		let toRemove = current - count;
-		return items.filter( ( cartItem ) => {
-			if ( toRemove > 0 && isSameCartItem( cartItem, item ) ) {
-				toRemove -= 1;
-				return false;
-			}
-			return true;
-		} );
-	}
-
-	const copies = Array.from( { length: count - current }, () => item );
-	return [ ...items, ...copies ];
 }

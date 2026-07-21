@@ -91,4 +91,41 @@ describe( 'ShoppingCartMenuItem quantity stepper', () => {
 		expect( screen.queryByLabelText( 'Add one' ) ).not.toBeInTheDocument();
 		expect( screen.getByText( 'Remove' ) ).toBeVisible();
 	} );
+
+	it( 'disables the add button once the maximum copy count is reached', () => {
+		renderItem(
+			<ShoppingCartMenuItem
+				item={ item }
+				count={ 10 }
+				onIncrementItem={ jest.fn() }
+				onDecrementItem={ jest.fn() }
+			/>
+		);
+
+		expect( screen.getByLabelText( 'Add one' ) ).toBeDisabled();
+		expect( screen.getByLabelText( 'Remove one' ) ).toBeEnabled();
+	} );
+
+	it( 'hides the stepper for Pressable RAM addons, which are purchased once', () => {
+		const addon: ShoppingCartItem = {
+			...item,
+			name: 'Pressable RAM addon',
+			slug: 'pressable-addon-php-memory-2gb',
+			site_domain: 'example.com',
+		};
+
+		renderItem(
+			<ShoppingCartMenuItem
+				item={ addon }
+				count={ 1 }
+				onIncrementItem={ jest.fn() }
+				onDecrementItem={ jest.fn() }
+				onRemoveItem={ jest.fn() }
+			/>
+		);
+
+		expect( screen.queryByLabelText( 'Add one' ) ).not.toBeInTheDocument();
+		expect( screen.queryByLabelText( 'Remove one' ) ).not.toBeInTheDocument();
+		expect( screen.getByText( 'Remove' ) ).toBeVisible();
+	} );
 } );
