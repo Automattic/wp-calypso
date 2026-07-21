@@ -266,6 +266,8 @@ describe( 'convertToolMessagesToComponents', () => {
 		expect( result.map( ( message ) => message.id ) ).toEqual( [ 'msg-1', 'msg-2' ] );
 		expect( result[ 0 ].content[ 0 ] ).toMatchObject( { component: MockComponent } );
 		expect( result[ 1 ].content[ 0 ] ).toMatchObject( { component: MockComponent } );
+		// Message actions (e.g. zoom) are resolved before conversion and must survive it.
+		expect( result[ 0 ].actions ).toEqual( actions );
 	} );
 
 	it( 'renders `UnavailableToolMessage` when not on an editor page', () => {
