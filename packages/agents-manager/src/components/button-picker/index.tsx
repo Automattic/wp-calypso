@@ -53,7 +53,7 @@ export default function ButtonPicker( {
 				() =>
 					liveButtonBorder
 						? ( {
-								title: __( 'Current', '__i18n_text_domain__' ),
+								title: __( 'Current', __i18n_text_domain__ ),
 								styles: {
 									elements: {
 										button: { border: liveButtonBorder },

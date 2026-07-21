@@ -36,7 +36,7 @@ export default function Variation( {
 	if ( typeof variation?.description === 'string' && variation.description ) {
 		label = sprintf(
 			/* translators: %1$s: variation title. %2$s variation description. */
-			__( '%1$s (%2$s)', '__i18n_text_domain__' ),
+			__( '%1$s (%2$s)', __i18n_text_domain__ ),
 			variation.title,
 			variation.description
 		);

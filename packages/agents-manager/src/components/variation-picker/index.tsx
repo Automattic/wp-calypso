@@ -75,10 +75,7 @@ export default function VariationPicker( {
 	if ( ! sortedVariations.length ) {
 		return (
 			<div>
-				{ __(
-					'There was a problem retrieving options. Please try again.',
-					'__i18n_text_domain__'
-				) }
+				{ __( 'There was a problem retrieving options. Please try again.', __i18n_text_domain__ ) }
 			</div>
 		);
 	}
@@ -105,7 +102,7 @@ export default function VariationPicker( {
 				{ sortedVariations.length > maxToShow && (
 					<div className="agents-manager-variation-picker__arrows">
 						<Button
-							label={ __( 'Previous', '__i18n_text_domain__' ) }
+							label={ __( 'Previous', __i18n_text_domain__ ) }
 							size="compact"
 							icon={ chevronLeft }
 							onClick={ revealPrevious }
@@ -115,7 +112,7 @@ export default function VariationPicker( {
 							{ currentPage }/{ totalPages }
 						</div>
 						<Button
-							label={ __( 'Next', '__i18n_text_domain__' ) }
+							label={ __( 'Next', __i18n_text_domain__ ) }
 							size="compact"
 							icon={ chevronRight }
 							onClick={ revealNext }

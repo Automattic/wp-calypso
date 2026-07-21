@@ -13,9 +13,9 @@ export type { ShowComponentInput, ShowComponentCallback } from './create-callbac
  */
 export const showComponentAbility = ( getDeps: () => ShowComponentDeps ): Ability => ( {
 	name: 'big-sky/show-component',
-	label: __( 'Show Component', '__i18n_text_domain__' ),
+	label: __( 'Show Component', __i18n_text_domain__ ),
 	category: 'big-sky',
-	description: __( 'Display a component in the UI with specified props', '__i18n_text_domain__' ),
+	description: __( 'Display a component in the UI with specified props', __i18n_text_domain__ ),
 	input_schema: {
 		type: 'object',
 		properties: {

@@ -48,7 +48,7 @@ export default function ColorPicker( {
 				() =>
 					globalStyles
 						? ( {
-								title: __( 'Current', '__i18n_text_domain__' ),
+								title: __( 'Current', __i18n_text_domain__ ),
 								settings: { color: { palette: { theme: livePalette } } },
 								styles: globalStyles.styles ?? {},
 						  } as StyleVariation )

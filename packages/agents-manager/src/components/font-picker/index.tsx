@@ -68,7 +68,7 @@ export default function FontPicker( {
 				() =>
 					liveFontFamilies
 						? ( {
-								title: __( 'Current', '__i18n_text_domain__' ),
+								title: __( 'Current', __i18n_text_domain__ ),
 								settings: { typography: { fontFamilies: { theme: liveFontFamilies } } },
 						  } as StyleVariation )
 						: null

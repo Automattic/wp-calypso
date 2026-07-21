@@ -16,7 +16,7 @@ export interface ShowComponentInput {
 export type ShowComponentCallback = ( input: ShowComponentInput ) => Promise< AbilityResult >;
 
 /**
- * Dependencies provided by the host (e.g., `orchestrator-chat`).
+ * Dependencies provided by `useAbilitiesRegistration`.
  */
 export interface ShowComponentDeps {
 	/** The current post ID from the editor. */
