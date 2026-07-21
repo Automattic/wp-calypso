@@ -494,7 +494,7 @@ webpackConfig.plugins.push( {
 				// eslint-disable-next-line import/no-extraneous-dependencies
 				require( 'thread-loader/dist/workerPools' ).getPool( { workers: workerCount } ).terminate();
 			} catch ( e ) {
-				// Best-effort cleanup — never fail the build over it.
+				console.warn( 'TerminateThreadLoaderPool: pool cleanup skipped:', e && e.message );
 			}
 		} );
 	},
