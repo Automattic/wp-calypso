@@ -243,9 +243,9 @@ const getOdieInitialPromptContext = ( botNameSlug: OdieAllowedBots ): Context | 
 export const getOdieInitialMessage = (
 	botNameSlug: OdieAllowedBots,
 	displayName: string,
-	hasEnTranslation: ( single: string, context?: string, domain?: string ) => boolean
+	hasEnTranslation?: ( single: string, context?: string, domain?: string ) => boolean
 ): Message => {
-	const introMessage = hasEnTranslation(
+	const introMessage = hasEnTranslation?.(
 		"I'm your personal Support Assistant. I can help with any questions about your site or account.",
 		undefined,
 		__i18n_text_domain__
