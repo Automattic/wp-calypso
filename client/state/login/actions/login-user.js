@@ -8,6 +8,7 @@ import {
 	TWO_FACTOR_AUTHENTICATION_SEND_SMS_CODE_REQUEST_SUCCESS,
 } from 'calypso/state/action-types';
 import { remoteLoginUser } from 'calypso/state/login/actions/remote-login-user';
+import { isFormDisabled } from 'calypso/state/login/selectors';
 import {
 	getErrorFromHTTPError,
 	getSMSMessageFromResponse,
@@ -22,10 +23,14 @@ import 'calypso/state/login/init';
  * @param  {string}   redirectTo      		Url to redirect the user to upon successful login
  * @param  {string}   domain          		A domain to reverse login to
  * @param  {Object}   blackbox        		Blackbox protection helpers from `useBlackboxProtection`.
- * @returns {Function}                 		A thunk that can be dispatched
+ * @returns {Function}                 		A thunk that resolves to `false` when no login request is started
  */
 export const loginUser =
-	( usernameOrEmail, password, redirectTo, domain, blackbox ) => async ( dispatch ) => {
+	( usernameOrEmail, password, redirectTo, domain, blackbox ) => async ( dispatch, getState ) => {
+		if ( isFormDisabled( getState() ) ) {
+			return false;
+		}
+
 		dispatch( {
 			type: LOGIN_REQUEST,
 		} );
