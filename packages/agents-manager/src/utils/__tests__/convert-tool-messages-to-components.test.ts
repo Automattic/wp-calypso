@@ -212,6 +212,24 @@ describe( 'convertToolMessagesToComponents', () => {
 		expect( result[ 0 ].suppressThinking ).toBe( false );
 	} );
 
+	it( 'renders the notice for deprecated pattern-picker messages even when a provider component exists', () => {
+		const message = createToolMessage( LEGACY_SHOW_COMPONENT_TOOL_ID, {
+			type: 'pattern-picker',
+			props: { patterns: [] },
+		} );
+		const getChatComponent = jest.fn().mockReturnValue( MockComponent );
+
+		const result = convertToolMessagesToComponents( {
+			messages: [ message ],
+			getChatComponent,
+		} );
+
+		expect( result ).toHaveLength( 1 );
+		expect( result[ 0 ].content ).toEqual( [
+			{ type: 'text', text: 'This option is no longer available.' },
+		] );
+	} );
+
 	it( 'renders a short notice when no component resolves on either side', () => {
 		const message = createToolMessage( LEGACY_SHOW_COMPONENT_TOOL_ID, {
 			type: 'unknown-component',
