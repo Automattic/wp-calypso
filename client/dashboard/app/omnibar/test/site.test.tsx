@@ -1,20 +1,20 @@
 /**
  * @jest-environment jsdom
  */
-import { queryClient } from '@automattic/api-queries';
+import { omnibarSiteIdQuery, queryClient } from '@automattic/api-queries';
 import { waitFor } from '@testing-library/react';
 import nock from 'nock';
 import { render } from '../../../test-utils';
 import { AUTH_QUERY_KEY } from '../../auth';
-import { useInitializeOmnibarSite } from '../site';
+import { useSyncOmnibarSite } from '../site';
 import type { User } from '@automattic/api-core';
 
 function OmnibarProbe() {
-	useInitializeOmnibarSite();
+	useSyncOmnibarSite();
 	return null;
 }
 
-describe( 'useInitializeOmnibarSite', () => {
+describe( 'useSyncOmnibarSite', () => {
 	afterEach( () => {
 		nock.cleanAll();
 		queryClient.clear();
@@ -43,7 +43,8 @@ describe( 'useInitializeOmnibarSite', () => {
 			.reply( 200, {} );
 
 		// The recent-sites write always fails. Before the fix, the optimistic
-		// mutation's rollback re-triggered the effect and it retried forever.
+		// mutation's rollback changed `recentSites`, re-triggering the effect that
+		// fired the write, so it retried forever.
 		let postCount = 0;
 		nock( 'https://public-api.wordpress.com' )
 			.persist()
@@ -59,5 +60,8 @@ describe( 'useInitializeOmnibarSite', () => {
 		await new Promise( ( resolve ) => setTimeout( resolve, 200 ) );
 
 		expect( postCount ).toBe( 1 );
+
+		// The omnibar still resolves to the primary blog and publishes it as shared state.
+		expect( queryClient.getQueryData( omnibarSiteIdQuery().queryKey ) ).toBe( 123 );
 	} );
 } );
