@@ -40,4 +40,22 @@ describe( 'ExportNotice', () => {
 		const clickEvent = fireEvent.click( link );
 		expect( clickEvent ).toBe( true );
 	} );
+
+	it( 'uses wp-admin export URL when isClassicView is true', () => {
+		render(
+			<ExportNotice
+				{ ...defaultProps }
+				isClassicView
+				siteAdminUrl="https://example-site.com/wp-admin/"
+			/>
+		);
+		const link = screen.getByRole( 'link', { name: 'Export content' } );
+		expect( link ).toHaveAttribute( 'href', 'https://example-site.com/wp-admin/export.php' );
+	} );
+
+	it( 'falls back to Calypso export URL when isClassicView is true but siteAdminUrl is missing', () => {
+		render( <ExportNotice { ...defaultProps } isClassicView /> );
+		const link = screen.getByRole( 'link', { name: 'Export content' } );
+		expect( link ).toHaveAttribute( 'href', '/export/example-site' );
+	} );
 } );
