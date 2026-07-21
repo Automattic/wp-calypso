@@ -182,12 +182,6 @@ function StatsBenefitsListing( {
 				<li className={ `${ COMPONENT_CLASS_NAME }__benefits-item--included` }>
 					{ translate( 'GDPR compliance' ) }
 				</li>
-				<li className={ `${ COMPONENT_CLASS_NAME }__benefits-item--included` }>
-					{ translate( 'More granular location stats' ) }
-				</li>
-				<li className={ `${ COMPONENT_CLASS_NAME }__benefits-item--included` }>
-					{ translate( 'Device attribution' ) }
-				</li>
 				{ subscriptionValue >= defaultStartingValue ? (
 					<li className={ `${ COMPONENT_CLASS_NAME }__benefits-item--included` }>
 						{ translate( 'Email support' ) }
@@ -202,6 +196,12 @@ function StatsBenefitsListing( {
 				</li>
 				<li className={ `${ COMPONENT_CLASS_NAME }__benefits-item--not-included` }>
 					{ translate( 'No access to upcoming advanced features' ) }
+				</li>
+				<li className={ `${ COMPONENT_CLASS_NAME }__benefits-item--not-included` }>
+					{ translate( 'No granular location stats' ) }
+				</li>
+				<li className={ `${ COMPONENT_CLASS_NAME }__benefits-item--not-included` }>
+					{ translate( 'No device attribution' ) }
 				</li>
 			</ul>
 		</div>
