@@ -44,7 +44,6 @@ const RefundEligibilityNotice = ( props: RefundEligibilityNoticeProps ) => {
 	};
 
 	const { prompt, linkLabel } = getRefundEligibilityPromoCopy( {
-		purchase: toPurchaseForCopy( props.purchase ),
 		refundAmount: props.refundAmount,
 	} );
 

@@ -350,20 +350,14 @@ describe( 'getTitanCancellationLossItems', () => {
 
 describe( 'getRefundEligibilityPromoCopy', () => {
 	test( 'returns the plan-worded prompt and link label', () => {
-		const { prompt, linkLabel } = getRefundEligibilityPromoCopy( {
-			purchase: makePurchaseForCategory( 'plan' ),
-			refundAmount: '$96.00',
-		} );
+		const { prompt, linkLabel } = getRefundEligibilityPromoCopy( { refundAmount: '$96.00' } );
 		expect( prompt ).toBe(
 			'You’re eligible for a $96.00 refund if you remove your plan now. Your features will be unavailable right away.'
 		);
 		expect( linkLabel ).toBe( 'Remove plan and claim refund.' );
 	} );
-	test( 'is not product-aware — non-plan products still get the plan wording', () => {
-		const { prompt, linkLabel } = getRefundEligibilityPromoCopy( {
-			purchase: makePurchaseForCategory( 'domain' ),
-			refundAmount: '$12.00',
-		} );
+	test( 'interpolates the refund amount into the prompt', () => {
+		const { prompt, linkLabel } = getRefundEligibilityPromoCopy( { refundAmount: '$12.00' } );
 		expect( prompt ).toBe(
 			'You’re eligible for a $12.00 refund if you remove your plan now. Your features will be unavailable right away.'
 		);

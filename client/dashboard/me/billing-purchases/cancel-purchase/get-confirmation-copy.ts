@@ -515,12 +515,10 @@ export function getRefundNoticeCopy( {
  * a prompt sentence plus the label for the link that switches to the Remove
  * flow. Plan-worded (not product-aware) to match the current copy.
  */
-export function getRefundEligibilityPromoCopy( {
-	refundAmount,
-}: {
-	purchase: PurchaseForCopy;
-	refundAmount: string;
-} ): { prompt: string; linkLabel: string } {
+export function getRefundEligibilityPromoCopy( { refundAmount }: { refundAmount: string } ): {
+	prompt: string;
+	linkLabel: string;
+} {
 	return {
 		prompt: sprintf(
 			/* translators: %(refundAmount)s is a monetary amount, e.g. "$96.00" */

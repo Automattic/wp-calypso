@@ -23,7 +23,7 @@ export default function RefundEligibilityNotice( props: RefundEligibilityNoticeP
 	}
 
 	if ( props.mode === 'refund-eligibility' ) {
-		const { prompt, linkLabel } = getRefundEligibilityPromoCopy( { purchase, refundAmount } );
+		const { prompt, linkLabel } = getRefundEligibilityPromoCopy( { refundAmount } );
 		return (
 			<Notice
 				variant="info"
