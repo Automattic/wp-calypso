@@ -11,7 +11,7 @@ import {
 	envToFeatureKey,
 	getTestAccountByFeature,
 } from '@automattic/calypso-e2e';
-import { expect, tags, test } from '../../lib/pw-base';
+import { tags, test } from '../../lib/pw-base';
 import { TEST_IMAGE_PATH } from '../constants';
 
 const features = envToFeatureKey( envVariables );
@@ -122,7 +122,5 @@ test.describe( 'CoBlocks: Blocks', { tag: [ tags.GUTENBERG ] }, () => {
 		await test.step( 'Then Logos block is visible in published post', async () => {
 			await LogosBlock.validatePublishedContent( page, [ logoImage!.filename ] );
 		} );
-
-		void expect;
 	} );
 } );

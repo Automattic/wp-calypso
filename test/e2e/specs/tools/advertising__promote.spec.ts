@@ -1,11 +1,25 @@
-import { DataHelper } from '@automattic/calypso-e2e';
+import { DataHelper, PostResponse, TestAccount } from '@automattic/calypso-e2e';
 import { expect, tags, test } from '../../lib/pw-base';
 import { TEST_IMAGE_PATH } from '../constants';
 
 test.describe(
 	DataHelper.createSuiteTitle( 'Blaze Ads: Promote' ),
-	{ tag: [ tags.JETPACK_WPCOM_INTEGRATION ] },
+	{ tag: [ tags.CALYPSO_PR, tags.JETPACK_WPCOM_INTEGRATION ] },
 	() => {
+		let newPostDetails: PostResponse;
+		let testAccount: TestAccount;
+
+		test.afterAll( async () => {
+			if ( ! newPostDetails ) {
+				return;
+			}
+
+			await testAccount.restAPI.deletePost(
+				testAccount.credentials.testSites?.primary.id as number,
+				newPostDetails.ID
+			);
+		} );
+
 		test( 'As a WordPress.com user, I can promote my content using Jetpack Blaze', async ( {
 			accountGivenByEnvironment,
 			accountSimpleSiteFreePlan,
@@ -21,7 +35,7 @@ test.describe(
 				'Blaze is unavailable on private sites'
 			);
 
-			const testAccount = environment.TEST_ON_ATOMIC
+			testAccount = environment.TEST_ON_ATOMIC
 				? accountGivenByEnvironment
 				: accountSimpleSiteFreePlan;
 			const pageTitle = helperData.getRandomPhrase().slice( 0, 20 );
@@ -39,7 +53,7 @@ test.describe(
 
 				if ( ! hasPosts ) {
 					console.log( 'Creating a new post for the site' );
-					await testAccount.restAPI.createPost(
+					newPostDetails = await testAccount.restAPI.createPost(
 						testAccount.credentials.testSites?.primary.id as number,
 						{
 							title: pageTitle,
