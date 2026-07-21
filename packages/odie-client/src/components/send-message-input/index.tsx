@@ -2,7 +2,6 @@ import '@automattic/agenttic-ui/index.css';
 import { useInput } from '@automattic/agenttic-ui';
 import { HelpCenterSelect } from '@automattic/data-stores';
 import { useConnectionStatusNotice } from '@automattic/zendesk-client';
-import { ExternalLink } from '@wordpress/components';
 import { useSelect } from '@wordpress/data';
 import {
 	createInterpolateElement,
@@ -32,8 +31,11 @@ const AiDisclosure = () => (
 			),
 			{
 				a: (
-					// @ts-expect-error Children must be passed to External link. This is done by createInterpolateElement, but the types don't see that.
-					<ExternalLink href="https://automattic.com/ai-guidelines" />
+					<a
+						href="https://automattic.com/ai-guidelines"
+						target="_blank"
+						rel="noreferrer noopener"
+					/>
 				),
 			}
 		) }
