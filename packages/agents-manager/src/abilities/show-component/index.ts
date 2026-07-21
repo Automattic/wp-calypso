@@ -1,9 +1,11 @@
 import { __ } from '@wordpress/i18n';
-import { BIG_SKY_ABILITY_CATEGORY, SHOW_COMPONENT_TYPES } from '../constants';
+import { BIG_SKY_ABILITY_CATEGORY } from '../constants';
 import { showComponentCallback } from './callback';
+import { SHOW_COMPONENT_TYPES } from './constants';
 import type { Ability } from '../types';
 
 export type { ShowComponentInput } from './callback';
+export type { ShowComponentType } from './constants';
 
 /**
  * The `show-component` ability definition.

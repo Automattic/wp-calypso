@@ -300,16 +300,17 @@ export default function StylesPreview( {
 	const textColor = ( getStyleValue( globalStyles, 'color.text' ) as string ) ?? 'black';
 
 	// `h1` styles win over `heading` styles for the header preview.
-	const headerStyle = ( styles: GlobalStyles, path: string ) =>
+	const getHeaderStyleValue = ( styles: GlobalStyles, path: string ) =>
 		( getStyleValue( styles, path, 'h1' ) ?? getStyleValue( styles, path, 'heading' ) ) as string;
 
 	const headerFontFamily =
-		resolveFontFamily( headerStyle( mergedStyles, 'typography.fontFamily' ) ) ?? fontFamily;
-	const headerFontWeight = headerStyle( mergedStyles, 'typography.fontWeight' ) ?? fontWeight;
-	const headerFontStyle = headerStyle( mergedStyles, 'typography.fontStyle' ) ?? fontStyle;
+		resolveFontFamily( getHeaderStyleValue( mergedStyles, 'typography.fontFamily' ) ) ?? fontFamily;
+	const headerFontWeight =
+		getHeaderStyleValue( mergedStyles, 'typography.fontWeight' ) ?? fontWeight;
+	const headerFontStyle = getHeaderStyleValue( mergedStyles, 'typography.fontStyle' ) ?? fontStyle;
 	const headerTextTransform =
-		headerStyle( mergedStyles, 'typography.textTransform' ) ?? textTransform;
-	const headerColor = headerStyle( globalStyles, 'color.text' ) ?? textColor;
+		getHeaderStyleValue( mergedStyles, 'typography.textTransform' ) ?? textTransform;
+	const headerColor = getHeaderStyleValue( globalStyles, 'color.text' ) ?? textColor;
 	const backgroundColor = globalStyles?.styles?.color?.background;
 
 	const [ containerResizeListener, { width } ] = useResizeObserver();

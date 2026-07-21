@@ -2,7 +2,8 @@ import { select } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
 import { setCheckpoint } from '../../utils/checkpoint';
 import { BIG_SKY_SHOW_COMPONENT_TOOL_ID } from '../../utils/show-component-tools';
-import type { AbilityResult, ShowComponentType } from '../types';
+import type { AbilityResult } from '../types';
+import type { ShowComponentType } from './constants';
 
 export interface ShowComponentInput {
 	type: ShowComponentType;

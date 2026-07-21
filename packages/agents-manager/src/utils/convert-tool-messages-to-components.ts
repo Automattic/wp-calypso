@@ -8,7 +8,7 @@ import { isEditorPage } from './is-editor-page';
 import { isShowComponentTool } from './show-component-tools';
 import { getDisplayMessageFromToolData, isDisplayableToolMessageTool } from './tool-message-utils';
 import type { GetChatComponent } from './load-external-providers';
-import type { ShowComponentType } from '../abilities/types';
+import type { ShowComponentType } from '../abilities/show-component';
 import type { UIMessage } from '@automattic/agenttic-client';
 
 export interface AgentsManagerUIMessage extends UIMessage {
