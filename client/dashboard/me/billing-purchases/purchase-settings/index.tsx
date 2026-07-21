@@ -277,7 +277,7 @@ function PurchaseActionMenu( { purchase }: { purchase: Purchase } ) {
 	);
 }
 
-function CancelOrRemoveActionButton( { purchase }: { purchase: Purchase } ) {
+export function CancelOrRemoveActionButton( { purchase }: { purchase: Purchase } ) {
 	const { user } = useAuth();
 	const navigate = useNavigate();
 	const locale = useLocale();
