@@ -35,9 +35,6 @@ const EditGravatar = ( { isEmailVerified = true, avatarUrl, userEmail }: EditGra
 		avatarUrlRef.current = avatarUrl;
 	}, [ avatarUrl ] );
 
-	// Add a timestamp to the avatar URL to avoid cache since this component needs to show the latest avatar the user has uploaded
-	const displayUrl = addQueryArgs( avatarUrlRef.current, { ver: Date.now() } );
-
 	useEffect( () => {
 		quickEditorRef.current = new GravatarQuickEditorCore( {
 			email: userEmail,
@@ -154,7 +151,7 @@ const EditGravatar = ( { isEmailVerified = true, avatarUrl, userEmail }: EditGra
 						aria-label={ uploadButtonLabel }
 					>
 						<img
-							src={ tempImage || displayUrl }
+							src={ tempImage || avatarUrl }
 							alt={ __( 'Gravatar' ) }
 							width={ 48 }
 							height={ 48 }
