@@ -253,7 +253,7 @@ export default function StylesPreview( {
 	themeColors: themeColorsProp,
 	fontFamiliesToCSS: fontFamiliesToCSSFn,
 }: Props ) {
-	// Read current global styles from the store. Props override when provided.
+	// Props override the store's global styles when provided.
 	const { globalStyles: storeGlobalStyles } = useGlobalStyles();
 
 	const globalStyles = globalStylesProp ?? storeGlobalStyles ?? EMPTY_GLOBAL_STYLES;
@@ -289,7 +289,6 @@ export default function StylesPreview( {
 		return fontFamilies?.find( ( f ) => f.slug === slug )?.fontFamily ?? value;
 	};
 
-	// Typography
 	const fontFamily =
 		resolveFontFamily( getStyleValue( mergedStyles, 'typography.fontFamily' ) as string ) ??
 		'serif';
@@ -332,7 +331,6 @@ export default function StylesPreview( {
 		resolveColor( backgroundColor, globalPalette, 'white' ) ??
 		'#ffffff';
 
-	// Button previews only.
 	const buttonStyles = useMemo( () => {
 		if ( type !== 'button' ) {
 			return undefined;
