@@ -4,12 +4,6 @@
 	min-height: unset;
 	container-type: inline-size;
 
-	// Pagination controls are absolutely positioned below the picker grid, so
-	// reserve space before the next bot response.
-	&:has( .agents-manager-variation-picker__arrows ) {
-		margin-bottom: 56px;
-	}
-
 	&__grid {
 		.block-editor-iframe__scale-container {
 			flex: 1 0 fit-content;
@@ -40,11 +34,9 @@
 	}
 
 	&__arrows {
-		position: absolute;
-		bottom: -40px;
-		right: 0;
 		display: flex;
 		align-items: center;
+		justify-content: flex-end;
 
 		.components-button {
 			color: var(--color-muted-foreground);
