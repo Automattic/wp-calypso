@@ -36,6 +36,8 @@
 		display: flex;
 		align-items: center;
 		justify-content: flex-end;
+		// Keep the buttons' focus ring clear of the page number.
+		gap: 4px;
 
 		.components-button {
 			color: var( --color-muted-foreground );
