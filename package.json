@@ -313,7 +313,7 @@
 		"recursive-copy": "^2.0.14",
 		"resize-observer-polyfill": "^1.5.1",
 		"sass": "1.77.8",
-		"sass-loader": "^14.2.1",
+		"sass-loader": "^16.0.5",
 		"source-map": "^0.7.4",
 		"stackframe": "^1.1.1",
 		"stacktrace-gps": "^3.0.3",
