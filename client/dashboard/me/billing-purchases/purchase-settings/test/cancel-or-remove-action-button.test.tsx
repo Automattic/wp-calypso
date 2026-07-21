@@ -35,7 +35,9 @@ describe( '<CancelOrRemoveActionButton />', () => {
 
 	test( 'renders nothing for a subscription that is no longer active', () => {
 		const { container } = render(
-			<CancelOrRemoveActionButton purchase={ makePurchase( { subscription_status: 'expired' } ) } />
+			<CancelOrRemoveActionButton
+				purchase={ makePurchase( { subscription_status: 'inactive' } ) }
+			/>
 		);
 		expect( container ).toBeEmptyDOMElement();
 	} );
