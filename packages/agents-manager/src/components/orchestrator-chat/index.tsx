@@ -23,7 +23,6 @@ import { useImageUpload } from '../../hooks/use-image-upload';
 import useRegenerateAction from '../../hooks/use-regenerate-action';
 import useSaveNewChatRoute from '../../hooks/use-save-new-chat-route';
 import useSourcesAction from '../../hooks/use-sources-action';
-import useZoomAction from '../../hooks/use-zoom-action';
 import { markSessionUsed } from '../../utils/agent-session';
 import convertToolMessagesToComponents, {
 	type AgentsManagerUIMessage,
@@ -463,9 +462,6 @@ export default function OrchestratorChat( {
 
 	// Add a "Copy" action on plain-text agent messages.
 	const getCopyActionsForMessage = useCopyAction();
-
-	// Register zoom-in/zoom-out actions on agent messages.
-	useZoomAction( registerMessageActions );
 
 	// Register a "Sources" action on agent messages with sources data.
 	useSourcesAction( registerMessageActions, ! isReaderChat );
