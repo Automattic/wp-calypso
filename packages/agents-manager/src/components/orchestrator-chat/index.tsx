@@ -883,10 +883,6 @@ export default function OrchestratorChat( {
 			const traceId = getTraceIdForMessage( message.id );
 			const messageWithTraceId = traceId ? { ...message, traceId } : message;
 
-			if ( message.id.endsWith( '-next-step' ) ) {
-				return messageWithTraceId;
-			}
-
 			const directActions = [
 				...getFeedbackActionsForMessage( message ),
 				...getCopyActionsForMessage( message ),

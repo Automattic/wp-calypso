@@ -87,7 +87,6 @@ type ChatComponentType =
 	| 'font-picker'
 	| 'color-picker'
 	| 'chat-suggestions'
-	| 'next-step-button'
 	| 'open-help-center-button'
 	| 'title-picker'
 	| 'seo-title-picker';
