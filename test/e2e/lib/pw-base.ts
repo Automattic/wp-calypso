@@ -36,6 +36,7 @@ import {
 	BlockWidgetEditorComponent,
 	CartCheckoutPage,
 	DashboardPage,
+	DashboardSiteDomainsPage,
 	DashboardVisibilitySettingsPage,
 	DataHelper,
 	DomainSearchComponent,
@@ -217,6 +218,10 @@ export const test = base.extend<
 		 * Page object representing the WordPress.com dashboard.
 		 */
 		pageDashboard: DashboardPage;
+		/**
+		 * Page object representing a single site's Domains screen (`/sites/:slug/domains`) in the WordPress.com dashboard.
+		 */
+		pageDashboardSiteDomains: DashboardSiteDomainsPage;
 		/**
 		 * Page object representing the cart checkout page.
 		 */
@@ -480,6 +485,10 @@ export const test = base.extend<
 	pageDashboard: async ( { page }, use ) => {
 		const dashboardPage = new DashboardPage( page );
 		await use( dashboardPage );
+	},
+	pageDashboardSiteDomains: async ( { page }, use ) => {
+		const dashboardSiteDomainsPage = new DashboardSiteDomainsPage( page );
+		await use( dashboardSiteDomainsPage );
 	},
 	pageCartCheckout: async ( { page }, use ) => {
 		const cartCheckoutPage = new CartCheckoutPage( page );
