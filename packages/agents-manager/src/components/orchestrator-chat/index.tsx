@@ -206,7 +206,7 @@ export default function OrchestratorChat( {
 	useSuggestions,
 	getChatComponent,
 	siteBuildUtils,
-	useCheckpoint: useExternalCheckpoint,
+	useCheckpoint,
 	capabilities,
 	onHasMessagesChange,
 }: Props ) {
@@ -442,7 +442,8 @@ export default function OrchestratorChat( {
 	useSaveNewChatRoute( hasUserSentMessage );
 
 	// Register an "Undo" action on agent messages with checkpoints.
-	useCheckpointAction( registerMessageActions, useExternalCheckpoint?.() );
+	const checkpoint = useCheckpoint?.();
+	useCheckpointAction( registerMessageActions, checkpoint );
 
 	// Register thumbs-up/down feedback actions on agent messages.
 	const { showFeedbackInput, submitFeedbackText, resetFeedback, getFeedbackActionsForMessage } =

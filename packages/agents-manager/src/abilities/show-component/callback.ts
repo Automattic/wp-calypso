@@ -1,6 +1,5 @@
 import { select } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
-import { setCheckpoint } from '../../utils/checkpoint';
 import { BIG_SKY_SHOW_COMPONENT_TOOL_ID } from '../../utils/show-component-tools';
 import type { AbilityResult } from '../types';
 import type { ShowComponentType } from './constants';
@@ -10,10 +9,6 @@ export interface ShowComponentInput {
 	props: Record< string, unknown >;
 	summary?: string;
 	followUpTasks?: boolean;
-	/** Injected by the agenttic client — not part of the model-facing schema. */
-	messageId?: string;
-	/** Injected by the agenttic client — not part of the model-facing schema. */
-	toolCallId?: string;
 }
 
 /**
@@ -21,17 +16,11 @@ export interface ShowComponentInput {
  * Returns a JSON `agentMessage` for `convertToolMessagesToComponents()`.
  */
 export async function showComponentCallback( input: ShowComponentInput ): Promise< AbilityResult > {
-	const { type, props = {}, summary, followUpTasks, messageId, toolCallId } = input;
+	const { type, props = {}, summary, followUpTasks } = input;
 
 	try {
 		if ( typeof props !== 'object' || Object.keys( props ).length === 0 ) {
 			throw new Error( '[AgentsManager] Props must be an object with properties' );
-		}
-
-		// Set checkpoint so the action can be undone.
-		const checkpointId = toolCallId || messageId;
-		if ( checkpointId ) {
-			setCheckpoint( checkpointId );
 		}
 
 		// Read at call time so the picker records the page it was shown on.
@@ -60,7 +49,6 @@ export async function showComponentCallback( input: ShowComponentInput ): Promis
 					summary: successMessage,
 					isCurrent: true,
 					postId: currentPostId,
-					calypsoCheckpointId: checkpointId,
 				},
 			} ),
 		};

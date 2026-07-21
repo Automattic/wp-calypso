@@ -1,13 +1,9 @@
 /**
  * @jest-environment jsdom
  */
-import { setCheckpoint } from '../../../utils/checkpoint';
 import { showComponentCallback } from '../callback';
 import type { ShowComponentInput } from '../callback';
 
-jest.mock( '../../../utils/checkpoint', () => ( {
-	setCheckpoint: jest.fn(),
-} ) );
 jest.mock( '@wordpress/data', () => ( {
 	select: () => ( { getCurrentPostId: () => 42 } ),
 } ) );
@@ -49,36 +45,10 @@ describe( 'showComponentCallback', () => {
 		expect( JSON.parse( result.agentMessage! ).data.summary ).toBe( 'Pick a color palette.' );
 	} );
 
-	it( 'includes `followUpTasks` and `messageId` in the output', async () => {
-		const result = await showComponentCallback(
-			makeInput( { followUpTasks: true, messageId: 'msg-1' } )
-		);
+	it( 'includes `followUpTasks` in the output', async () => {
+		const result = await showComponentCallback( makeInput( { followUpTasks: true } ) );
 
-		const parsed = JSON.parse( result.agentMessage! );
-		expect( parsed.data.followUpTasks ).toBe( true );
-		expect( parsed.data.calypsoCheckpointId ).toBe( 'msg-1' );
-	} );
-
-	it( 'prefers `toolCallId` over `messageId` as the checkpoint ID', async () => {
-		const result = await showComponentCallback(
-			makeInput( { toolCallId: 'toolu_1', messageId: 'msg-1' } )
-		);
-
-		expect( setCheckpoint ).toHaveBeenCalledWith( 'toolu_1' );
-		expect( JSON.parse( result.agentMessage! ).data.calypsoCheckpointId ).toBe( 'toolu_1' );
-	} );
-
-	it.each( [ 'color-picker', 'font-picker', 'button-picker' ] as const )(
-		'sets a checkpoint for %s',
-		async ( type ) => {
-			await showComponentCallback( makeInput( { type, messageId: 'msg-1' } ) );
-			expect( setCheckpoint ).toHaveBeenCalledWith( 'msg-1' );
-		}
-	);
-
-	it( 'does not set checkpoint when no checkpoint ID is available', async () => {
-		await showComponentCallback( makeInput() );
-		expect( setCheckpoint ).not.toHaveBeenCalled();
+		expect( JSON.parse( result.agentMessage! ).data.followUpTasks ).toBe( true );
 	} );
 
 	it( 'returns a structured error result when props is empty', async () => {

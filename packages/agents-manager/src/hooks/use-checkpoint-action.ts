@@ -1,14 +1,11 @@
 import { createElement, useEffect, useRef } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { undo, Icon } from '@wordpress/icons';
-import { hasCheckpoint, restoreCheckpoint } from '../utils/checkpoint';
 import { recordBigSkyTracksEvent } from '../utils/tracks';
-import type { CheckpointStore } from '../utils/checkpoint';
+import type { UseCheckpointReturn } from '../utils/load-external-providers';
 import type { UseAgentChatReturn, UIMessage } from '@automattic/agenttic-client';
 
 type RegisterMessageActions = UseAgentChatReturn[ 'registerMessageActions' ];
-
-const AM_CHECKPOINT_STORE: CheckpointStore = { hasCheckpoint, restoreCheckpoint };
 
 /**
  * Gets the checkpoint ID embedded in a tool message, or an empty string
@@ -38,33 +35,25 @@ function getCheckpointId( message: UIMessage ): string {
  */
 export default function useCheckpointAction(
 	registerMessageActions: RegisterMessageActions,
-	externalCheckpoint?: CheckpointStore
+	checkpoint?: UseCheckpointReturn
 ): void {
-	// A message's checkpoint lives in whichever bundle's ability created it,
-	// so resolve per message: AM's store first, then the provider's.
-	// TODO: Remove `externalCheckpoint` once the remaining checkpoint-creating
-	// provider abilities are migrated into AM.
-	// Ref avoids infinite re-renders caused by an unstable provider reference.
-	const storesRef = useRef< Array< CheckpointStore | undefined > >( [] );
-	storesRef.current = [ AM_CHECKPOINT_STORE, externalCheckpoint ];
+	// Ref avoids infinite re-renders caused by unstable `checkpoint` reference.
+	const checkpointRef = useRef( checkpoint );
+	checkpointRef.current = checkpoint;
 
 	useEffect( () => {
 		registerMessageActions( {
 			id: 'agents-manager-checkpoint',
 			actions: ( message: UIMessage ) => {
-				if ( message.role !== 'agent' ) {
+				const currentCheckpoint = checkpointRef.current;
+
+				if ( ! currentCheckpoint || message.role !== 'agent' ) {
 					return [];
 				}
 
 				const checkpointId = getCheckpointId( message );
-				if ( ! checkpointId ) {
-					return [];
-				}
 
-				const checkpoint = storesRef.current.find(
-					( store ) => store?.hasCheckpoint( checkpointId )
-				);
-				if ( ! checkpoint ) {
+				if ( ! checkpointId || ! currentCheckpoint.hasCheckpoint( checkpointId ) ) {
 					return [];
 				}
 
@@ -81,7 +70,7 @@ export default function useCheckpointAction(
 								id: checkpointId,
 							} );
 							try {
-								await checkpoint.restoreCheckpoint( checkpointId );
+								await checkpointRef.current?.restoreCheckpoint( checkpointId );
 							} catch ( error ) {
 								// eslint-disable-next-line no-console
 								console.error( '[useCheckpointAction] Failed to restore checkpoint:', error );
