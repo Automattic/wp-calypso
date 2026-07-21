@@ -12,6 +12,7 @@ import type {
 	FediverseCreatePostResult,
 	FediverseDeleteFollowParams,
 	FediverseFollowResponse,
+	FediverseNotificationsPage,
 	FediverseTimelinePage,
 } from './types';
 
@@ -82,6 +83,47 @@ export async function getFediverseTimeline(
 			},
 			query
 		) ) as FediverseTimelinePage;
+	} catch ( raw ) {
+		throw classifyFediverseError( raw );
+	}
+}
+
+export interface GetFediverseNotificationsParams {
+	connectionId: number;
+	cursor?: string;
+	limit?: number;
+	types?: string;
+}
+
+/**
+ * Fetches the home notifications for a Fediverse connection. Cursor-paginated
+ * — pass the previous page's `next_cursor` in subsequent calls. The optional
+ * `types` filter is the wire-comma-joined list (`like,repost,…`) produced by
+ * the shared `mapNotificationsFilter` helper. Mirrors
+ * `getMastodonNotifications`.
+ */
+export async function getFediverseNotifications(
+	params: GetFediverseNotificationsParams
+): Promise< FediverseNotificationsPage > {
+	const { connectionId, cursor, limit, types } = params;
+	const query: Record< string, string > = {};
+	if ( cursor ) {
+		query.cursor = cursor;
+	}
+	if ( limit ) {
+		query.limit = String( limit );
+	}
+	if ( types ) {
+		query.types = types;
+	}
+	try {
+		return ( await wpcom.req.get(
+			{
+				path: `/reader/fediverse/connections/${ connectionId }/notifications`,
+				apiNamespace: NAMESPACE,
+			},
+			query
+		) ) as FediverseNotificationsPage;
 	} catch ( raw ) {
 		throw classifyFediverseError( raw );
 	}

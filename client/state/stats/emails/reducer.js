@@ -1,4 +1,4 @@
-import { merge } from 'lodash';
+import { merge } from '@automattic/js-utils';
 import {
 	EMAIL_STATS_RECEIVE,
 	EMAIL_STATS_REQUEST,

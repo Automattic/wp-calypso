@@ -1,4 +1,3 @@
-import { get } from 'lodash';
 import { allDomains } from 'calypso/state/all-domains/init';
 
 /**
@@ -7,5 +6,5 @@ import { allDomains } from 'calypso/state/all-domains/init';
  * @returns {?boolean} true if the list is being requested, false otherwise
  */
 export default function isRequestingAllDomains( state ) {
-	return get( state, [ allDomains, 'requesting' ], false );
+	return state?.[ allDomains ]?.requesting ?? false;
 }

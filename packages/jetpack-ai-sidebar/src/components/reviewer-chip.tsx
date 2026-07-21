@@ -1,8 +1,10 @@
 /**
- * ReviewerChip — avatar + name when `reviewers_metadata` gives a Gravatar,
+ * ReviewerChip — avatar + name when `reviewers_metadata` gives a safe avatar URL,
  * otherwise a coloured full-name pill (hue deterministic from name, so the
  * same reviewer reads the same colour across cards).
  */
+
+import { safeImageUrl } from '@automattic/calypso-url';
 
 export interface ReviewerMetadata {
 	display_name?: string;
@@ -11,7 +13,7 @@ export interface ReviewerMetadata {
 }
 
 interface ReviewerChipProps {
-	/** The display name exactly as it appears in the mediation payload. */
+	/** The display name exactly as it appears in the review payload. */
 	name: string;
 	/** Server-provided metadata keyed by name; may be missing for some reviewers. */
 	metadata?: ReviewerMetadata | null;
@@ -60,11 +62,6 @@ function getPillColours( name: string ): { background: string; border: string } 
  * @param           props.variant    Visual variant — 'inline' (default) or 'compact' for dense lists.
  * @returns React element.
  */
-/** Avatar URLs are server-built from WordPress avatar APIs; keep only a scheme guard here. */
-function isSafeAvatarUrl( url: string | null | undefined ): url is string {
-	return typeof url === 'string' && /^https:\/\//i.test( url );
-}
-
 export default function ReviewerChip( {
 	name,
 	metadata,
@@ -72,7 +69,7 @@ export default function ReviewerChip( {
 	variant = 'inline',
 }: ReviewerChipProps ) {
 	const tooltip = title ?? metadata?.bio ?? name;
-	const avatarUrl = isSafeAvatarUrl( metadata?.avatar_url ) ? metadata.avatar_url : null;
+	const avatarUrl = safeImageUrl( metadata?.avatar_url );
 
 	if ( avatarUrl ) {
 		return (

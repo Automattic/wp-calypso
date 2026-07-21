@@ -19,7 +19,6 @@ import { useQuery as useUrlParams } from 'calypso/landing/stepper/hooks/use-quer
 import { ONBOARD_STORE, SITE_STORE } from 'calypso/landing/stepper/stores';
 import { waitForPluginsActive } from 'calypso/landing/stepper/utils/wait-for-plugins-active';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
-import { useExperiment } from 'calypso/lib/explat';
 import { useMarketplaceThemeProducts } from '../../../../hooks/use-marketplace-theme-products';
 import { useSiteSlugParam } from '../../../../hooks/use-site-slug-param';
 import { useSiteTransferStatusQuery } from '../../../../hooks/use-site-transfer/query';
@@ -62,15 +61,11 @@ const PostCheckoutOnboarding: StepType< {
 		enabled: !! siteSlug,
 	} );
 
-	const eligibleForExperiment =
+	const showBigSkyChoice =
 		isEnabled( 'onboarding/post-checkout-ai-step' ) &&
 		!! site?.plan &&
 		( isPersonal( site.plan ) || isPremium( site.plan ) || isBusiness( site.plan ) ) &&
 		site.plan.features?.active?.includes( FEATURE_BIG_SKY );
-	const [ isLoadingExperiment, experimentAssignment ] = useExperiment(
-		'calyso_post_onboarding_big_sky_202601_v1',
-		{ isEligible: eligibleForExperiment }
-	);
 
 	const intent = useSelect(
 		( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getIntent(),
@@ -180,8 +175,7 @@ const PostCheckoutOnboarding: StepType< {
 			! siteSlug ||
 			isLoadingSite ||
 			isLoadingMarketplaceThemeProducts ||
-			isLoadingSiteTransferStatusData ||
-			isLoadingExperiment
+			isLoadingSiteTransferStatusData
 		) {
 			return;
 		}
@@ -191,12 +185,7 @@ const PostCheckoutOnboarding: StepType< {
 				siteSlug,
 				hasExternalTheme,
 				hasPluginByGoal,
-				...( eligibleForExperiment
-					? {
-							postCheckoutBigSky: true,
-							postCheckoutBigSkyVariation: experimentAssignment?.variationName ?? 'control',
-					  }
-					: {} ),
+				...( showBigSkyChoice ? { postCheckoutBigSky: true } : {} ),
 			};
 
 			if ( ! isJetpackOrAtomic ) {
@@ -231,7 +220,6 @@ const PostCheckoutOnboarding: StepType< {
 		isLoadingSite,
 		isLoadingMarketplaceThemeProducts,
 		isLoadingSiteTransferStatusData,
-		isLoadingExperiment,
 		isJetpackOrAtomic,
 		siteTransferStatusData,
 		selectedDesign,

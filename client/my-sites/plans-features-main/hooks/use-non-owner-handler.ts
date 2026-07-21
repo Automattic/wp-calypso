@@ -32,12 +32,14 @@ export function useNonOwnerHandler( {
 			const currentSitePurchase = currentPlan?.purchaseId
 				? sitePurchases[ currentPlan?.purchaseId ]
 				: undefined;
+			const ownerUserId =
+				currentSitePurchase?.user_id != null ? Number( currentSitePurchase.user_id ) : undefined;
 
 			const siteOwner = await queryClient.ensureQueryData(
 				getUseSiteUserQueryOptions(
 					siteId,
-					currentSitePurchase?.userId,
-					siteQueryKeys.siteUser( siteId, currentSitePurchase?.userId )
+					ownerUserId,
+					siteQueryKeys.siteUser( siteId, ownerUserId )
 				)
 			);
 

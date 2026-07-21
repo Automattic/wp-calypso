@@ -15,8 +15,8 @@ import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import { FollowersView } from '../followers-view';
 import type React from 'react';
 
-// `ReaderMain` mounts `<sync-reader-follows>`, which selects from a Redux
-// branch the test store doesn't seed. Stub to a passthrough.
+// `ReaderMain` mounts shared Reader shell concerns that are outside this
+// test's scope. Stub it to a passthrough.
 jest.mock(
 	'calypso/reader/components/reader-main',
 	() =>
@@ -146,12 +146,14 @@ describe( 'FollowersView', () => {
 		await waitFor( () => expect( screen.getByText( 'No followers yet' ) ).toBeVisible() );
 	} );
 
-	it( 'shows an auth-required empty state when the followers query 401s', async () => {
+	it( 'shows a generic connection-error empty state when the followers query 401s', async () => {
 		mockConnections();
 		mockProfile();
-		// 401 → `auth_required`, which is non-retryable per the query's retry
-		// policy. `SocialFeedList` renders the reconnect copy with the
-		// protocol-home link rather than a Retry button.
+		// 401 → `auth_required`. Fediverse passes `authRequiredCopy` to
+		// `SocialAccountList`, replacing the default reconnect copy with the
+		// generic "Couldn't load followers" / "Something went wrong …" copy
+		// plus a Retry button (the Reader doesn't have a working Fediverse
+		// reconnect flow yet).
 		nock( BASE ).get( FOLLOWERS_URL ).query( true ).reply( 401, { code: 'not_authenticated' } );
 
 		renderWithProvider( <FollowersView connectionId={ 7 } actor="alice@example.com" />, {
@@ -159,9 +161,12 @@ describe( 'FollowersView', () => {
 		} );
 
 		await waitFor( () =>
-			expect( screen.getByRole( 'heading', { name: /reconnect needed/i } ) ).toBeVisible()
+			expect(
+				screen.getByText( /Something went wrong with your Fediverse connection/i )
+			).toBeVisible()
 		);
-		expect( screen.getByRole( 'link', { name: /back to fediverse/i } ) ).toBeVisible();
+		expect( screen.queryByRole( 'heading', { name: /reconnect needed/i } ) ).toBeNull();
+		expect( screen.getByRole( 'button', { name: /retry/i } ) ).toBeVisible();
 	} );
 
 	it( 'hides the follow control on `is_self` rows', async () => {

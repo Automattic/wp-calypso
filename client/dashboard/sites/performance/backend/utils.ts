@@ -1,4 +1,6 @@
 import { __, sprintf } from '@wordpress/i18n';
+import type { MergedRoute } from './aggregate';
+import type { SlowListItem } from './slow-list';
 
 export type Intent = 'success' | 'warning' | 'error';
 
@@ -25,6 +27,21 @@ export function bucketByMs( ms: number, { good, warn }: ThresholdMs ): Intent {
 		return 'warning';
 	}
 	return 'error';
+}
+
+export function buildRequestDetailHref( siteSlug: string, method: string, route: string ): string {
+	const params = new URLSearchParams( { method, route } );
+	return `/sites/${ siteSlug }/performance/backend/requests?${ params.toString() }`;
+}
+
+export function routesToSlowListItems( routes: MergedRoute[], siteSlug: string ): SlowListItem[] {
+	return routes.map( ( route ) => ( {
+		id: route.id,
+		label: `${ route.method } ${ route.route }`,
+		avg_ms: route.duration_ms.avg,
+		max_ms: route.duration_ms.max,
+		href: buildRequestDetailHref( siteSlug, route.method, route.route ),
+	} ) );
 }
 
 export function formatMs( ms: number ): string {

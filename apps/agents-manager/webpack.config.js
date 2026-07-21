@@ -8,6 +8,26 @@ const GenerateChunksMapPlugin = require( '../../build-tools/webpack/generate-chu
 
 const isDevelopment = process.env.NODE_ENV !== 'production';
 
+function applyPostCssConfig( rules, config ) {
+	return rules.map( ( rule ) => ( {
+		...rule,
+		use: rule.use?.map( ( loader ) =>
+			loader?.loader === require.resolve( 'postcss-loader' )
+				? {
+						...loader,
+						options: {
+							...loader.options,
+							postcssOptions: {
+								...loader.options?.postcssOptions,
+								config,
+							},
+						},
+				  }
+				: loader
+		),
+	} ) );
+}
+
 function getIndividualConfig( options = {} ) {
 	const { name, env, argv, injectPolyfill = true } = options;
 
@@ -48,6 +68,16 @@ function getIndividualConfig( options = {} ) {
 				},
 			],
 		},
+		resolve: {
+			...webpackConfig.resolve,
+			alias: {
+				...( webpackConfig.resolve?.alias || {} ),
+				// Share one Smooch instance with the Help Center bundle when both load
+				// together (e.g. the Site Editor). See smooch-shim.js.
+				// TODO: Remove once Agents Manager takes over the Help Center.
+				smooch$: path.join( __dirname, '../../build-tools/webpack/smooch-shim.js' ),
+			},
+		},
 		optimization: {
 			...webpackConfig.optimization,
 			// disable module concatenation so that instances of `__()` are not renamed
@@ -87,6 +117,26 @@ function getIndividualConfig( options = {} ) {
 					) {
 						return null;
 					}
+					// Bundle @wordpress/ui: neither WordPress core nor the Gutenberg
+					// plugin registers a wp-ui script handle yet, and WP_Scripts
+					// silently skips scripts with unregistered dependencies, so
+					// externalizing it prevents the bundle from loading on
+					// self-hosted sites.
+					if ( request === '@wordpress/ui' ) {
+						return null;
+					}
+					// The plugin maps `react`/`react-dom` but not this deep import,
+					// so it would get bundled — a second react-dom copy (v19) that
+					// crashes against the page's external React. WordPress's
+					// `ReactDOM` global has included `createRoot` since WP 6.2.
+					if ( request === 'react-dom/client' ) {
+						return 'ReactDOM';
+					}
+				},
+				requestToHandle( request ) {
+					if ( request === 'react-dom/client' ) {
+						return 'react-dom';
+					}
 				},
 			} ),
 			new ReadableJsAssetsWebpackPlugin(),
@@ -95,12 +145,11 @@ function getIndividualConfig( options = {} ) {
 }
 
 /**
- * Reader chat config — bundles all dependencies (no WP externals).
+ * Reader chat config — bundles all dependencies and emits an asset manifest.
  *
- * Omits DependencyExtractionWebpackPlugin entirely so React, @wordpress/data,
- * and other WP packages are inlined. The resulting reader-chat.min.js is
- * self-contained and safe to load on the frontend (no WP script loader needed).
- *
+ * DependencyExtractionWebpackPlugin is configured with useDefaults: false so React,
+ * WordPress data, and other WP packages remain inlined. The resulting reader-chat.min.js
+ * is self-contained and safe to load on the frontend.
  * @param   {Object}  options                       options
  * @param   {Object}  options.env                   environment options
  * @param   {Object}  options.argv                  webpack CLI args
@@ -119,15 +168,30 @@ function getReaderConfig( options = {} ) {
 			...webpackConfig.output,
 			path: outputPath,
 			filename: '[name].min.js',
+			chunkLoadingGlobal: 'webpackChunkJetpackReaderChat',
+			uniqueName: 'JetpackReaderChat',
 		},
 		module: {
 			...webpackConfig.module,
-			rules: [ ...( webpackConfig.module?.rules || [] ) ],
+			rules: [
+				...applyPostCssConfig(
+					webpackConfig.module?.rules || [],
+					path.join( __dirname, 'reader-chat-postcss.config.js' )
+				),
+				{
+					// P2/O2 expects window._ to remain Underscore.
+					resource: require.resolve( 'lodash/lodash.js' ),
+					use: path.join( __dirname, 'disable-lodash-amd-loader.js' ),
+				},
+			],
 		},
 		resolve: {
 			...webpackConfig.resolve,
 			alias: {
 				...( webpackConfig.resolve?.alias || {} ),
+				// Share one Smooch instance across bundles (see smooch-shim.js).
+				// TODO: Remove once Agents Manager takes over the Help Center.
+				smooch$: path.join( __dirname, '../../build-tools/webpack/smooch-shim.js' ),
 				'../agent-history': path.join( __dirname, 'reader-chat-route-stub.js' ),
 				'../support-guide': path.join( __dirname, 'reader-chat-route-stub.js' ),
 				'../support-guides': path.join( __dirname, 'reader-chat-route-stub.js' ),
@@ -150,7 +214,12 @@ function getReaderConfig( options = {} ) {
 				'process.env.NODE_DEBUG': JSON.stringify( process.env.NODE_DEBUG || false ),
 			} ),
 			new ReadableJsAssetsWebpackPlugin(),
-			// Intentionally NO DependencyExtractionWebpackPlugin — all WP deps are bundled.
+			// Emit the cache-busting manifest without externalizing any dependencies.
+			new DependencyExtractionWebpackPlugin( {
+				outputFilename: '[name].asset.json',
+				outputFormat: 'json',
+				useDefaults: false,
+			} ),
 		],
 	};
 }
@@ -187,7 +256,6 @@ function getWebpackConfig( env = { source: '' }, argv = {} ) {
 		getIndividualConfig( { env, argv, name: 'jetpack-ai-sidebar' } ),
 		getIndividualConfig( { env, argv, name: 'agents-manager-gutenberg-disconnected' } ),
 		getIndividualConfig( { env, argv, name: 'agents-manager-wp-admin-disconnected' } ),
-		getIndividualConfig( { env, argv, name: 'agents-manager-ciab-disconnected' } ),
 		getIndividualConfig( { env, argv, name: 'block-notes' } ),
 		getIndividualConfig( { env, argv, name: 'agents-manager-ciab' } ),
 		getIndividualConfig( { env, argv, name: 'agents-manager-wooai' } ),

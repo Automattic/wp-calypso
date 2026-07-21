@@ -64,7 +64,7 @@ function OmnibarMenuContent( { nodes }: { nodes: OmnibarNode[] } ) {
 	);
 }
 
-export function OmnibarMenu( { node }: { node: OmnibarNode } ) {
+export function OmnibarMenu( { node, style }: { node: OmnibarNode; style?: React.CSSProperties } ) {
 	const label = node.title || node.label || '';
 
 	if ( ! node.children ) {
@@ -72,6 +72,7 @@ export function OmnibarMenu( { node }: { node: OmnibarNode } ) {
 			<Button
 				variant="unstyled"
 				className="omnibar__menu"
+				style={ style }
 				render={ node.href ? <a href={ node.href } /> : undefined }
 				onClick={ node.onClick }
 				aria-label={ label }
@@ -85,7 +86,7 @@ export function OmnibarMenu( { node }: { node: OmnibarNode } ) {
 		<Menu>
 			<Menu.TriggerButton
 				render={
-					<Button variant="unstyled" className="omnibar__menu" aria-label={ label }>
+					<Button variant="unstyled" className="omnibar__menu" style={ style } aria-label={ label }>
 						<OmnibarNodeContent node={ node } />
 					</Button>
 				}

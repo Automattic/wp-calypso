@@ -1,5 +1,5 @@
-import { expect } from 'playwright/test';
 import { BrowserManager, envVariables } from '../..';
+import { waitForLocatorAttribute } from '../../element-helper';
 import type { Locator, Page } from 'playwright';
 
 /**
@@ -37,20 +37,31 @@ export class LoggedOutHomePage {
 	 * returns {Promise<void>}
 	 */
 	async exploreThemes(): Promise< void > {
-		await expect( this.exploreThemesLink ).toBeVisible( { timeout: 10_000 } );
-		await expect( this.exploreThemesLink ).toHaveAttribute( 'href', /\/themes\/?(?:[?#].*)?$/, {
-			timeout: 10_000,
-		} );
+		const themesHref = await waitForLocatorAttribute(
+			this.exploreThemesLink,
+			'href',
+			/\/themes\/?(?:[?#].*)?$/,
+			{
+				timeout: 10_000,
+				description: 'Explore themes link',
+				state: 'visible',
+			}
+		);
 
-		const themesHref = await this.exploreThemesLink.getAttribute( 'href' );
-		if ( ! themesHref ) {
-			throw new Error( 'Explore themes URL not found' );
-		}
-
-		await this.page.goto( new URL( themesHref, this.page.url() ).href, {
-			timeout: 30_000,
+		const response = await this.page.goto( new URL( themesHref, this.page.url() ).href, {
+			// CI traces in wp-calypso#111117 showed this route can spend over 50s server-side
+			// before the document loads.
+			timeout: 60_000,
 			waitUntil: 'domcontentloaded',
 		} );
+
+		if ( ! response?.ok() ) {
+			throw new Error(
+				`Themes page failed to load: ${ response?.status() ?? 'no response' } ${
+					response?.url() ?? themesHref
+				}`
+			);
+		}
 	}
 
 	/**

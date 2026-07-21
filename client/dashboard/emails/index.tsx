@@ -13,7 +13,6 @@ import { PerformanceTrackerStop } from '../app/performance-tracking';
 import { addEmailForwarderRoute, chooseDomainRoute, emailsRoute } from '../app/router/emails';
 import { DataViews, DataViewsCard, DataViewsEmptyStateLayout } from '../components/dataviews';
 import InlineSupportLink from '../components/inline-support-link';
-import { OptInWelcome } from '../components/opt-in-welcome';
 import { PageHeader } from '../components/page-header';
 import PageLayout from '../components/page-layout';
 import UnusedMailboxNotice from './components/unused-mailbox-notice';
@@ -136,7 +135,7 @@ function Emails() {
 					fields={ emailFields }
 					view={ view }
 					onChangeView={ updateView }
-					onResetView={ resetView }
+					onReset={ resetView }
 					selection={ selection.map( ( item ) => item.id ) }
 					onChangeSelection={ ( ids ) =>
 						setSelection( emails.filter( ( email ) => ids.includes( email.id ) ) )
@@ -187,7 +186,6 @@ function Emails() {
 					}
 				/>
 			}
-			notices={ <OptInWelcome tracksContext="emails" /> }
 		>
 			<UnusedMailboxNotice domains={ domainsWithUnusedMailbox } />
 			{ renderContent() }

@@ -1,15 +1,19 @@
 import './style.scss';
+import { commonFeedExtensions } from '@automattic/api-core';
 import { ExternalLink } from '@automattic/components';
+import { isEmpty } from '@automattic/js-utils';
 import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
-import { flowRight as compose, isEmpty, get } from 'lodash';
 import { useEffect, useCallback } from 'react';
 import { connect } from 'react-redux';
-import ReaderSiteNotificationSettings from 'calypso/blocks/reader-site-notification-settings';
+import { compose } from 'redux';
+import SiteNotificationSettings from 'calypso/blocks/reader-site-notification-settings';
 import ReaderSubscriptionListItemPlaceholder from 'calypso/blocks/reader-subscription-list-item/placeholder';
 import { SiteIcon } from 'calypso/blocks/site-icon';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
 import { resemblesUrl } from 'calypso/lib/url';
+import { useFeedQuery } from 'calypso/reader/data/feed';
+import { useSiteSubscriptionForFeed } from 'calypso/reader/data/site-subscriptions';
 import FollowButton from 'calypso/reader/follow-button';
 import {
 	getSiteName,
@@ -22,9 +26,6 @@ import { formatUrlForDisplay } from 'calypso/reader/lib/feed-display-helper';
 import { getStreamUrl } from 'calypso/reader/route';
 import { recordTrack, recordTrackWithRailcar } from 'calypso/reader/stats';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
-import { getFeed } from 'calypso/state/reader/feeds/selectors';
-import { getReaderFollowForFeed } from 'calypso/state/reader/follows/selectors';
-import { commonExtensions } from 'calypso/state/reader/follows/selectors/get-reader-aliased-follow-feed-url';
 import { registerLastActionRequiresLogin } from 'calypso/state/reader-ui/actions';
 
 function ReaderSubscriptionListItem( {
@@ -35,8 +36,10 @@ function ReaderSubscriptionListItem( {
 	feed,
 	siteId,
 	site,
+	hasFeedError,
 	className = '',
 	followSource,
+	followApiSource,
 	showNotificationSettings,
 	showLastUpdatedDate,
 	showFollowedOnDate,
@@ -52,13 +55,13 @@ function ReaderSubscriptionListItem( {
 	let siteTitle = getSiteName( { feed, site } );
 	const siteExcerpt = getSiteDescription( { feed, site } );
 	const authorName = getSiteAuthorName( site );
-	const siteIcon = get( site, 'icon.img' );
-	const feedIcon = feed ? feed.site_icon ?? get( feed, 'image' ) : null;
+	const siteIcon = site?.icon?.img;
+	const feedIcon = feed ? feed.site_icon ?? feed.image : null;
 	let streamUrl = getStreamUrl( feedId, siteId );
 	const feedUrl = url || getFeedUrl( { feed, site } );
 	let siteUrl = getSiteUrl( { feed, site } );
-	const isMultiAuthor = get( site, 'is_multi_author', false );
-	const hasSiteError = site?.is_error || feed?.is_error;
+	const isMultiAuthor = site?.is_multi_author ?? false;
+	const hasSiteError = site?.is_error || hasFeedError;
 
 	const recordEvent = useCallback(
 		( name ) => {
@@ -130,7 +133,7 @@ function ReaderSubscriptionListItem( {
 
 		try {
 			const parsedUrl = new URL( urlToVerify );
-			return commonExtensions.some( ( ext ) => parsedUrl.toString().includes( ext ) );
+			return commonFeedExtensions.some( ( ext ) => parsedUrl.toString().includes( ext ) );
 		} catch {
 			return false;
 		}
@@ -244,50 +247,56 @@ function ReaderSubscriptionListItem( {
 				<FollowButton
 					siteUrl={ feedUrl }
 					followSource={ followSource }
+					followApiSource={ followApiSource }
 					feedId={ feedId }
 					siteId={ siteId }
 					railcar={ railcar }
 					onFollowToggle={ onFollowToggle }
 				/>
 				{ isFollowing && showNotificationSettings && (
-					<ReaderSiteNotificationSettings siteId={ siteId } />
+					<SiteNotificationSettings siteId={ siteId } />
 				) }
 			</div>
 		</div>
 	);
 }
 
-export default compose(
+const ConnectedReaderSubscriptionListItem = compose(
 	connect(
-		( state, ownProps ) => {
-			const feed = getFeed( state, ownProps.feedId );
-
-			if ( feed ) {
-				const follow = getReaderFollowForFeed( state, parseInt( ownProps.feedId ) );
-
-				if ( follow ) {
-					// Add site icon to feed object so have icon for external feeds when not set
-					if ( feed.site_icon === undefined ) {
-						feed.site_icon = follow.site_icon;
-					}
-					// Add date_subscribed timestamp to feed object when not set
-					if ( feed.date_subscribed === undefined || isNaN( feed.date_subscribed ) ) {
-						feed.date_subscribed = follow.date_subscribed;
-					}
-					// Add last_update timestamp to feed object when not set
-					if ( feed.last_update === undefined || isNaN( feed.last_update ) ) {
-						feed.last_update = follow.last_updated;
-					}
-				}
-			}
-
-			return {
-				feed,
-				isLoggedIn: isUserLoggedIn( state ),
-			};
-		},
+		( state ) => ( {
+			isLoggedIn: isUserLoggedIn( state ),
+		} ),
 		{ registerLastActionRequiresLogin }
 	),
 	localize,
 	withLocalizedMoment
 )( ReaderSubscriptionListItem );
+
+export default function ReaderSubscriptionListItemContainer( props ) {
+	const { data: feed, isError: hasFeedError } = useFeedQuery( props.feedId );
+	const follow = useSiteSubscriptionForFeed( props.feedId );
+	let feedWithFollowData = feed;
+
+	if ( feed && follow ) {
+		feedWithFollowData = {
+			...feed,
+			site_icon: feed.site_icon ?? follow.site_icon,
+			date_subscribed:
+				feed.date_subscribed === undefined || isNaN( feed.date_subscribed )
+					? follow.date_subscribed
+					: feed.date_subscribed,
+			last_update:
+				feed.last_update === undefined || isNaN( feed.last_update )
+					? follow.last_updated
+					: feed.last_update,
+		};
+	}
+
+	return (
+		<ConnectedReaderSubscriptionListItem
+			{ ...props }
+			feed={ feedWithFollowData }
+			hasFeedError={ hasFeedError }
+		/>
+	);
+}

@@ -490,13 +490,19 @@ loaded row lands in a single bucket the lone divider is also suppressed
 (it would feel like noise). `now` is captured inside the bucketing
 `useMemo`, not lifted to its own hook.
 
-**Stacking** — `groupNotifications( items )` in
+**Stacking** — `groupNotifications( items, now )` in
 `group-notifications.ts` is a pure function that buckets a flat
 newest-first `SocialNotification[]` into `GroupedRow[]`. Group key:
-`canonical_type:target.uri` for like/repost/mention/reply/quote, the
-literal `'follow'` for follow rows (no target needed), and a per-item
+`canonical_type:target.uri` for like/repost/mention/reply/quote,
+`follow:<date-bucket>` for follow rows (using the same `bucketFor`
+vocabulary the renderer uses for date dividers — a long-tailed
+follower history would otherwise collapse into a single mega-stack,
+since every follow shares the same target = "you"), and a per-item
 singleton key for `other` (never stacks) or for any row missing a
-`target.uri`. Stacks form only at `members.length >= 2`; singletons
+`target.uri`. The `now` argument is shared by `<SocialNotificationsList>`
+with the divider computation so each follow stack lands under the
+matching bucket heading. Stacks form only at `members.length >= 2`;
+singletons
 render via `<SocialNotificationItem>` unchanged. Position of a stack in
 the rendered list is the position of its newest member, which falls out
 of the algorithm because the first time a key is seen creates its
@@ -589,7 +595,26 @@ Per-protocol `ComposerConfig` supplies:
   and Mastodon both wire it as `calypso_reader_<protocol>_overflow_handoff_{shown,editor_opened}`
   with `connection_id` + `mode_kind` props (plus `site_id` on the
   click event).
-- `copy.{title, placeholder}` — per-mode strings.
+- `copy.{title, placeholder}` — per-mode strings. `copy.title( mode, t,
+  handle )` is called by the modal with the resolved `useAuthorHandle`
+  value (or `null` when the hook is omitted / pending) so each protocol
+  can render "New post · @handle" — the destination context the issue
+  CM-799 surfaced. All three protocols (atmosphere, mastodon, fediverse)
+  wire this; fediverse's handle is the webfinger identity of the source
+  blog (e.g. `@myblog@myblog.wordpress.com`).
+- `headerIcon?` — optional `ReactElement` rendered before the modal
+  title via `<Modal icon>`. Atmosphere passes `<ReaderBlueskyIcon
+  filled />`, Mastodon passes `<ReaderMastodonIcon />`, Fediverse passes
+  `<ReaderFediverseIcon />`. Together with the `· @handle` title suffix
+  this communicates "you're posting to Bluesky as @jordesign.bsky.social"
+  without a destination picker.
+- `useAuthorHandle?` — optional hook returning the connected account's
+  handle for the given `connectionId` (or `null` for `null` / pending /
+  missing). Called unconditionally inside `<ComposerModal>` (rules of
+  hooks) — same contract as `useLimit`. Atmosphere reads it from
+  `useConnectionsQuery`, Mastodon from `useMastodonConnectionsQuery`,
+  Fediverse from `useFediverseConnectionsQuery`, all running the result
+  through `normalizeHandle()` so the leading `@` doesn't double up.
 - `logBadRequest?` — fire-and-forget hook for the `bad_request` body
   log. Lives in the per-protocol adapter so `calypso/lib/logstash`
   doesn't have to be imported from `packages/api-queries` (which is
@@ -628,6 +653,15 @@ The connection ID flows from the protocol shell:
 `<ComposerModal />` + `<ComposeFab />` (mounted as siblings of the
 view content). Inline pills (`<TimelineComposePill />`) live inside
 panels that opt into the composer via `useOptionalComposer()`.
+
+#### Fediverse migration follow-up
+
+`ComposerProtocolExtrasSlot.renderControls` is `@deprecated` but retained
+because `client/reader/fediverse/use-fediverse-composer-extras.tsx` still
+renders an inline visibility/CW control block via this slot. Migrating
+Fediverse to `renderTrigger` + a popover (mirroring the Mastodon migration)
+is a follow-up. When that lands, drop `renderControls` from the interface,
+the modal, the NOOP slot, and the atmosphere + Mastodon shim returns.
 
 ### Site handoff
 

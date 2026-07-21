@@ -13,23 +13,35 @@ import LayoutHeader, {
 } from 'calypso/layout/hosting-dashboard/header';
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import { getAgentStudioProjectPath } from '../../lib/paths';
-import CreateProjectModal from './create-project-modal';
+import AgentPickerModal from '../../components/agent-picker-modal';
+import { getAgentStudioBriefPath } from '../../lib/paths';
 import AgentStudioOverviewContent from './overview-content';
+import type { AgentStudioAgentId } from '../../lib/agents';
 
 export default function AgentStudioOverview() {
 	const dispatch = useDispatch();
 	const title = __( 'Agent studio' );
-	const [ isCreateModalOpen, setIsCreateModalOpen ] = useState( false );
+	const [ isAgentPickerOpen, setIsAgentPickerOpen ] = useState( false );
 
-	const openCreateModal = useCallback( () => {
-		dispatch( recordTracksEvent( 'calypso_a4a_agent_studio_new_project_click' ) );
-		setIsCreateModalOpen( true );
+	const openAgentPicker = useCallback( () => {
+		dispatch( recordTracksEvent( 'calypso_a4a_agent_studio_new_deliverable_click' ) );
+		setIsAgentPickerOpen( true );
 	}, [ dispatch ] );
 
-	const closeCreateModal = useCallback( () => {
-		setIsCreateModalOpen( false );
+	const closeAgentPicker = useCallback( () => {
+		setIsAgentPickerOpen( false );
 	}, [] );
+
+	const onPickAgent = useCallback(
+		( agentId: AgentStudioAgentId ) => {
+			dispatch(
+				recordTracksEvent( 'calypso_a4a_agent_studio_agent_picked', { agent_id: agentId } )
+			);
+			setIsAgentPickerOpen( false );
+			pageRouter( getAgentStudioBriefPath( agentId ) );
+		},
+		[ dispatch ]
+	);
 
 	return (
 		<Layout title={ title } wide className="a4a-agent-studio-overview">
@@ -38,23 +50,17 @@ export default function AgentStudioOverview() {
 					<Title>{ title }</Title>
 					<Actions>
 						<MobileSidebarNavigation />
-						<Button variant="primary" icon={ plus } onClick={ openCreateModal }>
-							{ __( 'New project' ) }
+						<Button variant="primary" icon={ plus } onClick={ openAgentPicker }>
+							{ __( 'New deliverable' ) }
 						</Button>
 					</Actions>
 				</LayoutHeader>
 			</LayoutTop>
 			<LayoutBody>
-				<AgentStudioOverviewContent onCreateProject={ openCreateModal } />
+				<AgentStudioOverviewContent onCreateDeliverable={ openAgentPicker } />
 			</LayoutBody>
-			{ isCreateModalOpen && (
-				<CreateProjectModal
-					onClose={ closeCreateModal }
-					onCreated={ ( projectId ) => {
-						setIsCreateModalOpen( false );
-						pageRouter( getAgentStudioProjectPath( projectId ) );
-					} }
-				/>
+			{ isAgentPickerOpen && (
+				<AgentPickerModal onClose={ closeAgentPicker } onPick={ onPickAgent } />
 			) }
 		</Layout>
 	);

@@ -98,7 +98,7 @@ describe( 'Standalone compose end-to-end', () => {
 	} );
 
 	beforeEach( () => {
-		// recordReaderTracksEvent is a thunk that reads state.reader.follows;
+		// recordReaderTracksEvent is a thunk that reads the follows query cache;
 		// the test store doesn't provide that slice. Replace it with a no-op
 		// action creator so dispatch() doesn't throw, while still letting
 		// spies observe call-site arguments.
@@ -147,7 +147,9 @@ describe( 'Standalone compose end-to-end', () => {
 		const fab = await screen.findByRole( 'button', { name: 'Compose' } );
 		await user.click( fab );
 
-		expect( await screen.findByRole( 'dialog', { name: 'New post' } ) ).toBeVisible();
+		expect(
+			await screen.findByRole( 'dialog', { name: 'New post · @a.bsky.social' } )
+		).toBeVisible();
 
 		await user.type( screen.getByRole( 'textbox' ), 'hello world' );
 		await user.click( screen.getByRole( 'button', { name: 'Post' } ) );
@@ -213,7 +215,9 @@ describe( 'Standalone compose end-to-end', () => {
 		const pill = await screen.findByRole( 'button', { name: /what['’]s up/i } );
 		await user.click( pill );
 
-		expect( await screen.findByRole( 'dialog', { name: 'New post' } ) ).toBeVisible();
+		expect(
+			await screen.findByRole( 'dialog', { name: 'New post · @a.bsky.social' } )
+		).toBeVisible();
 
 		// _compose_opened fires with the pill's entry_point dimension.
 		await waitFor( () =>
@@ -279,7 +283,7 @@ describe( 'Standalone compose end-to-end', () => {
 		expect( composeErrorCalls ).toHaveLength( 1 );
 	} );
 
-	it( 'auth error 401: renders a Reconnect link to /reader/atmosphere/connect that opens in a new tab, preserves the draft, and keeps the modal open', async () => {
+	it( 'auth error 401: shows a connection-error message, preserves the draft, and keeps the modal open', async () => {
 		mockConnections();
 		mockTimelineEmpty();
 
@@ -294,11 +298,9 @@ describe( 'Standalone compose end-to-end', () => {
 		await user.type( screen.getByRole( 'textbox' ), 'auth fail' );
 		await user.click( screen.getByRole( 'button', { name: 'Post' } ) );
 
-		const reconnect = await screen.findByRole( 'link', { name: /reconnect/i } );
-		expect( reconnect ).toHaveAttribute( 'href', '/reader/atmosphere/connect' );
-		expect( reconnect ).toHaveAttribute( 'target', '_blank' );
-		expect( reconnect ).toHaveAttribute( 'rel', expect.stringContaining( 'noopener' ) );
-		expect( reconnect ).toHaveAttribute( 'rel', expect.stringContaining( 'noreferrer' ) );
+		// The error toast surfaces a connection-error message with no link.
+		expect( await screen.findByText( /Bluesky connection/i ) ).toBeVisible();
+		expect( screen.queryByRole( 'link', { name: /reconnect/i } ) ).toBeNull();
 
 		// Modal stays open with the typed draft preserved.
 		expect( screen.getByRole( 'dialog' ) ).toBeVisible();

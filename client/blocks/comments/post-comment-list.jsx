@@ -1,32 +1,15 @@
 import { Button, Gridicon, SegmentedControl } from '@automattic/components';
+import { pickBy } from '@automattic/js-utils';
 import { Icon, published } from '@wordpress/icons';
 import clsx from 'clsx';
 import { translate } from 'i18n-calypso';
-import { get, size, delay, pickBy } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component, createRef } from 'react';
-import { connect } from 'react-redux';
 import ConversationFollowButton from 'calypso/blocks/conversation-follow-button';
+import { NUMBER_OF_COMMENTS_PER_FETCH } from 'calypso/reader/comments/constants';
 import ReaderFollowConversationIcon from 'calypso/reader/components/icons/follow-conversation-icon';
 import { isConversationFollowable } from 'calypso/reader/post/capabilities';
 import { recordAction, recordGaEvent, recordTrackForPost } from 'calypso/reader/stats';
-import {
-	requestPostComments,
-	requestComment,
-	setActiveReply,
-	toggleInlineCommentsExpanded,
-} from 'calypso/state/comments/actions';
-import { NUMBER_OF_COMMENTS_PER_FETCH } from 'calypso/state/comments/constants';
-import {
-	commentsFetchingStatus,
-	getActiveReplyCommentId,
-	getCommentById,
-	getPostCommentsTree,
-	getInlineCommentsExpandedState,
-} from 'calypso/state/comments/selectors';
-import { getCurrentUserId } from 'calypso/state/current-user/selectors';
-import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
-import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import CommentCount from './comment-count';
 import PostCommentFormRoot from './form-root';
 import PostComment from './post-comment';
@@ -80,8 +63,9 @@ class PostCommentList extends Component {
 
 		// connect()ed props:
 		commentsTree: PropTypes.object,
-		requestPostComments: PropTypes.func.isRequired,
-		requestComment: PropTypes.func.isRequired,
+		fetchEarlierComments: PropTypes.func.isRequired,
+		fetchLaterComments: PropTypes.func.isRequired,
+		isInitialCommentLoading: PropTypes.bool,
 		shouldHighlightNew: PropTypes.bool,
 	};
 
@@ -123,47 +107,10 @@ class PostCommentList extends Component {
 		);
 	};
 
-	shouldNormalFetchAfterPropsChange = () => {
-		// this next check essentially looks out for whether we've ever requested comments for the post
-		if (
-			this.props.commentsFetchingStatus.haveEarlierCommentsToFetch &&
-			this.props.commentsFetchingStatus.haveLaterCommentsToFetch
-		) {
-			return true;
-		}
-
-		const currentSiteId = get( this.props, 'post.site_ID' );
-		const currentPostId = get( this.props, 'post.ID' );
-		const currentCommentsFilter = this.props.commentsFilter;
-		const currentInitialComment = this.props.initialComment;
-
-		const nextSiteId = get( this.props, 'post.site_ID' );
-		const nextPostId = get( this.props, 'post.ID' );
-		const nextCommentsFilter = this.props.commentsFilter;
-		const nextInitialComment = this.props.initialComment;
-
-		const propsExist = nextSiteId && nextPostId && nextCommentsFilter;
-		const propChanged =
-			currentSiteId !== nextSiteId ||
-			currentPostId !== nextPostId ||
-			currentCommentsFilter !== nextCommentsFilter;
-
-		/**
-		 * This covers two cases where fetching by commentId fails and we should fetch as if it werent specified:
-		 *  1. the comment specified (commentId) exists for the site but is for a different postId
-		 *  2. the commentId does not exist for the site
-		 */
-		const commentIdBail =
-			currentInitialComment !== nextInitialComment &&
-			nextInitialComment &&
-			( nextInitialComment.error ||
-				( nextInitialComment.post && nextInitialComment.post.ID !== nextPostId ) );
-
-		return ( propsExist && propChanged ) || commentIdBail;
-	};
-
 	initialFetches = () => {
-		const { postId, siteId, commentsFilter: status } = this.props;
+		if ( this.props.isInitialCommentLoading ) {
+			return;
+		}
 
 		if ( this.shouldFetchInitialComment() ) {
 			// there is an edgecase the initialComment can change while on the same post
@@ -172,15 +119,11 @@ class PostCommentList extends Component {
 			if ( this.props.commentsTree ) {
 				// view earlier...
 				this.viewEarlierCommentsHandler();
-			} else {
-				this.props.requestComment( { siteId, commentId: this.props.startingCommentId } );
 			}
 		} else if ( this.shouldFetchInitialPages() ) {
 			this.viewEarlierCommentsHandler();
 			this.viewLaterCommentsHandler();
 			this.alreadyLoadedInitialSet = true;
-		} else if ( this.shouldNormalFetchAfterPropsChange() ) {
-			this.props.requestPostComments( { siteId, postId, status } );
 		}
 	};
 
@@ -196,7 +139,17 @@ class PostCommentList extends Component {
 		if ( prevState !== this.state && prevProps === this.props ) {
 			return;
 		}
-		this.initialFetches();
+		// Only re-run initialFetches when one of its inputs changes; running it on
+		// every update can re-enter componentDidUpdate via setState and exceed the
+		// maximum update depth.
+		if (
+			prevProps.isInitialCommentLoading !== this.props.isInitialCommentLoading ||
+			prevProps.startingCommentId !== this.props.startingCommentId ||
+			prevProps.initialComment !== this.props.initialComment ||
+			prevProps.commentsTree !== this.props.commentsTree
+		) {
+			this.initialFetches();
+		}
 		if (
 			prevProps.siteId !== this.props.siteId ||
 			prevProps.postId !== this.props.postId ||
@@ -256,9 +209,9 @@ class PostCommentList extends Component {
 	scrollWhenDOMReady = () => {
 		if ( this.props.startingCommentId && ! this.hasScrolledToComment ) {
 			if ( this.commentIsOnDOM( this.props.startingCommentId ) ) {
-				delay( () => this.scrollToComment(), 50 );
+				setTimeout( () => this.scrollToComment(), 50 );
 			}
-			delay( this.scrollWhenDOMReady, 100 );
+			setTimeout( this.scrollWhenDOMReady, 100 );
 		}
 	};
 
@@ -284,6 +237,8 @@ class PostCommentList extends Component {
 				showNestingReplyArrow={ this.props.showNestingReplyArrow }
 				shouldHighlightNew={ this.props.shouldHighlightNew }
 				isInlineComment={ this.props.expandableView }
+				expandComments={ this.props.expandComments }
+				comments={ this.props.comments }
 			/>
 		);
 	};
@@ -348,8 +303,8 @@ class PostCommentList extends Component {
 	};
 
 	setActiveReplyComment = ( commentId ) => {
-		const siteId = get( this.props, 'post.site_ID' );
-		const postId = get( this.props, 'post.ID' );
+		const siteId = this.props?.post?.site_ID;
+		const postId = this.props?.post?.ID;
 
 		if ( ! siteId || ! postId ) {
 			return;
@@ -485,9 +440,7 @@ class PostCommentList extends Component {
 		// we always count prevSum, children sum, and +1 for the current processed comment
 		return commentIds.reduce(
 			( prevSum, commentId ) =>
-				prevSum +
-				this.getCommentsCount( get( this.props.commentsTree, [ commentId, 'children' ] ) ) +
-				1,
+				prevSum + this.getCommentsCount( this.props.commentsTree?.[ commentId ]?.children ) + 1,
 			0
 		);
 	};
@@ -526,14 +479,14 @@ class PostCommentList extends Component {
 	};
 
 	loadMoreCommentsHandler = ( direction ) => {
-		const {
-			post: { ID: postId, site_ID: siteId },
-			commentsFilter: status,
-		} = this.props;
 		const amountOfCommentsToTake = this.state.amountOfCommentsToTake + this.props.pageSize;
 
 		this.setState( { amountOfCommentsToTake } );
-		this.props.requestPostComments( { siteId, postId, status, direction } );
+		if ( direction === 'after' ) {
+			this.props.fetchLaterComments();
+		} else {
+			this.props.fetchEarlierComments();
+		}
 	};
 
 	handleFilterClick = ( commentsFilter ) => () => this.props.onFilterChange( commentsFilter );
@@ -634,7 +587,7 @@ class PostCommentList extends Component {
 		// orphans (parent deleted/unapproved), that comment will become unreachable but still counted.
 		const showViewMoreComments =
 			! this.props.expandableView &&
-			( size( commentsTree.children ) > amountOfCommentsToTake ||
+			( commentsTree.children.length > amountOfCommentsToTake ||
 				haveEarlierCommentsToFetch ||
 				haveLaterCommentsToFetch ) &&
 			displayedCommentsCount > 0;
@@ -765,48 +718,4 @@ class PostCommentList extends Component {
 	}
 }
 
-export default connect(
-	( state, ownProps ) => {
-		const authorId = getCurrentUserId( state );
-		const siteId = ownProps.post.site_ID;
-		const postId = ownProps.post.ID;
-
-		return {
-			siteId,
-			postId,
-			currentUserId: authorId,
-			canUserModerateComments: canCurrentUser( state, siteId, 'moderate_comments' ),
-			commentsTree: getPostCommentsTree(
-				state,
-				siteId,
-				postId,
-				ownProps.commentsFilterDisplay ? ownProps.commentsFilterDisplay : ownProps.commentsFilter,
-				authorId
-			),
-			commentsFetchingStatus: commentsFetchingStatus(
-				state,
-				siteId,
-				postId,
-				ownProps.commentCount
-			),
-			initialComment: getCommentById( {
-				state,
-				siteId,
-				commentId: ownProps.startingCommentId,
-			} ),
-			activeReplyCommentId: getActiveReplyCommentId( {
-				state,
-				siteId,
-				postId,
-			} ),
-			isExpanded: getInlineCommentsExpandedState( state, ownProps.streamKey, siteId, postId ),
-		};
-	},
-	{
-		requestComment,
-		requestPostComments,
-		recordReaderTracksEvent,
-		setActiveReply,
-		toggleInlineCommentsExpanded,
-	}
-)( PostCommentList );
+export default PostCommentList;

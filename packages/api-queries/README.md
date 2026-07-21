@@ -61,6 +61,9 @@ These guidelines should be followed to ensure reusability of the queries and mut
 ### Adding mutations
 
 - Define mutations as functions that return the result of `mutationOptions()` from `@tanstack/react-query`. This is to improve TypeScript type inference.
+- Every mutation must set a `meta.statId`. It identifies the mutation in failure stats, where the mutation key can't be relied on because it is optional and most mutations here don't set one.
+  - Name it `<noun>-<verb>` — the thing acted on first, the action last (`site-plugin-activate`, not `activate-site-plugin`), so that the stats display groups a family together. It describes the request the `mutationFn` makes, and is deliberately not derived from the export name.
+  - An ID can't exceed 28 characters, so recurring phrases are abbreviated to fit (`two-step-auth` → `2fa`, `subscription` → `sub`). `src/__tests__/mutation-stat-ids.test.ts` asserts that every mutation has a `statId`, that none is duplicated, and that none is over the limit. See `AGENTS.md` for the naming rules in full.
 - Add `onSuccess` and `onError` handlers to invalidate queries and update the cache as needed.
   - You can do so by using the exported `queryClient` instance:
 

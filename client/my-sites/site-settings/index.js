@@ -1,5 +1,4 @@
 import page from '@automattic/calypso-router';
-import { get } from 'lodash';
 import { makeLayout, redirectIfDuplicatedView, render as clientRender } from 'calypso/controller';
 import { navigation, sites, siteSelection } from 'calypso/my-sites/controller';
 import {
@@ -23,6 +22,10 @@ import {
 	redirectIfCantStartSiteOwnerTransfer,
 } from 'calypso/sites/settings/administration/controller';
 
+function redirectToAiToolsSettings( context ) {
+	return page.redirect( `/sites/${ context.params.site }/settings/ai-tools` );
+}
+
 export default function () {
 	page( '/settings', redirectSettingsIfDuplciatedViewsEnabled );
 
@@ -37,9 +40,9 @@ export default function () {
 
 	// Redirect settings pages for import and export now that they have their own sections.
 	page( '/settings/:importOrExport(import|export)/:subroute(.*)', ( context ) => {
-		const importOrExport = get( context, 'params.importOrExport' );
-		const subroute = get( context, 'params.subroute' );
-		const queryString = get( context, 'querystring' );
+		const importOrExport = context?.params?.importOrExport;
+		const subroute = context?.params?.subroute;
+		const queryString = context?.querystring;
 		let redirectPath = `/${ importOrExport }`;
 
 		if ( subroute ) {
@@ -127,6 +130,9 @@ export default function () {
 	page( '/settings/analytics/:site_id?', redirectToTraffic );
 	page( '/settings/seo/:site_id?', redirectToTraffic );
 	page( '/settings/theme-setup/:site_id?', redirectToGeneral );
+
+	page( '/settings/ai-tools', siteSelection, sites, makeLayout, clientRender );
+	page( '/settings/ai-tools/:site', siteSelection, redirectToAiToolsSettings );
 
 	page( '/settings/:section', legacyRedirects, siteSelection, sites, makeLayout, clientRender );
 }

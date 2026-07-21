@@ -1,6 +1,10 @@
-import { StepContainer, isStartWritingFlow, Step } from '@automattic/onboarding';
+import { HelpCenter } from '@automattic/data-stores';
+import { StepContainer, Step } from '@automattic/onboarding';
 import { MinimalRequestCartProduct } from '@automattic/shopping-cart';
+import { useViewportMatch } from '@wordpress/compose';
+import { useDispatch, useSelect } from '@wordpress/data';
 import { useState } from '@wordpress/element';
+import { help } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
 import { getQueryArg, removeQueryArgs } from '@wordpress/url';
 import { useSelector } from 'react-redux';
@@ -22,10 +26,15 @@ import { siteHasPaidPlan } from 'calypso/signup/steps/site-picker/site-picker-su
 import { getCurrentUserSiteCount } from 'calypso/state/current-user/selectors';
 import { hasDashboardOptIn } from 'calypso/state/dashboard/selectors';
 import { useQuery } from '../../../../hooks/use-query';
+import { useOnboardingStepCounter } from '../../../flows/onboarding/use-onboarding-step-counter';
 import { shouldUseStepContainerV2 } from '../../../helpers/should-use-step-container-v2';
+import { useOnboardingHelpExperiment } from '../components/use-onboarding-help-experiment';
 import type { Step as StepType } from '../../types';
+import type { HelpCenterSelect } from '@automattic/data-stores';
 
 import './style.scss';
+
+const HELP_CENTER_STORE = HelpCenter.register();
 
 type OwnershipVerificationData = {
 	ownership_verification_data: {
@@ -53,6 +62,7 @@ const UseMyDomain: StepType< {
 		| undefined;
 } > = function UseMyDomain( { navigation, flow } ) {
 	const { __ } = useI18n();
+	const isMobileViewport = useViewportMatch( 'small', '<' );
 	const { goNext, goBack, submit } = navigation;
 	const location = useLocation();
 	const { site } = useSiteData();
@@ -63,6 +73,20 @@ const UseMyDomain: StepType< {
 	const [ useMyDomainMode, setUseMyDomainMode ] = useState< UseMyDomainInputMode >(
 		inputMode.domainInput
 	);
+	const stepCounter = useOnboardingStepCounter( flow, 'use-my-domain' );
+
+	const { setShowHelpCenter } = useDispatch( HELP_CENTER_STORE );
+	const isHelpCenterShown = useSelect(
+		( select ) => ( select( HELP_CENTER_STORE ) as HelpCenterSelect ).isHelpCenterShown(),
+		[]
+	);
+	const toggleHelpCenter = () => {
+		if ( ! isHelpCenterShown ) {
+			recordTracksEvent( 'calypso_onboarding_help_center_click', { flow, step: 'use-my-domain' } );
+		}
+		setShowHelpCenter( ! isHelpCenterShown );
+	};
+	const { showHelp: showHelpCenter } = useOnboardingHelpExperiment( flow );
 
 	const handleGoBack = () => {
 		if ( String( getQueryArg( window.location.search, 'step' ) ?? '' ) === 'transfer-or-connect' ) {
@@ -174,8 +198,6 @@ const UseMyDomain: StepType< {
 		);
 	};
 
-	const shouldHideButtons = isStartWritingFlow( flow );
-
 	if ( shouldUseStepContainerV2( flow ) ) {
 		let columnWidth;
 		let headingText;
@@ -192,10 +214,6 @@ const UseMyDomain: StepType< {
 		}
 
 		const getTopBarLeftElement = () => {
-			if ( shouldHideButtons ) {
-				return undefined;
-			}
-
 			if ( goBack ) {
 				return <Step.BackButton onClick={ handleGoBack } />;
 			}
@@ -223,7 +241,28 @@ const UseMyDomain: StepType< {
 			<>
 				<QueryProductsList />
 				<Step.CenteredColumnLayout
-					topBar={ <Step.TopBar leftElement={ getTopBarLeftElement() } /> }
+					topBar={
+						<Step.TopBar
+							leftElement={ getTopBarLeftElement() }
+							rightElement={
+								( stepCounter || showHelpCenter ) && (
+									<>
+										{ stepCounter && (
+											<Step.StepCounter
+												current={ stepCounter.current }
+												total={ stepCounter.total }
+											/>
+										) }
+										{ showHelpCenter && (
+											<Step.LinkButton icon={ help } iconSize={ 20 } onClick={ toggleHelpCenter }>
+												{ isMobileViewport ? __( 'Help' ) : __( 'Need help?' ) }
+											</Step.LinkButton>
+										) }
+									</>
+								)
+							}
+						/>
+					}
 					columnWidth={ columnWidth }
 					heading={ <Step.Heading text={ headingText } subText={ subText } /> }
 					verticalAlign="center"
@@ -240,7 +279,7 @@ const UseMyDomain: StepType< {
 			<QueryProductsList />
 			<StepContainer
 				stepName="useMyDomain"
-				shouldHideNavButtons={ shouldHideButtons }
+				shouldHideNavButtons={ false }
 				goBack={ handleGoBack }
 				goNext={ goNext }
 				isHorizontalLayout={ false }

@@ -122,7 +122,7 @@
 	&.isActive {
 		backdrop-filter: blur( 2px ) saturate( 150% );
 		// Gradual blur
-		mask: linear-gradient(#000, #000, transparent);
+		mask: linear-gradient( #000, #000, transparent );
 		background: linear-gradient(
 			180deg,
 			rgba( 255, 255, 255, 0.6 ) 0%,
@@ -153,6 +153,11 @@
 	p {
 		margin: 0;
 	}
+}
+
+.live-ai-assistant__intro-learn-more {
+	display: inline-block;
+	margin-block-start: 8px;
 }
 
 .live-ai-assistant__intro-artwork {
@@ -310,6 +315,38 @@
 	gap: 8px;
 	padding: 12px 0;
 	border-block-start: 1px solid #f0f0f0;
+}
+
+.live-ai-assistant__time {
+	display: flex;
+	flex-direction: column;
+	gap: 6px;
+}
+
+.live-ai-assistant__time-label {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 12px;
+	color: #646970;
+	font-size: 12px;
+	line-height: 1.4;
+}
+
+.live-ai-assistant__time-bar {
+	position: relative;
+	width: 100%;
+	height: 4px;
+	overflow: hidden;
+	border-radius: 4px;
+	background: #f0f0f0;
+}
+
+.live-ai-assistant__time-bar-fill {
+	height: 100%;
+	border-radius: inherit;
+	background: #3858e9;
+	transition: width 0.3s linear;
 }
 
 .live-ai-assistant__mute.components-button {
@@ -623,4 +660,11 @@
 	white-space: nowrap;
 	border: 0;
 	opacity: 0.01;
+}
+
+// Fix the collision with the Agents Manager sidebar FAB
+body:has( .agents-manager-sidebar-fab ):not( .agents-manager-sidebar-container--sidebar-open ) {
+	.live-ai-assistant__footer {
+		margin-bottom: 40px;
+	}
 }

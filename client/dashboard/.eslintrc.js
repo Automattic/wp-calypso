@@ -24,6 +24,8 @@ module.exports = {
 							'!calypso/lib/color-scheme',
 							'!calypso/lib/explat',
 							'!calypso/lib/interval',
+							// Allowed: calypso/lib/use-site-launch-gating-variant (temporary)
+							'!calypso/lib/use-site-launch-gating-variant',
 							'!calypso/lib/load-dev-helpers',
 							'!calypso/lib/logstash',
 							'!calypso/lib/wp',
@@ -86,11 +88,6 @@ module.exports = {
 						],
 						message: 'Importing from @automattic/ is not allowed in the dashboard folder.',
 					},
-					{
-						group: [ 'lodash' ],
-						message:
-							'Lodash is not allowed in the dashboard folder. Use native JavaScript methods instead.',
-					},
 				],
 				paths: [
 					{
@@ -111,10 +108,6 @@ module.exports = {
 					{
 						name: 'i18n-calypso',
 						message: 'Please use the @wordpress/i18n package instead of the i18n-calypso package.',
-					},
-					{
-						name: 'lodash',
-						message: 'Please use native JavaScript instead of lodash.',
 					},
 					{
 						name: 'moment',
@@ -184,5 +177,15 @@ module.exports = {
 			},
 		],
 		'@tanstack/query/exhaustive-deps': 'error',
+		'no-restricted-syntax': [
+			'error',
+			{
+				// Spreading an api-queries factory and then setting `meta` replaces the
+				// whole object, dropping the factory's `meta.statId`.
+				selector: "Property[key.name='meta'] > ObjectExpression > Property[key.name='snackbar']",
+				message:
+					'Setting `meta.snackbar` by hand drops the mutation’s `meta.statId`. Use `withSnackbar()` from app/snackbars/with-snackbar instead.',
+			},
+		],
 	},
 };

@@ -4,7 +4,6 @@ import { Button, Gridicon } from '@automattic/components';
 import { localizeUrl, useHasEnTranslation } from '@automattic/i18n-utils';
 import clsx from 'clsx';
 import { localize, LocalizeProps } from 'i18n-calypso';
-import { map } from 'lodash';
 import ExcessiveDiskSpace from 'calypso/blocks/eligibility-warnings/excessive-disk-space';
 import CardHeading from 'calypso/components/card-heading';
 import Notice, { NoticeStatus } from 'calypso/components/notice';
@@ -28,10 +27,16 @@ function getHoldMessages( {
 	isMarketplace?: boolean;
 	hasEnTranslation: ( arg: string ) => boolean;
 } ) {
+	// Plugin upload is available on the Personal plan and up, so upsell the
+	// lowest eligible plan for that context instead of Business.
+	const upsellPersonalPlan =
+		context === 'plugins-upload' ||
+		( isMarketplace && isEnabled( 'marketplace-personal-premium' ) );
+
 	return {
 		NO_BUSINESS_PLAN: {
 			title: ( function () {
-				if ( isMarketplace && isEnabled( 'marketplace-personal-premium' ) ) {
+				if ( upsellPersonalPlan ) {
 					return translate( 'Upgrade to a %(personalPlanName)s plan', {
 						args: { personalPlanName: getPlan( PLAN_PERSONAL )?.getTitle() ?? '' },
 					} );
@@ -54,7 +59,7 @@ function getHoldMessages( {
 						  );
 				}
 
-				if ( isMarketplace && isEnabled( 'marketplace-personal-premium' ) ) {
+				if ( upsellPersonalPlan ) {
 					return hasEnTranslation(
 						"You'll also get a free domain for one year, and access fast support."
 					)
@@ -300,7 +305,7 @@ export const HoldList = ( { context, holds, isMarketplace, isPlaceholder, transl
 					</div>
 				) }
 				{ ! isPlaceholder &&
-					map( holds, ( hold ) =>
+					holds.map( ( hold ) =>
 						! isKnownHoldType( hold, holdMessages ) ? null : (
 							<div className="eligibility-warnings__hold" key={ hold }>
 								<div className="eligibility-warnings__message">

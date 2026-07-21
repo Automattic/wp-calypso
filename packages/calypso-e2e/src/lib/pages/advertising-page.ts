@@ -5,7 +5,7 @@ import { clickNavTab } from '../../element-helper';
 type AdvertisingTab = 'Ready to promote' | 'Campaigns';
 
 /**
- * Page representing the Tools > Advertising page.
+ * Page representing the Tools > Blaze Ads page.
  */
 export class AdvertisingPage {
 	private page: Page;
@@ -20,7 +20,7 @@ export class AdvertisingPage {
 	}
 
 	/**
-	 * Navigates directly to the Advertising page for the site.
+	 * Navigates directly to the Blaze Ads page for the site.
 	 *
 	 * @param {string} siteSlug Site slug.
 	 */
@@ -38,11 +38,11 @@ export class AdvertisingPage {
 	}
 
 	/**
-	 * Get the heading for the Advertising page.
-	 * @returns The heading element for the Advertising page.
+	 * Get the heading for the Blaze Ads page.
+	 * @returns The heading element for the Blaze Ads page.
 	 */
 	get advertisingHeading(): Locator {
-		return this.page.getByRole( 'heading', { name: 'Dashboard' } );
+		return this.page.getByRole( 'heading', { name: 'Blaze Ads' } );
 	}
 
 	/**

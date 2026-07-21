@@ -149,7 +149,9 @@ const createBlockNoteInDB = async ( {
 	noteId: number;
 } ): Promise< ConvertedNote > => {
 	try {
-		const currentUser: CurrentUser | undefined = await resolveSelect( coreStore ).getCurrentUser();
+		const currentUser = ( await resolveSelect( coreStore ).getCurrentUser() ) as unknown as
+			| CurrentUser
+			| undefined;
 
 		const noteData = {
 			post: postId,

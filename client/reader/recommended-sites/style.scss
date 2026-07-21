@@ -1,6 +1,7 @@
-@import "@automattic/typography/styles/variables";
-@import "@automattic/color-studio/dist/color-variables";
 @import "@wordpress/base-styles/breakpoints";
+@import "@automattic/typography/styles/variables";
+@import "calypso/assets/stylesheets/shared/mixins/placeholder";
+@import "@automattic/color-studio/dist/color-variables";
 
 %ellipsis {
 	overflow: hidden;
@@ -20,7 +21,7 @@
 
 	&__heading {
 		margin: 0 0 16px 0;
-		color: $studio-gray-60;
+		color: var( --studio-gray-60 );
 		font-size: $font-body-small;
 		font-family: "SF Pro Text", sans-serif;
 		line-height: $font-title-small;
@@ -39,7 +40,7 @@
 
 		.user-avatar {
 			margin: 0;
-			color: $studio-gray-50;
+			color: var( --studio-gray-50 );
 
 			&.is-compact {
 				max-height: 40px;
@@ -47,7 +48,7 @@
 		}
 
 		&__dismiss-button {
-			color: $studio-gray-60;
+			color: var( --studio-gray-60 );
 			padding: 0;
 			min-height: unset;
 			height: fit-content;
@@ -60,7 +61,7 @@
 			font-weight: 600;
 			font-size: $font-body;
 			line-height: rem(22px);
-			color: $studio-gray-100;
+			color: var( --studio-gray-100 );
 			margin-right: 36px;
 			@extend %ellipsis;
 		}
@@ -71,7 +72,7 @@
 			font-weight: 400;
 			font-size: $font-body-extra-small;
 			line-height: rem(18px);
-			color: $studio-gray-40;
+			color: var( --studio-gray-40 );
 			@extend %ellipsis;
 		}
 
@@ -84,7 +85,7 @@
 			font-weight: 400;
 			font-size: $font-body-small;
 			line-height: $site-description-line-height;
-			color: $studio-gray-60;
+			color: var( --studio-gray-60 );
 
 			@extend %ellipsis-after-two-lines;
 		}
@@ -159,4 +160,3 @@
 		}
 	}
 }
-

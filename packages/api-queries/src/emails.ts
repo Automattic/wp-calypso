@@ -23,6 +23,7 @@ export const mailboxAccountsQuery = ( siteId: number, domain: string ) =>
 
 export const createTitanMailboxMutation = () => {
 	return mutationOptions( {
+		meta: { statId: 'titan-mailbox-create' },
 		mutationFn: ( vars: {
 			domainName: string;
 			isAdmin: boolean;
@@ -47,6 +48,7 @@ export const createTitanMailboxMutation = () => {
 
 export const deleteTitanMailboxMutation = () => {
 	return mutationOptions( {
+		meta: { statId: 'titan-mailbox-delete' },
 		mutationFn: ( vars: { domainName: string; mailbox: string } ) =>
 			deleteTitanMailbox( vars.domainName, vars.mailbox ),
 		onSuccess: () => {

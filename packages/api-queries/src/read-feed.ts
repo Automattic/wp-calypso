@@ -2,12 +2,22 @@ import { fetchReadFeedSearch, fetchReadFeed, ReadFeedSearchSort } from '@automat
 import { infiniteQueryOptions, queryOptions } from '@tanstack/react-query';
 import type { ReadFeedSearchResponse } from '@automattic/api-core';
 
+const FEED_STALE_TIME = 1000 * 60; // 1 minute
+const FEED_SEARCH_STALE_TIME = 1000 * 60; // 1 minute
+
+const isValidFeedId = ( feedId?: number | string | null ) =>
+	feedId != null && Number.isInteger( Number( feedId ) ) && Number( feedId ) >= 0;
+
+export const readFeedQueryKey = ( feedId?: number | string | null ) =>
+	[ 'read', 'feed', Number( feedId ) ] as const;
+
 export const readFeedQuery = ( feedId?: number | string | null ) => {
 	return queryOptions( {
-		queryKey: [ 'read', 'feed', Number( feedId ) ],
-		staleTime: 1000 * 60, // 1 minute
+		queryKey: readFeedQueryKey( feedId ),
+		staleTime: FEED_STALE_TIME,
 		queryFn: () => fetchReadFeed( feedId! ),
-		enabled: feedId != null && Number.isInteger( Number( feedId ) ) && Number( feedId ) >= 0,
+		enabled: isValidFeedId( feedId ),
+		meta: { persist: true },
 	} );
 };
 
@@ -24,13 +34,26 @@ const FEED_SEARCH_MAX_QUERY_LENGTH = 500;
 const truncateQuery = ( query?: string ): string | undefined =>
 	query == null ? query : query.slice( 0, FEED_SEARCH_MAX_QUERY_LENGTH );
 
+export const readFeedSearchQueryKey = ( options: Options ) => {
+	const { excludeFollowed, sort } = options;
+	const query = truncateQuery( options.query );
+	return [ 'read', 'feeds', 'search', query, excludeFollowed, sort ] as const;
+};
+
 export const readFeedSearchQuery = ( options: Options ) => {
 	const { excludeFollowed, sort } = options;
 	const query = truncateQuery( options.query );
 	return queryOptions( {
-		queryKey: [ 'read', 'feeds', 'search', query, excludeFollowed, sort ],
-		queryFn: () => fetchReadFeedSearch( { query, excludeFollowed, sort } ),
+		queryKey: [ 'read', 'feeds', 'search', query, excludeFollowed, sort ] as const,
+		staleTime: FEED_SEARCH_STALE_TIME,
+		queryFn: () =>
+			fetchReadFeedSearch( {
+				query,
+				excludeFollowed,
+				sort,
+			} ),
 		enabled: Boolean( query ),
+		meta: { persist: false },
 	} );
 };
 
@@ -39,11 +62,41 @@ export const readFeedSearchQuery = ( options: Options ) => {
 // boundary the UI used to enforce.
 const FEED_SEARCH_MAX_RESULTS = 200;
 
+// The `/read/feed` find endpoint pages Elasticsearch by a fixed window and never
+// receives a `number` param from this client, so it always returns 10 hits per
+// page. Advancing the offset by this window size (rather than the post-filter
+// `feeds.length`) keeps consecutive ES windows from overlapping, which would
+// otherwise stall the deduped client list before it reaches the end.
+const FEED_SEARCH_PAGE_SIZE = 10;
+
+// The endpoint's `next_page` handle is a query string. For the relevance sort it
+// carries the next offset (`from + size`); for the date sort it is an opaque
+// page handle with no offset. Return the parsed offset when present, otherwise
+// undefined so callers can fall back to stepping by the page size.
+const parseNextPageOffset = ( nextPage?: string ): number | undefined => {
+	if ( ! nextPage ) {
+		return undefined;
+	}
+	const offset = new URLSearchParams( nextPage ).get( 'offset' );
+	if ( offset == null ) {
+		return undefined;
+	}
+	const parsed = Number( offset );
+	return Number.isInteger( parsed ) && parsed >= 0 ? parsed : undefined;
+};
+
+export const readFeedSearchInfiniteQueryKey = ( options: Options ) => {
+	const { excludeFollowed, sort } = options;
+	const query = truncateQuery( options.query );
+	return [ 'read', 'feeds', 'search', 'infinite', query, excludeFollowed, sort ] as const;
+};
+
 export const readFeedSearchInfiniteQuery = ( options: Options ) => {
 	const { excludeFollowed, sort } = options;
 	const query = truncateQuery( options.query );
 	return infiniteQueryOptions( {
-		queryKey: [ 'read', 'feeds', 'search', 'infinite', query, excludeFollowed, sort ],
+		queryKey: [ 'read', 'feeds', 'search', 'infinite', query, excludeFollowed, sort ] as const,
+		staleTime: FEED_SEARCH_STALE_TIME,
 		queryFn: ( { pageParam }: { pageParam: number } ) =>
 			fetchReadFeedSearch( { query, excludeFollowed, sort, offset: pageParam } ),
 		initialPageParam: 0,
@@ -52,10 +105,23 @@ export const readFeedSearchInfiniteQuery = ( options: Options ) => {
 			_allPages: ReadFeedSearchResponse[],
 			lastPageParam: number
 		) => {
-			const next = lastPageParam + ( lastPage.feeds?.length ?? 0 );
-			const max = Math.min( lastPage.total ?? 0, FEED_SEARCH_MAX_RESULTS );
-			return next < max ? next : undefined;
+			// `next_page` is the endpoint's authoritative "is there more?" signal:
+			// it is emitted only while more ES results remain and omitted once the
+			// result set is exhausted or the 200-result ceiling is reached. The ES
+			// `total` is the raw hit count and overcounts results the endpoint
+			// filters out (graylisted, non-public, hidden Jetpack, empty feeds, …),
+			// so it must not drive the stop condition — the deduped client list can
+			// never reach it, which deadlocks the infinite stream (READ-601).
+			if ( ! lastPage.next_page ) {
+				return undefined;
+			}
+			// Relevance encodes the next offset in the handle; date sort omits it,
+			// so fall back to advancing by the fixed ES page size.
+			const nextOffset =
+				parseNextPageOffset( lastPage.next_page ) ?? lastPageParam + FEED_SEARCH_PAGE_SIZE;
+			return nextOffset < FEED_SEARCH_MAX_RESULTS ? nextOffset : undefined;
 		},
 		enabled: Boolean( query ),
+		meta: { persist: false },
 	} );
 };

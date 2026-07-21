@@ -1,10 +1,16 @@
 import colorStudio from '@automattic/color-studio';
 import { formatCurrency } from '@automattic/number-formatters';
-import { styled } from '@automattic/wpcom-checkout';
-import i18n, { useTranslate } from 'i18n-calypso';
+import {
+	calculateDiscountPercentage,
+	fromVariantPriceData,
+	getPlanPriceForDuration,
+} from '@automattic/plans-grid-next';
+import { useShoppingCart } from '@automattic/shopping-cart';
+import { LoadingCopy, styled } from '@automattic/wpcom-checkout';
+import { useTranslate } from 'i18n-calypso';
 import { FunctionComponent } from 'react';
 import { useCheckoutUiRedesignExperiment } from 'calypso/my-sites/checkout/src/hooks/use-checkout-ui-redesign-experiment';
-import { getItemVariantDiscount } from './util';
+import useCartKey from '../../../use-cart-key';
 import type { WPCOMProductVariant } from './types';
 
 const Discount = styled.span`
@@ -80,8 +86,18 @@ export const ItemVariantRadioPrice: FunctionComponent< {
 	compareTo?: WPCOMProductVariant;
 } > = ( { variant, compareTo } ) => {
 	const translate = useTranslate();
+	const cartKey = useCartKey();
+	const { couponStatus } = useShoppingCart( cartKey );
+	const isApplyingCoupon = couponStatus === 'pending';
 	const [ , isCheckoutUiRedesignV1 ] = useCheckoutUiRedesignExperiment();
-	const discountPercentage = getItemVariantDiscount( variant, compareTo );
+	const compareToInfo = compareTo ? fromVariantPriceData( compareTo ) : null;
+	const variantInfo = fromVariantPriceData( variant );
+	const discountPercentage = compareToInfo
+		? calculateDiscountPercentage(
+				getPlanPriceForDuration( compareToInfo, variantInfo.termMonths ),
+				getPlanPriceForDuration( variantInfo, variantInfo.termMonths )
+		  ) ?? 0
+		: 0;
 
 	// Calculate months per bill period with introductory offers.
 	let priceTermIntervalInMonths = variant.termIntervalInMonths;
@@ -98,18 +114,10 @@ export const ItemVariantRadioPrice: FunctionComponent< {
 
 	const priceDisplay = ( () => {
 		if ( isCheckoutUiRedesignV1 ) {
-			return i18n.fixMe( {
-				text: '%(pricePerMonth)s/mo',
-				newCopy: translate( '%(pricePerMonth)s/mo', {
-					args: {
-						pricePerMonth: pricePerMonthFormatted,
-					},
-				} ),
-				oldCopy: translate( '%(pricePerMonth)s /mo', {
-					args: {
-						pricePerMonth: pricePerMonthFormatted,
-					},
-				} ),
+			return translate( '%(pricePerMonth)s/mo', {
+				args: {
+					pricePerMonth: pricePerMonthFormatted,
+				},
 			} );
 		}
 		return translate( '%(pricePerMonth)s /mo', {
@@ -129,12 +137,18 @@ export const ItemVariantRadioPrice: FunctionComponent< {
 				inlineDiscount={ isCheckoutUiRedesignV1 && discountPercentage > 0 }
 				isCheckoutUiRedesignV1={ isCheckoutUiRedesignV1 }
 			>
-				{ isCheckoutUiRedesignV1 && discountPercentage > 0 && (
-					<DiscountPercentage percent={ discountPercentage } />
-				) }
-				<Price isCheckoutUiRedesignV1={ isCheckoutUiRedesignV1 }>{ priceDisplay }</Price>
-				{ ! isCheckoutUiRedesignV1 && discountPercentage > 0 && (
-					<DiscountPercentage percent={ discountPercentage } />
+				{ isApplyingCoupon ? (
+					<LoadingCopy width="70px" height="16px" noMargin />
+				) : (
+					<>
+						{ isCheckoutUiRedesignV1 && discountPercentage > 0 && (
+							<DiscountPercentage percent={ discountPercentage } />
+						) }
+						<Price isCheckoutUiRedesignV1={ isCheckoutUiRedesignV1 }>{ priceDisplay }</Price>
+						{ ! isCheckoutUiRedesignV1 && discountPercentage > 0 && (
+							<DiscountPercentage percent={ discountPercentage } />
+						) }
+					</>
 				) }
 			</PriceArea>
 		</Variant>

@@ -90,7 +90,7 @@ describe( 'MastodonAccountView reauth gate', () => {
 
 	let trackSpy: jest.SpyInstance;
 	beforeEach( () => {
-		// recordReaderTracksEvent is a thunk that reads state.reader.follows;
+		// recordReaderTracksEvent is a thunk that reads the follows query cache;
 		// the test store doesn't seed that slice. Replace with a no-op so
 		// dispatch() doesn't throw.
 		trackSpy = jest

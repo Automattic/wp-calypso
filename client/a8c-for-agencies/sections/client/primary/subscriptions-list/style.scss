@@ -1,3 +1,5 @@
+@import "calypso/assets/stylesheets/shared/mixins/breakpoints";
+
 .subscriptions-list__layout {
 	&.main.hosting-dashboard-layout.is-with-border .hosting-dashboard-layout__top-wrapper:not(.has-navigation) {
 		padding-block-start: 24px;

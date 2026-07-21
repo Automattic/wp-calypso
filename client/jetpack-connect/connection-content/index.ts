@@ -17,8 +17,8 @@ export {
 	getFeatureSelection,
 } from './selectors';
 export type { SurfaceCopy } from './copy';
-export { getAuthCopy, getSignupCopy, getLoginCopy } from './copy';
+export { getAuthCopy, getSignupCopy, getLoginCopy, getSecondaryAuthCopy } from './copy';
 export type { SubtitleScenario } from './scenarios';
 export { getSubtitleScenario } from './scenarios';
 export type { FeatureCardKey, FeatureCardData } from './family-features';
-export { getFeatureCardData } from './family-features';
+export { getFeatureCardData, getSecondaryFeatureCardData } from './family-features';

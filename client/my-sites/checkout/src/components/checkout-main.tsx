@@ -575,8 +575,6 @@ export default function CheckoutMain( {
 				genericRedirectProcessor( 'bancontact', transactionData, dataForProcessor ),
 			wechat: ( transactionData: unknown ) =>
 				weChatProcessor( transactionData, dataForProcessor, translate ),
-			netbanking: ( transactionData: unknown ) =>
-				genericRedirectProcessor( 'netbanking', transactionData, dataForProcessor ),
 			ideal: ( transactionData: unknown ) =>
 				genericRedirectProcessor( 'ideal', transactionData, dataForProcessor ),
 			sofort: ( transactionData: unknown ) =>
@@ -830,7 +828,7 @@ export default function CheckoutMain( {
 				translate( 'An error occurred during your purchase.' )
 			);
 
-			reduxDispatch( errorNotice( errorNoticeText ) );
+			reduxDispatch( errorNotice( errorNoticeText, { id: 'checkout-payment-error' } ) );
 
 			reduxDispatch(
 				recordTracksEvent( 'calypso_checkout_payment_error', {

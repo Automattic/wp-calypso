@@ -1,5 +1,4 @@
 import { createSelector } from '@automattic/state-utils';
-import { get } from 'lodash';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 
 /**
@@ -9,7 +8,7 @@ import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
  */
 export default createSelector(
 	( state ) => {
-		const siteIds = Object.keys( get( state, 'currentUser.capabilities', {} ) );
+		const siteIds = Object.keys( state?.currentUser?.capabilities ?? {} );
 		return siteIds.some( ( siteId ) => canCurrentUser( state, siteId, 'manage_options' ) );
 	},
 	( state ) => state.currentUser.capabilities

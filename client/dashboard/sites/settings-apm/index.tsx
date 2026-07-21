@@ -5,6 +5,7 @@ import { Button } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import Breadcrumbs from '../../app/breadcrumbs';
+import { withSnackbar } from '../../app/snackbars/with-snackbar';
 import InlineSupportLink from '../../components/inline-support-link';
 import Notice from '../../components/notice';
 import { PageHeader } from '../../components/page-header';
@@ -15,15 +16,12 @@ import { getBackendCalloutProps } from '../performance/backend-callout';
 
 function ApmToggle( { site }: { site: Site } ) {
 	const enabled = !! site.options?.apm_enabled;
-	const { mutate, isPending } = useMutation( {
-		...siteApmEnabledMutation( site.ID ),
-		meta: {
-			snackbar: {
-				success: enabled ? __( 'APM disabled.' ) : __( 'APM enabled.' ),
-				error: enabled ? __( 'Failed to disable APM.' ) : __( 'Failed to enable APM.' ),
-			},
-		},
-	} );
+	const { mutate, isPending } = useMutation(
+		withSnackbar( siteApmEnabledMutation( site.ID ), {
+			success: enabled ? __( 'APM disabled.' ) : __( 'APM enabled.' ),
+			error: enabled ? __( 'Failed to disable APM.' ) : __( 'Failed to enable APM.' ),
+		} )
+	);
 
 	const handleClick = () => mutate( ! enabled );
 

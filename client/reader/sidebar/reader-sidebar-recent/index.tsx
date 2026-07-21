@@ -1,57 +1,73 @@
 import './style.scss';
 import page from '@automattic/calypso-router';
+import { Count } from '@automattic/components';
 import clsx from 'clsx';
-import { localize } from 'i18n-calypso';
+import { useTranslate } from 'i18n-calypso';
 import React, { useState } from 'react';
 import { useSelector } from 'react-redux';
-import ReaderIcon from 'calypso/assets/icons/reader/reader-icon';
 import { SiteIcon } from 'calypso/blocks/site-icon';
 import AutoDirection from 'calypso/components/auto-direction';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import ExpandableSidebarMenu from 'calypso/layout/sidebar/expandable';
+import { useSubscribedFeedsInfo, useSubscribedSites } from 'calypso/reader/data/site-subscriptions';
+import { getSiteDomain } from 'calypso/reader/get-helpers';
+import { formatUrlForDisplay } from 'calypso/reader/lib/feed-display-helper';
+import { MoreMenuActions } from 'calypso/reader/sidebar/more-menu-actions';
 import { recordAction, recordGaEvent } from 'calypso/reader/stats';
 import { useRecordReaderTracksEvent } from 'calypso/state/reader/analytics/useRecordReaderTracksEvent';
-import getReaderFollowedSites from 'calypso/state/reader/follows/selectors/get-reader-followed-sites';
 import { getSelectedRecentFeedId } from 'calypso/state/reader-ui/sidebar/selectors';
 import { AppState } from 'calypso/types';
-import { AllIcon } from '../icons/all';
 import { MenuItem, MenuItemLink } from '../menu';
-
-// Not complete, just useful fields for now
-type Site = {
-	ID: number;
-	URL: string;
-	feed_URL: string;
-	feed_ID: number;
-	last_updated: number;
-	is_owner: boolean;
-	organization_id: number;
-	name: string;
-	unseen_count: number;
-	site_icon: string | null;
-	is_following: boolean;
-};
 
 type Props = {
 	isOpen: boolean;
 	onClick: () => void;
 	path: string;
 	className: string;
-	translate: ( key: string ) => string;
 };
 
 const SITE_DISPLAY_CUTOFF = 5;
 const RECENT_PATH_REGEX = /^\/reader(?:\/recent\/\d+)?\/?(?:\?|$)/;
 
-const ReaderSidebarRecent = ( {
-	translate,
-	isOpen,
-	onClick,
-	path,
-	className,
-}: Props ): React.JSX.Element => {
+type ReaderSidebarSite = Pick< ReturnType< typeof useSubscribedSites >[ number ], 'name' | 'URL' >;
+
+const isFreeWpcomSubdomain = ( host = '' ): boolean => /\.wordpress\.com$/i.test( host );
+
+/**
+ * Label for a followed site: real title, else an `r/subreddit` handle, else the
+ * resolved domain. Untitled WordPress.com sites come back named after their free
+ * subdomain, so those fall through to the domain from `URL`.
+ */
+export function getReaderSidebarSiteName( site: ReaderSidebarSite ): string {
+	const siteName = site.name ?? '';
+	// `name` may be URL-shaped, so normalize before the subdomain check.
+	const normalizedName = formatUrlForDisplay( siteName ) || siteName;
+
+	if ( siteName && ! isFreeWpcomSubdomain( normalizedName ) ) {
+		return siteName;
+	}
+
+	// A title-less subreddit reads best as its `r/name` (or `u/name`) handle, since
+	// every subreddit resolves to the same generic `reddit.com` domain. The host is
+	// anchored so only genuine `reddit.com` feeds qualify.
+	const reddit = site.URL?.match( /^https?:\/\/(?:[^/]+\.)?reddit\.com\/(r|user)\/([^/?#]+)/i );
+	if ( reddit ) {
+		return `${ reddit[ 1 ].toLowerCase() === 'user' ? 'u' : 'r' }/${ reddit[ 2 ] }`;
+	}
+
+	const siteDomain = site.URL ? getSiteDomain( { site: { URL: site.URL } } ) : undefined;
+	if ( siteDomain ) {
+		return siteDomain;
+	}
+
+	return siteName;
+}
+
+const ReaderSidebarRecent = ( { isOpen, onClick, path, className }: Props ): React.JSX.Element => {
+	const translate = useTranslate();
 	const [ showAllSites, setShowAllSites ] = useState( false );
-	const sites = useSelector< AppState, Site[] >( getReaderFollowedSites );
+	const sites = useSubscribedSites();
+	const feedsInfo = useSubscribedFeedsInfo();
 	const selectedSiteFeedId = useSelector< AppState, number | null >( getSelectedRecentFeedId );
 	const moment = useLocalizedMoment();
 	const recordReaderTracksEvent = useRecordReaderTracksEvent();
@@ -88,9 +104,6 @@ const ReaderSidebarRecent = ( {
 	};
 
 	const selectMenu = () => {
-		if ( ! isOpen ) {
-			onClick();
-		}
 		trackMenuClick( null );
 		page( '/reader' );
 	};
@@ -100,56 +113,77 @@ const ReaderSidebarRecent = ( {
 			onClick={ selectMenu }
 			expanded={ isOpen }
 			title={ translate( 'Recent' ) }
-			customIcon={ <ReaderIcon className="sidebar__menu-icon" viewBox="0 0 24 11" /> }
 			disableFlyout
-			className={ clsx( 'reader-sidebar-recent', className, {
-				'sidebar__menu--selected': ! isOpen && isRecentStream,
+			className={ clsx( 'reader-sidebar-recent', 'has-counts', className, {
+				'sidebar__menu--selected': isRecentStream && ( ! isOpen || selectedSiteFeedId === null ),
 			} ) }
-			count={ undefined }
+			count={ feedsInfo.unseenCount > 0 ? feedsInfo.unseenCount : undefined }
 			icon={ null }
 			materialIcon={ null }
 			materialIconStyle={ null }
 			expandableIconClick={ onClick }
+			moreMenuActions={
+				<MoreMenuActions
+					identifier="following"
+					feedIds={ feedsInfo.feedIds }
+					feedUrls={ feedsInfo.feedUrls }
+					unseenCount={ feedsInfo.unseenCount }
+				/>
+			}
 		>
-			<MenuItem key="all" selected={ isRecentStream && selectedSiteFeedId === null }>
-				<MenuItemLink
-					href="/reader"
-					className="sidebar__menu-link all-sites-link"
-					onClick={ () => trackMenuClick( null ) }
-				>
-					<AllIcon />
-					<span>{ translate( 'All' ) }</span>
-				</MenuItemLink>
-			</MenuItem>
+			{ sitesToShow.map( ( site ) => {
+				const displayName = getReaderSidebarSiteName( site );
+				const unseenCount = site.unseen_count ?? 0;
+				const unseenCountLabel = translate( '%(count)d unseen post', '%(count)d unseen posts', {
+					count: unseenCount,
+					args: { count: unseenCount },
+					comment: '%(count)d is the number of unseen posts.',
+				} );
+				const feedId = site.feed_ID ? Number( site.feed_ID ) : null;
 
-			{ sitesToShow.map( ( site ) => (
-				<MenuItem
-					key={ site.ID }
-					selected={ isRecentStream && site.feed_ID === selectedSiteFeedId }
-				>
-					<AutoDirection>
-						<MenuItemLink
-							href={ `/reader/recent/${ site.feed_ID }` }
-							className={ clsx( 'reader-sidebar-recent__item sidebar__menu-link' ) }
-							onClick={ () => trackMenuClick( site.feed_ID ) }
-						>
-							<SiteIcon iconUrl={ site.site_icon } size={ 22 } />
-							<span title={ site.name } className="sidebar__menu-item-sitename">
-								<span>{ site.name }</span>
-								{ site.last_updated > 0 && (
-									<span className="sidebar__menu-item-last-updated">
-										{ moment( new Date( site.last_updated ) ).fromNow() }
-									</span>
-								) }
-							</span>
-						</MenuItemLink>
-					</AutoDirection>
-				</MenuItem>
-			) ) }
+				return (
+					<MenuItem key={ site.ID } selected={ isRecentStream && feedId === selectedSiteFeedId }>
+						<AutoDirection>
+							<MenuItemLink
+								href={ `/reader/recent/${ feedId }` }
+								className={ clsx( 'reader-sidebar-recent__item sidebar__menu-link' ) }
+								onClick={ () => trackMenuClick( feedId ) }
+							>
+								<SiteIcon iconUrl={ site.site_icon } size={ 22 } />
+								<span title={ displayName } className="sidebar__menu-item-sitename">
+									<span>{ displayName }</span>
+									{ site.last_updated && (
+										<span className="sidebar__menu-item-last-updated">
+											{ moment( new Date( site.last_updated ) ).fromNow() }
+										</span>
+									) }
+								</span>
+								<span className="sidebar__actions-and-count">
+									{ feedId && site.feed_URL && (
+										<MoreMenuActions
+											identifier={ `feed:${ feedId }` }
+											feedIds={ [ feedId ] }
+											feedUrls={ [ site.feed_URL ] }
+											unseenCount={ unseenCount }
+										/>
+									) }
+									{ unseenCount > 0 && (
+										<Count
+											count={ unseenCount }
+											compact
+											aria-label={ unseenCountLabel as string }
+										/>
+									) }
+								</span>
+							</MenuItemLink>
+						</AutoDirection>
+					</MenuItem>
+				);
+			} ) }
 			{ shouldShowViewMoreButton && (
 				<MenuItem selected={ showAllSites }>
 					<MenuItemLink className="view-more-link" onClick={ toggleShowAllSites }>
-						<span>{ showAllSites ? translate( 'View Less' ) : translate( 'View More' ) }</span>
+						<span>{ showAllSites ? translate( 'View less' ) : translate( 'View more' ) }</span>
 					</MenuItemLink>
 				</MenuItem>
 			) }
@@ -157,4 +191,4 @@ const ReaderSidebarRecent = ( {
 	);
 };
 
-export default localize( ReaderSidebarRecent );
+export default ReaderSidebarRecent;

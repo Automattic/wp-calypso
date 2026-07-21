@@ -5,11 +5,26 @@ import Popover from '../popover';
 
 import './style.scss';
 
+/**
+ * @param {{
+ *   autoPosition?: boolean;
+ *   className?: string;
+ *   id?: string;
+ *   isVisible?: boolean;
+ *   position?: string;
+ *   status?: string;
+ *   showDelay?: number;
+ *   showOnMobile?: boolean;
+ *   hideArrow?: boolean;
+ *   children?: import('react').ReactNode;
+ *   context?: any;
+ * }} props
+ */
 function Tooltip( {
-	autoPosition,
+	autoPosition = true,
 	className,
 	id,
-	isVisible,
+	isVisible = false,
 	position = 'top',
 	status,
 	showDelay = 100,

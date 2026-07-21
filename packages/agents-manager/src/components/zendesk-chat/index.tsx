@@ -1,6 +1,12 @@
 import { type MarkdownComponents, type MarkdownExtensions } from '@automattic/agenttic-ui';
-import { useManagedZendeskChat } from '@automattic/zendesk-client';
-import { useEffect } from '@wordpress/element';
+import {
+	useManagedZendeskChat,
+	ZENDESK_CUSTOM_FIELD_PRODUCT,
+	ZENDESK_CUSTOM_FIELD_WEBSITE_URL,
+	ZENDESK_SOURCE_URL_TICKET_FIELD_ID,
+} from '@automattic/zendesk-client';
+import { useMemo } from '@wordpress/element';
+import { useAgentsManagerContext } from '../../contexts';
 import AgentChat from '../agent-chat';
 import { type Options as ChatHeaderOptions } from '../chat-header';
 import ConcludedConversationFooter from '../concluded-conversation-footer';
@@ -22,8 +28,22 @@ interface Props {
 	markdownComponents?: MarkdownComponents;
 	/** Custom markdown extensions. */
 	markdownExtensions?: MarkdownExtensions;
-	/** Called when the has-messages state changes. */
-	onHasMessagesChange: ( hasMessages: boolean ) => void;
+}
+
+function withHttpsProtocol( domain: string ) {
+	return /^https?:\/\//.test( domain ) ? domain : `https://${ domain }`;
+}
+
+function getSiteUrl( site: ReturnType< typeof useAgentsManagerContext >[ 'site' ] ) {
+	if ( site?.URL ) {
+		return site.URL;
+	}
+
+	if ( site?.domain ) {
+		return withHttpsProtocol( site.domain );
+	}
+
+	return window.location.href;
 }
 
 export default function ZendeskChat( {
@@ -34,8 +54,25 @@ export default function ZendeskChat( {
 	onExpand,
 	markdownComponents = {},
 	markdownExtensions = {},
-	onHasMessagesChange,
 }: Props ) {
+	const {
+		site,
+		zendeskConversationTags,
+		zendeskSmoochIntegrationKey,
+		zendeskTicketProductFieldValue,
+	} = useAgentsManagerContext();
+	const siteUrl = getSiteUrl( site );
+	const conversationTicketFields = useMemo(
+		() =>
+			zendeskTicketProductFieldValue
+				? {
+						[ ZENDESK_CUSTOM_FIELD_WEBSITE_URL ]: siteUrl,
+						[ ZENDESK_SOURCE_URL_TICKET_FIELD_ID ]: window.location.href,
+						[ ZENDESK_CUSTOM_FIELD_PRODUCT ]: zendeskTicketProductFieldValue,
+				  }
+				: {},
+		[ siteUrl, zendeskTicketProductFieldValue ]
+	);
 	const {
 		agentticMessages,
 		onSubmit,
@@ -46,13 +83,11 @@ export default function ZendeskChat( {
 		supportedImageTypes,
 		notice,
 		hasInteractionEnded,
-	} = useManagedZendeskChat();
-
-	// Notify parent when has-messages state changes
-	const hasMessages = agentticMessages.length > 0;
-	useEffect( () => {
-		onHasMessagesChange( hasMessages );
-	}, [ hasMessages, onHasMessagesChange ] );
+	} = useManagedZendeskChat( {
+		conversationTags: zendeskConversationTags,
+		conversationTicketFields,
+		smoochIntegrationKey: zendeskSmoochIntegrationKey,
+	} );
 
 	return (
 		<AgentChat
@@ -75,6 +110,9 @@ export default function ZendeskChat( {
 			imageUpload={ imageUpload }
 			acceptedImageFileTypes={ supportedImageTypes }
 			alternativeFooter={ hasInteractionEnded ? <ConcludedConversationFooter /> : undefined }
+			// Zendesk conversations connect the user to a human Happiness
+			// Engineer, so the "You're chatting with AI" disclosure must not show.
+			complianceDisclosure={ false }
 		/>
 	);
 }

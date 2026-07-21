@@ -1,5 +1,5 @@
+import { truncate } from '@automattic/js-utils';
 import { translate } from 'i18n-calypso';
-import { truncate } from 'lodash';
 import wpcom from 'calypso/lib/wp';
 import {
 	POST_RESTORE_FAILURE,

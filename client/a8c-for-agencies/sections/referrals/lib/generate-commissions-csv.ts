@@ -1,4 +1,3 @@
-import { APIProductFamilyProduct } from 'calypso/state/partner-portal/types';
 import { getProductCommissionPercentage } from './commissions';
 import type {
 	Referral,
@@ -6,6 +5,7 @@ import type {
 	ReferralCommissionPayoutResponse,
 	ReferralPurchase,
 } from '../types';
+import type { APIProductFamilyProduct } from 'calypso/a8c-for-agencies/types/products';
 
 /** CSV line ending per RFC 4180; CRLF ensures Excel and Windows tools parse rows correctly. */
 const CSV_LINE_ENDING = '\r\n';
@@ -14,12 +14,27 @@ const CSV_LINE_ENDING = '\r\n';
 const UTF8_BOM = '\uFEFF';
 
 /**
+ * Characters that spreadsheet applications (Excel, Google Sheets, etc.) treat as the
+ * start of a formula. A field beginning with one of these can execute on open, so we
+ * neutralize it. Includes tab and carriage return, which some parsers strip before
+ * evaluating the remaining formula.
+ */
+const FORMULA_TRIGGERS = [ '=', '+', '-', '@', '\t', '\r' ];
+
+/**
  * Escapes a value for CSV format.
+ * Neutralizes formula injection by prefixing a single quote to fields that begin with a
+ * formula trigger character (spreadsheets render the leading quote-prefixed value as a literal string).
  * Wraps in quotes if the value contains commas, quotes, or newlines.
  * Doubles any existing quotes.
  */
 function csvEscape( value: unknown ): string {
-	const str = value == null ? '' : String( value );
+	let str = value == null ? '' : String( value );
+	// A lone trigger character (e.g. the '-' placeholder used for missing values) is not a
+	// formula, so only neutralize when there is content after the trigger.
+	if ( str.length > 1 && FORMULA_TRIGGERS.some( ( char ) => str.startsWith( char ) ) ) {
+		str = `'${ str }`;
+	}
 	const needsQuotes = /[",\n]/.test( str );
 	const escaped = str.replace( /"/g, '""' );
 	return needsQuotes ? `"${ escaped }"` : escaped;
@@ -82,9 +97,14 @@ function findMatchingPurchase(
 		return null;
 	}
 	const product = products.find( ( p ) =>
-		[ p.product_id, p.monthly_product_id, p.yearly_product_id, p.alternative_product_id ].includes(
-			productId
-		)
+		[
+			p.product_id,
+			p.monthly_product_id,
+			p.yearly_product_id,
+			p.alternative_product_id,
+			p.monthly_alternative_product_id,
+			p.yearly_alternative_product_id,
+		].includes( productId )
 	);
 	if ( ! product ) {
 		return null;
@@ -95,6 +115,8 @@ function findMatchingPurchase(
 			product.monthly_product_id,
 			product.yearly_product_id,
 			product.alternative_product_id,
+			product.monthly_alternative_product_id,
+			product.yearly_alternative_product_id,
 		].includes( p.product_id )
 	);
 	if ( ! purchase || purchase.status === 'pending' || purchase.status === 'error' ) {

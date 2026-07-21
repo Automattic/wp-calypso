@@ -31,47 +31,96 @@ export const CANCEL_FLOW_TYPE = {
 } as const;
 export type CancelFlowType = ( typeof CANCEL_FLOW_TYPE )[ keyof typeof CANCEL_FLOW_TYPE ];
 
-export function isRenewing( purchase: Purchase ): boolean {
+/**
+ * Returns true if the purchase is auto-renewing and not yet expired.
+ */
+export function isRenewingBeforeExpiration( purchase: Purchase ): boolean {
 	return [ 'active', 'auto-renewing' ].includes( purchase.expiry_status );
 }
 
 /**
- * Returns true if the purchase is in grace period with a failed or missing auto-renewal.
+ * Returns true if the purchase is still active but will lapse unless renewed,
+ * because it is not set to auto-renew. Covers an `expiry_status` of either
+ * `manual-renew` (not auto-renewing, with the expiry date not yet imminent) or
+ * `expiring` (not auto-renewing and expiring soon — the "needs attention"
+ * state).
+ *
+ * Note this describes a purchase that has not yet passed its expiry date — once
+ * the expiry date passes without renewal the status becomes `expired` (see
+ * {@link isExpiredAndInGracePeriod} and {@link isRemoved}).
  */
-export function isFailedAutoRenewal( purchase: Purchase ): boolean {
-	return (
-		isInExpirationGracePeriod( purchase ) &&
-		( isRenewing( purchase ) || ( purchase.is_auto_renew_enabled && ! purchase.payment_type ) )
-	);
-}
-
 export function isExpiring( purchase: Purchase ) {
 	return [ 'manual-renew', 'expiring' ].includes( purchase.expiry_status );
 }
 
-export function isExpired( purchase: Purchase ) {
-	return 'expired' === purchase.expiry_status;
+/**
+ * Returns true if the purchase has passed its expiration date but is still
+ * active — this covers the post-expiry grace period during which a
+ * subscription can still be renewed before being fully removed.
+ *
+ * If you also want to know whether the purchase could still have upcoming
+ * AUTO-RENEW attempts (which can occur even during the grace period), see
+ * {@link mightStillAutoRenew} or {@link isExpiredWithNoAutoRenewAttemptsLeft}.
+ *
+ * Note that during the grace period, the `purchase.renew_date` property may be
+ * empty even for subscriptions that auto-renew (this happens once the final
+ * auto-renewal attempt has passed), but regardless of whether it's empty, the
+ * focus of the user interface during this phase should not be on showing
+ * scheduled auto-renewal dates (which aren't very likely to succeed at this
+ * point anyway) but rather on encouraging the customer to manually renew.
+ */
+export function isExpiredAndInGracePeriod( purchase: Purchase ): boolean {
+	return 'expired' === purchase.expiry_status && 'active' === purchase.subscription_status;
 }
 
-export function isInExpirationGracePeriod( purchase: Purchase ): boolean {
-	if ( ! purchase.expiry_date ) {
-		return false;
-	}
+/**
+ * Returns true if the purchase's subscription is no longer active (removed).
+ */
+export function isRemoved( purchase: Purchase ): boolean {
+	return 'active' !== purchase.subscription_status;
+}
 
-	if ( new Date( purchase.expiry_date ) >= new Date() ) {
-		return false;
-	}
-	if ( isExpired( purchase ) ) {
-		return false;
-	}
-	if ( ! isRenewing( purchase ) && ! isExpiring( purchase ) ) {
-		return false;
-	}
-	if ( isAkismetFreeProduct( purchase ) ) {
-		return false;
-	}
+/**
+ * Convenience check for "expired in any way" — either still active but past the
+ * expiration date (grace period), or fully removed.
+ */
+export function isExpiredOrRemoved( purchase: Purchase ): boolean {
+	return isExpiredAndInGracePeriod( purchase ) || isRemoved( purchase );
+}
 
-	return true;
+/**
+ * Returns true if the purchase may still auto-renew — i.e. a charge will
+ * actually be attempted: the subscription is active, auto-renew is enabled, a
+ * rechargeable payment method is attached, and it is not past its final
+ * auto-renewal attempt date.
+ *
+ * This is the "will be billed" signal and is a superset of the renewing
+ * `expiry_status` values (`active`/`auto-renewing` already require a chargeable
+ * payment method on the backend), so it holds for both not-yet-expired
+ * auto-renewing purchases and grace-period purchases that may still recover.
+ * "Might" is intentional: the underlying dates are day-granular and a charge can
+ * still fail.
+ */
+export function mightStillAutoRenew( purchase: Purchase ): boolean {
+	return purchase.might_still_auto_renew;
+}
+
+/**
+ * Returns true if the purchase has passed its expiry date (and is still in its
+ * grace period, not removed) with no remaining auto-renewal attempts on the
+ * schedule. This is the "expired and the auto-renew schedule is exhausted"
+ * state, independent of whether auto-renew is currently enabled or a payment
+ * method is attached.
+ *
+ * If this returns false, then there is still hope -- even if the purchase has
+ * auto-renew turned off or doesn't have a chargeable payment method attached,
+ * those are things which can be fixed and still end up with a successful
+ * auto-renewal in the end. Therefore, this is useful to check when deciding
+ * whether to allow the customer to do things like add a payment method or
+ * enable auto-renew on an already-expired subscription.
+ */
+export function isExpiredWithNoAutoRenewAttemptsLeft( purchase: Purchase ): boolean {
+	return isExpiredAndInGracePeriod( purchase ) && purchase.is_past_last_auto_renew_attempt_date;
 }
 
 export function isIncludedWithPlan( purchase: Purchase ) {
@@ -303,10 +352,10 @@ export function getTitleForDisplay( purchase: Purchase ): string {
 		'wordpress_com_1gb_space_addon_yearly' === purchase.product_slug &&
 		purchase.renewal_price_tier_usage_quantity
 	) {
-		// translators: productName is the name of the product and quantity is a number (GB stands for GigaBytes)
+		// translators: %(productName)s is the name of the product and %(quantity)s is a number (GB stands for GigaBytes)
 		return sprintf( __( '%(productName)s %(quantity)s GB' ), {
 			productName: purchase.product_name,
-			quantity: purchase.renewal_price_tier_usage_quantity,
+			quantity: String( purchase.renewal_price_tier_usage_quantity ),
 		} );
 	}
 
@@ -319,10 +368,17 @@ export function getTitleForDisplay( purchase: Purchase ): string {
 		purchase.renewal_price_tier_usage_quantity &&
 		purchase.renewal_price_tier_usage_quantity > 1
 	) {
-		/* translators: %s is the product name "Akismet Pro", %d is a number of requests/month */
+		/* translators: %(productName)s is the product name "Akismet Pro", %(requests)d is a number of requests/month */
 		return sprintf( __( '%(productName)s (%(requests)d requests/month)' ), {
 			productName: purchase.product_name.replace( /\s*\(.*$/, '' ).trim(),
 			requests: 500 * purchase.renewal_price_tier_usage_quantity,
+		} );
+	}
+
+	if ( purchase.is_plan ) {
+		/* translators: %(productName)s is the product name "WordPress.com Personal" */
+		return sprintf( __( '%(productName)s Plan' ), {
+			productName: purchase.product_name.replace( /\s*\(.*$/, '' ).trim(),
 		} );
 	}
 
@@ -366,7 +422,7 @@ export function getSubtitleForDisplay( purchase: Purchase ): string | null {
 	}
 
 	if ( purchase.is_plan ) {
-		return __( 'Site plan' );
+		return null;
 	}
 
 	if ( purchase.is_domain_registration ) {
@@ -391,7 +447,7 @@ export function getSubtitleForDisplay( purchase: Purchase ): string | null {
 
 	if ( purchase.is_google_workspace_product && purchase.meta ) {
 		return sprintf(
-			// translators: The domain is the domain name of the site
+			// translators: %(domain)s is the domain name of the site
 			__( 'Mailboxes and Productivity Tools at %(domain)s' ),
 			{
 				domain: purchase.meta,
@@ -401,7 +457,7 @@ export function getSubtitleForDisplay( purchase: Purchase ): string | null {
 
 	if ( purchase.is_titan_mail_product && purchase.meta ) {
 		return sprintf(
-			// translators: The domain is the domain name of the site
+			// translators: %(domain)s is the domain name of the site
 			__( 'Mailboxes at %(domain)s' ),
 			{
 				domain: purchase.meta,
@@ -432,10 +488,11 @@ export function isJetpackCrmProduct( keyOrSlug: string ): boolean {
 type ObjectWithProductSlug = { product_slug?: string };
 
 export function isTitanMail( purchase: Purchase | ObjectWithProductSlug ): boolean {
-	return (
-		purchase.product_slug === TitanMailSlugs.TITAN_MAIL_MONTHLY_SLUG ||
-		purchase.product_slug === TitanMailSlugs.TITAN_MAIL_YEARLY_SLUG
-	);
+	if ( ! purchase.product_slug ) {
+		return false;
+	}
+
+	return ( Object.values( TitanMailSlugs ) as readonly string[] ).includes( purchase.product_slug );
 }
 
 export function isGoogleWorkspace( purchase: Purchase | ObjectWithProductSlug ): boolean {
@@ -683,21 +740,45 @@ export function hasAmountAvailableToRefund( purchase: Purchase ) {
 }
 
 /**
+ * Returns true if the plan is eligible for an instant, self-serve downgrade: the
+ * plan is still within its initial refund window (not a renewal) and has neither
+ * expired nor entered its post-expiry grace period.
+ *
+ * Note: this intentionally does NOT require a refundable amount. Instant
+ * downgrades are also offered for plans that were paid with credits or are
+ * otherwise free, where no money would be refunded.
+ *
+ * This is distinct from {@link isExpiredAndInGracePeriod}, which gates the
+ * downgrade-to-checkout flow for plans whose expiry date has already passed.
+ */
+export function isWithinRefundWindowDowngradeEligible( purchase: Purchase ): boolean {
+	return (
+		purchase.is_plan_type_downgradable &&
+		purchase.is_plan &&
+		purchase.is_within_initial_refund_window &&
+		! isExpiredOrRemoved( purchase )
+	);
+}
+
+/**
  * Returns the purchase cancellation flow.
  */
 export function getPurchaseCancellationFlowType( purchase: Purchase ): CancelFlowType {
-	// Expired or grace-period purchases use the removal flow, matching the "Remove" button on the details page.
-	if ( isExpired( purchase ) || isInExpirationGracePeriod( purchase ) ) {
-		return CANCEL_FLOW_TYPE.REMOVE;
-	}
-
 	const isPlanRefundable = purchase.is_refundable;
 	const isPlanAutoRenewing = purchase.is_auto_renew_enabled;
 
 	if ( isPlanRefundable && hasAmountAvailableToRefund( purchase ) ) {
 		// If the subscription is refundable the subscription should be removed immediately.
 		return CANCEL_FLOW_TYPE.CANCEL_WITH_REFUND;
-	} else if ( ! isPlanRefundable && isPlanAutoRenewing ) {
+	}
+
+	// Expired purchases (that aren't refundable) use the removal flow, matching
+	// the "Remove" button on the details page.
+	if ( isExpiredOrRemoved( purchase ) ) {
+		return CANCEL_FLOW_TYPE.REMOVE;
+	}
+
+	if ( ! isPlanRefundable && isPlanAutoRenewing ) {
 		// If the subscription is not refundable and auto-renew is on turn off auto-renew.
 		return CANCEL_FLOW_TYPE.CANCEL_AUTORENEW;
 	}
@@ -707,17 +788,26 @@ export function getPurchaseCancellationFlowType( purchase: Purchase ): CancelFlo
 }
 
 /**
- * Cancel intent sourced from the Purchase Settings button the user clicked.
- * `cancel` = clicked "Cancel subscription"; `remove` = clicked "Remove subscription / Remove {product}".
+ * Cancel intent sourced from the entry point the user came from.
+ * `cancel`      = clicked "Cancel subscription" on Purchase Settings.
+ * `remove`      = clicked "Remove subscription / Remove {product}" on Purchase Settings.
+ * `auto-renew`  = toggled off auto-renew on Purchase Settings.
  * Absent means flag-off, old deep link, or flow-type heuristic fallback.
  */
-export type CancelIntent = 'cancel' | 'remove';
+export type CancelIntent = 'cancel' | 'remove' | 'auto-renew';
 
 export function getCancelIntentFromSearch( search: { intent?: unknown } ): CancelIntent | null {
-	return search.intent === 'cancel' || search.intent === 'remove' ? search.intent : null;
+	return search.intent === 'cancel' || search.intent === 'remove' || search.intent === 'auto-renew'
+		? search.intent
+		: null;
 }
 
-export type DisplayVariant = 'cancel' | 'remove';
+/**
+ * The set of UI variants the cancel/confirmation screens can render. Currently
+ * 1:1 with CancelIntent — kept as a separate alias because callers often
+ * compute a display variant from intent plus a flow-type fallback.
+ */
+export type DisplayVariant = 'cancel' | 'remove' | 'auto-renew';
 
 /**
  * Derives which screen variant to show from intent, with a flow-type fallback when intent is absent.
@@ -726,11 +816,8 @@ export function getDisplayVariant(
 	intent: CancelIntent | null,
 	flowType: CancelFlowType
 ): DisplayVariant {
-	if ( intent === 'remove' ) {
-		return 'remove';
-	}
-	if ( intent === 'cancel' ) {
-		return 'cancel';
+	if ( intent ) {
+		return intent;
 	}
 	return flowType === CANCEL_FLOW_TYPE.REMOVE ? 'remove' : 'cancel';
 }
@@ -747,7 +834,9 @@ export function getMutationFlowType(
 		return getPurchaseCancellationFlowType( purchase );
 	}
 
-	if ( intent === 'cancel' ) {
+	// 'cancel' and 'auto-renew' both map to the disable-auto-renew flow when
+	// auto-renew is on; both fall back to flow-type otherwise.
+	if ( intent === 'cancel' || intent === 'auto-renew' ) {
 		if ( purchase.is_auto_renew_enabled ) {
 			return CANCEL_FLOW_TYPE.CANCEL_AUTORENEW;
 		}

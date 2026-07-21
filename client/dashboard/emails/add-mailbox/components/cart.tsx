@@ -30,11 +30,11 @@ const animation = {
 export const Cart = ( {
 	totalItems,
 	totalPrice,
-	isCartBusy,
+	disabled,
 }: {
 	totalItems: number;
 	totalPrice: string;
-	isCartBusy: boolean;
+	disabled?: boolean;
 } ) => {
 	const { recordTracksEvent } = useAnalytics();
 	const { domainName } = useDomainFromUrlParam();
@@ -44,7 +44,7 @@ export const Cart = ( {
 		// translators: %(mailboxes)s is the number of mailboxes selected.
 		_n( '%(mailboxes)s mailbox', '%(mailboxes)s mailboxes', totalItems ),
 		{
-			mailboxes: totalItems,
+			mailboxes: String( totalItems ),
 		}
 	);
 
@@ -68,7 +68,7 @@ export const Cart = ( {
 							<Button
 								variant="primary"
 								__next40pxDefaultSize
-								disabled={ isCartBusy }
+								disabled={ disabled }
 								type="submit"
 								onClick={ () => {
 									recordTracksEvent( 'calypso_dashboard_emails_add_mailbox_add_to_cart_click', {

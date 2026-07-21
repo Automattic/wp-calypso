@@ -13,6 +13,7 @@ const {
 	defaultRequestToHandle,
 } = require( '@wordpress/dependency-extraction-webpack-plugin/lib/util' );
 const autoprefixerPlugin = require( 'autoprefixer' );
+const prefixSelectorPlugin = require( 'postcss-prefix-selector' );
 const webpack = require( 'webpack' );
 const { BundleAnalyzerPlugin } = require( 'webpack-bundle-analyzer' );
 const cacheIdentifier = require( '../../build-tools/babel/babel-loader-cache-identifier' );
@@ -69,6 +70,14 @@ module.exports = {
 	module: {
 		strictExportPresence: true,
 		rules: [
+			// Disable `resolve.fullySpecified` for .mjs and .js files. Some
+			// dependencies ship .mjs that imports bare paths like
+			// `fast-deep-equal/es6`, which webpack would otherwise reject as
+			// not fully specified.
+			{
+				test: /\.m?js$/,
+				resolve: { fullySpecified: false },
+			},
 			TranspileConfig.loader( {
 				workerCount: 2,
 				configFile: path.resolve( '../../babel.config.js' ),
@@ -86,17 +95,53 @@ module.exports = {
 				include: shouldTranspileDependency,
 			} ),
 			SassConfig.loader( {
-				includePaths: [ process.cwd(), __dirname ],
 				postCssOptions: {
 					// Do not use postcss.config.js. This ensure we have the final say on how PostCSS is used in calypso.
 					// This is required because Calypso imports `@automattic/notifications` and that package defines its
 					// own `postcss.config.js` that they use for their webpack bundling process.
 					config: false,
-					plugins: [ autoprefixerPlugin() ],
+					plugins: [
+						// Scopes this repo's own component styles to .jp-stats-dashboard (the class
+						// on Odyssey's mount point), so generic classes (`.card`, `.button`, etc.)
+						// can't collide with wp-admin's own chrome. See AGENTS.md > CSS Scoping.
+						prefixSelectorPlugin( {
+							// .jp-stats-dashboard for normal content. The rest are portal roots
+							// first-party components can render into: .color-scheme/.ReactModalPortal
+							// (Popover/Dialog), [data-base-ui-portal]/[data-wp-compat-overlay-slot]
+							// (@wordpress/ui Popover/Tooltip/Dialog, e.g. StatsInfotip),
+							// .components-modal__screen-overlay (@wordpress/components Modal, e.g. the
+							// UTM builder, stats upsell modal, and feedback modal).
+							prefix:
+								':where(.jp-stats-dashboard, .color-scheme, .ReactModalPortal, [data-base-ui-portal], [data-wp-compat-overlay-slot], .components-modal__screen-overlay)',
+							ignoreFiles: [
+								// Already hand-scoped; re-prefixing would double-nest it.
+								'odyssey-stats/src/app.scss',
+								// Calypso's global stylesheet (html/body reset, @wordpress/components
+								// CSS) — left unscoped for now.
+								'client/assets/stylesheets/style.scss',
+								// @visx/tooltip's TooltipInPortal (used by the line chart tooltip)
+								// portals to an unmarked <body> div, always wrapped in a `.visx-tooltip`
+								// element. This file already self-scopes under `.visx-tooltip` (like
+								// app.scss does under `[id="wpcom"]`) — re-prefixing would double-nest it.
+								'client/my-sites/stats/components/line-chart/styles.scss',
+								// Third-party CSS is out of scope here.
+								/node_modules/,
+							],
+							// Selectors that target the real <html>/<body>/document root. Prefixing
+							// these would require #wpcom to be its own ancestor, which is impossible —
+							// the rule would just go dead. Leave them unscoped instead.
+							exclude: [
+								/^:root(?![\w-])/, // :root, :root[data-theme=dark] .foo
+								/(^|[\s,])(html|body)(?=$|[\s.[:#,])/, // html.rtl, body.lockscroll
+								/^\.rtl(?![\w-])/, // .rtl button
+								/^:lang\(/, // :lang(he) .rtl
+								/^\[lang/, // [lang*=fr] .wp-brand-font
+								/^\[dir[~|^$*]?=/, // [dir=rtl] .chevron
+							],
+						} ),
+						autoprefixerPlugin(),
+					],
 				},
-				prelude: `@use '${ require.resolve(
-					'calypso/assets/stylesheets/shared/_utils.scss'
-				) }' as *;`,
 			} ),
 			FileConfig.loader(),
 			{
@@ -106,7 +151,7 @@ module.exports = {
 		],
 	},
 	resolve: {
-		extensions: [ '.json', '.js', '.jsx', '.ts', '.tsx' ],
+		extensions: [ '.json', '.js', '.mjs', '.jsx', '.ts', '.tsx' ],
 		mainFields: [ 'browser', 'calypso:src', 'module', 'main' ],
 		conditionNames: [ 'calypso:src', 'import', 'module', 'require' ],
 		alias: {
@@ -128,14 +173,30 @@ module.exports = {
 		new DependencyExtractionWebpackPlugin( {
 			injectPolyfill: true,
 			useDefaults: false,
-			requestToHandle: defaultRequestToHandle,
+			requestToHandle: ( request ) => {
+				if ( request === 'react-dom/client' ) {
+					return 'wp-element';
+				}
+
+				return defaultRequestToHandle( request );
+			},
 			requestToExternal: ( request ) => {
+				if ( request === 'react-dom/client' ) {
+					return [ 'wp', 'element' ];
+				}
+
 				if (
 					! [
 						'lodash',
 						'lodash-es',
 						'react',
 						'react-dom',
+						// Externalize the JSX runtime alongside react/react-dom so it matches the
+						// React that WordPress provides. Bundling it (the default here, since it is
+						// absent from this allow list) ships an older React's runtime, whose elements
+						// React 19 rejects ("A React Element from an older version of React was rendered").
+						'react/jsx-runtime',
+						'react/jsx-dev-runtime',
 						'@wordpress/api-fetch',
 						'@wordpress/components',
 						'@wordpress/compose',
@@ -200,6 +261,10 @@ module.exports = {
 		new webpack.NormalModuleReplacementPlugin(
 			/^calypso\/components\/data\/query-site-purchases$/,
 			path.resolve( __dirname, 'src/components/odyssey-query-site-purchases' )
+		),
+		new webpack.NormalModuleReplacementPlugin(
+			/^calypso\/components\/data\/query-sites$/,
+			path.resolve( __dirname, 'src/components/odyssey-query-sites' )
 		),
 		new webpack.NormalModuleReplacementPlugin(
 			/^calypso\/components\/data\/query-products-list$/,

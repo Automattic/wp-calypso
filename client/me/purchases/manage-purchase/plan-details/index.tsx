@@ -7,7 +7,7 @@ import ClipboardButtonInput from 'calypso/components/clipboard-button-input';
 import QueryPluginKeys from 'calypso/components/data/query-plugin-keys';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import SectionHeader from 'calypso/components/section-header';
-import { getName, isExpired, isPartnerPurchase } from 'calypso/lib/purchases';
+import { getName, isPartnerPurchase, isRemoved } from 'calypso/lib/purchases';
 import { getPluginsForSite } from 'calypso/state/plugins/premium/selectors';
 import {
 	getByPurchaseId,
@@ -78,7 +78,7 @@ export class PurchasePlanDetails extends Component<
 			return this.renderPlaceholder();
 		}
 
-		if ( ! purchase || isExpired( purchase ) ) {
+		if ( ! purchase || isRemoved( purchase ) ) {
 			return null;
 		}
 

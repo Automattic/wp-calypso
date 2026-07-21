@@ -6,7 +6,6 @@ import { Icon, external } from '@wordpress/icons';
 import { isURL, getAuthority, getProtocol } from '@wordpress/url';
 import clsx from 'clsx';
 import { translate } from 'i18n-calypso';
-import { get, some, flatMap } from 'lodash';
 import PropTypes from 'prop-types';
 import { PureComponent } from 'react';
 import { connect } from 'react-redux';
@@ -17,11 +16,10 @@ import { navigate } from 'calypso/lib/navigate';
 import { createAccountUrl } from 'calypso/lib/paths';
 import isReaderTagEmbedPage from 'calypso/lib/reader/is-reader-tag-embed-page';
 import withDimensions from 'calypso/lib/with-dimensions';
+import { PLACEHOLDER_STATE, POST_COMMENT_DISPLAY_TYPES } from 'calypso/reader/comments/constants';
 import { getStreamUrl } from 'calypso/reader/route';
 import { recordAction, recordGaEvent, recordPermalinkClick } from 'calypso/reader/stats';
 import { getUserProfileUrl } from 'calypso/reader/user-profile/user-profile.utils';
-import { expandComments } from 'calypso/state/comments/actions';
-import { PLACEHOLDER_STATE, POST_COMMENT_DISPLAY_TYPES } from 'calypso/state/comments/constants';
 import { getCurrentUser, isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
 import { registerLastActionRequiresLogin } from 'calypso/state/reader-ui/actions';
@@ -67,6 +65,8 @@ class PostComment extends PureComponent {
 		showReadMoreInActions: PropTypes.bool,
 		hidePingbacksAndTrackbacks: PropTypes.bool,
 		isInlineComment: PropTypes.bool,
+		expandComments: PropTypes.func,
+		comments: PropTypes.array,
 
 		/**
 		 * If commentsToShow is not provided then it is assumed that all child comments should be displayed.
@@ -98,6 +98,8 @@ class PostComment extends PureComponent {
 		showReadMoreInActions: false,
 		hidePingbacksAndTrackbacks: false,
 		shouldHighlightNew: false,
+		expandComments: noop,
+		comments: [],
 	};
 
 	state = {
@@ -172,9 +174,9 @@ class PostComment extends PureComponent {
 			return [];
 		}
 
-		const immediateChildren = get( commentsTree, [ id, 'children' ], [] );
+		const immediateChildren = commentsTree?.[ id ]?.children ?? [];
 		return immediateChildren.concat(
-			flatMap( immediateChildren, ( childId ) => this.getAllChildrenIds( childId ) )
+			immediateChildren.flatMap( ( childId ) => this.getAllChildrenIds( childId ) )
 		);
 	};
 
@@ -183,9 +185,7 @@ class PostComment extends PureComponent {
 		const { enableCaterpillar, commentsToShow, commentId } = this.props;
 		const childIds = this.getAllChildrenIds( commentId );
 
-		return (
-			enableCaterpillar && commentsToShow && some( childIds, ( id ) => ! commentsToShow[ id ] )
-		);
+		return enableCaterpillar && commentsToShow && childIds.some( ( id ) => ! commentsToShow[ id ] );
 	};
 
 	// has visisble child --> true
@@ -193,7 +193,7 @@ class PostComment extends PureComponent {
 		const { commentsToShow, commentId } = this.props;
 		const childIds = this.getAllChildrenIds( commentId );
 
-		return commentsToShow && some( childIds, ( id ) => commentsToShow[ id ] );
+		return commentsToShow && childIds.some( ( id ) => commentsToShow[ id ] );
 	};
 
 	renderRepliesList() {
@@ -208,7 +208,7 @@ class PostComment extends PureComponent {
 			maxDepth,
 		} = this.props;
 
-		const commentChildrenIds = get( commentsTree, [ commentId, 'children' ] );
+		const commentChildrenIds = commentsTree?.[ commentId ]?.children;
 		// Hide children if more than maxChildrenToShow, but not if replying
 		const exceedsMaxChildrenToShow =
 			commentChildrenIds && commentChildrenIds.length < maxChildrenToShow;
@@ -273,6 +273,8 @@ class PostComment extends PureComponent {
 								onCommentSubmit={ this.props.onCommentSubmit }
 								shouldHighlightNew={ this.props.shouldHighlightNew }
 								isInlineComment={ this.props.isInlineComment }
+								expandComments={ this.props.expandComments }
+								comments={ this.props.comments }
 							/>
 						) ) }
 					</ol>
@@ -287,11 +289,8 @@ class PostComment extends PureComponent {
 		}
 
 		// If a comment save is pending, don't show the form
-		const placeholderState = get( this.props.commentsTree, [
-			this.props.commentId,
-			'data',
-			'placeholderState',
-		] );
+		const placeholderState =
+			this.props.commentsTree?.[ this.props.commentId ]?.data?.placeholderState;
 		if ( placeholderState === PLACEHOLDER_STATE.PENDING ) {
 			return null;
 		}
@@ -309,8 +308,8 @@ class PostComment extends PureComponent {
 	}
 
 	getAuthorDetails = ( commentId ) => {
-		const comment = get( this.props.commentsTree, [ commentId, 'data' ], {} );
-		const commentAuthor = get( comment, 'author', {} );
+		const comment = this.props.commentsTree?.[ commentId ]?.data ?? {};
+		const commentAuthor = comment?.author ?? {};
 		const commentAuthorName = decodeEntities( commentAuthor.name );
 
 		let commentAuthorUrl;
@@ -399,7 +398,7 @@ class PostComment extends PureComponent {
 			shouldHighlightNew,
 		} = this.props;
 
-		const comment = get( commentsTree, [ commentId, 'data' ] );
+		const comment = commentsTree?.[ commentId ]?.data;
 		const isPingbackOrTrackback = comment.type === 'trackback' || comment.type === 'pingback';
 
 		if ( ! comment || ( hidePingbacksAndTrackbacks && isPingbackOrTrackback ) ) {
@@ -415,10 +414,8 @@ class PostComment extends PureComponent {
 				: commentsToShow[ commentId ];
 
 		// todo: connect this constants to the state (new selector)
-		const haveReplyWithError = some(
-			get( commentsTree, [ this.props.commentId, 'children' ] ),
-			( childId ) =>
-				get( commentsTree, [ childId, 'data', 'placeholderState' ] ) === PLACEHOLDER_STATE.ERROR
+		const haveReplyWithError = ( commentsTree?.[ this.props.commentId ]?.children ?? [] ).some(
+			( childId ) => commentsTree?.[ childId ]?.data?.placeholderState === PLACEHOLDER_STATE.ERROR
 		);
 
 		// If it's a pending comment, use the current user as the author
@@ -440,7 +437,7 @@ class PostComment extends PureComponent {
 		}
 
 		// Author Details
-		const parentCommentId = get( comment, 'parent.ID' );
+		const parentCommentId = comment?.parent?.ID;
 		const { commentAuthorUrl, commentAuthorName } = this.getAuthorDetails( commentId );
 		const { commentAuthorUrl: parentAuthorUrl, commentAuthorName: parentAuthorName } =
 			this.getAuthorDetails( parentCommentId );
@@ -506,7 +503,6 @@ class PostComment extends PureComponent {
 					post={ this.props.post || {} }
 					comment={ comment }
 					activeReplyCommentId={ this.props.activeReplyCommentId }
-					commentId={ this.props.commentId }
 					handleReply={ this.handleReply }
 					onLikeToggle={ this.onLikeToggle }
 					onReplyCancel={ this.props.onReplyCancel }
@@ -520,7 +516,11 @@ class PostComment extends PureComponent {
 						blogId={ post.site_ID }
 						postId={ post.ID }
 						parentCommentId={ commentId }
+						comments={ this.props.comments }
+						commentsTree={ commentsTree }
 						commentsToShow={ commentsToShow }
+						expandComments={ this.props.expandComments }
+						recordReaderTracksEvent={ this.props.recordReaderTracksEvent }
 					/>
 				) }
 				{ this.renderRepliesList() }
@@ -534,7 +534,7 @@ const ConnectedPostComment = connect(
 		currentUser: getCurrentUser( state ),
 		isLoggedIn: isUserLoggedIn( state ),
 	} ),
-	{ expandComments, recordReaderTracksEvent, registerLastActionRequiresLogin }
+	{ recordReaderTracksEvent, registerLastActionRequiresLogin }
 )( withDimensions( PostComment ) );
 
 export default ConnectedPostComment;

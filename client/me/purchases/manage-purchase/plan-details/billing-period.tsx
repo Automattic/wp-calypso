@@ -3,7 +3,7 @@ import page from '@automattic/calypso-router';
 import { Button, FormLabel } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { JETPACK_SUPPORT } from '@automattic/urls';
-import { localize, type LocalizeProps } from 'i18n-calypso';
+import { fixMe, localize, type LocalizeProps } from 'i18n-calypso';
 import moment from 'moment';
 import { Fragment, Component } from 'react';
 import { connect } from 'react-redux';
@@ -12,11 +12,10 @@ import FormSettingExplanation from 'calypso/components/forms/form-setting-explan
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import {
-	isExpired,
 	isExpiring,
-	isRenewing,
+	isRenewingBeforeExpiration,
 	showCreditCardExpiringWarning,
-	isInExpirationGracePeriod,
+	isExpiredOrRemoved,
 } from 'calypso/lib/purchases';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import type { Purchases, SiteDetails } from '@automattic/data-stores';
@@ -67,7 +66,7 @@ export class PlanBillingPeriod extends Component<
 			return translate( 'Billed yearly, credit card expiring soon' );
 		}
 
-		if ( isRenewing( purchase ) && purchase.renewDate && ! isInExpirationGracePeriod( purchase ) ) {
+		if ( isRenewingBeforeExpiration( purchase ) && purchase.renewDate ) {
 			const renewDate = moment( purchase.renewDate );
 			return translate( 'Billed yearly, renews on %s', {
 				args: renewDate.format( 'LL' ),
@@ -75,18 +74,14 @@ export class PlanBillingPeriod extends Component<
 			} );
 		}
 
-		if (
-			isExpiring( purchase ) &&
-			purchase.expiryDate &&
-			! isInExpirationGracePeriod( purchase )
-		) {
+		if ( isExpiring( purchase ) && purchase.expiryDate ) {
 			return translate( 'Billed yearly, expires on %s', {
 				args: moment( purchase.expiryDate ).format( 'LL' ),
 				comment: '%s is the expiration date in format M DD, Y, for example: June 10, 2019',
 			} );
 		}
 
-		if ( isExpired( purchase ) && purchase.expiryDate ) {
+		if ( isExpiredOrRemoved( purchase ) && purchase.expiryDate ) {
 			return translate( 'Billed yearly, expired %(timeSinceExpiry)s', {
 				args: {
 					timeSinceExpiry: moment( purchase.expiryDate ).fromNow(),
@@ -99,7 +94,7 @@ export class PlanBillingPeriod extends Component<
 	}
 
 	renderBillingPeriod() {
-		const { purchase, site, translate, isProductOwner } = this.props;
+		const { purchase, site, translate, moment, isProductOwner } = this.props;
 		if ( ! purchase ) {
 			return;
 		}
@@ -116,11 +111,27 @@ export class PlanBillingPeriod extends Component<
 		}
 
 		const isTemporarySite = purchase.isAttachedToHoldingSite;
+		const isExpired = isExpiredOrRemoved( purchase );
+
+		const billedMonthlyText =
+			isExpired && purchase.expiryDate
+				? fixMe( {
+						text: 'Billed monthly, expired %(timeSinceExpiry)s',
+						newCopy: translate( 'Billed monthly, expired %(timeSinceExpiry)s', {
+							args: {
+								timeSinceExpiry: moment( purchase.expiryDate ).fromNow(),
+							},
+							comment:
+								'timeSinceExpiry is of the form "[number] [time-period] ago" i.e. "3 days ago"',
+						} ),
+						oldCopy: translate( 'Billed monthly' ),
+				  } )
+				: translate( 'Billed monthly' );
 
 		return (
 			<Fragment>
 				<FormSettingExplanation>
-					{ translate( 'Billed monthly' ) }
+					{ billedMonthlyText }
 					{ site && isProductOwner && ! purchase.isLocked && (
 						<Button onClick={ this.handleMonthlyToYearlyButtonClick } primary compact>
 							{ translate( 'Upgrade to yearly billing' ) }

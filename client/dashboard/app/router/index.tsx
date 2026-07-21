@@ -4,6 +4,8 @@ import NotFound from '../404';
 import UnknownError from '../500';
 import { handleOnCatch } from '../logger';
 import { startPerformanceTracking } from '../performance-tracking';
+import { createAgencyRoutes } from './agency';
+import { createAgencyClientRoutes } from './agency-client';
 import { createDomainsRoutes } from './domains';
 import { createEmailsRoutes } from './emails';
 import { createMeRoutes } from './me';
@@ -44,10 +46,27 @@ const indexRoute = createRoute( {
 	},
 } );
 
+// Catch-all so every unmatched path still resolves to a route. Without it, an
+// unmatched path renders the not-found component but has no matched route, and
+// navigation APIs like useBlocker throw "No route found for location".
+const catchAllRoute = createRoute( {
+	getParentRoute: () => rootRoute,
+	path: '$',
+	component: NotFound,
+} );
+
 const createRouteTree = ( config: AppConfig ) => {
 	const children = [];
 
 	children.push( indexRoute );
+
+	if ( config.supports.agency ) {
+		children.push( ...createAgencyRoutes() );
+	}
+
+	if ( config.supports.agencyClient ) {
+		children.push( ...createAgencyClientRoutes() );
+	}
 
 	if ( config.supports.sites ) {
 		children.push( ...createSitesRoutes( config ) );
@@ -72,6 +91,8 @@ const createRouteTree = ( config: AppConfig ) => {
 	if ( config.supports.startStoreRoute ) {
 		children.push( startStoreRoute );
 	}
+
+	children.push( catchAllRoute );
 
 	return rootRoute.addChildren( children );
 };

@@ -2,6 +2,7 @@ import { formatNumber } from '@automattic/number-formatters';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import React from 'react';
+import StatsInfotip from 'calypso/my-sites/stats/components/stats-infotip';
 import usePlanUsageQuery from 'calypso/my-sites/stats/hooks/use-plan-usage-query';
 import useSiteTypes from 'calypso/my-sites/stats/hooks/use-site-types';
 
@@ -83,6 +84,16 @@ const PlanUsage: React.FC< PlanUsageProps > = ( {
 						productName: 'Stats',
 					},
 				} ) }
+				<StatsInfotip
+					className="plan-usage-heading-info"
+					iconSize={ 18 }
+					label={ translate( 'Learn more about billable views' ) }
+					side="bottom"
+				>
+					{ translate(
+						"Billable views are your total views minus your two highest-traffic days each billing cycle, so big spikes won't count against your limit. You'll only need to upgrade if you exceed your limit for three cycles in a row."
+					) }
+				</StatsInfotip>
 			</h3>
 			<div className={ progressClassNames } key="progress">
 				<div
@@ -91,7 +102,7 @@ const PlanUsage: React.FC< PlanUsageProps > = ( {
 					key="bar"
 				></div>
 				<div key="usage">
-					{ translate( '%(numberOfUsage)s / %(numberOfLimit)s views', {
+					{ translate( '%(numberOfUsage)s / %(numberOfLimit)s billable views', {
 						args: {
 							numberOfUsage: formatNumber( usage ),
 							numberOfLimit: typeof limit === 'number' ? formatNumber( limit ) : '-',

@@ -18,6 +18,7 @@ import {
 	trackImageStudioReelShareNotConnected,
 	trackImageStudioReelShareNotPublished,
 } from '../../utils/tracking';
+import type { ShareSurface } from '../../utils/tracking';
 import type { ShareClipIdentity } from '../share-types';
 
 const SOCIAL_STORE = 'jetpack-social-plugin';
@@ -54,7 +55,10 @@ interface UseReelShareReturn {
 	cancelShare: () => void;
 }
 
-export function useReelShare( clip?: ShareClipIdentity ): UseReelShareReturn {
+export function useReelShare(
+	surface: ShareSurface,
+	clip?: ShareClipIdentity
+): UseReelShareReturn {
 	const sharePath = getReelSharePostPath();
 	const hasOverride = clip !== undefined;
 
@@ -93,12 +97,22 @@ export function useReelShare( clip?: ShareClipIdentity ): UseReelShareReturn {
 	const { editPost } = useDispatch( EDITOR_STORE ) as {
 		editPost: ( edits: { meta: Record< string, unknown > } ) => void;
 	};
-	const { shareCurrentPost } = useDispatch( SOCIAL_STORE ) as {
+	// `jetpack-social-plugin` is registered by the Jetpack Social editor bundle,
+	// which isn't always present (e.g. Atomic sites without Jetpack Social
+	// active). `useDispatch` returns null for an unregistered store, so read the
+	// action off the result instead of destructuring it — destructuring null
+	// throws at render and takes down the whole editor. Mirrors the `?.`-guarded
+	// `useSelect( SOCIAL_STORE )` above.
+	const socialActions = useDispatch( SOCIAL_STORE ) as {
 		shareCurrentPost: (
 			params: { message: string; skipped_connections: string[] },
 			config: { apiPath: string; savePost?: boolean }
 		) => Promise< boolean >;
-	};
+	} | null;
+	// `socialActions` is null when the store isn't registered; optional chaining
+	// yields `undefined` for `shareCurrentPost` in that case. The action itself
+	// is required on a registered store, so it stays non-optional above.
+	const shareCurrentPost = socialActions?.shareCurrentPost;
 	const { addNotice: addModalNotice } = useDispatch( imageStudioStore ) as ImageStudioActions;
 	const { createNotice: createCoreNotice } = useDispatch( 'core/notices' ) as {
 		createNotice?: (
@@ -182,6 +196,7 @@ export function useReelShare( clip?: ShareClipIdentity ): UseReelShareReturn {
 		}
 
 		trackImageStudioReelShareClicked( {
+			surface,
 			attachmentId: currentAttachmentId ?? 0,
 			durationSeconds: currentDurationSeconds,
 		} );
@@ -192,20 +207,20 @@ export function useReelShare( clip?: ShareClipIdentity ): UseReelShareReturn {
 		// when the store registers later — leaving the closure with stale
 		// `hasInstagramConnection: false` even after IG hydrates. Standalone
 		// `select()` always reads the current registry state.
-		const freshSocial = freshSelect( SOCIAL_STORE ) as
+		const freshSocial = freshSelect( SOCIAL_STORE ) as unknown as
 			| { getConnections: () => Connection[] }
 			| undefined;
 		const freshConnections = freshSocial?.getConnections?.() ?? [];
 		const freshIgConnection = freshConnections.find( ( c ) => c.service_name === IG_SERVICE );
 		const freshIgIsEnabled = !! freshIgConnection && freshIgConnection.enabled !== false;
 
-		const freshEditor = freshSelect( EDITOR_STORE ) as
+		const freshEditor = freshSelect( EDITOR_STORE ) as unknown as
 			| { isCurrentPostPublished: () => boolean }
 			| undefined;
 		const freshIsPublished = freshEditor?.isCurrentPostPublished?.() ?? false;
 
 		if ( ! currentVideoUrl || ! currentAttachmentId ) {
-			trackImageStudioReelShareInvalidState();
+			trackImageStudioReelShareInvalidState( { surface } );
 			await showNotice(
 				__( 'Generate a video first to share it as a Reel.', __i18n_text_domain__ ),
 				'error'
@@ -218,7 +233,7 @@ export function useReelShare( clip?: ShareClipIdentity ): UseReelShareReturn {
 		}
 
 		if ( ! freshIgConnection ) {
-			trackImageStudioReelShareNotConnected();
+			trackImageStudioReelShareNotConnected( { surface } );
 			await showNotice(
 				__(
 					'Connect Instagram in your site marketing settings to share Reels.',
@@ -238,7 +253,7 @@ export function useReelShare( clip?: ShareClipIdentity ): UseReelShareReturn {
 		}
 
 		if ( ! freshIgIsEnabled ) {
-			trackImageStudioReelShareConnectionDisabled();
+			trackImageStudioReelShareConnectionDisabled( { surface } );
 			await showNotice(
 				__(
 					'Instagram sharing is not enabled for this post. Enable it in the Jetpack Social sidebar to share this Reel.',
@@ -252,7 +267,7 @@ export function useReelShare( clip?: ShareClipIdentity ): UseReelShareReturn {
 		}
 
 		if ( ! freshIsPublished ) {
-			trackImageStudioReelShareNotPublished();
+			trackImageStudioReelShareNotPublished( { surface } );
 			await showNotice(
 				__( 'Publish this post first to share it as an Instagram Reel.', __i18n_text_domain__ ),
 				'warning',
@@ -273,6 +288,7 @@ export function useReelShare( clip?: ShareClipIdentity ): UseReelShareReturn {
 		pendingShare,
 		sharePath,
 		showNotice,
+		surface,
 	] );
 
 	const confirmShare = useCallback( async () => {
@@ -286,10 +302,11 @@ export function useReelShare( clip?: ShareClipIdentity ): UseReelShareReturn {
 			return;
 		}
 
-		if ( ! currentVideoUrl || ! currentAttachmentId || ! sharePath ) {
+		if ( ! currentVideoUrl || ! currentAttachmentId || ! sharePath || ! shareCurrentPost ) {
 			// requestShare gated these already; if we somehow lost state between
-			// open and confirm, fall back to closing the dialog rather than
-			// dispatching a half-formed share.
+			// open and confirm — or the social store never registered, leaving
+			// `shareCurrentPost` undefined — fall back to closing the dialog
+			// rather than dispatching a half-formed share.
 			setPendingShare( null );
 			return;
 		}
@@ -298,7 +315,7 @@ export function useReelShare( clip?: ShareClipIdentity ): UseReelShareReturn {
 		// the list at requestShare time would miss any connection that finishes
 		// hydrating while the dialog is open — those would NOT be in
 		// `skipped_connections` and the Reel would also publish to them.
-		const freshSocial = freshSelect( SOCIAL_STORE ) as
+		const freshSocial = freshSelect( SOCIAL_STORE ) as unknown as
 			| { getConnections: () => Connection[] }
 			| undefined;
 		const freshConnections = freshSocial?.getConnections?.() ?? [];
@@ -341,7 +358,7 @@ export function useReelShare( clip?: ShareClipIdentity ): UseReelShareReturn {
 			);
 
 			if ( success ) {
-				trackImageStudioReelShareDispatched();
+				trackImageStudioReelShareDispatched( { surface } );
 				await showNotice(
 					__(
 						'Reel shared to Instagram. It may take a few minutes to appear on your account.',
@@ -352,11 +369,11 @@ export function useReelShare( clip?: ShareClipIdentity ): UseReelShareReturn {
 			} else {
 				// shareCurrentPost already created a notice via @wordpress/notices;
 				// avoid a second one. Just record telemetry.
-				trackImageStudioReelShareFailed();
+				trackImageStudioReelShareFailed( { surface } );
 			}
 		} catch ( err ) {
 			const message = err instanceof Error ? err.message : undefined;
-			trackImageStudioReelShareFailed( message );
+			trackImageStudioReelShareFailed( { surface, errorMessage: message } );
 		} finally {
 			isSharingRef.current = false;
 		}
@@ -369,14 +386,15 @@ export function useReelShare( clip?: ShareClipIdentity ): UseReelShareReturn {
 		editPost,
 		sharePath,
 		shareCurrentPost,
+		surface,
 	] );
 
 	const cancelShare = useCallback( () => {
 		if ( pendingShare ) {
-			trackImageStudioReelShareCancelled();
+			trackImageStudioReelShareCancelled( { surface } );
 		}
 		setPendingShare( null );
-	}, [ pendingShare ] );
+	}, [ pendingShare, surface ] );
 
 	return {
 		isVisible,

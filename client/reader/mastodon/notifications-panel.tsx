@@ -1,60 +1,43 @@
 import { useMastodonNotificationsInfiniteQuery } from '@automattic/api-queries';
-import { useMemo, useState } from 'react';
-import { useDispatch } from 'react-redux';
-import { UnknownAction } from 'redux';
-import { ThunkDispatch } from 'redux-thunk';
-import { SocialNotificationsList } from 'calypso/reader/social';
-import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
+import { useCallback } from 'react';
+import { SocialNotificationsPanel } from 'calypso/reader/social';
+import { getThreadUrl } from './route';
 import type { MastodonConnection } from '@automattic/api-core';
-import type { ChipFilter } from 'calypso/reader/social';
-import type { AppState } from 'calypso/types';
+import type { NotificationInAppUrlResolver } from 'calypso/reader/social';
+
+// The wpcom backend emits Mastodon notification target URIs as
+// `mastodon:<instance>:<status_id>` (see NotificationsNormalizerTest). The
+// status id is the home-instance local id, which is exactly what the
+// in-app thread route expects.
+const MASTODON_TARGET_URI_RE = /^mastodon:[^:]+:([0-9]{1,32})$/;
 
 interface Props {
 	connection: MastodonConnection;
 }
 
 export function NotificationsPanel( { connection }: Props ) {
-	const [ filter, setFilter ] = useState< ChipFilter >( 'all' );
-	const dispatch = useDispatch< ThunkDispatch< AppState, void, UnknownAction > >();
-	const { data, isPending, isError, fetchNextPage, hasNextPage, isFetchingNextPage } =
-		useMastodonNotificationsInfiniteQuery( connection.id, { filter } );
-
-	const items = useMemo( () => data?.pages.flatMap( ( p ) => p.items ) ?? [], [ data ] );
+	const connectionId = connection.id;
+	const getInAppUrl = useCallback< NotificationInAppUrlResolver >(
+		( notification ) => {
+			const target = notification.target;
+			if ( ! target || target.kind !== 'post' ) {
+				return null;
+			}
+			const matched = target.uri.match( MASTODON_TARGET_URI_RE );
+			if ( ! matched ) {
+				return null;
+			}
+			return getThreadUrl( connectionId, matched[ 1 ] );
+		},
+		[ connectionId ]
+	);
 
 	return (
-		<SocialNotificationsList
-			items={ items }
-			isLoading={ isPending }
-			isLoadingMore={ isFetchingNextPage }
-			isError={ isError }
-			hasMore={ !! hasNextPage }
-			onLoadMore={ () => {
-				fetchNextPage();
-			} }
-			filter={ filter }
-			onFilterChange={ ( next ) => {
-				setFilter( next );
-				dispatch(
-					recordReaderTracksEvent( 'calypso_reader_mastodon_notifications_filter_changed', {
-						connection_id: connection.id,
-						filter: next,
-					} )
-				);
-			} }
-			onStackExpandedChange={ ( expanded, member_count ) => {
-				dispatch(
-					recordReaderTracksEvent(
-						expanded
-							? 'calypso_reader_mastodon_notifications_stack_expanded'
-							: 'calypso_reader_mastodon_notifications_stack_collapsed',
-						{
-							connection_id: connection.id,
-							member_count,
-							canonical_type: 'follow',
-						}
-					)
-				);
-			} }
+		<SocialNotificationsPanel
+			connectionId={ connectionId }
+			source="mastodon"
+			useNotificationsInfiniteQuery={ useMastodonNotificationsInfiniteQuery }
+			getInAppUrl={ getInAppUrl }
 		/>
 	);
 }

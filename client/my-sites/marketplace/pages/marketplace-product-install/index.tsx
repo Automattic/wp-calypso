@@ -48,6 +48,7 @@ import {
 	isMarketplaceProduct as isMarketplaceProductSelector,
 	getProductsList,
 } from 'calypso/state/products-list/selectors';
+import { getCurrentQueryArguments } from 'calypso/state/selectors/get-current-query-arguments';
 import getPluginUploadError from 'calypso/state/selectors/get-plugin-upload-error';
 import getPluginUploadProgress from 'calypso/state/selectors/get-plugin-upload-progress';
 import getUploadedPluginId from 'calypso/state/selectors/get-uploaded-plugin-id';
@@ -76,11 +77,21 @@ const MarketplaceProductInstall = ( {
 }: MarketplacePluginInstallProps ) => {
 	const isPluginUploadFlow = ! pluginSlug && ! themeSlug;
 	const [ currentStep, setCurrentStep ] = useState( 0 );
-	const [ initializeInstallFlow, setInitializeInstallFlow ] = useState( false );
+	// Ref instead of state so the install effect can be guarded synchronously —
+	// the dispatch inside the effect notifies redux subscribers (via
+	// useSyncExternalStore) before a setState would commit, which would
+	// otherwise re-enter the effect and dispatch repeatedly.
+	const installFlowInitiatedRef = useRef( false );
 	const [ atomicFlow, setAtomicFlow ] = useState( false );
 	const [ nonInstallablePlanError, setNonInstallablePlanError ] = useState( false );
 	const [ noDirectAccessError, setNoDirectAccessError ] = useState( false );
-	const [ directInstallationAllowed, setDirectInstallationAllowed ] = useState( false );
+	const [ userDirectInstallationAllowed, setUserDirectInstallationAllowed ] = useState( false );
+	// The signup "Get started" flow reaches this page via a full-page redirect, which drops the
+	// in-memory purchase-flow state that normally authorizes the install. When that redirect marks
+	// itself as trusted (directInstall), proceed with the install directly instead of waiting on
+	// handoff state that will never arrive (which otherwise leaves the page polling forever).
+	const directInstallFromSignup = useSelector( getCurrentQueryArguments )?.directInstall != null;
+	const directInstallationAllowed = userDirectInstallationAllowed || directInstallFromSignup;
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 	const selectedSiteSlug = useSelector( getSelectedSiteSlug );
@@ -152,7 +163,7 @@ const MarketplaceProductInstall = ( {
 	const hasAtomicFeature = useSelector( ( state ) =>
 		siteHasFeature( state, selectedSite?.ID ?? null, WPCOM_FEATURES_ATOMIC )
 	);
-	const supportsAtomicUpgrade = useRef< boolean >();
+	const supportsAtomicUpgrade = useRef< boolean >( undefined );
 	useEffect( () => {
 		supportsAtomicUpgrade.current = hasAtomicFeature;
 	}, [ hasAtomicFeature ] );
@@ -167,14 +178,16 @@ const MarketplaceProductInstall = ( {
 	// Check if the user plan is enough for installation or it is a self-hosted jetpack site
 	// if not, check again in 2s and show an error message
 	useEffect( () => {
-		if ( ! supportsAtomicUpgrade.current && ! isJetpackSelfHosted ) {
-			waitFor( 2 ).then( () => {
-				if ( ! supportsAtomicUpgrade.current && ! isJetpackSelfHosted ) {
-					setNonInstallablePlanError( true );
-				}
-			} );
+		if ( hasAtomicFeature || isJetpackSelfHosted || nonInstallablePlanError ) {
+			return;
 		}
-	} );
+		const id = setTimeout( () => {
+			if ( ! supportsAtomicUpgrade.current && ! isJetpackSelfHosted ) {
+				setNonInstallablePlanError( true );
+			}
+		}, 2000 );
+		return () => clearTimeout( id );
+	}, [ hasAtomicFeature, isJetpackSelfHosted, nonInstallablePlanError ] );
 
 	const { primaryDomain } = useSelector( getPurchaseFlowState );
 
@@ -188,7 +201,9 @@ const MarketplaceProductInstall = ( {
 	useEffect( () => {
 		if ( shouldShowNoDirectAccessError ) {
 			waitFor( 2 ).then( () => {
-				shouldShowNoDirectAccessError && setNoDirectAccessError( true );
+				if ( shouldShowNoDirectAccessError ) {
+					setNoDirectAccessError( true );
+				}
 			} );
 		}
 	}, [ shouldShowNoDirectAccessError ] );
@@ -208,11 +223,11 @@ const MarketplaceProductInstall = ( {
 		if (
 			( marketplaceInstallationInProgress || directInstallationAllowed ) &&
 			! isPluginUploadFlow &&
-			! initializeInstallFlow &&
+			! installFlowInitiatedRef.current &&
 			( wporgPlugin || wpOrgTheme )
 		) {
+			installFlowInitiatedRef.current = true;
 			const triggerInstallFlow = () => {
-				setInitializeInstallFlow( true );
 				waitFor( 1 ).then( () => setCurrentStep( 1 ) );
 			};
 
@@ -242,7 +257,6 @@ const MarketplaceProductInstall = ( {
 		marketplaceInstallationInProgress,
 		directInstallationAllowed,
 		isPluginUploadFlow,
-		initializeInstallFlow,
 		siteId,
 		wporgPlugin,
 		wpOrgTheme,
@@ -453,7 +467,7 @@ const MarketplaceProductInstall = ( {
 								<Button href={ productPage }>{ translate( 'Go to the theme page' ) }</Button>
 
 								{ ! isMarketplaceProduct ? (
-									<Button primary onClick={ () => setDirectInstallationAllowed( true ) }>
+									<Button primary onClick={ () => setUserDirectInstallationAllowed( true ) }>
 										{ translate( 'Activate theme' ) }
 									</Button>
 								) : (
@@ -517,13 +531,17 @@ const MarketplaceProductInstall = ( {
 			return (
 				<EmptyContent
 					title={ null }
-					line={ translate( 'An error occurred while installing the plugin.' ) }
-					action={ translate( 'Back' ) }
-					actionURL={
+					line={ translate(
+						'An error occurred while installing the plugin. Please try uploading it again from WP Admin.'
+					) }
+					secondaryAction={ translate( 'Back' ) }
+					secondaryActionURL={
 						isPluginUploadFlow
 							? `/plugins/upload/${ selectedSiteSlug }`
 							: `/plugins/${ pluginSlug }/${ selectedSiteSlug }`
 					}
+					action={ translate( 'Upload from WP Admin' ) }
+					actionURL={ `https://${ selectedSiteSlug }/wp-admin/plugin-install.php?tab=upload` }
 				/>
 			);
 		}

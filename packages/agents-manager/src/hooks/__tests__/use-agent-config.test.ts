@@ -97,6 +97,14 @@ describe( 'useAgentConfig', () => {
 		delete ( globalThis as Record< string, unknown > ).agentsManagerData;
 	} );
 
+	it( 'uses a Dolly host override from `agentsManagerData.agentId`', () => {
+		( globalThis as Record< string, unknown > ).agentsManagerData = {
+			agentId: 'dolly',
+		};
+		const { result } = renderHook( () => useAgentConfig() );
+		expect( result.current.agentId ).toBe( 'dolly' );
+	} );
+
 	it( 'URL `?agent=` param overrides `agentsManagerData.agentId`', () => {
 		( globalThis as Record< string, unknown > ).agentsManagerData = {
 			agentId: 'woo-workflow-unified_chat',

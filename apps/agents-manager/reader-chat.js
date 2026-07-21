@@ -4,13 +4,15 @@
  * Loads the Agents Manager chat UI for blog readers (logged-out visitors).
  * Reads config from window.JetpackReaderChatConfig, mounts to #jetpack-reader-chat.
  *
- * IMPORTANT: This bundle is built without DependencyExtractionWebpackPlugin so
- * React, @wordpress/data, and all other WP packages are bundled inline. This
- * makes it safe to load on the frontend where WordPress's script loader is absent.
+ * IMPORTANT: Dependency extraction only emits the cache-busting asset manifest.
+ * Externalization is disabled, so React, WordPress data, and all other WP packages
+ * are bundled inline. This makes the bundle safe to load on the frontend where
+ * WordPress's script loader is absent.
  */
 
 import './config';
 import AgentsManager, { AGENTS_MANAGER_STORE } from '@automattic/agents-manager';
+import { createCalypsoAuthProvider } from '@automattic/agents-manager/src/auth/calypso-auth-provider';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { dispatch, select, subscribe } from '@wordpress/data';
 import { useState, useEffect } from '@wordpress/element';
@@ -70,12 +72,24 @@ function injectScopedReset() {
 		 */
 		#jetpack-reader-chat input,
 		#jetpack-reader-chat textarea,
-		#jetpack-reader-chat button,
 		.agents-manager-chat input,
-		.agents-manager-chat textarea,
-		.agents-manager-chat button {
+		.agents-manager-chat textarea {
 			font-family: inherit !important;
 			font-size: inherit !important;
+			letter-spacing: inherit !important;
+			text-transform: none !important;
+		}
+		#jetpack-reader-chat button,
+		.agents-manager-chat button {
+			font-family: inherit !important;
+			text-transform: none !important;
+		}
+		#jetpack-reader-chat input::placeholder,
+		#jetpack-reader-chat textarea::placeholder,
+		.agents-manager-chat input::placeholder,
+		.agents-manager-chat textarea::placeholder {
+			letter-spacing: inherit !important;
+			text-transform: none !important;
 		}
 		/*
 		 * Themes often give inputs/textareas thick borders that leak
@@ -93,8 +107,107 @@ function injectScopedReset() {
 		}
 		#jetpack-reader-chat,
 		.agents-manager-chat {
+			font-size: 16px !important;
 			line-height: 1.5 !important;
 			color: #1e1e1e !important;
+		}
+		/*
+		 * The .agenttic widget's sizes are derived from --base-font-size. Some blog
+		 * themes set html { font-size: 62.5%; }, which shrinks every rem in
+		 * the widget. Pin the wrapper and widget base to px so inherited em
+		 * text and rem-derived spacing do not inherit the host page's scale.
+		 */
+		.agents-manager-chat .agenttic {
+			--base-font-size: 16px !important;
+		}
+		.agents-manager-chat .components-button {
+			-webkit-appearance: none !important;
+			appearance: none !important;
+			font-family: inherit !important;
+			font-size: inherit !important;
+			font-weight: 400 !important;
+			letter-spacing: normal !important;
+			line-height: normal !important;
+			text-decoration: none !important;
+			text-transform: none !important;
+		}
+		.agents-manager-chat .components-button.has-icon:not(.components-dropdown-menu__menu-item) {
+			align-items: center !important;
+			background: transparent !important;
+			border: 0 !important;
+			border-radius: 4px !important;
+			box-shadow: none !important;
+			color: var( --color-foreground, #1e1e1e ) !important;
+			display: inline-flex !important;
+			justify-content: center !important;
+			margin: 0 !important;
+		}
+		.agents-manager-chat .agents-manager-chat-header .components-button.has-icon:not(.components-dropdown-menu__menu-item),
+		.agents-manager-chat .agents-manager-copy-action-button.components-button.has-icon,
+		.agents-manager-chat .agents-manager-zoom-action-button.components-button.has-icon {
+			height: 32px !important;
+			padding: 6px !important;
+			width: 32px !important;
+		}
+		.agents-manager-chat .agents-manager-chat-header .components-button.has-icon:not(.components-dropdown-menu__menu-item):hover:not(:disabled):not([aria-disabled="true"]),
+		.agents-manager-chat .agents-manager-copy-action-button.components-button.has-icon:hover:not(:disabled):not([aria-disabled="true"]),
+		.agents-manager-chat .agents-manager-zoom-action-button.components-button.has-icon:hover:not(:disabled):not([aria-disabled="true"]) {
+			background: var( --color-muted, rgba( 0, 0, 0, 0.06 ) ) !important;
+		}
+		.agents-manager-chat-header__menu-popover {
+			--color-foreground: #1e1e1e;
+			--color-muted: rgba( 0, 0, 0, 0.06 );
+			font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", Arial, sans-serif !important;
+			font-size: 13px !important;
+			line-height: 1.4 !important;
+			color: var( --color-foreground, #1e1e1e ) !important;
+		}
+		.agents-manager-chat-header__menu-popover .components-button,
+		.agents-manager-chat-header__menu-popover .components-dropdown-menu__menu-item {
+			-webkit-appearance: none !important;
+			appearance: none !important;
+			background: transparent !important;
+			border: 0 !important;
+			box-shadow: none !important;
+			color: var( --color-foreground, #1e1e1e ) !important;
+			font-family: inherit !important;
+			font-size: inherit !important;
+			font-weight: 400 !important;
+			letter-spacing: normal !important;
+			line-height: inherit !important;
+			text-decoration: none !important;
+			text-transform: none !important;
+		}
+		.agents-manager-chat-header__menu-popover .components-dropdown-menu__menu-item,
+		.agents-manager-chat .agents-manager-chat-header .components-dropdown-menu__menu .components-dropdown-menu__menu-item {
+			align-items: center !important;
+			box-sizing: border-box !important;
+			display: flex !important;
+			gap: 8px !important;
+			height: auto !important;
+			justify-content: flex-start !important;
+			min-height: 32px !important;
+			padding: 6px 8px !important;
+			text-align: left !important;
+			white-space: nowrap !important;
+			width: 100% !important;
+		}
+		.agents-manager-chat .agents-manager-chat-header .components-dropdown-menu__menu .components-dropdown-menu__menu-item {
+			margin: 0 !important;
+			max-width: none !important;
+		}
+		.agents-manager-chat-header__menu-popover .components-dropdown-menu__menu-item:hover:not(:disabled):not([aria-disabled="true"]) {
+			background: var( --color-muted, rgba( 0, 0, 0, 0.06 ) ) !important;
+		}
+		.agents-manager-chat-header__menu-popover .components-dropdown-menu__menu-item[aria-disabled="true"],
+		.agents-manager-chat-header__menu-popover .components-dropdown-menu__menu-item:disabled {
+			background: transparent !important;
+			color: var( --color-foreground, #1e1e1e ) !important;
+			cursor: default !important;
+			opacity: 0.5 !important;
+		}
+		.agents-manager-chat-header__menu-popover .components-dropdown-menu__menu-item svg {
+			fill: currentColor !important;
 		}
 		/*
 		 * wp-components dropdown/menu fix: the popover is portalled to body
@@ -151,6 +264,9 @@ function injectScopedReset() {
 		.agents-manager-sidebar-fab {
 			left: 16px !important;
 			right: auto !important;
+		}
+		.agents-manager-chat--undocked [data-slot="chat-footer"] > [data-slot="suggestions"] button {
+			background: #ffffff !important;
 		}
 
 	`;
@@ -394,6 +510,10 @@ function normalizeSuggestions( items, resultIdPrefix ) {
 	} );
 }
 
+function getSuggestionsFetchHeaders( siteId = readerSiteId ) {
+	return createCalypsoAuthProvider( siteId, { logWpcomJwtFailure: false } )();
+}
+
 /**
  * Call the reader-chat-suggestions agent with an arbitrary user message and
  * return a list of {id,label,prompt} suggestions, or null on failure.
@@ -447,7 +567,7 @@ async function fetchSuggestions( { messageText, requestIdPrefix, resultIdPrefix,
 		const fetchOptions = {
 			method: 'POST',
 			credentials: 'omit',
-			headers: { 'Content-Type': 'application/json' },
+			headers: await getSuggestionsFetchHeaders(),
 			body: JSON.stringify( body ),
 		};
 		if ( controller ) {
@@ -566,6 +686,20 @@ Questions should feel like natural next-step curiosity: clarify a detail, go dee
 		resultIdPrefix: 'followup',
 		signal,
 	} );
+}
+
+/**
+ * Read the shared Agents Manager store state, treating an unusable store
+ * as "no state". `select( storeName )` can throw in some @wordpress/data
+ * implementations when the store isn't registered.
+ * @param {Function} [selectFn] @wordpress/data select, injectable for tests.
+ */
+function getAgentsManagerState( selectFn = select ) {
+	try {
+		return selectFn( AGENTS_MANAGER_STORE )?.getAgentsManagerState?.();
+	} catch {
+		return undefined;
+	}
 }
 
 /**
@@ -748,13 +882,49 @@ function setupFollowupChips() {
 	}
 
 	unsubscribeOpen = subscribe( () => {
-		const state = select( AGENTS_MANAGER_STORE ).getAgentsManagerState?.();
-		if ( state?.isOpen ) {
+		if ( getAgentsManagerState()?.isOpen ) {
 			scheduleObserve();
 		}
 	} );
 
 	tryObserve();
+}
+
+/**
+ * Invoke `onFirstOpen` the first time the chat panel opens.
+ *
+ * Checks current state first (covers a relaunch where the panel is
+ * already open), then watches the shared store for isOpen turning
+ * true. Fires at most once.
+ *
+ * @param {Function} onFirstOpen    Callback to run on the first open.
+ * @param {Object}   deps           Store accessors, injectable for tests.
+ * @param {Function} deps.select    @wordpress/data select.
+ * @param {Function} deps.subscribe @wordpress/data subscribe.
+ */
+function watchFirstChatOpen( onFirstOpen, deps = { select, subscribe } ) {
+	const isOpenNow = () => !! getAgentsManagerState( deps.select )?.isOpen;
+
+	if ( isOpenNow() ) {
+		onFirstOpen();
+		return;
+	}
+
+	let fired = false;
+	let unsubscribe = null;
+	unsubscribe = deps.subscribe( () => {
+		if ( fired || ! isOpenNow() ) {
+			return;
+		}
+		fired = true;
+		unsubscribe?.();
+		onFirstOpen();
+	} );
+	// If the subscribe implementation invoked the callback synchronously,
+	// the handle wasn't available inside the callback — release it now.
+	if ( fired ) {
+		unsubscribe();
+	}
 }
 
 function setupInitialSuggestions() {
@@ -806,8 +976,7 @@ function setupTracksEvents() {
 	// false -> true. Fires once per open; closing + reopening re-fires.
 	let wasOpen = false;
 	const unsubscribe = subscribe( () => {
-		const state = select( AGENTS_MANAGER_STORE ).getAgentsManagerState?.();
-		const isOpen = !! state?.isOpen;
+		const isOpen = !! getAgentsManagerState()?.isOpen;
 		if ( isOpen && ! wasOpen ) {
 			recordTracksEvent( 'jetpack_reader_chat_opened', baseProps );
 		}
@@ -821,7 +990,7 @@ function setupTracksEvents() {
 		if ( ! target || typeof target.closest !== 'function' ) {
 			return;
 		}
-		const suggestionBtn = target.closest( '.Suggestions-module_button' );
+		const suggestionBtn = target.closest( '[data-slot="suggestions"] button' );
 		if ( suggestionBtn ) {
 			recordTracksEvent( 'jetpack_reader_chat_suggestion_click', {
 				...baseProps,
@@ -858,15 +1027,20 @@ function setupTracksEvents() {
 			trigger: 'enter',
 		} );
 	};
-	document.addEventListener( 'click', handleClick );
-	document.addEventListener( 'keydown', handleKeydown );
+	// Capture phase: agenttic-ui stops propagation on suggestion-chip
+	// clicks (Suggestions.tsx) and composer Enter keydowns (ChatInput.tsx),
+	// so bubble-phase listeners on document never see those events —
+	// suggestion_click recorded zero events in production. Capture runs
+	// top-down before any handler can stop propagation.
+	document.addEventListener( 'click', handleClick, true );
+	document.addEventListener( 'keydown', handleKeydown, true );
 
 	window.addEventListener(
 		'pagehide',
 		() => {
 			unsubscribe?.();
-			document.removeEventListener( 'click', handleClick );
-			document.removeEventListener( 'keydown', handleKeydown );
+			document.removeEventListener( 'click', handleClick, true );
+			document.removeEventListener( 'keydown', handleKeydown, true );
 		},
 		{ once: true }
 	);
@@ -958,10 +1132,16 @@ if ( container ) {
 	const root = createRoot( container );
 	root.render( <ReaderChatApp /> );
 
-	setupInitialSuggestions();
+	// Defer the suggestions fetch until the reader actually opens the
+	// chat. The widget mounts on every public page view of an enabled
+	// site, but most visitors never open the chat — and on sites over
+	// their AI Search quota an at-mount fetch logs a failed run on every
+	// page view. First open → fetch once; the wpcom-side 24h cache keeps
+	// repeat opens fast.
+	watchFirstChatOpen( setupInitialSuggestions );
 }
 
-// Exported for unit tests only — these are pure helpers with no side effects.
+// Exported for unit tests only; injectScopedReset mutates document.head.
 export {
 	parseAgentSseResponse,
 	slugify,
@@ -973,4 +1153,7 @@ export {
 	getReaderClientContext,
 	normalizeSuggestions,
 	parseSuggestionsResponse,
+	getSuggestionsFetchHeaders,
+	injectScopedReset,
+	watchFirstChatOpen,
 };

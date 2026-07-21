@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.2.2]
+
+- Declare React 19 compatibility for package consumers (#111721).
+
 ## [1.2.1]
 
 ### Changed

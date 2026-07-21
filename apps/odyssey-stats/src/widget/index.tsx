@@ -1,8 +1,7 @@
 import '@automattic/calypso-polyfills';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { createRoot } from '@wordpress/element';
 import { useTranslate } from 'i18n-calypso';
-import { FunctionComponent } from 'react';
-import { createRoot } from 'react-dom/client';
 import JetpackLogo from 'calypso/components/jetpack-logo';
 import config from '../lib/config-api';
 import getSiteAdminUrl from '../lib/selectors/get-site-admin-url';
@@ -11,6 +10,7 @@ import setLocale from '../lib/set-locale';
 import Highlights from './highlights';
 import MiniChart from './mini-chart';
 import Modules from './modules';
+import type { FunctionComponent } from 'react';
 
 import './index.scss';
 

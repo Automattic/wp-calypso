@@ -9,6 +9,7 @@ import {
 	trackImageStudioGenericShareCompleted,
 	trackImageStudioGenericShareFailed,
 } from '../../utils/tracking';
+import type { ShareSurface } from '../../utils/tracking';
 import type { ShareClipIdentity } from '../share-types';
 
 interface UseGenericShareReturn {
@@ -40,19 +41,27 @@ function canShareVideoFiles( nav: NavigatorWithShare, filename: string ): boolea
 	}
 }
 
-export function useGenericShare( clip?: ShareClipIdentity ): UseGenericShareReturn {
+export function useGenericShare(
+	surface: ShareSurface,
+	clip?: ShareClipIdentity
+): UseGenericShareReturn {
 	const hasOverride = clip !== undefined;
 
-	const { storeUrl, storeAttachmentId, entryPoint, isAiProcessing } = useSelect( ( select ) => {
-		const videoStore = select( videoStudioStore );
-		const studio = select( imageStudioStore );
-		return {
-			storeUrl: videoStore.getCurrentVideoUrl?.() ?? null,
-			storeAttachmentId: videoStore.getCurrentAttachmentId?.() ?? null,
-			entryPoint: studio.getEntryPoint?.() ?? null,
-			isAiProcessing: studio.getImageStudioAiProcessing?.() ?? false,
-		};
-	}, [] );
+	const { storeUrl, storeAttachmentId, entryPoint, isAiProcessing, postPermalink } = useSelect(
+		( select ) => {
+			const videoStore = select( videoStudioStore );
+			const studio = select( imageStudioStore );
+			const editor = select( 'core/editor' ) as { getPermalink?: () => string | null } | undefined;
+			return {
+				storeUrl: videoStore.getCurrentVideoUrl?.() ?? null,
+				storeAttachmentId: videoStore.getCurrentAttachmentId?.() ?? null,
+				entryPoint: studio.getEntryPoint?.() ?? null,
+				isAiProcessing: studio.getImageStudioAiProcessing?.() ?? false,
+				postPermalink: editor?.getPermalink?.() ?? null,
+			};
+		},
+		[]
+	);
 
 	const currentVideoUrl = hasOverride ? clip.url : storeUrl;
 	const currentAttachmentId = hasOverride ? clip.attachmentId : storeAttachmentId;
@@ -69,17 +78,24 @@ export function useGenericShare( clip?: ShareClipIdentity ): UseGenericShareRetu
 	/**
 	 * See `useReelShare` — same rationale. Sidebar callers (override clip) get
 	 * notices on the editor snackbar; modal callers get them in-modal.
+	 *
+	 * Memoized so `handleShare` (which depends on it) doesn't get re-created
+	 * on every render. The dispatch refs from `useDispatch` are stable, so
+	 * once `hasOverride` settles `showNotice` keeps a stable identity.
 	 */
-	const showNotice = async ( message: string, type: 'success' | 'warning' | 'error' ) => {
-		if ( hasOverride ) {
-			await createCoreNotice?.( type, message, {
-				type: 'snackbar',
-				isDismissible: true,
-			} );
-			return;
-		}
-		await addModalNotice( message, type );
-	};
+	const showNotice = useCallback(
+		async ( message: string, type: 'success' | 'warning' | 'error' ) => {
+			if ( hasOverride ) {
+				await createCoreNotice?.( type, message, {
+					type: 'snackbar',
+					isDismissible: true,
+				} );
+				return;
+			}
+			await addModalNotice( message, type );
+		},
+		[ hasOverride, createCoreNotice, addModalNotice ]
+	);
 
 	// Synchronous double-click guard — same rationale as in useReelShare.
 	// Kept alongside `isSharing` state because state updates lag a render and
@@ -121,13 +137,13 @@ export function useGenericShare( clip?: ShareClipIdentity ): UseGenericShareRetu
 			// fail. When there's no file-share support, surface an error rather than
 			// falling back to a download — the toolbar already has a download action.
 			if ( ! nav || ! canShareVideoFiles( nav, filename ) ) {
-				trackImageStudioGenericShareClicked( { method: 'web-share-unsupported' } );
-				trackImageStudioGenericShareFailed( { method: 'web-share-unsupported' } );
+				trackImageStudioGenericShareClicked( { surface, method: 'web-share-unsupported' } );
+				trackImageStudioGenericShareFailed( { surface, method: 'web-share-unsupported' } );
 				await showShareFailedNotice();
 				return;
 			}
 
-			trackImageStudioGenericShareClicked( { method: 'web-share' } );
+			trackImageStudioGenericShareClicked( { surface, method: 'web-share' } );
 			try {
 				const response = await fetch( currentVideoUrl );
 				if ( ! response.ok ) {
@@ -138,8 +154,9 @@ export function useGenericShare( clip?: ShareClipIdentity ): UseGenericShareRetu
 				await nav.share?.( {
 					files: [ file ],
 					title: __( 'Generated video clip', __i18n_text_domain__ ),
+					...( postPermalink ? { text: postPermalink } : {} ),
 				} );
-				trackImageStudioGenericShareCompleted( { method: 'web-share' } );
+				trackImageStudioGenericShareCompleted( { surface, method: 'web-share' } );
 			} catch ( err ) {
 				if ( err instanceof DOMException && err.name === 'AbortError' ) {
 					// User dismissed the share sheet — silent, no notice.
@@ -149,6 +166,7 @@ export function useGenericShare( clip?: ShareClipIdentity ): UseGenericShareRetu
 				const failureKind =
 					err instanceof Error && err.message.startsWith( 'Fetch failed:' ) ? 'http' : undefined;
 				trackImageStudioGenericShareFailed( {
+					surface,
 					method: 'web-share',
 					...( failureKind ? { failureKind } : {} ),
 					message,
@@ -159,7 +177,7 @@ export function useGenericShare( clip?: ShareClipIdentity ): UseGenericShareRetu
 			isSharingRef.current = false;
 			setIsSharing( false );
 		}
-	}, [ showNotice, currentAttachmentId, currentVideoUrl ] );
+	}, [ showNotice, currentAttachmentId, currentVideoUrl, surface, postPermalink ] );
 
 	return {
 		isVisible,

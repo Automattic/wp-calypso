@@ -6,11 +6,11 @@ const mockUseGenericShare = jest.fn();
 const mockDialogProps = jest.fn();
 
 jest.mock( '../../../hooks/use-reel-share', () => ( {
-	useReelShare: () => mockUseReelShare(),
+	useReelShare: ( ...args: unknown[] ) => mockUseReelShare( ...args ),
 } ) );
 
 jest.mock( '../../../hooks/use-generic-share', () => ( {
-	useGenericShare: () => mockUseGenericShare(),
+	useGenericShare: ( ...args: unknown[] ) => mockUseGenericShare( ...args ),
 } ) );
 
 jest.mock( '@wordpress/i18n', () => ( {
@@ -84,6 +84,12 @@ describe( '<ShareReelAction />', () => {
 		render( <ShareReelAction /> );
 		expect( screen.getByRole( 'button', { name: /Share on Instagram/i } ) ).toBeInTheDocument();
 		expect( screen.getByRole( 'button', { name: /Share to other apps/i } ) ).toBeInTheDocument();
+	} );
+
+	it( 'labels both share hooks with the modal surface', () => {
+		render( <ShareReelAction /> );
+		expect( mockUseReelShare ).toHaveBeenCalledWith( 'modal' );
+		expect( mockUseGenericShare ).toHaveBeenCalledWith( 'modal' );
 	} );
 
 	it( 'renders only the IG button when generic share is hidden', () => {

@@ -1,6 +1,7 @@
 import styled from '@emotion/styled';
 import { useTranslate } from 'i18n-calypso';
 import type { Purchase } from 'calypso/lib/purchases/types';
+import type { JSX } from 'react';
 
 const RenewalSubtext = styled.div`
 	margin-top: 1em;

@@ -283,6 +283,7 @@ describe( 'PurchaseMeta', () => {
 							ID: 1,
 							product_slug: 'wp_difm_lite',
 							expiry_status: 'one_time_purchase',
+							subscription_status: 'active',
 						},
 					],
 				},

@@ -27,6 +27,7 @@ export const siteBackupsQuery = ( siteId: number ) =>
 
 export const siteBackupEnqueueMutation = ( siteId: number ) =>
 	mutationOptions( {
+		meta: { statId: 'site-backup-enqueue' },
 		mutationFn: () => enqueueSiteBackup( siteId ),
 		onSuccess: () => {
 			queryClient.invalidateQueries( siteBackupsQuery( siteId ) );
@@ -78,5 +79,6 @@ export const siteBackupSizeQuery = ( siteId: number ) =>
 
 export const siteUpdateRetentionDaysMutation = ( siteId: number, retentionDays: number ) =>
 	mutationOptions( {
+		meta: { statId: 'site-retention-days-update' },
 		mutationFn: () => updateRetentionDays( siteId, retentionDays ),
 	} );

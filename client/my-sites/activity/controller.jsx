@@ -1,5 +1,5 @@
 import config from '@automattic/calypso-config';
-import { isEqual } from 'lodash';
+import isEqual from 'fast-deep-equal/es6';
 import IsCurrentUserAdminSwitch from 'calypso/components/jetpack/is-current-user-admin-switch';
 import NotAuthorizedPage from 'calypso/components/jetpack/not-authorized-page';
 import ActivityLog from 'calypso/my-sites/activity/activity-log';

@@ -12,7 +12,6 @@
 const fs = require( 'fs' );
 const readline = require( 'readline' );
 const glob = require( 'glob' );
-const _ = require( 'lodash' );
 const SourceMap = require( 'source-map' );
 const StackFrame = require( 'stackframe' );
 const StackTraceGPS = require( 'stacktrace-gps' );
@@ -152,15 +151,15 @@ function showUsage() {
 }
 
 function run( args ) {
-	const usage = _.includes( args, '-?' ) || _.includes( args, '--help' );
+	const usage = args.includes( '-?' ) || args.includes( '--help' );
 
 	if ( usage ) {
 		showUsage( args[ 0 ], args[ 1 ] );
 		process.exit( 0 );
 	}
 
-	verbose = _.includes( args, '-v' ) || _.includes( args, '--verbose' );
-	const fileName = _.find( args, ( el, index ) => {
+	verbose = args.includes( '-v' ) || args.includes( '--verbose' );
+	const fileName = args.find( ( el, index ) => {
 		return 2 <= index && ! el.startsWith( '-' );
 	} );
 

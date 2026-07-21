@@ -1,8 +1,9 @@
 import { createContext, useContext } from '@wordpress/element';
-import type { SitesWithWooPaymentsState, WooPaymentsData } from './types';
+import type { SitesWithWooPaymentsState } from './types';
+import type { WooPaymentsData } from '@automattic/api-core';
 
 interface WooPaymentsContextType {
-	woopaymentsData: WooPaymentsData;
+	woopaymentsData?: WooPaymentsData;
 	isLoadingWooPaymentsData: boolean;
 	sitesWithPluginsStates: SitesWithWooPaymentsState[];
 }

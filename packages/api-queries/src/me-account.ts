@@ -4,6 +4,7 @@ import { queryClient } from './query-client';
 
 export const closeAccountMutation = () =>
 	mutationOptions( {
+		meta: { statId: 'account-close' },
 		mutationFn: closeAccount,
 		onSuccess: () => {
 			// Clear all cached data when account is closed
@@ -13,6 +14,7 @@ export const closeAccountMutation = () =>
 
 export const restoreAccountMutation = () =>
 	mutationOptions( {
+		meta: { statId: 'account-restore' },
 		mutationFn: ( token: string ) => restoreAccount( token ),
 		onSuccess: () => {
 			// Invalidate all queries to refresh data after account restoration

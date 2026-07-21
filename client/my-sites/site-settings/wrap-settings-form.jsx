@@ -1,9 +1,10 @@
+import { omit, pick } from '@automattic/js-utils';
 import debugFactory from 'debug';
+import isEqual from 'fast-deep-equal/es6';
 import { localize } from 'i18n-calypso';
-import { flowRight, get, isEqual, keys, omit, pick } from 'lodash';
 import { Component } from 'react';
 import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
+import { compose, bindActionCreators } from 'redux';
 import QueryJetpackSettings from 'calypso/components/data/query-jetpack-settings';
 import QuerySiteSettings from 'calypso/components/data/query-site-settings';
 import { withCompleteLaunchpadTasksWithNotice } from 'calypso/launchpad/hooks/with-complete-launchpad-tasks-with-notice';
@@ -112,7 +113,11 @@ const wrapSettingsForm = ( getFormSettings ) => ( SettingsForm ) => {
 			const launchpadTasksToComplete = [];
 
 			Object.entries( FIELDS_TO_LAUNCHPAD_TASKS ).forEach( ( [ field, taskSlugs ] ) => {
-				if ( get( this.state.modifiedFields, field ) ) {
+				// `field` can be a dotted path (e.g. `subscription_options.welcome`)
+				// into the nested `modifiedFields` map, so walk each segment.
+				if (
+					field.split( '.' ).reduce( ( value, key ) => value?.[ key ], this.state.modifiedFields )
+				) {
 					const slugs = Array.isArray( taskSlugs ) ? taskSlugs : [ taskSlugs ];
 					launchpadTasksToComplete.push( ...slugs );
 				}
@@ -390,7 +395,7 @@ const wrapSettingsForm = ( getFormSettings ) => ( SettingsForm ) => {
 			let saveInstantSearchRequest;
 			const siteSettingsSaveError = getSiteSettingsSaveError( state, siteId );
 			const settingsFields = {
-				site: keys( settings ),
+				site: Object.keys( settings || {} ),
 			};
 			const path = getCurrentRouteParameterized( state, siteId );
 
@@ -399,7 +404,7 @@ const wrapSettingsForm = ( getFormSettings ) => ( SettingsForm ) => {
 			if ( isJetpack ) {
 				const jetpackSettings = getJetpackSettings( state, siteId );
 				settings = { ...settings, ...jetpackSettings };
-				settingsFields.jetpack = keys( jetpackSettings );
+				settingsFields.jetpack = Object.keys( jetpackSettings || {} );
 				const fieldsToUpdate = /^error_/.test( fields.lang_id )
 					? omit( fields, 'lang_id' )
 					: fields;
@@ -465,7 +470,7 @@ const wrapSettingsForm = ( getFormSettings ) => ( SettingsForm ) => {
 		}
 	);
 
-	return flowRight(
+	return compose(
 		withCompleteLaunchpadTasksWithNotice,
 		trackForm,
 		protectForm,

@@ -1,3 +1,10 @@
+@import "calypso/assets/stylesheets/shared/functions/z-index";
+
+@import "@automattic/typography/styles/variables";
+@import "calypso/assets/stylesheets/shared/mixins/breakpoints";
+@import "calypso/assets/stylesheets/shared/mixins/long-content-fade";
+@import "calypso/assets/stylesheets/shared/mixins/placeholder";
+
 .reader-related-card__heading {
 	color: var(--color-text-subtle);
 	font-size: $font-body-small;
@@ -18,7 +25,7 @@
 
 .reader-related-card__link,
 .reader-related-card__link:visited {
-	color: var(--color-primary);
+	color: var(--color-link);
 	font-family: $sans;
 
 	&:hover,
@@ -236,7 +243,7 @@
 	line-height: 18px;
 	text-overflow: ellipsis;
 	width: calc(100% - 25px);
-	color: var(--color-primary);
+	color: var(--color-link);
 
 	&::after {
 		@include long-content-fade( $size: 10% );
@@ -361,7 +368,7 @@
 	z-index: z-index(".reader-related-card__meta", ".follow-button");
 
 	.reader-follow-feed {
-		fill: var(--color-primary);
+		fill: var(--color-link);
 	}
 
 	@include breakpoint-deprecated( "<960px" ) {
@@ -384,7 +391,7 @@
 }
 
 // Placeholders
-.reader-related-card.is-placeholder {
+:root .reader-related-card.card.is-placeholder {
 	.reader-related-card__title,
 	.reader-related-card__excerpt,
 	.reader-related-card__featured-image {

@@ -1,3 +1,7 @@
+@import "@automattic/typography/styles/variables";
+@import "calypso/assets/stylesheets/shared/mixins/breakpoints";
+@import "calypso/assets/stylesheets/shared/mixins/placeholder";
+
 .manage-purchase > button.card,
 .manage-purchase > a.card,
 .manage-purchase > div > a.card,
@@ -228,6 +232,25 @@
 	}
 }
 
+.manage-purchase__feature-list-items {
+	list-style: none;
+	margin: 0;
+	padding: 0;
+	transform: translateX( -4px );
+}
+
+.manage-purchase__feature-list-item {
+	display: flex;
+	align-items: flex-start;
+	gap: 12px;
+	padding-block: 2px;
+}
+
+.manage-purchase__feature-icon {
+	fill: var( --color-success );
+	flex-shrink: 0;
+}
+
 .manage-purchase__refund-text {
 	display: block;
 	font-size: $font-body-extra-small;
@@ -349,13 +372,24 @@
 
 	.manage-purchase__no-payment-method {
 		display: flex;
-		align-items: center;
+		align-items: flex-start;
+		flex-direction: column;
 		gap: 4px;
+
+		@include breakpoint-deprecated( '<660px' ) {
+			clear: left;
+			text-align: left;
+		}
 
 		svg {
 			flex-shrink: 0;
 			fill: var( --color-warning-30 );
 		}
+	}
+
+	.manage-purchase__add-payment-method-link {
+		margin-block-start: 4px;
+		height: auto;
 	}
 
 	.payment-logo {
@@ -393,12 +427,29 @@
 	margin-bottom: 6px;
 }
 
+.manage-purchase__delayed-downgrade-pending-notice.calypso-notice,
 .manage-purchase__expiring-credit-card-notice.calypso-notice,
+.manage-purchase__other-renewable-purchases-notice.calypso-notice,
 .manage-purchase__purchase-expiring-notice.calypso-notice {
+	// Inset the notice to match its neighbors. width:auto is required: the base
+	// .calypso-notice is width:100% border-box, so margin-inline alone overflows.
+	width: auto;
 	margin-bottom: 10px;
+	margin-inline: 16px;
 
 	@include breakpoint-deprecated( '>660px' ) {
 		margin-bottom: 16px;
+		margin-inline: 24px;
+	}
+
+	// On mobile, drop the action onto its own full-width row instead of cramming
+	// it inline beside the notice text (same idiom as step-wrapper's header).
+	@include breakpoint-deprecated( '<660px' ) {
+		flex-wrap: wrap;
+
+		.calypso-notice__action {
+			flex-basis: 100%;
+		}
 	}
 }
 

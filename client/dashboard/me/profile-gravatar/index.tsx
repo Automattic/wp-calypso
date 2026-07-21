@@ -148,7 +148,7 @@ export default function GravatarProfileSection() {
 							title={ __( 'Public Gravatar profile' ) }
 							description={ createInterpolateElement(
 								sprintf(
-									/* translators: %1$s: User email */
+									/* translators: %s: User email */
 									__(
 										'Your WordPress profile is linked to Gravatar, making your Gravatar public by default. It might appear on other sites using Gravatar when logged in with <strong>%s</strong>. Manage your Gravatar settings on your <external>Gravatar profile</external>'
 									),

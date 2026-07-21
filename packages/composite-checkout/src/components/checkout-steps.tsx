@@ -427,7 +427,9 @@ function CheckoutStepGroupWrapper( {
 			// context consumers get the modified store because its identity has
 			// changed.
 			setTimeout( () => {
-				isMounted.current && setContextValue( { ...store } );
+				if ( isMounted.current ) {
+					setContextValue( { ...store } );
+				}
 			}, 0 );
 		} );
 	}, [ store ] );
@@ -682,6 +684,7 @@ export function CheckoutFormSubmit( {
 	disableSubmitButton,
 	submitButton,
 	onPageLoadError,
+	continueToNextIncompleteStep,
 }: {
 	validateForm?: () => Promise< boolean >;
 	submitButtonHeader?: ReactNode;
@@ -689,10 +692,18 @@ export function CheckoutFormSubmit( {
 	disableSubmitButton?: boolean;
 	submitButton?: ReactNode;
 	onPageLoadError?: CheckoutPageErrorCallback;
+	continueToNextIncompleteStep?: boolean;
 } ) {
+	const { __ } = useI18n();
 	const { state, actions } = useContext( CheckoutStepGroupContext );
-	const { activeStepNumber, totalSteps, stepCompleteStatus, stepSkipValidationOnSubmitMap } = state;
-	const { getStepCompleteCallback, setStepCompleteStatus } = actions;
+	const {
+		activeStepNumber,
+		totalSteps,
+		stepCompleteStatus,
+		stepIdMap,
+		stepSkipValidationOnSubmitMap,
+	} = state;
+	const { getStepCompleteCallback, setStepCompleteStatus, makeStepActive } = actions;
 	const isThereAnotherNumberedStep = activeStepNumber < totalSteps;
 	const areAllStepsComplete = Object.values( stepCompleteStatus ).every(
 		( isComplete ) => isComplete === true
@@ -764,15 +775,93 @@ export function CheckoutFormSubmit( {
 		}
 		return false;
 	} )();
+
+	const getStepIdFromNumber = ( stepNumber: number ): string | undefined =>
+		Object.entries( stepIdMap ).find( ( [ , num ] ) => num === stepNumber )?.[ 0 ];
+
+	// The next step the user needs to address: the first incomplete step at or
+	// after the active step, falling back to the lowest incomplete step overall.
+	const nextIncompleteStepId = ( () => {
+		for ( let step = Math.max( activeStepNumber, 1 ); step <= totalSteps; step++ ) {
+			if ( ! stepCompleteStatus[ step ] ) {
+				return getStepIdFromNumber( step );
+			}
+		}
+		for ( let step = 1; step <= totalSteps; step++ ) {
+			if ( ! stepCompleteStatus[ step ] ) {
+				return getStepIdFromNumber( step );
+			}
+		}
+		return undefined;
+	} )();
+
+	// Show "Continue" only when the submit button would otherwise be disabled
+	// because there is another numbered step after the active one AND there is
+	// actually an incomplete step to go to. The latter guard matters for returning
+	// purchasers whose steps are all auto-completed while the active step is still
+	// an earlier step: there is nothing to continue to, so show the Pay button.
+	const showContinueToNextIncompleteStep =
+		!! continueToNextIncompleteStep &&
+		! disableSubmitButton &&
+		isThereAnotherNumberedStep &&
+		!! nextIncompleteStepId;
+
+	const goToNextIncompleteStep = async () => {
+		// Prefer the next incomplete step; otherwise just advance one step so the
+		// user always moves forward (covers the rare all-complete-but-not-last case).
+		const targetStepId =
+			nextIncompleteStepId ?? getStepIdFromNumber( Math.min( activeStepNumber + 1, totalSteps ) );
+		if ( ! targetStepId ) {
+			return;
+		}
+		if ( stepIdMap[ targetStepId ] === activeStepNumber ) {
+			// The active step is itself the step that still needs completing.
+			// makeStepActive would be a no-op here because it only runs completion
+			// callbacks for the steps *before* its target, so it would never validate
+			// the active step. Run the active step's own completion callback instead so
+			// the button always tries to complete the step: surfacing inline validation
+			// errors when invalid and advancing when valid, exactly like the step's
+			// inline "Continue" button.
+			await getStepCompleteCallback( activeStepNumber )();
+		} else {
+			// makeStepActive walks forward from the active step, completing each step
+			// until it reaches the target or stops on an intervening step that fails to
+			// validate (leaving that step active).
+			await makeStepActive( targetStepId );
+		}
+		// Scroll to whichever step ended up active (read from the live store): the step
+		// we advanced to on success, or the step that still needs attention on failure.
+		// Desktop does not auto-scroll on step changes, so we always scroll explicitly.
+		const stepIdToScrollTo = getStepIdFromNumber( state.activeStepNumber ) ?? targetStepId;
+		document
+			.getElementById( stepIdToScrollTo )
+			?.scrollIntoView?.( { behavior: 'smooth', block: 'start' } );
+	};
+
 	return (
 		<SubmitButtonWrapper className="checkout-steps__submit-button-wrapper" ref={ submitWrapperRef }>
 			{ submitButtonHeader || null }
-			{ submitButton || (
-				<CheckoutSubmitButton
-					validateForm={ wrappedValidateForm }
-					disabled={ isDisabled }
-					onLoadError={ onSubmitButtonLoadError }
-				/>
+			{ showContinueToNextIncompleteStep ? (
+				<Button
+					type="button"
+					buttonType="primary"
+					fullWidth
+					className="checkout-steps__continue-button"
+					// Distinguish this from the per-step inline "Continue" buttons for
+					// assistive technology, which would otherwise announce "Continue" twice.
+					aria-label={ __( 'Continue to the next step' ) }
+					onClick={ goToNextIncompleteStep }
+				>
+					{ __( 'Continue' ) }
+				</Button>
+			) : (
+				submitButton || (
+					<CheckoutSubmitButton
+						validateForm={ wrappedValidateForm }
+						disabled={ isDisabled }
+						onLoadError={ onSubmitButtonLoadError }
+					/>
+				)
 			) }
 			<div className="checkout-steps__submit-footer-wrapper">{ submitButtonFooter || null }</div>
 		</SubmitButtonWrapper>
@@ -995,6 +1084,38 @@ export function useCompleteAllSteps(): CompleteAllSteps {
 export function useMakeStepActive(): MakeStepActive {
 	const store = useContext( CheckoutStepGroupContext );
 	return store.actions.makeStepActive;
+}
+
+/**
+ * Returns the id of the step the "Continue" submit button would advance to (the
+ * first incomplete numbered step at or after the active step, falling back to
+ * the lowest incomplete step overall), or undefined when there is no such step
+ * to continue to (all steps complete, or the active step is the last one).
+ *
+ * Consumers can use this to tell whether the submit area is showing "Continue"
+ * versus the final submit button — e.g. to gate UI rendered via
+ * `submitButtonFooter` so it only appears on the final step.
+ */
+export function useNextIncompleteStepId(): string | undefined {
+	const { state } = useContext( CheckoutStepGroupContext );
+	const { activeStepNumber, totalSteps, stepCompleteStatus, stepIdMap } = state;
+	const isThereAnotherNumberedStep = activeStepNumber < totalSteps;
+	if ( ! isThereAnotherNumberedStep ) {
+		return undefined;
+	}
+	const getStepIdFromNumber = ( stepNumber: number ): string | undefined =>
+		Object.entries( stepIdMap ).find( ( [ , num ] ) => num === stepNumber )?.[ 0 ];
+	for ( let step = Math.max( activeStepNumber, 1 ); step <= totalSteps; step++ ) {
+		if ( ! stepCompleteStatus[ step ] ) {
+			return getStepIdFromNumber( step );
+		}
+	}
+	for ( let step = 1; step <= totalSteps; step++ ) {
+		if ( ! stepCompleteStatus[ step ] ) {
+			return getStepIdFromNumber( step );
+		}
+	}
+	return undefined;
 }
 
 const StepTitle = styled.span< StepTitleProps & HTMLAttributes< HTMLSpanElement > >`

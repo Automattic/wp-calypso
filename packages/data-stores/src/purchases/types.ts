@@ -2,6 +2,7 @@ import { PriceTierEntry } from '@automattic/calypso-products';
 
 export interface Purchase {
 	amount: number;
+	advertisedTotalUploadSpaceInGb?: number | null;
 	attachedToPurchaseId: number;
 	billPeriodDays: number;
 	billPeriodLabel: string;
@@ -45,6 +46,23 @@ export interface Purchase {
 	paymentExpiryDate: string | undefined;
 
 	expiryStatus: string;
+
+	/**
+	 * Whole days until expiry, rounded down, negative once past expiry. Measured
+	 * against UTC midnight, so it can be up to a day off from the viewer's local
+	 * time zone. Null for purchases with no expiry time (one-time and perpetual).
+	 */
+	daysUntilExpiry: number | null;
+
+	/**
+	 * True if the subscription's expiry date has already passed, whether it is
+	 * still active (i.e. in its post-expiry grace period) or has since been
+	 * removed. Closely tracks `expiryStatus === 'expired'`; the two only diverge
+	 * for a subscription removed before its expiry date (which reports 'expired'
+	 * while this stays false). Always false for purchases with no expiry time.
+	 */
+	isPastExpiryDate: boolean;
+
 	iapPurchaseManagementLink: string | null;
 	id: number;
 
@@ -64,6 +82,10 @@ export interface Purchase {
 	isHundredYearDomain?: boolean;
 	isInAppPurchase: boolean;
 	isLocked: boolean;
+	isPlan: boolean;
+	isPlanTypeDowngradable: boolean;
+	isPastLastAutoRenewAttemptDate: boolean;
+	mightStillAutoRenew: boolean;
 	isRechargeable: boolean;
 	isRefundable: boolean;
 	isWithinInitialRefundWindow: boolean;
@@ -133,6 +155,22 @@ export interface Purchase {
 	 */
 	regularPriceInteger: number;
 
+	/**
+	 * The date of the next scheduled auto-renewal attempt (ISO 8601), or an
+	 * empty string when no renewal is scheduled.
+	 *
+	 * Populated only when the subscription is set to auto-renew and a renewal
+	 * attempt is still upcoming. WordPress.com begins attempting renewals before
+	 * a subscription expires (e.g. non-monthly WordPress.com plans first attempt
+	 * ~30 days before `expiryDate`) and can keep attempting during the
+	 * post-expiry grace period, so this date may fall before or after
+	 * `expiryDate`.
+	 *
+	 * An empty string means no attempt is scheduled: auto-renew is off, or the
+	 * subscription is in its grace period past the final auto-renewal attempt.
+	 * It does NOT fall back to the expiry date — read `expiryDate` explicitly
+	 * where an expiry date is wanted.
+	 */
 	renewDate: string;
 	saleAmount?: number;
 	saleAmountInteger?: number;
@@ -195,6 +233,18 @@ export interface Purchase {
 
 	isJetpackPlanOrProduct: boolean;
 	isAttachedToHoldingSite: boolean;
+
+	/**
+	 * True when a delayed downgrade has been scheduled for this subscription.
+	 * See `delayedDowngradeToProductSlug` for the target plan.
+	 */
+	isDelayedDowngradePending: boolean;
+
+	/**
+	 * The product slug of the plan this subscription will downgrade to at
+	 * renewal, or null when no delayed downgrade is scheduled.
+	 */
+	delayedDowngradeToProductSlug: string | null;
 }
 
 export interface PurchasePriceTier {

@@ -14,6 +14,7 @@ import { store as noticesStore } from '@wordpress/notices';
 import { useMemo, useState } from 'react';
 import { useAnalytics } from '../../../../app/analytics';
 import { ButtonStack } from '../../../../components/button-stack';
+import { getSecurityKeyHostname } from '../../utils';
 import type { Field } from '@wordpress/dataviews';
 
 type SecurityKeyFormData = {
@@ -30,7 +31,7 @@ export default function RegisterKey( { onClose }: { onClose: () => void } ) {
 	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
 
 	const { mutateAsync: registerSecurityKey, isPending: isRegisteringSecurityKey } = useMutation(
-		registerTwoStepAuthSecurityKeyMutation()
+		registerTwoStepAuthSecurityKeyMutation( getSecurityKeyHostname() )
 	);
 
 	const handleSubmit = async ( e: React.FormEvent< HTMLFormElement > ) => {
@@ -50,7 +51,7 @@ export default function RegisterKey( { onClose }: { onClose: () => void } ) {
 				onClose();
 			},
 			onError: ( err ) => {
-				let errorMessage = __( 'Failed to add security key. Please try again.' );
+				let errorMessage: string = __( 'Failed to add security key. Please try again.' );
 
 				// Handle WebAuthn specific errors with user-friendly messages
 				if ( err instanceof Error ) {
@@ -130,7 +131,10 @@ export default function RegisterKey( { onClose }: { onClose: () => void } ) {
 						<DataForm< SecurityKeyFormData >
 							data={ formData }
 							fields={ fields }
-							form={ { layout: { type: 'regular' as const }, fields } }
+							form={ {
+								layout: { type: 'regular' as const },
+								fields: fields.map( ( field ) => field.id ),
+							} }
 							onChange={ ( edits: Partial< SecurityKeyFormData > ) => {
 								setFormData( ( data ) => ( { ...data, ...edits } ) );
 							} }

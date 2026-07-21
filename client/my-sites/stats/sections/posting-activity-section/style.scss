@@ -129,19 +129,19 @@ $lowestLevelColor: var(--color-neutral-5);
 	}
 
 	&.is-level-1 {
-		background-color: var(--color-primary-10);
+		background-color: var(--color-accent-10);
 	}
 
 	&.is-level-2 {
-		background-color: var(--color-primary-light);
+		background-color: var(--color-accent-light);
 	}
 
 	&.is-level-3 {
-		background-color: var(--color-primary);
+		background-color: var(--color-accent);
 	}
 
 	&.is-level-4 {
-		background-color: var(--color-primary-dark);
+		background-color: var(--color-accent-dark);
 	}
 
 	&.is-hovered {

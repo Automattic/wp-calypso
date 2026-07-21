@@ -3,11 +3,7 @@ jest.mock( '@automattic/calypso-config', () => ( {
 } ) );
 
 import { isEnabled } from '@automattic/calypso-config';
-import {
-	A4A_PARTNER_DIRECTORY_LEAD_MATCHING_PILOT_AGENCY_IDS,
-	isLeadMatchingPilotAgency,
-	isLeadMatchingSectionEnabled,
-} from '../lead-matching-visibility';
+import { isLeadMatchingSectionEnabled } from '../lead-matching-visibility';
 
 const mockedIsEnabled = isEnabled as jest.MockedFunction< typeof isEnabled >;
 
@@ -22,17 +18,9 @@ describe( 'lead matching visibility', () => {
 		expect( isLeadMatchingSectionEnabled() ).toBe( true );
 	} );
 
-	it( 'returns true for pilot agencies', () => {
-		for ( const agencyId of A4A_PARTNER_DIRECTORY_LEAD_MATCHING_PILOT_AGENCY_IDS ) {
-			expect( isLeadMatchingPilotAgency( agencyId ) ).toBe( true );
-		}
-	} );
-
-	it( 'returns false for non-pilot agencies', () => {
+	it( 'returns false when the global feature flag is disabled', () => {
 		mockedIsEnabled.mockReturnValue( false );
 
-		expect( isLeadMatchingPilotAgency( 123 ) ).toBe( false );
-		expect( isLeadMatchingPilotAgency() ).toBe( false );
 		expect( isLeadMatchingSectionEnabled() ).toBe( false );
 	} );
 } );

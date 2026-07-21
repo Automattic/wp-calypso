@@ -15,8 +15,38 @@ This is the new hosting dashboard for WordPress.com.
   2. If the behavior genuinely differs per dashboard variant, add a property to `AppConfig` that each variant provides, and branch on that property instead of the name.
   3. Before doing either, ask: if this UX is better for one variant, wouldn't it be better for all users? Prefer a single code path when possible.
 
+### Mutation snackbars
+
+Use `withSnackbar()` from `app/snackbars/with-snackbar` to attach a snackbar to a mutation. Never write `meta: { snackbar }` by hand:
+
+```ts
+useMutation( withSnackbar( sitePhpVersionMutation( siteId ), { success: __( 'Saved.' ) } ) );
+```
+
+Every `@automattic/api-queries` mutation carries a `meta.statId` naming its failure stat. Spreading a factory and then setting `meta` replaces the whole object rather than merging, so the `statId` is lost. `withSnackbar()` merges instead. A `no-restricted-syntax` rule in `.eslintrc.js` enforces this.
+
+If the mutation needs other options too, wrap only the factory:
+
+```ts
+useMutation( {
+	...withSnackbar( sitePhpVersionMutation( siteId ), { success: __( 'Saved.' ) } ),
+	onSuccess: () => {
+		/* … */
+	},
+} );
+```
+
+### Internationalization
+
+- When calling locale-aware formatting functions (`toLocaleDateString`, `toLocaleString`, `Intl.*`, etc.), prefer passing the user's locale from `useLocale()` (`app/locale`) rather than `undefined`. Passing `undefined` falls back to the browser/OS locale, so output silently drifts from the user's WordPress.com language setting.
+
+### Testing
+
+- Read [docs/testing.md](./docs/testing.md) before writing or modifying tests.
+
 ### Dark mode
 
-- Dark-mode overrides for the dashboard app live in `client/dashboard/app/_dark-theme.scss`. Add to the existing `dashboard-dark-theme-*` mixins (or add a new one and `@include` it from `dashboard-dark-theme`) instead of writing ad-hoc `:root[data-theme='dark']` blocks elsewhere.
-- Prefer overriding the CSS custom properties already defined there (`--dashboard-*`, `--wp-components-*`, `--jp-*`) over hardcoding hex values in component styles.
-- For styles authored inside a CSS Module (`*.module.scss`), `:root`-based overrides cannot reach the scope-hashed class. Use the `when-dark-theme` mixin from `@automattic/ui` — see `packages/ui/AGENTS.md`.
+- Shared dark-mode tokens and component-wide overrides for components used across multiple Calypso surfaces live in `client/lib/color-scheme/dark-theme.scss`. Add dashboard-only exceptions to `client/dashboard/app/_dark-theme.scss` using the existing `dashboard-dark-theme-*` mixins (or add a new one and `@include` it from `dashboard-dark-theme`) instead of writing ad-hoc `:root[data-theme='dark']` blocks elsewhere.
+- When adding a component that is not already used in a dark-mode-supported surface, verify it in dark mode and add or reuse overrides where needed. If the component is already covered by the existing dark-mode baseline, assume the shared styling holds unless the new usage introduces new variants, states, wrappers, or local CSS.
+- Prefer overriding the existing CSS custom properties (`--dashboard-*`, `--wp-components-*`, `--jp-*`) over hardcoding hex values in component styles.
+- For styles authored inside a CSS Module (`*.module.scss`), `:root`-based overrides cannot reach the scope-hashed class. Use the shared `when-dark-theme` mixin from `calypso/assets/stylesheets/shared/mixins/dark-theme` — see `packages/ui/AGENTS.md`.

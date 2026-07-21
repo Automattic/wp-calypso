@@ -1,6 +1,7 @@
 import nock from 'nock';
 import { wpcom } from '../../wpcom-fetcher';
-import { createFediversePost } from '../fetchers';
+import { createFediversePost, getFediverseNotifications } from '../fetchers';
+import type { FediverseNotificationsPage } from '../types';
 
 const BASE = 'https://public-api.wordpress.com';
 
@@ -154,5 +155,82 @@ describe( 'createFediversePost', () => {
 		await expect(
 			createFediversePost( { connectionId: 7, content: 'hi', visibility: 'public' } )
 		).rejects.toEqual( { kind: 'rate_limited', retry_after: 30 } );
+	} );
+} );
+
+describe( 'getFediverseNotifications', () => {
+	afterEach( () => nock.cleanAll() );
+
+	it( 'hits the connection-scoped path with cursor + limit', async () => {
+		const page: FediverseNotificationsPage = {
+			items: [
+				{
+					id: '13371337',
+					protocol_type: 'Like',
+					canonical_type: 'like',
+					actor: {
+						handle: 'jane@example.com',
+						display_name: 'Jane',
+						avatar_url: null,
+						profile_uri: 'https://example.com/users/jane',
+					},
+					target: {
+						kind: 'post',
+						uri: 'https://example.com/users/me/statuses/110000000000000001',
+						excerpt: '',
+					},
+					target_url: 'https://example.com/users/me/statuses/110000000000000001',
+					created_at: '2026-05-11T12:34:56Z',
+					is_read: false,
+				},
+			],
+			next_cursor: 'next',
+			seen_at: '2026-05-10T00:00:00Z',
+		};
+		nock( BASE )
+			.get( '/wpcom/v2/reader/fediverse/connections/101/notifications' )
+			.query( { cursor: 'abc', limit: '30' } )
+			.reply( 200, page );
+
+		const res = await getFediverseNotifications( {
+			connectionId: 101,
+			cursor: 'abc',
+			limit: 30,
+		} );
+		expect( res ).toEqual( page );
+	} );
+
+	it( 'omits cursor + limit when not provided', async () => {
+		nock( BASE )
+			.get( '/wpcom/v2/reader/fediverse/connections/101/notifications' )
+			.query( {} )
+			.reply( 200, { items: [], next_cursor: null, seen_at: null } );
+
+		const res = await getFediverseNotifications( { connectionId: 101 } );
+		expect( res.items ).toEqual( [] );
+		expect( res.next_cursor ).toBeNull();
+	} );
+
+	it( 'forwards types when provided', async () => {
+		nock( BASE )
+			.get( '/wpcom/v2/reader/fediverse/connections/101/notifications' )
+			.query( { types: 'like,repost' } )
+			.reply( 200, { items: [], next_cursor: null, seen_at: null } );
+
+		const res = await getFediverseNotifications( {
+			connectionId: 101,
+			types: 'like,repost',
+		} );
+		expect( res.items ).toEqual( [] );
+	} );
+
+	it( 'classifies wpcom 401 as auth_required', async () => {
+		nock( BASE )
+			.get( '/wpcom/v2/reader/fediverse/connections/101/notifications' )
+			.query( {} )
+			.reply( 401, { code: 'reader_fediverse_auth_required' } );
+		await expect( getFediverseNotifications( { connectionId: 101 } ) ).rejects.toMatchObject( {
+			kind: 'auth_required',
+		} );
 	} );
 } );

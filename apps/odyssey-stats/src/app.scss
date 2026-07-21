@@ -4,7 +4,11 @@
 @import "./styles/typography";
 @import "@wordpress/base-styles/breakpoints";
 
-.wp-admin {
+// Scoped to `.jp-stats-dashboard` (the class Jetpack's PHP puts on the Stats app's own mount
+// element) rather than `.wp-admin`, since WP core already puts a `wp-admin` class on the real
+// `<body>` — using it here would apply these rules to the whole wp-admin page, not just the Stats
+// app.
+.jp-stats-dashboard {
 	.card {
 		border: 0;
 		max-width: initial;
@@ -15,16 +19,26 @@
 		display: none;
 	}
 
-	.form-checkbox:checked::before {
-		// Increase Calypso styles specificity.
-		content: url(calypso/assets/images/checkbox-icons/checkmark-primary.svg);
-		width: 12px;
-		height: 12px;
-		margin: 3px auto;
-		display: inline-block;
+	// Checked: secondary-button-like outline style, matching the accent chain the
+	// @wordpress/components controls (e.g. the chart type toggle) already follow.
+	.form-checkbox:checked {
+		background-color: transparent;
+		border-color: var(--wp-components-color-accent, var(--color-accent));
 
-		// Override WP-Admin styles.
-		float: none;
+		&::before {
+			// Render the checkmark through an alpha mask so it takes a theme color;
+			// the base form-checkbox checkmark is an SVG with a hardcoded stroke
+			// that ignores color schemes. Also overrides WP-Admin core's checked
+			// styles (white checkmark content, float: left).
+			content: "";
+			mask: url(calypso/assets/images/checkbox-icons/checkmark-primary.svg) no-repeat center / contain;
+			background-color: var(--wp-components-color-accent, var(--color-accent));
+			width: 12px;
+			height: 12px;
+			margin: 3px auto;
+			display: inline-block;
+			float: none;
+		}
 	}
 
 	// Jetpack custom styles.
@@ -117,7 +131,9 @@
 	}
 }
 
-.inner-notice-container .card.banner.is-jetpack {
+// Scoped with `:where()` so it adds zero specificity, rather than the class-level weight
+// `.jp-stats-dashboard` carries on its own.
+:where(.jp-stats-dashboard) .inner-notice-container .card.banner.is-jetpack {
 	border-left: 3px solid var(--color-jetpack);
 }
 

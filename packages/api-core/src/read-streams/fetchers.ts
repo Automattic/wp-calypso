@@ -68,6 +68,47 @@ export const fetchReadSitePosts = (
 	} );
 
 /**
+ * Fetch a Reader Space's posts feed — `/reader/spaces/{spaceId}/posts` on
+ * `wpcom/v2`. The backend builds the stream from the Space's followed feeds
+ * (and tags), returning the standard `{ cards, next_page_handle }` stream shape
+ * so the Reader consumes it like any other stream. `count` is capped at 15
+ * server-side; paginate with the returned `page_handle`.
+ */
+export const fetchReadSpacePosts = (
+	spaceId: string | number,
+	params: ReadStreamQueryParams = {}
+): Promise< ReadStreamResponse > =>
+	wpcom.req.get( {
+		// Encode the id into the path segment: it arrives as a string (from the
+		// `space:<id>` stream key), so harden against a stray separator even though
+		// today's ids are numeric — `addQueryArgs` only encodes the query string.
+		path: addQueryArgs( `/reader/spaces/${ encodeURIComponent( spaceId ) }/posts`, params ),
+		apiNamespace: 'wpcom/v2',
+		method: 'GET',
+	} );
+
+/**
+ * Fetch a Reader Space's Discover feed — `/reader/spaces/{spaceId}/discover` on
+ * `wpcom/v2`. The backend recommends new on-topic posts the user does NOT already
+ * follow (drawn from the Space's discovery strands, falling back to the viewer's
+ * global Reader topics), returning the standard `{ cards, next_page_handle }`
+ * stream shape so the Reader consumes it like any other stream. `count` is capped
+ * at 7 server-side; paginate with the returned `page_handle`.
+ */
+export const fetchReadSpaceDiscover = (
+	spaceId: string | number,
+	params: ReadStreamQueryParams = {}
+): Promise< ReadStreamResponse > =>
+	wpcom.req.get( {
+		// Encode the id into the path segment: it arrives as a string (from the
+		// `space_discover:<id>` stream key), so harden against a stray separator even
+		// though today's ids are numeric — `addQueryArgs` only encodes the query string.
+		path: addQueryArgs( `/reader/spaces/${ encodeURIComponent( spaceId ) }/discover`, params ),
+		apiNamespace: 'wpcom/v2',
+		method: 'GET',
+	} );
+
+/**
  * Fetch the `notifications` stream — `/read/notifications`.
  */
 export const fetchReadNotifications = (
@@ -260,11 +301,10 @@ export const fetchReadLiked = (
 	} );
 
 /**
- * Fetch the `conversations` stream — `/read/conversations`. The thunk in
- * `client/state/reader/streams/actions.js` always passes `comments_per_post: 20`
- * and (for the a8c variant) `index: 'a8c'` in `params`, mirroring the legacy
- * `streamApis.conversations` definition. Pagination is date-based via
- * `last_comment_date_gmt` on the response.
+ * Fetch the `conversations` stream — `/read/conversations`. Calypso stream
+ * query params pass `comments_per_post: 20` and (for the a8c variant)
+ * `index: 'a8c'`, mirroring the legacy `streamApis.conversations` definition.
+ * Pagination is date-based via `last_comment_date_gmt` on the response.
  */
 export const fetchReadConversations = (
 	params: ReadStreamQueryParams = {}
@@ -278,10 +318,9 @@ export const fetchReadConversations = (
 /**
  * Fetch the `recommendations_posts` and `custom_recs_posts_with_images`
  * streams — both hit `/read/recommendations/posts`. The differentiator is in
- * the query params (algorithm vs. alg_prefix, plus `seed`), which the thunk
- * in `client/state/reader/streams/actions.js` builds per stream type and
- * passes through. Pagination is offset-based (see `extractPageHandle` in
- * `client/state/reader/streams/normalize.ts`).
+ * the query params (algorithm vs. alg_prefix, plus `seed`), which Calypso
+ * builds per stream type and passes through. Pagination is offset-based (see
+ * `extractPageHandle` in `client/reader/data/stream/normalization/helpers.ts`).
  */
 export const fetchReadRecommendationsPosts = (
 	params: ReadStreamQueryParams = {}

@@ -3,6 +3,7 @@ import { Button, ToggleControl } from '@wordpress/components';
 import { localize, LocalizeProps } from 'i18n-calypso';
 import { Component, type ReactNode } from 'react';
 import { connect } from 'react-redux';
+import { useIsSplitCancelRemoveEnabled } from 'calypso/dashboard/me/billing-purchases/cancel-purchase/use-is-split-cancel-remove-enabled';
 import { disableAutoRenew, enableAutoRenew } from 'calypso/lib/purchases/actions';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getCurrentUserId } from 'calypso/state/current-user/selectors';
@@ -12,7 +13,13 @@ import { isFetchingUserPurchases } from 'calypso/state/purchases/selectors';
 import isSiteAtomic from 'calypso/state/selectors/is-site-automated-transfer';
 import { IAppState } from 'calypso/state/types';
 import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
-import { isExpired, isOneTimePurchase, isRechargeable } from '../../../../lib/purchases';
+import {
+	isExpiredWithNoAutoRenewAttemptsLeft,
+	isOneTimePurchase,
+	isRechargeable,
+	isRemoved,
+} from '../../../../lib/purchases';
+import { cancelPurchase as cancelPurchaseUrl } from '../../paths';
 import { getChangePaymentMethodPath } from '../../utils';
 import AutoRenewDisablingDialog from './auto-renew-disabling-dialog';
 import AutoRenewPaymentMethodDialog from './auto-renew-payment-method-dialog';
@@ -40,6 +47,7 @@ export interface AutoRenewToggleConnectedProps {
 	isEnabled: boolean;
 	currentUserId: number | null;
 	isAtomicSite: boolean;
+	isSplitCancelRemoveEnabled: boolean;
 	siteSlug?: string | null;
 	fetchUserPurchases: ( userId: number ) => Promise< Purchase[] >;
 	recordTracksEvent: (
@@ -193,9 +201,15 @@ class AutoRenewToggle extends Component<
 	};
 
 	onToggleAutoRenew = () => {
-		const { isEnabled } = this.props;
+		const { isEnabled, isSplitCancelRemoveEnabled, purchase, siteSlug } = this.props;
 
 		if ( isEnabled ) {
+			if ( isSplitCancelRemoveEnabled ) {
+				const url = cancelPurchaseUrl( siteSlug ?? '', purchase.id );
+				page( `${ url }?intent=auto-renew` );
+				return;
+			}
+
 			this.setState( {
 				showAutoRenewDisablingDialog: true,
 			} );
@@ -224,7 +238,11 @@ class AutoRenewToggle extends Component<
 	}
 
 	shouldRender( purchase: Purchase ) {
-		return ! isExpired( purchase ) && ! isOneTimePurchase( purchase );
+		return (
+			! isRemoved( purchase ) &&
+			! isExpiredWithNoAutoRenewAttemptsLeft( purchase ) &&
+			! isOneTimePurchase( purchase )
+		);
 	}
 
 	render() {
@@ -282,7 +300,7 @@ class AutoRenewToggle extends Component<
 	}
 }
 
-export default connect(
+const ConnectedAutoRenewToggle = connect(
 	( state: IAppState, { purchase, siteSlug }: AutoRenewToggleProps ) => ( {
 		fetchingUserPurchases: isFetchingUserPurchases( state ),
 		isEnabled: purchase.isAutoRenewEnabled,
@@ -297,3 +315,13 @@ export default connect(
 		createNotice,
 	}
 )( localize( AutoRenewToggle ) );
+
+export default function AutoRenewToggleWithExperiment( props: AutoRenewToggleProps ) {
+	const isSplitCancelRemoveEnabled = useIsSplitCancelRemoveEnabled();
+	return (
+		<ConnectedAutoRenewToggle
+			{ ...props }
+			isSplitCancelRemoveEnabled={ isSplitCancelRemoveEnabled }
+		/>
+	);
+}

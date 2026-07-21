@@ -15,6 +15,7 @@ export type {
 	ComposerProtocolExtrasSlot,
 	Translate,
 } from './composer-config';
+export { ComposerExtrasPill } from './composer-extras-pill';
 export { DEFAULT_SUMMARY_MAX_LENGTH, VisibilityCwControls } from './visibility-cw-controls';
 export type { VisibilityCwControlsProps } from './visibility-cw-controls';
 export { useVisibilityCwState } from './use-visibility-cw-state';

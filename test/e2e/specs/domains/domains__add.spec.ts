@@ -1,15 +1,19 @@
-import { DomainsPage } from '@automattic/calypso-e2e';
-import { expect, skipIfMailosaurLimitReached, tags, test } from '../../lib/pw-base';
+import { DataHelper, DomainsPage } from '@automattic/calypso-e2e';
+import { expect, skipIfMailosaurLimitReached, skipIfNotTrunk, tags, test } from '../../lib/pw-base';
 
 test.describe(
-	'Domains: Add to current site',
+	DataHelper.createSuiteTitle( 'Domains: Add to current site' ),
 	{
 		tag: [ tags.CALYPSO_RELEASE ],
 	},
 	() => {
+		skipIfNotTrunk();
 		skipIfMailosaurLimitReached();
 
-		test( 'As a user, I can add a domain to my existing site', async ( {
+		// Skipped for now; can be updated once we're sure all onboarding tests will go
+		// through the MSD flow. See https://github.com/Automattic/wp-calypso/pull/112586
+		// and https://github.com/Automattic/wp-calypso/pull/112587.
+		test.skip( 'As a user, I can add a domain to my existing site', async ( {
 			componentDomainSearch,
 			componentSidebar,
 			helperData,

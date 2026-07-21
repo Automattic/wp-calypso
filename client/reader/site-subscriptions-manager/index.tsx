@@ -1,3 +1,5 @@
 import SiteSubscriptionsManager from './site-subscriptions-manager';
 
-export default () => <SiteSubscriptionsManager />;
+const SiteSubscriptionsManagerRoute = () => <SiteSubscriptionsManager />;
+
+export default SiteSubscriptionsManagerRoute;

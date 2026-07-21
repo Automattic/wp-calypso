@@ -1,4 +1,3 @@
-import { get } from 'lodash';
 import {
 	SUCCESS,
 	PROCESSING,
@@ -43,6 +42,6 @@ export type OrderTransaction =
 	| OrderTransactionAsyncPending;
 
 export const getOrderTransaction = ( state: AppState, orderId: number ): OrderTransaction | null =>
-	get( state, [ 'orderTransactions', 'items', orderId ], null );
+	state?.orderTransactions?.items?.[ orderId ] ?? null;
 
 export default getOrderTransaction;

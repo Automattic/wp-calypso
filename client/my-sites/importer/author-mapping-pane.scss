@@ -1,3 +1,6 @@
+@import "@automattic/typography/styles/variables";
+@import "calypso/assets/stylesheets/shared/mixins/clear-fix";
+
 .importer__mapping-header {
 	border-bottom: 1px solid var(--color-border);
 	margin-bottom: 0;

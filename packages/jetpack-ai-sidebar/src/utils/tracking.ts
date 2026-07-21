@@ -55,18 +55,39 @@ interface TrackAiEditorialReviewItemActionOptions {
 	itemCount?: number;
 }
 
+export type BlockTransformationSuggestionType = 'text' | 'image';
+
+interface TrackBlockTransformationSuggestionOptions {
+	suggestionId: string;
+	suggestionType: BlockTransformationSuggestionType;
+	blockType: string;
+}
+
 /**
- * Tracks the empty-view "AI Editorial Review" suggestion appearing.
+ * Tracks the AI Editorial Review empty-view suggestion appearing.
  */
 export function trackAiEditorialReviewSuggestionRendered(): void {
 	recordTracksEvent( 'ai_editorial_review_suggestion_rendered' );
 }
 
 /**
- * Tracks a user clicking the "AI Editorial Review" suggestion.
+ * Tracks a block transformation suggestion appearing for a selected block.
+ * @param options                - Tracking options
+ * @param options.suggestionId   - Stable suggestion identifier.
+ * @param options.suggestionType - Transformation category.
+ * @param options.blockType      - Core block type the suggestion applies to.
  */
-export function trackAiEditorialReviewSuggestionClick(): void {
-	recordTracksEvent( 'ai_editorial_review_suggestion_click' );
+export function trackBlockTransformationSuggestionRendered( {
+	suggestionId,
+	suggestionType,
+	blockType,
+}: TrackBlockTransformationSuggestionOptions ): void {
+	recordTracksEvent( 'ai_block_transformation_suggestion_rendered', {
+		suggestion_id: suggestionId,
+		suggestion_type: suggestionType,
+		block_type: blockType,
+		surface: 'jetpack_ai_sidebar',
+	} );
 }
 
 /**

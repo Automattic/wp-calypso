@@ -1,5 +1,10 @@
-import { Card } from '@automattic/components';
-import { useTranslate } from 'i18n-calypso';
+import {
+	Card,
+	CardBody,
+	__experimentalVStack as VStack,
+	__experimentalText as Text,
+} from '@wordpress/components';
+import { __, sprintf } from '@wordpress/i18n';
 import type { TaggedSite } from '../types';
 
 import './style.scss';
@@ -10,8 +15,6 @@ const getQuarter = ( date = new Date() ) => {
 };
 
 export default function MigrationsConsolidatedCommissions( { items }: { items: TaggedSite[] } ) {
-	const translate = useTranslate();
-
 	const migrationCommissions =
 		items.filter( ( item ) => {
 			// Consider only verified migrations for the current quarter
@@ -29,20 +32,41 @@ export default function MigrationsConsolidatedCommissions( { items }: { items: T
 
 	return (
 		<div className="consolidated-commissions">
-			<Card compact>
-				<div className="consolidated-commissions__value"> ${ migrationCommissions }</div>
-				<div className="consolidated-commissions__label">
-					{ translate( 'Migration commissions expected in Q%(currentQuarter)s', {
-						args: { currentQuarter },
-						comment: 'Quarterly commission value, where Q is the short form of "Quarter"',
-					} ) }
-				</div>
+			<Card className="consolidated-commissions__card">
+				<CardBody>
+					<VStack spacing={ 2 }>
+						<Text size={ 20 } weight={ 500 } color="var(--color-accent-100)">
+							${ migrationCommissions }
+						</Text>
+						<Text
+							className="consolidated-commissions__label"
+							size={ 13 }
+							color="var(--color-accent)"
+						>
+							{ sprintf(
+								/* translators: %d: the current quarter number. Q is the short form of "Quarter". */
+								__( 'Migration commissions expected in Q%d' ),
+								currentQuarter
+							) }
+						</Text>
+					</VStack>
+				</CardBody>
 			</Card>
-			<Card compact>
-				<div className="consolidated-commissions__value">{ sitesPendingReview }</div>
-				<div className="consolidated-commissions__label">
-					{ translate( 'Sites pending review' ) }
-				</div>
+			<Card className="consolidated-commissions__card">
+				<CardBody>
+					<VStack spacing={ 2 }>
+						<Text size={ 20 } weight={ 500 } color="var(--color-accent-100)">
+							{ sitesPendingReview }
+						</Text>
+						<Text
+							className="consolidated-commissions__label"
+							size={ 13 }
+							color="var(--color-accent)"
+						>
+							{ __( 'Sites pending review' ) }
+						</Text>
+					</VStack>
+				</CardBody>
 			</Card>
 		</div>
 	);

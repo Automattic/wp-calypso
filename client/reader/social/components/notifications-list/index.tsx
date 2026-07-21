@@ -6,12 +6,16 @@ import { useMemo } from 'react';
 import { bucketFor, type DateBucket } from './date-bucket';
 import { NotificationsFilterBar } from './filter-bar';
 import { groupNotifications, type GroupedRow } from './group-notifications';
-import { SocialNotificationItem } from './notification-item';
+import { SocialNotificationItem, type NotificationInAppUrlResolver } from './notification-item';
 import { StackedNotification } from './stacked-notification';
 import type { ChipFilter } from './filter';
-import type { AtmosphereNotification, MastodonNotification } from '@automattic/api-core';
+import type {
+	AtmosphereNotification,
+	FediverseNotification,
+	MastodonNotification,
+} from '@automattic/api-core';
 
-type SocialNotification = AtmosphereNotification | MastodonNotification;
+type SocialNotification = AtmosphereNotification | MastodonNotification | FediverseNotification;
 
 interface Props {
 	items: SocialNotification[];
@@ -23,6 +27,7 @@ interface Props {
 	filter: ChipFilter;
 	onFilterChange: ( next: ChipFilter ) => void;
 	onStackExpandedChange?: ( expanded: boolean, memberCount: number ) => void;
+	getInAppUrl?: NotificationInAppUrlResolver;
 }
 
 function emptyMessage( filter: ChipFilter, translate: ReturnType< typeof useTranslate > ): string {
@@ -71,19 +76,26 @@ export function SocialNotificationsList( {
 	filter,
 	onFilterChange,
 	onStackExpandedChange,
+	getInAppUrl,
 }: Props ) {
 	const translate = useTranslate();
 
-	const grouped = useMemo( () => groupNotifications( items ), [ items ] );
+	// Share a single `now` across grouping and divider-bucketing so the
+	// follow-stack key (which buckets by date) and its rendered divider
+	// resolve to the same bucket. Re-derives only when items change — any
+	// stale-by-a-render jitter is well below the bucket granularity.
+	const grouped = useMemo( () => {
+		const now = new Date();
+		return { rows: groupNotifications( items, now ), now };
+	}, [ items ] );
 
 	const withBuckets = useMemo( () => {
-		const now = new Date();
 		const out: Array< { kind: 'divider'; bucket: DateBucket } | { kind: 'row'; row: GroupedRow } > =
 			[];
 		const bucketsSeen: DateBucket[] = [];
 		let lastBucket: DateBucket | null = null;
-		for ( const row of grouped ) {
-			const b = bucketFor( rowTimestamp( row ), now );
+		for ( const row of grouped.rows ) {
+			const b = bucketFor( rowTimestamp( row ), grouped.now );
 			if ( b !== lastBucket ) {
 				out.push( { kind: 'divider', bucket: b } );
 				bucketsSeen.push( b );
@@ -142,7 +154,7 @@ export function SocialNotificationsList( {
 		<div className="social-notifications-list">
 			{ filterBar }
 			<VStack spacing={ 0 }>
-				{ withBuckets.map( ( entry ) => {
+				{ withBuckets.map( ( entry, index ) => {
 					if ( entry.kind === 'divider' ) {
 						// Visual-only separator. Rendered as a presentational
 						// `<div>` rather than a heading so the surrounding
@@ -150,9 +162,15 @@ export function SocialNotificationsList( {
 						// surface that mounts this list already supplies its
 						// own page heading, and an `<h3>` here would land
 						// without a parent `<h2>` on some of them.
+						//
+						// Key includes the entry index because a bucket can
+						// appear more than once when wire items aren't strictly
+						// monotonic by created_at (e.g. paginated pages re-merged,
+						// or backend ordering quirks). The bucket name alone is
+						// not unique in that case and would collide.
 						return (
 							<div
-								key={ `divider-${ entry.bucket }` }
+								key={ `divider-${ entry.bucket }-${ index }` }
 								className="social-notifications-list__divider"
 								role="presentation"
 							>
@@ -166,11 +184,16 @@ export function SocialNotificationsList( {
 								key={ entry.row.groupKey }
 								stack={ entry.row }
 								onExpandedChange={ onStackExpandedChange }
+								getInAppUrl={ getInAppUrl }
 							/>
 						);
 					}
 					return (
-						<SocialNotificationItem key={ entry.row.item.id } notification={ entry.row.item } />
+						<SocialNotificationItem
+							key={ entry.row.item.id }
+							notification={ entry.row.item }
+							getInAppUrl={ getInAppUrl }
+						/>
 					);
 				} ) }
 				{ showRetry && (

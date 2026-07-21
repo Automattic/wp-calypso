@@ -10,7 +10,6 @@ import { PageHeader } from '../../../components/page-header';
 import PageLayout from '../../../components/page-layout';
 import DeviceToggle from '../device-toggle';
 import PageSelector from '../page-selector';
-import PerformanceTabs from '../performance-tabs';
 import Report from '../report';
 import ReportErrorNotice from '../report-error-notice';
 import ReportLoading from '../report-loading';
@@ -49,7 +48,9 @@ export default function SitePerformanceFrontend( { siteSlug }: { siteSlug: strin
 		return pagesData?.[ 0 ];
 	}, [ page_id, pagesData ] );
 
-	const performanceUrl = [ 'development', 'wpcalypso' ].includes( config( 'env_id' ) )
+	const performanceUrl = [ 'development', 'dashboard-development', 'wpcalypso' ].includes(
+		config( 'env_id' )
+	)
 		? url ?? currentPage?.link
 		: currentPage?.link;
 
@@ -149,7 +150,6 @@ export default function SitePerformanceFrontend( { siteSlug }: { siteSlug: strin
 				/>
 			}
 		>
-			<PerformanceTabs siteSlug={ siteSlug } activeTab="frontend" />
 			{ renderContent() }
 		</PageLayout>
 	);

@@ -1,5 +1,3 @@
-import { get } from 'lodash';
-
 import 'calypso/state/jetpack/init';
 
 /**
@@ -11,5 +9,5 @@ import 'calypso/state/jetpack/init';
  * @returns {?boolean}         Whether the list is being requested
  */
 export default function isFetchingJetpackModules( state, siteId ) {
-	return get( state.jetpack.modules.requests, [ siteId, 'fetchingModules' ], null );
+	return state.jetpack.modules.requests?.[ siteId ]?.fetchingModules ?? null;
 }

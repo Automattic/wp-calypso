@@ -19,6 +19,7 @@ import { RouteProvider } from 'calypso/components/route';
 import { dashboardLink } from 'calypso/dashboard/utils/link';
 import Layout from 'calypso/layout';
 import LayoutLoggedOut from 'calypso/layout/logged-out';
+import { bumpStat } from 'calypso/lib/analytics/mc';
 import { logToLogstash } from 'calypso/lib/logstash';
 import { navigate } from 'calypso/lib/navigate';
 import { createAccountUrl, login } from 'calypso/lib/paths';
@@ -42,6 +43,11 @@ import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { makeLayoutMiddleware } from './shared.jsx';
 import { hydrate, render } from './web-util.js';
 
+const WOO_MOBILE_LOGIN_FALLBACK_URL = 'https://woocommerce.com/mobilelogin/';
+const WOO_MOBILE_LOGIN_LOCAL_FALLBACK_URL = 'https://woocommerce.test/mobilelogin/';
+const WOO_MOBILE_LOGIN_AUTH_MISSING_QUERY = 'wpcom_auth';
+const WOO_MOBILE_LOGIN_RETURN_TO_QUERY = 'return_to';
+
 /**
  * Re-export
  */
@@ -58,13 +64,12 @@ export const ProviderWrappedLayout = ( {
 	secondary,
 	renderHeaderSection,
 	redirectUri,
-	beforePrimary,
 } ) => {
 	const state = store.getState();
 	const userLoggedIn = isUserLoggedIn( state );
 
 	const layout = userLoggedIn ? (
-		<Layout primary={ primary } secondary={ secondary } beforePrimary={ beforePrimary } />
+		<Layout primary={ primary } secondary={ secondary } />
 	) : (
 		<LayoutLoggedOut
 			primary={ primary }
@@ -95,8 +100,8 @@ export const ProviderWrappedLayout = ( {
 export const makeLayout = makeLayoutMiddleware( ProviderWrappedLayout );
 
 /**
- * For logged in users with bootstrap (production), ReactDOM.hydrate().
- * Otherwise (development), ReactDOM.render().
+ * For logged in users with bootstrap (production), hydrate the server-rendered
+ * markup (`hydrateRoot`). Otherwise (development), render from scratch (`createRoot`).
  * See: https://wp.me/pd2qbF-P#comment-20
  * @param context - Middleware context
  */
@@ -138,6 +143,79 @@ export const redirectInvalidLanguage = ( context, next ) => {
 	}
 	next();
 };
+
+function isWooCommerceQrLoginContext( context ) {
+	return context.pathname === '/me/security/qr-login' && context.query?.origin === 'woocommerce';
+}
+
+function getAllowedWooMobileLoginHosts() {
+	const hosts = [ 'woocommerce.com' ];
+
+	if ( [ 'development', 'test' ].includes( config( 'env_id' ) ) ) {
+		hosts.push( 'woocommerce.test' );
+	}
+
+	return hosts;
+}
+
+function addWooMobileLoginAuthMissingQuery( url ) {
+	url.search = '';
+	url.searchParams.set( WOO_MOBILE_LOGIN_AUTH_MISSING_QUERY, 'missing' );
+	return url.toString();
+}
+
+function getDefaultWooMobileLoginFallbackUrl() {
+	const fallbackUrl =
+		config( 'env_id' ) === 'development'
+			? WOO_MOBILE_LOGIN_LOCAL_FALLBACK_URL
+			: WOO_MOBILE_LOGIN_FALLBACK_URL;
+
+	return addWooMobileLoginAuthMissingQuery( new URL( fallbackUrl ) );
+}
+
+function getWooMobileLoginFallbackUrl( context ) {
+	const returnTo = context.query?.[ WOO_MOBILE_LOGIN_RETURN_TO_QUERY ];
+
+	if ( typeof returnTo !== 'string' ) {
+		return getDefaultWooMobileLoginFallbackUrl();
+	}
+
+	try {
+		const url = new URL( returnTo );
+		const pathname = url.pathname.endsWith( '/' ) ? url.pathname : `${ url.pathname }/`;
+
+		if (
+			url.protocol !== 'https:' ||
+			url.port !== '' ||
+			pathname !== '/mobilelogin/' ||
+			! getAllowedWooMobileLoginHosts().includes( url.hostname )
+		) {
+			return getDefaultWooMobileLoginFallbackUrl();
+		}
+
+		url.pathname = '/mobilelogin/';
+		return addWooMobileLoginAuthMissingQuery( url );
+	} catch {
+		return getDefaultWooMobileLoginFallbackUrl();
+	}
+}
+
+function maybeCleanWooCommerceQrLoginUrl( context ) {
+	if (
+		! isWooCommerceQrLoginContext( context ) ||
+		typeof context.query?.[ WOO_MOBILE_LOGIN_RETURN_TO_QUERY ] !== 'string'
+	) {
+		return;
+	}
+
+	const cleanPath = removeQueryArgs( context.path, WOO_MOBILE_LOGIN_RETURN_TO_QUERY );
+	delete context.query[ WOO_MOBILE_LOGIN_RETURN_TO_QUERY ];
+	context.path = cleanPath;
+
+	if ( window.history?.replaceState ) {
+		window.history.replaceState( window.history.state, '', cleanPath );
+	}
+}
 
 /**
  * Builds login parameters from context and state for redirecting to the login page.
@@ -197,7 +275,13 @@ export async function redirectLoggedOut( context, next ) {
 		return next();
 	}
 
+	if ( ! isUserLoggedIn( state ) && isWooCommerceQrLoginContext( context ) ) {
+		window.location = getWooMobileLoginFallbackUrl( context );
+		return;
+	}
+
 	if ( isUserLoggedIn( state ) && ! isCookieAuthMissing() ) {
+		maybeCleanWooCommerceQrLoginUrl( context );
 		next();
 		return;
 	} else if (
@@ -252,6 +336,7 @@ export async function redirectLoggedOut( context, next ) {
 	// This check would allow a user with a missing auth cookie to continue in the event that the user re-fetch operation
 	// does not return a 401 or 403 - this prevents redirecting them to login if some other error is affecting the user re-fetch operation
 	if ( isUserLoggedIn( state ) ) {
+		maybeCleanWooCommerceQrLoginUrl( context );
 		next();
 		return;
 	}
@@ -497,6 +582,7 @@ export const maybeRedirectToMultiSiteDashboard = ( path ) => ( context, next ) =
 	const state = context.store.getState();
 	if ( hasDashboardForcedOptIn( state ) ) {
 		const redirectUrl = typeof path === 'function' ? path( context.params, context.query ) : path;
+		bumpStat( 'dashboard-redirect', 'forced-opt-in' );
 		return navigate( dashboardLink( redirectUrl ?? context.path ) );
 	}
 

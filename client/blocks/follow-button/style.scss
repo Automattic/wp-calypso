@@ -1,3 +1,6 @@
+@import "calypso/assets/stylesheets/shared/mixins/breakpoints";
+@import "calypso/assets/stylesheets/shared/mixins/no-select";
+
 $follow-button-gray-disabled: var(--color-neutral-10);
 
 .follow-button,

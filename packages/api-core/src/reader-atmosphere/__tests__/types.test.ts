@@ -23,6 +23,27 @@ describe( 'reader-atmosphere types compile', () => {
 		expect( listItem.display_name ).toBe( 'Alice' );
 	} );
 
+	it( 'AtmosphereConnection accepts optional pds_hostname', () => {
+		const withHost: AtmosphereConnection = {
+			id: 2,
+			handle: 'b.example.com',
+			display_name: null,
+			did: 'did:plc:y',
+			avatar: null,
+			pds_hostname: 'pds.example.com',
+		};
+		const withNullHost: AtmosphereConnection = {
+			id: 3,
+			handle: 'c.bsky.social',
+			display_name: null,
+			did: 'did:plc:z',
+			avatar: null,
+			pds_hostname: null,
+		};
+		expect( withHost.pds_hostname ).toBe( 'pds.example.com' );
+		expect( withNullHost.pds_hostname ).toBeNull();
+	} );
+
 	it( 'response + details shapes', () => {
 		const list: AtmosphereConnectionsResponse = { connections: [] };
 		const created: AtmosphereCreateConnectionResponse = {

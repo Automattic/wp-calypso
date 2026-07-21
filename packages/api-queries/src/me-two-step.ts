@@ -12,7 +12,6 @@ import {
 	updateUserSettings,
 	sendTwoStepAuthSMSCode,
 } from '@automattic/api-core';
-import config from '@automattic/calypso-config';
 import { create } from '@github/webauthn-json';
 import { queryOptions, mutationOptions } from '@tanstack/react-query';
 import { userSettingsQuery } from './me-settings';
@@ -25,12 +24,12 @@ export const twoStepAuthSecurityKeysQuery = () =>
 		queryFn: fetchTwoStepAuthSecurityKeys,
 	} );
 
-export const registerTwoStepAuthSecurityKeyMutation = () =>
+// The hostname is the WebAuthn relying party ID. Keys must be scoped to wordpress.com to be
+// usable at login, not to whichever host the dashboard is served from.
+export const registerTwoStepAuthSecurityKeyMutation = ( hostname = 'wordpress.com' ) =>
 	mutationOptions( {
+		meta: { statId: '2fa-security-key-register' },
 		mutationFn: async ( keyName: string ) => {
-			// Get hostname for non-production environments
-			const hostname = 'production' !== config( 'env_id' ) ? window.location.hostname : undefined;
-
 			// First, fetch the registration challenge
 			const options = await fetchTwoStepAuthSecurityKeyRegistrationChallenge( { hostname } );
 
@@ -53,6 +52,7 @@ export const registerTwoStepAuthSecurityKeyMutation = () =>
 
 export const deleteTwoStepAuthSecurityKeyMutation = () =>
 	mutationOptions( {
+		meta: { statId: '2fa-security-key-delete' },
 		mutationFn: deleteTwoStepAuthSecurityKey,
 		onSuccess: () => {
 			queryClient.invalidateQueries( twoStepAuthSecurityKeysQuery() );
@@ -67,6 +67,7 @@ export const twoStepAuthApplicationPasswordsQuery = () =>
 
 export const createTwoStepAuthApplicationPasswordMutation = () =>
 	mutationOptions( {
+		meta: { statId: '2fa-app-pw-create' },
 		mutationFn: createTwoStepAuthApplicationPassword,
 		onSuccess: () => {
 			queryClient.invalidateQueries( twoStepAuthApplicationPasswordsQuery() );
@@ -75,6 +76,7 @@ export const createTwoStepAuthApplicationPasswordMutation = () =>
 
 export const deleteTwoStepAuthApplicationPasswordMutation = () =>
 	mutationOptions( {
+		meta: { statId: '2fa-app-pw-delete' },
 		mutationFn: deleteTwoStepAuthApplicationPassword,
 		onSuccess: () => {
 			queryClient.invalidateQueries( twoStepAuthApplicationPasswordsQuery() );
@@ -89,6 +91,7 @@ export const twoStepAuthAppSetupQuery = () =>
 
 export const validateTwoStepAuthCodeMutation = () =>
 	mutationOptions( {
+		meta: { statId: '2fa-code-validate' },
 		mutationFn: validateTwoStepAuthCode,
 		onSuccess: ( data ) => {
 			// This is a workaround to handle the error/success response
@@ -104,11 +107,13 @@ export const validateTwoStepAuthCodeMutation = () =>
 
 export const generateTwoStepAuthBackupCodesMutation = () =>
 	mutationOptions( {
+		meta: { statId: '2fa-backup-codes-generate' },
 		mutationFn: generateTwoStepAuthBackupCodes,
 	} );
 
 export const setupTwoStepAuthSMSMutation = () =>
 	mutationOptions( {
+		meta: { statId: '2fa-sms-setup' },
 		mutationFn: async ( data: Partial< UserSettings > ) => {
 			try {
 				await updateUserSettings( data );
@@ -121,5 +126,6 @@ export const setupTwoStepAuthSMSMutation = () =>
 
 export const resendTwoStepAuthSMSCodeMutation = () =>
 	mutationOptions( {
+		meta: { statId: '2fa-sms-code-resend' },
 		mutationFn: sendTwoStepAuthSMSCode,
 	} );

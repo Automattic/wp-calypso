@@ -9,6 +9,7 @@ import {
 import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import { useAnalytics } from '../../app/analytics';
+import { withSnackbar } from '../../app/snackbars/with-snackbar';
 import { Card, CardBody } from '../../components/card';
 import InlineSupportLink from '../../components/inline-support-link';
 import { SectionHeader } from '../../components/section-header';
@@ -22,18 +23,21 @@ interface DnsSecProps {
 
 export default function DnsSec( { domainName, domain }: DnsSecProps ) {
 	const { recordTracksEvent } = useAnalytics();
-	const mutation = useMutation( {
-		...domainDnssecMutation( domainName ),
-		meta: {
-			snackbar: {
-				/* translators: %s is the domain name */
-				success: sprintf( __( 'DNSSEC setting for %s saved.' ), domainName ),
-				error: { source: 'server' },
-			},
-		},
-	} );
+	const mutation = useMutation(
+		withSnackbar( domainDnssecMutation( domainName ), {
+			/* translators: %s is the domain name */
+			success: sprintf( __( 'DNSSEC setting for %s saved.' ), domainName ),
+			error: { source: 'server' },
+		} )
+	);
 
 	const { isPending } = mutation;
+
+	const isDnssecEnabled = domain.is_dnssec_enabled ?? false;
+	// DNSSEC can only be enabled when the domain uses WordPress.com name servers.
+	// Prevent enabling it otherwise, since the request would fail server-side with
+	// `domain_does_not_use_wpcom_ns`. Disabling an already-enabled record stays allowed.
+	const isEnablingDisabled = ! domain.has_wpcom_nameservers && ! isDnssecEnabled;
 
 	const handleToggleChange = ( enabled: boolean ) => {
 		// Track the toggle action
@@ -83,15 +87,13 @@ export default function DnsSec( { domainName, domain }: DnsSecProps ) {
 							<HStack alignment="left">
 								<ToggleControl
 									__nextHasNoMarginBottom
-									checked={ domain.is_dnssec_enabled ?? false }
+									checked={ isDnssecEnabled }
 									onChange={ ( checked ) => handleToggleChange( checked ) }
-									disabled={ isPending }
-									label={
-										domain.is_dnssec_enabled ? __( 'Disable DNSSEC' ) : __( 'Enable DNSSEC' )
-									}
+									disabled={ isPending || isEnablingDisabled }
+									label={ isDnssecEnabled ? __( 'Disable DNSSEC' ) : __( 'Enable DNSSEC' ) }
 								/>
 							</HStack>
-							{ domain.is_dnssec_enabled && (
+							{ isDnssecEnabled && (
 								<VStack spacing={ 3 }>
 									{ domain.dnssec_records?.dnskey?.map( ( dnskey, index ) => (
 										<DnsSecRecordTextarea

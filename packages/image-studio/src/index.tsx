@@ -17,6 +17,7 @@ import {
 	trackImageStudioImageSaved,
 	trackImageStudioOpened,
 } from './utils/tracking';
+import type { JSX } from 'react';
 
 /**
  * Type definitions
@@ -27,6 +28,9 @@ interface ImageStudioData {
 	environment?: 'wp-admin' | 'ciab-admin';
 	isDevMode?: boolean;
 	canGenerateVideoClips?: boolean;
+	blogId?: number | string;
+	siteType?: 'simple' | 'atomic' | 'jetpack' | 'wpcom' | 'woa';
+	isA11n?: boolean;
 }
 
 declare global {

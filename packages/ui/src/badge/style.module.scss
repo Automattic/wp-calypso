@@ -1,7 +1,7 @@
 @use '@wordpress/base-styles/colors';
 @use '@wordpress/base-styles/mixins';
 @use '@wordpress/base-styles/variables';
-@use '../utils/mixins' as ui-mixins;
+@use "calypso/assets/stylesheets/shared/mixins/dark-theme" as ui-mixins;
 @use '../utils/_theme-variables' as theme;
 
 $badge-colors: (

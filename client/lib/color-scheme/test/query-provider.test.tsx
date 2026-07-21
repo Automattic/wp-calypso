@@ -7,12 +7,13 @@ import { QueryClientProvider } from '@tanstack/react-query';
 import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
-import { ColorSchemeProvider, useColorScheme } from 'calypso/lib/color-scheme';
+import { ColorSchemeProvider, useColorScheme, withColorScheme } from 'calypso/lib/color-scheme';
 import type { ColorScheme } from 'calypso/lib/color-scheme';
 
 const PREFERENCE_KEY = 'hosting-dashboard-color-scheme';
 const API_BASE = 'https://public-api.wordpress.com';
 const PREFERENCES_PATH = '/rest/v1.1/me/preferences';
+const surfaceBodyClasses = [ 'is-reader-dark-mode', 'is-themes-dark-mode' ];
 
 const mockUpdatePreference = jest.fn();
 const mockOnSaveSuccess = jest.fn();
@@ -96,6 +97,18 @@ function renderColorSchemeProvider() {
 	);
 }
 
+function renderWithColorScheme( bodyClass: string ) {
+	return render(
+		<QueryClientProvider client={ queryClient }>
+			{ withColorScheme( <span>child</span>, { bodyClass } ) }
+		</QueryClientProvider>
+	);
+}
+
+function removeSurfaceBodyClasses() {
+	surfaceBodyClasses.forEach( ( bodyClass ) => document.body.classList.remove( bodyClass ) );
+}
+
 beforeEach( () => {
 	queryClient.clear();
 	queryClient.setDefaultOptions( {
@@ -105,10 +118,12 @@ beforeEach( () => {
 	mockOnSaveSuccess.mockClear();
 	nock.cleanAll();
 	document.documentElement.removeAttribute( 'data-theme' );
+	removeSurfaceBodyClasses();
 } );
 
 afterEach( () => {
 	nock.cleanAll();
+	removeSurfaceBodyClasses();
 } );
 
 test( 'defaults to light when no server preference is available', async () => {
@@ -317,4 +332,22 @@ test( 'does not save when selecting the current color scheme', async () => {
 
 	expect( mockUpdatePreference ).not.toHaveBeenCalled();
 	expect( mockOnSaveSuccess ).not.toHaveBeenCalled();
+} );
+
+describe.each( surfaceBodyClasses )( 'withColorScheme body class %s', ( bodyClass ) => {
+	test( 'applies the dark scheme and cleans up the body class on unmount', async () => {
+		mockGetPreferences( { [ PREFERENCE_KEY ]: 'dark' } );
+
+		const { unmount } = renderWithColorScheme( bodyClass );
+
+		await waitFor( () => {
+			expect( screen.getByText( 'child' ) ).toBeVisible();
+			expect( document.documentElement.dataset.theme ).toBe( 'dark' );
+			expect( document.body.classList.contains( bodyClass ) ).toBe( true );
+		} );
+
+		unmount();
+
+		expect( document.body.classList.contains( bodyClass ) ).toBe( false );
+	} );
 } );

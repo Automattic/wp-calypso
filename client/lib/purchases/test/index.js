@@ -11,6 +11,11 @@ import {
 	handleRenewNowClick,
 	handleRenewMultiplePurchasesClick,
 	shouldRenderMonthlyRenewalOption,
+	isRemoved,
+	isExpiredAndInGracePeriod,
+	isExpiredOrRemoved,
+	mightStillAutoRenew,
+	isExpiredWithNoAutoRenewAttemptsLeft,
 } from '../index';
 import data from './data';
 const {
@@ -80,6 +85,92 @@ describe( 'index', () => {
 
 		test( 'should not be cancelable if domain is pending transfer', () => {
 			expect( isCancelable( DOMAIN_PURCHASE_PENDING_TRANSFER ) ).toEqual( false );
+		} );
+	} );
+	describe( '#isRemoved', () => {
+		test( 'should be true when the subscription is no longer active', () => {
+			expect( isRemoved( { subscriptionStatus: 'inactive' } ) ).toEqual( true );
+		} );
+		test( 'should be false when the subscription is still active (including grace period)', () => {
+			expect( isRemoved( { subscriptionStatus: 'active' } ) ).toEqual( false );
+		} );
+	} );
+	describe( '#isExpiredAndInGracePeriod', () => {
+		test( 'should be true when expired but the subscription is still active', () => {
+			expect(
+				isExpiredAndInGracePeriod( { expiryStatus: 'expired', subscriptionStatus: 'active' } )
+			).toEqual( true );
+		} );
+		test( 'should be false when expired and the subscription has been removed', () => {
+			expect(
+				isExpiredAndInGracePeriod( { expiryStatus: 'expired', subscriptionStatus: 'inactive' } )
+			).toEqual( false );
+		} );
+		test( 'should be false when not expired', () => {
+			expect(
+				isExpiredAndInGracePeriod( { expiryStatus: 'active', subscriptionStatus: 'active' } )
+			).toEqual( false );
+		} );
+	} );
+	describe( '#isExpiredOrRemoved', () => {
+		test( 'should be true for a purchase in its grace period', () => {
+			expect(
+				isExpiredOrRemoved( { expiryStatus: 'expired', subscriptionStatus: 'active' } )
+			).toEqual( true );
+		} );
+		test( 'should be true for a removed purchase', () => {
+			expect(
+				isExpiredOrRemoved( { expiryStatus: 'expired', subscriptionStatus: 'inactive' } )
+			).toEqual( true );
+		} );
+		test( 'should be false for an active purchase', () => {
+			expect(
+				isExpiredOrRemoved( { expiryStatus: 'active', subscriptionStatus: 'active' } )
+			).toEqual( false );
+		} );
+	} );
+	describe( '#mightStillAutoRenew', () => {
+		test( 'should reflect the server-provided mightStillAutoRenew flag', () => {
+			expect( mightStillAutoRenew( { mightStillAutoRenew: true } ) ).toEqual( true );
+			expect( mightStillAutoRenew( { mightStillAutoRenew: false } ) ).toEqual( false );
+		} );
+	} );
+	describe( '#isExpiredWithNoAutoRenewAttemptsLeft', () => {
+		test( 'should be true when expired in grace period and past the last attempt date', () => {
+			expect(
+				isExpiredWithNoAutoRenewAttemptsLeft( {
+					expiryStatus: 'expired',
+					subscriptionStatus: 'active',
+					isPastLastAutoRenewAttemptDate: true,
+				} )
+			).toEqual( true );
+		} );
+		test( 'should be false when attempts may still remain', () => {
+			expect(
+				isExpiredWithNoAutoRenewAttemptsLeft( {
+					expiryStatus: 'expired',
+					subscriptionStatus: 'active',
+					isPastLastAutoRenewAttemptDate: false,
+				} )
+			).toEqual( false );
+		} );
+		test( 'should be false when the subscription has been removed', () => {
+			expect(
+				isExpiredWithNoAutoRenewAttemptsLeft( {
+					expiryStatus: 'expired',
+					subscriptionStatus: 'inactive',
+					isPastLastAutoRenewAttemptDate: true,
+				} )
+			).toEqual( false );
+		} );
+		test( 'should be false when not expired', () => {
+			expect(
+				isExpiredWithNoAutoRenewAttemptsLeft( {
+					expiryStatus: 'active',
+					subscriptionStatus: 'active',
+					isPastLastAutoRenewAttemptDate: true,
+				} )
+			).toEqual( false );
 		} );
 	} );
 	describe( '#isPaidWithCredits', () => {

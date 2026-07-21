@@ -10,6 +10,7 @@ import {
 	getCheckboxLabel,
 	getButtonLabels,
 	getFallbackLossItems,
+	getTitanCancellationLossItems,
 } from '../get-confirmation-copy';
 import type { Purchase } from '@automattic/api-core';
 
@@ -102,6 +103,14 @@ describe( 'getProductCategory', () => {
 } );
 
 describe( 'getCancellationHeading', () => {
+	test( 'Auto-renew intent returns "Turn off auto-renew"', () => {
+		for ( const category of [ 'plan', 'domain', 'email', 'jetpack', 'other' ] ) {
+			const purchase = makePurchaseForCategory( category );
+			expect( getCancellationHeading( { purchase, intent: 'auto-renew' } ) ).toBe(
+				'Turn off auto-renew'
+			);
+		}
+	} );
 	test( 'Cancel intent is always "Cancel subscription" regardless of product', () => {
 		for ( const category of [ 'plan', 'domain', 'email', 'jetpack', 'other' ] ) {
 			const purchase = makePurchaseForCategory( category );
@@ -162,6 +171,15 @@ describe( 'getTopNoticeCopy', () => {
 	test( 'returns null for Remove intent', () => {
 		expect( getTopNoticeCopy( { purchase: makePurchase(), intent: 'remove' } ) ).toBeNull();
 	} );
+	test( 'auto-renew intent returns non-null for a plan with a future expiry', () => {
+		const copy = getTopNoticeCopy( {
+			purchase: makePurchaseForCategory( 'plan', {
+				expiry_date: new Date( Date.now() + 30 * 24 * 60 * 60 * 1000 ).toISOString(),
+			} ),
+			intent: 'auto-renew',
+		} );
+		expect( copy ).toMatch( /^Your plan features will be available for another /i );
+	} );
 	test( 'returns null with no expiry date', () => {
 		expect(
 			getTopNoticeCopy( {
@@ -217,6 +235,15 @@ describe( 'getCheckboxLabel', () => {
 } );
 
 describe( 'getButtonLabels', () => {
+	test( 'Auto-renew intent returns "Turn off auto-renew" / "Keep auto-renew on"', () => {
+		for ( const category of [ 'plan', 'domain', 'email', 'jetpack', 'other' ] ) {
+			const purchase = makePurchaseForCategory( category );
+			expect( getButtonLabels( { purchase, intent: 'auto-renew' } ) ).toEqual( {
+				primary: 'Turn off auto-renew',
+				secondary: 'Keep auto-renew on',
+			} );
+		}
+	} );
 	test( 'Cancel intent always uses "Cancel subscription" / "Keep subscription"', () => {
 		for ( const category of [ 'plan', 'domain', 'email', 'jetpack', 'one-time', 'other' ] ) {
 			const purchase = makePurchaseForCategory( category );
@@ -282,6 +309,41 @@ describe( 'getFallbackLossItems', () => {
 				makePurchaseForCategory( 'one-time', { product_name: 'Do it for me: Website Design' } )
 			)
 		).toEqual( [ 'Do it for me: Website Design' ] );
+	} );
+} );
+
+describe( 'getTitanCancellationLossItems', () => {
+	test( 'returns null for non-Titan products', () => {
+		expect( getTitanCancellationLossItems( makePurchaseForCategory( 'plan' ) ) ).toBeNull();
+		expect(
+			getTitanCancellationLossItems( makePurchase( { is_plan: false, product_slug: 'gapps' } ) )
+		).toBeNull();
+	} );
+	test( 'Pro tier lists 30 GB storage and no tier highlight', () => {
+		const items = getTitanCancellationLossItems(
+			makePurchase( { is_plan: false, product_slug: 'wp_titan_mail_yearly' } )
+		);
+		expect( items ).toEqual( [
+			'Your custom email address',
+			'30 GB of mailbox storage',
+			'Email, calendar, and contacts',
+			'Access on web and mobile',
+			'24/7 email support',
+		] );
+	} );
+	test( 'Premium tier lists 50 GB storage and a tier highlight', () => {
+		const items = getTitanCancellationLossItems(
+			makePurchase( { is_plan: false, product_slug: 'wp_titan_mail_premium_yearly' } )
+		);
+		expect( items ).toContain( '50 GB of mailbox storage' );
+		expect( items ).toContain( 'Two-factor authentication, priority inbox, and more' );
+	} );
+	test( 'Ultra tier lists 100 GB storage and a tier highlight', () => {
+		const items = getTitanCancellationLossItems(
+			makePurchase( { is_plan: false, product_slug: 'wp_titan_mail_ultra_yearly' } )
+		);
+		expect( items ).toContain( '100 GB of mailbox storage' );
+		expect( items ).toContain( 'Titan AI, email campaigns, and more' );
 	} );
 } );
 

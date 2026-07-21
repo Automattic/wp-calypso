@@ -1,5 +1,4 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
-import config from '@automattic/calypso-config';
 import { CompactCard } from '@automattic/components';
 import { isValueTruthy } from '@automattic/wpcom-checkout';
 import { useTranslate } from 'i18n-calypso';
@@ -8,6 +7,7 @@ import EmptyContent from 'calypso/components/empty-content';
 import NoSitesMessage from 'calypso/components/empty-content/no-sites-message';
 import JetpackRnaActionCard from 'calypso/components/jetpack/card/jetpack-rna-action-card';
 import Notice from 'calypso/components/notice';
+import { useIsSplitCancelRemoveEnabled } from 'calypso/dashboard/me/billing-purchases/cancel-purchase/use-is-split-cancel-remove-enabled';
 import TrackComponentView from 'calypso/lib/analytics/track-component-view';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import { PurchasesDataViews } from 'calypso/me/purchases/purchases-list-in-dataviews/purchases-data-view';
@@ -27,6 +27,7 @@ import './style.scss';
 
 export default function SubscriptionsContentWrapper() {
 	const translate = useTranslate();
+	const isSplitCancelRemoveEnabled = useIsSplitCancelRemoveEnabled();
 	const isFetchingPurchases = useSelector( isFetchingSitePurchases );
 	const hasLoadedPurchases = useSelector( hasLoadedSitePurchasesFromServer );
 	const selectedSiteId = useSelector( getSelectedSiteId );
@@ -82,9 +83,7 @@ export default function SubscriptionsContentWrapper() {
 	}
 
 	const removedNotice =
-		config.isEnabled( 'purchases/split-cancel-remove' ) &&
-		showRemovedNotice &&
-		removedNoticeData ? (
+		isSplitCancelRemoveEnabled && showRemovedNotice && removedNoticeData ? (
 			<Notice
 				showDismiss
 				onDismissClick={ () => setShowRemovedNotice( false ) }

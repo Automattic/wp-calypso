@@ -35,6 +35,7 @@ const eslintBin = path.join( '.', 'node_modules', '.bin', 'eslint' );
 const lintResult = child_process.spawnSync( eslintBin, [ ...flags, ...files ], {
 	shell: true,
 	stdio: 'inherit',
+	env: { ...process.env, ESLINT_USE_FLAT_CONFIG: 'false' },
 } );
 
 process.exit( lintResult.status );

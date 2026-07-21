@@ -12,12 +12,11 @@ import { useState } from 'react';
 import FollowButton from 'calypso/blocks/follow-button/button';
 import SitePlaceholder from 'calypso/blocks/site/placeholder';
 import { SiteIcon } from 'calypso/blocks/site-icon';
-import QueryReaderFeed from 'calypso/components/data/query-reader-feed';
 import { removeTrailingSlash } from 'calypso/lib/string';
-import { useDispatch, useSelector } from 'calypso/state';
+import { useFeedQuery } from 'calypso/reader/data/feed';
+import { useDispatch } from 'calypso/state';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 import { DEFAULT_NOTICE_DURATION } from 'calypso/state/notices/constants';
-import { getFeed } from 'calypso/state/reader/feeds/selectors';
 import ItemRemoveDialog from './item-remove-dialog';
 import { Item, Feed, FeedError, List } from './types';
 
@@ -77,13 +76,8 @@ export default function FeedItem( props: {
 	hideFollowButton?: boolean;
 } ) {
 	const { list, owner, item } = props;
-	const feed = useSelector( ( state ) => {
-		let feed = props.item.meta?.data?.feed;
-		if ( ! feed && props.item.feed_ID ) {
-			feed = getFeed( state, props.item.feed_ID ) as Feed | undefined;
-		}
-		return feed;
-	} );
+	const { data: fetchedFeed } = useFeedQuery( props.item.feed_ID );
+	const feed = ( props.item.meta?.data?.feed ?? fetchedFeed ) as Feed | undefined;
 	const isRecommendedBlogsList = list.slug === 'recommended-blogs';
 
 	const { data: isInList = false } = useQuery( {
@@ -170,7 +164,6 @@ export default function FeedItem( props: {
 		// TODO: Add support for removing invalid feed list item
 		<Card className="list-manage__site-card">
 			<SitePlaceholder />
-			<QueryReaderFeed feedId={ item.feed_ID } />
 		</Card>
 	) : (
 		<Card className="list-manage__site-card">

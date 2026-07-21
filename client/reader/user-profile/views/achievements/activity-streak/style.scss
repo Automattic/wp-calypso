@@ -44,3 +44,45 @@
 	text-decoration: underline dotted;
 	text-underline-offset: 2px;
 }
+
+.activity-streak__stats {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 24px;
+	font-size: $font-body-small;
+	color: var( --color-text-subtle );
+	line-height: 1.4;
+}
+
+.activity-streak__stat {
+	display: inline-flex;
+	align-items: center;
+	gap: 4px;
+	white-space: nowrap;
+	cursor: help;
+}
+
+.activity-streak__stat-icon {
+	display: inline-block;
+	width: 20px;
+	height: 20px;
+	background-repeat: no-repeat;
+	background-position: center;
+	background-size: contain;
+	flex-shrink: 0;
+}
+
+.activity-streak__stat-icon.is-freeze {
+	background-image: url( calypso/assets/images/achievements/streak-day-freeze-used.svg );
+}
+
+.activity-streak__stat-icon.is-record {
+	background-image: url( calypso/assets/images/achievements/streak-record.svg );
+}
+
+// Tooltip is rendered in a portal outside `.activity-streak`, so this rule
+// lives at the top level. Lets us emit two paragraphs in the same `text` prop
+// using `\n\n` as a separator.
+.activity-streak__stat-tooltip {
+	white-space: pre-line;
+}

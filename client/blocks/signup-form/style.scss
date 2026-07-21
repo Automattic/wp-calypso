@@ -19,6 +19,22 @@
 	.signup-form__passwordless-email {
 		transition: none !important; // The default form element transition breaks the visibility transition between steps.
 	}
+
+	// Variant B of the round-2 experiment (email block below social block):
+	// the `.card ~ .auth-form__separator { margin: -10px 0 }` rule in form-divider/style.scss
+	// pulls the OR into both neighbouring cards. That works for Variant A (the email card's
+	// own padding absorbs the negative top margin), but the social card uses
+	// `padding: 0 0 0 1px` and has nothing to absorb it, so the OR visually overlaps the
+	// last social button. Override the divider margins in this layout and add matching
+	// breathing room to the email wrapper below.
+	.auth-form__separator:has(+ .signup-form-social-first-email) {
+		margin-top: 24px;
+		margin-bottom: 0;
+	}
+
+	.auth-form__separator + .signup-form-social-first-email {
+		margin-top: 24px;
+	}
 }
 
 .signup-form .signup-form__input.form-text-input[type] {

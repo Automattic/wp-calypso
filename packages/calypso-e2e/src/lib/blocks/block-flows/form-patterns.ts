@@ -104,12 +104,20 @@ export class FormPatternsFlow implements BlockFlow {
 		await context.addedBlockLocator.getByRole( 'button', { name: 'Browse form patterns' } ).click();
 
 		const editorParent = await context.editorPage.getEditorParent();
-		await editorParent
+		const firstOption = editorParent
 			.getByRole( 'dialog', { name: 'Choose a pattern' } )
 			.getByRole( 'option' )
-			.first()
-			// These patterns can load in quite slowly, messing with animation wait checks, so let's give extra time.
-			.click( { timeout: 30 * 1000 } );
+			.first();
+		// Wait for the dialog to settle before clicking; the patterns load in via an
+		// iframe and a `block-editor-block-preview__container` overlay intercepts
+		// pointer events while previews hydrate. The remote pattern library can be
+		// slow to load on loaded CI agents, so allow a generous timeout here.
+		await firstOption.waitFor( { state: 'visible', timeout: 40 * 1000 } );
+		// Force the click: on slower CI agents the preview container occasionally
+		// continues to intercept pointer events even after the option reports as
+		// visible, enabled and stable. The option still carries the selection
+		// handler — clicking it directly is what the keyboard-activated path does.
+		await firstOption.click( { force: true } );
 	}
 
 	/**

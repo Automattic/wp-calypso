@@ -1,6 +1,7 @@
 import debugFactory from 'debug';
 import wpcomBlockDonationsPlanUpgrade from './wpcom-block-donations-plan-upgrade';
 import wpcomBlockDonationsStripeConnect from './wpcom-block-donations-stripe-connect';
+import wpcomBlockEditorClassicBlockDeprecationActionClick from './wpcom-block-editor-classic-block-deprecation-action-click';
 import wpcomBlockEditorCloseClick from './wpcom-block-editor-close-click';
 import wpcomBlockEditorDetailsOpen from './wpcom-block-editor-details-open';
 import wpcomBlockEditorGlobalStylesMenuSelected from './wpcom-block-editor-global-styles-menu-selected';
@@ -72,6 +73,7 @@ const EVENTS_MAPPING = [
 	wpcomTemplatePartChooseCapture(),
 	wpcomTemplatePartChooseBubble(),
 	wpcomTemplatePartReplaceBubble(),
+	wpcomBlockEditorClassicBlockDeprecationActionClick(),
 	wpcomBlockEditorListViewSelect(),
 	wpcomBlockEditorMissingBlockActionClick(),
 	wpcomBlockEditorTemplatePartDetachBlocks(),
