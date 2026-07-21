@@ -49,7 +49,6 @@ import {
 	STATS_FEATURE_SUMMARY_LINKS_7_DAYS,
 	STATS_FEATURE_LOCATION_REGION_VIEWS,
 	STATS_FEATURE_LOCATION_CITY_VIEWS,
-	COMMERCIAL_PAYWALL_KILLED,
 } from '../constants';
 import {
 	hasSupportedCommercialUse,
@@ -76,7 +75,7 @@ const jetpackStatsAdvancedPaywall = [
 ];
 
 // If Jetpack commerical sites don't have any purchase that supports commercial use,
-// gate modules or cards accordingly. Unused while COMMERCIAL_PAYWALL_KILLED is true (STATS-342).
+// gate modules or cards accordingly.
 const jetpackStatsCommercialPaywall = [
 	STAT_TYPE_TOP_POSTS,
 	STAT_TYPE_COUNTRY_VIEWS,
@@ -98,7 +97,7 @@ const jetpackStatsCommercialPaywall = [
 ];
 
 // If Jetpack commerical sites don't have any purchase that supports commercial use,
-// gate controls accordingly. Unused while COMMERCIAL_PAYWALL_KILLED is true (STATS-342).
+// gate controls accordingly.
 const granularControlForJetpackStatsCommercialPaywall = [
 	...defaultDateControlGates,
 	STATS_FEATURE_INTERVAL_DROPDOWN_WEEK,
@@ -227,7 +226,7 @@ export const shouldGateStats = ( state: object, siteId: number | null, statType:
 		}
 
 		const isSiteCommercial = getSiteOption( state, siteId, 'is_commercial' ) || false;
-		if ( isSiteCommercial && ! COMMERCIAL_PAYWALL_KILLED ) {
+		if ( isSiteCommercial ) {
 			// Paywall basic stats for commercial sites with:
 			// 1. Monthly views reached the paywall threshold.
 			// 2. Current usage passed over grace period days.
@@ -237,10 +236,13 @@ export const shouldGateStats = ( state: object, siteId: number | null, statType:
 					...granularControlForJetpackStatsCommercialPaywall,
 				].includes( statType );
 			}
+
+			// Paywall advanced stats for commercial sites with monthly views less than 1k.
+			return [ ...jetpackStatsAdvancedPaywall ].includes( statType );
 		}
 
-		// Paywall advanced stats for all other Jetpack sites without a supporting purchase.
-		return jetpackStatsAdvancedPaywall.includes( statType );
+		// Paywall advanced stats for non-commercial sites.
+		return [ ...jetpackStatsAdvancedPaywall ].includes( statType );
 	}
 
 	const siteFeatures = getSiteFeatures( state, siteId );

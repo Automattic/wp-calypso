@@ -348,7 +348,7 @@ describe( 'shouldGateStats in Odyssey stats', () => {
 		expect( isGatedStats ).toBe( false );
 	} );
 
-	it( 'should not gate basic stats for commercial jetpack sites past the paywall threshold, since the commercial paywall is no longer enforced (STATS-342)', () => {
+	it( 'should gate basic stats for commercial jetpack sites having 1k views count without Stats commercial purchase', () => {
 		const mockState = {
 			sites: {
 				features: {
@@ -382,7 +382,7 @@ describe( 'shouldGateStats in Odyssey stats', () => {
 			},
 		};
 		const isGatedStats = shouldGateStats( mockState, siteId, gatedStatType );
-		expect( isGatedStats ).toBe( false );
+		expect( isGatedStats ).toBe( true );
 	} );
 
 	it( 'should gate advanced stats for non-commercial jetpack sites without Stats commercial purchase', () => {

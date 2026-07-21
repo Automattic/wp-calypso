@@ -1,5 +1,4 @@
 import { NoticeIdType } from 'calypso/my-sites/stats/hooks/use-notice-visibility-query';
-import { COMMERCIAL_PAYWALL_KILLED } from '../constants';
 import CommercialSiteUpgradeNotice from './commercial-site-upgrade-notice';
 import DoYouLoveJetpackStatsNotice from './do-you-love-jetpack-stats-notice';
 import FreePlanPurchaseSuccessJetpackStatsNotice from './free-plan-purchase-success-notice';
@@ -67,7 +66,7 @@ const ALL_STATS_NOTICES: StatsNoticeType[] = [
 				!! ( showUpgradeNoticeForJetpackSites || showUpgradeNoticeForWpcomSites ) && ! hasPaidStats
 			);
 		},
-		disabled: COMMERCIAL_PAYWALL_KILLED,
+		disabled: false,
 	},
 	{
 		component: DoYouLoveJetpackStatsNotice,
