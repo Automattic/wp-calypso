@@ -2,20 +2,18 @@
 	position: relative;
 	pointer-events: all;
 	min-height: unset;
-	container-type: inline-size;
-	// Cap width in wide chats so cards stay card-sized (4 columns past 520px).
+	// Cap width in wide chats so cards stay card-sized.
 	max-width: 640px;
 
-	&__grid {
+	// Descendant selector out-specifies the `Grid` component's own class.
+	.agents-manager-variation-picker__grid {
+		// As many card-sized columns as fit: 2 in the docked sidebar,
+		// 4 at the max width.
+		grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+
 		.block-editor-iframe__scale-container {
 			flex: 1 0 fit-content;
 			display: flex;
-		}
-	}
-
-	@container (min-width: 520px) {
-		.agents-manager-variation-picker__grid {
-			grid-template-columns: repeat(4, minmax(0, 1fr));
 		}
 	}
 
