@@ -19,12 +19,7 @@ import { __ } from '@wordpress/i18n';
 import { dashboardRedirect, redirectAsNotAllowed } from './redirect';
 import { rootRoute } from './root';
 import type { AgencyCapability } from '@automattic/api-core';
-
-type CapabilityRouteMatch = {
-	staticData?: {
-		requiresAgencyCapability?: AgencyCapability | AgencyCapability[];
-	};
-};
+import type { AnyRoute, StaticDataRouteOption } from '@tanstack/react-router';
 
 /**
  * Any-of (OR): true when `capabilities` contains at least one required capability.
@@ -37,18 +32,35 @@ export function hasAnyCapability(
 	return list.some( ( capability ) => capabilities.includes( capability ) );
 }
 
+function satisfiesStaticData(
+	staticData: StaticDataRouteOption | undefined,
+	capabilities: readonly string[]
+): boolean {
+	const required = staticData?.requiresAgencyCapability;
+	return ! required || hasAnyCapability( capabilities, required );
+}
+
 /**
  * True when every matched agency route's declared capability requirement is
  * satisfied. Routes without `requiresAgencyCapability` are unrestricted.
  */
 export function isAllowedByCapabilities(
-	matches: ReadonlyArray< CapabilityRouteMatch >,
+	matches: ReadonlyArray< { staticData?: StaticDataRouteOption } >,
 	capabilities: readonly string[]
 ): boolean {
-	return matches.every( ( match ) => {
-		const required = match.staticData?.requiresAgencyCapability;
-		return ! required || hasAnyCapability( capabilities, required );
-	} );
+	return matches.every( ( match ) => satisfiesStaticData( match.staticData, capabilities ) );
+}
+
+/**
+ * The same check against a route object, for surfaces that decide whether to
+ * link to a route at all (the sidebar) rather than guarding a navigation to it.
+ * Reading the requirement off the route keeps the menu and the guard in sync.
+ */
+export function isRouteAllowedByCapabilities(
+	route: AnyRoute,
+	capabilities: readonly string[]
+): boolean {
+	return satisfiesStaticData( route.options.staticData, capabilities );
 }
 
 // Pathless layout route that guards every agency route (blocks client users).
@@ -95,7 +107,7 @@ const agencyOverviewRoute = createRoute( {
 );
 
 // `/tiers` – agency tiers & benefits
-const agencyTiersRoute = createRoute( {
+export const agencyTiersRoute = createRoute( {
 	staticData: { requiresAgencyCapability: 'a4a_read_agency_tier' },
 	head: () => ( {
 		meta: [
@@ -116,7 +128,7 @@ const agencyTiersRoute = createRoute( {
 );
 
 // `/marketplace/exclusive-offers` – partner offers (Refer / Resell)
-const exclusiveOffersRoute = createRoute( {
+export const exclusiveOffersRoute = createRoute( {
 	staticData: { requiresAgencyCapability: 'a4a_read_exclusive_offers' },
 	head: () => ( {
 		meta: [
@@ -136,7 +148,7 @@ const exclusiveOffersRoute = createRoute( {
 );
 
 // `/resources/learn` – guides, articles, and training for agencies
-const learnRoute = createRoute( {
+export const learnRoute = createRoute( {
 	staticData: { requiresAgencyCapability: 'a4a_read_learn' },
 	head: () => ( {
 		meta: [
@@ -165,7 +177,7 @@ const ensureMcpSettings = async () => {
 	}
 };
 
-const mcpRoute = createRoute( {
+export const mcpRoute = createRoute( {
 	staticData: { requiresAgencyCapability: 'a4a_read_learn' },
 	head: () => ( { meta: [ { title: __( 'MCP' ) } ] } ),
 	getParentRoute: () => agencyRoute,
@@ -248,7 +260,7 @@ export const agencyTeamRoute = createRoute( {
 );
 
 // `/earn` – summary of the agency's earning programs (default Earn screen)
-const earnOverviewRoute = createRoute( {
+export const earnOverviewRoute = createRoute( {
 	staticData: { requiresAgencyCapability: [ 'a4a_read_referrals', 'a4a_read_migrations' ] },
 	head: () => ( { meta: [ { title: __( 'Overview' ) } ] } ),
 	getParentRoute: () => agencyRoute,
@@ -260,7 +272,7 @@ const earnOverviewRoute = createRoute( {
 );
 
 // `/earn/referrals` – referral commissions
-const earnReferralsRoute = createRoute( {
+export const earnReferralsRoute = createRoute( {
 	staticData: { requiresAgencyCapability: 'a4a_read_referrals' },
 	head: () => ( { meta: [ { title: __( 'Referrals' ) } ] } ),
 	getParentRoute: () => agencyRoute,
@@ -272,7 +284,7 @@ const earnReferralsRoute = createRoute( {
 );
 
 // `/earn/woopayments` – WooPayments revenue share
-const earnWooPaymentsRoute = createRoute( {
+export const earnWooPaymentsRoute = createRoute( {
 	// TODO: replace with a dedicated WooPayments capability when one exists.
 	staticData: { requiresAgencyCapability: 'a4a_read_referrals' },
 	head: () => ( { meta: [ { title: __( 'WooPayments' ) } ] } ),
@@ -285,7 +297,7 @@ const earnWooPaymentsRoute = createRoute( {
 );
 
 // `/earn/migrations` – migration commissions
-const earnMigrationsRoute = createRoute( {
+export const earnMigrationsRoute = createRoute( {
 	staticData: { requiresAgencyCapability: 'a4a_read_migrations' },
 	head: () => ( { meta: [ { title: __( 'Migrations' ) } ] } ),
 	getParentRoute: () => agencyRoute,
@@ -297,7 +309,7 @@ const earnMigrationsRoute = createRoute( {
 );
 
 // `/earn/payout-settings` – where and how the agency gets paid
-const earnPayoutSettingsRoute = createRoute( {
+export const earnPayoutSettingsRoute = createRoute( {
 	staticData: { requiresAgencyCapability: [ 'a4a_read_referrals', 'a4a_read_migrations' ] },
 	head: () => ( { meta: [ { title: __( 'Payout settings' ) } ] } ),
 	getParentRoute: () => agencyRoute,
