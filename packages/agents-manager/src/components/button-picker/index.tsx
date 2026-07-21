@@ -31,13 +31,7 @@ export default function ButtonPicker( {
 
 	// Read current button border from the editor's global styles.
 	const { globalStyles } = useGlobalStyles();
-	const liveButtonBorder =
-		(
-			( globalStyles?.styles?.elements as Record< string, unknown > )?.button as Record<
-				string,
-				unknown
-			>
-		 )?.border ?? null;
+	const liveButtonBorder = globalStyles?.styles?.elements?.button?.border ?? null;
 
 	// Move the currently-applied button style to index 0 (once, when the store loads).
 	const [ sortedVariations, setSortedVariations ] = useState( safeVariations );

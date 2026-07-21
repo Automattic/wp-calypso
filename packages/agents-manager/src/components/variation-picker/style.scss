@@ -2,11 +2,24 @@
 	position: relative;
 	pointer-events: all;
 	min-height: unset;
+	container-type: inline-size;
+
+	// Pagination controls are absolutely positioned below the picker grid, so
+	// reserve space before the next bot response.
+	&:has( .agents-manager-variation-picker__arrows ) {
+		margin-bottom: 56px;
+	}
 
 	&__grid {
 		.block-editor-iframe__scale-container {
 			flex: 1 0 fit-content;
 			display: flex;
+		}
+	}
+
+	@container (min-width: 520px) {
+		.agents-manager-variation-picker__grid {
+			grid-template-columns: repeat(4, minmax(0, 1fr));
 		}
 	}
 

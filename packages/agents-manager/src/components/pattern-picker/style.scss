@@ -2,6 +2,12 @@
 @import "@wordpress/base-styles/variables";
 
 .agents-manager-pattern-picker {
+	// Pagination controls are absolutely positioned below the picker, so
+	// reserve space before the next bot response.
+	&:has( .agents-manager-pattern-picker__arrows ) {
+		margin-bottom: 56px;
+	}
+
 	&__item-picker {
 		position: relative;
 		display: flex;

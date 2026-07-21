@@ -24,8 +24,7 @@ export default function ColorPicker( {
 
 	// Read current color palette from the editor's global styles.
 	const { globalStyles } = useGlobalStyles();
-	const livePalette =
-		( globalStyles?.settings?.color?.palette as Record< string, unknown > )?.theme ?? null;
+	const livePalette = globalStyles?.settings?.color?.palette?.theme ?? null;
 
 	const safeVariations = useMemo(
 		() => ( Array.isArray( variations ) ? variations : [] ),

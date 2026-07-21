@@ -49,9 +49,7 @@ export default function FontPicker( {
 
 	// Read current font families from the editor's global styles.
 	const { globalStyles } = useGlobalStyles();
-	const liveFontFamilies =
-		( globalStyles?.settings?.typography?.fontFamilies as Record< string, unknown > )?.theme ??
-		null;
+	const liveFontFamilies = globalStyles?.settings?.typography?.fontFamilies?.theme ?? null;
 
 	// Move the currently-applied font to index 0 (once, when the store loads).
 	const [ sortedVariations, setSortedVariations ] = useState( fontVariations );

@@ -28,14 +28,19 @@ export const showComponentAbility = ( getDeps: () => ShowComponentDeps ): Abilit
 				type: 'object',
 				description: 'The props to pass to the component',
 			},
+			summary: {
+				type: 'string',
+				description: 'Summary message to show to the user',
+			},
 			followUpTasks: {
 				type: 'boolean',
 				description:
-					'Set to true if the user request has to be broken into multiple steps and other tasks remain to be done after this one.',
+					'Deprecated. This tool always returns to the agent with a success or error message.',
 			},
 			zoomOut: {
 				type: 'boolean',
-				description: 'Whether to zoom out before showing the component',
+				description:
+					'Whether to zoom out before showing the component. Ignored for color-picker and font-picker.',
 			},
 			clientId: {
 				type: 'string',
@@ -45,12 +50,42 @@ export const showComponentAbility = ( getDeps: () => ShowComponentDeps ): Abilit
 				type: 'number',
 				description: 'The index at which to insert the component',
 			},
-			messageId: {
-				type: 'string',
-				description: 'The assistant message ID for undo support',
-			},
 		},
 		required: [ 'type', 'props' ],
+	},
+	output_schema: {
+		type: 'object',
+		properties: {
+			result: {
+				type: 'object',
+				properties: {
+					success: {
+						type: 'boolean',
+						description: 'Whether the picker was shown successfully.',
+					},
+					message: {
+						type: 'string',
+						description: 'Human-readable success or error message.',
+					},
+					error: {
+						type: 'string',
+						description: 'Error details when success is false.',
+					},
+					details: {
+						type: 'object',
+						description: 'Optional details about the shown picker.',
+					},
+				},
+				required: [ 'success', 'message' ],
+			},
+			returnToAgent: {
+				type: 'boolean',
+			},
+			agentMessage: {
+				type: 'string',
+			},
+		},
+		required: [ 'result', 'returnToAgent' ],
 	},
 	callback: ( input ) => createCallback( getDeps() )( input ),
 } );

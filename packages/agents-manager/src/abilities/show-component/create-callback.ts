@@ -1,3 +1,4 @@
+import { __ } from '@wordpress/i18n';
 import { zoomOut } from '../../utils/canvas-zoom';
 import type { UseCheckpointReturn } from '../../hooks/use-checkpoint';
 import type { AbilityResult, ShowComponentType } from '../types';
@@ -5,11 +6,15 @@ import type { AbilityResult, ShowComponentType } from '../types';
 export interface ShowComponentInput {
 	type: ShowComponentType;
 	props: Record< string, unknown >;
+	summary?: string;
 	followUpTasks?: boolean;
 	zoomOut?: boolean;
 	clientId?: string;
 	insertIndex?: number;
+	/** Injected by the agenttic client — not part of the model-facing schema. */
 	messageId?: string;
+	/** Injected by the agenttic client — not part of the model-facing schema. */
+	toolCallId?: string;
 }
 
 export type ShowComponentCallback = ( input: ShowComponentInput ) => Promise< AbilityResult >;
@@ -44,10 +49,12 @@ export function createCallback( deps: ShowComponentDeps ): ShowComponentCallback
 		const {
 			type,
 			props: inputProps = {},
+			summary,
 			followUpTasks,
 			zoomOut: shouldZoomOut = false,
 			clientId,
 			messageId,
+			toolCallId,
 			insertIndex,
 		} = input;
 
@@ -59,7 +66,9 @@ export function createCallback( deps: ShowComponentDeps ): ShowComponentCallback
 				throw new Error( '[AgentsManager] Props must be an object with properties' );
 			}
 
-			if ( shouldZoomOut ) {
+			// Color and font pickers skip auto-zoom because they are lightweight
+			// style pickers and zooming disrupts the editing context.
+			if ( shouldZoomOut && type !== 'color-picker' && type !== 'font-picker' ) {
 				zoomOut( { blockDoubleClick: deps.isBuildingSite } );
 			}
 
@@ -68,25 +77,35 @@ export function createCallback( deps: ShowComponentDeps ): ShowComponentCallback
 			if ( resolvedClientId ) {
 				props.clientId = resolvedClientId;
 			}
-			if ( insertIndex !== undefined ) {
+			if ( insertIndex !== undefined && insertIndex >= 0 ) {
 				props.insertIndex = insertIndex;
 			}
 
 			// Set checkpoint so the action can be undone.
-			if ( messageId ) {
+			const checkpointId = toolCallId || messageId;
+			if ( checkpointId ) {
 				const isNewPage = type === 'pattern-picker' && !! props?.newPageId;
 				const checkpointKey = isNewPage ? 'page' : CHECKPOINT_KEYS[ type ];
 
-				deps.checkpoint.setCheckpoint( messageId, [ checkpointKey ] );
+				deps.checkpoint.setCheckpoint( checkpointId, [ checkpointKey ] );
 
 				if ( isNewPage ) {
 					deps.checkpoint.addNewPageToCheckpoint( props.newPageId as string );
 				}
 			}
 
+			const successMessage =
+				summary?.trim() || __( 'Choose from the options I provided.', __i18n_text_domain__ );
+
 			return {
-				result: 'Component displayed successfully',
-				returnToAgent: false,
+				result: {
+					success: true,
+					message: successMessage,
+					details: { type },
+				},
+				// The picker renders from the structured `agentMessage`, while the
+				// tool result tells the agent the picker was shown.
+				returnToAgent: true,
 				agentMessage: JSON.stringify( {
 					// Uses `big_sky__` prefix to match `convertToolMessagesToComponents()`.
 					tool_id: 'big_sky__show_component',
@@ -94,9 +113,10 @@ export function createCallback( deps: ShowComponentDeps ): ShowComponentCallback
 						type,
 						props,
 						followUpTasks,
+						summary: successMessage,
 						isCurrent: true,
 						postId: deps.currentPostId,
-						calypsoCheckpointId: messageId,
+						calypsoCheckpointId: checkpointId,
 					},
 				} ),
 			};
@@ -105,8 +125,15 @@ export function createCallback( deps: ShowComponentDeps ): ShowComponentCallback
 			console.error( `[AgentsManager] Error showing component ${ type }:`, error );
 
 			return {
-				result: 'There was an error with this request.',
-				returnToAgent: !! followUpTasks,
+				result: {
+					success: false,
+					message: __(
+						'There was an error with this request. Please try again.',
+						__i18n_text_domain__
+					),
+					error: error instanceof Error ? error.message : String( error ),
+				},
+				returnToAgent: true,
 			};
 		}
 	};

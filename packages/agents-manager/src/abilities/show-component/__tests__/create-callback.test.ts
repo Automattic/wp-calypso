@@ -33,17 +33,31 @@ describe( 'show-component/create-callback', () => {
 		const deps = makeDeps();
 		const result = await createCallback( deps )( makeInput() );
 
-		expect( result.result ).toBe( 'Component displayed successfully' );
-		expect( result.returnToAgent ).toBe( false );
+		expect( result.result ).toEqual( {
+			success: true,
+			message: 'Choose from the options I provided.',
+			details: { type: 'color-picker' },
+		} );
+		expect( result.returnToAgent ).toBe( true );
 
 		const parsed = JSON.parse( result.agentMessage! );
 		expect( parsed.tool_id ).toBe( 'big_sky__show_component' );
 		expect( parsed.data ).toMatchObject( {
 			type: 'color-picker',
 			props: { variations: [ { title: 'Bold' } ] },
+			summary: 'Choose from the options I provided.',
 			isCurrent: true,
 			postId: 42,
 		} );
+	} );
+
+	it( 'uses the input `summary` as the success message and picker summary', async () => {
+		const result = await createCallback( makeDeps() )(
+			makeInput( { summary: 'Pick a color palette.' } )
+		);
+
+		expect( result.result.message ).toBe( 'Pick a color palette.' );
+		expect( JSON.parse( result.agentMessage! ).data.summary ).toBe( 'Pick a color palette.' );
 	} );
 
 	it( 'includes `followUpTasks` and `messageId` in the output', async () => {
@@ -55,6 +69,16 @@ describe( 'show-component/create-callback', () => {
 		const parsed = JSON.parse( result.agentMessage! );
 		expect( parsed.data.followUpTasks ).toBe( true );
 		expect( parsed.data.calypsoCheckpointId ).toBe( 'msg-1' );
+	} );
+
+	it( 'prefers `toolCallId` over `messageId` as the checkpoint ID', async () => {
+		const deps = makeDeps();
+		const result = await createCallback( deps )(
+			makeInput( { toolCallId: 'toolu_1', messageId: 'msg-1' } )
+		);
+
+		expect( deps.checkpoint.setCheckpoint ).toHaveBeenCalledWith( 'toolu_1', [ 'color' ] );
+		expect( JSON.parse( result.agentMessage! ).data.calypsoCheckpointId ).toBe( 'toolu_1' );
 	} );
 
 	it( 'resolves compressed `clientId` from the map', async () => {
@@ -87,13 +111,21 @@ describe( 'show-component/create-callback', () => {
 
 	it( 'calls `zoomOut` when `shouldZoomOut` is true', async () => {
 		const deps = makeDeps( { isBuildingSite: true } );
-		await createCallback( deps )( makeInput( { zoomOut: true } ) );
+		await createCallback( deps )( makeInput( { type: 'pattern-picker', zoomOut: true } ) );
 
 		expect( mockZoomOut ).toHaveBeenCalledWith( { blockDoubleClick: true } );
 	} );
 
+	it.each( [ 'color-picker', 'font-picker' ] as const )(
+		'skips auto-zoom for %s',
+		async ( type ) => {
+			await createCallback( makeDeps() )( makeInput( { type, zoomOut: true } ) );
+			expect( mockZoomOut ).not.toHaveBeenCalled();
+		}
+	);
+
 	it( 'does not call `zoomOut` by default', async () => {
-		await createCallback( makeDeps() )( makeInput() );
+		await createCallback( makeDeps() )( makeInput( { type: 'pattern-picker' } ) );
 		expect( mockZoomOut ).not.toHaveBeenCalled();
 	} );
 
@@ -112,7 +144,7 @@ describe( 'show-component/create-callback', () => {
 		}
 	} );
 
-	it( 'does not set checkpoint when `messageId` is absent', async () => {
+	it( 'does not set checkpoint when no checkpoint ID is available', async () => {
 		const deps = makeDeps();
 		await createCallback( deps )( makeInput() );
 		expect( deps.checkpoint.setCheckpoint ).not.toHaveBeenCalled();
@@ -132,21 +164,16 @@ describe( 'show-component/create-callback', () => {
 		expect( deps.checkpoint.addNewPageToCheckpoint ).toHaveBeenCalledWith( 'page-99' );
 	} );
 
-	it( 'returns error result when props is empty', async () => {
+	it( 'returns a structured error result when props is empty', async () => {
 		const result = await createCallback( makeDeps() )( makeInput( { props: {} } ) );
 
-		expect( result.result ).toBe( 'There was an error with this request.' );
-		expect( result.agentMessage ).toBeUndefined();
-	} );
-
-	it( 'sets `returnToAgent` based on `followUpTasks` on error', async () => {
-		const resultWithFollowUp = await createCallback( makeDeps() )(
-			makeInput( { props: {}, followUpTasks: true } )
+		expect( result.result.success ).toBe( false );
+		expect( result.result.message ).toBe(
+			'There was an error with this request. Please try again.'
 		);
-		expect( resultWithFollowUp.returnToAgent ).toBe( true );
-
-		const resultWithout = await createCallback( makeDeps() )( makeInput( { props: {} } ) );
-		expect( resultWithout.returnToAgent ).toBe( false );
+		expect( result.result.error ).toContain( 'Props must be an object with properties' );
+		expect( result.returnToAgent ).toBe( true );
+		expect( result.agentMessage ).toBeUndefined();
 	} );
 
 	it( 'does not mutate the input props object', async () => {

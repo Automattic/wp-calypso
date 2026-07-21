@@ -98,12 +98,10 @@ function getIndividualConfig( options = {} ) {
 					}
 					// TODO: Remove this override when @wordpress/abilities ships with
 					// WordPress core (expected in WP 7.0).
-					// Bundle @wordpress/abilities into image-studio so it works on
-					// self-hosted sites where the package isn't registered as a script.
-					if (
-						( name === 'image-studio' || name === 'jetpack-ai-sidebar' ) &&
-						request === '@wordpress/abilities'
-					) {
+					// Bundle @wordpress/abilities so bundles work on sites where the
+					// package isn't registered as a script — WP_Scripts silently skips
+					// scripts with unregistered dependencies.
+					if ( request === '@wordpress/abilities' ) {
 						return null;
 					}
 					// Bundle @wordpress/ui: neither WordPress core nor the Gutenberg
