@@ -484,4 +484,23 @@ const webpackConfig = {
 	},
 };
 
+// thread-loader leaks its worker processes on one-shot builds, and their referenced
+// pipes pin the event loop so the build never exits (thread-loader#122). Terminate the
+// pool on `done` (skip watch mode). getPool options must match calypso-build's transpile.js.
+webpackConfig.plugins.push( {
+	apply( compiler ) {
+		compiler.hooks.done.tap( 'TerminateThreadLoaderPool', () => {
+			if ( compiler.watchMode ) {
+				return;
+			}
+			try {
+				// eslint-disable-next-line import/no-extraneous-dependencies
+				require( 'thread-loader/dist/workerPools' ).getPool( { workers: workerCount } ).terminate();
+			} catch ( e ) {
+				// Best-effort cleanup — never fail the build over it.
+			}
+		} );
+	},
+} );
+
 module.exports = webpackConfig;
