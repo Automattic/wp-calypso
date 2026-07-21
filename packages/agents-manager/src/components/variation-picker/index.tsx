@@ -11,26 +11,12 @@ import Variation from './variation';
 import type { StyleVariation } from '../styles-preview';
 import './style.scss';
 
-const prepareVariations = (
-	variations: StyleVariation[],
-	numSuggestions: number
-): StyleVariation[] => {
-	const preparedVariations = variations.filter( ( v ) => v );
-	if ( numSuggestions > 0 ) {
-		return preparedVariations.slice( 0, numSuggestions );
-	}
-	return preparedVariations;
-};
-
 interface Props {
 	variations: StyleVariation[];
 	type: 'color' | 'font' | 'button';
 	maxToShow?: number;
-	numSuggestions?: number;
 	onSelect?: ( variation: StyleVariation ) => void;
-	onPaginate?: ( direction: 'prev' | 'next' ) => void;
 	activeVariationTitle?: string | null;
-	currentStyleVariation?: StyleVariation | null;
 	fontFamiliesToCSS?: ( fontFamilies: Array< { name: string; fontFamily: string } > ) => string;
 }
 
@@ -38,19 +24,13 @@ export default function VariationPicker( {
 	variations,
 	type,
 	maxToShow = 4,
-	numSuggestions = 0,
 	onSelect,
-	onPaginate,
 	activeVariationTitle,
-	currentStyleVariation,
 	fontFamiliesToCSS,
 }: Props ) {
 	const [ firstIndex, setFirstIndex ] = useState( 0 );
 
-	const sortedVariations = useMemo(
-		() => prepareVariations( variations, numSuggestions ),
-		[ variations, numSuggestions ]
-	);
+	const sortedVariations = useMemo( () => variations.filter( Boolean ), [ variations ] );
 
 	const variationsToShow = useMemo(
 		() => sortedVariations.slice( firstIndex, firstIndex + maxToShow ),
@@ -61,12 +41,10 @@ export default function VariationPicker( {
 	const currentPage = Math.floor( firstIndex / maxToShow ) + 1;
 
 	const revealPrevious = () => {
-		onPaginate?.( 'prev' );
 		setFirstIndex( ( prev ) => Math.max( 0, prev - maxToShow ) );
 	};
 
 	const revealNext = () => {
-		onPaginate?.( 'next' );
 		setFirstIndex( ( prev ) =>
 			Math.min( prev + maxToShow, Math.floor( sortedVariations.length / maxToShow ) * maxToShow )
 		);
@@ -92,7 +70,6 @@ export default function VariationPicker( {
 									type={ type }
 									isActive={ variation.title === activeVariationTitle }
 									onSelect={ onSelect }
-									currentStyleVariation={ currentStyleVariation }
 									fontFamiliesToCSS={ fontFamiliesToCSS }
 								/>
 							</div>

@@ -1,16 +1,10 @@
 import { registerAbility, registerAbilityCategory } from '@wordpress/abilities';
-import { useSelect } from '@wordpress/data';
 import { useEffect } from '@wordpress/element';
+import { BIG_SKY_ABILITY_CATEGORY } from '../abilities/constants';
 import { showComponentAbility } from '../abilities/show-component';
-import useCheckpoint from './use-checkpoint';
-import type { ShowComponentDeps } from '../abilities/show-component/create-callback';
 
 // Shared across all component instances to prevent duplicate registration.
 let hasRegistered = false;
-
-// Module-scoped so the registered abilities — which outlive any single
-// component instance — always read the latest deps from the mounted one.
-let showComponentDeps: ShowComponentDeps = { checkpoint: { setCheckpoint: () => {} } };
 
 /**
  * Registers AM-owned abilities via `@wordpress/abilities`.
@@ -20,26 +14,18 @@ let showComponentDeps: ShowComponentDeps = { checkpoint: { setCheckpoint: () => 
  * AM is the single source of truth for each migrated ability.
  */
 export default function useAbilitiesRegistration(): void {
-	const checkpoint = useCheckpoint();
-	const currentPostId = useSelect( ( select ) => {
-		return ( select( 'core/editor' ) as { getCurrentPostId?: () => number } )?.getCurrentPostId?.();
-	}, [] );
-
-	showComponentDeps = { currentPostId, checkpoint };
-
 	useEffect( () => {
 		if ( hasRegistered ) {
 			return;
 		}
 		hasRegistered = true;
 
-		const abilities = [ showComponentAbility( () => showComponentDeps ) ];
+		const abilities = [ showComponentAbility ];
 
-		// Register category before abilities (required ordering).
-		// Uses `big-sky` to match the backend route configuration.
+		// Register the category before the abilities that reference it.
 		( async () => {
 			try {
-				await registerAbilityCategory( 'big-sky', {
+				await registerAbilityCategory( BIG_SKY_ABILITY_CATEGORY, {
 					label: 'Big Sky',
 					description: 'Big Sky abilities',
 				} );

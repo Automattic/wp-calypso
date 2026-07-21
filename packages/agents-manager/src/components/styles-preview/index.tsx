@@ -146,47 +146,30 @@ const THROTTLE_OPTIONS = {
  */
 function resolveColor(
 	editorColor: string | undefined,
-	fallbackColor: string | undefined,
 	palette: PaletteColor[] | undefined,
-	fallbackPalette: PaletteColor[] | undefined,
 	defaultValue: string | null = null
 ): string | undefined {
-	if ( editorColor ) {
-		// Handle WordPress block format: var:preset|color|theme-2
-		if ( editorColor.includes( 'var:preset|color|' ) ) {
-			const slug = editorColor.split( '|' )[ 2 ];
-			const resolved = palette?.find( ( c ) => c.slug === slug )?.color;
-			if ( resolved ) {
-				return resolved;
-			}
-		}
-		// Handle CSS variable format: var(--wp--preset--color--theme-2)
-		else if ( editorColor.includes( 'var(--wp--preset' ) ) {
-			const slug = editorColor.split( '--' )[ 4 ]?.replace( ')', '' );
-			const resolved = palette?.find( ( c ) => c.slug === slug )?.color;
-			if ( resolved ) {
-				return resolved;
-			}
-		} else if ( ! defaultValue || editorColor !== defaultValue ) {
-			return editorColor;
-		}
-	}
-
-	if ( ! fallbackColor ) {
+	if ( ! editorColor ) {
 		return undefined;
 	}
 
-	if ( fallbackColor.includes( 'var:preset|color|' ) ) {
-		const slug = fallbackColor.split( '|' )[ 2 ];
-		return fallbackPalette?.find( ( c ) => c.slug === slug )?.color;
+	// Handle WordPress block format: var:preset|color|theme-2
+	if ( editorColor.includes( 'var:preset|color|' ) ) {
+		const slug = editorColor.split( '|' )[ 2 ];
+		return palette?.find( ( c ) => c.slug === slug )?.color;
 	}
 
-	if ( ! fallbackColor.includes( 'var(--wp--preset' ) ) {
-		return fallbackColor;
+	// Handle CSS variable format: var(--wp--preset--color--theme-2)
+	if ( editorColor.includes( 'var(--wp--preset' ) ) {
+		const slug = editorColor.split( '--' )[ 4 ]?.replace( ')', '' );
+		return palette?.find( ( c ) => c.slug === slug )?.color;
 	}
 
-	const slug = fallbackColor.split( '--' )[ 4 ]?.replace( ')', '' );
-	return fallbackPalette?.find( ( c ) => c.slug === slug )?.color;
+	if ( ! defaultValue || editorColor !== defaultValue ) {
+		return editorColor;
+	}
+
+	return undefined;
 }
 
 function getPaddingStyles(
@@ -248,6 +231,9 @@ function getBorderStyles(
 	return { border: border as unknown as string };
 }
 
+// Stable fallback so the merge memo doesn't invalidate on every render.
+const EMPTY_GLOBAL_STYLES: GlobalStyles = {};
+
 interface Props {
 	label?: string;
 	type: 'color' | 'font' | 'button';
@@ -255,7 +241,6 @@ interface Props {
 	globalStyles?: GlobalStyles;
 	paletteColors?: PaletteColor[];
 	themeColors?: PaletteColor[];
-	currentStyleVariation?: StyleVariation | null;
 	fontFamiliesToCSS?: ( fontFamilies: Array< { name: string; fontFamily: string } > ) => string;
 }
 
@@ -266,13 +251,12 @@ export default function StylesPreview( {
 	globalStyles: globalStylesProp,
 	paletteColors: paletteColorsProp,
 	themeColors: themeColorsProp,
-	currentStyleVariation,
 	fontFamiliesToCSS: fontFamiliesToCSSFn,
 }: Props ) {
 	// Read current global styles from the store. Props override when provided.
 	const { globalStyles: storeGlobalStyles } = useGlobalStyles();
 
-	const globalStyles = globalStylesProp ?? storeGlobalStyles ?? ( {} as GlobalStyles );
+	const globalStyles = globalStylesProp ?? storeGlobalStyles ?? EMPTY_GLOBAL_STYLES;
 	const paletteColors =
 		paletteColorsProp ??
 		( ( globalStyles?.settings?.color?.palette as Record< string, unknown > )?.theme as
@@ -283,14 +267,12 @@ export default function StylesPreview( {
 
 	// For typography previews: use ONLY the variation to prevent leaking active global styles.
 	// For other types: merge variation with `globalStyles` to get custom colors.
-	let mergedStyles: GlobalStyles;
-	if ( variation && type === 'font' ) {
-		mergedStyles = variation as GlobalStyles;
-	} else if ( variation ) {
-		mergedStyles = deepmerge( globalStyles, variation ) as GlobalStyles;
-	} else {
-		mergedStyles = globalStyles;
-	}
+	const mergedStyles: GlobalStyles = useMemo( () => {
+		if ( variation && type === 'font' ) {
+			return variation as GlobalStyles;
+		}
+		return variation ? ( deepmerge( globalStyles, variation ) as GlobalStyles ) : globalStyles;
+	}, [ variation, type, globalStyles ] );
 
 	const fontFamilies =
 		mergedStyles?.settings?.typography?.fontFamilies?.theme ||
@@ -317,53 +299,18 @@ export default function StylesPreview( {
 		( getStyleValue( mergedStyles, 'typography.textTransform' ) as string ) ?? 'none';
 	const textColor = ( getStyleValue( globalStyles, 'color.text' ) as string ) ?? 'black';
 
-	const h1FontFamily = resolveFontFamily(
-		getStyleValue( mergedStyles, 'typography.fontFamily', 'h1' ) as string
-	);
-	const headingFontFamily = resolveFontFamily(
-		getStyleValue( mergedStyles, 'typography.fontFamily', 'heading' ) as string
-	);
-	const headerFontFamily = h1FontFamily ?? headingFontFamily ?? fontFamily;
+	// `h1` styles win over `heading` styles for the header preview.
+	const headerStyle = ( styles: GlobalStyles, path: string ) =>
+		( getStyleValue( styles, path, 'h1' ) ?? getStyleValue( styles, path, 'heading' ) ) as string;
 
-	const h1FontWeight = getStyleValue( mergedStyles, 'typography.fontWeight', 'h1' ) as string;
-	const headingFontWeight = getStyleValue(
-		mergedStyles,
-		'typography.fontWeight',
-		'heading'
-	) as string;
-	const headerFontWeight = h1FontWeight ?? headingFontWeight ?? fontWeight;
-
-	const h1FontStyle = getStyleValue( mergedStyles, 'typography.fontStyle', 'h1' ) as string;
-	const headingFontStyle = getStyleValue(
-		mergedStyles,
-		'typography.fontStyle',
-		'heading'
-	) as string;
-	const headerFontStyle = h1FontStyle ?? headingFontStyle ?? fontStyle;
-
-	const h1TextTransform = getStyleValue( mergedStyles, 'typography.textTransform', 'h1' ) as string;
-	const headingTextTransform = getStyleValue(
-		mergedStyles,
-		'typography.textTransform',
-		'heading'
-	) as string;
-	const headerTextTransform = h1TextTransform ?? headingTextTransform ?? textTransform;
-
-	const h1Color = getStyleValue( globalStyles, 'color.text', 'h1' ) as string;
-	const headingColor = getStyleValue( globalStyles, 'color.text', 'heading' ) as string;
-	const headerColor = h1Color ?? headingColor ?? textColor;
+	const headerFontFamily =
+		resolveFontFamily( headerStyle( mergedStyles, 'typography.fontFamily' ) ) ?? fontFamily;
+	const headerFontWeight = headerStyle( mergedStyles, 'typography.fontWeight' ) ?? fontWeight;
+	const headerFontStyle = headerStyle( mergedStyles, 'typography.fontStyle' ) ?? fontStyle;
+	const headerTextTransform =
+		headerStyle( mergedStyles, 'typography.textTransform' ) ?? textTransform;
+	const headerColor = headerStyle( globalStyles, 'color.text' ) ?? textColor;
 	const backgroundColor = globalStyles?.styles?.color?.background;
-
-	// Button styles
-	const buttonPadding = getStyleValue( mergedStyles, 'spacing.padding', 'button' ) as
-		| Record< string, string >
-		| string
-		| undefined;
-	const buttonBorder = getStyleValue( mergedStyles, 'border', 'button' ) as
-		| Record< string, string >
-		| string
-		| undefined;
-	const buttonBackground = getStyleValue( mergedStyles, 'color.background', 'button' ) as string;
 
 	const [ containerResizeListener, { width } ] = useResizeObserver();
 	const [ throttledWidth, setThrottledWidthState ] = useState( width );
@@ -372,64 +319,32 @@ export default function StylesPreview( {
 	const setThrottledWidth = useThrottle( setThrottledWidthState, 250, THROTTLE_OPTIONS );
 
 	const globalPalette = globalStyles?.settings?.color?.palette?.theme;
-	const colorVarPalette = currentStyleVariation?.settings?.color?.palette?.theme;
 
-	const activeBackgroundColor = () => {
-		return resolveColor(
-			backgroundColor,
-			currentStyleVariation?.styles?.color?.background,
-			globalPalette,
-			colorVarPalette,
-			'white'
-		);
-	};
+	const activeTextColor = resolveColor( textColor, globalPalette, 'black' );
 
-	const activeTextColor = () => {
-		return resolveColor(
-			textColor,
-			currentStyleVariation?.styles?.color?.text,
-			globalPalette,
-			colorVarPalette,
-			'black'
-		);
-	};
+	// The variation's own background wins over the active editor background.
+	const variationBackgroundColor =
+		resolveColor(
+			variation?.styles?.color?.background,
+			variation?.settings?.color?.palette?.theme
+		) ??
+		resolveColor( backgroundColor, globalPalette, 'white' ) ??
+		'#ffffff';
 
-	const getVariationBackgroundColor = () => {
-		if ( variation ) {
-			const varBg = variation.styles?.color?.background;
-			if ( varBg ) {
-				const variationPalette = variation.settings?.color?.palette?.theme;
-				if ( varBg.includes( 'var:preset|color|' ) ) {
-					const slug = varBg.split( '|' )[ 2 ];
-					const resolved = variationPalette?.find( ( c ) => c.slug === slug )?.color;
-					return resolved || varBg || '#ffffff';
-				} else if ( varBg.includes( 'var(--wp--preset--color' ) ) {
-					const slug = varBg.split( '--' )[ 4 ]?.replace( ')', '' );
-					const resolved = variationPalette?.find( ( c ) => c.slug === slug )?.color;
-					return resolved || varBg || '#ffffff';
-				}
-				return varBg;
-			}
+	// Button previews only.
+	const buttonStyles = useMemo( () => {
+		if ( type !== 'button' ) {
+			return undefined;
 		}
-		return activeBackgroundColor() || '#ffffff';
-	};
-
-	const getPreviewButtonBackgroundColor = () => {
-		return resolveColor(
-			buttonBackground,
-			// eslint-disable-next-line @typescript-eslint/no-explicit-any -- deep nested access
-			( currentStyleVariation?.styles?.elements as any )?.button?.color?.background,
-			globalPalette,
-			colorVarPalette,
-			'#1E1E1E'
-		);
-	};
-
-	const buttonStyles = {
-		...getPaddingStyles( buttonPadding ),
-		...getBorderStyles( buttonBorder ),
-		background: getPreviewButtonBackgroundColor(),
-	};
+		const padding = getStyleValue( mergedStyles, 'spacing.padding', 'button' );
+		const border = getStyleValue( mergedStyles, 'border', 'button' );
+		const background = getStyleValue( mergedStyles, 'color.background', 'button' ) as string;
+		return {
+			...getPaddingStyles( padding ),
+			...getBorderStyles( border ),
+			background: resolveColor( background, globalPalette, '#1E1E1E' ),
+		};
+	}, [ type, mergedStyles, globalPalette ] );
 
 	useLayoutEffect( () => {
 		if ( width ) {
@@ -488,7 +403,7 @@ export default function StylesPreview( {
 					style={ {
 						height: normalizedHeight * ratio,
 						width: '100%',
-						background: getVariationBackgroundColor(),
+						background: variationBackgroundColor,
 						cursor: 'pointer',
 					} }
 					initial="start"
@@ -511,7 +426,7 @@ export default function StylesPreview( {
 							{ type === 'font' && (
 								<div
 									style={ {
-										color: activeTextColor() || '#000000',
+										color: activeTextColor || '#000000',
 										whiteSpace: 'nowrap',
 										paddingLeft: '5px',
 										lineHeight: 1,
@@ -553,7 +468,7 @@ export default function StylesPreview( {
 												background: color,
 												borderRadius: '100%',
 												margin: '0 0 0 -10px',
-												border: `2px solid ${ getVariationBackgroundColor() }`,
+												border: `2px solid ${ variationBackgroundColor }`,
 												boxSizing: 'content-box',
 											} }
 										/>
@@ -563,7 +478,7 @@ export default function StylesPreview( {
 							{ type === 'button' && (
 								<motion.div
 									style={ {
-										color: activeTextColor() || '#000000',
+										color: activeTextColor || '#000000',
 										whiteSpace: 'nowrap',
 										paddingLeft: '5px',
 										lineHeight: 1,

@@ -1,20 +1,19 @@
 import { __ } from '@wordpress/i18n';
-import { createCallback } from './create-callback';
-import type { ShowComponentDeps } from './create-callback';
+import { BIG_SKY_ABILITY_CATEGORY, SHOW_COMPONENT_TYPES } from '../constants';
+import { showComponentCallback } from './callback';
 import type { Ability } from '../types';
 
-export type { ShowComponentInput, ShowComponentCallback } from './create-callback';
+export type { ShowComponentInput } from './callback';
 
 /**
- * Creates the `show-component` ability definition.
+ * The `show-component` ability definition.
  *
- * Uses `big-sky` name and category to match the backend route configuration.
- * @param getDeps - Returns the latest deps at call time.
+ * Uses the `big-sky` name and category to match the backend route configuration.
  */
-export const showComponentAbility = ( getDeps: () => ShowComponentDeps ): Ability => ( {
+export const showComponentAbility: Ability = {
 	name: 'big-sky/show-component',
 	label: __( 'Show Component', __i18n_text_domain__ ),
-	category: 'big-sky',
+	category: BIG_SKY_ABILITY_CATEGORY,
 	description: __( 'Display a component in the UI with specified props', __i18n_text_domain__ ),
 	input_schema: {
 		type: 'object',
@@ -22,7 +21,7 @@ export const showComponentAbility = ( getDeps: () => ShowComponentDeps ): Abilit
 			type: {
 				type: 'string',
 				description: 'The type of component to show',
-				enum: [ 'button-picker', 'font-picker', 'color-picker' ],
+				enum: [ ...SHOW_COMPONENT_TYPES ],
 			},
 			props: {
 				type: 'object',
@@ -74,5 +73,5 @@ export const showComponentAbility = ( getDeps: () => ShowComponentDeps ): Abilit
 		},
 		required: [ 'result', 'returnToAgent' ],
 	},
-	callback: ( input ) => createCallback( getDeps() )( input ),
-} );
+	callback: showComponentCallback,
+};

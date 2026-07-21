@@ -1,13 +1,14 @@
 import { createElement, useEffect, useRef } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { undo, Icon } from '@wordpress/icons';
+import { hasCheckpoint, restoreCheckpoint } from '../utils/checkpoint';
 import { recordBigSkyTracksEvent } from '../utils/tracks';
-import useCheckpoint from './use-checkpoint';
-import type { UseCheckpointReturn } from './use-checkpoint';
+import type { CheckpointStore } from '../utils/checkpoint';
 import type { UseAgentChatReturn, UIMessage } from '@automattic/agenttic-client';
 
 type RegisterMessageActions = UseAgentChatReturn[ 'registerMessageActions' ];
-type CheckpointActions = Pick< UseCheckpointReturn, 'hasCheckpoint' | 'restoreCheckpoint' >;
+
+const AM_CHECKPOINT_STORE: CheckpointStore = { hasCheckpoint, restoreCheckpoint };
 
 /**
  * Gets the checkpoint ID embedded in a tool message, or an empty string
@@ -37,17 +38,15 @@ function getCheckpointId( message: UIMessage ): string {
  */
 export default function useCheckpointAction(
 	registerMessageActions: RegisterMessageActions,
-	externalCheckpoint?: CheckpointActions
+	externalCheckpoint?: CheckpointStore
 ): void {
-	const amCheckpoint = useCheckpoint();
-
 	// A message's checkpoint lives in whichever bundle's ability created it,
 	// so resolve per message: AM's store first, then the provider's.
 	// TODO: Remove `externalCheckpoint` once the remaining checkpoint-creating
 	// provider abilities are migrated into AM.
-	// Ref avoids infinite re-renders caused by unstable checkpoint references.
-	const storesRef = useRef< Array< CheckpointActions | undefined > >( [] );
-	storesRef.current = [ amCheckpoint, externalCheckpoint ];
+	// Ref avoids infinite re-renders caused by an unstable provider reference.
+	const storesRef = useRef< Array< CheckpointStore | undefined > >( [] );
+	storesRef.current = [ AM_CHECKPOINT_STORE, externalCheckpoint ];
 
 	useEffect( () => {
 		registerMessageActions( {

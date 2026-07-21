@@ -9,7 +9,6 @@ interface Props {
 	type: 'color' | 'font' | 'button';
 	isActive?: boolean;
 	onSelect?: ( variation: StyleVariation ) => void;
-	currentStyleVariation?: StyleVariation | null;
 	fontFamiliesToCSS?: ( fontFamilies: Array< { name: string; fontFamily: string } > ) => string;
 }
 
@@ -18,7 +17,6 @@ export default function Variation( {
 	type,
 	isActive = false,
 	onSelect,
-	currentStyleVariation,
 	fontFamiliesToCSS,
 }: Props ) {
 	const handleSelectVariation = () => {
@@ -60,7 +58,6 @@ export default function Variation( {
 					label={ variation?.title }
 					type={ type }
 					variation={ variation }
-					currentStyleVariation={ currentStyleVariation }
 					fontFamiliesToCSS={ fontFamiliesToCSS }
 				/>
 			</div>

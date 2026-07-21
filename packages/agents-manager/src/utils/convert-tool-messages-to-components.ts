@@ -18,22 +18,16 @@ export interface AgentsManagerUIMessage extends UIMessage {
 	suppressThinking?: boolean;
 }
 
-/**
- * Resolves a `ShowComponentType` to its AM-owned React component.
- * AM components take precedence over provider components — AM is the
- * single source of truth for each migrated type.
- */
-function getAmComponent( type: ShowComponentType ): React.ComponentType | null {
-	switch ( type ) {
-		case 'button-picker':
-			return ButtonPicker as React.ComponentType;
-		case 'color-picker':
-			return ColorPicker as React.ComponentType;
-		case 'font-picker':
-			return FontPicker as React.ComponentType;
-		default:
-			return null;
-	}
+// AM-owned components by `ShowComponentType`. These take precedence over
+// provider components — AM is the single source of truth for each migrated type.
+const AM_COMPONENTS: Record< ShowComponentType, React.ComponentType > = {
+	'button-picker': ButtonPicker as React.ComponentType,
+	'color-picker': ColorPicker as React.ComponentType,
+	'font-picker': FontPicker as React.ComponentType,
+};
+
+function getAmComponent( type: string ): React.ComponentType | null {
+	return AM_COMPONENTS[ type as ShowComponentType ] ?? null;
 }
 
 interface Options {
@@ -227,6 +221,8 @@ export default function convertToolMessagesToComponents( {
 			// TODO: Remove the `getChatComponent` fallthrough once all component
 			// types are migrated into AM.
 			const Component = amComponent ?? getChatComponent?.( contentType );
+			// Provider components resolve by `contentType`; AM components are pre-resolved.
+			const ownerProps = amComponent ? {} : { contentType };
 
 			const summaryText = typeof summary === 'string' ? summary.trim() || undefined : undefined;
 
@@ -282,8 +278,7 @@ export default function convertToolMessagesToComponents( {
 						componentProps: {
 							...props,
 							...( summaryText && { summary: summaryText } ),
-							// Provider components resolve by `contentType`; AM components are pre-resolved.
-							...( ! amComponent && { contentType } ),
+							...ownerProps,
 							...( isStale && { isMessageStale: true } ),
 						},
 					},

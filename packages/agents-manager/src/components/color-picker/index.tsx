@@ -1,8 +1,5 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
-import useGlobalStyles from '../../hooks/use-global-styles';
-import useStyles from '../../hooks/use-styles';
-import ensureCurrentFirst from '../../utils/ensure-current-first';
+import usePickerVariations from '../../hooks/use-picker-variations';
 import VariationPicker from '../variation-picker';
 import type { StyleVariation } from '../styles-preview';
 
@@ -14,69 +11,20 @@ interface Props {
 	onSelect?: ( variation: StyleVariation ) => void;
 }
 
-export default function ColorPicker( {
-	variations,
-	currentColor = null,
-	onSelect = () => {},
-}: Props ) {
-	const setStyles = useStyles();
-	const [ activeColor, setActiveColor ] = useState< string | null >( currentColor );
-
-	// Read current color palette from the editor's global styles.
-	const { globalStyles } = useGlobalStyles();
-	const livePalette = globalStyles?.settings?.color?.palette?.theme ?? null;
-
-	const safeVariations = useMemo(
-		() => ( Array.isArray( variations ) ? variations : [] ),
-		[ variations ]
-	);
-
-	// Move the currently-applied color to index 0 (once, when the store loads).
-	const [ sortedVariations, setSortedVariations ] = useState( safeVariations );
-	const hasSortedRef = useRef( false );
-
-	useEffect( () => {
-		if ( hasSortedRef.current || ! livePalette ) {
-			return;
-		}
-		hasSortedRef.current = true;
-		setSortedVariations(
-			ensureCurrentFirst(
-				safeVariations,
-				livePalette,
-				( v ) => v.settings?.color?.palette?.theme,
-				() =>
-					globalStyles
-						? ( {
-								title: __( 'Current', __i18n_text_domain__ ),
-								settings: { color: { palette: { theme: livePalette } } },
-								styles: globalStyles.styles ?? {},
-						  } as StyleVariation )
-						: null
-			)
-		);
-	}, [ livePalette, safeVariations, globalStyles ] );
-
-	// Highlight the variation matching the editor's current palette.
-	useEffect( () => {
-		if ( ! livePalette || ! sortedVariations.length ) {
-			return;
-		}
-		const paletteStr = JSON.stringify( livePalette );
-		const match = sortedVariations.find(
-			( v ) => JSON.stringify( v.settings?.color?.palette?.theme ) === paletteStr
-		);
-		setActiveColor( match?.title ?? null );
-	}, [ livePalette, sortedVariations ] );
-
-	const handleSelect = useCallback(
-		( variation: StyleVariation ) => {
-			setStyles( variation );
-			setActiveColor( variation.title ?? null );
-			onSelect?.( variation );
-		},
-		[ setStyles, onSelect ]
-	);
+export default function ColorPicker( { variations, currentColor = null, onSelect }: Props ) {
+	const { sortedVariations, activeTitle, handleSelect } = usePickerVariations( {
+		variations,
+		initialActiveTitle: currentColor,
+		getLiveValue: ( globalStyles ) => globalStyles.settings?.color?.palette?.theme,
+		getValue: ( variation ) => variation.settings?.color?.palette?.theme,
+		createCurrent: ( liveValue, globalStyles ) =>
+			( {
+				title: __( 'Current', __i18n_text_domain__ ),
+				settings: { color: { palette: { theme: liveValue } } },
+				styles: globalStyles.styles ?? {},
+			} ) as StyleVariation,
+		onSelect,
+	} );
 
 	if ( ! sortedVariations.length ) {
 		return null;
@@ -88,7 +36,7 @@ export default function ColorPicker( {
 			maxToShow={ MAX_COLORS_TO_SHOW }
 			type="color"
 			onSelect={ handleSelect }
-			activeVariationTitle={ activeColor }
+			activeVariationTitle={ activeTitle }
 		/>
 	);
 }

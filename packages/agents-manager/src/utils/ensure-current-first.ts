@@ -1,6 +1,32 @@
 import type { StyleVariation } from '../components/styles-preview';
 
 /**
+ * Deduplicates variations by title, dropping untitled ones.
+ */
+export function dedupeByTitle( variations: StyleVariation[] ): StyleVariation[] {
+	const seen = new Set< string >();
+	return variations.filter( ( variation ) => {
+		if ( ! variation.title || seen.has( variation.title ) ) {
+			return false;
+		}
+		seen.add( variation.title );
+		return true;
+	} );
+}
+
+/**
+ * Finds the variation whose value matches the live editor value.
+ */
+export function findMatchingVariation(
+	variations: StyleVariation[],
+	liveValue: unknown,
+	getValue: ( variation: StyleVariation ) => unknown
+): StyleVariation | undefined {
+	const liveStr = JSON.stringify( liveValue );
+	return variations.find( ( variation ) => JSON.stringify( getValue( variation ) ) === liveStr );
+}
+
+/**
  * Ensure the currently-applied variation is the first option in the list.
  *
  * - Deduplicates variations by title.
@@ -21,28 +47,20 @@ export default function ensureCurrentFirst(
 		return variations;
 	}
 
-	// Deduplicate by title.
-	const seen = new Set< string >();
-	const unique = variations.filter( ( v ) => {
-		if ( ! v.title || seen.has( v.title ) ) {
-			return false;
-		}
-		seen.add( v.title );
-		return true;
-	} );
+	const unique = dedupeByTitle( variations );
 
 	if ( ! liveValue ) {
 		return unique;
 	}
 
-	const liveStr = JSON.stringify( liveValue );
-	const matchIndex = unique.findIndex( ( v ) => JSON.stringify( getValue( v ) ) === liveStr );
+	const match = findMatchingVariation( unique, liveValue, getValue );
+	const matchIndex = match ? unique.indexOf( match ) : -1;
 
 	// Match found — move to front.
 	if ( matchIndex > 0 ) {
 		const sorted = [ ...unique ];
-		const [ match ] = sorted.splice( matchIndex, 1 );
-		return [ match, ...sorted ];
+		sorted.splice( matchIndex, 1 );
+		return [ match as StyleVariation, ...sorted ];
 	}
 
 	// Already at index 0.
