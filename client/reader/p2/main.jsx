@@ -1,5 +1,5 @@
 import { Button } from '@automattic/components';
-import { useTranslate } from 'i18n-calypso';
+import { fixMe, useTranslate } from 'i18n-calypso';
 import { useDispatch } from 'react-redux';
 import SectionHeader from 'calypso/components/section-header';
 import { useMarkAllAsSeenMutation } from 'calypso/reader/data/seen-posts';
@@ -26,7 +26,11 @@ export default function P2Following( props ) {
 		<Stream { ...props }>
 			<SectionHeader label={ translate( 'Followed P2 Sites' ) }>
 				<Button compact onClick={ handleMarkAllAsSeen } disabled={ ! feedsInfo.unseenCount }>
-					{ translate( 'Mark all as seen' ) }
+					{ fixMe( {
+						text: 'Mark all as read',
+						newCopy: translate( 'Mark all as read' ),
+						oldCopy: translate( 'Mark all as seen' ),
+					} ) }
 				</Button>
 			</SectionHeader>
 		</Stream>

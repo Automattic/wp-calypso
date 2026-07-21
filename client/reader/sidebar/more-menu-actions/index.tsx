@@ -4,7 +4,7 @@ import { isAutomatticianQuery } from '@automattic/api-queries';
 import { useQuery } from '@tanstack/react-query';
 import { DropdownMenu } from '@wordpress/components';
 import { check, moreHorizontal } from '@wordpress/icons';
-import { useTranslate } from 'i18n-calypso';
+import { fixMe, useTranslate } from 'i18n-calypso';
 import { useMarkAllAsSeenMutation } from 'calypso/reader/data/seen-posts';
 import { useRecordReaderTracksEvent } from 'calypso/state/reader/analytics/useRecordReaderTracksEvent';
 
@@ -54,6 +54,19 @@ export function MoreMenuActions( {
 		}
 	};
 
+	const title =
+		feedIds.length > 1
+			? ( fixMe( {
+					text: 'Mark all as read',
+					newCopy: translate( 'Mark all as read' ),
+					oldCopy: translate( 'Mark all as seen' ),
+			  } ) as string )
+			: ( fixMe( {
+					text: 'Mark as read',
+					newCopy: translate( 'Mark as read' ),
+					oldCopy: translate( 'Mark as seen' ),
+			  } ) as string );
+
 	return (
 		// eslint-disable-next-line jsx-a11y/no-static-element-interactions
 		<span
@@ -72,7 +85,7 @@ export function MoreMenuActions( {
 				} }
 				controls={ [
 					{
-						title: translate( 'Mark all as seen' ) as string,
+						title,
 						icon: check,
 						onClick: handleMarkAllAsSeen,
 						isDisabled: unseenCount === 0,
