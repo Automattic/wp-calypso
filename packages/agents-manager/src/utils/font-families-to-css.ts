@@ -104,7 +104,7 @@ function getActiveThemeBaseUrl(): string {
 			return localBaseUrl;
 		}
 	} catch {
-		// Ignore.
+		// Theme data unavailable — no base URL to resolve against.
 	}
 
 	return '';

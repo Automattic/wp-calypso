@@ -36,7 +36,6 @@ export default function useAbilitiesRegistration(): void {
 		}
 		hasRegistered = true;
 
-		// Abilities to register.
 		const abilities = [ showComponentAbility( () => depsRef.current.showComponent ) ];
 
 		// Register category before abilities (required ordering).
