@@ -29,9 +29,6 @@ jest.mock( '@wordpress/icons', () => ( {
 
 const defaultProps = {
 	onSelect: jest.fn(),
-	globalStyles: {},
-	paletteColors: [],
-	themeColors: [],
 };
 
 const mockVariations = [
@@ -86,11 +83,14 @@ describe( 'VariationPicker', () => {
 		expect( displayedVariations ).toHaveLength( 3 );
 	} );
 
-	it( 'shows error message when no variations are provided', () => {
-		render( <VariationPicker { ...defaultProps } variations={ [] } type="color" /> );
+	it( 'renders no variations or arrows when the list is empty', () => {
+		const { container } = render(
+			<VariationPicker { ...defaultProps } variations={ [] } type="color" />
+		);
 
+		expect( screen.queryByTestId( 'variation' ) ).not.toBeInTheDocument();
 		expect(
-			screen.getByText( 'There was a problem retrieving options. Please try again.' )
-		).toBeInTheDocument();
+			container.querySelector( '.agents-manager-variation-picker__arrows' )
+		).not.toBeInTheDocument();
 	} );
 } );

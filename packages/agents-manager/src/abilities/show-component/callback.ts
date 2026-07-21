@@ -18,43 +18,9 @@ export interface ShowComponentInput {
 export async function showComponentCallback( input: ShowComponentInput ): Promise< AbilityResult > {
 	const { type, props = {}, summary, followUpTasks } = input;
 
-	try {
-		if ( typeof props !== 'object' || Object.keys( props ).length === 0 ) {
-			throw new Error( '[AgentsManager] Props must be an object with properties' );
-		}
-
-		// Read at call time so the picker records the page it was shown on.
-		const currentPostId = (
-			select( 'core/editor' ) as { getCurrentPostId?: () => number } | undefined
-		 )?.getCurrentPostId?.();
-
-		const successMessage =
-			summary?.trim() || __( 'Choose from the options I provided.', __i18n_text_domain__ );
-
-		return {
-			result: {
-				success: true,
-				message: successMessage,
-				details: { type },
-			},
-			// The picker renders from the structured `agentMessage`, while the
-			// tool result tells the agent the picker was shown.
-			returnToAgent: true,
-			agentMessage: JSON.stringify( {
-				tool_id: BIG_SKY_SHOW_COMPONENT_TOOL_ID,
-				data: {
-					type,
-					props,
-					followUpTasks,
-					summary: successMessage,
-					isCurrent: true,
-					postId: currentPostId,
-				},
-			} ),
-		};
-	} catch ( error ) {
+	if ( typeof props !== 'object' || Object.keys( props ).length === 0 ) {
 		// eslint-disable-next-line no-console
-		console.error( `[AgentsManager] Error showing component ${ type }:`, error );
+		console.error( `[AgentsManager] Invalid props for component ${ type }` );
 
 		return {
 			result: {
@@ -63,9 +29,39 @@ export async function showComponentCallback( input: ShowComponentInput ): Promis
 					'There was an error with this request. Please try again.',
 					__i18n_text_domain__
 				),
-				error: error instanceof Error ? error.message : String( error ),
+				error: 'Props must be an object with properties',
 			},
 			returnToAgent: true,
 		};
 	}
+
+	// Read at call time so the picker records the page it was shown on.
+	const currentPostId = (
+		select( 'core/editor' ) as { getCurrentPostId?: () => number } | undefined
+	 )?.getCurrentPostId?.();
+
+	const successMessage =
+		summary?.trim() || __( 'Choose from the options I provided.', __i18n_text_domain__ );
+
+	return {
+		result: {
+			success: true,
+			message: successMessage,
+			details: { type },
+		},
+		// The picker renders from the structured `agentMessage`, while the
+		// tool result tells the agent the picker was shown.
+		returnToAgent: true,
+		agentMessage: JSON.stringify( {
+			tool_id: BIG_SKY_SHOW_COMPONENT_TOOL_ID,
+			data: {
+				type,
+				props,
+				followUpTasks,
+				summary: successMessage,
+				isCurrent: true,
+				postId: currentPostId,
+			},
+		} ),
+	};
 }

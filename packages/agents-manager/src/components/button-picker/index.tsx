@@ -1,4 +1,3 @@
-import { __ } from '@wordpress/i18n';
 import usePickerVariations from '../../hooks/use-picker-variations';
 import VariationPicker from '../variation-picker';
 import type { StyleVariation } from '../styles-preview';
@@ -12,14 +11,12 @@ interface Props {
 	buttonVariations?: StyleVariation[];
 	maxButtonsToShow?: number;
 	currentButtonStyle?: string | null;
-	onSelect?: ( variation: StyleVariation ) => void;
 }
 
 export default function ButtonPicker( {
 	buttonVariations,
 	maxButtonsToShow = MAX_BUTTONS_TO_SHOW,
 	currentButtonStyle = null,
-	onSelect,
 }: Props ) {
 	const { sortedVariations, activeTitle, handleSelect } = usePickerVariations( {
 		variations: buttonVariations,
@@ -28,14 +25,12 @@ export default function ButtonPicker( {
 		getValue: getButtonBorder,
 		createCurrent: ( liveValue ) =>
 			( {
-				title: __( 'Current', __i18n_text_domain__ ),
 				styles: {
 					elements: {
 						button: { border: liveValue },
 					},
 				},
-			} ) as StyleVariation,
-		onSelect,
+			} ) as Omit< StyleVariation, 'title' >,
 	} );
 
 	if ( ! sortedVariations.length ) {

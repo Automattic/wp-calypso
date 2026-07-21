@@ -15,6 +15,7 @@ import { useResizeObserver, useThrottle } from '@wordpress/compose';
 import { useLayoutEffect, useMemo, useState } from '@wordpress/element';
 import deepmerge from 'deepmerge';
 import useGlobalStyles from '../../hooks/use-global-styles';
+import { fontFamiliesToCSS } from '../../utils/font-families-to-css';
 
 export interface PaletteColor {
 	color: string;
@@ -231,39 +232,21 @@ function getBorderStyles(
 	return { border: border as unknown as string };
 }
 
-// Stable fallback so the merge memo doesn't invalidate on every render.
+// Stable fallbacks so the memos don't invalidate on every render.
 const EMPTY_GLOBAL_STYLES: GlobalStyles = {};
+const EMPTY_PALETTE: PaletteColor[] = [];
 
 interface Props {
 	label?: string;
 	type: 'color' | 'font' | 'button';
 	variation?: StyleVariation;
-	globalStyles?: GlobalStyles;
-	paletteColors?: PaletteColor[];
-	themeColors?: PaletteColor[];
-	fontFamiliesToCSS?: ( fontFamilies: Array< { name: string; fontFamily: string } > ) => string;
 }
 
-export default function StylesPreview( {
-	label,
-	type,
-	variation,
-	globalStyles: globalStylesProp,
-	paletteColors: paletteColorsProp,
-	themeColors: themeColorsProp,
-	fontFamiliesToCSS: fontFamiliesToCSSFn,
-}: Props ) {
-	// Props override the store's global styles when provided.
+export default function StylesPreview( { label, type, variation }: Props ) {
 	const { globalStyles: storeGlobalStyles } = useGlobalStyles();
 
-	const globalStyles = globalStylesProp ?? storeGlobalStyles ?? EMPTY_GLOBAL_STYLES;
-	const paletteColors =
-		paletteColorsProp ??
-		( ( globalStyles?.settings?.color?.palette as Record< string, unknown > )?.theme as
-			| PaletteColor[]
-			| undefined ) ??
-		[];
-	const themeColors = themeColorsProp ?? paletteColors;
+	const globalStyles = storeGlobalStyles ?? EMPTY_GLOBAL_STYLES;
+	const paletteColors = globalStyles.settings?.color?.palette?.theme ?? EMPTY_PALETTE;
 
 	// For typography previews: use ONLY the variation to prevent leaking active global styles.
 	// For other types: merge variation with `globalStyles` to get custom colors.
@@ -318,9 +301,7 @@ export default function StylesPreview( {
 
 	const setThrottledWidth = useThrottle( setThrottledWidthState, 250, THROTTLE_OPTIONS );
 
-	const globalPalette = globalStyles?.settings?.color?.palette?.theme;
-
-	const activeTextColor = resolveColor( textColor, globalPalette, 'black' );
+	const activeTextColor = resolveColor( textColor, paletteColors, 'black' );
 
 	// The variation's own background wins over the active editor background.
 	const variationBackgroundColor =
@@ -328,7 +309,7 @@ export default function StylesPreview( {
 			variation?.styles?.color?.background,
 			variation?.settings?.color?.palette?.theme
 		) ??
-		resolveColor( backgroundColor, globalPalette, 'white' ) ??
+		resolveColor( backgroundColor, paletteColors, 'white' ) ??
 		'#ffffff';
 
 	const buttonStyles = useMemo( () => {
@@ -341,9 +322,9 @@ export default function StylesPreview( {
 		return {
 			...getPaddingStyles( padding ),
 			...getBorderStyles( border ),
-			background: resolveColor( background, globalPalette, '#1E1E1E' ),
+			background: resolveColor( background, paletteColors, '#1E1E1E' ),
 		};
-	}, [ type, mergedStyles, globalPalette ] );
+	}, [ type, mergedStyles, paletteColors ] );
 
 	useLayoutEffect( () => {
 		if ( width ) {
@@ -365,16 +346,16 @@ export default function StylesPreview( {
 	const ratio = ratioState ? ratioState : fallbackRatio;
 
 	const getColorsToShow = () => {
-		const colorsToShow = variation?.settings?.color?.palette?.theme || themeColors;
+		const colorsToShow = variation?.settings?.color?.palette?.theme || paletteColors;
 		return colorsToShow.filter( ( color ) => color.color !== backgroundColor ).slice( 0, 4 );
 	};
 
 	const editorStyles = useMemo( () => {
 		return [
-			...( type === 'font' && fontFamiliesToCSSFn && fontFamilies
+			...( type === 'font' && fontFamilies
 				? [
 						{
-							css: fontFamiliesToCSSFn( fontFamilies ),
+							css: fontFamiliesToCSS( fontFamilies ),
 							isGlobalStyles: true,
 						},
 				  ]
@@ -384,7 +365,7 @@ export default function StylesPreview( {
 				isGlobalStyles: true,
 			},
 		];
-	}, [ fontFamilies, type, fontFamiliesToCSSFn ] );
+	}, [ fontFamilies, type ] );
 
 	return (
 		<>

@@ -1,5 +1,9 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from '@wordpress/element';
-import ensureCurrentFirst, { findMatchingVariation } from '../utils/ensure-current-first';
+import { __ } from '@wordpress/i18n';
+import ensureCurrentFirst, {
+	dedupeByTitle,
+	findMatchingVariation,
+} from '../utils/ensure-current-first';
 import useGlobalStyles from './use-global-styles';
 import useStyles from './use-styles';
 import type { GlobalStyles, StyleVariation } from '../components/styles-preview';
@@ -12,11 +16,11 @@ interface Options {
 	getLiveValue: ( globalStyles: GlobalStyles ) => unknown;
 	/** Extracts the comparable value from a variation. */
 	getValue: ( variation: StyleVariation ) => unknown;
-	/** Creates a synthetic "Current" variation when nothing matches the live value. */
-	createCurrent: ( liveValue: unknown, globalStyles: GlobalStyles ) => StyleVariation | null;
-	/** Inject `@font-face` CSS into the editor iframe after applying. */
-	injectFonts?: boolean;
-	onSelect?: ( variation: StyleVariation ) => void;
+	/** Creates the synthetic "Current" variation when nothing matches; the hook adds its title. */
+	createCurrent: (
+		liveValue: unknown,
+		globalStyles: GlobalStyles
+	) => Omit< StyleVariation, 'title' > | null;
 }
 
 /**
@@ -30,14 +34,13 @@ export default function usePickerVariations( {
 	getLiveValue,
 	getValue,
 	createCurrent,
-	injectFonts,
-	onSelect,
 }: Options ) {
-	const setStyles = useStyles( { injectFonts } );
+	const setStyles = useStyles();
 	const [ activeTitle, setActiveTitle ] = useState< string | null >( initialActiveTitle );
 
+	// Drop falsy/untitled entries and duplicate titles before any render.
 	const safeVariations = useMemo(
-		() => ( Array.isArray( variations ) ? variations : [] ),
+		() => ( Array.isArray( variations ) ? dedupeByTitle( variations.filter( Boolean ) ) : [] ),
 		[ variations ]
 	);
 
@@ -60,9 +63,10 @@ export default function usePickerVariations( {
 		hasSortedRef.current = true;
 
 		setSortedVariations(
-			ensureCurrentFirst( safeVariations, liveValue, accessorsRef.current.getValue, () =>
-				accessorsRef.current.createCurrent( liveValue, globalStyles )
-			)
+			ensureCurrentFirst( safeVariations, liveValue, accessorsRef.current.getValue, () => {
+				const current = accessorsRef.current.createCurrent( liveValue, globalStyles );
+				return current ? { ...current, title: __( 'Current', __i18n_text_domain__ ) } : null;
+			} )
 		);
 	}, [ liveValue, safeVariations, globalStyles ] );
 
@@ -83,9 +87,8 @@ export default function usePickerVariations( {
 		( variation: StyleVariation ) => {
 			setStyles( variation );
 			setActiveTitle( variation.title ?? null );
-			onSelect?.( variation );
 		},
-		[ setStyles, onSelect ]
+		[ setStyles ]
 	);
 
 	return { sortedVariations, activeTitle, handleSelect };

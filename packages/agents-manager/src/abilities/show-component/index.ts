@@ -4,7 +4,6 @@ import { showComponentCallback } from './callback';
 import { SHOW_COMPONENT_TYPES } from './constants';
 import type { Ability } from '../types';
 
-export type { ShowComponentInput } from './callback';
 export type { ShowComponentType } from './constants';
 
 /**

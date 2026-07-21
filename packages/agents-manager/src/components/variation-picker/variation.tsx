@@ -9,16 +9,9 @@ interface Props {
 	type: 'color' | 'font' | 'button';
 	isActive?: boolean;
 	onSelect?: ( variation: StyleVariation ) => void;
-	fontFamiliesToCSS?: ( fontFamilies: Array< { name: string; fontFamily: string } > ) => string;
 }
 
-export default function Variation( {
-	variation,
-	type,
-	isActive = false,
-	onSelect,
-	fontFamiliesToCSS,
-}: Props ) {
+export default function Variation( { variation, type, isActive = false, onSelect }: Props ) {
 	const handleSelectVariation = () => {
 		onSelect?.( variation );
 	};
@@ -52,14 +45,8 @@ export default function Variation( {
 			aria-label={ label }
 			aria-current={ isActive }
 		>
-			{ /* eslint-disable-next-line wpcalypso/jsx-classname-namespace -- WordPress/Gutenberg class */ }
 			<div className="agents-manager-variation-picker__preview">
-				<StylesPreview
-					label={ variation?.title }
-					type={ type }
-					variation={ variation }
-					fontFamiliesToCSS={ fontFamiliesToCSS }
-				/>
+				<StylesPreview label={ variation?.title } type={ type } variation={ variation } />
 			</div>
 		</div>
 	);

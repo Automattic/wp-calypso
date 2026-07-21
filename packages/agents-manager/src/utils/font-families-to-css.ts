@@ -1,4 +1,5 @@
-import { getCanvasIframeElements } from './canvas-iframe-elements';
+import { store as coreStore } from '@wordpress/core-data';
+import { select } from '@wordpress/data';
 
 /**
  * Generates CSS for a `@font-face` rule.
@@ -56,11 +57,9 @@ function normalizeThemeBaseFromUri( uri: string ): string {
 
 function getActiveThemeBaseUrl(): string {
 	try {
-		// eslint-disable-next-line @typescript-eslint/no-explicit-any -- accessing global `wp.data` at runtime
-		const wpData = ( window as any )?.wp?.data;
-		const theme = wpData?.select?.( 'core' )?.getCurrentTheme?.() as
-			| Record< string, unknown >
-			| undefined;
+		const theme = (
+			select( coreStore ) as { getCurrentTheme?: () => Record< string, unknown > | null }
+		 ).getCurrentTheme?.();
 
 		if ( ! theme ) {
 			return '';
@@ -193,7 +192,9 @@ export function injectFontFamiliesIntoEditorIframe( fontFamilies: FontFamily[] )
 	if ( ! css ) {
 		return;
 	}
-	const { canvasIframeDocument } = getCanvasIframeElements();
+	const canvasIframeDocument =
+		document.querySelector< HTMLIFrameElement >( '[name="editor-canvas"]' )?.contentDocument ??
+		null;
 	if ( canvasIframeDocument ) {
 		const style = document.createElement( 'style' );
 		style.textContent = css;

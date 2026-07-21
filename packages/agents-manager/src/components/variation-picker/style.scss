@@ -2,13 +2,7 @@
 	// Cap width in wide chats so cards stay card-sized.
 	max-width: 640px;
 
-	// Descendant selector out-specifies the `Grid` component's own class.
-	.agents-manager-variation-picker__grid {
-		// As many card-sized columns as fit: 2 in the docked sidebar, 4 at the
-		// max width. `auto-fill` keeps empty tracks, so partial pages render
-		// cards at the same size instead of stretching them.
-		grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
-
+	&__grid {
 		.block-editor-iframe__scale-container {
 			flex: 1 0 fit-content;
 			display: flex;
@@ -19,20 +13,20 @@
 		&.is-active,
 		&:focus-visible {
 			.agents-manager-variation-picker__preview {
-				outline: var(--color-link) solid var(--wp-admin-border-width-focus);
+				outline: var( --color-link ) solid var( --wp-admin-border-width-focus );
 				outline-offset: 1px;
 			}
 		}
 
 		&:not( .is-active ):hover {
 			.agents-manager-variation-picker__preview {
-				outline-color: var(--color-muted-foreground);
+				outline-color: var( --color-muted-foreground );
 			}
 		}
 	}
 
 	&__preview {
-		outline: var(--color-muted) solid 1px;
+		outline: var( --color-muted ) solid 1px;
 		/* stylelint-disable-next-line scales/radii */
 		border-radius: 6px;
 		overflow: hidden;
@@ -44,10 +38,10 @@
 		justify-content: flex-end;
 
 		.components-button {
-			color: var(--color-muted-foreground);
+			color: var( --color-muted-foreground );
 
 			&:not( :disabled ):hover {
-				color: var(--color-foreground);
+				color: var( --color-foreground );
 			}
 
 			&:disabled {
@@ -55,8 +49,8 @@
 			}
 
 			&.is-pressed {
-				color: var(--color-foreground);
-				background-color: var(--color-muted);
+				color: var( --color-foreground );
+				background-color: var( --color-muted );
 			}
 
 			&:focus {
@@ -66,7 +60,7 @@
 	}
 
 	&__pager {
-		color: var(--color-muted-foreground);
+		color: var( --color-muted-foreground );
 	}
 }
 

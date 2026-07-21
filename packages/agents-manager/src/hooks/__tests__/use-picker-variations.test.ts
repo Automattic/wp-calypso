@@ -27,7 +27,7 @@ const makeOptions = ( overrides = {} ) => ( {
 	getLiveValue: ( globalStyles: GlobalStyles ) => globalStyles.live,
 	getValue: ( variation: StyleVariation ) => ( variation.settings as { value?: string } )?.value,
 	createCurrent: ( liveValue: unknown ) =>
-		( { title: 'Current', settings: { value: liveValue } } ) as StyleVariation,
+		( { settings: { value: liveValue } } ) as Omit< StyleVariation, 'title' >,
 	...overrides,
 } );
 
@@ -67,15 +67,27 @@ describe( 'usePickerVariations', () => {
 		expect( result.current.activeTitle ).toBe( 'Current' );
 	} );
 
-	it( 'applies the selection, highlights it, and notifies `onSelect`', () => {
-		const onSelect = jest.fn();
-		const { result } = renderHook( () => usePickerVariations( makeOptions( { onSelect } ) ) );
+	it( 'applies the selection and highlights it', () => {
+		const { result } = renderHook( () => usePickerVariations( makeOptions() ) );
 
 		act( () => result.current.handleSelect( variations[ 1 ] ) );
 
 		expect( mockSetStyles ).toHaveBeenCalledWith( variations[ 1 ] );
-		expect( onSelect ).toHaveBeenCalledWith( variations[ 1 ] );
 		expect( result.current.activeTitle ).toBe( 'Pastel' );
+	} );
+
+	it( 'drops falsy and duplicate-title variations', () => {
+		const dirty = [
+			variations[ 0 ],
+			null,
+			variations[ 0 ],
+			variations[ 1 ],
+		] as unknown as StyleVariation[];
+		const { result } = renderHook( () =>
+			usePickerVariations( makeOptions( { variations: dirty } ) )
+		);
+
+		expect( result.current.sortedVariations ).toEqual( variations );
 	} );
 
 	it( 'normalizes non-array variations to an empty list', () => {

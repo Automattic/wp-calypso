@@ -6,7 +6,42 @@ import StylesPreview from '../styles-preview';
 
 jest.mock( '../../hooks/use-global-styles', () => ( {
 	__esModule: true,
-	default: () => ( { globalStylesId: null, globalStyles: null } ),
+	default: () => ( {
+		globalStylesId: 'global-styles-1',
+		globalStyles: {
+			settings: {
+				typography: {
+					fontFamilies: {
+						theme: [ { name: 'Arial', fontFamily: 'Arial, sans-serif' } ],
+					},
+				},
+				color: {
+					palette: {
+						theme: [
+							{ slug: 'primary', color: '#000000' },
+							{ slug: 'secondary', color: '#ffffff' },
+						],
+					},
+				},
+			},
+			styles: {
+				typography: {
+					fontFamily: 'Arial',
+					fontWeight: '400',
+					fontStyle: 'normal',
+					textTransform: 'none',
+				},
+				color: {
+					text: '#000000',
+					background: '#ffffff',
+				},
+			},
+		},
+	} ),
+} ) );
+
+jest.mock( '../../utils/font-families-to-css', () => ( {
+	fontFamiliesToCSS: () => '',
 } ) );
 
 jest.mock( '@wordpress/block-editor', () => ( {
@@ -47,59 +82,19 @@ jest.mock( '@wordpress/compose', () => ( {
 	useThrottle: ( fn: ( ...args: unknown[] ) => void ) => fn,
 } ) );
 
-const defaultProps = {
-	globalStyles: {
-		settings: {
-			typography: {
-				fontFamilies: {
-					theme: [ { name: 'Arial', fontFamily: 'Arial, sans-serif' } ],
-				},
-			},
-			color: {
-				palette: {
-					theme: [
-						{ slug: 'primary', color: '#000000' },
-						{ slug: 'secondary', color: '#ffffff' },
-					],
-				},
-			},
-		},
-		styles: {
-			typography: {
-				fontFamily: 'Arial',
-				fontWeight: '400',
-				fontStyle: 'normal',
-				textTransform: 'none',
-			},
-			color: {
-				text: '#000000',
-				background: '#ffffff',
-			},
-		},
-	},
-	paletteColors: [
-		{ slug: 'primary', color: '#000000' },
-		{ slug: 'secondary', color: '#ffffff' },
-	],
-	themeColors: [
-		{ slug: 'primary', color: '#000000' },
-		{ slug: 'secondary', color: '#ffffff' },
-	],
-};
-
 describe( 'StylesPreview', () => {
 	it( 'renders without crashing', () => {
-		render( <StylesPreview { ...defaultProps } label="Test Label" type="font" /> );
+		render( <StylesPreview label="Test Label" type="font" /> );
 		expect( screen.getByTestId( 'mock-editor-iframe' ) ).toBeInTheDocument();
 	} );
 
 	it( 'displays the correct label', () => {
-		render( <StylesPreview { ...defaultProps } label="Test Label" type="font" /> );
+		render( <StylesPreview label="Test Label" type="font" /> );
 		expect( screen.getByText( 'Test Label' ) ).toBeInTheDocument();
 	} );
 
 	it( 'renders font preview when type is "font"', () => {
-		render( <StylesPreview { ...defaultProps } label="Font Preview" type="font" /> );
+		render( <StylesPreview label="Font Preview" type="font" /> );
 		expect( screen.getByText( 'A' ) ).toBeInTheDocument();
 		const lowercase = screen.getByText( 'a' );
 		expect( lowercase ).toBeInTheDocument();
@@ -107,17 +102,13 @@ describe( 'StylesPreview', () => {
 	} );
 
 	it( 'renders color swatches when type is "color"', () => {
-		const { container } = render(
-			<StylesPreview { ...defaultProps } label="Color Preview" type="color" />
-		);
+		const { container } = render( <StylesPreview label="Color Preview" type="color" /> );
 		// Color swatches are circular divs with `border-radius: 100%`.
 		expect( container.querySelector( 'div[style*="border-radius"]' ) ).toBeInTheDocument();
 	} );
 
 	it( 'renders button preview when type is "button"', () => {
-		const { container } = render(
-			<StylesPreview { ...defaultProps } label="Button Preview" type="button" />
-		);
+		const { container } = render( <StylesPreview label="Button Preview" type="button" /> );
 		expect( container.querySelector( 'button' ) ).toBeInTheDocument();
 	} );
 } );

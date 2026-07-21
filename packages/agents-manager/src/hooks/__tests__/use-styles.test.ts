@@ -5,7 +5,6 @@ import { renderHook, act } from '@testing-library/react';
 import useStyles from '../use-styles';
 
 const mockEditEntityRecord = jest.fn();
-const mockInjectFontFamilies = jest.fn();
 let mockGlobalStylesId: string | null = 'global-styles-1';
 const mockCurrentRecord = {
 	settings: { color: { palette: { theme: [ { slug: 'primary', color: '#000' } ] } } },
@@ -20,9 +19,6 @@ jest.mock( '@wordpress/data', () => ( {
 			getEditedEntityRecord: () => ( mockGlobalStylesId ? mockCurrentRecord : null ),
 		} ) ),
 	useDispatch: () => ( { editEntityRecord: mockEditEntityRecord } ),
-} ) );
-jest.mock( '../../utils/font-families-to-css', () => ( {
-	injectFontFamiliesIntoEditorIframe: ( ...args: unknown[] ) => mockInjectFontFamilies( ...args ),
 } ) );
 
 describe( 'useStyles', () => {
@@ -79,36 +75,5 @@ describe( 'useStyles', () => {
 		} );
 
 		expect( mockEditEntityRecord ).not.toHaveBeenCalled();
-	} );
-
-	it( 'injects font families when `injectFonts` is true', () => {
-		const families = [ { name: 'Inter', fontFamily: 'Inter' } ];
-		const { result } = renderHook( () => useStyles( { injectFonts: true } ) );
-
-		act( () => {
-			result.current( {
-				title: 'Modern Sans',
-				settings: { typography: { fontFamilies: { theme: families } } },
-				styles: { typography: { fontFamily: 'Inter' } },
-			} );
-		} );
-
-		expect( mockInjectFontFamilies ).toHaveBeenCalledWith( families );
-	} );
-
-	it( 'does not inject fonts by default', () => {
-		const { result } = renderHook( () => useStyles() );
-
-		act( () => {
-			result.current( {
-				title: 'Modern Sans',
-				settings: {
-					typography: { fontFamilies: { theme: [ { name: 'Inter', fontFamily: 'Inter' } ] } },
-				},
-				styles: {},
-			} );
-		} );
-
-		expect( mockInjectFontFamilies ).not.toHaveBeenCalled();
 	} );
 } );

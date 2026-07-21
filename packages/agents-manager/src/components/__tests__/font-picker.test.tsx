@@ -1,13 +1,24 @@
 /**
  * @jest-environment jsdom
  */
-import { render } from '@testing-library/react';
+import { fireEvent, render } from '@testing-library/react';
+import { injectFontFamiliesIntoEditorIframe } from '../../utils/font-families-to-css';
 import FontPicker from '../font-picker';
 
 // Mock VariationPicker to avoid deep `@wordpress/components` import chain.
 jest.mock( '../variation-picker', () => {
-	const MockVariationPicker = ( { variations }: { variations: unknown[] } ) => (
-		<div data-testid="mock-variation-picker" data-count={ variations.length } />
+	const MockVariationPicker = ( {
+		variations,
+		onSelect,
+	}: {
+		variations: unknown[];
+		onSelect?: ( variation: unknown ) => void;
+	} ) => (
+		<button
+			data-testid="mock-variation-picker"
+			data-count={ variations.length }
+			onClick={ () => onSelect?.( variations[ 0 ] ) }
+		/>
 	);
 	MockVariationPicker.displayName = 'MockVariationPicker';
 	return MockVariationPicker;
@@ -34,6 +45,8 @@ const defaultProps = {
 };
 
 describe( 'FontPicker', () => {
+	beforeEach( () => jest.clearAllMocks() );
+
 	it( 'renders VariationPicker with variations', () => {
 		const { getByTestId } = render( <FontPicker { ...defaultProps } /> );
 		expect( getByTestId( 'mock-variation-picker' ) ).toHaveAttribute( 'data-count', '2' );
@@ -52,5 +65,19 @@ describe( 'FontPicker', () => {
 		];
 		const { getByTestId } = render( <FontPicker { ...defaultProps } variations={ duped } /> );
 		expect( getByTestId( 'mock-variation-picker' ) ).toHaveAttribute( 'data-count', '2' );
+	} );
+
+	it( 'loads the picked variation fonts into the editor canvas', () => {
+		const families = [ { name: 'Inter', fontFamily: 'Inter' } ];
+		const variation = {
+			title: 'Modern Sans',
+			settings: { typography: { fontFamilies: { theme: families } } },
+			styles: {},
+		};
+		const { getByTestId } = render( <FontPicker variations={ [ variation ] } /> );
+
+		fireEvent.click( getByTestId( 'mock-variation-picker' ) );
+
+		expect( injectFontFamiliesIntoEditorIframe ).toHaveBeenLastCalledWith( families );
 	} );
 } );

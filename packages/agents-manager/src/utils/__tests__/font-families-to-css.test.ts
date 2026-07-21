@@ -3,11 +3,14 @@
  */
 import { fontFamiliesToCSS } from '../font-families-to-css';
 
+const mockGetCurrentTheme = jest.fn();
+jest.mock( '@wordpress/core-data', () => ( { store: 'core' } ) );
+jest.mock( '@wordpress/data', () => ( {
+	select: () => ( { getCurrentTheme: mockGetCurrentTheme } ),
+} ) );
+
 describe( 'fontFamiliesToCSS', () => {
-	afterEach( () => {
-		// eslint-disable-next-line @typescript-eslint/no-explicit-any
-		delete ( window as any ).wp;
-	} );
+	beforeEach( () => jest.clearAllMocks() );
 
 	it( 'generates `@font-face` CSS for font families with `fontFace`', () => {
 		const css = fontFamiliesToCSS( [
@@ -33,14 +36,7 @@ describe( 'fontFamiliesToCSS', () => {
 	} );
 
 	it( 'resolves `file:` theme font src to a theme URL', () => {
-		// eslint-disable-next-line @typescript-eslint/no-explicit-any
-		( window as any ).wp = {
-			data: {
-				select: () => ( {
-					getCurrentTheme: () => ( { stylesheet: 'pub/assembler' } ),
-				} ),
-			},
-		};
+		mockGetCurrentTheme.mockReturnValue( { stylesheet: 'pub/assembler' } );
 
 		const css = fontFamiliesToCSS( [
 			{
@@ -65,18 +61,11 @@ describe( 'fontFamiliesToCSS', () => {
 	} );
 
 	it( 'handles `stylesheetUri` objects (raw/rendered) and strips style.css', () => {
-		// eslint-disable-next-line @typescript-eslint/no-explicit-any
-		( window as any ).wp = {
-			data: {
-				select: () => ( {
-					getCurrentTheme: () => ( {
-						stylesheetUri: {
-							raw: 'https://example.com/wp-content/themes/pub/assembler/style.css',
-						},
-					} ),
-				} ),
+		mockGetCurrentTheme.mockReturnValue( {
+			stylesheetUri: {
+				raw: 'https://example.com/wp-content/themes/pub/assembler/style.css',
 			},
-		};
+		} );
 
 		const css = fontFamiliesToCSS( [
 			{
@@ -99,19 +88,12 @@ describe( 'fontFamiliesToCSS', () => {
 	} );
 
 	it( 'prefers same-origin wp-content theme base over cross-origin theme URIs', () => {
-		// eslint-disable-next-line @typescript-eslint/no-explicit-any
-		( window as any ).wp = {
-			data: {
-				select: () => ( {
-					getCurrentTheme: () => ( {
-						stylesheet: 'assembler',
-						stylesheetUri: {
-							raw: 'https://wordpress.com/themes/assembler/style.css',
-						},
-					} ),
-				} ),
+		mockGetCurrentTheme.mockReturnValue( {
+			stylesheet: 'assembler',
+			stylesheetUri: {
+				raw: 'https://wordpress.com/themes/assembler/style.css',
 			},
-		};
+		} );
 
 		const css = fontFamiliesToCSS( [
 			{

@@ -1,22 +1,14 @@
-import { useEffect, useMemo } from '@wordpress/element';
-import { __ } from '@wordpress/i18n';
+import { useCallback, useEffect, useMemo } from '@wordpress/element';
 import usePickerVariations from '../../hooks/use-picker-variations';
-import { dedupeByTitle } from '../../utils/ensure-current-first';
-import {
-	injectFontFamiliesIntoEditorIframe,
-	fontFamiliesToCSS,
-} from '../../utils/font-families-to-css';
+import { injectFontFamiliesIntoEditorIframe } from '../../utils/font-families-to-css';
 import VariationPicker from '../variation-picker';
 import type { StyleVariation } from '../styles-preview';
-
-const MAX_FONTS_TO_SHOW = 4;
 
 interface Props {
 	variations?: StyleVariation[];
 	themeVariations?: StyleVariation[];
 	dynamicVariations?: StyleVariation[];
 	currentFont?: string | null;
-	onSelect?: ( variation: StyleVariation ) => void;
 }
 
 export default function FontPicker( {
@@ -24,14 +16,13 @@ export default function FontPicker( {
 	themeVariations = [],
 	dynamicVariations = [],
 	currentFont = null,
-	onSelect,
 }: Props ) {
-	// Combine theme + dynamic + direct variations and deduplicate by title.
+	// Combine theme + dynamic + direct variations; the picker hook dedupes by title.
 	const fontVariations = useMemo( () => {
 		const safe = Array.isArray( variations ) ? variations : [];
 		const safeTheme = Array.isArray( themeVariations ) ? themeVariations : [];
 		const safeDynamic = Array.isArray( dynamicVariations ) ? dynamicVariations : [];
-		return dedupeByTitle( [ ...safeTheme, ...safeDynamic, ...safe ].filter( Boolean ) );
+		return [ ...safeTheme, ...safeDynamic, ...safe ];
 	}, [ variations, themeVariations, dynamicVariations ] );
 
 	const { sortedVariations, activeTitle, handleSelect } = usePickerVariations( {
@@ -41,11 +32,8 @@ export default function FontPicker( {
 		getValue: ( variation ) => variation.settings?.typography?.fontFamilies?.theme,
 		createCurrent: ( liveValue ) =>
 			( {
-				title: __( 'Current', __i18n_text_domain__ ),
 				settings: { typography: { fontFamilies: { theme: liveValue } } },
-			} ) as StyleVariation,
-		injectFonts: true,
-		onSelect,
+			} ) as Omit< StyleVariation, 'title' >,
 	} );
 
 	// Load all variation fonts into the editor iframe so previews render correctly.
@@ -59,6 +47,18 @@ export default function FontPicker( {
 		// eslint-disable-next-line react-hooks/exhaustive-deps -- run once on mount
 	}, [] );
 
+	// Load the applied variation's fonts into the editor canvas after picking.
+	const handlePick = useCallback(
+		( variation: StyleVariation ) => {
+			handleSelect( variation );
+			const families = variation.settings?.typography?.fontFamilies?.theme;
+			if ( Array.isArray( families ) ) {
+				injectFontFamiliesIntoEditorIframe( families );
+			}
+		},
+		[ handleSelect ]
+	);
+
 	if ( ! sortedVariations.length ) {
 		return null;
 	}
@@ -66,11 +66,9 @@ export default function FontPicker( {
 	return (
 		<VariationPicker
 			variations={ sortedVariations }
-			maxToShow={ MAX_FONTS_TO_SHOW }
 			type="font"
-			onSelect={ handleSelect }
+			onSelect={ handlePick }
 			activeVariationTitle={ activeTitle }
-			fontFamiliesToCSS={ fontFamiliesToCSS }
 		/>
 	);
 }

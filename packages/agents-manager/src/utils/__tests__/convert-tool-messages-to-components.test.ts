@@ -1,4 +1,3 @@
-/* eslint-disable import/order -- mocks must be registered before importing the converter */
 function mockEscalationButton() {
 	return null;
 }
