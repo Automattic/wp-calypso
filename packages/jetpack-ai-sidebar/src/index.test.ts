@@ -513,7 +513,9 @@ describe( 'PostFeedback', () => {
 						action: 'Add a space between "created." and "When".',
 						block_index: 0,
 						current_text: '<strong>created.</strong><em>When</em>',
+						current_text_html: '<strong>created.</strong><em>When</em>',
 						suggested_text: '<strong>created.</strong> <em>When</em>',
+						suggested_text_html: '<strong>created.</strong> <em>When</em>',
 					},
 				],
 			} )
@@ -610,7 +612,9 @@ describe( 'PostFeedback', () => {
 						action: 'Confirm the intended wording.',
 						block_index: 0,
 						current_text: currentFragment,
+						current_text_html: currentFragment,
 						suggested_text: 'Rewrite this while keeping <em>emphasis</em>.',
+						suggested_text_html: 'Rewrite this while keeping <em>emphasis</em>.',
 						requires_manual: true,
 					},
 				],
@@ -1520,7 +1524,7 @@ describe( 'Proofread', () => {
 		expect( container.textContent ).toContain( 'Punctuation' );
 	} );
 
-	it( 'renders formatted backend fragments in Current and New rows', () => {
+	it( 'renders server-sanitised backend fragments in Current and New rows', () => {
 		const currentText =
 			'<strong><em>Consultation</em></strong> <a href="https://example.com"><strong><em>opens</em>s</strong></a> next week, <s>not this week</s>, ref<sup>2</sup>';
 		const suggestedText =
@@ -1544,7 +1548,9 @@ describe( 'Proofread', () => {
 						action: 'Remove the extra letter.',
 						block_index: 0,
 						current_text: currentText,
+						current_text_html: currentText,
 						suggested_text: suggestedText,
+						suggested_text_html: suggestedText,
 					},
 				],
 			} )
@@ -1558,6 +1564,38 @@ describe( 'Proofread', () => {
 		expect( suggestion?.querySelector( 'a strong em' ) ).toHaveTextContent( 'opens' );
 		expect( suggestion?.querySelector( 's' ) ).toHaveTextContent( 'not this week' );
 		expect( suggestion?.querySelector( 'sup' ) ).toHaveTextContent( '2' );
+	} );
+
+	it( 'shows raw HTML-like fragments literally when the server preview fields are absent', () => {
+		const currentText = '<strong>openss</strong>';
+		mockEditorBlocks = [
+			{
+				clientId: 'block-1',
+				name: 'core/paragraph',
+				attributes: { content: currentText },
+			},
+		];
+
+		const { container } = render(
+			React.createElement( Proofread, {
+				summary: 'Found a spelling error.',
+				postId: 123,
+				items: [
+					{
+						title: 'Spelling',
+						feedback: 'The word has an extra letter.',
+						action: 'Remove the extra letter.',
+						block_index: 0,
+						current_text: currentText,
+						suggested_text: '<strong>opens</strong>',
+					},
+				],
+			} )
+		);
+
+		expect( container.querySelector( 'del strong, ins strong' ) ).toBeNull();
+		expect( container.querySelector( 'del' ) ).toHaveTextContent( '<strong>openss</strong>' );
+		expect( container.querySelector( 'ins' ) ).toHaveTextContent( '<strong>opens</strong>' );
 	} );
 
 	const findApplyAllButton = ( container: HTMLElement ) =>

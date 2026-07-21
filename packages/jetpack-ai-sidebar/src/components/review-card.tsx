@@ -15,7 +15,6 @@ import { type ReactNode } from 'react';
 /**
  * Internal dependencies
  */
-import { sanitizeReviewRichText } from '../utils/sanitize-review-rich-text';
 import BlockRef, { type BlockSnapshot } from './block-ref';
 
 export type ReviewCardStatus = 'pending' | 'applying' | 'accepted' | 'dismissed' | 'failed';
@@ -28,8 +27,8 @@ export interface ReviewCardRow {
 	variant: 'current' | 'new';
 	/** Semantic element: an exact diff uses del/ins, advisory copy uses text. */
 	element: 'del' | 'ins' | 'text';
-	/** Whether the row contains block content or explanatory prose. */
-	contentType: 'rich-text' | 'plain-text';
+	/** Server-sanitised HTML for display. When absent, `text` renders literally. */
+	previewHtml?: string;
 }
 
 export interface ReviewCardModel {
@@ -169,7 +168,7 @@ export default function ReviewCard( {
 					{ bodyRows.map( ( row, i ) => {
 						let RowContentElement: 'del' | 'div' | 'ins' | 'span' =
 							row.element === 'text' ? 'span' : row.element;
-						if ( row.element === 'text' && row.contentType === 'rich-text' ) {
+						if ( row.element === 'text' && typeof row.previewHtml === 'string' ) {
 							RowContentElement = 'div';
 						}
 						const contentClassName = `${ classPrefix }__diff-content${
@@ -178,11 +177,11 @@ export default function ReviewCard( {
 						return (
 							<div key={ i } className={ `${ classPrefix }__diff-row is-${ row.variant }` }>
 								<span className={ `${ classPrefix }__diff-tag` }>{ row.tag }</span>
-								{ row.contentType === 'rich-text' ? (
+								{ typeof row.previewHtml === 'string' ? (
 									<RichText.Content
 										tagName={ RowContentElement }
 										className={ contentClassName }
-										value={ sanitizeReviewRichText( row.text ) }
+										value={ row.previewHtml }
 									/>
 								) : (
 									<RowContentElement className={ contentClassName }>{ row.text }</RowContentElement>

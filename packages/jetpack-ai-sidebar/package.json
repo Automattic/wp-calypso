@@ -55,8 +55,7 @@
 		"@wordpress/compose": "^7.23.0",
 		"@wordpress/hooks": "^4.46.0",
 		"@wordpress/i18n": "^6.21.0",
-		"@wordpress/icons": "^13.3.0",
-		"dompurify": "3.4.11"
+		"@wordpress/icons": "^13.3.0"
 	},
 	"devDependencies": {
 		"@automattic/calypso-typescript-config": "workspace:^",

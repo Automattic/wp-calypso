@@ -53,7 +53,9 @@ export interface FeedbackListItem {
 	block_index: number | null;
 	editable_attribute?: string;
 	current_text?: string;
+	current_text_html?: string;
 	suggested_text?: string;
+	suggested_text_html?: string;
 	requires_manual?: boolean;
 	manual_reason?: string;
 }
@@ -471,31 +473,30 @@ export default function FeedbackList( {
 										text: feedbackReason,
 										variant: 'current',
 										element: 'text',
-										contentType: 'plain-text',
 									} );
 								}
 								if ( showDiff ) {
 									bodyRows.push( {
 										tag: __( 'Current', __i18n_text_domain__ ),
 										text: item.current_text ?? '',
+										previewHtml: item.current_text_html,
 										variant: 'current',
 										element: 'del',
-										contentType: 'rich-text',
 									} );
 									bodyRows.push( {
 										tag: __( 'New', __i18n_text_domain__ ),
 										text: item.suggested_text ?? '',
+										previewHtml: item.suggested_text_html,
 										variant: 'new',
 										element: 'ins',
-										contentType: 'rich-text',
 									} );
 								} else if ( suggestionText ) {
 									bodyRows.push( {
 										tag: __( 'Suggestion', __i18n_text_domain__ ),
 										text: suggestionText,
+										previewHtml: item.suggested_text ? item.suggested_text_html : undefined,
 										variant: 'new',
 										element: 'text',
-										contentType: item.suggested_text ? 'rich-text' : 'plain-text',
 									} );
 								}
 

@@ -31,7 +31,6 @@ import {
 	type BlockEditorStore,
 	type EditorStore,
 } from '../utils/blocks';
-import { sanitizeReviewRichText } from '../utils/sanitize-review-rich-text';
 import {
 	trackAiEditorialReviewItemAction,
 	trackAiEditorialReviewResultRendered,
@@ -58,6 +57,7 @@ interface CandidateResolution {
 	editable_attribute?: string;
 	current_text?: string;
 	text: string;
+	text_html?: string;
 	rationale: string;
 }
 
@@ -79,7 +79,9 @@ interface SuggestedEdit {
 	block_index: number | null;
 	editable_attribute?: string;
 	current_text: string;
+	current_text_html?: string;
 	suggested_text: string;
+	suggested_text_html?: string;
 	rationale: string;
 	supported_by_reviewers: string[];
 	requires_manual?: boolean;
@@ -1296,15 +1298,15 @@ export default function AiEditorialReview( {
 															</span>{ ' ' }
 															{ __( 'Recommended resolution', __i18n_text_domain__ ) }
 														</p>
-														{ aiCandidate?.text ? (
+														{ typeof aiCandidate?.text_html === 'string' ? (
 															<RichText.Content
 																tagName="div"
 																className="jetpack-ai-editorial-review__ai-text"
-																value={ sanitizeReviewRichText( aiCandidate.text ) }
+																value={ aiCandidate.text_html }
 															/>
 														) : (
 															<p className="jetpack-ai-editorial-review__ai-text">
-																{ conflict.recommended_resolution }
+																{ aiCandidate?.text || conflict.recommended_resolution }
 															</p>
 														) }
 														{ conflict.guideline_anchor && (
@@ -1482,31 +1484,30 @@ export default function AiEditorialReview( {
 												text: edit.rationale,
 												variant: 'current',
 												element: 'text',
-												contentType: 'plain-text',
 											} );
 										}
 										if ( showDiff ) {
 											bodyRows.push( {
 												tag: __( 'Current', __i18n_text_domain__ ),
 												text: edit.current_text,
+												previewHtml: edit.current_text_html,
 												variant: 'current',
 												element: 'del',
-												contentType: 'rich-text',
 											} );
 											bodyRows.push( {
 												tag: __( 'New', __i18n_text_domain__ ),
 												text: edit.suggested_text,
+												previewHtml: edit.suggested_text_html,
 												variant: 'new',
 												element: 'ins',
-												contentType: 'rich-text',
 											} );
 										} else if ( edit.suggested_text ) {
 											bodyRows.push( {
 												tag: __( 'Suggestion', __i18n_text_domain__ ),
 												text: edit.suggested_text,
+												previewHtml: edit.suggested_text_html,
 												variant: 'new',
 												element: 'text',
-												contentType: 'rich-text',
 											} );
 										}
 										const footer =
@@ -1594,7 +1595,6 @@ export default function AiEditorialReview( {
 												text: v.issue,
 												variant: 'current',
 												element: 'text',
-												contentType: 'plain-text',
 											} );
 											if ( v.violating_text ) {
 												bodyRows.push( {
@@ -1602,7 +1602,6 @@ export default function AiEditorialReview( {
 													text: v.violating_text,
 													variant: 'current',
 													element: 'del',
-													contentType: 'plain-text',
 												} );
 											}
 											if ( hasGuideline && v.guideline_quote ) {
@@ -1611,7 +1610,6 @@ export default function AiEditorialReview( {
 													text: v.guideline_quote,
 													variant: 'new',
 													element: 'text',
-													contentType: 'plain-text',
 												} );
 											}
 											return (

@@ -947,6 +947,7 @@ describe( 'AiEditorialReview — suggested-edit accept flow', () => {
 							block_index: 1,
 							current_text: 'outdated text',
 							suggested_text: '<strong>fresh</strong> text',
+							suggested_text_html: '<strong>fresh</strong> text',
 							rationale: 'Avoid stale source edits.',
 							supported_by_reviewers: [],
 						},
@@ -1647,7 +1648,7 @@ describe( 'AiEditorialReview — HTML fragment display', () => {
 		},
 	];
 
-	it( 'renders formatted Current/New rows and applies the raw strings', async () => {
+	it( 'renders server-sanitised Current/New previews and applies the raw strings', async () => {
 		mockBlocks = formattedBlocks;
 		mockApplyReviewEdit.mockResolvedValueOnce( { success: true } );
 
@@ -1658,7 +1659,9 @@ describe( 'AiEditorialReview — HTML fragment display', () => {
 						{
 							block_index: 0,
 							current_text: currentFragment,
+							current_text_html: currentFragment,
 							suggested_text: replacementFragment,
+							suggested_text_html: replacementFragment,
 							rationale: 'Confirm the <date> placeholder.',
 							supported_by_reviewers: [],
 						},
@@ -1686,7 +1689,7 @@ describe( 'AiEditorialReview — HTML fragment display', () => {
 			fireEvent.click( screen.getByRole( 'button', { name: 'Apply change' } ) );
 		} );
 
-		// Apply receives the raw HTML strings, untouched by display sanitization.
+		// Apply receives the exact raw strings rather than either display preview.
 		expect( mockApplyReviewEdit ).toHaveBeenCalledWith(
 			'f0',
 			replacementFragment,
@@ -1706,7 +1709,9 @@ describe( 'AiEditorialReview — HTML fragment display', () => {
 						{
 							block_index: 0,
 							current_text: currentFragment,
+							current_text_html: currentFragment,
 							suggested_text: 'Rewrite the intro; keep <em>emphasis</em>.',
+							suggested_text_html: 'Rewrite the intro; keep <em>emphasis</em>.',
 							rationale: 'Needs author judgment.',
 							supported_by_reviewers: [],
 							requires_manual: true,
@@ -1724,10 +1729,11 @@ describe( 'AiEditorialReview — HTML fragment display', () => {
 		expect( screen.queryByRole( 'button', { name: 'Apply change' } ) ).not.toBeInTheDocument();
 	} );
 
-	it( 'sanitizes the conflict AI candidate preview without changing the apply value', async () => {
+	it( 'renders the server-sanitised conflict preview without changing the apply value', async () => {
 		mockBlocks = formattedBlocks;
 		mockApplyReviewEdit.mockResolvedValueOnce( { success: true } );
-		const candidateFragment = `${ replacementFragment }<iframe srcdoc="<script>window.pwned = true;</script>"></iframe><a href="javascript:window.pwned = true">unsafe link</a>`;
+		const candidateFragment = `${ replacementFragment }<iframe></iframe><a href="javascript:window.pwned = true">unsafe link</a>`;
+		const candidatePreview = `${ replacementFragment }<a>unsafe link</a>`;
 		render(
 			<AiEditorialReview
 				{ ...basePayload( {
@@ -1745,6 +1751,7 @@ describe( 'AiEditorialReview — HTML fragment display', () => {
 									block_index: 0,
 									current_text: currentFragment,
 									text: candidateFragment,
+									text_html: candidatePreview,
 									rationale: 'Grounded.',
 								},
 							],
@@ -1777,5 +1784,39 @@ describe( 'AiEditorialReview — HTML fragment display', () => {
 			expect.any( Function ),
 			undefined
 		);
+	} );
+
+	it( 'renders an HTML-like candidate literally when the server preview is absent', () => {
+		mockBlocks = formattedBlocks;
+		render(
+			<AiEditorialReview
+				{ ...basePayload( {
+					conflicts: [
+						{
+							subject: 'Framing',
+							positions: [ { reviewer: 'Marcus', position: 'Softer.' } ],
+							guideline_anchor: null,
+							recommended_resolution: 'Use the softer wording.',
+							candidate_resolutions: [
+								{
+									source: 'ai',
+									reviewer_name: null,
+									label: 'AI resolution',
+									block_index: 0,
+									current_text: currentFragment,
+									text: '<strong>Use this wording.</strong>',
+									rationale: 'Grounded.',
+								},
+							],
+						},
+					],
+				} ) }
+			/>
+		);
+
+		const aiText = document.querySelector( '.jetpack-ai-editorial-review__ai-text' );
+		expect( aiText?.tagName ).toBe( 'P' );
+		expect( aiText?.querySelector( 'strong' ) ).toBeNull();
+		expect( aiText ).toHaveTextContent( '<strong>Use this wording.</strong>' );
 	} );
 } );

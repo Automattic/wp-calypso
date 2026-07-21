@@ -55,21 +55,21 @@ function renderCard( bodyRows: ReviewCardRow[] ) {
 }
 
 describe( 'ReviewCard rich-text rows', () => {
-	it( 'renders inline formatting as elements instead of literal tags', () => {
+	it( 'renders server-provided preview HTML as elements instead of literal tags', () => {
 		const { container } = renderCard( [
 			{
 				tag: 'Current',
-				text: '<strong>Consultation</strong> opens on next week.',
+				text: '<strong>raw current text</strong>',
+				previewHtml: '<strong>Consultation</strong> opens on next week.',
 				variant: 'current',
 				element: 'del',
-				contentType: 'rich-text',
 			},
 			{
 				tag: 'New',
-				text: '<strong>Consultation</strong> <em>opens</em> on 1 May.',
+				text: '<em>raw suggested text</em>',
+				previewHtml: '<strong>Consultation</strong> <em>opens</em> on 1 May.',
 				variant: 'new',
 				element: 'ins',
-				contentType: 'rich-text',
 			},
 		] );
 
@@ -87,9 +87,9 @@ describe( 'ReviewCard rich-text rows', () => {
 			{
 				tag: 'New',
 				text: 'Fees &amp; charges',
+				previewHtml: 'Fees &amp; charges',
 				variant: 'new',
 				element: 'ins',
-				contentType: 'rich-text',
 			},
 		] );
 
@@ -100,10 +100,11 @@ describe( 'ReviewCard rich-text rows', () => {
 		const { container } = renderCard( [
 			{
 				tag: 'New',
-				text: '<mark class="has-inline-color" style="color:red">colour</mark> <span style="text-decoration:underline">underlined</span> <s>removed</s> ref<sup>2</sup> <a href="https://example.com">linked</a>',
+				text: 'colour underlined removed ref2 linked',
+				previewHtml:
+					'<mark class="has-inline-color" style="color:red">colour</mark> <span style="text-decoration:underline">underlined</span> <s>removed</s> ref<sup>2</sup> <a href="https://example.com">linked</a>',
 				variant: 'new',
 				element: 'ins',
-				contentType: 'rich-text',
 			},
 		] );
 
@@ -119,10 +120,10 @@ describe( 'ReviewCard rich-text rows', () => {
 		const { container } = renderCard( [
 			{
 				tag: 'Suggestion',
-				text: 'Use <strong>bold</strong> sparingly.',
+				text: 'Use bold sparingly.',
+				previewHtml: 'Use <strong>bold</strong> sparingly.',
 				variant: 'new',
 				element: 'text',
-				contentType: 'rich-text',
 			},
 		] );
 
@@ -140,47 +141,42 @@ describe( 'ReviewCard rich-text rows', () => {
 				text: 'Change the <h3> to an <h2>.',
 				variant: 'current',
 				element: 'text',
-				contentType: 'plain-text',
 			},
 		] );
 
 		expect( screen.getByText( 'Change the <h3> to an <h2>.' ) ).toBeInTheDocument();
 	} );
 
-	it( 'fails closed to literal text for an unknown runtime content type', () => {
-		const row = {
-			tag: 'New',
-			text: '<strong>Consultation</strong>',
-			variant: 'new',
-			element: 'ins',
-			contentType: 'markdown',
-		} as unknown as ReviewCardRow;
-		const { container } = renderCard( [ row ] );
+	it( 'renders raw HTML-like text literally when no preview field is available', () => {
+		const { container } = renderCard( [
+			{
+				tag: 'New',
+				text: '<strong>Consultation</strong>',
+				variant: 'new',
+				element: 'ins',
+			},
+		] );
 
 		expect( container.querySelector( 'ins strong' ) ).toBeNull();
 		expect( container.querySelector( 'ins' ) ).toHaveTextContent( '<strong>Consultation</strong>' );
 	} );
 
-	it( 'removes active content and unsafe URLs from rich-text HTML', () => {
+	it( 'renders only the server-sanitised preview and never the raw replacement as HTML', () => {
 		const { container } = renderCard( [
 			{
 				tag: 'New',
-				text: 'safe<script>window.pwned = true;</script><iframe srcdoc="<script>window.pwned = true;</script>"></iframe><svg><style>body{display:none}</style><text>svg</text></svg><math><mstyle><style>body{display:none}</style></mstyle></math><a href="javascript:window.pwned = true">link</a><strong onclick="window.pwned = true">format</strong>',
+				text: '<script>window.pwned = true;</script><iframe></iframe><strong onclick="window.pwned = true">raw</strong>',
+				previewHtml: '<strong>safe preview</strong>',
 				variant: 'new',
 				element: 'ins',
-				contentType: 'rich-text',
 			},
 		] );
 
 		const ins = container.querySelector( 'ins' );
 		expect( ins?.querySelector( 'script' ) ).toBeNull();
 		expect( ins?.querySelector( 'iframe' ) ).toBeNull();
-		expect( ins?.querySelector( 'svg, math, style' ) ).toBeNull();
-		expect( ins?.textContent ).toBe( 'safelinkformat' );
-		expect( ins?.querySelector( 'a' ) ).not.toHaveAttribute( 'href' );
-		const strong = ins?.querySelector( 'strong' );
-		expect( strong ).not.toBeNull();
-		expect( strong?.getAttribute( 'onclick' ) ).toBeNull();
+		expect( ins?.querySelector( 'strong' ) ).toHaveTextContent( 'safe preview' );
+		expect( ins ).not.toHaveTextContent( 'raw' );
 		expect( ( window as unknown as { pwned?: boolean } ).pwned ).toBeUndefined();
 	} );
 } );
