@@ -14376,7 +14376,6 @@ __metadata:
     browser-filesaver: "npm:^1.1.1"
     bunyan: "npm:^1.8.15"
     chalk: "npm:^4.1.2"
-    chrono-node: "npm:^2.3.5"
     circular-dependency-plugin: "npm:^5.2.2"
     clipboard: "npm:^2.0.11"
     clsx: "npm:^2.1.1"
@@ -14851,15 +14850,6 @@ __metadata:
   version: 0.2.0
   resolution: "chromium-pickle-js@npm:0.2.0"
   checksum: 0a95bd280acdf05b0e08fa1a0e1db58c815dd24e92d639add8f494d23a8a49c26e4829721224d68f2f0e57a69047714db29bcff6deb5d029332321223416cb29
-  languageName: node
-  linkType: hard
-
-"chrono-node@npm:^2.3.5":
-  version: 2.3.5
-  resolution: "chrono-node@npm:2.3.5"
-  dependencies:
-    dayjs: "npm:^1.10.0"
-  checksum: aada72974a4bd6dac4d6f7a9efad8006845636105248c468e79f3aa6a86764c56a2c7329bbf9bf10bdc8e0f4225028ccc889bef98b92903cea1727b64b14db90
   languageName: node
   linkType: hard
 
@@ -16353,13 +16343,6 @@ __metadata:
   version: 4.1.0
   resolution: "date-fns@npm:4.1.0"
   checksum: b79ff32830e6b7faa009590af6ae0fb8c3fd9ffad46d930548fbb5acf473773b4712ae887e156ba91a7b3dc30591ce0f517d69fd83bd9c38650fdc03b4e0bac8
-  languageName: node
-  linkType: hard
-
-"dayjs@npm:^1.10.0":
-  version: 1.11.18
-  resolution: "dayjs@npm:1.11.18"
-  checksum: 83b67f5d977e2634edf4f5abdd91d9041a696943143638063016915d2cd8c7e57e0751e40379a07ebca8be7a48dd380bef8752d22a63670f2d15970e34f96d7a
   languageName: node
   linkType: hard
 
