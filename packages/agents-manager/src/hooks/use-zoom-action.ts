@@ -1,7 +1,7 @@
 import { useEffect } from '@wordpress/element';
 import ZoomActionButton from '../components/zoom-action-button';
 import { isEditorPage } from '../utils/is-editor-page';
-import { isShowComponentTool } from '../utils/show-component-tools';
+import { isDeprecatedShowComponentType, isShowComponentTool } from '../utils/show-component-tools';
 import type { UseAgentChatReturn, UIMessage } from '@automattic/agenttic-client';
 
 type RegisterMessageActions = UseAgentChatReturn[ 'registerMessageActions' ];
@@ -31,7 +31,8 @@ export default function useZoomAction( registerMessageActions: RegisterMessageAc
 					if (
 						parsed.data?.hideZoomAction ||
 						parsed.data?.type === 'color-picker' ||
-						parsed.data?.type === 'font-picker'
+						parsed.data?.type === 'font-picker' ||
+						isDeprecatedShowComponentType( parsed.data?.type )
 					) {
 						return [];
 					}

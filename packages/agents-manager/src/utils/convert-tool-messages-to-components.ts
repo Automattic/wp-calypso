@@ -5,7 +5,7 @@ import { EscalationButton } from '../components/escalation-button';
 import FontPicker from '../components/font-picker';
 import UnavailableToolMessage from '../components/unavailable-tool-message';
 import { isEditorPage } from './is-editor-page';
-import { isShowComponentTool } from './show-component-tools';
+import { isDeprecatedShowComponentType, isShowComponentTool } from './show-component-tools';
 import { getDisplayMessageFromToolData, isDisplayableToolMessageTool } from './tool-message-utils';
 import type { GetChatComponent } from './load-external-providers';
 import type { ShowComponentType } from '../abilities/show-component';
@@ -217,11 +217,7 @@ export default function convertToolMessagesToComponents( {
 
 			const toolData = textData.data ?? {};
 			const { type: contentType, props, followUpTasks, isCurrent, postId, summary } = toolData;
-			// Big Sky's pattern picker no longer renders in AM chats (its ability is
-			// backend-dead on AM surfaces) — history messages get the notice below.
-			// TODO: Remove once Big Sky drops its pattern-picker chat component; the
-			// fallthrough then resolves nothing and the notice happens on its own.
-			const isDeprecatedType = contentType === 'pattern-picker';
+			const isDeprecatedType = isDeprecatedShowComponentType( contentType );
 			const amComponent = getAmComponent( contentType );
 			// AM components take precedence; other types resolve through the external
 			// providers (e.g. jetpack-ai-sidebar's title pickers) via `getChatComponent`.

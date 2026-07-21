@@ -53,10 +53,10 @@ describe( 'useZoomAction', () => {
 
 		renderHook( () => useZoomAction( registerMessageActions ) );
 
-		expect( getActions( registration, createToolMessage( 'pattern-picker' ) ) ).toHaveLength( 1 );
+		expect( getActions( registration, createToolMessage( 'button-picker' ) ) ).toHaveLength( 1 );
 	} );
 
-	it.each( [ 'color-picker', 'font-picker' ] )(
+	it.each( [ 'color-picker', 'font-picker', 'pattern-picker' ] )(
 		'does not register zoom action for %s messages',
 		( type ) => {
 			let registration: MessageActionsRegistration | undefined;
