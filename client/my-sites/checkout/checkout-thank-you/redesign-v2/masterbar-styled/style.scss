@@ -1,6 +1,7 @@
 .checkout-thank-you__masterbar {
 	--color-masterbar-background: var(--color-main-background);
 	--color-masterbar-text: var(--studio-gray-60);
+	--color-masterbar-item-hover-background: transparent;
 	padding-right: 24px;
 	border-bottom: 0;
 
@@ -13,8 +14,6 @@
 	}
 
 	.checkout-thank-you__item-wrapper {
-		// Fills the bar so the contact link is pushed to the far edge, but the
-		// button inside must stay label-width — it is the hover and click target.
 		flex: 1;
 		display: flex;
 
@@ -25,8 +24,6 @@
 			font-weight: 500;
 
 			&:hover {
-				background: var(--studio-white);
-
 				.masterbar__item-content {
 					color: var(--color-masterbar-text);
 					text-decoration: underline;
