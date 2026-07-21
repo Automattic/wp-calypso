@@ -1,26 +1,18 @@
-/**
- * @group gutenberg
- */
-
 import {
-	DataHelper,
 	CommentsComponent,
-	TestAccount,
-	envVariables,
-	getTestAccountByFeature,
-	envToFeatureKey,
-	RestAPIClient,
+	DataHelper,
 	NewCommentResponse,
 	PostResponse,
+	RestAPIClient,
+	TestAccount,
+	envVariables,
+	envToFeatureKey,
+	getTestAccountByFeature,
 } from '@automattic/calypso-e2e';
-import { Browser, Page } from 'playwright';
+import { tags, test } from '../../lib/pw-base';
 
-declare const browser: Browser;
-
-describe( 'Likes: Comment', function () {
+test.describe( 'Likes: Comment', { tag: [ tags.GUTENBERG ] }, () => {
 	const features = envToFeatureKey( envVariables );
-	// @todo Does it make sense to create a `simpleSitePersonalPlanUserEdge` with GB edge?
-	// for now, it will pick up the default `gutenbergAtomicSiteEdgeUser` if edge is set.
 	const accountName = getTestAccountByFeature( features, [
 		{
 			gutenberg: 'stable',
@@ -28,90 +20,85 @@ describe( 'Likes: Comment', function () {
 			accountName: 'simpleSitePersonalPlanUser',
 		},
 	] );
-	const postContent =
-		'The foolish man seeks happiness in the distance. The wise grows it under his feet.\n— James Oppenheim';
-	let page: Page;
-	let commentsComponent: CommentsComponent;
-	let testAccount: TestAccount;
-	let newPost: PostResponse;
-	let commentToBeLiked: NewCommentResponse;
-	let commentToBeUnliked: NewCommentResponse;
-	let restAPIClient: RestAPIClient;
 
-	it( 'Setup the test', async function () {
-		page = await browser.newPage();
+	test( 'As a user, I can like and unlike a comment', async ( { page } ) => {
+		const testAccount = new TestAccount( accountName );
+		const restAPIClient = new RestAPIClient( testAccount.credentials );
+		let newPost: PostResponse;
+		let commentToBeLiked: NewCommentResponse;
+		let commentToBeUnliked: NewCommentResponse;
 
-		testAccount = new TestAccount( accountName );
+		await test.step( 'Setup the test', async () => {
+			const postContent =
+				'The foolish man seeks happiness in the distance. The wise grows it under his feet.\n— James Oppenheim';
 
-		restAPIClient = new RestAPIClient( testAccount.credentials );
-
-		newPost = await restAPIClient.createPost(
-			testAccount.credentials.testSites?.primary.id as number,
-			{
-				title: DataHelper.getTimestamp() as string,
-				content: postContent,
-			}
-		);
-
-		commentToBeLiked = await restAPIClient.createComment(
-			testAccount.credentials.testSites?.primary.id as number,
-			newPost.ID,
-			DataHelper.getRandomPhrase()
-		);
-		commentToBeUnliked = await restAPIClient.createComment(
-			testAccount.credentials.testSites?.primary.id as number,
-			newPost.ID,
-			DataHelper.getRandomPhrase()
-		);
-
-		// The comment takes some time to settle. If we request the like
-		// immediately we might be getting the `unknown_comment` error. Let's do
-		// a few retries to make sure the like is getting through.
-		const likeRetryCount = 10;
-		for ( let i = 0; i <= likeRetryCount; i++ ) {
-			try {
-				await restAPIClient.commentAction(
-					'like',
-					testAccount.credentials.testSites?.primary.id as number,
-					commentToBeUnliked.ID
-				);
-				break;
-			} catch ( error ) {
-				if ( i === likeRetryCount ) {
-					throw error;
+			newPost = await restAPIClient.createPost(
+				testAccount.credentials.testSites?.primary.id as number,
+				{
+					title: DataHelper.getTimestamp() as string,
+					content: postContent,
 				}
-				await page.waitForTimeout( 1000 );
+			);
+
+			commentToBeLiked = await restAPIClient.createComment(
+				testAccount.credentials.testSites?.primary.id as number,
+				newPost.ID,
+				DataHelper.getRandomPhrase()
+			);
+			commentToBeUnliked = await restAPIClient.createComment(
+				testAccount.credentials.testSites?.primary.id as number,
+				newPost.ID,
+				DataHelper.getRandomPhrase()
+			);
+
+			// The comment takes some time to settle. Retry to handle `unknown_comment` errors.
+			const likeRetryCount = 10;
+			for ( let i = 0; i <= likeRetryCount; i++ ) {
+				try {
+					await restAPIClient.commentAction(
+						'like',
+						testAccount.credentials.testSites?.primary.id as number,
+						commentToBeUnliked.ID
+					);
+					break;
+				} catch ( error ) {
+					if ( i === likeRetryCount ) {
+						throw error;
+					}
+					await page.waitForTimeout( 1000 );
+				}
 			}
-		}
 
-		await testAccount.authenticate( page );
-	} );
+			await testAccount.authenticate( page );
+		} );
 
-	it( 'View the post', async function () {
-		await page.goto( newPost.URL );
-	} );
+		await test.step( 'View the post', async () => {
+			await page.goto( newPost.URL );
+		} );
 
-	it( 'Like the comment', async function () {
-		commentsComponent = new CommentsComponent( page );
-		await commentsComponent.like( commentToBeLiked.raw_content );
-	} );
+		const commentsComponent = new CommentsComponent( page );
 
-	it( 'Unlike the comment', async function () {
-		if ( envVariables.TEST_ON_ATOMIC ) {
-			// AT comments appear unable to respond to `scrollIntoViewIfNeeded`
-			// unless the focus is "unstuck" by shiting the page.
-			await page.mouse.wheel( 0, 120 );
-		}
-		await commentsComponent.unlike( commentToBeUnliked.raw_content );
-	} );
+		await test.step( 'Like the comment', async () => {
+			await commentsComponent.like( commentToBeLiked.raw_content );
+		} );
 
-	afterAll( async function () {
-		if ( ! newPost ) {
-			return;
-		}
-		await restAPIClient.deletePost(
-			testAccount.credentials.testSites?.primary.id as number,
-			newPost.ID
-		);
+		await test.step( 'Unlike the comment', async () => {
+			if ( envVariables.TEST_ON_ATOMIC ) {
+				// AT comments appear unable to respond to `scrollIntoViewIfNeeded`
+				// unless the focus is "unstuck" by shifting the page.
+				await page.mouse.wheel( 0, 120 );
+			}
+			await commentsComponent.unlike( commentToBeUnliked.raw_content );
+		} );
+
+		test.afterAll( async () => {
+			if ( ! newPost ) {
+				return;
+			}
+			await restAPIClient.deletePost(
+				testAccount.credentials.testSites?.primary.id as number,
+				newPost.ID
+			);
+		} );
 	} );
 } );

@@ -1,98 +1,72 @@
 /**
- * @group jetpack-wpcom-integration
- */
-
-import { HelpCenterComponent, TestAccount } from '@automattic/calypso-e2e';
-import { Browser, Page, Locator } from 'playwright';
-
-declare const browser: Browser;
-
-/**
  * Skip this test.
  * I wasn't able to figure out how to test the apps/help-center version
  */
-describe.skip( 'Help Center in WP Admin', () => {
+
+import { HelpCenterComponent, TestAccount } from '@automattic/calypso-e2e';
+import { Locator } from 'playwright';
+import { expect, tags, test } from '../../lib/pw-base';
+
+test.describe( 'Help Center in WP Admin', { tag: [ tags.JETPACK_WPCOM_INTEGRATION ] }, () => {
 	const normalizeString = ( str: string | null ) => str?.replace( /\s+/g, ' ' ).trim();
 
-	let page: Page;
-	let pageUrl: string;
-	let testAccount: TestAccount;
-	let helpCenterComponent: HelpCenterComponent;
-	let helpCenterLocator: Locator;
+	test.skip( true, 'Skipped: unable to test apps/help-center version' );
 
-	// Setup the page and test account
-	beforeAll( async function () {
-		page = await browser.newPage();
-		testAccount = new TestAccount( 'defaultUser' );
-		pageUrl = `${ testAccount.getSiteURL( { protocol: true } ) }wp-admin/`;
+	test( 'As a user, I can interact with the Help Center in WP Admin', async ( { page } ) => {
+		let pageUrl: string;
+		let helpCenterComponent: HelpCenterComponent;
+		let helpCenterLocator: Locator;
 
-		await testAccount.authenticate( page, { waitUntilStable: true } );
-		await page.goto( pageUrl );
+		await test.step( 'Setup the page and test account', async () => {
+			const testAccount = new TestAccount( 'defaultUser' );
+			pageUrl = `${ testAccount.getSiteURL( { protocol: true } ) }wp-admin/`;
 
-		helpCenterComponent = new HelpCenterComponent( page );
-		helpCenterLocator = helpCenterComponent.getHelpCenterLocator();
+			await testAccount.authenticate( page, { waitUntilStable: true } );
+			await page.goto( pageUrl );
 
-		// Set Zendesk to staging environment to prevent calling Zendesk API in test environment.
-		await helpCenterComponent.setZendeskStaging();
-	} );
+			helpCenterComponent = new HelpCenterComponent( page );
+			helpCenterLocator = helpCenterComponent.getHelpCenterLocator();
 
-	// Close the page after the tests
-	afterAll( async function () {
-		await page.close();
-	} );
-
-	/**
-	 * General Interaction
-	 *
-	 * These tests check the general interaction with the Help Center popover.
-	 */
-	describe( 'General Interaction', () => {
-		it( 'is initially closed', async () => {
-			expect( await helpCenterComponent.isVisible() ).toBeFalsy();
+			await helpCenterComponent.setZendeskStaging();
 		} );
 
-		it( 'can be opened', async () => {
+		// General Interaction
+
+		await test.step( 'Is initially closed', async () => {
+			await expect( helpCenterLocator ).toBeHidden();
+		} );
+
+		await test.step( 'Can be opened', async () => {
 			await helpCenterComponent.openPopover();
-
-			expect( await helpCenterComponent.isVisible() ).toBeTruthy();
+			await expect( helpCenterLocator ).toBeVisible();
 		} );
 
-		it( 'is showing on the screen', async () => {
+		await test.step( 'Is showing on the screen', async () => {
 			expect( await helpCenterComponent.isPopoverShown() ).toBeTruthy();
 		} );
 
-		it( 'can be minimized', async () => {
+		await test.step( 'Can be minimized', async () => {
 			await helpCenterComponent.minimizePopover();
-
 			const containerHeight = await helpCenterLocator.evaluate(
 				( el: HTMLElement ) => el.offsetHeight
 			);
-
 			expect( containerHeight ).toBe( 50 );
 		} );
 
-		it( 'the popover can be closed', async () => {
+		await test.step( 'The popover can be closed', async () => {
 			await helpCenterComponent.closePopover();
-
-			expect( await helpCenterComponent.isVisible() ).toBeFalsy();
+			await expect( helpCenterLocator ).toBeHidden();
 		} );
-	} );
 
-	/**
-	 * Articles
-	 *
-	 * These tests check the search function and article navigation.
-	 */
-	describe( 'Articles', () => {
-		it( 'initial articles are shown', async () => {
+		// Articles
+
+		await test.step( 'Initial articles are shown', async () => {
 			await helpCenterComponent.openPopover();
-
 			const articles = helpCenterComponent.getArticles();
-
 			expect( await articles.count() ).toBeGreaterThanOrEqual( 1 );
 		} );
 
-		it( 'search returns proper results', async () => {
+		await test.step( 'Search returns proper results', async () => {
 			await helpCenterComponent.search( 'Change a Domain Name Address' );
 			const resultTitles = await helpCenterComponent.getArticles().allTextContents();
 			expect(
@@ -102,12 +76,11 @@ describe.skip( 'Help Center in WP Admin', () => {
 			).toBeTruthy();
 		} );
 
-		it( 'post loads correctly', async () => {
+		await test.step( 'Post loads correctly', async () => {
 			const article = await helpCenterComponent.getArticles().first();
 			const articleTitle = await article.textContent();
 			await article.click();
 
-			// Make sure the API response is valid
 			await page.waitForResponse(
 				( response ) =>
 					response.url().includes( '/wpcom/v2/help/article' ) && response.status() === 200
@@ -125,64 +98,39 @@ describe.skip( 'Help Center in WP Admin', () => {
 
 			await helpCenterComponent.goBack();
 		} );
-	} );
 
-	/**
-	 * Support Flow
-	 *
-	 * These tests check the support flow. Starting with AI and then chat.
-	 */
-	describe( 'Support Flow', () => {
-		it( 'start support flow', async () => {
+		// Support Flow
+
+		await test.step( 'Start support flow', async () => {
 			await helpCenterComponent.openPopover();
-
 			const stillNeedHelpButton = helpCenterLocator.getByRole( 'link', {
 				name: 'Still need help?',
 			} );
-
 			await stillNeedHelpButton.waitFor( { state: 'visible' } );
 			await stillNeedHelpButton.click();
-
 			expect( await helpCenterComponent.getOdieChat().count() ).toBeTruthy();
 		} );
 
-		it.skip( 'get forwarded to a human', async () => {
-			await helpCenterComponent.startAIChat( 'talk to human' );
+		// Skipped: get forwarded to a human
+		// await helpCenterComponent.startAIChat( 'talk to human' );
+		// const contactSupportButton = helpCenterComponent.getContactSupportButton();
+		// await contactSupportButton.waitFor( { state: 'visible' } );
+		// expect( await contactSupportButton.count() ).toBeTruthy();
 
-			const contactSupportButton = helpCenterComponent.getContactSupportButton();
-			await contactSupportButton.waitFor( { state: 'visible' } );
+		// Skipped: start talking with a human
+		// const contactSupportButton = helpCenterComponent.getContactSupportButton();
+		// await contactSupportButton.dispatchEvent( 'click' );
+		// const zendeskMessaging = page
+		// 	.frameLocator( 'iframe[title="Messaging window"]' )
+		// 	.getByPlaceholder( 'Type a message' );
+		// await zendeskMessaging.waitFor( { state: 'visible' } );
+		// expect( await zendeskMessaging.count() ).toBeTruthy();
 
-			expect( await contactSupportButton.count() ).toBeTruthy();
-		} );
+		// Action Hooks
 
-		/**
-		 * These tests need to be update
-		 */
-		it.skip( 'start talking with a human', async () => {
-			const contactSupportButton = await helpCenterComponent.getContactSupportButton();
-			await contactSupportButton.dispatchEvent( 'click' );
-
-			const zendeskMessaging = await page
-				.frameLocator( 'iframe[title="Messaging window"]' )
-				.getByPlaceholder( 'Type a message' );
-
-			await zendeskMessaging.waitFor( { state: 'visible' } );
-
-			expect( await zendeskMessaging.count() ).toBeTruthy();
-		} );
-	} );
-
-	/**
-	 * Action Hooks
-	 *
-	 * These tests Help Center opening on page load.
-	 */
-	describe( 'Action Hooks', () => {
-		it( 'open help center on page load', async () => {
+		await test.step( 'Open help center on page load', async () => {
 			await page.goto( pageUrl + '?help-center=home' );
-
 			await helpCenterLocator.waitFor( { state: 'visible' } );
-
 			expect( await helpCenterComponent.isPopoverShown() ).toBeTruthy();
 		} );
 	} );

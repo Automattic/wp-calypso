@@ -1,18 +1,11 @@
-/**
- * @group gutenberg
- */
 import {
-	envVariables,
-	EditorPage,
 	PricingTableBlock,
 	TestAccount,
-	getTestAccountByFeature,
+	envVariables,
 	envToFeatureKey,
+	getTestAccountByFeature,
 } from '@automattic/calypso-e2e';
-import { Page, Browser } from 'playwright';
-import { skipItIf } from '../../jest-helpers';
-
-declare const browser: Browser;
+import { tags, test } from '../../lib/pw-base';
 
 const isAtomic = envVariables.TEST_ON_ATOMIC;
 const isSimple = ! envVariables.TEST_ON_ATOMIC;
@@ -27,83 +20,93 @@ if ( isAtomic ) {
  * This spec requires the following:
  * 	- theme: a non-block-based theme (eg. Twenty-Twenty One)
  */
-describe( 'CoBlocks: Extensions: Gutter Control', function () {
+test.describe( 'CoBlocks: Extensions: Gutter Control', { tag: [ tags.GUTENBERG ] }, () => {
 	const accountName = getTestAccountByFeature( features );
 
-	let page: Page;
-	let testAccount: TestAccount;
-	let editorPage: EditorPage;
-	let pricingTableBlock: PricingTableBlock;
+	test( 'As a user, I can change CoBlocks gutter control settings', async ( {
+		page,
+		pageEditor,
+	} ) => {
+		let pricingTableBlock: PricingTableBlock;
 
-	beforeAll( async () => {
-		page = await browser.newPage();
-		testAccount = new TestAccount( accountName );
-		editorPage = new EditorPage( page );
+		await test.step( 'Given I am authenticated', async () => {
+			const testAccount = new TestAccount( accountName );
+			await testAccount.authenticate( page );
+		} );
 
-		await testAccount.authenticate( page );
-	} );
+		await test.step( 'When I go to the new post page', async () => {
+			const testAccount = new TestAccount( accountName );
+			const siteSlug = testAccount.getSiteURL( { protocol: false } );
+			await pageEditor.visit( 'post', { siteSlug } );
+		} );
 
-	it( 'Go to the new post page', async () => {
-		const siteSlug = testAccount.getSiteURL( { protocol: false } );
-		await editorPage.visit( 'post', { siteSlug } );
-	} );
+		await test.step( 'When I insert Pricing Table block', async () => {
+			const blockHandle = await pageEditor.addBlockFromSidebar(
+				PricingTableBlock.blockName,
+				PricingTableBlock.blockEditorSelector
+			);
+			pricingTableBlock = new PricingTableBlock( page, blockHandle );
+		} );
 
-	it( 'Insert Pricing Table block', async () => {
-		const blockHandle = await editorPage.addBlockFromSidebar(
-			PricingTableBlock.blockName,
-			PricingTableBlock.blockEditorSelector
-		);
-		pricingTableBlock = new PricingTableBlock( page, blockHandle );
-	} );
+		await test.step( 'When I open settings sidebar', async () => {
+			await pageEditor.openSettings();
+		} );
 
-	it( 'Open settings sidebar', async () => {
-		await editorPage.openSettings();
-	} );
+		if ( ! isAtomic ) {
+			await test.step( 'When I verify "None" gutter is available', async () => {
+				await pricingTableBlock!.setGutter( 'None' );
+			} );
+		}
 
-	skipItIf( isAtomic )( 'Verify "None" gutter is available', async () => {
-		await pricingTableBlock.setGutter( 'None' );
-	} );
+		await test.step( 'When I verify "Small" gutter is available', async () => {
+			await pricingTableBlock!.setGutter( 'Small' );
+		} );
 
-	it( 'Verify "Small" gutter is available', async () => {
-		await pricingTableBlock.setGutter( 'Small' );
-	} );
+		await test.step( 'When I verify "Medium" gutter is available', async () => {
+			await pricingTableBlock!.setGutter( 'Medium' );
+		} );
 
-	it( 'Verify "Medium" gutter is available', async () => {
-		await pricingTableBlock.setGutter( 'Medium' );
-	} );
+		await test.step( 'When I verify "Large" gutter is available', async () => {
+			await pricingTableBlock!.setGutter( 'Large' );
+		} );
 
-	it( 'Verify "Large" gutter is available', async () => {
-		await pricingTableBlock.setGutter( 'Large' );
-	} );
+		if ( ! isAtomic ) {
+			await test.step( 'When I verify "Huge" gutter is available', async () => {
+				await pricingTableBlock!.setGutter( 'Huge' );
+			} );
+		}
 
-	skipItIf( isAtomic )( 'Verify "Huge" gutter is available', async () => {
-		await pricingTableBlock.setGutter( 'Huge' );
-	} );
+		if ( ! isSimple ) {
+			await test.step( 'When I verify "Custom" gutter is available', async () => {
+				await pricingTableBlock!.setGutter( 'Custom', 2.7 );
+			} );
+		}
 
-	skipItIf( isSimple )( 'Verify "Custom" gutter is available', async () => {
-		await pricingTableBlock.setGutter( 'Custom', 2.7 );
-	} );
+		await test.step( 'When I close settings sidebar', async () => {
+			await pageEditor.closeSettings();
+		} );
 
-	it( 'Close settings sidebar', async () => {
-		await editorPage.closeSettings();
-	} );
+		await test.step( 'When I fill the price fields so the block is visible', async () => {
+			await pricingTableBlock!.enterPrice( 1, 4.99 );
+			await pricingTableBlock!.enterPrice( 2, 9.99 );
+		} );
 
-	it( 'Fill the price fields so the block is visible', async () => {
-		await pricingTableBlock.enterPrice( 1, 4.99 );
-		await pricingTableBlock.enterPrice( 2, 9.99 );
-	} );
+		await test.step( 'When I publish and visit the post', async () => {
+			await pageEditor.publish( { visit: true } );
+		} );
 
-	it( 'Publish and visit the post', async () => {
-		await editorPage.publish( { visit: true } );
-	} );
+		if ( ! isAtomic ) {
+			await test.step( 'Then the class for "Huge" gutter is present', async () => {
+				await page.locator( '.wp-block-coblocks-pricing-table .has-huge-gutter' ).waitFor();
+			} );
+		}
 
-	skipItIf( isAtomic )( 'Verify the class for "Huge" gutter is present', async () => {
-		await page.locator( '.wp-block-coblocks-pricing-table .has-huge-gutter' ).waitFor();
-	} );
-
-	skipItIf( isSimple )( 'Verify the proper value for "Custom" gutter is set', async () => {
-		await page
-			.locator( '.wp-block-coblocks-pricing-table [style="--coblocks-custom-gutter:2.7em"]' )
-			.waitFor();
+		if ( ! isSimple ) {
+			await test.step( 'Then the proper value for "Custom" gutter is set', async () => {
+				await page
+					.locator( '.wp-block-coblocks-pricing-table [style="--coblocks-custom-gutter:2.7em"]' )
+					.waitFor();
+			} );
+		}
 	} );
 } );

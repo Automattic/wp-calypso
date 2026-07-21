@@ -1,82 +1,75 @@
 /**
- * @group jetpack-wpcom-integration
- */
-
-import {
-	envToFeatureKey,
-	getTestAccountByFeature,
-	envVariables,
-	DataHelper,
-	MarketingPage,
-	RestAPIClient,
-	TestAccount,
-	SecretsManager,
-} from '@automattic/calypso-e2e';
-import { Page, Browser } from 'playwright';
-import { skipDescribeIf } from '../../jest-helpers';
-
-declare const browser: Browser;
-
-/**
  * Sets up a Tumblr social connection for the site.
  *
  * Note, Private sites do not support Social/Publicize connections.
  *
  * Keywords: Social Connections, Marketing, Jetpack, Tumblr, Publicize
  */
-skipDescribeIf( envVariables.ATOMIC_VARIATION === 'private' )(
+
+import {
+	DataHelper,
+	MarketingPage,
+	RestAPIClient,
+	TestAccount,
+	envToFeatureKey,
+	envVariables,
+	getTestAccountByFeature,
+} from '@automattic/calypso-e2e';
+import { tags, test } from '../../lib/pw-base';
+
+test.describe(
 	DataHelper.createSuiteTitle( 'Social Connections: Set up Tumblr' ),
-	function () {
-		let page: Page;
-		let popup: Page;
-
-		let testAccount: TestAccount;
-		let restAPIClient: RestAPIClient;
-		let marketingPage: MarketingPage;
-
-		beforeAll( async () => {
-			page = await browser.newPage();
-
-			const features = envToFeatureKey( envVariables );
-			const accountName = getTestAccountByFeature( features );
-			testAccount = new TestAccount( accountName );
-			await testAccount.authenticate( page );
-
-			restAPIClient = new RestAPIClient( testAccount.credentials );
-
-			// Check whether a Tumblr connection exists.
-			const connections = await restAPIClient.getAllPublicizeConnections(
-				testAccount.credentials.testSites?.primary.id as number
+	{ tag: [ tags.JETPACK_WPCOM_INTEGRATION ] },
+	() => {
+		test( 'As a user, I can navigate to the Tumblr connection page', async ( { page } ) => {
+			test.skip(
+				envVariables.ATOMIC_VARIATION === 'private',
+				'Social connections not supported on private sites'
 			);
 
-			// If it does, remove the connection.
-			for ( const connection of connections ) {
-				if ( connection.label === 'Tumblr' ) {
-					console.info(
-						`Removing existing connection for Tumblr for accountName ${ accountName }.`
-					);
-					await restAPIClient.deletePublicizeConnection( connection.site_ID, connection.ID );
+			let marketingPage: MarketingPage;
+
+			await test.step( 'Setup: authenticate and remove existing Tumblr connection if any', async () => {
+				const features = envToFeatureKey( envVariables );
+				const accountName = getTestAccountByFeature( features );
+				const testAccount = new TestAccount( accountName );
+				await testAccount.authenticate( page );
+
+				const restAPIClient = new RestAPIClient( testAccount.credentials );
+
+				const connections = await restAPIClient.getAllPublicizeConnections(
+					testAccount.credentials.testSites?.primary.id as number
+				);
+
+				for ( const connection of connections ) {
+					if ( connection.label === 'Tumblr' ) {
+						console.info(
+							`Removing existing connection for Tumblr for accountName ${ accountName }.`
+						);
+						await restAPIClient.deletePublicizeConnection( connection.site_ID, connection.ID );
+					}
 				}
-			}
 
-			marketingPage = new MarketingPage( page );
-		} );
+				marketingPage = new MarketingPage( page );
+			} );
 
-		it( 'Navigate to Tools > Marketing > Connections page', async function () {
-			await marketingPage.visitTab( testAccount.getSiteURL( { protocol: false } ), 'connections' );
-		} );
+			await test.step( 'Navigate to Tools > Marketing > Connections page', async () => {
+				const testAccount = new TestAccount(
+					getTestAccountByFeature( envToFeatureKey( envVariables ) )
+				);
+				await marketingPage.visitTab(
+					testAccount.getSiteURL( { protocol: false } ),
+					'connections'
+				);
+			} );
 
-		// Skipping the bulk of the spec, as it's flaky. We're working on better E2E tests.
-		it.skip( 'Click on the "Connect" button for Tumblr', async function () {
-			popup = await marketingPage.clickSocialConnectButton( 'Tumblr' );
-		} );
-
-		it.skip( 'Set up Tumblr', async function () {
-			await marketingPage.setupTumblr( popup, SecretsManager.secrets.socialAccounts.tumblr );
-		} );
-
-		it.skip( 'Tumblr is connected', async function () {
-			await marketingPage.validateSocialConnected( 'Tumblr' );
+			// Skipping the bulk of the spec, as it's flaky. We're working on better E2E tests.
+			// Skipped: Click on the "Connect" button for Tumblr
+			// const popup = await marketingPage.clickSocialConnectButton( 'Tumblr' );
+			// Skipped: Set up Tumblr
+			// await marketingPage.setupTumblr( popup, SecretsManager.secrets.socialAccounts.tumblr );
+			// Skipped: Tumblr is connected
+			// await marketingPage.validateSocialConnected( 'Tumblr' );
 		} );
 	}
 );

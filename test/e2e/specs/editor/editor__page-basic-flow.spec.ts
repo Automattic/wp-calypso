@@ -1,126 +1,104 @@
-/**
- * @group gutenberg
- * @group jetpack-wpcom-integration
- */
-
 import {
 	DataHelper,
-	envVariables,
-	EditorPage,
+	PagesPage,
 	PublishedPostPage,
 	TestAccount,
-	PagesPage,
-	getTestAccountByFeature,
 	envToFeatureKey,
+	envVariables,
+	getTestAccountByFeature,
 } from '@automattic/calypso-e2e';
-import { Browser, Page } from 'playwright';
-
-declare const browser: Browser;
+import { expect, tags, test } from '../../lib/pw-base';
 
 const customUrlSlug = `about-${ DataHelper.getTimestamp() }-${ DataHelper.getRandomInteger(
 	0,
 	100
 ) }`;
 
-describe( DataHelper.createSuiteTitle( 'Editor: Basic Page Flow' ), function () {
-	const features = envToFeatureKey( envVariables );
-	const accountName = getTestAccountByFeature(
-		features,
-		// The default accounts for gutenberg+simple are `gutenbergSimpleSiteEdgeUser` for GB edge
-		// and `gutenbergSimpleSiteUser` for stable. The criteria below conflicts with the default
-		// one that would return the `gutenbergSimpleSiteUser`. We also can't define it as part of
-		// the default criteria, and should pass it here, as an override. For this specific function
-		// call, `simpleSitePersonalPlanUser` will be retured when gutenberg is stable, and siteType
-		// is simple.
-		[ { gutenberg: 'stable', siteType: 'simple', accountName: 'simpleSitePersonalPlanUser' } ]
-	);
+test.describe(
+	DataHelper.createSuiteTitle( 'Editor: Basic Page Flow' ),
+	{ tag: [ tags.GUTENBERG, tags.JETPACK_WPCOM_INTEGRATION ] },
+	() => {
+		const features = envToFeatureKey( envVariables );
+		const accountName = getTestAccountByFeature( features, [
+			{ gutenberg: 'stable', siteType: 'simple', accountName: 'simpleSitePersonalPlanUser' },
+		] );
 
-	let page: Page;
-	let siteSlug: string;
-	let editorPage: EditorPage;
-	let pagesPage: PagesPage;
-	let publishedUrl: URL;
-	let pageTemplateFirstTextContent: string;
+		test( 'As a user, I can create and publish a page with a custom slug', async ( {
+			page,
+			pageEditor,
+		} ) => {
+			let pagesPage: PagesPage;
+			let publishedUrl: URL;
+			let pageTemplateFirstTextContent: string;
 
-	beforeAll( async () => {
-		page = await browser.newPage();
+			await test.step( 'Given I am authenticated', async () => {
+				const testAccount = new TestAccount( accountName );
+				await testAccount.authenticate( page );
+			} );
 
-		const testAccount = new TestAccount( accountName );
-		await testAccount.authenticate( page );
-		siteSlug = testAccount.getSiteURL( { protocol: false } );
-	} );
+			await test.step( 'When I visit the Pages page', async () => {
+				pagesPage = new PagesPage( page );
+				await pagesPage.visit();
+			} );
 
-	it( 'Visit Pages page', async function () {
-		pagesPage = new PagesPage( page );
-		await pagesPage.visit( { siteSlug } );
-	} );
+			await test.step( 'When I start a new page', async () => {
+				await pagesPage!.addNewPage();
+			} );
 
-	it( 'Start a new page', async function () {
-		await pagesPage.addNewPage( { siteSlug } );
-	} );
+			await test.step( 'When I select a page template', async () => {
+				const editorParent = await pageEditor.getEditorParent();
+				const modalSelector = editorParent.getByRole( 'listbox', {
+					name: /^(All|Block patterns)$/,
+				} );
 
-	it( 'Select page template', async function () {
-		editorPage = new EditorPage( page );
+				let selectedPatternLocator;
+				try {
+					await modalSelector.waitFor( { timeout: 3 * 1000 } );
+					selectedPatternLocator = modalSelector.getByRole( 'option' ).first();
+				} catch ( e ) {
+					selectedPatternLocator = await pageEditor.addPatternFromSidebar( 'About', false );
+				}
 
-		const editorParent = await editorPage.getEditorParent();
+				pageTemplateFirstTextContent =
+					( await selectedPatternLocator
+						.frameLocator( 'iframe' )
+						.locator( '.is-root-container' )
+						.locator( 'p, h1, h2, h3, h4, h5, h6, blockquote, ul, ol' )
+						.first()
+						.textContent() ) || '';
+				pageTemplateFirstTextContent = pageTemplateFirstTextContent.trim();
+				await pageEditor.selectTemplate( selectedPatternLocator, { timeout: 15 * 1000 } );
+			} );
 
-		const modalSelector = await editorParent.getByRole( 'listbox', {
-			name: /^(All|Block patterns)$/,
+			await test.step( 'Then template content loads into editor', async () => {
+				const editorCanvas = await pageEditor.getEditorCanvas();
+				expect( await editorCanvas.textContent() ).toContain( pageTemplateFirstTextContent! );
+			} );
+
+			await test.step( 'When I open settings sidebar', async () => {
+				await pageEditor.openSettings();
+			} );
+
+			await test.step( 'When I set custom URL slug', async () => {
+				await pageEditor.setURLSlug( customUrlSlug );
+			} );
+
+			await test.step( 'When I close settings sidebar', async () => {
+				await pageEditor.closeSettings();
+			} );
+
+			await test.step( 'When I publish page', async () => {
+				publishedUrl = await pageEditor.publish( { visit: true } );
+			} );
+
+			await test.step( 'Then published URL contains the custom URL slug', async () => {
+				expect( publishedUrl!.pathname ).toContain( `/${ customUrlSlug }` );
+			} );
+
+			await test.step( 'Then published page contains template content', async () => {
+				const publishedPagePage = new PublishedPostPage( page );
+				await publishedPagePage.validateTextInPost( pageTemplateFirstTextContent! );
+			} );
 		} );
-
-		// The PR, https://github.com/WordPress/gutenberg/pull/69081, restored the starter content modal for newly created pages.
-		// However, not all of themes have the page template. As a result, we have to check whether the modal is open.
-		// If not, we can simply open the inserter from the sidebar manually.
-		let selectedPatternLocator;
-		try {
-			await modalSelector.waitFor( { timeout: 3 * 1000 } );
-			selectedPatternLocator = await modalSelector.getByRole( 'option' ).first();
-		} catch ( e ) {
-			// Probably doesn't exist. Let's add the first pattern that starts with "About" from the sidebar.
-			selectedPatternLocator = await editorPage.addPatternFromSidebar( 'About', false );
-		}
-
-		pageTemplateFirstTextContent =
-			( await selectedPatternLocator
-				.frameLocator( 'iframe' )
-				.locator( '.is-root-container' )
-				.locator( 'p, h1, h2, h3, h4, h5, h6, blockquote, ul, ol' )
-				.first()
-				.textContent() ) || '';
-
-		pageTemplateFirstTextContent = pageTemplateFirstTextContent.trim();
-		await editorPage.selectTemplate( selectedPatternLocator, { timeout: 15 * 1000 } );
-	} );
-
-	it( 'Template content loads into editor', async function () {
-		//await wait( 30000 ); // Wait for the template to load
-		const editorCanvas = await editorPage.getEditorCanvas();
-		expect( await editorCanvas.textContent() ).toContain( pageTemplateFirstTextContent );
-	} );
-
-	it( 'Open setting sidebar', async function () {
-		await editorPage.openSettings();
-	} );
-
-	it( 'Set custom URL slug', async function () {
-		await editorPage.setURLSlug( customUrlSlug );
-	} );
-
-	it( 'Close settings sidebar', async function () {
-		await editorPage.closeSettings();
-	} );
-
-	it( 'Publish page', async function () {
-		publishedUrl = await editorPage.publish( { visit: true } );
-	} );
-
-	it( 'Published URL contains the custom URL slug', async function () {
-		expect( publishedUrl.pathname ).toContain( `/${ customUrlSlug }` );
-	} );
-
-	it( 'Published page contains template content', async function () {
-		// Not a typo, it's the POM page class for a WordPress page. :)
-		const publishedPagePage = new PublishedPostPage( page );
-		await publishedPagePage.validateTextInPost( pageTemplateFirstTextContent );
-	} );
-} );
+	}
+);

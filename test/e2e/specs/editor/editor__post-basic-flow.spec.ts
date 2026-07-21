@@ -1,20 +1,13 @@
-/**
- * @group gutenberg
- * @group jetpack-wpcom-integration
- */
-
 import {
 	DataHelper,
-	EditorPage,
+	ParagraphBlock,
 	PublishedPostPage,
 	TestAccount,
-	ParagraphBlock,
+	envToFeatureKey,
 	envVariables,
 	getTestAccountByFeature,
-	envToFeatureKey,
 } from '@automattic/calypso-e2e';
-import { Page, Browser, Response } from 'playwright';
-import { skipDescribeIf, skipItIf } from '../../jest-helpers';
+import { expect, tags, test } from '../../lib/pw-base';
 
 const quote =
 	'The problem with quotes on the Internet is that it is hard to verify their authenticity.\nby Abraham Lincoln';
@@ -24,249 +17,166 @@ const tag = 'test-tag';
 const seoTitle = 'SEO example title';
 const seoDescription = 'SEO example description';
 
-declare const browser: Browser;
+test.describe(
+	DataHelper.createSuiteTitle( 'Editor: Basic Post Flow' ),
+	{ tag: [ tags.GUTENBERG, tags.JETPACK_WPCOM_INTEGRATION ] },
+	() => {
+		const features = envToFeatureKey( envVariables );
+		const accountName = getTestAccountByFeature( features, [
+			{ gutenberg: 'stable', siteType: 'simple', accountName: 'simpleSitePersonalPlanUser' },
+		] );
 
-describe( DataHelper.createSuiteTitle( 'Editor: Basic Post Flow' ), function () {
-	const features = envToFeatureKey( envVariables );
-	const accountName = getTestAccountByFeature( features, [
-		{ gutenberg: 'stable', siteType: 'simple', accountName: 'simpleSitePersonalPlanUser' },
-	] );
+		test( 'As a user, I can create, publish, and view a post', async ( { page, pageEditor } ) => {
+			let testAccount: TestAccount;
+			let publishedPostPage: PublishedPostPage;
+			let publishedURL: URL;
 
-	let page: Page;
-	let testAccount: TestAccount;
-	let siteSlug: string;
-	let editorPage: EditorPage;
-	let publishedPostPage: PublishedPostPage;
-	let publishedURL: URL;
+			await test.step( 'Given I am authenticated', async () => {
+				testAccount = new TestAccount( accountName );
+				await testAccount.authenticate( page );
+			} );
 
-	beforeAll( async () => {
-		page = await browser.newPage();
-		editorPage = new EditorPage( page );
+			await test.step( 'When I go to the new post page', async () => {
+				await pageEditor.visit( 'post' );
+			} );
 
-		testAccount = new TestAccount( accountName );
-		await testAccount.authenticate( page );
-		siteSlug = testAccount.getSiteURL( { protocol: false } );
-	} );
+			await test.step( 'When I enter post title', async () => {
+				await pageEditor.enterTitle( title );
+			} );
 
-	it( 'Go to the new post page', async function () {
-		await editorPage.visit( 'post', { siteSlug } );
-	} );
-
-	describe( 'Blocks', function () {
-		it( 'Enter post title', async function () {
-			await editorPage.enterTitle( title );
-		} );
-
-		it( 'Enter post content', async function () {
-			const blockHandle = await editorPage.addBlockFromSidebar(
-				ParagraphBlock.blockName,
-				ParagraphBlock.blockEditorSelector,
-				{ noSearch: true }
-			);
-			const paragraphBlock = new ParagraphBlock( blockHandle );
-			await paragraphBlock.enterParagraph( quote, { type: true } );
-		} );
-	} );
-
-	describe( 'Patterns', function () {
-		const patternName = 'About';
-
-		// Adds first pattern that matches `patternName` (not an exact match).
-		it( `Add ${ patternName } pattern`, async function () {
-			await editorPage.addPatternFromSidebar( patternName, false );
-		} );
-	} );
-
-	describe( 'Categories and Tags', function () {
-		it( 'Open post settings', async function () {
-			await editorPage.openSettings( 'Settings' );
-		} );
-
-		it( 'Add post category', async function () {
-			await editorPage.selectCategory( category );
-		} );
-
-		it( 'Add post tag', async function () {
-			await editorPage.addTag( tag );
-		} );
-
-		afterAll( async function () {
-			// For mobile, but doesn't hurt to do this for Desktop either.
-			await editorPage.closeSettings();
-		} );
-	} );
-
-	describe( 'Jetpack features', function () {
-		skipItIf( envVariables.TEST_ON_ATOMIC !== true )(
-			'Enter SEO title and description',
-			async function () {
-				await editorPage.openSettings( 'Settings' );
-				await editorPage.enterSEODetails( {
-					title: seoTitle,
-					description: seoDescription,
-				} );
-				await editorPage.closeSettings();
-			}
-		);
-
-		it( 'Open Jetpack settings', async function () {
-			// Open the Jetpack sidebar through the shared helper. It goes via the
-			// more-options menu (the Jetpack icon is not always pinned to the
-			// toolbar, see https://github.com/Automattic/wp-calypso/pull/82301),
-			// matches the entry by its stable `aria-controls` id rather than the
-			// "Jetpack" label, and verifies the Jetpack complementary area
-			// actually became active, retrying if a sibling sidebar (such as
-			// "Jetpack Newsletter") wins the activation race.
-			await editorPage.openSettings( 'Jetpack' );
-		} );
-
-		skipDescribeIf( envVariables.ATOMIC_VARIATION === 'private' )( 'Link preview', function () {
-			it( 'Open link preview', async function () {
-				// Newer Jetpack replaced the standalone "Link preview" panel with a
-				// "View previews" button in the "Optimize SEO" panel (same previews
-				// modal). Older Jetpack still renders the panel. Support both until the
-				// environments converge.
-				const editorParent = await editorPage.getEditorParent();
-				const viewPreviewsButton = editorParent.getByRole( 'button', {
-					name: 'View previews',
-					exact: true,
-				} );
-				const linkPreviewPanelButton = editorParent.locator(
-					'.components-panel__body-title button:has-text("Link preview")'
+			await test.step( 'When I enter post content', async () => {
+				const blockHandle = await pageEditor.addBlockFromSidebar(
+					ParagraphBlock.blockName,
+					ParagraphBlock.blockEditorSelector,
+					{ noSearch: true }
 				);
-				// Wait for whichever entry point this Jetpack version renders.
-				await viewPreviewsButton.or( linkPreviewPanelButton ).first().waitFor();
+				const paragraphBlock = new ParagraphBlock( blockHandle );
+				await paragraphBlock.enterParagraph( quote, { type: true } );
+			} );
 
-				// count() resolves immediately on DOM presence, which is what tells the
-				// two Jetpack variants apart; click() then auto-waits for the button to
-				// become actionable (e.g. while the panel animates open).
-				if ( ( await viewPreviewsButton.count() ) > 0 ) {
-					await viewPreviewsButton.first().click();
+			await test.step( 'When I add an "About" pattern', async () => {
+				await pageEditor.addPatternFromSidebar( 'About', false );
+			} );
+
+			await test.step( 'When I open post settings', async () => {
+				await pageEditor.openSettings( 'Settings' );
+			} );
+
+			await test.step( 'When I add post category', async () => {
+				await pageEditor.selectCategory( category );
+			} );
+
+			await test.step( 'When I add post tag', async () => {
+				await pageEditor.addTag( tag );
+			} );
+
+			await test.step( 'When I close settings', async () => {
+				await pageEditor.closeSettings();
+			} );
+
+			// SEO fields only apply to Atomic sites
+			if ( envVariables.TEST_ON_ATOMIC === true ) {
+				await test.step( 'When I enter SEO title and description', async () => {
+					await pageEditor.openSettings( 'Settings' );
+					await pageEditor.enterSEODetails( { title: seoTitle, description: seoDescription } );
+					await pageEditor.closeSettings();
+				} );
+			}
+
+			await test.step( 'When I open Jetpack settings', async () => {
+				await pageEditor.openEditorOptionsMenu();
+				const editorParent = await pageEditor.getEditorParent();
+				await editorParent.getByRole( 'menuitemcheckbox', { name: 'Jetpack' } ).click();
+			} );
+
+			if ( envVariables.ATOMIC_VARIATION !== 'private' ) {
+				await test.step( 'When I open link preview', async () => {
+					await pageEditor.expandSection( 'Link preview' );
+					await pageEditor.clickSidebarButton( 'Open link preview' );
+				} );
+
+				await test.step( 'When I show link preview for Tumblr', async () => {
+					const editorParent = await pageEditor.getEditorParent();
+					const dialog = editorParent.getByRole( 'dialog' );
+					await dialog.getByRole( 'tab', { name: 'Tumblr' } ).click();
+					await dialog.getByRole( 'tabpanel', { name: 'Tumblr' } ).waitFor();
+					await dialog
+						.filter( {
+							hasText: new RegExp( `${ seoTitle }|${ title }` ),
+						} )
+						.waitFor();
+				} );
+
+				await test.step( 'When I dismiss link preview', async () => {
+					await page.keyboard.press( 'Escape' );
+				} );
+			}
+
+			await test.step( 'When I close settings', async () => {
+				await pageEditor.closeSettings();
+			} );
+
+			await test.step( 'When I launch preview', async () => {
+				if ( envVariables.VIEWPORT_NAME === 'mobile' ) {
+					const previewPage = await pageEditor.previewAsMobile();
+					await previewPage.close();
 				} else {
-					await editorPage.expandSection( 'Link preview' );
-					await editorPage.clickSidebarButton( 'Open link preview' );
+					await pageEditor.previewAsDesktop( 'Mobile' );
+					await pageEditor.closePreview();
 				}
-
-				// Confirm the previews modal (identified by its per-platform tabs) opened,
-				// so a broken entry point fails here instead of in the next (serial) test.
-				await editorParent.getByRole( 'dialog' ).getByRole( 'tab', { name: 'Tumblr' } ).waitFor();
 			} );
 
-			it( 'Show link preview for Tumblr', async function () {
-				// Action implemented as "raw" calls for now (2023-09).
-				const editorParent = await editorPage.getEditorParent();
-				const dialog = editorParent.getByRole( 'dialog' );
+			// Step skipped for mobile, since previewing naturally saves the post
+			if ( envVariables.VIEWPORT_NAME !== 'mobile' ) {
+				await test.step( 'When I save draft', async () => {
+					await pageEditor.saveDraft();
+				} );
+			}
 
-				await dialog.getByRole( 'tab', { name: 'Tumblr' } ).click();
-				await dialog.getByRole( 'tabpanel', { name: 'Tumblr' } ).waitFor();
-				await dialog
-					.filter( {
-						// Look for either the SEO title, or the post title,
-						// depending on whether the platform had SEO options
-						// two steps previously.
-						hasText: new RegExp( `${ seoTitle }|${ title }` ),
-					} )
-					.waitFor();
+			await test.step( 'When I publish post', async () => {
+				publishedURL = await pageEditor.publish();
 			} );
 
-			it( 'Dismiss link preview', async function () {
-				await page.keyboard.press( 'Escape' );
-			} );
-		} );
+			// Skip for Private sites, posts are not visible to non-logged out users
+			if ( envVariables.ATOMIC_VARIATION !== 'private' ) {
+				await test.step( 'Then I can view the published post', async () => {
+					const newPage = await page.context().newPage();
 
-		afterAll( async function () {
-			// For mobile, but doesn't hurt to do this for Desktop either.
-			await editorPage.closeSettings();
-		} );
-	} );
+					const trackingPixelLoaded = newPage.waitForResponse(
+						new RegExp(
+							`pixel.wp.com/g.gif.*blog=${ testAccount!.credentials.testSites?.primary
+								.id }+.*&post=[\\d]+`
+						)
+					);
+					await newPage.goto( publishedURL!.href );
 
-	describe( 'Preview', function () {
-		let previewPage: Page;
+					let response;
+					try {
+						response = await trackingPixelLoaded;
+					} catch {
+						// noop - will throw in next step
+					}
 
-		it( 'Launch preview', async function () {
-			if ( envVariables.VIEWPORT_NAME === 'mobile' ) {
-				previewPage = await editorPage.previewAsMobile();
-			} else {
-				await editorPage.previewAsDesktop( 'Mobile' );
+					expect( publishedURL!.href ).toStrictEqual( newPage.url() );
+
+					expect( response ).toBeDefined();
+					expect( response!.status() ).toBe( 200 );
+
+					publishedPostPage = new PublishedPostPage( newPage );
+					await publishedPostPage.validateTitle( title );
+					for ( const part of quote.split( '\n' ) ) {
+						await publishedPostPage.validateTextInPost( part );
+					}
+					await publishedPostPage.validateCategory( category );
+					await publishedPostPage.validateTags( tag );
+
+					for ( const name of [ 'X', 'Facebook' ] ) {
+						await publishedPostPage.validateSocialButton( name, { click: true } );
+					}
+
+					await newPage.close();
+				} );
 			}
 		} );
-
-		it( 'Close preview', async function () {
-			if ( previewPage ) {
-				// Mobile path - close the new page.
-				await previewPage.close();
-			} else {
-				// Desktop path - restore the Desktop view.
-				await editorPage.closePreview();
-			}
-		} );
-
-		// Step skipped for mobile, since previewing naturally saves the post, rendering this step unnecessary.
-		skipItIf( envVariables.VIEWPORT_NAME === 'mobile' )( 'Save draft', async function () {
-			await editorPage.saveDraft();
-		} );
-
-		it( 'Publish post', async function () {
-			publishedURL = await editorPage.publish();
-		} );
-	} );
-
-	// Skip test on Private site, because posts are not visible to non-logged out users.
-	skipDescribeIf( envVariables.ATOMIC_VARIATION === 'private' )( 'View post', function () {
-		let newPage: Page;
-		let response: Response;
-
-		beforeAll( async function () {
-			newPage = await browser.newPage();
-		} );
-
-		it( 'View published post', async function () {
-			// Check for `blog` and `post` query params, used for stats tracking.
-			const trackingPixelLoaded = newPage.waitForResponse(
-				new RegExp(
-					`pixel.wp.com/g.gif.*blog=${ testAccount.credentials.testSites?.primary.id }+.*&post=[\\d]+`
-				)
-			);
-			await newPage.goto( publishedURL.href );
-
-			// Wrap the `waitForResponse` wait so it does not fail this step should the tracking pixel
-			// fail to load.
-			// This way if the tracking pixel ever fails to load, the most accurate test step fails.
-			try {
-				response = await trackingPixelLoaded;
-			} catch {
-				// noop - will throw in next step.
-			}
-
-			expect( publishedURL.href ).toStrictEqual( newPage.url() );
-		} );
-
-		it( 'Jetpack Stats tracking pixel is loaded', async function () {
-			expect( response ).toBeDefined();
-			expect( response.status() ).toBe( 200 );
-		} );
-
-		it( 'Post content is found in published post', async function () {
-			publishedPostPage = new PublishedPostPage( newPage );
-			await publishedPostPage.validateTitle( title );
-			for ( const part of quote.split( '\n' ) ) {
-				await publishedPostPage.validateTextInPost( part );
-			}
-		} );
-
-		it( 'Post metadata is found in published post', async function () {
-			await publishedPostPage.validateCategory( category );
-			await publishedPostPage.validateTags( tag );
-		} );
-
-		// Not checking the `Press This` button as it is not available on AT.
-		// @see: paYJgx-1lp-p2
-		it.each( [ { name: 'X' }, { name: 'Facebook' } ] )(
-			'Social sharing button for $name can be clicked',
-			async function ( { name } ) {
-				publishedPostPage = new PublishedPostPage( newPage );
-				await publishedPostPage.validateSocialButton( name, { click: true } );
-			}
-		);
-	} );
-} );
+	}
+);

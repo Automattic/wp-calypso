@@ -1,86 +1,77 @@
-/**
- * @group gutenberg
- * @group jetpack-wpcom-integration
- */
-
 import {
 	DataHelper,
 	MediaHelper,
-	EditorPage,
-	ElementHelper,
-	TestAccount,
 	StoryBlock,
-	envVariables,
-	getTestAccountByFeature,
-	envToFeatureKey,
+	TestAccount,
 	TestFile,
+	envVariables,
+	envToFeatureKey,
+	getTestAccountByFeature,
 } from '@automattic/calypso-e2e';
-import { Page, Browser } from 'playwright';
+import { tags, test } from '../../lib/pw-base';
 import { ALT_TEST_IMAGE_PATH, TEST_IMAGE_PATH } from '../constants';
 
-declare const browser: Browser;
-
 /**
- * Isolated block test for the Story block due to accessiblity issues,
+ * Isolated block test for the Story block due to accessibility issues,
  * making it unable to be run using the BlockFlow pattern.
  *
  * @see https://github.com/Automattic/jetpack/issues/32976
  *
  * Keywords: Jetpack, Media Block, Story
  */
-describe( DataHelper.createSuiteTitle( 'Blocks: Jetpack Story' ), function () {
-	const features = envToFeatureKey( envVariables );
-	const accountName = getTestAccountByFeature( features );
-	const testFiles: TestFile[] = [];
+test.describe(
+	DataHelper.createSuiteTitle( 'Blocks: Jetpack Story' ),
+	{ tag: [ tags.GUTENBERG, tags.JETPACK_WPCOM_INTEGRATION ] },
+	() => {
+		const features = envToFeatureKey( envVariables );
+		const accountName = getTestAccountByFeature( features );
 
-	let page: Page;
-	let testAccount: TestAccount;
-	let editorPage: EditorPage;
+		test( 'As a user, I can use the Story block in a post', async ( { page, pageEditor } ) => {
+			const testFiles: TestFile[] = [];
 
-	beforeAll( async () => {
-		page = await browser.newPage();
+			await test.step( 'Given I am authenticated', async () => {
+				const testAccount = new TestAccount( accountName );
+				await testAccount.authenticate( page );
 
-		testAccount = new TestAccount( accountName );
-		await testAccount.authenticate( page );
+				for ( const path of [ TEST_IMAGE_PATH, ALT_TEST_IMAGE_PATH ] ) {
+					const testFile = await MediaHelper.createTestFile( path );
+					testFiles.push( testFile );
+				}
+			} );
 
-		for ( const path of [ TEST_IMAGE_PATH, ALT_TEST_IMAGE_PATH ] ) {
-			const testFile = await MediaHelper.createTestFile( path );
-			testFiles.push( testFile );
-		}
-	} );
+			await test.step( 'When I start a new post', async () => {
+				const testAccount = new TestAccount( accountName );
+				await pageEditor.visit( 'post', {
+					siteSlug: testAccount.getSiteURL( { protocol: false } ),
+				} );
+				await pageEditor.enterTitle( DataHelper.getRandomPhrase() );
+			} );
 
-	it( 'Start new post', async function () {
-		editorPage = new EditorPage( page );
+			await test.step( 'When I add Story block', async () => {
+				await pageEditor.addBlockFromSidebar(
+					StoryBlock.blockName,
+					StoryBlock.blockEditorSelector,
+					{ noSearch: true }
+				);
+			} );
 
-		await editorPage.visit( 'post', { siteSlug: testAccount.getSiteURL( { protocol: false } ) } );
-		await editorPage.enterTitle( DataHelper.getRandomPhrase() );
-	} );
+			await test.step( 'When I upload images', async () => {
+				const storyBlock = new StoryBlock( page );
+				await storyBlock.upload( testFiles );
+			} );
 
-	it( 'Add Story block', async function () {
-		await editorPage.addBlockFromSidebar( StoryBlock.blockName, StoryBlock.blockEditorSelector, {
-			noSearch: true,
+			await test.step( 'When I publish and visit the post', async () => {
+				// Must separate out the publish and visit steps here.
+				// The single call used elsewhere checks whether
+				// `getByRole('main')` resolves, which will fail with the Story
+				// block due to https://github.com/Automattic/jetpack/issues/32976.
+				const postURL = await pageEditor.publish();
+				await page.goto( postURL.href );
+			} );
+
+			await test.step( 'Then the published post has the Story block', async () => {
+				await StoryBlock.validatePublishedContent( page );
+			} );
 		} );
-	} );
-
-	it( 'Upload images', async function () {
-		const storyBlock = new StoryBlock( page );
-		await storyBlock.upload( testFiles );
-	} );
-
-	it( 'Publish and visit post', async function () {
-		// Must separate out the publish and visit steps here.
-		// The single call used elsewhere checks whether
-		// `getByRole('main')` resolves, which will fail with the Story
-		// block due to https://github.com/Automattic/jetpack/issues/32976.
-		const postURL = await editorPage.publish();
-		await page.goto( postURL.href, { waitUntil: 'domcontentloaded' } );
-
-		await ElementHelper.reloadAndRetry( page, async function ( page: Page ): Promise< void > {
-			await page.locator( '.wp-story' ).waitFor();
-		} );
-	} );
-
-	it( 'Validate the published post', async function () {
-		await StoryBlock.validatePublishedContent( page );
-	} );
-} );
+	}
+);

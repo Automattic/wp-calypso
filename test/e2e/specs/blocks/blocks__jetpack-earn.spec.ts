@@ -1,25 +1,16 @@
-/**
- * @group gutenberg
- * @group jetpack-wpcom-integration
- */
 import {
-	BlockFlow,
-	// OpenTableFlow,
-	DonationsFormFlow,
 	AdFlow,
+	BlockFlow,
+	DonationsFormFlow,
 	envVariables,
 	PaywallFlow,
-	// PaymentsBlockFlow,
-	// envVariables,
 } from '@automattic/calypso-e2e';
+import { tags } from '../../lib/pw-base';
 import { createBlockTests } from './shared/block-smoke-testing';
 
 const blockFlows: BlockFlow[] = [
 	// Skip OpenTable block test for now, block is broken due to upstream API changes.
 	// https://github.com/Automattic/jetpack/issues/39410
-	// new OpenTableFlow( {
-	// 	restaurant: 'Miku Restaurant - Vancouver',
-	// } ),
 	new DonationsFormFlow(
 		{
 			frequency: 'Yearly',
@@ -33,17 +24,8 @@ const blockFlows: BlockFlow[] = [
 	),
 ];
 
-// We're just skipping the Payments Button test for now due to this bug:
-// https://github.com/Automattic/jetpack/issues/30785
-// You can't close the inserter, and it's just messing things up!
-// // Stripe is not connected to this WordPress.com account, so skipping on Atomic
-// if ( ! envVariables.TEST_ON_ATOMIC ) {
-// 	blockFlows.push( new PaymentsBlockFlow( { buttonText: 'Donate to Me' } ) );
-// }
-
 // The Ad block is only available on more premium plans that imply AT.
-// Furthermore, private sites are not eligible to monetize due to the site
-// being, well, private.
+// Furthermore, private sites are not eligible to monetize due to the site being private.
 if (
 	envVariables.JETPACK_TARGET === 'wpcom-deployment' &&
 	envVariables.TEST_ON_ATOMIC === true &&
@@ -66,4 +48,7 @@ if ( envVariables.ATOMIC_VARIATION !== 'private' ) {
 	);
 }
 
-createBlockTests( 'Blocks: Jetpack Earn', blockFlows );
+createBlockTests( 'Blocks: Jetpack Earn', blockFlows, [
+	tags.GUTENBERG,
+	tags.JETPACK_WPCOM_INTEGRATION,
+] );

@@ -1,21 +1,15 @@
-/**
- * @group gutenberg
- */
 import {
-	envVariables,
-	MediaHelper,
 	ElementHelper,
-	EditorPage,
-	TestFile,
 	ImageBlock,
+	MediaHelper,
 	TestAccount,
-	getTestAccountByFeature,
+	TestFile,
+	envVariables,
 	envToFeatureKey,
+	getTestAccountByFeature,
 } from '@automattic/calypso-e2e';
-import { Page, Browser } from 'playwright';
+import { expect, tags, test } from '../../lib/pw-base';
 import { TEST_IMAGE_PATH } from '../constants';
-
-declare const browser: Browser;
 
 const features = envToFeatureKey( envVariables );
 // For this spec, all Atomic testing is always edge.
@@ -28,70 +22,65 @@ if ( envVariables.TEST_ON_ATOMIC ) {
  * This spec requires the following:
  * 	- theme: a non-block-based theme (eg. Twenty-Twenty One)
  */
-describe( 'CoBlocks: Extensions: Replace Image', function () {
+test.describe( 'CoBlocks: Extensions: Replace Image', { tag: [ tags.GUTENBERG ] }, () => {
 	const accountName = getTestAccountByFeature( features );
 
-	let page: Page;
-	let editorPage: EditorPage;
-	let testAccount: TestAccount;
-	let imageBlock: ImageBlock;
-	let imageFile: TestFile;
-	let uploadedImageURL: string;
-	let newImageURL: string;
+	test( 'As a user, I can replace an image in the editor', async ( { page, pageEditor } ) => {
+		let imageFile: TestFile;
+		let imageBlock: ImageBlock;
+		let uploadedImageURL: string;
+		let newImageURL: string;
 
-	beforeAll( async () => {
-		page = await browser.newPage();
-		imageFile = await MediaHelper.createTestFile( TEST_IMAGE_PATH );
-		editorPage = new EditorPage( page );
+		await test.step( 'Given I am authenticated', async () => {
+			imageFile = await MediaHelper.createTestFile( TEST_IMAGE_PATH );
+			const testAccount = new TestAccount( accountName );
+			await testAccount.authenticate( page );
+		} );
 
-		testAccount = new TestAccount( accountName );
-		await testAccount.authenticate( page );
-	} );
+		await test.step( 'When I go to the new post page', async () => {
+			const testAccount = new TestAccount( accountName );
+			const siteSlug = testAccount.getSiteURL( { protocol: false } );
+			await pageEditor.visit( 'post', { siteSlug } );
+		} );
 
-	it( 'Go to the new post page', async () => {
-		const siteSlug = testAccount.getSiteURL( { protocol: false } );
-		await editorPage.visit( 'post', { siteSlug } );
-	} );
+		await test.step( `When I insert ${ ImageBlock.blockName } block and upload image`, async () => {
+			const blockHandle = await pageEditor.addBlockFromSidebar(
+				ImageBlock.blockName,
+				ImageBlock.blockEditorSelector
+			);
+			imageBlock = new ImageBlock( page, blockHandle );
+			const uploadedImage = await imageBlock.upload( imageFile!.fullpath );
+			uploadedImageURL = ( ( await uploadedImage.getAttribute( 'src' ) ) as string ).split(
+				'?'
+			)[ 0 ];
+		} );
 
-	it( `Insert ${ ImageBlock.blockName } block and upload image`, async () => {
-		const blockHandle = await editorPage.addBlockFromSidebar(
-			ImageBlock.blockName,
-			ImageBlock.blockEditorSelector
-		);
-		imageBlock = new ImageBlock( page, blockHandle );
-		const uploadedImage = await imageBlock.upload( imageFile.fullpath );
-		uploadedImageURL = ( await uploadedImage.getAttribute( 'src' ) ) as string;
-		uploadedImageURL = uploadedImageURL.split( '?' )[ 0 ];
-	} );
+		await test.step( 'When I replace the uploaded image', async () => {
+			const editorParent = await pageEditor.getEditorParent();
+			await editorParent.locator( 'button:text("Replace")' ).click();
+			await editorParent
+				.locator( '.components-form-file-upload input[type="file"]' )
+				.setInputFiles( imageFile!.fullpath );
 
-	it( 'Replace uploaded image', async () => {
-		const editorParent = await editorPage.getEditorParent();
-		await editorParent.locator( 'button:text("Replace")' ).click();
-		await editorParent
-			.locator( '.components-form-file-upload input[type="file"]' )
-			.setInputFiles( imageFile.fullpath );
+			await imageBlock!.waitUntilUploaded();
 
-		await imageBlock.waitUntilUploaded();
+			const newImage = await imageBlock!.getImage();
+			newImageURL = ( ( await newImage.getAttribute( 'src' ) ) as string ).split( '?' )[ 0 ];
 
-		const newImage = await imageBlock.getImage();
-		newImageURL = ( await newImage.getAttribute( 'src' ) ) as string;
-		newImageURL = newImageURL.split( '?' )[ 0 ];
+			expect( newImageURL ).not.toEqual( uploadedImageURL );
+		} );
 
-		expect( newImageURL ).not.toEqual( uploadedImageURL );
-	} );
+		await test.step( 'When I publish the post', async () => {
+			await pageEditor.publish( { visit: true } );
+		} );
 
-	it( 'Publish the post', async () => {
-		await editorPage.publish( { visit: true } );
-	} );
+		await test.step( 'Then the new image was published', async () => {
+			await ElementHelper.reloadAndRetry( page, async function () {
+				const publishedImage = await page.waitForSelector( '.wp-block-image img' );
+				const publishedImageURL = ( await publishedImage.getAttribute( 'src' ) ) as string;
 
-	it( 'Verify the new image was published', async () => {
-		// Image is not always immediately available on a published site, so we need
-		// to refresh and check again.
-		await ElementHelper.reloadAndRetry( page, async function () {
-			const publishedImage = await page.waitForSelector( '.wp-block-image img' );
-			const publishedImageURL = ( await publishedImage.getAttribute( 'src' ) ) as string;
-
-			expect( publishedImageURL.split( '?' )[ 0 ] ).toEqual( newImageURL );
+				expect( publishedImageURL.split( '?' )[ 0 ] ).toEqual( newImageURL );
+			} );
 		} );
 	} );
 } );

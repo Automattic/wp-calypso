@@ -1,8 +1,5 @@
-/**
- * @group gutenberg
- * @group jetpack-wpcom-integration
- */
-import { BlockFlow, AIAssistantFlow, MarkdownFlow } from '@automattic/calypso-e2e';
+import { AIAssistantFlow, BlockFlow, MarkdownFlow } from '@automattic/calypso-e2e';
+import { tags } from '../../lib/pw-base';
 import { createBlockTests } from './shared/block-smoke-testing';
 
 const blockFlows: BlockFlow[] = [
@@ -25,5 +22,7 @@ const blockFlows: BlockFlow[] = [
 	),
 ];
 
-createBlockTests( 'Blocks: Jetpack Writing', blockFlows );
-8;
+createBlockTests( 'Blocks: Jetpack Writing', blockFlows, [
+	tags.GUTENBERG,
+	tags.JETPACK_WPCOM_INTEGRATION,
+] );
