@@ -84,15 +84,29 @@ test.describe(
 			}
 
 			await test.step( 'When I open Jetpack settings', async () => {
-				await pageEditor.openEditorOptionsMenu();
-				const editorParent = await pageEditor.getEditorParent();
-				await editorParent.getByRole( 'menuitemcheckbox', { name: 'Jetpack' } ).click();
+				await pageEditor.openSettings( 'Jetpack' );
 			} );
 
 			if ( envVariables.ATOMIC_VARIATION !== 'private' ) {
 				await test.step( 'When I open link preview', async () => {
-					await pageEditor.expandSection( 'Link preview' );
-					await pageEditor.clickSidebarButton( 'Open link preview' );
+					const editorParent = await pageEditor.getEditorParent();
+					const viewPreviewsButton = editorParent.getByRole( 'button', {
+						name: 'View previews',
+						exact: true,
+					} );
+					const linkPreviewPanelButton = editorParent.locator(
+						'.components-panel__body-title button:has-text("Link preview")'
+					);
+					await viewPreviewsButton.or( linkPreviewPanelButton ).first().waitFor();
+
+					if ( ( await viewPreviewsButton.count() ) > 0 ) {
+						await viewPreviewsButton.first().click();
+					} else {
+						await pageEditor.expandSection( 'Link preview' );
+						await pageEditor.clickSidebarButton( 'Open link preview' );
+					}
+
+					await editorParent.getByRole( 'dialog' ).getByRole( 'tab', { name: 'Tumblr' } ).waitFor();
 				} );
 
 				await test.step( 'When I show link preview for Tumblr', async () => {

@@ -20,11 +20,23 @@ test.describe( 'Likes: Comment', { tag: [ tags.GUTENBERG ] }, () => {
 			accountName: 'simpleSitePersonalPlanUser',
 		},
 	] );
+	let newPost: PostResponse;
+	let restAPIClient: RestAPIClient;
+	let testAccount: TestAccount;
+
+	test.afterAll( async () => {
+		if ( ! newPost ) {
+			return;
+		}
+		await restAPIClient.deletePost(
+			testAccount.credentials.testSites?.primary.id as number,
+			newPost.ID
+		);
+	} );
 
 	test( 'As a user, I can like and unlike a comment', async ( { page } ) => {
-		const testAccount = new TestAccount( accountName );
-		const restAPIClient = new RestAPIClient( testAccount.credentials );
-		let newPost: PostResponse;
+		testAccount = new TestAccount( accountName );
+		restAPIClient = new RestAPIClient( testAccount.credentials );
 		let commentToBeLiked: NewCommentResponse;
 		let commentToBeUnliked: NewCommentResponse;
 
@@ -89,16 +101,6 @@ test.describe( 'Likes: Comment', { tag: [ tags.GUTENBERG ] }, () => {
 				await page.mouse.wheel( 0, 120 );
 			}
 			await commentsComponent.unlike( commentToBeUnliked.raw_content );
-		} );
-
-		test.afterAll( async () => {
-			if ( ! newPost ) {
-				return;
-			}
-			await restAPIClient.deletePost(
-				testAccount.credentials.testSites?.primary.id as number,
-				newPost.ID
-			);
 		} );
 	} );
 } );
