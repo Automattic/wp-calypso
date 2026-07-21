@@ -13,7 +13,7 @@ import { useCallback, useMemo, useState } from 'react';
 import { useAnalytics } from '../../app/analytics';
 import { useAuth } from '../../app/auth';
 import { usePersistentView } from '../../app/hooks/use-persistent-view';
-import { agencyTeamRoute } from '../../app/router/agency';
+import { agencyTeamRoute, hasAnyCapability } from '../../app/router/agency';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import { useTeamActions, type TeamActionRequest } from './dataviews/actions';
@@ -52,7 +52,10 @@ export default function AgencyTeam() {
 		[ members, invites ]
 	);
 
-	const canRemove = !! activeAgency?.user?.capabilities?.includes( REMOVE_USERS_CAPABILITY );
+	const canRemove = hasAnyCapability(
+		activeAgency?.user?.capabilities ?? [],
+		REMOVE_USERS_CAPABILITY
+	);
 
 	const [ activeRequest, setActiveRequest ] = useState< TeamActionRequest | null >( null );
 	const [ isInviteOpen, setIsInviteOpen ] = useState( false );

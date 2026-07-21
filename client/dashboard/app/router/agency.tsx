@@ -18,22 +18,59 @@ import { createRoute, createLazyRoute, notFound, Outlet } from '@tanstack/react-
 import { __ } from '@wordpress/i18n';
 import { dashboardRedirect, redirectAsNotAllowed } from './redirect';
 import { rootRoute } from './root';
+import type { AgencyCapability } from '@automattic/api-core';
+
+type CapabilityRouteMatch = {
+	staticData?: {
+		requiresAgencyCapability?: AgencyCapability | AgencyCapability[];
+	};
+};
+
+/**
+ * Any-of (OR): true when `capabilities` contains at least one required capability.
+ */
+export function hasAnyCapability(
+	capabilities: readonly string[],
+	required: AgencyCapability | AgencyCapability[]
+): boolean {
+	const list = Array.isArray( required ) ? required : [ required ];
+	return list.some( ( capability ) => capabilities.includes( capability ) );
+}
+
+/**
+ * True when every matched agency route's declared capability requirement is
+ * satisfied. Routes without `requiresAgencyCapability` are unrestricted.
+ */
+export function isAllowedByCapabilities(
+	matches: ReadonlyArray< CapabilityRouteMatch >,
+	capabilities: readonly string[]
+): boolean {
+	return matches.every( ( match ) => {
+		const required = match.staticData?.requiresAgencyCapability;
+		return ! required || hasAnyCapability( capabilities, required );
+	} );
+}
 
 // Pathless layout route that guards every agency route (blocks client users).
 const agencyRoute = createRoute( {
 	getParentRoute: () => rootRoute,
 	id: 'agency',
-	beforeLoad: async ( { cause } ) => {
+	beforeLoad: async ( { cause, matches } ) => {
 		if ( cause === 'preload' ) {
 			return; // Don't redirect on hover/intent preloads.
 		}
 
-		const [ agency ] = await Promise.all( [
+		const [ agency, activeAgency ] = await Promise.all( [
 			queryClient.ensureQueryData( agencyQuery() ),
 			queryClient.ensureQueryData( activeAgencyQuery() ),
 		] );
 		if ( agency.isClientUser ) {
 			throw redirectAsNotAllowed( { to: '/client/subscriptions' } );
+		}
+
+		const capabilities = activeAgency?.user?.capabilities ?? [];
+		if ( ! isAllowedByCapabilities( matches, capabilities ) ) {
+			throw redirectAsNotAllowed( { to: '/overview' } );
 		}
 	},
 } );
@@ -190,6 +227,7 @@ export const agencySitesRoute = createRoute( {
 
 // `/team` – manage agency team members and invitations
 export const agencyTeamRoute = createRoute( {
+	staticData: { requiresAgencyCapability: 'a4a_read_users' },
 	head: () => ( {
 		meta: [ { title: __( 'Team' ) } ],
 	} ),
