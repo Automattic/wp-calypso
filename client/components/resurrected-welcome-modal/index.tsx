@@ -203,15 +203,16 @@ export const ResurrectedWelcomeModalGate = ( {
 			length: DRAFT_TITLE_MAX_LENGTH,
 			omission: '…',
 		} );
-		resolvedCtas = [
-			{
-				id: 'content-draft',
-				getLabel: ( translate ) => getDraftCtaLabel( translate, truncatedDraftTitle ),
-				href: `/post/${ lastDraft.siteId }/${ lastDraft.id }`,
-				variant: 'primary',
-			},
-			...resolvedCtas.slice( 1 ),
-		];
+		resolvedCtas = resolvedCtas.map( ( cta ) =>
+			cta.id === 'content-new'
+				? {
+						id: 'content-draft',
+						getLabel: ( translate ) => getDraftCtaLabel( translate, truncatedDraftTitle ),
+						href: `/post/${ lastDraft.siteId }/${ lastDraft.id }`,
+						variant: 'primary',
+				  }
+				: cta
+		);
 	}
 
 	const variationClassName = variationName

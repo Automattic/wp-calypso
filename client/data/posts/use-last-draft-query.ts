@@ -30,6 +30,7 @@ async function fetchLastDraft( currentUserId: number ): Promise< LastDraft | nul
 		order_by: 'modified',
 		order: 'DESC',
 		number: 1,
+		fields: 'ID,site_ID,title',
 	} ) ) as LastDraftResponse;
 	const post = response.posts?.[ 0 ];
 
