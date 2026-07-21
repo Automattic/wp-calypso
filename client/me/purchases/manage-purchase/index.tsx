@@ -102,8 +102,10 @@ import {
 	hasPaymentMethod,
 	isPaidWithCredits,
 	canAutoRenewBeTurnedOff,
-	isExpired,
-	isInExpirationGracePeriod,
+	isExpiredAndInGracePeriod,
+	isExpiredOrRemoved,
+	isExpiredWithNoAutoRenewAttemptsLeft,
+	isRemoved,
 	isWithinRefundWindowDowngradeEligible,
 	isOneTimePurchase,
 	isPartnerPurchase,
@@ -459,7 +461,7 @@ class ManagePurchase extends Component<
 			return null;
 		}
 
-		if ( isExpired( purchase ) ) {
+		if ( isExpiredOrRemoved( purchase ) ) {
 			return null;
 		}
 
@@ -558,7 +560,7 @@ class ManagePurchase extends Component<
 		}
 
 		recordTracksEvent( 'calypso_purchases_upgrade_plan', {
-			status: isExpired( purchase ) ? 'expired' : 'active',
+			status: isExpiredOrRemoved( purchase ) ? 'expired' : 'active',
 			plan: purchase.productName,
 		} );
 	};
@@ -622,7 +624,7 @@ class ManagePurchase extends Component<
 		}
 		const expiredOrRefundDowngrade =
 			config.isEnabled( 'plans/expired-downgrade' ) &&
-			( isInExpirationGracePeriod( purchase ) ||
+			( isExpiredAndInGracePeriod( purchase ) ||
 				isWithinRefundWindowDowngradeEligible( purchase ) );
 		const delayedDowngrade = config.isEnabled( 'plans/delayed-downgrade' );
 		return expiredOrRefundDowngrade || delayedDowngrade;
@@ -699,7 +701,7 @@ class ManagePurchase extends Component<
 		let icon;
 		let buttonText;
 
-		if ( isExpired( purchase ) ) {
+		if ( isExpiredOrRemoved( purchase ) ) {
 			icon = column;
 			buttonText = isUpgradeablePlan
 				? translate( 'Pick another plan' )
@@ -854,11 +856,13 @@ class ManagePurchase extends Component<
 
 		// Visibility:
 		//   Off flag → mutually exclusive with Cancel (preserves today's behavior).
-		//   On flag  → Remove only when auto-renew is already off. The refund-eligible
-		//              case is surfaced inside the cancel flow via
+		//   On flag  → Remove when auto-renew is off, OR when the purchase is in its
+		//              post-expiry grace period (Cancel is not offered there, so Remove
+		//              is the only way to act on it — matching the Dashboard). The
+		//              refund-eligible case is surfaced inside the cancel flow via
 		//              RefundEligibilityNotice instead of a parallel Remove CTA.
 		if ( isSplitEnabled ) {
-			if ( autoRenewOn ) {
+			if ( autoRenewOn && ! isExpiredAndInGracePeriod( purchase ) ) {
 				return null;
 			}
 		} else if ( canAutoRenewBeTurnedOff( purchase ) ) {
@@ -928,7 +932,7 @@ class ManagePurchase extends Component<
 				{ text }
 				{ this.renderActionDetails(
 					String(
-						purchase.expiryStatus === 'expired'
+						isExpiredOrRemoved( purchase )
 							? translate( 'Expired purchase will be removed.' )
 							: translate( 'Will expire immediately and be removed' )
 					)
@@ -1534,11 +1538,16 @@ class ManagePurchase extends Component<
 		const isActive100YearPurchase = is100Year( purchase ) && ! isCloseToExpiration( purchase );
 
 		const classes = clsx( 'manage-purchase__info', {
-			'is-expired': purchase && isExpired( purchase ),
-			'is-personal': purchase && isPersonal( purchase ),
-			'is-premium': purchase && isPremium( purchase ),
-			'is-business': purchase && isBusiness( purchase ),
-			'is-jetpack-product': purchase && isJetpackProduct( purchase ),
+			// Style the purchase as expired only once it is removed, or once its
+			// post-expiry grace period ends with no auto-renewal attempts left.
+			// While attempts remain it is still recoverable (the user can fix the
+			// payment method and/or turn auto-renew back on, and the toggle is shown
+			// in that state), so we do not style it as dead.
+			'is-expired': isRemoved( purchase ) || isExpiredWithNoAutoRenewAttemptsLeft( purchase ),
+			'is-personal': isPersonal( purchase ),
+			'is-premium': isPremium( purchase ),
+			'is-business': isBusiness( purchase ),
+			'is-jetpack-product': isJetpackProduct( purchase ),
 		} );
 		const siteName = purchase.siteName;
 		const siteId = purchase.siteId;

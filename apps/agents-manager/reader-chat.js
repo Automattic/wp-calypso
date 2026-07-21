@@ -4,9 +4,10 @@
  * Loads the Agents Manager chat UI for blog readers (logged-out visitors).
  * Reads config from window.JetpackReaderChatConfig, mounts to #jetpack-reader-chat.
  *
- * IMPORTANT: This bundle is built without DependencyExtractionWebpackPlugin so
- * React, @wordpress/data, and all other WP packages are bundled inline. This
- * makes it safe to load on the frontend where WordPress's script loader is absent.
+ * IMPORTANT: Dependency extraction only emits the cache-busting asset manifest.
+ * Externalization is disabled, so React, WordPress data, and all other WP packages
+ * are bundled inline. This makes the bundle safe to load on the frontend where
+ * WordPress's script loader is absent.
  */
 
 import './config';
@@ -71,12 +72,22 @@ function injectScopedReset() {
 		 */
 		#jetpack-reader-chat input,
 		#jetpack-reader-chat textarea,
-		#jetpack-reader-chat button,
 		.agents-manager-chat input,
-		.agents-manager-chat textarea,
-		.agents-manager-chat button {
+		.agents-manager-chat textarea {
 			font-family: inherit !important;
 			font-size: inherit !important;
+			letter-spacing: inherit !important;
+			text-transform: none !important;
+		}
+		#jetpack-reader-chat button,
+		.agents-manager-chat button {
+			font-family: inherit !important;
+			text-transform: none !important;
+		}
+		#jetpack-reader-chat input::placeholder,
+		#jetpack-reader-chat textarea::placeholder,
+		.agents-manager-chat input::placeholder,
+		.agents-manager-chat textarea::placeholder {
 			letter-spacing: inherit !important;
 			text-transform: none !important;
 		}
@@ -120,7 +131,7 @@ function injectScopedReset() {
 			text-decoration: none !important;
 			text-transform: none !important;
 		}
-		.agents-manager-chat .components-button.has-icon {
+		.agents-manager-chat .components-button.has-icon:not(.components-dropdown-menu__menu-item) {
 			align-items: center !important;
 			background: transparent !important;
 			border: 0 !important;
@@ -131,14 +142,14 @@ function injectScopedReset() {
 			justify-content: center !important;
 			margin: 0 !important;
 		}
-		.agents-manager-chat .agents-manager-chat-header .components-button.has-icon,
+		.agents-manager-chat .agents-manager-chat-header .components-button.has-icon:not(.components-dropdown-menu__menu-item),
 		.agents-manager-chat .agents-manager-copy-action-button.components-button.has-icon,
 		.agents-manager-chat .agents-manager-zoom-action-button.components-button.has-icon {
 			height: 32px !important;
 			padding: 6px !important;
 			width: 32px !important;
 		}
-		.agents-manager-chat .agents-manager-chat-header .components-button.has-icon:hover:not(:disabled):not([aria-disabled="true"]),
+		.agents-manager-chat .agents-manager-chat-header .components-button.has-icon:not(.components-dropdown-menu__menu-item):hover:not(:disabled):not([aria-disabled="true"]),
 		.agents-manager-chat .agents-manager-copy-action-button.components-button.has-icon:hover:not(:disabled):not([aria-disabled="true"]),
 		.agents-manager-chat .agents-manager-zoom-action-button.components-button.has-icon:hover:not(:disabled):not([aria-disabled="true"]) {
 			background: var( --color-muted, rgba( 0, 0, 0, 0.06 ) ) !important;
@@ -167,8 +178,10 @@ function injectScopedReset() {
 			text-decoration: none !important;
 			text-transform: none !important;
 		}
-		.agents-manager-chat-header__menu-popover .components-dropdown-menu__menu-item {
+		.agents-manager-chat-header__menu-popover .components-dropdown-menu__menu-item,
+		.agents-manager-chat .agents-manager-chat-header .components-dropdown-menu__menu .components-dropdown-menu__menu-item {
 			align-items: center !important;
+			box-sizing: border-box !important;
 			display: flex !important;
 			gap: 8px !important;
 			height: auto !important;
@@ -176,7 +189,12 @@ function injectScopedReset() {
 			min-height: 32px !important;
 			padding: 6px 8px !important;
 			text-align: left !important;
+			white-space: nowrap !important;
 			width: 100% !important;
+		}
+		.agents-manager-chat .agents-manager-chat-header .components-dropdown-menu__menu .components-dropdown-menu__menu-item {
+			margin: 0 !important;
+			max-width: none !important;
 		}
 		.agents-manager-chat-header__menu-popover .components-dropdown-menu__menu-item:hover:not(:disabled):not([aria-disabled="true"]) {
 			background: var( --color-muted, rgba( 0, 0, 0, 0.06 ) ) !important;

@@ -84,6 +84,7 @@ export const userPurchaseSetAutoRenewQuery = () =>
 
 export const assignPaymentMethodMutation = () =>
 	mutationOptions( {
+		meta: { statId: 'payment-method-assign' },
 		mutationFn: ( params: AssignPaymentMethodParams ) => assignPaymentMethod( params ),
 		onSuccess: () => {
 			queryClient.invalidateQueries( userPurchasesQuery() );
@@ -92,6 +93,7 @@ export const assignPaymentMethodMutation = () =>
 
 export const removePurchaseMutation = () =>
 	mutationOptions( {
+		meta: { statId: 'purch-remove' },
 		mutationFn: removePurchase,
 		onSuccess: () => {
 			queryClient.invalidateQueries( userPurchasesQuery() );
@@ -100,6 +102,7 @@ export const removePurchaseMutation = () =>
 
 export const cancelAndRefundPurchaseMutation = () =>
 	mutationOptions( {
+		meta: { statId: 'purch-cancel-refund' },
 		mutationFn: ( params: {
 			purchaseId: number;
 			options: PurchaseCancelOptions | PurchaseDowngradeOptions;
@@ -111,6 +114,7 @@ export const cancelAndRefundPurchaseMutation = () =>
 
 export const extendPurchaseWithFreeMonthMutation = () =>
 	mutationOptions( {
+		meta: { statId: 'purch-free-month-extend' },
 		mutationFn: ( purchaseId: number ) => extendPurchaseWithFreeMonth( purchaseId ),
 		onSuccess: () => {
 			queryClient.invalidateQueries( userPurchasesQuery() );
@@ -119,6 +123,7 @@ export const extendPurchaseWithFreeMonthMutation = () =>
 
 export const setDelayedDowngradeMutation = () =>
 	mutationOptions( {
+		meta: { statId: 'purch-downgrade-delayed-set' },
 		mutationFn: (
 			params: { purchaseId: number } & (
 				| { enabled: true; toProductId: number }

@@ -116,6 +116,7 @@ export const mcpSettingsQuery = ( agencyId: number ) =>
 export const agencyMcpSettingsMutation = ( agencyId: number ) => {
 	const queryKey = mcpSettingsQuery( agencyId ).queryKey;
 	return mutationOptions( {
+		meta: { statId: 'agcy-mcp-settings-update' },
 		mutationFn: ( update: McpSettingsUpdate ) => updateAgencyMcpSettings( agencyId, update ),
 		onMutate: async ( update: McpSettingsUpdate ) => {
 			await queryClient.cancelQueries( { queryKey } );

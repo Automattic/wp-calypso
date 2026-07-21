@@ -5,6 +5,7 @@ import { __experimentalText as Text, __experimentalVStack as VStack } from '@wor
 import { __, sprintf } from '@wordpress/i18n';
 import { useMemo, type JSX } from 'react';
 import { receiptRoute } from '../../app/router/me';
+import { withSnackbar } from '../../app/snackbars/with-snackbar';
 import { isAkismetPro500Plan } from '../../utils/akismet';
 import { getTaxName } from '../../utils/tax';
 import {
@@ -54,17 +55,14 @@ export const DEFAULT_VIEW: View = {
 
 export function useActions() {
 	const navigate = useNavigate();
-	const { mutate: sendEmail } = useMutation( {
-		...sendReceiptEmailMutation(),
-		meta: {
-			snackbar: {
-				success: __( 'Your receipt was sent by email successfully.' ),
-				error: __(
-					'There was a problem sending your receipt. Please try again later or contact support.'
-				),
-			},
-		},
-	} );
+	const { mutate: sendEmail } = useMutation(
+		withSnackbar( sendReceiptEmailMutation(), {
+			success: __( 'Your receipt was sent by email successfully.' ),
+			error: __(
+				'There was a problem sending your receipt. Please try again later or contact support.'
+			),
+		} )
+	);
 
 	return useMemo(
 		() => [

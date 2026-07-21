@@ -8,7 +8,11 @@ export function getOrchestratorErrorMessage( error: string | null ): string | nu
 		return null;
 	}
 
-	if ( error.includes( 'review_mediator_over_limit' ) || /jetpack ai usage limit/i.test( error ) ) {
+	if (
+		error === 'ai_editorial_review_over_limit' ||
+		error === 'review_mediator_over_limit' ||
+		/jetpack ai usage limit/i.test( error )
+	) {
 		return __(
 			'You have reached your Jetpack AI usage limit. Upgrade your plan to continue.',
 			__i18n_text_domain__

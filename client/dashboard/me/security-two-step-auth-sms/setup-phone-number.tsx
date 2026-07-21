@@ -12,6 +12,7 @@ import { __ } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
 import { useMemo, useState } from 'react';
 import { useAnalytics } from '../../app/analytics';
+import { withSnackbar } from '../../app/snackbars/with-snackbar';
 import { ButtonStack } from '../../components/button-stack';
 import { Card, CardBody } from '../../components/card';
 import PhoneNumberInput, { type SecuritySMSNumber } from '../../components/phone-number-input';
@@ -37,15 +38,12 @@ export default function SetupPhoneNumber( { userSettings }: { userSettings: User
 	const { mutate: setupTwoStepAuthSMS, isPending: isSetupSMSPending } = useMutation(
 		setupTwoStepAuthSMSMutation()
 	);
-	const { mutate: resendTwoStepAuthSMSCode, isPending: isResending } = useMutation( {
-		...resendTwoStepAuthSMSCodeMutation(),
-		meta: {
-			snackbar: {
-				success: __( 'Verification code sent to your phone.' ),
-				error: __( 'Failed to send verification code. Please try again.' ),
-			},
-		},
-	} );
+	const { mutate: resendTwoStepAuthSMSCode, isPending: isResending } = useMutation(
+		withSnackbar( resendTwoStepAuthSMSCodeMutation(), {
+			success: __( 'Verification code sent to your phone.' ),
+			error: __( 'Failed to send verification code. Please try again.' ),
+		} )
+	);
 
 	const initialCountryCode = userSettings.two_step_sms_country;
 	const initialPhoneNumber = userSettings.two_step_sms_phone_number || '';

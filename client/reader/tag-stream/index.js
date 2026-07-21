@@ -9,6 +9,7 @@ import {
 import { setLocaleMiddleware } from 'calypso/controller/shared';
 import isReaderTagEmbedPage from 'calypso/lib/reader/is-reader-tag-embed-page';
 import { sidebar } from 'calypso/reader/controller';
+import { readerNotFound } from 'calypso/reader/lib/reader-router';
 import { tagListing } from './controller';
 
 const redirectHashtaggedTags = ( context, next ) => {
@@ -46,4 +47,7 @@ export default function () {
 		makeLayout,
 		clientRender
 	);
+
+	// Catch-all for unrecognized /tag/* paths (after the specific /tag/:tag route).
+	page( '/tag/*', readerNotFound );
 }

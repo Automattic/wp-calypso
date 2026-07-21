@@ -4,7 +4,7 @@ import { Button } from '@automattic/components';
 import { formatCurrency } from '@automattic/number-formatters';
 import { useTranslate } from 'i18n-calypso';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
-import { getRenewalPrice, isExpiring } from 'calypso/lib/purchases';
+import { getRenewalPrice, isExpiring, isExpiredOrRemoved } from 'calypso/lib/purchases';
 import AutoRenewToggle from 'calypso/me/purchases/manage-purchase/auto-renew-toggle';
 import { managePurchase } from 'calypso/me/purchases/paths';
 import RenewButton from 'calypso/my-sites/domains/domain-management/edit/card/renew-button';
@@ -82,7 +82,7 @@ const RegisteredDomainDetails = ( {
 		}
 
 		const autoRenewAdditionalText =
-			purchase && ! isExpiring( purchase ) && ! domain.expired
+			purchase && ! isExpiring( purchase ) && ! isExpiredOrRemoved( purchase ) && ! domain.expired
 				? translate( 'We will attempt to renew on %(renewalDate)s for %(price)s', {
 						args: {
 							renewalDate: moment( domain.autoRenewalDate ).format( 'LL' ),

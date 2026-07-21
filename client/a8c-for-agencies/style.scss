@@ -90,7 +90,7 @@
 
 .theme-a8c-for-agencies {
 
-	.components-button,
+	.components-button:not( .dataviews-view-table-header-button ),
 	.button {
 		display: inline-flex;
 		align-items: center;
@@ -294,7 +294,7 @@
 		outline: none;
 	}
 
-	.components-button.is-tertiary {
+	.components-button.is-tertiary:not( .dataviews-view-table-header-button ) {
 		color: var(--color-primary-60);
 	}
 

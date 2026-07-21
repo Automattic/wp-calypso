@@ -182,6 +182,31 @@ describe( 'useFeedbackAction', () => {
 			);
 		} );
 
+		it( 'sends rating with `trace_id` when available', async () => {
+			const messages = [ createMessage( 'msg-1', 'agent', 'Here is the answer' ) ];
+			renderHook( () =>
+				useFeedbackAction( {
+					...defaultConfig,
+					messages,
+					getTraceIdForMessage: () => 'trace-123',
+				} )
+			);
+
+			await triggerFeedback( 'msg-1', 'up' );
+
+			expect( mockFetch ).toHaveBeenCalledWith(
+				'https://public-api.wordpress.com/wpcom/v2/ai/feedback/session-abc/rate',
+				expect.objectContaining( {
+					body: JSON.stringify( {
+						message_id: 'msg-1',
+						rating: 'up',
+						message_text: 'Here is the answer',
+						trace_id: 'trace-123',
+					} ),
+				} )
+			);
+		} );
+
 		it( 'records the verbatim Big Sky thumbs-up event', async () => {
 			renderHook( () => useFeedbackAction( defaultConfig ) );
 			await triggerFeedback( 'msg-1', 'up' );
@@ -270,6 +295,25 @@ describe( 'useFeedbackAction', () => {
 					],
 				} )
 			);
+		} );
+
+		it( 'submits feedback text with `trace_id` when available', async () => {
+			const messages = [ createMessage( 'msg-1', 'agent', 'Bad answer' ) ];
+			const { result } = renderHook( () =>
+				useFeedbackAction( {
+					...defaultConfig,
+					messages,
+					getTraceIdForMessage: () => 'trace-123',
+				} )
+			);
+			await triggerFeedback( 'msg-1', 'down' );
+
+			await act( async () => {
+				await result.current.submitFeedbackText( 'The answer was incorrect' );
+			} );
+
+			const body = JSON.parse( findFetchCall( '/text' )[ 1 ].body );
+			expect( body.trace_id ).toBe( 'trace-123' );
 		} );
 
 		it( 'limits conversation context to last 4 messages', async () => {

@@ -97,5 +97,6 @@ export const dismissReadSiteRecommendationMutation = () =>
 		Error,
 		DismissReadSiteRecommendationParams
 	>( {
+		meta: { statId: 'read-site-rec-dismiss' },
 		mutationFn: dismissReadSiteRecommendation,
 	} );

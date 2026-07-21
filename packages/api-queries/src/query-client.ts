@@ -4,12 +4,28 @@ import { QueryClient, defaultShouldDehydrateQuery } from '@tanstack/react-query'
 import { persistQueryClient } from '@tanstack/react-query-persist-client';
 import { startSiteCollisionListener } from './site-collision-listener';
 
+// Open to augmentation: apps consuming this package add their own meta by extending
+// these interfaces rather than TanStack's `Register`, which only allows one
+// `mutationMeta`/`queryMeta` declaration repo-wide.
+//
+// Extending `Record< string, unknown >` is required because TanStack derives
+// `MutationMeta` via `Register extends { mutationMeta: infer T } ? T extends
+// Record< string, unknown > ? T : ... `, and interfaces get no implicit index
+// signature (microsoft/TypeScript#15300). Drop it and every `meta` read silently
+// degrades to `{}`.
+
+export interface ApiQueriesMutationMeta extends Record< string, unknown > {
+	statId?: string;
+}
+
+export interface ApiQueriesQueryMeta extends Record< string, unknown > {
+	persist?: boolean | ( ( data: any ) => boolean );
+}
+
 declare module '@tanstack/react-query' {
 	interface Register {
-		queryMeta: {
-			persist?: boolean | ( ( data: any ) => boolean );
-			fullPageLoader?: boolean;
-		};
+		mutationMeta: ApiQueriesMutationMeta;
+		queryMeta: ApiQueriesQueryMeta;
 	}
 }
 
@@ -47,26 +63,60 @@ const persister = createSyncStoragePersister( {
 } );
 
 const maxAge = 1000 * 60 * 60 * 24; // 24 hours
+const cacheDataShapeVersion = 3; // Bump the numeric prefix when query data shape changes.
 
-const [ disablePersistQueryClient, persistQueryClientPromise ] = persistQueryClient( {
-	queryClient,
-	persister,
-	buster: '3', // Bump when query data shape changes.
-	maxAge,
-	dehydrateOptions: {
-		shouldRedactErrors: () => false,
-		shouldDehydrateQuery: ( query ) => {
-			if ( query.meta?.persist === false ) {
-				return false;
-			}
-			return defaultShouldDehydrateQuery( query );
+let persistence: { userId: number; promise: Promise< void >; disable: () => void } | undefined;
+
+/**
+ * Start restoring/persisting the query cache, scoped to the given user.
+ *
+ * Memoized per user, so callers can invoke it freely (e.g. from an effect).
+ * While the user is unknown we neither restore nor persist.
+ */
+export function getPersistQueryClientPromise( userId?: number ): Promise< void > {
+	if ( userId === undefined ) {
+		return Promise.resolve();
+	}
+
+	if ( persistence?.userId === userId ) {
+		return persistence.promise;
+	}
+
+	persistence?.disable();
+
+	const [ disable, promise ] = persistQueryClient( {
+		queryClient,
+		persister,
+		buster: `${ cacheDataShapeVersion }-${ userId }`,
+		maxAge,
+		dehydrateOptions: {
+			shouldRedactErrors: () => false,
+			shouldDehydrateQuery: ( query ) => {
+				const persist = query.meta?.persist;
+				if ( persist === false ) {
+					return false;
+				}
+				// Gate the predicate behind the default check so it is never handed the
+				// data of a query that hasn't succeeded.
+				if ( ! defaultShouldDehydrateQuery( query ) ) {
+					return false;
+				}
+				return typeof persist === 'function' ? persist( query.state.data ) : true;
+			},
 		},
-	},
-} );
+	} );
+	persistence = { userId, promise, disable };
+
+	return promise;
+}
+
+export function disablePersistQueryClient() {
+	persistence?.disable();
+}
 
 startSiteCollisionListener( queryClient );
 
-export { queryClient, disablePersistQueryClient, persistQueryClientPromise };
+export { queryClient };
 
 export function clearQueryClient() {
 	if ( typeof window !== 'undefined' && ! isSupportSession() ) {

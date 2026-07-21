@@ -17,7 +17,6 @@ test.describe(
 		const credentials = SecretsManager.secrets.testAccounts.defaultUser;
 
 		let acceptInviteLink: string;
-		let userManagementRevampFeature = false;
 
 		const siteID = credentials.testSites?.primary?.id as number;
 
@@ -116,17 +115,10 @@ test.describe(
 
 			await test.step( 'And I log in as the site owner', async function () {
 				await accountDefaultUser.authenticate( page );
-
-				userManagementRevampFeature = await page.evaluate(
-					"configData.features['user-management-revamp']"
-				);
 			} );
 
 			await test.step( 'When I navigate to Users > All Users', async function () {
 				await componentSidebar.navigate( 'Users', 'All Users' );
-				if ( ! userManagementRevampFeature ) {
-					await pagePeople.clickTab( 'Invites' );
-				}
 			} );
 
 			await test.step( 'Then I can see the invite is pending', async function () {

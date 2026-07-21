@@ -10,7 +10,10 @@ test.describe(
 		skipIfNotTrunk();
 		skipIfMailosaurLimitReached();
 
-		test( 'As a user, I can add a domain to my existing site', async ( {
+		// Skipped for now; can be updated once we're sure all onboarding tests will go
+		// through the MSD flow. See https://github.com/Automattic/wp-calypso/pull/112586
+		// and https://github.com/Automattic/wp-calypso/pull/112587.
+		test.skip( 'As a user, I can add a domain to my existing site', async ( {
 			componentDomainSearch,
 			componentSidebar,
 			helperData,

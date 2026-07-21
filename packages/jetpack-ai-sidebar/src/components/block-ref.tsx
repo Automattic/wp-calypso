@@ -34,9 +34,9 @@ export interface BlockSnapshot {
 }
 
 interface BlockRefProps {
-	/** 0-based block index from the mediation payload. Null = post-wide. */
+	/** 0-based block index from the review payload. Null = post-wide. */
 	index: number | null;
-	/** Flat pre-order block list from the mediator/editor block tree. */
+	/** Flat pre-order block list from the review/editor block tree. */
 	blocks: BlockSnapshot[];
 	/** Called on click for in-bounds refs; a no-op when out of bounds. */
 	onFocus?: ( index: number ) => void;

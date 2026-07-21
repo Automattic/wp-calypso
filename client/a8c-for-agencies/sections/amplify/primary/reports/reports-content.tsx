@@ -195,11 +195,15 @@ export default function AmplifyReportsContent() {
 							</Badge>
 						);
 					}
-					if ( item.rowStatus === 'in_progress' ) {
+					if ( item.rowStatus === 'pending' || item.rowStatus === 'in_progress' ) {
 						return (
 							<HStack spacing={ 2 } justify="flex-start" expanded={ false }>
 								<Spinner />
-								<Text variant="muted">{ __( 'Analysis in progress' ) }</Text>
+								<Text variant="muted">
+									{ item.rowStatus === 'pending'
+										? __( 'Waiting to start' )
+										: __( 'Analysis in progress' ) }
+								</Text>
 							</HStack>
 						);
 					}

@@ -12,6 +12,7 @@ describe( 'PurchaseItem', () => {
 		const purchase = {
 			productSlug: 'business-bundle',
 			expiryStatus: 'expired',
+			subscriptionStatus: 'active',
 			expiryDate: moment().subtract( 10, 'hours' ).format(),
 		};
 
@@ -35,6 +36,7 @@ describe( 'PurchaseItem', () => {
 		const purchase = {
 			isInAppPurchase: true,
 			isAutoRenewEnabled: false,
+			subscriptionStatus: 'active',
 		};
 
 		test( 'should not display warning', () => {
@@ -55,6 +57,7 @@ describe( 'PurchaseItem', () => {
 		const purchase = {
 			productSlug: 'business-bundle',
 			isAutoRenewEnabled: true,
+			subscriptionStatus: 'active',
 		};
 
 		renderWithProvider( <PurchaseItem purchase={ purchase } /> );
@@ -66,6 +69,7 @@ describe( 'PurchaseItem', () => {
 		const purchase = {
 			productSlug: 'business-bundle',
 			isAutoRenewEnabled: false,
+			subscriptionStatus: 'active',
 		};
 
 		renderWithProvider( <PurchaseItem purchase={ purchase } /> );

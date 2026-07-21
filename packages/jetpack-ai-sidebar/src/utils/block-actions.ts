@@ -1,6 +1,6 @@
 /**
  * Block-action helpers and module state shared by the AM provider entry
- * (`../index`) and components (e.g. ReviewMediation). Lives here to break
+ * (`../index`) and components (e.g. AiEditorialReview). Lives here to break
  * the index ↔ component import cycle.
  */
 
@@ -130,7 +130,7 @@ function getAccessibleFrameDocuments(): Document[] {
 
 /**
  * Find a block element by clientId in the main document or editor iframe.
- * Exported so peer components (e.g. ReviewMediation) can scroll a block into
+ * Exported so peer components (e.g. AiEditorialReview) can scroll a block into
  * view on interaction.
  * @param {string} clientId - The block's clientId.
  * @returns The block element, or null.
@@ -627,7 +627,7 @@ export function handleUpdateBlockContent( input: any ): any {
 			const fallback = findBlockSnapshotByCurrentText( currentText, editableAttribute );
 			if ( fallback.error ) {
 				// eslint-disable-next-line no-console
-				console.warn( '[ReviewMediation] currentText matches multiple spans in block content', {
+				console.warn( '[Jetpack AI] currentText matches multiple spans in block content', {
 					clientId,
 				} );
 				return {
@@ -640,7 +640,7 @@ export function handleUpdateBlockContent( input: any ): any {
 				targetClientId = fallback.snapshot.clientId;
 				snapshot = fallback.snapshot;
 				// eslint-disable-next-line no-console
-				console.warn( '[ReviewMediation] stale clientId matched by currentText', {
+				console.warn( '[Jetpack AI] stale clientId matched by currentText', {
 					clientId,
 					targetClientId,
 				} );
@@ -666,7 +666,7 @@ export function handleUpdateBlockContent( input: any ): any {
 		const matchCount = countOccurrences( snapshot.content, currentText );
 		if ( matchCount === 0 ) {
 			// eslint-disable-next-line no-console
-			console.warn( '[ReviewMediation] currentText not found in block content', { clientId } );
+			console.warn( '[Jetpack AI] currentText not found in block content', { clientId } );
 			return {
 				success: false,
 				error: 'currentText not found in block content',
@@ -675,7 +675,7 @@ export function handleUpdateBlockContent( input: any ): any {
 		}
 		if ( matchCount > 1 ) {
 			// eslint-disable-next-line no-console
-			console.warn( '[ReviewMediation] currentText matches multiple spans in block content', {
+			console.warn( '[Jetpack AI] currentText matches multiple spans in block content', {
 				clientId,
 			} );
 			return {
@@ -727,7 +727,7 @@ export function handleUpdateBlockContent( input: any ): any {
 				const matchCount = countOccurrences( latestSnapshot.content, currentText );
 				if ( matchCount === 0 ) {
 					// eslint-disable-next-line no-console
-					console.warn( '[ReviewMediation] currentText not found in block content', {
+					console.warn( '[Jetpack AI] currentText not found in block content', {
 						clientId: targetClientId,
 					} );
 					resolveFailure( 'currentText not found in block content' );
@@ -735,7 +735,7 @@ export function handleUpdateBlockContent( input: any ): any {
 				}
 				if ( matchCount > 1 ) {
 					// eslint-disable-next-line no-console
-					console.warn( '[ReviewMediation] currentText matches multiple spans in block content', {
+					console.warn( '[Jetpack AI] currentText matches multiple spans in block content', {
 						clientId: targetClientId,
 					} );
 					resolveFailure( 'currentText matches multiple spans in block content' );
@@ -744,7 +744,7 @@ export function handleUpdateBlockContent( input: any ): any {
 				nextContent = latestSnapshot.content.replace( currentText, content );
 			} else if ( latestSnapshot.content !== snapshot.content ) {
 				// eslint-disable-next-line no-console
-				console.warn( '[ReviewMediation] block content changed while applying edit', {
+				console.warn( '[Jetpack AI] block content changed while applying edit', {
 					clientId: targetClientId,
 				} );
 				resolveFailure( 'block content changed while applying edit' );
@@ -782,7 +782,7 @@ export function handleUpdateBlockContent( input: any ): any {
 }
 
 /**
- * Apply a mediation-suggested edit. When `currentText` is provided and uniquely
+ * Apply a review-suggested edit. When `currentText` is provided and uniquely
  * matches a span in the block, only that span is replaced. When it is missing or
  * ambiguous, the edit fails safely rather than replacing the whole block. Returns
  * `success: false` for unsupported edit targets so the UI can show 'failed' rather
@@ -818,7 +818,7 @@ export async function applyReviewEdit(
 }
 
 /**
- * Revert a block's content to a pre-accept snapshot. Used by ReviewMediation's
+ * Revert a block's content to a pre-accept snapshot. Used by AiEditorialReview's
  * per-card Undo to actually undo the mutation, not just flip UI state.
  * When `expectedContent` is supplied, only restore if the block still contains
  * the content this row applied. This avoids clobbering later accepted edits on

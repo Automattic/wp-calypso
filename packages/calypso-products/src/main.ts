@@ -674,7 +674,7 @@ export function getBillingMonthsForTerm( term: string ): number {
 	} else if ( term === TERM_CENTENNIALLY ) {
 		return 1200;
 	}
-	throw new Error( `Unknown term: ${ term }` );
+	throw new Error( `Unknown billing term in getBillingMonthsForTerm: ${ term }` );
 }
 
 export function getBillingTermForMonths( term: number ): string {
@@ -703,7 +703,7 @@ export function getBillingTermForMonths( term: number ): string {
 	} else if ( term === 1200 ) {
 		return TERM_CENTENNIALLY;
 	}
-	throw new Error( `Unknown term: ${ term }` );
+	throw new Error( `Unknown month count in getBillingTermForMonths: ${ term }` );
 }
 
 export function plansLink(

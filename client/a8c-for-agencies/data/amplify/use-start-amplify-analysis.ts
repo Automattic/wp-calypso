@@ -45,11 +45,12 @@ export default function useStartAmplifyAnalysis< TContext = unknown >(
 			return startAmplifyAnalysis( params, agencyId );
 		},
 		onSuccess: ( data, variables, context ) => {
-			// Seed the reports cache with the new `in_progress` report so its row
+			// Seed the reports cache with the newly created report so its row
 			// appears immediately and the reports query starts polling (its
-			// refetchInterval keys off the presence of an in-progress report) —
-			// without waiting for a manual page refresh. We seed rather than only
-			// invalidate so the row shows even if a refetch races the write.
+			// refetchInterval keys off the presence of a pending or in-progress
+			// report) — without waiting for a manual page refresh. We seed rather
+			// than only invalidate so the row shows even if a refetch races the
+			// write.
 			queryClient.setQueryData< AmplifyReport[] >(
 				getAmplifyReportsQueryKey( agencyId ),
 				( previous ) => {

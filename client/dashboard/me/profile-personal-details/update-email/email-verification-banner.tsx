@@ -7,6 +7,7 @@ import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
 import { useState, useEffect } from 'react';
+import { withSnackbar } from '../../../app/snackbars/with-snackbar';
 import Notice from '../../../components/notice';
 import type { UserSettings } from '@automattic/api-core';
 
@@ -103,24 +104,21 @@ export default function EmailVerificationBanner( { userData }: EmailVerification
 
 	// Resend email
 	const { mutate: resendEmail, isPending: isResendPending } = useMutation( {
-		...resendEmailVerificationMutation( pendingEmail || '' ),
+		...withSnackbar( resendEmailVerificationMutation( pendingEmail || '' ), {
+			success: pendingEmail
+				? sprintf(
+						/* translators: %s is the user's new email address they're trying to change to */
+						__( 'We sent an email to %s. Please check your inbox to verify your email.' ),
+						pendingEmail
+				  )
+				: __( 'Verification email sent.' ),
+			error: __( 'Failed to resend verification email.' ),
+		} ),
 		onSuccess: () => {
 			setShowResendButton( false );
 		},
 		onError: () => {
 			setShowResendButton( true );
-		},
-		meta: {
-			snackbar: {
-				success: pendingEmail
-					? sprintf(
-							/* translators: %s is the user's new email address they're trying to change to */
-							__( 'We sent an email to %s. Please check your inbox to verify your email.' ),
-							pendingEmail
-					  )
-					: __( 'Verification email sent.' ),
-				error: __( 'Failed to resend verification email.' ),
-			},
 		},
 	} );
 

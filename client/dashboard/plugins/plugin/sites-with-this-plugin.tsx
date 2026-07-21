@@ -1,6 +1,6 @@
 import {
 	invalidatePlugins,
-	resetPlugins,
+	pluginsQuery,
 	sitePluginActivateMutation,
 	sitePluginAutoupdateDisableMutation,
 	sitePluginAutoupdateEnableMutation,
@@ -8,7 +8,7 @@ import {
 	sitePluginRemoveMutation,
 	sitePluginUpdateMutation,
 } from '@automattic/api-queries';
-import { useMutation } from '@tanstack/react-query';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { __experimentalText as Text, Button, Icon } from '@wordpress/components';
 import {
 	DataViews,
@@ -24,7 +24,7 @@ import { getSiteDisplayName } from '../../utils/site-name';
 import { getSiteDisplayUrl } from '../../utils/site-url';
 import ActionRenderModal, { getModalHeader } from '../manage/components/action-render-modal';
 import { PluginsHeaderActions } from '../manage/components/plugins-header-actions';
-import { buildBulkSitesPluginAction } from '../manage/utils';
+import { buildBulkSitesPluginAction, removePluginsFromSites } from '../manage/utils';
 import { getViewFilteredByUpdates } from '../utils/update-filters';
 import { ActionRenderModalWrapper } from './components/action-render-modal-wrapper';
 import { ActiveToggle } from './components/active-toggle';
@@ -34,7 +34,7 @@ import { SiteWithPluginData } from './use-plugin';
 import { getAllowedPluginActions } from './utils/get-allowed-plugin-actions';
 import { mapToPluginListRow } from './utils/map-to-plugin-list-row';
 import type { PluginListRow } from '../manage/types';
-import type { PluginItem } from '@automattic/api-core';
+import type { PluginItem, PluginsResponse } from '@automattic/api-core';
 
 const defaultView: View = {
 	type: 'table',
@@ -402,6 +402,7 @@ export const SitesWithThisPlugin = ( {
 						label: __( 'Delete' ),
 						modalHeader: getModalHeader( 'delete' ),
 						RenderModal: ( { items, closeModal } ) => {
+							const queryClient = useQueryClient();
 							const { mutateAsync: deactivate } = useMutation(
 								sitePluginDeactivateMutation( false )
 							);
@@ -432,6 +433,18 @@ export const SitesWithThisPlugin = ( {
 										} );
 										return newState;
 									} );
+
+									// `/me/sites/plugins` lags behind writes, so apply the removal to the
+									// cache and mark it stale rather than refetching, letting the next
+									// read reconcile once the server has caught up.
+									queryClient.setQueryData(
+										pluginsQuery().queryKey,
+										( old: PluginsResponse | undefined ) => removePluginsFromSites( old, items )
+									);
+									queryClient.invalidateQueries( {
+										queryKey: pluginsQuery().queryKey,
+										refetchType: 'none',
+									} );
 								}
 
 								return { successCount, errorCount };
@@ -459,12 +472,6 @@ export const SitesWithThisPlugin = ( {
 									items={ [ mapToPluginListRow( plugin, items ) as PluginListRow ] }
 									closeModal={ closeModal }
 									onExecute={ action }
-									onActionPerformed={ () => {
-										resetPlugins();
-
-										// Delay invalidation to allow backend to settle
-										setTimeout( invalidatePlugins, 500 );
-									} }
 								/>
 							);
 						},

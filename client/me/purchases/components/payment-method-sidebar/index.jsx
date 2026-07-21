@@ -36,9 +36,23 @@ function MainCard( { purchase } ) {
 	const moment = useLocalizedMoment();
 
 	if ( purchase ) {
-		const purchaseMessaging = purchase.renewDate
-			? translate( 'Next payment on %s', { args: moment( purchase.renewDate ).format( 'LL' ) } )
-			: translate( 'Expires on %s', { args: moment( purchase.expiryDate ).format( 'LL' ) } );
+		// `renewDate` is only populated when there is an upcoming renewal, so an
+		// empty value means the subscription isn't renewing — show its expiry
+		// status instead, worded for whether the expiry date has already passed.
+		let purchaseMessaging;
+		if ( purchase.renewDate ) {
+			purchaseMessaging = translate( 'Next payment on %s', {
+				args: moment( purchase.renewDate ).format( 'LL' ),
+			} );
+		} else if ( purchase.isPastExpiryDate ) {
+			purchaseMessaging = translate( 'Expired on %s', {
+				args: moment( purchase.expiryDate ).format( 'LL' ),
+			} );
+		} else {
+			purchaseMessaging = translate( 'Expires on %s', {
+				args: moment( purchase.expiryDate ).format( 'LL' ),
+			} );
+		}
 
 		return (
 			<Card className="payment-method-sidebar__details-card">
