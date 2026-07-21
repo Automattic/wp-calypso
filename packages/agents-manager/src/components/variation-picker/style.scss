@@ -1,4 +1,6 @@
 .agents-manager-variation-picker {
+	// TODO: AI-1068 — oversized gap between the picker and the message actions
+	// row; root cause not identified yet.
 	// Cap width in wide chats so cards stay card-sized.
 	max-width: 640px;
 
