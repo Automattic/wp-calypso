@@ -26,6 +26,52 @@ const defaultValues: Required< UserPreferences > = {
 	'reader-profile-hidden-sites': [],
 };
 
+const staticPreferenceStatIds: Record< string, string > = {
+	recentSites: 'recent',
+	'hosting-dashboard-color-scheme': 'color',
+	'hosting-dashboard-dark-mode-announcement-dismissed': 'darkann',
+	'hosting-dashboard-opt-in': 'optin',
+	'hosting-dashboard-opt-in-welcome-modal-dismissed': 'optwelc',
+	'hosting-dashboard-welcome-notice-dismissed': 'welcome',
+	'account-recovery-interstitial-snoozed-until': 'acctrec',
+	'reader-landing-page': 'rdland',
+	'sites-landing-page': 'stland',
+	'achievements-visibility': 'achvis',
+	'achievements-global-notifications': 'achnot',
+	'reader-profile-posts-visibility': 'postvis',
+	'reader-profile-sites-visibility': 'sitevis',
+	'reader-profile-hidden-sites': 'hidsit',
+};
+
+const dynamicPreferenceStatPrefixes: Record< string, string > = {
+	'hosting-dashboard-dataviews-view': 'dvview',
+	'hosting-dashboard-visit-count': 'visits',
+	'hosting-dashboard-overview-storage-notice-dismissed': 'storage',
+	'hosting-dashboard-tours': 'tours',
+	'hosting-dashboard-time-mismatch-warning-dismissed': 'timewrn',
+	'hosting-dashboard-wp-beta-notice-dismissed': 'wpbeta',
+	'cancel-purchase-survey-completed': 'cncsvy',
+	'cancellation-offer-accepted-notice-dismissed': 'cncofr',
+};
+
+function getUserPreferenceMutationStatId(
+	statId: string,
+	preferenceName: keyof UserPreferences
+): string {
+	const preferenceKey = String( preferenceName );
+	const staticStatId = staticPreferenceStatIds[ preferenceKey ];
+
+	if ( staticStatId ) {
+		return `${ statId }.${ staticStatId }`;
+	}
+
+	const dynamicStatId = Object.entries( dynamicPreferenceStatPrefixes ).find( ( [ prefix ] ) =>
+		preferenceKey.startsWith( `${ prefix }-` )
+	)?.[ 1 ];
+
+	return `${ statId }.${ dynamicStatId ?? 'other' }`;
+}
+
 // Returns all user preferences, without applying any defaults.
 export const rawUserPreferencesQuery = () =>
 	queryOptions( {
@@ -50,7 +96,9 @@ export const userPreferenceQuery = < P extends keyof UserPreferences >( preferen
 
 export const userPreferenceMutation = < P extends keyof UserPreferences >( preferenceName: P ) =>
 	mutationOptions( {
-		meta: { statId: 'user-pref-update' },
+		meta: {
+			statId: getUserPreferenceMutationStatId( 'user-pref-update', preferenceName ),
+		},
 		mutationFn: ( data: UserPreferences[ P ] ) =>
 			updatePreferences( {
 				[ preferenceName ]: data ?? null, // null means deleting the preference
@@ -66,7 +114,9 @@ export const userPreferenceOptimisticMutation = < P extends keyof UserPreference
 	preferenceName: P
 ) =>
 	mutationOptions( {
-		meta: { statId: 'user-pref-opt-update' },
+		meta: {
+			statId: getUserPreferenceMutationStatId( 'user-pref-opt-update', preferenceName ),
+		},
 		mutationFn: userPreferenceMutation( preferenceName ).mutationFn,
 		onMutate: async ( value ) => {
 			await queryClient.cancelQueries( { queryKey: rawUserPreferencesQuery().queryKey } );
