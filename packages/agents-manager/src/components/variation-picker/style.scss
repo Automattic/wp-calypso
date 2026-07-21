@@ -1,6 +1,4 @@
 .agents-manager-variation-picker {
-	// TODO: AI-1068 — oversized gap between the picker and the message actions
-	// row; root cause not identified yet.
 	// Cap width in wide chats so cards stay card-sized.
 	max-width: 640px;
 
@@ -70,4 +68,12 @@
 	&__pager {
 		color: var(--color-muted-foreground);
 	}
+}
+
+// AI-1068: the pagination row (right-aligned) and the actions row
+// (left-aligned) are both sparse, so stacked they read as a large gap.
+// Pull the actions row up one row height to share the pagination row.
+.Message-module_content:has( .agents-manager-variation-picker__arrows )
+	.MessageActions-module_container {
+	margin-top: -32px;
 }
