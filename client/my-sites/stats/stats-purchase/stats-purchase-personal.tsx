@@ -195,13 +195,13 @@ function StatsBenefitsListing( {
 					{ translate( 'No UTM tracking for your marketing campaigns' ) }
 				</li>
 				<li className={ `${ COMPONENT_CLASS_NAME }__benefits-item--not-included` }>
-					{ translate( 'No access to upcoming advanced features' ) }
-				</li>
-				<li className={ `${ COMPONENT_CLASS_NAME }__benefits-item--not-included` }>
 					{ translate( 'No granular location stats' ) }
 				</li>
 				<li className={ `${ COMPONENT_CLASS_NAME }__benefits-item--not-included` }>
 					{ translate( 'No device attribution' ) }
+				</li>
+				<li className={ `${ COMPONENT_CLASS_NAME }__benefits-item--not-included` }>
+					{ translate( 'No access to upcoming advanced features' ) }
 				</li>
 			</ul>
 		</div>
