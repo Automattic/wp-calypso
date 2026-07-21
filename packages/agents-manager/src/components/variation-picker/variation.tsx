@@ -53,7 +53,7 @@ export default function Variation( {
 			aria-current={ isActive }
 		>
 			{ /* eslint-disable-next-line wpcalypso/jsx-classname-namespace -- WordPress/Gutenberg class */ }
-			<div className="edit-site-global-styles-variations_item-preview">
+			<div className="agents-manager-variation-picker__preview">
 				<StylesPreview
 					label={ variation?.title }
 					type={ type }

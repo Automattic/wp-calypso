@@ -392,7 +392,7 @@ export default function StylesPreview( {
 		<>
 			<div style={ { position: 'relative' } }>{ containerResizeListener }</div>
 			<Iframe
-				className="edit-site-global-styles-preview__iframe"
+				className="agents-manager-styles-preview__iframe"
 				style={ {
 					width: '100%',
 					height: normalizedHeight * ratio,
