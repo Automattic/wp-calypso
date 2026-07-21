@@ -8,6 +8,7 @@ import type { UIMessage } from '@automattic/agenttic-client';
 
 export interface AgentsManagerUIMessage extends UIMessage {
 	disabled?: boolean;
+	traceId?: string;
 	/** Suppress Agenttic's transient thinking indicator while this message is the latest one. */
 	suppressThinking?: boolean;
 }
@@ -168,6 +169,14 @@ export default function convertToolMessagesToComponents( {
 		try {
 			textData = JSON.parse( firstContentText );
 		} catch ( _error ) {
+			return [ message ];
+		}
+
+		if (
+			typeof textData !== 'object' ||
+			textData === null ||
+			typeof textData.tool_id !== 'string'
+		) {
 			return [ message ];
 		}
 

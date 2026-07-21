@@ -28,6 +28,7 @@ export const jetpackTestConnectionQuery = ( siteId: number, isStaleConnectionHea
 
 export const siteJetpackDisconnectMutation = ( siteId: number ) =>
 	mutationOptions( {
+		meta: { statId: 'site-jp-disconnect' },
 		mutationFn: () => disconnectJetpackSite( siteId ),
 		onSuccess: () => {
 			queryClient.invalidateQueries( siteQueryFilter( siteId ) );

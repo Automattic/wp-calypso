@@ -1,6 +1,6 @@
 export type AmplifyMode = 'human' | 'ai' | 'full';
 
-export type AmplifyReportStatus = 'in_progress' | 'completed' | 'failed';
+export type AmplifyReportStatus = 'pending' | 'in_progress' | 'completed' | 'failed';
 
 // `full` fills both lenses; a single-lens run fills its own and leaves the
 // other `null`. Both are `null` until the analysis completes.
@@ -11,9 +11,9 @@ export interface AmplifyScore {
 
 // A report as surfaced by the unified `/reports` routes. Every run lives on
 // the one collection through its whole life, its `status` telling you where
-// it is: `in_progress` (analysis queued or running), `completed` (`score`
-// populated, `pdf_url` set) or `failed` (`failure_reason` carries a short
-// reason). `id` is the numeric post id as a string.
+// it is: `pending` (analysis queued, waiting to start), `in_progress`
+// (analysis running), `completed` (`score` populated, `pdf_url` set) or
+// `failed` (`failure_reason` carries a short reason). `id` is the numeric post id as a string.
 export interface AmplifyReport {
 	id: string;
 	status: AmplifyReportStatus;

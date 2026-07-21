@@ -31,6 +31,7 @@ const defaultList: ComponentProps< typeof ListSites >[ 'list' ] = {
 	slug: 'my-list',
 	owner: 'test_user',
 	is_owner: true,
+	feeds: [],
 };
 
 let queryClient: QueryClient;

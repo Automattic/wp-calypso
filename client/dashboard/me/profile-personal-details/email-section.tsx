@@ -7,6 +7,7 @@ import { __ } from '@wordpress/i18n';
 import { Icon, info, check } from '@wordpress/icons';
 import emailValidator from 'email-validator';
 import { useState, useEffect, useCallback } from 'react';
+import { withSnackbar } from '../../app/snackbars/with-snackbar';
 import { isCustomDomainEmail } from './email-utils';
 import type { UserSettings } from '@automattic/api-core';
 import './style.scss';
@@ -46,7 +47,10 @@ export default function EmailSection( {
 	const mutation = cancelPendingEmailChangeMutation();
 
 	const { mutate: cancelPendingEmail, isPending: isCancelPending } = useMutation( {
-		...mutation,
+		...withSnackbar( mutation, {
+			success: __( 'Pending email change canceled.' ),
+			error: __( 'Failed to cancel pending email change.' ),
+		} ),
 		onSuccess: ( data, variables, context ) => {
 			// Call the original onSuccess from the mutation if it exists
 			if ( mutation.onSuccess ) {
@@ -54,12 +58,6 @@ export default function EmailSection( {
 			}
 			// Use the fresh data from the mutation response
 			onChange( data.user_email || '' );
-		},
-		meta: {
-			snackbar: {
-				success: __( 'Pending email change canceled.' ),
-				error: __( 'Failed to cancel pending email change.' ),
-			},
 		},
 	} );
 

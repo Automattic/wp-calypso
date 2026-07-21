@@ -41,9 +41,9 @@ export default function useAmplifyReportRows(): {
 	isLoading: boolean;
 	error: unknown;
 } {
-	// Polls every 15s while any report is `in_progress` (see
-	// use-fetch-amplify-reports), so a running analysis flips to its terminal
-	// status without a refresh.
+	// Polls every 15s while any report is `pending` or `in_progress` (see
+	// use-fetch-amplify-reports), so a queued or running analysis flips to its
+	// terminal status without a refresh.
 	const reportsQuery = useFetchAmplifyReports();
 
 	const rows = useMemo( () => toAmplifyReportRows( reportsQuery.data ), [ reportsQuery.data ] );

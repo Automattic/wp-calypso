@@ -19,6 +19,7 @@ const props = {
 		productName: 'Jetpack Personal',
 		productSlug: 'jetpack_premium_monthly',
 		expiryStatus: 'active',
+		subscriptionStatus: 'active',
 	},
 	hasLoadedSites: true,
 	hasLoadedPurchasesFromServer: true,
@@ -93,11 +94,24 @@ describe( 'PurchasePlanDetails', () => {
 		} );
 	} );
 
-	describe( 'expired plan', () => {
+	describe( 'expired plan in grace period', () => {
+		it( 'should render plan details (still manageable during the grace period)', () => {
+			const purchase = {
+				...props.purchase,
+				expiryStatus: 'expired',
+				subscriptionStatus: 'active',
+			};
+			const { container } = render( <PurchasePlanDetails { ...props } purchase={ purchase } /> );
+			expect( container ).not.toBeEmptyDOMElement();
+		} );
+	} );
+
+	describe( 'removed plan', () => {
 		it( 'should return null', () => {
 			const purchase = {
 				...props.purchase,
 				expiryStatus: 'expired',
+				subscriptionStatus: 'inactive',
 			};
 			const { container } = render( <PurchasePlanDetails { ...props } purchase={ purchase } /> );
 			expect( container ).toBeEmptyDOMElement();

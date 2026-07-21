@@ -168,7 +168,11 @@ const ReaderSidebarRecent = ( { isOpen, onClick, path, className }: Props ): Rea
 										/>
 									) }
 									{ unseenCount > 0 && (
-										<Count count={ unseenCount } compact aria-label={ unseenCountLabel } />
+										<Count
+											count={ unseenCount }
+											compact
+											aria-label={ unseenCountLabel as string }
+										/>
 									) }
 								</span>
 							</MenuItemLink>

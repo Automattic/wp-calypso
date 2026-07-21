@@ -134,6 +134,7 @@ export const bulkDomainUpdateStatusQuery = () =>
 
 export const bulkDomainsActionMutation = () =>
 	mutationOptions( {
+		meta: { statId: 'domains-bulk-apply' },
 		mutationFn: ( action: BulkDomainsAction ) => bulkDomainsAction( action ),
 		onSuccess: () => {
 			queryClient.refetchQueries( bulkDomainUpdateStatusQuery() );

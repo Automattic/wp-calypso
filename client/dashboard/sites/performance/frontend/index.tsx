@@ -48,7 +48,9 @@ export default function SitePerformanceFrontend( { siteSlug }: { siteSlug: strin
 		return pagesData?.[ 0 ];
 	}, [ page_id, pagesData ] );
 
-	const performanceUrl = [ 'development', 'wpcalypso' ].includes( config( 'env_id' ) )
+	const performanceUrl = [ 'development', 'dashboard-development', 'wpcalypso' ].includes(
+		config( 'env_id' )
+	)
 		? url ?? currentPage?.link
 		: currentPage?.link;
 

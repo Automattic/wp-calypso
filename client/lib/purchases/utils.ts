@@ -1,5 +1,9 @@
 import { CANCEL_FLOW_TYPE } from 'calypso/components/marketing-survey/cancel-purchase-form/constants';
-import { hasAmountAvailableToRefund, isRefundable } from 'calypso/lib/purchases';
+import {
+	hasAmountAvailableToRefund,
+	isExpiredOrRemoved,
+	isRefundable,
+} from 'calypso/lib/purchases';
 import type { Purchase } from './types';
 
 /**
@@ -83,7 +87,16 @@ export function getPurchaseCancellationFlowType( purchase: Purchase ): string {
 	if ( isPlanRefundable && hasAmountAvailableToRefund( purchase ) ) {
 		// If the subscription is refundable the subscription should be removed immediately.
 		return CANCEL_FLOW_TYPE.CANCEL_WITH_REFUND;
-	} else if ( ! isPlanRefundable && isPlanAutoRenewing ) {
+	}
+
+	// Expired or grace-period purchases (that aren't refundable) use the removal
+	// flow, matching the "Remove" button on the manage-purchase page (parity
+	// with the Dashboard).
+	if ( isExpiredOrRemoved( purchase ) ) {
+		return CANCEL_FLOW_TYPE.REMOVE;
+	}
+
+	if ( ! isPlanRefundable && isPlanAutoRenewing ) {
 		// If the subscription is not refundable and auto-renew is on turn off auto-renew.
 		return CANCEL_FLOW_TYPE.CANCEL_AUTORENEW;
 	}

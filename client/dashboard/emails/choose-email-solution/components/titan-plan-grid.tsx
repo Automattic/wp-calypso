@@ -100,8 +100,8 @@ const getTierDetails = ( tier: TitanPlanTier ): { description: string; features:
 	}
 };
 
-// Tiers ordered from lowest to highest, used to hide tiers below the current one
-// when upgrading.
+// Tiers ordered from lowest to highest, used to tell upgrades from downgrades
+// relative to the current tier.
 const TIER_ORDER: TitanPlanTier[] = [
 	TitanPlanTier.Pro,
 	TitanPlanTier.Premium,
@@ -121,8 +121,8 @@ export function TitanPlanGrid( {
 	interval: IntervalLength;
 	available: boolean;
 	// The tier the user is currently subscribed to. When set, the grid is in
-	// upgrade mode: lower tiers are hidden, the current tier is labeled, and higher
-	// tiers offer an upgrade.
+	// upgrade mode: lower tiers are shown with a disabled button, the current
+	// tier is labeled, and higher tiers offer an upgrade.
 	currentTier?: TitanPlanTier;
 	// Called when a higher tier is selected in upgrade mode (currentTier set).
 	onUpgrade?: ( tier: TitanPlanTier ) => void;
@@ -178,21 +178,18 @@ export function TitanPlanGrid( {
 		},
 	];
 
-	// When upgrading, only offer the current plan (labeled below) and higher tiers,
-	// since this flow cannot downgrade.
-	const visiblePlans = currentTier
-		? plans.filter(
-				( plan ) => TIER_ORDER.indexOf( plan.tier ) >= TIER_ORDER.indexOf( currentTier )
-		  )
-		: plans;
+	// All tiers stay visible when upgrading; lower tiers render with a disabled
+	// button since this flow cannot downgrade.
+	const isLowerTier = ( tier: TitanPlanTier ) =>
+		currentTier ? TIER_ORDER.indexOf( tier ) < TIER_ORDER.indexOf( currentTier ) : false;
 
 	// The tier that gets the emphasized (primary) button: the recommended plan when
-	// buying, or the recommended upgrade target when upgrading. The current plan is
-	// never emphasized because its button is disabled.
+	// buying, or the recommended upgrade target when upgrading. The current and lower
+	// tiers are never emphasized because their buttons are disabled.
 	const primaryTier = ( () => {
 		const candidates = currentTier
-			? visiblePlans.filter( ( plan ) => plan.tier !== currentTier )
-			: visiblePlans;
+			? plans.filter( ( plan ) => plan.tier !== currentTier && ! isLowerTier( plan.tier ) )
+			: plans;
 		return ( candidates.find( ( plan ) => plan.isPopular ) ?? candidates[ 0 ] )?.tier;
 	} )();
 
@@ -207,14 +204,17 @@ export function TitanPlanGrid( {
 
 	return (
 		<div className="email-providers">
-			{ visiblePlans.map( ( plan ) => {
+			{ plans.map( ( plan ) => {
 				const planName = getTierName( plan.tier );
 				const details = getTierDetails( plan.tier );
 				const isCurrentPlan = plan.tier === currentTier;
+				const isDowngrade = isLowerTier( plan.tier );
 
 				let actionLabel;
 				if ( isCurrentPlan ) {
 					actionLabel = __( 'Current plan' );
+				} else if ( isDowngrade ) {
+					actionLabel = __( 'Included in your plan' );
 				} else if ( currentTier ) {
 					actionLabel = __( 'Upgrade' );
 				} else if ( plan.hasFreeTrial ) {
@@ -288,7 +288,7 @@ export function TitanPlanGrid( {
 							__next40pxDefaultSize
 							className="email-provider-action"
 							variant={ plan.tier === primaryTier ? 'primary' : 'secondary' }
-							disabled={ ! available || isCurrentPlan }
+							disabled={ ! available || isCurrentPlan || isDowngrade }
 							onClick={ () => {
 								// Upgrade mode goes to checkout for the picked tier; otherwise the
 								// grid is buying a new plan, so collect mailboxes first.

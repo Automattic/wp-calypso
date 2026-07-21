@@ -1,54 +1,12 @@
-@import "calypso/assets/stylesheets/shared/mixins/breakpoints";
-
 .theme-download-card {
-	text-align: center;
-
-	.gridicon {
-		color: var( --theme-icon-color, var( --color-neutral-10 ) );
-		display: inline-block;
+	.theme-download-card__external-icon {
 		fill: currentColor;
-		margin: -0.5em 0 -1.1em;
-	}
-
-	.button {
-		display: inline-block;
-	}
-
-	p {
-		margin: 1.15em 0;
-		a {
-			color: inherit;
-			text-decoration: underline;
-		}
-	}
-
-	&__external-icon {
 		vertical-align: text-bottom;
 	}
-}
 
-@include breakpoint-deprecated( ">1040px" ) {
-	.theme-download-card {
-		text-align: inherit;
-
-		.gridicon {
-			color: var( --theme-icon-color, var( --color-neutral-10 ) );
-			position: absolute;
-			transform: translateY(-50%);
-			margin: 0.3em 0 0;
-			float: left;
-			top: 50%;
-		}
-
-		.button {
-			position: absolute;
-			transform: translateY(-50%);
-			top: 50%;
-			right: 26px;
-		}
-
-		p {
-			margin: 0 122px 0 71px;
-		}
+	// The @wordpress/ui Button only sets `color`: without this, the SVG icon
+	// stays black instead of following the button color in all states.
+	.action-item__actions svg {
+		fill: currentColor;
 	}
 }

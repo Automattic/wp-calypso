@@ -20,6 +20,7 @@ describe( 'PaymentInfoBlock', () => {
 				payment: { type: 'credits' },
 				isRechargeable: false,
 				isAutoRenewEnabled: autoRenewStatus === 'enabled',
+				mightStillAutoRenew: autoRenewStatus === 'enabled',
 			};
 
 			it(
@@ -50,6 +51,7 @@ describe( 'PaymentInfoBlock', () => {
 			const purchase = {
 				expiryStatus: 'included',
 				isAutoRenewEnabled: autoRenewStatus === 'enabled',
+				mightStillAutoRenew: autoRenewStatus === 'enabled',
 			};
 
 			it( 'renders "Included with plan"', () => {
@@ -73,6 +75,7 @@ describe( 'PaymentInfoBlock', () => {
 				isRechargeable: false,
 				payment: {},
 				isAutoRenewEnabled: autoRenewStatus === 'enabled',
+				mightStillAutoRenew: autoRenewStatus === 'enabled',
 			};
 
 			it(
@@ -105,6 +108,7 @@ describe( 'PaymentInfoBlock', () => {
 				payment: { type: 'ideal' },
 				isRechargeable: false,
 				isAutoRenewEnabled: autoRenewStatus === 'enabled',
+				mightStillAutoRenew: autoRenewStatus === 'enabled',
 			};
 
 			it(
@@ -142,6 +146,7 @@ describe( 'PaymentInfoBlock', () => {
 				},
 				isRechargeable: true,
 				isAutoRenewEnabled: autoRenewStatus === 'enabled',
+				mightStillAutoRenew: autoRenewStatus === 'enabled',
 			};
 
 			it( 'renders the credit card last4', () => {
@@ -188,6 +193,7 @@ describe( 'PaymentInfoBlock', () => {
 					},
 					isRechargeable: true,
 					isAutoRenewEnabled: autoRenewStatus === 'enabled',
+					mightStillAutoRenew: autoRenewStatus === 'enabled',
 				};
 				render( <PaymentInfoBlock purchase={ purchase } cards={ [] } /> );
 				if ( expiryStatus === 'manualRenew' ) {
@@ -206,6 +212,7 @@ describe( 'PaymentInfoBlock', () => {
 				},
 				isRechargeable: true,
 				isAutoRenewEnabled: autoRenewStatus === 'enabled',
+				mightStillAutoRenew: autoRenewStatus === 'enabled',
 			};
 
 			it( 'renders PayPal logo', () => {
@@ -243,6 +250,7 @@ describe( 'PaymentInfoBlock', () => {
 				},
 				isRechargeable: true,
 				isAutoRenewEnabled: autoRenewStatus === 'enabled',
+				mightStillAutoRenew: autoRenewStatus === 'enabled',
 			};
 			render( <PaymentInfoBlock purchase={ purchase } cards={ [] } /> );
 			expect( screen.getByLabelText( 'Payment method' ) ).toHaveTextContent( '1234' );
@@ -259,6 +267,7 @@ describe( 'PaymentInfoBlock', () => {
 				},
 				isRechargeable: true,
 				isAutoRenewEnabled: autoRenewStatus === 'enabled',
+				mightStillAutoRenew: autoRenewStatus === 'enabled',
 			};
 			render( <PaymentInfoBlock purchase={ purchase } cards={ [] } /> );
 			expect( screen.getByLabelText( 'Payment method' ) ).toHaveTextContent( '1234' );
@@ -275,6 +284,7 @@ describe( 'PaymentInfoBlock', () => {
 				},
 				isRechargeable: true,
 				isAutoRenewEnabled: autoRenewStatus === 'enabled',
+				mightStillAutoRenew: autoRenewStatus === 'enabled',
 			};
 
 			it( 'renders the expiration date', () => {

@@ -12,7 +12,7 @@ import JetpackCancellationOfferAccepted from 'calypso/components/marketing-surve
 import JetpackCancellationSurvey from 'calypso/components/marketing-survey/cancel-jetpack-form/jetpack-cancellation-survey';
 import { CANCEL_FLOW_TYPE } from 'calypso/components/marketing-survey/cancel-purchase-form/constants';
 import enrichedSurveyData from 'calypso/components/marketing-survey/cancel-purchase-form/enriched-survey-data';
-import { getName, isExpired } from 'calypso/lib/purchases';
+import { getName, isRemoved } from 'calypso/lib/purchases';
 import { submitSurvey } from 'calypso/lib/purchases/actions';
 import { isOutsideCalypso } from 'calypso/lib/url';
 import { isJetpackHoldingSitePurchase } from 'calypso/me/purchases/utils';
@@ -55,8 +55,9 @@ const CancelJetpackForm: React.FC< Props > = ( {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 	const initialCancellationStep = useMemo( () => {
-		// If the subscription is expired, the only step in the survey is the removal confirmation
-		if ( isExpired( purchase ) || isJetpackHoldingSitePurchase( purchase ) ) {
+		// If the subscription has been removed, the only step in the survey is the removal
+		// confirmation. (Purchases merely past expiry, in the grace period, keep the normal flow.)
+		if ( isRemoved( purchase ) || isJetpackHoldingSitePurchase( purchase ) ) {
 			return steps.CANCEL_CONFIRM_STEP;
 		}
 
@@ -153,10 +154,11 @@ const CancelJetpackForm: React.FC< Props > = ( {
 	const availableSurveySteps = useMemo( () => {
 		const availableSteps = [];
 
-		// If the plan is already expired or is a temporary Jetpack purchase (license),
-		// we only need one "confirm" step for the survey is the removal confirmation
-		// A product that is not in use does not need to collect the survey or show benefits
-		if ( isExpired( purchase ) || isJetpackHoldingSitePurchase( purchase ) ) {
+		// If the subscription has already been removed or is a temporary Jetpack purchase
+		// (license), we only need one "confirm" step for the survey — the removal confirmation.
+		// A product that is not in use does not need to collect the survey or show benefits.
+		// (Purchases merely past expiry, in the grace period, keep the normal flow.)
+		if ( isRemoved( purchase ) || isJetpackHoldingSitePurchase( purchase ) ) {
 			return [ steps.CANCEL_CONFIRM_STEP ];
 		}
 

@@ -33,6 +33,7 @@ export const codeDeploymentRunsQuery = ( siteId: number, deploymentId: number ) 
 
 export const createCodeDeploymentRunMutation = () =>
 	mutationOptions( {
+		meta: { statId: 'site-deploy-run-create' },
 		mutationFn: async ( { siteId, deploymentId }: { siteId: number; deploymentId: number } ) =>
 			createCodeDeploymentRun( siteId, deploymentId ),
 		onSuccess: ( ...args ) => {
@@ -46,12 +47,14 @@ export const createCodeDeploymentRunMutation = () =>
 
 export const codeDeploymentDeleteMutation = ( siteId: number, deploymentId: number ) =>
 	mutationOptions( {
+		meta: { statId: 'site-deploy-delete' },
 		mutationFn: ( removeFiles: boolean ) =>
 			deleteCodeDeployment( siteId, deploymentId, removeFiles ),
 	} );
 
 export const createCodeDeploymentMutation = ( siteId: number ) =>
 	mutationOptions( {
+		meta: { statId: 'site-deploy-create' },
 		mutationFn: ( variables: CreateAndUpdateCodeDeploymentVariables ) =>
 			createCodeDeployment( siteId, variables ),
 		onSuccess: () => {
@@ -61,6 +64,7 @@ export const createCodeDeploymentMutation = ( siteId: number ) =>
 
 export const updateCodeDeploymentMutation = ( siteId: number, deploymentId: number ) =>
 	mutationOptions( {
+		meta: { statId: 'site-deploy-update' },
 		mutationFn: ( variables: CreateAndUpdateCodeDeploymentVariables ) =>
 			updateCodeDeployment( siteId, deploymentId, variables ),
 		onSuccess: () => {

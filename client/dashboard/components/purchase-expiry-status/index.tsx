@@ -15,15 +15,14 @@ import {
 import {
 	isA4ABillingDragonPurchase,
 	isRecentMonthlyPurchase,
-	isRenewing,
+	isRenewingBeforeExpiration,
 	isExpiring,
-	isExpired,
+	isExpiredOrRemoved,
 	isIncludedWithPlan,
 	isOneTimePurchase,
 	isAkismetFreeProduct,
 	creditCardHasAlreadyExpired,
 	creditCardExpiresBeforeSubscription,
-	isInExpirationGracePeriod,
 	isCentennialPurchase,
 } from '../../utils/purchase';
 import type { Purchase } from '@automattic/api-core';
@@ -157,8 +156,7 @@ export function PurchaseExpiryStatus( {
 	if (
 		purchase.introductory_offer?.is_within_period &&
 		isIntroductoryOfferFreeTrial &&
-		isRenewing( purchase ) &&
-		! isInExpirationGracePeriod( purchase )
+		isRenewingBeforeExpiration( purchase )
 	) {
 		return createInterpolateElement(
 			sprintf(
@@ -185,7 +183,7 @@ export function PurchaseExpiryStatus( {
 	if (
 		purchase.introductory_offer?.is_within_period &&
 		isIntroductoryOfferFreeTrial &&
-		! isInExpirationGracePeriod( purchase )
+		! isExpiredOrRemoved( purchase )
 	) {
 		return (
 			<span>
@@ -199,7 +197,7 @@ export function PurchaseExpiryStatus( {
 		);
 	}
 
-	const isRenewingOnDate = Boolean( isRenewing( purchase ) && purchase.renew_date );
+	const isRenewingOnDate = Boolean( isRenewingBeforeExpiration( purchase ) && purchase.renew_date );
 	if ( isRenewingOnDate && creditCardHasAlreadyExpired( purchase ) ) {
 		return <span>{ __( 'Credit card expired' ) }</span>;
 	}
@@ -215,27 +213,6 @@ export function PurchaseExpiryStatus( {
 					}
 				) }
 			</span>
-		);
-	}
-
-	// Check if expired within the grace period (not actually expired)
-	if ( isInExpirationGracePeriod( purchase ) ) {
-		if ( isRenewing( purchase ) ) {
-			// Auto-renew ON, renewal failing
-			return <Text intent="error">{ __( 'Pending renewal' ) }</Text>;
-		}
-
-		// Auto-renew OFF (isExpiring)
-		return (
-			<Text intent="error">
-				{ sprintf(
-					// translators: timeSinceExpiry is of the form "[number] [time-period] ago" i.e. "3 days ago"
-					__( 'Expired %(timeSinceExpiry)s' ),
-					{
-						timeSinceExpiry: getRelativeTimeString( new Date( purchase.expiry_date ) ),
-					}
-				) }
-			</Text>
 		);
 	}
 
@@ -372,14 +349,14 @@ export function PurchaseExpiryStatus( {
 			}
 		);
 	}
-	if ( isExpired( purchase ) && 'concierge-session' === purchase.product_slug ) {
+	if ( isExpiredOrRemoved( purchase ) && 'concierge-session' === purchase.product_slug ) {
 		// translators: %s is a formatted expiry date
 		return sprintf( __( 'Session used on %s' ), [
 			formatDate( new Date( purchase.expiry_date ), locale, { dateStyle: 'long' } ),
 		] );
 	}
 
-	if ( isExpired( purchase ) ) {
+	if ( isExpiredOrRemoved( purchase ) ) {
 		const isExpiredToday = isWithinLast( new Date( purchase.expiry_date ), 24, 'hours' );
 		const expiredTodayText = __( 'Expired today' );
 		// translators: timeSinceExpiry is of the form "[number] [time-period] ago" i.e. "3 days ago"

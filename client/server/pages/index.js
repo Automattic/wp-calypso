@@ -56,6 +56,7 @@ import {
 	attachBuildTimestamp,
 	attachHead,
 	attachI18n,
+	bumpStat,
 } from 'calypso/server/render';
 import sanitize from 'calypso/server/sanitize';
 import stateCache from 'calypso/server/state-cache';
@@ -878,6 +879,13 @@ const setUpSectionContext = ( section, entrypoint ) => ( req, res, next ) => {
 	next();
 };
 
+const setNotFoundStatus = ( req, res, next ) => {
+	res.status( 404 );
+	// bumpStat only accepts 32 chars max for the value
+	bumpStat( 'dashboard-404', req.path.slice( 0, 32 ) );
+	next();
+};
+
 const render404 =
 	( entrypoint = 'entry-main' ) =>
 	( req, res ) => {
@@ -887,6 +895,33 @@ const render404 =
 
 		res.status( 404 ).send( renderJsx( '404', ctx ) );
 	};
+
+const DASHBOARD_VARIANTS = [
+	{
+		definition: DOTCOM_DASHBOARD_SECTION_DEFINITION,
+		paths: DOTCOM_DASHBOARD_SECTION_PATHS,
+		entrypoint: 'entry-dashboard-dotcom',
+		devEnv: 'development',
+		isAllowedHostname: isAllowedDotcomDashboardHostname,
+		extraMiddleware: [ loadDashboardLocaleData ],
+	},
+	{
+		definition: CIAB_DASHBOARD_SECTION_DEFINITION,
+		paths: CIAB_DASHBOARD_SECTION_PATHS,
+		entrypoint: 'entry-dashboard-ciab',
+		devEnv: 'development',
+		isAllowedHostname: isAllowedCiabDashboardHostname,
+		extraMiddleware: [ loadDashboardLocaleData ],
+	},
+	{
+		definition: A4A_DASHBOARD_SECTION_DEFINITION,
+		paths: A4A_DASHBOARD_SECTION_PATHS,
+		entrypoint: 'entry-dashboard-a4a',
+		devEnv: 'a8c-for-agencies-development',
+		isAllowedHostname: isAllowedA4ADashboardHostname,
+		extraMiddleware: [],
+	},
+];
 
 /*
 We don't use `next` but need to add it for express.js to
@@ -1208,7 +1243,7 @@ export default function pages() {
 	 * SSR middleware if the request wasn't going to be resolved with SSR anyways.
 	 */
 	function handleSectionPath( section, sectionPath, entrypoint, reqFilter, extraMiddleware ) {
-		const pathRegex = pathToRegExp( sectionPath );
+		const pathRegex = sectionPath instanceof RegExp ? sectionPath : pathToRegExp( sectionPath );
 
 		app.get(
 			pathRegex,
@@ -1227,12 +1262,12 @@ export default function pages() {
 				next();
 			},
 			setUpRoute, // For SSR requests, this will happen in the serverRouter.
-			...( extraMiddleware ? [ extraMiddleware ] : [] ),
+			...( extraMiddleware ? [].concat( extraMiddleware ) : [] ),
 			serverRender
 		);
 	}
 
-	// Multi-site Dashboard routing.
+	// Special Calypso routes which also appear on `my.wordpress.com`
 	if ( isDashboardEnv() || calypsoEnv === 'development' ) {
 		const signupSectionDefinition = sections.find( ( s ) => s.name === 'signup' );
 		handleSectionPath( signupSectionDefinition, '/start', undefined, ( req ) =>
@@ -1245,24 +1280,6 @@ export default function pages() {
 		handleSectionPath( STEPPER_SECTION_DEFINITION, '/setup', 'entry-stepper', ( req ) =>
 			isAllowedDashboardRoute( { hostname: req.hostname, path: req.path } )
 		);
-		DOTCOM_DASHBOARD_SECTION_PATHS.forEach( ( route ) => {
-			handleSectionPath(
-				DOTCOM_DASHBOARD_SECTION_DEFINITION,
-				route,
-				'entry-dashboard-dotcom',
-				( req ) => isAllowedDotcomDashboardHostname( req.hostname ),
-				loadDashboardLocaleData
-			);
-		} );
-		CIAB_DASHBOARD_SECTION_PATHS.forEach( ( route ) => {
-			handleSectionPath(
-				CIAB_DASHBOARD_SECTION_DEFINITION,
-				route,
-				'entry-dashboard-ciab',
-				( req ) => isAllowedCiabDashboardHostname( req.hostname ),
-				loadDashboardLocaleData
-			);
-		} );
 	}
 
 	// Multi-site Dashboard (A4A) routing.
@@ -1275,12 +1292,23 @@ export default function pages() {
 				isAllowedA4ADashboardHostname( req.hostname )
 			);
 		} );
-		A4A_DASHBOARD_SECTION_PATHS.forEach( ( route ) => {
-			handleSectionPath( A4A_DASHBOARD_SECTION_DEFINITION, route, 'entry-dashboard-a4a', ( req ) =>
-				isAllowedA4ADashboardHostname( req.hostname )
-			);
-		} );
 	}
+
+	// Register each dashboard variant's explicit section paths.
+	DASHBOARD_VARIANTS.forEach( ( variant ) => {
+		if ( ! ( isDashboardEnv() || calypsoEnv === variant.devEnv ) ) {
+			return;
+		}
+		variant.paths.forEach( ( route ) =>
+			handleSectionPath(
+				variant.definition,
+				route,
+				variant.entrypoint,
+				( req ) => variant.isAllowedHostname( req.hostname ),
+				variant.extraMiddleware
+			)
+		);
+	} );
 
 	sections
 		.filter( ( section ) => ! section.envId || section.envId.indexOf( config( 'env_id' ) ) > -1 )
@@ -1298,6 +1326,16 @@ export default function pages() {
 			}
 		} );
 
+	// The dashboard host has no login page; send /log-in to WordPress.com.
+	if ( isDashboardEnv() || calypsoEnv === 'development' ) {
+		app.get( pathToRegExp( '/log-in' ), ( req, res, next ) => {
+			if ( ! isAllowedDotcomDashboardHostname( req.hostname ) ) {
+				return next( 'route' );
+			}
+			res.redirect( config( 'wpcom_url' ) + req.originalUrl );
+		} );
+	}
+
 	// Set up login routing.
 	handleSectionPath( LOGIN_SECTION_DEFINITION, '/log-in', 'entry-login' );
 	loginRouter( serverRouter( app, setUpRoute, null ) );
@@ -1306,8 +1344,19 @@ export default function pages() {
 	registerCspReportRoute( app );
 
 	// Multi-site Dashboard routing.
-	// Return earlier since we don't need to set up any other routes.
 	if ( isDashboardEnv() ) {
+		// Serve the dashboard shell for any otherwise-unmatched path so the client
+		// router renders its own not-found page, instead of falling through to default.
+		DASHBOARD_VARIANTS.forEach( ( variant ) =>
+			handleSectionPath(
+				variant.definition,
+				/.*/,
+				variant.entrypoint,
+				( req ) => variant.isAllowedHostname( req.hostname ),
+				[ setNotFoundStatus, ...variant.extraMiddleware ]
+			)
+		);
+
 		return app;
 	}
 

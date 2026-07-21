@@ -9,12 +9,14 @@
 /**
  * WordPress dependencies
  */
-import { dispatch, useSelect } from '@wordpress/data';
+import { useSelect } from '@wordpress/data';
 import { useState, useEffect, useMemo } from '@wordpress/element';
 import { __, _x } from '@wordpress/i18n';
 /**
  * Internal dependencies
  */
+import AiEditorialReview from './components/ai-editorial-review';
+import './components/ai-editorial-review.scss';
 import './components/block-ref.scss';
 import ExcerptPicker from './components/excerpt-picker';
 import './components/feedback-list.scss';
@@ -22,8 +24,6 @@ import ImageAltTextPicker from './components/image-alt-text-picker';
 import './components/image-alt-text-picker.scss';
 import PostFeedback from './components/post-feedback';
 import Proofread from './components/proofread';
-import ReviewMediation from './components/review-mediation';
-import './components/review-mediation.scss';
 import SeoDescriptionPicker from './components/seo-description-picker';
 import SeoTitlePicker from './components/seo-title-picker';
 import './components/base-suggestion-picker.scss';
@@ -62,9 +62,7 @@ import {
 } from './utils/tool-provider';
 import {
 	type BlockTransformationSuggestionType,
-	trackAiEditorialReviewSuggestionClick,
 	trackAiEditorialReviewSuggestionRendered,
-	trackBlockTransformationSuggestionClick,
 	trackBlockTransformationSuggestionRendered,
 } from './utils/tracking';
 import type { SuggestionOption } from '@automattic/agenttic-client';
@@ -85,11 +83,6 @@ let suggestionRenderedFiredOnce = false;
 
 /** Block transformation suggestions whose rendered event has fired this page life. */
 const blockTransformationSuggestionRenderedKeys = new Set< string >();
-
-let lastBlockTransformationSuggestionContext: {
-	blockType: string;
-	suggestions: BlockSuggestion[];
-} | null = null;
 
 /** Default suggestion shown when no block is selected. */
 const OPTIMIZE_TITLE_SUGGESTION = {
@@ -161,14 +154,9 @@ const SEO_ENHANCER_SUGGESTION = {
 	],
 };
 
-/**
- * Editor-level suggestion to run AI Editorial Review on saved content.
- *
- * The id remains stable because saved chats/tests may still refer to the
- * original review-mediation identifier.
- */
+/** Editor-level suggestion to run AI Editorial Review on saved content. */
 const AI_EDITORIAL_REVIEW_SUGGESTION = {
-	id: 'mediate-review-notes',
+	id: 'ai-editorial-review',
 	label: __( 'Editorial Review', __i18n_text_domain__ ),
 	description: __( 'In-depth review against your content guidelines.', __i18n_text_domain__ ),
 	prompt: __(
@@ -476,7 +464,7 @@ function handleShowComponent( input: any ): any {
 		isCurrent: true,
 		hideZoomAction: true,
 	};
-	if ( type === 'review-mediation' || type === 'post-feedback' || type === 'proofread' ) {
+	if ( type === 'ai-editorial-review' || type === 'post-feedback' || type === 'proofread' ) {
 		const reviewedPostId =
 			normalizeEditorPostId( componentProps.postId ) ?? getCurrentEditorPostId();
 		if ( reviewedPostId ) {
@@ -793,6 +781,11 @@ export const contextProvider = {
 					type: 'selected-block-content',
 					data: selectedBlockContent ? { content: selectedBlockContent } : null,
 				},
+				{
+					id: 'ai-editorial-review-contract',
+					type: 'ai-editorial-review-contract',
+					data: { version: 2 },
+				},
 			],
 		};
 	},
@@ -821,8 +814,8 @@ export function getChatComponent( type: string ): ComponentType | null {
 	if ( type === 'image-alt-text-picker' ) {
 		return ImageAltTextPicker as ComponentType;
 	}
-	if ( type === 'review-mediation' ) {
-		return ReviewMediation as ComponentType;
+	if ( type === 'ai-editorial-review' ) {
+		return AiEditorialReview as ComponentType;
 	}
 	if ( type === 'post-feedback' ) {
 		return PostFeedback as ComponentType;
@@ -1086,45 +1079,6 @@ const BLOCK_SUGGESTIONS: BlockSuggestion[] = [
 	},
 ];
 
-type BlockTransformationSuggestionMatch = {
-	suggestion: BlockSuggestion;
-	option?: SuggestionOption;
-};
-
-/**
- * Resolve a dispatched click value to its suggestion and the picked option.
- * Option-bearing suggestions use an empty prompt, so the value is the option's.
- */
-function matchBlockTransformationSuggestion(
-	suggestion: BlockSuggestion,
-	value: string
-): BlockTransformationSuggestionMatch | undefined {
-	const option = suggestion.options?.find( ( candidate ) => candidate.value === value );
-	if ( option ) {
-		return { suggestion, option };
-	}
-	// `filter( Boolean )` drops an empty prompt so a blank value can't false-match.
-	if (
-		[ suggestion.id, suggestion.label, suggestion.prompt ].filter( Boolean ).includes( value )
-	) {
-		return { suggestion };
-	}
-	return undefined;
-}
-
-function getBlockTransformationSuggestionMatchForValue(
-	value: string,
-	suggestions: BlockSuggestion[]
-): BlockTransformationSuggestionMatch | undefined {
-	for ( const suggestion of suggestions ) {
-		const match = matchBlockTransformationSuggestion( suggestion, value );
-		if ( match ) {
-			return match;
-		}
-	}
-	return undefined;
-}
-
 function trackRenderedBlockTransformationSuggestions(
 	suggestions: BlockSuggestion[],
 	block: any
@@ -1132,11 +1086,6 @@ function trackRenderedBlockTransformationSuggestions(
 	if ( typeof block?.name !== 'string' ) {
 		return;
 	}
-
-	lastBlockTransformationSuggestionContext = {
-		blockType: block.name,
-		suggestions,
-	};
 
 	suggestions.forEach( ( suggestion ) => {
 		const renderedKey = `${ suggestion.id }:${ block.name }`;
@@ -1149,44 +1098,6 @@ function trackRenderedBlockTransformationSuggestions(
 			suggestionType: suggestion.type,
 			blockType: block.name,
 		} );
-	} );
-}
-
-function trackBlockTransformationSuggestionClickForValue( value: string ): void {
-	if ( ! isBlockTransformationsEnabled() ) {
-		return;
-	}
-
-	const selectedBlock = getSelectedOrRememberedBlock();
-	if ( typeof selectedBlock?.name === 'string' ) {
-		const selectedBlockMatch = getBlockTransformationSuggestionMatchForValue(
-			value,
-			BLOCK_SUGGESTIONS.filter( ( suggestion ) => suggestion.condition( selectedBlock ) )
-		);
-		if ( selectedBlockMatch ) {
-			trackBlockTransformationSuggestionClick( {
-				suggestionId: selectedBlockMatch.suggestion.id,
-				suggestionType: selectedBlockMatch.suggestion.type,
-				blockType: selectedBlock.name,
-				optionId: selectedBlockMatch.option?.id,
-			} );
-			return;
-		}
-	}
-
-	const lastRenderedContext = lastBlockTransformationSuggestionContext;
-	const lastRenderedMatch = lastRenderedContext
-		? getBlockTransformationSuggestionMatchForValue( value, lastRenderedContext.suggestions )
-		: undefined;
-	if ( ! lastRenderedContext || ! lastRenderedMatch ) {
-		return;
-	}
-
-	trackBlockTransformationSuggestionClick( {
-		suggestionId: lastRenderedMatch.suggestion.id,
-		suggestionType: lastRenderedMatch.suggestion.type,
-		blockType: lastRenderedContext.blockType,
-		optionId: lastRenderedMatch.option?.id,
 	} );
 }
 
@@ -1228,45 +1139,20 @@ export function useSuggestions(
 
 	useEffect( () => {
 		const handleSuggestionClick = ( event: Event ) => {
-			const value = ( event as CustomEvent ).detail?.value;
+			const { suggestionId, value } = ( event as CustomEvent ).detail ?? {};
+			const matchesSuggestion = ( suggestion: { id: string; prompt: string } ) =>
+				suggestionId === suggestion.id ||
+				( ! suggestionId && typeof value === 'string' && value === suggestion.prompt );
 
 			setHidden( true );
 			clearSuggestionsFn?.();
 			suppressCurrentPageContentForNextContext = false;
 
-			if ( typeof value === 'string' ) {
-				trackBlockTransformationSuggestionClickForValue( value );
-			}
-
-			// Auto-expand the review-style chip flows below to 50vw.
-			if ( typeof value === 'string' && value === POST_FEEDBACK_SUGGESTION.prompt ) {
+			if ( matchesSuggestion( POST_FEEDBACK_SUGGESTION ) ) {
 				suppressCurrentPageContentForNextContext = true;
-				try {
-					( dispatch as any )( 'automattic/agents-manager' ).setIsSplitScreen( true );
-				} catch {
-					// Store not registered yet (e.g. tests); split-screen is demo polish.
-				}
 			}
-			if ( typeof value === 'string' && value === PROOFREAD_SUGGESTION.prompt ) {
+			if ( matchesSuggestion( PROOFREAD_SUGGESTION ) ) {
 				suppressCurrentPageContentForNextContext = true;
-				try {
-					( dispatch as any )( 'automattic/agents-manager' ).setIsSplitScreen( true );
-				} catch {
-					// Store not registered yet (e.g. tests); split-screen is demo polish.
-				}
-			}
-			if (
-				isAiEditorialReviewAvailable() &&
-				typeof value === 'string' &&
-				value === AI_EDITORIAL_REVIEW_SUGGESTION.prompt
-			) {
-				trackAiEditorialReviewSuggestionClick();
-				try {
-					( dispatch as any )( 'automattic/agents-manager' ).setIsSplitScreen( true );
-				} catch {
-					// Store not registered yet (e.g. tests); split-screen is a
-					// polish feature, so a silent no-op is the right fallback.
-				}
 			}
 		};
 		window.addEventListener( 'big-sky-inline-suggestion-click', handleSuggestionClick, true );

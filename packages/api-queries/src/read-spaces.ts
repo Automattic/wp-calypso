@@ -153,6 +153,7 @@ const setReadSpaceDetailCaches = ( queryClient: QueryClient, space: ReadSpaceDet
 
 export const createReadSpaceMutation = ( queryClient: QueryClient ) =>
 	mutationOptions( {
+		meta: { statId: 'read-space-create' },
 		mutationFn: createReadSpace,
 		onSuccess: ( space ) => {
 			// Append the summary to the list and seed the detail cache so the sidebar
@@ -180,6 +181,7 @@ export const updateReadSpaceMutation = ( queryClient: QueryClient ) =>
 		UpdateReadSpaceVariables,
 		{ previousList: ReadSpace[] | undefined; previousSlug: string | undefined }
 	>( {
+		meta: { statId: 'read-space-update' },
 		mutationFn: ( { spaceId, params } ) => updateReadSpace( spaceId, params ),
 		// Optimistically patch the cached list summary so the sidebar — which reads
 		// `useSpaces()` (this list) and renders each item's icon and colour from
@@ -252,6 +254,7 @@ export const updateReadSpaceMutation = ( queryClient: QueryClient ) =>
 // hard-deletes (no undo), so the caller should confirm before mutating.
 export const deleteReadSpaceMutation = ( queryClient: QueryClient ) =>
 	mutationOptions< ReadSpaceDeletionResult, unknown, string >( {
+		meta: { statId: 'read-space-delete' },
 		mutationFn: deleteReadSpace,
 		onSuccess: ( _result, spaceId ) => {
 			// Resolve the deleted space's slug (from the list, falling back to the
@@ -288,12 +291,14 @@ const writeReadSpaceDetail = ( queryClient: QueryClient, space: ReadSpaceDetails
 
 export const addReadSpaceSourceMutation = ( queryClient: QueryClient ) =>
 	mutationOptions< ReadSpaceDetails, unknown, ReadSpaceSourceMutationParams >( {
+		meta: { statId: 'read-space-source-add' },
 		mutationFn: addReadSpaceSource,
 		onSuccess: ( space ) => writeReadSpaceDetail( queryClient, space ),
 	} );
 
 export const deleteReadSpaceSourceMutation = ( queryClient: QueryClient ) =>
 	mutationOptions< ReadSpaceDetails, unknown, ReadSpaceSourceMutationParams >( {
+		meta: { statId: 'read-space-source-delete' },
 		mutationFn: deleteReadSpaceSource,
 		onSuccess: ( space ) => writeReadSpaceDetail( queryClient, space ),
 	} );

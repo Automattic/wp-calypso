@@ -14,6 +14,7 @@ export const siteDomainsQuery = ( siteId: number ) =>
 
 export const siteSetPrimaryDomainMutation = () =>
 	mutationOptions( {
+		meta: { statId: 'site-primary-domain-set' },
 		mutationFn: ( { siteId, domain }: { siteId: number; domain: string } ) =>
 			setPrimaryDomain( siteId, domain ),
 		onSuccess: ( data, { siteId } ) => {

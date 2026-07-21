@@ -192,16 +192,45 @@ export default function SiteActionInterstitial( {
 
 	const getRenewalText = ( p: Purchase ) => {
 		if ( isRemove ) {
+			if ( p.isPastExpiryDate ) {
+				return translate( 'Expired on %(date)s', {
+					args: { date: moment( p.expiryDate ).format( 'LL' ) },
+				} );
+			}
 			return translate( 'Expires on %(date)s', {
 				args: { date: moment( p.expiryDate ).format( 'LL' ) },
 			} );
 		}
-		return translate( 'Renews at %(price)s on %(date)s', {
-			args: {
-				price: p.priceText,
-				date: moment( p.renewDate || p.expiryDate ).format( 'LL' ),
-			},
-		} );
+		const expiryDate = p.expiryDate ? moment( p.expiryDate ).format( 'LL' ) : null;
+		// Once the expiry date has passed, lead with the expiry status rather
+		// than any scheduled auto-renewal date. During the grace period the UI
+		// should steer toward manual renewal — a remaining auto-renewal attempt
+		// is unlikely to succeed — so show "Expired on" even if `renewDate` is
+		// still set.
+		if ( p.isPastExpiryDate && expiryDate ) {
+			return translate( 'Renews at %(price)s. Expired on %(date)s', {
+				args: { price: p.priceText, date: expiryDate },
+			} );
+		}
+		// An upcoming scheduled renewal: show its date. `renewDate` is only
+		// populated when there is an upcoming auto-renewal, so an empty value
+		// means "not renewing".
+		if ( p.renewDate ) {
+			return translate( 'Renews at %(price)s on %(date)s', {
+				args: {
+					price: p.priceText,
+					date: moment( p.renewDate ).format( 'LL' ),
+				},
+			} );
+		}
+		// Not yet expired and not renewing: show the upcoming expiry date.
+		if ( expiryDate ) {
+			return translate( 'Renews at %(price)s. Expires on %(date)s', {
+				args: { price: p.priceText, date: expiryDate },
+			} );
+		}
+		// One-time/perpetual purchase (no renewal, no expiry): no subtitle.
+		return '';
 	};
 
 	return (

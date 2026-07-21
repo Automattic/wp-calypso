@@ -6,6 +6,7 @@ import { addQueryArgs } from '@wordpress/url';
 import { useMemo, useState, type ComponentType, type ReactElement } from 'react';
 import { useSiteLaunchGatingVariant } from 'calypso/lib/use-site-launch-gating-variant';
 import { getCurrentDashboard } from '../../app/routing';
+import { withSnackbar } from '../../app/snackbars/with-snackbar';
 import { dashboardLinkWithBackport, redirectToDashboardLink, wpcomLink } from '../../utils/link';
 import {
 	isSitePlanLaunchable as getIsSitePlanLaunchable,
@@ -62,15 +63,12 @@ export function useSiteLaunch(
 		select: ( data ) => data.filter( ( d ) => d.blog_id === site.ID ),
 	} );
 
-	const launchMutation = useMutation( {
-		...siteLaunchMutation( site.ID ),
-		meta: {
-			snackbar: {
-				success: __( 'Your site has been launched; now you can share it with the world!' ),
-				error: __( 'Failed to launch site.' ),
-			},
-		},
-	} );
+	const launchMutation = useMutation(
+		withSnackbar( siteLaunchMutation( site.ID ), {
+			success: __( 'Your site has been launched; now you can share it with the world!' ),
+			error: __( 'Failed to launch site.' ),
+		} )
+	);
 
 	const [ isModalOpen, setIsModalOpen ] = useState( false );
 	const [ isExperimentLoading, variant ] = useSiteLaunchGatingVariant();

@@ -33,9 +33,10 @@ describe( '<UpcomingRenewalsDialog>', () => {
 			currencyCode: 'USD',
 			expiryDate: moment().add( 20, 'days' ).format(),
 			expiryStatus: 'expiring',
+			subscriptionStatus: 'active',
 			renewDate: '',
 			productSlug: 'personal-bundle',
-			productName: 'Personal Plan',
+			productName: 'WordPress.com Personal',
 			amount: 100,
 		},
 		{
@@ -43,6 +44,7 @@ describe( '<UpcomingRenewalsDialog>', () => {
 			currencyCode: 'USD',
 			expiryDate: moment().add( 10, 'days' ).format(),
 			expiryStatus: 'expiring',
+			subscriptionStatus: 'active',
 			renewDate: '',
 			productSlug: 'dotlive_domain',
 			meta: 'personalsitetest1234.live',
@@ -78,7 +80,7 @@ describe( '<UpcomingRenewalsDialog>', () => {
 		).toHaveTextContent( '$200' );
 		expect(
 			document.body.querySelectorAll( '.upcoming-renewals-dialog__name' )[ 1 ]
-		).toHaveTextContent( /Personal PlanSite Plan: expires in 20 days/ );
+		).toHaveTextContent( /WordPress.com PersonalExpires in 20 days/ );
 		expect(
 			document.body.querySelectorAll( '.upcoming-renewals-dialog__price' )[ 1 ]
 		).toHaveTextContent( '$100' );
