@@ -1,0 +1,33 @@
+@import '../../styles/variables.scss';
+
+// Docked-chat styles for Big Sky's pattern picker — the one `show-component`
+// type still rendered by the provider (`getChatComponent` fallthrough).
+// Delete when the pattern picker migrates into AM.
+.agents-manager-chat--docked .agenttic {
+	.Message-module_message {
+		.big-sky__item-picker__arrows {
+			bottom: -40px;
+
+			.components-button {
+				color: $gray-700;
+
+				&:not( :disabled ):hover {
+					color: $gray-100;
+				}
+
+				&:disabled {
+					opacity: 0.5;
+				}
+
+				&.is-pressed {
+					color: $gray-100;
+					background-color: #484848;
+				}
+			}
+		}
+
+		.big-sky__item-picker__pager {
+			color: $gray-400;
+		}
+	}
+}
