@@ -9,36 +9,18 @@ const mockGetEditedEntityRecord = jest.fn( () => ( {
 	styles: { color: { text: '#000' } },
 } ) );
 const mockEditEntityRecord = jest.fn();
-const mockReplaceInnerBlocks = jest.fn();
-const mockReplaceTemplatePart = jest.fn();
-const mockGetBlocks = jest.fn( () => [] );
-const mockGetSectionRootClientId = jest.fn( () => 'section-root' );
 const mockGlobalStylesId = 'global-styles-1';
 
 jest.mock( '@wordpress/core-data', () => ( { store: 'core' } ) );
-jest.mock( '@wordpress/block-editor', () => ( { store: 'block-editor' } ) );
-
-jest.mock( '../../utils/unlock-private-apis', () => ( {
-	unlock: () => ( { getSectionRootClientId: mockGetSectionRootClientId } ),
-} ) );
-
-jest.mock( '../use-template-parts', () => ( {
-	__esModule: true,
-	default: () => ( { replaceTemplatePart: mockReplaceTemplatePart } ),
-} ) );
 
 jest.mock( '@wordpress/data', () => ( {
 	useSelect: ( callback: ( select: ( store: string ) => unknown ) => unknown ) =>
 		callback( () => ( {
 			__experimentalGetCurrentGlobalStylesId: () => mockGlobalStylesId,
 			getEditedEntityRecord: mockGetEditedEntityRecord,
-			getBlocks: mockGetBlocks,
-			getBlocksByName: jest.fn( () => [] ),
-			getBlock: jest.fn( () => null ),
 		} ) ),
 	useDispatch: () => ( {
 		editEntityRecord: mockEditEntityRecord,
-		replaceInnerBlocks: mockReplaceInnerBlocks,
 	} ),
 } ) );
 
@@ -48,11 +30,11 @@ describe( 'useCheckpoint', () => {
 	} );
 
 	describe( 'setCheckpoint', () => {
-		it( 'captures global styles and blocks, stores by ID', () => {
+		it( 'captures global styles and stores by ID', () => {
 			const { result } = renderHook( () => useCheckpoint() );
 
 			act( () => {
-				result.current.setCheckpoint( 'msg-1', [ 'color' ] );
+				result.current.setCheckpoint( 'msg-1' );
 			} );
 
 			expect( mockGetEditedEntityRecord ).toHaveBeenCalledWith(
@@ -67,7 +49,7 @@ describe( 'useCheckpoint', () => {
 			const { result } = renderHook( () => useCheckpoint() );
 
 			act( () => {
-				result.current.setCheckpoint( '', [ 'color' ] );
+				result.current.setCheckpoint( '' );
 			} );
 
 			expect( mockGetEditedEntityRecord ).not.toHaveBeenCalled();
@@ -75,11 +57,11 @@ describe( 'useCheckpoint', () => {
 	} );
 
 	describe( 'restoreCheckpoint', () => {
-		it( 'restores global styles and blocks', async () => {
+		it( 'restores global styles', async () => {
 			const { result } = renderHook( () => useCheckpoint() );
 
 			act( () => {
-				result.current.setCheckpoint( 'msg-1', [ 'blocks' ] );
+				result.current.setCheckpoint( 'msg-1' );
 			} );
 
 			await act( async () => {
@@ -95,8 +77,6 @@ describe( 'useCheckpoint', () => {
 					styles: { color: { text: '#000' } },
 				}
 			);
-			expect( mockReplaceTemplatePart ).toHaveBeenCalledTimes( 3 );
-			expect( mockReplaceInnerBlocks ).toHaveBeenCalledWith( 'section-root', [] );
 		} );
 
 		it( 'does nothing for non-existent checkpoint', async () => {
@@ -107,7 +87,6 @@ describe( 'useCheckpoint', () => {
 			} );
 
 			expect( mockEditEntityRecord ).not.toHaveBeenCalled();
-			expect( mockReplaceTemplatePart ).not.toHaveBeenCalled();
 		} );
 	} );
 
@@ -117,11 +96,11 @@ describe( 'useCheckpoint', () => {
 			expect( result.current.hasCheckpoint( 'non-existent' ) ).toBe( false );
 		} );
 
-		it( 'returns `true` when checkpoint has keys', () => {
+		it( 'returns `true` when a checkpoint exists', () => {
 			const { result } = renderHook( () => useCheckpoint() );
 
 			act( () => {
-				result.current.setCheckpoint( 'msg-1', [ 'color' ] );
+				result.current.setCheckpoint( 'msg-1' );
 			} );
 
 			expect( result.current.hasCheckpoint( 'msg-1' ) ).toBe( true );

@@ -17,12 +17,6 @@ export interface ShowComponentInput {
 
 export type ShowComponentCallback = ( input: ShowComponentInput ) => Promise< AbilityResult >;
 
-const CHECKPOINT_KEYS: Record< ShowComponentType, string > = {
-	'button-picker': 'button',
-	'font-picker': 'font',
-	'color-picker': 'color',
-};
-
 /**
  * Dependencies provided by the host (e.g., `orchestrator-chat`).
  */
@@ -65,7 +59,7 @@ export function createCallback( deps: ShowComponentDeps ): ShowComponentCallback
 			// Set checkpoint so the action can be undone.
 			const checkpointId = toolCallId || messageId;
 			if ( checkpointId ) {
-				deps.checkpoint.setCheckpoint( checkpointId, [ CHECKPOINT_KEYS[ type ] ] );
+				deps.checkpoint.setCheckpoint( checkpointId );
 			}
 
 			const successMessage =

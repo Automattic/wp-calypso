@@ -208,7 +208,6 @@ __metadata:
     "@wordpress/components": "npm:^37.0.0"
     "@wordpress/compose": "npm:^8.2.0"
     "@wordpress/core-data": "npm:^7.48.0"
-    "@wordpress/hooks": "npm:^4.48.0"
     "@wordpress/html-entities": "npm:^4.48.0"
     "@wordpress/i18n": "npm:^6.21.0"
     "@wordpress/icons": "npm:^13.3.0"

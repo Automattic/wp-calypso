@@ -75,7 +75,7 @@ describe( 'show-component/create-callback', () => {
 			makeInput( { toolCallId: 'toolu_1', messageId: 'msg-1' } )
 		);
 
-		expect( deps.checkpoint.setCheckpoint ).toHaveBeenCalledWith( 'toolu_1', [ 'color' ] );
+		expect( deps.checkpoint.setCheckpoint ).toHaveBeenCalledWith( 'toolu_1' );
 		expect( JSON.parse( result.agentMessage! ).data.calypsoCheckpointId ).toBe( 'toolu_1' );
 	} );
 
@@ -99,17 +99,13 @@ describe( 'show-component/create-callback', () => {
 		expect( mockZoomOut ).not.toHaveBeenCalled();
 	} );
 
-	it( 'sets checkpoint with the correct key for each picker type', async () => {
+	it( 'sets a checkpoint for each picker type', async () => {
 		const deps = makeDeps();
 
-		for ( const [ type, expectedKey ] of [
-			[ 'color-picker', 'color' ],
-			[ 'font-picker', 'font' ],
-			[ 'button-picker', 'button' ],
-		] as const ) {
+		for ( const type of [ 'color-picker', 'font-picker', 'button-picker' ] as const ) {
 			jest.clearAllMocks();
 			await createCallback( deps )( makeInput( { type, messageId: 'msg-1' } ) );
-			expect( deps.checkpoint.setCheckpoint ).toHaveBeenCalledWith( 'msg-1', [ expectedKey ] );
+			expect( deps.checkpoint.setCheckpoint ).toHaveBeenCalledWith( 'msg-1' );
 		}
 	} );
 
