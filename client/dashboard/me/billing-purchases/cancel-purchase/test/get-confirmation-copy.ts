@@ -11,6 +11,7 @@ import {
 	getButtonLabels,
 	getFallbackLossItems,
 	getTitanCancellationLossItems,
+	getRefundEligibilityPromoCopy,
 } from '../get-confirmation-copy';
 import type { Purchase } from '@automattic/api-core';
 
@@ -344,6 +345,29 @@ describe( 'getTitanCancellationLossItems', () => {
 		);
 		expect( items ).toContain( '100 GB of mailbox storage' );
 		expect( items ).toContain( 'Titan AI, email campaigns, and more' );
+	} );
+} );
+
+describe( 'getRefundEligibilityPromoCopy', () => {
+	test( 'returns the plan-worded prompt and link label', () => {
+		const { prompt, linkLabel } = getRefundEligibilityPromoCopy( {
+			purchase: makePurchaseForCategory( 'plan' ),
+			refundAmount: '$96.00',
+		} );
+		expect( prompt ).toBe(
+			'You’re eligible for a $96.00 refund if you remove your plan now. Your features will be unavailable right away.'
+		);
+		expect( linkLabel ).toBe( 'Remove plan and claim refund.' );
+	} );
+	test( 'is not product-aware — non-plan products still get the plan wording', () => {
+		const { prompt, linkLabel } = getRefundEligibilityPromoCopy( {
+			purchase: makePurchaseForCategory( 'domain' ),
+			refundAmount: '$12.00',
+		} );
+		expect( prompt ).toBe(
+			'You’re eligible for a $12.00 refund if you remove your plan now. Your features will be unavailable right away.'
+		);
+		expect( linkLabel ).toBe( 'Remove plan and claim refund.' );
 	} );
 } );
 
