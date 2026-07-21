@@ -273,9 +273,15 @@ describe( 'closeAccountAndRecordLeak', () => {
 		expect( existsSync( markerFile( details.userID ) ) ).toBe( false );
 	} );
 
-	test( 'retries while the close is blocked by an active Atomic site, then clears once it succeeds', async () => {
-		jest.useFakeTimers();
-		try {
+	describe( 'retry loops (fake timers)', () => {
+		beforeEach( () => {
+			jest.useFakeTimers();
+		} );
+		afterEach( () => {
+			jest.useRealTimers();
+		} );
+
+		test( 'retries while the close is blocked by an active Atomic site, then clears once it succeeds', async () => {
 			let calls = 0;
 			const closeAccount = jest.fn( async () => {
 				calls += 1;
@@ -294,14 +300,9 @@ describe( 'closeAccountAndRecordLeak', () => {
 
 			expect( closeAccount ).toHaveBeenCalledTimes( 3 );
 			expect( existsSync( markerFile( details.userID ) ) ).toBe( false );
-		} finally {
-			jest.useRealTimers();
-		}
-	} );
+		} );
 
-	test( 'records a leak when the Atomic site never deprovisions within the retry window', async () => {
-		jest.useFakeTimers();
-		try {
+		test( 'records a leak when the Atomic site never deprovisions within the retry window', async () => {
 			const promise = closeAccountAndRecordLeak(
 				fakeClient( {
 					closeAccount: jest.fn( async () => ( {
@@ -318,9 +319,64 @@ describe( 'closeAccountAndRecordLeak', () => {
 			await promise;
 
 			expect( existsSync( markerFile( details.userID ) ) ).toBe( true );
-		} finally {
-			jest.useRealTimers();
-		}
+		} );
+
+		test( 'retries while the close POST rejects a fresh token, then clears once it succeeds', async () => {
+			let calls = 0;
+			const closeAccount = jest.fn( async () => {
+				calls += 1;
+				return calls < 3
+					? { error: 'invalid_token', message: 'The OAuth2 token is invalid.' }
+					: { success: true };
+			} );
+			const promise = closeAccountAndRecordLeak(
+				fakeClient( { closeAccount, getMyAccountInformation: jest.fn( async () => ( {} ) ) } ),
+				details,
+				leakDir
+			);
+			await jest.advanceTimersByTimeAsync( 30 * 1000 );
+			await promise;
+
+			expect( closeAccount ).toHaveBeenCalledTimes( 3 );
+			expect( existsSync( markerFile( details.userID ) ) ).toBe( false );
+		} );
+
+		test( 'records a leak when the close POST still rejects the token past the retry window', async () => {
+			const promise = closeAccountAndRecordLeak(
+				fakeClient( {
+					closeAccount: jest.fn( async () => ( {
+						error: 'invalid_token',
+						message: 'The OAuth2 token is invalid.',
+					} ) ),
+					getMyAccountInformation: jest.fn( async () => ( {} ) ),
+				} ),
+				details,
+				leakDir
+			);
+			await jest.advanceTimersByTimeAsync( 60 * 1000 );
+			await promise;
+
+			expect( existsSync( markerFile( details.userID ) ) ).toBe( true );
+		} );
+	} );
+
+	test( 'a thrown invalid_token error is not retried and resolves via the probe', async () => {
+		const closeAccount = jest.fn( async () => {
+			throw new Error( 'invalid_token: The OAuth2 token is invalid.' );
+		} );
+		await closeAccountAndRecordLeak(
+			fakeClient( {
+				closeAccount,
+				getMyAccountInformation: jest.fn( async () => {
+					throw new Error( 'invalid_token: The OAuth2 token is invalid.' );
+				} ),
+			} ),
+			details,
+			leakDir
+		);
+
+		expect( closeAccount ).toHaveBeenCalledTimes( 1 );
+		expect( existsSync( markerFile( details.userID ) ) ).toBe( false );
 	} );
 
 	test( 'never throws even when the client throws', async () => {
