@@ -50,6 +50,7 @@ describe( 'useLastDraftQuery', () => {
 			order_by: 'modified',
 			order: 'DESC',
 			number: 1,
+			fields: 'ID,site_ID,title',
 		} );
 		expect( result.current.data ).toEqual( {
 			id: 45,
