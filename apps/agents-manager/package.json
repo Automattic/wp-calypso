@@ -50,6 +50,7 @@
 		"@wordpress/readable-js-assets-webpack-plugin": "^3.24.0",
 		"copy-webpack-plugin": "^10.2.4",
 		"postcss-prefix-selector": "^1.16.1",
+		"sass": "1.77.8",
 		"webpack": "^5.99.8"
 	},
 	"peerDependencies": {

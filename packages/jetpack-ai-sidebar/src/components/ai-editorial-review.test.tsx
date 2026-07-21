@@ -119,18 +119,32 @@ jest.mock( '@wordpress/components', () => {
 	const React = jest.requireActual< typeof import('react') >( 'react' );
 	return {
 		Panel: ( { children, className }: any ) =>
-			React.createElement( 'div', { className }, children ),
+			React.createElement(
+				'div',
+				{ className: [ 'components-panel', className ].filter( Boolean ).join( ' ' ) },
+				children
+			),
 		PanelBody: ( { title, children, className, opened, onToggle }: any ) =>
 			React.createElement(
 				'section',
-				{ className, 'data-testid': 'panel-body' },
+				{
+					className: [ 'components-panel__body', className, opened !== false && 'is-opened' ]
+						.filter( Boolean )
+						.join( ' ' ),
+					'data-testid': 'panel-body',
+				},
 				React.createElement(
-					'button',
-					{
-						type: 'button',
-						onClick: () => onToggle && onToggle( ! opened ),
-					},
-					title
+					'h2',
+					{ className: 'components-panel__body-title' },
+					React.createElement(
+						'button',
+						{
+							className: 'components-panel__body-toggle',
+							type: 'button',
+							onClick: () => onToggle && onToggle( ! opened ),
+						},
+						title
+					)
 				),
 				opened !== false ? children : null
 			),
@@ -209,7 +223,7 @@ describe( 'AiEditorialReview — smoke render', () => {
 	} );
 
 	it( 'renders all five sections when the payload is fully populated', () => {
-		render(
+		const { container } = render(
 			<AiEditorialReview
 				{ ...basePayload( {
 					conflicts: [
@@ -264,6 +278,19 @@ describe( 'AiEditorialReview — smoke render', () => {
 		expect( screen.getByText( 'was voted upon' ) ).toBeInTheDocument();
 		expect( screen.getByText( 'Avoid passive voice.' ) ).toBeInTheDocument();
 		expect( screen.getByText( 'Passive voice detected.' ) ).toBeInTheDocument();
+
+		// These direct-child classes are stylesheet layout hooks: cards use the
+		// full content width while prose retains the chat-message gutter.
+		const root = container.querySelector( '.jetpack-ai-editorial-review' );
+		expect( root ).toBeInTheDocument();
+		expect(
+			root?.querySelector( '.jetpack-ai-editorial-review__edits > .jetpack-ai-feedback-list__item' )
+		).toBeInTheDocument();
+		expect(
+			root?.querySelector(
+				'.jetpack-ai-editorial-review__violations > .jetpack-ai-feedback-list__items'
+			)
+		).toBeInTheDocument();
 	} );
 
 	it( 'tracks the rendered result with aggregate counts', async () => {

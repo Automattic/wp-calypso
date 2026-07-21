@@ -99,14 +99,26 @@ jest.mock( '@wordpress/blocks', () => ( {
 jest.mock( '@wordpress/components', () => {
 	const react = jest.requireActual< typeof import('react') >( 'react' );
 	return {
-		Panel: ( { children }: any ) => react.createElement( 'div', null, children ),
-		PanelBody: ( { children, initialOpen, title }: any ) =>
+		Panel: ( { children, className }: any ) =>
 			react.createElement(
-				'section',
-				{ 'data-initial-open': initialOpen ? 'true' : 'false' },
-				react.createElement( 'h3', null, title ),
+				'div',
+				{ className: [ 'components-panel', className ].filter( Boolean ).join( ' ' ) },
 				children
 			),
+		PanelBody: ( { children, className, initialOpen, opened, title }: any ) => {
+			const isOpened = opened ?? initialOpen ?? true;
+			return react.createElement(
+				'section',
+				{
+					className: [ 'components-panel__body', className, isOpened && 'is-opened' ]
+						.filter( Boolean )
+						.join( ' ' ),
+					'data-initial-open': initialOpen ? 'true' : 'false',
+				},
+				react.createElement( 'h2', { className: 'components-panel__body-title' }, title ),
+				isOpened ? children : null
+			);
+		},
 	};
 } );
 
@@ -502,6 +514,14 @@ describe( 'PostFeedback', () => {
 				],
 			} )
 		);
+
+		// These direct-child classes are stylesheet layout hooks: the card list
+		// fills the review width while the surrounding prose keeps its gutter.
+		const root = container.querySelector( '.jetpack-ai-feedback-list' );
+		const items = root?.querySelector( '.jetpack-ai-feedback-list__items' );
+		expect( root ).toBeInTheDocument();
+		expect( items ).toBeInTheDocument();
+		expect( items?.parentElement ).toHaveClass( 'components-panel__body' );
 
 		const badge = container.querySelector( '.jetpack-ai-feedback-list__item-badge' );
 		expect( badge?.textContent ).toBe( 'Spacing (1/1)' );
@@ -986,9 +1006,9 @@ describe( 'PostFeedback', () => {
 			} )
 		);
 
-		const headings = Array.from( container.querySelectorAll( 'section > h3' ) ).map(
-			( node ) => node.textContent
-		);
+		const headings = Array.from(
+			container.querySelectorAll( '.components-panel__body-title' )
+		).map( ( node ) => node.textContent );
 		expect( headings ).toContain( 'Suggested edits (2)' );
 	} );
 

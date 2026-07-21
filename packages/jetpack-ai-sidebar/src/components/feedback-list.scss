@@ -15,6 +15,9 @@
 	);
 	--jetpack-ai-feedback-list-applied: #079d2c;
 
+	// Agenttic's message row has a spacing-4 inline gutter. Let the review
+	// content fill that gutter, then restore it only for non-card content.
+	margin-inline: calc( -1 * var( --spacing-4 ) );
 	display: flex;
 	flex-direction: column;
 	font-size: 13px;
@@ -53,6 +56,14 @@
 		border: 0;
 		border-top: 1px solid color-mix( in srgb, currentColor 10%, transparent );
 
+		&.is-opened {
+			padding-inline: 0;
+
+			> .components-panel__body-title {
+				margin-inline: 0;
+			}
+		}
+
 		&:first-child {
 			border-top: 0;
 		}
@@ -86,7 +97,12 @@
 		fill: currentColor;
 	}
 
-	.components-panel__body.is-opened > :not( .components-panel__body-title ) {
+	.components-panel__body.is-opened
+		> :not( .components-panel__body-title ):not( .jetpack-ai-feedback-list__items ) {
+		padding: 0 var( --spacing-4 ) 0.75rem;
+	}
+
+	.components-panel__body.is-opened > .jetpack-ai-feedback-list__items {
 		padding: 0 0 0.75rem;
 	}
 
@@ -415,7 +431,7 @@
 
 	&__footer {
 		margin-top: 0.75rem;
-		padding-top: 0.75rem;
+		padding-block-start: 0.75rem;
 		border-top: 1px solid color-mix( in srgb, currentColor 10%, transparent );
 	}
 
