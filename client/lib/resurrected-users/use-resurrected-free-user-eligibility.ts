@@ -1,5 +1,6 @@
 import config from '@automattic/calypso-config';
 import { useEffect, useMemo } from '@wordpress/element';
+import { useExperiment } from 'calypso/lib/explat';
 import { isRenewingBeforeExpiration, isSubscription } from 'calypso/lib/purchases';
 import { useDispatch, useSelector } from 'calypso/state';
 import { getCurrentUserId } from 'calypso/state/current-user/selectors';
@@ -15,6 +16,7 @@ import {
 	RESURRECTION_DAY_LIMIT_EXPERIMENT,
 	WELCOME_BACK_MODAL_FORCE_FLAG,
 	WELCOME_BACK_VARIATION_MANUAL,
+	RESURRECTED_FREE_USERS_EXPERIMENT,
 } from './constants';
 import { hasExceededDormancyThreshold } from './utils';
 import type { Purchase } from 'calypso/lib/purchases/types';
@@ -79,8 +81,16 @@ export function useResurrectedFreeUserEligibility(): EligibilityResult {
 	);
 
 	const baseEligibility = isResurrectedSixMonths && hasActiveSubscriptions === false;
+	const [ isExperimentLoading, experimentAssignment ] = useExperiment(
+		RESURRECTED_FREE_USERS_EXPERIMENT,
+		{
+			isEligible: baseEligibility,
+		}
+	);
 
+	const variationName = experimentAssignment?.variationName ?? WELCOME_BACK_VARIATION_MANUAL;
 	const isForcedByFlag = config.isEnabled( WELCOME_BACK_MODAL_FORCE_FLAG );
+	const experimentReady = ! isExperimentLoading && !! variationName;
 
 	if ( isForcedByFlag ) {
 		return {
@@ -88,20 +98,22 @@ export function useResurrectedFreeUserEligibility(): EligibilityResult {
 			isResurrectedSixMonths,
 			hasActivePaidSubscription: hasActiveSubscriptions,
 			isEligible: true,
-			variationName: WELCOME_BACK_VARIATION_MANUAL,
+			variationName,
 			isForcedVariation: true,
 		};
 	}
 
-	const isLoading = isUserSettingsFetching || ! purchasesLoaded || isUserPurchasesFetching;
-
-	const variationName = baseEligibility ? WELCOME_BACK_VARIATION_MANUAL : null;
+	const isLoading =
+		isUserSettingsFetching ||
+		! purchasesLoaded ||
+		isUserPurchasesFetching ||
+		( baseEligibility && isExperimentLoading );
 
 	return {
 		isLoading,
 		isResurrectedSixMonths,
 		hasActivePaidSubscription: hasActiveSubscriptions,
-		isEligible: baseEligibility,
+		isEligible: baseEligibility && experimentReady,
 		variationName,
 		isForcedVariation: false,
 	};
