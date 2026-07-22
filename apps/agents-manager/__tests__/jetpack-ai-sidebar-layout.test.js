@@ -93,6 +93,18 @@ describe.each( COMPONENTS )( '$name layout CSS contract', ( component ) => {
 	} );
 } );
 
+describe( 'Feedback List card CSS contract', () => {
+	const css = compileStylesheet( 'feedback-list.scss' );
+
+	it( 'uses the shared inline gutter for card content and actions', () => {
+		const diffRow = getDeclarations( css, '.jetpack-ai-feedback-list__diff-row' );
+		const actions = getDeclarations( css, '.jetpack-ai-feedback-list__actions' );
+
+		expect( diffRow.get( 'padding' ) ).toBe( '0.625rem var(--spacing-4)' );
+		expect( actions.get( 'padding' ) ).toBe( '0.75rem var(--spacing-4)' );
+	} );
+} );
+
 describe( 'AI Editorial Review conflict-card CSS contract', () => {
 	const css = compileStylesheet( 'ai-editorial-review.scss' );
 

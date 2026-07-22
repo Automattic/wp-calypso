@@ -252,6 +252,13 @@ describe( 'AiEditorialReview — smoke render', () => {
 							rationale: 'Concise.',
 							supported_by_reviewers: [ 'Marcus' ],
 						},
+						{
+							block_index: 1,
+							current_text: 'voted last Tuesday',
+							suggested_text: 'approved on Tuesday',
+							rationale: 'Use precise language.',
+							supported_by_reviewers: [],
+						},
 					],
 					guideline_violations: [
 						{
@@ -279,13 +286,16 @@ describe( 'AiEditorialReview — smoke render', () => {
 		expect( screen.getByText( 'Avoid passive voice.' ) ).toBeInTheDocument();
 		expect( screen.getByText( 'Passive voice detected.' ) ).toBeInTheDocument();
 
-		// These direct-child classes are stylesheet layout hooks: cards use the
+		// These direct-child classes are stylesheet layout hooks: card lists use the
 		// full content width while prose retains the chat-message gutter.
 		const root = container.querySelector( '.jetpack-ai-editorial-review' );
 		expect( root ).toBeInTheDocument();
-		expect(
-			root?.querySelector( '.jetpack-ai-editorial-review__edits > .jetpack-ai-feedback-list__item' )
-		).toBeInTheDocument();
+		const editItems = root?.querySelector(
+			'.jetpack-ai-editorial-review__edits > .jetpack-ai-feedback-list__items'
+		);
+		expect( editItems ).toBeInTheDocument();
+		expect( editItems?.children ).toHaveLength( 2 );
+		expect( editItems?.firstElementChild ).toHaveClass( 'jetpack-ai-feedback-list__item' );
 		expect(
 			root?.querySelector(
 				'.jetpack-ai-editorial-review__violations > .jetpack-ai-feedback-list__items'
