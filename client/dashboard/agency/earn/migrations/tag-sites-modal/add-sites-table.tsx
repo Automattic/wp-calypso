@@ -2,6 +2,7 @@ import {
 	BaseControl,
 	CheckboxControl,
 	__experimentalSpacer as Spacer,
+	__experimentalText as Text,
 } from '@wordpress/components';
 import { useViewportMatch } from '@wordpress/compose';
 import { DataViews, filterSortAndPaginate } from '@wordpress/dataviews';
@@ -92,20 +93,19 @@ export default function MigrationsAddSitesTable( {
 	const fields: Field< SiteItem >[] = useMemo( () => {
 		const siteColumn = {
 			id: 'site',
+			// DataViews types `label` as a string, but it accepts a node at runtime;
+			// this renders the select-all control in the column header.
 			label: (
-				<div>
-					<CheckboxControl
-						label={ __( 'Site' ) }
-						checked={ availableSites.length > 0 && selectedSites.length === availableSites.length }
-						onChange={ onSelectAllSites }
-						disabled={ false }
-					/>
-				</div>
-			 ) as any,
+				<CheckboxControl
+					label={ __( 'Site' ) }
+					checked={ availableSites.length > 0 && selectedSites.length === availableSites.length }
+					onChange={ onSelectAllSites }
+					disabled={ false }
+				/>
+			 ) as unknown as string,
 			getValue: () => '-',
 			render: ( { item }: { item: SiteItem } ) => (
 				<CheckboxControl
-					className="view-details-button"
 					data-site-id={ item.id }
 					label={ item.site }
 					checked={ selectedSites.map( ( site ) => site.id ).includes( item.id ) }
@@ -146,19 +146,16 @@ export default function MigrationsAddSitesTable( {
 
 	return (
 		<>
-			<BaseControl
-				label={ __( 'Select sites to tag' ) }
-				className="migrations-tag-sites-modal__table-control"
-			>
+			<BaseControl label={ __( 'Select sites to tag' ) }>
 				{ migrationSourceHost && (
 					<Spacer marginY={ 4 }>
-						<div className="migrations-tag-sites-modal__instruction">
+						<Text variant="muted">
 							{ sprintf(
 								/* translators: %s: the hosting provider name */
 								__( 'Make sure you only select sites previously hosted on %s' ),
 								migrationSourceHost
 							) }
-						</div>
+						</Text>
 					</Spacer>
 				) }
 				<DataViews

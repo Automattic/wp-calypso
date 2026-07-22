@@ -4,7 +4,7 @@
 	// opaque background covers the list all the way down and no rows peek
 	// through beneath the buttons.
 	.components-modal__content {
-		padding-bottom: 0;
+		padding-block-end: 0;
 	}
 }
 
