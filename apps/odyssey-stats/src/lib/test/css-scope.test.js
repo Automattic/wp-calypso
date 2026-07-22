@@ -83,4 +83,28 @@ describe( 'Odyssey Stats CSS scoping (webpack-css-scope.js)', () => {
 
 		expect( compiled.trim() ).toBe( '.jp-stats-dashboard .card { border: 0; }' );
 	} );
+
+	it( 'leaves .color-scheme.is-<scheme> unprefixed — it sets the scheme vars on the element that carries the class', () => {
+		const compiled = compile( '.color-scheme.is-midnight { --color-accent: red; }' );
+
+		// Prefixing it would require a scope-root ancestor above an element that IS a scope root,
+		// so the rule would go dead — the same self-scoping case as the mount roots.
+		expect( compiled ).not.toContain( ':where(' );
+		expect( compiled ).toMatch( /^\.color-scheme\.is-midnight/m );
+	} );
+
+	it( 'still prefixes a nested rule under a colour scheme — only the self-scoping compound is exempt', () => {
+		const compiled = compile( '.color-scheme.is-light .masterbar { color: green; }' );
+
+		expect( compiled ).toContain( ':where(' );
+	} );
+
+	it( 'leaves .stats-widget-content.color-scheme unprefixed — the widget primary→accent remap on its own root', () => {
+		const compiled = compile( '.stats-widget-content.color-scheme { --color-primary: red; }', {
+			from: 'odyssey-stats/src/styles/scoped-theme-for-widget.scss',
+		} );
+
+		expect( compiled ).not.toContain( ':where(' );
+		expect( compiled ).toMatch( /^\.stats-widget-content\.color-scheme/m );
+	} );
 } );
