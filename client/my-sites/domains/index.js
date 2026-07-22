@@ -439,11 +439,8 @@ export default function () {
 		paths.domainUseMyDomain( ':site' ),
 		siteSelection,
 		setupPreferences,
-		maybeRedirectToMultiSiteDashboard(
-			( params, queries ) =>
-				queries.initialQuery
-					? `/domains/${ queries.initialQuery }/domain-transfer-setup`
-					: '/domains'
+		maybeRedirectToMultiSiteDashboard( ( params, queries ) =>
+			queries.initialQuery ? `/domains/${ queries.initialQuery }/domain-transfer-setup` : '/domains'
 		),
 		navigation,
 		domainsController.redirectIfNoSite( '/domains/add' ),
