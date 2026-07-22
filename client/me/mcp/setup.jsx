@@ -51,7 +51,7 @@ function McpSetupComponent( { path } ) {
 	const mcpClientOptions = [
 		{ label: 'Claude', value: 'claude' },
 		{ label: 'Claude Code', value: 'claude-code' },
-		{ label: 'ChatGPT', value: 'chatgpt' },
+		{ label: 'ChatGPT/Codex', value: 'chatgpt' },
 		{ label: 'Cursor', value: 'cursor' },
 		{ label: 'VS Code', value: 'vscode' },
 		{ label: 'Continue', value: 'continue' },
