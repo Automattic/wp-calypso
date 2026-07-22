@@ -1,5 +1,6 @@
 import { siteBySlugQuery, sitesQueryKey } from '@automattic/api-queries';
 import config from '@automattic/calypso-config';
+import { getCurrentDashboard } from '../routing';
 import type { User, Site } from '@automattic/api-core';
 import type { QueryClient } from '@tanstack/react-query';
 import type { AnyRouter, RouterState } from '@tanstack/react-router';
@@ -11,6 +12,7 @@ export const getSuperProps = ( user: User, router: AnyRouter, queryClient: Query
 		site_count: user.site_count,
 		site_id_label: 'wpcom',
 		client: config( 'client_slug' ),
+		dashboard: getCurrentDashboard(),
 	};
 
 	if ( typeof window !== 'undefined' ) {

@@ -13,6 +13,7 @@ import type {
 	FetchDashboardSiteFiltersParams,
 } from '@automattic/api-core';
 import type { PostHogOverrides } from '@automattic/posthog';
+import type { QueryKey } from '@tanstack/react-query';
 
 export type AgencySupports = {
 	overview: boolean;
@@ -47,6 +48,39 @@ export type SiteOverviewSupports = {
 	preview: boolean;
 };
 
+export type SiteLogsSectionsSupports = {
+	activity: boolean;
+	php: boolean;
+	server: boolean;
+};
+
+// Lifecycle routes (overview, critical-error, trial-ended,
+// site-building-in-progress, migration pages) are not listed here: they always
+// register so the shared site guards have a landing page in every variant.
+export type SiteSectionsSupports = {
+	domains: boolean;
+	plans: boolean;
+	backups: boolean;
+	scan: boolean;
+	performance: boolean;
+	monitoring: boolean;
+	deployments: boolean;
+	logs: SiteLogsSectionsSupports | false;
+	settings: boolean;
+};
+
+export type SitesSupports = {
+	sections: SiteSectionsSupports;
+	lockSelfHostedJetpackToOverview: boolean;
+};
+
+export type SiteRouteOverride = {
+	component: () => Promise< { default: React.FC } >;
+	loader?: ( siteSlug: string ) => Promise< void >;
+};
+
+export type GateableSiteFeature = 'backups' | 'scan';
+
 export type AppConfig = {
 	name: string;
 	basePath: string;
@@ -56,7 +90,7 @@ export type AppConfig = {
 	supports: {
 		agency: AgencySupports | false;
 		agencyClient: AgencyClientSupports | false;
-		sites: boolean;
+		sites: SitesSupports | false;
 		plugins: boolean;
 		domains: boolean;
 		emails: boolean;
@@ -82,6 +116,8 @@ export type AppConfig = {
 		sites?: () => Promise< { default: React.FC } >;
 		// eslint-disable-next-line @typescript-eslint/no-explicit-any
 		siteSwitcher?: () => Promise< { default: React.FC< any > } >;
+		siteSidebar?: () => Promise< { default: React.FC } >;
+		siteOverview?: SiteRouteOverride;
 	};
 	queries: {
 		sitesQuery: ( fetchSiteOptions?: FetchSitesOptions ) => ReturnType< typeof sitesQuery >;
@@ -92,6 +128,23 @@ export type AppConfig = {
 			field: FetchDashboardSiteFiltersParams[ 'fields' ]
 		) => ReturnType< typeof dashboardSiteFiltersQuery >;
 		domainsQuery: () => ReturnType< typeof domainsQuery >;
+		// Variant-defined site membership. When provided it replaces the
+		// canManageSite() capability check on site routes; resolving false
+		// results in a 404.
+		siteAccessQuery?: ( siteSlug: string ) => {
+			queryKey: QueryKey;
+			queryFn: () => Promise< boolean >;
+		};
+		// Variant-defined feature access. When provided it replaces the
+		// plan-based gating on the shared backups/scan pages: false renders a
+		// "not enabled" state, true renders the feature without an upsell.
+		siteFeatureAccessQuery?: (
+			siteSlug: string,
+			feature: GateableSiteFeature
+		) => {
+			queryKey: QueryKey;
+			queryFn: () => Promise< boolean >;
+		};
 	};
 };
 

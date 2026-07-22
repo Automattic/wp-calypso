@@ -3,6 +3,7 @@ import { useSuspenseQuery } from '@tanstack/react-query';
 import { notFound, Outlet } from '@tanstack/react-router';
 import { __ } from '@wordpress/i18n';
 import { Suspense } from 'react';
+import { useSiteAccess } from '../../app/hooks/use-site-access';
 import { siteRoute } from '../../app/router/sites';
 import StagingSiteSyncMonitor from '../../app/staging-site-sync-monitor';
 import FlashMessage from '../../components/flash-message';
@@ -13,12 +14,13 @@ import SiteLaunchCelebrationModal from '../site-launch-celebration-modal';
 function Site() {
 	const { siteSlug } = siteRoute.useParams();
 	const { data: site, isError, error } = useSuspenseQuery( siteBySlugQuery( siteSlug ) );
+	const variantAccess = useSiteAccess( siteSlug );
 
 	if ( isError ) {
 		throw error;
 	}
 
-	if ( ! canManageSite( site ) ) {
+	if ( ! ( variantAccess ?? canManageSite( site ) ) ) {
 		throw notFound();
 	}
 

@@ -16,6 +16,7 @@ import {
 	settings,
 	shield,
 } from '@wordpress/icons';
+import { useAppContext } from '../../app/context';
 import {
 	siteRoute,
 	siteOverviewRoute,
@@ -68,12 +69,33 @@ export default function SiteSidebar() {
 }
 
 function SiteMenuSidebar( { site }: { site: Site } ) {
+	const { supports } = useAppContext();
 	const siteSlug = site.slug;
 	const siteTypeSupports = getSiteTypeFeatureSupports( site );
 	const isApmEnabled = isEnabled( 'performance/apm' );
 
 	if ( isSiteMigrationInProgress( site ) ) {
 		return null;
+	}
+
+	// Mirrors the route guard: variants that lock self-hosted Jetpack sites to
+	// the overview page get an overview-only menu for them.
+	if (
+		supports.sites &&
+		supports.sites.lockSelfHostedJetpackToOverview &&
+		isSelfHostedJetpackConnected( site )
+	) {
+		return (
+			<SidebarMenu>
+				<SidebarMenuItem
+					icon={ category }
+					to={ `/sites/${ siteSlug }` }
+					activeOptions={ { exact: true } }
+				>
+					{ __( 'Overview' ) }
+				</SidebarMenuItem>
+			</SidebarMenu>
+		);
 	}
 
 	if ( hasSiteTrialEnded( site ) ) {

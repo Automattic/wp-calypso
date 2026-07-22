@@ -5,6 +5,7 @@ import { Outlet, useParams, useRouter } from '@tanstack/react-router';
 import { __ } from '@wordpress/i18n';
 import { backup } from '@wordpress/icons';
 import { useMemo } from 'react';
+import { useSiteFeatureAccess } from '../../app/hooks/use-site-access';
 import {
 	siteRoute,
 	siteBackupsRoute,
@@ -14,6 +15,7 @@ import {
 	siteBackupDownloadRoute,
 } from '../../app/router/sites';
 import { hasHostingFeature } from '../../utils/site-features';
+import FeatureNotEnabled from '../feature-not-enabled';
 import HostingFeatureGatedWithCallout from '../hosting-feature-gated-with-callout';
 import { SitesNoticeArbiter } from '../notice-arbiter';
 import { BackupFileBrowserProvider } from './backup-file-browser-provider';
@@ -81,6 +83,25 @@ export function BackupsListPage() {
 function SiteBackups() {
 	const { siteSlug } = siteRoute.useParams();
 	const { data: site } = useSuspenseQuery( siteBySlugQuery( siteSlug ) );
+	const variantAccess = useSiteFeatureAccess( siteSlug, 'backups' );
+
+	if ( variantAccess === false ) {
+		return (
+			<FeatureNotEnabled
+				title={ __( 'Backups' ) }
+				icon={ backup }
+				message={ __( 'Backups aren’t enabled for this site.' ) }
+			/>
+		);
+	}
+
+	if ( variantAccess === true ) {
+		return (
+			<BackupFileBrowserProvider>
+				<Outlet />
+			</BackupFileBrowserProvider>
+		);
+	}
 
 	return (
 		<HostingFeatureGatedWithCallout

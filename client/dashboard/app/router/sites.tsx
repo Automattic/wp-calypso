@@ -103,7 +103,7 @@ export const siteRoute = createRoute( {
 	} ),
 	getParentRoute: () => rootRoute,
 	path: 'sites/$siteSlug',
-	beforeLoad: async ( { cause, params: { siteSlug }, location, matches } ) => {
+	beforeLoad: async ( { cause, context, params: { siteSlug }, location, matches } ) => {
 		if ( cause === 'preload' ) {
 			return;
 		}
@@ -116,7 +116,11 @@ export const siteRoute = createRoute( {
 			return;
 		}
 
-		if ( ! canManageSite( site ) ) {
+		const siteAccessQuery = context.config.queries.siteAccessQuery;
+		const canAccess = siteAccessQuery
+			? await queryClient.ensureQueryData( siteAccessQuery( siteSlug ) )
+			: canManageSite( site );
+		if ( ! canAccess ) {
 			throw notFound();
 		}
 
@@ -124,7 +128,10 @@ export const siteRoute = createRoute( {
 		const criticalErrorUrl = `/sites/${ siteSlug }/critical-error`;
 		const isOnCriticalErrorPage = location.pathname.endsWith( criticalErrorUrl );
 
+		const sitesSupports = context.config.supports.sites;
 		if (
+			sitesSupports &&
+			sitesSupports.lockSelfHostedJetpackToOverview &&
 			isSelfHostedJetpackConnected( site ) &&
 			! location.pathname.endsWith( overviewUrl ) &&
 			! isOnCriticalErrorPage
@@ -205,7 +212,12 @@ export const siteOverviewRoute = createRoute( {
 	staticData: { availableToInaccessibleJetpackSites: true },
 	getParentRoute: () => siteRoute,
 	path: '/',
-	loader: async ( { params: { siteSlug }, preload } ) => {
+	loader: async ( { context, params: { siteSlug }, preload } ) => {
+		const overrideLoader = context.config.components.siteOverview?.loader;
+		if ( overrideLoader ) {
+			return overrideLoader( siteSlug );
+		}
+
 		const site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
 		if ( preload ) {
 			const notGroup = getActivityLogHiddenGroups( site );
@@ -233,13 +245,7 @@ export const siteOverviewRoute = createRoute( {
 			queryClient.ensureQueryData( siteMediaStorageQuery( site.ID ) ),
 		] );
 	},
-} ).lazy( () =>
-	import( '../../sites/overview' ).then( ( d ) =>
-		createLazyRoute( 'site-overview' )( {
-			component: () => <d.default siteSlug={ siteRoute.useParams().siteSlug } />,
-		} )
-	)
-);
+} );
 
 export const siteDeploymentsRoute = createRoute( {
 	staticData: { requiresSiteTypeSupport: 'deployments' },
@@ -295,7 +301,7 @@ export const siteMonitoringRoute = createRoute( {
 );
 
 export const siteLogsRoute = createRoute( {
-	staticData: { requiresSiteTypeSupport: 'logs', availableToInaccessibleJetpackSites: true },
+	staticData: { availableToInaccessibleJetpackSites: true },
 	head: () => ( {
 		meta: [
 			{
@@ -316,6 +322,7 @@ export const siteLogsIndexRoute = createRoute( {
 } );
 
 export const siteLogsPhpRoute = createRoute( {
+	staticData: { requiresSiteTypeSupport: 'logs' },
 	head: () => ( {
 		meta: [
 			{
@@ -340,6 +347,7 @@ export const siteLogsPhpRoute = createRoute( {
 );
 
 export const siteLogsServerRoute = createRoute( {
+	staticData: { requiresSiteTypeSupport: 'logs' },
 	head: () => ( {
 		meta: [
 			{
@@ -361,6 +369,7 @@ export const siteLogsServerRoute = createRoute( {
 );
 
 export const siteLogsActivityRoute = createRoute( {
+	staticData: { requiresSiteTypeSupport: 'activityLog' },
 	head: () => ( {
 		meta: [
 			{
@@ -392,7 +401,15 @@ export const siteScanRoute = createRoute( {
 	} ),
 	getParentRoute: () => siteRoute,
 	path: 'scan',
-	loader: async ( { params: { siteSlug } } ) => {
+	loader: async ( { context, params: { siteSlug } } ) => {
+		const accessQuery = context.config.queries.siteFeatureAccessQuery;
+		if (
+			accessQuery &&
+			! ( await queryClient.ensureQueryData( accessQuery( siteSlug, 'scan' ) ) )
+		) {
+			return;
+		}
+
 		const site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
 		await Promise.all( [
 			queryClient.ensureQueryData( siteSettingsQuery( site.ID ) ),
@@ -400,7 +417,13 @@ export const siteScanRoute = createRoute( {
 				queryClient.ensureQueryData( siteScanQuery( site.ID ) ),
 		] );
 	},
-} );
+} ).lazy( () =>
+	import( '../../sites/scan/scan-layout' ).then( ( d ) =>
+		createLazyRoute( 'site-scan' )( {
+			component: d.default,
+		} )
+	)
+);
 
 export const siteScanIndexRoute = createRoute( {
 	getParentRoute: () => siteScanRoute,
@@ -457,7 +480,15 @@ export const siteBackupsRoute = createRoute( {
 	} ),
 	getParentRoute: () => siteRoute,
 	path: 'backups',
-	loader: async ( { params: { siteSlug } } ) => {
+	loader: async ( { context, params: { siteSlug } } ) => {
+		const accessQuery = context.config.queries.siteFeatureAccessQuery;
+		if (
+			accessQuery &&
+			! ( await queryClient.ensureQueryData( accessQuery( siteSlug, 'backups' ) ) )
+		) {
+			return;
+		}
+
 		const site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
 		// Preload activity log backup-related entries and group counts.
 		if ( hasHostingFeature( site, HostingFeatures.BACKUPS_SELF_SERVE ) ) {
@@ -1822,6 +1853,24 @@ export const createSitesRoutes = ( config: AppConfig ) => {
 		return [];
 	}
 
+	const { sections } = config.supports.sites;
+
+	// The overview is the one variant-overridable page: e.g. A4A swaps in its
+	// agency overview instead of the hosting one.
+	siteOverviewRoute.lazy( () => {
+		const loadComponent =
+			config.components.siteOverview?.component ??
+			( () =>
+				import( '../../sites/overview' ).then( ( m ) => ( {
+					default: () => <m.default siteSlug={ siteRoute.useParams().siteSlug } />,
+				} ) ) );
+		return loadComponent().then( ( d ) =>
+			createLazyRoute( 'site-overview' )( { component: d.default } )
+		);
+	} );
+
+	// Lifecycle routes register in every variant so the shared site guards
+	// always have a landing page.
 	const siteRoutes: AnyRoute[] = [
 		siteOverviewRoute,
 		siteCriticalErrorRoute,
@@ -1830,46 +1879,79 @@ export const createSitesRoutes = ( config: AppConfig ) => {
 		siteMigrationOverviewRoute,
 		siteSSHMigrationCompleteRoute,
 		siteSSHMigrationFailedRoute,
-		siteDeploymentsRoute.addChildren( [ siteDeploymentsListRoute ] ),
-		sitePerformanceRoute.addChildren( [
-			sitePerformanceIndexRoute,
-			sitePerformanceFrontendRoute,
-			...( isEnabled( 'performance/apm' )
-				? [
-						sitePerformanceBackendRoute.addChildren( [
-							sitePerformanceBackendIndexRoute,
-							sitePerformanceBackendTransactionsRoute,
-							sitePerformanceBackendWordPressRoute,
-							sitePerformanceBackendDatabaseRoute,
-							sitePerformanceBackendExternalRequestsRoute,
-							sitePerformanceBackendRequestDetailRoute,
-						] ),
-				  ]
-				: [] ),
-		] ),
-		siteMonitoringRoute,
-		siteLogsRoute.addChildren( [
-			siteLogsIndexRoute,
-			siteLogsPhpRoute,
-			siteLogsServerRoute,
-			siteLogsActivityRoute,
-		] ),
-		siteBackupsRoute.addChildren( [
-			siteBackupsIndexRoute,
-			siteBackupDetailRoute.addChildren( [
-				siteBackupDetailIndexRoute,
-				siteBackupRestoreRoute,
-				siteBackupDownloadRoute,
-			] ),
-		] ),
-		siteScanRoute.addChildren( [
-			siteScanIndexRoute,
-			siteScanActiveThreatsRoute,
-			siteScanHistoryRoute,
-		] ),
-		siteDomainsRoute,
-		sitePlansRoute,
 	];
+
+	if ( sections.deployments ) {
+		siteRoutes.push( siteDeploymentsRoute.addChildren( [ siteDeploymentsListRoute ] ) );
+	}
+
+	if ( sections.performance ) {
+		siteRoutes.push(
+			sitePerformanceRoute.addChildren( [
+				sitePerformanceIndexRoute,
+				sitePerformanceFrontendRoute,
+				...( isEnabled( 'performance/apm' )
+					? [
+							sitePerformanceBackendRoute.addChildren( [
+								sitePerformanceBackendIndexRoute,
+								sitePerformanceBackendTransactionsRoute,
+								sitePerformanceBackendWordPressRoute,
+								sitePerformanceBackendDatabaseRoute,
+								sitePerformanceBackendExternalRequestsRoute,
+								sitePerformanceBackendRequestDetailRoute,
+							] ),
+					  ]
+					: [] ),
+			] )
+		);
+	}
+
+	if ( sections.monitoring ) {
+		siteRoutes.push( siteMonitoringRoute );
+	}
+
+	if ( sections.logs ) {
+		const logsSections = sections.logs;
+		siteRoutes.push(
+			siteLogsRoute.addChildren( [
+				siteLogsIndexRoute,
+				...( logsSections.php ? [ siteLogsPhpRoute ] : [] ),
+				...( logsSections.server ? [ siteLogsServerRoute ] : [] ),
+				...( logsSections.activity ? [ siteLogsActivityRoute ] : [] ),
+			] )
+		);
+	}
+
+	if ( sections.backups ) {
+		siteRoutes.push(
+			siteBackupsRoute.addChildren( [
+				siteBackupsIndexRoute,
+				siteBackupDetailRoute.addChildren( [
+					siteBackupDetailIndexRoute,
+					siteBackupRestoreRoute,
+					siteBackupDownloadRoute,
+				] ),
+			] )
+		);
+	}
+
+	if ( sections.scan ) {
+		siteRoutes.push(
+			siteScanRoute.addChildren( [
+				siteScanIndexRoute,
+				siteScanActiveThreatsRoute,
+				siteScanHistoryRoute,
+			] )
+		);
+	}
+
+	if ( sections.domains ) {
+		siteRoutes.push( siteDomainsRoute );
+	}
+
+	if ( sections.plans ) {
+		siteRoutes.push( sitePlansRoute );
+	}
 
 	const settingsRoutes: AnyRoute[] = [
 		siteSettingsIndexRoute,
@@ -1914,7 +1996,9 @@ export const createSitesRoutes = ( config: AppConfig ) => {
 		siteSettingsDefensiveModeRoute,
 	];
 
-	siteRoutes.push( siteSettingsRoute.addChildren( settingsRoutes ) );
+	if ( sections.settings ) {
+		siteRoutes.push( siteSettingsRoute.addChildren( settingsRoutes ) );
+	}
 
 	return [
 		sitesRoute.lazy( () =>

@@ -6,6 +6,7 @@ export type SiteTypeFeatureSupports = {
 	performance: boolean;
 	monitoring: boolean;
 	logs: boolean;
+	activityLog: boolean;
 	backups: boolean;
 	scan: boolean;
 	domains: boolean;
@@ -39,8 +40,13 @@ export function getSiteTypeFeatureSupports( site: Site ): SiteTypeFeatureSupport
 			performance: false,
 			monitoring: false,
 			logs: false,
-			backups: false,
-			scan: false,
+			// The activity log, backups, and scan are Jetpack services, so they
+			// work without Atomic hosting — unlike e.g. the PHP/server logs.
+			// Variants that don't want them for self-hosted sites already lock
+			// those sites to the overview page.
+			activityLog: true,
+			backups: true,
+			scan: true,
 			domains: false,
 			emails: false,
 			settings: false,
@@ -53,6 +59,7 @@ export function getSiteTypeFeatureSupports( site: Site ): SiteTypeFeatureSupport
 			performance: false,
 			monitoring: false,
 			logs: false,
+			activityLog: false,
 			backups: false,
 			scan: false,
 			domains: true,
@@ -73,6 +80,7 @@ export function getSiteTypeFeatureSupports( site: Site ): SiteTypeFeatureSupport
 			performance: true,
 			monitoring: true,
 			logs: true,
+			activityLog: true,
 			backups: false,
 			scan: false,
 			domains: true,
@@ -92,6 +100,7 @@ export function getSiteTypeFeatureSupports( site: Site ): SiteTypeFeatureSupport
 		performance: true,
 		monitoring: true,
 		logs: true,
+		activityLog: true,
 		backups: true,
 		scan: true,
 		domains: true,
