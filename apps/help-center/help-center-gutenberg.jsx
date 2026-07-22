@@ -31,8 +31,9 @@ function HelpCenterContent() {
 
 	const canvasMode = useCanvasMode();
 
-	// Gutenberg's "admin bar in editor" (omnibar) experiment puts a top admin bar in the editor.
-	// When it's active, the legacy Help button moves out of the toolbar and into that admin bar.
+	// When a top admin bar is present in the editor — Gutenberg's "admin bar in editor" (omnibar)
+	// experiment, or any context that renders a visible #wpadminbar — the Help button moves out of
+	// the toolbar and into that admin bar.
 	const isAdminBarInEditor =
 		!! window.__experimentalAdminBarInEditor ||
 		document.body.classList.contains( 'has-admin-bar-in-editor' ) ||

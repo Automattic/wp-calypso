@@ -52,6 +52,29 @@ describe( 'isAdminBarInEditor', () => {
 		setOmnibarActive( false );
 		expect( isAdminBarInEditor() ).toBe( false );
 	} );
+
+	it( 'returns true when a visible #wpadminbar is present', () => {
+		const adminBar = document.createElement( 'div' );
+		adminBar.id = 'wpadminbar';
+		// jsdom reports offsetHeight as 0, so stub a visible height.
+		Object.defineProperty( adminBar, 'offsetHeight', { value: 32, configurable: true } );
+		document.body.appendChild( adminBar );
+
+		expect( isAdminBarInEditor() ).toBe( true );
+
+		adminBar.remove();
+	} );
+
+	it( 'returns false when #wpadminbar is present but hidden', () => {
+		const adminBar = document.createElement( 'div' );
+		adminBar.id = 'wpadminbar';
+		Object.defineProperty( adminBar, 'offsetHeight', { value: 0, configurable: true } );
+		document.body.appendChild( adminBar );
+
+		expect( isAdminBarInEditor() ).toBe( false );
+
+		adminBar.remove();
+	} );
 } );
 
 describe( 'isEditorAiEntryEnabled', () => {
