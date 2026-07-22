@@ -40,7 +40,7 @@ export default function ReferralsEmptyState( { agencyId }: { agencyId: number } 
 								a: (
 									<InlineSupportLink
 										supportLink={ AGENCY_EARNINGS_LEARN_MORE_LINK }
-										openInHelpCenter
+										forceOpenInHelpCenter
 									/>
 								),
 							}

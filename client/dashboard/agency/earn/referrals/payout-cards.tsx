@@ -73,7 +73,10 @@ function PayoutAmount( {
 					</div>
 
 					<div>
-						<InlineSupportLink supportLink={ AGENCY_EARNINGS_LEARN_MORE_LINK } openInHelpCenter>
+						<InlineSupportLink
+							supportLink={ AGENCY_EARNINGS_LEARN_MORE_LINK }
+							forceOpenInHelpCenter
+						>
 							{ __( 'Learn more' ) }
 						</InlineSupportLink>
 					</div>

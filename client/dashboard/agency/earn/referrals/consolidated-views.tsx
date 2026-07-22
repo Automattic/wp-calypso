@@ -101,7 +101,10 @@ export default function ConsolidatedViews( {
 					{
 						br: <br />,
 						a: (
-							<InlineSupportLink supportLink={ AGENCY_EARNINGS_LEARN_MORE_LINK } openInHelpCenter />
+							<InlineSupportLink
+								supportLink={ AGENCY_EARNINGS_LEARN_MORE_LINK }
+								forceOpenInHelpCenter
+							/>
 						),
 					}
 				) }
@@ -124,7 +127,10 @@ export default function ConsolidatedViews( {
 					{
 						br: <br />,
 						a: (
-							<InlineSupportLink supportLink={ AGENCY_EARNINGS_LEARN_MORE_LINK } openInHelpCenter />
+							<InlineSupportLink
+								supportLink={ AGENCY_EARNINGS_LEARN_MORE_LINK }
+								forceOpenInHelpCenter
+							/>
 						),
 					}
 				) }

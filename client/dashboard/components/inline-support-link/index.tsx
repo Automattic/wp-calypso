@@ -12,7 +12,7 @@ const InlineSupportLink = ( {
 	supportContext,
 	children = __( 'Learn more' ),
 	onClick,
-	openInHelpCenter = false,
+	forceOpenInHelpCenter = false,
 }: {
 	className?: string;
 	title?: string;
@@ -22,7 +22,7 @@ const InlineSupportLink = ( {
 	children?: React.ReactNode;
 	onClick?: ( supportData: SupportDocData | null ) => void;
 	// Open the article in the Help Center panel even without a wpcom postId (e.g. an agencieshelp.automattic.com article, which is fetched by URL).
-	openInHelpCenter?: boolean;
+	forceOpenInHelpCenter?: boolean;
 } ) => {
 	const { supportDocData, openSupportDoc } = useSupportDocData( {
 		supportPostId,
@@ -30,7 +30,7 @@ const InlineSupportLink = ( {
 		supportContext,
 	} );
 
-	const opensInPanel = !! supportDocData?.postId || openInHelpCenter;
+	const opensInPanel = !! supportDocData?.postId || forceOpenInHelpCenter;
 
 	const handleClick = ( event: React.SyntheticEvent< HTMLAnchorElement > ) => {
 		if ( opensInPanel ) {
@@ -60,7 +60,7 @@ const InlineSupportLink = ( {
 		);
 	}
 
-	if ( openInHelpCenter ) {
+	if ( forceOpenInHelpCenter ) {
 		return <a { ...linkProps }>{ children }</a>;
 	}
 

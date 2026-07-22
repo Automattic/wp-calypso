@@ -63,7 +63,7 @@ function InfluencedRevenueStrapline( {
 						</Text>
 						<InlineSupportLink
 							supportLink={ LEARN_MORE_URL }
-							openInHelpCenter
+							forceOpenInHelpCenter
 							onClick={ () =>
 								recordTracksEvent( 'calypso_a4a_agency_tier_influenced_revenue_learn_more_click' )
 							}
