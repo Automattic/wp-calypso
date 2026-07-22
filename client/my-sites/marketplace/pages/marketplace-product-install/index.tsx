@@ -167,15 +167,14 @@ const MarketplaceProductInstall = ( {
 		// 2. This is a marketplace plugin installation but the installation process hasn't started
 		( ! isPluginUploadFlow && ! marketplaceInstallationInProgress );
 
-	// Check that the site URL and the plugin slug are the same which were selected on the plugin page
+	// The state authorizing the install is handed off asynchronously, so only treat it as missing
+	// once it has stayed missing for 2s. Any change to the condition restarts the timer.
 	useEffect( () => {
-		if ( shouldShowNoDirectAccessError ) {
-			waitFor( 2 ).then( () => {
-				if ( shouldShowNoDirectAccessError ) {
-					setNoDirectAccessError( true );
-				}
-			} );
+		if ( ! shouldShowNoDirectAccessError ) {
+			return;
 		}
+		const id = setTimeout( () => setNoDirectAccessError( true ), 2000 );
+		return () => clearTimeout( id );
 	}, [ shouldShowNoDirectAccessError ] );
 
 	// Upload flow startup
