@@ -141,8 +141,24 @@ module.exports = {
 		new DependencyExtractionWebpackPlugin( {
 			injectPolyfill: true,
 			useDefaults: false,
-			requestToHandle: defaultRequestToHandle,
+			requestToHandle: ( request ) => {
+				// `react-dom/client` is externalized to the `ReactDOM` global below; point its
+				// script dependency at the existing `react-dom` handle since the request name
+				// itself is not a registered handle.
+				if ( request === 'react-dom/client' ) {
+					return 'react-dom';
+				}
+				return defaultRequestToHandle( request );
+			},
 			requestToExternal: ( request ) => {
+				// Externalize the `react-dom/client` subpath to WordPress's `ReactDOM` global so
+				// `createRoot` comes from the same React that WordPress provides. The default
+				// extraction only maps bare `react-dom`, so this subpath would otherwise bundle
+				// our own react-dom, which reads React internals off the host's React and throws
+				// ("Cannot read properties of undefined").
+				if ( request === 'react-dom/client' ) {
+					return 'ReactDOM';
+				}
 				if (
 					! [
 						'lodash',
