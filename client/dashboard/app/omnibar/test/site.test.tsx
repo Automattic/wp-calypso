@@ -7,7 +7,7 @@ import nock from 'nock';
 import { render } from '../../../test-utils';
 import { AUTH_QUERY_KEY } from '../../auth';
 import { useSyncOmnibarSite } from '../site';
-import type { User } from '@automattic/api-core';
+import type { User, UserPreferences } from '@automattic/api-core';
 
 function OmnibarProbe() {
 	useSyncOmnibarSite();
@@ -65,9 +65,10 @@ describe( 'useSyncOmnibarSite', () => {
 		// …then fails and rolls `recentSites` back to `[ 999 ]`. That rollback is the
 		// exact event the old bug re-fired the write from; once it settles, no retry.
 		await waitFor( () =>
-			expect( queryClient.getQueryData( rawUserPreferencesQuery().queryKey )?.recentSites ).toEqual(
-				[ 999 ]
-			)
+			expect(
+				queryClient.getQueryData< UserPreferences >( rawUserPreferencesQuery().queryKey )
+					?.recentSites
+			).toEqual( [ 999 ] )
 		);
 		await flush();
 
