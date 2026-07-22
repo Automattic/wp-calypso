@@ -1,4 +1,5 @@
-import { Button } from '@wordpress/components';
+import { useLocale } from '@automattic/i18n-utils';
+import { Button, __experimentalVStack as VStack } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import clsx from 'clsx';
 import { useCallback, useState } from 'react';
@@ -27,9 +28,14 @@ import type { ReactNode } from 'react';
 
 import './style.scss';
 
+const ClassicTableWrapper = ( { children }: { children: ReactNode } ) => (
+	<div className="redesigned-a8c-table full-width">{ children }</div>
+);
+
 export default function MigrationsCommissions() {
 	const dispatch = useDispatch();
 	const sites = useSelector( getSites );
+	const locale = useLocale();
 
 	const [ showAddSitesModal, setShowAddSitesModal ] = useState( false );
 	const {
@@ -47,13 +53,13 @@ export default function MigrationsCommissions() {
 	);
 
 	const onSuccess = useCallback(
-		( message: ReactNode, options?: { id?: string; duration?: number } ) =>
+		( message: string, options?: { id?: string; duration?: number } ) =>
 			dispatch( successNotice( message, options ) ),
 		[ dispatch ]
 	);
 
 	const onError = useCallback(
-		( message: ReactNode ) => dispatch( errorNotice( message ) ),
+		( message: string ) => dispatch( errorNotice( message ) ),
 		[ dispatch ]
 	);
 
@@ -120,7 +126,7 @@ export default function MigrationsCommissions() {
 					/>
 				) }
 				{ ! isLoading && ! showEmptyState && (
-					<div className="redesigned-a8c-table full-width">
+					<VStack spacing={ 6 }>
 						{ canTagSitesForCommission && (
 							<MigrationsConsolidatedCommissions items={ taggedSites } />
 						) }
@@ -130,8 +136,10 @@ export default function MigrationsCommissions() {
 							recordTracksEvent={ recordTracks }
 							onSuccess={ onSuccess }
 							onError={ onError }
+							locale={ locale }
+							TableWrapper={ ClassicTableWrapper }
 						/>
-					</div>
+					</VStack>
 				) }
 			</LayoutBody>
 
@@ -144,6 +152,7 @@ export default function MigrationsCommissions() {
 					onSuccess={ onSuccess }
 					onError={ onError }
 					getSiteCreatedAt={ getSiteCreatedAt }
+					locale={ locale }
 				/>
 			) }
 		</Layout>

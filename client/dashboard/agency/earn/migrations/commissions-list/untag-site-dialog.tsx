@@ -54,13 +54,10 @@ export default function UntagSiteDialog( {
 					} );
 					onClose();
 					onSuccess(
-						createInterpolateElement(
-							sprintf(
-								/* translators: %s: the site URL */
-								__( 'Successfully untagged <strong>%s</strong>.' ),
-								site.url
-							),
-							{ strong: <strong /> }
+						sprintf(
+							/* translators: %s: the site URL */
+							__( 'Successfully untagged %s.' ),
+							site.url
 						),
 						{ id: 'a4a-commission-list-untag-success', duration: 5000 }
 					);

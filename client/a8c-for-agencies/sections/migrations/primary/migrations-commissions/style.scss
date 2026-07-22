@@ -36,13 +36,15 @@
 		}
 	}
 
-	// Classic-only page inset; keep in sync with the shared `.consolidated-commissions`
-	// in dashboard/agency/earn/migrations/consolidated-commissions.
+	// Classic-only page inset; the list gap comes from the shared content's VStack, so
+	// this sets only the top and horizontal inset. Keep in sync with
+	// dashboard/agency/earn/migrations/consolidated-commissions.
 	.consolidated-commissions {
-		padding: 16px;
+		padding-block-start: 16px;
+		padding-inline: 16px;
 
 		@include break-large {
-			padding: 16px 64px 48px;
+			padding-inline: 64px;
 		}
 	}
 

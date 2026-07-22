@@ -1,23 +1,26 @@
+import { __experimentalVStack as VStack } from '@wordpress/components';
 import { TextSkeleton } from '../../../components/text-skeleton';
 import MigrationsCommissionsList from './commissions-list';
 import MigrationsConsolidatedCommissions from './consolidated-commissions';
 import MigrationsCommissionsEmptyState from './empty-state';
 import MigrationsTagSitesModal from './tag-sites-modal';
 import type { RecordTracksEvent, ShowSuccessNotice, TaggedSite } from './types';
-import type { ReactNode } from 'react';
+import type { ComponentType, ReactNode } from 'react';
 
 interface MigrationsCommissionsContentProps {
 	taggedSites: TaggedSite[];
 	isLoading: boolean;
 	recordTracksEvent: RecordTracksEvent;
 	onSuccess: ShowSuccessNotice;
-	onError: ( message: ReactNode ) => void;
+	onError: ( message: string ) => void;
 	getSiteCreatedAt: ( blogId: number ) => string | undefined;
+	locale: string;
 	canTagSitesForCommission: boolean;
 	migrationTags: string[];
 	isAddSitesModalOpen: boolean;
 	onCloseAddSitesModal: () => void;
 	onOpenAddSitesModal: () => void;
+	TableWrapper?: ComponentType< { children: ReactNode } >;
 }
 
 export default function MigrationsCommissionsContent( {
@@ -27,11 +30,13 @@ export default function MigrationsCommissionsContent( {
 	onSuccess,
 	onError,
 	getSiteCreatedAt,
+	locale,
 	canTagSitesForCommission,
 	migrationTags,
 	isAddSitesModalOpen,
 	onCloseAddSitesModal,
 	onOpenAddSitesModal,
+	TableWrapper,
 }: MigrationsCommissionsContentProps ) {
 	if ( isLoading ) {
 		return (
@@ -51,7 +56,7 @@ export default function MigrationsCommissionsContent( {
 					canTagSitesForCommission={ canTagSitesForCommission }
 				/>
 			) : (
-				<>
+				<VStack spacing={ 6 }>
 					{ canTagSitesForCommission && (
 						<MigrationsConsolidatedCommissions items={ taggedSites } />
 					) }
@@ -61,8 +66,10 @@ export default function MigrationsCommissionsContent( {
 						recordTracksEvent={ recordTracksEvent }
 						onSuccess={ onSuccess }
 						onError={ onError }
+						locale={ locale }
+						TableWrapper={ TableWrapper }
 					/>
-				</>
+				</VStack>
 			) }
 			{ isAddSitesModalOpen && (
 				<MigrationsTagSitesModal
@@ -73,6 +80,7 @@ export default function MigrationsCommissionsContent( {
 					onSuccess={ onSuccess }
 					onError={ onError }
 					getSiteCreatedAt={ getSiteCreatedAt }
+					locale={ locale }
 				/>
 			) }
 		</>

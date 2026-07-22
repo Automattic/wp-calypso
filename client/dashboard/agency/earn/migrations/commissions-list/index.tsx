@@ -2,7 +2,7 @@ import { __experimentalHStack as HStack } from '@wordpress/components';
 import { useViewportMatch } from '@wordpress/compose';
 import { DataViews } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
-import { useCallback, useMemo, type ReactNode, useState } from 'react';
+import { useCallback, useMemo, type ComponentType, type ReactNode, useState } from 'react';
 import RequestReviewModal from '../request-review-modal';
 import { MigratedOnColumn, ReviewStatusColumn, SiteColumn } from './commission-columns';
 import UntagSiteDialog from './untag-site-dialog';
@@ -50,18 +50,24 @@ const INITIAL_VIEW: View = {
 	layout: {},
 };
 
+const DefaultTableWrapper = ( { children }: { children: ReactNode } ) => <>{ children }</>;
+
 export default function MigrationsCommissionsList( {
 	items,
 	migrationTags,
 	recordTracksEvent,
 	onSuccess,
 	onError,
+	locale,
+	TableWrapper = DefaultTableWrapper,
 }: {
 	items: TaggedSite[];
 	migrationTags: string[];
 	recordTracksEvent: RecordTracksEvent;
 	onSuccess: ShowSuccessNotice;
-	onError: ( message: ReactNode ) => void;
+	onError: ( message: string ) => void;
+	locale: string;
+	TableWrapper?: ComponentType< { children: ReactNode } >;
 } ) {
 	const isDesktop = useViewportMatch( 'large' );
 
@@ -108,7 +114,9 @@ export default function MigrationsCommissionsList( {
 				// We will change this when the MC tool is implemented and we have the migration date
 				label: __( 'Date added' ),
 				getValue: () => '-',
-				render: ( { item } ): ReactNode => <MigratedOnColumn migratedOn={ item.created_at } />,
+				render: ( { item } ): ReactNode => (
+					<MigratedOnColumn migratedOn={ item.created_at } locale={ locale } />
+				),
 				enableHiding: false,
 				enableSorting: false,
 			},
@@ -128,30 +136,35 @@ export default function MigrationsCommissionsList( {
 				enableSorting: false,
 			},
 		],
-		[]
+		[ locale ]
 	);
 
 	return (
 		<>
-			<DataViews
-				data={ items }
-				view={ responsiveView }
-				onChangeView={ setView }
-				fields={ fields }
-				search={ false }
-				actions={ actions }
-				getItemId={ ( item ) => `${ item.id }` }
-				paginationInfo={ pagination }
-				defaultLayouts={ { table: {}, list: {} } }
-			>
-				{ isDesktop && (
-					<HStack className="dataviews__view-actions commissions-list__view-actions" justify="end">
-						<DataViews.ViewConfig />
-					</HStack>
-				) }
-				<DataViews.Layout />
-				<DataViews.Footer />
-			</DataViews>
+			<TableWrapper>
+				<DataViews
+					data={ items }
+					view={ responsiveView }
+					onChangeView={ setView }
+					fields={ fields }
+					search={ false }
+					actions={ actions }
+					getItemId={ ( item ) => `${ item.id }` }
+					paginationInfo={ pagination }
+					defaultLayouts={ { table: {}, list: {} } }
+				>
+					{ isDesktop && (
+						<HStack
+							className="dataviews__view-actions commissions-list__view-actions"
+							justify="end"
+						>
+							<DataViews.ViewConfig />
+						</HStack>
+					) }
+					<DataViews.Layout />
+					<DataViews.Footer />
+				</DataViews>
+			</TableWrapper>
 
 			{ activeModal?.kind === 'untag' && (
 				<UntagSiteDialog

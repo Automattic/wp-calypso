@@ -16,7 +16,6 @@ import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import { useState } from 'react';
 import type { RecordTracksEvent, ShowSuccessNotice, TaggedSite } from '../types';
-import type { ReactNode } from 'react';
 
 export default function RequestReviewModal( {
 	onClose,
@@ -29,7 +28,7 @@ export default function RequestReviewModal( {
 	site: TaggedSite;
 	recordTracksEvent: RecordTracksEvent;
 	onSuccess: ShowSuccessNotice;
-	onError: ( message: ReactNode ) => void;
+	onError: ( message: string ) => void;
 } ) {
 	const queryClient = useQueryClient();
 	const { data: agency } = useQuery( activeAgencyQuery() );
@@ -58,13 +57,10 @@ export default function RequestReviewModal( {
 						site_id: site.id,
 					} );
 					onSuccess(
-						createInterpolateElement(
-							sprintf(
-								/* translators: %s: the site URL */
-								__( 'Your verification request for <strong>%s</strong> has been submitted.' ),
-								site.url
-							),
-							{ strong: <strong /> }
+						sprintf(
+							/* translators: %s: the site URL */
+							__( 'Your verification request for %s has been submitted.' ),
+							site.url
 						),
 						{ id: 'a4a-commission-request-review-success', duration: 5000 }
 					);
