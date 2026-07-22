@@ -14,6 +14,11 @@ import './style.scss';
 // Variations per page — one full 2×2 grid in the docked sidebar.
 const DEFAULT_MAX_TO_SHOW = 4;
 
+// At least 2 columns even in the docked chat (`min()` caps the track minimum
+// at half the row), and `auto-fill` keeps empty tracks so partial pages render
+// cards at the same size instead of stretching them.
+const GRID_TEMPLATE_COLUMNS = 'repeat(auto-fill, minmax(min(140px, calc(50% - 4px)), 1fr))';
+
 interface Props {
 	variations: StyleVariation[];
 	type: 'color' | 'font' | 'button';
@@ -52,12 +57,9 @@ function VariationPicker( {
 	return (
 		<div className="agents-manager-variation-picker">
 			<VStack spacing={ 1 }>
-				{ /* At least 2 columns even in the docked chat (`min()` caps the track minimum at
-				     half the row), and `auto-fill` keeps empty tracks so partial pages render
-				     cards at the same size instead of stretching them. */ }
 				<Grid
 					gap={ 2 }
-					templateColumns="repeat(auto-fill, minmax(min(140px, calc(50% - 4px)), 1fr))"
+					templateColumns={ GRID_TEMPLATE_COLUMNS }
 					className="agents-manager-variation-picker__grid"
 				>
 					{ variationsToShow.map( ( variation, index ) => (
