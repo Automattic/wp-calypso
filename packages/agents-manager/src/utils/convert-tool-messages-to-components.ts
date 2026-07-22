@@ -203,9 +203,7 @@ export default function convertToolMessagesToComponents( {
 			// reopened on a surface that shares the editor's agent id can carry
 			// picker messages here.
 			// TODO: Remove once conversation histories can no longer cross onto
-			// non-editor surfaces (per-surface agent ids everywhere); verify the
-			// CIAB design routes first — they allow picker tools but may fail
-			// `isEditorPage()`.
+			// non-editor surfaces (per-surface agent ids everywhere).
 			if ( ! isEditorPage() ) {
 				return [
 					{
