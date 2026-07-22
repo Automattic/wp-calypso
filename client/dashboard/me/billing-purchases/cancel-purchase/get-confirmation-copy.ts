@@ -252,8 +252,30 @@ export function getTopNoticeCopy( { purchase, intent }: ConfirmationCopyArgs ): 
  * Form: "Your {category} will expire on {date} and you’ll lose access to:"
  * Falls back to a date-less form when no expiry is available.
  */
-export function getCancelLossIntro( purchase: PurchaseForCopy, fullExpiryDate: string ): string {
+export function getCancelLossIntro(
+	purchase: PurchaseForCopy,
+	fullExpiryDate: string,
+	isInGracePeriod: boolean
+): string {
 	const category = getProductCategory( purchase );
+	// Already past the expiry date (grace period): the expiry date is in the past,
+	// so frame the loss around imminent removal instead of a future expiry.
+	if ( isInGracePeriod ) {
+		switch ( category ) {
+			case 'plan':
+				return __( 'Your plan will be removed soon. Here’s what you’ll lose:' );
+			case 'domain':
+				return __( 'Your domain will be removed soon. Here’s what you’ll lose:' );
+			case 'email':
+				return __( 'Your email will be removed soon. Here’s what you’ll lose:' );
+			default:
+				return sprintf(
+					/* translators: %(productName)s is the product name */
+					__( 'Your %(productName)s subscription will be removed soon. Here’s what you’ll lose:' ),
+					{ productName: purchase.product_name }
+				);
+		}
+	}
 	if ( ! fullExpiryDate ) {
 		return __( 'You’ll lose access to:' );
 	}
@@ -325,9 +347,36 @@ export function getRemoveLossIntro( purchase: PurchaseForCopy ): string {
  */
 export function getSingleItemCancelCopy(
 	purchase: PurchaseForCopy,
-	fullExpiryDate: string
+	fullExpiryDate: string,
+	isInGracePeriod: boolean
 ): string {
 	const category = getProductCategory( purchase );
+	// Already past the expiry date (grace period): the expiry date is in the past,
+	// so frame it around imminent removal instead of a future expiry.
+	if ( isInGracePeriod ) {
+		switch ( category ) {
+			case 'plan':
+				return __(
+					"Your plan subscription will be removed soon. It will be deactivated and you'll no longer be able to use it."
+				);
+			case 'domain':
+				return __(
+					"Your domain subscription will be removed soon. It will be deactivated and you'll no longer be able to use it."
+				);
+			case 'email':
+				return __(
+					"Your email subscription will be removed soon. It will be deactivated and you'll no longer be able to use it."
+				);
+			default:
+				return sprintf(
+					/* translators: %(productName)s is the product name */
+					__(
+						"Your %(productName)s subscription will be removed soon. It will be deactivated and you'll no longer be able to use it."
+					),
+					{ productName: purchase.product_name }
+				);
+		}
+	}
 	if ( ! fullExpiryDate ) {
 		switch ( category ) {
 			case 'plan':
@@ -459,6 +508,27 @@ export function getRefundNoticeCopy( {
 				{ refundAmount }
 			);
 	}
+}
+
+/**
+ * Promo notice shown on the Cancel screen when a refund is still available:
+ * a prompt sentence plus the label for the link that switches to the Remove
+ * flow. Plan-worded (not product-aware) to match the current copy.
+ */
+export function getRefundEligibilityPromoCopy( { refundAmount }: { refundAmount: string } ): {
+	prompt: string;
+	linkLabel: string;
+} {
+	return {
+		prompt: sprintf(
+			/* translators: %(refundAmount)s is a monetary amount, e.g. "$96.00" */
+			__(
+				'You’re eligible for a %(refundAmount)s refund if you remove your plan now. Your features will be unavailable right away.'
+			),
+			{ refundAmount }
+		),
+		linkLabel: __( 'Remove plan and claim refund.' ),
+	};
 }
 
 /**

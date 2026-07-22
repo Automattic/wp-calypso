@@ -56,6 +56,7 @@ import {
 	attachBuildTimestamp,
 	attachHead,
 	attachI18n,
+	bumpStat,
 } from 'calypso/server/render';
 import sanitize from 'calypso/server/sanitize';
 import stateCache from 'calypso/server/state-cache';
@@ -880,6 +881,8 @@ const setUpSectionContext = ( section, entrypoint ) => ( req, res, next ) => {
 
 const setNotFoundStatus = ( req, res, next ) => {
 	res.status( 404 );
+	// bumpStat only accepts 32 chars max for the value
+	bumpStat( 'dashboard-404', req.path.slice( 0, 32 ) );
 	next();
 };
 
@@ -1322,6 +1325,16 @@ export default function pages() {
 				section.load().default( serverRouter( app, setUpRoute, section ) );
 			}
 		} );
+
+	// The dashboard host has no login page; send /log-in to WordPress.com.
+	if ( isDashboardEnv() || calypsoEnv === 'development' ) {
+		app.get( pathToRegExp( '/log-in' ), ( req, res, next ) => {
+			if ( ! isAllowedDotcomDashboardHostname( req.hostname ) ) {
+				return next( 'route' );
+			}
+			res.redirect( config( 'wpcom_url' ) + req.originalUrl );
+		} );
+	}
 
 	// Set up login routing.
 	handleSectionPath( LOGIN_SECTION_DEFINITION, '/log-in', 'entry-login' );

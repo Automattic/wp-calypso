@@ -51,7 +51,7 @@
 		"@wordpress/react-i18n": "^4.48.0",
 		"@wordpress/url": "^4.48.0",
 		"clsx": "^2.1.1",
-		"dompurify": "3.4.11",
+		"dompurify": "3.4.12",
 		"react-router-dom": "6.30.4",
 		"smooch": "^5.7.17",
 		"tslib": "^2.8.1",

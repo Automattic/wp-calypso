@@ -16,6 +16,7 @@ export const siteJetpackModulesQuery = ( siteId: number ) =>
 
 export const siteJetpackModulesMutation = ( siteId: number ) =>
 	mutationOptions( {
+		meta: { statId: 'site-jp-module-toggle' },
 		mutationFn: ( variables: { module: string; value: boolean } ) => {
 			const { module, value } = variables;
 			return value

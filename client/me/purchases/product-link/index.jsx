@@ -23,7 +23,7 @@ const ProductLink = ( { productUrl, purchase, selectedSite } ) => {
 	}
 
 	if ( isPlan( purchase ) ) {
-		url = '/plans/my-plan/' + selectedSite.slug;
+		url = '/plans/' + selectedSite.slug;
 		if ( isJetpackCloud() ) {
 			url = 'https://wordpress.com' + url;
 		}

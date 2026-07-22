@@ -359,6 +359,36 @@ describe( 'OrchestratorChat', () => {
 		window.removeEventListener( 'big-sky-inline-suggestion-click', listener );
 	} );
 
+	it( 'dispatches and tracks the canonical AI Editorial Review suggestion ID once', () => {
+		const listener = jest.fn();
+		window.addEventListener( 'big-sky-inline-suggestion-click', listener );
+		const suggestion = {
+			id: 'ai-editorial-review',
+			label: 'Editorial Review',
+			prompt: 'Run an AI Editorial Review',
+		};
+
+		render( chat( { emptyViewSuggestions: [ suggestion ] } ) );
+		jest.mocked( recordBigSkyTracksEvent ).mockClear();
+
+		fireEvent.click( screen.getByRole( 'button', { name: 'Editorial Review' } ) );
+
+		expect( listener ).toHaveBeenCalledTimes( 1 );
+		expect( ( listener.mock.calls[ 0 ][ 0 ] as CustomEvent ).detail ).toEqual( {
+			value: 'Run an AI Editorial Review',
+			autoSubmit: false,
+			suggestionId: 'ai-editorial-review',
+		} );
+		expect( recordBigSkyTracksEvent ).toHaveBeenCalledTimes( 1 );
+		expect( recordBigSkyTracksEvent ).toHaveBeenCalledWith( 'chat_suggestion_click', {
+			suggestion_text: 'Run an AI Editorial Review',
+			suggestion_id: 'ai-editorial-review',
+			available_suggestions: '|ai-editorial-review|',
+		} );
+
+		window.removeEventListener( 'big-sky-inline-suggestion-click', listener );
+	} );
+
 	it( 'dispatches the inline suggestion event when Agenttic passes a prompt string', () => {
 		const listener = jest.fn();
 		window.addEventListener( 'big-sky-inline-suggestion-click', listener );

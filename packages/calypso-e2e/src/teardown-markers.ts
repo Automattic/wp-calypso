@@ -12,6 +12,10 @@ const MAX_ERROR_LENGTH = 300;
 const ATOMIC_DEPROVISION_TIMEOUT_MS = 180 * 1000;
 const ATOMIC_DEPROVISION_POLL_MS = 15 * 1000;
 
+// Fresh signup tokens can reach `/me` before the account-close endpoint.
+const TOKEN_PROPAGATION_TIMEOUT_MS = 30 * 1000;
+const TOKEN_PROPAGATION_POLL_MS = 5 * 1000;
+
 export interface AccountLeak {
 	/**
 	 * Numeric user ID; absent when a signup response created an account but did
@@ -91,6 +95,19 @@ function isActiveAtomicSiteError( error: unknown ): boolean {
 		return true;
 	}
 	return /atomic-site|active atomic sites/i.test( errorMessage( error ) );
+}
+
+/**
+ * Matches only raw close responses. A thrown `invalid_token` came from the
+ * preliminary `/me` request and is handled by the closed-account probe.
+ */
+function isTransientInvalidTokenCloseResponse( error: unknown ): boolean {
+	return (
+		!! error &&
+		typeof error === 'object' &&
+		! ( error instanceof Error ) &&
+		( error as { error?: unknown } ).error === 'invalid_token'
+	);
 }
 
 /**
@@ -208,7 +225,11 @@ export async function closeAccountAndRecordLeak(
 	// Track the wait so the terminal `[atomic-teardown]` breadcrumb reports how
 	// long the Atomic deprovision took, surfacing drift if that timing changes.
 	const startedAt = Date.now();
-	const deadline = startedAt + ATOMIC_DEPROVISION_TIMEOUT_MS;
+	const atomicDeadline = startedAt + ATOMIC_DEPROVISION_TIMEOUT_MS;
+	// Anchored to the first invalid_token response, not startedAt, so an Atomic
+	// deprovision wait can't consume the token-propagation window before the
+	// token race has even surfaced.
+	let tokenDeadline: number | undefined;
 	let closeError: unknown;
 	let attempts = 0;
 	let sawAtomicSite = false;
@@ -241,13 +262,22 @@ export async function closeAccountAndRecordLeak(
 			closeError = error;
 		}
 
-		// Only an active-Atomic-site rejection is worth waiting on; every other
-		// failure is terminal and falls through to the leak probe immediately.
-		if ( ! isActiveAtomicSiteError( closeError ) || Date.now() >= deadline ) {
+		let pollMs: number;
+		if ( isActiveAtomicSiteError( closeError ) && Date.now() < atomicDeadline ) {
+			sawAtomicSite = true;
+			pollMs = ATOMIC_DEPROVISION_POLL_MS;
+		} else if ( isTransientInvalidTokenCloseResponse( closeError ) ) {
+			if ( tokenDeadline === undefined ) {
+				tokenDeadline = Date.now() + TOKEN_PROPAGATION_TIMEOUT_MS;
+			}
+			if ( Date.now() >= tokenDeadline ) {
+				break;
+			}
+			pollMs = TOKEN_PROPAGATION_POLL_MS;
+		} else {
 			break;
 		}
-		sawAtomicSite = true;
-		await new Promise( ( resolve ) => setTimeout( resolve, ATOMIC_DEPROVISION_POLL_MS ) );
+		await new Promise( ( resolve ) => setTimeout( resolve, pollMs ) );
 	}
 
 	if ( sawAtomicSite ) {

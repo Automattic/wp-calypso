@@ -5,7 +5,7 @@ import type { HostingDashboardOptIn } from '@automattic/api-core';
 const ROLLOUT_PERCENTAGE = 50;
 
 // When rollout begins, users registered after this ID (i.e. new users) are enrolled.
-const NEW_USER_ID_THRESHOLD = 282742932;
+const NEW_USER_ID_THRESHOLD = 282953237;
 
 /**
  * Whether the user belongs to the percentage-rollout cohort. Membership is

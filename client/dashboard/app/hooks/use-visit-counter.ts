@@ -1,8 +1,10 @@
+import { isWpError } from '@automattic/api-core';
 import { userPreferenceQuery, userPreferenceOptimisticMutation } from '@automattic/api-queries';
 import config from '@automattic/calypso-config';
 import { useQuery, useMutation } from '@tanstack/react-query';
 import { useRouterState } from '@tanstack/react-router';
 import { useEffect, useRef } from 'react';
+import { logToLogstash } from 'calypso/lib/logstash';
 import { useAppContext } from '../context';
 import { resolveVisitAreaSlug } from '../survicate/visit-areas';
 
@@ -53,10 +55,29 @@ export function usePersistentVisitCounter( area: string | null ): void {
 			return;
 		}
 
-		mutate( {
-			count: ( counter?.count ?? 0 ) + 1,
-			lastUpdated: now,
-		} );
+		mutate(
+			{
+				count: ( counter?.count ?? 0 ) + 1,
+				lastUpdated: now,
+			},
+			{
+				onError: ( error ) => {
+					logToLogstash( {
+						feature: 'calypso_client',
+						message: error.message,
+						tags: [ 'dashboard', 'visit-counter-update-fail' ],
+						properties: {
+							status: isWpError( error ) ? error.status : undefined,
+							error_name: isWpError( error ) ? error.name : undefined,
+							env_id: config( 'env_id' ),
+							message: error.message,
+							path: window.location.href,
+							area,
+						},
+					} );
+				},
+			}
+		);
 	}, [ area, isSuccess, counter, mutate ] );
 }
 

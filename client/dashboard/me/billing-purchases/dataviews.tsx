@@ -13,7 +13,7 @@ import { purchaseSettingsRoute } from '../../app/router/me';
 import { PurchaseExpiryStatus } from '../../components/purchase-expiry-status';
 import SiteIcon from '../../components/site-icon';
 import {
-	isRenewing,
+	mightStillAutoRenew,
 	isTransferredOwnership,
 	isAkismetHoldingSitePurchase,
 	isMarketplaceHoldingSitePurchase,
@@ -434,10 +434,6 @@ export function getFields( {
 			enableHiding: false,
 			filterBy: false,
 			getValue: ( { item }: { item: Purchase } ) => {
-				if ( item.expiry_status === 'expired' ) {
-					// Prefix expired items with a z so they sort to the end of the list.
-					return 'zzz ' + item.expiry_status + ' ' + item.expiry_date;
-				}
 				// Include date in value to sort similar expiries together.
 				return item.expiry_date + ' ' + item.expiry_status;
 			},
@@ -460,10 +456,10 @@ export function getFields( {
 			filterBy: false,
 			getValue: ( { item }: { item: Purchase } ) => {
 				// Allows sorting by card number or payment partner (eg: `type === 'paypal'`).
-				return item.expiry_status === 'expired'
-					? // Do not return card number for expired purchases because it
-					  // will not be displayed so it will look weird if we sort
-					  // expired purchases with active ones that have the same card.
+				return ! mightStillAutoRenew( item )
+					? // Do not return the card number when the payment method isn't in
+					  // use, since it won't be displayed; sorting it alongside active
+					  // purchases that have the same card would look wrong.
 					  'expired'
 					: item.payment_details ?? item.payment_card_type ?? 'no-payment-method';
 			},
@@ -480,7 +476,9 @@ export function getFields( {
 				return (
 					<HStack justify="flex-start" spacing={ 1 }>
 						<PurchasePaymentMethod purchase={ item } isSiteMissing={ ! site } />
-						{ isBackupMethodAvailable && isRenewing( item ) && <BackupPaymentMethodNotice /> }
+						{ isBackupMethodAvailable && mightStillAutoRenew( item ) && (
+							<BackupPaymentMethodNotice />
+						) }
 					</HStack>
 				);
 			},

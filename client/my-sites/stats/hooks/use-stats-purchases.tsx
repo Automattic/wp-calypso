@@ -12,8 +12,8 @@ import {
 	PRODUCT_JETPACK_STATS_YEARLY,
 } from '@automattic/calypso-products';
 import { createSelector } from '@automattic/state-utils';
-import moment from 'moment';
 import { ComponentClass, useMemo } from 'react';
+import { isRemoved } from 'calypso/lib/purchases';
 import { useSelector } from 'calypso/state';
 import {
 	isFetchingSitePurchases,
@@ -31,29 +31,16 @@ const JETPACK_STATS_TIERED_BILLING_LIVE_DATE_2024_01_04 = '2024-01-04T05:30:00+0
 const JETPACK_BUSINESS_PLANS = [ PLAN_JETPACK_BUSINESS, PLAN_JETPACK_BUSINESS_MONTHLY ];
 
 /**
- * Checks if a purchase is valid.
+ * Checks if a purchase is still valid for providing its product.
  *
- * A purchase is considered valid if it is not expired or if it is within the grace period.
- * The grace period accounts for time zones and auto-renewals.
+ * A purchase is valid as long as its subscription is still active, which includes
+ * the post-expiry grace period (during which it can still be renewed). Only a
+ * fully-removed subscription is invalid.
  * @param {Purchase} purchase - The purchase object to check.
- * @returns {boolean} - Returns false if the purchase is both expired and outside the grace period, otherwise true.
+ * @returns {boolean} - Returns false only if the subscription has been removed.
  */
-
 const isPurchaseValid = ( purchase: Purchase ) => {
-	if ( purchase.expiryStatus !== 'expired' ) {
-		return true;
-	}
-
-	if ( ! purchase.expiryDate ) {
-		return false;
-	}
-
-	// Allow for a grace period to account for time zones and auto-renewals.
-	const EXPIRY_THRESHOLD_DAYS = 2;
-	const expiryThreshold = moment().subtract( EXPIRY_THRESHOLD_DAYS, 'days' );
-	const isExpiredAndOld = moment( purchase.expiryDate ).isBefore( expiryThreshold );
-
-	return ! isExpiredAndOld;
+	return ! isRemoved( purchase );
 };
 
 const filterPurchasesByProducts = ( ownedPurchases: Purchase[], productSlugs: string[] ) => {

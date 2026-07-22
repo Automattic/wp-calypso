@@ -1579,10 +1579,7 @@ const ConnectedCancelPurchase = connect(
 function CancelPurchaseWithExperiment( props: CancelPurchaseProps ) {
 	const isSplitCancelRemoveEnabled = useIsSplitCancelRemoveEnabled();
 	const { data: purchaseCancelFeatures, isPending: isPurchaseCancelFeaturesLoading } = useQuery(
-		purchaseCancelFeaturesQuery(
-			props.purchaseId,
-			isSplitCancelRemoveEnabled ? 'treatment' : 'control'
-		)
+		purchaseCancelFeaturesQuery( props.purchaseId )
 	);
 	return (
 		<ConnectedCancelPurchase

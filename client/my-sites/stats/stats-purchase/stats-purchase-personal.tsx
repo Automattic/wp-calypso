@@ -104,7 +104,7 @@ const PersonalPurchase = ( {
 
 			<div className={ `${ COMPONENT_CLASS_NAME }__notice` }>
 				{ translate(
-					'This plan is for non-commercial sites only. Sites with any commercial activity {{Button}}require a commercial license{{/Button}}.',
+					'To unlock UTM tracking, device attribution, commercial use and more, {{Button}}upgrade to a commercial license{{/Button}}.',
 					{
 						components: {
 							Button: <Button variant="link" href="#" onClick={ handleClick } />,
@@ -256,6 +256,12 @@ function StatsBenefitsListing( {
 				) }
 				<li className={ `${ COMPONENT_CLASS_NAME }__benefits-item--not-included` }>
 					{ translate( 'No UTM tracking for your marketing campaigns' ) }
+				</li>
+				<li className={ `${ COMPONENT_CLASS_NAME }__benefits-item--not-included` }>
+					{ translate( 'No granular location stats' ) }
+				</li>
+				<li className={ `${ COMPONENT_CLASS_NAME }__benefits-item--not-included` }>
+					{ translate( 'No device attribution' ) }
 				</li>
 				<li className={ `${ COMPONENT_CLASS_NAME }__benefits-item--not-included` }>
 					{ translate( 'No access to upcoming advanced features' ) }

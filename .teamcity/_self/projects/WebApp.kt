@@ -570,7 +570,6 @@ object RunAllUnitTests : BuildType({
 			branchFilter = """
 				+:*
 				-:pull*
-				-:trunk
 			""".trimIndent()
 		}
 	}
@@ -611,6 +610,7 @@ object RunAllUnitTests : BuildType({
 				messageFormat = simpleMessageFormat()
 			}
 			branchFilter = """
+				+:trunk
 				+:gh-readonly-queue/*
 			""".trimIndent()
 			buildFailedToStart = true

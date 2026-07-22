@@ -177,5 +177,15 @@ module.exports = {
 			},
 		],
 		'@tanstack/query/exhaustive-deps': 'error',
+		'no-restricted-syntax': [
+			'error',
+			{
+				// Spreading an api-queries factory and then setting `meta` replaces the
+				// whole object, dropping the factory's `meta.statId`.
+				selector: "Property[key.name='meta'] > ObjectExpression > Property[key.name='snackbar']",
+				message:
+					'Setting `meta.snackbar` by hand drops the mutation’s `meta.statId`. Use `withSnackbar()` from app/snackbars/with-snackbar instead.',
+			},
+		],
 	},
 };

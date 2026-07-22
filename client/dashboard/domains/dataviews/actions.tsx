@@ -19,6 +19,7 @@ import {
 	domainsContactInfoRoute,
 } from '../../app/router/domains';
 import { getCurrentDashboard } from '../../app/routing';
+import { withSnackbar } from '../../app/snackbars/with-snackbar';
 import ComponentViewTracker from '../../components/component-view-tracker';
 import { isDomainRenewable, canSetAsPrimary, getDomainRenewalUrl } from '../../utils/domain';
 import { isTransferrableToWpcom } from '../../utils/domain-types';
@@ -42,14 +43,11 @@ export const useActions = ( { user, sites }: { user: User; sites?: Site[] } ) =>
 	const { createSuccessNotice } = useDispatch( noticesStore );
 	const { data: purchases } = useQuery( userPurchasesQuery() );
 
-	const { mutate: setPrimaryDomain, isPending: isSettingPrimaryDomain } = useMutation( {
-		...siteSetPrimaryDomainMutation(),
-		meta: {
-			snackbar: {
-				error: { source: 'server' },
-			},
-		},
-	} );
+	const { mutate: setPrimaryDomain, isPending: isSettingPrimaryDomain } = useMutation(
+		withSnackbar( siteSetPrimaryDomainMutation(), {
+			error: { source: 'server' },
+		} )
+	);
 
 	const sitesByBlogId: Record< number, Site > = useMemo( () => {
 		if ( ! sites ) {

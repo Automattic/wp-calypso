@@ -10,6 +10,22 @@ $segmentedControlItemBorderRadius: 4px;
 	container-type: inline-size;
 	// Offset the margin and padding of the `.postbox .inside` container.
 	margin: -11px -12px -12px;
+	// `#dashboard-widgets .postbox` (dashboard.css) rounds its own corners with
+	// `border-radius: 8px` but doesn't clip its content, so pulling flush to the
+	// postbox edges above leaves this element's square bottom corners poking out
+	// past the rounded ones. Round and clip to match; the top isn't affected since
+	// it sits below the postbox header, not at the postbox's own rounded edge.
+	border-radius: 0 0 var(--wpds-border-radius-lg, 8px) var(--wpds-border-radius-lg, 8px);
+	overflow: hidden;
+}
+
+// Counters WP-admin core's own `.card` utility class, which collides with the `Card` component
+// StatsEmptyState (rendered by MiniChart/Modules) uses for its empty-state placeholder. Mirrors
+// the equivalent `.jp-stats-dashboard .card` override in app.scss for the main app.
+.card {
+	border: 0;
+	max-width: initial;
+	min-width: initial;
 }
 
 .stats-widget-content {

@@ -1,4 +1,5 @@
 /* eslint-disable no-restricted-imports */
+import { useShouldUseUnifiedAgent } from '@automattic/agents-manager';
 import {
 	purchaseQuery,
 	queryClient,
@@ -123,6 +124,10 @@ export function InterimOmnibar( {
 		store.dispatch( { type: 'NOTIFICATIONS_UNSEEN_COUNT_SET', unseenCount } );
 	} );
 
+	// The masterbar's own client, not the Dashboard one: that client is restored from
+	// storage, so a cached flag would resolve on the first render and mismatch the SSR.
+	const shouldUseUnifiedAgent = useShouldUseUnifiedAgent( omnibarQueryClient );
+
 	return (
 		<QueryClientProvider client={ omnibarQueryClient }>
 			<ReduxProvider store={ store }>
@@ -177,10 +182,11 @@ export function InterimOmnibar( {
 					isCheckoutPending={ false }
 					isCheckoutFailed={ false }
 					loadHelpCenterIcon
+					loadAgentsManager
 					isGlobalSidebarVisible={ false }
 					isGravatarDomain={ false }
 					dashboardOptIn
-					useUnifiedAgent={ false }
+					useUnifiedAgent={ !! shouldUseUnifiedAgent }
 					isSupportSession={ isSupportSession() }
 					isNotificationsShowing={ false }
 					isMigrationInProgress={ false }

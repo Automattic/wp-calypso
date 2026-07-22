@@ -21,7 +21,6 @@
 //               |                                                  |
 //               \--------------------------------------------------\--- tokens
 //
-//   @see README for `TokenField`
 //   [
 //   	{ value: 'Site Name', type: 'siteName' },
 //   	{ value: ' | ', type: 'string' },

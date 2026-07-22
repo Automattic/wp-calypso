@@ -5,13 +5,14 @@ import {
 	isTitanMail,
 } from '@automattic/calypso-products';
 import { Button } from '@wordpress/components';
-import { localize, type LocalizeProps } from 'i18n-calypso';
+import { localize, fixMe, type LocalizeProps } from 'i18n-calypso';
 import moment from 'moment';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import { ConfirmDialog, DialogContent, DialogFooter } from 'calypso/components/confirm-dialog';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
 import CancelAutoRenewalForm from 'calypso/components/marketing-survey/cancel-auto-renewal-form';
+import { isExpiredAndInGracePeriod } from 'calypso/lib/purchases';
 import { isAkismetHoldingSitePurchase } from 'calypso/me/purchases/utils';
 import isSiteAtomic from 'calypso/state/selectors/is-site-automated-transfer';
 import type { Purchases } from '@automattic/data-stores';
@@ -86,6 +87,13 @@ class AutoRenewDisablingDialog extends Component<
 	}
 
 	getCopy( variation: string ) {
+		if ( isExpiredAndInGracePeriod( this.props.purchase ) ) {
+			return this.getGracePeriodCopy( variation );
+		}
+		return this.getExpiringCopy( variation );
+	}
+
+	getExpiringCopy( variation: string ) {
 		const { planName, siteDomain, purchase, translate, moment } = this.props;
 		const expiryDate = moment( purchase.expiryDate ).format( 'LL' );
 
@@ -209,6 +217,160 @@ class AutoRenewDisablingDialog extends Component<
 							'%(expiryDate)s is a date string, e.g. May 14, 2020',
 					}
 				);
+		}
+	}
+
+	getGracePeriodCopy( variation: string ) {
+		const { planName, siteDomain, purchase, translate } = this.props;
+		const expiringCopy = this.getExpiringCopy( variation );
+
+		switch ( variation ) {
+			case 'plan':
+				return fixMe( {
+					text:
+						'By canceling auto-renewal, your {{strong}}%(planName)s{{/strong}} plan for {{strong}}%(siteDomain)s{{/strong}} will be removed soon. ' +
+						"When it does, you'll lose access to key features you may be using on your site. " +
+						'To avoid that, turn auto-renewal back on or manually renew your plan before it is removed.',
+					newCopy: translate(
+						'By canceling auto-renewal, your {{strong}}%(planName)s{{/strong}} plan for {{strong}}%(siteDomain)s{{/strong}} will be removed soon. ' +
+							"When it does, you'll lose access to key features you may be using on your site. " +
+							'To avoid that, turn auto-renewal back on or manually renew your plan before it is removed.',
+						{
+							args: {
+								planName,
+								siteDomain,
+							},
+							components: {
+								strong: <strong />,
+							},
+							comment:
+								'%(planName)s is the name of a WordPress.com plan, e.g. Personal, Premium, Business. ' +
+								'%(siteDomain)s is a domain name, e.g. example.com, example.wordpress.com.',
+						}
+					),
+					oldCopy: expiringCopy,
+				} );
+			case 'domain':
+				return fixMe( {
+					text:
+						'By canceling auto-renewal, your domain {{strong}}%(domain)s{{/strong}} will be removed soon. ' +
+						"Once your domain is removed, there is no guarantee that you'll be able to get it back – " +
+						'it could become unavailable and be impossible to purchase here, or at any other domain registrar. ' +
+						'To avoid that, turn auto-renewal back on or manually renew your domain before it is removed.',
+					newCopy: translate(
+						'By canceling auto-renewal, your domain {{strong}}%(domain)s{{/strong}} will be removed soon. ' +
+							"Once your domain is removed, there is no guarantee that you'll be able to get it back – " +
+							'it could become unavailable and be impossible to purchase here, or at any other domain registrar. ' +
+							'To avoid that, turn auto-renewal back on or manually renew your domain before it is removed.',
+						{
+							args: {
+								domain: purchase.meta ?? '',
+							},
+							components: {
+								strong: <strong />,
+							},
+							comment: '%(domain)s is a domain name, e.g. example.com, example.wordpress.com.',
+						}
+					),
+					oldCopy: expiringCopy,
+				} );
+			case 'atomic':
+				return fixMe( {
+					text:
+						'By canceling auto-renewal, your {{strong}}%(planName)s{{/strong}} plan for {{strong}}%(siteDomain)s{{/strong}} will be removed soon. ' +
+						'When it is removed, plugins, themes and design customizations will be deactivated. ' +
+						'To avoid that, turn auto-renewal back on or manually renew your plan before it is removed.',
+					newCopy: translate(
+						'By canceling auto-renewal, your {{strong}}%(planName)s{{/strong}} plan for {{strong}}%(siteDomain)s{{/strong}} will be removed soon. ' +
+							'When it is removed, plugins, themes and design customizations will be deactivated. ' +
+							'To avoid that, turn auto-renewal back on or manually renew your plan before it is removed.',
+						{
+							args: {
+								planName,
+								siteDomain,
+							},
+							components: {
+								strong: <strong />,
+							},
+							comment:
+								'%(planName)s is the name of a WordPress.com plan, e.g. Personal, Premium, Business. ' +
+								'%(siteDomain)s is a domain name, e.g. example.com, example.wordpress.com.',
+						}
+					),
+					oldCopy: expiringCopy,
+				} );
+			case 'email':
+				return fixMe( {
+					text:
+						'By canceling auto-renewal, your {{strong}}%(emailProductName)s{{/strong}} subscription for {{strong}}%(domainName)s{{/strong}} will be removed soon. ' +
+						'After it is removed, you will not be able to send and receive emails for this domain. ' +
+						'To avoid that, turn auto-renewal back on or manually renew your subscription before it is removed.',
+					newCopy: translate(
+						'By canceling auto-renewal, your {{strong}}%(emailProductName)s{{/strong}} subscription for {{strong}}%(domainName)s{{/strong}} will be removed soon. ' +
+							'After it is removed, you will not be able to send and receive emails for this domain. ' +
+							'To avoid that, turn auto-renewal back on or manually renew your subscription before it is removed.',
+						{
+							args: {
+								domainName: purchase.meta ?? '',
+								emailProductName: purchase.productName,
+							},
+							components: {
+								strong: <strong />,
+							},
+							comment:
+								'%(emailProductName)s is the name of an email product, e.g. Email, Titan Mail, Google Workspace. ' +
+								'%(domainName)s is a domain name, e.g. example.com.',
+						}
+					),
+					oldCopy: expiringCopy,
+				} );
+			case 'siteless':
+				return fixMe( {
+					text:
+						'By canceling auto-renewal, your {{strong}}%(productName)s{{/strong}} subscription will be removed soon. ' +
+						"When it does, you'll lose access to key features you may be using on your site. " +
+						'To avoid that, turn auto-renewal back on or manually renew your subscription before it is removed.',
+					newCopy: translate(
+						'By canceling auto-renewal, your {{strong}}%(productName)s{{/strong}} subscription will be removed soon. ' +
+							"When it does, you'll lose access to key features you may be using on your site. " +
+							'To avoid that, turn auto-renewal back on or manually renew your subscription before it is removed.',
+						{
+							args: {
+								productName: purchase.productName,
+							},
+							components: {
+								strong: <strong />,
+							},
+							comment: '%(productName)s is the name of an Akismet plan/ product.',
+						}
+					),
+					oldCopy: expiringCopy,
+				} );
+			default:
+				return fixMe( {
+					text:
+						'By canceling auto-renewal, your {{strong}}%(productName)s{{/strong}} subscription for {{strong}}%(siteDomain)s{{/strong}} will be removed soon. ' +
+						"When it does, you'll lose access to key features you may be using on your site. " +
+						'To avoid that, turn auto-renewal back on or manually renew your subscription before it is removed.',
+					newCopy: translate(
+						'By canceling auto-renewal, your {{strong}}%(productName)s{{/strong}} subscription for {{strong}}%(siteDomain)s{{/strong}} will be removed soon. ' +
+							"When it does, you'll lose access to key features you may be using on your site. " +
+							'To avoid that, turn auto-renewal back on or manually renew your subscription before it is removed.',
+						{
+							args: {
+								productName: purchase.productName,
+								siteDomain,
+							},
+							components: {
+								strong: <strong />,
+							},
+							comment:
+								'%(productName)s is the name of a WordPress.com product. ' +
+								'%(siteDomain)s is a domain name, e.g. example.com, example.wordpress.com.',
+						}
+					),
+					oldCopy: expiringCopy,
+				} );
 		}
 	}
 

@@ -2,7 +2,7 @@
  * Shared clipboard-copy state for review cards. Exposes whether the clipboard
  * API is available, which card currently shows "Copied", and a copy() that
  * flips that card to "Copied" for a couple of seconds. Used by both FeedbackList
- * (Generate Feedback / Proofreader) and review-mediation (AI Editorial Review).
+ * (Generate Feedback / Proofreader) and AI Editorial Review.
  * @package
  */
 

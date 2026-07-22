@@ -29,11 +29,8 @@ body.is-section-earn.theme-default.color-scheme {
 	width: auto;
 }
 
-.memberships__module-content {
-	max-height: 520px;
-	overflow-y: auto;
-	margin-top: -24px;
-	border-bottom: 1px solid var(--color-neutral-5);
+.card.memberships__earnings-card {
+	padding-block: 16px;
 }
 
 .memberships__onboarding-wrapper {
@@ -113,7 +110,17 @@ body.is-section-earn.theme-default.color-scheme {
 }
 
 .memberships__earnings-breakdown-list {
+	display: grid;
+	grid-template-columns: repeat( 3, 1fr );
+	gap: 16px;
 	margin: 0;
+	padding-inline: 0;
+	padding-block: 0 16px;
+	border-block-end: 1px solid var(--color-border-subtle);
+
+	@include breakpoint-deprecated( "<480px" ) {
+		grid-template-columns: 1fr;
+	}
 }
 
 .memberships__earnings-breakdown-label {
@@ -130,28 +137,22 @@ body.is-section-earn.theme-default.color-scheme {
 }
 
 .memberships__earnings-breakdown-item {
-	width: 33%;
-	float: left;
-	padding: 5px 0 10px;
 	list-style-type: none;
 	text-align: center;
 
 	@include breakpoint-deprecated( "<480px" ) {
-		width: auto;
-		float: none;
-		padding: 10px 24px;
+		display: flex;
+		align-items: baseline;
+		justify-content: space-between;
 		text-align: left;
 	}
 }
 
 .memberships__earnings-breakdown-value {
-	width: 100%;
 	display: block;
 	font-size: $font-title-medium;
 
 	@include breakpoint-deprecated( "<480px" ) {
-		width: auto;
-		float: right;
 		font-size: $font-body;
 	}
 }
@@ -446,10 +447,8 @@ body.is-section-earn.theme-default.color-scheme {
 }
 .memberships__earnings-breakdown-notes {
 	display: block;
-	clear: both;
 	color: var(--color-neutral-30);
-	padding-bottom: 12px;
-	padding-top: 24px;
+	padding-block-start: 16px;
 	font-size: $font-body-extra-small;
 	line-height: 1.6;
 	font-style: italic;

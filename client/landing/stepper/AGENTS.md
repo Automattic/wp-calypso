@@ -23,6 +23,10 @@ client/landing/stepper/
 └── README.md                     # Full human-readable docs
 ```
 
+> **Note**: The `ai-site-builder` flow (the free Big Sky entry at `/setup/ai-site-builder`)
+> is slated for removal. Don't add new features or flow-specific handling for it;
+> `ai-site-builder-onboarding` (the pay-upfront AI Site Builder variant) is the one that stays.
+
 ## Core concept
 
 A flow is a **finite-state machine**, not a linear list. The first step is fixed; all

@@ -1,5 +1,6 @@
 import {
 	activeAgencyQuery,
+	agencyProductsQuery,
 	agencyQuery,
 	agencyResourcesQuery,
 	agencySiteQuery,
@@ -10,8 +11,10 @@ import {
 	siteBySlugQuery,
 	siteScanQuery,
 	siteSettingsQuery,
+	referralsQuery,
+	referralCommissionPayoutQuery,
 } from '@automattic/api-queries';
-import { createRoute, createLazyRoute, notFound } from '@tanstack/react-router';
+import { createRoute, createLazyRoute, notFound, Outlet } from '@tanstack/react-router';
 import { __ } from '@wordpress/i18n';
 import { dashboardRedirect, redirectAsNotAllowed } from './redirect';
 import { rootRoute } from './root';
@@ -256,6 +259,54 @@ const earnPayoutSettingsRoute = createRoute( {
 	)
 );
 
+// `/earn/referrals/$referralId` – referral (client) detail view; hosts the tab routes
+export const earnReferralRoute = createRoute( {
+	head: () => ( { meta: [ { title: __( 'Referral details' ) } ] } ),
+	getParentRoute: () => agencyRoute,
+	path: 'earn/referrals/$referralId',
+	loader: async () => {
+		const agency = await queryClient.ensureQueryData( activeAgencyQuery() );
+		const agencyId = agency?.id ?? 0;
+		if ( agencyId ) {
+			await Promise.all( [
+				queryClient.ensureQueryData( referralsQuery( agencyId ) ),
+				queryClient.ensureQueryData( agencyProductsQuery( agencyId ) ).catch( () => undefined ),
+			] );
+			queryClient.prefetchQuery( referralCommissionPayoutQuery( agencyId ) );
+		}
+	},
+	component: Outlet,
+} );
+
+const earnReferralOverviewRoute = createRoute( {
+	getParentRoute: () => earnReferralRoute,
+	path: '/',
+} ).lazy( () =>
+	import( '../../agency/earn/referrals/referral/overview' ).then( ( d ) =>
+		createLazyRoute( 'earn-referral-overview' )( { component: d.default } )
+	)
+);
+
+const earnReferralOrdersRoute = createRoute( {
+	head: () => ( { meta: [ { title: __( 'Referrals' ) } ] } ),
+	getParentRoute: () => earnReferralRoute,
+	path: 'orders',
+} ).lazy( () =>
+	import( '../../agency/earn/referrals/referral/referrals-tab' ).then( ( d ) =>
+		createLazyRoute( 'earn-referral-orders' )( { component: d.default } )
+	)
+);
+
+const earnReferralPurchasesRoute = createRoute( {
+	head: () => ( { meta: [ { title: __( 'Purchases' ) } ] } ),
+	getParentRoute: () => earnReferralRoute,
+	path: 'purchases',
+} ).lazy( () =>
+	import( '../../agency/earn/referrals/referral/purchases' ).then( ( d ) =>
+		createLazyRoute( 'earn-referral-purchases' )( { component: d.default } )
+	)
+);
+
 // `/sites/$siteSlug` – agency site detail (a layout that hosts the section routes)
 export const agencySiteRoute = createRoute( {
 	getParentRoute: () => agencyRoute,
@@ -475,6 +526,11 @@ export const createAgencyRoutes = () => [
 		earnWooPaymentsRoute,
 		earnMigrationsRoute,
 		earnPayoutSettingsRoute,
+		earnReferralRoute.addChildren( [
+			earnReferralOverviewRoute,
+			earnReferralOrdersRoute,
+			earnReferralPurchasesRoute,
+		] ),
 		agencySiteRoute.addChildren( [
 			agencySiteOverviewRoute,
 			agencySiteBackupsRoute.addChildren( [

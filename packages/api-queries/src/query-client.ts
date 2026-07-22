@@ -63,32 +63,60 @@ const persister = createSyncStoragePersister( {
 } );
 
 const maxAge = 1000 * 60 * 60 * 24; // 24 hours
+const cacheDataShapeVersion = 3; // Bump the numeric prefix when query data shape changes.
 
-const [ disablePersistQueryClient, persistQueryClientPromise ] = persistQueryClient( {
-	queryClient,
-	persister,
-	buster: '3', // Bump when query data shape changes.
-	maxAge,
-	dehydrateOptions: {
-		shouldRedactErrors: () => false,
-		shouldDehydrateQuery: ( query ) => {
-			const persist = query.meta?.persist;
-			if ( persist === false ) {
-				return false;
-			}
-			// Gate the predicate behind the default check so it is never handed the
-			// data of a query that hasn't succeeded.
-			if ( ! defaultShouldDehydrateQuery( query ) ) {
-				return false;
-			}
-			return typeof persist === 'function' ? persist( query.state.data ) : true;
+let persistence: { userId: number; promise: Promise< void >; disable: () => void } | undefined;
+
+/**
+ * Start restoring/persisting the query cache, scoped to the given user.
+ *
+ * Memoized per user, so callers can invoke it freely (e.g. from an effect).
+ * While the user is unknown we neither restore nor persist.
+ */
+export function getPersistQueryClientPromise( userId?: number ): Promise< void > {
+	if ( userId === undefined ) {
+		return Promise.resolve();
+	}
+
+	if ( persistence?.userId === userId ) {
+		return persistence.promise;
+	}
+
+	persistence?.disable();
+
+	const [ disable, promise ] = persistQueryClient( {
+		queryClient,
+		persister,
+		buster: `${ cacheDataShapeVersion }-${ userId }`,
+		maxAge,
+		dehydrateOptions: {
+			shouldRedactErrors: () => false,
+			shouldDehydrateQuery: ( query ) => {
+				const persist = query.meta?.persist;
+				if ( persist === false ) {
+					return false;
+				}
+				// Gate the predicate behind the default check so it is never handed the
+				// data of a query that hasn't succeeded.
+				if ( ! defaultShouldDehydrateQuery( query ) ) {
+					return false;
+				}
+				return typeof persist === 'function' ? persist( query.state.data ) : true;
+			},
 		},
-	},
-} );
+	} );
+	persistence = { userId, promise, disable };
+
+	return promise;
+}
+
+export function disablePersistQueryClient() {
+	persistence?.disable();
+}
 
 startSiteCollisionListener( queryClient );
 
-export { queryClient, disablePersistQueryClient, persistQueryClientPromise };
+export { queryClient };
 
 export function clearQueryClient() {
 	if ( typeof window !== 'undefined' && ! isSupportSession() ) {

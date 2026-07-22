@@ -242,8 +242,23 @@ const getOdieInitialPromptContext = ( botNameSlug: OdieAllowedBots ): Context | 
 
 export const getOdieInitialMessage = (
 	botNameSlug: OdieAllowedBots,
-	displayName: string
+	displayName: string,
+	hasEnTranslation?: ( single: string, context?: string, domain?: string ) => boolean
 ): Message => {
+	const introMessage = hasEnTranslation?.(
+		"I'm your personal Support Assistant. I can help with any questions about your site or account.",
+		undefined,
+		__i18n_text_domain__
+	)
+		? __(
+				"I'm your personal Support Assistant. I can help with any questions about your site or account.",
+				__i18n_text_domain__
+		  )
+		: __(
+				"I'm your personal AI assistant. I can help with any questions about your site or account.",
+				__i18n_text_domain__
+		  );
+
 	return {
 		content: `**${ sprintf(
 			/* translators: %(name)s: the user's display name */
@@ -251,10 +266,7 @@ export const getOdieInitialMessage = (
 			{
 				name: displayName || 'there',
 			}
-		) }** \n\n ${ __(
-			"I'm your personal AI assistant. I can help with any questions about your site or account.",
-			__i18n_text_domain__
-		) }`,
+		) }** \n\n ${ introMessage }`,
 		role: 'bot',
 		type: 'introduction',
 		context: getOdieInitialPromptContext( botNameSlug ),

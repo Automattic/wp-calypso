@@ -160,13 +160,15 @@ export interface Purchase {
 	 *   auto-renew and not yet expiring soon. The user must renew manually
 	 *   before the expiry date or it will lapse.
 	 *
-	 * - 'expiring': Active, expiring soon (or already PAST its expiry date, see
-	 *   below), and NOT going to auto-renew. This is the "needs attention"
-	 *   state: the purchase is still active but will lapse unless renewed.
+	 * - 'expiring': Active, expiring soon but NOT yet past its expiry date, and
+	 *   NOT going to auto-renew. This is the "needs attention" state: the
+	 *   purchase is still active but will lapse unless renewed.
 	 *
-	 * - 'expired': The underlying subscription is no longer active
-	 *   (`subscription_status !== 'active'`). Note this is NOT the same as being
-	 *   past the expiry date — see below.
+	 * - 'expired': The expiry date has passed. This covers BOTH a subscription
+	 *   that is still active but past its expiry date — its post-expiry grace
+	 *   period (`subscription_status === 'active'`), during which it can still be
+	 *   renewed before being removed — and one that has since been removed
+	 *   (`subscription_status !== 'active'`). See below.
 	 *
 	 * - 'included': This purchase is part of a bundle (e.g. a domain bundled
 	 *   with a plan) and its lifecycle is governed by the parent subscription.
@@ -175,14 +177,10 @@ export interface Purchase {
 	 * - 'one-time-purchase': The purchase has no expiry time at all (a perpetual
 	 *   purchase or a one-time product). Never renews and never lapses.
 	 *
-	 * Determining an active subscription that is PAST its expiry date (grace
-	 * period): this status alone is NOT sufficient, and it is NOT 'expired'.
-	 * A subscription that is still `active` but whose expiry date has passed
-	 * surfaces here as 'expiring' (because past-expiry trivially satisfies
-	 * "expiring soon" and a lapsed purchase is not auto-renewing). However,
-	 * 'expiring' also covers subscriptions that are merely approaching expiry
-	 * and have NOT passed it yet. To distinguish "active but already past
-	 * expiry" precisely, use `is_past_expiry_date`.
+	 * Distinguishing the two 'expired' cases: both report `expiry_status` of
+	 * 'expired'. While `subscription_status` is still 'active' the purchase is in
+	 * its post-expiry grace period and can still be renewed; once it has been
+	 * removed, `subscription_status` is no longer 'active'.
 	 */
 	expiry_status:
 		| 'expiring'
@@ -195,10 +193,13 @@ export interface Purchase {
 
 	/**
 	 * True if the subscription's expiry date has already passed, whether it is
-	 * still active (i.e. in its post-expiry grace period) or has since become
-	 * inactive ('expired'). This is a more precise signal than
-	 * `expiry_status === 'expiring'`, which also covers subscriptions that are
-	 * merely approaching expiry but have not passed it.
+	 * still active (i.e. in its post-expiry grace period) or has since been
+	 * removed.
+	 *
+	 * This is about the expiry date specifically. It closely tracks
+	 * `expiry_status === 'expired'`, which the backend also reports once the
+	 * expiry date passes; the two only diverge for a subscription removed before
+	 * its expiry date (which reports 'expired' while this stays false).
 	 *
 	 * Always false for purchases with no expiry time (one-time purchases and
 	 * perpetual purchases).
@@ -370,13 +371,20 @@ export interface Purchase {
 	regular_price_integer: number;
 
 	/**
-	 * The date this subscription will next attempt to auto-renew (ISO 8601).
+	 * The date of the next scheduled auto-renewal attempt (ISO 8601), or an
+	 * empty string when no renewal is scheduled.
 	 *
-	 * For active/auto-renewing subscriptions this is the next *renewal attempt*
-	 * date, NOT the expiry date: WordPress.com begins attempting renewals before
+	 * Populated only when the subscription is set to auto-renew and a renewal
+	 * attempt is still upcoming. WordPress.com begins attempting renewals before
 	 * a subscription expires (e.g. non-monthly WordPress.com plans first attempt
-	 * ~30 days before `expiry_date`). For subscriptions that are not renewing
-	 * (expiring, manual-renew, etc.) it falls back to the expiry date.
+	 * ~30 days before `expiry_date`) and can keep attempting during the
+	 * post-expiry grace period, so this date may fall before or after
+	 * `expiry_date`.
+	 *
+	 * An empty string means no attempt is scheduled: auto-renew is off, or the
+	 * subscription is in its grace period past the final auto-renewal attempt.
+	 * It does NOT fall back to the expiry date — read `expiry_date` explicitly
+	 * where an expiry date is wanted.
 	 */
 	renew_date: string;
 
@@ -426,6 +434,41 @@ export interface Purchase {
 	 * payment method attached, no auto-renew will be attempted.
 	 */
 	is_auto_renew_enabled: boolean;
+
+	/**
+	 * True if the purchase is past the UTC date of its final auto-renewal attempt.
+	 *
+	 * Note that whether or not auto-renew is actually enabled has no bearing
+	 * on the value of this property; it simply checks against the schedule for
+	 * subscriptions of this type that do have auto-renew turned on.
+	 *
+	 * Also, since we don't know in advance the exact moment at which
+	 * auto-renewals will happen, this property effectively has a granularity
+	 * of one day; in other words, when this is `false` it is still possible
+	 * that the final renewal attempt of the billing cycle actually already
+	 * took place earlier on the same day. Nonetheless, this property is still
+	 * useful to distinguish between expired subscriptions that might have
+	 * remaining auto-renewal attempts and those that definitely do not.
+	 */
+	is_past_last_auto_renew_attempt_date: boolean;
+
+	/**
+	 * True if the purchase may still auto-renew: its subscription is active (not
+	 * removed), auto-renew is enabled, it has a rechargeable payment method
+	 * attached, and it is not past its final auto-renewal attempt date.
+	 *
+	 * This is the "a charge will actually be attempted" signal. Note it is a
+	 * superset of the renewing `expiry_status` values: any purchase reported as
+	 * `active` or `auto-renewing` necessarily satisfies this (those statuses
+	 * already require a chargeable payment method), so it holds for both
+	 * not-yet-expired auto-renewing purchases and grace-period purchases that may
+	 * still recover via a remaining auto-renewal attempt.
+	 *
+	 * As with `is_past_last_auto_renew_attempt_date`, this is best-effort: the
+	 * underlying dates are day-granular and a charge can still fail, so "might"
+	 * is intentional.
+	 */
+	might_still_auto_renew: boolean;
 
 	/**
 	 * The ID of the stored payment method used for this subscription (the

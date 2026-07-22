@@ -10,6 +10,7 @@ export const userSettingsQuery = () =>
 
 export const userSettingsMutation = () =>
 	mutationOptions( {
+		meta: { statId: 'user-settings-update' },
 		mutationFn: updateUserSettings,
 		onSuccess: ( newData, variables ) => {
 			queryClient.setQueryData(
@@ -29,6 +30,7 @@ export const userSettingsMutation = () =>
 
 export const cancelPendingEmailChangeMutation = () =>
 	mutationOptions( {
+		meta: { statId: 'email-change-cancel' },
 		mutationFn: () => updateUserSettings( { user_email_change_pending: false } ),
 		onSuccess: ( newData ) => {
 			queryClient.setQueryData(
@@ -44,6 +46,7 @@ export const cancelPendingEmailChangeMutation = () =>
 
 export const resendEmailVerificationMutation = ( email: string ) =>
 	mutationOptions( {
+		meta: { statId: 'email-verify-resend' },
 		mutationFn: () => updateUserSettings( { user_email: email } ),
 		onSuccess: ( newData ) => {
 			queryClient.setQueryData(
