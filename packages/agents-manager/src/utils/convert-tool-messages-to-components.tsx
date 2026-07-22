@@ -1,4 +1,3 @@
-import { createElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import ButtonPicker from '../components/button-picker';
 import ColorPicker from '../components/color-picker';
@@ -136,13 +135,9 @@ function hasLaterAgentToolMessageInSameTurn(
 }
 
 // The legacy `start over` tool is gone — ask the user to resend instead.
-function StartOverMessage() {
-	return createElement(
-		'p',
-		null,
-		__( 'To start over, please send your request again.', __i18n_text_domain__ )
-	);
-}
+const StartOverMessage = () => (
+	<p>{ __( 'To start over, please send your request again.', __i18n_text_domain__ ) }</p>
+);
 
 /**
  * Converts tool-related messages to component messages.
