@@ -142,20 +142,16 @@ module.exports = {
 			injectPolyfill: true,
 			useDefaults: false,
 			requestToHandle: ( request ) => {
-				// `react-dom/client` is externalized to the `ReactDOM` global below; point its
-				// script dependency at the existing `react-dom` handle since the request name
-				// itself is not a registered handle.
+				// `react-dom/client` is not a registered handle; reuse `react-dom`.
 				if ( request === 'react-dom/client' ) {
 					return 'react-dom';
 				}
 				return defaultRequestToHandle( request );
 			},
 			requestToExternal: ( request ) => {
-				// Externalize the `react-dom/client` subpath to WordPress's `ReactDOM` global so
-				// `createRoot` comes from the same React that WordPress provides. The default
-				// extraction only maps bare `react-dom`, so this subpath would otherwise bundle
-				// our own react-dom, which reads React internals off the host's React and throws
-				// ("Cannot read properties of undefined").
+				// The default extraction only maps bare `react-dom`, so this subpath would
+				// otherwise bundle a second react-dom that crashes against the page's external
+				// React. Same fix as help-center (#112576) and agents-manager.
 				if ( request === 'react-dom/client' ) {
 					return 'ReactDOM';
 				}
