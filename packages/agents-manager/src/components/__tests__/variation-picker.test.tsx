@@ -94,6 +94,38 @@ describe( 'VariationPicker', () => {
 			container.querySelector( '.agents-manager-variation-picker__arrows' )
 		).not.toBeInTheDocument();
 	} );
+	// 584px is the exact four-column width: 4 × 140px tracks + 3 × 8px gaps.
+	it.each( [
+		[ 583, 6 ],
+		[ 584, 8 ],
+	] )( 'pins the show-all breakpoint at %dpx', ( px, shown ) => {
+		mockWidth = px;
+		render(
+			<VariationPicker
+				{ ...defaultProps }
+				variations={ manyVariations }
+				maxToShow={ 4 }
+				type="color"
+			/>
+		);
+
+		expect( screen.getAllByTestId( 'variation' ) ).toHaveLength( shown );
+	} );
+
+	it( 'never pages below the given page size when wider', () => {
+		mockWidth = 460;
+		render(
+			<VariationPicker
+				{ ...defaultProps }
+				variations={ manyVariations }
+				maxToShow={ 8 }
+				type="color"
+			/>
+		);
+
+		expect( screen.getAllByTestId( 'variation' ) ).toHaveLength( 8 );
+	} );
+
 	it( 'recovers from a stale page position when resizing widens the grid', () => {
 		const props = {
 			...defaultProps,

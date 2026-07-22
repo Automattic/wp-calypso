@@ -15,7 +15,8 @@ import './style.scss';
 // Variations per page — one full 2×2 grid in the docked sidebar.
 const DEFAULT_MAX_TO_SHOW = 4;
 
-// Keep in sync with `GRID_TEMPLATE_COLUMNS`: 140px-minimum cards, 8px gap.
+// Mirror the grid: the 140px track minimum in `GRID_TEMPLATE_COLUMNS` and the
+// 8px gap from the Grid's `gap={ 2 }` (4px base).
 const CARD_MIN_WIDTH = 140;
 const GRID_GAP = 8;
 
@@ -48,13 +49,11 @@ function VariationPicker( { variations, type, maxToShow, onSelect, activeVariati
 	const parsedMaxToShow = Math.floor( Number( maxToShow ) );
 	const pageSize = parsedMaxToShow > 0 ? parsedMaxToShow : DEFAULT_MAX_TO_SHOW;
 
-	// Narrow width keeps the given page size, wider widths fit two full rows
-	// per page, and full width shows every option without pagination.
-	const columns = width
-		? Math.max( 2, Math.floor( ( width + GRID_GAP ) / ( CARD_MIN_WIDTH + GRID_GAP ) ) )
-		: 2;
+	// Narrow width keeps the given page size, wider widths fit at least two
+	// full rows per page, and full width shows every option without pagination.
+	const columns = Math.max( 2, Math.floor( ( width + GRID_GAP ) / ( CARD_MIN_WIDTH + GRID_GAP ) ) );
 	const showAll = columns >= FULL_WIDTH_COLUMNS;
-	const perPage = columns <= 2 ? pageSize : columns * PAGE_ROWS;
+	const perPage = columns <= 2 ? pageSize : Math.max( pageSize, columns * PAGE_ROWS );
 
 	const totalPages = Math.max( 1, Math.ceil( variations.length / perPage ) );
 	// Resizing can shrink the page count under `pageIndex` — clamp so no
