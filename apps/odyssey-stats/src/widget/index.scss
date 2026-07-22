@@ -15,7 +15,7 @@ $segmentedControlItemBorderRadius: 4px;
 	// postbox edges above leaves this element's square bottom corners poking out
 	// past the rounded ones. Round and clip to match; the top isn't affected since
 	// it sits below the postbox header, not at the postbox's own rounded edge.
-	border-radius: 0 0 8px 8px;
+	border-radius: 0 0 var(--wpds-border-radius-lg, 8px) var(--wpds-border-radius-lg, 8px);
 	overflow: hidden;
 }
 
