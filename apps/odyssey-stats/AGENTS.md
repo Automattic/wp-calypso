@@ -53,9 +53,9 @@ Odyssey routes API calls through Jetpack REST API, not `public-api.wordpress.com
 
 ### CSS Scoping
 
-Odyssey only owns the `#wpcom` subtree of a wp-admin page (wp-admin chrome is a sibling under the same `<body>`), so `webpack.config.js` runs a `postcss-prefix-selector` step scoping first-party component styles to `.jp-stats-dashboard` and known portal roots (`.color-scheme`, `.ReactModalPortal`, `[data-base-ui-portal]`, `[data-wp-compat-overlay-slot]`, `.components-modal__screen-overlay` for `@wordpress/components` `Modal`). Two lists there need updating as the app evolves:
+Odyssey only owns the `#wpcom` subtree of a wp-admin page (wp-admin chrome is a sibling under the same `<body>`), so `webpack.config.js` runs a `postcss-prefix-selector` step scoping first-party component styles to `.jp-stats-dashboard`, the WP-Admin dashboard widget's own mount point (`.jp-stats-widget`), and known portal roots (`.color-scheme`, `.ReactModalPortal`, `[data-base-ui-portal]`, `[data-wp-compat-overlay-slot]`, `.components-modal__screen-overlay` for `@wordpress/components` `Modal`). Two lists there need updating as the app evolves:
 
-- **Prefix target list** — add a new portal root if a component renders through one not already listed (e.g. a new `Popover`/`Dialog`/`Tooltip` library).
+- **Prefix target list** — add a new mount point or portal root if a component renders under a wrapper not already listed (e.g. a new standalone entry point, or a component that renders through a new `Popover`/`Dialog`/`Tooltip` library).
 - **`exclude` list** — add a pattern if a selector legitimately targets the real `<html>`/`<body>`/`:root` (RTL flags, `:lang()`, scroll-lock, etc.); prefixing those makes them permanently dead instead of just scoped.
 
 After changing either list, do a production build and grep the compiled CSS for the affected class to confirm it's scoped (or intentionally left unscoped), not silently dead.

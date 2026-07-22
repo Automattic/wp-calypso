@@ -112,7 +112,7 @@ module.exports = {
 							// .components-modal__screen-overlay (@wordpress/components Modal, e.g. the
 							// UTM builder, stats upsell modal, and feedback modal).
 							prefix:
-								':where(.jp-stats-dashboard, .color-scheme, .ReactModalPortal, [data-base-ui-portal], [data-wp-compat-overlay-slot], .components-modal__screen-overlay)',
+								':where(.jp-stats-dashboard, .color-scheme, .ReactModalPortal, [data-base-ui-portal], [data-wp-compat-overlay-slot], .components-modal__screen-overlay, .jp-stats-widget)',
 							ignoreFiles: [
 								// Already hand-scoped; re-prefixing would double-nest it.
 								'odyssey-stats/src/app.scss',
