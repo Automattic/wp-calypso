@@ -1,6 +1,5 @@
 import { useQueries, useQuery } from '@tanstack/react-query';
 import { useMemo } from 'react';
-import { isFqdnQuery } from '../helpers';
 import { useDomainSearch } from '../page/context';
 import type { BundleSuggestion } from '@automattic/api-core';
 
@@ -19,19 +18,23 @@ export interface InlineBundleEntry {
 /**
  * Drives the inline bundle rows shown beneath trigger-domain suggestions.
  *
- * Inline bundles only apply to a bare-term search (no TLD in the query) and only
- * when the `domain-bundling` flag is on (surfaced as `config.showBundleSuggestions`).
- * When enabled it reads the cheap `bundle_triggers` catalogue list, then, for
- * every cart item whose TLD is a trigger, lazily fetches that FQDN's bundle from
- * the per-FQDN `/domains/bundle` (v2) endpoint. Each FQDN is fetched at most once
- * and cached. Consumers look up a domain's bundle via `getInlineBundle`.
+ * Inline bundles apply whenever the `domain-bundling` flag is on (surfaced as
+ * `config.showBundleSuggestions`), for both bare-term and FQDN queries:
+ * selecting a trigger domain (e.g. `flowers.com`) should offer its bundle even
+ * when the user typed a full domain. When enabled it reads the cheap
+ * `bundle_triggers` catalogue list, then, for every cart item whose TLD is a
+ * trigger, lazily fetches that FQDN's bundle from the per-FQDN `/domains/bundle`
+ * (v2) endpoint. Each FQDN is fetched at most once and cached. Consumers look up
+ * a domain's bundle via `getInlineBundle`.
  */
 export const useInlineBundles = () => {
 	const { query, queries, config, cart } = useDomainSearch();
 
-	// An FQDN search keeps the top BundleCard path, so inline bundles are gated
-	// to bare-term queries (see isFqdnQuery, shared with useSuggestionsList).
-	const inlineBundlesEnabled = config.showBundleSuggestions && ! isFqdnQuery( query );
+	// Gated on the domain-bundling flag only. An FQDN query is included: its
+	// bundleTriggers request shares a query key with useSuggestionsList's
+	// bundleSuggestion (see api-queries domains.ts), so the two dedupe to one
+	// network request rather than duplicating the same URL.
+	const inlineBundlesEnabled = config.showBundleSuggestions;
 
 	const { data: bundleTriggers = [] } = useQuery( {
 		...queries.bundleTriggers( query ),
