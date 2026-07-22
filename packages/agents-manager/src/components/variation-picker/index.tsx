@@ -14,9 +14,9 @@ import './style.scss';
 // Variations per page — one full 2×2 grid in the docked sidebar.
 const DEFAULT_MAX_TO_SHOW = 4;
 
-// At least 2 columns even in the docked chat (`min()` caps the track minimum
-// at half the row), and `auto-fill` keeps empty tracks so partial pages render
-// cards at the same size instead of stretching them.
+// As many card-sized columns as fit, but at least 2 — `min()` caps the track
+// minimum at half the row so the narrow docked chat never falls to one column,
+// and `auto-fill` keeps empty tracks so partial pages don't stretch their cards.
 const GRID_TEMPLATE_COLUMNS = 'repeat(auto-fill, minmax(min(140px, calc(50% - 4px)), 1fr))';
 
 interface Props {
