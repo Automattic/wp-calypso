@@ -50,6 +50,34 @@ import { type FlowV2, type ProvidedDependencies, type SubmitHandler } from '../.
 import { getOnboardingStepperPosition } from './step-counter-config';
 import type { DomainSuggestion } from '@automattic/api-core';
 
+export function getPlaygroundPostCheckoutDestination( {
+	locale,
+	siteId,
+	siteSlug,
+	playgroundId,
+}: {
+	locale: string;
+	siteId: number;
+	siteSlug: string;
+	playgroundId: string;
+} ): string {
+	const importerDestination = addQueryArgs(
+		withLocale( '/setup/site-setup/importerPlayground', locale ),
+		{
+			siteSlug,
+			siteId,
+			playground: playgroundId,
+		}
+	);
+
+	return addQueryArgs( '/setup/transferring-hosted-site', {
+		siteSlug,
+		siteId,
+		initiate_transfer_context: 'onboarding',
+		redirect_to: importerDestination,
+	} );
+}
+
 function initialize() {
 	const steps = [
 		STEPS.DOMAIN_SEARCH,
@@ -146,8 +174,26 @@ const onboarding: FlowV2< typeof initialize > = {
 					playground: playgroundId as string,
 				};
 
+				if ( blueprint ) {
+					params.blueprint = blueprint;
+				} else if ( playgroundId ) {
+					params.playground = playgroundId;
+				}
+
+				const importerDestination = addQueryArgs(
+					withLocale( '/setup/site-setup/importerPlayground', locale ),
+					params
+				);
+
 				return [
-					addQueryArgs( withLocale( '/setup/site-setup/importerPlayground', locale ), params ),
+					playgroundId
+						? getPlaygroundPostCheckoutDestination( {
+								locale,
+								siteSlug: params.siteSlug as string,
+								siteId: params.siteId as number,
+								playgroundId,
+						  } )
+						: importerDestination,
 					null,
 					null,
 				];
@@ -393,18 +439,13 @@ const onboarding: FlowV2< typeof initialize > = {
 							const siteSlug = providedDependencies.siteSlug as string;
 
 							/**
-							 * If the user comes from the Playground onboarding flow,
-							 * redirect the user back to Playground to start the import.
+							 * Playground imports require the post-checkout Atomic transfer to finish first.
 							 */
 							const playgroundId = getQueryArg( window.location.href, 'playground' );
 							const redirectTo: string =
 								playgroundId &&
 								! isPlanProductFree( {} as unknown as State, planCartItem?.product_id )
-									? addQueryArgs( withLocale( '/setup/site-setup/importerPlayground', locale ), {
-											siteSlug,
-											siteId: providedDependencies.siteId,
-											playground: playgroundId,
-									  } )
+									? destination
 									: addQueryArgs(
 											withLocale( '/setup/onboarding/post-checkout-onboarding', locale ),
 											{

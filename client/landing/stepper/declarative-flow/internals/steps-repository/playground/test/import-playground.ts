@@ -1,5 +1,6 @@
 import wpcomRequest from 'wpcom-proxy-request';
 import { uploadExportFile } from 'calypso/state/imports/actions';
+import { pollForAtomicProvisioning } from '../../create-site/early-provisioning';
 import { createPlaygroundImport } from '../lib/import-playground';
 
 jest.mock( 'wpcom-proxy-request', () => ( {
@@ -12,7 +13,12 @@ jest.mock( 'calypso/state/imports/actions', () => ( {
 	updateImporter: jest.fn(),
 } ) );
 
+jest.mock( '../../create-site/early-provisioning', () => ( {
+	pollForAtomicProvisioning: jest.fn(),
+} ) );
+
 const wpcomRequestMock = wpcomRequest as jest.Mock;
+const pollForAtomicProvisioningMock = pollForAtomicProvisioning as jest.Mock;
 const uploadExportFileMock = uploadExportFile as jest.Mock;
 
 describe( 'createPlaygroundImport', () => {
@@ -21,13 +27,28 @@ describe( 'createPlaygroundImport', () => {
 
 	beforeEach( () => {
 		jest.clearAllMocks();
+		pollForAtomicProvisioningMock.mockResolvedValue( { siteSlug: 'example.wordpress.com' } );
 	} );
 
-	it( 'uploads the export to the Atomic site and passes its media ID to the importer', async () => {
+	it( 'waits for the site to become Atomic before uploading the export', async () => {
+		let resolveProvisioning!: ( value: { siteSlug: string } ) => void;
+		pollForAtomicProvisioningMock.mockReturnValueOnce(
+			new Promise( ( resolve ) => {
+				resolveProvisioning = resolve;
+			} )
+		);
 		wpcomRequestMock.mockResolvedValue( { media: [ { ID: 456 } ] } );
 		uploadExportFileMock.mockResolvedValue( { importId: 'import-id' } );
 
-		await expect( createPlaygroundImport( siteId, siteZip ) ).resolves.toEqual( {
+		const importPromise = createPlaygroundImport( siteId, siteZip );
+
+		expect( pollForAtomicProvisioningMock ).toHaveBeenCalledWith( siteId );
+		expect( wpcomRequestMock ).not.toHaveBeenCalled();
+		expect( uploadExportFileMock ).not.toHaveBeenCalled();
+
+		resolveProvisioning( { siteSlug: 'example.wordpress.com' } );
+
+		await expect( importPromise ).resolves.toEqual( {
 			importId: 'import-id',
 		} );
 
@@ -43,8 +64,18 @@ describe( 'createPlaygroundImport', () => {
 				siteId,
 				type: 'wordpress',
 			},
-			mediaID: 456,
+			attachmentId: 456,
 		} );
+	} );
+
+	it( 'does not upload the export when Atomic provisioning fails', async () => {
+		pollForAtomicProvisioningMock.mockRejectedValue( new Error( 'Provisioning failed' ) );
+
+		await expect( createPlaygroundImport( siteId, siteZip ) ).rejects.toThrow(
+			'Provisioning failed'
+		);
+		expect( wpcomRequestMock ).not.toHaveBeenCalled();
+		expect( uploadExportFileMock ).not.toHaveBeenCalled();
 	} );
 
 	it( 'does not start an import when the media upload has no attachment ID', async () => {

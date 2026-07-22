@@ -3,7 +3,7 @@
  */
 import { renderHook } from '@testing-library/react';
 import { clearSessionStorageQuery } from 'calypso/components/domains/wpcom-domain-search/use-query-handler';
-import onboarding from '../onboarding';
+import onboarding, { getPlaygroundPostCheckoutDestination } from '../onboarding';
 
 jest.mock( 'calypso/components/domains/wpcom-domain-search/use-query-handler', () => ( {
 	clearSessionStorageQuery: jest.fn(),
@@ -61,6 +61,32 @@ jest.mock( '@automattic/onboarding', () => ( {
 	SITE_SETUP_FLOW: 'site-setup',
 	clearStepPersistedState: jest.fn(),
 } ) );
+
+describe( 'getPlaygroundPostCheckoutDestination', () => {
+	it( 'initiates the Atomic transfer before continuing to the Playground importer', () => {
+		const destination = getPlaygroundPostCheckoutDestination( {
+			locale: 'it',
+			siteId: 256300535,
+			siteSlug: 'example.wordpress.com',
+			playgroundId: 'playground-id',
+		} );
+		const transferUrl = new URL( destination, 'https://wordpress.com' );
+
+		expect( transferUrl.pathname ).toBe( '/setup/transferring-hosted-site' );
+		expect( transferUrl.searchParams.get( 'siteId' ) ).toBe( '256300535' );
+		expect( transferUrl.searchParams.get( 'siteSlug' ) ).toBe( 'example.wordpress.com' );
+		expect( transferUrl.searchParams.get( 'initiate_transfer_context' ) ).toBe( 'onboarding' );
+
+		const importerUrl = new URL(
+			transferUrl.searchParams.get( 'redirect_to' ) as string,
+			'https://wordpress.com'
+		);
+		expect( importerUrl.pathname ).toBe( '/setup/site-setup/importerPlayground/it' );
+		expect( importerUrl.searchParams.get( 'siteId' ) ).toBe( '256300535' );
+		expect( importerUrl.searchParams.get( 'siteSlug' ) ).toBe( 'example.wordpress.com' );
+		expect( importerUrl.searchParams.get( 'playground' ) ).toBe( 'playground-id' );
+	} );
+} );
 
 describe( 'onboarding flow side effects', () => {
 	const navigate = jest.fn();

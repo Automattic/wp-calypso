@@ -2,6 +2,7 @@ import wpcomRequest from 'wpcom-proxy-request';
 import { uploadExportFile, updateImporter } from 'calypso/state/imports/actions';
 import { fromApi, toApi } from 'calypso/state/imports/api';
 import { appStates } from 'calypso/state/imports/constants';
+import { pollForAtomicProvisioning } from '../../create-site/early-provisioning';
 import { PLAYGROUND_HOST } from './constants';
 import type { PlaygroundClient } from './types';
 
@@ -58,6 +59,7 @@ export async function uploadSiteZip( siteId: number, siteZip: File ): Promise< n
 }
 
 export async function createPlaygroundImport( siteId: number, siteZip: File ) {
+	await pollForAtomicProvisioning( siteId );
 	const attachmentId = await uploadSiteZip( siteId, siteZip );
 
 	return uploadExportFile( siteId, {
