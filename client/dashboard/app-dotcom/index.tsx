@@ -24,7 +24,20 @@ boot( {
 	supports: {
 		agency: false,
 		agencyClient: false,
-		sites: true,
+		sites: {
+			sections: {
+				domains: true,
+				plans: true,
+				backups: true,
+				scan: true,
+				performance: true,
+				monitoring: true,
+				deployments: true,
+				logs: { activity: true, php: true, server: true },
+				settings: true,
+			},
+			lockSelfHostedJetpackToOverview: true,
+		},
 		domains: true,
 		emails: true,
 		themes: true,
