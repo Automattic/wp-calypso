@@ -302,6 +302,14 @@ body.is-section-marketing-traffic {
 .settings-traffic {
 	.promo-card-block {
 		margin-top: 0;
+
+		@media screen and (max-width: 910px) {
+			padding: 24px;
+		}
+
+		@media screen and (max-width: 480px) {
+			padding: 20px;
+		}
 	}
 
 	.promo-card-block .button {
@@ -310,6 +318,36 @@ body.is-section-marketing-traffic {
 
 	.promo-card-block img {
 		max-width: 170px;
+
+		@media screen and (max-width: 910px) {
+			max-width: 120px;
+			margin-bottom: 16px;
+		}
+
+		@media screen and (max-width: 480px) {
+			max-width: 96px;
+			margin-bottom: 12px;
+		}
+	}
+
+	.promo-card-block .formatted-header__title {
+		@media screen and (max-width: 910px) {
+			font-size: $font-title-medium;
+		}
+
+		@media screen and (max-width: 480px) {
+			font-size: $font-title-small;
+		}
+	}
+
+	.promo-card-block p {
+		@media screen and (max-width: 910px) {
+			font-size: $font-body-small;
+		}
+
+		@media screen and (max-width: 480px) {
+			margin-bottom: 16px;
+		}
 	}
 
 	.panel-card {
