@@ -63,8 +63,9 @@ export default function MigrationsCommissions() {
 		setShowAddSitesModal( true );
 	}, [ recordTracks ] );
 
-	const { data } = useFetchTaggedSitesForMigration();
-	const showEmptyState = ! ( data ?? [] ).length;
+	const { data, isLoading } = useFetchTaggedSitesForMigration();
+	const taggedSites = data ?? [];
+	const showEmptyState = taggedSites.length === 0;
 
 	return (
 		<Layout
@@ -102,6 +103,8 @@ export default function MigrationsCommissions() {
 
 			<LayoutBody>
 				<MigrationsCommissionsContent
+					taggedSites={ taggedSites }
+					isLoading={ isLoading }
 					recordTracksEvent={ recordTracks }
 					onSuccess={ onSuccess }
 					onError={ onError }

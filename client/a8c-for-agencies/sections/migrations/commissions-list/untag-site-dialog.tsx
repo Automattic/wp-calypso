@@ -13,8 +13,7 @@ import {
 import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import useMinimizeHelpCenterOnMount from 'calypso/a8c-for-agencies/hooks/use-minimize-help-center-on-mount';
-import type { TaggedSite } from '../types';
-import type { ReactNode } from 'react';
+import type { ShowSuccessNotice, TaggedSite } from '../types';
 
 export default function UntagSiteDialog( {
 	site,
@@ -25,7 +24,7 @@ export default function UntagSiteDialog( {
 	site: TaggedSite;
 	migrationTags: string[];
 	onClose: () => void;
-	onSuccess: ( message: ReactNode, options?: { id?: string; duration?: number } ) => void;
+	onSuccess: ShowSuccessNotice;
 } ) {
 	const queryClient = useQueryClient();
 	const { data: agency } = useQuery( activeAgencyQuery() );

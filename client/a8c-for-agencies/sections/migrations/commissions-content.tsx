@@ -1,15 +1,16 @@
 import { TextSkeleton } from 'calypso/dashboard/components/text-skeleton';
 import MigrationsCommissionsList from './commissions-list';
 import MigrationsConsolidatedCommissions from './consolidated-commissions';
-import useFetchTaggedSitesForMigration from './hooks/use-fetch-tagged-sites-for-migration';
 import MigrationsCommissionsEmptyState from './primary/migrations-commissions/empty-state';
 import MigrationsTagSitesModal from './tag-sites-modal';
-import type { RecordTracksEvent } from './types';
+import type { RecordTracksEvent, ShowSuccessNotice, TaggedSite } from './types';
 import type { ReactNode } from 'react';
 
 interface MigrationsCommissionsContentProps {
+	taggedSites: TaggedSite[];
+	isLoading: boolean;
 	recordTracksEvent: RecordTracksEvent;
-	onSuccess: ( message: ReactNode ) => void;
+	onSuccess: ShowSuccessNotice;
 	onError: ( message: ReactNode ) => void;
 	getSiteCreatedAt: ( blogId: number ) => string | undefined;
 	canTagSitesForCommission: boolean;
@@ -20,6 +21,8 @@ interface MigrationsCommissionsContentProps {
 }
 
 export default function MigrationsCommissionsContent( {
+	taggedSites,
+	isLoading,
 	recordTracksEvent,
 	onSuccess,
 	onError,
@@ -30,9 +33,6 @@ export default function MigrationsCommissionsContent( {
 	onCloseAddSitesModal,
 	onOpenAddSitesModal,
 }: MigrationsCommissionsContentProps ) {
-	const { data, isLoading } = useFetchTaggedSitesForMigration();
-	const taggedSites = data ?? [];
-
 	if ( isLoading ) {
 		return (
 			<>

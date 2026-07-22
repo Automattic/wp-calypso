@@ -1,4 +1,5 @@
 import type { MigrationCommissionSite } from '@automattic/api-core';
+import type { ReactNode } from 'react';
 
 /**
  * @deprecated Prefer importing `MigrationCommissionSite` from `@automattic/api-core`.
@@ -7,3 +8,8 @@ import type { MigrationCommissionSite } from '@automattic/api-core';
 export type TaggedSite = MigrationCommissionSite;
 
 export type RecordTracksEvent = ( name: string, properties?: Record< string, unknown > ) => void;
+
+export type ShowSuccessNotice = (
+	message: ReactNode,
+	options?: { id?: string; duration?: number }
+) => void;

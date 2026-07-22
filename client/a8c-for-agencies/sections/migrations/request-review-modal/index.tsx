@@ -16,7 +16,7 @@ import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import { useState } from 'react';
 import useMinimizeHelpCenterOnMount from 'calypso/a8c-for-agencies/hooks/use-minimize-help-center-on-mount';
-import type { RecordTracksEvent, TaggedSite } from '../types';
+import type { RecordTracksEvent, ShowSuccessNotice, TaggedSite } from '../types';
 import type { ReactNode } from 'react';
 
 export default function RequestReviewModal( {
@@ -29,7 +29,7 @@ export default function RequestReviewModal( {
 	onClose: () => void;
 	site: TaggedSite;
 	recordTracksEvent: RecordTracksEvent;
-	onSuccess: ( message: ReactNode, options?: { id?: string; duration?: number } ) => void;
+	onSuccess: ShowSuccessNotice;
 	onError: ( message: ReactNode ) => void;
 } ) {
 	const queryClient = useQueryClient();

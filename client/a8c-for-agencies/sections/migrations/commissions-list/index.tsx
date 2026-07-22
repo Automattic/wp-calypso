@@ -7,7 +7,7 @@ import RequestReviewModal from '../request-review-modal';
 import { MigratedOnColumn, ReviewStatusColumn, SiteColumn } from './commission-columns';
 import UntagSiteDialog from './untag-site-dialog';
 import useCommissionListActions from './use-commission-list-actions';
-import type { RecordTracksEvent, TaggedSite } from '../types';
+import type { RecordTracksEvent, ShowSuccessNotice, TaggedSite } from '../types';
 import type { Field, View } from '@wordpress/dataviews';
 
 import '../commissions/components/dataviews/style.scss';
@@ -62,7 +62,7 @@ export default function MigrationsCommissionsList( {
 	items: TaggedSite[];
 	migrationTags: string[];
 	recordTracksEvent: RecordTracksEvent;
-	onSuccess: ( message: ReactNode ) => void;
+	onSuccess: ShowSuccessNotice;
 	onError: ( message: ReactNode ) => void;
 } ) {
 	const isDesktop = useDesktopBreakpoint();
