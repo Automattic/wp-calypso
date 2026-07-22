@@ -3,6 +3,7 @@ import { TranslateResult, useTranslate } from 'i18n-calypso';
 import {
 	Children,
 	cloneElement,
+	Fragment,
 	FunctionComponent,
 	isValidElement,
 	ReactNode,
@@ -88,7 +89,11 @@ const JetpackProductInfo: FunctionComponent< JetpackProductInfoProps > = ( {
 		faqButton.scrollIntoView( { behavior: 'smooth', block: 'nearest' } );
 	}, [] );
 
-	const renderedDisclaimer = Children.map( disclaimer, ( child ) => {
+	const renderDisclaimerNode = ( child: ReactNode ): ReactNode => {
+		if ( isValidElement< { children?: ReactNode } >( child ) && child.type === Fragment ) {
+			return cloneElement( child, {}, Children.map( child.props.children, renderDisclaimerNode ) );
+		}
+
 		if (
 			! isValidElement< AnchorHTMLAttributes< HTMLAnchorElement > >( child ) ||
 			child.type !== 'a' ||
@@ -106,7 +111,9 @@ const JetpackProductInfo: FunctionComponent< JetpackProductInfoProps > = ( {
 				}
 			},
 		} );
-	} );
+	};
+
+	const renderedDisclaimer = Children.map( disclaimer, renderDisclaimerNode );
 
 	return (
 		<div

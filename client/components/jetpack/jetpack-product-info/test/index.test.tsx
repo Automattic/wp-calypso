@@ -3,6 +3,7 @@
  */
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { translate } from 'i18n-calypso';
 import JetpackProductInfo from '../index';
 import type { SelectorProduct } from 'calypso/my-sites/plans/jetpack-plans/types';
 
@@ -44,7 +45,11 @@ const product = {
 			answer: 'Backup storage limit details.',
 		},
 	],
-	disclaimer: <a href="#backup-storage-limits-lightbox-faq">Learn more</a>,
+	disclaimer: translate( 'Subject to your usage and storage limit. {{link}}Learn more{{/link}}.', {
+		components: {
+			link: <a href="#backup-storage-limits-lightbox-faq" />,
+		},
+	} ),
 } as SelectorProduct;
 
 describe( 'JetpackProductInfo', () => {
