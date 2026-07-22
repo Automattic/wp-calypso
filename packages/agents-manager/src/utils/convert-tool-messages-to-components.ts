@@ -334,9 +334,9 @@ export default function convertToolMessagesToComponents( {
 		}
 
 		// Handle start over tool message
-		// TODO: Remove this branch when the `client-assistants` ability
-		// migrates. No agent offers that tool today — only old conversation
-		// history still contains it.
+		// TODO: Double-check whether this branch is still needed when the
+		// `client-assistants` ability migrates. No agent offers that tool
+		// today — only old conversation history still contains it.
 		if (
 			textData.tool_id === 'big_sky__client_assistants' &&
 			textData.data?.assistantId === 'big-sky-site-admin'
