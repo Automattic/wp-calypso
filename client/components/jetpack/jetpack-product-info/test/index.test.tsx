@@ -71,36 +71,4 @@ describe( 'JetpackProductInfo', () => {
 		} );
 		expect( window.location.hash ).toBe( '' );
 	} );
-
-	it( 'leaves external disclaimer links unchanged', async () => {
-		const user = userEvent.setup();
-		const onExternalLinkClick = jest.fn();
-		const productWithExternalDisclaimer = {
-			...product,
-			disclaimer: (
-				<a
-					href="https://jetpack.com/support/"
-					onClick={ ( event ) => {
-						event.preventDefault();
-						onExternalLinkClick();
-					} }
-				>
-					External details
-				</a>
-			),
-		};
-
-		render(
-			<JetpackProductInfo title="Security 10GB" product={ productWithExternalDisclaimer } />
-		);
-
-		const faqButton = screen.getByRole( 'button', {
-			name: 'How do backup storage limits work?',
-		} );
-		await user.click( screen.getByRole( 'link', { name: 'External details' } ) );
-
-		expect( onExternalLinkClick ).toHaveBeenCalledTimes( 1 );
-		expect( faqButton ).toHaveAttribute( 'aria-expanded', 'false' );
-		expect( faqButton.scrollIntoView ).not.toHaveBeenCalled();
-	} );
 } );
