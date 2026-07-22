@@ -7,6 +7,7 @@ import {
 	EXTERNAL_WPCOM_BILLING_HISTORY_URL,
 } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
 import PurchasesSidebar from 'calypso/a8c-for-agencies/components/sidebar-menu/purchases';
+import { clearPersistedSelectedItems } from 'calypso/a8c-for-agencies/sections/marketplace/lib/shopping-cart-storage';
 import {
 	publicToInternalLicenseFilter,
 	publicToInternalLicenseSortField,
@@ -30,6 +31,14 @@ export const purchasesContext: Callback = () => {
 
 export const licensesContext: Callback = ( context, next ) => {
 	const { s: search, sort_field, sort_direction, page } = context.query;
+
+	// Arriving with a receipt ID means the marketplace checkout just completed
+	// successfully (failed or cancelled payments never redirect here), so the
+	// purchased items can be removed from the persisted mini-cart.
+	if ( context.query.receipt_id ) {
+		clearPersistedSelectedItems( 'regular' );
+	}
+
 	const filter = publicToInternalLicenseFilter( context.params.filter, LicenseFilter.NotRevoked );
 	const currentPage = parseInt( page ) || 1;
 	const sortField = publicToInternalLicenseSortField( sort_field, LicenseSortField.IssuedAt );
