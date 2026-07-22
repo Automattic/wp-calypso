@@ -149,12 +149,20 @@ export default function MigrationsTagSitesModal( {
 		>
 			<VStack spacing={ 4 }>
 				<Text>{ __( 'Select the sites you moved on your own.' ) }</Text>
-				<div className="migrations-tag-sites-modal__instruction">
+				<HStack
+					className="migrations-tag-sites-modal__instruction"
+					spacing={ 2 }
+					alignment="flex-start"
+					justify="flex-start"
+					expanded={ false }
+				>
 					<Icon size={ 18 } icon={ info } />
-					{ __(
-						"Can't find your transferred site? Ensure the Automattic for Agencies plugin is connected in WP-Admin to display the site here."
-					) }
-				</div>
+					<Text variant="muted">
+						{ __(
+							'Can’t find your transferred site? Ensure the Automattic for Agencies plugin is connected in WP-Admin to display the site here.'
+						) }
+					</Text>
+				</HStack>
 				<SelectControl
 					__nextHasNoMarginBottom
 					label={ __( 'Hosting provider' ) }
@@ -183,10 +191,11 @@ export default function MigrationsTagSitesModal( {
 				) }
 			</VStack>
 			<HStack className="migrations-tag-sites-modal__footer" justify="flex-end" spacing={ 3 }>
-				<Button variant="tertiary" onClick={ handleOnClose }>
+				<Button __next40pxDefaultSize variant="tertiary" onClick={ handleOnClose }>
 					{ __( 'Cancel' ) }
 				</Button>
 				<Button
+					__next40pxDefaultSize
 					variant="primary"
 					onClick={ handleAddSites }
 					disabled={ isPending || ! isValidHostingProvider || selectedSites.length === 0 }

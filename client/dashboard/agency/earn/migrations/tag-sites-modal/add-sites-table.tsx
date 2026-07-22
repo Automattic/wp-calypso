@@ -15,8 +15,6 @@ import {
 import type { RecordTracksEvent, TaggedSite } from '../types';
 import type { Field, View } from '@wordpress/dataviews';
 
-import '../components/dataviews/style.scss';
-
 export default function MigrationsAddSitesTable( {
 	selectedSites,
 	setSelectedSites,
@@ -147,7 +145,7 @@ export default function MigrationsAddSitesTable( {
 	}, [ availableSites, view, fields ] );
 
 	return (
-		<div className="add-sites-table redesigned-a8c-table">
+		<>
 			<BaseControl
 				label={ __( 'Select sites to tag' ) }
 				className="migrations-tag-sites-modal__table-control"
@@ -176,6 +174,6 @@ export default function MigrationsAddSitesTable( {
 					isLoading={ isLoading }
 				/>
 			</BaseControl>
-		</div>
+		</>
 	);
 }

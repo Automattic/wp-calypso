@@ -51,7 +51,7 @@ export default function MigrationsCommissionsContent( {
 					canTagSitesForCommission={ canTagSitesForCommission }
 				/>
 			) : (
-				<div className="migrations-commissions__content">
+				<>
 					{ canTagSitesForCommission && (
 						<MigrationsConsolidatedCommissions items={ taggedSites } />
 					) }
@@ -62,7 +62,7 @@ export default function MigrationsCommissionsContent( {
 						onSuccess={ onSuccess }
 						onError={ onError }
 					/>
-				</div>
+				</>
 			) }
 			{ isAddSitesModalOpen && (
 				<MigrationsTagSitesModal

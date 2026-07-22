@@ -102,19 +102,21 @@ export default function MigrationsCommissions() {
 			</LayoutTop>
 
 			<LayoutBody>
-				<MigrationsCommissionsContent
-					taggedSites={ taggedSites }
-					isLoading={ isLoading }
-					recordTracksEvent={ recordTracks }
-					onSuccess={ onSuccess }
-					onError={ onError }
-					getSiteCreatedAt={ getSiteCreatedAt }
-					canTagSitesForCommission={ canTagSitesForCommission }
-					migrationTags={ migrationTags }
-					isAddSitesModalOpen={ showAddSitesModal }
-					onCloseAddSitesModal={ () => setShowAddSitesModal( false ) }
-					onOpenAddSitesModal={ () => setShowAddSitesModal( true ) }
-				/>
+				<div className="redesigned-a8c-table full-width">
+					<MigrationsCommissionsContent
+						taggedSites={ taggedSites }
+						isLoading={ isLoading }
+						recordTracksEvent={ recordTracks }
+						onSuccess={ onSuccess }
+						onError={ onError }
+						getSiteCreatedAt={ getSiteCreatedAt }
+						canTagSitesForCommission={ canTagSitesForCommission }
+						migrationTags={ migrationTags }
+						isAddSitesModalOpen={ showAddSitesModal }
+						onCloseAddSitesModal={ () => setShowAddSitesModal( false ) }
+						onOpenAddSitesModal={ () => setShowAddSitesModal( true ) }
+					/>
+				</div>
 			</LayoutBody>
 		</Layout>
 	);

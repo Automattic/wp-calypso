@@ -10,8 +10,6 @@ import useCommissionListActions from './use-commission-list-actions';
 import type { RecordTracksEvent, ShowSuccessNotice, TaggedSite } from '../types';
 import type { Field, View } from '@wordpress/dataviews';
 
-import '../components/dataviews/style.scss';
-
 type ActiveModal =
 	| { kind: 'untag'; site: TaggedSite }
 	| { kind: 'request-review'; site: TaggedSite }
@@ -135,31 +133,25 @@ export default function MigrationsCommissionsList( {
 
 	return (
 		<>
-			<div className="redesigned-a8c-table full-width">
-				<DataViews
-					data={ items }
-					view={ responsiveView }
-					onChangeView={ setView }
-					fields={ fields }
-					search={ false }
-					actions={ actions }
-					getItemId={ ( item ) => `${ item.id }` }
-					paginationInfo={ pagination }
-					defaultLayouts={ { table: {}, list: {} } }
-				>
-					{ isDesktop && (
-						<HStack
-							className="dataviews__view-actions"
-							justify="end"
-							style={ { paddingInline: '64px' } }
-						>
-							<DataViews.ViewConfig />
-						</HStack>
-					) }
-					<DataViews.Layout />
-					<DataViews.Footer />
-				</DataViews>
-			</div>
+			<DataViews
+				data={ items }
+				view={ responsiveView }
+				onChangeView={ setView }
+				fields={ fields }
+				search={ false }
+				actions={ actions }
+				getItemId={ ( item ) => `${ item.id }` }
+				paginationInfo={ pagination }
+				defaultLayouts={ { table: {}, list: {} } }
+			>
+				{ isDesktop && (
+					<HStack className="dataviews__view-actions" justify="end">
+						<DataViews.ViewConfig />
+					</HStack>
+				) }
+				<DataViews.Layout />
+				<DataViews.Footer />
+			</DataViews>
 
 			{ activeModal?.kind === 'untag' && (
 				<UntagSiteDialog

@@ -1,5 +1,6 @@
 @import "@wordpress/base-styles/breakpoints";
 @import "@wordpress/base-styles/mixins";
+@import "@wordpress/dataviews/build-style/style.css";
 
 .migrations-commissions {
 	&:not(.full-width-layout-with-table) .hosting-dashboard-layout__body-wrapper {
@@ -19,29 +20,16 @@
 		}
 	}
 
-	.commissions-step-section-item-content {
-		max-width: none;
+	// Classic-only inset for the shared consolidated summary cards. The MSD
+	// component renders a neutral `.consolidated-commissions` class; the A4A
+	// host owns this page padding (the MSD route gets its spacing from
+	// PageLayout instead). Keep in sync with the `.consolidated-commissions`
+	// class in dashboard/agency/earn/migrations/consolidated-commissions.
+	.consolidated-commissions {
+		padding: 16px;
 
-		ul {
-			color: var(--color-text-black);
-			list-style: decimal;
-			margin-block: 8px 16px;
-			margin-inline: 16px 0;
-
-			li a {
-				color: var(--color-text-black);
-				text-decoration: underline;
-			}
-		}
-	}
-
-	.migrations-commissions__content {
-		.consolidated-commissions {
-			padding: 16px;
-
-			@include break-large {
-				padding: 16px 64px 48px;
-			}
+		@include break-large {
+			padding: 16px 64px 48px;
 		}
 	}
 }
