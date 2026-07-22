@@ -31,7 +31,8 @@ export const HelpCenterCTA: React.FC< HelpCenterCTAProps > = ( {
 			variant,
 			placement,
 		} );
-	}, [ ctaId, variant, placement ] );
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [] );
 
 	const trackClick = () => {
 		recordTracksEvent( 'calypso_helpcenter_cta_click', {
