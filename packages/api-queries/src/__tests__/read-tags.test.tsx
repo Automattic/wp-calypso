@@ -278,6 +278,7 @@ describe( 'optimistic followed-tags cache updates', () => {
 
 		await waitFor( () => expect( cachedSlugs( client ) ).toEqual( [ 'health' ] ) );
 		expect( result.current.isPending ).toBe( true );
+		await waitFor( () => expect( result.current.isPending ).toBe( false ) );
 	} );
 
 	it( 'restores the followed cache when the unfollow request fails', async () => {
