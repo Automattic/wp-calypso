@@ -1,7 +1,8 @@
-@import "calypso/assets/stylesheets/shared/mixins/breakpoints";
+@import 'calypso/assets/stylesheets/shared/mixins/breakpoints';
 
 .subscriptions-list__layout {
-	&.main.hosting-dashboard-layout.is-with-border .hosting-dashboard-layout__top-wrapper:not(.has-navigation) {
+	&.main.hosting-dashboard-layout.is-with-border
+		.hosting-dashboard-layout__top-wrapper:not( .has-navigation ) {
 		padding-block-start: 24px;
 		padding-block-end: 0;
 	}
@@ -15,10 +16,18 @@
 			padding-inline: 16px;
 			padding-block-end: 48px;
 
-			@include breakpoint-deprecated( ">660px" ) {
+			@include breakpoint-deprecated( '>660px' ) {
 				padding-inline: 64px;
 			}
 		}
+	}
+}
+
+.subscriptions-list__purchase-confirmation {
+	padding-inline: 16px;
+
+	@include breakpoint-deprecated( '>660px' ) {
+		padding-inline: 64px;
 	}
 }
 
