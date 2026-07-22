@@ -2,6 +2,7 @@ import '@automattic/agenttic-ui/index.css';
 import { useInput } from '@automattic/agenttic-ui';
 import { HelpCenterSelect } from '@automattic/data-stores';
 import { useConnectionStatusNotice } from '@automattic/zendesk-client';
+import { ExternalLink } from '@wordpress/components';
 import { useSelect } from '@wordpress/data';
 import {
 	createInterpolateElement,
@@ -23,6 +24,10 @@ import { useMessageSizeErrorNotice } from '../notices';
 import { useAttachmentHandler } from './use-attachment-handler';
 import { useSendMessageHandler } from './use-send-message-handler';
 
+const AiDisclosureLink = ( { children }: { children?: React.ReactNode } ) => (
+	<ExternalLink href="https://automattic.com/ai-guidelines">{ children }</ExternalLink>
+);
+
 const AiDisclosure = ( { id }: { id: string } ) => (
 	<div className="odie-ai-disclosure" id={ id }>
 		{ createInterpolateElement(
@@ -31,13 +36,7 @@ const AiDisclosure = ( { id }: { id: string } ) => (
 				__i18n_text_domain__
 			),
 			{
-				a: (
-					<a
-						href="https://automattic.com/ai-guidelines"
-						target="_blank"
-						rel="noreferrer noopener"
-					/>
-				),
+				a: <AiDisclosureLink />,
 			}
 		) }
 	</div>
