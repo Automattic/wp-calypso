@@ -3,7 +3,6 @@ import ButtonPicker from '../components/button-picker';
 import ColorPicker from '../components/color-picker';
 import { EscalationButton } from '../components/escalation-button';
 import FontPicker from '../components/font-picker';
-import StartOverMessage from '../components/start-over-message';
 import { isShowComponentTool } from './show-component-tools';
 import { getDisplayMessageFromToolData, isDisplayableToolMessageTool } from './tool-message-utils';
 import type { GetChatComponent } from './load-external-providers';
@@ -335,9 +334,9 @@ export default function convertToolMessagesToComponents( {
 		}
 
 		// Handle start over tool message
-		// TODO: Remove this branch and the `start-over-message` component when
-		// the `client-assistants` ability migrates. No agent offers that tool
-		// today — only old conversation history still contains it.
+		// TODO: Remove this branch when the `client-assistants` ability
+		// migrates. No agent offers that tool today — only old conversation
+		// history still contains it.
 		if (
 			textData.tool_id === 'big_sky__client_assistants' &&
 			textData.data?.assistantId === 'big-sky-site-admin'
@@ -347,11 +346,11 @@ export default function convertToolMessagesToComponents( {
 					...message,
 					content: [
 						{
-							type: 'component' as const,
-							component: StartOverMessage,
-							componentProps: {},
+							type: 'text' as const,
+							text: __( 'To start over, please send your request again.', __i18n_text_domain__ ),
 						},
 					],
+					suppressThinking: true,
 				},
 			];
 		}

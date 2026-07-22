@@ -289,10 +289,9 @@ describe( 'convertToolMessagesToComponents', () => {
 		} );
 
 		expect( result ).toHaveLength( 1 );
-		expect( result[ 0 ].content[ 0 ] ).toMatchObject( {
-			type: 'component',
-			component: expect.any( Function ),
-			componentProps: {},
+		expect( result[ 0 ].content[ 0 ] ).toEqual( {
+			type: 'text',
+			text: 'To start over, please send your request again.',
 		} );
 	} );
 
