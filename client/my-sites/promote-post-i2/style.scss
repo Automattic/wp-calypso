@@ -254,6 +254,19 @@ body.is-section-promote-post-i2 {
 	position: static;
 }
 
+// On mobile the admin-ui Page header keeps its desktop padding (16px 24px), so
+// it sits inset from the 16px card gutters below, and its title row and
+// subtitle are separated only by the subtitle's tight 4px gap — cramped and
+// misaligned against the cards. Match the card gutter and even out the vertical
+// rhythm. Same structural anchor as above: the header has no stable class
+// (CSS Modules) and is always the page's first child.
+@media screen and (max-width: $break-medium) {
+	.promote-post-i2__page > :first-child {
+		padding: 16px;
+		row-gap: 8px;
+	}
+}
+
 // Keep the Jetpack footer pinned to the viewport bottom, like the other
 // Jetpack admin pages (they pin it with position: fixed inside their
 // fixed-primary layout). Blaze scrolls the document instead, so let the

@@ -1,3 +1,4 @@
+import { useHasEnTranslation } from '@automattic/i18n-utils';
 import { isTestModeEnvironment } from '@automattic/zendesk-client';
 import { Spinner } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
@@ -31,6 +32,7 @@ export const MessagesContainer = ( { currentUser }: ChatMessagesProps ) => {
 	const { chat, isChatLoaded, isUserEligibleForPaidSupport, forceEmailSupport } =
 		useOdieAssistantContext();
 	const isTestMode = isTestModeEnvironment();
+	const hasEnTranslation = useHasEnTranslation();
 	const createZendeskConversation = useCreateZendeskConversation();
 	const [ searchParams, setSearchParams ] = useSearchParams();
 	const navigate = useNavigate();
@@ -146,7 +148,8 @@ export const MessagesContainer = ( { currentUser }: ChatMessagesProps ) => {
 					<ChatMessage
 						message={ getOdieInitialMessage(
 							supportInteraction?.bot_slug || ODIE_DEFAULT_BOT_SLUG_LEGACY,
-							currentUser?.display_name
+							currentUser?.display_name,
+							hasEnTranslation
 						) }
 						key={ 0 }
 					/>

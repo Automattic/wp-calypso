@@ -146,33 +146,9 @@ describe( 'Purchase Management Buttons', () => {
 	const queryClient = new QueryClient();
 
 	beforeEach( () => {
-		// Default to the split-cancel-remove flow being enabled (matches config/test.json);
-		// individual tests opt out to exercise the flag-off path.
+		// The cancellation-features query is still gated on the split-cancel-remove
+		// flag, so keep it enabled (matches config/test.json).
 		useIsSplitCancelRemoveEnabled.mockReturnValue( true );
-	} );
-
-	it( 'cancel button links to the cancel flow with intent=cancel even when the split flag is off', async () => {
-		useIsSplitCancelRemoveEnabled.mockReturnValue( false );
-		nock( 'https://public-api.wordpress.com' )
-			.get( '/rest/v1.2/me/payment-methods?expired=include' )
-			.reply( 200 );
-
-		const store = createMockReduxStoreForPurchase( { ...purchase, is_auto_renew_enabled: true } );
-
-		render(
-			<QueryClientProvider client={ queryClient }>
-				<ReduxProvider store={ store }>
-					<ManagePurchase
-						purchaseId={ Number( purchase.ID ) }
-						isSiteLevel
-						siteSlug="onecooltestsite.com"
-					/>
-				</ReduxProvider>
-			</QueryClientProvider>
-		);
-
-		const cancelLink = await screen.findByRole( 'link', { name: /Cancel plan/i } );
-		expect( cancelLink ).toHaveAttribute( 'href', expect.stringContaining( 'intent=cancel' ) );
 	} );
 
 	it( 'renders a cancel button when auto-renew is ON', async () => {

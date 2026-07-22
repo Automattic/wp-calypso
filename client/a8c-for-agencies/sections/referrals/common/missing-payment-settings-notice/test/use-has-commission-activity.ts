@@ -5,16 +5,22 @@
 import { renderHook } from '@testing-library/react';
 import useFetchAllLicenses from 'calypso/a8c-for-agencies/data/purchases/use-fetch-all-licenses';
 import useFetchSitesWithPlugins from 'calypso/a8c-for-agencies/data/sites/use-fetch-sites-with-plugins';
-import useFetchTaggedSitesForMigration from 'calypso/a8c-for-agencies/sections/migrations/hooks/use-fetch-tagged-sites-for-migration';
+import useFetchTaggedSitesForMigration from 'calypso/dashboard/agency/earn/migrations/hooks/use-fetch-tagged-sites-for-migration';
 import useFetchReferrals from '../../../hooks/use-fetch-referrals';
 import useHasCommissionActivity from '../use-has-commission-activity';
 
 jest.mock( '../../../hooks/use-fetch-referrals' );
-jest.mock(
-	'calypso/a8c-for-agencies/sections/migrations/hooks/use-fetch-tagged-sites-for-migration'
-);
+jest.mock( 'calypso/dashboard/agency/earn/migrations/hooks/use-fetch-tagged-sites-for-migration' );
 jest.mock( 'calypso/a8c-for-agencies/data/purchases/use-fetch-all-licenses' );
 jest.mock( 'calypso/a8c-for-agencies/data/sites/use-fetch-sites-with-plugins' );
+
+let mockAgencyId: number | undefined = 123;
+jest.mock( 'calypso/state', () => ( {
+	useSelector: ( selector: ( state: unknown ) => unknown ) => selector( undefined ),
+} ) );
+jest.mock( 'calypso/state/a8c-for-agencies/agency/selectors', () => ( {
+	getActiveAgencyId: () => mockAgencyId,
+} ) );
 
 const mockUseFetchReferrals = useFetchReferrals as jest.MockedFunction< typeof useFetchReferrals >;
 const mockUseFetchTaggedSitesForMigration = useFetchTaggedSitesForMigration as jest.MockedFunction<
@@ -76,6 +82,7 @@ const setMocks = ( {
 describe( 'useHasCommissionActivity', () => {
 	beforeEach( () => {
 		jest.clearAllMocks();
+		mockAgencyId = 123;
 	} );
 
 	it( 'returns hasActivity=false when all data sources are empty', () => {
@@ -117,6 +124,15 @@ describe( 'useHasCommissionActivity', () => {
 		const { result } = renderHook( () => useHasCommissionActivity() );
 
 		expect( result.current.hasActivity ).toBe( true );
+	} );
+
+	it( 'returns isLoading=true while the agency id is unresolved', () => {
+		mockAgencyId = undefined;
+		setMocks();
+
+		const { result } = renderHook( () => useHasCommissionActivity() );
+
+		expect( result.current.isLoading ).toBe( true );
 	} );
 
 	it.each( [

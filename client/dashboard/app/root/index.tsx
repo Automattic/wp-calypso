@@ -28,7 +28,7 @@ import { NavigationBlockerRegistry } from '../navigation-blocker';
 import Notifications from '../notifications';
 import { useOmnibarEvent } from '../omnibar/events';
 import OmnibarSiteSwitcher from '../omnibar/omnibar-site-switcher';
-import { useInitializeOmnibarSite } from '../omnibar/site';
+import { useSyncOmnibarSite } from '../omnibar/site';
 import ResponsiveSidebar from '../responsive-sidebar';
 import Snackbars from '../snackbars';
 import { OptInWelcomeModal } from '../welcome-modal';
@@ -66,7 +66,7 @@ function Root() {
 	const [ isSidebarOpen, setIsSidebarOpen ] = useState( false );
 	const closeSidebar = useCallback( () => setIsSidebarOpen( false ), [ setIsSidebarOpen ] );
 
-	useInitializeOmnibarSite();
+	useSyncOmnibarSite();
 	useTrackVisitedAreas();
 	useOmnibarEvent( 'mobileMenu', () => setIsSidebarOpen( ( v ) => ! v ) );
 	useOmnibarEvent( 'linkClick', ( { href, event } ) => {

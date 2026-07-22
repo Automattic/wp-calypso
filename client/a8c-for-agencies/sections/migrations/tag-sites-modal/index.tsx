@@ -1,8 +1,9 @@
 import {
+	activeAgencyQuery,
 	agencyMigrationCommissionSitesQuery,
 	tagAgencySitesForCommissionMutation,
 } from '@automattic/api-queries';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import {
 	Button,
 	Modal,
@@ -18,13 +19,10 @@ import { Icon, info } from '@wordpress/icons';
 import { useState } from 'react';
 import useMinimizeHelpCenterOnMount from 'calypso/a8c-for-agencies/hooks/use-minimize-help-center-on-mount';
 import { preventWidows } from 'calypso/lib/formatting';
-import { useDispatch, useSelector } from 'calypso/state';
-import { getActiveAgencyId } from 'calypso/state/a8c-for-agencies/agency/selectors';
-import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 import MigrationsAddSitesTable from './add-sites-table';
-import type { SiteItem } from '../hooks/use-fetch-all-managed-sites-for-commission';
-import type { TaggedSite } from '../types';
+import type { SiteItem } from 'calypso/dashboard/agency/earn/migrations/hooks/use-fetch-all-managed-sites-for-commission';
+import type { RecordTracksEvent, TaggedSite } from 'calypso/dashboard/agency/earn/migrations/types';
+import type { ReactNode } from 'react';
 
 import './style.scss';
 
@@ -32,14 +30,22 @@ export default function MigrationsTagSitesModal( {
 	onClose,
 	taggedSites,
 	migrationTags,
+	recordTracksEvent,
+	onSuccess,
+	onError,
+	getSiteCreatedAt,
 }: {
 	onClose: () => void;
 	taggedSites?: TaggedSite[];
 	migrationTags: string[];
+	recordTracksEvent: RecordTracksEvent;
+	onSuccess: ( message: ReactNode ) => void;
+	onError: ( message: ReactNode ) => void;
+	getSiteCreatedAt: ( blogId: number ) => string | undefined;
 } ) {
-	const dispatch = useDispatch();
 	const queryClient = useQueryClient();
-	const agencyId = useSelector( getActiveAgencyId );
+	const { data: agency } = useQuery( activeAgencyQuery() );
+	const agencyId = agency?.id;
 	useMinimizeHelpCenterOnMount();
 
 	const { mutate: tagSitesForMigration, isPending } = useMutation(
@@ -83,54 +89,46 @@ export default function MigrationsTagSitesModal( {
 					queryClient.invalidateQueries( {
 						queryKey: agencyMigrationCommissionSitesQuery( agencyId ).queryKey,
 					} );
-					dispatch(
-						recordTracksEvent( 'calypso_a8c_migrations_tag_sites_modal_add_sites_success', {
-							count: selectedSites.length,
-							migration_source_host: finalMigrationSourceHost,
-						} )
-					);
+					recordTracksEvent( 'calypso_a8c_migrations_tag_sites_modal_add_sites_success', {
+						count: selectedSites.length,
+						migration_source_host: finalMigrationSourceHost,
+					} );
 					const hasSingleSite = selectedSites.length === 1;
 					const siteUrl = hasSingleSite ? selectedSites[ 0 ].site : '';
-					dispatch(
+					onSuccess(
 						hasSingleSite
-							? successNotice(
-									createInterpolateElement(
-										sprintf(
-											/* translators: %s: the site URL */
-											__(
-												'The site <strong>%s</strong> has been successfully tagged for commission.'
-											),
-											siteUrl
-										),
-										{ strong: <strong /> }
-									)
-							  )
-							: successNotice(
+							? createInterpolateElement(
 									sprintf(
-										/* translators: %d: the number of sites tagged */
-										__( '%d sites have been successfully tagged for commission.' ),
-										selectedSites.length
-									)
+										/* translators: %s: the site URL */
+										__(
+											'The site <strong>%s</strong> has been successfully tagged for commission.'
+										),
+										siteUrl
+									),
+									{ strong: <strong /> }
+							  )
+							: sprintf(
+									/* translators: %d: the number of sites tagged */
+									__( '%d sites have been successfully tagged for commission.' ),
+									selectedSites.length
 							  )
 					);
 					onClose();
 				},
 				onError: ( error ) => {
-					dispatch( errorNotice( error.message ) );
+					onError( error.message );
 				},
 			}
 		);
-		dispatch(
-			recordTracksEvent( 'calypso_a8c_migrations_tag_sites_modal_add_sites_click', {
-				count: selectedSites.length,
-				migration_source_host: finalMigrationSourceHost,
-			} )
-		);
+		recordTracksEvent( 'calypso_a8c_migrations_tag_sites_modal_add_sites_click', {
+			count: selectedSites.length,
+			migration_source_host: finalMigrationSourceHost,
+		} );
 	};
 
 	const handleOnClose = () => {
 		onClose();
-		dispatch( recordTracksEvent( 'calypso_a8c_migrations_tag_sites_modal_close' ) );
+		recordTracksEvent( 'calypso_a8c_migrations_tag_sites_modal_close' );
 	};
 
 	const handleMigrationSourceHostChange = ( value: string ) => {
@@ -184,6 +182,8 @@ export default function MigrationsTagSitesModal( {
 						selectedSites={ selectedSites }
 						setSelectedSites={ setSelectedSites }
 						migrationSourceHost={ selectedMigrationSourceHost }
+						recordTracksEvent={ recordTracksEvent }
+						getSiteCreatedAt={ getSiteCreatedAt }
 					/>
 				) }
 			</VStack>

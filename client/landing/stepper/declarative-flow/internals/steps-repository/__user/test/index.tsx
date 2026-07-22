@@ -2,31 +2,33 @@
  * @jest-environment jsdom
  */
 
-jest.mock( '../use-mobile-layout-experiment', () => jest.fn() );
-
 jest.mock( 'calypso/lib/partner-branding', () => ( {
 	usePartnerBranding: jest.fn(),
 } ) );
 
+jest.mock( '@wordpress/compose', () => ( {
+	...jest.requireActual( '@wordpress/compose' ),
+	useViewportMatch: jest.fn(),
+} ) );
+
 import { screen } from '@testing-library/dom';
+import { useViewportMatch } from '@wordpress/compose';
 import { MemoryRouter } from 'react-router-dom';
 import { usePartnerBranding } from 'calypso/lib/partner-branding';
 import loginReducer from 'calypso/state/login/reducer';
 import routeReducer from 'calypso/state/route/reducer';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import UserStep from '..';
-import useMobileLayoutExperiment from '../use-mobile-layout-experiment';
 
-const mockUseMobileLayoutExperiment = useMobileLayoutExperiment as unknown as jest.Mock;
+const mockUseViewportMatch = useViewportMatch as unknown as jest.Mock;
 const mockUsePartnerBranding = usePartnerBranding as unknown as jest.Mock;
 
-const defaultExperimentResult = {
-	isLoading: false,
-	isEligible: false,
-	variationName: 'control' as const,
-	isMobileTreatment: false,
-	isMobileTreatmentTosTop: false,
-};
+// Drives isMobileViewport = useViewportMatch( 'small', '<' ). Every other call
+// (e.g. useViewportMatch( 'large' )) resolves to false, i.e. not a wide viewport.
+const setViewport = ( { isMobile }: { isMobile: boolean } ) =>
+	mockUseViewportMatch.mockImplementation( ( breakpoint: string, operator?: string ) =>
+		breakpoint === 'small' && operator === '<' ? isMobile : false
+	);
 
 const noPartnerBranding = {
 	hasCustomBranding: false,
@@ -37,7 +39,7 @@ const noPartnerBranding = {
 
 describe( 'User email signup step', () => {
 	beforeEach( () => {
-		mockUseMobileLayoutExperiment.mockReturnValue( defaultExperimentResult );
+		setViewport( { isMobile: false } );
 		mockUsePartnerBranding.mockReturnValue( noPartnerBranding );
 	} );
 
@@ -60,78 +62,42 @@ describe( 'User email signup step', () => {
 		expect( screen.getByLabelText( 'Enter your email' ) ).toHaveValue( '' );
 	} );
 
-	describe( 'mobile-layout experiment', () => {
-		it( 'renders the default heading on control', () => {
+	describe( 'mobile compact layout', () => {
+		it( 'renders the default heading on desktop viewports', () => {
 			renderUserStep();
-			expect( screen.getByRole( 'heading', { name: 'Create your account' } ) ).toBeInTheDocument();
+			expect( screen.getByRole( 'heading', { name: 'Create your account' } ) ).toBeVisible();
 			expect(
 				screen.queryByRole( 'heading', { name: 'Welcome to WordPress.com' } )
 			).not.toBeInTheDocument();
 		} );
 
-		it( 'swaps the heading copy on the bottom-position treatment', () => {
-			mockUseMobileLayoutExperiment.mockReturnValue( {
-				...defaultExperimentResult,
-				isEligible: true,
-				variationName: 'treatment_tos_bottom',
-				isMobileTreatment: true,
-			} );
+		it( 'renders the compact layout with in-form ToS on mobile viewports', () => {
+			setViewport( { isMobile: true } );
 
 			renderUserStep();
 
-			expect(
-				screen.getByRole( 'heading', { name: 'Welcome to WordPress.com' } )
-			).toBeInTheDocument();
-			expect( screen.getByText( 'Sign up free to start creating your site.' ) ).toBeInTheDocument();
-			// "Above" copy: ToS lives inside the form, rendered by SignupFormSocialFirst.
-			expect(
-				screen.getByText( /By continuing with any of the options above/i )
-			).toBeInTheDocument();
-			expect(
-				screen.queryByText( /By continuing with any of the options below/i )
-			).not.toBeInTheDocument();
+			expect( screen.getByRole( 'heading', { name: 'Welcome to WordPress.com' } ) ).toBeVisible();
+			expect( screen.getByText( 'Sign up free to start creating your site.' ) ).toBeVisible();
+			// "Above" copy: ToS lives inside the form, below the sign-up options.
+			expect( screen.getByText( /By continuing with any of the options above/i ) ).toBeVisible();
 		} );
 
-		it( 'renders the heading-slot ToS on the top-position treatment', () => {
-			mockUseMobileLayoutExperiment.mockReturnValue( {
-				...defaultExperimentResult,
-				isEligible: true,
-				variationName: 'treatment_tos_top',
-				isMobileTreatment: true,
-				isMobileTreatmentTosTop: true,
-			} );
+		it( 'excludes Woo-referrer users from the compact layout on mobile', () => {
+			setViewport( { isMobile: true } );
 
-			const { container } = renderUserStep();
+			renderUserStep( '/onboarding/user?ref=woo-hosting-solutions-flow' );
 
+			expect( screen.getByRole( 'heading', { name: 'Create your account' } ) ).toBeVisible();
 			expect(
-				screen.getByRole( 'heading', { name: 'Welcome to WordPress.com' } )
-			).toBeInTheDocument();
-			// "Below" copy is in the heading slot, not the form.
-			expect(
-				screen.getByText( /By continuing with any of the options below/i )
-			).toBeInTheDocument();
+				screen.queryByRole( 'heading', { name: 'Welcome to WordPress.com' } )
+			).not.toBeInTheDocument();
 			expect(
 				screen.queryByText( /By continuing with any of the options above/i )
 			).not.toBeInTheDocument();
-			// The in-form ToS is suppressed by hideTosElement — exactly one tos-link
-			// element is rendered (the one in the heading slot).
-			expect( container.querySelectorAll( '.signup-form-social-first__tos-link' ) ).toHaveLength(
-				1
-			);
 		} );
 
-		it( 'keeps the partner ToS and suppresses the heading-slot notice on the top-position treatment', () => {
-			// Partner branding wins over the experiment: even on the top-position
-			// arm, signupTosElement is truthy, so the experiment's heading-slot
-			// notice is suppressed (showTosInHeadingSlot is false) and the partner
-			// ToS renders inside the form via customTosElement.
-			mockUseMobileLayoutExperiment.mockReturnValue( {
-				...defaultExperimentResult,
-				isEligible: true,
-				variationName: 'treatment_tos_top',
-				isMobileTreatment: true,
-				isMobileTreatmentTosTop: true,
-			} );
+		it( 'preserves partner branding over the compact layout on mobile', () => {
+			setViewport( { isMobile: true } );
 			mockUsePartnerBranding.mockReturnValue( {
 				hasCustomBranding: true,
 				partnerConfig: { id: 'woo', displayName: 'Woo', ssoProviders: [ 'google', 'apple' ] },
@@ -139,32 +105,14 @@ describe( 'User email signup step', () => {
 				signupTosElement: <>Partner reminder: agree to our partner Terms of Service.</>,
 			} );
 
-			const { container } = renderUserStep();
-
-			// Partner ToS renders (inside the form).
-			expect( screen.getByText( /Partner reminder: agree to our partner/i ) ).toBeInTheDocument();
-			// The experiment's heading-slot "options below" notice is not rendered.
-			expect(
-				screen.queryByText( /By continuing with any of the options below/i )
-			).not.toBeInTheDocument();
-			// Exactly one tos-link element — the partner one inside the form.
-			expect( container.querySelectorAll( '.signup-form-social-first__tos-link' ) ).toHaveLength(
-				1
-			);
-		} );
-
-		it( 'defers rendering the heading and form while the assignment is loading', () => {
-			mockUseMobileLayoutExperiment.mockReturnValue( {
-				...defaultExperimentResult,
-				isEligible: true,
-				isLoading: true,
-			} );
-
 			renderUserStep();
 
-			// Neither cohort sees the other variant's copy flash on cold visits.
-			expect( screen.queryByRole( 'heading' ) ).not.toBeInTheDocument();
-			expect( screen.queryByLabelText( 'Enter your email' ) ).not.toBeInTheDocument();
+			expect( screen.getByRole( 'heading', { name: 'Create an account for Woo' } ) ).toBeVisible();
+			expect( screen.getByText( /Partner reminder: agree to our partner/i ) ).toBeVisible();
+			// The compact "options above" notice is not rendered for partner flows.
+			expect(
+				screen.queryByText( /By continuing with any of the options above/i )
+			).not.toBeInTheDocument();
 		} );
 	} );
 } );
