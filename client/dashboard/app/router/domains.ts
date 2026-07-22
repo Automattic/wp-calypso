@@ -38,7 +38,6 @@ import {
 	checkDomainContactVerificationPermissions,
 	checkDomainNotPendingRegistration,
 } from '../../utils/domain-permissions';
-import { logToLogstash } from 'calypso/lib/logstash';
 import { queryParamToArray } from '../../utils/url';
 import { dashboardRedirect } from './redirect';
 import { rootRoute } from './root';
@@ -128,21 +127,6 @@ export const domainRoute = createRoute( {
 	getParentRoute: () => rootRoute,
 	path: 'domains/$domainName',
 	errorComponent: lazyRouteComponent( () => import( '../../domains/domain/error' ) ),
-	beforeLoad: ( { params: { domainName } } ) => {
-		if ( ! domainName || domainName === 'undefined' ) {
-			logToLogstash( {
-				feature: 'calypso_client',
-				message: 'Invalid domain name in route param',
-				severity: 'warning',
-				tags: [ 'dashboard' ],
-				properties: {
-					domain: domainName,
-					referrer: document.referrer,
-				},
-			} );
-			throw notFound();
-		}
-	},
 	loader: async ( { params: { domainName }, location } ) => {
 		const domain = await queryClient.ensureQueryData( domainQuery( domainName ) );
 		const isNameServersSubRoute = location.pathname.includes( '/name-servers' );
