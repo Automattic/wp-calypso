@@ -115,8 +115,8 @@ export interface BaseContextEntry {
 	getData?: () => any;
 
 	/**
-	 * Optional resolved data
-	 * Populated after `getData()` is called
+	 * Optional resolved data.
+	 * Populated after `getData()` is called.
 	 */
 	data?: any;
 }
