@@ -8,17 +8,18 @@ import {
 } from '@wordpress/components';
 import { Icon, info } from '@wordpress/icons';
 import { useState } from 'react';
-import { Card, CardBody } from '../../../components/card';
-import { TextSkeleton } from '../../../components/text-skeleton';
+import { Card, CardBody } from '../card';
+import { TextSkeleton } from '../text-skeleton';
+import type { ReactNode } from 'react';
 
-import './consolidated-stat-card.scss';
+import './style.scss';
 
 interface ConsolidatedStatCardProps {
 	value: string | number;
 	footerText: string;
-	footerAction?: React.ReactNode;
+	footerAction?: ReactNode;
 	popoverTitle?: string;
-	popoverContent: React.ReactNode;
+	popoverContent?: ReactNode;
 	isLoading?: boolean;
 }
 
@@ -34,7 +35,7 @@ export default function ConsolidatedStatCard( {
 	const [ infoAnchor, setInfoAnchor ] = useState< HTMLButtonElement | null >( null );
 
 	return (
-		<Card className="referrals-stat-card">
+		<Card className="consolidated-stat-card">
 			<CardBody>
 				<VStack spacing={ 2 }>
 					<Heading level={ 2 } size={ 20 } weight={ 500 }>
@@ -42,26 +43,32 @@ export default function ConsolidatedStatCard( {
 					</Heading>
 					<HStack justify="flex-start" spacing={ 1 } expanded={ false }>
 						<Text variant="muted">{ footerText }</Text>
-						<Button
-							size="small"
-							ref={ setInfoAnchor }
-							aria-label={ popoverTitle }
-							onClick={ () => setShowPopover( ( visible ) => ! visible ) }
-						>
-							<Icon icon={ info } size={ 16 } />
-						</Button>
-						{ showPopover && (
-							<Popover
-								anchor={ infoAnchor }
-								placement="bottom"
-								offset={ 12 }
-								shift
-								resize={ false }
-								focusOnMount
-								onFocusOutside={ () => setShowPopover( false ) }
-							>
-								<div className="referrals-stat-card__popover-content">{ popoverContent }</div>
-							</Popover>
+						{ popoverContent && (
+							<>
+								<Button
+									size="small"
+									ref={ setInfoAnchor }
+									aria-label={ popoverTitle }
+									onClick={ () => setShowPopover( ( visible ) => ! visible ) }
+								>
+									<Icon icon={ info } size={ 16 } />
+								</Button>
+								{ showPopover && (
+									<Popover
+										anchor={ infoAnchor }
+										placement="bottom"
+										offset={ 12 }
+										shift
+										resize={ false }
+										focusOnMount
+										onFocusOutside={ () => setShowPopover( false ) }
+									>
+										<div className="consolidated-stat-card__popover-content">
+											{ popoverContent }
+										</div>
+									</Popover>
+								) }
+							</>
 						) }
 					</HStack>
 					{ footerAction && (

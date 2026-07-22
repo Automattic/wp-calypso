@@ -1,9 +1,8 @@
-import { __experimentalVStack as VStack, __experimentalText as Text } from '@wordpress/components';
+import { formatCurrency } from '@automattic/number-formatters';
+import { __experimentalGrid as Grid } from '@wordpress/components';
 import { __, sprintf } from '@wordpress/i18n';
-import { Card, CardBody } from '../../../../components/card';
+import ConsolidatedStatCard from '../../../../components/consolidated-stat-card';
 import type { TaggedSite } from '../types';
-
-import './style.scss';
 
 const getQuarter = ( date = new Date() ) => {
 	const currentMonth = date.getMonth();
@@ -27,43 +26,23 @@ export default function MigrationsConsolidatedCommissions( { items }: { items: T
 	const currentQuarter = getQuarter();
 
 	return (
-		<div className="consolidated-commissions">
-			<Card className="consolidated-commissions__card">
-				<CardBody>
-					<VStack spacing={ 2 }>
-						<Text size={ 20 } weight={ 500 } color="var(--color-accent-100)">
-							${ migrationCommissions }
-						</Text>
-						<Text
-							className="consolidated-commissions__label"
-							size={ 13 }
-							color="var(--color-accent)"
-						>
-							{ sprintf(
-								/* translators: %d: the current quarter number. Q is the short form of "Quarter". */
-								__( 'Migration commissions expected in Q%d' ),
-								currentQuarter
-							) }
-						</Text>
-					</VStack>
-				</CardBody>
-			</Card>
-			<Card className="consolidated-commissions__card">
-				<CardBody>
-					<VStack spacing={ 2 }>
-						<Text size={ 20 } weight={ 500 } color="var(--color-accent-100)">
-							{ sitesPendingReview }
-						</Text>
-						<Text
-							className="consolidated-commissions__label"
-							size={ 13 }
-							color="var(--color-accent)"
-						>
-							{ __( 'Sites pending review' ) }
-						</Text>
-					</VStack>
-				</CardBody>
-			</Card>
-		</div>
+		<Grid
+			className="consolidated-commissions"
+			templateColumns="repeat(auto-fit, minmax(240px, 1fr))"
+			gap={ 4 }
+		>
+			<ConsolidatedStatCard
+				value={ formatCurrency( migrationCommissions, 'USD' ) }
+				footerText={ sprintf(
+					/* translators: %d: the current quarter number. Q is the short form of "Quarter". */
+					__( 'Migration commissions expected in Q%d' ),
+					currentQuarter
+				) }
+			/>
+			<ConsolidatedStatCard
+				value={ sitesPendingReview }
+				footerText={ __( 'Sites pending review' ) }
+			/>
+		</Grid>
 	);
 }

@@ -3,7 +3,7 @@ import { Button, __experimentalGrid as Grid } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import InlineSupportLink from '../../../components/inline-support-link';
-import ConsolidatedStatCard from './consolidated-stat-card';
+import ConsolidatedStatCard from '../../../components/consolidated-stat-card';
 import useConsolidatedPayoutData from './hooks/use-consolidated-payout-data';
 import { downloadCommissionsCsv } from './lib/download-commissions-csv';
 import PayoutCards from './payout-cards';
