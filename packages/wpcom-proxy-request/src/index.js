@@ -571,6 +571,7 @@ const localDevHosts = [
 	'agencies.localhost',
 	'my.localhost',
 	'my.woo.localhost',
+	'my.a4a.localhost',
 ];
 
 function isLocalDevOrigin( urlOrigin ) {
