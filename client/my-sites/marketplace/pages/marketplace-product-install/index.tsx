@@ -64,6 +64,11 @@ import ThemeDirectInstall from './theme-direct-install';
 import useMarketplaceAdditionalSteps from './use-marketplace-additional-steps';
 import type { TranslateResult } from 'i18n-calypso';
 
+// Both the install authorization and the plan's feature list are handed off asynchronously; each
+// gets a grace period before the page concludes it is missing.
+const INSTALL_HANDOFF_GRACE_PERIOD_MS = 2000;
+const PLAN_FEATURES_GRACE_PERIOD_MS = 2000;
+
 const MarketplaceProductInstall = ( {
 	pluginSlug = '',
 	themeSlug = '',
@@ -157,25 +162,29 @@ const MarketplaceProductInstall = ( {
 		if ( hasAtomicFeature || isJetpackSelfHosted || nonInstallablePlanError ) {
 			return;
 		}
-		const id = setTimeout( () => setNonInstallablePlanError( true ), 2000 );
+		const id = setTimeout(
+			() => setNonInstallablePlanError( true ),
+			PLAN_FEATURES_GRACE_PERIOD_MS
+		);
 		return () => clearTimeout( id );
 	}, [ hasAtomicFeature, isJetpackSelfHosted, nonInstallablePlanError ] );
 
-	const shouldShowNoDirectAccessError =
+	const isInstallAuthorizationMissing =
 		// 1. This is a plugin upload flow (via zip file) and we don't have a primary domain set
 		( isPluginUploadFlow && ! primaryDomain ) ||
 		// 2. This is a marketplace plugin installation but the installation process hasn't started
 		( ! isPluginUploadFlow && ! marketplaceInstallationInProgress );
 
-	// The state authorizing the install is handed off asynchronously, so only treat it as missing
-	// once it has stayed missing for 2s. Any change to the condition restarts the timer.
+	// Only report the authorization missing once it has stayed missing for the whole grace period,
+	// and clear the error if it turns up afterwards so a later failure gets a fresh grace period.
 	useEffect( () => {
-		if ( ! shouldShowNoDirectAccessError ) {
+		if ( ! isInstallAuthorizationMissing ) {
+			setNoDirectAccessError( false );
 			return;
 		}
-		const id = setTimeout( () => setNoDirectAccessError( true ), 2000 );
+		const id = setTimeout( () => setNoDirectAccessError( true ), INSTALL_HANDOFF_GRACE_PERIOD_MS );
 		return () => clearTimeout( id );
-	}, [ shouldShowNoDirectAccessError ] );
+	}, [ isInstallAuthorizationMissing ] );
 
 	// Upload flow startup
 	useEffect( () => {
