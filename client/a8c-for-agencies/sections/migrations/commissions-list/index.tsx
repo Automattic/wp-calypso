@@ -7,8 +7,12 @@ import RequestReviewModal from '../request-review-modal';
 import { MigratedOnColumn, ReviewStatusColumn, SiteColumn } from './commission-columns';
 import UntagSiteDialog from './untag-site-dialog';
 import useCommissionListActions from './use-commission-list-actions';
-import type { TaggedSite } from '../types';
 import type { Field, View } from '@wordpress/dataviews';
+import type {
+	RecordTracksEvent,
+	ShowSuccessNotice,
+	TaggedSite,
+} from 'calypso/dashboard/agency/earn/migrations/types';
 
 import '../commissions/components/dataviews/style.scss';
 
@@ -55,9 +59,15 @@ const INITIAL_VIEW: View = {
 export default function MigrationsCommissionsList( {
 	items,
 	migrationTags,
+	recordTracksEvent,
+	onSuccess,
+	onError,
 }: {
 	items: TaggedSite[];
 	migrationTags: string[];
+	recordTracksEvent: RecordTracksEvent;
+	onSuccess: ShowSuccessNotice;
+	onError: ( message: ReactNode ) => void;
 } ) {
 	const isDesktop = useDesktopBreakpoint();
 
@@ -160,11 +170,18 @@ export default function MigrationsCommissionsList( {
 					site={ activeModal.site }
 					migrationTags={ migrationTags }
 					onClose={ closeModal }
+					onSuccess={ onSuccess }
 				/>
 			) }
 
 			{ activeModal?.kind === 'request-review' && (
-				<RequestReviewModal site={ activeModal.site } onClose={ closeModal } />
+				<RequestReviewModal
+					site={ activeModal.site }
+					onClose={ closeModal }
+					recordTracksEvent={ recordTracksEvent }
+					onSuccess={ onSuccess }
+					onError={ onError }
+				/>
 			) }
 		</>
 	);
