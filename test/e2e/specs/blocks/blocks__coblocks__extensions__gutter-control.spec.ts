@@ -8,7 +8,6 @@ import {
 import { tags, test } from '../../lib/pw-base';
 
 const isAtomic = envVariables.TEST_ON_ATOMIC;
-const isSimple = ! envVariables.TEST_ON_ATOMIC;
 const features = envToFeatureKey( envVariables );
 // For this spec, all Atomic testing is always edge.
 // See https://github.com/Automattic/wp-calypso/pull/73052
@@ -76,7 +75,7 @@ test.describe( 'CoBlocks: Extensions: Gutter Control', { tag: [ tags.GUTENBERG ]
 			} );
 		}
 
-		if ( ! isSimple ) {
+		if ( isAtomic ) {
 			await test.step( 'When I verify "Custom" gutter is available', async () => {
 				await pricingTableBlock!.setGutter( 'Custom', 2.7 );
 			} );
@@ -101,7 +100,7 @@ test.describe( 'CoBlocks: Extensions: Gutter Control', { tag: [ tags.GUTENBERG ]
 			} );
 		}
 
-		if ( ! isSimple ) {
+		if ( isAtomic ) {
 			await test.step( 'Then the proper value for "Custom" gutter is set', async () => {
 				await page
 					.locator( '.wp-block-coblocks-pricing-table [style="--coblocks-custom-gutter:2.7em"]' )

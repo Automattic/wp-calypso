@@ -64,12 +64,6 @@ test.describe(
 			} );
 
 			// Skipping the bulk of the spec, as it's flaky. We're working on better E2E tests.
-			// Skipped: Click on the "Connect" button for Tumblr
-			// const popup = await marketingPage.clickSocialConnectButton( 'Tumblr' );
-			// Skipped: Set up Tumblr
-			// await marketingPage.setupTumblr( popup, SecretsManager.secrets.socialAccounts.tumblr );
-			// Skipped: Tumblr is connected
-			// await marketingPage.validateSocialConnected( 'Tumblr' );
 		} );
 	}
 );
