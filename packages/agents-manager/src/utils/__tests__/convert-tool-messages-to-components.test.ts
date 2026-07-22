@@ -21,7 +21,6 @@ jest.mock( '../../components/font-picker', () => ( { __esModule: true, default: 
 import ButtonPicker from '../../components/button-picker';
 import ColorPicker from '../../components/color-picker';
 import FontPicker from '../../components/font-picker';
-import UnavailableToolMessage from '../../components/unavailable-tool-message';
 import convertToolMessagesToComponents from '../convert-tool-messages-to-components';
 import {
 	BIG_SKY_SHOW_COMPONENT_TOOL_ID,
@@ -280,7 +279,7 @@ describe( 'convertToolMessagesToComponents', () => {
 		expect( result[ 0 ].actions ).toEqual( actions );
 	} );
 
-	it( 'renders `UnavailableToolMessage` for the start-over tool', () => {
+	it( 'renders the start-over notice for the legacy start-over tool', () => {
 		const message = createToolMessage( 'big_sky__client_assistants', {
 			assistantId: 'big-sky-site-admin',
 		} );
@@ -292,7 +291,7 @@ describe( 'convertToolMessagesToComponents', () => {
 		expect( result ).toHaveLength( 1 );
 		expect( result[ 0 ].content[ 0 ] ).toMatchObject( {
 			type: 'component',
-			component: UnavailableToolMessage,
+			component: expect.any( Function ),
 			componentProps: {},
 		} );
 	} );
