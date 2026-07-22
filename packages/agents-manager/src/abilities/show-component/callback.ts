@@ -2,7 +2,7 @@ import { select } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
 import { BIG_SKY_SHOW_COMPONENT_TOOL_ID } from '../../utils/show-component-tools';
 import type { AbilityResult } from '../types';
-import type { ShowComponentType } from './constants';
+import type { ShowComponentType } from './index';
 
 export interface ShowComponentInput {
 	type: ShowComponentType;

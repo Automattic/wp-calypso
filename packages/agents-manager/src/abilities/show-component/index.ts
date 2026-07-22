@@ -1,10 +1,13 @@
 import { __ } from '@wordpress/i18n';
 import { BIG_SKY_ABILITY_CATEGORY } from '../constants';
 import { showComponentCallback } from './callback';
-import { SHOW_COMPONENT_TYPES } from './constants';
 import type { Ability } from '../types';
 
-export type { ShowComponentType } from './constants';
+// Component types the `show-component` ability can render. Single source for
+// the input schema enum, the `ShowComponentType` union, and the component map.
+export const SHOW_COMPONENT_TYPES = [ 'button-picker', 'font-picker', 'color-picker' ] as const;
+
+export type ShowComponentType = ( typeof SHOW_COMPONENT_TYPES )[ number ];
 
 /**
  * The `show-component` ability definition.
