@@ -2680,10 +2680,13 @@ describe( 'useSuggestions', () => {
 		expect( latestSuggestions ).toEqual( [] );
 	} );
 
-	it( 'does not start the selected block shimmer when a suggestion is only selected', () => {
+	it( 'starts block suggestion shimmer without duplicating concrete completion', () => {
+		jest.useFakeTimers();
 		installAiEditorialReviewData();
 		installPostTypeMock( 'post' );
 		mockSelectedBlock = { clientId: 'b1', name: 'core/paragraph' };
+		const blockActionComplete = jest.fn();
+		window.addEventListener( 'jetpack-ai-sidebar-block-action-complete', blockActionComplete );
 		const blockEl = document.createElement( 'div' );
 		blockEl.setAttribute( 'data-block', 'b1' );
 		document.body.appendChild( blockEl );
@@ -2700,10 +2703,36 @@ describe( 'useSuggestions', () => {
 
 		expect( blockEl.classList.contains( 'jetpack-ai-is-processing' ) ).toBe( false );
 		expect( blockEl.classList.contains( 'jetpack-ai-is-processing-content' ) ).toBe( false );
+
+		act( () => {
+			useAbilitiesSetup( {
+				addMessage: () => undefined,
+				clearSuggestions: () => undefined,
+				isProcessing: true,
+			} as any );
+		} );
+
+		expect( blockEl.classList.contains( 'jetpack-ai-is-processing' ) ).toBe( true );
+		expect( blockEl.classList.contains( 'jetpack-ai-is-processing-content' ) ).toBe( true );
+
+		act( () => {
+			window.dispatchEvent( new Event( 'jetpack-ai-sidebar-block-action-complete' ) );
+			useAbilitiesSetup( {
+				addMessage: () => undefined,
+				clearSuggestions: () => undefined,
+				isProcessing: false,
+			} as any );
+		} );
+
+		expect( blockEl.classList.contains( 'jetpack-ai-is-processing' ) ).toBe( false );
+		expect( blockEl.classList.contains( 'jetpack-ai-is-processing-content' ) ).toBe( false );
+		expect( blockActionComplete ).toHaveBeenCalledTimes( 1 );
+		window.removeEventListener( 'jetpack-ai-sidebar-block-action-complete', blockActionComplete );
+		jest.runOnlyPendingTimers();
+		jest.useRealTimers();
 	} );
 
-	it( 'starts the selected block shimmer when AM starts processing', () => {
-		jest.useFakeTimers();
+	it( 'does not start the selected block shimmer when AM starts processing', () => {
 		installPostTypeMock( 'post' );
 		mockSelectedBlock = { clientId: 'lQ0k', name: 'core/paragraph' };
 		const blockEl = document.createElement( 'div' );
@@ -2713,25 +2742,17 @@ describe( 'useSuggestions', () => {
 		useAbilitiesSetup( {
 			addMessage: () => undefined,
 			clearSuggestions: () => undefined,
-			isProcessing: false,
-		} as any );
-		useAbilitiesSetup( {
-			addMessage: () => undefined,
-			clearSuggestions: () => undefined,
 			isProcessing: true,
 		} as any );
 
-		expect( blockEl.classList.contains( 'jetpack-ai-is-processing' ) ).toBe( true );
-		expect( blockEl.classList.contains( 'jetpack-ai-is-processing-content' ) ).toBe( true );
+		expect( blockEl.classList.contains( 'jetpack-ai-is-processing' ) ).toBe( false );
+		expect( blockEl.classList.contains( 'jetpack-ai-is-processing-content' ) ).toBe( false );
+
 		useAbilitiesSetup( {
 			addMessage: () => undefined,
 			clearSuggestions: () => undefined,
 			isProcessing: false,
 		} as any );
-		expect( blockEl.classList.contains( 'jetpack-ai-is-processing' ) ).toBe( false );
-		expect( blockEl.classList.contains( 'jetpack-ai-is-processing-content' ) ).toBe( false );
-		jest.runOnlyPendingTimers();
-		jest.useRealTimers();
 	} );
 } );
 

@@ -15,7 +15,7 @@ This package exports the **AM provider contract** — a set of functions the Age
 
 | Export                    | Role                                                      |
 | ------------------------- | --------------------------------------------------------- |
-| `useAbilitiesSetup`       | Captures AM's `addMessage`/`clearSuggestions` callbacks   |
+| `useAbilitiesSetup`       | Captures AM state and gates contextual block shimmer      |
 | `toolProvider`            | Surfaces Jetpack AI's client-side abilities to AM         |
 | `contextProvider`         | Sends Gutenberg editor state to the orchestrator          |
 | `getChatComponent`        | Maps `type` strings → React components for show-component |
@@ -32,7 +32,7 @@ All exports live in `src/index.ts`. This is intentionally a single-file provider
 - **Tool ID normalization**: AM normalizes tool IDs (`wpcom/update-block-content` → `wpcom__update_block_content`). The `isUpdateBlockContentTool` / `isShowComponentTool` helpers handle both forms. Any new tool must follow this pattern.
 - **Show-component via `agentMessage` escape hatch**: `handleShowComponent` returns `{ agentMessage: JSON }` — it does NOT call `addMessageFn` directly. agenttic-client wraps the JSON in an `{ role: 'agent', parts: [text] }` message, AM's `convert-tool-messages-to-components` resolves the component via `getChatComponent`, and AgentChat's action bar (thumbs/Undo) attaches because the original message had a text content part. See "Show-component pattern" below.
 - **Role transformation**: AM's `useAbilitiesSetup` handler maps `role: 'assistant'` → `'agent'` and everything else → `'user'`. When injecting messages directly via `addMessageFn`, always use `'assistant'` — passing `'agent'` would make the message render as user content and get filtered out of the agent message list.
-- **Processing shimmer**: The block editing shimmer uses `Flow Block` font + CSS animations injected into the block's owning document (which may be an iframe). The `ensureProcessingStyles` function is idempotent — don't duplicate style injection.
+- **Processing shimmer**: Start request-time shimmer only for a contextual block-transformation suggestion with a known target block. Free-form requests fall back to the concrete `handleUpdateBlockContent` action after its target is resolved. Never use generic AM processing state by itself. The effect uses `Flow Block` font + CSS animations injected into the block's owning document (which may be an iframe).
 
 ## Tools
 
