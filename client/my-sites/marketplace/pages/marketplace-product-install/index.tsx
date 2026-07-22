@@ -61,13 +61,12 @@ import {
 } from 'calypso/state/ui/selectors';
 import './style.scss';
 import ThemeDirectInstall from './theme-direct-install';
+import { useDelayedCondition } from './use-delayed-condition';
 import useMarketplaceAdditionalSteps from './use-marketplace-additional-steps';
 import type { TranslateResult } from 'i18n-calypso';
 
-// Both the install authorization and the plan's feature list are handed off asynchronously; each
-// gets a grace period before the page concludes it is missing.
+// The state authorizing an install is handed off asynchronously, so allow for it arriving late.
 const INSTALL_HANDOFF_GRACE_PERIOD_MS = 2000;
-const PLAN_FEATURES_GRACE_PERIOD_MS = 2000;
 
 const MarketplaceProductInstall = ( {
 	pluginSlug = '',
@@ -85,7 +84,6 @@ const MarketplaceProductInstall = ( {
 	const installFlowInitiatedRef = useRef( false );
 	const [ atomicFlow, setAtomicFlow ] = useState( false );
 	const [ nonInstallablePlanError, setNonInstallablePlanError ] = useState( false );
-	const [ noDirectAccessError, setNoDirectAccessError ] = useState( false );
 	const [ userDirectInstallationAllowed, setUserDirectInstallationAllowed ] = useState( false );
 	// The signup "Get started" flow reaches this page via a full-page redirect, which drops the
 	// in-memory purchase-flow state that normally authorizes the install. When that redirect marks
@@ -162,10 +160,7 @@ const MarketplaceProductInstall = ( {
 		if ( hasAtomicFeature || isJetpackSelfHosted || nonInstallablePlanError ) {
 			return;
 		}
-		const id = setTimeout(
-			() => setNonInstallablePlanError( true ),
-			PLAN_FEATURES_GRACE_PERIOD_MS
-		);
+		const id = setTimeout( () => setNonInstallablePlanError( true ), 2000 );
 		return () => clearTimeout( id );
 	}, [ hasAtomicFeature, isJetpackSelfHosted, nonInstallablePlanError ] );
 
@@ -175,16 +170,11 @@ const MarketplaceProductInstall = ( {
 		// 2. This is a marketplace plugin installation but the installation process hasn't started
 		( ! isPluginUploadFlow && ! marketplaceInstallationInProgress );
 
-	// Only report the authorization missing once it has stayed missing for the whole grace period,
-	// and clear the error if it turns up afterwards so a later failure gets a fresh grace period.
-	useEffect( () => {
-		if ( ! isInstallAuthorizationMissing ) {
-			setNoDirectAccessError( false );
-			return;
-		}
-		const id = setTimeout( () => setNoDirectAccessError( true ), INSTALL_HANDOFF_GRACE_PERIOD_MS );
-		return () => clearTimeout( id );
-	}, [ isInstallAuthorizationMissing ] );
+	// Flows that carry their own authorization never render this error, so don't arm the timer.
+	const noDirectAccessError = useDelayedCondition(
+		isInstallAuthorizationMissing && ! directInstallationAllowed,
+		INSTALL_HANDOFF_GRACE_PERIOD_MS
+	);
 
 	// Upload flow startup
 	useEffect( () => {
