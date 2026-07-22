@@ -43,6 +43,7 @@ import {
 	getSelectedOrRememberedBlock,
 	rememberSelectedBlock,
 	clearRememberedSelectedBlock,
+	notifyBlockActionComplete,
 	BLOCK_ACTION_COMPLETE_EVENT,
 	SELECTED_BLOCK_CLEAR_EVENT,
 } from './utils/block-actions';
@@ -76,6 +77,8 @@ export { registerBlockEditorFilters } from './extensions';
 
 let clearSuggestionsFn: ( () => void ) | null = null;
 let wasAgentProcessing = false;
+let pendingBlockShimmerClientId: string | null = null;
+let blockShimmerStartedForRequest = false;
 let suppressCurrentPageContentForNextContext = false;
 
 /** Whether `_suggestion_rendered` has fired this page life (once-per-session). */
@@ -559,8 +562,8 @@ function getAbilitiesExecuteAbility():
 // ---------- useAbilitiesSetup ----------
 
 /**
- * Captures AM's clearSuggestions callback and processing state so the provider
- * can hide chips and run block-edit shimmers at the right time.
+ * Captures AM's clearSuggestions callback and starts request-time shimmer only
+ * for a known contextual block transformation.
  */
 export function useAbilitiesSetup( actions: {
 	addMessage: ( message: any ) => void;
@@ -573,10 +576,16 @@ export function useAbilitiesSetup( actions: {
 	}
 
 	const isProcessing = actions.isProcessing === true;
-	if ( isProcessing && ! wasAgentProcessing ) {
-		startBlockShimmer();
+	if ( isProcessing && ! wasAgentProcessing && pendingBlockShimmerClientId ) {
+		startBlockShimmer( pendingBlockShimmerClientId );
+		blockShimmerStartedForRequest = true;
 	} else if ( ! isProcessing && wasAgentProcessing ) {
 		stopBlockShimmer();
+		if ( blockShimmerStartedForRequest ) {
+			notifyBlockActionComplete();
+		}
+		pendingBlockShimmerClientId = null;
+		blockShimmerStartedForRequest = false;
 	}
 	wasAgentProcessing = isProcessing;
 }
@@ -1147,6 +1156,9 @@ export function useSuggestions(
 			setHidden( true );
 			clearSuggestionsFn?.();
 			suppressCurrentPageContentForNextContext = false;
+			pendingBlockShimmerClientId = BLOCK_SUGGESTIONS.some( matchesSuggestion )
+				? getSelectedOrRememberedBlock()?.clientId ?? null
+				: null;
 
 			if ( matchesSuggestion( POST_FEEDBACK_SUGGESTION ) ) {
 				suppressCurrentPageContentForNextContext = true;
@@ -1163,6 +1175,7 @@ export function useSuggestions(
 
 	useEffect( () => {
 		const handleBlockActionComplete = () => {
+			blockShimmerStartedForRequest = false;
 			setHidden( false );
 		};
 		window.addEventListener( BLOCK_ACTION_COMPLETE_EVENT, handleBlockActionComplete );
@@ -1174,6 +1187,7 @@ export function useSuggestions(
 	useEffect( () => {
 		const handleSelectedBlockClear = () => {
 			clearRememberedSelectedBlock();
+			pendingBlockShimmerClientId = null;
 			setHidden( false );
 		};
 		window.addEventListener( SELECTED_BLOCK_CLEAR_EVENT, handleSelectedBlockClear );
@@ -1205,6 +1219,7 @@ export function useSuggestions(
 
 	// Re-show suggestions when block selection changes (unless conversation is active)
 	useEffect( () => {
+		pendingBlockShimmerClientId = null;
 		setHidden( false );
 	}, [ editorContext.selectedBlock?.clientId ] );
 

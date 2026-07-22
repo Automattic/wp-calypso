@@ -32,6 +32,14 @@ export interface Agency {
 	user?: {
 		capabilities: string[];
 	};
+	third_party?: null | {
+		pressable?: null | {
+			usage?: null | {
+				start_date?: string;
+				end_date?: string;
+			};
+		};
+	};
 }
 
 /**

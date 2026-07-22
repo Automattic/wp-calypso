@@ -5,7 +5,7 @@ import {
 	__experimentalText as Text,
 } from '@wordpress/components';
 import { __, sprintf } from '@wordpress/i18n';
-import type { TaggedSite } from '../types';
+import type { TaggedSite } from 'calypso/dashboard/agency/earn/migrations/types';
 
 import './style.scss';
 

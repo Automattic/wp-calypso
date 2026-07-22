@@ -61,7 +61,6 @@ import { Plans, type SiteDetails } from '@automattic/data-stores';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { DOMAIN_CANCEL, SUPPORT_ROOT } from '@automattic/urls';
 import { useQuery } from '@tanstack/react-query';
-import { hasTranslation } from '@wordpress/i18n';
 import { check, column, Icon, payment, reusableBlock, tool, trash, upload } from '@wordpress/icons';
 import clsx from 'clsx';
 import { localize, LocalizeProps, useTranslate } from 'i18n-calypso';
@@ -110,7 +109,6 @@ import {
 	isOneTimePurchase,
 	isPartnerPurchase,
 	isRenewable,
-	isSubscription,
 	isCloseToExpiration,
 	purchaseType,
 	getName,
@@ -121,11 +119,9 @@ import {
 import { getPurchaseCancellationFlowType } from 'calypso/lib/purchases/utils';
 import { hasCustomDomain } from 'calypso/lib/site/utils';
 import { addQueryArgs } from 'calypso/lib/url';
-import NonPrimaryDomainDialog from 'calypso/me/purchases/non-primary-domain-dialog';
 import ProductLink from 'calypso/me/purchases/product-link';
 import titles from 'calypso/me/purchases/titles';
 import TrackPurchasePageView from 'calypso/me/purchases/track-purchase-page-view';
-import WordAdsEligibilityWarningDialog from 'calypso/me/purchases/wordads-eligibility-warning-dialog';
 import PlanRenewalMessage from 'calypso/my-sites/plans/jetpack-plans/plan-renewal-message';
 import useCheckPlanAvailabilityForPurchase from 'calypso/my-sites/plans-features-main/hooks/use-check-plan-availability-for-purchase';
 import {
@@ -167,7 +163,6 @@ import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { isRequestingWordAdsApprovalForSite } from 'calypso/state/wordads/approve/selectors';
 import { cancelPurchase, managePurchase, purchasesRoot } from '../paths';
 import PurchaseSiteHeader from '../purchases-site/header';
-import RemovePurchase from '../remove-purchase';
 import {
 	canEditPaymentDetails,
 	getAddNewPaymentMethodPath,
@@ -269,9 +264,6 @@ export interface ManagePurchaseConnectedProps {
 }
 
 interface ManagePurchaseState {
-	showNonPrimaryDomainWarningDialog: boolean;
-	showWordAdsEligibilityWarningDialog: boolean;
-	cancelLink: string | null;
 	isRemoving: boolean;
 	isCancelSurveyVisible: boolean;
 	isReinstalling: boolean;
@@ -300,9 +292,6 @@ class ManagePurchase extends Component<
 	ManagePurchaseState
 > {
 	state = {
-		showNonPrimaryDomainWarningDialog: false,
-		showWordAdsEligibilityWarningDialog: false,
-		cancelLink: null,
 		isRemoving: false,
 		isCancelSurveyVisible: false,
 		isReinstalling: false,
@@ -377,16 +366,6 @@ class ManagePurchase extends Component<
 		const options = redirectTo ? { redirectTo } : undefined;
 		this.props.handleRenewMultiplePurchasesClick( purchases, siteSlug, options );
 	};
-
-	shouldShowNonPrimaryDomainWarning() {
-		const { hasNonPrimaryDomainsFlag, hasCustomPrimaryDomain, purchase } = this.props;
-		return hasNonPrimaryDomainsFlag && purchase && isPlan( purchase ) && hasCustomPrimaryDomain;
-	}
-
-	shouldShowWordAdsEligibilityWarning() {
-		const { hasSetupAds, purchase } = this.props;
-		return hasSetupAds && purchase && isPlan( purchase );
-	}
 
 	isPendingDomainRegistration( purchase: Purchase ): boolean {
 		if ( ! isDomainRegistration( purchase ) ) {
@@ -806,28 +785,6 @@ class ManagePurchase extends Component<
 		);
 	}
 
-	renderActionDetails( nonRefundableTranslatedActionDetails?: string ) {
-		const { purchase, translate } = this.props;
-
-		if ( ! purchase ) {
-			return null;
-		}
-
-		// Hide if refund window has lapsed.
-		if ( ! hasAmountAvailableToRefund( purchase ) || ! purchase?.mostRecentRenewDate ) {
-			if ( ! nonRefundableTranslatedActionDetails ) {
-				return null;
-			}
-			return this.renderActionDetailsText( nonRefundableTranslatedActionDetails, {
-				className: 'manage-purchase__refund-text',
-			} );
-		}
-
-		return this.renderActionDetailsText( translate( 'Refund available' ), {
-			className: 'manage-purchase__refund-text',
-		} );
-	}
-
 	renderActionDetailsText(
 		translatedActionDetails: string,
 		props?: ComponentProps< 'span' >
@@ -836,40 +793,22 @@ class ManagePurchase extends Component<
 	}
 
 	renderRemovePurchaseNavItem() {
-		const {
-			hasLoadedSites,
-			hasNonPrimaryDomainsFlag,
-			hasCustomPrimaryDomain,
-			hasCompletedCancelPurchaseSurvey,
-			site,
-			purchase,
-			purchaseListUrl,
-			translate,
-		} = this.props;
+		const { purchase } = this.props;
 		if ( ! purchase ) {
 			return null;
 		}
 
-		const isSplitEnabled = this.props.isSplitCancelRemoveEnabled;
 		const canRefund = hasAmountAvailableToRefund( purchase );
 		const autoRenewOn = !! purchase.isAutoRenewEnabled;
 
-		// Visibility:
-		//   Off flag → mutually exclusive with Cancel (preserves today's behavior).
-		//   On flag  → Remove when auto-renew is off, OR when the purchase is in its
-		//              post-expiry grace period (Cancel is not offered there, so Remove
-		//              is the only way to act on it — matching the Dashboard). The
-		//              refund-eligible case is surfaced inside the cancel flow via
-		//              RefundEligibilityNotice instead of a parallel Remove CTA.
-		if ( isSplitEnabled ) {
-			if ( autoRenewOn && ! isExpiredAndInGracePeriod( purchase ) ) {
-				return null;
-			}
-		} else if ( canAutoRenewBeTurnedOff( purchase ) ) {
+		// Show Remove when auto-renew is off, OR when the purchase is in its
+		// post-expiry grace period (Cancel is not offered there, so Remove is the
+		// only way to act on it — matching the Dashboard). The refund-eligible case
+		// is surfaced inside the cancel flow via RefundEligibilityNotice instead of
+		// a parallel Remove CTA.
+		if ( autoRenewOn && ! isExpiredAndInGracePeriod( purchase ) ) {
 			return null;
 		}
-
-		const isPlanPurchase = isPlan( purchase );
 
 		// 100-year plans and domains can't be removed via self-serve.
 		if ( is100Year( purchase ) ) {
@@ -879,149 +818,45 @@ class ManagePurchase extends Component<
 			return null;
 		}
 
-		if ( isSplitEnabled ) {
-			const removeCopy = getRemoveButtonCopy( {
-				category: classifyPurchaseForCopy( purchase ),
-				productName: purchase.productName,
-				hasRefund: canRefund,
-			} );
+		const removeCopy = getRemoveButtonCopy( {
+			category: classifyPurchaseForCopy( purchase ),
+			productName: purchase.productName,
+			hasRefund: canRefund,
+		} );
 
-			// All removes route through the unified confirmation screen via
-			// ?intent=remove. isDataValid on the cancel page now accepts any
-			// intent=remove purchase under the flag, so non-refundable and
-			// domain removes both land on the confirmation screen correctly.
-			const baseLink = ( this.props.getCancelPurchaseUrlFor ?? cancelPurchase )(
-				this.props.siteSlug,
-				purchase.id
-			);
-			const link = `${ baseLink }?intent=remove`;
-			return (
-				<CompactCard href={ link } className="remove-purchase__card">
-					<Icon icon={ trash } className="card__icon" />
-					{ removeCopy.label }
-					{ this.renderActionDetailsText( removeCopy.description, {
-						className: 'manage-purchase__refund-text',
-					} ) }
-				</CompactCard>
-			);
-		}
-
-		let text = translate( 'Cancel subscription' );
-
-		if ( isPlanPurchase ) {
-			text = translate( 'Cancel plan' );
-		} else if ( isDomainRegistration( purchase ) ) {
-			text = translate( 'Cancel domain subscription' );
-		}
-
-		return (
-			<RemovePurchase
-				hasLoadedSites={ hasLoadedSites }
-				hasLoadedUserPurchasesFromServer={ this.props.hasLoadedPurchasesFromServer }
-				hasNonPrimaryDomainsFlag={ hasNonPrimaryDomainsFlag }
-				hasSetupAds={ this.props.hasSetupAds }
-				hasCustomPrimaryDomain={ hasCustomPrimaryDomain }
-				activeSubscriptions={ this.getActiveMarketplaceSubscriptions() }
-				site={ site }
-				purchase={ purchase }
-				purchaseListUrl={ purchaseListUrl ?? purchasesRoot }
-				linkIcon="chevron-right"
-				skipRemovePlanSurvey={ isPlanPurchase && hasCompletedCancelPurchaseSurvey }
-			>
-				<Icon icon={ trash } className="card__icon" />
-				{ text }
-				{ this.renderActionDetails(
-					String(
-						isExpiredOrRemoved( purchase )
-							? translate( 'Expired purchase will be removed.' )
-							: translate( 'Will expire immediately and be removed' )
-					)
-				) }
-			</RemovePurchase>
+		// All removes route through the unified confirmation screen via
+		// ?intent=remove. isDataValid on the cancel page accepts any intent=remove
+		// purchase, so non-refundable and domain removes both land on the
+		// confirmation screen correctly.
+		const baseLink = ( this.props.getCancelPurchaseUrlFor ?? cancelPurchase )(
+			this.props.siteSlug,
+			purchase.id
 		);
-	}
-
-	showNonPrimaryDomainWarningDialog( cancelLink: string ) {
-		this.setState( {
-			showNonPrimaryDomainWarningDialog: true,
-			showWordAdsEligibilityWarningDialog: false,
-			isRemoving: false,
-			isCancelSurveyVisible: false,
-			cancelLink,
-		} );
-	}
-
-	showWordAdsEligibilityWarningDialog( cancelLink: string ) {
-		this.setState( {
-			showNonPrimaryDomainWarningDialog: false,
-			showWordAdsEligibilityWarningDialog: true,
-			isRemoving: false,
-			isCancelSurveyVisible: false,
-			cancelLink,
-		} );
+		const link = `${ baseLink }?intent=remove`;
+		return (
+			<CompactCard href={ link } className="remove-purchase__card">
+				<Icon icon={ trash } className="card__icon" />
+				{ removeCopy.label }
+				{ this.renderActionDetailsText( removeCopy.description, {
+					className: 'manage-purchase__refund-text',
+				} ) }
+			</CompactCard>
+		);
 	}
 
 	showPreCancellationModalDialog = () => {
 		this.setState( {
-			showNonPrimaryDomainWarningDialog: false,
-			showWordAdsEligibilityWarningDialog: false,
 			isRemoving: false,
 			isCancelSurveyVisible: true,
-			cancelLink: null,
 		} );
 	};
 
 	closeDialog = () => {
 		this.setState( {
-			showNonPrimaryDomainWarningDialog: false,
-			showWordAdsEligibilityWarningDialog: false,
 			isRemoving: false,
 			isCancelSurveyVisible: false,
-			cancelLink: null,
 		} );
 	};
-
-	goToCancelLink = () => {
-		const cancelLink = this.state.cancelLink;
-		if ( ! cancelLink ) {
-			return;
-		}
-		this.closeDialog();
-		page( cancelLink );
-	};
-
-	renderNonPrimaryDomainWarningDialog( site: SiteDetails, purchase: Purchase ) {
-		if ( this.state.showNonPrimaryDomainWarningDialog ) {
-			return (
-				<NonPrimaryDomainDialog
-					isDialogVisible={ this.state.showNonPrimaryDomainWarningDialog }
-					closeDialog={ this.closeDialog }
-					removePlan={ this.goToCancelLink }
-					planName={ getName( purchase ) }
-					oldDomainName={ site.domain }
-					newDomainName={ site.wpcom_url }
-					hasSetupAds={ this.props.hasSetupAds }
-				/>
-			);
-		}
-
-		return null;
-	}
-
-	renderWordAdsEligibilityWarningDialog( purchase: Purchase ) {
-		if ( this.state.showWordAdsEligibilityWarningDialog ) {
-			return (
-				<WordAdsEligibilityWarningDialog
-					isDialogVisible={ this.state.showWordAdsEligibilityWarningDialog }
-					closeDialog={ this.closeDialog }
-					removePlan={ this.goToCancelLink }
-					planName={ getName( purchase ) }
-				/>
-			);
-		}
-
-		return null;
-	}
 
 	renderCancelSurvey() {
 		const { purchase } = this.props;
@@ -1098,23 +933,22 @@ class ManagePurchase extends Component<
 	};
 
 	renderCancelPurchaseNavItem() {
-		const { isAtomicSite, purchase, translate } = this.props;
+		const { isAtomicSite, purchase } = this.props;
 		if ( ! purchase ) {
 			return null;
 		}
 		const { id } = purchase;
-		const isSplitEnabled = this.props.isSplitCancelRemoveEnabled;
 
 		if ( ! canAutoRenewBeTurnedOff( purchase ) ) {
 			return null;
 		}
 
-		// Under flag: only show the Cancel button when auto-renew is still on
-		// (i.e. the user hasn't already cancelled the subscription). The Remove
-		// button owns the auto-renew-off state. `canAutoRenewBeTurnedOff` returns
-		// true for refundable purchases even when auto-renew is already off, so
-		// the explicit `isAutoRenewEnabled` check is needed.
-		if ( isSplitEnabled && ! purchase.isAutoRenewEnabled ) {
+		// Only show the Cancel button when auto-renew is still on (i.e. the user
+		// hasn't already cancelled the subscription). The Remove button owns the
+		// auto-renew-off state. `canAutoRenewBeTurnedOff` returns true for
+		// refundable purchases even when auto-renew is already off, so the explicit
+		// `isAutoRenewEnabled` check is needed.
+		if ( ! purchase.isAutoRenewEnabled ) {
 			return null;
 		}
 
@@ -1142,49 +976,29 @@ class ManagePurchase extends Component<
 		}
 
 		const expiryDateDisplay = moment( purchase.expiryDate ).format( 'LL' );
-		// Under flag: use non-breaking spaces so the formatted date stays on one
-		// line in narrow viewports. Off flag we preserve trunk's exact output.
-		const cancelCopy = isSplitEnabled
-			? getCancelButtonCopy( {
-					category: classifyPurchaseForCopy( purchase ),
-					productName: purchase.productName,
-					expiryDateFormatted: expiryDateDisplay.replace( / /g, '\u00A0' ),
-			  } )
-			: null;
+		// Use non-breaking spaces so the formatted date stays on one line in narrow
+		// viewports.
+		const cancelCopy = getCancelButtonCopy( {
+			category: classifyPurchaseForCopy( purchase ),
+			productName: purchase.productName,
+			expiryDateFormatted: expiryDateDisplay.replace( / /g, '\u00A0' ),
+		} );
 
-		const onClick = ( event: { preventDefault: () => void } ) => {
+		const onClick = () => {
 			recordTracksEvent( 'calypso_purchases_manage_purchase_cancel_click', {
 				product_slug: purchase.productSlug,
 				is_atomic: isAtomicSite,
-				link_text: cancelCopy ? cancelCopy.label : getCancelPurchaseNavText( purchase, translate ),
+				link_text: cancelCopy.label,
 			} );
-
-			if ( ! isSplitEnabled && this.shouldShowWordAdsEligibilityWarning() ) {
-				event.preventDefault();
-				this.showWordAdsEligibilityWarningDialog( link );
-			}
-
-			if ( ! isSplitEnabled && this.shouldShowNonPrimaryDomainWarning() ) {
-				event.preventDefault();
-				this.showNonPrimaryDomainWarningDialog( link );
-			}
 		};
 
 		return (
 			<CompactCard href={ link } className="remove-purchase__card" onClick={ onClick }>
 				<Icon icon={ trash } className="card__icon" />
-				{ cancelCopy ? cancelCopy.label : getCancelPurchaseNavText( purchase, translate ) }
-				{ cancelCopy
-					? this.renderActionDetailsText( cancelCopy.description, {
-							className: 'manage-purchase__refund-text',
-					  } )
-					: this.renderActionDetails(
-							String(
-								translate( 'Will remain active until %(expiryDate)s', {
-									args: { expiryDate: expiryDateDisplay },
-								} )
-							)
-					  ) }
+				{ cancelCopy.label }
+				{ this.renderActionDetailsText( cancelCopy.description, {
+					className: 'manage-purchase__refund-text',
+				} ) }
 			</CompactCard>
 		);
 	}
@@ -1751,8 +1565,6 @@ class ManagePurchase extends Component<
 					purchase={ purchase }
 				/>
 				{ this.renderPurchaseDetail( preventRenewal ) }
-				{ this.renderWordAdsEligibilityWarningDialog( purchase ) }
-				{ site && this.renderNonPrimaryDomainWarningDialog( site, purchase ) }
 			</Fragment>
 		);
 	}
@@ -2046,22 +1858,3 @@ function ManagePurchaseWithExperiment( props: ManagePurchaseProps ) {
 }
 
 export default ManagePurchaseWithExperiment;
-
-function getCancelPurchaseNavText(
-	purchase: Purchase,
-	translate: LocalizeProps[ 'translate' ]
-): string {
-	if ( isDomainRegistration( purchase ) ) {
-		if ( hasTranslation( 'Cancel domain subscription' ) ) {
-			return translate( 'Cancel domain subscription' );
-		}
-		return translate( 'Cancel domain' );
-	} else if ( isPlan( purchase ) ) {
-		return translate( 'Cancel plan' );
-	} else if ( isSubscription( purchase ) ) {
-		return translate( 'Cancel subscription' );
-	} else if ( isOneTimePurchase( purchase ) ) {
-		return translate( 'Cancel' );
-	}
-	return '';
-}

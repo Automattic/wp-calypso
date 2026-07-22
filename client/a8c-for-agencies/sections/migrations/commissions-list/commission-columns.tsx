@@ -12,6 +12,8 @@ import { useState } from 'react';
 import FormattedDate from 'calypso/components/formatted-date';
 import { urlToSlug } from 'calypso/lib/url/http-utils';
 
+import './commission-columns.scss';
+
 const DETAILS_DATE_FORMAT_SHORT = 'DD MMM YYYY';
 
 export const SiteColumn = ( { site }: { site: string } ) => {
@@ -31,6 +33,7 @@ export const ReviewStatusColumn = ( {
 	rejectionReason?: string;
 } ) => {
 	const [ isPopoverVisible, setIsPopoverVisible ] = useState( false );
+	const [ infoButtonAnchor, setInfoButtonAnchor ] = useState< HTMLButtonElement | null >( null );
 
 	// Don't show a badge if status is empty
 	if ( ! reviewStatus ) {
@@ -73,6 +76,7 @@ export const ReviewStatusColumn = ( {
 			<HStack spacing={ 1 } justify="flex-start" expanded={ false }>
 				{ badge }
 				<Button
+					ref={ setInfoButtonAnchor }
 					size="small"
 					icon={ info }
 					iconSize={ 18 }
@@ -81,12 +85,13 @@ export const ReviewStatusColumn = ( {
 				/>
 				{ isPopoverVisible && (
 					<Popover
+						anchor={ infoButtonAnchor }
 						offset={ 12 }
 						placement="bottom"
 						focusOnMount
 						onClose={ () => setIsPopoverVisible( false ) }
 					>
-						<VStack spacing={ 1 } style={ { width: '280px', padding: '8px' } }>
+						<VStack className="migrations-commission-status-popover" spacing={ 1 }>
 							<Text weight={ 600 }>{ __( 'Ineligibility reason' ) }</Text>
 							<Text>{ rejectionReason }</Text>
 						</VStack>

@@ -1,6 +1,7 @@
 import { __, sprintf } from '@wordpress/i18n';
 import { brush, envelope, globe, layout, plugins } from '@wordpress/icons';
 import { useRef } from 'react';
+import ReferralSidebar from '../../agency/earn/referrals/referral-sidebar';
 import AgencySiteSidebar from '../../agency/sites/site-sidebar';
 import RouterLinkButton from '../../components/router-link-button';
 import { SidebarExpandableMenuItem, SidebarMenu, SidebarMenuItem } from '../../components/sidebar';
@@ -49,6 +50,9 @@ export default function Sidebar( { scrollSyncEnabled = false }: { scrollSyncEnab
 				</SidebarNavigator.Screen>
 				<SidebarNavigator.Screen path="/agency/sites/$siteSlug">
 					<AgencySiteSidebar />
+				</SidebarNavigator.Screen>
+				<SidebarNavigator.Screen path="/agency/earn/referrals/$referralId">
+					<ReferralSidebar />
 				</SidebarNavigator.Screen>
 				<SidebarNavigator.Screen path="/domains/$domainName">
 					<DomainSidebar />

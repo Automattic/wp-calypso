@@ -4,34 +4,34 @@ import {
 	CheckboxControl,
 	__experimentalSpacer as Spacer,
 } from '@wordpress/components';
-import { filterSortAndPaginate } from '@wordpress/dataviews';
+import { DataViews, filterSortAndPaginate } from '@wordpress/dataviews';
 import { __, sprintf } from '@wordpress/i18n';
 import { useCallback, useMemo, useState } from 'react';
-import A4ATablePlaceholder from 'calypso/a8c-for-agencies/components/a4a-table-placeholder';
-import { initialDataViewsState } from 'calypso/a8c-for-agencies/components/items-dashboard/constants';
-import ItemsDataViews from 'calypso/a8c-for-agencies/components/items-dashboard/items-dataviews';
-import { DataViewsState } from 'calypso/a8c-for-agencies/components/items-dashboard/items-dataviews/interfaces';
-import { useDispatch } from 'calypso/state';
-import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import {
 	useFetchAllManagedSitesForCommission,
 	type SiteItem,
-} from '../hooks/use-fetch-all-managed-sites-for-commission';
-import { TaggedSite } from '../types';
+} from 'calypso/dashboard/agency/earn/migrations/hooks/use-fetch-all-managed-sites-for-commission';
+import type { Field, View } from '@wordpress/dataviews';
+import type { RecordTracksEvent, TaggedSite } from 'calypso/dashboard/agency/earn/migrations/types';
+
+import '../commissions/components/dataviews/style.scss';
 
 export default function MigrationsAddSitesTable( {
 	selectedSites,
 	setSelectedSites,
 	taggedSites,
 	migrationSourceHost,
+	recordTracksEvent,
+	getSiteCreatedAt,
 }: {
 	selectedSites: SiteItem[];
 	setSelectedSites: ( sites: SiteItem[] ) => void;
 	taggedSites?: TaggedSite[];
 	migrationSourceHost: string;
+	recordTracksEvent: RecordTracksEvent;
+	getSiteCreatedAt: ( blogId: number ) => string | undefined;
 } ) {
 	const isDesktop = useDesktopBreakpoint();
-	const dispatch = useDispatch();
 
 	const { items, isLoading } = useFetchAllManagedSitesForCommission();
 
@@ -57,20 +57,24 @@ export default function MigrationsAddSitesTable( {
 			} );
 	}, [ items, taggedSitesIds ] );
 
-	const [ dataViewsState, setDataViewsState ] = useState< DataViewsState >( {
-		...initialDataViewsState,
+	const [ view, setView ] = useState< View >( {
+		type: 'table',
+		search: '',
+		filters: [],
+		page: 1,
+		perPage: 50,
+		sort: { field: '', direction: 'asc' },
 		fields: [ 'site', 'date' ],
+		layout: {},
 	} );
 
 	const onSelectAllSites = useCallback( () => {
 		const isAllSitesSelected = selectedSites.length === availableSites.length;
 		setSelectedSites( isAllSitesSelected ? [] : availableSites );
-		dispatch(
-			recordTracksEvent( 'calypso_a8c_migrations_tag_sites_modal_select_all_sites_click', {
-				type: isAllSitesSelected ? 'deselect' : 'select',
-			} )
-		);
-	}, [ dispatch, availableSites, selectedSites.length, setSelectedSites ] );
+		recordTracksEvent( 'calypso_a8c_migrations_tag_sites_modal_select_all_sites_click', {
+			type: isAllSitesSelected ? 'deselect' : 'select',
+		} );
+	}, [ recordTracksEvent, availableSites, selectedSites.length, setSelectedSites ] );
 
 	const onSelectSite = useCallback(
 		( checked: boolean, item: SiteItem ) => {
@@ -79,16 +83,14 @@ export default function MigrationsAddSitesTable( {
 			} else {
 				setSelectedSites( selectedSites.filter( ( site ) => site.id !== item.id ) );
 			}
-			dispatch(
-				recordTracksEvent( 'calypso_a8c_migrations_tag_sites_modal_select_site_click', {
-					type: checked ? 'select' : 'deselect',
-				} )
-			);
+			recordTracksEvent( 'calypso_a8c_migrations_tag_sites_modal_select_site_click', {
+				type: checked ? 'select' : 'deselect',
+			} );
 		},
-		[ dispatch, selectedSites, setSelectedSites ]
+		[ recordTracksEvent, selectedSites, setSelectedSites ]
 	);
 
-	const fields = useMemo( () => {
+	const fields: Field< SiteItem >[] = useMemo( () => {
 		const siteColumn = {
 			id: 'site',
 			label: (
@@ -120,18 +122,27 @@ export default function MigrationsAddSitesTable( {
 			id: 'date',
 			label: __( 'Date added' ),
 			getValue: () => '-',
-			render: ( { item }: { item: SiteItem } ) =>
-				item.date ? new Date( item.date ).toLocaleDateString() : '-',
+			render: ( { item }: { item: SiteItem } ) => {
+				const createdAt = getSiteCreatedAt( item.rawSite.blog_id );
+				return createdAt ? new Date( createdAt ).toLocaleDateString() : '-';
+			},
 			enableHiding: false,
 			enableSorting: false,
 		};
 
 		return isDesktop ? [ siteColumn, dateColumn ] : [ siteColumn ];
-	}, [ isDesktop, availableSites.length, onSelectAllSites, onSelectSite, selectedSites ] );
+	}, [
+		isDesktop,
+		availableSites.length,
+		onSelectAllSites,
+		onSelectSite,
+		selectedSites,
+		getSiteCreatedAt,
+	] );
 
 	const { data: allSites, paginationInfo } = useMemo( () => {
-		return filterSortAndPaginate( availableSites, dataViewsState, fields );
-	}, [ availableSites, dataViewsState, fields ] );
+		return filterSortAndPaginate( availableSites, view, fields );
+	}, [ availableSites, view, fields ] );
 
 	return (
 		<div className="add-sites-table redesigned-a8c-table">
@@ -150,23 +161,18 @@ export default function MigrationsAddSitesTable( {
 						</div>
 					</Spacer>
 				) }
-				{ isLoading ? (
-					<A4ATablePlaceholder />
-				) : (
-					<ItemsDataViews
-						data={ {
-							items: allSites,
-							fields,
-							getItemId: ( item ) => `${ item.id }`,
-							pagination: paginationInfo,
-							enableSearch: false,
-							actions: [],
-							dataViewsState: dataViewsState,
-							setDataViewsState: setDataViewsState,
-							defaultLayouts: { table: {} },
-						} }
-					/>
-				) }
+				<DataViews
+					data={ allSites }
+					view={ view }
+					onChangeView={ setView }
+					fields={ fields }
+					search={ false }
+					actions={ [] }
+					getItemId={ ( item ) => `${ item.id }` }
+					paginationInfo={ paginationInfo }
+					defaultLayouts={ { table: {} } }
+					isLoading={ isLoading }
+				/>
 			</BaseControl>
 		</div>
 	);
