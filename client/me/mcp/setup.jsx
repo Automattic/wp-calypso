@@ -61,7 +61,6 @@ function McpSetupComponent( { path } ) {
 	const clientDocumentation = {
 		claude: 'https://docs.claude.com/en/docs/mcp',
 		'claude-code': 'https://code.claude.com/docs/en/mcp',
-		chatgpt: 'https://chatgpt.com/plugins',
 		vscode: 'https://code.visualstudio.com/docs/copilot/customization/mcp-servers',
 		cursor: 'https://docs.cursor.com/en/context/mcp',
 		continue: 'https://docs.continue.dev/customize/deep-dives/mcp',
@@ -71,7 +70,6 @@ function McpSetupComponent( { path } ) {
 	const clientDocumentationLabels = {
 		claude: translate( 'Claude documentation' ),
 		'claude-code': translate( 'Claude Code documentation' ),
-		chatgpt: translate( 'ChatGPT documentation' ),
 		vscode: translate( 'VS Code documentation' ),
 		cursor: translate( 'Cursor documentation' ),
 		continue: translate( 'Continue documentation' ),
@@ -203,7 +201,7 @@ function McpSetupComponent( { path } ) {
 									</li>
 									<li>
 										<Text as="p" size="medium">
-											{ translate( 'Click "Browse connectors" and search for WordPress.com.' ) }
+											{ translate( 'Click “Browse connectors” and search for WordPress.com.' ) }
 										</Text>
 									</li>
 									<li>
@@ -305,7 +303,7 @@ function McpSetupComponent( { path } ) {
 									</li>
 									<li>
 										<Text as="p" size="medium">
-											{ translate( 'Click "Install plugin".' ) }
+											{ translate( 'Click “Install plugin”.' ) }
 										</Text>
 									</li>
 								</ol>

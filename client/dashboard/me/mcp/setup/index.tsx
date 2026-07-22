@@ -49,20 +49,18 @@ function McpSetupComponent() {
 		{ label: __( 'Other MCP client' ), value: 'default' },
 	];
 
-	const clientDocumentation: Record< McpClient, string > = {
+	const clientDocumentation: Record< Exclude< McpClient, 'chatgpt' >, string > = {
 		claude: 'https://docs.claude.com/en/docs/mcp',
 		'claude-code': 'https://code.claude.com/docs/en/mcp',
-		chatgpt: 'https://chatgpt.com/plugins',
 		vscode: 'https://code.visualstudio.com/docs/copilot/customization/mcp-servers',
 		cursor: 'https://docs.cursor.com/en/context/mcp',
 		continue: 'https://docs.continue.dev/customize/deep-dives/mcp',
 		default: 'https://modelcontextprotocol.io/docs/develop/connect-local-servers',
 	};
 
-	const clientDocumentationLabels: Record< McpClient, string > = {
+	const clientDocumentationLabels: Record< Exclude< McpClient, 'chatgpt' >, string > = {
 		claude: __( 'Claude documentation' ),
 		'claude-code': __( 'Claude Code documentation' ),
-		chatgpt: __( 'ChatGPT documentation' ),
 		vscode: __( 'VS Code documentation' ),
 		cursor: __( 'Cursor documentation' ),
 		continue: __( 'Continue documentation' ),
@@ -203,7 +201,7 @@ function McpSetupComponent() {
 										</li>
 										<li>
 											<Text as="p" variant="muted">
-												{ __( 'Click "Browse connectors" and search for WordPress.com.' ) }
+												{ __( 'Click “Browse connectors” and search for WordPress.com.' ) }
 											</Text>
 										</li>
 										<li>
@@ -308,7 +306,7 @@ function McpSetupComponent() {
 										</li>
 										<li>
 											<Text as="p" variant="muted">
-												{ __( 'Click "Install plugin".' ) }
+												{ __( 'Click “Install plugin”.' ) }
 											</Text>
 										</li>
 									</ol>
