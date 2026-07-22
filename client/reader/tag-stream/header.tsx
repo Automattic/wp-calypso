@@ -17,6 +17,7 @@ interface TagStreamHeaderProps {
 	encodedTagSlug: string;
 	description?: string;
 	following?: boolean;
+	followDisabled?: boolean;
 	isPlaceholder?: boolean;
 	onFollowToggle?: () => void;
 	showFollow: boolean;
@@ -30,6 +31,7 @@ export default function TagStreamHeader( props: TagStreamHeaderProps ): JSX.Elem
 		description,
 		encodedTagSlug,
 		following,
+		followDisabled,
 		isPlaceholder,
 		onFollowToggle,
 		showFollow,
@@ -106,6 +108,7 @@ export default function TagStreamHeader( props: TagStreamHeaderProps ): JSX.Elem
 								followLabel={ translate( 'Follow tag' ) }
 								followingLabel={ translate( 'Following tag' ) }
 								following={ following }
+								disabled={ followDisabled }
 								onFollowToggle={ onFollowToggle }
 							/>
 						) }

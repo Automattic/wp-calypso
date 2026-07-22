@@ -7,7 +7,12 @@ import {
 	type ReadTag,
 	type ReadTagsResponse,
 } from '@automattic/api-core';
-import { mutationOptions, queryOptions, type QueryClient } from '@tanstack/react-query';
+import {
+	mutationOptions,
+	queryOptions,
+	type QueryClient,
+	type QueryKey,
+} from '@tanstack/react-query';
 import { decodeEntities } from '@wordpress/html-entities';
 
 export interface ReaderTag {
@@ -78,6 +83,55 @@ function slugify( tag: string ): string {
 // caller's QueryClient and uses it for cache invalidation. Pass
 // `useQueryClient()` from the consuming component.
 
+interface FollowedTagsMutationContext {
+	previous: Array< [ QueryKey, ReadTagsResponse | undefined ] >;
+}
+
+// Optimistically patch the followed-tags cache so the follow/unfollow button
+// flips on click instead of waiting for the POST + refetch round-trip. The cache
+// holds the raw response ({ tags: ReadTag[] }); `select` normalizes on read, so
+// we patch the raw shape here. `onSettled` invalidation reconciles with the
+// server afterwards.
+async function snapshotAndPatchFollowedTags(
+	queryClient: QueryClient,
+	updater: ( tags: ReadTag[] ) => ReadTag[]
+): Promise< FollowedTagsMutationContext > {
+	try {
+		await queryClient.cancelQueries( { queryKey: [ 'read', 'tags', 'followed' ] } );
+	} catch {
+		// cancelQueries is best-effort; the optimistic patch below must still run.
+	}
+	const previous = queryClient.getQueriesData< ReadTagsResponse >( {
+		queryKey: [ 'read', 'tags', 'followed' ],
+	} );
+	queryClient.setQueriesData< ReadTagsResponse >(
+		{ queryKey: [ 'read', 'tags', 'followed' ] },
+		( old ) => ( old?.tags ? { ...old, tags: updater( old.tags ) } : old )
+	);
+	return { previous };
+}
+
+function rollbackFollowedTags(
+	queryClient: QueryClient,
+	context: FollowedTagsMutationContext | undefined
+) {
+	context?.previous.forEach( ( [ key, data ] ) => queryClient.setQueryData( key, data ) );
+}
+
+// Source a full ReadTag for the optimistic follow from the single-tag cache when
+// available; the reconciling refetch replaces the minimal fallback with real data.
+function findCachedReadTag( queryClient: QueryClient, slug: string ): ReadTag | undefined {
+	const matches = queryClient.getQueriesData< ReadSingleTagResponse >( {
+		queryKey: [ 'read', 'tags', slug ],
+	} );
+	for ( const [ , data ] of matches ) {
+		if ( data?.tag ) {
+			return data.tag;
+		}
+	}
+	return undefined;
+}
+
 export const followReadTagMutation = ( queryClient: QueryClient ) =>
 	mutationOptions( {
 		meta: { statId: 'read-tag-follow' },
@@ -94,12 +148,33 @@ export const followReadTagMutation = ( queryClient: QueryClient ) =>
 				throw error;
 			}
 		},
-		onSuccess: () => invalidateFollowedTags( queryClient ),
+		onMutate: ( tag: string ) => {
+			const slug = slugify( tag );
+			const optimisticTag: ReadTag = findCachedReadTag( queryClient, slug ) ?? {
+				ID: slug,
+				slug,
+				title: tag,
+				display_name: tag,
+				URL: `/tag/${ slug }`,
+			};
+			return snapshotAndPatchFollowedTags( queryClient, ( tags ) =>
+				tags.some( ( t ) => t.slug.toLowerCase() === slug ) ? tags : [ ...tags, optimisticTag ]
+			);
+		},
+		onError: ( _error, _tag, context ) => rollbackFollowedTags( queryClient, context ),
+		onSettled: () => invalidateFollowedTags( queryClient ),
 	} );
 
 export const unfollowReadTagMutation = ( queryClient: QueryClient ) =>
 	mutationOptions( {
 		meta: { statId: 'read-tag-unfollow' },
 		mutationFn: ( tag: string ) => unfollowReadTag( slugify( tag ) ),
-		onSuccess: () => invalidateFollowedTags( queryClient ),
+		onMutate: ( tag: string ) => {
+			const slug = slugify( tag );
+			return snapshotAndPatchFollowedTags( queryClient, ( tags ) =>
+				tags.filter( ( t ) => t.slug.toLowerCase() !== slug )
+			);
+		},
+		onError: ( _error, _tag, context ) => rollbackFollowedTags( queryClient, context ),
+		onSettled: () => invalidateFollowedTags( queryClient ),
 	} );
