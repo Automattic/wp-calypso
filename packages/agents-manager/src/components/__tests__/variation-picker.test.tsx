@@ -1,7 +1,7 @@
 /**
  * @jest-environment jsdom
  */
-import { render, screen } from '@testing-library/react';
+import { fireEvent, render, screen } from '@testing-library/react';
 import VariationPicker from '../variation-picker';
 
 // Mock the `Variation` component
@@ -88,6 +88,31 @@ describe( 'VariationPicker', () => {
 			container.querySelector( '.agents-manager-variation-picker__arrows' )
 		).not.toBeInTheDocument();
 	} );
+	it( 'recovers from a stale page position when resizing widens the grid', () => {
+		const props = {
+			...defaultProps,
+			variations: manyVariations.slice( 0, 6 ),
+			maxToShow: 4,
+			type: 'color' as const,
+		};
+		const { container, rerender } = render( <VariationPicker { ...props } /> );
+
+		// Page to 2/2 while narrow — only the last two options remain.
+		fireEvent.click( container.querySelectorAll( 'button' )[ 1 ] );
+		expect( screen.getAllByTestId( 'variation' ) ).toHaveLength( 2 );
+
+		// 460px → 3 columns → all six fit one page; nothing stays stranded.
+		// Real resizes re-render through the observer's state; the static mock
+		// needs a prop change to get past `memo`.
+		mockWidth = 460;
+		rerender( <VariationPicker { ...props } activeVariationTitle="Variation 1" /> );
+
+		expect( screen.getAllByTestId( 'variation' ) ).toHaveLength( 6 );
+		expect(
+			container.querySelector( '.agents-manager-variation-picker__arrows' )
+		).not.toBeInTheDocument();
+	} );
+
 	it( 'shows navigation buttons when variations exceed `maxToShow`', () => {
 		const { container } = render(
 			<VariationPicker

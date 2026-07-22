@@ -55,22 +55,23 @@ function VariationPicker( { variations, type, maxToShow, onSelect, activeVariati
 	const showAll = columns >= FULL_WIDTH_COLUMNS;
 	const perPage = columns <= 2 ? pageSize : columns * PAGE_ROWS;
 
+	const totalPages = Math.max( 1, Math.ceil( variations.length / perPage ) );
+	// Resizing changes the page size under `firstIndex` — snap it to the
+	// current page grid and clamp to the last page so no options get stranded.
+	const first = Math.min( Math.floor( firstIndex / perPage ), totalPages - 1 ) * perPage;
+	const currentPage = first / perPage + 1;
+
 	const variationsToShow = useMemo(
-		() => ( showAll ? variations : variations.slice( firstIndex, firstIndex + perPage ) ),
-		[ variations, firstIndex, perPage, showAll ]
+		() => ( showAll ? variations : variations.slice( first, first + perPage ) ),
+		[ variations, first, perPage, showAll ]
 	);
 
-	const totalPages = Math.ceil( variations.length / perPage );
-	const currentPage = Math.floor( firstIndex / perPage ) + 1;
-
 	const revealPrevious = () => {
-		setFirstIndex( ( prev ) => Math.max( 0, prev - perPage ) );
+		setFirstIndex( Math.max( 0, first - perPage ) );
 	};
 
 	const revealNext = () => {
-		setFirstIndex( ( prev ) =>
-			Math.min( prev + perPage, Math.floor( variations.length / perPage ) * perPage )
-		);
+		setFirstIndex( Math.min( first + perPage, ( totalPages - 1 ) * perPage ) );
 	};
 
 	return (
@@ -103,7 +104,7 @@ function VariationPicker( { variations, type, maxToShow, onSelect, activeVariati
 							size="compact"
 							icon={ chevronLeft }
 							onClick={ revealPrevious }
-							disabled={ firstIndex === 0 }
+							disabled={ first === 0 }
 						/>
 						<div className="agents-manager-variation-picker__pager">
 							{ currentPage }/{ totalPages }
@@ -113,7 +114,7 @@ function VariationPicker( { variations, type, maxToShow, onSelect, activeVariati
 							size="compact"
 							icon={ chevronRight }
 							onClick={ revealNext }
-							disabled={ firstIndex + perPage >= variations.length }
+							disabled={ first + perPage >= variations.length }
 						/>
 					</div>
 				) }
