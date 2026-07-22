@@ -6,24 +6,20 @@ import {
 	WPCOM_FEATURES_MANAGE_PLUGINS,
 } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
-import { Button, WordPressLogo } from '@automattic/components';
+import { WordPressLogo } from '@automattic/components';
 import { css, Global, ThemeProvider } from '@emotion/react';
 import { useQuery } from '@tanstack/react-query';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, useState, useMemo, useRef } from 'react';
 import QueryActiveTheme from 'calypso/components/data/query-active-theme';
 import QueryJetpackPlugins from 'calypso/components/data/query-jetpack-plugins';
-import QueryProductsList from 'calypso/components/data/query-products-list';
 import { useQueryTheme } from 'calypso/components/data/query-theme';
 import EmptyContent from 'calypso/components/empty-content';
 import { isAtomicTransferredSite } from 'calypso/dashboard/utils/site-atomic-transfers';
-import { useWPCOMPlugin } from 'calypso/data/marketplace/use-wpcom-plugins-query';
 import Masterbar from 'calypso/layout/masterbar/masterbar';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { useInterval } from 'calypso/lib/interval';
-import { getProductSlugByPeriodVariation } from 'calypso/lib/plugins/utils';
 import MarketplaceProgressBar from 'calypso/my-sites/marketplace/components/progressbar';
-import useMarketplaceAdditionalSteps from 'calypso/my-sites/marketplace/pages/marketplace-product-install/use-marketplace-additional-steps';
 import theme from 'calypso/my-sites/marketplace/theme';
 import { waitFor } from 'calypso/my-sites/marketplace/util';
 import { useSelector, useDispatch } from 'calypso/state';
@@ -44,10 +40,6 @@ import {
 } from 'calypso/state/plugins/installed/selectors-ts';
 import { fetchPluginData as wporgFetchPluginData } from 'calypso/state/plugins/wporg/actions';
 import { getPlugin, isFetched } from 'calypso/state/plugins/wporg/selectors';
-import {
-	isMarketplaceProduct as isMarketplaceProductSelector,
-	getProductsList,
-} from 'calypso/state/products-list/selectors';
 import { getCurrentQueryArguments } from 'calypso/state/selectors/get-current-query-arguments';
 import getPluginUploadError from 'calypso/state/selectors/get-plugin-upload-error';
 import getPluginUploadProgress from 'calypso/state/selectors/get-plugin-upload-progress';
@@ -68,13 +60,17 @@ import {
 	getSelectedSiteSlug,
 } from 'calypso/state/ui/selectors';
 import './style.scss';
-import { MarketplacePluginInstallProps } from './types';
-import type { IAppState } from 'calypso/state/types';
+import ThemeDirectInstall from './theme-direct-install';
+import useMarketplaceAdditionalSteps from './use-marketplace-additional-steps';
+import type { TranslateResult } from 'i18n-calypso';
 
 const MarketplaceProductInstall = ( {
 	pluginSlug = '',
 	themeSlug = '',
-}: MarketplacePluginInstallProps ) => {
+}: {
+	pluginSlug?: string;
+	themeSlug?: string;
+} ) => {
 	const isPluginUploadFlow = ! pluginSlug && ! themeSlug;
 	const [ currentStep, setCurrentStep ] = useState( 0 );
 	// Ref instead of state so the install effect can be guarded synchronously —
@@ -122,37 +118,21 @@ const MarketplaceProductInstall = ( {
 		getStatusForPlugin( state, siteId, pluginSlug )
 	);
 
-	const productsList = useSelector( getProductsList );
-	const isProductListFetched = Object.values( productsList ).length > 0;
-	const isMarketplaceProduct = useSelector( ( state ) =>
-		isMarketplaceProductSelector( state, pluginSlug )
-	);
-
 	const wpOrgTheme = useSelector( ( state ) => getTheme( state, 'wporg', themeSlug ) );
 	const isThemeActive = useSelector( ( state ) => getThemeActive( state, themeSlug, siteId ) );
 	useQueryTheme( 'wporg', themeSlug );
 
-	const { data: wpComPluginData } = useWPCOMPlugin( pluginSlug, {
-		enabled: isProductListFetched && isMarketplaceProduct,
-	} );
+	const { pluginInstallationStatus, productSlugInstalled, primaryDomain } =
+		useSelector( getPurchaseFlowState );
 
-	const marketplaceInstallationInProgress = useSelector( ( state ) => {
-		const { pluginInstallationStatus, productSlugInstalled, primaryDomain } = getPurchaseFlowState(
-			state as IAppState
-		);
-		if ( isPluginUploadFlow ) {
-			return (
-				pluginInstallationStatus !== MARKETPLACE_ASYNC_PROCESS_STATUS.COMPLETED &&
-				primaryDomain === selectedSiteSlug
-			);
-		}
-		return (
-			pluginInstallationStatus !== MARKETPLACE_ASYNC_PROCESS_STATUS.COMPLETED &&
-			productSlugInstalled &&
-			[ pluginSlug, themeSlug ].includes( productSlugInstalled ) &&
-			primaryDomain === selectedSiteSlug
-		);
-	} );
+	const isInstallationPending =
+		pluginInstallationStatus !== MARKETPLACE_ASYNC_PROCESS_STATUS.COMPLETED &&
+		primaryDomain === selectedSiteSlug;
+	const marketplaceInstallationInProgress = isPluginUploadFlow
+		? isInstallationPending
+		: isInstallationPending &&
+		  !! productSlugInstalled &&
+		  [ pluginSlug, themeSlug ].includes( productSlugInstalled );
 
 	const isJetpack = useSelector( ( state ) => isJetpackSite( state, selectedSite?.ID ?? null ) );
 	const isAtomic = useSelector( ( state ) =>
@@ -163,10 +143,6 @@ const MarketplaceProductInstall = ( {
 	const hasAtomicFeature = useSelector( ( state ) =>
 		siteHasFeature( state, selectedSite?.ID ?? null, WPCOM_FEATURES_ATOMIC )
 	);
-	const supportsAtomicUpgrade = useRef< boolean >( undefined );
-	useEffect( () => {
-		supportsAtomicUpgrade.current = hasAtomicFeature;
-	}, [ hasAtomicFeature ] );
 
 	// retrieve plugin data if not available
 	useEffect( () => {
@@ -175,21 +151,15 @@ const MarketplaceProductInstall = ( {
 		}
 	}, [ isWporgPluginFetched, pluginSlug, dispatch ] );
 
-	// Check if the user plan is enough for installation or it is a self-hosted jetpack site
-	// if not, check again in 2s and show an error message
+	// The plan's feature list can arrive late, so give it 2s before concluding that the site
+	// can't install plugins. Any change to the conditions restarts the timer.
 	useEffect( () => {
 		if ( hasAtomicFeature || isJetpackSelfHosted || nonInstallablePlanError ) {
 			return;
 		}
-		const id = setTimeout( () => {
-			if ( ! supportsAtomicUpgrade.current && ! isJetpackSelfHosted ) {
-				setNonInstallablePlanError( true );
-			}
-		}, 2000 );
+		const id = setTimeout( () => setNonInstallablePlanError( true ), 2000 );
 		return () => clearTimeout( id );
 	}, [ hasAtomicFeature, isJetpackSelfHosted, nonInstallablePlanError ] );
-
-	const { primaryDomain } = useSelector( getPurchaseFlowState );
 
 	const shouldShowNoDirectAccessError =
 		// 1. This is a plugin upload flow (via zip file) and we don't have a primary domain set
@@ -210,13 +180,15 @@ const MarketplaceProductInstall = ( {
 
 	// Upload flow startup
 	useEffect( () => {
-		if ( 100 === pluginUploadProgress ) {
-			// For smaller uploads or fast networks give
-			// the chance to Upload Plugin step to be shown
-			// before moving to next step.
-			waitFor( 1 ).then( () => setCurrentStep( 1 ) );
+		if ( 100 !== pluginUploadProgress ) {
+			return;
 		}
-	}, [ pluginUploadProgress, setCurrentStep ] );
+		// For smaller uploads or fast networks give
+		// the chance to Upload Plugin step to be shown
+		// before moving to next step.
+		const id = setTimeout( () => setCurrentStep( 1 ), 1000 );
+		return () => clearTimeout( id );
+	}, [ pluginUploadProgress ] );
 
 	// Installing plugin flow startup
 	useEffect( () => {
@@ -227,6 +199,9 @@ const MarketplaceProductInstall = ( {
 			( wporgPlugin || wpOrgTheme )
 		) {
 			installFlowInitiatedRef.current = true;
+			// Intentionally uncancelable. The ref above blocks re-entry, so tying this to the
+			// effect's lifetime would let a dependency change drop the step advance for good
+			// rather than reschedule it — and the dispatches below change state this effect reads.
 			const triggerInstallFlow = () => {
 				waitFor( 1 ).then( () => setCurrentStep( 1 ) );
 			};
@@ -444,81 +419,43 @@ const MarketplaceProductInstall = ( {
 		}
 
 		if ( themeSlug && noDirectAccessError && ! directInstallationAllowed ) {
-			const variationPeriod = 'monthly';
-			const variation = wpComPluginData?.variations?.[ variationPeriod ];
-			const marketplaceProductSlug = getProductSlugByPeriodVariation( variation, productsList );
-			const productPage = `/themes/${ themeSlug }/${ selectedSite?.slug }`;
-			const productName = wpOrgTheme?.name || themeSlug;
-
 			return (
-				<>
-					<QueryProductsList />
-					<EmptyContent
-						className="marketplace-plugin-install__direct-install-container"
-						illustration={ wpOrgTheme?.screenshot || null }
-						illustrationWidth={ wpOrgTheme?.screenshot && 720 }
-						title={ productName }
-						line={ translate( 'Do you want to activate the theme %(theme)s?', {
-							args: { theme: wpOrgTheme?.name },
-						} ) }
-					>
-						{ isProductListFetched && (
-							<div className="marketplace-plugin-install__direct-install-actions">
-								<Button href={ productPage }>{ translate( 'Go to the theme page' ) }</Button>
-
-								{ ! isMarketplaceProduct ? (
-									<Button primary onClick={ () => setUserDirectInstallationAllowed( true ) }>
-										{ translate( 'Activate theme' ) }
-									</Button>
-								) : (
-									<Button
-										primary
-										onClick={ () =>
-											page(
-												`/checkout/${ selectedSite?.slug || '' }/${ marketplaceProductSlug }?#step2`
-											)
-										}
-									>
-										{ translate( 'Purchase and activate plugin' ) }
-									</Button>
-								) }
-							</div>
-						) }
-					</EmptyContent>
-				</>
-			);
-		}
-		if ( pluginExists ) {
-			return (
-				<EmptyContent
-					title={ null }
-					line={ translate(
-						'This plugin already exists on your site. If you want to upgrade or downgrade the plugin, please continue by uploading the plugin again from WP Admin.'
-					) }
-					secondaryAction={ translate( 'Back' ) }
-					secondaryActionURL={ `/plugins/upload/${ selectedSiteSlug }` }
-					action={ translate( 'Re-upload plugin' ) }
-					actionURL={ `https://${ selectedSiteSlug }/wp-admin/plugin-install.php?tab=upload` }
+				<ThemeDirectInstall
+					themeSlug={ themeSlug }
+					pluginSlug={ pluginSlug }
+					siteSlug={ selectedSite?.slug }
+					theme={ wpOrgTheme }
+					onActivate={ () => setUserDirectInstallationAllowed( true ) }
 				/>
 			);
 		}
-		if ( pluginMalicious || pluginTooBig ) {
+		const uploadPageURL = `/plugins/upload/${ selectedSiteSlug }`;
+		const wpAdminUploadURL = `https://${ selectedSiteSlug }/wp-admin/plugin-install.php?tab=upload`;
+
+		// Rejected uploads all offer the same way out: back to the upload page, or retry in WP Admin.
+		const rejectedUploadLine: TranslateResult | false =
+			( pluginExists &&
+				translate(
+					'This plugin already exists on your site. If you want to upgrade or downgrade the plugin, please continue by uploading the plugin again from WP Admin.'
+				) ) ||
+			( pluginMalicious &&
+				translate(
+					'This plugin is identified as malicious. If you still insist to install the plugin, please continue by uploading the plugin again from WP Admin.'
+				) ) ||
+			( pluginTooBig &&
+				translate(
+					'This plugin is too big to be installed via this page. If you still want to install the plugin, please continue by uploading the plugin again from WP Admin.'
+				) );
+
+		if ( rejectedUploadLine ) {
 			return (
 				<EmptyContent
 					title={ null }
-					line={
-						pluginMalicious
-							? translate(
-									'This plugin is identified as malicious. If you still insist to install the plugin, please continue by uploading the plugin again from WP Admin.'
-							  )
-							: translate(
-									'This plugin is too big to be installed via this page. If you still want to install the plugin, please continue by uploading the plugin again from WP Admin.'
-							  )
-					}
+					line={ rejectedUploadLine }
 					secondaryAction={ translate( 'Back' ) }
-					secondaryActionURL={ `/plugins/upload/${ selectedSiteSlug }` }
+					secondaryActionURL={ uploadPageURL }
 					action={ translate( 'Re-upload plugin' ) }
-					actionURL={ `https://${ selectedSiteSlug }/wp-admin/plugin-install.php?tab=upload` }
+					actionURL={ wpAdminUploadURL }
 				/>
 			);
 		}
@@ -536,12 +473,10 @@ const MarketplaceProductInstall = ( {
 					) }
 					secondaryAction={ translate( 'Back' ) }
 					secondaryActionURL={
-						isPluginUploadFlow
-							? `/plugins/upload/${ selectedSiteSlug }`
-							: `/plugins/${ pluginSlug }/${ selectedSiteSlug }`
+						isPluginUploadFlow ? uploadPageURL : `/plugins/${ pluginSlug }/${ selectedSiteSlug }`
 					}
 					action={ translate( 'Upload from WP Admin' ) }
-					actionURL={ `https://${ selectedSiteSlug }/wp-admin/plugin-install.php?tab=upload` }
+					actionURL={ wpAdminUploadURL }
 				/>
 			);
 		}

@@ -4,8 +4,9 @@ import NoticeBanner from '@automattic/components/src/notice-banner';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { Icon, external } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { STATS_PRODUCT_NAME } from 'calypso/my-sites/stats/constants';
+import useNoticeVisibilityMutation from 'calypso/my-sites/stats/hooks/use-notice-visibility-mutation';
 import usePlanUsageQuery from 'calypso/my-sites/stats/hooks/use-plan-usage-query';
 import { useSelector } from 'calypso/state';
 import getIsSiteWPCOM from 'calypso/state/selectors/is-site-wpcom';
@@ -25,6 +26,13 @@ const CommercialSiteUpgradeNotice = ( {
 }: StatsNoticeProps ) => {
 	const translate = useTranslate();
 	const isWPCOMSite = useSelector( ( state ) => siteId && getIsSiteWPCOM( state, siteId ) );
+	const [ noticeDismissed, setNoticeDismissed ] = useState( false );
+	const { mutateAsync: postponeNoticeAsync } = useNoticeVisibilityMutation(
+		siteId,
+		'commercial_site_upgrade',
+		'postponed',
+		30 * 24 * 3600
+	);
 
 	// Determine when the paywall will go into effect (if applicable).
 	// The upgrade_deadline_date is the actual date the paywall will be applied.
@@ -32,12 +40,25 @@ const CommercialSiteUpgradeNotice = ( {
 	// Guard against empty value in the API response.
 	const paywallUpgradeDeadlineDate = data?.upgrade_deadline_date;
 
+	const dismissNotice = () => {
+		if ( isOdysseyStats ) {
+			recordTracksEvent( 'jetpack_odyssey_stats_commercial_site_upgrade_notice_dismissed' );
+		} else {
+			recordTracksEvent( 'calypso_stats_commercial_site_upgrade_notice_dismissed' );
+		}
+
+		setNoticeDismissed( true );
+		postponeNoticeAsync();
+	};
+
 	const gotoJetpackStatsProduct = () => {
-		isOdysseyStats
-			? recordTracksEvent(
-					'jetpack_odyssey_stats_commercial_site_upgrade_notice_support_button_clicked'
-			  )
-			: recordTracksEvent( 'calypso_stats_commercial_site_upgrade_notice_support_button_clicked' );
+		if ( isOdysseyStats ) {
+			recordTracksEvent(
+				'jetpack_odyssey_stats_commercial_site_upgrade_notice_support_button_clicked'
+			);
+		} else {
+			recordTracksEvent( 'calypso_stats_commercial_site_upgrade_notice_support_button_clicked' );
+		}
 
 		trackStatsAnalyticsEvent( 'stats_upgrade_clicked', {
 			type: 'notice-commercial',
@@ -48,10 +69,18 @@ const CommercialSiteUpgradeNotice = ( {
 	};
 
 	useEffect( () => {
-		isOdysseyStats
-			? recordTracksEvent( 'jetpack_odyssey_stats_commercial_site_upgrade_notice_viewed' )
-			: recordTracksEvent( 'calypso_stats_commercial_site_upgrade_notice_viewed' );
-	}, [ isOdysseyStats ] );
+		if ( ! noticeDismissed ) {
+			if ( isOdysseyStats ) {
+				recordTracksEvent( 'jetpack_odyssey_stats_commercial_site_upgrade_notice_viewed' );
+			} else {
+				recordTracksEvent( 'calypso_stats_commercial_site_upgrade_notice_viewed' );
+			}
+		}
+	}, [ noticeDismissed, isOdysseyStats ] );
+
+	if ( noticeDismissed ) {
+		return null;
+	}
 
 	let learnMoreLink = isWPCOMSite
 		? 'https://wordpress.com/support/stats/#purchase-the-stats-add-on'
@@ -125,8 +154,8 @@ const CommercialSiteUpgradeNotice = ( {
 			<NoticeBanner
 				level={ showPaywallNotice ? 'error' : 'info' }
 				title={ bannerTitle }
-				onClose={ () => {} }
-				hideCloseButton
+				onClose={ showPaywallNotice ? () => {} : dismissNotice }
+				hideCloseButton={ showPaywallNotice }
 			>
 				{ bannerBody }
 			</NoticeBanner>

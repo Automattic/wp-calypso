@@ -576,15 +576,20 @@ export const redirectIfDuplicatedView = ( wpAdminPath ) => async ( context, next
 
 /**
  * Middleware to redirect a user to the multi-site dashboard if the value of
- * `hosting-dashboard-opt-in` is configured to `forced-opt-in`.
+ * `hosting-dashboard-opt-in` is configured to `forced-opt-in`, or if the
+ * optional `shouldForceRedirect` predicate returns `true`. The predicate lets
+ * callers redirect users who are not in the dashboard rollout when a page can
+ * no longer be safely served by the classic UI (e.g. behind a feature flag).
  */
-export const maybeRedirectToMultiSiteDashboard = ( path ) => ( context, next ) => {
-	const state = context.store.getState();
-	if ( hasDashboardForcedOptIn( state ) ) {
-		const redirectUrl = typeof path === 'function' ? path( context.params, context.query ) : path;
-		bumpStat( 'dashboard-redirect', 'forced-opt-in' );
-		return navigate( dashboardLink( redirectUrl ?? context.path ) );
-	}
+export const maybeRedirectToMultiSiteDashboard =
+	( path, shouldForceRedirect ) => ( context, next ) => {
+		const state = context.store.getState();
+		const isForcedOptIn = hasDashboardForcedOptIn( state );
+		if ( isForcedOptIn || shouldForceRedirect?.( context ) ) {
+			const redirectUrl = typeof path === 'function' ? path( context.params, context.query ) : path;
+			bumpStat( 'dashboard-redirect', isForcedOptIn ? 'forced-opt-in' : 'feature-flag' );
+			return navigate( dashboardLink( redirectUrl ?? context.path ) );
+		}
 
-	next();
-};
+		next();
+	};

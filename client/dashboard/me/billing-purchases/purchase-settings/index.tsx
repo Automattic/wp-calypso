@@ -277,11 +277,10 @@ function PurchaseActionMenu( { purchase }: { purchase: Purchase } ) {
 	);
 }
 
-function CancelOrRemoveActionButton( { purchase }: { purchase: Purchase } ) {
+export function CancelOrRemoveActionButton( { purchase }: { purchase: Purchase } ) {
 	const { user } = useAuth();
 	const navigate = useNavigate();
 	const locale = useLocale();
-	const isSplitEnabled = useIsSplitCancelRemoveEnabled();
 
 	if ( String( user.ID ) !== String( purchase.user_id ) ) {
 		return null;
@@ -304,152 +303,99 @@ function CancelOrRemoveActionButton( { purchase }: { purchase: Purchase } ) {
 			...( intent ? { search: { intent } } : {} ),
 		} );
 
-	if ( isSplitEnabled ) {
-		const hasRefund = hasAmountAvailableToRefund( purchase );
-		const autoRenewOn = purchase.is_auto_renew_enabled;
-		// Domain transfer gate: non-refundable transfers can't be cancelled without
-		// support intervention (preserves legacy behavior on classic; adds it to
-		// dashboard). Remove button is unaffected — a completed transfer with
-		// auto-renew off can still be removed below.
-		const isTransferNonRefundable = isDomainTransfer( purchase ) && ! hasRefund;
-		// Visibility is driven mainly by what the user controls:
-		// - Cancel: auto-renew is on (stopping it halts any upcoming retry too).
-		// - Remove: auto-renew is already off (cancelled subscriptions awaiting
-		//   removal, etc.).
-		// During the post-expiration grace period, we force the "Remove"
-		// option, though; given how close the subscription is to being removed
-		// anyway, turning off auto-renew via a "cancel" option would be
-		// confusing. (If the subscription still has grace period renewal
-		// attempts scheduled, the user can still disable auto-renew via the
-		// dedicated toggle instead.)
-		// When a refund is available with auto-renew still on, the refund path is
-		// surfaced inside the cancel flow via RefundEligibilityNotice instead of
-		// a second CTA here.
-		// Verified against wpcom-billing backend — cancel / disable-auto-renew /
-		// delete endpoints all accept the call in pending-renewal state, so we
-		// don't need to special-case it.
-		const showCancel =
-			autoRenewOn && ! isTransferNonRefundable && ! isExpiredAndInGracePeriod( purchase );
-		const showRemove = ! autoRenewOn || isExpiredAndInGracePeriod( purchase );
+	const hasRefund = hasAmountAvailableToRefund( purchase );
+	const autoRenewOn = purchase.is_auto_renew_enabled;
+	// Domain transfer gate: non-refundable transfers can't be cancelled without
+	// support intervention (preserves legacy behavior on classic; adds it to
+	// dashboard). Remove button is unaffected — a completed transfer with
+	// auto-renew off can still be removed below.
+	const isTransferNonRefundable = isDomainTransfer( purchase ) && ! hasRefund;
+	// Visibility is driven mainly by what the user controls:
+	// - Cancel: auto-renew is on (stopping it halts any upcoming retry too).
+	// - Remove: auto-renew is already off (cancelled subscriptions awaiting
+	//   removal, etc.).
+	// During the post-expiration grace period, we force the "Remove"
+	// option, though; given how close the subscription is to being removed
+	// anyway, turning off auto-renew via a "cancel" option would be
+	// confusing. (If the subscription still has grace period renewal
+	// attempts scheduled, the user can still disable auto-renew via the
+	// dedicated toggle instead.)
+	// When a refund is available with auto-renew still on, the refund path is
+	// surfaced inside the cancel flow via RefundEligibilityNotice instead of
+	// a second CTA here.
+	// Verified against wpcom-billing backend — cancel / disable-auto-renew /
+	// delete endpoints all accept the call in pending-renewal state, so we
+	// don't need to special-case it.
+	const showCancel =
+		autoRenewOn && ! isTransferNonRefundable && ! isExpiredAndInGracePeriod( purchase );
+	const showRemove = ! autoRenewOn || isExpiredAndInGracePeriod( purchase );
 
-		if ( ! showCancel && ! showRemove ) {
-			return null;
-		}
-
-		// Use non-breaking spaces in the date so it doesn't wrap mid-date
-		// (e.g. "April\n16, 2027") in narrow viewports.
-		const expiryDateFormatted = purchase.expiry_date
-			? formatDate( new Date( purchase.expiry_date ), locale, {
-					dateStyle: 'long',
-			  } ).replace( / /g, '\u00A0' )
-			: '';
-
-		const category = classifyPurchaseForCopy( purchase );
-		const cancelCopy = showCancel
-			? getCancelButtonCopy( {
-					category,
-					productName: purchase.product_name,
-					expiryDateFormatted,
-			  } )
-			: null;
-		const removeCopy = showRemove
-			? getRemoveButtonCopy( { category, productName: purchase.product_name, hasRefund } )
-			: null;
-
-		return (
-			<>
-				{ cancelCopy && (
-					<ActionList.ActionItem
-						title={ cancelCopy.label }
-						description={ cancelCopy.description }
-						actions={
-							<Button
-								variant="secondary"
-								// When Remove is shown alongside Cancel, keep Cancel neutral so
-								// the destructive emphasis goes to Remove only. When Cancel is
-								// the lone destructive action, make it red.
-								isDestructive={ ! showRemove }
-								size="compact"
-								onClick={ () => goToCancel( 'cancel' ) }
-							>
-								{ _x( 'Cancel', 'Stop the subscription from automatically charging and renewing' ) }
-							</Button>
-						}
-					/>
-				) }
-				{ removeCopy && (
-					<ActionList.ActionItem
-						title={ removeCopy.label }
-						description={ removeCopy.description }
-						actions={
-							<Button
-								variant="secondary"
-								isDestructive
-								size="compact"
-								onClick={ () => goToCancel( 'remove' ) }
-							>
-								{ _x(
-									'Remove',
-									'Remove the cancelled or expired subscription from the list of active purchases.'
-								) }
-							</Button>
-						}
-					/>
-				) }
-			</>
-		);
+	if ( ! showCancel && ! showRemove ) {
+		return null;
 	}
 
-	if ( purchase.is_cancelable ) {
-		return (
-			<ActionList.ActionItem
-				title={ __( 'Cancel subscription' ) }
-				description={ __( 'We’ll be sorry to see you go!' ) }
-				actions={
-					<Button
-						variant="secondary"
-						isDestructive
-						size="compact"
-						onClick={ () =>
-							navigate( {
-								to: cancelPurchaseRoute.fullPath,
-								params: { purchaseId: purchase.ID },
-							} )
-						}
-					>
-						{ _x( 'Cancel', 'Stop the subscription from automatically charging and renewing' ) }
-					</Button>
-				}
-			/>
-		);
-	}
-	if ( purchase.is_removable ) {
-		return (
-			<ActionList.ActionItem
-				title={ __( 'Remove subscription' ) }
-				description={ __( 'We’ll be sorry to see you go!' ) }
-				actions={
-					<Button
-						variant="secondary"
-						isDestructive
-						size="compact"
-						onClick={ () =>
-							navigate( {
-								to: cancelPurchaseRoute.fullPath,
-								params: { purchaseId: purchase.ID },
-							} )
-						}
-					>
-						{ _x(
-							'Remove',
-							'Remove the cancelled or expired subscription from the list of active purchases.'
-						) }
-					</Button>
-				}
-			/>
-		);
-	}
-	return null;
+	// Use non-breaking spaces in the date so it doesn't wrap mid-date
+	// (e.g. "April\n16, 2027") in narrow viewports.
+	const expiryDateFormatted = purchase.expiry_date
+		? formatDate( new Date( purchase.expiry_date ), locale, {
+				dateStyle: 'long',
+		  } ).replace( / /g, '\u00A0' )
+		: '';
+
+	const category = classifyPurchaseForCopy( purchase );
+	const cancelCopy = showCancel
+		? getCancelButtonCopy( {
+				category,
+				productName: purchase.product_name,
+				expiryDateFormatted,
+		  } )
+		: null;
+	const removeCopy = showRemove
+		? getRemoveButtonCopy( { category, productName: purchase.product_name, hasRefund } )
+		: null;
+
+	return (
+		<>
+			{ cancelCopy && (
+				<ActionList.ActionItem
+					title={ cancelCopy.label }
+					description={ cancelCopy.description }
+					actions={
+						<Button
+							variant="secondary"
+							// When Remove is shown alongside Cancel, keep Cancel neutral so
+							// the destructive emphasis goes to Remove only. When Cancel is
+							// the lone destructive action, make it red.
+							isDestructive={ ! showRemove }
+							size="compact"
+							onClick={ () => goToCancel( 'cancel' ) }
+						>
+							{ _x( 'Cancel', 'Stop the subscription from automatically charging and renewing' ) }
+						</Button>
+					}
+				/>
+			) }
+			{ removeCopy && (
+				<ActionList.ActionItem
+					title={ removeCopy.label }
+					description={ removeCopy.description }
+					actions={
+						<Button
+							variant="secondary"
+							isDestructive
+							size="compact"
+							onClick={ () => goToCancel( 'remove' ) }
+						>
+							{ _x(
+								'Remove',
+								'Remove the cancelled or expired subscription from the list of active purchases.'
+							) }
+						</Button>
+					}
+				/>
+			) }
+		</>
+	);
 }
 
 /**

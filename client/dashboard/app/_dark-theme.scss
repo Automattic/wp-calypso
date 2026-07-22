@@ -185,25 +185,6 @@
 	}
 }
 
-/* Action List */
-@mixin dashboard-dark-theme-action-list {
-	.action-list .action-item {
-		border-bottom-color: var( --dashboard-surface__border-color );
-	}
-
-	.icon-list-item__decoration svg {
-		fill: var( --dashboard-subtle__color );
-	}
-
-	.action-item .components-v-stack > .components-text:first-child {
-		color: var( --dashboard__text-color );
-	}
-
-	.action-item .components-v-stack > .components-text:last-child {
-		color: var( --dashboard-subtle__color );
-	}
-}
-
 /* Item Group */
 @mixin dashboard-dark-theme-item-group {
 	.components-item-group {
@@ -442,7 +423,7 @@
 	@include color-scheme-dark-theme-tokens;
 	@include color-scheme-dark-theme-calypso-properties;
 	@include color-scheme-dark-theme-color-scheme;
-	@include dashboard-dark-theme-action-list;
+	@include color-scheme-dark-theme-action-list;
 	@include color-scheme-dark-theme-agenttic;
 	@include dashboard-dark-theme-breadcrumbs;
 	@include dashboard-dark-theme-callout;

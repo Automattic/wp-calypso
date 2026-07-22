@@ -19,7 +19,7 @@
 
 	svg {
 		position: relative;
-		top: 4px;
+		inset-block-start: 4px;
 		inset-inline-end: 2px;
 	}
 }
@@ -71,13 +71,13 @@
 		margin: 0 0 32px;
 
 		tr {
-			border-top: none;
+			border-block-start: none;
 		}
 	}
 
 	.dataviews-view-table thead {
 		position: sticky;
-		top: 0;
+		inset-block-start: 0;
 		z-index: 2;
 	}
 }

@@ -1,7 +1,7 @@
 import { isEnabled } from '@automattic/calypso-config';
 import { __ } from '@wordpress/i18n';
 import { useMemo } from 'react';
-import type { TaggedSite } from '../types';
+import type { TaggedSite } from 'calypso/dashboard/agency/earn/migrations/types';
 
 export default function useCommissionListActions( {
 	onUntagSite,
