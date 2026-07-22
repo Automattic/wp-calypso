@@ -7,14 +7,15 @@ export const getPHPVersions = ( siteId ) => {
 
 	// PHP 8.3 is the default recommended version, 8.4 is the new recommended version for some sites.
 	const recommendedValue = isPhp84Default ? '8.4' : '8.3';
-	// translators: PHP Version for a version switcher
+	// translators: %s: PHP version number, e.g. "8.3", for a version switcher
 	const recommendedLabel = sprintf( __( '%s (Recommended)' ), recommendedValue );
+	const PHP82AllowedSites = [ 255633016 ];
 
 	const phpVersions = [
 		{
 			label: '8.2',
 			value: '8.2',
-			disabled: false, // EOL 31 December 2026
+			disabled: ! PHP82AllowedSites.includes( siteId ?? 0 ), // EOL 31 December 2026
 		},
 		{
 			label: isPhp84Default ? '8.3' : recommendedLabel,

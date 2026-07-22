@@ -2,7 +2,9 @@
  * @jest-environment jsdom
  */
 
-import { screen, waitFor } from '@testing-library/react';
+import { sitePHPVersionQuery } from '@automattic/api-queries';
+import { QueryClient } from '@tanstack/react-query';
+import { screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
 import { render } from '../../../test-utils';
@@ -30,11 +32,11 @@ function mockSite( mockedSite: Site ) {
 		.reply( 200, mockedSite );
 }
 
-function mockPHPVersion( version: string ) {
+function mockPHPVersion( version: string, siteId: number = site.ID ) {
 	nock( 'https://public-api.wordpress.com' )
-		.get( `/wpcom/v2/sites/${ site.ID }/hosting/php-version` )
+		.get( `/wpcom/v2/sites/${ siteId }/hosting/php-version` )
 		.query( true )
-		.reply( 200, version );
+		.reply( 200, JSON.stringify( version ), { 'Content-Type': 'application/json' } );
 }
 
 function mockPHPVersionSaved( expectedVersion: string ) {
@@ -53,7 +55,11 @@ describe( '<PHPVersionSettings>', () => {
 		mockSite( site );
 		mockPHPVersion( '8.2' );
 
-		render( <PHPVersionSettings siteSlug={ site.slug } /> );
+		// The route loader awaits the PHP version before the page renders.
+		const queryClient = new QueryClient();
+		await queryClient.ensureQueryData( sitePHPVersionQuery( site.ID ) );
+
+		render( <PHPVersionSettings siteSlug={ site.slug } />, { queryClient } );
 		await screen.findByRole( 'heading', { name: 'PHP' } );
 
 		const versionSelect = await screen.findByRole( 'combobox', { name: 'PHP version' } );
@@ -68,6 +74,36 @@ describe( '<PHPVersionSettings>', () => {
 		await waitFor( () => {
 			expect( scope.isDone() ).toBe( true );
 		} );
+	} );
+
+	test( 'does not offer PHP 8.2 to sites that are not using it', async () => {
+		mockSite( site );
+		mockPHPVersion( '8.3' );
+
+		const queryClient = new QueryClient();
+		await queryClient.ensureQueryData( sitePHPVersionQuery( site.ID ) );
+
+		render( <PHPVersionSettings siteSlug={ site.slug } />, { queryClient } );
+
+		const versionSelect = await screen.findByRole( 'combobox', { name: 'PHP version' } );
+		expect( versionSelect ).toHaveDisplayValue( '8.3 (Recommended)' );
+		expect(
+			within( versionSelect ).queryByRole( 'option', { name: '8.2' } )
+		).not.toBeInTheDocument();
+	} );
+
+	test( 'offers PHP 8.2 to allowlisted sites', async () => {
+		const allowlistedSite = { ...site, ID: 255633016 } as Site;
+		mockSite( allowlistedSite );
+		mockPHPVersion( '8.3', allowlistedSite.ID );
+
+		const queryClient = new QueryClient();
+		await queryClient.ensureQueryData( sitePHPVersionQuery( allowlistedSite.ID ) );
+
+		render( <PHPVersionSettings siteSlug={ allowlistedSite.slug } />, { queryClient } );
+
+		const versionSelect = await screen.findByRole( 'combobox', { name: 'PHP version' } );
+		expect( within( versionSelect ).getByRole( 'option', { name: '8.2' } ) ).toBeVisible();
 	} );
 
 	test( 'renders upsell when the site does not have the plan feature', async () => {
