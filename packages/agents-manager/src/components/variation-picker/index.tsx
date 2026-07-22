@@ -31,6 +31,8 @@ function VariationPicker( { variations, type, maxToShow, onSelect, activeVariati
 	const [ firstIndex, setFirstIndex ] = useState( 0 );
 
 	// `maxToShow` can arrive degenerate through model-generated tool props.
+	// TODO: Revisit the pagination/display rule — wide chats could show more
+	// (or all) options per page instead of paginating.
 	const parsedMaxToShow = Math.floor( Number( maxToShow ) );
 	const perPage = parsedMaxToShow > 0 ? parsedMaxToShow : DEFAULT_MAX_TO_SHOW;
 
