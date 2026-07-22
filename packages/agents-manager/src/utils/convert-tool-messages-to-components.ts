@@ -199,7 +199,13 @@ export default function convertToolMessagesToComponents( {
 
 		// Handle `show-component` tool message
 		if ( isShowComponentTool( textData.tool_id ) ) {
-			// If not on an editor page, show an unavailable tool message instead of the component
+			// Off the editor, show a notice instead of the picker — a conversation
+			// reopened on a surface that shares the editor's agent id can carry
+			// picker messages here.
+			// TODO: Remove once conversation histories can no longer cross onto
+			// non-editor surfaces (per-surface agent ids everywhere); verify the
+			// CIAB design routes first — they allow picker tools but may fail
+			// `isEditorPage()`.
 			if ( ! isEditorPage() ) {
 				return [
 					{
