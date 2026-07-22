@@ -1,4 +1,6 @@
 .agents-manager-variation-picker {
+	// Anchor for the width-measuring resize listener.
+	position: relative;
 	// Cap width in wide chats so cards stay card-sized.
 	max-width: 640px;
 

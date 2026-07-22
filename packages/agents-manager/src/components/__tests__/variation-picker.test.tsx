@@ -27,6 +27,11 @@ jest.mock( '@wordpress/icons', () => ( {
 	chevronRight: 'chevron-right',
 } ) );
 
+let mockWidth: number | null = null;
+jest.mock( '@wordpress/compose', () => ( {
+	useResizeObserver: () => [ null, { width: mockWidth } ],
+} ) );
+
 const defaultProps = {
 	onSelect: jest.fn(),
 };
@@ -37,13 +42,23 @@ const mockVariations = [
 	{ title: 'Variation 3', settings: {}, styles: {} },
 ];
 
+const manyVariations = Array.from( { length: 8 }, ( _, index ) => ( {
+	title: `Variation ${ index + 1 }`,
+	settings: {},
+	styles: {},
+} ) );
+
 describe( 'VariationPicker', () => {
-	it( 'shows navigation buttons when variations exceed `maxToShow`', () => {
+	beforeEach( () => {
+		mockWidth = null;
+	} );
+
+	it( 'shows navigation buttons when variations exceed the page', () => {
 		const { container } = render(
 			<VariationPicker
 				{ ...defaultProps }
-				variations={ mockVariations }
-				maxToShow={ 1 }
+				variations={ manyVariations }
+				maxToShow={ 2 }
 				type="color"
 			/>
 		);
@@ -53,6 +68,22 @@ describe( 'VariationPicker', () => {
 
 		const buttons = container.querySelectorAll( 'button' );
 		expect( buttons ).toHaveLength( 2 );
+	} );
+
+	it( 'shows every option without pagination when the width fits them', () => {
+		mockWidth = 640;
+		render(
+			<VariationPicker
+				{ ...defaultProps }
+				variations={ manyVariations }
+				maxToShow={ 2 }
+				type="color"
+			/>
+		);
+
+		// 4 columns at 640px → 8 options fill 2 rows, so no paging.
+		expect( screen.getAllByTestId( 'variation' ) ).toHaveLength( 8 );
+		expect( screen.queryByText( '1/4' ) ).not.toBeInTheDocument();
 	} );
 
 	it( 'hides navigation buttons when variations fit within `maxToShow`', () => {
@@ -73,14 +104,14 @@ describe( 'VariationPicker', () => {
 		render(
 			<VariationPicker
 				{ ...defaultProps }
-				variations={ mockVariations }
+				variations={ manyVariations }
 				maxToShow={ value }
 				type="color"
 			/>
 		);
 
-		// 3 variations fit inside the default page of 4 — all render, no arrows.
-		expect( screen.getAllByTestId( 'variation' ) ).toHaveLength( 3 );
+		// 8 options at the narrow 2-column width paginate at the default page of 4.
+		expect( screen.getAllByTestId( 'variation' ) ).toHaveLength( 4 );
 	} );
 
 	it( 'displays the correct number of variations', () => {
