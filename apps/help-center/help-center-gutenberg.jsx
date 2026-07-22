@@ -31,13 +31,15 @@ function HelpCenterContent() {
 
 	const canvasMode = useCanvasMode();
 
-	// When a top admin bar is present in the editor — Gutenberg's "admin bar in editor" (omnibar)
-	// experiment, or any context that renders a visible #wpadminbar — the Help button moves out of
-	// the toolbar and into that admin bar.
-	const isAdminBarInEditor =
-		!! window.__experimentalAdminBarInEditor ||
-		document.body.classList.contains( 'has-admin-bar-in-editor' ) ||
-		( document.getElementById( 'wpadminbar' )?.offsetHeight ?? 0 ) > 0;
+	// Whether the Help button belongs in the admin bar rather than the editor toolbar. Snapshot it
+	// once at mount: the underlying signals change as the user toggles editor modes (fullscreen,
+	// distraction-free), and we don't want the button hopping between the toolbar and the admin bar.
+	const [ isAdminBarInEditor ] = useState(
+		() =>
+			!! window.__experimentalAdminBarInEditor ||
+			document.body.classList.contains( 'has-admin-bar-in-editor' ) ||
+			( document.getElementById( 'wpadminbar' )?.offsetHeight ?? 0 ) > 0
+	);
 
 	const trackIconInteraction = useCallback( () => {
 		recordTracksEvent( 'wpcom_help_center_icon_interaction', {
