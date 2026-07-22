@@ -35,6 +35,7 @@ import SiteErrorPreview from './site-error-preview';
 import '../jetpack/style.scss';
 import '../../site-preview-pane/a4a-style.scss';
 
+// Keep removed IDs so old direct links fall back to the default tab.
 const REMOVED_FEATURE_IDS = [
 	JETPACK_BOOST_ID,
 	JETPACK_PLUGINS_ID,
