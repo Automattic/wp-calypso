@@ -13,6 +13,7 @@ import type {
 	FetchDashboardSiteFiltersParams,
 	User,
 } from '@automattic/api-core';
+import type { HelpCenterProduct } from '@automattic/help-center';
 import type { PostHogOverrides } from '@automattic/posthog';
 
 export type AgencySupports = {
@@ -82,6 +83,9 @@ export type AppConfig = {
 	posthog?: {
 		apiKey: string;
 		overrides?: PostHogOverrides;
+	};
+	helpCenter?: {
+		product: HelpCenterProduct;
 	};
 	optIn: boolean;
 	components: {

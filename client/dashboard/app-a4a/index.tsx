@@ -56,6 +56,7 @@ boot( {
 		colorScheme: false,
 		darkMode: false,
 	},
+	helpCenter: { product: 'a4a' },
 	optIn: false,
 	components: {
 		omnibar: A4AOmnibar,

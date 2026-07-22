@@ -3,7 +3,9 @@ import config from '@automattic/calypso-config';
 import { useQuery } from '@tanstack/react-query';
 import { Suspense, lazy, useCallback, useState } from 'react';
 import { useAuth } from '../auth';
+import { useAppContext } from '../context';
 import { useHelpCenter } from '../help-center';
+import { useA4AHelpCenterProps } from '../help-center/use-a4a-help-center-props';
 import type HelpCenterApp from '../help-center/help-center-app';
 import type { Site } from '@automattic/api-core';
 
@@ -53,7 +55,9 @@ function hasHelpCenterQueryParam() {
  */
 export default function OmnibarHelpCenter() {
 	const { user } = useAuth();
+	const { helpCenter } = useAppContext();
 	const { isShown, setShowHelpCenter } = useHelpCenter();
+	const a4aHelpCenterProps = useA4AHelpCenterProps( helpCenter?.product === 'a4a' );
 	const [ shouldMount, setShouldMount ] = useState( hasHelpCenterQueryParam );
 	const { data: omnibarSiteId } = useQuery( omnibarSiteIdQuery() );
 	const { data: site } = useQuery( {
@@ -85,6 +89,8 @@ export default function OmnibarHelpCenter() {
 				onboardingUrl={ config( 'wpcom_signup_url' ) }
 				sectionName="dashboard"
 				site={ site ? toHelpCenterSite( site ) : null }
+				product={ helpCenter?.product }
+				{ ...a4aHelpCenterProps }
 			/>
 		</Suspense>
 	);
