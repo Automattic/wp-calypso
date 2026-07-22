@@ -18,6 +18,16 @@
 			}
 		}
 
+		// The dark theme maps `--color-link` to white; use the admin accent there.
+		.agenttic.dark & {
+			&.is-active,
+			&:focus-visible {
+				.agents-manager-variation-picker__preview {
+					outline-color: var( --wp-admin-theme-color, #3858e9 );
+				}
+			}
+		}
+
 		&:not( .is-active ):hover {
 			.agents-manager-variation-picker__preview {
 				outline-color: var( --color-muted-foreground );
