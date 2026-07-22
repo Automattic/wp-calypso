@@ -105,4 +105,19 @@ describe( 'AI Editorial Review conflict-card CSS contract', () => {
 		expect( declarations.get( 'padding-inline' ) ).toBe( 'var(--spacing-4)' );
 		expect( declarations.get( 'padding-block' ) ).toBe( '1.25rem' );
 	} );
+
+	it( 'keeps the shared action row flush and maps the conflict primary treatment', () => {
+		const conflictActions = getDeclarations(
+			css,
+			'.jetpack-ai-editorial-review__conflict-resolution .jetpack-ai-feedback-list__actions'
+		);
+
+		expect( conflictActions.get( 'padding' ) ).toBe( '0' );
+		expect( conflictActions.get( '--jetpack-ai-feedback-list-primary' ) ).toBe(
+			'var(--jetpack-ai-review-primary)'
+		);
+		expect( conflictActions.get( '--jetpack-ai-feedback-list-primary-foreground' ) ).toBe(
+			'var(--jetpack-ai-review-primary-foreground)'
+		);
+	} );
 } );

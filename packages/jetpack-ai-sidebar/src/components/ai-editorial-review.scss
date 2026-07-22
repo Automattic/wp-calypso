@@ -857,11 +857,8 @@
 	}
 
 	// ---------- Conflict action buttons ----------
-	// is-reviewer (ghost) / is-accept (primary AI) / is-dismiss (ghost). Wrap
-	// to multiple rows on narrow sidebars; extra padding for two-line labels.
-	// Resolution controls stack in two groups: reviewer options wrap two-up,
-	// then a fixed [Accept AI resolution][Dismiss] pair — so that pairing never
-	// depends on the parity of the reviewer count.
+	// Reviewer options wrap two-up above the shared Apply AI change + Dismiss row,
+	// so the two groups never depend on the reviewer count's parity.
 	&__conflict-resolution {
 		display: flex;
 		flex-direction: column;
@@ -881,17 +878,12 @@
 		padding: 0.625rem 0.875rem;
 	}
 
-	// The AI + Dismiss row: an even, fixed pair (or Dismiss alone when there is
-	// no AI recommendation). The parent column owns the top spacing.
-	&__conflict-resolution &__actions {
-		margin-top: 0;
-		gap: 0.5rem;
-	}
+	// The conflict card already owns the shared action row's inline inset.
+	&__conflict-resolution .jetpack-ai-feedback-list__actions {
+		--jetpack-ai-feedback-list-primary: var(--jetpack-ai-review-primary);
+		--jetpack-ai-feedback-list-primary-foreground: var(--jetpack-ai-review-primary-foreground);
 
-	&__conflict-resolution &__actions &__action {
-		flex: 1 1 0;
-		min-height: 42px;
-		padding: 0.625rem 0.875rem;
+		padding: 0;
 	}
 
 	&__action.is-reviewer {

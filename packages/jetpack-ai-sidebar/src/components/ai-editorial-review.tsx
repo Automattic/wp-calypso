@@ -37,7 +37,7 @@ import {
 } from '../utils/tracking';
 import { useCopyToClipboard } from '../utils/use-copy-to-clipboard';
 import BlockRef, { getBlockTypeName, type BlockSnapshot } from './block-ref';
-import ReviewCard, { type ReviewCardRow } from './review-card';
+import ReviewCard, { ReviewCardActions, type ReviewCardRow } from './review-card';
 import ReviewerChip, { type ReviewerMetadata } from './reviewer-chip';
 
 /**
@@ -212,18 +212,18 @@ function getGuidelineCategoryLabel( category: GuidelineViolation[ 'category' ] )
  * Lookup rather than a nested ternary. Keeps the JSX flat and makes eslint
  * `no-nested-ternary` happy while still i18n-ing each phrase.
  * @param status Current conflict row status.
- * @returns Label for the "Accept AI resolution" button.
+ * @returns Label for the "Apply AI change" button.
  */
 function getAiButtonLabel( status: EditStatus ): string {
 	switch ( status ) {
 		case 'applying':
 			return __( 'Applying…', __i18n_text_domain__ );
 		case 'accepted':
-			return __( 'Accepted', __i18n_text_domain__ );
+			return __( 'Applied', __i18n_text_domain__ );
 		case 'failed':
-			return __( 'Retry AI resolution', __i18n_text_domain__ );
+			return __( 'Retry AI change', __i18n_text_domain__ );
 		default:
-			return __( 'Accept AI resolution', __i18n_text_domain__ );
+			return __( 'Apply AI change', __i18n_text_domain__ );
 	}
 }
 
@@ -1328,7 +1328,7 @@ export default function AiEditorialReview( {
 																	>
 																		{ sprintf(
 																			/* translators: %s is a short label, e.g. "Marcus's wording" */
-																			__( 'Accept %s', __i18n_text_domain__ ),
+																			__( 'Apply %s', __i18n_text_domain__ ),
 																			candidate.label
 																		) }
 																	</button>
@@ -1336,28 +1336,18 @@ export default function AiEditorialReview( {
 															} ) }
 														</div>
 													) }
-													<div className="jetpack-ai-editorial-review__actions">
-														{ aiCandidate && (
-															<button
-																type="button"
-																className="jetpack-ai-editorial-review__action is-accept"
-																disabled={ actionsDisabled }
-																onClick={ () => handleAcceptCandidate( i, aiCandidate ) }
-															>
-																{ getAiButtonLabel( status ) }
-															</button>
-														) }
-														<button
-															type="button"
-															className="jetpack-ai-editorial-review__action is-dismiss"
-															disabled={ actionsDisabled }
-															onClick={ () => handleDismissConflict( i ) }
-														>
-															{ /* status can never be 'dismissed' here — the
-															collapsed branch above renders for that case */ }
-															{ __( 'Dismiss', __i18n_text_domain__ ) }
-														</button>
-													</div>
+													<ReviewCardActions
+														applyAction={
+															aiCandidate
+																? {
+																		label: getAiButtonLabel( status ),
+																		onClick: () => handleAcceptCandidate( i, aiCandidate ),
+																  }
+																: undefined
+														}
+														disabled={ actionsDisabled }
+														onDismiss={ () => handleDismissConflict( i ) }
+													/>
 												</div>
 											</article>
 										);
