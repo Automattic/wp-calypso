@@ -1,8 +1,7 @@
 import { __, sprintf } from '@wordpress/i18n';
 import { brush, envelope, globe, layout, plugins } from '@wordpress/icons';
-import { useRef } from 'react';
+import { lazy, Suspense, useRef, useState } from 'react';
 import ReferralSidebar from '../../agency/earn/referrals/referral-sidebar';
-import AgencySiteSidebar from '../../agency/sites/site-sidebar';
 import RouterLinkButton from '../../components/router-link-button';
 import { SidebarExpandableMenuItem, SidebarMenu, SidebarMenuItem } from '../../components/sidebar';
 import SidebarNavigator from '../../components/sidebar-navigator';
@@ -19,7 +18,11 @@ import { useSidebarScrollSync } from './use-sidebar-scroll-sync';
 import './sidebar.scss';
 
 export default function Sidebar( { scrollSyncEnabled = false }: { scrollSyncEnabled?: boolean } ) {
-	const { Logo, name } = useAppContext();
+	const { Logo, name, components } = useAppContext();
+	// Resolved once per app: variants may provide their own site sidebar.
+	const [ VariantSiteSidebar ] = useState( () =>
+		components.siteSidebar ? lazy( components.siteSidebar ) : null
+	);
 	const { recordTracksEvent } = useAnalytics();
 	const sidebarRef = useRef< HTMLDivElement >( null );
 	const navigatorRef = useRef< HTMLDivElement >( null );
@@ -46,10 +49,13 @@ export default function Sidebar( { scrollSyncEnabled = false }: { scrollSyncEnab
 					<PrimaryMenuSidebar />
 				</SidebarNavigator.Screen>
 				<SidebarNavigator.Screen path="/sites/$siteSlug">
-					<SiteSidebar />
-				</SidebarNavigator.Screen>
-				<SidebarNavigator.Screen path="/agency/sites/$siteSlug">
-					<AgencySiteSidebar />
+					{ VariantSiteSidebar ? (
+						<Suspense fallback={ null }>
+							<VariantSiteSidebar />
+						</Suspense>
+					) : (
+						<SiteSidebar />
+					) }
 				</SidebarNavigator.Screen>
 				<SidebarNavigator.Screen path="/agency/earn/referrals/$referralId">
 					<ReferralSidebar />
@@ -72,7 +78,8 @@ function PrimaryMenuSidebar() {
 		<SidebarMenu>
 			{ supports.agency && <AgencySidebar /> }
 			{ supports.agencyClient && <AgencyClientSidebar /> }
-			{ supports.sites && (
+			{ /* The agency sidebar renders its own Sites entry. */ }
+			{ ! supports.agency && supports.sites && (
 				<SidebarMenuItem icon={ layout } to="/sites">
 					{ __( 'Sites' ) }
 				</SidebarMenuItem>

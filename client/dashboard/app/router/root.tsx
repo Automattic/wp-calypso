@@ -44,6 +44,13 @@ export const rootRoute = createRootRouteWithContext< RootRouterContext >()( {
 				if ( ! agency.isClientUser && ! agency.hasAgency ) {
 					throw dashboardRedirect( { href: '/signup', replace: true } );
 				}
+
+				// Client users only get the client area.
+				const isClientPath =
+					location.pathname === '/client' || location.pathname.startsWith( '/client/' );
+				if ( agency.isClientUser && ! isClientPath ) {
+					throw dashboardRedirect( { to: '/client/subscriptions', replace: true } );
+				}
 			}
 		}
 	},

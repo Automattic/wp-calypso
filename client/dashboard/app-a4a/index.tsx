@@ -8,6 +8,11 @@ import {
 /* eslint-enable no-restricted-imports */
 import boot from '../app/boot';
 import { Logo } from './logo';
+import {
+	agencySiteAccessQuery,
+	agencySiteFeatureAccessQuery,
+	agencySiteOverviewLoader,
+} from './site-routes';
 import type {
 	FetchSitesOptions,
 	FetchPaginatedSitesOptions,
@@ -32,7 +37,20 @@ boot( {
 			earn: true,
 		},
 		agencyClient: { subscriptions: true },
-		sites: false,
+		sites: {
+			sections: {
+				domains: false,
+				plans: false,
+				backups: true,
+				scan: true,
+				performance: true,
+				monitoring: true,
+				deployments: true,
+				logs: { activity: true, php: true, server: true },
+				settings: true,
+			},
+			lockSelfHostedJetpackToOverview: false,
+		},
 		domains: false,
 		emails: false,
 		themes: false,
@@ -51,7 +69,14 @@ boot( {
 		darkMode: false,
 	},
 	optIn: false,
-	components: {},
+	components: {
+		sites: () => import( '../agency/sites' ),
+		siteSidebar: () => import( '../agency/sites/site-sidebar' ),
+		siteOverview: {
+			component: () => import( '../agency/sites/site/overview' ),
+			loader: agencySiteOverviewLoader,
+		},
+	},
 	queries: {
 		sitesQuery: ( fetchSiteOptions?: FetchSitesOptions ) => sitesQuery( 'all', fetchSiteOptions ),
 		paginatedSitesQuery: ( fetchSiteOptions?: FetchPaginatedSitesOptions ) =>
@@ -59,5 +84,7 @@ boot( {
 		dashboardSiteFiltersQuery: ( fields: FetchDashboardSiteFiltersParams[ 'fields' ] ) =>
 			dashboardSiteFiltersQuery( 'all', fields ),
 		domainsQuery: () => domainsQuery(),
+		siteAccessQuery: agencySiteAccessQuery,
+		siteFeatureAccessQuery: agencySiteFeatureAccessQuery,
 	},
 } );
