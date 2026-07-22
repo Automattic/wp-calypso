@@ -27,6 +27,15 @@ cd apps/agents-manager && yarn dev --sync
 - **i18n**: Use `@wordpress/i18n` with the `__i18n_text_domain__` text domain placeholder — passed unquoted as it is a global constant, not a string literal. The webpack `DefinePlugin` replaces it with `'default'` at build time.
 - **Curly quotes**: Preserve `""` `''` exactly as they appear. Do not convert to unicode escapes or ASCII equivalents.
 
+## Ability Scoping
+
+AM ability registration (`registerAmAbilities()`) is surface-agnostic by design — it runs wherever the chat mounts, and that is safe because registration grants nothing:
+
+- **The backend route settings are the scope authority** (`wpcom` repo, `lib/ai/agents/route-settings/wp-orchestrator/`): deny-by-default, per-URL allowlists rebuild each agent's tool set from scratch. Client-side registration and provider advertisement never make an ability callable.
+- **Never rename an ability while migrating it** — the name is the key the route settings match on; renaming silently drops it from every surface.
+- **Guard mutating callbacks in place**: a callback that changes editor state (e.g. `apply-block-edits`, `set-styles`) starts with an `isEditorPage()` early-return that returns an error result. Inert callbacks (e.g. `show-component`) need no guard.
+- **Per migration, grep the route-settings files** for the ability name to confirm which surfaces expose it.
+
 ## Pitfalls
 
 - **Two deployment targets**: Every change must work in both Calypso (SPA) and Simple/Atomic/CIAB (via `widgets.wp.com` bundles). They use different bootstrap paths.
