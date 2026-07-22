@@ -76,6 +76,24 @@ describe( 'usePickerVariations', () => {
 		expect( result.current.activeTitle ).toBe( 'Pastel' );
 	} );
 
+	it( 'keeps the picked variation highlighted when several share the live value', () => {
+		const twins = [
+			{ title: 'Twin A', settings: { value: { v: 'dup' } } },
+			{ title: 'Twin B', settings: { value: { v: 'dup' } } },
+		] as unknown as StyleVariation[];
+		mockGlobalStyles = { live: { v: 'dup' } };
+		const { result, rerender } = renderHook( () =>
+			usePickerVariations( makeOptions( { variations: twins } ) )
+		);
+
+		act( () => result.current.handleSelect( twins[ 1 ] ) );
+		// A fresh store read re-runs the highlight effect with an equal value.
+		mockGlobalStyles = { live: { v: 'dup' } };
+		rerender();
+
+		expect( result.current.activeTitle ).toBe( 'Twin B' );
+	} );
+
 	it( 'does not highlight a selection that could not be applied', () => {
 		mockSetStyles.mockReturnValueOnce( false );
 		const { result } = renderHook( () => usePickerVariations( makeOptions() ) );

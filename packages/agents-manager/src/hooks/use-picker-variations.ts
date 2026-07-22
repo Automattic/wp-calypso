@@ -70,17 +70,27 @@ export default function usePickerVariations( {
 		);
 	}, [ liveValue, safeVariations, globalStyles ] );
 
-	// Highlight the variation matching the editor's live value.
+	// Highlight the variation matching the editor's live value. Several
+	// variations can share the value (e.g. fonts with one family list), so the
+	// currently-highlighted one wins the tie — the user's pick stays put.
 	useEffect( () => {
 		if ( ! liveValue || ! sortedVariations.length ) {
 			return;
 		}
-		const match = findMatchingVariation(
-			sortedVariations,
-			liveValue,
-			accessorsRef.current.getValue
-		);
-		setActiveTitle( match?.title ?? null );
+		const liveString = JSON.stringify( liveValue );
+		setActiveTitle( ( current ) => {
+			const currentVariation = sortedVariations.find( ( v ) => v.title === current );
+			if (
+				currentVariation &&
+				JSON.stringify( accessorsRef.current.getValue( currentVariation ) ) === liveString
+			) {
+				return current;
+			}
+			return (
+				findMatchingVariation( sortedVariations, liveValue, accessorsRef.current.getValue )
+					?.title ?? null
+			);
+		} );
 	}, [ liveValue, sortedVariations ] );
 
 	const handleSelect = useCallback(
