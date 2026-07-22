@@ -36,7 +36,10 @@ export async function getSiteZip( playground: PlaygroundClient ) {
 }
 
 export async function uploadSiteZip( siteId: number, siteZip: File ): Promise< number > {
-	const response = await wpcomRequest< { media?: Array< { ID?: number } > } >( {
+	const response = await wpcomRequest< {
+		media?: Array< { ID?: number } >;
+		errors?: unknown;
+	} >( {
 		path: `/sites/${ siteId }/media/new`,
 		apiVersion: '1.1',
 		method: 'POST',
@@ -45,7 +48,10 @@ export async function uploadSiteZip( siteId: number, siteZip: File ): Promise< n
 	const mediaId = response.media?.[ 0 ]?.ID;
 
 	if ( ! mediaId ) {
-		throw new Error( 'No media ID returned after uploading the Playground export.' );
+		const detail = response.errors ? JSON.stringify( response.errors ) : JSON.stringify( response );
+		throw new Error(
+			`No media ID returned after uploading the Playground export. API response: ${ detail }`
+		);
 	}
 
 	return mediaId;
