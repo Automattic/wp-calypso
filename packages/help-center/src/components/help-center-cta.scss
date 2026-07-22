@@ -1,0 +1,60 @@
+@use "sass:math";
+@import "@wordpress/base-styles/colors";
+@import "variables";
+
+.help-center-cta__banner {
+	background-color: $help-center-cta-banner-background;
+	border: 1px solid $help-center-cta-banner-border;
+	border-radius: 4px;
+	padding: 8px 16px;
+	font-size: $font-body-small;
+
+	.help-center-cta__title {
+		margin: 0 0 4px;
+	}
+
+	.help-center-cta__description {
+		margin: 0 0 8px;
+		color: $gray-700;
+	}
+
+	.help-center-cta__action {
+		color: $help-center-blue;
+		font-weight: 500;
+		text-decoration: none;
+
+		&:hover {
+			text-decoration: underline;
+		}
+
+		&:focus-visible {
+			outline: $help-center-blue solid 2px;
+			outline-offset: 2px;
+		}
+	}
+}
+
+.help-center-cta__resource-item {
+	.help-center-link__cell a svg:first-child {
+		fill: $help-center-blue;
+	}
+
+	.help-center-cta__resource-title {
+		display: block;
+		font-weight: 600;
+	}
+
+	.help-center-cta__resource-description {
+		display: block;
+		color: $gray-700;
+		// Parent link text is $font-body-small; rescale so this computes to
+		// $font-body-extra-small of the panel root instead of compounding.
+		font-size: math.div($font-body-extra-small, $font-body-small) * 1em;
+		font-weight: normal;
+	}
+
+	.help-center-link__cell a:focus {
+		outline: $help-center-blue solid 2px;
+		outline-offset: -2px;
+	}
+}

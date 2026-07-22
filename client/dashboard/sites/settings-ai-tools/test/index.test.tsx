@@ -258,7 +258,9 @@ describe( '<AIToolsSettings>', () => {
 			)
 		).toContain( 'EMAIL;TYPE=INTERNET:agent+first-secret@post.wordpress.com' );
 
-		await user.click( screen.getByRole( 'button', { name: 'Copy WordPress Agent email address' } ) );
+		await user.click(
+			screen.getByRole( 'button', { name: 'Copy WordPress Agent email address' } )
+		);
 		expect( clipboardWriteText ).toHaveBeenCalledWith( 'agent+first-secret@post.wordpress.com' );
 
 		const regenerateScope = mockJetpackPostByEmailMutation(

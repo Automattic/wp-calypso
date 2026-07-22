@@ -6,6 +6,7 @@
 /**
  * External dependencies
  */
+import { RichText } from '@wordpress/block-editor';
 import { Panel, PanelBody } from '@wordpress/components';
 import { useSelect } from '@wordpress/data';
 import { useState, useCallback, useEffect, useMemo, useRef } from '@wordpress/element';
@@ -56,6 +57,7 @@ interface CandidateResolution {
 	editable_attribute?: string;
 	current_text?: string;
 	text: string;
+	text_html?: string;
 	rationale: string;
 }
 
@@ -77,7 +79,9 @@ interface SuggestedEdit {
 	block_index: number | null;
 	editable_attribute?: string;
 	current_text: string;
+	current_text_html?: string;
 	suggested_text: string;
+	suggested_text_html?: string;
 	rationale: string;
 	supported_by_reviewers: string[];
 	requires_manual?: boolean;
@@ -1294,9 +1298,17 @@ export default function AiEditorialReview( {
 															</span>{ ' ' }
 															{ __( 'Recommended resolution', __i18n_text_domain__ ) }
 														</p>
-														<p className="jetpack-ai-editorial-review__ai-text">
-															{ aiCandidate?.text || conflict.recommended_resolution }
-														</p>
+														{ typeof aiCandidate?.text_html === 'string' ? (
+															<RichText.Content
+																tagName="div"
+																className="jetpack-ai-editorial-review__ai-text"
+																value={ aiCandidate.text_html }
+															/>
+														) : (
+															<p className="jetpack-ai-editorial-review__ai-text">
+																{ aiCandidate?.text || conflict.recommended_resolution }
+															</p>
+														) }
 														{ conflict.guideline_anchor && (
 															<blockquote className="jetpack-ai-editorial-review__guideline-anchor">
 																{ conflict.guideline_anchor }
@@ -1478,12 +1490,14 @@ export default function AiEditorialReview( {
 											bodyRows.push( {
 												tag: __( 'Current', __i18n_text_domain__ ),
 												text: edit.current_text,
+												previewHtml: edit.current_text_html,
 												variant: 'current',
 												element: 'del',
 											} );
 											bodyRows.push( {
 												tag: __( 'New', __i18n_text_domain__ ),
 												text: edit.suggested_text,
+												previewHtml: edit.suggested_text_html,
 												variant: 'new',
 												element: 'ins',
 											} );
@@ -1491,6 +1505,7 @@ export default function AiEditorialReview( {
 											bodyRows.push( {
 												tag: __( 'Suggestion', __i18n_text_domain__ ),
 												text: edit.suggested_text,
+												previewHtml: edit.suggested_text_html,
 												variant: 'new',
 												element: 'text',
 											} );

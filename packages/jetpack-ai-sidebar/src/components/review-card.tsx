@@ -8,6 +8,7 @@
 /**
  * External dependencies
  */
+import { RichText } from '@wordpress/block-editor';
 import { __ } from '@wordpress/i18n';
 import { Icon, check, undo } from '@wordpress/icons';
 import { type ReactNode } from 'react';
@@ -26,6 +27,8 @@ export interface ReviewCardRow {
 	variant: 'current' | 'new';
 	/** Semantic element: an exact diff uses del/ins, advisory copy uses text. */
 	element: 'del' | 'ins' | 'text';
+	/** Server-sanitised HTML for display. When absent, `text` renders literally. */
+	previewHtml?: string;
 }
 
 export interface ReviewCardModel {
@@ -162,16 +165,30 @@ export default function ReviewCard( {
 			{ header }
 			{ bodyRows.length > 0 && (
 				<div className={ `${ classPrefix }__diff` }>
-					{ bodyRows.map( ( row, i ) => (
-						<div key={ i } className={ `${ classPrefix }__diff-row is-${ row.variant }` }>
-							<span className={ `${ classPrefix }__diff-tag` }>{ row.tag }</span>
-							{ row.element === 'del' && <del>{ row.text }</del> }
-							{ row.element === 'ins' && <ins>{ row.text }</ins> }
-							{ row.element === 'text' && (
-								<span className={ `${ classPrefix }__diff-text` }>{ row.text }</span>
-							) }
-						</div>
-					) ) }
+					{ bodyRows.map( ( row, i ) => {
+						let RowContentElement: 'del' | 'div' | 'ins' | 'span' =
+							row.element === 'text' ? 'span' : row.element;
+						if ( row.element === 'text' && typeof row.previewHtml === 'string' ) {
+							RowContentElement = 'div';
+						}
+						const contentClassName = `${ classPrefix }__diff-content${
+							row.element === 'text' ? ` ${ classPrefix }__diff-text` : ''
+						}`;
+						return (
+							<div key={ i } className={ `${ classPrefix }__diff-row is-${ row.variant }` }>
+								<span className={ `${ classPrefix }__diff-tag` }>{ row.tag }</span>
+								{ typeof row.previewHtml === 'string' ? (
+									<RichText.Content
+										tagName={ RowContentElement }
+										className={ contentClassName }
+										value={ row.previewHtml }
+									/>
+								) : (
+									<RowContentElement className={ contentClassName }>{ row.text }</RowContentElement>
+								) }
+							</div>
+						);
+					} ) }
 				</div>
 			) }
 			{ reasonNote && <p className={ `${ classPrefix }__reason-note` }>{ reasonNote }</p> }

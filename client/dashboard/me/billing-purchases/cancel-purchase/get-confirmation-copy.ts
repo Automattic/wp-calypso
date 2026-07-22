@@ -511,6 +511,27 @@ export function getRefundNoticeCopy( {
 }
 
 /**
+ * Promo notice shown on the Cancel screen when a refund is still available:
+ * a prompt sentence plus the label for the link that switches to the Remove
+ * flow. Plan-worded (not product-aware) to match the current copy.
+ */
+export function getRefundEligibilityPromoCopy( { refundAmount }: { refundAmount: string } ): {
+	prompt: string;
+	linkLabel: string;
+} {
+	return {
+		prompt: sprintf(
+			/* translators: %(refundAmount)s is a monetary amount, e.g. "$96.00" */
+			__(
+				'You’re eligible for a %(refundAmount)s refund if you remove your plan now. Your features will be unavailable right away.'
+			),
+			{ refundAmount }
+		),
+		linkLabel: __( 'Remove plan and claim refund.' ),
+	};
+}
+
+/**
  * Universal confirm checkbox — same on Cancel and Remove, any product type.
  * Expiry date lives in the feature-list intro and the top notice; the
  * checkbox is a final "I read the above" ack.

@@ -2,27 +2,23 @@ import { Button, ExternalLink } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { useCallback } from 'react';
-import StepSection from 'calypso/a8c-for-agencies/components/step-section';
-import StepSectionItem from 'calypso/a8c-for-agencies/components/step-section-item';
-import { preventWidows } from 'calypso/lib/formatting';
-import { useDispatch } from 'calypso/state';
-import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import StepSection from '../../commissions/components/step-section';
+import StepSectionItem from '../../commissions/components/step-section-item';
+import type { RecordTracksEvent } from 'calypso/dashboard/agency/earn/migrations/types';
 
 export default function MigrationsCommissionsEmptyState( {
-	setShowAddSitesModal,
+	recordTracksEvent,
+	onTagSitesClick,
 	canTagSitesForCommission,
 }: {
-	setShowAddSitesModal: ( show: boolean ) => void;
+	recordTracksEvent: RecordTracksEvent;
+	onTagSitesClick: () => void;
 	canTagSitesForCommission: boolean;
 } ) {
-	const dispatch = useDispatch();
-
 	const onTagMySelfMigratedSitesClick = useCallback( () => {
-		dispatch(
-			recordTracksEvent( 'calypso_a8c_migrations_commissions_tag_my_self_migrated_sites_click' )
-		);
-		setShowAddSitesModal( true );
-	}, [ dispatch, setShowAddSitesModal ] );
+		recordTracksEvent( 'calypso_a8c_migrations_commissions_tag_my_self_migrated_sites_click' );
+		onTagSitesClick();
+	}, [ recordTracksEvent, onTagSitesClick ] );
 
 	const a4aPluginUrl = 'https://wordpress.org/plugins/automattic-for-agencies-client';
 
@@ -30,10 +26,8 @@ export default function MigrationsCommissionsEmptyState( {
 		<StepSection heading={ __( 'View your migrated websites and commissions right here.' ) }>
 			<StepSectionItem
 				heading={ __( 'Concierge Migrations' ) }
-				description={ preventWidows(
-					__(
-						"If you picked the concierge service, we'll move your sites for you. Once we're done, you'll see them here and they'll be available for tagging."
-					)
+				description={ __(
+					'If you picked the concierge service, we’ll move your sites for you. Once we’re done, you’ll see them here and they’ll be available for tagging.'
 				) }
 			/>
 			{ canTagSitesForCommission && (
@@ -57,10 +51,8 @@ export default function MigrationsCommissionsEmptyState( {
 													children={ null }
 													href={ a4aPluginUrl }
 													onClick={ () => {
-														dispatch(
-															recordTracksEvent(
-																'calypso_a8c_migrations_commissions_a4a_plugin_link_click'
-															)
+														recordTracksEvent(
+															'calypso_a8c_migrations_commissions_a4a_plugin_link_click'
 														);
 													} }
 												/>

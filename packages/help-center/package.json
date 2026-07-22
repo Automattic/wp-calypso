@@ -41,6 +41,7 @@
 	},
 	"dependencies": {
 		"@automattic/agents-manager": "workspace:^",
+		"@automattic/calypso-analytics": "workspace:^",
 		"@automattic/components": "workspace:^",
 		"@automattic/i18n-utils": "workspace:^",
 		"@automattic/odie-client": "workspace:^",

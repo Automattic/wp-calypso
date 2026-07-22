@@ -182,6 +182,7 @@ export default function AmplifyAiWorkflow() {
 						</VStack>
 						<ToggleGroupControl
 							__next40pxDefaultSize
+							isBlock
 							hideLabelFromVision
 							label={ __( 'Analysis mode' ) }
 							value={ mode }

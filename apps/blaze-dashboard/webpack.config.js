@@ -141,8 +141,20 @@ module.exports = {
 		new DependencyExtractionWebpackPlugin( {
 			injectPolyfill: true,
 			useDefaults: false,
-			requestToHandle: defaultRequestToHandle,
+			requestToHandle: ( request ) => {
+				// `react-dom/client` is not a registered handle; reuse `react-dom`.
+				if ( request === 'react-dom/client' ) {
+					return 'react-dom';
+				}
+				return defaultRequestToHandle( request );
+			},
 			requestToExternal: ( request ) => {
+				// The default extraction only maps bare `react-dom`, so this subpath would
+				// otherwise bundle a second react-dom that crashes against the page's external
+				// React. Same fix as help-center (#112576) and agents-manager.
+				if ( request === 'react-dom/client' ) {
+					return 'ReactDOM';
+				}
 				if (
 					! [
 						'lodash',

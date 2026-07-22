@@ -380,15 +380,13 @@ export function applyProcessingEffect( el: HTMLElement ): void {
 }
 
 /**
- * Remove processing effect and show a brief highlight.
- * @param el - The block element.
+ * Start shimmer on a known block-edit target.
  */
-function removeProcessingEffect( el: HTMLElement ): void {
-	clearProcessingEffect( el );
-	el.classList.add( 'jetpack-ai-has-processed' );
-	setTimeout( () => {
-		el.classList.remove( 'jetpack-ai-has-processed' );
-	}, 1000 );
+export function startBlockShimmer( clientId: string ): void {
+	const blockEl = findBlockElement( clientId );
+	if ( blockEl ) {
+		applyProcessingEffect( blockEl );
+	}
 }
 
 /**
@@ -399,20 +397,15 @@ export function stopBlockShimmer(): void {
 }
 
 /**
- * Start shimmer on the currently selected block (if any).
+ * Remove processing effect and show a brief highlight.
+ * @param el - The block element.
  */
-export function startBlockShimmer(): void {
-	const wpData = ( window as any ).wp?.data;
-	if ( ! wpData ) {
-		return;
-	}
-	const block = getSelectedOrRememberedBlock();
-	if ( block?.clientId ) {
-		const blockEl = findBlockElement( block.clientId );
-		if ( blockEl ) {
-			applyProcessingEffect( blockEl );
-		}
-	}
+function removeProcessingEffect( el: HTMLElement ): void {
+	clearProcessingEffect( el );
+	el.classList.add( 'jetpack-ai-has-processed' );
+	setTimeout( () => {
+		el.classList.remove( 'jetpack-ai-has-processed' );
+	}, 1000 );
 }
 
 // ---------- Ability callbacks ----------
