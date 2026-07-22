@@ -40,7 +40,7 @@ interface Props {
 }
 
 function VariationPicker( { variations, type, maxToShow, onSelect, activeVariationTitle }: Props ) {
-	const [ firstIndex, setFirstIndex ] = useState( 0 );
+	const [ pageIndex, setPageIndex ] = useState( 0 );
 	const [ resizeListener, { width } ] = useResizeObserver();
 
 	// `maxToShow` can arrive degenerate through model-generated tool props.
@@ -56,23 +56,15 @@ function VariationPicker( { variations, type, maxToShow, onSelect, activeVariati
 	const perPage = columns <= 2 ? pageSize : columns * PAGE_ROWS;
 
 	const totalPages = Math.max( 1, Math.ceil( variations.length / perPage ) );
-	// Resizing changes the page size under `firstIndex` — snap it to the
-	// current page grid and clamp to the last page so no options get stranded.
-	const first = Math.min( Math.floor( firstIndex / perPage ), totalPages - 1 ) * perPage;
-	const currentPage = first / perPage + 1;
+	// Resizing can shrink the page count under `pageIndex` — clamp so no
+	// options get stranded behind a hidden pager.
+	const page = Math.min( pageIndex, totalPages - 1 );
+	const first = page * perPage;
 
 	const variationsToShow = useMemo(
 		() => ( showAll ? variations : variations.slice( first, first + perPage ) ),
 		[ variations, first, perPage, showAll ]
 	);
-
-	const revealPrevious = () => {
-		setFirstIndex( Math.max( 0, first - perPage ) );
-	};
-
-	const revealNext = () => {
-		setFirstIndex( Math.min( first + perPage, ( totalPages - 1 ) * perPage ) );
-	};
 
 	return (
 		<div className="agents-manager-variation-picker">
@@ -97,24 +89,24 @@ function VariationPicker( { variations, type, maxToShow, onSelect, activeVariati
 						</Tooltip>
 					) ) }
 				</Grid>
-				{ ! showAll && variations.length > perPage && (
+				{ ! showAll && totalPages > 1 && (
 					<div className="agents-manager-variation-picker__arrows">
 						<Button
 							label={ __( 'Previous', __i18n_text_domain__ ) }
 							size="compact"
 							icon={ chevronLeft }
-							onClick={ revealPrevious }
-							disabled={ first === 0 }
+							onClick={ () => setPageIndex( page - 1 ) }
+							disabled={ page === 0 }
 						/>
 						<div className="agents-manager-variation-picker__pager">
-							{ currentPage }/{ totalPages }
+							{ page + 1 }/{ totalPages }
 						</div>
 						<Button
 							label={ __( 'Next', __i18n_text_domain__ ) }
 							size="compact"
 							icon={ chevronRight }
-							onClick={ revealNext }
-							disabled={ first + perPage >= variations.length }
+							onClick={ () => setPageIndex( page + 1 ) }
+							disabled={ page + 1 === totalPages }
 						/>
 					</div>
 				) }
