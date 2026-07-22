@@ -440,7 +440,10 @@ export default function () {
 		siteSelection,
 		setupPreferences,
 		maybeRedirectToMultiSiteDashboard(
-			( params, queries ) => `/domains/${ queries.initialQuery }/domain-transfer-setup`
+			( params, queries ) =>
+				queries.initialQuery
+					? `/domains/${ queries.initialQuery }/domain-transfer-setup`
+					: '/domains'
 		),
 		navigation,
 		domainsController.redirectIfNoSite( '/domains/add' ),
