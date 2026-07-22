@@ -58,14 +58,19 @@ export const bundleMetadataQuery = ( query: string ) =>
 		meta: { persist: false },
 	} );
 
+// Module-level selectors so React Query sees a stable `select` reference across
+// renders instead of a fresh closure per call.
+const selectBundleSuggestion = ( data: BundleMetadata ) => data.bundle_suggestion;
+const selectBundleTriggers = ( data: BundleMetadata ) => data.bundle_triggers;
+
 export const bundleSuggestionQuery = ( query: string ) => ( {
 	...bundleMetadataQuery( query ),
-	select: ( data: BundleMetadata ) => data.bundle_suggestion,
+	select: selectBundleSuggestion,
 } );
 
 export const bundleTriggersQuery = ( query: string ) => ( {
 	...bundleMetadataQuery( query ),
-	select: ( data: BundleMetadata ) => data.bundle_triggers,
+	select: selectBundleTriggers,
 } );
 
 export const bundleForDomainQuery = ( fqdn: string ) =>
