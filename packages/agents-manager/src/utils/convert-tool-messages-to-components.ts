@@ -3,7 +3,6 @@ import ButtonPicker from '../components/button-picker';
 import ColorPicker from '../components/color-picker';
 import { EscalationButton } from '../components/escalation-button';
 import FontPicker from '../components/font-picker';
-import UnavailableToolMessage from '../components/unavailable-tool-message';
 import { isShowComponentTool } from './show-component-tools';
 import { getDisplayMessageFromToolData, isDisplayableToolMessageTool } from './tool-message-utils';
 import type { GetChatComponent } from './load-external-providers';
@@ -328,25 +327,6 @@ export default function convertToolMessagesToComponents( {
 						{
 							type: 'text' as const,
 							text: textData.data,
-						},
-					],
-				},
-			];
-		}
-
-		// Handle start over tool message
-		if (
-			textData.tool_id === 'big_sky__client_assistants' &&
-			textData.data?.assistantId === 'big-sky-site-admin'
-		) {
-			return [
-				{
-					...message,
-					content: [
-						{
-							type: 'component' as const,
-							component: UnavailableToolMessage as React.ComponentType,
-							componentProps: {},
 						},
 					],
 				},
