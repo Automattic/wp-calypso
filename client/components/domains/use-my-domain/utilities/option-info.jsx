@@ -9,10 +9,10 @@ const transferIllustration = <Icon icon={ TransferIcon } />;
 
 const optionTitleText = {
 	get transfer() {
-		return __( 'Transfer your domain' );
+		return __( 'Transfer your domain name' );
 	},
 	get connect() {
-		return __( 'Connect your site address' );
+		return __( 'Connect your domain name' );
 	},
 };
 
@@ -22,7 +22,7 @@ const transferSupported = {
 		return optionTitleText.transfer;
 	},
 	get topText() {
-		return __( 'Manage everything in one place.' );
+		return __( 'Manage everything in one place, including domain name renewals.' );
 	},
 	get etaText() {
 		return __( 'May take 5–7 days' );
@@ -31,8 +31,8 @@ const transferSupported = {
 	get benefits() {
 		return [
 			__( 'Free domain name renewal for 1 year' ),
-			__( 'Manage everything from WordPress.com' ),
-			__( 'Privacy protection and SSL included' ),
+			__( 'Manage everything in one place' ),
+			__( 'Private domain registration and SSL included' ),
 		];
 	},
 };
@@ -54,7 +54,7 @@ const connectSupported = {
 		return optionTitleText.connect;
 	},
 	get topText() {
-		return __( 'Use your existing domain with your site.' );
+		return __( 'Connect your existing domain name to WordPress.com.' );
 	},
 	get etaText() {
 		return __( 'May take up to 72 hours' );
@@ -62,8 +62,8 @@ const connectSupported = {
 	learnMoreLink: MAP_EXISTING_DOMAIN,
 	get benefits() {
 		return [
-			__( 'Keep your current domain provider' ),
-			__( 'Email and other services stay connected' ),
+			__( 'Keep your current domain name provider' ),
+			__( "Your existing services won't be interrupted" ),
 			__( 'Privacy protection and SSL included' ),
 		];
 	},
