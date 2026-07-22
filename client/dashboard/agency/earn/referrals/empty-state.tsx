@@ -64,7 +64,7 @@ export default function ReferralsEmptyState( { agencyId }: { agencyId: number } 
 						/>
 						<EmptyState.ActionItem
 							title={
-								<HStack spacing={ 2 } justify="flex-start" expanded={ false }>
+								<HStack as="span" spacing={ 2 } justify="flex-start" expanded={ false }>
 									<span>{ __( 'Prepare to get paid' ) }</span>
 									{ accountStatus && (
 										<Badge intent={ accountStatus.statusType }>{ accountStatus.status }</Badge>
@@ -75,7 +75,11 @@ export default function ReferralsEmptyState( { agencyId }: { agencyId: number } 
 								__( 'With <a>Tipalti</a>, our secure platform.' ),
 								{ a: <ExternalLink href="https://tipalti.com/" children={ null } /> }
 							) }
-							decoration={ tipaltiLogo }
+							decoration={
+								<span style={ { display: 'flex', alignItems: 'center', height: 24 } }>
+									{ tipaltiLogo }
+								</span>
+							}
 							actions={
 								<RouterLinkButton
 									variant={ hasPayeeAccount ? 'secondary' : 'primary' }
