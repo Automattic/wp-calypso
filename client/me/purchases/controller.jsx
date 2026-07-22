@@ -105,7 +105,7 @@ export function cancelPurchase( context, next ) {
 
 	// Start fetching cancel features immediately — the useQuery inside
 	// CancelPurchaseWrapper will reuse this in-flight promise.
-	queryClient.prefetchQuery( purchaseCancelFeaturesQuery( purchaseId ) );
+	queryClient.prefetchQuery( purchaseCancelFeaturesQuery( purchaseId, 'treatment' ) );
 
 	const CancelPurchaseWrapper = localize( () => {
 		// React Query owns the cancellation-features fetch: cancel-on-unmount,
@@ -113,7 +113,7 @@ export function cancelPurchase( context, next ) {
 		// dashboard side uses the same query at
 		// client/dashboard/me/billing-purchases/cancel-purchase/index.tsx.
 		const { data: purchaseCancelFeatures, isLoading: isPurchaseCancelFeaturesLoading } = useQuery(
-			purchaseCancelFeaturesQuery( purchaseId )
+			purchaseCancelFeaturesQuery( purchaseId, 'treatment' )
 		);
 		return (
 			<PurchasesWrapper title={ pageTitle }>

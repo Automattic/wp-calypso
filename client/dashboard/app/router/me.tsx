@@ -474,7 +474,7 @@ export const cancelPurchaseRoute = createRoute( {
 			queryClient.ensureQueryData( plansQuery() ),
 			// Prefetch the default (control) variant; the component refetches
 			// under the 'treatment' key when the split-cancel-remove flag is on.
-			queryClient.ensureQueryData( purchaseCancelFeaturesQuery( purchase.ID ) ),
+			queryClient.ensureQueryData( purchaseCancelFeaturesQuery( purchase.ID, 'treatment' ) ),
 		] );
 		return { purchase, intent };
 	},

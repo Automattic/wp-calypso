@@ -1438,10 +1438,8 @@ export default function PurchaseSettings() {
 	} )();
 
 	const isCentennial = isCentennialPurchase( purchase );
-	const isSplitEnabled = useIsSplitCancelRemoveEnabled();
 	const { data: cancelFeaturesResponse } = useQuery( {
 		...purchaseCancelFeaturesQuery( purchase.ID, 'treatment' ),
-		enabled: isSplitEnabled,
 	} );
 	const features = cancelFeaturesResponse?.features ?? null;
 	const hasExpiryInfo = ! purchase.partner_name || isA4ABillingDragonPurchase( purchase );
