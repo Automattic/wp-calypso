@@ -52,10 +52,12 @@ function VariationPicker( {
 	return (
 		<div className="agents-manager-variation-picker">
 			<VStack spacing={ 1 }>
-				{ /* `auto-fill` keeps empty tracks, so partial pages render cards at the same size instead of stretching them. */ }
+				{ /* At least 2 columns even in the docked chat (`min()` caps the track minimum at
+				     half the row), and `auto-fill` keeps empty tracks so partial pages render
+				     cards at the same size instead of stretching them. */ }
 				<Grid
 					gap={ 2 }
-					templateColumns="repeat(auto-fill, minmax(140px, 1fr))"
+					templateColumns="repeat(auto-fill, minmax(min(140px, calc(50% - 4px)), 1fr))"
 					className="agents-manager-variation-picker__grid"
 				>
 					{ variationsToShow.map( ( variation, index ) => (
