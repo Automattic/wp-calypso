@@ -23,7 +23,6 @@ import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { useInterval } from 'calypso/lib/interval';
 import { getProductSlugByPeriodVariation } from 'calypso/lib/plugins/utils';
 import MarketplaceProgressBar from 'calypso/my-sites/marketplace/components/progressbar';
-import useMarketplaceAdditionalSteps from 'calypso/my-sites/marketplace/pages/marketplace-product-install/use-marketplace-additional-steps';
 import theme from 'calypso/my-sites/marketplace/theme';
 import { waitFor } from 'calypso/my-sites/marketplace/util';
 import { useSelector, useDispatch } from 'calypso/state';
@@ -68,13 +67,17 @@ import {
 	getSelectedSiteSlug,
 } from 'calypso/state/ui/selectors';
 import './style.scss';
-import { MarketplacePluginInstallProps } from './types';
+import useMarketplaceAdditionalSteps from './use-marketplace-additional-steps';
 import type { IAppState } from 'calypso/state/types';
+import type { TranslateResult } from 'i18n-calypso';
 
 const MarketplaceProductInstall = ( {
 	pluginSlug = '',
 	themeSlug = '',
-}: MarketplacePluginInstallProps ) => {
+}: {
+	pluginSlug?: string;
+	themeSlug?: string;
+} ) => {
 	const isPluginUploadFlow = ! pluginSlug && ! themeSlug;
 	const [ currentStep, setCurrentStep ] = useState( 0 );
 	// Ref instead of state so the install effect can be guarded synchronously —
@@ -163,10 +166,6 @@ const MarketplaceProductInstall = ( {
 	const hasAtomicFeature = useSelector( ( state ) =>
 		siteHasFeature( state, selectedSite?.ID ?? null, WPCOM_FEATURES_ATOMIC )
 	);
-	const supportsAtomicUpgrade = useRef< boolean >( undefined );
-	useEffect( () => {
-		supportsAtomicUpgrade.current = hasAtomicFeature;
-	}, [ hasAtomicFeature ] );
 
 	// retrieve plugin data if not available
 	useEffect( () => {
@@ -175,17 +174,13 @@ const MarketplaceProductInstall = ( {
 		}
 	}, [ isWporgPluginFetched, pluginSlug, dispatch ] );
 
-	// Check if the user plan is enough for installation or it is a self-hosted jetpack site
-	// if not, check again in 2s and show an error message
+	// The plan's feature list can arrive late, so give it 2s before concluding that the site
+	// can't install plugins. Any change to the conditions restarts the timer.
 	useEffect( () => {
 		if ( hasAtomicFeature || isJetpackSelfHosted || nonInstallablePlanError ) {
 			return;
 		}
-		const id = setTimeout( () => {
-			if ( ! supportsAtomicUpgrade.current && ! isJetpackSelfHosted ) {
-				setNonInstallablePlanError( true );
-			}
-		}, 2000 );
+		const id = setTimeout( () => setNonInstallablePlanError( true ), 2000 );
 		return () => clearTimeout( id );
 	}, [ hasAtomicFeature, isJetpackSelfHosted, nonInstallablePlanError ] );
 
@@ -488,37 +483,33 @@ const MarketplaceProductInstall = ( {
 				</>
 			);
 		}
-		if ( pluginExists ) {
+		const uploadPageURL = `/plugins/upload/${ selectedSiteSlug }`;
+		const wpAdminUploadURL = `https://${ selectedSiteSlug }/wp-admin/plugin-install.php?tab=upload`;
+
+		// Rejected uploads all offer the same way out: back to the upload page, or retry in WP Admin.
+		const rejectedUploadLine: TranslateResult | false =
+			( pluginExists &&
+				translate(
+					'This plugin already exists on your site. If you want to upgrade or downgrade the plugin, please continue by uploading the plugin again from WP Admin.'
+				) ) ||
+			( pluginMalicious &&
+				translate(
+					'This plugin is identified as malicious. If you still insist to install the plugin, please continue by uploading the plugin again from WP Admin.'
+				) ) ||
+			( pluginTooBig &&
+				translate(
+					'This plugin is too big to be installed via this page. If you still want to install the plugin, please continue by uploading the plugin again from WP Admin.'
+				) );
+
+		if ( rejectedUploadLine ) {
 			return (
 				<EmptyContent
 					title={ null }
-					line={ translate(
-						'This plugin already exists on your site. If you want to upgrade or downgrade the plugin, please continue by uploading the plugin again from WP Admin.'
-					) }
+					line={ rejectedUploadLine }
 					secondaryAction={ translate( 'Back' ) }
-					secondaryActionURL={ `/plugins/upload/${ selectedSiteSlug }` }
+					secondaryActionURL={ uploadPageURL }
 					action={ translate( 'Re-upload plugin' ) }
-					actionURL={ `https://${ selectedSiteSlug }/wp-admin/plugin-install.php?tab=upload` }
-				/>
-			);
-		}
-		if ( pluginMalicious || pluginTooBig ) {
-			return (
-				<EmptyContent
-					title={ null }
-					line={
-						pluginMalicious
-							? translate(
-									'This plugin is identified as malicious. If you still insist to install the plugin, please continue by uploading the plugin again from WP Admin.'
-							  )
-							: translate(
-									'This plugin is too big to be installed via this page. If you still want to install the plugin, please continue by uploading the plugin again from WP Admin.'
-							  )
-					}
-					secondaryAction={ translate( 'Back' ) }
-					secondaryActionURL={ `/plugins/upload/${ selectedSiteSlug }` }
-					action={ translate( 'Re-upload plugin' ) }
-					actionURL={ `https://${ selectedSiteSlug }/wp-admin/plugin-install.php?tab=upload` }
+					actionURL={ wpAdminUploadURL }
 				/>
 			);
 		}
@@ -536,12 +527,10 @@ const MarketplaceProductInstall = ( {
 					) }
 					secondaryAction={ translate( 'Back' ) }
 					secondaryActionURL={
-						isPluginUploadFlow
-							? `/plugins/upload/${ selectedSiteSlug }`
-							: `/plugins/${ pluginSlug }/${ selectedSiteSlug }`
+						isPluginUploadFlow ? uploadPageURL : `/plugins/${ pluginSlug }/${ selectedSiteSlug }`
 					}
 					action={ translate( 'Upload from WP Admin' ) }
-					actionURL={ `https://${ selectedSiteSlug }/wp-admin/plugin-install.php?tab=upload` }
+					actionURL={ wpAdminUploadURL }
 				/>
 			);
 		}
