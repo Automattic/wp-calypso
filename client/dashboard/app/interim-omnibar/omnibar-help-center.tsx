@@ -1,7 +1,9 @@
 import config from '@automattic/calypso-config';
 import { Suspense, lazy, useCallback, useState } from 'react';
 import { useAuth } from '../auth';
+import { useAppContext } from '../context';
 import { useHelpCenter } from '../help-center';
+import { useA4AHelpCenterProps } from '../help-center/use-a4a-help-center-props';
 
 const AsyncHelpCenterApp = lazy( () => import( '../help-center/help-center-app' ) );
 
@@ -26,7 +28,9 @@ function hasHelpCenterQueryParam() {
  */
 export default function OmnibarHelpCenter() {
 	const { user } = useAuth();
+	const { helpCenter } = useAppContext();
 	const { isShown, setShowHelpCenter } = useHelpCenter();
+	const a4aHelpCenterProps = useA4AHelpCenterProps( helpCenter?.product === 'a4a' );
 	const [ shouldMount, setShouldMount ] = useState( hasHelpCenterQueryParam );
 
 	const handleClose = useCallback( () => {
@@ -52,6 +56,8 @@ export default function OmnibarHelpCenter() {
 				locale={ user.language }
 				onboardingUrl={ config( 'wpcom_signup_url' ) }
 				sectionName="dashboard"
+				product={ helpCenter?.product }
+				{ ...a4aHelpCenterProps }
 			/>
 		</Suspense>
 	);

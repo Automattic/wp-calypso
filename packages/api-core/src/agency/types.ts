@@ -34,6 +34,7 @@ export interface Agency {
 	};
 	third_party?: null | {
 		pressable?: null | {
+			pressable_id?: number;
 			usage?: null | {
 				start_date?: string;
 				end_date?: string;
