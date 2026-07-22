@@ -75,6 +75,7 @@ export const referralCommissionPayoutQuery = ( agencyId: number ) =>
 export const archiveReferralMutation = ( agencyId: number ) => {
 	const queryKey = referralsQuery( agencyId ).queryKey;
 	return mutationOptions( {
+		meta: { statId: 'agcy-referral-archive' },
 		mutationFn: ( referralId: number ) => archiveReferral( agencyId, referralId ),
 		onMutate: async ( referralId: number ) => {
 			await queryClient.cancelQueries( { queryKey } );
@@ -112,5 +113,6 @@ export const archiveReferralMutation = ( agencyId: number ) => {
 
 export const resendReferralEmailMutation = ( agencyId: number ) =>
 	mutationOptions( {
+		meta: { statId: 'agcy-referral-email-resend' },
 		mutationFn: ( referralId: number ) => resendReferralEmail( agencyId, referralId ),
 	} );
