@@ -3,6 +3,7 @@ import ButtonPicker from '../components/button-picker';
 import ColorPicker from '../components/color-picker';
 import { EscalationButton } from '../components/escalation-button';
 import FontPicker from '../components/font-picker';
+import StartOverMessage from '../components/start-over-message';
 import { isShowComponentTool } from './show-component-tools';
 import { getDisplayMessageFromToolData, isDisplayableToolMessageTool } from './tool-message-utils';
 import type { GetChatComponent } from './load-external-providers';
@@ -133,11 +134,6 @@ function hasLaterAgentToolMessageInSameTurn(
 
 	return false;
 }
-
-// The legacy `start over` tool is gone — ask the user to resend instead.
-const StartOverMessage = () => (
-	<p>{ __( 'To start over, please send your request again.', __i18n_text_domain__ ) }</p>
-);
 
 /**
  * Converts tool-related messages to component messages.
@@ -339,9 +335,9 @@ export default function convertToolMessagesToComponents( {
 		}
 
 		// Handle start over tool message
-		// TODO: Remove this branch and `StartOverMessage` when the
-		// `client-assistants` ability migrates (it is offered by no orchestrator
-		// route today — only old history rows carry it).
+		// TODO: Remove this branch and the `start-over-message` component when
+		// the `client-assistants` ability migrates (it is offered by no
+		// orchestrator route today — only old history rows carry it).
 		if (
 			textData.tool_id === 'big_sky__client_assistants' &&
 			textData.data?.assistantId === 'big-sky-site-admin'
@@ -352,7 +348,7 @@ export default function convertToolMessagesToComponents( {
 					content: [
 						{
 							type: 'component' as const,
-							component: StartOverMessage as React.ComponentType,
+							component: StartOverMessage,
 							componentProps: {},
 						},
 					],
