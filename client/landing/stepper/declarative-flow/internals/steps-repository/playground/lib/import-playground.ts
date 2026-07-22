@@ -58,11 +58,11 @@ export async function uploadSiteZip( siteId: number, siteZip: File ): Promise< n
 }
 
 export async function createPlaygroundImport( siteId: number, siteZip: File ) {
-	const mediaId = await uploadSiteZip( siteId, siteZip );
+	const attachmentId = await uploadSiteZip( siteId, siteZip );
 
 	return uploadExportFile( siteId, {
 		importStatus: { importStatus: 'importer-ready-for-upload', siteId, type: 'wordpress' },
-		mediaID: mediaId,
+		attachmentId: attachmentId,
 	} );
 }
 
