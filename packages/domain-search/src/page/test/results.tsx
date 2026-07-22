@@ -1483,6 +1483,97 @@ describe( 'ResultsPage', () => {
 			expect( await screen.findByTitle( 'flowers.com' ) ).toBeInTheDocument();
 			expect( screen.queryByRole( 'button', { name: 'Get bundle' } ) ).not.toBeInTheDocument();
 		} );
+
+		it( 'renders an inline bundle row below the featured section for a featured trigger in the cart', async () => {
+			// flowers.com is the first suggestion, so it is promoted to the featured
+			// section (Recommended) rather than the regular list. Its inline offer must
+			// still render — full-width in the featured-inline wrapper below the cards.
+			mockGetSuggestionsQuery( {
+				params: { query: 'flowers' },
+				suggestions: [
+					buildSuggestion( { domain_name: 'flowers.com' } ),
+					buildSuggestion( { domain_name: 'flowers.io' } ),
+					buildSuggestion( { domain_name: 'flowers.co' } ),
+				],
+			} );
+			mockGetBundleTriggersQuery( { params: { query: 'flowers' }, bundleTriggers: [ 'com' ] } );
+			mockGetBundleForDomainQuery( { fqdn: 'flowers.com', bundleSuggestion: flowersBundle } );
+
+			const { container } = render(
+				<TestDomainSearch
+					cart={ buildCart( {
+						items: [ buildCartItem( { domain: 'flowers', tld: 'com' } ) ],
+					} ) }
+					config={ { showBundleSuggestions: true } }
+					query="flowers"
+				>
+					<ResultsPage />
+				</TestDomainSearch>
+			);
+
+			// flowers.com leads the suggestions, so it is promoted into the featured
+			// section rather than the regular list.
+			expect( await screen.findByTitle( 'flowers.com' ) ).toBeInTheDocument();
+
+			// The offer renders once, inside the featured-inline wrapper below the
+			// featured cards — never duplicated into the regular suggestions list.
+			expect( await screen.findByRole( 'button', { name: 'Get bundle' } ) ).toBeInTheDocument();
+			const featuredInlineWrapper = container.querySelector(
+				'.domain-search--results__featured-inline-bundles'
+			);
+			expect( featuredInlineWrapper ).not.toBeNull();
+			expect( featuredInlineWrapper?.querySelector( '.inline-bundle-row' ) ).not.toBeNull();
+			expect( screen.getByText( '.net' ) ).toBeInTheDocument();
+			expect( container.querySelectorAll( '.inline-bundle-row' ) ).toHaveLength( 1 );
+			expect( container.querySelector( '.domain-suggestions-list .inline-bundle-row' ) ).toBeNull();
+		} );
+
+		it( 'shows only the top BundleCard and no duplicate inline row for a FQDN trigger', async () => {
+			// NOTE: on this trunk-based branch the inline path is still FQDN-gated, so
+			// no inline row renders for an FQDN query at all. Once PR 1 relaxes that
+			// gate beneath this branch, the inline path also runs for FQDN queries and
+			// this test then exercises the featured de-dup: the top card and the inline
+			// offer share the flowers.com primary, so the inline row is suppressed. The
+			// assertion (no `.inline-bundle-row`, top card present) holds in both worlds.
+			mockGetAvailabilityQuery( {
+				params: { domainName: 'flowers.com' },
+				availability: buildAvailability( {
+					domain_name: 'flowers.com',
+					status: DomainAvailabilityStatus.AVAILABLE,
+				} ),
+			} );
+			mockGetSuggestionsQuery( {
+				params: { query: 'flowers.com' },
+				suggestions: [ buildSuggestion( { domain_name: 'flowers.com' } ) ],
+			} );
+			mockGetBundleSuggestionQuery( {
+				params: { query: 'flowers.com' },
+				bundleSuggestion: flowersBundle,
+			} );
+			// Mocked for the post-rebase (gate-relaxed) world; unconsumed on this branch.
+			mockGetBundleTriggersQuery( { params: { query: 'flowers.com' }, bundleTriggers: [ 'com' ] } );
+			mockGetBundleForDomainQuery( { fqdn: 'flowers.com', bundleSuggestion: flowersBundle } );
+
+			const { container } = render(
+				<TestDomainSearch
+					cart={ buildCart( {
+						items: [ buildCartItem( { domain: 'flowers', tld: 'com' } ) ],
+					} ) }
+					config={ { showBundleSuggestions: true } }
+					query="flowers.com"
+				>
+					<ResultsPage />
+				</TestDomainSearch>
+			);
+
+			// The top BundleCard is the single offer...
+			expect( await findBundleMember( 'flowers.net' ) ).toBeInTheDocument();
+			// ...with no inline row duplicating the flowers.com primary.
+			expect( container.querySelector( '.inline-bundle-row' ) ).toBeNull();
+			expect(
+				container.querySelector( '.domain-search--results__featured-inline-bundles' )
+			).toBeNull();
+		} );
 	} );
 
 	describe( 'tracking', () => {
@@ -1579,7 +1670,8 @@ describe( 'ResultsPage', () => {
 					domains: expect.arrayContaining( [
 						expect.objectContaining( { domain: 'bundle-shown.com' } ),
 					] ),
-				} )
+				} ),
+				'card'
 			);
 		} );
 
@@ -1599,6 +1691,79 @@ describe( 'ResultsPage', () => {
 
 			expect( await screen.findByTitle( 'bundle-off.com' ) ).toBeInTheDocument();
 			expect( onBundleShown ).not.toHaveBeenCalled();
+		} );
+
+		it( 'fires the onBundleShown event with placement "card" for the top bundle card', async () => {
+			const onBundleShown = jest.fn();
+
+			mockGetSuggestionsQuery( {
+				params: { query: 'bundle-card-shown.com' },
+				suggestions: [ buildSuggestion( { domain_name: 'bundle-card-shown.com' } ) ],
+			} );
+			mockGetBundleSuggestionQuery( {
+				params: { query: 'bundle-card-shown.com' },
+				bundleSuggestion: buildBundleSuggestion( 'bundle-card-shown' ),
+			} );
+
+			render(
+				<TestDomainSearch
+					events={ { onBundleShown } }
+					config={ { showBundleSuggestions: true } }
+					query="bundle-card-shown.com"
+				>
+					<ResultsPage />
+				</TestDomainSearch>
+			);
+
+			await waitFor( () => {
+				expect( onBundleShown ).toHaveBeenCalledTimes( 1 );
+			} );
+			expect( onBundleShown ).toHaveBeenCalledWith(
+				expect.objectContaining( { bundle_group_id: 'mock-bundle-card-shown-group' } ),
+				'card'
+			);
+		} );
+
+		it( 'fires the onBundleShown event with placement "inline" once per rendered inline bundle', async () => {
+			const onBundleShown = jest.fn();
+
+			// petals.com leads the list, so it is promoted to the featured section and
+			// its inline offer is the featured-inline row (the Phase 3 path). A domain
+			// distinct from the other inline tests avoids sharing their cached bundle.
+			mockGetSuggestionsQuery( {
+				params: { query: 'petals' },
+				suggestions: [
+					buildSuggestion( { domain_name: 'petals.com' } ),
+					buildSuggestion( { domain_name: 'petals.io' } ),
+					buildSuggestion( { domain_name: 'petals.co' } ),
+				],
+			} );
+			mockGetBundleTriggersQuery( { params: { query: 'petals' }, bundleTriggers: [ 'com' ] } );
+			mockGetBundleForDomainQuery( {
+				fqdn: 'petals.com',
+				bundleSuggestion: buildBundleSuggestion( 'petals' ),
+			} );
+
+			render(
+				<TestDomainSearch
+					cart={ buildCart( {
+						items: [ buildCartItem( { domain: 'petals', tld: 'com' } ) ],
+					} ) }
+					events={ { onBundleShown } }
+					config={ { showBundleSuggestions: true } }
+					query="petals"
+				>
+					<ResultsPage />
+				</TestDomainSearch>
+			);
+
+			await waitFor( () => {
+				expect( onBundleShown ).toHaveBeenCalledTimes( 1 );
+			} );
+			expect( onBundleShown ).toHaveBeenCalledWith(
+				expect.objectContaining( { bundle_group_id: 'mock-petals-group' } ),
+				'inline'
+			);
 		} );
 
 		it( 'fires the onBundleAddToCart event after the bundle add succeeds', async () => {
@@ -1645,7 +1810,8 @@ describe( 'ResultsPage', () => {
 				expect( onBundleAddToCart ).toHaveBeenCalledTimes( 1 );
 			} );
 			expect( onBundleAddToCart ).toHaveBeenCalledWith(
-				expect.objectContaining( { bundle_group_id: 'mock-bundle-accept-group' } )
+				expect.objectContaining( { bundle_group_id: 'mock-bundle-accept-group' } ),
+				'card'
 			);
 		} );
 

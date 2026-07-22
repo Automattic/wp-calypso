@@ -224,16 +224,18 @@ export const useWPCOMDomainSearchEvents = ( {
 					)
 				);
 			},
-			onBundleShown: ( bundle ) => {
+			onBundleShown: ( bundle, placement ) => {
 				recordTracksEvent( 'calypso_domain_bundle_shown', {
 					domain_bundle_group_id: bundle.bundle_group_id,
 					domain_count: bundle.domains.length,
+					placement,
 				} );
 			},
-			onBundleAddToCart: ( bundle ) => {
+			onBundleAddToCart: ( bundle, placement ) => {
 				recordTracksEvent( 'calypso_domain_bundle_accepted', {
 					domain_bundle_group_id: bundle.bundle_group_id,
 					domain_count: bundle.domains.length,
+					placement,
 				} );
 			},
 		};
