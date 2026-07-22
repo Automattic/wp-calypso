@@ -14,10 +14,9 @@ let adminBarInEditorSnapshot: boolean | undefined;
  * experiment, or any context that renders a visible `#wpadminbar`. When it is, the editor toolbar
  * entry points move into the admin bar instead.
  *
- * Snapshotted on first read and kept for the page's lifetime, mirroring the Help Center button
- * (`apps/help-center/help-center-gutenberg.jsx`): the signals change as the user toggles editor
- * modes (fullscreen, distraction-free), and the entry points must not hop between the toolbar and
- * the admin bar.
+ * Snapshotted on first read and kept for the page's lifetime: the signals change as the user
+ * toggles editor modes (fullscreen, distraction-free), and the entry points must not hop between
+ * the toolbar and the admin bar.
  */
 export function isAdminBarInEditor(): boolean {
 	if ( adminBarInEditorSnapshot === undefined ) {
