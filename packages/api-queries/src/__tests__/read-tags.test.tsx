@@ -293,7 +293,47 @@ describe( 'optimistic followed-tags cache updates', () => {
 			await result.current.mutateAsync( 'finance' ).catch( () => undefined );
 		} );
 
-		expect( cachedSlugs( client ) ).toEqual( [ 'finance', 'health' ] );
+		expect( cachedSlugs( client ).sort() ).toEqual( [ 'finance', 'health' ] );
+	} );
+
+	it( 'removes only the optimistically-added tag when the follow request fails', async () => {
+		nock( BASE ).post( '/rest/v1.1/read/tags/gardening/mine/new' ).reply( 500, {} );
+
+		const client = newClient();
+		seedFollowed( client, [ 'health' ] );
+		const { result } = renderHook( () => useMutation( followReadTagMutation( client ) ), {
+			wrapper: makeWrapper( client ),
+		} );
+
+		await act( async () => {
+			await result.current.mutateAsync( 'gardening' ).catch( () => undefined );
+		} );
+
+		expect( cachedSlugs( client ) ).toEqual( [ 'health' ] );
+	} );
+
+	it( 'rolls back only its own tag when concurrent mutations run and one fails', async () => {
+		nock( BASE )
+			.post( '/rest/v1.1/read/tags/finance/mine/delete' )
+			.reply( 200, { subscribed: false, removed_tag: '1' } );
+		nock( BASE ).post( '/rest/v1.1/read/tags/health/mine/delete' ).reply( 500, {} );
+
+		const client = newClient();
+		seedFollowed( client, [ 'finance', 'health' ] );
+		const { result } = renderHook( () => useMutation( unfollowReadTagMutation( client ) ), {
+			wrapper: makeWrapper( client ),
+		} );
+
+		await act( async () => {
+			await Promise.all( [
+				result.current.mutateAsync( 'finance' ).catch( () => undefined ),
+				result.current.mutateAsync( 'health' ).catch( () => undefined ),
+			] );
+		} );
+
+		// finance's unfollow succeeded (stays removed); health's failed and was
+		// rolled back (re-added) without reverting finance's optimistic removal.
+		expect( cachedSlugs( client ) ).toEqual( [ 'health' ] );
 	} );
 
 	it( 'adds the tag to the followed cache on follow', async () => {
