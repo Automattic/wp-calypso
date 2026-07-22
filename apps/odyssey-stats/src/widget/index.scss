@@ -12,6 +12,15 @@ $segmentedControlItemBorderRadius: 4px;
 	margin: -11px -12px -12px;
 }
 
+// Counters WP-admin core's own `.card` utility class, which collides with the `Card` component
+// StatsEmptyState (rendered by MiniChart/Modules) uses for its empty-state placeholder. Mirrors
+// the equivalent `.jp-stats-dashboard .card` override in app.scss for the main app.
+.card {
+	border: 0;
+	max-width: initial;
+	min-width: initial;
+}
+
 .stats-widget-content {
 	font-family: $font-sf-pro-text;
 

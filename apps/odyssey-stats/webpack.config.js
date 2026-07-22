@@ -137,6 +137,10 @@ module.exports = {
 								/^:lang\(/, // :lang(he) .rtl
 								/^\[lang/, // [lang*=fr] .wp-brand-font
 								/^\[dir[~|^$*]?=/, // [dir=rtl] .chevron
+								// .jp-stats-widget styling its own mount element (widget/index.scss).
+								// It's already one of the prefix roots above, so nesting it as a
+								// descendant of itself would go dead — same problem :root/html/body have.
+								/^\.jp-stats-widget$/,
 							],
 						} ),
 						autoprefixerPlugin(),
