@@ -173,8 +173,8 @@ interface Props {
 	isCompactMode: boolean;
 	/** Navigation continuation hook for post-navigation conversation resumption. */
 	useNavigationContinuation?: NavigationContinuationHook;
-	/** Hook for setting up abilities that utilize React context. Invoked after custom actions registration. */
-	useAbilitiesSetup?: AbilitiesSetupHook;
+	/** The external providers' abilities-setup hook (e.g. Big Sky, jetpack-ai-sidebar). Invoked after custom actions registration. */
+	useProviderAbilitiesSetup?: AbilitiesSetupHook;
 	/** Hook for providing dynamic suggestions based on context (e.g., selected block). */
 	useSuggestions?: UseSuggestionsHook;
 	/** Get a chat component by type for rendering in agent messages. */
@@ -201,7 +201,7 @@ export default function OrchestratorChat( {
 	markdownExtensions,
 	isCompactMode,
 	useNavigationContinuation,
-	useAbilitiesSetup,
+	useProviderAbilitiesSetup,
 	useSuggestions,
 	getChatComponent,
 	siteBuildUtils,
@@ -765,7 +765,7 @@ export default function OrchestratorChat( {
 	// TODO: After Big Sky's abilities migrate, prune this object to the fields
 	// other providers consume (jetpack-ai-sidebar reads only `clearSuggestions`
 	// and `isProcessing`) and drop the `BigSkyMessage` conversion.
-	useAbilitiesSetup?.( {
+	useProviderAbilitiesSetup?.( {
 		addMessage: ( message: BigSkyMessage ) => {
 			// Transform Big Sky message format to `UIMessage` format and add to chat.
 			addMessage( convertBigSkyMessageToUIMessage( message ) );
