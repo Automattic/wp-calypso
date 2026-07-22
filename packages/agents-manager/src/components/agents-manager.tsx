@@ -138,7 +138,6 @@ function AgentSetup( { agentId: hostAgentId }: { agentId?: string } ): JSX.Eleme
 				const agentManager = getAgentManager();
 
 				if ( agentManager.hasAgent( agentId ) ) {
-					// eslint-disable-next-line @typescript-eslint/await-thenable -- ensure abort completes before teardown
 					await agentManager.abortCurrentRequest( agentId );
 					agentManager.removeAgent( agentId );
 				}
