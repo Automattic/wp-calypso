@@ -26,7 +26,7 @@ const AM_COMPONENTS: Record< ShowComponentType, React.ComponentType > = {
 };
 
 function getAmComponent( type: string ): React.ComponentType | null {
-	// Own-property check so degenerate types (e.g. 'toString') can't resolve
+	// Own-property check so degenerate types (e.g. `toString`) can't resolve
 	// to `Object.prototype` members.
 	return Object.hasOwn( AM_COMPONENTS, type ) ? AM_COMPONENTS[ type as ShowComponentType ] : null;
 }
