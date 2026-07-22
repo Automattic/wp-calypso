@@ -335,6 +335,9 @@ export default function convertToolMessagesToComponents( {
 		}
 
 		// Handle start over tool message
+		// TODO: Likely dead — `client-assistants` is in no orchestrator route
+		// allowlist, so only old history rows can carry it. Verify, then delete
+		// this branch together with `UnavailableToolMessage`.
 		if (
 			textData.tool_id === 'big_sky__client_assistants' &&
 			textData.data?.assistantId === 'big-sky-site-admin'
