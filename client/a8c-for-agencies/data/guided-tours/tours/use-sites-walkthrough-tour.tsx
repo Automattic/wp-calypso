@@ -82,7 +82,7 @@ export default function useSitesWalkthroughTour() {
 			popoverPosition: 'bottom right',
 			title: translate( '🔍 Detailed views' ),
 			description: translate(
-				'Click the arrow for detailed insights on stats, site speed performance, recent backups, and monitoring activity trends. Handy, right?'
+				'Click the site name for detailed insights on backups, security scans, Uptime Monitor, recent activity, and other available site details.'
 			),
 		},
 		{
