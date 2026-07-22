@@ -1,0 +1,143 @@
+import { Step } from '@automattic/onboarding';
+import { createInterpolateElement } from '@wordpress/element';
+import { sprintf } from '@wordpress/i18n';
+import { useI18n } from '@wordpress/react-i18n';
+import { useEffect, useRef } from 'react';
+import DocumentHead from 'calypso/components/data/document-head';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import UserVerificationChecker from 'calypso/lib/user/verification-checker';
+import { useSelector } from 'calypso/state';
+import { getCurrentUser } from 'calypso/state/current-user/selectors';
+import { useEmailVerification } from './use-email-verification';
+import type { Step as StepType } from '../../types';
+
+import './style.scss';
+
+const EmailVerification: StepType< {
+	submits: {
+		emailVerified: boolean;
+	};
+} > = function EmailVerification( { navigation, flow } ) {
+	const { __ } = useI18n();
+	const user = useSelector( getCurrentUser );
+	const {
+		isVerified,
+		isSending,
+		hasSendError,
+		secondsUntilResend,
+		isChecking,
+		hasFailedCheck,
+		checkNow,
+		resend,
+	} = useEmailVerification( flow );
+
+	const shownAt = useRef( Date.now() );
+	const hasSubmitted = useRef( false );
+
+	const title = __( 'Confirm your email address' );
+
+	useEffect( () => {
+		if ( ! isVerified || hasSubmitted.current ) {
+			return;
+		}
+
+		hasSubmitted.current = true;
+		recordTracksEvent( 'calypso_signup_email_verification_confirmed', {
+			flow,
+			seconds_on_step: Math.round( ( Date.now() - shownAt.current ) / 1000 ),
+		} );
+		navigation.submit( { emailVerified: true } );
+	}, [ isVerified, flow, navigation ] );
+
+	const onSkip = () => {
+		if ( hasSubmitted.current ) {
+			return;
+		}
+
+		hasSubmitted.current = true;
+		recordTracksEvent( 'calypso_signup_email_verification_skipped', {
+			flow,
+			seconds_on_step: Math.round( ( Date.now() - shownAt.current ) / 1000 ),
+		} );
+		navigation.submit( { emailVerified: false } );
+	};
+
+	const subText = createInterpolateElement(
+		sprintf(
+			// translators: %s is the email address the confirmation link was sent to.
+			__(
+				'Click the link we sent to <email>%s</email> and we’ll pick up right where you left off.'
+			),
+			user?.email ?? ''
+		),
+		{ email: <strong /> }
+	);
+
+	return (
+		<>
+			<DocumentHead title={ title } />
+			{ /* Confirming in another tab of this browser resolves the step immediately. */ }
+			<UserVerificationChecker />
+			<Step.CenteredColumnLayout
+				columnWidth={ 4 }
+				verticalAlign="center"
+				className="email-verification"
+				topBar={
+					<Step.TopBar
+						leftElement={
+							navigation.goBack ? <Step.BackButton onClick={ navigation.goBack } /> : undefined
+						}
+					/>
+				}
+				heading={ <Step.Heading align="center" text={ title } subText={ subText } /> }
+			>
+				<Step.PrimaryButton onClick={ checkNow } isBusy={ isChecking } disabled={ isChecking }>
+					{ __( 'I’ve confirmed my email' ) }
+				</Step.PrimaryButton>
+
+				{ hasFailedCheck && (
+					<p className="email-verification__notice" role="status">
+						{ __(
+							'We haven’t received your confirmation yet. Open the link in your inbox, then try again.'
+						) }
+					</p>
+				) }
+
+				{ hasSendError && (
+					<p className="email-verification__notice is-error" role="alert">
+						{ __( 'We couldn’t send the email. Please try again in a moment.' ) }
+					</p>
+				) }
+
+				<p className="email-verification__resend">
+					{ secondsUntilResend > 0
+						? sprintf(
+								// translators: %d is the number of seconds the user has to wait before the email can be sent again.
+								__(
+									'Nothing in your inbox? Check your spam folder. You can resend the email in %ds.'
+								),
+								secondsUntilResend
+						  )
+						: createInterpolateElement(
+								__(
+									'Nothing in your inbox? Check your spam folder, or <resend>resend the email</resend>.'
+								),
+								{
+									resend: (
+										<Step.LinkButton
+											onClick={ resend }
+											disabled={ isSending }
+											isBusy={ isSending }
+										/>
+									),
+								}
+						  ) }
+				</p>
+
+				<Step.SkipButton onClick={ onSkip }>{ __( 'I’ll do this later' ) }</Step.SkipButton>
+			</Step.CenteredColumnLayout>
+		</>
+	);
+};
+
+export default EmailVerification;

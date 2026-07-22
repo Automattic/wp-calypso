@@ -26,7 +26,11 @@ import {
 	clearSignupCompleteSiteID,
 } from 'calypso/signup/storageUtils';
 import { useSelector, useDispatch as useReduxDispatch } from 'calypso/state';
-import { getCurrentUser, isUserLoggedIn } from 'calypso/state/current-user/selectors';
+import {
+	getCurrentUser,
+	isCurrentUserEmailVerified,
+	isUserLoggedIn,
+} from 'calypso/state/current-user/selectors';
 import { setSelectedSiteId } from 'calypso/state/ui/actions';
 import { State } from '../../../../../../packages/data-stores/src/plans/reducer';
 import { isPlanProductFree } from '../../../../../../packages/data-stores/src/plans/selectors';
@@ -55,6 +59,7 @@ function initialize() {
 		STEPS.DOMAIN_SEARCH,
 		STEPS.USE_MY_DOMAIN,
 		STEPS.UNIFIED_PLANS,
+		...( isEnabled( 'onboarding/email-verification' ) ? [ STEPS.EMAIL_VERIFICATION ] : [] ),
 		STEPS.SITE_CREATION_STEP,
 		STEPS.PROCESSING,
 		STEPS.POST_CHECKOUT_ONBOARDING,
@@ -100,6 +105,8 @@ const onboarding: FlowV2< typeof initialize > = {
 		const { setShouldShowNotification } = usePurchasePlanNotification();
 
 		const playgroundId = queryParams.get( 'playground' );
+
+		const isEmailVerified = useSelector( isCurrentUserEmailVerified );
 
 		/**
 		 * Returns [destination, backDestination] for the post-checkout destination.
@@ -256,8 +263,18 @@ const onboarding: FlowV2< typeof initialize > = {
 					setProductCartItems( products.filter( ( product ) => product !== null ) );
 
 					setSignupCompleteFlowName( flowName );
+
+					// Only the free plan is gated for now. Picking a paid plan sends the
+					// user to checkout next, and asking them to leave for their inbox
+					// right before paying is friction we don't want to introduce yet.
+					if ( isEnabled( 'onboarding/email-verification' ) && ! pickedPlan && ! isEmailVerified ) {
+						return navigate( 'email-verification' );
+					}
+
 					return navigate( 'create-site', undefined, false );
 				}
+				case 'email-verification':
+					return navigate( 'create-site', undefined, false );
 				case 'create-site':
 					return navigate( 'processing', undefined, true );
 				case 'post-checkout-onboarding': {
@@ -482,6 +499,8 @@ const onboarding: FlowV2< typeof initialize > = {
 			switch ( currentStepSlug ) {
 				case 'plans':
 					return navigate( 'domains' );
+				case 'email-verification':
+					return navigate( 'plans' );
 				default:
 					return window.history.back();
 			}

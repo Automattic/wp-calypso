@@ -2,6 +2,7 @@
  * @jest-environment jsdom
  */
 // @ts-nocheck - TODO: Fix TypeScript issues
+import config from '@automattic/calypso-config';
 import { ONBOARDING_FLOW } from '@automattic/onboarding';
 import React from 'react';
 import { MemoryRouter } from 'react-router';
@@ -10,9 +11,25 @@ import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import onboarding from '../flows/onboarding/onboarding';
 import { STEPS } from '../internals/steps';
 import { ProcessingResult } from '../internals/steps-repository/processing-step/constants';
-import { renderFlow } from './helpers';
+import { getFlowLocation, renderFlow } from './helpers';
 
 const originalLocation = window.location;
+
+// Flags added to `enabledFlags` read as enabled on top of the test config. The set
+// lives inside the factory because config is read while modules are still importing,
+// long before a top-level `const` in this file would be initialized.
+jest.mock( '@automattic/calypso-config', () => {
+	const actual = jest.requireActual( '@automattic/calypso-config' );
+	const enabledFlags = new Set();
+	const configFn = ( key ) => actual( key );
+	Object.assign( configFn, actual, {
+		enabledFlags,
+		isEnabled: ( flag ) => enabledFlags.has( flag ) || actual.isEnabled( flag ),
+	} );
+	return configFn;
+} );
+
+const { enabledFlags } = config;
 
 jest.mock( '../../hooks/use-marketplace-theme-products', () => ( {
 	useMarketplaceThemeProducts: () => ( {
@@ -60,6 +77,56 @@ describe( 'Onboarding Flow', () => {
 
 	beforeEach( () => {
 		jest.resetAllMocks();
+		enabledFlags.clear();
+	} );
+
+	describe( 'Email verification step', () => {
+		it( 'asks free-plan signups to confirm their email before the site is created', () => {
+			enabledFlags.add( 'onboarding/email-verification' );
+			const { runUseStepNavigationSubmit } = renderFlow( onboarding );
+
+			runUseStepNavigationSubmit( {
+				currentStep: STEPS.UNIFIED_PLANS.slug,
+				dependencies: { cartItems: null },
+			} );
+
+			expect( getFlowLocation().path ).toBe( `/${ STEPS.EMAIL_VERIFICATION.slug }` );
+		} );
+
+		it( 'leaves paid signups alone so nothing stands between them and checkout', () => {
+			enabledFlags.add( 'onboarding/email-verification' );
+			const { runUseStepNavigationSubmit } = renderFlow( onboarding );
+
+			runUseStepNavigationSubmit( {
+				currentStep: STEPS.UNIFIED_PLANS.slug,
+				dependencies: { cartItems: [ { product_slug: 'personal-bundle' } ] },
+			} );
+
+			expect( getFlowLocation().path ).toBe( `/${ STEPS.SITE_CREATION_STEP.slug }` );
+		} );
+
+		it( 'stays out of the way while the flag is off', () => {
+			const { runUseStepNavigationSubmit } = renderFlow( onboarding );
+
+			runUseStepNavigationSubmit( {
+				currentStep: STEPS.UNIFIED_PLANS.slug,
+				dependencies: { cartItems: null },
+			} );
+
+			expect( getFlowLocation().path ).toBe( `/${ STEPS.SITE_CREATION_STEP.slug }` );
+		} );
+
+		it( 'creates the site once the email is confirmed', () => {
+			enabledFlags.add( 'onboarding/email-verification' );
+			const { runUseStepNavigationSubmit } = renderFlow( onboarding );
+
+			runUseStepNavigationSubmit( {
+				currentStep: STEPS.EMAIL_VERIFICATION.slug,
+				dependencies: { emailVerified: true },
+			} );
+
+			expect( getFlowLocation().path ).toBe( `/${ STEPS.SITE_CREATION_STEP.slug }` );
+		} );
 	} );
 
 	describe( 'Flow configuration', () => {

@@ -1,0 +1,23 @@
+.email-verification {
+	align-items: center;
+	display: flex;
+	flex-direction: column;
+	gap: 16px;
+	text-align: center;
+}
+
+.email-verification__notice {
+	color: var(--color-text-subtle);
+	font-size: 0.875rem;
+	margin: 0;
+}
+
+.email-verification__notice.is-error {
+	color: var(--color-error);
+}
+
+.email-verification__resend {
+	color: var(--color-text-subtle);
+	font-size: 0.875rem;
+	margin: 0;
+}
