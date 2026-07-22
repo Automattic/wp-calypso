@@ -336,8 +336,8 @@ export default function convertToolMessagesToComponents( {
 
 		// Handle start over tool message
 		// TODO: Remove this branch and the `start-over-message` component when
-		// the `client-assistants` ability migrates (it is offered by no
-		// orchestrator route today — only old history rows carry it).
+		// the `client-assistants` ability migrates. No agent offers that tool
+		// today — only old conversation history still contains it.
 		if (
 			textData.tool_id === 'big_sky__client_assistants' &&
 			textData.data?.assistantId === 'big-sky-site-admin'
