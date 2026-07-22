@@ -184,11 +184,23 @@ export const ResultsPage = () => {
 			// only when a currently-visible top BundleCard already resolves to that
 			// same primary — never merely because it matches the typed query, so a
 			// withheld/absent top card still leaves the inline offer visible.
-			const primaryFqdn = inlineBundle.bundle
-				? getBundlePrimaryDomain( inlineBundle.bundle ).domain.toLowerCase()
-				: suggestion.toLowerCase();
+			const primaryFqdn =
+				inlineBundle.bundle && inlineBundle.bundle.domains.length > 0
+					? getBundlePrimaryDomain( inlineBundle.bundle ).domain.toLowerCase()
+					: suggestion.toLowerCase();
 
 			if ( visibleBundlePrimaryFqdn && primaryFqdn === visibleBundlePrimaryFqdn ) {
+				return null;
+			}
+
+			// InlineBundleRow renders nothing for a resolved bundle without at least
+			// one companion beyond the primary, so drop the entry here too — otherwise
+			// the role="list" wrapper below would render with no listitem children.
+			if (
+				! inlineBundle.isLoading &&
+				inlineBundle.bundle &&
+				! inlineBundle.bundle.domains.some( ( { domain } ) => domain.toLowerCase() !== primaryFqdn )
+			) {
 				return null;
 			}
 

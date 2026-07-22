@@ -1529,12 +1529,10 @@ describe( 'ResultsPage', () => {
 		} );
 
 		it( 'shows only the top BundleCard and no duplicate inline row for a FQDN trigger', async () => {
-			// NOTE: on this trunk-based branch the inline path is still FQDN-gated, so
-			// no inline row renders for an FQDN query at all. Once PR 1 relaxes that
-			// gate beneath this branch, the inline path also runs for FQDN queries and
-			// this test then exercises the featured de-dup: the top card and the inline
-			// offer share the flowers.com primary, so the inline row is suppressed. The
-			// assertion (no `.inline-bundle-row`, top card present) holds in both worlds.
+			// The inline path runs for FQDN queries too (the base branch relaxed the
+			// FQDN gate), so this test exercises the featured de-dup: the top card and
+			// the inline offer share the flowers.com primary, so the inline row is
+			// suppressed in favor of the card.
 			mockGetAvailabilityQuery( {
 				params: { domainName: 'flowers.com' },
 				availability: buildAvailability( {
@@ -1550,7 +1548,6 @@ describe( 'ResultsPage', () => {
 				params: { query: 'flowers.com' },
 				bundleSuggestion: flowersBundle,
 			} );
-			// Mocked for the post-rebase (gate-relaxed) world; unconsumed on this branch.
 			mockGetBundleTriggersQuery( { params: { query: 'flowers.com' }, bundleTriggers: [ 'com' ] } );
 			mockGetBundleForDomainQuery( { fqdn: 'flowers.com', bundleSuggestion: flowersBundle } );
 
