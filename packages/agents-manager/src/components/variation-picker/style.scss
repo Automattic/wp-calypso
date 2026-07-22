@@ -1,5 +1,6 @@
 .agents-manager-variation-picker {
-	// Cap width in wide chats so cards stay card-sized.
+	// Cap the picker at four columns — wide chats get a compact block, and the
+	// width tiers in `index.tsx` rely on this bound.
 	max-width: 640px;
 
 	&__grid {
