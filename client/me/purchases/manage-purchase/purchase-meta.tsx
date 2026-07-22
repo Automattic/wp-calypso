@@ -19,13 +19,12 @@ import useUserLicenseBySubscriptionQuery from 'calypso/data/jetpack-licensing/us
 import { ResponseDomain } from 'calypso/lib/domains/types';
 import {
 	getName,
-	isExpired,
+	isExpiredOrRemoved,
 	isExpiring,
 	isIncludedWithPlan,
 	isOneTimePurchase,
-	isRenewing,
+	isRenewingBeforeExpiration,
 	isSubscription,
-	isInExpirationGracePeriod,
 } from 'calypso/lib/purchases';
 import { useSelector } from 'calypso/state';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
@@ -174,7 +173,7 @@ function renderRenewsOrExpiresOnLabel( {
 	domainDetails?: ResponseDomain | null;
 	translate: ReturnType< typeof useTranslate >;
 } ): string | null {
-	if ( isExpiring( purchase ) && ! isInExpirationGracePeriod( purchase ) ) {
+	if ( isExpiring( purchase ) ) {
 		if ( isDomainRegistration( purchase ) ) {
 			if ( domainDetails?.isHundredYearDomain ) {
 				return translate( 'Paid until' );
@@ -191,7 +190,7 @@ function renderRenewsOrExpiresOnLabel( {
 		}
 	}
 
-	if ( isExpired( purchase ) || isInExpirationGracePeriod( purchase ) ) {
+	if ( isExpiredOrRemoved( purchase ) ) {
 		if ( isDomainRegistration( purchase ) ) {
 			return translate( 'Domain expired on' );
 		}
@@ -250,11 +249,11 @@ function renderRenewsOrExpiresOn( {
 		);
 	}
 
-	if ( isExpiring( purchase ) || isExpired( purchase ) || isInExpirationGracePeriod( purchase ) ) {
+	if ( isExpiring( purchase ) || isExpiredOrRemoved( purchase ) ) {
 		return <>{ moment( purchase.expiryDate ).format( 'LL' ) }</>;
 	}
 
-	if ( isRenewing( purchase ) ) {
+	if ( isRenewingBeforeExpiration( purchase ) ) {
 		return <>{ moment( purchase.renewDate ).format( 'LL' ) }</>;
 	}
 
@@ -299,7 +298,7 @@ function RenewErrorMessage( {
 	if ( isJetpack ) {
 		return (
 			<div className="manage-purchase__footnotes">
-				{ isExpired( purchase )
+				{ isExpiredOrRemoved( purchase )
 					? translate(
 							'%(purchaseName)s expired on %(siteSlug)s, and the site is no longer connected to WordPress.com. ' +
 								'To renew this purchase, please reconnect %(siteSlug)s to your WordPress.com account, then complete your purchase.',

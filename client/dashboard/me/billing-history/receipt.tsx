@@ -24,6 +24,7 @@ import { type ReactNode, useState } from 'react';
 import Breadcrumbs from '../../app/breadcrumbs';
 import { useLocale } from '../../app/locale';
 import { receiptRoute, taxDetailsRoute } from '../../app/router/me';
+import { withSnackbar } from '../../app/snackbars/with-snackbar';
 import { Card, CardBody } from '../../components/card';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
@@ -268,17 +269,14 @@ type ReceiptTaxDetail = {
 
 function UserVatDetails( { receipt }: { receipt: Receipt } ) {
 	const { data: vatDetails } = useSuspenseQuery( userTaxDetailsQuery() );
-	const sendEmailMutation = useMutation( {
-		...sendReceiptEmailMutation(),
-		meta: {
-			snackbar: {
-				success: __( 'Your receipt was sent by email successfully.' ),
-				error: __(
-					'There was a problem sending your receipt. Please try again later or contact support.'
-				),
-			},
-		},
-	} );
+	const sendEmailMutation = useMutation(
+		withSnackbar( sendReceiptEmailMutation(), {
+			success: __( 'Your receipt was sent by email successfully.' ),
+			error: __(
+				'There was a problem sending your receipt. Please try again later or contact support.'
+			),
+		} )
+	);
 
 	const handleEmailReceipt = ( event: React.MouseEvent< HTMLButtonElement > ) => {
 		event.preventDefault();

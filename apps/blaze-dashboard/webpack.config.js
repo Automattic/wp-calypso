@@ -161,6 +161,9 @@ module.exports = {
 						'@wordpress/is-shallow-equal',
 						'@wordpress/primitives',
 						'@wordpress/url',
+						'@wordpress/private-apis',
+						'@wordpress/element',
+						'@wordpress/data',
 						'moment',
 						'../moment',
 					].includes( request )

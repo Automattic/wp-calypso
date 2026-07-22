@@ -56,7 +56,6 @@ import {
 	ImportLetUsMigrateYourSitePage,
 	ImportPlansPage,
 	IncognitoPage,
-	InvitePeoplePage,
 	JetpackTrafficPage,
 	LaunchCelebrationComponent,
 	LoginPage,
@@ -302,10 +301,6 @@ export const test = base.extend<
 		 * Page object representing the WordPress.com Add People page.
 		 */
 		pageAddPeople: AddPeoplePage;
-		/**
-		 * Page object representing the WordPress.com Invite People page.
-		 */
-		pageInvitePeople: InvitePeoplePage;
 		/**
 		 * Page object representing the WordPress.com My Home page.
 		 */
@@ -576,10 +571,6 @@ export const test = base.extend<
 	pageAddPeople: async ( { page }, use ) => {
 		const addPeoplePage = new AddPeoplePage( page );
 		await use( addPeoplePage );
-	},
-	pageInvitePeople: async ( { page }, use ) => {
-		const invitePeoplePage = new InvitePeoplePage( page );
-		await use( invitePeoplePage );
 	},
 	pagePeople: async ( { page }, use ) => {
 		const peoplePage = new PeoplePage( page );

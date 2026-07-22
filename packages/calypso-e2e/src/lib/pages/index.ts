@@ -21,7 +21,6 @@ export * from './import-lets-find-your-site-page';
 export * from './import-plans-page';
 export * from './incognito-page';
 export * from './individual-purchase-page';
-export * from './invite-people-page';
 export * from './jetpack-traffic-page';
 export * from './login-page';
 export * from './marketing-page';

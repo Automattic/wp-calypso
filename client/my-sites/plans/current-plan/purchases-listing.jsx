@@ -29,6 +29,7 @@ import { withLocalizedMoment } from 'calypso/components/localized-moment';
 import ProductExpiration from 'calypso/components/product-expiration';
 import {
 	isExpiring,
+	isExpiredOrRemoved,
 	getDisplayName,
 	isPartnerPurchase,
 	shouldAddPaymentSourceInsteadOfRenewingNow,
@@ -180,7 +181,7 @@ class PurchasesListing extends Component {
 		const expiryMoment = purchase.expiryDate ? this.props.moment( purchase.expiryDate ) : null;
 
 		const renewMoment =
-			! isExpiring( purchase ) && purchase.renewDate
+			! isExpiring( purchase ) && ! isExpiredOrRemoved( purchase ) && purchase.renewDate
 				? this.props.moment( purchase.renewDate )
 				: null;
 

@@ -1,6 +1,7 @@
 import { removeQueryArgs } from '@wordpress/url';
 import i18n from 'i18n-calypso';
 import { dashboardLink } from 'calypso/dashboard/utils/link';
+import { bumpStat } from 'calypso/lib/analytics/mc';
 import { sendVerificationSignal } from 'calypso/lib/user/verification-checker';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { hasDashboardOptIn } from 'calypso/state/dashboard/selectors';
@@ -47,6 +48,7 @@ export default function emailVerification( context, next ) {
 
 // Helper function to build redirect URL
 function buildDashboardRedirectUrl( verified, newEmailResult ) {
+	bumpStat( 'dashboard-redirect', 'email-verification' );
 	let redirectUrl = dashboardLink( '/me/profile' );
 	if ( verified ) {
 		redirectUrl += `?verified=${ verified }`;

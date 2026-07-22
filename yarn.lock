@@ -117,6 +117,7 @@ __metadata:
     "@wordpress/plugins": "npm:^7.48.0"
     "@wordpress/readable-js-assets-webpack-plugin": "npm:^3.24.0"
     copy-webpack-plugin: "npm:^10.2.4"
+    postcss-prefix-selector: "npm:^1.16.1"
     webpack: "npm:^5.99.8"
   peerDependencies:
     "@automattic/calypso-router": "workspace:^"
@@ -12698,7 +12699,7 @@ __metadata:
     electron-store: "npm:^8.1.0"
     electron-updater: "npm:6.3.0"
     jest: "npm:^29.7.0"
-    js-yaml: "npm:4.2.0"
+    js-yaml: "npm:5.2.1"
     playwright: "npm:1.57.0"
     postcss: "npm:^8.5.15"
     react: "npm:^18.3.1"
@@ -13916,12 +13917,12 @@ __metadata:
   linkType: hard
 
 "brace-expansion@npm:^1.1.7":
-  version: 1.1.11
-  resolution: "brace-expansion@npm:1.1.11"
+  version: 1.1.16
+  resolution: "brace-expansion@npm:1.1.16"
   dependencies:
     balanced-match: "npm:^1.0.0"
     concat-map: "npm:0.0.1"
-  checksum: 695a56cd058096a7cb71fb09d9d6a7070113c7be516699ed361317aca2ec169f618e28b8af352e02ab4233fb54eb0168460a40dc320bab0034b36ab59aaad668
+  checksum: b2a915bbedbf4e45840d1fb9a4d391bbf26a79475bd134714d3cee34f1f0edb0ce982738028843be5fbaf8039429f71fa487df8c915b6065ced542c83e58fae6
   languageName: node
   linkType: hard
 
@@ -14290,7 +14291,6 @@ __metadata:
     "@automattic/lasagna": "npm:^0.6.1"
     "@automattic/launchpad": "workspace:^"
     "@automattic/load-script": "workspace:^"
-    "@automattic/material-design-icons": "workspace:^"
     "@automattic/mini-cart": "workspace:^"
     "@automattic/notifications": "workspace:^"
     "@automattic/oauth-token": "workspace:^"
@@ -14318,6 +14318,7 @@ __metadata:
     "@automattic/wpcom-template-parts": "workspace:^"
     "@automattic/zendesk-client": "workspace:^"
     "@babel/core": "npm:^7.27.1"
+    "@emotion/cache": "npm:^11.14.0"
     "@emotion/css": "npm:^11.11.2"
     "@emotion/jest": "npm:^11.11.0"
     "@emotion/react": "npm:^11.11.1"
@@ -14347,7 +14348,6 @@ __metadata:
     "@wordpress/abilities": "npm:^0.14.0"
     "@wordpress/api-fetch": "npm:^7.48.0"
     "@wordpress/base-styles": "npm:^9.1.0"
-    "@wordpress/blocks": "npm:^15.21.0"
     "@wordpress/commands": "npm:^1.48.0"
     "@wordpress/components": "npm:^35.0.0"
     "@wordpress/compose": "npm:^8.2.0"
@@ -14367,7 +14367,6 @@ __metadata:
     "@wordpress/react-i18n": "npm:^4.48.0"
     "@wordpress/theme": "npm:^0.15.0"
     "@wordpress/ui": "npm:^0.17.0"
-    "@wordpress/viewport": "npm:^6.48.0"
     "@wordpress/warning": "npm:^3.48.0"
     autoprefixer: "npm:^10.4.21"
     autosize: "npm:^4.0.4"
@@ -14375,7 +14374,6 @@ __metadata:
     browser-filesaver: "npm:^1.1.1"
     bunyan: "npm:^1.8.15"
     chalk: "npm:^4.1.2"
-    chrono-node: "npm:^2.3.5"
     circular-dependency-plugin: "npm:^5.2.2"
     clipboard: "npm:^2.0.11"
     clsx: "npm:^2.1.1"
@@ -14411,7 +14409,6 @@ __metadata:
     fast-json-stable-stringify: "npm:^2.1.0"
     filesize: "npm:^6.0.1"
     flag-icons: "npm:^7.5.0"
-    fuse.js: "npm:^3.6.1"
     get-video-id: "npm:^3.1.4"
     hash.js: "npm:^1.1.7"
     he: "npm:^1.2.0"
@@ -14466,7 +14463,6 @@ __metadata:
     storybook: "npm:^9.1.20"
     striptags: "npm:^3.2.0"
     superagent: "npm:^3.8.3"
-    supertest: "npm:^7.2.2"
     textarea-caret: "npm:^3.1.0"
     to-title-case: "npm:^1.0.0"
     tracekit: "npm:^0.4.5"
@@ -14850,15 +14846,6 @@ __metadata:
   version: 0.2.0
   resolution: "chromium-pickle-js@npm:0.2.0"
   checksum: 0a95bd280acdf05b0e08fa1a0e1db58c815dd24e92d639add8f494d23a8a49c26e4829721224d68f2f0e57a69047714db29bcff6deb5d029332321223416cb29
-  languageName: node
-  linkType: hard
-
-"chrono-node@npm:^2.3.5":
-  version: 2.3.5
-  resolution: "chrono-node@npm:2.3.5"
-  dependencies:
-    dayjs: "npm:^1.10.0"
-  checksum: aada72974a4bd6dac4d6f7a9efad8006845636105248c468e79f3aa6a86764c56a2c7329bbf9bf10bdc8e0f4225028ccc889bef98b92903cea1727b64b14db90
   languageName: node
   linkType: hard
 
@@ -15498,13 +15485,6 @@ __metadata:
   version: 1.0.6
   resolution: "cookie-signature@npm:1.0.6"
   checksum: b36fd0d4e3fef8456915fcf7742e58fbfcc12a17a018e0eb9501c9d5ef6893b596466f03b0564b81af29ff2538fd0aa4b9d54fe5ccbfb4c90ea50ad29fe2d221
-  languageName: node
-  linkType: hard
-
-"cookie-signature@npm:^1.2.2":
-  version: 1.2.2
-  resolution: "cookie-signature@npm:1.2.2"
-  checksum: 54e05df1a293b3ce81589b27dddc445f462f6fa6812147c033350cd3561a42bc14481674e05ed14c7bd0ce1e8bb3dc0e40851bad75415733711294ddce0b7bc6
   languageName: node
   linkType: hard
 
@@ -16352,13 +16332,6 @@ __metadata:
   version: 4.1.0
   resolution: "date-fns@npm:4.1.0"
   checksum: b79ff32830e6b7faa009590af6ae0fb8c3fd9ffad46d930548fbb5acf473773b4712ae887e156ba91a7b3dc30591ce0f517d69fd83bd9c38650fdc03b4e0bac8
-  languageName: node
-  linkType: hard
-
-"dayjs@npm:^1.10.0":
-  version: 1.11.18
-  resolution: "dayjs@npm:1.11.18"
-  checksum: 83b67f5d977e2634edf4f5abdd91d9041a696943143638063016915d2cd8c7e57e0751e40379a07ebca8be7a48dd380bef8752d22a63670f2d15970e34f96d7a
   languageName: node
   linkType: hard
 
@@ -19378,13 +19351,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"fuse.js@npm:^3.6.1":
-  version: 3.6.1
-  resolution: "fuse.js@npm:3.6.1"
-  checksum: bd9d5bc4d82781de7bb46057e96775f9efc497eb8b334b61cfea589db730c1fe7789bf5ff61b1146c15e18ffe5b27715807e5d436f333662b47917b530ced5e9
-  languageName: node
-  linkType: hard
-
 "fuse.js@npm:^6.6.2":
   version: 6.6.2
   resolution: "fuse.js@npm:6.6.2"
@@ -22264,6 +22230,17 @@ __metadata:
   bin:
     js-yaml: bin/js-yaml.js
   checksum: 1916456c118746603b067d74bbcbb0445d9a1d5e474ad4ae775e7b20525bed902e01d9d97dd0c81fcd8d4f596162309d0eb057f4aa38f3e9647f14075e9dea45
+  languageName: node
+  linkType: hard
+
+"js-yaml@npm:5.2.1":
+  version: 5.2.1
+  resolution: "js-yaml@npm:5.2.1"
+  dependencies:
+    argparse: "npm:^2.0.1"
+  bin:
+    js-yaml: bin/js-yaml.mjs
+  checksum: 8eadf08efc738a656c2838f6617b0cc508944f66f568eb4d435e858261b889a6806d98f44fb6ffdba21a0c68e4bdff1ac35516724882e1dab8fc2cc59150c881
   languageName: node
   linkType: hard
 
@@ -30942,7 +30919,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"superagent@npm:^10.2.3, superagent@npm:^10.3.0":
+"superagent@npm:^10.2.3":
   version: 10.3.0
   resolution: "superagent@npm:10.3.0"
   dependencies:
@@ -30974,17 +30951,6 @@ __metadata:
     qs: "npm:^6.5.1"
     readable-stream: "npm:^2.3.5"
   checksum: e467c39aee7aa57dc2e45b5c7c76d70a7ad4fff8d3d2b57a2da0edfaca0e598562fc9f8f74a1383661744f68b3dfd2cca388a3000b41d6c2d8e0e5d031d152fe
-  languageName: node
-  linkType: hard
-
-"supertest@npm:^7.2.2":
-  version: 7.2.2
-  resolution: "supertest@npm:7.2.2"
-  dependencies:
-    cookie-signature: "npm:^1.2.2"
-    methods: "npm:^1.1.2"
-    superagent: "npm:^10.3.0"
-  checksum: 9de987aefbec50c5dfac79ff699bbc23c89cdbfe59ede165309fb3cf00c306117b30c5059fe6f7085c7525aab315ac27c77a1dc6056b993c7e0bb154a56c2b78
   languageName: node
   linkType: hard
 

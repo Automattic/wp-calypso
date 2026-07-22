@@ -75,6 +75,21 @@ describe( 'convertToolMessagesToComponents', () => {
 		expect( result ).toEqual( [ message ] );
 	} );
 
+	it.each( [ '2', '0', '-1', '2.5', 'true', 'false', 'null', '"hello"', '[]', '{}' ] )(
+		'passes through JSON-looking agent text %s unchanged',
+		( text ) => {
+			const message = createMessage( {
+				content: [ { type: 'text', text } ],
+			} );
+
+			const result = convertToolMessagesToComponents( {
+				messages: [ message ],
+			} );
+
+			expect( result ).toEqual( [ message ] );
+		}
+	);
+
 	it.each( [
 		{
 			name: 'context flags',

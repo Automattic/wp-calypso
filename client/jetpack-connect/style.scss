@@ -1803,62 +1803,6 @@ body.is-section-jetpack-connect {
 	background-color: var( --color-surface );
 }
 
-// ProductCard overrides
-
-.is-section-jetpack-connect .product-card {
-	.product-card__header-primary {
-		@include breakpoint-deprecated( '<660px' ) {
-			justify-content: center;
-		}
-	}
-
-	.product-card__title,
-	.product-card__title:not( .is-purchased ) {
-		font-size: $font-title-small;
-		color: var( --color-neutral-70 );
-	}
-
-	.plan-price,
-	.plan-price *,
-	.product-card__billing-timeframe,
-	.product-card__option .product-card__price-group .product-card__billing-timeframe {
-		color: var( --color-neutral-70 );
-		font-style: normal;
-		vertical-align: baseline;
-
-		@include breakpoint-deprecated( '>660px' ) {
-			font-weight: 600;
-		}
-	}
-
-	.plan-price.is-original,
-	.plan-price.is-original * {
-		color: var( --color-neutral-light );
-	}
-
-	.product-card__billing-timeframe {
-		font-size: $font-body-small;
-	}
-
-	.product-card__header {
-		padding: 12px 0;
-
-		@include breakpoint-deprecated( '<660px' ) {
-			padding: 16px 0;
-		}
-
-		.plan-price,
-		.plan-price * {
-			font-size: $font-body;
-			line-height: 21px;
-		}
-	}
-
-	.product-card__option-name {
-		text-align: left;
-	}
-}
-
 .layout.is-section-jetpack-connect .upsell .upsell__header .formatted-header {
 	color: inherit;
 }

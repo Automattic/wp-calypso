@@ -10,6 +10,7 @@ export const siteRedirectQuery = ( siteId: number ) =>
 
 export const updateSiteRedirectMutation = ( siteId: number ) =>
 	mutationOptions( {
+		meta: { statId: 'site-redirect-update' },
 		mutationFn: ( location: string ) => updateSiteRedirect( siteId, location ),
 		onSuccess: () => {
 			queryClient.invalidateQueries( {

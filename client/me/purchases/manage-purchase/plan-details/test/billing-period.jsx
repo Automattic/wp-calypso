@@ -16,6 +16,7 @@ const props = {
 		productSlug: 'jetpack_premium_monthly',
 		domain: 'site.com',
 		expiryStatus: 'active',
+		subscriptionStatus: 'active',
 		payment: {
 			type: 'paypal',
 		},

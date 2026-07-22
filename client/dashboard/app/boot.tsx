@@ -1,4 +1,4 @@
-import { persistQueryClientPromise } from '@automattic/api-queries';
+import { getPersistQueryClientPromise, queryClient } from '@automattic/api-queries';
 import { isEnabled } from '@automattic/calypso-config';
 import { captureException, initSentry } from '@automattic/calypso-sentry';
 import { maybeInitializeSupportSession } from '@automattic/calypso-support-session';
@@ -7,6 +7,7 @@ import '@wordpress/components/build-style/style.css';
 import '@wordpress/commands/build-style/style.css';
 import loadDevHelpers from 'calypso/lib/load-dev-helpers';
 import wpcom from 'calypso/lib/wp';
+import { AUTH_QUERY_KEY, initializeCurrentUser } from './auth';
 import { handleOAuthCallback } from './auth/oauth-callback';
 import { loadPreferencesHelper } from './dev-tools/preferences';
 import Layout from './layout';
@@ -48,9 +49,18 @@ function boot( config: AppConfig ) {
 			.catch( captureException );
 	}
 
-	persistQueryClientPromise.then( () => {
-		root.render( <Layout config={ config } /> );
-	} );
+	initializeCurrentUser()
+		.then( ( user ) => {
+			// Seed the query cache with the auth query result. Avoids
+			// redundant request by AuthProvider.
+			queryClient.setQueryData( AUTH_QUERY_KEY, user );
+			return user.ID;
+		} )
+		.catch( () => undefined )
+		.then( ( userId ) => getPersistQueryClientPromise( userId ) )
+		.then( () => {
+			root.render( <Layout config={ config } /> );
+		} );
 }
 
 export default boot;

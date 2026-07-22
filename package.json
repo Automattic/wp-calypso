@@ -65,7 +65,6 @@
 		"build-client-if-prod": "node -e \"process.env.CALYPSO_ENV === 'production' && process.exit(1)\" || { yarn run build-client && yarn run build-languages-if-enabled }",
 		"build-client-stats": "NODE_ENV=production CALYPSO_ENV=production EMIT_STATS=true yarn run build-client",
 		"build-css": "run-p -s 'build-css:*'",
-		"build-css:directly": "node bin/render-stylesheet.js --in client/assets/stylesheets/directly.scss --out public/directly.css && yarn run postcss public/directly.css",
 		"build-css:reader-mobile": "node bin/render-stylesheet.js --in client/assets/stylesheets/reader-mobile.scss --out public/reader-mobile.css && yarn run postcss public/reader-mobile.css",
 		"build-desktop": "cd desktop && yarn run build",
 		"build-desktop:app": "cd desktop && yarn run build",

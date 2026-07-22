@@ -401,6 +401,7 @@ export const markSiteSubscriptionUnfollowed = ( queryClient: QueryClient, feedUr
 
 export const followSiteMutation = ( queryClient: QueryClient ) =>
 	mutationOptions< SiteSubscriptionItem, Error, FollowSiteParams >( {
+		meta: { statId: 'read-site-follow' },
 		mutationFn: ( params ) => followSite( params ),
 		onSuccess: ( subscription, params ) => {
 			patchSiteSubscription( queryClient, {
@@ -413,6 +414,7 @@ export const followSiteMutation = ( queryClient: QueryClient ) =>
 
 export const unfollowSiteMutation = ( queryClient: QueryClient ) =>
 	mutationOptions< unknown, Error, UnfollowSiteParams >( {
+		meta: { statId: 'read-site-unfollow' },
 		mutationFn: ( params ) => unfollowSite( params ),
 		onSuccess: async ( _response, params ) => {
 			if ( params.feedUrl ) {
@@ -568,6 +570,7 @@ const rollbackOptimisticDeliveryPatch = (
 export const updateSitePostEmailSubscriptionMutation = ( queryClient: QueryClient ) =>
 	mutationOptions< unknown, Error, FollowDeliveryParams, SiteSubscriptionDeliveryMutationContext >(
 		{
+			meta: { statId: 'read-post-email-sub-update' },
 			mutationFn: ( params ) => updateSitePostEmailSubscription( params ),
 			onMutate: ( params ) => withOptimisticDeliveryPatch( queryClient, params, 'post-email' ),
 			onError: ( _error, _params, context ) =>
@@ -579,6 +582,7 @@ export const updateSitePostEmailSubscriptionMutation = ( queryClient: QueryClien
 export const updateSiteCommentEmailSubscriptionMutation = ( queryClient: QueryClient ) =>
 	mutationOptions< unknown, Error, FollowDeliveryParams, SiteSubscriptionDeliveryMutationContext >(
 		{
+			meta: { statId: 'read-cmt-email-sub-update' },
 			mutationFn: ( params ) => updateSiteCommentEmailSubscription( params ),
 			onMutate: ( params ) => withOptimisticDeliveryPatch( queryClient, params, 'comment-email' ),
 			onError: ( _error, _params, context ) =>
@@ -590,6 +594,7 @@ export const updateSiteCommentEmailSubscriptionMutation = ( queryClient: QueryCl
 export const updateSitePostEmailDeliveryFrequencyMutation = ( queryClient: QueryClient ) =>
 	mutationOptions< unknown, Error, FollowDeliveryParams, SiteSubscriptionDeliveryMutationContext >(
 		{
+			meta: { statId: 'read-post-email-freq-update' },
 			mutationFn: ( params ) => updateSitePostEmailDeliveryFrequency( params ),
 			onMutate: ( params ) => withOptimisticDeliveryPatch( queryClient, params, 'email-frequency' ),
 			onError: ( _error, _params, context ) =>
@@ -601,6 +606,7 @@ export const updateSitePostEmailDeliveryFrequencyMutation = ( queryClient: Query
 export const updateSitePostNotificationSubscriptionMutation = ( queryClient: QueryClient ) =>
 	mutationOptions< unknown, Error, FollowDeliveryParams, SiteSubscriptionDeliveryMutationContext >(
 		{
+			meta: { statId: 'read-post-notif-sub-update' },
 			mutationFn: ( params ) => updateSitePostNotificationSubscription( params ),
 			onMutate: ( params ) => withOptimisticDeliveryPatch( queryClient, params, 'notification' ),
 			onError: ( _error, _params, context ) =>

@@ -1,5 +1,6 @@
 import { camelOrSnakeSlug } from '@automattic/calypso-products';
 import { productHasStats } from 'calypso/blocks/jetpack-benefits/feature-checks';
+import { isRemoved } from 'calypso/lib/purchases';
 import { getSitePurchases } from 'calypso/state/purchases/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { AppState } from 'calypso/types';
@@ -12,8 +13,7 @@ function hasSiteProductJetpackStatsPWYWOnly(
 
 	// Get listing of all plans that support stats in some way and qualify as "paid" plans.
 	const plansSupportingStats = sitePurchases?.filter(
-		( product ) =>
-			productHasStats( camelOrSnakeSlug( product ), true ) && product.expiryStatus !== 'expired'
+		( product ) => productHasStats( camelOrSnakeSlug( product ), true ) && ! isRemoved( product )
 	);
 
 	if ( plansSupportingStats.length === 0 ) {

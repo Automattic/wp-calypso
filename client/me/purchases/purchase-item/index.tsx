@@ -33,14 +33,16 @@ import TrackComponentView from 'calypso/lib/analytics/track-component-view';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import {
 	getDisplayName,
-	isExpired,
+	isExpiredOrRemoved,
+	isExpiredWithNoAutoRenewAttemptsLeft,
 	isExpiring,
 	isRechargeable,
 	isIncludedWithPlan,
 	isOneTimePurchase,
 	isPartnerPurchase,
 	isRecentMonthlyPurchase,
-	isRenewing,
+	isRenewingBeforeExpiration,
+	isRemoved,
 	purchaseType,
 	creditCardExpiresBeforeSubscription,
 	creditCardHasAlreadyExpired,
@@ -49,7 +51,7 @@ import {
 	isIntroductoryOfferFreeTrial,
 	hasPaymentMethod,
 	isPaidWithCredits,
-	isInExpirationGracePeriod,
+	mightStillAutoRenew,
 } from 'calypso/lib/purchases';
 import { getPurchaseListUrlFor } from 'calypso/my-sites/purchases/paths';
 import getSiteIconUrl from 'calypso/state/selectors/get-site-icon-url';
@@ -429,9 +431,9 @@ export function PurchaseItemStatus( {
 	if (
 		isWithinIntroductoryOfferPeriod( purchase ) &&
 		isIntroductoryOfferFreeTrial( purchase ) &&
-		! isInExpirationGracePeriod( purchase )
+		! isExpiredOrRemoved( purchase )
 	) {
-		if ( isRenewing( purchase ) ) {
+		if ( isRenewingBeforeExpiration( purchase ) ) {
 			return translate(
 				'Free trial ends on {{span}}%(date)s{{/span}}, renews automatically at %(amount)s {{abbr}}%(excludeTaxStringAbbreviation)s{{/abbr}}',
 				{
@@ -469,7 +471,7 @@ export function PurchaseItemStatus( {
 		);
 	}
 
-	if ( isRenewing( purchase ) && purchase.renewDate ) {
+	if ( isRenewingBeforeExpiration( purchase ) && purchase.renewDate ) {
 		const renewDate = moment( purchase.renewDate );
 
 		if ( creditCardHasAlreadyExpired( purchase ) ) {
@@ -498,10 +500,6 @@ export function PurchaseItemStatus( {
 					<TrackImpression warning="credit-card-expiring" />
 				</span>
 			);
-		}
-
-		if ( isInExpirationGracePeriod( purchase ) ) {
-			return <span className="purchase-item__is-error">{ translate( 'Pending renewal' ) }</span>;
 		}
 
 		// When a downgrade is scheduled for the next renewal, the plan won't simply
@@ -590,11 +588,7 @@ export function PurchaseItemStatus( {
 		);
 	}
 
-	if (
-		isExpiring( purchase ) &&
-		! isInExpirationGracePeriod( purchase ) &&
-		! isAkismetFreeProduct( purchase )
-	) {
+	if ( isExpiring( purchase ) && ! isAkismetFreeProduct( purchase ) ) {
 		if ( expiry < moment().add( 30, 'days' ) && ! isRecentMonthlyPurchase( purchase ) ) {
 			const expiryClass =
 				expiry < moment().add( 7, 'days' )
@@ -625,7 +619,7 @@ export function PurchaseItemStatus( {
 		} );
 	}
 
-	if ( isExpired( purchase ) || isInExpirationGracePeriod( purchase ) ) {
+	if ( isExpiredOrRemoved( purchase ) ) {
 		if ( isConciergeSession( purchase ) ) {
 			return translate( 'Session used on %s', {
 				args: expiry.format( 'LL' ),
@@ -672,6 +666,10 @@ export function PurchaseItemPaymentMethod( {
 	translate: LocalizeProps[ 'translate' ];
 	isDisconnectedSite?: boolean;
 } ) {
+	if ( isRemoved( purchase ) ) {
+		return null;
+	}
+
 	if ( isIncludedWithPlan( purchase ) ) {
 		return translate( 'Included with Plan' );
 	}
@@ -703,8 +701,8 @@ export function PurchaseItemPaymentMethod( {
 
 	if (
 		purchase.isAutoRenewEnabled &&
-		! isExpired( purchase ) &&
 		( ! hasPaymentMethod( purchase ) || isPaidWithCredits( purchase ) ) &&
+		! isExpiredWithNoAutoRenewAttemptsLeft( purchase ) &&
 		! isPartnerPurchase( purchase ) &&
 		! isAkismetFreeProduct( purchase )
 	) {
@@ -739,7 +737,7 @@ export function PurchaseItemPaymentMethod( {
 		);
 	}
 
-	if ( isRenewing( purchase ) ) {
+	if ( mightStillAutoRenew( purchase ) ) {
 		if ( purchase.payment.type === 'credit_card' && purchase.payment.creditCard ) {
 			const paymentMethodType = purchase.payment.creditCard.displayBrand
 				? purchase.payment.creditCard.displayBrand
@@ -868,7 +866,9 @@ class PurchaseItem extends Component<
 						translate={ translate }
 						isDisconnectedSite={ isDisconnectedSite }
 					/>
-					{ isBackupMethodAvailable && isRenewing( purchase ) && <BackupPaymentMethodNotice /> }
+					{ isBackupMethodAvailable && mightStillAutoRenew( purchase ) && (
+						<BackupPaymentMethodNotice />
+					) }
 				</div>
 			</div>
 		);

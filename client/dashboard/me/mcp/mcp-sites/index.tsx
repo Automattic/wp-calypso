@@ -12,6 +12,7 @@ import { useAnalytics } from '../../../app/analytics';
 import Breadcrumbs from '../../../app/breadcrumbs';
 import { useAppContext } from '../../../app/context';
 import { siteSettingsAIToolsRoute } from '../../../app/router/sites';
+import { withSnackbar } from '../../../app/snackbars/with-snackbar';
 import { ActionList } from '../../../components/action-list';
 import { Card, CardBody } from '../../../components/card';
 import ComponentViewTracker from '../../../components/component-view-tracker';
@@ -62,15 +63,12 @@ export default function McpMcpSites() {
 		( site: Site ) => ! managedSiteIds.includes( site.ID )
 	);
 
-	const mutation = useMutation( {
-		...userSettingsMutation(),
-		meta: {
-			snackbar: {
-				success: __( 'MCP settings saved.' ),
-				error: __( 'Failed to save MCP settings.' ),
-			},
-		},
-	} );
+	const mutation = useMutation(
+		withSnackbar( userSettingsMutation(), {
+			success: __( 'MCP settings saved.' ),
+			error: __( 'Failed to save MCP settings.' ),
+		} )
+	);
 
 	const handleSiteAdd = ( siteId: number ) => {
 		const eventName = mcpEnabled

@@ -7,7 +7,7 @@ import { __ } from '@wordpress/i18n';
 import { close, info } from '@wordpress/icons';
 import { intlFormat } from 'date-fns';
 import { Text } from '../../../components/text';
-import { DisplayVariant } from '../../../utils/purchase';
+import { DisplayVariant, isExpiredAndInGracePeriod } from '../../../utils/purchase';
 import {
 	getCancelLossIntro,
 	getFallbackLossItems,
@@ -68,10 +68,11 @@ const CancelPurchaseFeatureList = ( {
 				'\u00a0'
 		  )
 		: '';
+	const inGracePeriod = isExpiredAndInGracePeriod( purchase );
 	const introCopy =
 		displayVariant === 'remove'
 			? getRemoveLossIntro( purchase )
-			: getCancelLossIntro( purchase, fullExpiryDate );
+			: getCancelLossIntro( purchase, fullExpiryDate, inGracePeriod );
 
 	return (
 		<VStack spacing={ 6 }>
@@ -79,7 +80,7 @@ const CancelPurchaseFeatureList = ( {
 				<Text as="p">
 					{ displayVariant === 'remove'
 						? getSingleItemRemoveCopy( purchase )
-						: getSingleItemCancelCopy( purchase, fullExpiryDate ) }
+						: getSingleItemCancelCopy( purchase, fullExpiryDate, inGracePeriod ) }
 				</Text>
 			) : (
 				lossItems.length > 0 && (

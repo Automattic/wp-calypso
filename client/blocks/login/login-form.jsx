@@ -323,7 +323,11 @@ export class LoginForm extends Component {
 		this.props.recordTracksEvent( 'calypso_login_block_login_form_submit' );
 		this.props
 			.loginUser( usernameOrEmail, password, redirectTo, domain, this.props.blackbox )
-			.then( () => {
+			.then( ( result ) => {
+				if ( result === false ) {
+					return;
+				}
+
 				this.props.recordTracksEvent( 'calypso_login_block_login_form_success' );
 				onSuccess( redirectTo );
 			} )

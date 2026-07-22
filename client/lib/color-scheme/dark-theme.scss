@@ -298,6 +298,24 @@ This mixin generates alias variables for a color palette. For example, the
 	--color-print: var( --dashboard-item-selected__background-color );
 }
 
+@mixin color-scheme-dark-theme-action-list {
+	.action-list .action-item {
+		border-bottom-color: var( --dashboard-surface__border-color );
+	}
+
+	.icon-list-item__decoration svg {
+		fill: var( --dashboard-subtle__color );
+	}
+
+	.action-item .components-v-stack > .components-text:first-child {
+		color: var( --dashboard__text-color );
+	}
+
+	.action-item .components-v-stack > .components-text:last-child {
+		color: var( --dashboard-subtle__color );
+	}
+}
+
 @mixin color-scheme-dark-theme-card {
 	.components-surface.components-card {
 		background-color: var( --dashboard-surface__background-color );
@@ -809,6 +827,7 @@ This mixin generates alias variables for a color palette. For example, the
 }
 
 @mixin color-scheme-dark-theme-common-components {
+	@include color-scheme-dark-theme-action-list;
 	@include color-scheme-dark-theme-card;
 	@include color-scheme-dark-theme-form-controls;
 	@include color-scheme-dark-theme-summary-button;
