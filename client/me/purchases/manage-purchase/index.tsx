@@ -1837,7 +1837,7 @@ function mapDispatchToProps( dispatch: CalypsoDispatch ) {
 function ManagePurchaseWithExperiment( props: ManagePurchaseProps ) {
 	const isSplitCancelRemoveEnabled = useIsSplitCancelRemoveEnabled();
 	const { data: cancelFeaturesResponse } = useQuery( {
-		...purchaseCancelFeaturesQuery( props.purchaseId, 'treatment' ),
+		...purchaseCancelFeaturesQuery( props.purchaseId ),
 	} );
 	const cancellationFeatures = cancelFeaturesResponse?.features ?? null;
 	return (

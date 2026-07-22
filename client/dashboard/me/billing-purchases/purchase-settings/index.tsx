@@ -1439,7 +1439,7 @@ export default function PurchaseSettings() {
 
 	const isCentennial = isCentennialPurchase( purchase );
 	const { data: cancelFeaturesResponse } = useQuery( {
-		...purchaseCancelFeaturesQuery( purchase.ID, 'treatment' ),
+		...purchaseCancelFeaturesQuery( purchase.ID ),
 	} );
 	const features = cancelFeaturesResponse?.features ?? null;
 	const hasExpiryInfo = ! purchase.partner_name || isA4ABillingDragonPurchase( purchase );
