@@ -80,7 +80,6 @@ import CancelPurchaseForm from 'calypso/components/marketing-survey/cancel-purch
 import Notice from 'calypso/components/notice';
 import NoticeAction from 'calypso/components/notice/notice-action';
 import VerticalNavItem from 'calypso/components/vertical-nav/item';
-import { useIsSplitCancelRemoveEnabled } from 'calypso/dashboard/me/billing-purchases/cancel-purchase/use-is-split-cancel-remove-enabled';
 import {
 	getCancelButtonCopy,
 	getRemoveButtonCopy,
@@ -216,7 +215,6 @@ export interface ManagePurchaseProps {
 }
 
 export interface ManagePurchaseConnectedProps {
-	isSplitCancelRemoveEnabled: boolean;
 	cancellationFeatures: CancellationFeature[] | null;
 	hasCustomPrimaryDomain?: boolean | null;
 	hasLoadedDomains?: boolean;
@@ -1200,12 +1198,14 @@ class ManagePurchase extends Component<
 			'Domain transfers can take anywhere from five to seven days to complete.'
 		);
 
+		const purchaseDescription = this.getPurchaseDescription() ?? null;
+
 		return (
 			<div className="manage-purchase__content">
 				<span className="manage-purchase__description">
-					{ this.getPurchaseDescription() && (
+					{ purchaseDescription && (
 						<div className="manage-purchase__content-purchase-description">
-							{ this.getPurchaseDescription() }
+							{ purchaseDescription }
 						</div>
 					) }
 					{ purchase.productType === 'domain_transfer' && (
@@ -1835,18 +1835,11 @@ function mapDispatchToProps( dispatch: CalypsoDispatch ) {
 }
 
 function ManagePurchaseWithExperiment( props: ManagePurchaseProps ) {
-	const isSplitCancelRemoveEnabled = useIsSplitCancelRemoveEnabled();
 	const { data: cancelFeaturesResponse } = useQuery( {
 		...purchaseCancelFeaturesQuery( props.purchaseId ),
 	} );
 	const cancellationFeatures = cancelFeaturesResponse?.features ?? null;
-	return (
-		<ConnectedManagePurchase
-			{ ...props }
-			isSplitCancelRemoveEnabled={ isSplitCancelRemoveEnabled }
-			cancellationFeatures={ cancellationFeatures }
-		/>
-	);
+	return <ConnectedManagePurchase { ...props } cancellationFeatures={ cancellationFeatures } />;
 }
 
 export default ManagePurchaseWithExperiment;
