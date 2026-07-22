@@ -4,7 +4,6 @@ import ColorPicker from '../components/color-picker';
 import { EscalationButton } from '../components/escalation-button';
 import FontPicker from '../components/font-picker';
 import UnavailableToolMessage from '../components/unavailable-tool-message';
-import { isEditorPage } from './is-editor-page';
 import { isShowComponentTool } from './show-component-tools';
 import { getDisplayMessageFromToolData, isDisplayableToolMessageTool } from './tool-message-utils';
 import type { GetChatComponent } from './load-external-providers';
@@ -199,26 +198,6 @@ export default function convertToolMessagesToComponents( {
 
 		// Handle `show-component` tool message
 		if ( isShowComponentTool( textData.tool_id ) ) {
-			// Off the editor, show a notice instead of the picker — a conversation
-			// reopened on a surface that shares the editor's agent id can carry
-			// picker messages here.
-			// TODO: Remove once conversation histories can no longer cross onto
-			// non-editor surfaces (per-surface agent ids everywhere).
-			if ( ! isEditorPage() ) {
-				return [
-					{
-						...message,
-						content: [
-							{
-								type: 'component' as const,
-								component: UnavailableToolMessage as React.ComponentType,
-								componentProps: { type: 'picker' },
-							},
-						],
-					},
-				];
-			}
-
 			const toolData = textData.data ?? {};
 			const { type: contentType, props, followUpTasks, isCurrent, postId, summary } = toolData;
 			// Big Sky's pattern picker no longer renders in AM chats (its backend
@@ -365,7 +344,7 @@ export default function convertToolMessagesToComponents( {
 						{
 							type: 'component' as const,
 							component: UnavailableToolMessage as React.ComponentType,
-							componentProps: { type: 'start-over' },
+							componentProps: {},
 						},
 					],
 				},

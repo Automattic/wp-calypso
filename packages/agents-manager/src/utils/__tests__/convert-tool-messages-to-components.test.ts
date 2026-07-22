@@ -14,7 +14,6 @@ jest.mock(
 jest.mock( '../../components/escalation-button', () => ( {
 	EscalationButton: mockEscalationButton,
 } ) );
-jest.mock( '../is-editor-page' );
 jest.mock( '../../components/button-picker', () => ( { __esModule: true, default: jest.fn() } ) );
 jest.mock( '../../components/color-picker', () => ( { __esModule: true, default: jest.fn() } ) );
 jest.mock( '../../components/font-picker', () => ( { __esModule: true, default: jest.fn() } ) );
@@ -24,7 +23,6 @@ import ColorPicker from '../../components/color-picker';
 import FontPicker from '../../components/font-picker';
 import UnavailableToolMessage from '../../components/unavailable-tool-message';
 import convertToolMessagesToComponents from '../convert-tool-messages-to-components';
-import { isEditorPage } from '../is-editor-page';
 import {
 	BIG_SKY_SHOW_COMPONENT_TOOL_ID,
 	JETPACK_AI_SHOW_COMPONENT_TOOL_ID,
@@ -56,7 +54,6 @@ const createToolMessage = (
 describe( 'convertToolMessagesToComponents', () => {
 	beforeEach( () => {
 		jest.clearAllMocks();
-		( isEditorPage as jest.Mock ).mockReturnValue( true );
 	} );
 
 	it( 'passes through user messages unchanged', () => {
@@ -270,22 +267,6 @@ describe( 'convertToolMessagesToComponents', () => {
 		expect( result[ 0 ].actions ).toEqual( actions );
 	} );
 
-	it( 'renders `UnavailableToolMessage` when not on an editor page', () => {
-		( isEditorPage as jest.Mock ).mockReturnValue( false );
-		const message = createToolMessage( LEGACY_SHOW_COMPONENT_TOOL_ID, { type: 'my-component' } );
-
-		const result = convertToolMessagesToComponents( {
-			messages: [ message ],
-		} );
-
-		expect( result ).toHaveLength( 1 );
-		expect( result[ 0 ].content[ 0 ] ).toMatchObject( {
-			type: 'component',
-			component: UnavailableToolMessage,
-			componentProps: { type: 'picker' },
-		} );
-	} );
-
 	it( 'renders `UnavailableToolMessage` for the start-over tool', () => {
 		const message = createToolMessage( 'big_sky__client_assistants', {
 			assistantId: 'big-sky-site-admin',
@@ -299,7 +280,7 @@ describe( 'convertToolMessagesToComponents', () => {
 		expect( result[ 0 ].content[ 0 ] ).toMatchObject( {
 			type: 'component',
 			component: UnavailableToolMessage,
-			componentProps: { type: 'start-over' },
+			componentProps: {},
 		} );
 	} );
 
