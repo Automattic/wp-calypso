@@ -1,8 +1,8 @@
 /**
  * @jest-environment jsdom
  */
-import { omnibarSiteIdQuery, queryClient } from '@automattic/api-queries';
-import { waitFor } from '@testing-library/react';
+import { omnibarSiteIdQuery, queryClient, rawUserPreferencesQuery } from '@automattic/api-queries';
+import { act, waitFor } from '@testing-library/react';
 import nock from 'nock';
 import { render } from '../../../test-utils';
 import { AUTH_QUERY_KEY } from '../../auth';
@@ -14,9 +14,13 @@ function OmnibarProbe() {
 	return null;
 }
 
+// Flush pending microtasks/effects so a hypothetical re-triggered write would fire.
+function flush() {
+	return act( async () => {} );
+}
+
 describe( 'useSyncOmnibarSite', () => {
 	afterEach( () => {
-		nock.cleanAll();
 		queryClient.clear();
 	} );
 
@@ -56,12 +60,51 @@ describe( 'useSyncOmnibarSite', () => {
 
 		render( <OmnibarProbe /> );
 
-		await waitFor( () => expect( postCount ).toBeGreaterThanOrEqual( 1 ) );
-		await new Promise( ( resolve ) => setTimeout( resolve, 200 ) );
+		// The write is attempted (optimistically setting `recentSites` to `[ 123, 999 ]`)…
+		await waitFor( () => expect( postCount ).toBe( 1 ) );
+		// …then fails and rolls `recentSites` back to `[ 999 ]`. That rollback is the
+		// exact event the old bug re-fired the write from; once it settles, no retry.
+		await waitFor( () =>
+			expect( queryClient.getQueryData( rawUserPreferencesQuery().queryKey )?.recentSites ).toEqual(
+				[ 999 ]
+			)
+		);
+		await flush();
 
 		expect( postCount ).toBe( 1 );
 
 		// The omnibar still resolves to the primary blog and publishes it as shared state.
 		expect( queryClient.getQueryData( omnibarSiteIdQuery().queryKey ) ).toBe( 123 );
+	} );
+
+	test( 'does not attempt a write when reading preferences fails', async () => {
+		queryClient.setQueryData( AUTH_QUERY_KEY, { ID: 1, primary_blog: 123 } as User );
+
+		// Reading preferences fails, so a write would likely fail too — we bail out.
+		nock( 'https://public-api.wordpress.com' )
+			.persist()
+			.get( '/rest/v1.1/me/preferences' )
+			.reply( 403, { error: 'unauthorized' } );
+
+		let postCount = 0;
+		nock( 'https://public-api.wordpress.com' )
+			.persist()
+			.post( '/rest/v1.1/me/preferences' )
+			.reply( () => {
+				postCount += 1;
+				return [ 200, {} ];
+			} );
+
+		render( <OmnibarProbe /> );
+
+		// Wait for the preferences read to fail, then confirm no write followed.
+		await waitFor( () =>
+			expect( queryClient.getQueryState( rawUserPreferencesQuery().queryKey )?.status ).toBe(
+				'error'
+			)
+		);
+		await flush();
+
+		expect( postCount ).toBe( 0 );
 	} );
 } );

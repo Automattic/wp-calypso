@@ -35,13 +35,6 @@ async function ensureSite( siteId: number | undefined ) {
 /**
  * Keeps the omnibar's current site in sync with the URL, the most recent sites,
  * or the user's primary blog, in that priority.
- *
- * The work runs in response to route-resolution events rather than from a
- * reactive effect. Recording the current site into the `recentSites` preference
- * is an optimistic write that rolls back on failure; driving it off a `useEffect`
- * dependency on `recentSites` meant a persistently failing write kept re-triggering
- * itself. Reacting to navigation events instead means a rolled-back write emits no
- * event and is not retried.
  */
 export function useSyncOmnibarSite() {
 	const router = useRouter();
@@ -52,8 +45,11 @@ export function useSyncOmnibarSite() {
 
 	useEffect( () => {
 		let cancelled = false;
+		// Only the latest run may publish/record, so a slow run can't overwrite a newer one.
+		let latestRun = 0;
 
 		async function resolveOmnibarSite() {
+			const runId = ++latestRun;
 			const user = queryClient.getQueryData< User >( AUTH_QUERY_KEY );
 
 			const routeSite = router.state.matches.findLast(
@@ -66,12 +62,18 @@ export function useSyncOmnibarSite() {
 			);
 			const originSiteId = originSiteIdParam > 0 ? originSiteIdParam : undefined;
 
-			let recentSiteIds: number[] = [];
+			let recentSiteIds: number[];
 			try {
 				const preferences = await queryClient.ensureQueryData( rawUserPreferencesQuery() );
 				recentSiteIds = preferences.recentSites ?? [];
 			} catch {
-				recentSiteIds = [];
+				// If we can't read preferences, a write would likely fail too, so bail
+				// rather than attempt a doomed record.
+				return;
+			}
+
+			if ( cancelled || runId !== latestRun ) {
+				return;
 			}
 
 			const recentSiteId =
@@ -83,7 +85,7 @@ export function useSyncOmnibarSite() {
 				ensureSite( recentSiteId ),
 			] );
 
-			if ( cancelled ) {
+			if ( cancelled || runId !== latestRun ) {
 				return;
 			}
 
