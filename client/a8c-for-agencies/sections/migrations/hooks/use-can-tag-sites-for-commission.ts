@@ -36,8 +36,9 @@ function isWithinPressablePurchaseCutoff( startDate: string | undefined | null )
 export default function useCanTagSitesForCommission(): {
 	canTagSitesForCommission: boolean;
 	migrationTags: string[];
+	isLoading: boolean;
 } {
-	const { data: agency } = useQuery( activeAgencyQuery() );
+	const { data: agency, isLoading } = useQuery( activeAgencyQuery() );
 
 	const pressableUsageStartDate = agency?.third_party?.pressable?.usage?.start_date;
 	const withinPurchaseCutoff = isWithinPressablePurchaseCutoff( pressableUsageStartDate );
@@ -51,6 +52,7 @@ export default function useCanTagSitesForCommission(): {
 		return {
 			canTagSitesForCommission,
 			migrationTags,
+			isLoading,
 		};
-	}, [ withinPurchaseCutoff ] );
+	}, [ withinPurchaseCutoff, isLoading ] );
 }

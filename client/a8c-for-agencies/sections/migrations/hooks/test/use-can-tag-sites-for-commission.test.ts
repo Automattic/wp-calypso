@@ -34,8 +34,11 @@ function mockActiveAgency( startDate?: string | null ) {
 	};
 }
 
-function mockAgencyQuery( agency: ReturnType< typeof mockActiveAgency > | null ) {
-	mockUseQuery.mockReturnValue( { data: agency } as unknown as UseQueryResult );
+function mockAgencyQuery(
+	agency: ReturnType< typeof mockActiveAgency > | null,
+	isLoading = false
+) {
+	mockUseQuery.mockReturnValue( { data: agency, isLoading } as unknown as UseQueryResult );
 }
 
 describe( 'useCanTagSitesForCommission', () => {
@@ -97,5 +100,13 @@ describe( 'useCanTagSitesForCommission', () => {
 		expect( result.current.migrationTags ).toContain(
 			A4A_MIGRATED_SITE_TAG_PRESSABLE_INCENTIVE_2026
 		);
+	} );
+
+	it( 'surfaces the agency query loading state', () => {
+		mockAgencyQuery( null, true );
+
+		const { result } = renderHook( () => useCanTagSitesForCommission() );
+
+		expect( result.current.isLoading ).toBe( true );
 	} );
 } );

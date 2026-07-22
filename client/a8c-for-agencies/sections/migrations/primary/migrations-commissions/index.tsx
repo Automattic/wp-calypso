@@ -28,7 +28,11 @@ export default function MigrationsCommissions() {
 	const dispatch = useDispatch();
 
 	const [ showAddSitesModal, setShowAddSitesModal ] = useState( false );
-	const { canTagSitesForCommission, migrationTags } = useCanTagSitesForCommission();
+	const {
+		canTagSitesForCommission,
+		migrationTags,
+		isLoading: isTagEligibilityLoading,
+	} = useCanTagSitesForCommission();
 
 	const title = __( 'Migrations: commissions' );
 
@@ -90,7 +94,7 @@ export default function MigrationsCommissions() {
 					/>
 					<Actions useColumnAlignment>
 						<MobileSidebarNavigation />
-						{ canTagSitesForCommission && (
+						{ ! isTagEligibilityLoading && canTagSitesForCommission && (
 							<Button variant="primary" onClick={ onTagSitesClick }>
 								{ __( 'Tag sites for commission' ) }
 							</Button>
