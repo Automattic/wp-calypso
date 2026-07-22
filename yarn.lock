@@ -1438,6 +1438,7 @@ __metadata:
   resolution: "@automattic/help-center@workspace:packages/help-center"
   dependencies:
     "@automattic/agents-manager": "workspace:^"
+    "@automattic/calypso-analytics": "workspace:^"
     "@automattic/calypso-color-schemes": "workspace:^"
     "@automattic/calypso-typescript-config": "workspace:^"
     "@automattic/components": "workspace:^"
