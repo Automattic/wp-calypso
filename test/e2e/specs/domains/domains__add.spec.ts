@@ -1,5 +1,10 @@
 import { DataHelper } from '@automattic/calypso-e2e';
-import { expect, skipIfMailosaurLimitReached, skipIfNotTrunk, tags, test } from '../../lib/pw-base';
+import {
+	expect,
+	skipIfMailosaurLimitReached,
+	/* skipIfNotTrunk, */ tags,
+	test,
+} from '../../lib/pw-base';
 
 test.describe(
 	DataHelper.createSuiteTitle( 'Domains: Add to current site' ),
@@ -7,7 +12,7 @@ test.describe(
 		tag: [ tags.CALYPSO_RELEASE ],
 	},
 	() => {
-		skipIfNotTrunk();
+		// skipIfNotTrunk();
 		skipIfMailosaurLimitReached();
 
 		test( 'As a user, I can add a domain to my existing site', async ( {
