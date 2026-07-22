@@ -86,7 +86,10 @@ describe( '<PHPVersionSettings>', () => {
 		render( <PHPVersionSettings siteSlug={ site.slug } />, { queryClient } );
 
 		const versionSelect = await screen.findByRole( 'combobox', { name: 'PHP version' } );
-		expect( versionSelect ).toHaveDisplayValue( '8.3 (Recommended)' );
+		expect( versionSelect ).toHaveDisplayValue( '8.3' );
+		expect(
+			within( versionSelect ).getByRole( 'option', { name: '8.4 (Recommended)' } )
+		).toBeVisible();
 		expect(
 			within( versionSelect ).queryByRole( 'option', { name: '8.2' } )
 		).not.toBeInTheDocument();

@@ -12,6 +12,7 @@ const storybookConfig = storybookDefaultConfig( {
 
 		'../packages/design-picker/src/**/*.stories.{ts,tsx}',
 		'../packages/domains-table/src/**/*.stories.{js,jsx,ts,tsx}',
+		'../packages/help-center/src/**/*.stories.{js,jsx,ts,tsx}',
 	],
 	webpackAliases: { calypso: path.join( __dirname, '../client' ) },
 	sassPrelude: `@use 'calypso/assets/stylesheets/shared/_utils.scss' as *;`,

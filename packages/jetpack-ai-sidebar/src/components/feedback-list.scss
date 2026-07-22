@@ -287,6 +287,23 @@
 		}
 	}
 
+	&__diff-content {
+		color: inherit;
+		// Keep retained inline positioning inside the preview in docked and floating layouts.
+		contain: paint;
+
+		// Host styles can assign weights to nested inline formats. Keep descendants
+		// inheriting semantic bold without enumerating every possible nested tag.
+		b,
+		strong {
+			font-weight: bold;
+
+			* {
+				font-weight: inherit;
+			}
+		}
+	}
+
 	// Matches Figma: SF Pro Medium 11px, uppercase, line-height 150%, and the
 	// muted-foreground token (~#8E8E8E, i.e. currentColor at ~0.55). Figma's 510
 	// weight rounds to the design-system's 500 (Medium).

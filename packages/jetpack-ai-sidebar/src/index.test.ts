@@ -88,6 +88,18 @@ jest.mock( '@wordpress/block-editor', () => ( {
 	// BlockRef renders the block-type icon via BlockIcon; a stub keeps these
 	// tests focused on the card structure rather than icon rendering.
 	BlockIcon: () => null,
+	RichText: {
+		Content: ( { tagName = 'div', value, ...props }: Record< string, unknown > ) => {
+			const react = jest.requireActual< typeof import('react') >( 'react' );
+			const { RawHTML } =
+				jest.requireActual< typeof import('@wordpress/element') >( '@wordpress/element' );
+			return react.createElement(
+				tagName as string,
+				props,
+				react.createElement( RawHTML, null, value as string )
+			);
+		},
+	},
 } ) );
 
 jest.mock( '@wordpress/blocks', () => ( {
@@ -484,7 +496,11 @@ describe( 'PostFeedback', () => {
 
 	it( 'renders an applicable card: category badge, Current/New diff, enabled Apply change', () => {
 		mockEditorBlocks = [
-			{ clientId: 'block-1', name: 'core/paragraph', attributes: { content: 'created.When' } },
+			{
+				clientId: 'block-1',
+				name: 'core/paragraph',
+				attributes: { content: '<strong>created.</strong><em>When</em>' },
+			},
 		];
 		const { container } = render(
 			React.createElement( PostFeedback, {
@@ -496,8 +512,10 @@ describe( 'PostFeedback', () => {
 						feedback: 'Missing space after the period.',
 						action: 'Add a space between "created." and "When".',
 						block_index: 0,
-						current_text: 'created.When',
-						suggested_text: 'created. When',
+						current_text: '<strong>created.</strong><em>When</em>',
+						current_text_html: '<strong>created.</strong><em>When</em>',
+						suggested_text: '<strong>created.</strong> <em>When</em>',
+						suggested_text_html: '<strong>created.</strong> <em>When</em>',
 					},
 				],
 			} )
@@ -511,8 +529,13 @@ describe( 'PostFeedback', () => {
 		// Why on top, then the Current/New diff.
 		expect( diffTags( container ) ).toEqual( [ 'Why', 'Current', 'New' ] );
 		expect( container.textContent ).toContain( 'Missing space after the period.' );
-		expect( container.querySelector( 'del' )?.textContent ).toBe( 'created.When' );
-		expect( container.querySelector( 'ins' )?.textContent ).toBe( 'created. When' );
+		const currentText = container.querySelector( 'del' );
+		const suggestedText = container.querySelector( 'ins' );
+		expect( currentText?.querySelector( 'strong' ) ).toHaveTextContent( 'created.' );
+		expect( currentText?.querySelector( 'em' ) ).toHaveTextContent( 'When' );
+		expect( suggestedText?.querySelector( 'strong' ) ).toHaveTextContent( 'created.' );
+		expect( suggestedText?.querySelector( 'em' ) ).toHaveTextContent( 'When' );
+		expect( suggestedText?.textContent ).toBe( 'created. When' );
 
 		const apply = findButton( container, 'Apply change' );
 		expect( apply?.classList.contains( 'is-primary' ) ).toBe( true );
@@ -566,6 +589,44 @@ describe( 'PostFeedback', () => {
 		expect( goto?.classList.contains( 'is-primary' ) ).toBe( true );
 		expect( goto?.hasAttribute( 'disabled' ) ).toBe( false );
 		expect( findButton( container, 'Dismiss' ) ).toBeDefined();
+	} );
+
+	it( 'formats manual Current and Suggestion content without using the apply flag', () => {
+		const currentFragment = '<strong><em>Consultation</em></strong> openss next week.';
+		mockEditorBlocks = [
+			{
+				clientId: 'block-1',
+				name: 'core/paragraph',
+				attributes: { content: currentFragment },
+			},
+		];
+
+		const { container } = render(
+			React.createElement( PostFeedback, {
+				summary: 'Summary.',
+				postId: 123,
+				items: [
+					{
+						title: 'Spelling',
+						feedback: 'The spelling needs author review.',
+						action: 'Confirm the intended wording.',
+						block_index: 0,
+						current_text: currentFragment,
+						current_text_html: currentFragment,
+						suggested_text: 'Rewrite this while keeping <em>emphasis</em>.',
+						suggested_text_html: 'Rewrite this while keeping <em>emphasis</em>.',
+						requires_manual: true,
+					},
+				],
+			} )
+		);
+
+		const current = container.querySelector( 'del' );
+		const suggestion = container.querySelector( 'ins' );
+		expect( current?.querySelector( 'strong em' ) ).toHaveTextContent( 'Consultation' );
+		expect( suggestion?.querySelector( 'em' ) ).toHaveTextContent( 'emphasis' );
+		expect( suggestion ).toHaveTextContent( 'Rewrite this while keeping emphasis.' );
+		expect( findButton( container, 'Apply change' ) ).toBeUndefined();
 	} );
 
 	it( 'copies the Suggestion text and confirms with Copied on an advisory card', async () => {
@@ -1461,6 +1522,80 @@ describe( 'Proofread', () => {
 		expect( container.textContent ).toContain( 'Reviews your last saved version.' );
 		expect( container.textContent ).toContain( 'Suggested edits' );
 		expect( container.textContent ).toContain( 'Punctuation' );
+	} );
+
+	it( 'renders server-sanitised backend fragments in Current and New rows', () => {
+		const currentText =
+			'<strong><em>Consultation</em></strong> <a href="https://example.com"><strong><em>opens</em>s</strong></a> next week, <s>not this week</s>, ref<sup>2</sup>';
+		const suggestedText =
+			'<strong><em>Consultation</em></strong> <a href="https://example.com"><strong><em>opens</em></strong></a> next week, <s>not this week</s>, ref<sup>2</sup>';
+		mockEditorBlocks = [
+			{
+				clientId: 'block-1',
+				name: 'core/list-item',
+				attributes: { content: currentText },
+			},
+		];
+
+		const { container } = render(
+			React.createElement( Proofread, {
+				summary: 'Found a spelling error.',
+				postId: 123,
+				items: [
+					{
+						title: 'Spelling',
+						feedback: 'The word has an extra letter.',
+						action: 'Remove the extra letter.',
+						block_index: 0,
+						current_text: currentText,
+						current_text_html: currentText,
+						suggested_text: suggestedText,
+						suggested_text_html: suggestedText,
+					},
+				],
+			} )
+		);
+
+		const current = container.querySelector( 'del' );
+		const suggestion = container.querySelector( 'ins' );
+		expect( current?.querySelector( 'strong em' ) ).toHaveTextContent( 'Consultation' );
+		expect( current?.querySelector( 'a strong em' ) ).toHaveTextContent( 'opens' );
+		expect( suggestion?.querySelector( 'a' ) ).toHaveAttribute( 'href', 'https://example.com' );
+		expect( suggestion?.querySelector( 'a strong em' ) ).toHaveTextContent( 'opens' );
+		expect( suggestion?.querySelector( 's' ) ).toHaveTextContent( 'not this week' );
+		expect( suggestion?.querySelector( 'sup' ) ).toHaveTextContent( '2' );
+	} );
+
+	it( 'shows raw HTML-like fragments literally when the server preview fields are absent', () => {
+		const currentText = '<strong>openss</strong>';
+		mockEditorBlocks = [
+			{
+				clientId: 'block-1',
+				name: 'core/paragraph',
+				attributes: { content: currentText },
+			},
+		];
+
+		const { container } = render(
+			React.createElement( Proofread, {
+				summary: 'Found a spelling error.',
+				postId: 123,
+				items: [
+					{
+						title: 'Spelling',
+						feedback: 'The word has an extra letter.',
+						action: 'Remove the extra letter.',
+						block_index: 0,
+						current_text: currentText,
+						suggested_text: '<strong>opens</strong>',
+					},
+				],
+			} )
+		);
+
+		expect( container.querySelector( 'del strong, ins strong' ) ).toBeNull();
+		expect( container.querySelector( 'del' ) ).toHaveTextContent( '<strong>openss</strong>' );
+		expect( container.querySelector( 'ins' ) ).toHaveTextContent( '<strong>opens</strong>' );
 	} );
 
 	const findApplyAllButton = ( container: HTMLElement ) =>

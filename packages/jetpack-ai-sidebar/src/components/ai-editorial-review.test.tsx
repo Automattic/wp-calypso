@@ -108,6 +108,18 @@ jest.mock( '@wordpress/data', () => ( {
 jest.mock( '@wordpress/block-editor', () => ( {
 	store: 'core/block-editor',
 	BlockIcon: () => null,
+	RichText: {
+		Content: ( { tagName = 'div', value, ...props }: Record< string, unknown > ) => {
+			const react = jest.requireActual< typeof import('react') >( 'react' );
+			const { RawHTML } =
+				jest.requireActual< typeof import('@wordpress/element') >( '@wordpress/element' );
+			return react.createElement(
+				tagName as string,
+				props,
+				react.createElement( RawHTML, null, value as string )
+			);
+		},
+	},
 } ) );
 jest.mock( '@wordpress/blocks', () => ( {
 	getBlockType: () => undefined,
@@ -934,7 +946,8 @@ describe( 'AiEditorialReview — suggested-edit accept flow', () => {
 						{
 							block_index: 1,
 							current_text: 'outdated text',
-							suggested_text: 'fresh text',
+							suggested_text: '<strong>fresh</strong> text',
+							suggested_text_html: '<strong>fresh</strong> text',
 							rationale: 'Avoid stale source edits.',
 							supported_by_reviewers: [],
 						},
@@ -946,6 +959,12 @@ describe( 'AiEditorialReview — suggested-edit accept flow', () => {
 		// The drifted source can't apply, so no Apply change; Go to section stands in.
 		expect( screen.queryByRole( 'button', { name: 'Apply change' } ) ).not.toBeInTheDocument();
 		expect( screen.getByRole( 'button', { name: 'Go to section' } ) ).not.toBeDisabled();
+		const suggestion = document.querySelector(
+			'.jetpack-ai-feedback-list__diff-row.is-new .jetpack-ai-feedback-list__diff-content'
+		);
+		expect( suggestion?.tagName ).toBe( 'DIV' );
+		expect( suggestion?.querySelector( 'strong' ) ).toHaveTextContent( 'fresh' );
+		expect( document.querySelector( 'span > div' ) ).not.toBeInTheDocument();
 
 		expect( mockApplyReviewEdit ).not.toHaveBeenCalled();
 		expect( screen.queryByText( /Apply all/ ) ).not.toBeInTheDocument();
@@ -1613,5 +1632,191 @@ describe( 'AiEditorialReview — cached-run hint', () => {
 	it( 'omits the note when cached_at is not provided', () => {
 		render( <AiEditorialReview { ...basePayload() } /> );
 		expect( screen.queryByText( /Reusing review/ ) ).not.toBeInTheDocument();
+	} );
+} );
+
+describe( 'AiEditorialReview — HTML fragment display', () => {
+	const currentFragment =
+		'<strong><em>Consultation</em></strong> <em>opens</em>s on next week, <s>not this week</s>, ref<sup>2</sup>';
+	const replacementFragment =
+		'<strong><em>Consultation</em></strong> <em>opens</em> on next week, <s>not this week</s>, ref<sup>2</sup>';
+	const formattedBlocks = [
+		{
+			clientId: 'f0',
+			name: 'core/list-item',
+			attributes: { content: currentFragment },
+		},
+	];
+
+	it( 'renders server-sanitised Current/New previews and applies the raw strings', async () => {
+		mockBlocks = formattedBlocks;
+		mockApplyReviewEdit.mockResolvedValueOnce( { success: true } );
+
+		const { container } = render(
+			<AiEditorialReview
+				{ ...basePayload( {
+					suggested_edits: [
+						{
+							block_index: 0,
+							current_text: currentFragment,
+							current_text_html: currentFragment,
+							suggested_text: replacementFragment,
+							suggested_text_html: replacementFragment,
+							rationale: 'Confirm the <date> placeholder.',
+							supported_by_reviewers: [],
+						},
+					],
+				} ) }
+			/>
+		);
+
+		const del = container.querySelector( '.jetpack-ai-feedback-list__diff-row.is-current del' );
+		const ins = container.querySelector( '.jetpack-ai-feedback-list__diff-row.is-new ins' );
+		expect( del?.querySelector( 'strong em' ) ).toHaveTextContent( 'Consultation' );
+		expect( del?.querySelectorAll( 'em' )[ 1 ] ).toHaveTextContent( 'opens' );
+		expect( del?.querySelector( 's' ) ).toHaveTextContent( 'not this week' );
+		expect( del?.querySelector( 'sup' ) ).toHaveTextContent( '2' );
+		expect( ins?.querySelector( 'strong em' ) ).toHaveTextContent( 'Consultation' );
+		expect( ins?.querySelectorAll( 'em' )[ 1 ] ).toHaveTextContent( 'opens' );
+		expect( ins?.querySelector( 's' ) ).toHaveTextContent( 'not this week' );
+		expect( ins?.querySelector( 'sup' ) ).toHaveTextContent( '2' );
+		expect( del ).toHaveTextContent( 'Consultation openss on next week, not this week, ref2' );
+		expect( ins ).toHaveTextContent( 'Consultation opens on next week, not this week, ref2' );
+		// Prose rationale keeps literal tags.
+		expect( screen.getByText( 'Confirm the <date> placeholder.' ) ).toBeInTheDocument();
+
+		await act( async () => {
+			fireEvent.click( screen.getByRole( 'button', { name: 'Apply change' } ) );
+		} );
+
+		// Apply receives the exact raw strings rather than either display preview.
+		expect( mockApplyReviewEdit ).toHaveBeenCalledWith(
+			'f0',
+			replacementFragment,
+			undefined,
+			currentFragment,
+			expect.any( Function ),
+			undefined
+		);
+	} );
+
+	it( 'formats manual Current and Suggestion content without using the apply flag', () => {
+		mockBlocks = formattedBlocks;
+		const { container } = render(
+			<AiEditorialReview
+				{ ...basePayload( {
+					suggested_edits: [
+						{
+							block_index: 0,
+							current_text: currentFragment,
+							current_text_html: currentFragment,
+							suggested_text: 'Rewrite the intro; keep <em>emphasis</em>.',
+							suggested_text_html: 'Rewrite the intro; keep <em>emphasis</em>.',
+							rationale: 'Needs author judgment.',
+							supported_by_reviewers: [],
+							requires_manual: true,
+						},
+					],
+				} ) }
+			/>
+		);
+
+		expect( container.querySelector( 'del strong em' ) ).toHaveTextContent( 'Consultation' );
+		expect( container.querySelector( 'ins em' ) ).toHaveTextContent( 'emphasis' );
+		expect( container.querySelector( 'ins' ) ).toHaveTextContent(
+			'Rewrite the intro; keep emphasis.'
+		);
+		expect( screen.queryByRole( 'button', { name: 'Apply change' } ) ).not.toBeInTheDocument();
+	} );
+
+	it( 'renders the server-sanitised conflict preview without changing the apply value', async () => {
+		mockBlocks = formattedBlocks;
+		mockApplyReviewEdit.mockResolvedValueOnce( { success: true } );
+		const candidateFragment = `${ replacementFragment }<iframe></iframe><a href="javascript:window.pwned = true">unsafe link</a>`;
+		const candidatePreview = `${ replacementFragment }<a>unsafe link</a>`;
+		render(
+			<AiEditorialReview
+				{ ...basePayload( {
+					conflicts: [
+						{
+							subject: 'Framing',
+							positions: [ { reviewer: 'Marcus', position: 'Softer.' } ],
+							guideline_anchor: null,
+							recommended_resolution: 'Use the softer wording.',
+							candidate_resolutions: [
+								{
+									source: 'ai',
+									reviewer_name: null,
+									label: 'AI resolution',
+									block_index: 0,
+									current_text: currentFragment,
+									text: candidateFragment,
+									text_html: candidatePreview,
+									rationale: 'Grounded.',
+								},
+							],
+						},
+					],
+				} ) }
+			/>
+		);
+
+		const aiText = document.querySelector( '.jetpack-ai-editorial-review__ai-text' );
+		expect( aiText?.tagName ).toBe( 'DIV' );
+		expect( aiText ).not.toHaveAttribute( 'role' );
+		expect( document.querySelector( 'p > div' ) ).not.toBeInTheDocument();
+		expect( aiText?.querySelector( 'strong em' ) ).toHaveTextContent( 'Consultation' );
+		expect( aiText?.querySelectorAll( 'em' )[ 1 ] ).toHaveTextContent( 'opens' );
+		expect( aiText?.querySelector( 's' ) ).toHaveTextContent( 'not this week' );
+		expect( aiText?.querySelector( 'sup' ) ).toHaveTextContent( '2' );
+		expect( aiText?.querySelector( 'iframe' ) ).toBeNull();
+		expect( aiText?.querySelector( 'a' ) ).not.toHaveAttribute( 'href' );
+
+		await act( async () => {
+			fireEvent.click( screen.getByRole( 'button', { name: 'Accept AI resolution' } ) );
+		} );
+
+		expect( mockApplyReviewEdit ).toHaveBeenCalledWith(
+			'f0',
+			candidateFragment,
+			undefined,
+			currentFragment,
+			expect.any( Function ),
+			undefined
+		);
+	} );
+
+	it( 'renders an HTML-like candidate literally when the server preview is absent', () => {
+		mockBlocks = formattedBlocks;
+		render(
+			<AiEditorialReview
+				{ ...basePayload( {
+					conflicts: [
+						{
+							subject: 'Framing',
+							positions: [ { reviewer: 'Marcus', position: 'Softer.' } ],
+							guideline_anchor: null,
+							recommended_resolution: 'Use the softer wording.',
+							candidate_resolutions: [
+								{
+									source: 'ai',
+									reviewer_name: null,
+									label: 'AI resolution',
+									block_index: 0,
+									current_text: currentFragment,
+									text: '<strong>Use this wording.</strong>',
+									rationale: 'Grounded.',
+								},
+							],
+						},
+					],
+				} ) }
+			/>
+		);
+
+		const aiText = document.querySelector( '.jetpack-ai-editorial-review__ai-text' );
+		expect( aiText?.tagName ).toBe( 'P' );
+		expect( aiText?.querySelector( 'strong' ) ).toBeNull();
+		expect( aiText ).toHaveTextContent( '<strong>Use this wording.</strong>' );
 	} );
 } );

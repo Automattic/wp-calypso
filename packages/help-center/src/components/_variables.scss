@@ -21,3 +21,5 @@ $help-center-z-index-focused: $overlay-panel-z-index-focused;
 $help-center-blue: #3858e9;
 $help-center-notice-background: #FDF7E9;
 $help-center-notice-color: #644B1C;
+$help-center-cta-banner-background: color-mix(in srgb, var(--color-surface) 94%, $help-center-blue);
+$help-center-cta-banner-border: color-mix(in srgb, var(--color-surface) 76%, $help-center-blue);
