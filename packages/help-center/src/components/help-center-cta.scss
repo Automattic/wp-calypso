@@ -1,3 +1,4 @@
+@use "sass:math";
 @import "@wordpress/base-styles/colors";
 @import "variables";
 
@@ -6,6 +7,7 @@
 	border: 1px solid $help-center-cta-banner-border;
 	border-radius: 4px;
 	padding: 8px 16px;
+	font-size: $font-body-small;
 
 	.help-center-cta__title {
 		margin: 0 0 4px;
@@ -45,7 +47,9 @@
 	.help-center-cta__resource-description {
 		display: block;
 		color: $gray-700;
-		font-size: $font-body-extra-small;
+		// Parent link text is $font-body-small; rescale so this computes to
+		// $font-body-extra-small of the panel root instead of compounding.
+		font-size: math.div($font-body-extra-small, $font-body-small) * 1em;
 		font-weight: normal;
 	}
 
