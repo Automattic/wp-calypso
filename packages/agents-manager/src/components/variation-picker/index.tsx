@@ -41,7 +41,8 @@ interface Props {
 
 function VariationPicker( { variations, type, maxToShow, onSelect, activeVariationTitle }: Props ) {
 	const [ pageIndex, setPageIndex ] = useState( 0 );
-	const [ resizeListener, { width } ] = useResizeObserver();
+	const [ width, setWidth ] = useState( 0 );
+	const resizeRef = useResizeObserver( ( [ entry ] ) => setWidth( entry.contentRect.width ) );
 
 	// `maxToShow` can arrive degenerate through model-generated tool props.
 	const parsedMaxToShow = Math.floor( Number( maxToShow ) );
@@ -67,8 +68,7 @@ function VariationPicker( { variations, type, maxToShow, onSelect, activeVariati
 	);
 
 	return (
-		<div className="agents-manager-variation-picker">
-			{ resizeListener }
+		<div className="agents-manager-variation-picker" ref={ resizeRef }>
 			<VStack spacing={ 1 }>
 				<Grid
 					gap={ 2 }

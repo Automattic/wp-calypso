@@ -29,7 +29,13 @@ jest.mock( '@wordpress/icons', () => ( {
 
 let mockWidth: number | null = null;
 jest.mock( '@wordpress/compose', () => ( {
-	useResizeObserver: () => [ null, { width: mockWidth } ],
+	useResizeObserver:
+		( callback: ( entries: { contentRect: { width: number } }[] ) => void ) =>
+		( element: Element | null ) => {
+			if ( element && mockWidth !== null ) {
+				callback( [ { contentRect: { width: mockWidth } } ] );
+			}
+		},
 } ) );
 
 const defaultProps = {
