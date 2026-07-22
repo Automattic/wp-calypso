@@ -135,7 +135,7 @@ export default function ReaderFeedHeaderFollow( props: ReaderFeedHeaderFollowPro
 		text: 'Mark all as read',
 		newCopy: translate( 'Mark all as read' ),
 		oldCopy: translate( 'Mark all as seen' ),
-	} );
+	} ) as string;
 
 	return (
 		<div className="reader-feed-header__follow">
