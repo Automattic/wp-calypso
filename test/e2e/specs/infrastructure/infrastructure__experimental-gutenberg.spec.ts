@@ -32,7 +32,7 @@ test.describe(
 			const experimentalPackages = [
 				[ 'blockEditor', '__unstableInserterMenuExtension', 'function' ],
 				[ 'date', '__experimentalGetSettings', 'function' ],
-				[ 'components', '__experimentalNavigationBackButton', 'object' ],
+				[ 'components', '__experimentalNavigatorBackButton', 'object' ],
 				[ 'editPost', '__experimentalMainDashboardButton', 'function' ],
 			];
 
