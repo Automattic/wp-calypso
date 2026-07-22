@@ -37,15 +37,15 @@ describe( 'uploadExportFile', () => {
 		);
 	} );
 
-	it( 'supports starting an import with a media ID', () => {
-		uploadExportFile( siteId, { importStatus, mediaID: 456 } );
+	it( 'supports starting an import with an attachment ID', () => {
+		uploadExportFile( siteId, { importStatus, attachmentId: 456 } );
 
 		expect( wp.req.post ).toHaveBeenCalledWith(
 			{
 				path: '/sites/123/imports/new',
 				formData: [
 					[ 'importStatus', JSON.stringify( importStatus ) ],
-					[ 'mediaID', 456 ],
+					[ 'attachmentId', 456 ],
 				],
 			},
 			expect.any( Function )
