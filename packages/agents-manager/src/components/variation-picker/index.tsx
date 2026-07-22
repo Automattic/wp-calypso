@@ -4,6 +4,7 @@ import {
 	Tooltip,
 	__experimentalVStack as VStack,
 } from '@wordpress/components';
+import { useResizeObserver } from '@wordpress/compose';
 import { memo, useMemo, useState } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { chevronLeft, chevronRight } from '@wordpress/icons';
@@ -13,6 +14,17 @@ import './style.scss';
 
 // Variations per page — one full 2×2 grid in the docked sidebar.
 const DEFAULT_MAX_TO_SHOW = 4;
+
+// Keep in sync with `GRID_TEMPLATE_COLUMNS`: 140px-minimum cards, 8px gap.
+const CARD_MIN_WIDTH = 140;
+const GRID_GAP = 8;
+
+// Rows per page when the width fits more than the narrow two columns.
+const PAGE_ROWS = 2;
+
+// The most columns possible under the 640px width cap — at full width every
+// option renders without pagination.
+const FULL_WIDTH_COLUMNS = 4;
 
 // As many card-sized columns as fit, but at least 2 — `min()` caps the track
 // minimum at half the row so the narrow docked chat never falls to one column,
@@ -29,16 +41,23 @@ interface Props {
 
 function VariationPicker( { variations, type, maxToShow, onSelect, activeVariationTitle }: Props ) {
 	const [ firstIndex, setFirstIndex ] = useState( 0 );
+	const [ resizeListener, { width } ] = useResizeObserver();
 
 	// `maxToShow` can arrive degenerate through model-generated tool props.
-	// TODO: Revisit the pagination/display rule — wide chats could show more
-	// (or all) options per page instead of paginating.
 	const parsedMaxToShow = Math.floor( Number( maxToShow ) );
-	const perPage = parsedMaxToShow > 0 ? parsedMaxToShow : DEFAULT_MAX_TO_SHOW;
+	const pageSize = parsedMaxToShow > 0 ? parsedMaxToShow : DEFAULT_MAX_TO_SHOW;
+
+	// Narrow width keeps the given page size, wider widths fit two full rows
+	// per page, and full width shows every option without pagination.
+	const columns = width
+		? Math.max( 2, Math.floor( ( width + GRID_GAP ) / ( CARD_MIN_WIDTH + GRID_GAP ) ) )
+		: 2;
+	const showAll = columns >= FULL_WIDTH_COLUMNS;
+	const perPage = columns <= 2 ? pageSize : columns * PAGE_ROWS;
 
 	const variationsToShow = useMemo(
-		() => variations.slice( firstIndex, firstIndex + perPage ),
-		[ variations, firstIndex, perPage ]
+		() => ( showAll ? variations : variations.slice( firstIndex, firstIndex + perPage ) ),
+		[ variations, firstIndex, perPage, showAll ]
 	);
 
 	const totalPages = Math.ceil( variations.length / perPage );
@@ -56,6 +75,7 @@ function VariationPicker( { variations, type, maxToShow, onSelect, activeVariati
 
 	return (
 		<div className="agents-manager-variation-picker">
+			{ resizeListener }
 			<VStack spacing={ 1 }>
 				<Grid
 					gap={ 2 }
@@ -76,7 +96,7 @@ function VariationPicker( { variations, type, maxToShow, onSelect, activeVariati
 						</Tooltip>
 					) ) }
 				</Grid>
-				{ variations.length > perPage && (
+				{ ! showAll && variations.length > perPage && (
 					<div className="agents-manager-variation-picker__arrows">
 						<Button
 							label={ __( 'Previous', __i18n_text_domain__ ) }

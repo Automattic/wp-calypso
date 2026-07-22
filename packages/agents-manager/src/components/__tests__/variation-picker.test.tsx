@@ -27,6 +27,11 @@ jest.mock( '@wordpress/icons', () => ( {
 	chevronRight: 'chevron-right',
 } ) );
 
+let mockWidth: number | null = null;
+jest.mock( '@wordpress/compose', () => ( {
+	useResizeObserver: () => [ null, { width: mockWidth } ],
+} ) );
+
 const defaultProps = {
 	onSelect: jest.fn(),
 };
@@ -37,7 +42,52 @@ const mockVariations = [
 	{ title: 'Variation 3', settings: {}, styles: {} },
 ];
 
+const manyVariations = Array.from( { length: 8 }, ( _, index ) => ( {
+	title: `Variation ${ index + 1 }`,
+	settings: {},
+	styles: {},
+} ) );
+
 describe( 'VariationPicker', () => {
+	beforeEach( () => {
+		mockWidth = null;
+	} );
+
+	it( 'fits two rows per page with pagination at larger widths', () => {
+		// 460px → 3 columns → 6 options per page.
+		mockWidth = 460;
+		const { container } = render(
+			<VariationPicker
+				{ ...defaultProps }
+				variations={ manyVariations }
+				maxToShow={ 4 }
+				type="color"
+			/>
+		);
+
+		expect( screen.getAllByTestId( 'variation' ) ).toHaveLength( 6 );
+		expect(
+			container.querySelector( '.agents-manager-variation-picker__arrows' )
+		).toBeInTheDocument();
+	} );
+
+	it( 'shows every option without pagination at full width', () => {
+		// 640px → 4 columns — the full-width tier.
+		mockWidth = 640;
+		const { container } = render(
+			<VariationPicker
+				{ ...defaultProps }
+				variations={ manyVariations }
+				maxToShow={ 4 }
+				type="color"
+			/>
+		);
+
+		expect( screen.getAllByTestId( 'variation' ) ).toHaveLength( 8 );
+		expect(
+			container.querySelector( '.agents-manager-variation-picker__arrows' )
+		).not.toBeInTheDocument();
+	} );
 	it( 'shows navigation buttons when variations exceed `maxToShow`', () => {
 		const { container } = render(
 			<VariationPicker
