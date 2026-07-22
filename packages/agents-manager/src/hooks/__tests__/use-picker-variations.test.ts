@@ -5,7 +5,7 @@ import { renderHook, act } from '@testing-library/react';
 import usePickerVariations from '../use-picker-variations';
 import type { GlobalStyles, StyleVariation } from '../../components/styles-preview';
 
-const mockSetStyles = jest.fn();
+const mockSetStyles = jest.fn( () => true );
 jest.mock( '../use-styles', () => ( {
 	__esModule: true,
 	default: () => mockSetStyles,
@@ -74,6 +74,15 @@ describe( 'usePickerVariations', () => {
 
 		expect( mockSetStyles ).toHaveBeenCalledWith( variations[ 1 ] );
 		expect( result.current.activeTitle ).toBe( 'Pastel' );
+	} );
+
+	it( 'does not highlight a selection that could not be applied', () => {
+		mockSetStyles.mockReturnValueOnce( false );
+		const { result } = renderHook( () => usePickerVariations( makeOptions() ) );
+
+		act( () => result.current.handleSelect( variations[ 1 ] ) );
+
+		expect( result.current.activeTitle ).toBeNull();
 	} );
 
 	it( 'drops falsy and duplicate-title variations', () => {

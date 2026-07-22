@@ -5,17 +5,13 @@ import {
 	// @ts-ignore -- exists at runtime but not typed
 	__unstableIframe as Iframe,
 } from '@wordpress/block-editor';
-import {
-	__experimentalHStack as HStack,
-	__unstableMotion as motion,
-	__experimentalVStack as VStack,
-} from '@wordpress/components';
+import { __experimentalHStack as HStack, __unstableMotion as motion } from '@wordpress/components';
 /* eslint-enable wpcalypso/no-unsafe-wp-apis */
 import { useResizeObserver, useThrottle } from '@wordpress/compose';
 import { useLayoutEffect, useMemo, useState } from '@wordpress/element';
-import deepmerge from 'deepmerge';
 import useGlobalStyles from '../../hooks/use-global-styles';
 import { fontFamiliesToCSS } from '../../utils/font-families-to-css';
+import mergeGlobalStyles from '../../utils/merge-global-styles';
 
 export interface PaletteColor {
 	color: string;
@@ -119,20 +115,6 @@ function getStyleValue(
 	return path.split( '.' ).reduce( ( obj: any, key: string ) => obj?.[ key ], source );
 }
 
-const firstFrame = {
-	start: {
-		scale: 1,
-		opacity: 1,
-	},
-};
-
-const secondFrame = {
-	start: {
-		scale: 0,
-		opacity: 0,
-	},
-};
-
 const normalizedWidth = 200;
 const normalizedHeight = 80;
 const normalizedColorSwatchSize = 32;
@@ -153,17 +135,19 @@ function resolveColor(
 	if ( ! editorColor ) {
 		return undefined;
 	}
+	// Palettes can arrive malformed through model-generated variation props.
+	const safePalette = Array.isArray( palette ) ? palette : [];
 
 	// Handle WordPress block format: var:preset|color|theme-2
 	if ( editorColor.includes( 'var:preset|color|' ) ) {
 		const slug = editorColor.split( '|' )[ 2 ];
-		return palette?.find( ( c ) => c.slug === slug )?.color;
+		return safePalette.find( ( c ) => c?.slug === slug )?.color;
 	}
 
 	// Handle CSS variable format: var(--wp--preset--color--theme-2)
 	if ( editorColor.includes( 'var(--wp--preset' ) ) {
 		const slug = editorColor.split( '--' )[ 4 ]?.replace( ')', '' );
-		return palette?.find( ( c ) => c.slug === slug )?.color;
+		return safePalette.find( ( c ) => c?.slug === slug )?.color;
 	}
 
 	if ( ! defaultValue || editorColor !== defaultValue ) {
@@ -237,12 +221,11 @@ const EMPTY_GLOBAL_STYLES: GlobalStyles = {};
 const EMPTY_PALETTE: PaletteColor[] = [];
 
 interface Props {
-	label?: string;
 	type: 'color' | 'font' | 'button';
 	variation?: StyleVariation;
 }
 
-export default function StylesPreview( { label, type, variation }: Props ) {
+export default function StylesPreview( { type, variation }: Props ) {
 	const { globalStyles: storeGlobalStyles } = useGlobalStyles();
 
 	const globalStyles = storeGlobalStyles ?? EMPTY_GLOBAL_STYLES;
@@ -254,7 +237,7 @@ export default function StylesPreview( { label, type, variation }: Props ) {
 		if ( variation && type === 'font' ) {
 			return variation as GlobalStyles;
 		}
-		return variation ? ( deepmerge( globalStyles, variation ) as GlobalStyles ) : globalStyles;
+		return variation ? mergeGlobalStyles( globalStyles, variation as GlobalStyles ) : globalStyles;
 	}, [ variation, type, globalStyles ] );
 
 	const fontFamilies =
@@ -277,8 +260,6 @@ export default function StylesPreview( { label, type, variation }: Props ) {
 		'serif';
 	const fontWeight = getStyleValue( mergedStyles, 'typography.fontWeight' ) as string | undefined;
 	const fontStyle = ( getStyleValue( mergedStyles, 'typography.fontStyle' ) as string ) ?? 'normal';
-	const textTransform =
-		( getStyleValue( mergedStyles, 'typography.textTransform' ) as string ) ?? 'none';
 	const textColor = ( getStyleValue( globalStyles, 'color.text' ) as string ) ?? 'black';
 
 	// `h1` styles win over `heading` styles for the header preview.
@@ -290,9 +271,6 @@ export default function StylesPreview( { label, type, variation }: Props ) {
 	const headerFontWeight =
 		getHeaderStyleValue( mergedStyles, 'typography.fontWeight' ) ?? fontWeight;
 	const headerFontStyle = getHeaderStyleValue( mergedStyles, 'typography.fontStyle' ) ?? fontStyle;
-	const headerTextTransform =
-		getHeaderStyleValue( mergedStyles, 'typography.textTransform' ) ?? textTransform;
-	const headerColor = getHeaderStyleValue( globalStyles, 'color.text' ) ?? textColor;
 	const backgroundColor = globalStyles?.styles?.color?.background;
 
 	const [ containerResizeListener, { width } ] = useResizeObserver();
@@ -346,8 +324,11 @@ export default function StylesPreview( { label, type, variation }: Props ) {
 	const ratio = ratioState ? ratioState : fallbackRatio;
 
 	const getColorsToShow = () => {
-		const colorsToShow = variation?.settings?.color?.palette?.theme || paletteColors;
-		return colorsToShow.filter( ( color ) => color.color !== backgroundColor ).slice( 0, 4 );
+		const variationPalette = variation?.settings?.color?.palette?.theme;
+		const colorsToShow = Array.isArray( variationPalette ) ? variationPalette : paletteColors;
+		return colorsToShow
+			.filter( ( color ) => color?.color && color.color !== backgroundColor )
+			.slice( 0, 4 );
 	};
 
 	const editorStyles = useMemo( () => {
@@ -386,98 +367,89 @@ export default function StylesPreview( { label, type, variation }: Props ) {
 						background: variationBackgroundColor,
 						cursor: 'pointer',
 					} }
-					initial="start"
 				>
-					<motion.div
-						variants={ firstFrame }
+					<HStack
+						spacing={ 10 * ratio }
+						justify="center"
 						style={ {
 							height: '100%',
 							overflow: 'hidden',
 						} }
 					>
-						<HStack
-							spacing={ 10 * ratio }
-							justify="center"
-							style={ {
-								height: '100%',
-								overflow: 'hidden',
-							} }
-						>
-							{ type === 'font' && (
-								<div
+						{ type === 'font' && (
+							<div
+								style={ {
+									color: activeTextColor || '#000000',
+									whiteSpace: 'nowrap',
+									paddingLeft: '5px',
+									lineHeight: 1,
+									padding: '0.2em',
+								} }
+							>
+								<span
 									style={ {
-										color: activeTextColor || '#000000',
-										whiteSpace: 'nowrap',
-										paddingLeft: '5px',
-										lineHeight: 1,
-										padding: '0.2em',
+										fontFamily: headerFontFamily,
+										fontSize: 50 * ratio,
+										fontWeight: headerFontWeight,
+										fontStyle: headerFontStyle,
+										textTransform: 'none',
 									} }
 								>
-									<span
+									A
+								</span>
+								<span
+									style={ {
+										fontFamily,
+										fontSize: 40 * ratio,
+										fontWeight,
+										fontStyle,
+										textTransform: 'none',
+									} }
+								>
+									a
+								</span>
+							</div>
+						) }
+						{ type === 'color' && (
+							<HStack spacing={ 0 } alignment="center" style={ { margin: '0 0 0 10px' } }>
+								{ getColorsToShow().map( ( { slug, color }, index ) => (
+									<div
+										key={ `${ slug }_${ index }` }
 										style={ {
-											fontFamily: headerFontFamily,
-											fontSize: 50 * ratio,
-											fontWeight: headerFontWeight,
-											fontStyle: headerFontStyle,
-											textTransform: 'none',
+											height: normalizedColorSwatchSize * ratio,
+											width: normalizedColorSwatchSize * ratio,
+											background: color,
+											borderRadius: '100%',
+											margin: '0 0 0 -10px',
+											border: `2px solid ${ variationBackgroundColor }`,
+											boxSizing: 'content-box',
 										} }
-									>
-										A
-									</span>
-									<span
-										style={ {
-											fontFamily,
-											fontSize: 40 * ratio,
-											fontWeight,
-											fontStyle,
-											textTransform: 'none',
-										} }
-									>
-										a
-									</span>
+									/>
+								) ) }
+							</HStack>
+						) }
+						{ type === 'button' && (
+							<motion.div
+								style={ {
+									color: activeTextColor || '#000000',
+									whiteSpace: 'nowrap',
+									paddingLeft: '5px',
+									lineHeight: 1,
+									padding: '0.2em',
+								} }
+								animate={ { scale: 1, opacity: 1 } }
+								initial={ { scale: 0.1, opacity: 0 } }
+								transition={ {
+									delay: 0.3,
+									type: 'tween',
+								} }
+							>
+								<div style={ { zoom: 0.8 } }>
+									<button style={ buttonStyles }> </button>
 								</div>
-							) }
-							{ type === 'color' && (
-								<HStack spacing={ 0 } alignment="center" style={ { margin: '0 0 0 10px' } }>
-									{ getColorsToShow().map( ( { slug, color }, index ) => (
-										<div
-											key={ `${ slug }_${ index }` }
-											style={ {
-												height: normalizedColorSwatchSize * ratio,
-												width: normalizedColorSwatchSize * ratio,
-												background: color,
-												borderRadius: '100%',
-												margin: '0 0 0 -10px',
-												border: `2px solid ${ variationBackgroundColor }`,
-												boxSizing: 'content-box',
-											} }
-										/>
-									) ) }
-								</HStack>
-							) }
-							{ type === 'button' && (
-								<motion.div
-									style={ {
-										color: activeTextColor || '#000000',
-										whiteSpace: 'nowrap',
-										paddingLeft: '5px',
-										lineHeight: 1,
-										padding: '0.2em',
-									} }
-									animate={ { scale: 1, opacity: 1 } }
-									initial={ { scale: 0.1, opacity: 0 } }
-									transition={ {
-										delay: 0.3,
-										type: 'tween',
-									} }
-								>
-									<div style={ { zoom: 0.8 } }>
-										<button style={ buttonStyles }> </button>
-									</div>
-								</motion.div>
-							) }
-						</HStack>
-					</motion.div>
+							</motion.div>
+						) }
+					</HStack>
 					<motion.div
 						style={ {
 							height: '100%',
@@ -508,44 +480,6 @@ export default function StylesPreview( { label, type, variation }: Props ) {
 								/>
 							) ) }
 						</HStack>
-					</motion.div>
-					<motion.div
-						variants={ secondFrame }
-						style={ {
-							height: '100%',
-							width: '100%',
-							overflow: 'hidden',
-							position: 'absolute',
-							top: 0,
-						} }
-					>
-						<VStack
-							spacing={ 3 * ratio }
-							justify="center"
-							style={ {
-								height: '100%',
-								overflow: 'hidden',
-								padding: 10 * ratio,
-								boxSizing: 'border-box',
-							} }
-						>
-							{ label && (
-								<div
-									style={ {
-										fontSize: 40 * ratio,
-										fontFamily: headerFontFamily,
-										color: type === 'color' ? headerColor : '#1e1e1e',
-										fontWeight: headerFontWeight,
-										fontStyle: headerFontStyle,
-										textTransform: headerTextTransform,
-										lineHeight: '1em',
-										textAlign: 'center',
-									} }
-								>
-									{ label }
-								</div>
-							) }
-						</VStack>
 					</motion.div>
 				</motion.div>
 			</Iframe>

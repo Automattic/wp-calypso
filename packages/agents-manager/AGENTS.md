@@ -33,7 +33,7 @@ AM ability registration (`registerAmAbilities()`) is surface-agnostic by design 
 
 - **The backend route settings are the scope authority** (`wpcom` repo, `lib/ai/agents/route-settings/wp-orchestrator/`): deny-by-default, per-URL allowlists rebuild each agent's tool set from scratch. Client-side registration and provider advertisement never make an ability callable.
 - **Never rename an ability while migrating it** — the name is the key the route settings match on; renaming silently drops it from every surface.
-- **Guard mutating callbacks in place**: a callback that changes editor state (e.g. `apply-block-edits`, `set-styles`) starts with an `isEditorPage()` early-return that returns an error result. Inert callbacks (e.g. `show-component`) need no guard.
+- **Guard mutating callbacks in place**: when migrating a callback that changes editor state (e.g. `apply-block-edits`, `set-styles`), start it with an `isEditorPage()` early-return that returns an error result. Inert callbacks (e.g. `show-component`) need no guard.
 - **Per migration, grep the route-settings files** for the ability name to confirm which surfaces expose it.
 
 ## Pitfalls

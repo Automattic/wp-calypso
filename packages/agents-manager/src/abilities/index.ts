@@ -1,4 +1,4 @@
-import { registerAbility, registerAbilityCategory } from '@wordpress/abilities';
+import { registerAbility, registerAbilityCategory, unregisterAbility } from '@wordpress/abilities';
 import { BIG_SKY_ABILITY_CATEGORY } from './constants';
 import { showComponentAbility } from './show-component';
 import type { Ability } from './types';
@@ -13,9 +13,10 @@ let hasRegistered = false;
 /**
  * Registers AM-owned abilities via `@wordpress/abilities`.
  *
- * The registry is last-write-wins and this runs after external providers have
- * loaded, so AM's implementations override same-name provider copies — AM is
- * the single source of truth for each migrated ability.
+ * The registry rejects duplicate names, and providers may register their own
+ * copies of migrated abilities first — so a collision is resolved by replacing
+ * the provider's copy, making AM the owner of each migrated ability. Providers
+ * delete their copies as cleanup once a migration lands.
  */
 export async function registerAmAbilities(): Promise< void > {
 	if ( hasRegistered ) {
@@ -36,9 +37,14 @@ export async function registerAmAbilities(): Promise< void > {
 	for ( const ability of AM_ABILITIES ) {
 		try {
 			await registerAbility( ability );
-		} catch ( error ) {
-			// eslint-disable-next-line no-console
-			console.warn( `[AgentsManager] Failed to register ability: ${ ability.name }`, error );
+		} catch {
+			try {
+				await unregisterAbility( ability.name );
+				await registerAbility( ability );
+			} catch ( error ) {
+				// eslint-disable-next-line no-console
+				console.warn( `[AgentsManager] Failed to register ability: ${ ability.name }`, error );
+			}
 		}
 	}
 }

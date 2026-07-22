@@ -10,7 +10,7 @@ import type { GlobalStyles, StyleVariation } from '../components/styles-preview'
 
 interface Options {
 	variations?: StyleVariation[];
-	/** Highlighted title until the live value matches a variation. */
+	/** Highlighted title until the live value is read from the store. */
 	initialActiveTitle?: string | null;
 	/** Reads the live value from the editor's global styles. */
 	getLiveValue: ( globalStyles: GlobalStyles ) => unknown;
@@ -85,8 +85,9 @@ export default function usePickerVariations( {
 
 	const handleSelect = useCallback(
 		( variation: StyleVariation ) => {
-			setStyles( variation );
-			setActiveTitle( variation.title ?? null );
+			if ( setStyles( variation ) ) {
+				setActiveTitle( variation.title ?? null );
+			}
 		},
 		[ setStyles ]
 	);

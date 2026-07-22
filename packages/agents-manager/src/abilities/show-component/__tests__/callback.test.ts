@@ -51,6 +51,15 @@ describe( 'showComponentCallback', () => {
 		expect( JSON.parse( result.agentMessage! ).data.followUpTasks ).toBe( true );
 	} );
 
+	it( 'returns a structured error result when props is null', async () => {
+		const result = await showComponentCallback(
+			makeInput( { props: null as unknown as ShowComponentInput[ 'props' ] } )
+		);
+
+		expect( result.result.success ).toBe( false );
+		expect( result.agentMessage ).toBeUndefined();
+	} );
+
 	it( 'returns a structured error result when props is empty', async () => {
 		const result = await showComponentCallback( makeInput( { props: {} } ) );
 

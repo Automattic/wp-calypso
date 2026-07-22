@@ -2,7 +2,6 @@ import { __, sprintf } from '@wordpress/i18n';
 import clsx from 'clsx';
 import StylesPreview from '../styles-preview';
 import type { StyleVariation } from '../styles-preview';
-import './style.scss';
 
 interface Props {
 	variation: StyleVariation;
@@ -46,7 +45,7 @@ export default function Variation( { variation, type, isActive = false, onSelect
 			aria-current={ isActive }
 		>
 			<div className="agents-manager-variation-picker__preview">
-				<StylesPreview label={ variation?.title } type={ type } variation={ variation } />
+				<StylesPreview type={ type } variation={ variation } />
 			</div>
 		</div>
 	);

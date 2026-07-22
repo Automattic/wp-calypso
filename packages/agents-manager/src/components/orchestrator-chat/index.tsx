@@ -811,9 +811,8 @@ export default function OrchestratorChat( {
 		setThinkingMessage,
 	} );
 
-	// Register AM-owned abilities after the providers' setup — the abilities
-	// registry is last-write-wins, so AM's implementations override same-name
-	// provider copies during the gradual migration.
+	// Register AM-owned abilities — a provider's copy of a migrated ability is
+	// replaced on collision, so AM's implementations own the migrated set.
 	useAbilitiesRegistration();
 
 	const displayedMessages = useMemo< AgentsManagerUIMessage[] >( () => {

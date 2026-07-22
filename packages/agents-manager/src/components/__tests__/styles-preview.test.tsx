@@ -84,17 +84,12 @@ jest.mock( '@wordpress/compose', () => ( {
 
 describe( 'StylesPreview', () => {
 	it( 'renders without crashing', () => {
-		render( <StylesPreview label="Test Label" type="font" /> );
+		render( <StylesPreview type="font" /> );
 		expect( screen.getByTestId( 'mock-editor-iframe' ) ).toBeInTheDocument();
 	} );
 
-	it( 'displays the correct label', () => {
-		render( <StylesPreview label="Test Label" type="font" /> );
-		expect( screen.getByText( 'Test Label' ) ).toBeInTheDocument();
-	} );
-
 	it( 'renders font preview when type is "font"', () => {
-		render( <StylesPreview label="Font Preview" type="font" /> );
+		render( <StylesPreview type="font" /> );
 		expect( screen.getByText( 'A' ) ).toBeInTheDocument();
 		const lowercase = screen.getByText( 'a' );
 		expect( lowercase ).toBeInTheDocument();
@@ -102,13 +97,13 @@ describe( 'StylesPreview', () => {
 	} );
 
 	it( 'renders color swatches when type is "color"', () => {
-		const { container } = render( <StylesPreview label="Color Preview" type="color" /> );
+		const { container } = render( <StylesPreview type="color" /> );
 		// Color swatches are circular divs with `border-radius: 100%`.
 		expect( container.querySelector( 'div[style*="border-radius"]' ) ).toBeInTheDocument();
 	} );
 
 	it( 'renders button preview when type is "button"', () => {
-		const { container } = render( <StylesPreview label="Button Preview" type="button" /> );
+		const { container } = render( <StylesPreview type="button" /> );
 		expect( container.querySelector( 'button' ) ).toBeInTheDocument();
 	} );
 } );

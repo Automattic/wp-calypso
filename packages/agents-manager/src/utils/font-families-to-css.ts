@@ -1,28 +1,56 @@
 import { store as coreStore } from '@wordpress/core-data';
 import { select } from '@wordpress/data';
 
+// `@font-face` descriptors we pass through; anything else in the (model- or
+// theme-supplied) font face object is dropped.
+const FONT_FACE_DESCRIPTORS = new Set( [
+	'font-family',
+	'font-style',
+	'font-weight',
+	'font-stretch',
+	'font-display',
+	'src',
+	'unicode-range',
+	'font-feature-settings',
+	'font-variation-settings',
+	'ascent-override',
+	'descent-override',
+	'line-gap-override',
+	'size-adjust',
+] );
+
+// Values are interpolated into a raw stylesheet — strip characters that could
+// terminate the declaration or block and inject arbitrary CSS.
+function sanitizeFontFaceValue( value: unknown ): string {
+	return String( value ).replace( /[{};"\\]/g, '' );
+}
+
 /**
- * Generates CSS for a `@font-face` rule.
+ * Generates CSS for a `@font-face` rule from an untrusted font face object.
  */
 function generateFontFaceCSS( fontFace: Record< string, unknown > ): string {
 	const properties = Object.entries( fontFace )
 		.map( ( [ key, value ] ) => {
 			const kebabKey = key.replace( /[A-Z]/g, ( m ) => `-${ m.toLowerCase() }` );
 
+			if ( ! FONT_FACE_DESCRIPTORS.has( kebabKey ) ) {
+				return null;
+			}
+
 			if ( kebabKey === 'src' ) {
-				if ( Array.isArray( value ) ) {
-					const urls = value.map( ( url ) => `url("${ url }")` ).join( ', ' );
-					return `  src: ${ urls };`;
-				}
-				return `  src: url("${ value }");`;
+				const urls = ( Array.isArray( value ) ? value : [ value ] )
+					.map( ( url ) => `url("${ sanitizeFontFaceValue( url ) }")` )
+					.join( ', ' );
+				return `  src: ${ urls };`;
 			}
 
 			if ( kebabKey === 'font-family' ) {
-				return `  ${ kebabKey }: "${ value }";`;
+				return `  ${ kebabKey }: "${ sanitizeFontFaceValue( value ) }";`;
 			}
 
-			return `  ${ kebabKey }: ${ value };`;
+			return `  ${ kebabKey }: ${ sanitizeFontFaceValue( value ) };`;
 		} )
+		.filter( Boolean )
 		.join( '\n' );
 
 	return `@font-face {\n${ properties }\n}`;

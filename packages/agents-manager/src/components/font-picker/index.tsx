@@ -30,13 +30,17 @@ export default function FontPicker( {
 		initialActiveTitle: currentFont,
 		getLiveValue: ( globalStyles ) => globalStyles.settings?.typography?.fontFamilies?.theme,
 		getValue: ( variation ) => variation.settings?.typography?.fontFamilies?.theme,
-		createCurrent: ( liveValue ) =>
+		createCurrent: ( liveValue, globalStyles ) =>
 			( {
 				settings: { typography: { fontFamilies: { theme: liveValue } } },
+				// Snapshot the applied typography so "Current" previews and
+				// restores the actual live font, not just the family list.
+				styles: globalStyles.styles ?? {},
 			} ) as Omit< StyleVariation, 'title' >,
 	} );
 
-	// Load all variation fonts into the editor iframe so previews render correctly.
+	// Pre-load every variation's fonts in the editor canvas so previews and
+	// applying a pick don't flash unstyled text.
 	useEffect( () => {
 		const families = sortedVariations.flatMap(
 			( v ) => v.settings?.typography?.fontFamilies?.theme ?? []

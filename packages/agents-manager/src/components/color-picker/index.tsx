@@ -3,7 +3,7 @@ import VariationPicker from '../variation-picker';
 import type { StyleVariation } from '../styles-preview';
 
 interface Props {
-	variations: StyleVariation[];
+	variations?: StyleVariation[];
 	currentColor?: string | null;
 }
 

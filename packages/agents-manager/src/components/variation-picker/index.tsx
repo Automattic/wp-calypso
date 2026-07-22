@@ -27,30 +27,28 @@ interface Props {
 	activeVariationTitle?: string | null;
 }
 
-function VariationPicker( {
-	variations,
-	type,
-	maxToShow = DEFAULT_MAX_TO_SHOW,
-	onSelect,
-	activeVariationTitle,
-}: Props ) {
+function VariationPicker( { variations, type, maxToShow, onSelect, activeVariationTitle }: Props ) {
 	const [ firstIndex, setFirstIndex ] = useState( 0 );
 
+	// `maxToShow` can arrive degenerate through model-generated tool props.
+	const parsedMaxToShow = Math.floor( Number( maxToShow ) );
+	const perPage = parsedMaxToShow > 0 ? parsedMaxToShow : DEFAULT_MAX_TO_SHOW;
+
 	const variationsToShow = useMemo(
-		() => variations.slice( firstIndex, firstIndex + maxToShow ),
-		[ variations, firstIndex, maxToShow ]
+		() => variations.slice( firstIndex, firstIndex + perPage ),
+		[ variations, firstIndex, perPage ]
 	);
 
-	const totalPages = Math.ceil( variations.length / maxToShow );
-	const currentPage = Math.floor( firstIndex / maxToShow ) + 1;
+	const totalPages = Math.ceil( variations.length / perPage );
+	const currentPage = Math.floor( firstIndex / perPage ) + 1;
 
 	const revealPrevious = () => {
-		setFirstIndex( ( prev ) => Math.max( 0, prev - maxToShow ) );
+		setFirstIndex( ( prev ) => Math.max( 0, prev - perPage ) );
 	};
 
 	const revealNext = () => {
 		setFirstIndex( ( prev ) =>
-			Math.min( prev + maxToShow, Math.floor( variations.length / maxToShow ) * maxToShow )
+			Math.min( prev + perPage, Math.floor( variations.length / perPage ) * perPage )
 		);
 	};
 
@@ -63,6 +61,7 @@ function VariationPicker( {
 					className="agents-manager-variation-picker__grid"
 				>
 					{ variationsToShow.map( ( variation, index ) => (
+						// An empty `text` disables the tooltip for non-font types.
 						<Tooltip key={ index } text={ type === 'font' ? variation.title : '' }>
 							<div>
 								<Variation
@@ -75,7 +74,7 @@ function VariationPicker( {
 						</Tooltip>
 					) ) }
 				</Grid>
-				{ variations.length > maxToShow && (
+				{ variations.length > perPage && (
 					<div className="agents-manager-variation-picker__arrows">
 						<Button
 							label={ __( 'Previous', __i18n_text_domain__ ) }
@@ -92,7 +91,7 @@ function VariationPicker( {
 							size="compact"
 							icon={ chevronRight }
 							onClick={ revealNext }
-							disabled={ firstIndex + maxToShow >= variations.length }
+							disabled={ firstIndex + perPage >= variations.length }
 						/>
 					</div>
 				) }

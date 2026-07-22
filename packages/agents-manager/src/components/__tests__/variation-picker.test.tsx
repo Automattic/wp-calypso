@@ -69,6 +69,20 @@ describe( 'VariationPicker', () => {
 		expect( arrows ).not.toBeInTheDocument();
 	} );
 
+	it.each( [ 0, -1, NaN ] )( 'falls back to the default page size for maxToShow=%p', ( value ) => {
+		render(
+			<VariationPicker
+				{ ...defaultProps }
+				variations={ mockVariations }
+				maxToShow={ value }
+				type="color"
+			/>
+		);
+
+		// 3 variations fit inside the default page of 4 — all render, no arrows.
+		expect( screen.getAllByTestId( 'variation' ) ).toHaveLength( 3 );
+	} );
+
 	it( 'displays the correct number of variations', () => {
 		render(
 			<VariationPicker

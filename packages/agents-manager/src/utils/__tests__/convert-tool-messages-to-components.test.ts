@@ -227,6 +227,19 @@ describe( 'convertToolMessagesToComponents', () => {
 		] );
 	} );
 
+	it( 'renders the notice for prototype-member component types', () => {
+		const message = createToolMessage( LEGACY_SHOW_COMPONENT_TOOL_ID, {
+			type: 'toString',
+			props: { name: 'test' },
+		} );
+
+		const result = convertToolMessagesToComponents( { messages: [ message ] } );
+
+		expect( result[ 0 ].content ).toEqual( [
+			{ type: 'text', text: 'This option is no longer available.' },
+		] );
+	} );
+
 	it( 'renders a short notice when no component resolves on either side', () => {
 		const message = createToolMessage( LEGACY_SHOW_COMPONENT_TOOL_ID, {
 			type: 'unknown-component',

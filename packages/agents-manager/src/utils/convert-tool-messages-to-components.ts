@@ -26,7 +26,9 @@ const AM_COMPONENTS: Record< ShowComponentType, React.ComponentType > = {
 };
 
 function getAmComponent( type: string ): React.ComponentType | null {
-	return AM_COMPONENTS[ type as ShowComponentType ] ?? null;
+	// Own-property check so degenerate types (e.g. 'toString') can't resolve
+	// to `Object.prototype` members.
+	return Object.hasOwn( AM_COMPONENTS, type ) ? AM_COMPONENTS[ type as ShowComponentType ] : null;
 }
 
 interface Options {
@@ -104,9 +106,6 @@ function isDuplicateAdjacentShowComponentSummary(
 	);
 }
 
-/**
- * Converts tool-related messages to component messages.
- */
 function hasLaterAgentToolMessageInSameTurn(
 	messages: UIMessage[],
 	currentIndex: number
@@ -136,6 +135,9 @@ function hasLaterAgentToolMessageInSameTurn(
 	return false;
 }
 
+/**
+ * Converts tool-related messages to component messages.
+ */
 export default function convertToolMessagesToComponents( {
 	messages,
 	getChatComponent,

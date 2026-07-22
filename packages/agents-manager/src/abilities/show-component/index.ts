@@ -5,14 +5,15 @@ import type { Ability } from '../types';
 
 // Component types the `show-component` ability can render. Single source for
 // the input schema enum, the `ShowComponentType` union, and the component map.
-export const SHOW_COMPONENT_TYPES = [ 'button-picker', 'font-picker', 'color-picker' ] as const;
+const SHOW_COMPONENT_TYPES = [ 'button-picker', 'font-picker', 'color-picker' ] as const;
 
 export type ShowComponentType = ( typeof SHOW_COMPONENT_TYPES )[ number ];
 
 /**
  * The `show-component` ability definition.
  *
- * Uses the `big-sky` name and category to match the backend route configuration.
+ * Keeps the `big-sky/` name so the backend route allowlists keep matching;
+ * the category mirrors Big Sky's client-side registration.
  */
 export const showComponentAbility: Ability = {
 	name: 'big-sky/show-component',

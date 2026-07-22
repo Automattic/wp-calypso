@@ -116,6 +116,28 @@ describe( 'fontFamiliesToCSS', () => {
 		expect( css ).not.toContain( 'wordpress.com/themes/assembler' );
 	} );
 
+	it( 'strips CSS-breaking characters and drops unknown descriptors', () => {
+		const css = fontFamiliesToCSS( [
+			{
+				name: 'Evil',
+				fontFamily: '"Evil", serif',
+				fontFace: [
+					{
+						fontFamily: 'Evil',
+						fontWeight: '400 } body { display:none } @font-face { font-weight: 400',
+						notADescriptor: 'x',
+						src: [ 'x") } body { background: red } @font-face { src: url("y' ],
+					},
+				],
+			},
+		] );
+
+		// One rule only — nothing escapes the `@font-face` block.
+		expect( css.match( /{/g ) ).toHaveLength( 1 );
+		expect( css.match( /}/g ) ).toHaveLength( 1 );
+		expect( css ).not.toContain( 'not-a-descriptor' );
+	} );
+
 	it( 'returns empty string for empty font families', () => {
 		expect( fontFamiliesToCSS( [] ) ).toBe( '' );
 	} );

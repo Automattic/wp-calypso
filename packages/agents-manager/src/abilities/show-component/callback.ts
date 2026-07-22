@@ -18,7 +18,7 @@ export interface ShowComponentInput {
 export async function showComponentCallback( input: ShowComponentInput ): Promise< AbilityResult > {
 	const { type, props = {}, summary, followUpTasks } = input;
 
-	if ( typeof props !== 'object' || Object.keys( props ).length === 0 ) {
+	if ( ! props || typeof props !== 'object' || Object.keys( props ).length === 0 ) {
 		// eslint-disable-next-line no-console
 		console.error( `[AgentsManager] Invalid props for component ${ type }` );
 
