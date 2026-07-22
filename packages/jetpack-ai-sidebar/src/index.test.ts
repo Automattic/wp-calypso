@@ -3881,7 +3881,7 @@ describe( 'applyReviewEdit', () => {
 					name: 'core/paragraph',
 					attributes: {
 						content:
-							'I write this blog. If you\u2019re a soul-search like me, read on. aaaa bbbb cccc ddd',
+							'I write this blog. If you’re a soul-search like me, read on. aaaa bbbb cccc ddd',
 					},
 				},
 				'template-client-id': {
