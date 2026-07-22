@@ -1,6 +1,6 @@
 import { AgentUI, cn } from '@automattic/agenttic-ui';
 import { useDispatch, useSelect } from '@wordpress/data';
-import { __ } from '@wordpress/i18n';
+import { __, sprintf } from '@wordpress/i18n';
 import threeDModelPreview from '../../assets/3d-model.webp';
 import analogFilmPreview from '../../assets/analog-film.webp';
 import animePreview from '../../assets/anime.webp';
@@ -195,9 +195,25 @@ export function StylePicker( { disabled = false, mode, variant = 'image' }: Styl
 		} );
 	};
 
-	const selectedLabel =
-		options.find( ( opt ) => opt.value === selectedStyle )?.label ??
-		__( 'Style', __i18n_text_domain__ );
+	const selectedOption = options.find( ( opt ) => opt.value === selectedStyle );
+	// Carry the card's badge (e.g. "New") into the collapsed toolbar label, so a
+	// freshly-added style still reads as new once it is the selected one and the
+	// dropdown is closed.
+	const getSelectedLabel = () => {
+		if ( ! selectedOption ) {
+			return __( 'Style', __i18n_text_domain__ );
+		}
+		if ( ! selectedOption.badge ) {
+			return selectedOption.label;
+		}
+		return sprintf(
+			/* translators: 1: style name, e.g. "Highlights". 2: short badge, e.g. "New". */
+			__( '%1$s (%2$s)', __i18n_text_domain__ ),
+			selectedOption.label,
+			selectedOption.badge
+		);
+	};
+	const selectedLabel = getSelectedLabel();
 
 	return (
 		<AgentUI.InputToolbar

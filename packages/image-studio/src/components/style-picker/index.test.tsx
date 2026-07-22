@@ -55,6 +55,12 @@ jest.mock( '@wordpress/data', () => ( {
 
 jest.mock( '@wordpress/i18n', () => ( {
 	__: ( text: string ) => text,
+	sprintf: ( format: string, ...args: string[] ) => {
+		let seq = 0;
+		return format
+			.replace( /%(\d+)\$s/g, ( _match, n: string ) => String( args[ Number( n ) - 1 ] ) )
+			.replace( /%s/g, () => String( args[ seq++ ] ) );
+	},
 } ) );
 
 jest.mock( '../../utils/tracking', () => ( {
@@ -562,6 +568,33 @@ describe( 'StylePicker', () => {
 			rerender( <StylePicker mode={ ImageStudioMode.Generate } /> );
 
 			expect( screen.getByTestId( 'toolbar-button' ) ).toHaveTextContent( 'Cinematic' );
+		} );
+
+		it( 'appends the badge to the collapsed label for a badged video style', () => {
+			mockUseSelect.mockImplementation( ( selector: any ) =>
+				selector( () => ( {
+					getSelectedStyle: () => 'highlights',
+				} ) )
+			);
+
+			render( <StylePicker mode={ ImageStudioMode.Generate } variant="video" /> );
+
+			// Highlights carries a "New" badge, so the closed toolbar reads "Highlights (New)".
+			expect( screen.getByTestId( 'toolbar-button' ) ).toHaveTextContent( 'Highlights (New)' );
+		} );
+
+		it( 'leaves the collapsed label unchanged for an un-badged video style', () => {
+			mockUseSelect.mockImplementation( ( selector: any ) =>
+				selector( () => ( {
+					getSelectedStyle: () => 'cinematic',
+				} ) )
+			);
+
+			render( <StylePicker mode={ ImageStudioMode.Generate } variant="video" /> );
+
+			const toolbarButton = screen.getByTestId( 'toolbar-button' );
+			expect( toolbarButton ).toHaveTextContent( 'Cinematic' );
+			expect( toolbarButton ).not.toHaveTextContent( '(New)' );
 		} );
 
 		it( 'handles unknown selected style gracefully', () => {
