@@ -1443,7 +1443,7 @@ export default function PurchaseSettings() {
 		...purchaseCancelFeaturesQuery( purchase.ID, 'treatment' ),
 		enabled: isSplitEnabled,
 	} );
-	const features = isSplitEnabled ? cancelFeaturesResponse?.features ?? null : null;
+	const features = cancelFeaturesResponse?.features ?? null;
 	const hasExpiryInfo = ! purchase.partner_name || isA4ABillingDragonPurchase( purchase );
 
 	const isSmallViewport = useViewportMatch( 'medium', '<' );

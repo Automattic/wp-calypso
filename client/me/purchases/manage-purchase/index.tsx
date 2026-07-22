@@ -1843,11 +1843,8 @@ function ManagePurchaseWithExperiment( props: ManagePurchaseProps ) {
 	const isSplitCancelRemoveEnabled = useIsSplitCancelRemoveEnabled();
 	const { data: cancelFeaturesResponse } = useQuery( {
 		...purchaseCancelFeaturesQuery( props.purchaseId, 'treatment' ),
-		enabled: isSplitCancelRemoveEnabled,
 	} );
-	const cancellationFeatures = isSplitCancelRemoveEnabled
-		? cancelFeaturesResponse?.features ?? null
-		: null;
+	const cancellationFeatures = cancelFeaturesResponse?.features ?? null;
 	return (
 		<ConnectedManagePurchase
 			{ ...props }
