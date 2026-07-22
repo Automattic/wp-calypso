@@ -1,14 +1,6 @@
 /**
  * @jest-environment jsdom
  */
-import {
-	isAdminBarInEditor,
-	isEditorAiEntryEnabled,
-	isEditorHelpMenuEnabled,
-} from '../editor-entry-points';
-import { getAgentsManagerInlineData } from '../get-agents-manager-inline-data';
-import { isEditorPage } from '../is-editor-page';
-
 jest.mock( '../get-agents-manager-inline-data', () => ( {
 	getAgentsManagerInlineData: jest.fn(),
 } ) );
@@ -16,8 +8,6 @@ jest.mock( '../is-editor-page', () => ( {
 	isEditorPage: jest.fn(),
 } ) );
 
-const mockInlineData = getAgentsManagerInlineData as jest.Mock;
-const mockIsEditorPage = isEditorPage as jest.Mock;
 const ADMIN_BAR_IN_EDITOR_CLASS = 'has-admin-bar-in-editor';
 // Saved so each suite can restore it — `setDesktop` overwrites `window.matchMedia`.
 const originalMatchMedia = window.matchMedia;
@@ -27,6 +17,24 @@ type TestWindow = Window & { __experimentalAdminBarInEditor?: boolean };
 function setOmnibarActive( active: boolean ) {
 	( window as TestWindow ).__experimentalAdminBarInEditor = active;
 }
+
+// `isAdminBarInEditor` snapshots its result on first read, so reset the module before each test to
+// re-run those tests against a fresh snapshot.
+let isAdminBarInEditor: () => boolean;
+let isEditorAiEntryEnabled: () => boolean;
+let isEditorHelpMenuEnabled: () => boolean;
+let mockInlineData: jest.Mock;
+let mockIsEditorPage: jest.Mock;
+
+beforeEach( async () => {
+	jest.resetModules();
+	( { isAdminBarInEditor, isEditorAiEntryEnabled, isEditorHelpMenuEnabled } = await import(
+		'../editor-entry-points'
+	) );
+	mockInlineData = ( await import( '../get-agents-manager-inline-data' ) )
+		.getAgentsManagerInlineData as unknown as jest.Mock;
+	mockIsEditorPage = ( await import( '../is-editor-page' ) ).isEditorPage as unknown as jest.Mock;
+} );
 
 describe( 'isAdminBarInEditor', () => {
 	afterEach( () => {
