@@ -140,8 +140,9 @@
 	}
 }
 
+.manage-purchase__content-purchase-description,
 .manage-purchase__content-domain-description {
-	margin-bottom: 4px;
+	margin-bottom: 8px;
 }
 
 .manage-purchase__header {
@@ -236,7 +237,6 @@
 	list-style: none;
 	margin: 0;
 	padding: 0;
-	transform: translateX( -4px );
 }
 
 .manage-purchase__feature-list-item {
