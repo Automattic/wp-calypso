@@ -30,6 +30,7 @@ import {
 import { dispatch } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
+import { logToLogstash } from 'calypso/lib/logstash';
 import {
 	checkDomainNameServersPermissions,
 	checkDomainTransferPermissions,
@@ -127,6 +128,26 @@ export const domainRoute = createRoute( {
 	getParentRoute: () => rootRoute,
 	path: 'domains/$domainName',
 	errorComponent: lazyRouteComponent( () => import( '../../domains/domain/error' ) ),
+	beforeLoad: ( { params: { domainName } } ) => {
+		// A valid domain name must contain at least one period.
+		// Reject obviously invalid slugs (e.g. the literal string 'undefined'
+		// produced when a JS variable is coerced to string) before hitting the API.
+		if ( ! domainName.includes( '.' ) ) {
+			logToLogstash( {
+				feature: 'calypso_client',
+				message: 'Invalid domain slug in route param',
+				severity: 'error',
+				tags: [ 'dashboard' ],
+				properties: {
+					env_id: config( 'env_id' ),
+					invalid_slug: domainName,
+					referrer: document.referrer || '(none)',
+					path: window.location.href,
+				},
+			} );
+			throw notFound();
+		}
+	},
 	loader: async ( { params: { domainName }, location } ) => {
 		const domain = await queryClient.ensureQueryData( domainQuery( domainName ) );
 		const isNameServersSubRoute = location.pathname.includes( '/name-servers' );
