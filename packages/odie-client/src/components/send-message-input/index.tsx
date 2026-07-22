@@ -7,6 +7,7 @@ import {
 	createInterpolateElement,
 	useCallback,
 	useEffect,
+	useId,
 	useRef,
 	useState,
 } from '@wordpress/element';
@@ -22,8 +23,8 @@ import { useMessageSizeErrorNotice } from '../notices';
 import { useAttachmentHandler } from './use-attachment-handler';
 import { useSendMessageHandler } from './use-send-message-handler';
 
-const AiDisclosure = () => (
-	<div className="odie-ai-disclosure">
+const AiDisclosure = ( { id }: { id: string } ) => (
+	<div className="odie-ai-disclosure" id={ id }>
 		{ createInterpolateElement(
 			__(
 				'You’re chatting with an AI assistant. Responses may be inaccurate. <a>Learn more</a>',
@@ -162,6 +163,22 @@ export const OdieSendMessageButton = () => {
 
 	const isEmailFallback = chat?.provider === 'zendesk' && forceEmailSupport;
 
+	const aiDisclosureId = useId();
+	const showAiDisclosure = ! isLiveChat && ! isEmailFallback;
+
+	// ChatInput doesn't forward aria attributes to the textarea, so associate the
+	// disclosure through the ref to have screen readers announce it on focus.
+	useEffect( () => {
+		const textarea = textareaRef.current;
+		if ( ! textarea ) {
+			return;
+		}
+		if ( showAiDisclosure ) {
+			textarea.setAttribute( 'aria-describedby', aiDisclosureId );
+			return () => textarea.removeAttribute( 'aria-describedby' );
+		}
+	}, [ textareaRef, showAiDisclosure, aiDisclosureId ] );
+
 	// Handle key events including Enter submission and paste
 	const handleKeyDown = useCallback(
 		( e: React.KeyboardEvent< HTMLTextAreaElement > ) => {
@@ -222,7 +239,7 @@ export const OdieSendMessageButton = () => {
 						actionOrder="before-submit"
 					/>
 				) }
-				{ ! isLiveChat && ! isEmailFallback && <AiDisclosure /> }
+				{ showAiDisclosure && <AiDisclosure id={ aiDisclosureId } /> }
 			</div>
 			<AttachmentDropZone />
 		</>
