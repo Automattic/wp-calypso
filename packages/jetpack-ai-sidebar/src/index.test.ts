@@ -59,6 +59,8 @@ let mockBlocksByClientId: Record< string, any > = {};
 let mockEditorBlocks: any[] = [];
 const SHOW_COMPONENT_TOOL_ID = 'jetpack_ai__show_component';
 const LEGACY_SHOW_COMPONENT_TOOL_ID = 'big_sky__show_component';
+const SHOW_COMPONENT_ABILITY_NAME = 'jetpack-ai/show-component';
+const LEGACY_SHOW_COMPONENT_ABILITY_NAME = 'big-sky/show-component';
 const AI_EDITORIAL_REVIEW_CONTRACT_ENTRY = {
 	id: 'ai-editorial-review-contract',
 	type: 'ai-editorial-review-contract',
@@ -2873,15 +2875,17 @@ describe( 'toolProvider', () => {
 			const names = abilities.map( ( a: any ) => a.name );
 
 			expect( names ).toContain( 'wpcom/update-block-content' );
-			expect( names ).toContain( SHOW_COMPONENT_TOOL_ID );
-			expect( names ).toContain( LEGACY_SHOW_COMPONENT_TOOL_ID );
+			expect( names ).toContain( SHOW_COMPONENT_ABILITY_NAME );
+			expect( names ).toContain( LEGACY_SHOW_COMPONENT_ABILITY_NAME );
+			expect( names ).not.toContain( SHOW_COMPONENT_TOOL_ID );
+			expect( names ).not.toContain( LEGACY_SHOW_COMPONENT_TOOL_ID );
 		} );
 
 		it( 'wires a callback on each provided ability', async () => {
 			const abilities = await toolProvider.getAbilities();
-			const showComponent = abilities.find( ( a: any ) => a.name === SHOW_COMPONENT_TOOL_ID );
+			const showComponent = abilities.find( ( a: any ) => a.name === SHOW_COMPONENT_ABILITY_NAME );
 			const legacyShowComponent = abilities.find(
-				( a: any ) => a.name === LEGACY_SHOW_COMPONENT_TOOL_ID
+				( a: any ) => a.name === LEGACY_SHOW_COMPONENT_ABILITY_NAME
 			);
 			const updateBlock = abilities.find( ( a: any ) => a.name === 'wpcom/update-block-content' );
 
@@ -2906,7 +2910,7 @@ describe( 'toolProvider', () => {
 
 			const abilities = await toolProvider.getAbilities();
 			const legacyShowComponent = abilities.find(
-				( a: any ) => a.name === LEGACY_SHOW_COMPONENT_TOOL_ID
+				( a: any ) => a.name === LEGACY_SHOW_COMPONENT_ABILITY_NAME
 			);
 			const result = await legacyShowComponent.callback( args );
 
@@ -2929,7 +2933,7 @@ describe( 'toolProvider', () => {
 
 			const abilities = await toolProvider.getAbilities();
 			const legacyShowComponent = abilities.find(
-				( a: any ) => a.name === LEGACY_SHOW_COMPONENT_TOOL_ID
+				( a: any ) => a.name === LEGACY_SHOW_COMPONENT_ABILITY_NAME
 			);
 			const result = await legacyShowComponent.callback( {
 				type,
@@ -2948,8 +2952,8 @@ describe( 'toolProvider', () => {
 			const names = abilities.map( ( a: any ) => a.name );
 
 			expect( names ).not.toContain( 'wpcom/update-block-content' );
-			expect( names ).toContain( SHOW_COMPONENT_TOOL_ID );
-			expect( names ).toContain( LEGACY_SHOW_COMPONENT_TOOL_ID );
+			expect( names ).toContain( SHOW_COMPONENT_ABILITY_NAME );
+			expect( names ).toContain( LEGACY_SHOW_COMPONENT_ABILITY_NAME );
 		} );
 	} );
 
@@ -2972,6 +2976,18 @@ describe( 'toolProvider', () => {
 			expect( result ).toMatchObject( { success: false } );
 			expect( ( result as any ).error ).toMatch( /no component registered/ );
 		} );
+
+		it.each( [ SHOW_COMPONENT_ABILITY_NAME, SHOW_COMPONENT_TOOL_ID ] )(
+			'accepts Jetpack show-component as %s',
+			async ( name ) => {
+				const { result } = ( await toolProvider.executeAbility( name, {
+					type: 'title-picker',
+					props: { titles: [] },
+				} ) ) as any;
+
+				expect( JSON.parse( result.agentMessage ).tool_id ).toBe( SHOW_COMPONENT_TOOL_ID );
+			}
+		);
 
 		it( 'returns an agentMessage envelope for a valid title-picker call', async () => {
 			const titles = [
@@ -3080,22 +3096,25 @@ describe( 'toolProvider', () => {
 			expect( parsed.data.calypsoCheckpointId ).toBe( 'call_alt' );
 		} );
 
-		it( 'accepts the legacy Big Sky show-component tool during migration', async () => {
-			const { result } = ( await toolProvider.executeAbility( LEGACY_SHOW_COMPONENT_TOOL_ID, {
-				type: 'ai-editorial-review',
-				props: {
-					summary: 'Summary.',
-					conflicts: [],
-					implications: [],
-					suggested_edits: [],
-					guideline_violations: [],
-				},
-			} ) ) as any;
+		it.each( [ LEGACY_SHOW_COMPONENT_ABILITY_NAME, LEGACY_SHOW_COMPONENT_TOOL_ID ] )(
+			'accepts the legacy Big Sky show-component ability as %s during migration',
+			async ( name ) => {
+				const { result } = ( await toolProvider.executeAbility( name, {
+					type: 'ai-editorial-review',
+					props: {
+						summary: 'Summary.',
+						conflicts: [],
+						implications: [],
+						suggested_edits: [],
+						guideline_violations: [],
+					},
+				} ) ) as any;
 
-			const parsed = JSON.parse( result.agentMessage );
-			expect( parsed.tool_id ).toBe( SHOW_COMPONENT_TOOL_ID );
-			expect( parsed.data.type ).toBe( 'ai-editorial-review' );
-		} );
+				const parsed = JSON.parse( result.agentMessage );
+				expect( parsed.tool_id ).toBe( SHOW_COMPONENT_TOOL_ID );
+				expect( parsed.data.type ).toBe( 'ai-editorial-review' );
+			}
+		);
 
 		it.each( [
 			[ 'Jetpack AI', SHOW_COMPONENT_TOOL_ID ],

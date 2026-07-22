@@ -394,10 +394,12 @@ function applySuggestionLimit< T extends { id: string } >(
 
 const SHOW_COMPONENT_TOOL_ID = 'jetpack_ai__show_component';
 const LEGACY_SHOW_COMPONENT_TOOL_ID = 'big_sky__show_component';
+const SHOW_COMPONENT_ABILITY_NAME = 'jetpack-ai/show-component';
+const LEGACY_SHOW_COMPONENT_ABILITY_NAME = 'big-sky/show-component';
 const SHOW_COMPONENT_TOOL_IDS = [ SHOW_COMPONENT_TOOL_ID, LEGACY_SHOW_COMPONENT_TOOL_ID ];
 
 /**
- * Client-side ability definition for `jetpack_ai__show_component`.
+ * Client-side ability definition for `jetpack-ai/show-component`.
  *
  * Surfaced to AM via `toolProvider.getAbilities()` so the orchestrator
  * recognizes Jetpack-owned component tool calls. Same pattern as
@@ -405,7 +407,7 @@ const SHOW_COMPONENT_TOOL_IDS = [ SHOW_COMPONENT_TOOL_ID, LEGACY_SHOW_COMPONENT_
  */
 const SHOW_COMPONENT_ABILITY: any = {
 	id: SHOW_COMPONENT_TOOL_ID,
-	name: SHOW_COMPONENT_TOOL_ID,
+	name: SHOW_COMPONENT_ABILITY_NAME,
 	label: 'Show component',
 	category: 'jetpack-ai',
 	description: 'Render an interactive component in the chat.',
@@ -422,7 +424,7 @@ const SHOW_COMPONENT_ABILITY: any = {
 const LEGACY_SHOW_COMPONENT_ABILITY: any = {
 	...SHOW_COMPONENT_ABILITY,
 	id: LEGACY_SHOW_COMPONENT_TOOL_ID,
-	name: LEGACY_SHOW_COMPONENT_TOOL_ID,
+	name: LEGACY_SHOW_COMPONENT_ABILITY_NAME,
 };
 
 function hasShowComponentType( type: unknown ): type is string {
@@ -615,7 +617,15 @@ function filterAbility( abilities: any[], toolId: string ): any[] {
 }
 
 function isShowComponentTool( toolId: string ): boolean {
-	return SHOW_COMPONENT_TOOL_IDS.includes( toolId );
+	return (
+		SHOW_COMPONENT_TOOL_IDS.includes( toolId ) ||
+		toolId === SHOW_COMPONENT_ABILITY_NAME ||
+		toolId === LEGACY_SHOW_COMPONENT_ABILITY_NAME
+	);
+}
+
+function isLegacyShowComponentTool( toolId: string ): boolean {
+	return toolId === LEGACY_SHOW_COMPONENT_TOOL_ID || toolId === LEGACY_SHOW_COMPONENT_ABILITY_NAME;
 }
 
 export const toolProvider = {
@@ -679,7 +689,7 @@ export const toolProvider = {
 			return { result, returnToAgent: false };
 		}
 
-		if ( name === LEGACY_SHOW_COMPONENT_TOOL_ID && shouldDelegateLegacyShowComponent( args ) ) {
+		if ( isLegacyShowComponentTool( name ) && shouldDelegateLegacyShowComponent( args ) ) {
 			const executeAbility = getAbilitiesExecuteAbility();
 			if ( executeAbility ) {
 				return executeAbility( 'big-sky/show-component', args );
