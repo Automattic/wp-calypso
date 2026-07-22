@@ -35,7 +35,8 @@ function HelpCenterContent() {
 	// When it's active, the legacy Help button moves out of the toolbar and into that admin bar.
 	const isAdminBarInEditor =
 		!! window.__experimentalAdminBarInEditor ||
-		document.body.classList.contains( 'has-admin-bar-in-editor' );
+		document.body.classList.contains( 'has-admin-bar-in-editor' ) ||
+		( document.getElementById( 'wpadminbar' )?.offsetHeight ?? 0 ) > 0;
 
 	const trackIconInteraction = useCallback( () => {
 		recordTracksEvent( 'wpcom_help_center_icon_interaction', {
