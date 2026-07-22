@@ -13,6 +13,21 @@ export function getSiteProvisionTarget( queryParams: URLSearchParams ): string |
 	return queryParams.get( 'provision_target' ) ?? queryParams.get( 'early_provision_target' );
 }
 
+export function shouldWaitForAtomicProvisioning(
+	provisionTarget: string | null,
+	{
+		isPlayground,
+		goToCheckout,
+	}: {
+		isPlayground: boolean;
+		goToCheckout: boolean;
+	}
+): boolean {
+	return (
+		provisionTarget === EARLY_PROVISION_TARGET_WPCOM_ATOMIC && ( ! isPlayground || ! goToCheckout )
+	);
+}
+
 type AtomicProvisioningSite = {
 	URL?: string;
 	slug?: string;

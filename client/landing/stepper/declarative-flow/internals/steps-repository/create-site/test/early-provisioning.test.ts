@@ -6,6 +6,7 @@ import {
 	getEarlyCreatedSiteId,
 	getSiteProvisionTarget,
 	pollForAtomicProvisioning,
+	shouldWaitForAtomicProvisioning,
 } from '../early-provisioning';
 
 jest.mock( 'calypso/lib/wp', () => ( {
@@ -50,6 +51,35 @@ describe( 'getSiteProvisionTarget', () => {
 		expect( getSiteProvisionTarget( new URLSearchParams( 'early_provision_target=custom' ) ) ).toBe(
 			'custom'
 		);
+	} );
+} );
+
+describe( 'shouldWaitForAtomicProvisioning', () => {
+	it( 'does not wait for Atomic provisioning before a paid plan checkout', () => {
+		expect(
+			shouldWaitForAtomicProvisioning( EARLY_PROVISION_TARGET_WPCOM_ATOMIC, {
+				isPlayground: true,
+				goToCheckout: true,
+			} )
+		).toBe( false );
+	} );
+
+	it( 'waits for Playground Atomic provisioning when checkout is not required', () => {
+		expect(
+			shouldWaitForAtomicProvisioning( EARLY_PROVISION_TARGET_WPCOM_ATOMIC, {
+				isPlayground: true,
+				goToCheckout: false,
+			} )
+		).toBe( true );
+	} );
+
+	it( 'preserves early Atomic provisioning for other paid flows', () => {
+		expect(
+			shouldWaitForAtomicProvisioning( EARLY_PROVISION_TARGET_WPCOM_ATOMIC, {
+				isPlayground: false,
+				goToCheckout: true,
+			} )
+		).toBe( true );
 	} );
 } );
 

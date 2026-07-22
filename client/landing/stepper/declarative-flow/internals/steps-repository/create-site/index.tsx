@@ -47,6 +47,7 @@ import {
 	getEarlyCreatedSiteId,
 	getSiteProvisionTarget,
 	pollForAtomicProvisioning,
+	shouldWaitForAtomicProvisioning,
 } from './early-provisioning';
 import type { Step as StepType } from '../../types';
 import type { OnboardSelect } from '@automattic/data-stores';
@@ -299,7 +300,12 @@ const CreateSite: StepType = function CreateSite( { navigation, flow, data } ) {
 			throw new Error( 'Failed to create site' );
 		}
 
-		if ( provisionTarget === EARLY_PROVISION_TARGET_WPCOM_ATOMIC ) {
+		if (
+			shouldWaitForAtomicProvisioning( provisionTarget, {
+				isPlayground: urlQueryParams.has( 'playground' ),
+				goToCheckout: shouldGoToCheckout,
+			} )
+		) {
 			const atomicSite = await pollForAtomicProvisioning( site.siteId );
 			site.siteSlug = atomicSite.siteSlug;
 		}
