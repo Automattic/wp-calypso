@@ -195,8 +195,8 @@ function EmailAssistantCard( {
 
 	const emailAddressMutation = useMutation(
 		withSnackbar( sitePostByEmailSettingsMutation( site ), {
-			success: __( 'AI agent email address settings saved.' ),
-			error: __( 'Failed to save AI agent email address settings.' ),
+			success: __( 'WordPress Agent email address settings saved.' ),
+			error: __( 'Failed to save WordPress Agent email address settings.' ),
 		} )
 	);
 	const isEmailAddressActionDisabled =
@@ -250,26 +250,26 @@ function EmailAssistantCard( {
 			<CardBody>
 				<VStack spacing={ 4 }>
 					<SectionHeader
-						title={ __( 'Email your assistant' ) }
-						description={ __( 'Email this site’s AI agent using a private address.' ) }
+						title={ __( 'Email WordPress Agent' ) }
+						description={ __( 'Email this site’s WordPress Agent using a private address.' ) }
 						level={ 3 }
 					/>
 					<ToggleControl
 						__nextHasNoMarginBottom
 						checked={ isAgentEmailEnabled }
 						disabled={ isEmailAddressActionDisabled }
-						label={ __( 'Enable AI agent email address' ) }
+						label={ __( 'Enable WordPress Agent email address' ) }
 						onChange={ handleEmailAddressToggle }
 					/>
 					<Notice density="medium">
 						{ __(
-							'Enabling this also enables Post by Email. Disabling it deletes the Post by Email address, so both Post by Email and this AI agent address will stop working.'
+							'Enabling this also enables Post by Email. Disabling it deletes the Post by Email address, so both Post by Email and this WordPress Agent address will stop working.'
 						) }
 					</Notice>
 					{ agentEmailAddress && (
 						<VStack spacing={ 3 }>
 							<ClipboardInputControl
-								label={ __( 'AI agent email address' ) }
+								label={ __( 'WordPress Agent email address' ) }
 								value={ agentEmailAddress }
 								readOnly
 								onCopy={ handleCopyAddress }
@@ -431,7 +431,7 @@ export default function AIToolsSettings( { siteSlug }: { siteSlug: string } ) {
 					upsellPlanRequirement="any"
 					upsellTitle={ __( 'Your dream site is just a prompt away' ) }
 					upsellDescription={ __(
-						'Get AI-powered assistance to help you build, edit, and redesign your site with ease.'
+						'Get WordPress Agent to help you build, edit, and redesign your site with ease.'
 					) }
 					upsellIcon={ comment }
 					upsellImage={ upsellIllustrationUrl }

@@ -2789,7 +2789,7 @@ const FEATURES_LIST: FeatureList = {
 	},
 	[ FEATURE_BUILT_IN_SITE_ASSISTANT ]: {
 		getSlug: () => FEATURE_BUILT_IN_SITE_ASSISTANT,
-		getTitle: () => i18n.translate( 'Built-in site assistant' ),
+		getTitle: () => i18n.translate( 'Built-in WordPress Agent' ),
 		getDescription: () =>
 			i18n.translate(
 				'Use WordPress Agent to generate content, design, and manage your site — all without leaving WordPress.'
