@@ -1,3 +1,5 @@
+import type { CorePlugin, Site } from '@automattic/api-core';
+
 export interface SitesWithWooPaymentsState {
 	blogId: number;
 	siteUrl: string;
@@ -13,3 +15,22 @@ export type RecordTracksEvent = (
 	eventName: string,
 	properties?: Record< string, unknown >
 ) => void;
+
+export type WooPaymentsPluginStatus = {
+	hasWooCommerce: boolean;
+	hasWooPayments: boolean;
+	woocommerceStatus?: CorePlugin[ 'status' ];
+	woocommercePaymentsStatus?: CorePlugin[ 'status' ];
+	isWooCommerceInactive: boolean;
+	isWooPaymentsActive: boolean;
+	isWooPaymentsInactive: boolean;
+};
+
+export type WooPaymentsSiteSetup = {
+	site: Site | undefined;
+	isLoading: boolean;
+	status: WooPaymentsPluginStatus;
+	setupUrl: string | undefined;
+	installAndActivate: () => Promise< void >;
+	isInstalling: boolean;
+};
