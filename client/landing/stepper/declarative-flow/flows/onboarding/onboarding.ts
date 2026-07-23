@@ -274,7 +274,10 @@ const onboarding: FlowV2< typeof initialize > = {
 					return navigate( 'create-site', undefined, false );
 				}
 				case 'email-verification':
-					return navigate( 'create-site', undefined, false );
+					// Replace rather than push: a verified user pressing Back must not land
+					// back on this step, which auto-submits and would kick off a second
+					// site-creation attempt.
+					return navigate( 'create-site', undefined, true );
 				case 'create-site':
 					return navigate( 'processing', undefined, true );
 				case 'post-checkout-onboarding': {

@@ -4,8 +4,10 @@
 // @ts-nocheck - TODO: Fix TypeScript issues
 import config from '@automattic/calypso-config';
 import { ONBOARDING_FLOW } from '@automattic/onboarding';
+import { screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import React from 'react';
-import { MemoryRouter } from 'react-router';
+import { MemoryRouter, useLocation, useNavigate } from 'react-router';
 import { addSurvicate } from 'calypso/lib/analytics/survicate';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import onboarding from '../flows/onboarding/onboarding';
@@ -126,6 +128,76 @@ describe( 'Onboarding Flow', () => {
 			} );
 
 			expect( getFlowLocation().path ).toBe( `/${ STEPS.SITE_CREATION_STEP.slug }` );
+		} );
+
+		it( 'replaces the verification step in history so browser Back cannot re-trigger site creation', async () => {
+			enabledFlags.add( 'onboarding/email-verification' );
+
+			const stepPath = ( slug: string ) => `/${ ONBOARDING_FLOW }/${ slug }`;
+
+			// A faithful stand-in for the flow's real navigate: it pushes or replaces
+			// history exactly the way `useFlowNavigation`'s customNavigate does.
+			const Harness = () => {
+				const navigate = useNavigate();
+				const location = useLocation();
+				const currentStep = location.pathname.split( '/' ).pop() as string;
+				const navigateAdapter = ( nextStep: string, _extraData?: unknown, replace = false ) =>
+					navigate( stepPath( nextStep ), { replace } );
+				const { submit } = onboarding.useStepNavigation( currentStep, navigateAdapter ) as {
+					submit: ( args: { slug: string; providedDependencies: unknown } ) => void;
+				};
+
+				return (
+					<>
+						<p data-testid="pathname">{ location.pathname }</p>
+						<button
+							onClick={ () =>
+								submit( {
+									slug: currentStep,
+									providedDependencies: { emailVerified: true },
+								} )
+							}
+						>
+							submit
+						</button>
+						<button onClick={ () => navigate( -1 ) }>back</button>
+					</>
+				);
+			};
+
+			renderWithProvider(
+				<MemoryRouter
+					initialEntries={ [
+						stepPath( STEPS.UNIFIED_PLANS.slug ),
+						stepPath( STEPS.EMAIL_VERIFICATION.slug ),
+					] }
+					initialIndex={ 1 }
+				>
+					<Harness />
+				</MemoryRouter>,
+				{ initialState: { currentUser: { id: 'some-id' } } }
+			);
+
+			expect( screen.getByTestId( 'pathname' ) ).toHaveTextContent(
+				stepPath( STEPS.EMAIL_VERIFICATION.slug )
+			);
+
+			// Confirming advances to site creation.
+			await userEvent.click( screen.getByRole( 'button', { name: 'submit' } ) );
+			expect( screen.getByTestId( 'pathname' ) ).toHaveTextContent(
+				stepPath( STEPS.SITE_CREATION_STEP.slug )
+			);
+
+			// Pressing Back must skip past the verification step (it was replaced, not
+			// pushed) and land on the step before it — otherwise it would auto-submit
+			// and start a second site-creation attempt.
+			await userEvent.click( screen.getByRole( 'button', { name: 'back' } ) );
+			expect( screen.getByTestId( 'pathname' ) ).toHaveTextContent(
+				stepPath( STEPS.UNIFIED_PLANS.slug )
+			);
+			expect( screen.getByTestId( 'pathname' ) ).not.toHaveTextContent(
+				stepPath( STEPS.EMAIL_VERIFICATION.slug )
+			);
 		} );
 	} );
 
