@@ -1,5 +1,6 @@
 import {
 	DataHelper,
+	ElementHelper,
 	MediaHelper,
 	StoryBlock,
 	TestAccount,
@@ -66,11 +67,17 @@ test.describe(
 				// `getByRole('main')` resolves, which will fail with the Story
 				// block due to https://github.com/Automattic/jetpack/issues/32976.
 				const postURL = await pageEditor.publish();
-				await page.goto( postURL.href );
+				await page.goto( postURL.href, { waitUntil: 'domcontentloaded' } );
 			} );
 
 			await test.step( 'Then the published post has the Story block', async () => {
-				await StoryBlock.validatePublishedContent( page );
+				// A just-published post can 404 for a moment (read-after-write),
+				// so reload until the Story block renders before asserting.
+				await ElementHelper.reloadAndRetry(
+					page,
+					( page ) => StoryBlock.validatePublishedContent( page ),
+					{ waitUntil: 'domcontentloaded' }
+				);
 			} );
 		} );
 	}
