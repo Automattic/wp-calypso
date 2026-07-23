@@ -29,8 +29,7 @@ function initialize() {
 		return [];
 	}
 
-	// Only show the site-spec step (with empty slug for clean URL)
-	return [ STEPS.SITE_SPEC ];
+	return [ STEPS.SITE_SPEC, STEPS.SITE_GENERATION ];
 }
 
 const aiSiteBuilderSpec: FlowV2< typeof initialize > = {
