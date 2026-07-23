@@ -45,6 +45,10 @@ export const useManageSupportInteraction = () => {
 					return newData;
 				}
 			);
+			// The support history relies on the list of odie-interactions to be fresh. Invalidate.
+			queryClient.invalidateQueries( {
+				queryKey: [ 'odie-interactions' ],
+			} );
 		},
 	} );
 
