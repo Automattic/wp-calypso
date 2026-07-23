@@ -2,9 +2,6 @@ import { WOOCOMMERCE_PLUGIN, WOOCOMMERCE_PAYMENTS_PLUGIN } from './constants';
 import type { WooPaymentsPluginStatus } from '../types';
 import type { CorePlugin } from '@automattic/api-core';
 
-/**
- * Reduce the site's Core plugins list to the WooCommerce / WooPayments flags the setup flow needs.
- */
 export function derivePluginStatus( plugins: CorePlugin[] = [] ): WooPaymentsPluginStatus {
 	const woocommercePlugin = plugins.find( ( { plugin } ) => plugin === WOOCOMMERCE_PLUGIN );
 	const woocommercePaymentsPlugin = plugins.find(

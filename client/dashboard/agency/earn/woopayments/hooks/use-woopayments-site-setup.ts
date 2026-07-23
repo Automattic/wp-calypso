@@ -16,13 +16,6 @@ import { derivePluginStatus } from '../lib/derive-plugin-status';
 import { getSiteSetupUrl } from '../lib/get-site-setup-url';
 import type { WooPaymentsSiteSetup } from '../types';
 
-/**
- * Data layer for the WooPayments site setup flow: resolves the target site, derives the
- * WooCommerce / WooPayments plugin status, and orchestrates installing + activating both plugins.
- *
- * Side effects that belong to presentation (opening WP-Admin, analytics, error surfacing) stay
- * with the caller — `installAndActivate` simply resolves once the plugins are ready or throws.
- */
 export function useWooPaymentsSiteSetup( siteId: number ): WooPaymentsSiteSetup {
 	const { data: site, isLoading: isLoadingSite } = useQuery( {
 		...siteByIdQuery( siteId ),
