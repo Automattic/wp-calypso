@@ -65,6 +65,24 @@
 	cursor: pointer;
 }
 
+/* DataViews appends its "loading more" spinner to the scrolled content, which
+   suits a fast request: it lands below the fold and the next batch arrives
+   before you reach it. A batch of logs can take a minute, so here it is scrolled
+   onto and sat with — pin it to the bottom so it doesn't shift rows or leave a
+   gap behind. */
+.site-logs-card .dataviews-loading:has( .dataviews-loading-more ) {
+	position: sticky;
+	bottom: 0;
+	flex-grow: 0;
+	padding: 6px 0;
+	background-color: var(--color-surface);
+	border-top: 1px solid var(--color-border-subtle);
+}
+
+.site-logs-card .dataviews-loading-more {
+	margin: 0;
+}
+
 /* Center the Auto-refresh toggle with the sibling view-config and download icon buttons. */
 .site-logs-card .dataviews__view-actions .components-toggle-control {
 	display: flex;
