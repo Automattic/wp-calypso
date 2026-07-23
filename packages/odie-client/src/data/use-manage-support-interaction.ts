@@ -34,8 +34,8 @@ export const useManageSupportInteraction = () => {
 			// Add the new interaction to the list of interactions without refetching them.
 			queryClient.setQueryData(
 				[ 'support-interactions', 'get-interactions', isTestMode ],
-				( oldData: SupportInteraction[] ) => {
-					const newData = [ ...oldData ];
+				( oldData: SupportInteraction[] | undefined ) => {
+					const newData = [ ...( oldData ?? [] ) ];
 					const index = newData.findIndex( ( i ) => i.uuid === interaction.uuid );
 					if ( index !== -1 ) {
 						newData[ index ] = interaction;
@@ -87,8 +87,8 @@ export const useManageSupportInteraction = () => {
 			// The support history relies on the list of interactions to have fresh events.
 			queryClient.setQueryData(
 				[ 'support-interactions', 'get-interactions', isTestMode ],
-				( oldData: SupportInteraction[] ) => {
-					const newData = [ ...oldData ];
+				( oldData: SupportInteraction[] | undefined ) => {
+					const newData = [ ...( oldData ?? [] ) ];
 					const index = newData.findIndex( ( i ) => i.uuid === interaction.uuid );
 					if ( index !== -1 ) {
 						newData[ index ] = interaction;
