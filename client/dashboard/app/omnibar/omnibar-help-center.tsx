@@ -5,7 +5,7 @@ import { Suspense, lazy, useCallback, useState } from 'react';
 import { useAuth } from '../auth';
 import { useAppContext } from '../context';
 import { useHelpCenter } from '../help-center';
-import { useA4AHelpCenterProps } from '../help-center/use-a4a-help-center-props';
+import { useHelpCenterExtraProps } from '../help-center/use-help-center-extra-props';
 import type HelpCenterApp from '../help-center/help-center-app';
 import type { Site } from '@automattic/api-core';
 
@@ -57,7 +57,7 @@ export default function OmnibarHelpCenter() {
 	const { user } = useAuth();
 	const { helpCenter } = useAppContext();
 	const { isShown, setShowHelpCenter } = useHelpCenter();
-	const a4aHelpCenterProps = useA4AHelpCenterProps( helpCenter?.product === 'a4a' );
+	const helpCenterExtraProps = useHelpCenterExtraProps( helpCenter?.product );
 	const [ shouldMount, setShouldMount ] = useState( hasHelpCenterQueryParam );
 	const { data: omnibarSiteId } = useQuery( omnibarSiteIdQuery() );
 	const { data: site } = useQuery( {
@@ -90,7 +90,7 @@ export default function OmnibarHelpCenter() {
 				sectionName="dashboard"
 				site={ site ? toHelpCenterSite( site ) : null }
 				product={ helpCenter?.product }
-				{ ...a4aHelpCenterProps }
+				{ ...helpCenterExtraProps }
 			/>
 		</Suspense>
 	);
