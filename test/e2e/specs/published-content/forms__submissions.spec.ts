@@ -340,6 +340,11 @@ test.describe(
 			} );
 
 			await test.step( 'Mark first response as read', async () => {
+				// CFM auto-marks a response as read on open, so no mark-as-read
+				// action is offered and there is nothing to assert here.
+				if ( await feedbackInboxPage.isCentralFormManagement() ) {
+					return;
+				}
 				await feedbackInboxPage.clickMarkAsReadAction();
 			} );
 
