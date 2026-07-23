@@ -41,25 +41,36 @@ export default function MigrationsCommissionsEmptyState( {
 						{ canTagSitesForCommission && (
 							<EmptyState.ActionItem
 								title={ __( 'Tag your transferred sites so we can pay you for them.' ) }
-								description={ createInterpolateElement(
-									__(
-										'If you transferred sites by yourself, follow these two steps to indicate which ones we should pay you for.<br/><br/>1. Ensure the <a>Automattic for Agencies plugin</a> is installed and connected to each site.<br/>2. Tag the connected sites using the button below.'
-									),
-									{
-										br: <br />,
-										a: (
-											<ExternalLink
-												children={ null }
-												href={ a4aPluginUrl }
-												onClick={ () => {
-													recordTracksEvent(
-														'calypso_a8c_migrations_commissions_a4a_plugin_link_click'
-													);
-												} }
-											/>
-										),
-									}
-								) }
+								description={
+									<>
+										{ __(
+											'If you transferred sites by yourself, follow these two steps to indicate which ones we should pay you for.'
+										) }
+										<ol>
+											<li>
+												{ createInterpolateElement(
+													__(
+														'Ensure the <a>Automattic for Agencies plugin</a> is installed and connected to each site.'
+													),
+													{
+														a: (
+															<ExternalLink
+																children={ null }
+																href={ a4aPluginUrl }
+																onClick={ () => {
+																	recordTracksEvent(
+																		'calypso_a8c_migrations_commissions_a4a_plugin_link_click'
+																	);
+																} }
+															/>
+														),
+													}
+												) }
+											</li>
+											<li>{ __( 'Tag the connected sites using the button below.' ) }</li>
+										</ol>
+									</>
+								}
 								actions={
 									<Button variant="primary" onClick={ onTagMySelfMigratedSitesClick }>
 										{ __( 'Tag my self-migrated sites' ) }
