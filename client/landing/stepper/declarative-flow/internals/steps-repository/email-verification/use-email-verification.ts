@@ -9,14 +9,9 @@ import { isCurrentUserEmailVerified } from 'calypso/state/current-user/selectors
 
 const RESEND_COOLDOWN_SECONDS = 60;
 
-/**
- * Confirmation happens in another tab (or another device), so the only way this
- * tab learns about it is by asking. `UserVerificationChecker` covers the
- * same-browser case instantly; polling covers everything else.
- *
- * Polling stops after this long so a tab left open overnight doesn't keep
- * hitting `/me` forever.
- */
+// Cross-tab/device confirmation only reaches this tab by polling `/me`
+// (`UserVerificationChecker` handles the same-browser case instantly). Cap the
+// polling so a tab left open overnight doesn't hit `/me` forever.
 const POLL_LIMIT_MS = 15 * 60 * 1000;
 
 export function useEmailVerification( flow: string ) {

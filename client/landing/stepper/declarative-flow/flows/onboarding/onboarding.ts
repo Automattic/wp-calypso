@@ -264,9 +264,8 @@ const onboarding: FlowV2< typeof initialize > = {
 
 					setSignupCompleteFlowName( flowName );
 
-					// Only the free plan is gated for now. Picking a paid plan sends the
-					// user to checkout next, and asking them to leave for their inbox
-					// right before paying is friction we don't want to introduce yet.
+					// Only free-plan signups are gated: a paid plan goes to checkout next,
+					// and interrupting that for email confirmation is friction we don't want.
 					if ( isEnabled( 'onboarding/email-verification' ) && ! pickedPlan && ! isEmailVerified ) {
 						return navigate( 'email-verification' );
 					}
@@ -274,9 +273,8 @@ const onboarding: FlowV2< typeof initialize > = {
 					return navigate( 'create-site', undefined, false );
 				}
 				case 'email-verification':
-					// Replace rather than push: a verified user pressing Back must not land
-					// back on this step, which auto-submits and would kick off a second
-					// site-creation attempt.
+					// Replace, not push: this step auto-submits once verified, so leaving it
+					// in history lets Back re-trigger a second site-creation attempt.
 					return navigate( 'create-site', undefined, true );
 				case 'create-site':
 					return navigate( 'processing', undefined, true );

@@ -188,9 +188,8 @@ describe( 'Onboarding Flow', () => {
 				stepPath( STEPS.SITE_CREATION_STEP.slug )
 			);
 
-			// Pressing Back must skip past the verification step (it was replaced, not
-			// pushed) and land on the step before it — otherwise it would auto-submit
-			// and start a second site-creation attempt.
+			// Back must skip the replaced verification step and land on the step before
+			// it; otherwise it would auto-submit and start a second site-creation attempt.
 			await userEvent.click( screen.getByRole( 'button', { name: 'back' } ) );
 			expect( screen.getByTestId( 'pathname' ) ).toHaveTextContent(
 				stepPath( STEPS.UNIFIED_PLANS.slug )
