@@ -377,6 +377,17 @@ export const earnWooPaymentsRoute = createRoute( {
 	)
 );
 
+// `/earn/woopayments/setup/$siteId` – install + activate WooPayments on a managed site
+export const earnWooPaymentsSetupRoute = createRoute( {
+	head: () => ( { meta: [ { title: __( 'Site setup' ) } ] } ),
+	getParentRoute: () => agencyRoute,
+	path: 'earn/woopayments/setup/$siteId',
+} ).lazy( () =>
+	import( '../../agency/earn/woopayments/setup' ).then( ( d ) =>
+		createLazyRoute( 'earn-woopayments-setup' )( { component: d.default } )
+	)
+);
+
 // `/earn/migrations` – migration commissions
 export const earnMigrationsRoute = createRoute( {
 	staticData: { requiresAgencyCapability: 'a4a_read_migrations' },
@@ -879,6 +890,7 @@ export const createAgencyRoutes = () => [
 		earnOverviewRoute,
 		earnReferralsRoute,
 		earnWooPaymentsRoute,
+		earnWooPaymentsSetupRoute,
 		earnMigrationsRoute,
 		earnPayoutSettingsRoute,
 		earnReferralRoute.addChildren( [
