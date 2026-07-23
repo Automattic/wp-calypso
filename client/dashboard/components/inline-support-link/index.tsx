@@ -21,7 +21,6 @@ const InlineSupportLink = ( {
 	supportContext?: string;
 	children?: React.ReactNode;
 	onClick?: ( supportData: SupportDocData | null ) => void;
-	// Open the article in the Help Center panel even without a wpcom postId (e.g. an agencieshelp.automattic.com article, which is fetched by URL).
 	forceOpenInHelpCenter?: boolean;
 } ) => {
 	const { supportDocData, openSupportDoc } = useSupportDocData( {
