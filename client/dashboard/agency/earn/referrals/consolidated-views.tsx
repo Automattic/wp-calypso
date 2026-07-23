@@ -1,5 +1,5 @@
 import { formatCurrency } from '@automattic/number-formatters';
-import { __experimentalGrid as Grid } from '@wordpress/components';
+import { Button, __experimentalGrid as Grid } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import InlineSupportLink from '../../../components/inline-support-link';
