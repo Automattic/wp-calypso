@@ -25,8 +25,17 @@ const COOLDOWN_MS = 60 * 1000;
 
 const mockApi = () => nock( 'https://public-api.wordpress.com:443' );
 
-const mockSendVerificationEmail = () =>
-	mockApi().post( '/rest/v1.1/me/send-verification-email' ).reply( 200, { success: true } );
+const mockSendVerificationEmail = ( response: { success: boolean } = { success: true } ) =>
+	mockApi().post( '/rest/v1.1/me/send-verification-email' ).reply( 200, response );
+
+const mockFetchUser = ( emailVerified: boolean ) =>
+	mockApi()
+		.get( '/rest/v1.1/me' )
+		.query( true )
+		.reply( 200, { ID: 1, email: EMAIL, email_verified: emailVerified } );
+
+const mockFetchUserError = () =>
+	mockApi().get( '/rest/v1.1/me' ).query( true ).reply( 500, { error: 'server_error' } );
 
 const currentUserState = ( emailVerified: boolean ) => ( {
 	currentUser: {
@@ -136,6 +145,62 @@ describe( 'EmailVerification', () => {
 		expect( recordTracksEvent ).toHaveBeenCalledWith(
 			'calypso_signup_email_verification_skipped',
 			expect.objectContaining( { flow: 'onboarding' } )
+		);
+	} );
+
+	it( 'advances when the manual check finds the email confirmed', async () => {
+		mockSendVerificationEmail();
+		mockFetchUser( true );
+		const submit = jest.fn();
+
+		render( { navigation: { submit } } );
+
+		await userEvent.click( screen.getByRole( 'button', { name: 'I’ve confirmed my email' } ) );
+
+		await waitFor( () => expect( submit ).toHaveBeenCalledWith( { emailVerified: true } ) );
+	} );
+
+	it( 'tells the user when the manual check still shows the email unconfirmed', async () => {
+		mockSendVerificationEmail();
+		mockFetchUser( false );
+		const submit = jest.fn();
+
+		render( { navigation: { submit } } );
+
+		await userEvent.click( screen.getByRole( 'button', { name: 'I’ve confirmed my email' } ) );
+
+		expect(
+			await screen.findByText( /We haven’t received your confirmation yet\./ )
+		).toBeVisible();
+		expect( submit ).not.toHaveBeenCalled();
+	} );
+
+	it( 'distinguishes a failed check request from an unconfirmed email', async () => {
+		mockSendVerificationEmail();
+		mockFetchUserError();
+		const submit = jest.fn();
+
+		render( { navigation: { submit } } );
+
+		await userEvent.click( screen.getByRole( 'button', { name: 'I’ve confirmed my email' } ) );
+
+		expect( await screen.findByText( /We couldn’t check right now\./ ) ).toBeVisible();
+		expect(
+			screen.queryByText( /We haven’t received your confirmation yet\./ )
+		).not.toBeInTheDocument();
+		expect( submit ).not.toHaveBeenCalled();
+	} );
+
+	it( 'surfaces an unsuccessful send and keeps resend available', async () => {
+		mockSendVerificationEmail( { success: false } );
+
+		render();
+
+		expect( await screen.findByText( /We couldn’t send the email\./ ) ).toBeVisible();
+		expect( screen.getByRole( 'button', { name: 'resend the email' } ) ).toBeVisible();
+		expect( recordTracksEvent ).toHaveBeenCalledWith(
+			'calypso_signup_email_verification_email_send_failed',
+			expect.objectContaining( { flow: 'onboarding', is_resend: false } )
 		);
 	} );
 

@@ -1,9 +1,10 @@
+import { fetchUser } from '@automattic/api-core';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { useSendEmailVerification } from 'calypso/landing/stepper/hooks/use-send-email-verification';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { EVERY_FIVE_SECONDS, EVERY_SECOND, useInterval } from 'calypso/lib/interval';
-import { useDispatch, useSelector, useStore } from 'calypso/state';
-import { fetchCurrentUser } from 'calypso/state/current-user/actions';
+import { useDispatch, useSelector } from 'calypso/state';
+import { fetchCurrentUser, setUserEmailVerified } from 'calypso/state/current-user/actions';
 import { isCurrentUserEmailVerified } from 'calypso/state/current-user/selectors';
 
 const RESEND_COOLDOWN_SECONDS = 60;
@@ -20,7 +21,6 @@ const POLL_LIMIT_MS = 15 * 60 * 1000;
 
 export function useEmailVerification( flow: string ) {
 	const dispatch = useDispatch();
-	const store = useStore();
 	const isVerified = useSelector( isCurrentUserEmailVerified );
 	const sendVerificationEmail = useSendEmailVerification();
 
@@ -30,13 +30,17 @@ export function useEmailVerification( flow: string ) {
 	const [ isPollingExpired, setIsPollingExpired ] = useState( false );
 	const [ isChecking, setIsChecking ] = useState( false );
 	const [ hasFailedCheck, setHasFailedCheck ] = useState( false );
+	const [ hasCheckError, setHasCheckError ] = useState( false );
 
 	const send = async ( isResend: boolean ) => {
 		setIsSending( true );
 		setHasSendError( false );
 
 		try {
-			await sendVerificationEmail();
+			const { success } = await sendVerificationEmail();
+			if ( ! success ) {
+				throw new Error( 'unsuccessful_response' );
+			}
 			setSecondsUntilResend( RESEND_COOLDOWN_SECONDS );
 			recordTracksEvent( 'calypso_signup_email_verification_email_sent', {
 				flow,
@@ -93,15 +97,25 @@ export function useEmailVerification( flow: string ) {
 	const checkNow = useCallback( async () => {
 		setIsChecking( true );
 		setHasFailedCheck( false );
+		setHasCheckError( false );
 
 		recordTracksEvent( 'calypso_signup_email_verification_check_click', { flow } );
-		await dispatch( fetchCurrentUser() );
 
-		setIsChecking( false );
-		// `isVerified` from the enclosing render is stale by now — read the value
-		// the fetch just wrote instead.
-		setHasFailedCheck( ! isCurrentUserEmailVerified( store.getState() ) );
-	}, [ dispatch, flow, store ] );
+		try {
+			// `fetchUser` throws on a failed request, so a network problem can't be
+			// mistaken for an unconfirmed email the way `fetchCurrentUser` would.
+			const { email_verified } = await fetchUser();
+			if ( email_verified ) {
+				dispatch( setUserEmailVerified( true ) );
+			} else {
+				setHasFailedCheck( true );
+			}
+		} catch {
+			setHasCheckError( true );
+		} finally {
+			setIsChecking( false );
+		}
+	}, [ dispatch, flow ] );
 
 	return {
 		isVerified,
@@ -110,6 +124,7 @@ export function useEmailVerification( flow: string ) {
 		secondsUntilResend,
 		isChecking,
 		hasFailedCheck,
+		hasCheckError,
 		checkNow,
 		resend: useCallback( () => sendRef.current( true ), [] ),
 	};

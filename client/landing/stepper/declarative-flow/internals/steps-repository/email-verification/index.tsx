@@ -27,6 +27,7 @@ const EmailVerification: StepType< {
 		secondsUntilResend,
 		isChecking,
 		hasFailedCheck,
+		hasCheckError,
 		checkNow,
 		resend,
 	} = useEmailVerification( flow );
@@ -107,6 +108,12 @@ const EmailVerification: StepType< {
 						{ __(
 							'We haven’t received your confirmation yet. Open the link in your inbox, then try again.'
 						) }
+					</p>
+				) }
+
+				{ hasCheckError && (
+					<p className="onboarding-email-verification__notice is-error" role="alert">
+						{ __( 'We couldn’t check right now. Please try again in a moment.' ) }
 					</p>
 				) }
 
