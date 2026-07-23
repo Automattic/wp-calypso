@@ -20,6 +20,22 @@
 		}
 	}
 
+	.commissions-step-section-item-content {
+		max-width: none;
+
+		ul {
+			color: var(--color-text-black);
+			list-style: decimal;
+			margin-block: 8px 16px;
+			margin-inline: 16px 0;
+
+			li a {
+				color: var(--color-text-black);
+				text-decoration: underline;
+			}
+		}
+	}
+
 	// Classic-only inset for the shared consolidated summary cards. The MSD
 	// component renders a neutral `.consolidated-commissions` class; the A4A
 	// host owns this page padding (the MSD route gets its spacing from

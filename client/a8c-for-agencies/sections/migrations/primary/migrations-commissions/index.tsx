@@ -7,9 +7,12 @@ import LayoutTop from 'calypso/a8c-for-agencies/components/layout/layout-with-pa
 import MobileSidebarNavigation from 'calypso/a8c-for-agencies/components/sidebar/mobile-sidebar-navigation';
 import { A4A_MIGRATIONS_LINK } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
 import MissingPaymentSettingsNotice from 'calypso/a8c-for-agencies/sections/referrals/common/missing-payment-settings-notice';
-import MigrationsCommissionsContent from 'calypso/dashboard/agency/earn/migrations/commissions-content';
+import MigrationsCommissionsList from 'calypso/dashboard/agency/earn/migrations/commissions-list';
+import MigrationsConsolidatedCommissions from 'calypso/dashboard/agency/earn/migrations/consolidated-commissions';
 import useCanTagSitesForCommission from 'calypso/dashboard/agency/earn/migrations/hooks/use-can-tag-sites-for-commission';
 import useFetchTaggedSitesForMigration from 'calypso/dashboard/agency/earn/migrations/hooks/use-fetch-tagged-sites-for-migration';
+import MigrationsTagSitesModal from 'calypso/dashboard/agency/earn/migrations/tag-sites-modal';
+import { TextSkeleton } from 'calypso/dashboard/components/text-skeleton';
 import LayoutBody from 'calypso/layout/hosting-dashboard/body';
 import LayoutHeader, {
 	LayoutHeaderBreadcrumb as Breadcrumb,
@@ -19,6 +22,7 @@ import { useDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 import getSites from 'calypso/state/selectors/get-sites';
+import MigrationsCommissionsEmptyState from './empty-state';
 import type { ReactNode } from 'react';
 
 import './style.scss';
@@ -102,22 +106,46 @@ export default function MigrationsCommissions() {
 			</LayoutTop>
 
 			<LayoutBody>
-				<div className="redesigned-a8c-table full-width">
-					<MigrationsCommissionsContent
-						taggedSites={ taggedSites }
-						isLoading={ isLoading }
+				{ isLoading && (
+					<>
+						<TextSkeleton length={ 30 } />
+						<TextSkeleton length={ 30 } />
+					</>
+				) }
+				{ ! isLoading && showEmptyState && (
+					<MigrationsCommissionsEmptyState
 						recordTracksEvent={ recordTracks }
-						onSuccess={ onSuccess }
-						onError={ onError }
-						getSiteCreatedAt={ getSiteCreatedAt }
+						onTagSitesClick={ () => setShowAddSitesModal( true ) }
 						canTagSitesForCommission={ canTagSitesForCommission }
-						migrationTags={ migrationTags }
-						isAddSitesModalOpen={ showAddSitesModal }
-						onCloseAddSitesModal={ () => setShowAddSitesModal( false ) }
-						onOpenAddSitesModal={ () => setShowAddSitesModal( true ) }
 					/>
-				</div>
+				) }
+				{ ! isLoading && ! showEmptyState && (
+					<div className="redesigned-a8c-table full-width">
+						{ canTagSitesForCommission && (
+							<MigrationsConsolidatedCommissions items={ taggedSites } />
+						) }
+						<MigrationsCommissionsList
+							items={ taggedSites }
+							migrationTags={ migrationTags }
+							recordTracksEvent={ recordTracks }
+							onSuccess={ onSuccess }
+							onError={ onError }
+						/>
+					</div>
+				) }
 			</LayoutBody>
+
+			{ showAddSitesModal && (
+				<MigrationsTagSitesModal
+					onClose={ () => setShowAddSitesModal( false ) }
+					taggedSites={ taggedSites }
+					migrationTags={ migrationTags }
+					recordTracksEvent={ recordTracks }
+					onSuccess={ onSuccess }
+					onError={ onError }
+					getSiteCreatedAt={ getSiteCreatedAt }
+				/>
+			) }
 		</Layout>
 	);
 }

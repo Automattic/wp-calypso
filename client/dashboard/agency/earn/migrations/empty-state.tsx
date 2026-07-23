@@ -22,7 +22,7 @@ export default function MigrationsCommissionsEmptyState( {
 	const a4aPluginUrl = 'https://wordpress.org/plugins/automattic-for-agencies-client';
 
 	return (
-		<EmptyState.Wrapper isBorderless>
+		<EmptyState.Wrapper>
 			<EmptyState>
 				<EmptyState.Header>
 					<EmptyState.Title>
