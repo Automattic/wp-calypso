@@ -74,6 +74,7 @@ export function SpacesView( { slug, tab = 'feed' }: Props ) {
 				icon,
 				color,
 				tab,
+                                        languages: space?.languages ?? [],
 			} )
 		);
 	}, [ color, dispatch, icon, id, layoutView, tab ] );

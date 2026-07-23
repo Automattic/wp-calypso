@@ -1,0 +1,28 @@
+name: Test Reader Spaces changes
+
+on:
+  push:
+    branches:
+      - add/reader-spaces-language-analytics
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Install dependencies
+        run: yarn install --immutable
+
+      - name: Build packages
+        run: yarn build
+
+      - name: Run Reader Spaces tests
+        run: |
+          npx jest client/reader/spaces/customize-modal/test/index.test.tsx
+          npx jest client/reader/spaces/test/view.test.tsx
