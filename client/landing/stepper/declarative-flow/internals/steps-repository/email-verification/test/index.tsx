@@ -10,6 +10,7 @@ import { applyMiddleware, combineReducers, createStore } from 'redux';
 import { thunk as thunkMiddleware } from 'redux-thunk';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { CURRENT_USER_RECEIVE } from 'calypso/state/action-types';
+import { fetchCurrentUser, setUserEmailVerified } from 'calypso/state/current-user/actions';
 import currentUserReducer from 'calypso/state/current-user/reducer';
 import documentHeadReducer from 'calypso/state/document-head/reducer';
 import uiReducer from 'calypso/state/ui/reducer';
@@ -19,6 +20,14 @@ import { mockStepProps, renderStep } from '../../test/helpers';
 import type { StepProps } from '../../../types';
 
 jest.mock( 'calypso/lib/analytics/tracks' );
+
+// Stub the poll action so the polling behaviour can be driven deterministically,
+// without the module-level in-flight guard in the real `fetchCurrentUser`.
+jest.mock( 'calypso/state/current-user/actions', () => ( {
+	__esModule: true,
+	...jest.requireActual( 'calypso/state/current-user/actions' ),
+	fetchCurrentUser: jest.fn( () => ( { type: 'TEST_NOOP' } ) ),
+} ) );
 
 const EMAIL = 'onboarder@example.com';
 const COOLDOWN_MS = 60 * 1000;
@@ -231,5 +240,41 @@ describe( 'EmailVerification', () => {
 				{ flow: 'onboarding', is_resend: true }
 			)
 		);
+	} );
+
+	it( 'restarts the polling window after a resend so a later remote confirmation still advances', async () => {
+		jest.useFakeTimers();
+		const user = userEvent.setup( { advanceTimers: jest.advanceTimersByTime } );
+		mockSendVerificationEmail();
+		// The poll is a no-op until the user confirms on another device.
+		( fetchCurrentUser as jest.Mock ).mockReturnValue( { type: 'TEST_NOOP' } );
+		const submit = jest.fn();
+
+		render( { navigation: { submit } } );
+
+		// The poll runs while the window is open.
+		await jest.advanceTimersByTimeAsync( 10 * 1000 );
+		expect( fetchCurrentUser ).toHaveBeenCalled();
+
+		// After 15 minutes the window lapses and polling switches itself off.
+		await jest.advanceTimersByTimeAsync( 15 * 60 * 1000 );
+		( fetchCurrentUser as jest.Mock ).mockClear();
+		await jest.advanceTimersByTimeAsync( 10 * 1000 );
+		expect( fetchCurrentUser ).not.toHaveBeenCalled();
+
+		// The user confirms on another device; the next poll would now see it.
+		( fetchCurrentUser as jest.Mock ).mockImplementation( () => setUserEmailVerified( true ) );
+
+		// Resending restarts the window. Waiting for the fresh cooldown confirms the
+		// send resolved and its state (including the reopened window) has applied.
+		mockSendVerificationEmail();
+		await user.click( await screen.findByRole( 'button', { name: 'resend the email' } ) );
+		await waitFor( () =>
+			expect( screen.getByText( /You can resend the email in \d+s\./ ) ).toBeVisible()
+		);
+
+		// The restarted poll fires, picks up the confirmation, and advances.
+		await jest.advanceTimersByTimeAsync( 5000 );
+		await waitFor( () => expect( submit ).toHaveBeenCalledWith( { emailVerified: true } ) );
 	} );
 } );

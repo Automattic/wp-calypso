@@ -23,6 +23,7 @@ export function useEmailVerification( flow: string ) {
 	const [ hasSendError, setHasSendError ] = useState( false );
 	const [ secondsUntilResend, setSecondsUntilResend ] = useState( 0 );
 	const [ isPollingExpired, setIsPollingExpired ] = useState( false );
+	const [ pollWindowKey, setPollWindowKey ] = useState( 0 );
 	const [ isChecking, setIsChecking ] = useState( false );
 	const [ hasFailedCheck, setHasFailedCheck ] = useState( false );
 	const [ hasCheckError, setHasCheckError ] = useState( false );
@@ -37,6 +38,10 @@ export function useEmailVerification( flow: string ) {
 				throw new Error( 'unsuccessful_response' );
 			}
 			setSecondsUntilResend( RESEND_COOLDOWN_SECONDS );
+			// A fresh link restarts the polling window: the user might confirm this
+			// new link from another device long after the previous window lapsed.
+			setIsPollingExpired( false );
+			setPollWindowKey( ( key ) => key + 1 );
 			recordTracksEvent( 'calypso_signup_email_verification_email_sent', {
 				flow,
 				is_resend: isResend,
@@ -82,7 +87,7 @@ export function useEmailVerification( flow: string ) {
 		}
 		const timer = setTimeout( () => setIsPollingExpired( true ), POLL_LIMIT_MS );
 		return () => clearTimeout( timer );
-	}, [ isVerified ] );
+	}, [ isVerified, pollWindowKey ] );
 
 	useInterval(
 		() => dispatch( fetchCurrentUser() ),
