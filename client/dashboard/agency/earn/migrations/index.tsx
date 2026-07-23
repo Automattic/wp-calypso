@@ -10,6 +10,7 @@ import { useLocale } from '../../../app/locale';
 import { DataViewsCard } from '../../../components/dataviews';
 import { PageHeader } from '../../../components/page-header';
 import PageLayout from '../../../components/page-layout';
+import MissingPaymentSettingsNotice from '../missing-payment-settings-notice';
 import MigrationsCommissionsContent from './commissions-content';
 import useCanTagSitesForCommission from './hooks/use-can-tag-sites-for-commission';
 import useFetchTaggedSitesForMigration from './hooks/use-fetch-tagged-sites-for-migration';
@@ -61,6 +62,7 @@ export default function EarnMigrations() {
 					}
 				/>
 			}
+			notices={ <MissingPaymentSettingsNotice hasCommissionActivity={ taggedSites.length > 0 } /> }
 		>
 			<MigrationsCommissionsContent
 				taggedSites={ taggedSites }

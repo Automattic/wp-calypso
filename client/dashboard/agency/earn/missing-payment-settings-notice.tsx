@@ -1,25 +1,25 @@
 import { activeAgencyQuery, tipaltiPayeeQuery } from '@automattic/api-queries';
 import { useQuery } from '@tanstack/react-query';
 import { __ } from '@wordpress/i18n';
-import { Notice } from '../../../components/notice';
-import RouterLinkButton from '../../../components/router-link-button';
+import { Notice } from '../../components/notice';
+import RouterLinkButton from '../../components/router-link-button';
 
 interface MissingPaymentSettingsNoticeProps {
-	hasReferrals: boolean;
+	hasCommissionActivity: boolean;
 }
 
 export default function MissingPaymentSettingsNotice( {
-	hasReferrals,
+	hasCommissionActivity,
 }: MissingPaymentSettingsNoticeProps ) {
 	const { data: agency } = useQuery( activeAgencyQuery() );
 	const agencyId = agency?.id ?? 0;
 
 	const { data: tipaltiData, isSuccess } = useQuery( {
 		...tipaltiPayeeQuery( agencyId ),
-		enabled: !! agencyId && hasReferrals,
+		enabled: !! agencyId && hasCommissionActivity,
 	} );
 
-	if ( ! hasReferrals || ! isSuccess || tipaltiData?.IsPayable ) {
+	if ( ! hasCommissionActivity || ! isSuccess || tipaltiData?.IsPayable ) {
 		return null;
 	}
 
