@@ -222,7 +222,7 @@ describe( 'useProductInstall progression', () => {
 		expect( installPlugin ).toHaveBeenCalledTimes( 1 );
 	} );
 
-	it( 'transfers a Simple site to Atomic and activates when the transfer completes', async () => {
+	it( 'transfers a Simple site to Atomic and advances to the activation step on completion', async () => {
 		const { result, store } = renderProgress(
 			{ pluginSlug: 'give' },
 			{
@@ -282,6 +282,8 @@ describe( 'useProductInstall progression', () => {
 		const { result, store } = renderProgress(
 			{},
 			{
+				// The upload page authorizes the flow by setting the primary domain.
+				marketplace: { purchaseFlow: { primaryDomain: SITE_SLUG } },
 				ui: { selectedSiteId: SITE_ID },
 				sites: {
 					items: { [ SITE_ID ]: { ID: SITE_ID, URL: `https://${ SITE_SLUG }`, jetpack: true } },
@@ -398,6 +400,31 @@ describe( 'useProductInstall progression', () => {
 			store.dispatch( fetchSiteFeaturesCompleted( SITE_ID, { active: [ 'atomic' ] } ) );
 		} );
 		expect( initiateThemeTransfer ).toHaveBeenCalledTimes( 1 );
+	} );
+
+	it( 'shows no plan error for an already-Atomic site even without feature data', async () => {
+		const { result } = renderProgress(
+			{ pluginSlug: 'give' },
+			{
+				...marketplaceHandoff,
+				ui: { selectedSiteId: SITE_ID },
+				// Already Atomic (installs in place), but the feature list never loads.
+				sites: {
+					items: {
+						[ SITE_ID ]: {
+							ID: SITE_ID,
+							URL: `https://${ SITE_SLUG }`,
+							options: { is_automated_transfer: true },
+						},
+					},
+				},
+				plugins: { wporg: { items: wporgItems } },
+			}
+		);
+
+		await advance( 2000 );
+		expect( result.current.error ).toBeNull();
+		expect( installPlugin ).toHaveBeenCalledTimes( 1 );
 	} );
 
 	it( 'clears the plan error when Atomic eligibility arrives after the timeout', async () => {

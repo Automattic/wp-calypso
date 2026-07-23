@@ -126,8 +126,6 @@ export function useProductInstall( {
 	const isAtomic = useSelector( ( state ) =>
 		isSiteAutomatedTransfer( state, selectedSite?.ID ?? null )
 	);
-	const isJetpackSelfHosted = selectedSite && isJetpack && ! isAtomic;
-
 	const hasAtomicFeature = useSelector( ( state ) =>
 		siteHasFeature( state, selectedSite?.ID ?? null, WPCOM_FEATURES_ATOMIC )
 	);
@@ -139,11 +137,18 @@ export function useProductInstall( {
 		}
 	}, [ isWporgPluginFetched, pluginSlug, dispatch ] );
 
+	// How this site can install the product (in place, via an Atomic transfer, or not at all).
+	const installStrategy = chooseInstallStrategy( {
+		siteInstallsInPlace: !! ( isJetpack || isAtomic ),
+		siteCanTransferToAtomic: !! hasAtomicFeature,
+	} );
+
 	// The plan's feature list can arrive late, so only conclude the site can't install plugins once
-	// it has stayed uninstallable for the grace period. Deriving it (rather than latching a timer)
-	// means the error clears if eligibility arrives afterwards.
+	// no strategy has been available for the grace period. Deriving it from the same strategy the
+	// install uses keeps the error from disagreeing with what actually happens, and it clears if
+	// eligibility arrives afterwards.
 	const nonInstallablePlanError = useDelayedCondition(
-		! hasAtomicFeature && ! isJetpackSelfHosted,
+		installStrategy === 'none',
 		PLAN_FEATURES_GRACE_PERIOD_MS
 	);
 
@@ -182,13 +187,9 @@ export function useProductInstall( {
 			return;
 		}
 
-		const strategy = chooseInstallStrategy( {
-			siteInstallsInPlace: !! ( isJetpack || isAtomic ),
-			siteCanTransferToAtomic: !! hasAtomicFeature,
-		} );
 		// The site may not be installable yet — e.g. its feature data hasn't loaded. Leave the
 		// guard unset so a later update (features arriving) can still start the install.
-		if ( strategy === 'none' ) {
+		if ( installStrategy === 'none' ) {
 			return;
 		}
 
@@ -200,7 +201,7 @@ export function useProductInstall( {
 			waitFor( 1 ).then( () => setCurrentStep( 1 ) );
 		};
 
-		if ( strategy === 'in-place' ) {
+		if ( installStrategy === 'in-place' ) {
 			if ( wpOrgTheme ) {
 				dispatch( installAndActivateTheme( wpOrgTheme.id, siteId ) );
 			} else {
@@ -223,9 +224,7 @@ export function useProductInstall( {
 		pluginSlug,
 		themeSlug,
 		dispatch,
-		hasAtomicFeature,
-		isAtomic,
-		isJetpack,
+		installStrategy,
 	] );
 
 	// Validate completion of atomic transfer flow
