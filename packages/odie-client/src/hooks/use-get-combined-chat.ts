@@ -1,5 +1,6 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { HelpCenterSelect } from '@automattic/data-stores';
+import { useHasEnTranslation } from '@automattic/i18n-utils';
 import { useIsMutating } from '@tanstack/react-query';
 import { useSelect } from '@wordpress/data';
 import { useState, useEffect, useRef, useCallback } from '@wordpress/element';
@@ -53,6 +54,7 @@ export const useGetCombinedChat = (
 		useCurrentSupportInteraction();
 
 	const { loggedOutOdieChatId, sessionId, botSlug } = useLoggedOutSession();
+	const hasEnTranslation = useHasEnTranslation();
 
 	const odieId = loggedOutOdieChatId || getOdieIdFromInteraction( currentSupportInteraction );
 	const { isChatLoaded, connectionStatus } = useSelect( ( select ) => {
@@ -199,7 +201,10 @@ export const useGetCombinedChat = (
 								conversationId: conversation.id,
 								messages: [
 									...( odieChat ? filteredOdieMessages : [] ),
-									...getOdieTransferMessages( currentSupportInteraction?.bot_slug ),
+									...getOdieTransferMessages(
+										currentSupportInteraction?.bot_slug,
+										hasEnTranslation
+									),
 									getZendeskChatStartedMetaMessage(),
 									...( deduplicateZDMessages( [
 										// During connection recovery, the user queued messages can be deleted. This ensure they remain. And `deduplicateZDMessages` takes of duplication.
@@ -249,6 +254,7 @@ export const useGetCombinedChat = (
 		sessionId,
 		botSlug,
 		isLoadingCurrentSupportInteraction,
+		hasEnTranslation,
 		mainChatState?.messages?.length,
 		mainChatState?.odieId,
 		odieChat,

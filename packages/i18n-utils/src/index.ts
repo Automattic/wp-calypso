@@ -6,7 +6,6 @@ export {
 } from './localize-url';
 export {
 	LocaleProvider,
-	getWpI18nLocaleSlug,
 	useLocale,
 	withLocale,
 	useIsEnglishLocale,

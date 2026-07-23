@@ -1,12 +1,9 @@
-import { englishLocales, getWpI18nLocaleSlug } from '@automattic/i18n-utils';
 import { isTestModeEnvironment } from '@automattic/zendesk-client';
-import { __, hasTranslation, sprintf } from '@wordpress/i18n';
+import { __, sprintf } from '@wordpress/i18n';
 import type { Context, Message, OdieAllowedBots, OdieAllBotSlugs } from './types';
 declare const __i18n_text_domain__: string;
 
-const hasEnTranslation = ( single: string ): boolean =>
-	englishLocales.includes( getWpI18nLocaleSlug() || 'en' ) ||
-	hasTranslation( single, undefined, __i18n_text_domain__ );
+type HasEnTranslation = ( single: string, context?: string, domain?: string ) => boolean;
 
 export const getOdieErrorMessage = (): string =>
 	__(
@@ -59,7 +56,10 @@ export function getFlowFromBotSlug( botSlug?: OdieAllBotSlugs ): string {
 	return 'wpcom';
 }
 
-export const getOdieTransferMessages = ( botSlug?: OdieAllBotSlugs ): Message[] => {
+export const getOdieTransferMessages = (
+	botSlug?: OdieAllBotSlugs,
+	hasEnTranslation: HasEnTranslation = () => true
+): Message[] => {
 	const isTestMode = isTestModeEnvironment();
 	const flow = getFlowFromBotSlug( botSlug );
 
@@ -126,7 +126,9 @@ export const getOdieTransferMessages = ( botSlug?: OdieAllBotSlugs ): Message[] 
 		baseMessage,
 		{
 			content: hasEnTranslation(
-				'A Happiness Engineer will reply as soon as they are available, either here or by email.'
+				'A Happiness Engineer will reply as soon as they are available, either here or by email.',
+				undefined,
+				__i18n_text_domain__
 			)
 				? __(
 						'A Happiness Engineer will reply as soon as they are available, either here or by email.',
@@ -148,7 +150,9 @@ export const getOdieTransferMessages = ( botSlug?: OdieAllBotSlugs ): Message[] 
 		},
 		{
 			content: hasEnTranslation(
-				'They can see this conversation, so please add any other details that may help.'
+				'They can see this conversation, so please add any other details that may help.',
+				undefined,
+				__i18n_text_domain__
 			)
 				? __(
 						'They can see this conversation, so please add any other details that may help.',
