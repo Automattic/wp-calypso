@@ -395,7 +395,6 @@ const maybeRedirectUseMyDomainToDashboardSetup = ( context, next ) => {
 		return next();
 	}
 
-	bumpStat( 'dashboard-redirect', 'forced-opt-in' );
 	window.location.replace(
 		addQueryArgs( '/setup/domain/use-my-domain', {
 			siteSlug: context.params.site,
