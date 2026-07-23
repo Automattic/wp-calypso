@@ -1,0 +1,196 @@
+/**
+ * @jest-environment jsdom
+ */
+import { act } from '@testing-library/react';
+import automatedTransferReducer from 'calypso/state/automated-transfer/reducer';
+import marketplaceReducer from 'calypso/state/marketplace/reducer';
+import pluginsReducer from 'calypso/state/plugins/reducer';
+import routeReducer from 'calypso/state/route/reducer';
+import themesReducer from 'calypso/state/themes/reducer';
+import uiReducer from 'calypso/state/ui/reducer';
+import { renderHookWithProvider } from 'calypso/test-helpers/testing-library';
+import { useProductInstall } from '../use-product-install';
+
+// Keep the post-transfer site fetch off the network, leaving the rest of the package intact.
+jest.mock( '@automattic/api-queries', () => ( {
+	...jest.requireActual( '@automattic/api-queries' ),
+	siteByIdQuery: ( siteId: number ) => ( {
+		queryKey: [ 'site', siteId ],
+		queryFn: async () => null,
+	} ),
+} ) );
+
+// The install-initiation effect dispatches these; replace them with inert, assertable actions.
+jest.mock( 'calypso/state/plugins/installed/actions', () => ( {
+	installPlugin: jest.fn( ( siteId: number, plugin: unknown, active: boolean ) => ( {
+		type: 'MOCK_INSTALL_PLUGIN',
+		siteId,
+		plugin,
+		active,
+	} ) ),
+	activatePlugin: jest.fn( ( siteId: number, plugin: unknown ) => ( {
+		type: 'MOCK_ACTIVATE_PLUGIN',
+		siteId,
+		plugin,
+	} ) ),
+	fetchSitePlugins: jest.fn( ( siteId: number ) => ( {
+		type: 'MOCK_FETCH_SITE_PLUGINS',
+		siteId,
+	} ) ),
+} ) );
+jest.mock( 'calypso/state/themes/actions', () => ( {
+	initiateThemeTransfer: jest.fn( ( siteId: number, _x, pluginSlug: string ) => ( {
+		type: 'MOCK_INITIATE_THEME_TRANSFER',
+		siteId,
+		pluginSlug,
+	} ) ),
+	installAndActivateTheme: jest.fn( ( themeId: string, siteId: number ) => ( {
+		type: 'MOCK_INSTALL_ACTIVATE_THEME',
+		themeId,
+		siteId,
+	} ) ),
+	requestActiveTheme: jest.fn( ( siteId: number ) => ( {
+		type: 'MOCK_REQUEST_ACTIVE_THEME',
+		siteId,
+	} ) ),
+} ) );
+jest.mock( 'calypso/state/atomic/transfers/actions', () => ( {
+	initiateAtomicTransfer: jest.fn( ( siteId: number, options: unknown ) => ( {
+		type: 'MOCK_INITIATE_ATOMIC_TRANSFER',
+		siteId,
+		options,
+	} ) ),
+} ) );
+
+const { installPlugin, activatePlugin } = jest.requireMock(
+	'calypso/state/plugins/installed/actions'
+);
+const { initiateThemeTransfer } = jest.requireMock( 'calypso/state/themes/actions' );
+
+const reducers = {
+	plugins: pluginsReducer,
+	themes: themesReducer,
+	marketplace: marketplaceReducer,
+	ui: uiReducer,
+	route: routeReducer,
+	automatedTransfer: automatedTransferReducer,
+};
+
+const SITE_ID = 1;
+const SITE_SLUG = 'example.com';
+
+const renderProgress = (
+	props: { pluginSlug?: string; themeSlug?: string },
+	initialState: object
+) => renderHookWithProvider( () => useProductInstall( props ), { reducers, initialState } );
+
+// The step advances via waitFor(), a setTimeout wrapped in a Promise, so flushing the timer also
+// needs the microtask queue drained — hence async act.
+const advance = async ( ms: number ) =>
+	act( async () => {
+		jest.advanceTimersByTime( ms );
+	} );
+
+// Common seeds: a trusted direct install (bypasses the handoff), and a fetched wporg plugin.
+const directInstall = { route: { query: { current: { directInstall: '1' } } } };
+const wporgPlugin = {
+	plugins: { wporg: { items: { give: { slug: 'give', fetched: true, name: 'GiveWP' } } } },
+};
+
+describe( 'useProductInstall progression', () => {
+	beforeEach( () => {
+		jest.useFakeTimers();
+		installPlugin.mockClear();
+		activatePlugin.mockClear();
+		initiateThemeTransfer.mockClear();
+	} );
+	afterEach( () => jest.useRealTimers() );
+
+	it( 'installs in place and reaches the installing step on a Jetpack site', async () => {
+		const { result } = renderProgress(
+			{ pluginSlug: 'give' },
+			{
+				...directInstall,
+				...wporgPlugin,
+				ui: { selectedSiteId: SITE_ID },
+				sites: {
+					items: { [ SITE_ID ]: { ID: SITE_ID, URL: `https://${ SITE_SLUG }`, jetpack: true } },
+				},
+			}
+		);
+
+		// In-place strategy: installs directly, no atomic transfer.
+		expect( installPlugin ).toHaveBeenCalledWith(
+			SITE_ID,
+			expect.objectContaining( { slug: 'give' } ),
+			false
+		);
+		expect( initiateThemeTransfer ).not.toHaveBeenCalled();
+
+		await advance( 1000 );
+		expect( result.current.currentStep ).toBe( 1 );
+	} );
+
+	it( 'transfers a Simple site to Atomic and advances to activating on completion', async () => {
+		const { result } = renderProgress(
+			{ pluginSlug: 'give' },
+			{
+				...directInstall,
+				ui: { selectedSiteId: SITE_ID },
+				sites: {
+					items: {
+						[ SITE_ID ]: {
+							ID: SITE_ID,
+							URL: `https://${ SITE_SLUG }`,
+							options: { is_wpcom_simple: true },
+						},
+					},
+					features: { [ SITE_ID ]: { data: { active: [ 'atomic' ] } } },
+				},
+				plugins: { wporg: wporgPlugin.plugins.wporg },
+				// The transfer already reports complete, so once the installing step is reached the
+				// completion effect advances to activating.
+				automatedTransfer: { [ SITE_ID ]: { status: 'complete' } },
+			}
+		);
+
+		// Atomic-transfer strategy: transfers first rather than installing in place.
+		expect( initiateThemeTransfer ).toHaveBeenCalledWith(
+			SITE_ID,
+			null,
+			'give',
+			expect.anything(),
+			'plugin_install'
+		);
+		expect( installPlugin ).not.toHaveBeenCalled();
+
+		await advance( 1000 );
+		expect( result.current.currentStep ).toBe( 2 );
+	} );
+
+	it( 'stays idle when revisited with a stale completed handoff', async () => {
+		const { result } = renderProgress(
+			{ pluginSlug: 'give' },
+			{
+				...wporgPlugin,
+				ui: { selectedSiteId: SITE_ID },
+				sites: {
+					items: { [ SITE_ID ]: { ID: SITE_ID, URL: `https://${ SITE_SLUG }`, jetpack: true } },
+				},
+				marketplace: {
+					purchaseFlow: {
+						primaryDomain: SITE_SLUG,
+						productSlugInstalled: 'give',
+						pluginInstallationStatus: 'COMPLETED',
+					},
+				},
+			}
+		);
+
+		await advance( 2000 );
+		// No install is initiated and the progress bar never leaves step 0. This documents the
+		// pre-existing dead-end for a completed handoff revisited in the same session.
+		expect( installPlugin ).not.toHaveBeenCalled();
+		expect( result.current.currentStep ).toBe( 0 );
+	} );
+} );
