@@ -9,7 +9,6 @@ import { connectDomainAction } from 'calypso/components/domains/use-my-domain/ut
 import EmptyContent from 'calypso/components/empty-content';
 import Main from 'calypso/components/main';
 import { makeLayout, render as clientRender } from 'calypso/controller';
-import { getCurrentDashboard } from 'calypso/dashboard/app/routing';
 import { getDomainConnectionSetupTemplateUrl } from 'calypso/dashboard/utils/domain-url';
 import { dashboardLink } from 'calypso/dashboard/utils/link';
 import { bumpStat } from 'calypso/lib/analytics/mc';
@@ -401,7 +400,7 @@ const maybeRedirectUseMyDomainToDashboardSetup = ( context, next ) => {
 		addQueryArgs( '/setup/domain/use-my-domain', {
 			siteSlug: context.params.site,
 			domainConnectionSetupUrl: getDomainConnectionSetupTemplateUrl(),
-			dashboard: getCurrentDashboard(),
+			dashboard: 'dotcom',
 		} )
 	);
 };
