@@ -79,7 +79,8 @@ jest.mock( 'calypso/state/plugins/wporg/actions', () => ( {
 const { installPlugin, activatePlugin } = jest.requireMock(
 	'calypso/state/plugins/installed/actions'
 );
-const { initiateThemeTransfer, installAndActivateTheme } = jest.requireMock(
+// initiateThemeTransfer is the (confusingly named) action that starts a plugin's Atomic transfer.
+const { initiateThemeTransfer: initiatePluginTransfer, installAndActivateTheme } = jest.requireMock(
 	'calypso/state/themes/actions'
 );
 const { initiateAtomicTransfer } = jest.requireMock( 'calypso/state/atomic/transfers/actions' );
@@ -128,6 +129,21 @@ const jetpackSite = {
 	plugins: { wporg: { items: wporgItems } },
 };
 
+// A Simple site that qualifies for an Atomic transfer (has the Atomic feature).
+const simpleAtomicEligibleSite = {
+	ui: { selectedSiteId: SITE_ID },
+	sites: {
+		items: {
+			[ SITE_ID ]: {
+				ID: SITE_ID,
+				URL: `https://${ SITE_SLUG }`,
+				options: { is_wpcom_simple: true },
+			},
+		},
+		features: { [ SITE_ID ]: { data: { active: [ 'atomic' ] } } },
+	},
+};
+
 const THEME_SLUG = 'twentytwentyfour';
 const themeHandoff = {
 	marketplace: {
@@ -144,7 +160,7 @@ describe( 'useProductInstall progression', () => {
 		jest.useFakeTimers();
 		installPlugin.mockClear();
 		activatePlugin.mockClear();
-		initiateThemeTransfer.mockClear();
+		initiatePluginTransfer.mockClear();
 		installAndActivateTheme.mockClear();
 		initiateAtomicTransfer.mockClear();
 	} );
@@ -162,7 +178,7 @@ describe( 'useProductInstall progression', () => {
 			expect.objectContaining( { slug: 'give' } ),
 			false
 		);
-		expect( initiateThemeTransfer ).not.toHaveBeenCalled();
+		expect( initiatePluginTransfer ).not.toHaveBeenCalled();
 
 		expect( result.current.currentStep ).toBe( 0 );
 		await advance( 999 );
@@ -228,23 +244,13 @@ describe( 'useProductInstall progression', () => {
 			{ pluginSlug: 'give' },
 			{
 				...marketplaceHandoff,
-				ui: { selectedSiteId: SITE_ID },
-				sites: {
-					items: {
-						[ SITE_ID ]: {
-							ID: SITE_ID,
-							URL: `https://${ SITE_SLUG }`,
-							options: { is_wpcom_simple: true },
-						},
-					},
-					features: { [ SITE_ID ]: { data: { active: [ 'atomic' ] } } },
-				},
+				...simpleAtomicEligibleSite,
 				plugins: { wporg: { items: wporgItems } },
 			}
 		);
 
-		expect( initiateThemeTransfer ).toHaveBeenCalledTimes( 1 );
-		expect( initiateThemeTransfer ).toHaveBeenCalledWith(
+		expect( initiatePluginTransfer ).toHaveBeenCalledTimes( 1 );
+		expect( initiatePluginTransfer ).toHaveBeenCalledWith(
 			SITE_ID,
 			null,
 			'give',
@@ -275,7 +281,7 @@ describe( 'useProductInstall progression', () => {
 				} )
 			);
 		} );
-		expect( initiateThemeTransfer ).toHaveBeenCalledTimes( 1 );
+		expect( initiatePluginTransfer ).toHaveBeenCalledTimes( 1 );
 		expect( installPlugin ).not.toHaveBeenCalled();
 	} );
 
@@ -342,20 +348,7 @@ describe( 'useProductInstall progression', () => {
 	it( 'transfers a Simple site to Atomic for a theme install', async () => {
 		const { store } = renderProgress(
 			{ themeSlug: THEME_SLUG },
-			{
-				...themeHandoff,
-				ui: { selectedSiteId: SITE_ID },
-				sites: {
-					items: {
-						[ SITE_ID ]: {
-							ID: SITE_ID,
-							URL: `https://${ SITE_SLUG }`,
-							options: { is_wpcom_simple: true },
-						},
-					},
-					features: { [ SITE_ID ]: { data: { active: [ 'atomic' ] } } },
-				},
-			}
+			{ ...themeHandoff, ...simpleAtomicEligibleSite }
 		);
 
 		await act( async () => {
@@ -394,13 +387,13 @@ describe( 'useProductInstall progression', () => {
 			}
 		);
 
-		expect( initiateThemeTransfer ).not.toHaveBeenCalled();
+		expect( initiatePluginTransfer ).not.toHaveBeenCalled();
 
 		// The Atomic feature data arrives late; the transfer must still start.
 		await act( async () => {
 			store.dispatch( fetchSiteFeaturesCompleted( SITE_ID, { active: [ 'atomic' ] } ) );
 		} );
-		expect( initiateThemeTransfer ).toHaveBeenCalledTimes( 1 );
+		expect( initiatePluginTransfer ).toHaveBeenCalledTimes( 1 );
 	} );
 
 	it( 'shows no plan error for an already-Atomic site even without feature data', async () => {
@@ -450,14 +443,14 @@ describe( 'useProductInstall progression', () => {
 		// With no feature data, the plan error appears after the grace period.
 		await advance( 2000 );
 		expect( result.current.error ).toEqual( { type: 'non-installable-plan' } );
-		expect( initiateThemeTransfer ).not.toHaveBeenCalled();
+		expect( initiatePluginTransfer ).not.toHaveBeenCalled();
 
 		// Eligibility arrives late: the error must clear and the transfer must start.
 		await act( async () => {
 			store.dispatch( fetchSiteFeaturesCompleted( SITE_ID, { active: [ 'atomic' ] } ) );
 		} );
 		expect( result.current.error ).toBeNull();
-		expect( initiateThemeTransfer ).toHaveBeenCalledTimes( 1 );
+		expect( initiatePluginTransfer ).toHaveBeenCalledTimes( 1 );
 	} );
 
 	it( 'stays idle when revisited with a stale completed handoff', async () => {

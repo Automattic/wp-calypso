@@ -234,12 +234,14 @@ export function useProductInstall( {
 		}
 	}, [ atomicFlow, automatedTransferStatus, currentStep ] );
 
-	// Validate plugin is already installed and activate
+	// Activate the plugin once it is installed and the installing step has been reached. currentStep
+	// is a dependency so a plugin that appears before that step (a fast or already-installed plugin)
+	// still gets activated when the step catches up.
 	useEffect( () => {
 		if (
 			installedPlugin &&
 			currentStep === 1 &&
-			( ! isPluginUploadFlow || ( isPluginUploadFlow && pluginUploadComplete ) )
+			( ! isPluginUploadFlow || pluginUploadComplete )
 		) {
 			dispatch(
 				activatePlugin( siteId, {
@@ -249,10 +251,7 @@ export function useProductInstall( {
 			);
 			setCurrentStep( 2 );
 		}
-		// currentStep is a dependency so a plugin that appears before the installing step is reached
-		// (a fast or already-installed plugin) still gets activated once the step catches up.
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [ pluginUploadComplete, installedPlugin, setCurrentStep, currentStep ] );
+	}, [ installedPlugin, currentStep, isPluginUploadFlow, pluginUploadComplete, dispatch, siteId ] );
 
 	useThankYouRedirect( {
 		siteId,
