@@ -108,10 +108,23 @@ export function useEmailVerification( flow: string ) {
 		}
 	}, [ isVerified, flow ] );
 
+	// Recompute from the stored send time rather than decrementing: mobile browsers
+	// suspend timers while the user is in their email app, so a plain counter would
+	// under-count the elapsed cooldown. Also refresh the moment the tab is shown again.
 	useInterval(
-		() => setSecondsUntilResend( ( seconds ) => Math.max( 0, seconds - 1 ) ),
+		() => setSecondsUntilResend( cooldownRemainingSeconds( flow ) ),
 		secondsUntilResend > 0 && EVERY_SECOND
 	);
+
+	useEffect( () => {
+		const refreshOnVisible = () => {
+			if ( document.visibilityState === 'visible' ) {
+				setSecondsUntilResend( cooldownRemainingSeconds( flow ) );
+			}
+		};
+		document.addEventListener( 'visibilitychange', refreshOnVisible );
+		return () => document.removeEventListener( 'visibilitychange', refreshOnVisible );
+	}, [ flow ] );
 
 	useEffect( () => {
 		if ( isVerified ) {

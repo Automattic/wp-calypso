@@ -272,7 +272,9 @@ const onboarding: FlowV2< typeof initialize > = {
 				case 'email-verification':
 					// Reached only after the site exists (see the processing case). Whether the
 					// user confirmed or skipped, send them on to the dashboard we had queued up.
-					return window.location.assign(
+					// Replace, not assign: leaving this step in history lets Back return to it,
+					// where a confirmed user auto-submits and a skipped user is gated again.
+					return window.location.replace(
 						retrieveSignupDestination() || `/home/${ siteSlugParam }`
 					);
 				case 'create-site':
@@ -472,7 +474,9 @@ const onboarding: FlowV2< typeof initialize > = {
 							// Free-plan signups confirm their email at the door. The site already
 							// exists, so this gate can't trigger a duplicate creation; the queued
 							// destination is persisted above and used once the step resolves.
-							return navigate( 'email-verification' );
+							// Replace so processing is removed from history, as it is on the
+							// non-gated path below.
+							return navigate( 'email-verification', undefined, true );
 						} else {
 							// replace the location to delete processing step from history.
 							window.location.replace( destination );

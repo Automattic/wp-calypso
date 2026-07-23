@@ -4,9 +4,10 @@
 // @ts-nocheck - TODO: Fix TypeScript issues
 import config from '@automattic/calypso-config';
 import { ONBOARDING_FLOW } from '@automattic/onboarding';
-import { waitFor } from '@testing-library/react';
+import { screen, waitFor } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import React from 'react';
-import { MemoryRouter } from 'react-router';
+import { MemoryRouter, useLocation, useNavigate } from 'react-router';
 import { addSurvicate } from 'calypso/lib/analytics/survicate';
 import {
 	persistSignupDestination,
@@ -146,8 +147,77 @@ describe( 'Onboarding Flow', () => {
 				dependencies: { emailVerified: true },
 			} );
 
-			expect( window.location.assign ).toHaveBeenCalledWith( '/home/test-site.wordpress.com' );
+			// Replace, not assign, so Back can't return to the gate and re-fire it.
+			expect( window.location.replace ).toHaveBeenCalledWith( '/home/test-site.wordpress.com' );
+			expect( window.location.assign ).not.toHaveBeenCalled();
 			clearSignupDestinationCookie();
+		} );
+
+		it( 'replaces processing with the gate so Back does not loop through verification', async () => {
+			enabledFlags.add( 'onboarding/email-verification' );
+
+			const stepPath = ( slug: string ) => `/${ ONBOARDING_FLOW }/${ slug }`;
+
+			const Harness = () => {
+				const navigate = useNavigate();
+				const location = useLocation();
+				const currentStep = location.pathname.split( '/' ).pop() as string;
+				const navigateAdapter = ( nextStep: string, _extraData?: unknown, replace = false ) =>
+					navigate( stepPath( nextStep ), { replace } );
+				const { submit } = onboarding.useStepNavigation( currentStep, navigateAdapter ) as {
+					submit: ( args: { slug: string; providedDependencies: unknown } ) => void;
+				};
+
+				return (
+					<>
+						<p data-testid="pathname">{ location.pathname }</p>
+						<button
+							onClick={ () =>
+								submit( {
+									slug: currentStep,
+									providedDependencies: {
+										processingResult: ProcessingResult.SUCCESS,
+										siteSlug: 'test-site.wordpress.com',
+										hasPluginByGoal: true,
+										hasExternalTheme: false,
+									},
+								} )
+							}
+						>
+							submit
+						</button>
+						<button onClick={ () => navigate( -1 ) }>back</button>
+					</>
+				);
+			};
+
+			renderWithProvider(
+				<MemoryRouter
+					initialEntries={ [
+						stepPath( STEPS.UNIFIED_PLANS.slug ),
+						stepPath( STEPS.PROCESSING.slug ),
+					] }
+					initialIndex={ 1 }
+				>
+					<Harness />
+				</MemoryRouter>,
+				{ initialState: { currentUser: { id: 'some-id' } } }
+			);
+
+			// Processing resolves into the gate…
+			await userEvent.click( screen.getByRole( 'button', { name: 'submit' } ) );
+			await waitFor( () =>
+				expect( screen.getByTestId( 'pathname' ) ).toHaveTextContent(
+					stepPath( STEPS.EMAIL_VERIFICATION.slug )
+				)
+			);
+
+			// …having replaced processing, so Back lands on plans, never back on
+			// processing or the gate itself.
+			await userEvent.click( screen.getByRole( 'button', { name: 'back' } ) );
+			expect( screen.getByTestId( 'pathname' ) ).toHaveTextContent(
+				stepPath( STEPS.UNIFIED_PLANS.slug )
+			);
 		} );
 	} );
 

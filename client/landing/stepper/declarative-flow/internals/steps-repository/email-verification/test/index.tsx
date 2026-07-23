@@ -270,6 +270,26 @@ describe( 'EmailVerification', () => {
 		expect( secondSend.isDone() ).toBe( false );
 	} );
 
+	it( 'catches the cooldown up after the tab was suspended', async () => {
+		jest.useFakeTimers();
+		mockSendVerificationEmail();
+
+		render();
+		await waitFor( () =>
+			expect( screen.getByText( /You can resend the email in 60s\./ ) ).toBeVisible()
+		);
+
+		// Simulate a phone suspending JS while the user is in their email app: the
+		// clock jumps past the cooldown without the per-second interval firing.
+		act( () => {
+			jest.setSystemTime( Date.now() + 65 * 1000 );
+			document.dispatchEvent( new Event( 'visibilitychange' ) );
+		} );
+
+		// On return, the cooldown reflects real elapsed time, not the paused counter.
+		expect( screen.getByRole( 'button', { name: 'resend the email' } ) ).toBeVisible();
+	} );
+
 	it( 'restarts the polling window after a resend so a later remote confirmation still advances', async () => {
 		jest.useFakeTimers();
 		const user = userEvent.setup( { advanceTimers: jest.advanceTimersByTime } );
