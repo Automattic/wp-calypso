@@ -24,7 +24,9 @@ export const createList = ( context, next ) => {
 	trackPageLoad( basePath, fullAnalyticsPageTitle, mcKey );
 	recordTrack( 'calypso_reader_list_create_loaded' );
 
-	context.primary = <AsyncLoad require={ loadListManage } key="list-manage" isCreateForm />;
+	context.primary = (
+		<AsyncLoad require={ loadListManage } key="list-manage" isCreateForm placeholder={ null } />
+	);
 	next();
 };
 
@@ -64,6 +66,7 @@ export const listListing = ( context, next ) => {
 				mcKey
 			) }
 			onUpdatesShown={ trackUpdatesLoaded.bind( null, mcKey ) }
+			placeholder={ null }
 		/>
 	);
 	next();
@@ -87,6 +90,7 @@ export const editList = ( context, next ) => {
 			owner={ encodeURIComponent( context.params.user ) }
 			slug={ encodeURIComponent( context.params.list ) }
 			selectedSection="details"
+			placeholder={ null }
 		/>
 	);
 	next();
@@ -110,6 +114,7 @@ export const editListItems = ( context, next ) => {
 			owner={ encodeURIComponent( context.params.user ) }
 			slug={ encodeURIComponent( context.params.list ) }
 			selectedSection="items"
+			placeholder={ null }
 		/>
 	);
 	next();
@@ -133,6 +138,7 @@ export const exportList = ( context, next ) => {
 			owner={ encodeURIComponent( context.params.user ) }
 			slug={ encodeURIComponent( context.params.list ) }
 			selectedSection="export"
+			placeholder={ null }
 		/>
 	);
 	next();
@@ -156,6 +162,7 @@ export const deleteList = ( context, next ) => {
 			owner={ encodeURIComponent( context.params.user ) }
 			slug={ encodeURIComponent( context.params.list ) }
 			selectedSection="delete"
+			placeholder={ null }
 		/>
 	);
 	next();

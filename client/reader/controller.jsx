@@ -127,7 +127,9 @@ export function following( context, next ) {
 
 export function loadNewSubscriptionPage( context, next ) {
 	const selectedTab = getCurrentTabFromURL( context.path, 'reader/new', 'add-new' );
-	context.primary = <AsyncLoad require={ loadNewSubscription } selectedTab={ selectedTab } />;
+	context.primary = (
+		<AsyncLoad require={ loadNewSubscription } selectedTab={ selectedTab } placeholder={ null } />
+	);
 
 	trackPageLoad( '/reader/new', 'Reader > New Subscription', 'reader-new-subscription' );
 	next();
@@ -349,7 +351,7 @@ export async function siteSubscriptionsManager( context, next ) {
 	const mcKey = 'subscription-sites';
 	trackPageLoad( basePath, fullAnalyticsPageTitle, mcKey );
 
-	context.primary = <AsyncLoad require={ loadSiteSubscriptionsManager } />;
+	context.primary = <AsyncLoad require={ loadSiteSubscriptionsManager } placeholder={ null } />;
 	next();
 }
 
@@ -376,6 +378,7 @@ export async function siteSubscription( context, next ) {
 			subscriptionId={ context.params.subscription_id }
 			blogId={ context.params.blog_id }
 			transition={ context.query.transition === 'true' }
+			placeholder={ null }
 		/>
 	);
 	next();
@@ -387,7 +390,7 @@ export async function commentSubscriptionsManager( context, next ) {
 	const mcKey = 'subscription-comments';
 	trackPageLoad( basePath, fullAnalyticsPageTitle, mcKey );
 
-	context.primary = <AsyncLoad require={ loadCommentSubscriptionsManager } />;
+	context.primary = <AsyncLoad require={ loadCommentSubscriptionsManager } placeholder={ null } />;
 	next();
 }
 
@@ -397,7 +400,7 @@ export async function pendingSubscriptionsManager( context, next ) {
 	const mcKey = 'subscription-pending';
 	trackPageLoad( basePath, fullAnalyticsPageTitle, mcKey );
 
-	context.primary = <AsyncLoad require={ loadPendingSubscriptionsManager } />;
+	context.primary = <AsyncLoad require={ loadPendingSubscriptionsManager } placeholder={ null } />;
 	next();
 }
 

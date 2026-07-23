@@ -64,6 +64,7 @@ export function userProfile( ctx: Context, next: () => void ): void {
 			) }
 			path={ context.path }
 			view={ view }
+			placeholder={ null }
 		/>
 	);
 	next();

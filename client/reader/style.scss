@@ -125,6 +125,7 @@ body.is-section-reader {
 			}
 		}
 
+		.layout__primary:not( :has( > * ) ),
 		.layout__primary > div:not( :has( .recent-feed ) ) {
 			background: var( --color-surface );
 			border-radius: 8px;

@@ -37,6 +37,7 @@ export function blogPost( context, next ) {
 			blogId={ blogId }
 			postId={ postId }
 			referral={ referral }
+			placeholder={ null }
 		/>
 	);
 
@@ -59,7 +60,12 @@ export function feedPost( context, next ) {
 	trackPageLoad( basePath, fullPageTitle, 'full_post' );
 
 	context.primary = (
-		<AsyncLoad require={ loadReaderFullPost } feedId={ feedId } postId={ postId } />
+		<AsyncLoad
+			require={ loadReaderFullPost }
+			feedId={ feedId }
+			postId={ postId }
+			placeholder={ null }
+		/>
 	);
 
 	if ( isUserLoggedIn( state ) ) {

@@ -93,6 +93,7 @@ const exported = {
 							onSortChange={ reportSortChange }
 							searchType={ show }
 							trendingTags={ context.params.trendingTags }
+							placeholder={ null }
 						/>
 					</div>
 				</div>
