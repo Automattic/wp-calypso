@@ -29,7 +29,7 @@ function initialize() {
 		return [];
 	}
 
-	return [ STEPS.SITE_SPEC, STEPS.SITE_GENERATION ];
+	return shouldBuildWow ? [ STEPS.SITE_SPEC, STEPS.SITE_GENERATION ] : [ STEPS.SITE_SPEC ];
 }
 
 const aiSiteBuilderSpec: FlowV2< typeof initialize > = {

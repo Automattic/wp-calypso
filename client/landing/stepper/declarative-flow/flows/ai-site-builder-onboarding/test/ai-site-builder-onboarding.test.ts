@@ -20,10 +20,6 @@ jest.mock( 'calypso/lib/wp', () => ( {
 	req: { post: jest.fn(), get: jest.fn() },
 } ) );
 
-jest.mock( 'calypso/lib/logstash', () => ( {
-	logToLogstash: jest.fn().mockResolvedValue( undefined ),
-} ) );
-
 jest.mock( '@wordpress/data', () => ( {
 	dispatch: () => ( { resetOnboardStore: jest.fn() } ),
 	useDispatch: jest.fn(),
@@ -59,7 +55,7 @@ jest.mock( '../../../../utils/steps-with-required-login', () => ( {
 } ) );
 
 describe( 'ai-site-builder-onboarding flow', () => {
-	it( 'initializes domain → plans → create-site → processing → setup choice → error', async () => {
+	it( 'initializes domain → plans → create-site → processing → error', async () => {
 		const reduxStore = { dispatch: jest.fn(), getState: jest.fn() } as never;
 		const steps = await aiSiteBuilderOnboarding.initialize( reduxStore );
 
@@ -68,7 +64,6 @@ describe( 'ai-site-builder-onboarding flow', () => {
 			STEPS.UNIFIED_PLANS.slug,
 			STEPS.SITE_CREATION_STEP.slug,
 			STEPS.PROCESSING.slug,
-			STEPS.SETUP_YOUR_SITE_AI.slug,
 			STEPS.ERROR.slug,
 		] );
 	} );
@@ -147,16 +142,9 @@ describe( 'ai-site-builder-onboarding flow', () => {
 				checkoutParams.get( 'checkoutBackUrlDomains' ) as string
 			);
 
-			// Checkout success returns to the setup chooser instead of entering
-			// the Site Editor before the user has selected a setup path.
-			expect( redirectTo.pathname ).toBe(
-				`/setup/ai-site-builder-onboarding/${ STEPS.SETUP_YOUR_SITE_AI.slug }`
-			);
+			// Success still lands in Big Sky.
 			expect( redirectTo.searchParams.get( 'checkout' ) ).toBe( 'success' );
-			expect( redirectTo.searchParams.get( 'siteId' ) ).toBe( '123' );
-			expect( redirectTo.searchParams.get( 'siteSlug' ) ).toBe( 'example.wordpress.com' );
 			expect( redirectTo.searchParams.get( 'prompt' ) ).toBe( 'a bakery website' );
-			expect( redirectTo.pathname ).not.toContain( 'site-editor.php' );
 
 			// Keeping the cart returns to the plan step; emptying it returns to
 			// the domain step. Neither must point at Big Sky's site editor.
@@ -172,50 +160,5 @@ describe( 'ai-site-builder-onboarding flow', () => {
 			expect( checkoutBackUrlDomains.searchParams.get( 'prompt' ) ).toBe( 'a bakery website' );
 			expect( checkoutBackUrlDomains.pathname ).not.toContain( 'site-editor.php' );
 		} );
-	} );
-
-	it( 'starts build-wow and enters the Calypso Site Spec flow after Generate Theme', async () => {
-		jest.clearAllMocks();
-		( useDispatch as jest.Mock ).mockReturnValue( {
-			setStaticHomepageOnSite: jest.fn(),
-			setIntentOnSite: jest.fn(),
-		} );
-		( wpcom.req.post as jest.Mock ).mockResolvedValue( { success: true } );
-		Object.defineProperty( window, 'location', {
-			value: { assign: jest.fn() },
-			writable: true,
-		} );
-
-		const navigate = jest.fn();
-		const { submit } = aiSiteBuilderOnboarding.useStepNavigation(
-			STEPS.SETUP_YOUR_SITE_AI.slug,
-			navigate
-		);
-
-		await submit?.( {
-			slug: STEPS.SETUP_YOUR_SITE_AI.slug,
-			providedDependencies: {
-				setupChoice: 'generate-theme',
-				siteId: 123,
-				siteSlug: 'example.wordpress.com',
-			},
-		} as never );
-
-		expect( wpcom.req.post ).toHaveBeenCalledWith(
-			{
-				path: '/sites/example.wordpress.com/big-sky/build-wow',
-				apiNamespace: 'wpcom/v2',
-			},
-			{}
-		);
-		const destination = new URL(
-			( window.location.assign as jest.Mock ).mock.calls[ 0 ][ 0 ],
-			'https://wordpress.com'
-		);
-		expect( destination.pathname ).toBe( '/setup/ai-site-builder-spec/site-spec' );
-		expect( destination.searchParams.get( 'build_wow' ) ).toBe( '1' );
-		expect( destination.searchParams.get( 'siteId' ) ).toBe( '123' );
-		expect( destination.searchParams.get( 'siteSlug' ) ).toBe( 'example.wordpress.com' );
-		expect( navigate ).not.toHaveBeenCalled();
 	} );
 } );
