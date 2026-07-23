@@ -14,7 +14,8 @@ export default function () {
 		makeLayout,
 		clientRender
 	);
-	page( '/signup/wc-asia', controller.signupWCAsiaContext, makeLayout, clientRender );
+	page( '/signup/wordcamp', controller.signupWordCampContext, makeLayout, clientRender );
+	page( '/signup/wc-asia', controller.redirectToSignup );
 	page( '/signup/finish', controller.finishSignUpContext, makeLayout, clientRender );
 	page( '/signup/oauth/token', controller.tokenRedirect, makeLayout, clientRender );
 }

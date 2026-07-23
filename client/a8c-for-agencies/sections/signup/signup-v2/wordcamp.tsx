@@ -4,8 +4,9 @@ import { useDispatch } from 'calypso/state';
 import { loadTrackingTool } from 'calypso/state/analytics/actions';
 import MultiStepForm from './components/multi-step-form';
 import SignupWrapper from './components/signup-wrapper';
+import { WORDCAMP_SIGNUP_SOURCE } from './wordcamp-signup-campaign';
 
-const AgencySignupWCAsia = () => {
+const AgencySignupWordCamp = () => {
 	const dispatch = useDispatch();
 	useEffect( () => {
 		// We need to include HubSpot tracking code on the signup form.
@@ -16,13 +17,9 @@ const AgencySignupWCAsia = () => {
 
 	return (
 		<SignupWrapper>
-			<MultiStepForm
-				signupWithMagicLinkFlow
-				withPersonalizedBlueprint
-				sourceName="WC Asia Signup Flow"
-			/>
+			<MultiStepForm signupWithMagicLinkFlow sourceName={ WORDCAMP_SIGNUP_SOURCE } />
 		</SignupWrapper>
 	);
 };
 
-export default AgencySignupWCAsia;
+export default AgencySignupWordCamp;
