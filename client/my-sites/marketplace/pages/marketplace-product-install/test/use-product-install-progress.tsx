@@ -8,6 +8,7 @@ import automatedTransferReducer from 'calypso/state/automated-transfer/reducer';
 import marketplaceReducer from 'calypso/state/marketplace/reducer';
 import pluginsReducer from 'calypso/state/plugins/reducer';
 import routeReducer from 'calypso/state/route/reducer';
+import { receiveSite } from 'calypso/state/sites/actions';
 import themesReducer from 'calypso/state/themes/reducer';
 import uiReducer from 'calypso/state/ui/reducer';
 import { renderHookWithProvider } from 'calypso/test-helpers/testing-library';
@@ -116,8 +117,8 @@ describe( 'useProductInstall progression', () => {
 	} );
 	afterEach( () => jest.useRealTimers() );
 
-	it( 'installs in place once and reaches the installing step on a Jetpack site', async () => {
-		const { result } = renderProgress(
+	it( 'installs in place once even when the site data changes underneath it', async () => {
+		const { result, store } = renderProgress(
 			{ pluginSlug: 'give' },
 			{
 				...marketplaceHandoff,
@@ -140,6 +141,20 @@ describe( 'useProductInstall progression', () => {
 
 		await advance( 1000 );
 		expect( result.current.currentStep ).toBe( 1 );
+
+		// A site update re-runs the initiation effect; the re-entry guard must keep it from
+		// installing a second time.
+		await act( async () => {
+			store.dispatch(
+				receiveSite( {
+					ID: SITE_ID,
+					URL: `https://${ SITE_SLUG }`,
+					jetpack: true,
+					options: { is_automated_transfer: true },
+				} )
+			);
+		} );
+		expect( installPlugin ).toHaveBeenCalledTimes( 1 );
 	} );
 
 	it( 'transfers a Simple site to Atomic and advances to activating when the transfer completes', async () => {
@@ -169,12 +184,25 @@ describe( 'useProductInstall progression', () => {
 		await advance( 1000 );
 		expect( result.current.currentStep ).toBe( 1 );
 
+		// The site turns Atomic mid-transfer, which would make the strategy install in place on a
+		// re-run; the re-entry guard must prevent any second initiation.
+		await act( async () => {
+			store.dispatch(
+				receiveSite( {
+					ID: SITE_ID,
+					URL: `https://${ SITE_SLUG }`,
+					options: { is_automated_transfer: true },
+				} )
+			);
+		} );
+		expect( initiateThemeTransfer ).toHaveBeenCalledTimes( 1 );
+		expect( installPlugin ).not.toHaveBeenCalled();
+
 		// The transfer reports complete later; the hook must react to that update to advance.
 		await act( async () => {
 			store.dispatch( setAutomatedTransferStatus( SITE_ID, transferStates.COMPLETE ) );
 		} );
 		expect( result.current.currentStep ).toBe( 2 );
-		expect( initiateThemeTransfer ).toHaveBeenCalledTimes( 1 );
 	} );
 
 	it( 'stays idle when revisited with a stale completed handoff', async () => {
