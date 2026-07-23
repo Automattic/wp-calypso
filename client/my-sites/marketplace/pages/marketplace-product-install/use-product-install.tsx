@@ -173,41 +173,45 @@ export function useProductInstall( {
 	// Installing plugin flow startup
 	useEffect( () => {
 		if (
-			( marketplaceInstallationInProgress || directInstallationAllowed ) &&
-			! isPluginUploadFlow &&
-			! installFlowInitiatedRef.current &&
-			( wporgPlugin || wpOrgTheme )
+			! ( marketplaceInstallationInProgress || directInstallationAllowed ) ||
+			isPluginUploadFlow ||
+			installFlowInitiatedRef.current ||
+			! ( wporgPlugin || wpOrgTheme )
 		) {
-			installFlowInitiatedRef.current = true;
-			// Intentionally uncancelable. The ref above blocks re-entry, so tying this to the
-			// effect's lifetime would let a dependency change drop the step advance for good
-			// rather than reschedule it — and the dispatches below change state this effect reads.
-			const triggerInstallFlow = () => {
-				waitFor( 1 ).then( () => setCurrentStep( 1 ) );
-			};
-
-			const strategy = chooseInstallStrategy( {
-				siteInstallsInPlace: !! ( isJetpack || isAtomic ),
-				siteCanTransferToAtomic: !! hasAtomicFeature,
-			} );
-
-			if ( strategy === 'in-place' ) {
-				if ( wpOrgTheme ) {
-					dispatch( installAndActivateTheme( wpOrgTheme.id, siteId ) );
-				} else {
-					dispatch( installPlugin( siteId, wporgPlugin, false ) );
-				}
-				triggerInstallFlow();
-			} else if ( strategy === 'atomic-transfer' ) {
-				if ( wpOrgTheme ) {
-					dispatch( initiateAtomicTransfer( siteId, { themeSlug, context: 'theme_install' } ) );
-				} else {
-					setAtomicFlow( true );
-					dispatch( initiateTransfer( siteId, null, pluginSlug, '', 'plugin_install' ) );
-				}
-				triggerInstallFlow();
-			}
+			return;
 		}
+
+		const strategy = chooseInstallStrategy( {
+			siteInstallsInPlace: !! ( isJetpack || isAtomic ),
+			siteCanTransferToAtomic: !! hasAtomicFeature,
+		} );
+		// The site may not be installable yet — e.g. its feature data hasn't loaded. Leave the
+		// guard unset so a later update (features arriving) can still start the install.
+		if ( strategy === 'none' ) {
+			return;
+		}
+
+		installFlowInitiatedRef.current = true;
+		// Intentionally uncancelable. The ref above blocks re-entry, so tying this to the
+		// effect's lifetime would let a dependency change drop the step advance for good
+		// rather than reschedule it — and the dispatches below change state this effect reads.
+		const triggerInstallFlow = () => {
+			waitFor( 1 ).then( () => setCurrentStep( 1 ) );
+		};
+
+		if ( strategy === 'in-place' ) {
+			if ( wpOrgTheme ) {
+				dispatch( installAndActivateTheme( wpOrgTheme.id, siteId ) );
+			} else {
+				dispatch( installPlugin( siteId, wporgPlugin, false ) );
+			}
+		} else if ( wpOrgTheme ) {
+			dispatch( initiateAtomicTransfer( siteId, { themeSlug, context: 'theme_install' } ) );
+		} else {
+			setAtomicFlow( true );
+			dispatch( initiateTransfer( siteId, null, pluginSlug, '', 'plugin_install' ) );
+		}
+		triggerInstallFlow();
 	}, [
 		marketplaceInstallationInProgress,
 		directInstallationAllowed,

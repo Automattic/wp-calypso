@@ -10,6 +10,8 @@ import { receiveSitePlugins } from 'calypso/state/plugins/installed/actions';
 import pluginsReducer from 'calypso/state/plugins/reducer';
 import routeReducer from 'calypso/state/route/reducer';
 import { receiveSite } from 'calypso/state/sites/actions';
+import { fetchSiteFeaturesCompleted } from 'calypso/state/sites/features/actions';
+import { THEMES_REQUEST_SUCCESS } from 'calypso/state/themes/action-types';
 import themesReducer from 'calypso/state/themes/reducer';
 import uiReducer from 'calypso/state/ui/reducer';
 import { renderHookWithProvider } from 'calypso/test-helpers/testing-library';
@@ -60,6 +62,7 @@ jest.mock( 'calypso/state/themes/actions', () => ( {
 		type: 'MOCK_REQUEST_ACTIVE_THEME',
 		siteId,
 	} ) ),
+	requestTheme: jest.fn( () => ( { type: 'MOCK_REQUEST_THEME' } ) ),
 } ) );
 jest.mock( 'calypso/state/atomic/transfers/actions', () => ( {
 	initiateAtomicTransfer: jest.fn( ( siteId: number, options: unknown ) => ( {
@@ -76,7 +79,10 @@ jest.mock( 'calypso/state/plugins/wporg/actions', () => ( {
 const { installPlugin, activatePlugin } = jest.requireMock(
 	'calypso/state/plugins/installed/actions'
 );
-const { initiateThemeTransfer } = jest.requireMock( 'calypso/state/themes/actions' );
+const { initiateThemeTransfer, installAndActivateTheme } = jest.requireMock(
+	'calypso/state/themes/actions'
+);
+const { initiateAtomicTransfer } = jest.requireMock( 'calypso/state/atomic/transfers/actions' );
 
 const reducers = {
 	plugins: pluginsReducer,
@@ -122,12 +128,25 @@ const jetpackSite = {
 	plugins: { wporg: { items: wporgItems } },
 };
 
+const THEME_SLUG = 'twentytwentyfour';
+const themeHandoff = {
+	marketplace: {
+		purchaseFlow: {
+			primaryDomain: SITE_SLUG,
+			productSlugInstalled: THEME_SLUG,
+			pluginInstallationStatus: 'IN_PROGRESS',
+		},
+	},
+};
+
 describe( 'useProductInstall progression', () => {
 	beforeEach( () => {
 		jest.useFakeTimers();
 		installPlugin.mockClear();
 		activatePlugin.mockClear();
 		initiateThemeTransfer.mockClear();
+		installAndActivateTheme.mockClear();
+		initiateAtomicTransfer.mockClear();
 	} );
 	afterEach( () => jest.useRealTimers() );
 
@@ -287,6 +306,98 @@ describe( 'useProductInstall progression', () => {
 		} );
 		expect( activatePlugin ).toHaveBeenCalledTimes( 1 );
 		expect( result.current.currentStep ).toBe( 2 );
+	} );
+
+	it( 'installs and activates a theme in place on a Jetpack site', async () => {
+		const { result, store } = renderProgress(
+			{ themeSlug: THEME_SLUG },
+			{
+				...themeHandoff,
+				ui: { selectedSiteId: SITE_ID },
+				sites: {
+					items: { [ SITE_ID ]: { ID: SITE_ID, URL: `https://${ SITE_SLUG }`, jetpack: true } },
+				},
+			}
+		);
+
+		await act( async () => {
+			store.dispatch( {
+				type: THEMES_REQUEST_SUCCESS,
+				siteId: 'wporg',
+				query: {},
+				themes: [ { id: THEME_SLUG, name: 'Twenty Twenty-Four' } ],
+				found: 1,
+			} );
+		} );
+		expect( installAndActivateTheme ).toHaveBeenCalledWith( THEME_SLUG, SITE_ID );
+		expect( initiateAtomicTransfer ).not.toHaveBeenCalled();
+
+		await advance( 1000 );
+		expect( result.current.currentStep ).toBe( 1 );
+	} );
+
+	it( 'transfers a Simple site to Atomic for a theme install', async () => {
+		const { store } = renderProgress(
+			{ themeSlug: THEME_SLUG },
+			{
+				...themeHandoff,
+				ui: { selectedSiteId: SITE_ID },
+				sites: {
+					items: {
+						[ SITE_ID ]: {
+							ID: SITE_ID,
+							URL: `https://${ SITE_SLUG }`,
+							options: { is_wpcom_simple: true },
+						},
+					},
+					features: { [ SITE_ID ]: { data: { active: [ 'atomic' ] } } },
+				},
+			}
+		);
+
+		await act( async () => {
+			store.dispatch( {
+				type: THEMES_REQUEST_SUCCESS,
+				siteId: 'wporg',
+				query: {},
+				themes: [ { id: THEME_SLUG, name: 'Twenty Twenty-Four' } ],
+				found: 1,
+			} );
+		} );
+		expect( initiateAtomicTransfer ).toHaveBeenCalledWith( SITE_ID, {
+			themeSlug: THEME_SLUG,
+			context: 'theme_install',
+		} );
+		expect( installAndActivateTheme ).not.toHaveBeenCalled();
+	} );
+
+	it( 'starts the transfer when Atomic eligibility arrives after mount', async () => {
+		const { store } = renderProgress(
+			{ pluginSlug: 'give' },
+			{
+				...marketplaceHandoff,
+				ui: { selectedSiteId: SITE_ID },
+				// A Simple site with no feature data yet: no install strategy is available at mount.
+				sites: {
+					items: {
+						[ SITE_ID ]: {
+							ID: SITE_ID,
+							URL: `https://${ SITE_SLUG }`,
+							options: { is_wpcom_simple: true },
+						},
+					},
+				},
+				plugins: { wporg: { items: wporgItems } },
+			}
+		);
+
+		expect( initiateThemeTransfer ).not.toHaveBeenCalled();
+
+		// The Atomic feature data arrives late; the transfer must still start.
+		await act( async () => {
+			store.dispatch( fetchSiteFeaturesCompleted( SITE_ID, { active: [ 'atomic' ] } ) );
+		} );
+		expect( initiateThemeTransfer ).toHaveBeenCalledTimes( 1 );
 	} );
 
 	it( 'stays idle when revisited with a stale completed handoff', async () => {
