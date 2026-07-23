@@ -1,4 +1,3 @@
-import { get } from 'lodash';
 import { findRegistrantWhois } from 'calypso/lib/domains/whois/utils';
 
 import 'calypso/state/domains/init';
@@ -10,6 +9,6 @@ import 'calypso/state/domains/init';
  * @returns {Object}              Contact details
  */
 export default function getRegistrantWhois( state, domain ) {
-	const whoisContacts = get( state, [ 'domains', 'management', 'items', domain ], [] );
+	const whoisContacts = state?.domains?.management?.items?.[ domain ] ?? [];
 	return findRegistrantWhois( whoisContacts );
 }

@@ -22,7 +22,9 @@ import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import { type ReactNode, useState } from 'react';
 import Breadcrumbs from '../../app/breadcrumbs';
+import { useLocale } from '../../app/locale';
 import { receiptRoute, taxDetailsRoute } from '../../app/router/me';
+import { withSnackbar } from '../../app/snackbars/with-snackbar';
 import { Card, CardBody } from '../../components/card';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
@@ -76,11 +78,13 @@ export default function Receipt() {
 		tax_state: receipt.tax_state || historyReceipt?.tax_state,
 	};
 
+	const locale = useLocale();
+
 	const handlePrint = () => {
 		window.print();
 	};
 
-	const formattedDate = new Date( displayReceipt.date ).toLocaleDateString( undefined, {
+	const formattedDate = new Date( displayReceipt.date ).toLocaleDateString( locale, {
 		year: 'numeric',
 		month: 'long',
 		day: 'numeric',
@@ -265,17 +269,14 @@ type ReceiptTaxDetail = {
 
 function UserVatDetails( { receipt }: { receipt: Receipt } ) {
 	const { data: vatDetails } = useSuspenseQuery( userTaxDetailsQuery() );
-	const sendEmailMutation = useMutation( {
-		...sendReceiptEmailMutation(),
-		meta: {
-			snackbar: {
-				success: __( 'Your receipt was sent by email successfully.' ),
-				error: __(
-					'There was a problem sending your receipt. Please try again later or contact support.'
-				),
-			},
-		},
-	} );
+	const sendEmailMutation = useMutation(
+		withSnackbar( sendReceiptEmailMutation(), {
+			success: __( 'Your receipt was sent by email successfully.' ),
+			error: __(
+				'There was a problem sending your receipt. Please try again later or contact support.'
+			),
+		} )
+	);
 
 	const handleEmailReceipt = ( event: React.MouseEvent< HTMLButtonElement > ) => {
 		event.preventDefault();
@@ -460,18 +461,32 @@ function ReceiptLineItems( { receipt }: { receipt: Receipt } ) {
 					</VStack>
 					{ ( transactionIncludesTax( receipt ) || hasBusinessUseTaxDetails( receipt ) ) && (
 						<VStack className="receipt-tax-row">
-							<HStack justify="space-between">
-								<Text>
-									{ taxLabel }
-									{ businessTaxSuffixLabel && (
-										<>
-											{ ' (' }
-											<em>{ businessTaxSuffixLabel }</em>)
-										</>
-									) }
-								</Text>
-								<Text>{ formatReceiptTaxAmount( receipt ) }</Text>
-							</HStack>
+							{ receipt.tax_breakdown && receipt.tax_breakdown.length > 0 ? (
+								receipt.tax_breakdown.map( ( entry ) => (
+									<HStack key={ entry.label } justify="space-between">
+										<Text>{ `${ entry.label } ${ entry.rate_display }` }</Text>
+										<Text>
+											{ formatCurrency( entry.local_tax_collected_integer, receipt.currency, {
+												isSmallestUnit: true,
+												stripZeros: true,
+											} ) }
+										</Text>
+									</HStack>
+								) )
+							) : (
+								<HStack justify="space-between">
+									<Text>
+										{ taxLabel }
+										{ businessTaxSuffixLabel && (
+											<>
+												{ ' (' }
+												<em>{ businessTaxSuffixLabel }</em>)
+											</>
+										) }
+									</Text>
+									<Text>{ formatReceiptTaxAmount( receipt ) }</Text>
+								</HStack>
+							) }
 						</VStack>
 					) }
 				</VStack>

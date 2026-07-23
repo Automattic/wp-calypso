@@ -95,6 +95,24 @@ $blueberry-blue: #3858e9;
 	padding: 16px;
 }
 
+.odie-ai-disclosure {
+	color: var( --studio-gray-50 );
+	font-size: 0.75rem;
+	line-height: 1.4;
+	text-align: center;
+	padding: 8px 8px 0;
+
+	a,
+	a:visited {
+		color: inherit;
+		text-decoration: underline;
+		text-decoration-color: var( --studio-gray-10 );
+		text-decoration-thickness: 1px;
+		text-underline-offset: 2px;
+		font-size: inherit;
+	}
+}
+
 .odie-chat-message-input-container.agenttic {
 	--radius: 16px;
 

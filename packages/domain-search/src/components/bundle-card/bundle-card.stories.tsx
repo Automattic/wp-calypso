@@ -29,18 +29,28 @@ const buildDomain = (
 const buildSuggestion = (
 	domains: BundleSuggestionDomain[],
 	overrides: Partial< BundleSuggestion > = {}
-): BundleSuggestion => ( {
-	sld: 'example',
-	domains,
-	bundle_price: 60,
-	original_price: 75,
-	discount_percent: 20,
-	category: 'business',
-	bundle_id: 'bundle-1',
-	bundle_group_id: 'group-1',
-	catalogue_version: '2024-01-01',
-	...overrides,
-} );
+): BundleSuggestion => {
+	const base = {
+		sld: 'example',
+		bundle_price: 60,
+		original_price: 75,
+		discount_percent: 20,
+		category: 'business',
+		bundle_id: 'bundle-1',
+		bundle_group_id: 'group-1',
+		catalogue_version: '2024-01-01',
+		...overrides,
+	};
+
+	return {
+		...base,
+		domains,
+		// The card prefers the formatted `*_cost` strings over the raw numbers, so
+		// derive them from the final prices to mirror what the backend returns.
+		bundle_cost: base.bundle_cost ?? `$${ base.bundle_price }`,
+		original_cost: base.original_cost ?? `$${ base.original_price }`,
+	};
+};
 
 const meta: Meta< typeof BundleCard > = {
 	title: 'Components/BundleCard',
@@ -136,6 +146,19 @@ export const WithPremiumDomain = () => (
 				buildDomain( { domain: 'example.net', cost: '$18.00' } ),
 			] ) }
 			onAddToCart={ () => {} }
+		/>
+	</StoryWrapper>
+);
+
+export const WithError = () => (
+	<StoryWrapper>
+		<BundleCard
+			suggestion={ buildSuggestion( [
+				buildDomain( { domain: 'example.com', cost: '$22.00' } ),
+				buildDomain( { domain: 'example.net', cost: '$18.00' } ),
+			] ) }
+			onAddToCart={ () => {} }
+			errorMessage="Sorry, we can't determine the availability of the domain you're trying to register. Please try again in a few minutes."
 		/>
 	</StoryWrapper>
 );

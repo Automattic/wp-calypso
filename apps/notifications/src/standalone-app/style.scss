@@ -1,7 +1,3 @@
-// The src/app note list renders with @wordpress/dataviews, whose styles the
-// app expects its host to provide (e.g. client/dashboard/app/style.scss). The
-// standalone iframe is that host, so load them here.
-@import '@wordpress/dataviews/build-style/style.css';
 @import "@wordpress/base-styles/variables";
 @import "@wordpress/base-styles/colors";
 @import "@wordpress/base-styles/breakpoints";

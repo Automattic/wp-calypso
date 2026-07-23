@@ -1,3 +1,6 @@
+@import "calypso/assets/stylesheets/shared/mixins/banner";
+@import "calypso/assets/stylesheets/shared/mixins/breakpoints";
+@import "calypso/assets/stylesheets/shared/mixins/long-content-fade";
 @import '@automattic/onboarding/styles/mixins';
 @import '@wordpress/base-styles/mixins';
 @import '@wordpress/base-styles/variables';
@@ -172,6 +175,7 @@ $button-border: 4px;
 	.theme__sheet-demo-toggle {
 		display: flex;
 		align-items: center;
+		justify-content: space-between;
 		gap: 4px;
 	}
 }
@@ -258,10 +262,32 @@ $button-border: 4px;
 		margin: 0;
 	}
 
-	.theme__sheet-main-info-type {
+	.theme__sheet-main-info-badges {
+		align-items: center;
 		align-self: flex-start;
-		margin: 0;
+		display: flex;
+		flex-wrap: wrap;
+		gap: 8px;
 		margin-bottom: 8px;
+
+		// The tier badge renders nothing for some themes (e.g. retired ones), so
+		// keep the row from reserving space when there is no badge to show.
+		&:empty {
+			display: none;
+		}
+	}
+
+	.theme__sheet-main-info-type {
+		margin: 0;
+	}
+
+	.theme__sheet-active-badge {
+		background-color: var(--color-primary);
+		border-radius: 4px;
+		color: var(--studio-white);
+		font-family: $sans;
+		font-size: $font-body-extra-small;
+		white-space: nowrap;
 	}
 
 	.theme__sheet-main-info-tag {
@@ -312,28 +338,6 @@ $button-border: 4px;
 	}
 }
 
-.theme__sheet-customize-button {
-	.gridicon {
-		margin-right: 4px;
-	}
-	&.spin {
-		.gridicons-sync > use:first-child,
-		.gridicons-sync > g:first-child {
-			animation: spinning-sync-icon linear 2s infinite;
-			transform-origin: center;
-		}
-	}
-}
-
-@keyframes spinning-sync-icon {
-	from {
-		transform: rotate( 0deg );
-	}
-	to {
-		transform: rotate( 360deg );
-	}
-}
-
 .theme__sheet-button-placeholder {
 	color: transparent;
 }
@@ -361,6 +365,8 @@ $button-border: 4px;
 	$iframe-viewport-height: 1040px;
 	$iframe-viewport-height-scaled: calc( $iframe-viewport-height / 2 );
 	min-height: $iframe-viewport-height-scaled;
+	padding: 0 24px;
+	box-sizing: border-box;
 
 	.theme-preview__frame-wrapper {
 		max-height: 100vw;
@@ -371,6 +377,8 @@ $button-border: 4px;
 		}
 
 		@include breakpoint-deprecated( '>960px' ) {
+			padding: auto;
+
 			max-height: calc( 100vh - var( --masterbar-height ) );
 
 			.theme-preview__frame {
@@ -719,6 +727,10 @@ $button-border: 4px;
 	}
 }
 
+.theme__sheet-content .action-list {
+	margin-block-end: 24px;
+}
+
 .theme__sheet-placeholder {
 	color: transparent;
 	background-color: rgba( 255, 255, 255, 0.4 );
@@ -728,7 +740,7 @@ $button-border: 4px;
 .theme__sheet-features {
 	margin-bottom: 24px;
 
-	.card {
+	.card, .card.is-compact {
 		background-color: transparent;
 		box-shadow: none;
 		padding: 0;
@@ -844,9 +856,6 @@ $button-border: 4px;
 		}
 		.theme__sheet-reviews-summary {
 			padding-top: 16px;
-		}
-		.theme__sheet-features .card.is-compact {
-			padding: 16px 0;
 		}
 	}
 }

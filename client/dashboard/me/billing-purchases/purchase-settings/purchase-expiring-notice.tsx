@@ -12,8 +12,8 @@ import {
 	isExpiring,
 	isCloseToExpiration,
 	isRecentMonthlyPurchase,
+	isAkismetFreeProduct,
 	getRenewalUrlFromPurchase,
-	isInExpirationGracePeriod,
 } from '../../../utils/purchase';
 import { RenewNoticeAction, shouldShowRenewNoticeAction } from './renew-notice-action';
 import type { Purchase } from '@automattic/api-core';
@@ -35,7 +35,7 @@ export function shouldShowExpiringNotice(
 	if (
 		! isExpiring( currentPurchase ) ||
 		currentPurchase?.is_trial_plan ||
-		isInExpirationGracePeriod( currentPurchase )
+		isAkismetFreeProduct( currentPurchase )
 	) {
 		return false;
 	}

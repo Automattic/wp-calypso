@@ -1,6 +1,7 @@
 /**
  * @jest-environment jsdom
  */
+import { getStreamInfiniteQueryKey } from '@automattic/api-queries';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { act, renderHook, waitFor } from '@testing-library/react';
 import nock from 'nock';
@@ -16,6 +17,7 @@ import type { ReactNode } from 'react';
 
 const BASE = 'https://public-api.wordpress.com';
 const LIKES_PATH = '/rest/v1.2/read/liked';
+const RECOMMENDATIONS_SITES_PATH = '/rest/v1.2/read/recommendations/sites';
 
 afterEach( () => {
 	nock.cleanAll();
@@ -48,9 +50,17 @@ interface ApiPost {
 	ID: number;
 	site_ID: number;
 	URL?: string;
+	date?: string;
 	date_liked?: string;
 	content?: string;
 	railcar?: Record< string, unknown >;
+}
+
+interface ApiSite {
+	name: string;
+	feed_ID: number;
+	URL: string;
+	posts: ApiPost[];
 }
 
 function apiPost( id: number, overrides: Partial< ApiPost > = {} ): ApiPost {
@@ -66,6 +76,16 @@ function apiPost( id: number, overrides: Partial< ApiPost > = {} ): ApiPost {
 
 function postKey( id: number, siteId = 100 ): StreamItem {
 	return { blogId: siteId, postId: id };
+}
+
+function apiSite( siteId: number, postId: number, overrides: Partial< ApiSite > = {} ): ApiSite {
+	return {
+		name: `Recommended site ${ siteId }`,
+		feed_ID: siteId,
+		URL: `https://site-${ siteId }.example.com`,
+		posts: [ apiPost( postId, { site_ID: siteId, date: '2026-04-01T00:00:00Z' } ) ],
+		...overrides,
+	};
 }
 
 describe( 'useStreamPendingPosts', () => {
@@ -224,7 +244,165 @@ describe( 'useStreamPendingPosts', () => {
 		expect( result.current.pendingCount ).toBe( 0 );
 	} );
 
-	it( 'reset() drops the polled head from cache', async () => {
+	it( 'consume() prepends the polled pending posts to the rendered stream cache', async () => {
+		nock( BASE )
+			.get( LIKES_PATH )
+			.query( true )
+			.reply( 200, {
+				posts: [ apiPost( 1 ), apiPost( 2 ), apiPost( 3 ) ],
+				date_range: { after: null, before: null },
+			} );
+
+		const queryClient = makeQueryClient();
+		const streamQueryKey = getStreamInfiniteQueryKey( {
+			streamKey: 'likes',
+			feedId: null,
+			localeSlug: null,
+			startDate: null,
+		} );
+		queryClient.setQueryData( streamQueryKey, {
+			pageParams: [ null ],
+			pages: [
+				{
+					posts: [ apiPost( 2 ), apiPost( 3 ) ],
+					date_range: { after: null, before: null },
+				},
+			],
+		} );
+
+		const { Wrapper } = makeWrapper( queryClient );
+		const items = [ postKey( 2 ), postKey( 3 ) ];
+		const { result } = renderHook(
+			() => useStreamPendingPosts( { streamKey: 'likes', items, shouldPoll: true } ),
+			{ wrapper: Wrapper }
+		);
+
+		await waitFor( () => expect( result.current.pendingCount ).toBe( 1 ) );
+
+		act( () => {
+			result.current.consume();
+		} );
+
+		const streamData = queryClient.getQueryData< {
+			pages: Array< { posts?: ApiPost[] } >;
+		} >( streamQueryKey );
+		expect( streamData?.pages[ 0 ].posts?.map( ( post ) => post.ID ) ).toEqual( [ 1, 2, 3 ] );
+		await waitFor( () =>
+			expect( queryClient.getQueryState( streamQueryKey )?.isInvalidated ).toBe( true )
+		);
+		await waitFor( () => expect( result.current.pendingCount ).toBe( 0 ) );
+	} );
+
+	it( 'consume() does not duplicate posts already present in the current stream cache', async () => {
+		nock( BASE )
+			.get( LIKES_PATH )
+			.query( true )
+			.reply( 200, {
+				posts: [ apiPost( 1 ), apiPost( 2 ), apiPost( 3 ) ],
+				date_range: { after: null, before: null },
+			} );
+
+		const queryClient = makeQueryClient();
+		const streamQueryKey = getStreamInfiniteQueryKey( {
+			streamKey: 'likes',
+			feedId: null,
+			localeSlug: null,
+			startDate: null,
+		} );
+		queryClient.setQueryData( streamQueryKey, {
+			pageParams: [ null ],
+			pages: [
+				{
+					posts: [ apiPost( 2 ), apiPost( 3 ) ],
+					date_range: { after: null, before: null },
+				},
+			],
+		} );
+
+		const { Wrapper } = makeWrapper( queryClient );
+		const items = [ postKey( 2 ), postKey( 3 ) ];
+		const { result } = renderHook(
+			() => useStreamPendingPosts( { streamKey: 'likes', items, shouldPoll: true } ),
+			{ wrapper: Wrapper }
+		);
+
+		await waitFor( () => expect( result.current.pendingCount ).toBe( 1 ) );
+
+		act( () => {
+			queryClient.setQueryData( streamQueryKey, {
+				pageParams: [ null ],
+				pages: [
+					{
+						posts: [ apiPost( 1 ), apiPost( 2 ), apiPost( 3 ) ],
+						date_range: { after: null, before: null },
+					},
+				],
+			} );
+			result.current.consume();
+		} );
+
+		const streamData = queryClient.getQueryData< {
+			pages: Array< { posts?: ApiPost[] } >;
+		} >( streamQueryKey );
+		expect( streamData?.pages[ 0 ].posts?.map( ( post ) => post.ID ) ).toEqual( [ 1, 2, 3 ] );
+		await waitFor( () => expect( result.current.pendingCount ).toBe( 0 ) );
+	} );
+
+	it( 'consume() merges sites-shaped pending pages into the first rendered page', async () => {
+		nock( BASE )
+			.get( RECOMMENDATIONS_SITES_PATH )
+			.query( true )
+			.reply( 200, {
+				sites: [ apiSite( 100, 1 ), apiSite( 200, 2 ), apiSite( 300, 3 ) ],
+			} );
+
+		const queryClient = makeQueryClient();
+		const streamQueryKey = getStreamInfiniteQueryKey( {
+			streamKey: 'custom_recs_sites_with_images',
+			feedId: null,
+			localeSlug: null,
+			startDate: null,
+		} );
+		queryClient.setQueryData( streamQueryKey, {
+			pageParams: [ null ],
+			pages: [
+				{
+					sites: [ apiSite( 200, 2 ), apiSite( 300, 3 ) ],
+				},
+			],
+		} );
+
+		const { Wrapper } = makeWrapper( queryClient );
+		const items = [ postKey( 2, 200 ), postKey( 3, 300 ) ];
+		const { result } = renderHook(
+			() =>
+				useStreamPendingPosts( {
+					streamKey: 'custom_recs_sites_with_images',
+					items,
+					shouldPoll: true,
+				} ),
+			{ wrapper: Wrapper }
+		);
+
+		await waitFor( () => expect( result.current.pendingCount ).toBe( 1 ) );
+
+		act( () => {
+			result.current.consume();
+		} );
+
+		const streamData = queryClient.getQueryData< {
+			pageParams: unknown[];
+			pages: Array< { sites?: ApiSite[] } >;
+		} >( streamQueryKey );
+		expect( streamData?.pageParams ).toEqual( [ null ] );
+		expect( streamData?.pages ).toHaveLength( 1 );
+		expect( streamData?.pages[ 0 ].sites?.map( ( site ) => site.posts[ 0 ].ID ) ).toEqual( [
+			1, 2, 3,
+		] );
+		await waitFor( () => expect( result.current.pendingCount ).toBe( 0 ) );
+	} );
+
+	it( 'reset() drops the polled head from cache without immediately refetching', async () => {
 		nock( BASE )
 			.get( LIKES_PATH )
 			.query( true )
@@ -243,8 +421,7 @@ describe( 'useStreamPendingPosts', () => {
 
 		await waitFor( () => expect( result.current.pendingCount ).toBe( 1 ) );
 
-		// `resetQueries` re-fetches active observers; mock the second call.
-		nock( BASE )
+		const unexpectedRefetch = nock( BASE )
 			.get( LIKES_PATH )
 			.query( true )
 			.reply( 200, {
@@ -256,9 +433,10 @@ describe( 'useStreamPendingPosts', () => {
 			result.current.reset();
 		} );
 
-		// pendingCount snaps to 0 immediately after reset (data is undefined),
-		// and stays 0 once the follow-up fetch lands matching the visible items.
+		// pendingCount snaps to 0 immediately after reset (data is cleared),
+		// without the active poll observer starting a new network request.
 		await waitFor( () => expect( result.current.pendingCount ).toBe( 0 ) );
+		expect( unexpectedRefetch.isDone() ).toBe( false );
 	} );
 
 	it( 'rotates queryKey on streamKey change so polled head does not bleed across streams', async () => {

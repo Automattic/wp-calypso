@@ -1,7 +1,8 @@
-import { __experimentalHStack as HStack } from '@wordpress/components';
 import { __, sprintf } from '@wordpress/i18n';
 import { brush, envelope, globe, layout, plugins } from '@wordpress/icons';
 import { useRef } from 'react';
+import ReferralSidebar from '../../agency/earn/referrals/referral-sidebar';
+import AgencySiteSidebar from '../../agency/sites/site-sidebar';
 import RouterLinkButton from '../../components/router-link-button';
 import { SidebarExpandableMenuItem, SidebarMenu, SidebarMenuItem } from '../../components/sidebar';
 import SidebarNavigator from '../../components/sidebar-navigator';
@@ -47,6 +48,12 @@ export default function Sidebar( { scrollSyncEnabled = false }: { scrollSyncEnab
 				<SidebarNavigator.Screen path="/sites/$siteSlug">
 					<SiteSidebar />
 				</SidebarNavigator.Screen>
+				<SidebarNavigator.Screen path="/agency/sites/$siteSlug">
+					<AgencySiteSidebar />
+				</SidebarNavigator.Screen>
+				<SidebarNavigator.Screen path="/agency/earn/referrals/$referralId">
+					<ReferralSidebar />
+				</SidebarNavigator.Screen>
 				<SidebarNavigator.Screen path="/domains/$domainName">
 					<DomainSidebar />
 				</SidebarNavigator.Screen>
@@ -86,29 +93,14 @@ function PrimaryMenuSidebar() {
 					<SidebarMenuItem to="/plugins/scheduled-updates">
 						{ __( 'Scheduled updates' ) }
 					</SidebarMenuItem>
-					<SidebarMenuItem
-						href={ wpcomLink( '/plugins' ) }
-						target="_blank"
-						rel="noopener noreferrer"
-					>
-						<HStack justify="flex-start" spacing={ 1 }>
-							<span>{ __( 'Browse plugins' ) }</span>
-							<span aria-label={ __( '(opens in a new tab)' ) }>&#8599;</span>
-						</HStack>
+					<SidebarMenuItem href={ wpcomLink( '/plugins' ) }>
+						{ __( 'Browse plugins' ) }
 					</SidebarMenuItem>
 				</SidebarExpandableMenuItem>
 			) }
 			{ supports.themes && (
-				<SidebarMenuItem
-					icon={ brush }
-					href={ wpcomLink( '/themes' ) }
-					target="_blank"
-					rel="noopener noreferrer"
-				>
-					<HStack justify="flex-start" spacing={ 1 }>
-						<span>{ __( 'Themes' ) }</span>
-						<span aria-label={ __( '(opens in a new tab)' ) }>&#8599;</span>
-					</HStack>
+				<SidebarMenuItem icon={ brush } href={ wpcomLink( '/themes' ) }>
+					{ __( 'Themes' ) }
 				</SidebarMenuItem>
 			) }
 		</SidebarMenu>

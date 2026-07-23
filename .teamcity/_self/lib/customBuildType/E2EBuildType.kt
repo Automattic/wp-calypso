@@ -59,6 +59,7 @@ open class E2EBuildType(
 	var buildTriggers: Triggers.() -> Unit = {},
 	var buildDependencies: Dependencies.() -> Unit = {},
 	var addWpcomVcsRoot: Boolean = false,
+	var vcsBranchFilter: String? = null,
 	var buildSteps: BuildSteps.() -> Unit = {}
 
 ): BuildType() {
@@ -71,6 +72,7 @@ open class E2EBuildType(
 		val enableCommitStatusPublisher = enableCommitStatusPublisher
 		val buildTriggers = buildTriggers
 		val buildDependencies = buildDependencies
+		val vcsBranchFilter = vcsBranchFilter
 		val params = params
 		val buildSteps = buildSteps
 
@@ -85,10 +87,12 @@ open class E2EBuildType(
 			screenshots => screenshots
 			trace => trace
 			allure-results => allure-results.tgz
+			test/e2e/output => playwright-output
 		""".trimIndent()
 
 		vcs {
 			root(Settings.WpCalypso)
+			vcsBranchFilter?.let { branchFilter = it }
 			cleanCheckout = true
 		}
 

@@ -56,10 +56,12 @@ export function buildCheckoutURL(
 		}
 	}
 	// host maybe needed in either siteless or userless checkout below
-	const port = config( 'port' ) ?? 3000;
+	// `config( 'port' )` is only read inside the development branch because in
+	// Odyssey dev builds the config accessor throws (rather than returning
+	// undefined) for keys absent from the filtered production config.
 	const host =
 		'development' === urlQueryArgs.calypso_env
-			? `http://calypso.localhost:${ port }`
+			? `http://calypso.localhost:${ config( 'port' ) ?? 3000 }`
 			: 'https://wordpress.com';
 
 	// siteless checkout

@@ -52,11 +52,10 @@ describe( 'agents-manager-gutenberg entry', () => {
 		);
 	} );
 
-	it( 'renders nothing when the preview gate suppresses the mount', () => {
+	it( 'renders nothing when the gate suppresses the mount', () => {
 		globalThis.agentsManagerData = {
 			sectionName: 'gutenberg',
 			agentProviders: [ JETPACK_PROVIDER ],
-			jetpackAiSidebarPreview: { enabled: true },
 		};
 
 		const render = loadRender();
@@ -70,7 +69,6 @@ describe( 'agents-manager-gutenberg entry', () => {
 		globalThis.agentsManagerData = {
 			sectionName: 'gutenberg',
 			agentProviders: [ JETPACK_PROVIDER ],
-			jetpackAiSidebarPreview: { enabled: true },
 		};
 
 		const render = loadRender();

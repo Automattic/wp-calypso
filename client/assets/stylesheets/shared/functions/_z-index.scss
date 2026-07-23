@@ -171,7 +171,7 @@ $z-layers: (
 		".wpcom-site__global-noscript": 300000,
 
 		// Sits above the @automattic/privacy-toolset cookie banner (z-index 50001).
-		// The Help Center panel itself ($help-center-z-index: 500000) renders on
+		// The Help Center panel itself ($help-center-z-index: 999990) renders on
 		// top — that's intentional, since the panel has its own close button.
 		".help-center-fab": 50002,
 
@@ -203,9 +203,7 @@ $z-layers: (
 		".detail-page__action-buttons": 200,
 	),
 	".popover": (
-		".input-chrono__input": 1,
 		".popover .popover__arrow": 1,
-		".post-schedule__header": 1,
 		".date-picker__nav-bar": 2,
 		".search-filters__popover": 179,
 	),

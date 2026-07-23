@@ -22,9 +22,12 @@ const PromotePost = () => {
 		<>
 			{ showPromotePost && (
 				<Task
-					title={ translate( 'Promote your content with Blaze' ) }
+					title={ translate( 'Promote your content with %(productName)s', {
+						args: { productName: 'Blaze Ads' },
+					} ) }
 					description={ translate(
-						'Grow your audience by promoting your content with Blaze campaigns. Reach interested users across millions of sites on Tumblr and WordPress.com.'
+						'Grow your audience by promoting your content with %(productName)s campaigns. Reach interested users across millions of sites on Tumblr and WordPress.com.',
+						{ args: { productName: 'Blaze Ads' } }
 					) }
 					actionText={ translate( 'Create campaign' ) }
 					actionUrl={ advertisingUrl }

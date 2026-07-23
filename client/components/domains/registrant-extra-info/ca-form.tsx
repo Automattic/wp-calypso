@@ -1,6 +1,6 @@
 import { FormInputValidation, FormLabel } from '@automattic/components';
+import { camelCase, pick, isEmpty } from '@automattic/js-utils';
 import { LocalizeProps, localize } from 'i18n-calypso';
-import { camelCase, difference, isEmpty, keys, map, pick } from 'lodash';
 import { PureComponent, ReactNode } from 'react';
 import { connect } from 'react-redux';
 import FormCheckbox from 'calypso/components/forms/form-checkbox';
@@ -79,7 +79,7 @@ export class RegistrantExtraInfoCaForm extends PureComponent<
 			} ),
 			MAJ: translate( 'His Majesty the King' ),
 		};
-		const legalTypeOptions = map( legalTypes, ( text, optionValue ) => (
+		const legalTypeOptions = Object.entries( legalTypes ).map( ( [ optionValue, text ] ) => (
 			<option value={ optionValue } key={ optionValue }>
 				{ text }
 			</option>
@@ -90,9 +90,9 @@ export class RegistrantExtraInfoCaForm extends PureComponent<
 
 	componentDidMount() {
 		// Add defaults to redux state to make accepting default values work.
-		const neededRequiredDetails = difference(
-			[ 'lang', 'legalType', 'ciraAgreementAccepted' ],
-			keys( this.props.ccTldDetails )
+		const providedDetails = Object.keys( this.props.ccTldDetails );
+		const neededRequiredDetails = [ 'lang', 'legalType', 'ciraAgreementAccepted' ].filter(
+			( key ) => ! providedDetails.includes( key )
 		);
 
 		// Bail early as we already have the details from a previous purchase.

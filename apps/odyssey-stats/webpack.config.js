@@ -13,10 +13,12 @@ const {
 	defaultRequestToHandle,
 } = require( '@wordpress/dependency-extraction-webpack-plugin/lib/util' );
 const autoprefixerPlugin = require( 'autoprefixer' );
+const prefixSelectorPlugin = require( 'postcss-prefix-selector' );
 const webpack = require( 'webpack' );
 const { BundleAnalyzerPlugin } = require( 'webpack-bundle-analyzer' );
 const cacheIdentifier = require( '../../build-tools/babel/babel-loader-cache-identifier' );
 const GenerateChunksMapPlugin = require( '../../build-tools/webpack/generate-chunks-map-plugin' );
+const cssScope = require( './webpack-css-scope' );
 
 const shouldEmitStats = process.env.EMIT_STATS && process.env.EMIT_STATS !== 'false';
 const isDevelopment = process.env.NODE_ENV !== 'production';
@@ -99,11 +101,15 @@ module.exports = {
 					// This is required because Calypso imports `@automattic/notifications` and that package defines its
 					// own `postcss.config.js` that they use for their webpack bundling process.
 					config: false,
-					plugins: [ autoprefixerPlugin() ],
+					plugins: [
+						// Scopes this repo's own component styles to .jp-stats-dashboard and
+						// .jp-stats-widget (Odyssey's mount points), so generic classes (`.card`,
+						// `.button`, etc.) can't collide with wp-admin's own chrome. See
+						// AGENTS.md > CSS Scoping and webpack-css-scope.js.
+						prefixSelectorPlugin( cssScope ),
+						autoprefixerPlugin(),
+					],
 				},
-				prelude: `@use '${ require.resolve(
-					'calypso/assets/stylesheets/shared/_utils.scss'
-				) }' as *;`,
 			} ),
 			FileConfig.loader(),
 			{
@@ -135,8 +141,18 @@ module.exports = {
 		new DependencyExtractionWebpackPlugin( {
 			injectPolyfill: true,
 			useDefaults: false,
-			requestToHandle: defaultRequestToHandle,
+			requestToHandle: ( request ) => {
+				if ( request === 'react-dom/client' ) {
+					return 'wp-element';
+				}
+
+				return defaultRequestToHandle( request );
+			},
 			requestToExternal: ( request ) => {
+				if ( request === 'react-dom/client' ) {
+					return [ 'wp', 'element' ];
+				}
+
 				if (
 					! [
 						'lodash',
@@ -213,6 +229,10 @@ module.exports = {
 		new webpack.NormalModuleReplacementPlugin(
 			/^calypso\/components\/data\/query-site-purchases$/,
 			path.resolve( __dirname, 'src/components/odyssey-query-site-purchases' )
+		),
+		new webpack.NormalModuleReplacementPlugin(
+			/^calypso\/components\/data\/query-sites$/,
+			path.resolve( __dirname, 'src/components/odyssey-query-sites' )
 		),
 		new webpack.NormalModuleReplacementPlugin(
 			/^calypso\/components\/data\/query-products-list$/,

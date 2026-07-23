@@ -1,6 +1,6 @@
 {
 	"name": "@automattic/calypso-stripe",
-	"version": "1.0.0",
+	"version": "1.0.1",
 	"description": "A set of helper functions and components for using Stripe on WordPress.com.",
 	"main": "dist/cjs/index.js",
 	"module": "dist/esm/index.js",
@@ -44,14 +44,18 @@
 	"homepage": "https://github.com/Automattic/wp-calypso/tree/HEAD/packages/calypso-stripe#readme",
 	"dependencies": {
 		"@automattic/api-core": "workspace:^",
-		"@stripe/react-stripe-js": "^2.1.0",
-		"@stripe/stripe-js": "^1.54.2",
-		"debug": "^4.4.1",
-		"react": "^18.3.1",
-		"react-dom": "^18.3.1"
+		"@stripe/react-stripe-js": "^6.6.0",
+		"@stripe/stripe-js": "^9.8.0",
+		"debug": "^4.4.1"
 	},
 	"devDependencies": {
 		"@automattic/calypso-typescript-config": "workspace:^",
+		"react": "^18.3.1",
+		"react-dom": "^18.3.1",
 		"typescript": "^6.0.3"
+	},
+	"peerDependencies": {
+		"react": "^18.3.1 || ^19.0.0",
+		"react-dom": "^18.3.1 || ^19.0.0"
 	}
 }

@@ -1,8 +1,8 @@
 import './style.scss';
 
-import page from '@automattic/calypso-router';
 import { makeLayout, render as clientRender } from 'calypso/controller';
-import { sidebar, setBeforePrimary } from 'calypso/reader/controller';
+import { sidebar } from 'calypso/reader/controller';
+import { readerPage } from 'calypso/reader/lib/reader-router';
 import {
 	fediverseAccount,
 	fediverseAuthorProfile,
@@ -13,45 +13,34 @@ import {
 } from './controller';
 
 export default function () {
-	page(
-		'/reader/fediverse',
-		sidebar,
-		setBeforePrimary,
-		fediverseLanding,
-		makeLayout,
-		clientRender
-	);
-	page( '/reader/fediverse/:id(\\d+)', fediverseIdRedirect );
+	readerPage( '/reader/fediverse', sidebar, fediverseLanding, makeLayout, clientRender );
+	readerPage( '/reader/fediverse/:id(\\d+)', fediverseIdRedirect );
 	// More specific `:id/profile/:actor` route registered before the
 	// generic `:id/:tab` so the actor segment takes precedence.
-	page(
+	readerPage(
 		'/reader/fediverse/:id(\\d+)/profile/:actor',
 		sidebar,
-		setBeforePrimary,
 		fediverseAuthorProfile,
 		makeLayout,
 		clientRender
 	);
-	page(
+	readerPage(
 		'/reader/fediverse/:id(\\d+)/profile/:actor/followers',
 		sidebar,
-		setBeforePrimary,
 		fediverseProfileFollowers,
 		makeLayout,
 		clientRender
 	);
-	page(
+	readerPage(
 		'/reader/fediverse/:id(\\d+)/profile/:actor/following',
 		sidebar,
-		setBeforePrimary,
 		fediverseProfileFollowing,
 		makeLayout,
 		clientRender
 	);
-	page(
+	readerPage(
 		'/reader/fediverse/:id(\\d+)/:tab',
 		sidebar,
-		setBeforePrimary,
 		fediverseAccount,
 		makeLayout,
 		clientRender

@@ -17,7 +17,7 @@ class MainComponent extends Component {
 
 	componentDidMount() {
 		// Automatically call unsubscribe when the page is viewed in the browser;
-		// it is done this way to prevent an accidental unsubscribe from occuring
+		// it is done this way to prevent an accidental unsubscribe from occurring
 		// if an email client prefetches the unsubscribe link in an email
 		this.onUnsubscribeClick();
 	}

@@ -4,13 +4,16 @@ import { useSuspenseQuery, useMutation } from '@tanstack/react-query';
 import { Icon, __experimentalVStack as VStack, ToggleControl } from '@wordpress/components';
 import { __, sprintf } from '@wordpress/i18n';
 import { seen, pencil, notAllowed, connection, globe } from '@wordpress/icons';
+import { getOverridesToMatch, groupIntentKey } from '../../../me/mcp/group-intents';
 import {
 	getAccountMcpAbilities,
 	getDisabledSiteIds,
 	getEnabledSiteIds,
+	getGroupDescriptors,
 } from '../../../me/mcp/utils';
 import { useAnalytics } from '../../app/analytics';
 import Breadcrumbs from '../../app/breadcrumbs';
+import { withSnackbar } from '../../app/snackbars/with-snackbar';
 import { Card, CardBody, CardDivider } from '../../components/card';
 import ComponentViewTracker from '../../components/component-view-tracker';
 import { PageHeader } from '../../components/page-header';
@@ -98,39 +101,31 @@ function McpComponent() {
 	const readBadge = getReadBadge( readTools );
 	const writeBadge = getWriteBadge( writeTools );
 
-	const mutation = useMutation( {
-		...userSettingsMutation(),
-		meta: {
-			snackbar: {
-				success: __( 'Settings saved.' ),
-				error: __( 'Failed to save settings.' ),
-			},
-		},
-	} );
+	const mutation = useMutation(
+		withSnackbar( userSettingsMutation(), {
+			success: __( 'Settings saved.' ),
+			error: __( 'Failed to save settings.' ),
+		} )
+	);
 
 	const handleMcpToggle = ( enabled: boolean ) => {
-		const accountAbilities: Record< string, boolean > = {};
-		Object.keys( mcpAbilities ).forEach( ( toolId ) => {
-			const tool = mcpAbilities[ toolId ] as McpAbility;
-			if ( enabled ) {
-				// Only enable read tools by default; write tools start disabled
-				accountAbilities[ toolId ] = ! isWriteTool( toolId, tool );
-			} else {
-				accountAbilities[ toolId ] = false;
-			}
-		} );
+		const overrides = getOverridesToMatch( Object.entries( mcpAbilities ), enabled ) as
+			| Record< string, boolean >
+			| undefined;
 
-		// Clear site-level overrides when toggling on or off
-		const sitesToReset = [
-			...disabledSiteIds.map( ( id ) => ( { blog_id: id, account_tools_enabled: true } ) ),
-			...enabledSiteIds.map( ( id ) => ( { blog_id: id, site_level_enabled: false } ) ),
-		];
+		const groupIntents: Record< string, boolean > = { read: enabled, write: enabled };
+		if ( ! enabled ) {
+			getGroupDescriptors( userSettings || {} ).forEach( ( group ) => {
+				groupIntents[ groupIntentKey( 'read', group.name ) ] = false;
+				groupIntents[ groupIntentKey( 'write', group.name ) ] = false;
+			} );
+		}
 
 		mutation.mutate(
 			{
 				mcp_abilities: {
-					account: accountAbilities,
-					...( sitesToReset.length > 0 && { sites: sitesToReset } ),
+					...( overrides && { account: overrides } ),
+					group_intents: groupIntents,
 				},
 			} as any,
 			{

@@ -1,5 +1,5 @@
 import { Card, DotPager } from '@automattic/components';
-import { times } from 'lodash';
+import { times } from '@automattic/js-utils';
 import PropTypes from 'prop-types';
 import { useSelector } from 'react-redux';
 import AsyncLoad from 'calypso/components/async-load';

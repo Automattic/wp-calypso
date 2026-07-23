@@ -2,7 +2,6 @@ import page from '@automattic/calypso-router';
 import debugFactory from 'debug';
 import PropTypes from 'prop-types';
 import { createRef, Component } from 'react';
-import ReactDom from 'react-dom';
 import detectHistoryNavigation from 'calypso/lib/detect-history-navigation';
 import smartSetState from 'calypso/lib/react-smart-set-state';
 import scrollTo from 'calypso/lib/scroll-to';
@@ -53,6 +52,8 @@ export default class InfiniteList extends Component {
 	// renders. An unstable ref would re-run on every render and, when forwarded as
 	// a prop, would defeat consumers' own-props memoization (e.g. the Reader stream).
 	itemRefCallbacks = new Map();
+	// Item keys rendered in the latest render, used to prune the maps above.
+	renderedItemKeys = new Set();
 
 	// @TODO: Please update https://github.com/Automattic/wp-calypso/issues/58453 if you are refactoring away from UNSAFE_* lifecycle methods!
 	UNSAFE_componentWillMount() {
@@ -160,6 +161,15 @@ export default class InfiniteList extends Component {
 	}
 
 	componentDidUpdate( prevProps ) {
+		// Prune cached refs for items no longer rendered; consumers that ignore the ref arg
+		// never fire the callback's own cleanup.
+		for ( const key of this.itemRefCallbacks.keys() ) {
+			if ( ! this.renderedItemKeys.has( key ) ) {
+				this.itemRefCallbacks.delete( key );
+				this.itemRefs.delete( key );
+			}
+		}
+
 		if ( ! this._contextLoaded() ) {
 			return;
 		}
@@ -367,14 +377,6 @@ export default class InfiniteList extends Component {
 		if ( node ) {
 			return node.getBoundingClientRect();
 		}
-		// Transitional fallback for consumers whose `renderItem` still attaches string
-		// refs instead of the `registerItemRef` callback. Remove with DOTCOM-17551 once
-		// all consumers are migrated (string refs and `findDOMNode` are gone in React 19).
-		/* eslint-disable react/no-string-refs */
-		if ( ReactDom.findDOMNode && ref in this.refs && ReactDom.findDOMNode( this.refs[ ref ] ) ) {
-			return ReactDom.findDOMNode( this.refs[ ref ] ).getBoundingClientRect();
-		}
-		/* eslint-enable react/no-string-refs */
 		return null;
 	};
 
@@ -457,9 +459,12 @@ export default class InfiniteList extends Component {
 
 		debug( 'rendering %d to %d', this.state.firstRenderedIndex, lastRenderedIndex );
 
+		this.renderedItemKeys.clear();
 		for ( i = this.state.firstRenderedIndex; i <= lastRenderedIndex; i++ ) {
 			const item = items[ i ];
-			itemsToRender.push( renderItem( item, i, this.setItemRef( this.props.getItemRef( item ) ) ) );
+			const itemKey = this.props.getItemRef( item );
+			this.renderedItemKeys.add( itemKey );
+			itemsToRender.push( renderItem( item, i, this.setItemRef( itemKey ) ) );
 		}
 
 		if ( fetchingNextPage ) {

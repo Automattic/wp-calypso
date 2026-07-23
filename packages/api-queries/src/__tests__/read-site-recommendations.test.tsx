@@ -252,7 +252,7 @@ describe( 'dismissReadSiteRecommendationMutation', () => {
 			} );
 		} );
 
-		expect( result.current.isSuccess ).toBe( true );
+		await waitFor( () => expect( result.current.isSuccess ).toBe( true ) );
 		expect( scope.isDone() ).toBe( true );
 	} );
 } );

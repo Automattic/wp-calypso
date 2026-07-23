@@ -79,7 +79,7 @@ There is only a single dashboard instance for all entry points. The dashboard wi
 Then, we need to register the routing in `client/server/pages/index.js`. Look for the following code which registers `app-ciab`:
 
 ```js
-DASHBOARD_SECTION_PATHS.forEach( ( route ) => {
+CIAB_DASHBOARD_SECTION_PATHS.forEach( ( route ) => {
 	handleRoute( CIAB_DASHBOARD_SECTION_DEFINITION, route, 'entry-dashboard-ciab', ( req ) =>
 		isAllowedCiabDashboardHostname( req.hostname )
 	);

@@ -1,23 +1,14 @@
-import config from '@automattic/calypso-config';
-import { getCurrentUser } from 'calypso/state/current-user/selectors';
+import { isOptInToggleVisible } from 'calypso/dashboard/utils/hosting-dashboard-enrollment';
+import { getCurrentUserId } from 'calypso/state/current-user/selectors';
+import { getPreference } from 'calypso/state/preferences/selectors';
+import type { HostingDashboardOptIn } from '@automattic/api-core';
 import type { AppState } from 'calypso/types';
 
-const OLDEST_ELIGIBLE_USER: number = config( 'dashboard_opt_in_oldest_eligible_user' ); // Cut-off on 22 December 2025
-
-/**
- * Determine whether to display the dashboard toggle. Only users created
- * before 22 December 2025 can manually opt in or out.
- */
 export const isDashboardToggleEnabled = ( state: AppState ): boolean => {
-	// Useful for allowing internal testing for proxied a12s.
-	if ( config.isEnabled( 'dashboard/force-opt-in-visibility' ) ) {
-		return true;
-	}
+	const preference = getPreference( state, 'hosting-dashboard-opt-in' ) as
+		| HostingDashboardOptIn
+		| undefined;
+	const userId = getCurrentUserId( state ) ?? undefined;
 
-	const user = getCurrentUser( state ); // Ensure current user is loaded.
-	if ( ! user || user.ID > OLDEST_ELIGIBLE_USER ) {
-		return false;
-	}
-
-	return true;
+	return isOptInToggleVisible( preference, userId );
 };

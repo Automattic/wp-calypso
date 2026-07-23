@@ -4,6 +4,7 @@
  */
 import { useShouldUseUnifiedAgent } from '@automattic/agents-manager';
 import { initializeAnalytics } from '@automattic/calypso-analytics';
+import { HelpCenter as HelpCenterStore } from '@automattic/data-stores';
 import { useCanConnectToZendeskMessaging } from '@automattic/zendesk-client';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { createPortal, useEffect, useState } from '@wordpress/element';
@@ -102,6 +103,10 @@ export default function ContextualizedHelpCenter( {
 }: Container &
 	Partial< HelpCenterRequiredInformation > &
 	Pick< HelpCenterRequiredInformation, 'currentUser' | 'sectionName' > ) {
+	HelpCenterStore.setHelpCenterAppId(
+		props.product && props.product !== 'wpcom' ? props.product : undefined
+	);
+
 	return (
 		<HelpCenterRequiredContextProvider value={ props }>
 			<HelpCenter hidden={ hidden } currentRoute={ currentRoute } handleClose={ handleClose } />

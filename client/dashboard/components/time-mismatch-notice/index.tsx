@@ -12,35 +12,53 @@ interface TimeMismatchNoticeProps {
 	siteId: number;
 }
 
-export const TimeMismatchNotice = ( {
-	settingsUrl,
+/**
+ * Whether the time-mismatch notice is initially eligible to show: the site's
+ * time zone differs from the browser's and the mismatch hasn't been dismissed
+ * for the current browser offset. In-session dismissal is handled inside the
+ * component itself.
+ */
+export function useShouldShowTimeMismatchNotice( {
 	siteTime,
 	siteId,
-}: TimeMismatchNoticeProps ) => {
-	const { recordTracksEvent } = useAnalytics();
+}: {
+	siteTime: string | number;
+	siteId: number;
+} ) {
 	const { data: dismissedPref } = useSuspenseQuery(
 		userPreferenceQuery( `hosting-dashboard-time-mismatch-warning-dismissed-${ siteId }` )
-	);
-	const { mutate: dismiss, isPending: isDismissing } = useMutation(
-		userPreferenceMutation( `hosting-dashboard-time-mismatch-warning-dismissed-${ siteId }` )
 	);
 
 	const date = new Date();
 	const offsetHours = -date.getTimezoneOffset() / 60;
 	let savedOffset: number | null = null;
 
-	if ( isDismissing || dismissedPref ) {
+	if ( typeof dismissedPref === 'string' ) {
 		try {
-			if ( typeof dismissedPref === 'string' ) {
-				const parsed = JSON.parse( dismissedPref );
-				savedOffset = parsed.offsetHours;
-			}
+			const parsed = JSON.parse( dismissedPref );
+			savedOffset = parsed.offsetHours;
 		} catch {
 			savedOffset = null;
 		}
 	}
 
-	if ( siteTime === offsetHours || isDismissing || savedOffset === offsetHours ) {
+	return siteTime !== offsetHours && savedOffset !== offsetHours;
+}
+
+export const TimeMismatchNotice = ( {
+	settingsUrl,
+	siteTime,
+	siteId,
+}: TimeMismatchNoticeProps ) => {
+	const { recordTracksEvent } = useAnalytics();
+	const shouldShow = useShouldShowTimeMismatchNotice( { siteTime, siteId } );
+	const { mutate: dismiss, isPending: isDismissing } = useMutation(
+		userPreferenceMutation( `hosting-dashboard-time-mismatch-warning-dismissed-${ siteId }` )
+	);
+
+	const offsetHours = -new Date().getTimezoneOffset() / 60;
+
+	if ( ! shouldShow || isDismissing ) {
 		return null;
 	}
 

@@ -1,5 +1,5 @@
+import { flow, isEmpty } from '@automattic/js-utils';
 import { localize } from 'i18n-calypso';
-import { flow, get, isEmpty, some, values } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
@@ -32,8 +32,7 @@ const noop = () => {};
 function areMediaActionsDisabled( modalView, mediaItems, isParentReady ) {
 	return (
 		! isParentReady( mediaItems ) ||
-		some(
-			mediaItems,
+		( mediaItems ?? [] ).some(
 			( item ) =>
 				MediaUtils.isItemBeingUploaded( item ) &&
 				// Transients can't be handled by the editor if they are being
@@ -58,7 +57,7 @@ export class EditorMediaModal extends Component {
 		single: PropTypes.bool,
 		defaultFilter: PropTypes.string,
 		enabledFilters: PropTypes.arrayOf( PropTypes.string ),
-		view: PropTypes.oneOf( values( ModalViews ) ),
+		view: PropTypes.oneOf( Object.values( ModalViews ) ),
 		galleryViewEnabled: PropTypes.bool,
 		setView: PropTypes.func,
 		resetView: PropTypes.func,
@@ -408,7 +407,7 @@ export class EditorMediaModal extends Component {
 			ModalViews.GALLERY !== this.props.view &&
 			selectedItems.length > 1 &&
 			galleryViewEnabled &&
-			! some( selectedItems, ( item ) => MediaUtils.getMimePrefix( item ) !== 'image' )
+			! selectedItems.some( ( item ) => MediaUtils.getMimePrefix( item ) !== 'image' )
 		) {
 			buttons.push( {
 				action: 'confirm',
@@ -495,11 +494,11 @@ export class EditorMediaModal extends Component {
 			case ModalViews.IMAGE_EDITOR: {
 				const { site, imageEditorProps, selectedItems: items } = this.props;
 				const selectedIndex = this.getDetailSelectedIndex();
-				const media = get( items, selectedIndex, null );
+				const media = items?.[ selectedIndex ] ?? null;
 
 				content = (
 					<ImageEditor
-						siteId={ get( site, 'ID' ) }
+						siteId={ site?.ID }
 						media={ media }
 						onDone={ this.onImageEditorDone }
 						onCancel={ this.onImageEditorCancel }

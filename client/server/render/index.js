@@ -2,8 +2,8 @@ import fs from 'fs';
 import path from 'path';
 import config from '@automattic/calypso-config';
 import { isDefaultLocale, isTranslatedIncompletely } from '@automattic/i18n-utils';
+import { pick } from '@automattic/js-utils';
 import debugFactory from 'debug';
-import { get, pick } from 'lodash';
 import Lru from 'lru';
 import { createElement } from 'react';
 import ReactDomServer from 'react-dom/server';
@@ -67,7 +67,7 @@ export const markupCache = new Lru( {
 	maxAge: HOUR_IN_MS,
 } );
 
-function bumpStat( group, name ) {
+export function bumpStat( group, name ) {
 	const statUrl = `http://pixel.wp.com/g.gif?v=wpcom-no-pv&x_${ group }=${ name }&t=${ Math.random() }`;
 
 	if ( process.env.NODE_ENV === 'production' ) {
@@ -129,7 +129,7 @@ function render( element, key, req ) {
 					extra: {
 						key,
 						'existing-keys': markupCache.keys,
-						'user-agent': get( req.headers, 'user-agent', '' ),
+						'user-agent': req.headers?.[ 'user-agent' ] ?? '',
 						path: req.context.path,
 					},
 				} );

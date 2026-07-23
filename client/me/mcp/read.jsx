@@ -11,7 +11,6 @@ export default function McpReadToolsPage( props ) {
 			headerTitle={ translate( 'Read' ) }
 			filterTool={ isReadTool }
 			toolCategory="read"
-			groupingMode="categories"
 		/>
 	);
 }

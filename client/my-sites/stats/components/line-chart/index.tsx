@@ -3,7 +3,7 @@ import '@automattic/charts/style.css';
 import { formatNumber } from '@automattic/number-formatters';
 import clsx from 'clsx';
 import { translate } from 'i18n-calypso';
-import { useCallback, useMemo } from 'react';
+import { useCallback, useMemo, type JSX } from 'react';
 import ChartBarTooltip from 'calypso/components/chart/bar-tooltip';
 import { useMomentInSite } from '../../hooks/use-moment-site-zone';
 import StatsEmptyState from '../../stats-empty-state';
@@ -194,14 +194,13 @@ function StatsLineChart( {
 		( { datum }: EventHandlerParams< DataPointDate > ) => {
 			// datum.date is always in the timezone of the browser, we need to use literal date here.
 			if ( datum && datum.date ) {
-				onClick &&
-					onClick( {
-						data: {
-							period: `${ datum.date.getFullYear() }-${
-								datum.date.getMonth() + 1
-							}-${ datum.date.getDate() }`,
-						},
-					} );
+				onClick?.( {
+					data: {
+						period: `${ datum.date.getFullYear() }-${
+							datum.date.getMonth() + 1
+						}-${ datum.date.getDate() }`,
+					},
+				} );
 			}
 		},
 		[ onClick ]

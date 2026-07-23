@@ -19,8 +19,9 @@ import {
 	isRechargeable,
 	isCloseToExpiration,
 	isRenewable,
-	isExpired,
-	isInExpirationGracePeriod,
+	isExpiredAndInGracePeriod,
+	isExpiredWithNoAutoRenewAttemptsLeft,
+	isRemoved,
 } from 'calypso/lib/purchases';
 import {
 	isAkismetHoldingSitePurchase,
@@ -89,7 +90,15 @@ function PurchaseMetaExpiration( {
 			! isRenewable( purchase ) ) ||
 		is100Year( purchase );
 
-	if ( isRenewable( purchase ) && ! isExpired( purchase ) ) {
+	// We need to allow auto-renew to be disabled if there are still upcoming
+	// renewal attempts, and because of that we should allow it to be enabled
+	// too (so it can be turned back on after disabling it). But otherwise we
+	// don't want people to be able to toggle it, since if the subscription is
+	// past expiration and there are no more renewal attempts then the toggle
+	// won't have a meaningful effect.
+	const couldHaveUpcomingRenewalAttempts = ! isExpiredWithNoAutoRenewAttemptsLeft( purchase );
+
+	if ( isRenewable( purchase ) && ! isRemoved( purchase ) && couldHaveUpcomingRenewalAttempts ) {
 		const dateSpan = <span className="manage-purchase__detail-date-span" />;
 		// If a jetpack site has been disconnected, the "site" prop will be null here.
 		// We allow the empty site if an A4A BD purchase since clients often don't have access to the site so it'll be null.
@@ -137,7 +146,7 @@ function PurchaseMetaExpiration( {
 			! hideAutoRenew &&
 			hasPaymentMethod( purchase ) &&
 			isRechargeable( purchase ) &&
-			! isInExpirationGracePeriod( purchase )
+			! isExpiredAndInGracePeriod( purchase )
 		) {
 			subsBillingText = translate( 'You will be billed on {{dateSpan}}%(renewDate)s{{/dateSpan}}', {
 				args: {
@@ -147,7 +156,7 @@ function PurchaseMetaExpiration( {
 					dateSpan,
 				},
 			} );
-		} else if ( isInExpirationGracePeriod( purchase ) ) {
+		} else if ( isExpiredAndInGracePeriod( purchase ) ) {
 			subsBillingText = translate( 'Expired on {{dateSpan}}%(expireDate)s{{/dateSpan}}', {
 				args: {
 					expireDate: moment( purchase.expiryDate ).format( 'LL' ),

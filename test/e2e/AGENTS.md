@@ -147,7 +147,7 @@ test( 'Test', async ( { pageLogin, componentSidebar } ) => {
 
 - `page*` - Pages (e.g., `pageLogin`, `pageEditor`, `pagePeople`)
 - `component*` - Components (e.g., `componentSidebar`, `componentGutenberg`)
-- `flow*` - Flows (e.g., `flowStartWriting`)
+- `flow*` - Flows (e.g., `flowLOHPThemeSignup`)
 
 **Clients**: `clientEmail`, `clientRestAPI`
 

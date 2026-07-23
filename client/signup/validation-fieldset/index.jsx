@@ -1,7 +1,6 @@
 import { FormInputValidation } from '@automattic/components';
 import clsx from 'clsx';
 import debugFactory from 'debug';
-import { values } from 'lodash';
 import { Component } from 'react';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import './style.scss';
@@ -13,7 +12,7 @@ export default class ValidationFieldset extends Component {
 			<FormInputValidation
 				isError
 				isValid={ false }
-				text={ values( this.props.errorMessages )[ 0 ] }
+				text={ Object.values( this.props.errorMessages )[ 0 ] }
 			/>
 		);
 

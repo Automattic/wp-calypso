@@ -10,6 +10,7 @@ import {
 	fetchUserTransferredPurchases,
 	fetchSitePurchases,
 	fetchCancellationFeatures,
+	setDelayedDowngrade,
 } from '@automattic/api-core';
 import { queryOptions, mutationOptions } from '@tanstack/react-query';
 import { queryClient } from './query-client';
@@ -58,7 +59,7 @@ export const purchaseQuery = ( purchaseId: number ) =>
  */
 export const purchaseCancelFeaturesQuery = (
 	purchaseId: number,
-	variant: 'control' | 'treatment' = 'control',
+	variant: 'control' | 'treatment' = 'treatment',
 	targetProductSlug?: string
 ) =>
 	queryOptions( {
@@ -83,6 +84,7 @@ export const userPurchaseSetAutoRenewQuery = () =>
 
 export const assignPaymentMethodMutation = () =>
 	mutationOptions( {
+		meta: { statId: 'payment-method-assign' },
 		mutationFn: ( params: AssignPaymentMethodParams ) => assignPaymentMethod( params ),
 		onSuccess: () => {
 			queryClient.invalidateQueries( userPurchasesQuery() );
@@ -91,6 +93,7 @@ export const assignPaymentMethodMutation = () =>
 
 export const removePurchaseMutation = () =>
 	mutationOptions( {
+		meta: { statId: 'purch-remove' },
 		mutationFn: removePurchase,
 		onSuccess: () => {
 			queryClient.invalidateQueries( userPurchasesQuery() );
@@ -99,6 +102,7 @@ export const removePurchaseMutation = () =>
 
 export const cancelAndRefundPurchaseMutation = () =>
 	mutationOptions( {
+		meta: { statId: 'purch-cancel-refund' },
 		mutationFn: ( params: {
 			purchaseId: number;
 			options: PurchaseCancelOptions | PurchaseDowngradeOptions;
@@ -110,8 +114,28 @@ export const cancelAndRefundPurchaseMutation = () =>
 
 export const extendPurchaseWithFreeMonthMutation = () =>
 	mutationOptions( {
+		meta: { statId: 'purch-free-month-extend' },
 		mutationFn: ( purchaseId: number ) => extendPurchaseWithFreeMonth( purchaseId ),
 		onSuccess: () => {
 			queryClient.invalidateQueries( userPurchasesQuery() );
+		},
+	} );
+
+export const setDelayedDowngradeMutation = () =>
+	mutationOptions( {
+		meta: { statId: 'purch-downgrade-delayed-set' },
+		mutationFn: (
+			params: { purchaseId: number } & (
+				| { enabled: true; toProductId: number }
+				| { enabled: false }
+			)
+		) =>
+			setDelayedDowngrade(
+				params.purchaseId,
+				params.enabled ? { enabled: true, to_product_id: params.toProductId } : { enabled: false }
+			),
+		onSuccess: ( _data, params ) => {
+			queryClient.invalidateQueries( userPurchasesQuery() );
+			queryClient.invalidateQueries( purchaseQuery( params.purchaseId ) );
 		},
 	} );

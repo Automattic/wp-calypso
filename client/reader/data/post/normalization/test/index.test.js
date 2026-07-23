@@ -1,13 +1,12 @@
 /* eslint jest/expect-expect: ["error", { "assertFunctionNames": ["verifyClassification", "expect"] }] */
 
-import { forEach } from 'lodash';
 import { isFeaturedImageInContent } from 'calypso/lib/post-normalizer/utils';
 import { classifyPost } from '..';
 import DISPLAY_TYPES from '../../display-types';
 
 function verifyClassification( post, displayTypes ) {
 	classifyPost( post );
-	forEach( displayTypes, ( displayType ) => {
+	displayTypes.forEach( ( displayType ) => {
 		expect( post.display_type & displayType ).toEqual( displayType );
 	} );
 }

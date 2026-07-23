@@ -9,6 +9,7 @@ import { getCurrentUserLocale, isUserLoggedIn } from 'calypso/state/current-user
 import ClientCheckoutV2Error from '../../checkout-v2-error';
 import ClientCheckoutV2Placeholder from '../../checkout-v2-placeholder';
 import useClientCheckout from '../../hooks/use-client-checkout';
+import getClientCheckoutRedirectUrl from '../../lib/get-client-checkout-redirect-url';
 
 const EXPRESS_CHECKOUT_REDIRECT_URL = 'https://agencies.automattic.com/client/subscriptions';
 
@@ -16,7 +17,9 @@ function ClientExpressCheckoutContent() {
 	const translate = useTranslate();
 	const userLoggedIn = useSelector( isUserLoggedIn );
 
-	const { isReady, error } = useClientCheckout( { expressMode: ! userLoggedIn } );
+	const { isReady, error, wpcomHostingProductSlug } = useClientCheckout( {
+		expressMode: ! userLoggedIn,
+	} );
 
 	if ( ! isReady ) {
 		return <ClientCheckoutV2Placeholder />;
@@ -26,10 +29,15 @@ function ClientExpressCheckoutContent() {
 		return <ClientCheckoutV2Error title={ translate( 'Error' ) } message={ error } />;
 	}
 
+	const redirectTo = getClientCheckoutRedirectUrl(
+		EXPRESS_CHECKOUT_REDIRECT_URL,
+		wpcomHostingProductSlug
+	);
+
 	return (
 		<CheckoutMain
 			sitelessCheckoutType="a4a"
-			redirectTo={ EXPRESS_CHECKOUT_REDIRECT_URL }
+			redirectTo={ redirectTo }
 			customizedPreviousPath={ EXPRESS_CHECKOUT_REDIRECT_URL }
 			isLoggedOutCart={ ! userLoggedIn }
 			siteSlug=""

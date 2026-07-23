@@ -202,12 +202,12 @@ describe( 'getAgentEmailVCard', () => {
 } );
 
 describe( '<AIToolsSettings>', () => {
-	test( 'enables, copies, regenerates, and disables the AI agent email address', async () => {
+	test( 'enables, copies, regenerates, and disables the WordPress Agent email address', async () => {
 		const user = userEvent.setup();
 		mockClipboard();
 		renderAIToolsSettings();
 
-		expect( screen.getByRole( 'heading', { name: 'Email your assistant' } ) ).toBeVisible();
+		expect( screen.getByRole( 'heading', { name: 'Email WordPress Agent' } ) ).toBeVisible();
 		expect( screen.getByRole( 'link', { name: /Connect Telegram/ } ) ).toHaveAttribute(
 			'href',
 			'https://wordpress.com/me/developer'
@@ -219,15 +219,15 @@ describe( '<AIToolsSettings>', () => {
 		).toBeVisible();
 		expect(
 			screen.getByText(
-				'Enabling this also enables Post by Email. Disabling it deletes the Post by Email address, so both Post by Email and this AI agent address will stop working.'
+				'Enabling this also enables Post by Email. Disabling it deletes the Post by Email address, so both Post by Email and this WordPress Agent address will stop working.'
 			)
 		).toBeVisible();
 
 		const toggle = screen.getByRole( 'checkbox', {
-			name: 'Enable AI agent email address',
+			name: 'Enable WordPress Agent email address',
 		} );
 		expect( toggle ).not.toBeChecked();
-		expect( screen.queryByLabelText( 'AI agent email address' ) ).not.toBeInTheDocument();
+		expect( screen.queryByLabelText( 'WordPress Agent email address' ) ).not.toBeInTheDocument();
 
 		const createScope = mockJetpackPostByEmailMutation(
 			'create',
@@ -239,7 +239,7 @@ describe( '<AIToolsSettings>', () => {
 			expect( createScope.isDone() ).toBe( true );
 		} );
 
-		const addressInput = await screen.findByLabelText( 'AI agent email address' );
+		const addressInput = await screen.findByLabelText( 'WordPress Agent email address' );
 		expect( addressInput ).toHaveValue( 'agent+first-secret@post.wordpress.com' );
 		expect( toggle ).toBeChecked();
 
@@ -258,7 +258,9 @@ describe( '<AIToolsSettings>', () => {
 			)
 		).toContain( 'EMAIL;TYPE=INTERNET:agent+first-secret@post.wordpress.com' );
 
-		await user.click( screen.getByRole( 'button', { name: 'Copy AI agent email address' } ) );
+		await user.click(
+			screen.getByRole( 'button', { name: 'Copy WordPress Agent email address' } )
+		);
 		expect( clipboardWriteText ).toHaveBeenCalledWith( 'agent+first-secret@post.wordpress.com' );
 
 		const regenerateScope = mockJetpackPostByEmailMutation(
@@ -271,7 +273,7 @@ describe( '<AIToolsSettings>', () => {
 			expect( regenerateScope.isDone() ).toBe( true );
 		} );
 		await waitFor( () => {
-			expect( screen.getByLabelText( 'AI agent email address' ) ).toHaveValue(
+			expect( screen.getByLabelText( 'WordPress Agent email address' ) ).toHaveValue(
 				'agent+second-secret@post.wordpress.com'
 			);
 		} );
@@ -284,7 +286,7 @@ describe( '<AIToolsSettings>', () => {
 		} );
 		await waitFor( () => {
 			expect( toggle ).not.toBeChecked();
-			expect( screen.queryByLabelText( 'AI agent email address' ) ).not.toBeInTheDocument();
+			expect( screen.queryByLabelText( 'WordPress Agent email address' ) ).not.toBeInTheDocument();
 		} );
 	} );
 
@@ -293,7 +295,7 @@ describe( '<AIToolsSettings>', () => {
 		renderAIToolsSettings( '', true, simpleSite );
 
 		const toggle = screen.getByRole( 'checkbox', {
-			name: 'Enable AI agent email address',
+			name: 'Enable WordPress Agent email address',
 		} );
 
 		const createScope = mockWpcomPostByEmailMutation(
@@ -305,7 +307,7 @@ describe( '<AIToolsSettings>', () => {
 		await waitFor( () => {
 			expect( createScope.isDone() ).toBe( true );
 		} );
-		expect( await screen.findByLabelText( 'AI agent email address' ) ).toHaveValue(
+		expect( await screen.findByLabelText( 'WordPress Agent email address' ) ).toHaveValue(
 			'agent+simple-secret@post.wordpress.com'
 		);
 
@@ -319,7 +321,7 @@ describe( '<AIToolsSettings>', () => {
 			expect( regenerateScope.isDone() ).toBe( true );
 		} );
 		await waitFor( () => {
-			expect( screen.getByLabelText( 'AI agent email address' ) ).toHaveValue(
+			expect( screen.getByLabelText( 'WordPress Agent email address' ) ).toHaveValue(
 				'agent+new-simple-secret@post.wordpress.com'
 			);
 		} );
@@ -331,7 +333,7 @@ describe( '<AIToolsSettings>', () => {
 			expect( deleteScope.isDone() ).toBe( true );
 		} );
 		await waitFor( () => {
-			expect( screen.queryByLabelText( 'AI agent email address' ) ).not.toBeInTheDocument();
+			expect( screen.queryByLabelText( 'WordPress Agent email address' ) ).not.toBeInTheDocument();
 		} );
 	} );
 
@@ -345,7 +347,7 @@ describe( '<AIToolsSettings>', () => {
 		} );
 		expect(
 			screen.getByRole( 'checkbox', {
-				name: 'Enable AI agent email address',
+				name: 'Enable WordPress Agent email address',
 			} )
 		).not.toBeChecked();
 	} );
@@ -355,13 +357,13 @@ describe( '<AIToolsSettings>', () => {
 
 		renderAIToolsSettings( '', false );
 
-		expect( screen.getByRole( 'heading', { name: 'Email your assistant' } ) ).toBeVisible();
+		expect( screen.getByRole( 'heading', { name: 'Email WordPress Agent' } ) ).toBeVisible();
 		await waitFor( () => {
 			expect( settingsScope.isDone() ).toBe( true );
 		} );
 		expect(
 			screen.getByRole( 'checkbox', {
-				name: 'Enable AI agent email address',
+				name: 'Enable WordPress Agent email address',
 			} )
 		).not.toBeChecked();
 	} );

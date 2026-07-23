@@ -6,7 +6,9 @@ import {
 	DomainUpdateStatus,
 	fetchAvailableTlds,
 	fetchBulkDomainUpdateStatus,
+	fetchBundleForDomain,
 	fetchBundleSuggestion,
+	fetchBundleTriggers,
 	fetchDomains,
 	fetchDomainSuggestions,
 	fetchFreeDomainSuggestion,
@@ -47,6 +49,20 @@ export const bundleSuggestionQuery = ( query: string ) =>
 	queryOptions( {
 		queryKey: [ 'bundle-suggestion', query ],
 		queryFn: () => fetchBundleSuggestion( query ),
+		meta: { persist: false },
+	} );
+
+export const bundleTriggersQuery = ( query: string ) =>
+	queryOptions( {
+		queryKey: [ 'bundle-triggers', query ],
+		queryFn: () => fetchBundleTriggers( query ),
+		meta: { persist: false },
+	} );
+
+export const bundleForDomainQuery = ( fqdn: string ) =>
+	queryOptions( {
+		queryKey: [ 'bundle-for-domain', fqdn ],
+		queryFn: () => fetchBundleForDomain( fqdn ),
 		meta: { persist: false },
 	} );
 
@@ -118,6 +134,7 @@ export const bulkDomainUpdateStatusQuery = () =>
 
 export const bulkDomainsActionMutation = () =>
 	mutationOptions( {
+		meta: { statId: 'domains-bulk-apply' },
 		mutationFn: ( action: BulkDomainsAction ) => bulkDomainsAction( action ),
 		onSuccess: () => {
 			queryClient.refetchQueries( bulkDomainUpdateStatusQuery() );

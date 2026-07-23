@@ -10,6 +10,8 @@ import {
 	getCheckboxLabel,
 	getButtonLabels,
 	getFallbackLossItems,
+	getTitanCancellationLossItems,
+	getRefundEligibilityPromoCopy,
 } from '../get-confirmation-copy';
 import type { Purchase } from '@automattic/api-core';
 
@@ -308,6 +310,58 @@ describe( 'getFallbackLossItems', () => {
 				makePurchaseForCategory( 'one-time', { product_name: 'Do it for me: Website Design' } )
 			)
 		).toEqual( [ 'Do it for me: Website Design' ] );
+	} );
+} );
+
+describe( 'getTitanCancellationLossItems', () => {
+	test( 'returns null for non-Titan products', () => {
+		expect( getTitanCancellationLossItems( makePurchaseForCategory( 'plan' ) ) ).toBeNull();
+		expect(
+			getTitanCancellationLossItems( makePurchase( { is_plan: false, product_slug: 'gapps' } ) )
+		).toBeNull();
+	} );
+	test( 'Pro tier lists 30 GB storage and no tier highlight', () => {
+		const items = getTitanCancellationLossItems(
+			makePurchase( { is_plan: false, product_slug: 'wp_titan_mail_yearly' } )
+		);
+		expect( items ).toEqual( [
+			'Your custom email address',
+			'30 GB of mailbox storage',
+			'Email, calendar, and contacts',
+			'Access on web and mobile',
+			'24/7 email support',
+		] );
+	} );
+	test( 'Premium tier lists 50 GB storage and a tier highlight', () => {
+		const items = getTitanCancellationLossItems(
+			makePurchase( { is_plan: false, product_slug: 'wp_titan_mail_premium_yearly' } )
+		);
+		expect( items ).toContain( '50 GB of mailbox storage' );
+		expect( items ).toContain( 'Two-factor authentication, priority inbox, and more' );
+	} );
+	test( 'Ultra tier lists 100 GB storage and a tier highlight', () => {
+		const items = getTitanCancellationLossItems(
+			makePurchase( { is_plan: false, product_slug: 'wp_titan_mail_ultra_yearly' } )
+		);
+		expect( items ).toContain( '100 GB of mailbox storage' );
+		expect( items ).toContain( 'Titan AI, email campaigns, and more' );
+	} );
+} );
+
+describe( 'getRefundEligibilityPromoCopy', () => {
+	test( 'returns the plan-worded prompt and link label', () => {
+		const { prompt, linkLabel } = getRefundEligibilityPromoCopy( { refundAmount: '$96.00' } );
+		expect( prompt ).toBe(
+			'You’re eligible for a $96.00 refund if you remove your plan now. Your features will be unavailable right away.'
+		);
+		expect( linkLabel ).toBe( 'Remove plan and claim refund.' );
+	} );
+	test( 'interpolates the refund amount into the prompt', () => {
+		const { prompt, linkLabel } = getRefundEligibilityPromoCopy( { refundAmount: '$12.00' } );
+		expect( prompt ).toBe(
+			'You’re eligible for a $12.00 refund if you remove your plan now. Your features will be unavailable right away.'
+		);
+		expect( linkLabel ).toBe( 'Remove plan and claim refund.' );
 	} );
 } );
 

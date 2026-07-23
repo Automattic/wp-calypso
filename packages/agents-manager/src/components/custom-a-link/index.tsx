@@ -1,8 +1,8 @@
-import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { isThisASupportArticleLink } from '@automattic/urls';
 import { useMemo } from '@wordpress/element';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useAgentsManagerContext } from '../../contexts';
+import { recordAgentsManagerTracksEvent } from '../../utils/tracks';
 import { uriTransformer } from '../../utils/uri-transformer';
 
 export default function CustomALink( {
@@ -38,7 +38,7 @@ export default function CustomALink( {
 					} );
 				}
 
-				recordTracksEvent( 'calypso_agents_manager_link_click', {
+				recordAgentsManagerTracksEvent( 'link_click', {
 					href: transformedHref,
 					type: isSupportArticle ? 'support_article' : 'external',
 					source: isFromOrchestrator ? 'orchestrator' : 'zendesk',

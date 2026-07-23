@@ -6,10 +6,13 @@ import { Step } from '@automattic/onboarding';
 import { useShoppingCart } from '@automattic/shopping-cart';
 import { invokeSurvicateEvent } from '@automattic/survicate';
 import { useQuery } from '@tanstack/react-query';
+import { addQueryArgs } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
 import React, { useState, useEffect, useRef } from 'react';
 import Loading from 'calypso/components/loading';
 import Main from 'calypso/components/main';
+import { CHECKOUT_SUCCESS_FLASH_ID } from 'calypso/dashboard/app/checkout-success-flash-message';
+import { dashboardOrigins } from 'calypso/dashboard/utils/link';
 import { useInitialIsInStepContainerV2FlowContext } from 'calypso/layout/utils';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import CalypsoShoppingCartProvider from 'calypso/my-sites/checkout/calypso-shopping-cart-provider';
@@ -24,6 +27,10 @@ import getOrderTransactionError from 'calypso/state/selectors/get-order-transact
 import { requestSite } from 'calypso/state/sites/actions';
 import usePurchaseOrder from '../../src/hooks/use-purchase-order';
 import { logStashLoadErrorEvent } from '../../src/lib/analytics';
+import {
+	PLAN_AND_DOMAIN_NOTICE_QUERY_VALUE,
+	appendNoticeQueryParam,
+} from '../purchase-notice-constants';
 import type { RedirectInstructions } from 'calypso/my-sites/checkout/src/lib/pending-page';
 import type {
 	OrderTransaction,
@@ -123,6 +130,23 @@ function isValidOrderId( orderId: number | ':orderId' ): orderId is number {
 	return Number.isInteger( orderId );
 }
 
+// Whether the redirect destination is a page in the multi-site Dashboard (a
+// separate SPA reached via a full page load). The Dashboard doesn't read the
+// classic `notice` query param and Redux's `displayOnNextPage` notice can't
+// survive a cross-app navigation, so these redirects need the Dashboard's own
+// `flash` mechanism to show a post-checkout toast. Only absolute URLs are
+// considered so relative classic-Calypso destinations never match.
+function isDashboardUrl( url: string ): boolean {
+	if ( ! /^https?:\/\//.test( url ) ) {
+		return false;
+	}
+	try {
+		return dashboardOrigins().includes( new URL( url ).origin );
+	} catch {
+		return false;
+	}
+}
+
 function performRedirect( url: string ): void {
 	if ( url.startsWith( '/' ) ) {
 		page( url );
@@ -196,6 +220,15 @@ function useRedirectOnTransactionSuccess( {
 	const firstItem = receipt?.items[ 0 ];
 	const isRenewal = receipt?.items.some( ( item ) => item.type === 'recurring' ) ?? false;
 	const productName = firstItem?.variation || firstItem?.product || '';
+
+	// The `domain-and-plan` flow sets `redirect_to=/home/<site>`, so a successful
+	// plan + domain purchase lands the user on `/home/<site>` instead of the
+	// thank-you page. Detect that purchase shape from the receipt items so the
+	// destination can dispatch a success toast on arrival.
+	const isPlanAndDomainPurchase =
+		( receipt?.items.some( ( item ) => item.is_plan ) &&
+			receipt?.items.some( ( item ) => item.is_domain_registration ) ) ??
+		false;
 	const blogId = firstItem?.site_id;
 	const saasRedirectUrl = receipt?.items.reduce< string | undefined >(
 		( url, item ) => url ?? ( item.saas_redirect_url || undefined ),
@@ -331,7 +364,26 @@ function useRedirectOnTransactionSuccess( {
 			reduxDispatch( requestSite( blogId ) );
 		}
 
-		notifyAndPerformRedirect( siteSlug, redirectInstructions );
+		// For plan + domain purchases the `domain-and-plan` flow sends the user to
+		// `/home/<site>` instead of the thank-you page. Tag the destination URL with
+		// a `notice` query param so the destination can dispatch a success toast on
+		// arrival - we cannot dispatch from here because the global notice renderer
+		// has no concept of "show only on the next page".
+		let finalUrl = isPlanAndDomainPurchase
+			? appendNoticeQueryParam( redirectInstructions.url, PLAN_AND_DOMAIN_NOTICE_QUERY_VALUE )
+			: redirectInstructions.url;
+
+		// A successful redirect back into the Dashboard (a separate SPA) can't rely on
+		// the classic notice mechanisms, so tag the URL with the Dashboard's `flash`
+		// param and let `<CheckoutSuccessFlashMessage>` show the toast on arrival.
+		const isSuccessRedirect = ! redirectInstructions.isError && ! redirectInstructions.isUnknown;
+		if ( isSuccessRedirect && isDashboardUrl( finalUrl ) ) {
+			finalUrl = addQueryArgs( finalUrl, { flash: CHECKOUT_SUCCESS_FLASH_ID } );
+		}
+
+		const finalRedirectInstructions = { ...redirectInstructions, url: finalUrl };
+
+		notifyAndPerformRedirect( siteSlug, finalRedirectInstructions );
 	}, [
 		isLoadingOrder,
 		saasRedirectUrl,
@@ -343,6 +395,7 @@ function useRedirectOnTransactionSuccess( {
 		finalReceiptId,
 		isReceiptLoaded,
 		isRenewal,
+		isPlanAndDomainPurchase,
 		blogId,
 		orderId,
 		productName,

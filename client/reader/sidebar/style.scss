@@ -1,4 +1,4 @@
-@use "calypso/assets/stylesheets/shared/mixins/dark-theme" as ui-mixins;
+@use 'calypso/assets/stylesheets/shared/mixins/dark-theme' as ui-mixins;
 
 @import '@automattic/typography/styles/variables';
 
@@ -14,48 +14,47 @@
 		}
 	}
 }
-:root:has(.is-reader-msd-enabled) {
-	.sidebar-header {
-		display: flex;
-		justify-content: space-between;
-		@media only screen and (max-width: 781px) {
-			display: none;
-		}
-		h3 {
-			font-family: Recoleta, "Noto Serif", Georgia, "Times New Roman", Times, serif;
-			font-size: 32px;
-			font-style: normal;
-			font-weight: 400;
-			line-height: normal;
-		}
-		p {
-			display: none;
-		}
+.sidebar-header {
+	display: flex;
+
+	justify-content: space-between;
+	padding: 24px 8px;
+
+	h3 {
+		font-weight: 500;
+		font-size: 20px;
+		line-height: 26px;
+	}
+
+	p {
+		color: var( --studio-gray-50 );
+		font-size: $font-body-small;
+		margin: 0;
+	}
+
+	.sidebar_svg-search {
+		margin: 0;
 	}
 }
 
-//TODO: Remove this once the new reader MSD is enabled for all users (reader/enable-msd)
-:root:not(:has(.is-reader-msd-enabled)) {
-	.sidebar-header {
-		display: flex;
+.reader-sidebar__section-header {
+	margin-top: 8px;
+	padding: 0 14px;
 
-		justify-content: space-between;
-		padding: 24px 8px;
+	&:first-of-type {
+		margin-top: 0;
+	}
 
-		h3 {
-			font-weight: 500;
-			font-size: 20px;
-			line-height: 26px;
-		}
+	span[role="heading"] {
+		font-size: 11px;
+		font-weight: 500;
+		letter-spacing: 0.06em;
+		text-transform: uppercase;
+		color: var( --studio-gray-20 );
+		line-height: 1;
 
-		p {
-			color: var(--studio-gray-50);
-			font-size: $font-body-small;
-			margin: 0;
-		}
-
-		.sidebar_svg-search {
-			margin: 0;
+		@include ui-mixins.when-dark-theme {
+			color: var( --studio-gray-70 );
 		}
 	}
 }
@@ -63,6 +62,10 @@
 body.is-section-reader {
 	.is-global-sidebar-visible {
 		--content-padding-top: 32px;
+	}
+
+	.app-title__heading {
+		padding: 0 12px;
 	}
 
 	&.rtl .layout__content {
@@ -96,13 +99,13 @@ body.is-section-reader {
 	}
 
 	.sidebar__body {
-		padding-top: var(--content-padding-top);
+		padding-top: var( --content-padding-top );
 	}
 
 	.sidebar-menu-container {
 		display: flex;
 		flex-direction: column;
-		gap: 24px;
+		gap: 15px;
 		padding: 0 16px;
 
 		.app-title {
@@ -133,31 +136,54 @@ body.is-section-reader {
 
 :root .theme-default .is-section-reader .global-sidebar {
 	.sidebar__menu {
+		.sidebar__expandable-title {
+			display: flex;
+			justify-content: space-between;
+			align-items: center;
+			margin-inline-start: 29px;
+		}
+
+		.sidebar__expandable-arrow {
+			background: none;
+			fill: var( --studio-gray-20 );
+			transition: transform 0.15s ease;
+			transform: rotate( -90deg );
+		}
+
 		.sidebar__expandable-content {
-			padding: 0;
+			padding-top: 2px;
 			margin: 0;
+			background: none;
 		}
+
 		.sidebar__heading {
+			background-color: initial;
 			margin: 0;
+			border-radius: 4px;
+
+			&:hover .sidebar__expandable-arrow {
+				fill: var( --studio-gray-20 );
+			}
 		}
+
 		&:not( .is-togglable ) {
 			gap: 3px;
 		}
-		.sidebar__menu-link {
-			margin: 0;
+
+		.sidebar__menu-item {
+			&.sidebar__menu-item--reader-tag .sidebar__menu-link,
+			&.sidebar__menu-item--reader-list .sidebar__menu-link {
+				display: flex;
+				align-items: center;
+				justify-content: space-between;
+			}
 		}
+
 		.sidebar__menu--selected {
 			.sidebar__heading {
-				color: var( --color-sidebar-menu-selected-text );
 				background-color: var( --color-sidebar-menu-hover-background );
-				&:hover {
-					background-color: var( --color-sidebar-menu-hover-background );
-					color: var( --color-sidebar-menu-selected-text );
-
-					.sidebar__expandable-arrow {
-						fill: currentColor;
-					}
-				}
+				color: var( --color-sidebar-menu-selected-text );
+				border-radius: 4px;
 			}
 
 			.sidebar__expandable-title {
@@ -172,18 +198,11 @@ body.is-section-reader {
 					}
 				}
 			}
-			.sidebar__expandable-button {
-				color: currentColor;
-			}
-
-			.sidebar__expandable-arrow {
-				fill: currentColor;
-			}
 		}
 	}
 
 	.sidebar__menu-icon {
-		margin-right: 12px;
+		margin-right: 5px;
 	}
 
 	.sidebar__menu-link-reader {
@@ -195,19 +214,26 @@ body.is-section-reader {
 	.sidebar__menu .a8c-count {
 		position: relative;
 		flex-shrink: 0;
-		top: 0;
+		top: 1px;
 		font-size: 0.67rem; /* stylelint-disable-line scales/font-sizes */
 		font-weight: normal;
 		box-sizing: border-box;
 		padding: 4px 6px;
 		line-height: 1;
 		min-width: 22px;
+		white-space: nowrap;
 		background-color: transparent;
 		border-color: currentColor;
 		outline-color: currentColor;
 		color: currentColor;
-		margin: 0 auto;
+		justify-self: end;
 		align-self: self-start;
+		width: fit-content;
+	}
+
+	.sidebar__menu-link {
+		margin: 0;
+		border-radius: 4px;
 	}
 
 	.sidebar__menu-link:hover .a8c-count {
@@ -227,10 +253,6 @@ body.is-section-reader {
 		font-size: 0.67rem; /* stylelint-disable-line scales/font-sizes */
 		font-style: italic;
 		color: var( --color-sidebar-text-alternative );
-	}
-
-	.sidebar__separator {
-		height: 0;
 	}
 
 	.sidebar__menu-item-sitename {
@@ -264,11 +286,6 @@ body.is-section-reader {
 			color: var( --color-link-dark );
 		}
 	}
-	.sidebar-streams__tags {
-		.sidebar-menu__item.add-tag-form {
-			padding-top: 12px;
-		}
-	}
 }
 
 .is-reader-page.theme-default .sidebar .sidebar__menu-link::after {
@@ -278,31 +295,46 @@ body.is-section-reader {
 .theme-default .global-sidebar .sidebar .sidebar__menu {
 	&:is( .is-togglable ) {
 		@include ui-mixins.when-dark-theme {
-			.sidebar__expandable-button.components-button {
-				color: inherit;
-			}
+			.sidebar__expandable-button {
+				.components-button {
+					color: inherit;
+				}
 
-			.sidebar__expandable-arrow {
-				fill: currentColor;
+				.sidebar__expandable-arrow {
+					fill: var( --studio-gray-70 );
+				}
+
+				&:hover .sidebar__expandable-arrow {
+					fill: var( --studio-gray-30 );
+				}
+			}
+		}
+
+		.sidebar__heading > .sidebar__expandable-button {
+			order: -1;
+			margin-inline-end: 8px;
+			margin-inline-start: 0;
+			padding: 0;
+			min-width: initial;
+			position: absolute;
+			height: 40px; // Increase the height to make caret icon easier to click.
+
+			&:hover {
+				.sidebar__expandable-arrow {
+					fill: var( --studio-gray-70 );
+				}
 			}
 		}
 
 		&.is-toggle-open {
-			outline: 1px solid #e0e0e0;
-			border-radius: 4px;
-			.sidebar__heading {
-				background-color: var( --color-surface );
-			}
 			margin-bottom: 16px;
 
-			@include ui-mixins.when-dark-theme {
-				background-color: var( --color-surface );
-				outline-color: var( --color-border-subtle );
+			.sidebar__expandable-arrow {
+				transform: rotate( 0deg );
+			}
 
-				.sidebar__heading,
-				.sidebar__expandable-content {
-					background-color: var( --color-surface );
-				}
+			@include ui-mixins.when-dark-theme {
+				outline-color: var( --color-border-subtle );
 
 				.sidebar__expandable-content {
 					.selected .sidebar__menu-link,
@@ -333,8 +365,12 @@ body.is-section-reader {
 			}
 		}
 
+		&:not( .is-toggle-open ):dir( rtl ) .sidebar__expandable-arrow {
+			transform: rotate( 90deg );
+		}
+
 		&.has-counts .sidebar__menu-link {
-			grid-template-columns: 24px 1fr 36px;
+			grid-template-columns: 24px 1fr 48px;
 		}
 
 		.sidebar__menu-link {
@@ -343,7 +379,7 @@ body.is-section-reader {
 			align-items: center;
 			gap: 6px;
 			line-height: 1.5;
-			padding: 12px 10px 12px 18px;
+			padding: 12px 10px 12px 39px;
 			box-sizing: content-box;
 
 			&.view-more-link {
@@ -357,16 +393,21 @@ body.is-section-reader {
 			}
 		}
 
+		.add-tags-form {
+			padding-inline-start: 39px;
+		}
+
 		.selected {
 			.sidebar__menu-link {
 				font-weight: 600;
+				background-color: var( --color-sidebar-menu-hover-background );
 			}
 
-			svg:not( .sidebar_svg-a8c-conversations, .sidebar_svg-a8c, .sidebar_svg-a8c-conversations ) {
+			svg:not( .sidebar_svg-a8c, .sidebar_svg-a8c-conversations ) {
 				fill: currentColor;
 			}
 
-			svg:is( .sidebar_svg-a8c-conversations, .sidebar_svg-a8c, .sidebar_svg-a8c-conversations ) {
+			svg:is( .sidebar_svg-a8c, .sidebar_svg-a8c-conversations ) {
 				fill: none;
 				g {
 					stroke: currentColor;
@@ -376,12 +417,11 @@ body.is-section-reader {
 			&:hover,
 			&:focus {
 				color: var( --color-sidebar-submenu-selected-hover-text );
-				--color-sidebar-gridicon-fill: currentColor;
-				--color-sidebar-gridicon-hover-fill: currentColor;
 				--color-sidebar-menu-hover-text: currentColor;
 			}
 		}
 	}
+
 	.sidebar_svg-a8c-conversations,
 	.sidebar_svg-a8c {
 		fill: none;
@@ -389,6 +429,7 @@ body.is-section-reader {
 			stroke: currentColor;
 		}
 	}
+
 	.selected {
 		.sidebar__menu-link {
 			color: var( --color-sidebar-menu-selected-text );

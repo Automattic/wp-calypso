@@ -1,16 +1,15 @@
-import { Card, Gridicon } from '@automattic/components';
 import { HELP_CENTER_STORE } from '@automattic/help-center/src/stores';
 import { localizeUrl } from '@automattic/i18n-utils';
-import { Button } from '@wordpress/components';
 import { useDispatch as useDataStoreDispatch } from '@wordpress/data';
+import { Button } from '@wordpress/ui';
 import { useTranslate } from 'i18n-calypso';
+import EmotionCacheProvider from 'calypso/components/emotion-cache-provider';
 import useSupportDocData from 'calypso/components/inline-support-link/use-support-doc-data';
+import ActionList from 'calypso/dashboard/components/action-list';
 import { useDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { useThemeTierForTheme } from 'calypso/state/themes/hooks/use-theme-tier-for-theme';
-
-import './style.scss';
 
 export default function ThemeSupportTab( { themeId } ) {
 	const translate = useTranslate();
@@ -24,119 +23,117 @@ export default function ThemeSupportTab( { themeId } ) {
 	const { openSupportDoc } = useSupportDocData( { supportContext: 'themes-unsupported' } );
 
 	return (
-		<>
-			<Card className="theme__sheet-card-support">
-				<Gridicon icon="play" size={ 48 } />
-				<div className="theme__sheet-card-support-details">
-					{ translate( 'Learn WordPress' ) }
-					<small>
-						{ translate(
-							'Follow along with beginner-friendly courses and build your first website or blog.'
-						) }
-					</small>
-				</div>
-				<Button
-					__next40pxDefaultSize
-					href={ localizeUrl( 'https://wordpress.com/support/courses' ) }
-					onClick={ () =>
-						dispatch(
-							recordTracksEvent( 'calypso_theme_sheet_button_click', {
-								theme_name: themeId,
-								button_context: 'courses',
-							} )
-						)
-					}
-					rel="noreferrer"
-					target="_blank"
-					variant="secondary"
-				>
-					{ translate( 'Watch a course' ) }
-				</Button>
-			</Card>
-
-			{ isLoggedIn && (
-				<>
-					<Card className="theme__sheet-card-support">
-						<Gridicon icon="help-outline" size={ 48 } />
-						<div className="theme__sheet-card-support-details">
-							{ translate( 'Discover comprehensive guides' ) }
-							<small>
-								{ translate( 'Explore deep-dive tutorials for every WordPress.com feature.' ) }
-							</small>
-						</div>
+		<EmotionCacheProvider>
+			<ActionList>
+				<ActionList.ActionItem
+					title={ translate( 'Learn WordPress' ) }
+					description={ translate(
+						'Follow along with beginner-friendly courses and build your first website or blog.'
+					) }
+					actions={
 						<Button
-							__next40pxDefaultSize
-							onClick={ () => {
-								setShowHelpCenter( true );
-								setNavigateToRoute( '/' );
+							nativeButton={ false }
+							render={
+								<a
+									href={ localizeUrl( 'https://wordpress.com/support/courses' ) }
+									rel="noreferrer"
+									target="_blank"
+								/>
+							}
+							onClick={ () =>
 								dispatch(
 									recordTracksEvent( 'calypso_theme_sheet_button_click', {
 										theme_name: themeId,
-										button_context: 'help-center',
+										button_context: 'courses',
 									} )
-								);
-							} }
-							variant="secondary"
+								)
+							}
+							size="compact"
+							variant="outline"
 						>
-							{ translate( 'Visit guides' ) }
+							{ translate( 'Watch a course' ) }
 						</Button>
-					</Card>
-
-					{ themeTier?.slug === 'community' ? (
-						<Card className="theme__sheet-card-support">
-							<Gridicon icon="notice-outline" size={ 48 } />
-							<div className="theme__sheet-card-support-details">
-								{ translate( 'Help and support for this theme is not offered by WordPress.com.' ) }
-								<small>
-									{ translate( 'Contact the theme developer directly for help with this theme.' ) }
-								</small>
-							</div>
+					}
+				/>
+				{ isLoggedIn && (
+					<ActionList.ActionItem
+						title={ translate( 'Discover comprehensive guides' ) }
+						description={ translate(
+							'Explore deep-dive tutorials for every WordPress.com feature.'
+						) }
+						actions={
 							<Button
-								__next40pxDefaultSize
 								onClick={ () => {
-									openSupportDoc();
+									setShowHelpCenter( true );
+									setNavigateToRoute( '/' );
 									dispatch(
 										recordTracksEvent( 'calypso_theme_sheet_button_click', {
 											theme_name: themeId,
-											button_context: 'themes-unsupported',
+											button_context: 'help-center',
 										} )
 									);
 								} }
-								variant="secondary"
+								size="compact"
+								variant="outline"
 							>
-								{ translate( 'Learn more' ) }
+								{ translate( 'Visit guides' ) }
 							</Button>
-						</Card>
+						}
+					/>
+				) }
+				{ isLoggedIn &&
+					( themeTier?.slug === 'community' ? (
+						<ActionList.ActionItem
+							title={ translate(
+								'Help and support for this theme is not offered by WordPress.com.'
+							) }
+							description={ translate(
+								'Contact the theme developer directly for help with this theme.'
+							) }
+							actions={
+								<Button
+									onClick={ () => {
+										openSupportDoc();
+										dispatch(
+											recordTracksEvent( 'calypso_theme_sheet_button_click', {
+												theme_name: themeId,
+												button_context: 'themes-unsupported',
+											} )
+										);
+									} }
+									size="compact"
+									variant="outline"
+								>
+									{ translate( 'Learn more' ) }
+								</Button>
+							}
+						/>
 					) : (
-						<Card className="theme__sheet-card-support">
-							<Gridicon icon="comment" size={ 48 } />
-							<div className="theme__sheet-card-support-details">
-								{ translate( 'Contact support' ) }
-								<small>
-									{ translate(
-										'Get answers from our AI assistant, with access to 24/7 expert human support on paid plans.'
-									) }
-								</small>
-							</div>
-							<Button
-								__next40pxDefaultSize
-								onClick={ () => {
-									setNavigateToOdie();
-									dispatch(
-										recordTracksEvent( 'calypso_theme_sheet_button_click', {
-											theme_name: themeId,
-											button_context: 'help-center-ai',
-										} )
-									);
-								} }
-								variant="secondary"
-							>
-								{ translate( 'Get in touch' ) }
-							</Button>
-						</Card>
-					) }
-				</>
-			) }
-		</>
+						<ActionList.ActionItem
+							title={ translate( 'Contact support' ) }
+							description={ translate(
+								'Get answers from our AI assistant, with access to 24/7 expert human support on paid plans.'
+							) }
+							actions={
+								<Button
+									onClick={ () => {
+										setNavigateToOdie();
+										dispatch(
+											recordTracksEvent( 'calypso_theme_sheet_button_click', {
+												theme_name: themeId,
+												button_context: 'help-center-ai',
+											} )
+										);
+									} }
+									size="compact"
+									variant="outline"
+								>
+									{ translate( 'Get in touch' ) }
+								</Button>
+							}
+						/>
+					) ) }
+			</ActionList>
+		</EmotionCacheProvider>
 	);
 }

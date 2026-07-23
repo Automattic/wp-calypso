@@ -36,5 +36,6 @@ export const sitePlanBySlugQuery = ( siteId: number, productSlug: string ) =>
 
 export const sitePlanSoftwareRestoreMutation = ( siteId: number ) =>
 	mutationOptions( {
+		meta: { statId: 'site-plan-sw-restore' },
 		mutationFn: () => restoreSitePlanSoftware( siteId ),
 	} );

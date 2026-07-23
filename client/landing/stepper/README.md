@@ -337,6 +337,63 @@ Stepper aims to create a big `steps-repository` that contains the steps and allo
 1. Flow-specific styling should be done in a `style.scss` file put in the flow's folder. Each step should have the basic styling necessary to operate on its own.
 2. Steps should not do `if ( flow === 'X' ) do Y`. This is a very common pattern. It was a necessary evil before we introduced `useStepsProps`. But now, it's an unnecessary evil 😬
 
+#### Adding `accepts:` props to an existing step
+
+When a step is reusable in concept but rigid in practice (hardcoded copy, a fixed
+list of options, etc.), the right fix is usually to widen its `accepts:` type so
+flows can customize it without duplicating the step. Follow these rules so existing
+flows keep working unchanged:
+
+1. **Name props after their visible effect.** `headerText`, `hideUseMyDomainLink`,
+   `hideFreeDomainPromo`. No abbreviations. Avoid generic names like `options`
+   or `config`.
+2. **Make every prop optional, with defaults that reproduce today's behavior.**
+   A flow that doesn't pass anything must see exactly the same UI as before.
+   This is the load-bearing claim — it's how you keep dozens of existing flows
+   from regressing.
+3. **Apply the prop in every render branch.** Many steps have multiple render
+   paths (e.g. `shouldUseStepContainerV2 ? v2 : v1`). A prop wired in only one
+   branch is a latent bug — usually surfaces as "works in onboarding, broken
+   in the new flow."
+4. **Translate at the flow, not the step.** When a flow passes a `headerText`,
+   the flow's caller is responsible for translating it (`useTranslate()`,
+   `translate()`, etc.). The step's only job is to render the string it
+   receives. Step-side defaults still use `translate()` as today.
+5. **Don't touch `submits:`.** `accepts:` and `submits:` are independent.
+   Adding props to `accepts:` should never change the submit shape — if it
+   would, you're solving a different problem (a follow-up PR with broader
+   review).
+6. **Test the defaults and each prop.** One test that renders the step with
+   no props and asserts current behavior, then one test per prop that asserts
+   the override applied. Colocate the test under the step's `test/` folder.
+7. **Document the prop on the flow side.** When a flow opts into a prop via
+   `useStepsProps()`, the flow file is the canonical record of the customization.
+   Keep the README sketch above in mind: if a future maintainer can't tell
+   what the flow customizes just from reading the flow file, the prop is
+   misnamed.
+
+**Worked example.**
+
+- The `domain-search` step exposes `headerText`, `subHeaderText`, `hideUseMyDomainLink`
+  (suppresses the "Use a domain I own" CTA on both V2 top bar and V1 skip-button surfaces),
+  `hideFreeDomainPromo` (hides the free-domain-for-a-year banner), `freeDomainPromoTitle`
+  and `freeDomainPromoSubtitle` (copy overrides for that banner), and `allowedTlds`
+  (per-flow TLD filter that the URL `?tld=` query param can override). All optional and
+  default-safe; the same prop is applied across all three render paths
+  (HundredYearPlanStepWrapper, V2 `Step.CenteredColumnLayout`, V1 `StepContainer`). See
+  [`steps-repository/domain-search/index.tsx`](/client/landing/stepper/declarative-flow/internals/steps-repository/domain-search/index.tsx).
+- The `unified-plans` (`plans`) step exposes `headerText` and `subHeaderText` (override the
+  per-intent header/subheader chains in `getHeaderText()` / `getSubheaderText()`), the
+  plan-visibility toggles `hideFreePlan`, `hideEnterprisePlan`, `hidePersonalPlan`,
+  `hidePremiumPlan`, `hideEcommercePlan` and `hidePlanTypeSelector` (each OR-ed over today's
+  computed value, so passing nothing preserves the theme- and downgrade-based defaults),
+  `defaultInterval` (seeds the billing term — `monthly` / `yearly` / `2yearly` / `3yearly` —
+  while the URL still wins once the user switches), and `highlightLabelOverrides` (a
+  `{ [PlanSlug]: TranslateResult }` map that re-labels a plan's highlight tag, threaded through
+  `PlansFeaturesMain` into the existing `plans-grid-next` override path). All optional and
+  default-safe. See
+  [`steps-repository/unified-plans/index.tsx`](/client/landing/stepper/declarative-flow/internals/steps-repository/unified-plans/index.tsx).
+
 #### Renaming steps
 
 There may be a time when a step needs to be renamed. In order to preserve Tracks data and funnels, we recommend adding a new entry to [`getStepOldSlug`](client/landing/stepper/declarative-flow/helpers/get-step-old-slug.ts) mapping. This ensures that tracks events will fire with both the new step slug and the old step slug.

@@ -1,11 +1,11 @@
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
-import type { PaymentRiskNoticeSeverity } from './constants';
+import type { PaymentNoticeSeverity } from 'calypso/state/a8c-for-agencies/types';
 
 import './style.scss';
 
 type PaymentRiskNoticeMenuIndicatorProps = {
-	severity: PaymentRiskNoticeSeverity;
+	severity: PaymentNoticeSeverity;
 };
 
 export default function PaymentRiskNoticeMenuIndicator( {

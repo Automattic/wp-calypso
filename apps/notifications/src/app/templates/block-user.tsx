@@ -4,12 +4,14 @@ import {
 	__experimentalVStack as VStack,
 	__experimentalText as Text,
 } from '@wordpress/components';
+import { Fragment } from 'react';
 import { useSelector } from 'react-redux';
 import getIsNoteApproved from '../../panel/state/selectors/get-is-note-approved';
 import { useAppContext } from '../context';
 import NoteIcon from '../note-icon';
 import FollowLink, { followStatTypes } from './follow-link';
 import type { Note, Block } from '../types';
+import type { ReactElement } from 'react';
 
 function getDisplayURL( url: string ) {
 	const parser = document.createElement( 'a' );
@@ -61,6 +63,39 @@ export default function UserBlock( { note, block }: { note: Note; block: Block }
 			? getDisplayURL( homeLink )
 			: block.meta?.titles?.home;
 
+	// Build the present description items, then interleave a single separator
+	// between them — so there's never a leading, trailing, or doubled separator
+	// when an item is absent.
+	const descriptionParts = [
+		note.type === 'comment' && (
+			<a key="date" href={ note.url } target="_blank" rel="noreferrer" style={ { flexShrink: 0 } }>
+				<Text variant="muted">{ formatDate( note.timestamp, locale ) }</Text>
+			</a>
+		),
+		homeTitle && (
+			<a
+				key="home"
+				href={ homeLink }
+				target="_blank"
+				rel="noopener noreferrer"
+				style={ { overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' } }
+			>
+				{ homeTitle }
+			</a>
+		),
+		note.type !== 'comment' &&
+			!! block.meta?.ids?.site &&
+			block.actions &&
+			'follow' in block.actions && (
+				<FollowLink
+					key="follow"
+					site={ block.meta.ids.site }
+					isFollowing={ !! block.actions.follow }
+					noteType={ note.type as keyof typeof followStatTypes }
+				/>
+			),
+	].filter( ( part ): part is ReactElement => Boolean( part ) );
+
 	return (
 		<HStack className="wpnc__user" justify="flex-start" alignment="flex-start" spacing={ 4 }>
 			<a
@@ -81,33 +116,12 @@ export default function UserBlock( { note, block }: { note: Note; block: Block }
 					<Text>{ block.text }</Text>
 				</a>
 				<HStack className="wpnc__user-description" spacing={ 1 }>
-					{ note.type === 'comment' && (
-						<a href={ note.url } target="_blank" rel="noreferrer" style={ { flexShrink: 0 } }>
-							<Text variant="muted">{ formatDate( note.timestamp, locale ) }</Text>
-						</a>
-					) }
-					<span className="wpnc__user-description-separator">•</span>
-					{ homeTitle && (
-						<a
-							href={ homeLink }
-							target="_blank"
-							rel="noopener noreferrer"
-							style={ { overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' } }
-						>
-							{ homeTitle }
-						</a>
-					) }
-					<span className="wpnc__user-description-separator">•</span>
-					{ note.type !== 'comment' &&
-						!! block.meta?.ids?.site &&
-						block.actions &&
-						'follow' in block.actions && (
-							<FollowLink
-								site={ block.meta.ids.site }
-								isFollowing={ !! block.actions.follow }
-								noteType={ note.type as keyof typeof followStatTypes }
-							/>
-						) }
+					{ descriptionParts.map( ( part, index ) => (
+						<Fragment key={ part.key }>
+							{ index > 0 && <span className="wpnc__user-description-separator">•</span> }
+							{ part }
+						</Fragment>
+					) ) }
 				</HStack>
 			</VStack>
 		</HStack>

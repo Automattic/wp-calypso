@@ -1,4 +1,3 @@
-import config from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
 import { Card } from '@automattic/components';
 import { formatNumber } from '@automattic/number-formatters';
@@ -8,18 +7,16 @@ import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import QuerySiteStats from 'calypso/components/data/query-site-stats';
-import InfoPopover from 'calypso/components/info-popover';
 import SectionHeader from 'calypso/components/section-header';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import StatsInfotip from 'calypso/my-sites/stats/components/stats-infotip';
 import { getSiteSlug } from 'calypso/state/sites/selectors';
-import getSiteAdminUrl from 'calypso/state/sites/selectors/get-site-admin-url';
 import {
 	isRequestingSiteStatsForQuery,
 	getVideoPressPlaysComplete,
 } from 'calypso/state/stats/lists/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import EmptyModuleCardVideo from '../features/modules/shared/stats-empty-module-video';
-import DatePicker from '../stats-date-label';
 import ErrorPanel from '../stats-error';
 import StatsModulePlaceholder from '../stats-module/placeholder';
 import '../stats-module/style.scss';
@@ -86,7 +83,7 @@ class VideoPressStatsModule extends Component {
 		return Math.max( ...data.map( ( item ) => item[ field ] || 0 ) );
 	}
 
-	renderTitleCell( title, views, maxViews, onClick, onKeyUp ) {
+	renderTitleCell( { title, views, maxViews, onClick, href } ) {
 		const fillPercentage = maxViews > 0 ? ( views / maxViews ) * 100 : 0;
 		return (
 			<div className="videopress-stats-module__grid-cell videopress-stats-module__grid-link">
@@ -95,9 +92,9 @@ class VideoPressStatsModule extends Component {
 						className="videopress-stats-module__bar"
 						style={ { '--bar-fill-percentage': `${ fillPercentage }%` } }
 					>
-						<span onClick={ onClick } onKeyUp={ onKeyUp } tabIndex="0" role="button">
+						<a href={ href } onClick={ onClick }>
 							{ title }
-						</span>
+						</a>
 					</div>
 				</div>
 			</div>
@@ -108,16 +105,13 @@ class VideoPressStatsModule extends Component {
 		const {
 			className,
 			summary,
-			path,
 			data,
 			moduleStrings,
 			requesting,
 			statType,
 			query,
-			period,
 			siteSlug,
 			translate,
-			siteAdminUrl,
 			siteId,
 		} = this.props;
 
@@ -148,14 +142,23 @@ class VideoPressStatsModule extends Component {
 			'is-refreshing': requesting && ! isLoading,
 		} );
 
-		const editVideo = ( postId ) => {
-			const isOdysseyStats = config.isEnabled( 'is_running_in_jetpack_site' );
-			if ( ! isOdysseyStats ) {
-				page( `/media/${ siteSlug }/${ postId }` );
+		const videoDetailsHref = ( postId ) =>
+			`/stats/${ data.period }/videodetails/${ siteSlug }?post=${ postId }`;
+
+		const showVideoDetails = ( event, postId ) => {
+			recordTracksEvent( 'calypso_video_stats_details_clicked', {
+				blog_id: this.props.siteId,
+				post_id: postId,
+				period: data.period,
+			} );
+
+			// Let the browser handle modified clicks (open in a new tab, etc.).
+			if ( event.metaKey || event.ctrlKey || event.shiftKey || event.altKey || event.button > 0 ) {
 				return;
 			}
-			// If it's Odyssey, redirect user to media lib page.
-			location.href = `${ siteAdminUrl }upload.php?item=${ postId }`;
+
+			event.preventDefault();
+			page( videoDetailsHref( postId ) );
 		};
 
 		const showStat = ( queryStatType, row ) => {
@@ -179,19 +182,6 @@ class VideoPressStatsModule extends Component {
 				{ siteId && statType && query && (
 					<QuerySiteStats statType={ statType } siteId={ siteId } query={ query } />
 				) }
-				{ summary && (
-					<div className="stats-module__date-picker-header">
-						<h3>
-							<DatePicker
-								period={ period.period }
-								date={ period.startOf }
-								path={ path }
-								query={ query }
-								summary
-							/>
-						</h3>
-					</div>
-				) }
 				<Card compact className={ cardClasses }>
 					<SectionHeader
 						className={ headerClass }
@@ -199,9 +189,14 @@ class VideoPressStatsModule extends Component {
 							<div className="stats-card-header__title" role="heading" aria-level="4">
 								<div>{ moduleStrings.title }</div>
 								<div className="stats-card-header__title-nodes">
-									<InfoPopover className="stats-info-area__popover" iconSize={ 24 } position="top">
+									<StatsInfotip
+										className="stats-info-area__popover"
+										iconSize={ 24 }
+										label={ translate( 'Learn more about video statistics' ) }
+										side="top"
+									>
 										{ translate( 'View detailed statistics about your videos.' ) }
-									</InfoPopover>
+									</StatsInfotip>
 								</div>
 							</div>
 						}
@@ -228,13 +223,13 @@ class VideoPressStatsModule extends Component {
 								key={ 'videopress-stats-row-' + index }
 								className="videopress-stats-module__row-wrapper"
 							>
-								{ this.renderTitleCell(
-									row.title,
-									row.views,
+								{ this.renderTitleCell( {
+									title: row.title,
+									views: row.views,
 									maxViews,
-									() => editVideo( row.post_id ),
-									() => editVideo( row.post_id )
-								) }
+									href: videoDetailsHref( row.post_id ),
+									onClick: ( event ) => showVideoDetails( event, row.post_id ),
+								} ) }
 								<div className="videopress-stats-module__grid-cell videopress-stats-module__grid-metric">
 									<span
 										onClick={ () => showStat( 'impressions', row ) }
@@ -252,7 +247,7 @@ class VideoPressStatsModule extends Component {
 										tabIndex="0"
 										role="button"
 									>
-										{ row.watch_time > 1
+										{ row.watch_time === 0 || row.watch_time >= 1
 											? formatNumber( row.watch_time, { decimals: 1 } )
 											: `< ${ formatNumber( 1, { decimals: 1 } ) }` }
 									</span>
@@ -303,7 +298,6 @@ export default connect( ( state, ownProps ) => {
 	return {
 		requesting: isRequestingSiteStatsForQuery( state, siteId, statType, query ),
 		data: getVideoPressPlaysComplete( state, siteId, statType, query ),
-		siteAdminUrl: getSiteAdminUrl( state, siteId ),
 		siteId,
 		siteSlug,
 	};

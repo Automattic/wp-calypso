@@ -1,3 +1,4 @@
+import { getPurchaseIntroductoryOffer, logToLogstash } from '@automattic/api-core';
 import {
 	PLAN_MONTHLY_PERIOD,
 	type PlanSlug,
@@ -58,10 +59,58 @@ interface Props {
 	 * from the final price.
 	 */
 	reflectStorageSelectionInPlanPrices?: boolean;
+
+	/**
+	 * Renewal-pricing experiment flag. When falsy (non-treatment), the current plan's
+	 * headline uses the renewal price, not an active intro price.
+	 */
+	showBillingDescriptionForIncreasedRenewalPrice?: string | null;
 }
 
 function getTotalPrice( planPrice: number | null | undefined, addOnPrice = 0 ): number | null {
 	return null !== planPrice && undefined !== planPrice ? planPrice + addOnPrice : null;
+}
+
+const loggedUnknownBillPeriods = new Set< string >();
+
+function logUnknownBillPeriodDays(
+	planSlug: string,
+	purchase: Purchases.RawPurchase,
+	siteId: number | null | undefined
+): void {
+	const shape = purchase as unknown as Record< string, unknown >;
+	const purchaseId = shape.ID ?? shape.id;
+	const key = `${ siteId ?? '' }-${ String( purchaseId ) }-${ String(
+		shape.bill_period_days ?? shape.billPeriodDays
+	) }`;
+	if ( loggedUnknownBillPeriods.has( key ) ) {
+		return;
+	}
+	loggedUnknownBillPeriods.add( key );
+	const win =
+		typeof window !== 'undefined'
+			? ( window as unknown as { COMMIT_SHA?: string; location?: Location } )
+			: undefined;
+	logToLogstash( {
+		feature: 'calypso_client',
+		message: 'usePricingMetaForGridPlans: purchase has an unknown bill_period_days',
+		site_id: siteId ?? undefined,
+		extra: {
+			plan_slug: planSlug,
+			purchase_id: String( purchaseId ),
+			object_keys: Object.keys( shape ).sort().join( ',' ),
+			bill_period_days_snake: String( shape.bill_period_days ),
+			bill_period_days_camel: String( shape.billPeriodDays ),
+			product_slug_snake: String( shape.product_slug ),
+			product_slug_camel: String( shape.productSlug ),
+			expiry_status: String( shape.expiry_status ?? shape.expiryStatus ),
+			path: win?.location?.pathname ?? '',
+			commit_sha: String( win?.COMMIT_SHA ?? '' ),
+			caller_stack:
+				new Error( 'unknown-bill-period' ).stack?.split( '\n' ).slice( 0, 20 ).join( '\n' ) ?? '',
+		},
+		tags: [ 'unknown-term', 'bill-period-days' ],
+	} ).catch( () => {} );
 }
 
 /**
@@ -81,6 +130,7 @@ const usePricingMetaForGridPlans = ( {
 	useCheckPlanAvailabilityForPurchase,
 	withProratedDiscounts,
 	reflectStorageSelectionInPlanPrices = false,
+	showBillingDescriptionForIncreasedRenewalPrice,
 }: Props ): { [ planSlug: string ]: Plans.PricingMetaForGridPlan } | null => {
 	// plans - should have a definition for all plans, being the main source of API data
 	const plans = Plans.usePlans( { coupon } );
@@ -186,35 +236,43 @@ const usePricingMetaForGridPlans = ( {
 					let fullPrice = sitePlan?.pricing.originalPrice.full;
 
 					/**
-					 * Ensure the spotlight (current) plan shows the price with which the plan was purchased.
-					 * When the purchase has an active intro offer, use the intro offer price (what the
-					 * user is actually paying this billing term) instead of the renewal price.
+					 * Spotlight (current) plan headline. Only the renewal-pricing experiment treatment shows
+					 * the active intro price (with a separate "renews at" line); everyone else sees the renewal
+					 * price, so the headline is never lower than what they'll actually pay.
 					 */
 					let renewalPrice: Plans.PlanPricing[ 'originalPrice' ] | undefined;
 
 					if ( purchasedPlan ) {
-						const hasActiveIntroOffer = purchasedPlan.introductoryOffer?.isWithinPeriod;
-						const currentTermPrice = hasActiveIntroOffer
-							? purchasedPlan.introductoryOffer!.costPerIntervalInteger
-							: purchasedPlan.priceInteger;
-						const isMonthly = purchasedPlan.billPeriodDays === PLAN_MONTHLY_PERIOD;
+						const introductoryOffer = getPurchaseIntroductoryOffer( purchasedPlan );
+						const billPeriodDays = Number( purchasedPlan.bill_period_days );
+						const term = getTermFromDuration( billPeriodDays );
+						const showIntroOfferHeadline =
+							!! showBillingDescriptionForIncreasedRenewalPrice &&
+							introductoryOffer?.isWithinPeriod;
+						const currentTermPrice = showIntroOfferHeadline
+							? introductoryOffer!.costPerIntervalInteger
+							: purchasedPlan.price_integer;
+						const isMonthly = billPeriodDays === PLAN_MONTHLY_PERIOD;
+
+						if ( ! term ) {
+							logUnknownBillPeriodDays( planSlug, purchasedPlan, siteId );
+						}
 
 						if ( isMonthly && monthlyPrice !== currentTermPrice ) {
 							monthlyPrice = currentTermPrice;
 							fullPrice = parseFloat( ( currentTermPrice * 12 ).toFixed( 2 ) );
-						} else if ( fullPrice !== currentTermPrice ) {
-							const term = getTermFromDuration( purchasedPlan.billPeriodDays ) || '';
+						} else if ( term && fullPrice !== currentTermPrice ) {
 							monthlyPrice = calculateMonthlyPrice( term, currentTermPrice );
 							fullPrice = currentTermPrice;
 						}
 
-						if ( hasActiveIntroOffer ) {
-							const renewalTerm = getTermFromDuration( purchasedPlan.billPeriodDays ) || '';
+						if ( showIntroOfferHeadline ) {
 							renewalPrice = {
-								monthly: isMonthly
-									? purchasedPlan.priceInteger
-									: calculateMonthlyPrice( renewalTerm, purchasedPlan.priceInteger ),
-								full: purchasedPlan.priceInteger,
+								monthly:
+									isMonthly || ! term
+										? purchasedPlan.price_integer
+										: calculateMonthlyPrice( term, purchasedPlan.price_integer ),
+								full: purchasedPlan.price_integer,
 							};
 						}
 					}
@@ -231,7 +289,7 @@ const usePricingMetaForGridPlans = ( {
 								full: null,
 							},
 							currencyCode: purchasedPlan
-								? purchasedPlan?.currencyCode
+								? purchasedPlan?.currency_code
 								: plan?.pricing?.currencyCode,
 							...( renewalPrice && { renewalPrice } ),
 						},

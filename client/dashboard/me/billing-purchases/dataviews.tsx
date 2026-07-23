@@ -13,7 +13,7 @@ import { purchaseSettingsRoute } from '../../app/router/me';
 import { PurchaseExpiryStatus } from '../../components/purchase-expiry-status';
 import SiteIcon from '../../components/site-icon';
 import {
-	isRenewing,
+	mightStillAutoRenew,
 	isTransferredOwnership,
 	isAkismetHoldingSitePurchase,
 	isMarketplaceHoldingSitePurchase,
@@ -168,7 +168,7 @@ function BackupPaymentMethodNotice() {
 	const noticeText = createInterpolateElement(
 		__( 'If the renewal fails, a <link>backup payment method</link> may be used.' ),
 		{
-			link: <a href="/me/purchases/payment-methods" />,
+			link: <Link to="/me/billing/payment-methods" />,
 		}
 	);
 	return <BillingPurchaseInfoPopover>{ noticeText }</BillingPurchaseInfoPopover>;
@@ -238,11 +238,13 @@ export function getFields( {
 	paymentMethods,
 	transferredPurchases,
 	siteFilter,
+	visibleFields,
 }: {
 	sites: Site[];
 	paymentMethods: Array< StoredPaymentMethod >;
 	transferredPurchases: Array< Purchase >;
 	siteFilter?: number;
+	visibleFields?: string[];
 } ): Fields< Purchase > {
 	const backupPaymentMethods = paymentMethods.filter(
 		( paymentMethod ) => paymentMethod.is_backup === true
@@ -329,7 +331,16 @@ export function getFields( {
 			},
 			render: ( { item }: { item: Purchase } ) => {
 				const site = sites.find( ( site ) => site.ID === item.blog_id );
-				return <PurchaseProduct purchase={ item } site={ site } />;
+				return (
+					<>
+						<PurchaseProduct purchase={ item } site={ site } />
+						{ ! visibleFields?.includes( 'status' ) && (
+							<div className="billing-purchase__inline-status">
+								<PurchaseExpiryStatus purchase={ item } isSiteMissing={ ! site } />
+							</div>
+						) }
+					</>
+				);
 			},
 		},
 		{
@@ -423,10 +434,6 @@ export function getFields( {
 			enableHiding: false,
 			filterBy: false,
 			getValue: ( { item }: { item: Purchase } ) => {
-				if ( item.expiry_status === 'expired' ) {
-					// Prefix expired items with a z so they sort to the end of the list.
-					return 'zzz ' + item.expiry_status + ' ' + item.expiry_date;
-				}
 				// Include date in value to sort similar expiries together.
 				return item.expiry_date + ' ' + item.expiry_status;
 			},
@@ -449,10 +456,10 @@ export function getFields( {
 			filterBy: false,
 			getValue: ( { item }: { item: Purchase } ) => {
 				// Allows sorting by card number or payment partner (eg: `type === 'paypal'`).
-				return item.expiry_status === 'expired'
-					? // Do not return card number for expired purchases because it
-					  // will not be displayed so it will look wierd if we sort
-					  // expired purchases with active ones that have the same card.
+				return ! mightStillAutoRenew( item )
+					? // Do not return the card number when the payment method isn't in
+					  // use, since it won't be displayed; sorting it alongside active
+					  // purchases that have the same card would look wrong.
 					  'expired'
 					: item.payment_details ?? item.payment_card_type ?? 'no-payment-method';
 			},
@@ -469,7 +476,9 @@ export function getFields( {
 				return (
 					<HStack justify="flex-start" spacing={ 1 }>
 						<PurchasePaymentMethod purchase={ item } isSiteMissing={ ! site } />
-						{ isBackupMethodAvailable && isRenewing( item ) && <BackupPaymentMethodNotice /> }
+						{ isBackupMethodAvailable && mightStillAutoRenew( item ) && (
+							<BackupPaymentMethodNotice />
+						) }
 					</HStack>
 				);
 			},

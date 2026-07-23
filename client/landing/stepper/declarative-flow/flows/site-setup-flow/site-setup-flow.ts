@@ -2,15 +2,12 @@ import { Onboard } from '@automattic/data-stores';
 import { SITE_MIGRATION_FLOW } from '@automattic/onboarding';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { useFlowState } from 'calypso/landing/stepper/declarative-flow/internals/state-manager/store';
-import { useIsBigSkyEligible } from 'calypso/landing/stepper/hooks/use-is-site-big-sky-eligible';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { ImporterMainPlatform } from 'calypso/lib/importer/types';
-import { navigate as calypsoLibNavigate } from 'calypso/lib/navigate';
 import { addQueryArgs } from 'calypso/lib/route';
 import wpcom from 'calypso/lib/wp';
 import { clearSignupDestinationCookie } from 'calypso/signup/storageUtils';
 import { useDispatch as reduxDispatch, useSelector } from 'calypso/state';
-import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { requestSite } from 'calypso/state/sites/actions';
 import { getSiteAdminUrl } from 'calypso/state/sites/selectors';
 import { getActiveTheme, getCanonicalTheme } from 'calypso/state/themes/selectors';
@@ -35,10 +32,6 @@ import type { OnboardSelect, SiteSelect, UserSelect } from '@automattic/data-sto
 
 const SiteIntent = Onboard.SiteIntent;
 
-type ExitFlowOptions = {
-	skipLaunchpad?: boolean;
-};
-
 function isLaunchpadIntent( intent: string ) {
 	return intent === SiteIntent.Write || intent === SiteIntent.Build;
 }
@@ -50,13 +43,7 @@ const siteSetupFlow: Flow = {
 
 	useSteps() {
 		const steps = [
-			STEPS.GOALS,
-			STEPS.INTENT,
-			STEPS.OPTIONS,
-			STEPS.DESIGN_CHOICES,
 			STEPS.DESIGN_SETUP,
-			STEPS.BLOGGER_STARTING_POINT,
-			STEPS.COURSES,
 			STEPS.IMPORT,
 			STEPS.IMPORT_LIST,
 			STEPS.IMPORT_READY,
@@ -76,7 +63,6 @@ const siteSetupFlow: Flow = {
 			STEPS.TRIAL_ACKNOWLEDGE,
 			STEPS.PROCESSING,
 			STEPS.ERROR,
-			STEPS.DIFM_STARTING_POINT,
 		];
 
 		return steps;
@@ -119,28 +105,13 @@ const siteSetupFlow: Flow = {
 			( select ) => site && ( select( SITE_STORE ) as SiteSelect ).isSiteAtomic( site.ID ),
 			[ site ]
 		);
-		const storeType = useSelect(
-			( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getStoreType(),
-			[]
-		);
-
-		const { isEligible: isBigSkyEligible } = useIsBigSkyEligible();
-		const isDesignChoicesStepEnabled = isBigSkyEligible;
-
 		const { setPendingAction, resetOnboardStoreWithSkipFlags } = useDispatch( ONBOARD_STORE );
 		const { setDesignOnSite } = useDispatch( SITE_STORE );
 		const dispatch = reduxDispatch();
 
-		const getLaunchpadScreenValue = (
-			intent: string,
-			shouldSkip: boolean
-		): 'full' | 'skipped' | 'off' => {
+		const getLaunchpadScreenValue = ( intent: string ): 'full' | 'off' => {
 			if ( ! isLaunchpadIntent( intent ) || isLaunched ) {
 				return 'off';
-			}
-
-			if ( shouldSkip ) {
-				return 'skipped';
 			}
 
 			return 'full';
@@ -163,7 +134,7 @@ const siteSetupFlow: Flow = {
 			return featuresForGoals.length > 0 ? featuresForGoals : undefined;
 		};
 
-		const exitFlow = ( to: string, options: ExitFlowOptions = {} ) => {
+		const exitFlow = ( to: string ) => {
 			setPendingAction( () => {
 				/**
 				 * This implementation seems very hacky.
@@ -197,10 +168,7 @@ const siteSetupFlow: Flow = {
 
 					// Update Launchpad option based on site intent
 					if ( typeof siteId === 'number' ) {
-						settings.launchpad_screen = getLaunchpadScreenValue(
-							siteIntent,
-							options.skipLaunchpad ?? false
-						);
+						settings.launchpad_screen = getLaunchpadScreenValue( siteIntent );
 					}
 
 					let redirectionUrl = to;
@@ -263,18 +231,6 @@ const siteSetupFlow: Flow = {
 
 		function submit( providedDependencies: ProvidedDependencies = {} ) {
 			switch ( currentStep ) {
-				case 'options': {
-					if ( intent === 'sell' ) {
-						/**
-						 * Part of the theme/plugin bundling is simplyfing the seller flow.
-						 *
-						 * Instead of having the user manually choose between "Start simple" and "More power", we let them select a theme and use the theme choice to determine which path to take.
-						 */
-						return navigate( 'design-setup' );
-					}
-					return navigate( 'bloggerStartingPoint' );
-				}
-
 				case 'design-setup': {
 					return navigate( 'processing' );
 				}
@@ -284,13 +240,6 @@ const siteSetupFlow: Flow = {
 
 					if ( processingResult === ProcessingResult.FAILURE ) {
 						return navigate( 'error' );
-					}
-
-					// End of woo flow
-					if ( intent === 'sell' && storeType === 'power' ) {
-						dispatch( recordTracksEvent( 'calypso_woocommerce_dashboard_redirect' ) );
-
-						return exitFlow( `${ adminUrl }admin.php?page=wc-admin` );
 					}
 
 					// Check current theme: Does it have a plugin bundled?
@@ -312,94 +261,6 @@ const siteSetupFlow: Flow = {
 					}
 
 					return exitFlow( `/home/${ siteId ?? siteSlug }` );
-				}
-
-				case 'bloggerStartingPoint': {
-					const intent = providedDependencies.startingPoint as string;
-					switch ( intent ) {
-						case 'firstPost': {
-							return exitFlow( `/post/${ siteSlug }` );
-						}
-						case 'courses': {
-							return navigate( 'courses' );
-						}
-						case 'skip-to-my-home': {
-							return exitFlow( `/home/${ siteId ?? siteSlug }`, {
-								skipLaunchpad: true,
-							} );
-						}
-						default: {
-							return navigate( intent );
-						}
-					}
-				}
-
-				case 'goals': {
-					const { intent, skip } = providedDependencies;
-
-					if ( skip ) {
-						return exitFlow( `/home/${ siteId ?? siteSlug }`, {
-							skipLaunchpad: true,
-						} );
-					}
-
-					switch ( intent ) {
-						case SiteIntent.Import:
-							return exitFlow( `/setup/site-migration?siteSlug=${ siteSlug }&ref=goals` );
-
-						case SiteIntent.DIFM:
-							return navigate( 'difmStartingPoint' );
-
-						default: {
-							if ( isDesignChoicesStepEnabled ) {
-								return navigate( 'design-choices' );
-							}
-							return navigate( 'design-setup' );
-						}
-					}
-				}
-
-				case 'design-choices': {
-					if ( providedDependencies.destination === 'launch-big-sky' ) {
-						const queryParams = new URLSearchParams( location.search ).toString();
-						calypsoLibNavigate(
-							`/setup/site-setup/launch-big-sky${ queryParams ? `?${ queryParams }` : '' }`
-						);
-						return;
-					}
-
-					return navigate( providedDependencies.destination as string );
-				}
-
-				case 'intent': {
-					const submittedIntent = providedDependencies.intent as string;
-					switch ( submittedIntent ) {
-						case 'wpadmin': {
-							return exitFlow( `https://wordpress.com/home/${ siteId ?? siteSlug }` );
-						}
-						case 'build': {
-							return navigate( 'design-setup' );
-						}
-						case 'sell': {
-							return navigate( 'options' );
-						}
-						case 'import': {
-							return navigate( 'import' );
-						}
-						case 'write': {
-							return navigate( 'options' );
-						}
-						case 'difm': {
-							return navigate( 'difmStartingPoint' );
-						}
-						default: {
-							return navigate( submittedIntent );
-						}
-					}
-				}
-
-				case 'courses': {
-					return exitFlow( `/post/${ siteSlug }` );
 				}
 
 				case 'importList':
@@ -487,15 +348,6 @@ const siteSetupFlow: Flow = {
 
 				case 'verifyEmail':
 					return navigate( `importerWordpress?${ urlQueryParams.toString() }` );
-
-				case 'difmStartingPoint': {
-					const backUrl = window.location.href.replace( window.location.origin, '' );
-					return exitFlow(
-						`/start/website-design-services/?siteSlug=${ siteSlug }&back_to=${ encodeURIComponent(
-							backUrl
-						) }`
-					);
-				}
 			}
 		}
 
@@ -505,25 +357,6 @@ const siteSetupFlow: Flow = {
 			}
 
 			switch ( currentStep ) {
-				case 'bloggerStartingPoint':
-					return navigate( 'options' );
-
-				case 'courses':
-					return navigate( 'bloggerStartingPoint' );
-
-				case 'design-setup':
-					if ( intent === SiteIntent.DIFM ) {
-						return navigate( 'difmStartingPoint' );
-					}
-					if ( isDesignChoicesStepEnabled ) {
-						return navigate( 'design-choices' );
-					}
-					return navigate( 'goals' );
-
-				case 'design-choices': {
-					return navigate( 'goals' );
-				}
-
 				case 'importList': {
 					if ( backToStep ) {
 						return navigate( `${ backToStep }?siteSlug=${ siteSlug }` );
@@ -583,43 +416,22 @@ const siteSetupFlow: Flow = {
 				case 'importReadyPreview':
 					return navigate( `import?siteSlug=${ siteSlug }` );
 
-				case 'options':
-					return navigate( 'goals' );
-
-				case 'import':
-					return navigate( 'goals' );
-
 				case 'verifyEmail':
 				case 'trialAcknowledge':
 					return navigate( `importerWordpress?${ urlQueryParams.toString() }` );
 
-				case 'difmStartingPoint':
-					return navigate( 'goals' );
-
 				default:
-					return navigate( 'intent' );
+					return exitFlow( `/home/${ siteId ?? siteSlug }` );
 			}
 		};
 
 		const goNext = () => {
 			switch ( currentStep ) {
-				case 'options':
-					if ( intent === 'sell' ) {
-						return navigate( 'design-setup' );
-					}
-					return navigate( 'bloggerStartingPoint' );
-
-				case 'intent':
-					return exitFlow( `/home/${ siteId ?? siteSlug }` );
-
 				case 'import':
 					return navigate( 'importList' );
 
-				case 'difmStartingPoint':
-					return navigate( 'design-setup' );
-
 				default:
-					return navigate( 'intent' );
+					return exitFlow( `/home/${ siteId ?? siteSlug }` );
 			}
 		};
 

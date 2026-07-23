@@ -1636,6 +1636,30 @@ describe( 'utils', () => {
 				expect( normalizers.statsVideo() ).toBeNull();
 			} );
 
+			test( 'should return empty data when the endpoint reports an empty window', () => {
+				// With no rows in the requested window, the endpoint returns a
+				// single object instead of the usual [ date, value ] tuples.
+				expect(
+					normalizers.statsVideo( {
+						data: { date: '7-10', p: '0' },
+						pages: [],
+					} )
+				).toEqual( { pages: [], data: [], post: null } );
+			} );
+
+			test( 'should skip non-tuple entries in the data array', () => {
+				expect(
+					normalizers.statsVideo( {
+						data: [ [ '2016-11-12', 1 ], { date: '7-10', p: '0' } ],
+						pages: [],
+					} )
+				).toEqual( {
+					pages: [],
+					data: [ { period: '2016-11-12', value: 1 } ],
+					post: null,
+				} );
+			} );
+
 			test( 'should return a properly parsed data array', () => {
 				expect(
 					normalizers.statsVideo( {
@@ -1675,6 +1699,20 @@ describe( 'utils', () => {
 							link: 'http://www.themepremium.com/blog-with-the-speed-of-your-thought-with-the-p2-theme/',
 						},
 					],
+					post: null,
+				} );
+			} );
+
+			test( 'should pass through the attachment post', () => {
+				const post = {
+					ID: 43948,
+					post_title: 'blank-canvas-split-screen',
+					post_date: '2021-02-08 13:53:37',
+				};
+				expect( normalizers.statsVideo( { data: [], pages: [], post } ) ).toEqual( {
+					pages: [],
+					data: [],
+					post,
 				} );
 			} );
 		} );

@@ -1,11 +1,15 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { HelpCenterSelect } from '@automattic/data-stores';
-import { HELP_CENTER_STORE } from '@automattic/help-center/src/stores';
+import { useHasEnTranslation } from '@automattic/i18n-utils';
 import { useIsMutating } from '@tanstack/react-query';
 import { useSelect } from '@wordpress/data';
 import { useState, useEffect, useRef, useCallback } from '@wordpress/element';
 import { getMessageUniqueIdentifier } from '../components/message/utils/get-message-unique-identifier';
-import { getOdieTransferMessages, getZendeskChatStartedMetaMessage } from '../constants';
+import {
+	HELP_CENTER_STORE,
+	getOdieTransferMessages,
+	getZendeskChatStartedMetaMessage,
+} from '../constants';
 import { emptyChat } from '../context';
 import { useGetZendeskConversation, useManageSupportInteraction, useOdieChat } from '../data';
 import { useCurrentSupportInteraction } from '../data/use-current-support-interaction';
@@ -50,6 +54,7 @@ export const useGetCombinedChat = (
 		useCurrentSupportInteraction();
 
 	const { loggedOutOdieChatId, sessionId, botSlug } = useLoggedOutSession();
+	const hasEnTranslation = useHasEnTranslation();
 
 	const odieId = loggedOutOdieChatId || getOdieIdFromInteraction( currentSupportInteraction );
 	const { isChatLoaded, connectionStatus } = useSelect( ( select ) => {
@@ -60,8 +65,8 @@ export const useGetCombinedChat = (
 			connectionStatus: store.getZendeskConnectionStatus(),
 		};
 	}, [] );
-	const previousUuidRef = useRef< string | undefined >();
-	const previousOdieIdRef = useRef< string | null | undefined >();
+	const previousUuidRef = useRef< string | undefined >( undefined );
+	const previousOdieIdRef = useRef< string | null | undefined >( undefined );
 	const wasChatLoadedRef = useRef( isChatLoaded );
 	const [ mainChatState, setMainChatState ] = useState< Chat >( emptyChat );
 	const conversationId = getConversationIdFromInteraction( currentSupportInteraction );
@@ -196,7 +201,10 @@ export const useGetCombinedChat = (
 								conversationId: conversation.id,
 								messages: [
 									...( odieChat ? filteredOdieMessages : [] ),
-									...getOdieTransferMessages( currentSupportInteraction?.bot_slug ),
+									...getOdieTransferMessages(
+										currentSupportInteraction?.bot_slug,
+										hasEnTranslation
+									),
 									getZendeskChatStartedMetaMessage(),
 									...( deduplicateZDMessages( [
 										// During connection recovery, the user queued messages can be deleted. This ensure they remain. And `deduplicateZDMessages` takes of duplication.
@@ -246,6 +254,7 @@ export const useGetCombinedChat = (
 		sessionId,
 		botSlug,
 		isLoadingCurrentSupportInteraction,
+		hasEnTranslation,
 		mainChatState?.messages?.length,
 		mainChatState?.odieId,
 		odieChat,

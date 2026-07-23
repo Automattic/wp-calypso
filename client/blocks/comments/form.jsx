@@ -2,10 +2,10 @@ import './form.scss';
 import { Button, FormInputValidation } from '@automattic/components';
 import clsx from 'clsx';
 import { localize, useTranslate } from 'i18n-calypso';
-import { flowRight } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
+import { compose } from 'redux';
 import UserAvatar from 'calypso/blocks/user-avatar';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import { ProtectFormGuard } from 'calypso/lib/protect-form';
@@ -259,7 +259,7 @@ const withPostCommentActions = ( WrappedComponent ) => {
 	return WithPostCommentActions;
 };
 
-export default flowRight(
+export default compose(
 	connect(
 		( state ) => ( {
 			currentUser: getCurrentUser( state ),

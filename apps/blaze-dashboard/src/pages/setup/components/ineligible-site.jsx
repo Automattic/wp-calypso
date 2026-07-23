@@ -10,12 +10,15 @@ export default function IneligibleSite() {
 				<div className="promote-post-i2__inner-container">
 					<div className="promote-post-i2__setup-icon"></div>
 					<h3 className="setup-pages__title wp-brand-font">
-						{ translate( 'Your site is not eligible to Advertise with Blaze' ) }
+						{ translate( 'Your site is not eligible to Advertise with %(productName)s', {
+							args: { productName: 'Blaze Ads' },
+						} ) }
 					</h3>
 					<p className="setup-pages__body">
 						{ translate(
-							"Unfortunately, your site doesn't qualify for advertising using Blaze. If you have any questions or need assistance, please contact our {{a}}support team{{/a}}.",
+							"Unfortunately, your site doesn't qualify for advertising using %(productName)s. If you have any questions or need assistance, please contact our {{a}}support team{{/a}}.",
 							{
+								args: { productName: 'Blaze Ads' },
 								components: {
 									a: (
 										<a

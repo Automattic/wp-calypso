@@ -1,59 +1,99 @@
 # yaml-language-server: $schema=https://raw.githubusercontent.com/buildkite/pipeline-schema/main/schema.json
 ---
+# Variables used in this pipeline are defined in `shared-pipeline-vars`, which is `source`'d before calling `buildkite-agent pipeline upload`
 
 steps:
-  # Skip on `ainfra-*` branches: the gated build steps below already
-  # run `yarn install` as part of their build script, so running it
-  # again here would just duplicate the work.
-  - label: ":desktop_computer: Desktop yarn install"
-    branches: "!ainfra-*"
+  # The desktop build is resource-intensive and this repo runs many builds,
+  # so keep it scoped to the same branch families the CircleCI workflow used.
+  - label: ":desktop_computer: Build desktop (mac)"
+    key: desktop-build-mac
+    branches: trunk release/* desktop/* desktop-v*
     notify:
       - github_commit_status:
-          context: Desktop / yarn install
+          context: Desktop / Build (mac)
     agents:
       queue: mac
     env:
-      IMAGE_ID: xcode-26.4.1
-      PLAYWRIGHT_SKIP_DOWNLOAD: 'true'
-      SKIP_TSC: 'true'
-      COREPACK_ENABLE_DOWNLOAD_PROMPT: 0
+      IMAGE_ID: $IMAGE_ID
     plugins:
-      - automattic/nvm#0.6.0
-    command: |
-      set -euo pipefail
-
-      cd desktop
-      corepack enable
-      yarn install --immutable --inline-builds
-
-  # The desktop build is resource-intensive and this repo runs many
-  # builds; we don't want to pay for it on every commit, especially
-  # while the CircleCI -> Buildkite port is still in development.
-  # Gate it on `ainfra-*` branches until the port is stabilized.
-  - label: ":desktop_computer: Build desktop (mac, unsigned)"
-    branches: ainfra-*
-    notify:
-      - github_commit_status:
-          context: Desktop / Build (mac, unsigned)
-    agents:
-      queue: mac
-    env:
-      IMAGE_ID: xcode-26.4.1
-    plugins:
-      - automattic/nvm#0.6.0
+      - $NVM_PLUGIN
+      - $CI_TOOLKIT_PLUGIN
     command: .buildkite/commands/build-desktop-mac.sh
     artifact_paths:
-      - desktop/release/*
+      - desktop/release/*.zip
+      - desktop/release/*.dmg
+      - desktop/release/*.blockmap
+      - desktop/release/*.yml
+      - desktop/test/e2e/results/**/*
 
   - label: ":desktop_computer: Build desktop (linux, unsigned)"
-    branches: ainfra-*
+    key: desktop-build-linux
+    branches: release/* desktop/* desktop-v*
     notify:
       - github_commit_status:
           context: Desktop / Build (linux, unsigned)
     agents:
       queue: default
     plugins:
-      - automattic/nvm#0.6.0
+      - $DOCKER_PLUGIN:
+          image: cimg/node:24.15.0-browsers
+          propagate-uid-gid: true
+          userns: host
+          environment:
+            - BUILDKITE_TAG
+            - E2EGUTENBERGUSER
+            - E2EPASSWORD
     command: .buildkite/commands/build-desktop-linux.sh
     artifact_paths:
       - desktop/release/*
+      - desktop/test/e2e/results/**/*
+
+  - label: ":windows: Build desktop (windows store, unsigned)"
+    key: desktop-build-windows-store
+    branches: release/* desktop/* desktop-v*
+    notify:
+      - github_commit_status:
+          context: Desktop / Build (windows store, unsigned)
+    agents:
+      queue: windows
+    command: powershell -NoProfile -ExecutionPolicy Bypass -File .buildkite/commands/build-desktop-windows.ps1
+    artifact_paths:
+      - desktop/release/*.appx
+
+  # Signed NSIS direct-download installer — the auto-update path (electron-
+  # updater stays enabled). Signs via Azure Artifact Signing by default, with the
+  # org Sectigo PFX as a fallback behind FORCE_PFX_SIGNING (AINFRA-2237).
+  - label: ":windows: Build desktop (windows nsis, signed)"
+    key: desktop-build-windows-nsis
+    branches: release/* desktop/* desktop-v*
+    notify:
+      - github_commit_status:
+          context: Desktop / Build (windows nsis, signed)
+    agents:
+      queue: windows
+    plugins:
+      - $CI_TOOLKIT_PLUGIN
+    command: powershell -NoProfile -ExecutionPolicy Bypass -File .buildkite/commands/build-desktop-windows-nsis.ps1
+    artifact_paths:
+      - desktop/release/*.exe
+      - desktop/release/*.exe.blockmap
+      - desktop/release/latest.yml
+
+  - label: ":desktop_computer: Desktop publish"
+    branches: desktop-v*
+    depends_on:
+      - desktop-build-mac
+      - desktop-build-linux
+      - desktop-build-windows-store
+      - desktop-build-windows-nsis
+    notify:
+      - github_commit_status:
+          context: Desktop / Publish
+    agents:
+      queue: default
+    plugins:
+      - $NVM_PLUGIN
+    command: .buildkite/commands/publish-desktop-release.sh
+    artifact_paths:
+      - desktop/release/*
+      - desktop/CHANGELOG.md

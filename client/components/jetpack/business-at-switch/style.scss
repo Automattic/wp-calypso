@@ -1,3 +1,6 @@
+@import "calypso/assets/stylesheets/shared/mixins/breakpoints";
+@import "calypso/assets/stylesheets/shared/mixins/placeholder";
+
 .business-at-switch {
 	&.placeholder__header {
 		display: block;

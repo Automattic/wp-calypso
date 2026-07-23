@@ -207,6 +207,53 @@ const DeleteButtonWrapper = styled.div`
 	justify-content: inherit;
 `;
 
+const BundleLineItemWrapper = styled.div< { theme?: Theme } >`
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: space-between;
+	padding: 16px 0;
+	font-weight: ${ ( props ) => props.theme.weights.normal };
+	color: ${ ( props ) => props.theme.colors.textColorDark };
+	font-size: 1.1em;
+	position: relative;
+
+	.checkout-line-item__price {
+		position: relative;
+	}
+`;
+
+const BundleMemberList = styled.div< { theme?: Theme } >`
+	width: 100%;
+	display: flex;
+	flex-direction: column;
+	gap: 2px;
+	margin-top: 8px;
+	color: ${ ( props ) => props.theme.colors.textColorDark };
+	font-size: 14px;
+	line-height: 1.4;
+`;
+
+const BundleTermRow = styled.div< { theme?: Theme } >`
+	box-sizing: border-box;
+	width: 100%;
+	border: 1px solid ${ ( props ) => props.theme.colors.borderColor };
+	border-radius: 4px;
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 12px;
+	margin-top: 16px;
+	padding: 16px;
+	color: ${ ( props ) => props.theme.colors.textColorDark };
+	font-size: 14px;
+`;
+
+const BundleTermPrice = styled.span`
+	display: inline-flex;
+	align-items: center;
+	gap: 8px;
+`;
+
 const DeleteButton = styled( Button )< { theme?: Theme } >`
 	width: auto;
 	font-size: 0.75rem;
@@ -249,6 +296,7 @@ function WPNonProductLineItem( {
 	const actualAmountDisplay = lineItem.formattedAmount;
 	const { formStatus } = useFormStatus();
 	const isDisabled = formStatus !== FormStatus.READY;
+	const isCartUpdating = formStatus === FormStatus.VALIDATING;
 	const [ isModalVisible, setIsModalVisible ] = useState( false );
 	const translate = useTranslate();
 	const modalCopy = returnModalCopy(
@@ -268,7 +316,11 @@ function WPNonProductLineItem( {
 			<LineItemTitle isSummary={ isSummary }>{ label }</LineItemTitle>
 
 			<span className="checkout-line-item__price">
-				<LineItemPrice actualAmount={ actualAmountDisplay } />
+				{ isCartUpdating ? (
+					<LoadingCopy width="60px" height="16px" noMargin />
+				) : (
+					<LineItemPrice actualAmount={ actualAmountDisplay } />
+				) }
 			</span>
 
 			{ hasDeleteButton && removeProductFromCart && (
@@ -442,6 +494,7 @@ export function BundleLineItem( {
 	const translate = useTranslate();
 	const { formStatus } = useFormStatus();
 	const isDisabled = formStatus !== FormStatus.READY;
+	const isCartUpdating = formStatus === FormStatus.VALIDATING;
 	const [ isModalVisible, setIsModalVisible ] = useState( false );
 
 	const { products } = bundle;
@@ -472,7 +525,7 @@ export function BundleLineItem( {
 		stripZeros: true,
 	} );
 	const isBundleDiscounted = bundleTotalInteger < bundleOriginalInteger;
-	const bundleLabel = String( translate( 'Domain bundle' ) );
+	const bundleLabel = String( translate( 'Domain Bundle' ) );
 
 	const removeBundleFromCart = () => {
 		products.forEach( ( product ) => {
@@ -483,7 +536,7 @@ export function BundleLineItem( {
 
 	/* eslint-disable wpcalypso/jsx-classname-namespace */
 	return (
-		<div
+		<BundleLineItemWrapper
 			className={ joinClasses( [ className, 'checkout-line-item' ] ) }
 			data-e2e-product-slug="domain-bundle"
 			data-product-type="domain-bundle"
@@ -491,29 +544,38 @@ export function BundleLineItem( {
 			<LineItemTitle isSummary={ isSummary }>{ bundleLabel }</LineItemTitle>
 
 			<span className="checkout-line-item__price">
-				<LineItemPrice
-					actualAmount={ bundleTotalDisplay }
-					crossedOutAmount={ isBundleDiscounted ? bundleOriginalDisplay : undefined }
-				/>
+				{ isCartUpdating ? (
+					<LoadingCopy width="60px" height="16px" noMargin />
+				) : (
+					<LineItemPrice
+						actualAmount={ bundleTotalDisplay }
+						crossedOutAmount={ isBundleDiscounted ? bundleOriginalDisplay : undefined }
+					/>
+				) }
 			</span>
 
-			{ isBundleDiscounted && (
-				<LineItemMeta>
+			<LineItemMeta>
+				<LineItemSublabelTitle>
+					{ translate( 'Domain Bundle Registration: billed annually' ) }
+				</LineItemSublabelTitle>
+				{ isBundleDiscounted && (
 					<DiscountCallout>{ translate( 'Discount for first year' ) }</DiscountCallout>
-				</LineItemMeta>
-			) }
+				) }
+			</LineItemMeta>
 
-			{ products.map( ( product ) => (
-				<LineItemMeta key={ product.uuid }>
-					<span>{ product.meta }</span>
-					<span>
-						{ formatCurrency( product.item_subtotal_integer, product.currency, {
-							isSmallestUnit: true,
-							stripZeros: true,
-						} ) }
-					</span>
-				</LineItemMeta>
-			) ) }
+			<BundleMemberList>
+				{ products.map( ( product ) => (
+					<span key={ product.uuid }>{ product.meta }</span>
+				) ) }
+			</BundleMemberList>
+
+			<BundleTermRow>
+				<span>{ translate( 'One year' ) }</span>
+				<BundleTermPrice>
+					<span>{ bundleTotalDisplay }</span>
+					<Gridicon icon="chevron-down" size={ 16 } aria-hidden="true" />
+				</BundleTermPrice>
+			</BundleTermRow>
 
 			{ hasDeleteButton && removeProductFromCart && (
 				<>
@@ -559,7 +621,7 @@ export function BundleLineItem( {
 					/>
 				</>
 			) }
-		</div>
+		</BundleLineItemWrapper>
 	);
 	/* eslint-enable wpcalypso/jsx-classname-namespace */
 }
@@ -849,11 +911,13 @@ export function LineItemSublabelAndPrice( {
 	shouldShowComparison,
 	compareToPrice,
 	isRenewalPricingExperiment,
+	isCartUpdating,
 }: {
 	product: ResponseCartProduct;
 	shouldShowComparison?: boolean;
 	compareToPrice?: number;
 	isRenewalPricingExperiment?: boolean;
+	isCartUpdating?: boolean;
 } ) {
 	const translate = useTranslate();
 	const productSlug = product.product_slug;
@@ -861,6 +925,10 @@ export function LineItemSublabelAndPrice( {
 		isSmallestUnit: true,
 		stripZeros: true,
 	} );
+
+	if ( isCartUpdating ) {
+		return <>&nbsp;</>;
+	}
 
 	if ( isP2Plus( product ) ) {
 		// This is the price for one item for products with a quantity (eg. seats in a license).
@@ -1517,6 +1585,57 @@ const DesktopGiftWrapper = styled.div`
 	}
 `;
 
+function LineItemPriceContent( {
+	isCartUpdating,
+	shouldShowComparison,
+	isDiscounted,
+	isRenewalPricingExperiment,
+	monthlyAmountDisplay,
+	originalMonthlyAmountDisplay,
+	actualAmountDisplay,
+	originalAmountDisplay,
+	stackedCrossedOutDisplay,
+}: {
+	isCartUpdating: boolean;
+	shouldShowComparison?: boolean;
+	isDiscounted: boolean;
+	isRenewalPricingExperiment?: boolean;
+	monthlyAmountDisplay: string;
+	originalMonthlyAmountDisplay: string;
+	actualAmountDisplay: string;
+	originalAmountDisplay: string;
+	stackedCrossedOutDisplay?: string;
+} ) {
+	const translate = useTranslate();
+
+	if ( isCartUpdating ) {
+		return <LoadingCopy width="60px" height="16px" noMargin />;
+	}
+
+	if ( shouldShowComparison ) {
+		return (
+			<>
+				<LineItemPrice
+					actualAmount={ monthlyAmountDisplay }
+					crossedOutAmount={
+						isDiscounted && ! isRenewalPricingExperiment ? originalMonthlyAmountDisplay : undefined
+					}
+				/>{ ' ' }
+				{ translate( '/month' ) }
+			</>
+		);
+	}
+
+	return (
+		<LineItemPrice
+			actualAmount={ actualAmountDisplay }
+			crossedOutAmount={
+				stackedCrossedOutDisplay ?? ( isDiscounted ? originalAmountDisplay : undefined )
+			}
+		/>
+	);
+}
+
 function CheckoutLineItem( {
 	children,
 	product,
@@ -1587,6 +1706,7 @@ function CheckoutLineItem( {
 		isPwpoUser || false
 	);
 	const isDisabled = formStatus !== FormStatus.READY;
+	const isCartUpdating = formStatus === FormStatus.VALIDATING;
 
 	const isRenewal = isWpComProductRenewal( product );
 
@@ -1722,28 +1842,17 @@ function CheckoutLineItem( {
 			</LineItemTitle>
 
 			<span className="checkout-line-item__price">
-				{ shouldShowComparison ? (
-					<>
-						<LineItemPrice
-							actualAmount={ monthlyAmountDisplay }
-							crossedOutAmount={
-								isDiscounted && ! isRenewalPricingExperiment
-									? originalMonthlyAmountDisplay
-									: undefined
-							}
-						/>{ ' ' }
-						{ translate( '/month' ) }
-					</>
-				) : (
-					<>
-						<LineItemPrice
-							actualAmount={ actualAmountDisplay }
-							crossedOutAmount={
-								stackedCrossedOutDisplay ?? ( isDiscounted ? originalAmountDisplay : undefined )
-							}
-						/>
-					</>
-				) }
+				<LineItemPriceContent
+					isCartUpdating={ isCartUpdating }
+					shouldShowComparison={ shouldShowComparison }
+					isDiscounted={ isDiscounted }
+					isRenewalPricingExperiment={ isRenewalPricingExperiment }
+					monthlyAmountDisplay={ monthlyAmountDisplay }
+					originalMonthlyAmountDisplay={ originalMonthlyAmountDisplay }
+					actualAmountDisplay={ actualAmountDisplay }
+					originalAmountDisplay={ originalAmountDisplay }
+					stackedCrossedOutDisplay={ stackedCrossedOutDisplay }
+				/>
 			</span>
 
 			{ ! containsPartnerCoupon && (
@@ -1758,6 +1867,7 @@ function CheckoutLineItem( {
 								shouldShowComparison={ shouldShowComparison }
 								compareToPrice={ compareToPrice }
 								isRenewalPricingExperiment={ isRenewalPricingExperiment }
+								isCartUpdating={ isCartUpdating }
 							/>
 							<DomainDiscountCallout product={ product } />
 							<IntroductoryOfferCallout
@@ -1776,6 +1886,7 @@ function CheckoutLineItem( {
 					<LineItemSublabelAndPrice
 						product={ product }
 						isRenewalPricingExperiment={ isRenewalPricingExperiment }
+						isCartUpdating={ isCartUpdating }
 					/>
 				</LineItemMeta>
 			) }

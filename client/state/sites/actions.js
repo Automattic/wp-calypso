@@ -1,6 +1,6 @@
 import config from '@automattic/calypso-config';
+import { omit } from '@automattic/js-utils';
 import { translate } from 'i18n-calypso';
-import { omit } from 'lodash';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import wpcom from 'calypso/lib/wp';

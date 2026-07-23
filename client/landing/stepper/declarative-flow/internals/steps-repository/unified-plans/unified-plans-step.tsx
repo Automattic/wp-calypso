@@ -4,6 +4,7 @@ import {
 	UrlFriendlyTermType,
 	isDomainTransfer,
 	PLAN_WOO_HOSTED_FREE_TRIAL_MONTHLY,
+	PlanSlug,
 } from '@automattic/calypso-products';
 import { Button } from '@automattic/components';
 import { HelpCenter, HelpCenterSelect, Plans } from '@automattic/data-stores';
@@ -23,7 +24,7 @@ import { isDesktop as isDesktopViewport, subscribeIsDesktop } from '@automattic/
 import { useDispatch, useSelect } from '@wordpress/data';
 import { useCallback, useEffect, useMemo, useState } from '@wordpress/element';
 import clsx from 'clsx';
-import { useTranslate } from 'i18n-calypso';
+import { useTranslate, TranslateResult } from 'i18n-calypso';
 import moment from 'moment';
 import { parse as parseQs } from 'qs';
 import AsyncLoad from 'calypso/components/async-load';
@@ -72,6 +73,7 @@ export interface UnifiedPlansStepProps {
 	hidePremiumPlan?: boolean;
 	hideEnterprisePlan?: boolean;
 	hideEcommercePlan?: boolean;
+	hidePlanTypeSelector?: boolean;
 
 	flowName: string;
 	stepName: string;
@@ -123,6 +125,8 @@ export interface UnifiedPlansStepProps {
 		Extract< UrlFriendlyTermType, 'monthly' | 'yearly' | '2yearly' | '3yearly' >
 	>;
 	headerText?: string;
+	subHeaderText?: string;
+	highlightLabelOverrides?: { [ K in PlanSlug ]?: TranslateResult };
 	fallbackHeaderText?: string;
 	deemphasizeFreePlan?: boolean;
 	useStepperWrapper?: boolean;
@@ -220,6 +224,7 @@ function UnifiedPlansStep( {
 	hidePersonalPlan,
 	hidePremiumPlan,
 	hideEnterprisePlan,
+	hidePlanTypeSelector,
 	saveSignupStep: saveSignupStepFromProps,
 	submitSignupStep: submitSignupStepFromProps,
 	customerType: customerTypeFromProps,
@@ -240,6 +245,8 @@ function UnifiedPlansStep( {
 	signupDependencies,
 	displayedIntervals,
 	headerText,
+	subHeaderText,
+	highlightLabelOverrides,
 	useEmailOnboardingSubheader,
 	onPlanIntervalUpdate,
 	positionInFlow,
@@ -270,7 +277,15 @@ function UnifiedPlansStep( {
 		( select ) => ( select( HELP_CENTER_STORE ) as HelpCenterSelect ).isHelpCenterShown(),
 		[]
 	);
-	const toggleHelpCenter = () => setShowHelpCenter( ! isHelpCenterShown );
+	const toggleHelpCenter = () => {
+		if ( ! isHelpCenterShown ) {
+			recordTracksEvent( 'calypso_onboarding_help_center_click', {
+				flow: flowName,
+				step: 'plans',
+			} );
+		}
+		setShowHelpCenter( ! isHelpCenterShown );
+	};
 	const stepCounter = useOnboardingStepCounter( flowName, 'plans' );
 	const showProgress = useShowOnboardingProgress( isOnboardingFlow( flowName ) );
 	const initializedSitesBackUrl = useSelector( ( state ) => {
@@ -472,6 +487,10 @@ function UnifiedPlansStep( {
 		useStepContainerV2 && deemphasizeFreePlan && ( paidDomainName != null || isPaidTheme );
 
 	const getSubheaderText = () => {
+		if ( subHeaderText ) {
+			return subHeaderText;
+		}
+
 		const freePlanButton = (
 			<Button
 				onClick={ () =>
@@ -671,6 +690,8 @@ function UnifiedPlansStep( {
 				hidePremiumPlan={ hidePremiumPlan }
 				hideEcommercePlan={ shouldHideEcommercePlan() }
 				hideEnterprisePlan={ hideEnterprisePlan }
+				hidePlanTypeSelector={ hidePlanTypeSelector }
+				highlightLabelOverrides={ highlightLabelOverrides }
 				removePaidDomain={ handleRemovePaidDomain }
 				setSiteUrlAsFreeDomainSuggestion={ handleSetSiteUrlAsFreeDomainSuggestion }
 				coupon={ coupon ?? undefined }

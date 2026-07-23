@@ -1,6 +1,6 @@
 import page from '@automattic/calypso-router';
+import { pick } from '@automattic/js-utils';
 import i18n from 'i18n-calypso';
-import { find, pick } from 'lodash';
 import moment from 'moment';
 import AsyncLoad from 'calypso/components/async-load';
 import { bumpStat } from 'calypso/lib/analytics/mc';
@@ -25,6 +25,10 @@ const loadSummary = () =>
 const loadStatsPostDetail = () =>
 	import(
 		/* webpackChunkName: "async-load-calypso-my-sites-stats-stats-post-detail" */ './stats-post-detail'
+	);
+const loadStatsVideoDetail = () =>
+	import(
+		/* webpackChunkName: "async-load-calypso-my-sites-stats-stats-video-detail" */ './stats-video-detail'
 	);
 const loadCommentFollows = () =>
 	import(
@@ -146,7 +150,7 @@ export function overview( context, next ) {
 
 	window.scrollTo( 0, 0 );
 
-	const activeFilter = find( filters(), ( filter ) => {
+	const activeFilter = filters().find( ( filter ) => {
 		return context.params.period === filter.period || context.path.includes( filter.path );
 	} );
 
@@ -194,7 +198,7 @@ export function site( context, next ) {
 	const currentSite = getSite( state, givenSiteId );
 	const siteId = currentSite ? currentSite.ID || 0 : 0;
 
-	const activeFilter = find( filters, ( filter ) => {
+	const activeFilter = filters.find( ( filter ) => {
 		return context.path.includes( filter.path );
 	} );
 
@@ -246,6 +250,39 @@ export function redirectToDaySummary( context ) {
 	page.redirect( url );
 }
 
+// Resolve the summary page's date/date-range from the query string.
+// The modern `chartStart`/`chartEnd` pair (matching the Traffic page contract) takes precedence
+// when both are valid `YYYY-MM-DD` dates with `chartStart <= chartEnd`. Otherwise we fall back to
+// the legacy `startDate`/`endDate` params so existing links keep working.
+export function getSummaryDateRangeFromQuery( queryOptions, momentSiteZone, period ) {
+	const parseChartDate = ( value ) =>
+		value && moment( value, 'YYYY-MM-DD', true ).isValid()
+			? momentSiteZone( value ).locale( 'en' )
+			: null;
+
+	const chartStart = parseChartDate( queryOptions.chartStart );
+	const chartEnd = parseChartDate( queryOptions.chartEnd );
+
+	if ( chartStart && chartEnd && ! chartEnd.isBefore( chartStart ) ) {
+		return { date: chartStart, dateRange: { startDate: chartStart, endDate: chartEnd } };
+	}
+
+	const isValidStartDate = queryOptions.startDate && moment( queryOptions.startDate ).isValid();
+	const date = isValidStartDate
+		? momentSiteZone( queryOptions.startDate ).locale( 'en' )
+		: momentSiteZone().endOf( period ).locale( 'en' );
+
+	// Support for custom date ranges.
+	// Evaluate the endDate param if provided and create a date range object if valid.
+	// Valid means endDate is a valid date and is not before the startDate.
+	const isValidEndDate = queryOptions.endDate && moment( queryOptions.endDate ).isValid();
+	const endDate = isValidEndDate ? momentSiteZone( queryOptions.endDate ).locale( 'en' ) : null;
+	const isValidRange = isValidEndDate && ! endDate.isBefore( date );
+	const dateRange = isValidRange ? { startDate: date, endDate: endDate } : null;
+
+	return { date, dateRange };
+}
+
 export function summary( context, next ) {
 	let siteId = context.params.site;
 	const siteFragment = getSiteFragment( context.path );
@@ -281,7 +318,7 @@ export function summary( context, next ) {
 	const selectedSite = getSite( context.store.getState(), siteId );
 	siteId = selectedSite ? selectedSite.ID || 0 : 0;
 
-	const activeFilter = find( filters, ( filter ) => {
+	const activeFilter = filters.find( ( filter ) => {
 		return context.path.includes( filter.path );
 	} );
 
@@ -295,22 +332,28 @@ export function summary( context, next ) {
 	}
 
 	const momentSiteZone = getMomentSiteZone( context.store.getState(), siteId );
-	const isValidStartDate = queryOptions.startDate && moment( queryOptions.startDate ).isValid();
-	const date = isValidStartDate
-		? momentSiteZone( queryOptions.startDate ).locale( 'en' )
-		: momentSiteZone().endOf( activeFilter.period ).locale( 'en' );
+	const { date, dateRange } = getSummaryDateRangeFromQuery(
+		queryOptions,
+		momentSiteZone,
+		activeFilter.period
+	);
 	const period = rangeOfPeriod( activeFilter.period, date );
 
-	// Support for custom date ranges.
-	// Evaluate the endDate param if provided and create a date range object if valid.
-	// Valid means endDate is a valid date and is not before the startDate.
-	const isValidEndDate = queryOptions.endDate && moment( queryOptions.endDate ).isValid();
-	const endDate = isValidEndDate ? momentSiteZone( queryOptions.endDate ).locale( 'en' ) : null;
-	const isValidRange = isValidEndDate && ! endDate.isBefore( date );
-	const dateRange = isValidRange ? { startDate: date, endDate: endDate } : null;
-
-	const extraProps =
-		context.params.module === 'videodetails' ? { postId: parseInt( queryOptions.post, 10 ) } : {};
+	// Video details has its own dedicated page, modeled on the single post page.
+	if ( context.params.module === 'videodetails' ) {
+		context.primary = (
+			<StatsPageLoader>
+				<AsyncLoad
+					require={ loadStatsVideoDetail }
+					placeholder={ PageLoading }
+					postId={ parseInt( queryOptions.post, 10 ) }
+					period={ period }
+					context={ context }
+				/>
+			</StatsPageLoader>
+		);
+		return next();
+	}
 
 	// The option is used for stats queries only.
 	const statsQueryOptions = pick( queryOptions, [ 'num', 'summarize', 'geoMode', 'viewType' ] );
@@ -330,7 +373,6 @@ export function summary( context, next ) {
 				dateRange={ dateRange }
 				context={ context }
 				period={ period }
-				{ ...extraProps }
 			/>
 		</StatsPageLoader>
 	);
@@ -412,7 +454,7 @@ export function wordAds( context, next ) {
 	const siteId = getSelectedSiteId( state );
 	const filters = getWordAdsFilters( siteId );
 
-	const activeFilter = find( filters, ( filter ) => context.params.period === filter.period );
+	const activeFilter = filters.find( ( filter ) => context.params.period === filter.period );
 
 	if ( ! activeFilter ) {
 		return next();
@@ -460,7 +502,7 @@ export function emailStats( context, next ) {
 
 	const momentSiteZone = getMomentSiteZone( state, siteId );
 	const filters = getSiteFilters( givenSiteId );
-	const activeFilter = find( filters, ( filter ) => {
+	const activeFilter = filters.find( ( filter ) => {
 		return (
 			context.path.indexOf( filter.path ) >= 0 ||
 			( filter.altPaths && context.path.indexOf( filter.altPaths ) >= 0 )
@@ -511,7 +553,7 @@ export function emailSummary( context, next ) {
 	}
 
 	const filters = getSiteFilters( givenSiteId );
-	const activeFilter = find( filters, ( filter ) => {
+	const activeFilter = filters.find( ( filter ) => {
 		return (
 			context.path.indexOf( filter.path ) >= 0 ||
 			( filter.altPaths && context.path.indexOf( filter.altPaths ) >= 0 )

@@ -13,7 +13,12 @@ import { isFetchingUserPurchases } from 'calypso/state/purchases/selectors';
 import isSiteAtomic from 'calypso/state/selectors/is-site-automated-transfer';
 import { IAppState } from 'calypso/state/types';
 import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
-import { isExpired, isOneTimePurchase, isRechargeable } from '../../../../lib/purchases';
+import {
+	isExpiredWithNoAutoRenewAttemptsLeft,
+	isOneTimePurchase,
+	isRechargeable,
+	isRemoved,
+} from '../../../../lib/purchases';
 import { cancelPurchase as cancelPurchaseUrl } from '../../paths';
 import { getChangePaymentMethodPath } from '../../utils';
 import AutoRenewDisablingDialog from './auto-renew-disabling-dialog';
@@ -233,7 +238,11 @@ class AutoRenewToggle extends Component<
 	}
 
 	shouldRender( purchase: Purchase ) {
-		return ! isExpired( purchase ) && ! isOneTimePurchase( purchase );
+		return (
+			! isRemoved( purchase ) &&
+			! isExpiredWithNoAutoRenewAttemptsLeft( purchase ) &&
+			! isOneTimePurchase( purchase )
+		);
 	}
 
 	render() {

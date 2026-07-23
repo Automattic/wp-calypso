@@ -61,7 +61,7 @@ import {
 	hasAmountAvailableToRefund,
 	hasMarketplaceProduct,
 	isAgencyPartnerType,
-	isExpired,
+	isRemoved,
 	isGSuiteOrGoogleWorkspaceProductSlug,
 	isJetpackHoldingSitePurchase,
 	isAkismetProduct,
@@ -99,6 +99,7 @@ import RefundEligibilityNotice from './refund-eligibility-notice';
 import TimeRemainingNotice from './time-remaining-notice';
 import { useCancelMutationOnConfirm } from './use-cancel-mutation-on-confirm';
 import { useIsSplitCancelRemoveEnabled } from './use-is-split-cancel-remove-enabled';
+import { usePostRemovalNavigation } from './use-post-removal-navigation';
 import type { CancelPurchaseState } from './types';
 import type {
 	Purchase,
@@ -116,7 +117,6 @@ type TopNoticeArgs = {
 	displayVariant: DisplayVariant;
 	purchase: Purchase;
 	intent: CancelIntent | null;
-	isSplitCancelRemoveEnabled: boolean;
 };
 
 /**
@@ -126,14 +126,7 @@ type TopNoticeArgs = {
 const CACHE_GUARD_DURATION_MS = 15_000;
 
 function renderTopNotice( args: TopNoticeArgs ) {
-	const {
-		surveyShown,
-		showDomainOptionsStep,
-		displayVariant,
-		purchase,
-		intent,
-		isSplitCancelRemoveEnabled,
-	} = args;
+	const { surveyShown, showDomainOptionsStep, displayVariant, purchase, intent } = args;
 
 	if ( surveyShown || showDomainOptionsStep ) {
 		return null;
@@ -141,11 +134,7 @@ function renderTopNotice( args: TopNoticeArgs ) {
 
 	// Intent-cancel with a refund (flag-on) → promo notice with inline link to
 	// switch the user into the remove flow.
-	if (
-		isSplitCancelRemoveEnabled &&
-		displayVariant === 'cancel' &&
-		hasAmountAvailableToRefund( purchase )
-	) {
+	if ( displayVariant === 'cancel' && hasAmountAvailableToRefund( purchase ) ) {
 		return <RefundEligibilityNotice mode="refund-eligibility" purchase={ purchase } />;
 	}
 
@@ -260,10 +249,13 @@ function getOfferDiscountBasedOnPurchasePrice(
 function availableJetpackSurveySteps( purchase: Purchase, flowType: CancelFlowType ): string[] {
 	const availableSteps = [];
 
-	// If the plan is already expired or is a temporary Jetpack purchase (license),
-	// we only need one "confirm" step for the survey is the removal confirmation
-	// A product that is not in use does not need to collect the survey or show benefits
-	if ( isExpired( purchase ) || isJetpackHoldingSitePurchase( purchase ) ) {
+	// If the subscription has already been removed or is a temporary Jetpack
+	// purchase (license), we only need one "confirm" step for the survey — the
+	// removal confirmation. A product that is not in use does not need to collect
+	// the survey or show benefits. Note we intentionally do NOT short-circuit for
+	// purchases that are merely past expiry (in the grace period): those still go
+	// through the normal removal flow.
+	if ( isRemoved( purchase ) || isJetpackHoldingSitePurchase( purchase ) ) {
 		return [ CANCEL_CONFIRM_STEP ];
 	}
 
@@ -316,7 +308,7 @@ function getBasicSurveySteps( {
 	const isJetpack = purchase.is_jetpack_plan_or_product;
 	const downgradePlan = getDowngradePlanForPurchase( plans, purchase, upsell );
 	const isDowngradePlan = [ 'downgrade-monthly', 'downgrade-personal' ].includes( upsell ?? '' );
-	const hasExpired = purchase.expiry_status === 'expired';
+	const hasBeenRemoved = isRemoved( purchase );
 
 	if (
 		isPartnerPurchase( purchase ) &&
@@ -334,11 +326,11 @@ function getBasicSurveySteps( {
 	if ( ! isGSuiteOrGoogleWorkspaceProductSlug( purchase.product_slug ) && ! purchase.is_plan ) {
 		return [ NEXT_ADVENTURE_STEP ];
 	}
-	if ( upsell && ! hasExpired && ! isDowngradePlan ) {
+	if ( upsell && ! hasBeenRemoved && ! isDowngradePlan ) {
 		return [ FEEDBACK_STEP, UPSELL_STEP, NEXT_ADVENTURE_STEP ];
 	}
 	// NOTE: downgradePlan only ever exists if upsell is true (see getDowngradePlanForPurchase).
-	if ( upsell && ! hasExpired && downgradePlan ) {
+	if ( upsell && ! hasBeenRemoved && downgradePlan ) {
 		return [ FEEDBACK_STEP, UPSELL_STEP, NEXT_ADVENTURE_STEP ];
 	}
 	if ( hasQuestionTwo ) {
@@ -460,10 +452,7 @@ function CancelPurchaseInner() {
 	const { data: plans } = useSuspenseQuery( plansQuery() );
 	const isSplitCancelRemoveEnabled = useIsSplitCancelRemoveEnabled();
 	const { data: purchaseCancelFeatures } = useQuery(
-		purchaseCancelFeaturesQuery(
-			parseInt( purchaseId, 10 ),
-			isSplitCancelRemoveEnabled ? 'treatment' : 'control'
-		)
+		purchaseCancelFeaturesQuery( parseInt( purchaseId, 10 ) )
 	);
 
 	const lastSiteQueryIsError = useRef< boolean >( false );
@@ -532,6 +521,8 @@ function CancelPurchaseInner() {
 
 		navigate( { to: purchasesRoute.to } );
 	}, [ purchase, navigate ] );
+
+	const { navigateAfterRemoval, invalidateSiteAfterRemoval } = usePostRemovalNavigation( purchase );
 
 	const track = useCallback( () => {
 		if ( productSlug ) {
@@ -604,14 +595,19 @@ function CancelPurchaseInner() {
 
 		const [ firstStep ] = allSteps;
 
-		const hasExpired = purchase.expiry_status === 'expired';
+		// A grace-period (past-expiry but still active) removal should still go
+		// through the normal flow with its pre-survey confirmation; only fully-
+		// removed purchases short-circuit here. This matches behavior from before
+		// the server began reporting grace-period purchases as "expired".
+		const hasBeenRemoved = isRemoved( purchase );
 		// When intent is URL-sourced (user clicked Cancel or Remove on Purchase
 		// Settings), the pre-survey confirmation MUST render first — regardless
-		// of prior survey completion cache or expired state. The existing
+		// of prior survey completion cache or removed state. The existing
 		// short-circuit (surveyShown: true when REMOVE_PLAN_STEP is first, or
-		// when expired) bypasses our confirmation screen. Gate it on intent
-		// absence so flag-on users always see the matching confirmation.
-		const shortCircuitToSurvey = REMOVE_PLAN_STEP === firstStep || hasExpired;
+		// when the subscription has been removed) bypasses our confirmation
+		// screen. Gate it on intent absence so flag-on users always see the
+		// matching confirmation.
+		const shortCircuitToSurvey = REMOVE_PLAN_STEP === firstStep || hasBeenRemoved;
 		const surveyShownInitial = intent ? false : shortCircuitToSurvey;
 
 		const newState: CancelPurchaseState = {
@@ -1221,11 +1217,10 @@ function CancelPurchaseInner() {
 							cancelAllMarketplaceSubscriptions();
 						}
 						invokeSurvicateEvent( 'purchaseRefunded' );
-						navigate( {
-							to: purchaseSettingsRoute.fullPath,
-							params: { purchaseId: purchase.ID },
-							search: { refunded: true },
-						} );
+						invalidateSiteAfterRemoval();
+						navigateAfterRemoval(
+							__( 'Your refund has been processed and your purchase removed.' )
+						);
 					},
 					onError: ( error: Error ) => {
 						createErrorNotice( ( error as Error ).message, { type: 'snackbar' } );
@@ -1264,10 +1259,9 @@ function CancelPurchaseInner() {
 	};
 
 	const submitRemovePurchase = ( purchase: Purchase ) => {
-		if ( CANCEL_FLOW_TYPE.REMOVE !== flowType ) {
-			return;
-		}
-
+		// Callers gate this on the effective flow type (see onSurveyComplete). Don't
+		// re-guard on the base `flowType` heuristic — it diverges from the effective
+		// flow (e.g. refundable + auto-renew off) and would silently early-return.
 		setTimeout( () => {
 			// 1. Optimistic cache strip
 			const stripPurchaseFromList = () => {
@@ -1321,39 +1315,60 @@ function CancelPurchaseInner() {
 				queryClient.invalidateQueries( { queryKey: userPurchasesQuery().queryKey } );
 			}, CACHE_GUARD_DURATION_MS );
 
-			// 3. Navigate with notice params
+			// 3. Navigate away — the purchase is gone, so its settings page is no
+			//    longer useful. Atomic-revert removals still route to the purchases
+			//    list so the backup-download notice (with its export CTA) can show;
+			//    everything else follows the site-page / purchases-list rule.
 			invokeSurvicateEvent( 'purchaseRemoved' );
 			const productNoun = getProductNounForCategory( classifyPurchaseForCopy( purchase ) );
-			navigate( {
-				to: purchasesRoute.to,
-				search: {
-					removed: productNoun,
-					removedId: purchase.ID,
-					...( purchase.will_atomic_revert_after_removal
-						? { removedDomain: purchase.domain }
-						: {} ),
-				},
-			} );
+			if ( purchase.will_atomic_revert_after_removal ) {
+				navigate( {
+					to: purchasesRoute.to,
+					search: {
+						removed: productNoun,
+						removedId: purchase.ID,
+						removedDomain: purchase.domain,
+					},
+				} );
+			} else {
+				navigateAfterRemoval(
+					sprintf(
+						/* translators: %(productNoun)s is plan/domain/email/theme/plugin/subscription. */
+						__( 'Your %(productNoun)s has been removed.' ),
+						{ productNoun }
+					)
+				);
+			}
 
 			// 4. Fire mutation in background. On failure, restore the purchase to
-			//    the cache — the list watches userPurchasesQuery for reappearance
-			//    and self-dismisses its notice. The cache guard's re-strip happens
-			//    synchronously inside the QueryCache notify callback, so the list's
-			//    useEffect never observes transient successes-path reappearances.
-			removePurchaseMutator.mutateAsync( purchase.ID ).catch( () => {
-				cleanupGuard();
-				queryClient.setQueryData(
-					userPurchasesQuery().queryKey,
-					( old: Purchase[] | undefined ) => {
-						const list = old ?? [];
-						return list.some( ( p ) => p.ID === purchase.ID ) ? list : [ ...list, purchase ];
-					}
-				);
-				createErrorNotice( __( 'Failed to remove your purchase. Please try again.' ), {
-					type: 'snackbar',
+			//    the cache and surface an error snackbar (visible on whichever
+			//    destination the user landed on). When the atomic-revert path routed
+			//    to the purchases list, that list also watches userPurchasesQuery for
+			//    reappearance and self-dismisses its notice. The cache guard's
+			//    re-strip happens synchronously inside the QueryCache notify callback,
+			//    so the list's useEffect never observes transient success-path
+			//    reappearances.
+			removePurchaseMutator
+				.mutateAsync( purchase.ID )
+				.then( () => {
+					// The server has removed the purchase; refresh the site caches so
+					// the destination site page drops the now-defunct plan.
+					invalidateSiteAfterRemoval();
+				} )
+				.catch( () => {
+					cleanupGuard();
+					queryClient.setQueryData(
+						userPurchasesQuery().queryKey,
+						( old: Purchase[] | undefined ) => {
+							const list = old ?? [];
+							return list.some( ( p ) => p.ID === purchase.ID ) ? list : [ ...list, purchase ];
+						}
+					);
+					createErrorNotice( __( 'Failed to remove your purchase. Please try again.' ), {
+						type: 'snackbar',
+					} );
+					queryClient.invalidateQueries( { queryKey: userPurchasesQuery().queryKey } );
 				} );
-				queryClient.invalidateQueries( { queryKey: userPurchasesQuery().queryKey } );
-			} );
 		}, 1500 );
 	};
 
@@ -1394,16 +1409,19 @@ function CancelPurchaseInner() {
 		const effectiveFlowType = computeEffectiveFlowType( state.cancelIntent );
 
 		if ( shouldFireMutationOnConfirm() ) {
-			// Cancel intent: the mutation already fired at confirm-click via
-			// fireMutationFromConfirm. Navigate with the appropriate search param
-			// so the inline notice renders on the destination screen.
+			// The mutation already fired at confirm-click via fireMutationFromConfirm.
+			// A refund removes the purchase, so route away like the other removal
+			// paths; disabling auto-renew keeps it, so return to its settings page
+			// where the cancelled notice renders.
+			if ( effectiveFlowType === CANCEL_FLOW_TYPE.CANCEL_WITH_REFUND ) {
+				invalidateSiteAfterRemoval();
+				navigateAfterRemoval( __( 'Your refund has been processed and your purchase removed.' ) );
+				return;
+			}
 			navigate( {
 				to: purchaseSettingsRoute.fullPath,
 				params: { purchaseId: purchase.ID },
-				search:
-					effectiveFlowType === CANCEL_FLOW_TYPE.CANCEL_WITH_REFUND
-						? { refunded: true }
-						: getCancelledSearch(),
+				search: getCancelledSearch(),
 			} );
 			return;
 		}
@@ -1511,7 +1529,7 @@ function CancelPurchaseInner() {
 			! purchase.is_cancelable &&
 			! purchase.is_removable
 		) {
-			if ( purchase.subscription_status !== 'active' && ! createdErrorNoticeForRedirect.current ) {
+			if ( isRemoved( purchase ) && ! createdErrorNoticeForRedirect.current ) {
 				createErrorNotice(
 					__(
 						'This purchase has already been removed. Please contact support if you believe this to be in error.'
@@ -1769,7 +1787,6 @@ function CancelPurchaseInner() {
 				displayVariant,
 				purchase,
 				intent,
-				isSplitCancelRemoveEnabled,
 			} ) }
 		>
 			{ isSolutionsStep ? (

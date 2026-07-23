@@ -112,7 +112,7 @@ const PerformanceInsightTip = () => {
 	);
 };
 
-const PerformanceInsightFeedback = ( { chatId, hash }: { chatId: number; hash: string } ) => {
+const PerformanceInsightFeedback = ( { chatId, hash }: { chatId: string; hash: string } ) => {
 	const { recordTracksEvent } = useAnalytics();
 	const [ isSent, setIsSent ] = useState( false );
 	const [ isFeedbackModalOpen, setIsFeedbackModalOpen ] = useState( false );

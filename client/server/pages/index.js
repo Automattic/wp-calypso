@@ -14,22 +14,26 @@ import {
 import cookieParser from 'cookie-parser';
 import debugFactory from 'debug';
 import express from 'express';
-import { get, includes } from 'lodash';
 import { stringify } from 'qs';
 // eslint-disable-next-line no-restricted-imports
 import superagent from 'superagent'; // Don't have Node.js fetch lib yet.
 import { getDashboardFromHostname, isAllowedDashboardRoute } from 'calypso/dashboard/app/routing';
 import { isAllowedA4ADashboardHostname } from 'calypso/dashboard/app-a4a/routing';
-import { A4A_DASHBOARD_SECTION_DEFINITION } from 'calypso/dashboard/app-a4a/section';
-import { isAllowedCiabDashboardHostname } from 'calypso/dashboard/app-ciab/routing';
-import { CIAB_DASHBOARD_SECTION_DEFINITION } from 'calypso/dashboard/app-ciab/section';
-import { isAllowedDotcomDashboardHostname } from 'calypso/dashboard/app-dotcom/routing';
-import { DOTCOM_DASHBOARD_SECTION_DEFINITION } from 'calypso/dashboard/app-dotcom/section';
 import {
-	A4A_DASHBOARD_EXTRA_PATHS,
-	A4A_SIGNUP_PATHS,
-	DASHBOARD_SECTION_PATHS,
-} from 'calypso/dashboard/section';
+	A4A_DASHBOARD_SECTION_DEFINITION,
+	A4A_DASHBOARD_SECTION_PATHS,
+} from 'calypso/dashboard/app-a4a/section';
+import { isAllowedCiabDashboardHostname } from 'calypso/dashboard/app-ciab/routing';
+import {
+	CIAB_DASHBOARD_SECTION_DEFINITION,
+	CIAB_DASHBOARD_SECTION_PATHS,
+} from 'calypso/dashboard/app-ciab/section';
+import { isAllowedDotcomDashboardHostname } from 'calypso/dashboard/app-dotcom/routing';
+import {
+	DOTCOM_DASHBOARD_SECTION_DEFINITION,
+	DOTCOM_DASHBOARD_SECTION_PATHS,
+} from 'calypso/dashboard/app-dotcom/section';
+import { A4A_SIGNUP_PATHS } from 'calypso/dashboard/section';
 import isDashboardEnv from 'calypso/dashboard/utils/is-dashboard-env';
 import wooDnaConfig from 'calypso/jetpack-connect/woo-dna-config';
 import { STEPPER_SECTION_DEFINITION } from 'calypso/landing/stepper/section';
@@ -52,6 +56,7 @@ import {
 	attachBuildTimestamp,
 	attachHead,
 	attachI18n,
+	bumpStat,
 } from 'calypso/server/render';
 import sanitize from 'calypso/server/sanitize';
 import stateCache from 'calypso/server/state-cache';
@@ -306,6 +311,7 @@ function getDefaultContext( request, response, entrypoint = 'entry-main' ) {
 	context.app = {
 		// use ipv4 address when is ipv4 mapped address
 		clientIp: request.ip ? request.ip.replace( '::ffff:', '' ) : request.ip,
+		isFirefox: request.useragent.browser === 'Firefox',
 		isWpMobileApp: isWpMobileApp( request.useragent.source ),
 		isWcMobileApp: isWcMobileApp( request.useragent.source ),
 		isDevelopmentEnv: devEnvironments.includes( calypsoEnv ),
@@ -873,6 +879,13 @@ const setUpSectionContext = ( section, entrypoint ) => ( req, res, next ) => {
 	next();
 };
 
+const setNotFoundStatus = ( req, res, next ) => {
+	res.status( 404 );
+	// bumpStat only accepts 32 chars max for the value
+	bumpStat( 'dashboard-404', req.path.slice( 0, 32 ) );
+	next();
+};
+
 const render404 =
 	( entrypoint = 'entry-main' ) =>
 	( req, res ) => {
@@ -882,6 +895,33 @@ const render404 =
 
 		res.status( 404 ).send( renderJsx( '404', ctx ) );
 	};
+
+const DASHBOARD_VARIANTS = [
+	{
+		definition: DOTCOM_DASHBOARD_SECTION_DEFINITION,
+		paths: DOTCOM_DASHBOARD_SECTION_PATHS,
+		entrypoint: 'entry-dashboard-dotcom',
+		devEnv: 'development',
+		isAllowedHostname: isAllowedDotcomDashboardHostname,
+		extraMiddleware: [ loadDashboardLocaleData ],
+	},
+	{
+		definition: CIAB_DASHBOARD_SECTION_DEFINITION,
+		paths: CIAB_DASHBOARD_SECTION_PATHS,
+		entrypoint: 'entry-dashboard-ciab',
+		devEnv: 'development',
+		isAllowedHostname: isAllowedCiabDashboardHostname,
+		extraMiddleware: [ loadDashboardLocaleData ],
+	},
+	{
+		definition: A4A_DASHBOARD_SECTION_DEFINITION,
+		paths: A4A_DASHBOARD_SECTION_PATHS,
+		entrypoint: 'entry-dashboard-a4a',
+		devEnv: 'a8c-for-agencies-development',
+		isAllowedHostname: isAllowedA4ADashboardHostname,
+		extraMiddleware: [],
+	},
+];
 
 /*
 We don't use `next` but need to add it for express.js to
@@ -1007,14 +1047,14 @@ function wpcomPages( app ) {
 	// Redirect legacy `/menus` routes to the corresponding Customizer panel
 	// TODO: Move to `my-sites/customize` route defs once that section is isomorphic
 	app.get( [ '/menus', '/menus/:site?' ], ( req, res ) => {
-		const siteSlug = get( req.params, 'site', '' );
+		const siteSlug = req.params?.site ?? '';
 		const newRoute = '/customize/menus/' + siteSlug;
 		res.redirect( 301, newRoute );
 	} );
 
 	app.get( [ '/start/domain-first' ], function ( req, res ) {
 		let redirectUrl = '/start/domain';
-		const domain = get( req, 'query.new', false );
+		const domain = req?.query?.new ?? false;
 		if ( domain ) {
 			redirectUrl += '?new=' + encodeURIComponent( domain );
 		}
@@ -1034,8 +1074,8 @@ function wpcomPages( app ) {
 
 			ctx.clientData = config.clientData;
 			ctx.domainsLandingData = {
-				action: get( req, [ 'params', 'action' ], 'unknown-action' ),
-				query: get( req, 'query', {} ),
+				action: req?.params?.action ?? 'unknown-action',
+				query: req?.query ?? {},
 			};
 
 			const pageHtml = renderJsx( 'domains-landing', ctx );
@@ -1080,10 +1120,12 @@ function wpcomPages( app ) {
 		debug( 'Issuing API call to fetch user object' );
 		getBootstrappedUser( req )
 			.then( ( data ) => {
-				const activeFlags = get( data, 'meta.data.flags.active_flags', [] );
+				const activeFlags = data?.meta?.data?.flags?.active_flags ?? [];
 
 				// A8C check
-				if ( ! includes( activeFlags, 'calypso_support_user' ) ) {
+				if (
+					! ( Array.isArray( activeFlags ) && activeFlags.includes( 'calypso_support_user' ) )
+				) {
 					return res.send( renderJsx( 'support-user' ) );
 				}
 
@@ -1201,7 +1243,7 @@ export default function pages() {
 	 * SSR middleware if the request wasn't going to be resolved with SSR anyways.
 	 */
 	function handleSectionPath( section, sectionPath, entrypoint, reqFilter, extraMiddleware ) {
-		const pathRegex = pathToRegExp( sectionPath );
+		const pathRegex = sectionPath instanceof RegExp ? sectionPath : pathToRegExp( sectionPath );
 
 		app.get(
 			pathRegex,
@@ -1220,12 +1262,12 @@ export default function pages() {
 				next();
 			},
 			setUpRoute, // For SSR requests, this will happen in the serverRouter.
-			...( extraMiddleware ? [ extraMiddleware ] : [] ),
+			...( extraMiddleware ? [].concat( extraMiddleware ) : [] ),
 			serverRender
 		);
 	}
 
-	// Multi-site Dashboard routing.
+	// Special Calypso routes which also appear on `my.wordpress.com`
 	if ( isDashboardEnv() || calypsoEnv === 'development' ) {
 		const signupSectionDefinition = sections.find( ( s ) => s.name === 'signup' );
 		handleSectionPath( signupSectionDefinition, '/start', undefined, ( req ) =>
@@ -1237,31 +1279,6 @@ export default function pages() {
 		);
 		handleSectionPath( STEPPER_SECTION_DEFINITION, '/setup', 'entry-stepper', ( req ) =>
 			isAllowedDashboardRoute( { hostname: req.hostname, path: req.path } )
-		);
-		DASHBOARD_SECTION_PATHS.forEach( ( route ) => {
-			handleSectionPath(
-				DOTCOM_DASHBOARD_SECTION_DEFINITION,
-				route,
-				'entry-dashboard-dotcom',
-				( req ) => isAllowedDotcomDashboardHostname( req.hostname ),
-				loadDashboardLocaleData
-			);
-		} );
-		DASHBOARD_SECTION_PATHS.forEach( ( route ) => {
-			handleSectionPath(
-				CIAB_DASHBOARD_SECTION_DEFINITION,
-				route,
-				'entry-dashboard-ciab',
-				( req ) => isAllowedCiabDashboardHostname( req.hostname ),
-				loadDashboardLocaleData
-			);
-		} );
-		handleSectionPath(
-			CIAB_DASHBOARD_SECTION_DEFINITION,
-			'/start-store',
-			'entry-dashboard-ciab',
-			( req ) => isAllowedCiabDashboardHostname( req.hostname ),
-			loadDashboardLocaleData
 		);
 	}
 
@@ -1275,17 +1292,23 @@ export default function pages() {
 				isAllowedA4ADashboardHostname( req.hostname )
 			);
 		} );
-		DASHBOARD_SECTION_PATHS.forEach( ( route ) => {
-			handleSectionPath( A4A_DASHBOARD_SECTION_DEFINITION, route, 'entry-dashboard-a4a', ( req ) =>
-				isAllowedA4ADashboardHostname( req.hostname )
-			);
-		} );
-		A4A_DASHBOARD_EXTRA_PATHS.forEach( ( route ) => {
-			handleSectionPath( A4A_DASHBOARD_SECTION_DEFINITION, route, 'entry-dashboard-a4a', ( req ) =>
-				isAllowedA4ADashboardHostname( req.hostname )
-			);
-		} );
 	}
+
+	// Register each dashboard variant's explicit section paths.
+	DASHBOARD_VARIANTS.forEach( ( variant ) => {
+		if ( ! ( isDashboardEnv() || calypsoEnv === variant.devEnv ) ) {
+			return;
+		}
+		variant.paths.forEach( ( route ) =>
+			handleSectionPath(
+				variant.definition,
+				route,
+				variant.entrypoint,
+				( req ) => variant.isAllowedHostname( req.hostname ),
+				variant.extraMiddleware
+			)
+		);
+	} );
 
 	sections
 		.filter( ( section ) => ! section.envId || section.envId.indexOf( config( 'env_id' ) ) > -1 )
@@ -1303,6 +1326,16 @@ export default function pages() {
 			}
 		} );
 
+	// The dashboard host has no login page; send /log-in to WordPress.com.
+	if ( isDashboardEnv() || calypsoEnv === 'development' ) {
+		app.get( pathToRegExp( '/log-in' ), ( req, res, next ) => {
+			if ( ! isAllowedDotcomDashboardHostname( req.hostname ) ) {
+				return next( 'route' );
+			}
+			res.redirect( config( 'wpcom_url' ) + req.originalUrl );
+		} );
+	}
+
 	// Set up login routing.
 	handleSectionPath( LOGIN_SECTION_DEFINITION, '/log-in', 'entry-login' );
 	loginRouter( serverRouter( app, setUpRoute, null ) );
@@ -1311,8 +1344,19 @@ export default function pages() {
 	registerCspReportRoute( app );
 
 	// Multi-site Dashboard routing.
-	// Return earlier since we don't need to set up any other routes.
 	if ( isDashboardEnv() ) {
+		// Serve the dashboard shell for any otherwise-unmatched path so the client
+		// router renders its own not-found page, instead of falling through to default.
+		DASHBOARD_VARIANTS.forEach( ( variant ) =>
+			handleSectionPath(
+				variant.definition,
+				/.*/,
+				variant.entrypoint,
+				( req ) => variant.isAllowedHostname( req.hostname ),
+				[ setNotFoundStatus, ...variant.extraMiddleware ]
+			)
+		);
+
 		return app;
 	}
 

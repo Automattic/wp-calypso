@@ -44,12 +44,18 @@
 		"typecheck": "tsc --build --dry"
 	},
 	"dependencies": {
-		"@automattic/agenttic-client": "^0.1.65",
+		"@automattic/agenttic-client": "^0.1.80",
 		"@automattic/calypso-analytics": "workspace:^",
 		"@automattic/calypso-url": "workspace:^",
+		"@automattic/components": "workspace:^",
 		"@wordpress/abilities": "^0.14.0",
+		"@wordpress/block-editor": "patch:@wordpress/block-editor@npm%3A15.20.0#~/.yarn/patches/@wordpress-block-editor-npm-15.20.0-2d52fc5cc4.patch",
+		"@wordpress/blocks": "^15.21.0",
 		"@wordpress/components": "^35.0.0",
-		"@wordpress/i18n": "^6.21.0"
+		"@wordpress/compose": "^7.23.0",
+		"@wordpress/hooks": "^4.46.0",
+		"@wordpress/i18n": "^6.21.0",
+		"@wordpress/icons": "^13.3.0"
 	},
 	"devDependencies": {
 		"@automattic/calypso-typescript-config": "workspace:^",
@@ -60,8 +66,8 @@
 	"peerDependencies": {
 		"@wordpress/data": "^10.48.0",
 		"@wordpress/element": "^8.0.0",
-		"react": "^18.3.1",
-		"react-dom": "^18.3.1"
+		"react": "^18.3.1 || ^19.0.0",
+		"react-dom": "^18.3.1 || ^19.0.0"
 	},
 	"private": true
 }

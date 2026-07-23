@@ -37,6 +37,7 @@ export function conversations( context, next ) {
 			key="conversations"
 			streamKey={ streamKey }
 			trackScrollPage={ scrollTracker }
+			placeholder={ null }
 		/>
 	);
 	next();
@@ -73,6 +74,7 @@ export function conversationsA8c( context, next ) {
 			streamKey={ streamKey }
 			store={ { id: streamKey } }
 			trackScrollPage={ scrollTracker }
+			placeholder={ null }
 		/>
 	);
 	next();

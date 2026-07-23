@@ -1,4 +1,4 @@
-import { flow } from 'lodash';
+import { flow } from '@automattic/js-utils';
 import addImageWrapperElement from 'calypso/lib/post-normalizer/rule-add-image-wrapper-element';
 import addMinutesToRead from 'calypso/lib/post-normalizer/rule-add-minutes-to-read';
 import convertVideoPressBlocks from 'calypso/lib/post-normalizer/rule-content-convert-videopress-blocks';

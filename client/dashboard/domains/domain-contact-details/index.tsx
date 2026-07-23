@@ -13,6 +13,7 @@ import { store as noticesStore } from '@wordpress/notices';
 import { useMemo } from 'react';
 import { PerformanceTrackerStop } from '../../app/performance-tracking';
 import { domainRoute } from '../../app/router/domains';
+import { withSnackbar } from '../../app/snackbars/with-snackbar';
 import { Card, CardBody } from '../../components/card';
 import ContactForm from '../../components/domain-contact-details-form/contact-form';
 import ContactFormPrivacy from '../../components/domain-contact-details-form/contact-form-privacy';
@@ -48,54 +49,41 @@ export default function DomainContactInfo() {
 		return { initialData, key: JSON.stringify( initialData ) };
 	}, [ registrantWhoisData ] );
 
-	const validateMutation = useMutation( {
-		...domainWhoisValidateMutation( [ domainName ] ),
-		meta: { snackbar: { error: { source: 'server' } } },
-	} );
-	const updateMutation = useMutation( {
-		...domainWhoisMutation( domainName ),
-		meta: {
-			snackbar: {
-				/* translators: %s is the domain name */
-				success: sprintf( __( 'Contact details for %s saved.' ), domainName ),
-				error: { source: 'server' },
-			},
-		},
-	} );
-	const savePrivacyMutation = useMutation( {
-		...domainPrivacySaveMutation( domainName ),
-		meta: {
-			snackbar: {
-				/* translators: %s is the domain name */
-				success: sprintf( __( 'Privacy has been successfully updated for %s!' ), domainName ),
-				error: { source: 'server' },
-			},
-		},
-	} );
+	const validateMutation = useMutation(
+		withSnackbar( domainWhoisValidateMutation( [ domainName ] ), { error: { source: 'server' } } )
+	);
+	const updateMutation = useMutation(
+		withSnackbar( domainWhoisMutation( domainName ), {
+			/* translators: %s is the domain name */
+			success: sprintf( __( 'Contact details for %s saved.' ), domainName ),
+			error: { source: 'server' },
+		} )
+	);
+	const savePrivacyMutation = useMutation(
+		withSnackbar( domainPrivacySaveMutation( domainName ), {
+			/* translators: %s is the domain name */
+			success: sprintf( __( 'Privacy has been successfully updated for %s!' ), domainName ),
+			error: { source: 'server' },
+		} )
+	);
 
-	const disclosePrivacyMutation = useMutation( {
-		...domainPrivacyDiscloseSaveMutation( domainName ),
-		meta: {
-			snackbar: {
-				success: sprintf(
-					/* translators: %s is the domain name */
-					__( 'Your contact information for %s is now publicly visible!' ),
-					domainName
-				),
-				error: { source: 'server' },
-			},
-		},
-	} );
-	const redactPrivacyMutation = useMutation( {
-		...domainPrivacyDiscloseSaveMutation( domainName ),
-		meta: {
-			snackbar: {
+	const disclosePrivacyMutation = useMutation(
+		withSnackbar( domainPrivacyDiscloseSaveMutation( domainName ), {
+			success: sprintf(
 				/* translators: %s is the domain name */
-				success: sprintf( __( 'Your contact information for %s is now redacted!' ), domainName ),
-				error: { source: 'server' },
-			},
-		},
-	} );
+				__( 'Your contact information for %s is now publicly visible!' ),
+				domainName
+			),
+			error: { source: 'server' },
+		} )
+	);
+	const redactPrivacyMutation = useMutation(
+		withSnackbar( domainPrivacyDiscloseSaveMutation( domainName ), {
+			/* translators: %s is the domain name */
+			success: sprintf( __( 'Your contact information for %s is now redacted!' ), domainName ),
+			error: { source: 'server' },
+		} )
+	);
 
 	const isSubmitting =
 		validateMutation.isPending ||

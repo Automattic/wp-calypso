@@ -37,7 +37,7 @@
 		"@automattic/jetpack-ai-sidebar": "workspace:^",
 		"@tanstack/react-query": "^5.83.0",
 		"@wordpress/components": "^28.23.0",
-		"@wordpress/compose": "patch:@wordpress/compose@npm%3A8.1.0#~/.yarn/patches/@wordpress-compose-npm-8.1.0-ea108e3129.patch",
+		"@wordpress/compose": "^8.2.0",
 		"@wordpress/data": "^10.48.0",
 		"@wordpress/i18n": "^6.21.0",
 		"@wordpress/plugins": "^7.48.0"
@@ -49,13 +49,15 @@
 		"@wordpress/dependency-extraction-webpack-plugin": "^6.24.0",
 		"@wordpress/readable-js-assets-webpack-plugin": "^3.24.0",
 		"copy-webpack-plugin": "^10.2.4",
+		"postcss-prefix-selector": "^1.16.1",
+		"sass": "1.77.8",
 		"webpack": "^5.99.8"
 	},
 	"peerDependencies": {
 		"@automattic/calypso-router": "workspace:^",
 		"@wordpress/data": "^10.48.0",
 		"@wordpress/element": "^8.0.0",
-		"postcss": "^8.5.3",
+		"postcss": "^8.5.15",
 		"react": "^18.2.0",
 		"react-dom": "^18.2.0",
 		"redux": "^5.0.1"
