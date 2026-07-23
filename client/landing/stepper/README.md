@@ -393,6 +393,15 @@ flows keep working unchanged:
   `PlansFeaturesMain` into the existing `plans-grid-next` override path). All optional and
   default-safe. See
   [`steps-repository/unified-plans/index.tsx`](/client/landing/stepper/declarative-flow/internals/steps-repository/unified-plans/index.tsx).
+- The `__user` (`user`) step exposes `headerText`, `subHeaderText`, `hideLoginLink` (hides the
+  "Log in" link in both the V2 top bar and the V1 footer) and `allowedSocialServices` (restricts
+  which social sign-in providers are offered). This step is special: it is **auto-injected** by
+  `injectUserStepInSteps()` when a flow marks a step `requiresLoggedInUser`, so it is not in the
+  flow's `initialize()` array. Its props are therefore passed under the reserved `user` key of
+  `useStepsProps()` — the return type is widened with
+  `MapStepsToTheirAcceptedProps<[ typeof PRIVATE_STEPS.USER ]>` so a flow can set them once. All
+  optional and default-safe. See
+  [`steps-repository/__user/index.tsx`](/client/landing/stepper/declarative-flow/internals/steps-repository/__user/index.tsx).
 
 #### Renaming steps
 
