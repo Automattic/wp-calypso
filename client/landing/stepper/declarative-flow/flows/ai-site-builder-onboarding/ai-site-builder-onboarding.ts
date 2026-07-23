@@ -21,6 +21,12 @@ import {
 import { setSelectedSiteId } from 'calypso/state/ui/actions';
 import { useQuery } from '../../../hooks/use-query';
 import { ONBOARD_STORE, SITE_STORE } from '../../../stores';
+import {
+	getBuildWowSiteIdentifier,
+	getBuildWowSiteSpecUrl,
+	logBuildWowEvent,
+	requestBuildWowSite,
+} from '../../../utils/build-wow';
 import { stepsWithRequiredLogin } from '../../../utils/steps-with-required-login';
 import { STEPS } from '../../internals/steps';
 import { ProcessingResult } from '../../internals/steps-repository/processing-step/constants';
@@ -48,6 +54,7 @@ async function initialize( reduxStore: Store ) {
 		STEPS.UNIFIED_PLANS,
 		STEPS.SITE_CREATION_STEP,
 		STEPS.PROCESSING,
+		STEPS.SETUP_YOUR_SITE_AI,
 		STEPS.ERROR,
 	] );
 }
@@ -120,6 +127,71 @@ const aiSiteBuilderOnboarding: FlowV2< typeof initialize > = {
 				case STEPS.SITE_CREATION_STEP.slug:
 					return navigate( STEPS.PROCESSING.slug );
 
+				case STEPS.SETUP_YOUR_SITE_AI.slug: {
+					const setupChoice = providedDependencies?.setupChoice;
+					const siteSlug = providedDependencies?.siteSlug as string;
+					const siteId = providedDependencies?.siteId as number | string | undefined;
+					const prompt =
+						( providedDependencies?.prompt as string | undefined ) ??
+						query.get( 'prompt' ) ??
+						undefined;
+					const source = query.get( 'source' );
+
+					if ( setupChoice === 'generate-theme' ) {
+						const siteIdentifier = getBuildWowSiteIdentifier( { siteSlug, siteId } );
+						if ( ! siteIdentifier ) {
+							logBuildWowEvent( 'start_missing_site', {
+								site_slug: siteSlug,
+								site_id: siteId,
+							} );
+							return navigate( STEPS.ERROR.slug );
+						}
+
+						try {
+							await requestBuildWowSite( siteIdentifier );
+							logBuildWowEvent( 'start_success', {
+								site_identifier: siteIdentifier,
+							} );
+						} catch ( error ) {
+							logBuildWowEvent( 'start_error', {
+								site_identifier: siteIdentifier,
+								error: error instanceof Error ? error.message : String( error ),
+							} );
+							return navigate( STEPS.ERROR.slug );
+						}
+
+						window.location.assign(
+							getBuildWowSiteSpecUrl( {
+								siteSlug,
+								siteId,
+								source,
+							} )
+						);
+						return;
+					}
+
+					if ( setupChoice === 'build-with-ai' ) {
+						const site = await resolveSelect( SITE_STORE ).getSite( siteId || siteSlug );
+						const siteUrl = site?.URL || `https://${ siteSlug }`;
+						window.location.assign(
+							addQueryArgs( `${ siteUrl.replace( /\/$/, '' ) }/wp-admin/site-editor.php`, {
+								canvas: 'edit',
+								'ai-step': 'spec',
+								referrer: AI_SITE_BUILDER_ONBOARDING_FLOW,
+								...( prompt && { prompt } ),
+								...( source && { source } ),
+								checkout: 'success',
+							} )
+						);
+						return;
+					}
+
+					if ( setupChoice === 'blank-site' ) {
+						window.location.assign( `/home/${ siteSlug }` );
+					}
+					return;
+				}
+
 				case STEPS.PROCESSING.slug: {
 					if ( providedDependencies.processingResult === ProcessingResult.FAILURE ) {
 						return navigate( STEPS.ERROR.slug );
@@ -185,16 +257,19 @@ const aiSiteBuilderOnboarding: FlowV2< typeof initialize > = {
 					const specId = query.get( 'spec_id' );
 					window.sessionStorage.removeItem( 'stored_ai_prompt' );
 
-					const specEditorUrl = `${ site.URL }/wp-admin/site-editor.php`;
-					const specUrl = addQueryArgs( specEditorUrl, {
-						canvas: 'edit',
-						'ai-step': 'spec',
-						referrer: AI_SITE_BUILDER_ONBOARDING_FLOW,
-						...( prompt && { prompt } ),
-						...( source && { source } ),
-						...( specId && { spec_id: specId } ),
-						checkout: 'success',
-					} );
+					const setupChoiceUrl = pathToUrl(
+						addQueryArgs(
+							`/setup/${ AI_SITE_BUILDER_ONBOARDING_FLOW }/${ STEPS.SETUP_YOUR_SITE_AI.slug }`,
+							{
+								siteId,
+								siteSlug,
+								...( prompt && { prompt } ),
+								...( source && { source } ),
+								...( specId && { spec_id: specId } ),
+								checkout: 'success',
+							}
+						)
+					);
 					// On checkout exit we must not drop the user into Big Sky (the
 					// success destination) before they've paid. Send them back into
 					// the flow instead: keeping the cart returns to the plan step,
@@ -219,14 +294,14 @@ const aiSiteBuilderOnboarding: FlowV2< typeof initialize > = {
 						)
 					);
 
-					persistSignupDestination( specUrl );
+					persistSignupDestination( setupChoiceUrl );
 					setSignupCompleteSlug( siteSlug );
 					setSignupCompleteFlowName( flowName );
 					setSignupCompleteSiteID( siteId );
 
 					return window.location.assign(
 						addQueryArgs( `/checkout/${ encodeURIComponent( siteSlug ) }`, {
-							redirect_to: specUrl,
+							redirect_to: setupChoiceUrl,
 							checkoutBackUrl,
 							checkoutBackUrlDomains,
 							signup: 1,
