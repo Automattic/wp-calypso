@@ -553,7 +553,6 @@ const wpcomAllowedOrigins = [
 	'https://agencies.automattic.com',
 	'https://my.wordpress.com',
 	'https://woocommerce.com',
-	'https://my.woocommerce.com',
 	'https://woocommercealshakero.jurassic.tube',
 	'http://wpcalypso.wordpress.com', // for running docker on dev instances
 	'http://widgets.wp.com',
