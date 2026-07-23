@@ -145,11 +145,19 @@ export function useProductInstall( {
 		return () => clearTimeout( id );
 	}, [ hasAtomicFeature, isJetpackSelfHosted, nonInstallablePlanError ] );
 
+	// Whether the marketplace handoff (from checkout or the plugin/theme page) authorized this
+	// install. Unlike marketplaceInstallationInProgress this stays true once the install completes,
+	// so a finished install isn't mistaken for a direct page visit and re-shown the access error.
+	const isMarketplaceInstallAuthorized =
+		primaryDomain === selectedSiteSlug &&
+		!! productSlugInstalled &&
+		[ pluginSlug, themeSlug ].includes( productSlugInstalled );
+
 	const isInstallAuthorizationMissing =
 		// 1. This is a plugin upload flow (via zip file) and we don't have a primary domain set
 		( isPluginUploadFlow && ! primaryDomain ) ||
-		// 2. This is a marketplace plugin installation but the installation process hasn't started
-		( ! isPluginUploadFlow && ! marketplaceInstallationInProgress );
+		// 2. This is a marketplace install that was never authorized (whether or not it has finished)
+		( ! isPluginUploadFlow && ! isMarketplaceInstallAuthorized );
 
 	// Flows that carry their own authorization never render this error, so don't arm the timer.
 	const noDirectAccessError = useDelayedCondition(

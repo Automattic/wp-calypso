@@ -29,6 +29,19 @@ const withUploadError = ( uploadError: object ) => ( {
 	plugins: { upload: { uploadError: { [ SITE_ID ]: uploadError } } },
 } );
 
+const SITE_SLUG = 'example.com';
+
+// A site that can install plugins (so the plan-error timer never fires), optionally with a
+// marketplace purchase-flow handoff seeded.
+const withInstallableSite = ( purchaseFlow?: object ) => ( {
+	ui: { selectedSiteId: SITE_ID },
+	sites: {
+		items: { [ SITE_ID ]: { ID: SITE_ID, URL: `https://${ SITE_SLUG }` } },
+		features: { [ SITE_ID ]: { data: { active: [ 'atomic' ] } } },
+	},
+	...( purchaseFlow ? { marketplace: { purchaseFlow } } : {} ),
+} );
+
 describe( 'useProductInstall', () => {
 	describe( 'steps', () => {
 		it( 'lists set-up, install, and activate for a marketplace plugin', () => {
@@ -90,5 +103,41 @@ describe( 'useProductInstall', () => {
 				expect( result.current.error ).toEqual( { type: 'rejected-upload', reason } );
 			}
 		);
+
+		it( 'prompts to activate a theme reached without an install handoff', () => {
+			jest.useFakeTimers();
+			try {
+				const { result } = renderProductInstall(
+					{ themeSlug: 'twentytwentyfour' },
+					withInstallableSite()
+				);
+				act( () => {
+					jest.advanceTimersByTime( 2000 );
+				} );
+				expect( result.current.error ).toEqual( { type: 'theme-direct-install' } );
+			} finally {
+				jest.useRealTimers();
+			}
+		} );
+
+		it( 'does not re-show the access error after an authorized theme install completes', () => {
+			jest.useFakeTimers();
+			try {
+				const { result } = renderProductInstall(
+					{ themeSlug: 'twentytwentyfour' },
+					withInstallableSite( {
+						primaryDomain: SITE_SLUG,
+						productSlugInstalled: 'twentytwentyfour',
+						pluginInstallationStatus: 'COMPLETED',
+					} )
+				);
+				act( () => {
+					jest.advanceTimersByTime( 2000 );
+				} );
+				expect( result.current.error ).toBeNull();
+			} finally {
+				jest.useRealTimers();
+			}
+		} );
 	} );
 } );
