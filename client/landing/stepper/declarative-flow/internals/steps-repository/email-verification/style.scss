@@ -1,4 +1,4 @@
-.email-verification {
+.onboarding-email-verification {
 	align-items: center;
 	display: flex;
 	flex-direction: column;
@@ -6,17 +6,17 @@
 	text-align: center;
 }
 
-.email-verification__notice {
+.onboarding-email-verification__notice {
 	color: var(--color-text-subtle);
 	font-size: 0.875rem;
 	margin: 0;
 }
 
-.email-verification__notice.is-error {
+.onboarding-email-verification__notice.is-error {
 	color: var(--color-error);
 }
 
-.email-verification__resend {
+.onboarding-email-verification__resend {
 	color: var(--color-text-subtle);
 	font-size: 0.875rem;
 	margin: 0;

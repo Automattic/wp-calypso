@@ -2,7 +2,7 @@ import { Step } from '@automattic/onboarding';
 import { createInterpolateElement } from '@wordpress/element';
 import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
-import { useEffect, useRef } from 'react';
+import { useCallback, useEffect, useMemo, useRef } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import UserVerificationChecker from 'calypso/lib/user/verification-checker';
@@ -36,41 +36,48 @@ const EmailVerification: StepType< {
 
 	const title = __( 'Confirm your email address' );
 
+	const finish = useCallback(
+		( emailVerified: boolean ) => {
+			if ( hasSubmitted.current ) {
+				return;
+			}
+
+			hasSubmitted.current = true;
+			recordTracksEvent(
+				emailVerified
+					? 'calypso_signup_email_verification_confirmed'
+					: 'calypso_signup_email_verification_skipped',
+				{
+					flow,
+					seconds_on_step: Math.round( ( Date.now() - shownAt.current ) / 1000 ),
+				}
+			);
+			navigation.submit( { emailVerified } );
+		},
+		[ flow, navigation ]
+	);
+
 	useEffect( () => {
-		if ( ! isVerified || hasSubmitted.current ) {
-			return;
+		if ( isVerified ) {
+			finish( true );
 		}
+	}, [ isVerified, finish ] );
 
-		hasSubmitted.current = true;
-		recordTracksEvent( 'calypso_signup_email_verification_confirmed', {
-			flow,
-			seconds_on_step: Math.round( ( Date.now() - shownAt.current ) / 1000 ),
-		} );
-		navigation.submit( { emailVerified: true } );
-	}, [ isVerified, flow, navigation ] );
+	const onSkip = () => finish( false );
 
-	const onSkip = () => {
-		if ( hasSubmitted.current ) {
-			return;
-		}
-
-		hasSubmitted.current = true;
-		recordTracksEvent( 'calypso_signup_email_verification_skipped', {
-			flow,
-			seconds_on_step: Math.round( ( Date.now() - shownAt.current ) / 1000 ),
-		} );
-		navigation.submit( { emailVerified: false } );
-	};
-
-	const subText = createInterpolateElement(
-		sprintf(
-			// translators: %s is the email address the confirmation link was sent to.
-			__(
-				'Click the link we sent to <email>%s</email> and we’ll pick up right where you left off.'
+	const subText = useMemo(
+		() =>
+			createInterpolateElement(
+				sprintf(
+					// translators: %s is the email address the confirmation link was sent to.
+					__(
+						'Click the link we sent to <email>%s</email> and we’ll pick up right where you left off.'
+					),
+					user?.email ?? ''
+				),
+				{ email: <strong /> }
 			),
-			user?.email ?? ''
-		),
-		{ email: <strong /> }
+		[ __, user?.email ]
 	);
 
 	return (
@@ -81,7 +88,7 @@ const EmailVerification: StepType< {
 			<Step.CenteredColumnLayout
 				columnWidth={ 4 }
 				verticalAlign="center"
-				className="email-verification"
+				className="onboarding-email-verification"
 				topBar={
 					<Step.TopBar
 						leftElement={
@@ -96,7 +103,7 @@ const EmailVerification: StepType< {
 				</Step.PrimaryButton>
 
 				{ hasFailedCheck && (
-					<p className="email-verification__notice" role="status">
+					<p className="onboarding-email-verification__notice" role="status">
 						{ __(
 							'We haven’t received your confirmation yet. Open the link in your inbox, then try again.'
 						) }
@@ -104,12 +111,12 @@ const EmailVerification: StepType< {
 				) }
 
 				{ hasSendError && (
-					<p className="email-verification__notice is-error" role="alert">
+					<p className="onboarding-email-verification__notice is-error" role="alert">
 						{ __( 'We couldn’t send the email. Please try again in a moment.' ) }
 					</p>
 				) }
 
-				<p className="email-verification__resend">
+				<p className="onboarding-email-verification__resend">
 					{ secondsUntilResend > 0
 						? sprintf(
 								// translators: %d is the number of seconds the user has to wait before the email can be sent again.
