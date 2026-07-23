@@ -1,0 +1,481 @@
+import { siteByIdQuery } from '@automattic/api-queries';
+import {
+	PLAN_BUSINESS,
+	WPCOM_FEATURES_ATOMIC,
+	getPlan,
+	WPCOM_FEATURES_MANAGE_PLUGINS,
+} from '@automattic/calypso-products';
+import page from '@automattic/calypso-router';
+import { useQuery } from '@tanstack/react-query';
+import { useTranslate } from 'i18n-calypso';
+import { useEffect, useState, useMemo, useRef } from 'react';
+import { useQueryTheme } from 'calypso/components/data/query-theme';
+import EmptyContent from 'calypso/components/empty-content';
+import { isAtomicTransferredSite } from 'calypso/dashboard/utils/site-atomic-transfers';
+import { useInterval } from 'calypso/lib/interval';
+import { waitFor } from 'calypso/my-sites/marketplace/util';
+import { useSelector, useDispatch } from 'calypso/state';
+import { initiateAtomicTransfer } from 'calypso/state/atomic/transfers/actions';
+import { transferStates } from 'calypso/state/automated-transfer/constants';
+import { getAutomatedTransferStatus } from 'calypso/state/automated-transfer/selectors';
+import { getPurchaseFlowState } from 'calypso/state/marketplace/purchase-flow/selectors';
+import { MARKETPLACE_ASYNC_PROCESS_STATUS } from 'calypso/state/marketplace/types';
+import {
+	installPlugin,
+	activatePlugin,
+	fetchSitePlugins,
+} from 'calypso/state/plugins/installed/actions';
+import {
+	getPluginOnSite,
+	getStatusForPlugin,
+	isPluginActive,
+} from 'calypso/state/plugins/installed/selectors-ts';
+import { fetchPluginData as wporgFetchPluginData } from 'calypso/state/plugins/wporg/actions';
+import { getPlugin, isFetched } from 'calypso/state/plugins/wporg/selectors';
+import { getCurrentQueryArguments } from 'calypso/state/selectors/get-current-query-arguments';
+import getPluginUploadError from 'calypso/state/selectors/get-plugin-upload-error';
+import getPluginUploadProgress from 'calypso/state/selectors/get-plugin-upload-progress';
+import getUploadedPluginId from 'calypso/state/selectors/get-uploaded-plugin-id';
+import isPluginUploadComplete from 'calypso/state/selectors/is-plugin-upload-complete';
+import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
+import siteHasFeature from 'calypso/state/selectors/site-has-feature';
+import { isJetpackSite, getSiteAdminUrl } from 'calypso/state/sites/selectors';
+import {
+	initiateThemeTransfer as initiateTransfer,
+	installAndActivateTheme,
+	requestActiveTheme,
+} from 'calypso/state/themes/actions';
+import { getTheme, isThemeActive as getThemeActive } from 'calypso/state/themes/selectors';
+import {
+	getSelectedSite,
+	getSelectedSiteId,
+	getSelectedSiteSlug,
+} from 'calypso/state/ui/selectors';
+import ThemeDirectInstall from './theme-direct-install';
+import { useDelayedCondition } from './use-delayed-condition';
+import useMarketplaceAdditionalSteps from './use-marketplace-additional-steps';
+import type { TranslateResult } from 'i18n-calypso';
+
+// The state authorizing an install is handed off asynchronously, so allow for it arriving late.
+const INSTALL_HANDOFF_GRACE_PERIOD_MS = 2000;
+
+export function useProductInstall( {
+	pluginSlug = '',
+	themeSlug = '',
+}: {
+	pluginSlug?: string;
+	themeSlug?: string;
+} ) {
+	const isPluginUploadFlow = ! pluginSlug && ! themeSlug;
+	const [ currentStep, setCurrentStep ] = useState( 0 );
+	// Ref instead of state so the install effect can be guarded synchronously —
+	// the dispatch inside the effect notifies redux subscribers (via
+	// useSyncExternalStore) before a setState would commit, which would
+	// otherwise re-enter the effect and dispatch repeatedly.
+	const installFlowInitiatedRef = useRef( false );
+	const [ atomicFlow, setAtomicFlow ] = useState( false );
+	const [ nonInstallablePlanError, setNonInstallablePlanError ] = useState( false );
+	const [ userDirectInstallationAllowed, setUserDirectInstallationAllowed ] = useState( false );
+	// The signup "Get started" flow reaches this page via a full-page redirect, which drops the
+	// in-memory purchase-flow state that normally authorizes the install. When that redirect marks
+	// itself as trusted (directInstall), proceed with the install directly instead of waiting on
+	// handoff state that will never arrive (which otherwise leaves the page polling forever).
+	const directInstallFromSignup = useSelector( getCurrentQueryArguments )?.directInstall != null;
+	const directInstallationAllowed = userDirectInstallationAllowed || directInstallFromSignup;
+	const translate = useTranslate();
+	const dispatch = useDispatch();
+	const selectedSiteSlug = useSelector( getSelectedSiteSlug );
+	const selectedSite = useSelector( getSelectedSite );
+	const siteId = useSelector( getSelectedSiteId ) as number;
+	const pluginUploadProgress = useSelector( ( state ) => getPluginUploadProgress( state, siteId ) );
+	const pluginUploadError = useSelector( ( state ) => getPluginUploadError( state, siteId ) );
+	const pluginExists = pluginUploadError?.error === 'folder_exists';
+	const pluginMalicious = pluginUploadError?.error === 'plugin_malicious';
+	const pluginTooBig = pluginUploadError?.statusCode === 413;
+	const wporgPlugin = useSelector( ( state ) => getPlugin( state, pluginSlug ) );
+	const isWporgPluginFetched = useSelector( ( state ) => isFetched( state, pluginSlug ) );
+	const uploadedPluginSlug = useSelector( ( state ) =>
+		getUploadedPluginId( state, siteId )
+	) as string;
+	const pluginUploadComplete = useSelector( ( state ) => isPluginUploadComplete( state, siteId ) );
+	const installedPlugin = useSelector( ( state ) =>
+		getPluginOnSite( state, siteId, isPluginUploadFlow ? uploadedPluginSlug : pluginSlug )
+	);
+	const pluginActive = useSelector( ( state ) =>
+		isPluginActive( state, siteId, isPluginUploadFlow ? uploadedPluginSlug : pluginSlug )
+	);
+	const automatedTransferStatus = useSelector( ( state ) =>
+		getAutomatedTransferStatus( state, siteId )
+	);
+
+	const pluginInstallStatus = useSelector( ( state ) =>
+		getStatusForPlugin( state, siteId, pluginSlug )
+	);
+
+	const wpOrgTheme = useSelector( ( state ) => getTheme( state, 'wporg', themeSlug ) );
+	const isThemeActive = useSelector( ( state ) => getThemeActive( state, themeSlug, siteId ) );
+	useQueryTheme( 'wporg', themeSlug );
+
+	const { pluginInstallationStatus, productSlugInstalled, primaryDomain } =
+		useSelector( getPurchaseFlowState );
+
+	const isInstallationPending =
+		pluginInstallationStatus !== MARKETPLACE_ASYNC_PROCESS_STATUS.COMPLETED &&
+		primaryDomain === selectedSiteSlug;
+	const marketplaceInstallationInProgress = isPluginUploadFlow
+		? isInstallationPending
+		: isInstallationPending &&
+		  !! productSlugInstalled &&
+		  [ pluginSlug, themeSlug ].includes( productSlugInstalled );
+
+	const isJetpack = useSelector( ( state ) => isJetpackSite( state, selectedSite?.ID ?? null ) );
+	const isAtomic = useSelector( ( state ) =>
+		isSiteAutomatedTransfer( state, selectedSite?.ID ?? null )
+	);
+	const isJetpackSelfHosted = selectedSite && isJetpack && ! isAtomic;
+
+	const hasAtomicFeature = useSelector( ( state ) =>
+		siteHasFeature( state, selectedSite?.ID ?? null, WPCOM_FEATURES_ATOMIC )
+	);
+
+	// retrieve plugin data if not available
+	useEffect( () => {
+		if ( ! isWporgPluginFetched ) {
+			dispatch( wporgFetchPluginData( pluginSlug ) );
+		}
+	}, [ isWporgPluginFetched, pluginSlug, dispatch ] );
+
+	// The plan's feature list can arrive late, so give it 2s before concluding that the site
+	// can't install plugins. Any change to the conditions restarts the timer.
+	useEffect( () => {
+		if ( hasAtomicFeature || isJetpackSelfHosted || nonInstallablePlanError ) {
+			return;
+		}
+		const id = setTimeout( () => setNonInstallablePlanError( true ), 2000 );
+		return () => clearTimeout( id );
+	}, [ hasAtomicFeature, isJetpackSelfHosted, nonInstallablePlanError ] );
+
+	const isInstallAuthorizationMissing =
+		// 1. This is a plugin upload flow (via zip file) and we don't have a primary domain set
+		( isPluginUploadFlow && ! primaryDomain ) ||
+		// 2. This is a marketplace plugin installation but the installation process hasn't started
+		( ! isPluginUploadFlow && ! marketplaceInstallationInProgress );
+
+	// Flows that carry their own authorization never render this error, so don't arm the timer.
+	const noDirectAccessError = useDelayedCondition(
+		isInstallAuthorizationMissing && ! directInstallationAllowed,
+		INSTALL_HANDOFF_GRACE_PERIOD_MS
+	);
+
+	// Upload flow startup
+	useEffect( () => {
+		if ( 100 !== pluginUploadProgress ) {
+			return;
+		}
+		// For smaller uploads or fast networks give
+		// the chance to Upload Plugin step to be shown
+		// before moving to next step.
+		const id = setTimeout( () => setCurrentStep( 1 ), 1000 );
+		return () => clearTimeout( id );
+	}, [ pluginUploadProgress ] );
+
+	// Installing plugin flow startup
+	useEffect( () => {
+		if (
+			( marketplaceInstallationInProgress || directInstallationAllowed ) &&
+			! isPluginUploadFlow &&
+			! installFlowInitiatedRef.current &&
+			( wporgPlugin || wpOrgTheme )
+		) {
+			installFlowInitiatedRef.current = true;
+			// Intentionally uncancelable. The ref above blocks re-entry, so tying this to the
+			// effect's lifetime would let a dependency change drop the step advance for good
+			// rather than reschedule it — and the dispatches below change state this effect reads.
+			const triggerInstallFlow = () => {
+				waitFor( 1 ).then( () => setCurrentStep( 1 ) );
+			};
+
+			if ( isJetpack || isAtomic ) {
+				if ( wpOrgTheme ) {
+					// initilize theme activating
+					dispatch( installAndActivateTheme( wpOrgTheme.id, siteId ) );
+				} else {
+					// initialize plugin installing
+					dispatch( installPlugin( siteId, wporgPlugin, false ) );
+				}
+
+				triggerInstallFlow();
+			} else if ( hasAtomicFeature ) {
+				// initialize atomic flow
+				if ( wpOrgTheme ) {
+					dispatch( initiateAtomicTransfer( siteId, { themeSlug, context: 'theme_install' } ) );
+				} else {
+					setAtomicFlow( true );
+					dispatch( initiateTransfer( siteId, null, pluginSlug, '', 'plugin_install' ) );
+				}
+
+				triggerInstallFlow();
+			}
+		}
+	}, [
+		marketplaceInstallationInProgress,
+		directInstallationAllowed,
+		isPluginUploadFlow,
+		siteId,
+		wporgPlugin,
+		wpOrgTheme,
+		pluginSlug,
+		themeSlug,
+		dispatch,
+		hasAtomicFeature,
+		isAtomic,
+		isJetpack,
+	] );
+
+	// Validate completion of atomic transfer flow
+	useEffect( () => {
+		if ( atomicFlow && currentStep === 1 && transferStates.COMPLETE === automatedTransferStatus ) {
+			setCurrentStep( 2 );
+		}
+	}, [ atomicFlow, automatedTransferStatus, currentStep ] );
+
+	// Validate plugin is already installed and activate
+	useEffect( () => {
+		if (
+			installedPlugin &&
+			currentStep === 1 &&
+			( ! isPluginUploadFlow || ( isPluginUploadFlow && pluginUploadComplete ) )
+		) {
+			dispatch(
+				activatePlugin( siteId, {
+					slug: installedPlugin?.slug,
+					id: installedPlugin?.id,
+				} )
+			);
+			setCurrentStep( 2 );
+		}
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [ pluginUploadComplete, installedPlugin, setCurrentStep ] );
+
+	// Fetch fresh site data (including admin_url) post-transfer
+	const { data: freshSite } = useQuery( {
+		...siteByIdQuery( siteId ?? 0 ),
+		enabled: !! siteId && ( ! atomicFlow || automatedTransferStatus === transferStates.COMPLETE ),
+		refetchInterval: ( query ) =>
+			query.state.data && isAtomicTransferredSite( query.state.data ) ? false : 2000,
+		staleTime: 0,
+		refetchOnMount: 'always',
+	} );
+
+	const freshAdminUrl = freshSite?.options?.admin_url;
+	const isAtomicTransferReady = freshSite ? isAtomicTransferredSite( freshSite ) : false;
+	const pluginsUrlFresh = freshAdminUrl
+		? `${ freshAdminUrl }plugins.php?activate=true&plugin_status=active`
+		: null;
+
+	const pluginsUrlSelector = useSelector( ( state ) =>
+		getSiteAdminUrl( state, siteId, 'plugins.php?activate=true&plugin_status=active' )
+	);
+
+	// Prefer fresh URL when available; if in atomic flow, wait for fresh URL
+	const pluginsUrlFinal = atomicFlow ? pluginsUrlFresh : pluginsUrlFresh || pluginsUrlSelector;
+
+	// For marketplace plugins (e.g. sensei-pro), the atomic transfer + plugin install
+	// is initiated during checkout, not by this component. The wporg data is unavailable,
+	// so atomicFlow is never set. Once the site is atomic, poll for installed plugins
+	// so that the existing redirect (installedPlugin && pluginActive) fires.
+	const isMarketplacePluginFlow =
+		! atomicFlow &&
+		! isPluginUploadFlow &&
+		!! pluginSlug &&
+		!! freshSite?.is_wpcom_atomic &&
+		wporgPlugin?.wporg === false;
+
+	useInterval(
+		() => dispatch( fetchSitePlugins( siteId ) ),
+		isMarketplacePluginFlow && ! pluginActive ? 3000 : null
+	);
+
+	const canManagePlugins = useSelector( ( state ) => {
+		return siteHasFeature( state, selectedSite?.ID, WPCOM_FEATURES_MANAGE_PLUGINS );
+	} );
+	// Check completition of all flows and redirect to thank you page
+	useEffect( () => {
+		if (
+			// Happens in 3 cases:
+			// - Click on "Install and activate" button for any plugin on /plugins/<site_name>
+			// - Install with the help of uploading archive of a plugins
+			// - If it's simple site which doesn't support plugins, then installing and activation happens at the same time with upgrading to Business plan
+			( installedPlugin && pluginActive ) ||
+			// Transfer to atomic using a marketplace plugin
+			( atomicFlow &&
+				transferStates.COMPLETE === automatedTransferStatus &&
+				canManagePlugins &&
+				isAtomicTransferReady ) ||
+			// Transfer to atomic uploading a zip plugin
+			( uploadedPluginSlug &&
+				isPluginUploadFlow &&
+				! isAtomic &&
+				transferStates.COMPLETE === automatedTransferStatus &&
+				canManagePlugins &&
+				isAtomicTransferReady )
+		) {
+			// Require a resolved pluginsUrlFinal before redirecting
+			if ( ! pluginsUrlFinal ) {
+				return;
+			}
+			waitFor( 1 ).then( () => {
+				window.location.href = pluginsUrlFinal as string;
+			} );
+		}
+	}, [
+		pluginActive,
+		automatedTransferStatus,
+		atomicFlow,
+		isPluginUploadFlow,
+		isAtomic,
+		canManagePlugins,
+		installedPlugin,
+		uploadedPluginSlug,
+		pluginsUrlFinal,
+		isAtomicTransferReady,
+	] ); // We need to trigger this hook also when `automatedTransferStatus` changes cause the plugin install is done on the background in that case.
+
+	// Validate theme is already active
+	useEffect( () => {
+		if ( themeSlug && wpOrgTheme && isThemeActive ) {
+			waitFor( 1 ).then( () =>
+				page.redirect(
+					`/marketplace/thank-you/${ selectedSiteSlug }?themes=${ themeSlug }&hide-progress-bar`
+				)
+			);
+		}
+	}, [ themeSlug, wpOrgTheme, isThemeActive, selectedSiteSlug ] );
+
+	// Polling for theme activation status
+	useInterval(
+		() => {
+			dispatch( requestActiveTheme( siteId ) );
+		},
+		! themeSlug || currentStep === 0 || ( themeSlug && wpOrgTheme && isThemeActive ) ? null : 3000
+	);
+
+	const steps = useMemo( () => {
+		if ( themeSlug ) {
+			return [ translate( 'Setting up theme installation' ), translate( 'Activating theme' ) ];
+		}
+
+		return [
+			isPluginUploadFlow
+				? translate( 'Uploading plugin' )
+				: translate( 'Setting up plugin installation' ),
+			translate( 'Installing plugin' ),
+			translate( 'Activating plugin' ),
+		];
+	}, [ themeSlug, isPluginUploadFlow, translate ] );
+	const additionalSteps = useMarketplaceAdditionalSteps();
+
+	const renderError = () => {
+		// Evaluate error causes in priority order
+		if ( nonInstallablePlanError ) {
+			return (
+				<EmptyContent
+					title={ null }
+					line={ translate(
+						"Your current plan doesn't allow plugin installation. Please upgrade to %(businessPlanName)s plan first.",
+						{
+							args: { businessPlanName: getPlan( PLAN_BUSINESS )?.getTitle() ?? '' },
+						}
+					) }
+					action={ translate( 'Upgrade to %(planName)s Plan', {
+						args: { planName: getPlan( PLAN_BUSINESS )?.getTitle() ?? '' },
+					} ) }
+					actionURL={ `/checkout/${ selectedSite?.slug }/business?redirect_to=/marketplace/plugin/${ pluginSlug }/install/${ selectedSite?.slug }#step2` }
+				/>
+			);
+		}
+		if ( isPluginUploadFlow && noDirectAccessError && ! directInstallationAllowed ) {
+			return (
+				<EmptyContent
+					title={ null }
+					line={ translate(
+						'This URL should not be accessed directly. Please try to upload the plugin again.'
+					) }
+					action={ translate( 'Go to the upload page' ) }
+					actionURL={ `/plugins/upload/${ selectedSite?.slug }` }
+				/>
+			);
+		}
+
+		if ( themeSlug && noDirectAccessError && ! directInstallationAllowed ) {
+			return (
+				<ThemeDirectInstall
+					themeSlug={ themeSlug }
+					pluginSlug={ pluginSlug }
+					siteSlug={ selectedSite?.slug }
+					theme={ wpOrgTheme }
+					onActivate={ () => setUserDirectInstallationAllowed( true ) }
+				/>
+			);
+		}
+		const uploadPageURL = `/plugins/upload/${ selectedSiteSlug }`;
+		const wpAdminUploadURL = `https://${ selectedSiteSlug }/wp-admin/plugin-install.php?tab=upload`;
+
+		// Rejected uploads all offer the same way out: back to the upload page, or retry in WP Admin.
+		const rejectedUploadLine: TranslateResult | false =
+			( pluginExists &&
+				translate(
+					'This plugin already exists on your site. If you want to upgrade or downgrade the plugin, please continue by uploading the plugin again from WP Admin.'
+				) ) ||
+			( pluginMalicious &&
+				translate(
+					'This plugin is identified as malicious. If you still insist to install the plugin, please continue by uploading the plugin again from WP Admin.'
+				) ) ||
+			( pluginTooBig &&
+				translate(
+					'This plugin is too big to be installed via this page. If you still want to install the plugin, please continue by uploading the plugin again from WP Admin.'
+				) );
+
+		if ( rejectedUploadLine ) {
+			return (
+				<EmptyContent
+					title={ null }
+					line={ rejectedUploadLine }
+					secondaryAction={ translate( 'Back' ) }
+					secondaryActionURL={ uploadPageURL }
+					action={ translate( 'Re-upload plugin' ) }
+					actionURL={ wpAdminUploadURL }
+				/>
+			);
+		}
+		// Catch the rest of the error cases.
+		if (
+			pluginUploadError ||
+			pluginInstallStatus?.error ||
+			( atomicFlow && automatedTransferStatus === transferStates.FAILURE )
+		) {
+			return (
+				<EmptyContent
+					title={ null }
+					line={ translate(
+						'An error occurred while installing the plugin. Please try uploading it again from WP Admin.'
+					) }
+					secondaryAction={ translate( 'Back' ) }
+					secondaryActionURL={
+						isPluginUploadFlow ? uploadPageURL : `/plugins/${ pluginSlug }/${ selectedSiteSlug }`
+					}
+					action={ translate( 'Upload from WP Admin' ) }
+					actionURL={ wpAdminUploadURL }
+				/>
+			);
+		}
+	};
+
+	return {
+		siteId,
+		currentStep,
+		steps,
+		additionalSteps,
+		error: renderError(),
+	};
+}
