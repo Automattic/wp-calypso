@@ -851,7 +851,7 @@ class MasterbarLoggedIn extends Component {
 					className="masterbar__item-howdy-gravatar"
 					role="presentation"
 					user={ user }
-					size={ 16 }
+					size={ 20 }
 				/>
 			</Item>
 		);

@@ -847,13 +847,12 @@ body.is-mobile-app-view {
 	+ .masterbar__item-subitems {
 		.gravatar {
 			border: 1px solid var(--color-masterbar-border);
-			border-radius: unset;
+			border-radius: 50%;
 			margin-left: 1px;
 
 			@media only screen and (max-width: 781px) {
-				width: 26px;
-				height: 26px;
-				margin-left: 4px;
+				width: 28px;
+				height: 28px;
 			}
 		}
 	}
