@@ -39,6 +39,9 @@ test.describe(
 			} );
 
 			await test.step( 'And I choose the first suggestion', async function () {
+				// The stepper has no `main` landmark, and the page carries unrelated list items,
+				// so we need scoping.
+				componentDomainSearch.container = page.locator( '.domain-search' );
 				selectedDomain = await componentDomainSearch.selectFirstSuggestion();
 				expect( selectedDomain ).not.toBe( '' );
 			} );
