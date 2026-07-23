@@ -743,4 +743,73 @@ describe( 'useFloatingPanelPosition', () => {
 			expect( onFreeDragEnd ).toHaveBeenCalledWith( { x: 300, y: -100 } );
 		} );
 	} );
+
+	describe( 'runtime insets change', () => {
+		const animateTargetFor = ( motionValue: unknown ) =>
+			animateSpy.mock.calls.find(
+				( call ) => call[ 0 ] === motionValue
+			)?.[ 1 ];
+
+		it( 're-clamps a free-drag panel out of a newly reserved top area', async () => {
+			const defaultInsets = {
+				top: 16,
+				right: 16,
+				bottom: 16,
+				left: 16,
+			};
+			harness = renderHook( {
+				freeDrag: true,
+				insets: defaultInsets,
+			} );
+			await harness.render();
+			const result = harness.captured.current!;
+
+			// Park the panel at the old top bound: minY = top + bottom + height
+			// - innerHeight = 16 + 16 + 520 - 1024 = -472.
+			await act( async () => {
+				result.y.set( -472 );
+			} );
+			animateSpy.mockClear();
+
+			// A 100px header appears: the panel now sits inside the reserved
+			// area and must animate down to the new bound (-388).
+			await harness.rerender( {
+				freeDrag: true,
+				insets: { ...defaultInsets, top: 100 },
+			} );
+
+			const newMinY = 100 + 16 + FIXED_SIZE.height - window.innerHeight;
+			expect( animateTargetFor( result.y ) ).toBe( newMinY );
+		} );
+
+		it( 'clamps the committed size before repositioning', async () => {
+			const clampResizedSize = vi.fn();
+			harness = renderHook( { clampResizedSize } );
+			await harness.render();
+
+			await harness.rerender( {
+				clampResizedSize,
+				insets: { top: 100, right: 16, bottom: 16, left: 16 },
+			} );
+
+			expect( clampResizedSize ).toHaveBeenCalled();
+		} );
+
+		it( 'does not reposition when the insets identity is unchanged', async () => {
+			const insets = { top: 16, right: 16, bottom: 16, left: 16 };
+			harness = renderHook( { freeDrag: true, insets } );
+			await harness.render();
+			const result = harness.captured.current!;
+
+			await act( async () => {
+				result.y.set( -472 );
+			} );
+			animateSpy.mockClear();
+
+			// Unrelated rerender, same insets reference: no correction fires.
+			await harness.rerender( { freeDrag: true, insets } );
+
+			expect( animateTargetFor( result.y ) ).toBeUndefined();
+		} );
+	} );
 } );

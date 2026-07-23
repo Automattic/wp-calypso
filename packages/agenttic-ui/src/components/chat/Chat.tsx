@@ -4,6 +4,7 @@ import { __ } from '@wordpress/i18n';
 import { useChat } from '../../hooks/useChat';
 import { useInput } from '../../hooks/useInput';
 import { useFloatingPanel } from '../../hooks/useFloatingPanel';
+import { useBoundaryInsets } from '../../hooks/useBoundaryInsets';
 import type { ChatProps } from '../../types';
 import { cn } from '../../utils/classNames';
 import { STYLE_CONSTANTS } from '../../utils/constants';
@@ -42,6 +43,7 @@ export function Chat( {
 	freeDrag = false,
 	initialFreeDragPosition,
 	onFreeDragEnd,
+	boundaryInset,
 	initialChatPosition,
 	onChatPositionChange,
 	resizable = false,
@@ -98,6 +100,8 @@ export function Chat( {
 	const compactRef = useRef< HTMLDivElement >( null );
 	const [ compactHeight, setCompactHeight ] = useState( 56 );
 
+	const insets = useBoundaryInsets( boundaryInset );
+
 	// Drag + resize compose here (see useFloatingPanel for the seam).
 	const {
 		x,
@@ -130,6 +134,7 @@ export function Chat( {
 		onFreeDragEnd,
 		onResize,
 		onResizeEnd,
+		insets,
 	} );
 
 	const handleOpen = useCallback( () => {
@@ -296,10 +301,10 @@ export function Chat( {
 				ref={ constraintsRef }
 				style={ {
 					position: 'fixed',
-					top: STYLE_CONSTANTS.VIEWPORT_OFFSET,
-					left: STYLE_CONSTANTS.VIEWPORT_OFFSET,
-					right: STYLE_CONSTANTS.VIEWPORT_OFFSET,
-					bottom: STYLE_CONSTANTS.VIEWPORT_OFFSET,
+					top: insets.top,
+					left: insets.left,
+					right: insets.right,
+					bottom: insets.bottom,
 					pointerEvents: 'none',
 				} }
 			/>
@@ -329,16 +334,13 @@ export function Chat( {
 				// Glide the dock offset between states; `initial={ false }` skips it on mount.
 				initial={ false }
 				animate={ {
-					bottom:
-						chat.state === 'minimized'
-							? 0
-							: STYLE_CONSTANTS.VIEWPORT_OFFSET,
+					bottom: chat.state === 'minimized' ? 0 : insets.bottom,
 				} }
 				transition={ morphSpring }
 				style={ {
 					x,
 					y,
-					left: STYLE_CONSTANTS.VIEWPORT_OFFSET,
+					left: insets.left,
 					cursor: draggableStates.includes( chat.state )
 						? 'grab'
 						: 'default',

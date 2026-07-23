@@ -7,9 +7,9 @@ import {
 } from 'react';
 
 import { animate, type MotionValue, useMotionValue } from 'framer-motion';
-import { STYLE_CONSTANTS } from '../utils/constants';
+import { DEFAULT_BOUNDARY_INSETS, STYLE_CONSTANTS } from '../utils/constants';
 import { morphSpring } from '../components/animations';
-import type { ChatSize } from '../types';
+import type { BoundaryInsets, ChatSize } from '../types';
 
 interface SizeBounds {
 	minWidth: number;
@@ -19,17 +19,24 @@ interface SizeBounds {
 }
 
 // The inset viewport the panel is clamped to (constraint box).
-function getViewportBox(): { width: number; height: number } {
+function getViewportBox( insets: BoundaryInsets ): {
+	width: number;
+	height: number;
+} {
 	return {
-		width: window.innerWidth - STYLE_CONSTANTS.VIEWPORT_OFFSET * 2,
-		height: window.innerHeight - STYLE_CONSTANTS.VIEWPORT_OFFSET * 2,
+		width: window.innerWidth - insets.left - insets.right,
+		height: window.innerHeight - insets.top - insets.bottom,
 	};
 }
 
 // Clamp a candidate size into [min, ceiling]. Min wins over max so a viewport
 // smaller than the floor never inverts the bounds.
-function clampSizeToBox( candidate: ChatSize, bounds: SizeBounds ): ChatSize {
-	const box = getViewportBox();
+function clampSizeToBox(
+	candidate: ChatSize,
+	bounds: SizeBounds,
+	insets: BoundaryInsets
+): ChatSize {
+	const box = getViewportBox( insets );
 	const maxW = Math.min( bounds.maxWidth ?? box.width, box.width );
 	const maxH = Math.min( bounds.maxHeight ?? box.height, box.height );
 	return {
@@ -92,6 +99,8 @@ export interface UseResizablePanelArgs {
 	repositionForResize: ( deltaWidth: number ) => void;
 	onResize?: ( size: ChatSize ) => void;
 	onResizeEnd?: ( size: ChatSize ) => void;
+	// Per-side viewport insets (resolved boundaryInset).
+	insets?: BoundaryInsets;
 }
 
 export interface UseResizablePanelResult {
@@ -127,6 +136,7 @@ export function useResizablePanel( {
 	repositionForResize,
 	onResize,
 	onResizeEnd,
+	insets = DEFAULT_BOUNDARY_INSETS,
 }: UseResizablePanelArgs ): UseResizablePanelResult {
 	// Resize size floor, defaulting to today's size so an unsupplied min can never
 	// shrink the panel below its historical footprint.
@@ -149,7 +159,8 @@ export function useResizablePanel( {
 				minHeight,
 				maxWidth: maxSize?.width,
 				maxHeight: maxSize?.height,
-			}
+			},
+			insets
 		);
 		return {
 			expanded,
@@ -187,13 +198,17 @@ export function useResizablePanel( {
 	// Clamp a candidate size into [min, ceiling] against the current viewport.
 	const clampSize = useCallback(
 		( candidate: ChatSize ): ChatSize =>
-			clampSizeToBox( candidate, {
-				minWidth,
-				minHeight,
-				maxWidth: maxSize?.width,
-				maxHeight: maxSize?.height,
-			} ),
-		[ maxSize?.width, maxSize?.height, minWidth, minHeight ]
+			clampSizeToBox(
+				candidate,
+				{
+					minWidth,
+					minHeight,
+					maxWidth: maxSize?.width,
+					maxHeight: maxSize?.height,
+				},
+				insets
+			),
+		[ maxSize?.width, maxSize?.height, minWidth, minHeight, insets ]
 	);
 
 	const getHeightForState = useCallback(
@@ -285,7 +300,7 @@ export function useResizablePanel( {
 			// expand only into the space between the pinned opposite edge and the near
 			// inset it grows toward; the bottom-anchored box measures the vertical room
 			// from the current dock offset (startPosY ≤ 0).
-			const box = getViewportBox();
+			const box = getViewportBox( insets );
 			if ( edge.includes( 'right' ) ) {
 				nextWidth = Math.min( nextWidth, box.width - resize.startPosX );
 			} else if ( edge.includes( 'left' ) ) {
@@ -339,7 +354,7 @@ export function useResizablePanel( {
 			expandedSizeRef.current = clamped;
 			onResizeRef.current?.( clamped );
 		},
-		[ x, y, width, height ]
+		[ x, y, width, height, insets ]
 	);
 
 	const handleResizePointerUp = useCallback(
