@@ -131,6 +131,8 @@ export function createPurchaseObject( purchase: RawPurchase ): Purchase {
 		isAttachedToHoldingSite: Boolean( purchase.is_attached_to_holding_site ),
 		isDelayedDowngradePending: Boolean( purchase.is_delayed_downgrade_pending ),
 		delayedDowngradeToProductSlug: purchase.delayed_downgrade_to_product_slug ?? null,
+
+		rawPurchase: purchase,
 	};
 
 	if ( isCreditCardPurchase( purchase ) ) {

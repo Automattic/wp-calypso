@@ -1,8 +1,7 @@
 import { isDomainRegistration, isPlan } from '@automattic/calypso-products';
 import { shuffle } from '@automattic/js-utils';
 import { Button, RadioControl } from '@wordpress/components';
-import { localize } from 'i18n-calypso';
-import PropTypes from 'prop-types';
+import { localize, type LocalizeProps } from 'i18n-calypso';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import { ConfirmDialog, DialogContent, DialogFooter } from 'calypso/components/confirm-dialog';
@@ -10,22 +9,42 @@ import FormFieldset from 'calypso/components/forms/form-fieldset';
 import enrichedSurveyData from 'calypso/components/marketing-survey/cancel-purchase-form/enriched-survey-data';
 import PrecancellationChatButton from 'calypso/components/marketing-survey/cancel-purchase-form/precancellation-chat-button';
 import { submitSurvey } from 'calypso/lib/purchases/actions';
+import type { Purchases } from '@automattic/data-stores';
+
 import './style.scss';
 
-class CancelAutoRenewalForm extends Component {
-	static propTypes = {
-		purchase: PropTypes.object.isRequired,
-		selectedSiteId: PropTypes.number.isRequired,
-		isVisible: PropTypes.bool,
-		onClose: PropTypes.func.isRequired,
-		translate: PropTypes.func.isRequired,
-	};
+interface CancelAutoRenewalFormProps {
+	purchase: Purchases.Purchase;
+	selectedSiteId: number;
+	isVisible?: boolean;
+	onClose: () => void;
+}
 
-	state = {
+interface CancelAutoRenewalFormConnectedProps {
+	submitSurvey: (
+		surveyName: string,
+		siteId: number,
+		surveyData: Record< string, unknown >
+	) => void;
+}
+
+interface CancelAutoRenewalFormState {
+	response: string;
+}
+
+type CancelAutoRenewalFormAllProps = CancelAutoRenewalFormProps &
+	CancelAutoRenewalFormConnectedProps &
+	LocalizeProps;
+
+class CancelAutoRenewalForm extends Component<
+	CancelAutoRenewalFormAllProps,
+	CancelAutoRenewalFormState
+> {
+	state: CancelAutoRenewalFormState = {
 		response: '',
 	};
 
-	radioButtons = {};
+	radioButtons: Array< { value: string; label: string } > = [];
 
 	getProductTypeString = () => {
 		const { purchase, translate } = this.props;
@@ -43,7 +62,7 @@ class CancelAutoRenewalForm extends Component {
 		return translate( 'subscription' );
 	};
 
-	constructor( props ) {
+	constructor( props: CancelAutoRenewalFormAllProps ) {
 		super( props );
 
 		const { translate } = props;
@@ -55,7 +74,7 @@ class CancelAutoRenewalForm extends Component {
 				/* translators: %(productType)s will be either "plan", "domain", or "subscription". */
 				label: translate( "I'm going to let this %(productType)s expire.", {
 					args: { productType },
-				} ),
+				} ) as string,
 			},
 
 			{
@@ -63,11 +82,11 @@ class CancelAutoRenewalForm extends Component {
 				/* translators: %(productType)s will be either "plan", "domain", or "subscription". */
 				label: translate( "I'm going to renew the %(productType)s, but will do it manually.", {
 					args: { productType },
-				} ),
+				} ) as string,
 			},
 			{
 				value: 'not-sure',
-				label: translate( "I'm not sure." ),
+				label: translate( "I'm not sure." ) as string,
 			},
 		] );
 	}
@@ -89,41 +108,10 @@ class CancelAutoRenewalForm extends Component {
 		this.props.onClose();
 	};
 
-	onRadioChange = ( value ) => {
+	onRadioChange = ( value: string ) => {
 		this.setState( {
 			response: value,
 		} );
-	};
-
-	renderButtons = () => {
-		const { translate, purchase, onClose } = this.props;
-		const { response } = this.state;
-		const disableSubmit = ! response;
-
-		const skip = {
-			action: 'skip',
-			disabled: false,
-			label: translate( 'Skip' ),
-			onClick: onClose,
-		};
-
-		const submit = {
-			action: 'submit',
-			isPrimary: true,
-			disabled: disableSubmit,
-			label: translate( 'Submit' ),
-			onClick: this.onSubmit,
-		};
-
-		const chat = (
-			<PrecancellationChatButton
-				purchase={ purchase }
-				onClick={ onClose }
-				className="cancel-auto-renewal-form__chat-button"
-			/>
-		);
-
-		return [ skip, submit, chat ];
 	};
 
 	render() {

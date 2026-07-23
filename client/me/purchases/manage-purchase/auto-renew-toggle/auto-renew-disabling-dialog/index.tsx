@@ -12,10 +12,11 @@ import { connect } from 'react-redux';
 import { ConfirmDialog, DialogContent, DialogFooter } from 'calypso/components/confirm-dialog';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
 import CancelAutoRenewalForm from 'calypso/components/marketing-survey/cancel-auto-renewal-form';
-import { isExpiredAndInGracePeriod } from 'calypso/lib/purchases';
-import { isAkismetHoldingSitePurchase } from 'calypso/me/purchases/utils';
+import { isAkismetHoldingSitePurchase } from 'calypso/dashboard/utils/purchase';
+import { createPurchaseObject } from 'calypso/lib/purchases/assembler';
 import isSiteAtomic from 'calypso/state/selectors/is-site-automated-transfer';
-import type { Purchases } from '@automattic/data-stores';
+import { isExpiredAndInGracePeriod } from '../../../lib/raw-purchase-helpers';
+import type { Purchase } from '@automattic/api-core';
 
 const DIALOG = {
 	GENERAL: 'general',
@@ -37,7 +38,7 @@ interface AutoRenewDisablingDialogProps {
 	isVisible: boolean;
 	planName: string;
 	siteDomain: string;
-	purchase: Purchases.Purchase;
+	purchase: Purchase;
 	onConfirm: () => void;
 	onClose: () => void;
 }
@@ -95,7 +96,7 @@ class AutoRenewDisablingDialog extends Component<
 
 	getExpiringCopy( variation: string ) {
 		const { planName, siteDomain, purchase, translate, moment } = this.props;
-		const expiryDate = moment( purchase.expiryDate ).format( 'LL' );
+		const expiryDate = moment( purchase.expiry_date ).format( 'LL' );
 
 		switch ( variation ) {
 			case 'plan':
@@ -167,7 +168,7 @@ class AutoRenewDisablingDialog extends Component<
 						args: {
 							domainName: purchase.meta ?? '',
 							// Use the purchased product name to make sure it's correct
-							emailProductName: purchase.productName,
+							emailProductName: purchase.product_name,
 							expiryDate,
 						},
 						components: {
@@ -186,7 +187,7 @@ class AutoRenewDisablingDialog extends Component<
 						'To avoid that, turn auto-renewal back on or manually renew your subscription before the expiration date.',
 					{
 						args: {
-							productName: purchase.productName,
+							productName: purchase.product_name,
 							expiryDate,
 						},
 						components: {
@@ -204,7 +205,7 @@ class AutoRenewDisablingDialog extends Component<
 						'To avoid that, turn auto-renewal back on or manually renew your subscription before the expiration date.',
 					{
 						args: {
-							productName: purchase.productName,
+							productName: purchase.product_name,
 							siteDomain,
 							expiryDate,
 						},
@@ -312,7 +313,7 @@ class AutoRenewDisablingDialog extends Component<
 						{
 							args: {
 								domainName: purchase.meta ?? '',
-								emailProductName: purchase.productName,
+								emailProductName: purchase.product_name,
 							},
 							components: {
 								strong: <strong />,
@@ -336,7 +337,7 @@ class AutoRenewDisablingDialog extends Component<
 							'To avoid that, turn auto-renewal back on or manually renew your subscription before it is removed.',
 						{
 							args: {
-								productName: purchase.productName,
+								productName: purchase.product_name,
 							},
 							components: {
 								strong: <strong />,
@@ -358,7 +359,7 @@ class AutoRenewDisablingDialog extends Component<
 							'To avoid that, turn auto-renewal back on or manually renew your subscription before it is removed.',
 						{
 							args: {
-								productName: purchase.productName,
+								productName: purchase.product_name,
 								siteDomain,
 							},
 							components: {
@@ -479,8 +480,10 @@ class AutoRenewDisablingDialog extends Component<
 
 		return (
 			<CancelAutoRenewalForm
-				purchase={ purchase }
-				selectedSiteId={ purchase.siteId }
+				// Temporary bridge (SHILL-2256): CancelAutoRenewalForm still expects the
+				// camelCase Purchase. Remove once the cancel survey reads the raw shape.
+				purchase={ createPurchaseObject( purchase ) }
+				selectedSiteId={ purchase.blog_id }
 				isVisible={ isVisible }
 				onClose={ this.closeAndCleanup }
 			/>
@@ -500,5 +503,5 @@ class AutoRenewDisablingDialog extends Component<
 }
 
 export default connect( ( state, { purchase }: AutoRenewDisablingDialogProps ) => ( {
-	isAtomicSite: isSiteAtomic( state, purchase.siteId ),
+	isAtomicSite: isSiteAtomic( state, purchase.blog_id ),
 } ) )( localize( withLocalizedMoment( AutoRenewDisablingDialog ) ) );

@@ -814,7 +814,7 @@ class CancelPurchase extends Component< CancelPurchaseAllProps, CancelPurchaseSt
 				type: 'downgrade',
 				to_product_id: downgradePlan.getProductId(),
 			},
-			( error: Error, response: { message: string } ) => {
+			( error: Error | null, response: { message: string } ) => {
 				this.setState( { isLoading: false } );
 
 				if ( error ) {

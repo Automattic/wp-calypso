@@ -2,6 +2,8 @@
  * @jest-environment jsdom
  */
 
+import { normalizePurchase } from '@automattic/api-core';
+import { purchaseQuery, sitePurchasesQuery } from '@automattic/api-queries';
 import {
 	AKISMET_PRODUCTS_LIST,
 	PRODUCT_AKISMET_ENTERPRISE_GT2M_MONTHLY,
@@ -102,7 +104,19 @@ function getSiteForPurchase( purchaseForSite ) {
 	};
 }
 
+const queryClient = new QueryClient( {
+	defaultOptions: { queries: { staleTime: Infinity, retry: false } },
+} );
+
+function seedPurchaseQueries( purchaseForQuery ) {
+	// Match what fetchPurchase() returns (string ids coerced to numbers, etc.).
+	const normalized = normalizePurchase( purchaseForQuery );
+	queryClient.setQueryData( purchaseQuery( normalized.ID ).queryKey, normalized );
+	queryClient.setQueryData( sitePurchasesQuery( normalized.blog_id ).queryKey, [ normalized ] );
+}
+
 function createMockReduxStoreForPurchase( purchaseForRedux, domains_items = {} ) {
+	seedPurchaseQueries( purchaseForRedux );
 	return createReduxStore(
 		{
 			currentUser: { id: Number( purchaseForRedux.user_id ) },
@@ -143,11 +157,8 @@ async function findPaymentMethodNavItem() {
 }
 
 describe( 'Purchase Management Buttons', () => {
-	const queryClient = new QueryClient();
-
 	beforeEach( () => {
-		// The cancellation-features query is still gated on the split-cancel-remove
-		// flag, so keep it enabled (matches config/test.json).
+		queryClient.clear();
 		useIsSplitCancelRemoveEnabled.mockReturnValue( true );
 	} );
 
@@ -385,6 +396,7 @@ describe( 'Purchase Management Buttons', () => {
 			},
 			( state ) => state
 		);
+		seedPurchaseQueries( a4aPurchase );
 
 		render(
 			<QueryClientProvider client={ queryClient }>

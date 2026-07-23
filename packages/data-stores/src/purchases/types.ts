@@ -1,4 +1,7 @@
 import { PriceTierEntry } from '@automattic/calypso-products';
+import type { RawPurchase } from '@automattic/api-core';
+
+export type { RawPurchase };
 
 export interface Purchase {
 	amount: number;
@@ -245,6 +248,11 @@ export interface Purchase {
 	 * renewal, or null when no delayed downgrade is scheduled.
 	 */
 	delayedDowngradeToProductSlug: string | null;
+
+	/**
+	 * The raw purchase object. Useful for migrating away from this legacy shape.
+	 */
+	rawPurchase: RawPurchase;
 }
 
 export interface PurchasePriceTier {
@@ -260,8 +268,6 @@ export interface RawPurchasePriceTierEntry extends PriceTierEntry {
 	minimum_price_monthly_display: never;
 	maximum_price_monthly_display: never;
 }
-
-export type { RawPurchase } from '@automattic/api-core';
 
 export interface RefundOptions {
 	to_product_id: number;
