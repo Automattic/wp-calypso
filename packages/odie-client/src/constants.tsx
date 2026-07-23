@@ -3,6 +3,8 @@ import { __, sprintf } from '@wordpress/i18n';
 import type { Context, Message, OdieAllowedBots, OdieAllBotSlugs } from './types';
 declare const __i18n_text_domain__: string;
 
+type HasEnTranslation = ( single: string, context?: string, domain?: string ) => boolean;
+
 export const getOdieErrorMessage = (): string =>
 	__(
 		"Sorry, I'm offline right now. Leave our Support team a note and they'll get back to you as soon as possible.",
@@ -54,7 +56,10 @@ export function getFlowFromBotSlug( botSlug?: OdieAllBotSlugs ): string {
 	return 'wpcom';
 }
 
-export const getOdieTransferMessages = ( botSlug?: OdieAllBotSlugs ): Message[] => {
+export const getOdieTransferMessages = (
+	botSlug?: OdieAllBotSlugs,
+	hasEnTranslation: HasEnTranslation = () => true
+): Message[] => {
 	const isTestMode = isTestModeEnvironment();
 	const flow = getFlowFromBotSlug( botSlug );
 
@@ -120,10 +125,19 @@ export const getOdieTransferMessages = ( botSlug?: OdieAllBotSlugs ): Message[] 
 	return [
 		baseMessage,
 		{
-			content: __(
-				"We're connecting you with our support team. A Happiness Engineer will join the chat as soon as they're available.",
+			content: hasEnTranslation(
+				'A Happiness Engineer will reply as soon as they are available, either here or by email.',
+				undefined,
 				__i18n_text_domain__
-			),
+			)
+				? __(
+						'A Happiness Engineer will reply as soon as they are available, either here or by email.',
+						__i18n_text_domain__
+				  )
+				: __(
+						"We're connecting you with our support team. A Happiness Engineer will join the chat as soon as they're available.",
+						__i18n_text_domain__
+				  ),
 			role: 'bot' as const,
 			type: 'message' as const,
 			context: {
@@ -135,10 +149,19 @@ export const getOdieTransferMessages = ( botSlug?: OdieAllBotSlugs ): Message[] 
 			},
 		},
 		{
-			content: __(
-				'They can see your chat with our AI assistant but please share any extra details while you wait so we can assist you better.',
+			content: hasEnTranslation(
+				'They can see this conversation, so please add any other details that may help.',
+				undefined,
 				__i18n_text_domain__
-			),
+			)
+				? __(
+						'They can see this conversation, so please add any other details that may help.',
+						__i18n_text_domain__
+				  )
+				: __(
+						'They can see your chat with our AI assistant but please share any extra details while you wait so we can assist you better.',
+						__i18n_text_domain__
+				  ),
 			role: 'bot' as const,
 			type: 'message' as const,
 			context: {
