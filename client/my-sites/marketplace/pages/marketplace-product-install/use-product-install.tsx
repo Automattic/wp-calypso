@@ -43,6 +43,10 @@ import { useThankYouRedirect } from './use-thank-you-redirect';
 // The state authorizing an install is handed off asynchronously, so allow for it arriving late.
 const INSTALL_HANDOFF_GRACE_PERIOD_MS = 2000;
 
+// The plan's feature list is fetched asynchronously, so allow for it arriving late before
+// concluding the site can't install plugins.
+const PLAN_FEATURES_GRACE_PERIOD_MS = 2000;
+
 export type ProductInstallError =
 	| { type: 'non-installable-plan' }
 	| { type: 'no-direct-access-upload' }
@@ -65,7 +69,6 @@ export function useProductInstall( {
 	// otherwise re-enter the effect and dispatch repeatedly.
 	const installFlowInitiatedRef = useRef( false );
 	const [ atomicFlow, setAtomicFlow ] = useState( false );
-	const [ nonInstallablePlanError, setNonInstallablePlanError ] = useState( false );
 	const [ userDirectInstallationAllowed, setUserDirectInstallationAllowed ] = useState( false );
 	// The signup "Get started" flow reaches this page via a full-page redirect, which drops the
 	// in-memory purchase-flow state that normally authorizes the install. When that redirect marks
@@ -136,15 +139,13 @@ export function useProductInstall( {
 		}
 	}, [ isWporgPluginFetched, pluginSlug, dispatch ] );
 
-	// The plan's feature list can arrive late, so give it 2s before concluding that the site
-	// can't install plugins. Any change to the conditions restarts the timer.
-	useEffect( () => {
-		if ( hasAtomicFeature || isJetpackSelfHosted || nonInstallablePlanError ) {
-			return;
-		}
-		const id = setTimeout( () => setNonInstallablePlanError( true ), 2000 );
-		return () => clearTimeout( id );
-	}, [ hasAtomicFeature, isJetpackSelfHosted, nonInstallablePlanError ] );
+	// The plan's feature list can arrive late, so only conclude the site can't install plugins once
+	// it has stayed uninstallable for the grace period. Deriving it (rather than latching a timer)
+	// means the error clears if eligibility arrives afterwards.
+	const nonInstallablePlanError = useDelayedCondition(
+		! hasAtomicFeature && ! isJetpackSelfHosted,
+		PLAN_FEATURES_GRACE_PERIOD_MS
+	);
 
 	const isInstallAuthorizationMissing =
 		// 1. This is a plugin upload flow (via zip file) and we don't have a primary domain set

@@ -400,6 +400,38 @@ describe( 'useProductInstall progression', () => {
 		expect( initiateThemeTransfer ).toHaveBeenCalledTimes( 1 );
 	} );
 
+	it( 'clears the plan error when Atomic eligibility arrives after the timeout', async () => {
+		const { result, store } = renderProgress(
+			{ pluginSlug: 'give' },
+			{
+				...marketplaceHandoff,
+				ui: { selectedSiteId: SITE_ID },
+				sites: {
+					items: {
+						[ SITE_ID ]: {
+							ID: SITE_ID,
+							URL: `https://${ SITE_SLUG }`,
+							options: { is_wpcom_simple: true },
+						},
+					},
+				},
+				plugins: { wporg: { items: wporgItems } },
+			}
+		);
+
+		// With no feature data, the plan error appears after the grace period.
+		await advance( 2000 );
+		expect( result.current.error ).toEqual( { type: 'non-installable-plan' } );
+		expect( initiateThemeTransfer ).not.toHaveBeenCalled();
+
+		// Eligibility arrives late: the error must clear and the transfer must start.
+		await act( async () => {
+			store.dispatch( fetchSiteFeaturesCompleted( SITE_ID, { active: [ 'atomic' ] } ) );
+		} );
+		expect( result.current.error ).toBeNull();
+		expect( initiateThemeTransfer ).toHaveBeenCalledTimes( 1 );
+	} );
+
 	it( 'stays idle when revisited with a stale completed handoff', async () => {
 		const { result } = renderProgress(
 			{ pluginSlug: 'give' },
