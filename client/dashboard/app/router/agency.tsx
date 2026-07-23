@@ -382,6 +382,11 @@ export const earnWooPaymentsSetupRoute = createRoute( {
 	head: () => ( { meta: [ { title: __( 'Site setup' ) } ] } ),
 	getParentRoute: () => agencyRoute,
 	path: 'earn/woopayments/setup/$siteId',
+	beforeLoad: ( { params: { siteId } } ) => {
+		if ( Number.isNaN( parseInt( siteId, 10 ) ) ) {
+			throw dashboardRedirect( { to: '/earn/woopayments' } );
+		}
+	},
 } ).lazy( () =>
 	import( '../../agency/earn/woopayments/setup' ).then( ( d ) =>
 		createLazyRoute( 'earn-woopayments-setup' )( { component: d.default } )
