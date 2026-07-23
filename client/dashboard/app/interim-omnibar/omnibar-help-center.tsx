@@ -3,7 +3,7 @@ import { Suspense, lazy, useCallback, useState } from 'react';
 import { useAuth } from '../auth';
 import { useAppContext } from '../context';
 import { useHelpCenter } from '../help-center';
-import { useA4AHelpCenterProps } from '../help-center/use-a4a-help-center-props';
+import { useHelpCenterExtraProps } from '../help-center/use-help-center-extra-props';
 
 const AsyncHelpCenterApp = lazy( () => import( '../help-center/help-center-app' ) );
 
@@ -30,7 +30,7 @@ export default function OmnibarHelpCenter() {
 	const { user } = useAuth();
 	const { helpCenter } = useAppContext();
 	const { isShown, setShowHelpCenter } = useHelpCenter();
-	const a4aHelpCenterProps = useA4AHelpCenterProps( helpCenter?.product === 'a4a' );
+	const helpCenterExtraProps = useHelpCenterExtraProps( helpCenter?.product );
 	const [ shouldMount, setShouldMount ] = useState( hasHelpCenterQueryParam );
 
 	const handleClose = useCallback( () => {
@@ -57,7 +57,7 @@ export default function OmnibarHelpCenter() {
 				onboardingUrl={ config( 'wpcom_signup_url' ) }
 				sectionName="dashboard"
 				product={ helpCenter?.product }
-				{ ...a4aHelpCenterProps }
+				{ ...helpCenterExtraProps }
 			/>
 		</Suspense>
 	);
