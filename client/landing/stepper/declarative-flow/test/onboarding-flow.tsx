@@ -198,6 +198,57 @@ describe( 'Onboarding Flow', () => {
 				stepPath( STEPS.EMAIL_VERIFICATION.slug )
 			);
 		} );
+
+		it( 'removes the verification step from history when its Back button returns to plans', async () => {
+			enabledFlags.add( 'onboarding/email-verification' );
+
+			const stepPath = ( slug: string ) => `/${ ONBOARDING_FLOW }/${ slug }`;
+
+			const Harness = () => {
+				const navigate = useNavigate();
+				const location = useLocation();
+				const currentStep = location.pathname.split( '/' ).pop() as string;
+				const navigateAdapter = ( nextStep: string, _extraData?: unknown, replace = false ) =>
+					navigate( stepPath( nextStep ), { replace } );
+				const { goBack } = onboarding.useStepNavigation( currentStep, navigateAdapter ) as {
+					goBack: () => void;
+				};
+
+				return (
+					<>
+						<p data-testid="pathname">{ location.pathname }</p>
+						<button onClick={ () => goBack() }>step-back</button>
+						<button onClick={ () => navigate( -1 ) }>browser-back</button>
+					</>
+				);
+			};
+
+			renderWithProvider(
+				<MemoryRouter
+					initialEntries={ [
+						stepPath( STEPS.UNIFIED_PLANS.slug ),
+						stepPath( STEPS.EMAIL_VERIFICATION.slug ),
+					] }
+					initialIndex={ 1 }
+				>
+					<Harness />
+				</MemoryRouter>,
+				{ initialState: { currentUser: { id: 'some-id' } } }
+			);
+
+			// The step's own Back button returns to plans…
+			await userEvent.click( screen.getByRole( 'button', { name: 'step-back' } ) );
+			expect( screen.getByTestId( 'pathname' ) ).toHaveTextContent(
+				stepPath( STEPS.UNIFIED_PLANS.slug )
+			);
+
+			// …and a subsequent browser Back must not resurrect the verification step
+			// (it was replaced, not pushed), so it can't auto-submit once verified.
+			await userEvent.click( screen.getByRole( 'button', { name: 'browser-back' } ) );
+			expect( screen.getByTestId( 'pathname' ) ).not.toHaveTextContent(
+				stepPath( STEPS.EMAIL_VERIFICATION.slug )
+			);
+		} );
 	} );
 
 	describe( 'Flow configuration', () => {

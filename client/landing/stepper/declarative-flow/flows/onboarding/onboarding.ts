@@ -501,7 +501,9 @@ const onboarding: FlowV2< typeof initialize > = {
 				case 'plans':
 					return navigate( 'domains' );
 				case 'email-verification':
-					return navigate( 'plans' );
+					// Replace, not push: going back must remove this step from history so a
+					// later Back can't return to it and auto-submit once the email is verified.
+					return navigate( 'plans', undefined, true );
 				default:
 					return window.history.back();
 			}
