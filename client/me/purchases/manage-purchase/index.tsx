@@ -458,6 +458,40 @@ class ManagePurchase extends Component<
 		);
 	}
 
+	renderStorageUpgradeButton( preventRenewal: boolean ) {
+		const { purchase, translate, siteSlug } = this.props;
+		if ( ! purchase ) {
+			return null;
+		}
+
+		if ( isPartnerPurchase( purchase ) || isA4ABillingDragonPurchase( purchase ) ) {
+			return null;
+		}
+
+		const isUpgradeableBackupProduct = (
+			JETPACK_BACKUP_T1_PRODUCTS as ReadonlyArray< string >
+		 ).includes( purchase.product_slug );
+		const isUpgradeableSecurityPlan = (
+			JETPACK_SECURITY_T1_PLANS as ReadonlyArray< string >
+		 ).includes( purchase.product_slug );
+
+		if ( ! isUpgradeableSecurityPlan && ! isUpgradeableBackupProduct ) {
+			return null;
+		}
+
+		if ( isExpiredOrRemoved( purchase ) ) {
+			return null;
+		}
+
+		// If the "renew now" button is showing, it will be using primary styles
+		// Show the upgrade button without the primary style if both buttons are present
+		return (
+			<Button primary={ !! preventRenewal } compact href={ `/plans/storage/${ siteSlug }` }>
+				{ translate( 'Upgrade storage' ) }
+			</Button>
+		);
+	}
+
 	renderRenewalNavItem( content: JSX.Element | string, onClick: () => void ) {
 		const { purchase } = this.props;
 		if ( ! purchase ) {
@@ -549,13 +583,6 @@ class ManagePurchase extends Component<
 			return null;
 		}
 
-		const isUpgradeableBackupProduct = (
-			JETPACK_BACKUP_T1_PRODUCTS as ReadonlyArray< string >
-		 ).includes( purchase.product_slug );
-		const isUpgradeableSecurityPlan = (
-			JETPACK_SECURITY_T1_PLANS as ReadonlyArray< string >
-		 ).includes( purchase.product_slug );
-
 		if ( isAkismetProduct( purchase ) ) {
 			// For the first Iteration of Calypso Akismet checkout we are only suggesting
 			// for immediate upgrades to the next plan. We will change this in the future
@@ -583,10 +610,6 @@ class ManagePurchase extends Component<
 					purchase.product_slug as keyof typeof JETPACK_STARTER_UPGRADE_MAP
 				];
 			return `/checkout/${ siteSlug }/${ upgradePlan }`;
-		}
-
-		if ( isUpgradeableBackupProduct || isUpgradeableSecurityPlan ) {
-			return `/plans/storage/${ siteSlug }`;
 		}
 
 		return `/plans/${ siteSlug }`;
@@ -1399,6 +1422,7 @@ class ManagePurchase extends Component<
 						{ isProductOwner && ! purchase.is_locked && (
 							<div className="manage-purchase__renew-upgrade-buttons">
 								{ this.renderUpgradeButton( preventRenewal ) }
+								{ this.renderStorageUpgradeButton( preventRenewal ) }
 								{ ! preventRenewal && this.renderRenewButton() }
 							</div>
 						) }
