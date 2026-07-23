@@ -144,6 +144,8 @@ This code is shared with Odyssey Stats (`apps/odyssey-stats/`). When making chan
 
 Odyssey's build scopes first-party CSS to `.jp-stats-dashboard` plus a fixed list of known portal-root classes/attributes (see `apps/odyssey-stats/AGENTS.md` > CSS Scoping). Any new modal/dialog/popover/tooltip mechanism added here (e.g. `@wordpress/components` `Modal`, a new `Popover`/`Tooltip` library) that renders via `createPortal` to an *unlisted* root will silently lose its styling in Odyssey even though it looks fine in Calypso — update that prefix list when introducing one.
 
+**Never nest styles under a class that is itself a portal root.** Prefixing prepends the portal root as an *ancestor*, so a rule nested under a class you passed as `overlayClassName` (or any other class landing on the portal root element) compiles to something asking for that element to be its own descendant — it can never match, and it fails silently in Odyssey while working fine in Calypso. Anchor on a real descendant instead: pass `className` to `Modal` to style `.components-modal__frame`, or lead with an inner wrapper class. When compounding with a `@wordpress/components` base class to hold specificity, remember the `:where()` prefix adds none.
+
 ## Key Hooks Reference
 
 | Hook                          | Purpose                             |
