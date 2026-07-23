@@ -2,6 +2,8 @@
  * @jest-environment jsdom
  */
 import { act } from '@testing-library/react';
+import { setAutomatedTransferStatus } from 'calypso/state/automated-transfer/actions';
+import { transferStates } from 'calypso/state/automated-transfer/constants';
 import automatedTransferReducer from 'calypso/state/automated-transfer/reducer';
 import marketplaceReducer from 'calypso/state/marketplace/reducer';
 import pluginsReducer from 'calypso/state/plugins/reducer';
@@ -91,10 +93,18 @@ const advance = async ( ms: number ) =>
 		jest.advanceTimersByTime( ms );
 	} );
 
-// Common seeds: a trusted direct install (bypasses the handoff), and a fetched wporg plugin.
-const directInstall = { route: { query: { current: { directInstall: '1' } } } };
-const wporgPlugin = {
-	plugins: { wporg: { items: { give: { slug: 'give', fetched: true, name: 'GiveWP' } } } },
+const wporgItems = { give: { slug: 'give', fetched: true, name: 'GiveWP' } };
+
+// The marketplace handoff from checkout / the plugin page that authorizes an install: a matching
+// primary domain and product, with the installation not yet reported complete.
+const marketplaceHandoff = {
+	marketplace: {
+		purchaseFlow: {
+			primaryDomain: SITE_SLUG,
+			productSlugInstalled: 'give',
+			pluginInstallationStatus: 'IN_PROGRESS',
+		},
+	},
 };
 
 describe( 'useProductInstall progression', () => {
@@ -106,20 +116,21 @@ describe( 'useProductInstall progression', () => {
 	} );
 	afterEach( () => jest.useRealTimers() );
 
-	it( 'installs in place and reaches the installing step on a Jetpack site', async () => {
+	it( 'installs in place once and reaches the installing step on a Jetpack site', async () => {
 		const { result } = renderProgress(
 			{ pluginSlug: 'give' },
 			{
-				...directInstall,
-				...wporgPlugin,
+				...marketplaceHandoff,
 				ui: { selectedSiteId: SITE_ID },
 				sites: {
 					items: { [ SITE_ID ]: { ID: SITE_ID, URL: `https://${ SITE_SLUG }`, jetpack: true } },
 				},
+				plugins: { wporg: { items: wporgItems } },
 			}
 		);
 
-		// In-place strategy: installs directly, no atomic transfer.
+		// In-place strategy: installs directly, exactly once, with no atomic transfer.
+		expect( installPlugin ).toHaveBeenCalledTimes( 1 );
 		expect( installPlugin ).toHaveBeenCalledWith(
 			SITE_ID,
 			expect.objectContaining( { slug: 'give' } ),
@@ -131,11 +142,11 @@ describe( 'useProductInstall progression', () => {
 		expect( result.current.currentStep ).toBe( 1 );
 	} );
 
-	it( 'transfers a Simple site to Atomic and advances to activating on completion', async () => {
-		const { result } = renderProgress(
+	it( 'transfers a Simple site to Atomic and advances to activating when the transfer completes', async () => {
+		const { result, store } = renderProgress(
 			{ pluginSlug: 'give' },
 			{
-				...directInstall,
+				...marketplaceHandoff,
 				ui: { selectedSiteId: SITE_ID },
 				sites: {
 					items: {
@@ -147,36 +158,34 @@ describe( 'useProductInstall progression', () => {
 					},
 					features: { [ SITE_ID ]: { data: { active: [ 'atomic' ] } } },
 				},
-				plugins: { wporg: wporgPlugin.plugins.wporg },
-				// The transfer already reports complete, so once the installing step is reached the
-				// completion effect advances to activating.
-				automatedTransfer: { [ SITE_ID ]: { status: 'complete' } },
+				plugins: { wporg: { items: wporgItems } },
 			}
 		);
 
-		// Atomic-transfer strategy: transfers first rather than installing in place.
-		expect( initiateThemeTransfer ).toHaveBeenCalledWith(
-			SITE_ID,
-			null,
-			'give',
-			expect.anything(),
-			'plugin_install'
-		);
+		// Atomic-transfer strategy: transfers first, exactly once, rather than installing in place.
+		expect( initiateThemeTransfer ).toHaveBeenCalledTimes( 1 );
 		expect( installPlugin ).not.toHaveBeenCalled();
 
 		await advance( 1000 );
+		expect( result.current.currentStep ).toBe( 1 );
+
+		// The transfer reports complete later; the hook must react to that update to advance.
+		await act( async () => {
+			store.dispatch( setAutomatedTransferStatus( SITE_ID, transferStates.COMPLETE ) );
+		} );
 		expect( result.current.currentStep ).toBe( 2 );
+		expect( initiateThemeTransfer ).toHaveBeenCalledTimes( 1 );
 	} );
 
 	it( 'stays idle when revisited with a stale completed handoff', async () => {
 		const { result } = renderProgress(
 			{ pluginSlug: 'give' },
 			{
-				...wporgPlugin,
 				ui: { selectedSiteId: SITE_ID },
 				sites: {
 					items: { [ SITE_ID ]: { ID: SITE_ID, URL: `https://${ SITE_SLUG }`, jetpack: true } },
 				},
+				plugins: { wporg: { items: wporgItems } },
 				marketplace: {
 					purchaseFlow: {
 						primaryDomain: SITE_SLUG,
