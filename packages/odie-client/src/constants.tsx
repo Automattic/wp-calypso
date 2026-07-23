@@ -1,7 +1,12 @@
+import { englishLocales, getWpI18nLocaleSlug } from '@automattic/i18n-utils';
 import { isTestModeEnvironment } from '@automattic/zendesk-client';
-import { __, sprintf } from '@wordpress/i18n';
+import { __, hasTranslation, sprintf } from '@wordpress/i18n';
 import type { Context, Message, OdieAllowedBots, OdieAllBotSlugs } from './types';
 declare const __i18n_text_domain__: string;
+
+const hasEnTranslation = ( single: string ): boolean =>
+	englishLocales.includes( getWpI18nLocaleSlug() || 'en' ) ||
+	hasTranslation( single, undefined, __i18n_text_domain__ );
 
 export const getOdieErrorMessage = (): string =>
 	__(
@@ -120,10 +125,17 @@ export const getOdieTransferMessages = ( botSlug?: OdieAllBotSlugs ): Message[] 
 	return [
 		baseMessage,
 		{
-			content: __(
-				'A Happiness Engineer will reply as soon as they are available, either here or by email.',
-				__i18n_text_domain__
-			),
+			content: hasEnTranslation(
+				'A Happiness Engineer will reply as soon as they are available, either here or by email.'
+			)
+				? __(
+						'A Happiness Engineer will reply as soon as they are available, either here or by email.',
+						__i18n_text_domain__
+				  )
+				: __(
+						"We're connecting you with our support team. A Happiness Engineer will join the chat as soon as they're available.",
+						__i18n_text_domain__
+				  ),
 			role: 'bot' as const,
 			type: 'message' as const,
 			context: {
@@ -135,10 +147,17 @@ export const getOdieTransferMessages = ( botSlug?: OdieAllBotSlugs ): Message[] 
 			},
 		},
 		{
-			content: __(
-				'They can see this conversation, so please add any other details that may help.',
-				__i18n_text_domain__
-			),
+			content: hasEnTranslation(
+				'They can see this conversation, so please add any other details that may help.'
+			)
+				? __(
+						'They can see this conversation, so please add any other details that may help.',
+						__i18n_text_domain__
+				  )
+				: __(
+						'They can see your chat with our AI assistant but please share any extra details while you wait so we can assist you better.',
+						__i18n_text_domain__
+				  ),
 			role: 'bot' as const,
 			type: 'message' as const,
 			context: {
