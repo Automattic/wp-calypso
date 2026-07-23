@@ -1,6 +1,6 @@
 import { useNavigate } from '@tanstack/react-router';
 import { __, sprintf } from '@wordpress/i18n';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { useAnalytics } from '../../../../app/analytics';
 import { earnWooPaymentsSetupRoute } from '../../../../app/router/agency';
 import { PageHeader } from '../../../../components/page-header';
@@ -21,12 +21,6 @@ export default function EarnWooPaymentsSetup() {
 
 	const [ error, setError ] = useState( false );
 	const [ isInstalled, setIsInstalled ] = useState( false );
-
-	useEffect( () => {
-		if ( Number.isNaN( siteId ) ) {
-			navigate( { to: '/earn/woopayments' } );
-		}
-	}, [ siteId, navigate ] );
 
 	const onInstallClick = async () => {
 		recordTracksEvent( 'calypso_a4a_woopayments_site_setup_install_plugin_click', {
