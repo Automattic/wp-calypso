@@ -35,6 +35,7 @@ import {
 	getSelectedSiteId,
 	getSelectedSiteSlug,
 } from 'calypso/state/ui/selectors';
+import { chooseInstallStrategy } from './install-strategy';
 import { useDelayedCondition } from './use-delayed-condition';
 import useMarketplaceAdditionalSteps from './use-marketplace-additional-steps';
 import { useThankYouRedirect } from './use-thank-you-redirect';
@@ -185,25 +186,25 @@ export function useProductInstall( {
 				waitFor( 1 ).then( () => setCurrentStep( 1 ) );
 			};
 
-			if ( isJetpack || isAtomic ) {
+			const strategy = chooseInstallStrategy( {
+				siteInstallsInPlace: !! ( isJetpack || isAtomic ),
+				siteCanTransferToAtomic: !! hasAtomicFeature,
+			} );
+
+			if ( strategy === 'in-place' ) {
 				if ( wpOrgTheme ) {
-					// initilize theme activating
 					dispatch( installAndActivateTheme( wpOrgTheme.id, siteId ) );
 				} else {
-					// initialize plugin installing
 					dispatch( installPlugin( siteId, wporgPlugin, false ) );
 				}
-
 				triggerInstallFlow();
-			} else if ( hasAtomicFeature ) {
-				// initialize atomic flow
+			} else if ( strategy === 'atomic-transfer' ) {
 				if ( wpOrgTheme ) {
 					dispatch( initiateAtomicTransfer( siteId, { themeSlug, context: 'theme_install' } ) );
 				} else {
 					setAtomicFlow( true );
 					dispatch( initiateTransfer( siteId, null, pluginSlug, '', 'plugin_install' ) );
 				}
-
 				triggerInstallFlow();
 			}
 		}
