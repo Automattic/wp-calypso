@@ -11,21 +11,22 @@ import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import {
 	isExpiring,
 	isRenewingBeforeExpiration,
 	showCreditCardExpiringWarning,
 	isExpiredOrRemoved,
-} from 'calypso/lib/purchases';
-import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import type { Purchases, SiteDetails } from '@automattic/data-stores';
+} from '../../lib/raw-purchase-helpers';
+import type { Purchase } from '@automattic/api-core';
+import type { SiteDetails } from '@automattic/data-stores';
 
 interface MomentProps {
 	moment: typeof moment;
 }
 
 export interface PlanBillingPeriodProps {
-	purchase: Purchases.Purchase;
+	purchase: Purchase;
 	site: SiteDetails | null | undefined;
 	isProductOwner: boolean;
 }
@@ -42,10 +43,10 @@ export class PlanBillingPeriod extends Component<
 > {
 	handleMonthlyToYearlyButtonClick = () => {
 		const { purchase } = this.props;
-		const yearlyPlanSlug = getYearlyPlanByMonthly( purchase.productSlug );
+		const yearlyPlanSlug = getYearlyPlanByMonthly( purchase.product_slug );
 
 		this.props.recordTracksEvent( 'calypso_purchase_details_plan_upgrade_click', {
-			current_plan: purchase.productSlug,
+			current_plan: purchase.product_slug,
 			upgrading_to: yearlyPlanSlug,
 		} );
 		page(
@@ -55,7 +56,7 @@ export class PlanBillingPeriod extends Component<
 				'/' +
 				yearlyPlanSlug +
 				'?upgrade_from=' +
-				purchase.productSlug
+				purchase.product_slug
 		);
 	};
 
@@ -66,25 +67,25 @@ export class PlanBillingPeriod extends Component<
 			return translate( 'Billed yearly, credit card expiring soon' );
 		}
 
-		if ( isRenewingBeforeExpiration( purchase ) && purchase.renewDate ) {
-			const renewDate = moment( purchase.renewDate );
+		if ( isRenewingBeforeExpiration( purchase ) && purchase.renew_date ) {
+			const renewDate = moment( purchase.renew_date );
 			return translate( 'Billed yearly, renews on %s', {
 				args: renewDate.format( 'LL' ),
 				comment: '%s is the renewal date in format M DD, Y, for example: June 10, 2019',
 			} );
 		}
 
-		if ( isExpiring( purchase ) && purchase.expiryDate ) {
+		if ( isExpiring( purchase ) && purchase.expiry_date ) {
 			return translate( 'Billed yearly, expires on %s', {
-				args: moment( purchase.expiryDate ).format( 'LL' ),
+				args: moment( purchase.expiry_date ).format( 'LL' ),
 				comment: '%s is the expiration date in format M DD, Y, for example: June 10, 2019',
 			} );
 		}
 
-		if ( isExpiredOrRemoved( purchase ) && purchase.expiryDate ) {
+		if ( isExpiredOrRemoved( purchase ) && purchase.expiry_date ) {
 			return translate( 'Billed yearly, expired %(timeSinceExpiry)s', {
 				args: {
-					timeSinceExpiry: moment( purchase.expiryDate ).fromNow(),
+					timeSinceExpiry: moment( purchase.expiry_date ).fromNow(),
 				},
 				comment: 'timeSinceExpiry is of the form "[number] [time-period] ago" i.e. "3 days ago"',
 			} );
@@ -99,27 +100,27 @@ export class PlanBillingPeriod extends Component<
 			return;
 		}
 
-		if ( ! isMonthly( purchase.productSlug ) ) {
+		if ( ! isMonthly( purchase.product_slug ) ) {
 			return (
 				<FormSettingExplanation>{ this.renderYearlyBillingInformation() }</FormSettingExplanation>
 			);
 		}
 
-		const yearlyPlanSlug = getYearlyPlanByMonthly( purchase.productSlug );
+		const yearlyPlanSlug = getYearlyPlanByMonthly( purchase.product_slug );
 		if ( ! yearlyPlanSlug ) {
 			return;
 		}
 
-		const isTemporarySite = purchase.isAttachedToHoldingSite;
+		const isTemporarySite = purchase.is_attached_to_holding_site;
 		const isExpired = isExpiredOrRemoved( purchase );
 
 		const billedMonthlyText =
-			isExpired && purchase.expiryDate
+			isExpired && purchase.expiry_date
 				? fixMe( {
 						text: 'Billed monthly, expired %(timeSinceExpiry)s',
 						newCopy: translate( 'Billed monthly, expired %(timeSinceExpiry)s', {
 							args: {
-								timeSinceExpiry: moment( purchase.expiryDate ).fromNow(),
+								timeSinceExpiry: moment( purchase.expiry_date ).fromNow(),
 							},
 							comment:
 								'timeSinceExpiry is of the form "[number] [time-period] ago" i.e. "3 days ago"',
@@ -132,13 +133,13 @@ export class PlanBillingPeriod extends Component<
 			<Fragment>
 				<FormSettingExplanation>
 					{ billedMonthlyText }
-					{ site && isProductOwner && ! purchase.isLocked && (
+					{ site && isProductOwner && ! purchase.is_locked && (
 						<Button onClick={ this.handleMonthlyToYearlyButtonClick } primary compact>
 							{ translate( 'Upgrade to yearly billing' ) }
 						</Button>
 					) }
 				</FormSettingExplanation>
-				{ ! site && ! isTemporarySite && ! purchase.isLocked && (
+				{ ! site && ! isTemporarySite && ! purchase.is_locked && (
 					<FormSettingExplanation>
 						{ translate(
 							'To manage your plan, please {{supportPageLink}}reconnect{{/supportPageLink}} your site.',

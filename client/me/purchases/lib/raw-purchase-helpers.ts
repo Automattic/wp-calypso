@@ -87,6 +87,10 @@ export function isRenewingBeforeExpiration( purchase: Purchase ): boolean {
 	return [ 'active', 'auto-renewing' ].includes( purchase.expiry_status );
 }
 
+export function isExpiring( purchase: Purchase ): boolean {
+	return [ 'manual-renew', 'expiring' ].includes( purchase.expiry_status );
+}
+
 export function isExpiredWithNoAutoRenewAttemptsLeft( purchase: Purchase ): boolean {
 	return isExpiredAndInGracePeriod( purchase ) && purchase.is_past_last_auto_renew_attempt_date;
 }
