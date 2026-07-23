@@ -245,8 +245,10 @@ export function useProductInstall( {
 			);
 			setCurrentStep( 2 );
 		}
+		// currentStep is a dependency so a plugin that appears before the installing step is reached
+		// (a fast or already-installed plugin) still gets activated once the step catches up.
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [ pluginUploadComplete, installedPlugin, setCurrentStep ] );
+	}, [ pluginUploadComplete, installedPlugin, setCurrentStep, currentStep ] );
 
 	useThankYouRedirect( {
 		siteId,

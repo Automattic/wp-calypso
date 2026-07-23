@@ -68,6 +68,10 @@ jest.mock( 'calypso/state/atomic/transfers/actions', () => ( {
 		options,
 	} ) ),
 } ) );
+jest.mock( 'calypso/state/plugins/wporg/actions', () => ( {
+	...jest.requireActual( 'calypso/state/plugins/wporg/actions' ),
+	fetchPluginData: jest.fn( () => ( { type: 'MOCK_FETCH_PLUGIN_DATA' } ) ),
+} ) );
 
 const { installPlugin, activatePlugin } = jest.requireMock(
 	'calypso/state/plugins/installed/actions'
@@ -133,7 +137,6 @@ describe( 'useProductInstall progression', () => {
 			{ ...marketplaceHandoff, ...jetpackSite }
 		);
 
-		// In-place strategy: installs directly, exactly once, with no atomic transfer.
 		expect( installPlugin ).toHaveBeenCalledTimes( 1 );
 		expect( installPlugin ).toHaveBeenCalledWith(
 			SITE_ID,
@@ -142,14 +145,12 @@ describe( 'useProductInstall progression', () => {
 		);
 		expect( initiateThemeTransfer ).not.toHaveBeenCalled();
 
-		// The setup step is held visible for one second before moving on.
 		expect( result.current.currentStep ).toBe( 0 );
 		await advance( 999 );
 		expect( result.current.currentStep ).toBe( 0 );
 		await advance( 1 );
 		expect( result.current.currentStep ).toBe( 1 );
 
-		// The plugin finishes installing; the hook activates it once and advances to activating.
 		await act( async () => {
 			store.dispatch(
 				receiveSitePlugins( SITE_ID, [ { slug: 'give', id: 'give/give', active: false } ] )
@@ -157,6 +158,23 @@ describe( 'useProductInstall progression', () => {
 		} );
 		expect( activatePlugin ).toHaveBeenCalledTimes( 1 );
 		expect( activatePlugin ).toHaveBeenCalledWith( SITE_ID, { slug: 'give', id: 'give/give' } );
+		expect( result.current.currentStep ).toBe( 2 );
+	} );
+
+	it( 'activates a plugin that finishes installing during the setup delay', async () => {
+		const { result, store } = renderProgress(
+			{ pluginSlug: 'give' },
+			{ ...marketplaceHandoff, ...jetpackSite }
+		);
+
+		await act( async () => {
+			store.dispatch(
+				receiveSitePlugins( SITE_ID, [ { slug: 'give', id: 'give/give', active: false } ] )
+			);
+		} );
+		await advance( 1000 );
+
+		expect( activatePlugin ).toHaveBeenCalledTimes( 1 );
 		expect( result.current.currentStep ).toBe( 2 );
 	} );
 
@@ -205,7 +223,6 @@ describe( 'useProductInstall progression', () => {
 			}
 		);
 
-		// Atomic-transfer strategy: transfers first, exactly once, with the expected payload.
 		expect( initiateThemeTransfer ).toHaveBeenCalledTimes( 1 );
 		expect( initiateThemeTransfer ).toHaveBeenCalledWith(
 			SITE_ID,
@@ -240,6 +257,36 @@ describe( 'useProductInstall progression', () => {
 		} );
 		expect( initiateThemeTransfer ).toHaveBeenCalledTimes( 1 );
 		expect( installPlugin ).not.toHaveBeenCalled();
+	} );
+
+	it( 'uploads a plugin and activates it once the upload completes', async () => {
+		const { result, store } = renderProgress(
+			{},
+			{
+				ui: { selectedSiteId: SITE_ID },
+				sites: {
+					items: { [ SITE_ID ]: { ID: SITE_ID, URL: `https://${ SITE_SLUG }`, jetpack: true } },
+				},
+				plugins: {
+					upload: {
+						progressPercent: { [ SITE_ID ]: 100 },
+						uploadedPluginId: { [ SITE_ID ]: 'give' },
+						inProgress: { [ SITE_ID ]: false },
+					},
+				},
+			}
+		);
+
+		await advance( 1000 );
+		expect( result.current.currentStep ).toBe( 1 );
+
+		await act( async () => {
+			store.dispatch(
+				receiveSitePlugins( SITE_ID, [ { slug: 'give', id: 'give/give', active: false } ] )
+			);
+		} );
+		expect( activatePlugin ).toHaveBeenCalledTimes( 1 );
+		expect( result.current.currentStep ).toBe( 2 );
 	} );
 
 	it( 'stays idle when revisited with a stale completed handoff', async () => {
