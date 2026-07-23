@@ -86,17 +86,13 @@ const EmailVerification: StepType< {
 			<DocumentHead title={ title } />
 			{ /* Confirming in another tab of this browser resolves the step immediately. */ }
 			<UserVerificationChecker />
+			{ /* No back button: the site already exists by the time this gate shows, so
+			   the only ways forward are confirming or skipping to the dashboard. */ }
 			<Step.CenteredColumnLayout
 				columnWidth={ 4 }
 				verticalAlign="center"
 				className="onboarding-email-verification"
-				topBar={
-					<Step.TopBar
-						leftElement={
-							navigation.goBack ? <Step.BackButton onClick={ navigation.goBack } /> : undefined
-						}
-					/>
-				}
+				topBar={ <Step.TopBar /> }
 				heading={ <Step.Heading align="center" text={ title } subText={ subText } /> }
 			>
 				<Step.PrimaryButton onClick={ checkNow } isBusy={ isChecking } disabled={ isChecking }>

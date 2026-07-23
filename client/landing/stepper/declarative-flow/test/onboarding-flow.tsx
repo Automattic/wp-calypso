@@ -4,11 +4,14 @@
 // @ts-nocheck - TODO: Fix TypeScript issues
 import config from '@automattic/calypso-config';
 import { ONBOARDING_FLOW } from '@automattic/onboarding';
-import { screen } from '@testing-library/react';
-import userEvent from '@testing-library/user-event';
+import { waitFor } from '@testing-library/react';
 import React from 'react';
-import { MemoryRouter, useLocation, useNavigate } from 'react-router';
+import { MemoryRouter } from 'react-router';
 import { addSurvicate } from 'calypso/lib/analytics/survicate';
+import {
+	persistSignupDestination,
+	clearSignupDestinationCookie,
+} from 'calypso/signup/storageUtils';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import onboarding from '../flows/onboarding/onboarding';
 import { STEPS } from '../internals/steps';
@@ -83,31 +86,8 @@ describe( 'Onboarding Flow', () => {
 	} );
 
 	describe( 'Email verification step', () => {
-		it( 'asks free-plan signups to confirm their email before the site is created', () => {
+		it( 'sends free-plan signups straight to site creation now that the gate comes later', () => {
 			enabledFlags.add( 'onboarding/email-verification' );
-			const { runUseStepNavigationSubmit } = renderFlow( onboarding );
-
-			runUseStepNavigationSubmit( {
-				currentStep: STEPS.UNIFIED_PLANS.slug,
-				dependencies: { cartItems: null },
-			} );
-
-			expect( getFlowLocation().path ).toBe( `/${ STEPS.EMAIL_VERIFICATION.slug }` );
-		} );
-
-		it( 'leaves paid signups alone so nothing stands between them and checkout', () => {
-			enabledFlags.add( 'onboarding/email-verification' );
-			const { runUseStepNavigationSubmit } = renderFlow( onboarding );
-
-			runUseStepNavigationSubmit( {
-				currentStep: STEPS.UNIFIED_PLANS.slug,
-				dependencies: { cartItems: [ { product_slug: 'personal-bundle' } ] },
-			} );
-
-			expect( getFlowLocation().path ).toBe( `/${ STEPS.SITE_CREATION_STEP.slug }` );
-		} );
-
-		it( 'stays out of the way while the flag is off', () => {
 			const { runUseStepNavigationSubmit } = renderFlow( onboarding );
 
 			runUseStepNavigationSubmit( {
@@ -118,8 +98,47 @@ describe( 'Onboarding Flow', () => {
 			expect( getFlowLocation().path ).toBe( `/${ STEPS.SITE_CREATION_STEP.slug }` );
 		} );
 
-		it( 'creates the site once the email is confirmed', () => {
+		it( 'gates the dashboard on email confirmation once the free site is created', async () => {
 			enabledFlags.add( 'onboarding/email-verification' );
+			const { runUseStepNavigationSubmit } = renderFlow( onboarding );
+
+			await runUseStepNavigationSubmit( {
+				currentStep: STEPS.PROCESSING.slug,
+				dependencies: {
+					processingResult: ProcessingResult.SUCCESS,
+					siteSlug: 'test-site.wordpress.com',
+					hasPluginByGoal: true,
+					hasExternalTheme: false,
+				},
+			} );
+
+			await waitFor( () =>
+				expect( getFlowLocation().path ).toBe( `/${ STEPS.EMAIL_VERIFICATION.slug }` )
+			);
+			expect( window.location.replace ).not.toHaveBeenCalled();
+		} );
+
+		it( 'lands on the dashboard without a gate while the flag is off', async () => {
+			const { runUseStepNavigationSubmit } = renderFlow( onboarding );
+
+			await runUseStepNavigationSubmit( {
+				currentStep: STEPS.PROCESSING.slug,
+				dependencies: {
+					processingResult: ProcessingResult.SUCCESS,
+					siteSlug: 'test-site.wordpress.com',
+					hasPluginByGoal: true,
+					hasExternalTheme: false,
+				},
+			} );
+
+			await new Promise( ( resolve ) => setTimeout( resolve, 0 ) );
+
+			expect( window.location.replace ).toHaveBeenCalledWith( '/home/test-site.wordpress.com' );
+		} );
+
+		it( 'sends the user on to the queued dashboard once the email step resolves', () => {
+			enabledFlags.add( 'onboarding/email-verification' );
+			persistSignupDestination( '/home/test-site.wordpress.com' );
 			const { runUseStepNavigationSubmit } = renderFlow( onboarding );
 
 			runUseStepNavigationSubmit( {
@@ -127,127 +146,8 @@ describe( 'Onboarding Flow', () => {
 				dependencies: { emailVerified: true },
 			} );
 
-			expect( getFlowLocation().path ).toBe( `/${ STEPS.SITE_CREATION_STEP.slug }` );
-		} );
-
-		it( 'replaces the verification step in history so browser Back cannot re-trigger site creation', async () => {
-			enabledFlags.add( 'onboarding/email-verification' );
-
-			const stepPath = ( slug: string ) => `/${ ONBOARDING_FLOW }/${ slug }`;
-
-			// A faithful stand-in for the flow's real navigate: it pushes or replaces
-			// history exactly the way `useFlowNavigation`'s customNavigate does.
-			const Harness = () => {
-				const navigate = useNavigate();
-				const location = useLocation();
-				const currentStep = location.pathname.split( '/' ).pop() as string;
-				const navigateAdapter = ( nextStep: string, _extraData?: unknown, replace = false ) =>
-					navigate( stepPath( nextStep ), { replace } );
-				const { submit } = onboarding.useStepNavigation( currentStep, navigateAdapter ) as {
-					submit: ( args: { slug: string; providedDependencies: unknown } ) => void;
-				};
-
-				return (
-					<>
-						<p data-testid="pathname">{ location.pathname }</p>
-						<button
-							onClick={ () =>
-								submit( {
-									slug: currentStep,
-									providedDependencies: { emailVerified: true },
-								} )
-							}
-						>
-							submit
-						</button>
-						<button onClick={ () => navigate( -1 ) }>back</button>
-					</>
-				);
-			};
-
-			renderWithProvider(
-				<MemoryRouter
-					initialEntries={ [
-						stepPath( STEPS.UNIFIED_PLANS.slug ),
-						stepPath( STEPS.EMAIL_VERIFICATION.slug ),
-					] }
-					initialIndex={ 1 }
-				>
-					<Harness />
-				</MemoryRouter>,
-				{ initialState: { currentUser: { id: 'some-id' } } }
-			);
-
-			expect( screen.getByTestId( 'pathname' ) ).toHaveTextContent(
-				stepPath( STEPS.EMAIL_VERIFICATION.slug )
-			);
-
-			// Confirming advances to site creation.
-			await userEvent.click( screen.getByRole( 'button', { name: 'submit' } ) );
-			expect( screen.getByTestId( 'pathname' ) ).toHaveTextContent(
-				stepPath( STEPS.SITE_CREATION_STEP.slug )
-			);
-
-			// Back must skip the replaced verification step and land on the step before
-			// it; otherwise it would auto-submit and start a second site-creation attempt.
-			await userEvent.click( screen.getByRole( 'button', { name: 'back' } ) );
-			expect( screen.getByTestId( 'pathname' ) ).toHaveTextContent(
-				stepPath( STEPS.UNIFIED_PLANS.slug )
-			);
-			expect( screen.getByTestId( 'pathname' ) ).not.toHaveTextContent(
-				stepPath( STEPS.EMAIL_VERIFICATION.slug )
-			);
-		} );
-
-		it( 'removes the verification step from history when its Back button returns to plans', async () => {
-			enabledFlags.add( 'onboarding/email-verification' );
-
-			const stepPath = ( slug: string ) => `/${ ONBOARDING_FLOW }/${ slug }`;
-
-			const Harness = () => {
-				const navigate = useNavigate();
-				const location = useLocation();
-				const currentStep = location.pathname.split( '/' ).pop() as string;
-				const navigateAdapter = ( nextStep: string, _extraData?: unknown, replace = false ) =>
-					navigate( stepPath( nextStep ), { replace } );
-				const { goBack } = onboarding.useStepNavigation( currentStep, navigateAdapter ) as {
-					goBack: () => void;
-				};
-
-				return (
-					<>
-						<p data-testid="pathname">{ location.pathname }</p>
-						<button onClick={ () => goBack() }>step-back</button>
-						<button onClick={ () => navigate( -1 ) }>browser-back</button>
-					</>
-				);
-			};
-
-			renderWithProvider(
-				<MemoryRouter
-					initialEntries={ [
-						stepPath( STEPS.UNIFIED_PLANS.slug ),
-						stepPath( STEPS.EMAIL_VERIFICATION.slug ),
-					] }
-					initialIndex={ 1 }
-				>
-					<Harness />
-				</MemoryRouter>,
-				{ initialState: { currentUser: { id: 'some-id' } } }
-			);
-
-			// The step's own Back button returns to plans…
-			await userEvent.click( screen.getByRole( 'button', { name: 'step-back' } ) );
-			expect( screen.getByTestId( 'pathname' ) ).toHaveTextContent(
-				stepPath( STEPS.UNIFIED_PLANS.slug )
-			);
-
-			// …and a subsequent browser Back must not resurrect the verification step
-			// (it was replaced, not pushed), so it can't auto-submit once verified.
-			await userEvent.click( screen.getByRole( 'button', { name: 'browser-back' } ) );
-			expect( screen.getByTestId( 'pathname' ) ).not.toHaveTextContent(
-				stepPath( STEPS.EMAIL_VERIFICATION.slug )
-			);
+			expect( window.location.assign ).toHaveBeenCalledWith( '/home/test-site.wordpress.com' );
+			clearSignupDestinationCookie();
 		} );
 	} );
 

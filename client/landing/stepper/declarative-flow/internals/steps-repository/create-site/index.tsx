@@ -183,9 +183,6 @@ const CreateSite: StepType = function CreateSite( { navigation, flow, data } ) {
 	const isReEnteringFlow = getSignupCompleteFlowName() === flow;
 	//User has already reached checkout and then hit the browser back button.
 	//In this case, site has already been created, and plan added to cart. We need to avoid to create another site.
-	// Free-plan flows never reach checkout; they guard against re-creation by
-	// replacing this step in history instead (see the onboarding flow), so they
-	// deliberately don't need a manage-site branch here.
 	const isManageSiteFlow = Boolean(
 		wasSignupCheckoutPageUnloaded() && signupDestinationCookieExists && isReEnteringFlow
 	);

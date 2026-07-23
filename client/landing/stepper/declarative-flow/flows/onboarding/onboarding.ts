@@ -18,6 +18,7 @@ import { loadExperimentAssignment } from 'calypso/lib/explat';
 import { pathToUrl } from 'calypso/lib/url';
 import {
 	persistSignupDestination,
+	retrieveSignupDestination,
 	setSignupCompleteFlowName,
 	setSignupCompleteSlug,
 	clearSignupCompleteSlug,
@@ -59,9 +60,11 @@ function initialize() {
 		STEPS.DOMAIN_SEARCH,
 		STEPS.USE_MY_DOMAIN,
 		STEPS.UNIFIED_PLANS,
-		...( isEnabled( 'onboarding/email-verification' ) ? [ STEPS.EMAIL_VERIFICATION ] : [] ),
 		STEPS.SITE_CREATION_STEP,
 		STEPS.PROCESSING,
+		// Gates the dashboard after the site exists, so a free-plan signup gets their
+		// site first and confirms their email at the door.
+		...( isEnabled( 'onboarding/email-verification' ) ? [ STEPS.EMAIL_VERIFICATION ] : [] ),
 		STEPS.POST_CHECKOUT_ONBOARDING,
 		STEPS.SETUP_YOUR_SITE_AI,
 	];
@@ -264,18 +267,14 @@ const onboarding: FlowV2< typeof initialize > = {
 
 					setSignupCompleteFlowName( flowName );
 
-					// Only free-plan signups are gated: a paid plan goes to checkout next,
-					// and interrupting that for email confirmation is friction we don't want.
-					if ( isEnabled( 'onboarding/email-verification' ) && ! pickedPlan && ! isEmailVerified ) {
-						return navigate( 'email-verification' );
-					}
-
 					return navigate( 'create-site', undefined, false );
 				}
 				case 'email-verification':
-					// Replace, not push: this step auto-submits once verified, so leaving it
-					// in history lets Back re-trigger a second site-creation attempt.
-					return navigate( 'create-site', undefined, true );
+					// Reached only after the site exists (see the processing case). Whether the
+					// user confirmed or skipped, send them on to the dashboard we had queued up.
+					return window.location.assign(
+						retrieveSignupDestination() || `/home/${ siteSlugParam }`
+					);
 				case 'create-site':
 					return navigate( 'processing', undefined, true );
 				case 'post-checkout-onboarding': {
@@ -465,6 +464,15 @@ const onboarding: FlowV2< typeof initialize > = {
 							return navigate( 'setup-your-site-ai' );
 						} else if ( providedDependencies?.postCheckoutBigSky ) {
 							return navigate( 'setup-your-site-ai' );
+						} else if (
+							isEnabled( 'onboarding/email-verification' ) &&
+							! planCartItem &&
+							! isEmailVerified
+						) {
+							// Free-plan signups confirm their email at the door. The site already
+							// exists, so this gate can't trigger a duplicate creation; the queued
+							// destination is persisted above and used once the step resolves.
+							return navigate( 'email-verification' );
 						} else {
 							// replace the location to delete processing step from history.
 							window.location.replace( destination );
@@ -500,10 +508,6 @@ const onboarding: FlowV2< typeof initialize > = {
 			switch ( currentStepSlug ) {
 				case 'plans':
 					return navigate( 'domains' );
-				case 'email-verification':
-					// Replace, not push: going back must remove this step from history so a
-					// later Back can't return to it and auto-submit once the email is verified.
-					return navigate( 'plans', undefined, true );
 				default:
 					return window.history.back();
 			}
