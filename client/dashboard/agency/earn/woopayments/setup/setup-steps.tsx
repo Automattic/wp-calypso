@@ -77,7 +77,7 @@ export default function SetupSteps( {
 					layout="stacked"
 					title={ __( 'Earn commissions' ) }
 					description={ __(
-						"Once the plugin is installed and configured, each time a transaction occurs, you'll earn commisions!"
+						"Once the plugin is installed and configured, each time a transaction occurs, you'll earn commissions!"
 					) }
 					actions={
 						<Button variant="secondary" onClick={ onViewCommissionsClick }>

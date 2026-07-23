@@ -28,6 +28,7 @@ export type WooPaymentsPluginStatus = {
 
 export type WooPaymentsSiteSetupData = {
 	site: Site | undefined;
+	siteDomain: string | undefined;
 	isLoading: boolean;
 	status: WooPaymentsPluginStatus;
 	setupUrl: string | undefined;

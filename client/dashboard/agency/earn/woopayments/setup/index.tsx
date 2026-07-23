@@ -15,7 +15,7 @@ export default function EarnWooPaymentsSetup() {
 	const navigate = useNavigate();
 	const { recordTracksEvent } = useAnalytics();
 
-	const { site, isLoading, status, setupUrl, installAndActivate, isInstalling } =
+	const { site, siteDomain, isLoading, status, setupUrl, installAndActivate, isInstalling } =
 		useWooPaymentsSiteSetup( siteId );
 	const { woocommerceStatus, woocommercePaymentsStatus, isWooPaymentsActive } = status;
 
@@ -69,7 +69,7 @@ export default function EarnWooPaymentsSetup() {
 					title={ sprintf(
 						// translators: %s is the site domain, e.g. example.com
 						__( 'WooPayments is now ready to be configured on %s' ),
-						site.slug
+						siteDomain ?? site.slug
 					) }
 					description={ __(
 						'Follow the steps below to complete the process so you can earn commissions.'
