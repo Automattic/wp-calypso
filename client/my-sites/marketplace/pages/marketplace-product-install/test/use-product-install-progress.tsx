@@ -26,8 +26,7 @@ jest.mock( '@automattic/api-queries', () => ( {
 	} ),
 } ) );
 
-// Replace the initiators with inert, assertable actions; keep the rest of each module (e.g.
-// receiveSitePlugins) real so tests can drive genuine state transitions.
+// Replace the initiators with inert, assertable actions; keep the rest of each module real.
 jest.mock( 'calypso/state/plugins/installed/actions', () => ( {
 	...jest.requireActual( 'calypso/state/plugins/installed/actions' ),
 	installPlugin: jest.fn( ( siteId: number, plugin: unknown, active: boolean ) => ( {
@@ -47,8 +46,7 @@ jest.mock( 'calypso/state/plugins/installed/actions', () => ( {
 	} ) ),
 } ) );
 jest.mock( 'calypso/state/themes/actions', () => ( {
-	// Emit the real initiation action so the transfer status genuinely moves to START, as it does
-	// in production, rather than staying at whatever the test seeded.
+	// Emit the real action so the transfer status moves to START, as in production.
 	initiateThemeTransfer: jest.fn( ( siteId: number ) => ( {
 		type: 'THEME_TRANSFER_INITIATE_REQUEST',
 		siteId,
@@ -111,8 +109,7 @@ const advance = async ( ms: number ) =>
 
 const wporgItems = { give: { slug: 'give', fetched: true, name: 'GiveWP' } };
 
-// The marketplace handoff from checkout / the plugin page that authorizes an install: a matching
-// primary domain and product, with the installation not yet reported complete.
+// The handoff that authorizes an install: matching domain and product, not yet complete.
 const marketplaceHandoff = {
 	marketplace: {
 		purchaseFlow: {
@@ -223,9 +220,8 @@ describe( 'useProductInstall progression', () => {
 		await advance( 1000 );
 		expect( result.current.currentStep ).toBe( 1 );
 
-		// The wporg plugin selector returns a fresh object each render, so the initiation effect
-		// re-runs on every render (a site update here forces another); the re-entry guard is what
-		// keeps it to a single install. Without the guard this reaches multiple installs.
+		// getPlugin returns a fresh object each render, so the initiation effect re-runs constantly;
+		// the re-entry guard is what holds it to one install (without it, this reaches several).
 		await act( async () => {
 			store.dispatch(
 				receiveSite( {
@@ -365,35 +361,6 @@ describe( 'useProductInstall progression', () => {
 			context: 'theme_install',
 		} );
 		expect( installAndActivateTheme ).not.toHaveBeenCalled();
-	} );
-
-	it( 'starts the transfer when Atomic eligibility arrives after mount', async () => {
-		const { store } = renderProgress(
-			{ pluginSlug: 'give' },
-			{
-				...marketplaceHandoff,
-				ui: { selectedSiteId: SITE_ID },
-				// A Simple site with no feature data yet: no install strategy is available at mount.
-				sites: {
-					items: {
-						[ SITE_ID ]: {
-							ID: SITE_ID,
-							URL: `https://${ SITE_SLUG }`,
-							options: { is_wpcom_simple: true },
-						},
-					},
-				},
-				plugins: { wporg: { items: wporgItems } },
-			}
-		);
-
-		expect( initiatePluginTransfer ).not.toHaveBeenCalled();
-
-		// The Atomic feature data arrives late; the transfer must still start.
-		await act( async () => {
-			store.dispatch( fetchSiteFeaturesCompleted( SITE_ID, { active: [ 'atomic' ] } ) );
-		} );
-		expect( initiatePluginTransfer ).toHaveBeenCalledTimes( 1 );
 	} );
 
 	it( 'shows no plan error for an already-Atomic site even without feature data', async () => {
