@@ -272,6 +272,7 @@ describe( 'CreateSpaceModal', () => {
 			{
 				tag_count: 0,
 				language_count: 0,
+                                languages: expect.any( Array ),
 				source_count: 1,
 				layout: 'legacy',
 				icon: 'star',
