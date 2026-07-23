@@ -145,7 +145,7 @@ export default function MigrationsCommissionsList( {
 				defaultLayouts={ { table: {}, list: {} } }
 			>
 				{ isDesktop && (
-					<HStack className="dataviews__view-actions" justify="end">
+					<HStack className="dataviews__view-actions commissions-list__view-actions" justify="end">
 						<DataViews.ViewConfig />
 					</HStack>
 				) }

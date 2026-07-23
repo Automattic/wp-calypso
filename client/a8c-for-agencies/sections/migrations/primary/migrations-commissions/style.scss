@@ -51,8 +51,8 @@
 
 	// Classic-only: inset the DataViews view-config (cog) so it lines up with
 	// the 64px table content padding, matching the WooPayments dashboard table.
-	// The shared MSD list renders no inline padding for this.
-	.dataviews__view-actions {
+	// Target the list's own class rather than the shared `.dataviews__view-actions`.
+	.commissions-list__view-actions {
 		padding-inline: 64px;
 	}
 }
