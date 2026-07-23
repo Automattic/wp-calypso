@@ -24,6 +24,7 @@
 }
 
 .subscriptions-list__purchase-confirmation {
+	margin-block-start: 24px;
 	padding-inline: 16px;
 
 	@include breakpoint-deprecated( '>660px' ) {
