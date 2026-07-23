@@ -207,8 +207,9 @@ describe( 'useProductInstall progression', () => {
 		await advance( 1000 );
 		expect( result.current.currentStep ).toBe( 1 );
 
-		// A site update re-runs the initiation effect; the re-entry guard must keep it from
-		// installing a second time.
+		// The wporg plugin selector returns a fresh object each render, so the initiation effect
+		// re-runs on every render (a site update here forces another); the re-entry guard is what
+		// keeps it to a single install. Without the guard this reaches multiple installs.
 		await act( async () => {
 			store.dispatch(
 				receiveSite( {
