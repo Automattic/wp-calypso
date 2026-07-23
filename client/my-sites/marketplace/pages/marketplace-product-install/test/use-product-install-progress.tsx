@@ -6,6 +6,7 @@ import { setAutomatedTransferStatus } from 'calypso/state/automated-transfer/act
 import { transferStates } from 'calypso/state/automated-transfer/constants';
 import automatedTransferReducer from 'calypso/state/automated-transfer/reducer';
 import marketplaceReducer from 'calypso/state/marketplace/reducer';
+import { receiveSitePlugins } from 'calypso/state/plugins/installed/actions';
 import pluginsReducer from 'calypso/state/plugins/reducer';
 import routeReducer from 'calypso/state/route/reducer';
 import { receiveSite } from 'calypso/state/sites/actions';
@@ -23,8 +24,10 @@ jest.mock( '@automattic/api-queries', () => ( {
 	} ),
 } ) );
 
-// The install-initiation effect dispatches these; replace them with inert, assertable actions.
+// Replace the initiators with inert, assertable actions; keep the rest of each module (e.g.
+// receiveSitePlugins) real so tests can drive genuine state transitions.
 jest.mock( 'calypso/state/plugins/installed/actions', () => ( {
+	...jest.requireActual( 'calypso/state/plugins/installed/actions' ),
 	installPlugin: jest.fn( ( siteId: number, plugin: unknown, active: boolean ) => ( {
 		type: 'MOCK_INSTALL_PLUGIN',
 		siteId,
@@ -42,10 +45,11 @@ jest.mock( 'calypso/state/plugins/installed/actions', () => ( {
 	} ) ),
 } ) );
 jest.mock( 'calypso/state/themes/actions', () => ( {
-	initiateThemeTransfer: jest.fn( ( siteId: number, _x, pluginSlug: string ) => ( {
-		type: 'MOCK_INITIATE_THEME_TRANSFER',
+	// Emit the real initiation action so the transfer status genuinely moves to START, as it does
+	// in production, rather than staying at whatever the test seeded.
+	initiateThemeTransfer: jest.fn( ( siteId: number ) => ( {
+		type: 'THEME_TRANSFER_INITIATE_REQUEST',
 		siteId,
-		pluginSlug,
 	} ) ),
 	installAndActivateTheme: jest.fn( ( themeId: string, siteId: number ) => ( {
 		type: 'MOCK_INSTALL_ACTIVATE_THEME',
@@ -108,6 +112,12 @@ const marketplaceHandoff = {
 	},
 };
 
+const jetpackSite = {
+	ui: { selectedSiteId: SITE_ID },
+	sites: { items: { [ SITE_ID ]: { ID: SITE_ID, URL: `https://${ SITE_SLUG }`, jetpack: true } } },
+	plugins: { wporg: { items: wporgItems } },
+};
+
 describe( 'useProductInstall progression', () => {
 	beforeEach( () => {
 		jest.useFakeTimers();
@@ -117,17 +127,10 @@ describe( 'useProductInstall progression', () => {
 	} );
 	afterEach( () => jest.useRealTimers() );
 
-	it( 'installs in place once even when the site data changes underneath it', async () => {
+	it( 'installs in place, keeps the setup step visible, then activates on completion', async () => {
 		const { result, store } = renderProgress(
 			{ pluginSlug: 'give' },
-			{
-				...marketplaceHandoff,
-				ui: { selectedSiteId: SITE_ID },
-				sites: {
-					items: { [ SITE_ID ]: { ID: SITE_ID, URL: `https://${ SITE_SLUG }`, jetpack: true } },
-				},
-				plugins: { wporg: { items: wporgItems } },
-			}
+			{ ...marketplaceHandoff, ...jetpackSite }
 		);
 
 		// In-place strategy: installs directly, exactly once, with no atomic transfer.
@@ -139,6 +142,31 @@ describe( 'useProductInstall progression', () => {
 		);
 		expect( initiateThemeTransfer ).not.toHaveBeenCalled();
 
+		// The setup step is held visible for one second before moving on.
+		expect( result.current.currentStep ).toBe( 0 );
+		await advance( 999 );
+		expect( result.current.currentStep ).toBe( 0 );
+		await advance( 1 );
+		expect( result.current.currentStep ).toBe( 1 );
+
+		// The plugin finishes installing; the hook activates it once and advances to activating.
+		await act( async () => {
+			store.dispatch(
+				receiveSitePlugins( SITE_ID, [ { slug: 'give', id: 'give/give', active: false } ] )
+			);
+		} );
+		expect( activatePlugin ).toHaveBeenCalledTimes( 1 );
+		expect( activatePlugin ).toHaveBeenCalledWith( SITE_ID, { slug: 'give', id: 'give/give' } );
+		expect( result.current.currentStep ).toBe( 2 );
+	} );
+
+	it( 'installs in place only once when the site data changes underneath it', async () => {
+		const { result, store } = renderProgress(
+			{ pluginSlug: 'give' },
+			{ ...marketplaceHandoff, ...jetpackSite }
+		);
+
+		expect( installPlugin ).toHaveBeenCalledTimes( 1 );
 		await advance( 1000 );
 		expect( result.current.currentStep ).toBe( 1 );
 
@@ -157,7 +185,7 @@ describe( 'useProductInstall progression', () => {
 		expect( installPlugin ).toHaveBeenCalledTimes( 1 );
 	} );
 
-	it( 'transfers a Simple site to Atomic and advances to activating when the transfer completes', async () => {
+	it( 'transfers a Simple site to Atomic and activates when the transfer completes', async () => {
 		const { result, store } = renderProgress(
 			{ pluginSlug: 'give' },
 			{
@@ -177,15 +205,30 @@ describe( 'useProductInstall progression', () => {
 			}
 		);
 
-		// Atomic-transfer strategy: transfers first, exactly once, rather than installing in place.
+		// Atomic-transfer strategy: transfers first, exactly once, with the expected payload.
 		expect( initiateThemeTransfer ).toHaveBeenCalledTimes( 1 );
+		expect( initiateThemeTransfer ).toHaveBeenCalledWith(
+			SITE_ID,
+			null,
+			'give',
+			'',
+			'plugin_install'
+		);
 		expect( installPlugin ).not.toHaveBeenCalled();
 
+		expect( result.current.currentStep ).toBe( 0 );
 		await advance( 1000 );
 		expect( result.current.currentStep ).toBe( 1 );
 
-		// The site turns Atomic mid-transfer, which would make the strategy install in place on a
-		// re-run; the re-entry guard must prevent any second initiation.
+		// Production reports completion from polling first, and only then refreshes the site. The
+		// hook must consume the completed status to advance, before the site reads as Atomic.
+		await act( async () => {
+			store.dispatch( setAutomatedTransferStatus( SITE_ID, transferStates.COMPLETE, '' ) );
+		} );
+		expect( result.current.currentStep ).toBe( 2 );
+
+		// The later site refresh (now Atomic) re-runs the initiation effect; the guard prevents any
+		// second initiation.
 		await act( async () => {
 			store.dispatch(
 				receiveSite( {
@@ -197,23 +240,13 @@ describe( 'useProductInstall progression', () => {
 		} );
 		expect( initiateThemeTransfer ).toHaveBeenCalledTimes( 1 );
 		expect( installPlugin ).not.toHaveBeenCalled();
-
-		// The transfer reports complete later; the hook must react to that update to advance.
-		await act( async () => {
-			store.dispatch( setAutomatedTransferStatus( SITE_ID, transferStates.COMPLETE ) );
-		} );
-		expect( result.current.currentStep ).toBe( 2 );
 	} );
 
 	it( 'stays idle when revisited with a stale completed handoff', async () => {
 		const { result } = renderProgress(
 			{ pluginSlug: 'give' },
 			{
-				ui: { selectedSiteId: SITE_ID },
-				sites: {
-					items: { [ SITE_ID ]: { ID: SITE_ID, URL: `https://${ SITE_SLUG }`, jetpack: true } },
-				},
-				plugins: { wporg: { items: wporgItems } },
+				...jetpackSite,
 				marketplace: {
 					purchaseFlow: {
 						primaryDomain: SITE_SLUG,
