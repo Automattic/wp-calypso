@@ -1240,7 +1240,14 @@ class ManagePurchase extends Component<
 
 				<span className="manage-purchase__settings-link">
 					{ ! isJetpackCloud() && site && (
-						<ProductLink purchase={ purchase } selectedSite={ site } />
+						// Temporary bridge (SHILL-2256): ProductLink still expects the
+						// camelCase Purchase. Remove once it reads the raw shape.
+						<ProductLink
+							purchase={ createPurchaseObject(
+								purchase as unknown as Parameters< typeof createPurchaseObject >[ 0 ]
+							) }
+							selectedSite={ site }
+						/>
 					) }
 				</span>
 
@@ -1367,7 +1374,15 @@ class ManagePurchase extends Component<
 		return (
 			<Fragment>
 				{ ( this.props.showHeader ?? true ) && (
-					<PurchaseSiteHeader siteId={ siteId } name={ siteName } purchase={ purchase } />
+					// Temporary bridge (SHILL-2256): PurchaseSiteHeader still expects the
+					// camelCase Purchase. Remove once it reads the raw shape.
+					<PurchaseSiteHeader
+						siteId={ siteId }
+						name={ siteName }
+						purchase={ createPurchaseObject(
+							purchase as unknown as Parameters< typeof createPurchaseObject >[ 0 ]
+						) }
+					/>
 				) }
 				<Card className={ classes }>
 					<header className="manage-purchase__header">
@@ -1676,6 +1691,11 @@ function PlanOverlapNotice( {
 	siteId: number;
 	purchase: Purchase;
 } ) {
+	// Temporary bridge (SHILL-2256): ProductPlanOverlapNotices still expects the
+	// camelCase Purchase. Remove once it reads the raw shape.
+	const currentPurchase = createPurchaseObject(
+		purchase as unknown as Parameters< typeof createPurchaseObject >[ 0 ]
+	);
 	if ( isSiteLevel ) {
 		if ( ! selectedSiteId ) {
 			// Probably still loading
@@ -1688,7 +1708,7 @@ function PlanOverlapNotice( {
 				plans={ JETPACK_PLANS }
 				products={ JETPACK_PRODUCTS_LIST }
 				siteId={ selectedSiteId }
-				currentPurchase={ purchase }
+				currentPurchase={ currentPurchase }
 			/>
 		);
 	}
@@ -1703,7 +1723,7 @@ function PlanOverlapNotice( {
 			plans={ JETPACK_PLANS }
 			products={ JETPACK_PRODUCTS_LIST }
 			siteId={ siteId }
-			currentPurchase={ purchase }
+			currentPurchase={ currentPurchase }
 		/>
 	);
 }
