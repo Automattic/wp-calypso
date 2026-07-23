@@ -1,5 +1,6 @@
 import { agencyTeamInviteMutation } from '@automattic/api-queries';
 import { useMutation } from '@tanstack/react-query';
+import { useNavigate } from '@tanstack/react-router';
 import {
 	Button,
 	Modal,
@@ -12,6 +13,8 @@ import { __ } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
 import { useState } from 'react';
 import { ButtonStack } from '../../components/button-stack';
+import { FeedbackType } from '../feedback/types';
+import useShowFeedback from '../feedback/use-show-feedback';
 
 interface InviteTeamMemberModalProps {
 	agencyId: number;
@@ -24,6 +27,8 @@ export default function InviteTeamMemberModal( { agencyId, onClose }: InviteTeam
 	const [ error, setError ] = useState( '' );
 	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
 	const invite = useMutation( agencyTeamInviteMutation( agencyId ) );
+	const navigate = useNavigate();
+	const { isFeedbackShown } = useShowFeedback( FeedbackType.MemberInviteSent );
 
 	const onSubmit = ( event: React.FormEvent ) => {
 		event.preventDefault();
@@ -31,14 +36,25 @@ export default function InviteTeamMemberModal( { agencyId, onClose }: InviteTeam
 			setError( __( 'Please enter a valid email or WordPress.com username.' ) );
 			return;
 		}
+		const submittedLogin = login.trim();
 		invite.mutate(
-			{ login: login.trim(), message: message.trim() },
+			{ login: submittedLogin, message: message.trim() },
 			{
 				onSuccess: () => {
 					createSuccessNotice( __( 'The invitation has been successfully sent.' ), {
 						type: 'snackbar',
 					} );
 					onClose();
+					if ( ! isFeedbackShown ) {
+						navigate( {
+							to: '/feedback',
+							search: {
+								type: FeedbackType.MemberInviteSent,
+								returnTo: '/team',
+								email: submittedLogin,
+							},
+						} );
+					}
 				},
 				onError: () =>
 					createErrorNotice( __( 'Failed to send the invitation.' ), { type: 'snackbar' } ),

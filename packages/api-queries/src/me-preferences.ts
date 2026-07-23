@@ -24,6 +24,7 @@ const defaultValues: Required< UserPreferences > = {
 	'reader-profile-posts-visibility': 'public',
 	'reader-profile-sites-visibility': 'public',
 	'reader-profile-hidden-sites': [],
+	'a4a-feedback': {},
 };
 
 const staticPreferenceStatIds: Record< string, string > = {
@@ -41,6 +42,7 @@ const staticPreferenceStatIds: Record< string, string > = {
 	'reader-profile-posts-visibility': 'postvis',
 	'reader-profile-sites-visibility': 'sitevis',
 	'reader-profile-hidden-sites': 'hidsit',
+	'a4a-feedback': 'a4afb',
 };
 
 const dynamicPreferenceStatPrefixes: Record< string, string > = {

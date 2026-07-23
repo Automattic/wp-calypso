@@ -204,6 +204,22 @@ export const agencyTeamRoute = createRoute( {
 	)
 );
 
+// `/feedback` – shared milestone "rate your experience" survey screen
+export const feedbackRoute = createRoute( {
+	head: () => ( { meta: [ { title: __( 'Share your feedback' ) } ] } ),
+	getParentRoute: () => agencyRoute,
+	path: 'feedback',
+	validateSearch: ( search: Record< string, unknown > ) => ( {
+		type: typeof search.type === 'string' ? search.type : undefined,
+		returnTo: typeof search.returnTo === 'string' ? search.returnTo : undefined,
+		email: typeof search.email === 'string' ? search.email : undefined,
+	} ),
+} ).lazy( () =>
+	import( '../../agency/feedback' ).then( ( d ) =>
+		createLazyRoute( 'agency-feedback' )( { component: d.default } )
+	)
+);
+
 // `/earn` – summary of the agency's earning programs (default Earn screen)
 const earnOverviewRoute = createRoute( {
 	head: () => ( { meta: [ { title: __( 'Overview' ) } ] } ),
@@ -521,6 +537,7 @@ export const createAgencyRoutes = () => [
 		mcpRoute.addChildren( [ mcpOverviewRoute, mcpAvailableToolsRoute, mcpConnectRoute ] ),
 		agencySitesRoute,
 		agencyTeamRoute,
+		feedbackRoute,
 		earnOverviewRoute,
 		earnReferralsRoute,
 		earnWooPaymentsRoute,
