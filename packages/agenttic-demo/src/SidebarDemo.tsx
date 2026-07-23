@@ -1,69 +1,48 @@
-import type { ContextProvider } from '@automattic/agenttic-client';
-import { useAgentChat } from '@automattic/agenttic-client';
-import { getClientContext, getClientTools } from '@automattic/agenttic-client/mocks';
-
-import '../../packages/agenttic-ui/src/markdown-extensions/charts/charts.css';
 import {
 	AgentUI,
-	createMessageRenderer,
 	EmptyView,
 	ImageUploader,
 	type ImageUploaderHandle,
-	type UploadedImage,
 } from '@automattic/agenttic-ui';
-import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import React, { useEffect, useMemo, useRef } from 'react';
 import MessageTester from './MessageTester';
+import { ViewTools } from './playground/PlaygroundShell';
+import { SuggestionsTool } from './playground/SuggestionsTool';
+import { useDemoChat } from './hooks/useDemoChat';
+import { useImageUploads } from './hooks/useImageUploads';
 
 const SidebarDemo: React.FC< { currentTheme: 'light' | 'dark' } > = ( {
 	currentTheme,
 } ) => {
-	const uploaderRef = useRef<ImageUploaderHandle>( null );
-	const [ uploadedImages, setUploadedImages ] = useState<UploadedImage[]>( [] );
-
-	const [ contextProvider ] = useState<ContextProvider>( () => ( {
-		getClientContext,
-	} ) );
-
-	const addMessageRef = useRef< ( ( message: any ) => void ) | null >( null );
-
-	const toolProvider = useMemo(
-		() =>
-			getClientTools( ( message ) => {
-				if ( addMessageRef.current ) {
-					addMessageRef.current( message );
-				}
-			} ),
-		[]
-	);
+	const uploaderRef = useRef< ImageUploaderHandle >( null );
+	const { uploadedImages, handleFilesSelected, handleRemoveImage } =
+		useImageUploads();
 
 	const {
 		messages,
 		isProcessing,
 		error,
-		onSubmit,
 		suggestions,
 		registerSuggestions,
 		clearSuggestions,
 		addMessage,
 		loadMessages,
 		abortCurrentRequest,
-	} = useAgentChat( {
-		agentId: 'test',
-		agentUrl: 'https://public-api.wordpress.com/wpcom/v2/ai/agent',
+		messageRenderer,
+		handleSubmit,
+	} = useDemoChat( {
 		sessionId: 'dev-session-sidebar',
-		contextProvider,
-		toolProvider,
 		enableStreaming: true,
 	} );
-
-	useEffect( () => {
-		addMessageRef.current = addMessage;
-	}, [ addMessage ] );
 
 	const sampleSuggestions = useMemo(
 		() => [
 			{ id: '1', label: 'Customize colors', prompt: 'Customize colors' },
-			{ id: '2', label: 'Change page layout', prompt: 'Change page layout' },
+			{
+				id: '2',
+				label: 'Change page layout',
+				prompt: 'Change page layout',
+			},
 			{
 				id: '3',
 				label: 'Change tone to',
@@ -71,11 +50,19 @@ const SidebarDemo: React.FC< { currentTheme: 'light' | 'dark' } > = ( {
 				options: [
 					{ id: 'tone-formal', label: 'Formal', value: 'formal' },
 					{ id: 'tone-casual', label: 'Casual', value: 'casual' },
-					{ id: 'tone-friendly', label: 'Friendly', value: 'friendly' },
+					{
+						id: 'tone-friendly',
+						label: 'Friendly',
+						value: 'friendly',
+					},
 					{ id: 'tone-funny', label: 'Funny', value: 'funny' },
 				],
 			},
-			{ id: '5', label: 'What else can you do?', prompt: 'What else can you do?' },
+			{
+				id: '5',
+				label: 'What else can you do?',
+				prompt: 'What else can you do?',
+			},
 		],
 		[]
 	);
@@ -84,60 +71,14 @@ const SidebarDemo: React.FC< { currentTheme: 'light' | 'dark' } > = ( {
 		registerSuggestions( sampleSuggestions );
 	}, [ registerSuggestions, sampleSuggestions ] );
 
-	const messageRenderer = useMemo(
-		() =>
-			createMessageRenderer( {
-				extensions: {
-					charts: { enabled: true },
-					gfm: { enabled: true },
-				},
-				enableStreaming: true,
-			} ),
-		[]
-	);
-
-	const handleSubmit = useCallback(
-		async ( message: string ) => {
-			await onSubmit( message );
-			clearSuggestions();
-		},
-		[ onSubmit, clearSuggestions ]
-	);
-
-	const handleFilesSelected = useCallback( ( files: File[] ) => {
-		// Simulate upload by creating object URLs
-		const newImages: UploadedImage[] = files.map( ( file, index ) => ( {
-			id: `${ Date.now() }-${ index }`,
-			url: URL.createObjectURL( file ),
-			name: file.name,
-			mime_type: file.type,
-		} ) );
-		setUploadedImages( ( prev ) => [ ...prev, ...newImages ] );
-	}, [] );
-
-	const handleRemoveImage = useCallback( ( image: UploadedImage ) => {
-		setUploadedImages( ( prev ) => prev.filter( ( img ) => img.id !== image.id ) );
-		// Revoke the object URL to free memory
-		URL.revokeObjectURL( image.url );
-	}, [] );
-
 	return (
 		<>
 			<style>
 				{ `
-				#root {
-					display: flow-root;
-				}
-
-				body {
-					margin: 0;
-				}
-
 				.sidebar-demo {
 					display: flex;
-					height: calc(100vh - 30px);
+					height: 100%;
 					background-color: ${ currentTheme === 'dark' ? '#1e1e1e' : '#f0f0f1' };
-					margin-top: 30px;
 				}
 
 				.sidebar-demo__content {
@@ -191,19 +132,17 @@ const SidebarDemo: React.FC< { currentTheme: 'light' | 'dark' } > = ( {
 				}
 				` }
 			</style>
-			<div
-				style={ {
-					position: 'fixed',
-					top: '0',
-					right: '0',
-					display: 'flex',
-					flexWrap: 'wrap',
-					gap: '2px',
-					zIndex: 10000,
-				} }
-			>
-				<MessageTester addMessage={ addMessage } onClear={ () => loadMessages( [] ) } />
-			</div>
+			<ViewTools>
+				<SuggestionsTool
+					defaultSuggestions={ sampleSuggestions }
+					registerSuggestions={ registerSuggestions }
+				/>
+				<MessageTester
+					addMessage={ addMessage }
+					loadMessages={ loadMessages }
+					onClear={ () => loadMessages( [] ) }
+				/>
+			</ViewTools>
 			<div className="sidebar-demo">
 				<div className="sidebar-demo__content" />
 				<div className="sidebar-demo__sidebar">
@@ -231,23 +170,65 @@ const SidebarDemo: React.FC< { currentTheme: 'light' | 'dark' } > = ( {
 						>
 							<AgentUI.ConversationView>
 								<div className="sidebar-demo__header">
-									<button className="sidebar-demo__header-button" title="More options">
-										<svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+									<button
+										className="sidebar-demo__header-button"
+										title="More options"
+									>
+										<svg
+											width="20"
+											height="20"
+											viewBox="0 0 24 24"
+											fill="currentColor"
+										>
 											<circle cx="12" cy="5" r="2" />
 											<circle cx="12" cy="12" r="2" />
 											<circle cx="12" cy="19" r="2" />
 										</svg>
 									</button>
-									<button className="sidebar-demo__header-button" title="History">
-										<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+									<button
+										className="sidebar-demo__header-button"
+										title="History"
+									>
+										<svg
+											width="20"
+											height="20"
+											viewBox="0 0 24 24"
+											fill="none"
+											stroke="currentColor"
+											strokeWidth="2"
+											strokeLinecap="round"
+											strokeLinejoin="round"
+										>
 											<circle cx="12" cy="12" r="10" />
 											<polyline points="12 6 12 12 16 14" />
 										</svg>
 									</button>
-									<button className="sidebar-demo__header-button" title="Close">
-										<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-											<line x1="18" y1="6" x2="6" y2="18" />
-											<line x1="6" y1="6" x2="18" y2="18" />
+									<button
+										className="sidebar-demo__header-button"
+										title="Close"
+									>
+										<svg
+											width="20"
+											height="20"
+											viewBox="0 0 24 24"
+											fill="none"
+											stroke="currentColor"
+											strokeWidth="2"
+											strokeLinecap="round"
+											strokeLinejoin="round"
+										>
+											<line
+												x1="18"
+												y1="6"
+												x2="6"
+												y2="18"
+											/>
+											<line
+												x1="6"
+												y1="6"
+												x2="18"
+												y2="18"
+											/>
 										</svg>
 									</button>
 								</div>
@@ -259,10 +240,17 @@ const SidebarDemo: React.FC< { currentTheme: 'light' | 'dark' } > = ( {
 										images={ uploadedImages }
 										onFilesSelected={ handleFilesSelected }
 										onRemoveImage={ handleRemoveImage }
-										acceptedFileTypes={ [ 'image/jpeg', 'image/png', 'image/gif', 'image/webp' ] }
+										acceptedFileTypes={ [
+											'image/jpeg',
+											'image/png',
+											'image/gif',
+											'image/webp',
+										] }
 										showFileMetadata={ true }
 									/>
-									<AgentUI.Input imageUploaderRef={ uploaderRef } />
+									<AgentUI.Input
+										imageUploaderRef={ uploaderRef }
+									/>
 								</AgentUI.Footer>
 							</AgentUI.ConversationView>
 						</AgentUI.Container>
