@@ -1,9 +1,4 @@
-import {
-	getBuildWowSiteIdentifier,
-	getBuildWowSiteSpecUrl,
-	isBuildWowEnabled,
-	isBuildWowSiteEditorReady,
-} from '../build-wow';
+import { getBuildWowSiteIdentifier, getBuildWowSiteSpecUrl, isBuildWowEnabled } from '../build-wow';
 
 jest.mock( 'calypso/lib/logstash', () => ( {
 	logToLogstash: jest.fn( () => Promise.resolve() ),
@@ -65,25 +60,5 @@ describe( 'build-wow utilities', () => {
 		expect( url.searchParams.get( 'siteId' ) ).toBe( '123' );
 		expect( url.searchParams.get( 'ref' ) ).toBe( 'referrer' );
 		expect( url.searchParams.get( 'source' ) ).toBe( 'vega' );
-	} );
-
-	it( 'treats Atomic sites with a ready remote option as editor-ready', () => {
-		expect(
-			isBuildWowSiteEditorReady( {
-				atomic: {
-					is_atomic: true,
-				},
-				remote_option_ready: true,
-			} )
-		).toBe( true );
-
-		expect(
-			isBuildWowSiteEditorReady( {
-				atomic: {
-					is_atomic: false,
-				},
-				remote_option_ready: true,
-			} )
-		).toBe( false );
 	} );
 } );
