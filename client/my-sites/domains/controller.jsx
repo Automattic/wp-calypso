@@ -389,7 +389,7 @@ const maybeRedirectToDashboard = ( context, next ) => {
 
 // Forced-opt-in (multi-site dashboard) users who land on the classic
 // `/domains/add/use-my-domain/:site` screen are sent to the stepper flow that the
-// dashboard's own "Use a domain name I own" button targets.
+// dashboard's own "Use a domain name I own" button links to.
 const maybeRedirectUseMyDomainToDashboardSetup = ( context, next ) => {
 	if ( ! hasDashboardForcedOptIn( context.store.getState() ) ) {
 		return next();
