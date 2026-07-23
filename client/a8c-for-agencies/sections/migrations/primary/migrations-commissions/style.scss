@@ -36,11 +36,8 @@
 		}
 	}
 
-	// Classic-only inset for the shared consolidated summary cards. The MSD
-	// component renders a neutral `.consolidated-commissions` class; the A4A
-	// host owns this page padding (the MSD route gets its spacing from
-	// PageLayout instead). Keep in sync with the `.consolidated-commissions`
-	// class in dashboard/agency/earn/migrations/consolidated-commissions.
+	// Classic-only page inset; keep in sync with the shared `.consolidated-commissions`
+	// in dashboard/agency/earn/migrations/consolidated-commissions.
 	.consolidated-commissions {
 		padding: 16px;
 
@@ -49,9 +46,7 @@
 		}
 	}
 
-	// Classic-only: inset the DataViews view-config (cog) so it lines up with
-	// the 64px table content padding, matching the WooPayments dashboard table.
-	// Target the list's own class rather than the shared `.dataviews__view-actions`.
+	// Classic-only: inset the cog to line up with the 64px table content padding.
 	.commissions-list__view-actions {
 		padding-inline: 64px;
 	}
