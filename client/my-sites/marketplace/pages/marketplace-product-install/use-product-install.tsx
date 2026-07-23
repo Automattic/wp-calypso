@@ -1,16 +1,10 @@
 import { siteByIdQuery } from '@automattic/api-queries';
-import {
-	PLAN_BUSINESS,
-	WPCOM_FEATURES_ATOMIC,
-	getPlan,
-	WPCOM_FEATURES_MANAGE_PLUGINS,
-} from '@automattic/calypso-products';
+import { WPCOM_FEATURES_ATOMIC, WPCOM_FEATURES_MANAGE_PLUGINS } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
 import { useQuery } from '@tanstack/react-query';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, useState, useMemo, useRef } from 'react';
 import { useQueryTheme } from 'calypso/components/data/query-theme';
-import EmptyContent from 'calypso/components/empty-content';
 import { isAtomicTransferredSite } from 'calypso/dashboard/utils/site-atomic-transfers';
 import { useInterval } from 'calypso/lib/interval';
 import { waitFor } from 'calypso/my-sites/marketplace/util';
@@ -51,13 +45,18 @@ import {
 	getSelectedSiteId,
 	getSelectedSiteSlug,
 } from 'calypso/state/ui/selectors';
-import ThemeDirectInstall from './theme-direct-install';
 import { useDelayedCondition } from './use-delayed-condition';
 import useMarketplaceAdditionalSteps from './use-marketplace-additional-steps';
-import type { TranslateResult } from 'i18n-calypso';
 
 // The state authorizing an install is handed off asynchronously, so allow for it arriving late.
 const INSTALL_HANDOFF_GRACE_PERIOD_MS = 2000;
+
+export type ProductInstallError =
+	| { type: 'non-installable-plan' }
+	| { type: 'no-direct-access-upload' }
+	| { type: 'theme-direct-install' }
+	| { type: 'rejected-upload'; reason: 'exists' | 'malicious' | 'too-big' }
+	| { type: 'generic' };
 
 export function useProductInstall( {
 	pluginSlug = '',
@@ -375,107 +374,43 @@ export function useProductInstall( {
 	}, [ themeSlug, isPluginUploadFlow, translate ] );
 	const additionalSteps = useMarketplaceAdditionalSteps();
 
-	const renderError = () => {
-		// Evaluate error causes in priority order
+	// Which error screen to show, in priority order, or null for none. The presentational mapping
+	// lives in ProductInstallErrorView; keeping this as data makes the branching testable.
+	const error: ProductInstallError | null = ( () => {
 		if ( nonInstallablePlanError ) {
-			return (
-				<EmptyContent
-					title={ null }
-					line={ translate(
-						"Your current plan doesn't allow plugin installation. Please upgrade to %(businessPlanName)s plan first.",
-						{
-							args: { businessPlanName: getPlan( PLAN_BUSINESS )?.getTitle() ?? '' },
-						}
-					) }
-					action={ translate( 'Upgrade to %(planName)s Plan', {
-						args: { planName: getPlan( PLAN_BUSINESS )?.getTitle() ?? '' },
-					} ) }
-					actionURL={ `/checkout/${ selectedSite?.slug }/business?redirect_to=/marketplace/plugin/${ pluginSlug }/install/${ selectedSite?.slug }#step2` }
-				/>
-			);
+			return { type: 'non-installable-plan' };
 		}
 		if ( isPluginUploadFlow && noDirectAccessError && ! directInstallationAllowed ) {
-			return (
-				<EmptyContent
-					title={ null }
-					line={ translate(
-						'This URL should not be accessed directly. Please try to upload the plugin again.'
-					) }
-					action={ translate( 'Go to the upload page' ) }
-					actionURL={ `/plugins/upload/${ selectedSite?.slug }` }
-				/>
-			);
+			return { type: 'no-direct-access-upload' };
 		}
-
 		if ( themeSlug && noDirectAccessError && ! directInstallationAllowed ) {
-			return (
-				<ThemeDirectInstall
-					themeSlug={ themeSlug }
-					pluginSlug={ pluginSlug }
-					siteSlug={ selectedSite?.slug }
-					theme={ wpOrgTheme }
-					onActivate={ () => setUserDirectInstallationAllowed( true ) }
-				/>
-			);
+			return { type: 'theme-direct-install' };
 		}
-		const uploadPageURL = `/plugins/upload/${ selectedSiteSlug }`;
-		const wpAdminUploadURL = `https://${ selectedSiteSlug }/wp-admin/plugin-install.php?tab=upload`;
-
-		// Rejected uploads all offer the same way out: back to the upload page, or retry in WP Admin.
-		const rejectedUploadLine: TranslateResult | false =
-			( pluginExists &&
-				translate(
-					'This plugin already exists on your site. If you want to upgrade or downgrade the plugin, please continue by uploading the plugin again from WP Admin.'
-				) ) ||
-			( pluginMalicious &&
-				translate(
-					'This plugin is identified as malicious. If you still insist to install the plugin, please continue by uploading the plugin again from WP Admin.'
-				) ) ||
-			( pluginTooBig &&
-				translate(
-					'This plugin is too big to be installed via this page. If you still want to install the plugin, please continue by uploading the plugin again from WP Admin.'
-				) );
-
-		if ( rejectedUploadLine ) {
-			return (
-				<EmptyContent
-					title={ null }
-					line={ rejectedUploadLine }
-					secondaryAction={ translate( 'Back' ) }
-					secondaryActionURL={ uploadPageURL }
-					action={ translate( 'Re-upload plugin' ) }
-					actionURL={ wpAdminUploadURL }
-				/>
-			);
+		if ( pluginExists ) {
+			return { type: 'rejected-upload', reason: 'exists' };
 		}
-		// Catch the rest of the error cases.
+		if ( pluginMalicious ) {
+			return { type: 'rejected-upload', reason: 'malicious' };
+		}
+		if ( pluginTooBig ) {
+			return { type: 'rejected-upload', reason: 'too-big' };
+		}
 		if (
 			pluginUploadError ||
 			pluginInstallStatus?.error ||
 			( atomicFlow && automatedTransferStatus === transferStates.FAILURE )
 		) {
-			return (
-				<EmptyContent
-					title={ null }
-					line={ translate(
-						'An error occurred while installing the plugin. Please try uploading it again from WP Admin.'
-					) }
-					secondaryAction={ translate( 'Back' ) }
-					secondaryActionURL={
-						isPluginUploadFlow ? uploadPageURL : `/plugins/${ pluginSlug }/${ selectedSiteSlug }`
-					}
-					action={ translate( 'Upload from WP Admin' ) }
-					actionURL={ wpAdminUploadURL }
-				/>
-			);
+			return { type: 'generic' };
 		}
-	};
+		return null;
+	} )();
 
 	return {
 		siteId,
 		currentStep,
 		steps,
 		additionalSteps,
-		error: renderError(),
+		error,
+		onActivateTheme: () => setUserDirectInstallationAllowed( true ),
 	};
 }

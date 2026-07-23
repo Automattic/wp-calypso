@@ -7,6 +7,7 @@ import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import MarketplaceProgressBar from 'calypso/my-sites/marketplace/components/progressbar';
 import theme from 'calypso/my-sites/marketplace/theme';
 import './style.scss';
+import ProductInstallErrorView from './product-install-error';
 import { useProductInstall } from './use-product-install';
 
 const MarketplaceProductInstall = ( {
@@ -16,10 +17,12 @@ const MarketplaceProductInstall = ( {
 	pluginSlug?: string;
 	themeSlug?: string;
 } ) => {
-	const { siteId, currentStep, steps, additionalSteps, error } = useProductInstall( {
-		pluginSlug,
-		themeSlug,
-	} );
+	const { siteId, currentStep, steps, additionalSteps, error, onActivateTheme } = useProductInstall(
+		{
+			pluginSlug,
+			themeSlug,
+		}
+	);
 
 	return (
 		<ThemeProvider theme={ theme }>
@@ -40,7 +43,14 @@ const MarketplaceProductInstall = ( {
 				<WordPressLogo className="marketplace-plugin-install__logo" size={ 24 } />
 			</Masterbar>
 			<div className="marketplace-plugin-install__root">
-				{ error || (
+				{ error ? (
+					<ProductInstallErrorView
+						error={ error }
+						pluginSlug={ pluginSlug }
+						themeSlug={ themeSlug }
+						onActivateTheme={ onActivateTheme }
+					/>
+				) : (
 					<MarketplaceProgressBar
 						steps={ steps }
 						currentStep={ currentStep }
