@@ -1,6 +1,7 @@
 import { formatCurrency } from '@automattic/number-formatters';
-import { __experimentalVStack as VStack, Button } from '@wordpress/components';
+import { __experimentalVStack as VStack } from '@wordpress/components';
 import { __, sprintf } from '@wordpress/i18n';
+import InlineSupportLink from '../../../components/inline-support-link';
 import { formatDate } from '../../../utils/datetime';
 import ConsolidatedStatCard from './consolidated-stat-card';
 import useGetPayoutData from './hooks/use-payout-data';
@@ -72,9 +73,12 @@ function PayoutAmount( {
 					</div>
 
 					<div>
-						<Button variant="link" href={ AGENCY_EARNINGS_LEARN_MORE_LINK } target="_blank">
+						<InlineSupportLink
+							supportLink={ AGENCY_EARNINGS_LEARN_MORE_LINK }
+							forceOpenInHelpCenter
+						>
 							{ __( 'Learn more' ) }
-						</Button>
+						</InlineSupportLink>
 					</div>
 				</VStack>
 			}

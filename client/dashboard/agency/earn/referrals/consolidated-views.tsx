@@ -1,7 +1,8 @@
 import { formatCurrency } from '@automattic/number-formatters';
-import { __experimentalGrid as Grid, Button } from '@wordpress/components';
+import { Button, __experimentalGrid as Grid } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
+import InlineSupportLink from '../../../components/inline-support-link';
 import ConsolidatedStatCard from './consolidated-stat-card';
 import useConsolidatedPayoutData from './hooks/use-consolidated-payout-data';
 import { downloadCommissionsCsv } from './lib/download-commissions-csv';
@@ -99,7 +100,12 @@ export default function ConsolidatedViews( {
 					),
 					{
 						br: <br />,
-						a: <Button variant="link" href={ AGENCY_EARNINGS_LEARN_MORE_LINK } target="_blank" />,
+						a: (
+							<InlineSupportLink
+								supportLink={ AGENCY_EARNINGS_LEARN_MORE_LINK }
+								forceOpenInHelpCenter
+							/>
+						),
 					}
 				) }
 				isLoading={ isLoading || isLoadingCommissionPayout }
@@ -120,7 +126,12 @@ export default function ConsolidatedViews( {
 					),
 					{
 						br: <br />,
-						a: <Button variant="link" href={ AGENCY_EARNINGS_LEARN_MORE_LINK } target="_blank" />,
+						a: (
+							<InlineSupportLink
+								supportLink={ AGENCY_EARNINGS_LEARN_MORE_LINK }
+								forceOpenInHelpCenter
+							/>
+						),
 					}
 				) }
 				isLoading={ isLoading }

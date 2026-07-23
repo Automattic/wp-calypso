@@ -7,6 +7,7 @@ import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import { reusableBlock } from '@wordpress/icons';
 import EmptyState from '../../../components/empty-state';
+import InlineSupportLink from '../../../components/inline-support-link';
 import RouterLinkButton from '../../../components/router-link-button';
 import { getAccountStatus } from '../payout-settings/get-account-status';
 import tipaltiLogo from './lib/tipalti-logo';
@@ -36,7 +37,12 @@ export default function ReferralsEmptyState( { agencyId }: { agencyId: number } 
 								'Make money when your clients buy Automattic products, hosting, or use WooPayments. No promo codes needed. <a>How much money will I make?</a>'
 							),
 							{
-								a: <ExternalLink href={ AGENCY_EARNINGS_LEARN_MORE_LINK } children={ null } />,
+								a: (
+									<InlineSupportLink
+										supportLink={ AGENCY_EARNINGS_LEARN_MORE_LINK }
+										forceOpenInHelpCenter
+									/>
+								),
 							}
 						) }
 					</EmptyState.Description>

@@ -325,6 +325,7 @@ const Recent = ( { viewToggle }: RecentProps ) => {
 							require={ loadReaderFullPost }
 							feedId={ selectedItem.feedId }
 							postId={ selectedItem.postId }
+							placeholder={ null }
 							onClose={ () => {
 								const focusItem = itemRefs.current[ getStreamItemKey( selectedItem ) ];
 								if ( ! isWide ) {

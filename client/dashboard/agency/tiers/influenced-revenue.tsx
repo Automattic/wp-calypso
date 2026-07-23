@@ -1,7 +1,6 @@
 import { formatCurrency } from '@automattic/number-formatters';
 import {
 	Button,
-	ExternalLink,
 	Popover,
 	ProgressBar,
 	__experimentalHStack as HStack,
@@ -10,6 +9,7 @@ import {
 import { __ } from '@wordpress/i18n';
 import { info } from '@wordpress/icons';
 import { useState } from 'react';
+import InlineSupportLink from '../../components/inline-support-link';
 import { Text } from '../../components/text';
 import getCurrentAgencyTier from './get-current-agency-tier';
 import type { AgencyTierType, RecordTracksEvent } from './types';
@@ -61,14 +61,15 @@ function InfluencedRevenueStrapline( {
 								'Earn commissions by referring Automattic products to your clients, receive revenue share from WooPayments transactions, and unlock savings through volume discounts on bulk purchases.'
 							) }
 						</Text>
-						<ExternalLink
-							href={ LEARN_MORE_URL }
+						<InlineSupportLink
+							supportLink={ LEARN_MORE_URL }
+							forceOpenInHelpCenter
 							onClick={ () =>
 								recordTracksEvent( 'calypso_a4a_agency_tier_influenced_revenue_learn_more_click' )
 							}
 						>
 							{ __( 'Learn more' ) }
-						</ExternalLink>
+						</InlineSupportLink>
 					</VStack>
 				</Popover>
 			) }

@@ -76,6 +76,7 @@ const discover = ( context, next ) => {
 				className="is-discover-stream"
 				selectedTab={ selectedTab }
 				query={ context.query }
+				placeholder={ null }
 			/>
 		</>
 	);
