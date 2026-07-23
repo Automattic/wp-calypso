@@ -37,8 +37,9 @@ test.describe(
 			} );
 
 			await test.step( 'When I visit the Pages page', async () => {
+				const siteSlug = new TestAccount( accountName ).getSiteURL( { protocol: false } );
 				pagesPage = new PagesPage( page );
-				await pagesPage.visit();
+				await pagesPage.visit( { siteSlug } );
 			} );
 
 			await test.step( 'When I start a new page', async () => {

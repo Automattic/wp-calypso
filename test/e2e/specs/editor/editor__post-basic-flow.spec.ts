@@ -37,7 +37,8 @@ test.describe(
 			} );
 
 			await test.step( 'When I go to the new post page', async () => {
-				await pageEditor.visit( 'post' );
+				const siteSlug = testAccount.getSiteURL( { protocol: false } );
+				await pageEditor.visit( 'post', { siteSlug } );
 			} );
 
 			await test.step( 'When I enter post title', async () => {

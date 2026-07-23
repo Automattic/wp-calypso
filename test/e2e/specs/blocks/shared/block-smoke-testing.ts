@@ -42,7 +42,8 @@ export function createBlockTests(
 			} );
 
 			await test.step( 'When I visit the new post page', async () => {
-				await pageEditor.visit( 'post' );
+				const siteSlug = new TestAccount( accountName ).getSiteURL( { protocol: false } );
+				await pageEditor.visit( 'post', { siteSlug } );
 			} );
 
 			await test.step( 'When I enter the post title', async () => {
