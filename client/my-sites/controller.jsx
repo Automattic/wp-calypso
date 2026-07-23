@@ -779,6 +779,13 @@ function requestAndSelectSite( context, next, { siteFragment, isUnlinkedCheckout
 				}
 			} else if ( shouldRedirectToJetpackAuthorize( context, site ) ) {
 				navigate( getJetpackAuthorizeURL( context, site ) );
+			} else if ( /^\/checkout\/[^/]+\/renew\//.test( context.pathname ) ) {
+				// On a checkout renewal URL that carries an explicit site slug, an
+				// intermittently failed/unresolvable site fetch must not strip the slug:
+				// the all-sites redirect below would drop the user onto the slug-less
+				// no-site renewal route. Let checkout render with the slug intact and
+				// handle its own missing-site state instead. See CHE-512.
+				next();
 			} else {
 				// If the site has loaded but siteId is still invalid then redirect to allSitesPath.
 				const siteFragmentOffset = context.path.indexOf( `/${ siteFragment }` );
