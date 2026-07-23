@@ -14,6 +14,32 @@ const RESEND_COOLDOWN_SECONDS = 60;
 // polling so a tab left open overnight doesn't hit `/me` forever.
 const POLL_LIMIT_MS = 15 * 60 * 1000;
 
+// The cooldown lives in session storage, keyed by flow, so it survives leaving
+// and re-entering the step (via Back) or a refresh — the component state alone
+// would reset and let the user resend immediately.
+const LAST_SENT_STORAGE_KEY = 'onboarding-email-verification-last-sent';
+
+function readLastSentAt( flow: string ): number {
+	try {
+		return Number( sessionStorage.getItem( `${ LAST_SENT_STORAGE_KEY }:${ flow }` ) ) || 0;
+	} catch {
+		return 0;
+	}
+}
+
+function writeLastSentAt( flow: string, at: number ): void {
+	try {
+		sessionStorage.setItem( `${ LAST_SENT_STORAGE_KEY }:${ flow }`, String( at ) );
+	} catch {
+		// Ignore storage failures (private mode, quota); the cooldown just won't persist.
+	}
+}
+
+function cooldownRemainingSeconds( flow: string ): number {
+	const remainingMs = RESEND_COOLDOWN_SECONDS * 1000 - ( Date.now() - readLastSentAt( flow ) );
+	return remainingMs > 0 ? Math.min( Math.ceil( remainingMs / 1000 ), RESEND_COOLDOWN_SECONDS ) : 0;
+}
+
 export function useEmailVerification( flow: string ) {
 	const dispatch = useDispatch();
 	const isVerified = useSelector( isCurrentUserEmailVerified );
@@ -21,7 +47,9 @@ export function useEmailVerification( flow: string ) {
 
 	const [ isSending, setIsSending ] = useState( false );
 	const [ hasSendError, setHasSendError ] = useState( false );
-	const [ secondsUntilResend, setSecondsUntilResend ] = useState( 0 );
+	const [ secondsUntilResend, setSecondsUntilResend ] = useState( () =>
+		cooldownRemainingSeconds( flow )
+	);
 	const [ isPollingExpired, setIsPollingExpired ] = useState( false );
 	const [ pollWindowKey, setPollWindowKey ] = useState( 0 );
 	const [ isChecking, setIsChecking ] = useState( false );
@@ -37,6 +65,7 @@ export function useEmailVerification( flow: string ) {
 			if ( ! success ) {
 				throw new Error( 'unsuccessful_response' );
 			}
+			writeLastSentAt( flow, Date.now() );
 			setSecondsUntilResend( RESEND_COOLDOWN_SECONDS );
 			// A fresh link restarts the polling window: the user might confirm this
 			// new link from another device long after the previous window lapsed.
@@ -66,15 +95,18 @@ export function useEmailVerification( flow: string ) {
 	} );
 
 	// The signup email was sent minutes ago and is buried by now. Send a fresh
-	// link so the one the user is being asked to click is at the top of the inbox.
+	// link so the one the user is being asked to click is at the top of the inbox —
+	// unless a recent send is still within its cooldown (Back-and-return or refresh).
 	const hasSentOnMount = useRef( false );
 	useEffect( () => {
 		if ( hasSentOnMount.current || isVerified ) {
 			return;
 		}
 		hasSentOnMount.current = true;
-		sendRef.current( false );
-	}, [ isVerified ] );
+		if ( cooldownRemainingSeconds( flow ) === 0 ) {
+			sendRef.current( false );
+		}
+	}, [ isVerified, flow ] );
 
 	useInterval(
 		() => setSecondsUntilResend( ( seconds ) => Math.max( 0, seconds - 1 ) ),

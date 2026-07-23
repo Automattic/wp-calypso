@@ -75,6 +75,7 @@ describe( 'EmailVerification', () => {
 		jest.clearAllMocks();
 		jest.useRealTimers();
 		nock.cleanAll();
+		sessionStorage.clear();
 	} );
 
 	afterAll( () => nock.enableNetConnect() );
@@ -240,6 +241,33 @@ describe( 'EmailVerification', () => {
 				{ flow: 'onboarding', is_resend: true }
 			)
 		);
+	} );
+
+	it( 'keeps the cooldown when the step is revisited within the window, without resending', async () => {
+		jest.useFakeTimers();
+		mockSendVerificationEmail();
+
+		const { unmount } = render();
+		// Waiting for the fresh cooldown confirms the send resolved and persisted.
+		await waitFor( () =>
+			expect( screen.getByText( /You can resend the email in 60s\./ ) ).toBeVisible()
+		);
+
+		// 20 seconds of the 60-second cooldown elapse, then the user leaves the step.
+		act( () => {
+			jest.advanceTimersByTime( 20 * 1000 );
+		} );
+		unmount();
+
+		// Returning to the step (Back, then Free again) must not fire another send…
+		const secondSend = mockSendVerificationEmail();
+		render();
+
+		// …and the countdown resumes from what was left rather than resetting to 60.
+		await waitFor( () =>
+			expect( screen.getByText( /You can resend the email in 40s\./ ) ).toBeVisible()
+		);
+		expect( secondSend.isDone() ).toBe( false );
 	} );
 
 	it( 'restarts the polling window after a resend so a later remote confirmation still advances', async () => {
