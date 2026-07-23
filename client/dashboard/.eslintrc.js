@@ -28,6 +28,7 @@ module.exports = {
 							'!calypso/lib/use-site-launch-gating-variant',
 							'!calypso/lib/load-dev-helpers',
 							'!calypso/lib/logstash',
+							'!calypso/lib/version-compare',
 							'!calypso/lib/wp',
 							// Allowed: calypso/assets/icons
 							// Allowed: calypso/assets/images
