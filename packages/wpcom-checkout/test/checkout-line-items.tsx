@@ -119,4 +119,91 @@ describe( 'LineItemSublabelAndPrice', () => {
 			);
 		} );
 	} );
+
+	// The mobile sticky-summary experiment restyles the yearly sublabel and moves
+	// the monthly-cycle strikethrough into the main price column. These cover the
+	// sublabel side of that split; the price-column side lives in the private
+	// LineItemPriceContent.
+	describe( 'mobile sticky summary — yearly plan sublabel', () => {
+		const yearlyPlan = {
+			...getEmptyResponseCartProduct(),
+			product_slug: 'value_bundle',
+			months_per_bill_period: 12,
+			currency: 'USD',
+			item_subtotal_integer: 9600,
+			item_original_subtotal_integer: 9600,
+		};
+		// compareToPrice is the monthly-cycle price used for the "vs monthly"
+		// comparison; differing from the item's own per-month price is what makes
+		// control render a strikethrough.
+		const compareToPrice = 1000;
+
+		test( 'control renders the plain "Billed every year" sublabel', () => {
+			render(
+				<LineItemSublabelAndPrice
+					product={ yearlyPlan }
+					shouldShowComparison
+					compareToPrice={ compareToPrice }
+				/>
+			);
+
+			expect( screen.getByText( 'Billed every year' ) ).toBeVisible();
+		} );
+
+		test( 'treatment renders the annual price in the sublabel instead', () => {
+			render(
+				<LineItemSublabelAndPrice
+					product={ yearlyPlan }
+					shouldShowComparison
+					compareToPrice={ compareToPrice }
+					isMobileStickySummary
+				/>
+			);
+
+			expect( screen.getByText( '$96 billed annually' ) ).toBeVisible();
+			expect( screen.queryByText( 'Billed every year' ) ).not.toBeInTheDocument();
+		} );
+
+		test( 'control keeps the monthly-cycle strikethrough in the sublabel', () => {
+			const { container } = render(
+				<LineItemSublabelAndPrice
+					product={ yearlyPlan }
+					shouldShowComparison
+					compareToPrice={ compareToPrice }
+				/>
+			);
+
+			expect( container.querySelector( 's' ) ).toBeVisible();
+		} );
+
+		// Without this gate the strikethrough renders twice under treatment: once
+		// here and once inline next to the live price.
+		test( 'treatment drops the sublabel strikethrough so it is not shown twice', () => {
+			const { container } = render(
+				<LineItemSublabelAndPrice
+					product={ yearlyPlan }
+					shouldShowComparison
+					compareToPrice={ compareToPrice }
+					isMobileStickySummary
+				/>
+			);
+
+			expect( container.querySelector( 's' ) ).not.toBeInTheDocument();
+		} );
+
+		test( 'the renewal-pricing experiment still wins over the treatment sublabel', () => {
+			render(
+				<LineItemSublabelAndPrice
+					product={ yearlyPlan }
+					shouldShowComparison
+					compareToPrice={ compareToPrice }
+					isMobileStickySummary
+					isRenewalPricingExperiment
+				/>
+			);
+
+			expect( screen.getByText( /Auto-renews at/ ) ).toBeVisible();
+			expect( screen.queryByText( '$96 billed annually' ) ).not.toBeInTheDocument();
+		} );
+	} );
 } );

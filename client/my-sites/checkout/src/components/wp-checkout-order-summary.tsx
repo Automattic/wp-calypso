@@ -883,7 +883,7 @@ const CheckoutSummaryLineItem = styled.div< { isDiscount?: boolean } >`
 	color: ${ ( props ) => ( props.isDiscount ? props.theme.colors.discount : 'inherit' ) };
 `;
 
-const PriceLoadingIndicator = styled.span< { width?: string; height?: string } >`
+export const PriceLoadingIndicator = styled.span< { width?: string; height?: string } >`
 	display: inline-block;
 	height: ${ ( props ) => props.height ?? '16px' };
 	width: ${ ( props ) => props.width ?? '60px' };

@@ -14,6 +14,7 @@ import {
 	SummaryLine,
 	SummaryDetails,
 } from 'calypso/my-sites/checkout/src/components/summary-details';
+import { useMobileCheckoutStickySummaryExperiment } from 'calypso/my-sites/checkout/src/hooks/use-mobile-checkout-sticky-summary-experiment';
 import CreditCardFields from './credit-card-fields';
 import CreditCardPayButton from './credit-card-pay-button';
 import type { WpcomCreditCardSelectors } from './store';
@@ -62,6 +63,25 @@ const CreditCardLabel: React.FC< {
 };
 
 function CreditCardLogos( { currency }: { currency: string | null } ) {
+	const { isMobileCheckoutStickySummary } = useMobileCheckoutStickySummaryExperiment();
+
+	// VISA / MasterCard / AMEX + a "+N" pill (Figma 3971:13250). N counts only what
+	// the control strip advertises for this currency (CB on EUR, JCB on JPY) — the
+	// pill is a claim about accepted cards, so it must not overcount.
+	if ( isMobileCheckoutStickySummary ) {
+		const overflowCount = currency === 'EUR' || currency === 'JPY' ? 1 : 0;
+		return (
+			<PaymentMethodLogos className="credit-card__logos">
+				<VisaLogo />
+				<MastercardLogo />
+				<AmexLogo />
+				{ overflowCount > 0 && (
+					<span className="credit-card__logos-overflow">{ `+${ overflowCount }` }</span>
+				) }
+			</PaymentMethodLogos>
+		);
+	}
+
 	return (
 		<PaymentMethodLogos className="credit-card__logos">
 			{ currency === 'EUR' && <CBLogo className="has-background" /> }
