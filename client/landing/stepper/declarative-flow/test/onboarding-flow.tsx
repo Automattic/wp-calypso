@@ -5,6 +5,7 @@
 import { ONBOARDING_FLOW } from '@automattic/onboarding';
 import React from 'react';
 import { MemoryRouter } from 'react-router';
+import { addSurvicate } from 'calypso/lib/analytics/survicate';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import onboarding from '../flows/onboarding/onboarding';
 import { STEPS } from '../internals/steps';
@@ -110,7 +111,6 @@ describe( 'Onboarding Flow', () => {
 
 		describe( 'Survicate side effect', () => {
 			it( 'calls addSurvicate with user data when logged in on step changes', () => {
-				const { addSurvicate } = require( 'calypso/lib/analytics/survicate' );
 				const loggedInState = {
 					currentUser: {
 						id: 123,
