@@ -1,3 +1,4 @@
+import { __experimentalVStack as VStack } from '@wordpress/components';
 import { useCallback } from 'react';
 import CommissionsTable from 'calypso/dashboard/agency/earn/woopayments/commissions-table';
 import ConsolidatedViews from 'calypso/dashboard/agency/earn/woopayments/consolidated-views';
@@ -33,13 +34,11 @@ const WooPaymentsDashboardContent = ( {
 	);
 
 	return (
-		<>
-			<div className="consolidated-view">
-				<ConsolidatedViews
-					woopaymentsData={ woopaymentsData }
-					isLoading={ isLoadingWooPaymentsData }
-				/>
-			</div>
+		<VStack spacing={ 6 }>
+			<ConsolidatedViews
+				woopaymentsData={ woopaymentsData }
+				isLoading={ isLoadingWooPaymentsData }
+			/>
 			<div className="redesigned-a8c-table full-width">
 				<CommissionsTable
 					sites={ sitesWithPluginsStates }
@@ -49,7 +48,7 @@ const WooPaymentsDashboardContent = ( {
 					onDownloadReport={ downloadCommissionsReport }
 				/>
 			</div>
-		</>
+		</VStack>
 	);
 };
 
