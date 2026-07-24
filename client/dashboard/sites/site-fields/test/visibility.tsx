@@ -4,12 +4,11 @@
 import { siteBySlugQuery } from '@automattic/api-queries';
 import { QueryClient } from '@tanstack/react-query';
 import { waitFor } from '@testing-library/react';
+import { LAUNCHPAD_PERSONALIZATION_EXPERIMENT } from 'calypso/lib/ai-launchpad';
 import { render } from '../../../test-utils';
 import { wpcomLink } from '../../../utils/link';
 import { Visibility } from '../index';
 import type { Site } from '@automattic/api-core';
-
-const LAUNCHPAD_PERSONALIZATION_EXPERIMENT = 'wpcom_launchpad_personalization_202607_v1';
 
 function createQueryClientWithSite( site: Site ) {
 	const queryClient = new QueryClient( {

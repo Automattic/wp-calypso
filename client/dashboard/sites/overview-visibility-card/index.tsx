@@ -59,6 +59,18 @@ function VisibilityCardUnlaunched( { site }: { site: Site } ) {
 
 	const setupLink = setupUrl ?? wpcomLink( `/home/${ site.slug }` );
 
+	// The no_guidance launchpad-personalization variation omits the progress circle entirely.
+	const progressProps = isNoGuidance
+		? {}
+		: {
+				progress: {
+					value: completedTasks,
+					max: numberOfTasks,
+					label: `${ completedTasks }/${ numberOfTasks }`,
+					...( isLaunchpadCompleted && { variant: 'success' as const } ),
+				},
+		  };
+
 	return (
 		<OverviewCard
 			{ ...CARD_PROPS }
@@ -73,17 +85,7 @@ function VisibilityCardUnlaunched( { site }: { site: Site } ) {
 						description: __( 'Finish setting up your site.' ),
 						externalLink: setupLink,
 				  } ) }
-			{ ...( isNoGuidance
-				? {}
-				: {
-						// The no_guidance launchpad-personalization variation gets no progress guidance.
-						progress: {
-							value: completedTasks,
-							max: numberOfTasks,
-							label: `${ completedTasks }/${ numberOfTasks }`,
-							...( isLaunchpadCompleted && { variant: 'success' as const } ),
-						},
-				  } ) }
+			{ ...progressProps }
 		/>
 	);
 }

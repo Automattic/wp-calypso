@@ -4,11 +4,10 @@
 
 import { screen, waitFor, within } from '@testing-library/react';
 import nock from 'nock';
+import { LAUNCHPAD_PERSONALIZATION_EXPERIMENT } from 'calypso/lib/ai-launchpad';
 import { render } from '../../../test-utils';
 import SiteOverview from '../index';
 import type { Site } from '@automattic/api-core';
-
-const LAUNCHPAD_PERSONALIZATION_EXPERIMENT = 'wpcom_launchpad_personalization_202607_v1';
 
 // Seed a live ExPlat assignment into the storage the real useExperiment hook reads from, so it
 // resolves to the given variation through its normal code path — no module or network mocking.

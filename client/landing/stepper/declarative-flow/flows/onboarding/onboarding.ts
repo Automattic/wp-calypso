@@ -121,12 +121,11 @@ const onboarding: FlowV2< typeof initialize > = {
 		 */
 		const getPostCheckoutDestination = async (
 			providedDependencies: ProvidedDependencies,
-			planCartItem: MinimalRequestCartProduct | null
+			planCartItem: MinimalRequestCartProduct | null,
+			launchpadPersonalizationVariation: LaunchpadPersonalizationVariation
 		): Promise< [ string, string | null, string | null ] > => {
 			// Launchpad-personalization treatments land straight in wp-admin instead of My Home:
 			// ai_launchpad in Site Setup (enabling the AI launchpad), no_guidance on the dashboard.
-			const launchpadPersonalizationVariation =
-				await resolveLaunchpadPersonalizationVariation( diyLaunchpad );
 			if ( launchpadPersonalizationVariation !== 'control' && providedDependencies.siteSlug ) {
 				const siteSlug = providedDependencies.siteSlug as string;
 				const site = await resolveSelect( SITE_STORE ).getSite( siteSlug );
@@ -359,8 +358,14 @@ const onboarding: FlowV2< typeof initialize > = {
 						return;
 					}
 
+					const launchpadPersonalizationVariation =
+						await resolveLaunchpadPersonalizationVariation( diyLaunchpad );
 					const [ destination, backDestination, backDestinationDomains ] =
-						await getPostCheckoutDestination( providedDependencies, planCartItem );
+						await getPostCheckoutDestination(
+							providedDependencies,
+							planCartItem,
+							launchpadPersonalizationVariation
+						);
 					if ( providedDependencies.processingResult === ProcessingResult.SUCCESS ) {
 						persistSignupDestination( destination );
 						setSignupCompleteFlowName( flowName );
@@ -408,9 +413,7 @@ const onboarding: FlowV2< typeof initialize > = {
 									steps_total: checkoutStepperPosition.total,
 								} )
 							);
-						} else if (
-							( await resolveLaunchpadPersonalizationVariation( diyLaunchpad ) ) !== 'control'
-						) {
+						} else if ( launchpadPersonalizationVariation !== 'control' ) {
 							// Launchpad personalization treatments skip the AI/manual chooser and land straight in wp-admin.
 							window.location.replace( destination );
 						} else if (
