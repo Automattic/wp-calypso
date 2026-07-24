@@ -156,7 +156,7 @@ export const partnerOffers: PartnerOffer[] = [
 	{
 		id: 'avalara-partner-program-refer',
 		offerType: 'refer',
-		logo: <img src={ AvalaraLogo } alt="Avalara" />,
+		logo: <img className="exclusive-offers-card-logo-compact" src={ AvalaraLogo } alt="Avalara" />,
 		title: __( 'Join the Avalara Partner Program and unlock new revenue streams' ),
 		description: __(
 			'Help clients navigate tax complexity with a trusted partner—while unlocking new revenue opportunities for your business.'
@@ -240,7 +240,13 @@ export const partnerOffers: PartnerOffer[] = [
 		offerType: 'resell',
 		product: 'woocommerce',
 		productType: 'extension',
-		logo: <img src={ WooPaymentsLogo } alt="WooPayments" />,
+		logo: (
+			<img
+				className="exclusive-offers-card-logo-compact"
+				src={ WooPaymentsLogo }
+				alt="WooPayments"
+			/>
+		),
 		title: __( 'Earn up to 5 bps on all TPV' ),
 		description: __(
 			'Earn up to a 5 basis points (bps) revenue share on all Total Payments Volume (TPV) processed on client stores you onboard or migrate to WooPayments.'
