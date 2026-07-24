@@ -2,6 +2,8 @@ import { siteLaunchpadQuery } from '@automattic/api-queries';
 import { useQuery } from '@tanstack/react-query';
 import { __ } from '@wordpress/i18n';
 import { lockOutline, published } from '@wordpress/icons';
+import { LAUNCHPAD_PERSONALIZATION_EXPERIMENT, normalizeVariation } from 'calypso/lib/ai-launchpad';
+import { useExperiment } from 'calypso/lib/explat';
 import { launch } from '../../components/icons';
 import OverviewCard from '../../components/overview-card';
 import { wpcomLink } from '../../utils/link';
@@ -41,6 +43,10 @@ function VisibilityCardUnlaunched( { site }: { site: Site } ) {
 		withTasks: true,
 	} );
 
+	const [ , personalizationAssignment ] = useExperiment( LAUNCHPAD_PERSONALIZATION_EXPERIMENT );
+	const isNoGuidance =
+		normalizeVariation( personalizationAssignment?.variationName ) === 'no_guidance';
+
 	const { data: launchpad } = useQuery( {
 		...siteLaunchpadQuery( site.ID, getLaunchpadChecklistSlug( site ) ),
 		enabled: ! isAiLaunchpad,
@@ -67,12 +73,17 @@ function VisibilityCardUnlaunched( { site }: { site: Site } ) {
 						description: __( 'Finish setting up your site.' ),
 						externalLink: setupLink,
 				  } ) }
-			progress={ {
-				value: completedTasks,
-				max: numberOfTasks,
-				label: `${ completedTasks }/${ numberOfTasks }`,
-				...( isLaunchpadCompleted && { variant: 'success' } ),
-			} }
+			{ ...( isNoGuidance
+				? {}
+				: {
+						// The no_guidance launchpad-personalization variation gets no progress guidance.
+						progress: {
+							value: completedTasks,
+							max: numberOfTasks,
+							label: `${ completedTasks }/${ numberOfTasks }`,
+							...( isLaunchpadCompleted && { variant: 'success' as const } ),
+						},
+				  } ) }
 		/>
 	);
 }
