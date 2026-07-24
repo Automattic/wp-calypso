@@ -1,4 +1,17 @@
-export default function isSurveyFilledIn( survey, isImport = false, isPlan = true ) {
+export type Survey = {
+	questionOneRadio?: string;
+	questionOneText?: string;
+	questionTwoRadio?: string;
+	questionTwoText?: string;
+	questionTwoOrder?: string[];
+	importQuestionRadio?: string;
+};
+
+export default function isSurveyFilledIn(
+	survey: Survey,
+	isImport = false,
+	isPlan = true
+): boolean {
 	if ( ! isPlan ) {
 		// We only show an optional question when cancelling a non-plan.
 		return true;

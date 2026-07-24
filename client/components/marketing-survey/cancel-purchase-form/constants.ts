@@ -8,4 +8,4 @@ export const CANCEL_FLOW_TYPE = {
 	// When users effectively cancelling the auto-renewal by
 	// cancelling a subscription out of the refund window
 	CANCEL_AUTORENEW: 'cancel_autorenew',
-};
+} as const;

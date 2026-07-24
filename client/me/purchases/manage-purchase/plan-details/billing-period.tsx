@@ -28,7 +28,7 @@ interface MomentProps {
 export interface PlanBillingPeriodProps {
 	purchase: Purchase;
 	site: SiteDetails | null | undefined;
-	isProductOwner: boolean;
+	isProductOwner?: boolean;
 }
 
 export class PlanBillingPeriod extends Component<

@@ -8,8 +8,8 @@ import {
 import { Plans } from '@automattic/data-stores';
 import { shuffle } from '@automattic/js-utils';
 import { Button as GutenbergButton, Spinner } from '@wordpress/components';
-import { localize } from 'i18n-calypso';
-import PropTypes from 'prop-types';
+import { localize, LocalizeProps } from 'i18n-calypso';
+import moment from 'moment';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import { BlankCanvas } from 'calypso/components/blank-canvas';
@@ -66,28 +66,96 @@ import {
 	NEXT_ADVENTURE_STEP,
 	REMOVE_PLAN_STEP,
 } from './steps';
+import type { UpsellType } from './get-upsell-type';
+import type { PlanSlug } from '@automattic/calypso-products';
+import type { SiteDetails } from '@automattic/data-stores';
+import type { Purchase } from 'calypso/lib/purchases/types';
+import type { DisplayVariant } from 'calypso/lib/purchases/utils';
+import type { IAppState } from 'calypso/state/types';
+import type { ReactNode } from 'react';
 
 import './style.scss';
 
-class CancelPurchaseForm extends Component {
-	static propTypes = {
-		disableButtons: PropTypes.bool,
-		purchase: PropTypes.object.isRequired,
-		isVisible: PropTypes.bool,
-		onClose: PropTypes.func.isRequired,
-		onSurveyComplete: PropTypes.func.isRequired,
-		flowType: PropTypes.string.isRequired,
-		translate: PropTypes.func,
-		cancelBundledDomain: PropTypes.bool,
-		includedDomainPurchase: PropTypes.object,
-		linkedPurchases: PropTypes.array,
-		skipRemovePlanSurvey: PropTypes.bool,
-		cancellationInProgress: PropTypes.bool,
-		intent: PropTypes.string,
-		purchaseSettingsUrl: PropTypes.string,
-		isSplitCancelRemoveEnabled: PropTypes.bool,
-	};
+type UpsellState = UpsellType | 'solutions-cards';
 
+type EventOrValue = string | { currentTarget?: { value?: string } };
+
+function getEventValue( eventOrValue: EventOrValue ): string {
+	if ( typeof eventOrValue === 'string' ) {
+		return eventOrValue;
+	}
+	return eventOrValue?.currentTarget?.value ?? '';
+}
+
+interface MomentProps {
+	moment: typeof moment;
+}
+
+export interface CancelPurchaseFormOwnProps {
+	disableButtons?: boolean;
+	purchase: Purchase;
+	isVisible?: boolean;
+	onClose: () => void;
+	onSurveyComplete?: () => void;
+	flowType: string;
+	cancelBundledDomain?: boolean;
+	includedDomainPurchase?: object;
+	linkedPurchases?: Purchase[];
+	skipRemovePlanSurvey?: boolean;
+	cancellationInProgress?: boolean;
+	intent?: DisplayVariant | null;
+	purchaseSettingsUrl?: string;
+	isSplitCancelRemoveEnabled?: boolean;
+	downgradeClick?: ( upsell: string ) => void;
+	freeMonthOfferClick?: () => void;
+	onSwitchToMonthly?: () => void;
+	downgradePlanToPersonalPrice?: number | null;
+	downgradePlanToMonthlyPrice?: number | null;
+}
+
+interface CancelPurchaseFormConnectedProps {
+	isAtomicSite?: boolean | null;
+	isImport?: boolean;
+	site: SiteDetails | null;
+	willAtomicSiteRevert?: boolean;
+	atomicTransfer?: { created_at?: string };
+	hasBackupsFeature?: boolean;
+	cancelPurchaseSurveyCompleted: ( purchaseId: number | string ) => void;
+	fetchAtomicTransfer: ( siteId: number ) => void;
+	recordTracksEvent: ( name: string, properties?: Record< string, unknown > ) => void;
+	submitSurvey: (
+		surveyName: string,
+		siteId: number,
+		surveyData: Record< string, unknown >
+	) => Promise< void >;
+}
+
+type CancelPurchaseFormProps = CancelPurchaseFormOwnProps &
+	CancelPurchaseFormConnectedProps &
+	LocalizeProps &
+	MomentProps;
+
+interface CancelPurchaseFormState {
+	surveyStep?: string;
+	questionOneText: string;
+	questionOneOrder: string[];
+	questionOneRadio?: string;
+	questionOneDetails?: string;
+	questionTwoText: string;
+	questionTwoOrder: string[];
+	questionTwoRadio?: string;
+	questionThreeText: string;
+	importQuestionRadio?: string;
+	isSubmitting: boolean;
+	solution: string;
+	upsell: UpsellState;
+	atomicRevertCheckOne: boolean;
+	atomicRevertCheckTwo: boolean;
+	purchaseIsAlreadyExtended: boolean;
+	isNextAdventureValid: boolean;
+}
+
+class CancelPurchaseForm extends Component< CancelPurchaseFormProps, CancelPurchaseFormState > {
 	static defaultProps = {
 		isVisible: false,
 	};
@@ -140,7 +208,7 @@ class CancelPurchaseForm extends Component {
 		} );
 	}
 
-	constructor( props ) {
+	constructor( props: CancelPurchaseFormProps ) {
 		super( props );
 
 		const { purchase } = props;
@@ -169,7 +237,7 @@ class CancelPurchaseForm extends Component {
 		};
 	}
 
-	recordEvent = ( name, properties = {} ) => {
+	recordEvent = ( name: string, properties: Record< string, unknown > = {} ) => {
 		const { purchase, flowType, isAtomicSite } = this.props;
 
 		this.props.recordTracksEvent( name, {
@@ -181,28 +249,26 @@ class CancelPurchaseForm extends Component {
 		} );
 	};
 
-	recordClickRadioEvent = ( option, value ) =>
+	recordClickRadioEvent = ( option: string, value: string ) =>
 		this.props.recordTracksEvent( 'calypso_purchases_cancel_form_select_radio_option', {
 			option,
 			value,
 		} );
 
-	onRadioOneChange = ( eventOrValue ) => {
-		const value = eventOrValue?.currentTarget?.value ?? eventOrValue;
+	onRadioOneChange = ( eventOrValue: EventOrValue ) => {
+		const value = getEventValue( eventOrValue );
 		this.recordClickRadioEvent( 'radio_1', value );
 
-		const newState = {
-			...this.state,
+		this.setState( {
 			questionOneRadio: value,
 			questionOneText: '',
 			upsell: '',
-		};
-		this.setState( newState );
+		} );
 	};
 
-	onTextOneChange = ( eventOrValue, detailsValue ) => {
+	onTextOneChange = ( eventOrValue: EventOrValue, detailsValue?: string ) => {
 		const { downgradeClick, freeMonthOfferClick, purchase } = this.props;
-		const value = eventOrValue?.currentTarget?.value ?? eventOrValue;
+		const value = getEventValue( eventOrValue );
 		const { purchaseIsAlreadyExtended, questionOneDetails } = this.state;
 
 		// Only fire the tracking event if this is a dropdown selection (detailsValue is undefined)
@@ -219,57 +285,47 @@ class CancelPurchaseForm extends Component {
 		} );
 		const hasSolutionsCards =
 			this.props.isSplitCancelRemoveEnabled && ( getSolutionsForReason( value )?.length ?? 0 ) > 0;
-		const newState = {
-			...this.state,
+		this.setState( {
 			questionOneText: value,
 			questionOneDetails: detailsValue || questionOneDetails,
 			upsell: upsellFromType || ( hasSolutionsCards ? 'solutions-cards' : '' ),
-		};
-		this.setState( newState );
+		} );
 	};
 
-	onRadioTwoChange = ( eventOrValue ) => {
-		const value = eventOrValue?.currentTarget?.value ?? eventOrValue;
+	onRadioTwoChange = ( eventOrValue: EventOrValue ) => {
+		const value = getEventValue( eventOrValue );
 		this.recordClickRadioEvent( 'radio_2', value );
 
-		const newState = {
-			...this.state,
+		this.setState( {
 			questionTwoRadio: value,
 			questionTwoText: '',
-		};
-		this.setState( newState );
+		} );
 	};
 
-	onTextTwoChange = ( eventOrValue ) => {
-		const value = eventOrValue?.currentTarget?.value ?? eventOrValue;
-		const newState = {
-			...this.state,
+	onTextTwoChange = ( eventOrValue: EventOrValue ) => {
+		const value = getEventValue( eventOrValue );
+		this.setState( {
 			questionTwoText: value,
-		};
-		this.setState( newState );
+		} );
 	};
 
-	onTextThreeChange = ( eventOrValue ) => {
-		const value = eventOrValue?.currentTarget?.value ?? eventOrValue;
-		const newState = {
-			...this.state,
+	onTextThreeChange = ( eventOrValue: EventOrValue ) => {
+		const value = getEventValue( eventOrValue );
+		this.setState( {
 			questionThreeText: value,
-		};
-		this.setState( newState );
+		} );
 	};
 
-	onImportRadioChange = ( eventOrValue ) => {
-		const value = eventOrValue?.currentTarget?.value ?? eventOrValue;
+	onImportRadioChange = ( eventOrValue: EventOrValue ) => {
+		const value = getEventValue( eventOrValue );
 		this.recordClickRadioEvent( 'import_radio', value );
 
-		const newState = {
-			...this.state,
+		this.setState( {
 			importQuestionRadio: value,
-		};
-		this.setState( newState );
+		} );
 	};
 
-	onNextAdventureValidationChange = ( isValid ) => {
+	onNextAdventureValidationChange = ( isValid: boolean ) => {
 		this.setState( { isNextAdventureValid: isValid } );
 	};
 
@@ -341,9 +397,9 @@ class CancelPurchaseForm extends Component {
 		this.recordEvent( 'calypso_purchases_cancel_form_submit' );
 	};
 
-	downgradeClick = ( upsell ) => {
+	downgradeClick = ( upsell: string ) => {
 		if ( ! this.state.isSubmitting ) {
-			this.props.downgradeClick( upsell );
+			this.props.downgradeClick?.( upsell );
 			this.recordEvent( 'calypso_purchases_downgrade_form_submit' );
 			this.setState( {
 				solution: 'downgrade',
@@ -354,7 +410,7 @@ class CancelPurchaseForm extends Component {
 
 	freeMonthOfferClick = () => {
 		if ( ! this.state.isSubmitting ) {
-			this.props.freeMonthOfferClick();
+			this.props.freeMonthOfferClick?.();
 			this.recordEvent( 'calypso_purchases_free_month_offer_form_submit' );
 			this.setState( {
 				solution: 'free-month-offer',
@@ -377,10 +433,10 @@ class CancelPurchaseForm extends Component {
 				? refundOptions[ 0 ].refund_amount
 				: 0;
 
-		return parseFloat( refundAmount ).toFixed( precision );
+		return parseFloat( String( refundAmount ) ).toFixed( precision );
 	};
 
-	surveyContent() {
+	surveyContent(): ReactNode {
 		const {
 			atomicTransfer,
 			translate,
@@ -390,8 +446,8 @@ class CancelPurchaseForm extends Component {
 			site,
 			hasBackupsFeature,
 			flowType,
-			intent,
 		} = this.props;
+		const intent = this.props.intent ?? undefined;
 		const { atomicRevertCheckOne, atomicRevertCheckTwo, surveyStep, upsell } = this.state;
 		const { productName } = purchase;
 
@@ -399,7 +455,7 @@ class CancelPurchaseForm extends Component {
 			return (
 				<FeedbackStep
 					purchase={ purchase }
-					isImport={ isImport }
+					isImport={ Boolean( isImport ) }
 					cancellationReasonCodes={ this.state.questionOneOrder }
 					onChangeCancellationReason={ this.onRadioOneChange }
 					onChangeCancellationReasonDetails={ this.onTextOneChange }
@@ -436,7 +492,7 @@ class CancelPurchaseForm extends Component {
 						purchaseSettingsUrl={ this.props.purchaseSettingsUrl }
 						recordEvent={ this.recordEvent }
 						refundAmount={ this.getRefundAmount() }
-						site={ site }
+						site={ site as SiteDetails }
 					/>
 				);
 			}
@@ -444,8 +500,8 @@ class CancelPurchaseForm extends Component {
 			if ( upsell.startsWith( 'education:' ) ) {
 				return (
 					<EducationContentStep
-						type={ upsell }
-						site={ site }
+						type={ upsell as UpsellType }
+						site={ site as SiteDetails }
 						onDecline={ isLastStep ? this.onSubmit : this.clickNext }
 						cancellationReason={ this.state.questionOneText }
 					/>
@@ -454,11 +510,10 @@ class CancelPurchaseForm extends Component {
 
 			return (
 				<UpsellStep
-					upsell={ this.state.upsell }
+					upsell={ this.state.upsell as UpsellType }
 					cancellationReason={ this.state.questionOneText }
 					purchase={ purchase }
-					site={ site }
-					disabled={ this.state.isSubmitting }
+					site={ site as SiteDetails }
 					refundAmount={ this.getRefundAmount() }
 					intent={ intent }
 					declineButtonText={
@@ -469,7 +524,6 @@ class CancelPurchaseForm extends Component {
 							? this.props.downgradePlanToPersonalPrice
 							: this.props.downgradePlanToMonthlyPrice
 					}
-					downgradeClick={ this.downgradeClick }
 					closeDialog={ this.closeDialog }
 					cancelBundledDomain={ this.props.cancelBundledDomain }
 					includedDomainPurchase={ this.props.includedDomainPurchase }
@@ -506,8 +560,9 @@ class CancelPurchaseForm extends Component {
 					onClickCheckOne={ ( isChecked ) => this.setState( { atomicRevertCheckOne: isChecked } ) }
 					atomicRevertCheckTwo={ atomicRevertCheckTwo }
 					onClickCheckTwo={ ( isChecked ) => this.setState( { atomicRevertCheckTwo: isChecked } ) }
-					hasBackupsFeature={ hasBackupsFeature }
+					hasBackupsFeature={ Boolean( hasBackupsFeature ) }
 					isRemovePlan={ flowType === CANCEL_FLOW_TYPE.REMOVE && isPlan( purchase ) }
+					action="cancel-purchase"
 				/>
 			);
 		}
@@ -567,14 +622,14 @@ class CancelPurchaseForm extends Component {
 		this.recordEvent( 'calypso_purchases_cancel_form_close' );
 	};
 
-	changeSurveyStep = ( stepFunction ) => {
+	changeSurveyStep = ( stepFunction: ( currentStep: string, steps: string[] ) => string ) => {
 		const allSteps = this.getAllSurveySteps();
-		const newStep = stepFunction( this.state.surveyStep, allSteps );
+		const newStep = stepFunction( this.state.surveyStep ?? '', allSteps );
 
 		this.setState( { surveyStep: newStep } );
 
 		// Include upsell information when tracking the upsell step
-		const eventProperties = { new_step: newStep };
+		const eventProperties: Record< string, unknown > = { new_step: newStep };
 		if ( newStep === UPSELL_STEP && this.state.upsell ) {
 			eventProperties.upsell_type = this.state.upsell;
 		}
@@ -740,18 +795,18 @@ class CancelPurchaseForm extends Component {
 		);
 	};
 
-	fetchPurchaseExtendedStatus = async ( purchaseId ) => {
+	fetchPurchaseExtendedStatus = async ( purchaseId: number ) => {
 		const newState = {
 			...this.state,
 		};
 
 		try {
-			const res = await wpcom.req.get( {
+			const res: { has_extended?: boolean } = await wpcom.req.get( {
 				path: `/purchases/${ purchaseId }/has-extended`,
 				apiNamespace: 'wpcom/v2',
 			} );
 
-			newState.purchaseIsAlreadyExtended = res.has_extended;
+			newState.purchaseIsAlreadyExtended = Boolean( res.has_extended );
 		} catch {
 			// When the request fails, set the flag to true so the extra options don't show up to users.
 			newState.purchaseIsAlreadyExtended = true;
@@ -764,7 +819,7 @@ class CancelPurchaseForm extends Component {
 		this.setState( newState );
 	};
 
-	componentDidUpdate( prevProps ) {
+	componentDidUpdate( prevProps: CancelPurchaseFormProps ) {
 		if (
 			! prevProps.isVisible &&
 			this.props.isVisible &&
@@ -838,11 +893,9 @@ class CancelPurchaseForm extends Component {
 	}
 
 	getCanceledProduct() {
-		const {
-			purchase: { productSlug, productName, meta },
-			site: { slug },
-			translate,
-		} = this.props;
+		const { purchase, translate } = this.props;
+		const { productSlug, productName, meta } = purchase;
+		const { slug } = this.props.site as SiteDetails;
 		const headerTitle = this.getHeaderTitle();
 		switch ( productSlug ) {
 			case 'domain_map':
@@ -850,14 +903,14 @@ class CancelPurchaseForm extends Component {
 					displays canceled product and domain connection being canceled
 					eg: "Remove product: Domain Connection for externaldomain.com" */
 				return translate( '%(headerTitle)s: %(productName)s for %(purchaseMeta)s', {
-					args: { headerTitle, productName, purchaseMeta: meta },
+					args: { headerTitle, productName, purchaseMeta: meta ?? '' },
 				} );
 			case 'offsite_redirect':
 				/* 	Translators: If canceled product is site redirect,
 					displays canceled product and domain site is being directed to
 					eg: "Remove product: Site Redirect to redirectedsite.com" */
 				return translate( '%(headerTitle)s: %(productName)s to %(purchaseMeta)s', {
-					args: { headerTitle, productName, purchaseMeta: meta },
+					args: { headerTitle, productName, purchaseMeta: meta ?? '' },
 				} );
 			default:
 				/* Translators: If canceled product is site plan or other product,
@@ -917,14 +970,14 @@ class CancelPurchaseForm extends Component {
 }
 
 const ConnectedCancelPurchaseForm = connect(
-	( state, { purchase, linkedPurchases } ) => ( {
+	( state: IAppState, { purchase, linkedPurchases }: CancelPurchaseFormOwnProps ) => ( {
 		isAtomicSite: isSiteAutomatedTransfer( state, purchase.siteId ),
 		isImport: !! getSiteImportEngine( state, purchase.siteId ),
-		site: getSite( state, purchase.siteId ),
+		site: getSite( state, purchase.siteId ) ?? null,
 		willAtomicSiteRevert: willAtomicSiteRevertAfterPurchaseDeactivation(
 			state,
 			purchase.id,
-			linkedPurchases
+			linkedPurchases ?? []
 		),
 		atomicTransfer: getAtomicTransfer( state, purchase.siteId ),
 		hasBackupsFeature: siteHasFeature( state, purchase.siteId, WPCOM_FEATURES_BACKUPS ),
@@ -937,11 +990,20 @@ const ConnectedCancelPurchaseForm = connect(
 	}
 )( localize( withLocalizedMoment( CancelPurchaseForm ) ) );
 
-const WrappedCancelPurchaseForm = ( props ) => {
+type WrappedCancelPurchaseFormProps = Omit<
+	CancelPurchaseFormOwnProps,
+	'downgradePlanToPersonalPrice' | 'downgradePlanToMonthlyPrice' | 'isSplitCancelRemoveEnabled'
+>;
+
+const WrappedCancelPurchaseForm = ( props: WrappedCancelPurchaseFormProps ) => {
 	const personalDowngradePlan = getDowngradePlanFromPurchase( props.purchase );
 	const monthlyDowngradePlan = getDowngradePlanToMonthlyFromPurchase( props.purchase );
+	const personalSlug = personalDowngradePlan?.getStoreSlug();
+	const monthlySlug = monthlyDowngradePlan?.getStoreSlug();
 	const pricingMeta = Plans.usePricingMetaForGridPlans( {
-		planSlugs: [ personalDowngradePlan?.getStoreSlug(), monthlyDowngradePlan?.getStoreSlug() ],
+		planSlugs: [ personalSlug, monthlySlug ].filter( ( slug ): slug is PlanSlug =>
+			Boolean( slug )
+		),
 		coupon: undefined,
 		siteId: null,
 		useCheckPlanAvailabilityForPurchase,
@@ -952,10 +1014,10 @@ const WrappedCancelPurchaseForm = ( props ) => {
 		<ConnectedCancelPurchaseForm
 			{ ...props }
 			downgradePlanToPersonalPrice={
-				pricingMeta?.[ personalDowngradePlan?.getStoreSlug() ]?.originalPrice?.full
+				personalSlug ? pricingMeta?.[ personalSlug ]?.originalPrice?.full : undefined
 			}
 			downgradePlanToMonthlyPrice={
-				pricingMeta?.[ monthlyDowngradePlan?.getStoreSlug() ]?.originalPrice?.full
+				monthlySlug ? pricingMeta?.[ monthlySlug ]?.originalPrice?.full : undefined
 			}
 			isSplitCancelRemoveEnabled={ isSplitCancelRemoveEnabled }
 		/>
