@@ -43,6 +43,11 @@ const MOBILE_SOCIAL_SERVICES: SignupAllowedService[] = [ 'google', 'apple', 'git
 export type UserStepAccepts = {
 	headerText?: string;
 	subHeaderText?: string;
+	/**
+	 * Hides the top-level "Log in" link (V2 top bar / V1 footer). The email-first
+	 * account-step variant keeps its own in-form "Have an account? Log in" link.
+	 * Existing users can still sign in via the social / email buttons either way.
+	 */
 	hideLoginLink?: boolean;
 	allowedSocialServices?: SignupAllowedService[];
 };
