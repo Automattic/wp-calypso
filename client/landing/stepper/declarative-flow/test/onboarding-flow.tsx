@@ -32,6 +32,13 @@ jest.mock( 'calypso/lib/analytics/survicate', () => ( {
 	addSurvicate: jest.fn(),
 } ) );
 
+// The processing step awaits the launchpad-personalization ExPlat assignment before redirecting.
+// Resolve it synchronously to control (variationName: null) so the redirect fires within the test's
+// tick instead of waiting on a real network fetch.
+jest.mock( 'calypso/lib/explat', () => ( {
+	loadExperimentAssignment: jest.fn( () => Promise.resolve( { variationName: null } ) ),
+} ) );
+
 describe( 'Onboarding Flow', () => {
 	beforeAll( () => {
 		Object.defineProperty( window, 'location', {
