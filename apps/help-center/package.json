@@ -40,7 +40,7 @@
 		"@automattic/zendesk-client": "workspace:^",
 		"@tanstack/react-query": "^5.83.0",
 		"@wordpress/api-fetch": "^7.48.0",
-		"@wordpress/components": "^35.0.0",
+		"@wordpress/components": "^37.0.0",
 		"@wordpress/compose": "^8.2.0",
 		"@wordpress/data": "^10.48.0",
 		"@wordpress/dom-ready": "^4.48.0",
@@ -48,7 +48,7 @@
 		"@wordpress/i18n": "^6.21.0",
 		"@wordpress/icons": "^13.3.0",
 		"@wordpress/plugins": "^7.48.0",
-		"@wordpress/private-apis": "^1.48.0",
+		"@wordpress/private-apis": "^1.51.0",
 		"@wordpress/router": "^1.48.0",
 		"@wordpress/url": "^4.48.0",
 		"postcss-prefix-selector": "^1.16.1"
