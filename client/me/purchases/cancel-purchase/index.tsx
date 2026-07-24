@@ -1488,7 +1488,7 @@ class CancelPurchase extends Component< CancelPurchaseAllProps, CancelPurchaseSt
 				{ ! isJetpack && ! isAkismet && ! isDomainRegistrationPurchase && (
 					<CancelPurchaseForm
 						disableButtons={ this.state.isLoading }
-						purchase={ purchase }
+						purchase={ purchase.rawPurchase }
 						isVisible={ this.state.surveyShown }
 						onClose={ this.handleSurveyClose }
 						onSurveyComplete={ this.onSurveyComplete }
