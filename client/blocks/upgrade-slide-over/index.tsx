@@ -13,7 +13,7 @@
 
 import { Gridicon } from '@automattic/components';
 import { Button, InputControl, SelectControl } from '@wordpress/ui';
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import {
 	COUNTRIES,
@@ -77,6 +77,7 @@ export default function UpgradeSlideOver( {
 	const [ useAsPrimary, setUseAsPrimary ] = useState( true );
 	const [ taxIdType, setTaxIdType ] = useState( 'EU VAT number' );
 	const [ taxId, setTaxId ] = useState( '' );
+	const [ showErrors, setShowErrors ] = useState( false );
 	const panelRef = useRef< HTMLDivElement >( null );
 	const closeTimer = useRef< ReturnType< typeof setTimeout > | undefined >( undefined );
 
@@ -132,16 +133,19 @@ export default function UpgradeSlideOver( {
 		return () => document.removeEventListener( 'keydown', onKeyDown );
 	}, [ requestClose, step ] );
 
-	const canPay = useMemo( () => {
-		return (
-			cardNumber.replace( /\D/g, '' ).length >= 15 &&
-			expiry.replace( /\D/g, '' ).length === 4 &&
-			cvc.length >= 3 &&
-			fullName.trim().length > 0
-		);
-	}, [ cardNumber, expiry, cvc, fullName ] );
+	// Per-field validity; errors only show after a pay attempt.
+	const cardNumberValid = cardNumber.replace( /\D/g, '' ).length >= 15;
+	const expiryValid = expiry.replace( /\D/g, '' ).length === 4;
+	const cvcValid = cvc.length >= 3;
+	const fullNameValid = fullName.trim().length > 0;
+	const canPay = cardNumberValid && expiryValid && cvcValid && fullNameValid;
 
 	const handlePay = () => {
+		if ( ! canPay ) {
+			setShowErrors( true );
+			return;
+		}
+		setShowErrors( false );
 		setStep( 'processing' );
 		// Fake a payment round-trip.
 		setTimeout( () => setStep( 'success' ), 1400 );
@@ -264,6 +268,7 @@ export default function UpgradeSlideOver( {
 												placeholder="1234 1234 1234 1234"
 												autoComplete="cc-number"
 												inputMode="numeric"
+												className={ showErrors && ! cardNumberValid ? 'is-error' : undefined }
 												value={ cardNumber }
 												onChange={ ( event ) =>
 													setCardNumber( formatCardNumber( event.target.value ) )
@@ -274,6 +279,7 @@ export default function UpgradeSlideOver( {
 												placeholder="MM / YY"
 												autoComplete="cc-exp"
 												inputMode="numeric"
+												className={ showErrors && ! expiryValid ? 'is-error' : undefined }
 												value={ expiry }
 												onChange={ ( event ) => setExpiry( formatExpiry( event.target.value ) ) }
 											/>
@@ -282,17 +288,24 @@ export default function UpgradeSlideOver( {
 												placeholder="CVC"
 												autoComplete="cc-csc"
 												inputMode="numeric"
+												className={ showErrors && ! cvcValid ? 'is-error' : undefined }
 												value={ cvc }
 												onChange={ ( event ) =>
 													setCvc( event.target.value.replace( /\D/g, '' ).slice( 0, 4 ) )
 												}
 											/>
 										</div>
+										{ showErrors && ! canPay && (
+											<p className="upgrade-slide-over__card-error" role="alert">
+												Check your card details: the highlighted fields are incomplete or invalid.
+											</p>
+										) }
 
 										<InputControl
 											label="Full name"
 											placeholder="Jane Doe"
 											autoComplete="name"
+											className={ showErrors && ! fullNameValid ? 'is-error' : undefined }
 											value={ fullName }
 											onChange={ ( event ) => setFullName( event.target.value ) }
 										/>
@@ -375,7 +388,7 @@ export default function UpgradeSlideOver( {
 								<Button
 									variant="solid"
 									className="upgrade-slide-over__pay-button"
-									disabled={ ! canPay || step === 'processing' }
+									disabled={ step === 'processing' }
 									onClick={ handlePay }
 								>
 									{ step === 'processing' ? (

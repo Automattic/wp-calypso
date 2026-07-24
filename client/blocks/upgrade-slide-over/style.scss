@@ -16,6 +16,14 @@ body.upgrade-slide-over-open {
 	overflow: hidden;
 }
 
+// The @wordpress/ui select popup portals to <body> and defaults to
+// z-index: initial, which paints it UNDER the slide-over (z-index 100300)
+// and makes options unclickable. This custom property is the component's
+// intended override hook.
+:root {
+	--wp-ui-select-z-index: 100400;
+}
+
 .upgrade-slide-over {
 	position: fixed;
 	inset: 0;
@@ -290,6 +298,22 @@ body.upgrade-slide-over-open {
 		gap: var( --wpds-dimension-gap-md );
 	}
 
+	// Invalid card fields, shown after attempting to pay.
+	.is-error [class*='input-layout'] {
+		border-color: var( --wpds-color-stroke-interactive-error-strong );
+
+		&:hover {
+			border-color: var( --wpds-color-stroke-interactive-error-strong );
+		}
+	}
+
+	&__card-error {
+		margin: 0;
+		font-size: var( --wpds-typography-font-size-sm );
+		line-height: var( --wpds-typography-line-height-sm );
+		color: var( --wpds-color-fg-content-error );
+	}
+
 	&__checkbox-row {
 		display: flex;
 		align-items: center;
@@ -409,41 +433,19 @@ body.upgrade-slide-over-open {
 		margin: 0;
 	}
 
-	// Strong neutral (dark) button, WPDS-tokenized. Overrides the
-	// @wordpress/ui solid (brand blue) variant; our unlayered CSS wins
-	// over its @layer styles.
+	// Layout-only overrides: the color comes from the @wordpress/ui solid
+	// variant (WPDS brand blue).
 	&__pay-button {
 		justify-content: center;
 		gap: var( --wpds-dimension-gap-sm );
 		width: 100%;
 		height: var( --wpds-typography-line-height-2xl );
 		border-radius: var( --wpds-border-radius-lg );
-		background: var( --wpds-color-bg-interactive-neutral-strong );
-		color: var( --wpds-color-fg-interactive-neutral-strong );
 		font-size: var( --wpds-typography-font-size-lg );
 		font-weight: var( --wpds-typography-font-weight-medium );
 
 		.gridicon {
 			fill: currentColor;
-		}
-
-		&:hover:not( :disabled ),
-		&:active:not( :disabled ) {
-			background: var( --wpds-color-bg-interactive-neutral-strong-active );
-			color: var( --wpds-color-fg-interactive-neutral-strong-active );
-		}
-
-		&:focus-visible {
-			outline: var( --wpds-border-width-focus ) solid var( --wpds-color-stroke-focus-brand );
-			outline-offset: 1px;
-			box-shadow: none;
-		}
-
-		// @wordpress/ui Button uses aria-disabled, not the disabled attribute.
-		&:disabled,
-		&[aria-disabled='true'] {
-			background: var( --wpds-color-bg-interactive-neutral-strong-disabled );
-			color: var( --wpds-color-fg-interactive-neutral-strong-disabled );
 		}
 	}
 
