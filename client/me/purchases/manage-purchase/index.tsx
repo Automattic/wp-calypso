@@ -69,7 +69,7 @@ import { Plans, type SiteDetails } from '@automattic/data-stores';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { DOMAIN_CANCEL, SUPPORT_ROOT } from '@automattic/urls';
 import { useQuery } from '@tanstack/react-query';
-import { check, column, Icon, payment, reusableBlock, tool, trash, upload } from '@wordpress/icons';
+import { check, column, Icon, payment, reusableBlock, tool, trash, cloud } from '@wordpress/icons';
 import clsx from 'clsx';
 import { localize, LocalizeProps, useTranslate } from 'i18n-calypso';
 import moment from 'moment';
@@ -453,7 +453,41 @@ class ManagePurchase extends Component<
 		// Show the upgrade button without the primary style if both buttons are present
 		return (
 			<Button primary={ !! preventRenewal } compact href={ upgradeUrl }>
-				{ translate( 'Upgrade' ) }
+				{ translate( 'Upgrade plan' ) }
+			</Button>
+		);
+	}
+
+	renderStorageUpgradeButton( preventRenewal: boolean ) {
+		const { purchase, translate, siteSlug } = this.props;
+		if ( ! purchase ) {
+			return null;
+		}
+
+		if ( isPartnerPurchase( purchase ) || isA4ABillingDragonPurchase( purchase ) ) {
+			return null;
+		}
+
+		const isUpgradeableBackupProduct = (
+			JETPACK_BACKUP_T1_PRODUCTS as ReadonlyArray< string >
+		 ).includes( purchase.product_slug );
+		const isUpgradeableSecurityPlan = (
+			JETPACK_SECURITY_T1_PLANS as ReadonlyArray< string >
+		 ).includes( purchase.product_slug );
+
+		if ( ! isUpgradeableSecurityPlan && ! isUpgradeableBackupProduct ) {
+			return null;
+		}
+
+		if ( isExpiredOrRemoved( purchase ) ) {
+			return null;
+		}
+
+		// If the "renew now" button is showing, it will be using primary styles
+		// Show the upgrade button without the primary style if both buttons are present
+		return (
+			<Button primary={ !! preventRenewal } compact href={ `/plans/storage/${ siteSlug }` }>
+				{ translate( 'Upgrade storage' ) }
 			</Button>
 		);
 	}
@@ -543,18 +577,23 @@ class ManagePurchase extends Component<
 		} );
 	};
 
+	handleUpgradeStorageClick = () => {
+		const { purchase } = this.props;
+		if ( ! purchase ) {
+			return null;
+		}
+
+		recordTracksEvent( 'calypso_purchases_upgrade_storage', {
+			status: isExpiredOrRemoved( purchase ) ? 'expired' : 'active',
+			plan: purchase.product_name,
+		} );
+	};
+
 	getUpgradeUrl() {
 		const { purchase, siteSlug } = this.props;
 		if ( ! purchase ) {
 			return null;
 		}
-
-		const isUpgradeableBackupProduct = (
-			JETPACK_BACKUP_T1_PRODUCTS as ReadonlyArray< string >
-		 ).includes( purchase.product_slug );
-		const isUpgradeableSecurityPlan = (
-			JETPACK_SECURITY_T1_PLANS as ReadonlyArray< string >
-		 ).includes( purchase.product_slug );
 
 		if ( isAkismetProduct( purchase ) ) {
 			// For the first Iteration of Calypso Akismet checkout we are only suggesting
@@ -583,10 +622,6 @@ class ManagePurchase extends Component<
 					purchase.product_slug as keyof typeof JETPACK_STARTER_UPGRADE_MAP
 				];
 			return `/checkout/${ siteSlug }/${ upgradePlan }`;
-		}
-
-		if ( isUpgradeableBackupProduct || isUpgradeableSecurityPlan ) {
-			return `/plans/storage/${ siteSlug }`;
 		}
 
 		return `/plans/${ siteSlug }`;
@@ -676,16 +711,13 @@ class ManagePurchase extends Component<
 			return null;
 		}
 
-		let icon;
 		let buttonText;
 
 		if ( isExpiredOrRemoved( purchase ) ) {
-			icon = column;
 			buttonText = isUpgradeablePlan
 				? translate( 'Pick another plan' )
 				: translate( 'Pick another product' );
 		} else {
-			icon = upload;
 			buttonText = isUpgradeablePlan ? translate( 'Upgrade plan' ) : translate( 'Upgrade product' );
 		}
 
@@ -698,8 +730,46 @@ class ManagePurchase extends Component<
 				href={ upgradeUrl }
 				onClick={ this.handleUpgradeClick }
 			>
-				<Icon icon={ icon } className="card__icon" />
+				<Icon icon={ column } className="card__icon" />
 				{ buttonText }
+			</CompactCard>
+		);
+	}
+
+	renderUpgradeStorageNavItem() {
+		const { purchase, translate, siteSlug } = this.props;
+		if ( ! purchase ) {
+			return null;
+		}
+
+		if ( isPartnerPurchase( purchase ) || isA4ABillingDragonPurchase( purchase ) ) {
+			return null;
+		}
+
+		const isUpgradeableBackupProduct = (
+			JETPACK_BACKUP_T1_PRODUCTS as ReadonlyArray< string >
+		 ).includes( purchase.product_slug );
+		const isUpgradeableSecurityPlan = (
+			JETPACK_SECURITY_T1_PLANS as ReadonlyArray< string >
+		 ).includes( purchase.product_slug );
+
+		if ( ! isUpgradeableSecurityPlan && ! isUpgradeableBackupProduct ) {
+			return null;
+		}
+
+		if ( isExpiredOrRemoved( purchase ) ) {
+			return null;
+		}
+
+		return (
+			<CompactCard
+				tagName="button"
+				displayAsLink
+				href={ `/plans/storage/${ siteSlug }` }
+				onClick={ this.handleUpgradeStorageClick }
+			>
+				<Icon icon={ cloud } className="card__icon" />
+				{ translate( 'Upgrade storage' ) }
 			</CompactCard>
 		);
 	}
@@ -1420,6 +1490,7 @@ class ManagePurchase extends Component<
 						{ isProductOwner && ! purchase.is_locked && (
 							<div className="manage-purchase__renew-upgrade-buttons">
 								{ this.renderUpgradeButton( preventRenewal ) }
+								{ this.renderStorageUpgradeButton( preventRenewal ) }
 								{ ! preventRenewal && this.renderRenewButton() }
 							</div>
 						) }
@@ -1455,6 +1526,7 @@ class ManagePurchase extends Component<
 						{ ! preventRenewal && renderMonthlyRenewalOption && this.renderRenewMonthlyNavItem() }
 						{ /* TODO: Add ability to Renew Akismet subscription */ }
 						{ this.renderUpgradeNavItem() }
+						{ this.renderUpgradeStorageNavItem() }
 						{ this.renderEditPaymentMethodNavItem() }
 						{ config.isEnabled( 'jetpack/crm-downloads' ) && this.renderCrmDownloadsNavItem() }
 						{ this.renderReinstall() }
