@@ -93,7 +93,7 @@ import {
 	isDomainTransfer,
 	isDotcomPlan,
 	getRenewalUrlFromPurchase,
-	isJetpackT1SecurityPlan,
+	isStorageUpgradeEligible,
 	isWpcomFlexSubscription,
 	isAkismetFreeProduct,
 	isExpiredAndInGracePeriod,
@@ -109,6 +109,7 @@ import {
 import {
 	getChangedPlanRedirectUrl,
 	getSitePurchaseUpgradeUrl,
+	getSitePurchaseStorageUpgradeUrl,
 	getUpgradedPurchaseRedirectUrl,
 } from '../../../utils/site-url';
 import BillingFlexUsageCard from '../../billing-flex-usage';
@@ -140,10 +141,6 @@ function renewPurchase( purchase: Purchase ): void {
 }
 
 function getExpiredNewPlanUrl( purchase: Purchase ): string {
-	if ( purchase.is_jetpack_backup_t1 || isJetpackT1SecurityPlan( purchase ) ) {
-		return wpcomLink( `/plans/storage/${ purchase.site_slug }` );
-	}
-
 	if ( purchase.is_jetpack_plan_or_product ) {
 		return wpcomLink( `/plans/${ purchase.site_slug }` );
 	}
@@ -234,6 +231,7 @@ function PurchaseActionMenu( { purchase }: { purchase: Purchase } ) {
 	const isOwner = String( user.ID ) === String( purchase.user_id );
 	const canBeRenewed = purchase.can_explicit_renew && isOwner;
 	const upgradeUrl = getSitePurchaseUpgradeUrl( purchase, getUpgradedPurchaseRedirectUrl() );
+	const storageUpgradeUrl = getSitePurchaseStorageUpgradeUrl( purchase );
 	const { recordTracksEvent } = useAnalytics();
 	const menuItems = [
 		canUpgradePurchase( purchase ) && upgradeUrl && isOwner && (
@@ -246,9 +244,25 @@ function PurchaseActionMenu( { purchase }: { purchase: Purchase } ) {
 					upgradePurchase( upgradeUrl );
 				} }
 			>
-				{ _x( 'Upgrade', 'Change to a plan with more features.' ) }
+				{ _x( 'Upgrade plan', 'Change to a plan with more features.' ) }
 			</MenuItem>
 		),
+		isStorageUpgradeEligible( purchase ) &&
+			storageUpgradeUrl &&
+			isOwner &&
+			! isExpiredOrRemoved( purchase ) && (
+				<MenuItem
+					onClick={ () => {
+						recordTracksEvent( 'calypso_purchases_upgrade_storage', {
+							status: isExpiredOrRemoved( purchase ) ? 'expired' : 'active',
+							plan: purchase.product_name,
+						} );
+						upgradePurchase( storageUpgradeUrl );
+					} }
+				>
+					{ _x( 'Upgrade storage', 'Buy more storage space for the subscription.' ) }
+				</MenuItem>
+			),
 		canBeRenewed && (
 			<MenuItem
 				onClick={ () => {
@@ -462,7 +476,43 @@ function UpgradeActionButton( { purchase }: { purchase: Purchase } ) {
 						upgradePurchase( upgradeUrl );
 					} }
 				>
-					{ _x( 'Upgrade', 'Change to a plan with more features.' ) }
+					{ _x( 'Upgrade plan', 'Change to a plan with more features.' ) }
+				</Button>
+			}
+		/>
+	);
+}
+
+export function StorageUpgradeActionButton( { purchase }: { purchase: Purchase } ) {
+	const { user } = useAuth();
+	const { recordTracksEvent } = useAnalytics();
+	if ( String( user.ID ) !== String( purchase.user_id ) ) {
+		return null;
+	}
+	if ( ! isStorageUpgradeEligible( purchase ) || isExpiredOrRemoved( purchase ) ) {
+		return null;
+	}
+	const storageUpgradeUrl = getSitePurchaseStorageUpgradeUrl( purchase );
+	if ( ! storageUpgradeUrl ) {
+		return null;
+	}
+	return (
+		<ActionList.ActionItem
+			title={ __( 'Upgrade storage' ) }
+			description={ __( 'Get more storage space.' ) }
+			actions={
+				<Button
+					variant="secondary"
+					size="compact"
+					onClick={ () => {
+						recordTracksEvent( 'calypso_purchases_upgrade_storage', {
+							status: isExpiredOrRemoved( purchase ) ? 'expired' : 'active',
+							plan: purchase.product_name,
+						} );
+						upgradePurchase( storageUpgradeUrl );
+					} }
+				>
+					{ _x( 'Upgrade storage', 'Buy more storage space for the subscription.' ) }
 				</Button>
 			}
 		/>
@@ -677,6 +727,7 @@ function PurchaseSettingsActions( { purchase }: { purchase: Purchase } ) {
 				<ReinstallButton purchase={ purchase } />
 				<JetpackCRMDownloadsButton purchase={ purchase } />
 				<UpgradeActionButton purchase={ purchase } />
+				<StorageUpgradeActionButton purchase={ purchase } />
 				{ ! isExpiredOrRemoved( purchase ) && isEmailPlanManagementEnabled( purchase ) && (
 					<AddMailboxesActionItem purchase={ purchase } />
 				) }
@@ -1516,7 +1567,7 @@ export default function PurchaseSettings() {
 								<HStack justify="space-between">
 									{ shouldShowHeaderUpgradeAction && upgradeUrl && (
 										<Button __next40pxDefaultSize variant="primary" href={ upgradeUrl }>
-											{ _x( 'Upgrade', 'Change to a plan with more features.' ) }
+											{ _x( 'Upgrade plan', 'Change to a plan with more features.' ) }
 										</Button>
 									) }
 									{ /* Email plans surface every action in the list below, so the

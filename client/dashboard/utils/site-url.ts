@@ -5,7 +5,7 @@ import { getCurrentDashboard } from '../app/routing';
 import { isSitePlanTrial, isSitePlanWooHosted } from '../sites/plans';
 import { isDashboardBackport } from './is-dashboard-backport';
 import { dashboardLink, redirectToDashboardLink, wpcomLink } from './link';
-import { isAkismetProduct, isJetpackT1SecurityPlan, isTitanMail } from './purchase';
+import { isAkismetProduct, isStorageUpgradeEligible, isTitanMail } from './purchase';
 import { isSelfHostedJetpackConnected } from './site-types';
 import type { Purchase, Site } from '@automattic/api-core';
 
@@ -144,10 +144,6 @@ export function getSitePurchaseUpgradeUrl( purchase: Purchase, redirectTo?: stri
 		} );
 	}
 
-	if ( purchase.is_jetpack_backup_t1 || isJetpackT1SecurityPlan( purchase ) ) {
-		return wpcomLink( `/plans/storage/${ purchase.site_slug }` );
-	}
-
 	if ( purchase.is_jetpack_plan_or_product ) {
 		return wpcomLink( `/plans/${ purchase.site_slug }` );
 	}
@@ -158,6 +154,13 @@ export function getSitePurchaseUpgradeUrl( purchase: Purchase, redirectTo?: stri
 		isWooHosted: purchase.is_woo_hosted_product,
 		redirectTo: redirectTo ?? redirectToDashboardLink(),
 	} );
+}
+
+export function getSitePurchaseStorageUpgradeUrl( purchase: Purchase ): string | undefined {
+	if ( ! isStorageUpgradeEligible( purchase ) ) {
+		return undefined;
+	}
+	return wpcomLink( `/plans/storage/${ purchase.site_slug }` );
 }
 
 function buildSitePlanUpgradeUrl( {

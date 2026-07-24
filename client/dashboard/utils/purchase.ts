@@ -576,6 +576,10 @@ export function isJetpackT1SecurityPlan( purchase: Purchase ): boolean {
 	return securityT1Slugs.includes( purchase.product_slug as ( typeof securityT1Slugs )[ number ] );
 }
 
+export function isStorageUpgradeEligible( purchase: Purchase ): boolean {
+	return purchase.is_jetpack_backup_t1 || isJetpackT1SecurityPlan( purchase );
+}
+
 export function isDotcomPlan( purchase: Purchase ): boolean {
 	return purchase.is_plan && ! purchase.is_jetpack_plan_or_product;
 }
