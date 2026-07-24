@@ -83,6 +83,15 @@
 	margin: 0;
 }
 
+/* TEMPORARY: this screen scrolls instead of paginating, so the footer holds
+   nothing — but DataViews still mounts it partway through a fetch, which
+   resizes the scroll container under the reader. Hide it until the
+   @wordpress/dataviews 17.2.0 bump lands, which stops tying the footer's
+   visibility to the loading state, then remove this rule. */
+.site-logs-card .dataviews-footer {
+	display: none;
+}
+
 /* Center the Auto-refresh toggle with the sibling view-config and download icon buttons. */
 .site-logs-card .dataviews__view-actions .components-toggle-control {
 	display: flex;
