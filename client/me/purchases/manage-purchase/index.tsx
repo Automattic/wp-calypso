@@ -577,6 +577,18 @@ class ManagePurchase extends Component<
 		} );
 	};
 
+	handleUpgradeStorageClick = () => {
+		const { purchase } = this.props;
+		if ( ! purchase ) {
+			return null;
+		}
+
+		recordTracksEvent( 'calypso_purchases_upgrade_storage', {
+			status: isExpiredOrRemoved( purchase ) ? 'expired' : 'active',
+			plan: purchase.product_name,
+		} );
+	};
+
 	getUpgradeUrl() {
 		const { purchase, siteSlug } = this.props;
 		if ( ! purchase ) {
@@ -723,6 +735,44 @@ class ManagePurchase extends Component<
 			>
 				<Icon icon={ icon } className="card__icon" />
 				{ buttonText }
+			</CompactCard>
+		);
+	}
+
+	renderUpgradeStorageNavItem() {
+		const { purchase, translate, siteSlug } = this.props;
+		if ( ! purchase ) {
+			return null;
+		}
+
+		if ( isPartnerPurchase( purchase ) || isA4ABillingDragonPurchase( purchase ) ) {
+			return null;
+		}
+
+		const isUpgradeableBackupProduct = (
+			JETPACK_BACKUP_T1_PRODUCTS as ReadonlyArray< string >
+		 ).includes( purchase.product_slug );
+		const isUpgradeableSecurityPlan = (
+			JETPACK_SECURITY_T1_PLANS as ReadonlyArray< string >
+		 ).includes( purchase.product_slug );
+
+		if ( ! isUpgradeableSecurityPlan && ! isUpgradeableBackupProduct ) {
+			return null;
+		}
+
+		if ( isExpiredOrRemoved( purchase ) ) {
+			return null;
+		}
+
+		return (
+			<CompactCard
+				tagName="button"
+				displayAsLink
+				href={ `/plans/storage/${ siteSlug }` }
+				onClick={ this.handleUpgradeClick }
+			>
+				<Icon icon={ upload } className="card__icon" />
+				{ translate( 'Upgrade storage' ) }
 			</CompactCard>
 		);
 	}
@@ -1458,6 +1508,7 @@ class ManagePurchase extends Component<
 						{ ! preventRenewal && renderMonthlyRenewalOption && this.renderRenewMonthlyNavItem() }
 						{ /* TODO: Add ability to Renew Akismet subscription */ }
 						{ this.renderUpgradeNavItem() }
+						{ this.renderUpgradeStorageNavItem() }
 						{ this.renderEditPaymentMethodNavItem() }
 						{ config.isEnabled( 'jetpack/crm-downloads' ) && this.renderCrmDownloadsNavItem() }
 						{ this.renderReinstall() }
