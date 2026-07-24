@@ -1,22 +1,30 @@
 import { CompactCard, Gridicon } from '@automattic/components';
-import PropTypes from 'prop-types';
+import { type SiteDetails } from '@automattic/data-stores';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import Site from 'calypso/blocks/site';
 import SitePlaceholder from 'calypso/blocks/site/placeholder';
 import QuerySites from 'calypso/components/data/query-sites';
 import { getSite } from 'calypso/state/sites/selectors';
+import type { Purchase } from 'calypso/lib/purchases/types';
+import type { IAppState } from 'calypso/state/types';
 
 import './header.scss';
 
-class PurchaseSiteHeader extends Component {
-	static propTypes = {
-		isPlaceholder: PropTypes.bool,
-		siteId: PropTypes.number,
-		name: PropTypes.string,
-		purchase: PropTypes.object,
-	};
+interface PurchaseSiteHeaderProps {
+	isPlaceholder?: boolean;
+	siteId?: number;
+	name?: string;
+	purchase?: Purchase;
+}
 
+interface PurchaseSiteHeaderConnectedProps {
+	site?: SiteDetails | null;
+}
+
+class PurchaseSiteHeader extends Component<
+	PurchaseSiteHeaderProps & PurchaseSiteHeaderConnectedProps
+> {
 	// Disconnected sites can't render the `Site` component, but there can be
 	// purchases from disconnected sites. Here we spoof the Site header.
 	renderFauxSite() {
@@ -66,6 +74,6 @@ class PurchaseSiteHeader extends Component {
 	}
 }
 
-export default connect( ( state, { siteId } ) => ( {
+export default connect( ( state: IAppState, { siteId }: PurchaseSiteHeaderProps ) => ( {
 	site: getSite( state, siteId ),
 } ) )( PurchaseSiteHeader );
