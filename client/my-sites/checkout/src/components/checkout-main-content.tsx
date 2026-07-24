@@ -3080,8 +3080,10 @@ const WPCheckoutMainContent = styled.div< {
 				.components-h-stack {
 				align-items: center;
 			}
-			/* Figma 2392:15431 — all form labels render in Gray 100. */
-			.form-label {
+			/* Figma 2392:15431 — contact form labels render in Gray 100. Scoped to
+			   the contact step: the payment step's own labels are handled by the
+			   .credit-card-fields-inner-wrapper rules. */
+			.checkout-contact-form-step .form-label {
 				color: ${ colorStudio.colors[ 'Gray 100' ] };
 			}
 			/* The VAT form (Field from @automattic/wpcom-checkout) renders
