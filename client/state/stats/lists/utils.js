@@ -844,6 +844,28 @@ export const normalizers = {
 				} );
 		}
 
+		// `fields` names the tuple columns after the leading period (one metric
+		// for a single statType, four for statType=all). Rows keyed by metric
+		// name let consumers pick series without caring about column order.
+		let metrics = null;
+		let rows = null;
+		if (
+			Array.isArray( payload.fields ) &&
+			payload.fields.length >= 2 &&
+			Array.isArray( payload.data )
+		) {
+			metrics = payload.fields.slice( 1 );
+			rows = payload.data
+				.filter( ( item ) => Array.isArray( item ) )
+				.map( ( item ) => {
+					const row = { period: item[ 0 ] };
+					metrics.forEach( ( metric, index ) => {
+						row[ metric ] = Number( item[ index + 1 ] ) || 0;
+					} );
+					return row;
+				} );
+		}
+
 		let pages = [];
 		if ( payload.pages ) {
 			pages = payload.pages.map( ( item ) => {
@@ -856,7 +878,16 @@ export const normalizers = {
 
 		// The endpoint also returns the video's attachment post, which carries
 		// the title and upload date.
-		return { pages, data, post: payload.post ?? null };
+		return {
+			pages,
+			data,
+			post: payload.post ?? null,
+			metrics,
+			rows,
+			// Range queries also return canonical totals over the window, keyed
+			// by metric name.
+			total: payload.total ?? null,
+		};
 	},
 
 	/**

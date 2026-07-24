@@ -40,9 +40,10 @@ export default function StatsVideoDetail( { postId, period, context }: StatsVide
 	// The video title and upload date come from the attachment post included in
 	// the statsVideo response — available in both Calypso and Odyssey (the
 	// stats-app proxy forwards stats routes). Mirrors VideoSummary's default
-	// Days/Weeks query, which is always fetched first.
+	// Days query, which is always fetched first, so this reuses that cached
+	// response instead of issuing its own request.
 	const videoInfoQuery = useMemo(
-		() => ( { postId, statType: 'views', period: 'month' } ),
+		() => ( { postId, statType: 'all', period: 'day', num: -1 } ),
 		[ postId ]
 	);
 	const videoStatsData = useSelector(
