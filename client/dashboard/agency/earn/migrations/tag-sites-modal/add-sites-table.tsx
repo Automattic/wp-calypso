@@ -1,20 +1,20 @@
-import { useDesktopBreakpoint } from '@automattic/viewport-react';
 import {
 	BaseControl,
 	CheckboxControl,
 	__experimentalSpacer as Spacer,
+	__experimentalText as Text,
 } from '@wordpress/components';
+import { useViewportMatch } from '@wordpress/compose';
 import { DataViews, filterSortAndPaginate } from '@wordpress/dataviews';
 import { __, sprintf } from '@wordpress/i18n';
 import { useCallback, useMemo, useState } from 'react';
+import { formatDate } from '../../../../utils/datetime';
 import {
 	useFetchAllManagedSitesForCommission,
 	type SiteItem,
-} from 'calypso/dashboard/agency/earn/migrations/hooks/use-fetch-all-managed-sites-for-commission';
+} from '../hooks/use-fetch-all-managed-sites-for-commission';
+import type { RecordTracksEvent, TaggedSite } from '../types';
 import type { Field, View } from '@wordpress/dataviews';
-import type { RecordTracksEvent, TaggedSite } from 'calypso/dashboard/agency/earn/migrations/types';
-
-import '../commissions/components/dataviews/style.scss';
 
 export default function MigrationsAddSitesTable( {
 	selectedSites,
@@ -31,7 +31,7 @@ export default function MigrationsAddSitesTable( {
 	recordTracksEvent: RecordTracksEvent;
 	getSiteCreatedAt: ( blogId: number ) => string | undefined;
 } ) {
-	const isDesktop = useDesktopBreakpoint();
+	const isDesktop = useViewportMatch( 'large' );
 
 	const { items, isLoading } = useFetchAllManagedSitesForCommission();
 
@@ -93,20 +93,19 @@ export default function MigrationsAddSitesTable( {
 	const fields: Field< SiteItem >[] = useMemo( () => {
 		const siteColumn = {
 			id: 'site',
+			// DataViews types `label` as a string, but it accepts a node at runtime;
+			// this renders the select-all control in the column header.
 			label: (
-				<div>
-					<CheckboxControl
-						label={ __( 'Site' ) }
-						checked={ selectedSites.length === availableSites.length }
-						onChange={ onSelectAllSites }
-						disabled={ false }
-					/>
-				</div>
-			 ) as any,
+				<CheckboxControl
+					label={ __( 'Site' ) }
+					checked={ availableSites.length > 0 && selectedSites.length === availableSites.length }
+					onChange={ onSelectAllSites }
+					disabled={ false }
+				/>
+			 ) as unknown as string,
 			getValue: () => '-',
 			render: ( { item }: { item: SiteItem } ) => (
 				<CheckboxControl
-					className="view-details-button"
 					data-site-id={ item.id }
 					label={ item.site }
 					checked={ selectedSites.map( ( site ) => site.id ).includes( item.id ) }
@@ -124,7 +123,8 @@ export default function MigrationsAddSitesTable( {
 			getValue: () => '-',
 			render: ( { item }: { item: SiteItem } ) => {
 				const createdAt = getSiteCreatedAt( item.rawSite.blog_id );
-				return createdAt ? new Date( createdAt ).toLocaleDateString() : '-';
+				// TODO: resolve the real locale once the dashboard port lands; hardcoded for now.
+				return createdAt ? formatDate( new Date( createdAt ), 'en' ) : '-';
 			},
 			enableHiding: false,
 			enableSorting: false,
@@ -145,20 +145,17 @@ export default function MigrationsAddSitesTable( {
 	}, [ availableSites, view, fields ] );
 
 	return (
-		<div className="add-sites-table redesigned-a8c-table">
-			<BaseControl
-				label={ __( 'Select sites to tag' ) }
-				className="migrations-tag-sites-modal__table-control"
-			>
+		<>
+			<BaseControl label={ __( 'Select sites to tag' ) }>
 				{ migrationSourceHost && (
 					<Spacer marginY={ 4 }>
-						<div className="migrations-tag-sites-modal__instruction">
+						<Text variant="muted">
 							{ sprintf(
 								/* translators: %s: the hosting provider name */
 								__( 'Make sure you only select sites previously hosted on %s' ),
 								migrationSourceHost
 							) }
-						</div>
+						</Text>
 					</Spacer>
 				) }
 				<DataViews
@@ -174,6 +171,6 @@ export default function MigrationsAddSitesTable( {
 					isLoading={ isLoading }
 				/>
 			</BaseControl>
-		</div>
+		</>
 	);
 }

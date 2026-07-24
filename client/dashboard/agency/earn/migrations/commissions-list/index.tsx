@@ -1,20 +1,14 @@
-import { useDesktopBreakpoint } from '@automattic/viewport-react';
 import { __experimentalHStack as HStack } from '@wordpress/components';
+import { useViewportMatch } from '@wordpress/compose';
 import { DataViews } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
-import { useCallback, useMemo, ReactNode, useState } from 'react';
+import { useCallback, useMemo, type ReactNode, useState } from 'react';
 import RequestReviewModal from '../request-review-modal';
 import { MigratedOnColumn, ReviewStatusColumn, SiteColumn } from './commission-columns';
 import UntagSiteDialog from './untag-site-dialog';
 import useCommissionListActions from './use-commission-list-actions';
+import type { RecordTracksEvent, ShowSuccessNotice, TaggedSite } from '../types';
 import type { Field, View } from '@wordpress/dataviews';
-import type {
-	RecordTracksEvent,
-	ShowSuccessNotice,
-	TaggedSite,
-} from 'calypso/dashboard/agency/earn/migrations/types';
-
-import '../commissions/components/dataviews/style.scss';
 
 type ActiveModal =
 	| { kind: 'untag'; site: TaggedSite }
@@ -69,7 +63,7 @@ export default function MigrationsCommissionsList( {
 	onSuccess: ShowSuccessNotice;
 	onError: ( message: ReactNode ) => void;
 } ) {
-	const isDesktop = useDesktopBreakpoint();
+	const isDesktop = useViewportMatch( 'large' );
 
 	const [ view, setView ] = useState< View >( INITIAL_VIEW );
 
@@ -139,31 +133,25 @@ export default function MigrationsCommissionsList( {
 
 	return (
 		<>
-			<div className="redesigned-a8c-table full-width">
-				<DataViews
-					data={ items }
-					view={ responsiveView }
-					onChangeView={ setView }
-					fields={ fields }
-					search={ false }
-					actions={ actions }
-					getItemId={ ( item ) => `${ item.id }` }
-					paginationInfo={ pagination }
-					defaultLayouts={ { table: {}, list: {} } }
-				>
-					{ isDesktop && (
-						<HStack
-							className="dataviews__view-actions"
-							justify="end"
-							style={ { paddingInline: '64px' } }
-						>
-							<DataViews.ViewConfig />
-						</HStack>
-					) }
-					<DataViews.Layout />
-					<DataViews.Footer />
-				</DataViews>
-			</div>
+			<DataViews
+				data={ items }
+				view={ responsiveView }
+				onChangeView={ setView }
+				fields={ fields }
+				search={ false }
+				actions={ actions }
+				getItemId={ ( item ) => `${ item.id }` }
+				paginationInfo={ pagination }
+				defaultLayouts={ { table: {}, list: {} } }
+			>
+				{ isDesktop && (
+					<HStack className="dataviews__view-actions commissions-list__view-actions" justify="end">
+						<DataViews.ViewConfig />
+					</HStack>
+				) }
+				<DataViews.Layout />
+				<DataViews.Footer />
+			</DataViews>
 
 			{ activeModal?.kind === 'untag' && (
 				<UntagSiteDialog

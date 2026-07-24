@@ -12,10 +12,10 @@ const MigrationsLanding = () => {
 	const translate = useTranslate();
 	const title = translate( 'Migrations' );
 
-	const { data: taggedSites, isFetched } = useFetchTaggedSitesForMigration();
+	const { data: taggedSites, isLoading } = useFetchTaggedSitesForMigration();
 
 	useEffect( () => {
-		if ( ! isFetched ) {
+		if ( isLoading ) {
 			return;
 		}
 		if ( taggedSites?.length ) {
@@ -23,7 +23,7 @@ const MigrationsLanding = () => {
 			return;
 		}
 		page.redirect( A4A_MIGRATIONS_OVERVIEW_LINK );
-	}, [ taggedSites, isFetched ] );
+	}, [ taggedSites, isLoading ] );
 
 	return <PagePlaceholder title={ title } />;
 };

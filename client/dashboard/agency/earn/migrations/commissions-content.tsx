@@ -1,13 +1,9 @@
-import { TextSkeleton } from 'calypso/dashboard/components/text-skeleton';
+import { TextSkeleton } from '../../../components/text-skeleton';
 import MigrationsCommissionsList from './commissions-list';
 import MigrationsConsolidatedCommissions from './consolidated-commissions';
-import MigrationsCommissionsEmptyState from './primary/migrations-commissions/empty-state';
+import MigrationsCommissionsEmptyState from './empty-state';
 import MigrationsTagSitesModal from './tag-sites-modal';
-import type {
-	RecordTracksEvent,
-	ShowSuccessNotice,
-	TaggedSite,
-} from 'calypso/dashboard/agency/earn/migrations/types';
+import type { RecordTracksEvent, ShowSuccessNotice, TaggedSite } from './types';
 import type { ReactNode } from 'react';
 
 interface MigrationsCommissionsContentProps {
@@ -55,7 +51,7 @@ export default function MigrationsCommissionsContent( {
 					canTagSitesForCommission={ canTagSitesForCommission }
 				/>
 			) : (
-				<div className="migrations-commissions__content">
+				<>
 					{ canTagSitesForCommission && (
 						<MigrationsConsolidatedCommissions items={ taggedSites } />
 					) }
@@ -66,7 +62,7 @@ export default function MigrationsCommissionsContent( {
 						onSuccess={ onSuccess }
 						onError={ onError }
 					/>
-				</div>
+				</>
 			) }
 			{ isAddSitesModalOpen && (
 				<MigrationsTagSitesModal

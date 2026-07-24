@@ -17,11 +17,9 @@ import { createInterpolateElement } from '@wordpress/element';
 import { __, _n, sprintf } from '@wordpress/i18n';
 import { Icon, info } from '@wordpress/icons';
 import { useState } from 'react';
-import useMinimizeHelpCenterOnMount from 'calypso/a8c-for-agencies/hooks/use-minimize-help-center-on-mount';
-import { preventWidows } from 'calypso/lib/formatting';
 import MigrationsAddSitesTable from './add-sites-table';
-import type { SiteItem } from 'calypso/dashboard/agency/earn/migrations/hooks/use-fetch-all-managed-sites-for-commission';
-import type { RecordTracksEvent, TaggedSite } from 'calypso/dashboard/agency/earn/migrations/types';
+import type { SiteItem } from '../hooks/use-fetch-all-managed-sites-for-commission';
+import type { RecordTracksEvent, TaggedSite } from '../types';
 import type { ReactNode } from 'react';
 
 import './style.scss';
@@ -46,7 +44,6 @@ export default function MigrationsTagSitesModal( {
 	const queryClient = useQueryClient();
 	const { data: agency } = useQuery( activeAgencyQuery() );
 	const agencyId = agency?.id;
-	useMinimizeHelpCenterOnMount();
 
 	const { mutate: tagSitesForMigration, isPending } = useMutation(
 		tagAgencySitesForCommissionMutation( agencyId )
@@ -152,14 +149,20 @@ export default function MigrationsTagSitesModal( {
 		>
 			<VStack spacing={ 4 }>
 				<Text>{ __( 'Select the sites you moved on your own.' ) }</Text>
-				<div className="migrations-tag-sites-modal__instruction">
+				<HStack
+					className="migrations-tag-sites-modal__instruction"
+					spacing={ 2 }
+					alignment="flex-start"
+					justify="flex-start"
+					expanded={ false }
+				>
 					<Icon size={ 18 } icon={ info } />
-					{ preventWidows(
-						__(
-							"Can't find your transferred site? Ensure the Automattic for Agencies plugin is connected in WP-Admin to display the site here."
-						)
-					) }
-				</div>
+					<Text variant="muted">
+						{ __(
+							'Can’t find your transferred site? Ensure the Automattic for Agencies plugin is connected in WP-Admin to display the site here.'
+						) }
+					</Text>
+				</HStack>
 				<SelectControl
 					__nextHasNoMarginBottom
 					label={ __( 'Hosting provider' ) }
@@ -188,10 +191,11 @@ export default function MigrationsTagSitesModal( {
 				) }
 			</VStack>
 			<HStack className="migrations-tag-sites-modal__footer" justify="flex-end" spacing={ 3 }>
-				<Button variant="tertiary" onClick={ handleOnClose }>
+				<Button __next40pxDefaultSize variant="tertiary" onClick={ handleOnClose }>
 					{ __( 'Cancel' ) }
 				</Button>
 				<Button
+					__next40pxDefaultSize
 					variant="primary"
 					onClick={ handleAddSites }
 					disabled={ isPending || ! isValidHostingProvider || selectedSites.length === 0 }

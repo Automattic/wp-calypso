@@ -9,12 +9,10 @@ import {
 import { __ } from '@wordpress/i18n';
 import { info } from '@wordpress/icons';
 import { useState } from 'react';
-import FormattedDate from 'calypso/components/formatted-date';
-import { urlToSlug } from 'calypso/lib/url/http-utils';
+import { formatDate } from '../../../../utils/datetime';
+import { urlToSlug } from '../../../../utils/url';
 
 import './commission-columns.scss';
-
-const DETAILS_DATE_FORMAT_SHORT = 'DD MMM YYYY';
 
 export const SiteColumn = ( { site }: { site: string } ) => {
 	return urlToSlug( site );
@@ -22,7 +20,8 @@ export const SiteColumn = ( { site }: { site: string } ) => {
 
 export const MigratedOnColumn = ( { migratedOn }: { migratedOn: number } ) => {
 	const date = new Date( migratedOn * 1000 );
-	return <FormattedDate date={ date } format={ DETAILS_DATE_FORMAT_SHORT } />;
+	// TODO: resolve the real locale once the dashboard port lands; hardcoded for now.
+	return <>{ formatDate( date, 'en', { day: '2-digit', month: 'short', year: 'numeric' } ) }</>;
 };
 
 export const ReviewStatusColumn = ( {

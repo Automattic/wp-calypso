@@ -15,12 +15,7 @@ import {
 import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import { useState } from 'react';
-import useMinimizeHelpCenterOnMount from 'calypso/a8c-for-agencies/hooks/use-minimize-help-center-on-mount';
-import type {
-	RecordTracksEvent,
-	ShowSuccessNotice,
-	TaggedSite,
-} from 'calypso/dashboard/agency/earn/migrations/types';
+import type { RecordTracksEvent, ShowSuccessNotice, TaggedSite } from '../types';
 import type { ReactNode } from 'react';
 
 export default function RequestReviewModal( {
@@ -39,7 +34,6 @@ export default function RequestReviewModal( {
 	const queryClient = useQueryClient();
 	const { data: agency } = useQuery( activeAgencyQuery() );
 	const agencyId = agency?.id;
-	useMinimizeHelpCenterOnMount();
 
 	const { mutate: requestReview, isPending } = useMutation(
 		requestMigrationReverificationMutation( agencyId )

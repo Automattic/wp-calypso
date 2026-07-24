@@ -1,5 +1,6 @@
 @import "@wordpress/base-styles/breakpoints";
 @import "@wordpress/base-styles/mixins";
+@import "@wordpress/dataviews/build-style/style.css";
 
 .migrations-commissions {
 	&:not(.full-width-layout-with-table) .hosting-dashboard-layout__body-wrapper {
@@ -35,14 +36,18 @@
 		}
 	}
 
-	.migrations-commissions__content {
-		.consolidated-commissions {
-			padding: 16px;
+	// Classic-only page inset; keep in sync with the shared `.consolidated-commissions`
+	// in dashboard/agency/earn/migrations/consolidated-commissions.
+	.consolidated-commissions {
+		padding: 16px;
 
-			@include break-large {
-				padding: 16px 64px 48px;
-				flex-direction: row;
-			}
+		@include break-large {
+			padding: 16px 64px 48px;
 		}
+	}
+
+	// Classic-only: inset the cog to line up with the 64px table content padding.
+	.commissions-list__view-actions {
+		padding-inline: 64px;
 	}
 }
