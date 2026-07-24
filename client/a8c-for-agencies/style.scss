@@ -294,6 +294,25 @@
 		outline: none;
 	}
 
+	// The `check` and `reset` glyphs behind the checked and partially-selected states are not
+	// centred on the same axis inside their shared 24-unit viewBox: the checkmark's ink spans
+	// 7.5–16.1 (centre 11.8) while the dash spans 11.5–13 (centre 12.25). Centring the two SVGs
+	// therefore leaves the indicators 0.45 units apart. Nudge each glyph's ink onto the true
+	// centre of the box, in viewBox units so the correction scales with the rendered icon.
+	svg.components-checkbox-control__checked,
+	svg.components-checkbox-control__indeterminate {
+		// Falls back so the calc can never become invalid and drop the centring transform.
+		--checkbox-icon-viewbox-unit: calc(var(--checkmark-size, var(--checkbox-input-size, 16px)) / 24);
+	}
+
+	svg.components-checkbox-control__checked {
+		transform: translate(-50%, calc(-50% + 0.2 * var(--checkbox-icon-viewbox-unit)));
+	}
+
+	svg.components-checkbox-control__indeterminate {
+		transform: translate(-50%, calc(-50% - 0.25 * var(--checkbox-icon-viewbox-unit)));
+	}
+
 	.components-button.is-tertiary:not( .dataviews-view-table-header-button ) {
 		color: var(--color-primary-60);
 	}
