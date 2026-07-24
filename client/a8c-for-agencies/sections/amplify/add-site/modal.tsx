@@ -33,9 +33,15 @@ export default function AmplifyAddSiteModal( { onClose }: { onClose: () => void 
 		// closing this modal reveals the in-progress row. Here we just switch
 		// to the progress view instead of showing a notice.
 		onSuccess: () => setInProgress( true ),
-		onError: () => {
+		onError: ( error ) => {
+			const message =
+				error?.code === 'site_unreachable'
+					? __(
+							'We couldn’t reach this site to analyze it. Make sure it’s online and publicly accessible, then try again.'
+					  )
+					: __( 'Could not start the analysis. Please try again.' );
 			dispatch(
-				errorNotice( __( 'Could not start the analysis. Please try again.' ), {
+				errorNotice( message, {
 					id: 'amplify-analysis-error',
 					duration: 8000,
 				} )
