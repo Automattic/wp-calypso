@@ -313,7 +313,9 @@ function WPNonProductLineItem( {
 			data-e2e-product-slug={ lineItem.id }
 			data-product-type={ lineItem.type }
 		>
-			<LineItemTitle isSummary={ isSummary }>{ label }</LineItemTitle>
+			<LineItemTitle className="checkout-line-item__title" isSummary={ isSummary }>
+				{ label }
+			</LineItemTitle>
 
 			<span className="checkout-line-item__price">
 				{ isCartUpdating ? (
@@ -541,7 +543,9 @@ export function BundleLineItem( {
 			data-e2e-product-slug="domain-bundle"
 			data-product-type="domain-bundle"
 		>
-			<LineItemTitle isSummary={ isSummary }>{ bundleLabel }</LineItemTitle>
+			<LineItemTitle className="checkout-line-item__title" isSummary={ isSummary }>
+				{ bundleLabel }
+			</LineItemTitle>
 
 			<span className="checkout-line-item__price">
 				{ isCartUpdating ? (
@@ -1930,7 +1934,7 @@ function CheckoutLineItem( {
 					<GiftBadgeWithText />
 				</MobileGiftWrapper>
 			) }
-			<LineItemTitle isSummary={ isSummary }>
+			<LineItemTitle className="checkout-line-item__title" isSummary={ isSummary }>
 				{ label }
 				{ responseCart.is_gift_purchase && (
 					<DesktopGiftWrapper>

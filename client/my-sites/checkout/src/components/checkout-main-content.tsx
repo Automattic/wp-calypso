@@ -1296,10 +1296,8 @@ const mobileCheckoutStickySummaryStyles = css`
 	.wp-checkout__review-order-step .order-review-line-items > li:last-child .checkout-line-item {
 		padding-block-end: 0;
 	}
-	/* Figma 2392:15320 — product name typography. LineItemTitle is an
-	   unclassed styled.div; target it as the first child div of each
-	   line item. */
-	.wp-checkout__review-order-step .checkout-line-item > div:first-of-type {
+	/* Figma 2392:15320 — product name typography. */
+	.wp-checkout__review-order-step .checkout-line-item .checkout-line-item__title {
 		font-size: 16px;
 		line-height: 24px;
 	}
@@ -3091,29 +3089,20 @@ const WPCheckoutMainContent = styled.div< {
 			   FormFieldset is already flex-column but ships without a gap,
 			   and First/Last name is rendered as its sibling — not inside
 			   __contact-details. So the gap needs to live on all of:
-			   the outer FormFieldset, __contact-details itself, and the
-			   two un-classed wrapper divs from RegionAddressFieldsets. */
+			   the outer FormFieldset, __contact-details itself, and both
+			   wrapper divs from RegionAddressFieldsets. */
 			.form-fieldset.contact-details-form-fields,
 			.form-fieldset.contact-details-form-fields .contact-details-form-fields__contact-details,
-			.form-fieldset.contact-details-form-fields
-				.contact-details-form-fields__contact-details
-				> div:not( [class] ),
-			.form-fieldset.contact-details-form-fields
-				.contact-details-form-fields__contact-details
-				> div:not( [class] )
-				> div:not( [class] ) {
+			.form-fieldset.contact-details-form-fields .region-address-fieldsets,
+			.form-fieldset.contact-details-form-fields .region-address-fieldsets__street-address {
 				display: flex;
 				flex-direction: column;
 				gap: 16px;
 			}
-			/* …except the innermost RegionAddressFieldsets wrapper, which
-			   pairs an input with its toggle link ("+ Add Address Line 2")
-			   as a "Field + Action" group — Figma 2392:15432 puts those
-			   8px apart, not 16. */
-			.form-fieldset.contact-details-form-fields
-				.contact-details-form-fields__contact-details
-				> div:not( [class] )
-				> div:not( [class] ) {
+			/* …except the street-address wrapper, which pairs an input with its
+			   toggle link ("+ Add Address Line 2") as a "Field + Action" group —
+			   Figma 2392:15432 puts those 8px apart, not 16. */
+			.form-fieldset.contact-details-form-fields .region-address-fieldsets__street-address {
 				gap: 8px;
 			}
 			/* Same rhythm for the "Add organization name" row — it sits in
