@@ -1,5 +1,5 @@
 import page from '@automattic/calypso-router';
-import { removeQueryArgs } from '@wordpress/url';
+import { addQueryArgs, removeQueryArgs } from '@wordpress/url';
 import { translate } from 'i18n-calypso';
 import DocumentHead from 'calypso/components/data/document-head';
 import ConnectDomainStep from 'calypso/components/domains/connect-domain-step';
@@ -25,7 +25,7 @@ import {
 } from 'calypso/my-sites/domains/paths';
 import TransferDomain from 'calypso/my-sites/domains/transfer-domain';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
-import { hasDashboardOptIn } from 'calypso/state/dashboard/selectors';
+import { hasDashboardForcedOptIn, hasDashboardOptIn } from 'calypso/state/dashboard/selectors';
 import { fetchPreferences } from 'calypso/state/preferences/actions';
 import { hasReceivedRemotePreferences } from 'calypso/state/preferences/selectors';
 import getSites from 'calypso/state/selectors/get-sites';
@@ -386,6 +386,24 @@ const maybeRedirectToDashboard = ( context, next ) => {
 	} );
 };
 
+// Forced-opt-in (multi-site dashboard) users who land on the classic
+// `/domains/add/use-my-domain/:site` screen are sent to the stepper flow that the
+// dashboard's own "Use a domain name I own" button links to.
+const maybeRedirectUseMyDomainToDashboardSetup = ( context, next ) => {
+	if ( ! hasDashboardForcedOptIn( context.store.getState() ) ) {
+		return next();
+	}
+
+	bumpStat( 'dashboard-redirect', 'use-my-domain-flow' );
+	window.location.replace(
+		addQueryArgs( '/setup/domain/use-my-domain', {
+			siteSlug: context.params.site,
+			domainConnectionSetupUrl: dashboardLink( '/domains/%s/domain-connection-setup' ),
+			dashboard: 'dotcom',
+		} )
+	);
+};
+
 export default {
 	domainsAddHeader,
 	domainsAddRedirectHeader,
@@ -403,4 +421,5 @@ export default {
 	useMyDomain,
 	redirectDomainToSite,
 	maybeRedirectToDashboard,
+	maybeRedirectUseMyDomainToDashboardSetup,
 };

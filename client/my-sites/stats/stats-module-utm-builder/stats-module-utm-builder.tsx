@@ -5,6 +5,7 @@ import { link } from '@wordpress/icons';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import React, { useEffect, useRef } from 'react';
+import useWPAdminTheme from 'calypso/my-sites/stats/hooks/use-wp-admin-theme';
 import { trackStatsAnalyticsEvent } from '../utils';
 import StatsUtmBuilderForm, { type UtmBuilderProps } from './stats-module-utm-builder-form';
 
@@ -68,7 +69,12 @@ const UTMBuilder: React.FC< Props > = ( { modalClassName, trigger, initialData }
 	);
 
 	const isWPAdmin = config.isEnabled( 'is_odyssey' );
-	const utmBuilderClasses = clsx( 'stats-utm-builder__overlay', { 'is-odyssey-stats': isWPAdmin } );
+	const customTheme = useWPAdminTheme();
+	const utmBuilderClasses = clsx(
+		'stats-utm-builder__overlay',
+		{ 'is-odyssey-stats': isWPAdmin },
+		customTheme && `color-scheme ${ customTheme }`
+	);
 
 	return (
 		<>

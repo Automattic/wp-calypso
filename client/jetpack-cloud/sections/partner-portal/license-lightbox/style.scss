@@ -5,6 +5,13 @@
 	border-radius: 8px;
 	border: 1px solid var( --color-link );
 	padding: 1rem;
+
+	// The free label reserves 1.5rem beneath it so marketplace grid cards line up
+	// with priced ones. Alone in this box it reads as dead space, so split the same
+	// reservation evenly and center the label without resizing the box.
+	.product-price-with-discount__free {
+		margin-block: 0.75rem;
+	}
 }
 
 .license-lightbox__jetpack-manage-license-title {

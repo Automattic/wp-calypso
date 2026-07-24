@@ -2,11 +2,14 @@
  * @jest-environment jsdom
  */
 
+import { normalizePurchase } from '@automattic/api-core';
+import { purchaseQuery, sitePurchasesQuery } from '@automattic/api-queries';
 import {
 	AKISMET_PRODUCTS_LIST,
 	PRODUCT_AKISMET_ENTERPRISE_GT2M_MONTHLY,
 	PRODUCT_AKISMET_ENTERPRISE_GT2M_YEARLY,
 	AKISMET_UPGRADES_PRODUCTS_MAP,
+	PRODUCT_JETPACK_BACKUP_T1_YEARLY,
 } from '@automattic/calypso-products';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { render, screen } from '@testing-library/react';
@@ -102,7 +105,19 @@ function getSiteForPurchase( purchaseForSite ) {
 	};
 }
 
+const queryClient = new QueryClient( {
+	defaultOptions: { queries: { staleTime: Infinity, retry: false } },
+} );
+
+function seedPurchaseQueries( purchaseForQuery ) {
+	// Match what fetchPurchase() returns (string ids coerced to numbers, etc.).
+	const normalized = normalizePurchase( purchaseForQuery );
+	queryClient.setQueryData( purchaseQuery( normalized.ID ).queryKey, normalized );
+	queryClient.setQueryData( sitePurchasesQuery( normalized.blog_id ).queryKey, [ normalized ] );
+}
+
 function createMockReduxStoreForPurchase( purchaseForRedux, domains_items = {} ) {
+	seedPurchaseQueries( purchaseForRedux );
 	return createReduxStore(
 		{
 			currentUser: { id: Number( purchaseForRedux.user_id ) },
@@ -143,11 +158,8 @@ async function findPaymentMethodNavItem() {
 }
 
 describe( 'Purchase Management Buttons', () => {
-	const queryClient = new QueryClient();
-
 	beforeEach( () => {
-		// The cancellation-features query is still gated on the split-cancel-remove
-		// flag, so keep it enabled (matches config/test.json).
+		queryClient.clear();
 		useIsSplitCancelRemoveEnabled.mockReturnValue( true );
 	} );
 
@@ -325,6 +337,45 @@ describe( 'Purchase Management Buttons', () => {
 		}
 	);
 
+	// Storage-eligible Jetpack products (Backup T1 / Security T1) show a plan
+	// upgrade CTA (/plans) plus a dedicated "Upgrade storage" CTA
+	// (/plans/storage), each rendered both in the button row and in the
+	// options list at the bottom. Backup T1 exercises the shared render path
+	// without pulling in the Jetpack-plan plugin-keys query.
+	it( 'renders both a plan upgrade and a storage upgrade CTA for a storage-eligible product', async () => {
+		nock( 'https://public-api.wordpress.com' )
+			.get( '/rest/v1.2/me/payment-methods?expired=include' )
+			.reply( 200 );
+
+		const store = createMockReduxStoreForPurchase( {
+			...purchase,
+			product_slug: PRODUCT_JETPACK_BACKUP_T1_YEARLY,
+		} );
+
+		render(
+			<QueryClientProvider client={ queryClient }>
+				<ReduxProvider store={ store }>
+					<ManagePurchase
+						purchaseId={ Number( purchase.ID ) }
+						isSiteLevel
+						siteSlug="onecooltestsite.com"
+					/>
+				</ReduxProvider>
+			</QueryClientProvider>
+		);
+
+		expect( await screen.findByText( 'Upgrade plan' ) ).toHaveAttribute(
+			'href',
+			'/plans/onecooltestsite.com'
+		);
+
+		const storageCtas = screen.getAllByText( 'Upgrade storage' );
+		expect( storageCtas ).toHaveLength( 2 );
+		storageCtas.forEach( ( cta ) =>
+			expect( cta ).toHaveAttribute( 'href', '/plans/storage/onecooltestsite.com' )
+		);
+	} );
+
 	it( 'renders payment method nav item for A4A billingdragon purchase on a real site', async () => {
 		nock( 'https://public-api.wordpress.com' )
 			.get( '/rest/v1.2/me/payment-methods?expired=include' )
@@ -385,6 +436,7 @@ describe( 'Purchase Management Buttons', () => {
 			},
 			( state ) => state
 		);
+		seedPurchaseQueries( a4aPurchase );
 
 		render(
 			<QueryClientProvider client={ queryClient }>

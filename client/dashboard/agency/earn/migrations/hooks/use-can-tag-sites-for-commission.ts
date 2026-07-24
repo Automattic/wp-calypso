@@ -41,7 +41,11 @@ export default function useCanTagSitesForCommission(): {
 	const { data: agency, isLoading } = useQuery( activeAgencyQuery() );
 
 	const pressableUsageStartDate = agency?.third_party?.pressable?.usage?.start_date;
-	const withinPurchaseCutoff = isWithinPressablePurchaseCutoff( pressableUsageStartDate );
+	// The permissive default of `isWithinPressablePurchaseCutoff` applies to agencies
+	// that never bought Pressable, so it must not be applied before the agency
+	// resolves — otherwise ineligible agencies briefly get the incentive tag.
+	const withinPurchaseCutoff =
+		! isLoading && isWithinPressablePurchaseCutoff( pressableUsageStartDate );
 
 	return useMemo( () => {
 		const canTagSitesForCommission = withinPurchaseCutoff;

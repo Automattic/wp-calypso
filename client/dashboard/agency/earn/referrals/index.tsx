@@ -14,10 +14,10 @@ import { DataViewsCard } from '../../../components/dataviews';
 import { PageHeader } from '../../../components/page-header';
 import PageLayout from '../../../components/page-layout';
 import RouterLinkButton from '../../../components/router-link-button';
+import MissingPaymentSettingsNotice from '../missing-payment-settings-notice';
 import ConsolidatedViews from './consolidated-views';
 import { DEFAULT_VIEW } from './dataviews/views';
 import ReferralsEmptyState from './empty-state';
-import MissingPaymentSettingsNotice from './missing-payment-settings-notice';
 import ReferralsList from './referrals-list';
 import type { View } from '@wordpress/dataviews';
 
@@ -56,7 +56,7 @@ export default function EarnReferrals() {
 					}
 				/>
 			}
-			notices={ <MissingPaymentSettingsNotice hasReferrals={ hasReferrals } /> }
+			notices={ <MissingPaymentSettingsNotice hasCommissionActivity={ hasReferrals } /> }
 		>
 			{ ! isLoading && ! hasReferrals ? (
 				<ReferralsEmptyState agencyId={ agencyId } />

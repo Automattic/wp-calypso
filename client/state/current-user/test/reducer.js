@@ -1,7 +1,7 @@
 import deepFreeze from 'deep-freeze';
 import { CURRENT_USER_RECEIVE, SITE_RECEIVE, SITES_RECEIVE } from 'calypso/state/action-types';
 import { serialize, deserialize } from 'calypso/state/utils';
-import reducer, { id, capabilities } from '../reducer';
+import reducer, { id, user, capabilities } from '../reducer';
 
 describe( 'reducer', () => {
 	jest.spyOn( console, 'warn' ).mockImplementation();
@@ -35,6 +35,24 @@ describe( 'reducer', () => {
 			expect( state ).toEqual( 73705554 );
 		} );
 
+		test( 'should keep previous state when received user has no ID', () => {
+			const state = id( 73705554, {
+				type: CURRENT_USER_RECEIVE,
+				user: { subscriptionManagementSubkey: 'abc' },
+			} );
+
+			expect( state ).toEqual( 73705554 );
+		} );
+
+		test( 'should stay null when received user has no ID', () => {
+			const state = id( null, {
+				type: CURRENT_USER_RECEIVE,
+				user: { subscriptionManagementSubkey: 'abc' },
+			} );
+
+			expect( state ).toBeNull();
+		} );
+
 		test( 'should validate ID is positive', () => {
 			const state = deserialize( id, -1 );
 			expect( state ).toBeNull();
@@ -53,6 +71,33 @@ describe( 'reducer', () => {
 		test( 'will SERIALIZE current user', () => {
 			const state = serialize( id, 73705554 );
 			expect( state ).toEqual( 73705554 );
+		} );
+	} );
+
+	describe( '#user()', () => {
+		test( 'should default to null', () => {
+			const state = user( undefined, {} );
+
+			expect( state ).toBeNull();
+		} );
+
+		test( 'should set the current user', () => {
+			const currentUser = { ID: 73705554, username: 'foo' };
+			const state = user( null, {
+				type: CURRENT_USER_RECEIVE,
+				user: currentUser,
+			} );
+
+			expect( state ).toEqual( currentUser );
+		} );
+
+		test( 'should keep previous state when received user has no ID', () => {
+			const state = user( null, {
+				type: CURRENT_USER_RECEIVE,
+				user: { subscriptionManagementSubkey: 'abc' },
+			} );
+
+			expect( state ).toBeNull();
 		} );
 	} );
 

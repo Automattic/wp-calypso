@@ -16,42 +16,40 @@ describe( 'PurchaseNotice', () => {
 	const pastYearDate = new Date();
 	pastYearDate.setFullYear( pastYearDate.getFullYear() - 10 );
 
-	it( 'renders pending payment text and no buttons if purchase has a payment pending', () => {
-		const purchase = {
-			product_slug: 'value_bundle',
-			productName: 'Premium',
-			isRechargeable: true,
-			expiryStatus: 'manualRenew',
-			asyncPendingPaymentBlockIsSet: true,
-			canDisableAutoRenew: false,
-			canReenableAutoRenewal: false,
-			canExplicitRenew: false,
-			isCancelable: false,
-			isLocked: true,
-			isRefundable: false,
-			isRenewable: false,
-
-			payment: {
-				type: 'credit_card',
-				creditCard: {
-					expiryDate: '01/' + futureYearDate.getYear(),
-					type: 'visa',
-					number: 1111,
-				},
-			},
-		};
-		render(
+	function renderNotice( props ) {
+		return render(
 			<ReduxProvider store={ store }>
 				<QueryClientProvider client={ queryClient }>
-					<PurchaseNotice
-						purchase={ purchase }
-						isProductOwner
-						selectedSite={ { slug: 'testingsite' } }
-						renewableSitePurchases={ [] }
-					/>
+					<PurchaseNotice renewableSitePurchases={ [] } { ...props } />
 				</QueryClientProvider>
 			</ReduxProvider>
 		);
+	}
+
+	it( 'renders pending payment text and no buttons if purchase has a payment pending', () => {
+		const purchase = {
+			product_slug: 'value_bundle',
+			product_name: 'Premium',
+			is_rechargeable: true,
+			expiry_status: 'manual-renew',
+			async_pending_payment_block_is_set: true,
+			can_disable_auto_renew: false,
+			can_reenable_auto_renewal: false,
+			can_explicit_renew: false,
+			is_cancelable: false,
+			is_locked: true,
+			is_refundable: false,
+			is_renewable: false,
+			payment_type: 'credit_card',
+			payment_expiry: '01/' + futureYearDate.getYear(),
+			payment_card_type: 'visa',
+			payment_details: 1111,
+		};
+		renderNotice( {
+			purchase,
+			isProductOwner: true,
+			selectedSite: { slug: 'testingsite' },
+		} );
 		expect(
 			screen.getByText( /There is currently a payment processing for this subscription/ )
 		).toBeInTheDocument();
@@ -60,55 +58,27 @@ describe( 'PurchaseNotice', () => {
 	} );
 
 	it( 'renders nothing when data is still loading', () => {
-		render(
-			<ReduxProvider store={ store }>
-				<QueryClientProvider client={ queryClient }>
-					<PurchaseNotice isDataLoading renewableSitePurchases={ [] } />
-				</QueryClientProvider>
-			</ReduxProvider>
-		);
+		renderNotice( { isDataLoading: true } );
 		expect( screen.container ).toBeFalsy();
 	} );
 
 	it( 'renders nothing when the purchase is a domain transfer', () => {
 		const purchase = { product_slug: 'domain_transfer' };
-		render(
-			<ReduxProvider store={ store }>
-				<QueryClientProvider client={ queryClient }>
-					<PurchaseNotice purchase={ purchase } renewableSitePurchases={ [] } />
-				</QueryClientProvider>
-			</ReduxProvider>
-		);
+		renderNotice( { purchase } );
 		expect( screen.container ).toBeFalsy();
 	} );
 
 	it( 'renders non-product-owner message if not product owner', () => {
 		const purchase = { product_slug: 'something_else' };
-		render(
-			<ReduxProvider store={ store }>
-				<QueryClientProvider client={ queryClient }>
-					<PurchaseNotice
-						purchase={ purchase }
-						isProductOwner={ false }
-						renewableSitePurchases={ [] }
-					/>
-				</QueryClientProvider>
-			</ReduxProvider>
-		);
+		renderNotice( { purchase, isProductOwner: false } );
 		expect(
 			screen.getByText( /This product was purchased by a different WordPress.com account./ )
 		).toBeInTheDocument();
 	} );
 
 	it( 'renders concierge session used notice if concierge session has expired', () => {
-		const purchase = { product_slug: 'concierge-session', expiryStatus: 'expired' };
-		render(
-			<ReduxProvider store={ store }>
-				<QueryClientProvider client={ queryClient }>
-					<PurchaseNotice purchase={ purchase } isProductOwner renewableSitePurchases={ [] } />
-				</QueryClientProvider>
-			</ReduxProvider>
-		);
+		const purchase = { product_slug: 'concierge-session', expiry_status: 'expired' };
+		renderNotice( { purchase, isProductOwner: true } );
 		expect( screen.getByText( 'This session has been used.' ) ).toBeInTheDocument();
 	} );
 
@@ -116,25 +86,14 @@ describe( 'PurchaseNotice', () => {
 	it( 'renders distant product expiry text and add card button if purchase is not expiring soon and the payment method is credits', () => {
 		const purchase = {
 			product_slug: 'value_bundle',
-			productName: 'Premium',
-			isRenewable: true,
-			isRechargeable: false,
-			expiryStatus: 'manualRenew',
-			subscriptionStatus: 'active',
-			payment: { type: 'credits' },
+			product_name: 'Premium',
+			is_renewable: true,
+			is_rechargeable: false,
+			expiry_status: 'manual-renew',
+			subscription_status: 'active',
+			payment_type: 'credits',
 		};
-		render(
-			<ReduxProvider store={ store }>
-				<QueryClientProvider client={ queryClient }>
-					<PurchaseNotice
-						purchase={ purchase }
-						isProductOwner
-						selectedSite={ { slug: 'testingsite' } }
-						renewableSitePurchases={ [] }
-					/>
-				</QueryClientProvider>
-			</ReduxProvider>
-		);
+		renderNotice( { purchase, isProductOwner: true, selectedSite: { slug: 'testingsite' } } );
 		expect(
 			screen.getByText(
 				/You purchased Premium with credits. Please update your payment information before your plan expires/
@@ -146,32 +105,17 @@ describe( 'PurchaseNotice', () => {
 	it( 'renders distant product expiry text and no button if purchase is not expiring soon and the payment method is a card', () => {
 		const purchase = {
 			product_slug: 'value_bundle',
-			productName: 'Premium',
-			isRenewable: true,
-			isRechargeable: true,
-			expiryStatus: 'manualRenew',
-			subscriptionStatus: 'active',
-			payment: {
-				type: 'credit_card',
-				creditCard: {
-					expiryDate: '01/' + futureYearDate.getYear(),
-					type: 'visa',
-					number: 1111,
-				},
-			},
+			product_name: 'Premium',
+			is_renewable: true,
+			is_rechargeable: true,
+			expiry_status: 'manual-renew',
+			subscription_status: 'active',
+			payment_type: 'credit_card',
+			payment_expiry: '01/' + futureYearDate.getYear(),
+			payment_card_type: 'visa',
+			payment_details: 1111,
 		};
-		render(
-			<ReduxProvider store={ store }>
-				<QueryClientProvider client={ queryClient }>
-					<PurchaseNotice
-						purchase={ purchase }
-						isProductOwner
-						selectedSite={ { slug: 'testingsite' } }
-						renewableSitePurchases={ [] }
-					/>
-				</QueryClientProvider>
-			</ReduxProvider>
-		);
+		renderNotice( { purchase, isProductOwner: true, selectedSite: { slug: 'testingsite' } } );
 		expect(
 			screen.getByText( /Premium will expire and be removed from your site/ )
 		).toBeInTheDocument();
@@ -184,36 +128,29 @@ describe( 'PurchaseNotice', () => {
 
 	it( 'renders expired plan text if purchase is included with a plan, the plan is expired, and the purchase is not renewable', () => {
 		const plan = {
-			id: 'whatever1',
+			ID: 'whatever1',
 			product_slug: 'value_bundle',
-			productName: 'Premium',
-			isRenewable: false,
-			isRechargeable: false,
-			expiryStatus: 'expired',
-			payment: { type: 'credit_card' },
+			product_name: 'Premium',
+			is_renewable: false,
+			is_rechargeable: false,
+			expiry_status: 'expired',
+			payment_type: 'credit_card',
 		};
 		const purchase = {
-			id: 'whatever2',
+			ID: 'whatever2',
 			product_slug: 'domain_mapping',
-			productName: 'Domain mapping',
-			isRenewable: false,
-			isRechargeable: false,
-			expiryStatus: 'included',
-			payment: { type: 'credit_card' },
+			product_name: 'Domain mapping',
+			is_renewable: false,
+			is_rechargeable: false,
+			expiry_status: 'included',
+			payment_type: 'credit_card',
 		};
-		render(
-			<ReduxProvider store={ store }>
-				<QueryClientProvider client={ queryClient }>
-					<PurchaseNotice
-						purchase={ purchase }
-						purchaseAttachedTo={ plan }
-						isProductOwner
-						renewableSitePurchases={ [] }
-						selectedSite={ { slug: 'testingsite' } }
-					/>
-				</QueryClientProvider>
-			</ReduxProvider>
-		);
+		renderNotice( {
+			purchase,
+			purchaseAttachedTo: plan,
+			isProductOwner: true,
+			selectedSite: { slug: 'testingsite' },
+		} );
 		expect( screen.getByText( 'Premium plan' ) ).toBeInTheDocument();
 		expect(
 			screen.getByText( /\(which includes your Domain mapping subscription\) has expired/ )
@@ -223,23 +160,12 @@ describe( 'PurchaseNotice', () => {
 	it( 'renders expired purchase text and renew button if purchase is expired, renewable, not rechargable, and the payment method is a card', () => {
 		const purchase = {
 			product_slug: 'value_bundle',
-			isRenewable: true,
-			isRechargeable: false,
-			expiryStatus: 'expired',
-			payment: { type: 'credit_card' },
+			is_renewable: true,
+			is_rechargeable: false,
+			expiry_status: 'expired',
+			payment_type: 'credit_card',
 		};
-		render(
-			<ReduxProvider store={ store }>
-				<QueryClientProvider client={ queryClient }>
-					<PurchaseNotice
-						purchase={ purchase }
-						isProductOwner
-						selectedSite={ { slug: 'testingsite' } }
-						renewableSitePurchases={ [] }
-					/>
-				</QueryClientProvider>
-			</ReduxProvider>
-		);
+		renderNotice( { purchase, isProductOwner: true, selectedSite: { slug: 'testingsite' } } );
 		expect(
 			screen.getByText( 'This purchase has expired and is no longer in use.' )
 		).toBeInTheDocument();
@@ -249,22 +175,11 @@ describe( 'PurchaseNotice', () => {
 	it( 'renders expired purchase text and add card button if purchase is expired, renewable, not rechargable, and there is no payment method', () => {
 		const purchase = {
 			product_slug: 'value_bundle',
-			isRenewable: true,
-			isRechargeable: false,
-			expiryStatus: 'expired',
+			is_renewable: true,
+			is_rechargeable: false,
+			expiry_status: 'expired',
 		};
-		render(
-			<ReduxProvider store={ store }>
-				<QueryClientProvider client={ queryClient }>
-					<PurchaseNotice
-						purchase={ purchase }
-						isProductOwner
-						selectedSite={ { slug: 'testingsite' } }
-						renewableSitePurchases={ [] }
-					/>
-				</QueryClientProvider>
-			</ReduxProvider>
-		);
+		renderNotice( { purchase, isProductOwner: true, selectedSite: { slug: 'testingsite' } } );
 		expect(
 			screen.getByText( 'This purchase has expired and is no longer in use.' )
 		).toBeInTheDocument();
@@ -274,23 +189,12 @@ describe( 'PurchaseNotice', () => {
 	it( 'renders expired purchase text and renew button if purchase is expired, renewable, not rechargable, and payment method is credits', () => {
 		const purchase = {
 			product_slug: 'value_bundle',
-			isRenewable: true,
-			isRechargeable: false,
-			expiryStatus: 'expired',
-			payment: { type: 'credits' },
+			is_renewable: true,
+			is_rechargeable: false,
+			expiry_status: 'expired',
+			payment_type: 'credits',
 		};
-		render(
-			<ReduxProvider store={ store }>
-				<QueryClientProvider client={ queryClient }>
-					<PurchaseNotice
-						purchase={ purchase }
-						isProductOwner
-						selectedSite={ { slug: 'testingsite' } }
-						renewableSitePurchases={ [] }
-					/>
-				</QueryClientProvider>
-			</ReduxProvider>
-		);
+		renderNotice( { purchase, isProductOwner: true, selectedSite: { slug: 'testingsite' } } );
 		expect(
 			screen.getByText( 'This purchase has expired and is no longer in use.' )
 		).toBeInTheDocument();
@@ -300,84 +204,55 @@ describe( 'PurchaseNotice', () => {
 	it( 'renders nothing if purchase is expired, is not renewable, not rechargable, and the payment method is a card', () => {
 		const purchase = {
 			product_slug: 'value_bundle',
-			isRenewable: false,
-			isRechargeable: false,
-			expiryStatus: 'expired',
-			payment: { type: 'credit_card' },
+			is_renewable: false,
+			is_rechargeable: false,
+			expiry_status: 'expired',
+			payment_type: 'credit_card',
 		};
-		render(
-			<ReduxProvider store={ store }>
-				<QueryClientProvider client={ queryClient }>
-					<PurchaseNotice
-						purchase={ purchase }
-						isProductOwner
-						selectedSite={ { slug: 'testingsite' } }
-						renewableSitePurchases={ [] }
-					/>
-				</QueryClientProvider>
-			</ReduxProvider>
-		);
+		renderNotice( { purchase, isProductOwner: true, selectedSite: { slug: 'testingsite' } } );
 		expect( screen.container ).toBeFalsy();
 	} );
 
 	it( 'renders nothing if purchase is not expired, and is a partner purchase', () => {
 		const purchase = {
 			product_slug: 'value_bundle',
-			isRenewable: false,
-			partnerName: 'something',
-			isRechargeable: false,
-			expiryStatus: 'tofu',
-			payment: { type: 'credit_card' },
+			is_renewable: false,
+			partner_name: 'something',
+			is_rechargeable: false,
+			expiry_status: 'tofu',
+			payment_type: 'credit_card',
 		};
-		render(
-			<ReduxProvider store={ store }>
-				<QueryClientProvider client={ queryClient }>
-					<PurchaseNotice
-						purchase={ purchase }
-						isProductOwner
-						selectedSite={ { slug: 'testingsite' } }
-						renewableSitePurchases={ [] }
-					/>
-				</QueryClientProvider>
-			</ReduxProvider>
-		);
+		renderNotice( { purchase, isProductOwner: true, selectedSite: { slug: 'testingsite' } } );
 		expect( screen.container ).toBeFalsy();
 	} );
 
 	it( 'renders plan expiring text if purchase is included with a plan, and the plan is expiring', () => {
 		const plan = {
-			id: 'whatever1',
+			ID: 'whatever1',
 			product_slug: 'value_bundle',
-			productName: 'Premium',
-			isRenewable: false,
-			isRechargeable: false,
-			expiryStatus: 'expiring',
-			subscriptionStatus: 'active',
-			payment: { type: 'credit_card' },
+			product_name: 'Premium',
+			is_renewable: false,
+			is_rechargeable: false,
+			expiry_status: 'expiring',
+			subscription_status: 'active',
+			payment_type: 'credit_card',
 		};
 		const purchase = {
-			id: 'whatever2',
+			ID: 'whatever2',
 			product_slug: 'domain_mapping',
-			productName: 'Domain mapping',
-			isRenewable: false,
-			isRechargeable: false,
-			expiryStatus: 'included',
-			subscriptionStatus: 'active',
-			payment: { type: 'credit_card' },
+			product_name: 'Domain mapping',
+			is_renewable: false,
+			is_rechargeable: false,
+			expiry_status: 'included',
+			subscription_status: 'active',
+			payment_type: 'credit_card',
 		};
-		render(
-			<ReduxProvider store={ store }>
-				<QueryClientProvider client={ queryClient }>
-					<PurchaseNotice
-						purchase={ purchase }
-						isProductOwner
-						selectedSite={ { slug: 'testingsite' } }
-						purchaseAttachedTo={ plan }
-						renewableSitePurchases={ [] }
-					/>
-				</QueryClientProvider>
-			</ReduxProvider>
-		);
+		renderNotice( {
+			purchase,
+			isProductOwner: true,
+			selectedSite: { slug: 'testingsite' },
+			purchaseAttachedTo: plan,
+		} );
 		expect( screen.getByText( 'Premium plan' ) ).toBeInTheDocument();
 		expect(
 			screen.getByText( /\(which includes your Domain mapping subscription\) will expire/ )
@@ -386,26 +261,15 @@ describe( 'PurchaseNotice', () => {
 
 	it( 'renders product expiring text and renew button if purchase is expiring and payment method is a card', () => {
 		const purchase = {
-			id: 'whatever1',
+			ID: 'whatever1',
 			product_slug: 'value_bundle',
-			productName: 'Premium',
-			isRenewable: false,
-			isRechargeable: false,
-			expiryStatus: 'expiring',
-			payment: { type: 'credit_card' },
+			product_name: 'Premium',
+			is_renewable: false,
+			is_rechargeable: false,
+			expiry_status: 'expiring',
+			payment_type: 'credit_card',
 		};
-		render(
-			<ReduxProvider store={ store }>
-				<QueryClientProvider client={ queryClient }>
-					<PurchaseNotice
-						purchase={ purchase }
-						isProductOwner
-						selectedSite={ { slug: 'testingsite' } }
-						renewableSitePurchases={ [] }
-					/>
-				</QueryClientProvider>
-			</ReduxProvider>
-		);
+		renderNotice( { purchase, isProductOwner: true, selectedSite: { slug: 'testingsite' } } );
 		expect(
 			screen.getByText( /Premium will expire and be removed from your site/ )
 		).toBeInTheDocument();
@@ -414,26 +278,15 @@ describe( 'PurchaseNotice', () => {
 
 	it( 'renders product expiring text and renew button if purchase is expiring and payment method is credits', () => {
 		const purchase = {
-			id: 'whatever1',
+			ID: 'whatever1',
 			product_slug: 'value_bundle',
-			productName: 'Premium',
-			isRenewable: false,
-			isRechargeable: false,
-			expiryStatus: 'expiring',
-			payment: { type: 'credits' },
+			product_name: 'Premium',
+			is_renewable: false,
+			is_rechargeable: false,
+			expiry_status: 'expiring',
+			payment_type: 'credits',
 		};
-		render(
-			<ReduxProvider store={ store }>
-				<QueryClientProvider client={ queryClient }>
-					<PurchaseNotice
-						purchase={ purchase }
-						isProductOwner
-						selectedSite={ { slug: 'testingsite' } }
-						renewableSitePurchases={ [] }
-					/>
-				</QueryClientProvider>
-			</ReduxProvider>
-		);
+		renderNotice( { purchase, isProductOwner: true, selectedSite: { slug: 'testingsite' } } );
 		expect(
 			screen.getByText( /Premium will expire and be removed from your site/ )
 		).toBeInTheDocument();
@@ -442,25 +295,14 @@ describe( 'PurchaseNotice', () => {
 
 	it( 'renders product expiring text and add card button if purchase is expiring and there is no payment method', () => {
 		const purchase = {
-			id: 'whatever1',
+			ID: 'whatever1',
 			product_slug: 'value_bundle',
-			productName: 'Premium',
-			isRenewable: false,
-			isRechargeable: false,
-			expiryStatus: 'expiring',
+			product_name: 'Premium',
+			is_renewable: false,
+			is_rechargeable: false,
+			expiry_status: 'expiring',
 		};
-		render(
-			<ReduxProvider store={ store }>
-				<QueryClientProvider client={ queryClient }>
-					<PurchaseNotice
-						purchase={ purchase }
-						isProductOwner
-						selectedSite={ { slug: 'testingsite' } }
-						renewableSitePurchases={ [] }
-					/>
-				</QueryClientProvider>
-			</ReduxProvider>
-		);
+		renderNotice( { purchase, isProductOwner: true, selectedSite: { slug: 'testingsite' } } );
 		expect(
 			screen.getByText( /Premium will expire and be removed from your site/ )
 		).toBeInTheDocument();
@@ -471,35 +313,20 @@ describe( 'PurchaseNotice', () => {
 		const purchaseExpiry = new Date();
 		purchaseExpiry.setMonth( purchaseExpiry.getMonth() + 4 );
 		const purchase = {
-			id: 'whatever1',
+			ID: 'whatever1',
 			product_slug: 'value_bundle',
-			productName: 'Premium',
-			isRenewable: false,
-			isRechargeable: false,
-			expiryStatus: 'tofu',
-			subscriptionStatus: 'active',
-			expiryDate: purchaseExpiry.toISOString(),
-			payment: {
-				type: 'credit_card',
-				creditCard: {
-					expiryDate: '01/' + pastYearDate.getYear(),
-					type: 'visa',
-					number: 1111,
-				},
-			},
+			product_name: 'Premium',
+			is_renewable: false,
+			is_rechargeable: false,
+			expiry_status: 'tofu',
+			subscription_status: 'active',
+			expiry_date: purchaseExpiry.toISOString(),
+			payment_type: 'credit_card',
+			payment_expiry: '01/' + pastYearDate.getYear(),
+			payment_card_type: 'visa',
+			payment_details: 1111,
 		};
-		render(
-			<ReduxProvider store={ store }>
-				<QueryClientProvider client={ queryClient }>
-					<PurchaseNotice
-						purchase={ purchase }
-						isProductOwner
-						selectedSite={ { slug: 'testingsite' } }
-						renewableSitePurchases={ [] }
-					/>
-				</QueryClientProvider>
-			</ReduxProvider>
-		);
+		renderNotice( { purchase, isProductOwner: true, selectedSite: { slug: 'testingsite' } } );
 		expect( screen.getByText( /Your VISA ending in 1111 expired/ ) ).toBeInTheDocument();
 		expect( screen.getByText( 'update your payment information' ) ).toBeInTheDocument();
 	} );
@@ -508,34 +335,19 @@ describe( 'PurchaseNotice', () => {
 		const purchaseExpiry = new Date();
 		purchaseExpiry.setMonth( purchaseExpiry.getMonth() + 4 );
 		const purchase = {
-			id: 'whatever1',
+			ID: 'whatever1',
 			product_slug: 'value_bundle',
-			productName: 'Premium',
-			isRenewable: false,
-			isRechargeable: false,
-			expiryStatus: 'included',
-			expiryDate: purchaseExpiry.toISOString(),
-			payment: {
-				type: 'credit_card',
-				creditCard: {
-					expiryDate: '01/' + pastYearDate.getYear(),
-					type: 'visa',
-					number: 1111,
-				},
-			},
+			product_name: 'Premium',
+			is_renewable: false,
+			is_rechargeable: false,
+			expiry_status: 'included',
+			expiry_date: purchaseExpiry.toISOString(),
+			payment_type: 'credit_card',
+			payment_expiry: '01/' + pastYearDate.getYear(),
+			payment_card_type: 'visa',
+			payment_details: 1111,
 		};
-		render(
-			<ReduxProvider store={ store }>
-				<QueryClientProvider client={ queryClient }>
-					<PurchaseNotice
-						purchase={ purchase }
-						isProductOwner
-						selectedSite={ { slug: 'testingsite' } }
-						renewableSitePurchases={ [] }
-					/>
-				</QueryClientProvider>
-			</ReduxProvider>
-		);
+		renderNotice( { purchase, isProductOwner: true, selectedSite: { slug: 'testingsite' } } );
 		expect( screen.container ).toBeFalsy();
 	} );
 
@@ -543,34 +355,19 @@ describe( 'PurchaseNotice', () => {
 		const purchaseExpiry = new Date();
 		purchaseExpiry.setMonth( purchaseExpiry.getMonth() + 4 );
 		const purchase = {
-			id: 'whatever1',
+			ID: 'whatever1',
 			product_slug: 'value_bundle',
-			productName: 'Premium',
-			isRenewable: false,
-			isRechargeable: false,
-			expiryStatus: 'oneTimePurchase',
-			expiryDate: purchaseExpiry.toISOString(),
-			payment: {
-				type: 'credit_card',
-				creditCard: {
-					expiryDate: '01/' + pastYearDate.getYear(),
-					type: 'visa',
-					number: 1111,
-				},
-			},
+			product_name: 'Premium',
+			is_renewable: false,
+			is_rechargeable: false,
+			expiry_status: 'one-time-purchase',
+			expiry_date: purchaseExpiry.toISOString(),
+			payment_type: 'credit_card',
+			payment_expiry: '01/' + pastYearDate.getYear(),
+			payment_card_type: 'visa',
+			payment_details: 1111,
 		};
-		render(
-			<ReduxProvider store={ store }>
-				<QueryClientProvider client={ queryClient }>
-					<PurchaseNotice
-						purchase={ purchase }
-						isProductOwner
-						selectedSite={ { slug: 'testingsite' } }
-						renewableSitePurchases={ [] }
-					/>
-				</QueryClientProvider>
-			</ReduxProvider>
-		);
+		renderNotice( { purchase, isProductOwner: true, selectedSite: { slug: 'testingsite' } } );
 		expect( screen.container ).toBeFalsy();
 	} );
 } );

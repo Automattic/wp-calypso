@@ -46,6 +46,15 @@ const exclude = [
 	// problem :root/html/body have. Lookahead (not `$`) avoids also matching unrelated classes
 	// like `.jp-stats-widget-extra`.
 	/^\.jp-stats-widget(?![\w-])/,
+	// .color-scheme.is-<scheme> from @automattic/calypso-color-schemes sets the accent/primary
+	// scales on the element that carries the class itself (main dashboard, portals, widget), so
+	// prefixing it as a descendant of a scope root would go dead — same self-scoping case as the
+	// mount roots above. Anchored to the full compound so nested rules like
+	// `.color-scheme.is-light .masterbar` still get prefixed.
+	/^\.color-scheme\.is-[\w-]+$/,
+	// .stats-widget-content.color-scheme carries the widget's primary→accent remap on its own
+	// root element (scoped-theme-for-widget.scss); same self-scoping reason.
+	/^\.stats-widget-content\.color-scheme$/,
 ];
 
 module.exports = { prefix, ignoreFiles, exclude };

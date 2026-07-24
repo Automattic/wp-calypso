@@ -1,4 +1,5 @@
-import { Button } from '@wordpress/components';
+import { useLocale } from '@automattic/i18n-utils';
+import { Button, __experimentalVStack as VStack } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import clsx from 'clsx';
 import { useCallback, useState } from 'react';
@@ -7,8 +8,12 @@ import LayoutTop from 'calypso/a8c-for-agencies/components/layout/layout-with-pa
 import MobileSidebarNavigation from 'calypso/a8c-for-agencies/components/sidebar/mobile-sidebar-navigation';
 import { A4A_MIGRATIONS_LINK } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
 import MissingPaymentSettingsNotice from 'calypso/a8c-for-agencies/sections/referrals/common/missing-payment-settings-notice';
+import MigrationsCommissionsList from 'calypso/dashboard/agency/earn/migrations/commissions-list';
+import MigrationsConsolidatedCommissions from 'calypso/dashboard/agency/earn/migrations/consolidated-commissions';
 import useCanTagSitesForCommission from 'calypso/dashboard/agency/earn/migrations/hooks/use-can-tag-sites-for-commission';
 import useFetchTaggedSitesForMigration from 'calypso/dashboard/agency/earn/migrations/hooks/use-fetch-tagged-sites-for-migration';
+import MigrationsTagSitesModal from 'calypso/dashboard/agency/earn/migrations/tag-sites-modal';
+import { TextSkeleton } from 'calypso/dashboard/components/text-skeleton';
 import LayoutBody from 'calypso/layout/hosting-dashboard/body';
 import LayoutHeader, {
 	LayoutHeaderBreadcrumb as Breadcrumb,
@@ -18,14 +23,19 @@ import { useDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 import getSites from 'calypso/state/selectors/get-sites';
-import MigrationsCommissionsContent from '../../commissions-content';
+import MigrationsCommissionsEmptyState from './empty-state';
 import type { ReactNode } from 'react';
 
 import './style.scss';
 
+const ClassicTableWrapper = ( { children }: { children: ReactNode } ) => (
+	<div className="redesigned-a8c-table full-width">{ children }</div>
+);
+
 export default function MigrationsCommissions() {
 	const dispatch = useDispatch();
 	const sites = useSelector( getSites );
+	const locale = useLocale();
 
 	const [ showAddSitesModal, setShowAddSitesModal ] = useState( false );
 	const {
@@ -43,13 +53,13 @@ export default function MigrationsCommissions() {
 	);
 
 	const onSuccess = useCallback(
-		( message: ReactNode, options?: { id?: string; duration?: number } ) =>
+		( message: string, options?: { id?: string; duration?: number } ) =>
 			dispatch( successNotice( message, options ) ),
 		[ dispatch ]
 	);
 
 	const onError = useCallback(
-		( message: ReactNode ) => dispatch( errorNotice( message ) ),
+		( message: string ) => dispatch( errorNotice( message ) ),
 		[ dispatch ]
 	);
 
@@ -102,20 +112,49 @@ export default function MigrationsCommissions() {
 			</LayoutTop>
 
 			<LayoutBody>
-				<MigrationsCommissionsContent
+				{ isLoading && (
+					<>
+						<TextSkeleton length={ 30 } />
+						<TextSkeleton length={ 30 } />
+					</>
+				) }
+				{ ! isLoading && showEmptyState && (
+					<MigrationsCommissionsEmptyState
+						recordTracksEvent={ recordTracks }
+						onTagSitesClick={ () => setShowAddSitesModal( true ) }
+						canTagSitesForCommission={ canTagSitesForCommission }
+					/>
+				) }
+				{ ! isLoading && ! showEmptyState && (
+					<VStack spacing={ 6 }>
+						{ canTagSitesForCommission && (
+							<MigrationsConsolidatedCommissions items={ taggedSites } />
+						) }
+						<MigrationsCommissionsList
+							items={ taggedSites }
+							migrationTags={ migrationTags }
+							recordTracksEvent={ recordTracks }
+							onSuccess={ onSuccess }
+							onError={ onError }
+							locale={ locale }
+							TableWrapper={ ClassicTableWrapper }
+						/>
+					</VStack>
+				) }
+			</LayoutBody>
+
+			{ showAddSitesModal && (
+				<MigrationsTagSitesModal
+					onClose={ () => setShowAddSitesModal( false ) }
 					taggedSites={ taggedSites }
-					isLoading={ isLoading }
+					migrationTags={ migrationTags }
 					recordTracksEvent={ recordTracks }
 					onSuccess={ onSuccess }
 					onError={ onError }
 					getSiteCreatedAt={ getSiteCreatedAt }
-					canTagSitesForCommission={ canTagSitesForCommission }
-					migrationTags={ migrationTags }
-					isAddSitesModalOpen={ showAddSitesModal }
-					onCloseAddSitesModal={ () => setShowAddSitesModal( false ) }
-					onOpenAddSitesModal={ () => setShowAddSitesModal( true ) }
+					locale={ locale }
 				/>
-			</LayoutBody>
+			) }
 		</Layout>
 	);
 }

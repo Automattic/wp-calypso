@@ -1,9 +1,9 @@
 import { formatCurrency } from '@automattic/number-formatters';
 import { __experimentalVStack as VStack } from '@wordpress/components';
 import { __, sprintf } from '@wordpress/i18n';
+import ConsolidatedStatCard from '../../../components/consolidated-stat-card';
 import InlineSupportLink from '../../../components/inline-support-link';
 import { formatDate } from '../../../utils/datetime';
-import ConsolidatedStatCard from './consolidated-stat-card';
 import useGetPayoutData from './hooks/use-payout-data';
 
 const AGENCY_EARNINGS_LEARN_MORE_LINK =

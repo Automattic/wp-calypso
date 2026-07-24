@@ -36,12 +36,20 @@ export const mockGetSuggestionsQuery = ( {
 	return request.reply( 200, suggestions );
 };
 
-export const mockGetBundleSuggestionQuery = ( {
+// `bundle_suggestion` and `bundle_triggers` come back on ONE shared
+// `with_bundles=1` request (see bundleMetadataQuery), so composing
+// mockGetBundleSuggestionQuery + mockGetBundleTriggersQuery for the same query
+// does NOT work — only the first-registered nock interceptor is consumed and
+// the other half of the payload is silently absent. When a test needs both
+// fields on the same query, use this combined helper instead.
+export const mockGetBundleMetadataQuery = ( {
 	params,
-	bundleSuggestion,
+	bundleSuggestion = null,
+	bundleTriggers = [],
 }: {
 	params: Partial< DomainSuggestionQuery >;
-	bundleSuggestion: BundleSuggestion | null;
+	bundleSuggestion?: BundleSuggestion | null;
+	bundleTriggers?: string[];
 } ) => {
 	return nock( 'https://public-api.wordpress.com' )
 		.get( '/rest/v1.1/domains/suggestions' )
@@ -50,7 +58,17 @@ export const mockGetBundleSuggestionQuery = ( {
 			with_bundles: 1,
 			...params,
 		} )
-		.reply( 200, { bundle_suggestion: bundleSuggestion } );
+		.reply( 200, { bundle_suggestion: bundleSuggestion, bundle_triggers: bundleTriggers } );
+};
+
+export const mockGetBundleSuggestionQuery = ( {
+	params,
+	bundleSuggestion,
+}: {
+	params: Partial< DomainSuggestionQuery >;
+	bundleSuggestion: BundleSuggestion | null;
+} ) => {
+	return mockGetBundleMetadataQuery( { params, bundleSuggestion } );
 };
 
 export const mockGetBundleTriggersQuery = ( {
@@ -60,14 +78,7 @@ export const mockGetBundleTriggersQuery = ( {
 	params: Partial< DomainSuggestionQuery >;
 	bundleTriggers: string[];
 } ) => {
-	return nock( 'https://public-api.wordpress.com' )
-		.get( '/rest/v1.1/domains/suggestions' )
-		.query( {
-			vendor: 'variation2_front',
-			with_bundles: 1,
-			...params,
-		} )
-		.reply( 200, { bundle_triggers: bundleTriggers } );
+	return mockGetBundleMetadataQuery( { params, bundleTriggers } );
 };
 
 export const mockGetBundleForDomainQuery = ( {

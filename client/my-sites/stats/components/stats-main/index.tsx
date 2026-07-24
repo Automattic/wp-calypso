@@ -12,7 +12,7 @@ import Main, { MainProps } from 'calypso/components/main';
 import useWPAdminTheme from 'calypso/my-sites/stats/hooks/use-wp-admin-theme';
 import StatsUpsellModal from 'calypso/my-sites/stats/stats-upsell-modal';
 import { useSelector } from 'calypso/state';
-import { getSiteSlug, isJetpackSite } from 'calypso/state/sites/selectors';
+import { getSiteSlug } from 'calypso/state/sites/selectors';
 import { getUpsellModalView } from 'calypso/state/stats/paid-stats-upsell/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { STATS_HEADER_TITLE } from '../../constants';
@@ -107,10 +107,7 @@ export default function StatsMain( {
 }: StatsMainProps ) {
 	const isWPAdminAndNotSimpleSite = config.isEnabled( 'is_running_in_jetpack_site' );
 	const siteId = useSelector( ( state ) => getSelectedSiteId( state ) ) as number;
-	const isSiteJetpack = useSelector( ( state ) =>
-		isJetpackSite( state, siteId, { treatAtomicAsJetpackSite: true } )
-	);
-	const customTheme = useWPAdminTheme( isSiteJetpack );
+	const customTheme = useWPAdminTheme();
 
 	// Make the upsell modal view available on all Stats pages.
 	const upsellModalView = useSelector( ( state ) => getUpsellModalView( state, siteId ) );

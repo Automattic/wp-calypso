@@ -1,3 +1,8 @@
+import {
+	getPurchasePayment,
+	isPurchaseExpiring,
+	isPurchaseOneTimePurchase,
+} from '@automattic/api-core';
 import { setDelayedDowngradeMutation } from '@automattic/api-queries';
 import config from '@automattic/calypso-config';
 import {
@@ -27,16 +32,19 @@ import NoticeAction from 'calypso/components/notice/notice-action';
 import { useIsSplitCancelRemoveEnabled } from 'calypso/dashboard/me/billing-purchases/cancel-purchase/use-is-split-cancel-remove-enabled';
 import { getProductNounForCategory } from 'calypso/dashboard/me/billing-purchases/purchase-settings/classify-purchase-for-copy';
 import TrackComponentView from 'calypso/lib/analytics/track-component-view';
+import { createPurchasesArray } from 'calypso/lib/purchases/assembler';
+import { getTrialCheckoutUrl } from 'calypso/lib/trials/get-trial-checkout-url';
+import { managePurchase } from 'calypso/me/purchases/paths';
+import UpcomingRenewalsDialog from 'calypso/me/purchases/upcoming-renewals/upcoming-renewals-dialog';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { successNotice, errorNotice } from 'calypso/state/notices/actions';
 import {
-	canExplicitRenew,
 	creditCardExpiresBeforeSubscription,
 	creditCardHasAlreadyExpired,
 	getName,
 	hasPaymentMethod,
 	isCloseToExpiration,
-	isExpiring,
 	isIncludedWithPlan,
-	isOneTimePurchase,
 	isPartnerPurchase,
 	isRecentMonthlyPurchase,
 	isRenewable,
@@ -50,20 +58,12 @@ import {
 	isExpiredAndInGracePeriod,
 	isExpiredOrRemoved,
 	isRemoved,
-} from 'calypso/lib/purchases';
-import { getTrialCheckoutUrl } from 'calypso/lib/trials/get-trial-checkout-url';
-import { managePurchase } from 'calypso/me/purchases/paths';
-import UpcomingRenewalsDialog from 'calypso/me/purchases/upcoming-renewals/upcoming-renewals-dialog';
-import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import { successNotice, errorNotice } from 'calypso/state/notices/actions';
+} from '../lib/raw-purchase-helpers';
 import { getAddNewPaymentMethodPath } from '../utils';
 import { classifyPurchaseForCopy } from './classify-purchase-for-copy';
+import type { GetManagePurchaseUrlFor } from '../lib/types';
+import type { Purchase, PurchasePaymentCreditCard } from '@automattic/api-core';
 import type { SiteDetails } from '@automattic/data-stores';
-import type {
-	GetManagePurchaseUrlFor,
-	Purchase,
-	PurchasePaymentCreditCard,
-} from 'calypso/lib/purchases/types';
 import type { LocalizeProps, TranslateOptions } from 'i18n-calypso';
 import type { ReactNode, ReactElement } from 'react';
 
@@ -190,19 +190,19 @@ class PurchaseNotice extends Component<
 		const { purchase, translate, onCancelDelayedDowngrade, isCancellingDelayedDowngrade } =
 			this.props;
 
-		if ( ! purchase.isDelayedDowngradePending ) {
+		if ( ! purchase.is_delayed_downgrade_pending ) {
 			return null;
 		}
 
-		const targetPlanName = purchase.delayedDowngradeToProductSlug
-			? getPlan( purchase.delayedDowngradeToProductSlug )?.getTitle() ??
-			  purchase.delayedDowngradeToProductSlug
+		const targetPlanName = purchase.delayed_downgrade_to_product_slug
+			? getPlan( purchase.delayed_downgrade_to_product_slug )?.getTitle() ??
+			  purchase.delayed_downgrade_to_product_slug
 			: null;
 		// `renewDate` is the next auto-renewal attempt date, which for annual
 		// plans is up to 30 days before expiry. The downgrade takes effect on
 		// that renewal, so it's the accurate date to show the customer.
-		const renewalDate = purchase.renewDate
-			? this.props.moment( purchase.renewDate ).format( 'LL' )
+		const renewalDate = purchase.renew_date
+			? this.props.moment( purchase.renew_date ).format( 'LL' )
 			: null;
 
 		let noticeText;
@@ -267,7 +267,7 @@ class PurchaseNotice extends Component<
 		) {
 			return null;
 		}
-		const expiryDate = moment( purchase.expiryDate ).format( 'LL' );
+		const expiryDate = moment( purchase.expiry_date ).format( 'LL' );
 		if ( this.state.cancelledIntent === 'auto-renew' ) {
 			const noticeText = translate(
 				'Auto-renew has been disabled. You won\u2019t be billed again, and you\u2019ll continue to have access to the %(productNoun)s until %(expiryDate)s.',
@@ -373,14 +373,14 @@ class PurchaseNotice extends Component<
 		if ( ! this.state.showDelayedDowngradeScheduledNotice || ! purchase ) {
 			return null;
 		}
-		const targetPlanName = purchase.delayedDowngradeToProductSlug
-			? getPlan( purchase.delayedDowngradeToProductSlug )?.getTitle() ??
-			  purchase.delayedDowngradeToProductSlug
+		const targetPlanName = purchase.delayed_downgrade_to_product_slug
+			? getPlan( purchase.delayed_downgrade_to_product_slug )?.getTitle() ??
+			  purchase.delayed_downgrade_to_product_slug
 			: null;
 		// `renewDate` is the next auto-renewal attempt date (up to 30 days before
 		// expiry for annual plans) — the date the scheduled downgrade takes effect.
-		const renewalDate = purchase.renewDate
-			? this.props.moment( purchase.renewDate ).format( 'LL' )
+		const renewalDate = purchase.renew_date
+			? this.props.moment( purchase.renew_date ).format( 'LL' )
 			: null;
 
 		let text;
@@ -424,16 +424,16 @@ class PurchaseNotice extends Component<
 
 	getExpiringText( purchase: Purchase ) {
 		const { translate, moment, selectedSite } = this.props;
-		const expiry = moment( purchase.expiryDate );
+		const expiry = moment( purchase.expiry_date );
 
-		if ( selectedSite && purchase.expiryStatus === 'manualRenew' && ! is100Year( purchase ) ) {
+		if ( selectedSite && purchase.expiry_status === 'manual-renew' && ! is100Year( purchase ) ) {
 			return this.getExpiringLaterText( purchase );
 		}
 
 		if ( isMonthlyPurchase( purchase ) ) {
 			const daysToExpiry = expiry.diff( moment(), 'days' );
 
-			if ( purchase.isAttachedToHoldingSite ) {
+			if ( purchase.is_attached_to_holding_site ) {
 				return translate( '%(purchaseName)s will expire and be removed in %(daysToExpiry)d days.', {
 					args: {
 						purchaseName: getName( purchase ),
@@ -453,7 +453,7 @@ class PurchaseNotice extends Component<
 			);
 		}
 
-		if ( purchase.isAttachedToHoldingSite ) {
+		if ( purchase.is_attached_to_holding_site ) {
 			return translate( '%(purchaseName)s will expire and be removed %(expiry)s.', {
 				args: {
 					purchaseName: getName( purchase ),
@@ -478,7 +478,7 @@ class PurchaseNotice extends Component<
 	 */
 	getExpiringLaterText( purchase: Purchase, autoRenewingUpgradesLink?: ReactElement ): ReactNode {
 		const { translate, moment } = this.props;
-		const expiry = moment( purchase.expiryDate );
+		const expiry = moment( purchase.expiry_date );
 
 		const translateOptions: TranslateOptions = {
 			args: {
@@ -557,7 +557,7 @@ class PurchaseNotice extends Component<
 
 		if (
 			! hasPaymentMethod( purchase ) &&
-			( ! canExplicitRenew( purchase ) || shouldAddPaymentSourceInsteadOfRenewingNow( purchase ) )
+			( ! purchase.can_explicit_renew || shouldAddPaymentSourceInsteadOfRenewingNow( purchase ) )
 		) {
 			return (
 				<NoticeAction href={ changePaymentMethodPath ? changePaymentMethodPath : undefined }>
@@ -568,7 +568,7 @@ class PurchaseNotice extends Component<
 
 		// When the purchase is far away from expiration but was paid for with
 		// credits, we should show an "Add Payment Method" action.
-		if ( isPaidWithCredits( purchase ) && purchase.expiryStatus === 'manualRenew' ) {
+		if ( isPaidWithCredits( purchase ) && purchase.expiry_status === 'manual-renew' ) {
 			return (
 				<NoticeAction href={ changePaymentMethodPath ? changePaymentMethodPath : undefined }>
 					{ config.isEnabled( 'purchases/new-payment-methods' )
@@ -580,7 +580,7 @@ class PurchaseNotice extends Component<
 
 		if (
 			! isRechargeable( purchase ) ||
-			( canExplicitRenew( purchase ) && isExpiredAndInGracePeriod( purchase ) )
+			( purchase.can_explicit_renew && isExpiredAndInGracePeriod( purchase ) )
 		) {
 			return <NoticeAction onClick={ onClick }>{ translate( 'Renew Now' ) }</NoticeAction>;
 		}
@@ -666,14 +666,14 @@ class PurchaseNotice extends Component<
 		const includedPurchase = purchase;
 
 		if (
-			! isExpiring( currentPurchase ) ||
-			EXCLUDED_PRODUCTS.includes( currentPurchase?.productSlug ) ||
+			! isPurchaseExpiring( currentPurchase ) ||
+			EXCLUDED_PRODUCTS.includes( currentPurchase?.product_slug ) ||
 			isAkismetFreeProduct( currentPurchase )
 		) {
 			return null;
 		}
 
-		if ( purchase.isHundredYearDomain ) {
+		if ( purchase.is_hundred_year_domain ) {
 			return null;
 		}
 
@@ -698,11 +698,11 @@ class PurchaseNotice extends Component<
 					args: {
 						purchaseName: getName( currentPurchase ),
 						includedPurchaseName: getName( includedPurchase ),
-						expiry: moment( currentPurchase.expiryDate ).fromNow(),
+						expiry: moment( currentPurchase.expiry_date ).fromNow(),
 					},
 					components: {
 						managePurchase: (
-							<a href={ getManagePurchaseUrlFor( selectedSite.slug, currentPurchase.id ) } />
+							<a href={ getManagePurchaseUrlFor( selectedSite.slug, currentPurchase.ID ) } />
 						),
 					},
 				}
@@ -769,7 +769,7 @@ class PurchaseNotice extends Component<
 
 		// Show only if there is at least one other purchase to notify about.
 		const otherRenewableSitePurchases = renewableSitePurchases.filter(
-			( otherPurchase ) => otherPurchase.id !== currentPurchase.id
+			( otherPurchase ) => otherPurchase.ID !== currentPurchase.ID
 		);
 		if ( ! otherRenewableSitePurchases.length ) {
 			return null;
@@ -781,9 +781,10 @@ class PurchaseNotice extends Component<
 			isRenewingBeforeExpiration( currentPurchase ) &&
 			creditCardExpiresBeforeSubscription( currentPurchase );
 		const currentPurchaseIsExpiring =
-			isExpiring( currentPurchase ) || isExpiredOrRemoved( currentPurchase );
+			isPurchaseExpiring( currentPurchase ) || isExpiredOrRemoved( currentPurchase );
 		const anotherPurchaseIsExpiring = otherRenewableSitePurchases.some(
-			( otherPurchase ) => isExpiring( otherPurchase ) || isExpiredOrRemoved( otherPurchase )
+			( otherPurchase ) =>
+				isPurchaseExpiring( otherPurchase ) || isExpiredOrRemoved( otherPurchase )
 		);
 
 		// Other information needed by some of the messages.
@@ -794,24 +795,25 @@ class PurchaseNotice extends Component<
 				isRecentMonthlyPurchase( otherPurchase ) && ! isExpiredOrRemoved( otherPurchase )
 		);
 		const anotherPurchaseIsCloseToExpiration = otherRenewableSitePurchases.some(
-			( otherPurchase ) => moment( otherPurchase.expiryDate ).diff( Date.now(), 'months' ) < 1
+			( otherPurchase ) => moment( otherPurchase.expiry_date ).diff( Date.now(), 'months' ) < 1
 		);
 		const anotherPurchaseIsExpired = otherRenewableSitePurchases.some( isExpiredOrRemoved );
 		const earliestOtherExpiringPurchase = minBy(
 			otherRenewableSitePurchases.filter(
-				( otherPurchase ) => isExpiring( otherPurchase ) || isExpiredOrRemoved( otherPurchase )
+				( otherPurchase ) =>
+					isPurchaseExpiring( otherPurchase ) || isExpiredOrRemoved( otherPurchase )
 			),
-			( otherPurchase ) => Number( moment( otherPurchase.expiryDate ).format( 'X' ) )
+			( otherPurchase ) => Number( moment( otherPurchase.expiry_date ).format( 'X' ) )
 		);
 
-		const expiry = moment( currentPurchase.expiryDate );
+		const expiry = moment( currentPurchase.expiry_date );
 		const translateOptions = {
 			args: {
 				purchaseName: getName( currentPurchase ),
 				includedPurchaseName: getName( includedPurchase ),
 				expiry: expiry.fromNow(),
 				earliestOtherExpiry: earliestOtherExpiringPurchase
-					? moment( earliestOtherExpiringPurchase.expiryDate ).fromNow()
+					? moment( earliestOtherExpiringPurchase.expiry_date ).fromNow()
 					: '',
 			},
 			components: {
@@ -822,7 +824,7 @@ class PurchaseNotice extends Component<
 					/>
 				),
 				managePurchase: (
-					<a href={ getManagePurchaseUrlFor( selectedSite.slug, currentPurchase.id ) } />
+					<a href={ getManagePurchaseUrlFor( selectedSite.slug, currentPurchase.ID ) } />
 				),
 			},
 		};
@@ -1054,7 +1056,7 @@ class PurchaseNotice extends Component<
 					'You have {{link}}other upgrades{{/link}} on this site that are scheduled to renew soon.',
 					translateOptions
 				);
-			} else if ( currentPurchase.payment.creditCard ) {
+			} else if ( getPurchasePayment( currentPurchase ).creditCard ) {
 				noticeStatus = showCreditCardExpiringWarning( currentPurchase ) ? 'is-error' : 'is-info';
 				noticeActionHref = getAddNewPaymentMethodUrlFor( selectedSite.slug );
 				noticeActionOnClick = this.handleExpiringCardNoticeUpdateAll;
@@ -1065,14 +1067,18 @@ class PurchaseNotice extends Component<
 							'Your %(cardType)s ending in %(cardNumber)d expired %(cardExpiry)s – before the next renewal. You have {{link}}other upgrades{{/link}} on this site that are scheduled to renew soon and may also be affected. Please update the payment information for all your subscriptions.',
 							{
 								...translateOptions,
-								args: this.creditCardDetails( currentPurchase.payment.creditCard ),
+								args: this.creditCardDetails(
+									getPurchasePayment( currentPurchase ).creditCard as PurchasePaymentCreditCard
+								),
 							}
 					  )
 					: translate(
 							'Your %(cardType)s ending in %(cardNumber)d expires %(cardExpiry)s – before the next renewal. You have {{link}}other upgrades{{/link}} on this site that are scheduled to renew soon and may also be affected. Please update the payment information for all your subscriptions.',
 							{
 								...translateOptions,
-								args: this.creditCardDetails( currentPurchase.payment.creditCard ),
+								args: this.creditCardDetails(
+									getPurchasePayment( currentPurchase ).creditCard as PurchasePaymentCreditCard
+								),
 							}
 					  );
 			}
@@ -1185,7 +1191,7 @@ class PurchaseNotice extends Component<
 					'You have {{link}}other upgrades{{/link}} on this site that are scheduled to renew soon.',
 					translateOptions
 				);
-			} else if ( currentPurchase.payment.creditCard ) {
+			} else if ( getPurchasePayment( currentPurchase ).creditCard ) {
 				noticeStatus = 'is-info';
 				noticeActionHref = getAddNewPaymentMethodUrlFor( selectedSite.slug );
 				noticeActionOnClick = this.handleExpiringCardNoticeUpdateAll;
@@ -1196,14 +1202,18 @@ class PurchaseNotice extends Component<
 							'Your %(cardType)s ending in %(cardNumber)d expired %(cardExpiry)s – before the next renewal. You have {{link}}other upgrades{{/link}} on this site that are scheduled to renew soon and may also be affected. Please update the payment information for all your subscriptions.',
 							{
 								...translateOptions,
-								args: this.creditCardDetails( currentPurchase.payment.creditCard ),
+								args: this.creditCardDetails(
+									getPurchasePayment( currentPurchase ).creditCard as PurchasePaymentCreditCard
+								),
 							}
 					  )
 					: translate(
 							'Your %(cardType)s ending in %(cardNumber)d expires %(cardExpiry)s – before the next renewal. You have {{link}}other upgrades{{/link}} on this site that are scheduled to renew soon and may also be affected. Please update the payment information for all your subscriptions.',
 							{
 								...translateOptions,
-								args: this.creditCardDetails( currentPurchase.payment.creditCard ),
+								args: this.creditCardDetails(
+									getPurchasePayment( currentPurchase ).creditCard as PurchasePaymentCreditCard
+								),
 							}
 					  );
 			}
@@ -1217,10 +1227,24 @@ class PurchaseNotice extends Component<
 			<>
 				<UpcomingRenewalsDialog
 					isVisible={ this.state.showUpcomingRenewalsDialog }
-					purchases={ renewableSitePurchases }
+					// Temporary bridge (SHILL-2256): UpcomingRenewalsDialog is shared with
+					// checkout and still expects the camelCase Purchase. Convert on the way
+					// in, and map the confirmed selection back to the raw purchases by ID.
+					purchases={ createPurchasesArray(
+						renewableSitePurchases as unknown as Parameters< typeof createPurchasesArray >[ 0 ]
+					) }
 					site={ selectedSite }
 					getManagePurchaseUrlFor={ getManagePurchaseUrlFor }
-					onConfirm={ this.handleExpiringNoticeRenewSelection }
+					onConfirm={ ( selected ) => {
+						const selectedIds = new Set(
+							selected.map( ( selectedPurchase ) => selectedPurchase.id )
+						);
+						this.handleExpiringNoticeRenewSelection(
+							renewableSitePurchases.filter( ( sitePurchase ) =>
+								selectedIds.has( sitePurchase.ID )
+							)
+						);
+					} }
 					onClose={ this.closeUpcomingRenewalsDialog }
 				/>
 				<Notice
@@ -1275,11 +1299,11 @@ class PurchaseNotice extends Component<
 
 		if (
 			isExpiredOrRemoved( purchase ) ||
-			isOneTimePurchase( purchase ) ||
+			isPurchaseOneTimePurchase( purchase ) ||
 			isIncludedWithPlan( purchase ) ||
 			! this.props.selectedSite ||
-			! purchase.payment.creditCard ||
-			purchase.isHundredYearDomain
+			! getPurchasePayment( purchase ).creditCard ||
+			purchase.is_hundred_year_domain
 		) {
 			return null;
 		}
@@ -1301,7 +1325,9 @@ class PurchaseNotice extends Component<
 								'Your %(cardType)s ending in %(cardNumber)d expired %(cardExpiry)s ' +
 									'– before the next renewal. Please {{a}}update your payment information{{/a}}.',
 								{
-									args: this.creditCardDetails( purchase.payment.creditCard ),
+									args: this.creditCardDetails(
+										getPurchasePayment( purchase ).creditCard as PurchasePaymentCreditCard
+									),
 									components: {
 										a: linkComponent,
 									},
@@ -1311,7 +1337,9 @@ class PurchaseNotice extends Component<
 								'Your %(cardType)s ending in %(cardNumber)d expires %(cardExpiry)s ' +
 									'– before the next renewal. Please {{a}}update your payment information{{/a}}.',
 								{
-									args: this.creditCardDetails( purchase.payment.creditCard ),
+									args: this.creditCardDetails(
+										getPurchasePayment( purchase ).creditCard as PurchasePaymentCreditCard
+									),
 									components: {
 										a: linkComponent,
 									},
@@ -1394,7 +1422,7 @@ class PurchaseNotice extends Component<
 			},
 			components: {
 				managePurchase: (
-					<a href={ getManagePurchaseUrlFor( selectedSite.slug, currentPurchase.id ) } />
+					<a href={ getManagePurchaseUrlFor( selectedSite.slug, currentPurchase.ID ) } />
 				),
 			},
 		};
@@ -1474,7 +1502,7 @@ class PurchaseNotice extends Component<
 					'This product is an in-app purchase. You can manage it from within {{managePurchase}}the app store{{/managePurchase}}.',
 					{
 						components: {
-							managePurchase: <a href={ purchase.iapPurchaseManagementLink ?? undefined } />,
+							managePurchase: <a href={ purchase.iap_purchase_management_link ?? undefined } />,
 						},
 					}
 				) }
@@ -1513,7 +1541,7 @@ class PurchaseNotice extends Component<
 			return page( checkoutUrl );
 		};
 
-		const expiry = moment.utc( purchase.expiryDate );
+		const expiry = moment.utc( purchase.expiry_date );
 		const daysToExpiry = isExpiredOrRemoved( purchase )
 			? 0
 			: Math.floor( expiry.diff( moment().utc(), 'days', true ) );
@@ -1594,7 +1622,7 @@ class PurchaseNotice extends Component<
 		//
 		// Transient success notice after scheduling — only shown when the
 		// persistent warning isn't available yet (e.g. data still loading).
-		if ( ! purchase.isDelayedDowngradePending ) {
+		if ( ! purchase.is_delayed_downgrade_pending ) {
 			const delayedDowngradeScheduledNotice = this.renderDelayedDowngradeScheduledNotice();
 			if ( delayedDowngradeScheduledNotice ) {
 				return delayedDowngradeScheduledNotice;
@@ -1607,7 +1635,7 @@ class PurchaseNotice extends Component<
 			return delayedDowngradePendingNotice;
 		}
 
-		if ( purchase.asyncPendingPaymentBlockIsSet ) {
+		if ( purchase.async_pending_payment_block_is_set ) {
 			return this.renderAsyncPendingPaymentNotice();
 		}
 
@@ -1616,15 +1644,15 @@ class PurchaseNotice extends Component<
 		}
 
 		if (
-			purchase.productSlug === PLAN_PERSONAL_TRIAL_MONTHLY ||
-			purchase.productSlug === PLAN_ECOMMERCE_TRIAL_MONTHLY ||
-			purchase.productSlug === PLAN_MIGRATION_TRIAL_MONTHLY ||
-			purchase.productSlug === PLAN_HOSTING_TRIAL_MONTHLY
+			purchase.product_slug === PLAN_PERSONAL_TRIAL_MONTHLY ||
+			purchase.product_slug === PLAN_ECOMMERCE_TRIAL_MONTHLY ||
+			purchase.product_slug === PLAN_MIGRATION_TRIAL_MONTHLY ||
+			purchase.product_slug === PLAN_HOSTING_TRIAL_MONTHLY
 		) {
-			return this.renderTrialNotice( purchase.productSlug );
+			return this.renderTrialNotice( purchase.product_slug );
 		}
 
-		if ( purchase.isLocked && purchase.isInAppPurchase ) {
+		if ( purchase.is_locked && purchase.is_iap_purchase ) {
 			return this.renderInAppPurchaseNotice();
 		}
 
@@ -1678,11 +1706,11 @@ function PurchaseNoticeWithExperiment( props: PurchaseNoticeProps ) {
 	const onCancelDelayedDowngrade = () => {
 		dispatch(
 			recordTracksEvent( 'calypso_purchases_cancel_delayed_downgrade_click', {
-				purchase_id: props.purchase.id,
+				purchase_id: props.purchase.ID,
 			} )
 		);
 		cancelDelayedDowngrade(
-			{ purchaseId: props.purchase.id, enabled: false },
+			{ purchaseId: props.purchase.ID, enabled: false },
 			{
 				onSuccess: () =>
 					dispatch(

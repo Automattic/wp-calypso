@@ -10,16 +10,14 @@ import { PlanBillingPeriod } from '../billing-period';
 const props = {
 	purchase: {
 		// Including the properties that are used by this component
-		id: 123,
-		siteId: 123,
-		productName: 'Jetpack Personal',
-		productSlug: 'jetpack_premium_monthly',
+		ID: 123,
+		blog_id: 123,
+		product_name: 'Jetpack Personal',
+		product_slug: 'jetpack_premium_monthly',
 		domain: 'site.com',
-		expiryStatus: 'active',
-		subscriptionStatus: 'active',
-		payment: {
-			type: 'paypal',
-		},
+		expiry_status: 'active',
+		subscription_status: 'active',
+		payment_type: 'paypal',
 	},
 	site: {
 		ID: 123,
@@ -70,7 +68,7 @@ describe( 'PlanBillingPeriod', () => {
 			...props,
 			purchase: {
 				...props.purchase,
-				productSlug: 'jetpack_personal',
+				product_slug: 'jetpack_personal',
 			},
 		};
 
@@ -85,13 +83,9 @@ describe( 'PlanBillingPeriod', () => {
 				const cardExpiryDate = moment().add( 1, 'months' ).format( 'MM/YY' );
 				const purchase = {
 					...annualPlanProps.purchase,
-					expiryDate: planExpiryDate,
-					payment: {
-						type: 'credit_card',
-						creditCard: {
-							expiryDate: cardExpiryDate,
-						},
-					},
+					expiry_date: planExpiryDate,
+					payment_type: 'credit_card',
+					payment_expiry: cardExpiryDate,
 				};
 				render( <PlanBillingPeriod { ...annualPlanProps } purchase={ purchase } /> );
 				expect( screen.getByText( /billed yearly/i ) ).toHaveTextContent(
@@ -104,7 +98,7 @@ describe( 'PlanBillingPeriod', () => {
 			it( 'should display a warning to the user', () => {
 				const purchase = {
 					...annualPlanProps.purchase,
-					renewDate: moment( '2020-01-01' ).format(),
+					renew_date: moment( '2020-01-01' ).format(),
 				};
 				render( <PlanBillingPeriod { ...annualPlanProps } purchase={ purchase } /> );
 				expect( screen.getByText( /billed yearly/i ) ).toHaveTextContent(
@@ -119,8 +113,8 @@ describe( 'PlanBillingPeriod', () => {
 				const futureDate = moment().add( 1, 'month' );
 				const purchase = {
 					...annualPlanProps.purchase,
-					expiryDate: futureDate.format(),
-					expiryStatus: 'expiring',
+					expiry_date: futureDate.format(),
+					expiry_status: 'expiring',
 				};
 				render( <PlanBillingPeriod { ...annualPlanProps } purchase={ purchase } /> );
 				expect( screen.getByText( /billed yearly/i ) ).toHaveTextContent(
@@ -133,8 +127,8 @@ describe( 'PlanBillingPeriod', () => {
 			it( 'should display a warning to the user', () => {
 				const purchase = {
 					...annualPlanProps.purchase,
-					expiryDate: moment().subtract( 1, 'month' ).format(),
-					expiryStatus: 'expired',
+					expiry_date: moment().subtract( 1, 'month' ).format(),
+					expiry_status: 'expired',
 				};
 				render( <PlanBillingPeriod { ...annualPlanProps } purchase={ purchase } /> );
 				expect( screen.getByText( /billed yearly/i ) ).toHaveTextContent(

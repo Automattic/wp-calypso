@@ -42,7 +42,7 @@ export interface CancelPurchaseButtonProps {
 	purchaseListUrl?: string;
 	siteSlug: string;
 	cancelBundledDomain: boolean;
-	includedDomainPurchase: Purchases.Purchase;
+	includedDomainPurchase?: Purchases.Purchase;
 	disabled?: boolean;
 	textVariant?: string;
 	displayVariant?: DisplayVariant;

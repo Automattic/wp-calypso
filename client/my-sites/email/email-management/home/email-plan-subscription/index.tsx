@@ -102,7 +102,7 @@ export const EmailPlanSubscription = ( {
 				<AutoRenewToggle
 					planName={ selectedSite.plan?.product_name_short }
 					siteDomain={ selectedSite.domain }
-					purchase={ purchase }
+					purchase={ purchase.rawPurchase }
 					withTextStatus
 					toggleSource="email-plan-view"
 				/>
