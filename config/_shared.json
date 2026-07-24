@@ -20,6 +20,7 @@
 	"login_url": false,
 	"logout_url": false,
 	"wpcom_url": "https://wordpress.com",
+	"dashboard_url": "https://my.wordpress.com",
 	"wpcom_signup_url": false,
 	"wpcom_login_url": false,
 	"wpcom_authorize_endpoint": false,

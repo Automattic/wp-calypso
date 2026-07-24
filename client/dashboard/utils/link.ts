@@ -8,13 +8,25 @@ import { isDashboardBackport } from './is-dashboard-backport';
  */
 export function dashboardOrigins(): string[] {
 	const port = config( 'port' ) ?? 3000;
-	return [
+	const origins = [
 		`http://my.localhost:${ port }`,
 		'https://my.wordpress.com',
 		`http://my.woo.localhost:${ port }`,
 		'https://my.woo.ai',
 		`http://my.a4a.localhost:${ port }`,
 	];
+
+	// The configured dashboard URL can differ from the static list, e.g. on
+	// calypso.live previews where it points at the preview's own dashboard.
+	const dashboardUrl = config( 'dashboard_url' );
+	if ( dashboardUrl ) {
+		const origin = new URL( String( dashboardUrl ) ).origin;
+		if ( ! origins.includes( origin ) ) {
+			origins.push( origin );
+		}
+	}
+
+	return origins;
 }
 
 /**
