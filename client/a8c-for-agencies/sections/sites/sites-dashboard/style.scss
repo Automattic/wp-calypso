@@ -310,9 +310,20 @@
 	}
 
 	&.sites-dashboard__layout {
+		// The shared item view leaves 48px between the tab strip and the content.
+		// Halve it here only — the rule is shared with the Dotcom sites and domain panes.
+		.hosting-dashboard-item-view:not( .site-error-preview ) {
+			@include break-large {
+				.hosting-dashboard-item-view__content {
+					padding-block-start: 24px;
+				}
+			}
+		}
+
 		.backup__page > .admin-ui-navigable-region,
 		.scan > .admin-ui-navigable-region,
-		.scan-new > .admin-ui-navigable-region {
+		.scan-new > .admin-ui-navigable-region,
+		.activity-log-v2 > .admin-ui-navigable-region {
 			background-color: transparent;
 		}
 
