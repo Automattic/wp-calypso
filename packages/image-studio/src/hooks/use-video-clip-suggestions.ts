@@ -11,15 +11,12 @@ import {
 import { useAsyncSuggestionsLoader } from './use-async-suggestions-loader';
 import type { AgentMessage } from '../types/agenttic';
 
-const MAX_POST_BODY_CHARS = 2000;
 const EMPTY_SUGGESTIONS: Suggestion[] = [];
 
 /**
- * The post body is inlined verbatim because the suggestions endpoint does
- * not run server-side `[[client.gutenberg_page.simple_structure]]`
- * substitution — sending that placeholder leaves the LLM with no context
- * and an active video tool, and it ends up calling the tool instead of
- * returning chips.
+ * Suggestions for the Cinematic style. The post's content and structure reach
+ * the model via the server-resolved page context in the system prompt, so this
+ * prompt carries only the direction instructions — no inlined post body.
  *
  * Each chip prompt weaves together 5-7 axes drawn from a pool of eight
  * (camera, subject, lighting, texture, time-of-day, audio, palette,
@@ -33,9 +30,8 @@ const EMPTY_SUGGESTIONS: Suggestion[] = [];
  * Each chip may also include an optional closing-direction sub-clause
  * — exposes the chat-steerable `closerStatement` affordance via example.
  */
-export function buildVideoClipSuggestionsPrompt( postBody: string ): string {
-	const trimmed = postBody.slice( 0, MAX_POST_BODY_CHARS );
-	return `Below is the body of a WordPress post. Propose 3 rich directional prompts for an 8-second 9:16 vertical video clip that would complement the post.
+export function buildVideoClipSuggestionsPrompt(): string {
+	return `Using the WordPress post's content and structure available to you in context [[client.gutenberg_page.simple_structure]], propose 3 rich directional prompts for an 8-second 9:16 vertical video clip that would complement the post.
 
 Each prompt MUST be:
 - Grounded in the post's subject matter (a place, object, environment, mood, or texture mentioned in the post — not the post's literal headline).
@@ -57,10 +53,7 @@ Each chip MAY also include an optional closing-direction sub-clause (a short phr
 - 60-120 words. As rich as the chosen axes warrant; do not pad.
 - No trailing punctuation.
 - People may appear — only adults, no children or minors. Describe them generically (e.g. "a barista", "a hiker") with no named individuals, public figures, or recognizable likenesses.
-- Free of crowds, on-screen text, signage, dialogue, or copyrighted properties — these are non-negotiable for the safety pipeline.
-
-POST BODY:
-${ trimmed }`;
+- Free of crowds, on-screen text, signage, dialogue, or copyrighted properties — these are non-negotiable for the safety pipeline.`;
 }
 
 /**
@@ -220,7 +213,7 @@ export function useVideoClipSuggestions( {
 		prompt =
 			styleKey === 'highlights'
 				? buildHighlightsClipSuggestionsPrompt()
-				: buildVideoClipSuggestionsPrompt( postBodyText );
+				: buildVideoClipSuggestionsPrompt();
 	}
 
 	// Pair the right system-prompt builder with the user-prompt variant.
