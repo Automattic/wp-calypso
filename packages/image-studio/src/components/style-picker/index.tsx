@@ -134,13 +134,6 @@ export const STYLE_OPTIONS: StyleOption[] = [
 	},
 ];
 
-// The prior Informative / Promotional video styles collapse into one
-// "Cinematic" preset — they were the same Veo chain with cosmetically
-// different prompt templates, which never read as meaningfully distinct.
-// "Highlights" is server-rendered via EditFrame Cloud on this branch
-// (LLM-composed HTML → EditFrame /api/v1/renders → MP4 → media library);
-// the in-browser encoding implementation lives on the older compositor
-// branches and is preserved there.
 export const VIDEO_STYLE_OPTIONS: StyleOption[] = [
 	{
 		label: __( 'Highlights', __i18n_text_domain__ ),

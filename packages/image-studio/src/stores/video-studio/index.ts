@@ -13,8 +13,7 @@ import { createReduxStore, register, select } from '@wordpress/data';
 export interface VideoStudioState {
 	// Selected style preset for video generation (e.g. cinematic).
 	selectedStyle: string | null;
-	// URL of the most recently generated video clip — populated when the
-	// wpcom/generate-video-for-studio tool returns a successful upload.
+	// URL of the most recently generated video clip.
 	currentVideoUrl: string | null;
 	// Attachment ID of the most recently generated video clip.
 	currentAttachmentId: number | null;
