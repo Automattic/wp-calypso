@@ -71,6 +71,7 @@ class Document extends Component {
 			sectionGroup,
 			sectionName,
 			storeSandboxHelper,
+			subscriptionManagementSubkey,
 			target,
 			user,
 			useTranslationChunks,
@@ -93,6 +94,11 @@ class Document extends Component {
 			`var BUILD_TIMESTAMP = ${ jsonStringifyForHtml( buildTimestamp ) };\n` +
 			`var BUILD_TARGET = ${ jsonStringifyForHtml( target ) };\n` +
 			( user ? `var currentUser = ${ jsonStringifyForHtml( user ) };\n` : '' ) +
+			( subscriptionManagementSubkey
+				? `var subscriptionManagementSubkey = ${ jsonStringifyForHtml(
+						subscriptionManagementSubkey
+				  ) };\n`
+				: '' ) +
 			( isSupportSession ? 'var isSupportSession = true;\n' : '' ) +
 			( isSSP ? 'var isSSP = true;\n' : '' ) +
 			( app ? `var app = ${ jsonStringifyForHtml( app ) };\n` : '' ) +

@@ -432,10 +432,7 @@ function setUpLoggedOutRoute( req, res, next ) {
 	}
 
 	if ( req.cookies?.subkey ) {
-		req.context.user = {
-			...( req.context.user ?? {} ),
-			subscriptionManagementSubkey: req.cookies.subkey,
-		};
+		req.context.subscriptionManagementSubkey = req.cookies.subkey;
 	}
 
 	Promise.all( setupRequests )

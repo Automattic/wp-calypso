@@ -138,6 +138,7 @@ declare global {
 			clientIp?: string;
 		};
 		currentUser?: User;
+		subscriptionManagementSubkey?: string; // Added by an inline script in <head> via SSR context for logged-out subscription management.
 		__REDUX_DEVTOOLS_EXTENSION__?: () => void;
 		Blackbox?: {
 			configure: ( config: {
