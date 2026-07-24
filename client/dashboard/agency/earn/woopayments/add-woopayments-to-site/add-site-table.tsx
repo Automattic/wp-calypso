@@ -1,5 +1,5 @@
-import { __experimentalHStack as HStack, RadioControl } from '@wordpress/components';
-import { DataViews as WPDataViews, filterSortAndPaginate } from '@wordpress/dataviews';
+import { RadioControl } from '@wordpress/components';
+import { filterSortAndPaginate } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
 import { useCallback, useMemo, useState } from 'react';
 import { DataViews } from '../../../../components/dataviews';
@@ -86,17 +86,6 @@ export default function AddWooPaymentsToSiteTable( {
 			onChangeView={ setView }
 			isLoading={ isLoading }
 			defaultLayouts={ { table: {} } }
-		>
-			<HStack
-				className="dataviews__view-actions woopayments-add-site__view-actions"
-				justify="space-between"
-				alignment="center"
-			>
-				<WPDataViews.Search />
-				<WPDataViews.ViewConfig />
-			</HStack>
-			<WPDataViews.Layout />
-			<WPDataViews.Footer />
-		</DataViews>
+		/>
 	);
 }

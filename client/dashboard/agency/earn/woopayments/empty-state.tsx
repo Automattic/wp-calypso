@@ -4,6 +4,7 @@ import { Button } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import wooPaymentsLogo from 'calypso/assets/images/a8c-for-agencies/woopayments/logo.svg';
 import { useAnalytics } from '../../../app/analytics';
+import { ActionList } from '../../../components/action-list';
 import EmptyState from '../../../components/empty-state';
 import AddWooPaymentsToSite from './add-woopayments-to-site';
 
@@ -31,14 +32,13 @@ export default function WooPaymentsDashboardEmptyState() {
 					<EmptyState.Title>
 						{ __( 'Earn Revenue Share when clients use WooPayments' ) }
 					</EmptyState.Title>
-					<EmptyState.Description>
-						{ __(
-							'When new clients sign up to use the WooPayments gateway on WooCommerce stores that you build or manage for them, you will receive a revenue share of 5 basis points on the Total Payments Volume (“TPV”).'
-						) }
-					</EmptyState.Description>
 				</EmptyState.Header>
 				<EmptyState.Content>
-					<EmptyState.ActionList>
+					<ActionList
+						description={ __(
+							'When new clients sign up to use the WooPayments gateway on WooCommerce stores that you build or manage for them, you will receive a revenue share of 5 basis points on the Total Payments Volume (“TPV”).'
+						) }
+					>
 						<EmptyState.ActionItem
 							title={ __( 'Add WooPayments to a site for free' ) }
 							description={ __( 'Start by picking the site.' ) }
@@ -70,7 +70,7 @@ export default function WooPaymentsDashboardEmptyState() {
 								</Button>
 							}
 						/>
-					</EmptyState.ActionList>
+					</ActionList>
 				</EmptyState.Content>
 			</EmptyState>
 		</EmptyState.Wrapper>
