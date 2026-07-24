@@ -24,7 +24,11 @@ steps:
       - desktop/release/*.dmg
       - desktop/release/*.blockmap
       - desktop/release/*.yml
-      - desktop/test/e2e/results/**/*
+      # List the e2e results explicitly. A glob here uploads whatever the run leaves
+      # behind, which is how credential-bearing HARs reached the artifact store.
+      - desktop/test/e2e/results/app.log
+      - desktop/test/e2e/results/console.log
+      - desktop/test/e2e/results/screenshot.png
 
   - label: ":desktop_computer: Build desktop (linux, unsigned)"
     key: desktop-build-linux
@@ -46,7 +50,10 @@ steps:
     command: .buildkite/commands/build-desktop-linux.sh
     artifact_paths:
       - desktop/release/*
-      - desktop/test/e2e/results/**/*
+      # See the note on the mac step's e2e results.
+      - desktop/test/e2e/results/app.log
+      - desktop/test/e2e/results/console.log
+      - desktop/test/e2e/results/screenshot.png
 
   - label: ":windows: Build desktop (windows store, unsigned)"
     key: desktop-build-windows-store
