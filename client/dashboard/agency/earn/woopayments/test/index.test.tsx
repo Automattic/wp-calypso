@@ -41,7 +41,9 @@ describe( 'EarnWooPayments', () => {
 
 		render( <EarnWooPayments /> );
 
-		expect( await screen.findByText( 'How do I start?' ) ).toBeVisible();
+		expect(
+			await screen.findByText( 'Earn Revenue Share when clients use WooPayments' )
+		).toBeVisible();
 		expect( screen.getByRole( 'button', { name: 'Add WooPayments to site' } ) ).toBeVisible();
 	} );
 
@@ -85,6 +87,8 @@ describe( 'EarnWooPayments', () => {
 
 		expect( await screen.findByText( 'store.example.com' ) ).toBeVisible();
 		expect( screen.getByText( 'Total WooPayments commissions paid' ) ).toBeVisible();
-		expect( screen.queryByText( 'How do I start?' ) ).not.toBeInTheDocument();
+		expect(
+			screen.queryByText( 'Earn Revenue Share when clients use WooPayments' )
+		).not.toBeInTheDocument();
 	} );
 } );

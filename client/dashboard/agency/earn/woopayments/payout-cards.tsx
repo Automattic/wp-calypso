@@ -5,7 +5,7 @@ import {
 	Button,
 } from '@wordpress/components';
 import { __, sprintf } from '@wordpress/i18n';
-import ConsolidatedStatCard from './consolidated-stat-card';
+import ConsolidatedStatCard from '../../../components/consolidated-stat-card';
 import useGetPayoutData from './lib/use-get-payout-data';
 
 const AGENCY_EARNINGS_LEARN_MORE_LINK =

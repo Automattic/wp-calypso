@@ -35,7 +35,6 @@ export interface UserPreferences {
 	[ key: `hosting-dashboard-time-mismatch-warning-dismissed-${ number }` ]: string | undefined; // Timestamp when the user dismissed the notice
 	[ key: `hosting-dashboard-wp-beta-notice-dismissed-${ number }` ]: string | undefined; // ISO timestamp when the user dismissed the beta notice for a site
 	'hosting-dashboard-welcome-notice-dismissed'?: string; // Timestamp when the user dismissed the notice
-	'a4a-missing-payment-settings-notice-dismissed'?: string; // Timestamp when the user dismissed the notice (shared across A4A earning pages)
 	'account-recovery-interstitial-snoozed-until'?: number; // Unix timestamp (seconds) until which the account-recovery interstitial is snoozed; 0/unset means "never snoozed"
 	'account-recovery-interstitial-dismiss-count'?: number; // How many times the user has dismissed the account-recovery interstitial; capped so we stop nudging after a few dismissals
 	'reader-landing-page'?: ReaderLandingPage;

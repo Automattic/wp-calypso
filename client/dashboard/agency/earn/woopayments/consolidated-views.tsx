@@ -6,7 +6,7 @@ import {
 	Button,
 } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
-import ConsolidatedStatCard from './consolidated-stat-card';
+import ConsolidatedStatCard from '../../../components/consolidated-stat-card';
 import PayoutCards from './payout-cards';
 import type { WooPaymentsData } from '@automattic/api-core';
 
