@@ -294,20 +294,15 @@ export default function UpgradeSlideOver( {
 									</h4>
 
 									{ showingSavedCard ? (
-										<div className="upgrade-slide-over__payment-card">
-											<div className="upgrade-slide-over__card-row">
-												<InputControl label="Card number" readOnly value="•••• •••• •••• 4242" />
-												<InputControl label="Expiry date" readOnly value="12 / 27" />
-												<InputControl label="Security code" readOnly value="•••" />
+										<div className="upgrade-slide-over__payment-card is-saved">
+											<div className="upgrade-slide-over__saved-card">
+												<Gridicon icon="credit-card" size={ 24 } />
+												<div className="upgrade-slide-over__saved-card-details">
+													<strong>Visa ending in 3779</strong>
+													<span>exp. 9/2027</span>
+													<span>nuriapenya@gmail.com</span>
+												</div>
 											</div>
-											<InputControl label="Full name" readOnly value="Núria Peña" />
-											<SelectControl
-												label="Country or region"
-												value={ countryItems.find( ( item ) => item.value === 'Spain' ) }
-												items={ countryItems }
-												disabled
-											/>
-											<InputControl label="Address" readOnly value="Carrer de Mallorca, 401" />
 											<button
 												type="button"
 												className="upgrade-slide-over__change-method"

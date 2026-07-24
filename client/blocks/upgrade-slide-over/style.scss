@@ -337,6 +337,41 @@ body.upgrade-slide-over-open {
 		[class*='input-layout'] {
 			background: var( --wpds-color-bg-surface-neutral-strong );
 		}
+
+		// Compact variant for the saved-card summary.
+		&.is-saved {
+			padding: var( --wpds-dimension-padding-lg );
+			gap: var( --wpds-dimension-gap-md );
+		}
+	}
+
+	&__saved-card {
+		display: flex;
+		align-items: flex-start;
+		gap: var( --wpds-dimension-gap-md );
+
+		.gridicon {
+			flex-shrink: 0;
+			margin-top: var( --wpds-dimension-gap-xs );
+			fill: var( --wpds-color-fg-content-neutral );
+		}
+	}
+
+	&__saved-card-details {
+		display: flex;
+		flex-direction: column;
+		gap: 2px;
+		font-size: var( --wpds-typography-font-size-md );
+		line-height: var( --wpds-typography-line-height-sm );
+
+		strong {
+			color: var( --wpds-color-fg-content-neutral );
+			font-weight: var( --wpds-typography-font-weight-medium );
+		}
+
+		span {
+			color: var( --wpds-color-fg-content-neutral-weak );
+		}
 	}
 
 	&__card-row {
