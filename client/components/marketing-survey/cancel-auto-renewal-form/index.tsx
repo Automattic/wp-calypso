@@ -153,7 +153,7 @@ class CancelAutoRenewalForm extends Component<
 				</DialogContent>
 				<DialogFooter>
 					<PrecancellationChatButton
-						purchase={ purchase }
+						purchase={ purchase.rawPurchase }
 						onClick={ onClose }
 						className="cancel-auto-renewal-form__chat-button"
 					/>

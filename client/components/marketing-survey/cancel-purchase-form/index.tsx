@@ -26,7 +26,6 @@ import {
 	isPartnerPurchase,
 } from 'calypso/dashboard/utils/purchase';
 import { cancelPurchaseSurveyCompleted, submitSurvey } from 'calypso/lib/purchases/actions';
-import { createPurchaseObject } from 'calypso/lib/purchases/assembler';
 import wpcom from 'calypso/lib/wp';
 import {
 	hasAmountAvailableToRefund,
@@ -445,7 +444,7 @@ class CancelPurchaseForm extends Component< CancelPurchaseFormProps, CancelPurch
 		return parseFloat( String( refundAmount ) ).toFixed( precision );
 	};
 
-	surveyContent( legacyPurchase: LegacyPurchase ): ReactNode {
+	surveyContent(): ReactNode {
 		const {
 			atomicTransfer,
 			translate,
@@ -463,7 +462,7 @@ class CancelPurchaseForm extends Component< CancelPurchaseFormProps, CancelPurch
 		if ( surveyStep === FEEDBACK_STEP ) {
 			return (
 				<FeedbackStep
-					purchase={ legacyPurchase }
+					purchase={ purchase }
 					isImport={ Boolean( isImport ) }
 					cancellationReasonCodes={ this.state.questionOneOrder }
 					onChangeCancellationReason={ this.onRadioOneChange }
@@ -497,7 +496,7 @@ class CancelPurchaseForm extends Component< CancelPurchaseFormProps, CancelPurch
 						onClickDowngrade={ this.downgradeClick }
 						onDeclineUpsell={ isLastStep ? this.onSubmit : this.clickNext }
 						onSwitchToMonthly={ this.props.onSwitchToMonthly }
-						purchase={ legacyPurchase }
+						purchase={ purchase }
 						purchaseSettingsUrl={ this.props.purchaseSettingsUrl }
 						recordEvent={ this.recordEvent }
 						refundAmount={ this.getRefundAmount() }
@@ -521,7 +520,7 @@ class CancelPurchaseForm extends Component< CancelPurchaseFormProps, CancelPurch
 				<UpsellStep
 					upsell={ this.state.upsell as UpsellType }
 					cancellationReason={ this.state.questionOneText }
-					purchase={ legacyPurchase }
+					purchase={ purchase }
 					site={ site as SiteDetails }
 					refundAmount={ this.getRefundAmount() }
 					intent={ intent }
@@ -563,7 +562,7 @@ class CancelPurchaseForm extends Component< CancelPurchaseFormProps, CancelPurch
 			return (
 				<AtomicRevertStep
 					atomicTransfer={ atomicTransfer }
-					purchase={ legacyPurchase }
+					purchase={ purchase }
 					site={ site }
 					atomicRevertCheckOne={ atomicRevertCheckOne }
 					onClickCheckOne={ ( isChecked ) => this.setState( { atomicRevertCheckOne: isChecked } ) }
@@ -938,8 +937,6 @@ class CancelPurchaseForm extends Component< CancelPurchaseFormProps, CancelPurch
 			return null;
 		}
 
-		const legacyPurchase = createPurchaseObject( purchase );
-
 		return (
 			<>
 				{ /** QueryProducts added to ensure currency-code state gets populated for usages of getCurrentUserCurrencyCode */ }
@@ -956,14 +953,14 @@ class CancelPurchaseForm extends Component< CancelPurchaseFormProps, CancelPurch
 							<PrecancellationChatButton
 								icon="chat_bubble"
 								onClick={ this.closeDialog }
-								purchase={ legacyPurchase }
+								purchase={ purchase }
 								surveyStep={ surveyStep }
 							/>
 						</BlankCanvas.Header>
 						{ this.props.cancellationInProgress && (
 							<Spinner className="cancel-purchase-form__header-spinner" />
 						) }
-						<BlankCanvas.Content>{ this.surveyContent( legacyPurchase ) }</BlankCanvas.Content>
+						<BlankCanvas.Content>{ this.surveyContent() }</BlankCanvas.Content>
 						<BlankCanvas.Footer>
 							<div className="cancel-purchase-form__actions">
 								<div

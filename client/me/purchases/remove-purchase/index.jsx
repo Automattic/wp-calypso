@@ -217,7 +217,7 @@ class RemovePurchase extends Component {
 	getChatButton = () => (
 		<PrecancellationChatButton
 			onClick={ this.onClickChatButton }
-			purchase={ this.props.purchase }
+			purchase={ this.props.purchase.rawPurchase }
 			className="remove-domain-dialog__chat-button"
 		/>
 	);
