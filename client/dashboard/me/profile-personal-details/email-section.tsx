@@ -237,7 +237,7 @@ export default function EmailSection( {
 					variant="warning"
 					title={ __( 'Protect access to your account' ) }
 					actions={
-						<RouterLinkButton variant="primary" to="/me/security/account-recovery">
+						<RouterLinkButton variant="secondary" to="/me/security/account-recovery">
 							{ __( 'Set up account recovery' ) }
 						</RouterLinkButton>
 					}
