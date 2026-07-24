@@ -12,7 +12,6 @@ import './empty-state.scss';
 const WOOPAYMENTS_LEARN_MORE_LINK =
 	'https://agencieshelp.automattic.com/knowledge-base/earn-revenue-share-when-clients-use-woopayments/';
 
-// The empty state shows before any site has WooPayments, so nothing is excluded from the picker.
 const EXCLUDED_SITE_IDS: number[] = [];
 
 export default function WooPaymentsDashboardEmptyState() {

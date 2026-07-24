@@ -1,17 +1,11 @@
 .woopayments-add-site-modal {
-	// The Modal has no dedicated footer slot, and its content is the scrolling
-	// element. Pin the actions to the bottom of that scroll area so they stay
-	// reachable no matter how long the site list is. Move the content's bottom
-	// padding onto the footer so its opaque background covers the list all the
-	// way down and no rows peek through beneath the buttons.
+	// The sticky footer supplies the content's bottom padding instead.
 	.components-modal__content {
 		padding-bottom: 0;
 	}
 
-	// The DataViews toolbar (search + view options) has its own inline padding, so
-	// the search box and cog sit indented from the modal title and description.
-	// Remove it so they line up flush with the rest of the modal content.
-	.dataviews__view-actions {
+	// Line the toolbar up flush with the rest of the modal content.
+	.woopayments-add-site__view-actions {
 		padding-inline: 0;
 	}
 }

@@ -29,7 +29,11 @@ export default function ConsolidatedViews( {
 		woopaymentsData?.data?.estimated?.current_quarter?.payout ?? 0;
 
 	return (
-		<Grid templateColumns="repeat(auto-fit, minmax(240px, 1fr))" gap={ 4 }>
+		<Grid
+			className="consolidated-views"
+			templateColumns="repeat(auto-fit, minmax(240px, 1fr))"
+			gap={ 4 }
+		>
 			<ConsolidatedStatCard
 				value={ formatCurrency( totalCommission, 'USD' ) }
 				footerText={ __( 'Total WooPayments commissions paid' ) }

@@ -4,7 +4,7 @@ import {
 	Modal,
 	Spinner,
 } from '@wordpress/components';
-import { filterSortAndPaginate } from '@wordpress/dataviews';
+import { DataViews as WPDataViews, filterSortAndPaginate } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
 import { download, external } from '@wordpress/icons';
 import { useCallback, useMemo, useState } from 'react';
@@ -64,7 +64,6 @@ export default function CommissionsTable( {
 				label: __( 'Site' ),
 				getValue: ( { item } ) => item.siteUrl,
 				render: ( { item } ) => <SiteColumn site={ item.siteUrl } />,
-				enableGlobalSearch: true,
 				enableHiding: false,
 				enableSorting: false,
 			},
@@ -202,11 +201,21 @@ export default function CommissionsTable( {
 				getItemId={ ( item ) => `${ item.blogId }` }
 				paginationInfo={ paginationInfo }
 				fields={ fields }
+				search={ false }
 				actions={ actions }
 				view={ view }
 				onChangeView={ setView }
 				defaultLayouts={ { table: {} } }
-			/>
+			>
+				<HStack
+					className="dataviews__view-actions woopayments-commissions__view-actions"
+					justify="end"
+				>
+					<WPDataViews.ViewConfig />
+				</HStack>
+				<WPDataViews.Layout />
+				<WPDataViews.Footer />
+			</DataViews>
 
 			{ isGeneratingReport && (
 				<Modal
