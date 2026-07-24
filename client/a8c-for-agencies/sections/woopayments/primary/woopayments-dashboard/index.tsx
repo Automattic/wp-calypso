@@ -18,7 +18,6 @@ import LayoutHeader, {
 import { useDispatch, useSelector } from 'calypso/state';
 import { getActiveAgencyId } from 'calypso/state/a8c-for-agencies/agency/selectors';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import { WooPaymentsProvider } from '../../context';
 import WooPaymentsDashboardContent from '../../dashboard-content';
 import WooPaymentsDashboardEmptyState from './empty-state';
 
@@ -62,8 +61,22 @@ const WooPaymentsDashboard = () => {
 			return <WooPaymentsDashboardEmptyState />;
 		}
 
-		return <WooPaymentsDashboardContent />;
-	}, [ isLoading, showEmptyState ] );
+		return (
+			<WooPaymentsDashboardContent
+				agencyId={ agencyId }
+				woopaymentsData={ woopaymentsData }
+				isLoadingWooPaymentsData={ isLoadingWooPaymentsData }
+				sitesWithPluginsStates={ sitesWithPluginsStates }
+			/>
+		);
+	}, [
+		isLoading,
+		showEmptyState,
+		agencyId,
+		woopaymentsData,
+		isLoadingWooPaymentsData,
+		sitesWithPluginsStates,
+	] );
 
 	const isFullWidth = ! showEmptyState && isDesktop && ! isLoading;
 
@@ -76,35 +89,27 @@ const WooPaymentsDashboard = () => {
 			title={ title }
 			wide
 		>
-			<WooPaymentsProvider
-				value={ {
-					woopaymentsData,
-					isLoadingWooPaymentsData,
-					sitesWithPluginsStates,
-				} }
-			>
-				<LayoutTop isFullWidth={ isFullWidth }>
-					{ hasSites && <MissingPaymentSettingsNotice commissionType="woopayments" /> }
-					<LayoutHeader>
-						<Title>{ title }</Title>
-						<Actions>
-							<MobileSidebarNavigation />
-							<div className="woopayments-dashboard__actions">
-								{ ! isLoading && (
-									<AddWooPaymentsToSite
-										agencyId={ agencyId }
-										excludedSiteIds={ excludedSiteIds }
-										recordTracksEvent={ recordTracks }
-										navigate={ ( url ) => page.redirect( url ) }
-									/>
-								) }
-							</div>
-						</Actions>
-					</LayoutHeader>
-				</LayoutTop>
+			<LayoutTop isFullWidth={ isFullWidth }>
+				{ hasSites && <MissingPaymentSettingsNotice commissionType="woopayments" /> }
+				<LayoutHeader>
+					<Title>{ title }</Title>
+					<Actions>
+						<MobileSidebarNavigation />
+						<div className="woopayments-dashboard__actions">
+							{ ! isLoading && (
+								<AddWooPaymentsToSite
+									agencyId={ agencyId }
+									excludedSiteIds={ excludedSiteIds }
+									recordTracksEvent={ recordTracks }
+									navigate={ ( url ) => page.redirect( url ) }
+								/>
+							) }
+						</div>
+					</Actions>
+				</LayoutHeader>
+			</LayoutTop>
 
-				<LayoutBody>{ content }</LayoutBody>
-			</WooPaymentsProvider>
+			<LayoutBody>{ content }</LayoutBody>
 		</Layout>
 	);
 };
