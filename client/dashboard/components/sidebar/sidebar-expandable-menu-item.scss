@@ -15,7 +15,9 @@
 		block-size: auto;
 		opacity: 1;
 		overflow: clip;
-		overflow-clip-margin: 2px;
+		// Menu item focus rings sit outside the element: a 2px ring at a 2px
+		// offset. Leave room for both, or the clip slices them.
+		overflow-clip-margin: 4px;
 	}
 
 	.dashboard-sidebar__menu-item {

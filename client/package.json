@@ -120,7 +120,7 @@
 		"@wordpress/notices": "5.48.0",
 		"@wordpress/private-apis": "^1.51.0",
 		"@wordpress/react-i18n": "^4.48.0",
-		"@wordpress/theme": "^0.15.0",
+		"@wordpress/theme": "^1.0.0",
 		"@wordpress/ui": "^0.17.0",
 		"@wordpress/warning": "^3.48.0",
 		"autosize": "^4.0.4",

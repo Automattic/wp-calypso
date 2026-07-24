@@ -215,6 +215,15 @@
 	}
 }
 
+/* @wordpress/components emphasis font weight ----------------------------------------- *
+ * 37.0.0 moved Button and other emphasised labels from the legacy medium weight onto
+ * `--wpds-typography-font-weight-emphasis`, which the design system sets to 600. Hold
+ * the previous 499 so button text keeps its existing weight. Remove this to adopt the
+ * heavier design-system weight. */
+:root {
+	--wpds-typography-font-weight-emphasis: 499;
+}
+
 /* @wordpress/components RadioControl overrides --------------------------------------- */
 .components-radio-control {
 	&__input[type="radio"] {

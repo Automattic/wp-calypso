@@ -12603,23 +12603,37 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@wordpress/theme@npm:0.15.0":
-  version: 0.15.0
-  resolution: "@wordpress/theme@npm:0.15.0"
+"@wordpress/theme@npm:1.0.0":
+  version: 1.0.0
+  resolution: "@wordpress/theme@npm:1.0.0"
   dependencies:
-    "@wordpress/element": "npm:^8.0.0"
-    "@wordpress/private-apis": "npm:^1.48.0"
-    "@wordpress/style-runtime": "npm:^0.4.0"
+    "@wordpress/compose": "npm:^8.4.0"
+    "@wordpress/deprecated": "npm:^4.51.0"
+    "@wordpress/element": "npm:^8.3.0"
+    "@wordpress/private-apis": "npm:^1.51.0"
+    "@wordpress/style-runtime": "npm:^0.7.0"
     colorjs.io: "npm:^0.6.0"
     memize: "npm:^2.1.0"
   peerDependencies:
-    react: ^18.0.0
-    react-dom: ^18.0.0
+    "@types/react": ^18 || ^19
+    esbuild: ^0.27.2
+    postcss: ^8.0.0
+    react: ^18 || ^19
+    react-dom: ^18 || ^19
     stylelint: ^16.8.2
+    vite: ^7.3.2
   peerDependenciesMeta:
+    "@types/react":
+      optional: true
+    esbuild:
+      optional: true
+    postcss:
+      optional: true
     stylelint:
       optional: true
-  checksum: e5325c9e0059fd47ee1a00b5f00f5ad013193d42ccb8f688bad288fbfb61e8bd21cc3ffe53fd5e209ddd3040294e4d6f6c1f97363449399267c7c3b26e8984e4
+    vite:
+      optional: true
+  checksum: 3f38b9119b52646a26cb9b891dbc2cab0dc08e309241c728175b5365956703bb10add908cda8fe66fa4023d651b415ce9f5aa5b2ba58ba2688957628f929071b
   languageName: node
   linkType: hard
 
@@ -14532,7 +14546,7 @@ __metadata:
     "@wordpress/notices": "npm:5.48.0"
     "@wordpress/private-apis": "npm:^1.51.0"
     "@wordpress/react-i18n": "npm:^4.48.0"
-    "@wordpress/theme": "npm:^0.15.0"
+    "@wordpress/theme": "npm:^1.0.0"
     "@wordpress/ui": "npm:^0.17.0"
     "@wordpress/warning": "npm:^3.48.0"
     autoprefixer: "npm:^10.4.21"
