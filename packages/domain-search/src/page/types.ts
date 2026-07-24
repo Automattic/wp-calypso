@@ -108,9 +108,19 @@ export interface DomainSearchEvents {
 	onTrademarkClaimsNoticeAccepted: ( suggestion: ReturnType< typeof useSuggestion > ) => void;
 	onTrademarkClaimsNoticeClosed: ( suggestion: ReturnType< typeof useSuggestion > ) => void;
 	onPageView: () => void;
-	onBundleShown: ( bundle: BundleSuggestion ) => void;
-	onBundleAddToCart: ( bundle: BundleSuggestion ) => void;
+	/**
+	 * A bundle offer became visible. `placement` distinguishes the top featured
+	 * `BundleCard` (`'card'`) from an inline row beneath a trigger suggestion
+	 * (`'inline'`) so the shown → accepted funnel can segment by surface.
+	 */
+	onBundleShown: ( bundle: BundleSuggestion, placement: BundlePlacement ) => void;
+	onBundleAddToCart: ( bundle: BundleSuggestion, placement: BundlePlacement ) => void;
 }
+
+/**
+ * Where a bundle offer is surfaced: the top featured card or an inline row.
+ */
+export type BundlePlacement = 'card' | 'inline';
 
 export interface DomainSearchConfig {
 	vendor: DomainSuggestionQueryVendor;
