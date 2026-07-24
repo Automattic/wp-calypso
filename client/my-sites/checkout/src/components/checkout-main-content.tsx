@@ -1304,18 +1304,6 @@ const StepContainerV2CheckoutFixer = styled.div< {
 				padding-block: 2rem;
 			}
 
-			.checkout-contact-form-step {
-				padding-block: 0 32px;
-			}
-
-			.checkout__payment-method-step {
-				padding-block-start: 0;
-			}
-
-			.checkout-step.is-active.checkout__payment-method-step {
-				padding-bottom: 16px;
-			}
-
 			.checkout-steps__submit-button-wrapper {
 				max-width: 100%;
 				padding-inline: var( --step-container-v2-content-inline-padding );
@@ -1340,6 +1328,15 @@ const StepContainerV2CheckoutFixer = styled.div< {
 			}
 			.checkout__step-wrapper.checkout__step-wrapper--last-step {
 				margin-bottom: 0;
+			}
+			.checkout-contact-form-step {
+				padding-block: 0 32px;
+			}
+			.checkout__payment-method-step {
+				padding-block-start: 0;
+			}
+			.checkout-step.is-active.checkout__payment-method-step {
+				padding-bottom: 16px;
 			}
 			/* Figma 2392:15311/15425/15448 — under the mobile sticky experiment
 			   every step renders as a plain heading; the stepper circle (number
