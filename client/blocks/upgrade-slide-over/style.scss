@@ -1,0 +1,581 @@
+/**
+ * UpgradeSlideOver — PROTOTYPE styles.
+ *
+ * Built on WPDS design tokens (--wpds-*), inlined from the vendored partial
+ * below (see _wpds-tokens.scss for why). Per WPDS convention, tokens are used
+ * without fallback values.
+ *
+ * The only non-token value is the backdrop scrim (the token set has no
+ * overlay/scrim color yet) and the 782px WP admin breakpoint.
+ */
+
+@use 'wpds-tokens';
+@use 'wpds-token-aliases';
+
+body.upgrade-slide-over-open {
+	overflow: hidden;
+}
+
+.upgrade-slide-over {
+	position: fixed;
+	inset: 0;
+	// Above Calypso masterbar (z-index 180) and dialogs (100200).
+	z-index: 100300;
+	display: flex;
+	justify-content: flex-end;
+	font-family: var( --wpds-typography-font-family-body );
+
+	&__backdrop {
+		position: absolute;
+		inset: 0;
+		border: 0;
+		padding: 0;
+		margin: 0;
+		background: rgba( 0, 0, 0, 0.4 );
+		opacity: 0;
+		transition: opacity var( --wpds-motion-duration-md ) var( --wpds-motion-easing-subtle );
+		cursor: pointer;
+	}
+
+	&__panel {
+		position: relative;
+		display: flex;
+		height: 100%;
+		width: min( var( --wpds-dimension-surface-width-2xl ), 100vw );
+		background: var( --wpds-color-bg-surface-neutral-strong );
+		box-shadow: var( --wpds-elevation-lg );
+		transform: translateX( 100% );
+		transition: transform var( --wpds-motion-duration-lg ) var( --wpds-motion-easing-expressive );
+		outline: none;
+	}
+
+	&.is-visible &__backdrop {
+		opacity: 1;
+	}
+
+	&.is-visible &__panel {
+		transform: translateX( 0 );
+	}
+
+	@media ( prefers-reduced-motion: reduce ) {
+		&__backdrop,
+		&__panel {
+			transition: none;
+		}
+	}
+
+	// ----- Left column: plan features -----
+
+	&__features {
+		flex: 0 0 var( --wpds-dimension-surface-width-sm );
+		background: var( --wpds-color-bg-surface-neutral-weak );
+		border-right: var( --wpds-border-width-xs ) solid var( --wpds-color-stroke-surface-neutral );
+		padding: var( --wpds-dimension-padding-3xl );
+		overflow-y: auto;
+
+		h3 {
+			font-size: var( --wpds-typography-font-size-lg );
+			line-height: var( --wpds-typography-line-height-lg );
+			font-weight: var( --wpds-typography-font-weight-medium );
+			margin: 0 0 var( --wpds-dimension-gap-xs );
+			color: var( --wpds-color-fg-content-neutral );
+		}
+
+		ul {
+			list-style: none;
+			margin: var( --wpds-dimension-gap-xl ) 0 0;
+			padding: 0;
+			display: flex;
+			flex-direction: column;
+			gap: var( --wpds-dimension-gap-md );
+		}
+
+		li {
+			display: flex;
+			align-items: flex-start;
+			gap: var( --wpds-dimension-gap-sm );
+			font-size: var( --wpds-typography-font-size-md );
+			line-height: var( --wpds-typography-line-height-sm );
+			color: var( --wpds-color-fg-content-neutral );
+
+			.gridicon {
+				flex-shrink: 0;
+				margin-top: 2px;
+				fill: var( --wpds-color-fg-content-success );
+			}
+		}
+	}
+
+	&__tagline {
+		font-size: var( --wpds-typography-font-size-sm );
+		line-height: var( --wpds-typography-line-height-sm );
+		color: var( --wpds-color-fg-content-neutral-weak );
+		margin: 0;
+	}
+
+	// ----- Right column: checkout -----
+
+	&__checkout {
+		flex: 1;
+		display: flex;
+		flex-direction: column;
+		min-width: 0;
+	}
+
+	&__header {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		padding: var( --wpds-dimension-padding-2xl ) var( --wpds-dimension-padding-3xl )
+			var( --wpds-dimension-padding-sm );
+
+		h2 {
+			font-size: var( --wpds-typography-font-size-xl );
+			line-height: var( --wpds-typography-line-height-xl );
+			font-weight: var( --wpds-typography-font-weight-medium );
+			margin: 0;
+			color: var( --wpds-color-fg-content-neutral );
+		}
+	}
+
+	&__close {
+		border: 0;
+		background: var( --wpds-color-bg-interactive-neutral-weak );
+		padding: var( --wpds-dimension-padding-xs );
+		margin: calc( var( --wpds-dimension-padding-xs ) * -1 );
+		cursor: pointer;
+		border-radius: var( --wpds-border-radius-md );
+		line-height: 0;
+		color: var( --wpds-color-fg-interactive-neutral );
+
+		.gridicon {
+			fill: currentColor;
+		}
+
+		&:hover {
+			color: var( --wpds-color-fg-interactive-neutral-active );
+			background: var( --wpds-color-bg-interactive-neutral-weak-active );
+		}
+
+		&:focus-visible {
+			outline: var( --wpds-border-width-focus ) solid var( --wpds-color-stroke-focus-brand );
+			outline-offset: 1px;
+		}
+	}
+
+	&__body {
+		flex: 1;
+		overflow-y: auto;
+		padding: var( --wpds-dimension-padding-sm ) var( --wpds-dimension-padding-3xl )
+			var( --wpds-dimension-padding-2xl );
+		display: flex;
+		flex-direction: column;
+		gap: var( --wpds-dimension-gap-xl );
+
+		// The form controls are @wordpress/ui and style themselves with WPDS
+		// tokens. These guards stop classic Calypso's unlayered global form
+		// CSS from beating the @layer'd wp-ui styles, and apply the WPDS
+		// "plain" label variant (sentence case, md size) to match the
+		// reference design. InputControl doesn't expose the Field.Label
+		// `variant` prop yet, hence CSS.
+		input,
+		select {
+			margin: 0;
+		}
+
+		label {
+			text-transform: none;
+			letter-spacing: normal;
+			font-size: var( --wpds-typography-font-size-md );
+			line-height: var( --wpds-typography-line-height-sm );
+		}
+
+		section {
+			display: flex;
+			flex-direction: column;
+			gap: var( --wpds-dimension-gap-md );
+		}
+	}
+
+	&__section-title {
+		display: flex;
+		align-items: center;
+		gap: var( --wpds-dimension-gap-sm );
+		font-size: var( --wpds-typography-font-size-lg );
+		line-height: var( --wpds-typography-line-height-lg );
+		font-weight: var( --wpds-typography-font-weight-medium );
+		margin: 0 0 var( --wpds-dimension-gap-xs );
+		color: var( --wpds-color-fg-content-neutral );
+	}
+
+	&__step-number {
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		width: var( --wpds-typography-line-height-sm );
+		height: var( --wpds-typography-line-height-sm );
+		// No "round" radius token in WPDS yet; plain circle.
+		border-radius: 50%;
+		background: var( --wpds-color-bg-interactive-neutral-strong );
+		color: var( --wpds-color-fg-interactive-neutral-strong );
+		font-size: var( --wpds-typography-font-size-sm );
+		font-weight: var( --wpds-typography-font-weight-medium );
+	}
+
+	&__save-badge {
+		display: inline-flex;
+		align-items: center;
+		padding: 0 var( --wpds-dimension-padding-sm );
+		border-radius: var( --wpds-border-radius-sm );
+		background: var( --wpds-color-bg-surface-success );
+		color: var( --wpds-color-fg-content-success );
+		font-size: var( --wpds-typography-font-size-sm );
+		line-height: var( --wpds-typography-line-height-xs );
+		font-weight: var( --wpds-typography-font-weight-medium );
+		white-space: nowrap;
+	}
+
+	&__coupon-link {
+		align-self: flex-start;
+		border: 0;
+		background: transparent;
+		padding: 0;
+		cursor: pointer;
+		font-size: var( --wpds-typography-font-size-md );
+		color: var( --wpds-color-fg-interactive-brand );
+
+		&:hover {
+			color: var( --wpds-color-fg-interactive-brand-active );
+			text-decoration: underline;
+		}
+
+		&:focus-visible {
+			outline: var( --wpds-border-width-focus ) solid var( --wpds-color-stroke-focus-brand );
+			outline-offset: 1px;
+		}
+	}
+
+	&__method-tabs {
+		display: grid;
+		grid-template-columns: repeat( 4, 1fr );
+		gap: var( --wpds-dimension-gap-sm );
+
+		button {
+			display: inline-flex;
+			align-items: center;
+			justify-content: center;
+			gap: var( --wpds-dimension-gap-sm );
+			height: 40px;
+			border: var( --wpds-border-width-xs ) solid var( --wpds-color-stroke-interactive-neutral );
+			border-radius: var( --wpds-border-radius-lg );
+			background: var( --wpds-color-bg-interactive-neutral-weak );
+			color: var( --wpds-color-fg-interactive-neutral );
+			font-size: var( --wpds-typography-font-size-md );
+			font-weight: var( --wpds-typography-font-weight-medium );
+			cursor: pointer;
+
+			svg {
+				height: 16px;
+				width: auto;
+				flex-shrink: 0;
+			}
+
+			.gridicon {
+				fill: currentColor;
+			}
+
+			&:hover {
+				background: var( --wpds-color-bg-interactive-neutral-weak-active );
+			}
+
+			&:focus-visible {
+				outline: var( --wpds-border-width-focus ) solid var( --wpds-color-stroke-focus-brand );
+				outline-offset: 1px;
+			}
+
+			&.is-selected {
+				border-color: var( --wpds-color-stroke-interactive-brand );
+				border-width: var( --wpds-border-width-focus );
+				color: var( --wpds-color-fg-content-neutral );
+			}
+		}
+	}
+
+	&__method-note {
+		margin: 0;
+		padding: var( --wpds-dimension-padding-md ) var( --wpds-dimension-padding-lg );
+		border-radius: var( --wpds-border-radius-lg );
+		background: var( --wpds-color-bg-surface-info-weak );
+		font-size: var( --wpds-typography-font-size-md );
+		line-height: var( --wpds-typography-line-height-sm );
+		color: var( --wpds-color-fg-content-info );
+	}
+
+	// ----- Payment card (grey surface holding card + billing fields) -----
+
+	&__payment-card {
+		display: flex;
+		flex-direction: column;
+		gap: var( --wpds-dimension-gap-lg );
+		padding: var( --wpds-dimension-padding-2xl );
+		border-radius: var( --wpds-border-radius-lg );
+		background: var( --wpds-color-bg-surface-neutral-weak );
+
+		// The WPDS input surface is transparent; on the grey card the fields
+		// read as white, like the reference. The @wordpress/ui layout class
+		// is CSS-modules-hashed but keeps its readable name as a substring.
+		[class*='input-layout'] {
+			background: var( --wpds-color-bg-surface-neutral-strong );
+		}
+	}
+
+	&__card-row {
+		display: grid;
+		grid-template-columns: 2.4fr 1fr 1fr;
+		gap: var( --wpds-dimension-gap-md );
+	}
+
+	&__card-terms {
+		margin: 0;
+		font-size: var( --wpds-typography-font-size-sm );
+		line-height: var( --wpds-typography-line-height-sm );
+		color: var( --wpds-color-fg-content-neutral-weak );
+	}
+
+	&__brand-chips {
+		display: inline-flex;
+		align-items: center;
+		gap: 3px;
+
+		svg {
+			height: 13px;
+			width: auto;
+			display: block;
+		}
+	}
+
+	&__checkbox-row {
+		display: flex;
+		align-items: center;
+		gap: var( --wpds-dimension-gap-sm );
+		font-size: var( --wpds-typography-font-size-md );
+		color: var( --wpds-color-fg-content-neutral );
+		cursor: pointer;
+
+		input[type='checkbox'] {
+			// Calypso globals set appearance: none, which hides the box.
+			appearance: auto;
+			width: 16px;
+			height: 16px;
+			margin: 0;
+			flex-shrink: 0;
+			accent-color: var( --wpds-color-bg-interactive-neutral-strong );
+		}
+	}
+
+	&__tax-block {
+		display: flex;
+		flex-direction: column;
+		gap: var( --wpds-dimension-gap-sm );
+	}
+
+	&__tax-label {
+		font-size: var( --wpds-typography-font-size-md );
+		font-weight: var( --wpds-typography-font-weight-medium );
+		color: var( --wpds-color-fg-content-neutral );
+	}
+
+	&__tax-row {
+		display: grid;
+		grid-template-columns: 1fr 1fr;
+		gap: var( --wpds-dimension-gap-md );
+	}
+
+	// ----- Pricing summary above the CTA -----
+
+	&__summary {
+		display: flex;
+		flex-direction: column;
+		gap: var( --wpds-dimension-gap-lg );
+	}
+
+	&__summary-note {
+		margin: 0;
+		font-size: var( --wpds-typography-font-size-sm );
+		line-height: var( --wpds-typography-line-height-sm );
+		color: var( --wpds-color-fg-content-neutral-weak );
+	}
+
+	&__summary-table {
+		display: flex;
+		flex-direction: column;
+	}
+
+	&__summary-row {
+		display: flex;
+		align-items: baseline;
+		justify-content: space-between;
+		gap: var( --wpds-dimension-gap-lg );
+		padding: var( --wpds-dimension-padding-md ) 0;
+		border-bottom: var( --wpds-border-width-xs ) solid
+			var( --wpds-color-stroke-surface-neutral );
+		font-size: var( --wpds-typography-font-size-md );
+		color: var( --wpds-color-fg-content-neutral );
+
+		&.is-header {
+			padding-top: 0;
+			font-size: var( --wpds-typography-font-size-sm );
+			color: var( --wpds-color-fg-content-neutral-weak );
+		}
+	}
+
+	&__summary-product {
+		display: flex;
+		flex-direction: column;
+		gap: var( --wpds-dimension-gap-xs );
+		font-weight: var( --wpds-typography-font-weight-medium );
+	}
+
+	&__summary-detail {
+		display: inline-flex;
+		align-items: center;
+		gap: var( --wpds-dimension-gap-sm );
+		font-size: var( --wpds-typography-font-size-sm );
+		font-weight: var( --wpds-typography-font-weight-regular );
+		color: var( --wpds-color-fg-content-neutral-weak );
+
+		s {
+			color: var( --wpds-color-fg-content-neutral-weak );
+		}
+	}
+
+	&__summary-cost {
+		font-size: var( --wpds-typography-font-size-lg );
+		font-weight: var( --wpds-typography-font-weight-medium );
+	}
+
+	// ----- Footer -----
+
+	&__footer {
+		border-top: var( --wpds-border-width-xs ) solid var( --wpds-color-stroke-surface-neutral );
+		padding: var( --wpds-dimension-padding-lg ) var( --wpds-dimension-padding-3xl )
+			var( --wpds-dimension-padding-2xl );
+		display: flex;
+		flex-direction: column;
+		gap: var( --wpds-dimension-gap-md );
+	}
+
+	&__guarantee {
+		font-size: var( --wpds-typography-font-size-sm );
+		line-height: var( --wpds-typography-line-height-sm );
+		color: var( --wpds-color-fg-content-neutral-weak );
+		text-align: center;
+		margin: 0;
+	}
+
+	// Strong neutral (dark) button, WPDS-tokenized. Overrides the
+	// @wordpress/ui solid (brand blue) variant; our unlayered CSS wins
+	// over its @layer styles.
+	&__pay-button {
+		justify-content: center;
+		gap: var( --wpds-dimension-gap-sm );
+		width: 100%;
+		height: var( --wpds-typography-line-height-2xl );
+		border-radius: var( --wpds-border-radius-lg );
+		background: var( --wpds-color-bg-interactive-neutral-strong );
+		color: var( --wpds-color-fg-interactive-neutral-strong );
+		font-size: var( --wpds-typography-font-size-lg );
+		font-weight: var( --wpds-typography-font-weight-medium );
+
+		.gridicon {
+			fill: currentColor;
+		}
+
+		&:hover:not( :disabled ),
+		&:active:not( :disabled ) {
+			background: var( --wpds-color-bg-interactive-neutral-strong-active );
+			color: var( --wpds-color-fg-interactive-neutral-strong-active );
+		}
+
+		&:focus-visible {
+			outline: var( --wpds-border-width-focus ) solid var( --wpds-color-stroke-focus-brand );
+			outline-offset: 1px;
+			box-shadow: none;
+		}
+
+		// @wordpress/ui Button uses aria-disabled, not the disabled attribute.
+		&:disabled,
+		&[aria-disabled='true'] {
+			background: var( --wpds-color-bg-interactive-neutral-strong-disabled );
+			color: var( --wpds-color-fg-interactive-neutral-strong-disabled );
+		}
+	}
+
+	// ----- Success state -----
+
+	&__success {
+		flex: 1;
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		justify-content: center;
+		text-align: center;
+		padding: var( --wpds-dimension-padding-3xl );
+		gap: var( --wpds-dimension-gap-sm );
+
+		h2 {
+			font-size: var( --wpds-typography-font-size-xl );
+			line-height: var( --wpds-typography-line-height-xl );
+			font-weight: var( --wpds-typography-font-weight-medium );
+			color: var( --wpds-color-fg-content-neutral );
+			margin: var( --wpds-dimension-gap-md ) 0 0;
+		}
+
+		p {
+			font-size: var( --wpds-typography-font-size-md );
+			line-height: var( --wpds-typography-line-height-md );
+			color: var( --wpds-color-fg-content-neutral-weak );
+			max-width: 360px;
+			margin: 0 0 var( --wpds-dimension-gap-lg );
+		}
+
+		.upgrade-slide-over__pay-button {
+			max-width: var( --wpds-dimension-surface-width-xs );
+		}
+	}
+
+	&__success-icon {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		width: 64px;
+		height: 64px;
+		border-radius: 50%;
+		background: var( --wpds-color-bg-surface-success-weak );
+
+		.gridicon {
+			fill: var( --wpds-color-fg-content-success );
+		}
+	}
+
+	// ----- Small screens: stack columns -----
+
+	@media ( max-width: 782px ) {
+		&__panel {
+			flex-direction: column;
+			overflow-y: auto;
+		}
+
+		&__features {
+			flex: none;
+			border-right: 0;
+			border-bottom: var( --wpds-border-width-xs ) solid
+				var( --wpds-color-stroke-surface-neutral );
+		}
+
+		&__card-row {
+			grid-template-columns: 1fr 1fr;
+		}
+	}
+}
+
