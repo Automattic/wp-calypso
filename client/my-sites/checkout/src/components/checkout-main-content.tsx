@@ -17,7 +17,6 @@ import {
 	useIsStepComplete,
 	CheckoutErrorBoundary,
 	CheckoutFormSubmit,
-	CheckoutPaymentMethods,
 	PaymentMethodStep,
 	FormStatus,
 	usePaymentMethod,
@@ -1039,22 +1038,16 @@ export default function CheckoutMainContent( {
 							titleContent: <>{ translate( 'Payment method' ) }</>,
 							/* Figma 3971:13239 — secure-encryption notice sits as a
 							   13/regular/Gray 60 paragraph between the step heading
-							   and the methods card. We rebuild the default
-							   activeStepContent here so the notice ships alongside it. */
-							activeStepContent: (
-								<>
-									<p className="checkout-payment-method__secure-notice">
-										{ translate( 'All transactions are secure and encrypted.' ) }
-										{ /* getRefundWindowCopy is a badge label (no terminal stop), so it
-										     needs one to sit in prose here. */ }
-										{ paymentStepRefundCopy ? <> { paymentStepRefundCopy }.</> : null }
-									</p>
-									<CheckoutPaymentMethods
-										onPageLoadError={ onPageLoadError }
-										isComplete={ false }
-										waitForPaymentMethodIds={ [ 'apple-pay', 'google-pay' ] }
-									/>
-								</>
+							   and the methods card. activeStepHeader renders directly
+							   above activeStepContent, so the default methods card is
+							   left untouched. */
+							activeStepHeader: (
+								<p className="checkout-payment-method__secure-notice">
+									{ translate( 'All transactions are secure and encrypted.' ) }
+									{ /* getRefundWindowCopy is a badge label (no terminal stop), so it
+									     needs one to sit in prose here. */ }
+									{ paymentStepRefundCopy ? <> { paymentStepRefundCopy }.</> : null }
+								</p>
 							),
 						} ) }
 						isCompleteCallback={ () => {
@@ -1618,7 +1611,7 @@ const mobileStickySummaryStyles = css`
 	/* Secure-encryption notice — Figma 3971:13239 — sits below the
 	   "Payment method" heading at 13/regular/Gray 60 with a 16px
 	   gap to the card group. The <p> is injected via
-	   activeStepContent above. */
+	   activeStepHeader above. */
 	.checkout__payment-method-step .checkout-payment-method__secure-notice {
 		font-size: 13px;
 		line-height: 20px;
