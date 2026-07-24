@@ -221,6 +221,77 @@ describe( 'pollForBuildWowStatus', () => {
 		expect( onRequestError ).not.toHaveBeenCalled();
 	} );
 
+	it( 'reports the real error when the deadline passed but the request was never aborted', async () => {
+		// Transports that ignore the signal (wpcom-xhr-request) run the request to its
+		// real conclusion, so the deadline having passed must not overwrite the cause.
+		const fetchStatus = jest.fn(
+			() =>
+				new Promise< { build_status?: string } >( ( _resolve, reject ) => {
+					setTimeout(
+						() => reject( Object.assign( new Error( 'Bad gateway' ), { status: 502 } ) ),
+						900
+					);
+				} )
+		);
+		const onRequestError = jest.fn();
+
+		pollForBuildWowStatus( {
+			siteIdentifier: '123',
+			onReady: jest.fn(),
+			onFailed: jest.fn(),
+			onRequestError,
+			pollIntervalMs: 5000,
+			requestTimeoutMs: 500,
+			fetchStatus,
+		} );
+
+		await jest.advanceTimersByTimeAsync( 1000 );
+
+		expect( onRequestError ).toHaveBeenCalledWith( '502 Bad gateway' );
+	} );
+
+	it( 'keeps distinct HTTP statuses apart even when they share a message', async () => {
+		const fetchStatus = jest
+			.fn()
+			.mockRejectedValueOnce( Object.assign( new Error( 'Unauthorized.' ), { status: 401 } ) )
+			.mockRejectedValue( Object.assign( new Error( 'Unauthorized.' ), { status: 403 } ) );
+		const onRequestError = jest.fn();
+
+		pollForBuildWowStatus( {
+			siteIdentifier: '123',
+			onReady: jest.fn(),
+			onFailed: jest.fn(),
+			onRequestError,
+			pollIntervalMs: 1000,
+			fetchStatus,
+		} );
+
+		await jest.advanceTimersByTimeAsync( 2000 );
+
+		expect( onRequestError.mock.calls.map( ( call ) => call[ 0 ] ) ).toEqual( [
+			'401 Unauthorized.',
+			'403 Unauthorized.',
+		] );
+	} );
+
+	it( 'describes a rejection that is not an Error', async () => {
+		const fetchStatus = jest.fn().mockRejectedValue( { message: 'gateway exploded' } );
+		const onRequestError = jest.fn();
+
+		pollForBuildWowStatus( {
+			siteIdentifier: '123',
+			onReady: jest.fn(),
+			onFailed: jest.fn(),
+			onRequestError,
+			pollIntervalMs: 1000,
+			fetchStatus,
+		} );
+
+		await jest.advanceTimersByTimeAsync( 0 );
+
+		expect( onRequestError ).toHaveBeenCalledWith( 'gateway exploded' );
+	} );
+
 	it( 'reports a request timeout as a readable reason, not "[object Event]"', async () => {
 		const fetchStatus = jest.fn(
 			( _siteIdentifier: string, signal: AbortSignal ) =>
@@ -360,7 +431,7 @@ describe( 'pollForBuildWowStatus', () => {
 		expect( onReady ).toHaveBeenCalledTimes( 1 );
 	} );
 
-	it( 'stops polling and aborts the current request when cancelled', async () => {
+	it( 'stops scheduling further polls when cancelled between requests', async () => {
 		const fetchStatus = jest.fn().mockResolvedValue( {} );
 		const stop = pollForBuildWowStatus( {
 			siteIdentifier: '123',
@@ -375,5 +446,28 @@ describe( 'pollForBuildWowStatus', () => {
 		await jest.advanceTimersByTimeAsync( 5000 );
 
 		expect( fetchStatus ).toHaveBeenCalledTimes( 1 );
+	} );
+
+	it( 'aborts the request that is still in flight when cancelled', async () => {
+		let capturedSignal: AbortSignal | undefined;
+		const fetchStatus = jest.fn( ( _siteIdentifier: string, signal: AbortSignal ) => {
+			capturedSignal = signal;
+			return new Promise< { build_status?: string } >( () => {} );
+		} );
+
+		const stop = pollForBuildWowStatus( {
+			siteIdentifier: '123',
+			onReady: jest.fn(),
+			onFailed: jest.fn(),
+			pollIntervalMs: 1000,
+			fetchStatus,
+		} );
+
+		await jest.advanceTimersByTimeAsync( 0 );
+		expect( capturedSignal?.aborted ).toBe( false );
+
+		stop();
+
+		expect( capturedSignal?.aborted ).toBe( true );
 	} );
 } );

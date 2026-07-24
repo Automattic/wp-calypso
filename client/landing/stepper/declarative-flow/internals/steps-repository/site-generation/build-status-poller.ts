@@ -15,6 +15,7 @@ const BUILD_WOW_FAILED_STATUS_PREFIX = 'failed:';
 export const BUILD_WOW_DELIVERY_PHASES = [ 'delivering', 'activating', 'verifying' ] as const;
 
 const MAX_REPORTED_ERROR_REASONS = 3;
+const MAX_ERROR_REASON_LENGTH = 300;
 
 // Maps a delivery phase onto the tail of the designed step list, so a build that
 // is already `delivering` when this screen loads does not jump straight to the
@@ -42,16 +43,44 @@ function reportSafely( report: () => void ): void {
 }
 
 // An aborted proxy request rejects with a DOM Event rather than an Error
-// (wpcom-proxy-request passes the abort event straight to the callback), which
-// stringifies to a useless "[object Event]".
+// (wpcom-proxy-request hands the abort event straight to the callback), and an
+// Event has no `message`, so it would otherwise stringify to "[object Event]".
+function isAbortLike( error: unknown ): boolean {
+	if ( typeof Event !== 'undefined' && error instanceof Event ) {
+		return true;
+	}
+	if ( ! error || typeof error !== 'object' ) {
+		return false;
+	}
+	const { name, type } = error as { name?: unknown; type?: unknown };
+	return name === 'AbortError' || type === 'abort';
+}
+
+// Failures arrive as WPError, which extends Error and carries the HTTP status
+// separately from the message — and whose message the response body can
+// overwrite, so two different statuses can share one string. The status is kept
+// in the reason so those stay distinguishable, both in the log and in the
+// dedup set.
 function describeRequestError( error: unknown ): string {
+	if ( isAbortLike( error ) ) {
+		return 'request aborted';
+	}
+
+	let message: string;
 	if ( error instanceof Error ) {
-		return error.message;
+		message = error.message;
+	} else if ( error && typeof error === 'object' && 'message' in error ) {
+		message = String( ( error as { message: unknown } ).message );
+	} else {
+		message = String( error );
 	}
-	if ( error && typeof error === 'object' && 'message' in error ) {
-		return String( ( error as { message: unknown } ).message );
-	}
-	return String( error );
+
+	const status =
+		error && typeof error === 'object' && 'status' in error
+			? ( error as { status?: unknown } ).status
+			: undefined;
+
+	return ( status ? `${ status } ${ message }` : message ).slice( 0, MAX_ERROR_REASON_LENGTH );
 }
 
 type BuildWowStatusResponse = {
@@ -100,15 +129,18 @@ export function pollForBuildWowStatus( {
 
 	const poll = async () => {
 		const controller = new AbortController();
-		const timeout = setTimeout( () => controller.abort(), requestTimeoutMs );
+		let hasPassedDeadline = false;
+		const timeout = setTimeout( () => {
+			hasPassedDeadline = true;
+			controller.abort();
+		}, requestTimeoutMs );
 		requestController = controller;
 		requestTimeout = timeout;
 
-		let status: string | undefined;
+		let response: BuildWowStatusResponse | undefined;
 
 		try {
-			const response = await fetchStatus( siteIdentifier, controller.signal );
-			status = typeof response.build_status === 'string' ? response.build_status : undefined;
+			response = await fetchStatus( siteIdentifier, controller.signal );
 		} catch ( error ) {
 			// A failed status request does not mean the generation failed; keep polling.
 			// Nothing is reported once the poller has been stopped: tearing down aborts
@@ -117,9 +149,14 @@ export function pollForBuildWowStatus( {
 			// a 3s interval cannot emit hundreds of entries but a later, more
 			// informative error is not hidden behind the first one either.
 			if ( isActive ) {
-				const reason = controller.signal.aborted
-					? `request timed out after ${ requestTimeoutMs }ms`
-					: describeRequestError( error );
+				// The deadline having passed is not on its own proof that this rejection
+				// is the abort: transports that ignore the signal run the request to its
+				// real conclusion, and calling that a timeout would discard the actual
+				// error. Both have to hold.
+				const reason =
+					hasPassedDeadline && isAbortLike( error )
+						? `request timed out after ${ requestTimeoutMs }ms`
+						: describeRequestError( error );
 				if (
 					! reportedReasons.has( reason ) &&
 					reportedReasons.size < MAX_REPORTED_ERROR_REASONS
@@ -137,6 +174,10 @@ export function pollForBuildWowStatus( {
 		if ( ! isActive ) {
 			return;
 		}
+
+		// Parsed outside the try so a malformed response cannot be reported as a
+		// request failure.
+		const status = typeof response?.build_status === 'string' ? response.build_status : undefined;
 
 		// Terminal callbacks are dispatched outside the try so a throw from one of them
 		// cannot be mistaken for a request failure and silently reschedule the poll.
@@ -163,12 +204,15 @@ export function pollForBuildWowStatus( {
 
 	return () => {
 		isActive = false;
+		// Both timers are cleared before aborting: abort() runs the transport's own
+		// listeners synchronously, and teardown happens exactly when the page is
+		// going away, so a throw from one of them must not leak the request timer.
 		if ( pollTimeout !== undefined ) {
 			clearTimeout( pollTimeout );
 		}
-		requestController?.abort();
 		if ( requestTimeout !== undefined ) {
 			clearTimeout( requestTimeout );
 		}
+		requestController?.abort();
 	};
 }
