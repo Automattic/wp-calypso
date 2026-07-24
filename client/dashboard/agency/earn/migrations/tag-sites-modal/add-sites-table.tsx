@@ -23,6 +23,7 @@ export default function MigrationsAddSitesTable( {
 	migrationSourceHost,
 	recordTracksEvent,
 	getSiteCreatedAt,
+	locale,
 }: {
 	selectedSites: SiteItem[];
 	setSelectedSites: ( sites: SiteItem[] ) => void;
@@ -30,6 +31,7 @@ export default function MigrationsAddSitesTable( {
 	migrationSourceHost: string;
 	recordTracksEvent: RecordTracksEvent;
 	getSiteCreatedAt: ( blogId: number ) => string | undefined;
+	locale: string;
 } ) {
 	const isDesktop = useViewportMatch( 'large' );
 
@@ -123,8 +125,7 @@ export default function MigrationsAddSitesTable( {
 			getValue: () => '-',
 			render: ( { item }: { item: SiteItem } ) => {
 				const createdAt = getSiteCreatedAt( item.rawSite.blog_id );
-				// TODO: resolve the real locale once the dashboard port lands; hardcoded for now.
-				return createdAt ? formatDate( new Date( createdAt ), 'en' ) : '-';
+				return createdAt ? formatDate( new Date( createdAt ), locale ) : '-';
 			},
 			enableHiding: false,
 			enableSorting: false,
@@ -138,6 +139,7 @@ export default function MigrationsAddSitesTable( {
 		onSelectSite,
 		selectedSites,
 		getSiteCreatedAt,
+		locale,
 	] );
 
 	const { data: allSites, paginationInfo } = useMemo( () => {

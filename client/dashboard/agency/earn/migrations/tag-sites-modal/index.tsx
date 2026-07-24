@@ -13,14 +13,12 @@ import {
 	__experimentalVStack as VStack,
 	__experimentalText as Text,
 } from '@wordpress/components';
-import { createInterpolateElement } from '@wordpress/element';
 import { __, _n, sprintf } from '@wordpress/i18n';
 import { Icon, info } from '@wordpress/icons';
 import { useState } from 'react';
 import MigrationsAddSitesTable from './add-sites-table';
 import type { SiteItem } from '../hooks/use-fetch-all-managed-sites-for-commission';
 import type { RecordTracksEvent, TaggedSite } from '../types';
-import type { ReactNode } from 'react';
 
 import './style.scss';
 
@@ -32,14 +30,16 @@ export default function MigrationsTagSitesModal( {
 	onSuccess,
 	onError,
 	getSiteCreatedAt,
+	locale,
 }: {
 	onClose: () => void;
 	taggedSites?: TaggedSite[];
 	migrationTags: string[];
 	recordTracksEvent: RecordTracksEvent;
-	onSuccess: ( message: ReactNode ) => void;
-	onError: ( message: ReactNode ) => void;
+	onSuccess: ( message: string ) => void;
+	onError: ( message: string ) => void;
 	getSiteCreatedAt: ( blogId: number ) => string | undefined;
+	locale: string;
 } ) {
 	const queryClient = useQueryClient();
 	const { data: agency } = useQuery( activeAgencyQuery() );
@@ -94,15 +94,10 @@ export default function MigrationsTagSitesModal( {
 					const siteUrl = hasSingleSite ? selectedSites[ 0 ].site : '';
 					onSuccess(
 						hasSingleSite
-							? createInterpolateElement(
-									sprintf(
-										/* translators: %s: the site URL */
-										__(
-											'The site <strong>%s</strong> has been successfully tagged for commission.'
-										),
-										siteUrl
-									),
-									{ strong: <strong /> }
+							? sprintf(
+									/* translators: %s: the site URL */
+									__( 'The site %s has been successfully tagged for commission.' ),
+									siteUrl
 							  )
 							: sprintf(
 									/* translators: %d: the number of sites tagged */
@@ -187,6 +182,7 @@ export default function MigrationsTagSitesModal( {
 						migrationSourceHost={ selectedMigrationSourceHost }
 						recordTracksEvent={ recordTracksEvent }
 						getSiteCreatedAt={ getSiteCreatedAt }
+						locale={ locale }
 					/>
 				) }
 			</VStack>

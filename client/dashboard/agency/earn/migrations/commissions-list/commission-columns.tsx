@@ -18,10 +18,15 @@ export const SiteColumn = ( { site }: { site: string } ) => {
 	return urlToSlug( site );
 };
 
-export const MigratedOnColumn = ( { migratedOn }: { migratedOn: number } ) => {
+export const MigratedOnColumn = ( {
+	migratedOn,
+	locale,
+}: {
+	migratedOn: number;
+	locale: string;
+} ) => {
 	const date = new Date( migratedOn * 1000 );
-	// TODO: resolve the real locale once the dashboard port lands; hardcoded for now.
-	return <>{ formatDate( date, 'en', { day: '2-digit', month: 'short', year: 'numeric' } ) }</>;
+	return <>{ formatDate( date, locale, { day: '2-digit', month: 'short', year: 'numeric' } ) }</>;
 };
 
 export const ReviewStatusColumn = ( {
