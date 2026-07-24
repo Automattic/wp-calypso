@@ -67,6 +67,8 @@ describe( 'useInlineBundles', () => {
 		queryClient.clear();
 	} );
 
+	// Regression (DOMAINS-2225, case 4): a bare-term search with a trigger in the
+	// cart keeps its existing inline behavior after the FQDN gate was relaxed.
 	it( 'fetches a bundle for a cart item whose TLD is a trigger', async () => {
 		mockGetBundleTriggersQuery( { params: { query: 'flowers' }, bundleTriggers: [ 'com' ] } );
 		mockGetBundleForDomainQuery( { fqdn: 'flowers.com', bundleSuggestion: BUNDLE_FOR_FLOWERS } );
@@ -95,14 +97,22 @@ describe( 'useInlineBundles', () => {
 		expect( result.current.getInlineBundle( 'flowers.net' ) ).toBeUndefined();
 	} );
 
-	it( 'is gated to bare-term searches: an FQDN query never fetches triggers or bundles', async () => {
+	// Regression (DOMAINS-2225, case 2): the FQDN gate was removed. Typing a
+	// non-trigger FQDN (flowers.net) and adding a trigger domain (flowers.com)
+	// to the cart must still offer that trigger's inline bundle.
+	it( 'offers an inline bundle for a trigger in the cart even on an FQDN query', async () => {
+		mockGetBundleTriggersQuery( { params: { query: 'flowers.net' }, bundleTriggers: [ 'com' ] } );
+		mockGetBundleForDomainQuery( { fqdn: 'flowers.com', bundleSuggestion: BUNDLE_FOR_FLOWERS } );
+
 		const { result } = renderUseInlineBundles( {
-			query: 'flowers.com',
+			query: 'flowers.net',
 			cart: { items: [ buildCartItem( { domain: 'flowers', tld: 'com' } ) ] },
 		} );
 
-		await waitFor( () => expect( result.current.bundleTriggers ).toEqual( [] ) );
-		expect( result.current.getInlineBundle( 'flowers.com' ) ).toBeUndefined();
+		await waitFor( () =>
+			expect( result.current.getInlineBundle( 'flowers.com' )?.bundle ).toBeTruthy()
+		);
+		expect( result.current.bundleTriggers ).toEqual( [ 'com' ] );
 	} );
 
 	it( 'is gated on the bundle flag: nothing is fetched when showBundleSuggestions is off', async () => {
