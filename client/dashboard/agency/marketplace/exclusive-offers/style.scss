@@ -1,0 +1,17 @@
+@import '@wordpress/base-styles/breakpoints';
+@import '@wordpress/base-styles/mixins';
+@import '@wordpress/base-styles/variables';
+
+.exclusive-offers-card-logo {
+	display: flex;
+	align-items: center;
+	block-size: 24px;
+	min-inline-size: 0;
+}
+
+.exclusive-offers-card-logo img {
+	display: block;
+	inline-size: auto;
+	block-size: 24px;
+	max-inline-size: 160px;
+}
