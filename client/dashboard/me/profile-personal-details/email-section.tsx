@@ -1,7 +1,10 @@
 import { accountRecoveryQuery, cancelPendingEmailChangeMutation } from '@automattic/api-queries';
 import { useMutation, useQuery } from '@tanstack/react-query';
-import { Link } from '@tanstack/react-router';
-import { __experimentalInputControl as InputControl, Button } from '@wordpress/components';
+import {
+	__experimentalInputControl as InputControl,
+	__experimentalVStack as VStack,
+	Button,
+} from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { Icon, info, check } from '@wordpress/icons';
@@ -9,6 +12,8 @@ import emailValidator from 'email-validator';
 import { useState, useEffect, useCallback } from 'react';
 import { useAuth } from '../../app/auth';
 import { withSnackbar } from '../../app/snackbars/with-snackbar';
+import Notice from '../../components/notice';
+import RouterLinkButton from '../../components/router-link-button';
 import { recoveryEmailMatchesAccountEmail } from '../security-account-recovery/utils';
 import { isCustomDomainEmail } from './email-utils';
 import { useIsEmailWritePending } from './use-email-write-pending';
@@ -128,9 +133,6 @@ export default function EmailSection( {
 		if ( showBouncingEmailError ) {
 			return 'has-error';
 		}
-		if ( showCustomDomainWarning ) {
-			return 'has-warning';
-		}
 		if ( emailValidationState === 'valid' ) {
 			return 'has-success';
 		}
@@ -177,24 +179,6 @@ export default function EmailSection( {
 			);
 		}
 
-		if ( showCustomDomainWarning ) {
-			return (
-				<>
-					<Icon icon={ info } size={ 16 } />
-					<span>
-						{ createInterpolateElement(
-							__(
-								'This email uses a custom domain. If your domain expires, you’d lose access to account recovery. <a>Set up a recovery email or phone number</a> to keep access to your account.'
-							),
-							{
-								a: <Link to="/me/security/account-recovery" />,
-							}
-						) }
-					</span>
-				</>
-			);
-		}
-
 		// Input validation messages
 		if ( value && value !== currentEmail ) {
 			if ( emailValidationState === 'valid' ) {
@@ -226,7 +210,6 @@ export default function EmailSection( {
 		isEmailPending,
 		isEmailVerified,
 		showBouncingEmailError,
-		showCustomDomainWarning,
 		value,
 		currentEmail,
 		emailValidationState,
@@ -235,18 +218,35 @@ export default function EmailSection( {
 	] );
 
 	return (
-		<InputControl
-			__next40pxDefaultSize
-			id="email-input"
-			type="text"
-			label={ __( 'Email address' ) }
-			value={ value }
-			onChange={ ( newValue ) => onChange( newValue ?? '' ) }
-			autoComplete="email"
-			disabled={ disabled || isEmailPending }
-			className={ getValidationClass() }
-			help={ getHelpText() }
-			aria-describedby={ getHelpText() ? 'email-help' : undefined }
-		/>
+		<VStack spacing={ 4 }>
+			<InputControl
+				__next40pxDefaultSize
+				id="email-input"
+				type="text"
+				label={ __( 'Email address' ) }
+				value={ value }
+				onChange={ ( newValue ) => onChange( newValue ?? '' ) }
+				autoComplete="email"
+				disabled={ disabled || isEmailPending }
+				className={ getValidationClass() }
+				help={ getHelpText() }
+				aria-describedby={ getHelpText() ? 'email-help' : undefined }
+			/>
+			{ showCustomDomainWarning && (
+				<Notice
+					variant="warning"
+					title={ __( 'Protect access to your account' ) }
+					actions={
+						<RouterLinkButton variant="primary" to="/me/security/account-recovery">
+							{ __( 'Set up account recovery' ) }
+						</RouterLinkButton>
+					}
+				>
+					{ __(
+						'This email uses a custom domain. If your domain expires, you’d lose access to account recovery. Add a recovery email or phone number to keep access to your account.'
+					) }
+				</Notice>
+			) }
+		</VStack>
 	);
 }
