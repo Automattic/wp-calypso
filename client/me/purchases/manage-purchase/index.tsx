@@ -69,7 +69,7 @@ import { Plans, type SiteDetails } from '@automattic/data-stores';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { DOMAIN_CANCEL, SUPPORT_ROOT } from '@automattic/urls';
 import { useQuery } from '@tanstack/react-query';
-import { check, column, Icon, payment, reusableBlock, tool, trash, upload } from '@wordpress/icons';
+import { check, column, Icon, payment, reusableBlock, tool, trash, cloud } from '@wordpress/icons';
 import clsx from 'clsx';
 import { localize, LocalizeProps, useTranslate } from 'i18n-calypso';
 import moment from 'moment';
@@ -453,7 +453,7 @@ class ManagePurchase extends Component<
 		// Show the upgrade button without the primary style if both buttons are present
 		return (
 			<Button primary={ !! preventRenewal } compact href={ upgradeUrl }>
-				{ translate( 'Upgrade' ) }
+				{ translate( 'Upgrade plan' ) }
 			</Button>
 		);
 	}
@@ -711,16 +711,13 @@ class ManagePurchase extends Component<
 			return null;
 		}
 
-		let icon;
 		let buttonText;
 
 		if ( isExpiredOrRemoved( purchase ) ) {
-			icon = column;
 			buttonText = isUpgradeablePlan
 				? translate( 'Pick another plan' )
 				: translate( 'Pick another product' );
 		} else {
-			icon = upload;
 			buttonText = isUpgradeablePlan ? translate( 'Upgrade plan' ) : translate( 'Upgrade product' );
 		}
 
@@ -733,7 +730,7 @@ class ManagePurchase extends Component<
 				href={ upgradeUrl }
 				onClick={ this.handleUpgradeClick }
 			>
-				<Icon icon={ icon } className="card__icon" />
+				<Icon icon={ column } className="card__icon" />
 				{ buttonText }
 			</CompactCard>
 		);
@@ -771,7 +768,7 @@ class ManagePurchase extends Component<
 				href={ `/plans/storage/${ siteSlug }` }
 				onClick={ this.handleUpgradeClick }
 			>
-				<Icon icon={ upload } className="card__icon" />
+				<Icon icon={ cloud } className="card__icon" />
 				{ translate( 'Upgrade storage' ) }
 			</CompactCard>
 		);
