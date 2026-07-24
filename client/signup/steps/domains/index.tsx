@@ -28,7 +28,7 @@ import {
 	domainManagementTransferToOtherSite,
 } from 'calypso/my-sites/domains/paths';
 import StepWrapper from 'calypso/signup/step-wrapper';
-import { getStepUrl } from 'calypso/signup/utils';
+import { getNextStepName, getStepUrl } from 'calypso/signup/utils';
 import { useSelector } from 'calypso/state';
 import { getCurrentUserSiteCount, isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { hasDashboardOptIn } from 'calypso/state/dashboard/selectors';
@@ -60,6 +60,7 @@ const DomainSearchUI = (
 		stepName,
 		submitSignupStep,
 		goToNextStep,
+		goToStep,
 		locale,
 		queryObject,
 		baseSubmitStepProps,
@@ -71,6 +72,7 @@ const DomainSearchUI = (
 	const isDomainOnlyFlow = flowName === 'domain';
 	const isOnboardingWithEmailFlow = flowName === 'onboarding-with-email';
 
+	const isLoggedIn = useSelector( isUserLoggedIn );
 	const site = useSelector( getSelectedSite );
 
 	const siteSlug = queryObject.siteSlug;
@@ -220,6 +222,19 @@ const DomainSearchUI = (
 						{ stepName: 'plans-site-selected', wasSkipped: true },
 						{ cartItems: null }
 					);
+
+					// For logged-out users the account step is still pending, so the flow isn't
+					// "every step submitted" and the default goToNextStep() advances by array index
+					// from 'domain-only' back onto the just-skipped 'site-or-domain' step. Advance
+					// from the last auto-submitted step instead: logged-out users go to the account
+					// step, logged-in users fall through to checkout.
+					const nextStep = getNextStepName( flowName, 'plans-site-selected', isLoggedIn );
+					if ( nextStep ) {
+						goToStep( nextStep );
+					} else {
+						goToNextStep();
+					}
+					return;
 				}
 
 				goToNextStep();
@@ -257,6 +272,8 @@ const DomainSearchUI = (
 		clearQuery,
 		submitSignupStep,
 		goToNextStep,
+		goToStep,
+		isLoggedIn,
 		locale,
 		isDomainOnlyFlow,
 		baseSubmitStepProps,
