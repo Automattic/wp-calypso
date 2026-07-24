@@ -64,19 +64,15 @@ ${ trimmed }`;
 }
 
 /**
- * Suggestions for the Highlights style. The Highlights flow doesn't use the
- * user prompt to describe what the video should LOOK like — the cloud render
- * path (wpcom/generate-html-for-video → wpcom/generate-video-for-studio with
- * mode='editframe') composes the HTML server-side from the post itself. The
- * user prompt's role is purely editorial steering of that composer. The six
- * axes below are the editorial analogue of the cinematic builder's
- * cinematography axes — they map 1:1 to what generate-html-for-video
- * actually honors (lead/focus, audience, voice, structure, beat emphasis,
- * closer/CTA). Each chip weaves 2-3 of them, never cinematography.
+ * Suggestions for the Highlights style. The post's content and structure reach
+ * the model via the server-resolved page context in the system prompt (the
+ * same channel the image suggestions use), so this prompt carries only the
+ * editorial-steering instructions — no inlined post body. Each chip weaves 2-3
+ * of six editorial axes (lead / audience / voice / structure / emphasis /
+ * closer), never cinematography.
  */
-export function buildHighlightsClipSuggestionsPrompt( postBody: string ): string {
-	const trimmed = postBody.slice( 0, MAX_POST_BODY_CHARS );
-	return `Below is the body of a WordPress post. Propose 3 short editorial steers a user could pick to shape a 20-second summary video derived from this post.
+export function buildHighlightsClipSuggestionsPrompt(): string {
+	return `Using the WordPress post's content and structure available to you in context [[client.gutenberg_page.simple_structure]], propose 3 short editorial steers a user could pick to shape a 20-second summary video derived from this post.
 
 The video is rendered automatically from the post's content — these steers DO NOT describe what it should look like. They tell the composer WHICH parts to emphasize and HOW to frame them. Editorial direction, never cinematography.
 
@@ -97,10 +93,7 @@ Each steer MUST:
 
 Well-formed example (for a post about an autumn family weekend): "For families with young kids, structure it as three weekend outings and emphasize the orchard apple-picking and the lantern-lit harvest festival" — Audience + Structure + Emphasis, each axis naming a pointable detail from the post.
 
-Across the 3 chips, cover distinct axis combinations and distinct angles on the post — don't let two chips lean on the same pair.
-
-POST BODY:
-${ trimmed }`;
+Across the 3 chips, cover distinct axis combinations and distinct angles on the post — don't let two chips lean on the same pair.`;
 }
 
 function buildVideoClipSystemPrompt( suggestionPrompt: string, locale: string ): string {
@@ -226,7 +219,7 @@ export function useVideoClipSuggestions( {
 	if ( enabled ) {
 		prompt =
 			styleKey === 'highlights'
-				? buildHighlightsClipSuggestionsPrompt( postBodyText )
+				? buildHighlightsClipSuggestionsPrompt()
 				: buildVideoClipSuggestionsPrompt( postBodyText );
 	}
 
