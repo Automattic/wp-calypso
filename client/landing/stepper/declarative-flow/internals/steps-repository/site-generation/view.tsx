@@ -3,6 +3,9 @@ import { wordpress } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import type { SiteGenerationFailureReason, SiteGenerationState } from './use-site-generation';
 
+// Email notifications are out of MVP scope. The copy is kept so it can be switched back on.
+const HAS_EMAIL_NOTIFICATIONS: boolean = false;
+
 const WordPressMark = () => <Icon className="site-generation__wordpress-mark" icon={ wordpress } />;
 
 const CheckmarkIcon = (
@@ -102,6 +105,9 @@ function ErrorCanvas( {
 } ) {
 	const translate = useTranslate();
 	const hasTimedOut = failureReason === 'timed-out';
+	const timedOutDescription = HAS_EMAIL_NOTIFICATIONS
+		? translate( 'Your brief is saved. We’ll email you when your site is ready.' )
+		: translate( 'Your brief is saved.' );
 
 	return (
 		<div aria-live="polite" className="site-generation__outcome" role="status">
@@ -115,7 +121,7 @@ function ErrorCanvas( {
 			</h1>
 			<p className="site-generation__outcome-description">
 				{ hasTimedOut
-					? translate( 'Your brief is saved. We’ll email you when your site is ready.' )
+					? timedOutDescription
 					: translate( 'The site or editor destination is missing from this page.' ) }
 			</p>
 			<div className="site-generation__outcome-actions">
@@ -231,9 +237,11 @@ export function SiteGenerationView( {
 					</p>
 					<BuildProgress state={ state } />
 				</div>
-				<p className="site-generation__completion-note">
-					{ translate( 'We’ll email you when your site is ready.' ) }
-				</p>
+				{ HAS_EMAIL_NOTIFICATIONS && (
+					<p className="site-generation__completion-note">
+						{ translate( 'We’ll email you when your site is ready.' ) }
+					</p>
+				) }
 			</aside>
 		</main>
 	);
