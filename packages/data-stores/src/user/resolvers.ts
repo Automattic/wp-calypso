@@ -15,7 +15,7 @@ export function createResolvers() {
 		// In environments where `wpcom-user-bootstrap` is set to true, the currentUser
 		// object will be server-side rendered to window.currentUser. In these cases,
 		// return that object instead of performing another API request to `/me`.
-		if ( window.currentUser ) {
+		if ( window.currentUser?.ID ) {
 			return receiveCurrentUser( window.currentUser );
 		}
 		try {
