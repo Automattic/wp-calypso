@@ -3,7 +3,8 @@
  */
 import { renderHook } from '@testing-library/react';
 import { clearSessionStorageQuery } from 'calypso/components/domains/wpcom-domain-search/use-query-handler';
-import onboarding from '../onboarding';
+import { loadExperimentAssignment } from 'calypso/lib/explat';
+import onboarding, { resolvePersonalizationVariation } from '../onboarding';
 
 jest.mock( 'calypso/components/domains/wpcom-domain-search/use-query-handler', () => ( {
 	clearSessionStorageQuery: jest.fn(),
@@ -90,5 +91,29 @@ describe( 'onboarding flow side effects', () => {
 		renderSideEffect( 'domains' );
 
 		expect( clearSessionStorageQuery ).not.toHaveBeenCalled();
+	} );
+} );
+
+describe( 'resolvePersonalizationVariation', () => {
+	beforeEach( () => jest.clearAllMocks() );
+
+	it( 'forces ai_launchpad when the diy-launchpad override is present', async () => {
+		await expect( resolvePersonalizationVariation( '1' ) ).resolves.toBe( 'ai_launchpad' );
+		expect( loadExperimentAssignment ).not.toHaveBeenCalled();
+	} );
+
+	it( 'reads the variation from ExPlat when no override is present', async () => {
+		( loadExperimentAssignment as jest.Mock ).mockResolvedValue( {
+			variationName: 'no_guidance',
+		} );
+		await expect( resolvePersonalizationVariation( null ) ).resolves.toBe( 'no_guidance' );
+		expect( loadExperimentAssignment ).toHaveBeenCalledWith(
+			'wpcom_launchpad_personalization_202607_v1'
+		);
+	} );
+
+	it( 'falls back to control on an unrecognized assignment', async () => {
+		( loadExperimentAssignment as jest.Mock ).mockResolvedValue( { variationName: null } );
+		await expect( resolvePersonalizationVariation( null ) ).resolves.toBe( 'control' );
 	} );
 } );

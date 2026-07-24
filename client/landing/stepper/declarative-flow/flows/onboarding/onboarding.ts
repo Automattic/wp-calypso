@@ -7,6 +7,12 @@ import { addQueryArgs, getQueryArg, getQueryArgs } from '@wordpress/url';
 import { useEffect } from 'react';
 import { clearSessionStorageQuery } from 'calypso/components/domains/wpcom-domain-search/use-query-handler';
 import { WOO_HOSTING_SOLUTIONS_REF } from 'calypso/landing/stepper/constants';
+import {
+	LAUNCHPAD_PERSONALIZATION_EXPERIMENT,
+	normalizeVariation,
+	getLaunchpadPersonalizationDestination,
+	type LaunchpadPersonalizationVariation,
+} from 'calypso/lib/ai-launchpad';
 import { SIGNUP_DOMAIN_ORIGIN } from 'calypso/lib/analytics/signup';
 import { addSurvicate } from 'calypso/lib/analytics/survicate';
 import { loadExperimentAssignment } from 'calypso/lib/explat';
@@ -43,6 +49,21 @@ import { ProcessingResult } from '../../internals/steps-repository/processing-st
 import { type FlowV2, type ProvidedDependencies, type SubmitHandler } from '../../internals/types';
 import { getOnboardingStepperPosition } from './step-counter-config';
 import type { DomainSuggestion } from '@automattic/api-core';
+
+/**
+ * Resolve the launchpad-personalization variation. The `?diy-launchpad` query param is a
+ * dev/QA override that forces the `ai_launchpad` variation without consulting ExPlat;
+ * otherwise the variation comes from the sticky ExPlat assignment.
+ */
+export async function resolvePersonalizationVariation(
+	diyLaunchpad: string | null
+): Promise< LaunchpadPersonalizationVariation > {
+	if ( diyLaunchpad ) {
+		return 'ai_launchpad';
+	}
+	const assignment = await loadExperimentAssignment( LAUNCHPAD_PERSONALIZATION_EXPERIMENT );
+	return normalizeVariation( assignment?.variationName );
+}
 
 function initialize() {
 	const steps = [
@@ -102,17 +123,21 @@ const onboarding: FlowV2< typeof initialize > = {
 			providedDependencies: ProvidedDependencies,
 			planCartItem: MinimalRequestCartProduct | null
 		): Promise< [ string, string | null, string | null ] > => {
-			// Site Setup replaces My Home, so the diy-launchpad cohort must land there directly:
-			// any other destination (e.g. /home) would be the orphaned screen we just removed.
-			if ( diyLaunchpad && providedDependencies.siteSlug ) {
+			// Launchpad-personalization treatments land straight in wp-admin instead of My Home:
+			// ai_launchpad in Site Setup (enabling the AI launchpad), no_guidance on the dashboard.
+			const personalizationVariation = await resolvePersonalizationVariation( diyLaunchpad );
+			if ( personalizationVariation !== 'control' && providedDependencies.siteSlug ) {
 				const siteSlug = providedDependencies.siteSlug as string;
 				const site = await resolveSelect( SITE_STORE ).getSite( siteSlug );
 				const adminUrl = site?.options?.admin_url ?? `https://${ siteSlug }/wp-admin/`;
-				return [
-					`${ adminUrl }admin.php?page=site-setup-wp-admin&enable-ai-launchpad=1`,
-					null,
-					null,
-				];
+				const destination = getLaunchpadPersonalizationDestination( {
+					variation: personalizationVariation,
+					adminUrl,
+					enableAiLaunchpad: true,
+				} );
+				if ( destination ) {
+					return [ destination, null, null ];
+				}
 			}
 
 			if ( ! providedDependencies.hasExternalTheme && providedDependencies.hasPluginByGoal ) {
@@ -382,8 +407,8 @@ const onboarding: FlowV2< typeof initialize > = {
 									steps_total: checkoutStepperPosition.total,
 								} )
 							);
-						} else if ( diyLaunchpad ) {
-							// The diy-launchpad cohort skips the AI/manual chooser and lands straight in Site Setup.
+						} else if ( ( await resolvePersonalizationVariation( diyLaunchpad ) ) !== 'control' ) {
+							// Personalization treatments skip the AI/manual chooser and land straight in wp-admin.
 							window.location.replace( destination );
 						} else if (
 							refParameter === WOO_HOSTING_SOLUTIONS_REF &&
