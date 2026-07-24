@@ -1,4 +1,5 @@
 import config from '@automattic/calypso-config';
+import { buildLinkFromBaseUrl } from '../utils/base-url';
 
 const DOTCOM_DASHBOARD_ALLOWED_HOSTNAMES = [ 'my.localhost', 'my.wordpress.com' ];
 
@@ -12,5 +13,5 @@ export function isAllowedDotcomDashboardHostname( hostname?: string ): boolean {
 }
 
 export function buildDotcomDashboardLink( path: string = '' ) {
-	return new URL( path, config( 'dashboard_url' ) ).href;
+	return buildLinkFromBaseUrl( path, String( config( 'dashboard_url' ) ) );
 }

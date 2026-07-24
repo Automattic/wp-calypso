@@ -1,6 +1,7 @@
 import config from '@automattic/calypso-config';
 import { getCurrentDashboard, getDashboardFromQuery, buildDashboardLink } from '../app/routing';
 import { A4A_SIGNUP_PATHS } from '../section';
+import { buildLinkFromBaseUrl } from './base-url';
 import { isDashboardBackport } from './is-dashboard-backport';
 
 /**
@@ -58,7 +59,7 @@ export function wpcomLink( path: string ) {
 			return path;
 		}
 	}
-	return new URL( path, config( 'wpcom_url' ) ).href;
+	return buildLinkFromBaseUrl( path, String( config( 'wpcom_url' ) ) );
 }
 
 /**
@@ -116,5 +117,8 @@ export function reauthRequiredLink() {
 	const isSameOrigin = wpcomUrl.startsWith( window.location.origin );
 	const currentPath = isSameOrigin ? window.location.pathname : window.location.href;
 
-	return `${ wpcomUrl }/me/reauth-required?redirect_to=${ encodeURIComponent( currentPath ) }`;
+	return buildLinkFromBaseUrl(
+		`/me/reauth-required?redirect_to=${ encodeURIComponent( currentPath ) }`,
+		wpcomUrl
+	);
 }
