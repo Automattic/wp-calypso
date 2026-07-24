@@ -36,7 +36,7 @@
 		"@automattic/wpcom-smart-dictation": "workspace:^",
 		"@wordpress/components": "^35.0.0",
 		"@wordpress/data": "^10.48.0",
-		"@wordpress/editor": "^14.48.0",
+		"@wordpress/editor": "^14.51.0",
 		"@wordpress/i18n": "^6.21.0",
 		"@wordpress/icons": "^13.3.0",
 		"@wordpress/plugins": "^7.48.0",

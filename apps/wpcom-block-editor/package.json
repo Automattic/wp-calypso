@@ -35,7 +35,7 @@
 		"@wordpress/dom-ready": "^4.48.0",
 		"@wordpress/edit-post": "^8.48.0",
 		"@wordpress/edit-site": "^6.48.0",
-		"@wordpress/editor": "^14.48.0",
+		"@wordpress/editor": "^14.51.0",
 		"@wordpress/element": "^8.0.0",
 		"@wordpress/hooks": "^4.48.0",
 		"@wordpress/i18n": "^6.21.0",
