@@ -42,6 +42,7 @@ const staticPreferenceStatIds: Record< string, string > = {
 	'reader-profile-posts-visibility': 'postvis',
 	'reader-profile-sites-visibility': 'sitevis',
 	'reader-profile-hidden-sites': 'hidsit',
+	two_step_security_key_reregister_required: '2fakey',
 };
 
 const dynamicPreferenceStatPrefixes: Record< string, string > = {
