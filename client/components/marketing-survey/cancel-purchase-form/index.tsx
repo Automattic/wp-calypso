@@ -22,14 +22,17 @@ import { useIsSplitCancelRemoveEnabled } from 'calypso/dashboard/me/billing-purc
 import {
 	isAgencyPartnerType,
 	isExpiredOrRemoved,
-	isPartnerPurchase,
-	isRefundable,
-	hasAmountAvailableToRefund,
 	isOneTimePurchase,
-	isSubscription,
-} from 'calypso/lib/purchases';
+	isPartnerPurchase,
+} from 'calypso/dashboard/utils/purchase';
 import { cancelPurchaseSurveyCompleted, submitSurvey } from 'calypso/lib/purchases/actions';
+import { createPurchaseObject } from 'calypso/lib/purchases/assembler';
 import wpcom from 'calypso/lib/wp';
+import {
+	hasAmountAvailableToRefund,
+	isRefundable,
+	isSubscription,
+} from 'calypso/me/purchases/lib/raw-purchase-helpers';
 import useCheckPlanAvailabilityForPurchase from 'calypso/my-sites/plans-features-main/hooks/use-check-plan-availability-for-purchase';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { fetchAtomicTransfer } from 'calypso/state/atomic-transfer/actions';
@@ -67,9 +70,10 @@ import {
 	REMOVE_PLAN_STEP,
 } from './steps';
 import type { UpsellType } from './get-upsell-type';
+import type { Purchase } from '@automattic/api-core';
 import type { PlanSlug } from '@automattic/calypso-products';
 import type { SiteDetails } from '@automattic/data-stores';
-import type { Purchase } from 'calypso/lib/purchases/types';
+import type { Purchase as LegacyPurchase } from 'calypso/lib/purchases/types';
 import type { DisplayVariant } from 'calypso/lib/purchases/utils';
 import type { IAppState } from 'calypso/state/types';
 import type { ReactNode } from 'react';
@@ -100,7 +104,7 @@ export interface CancelPurchaseFormOwnProps {
 	flowType: string;
 	cancelBundledDomain?: boolean;
 	includedDomainPurchase?: object;
-	linkedPurchases?: Purchase[];
+	linkedPurchases?: LegacyPurchase[];
 	skipRemovePlanSurvey?: boolean;
 	cancellationInProgress?: boolean;
 	intent?: DisplayVariant | null;
@@ -172,7 +176,7 @@ class CancelPurchaseForm extends Component< CancelPurchaseFormProps, CancelPurch
 
 		if (
 			skipRemovePlanSurvey ||
-			( isPartnerPurchase( purchase ) && isAgencyPartnerType( purchase.partnerType ) )
+			( isPartnerPurchase( purchase ) && isAgencyPartnerType( purchase.partner_type ?? '' ) )
 		) {
 			steps = [];
 		} else if ( ! isPlan( purchase ) ) {
@@ -242,7 +246,7 @@ class CancelPurchaseForm extends Component< CancelPurchaseFormProps, CancelPurch
 
 		this.props.recordTracksEvent( name, {
 			cancellation_flow: flowType,
-			product_slug: purchase.productSlug,
+			product_slug: purchase.product_slug,
 			is_atomic: isAtomicSite,
 
 			...properties,
@@ -277,7 +281,7 @@ class CancelPurchaseForm extends Component< CancelPurchaseFormProps, CancelPurch
 		}
 
 		const upsellFromType = getUpsellType( value, {
-			productSlug: purchase?.productSlug || '',
+			productSlug: purchase?.product_slug || '',
 			canRefund: !! parseFloat( this.getRefundAmount() ),
 			canDowngrade: !! downgradeClick,
 			canOfferFreeMonth:
@@ -376,8 +380,13 @@ class CancelPurchaseForm extends Component< CancelPurchaseFormProps, CancelPurch
 			this.props
 				.submitSurvey(
 					'calypso-remove-purchase',
-					purchase.siteId,
-					enrichedSurveyData( surveyData, purchase )
+					purchase.blog_id,
+					enrichedSurveyData( surveyData, {
+						subscribedDate: purchase.subscribed_date,
+						blogCreatedDate: purchase.blog_created_date,
+						id: purchase.ID,
+						productSlug: purchase.product_slug,
+					} )
 				)
 				.then( () => {
 					this.setState( {
@@ -386,7 +395,7 @@ class CancelPurchaseForm extends Component< CancelPurchaseFormProps, CancelPurch
 				} );
 
 			if ( this.props.flowType === CANCEL_FLOW_TYPE.CANCEL_AUTORENEW ) {
-				this.props.cancelPurchaseSurveyCompleted( purchase.id );
+				this.props.cancelPurchaseSurveyCompleted( purchase.ID );
 			}
 		}
 
@@ -421,7 +430,7 @@ class CancelPurchaseForm extends Component< CancelPurchaseFormProps, CancelPurch
 
 	getRefundAmount = () => {
 		const { purchase } = this.props;
-		const { refundOptions, currencyCode } = purchase;
+		const { refund_options: refundOptions, currency_code: currencyCode } = purchase;
 		// TODO clk numberFormat pass through numberFormat if it stays
 		const defaultFormatter = new Intl.NumberFormat( 'en-US', {
 			style: 'currency',
@@ -436,7 +445,7 @@ class CancelPurchaseForm extends Component< CancelPurchaseFormProps, CancelPurch
 		return parseFloat( String( refundAmount ) ).toFixed( precision );
 	};
 
-	surveyContent(): ReactNode {
+	surveyContent( legacyPurchase: LegacyPurchase ): ReactNode {
 		const {
 			atomicTransfer,
 			translate,
@@ -449,12 +458,12 @@ class CancelPurchaseForm extends Component< CancelPurchaseFormProps, CancelPurch
 		} = this.props;
 		const intent = this.props.intent ?? undefined;
 		const { atomicRevertCheckOne, atomicRevertCheckTwo, surveyStep, upsell } = this.state;
-		const { productName } = purchase;
+		const { product_name: productName } = purchase;
 
 		if ( surveyStep === FEEDBACK_STEP ) {
 			return (
 				<FeedbackStep
-					purchase={ purchase }
+					purchase={ legacyPurchase }
 					isImport={ Boolean( isImport ) }
 					cancellationReasonCodes={ this.state.questionOneOrder }
 					onChangeCancellationReason={ this.onRadioOneChange }
@@ -488,7 +497,7 @@ class CancelPurchaseForm extends Component< CancelPurchaseFormProps, CancelPurch
 						onClickDowngrade={ this.downgradeClick }
 						onDeclineUpsell={ isLastStep ? this.onSubmit : this.clickNext }
 						onSwitchToMonthly={ this.props.onSwitchToMonthly }
-						purchase={ purchase }
+						purchase={ legacyPurchase }
 						purchaseSettingsUrl={ this.props.purchaseSettingsUrl }
 						recordEvent={ this.recordEvent }
 						refundAmount={ this.getRefundAmount() }
@@ -512,7 +521,7 @@ class CancelPurchaseForm extends Component< CancelPurchaseFormProps, CancelPurch
 				<UpsellStep
 					upsell={ this.state.upsell as UpsellType }
 					cancellationReason={ this.state.questionOneText }
-					purchase={ purchase }
+					purchase={ legacyPurchase }
 					site={ site as SiteDetails }
 					refundAmount={ this.getRefundAmount() }
 					intent={ intent }
@@ -554,7 +563,7 @@ class CancelPurchaseForm extends Component< CancelPurchaseFormProps, CancelPurch
 			return (
 				<AtomicRevertStep
 					atomicTransfer={ atomicTransfer }
-					purchase={ purchase }
+					purchase={ legacyPurchase }
 					site={ site }
 					atomicRevertCheckOne={ atomicRevertCheckOne }
 					onClickCheckOne={ ( isChecked ) => this.setState( { atomicRevertCheckOne: isChecked } ) }
@@ -597,7 +606,7 @@ class CancelPurchaseForm extends Component< CancelPurchaseFormProps, CancelPurch
 												{
 													args: {
 														planName: productName,
-														purchaseRenewalDate: moment( purchase.expiryDate ).format( 'LL' ),
+														purchaseRenewalDate: moment( purchase.expiry_date ).format( 'LL' ),
 													},
 													components: {
 														strong: <strong className="is-highlighted" />,
@@ -726,7 +735,7 @@ class CancelPurchaseForm extends Component< CancelPurchaseFormProps, CancelPurch
 						onClick={ this.onSubmit }
 					>
 						{ translate( 'Remove %(productName)s', {
-							args: { productName: purchase.productName || 'plan' },
+							args: { productName: purchase.product_name || 'plan' },
 						} ) }
 					</GutenbergButton>
 					<GutenbergButton
@@ -833,12 +842,12 @@ class CancelPurchaseForm extends Component< CancelPurchaseFormProps, CancelPurch
 		const { purchase } = this.props;
 
 		this.initSurveyState();
-		if ( this.props.isAtomicSite && purchase?.siteId ) {
-			this.props.fetchAtomicTransfer( purchase.siteId );
+		if ( this.props.isAtomicSite && purchase?.blog_id ) {
+			this.props.fetchAtomicTransfer( purchase.blog_id );
 		}
 
-		if ( purchase?.id && isWpComMonthlyPlan( purchase?.productSlug ) ) {
-			this.fetchPurchaseExtendedStatus( purchase.id );
+		if ( purchase?.ID && isWpComMonthlyPlan( purchase?.product_slug ) ) {
+			this.fetchPurchaseExtendedStatus( purchase.ID );
 		}
 	}
 
@@ -894,7 +903,7 @@ class CancelPurchaseForm extends Component< CancelPurchaseFormProps, CancelPurch
 
 	getCanceledProduct() {
 		const { purchase, translate } = this.props;
-		const { productSlug, productName, meta } = purchase;
+		const { product_slug: productSlug, product_name: productName, meta } = purchase;
 		const { slug } = this.props.site as SiteDetails;
 		const headerTitle = this.getHeaderTitle();
 		switch ( productSlug ) {
@@ -929,6 +938,8 @@ class CancelPurchaseForm extends Component< CancelPurchaseFormProps, CancelPurch
 			return null;
 		}
 
+		const legacyPurchase = createPurchaseObject( purchase );
+
 		return (
 			<>
 				{ /** QueryProducts added to ensure currency-code state gets populated for usages of getCurrentUserCurrencyCode */ }
@@ -945,14 +956,14 @@ class CancelPurchaseForm extends Component< CancelPurchaseFormProps, CancelPurch
 							<PrecancellationChatButton
 								icon="chat_bubble"
 								onClick={ this.closeDialog }
-								purchase={ purchase }
+								purchase={ legacyPurchase }
 								surveyStep={ surveyStep }
 							/>
 						</BlankCanvas.Header>
 						{ this.props.cancellationInProgress && (
 							<Spinner className="cancel-purchase-form__header-spinner" />
 						) }
-						<BlankCanvas.Content>{ this.surveyContent() }</BlankCanvas.Content>
+						<BlankCanvas.Content>{ this.surveyContent( legacyPurchase ) }</BlankCanvas.Content>
 						<BlankCanvas.Footer>
 							<div className="cancel-purchase-form__actions">
 								<div
@@ -971,16 +982,16 @@ class CancelPurchaseForm extends Component< CancelPurchaseFormProps, CancelPurch
 
 const ConnectedCancelPurchaseForm = connect(
 	( state: IAppState, { purchase, linkedPurchases }: CancelPurchaseFormOwnProps ) => ( {
-		isAtomicSite: isSiteAutomatedTransfer( state, purchase.siteId ),
-		isImport: !! getSiteImportEngine( state, purchase.siteId ),
-		site: getSite( state, purchase.siteId ) ?? null,
+		isAtomicSite: isSiteAutomatedTransfer( state, purchase.blog_id ),
+		isImport: !! getSiteImportEngine( state, purchase.blog_id ),
+		site: getSite( state, purchase.blog_id ) ?? null,
 		willAtomicSiteRevert: willAtomicSiteRevertAfterPurchaseDeactivation(
 			state,
-			purchase.id,
+			purchase.ID,
 			linkedPurchases ?? []
 		),
-		atomicTransfer: getAtomicTransfer( state, purchase.siteId ),
-		hasBackupsFeature: siteHasFeature( state, purchase.siteId, WPCOM_FEATURES_BACKUPS ),
+		atomicTransfer: getAtomicTransfer( state, purchase.blog_id ),
+		hasBackupsFeature: siteHasFeature( state, purchase.blog_id, WPCOM_FEATURES_BACKUPS ),
 	} ),
 	{
 		cancelPurchaseSurveyCompleted,
@@ -996,8 +1007,9 @@ type WrappedCancelPurchaseFormProps = Omit<
 >;
 
 const WrappedCancelPurchaseForm = ( props: WrappedCancelPurchaseFormProps ) => {
-	const personalDowngradePlan = getDowngradePlanFromPurchase( props.purchase );
-	const monthlyDowngradePlan = getDowngradePlanToMonthlyFromPurchase( props.purchase );
+	const productSlug = props.purchase.product_slug;
+	const personalDowngradePlan = getDowngradePlanFromPurchase( { productSlug } );
+	const monthlyDowngradePlan = getDowngradePlanToMonthlyFromPurchase( { productSlug } );
 	const personalSlug = personalDowngradePlan?.getStoreSlug();
 	const monthlySlug = monthlyDowngradePlan?.getStoreSlug();
 	const pricingMeta = Plans.usePricingMetaForGridPlans( {

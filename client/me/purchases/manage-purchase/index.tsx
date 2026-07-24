@@ -863,14 +863,10 @@ class ManagePurchase extends Component<
 			return null;
 		}
 
-		// Temporary bridge (SHILL-2256): CancelPurchaseForm still expects the
-		// camelCase Purchase. Remove once it reads the raw shape.
 		return (
 			<CancelPurchaseForm
 				disableButtons={ this.state.isRemoving }
-				purchase={ createPurchaseObject(
-					purchase as unknown as Parameters< typeof createPurchaseObject >[ 0 ]
-				) }
+				purchase={ purchase }
 				linkedPurchases={ this.getActiveMarketplaceSubscriptions().map( ( p ) =>
 					createPurchaseObject( p as unknown as Parameters< typeof createPurchaseObject >[ 0 ] )
 				) }

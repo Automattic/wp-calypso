@@ -280,7 +280,7 @@ class RemovePurchase extends Component {
 		return (
 			<CancelPurchaseForm
 				disableButtons={ this.state.isRemoving }
-				purchase={ purchase }
+				purchase={ purchase.rawPurchase }
 				isVisible={ this.state.isDialogVisible }
 				onClose={ this.closeDialog }
 				onSurveyComplete={ this.removePurchase }
@@ -295,7 +295,7 @@ class RemovePurchase extends Component {
 		return (
 			<CancelPurchaseForm
 				disableButtons={ this.state.isRemoving }
-				purchase={ purchase }
+				purchase={ purchase.rawPurchase }
 				linkedPurchases={ activeSubscriptions }
 				isVisible={ this.state.isDialogVisible }
 				onClose={ this.closeDialog }
