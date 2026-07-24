@@ -45,8 +45,8 @@ steps:
           userns: host
           environment:
             - BUILDKITE_TAG
-            - E2EGUTENBERGUSER
-            - E2E_PASSWORD
+            - WP_DESKTOP_E2E_USERNAME
+            - WP_DESKTOP_E2E_PASSWORD
     command: .buildkite/commands/build-desktop-linux.sh
     artifact_paths:
       - desktop/release/*

@@ -106,9 +106,9 @@ describe( 'User Can log in', () => {
 	} );
 
 	skipIfOAuthLogin( 'Log in with username and password', async function () {
-		await mainWindow.fill( '#usernameOrEmail', process.env.E2EGUTENBERGUSER );
+		await mainWindow.fill( '#usernameOrEmail', process.env.WP_DESKTOP_E2E_USERNAME );
 		await mainWindow.keyboard.press( 'Enter' );
-		await mainWindow.fill( '#password', process.env.E2E_PASSWORD );
+		await mainWindow.fill( '#password', process.env.WP_DESKTOP_E2E_PASSWORD );
 
 		// Wait for response from the Login endpoint.
 		const [ response ] = await Promise.all( [
