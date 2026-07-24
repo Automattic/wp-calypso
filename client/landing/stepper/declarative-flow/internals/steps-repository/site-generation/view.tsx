@@ -1,7 +1,7 @@
 import { Button, Icon, Notice } from '@wordpress/components';
 import { wordpress } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
-import type { SiteGenerationState } from './use-site-generation';
+import type { SiteGenerationFailureReason, SiteGenerationState } from './use-site-generation';
 
 const WordPressMark = () => <Icon className="site-generation__wordpress-mark" icon={ wordpress } />;
 
@@ -84,19 +84,34 @@ function WaitingCanvas( { state }: { state: SiteGenerationState } ) {
 	);
 }
 
-function ErrorCanvas( { onRetry }: { onRetry: () => void } ) {
+function ErrorCanvas( {
+	failureReason,
+	onRetry,
+}: {
+	failureReason: SiteGenerationFailureReason;
+	onRetry: () => void;
+} ) {
 	const translate = useTranslate();
+	const hasTimedOut = failureReason === 'timed-out';
 
 	return (
 		<div aria-live="polite" className="site-generation__outcome" role="status">
 			<div className="site-generation__outcome-icon" aria-hidden="true">
 				<WordPressMark />
 			</div>
-			<h1>{ translate( 'We couldn’t check your site' ) }</h1>
-			<p>{ translate( 'The site or editor destination is missing from this page.' ) }</p>
+			<h1>
+				{ hasTimedOut
+					? translate( 'This is taking longer than expected' )
+					: translate( 'We couldn’t check your site' ) }
+			</h1>
+			<p>
+				{ hasTimedOut
+					? translate( 'Your brief is saved. We’ll email you when your site is ready.' )
+					: translate( 'The site or editor destination is missing from this page.' ) }
+			</p>
 			<div className="site-generation__outcome-actions">
 				<Button onClick={ onRetry } variant="primary">
-					{ translate( 'Reload' ) }
+					{ hasTimedOut ? translate( 'Check again' ) : translate( 'Reload' ) }
 				</Button>
 			</div>
 		</div>
@@ -181,7 +196,10 @@ export function SiteGenerationView( {
 			<section className="site-generation__editor" aria-label={ translate( 'Site generation' ) }>
 				<div className="site-generation__canvas">
 					{ state.status === 'failed' ? (
-						<ErrorCanvas onRetry={ onRetry } />
+						<ErrorCanvas
+							failureReason={ state.failureReason ?? 'missing-parameters' }
+							onRetry={ onRetry }
+						/>
 					) : (
 						<WaitingCanvas state={ state } />
 					) }
