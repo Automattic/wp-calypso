@@ -18,7 +18,7 @@ import { useTranslate } from 'i18n-calypso';
 import { Fragment, useId, useState } from 'react';
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
 import useEquivalentMonthlyTotals, {
-	getSimulatedCostBeforeDiscounts,
+	getSubtotalBeforeDiscounts,
 } from 'calypso/my-sites/checkout/utils/use-equivalent-monthly-totals';
 import { useSubmitButtonSlot } from '../lib/submit-button-slot';
 import { getLineItemPriceDisplay } from './cost-overrides-list';
@@ -342,11 +342,7 @@ export function MobileCheckoutStickySummary() {
 	const monthlyPrices = useEquivalentMonthlyTotals( responseCart.products );
 	// The crossed-out total uses control's subtotal-before-discounts basis, so the
 	// bar and the panel quote the same numbers.
-	const subtotalBeforeDiscounts = responseCart.products.reduce( ( subtotal, product ) => {
-		const originalAmountInteger = getSimulatedCostBeforeDiscounts( product, monthlyPrices );
-		// In specific cases (e.g. premium domains) the original price (renewal) is lower than the due price.
-		return subtotal + Math.max( product.item_subtotal_integer, originalAmountInteger );
-	}, 0 );
+	const subtotalBeforeDiscounts = getSubtotalBeforeDiscounts( responseCart, monthlyPrices );
 	const crossedOutTotal =
 		subtotalBeforeDiscounts > responseCart.sub_total_integer
 			? formatCurrency( subtotalBeforeDiscounts, responseCart.currency, {

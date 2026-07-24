@@ -42,7 +42,7 @@ import { hasFreeCouponTransfersOnly } from 'calypso/lib/cart-values/cart-items';
 import { isWcMobileApp } from 'calypso/lib/mobile-app';
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
 import useEquivalentMonthlyTotals, {
-	getSimulatedCostBeforeDiscounts,
+	getSubtotalBeforeDiscounts,
 } from 'calypso/my-sites/checkout/utils/use-equivalent-monthly-totals';
 import { useSelector } from 'calypso/state';
 import { getCurrentPlan } from 'calypso/state/sites/plans/selectors';
@@ -165,11 +165,7 @@ function CheckoutSummaryPriceList() {
 	const { formStatus } = useFormStatus();
 	const isCartUpdating = FormStatus.VALIDATING === formStatus;
 
-	const subtotalBeforeDiscounts = responseCart.products.reduce( ( subtotal, product ) => {
-		const originalAmountInteger = getSimulatedCostBeforeDiscounts( product, monthlyPrices );
-		// In specific cases (e.g. premium domains) the original price (renewal) is lower than the due price.
-		return subtotal + Math.max( product.item_subtotal_integer, originalAmountInteger );
-	}, 0 );
+	const subtotalBeforeDiscounts = getSubtotalBeforeDiscounts( responseCart, monthlyPrices );
 	const totalDiscount = subtotalBeforeDiscounts - responseCart.sub_total_integer;
 
 	return (
