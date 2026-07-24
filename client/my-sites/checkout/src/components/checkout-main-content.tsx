@@ -113,6 +113,7 @@ import { handleProgressStepSelect } from './handle-progress-step-select';
 import JetpackAkismetCheckoutSidebarPlanUpsell from './jetpack-akismet-checkout-sidebar-plan-upsell';
 import { LeaveCheckoutModal, useCheckoutLeaveModal } from './leave-checkout-modal';
 import { MobileCheckoutStickySummary } from './mobile-checkout-sticky-summary';
+import { mobileCheckoutStickySummaryRadioDotStyles } from './mobile-checkout-sticky-summary-styles';
 import BeforeSubmitCheckoutHeader from './payment-method-step';
 import { PaymentMethodFilter } from './payment-methods-filter';
 import { getRefundWindowCopy } from './refund-policies';
@@ -1378,31 +1379,16 @@ const mobileCheckoutStickySummaryStyles = css`
 	   lives here (not only in the V1 block) so mobile-checkout-sticky-summary users
 	   on the non-V1 baseline still get 13px. */
 	.checkout-payment-methods .has-highlight > label {
+		${ mobileCheckoutStickySummaryRadioDotStyles }
 		min-height: 52px;
-		padding: 16px 16px 16px 48px;
+		padding-block: 16px;
+		padding-inline: 48px 16px;
 		flex-direction: row;
 		align-items: center;
 		justify-content: space-between;
 		gap: 16px;
 		font-size: 13px;
 		font-weight: 400;
-	}
-	.checkout-payment-methods .has-highlight > label::before {
-		left: 16px;
-	}
-	.checkout-payment-methods .has-highlight > label::after {
-		left: 20px;
-	}
-	.rtl .checkout-payment-methods .has-highlight > label {
-		padding: 16px 48px 16px 16px;
-	}
-	.rtl .checkout-payment-methods .has-highlight > label::before {
-		right: 16px;
-		left: auto;
-	}
-	.rtl .checkout-payment-methods .has-highlight > label::after {
-		right: 20px;
-		left: auto;
 	}
 	/* Brand logos render as 32x22 chips with a 4px radius and a
 	   1px gray-200 border (Figma 3971:13251 etc.). The brand SVG

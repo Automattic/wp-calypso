@@ -3,6 +3,7 @@ import styled from '@emotion/styled';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, useState, type FunctionComponent } from 'react';
+import { mobileCheckoutStickySummaryRadioDotStyles } from 'calypso/my-sites/checkout/src/components/mobile-checkout-sticky-summary-styles';
 import { useMobileCheckoutStickySummaryExperiment } from 'calypso/my-sites/checkout/src/hooks/use-mobile-checkout-sticky-summary-experiment';
 import { ItemVariantRadioPrice } from './variant-radio-price';
 import type { ItemVariationPickerProps, WPCOMProductVariant, OnChangeItemVariant } from './types';
@@ -49,6 +50,7 @@ const TermOptionsItem = styled.li`
 
 	/* Tighten the label and reposition the radio dot to the Figma's 16px gutter. */
 	.is-mobile-checkout-sticky-summary & label {
+		${ mobileCheckoutStickySummaryRadioDotStyles }
 		padding-block: 16px;
 		padding-inline-start: 40px;
 		padding-inline-end: 16px;
@@ -57,19 +59,6 @@ const TermOptionsItem = styled.li`
 		font-size: 16px;
 		line-height: 24px;
 		color: var( --studio-gray-100 );
-	}
-
-	.is-mobile-checkout-sticky-summary & label::before {
-		inset-inline-start: 16px;
-		inset-block-start: 50%;
-		transform: translateY( -50% );
-	}
-
-	.is-mobile-checkout-sticky-summary & label::after {
-		inset-inline-start: 20px;
-		inset-block-start: 50%;
-		margin-block-start: 0;
-		transform: translateY( -50% );
 	}
 `;
 
