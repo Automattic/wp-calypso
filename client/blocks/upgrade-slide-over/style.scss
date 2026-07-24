@@ -280,6 +280,7 @@ body.upgrade-slide-over-open {
 	}
 
 	// Prototype-only mode switch pinned to the bottom-left of the screen.
+	// Dark on purpose so it blends into the dimmed backdrop.
 	&__proto-toggle {
 		position: fixed;
 		left: var( --wpds-dimension-padding-lg );
@@ -289,15 +290,14 @@ body.upgrade-slide-over-open {
 		align-items: center;
 		gap: var( --wpds-dimension-gap-xs );
 		padding: var( --wpds-dimension-padding-xs );
-		border: var( --wpds-border-width-xs ) solid var( --wpds-color-stroke-surface-neutral );
+		border: 0;
 		border-radius: var( --wpds-border-radius-lg );
-		background: var( --wpds-color-bg-surface-neutral-strong );
-		box-shadow: var( --wpds-elevation-md );
+		background: var( --wpds-color-bg-interactive-neutral-strong );
 		font-size: var( --wpds-typography-font-size-sm );
 
 		span {
 			padding: 0 var( --wpds-dimension-padding-sm );
-			color: var( --wpds-color-fg-content-neutral-weak );
+			color: var( --wpds-color-fg-interactive-neutral-strong-disabled );
 		}
 
 		button {
@@ -305,18 +305,19 @@ body.upgrade-slide-over-open {
 			padding: var( --wpds-dimension-padding-xs ) var( --wpds-dimension-padding-sm );
 			border-radius: var( --wpds-border-radius-md );
 			background: transparent;
-			color: var( --wpds-color-fg-interactive-neutral );
+			color: var( --wpds-color-fg-interactive-neutral-strong-disabled );
 			font-size: var( --wpds-typography-font-size-sm );
 			font-weight: var( --wpds-typography-font-weight-medium );
 			cursor: pointer;
 
 			&:hover {
-				background: var( --wpds-color-bg-interactive-neutral-weak-active );
+				background: var( --wpds-color-bg-interactive-neutral-strong-active );
+				color: var( --wpds-color-fg-interactive-neutral-strong );
 			}
 
 			&.is-active {
-				background: var( --wpds-color-bg-interactive-neutral-strong );
-				color: var( --wpds-color-fg-interactive-neutral-strong );
+				background: var( --wpds-color-bg-surface-neutral-strong );
+				color: var( --wpds-color-fg-content-neutral );
 			}
 		}
 	}
