@@ -6,15 +6,23 @@ import {
 	isThemePurchase,
 	isTitanMail,
 } from '@automattic/calypso-products';
+import { type SiteDetails } from '@automattic/data-stores';
 import i18n from 'i18n-calypso';
-import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import { domainManagementEdit } from 'calypso/my-sites/domains/paths';
 import { getEmailManagementPath } from 'calypso/my-sites/email/paths';
 import { getThemeDetailsUrl } from 'calypso/state/themes/selectors';
+import type { Purchase } from 'calypso/lib/purchases/types';
+import type { IAppState } from 'calypso/state/types';
 
-const ProductLink = ( { productUrl, purchase, selectedSite } ) => {
+interface ProductLinkProps {
+	purchase: Purchase;
+	selectedSite?: SiteDetails | null | false;
+	productUrl?: string | null;
+}
+
+const ProductLink = ( { productUrl, purchase, selectedSite }: ProductLinkProps ) => {
 	let url;
 	let text;
 
@@ -31,7 +39,7 @@ const ProductLink = ( { productUrl, purchase, selectedSite } ) => {
 	}
 
 	if ( isDomainProduct( purchase ) || isSiteRedirect( purchase ) ) {
-		url = domainManagementEdit( selectedSite.slug, purchase.meta );
+		url = domainManagementEdit( selectedSite.slug, purchase.meta as string );
 		text = i18n.translate( 'Domain Settings' );
 	}
 
@@ -56,16 +64,11 @@ const ProductLink = ( { productUrl, purchase, selectedSite } ) => {
 	return <span />;
 };
 
-ProductLink.propTypes = {
-	purchase: PropTypes.object.isRequired,
-	selectedSite: PropTypes.oneOfType( [ PropTypes.bool, PropTypes.object ] ),
-};
-
-export default connect( ( state, { purchase } ) => {
+export default connect( ( state: IAppState, { purchase }: { purchase: Purchase } ) => {
 	if ( isThemePurchase( purchase ) ) {
 		return {
 			// No <QueryTheme /> component needed, since getThemeDetailsUrl() only needs the themeId which we pass here.
-			productUrl: getThemeDetailsUrl( state, purchase.meta, purchase.siteId ),
+			productUrl: getThemeDetailsUrl( state, purchase.meta as string, purchase.siteId ),
 		};
 	}
 	return {};
