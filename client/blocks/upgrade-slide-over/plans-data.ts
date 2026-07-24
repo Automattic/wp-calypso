@@ -170,9 +170,6 @@ export const PROTOTYPE_PLANS: PrototypePlan[] = [
 	},
 ];
 
-export const PAYMENT_METHODS = [ 'Credit card', 'PayPal', 'Apple Pay', 'Google Pay' ] as const;
-export type PaymentMethod = ( typeof PAYMENT_METHODS )[ number ];
-
 export const COUNTRIES = [
 	'Spain',
 	'United States',

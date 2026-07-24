@@ -15,16 +15,14 @@ import { Gridicon } from '@automattic/components';
 import { Button, InputControl, SelectControl } from '@wordpress/ui';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
-import { CardBrandChips, PaymentMethodIcon } from './payment-method-icons';
 import {
 	COUNTRIES,
 	formatEuro,
 	getPrototypePlan,
-	PAYMENT_METHODS,
 	PROTOTYPE_PLANS,
 	TAX_ID_TYPES,
 } from './plans-data';
-import type { BillingCycleSlug, PaymentMethod } from './plans-data';
+import type { BillingCycleSlug } from './plans-data';
 
 import './style.scss';
 
@@ -70,7 +68,6 @@ export default function UpgradeSlideOver( {
 	const [ cycle, setCycle ] = useState< BillingCycleSlug >( 'yearly' );
 	const [ showCoupon, setShowCoupon ] = useState( false );
 	const [ coupon, setCoupon ] = useState( '' );
-	const [ paymentMethod, setPaymentMethod ] = useState< PaymentMethod >( 'Credit card' );
 	const [ cardNumber, setCardNumber ] = useState( '' );
 	const [ expiry, setExpiry ] = useState( '' );
 	const [ cvc, setCvc ] = useState( '' );
@@ -136,16 +133,13 @@ export default function UpgradeSlideOver( {
 	}, [ requestClose, step ] );
 
 	const canPay = useMemo( () => {
-		if ( paymentMethod !== 'Credit card' ) {
-			return true;
-		}
 		return (
 			cardNumber.replace( /\D/g, '' ).length >= 15 &&
 			expiry.replace( /\D/g, '' ).length === 4 &&
 			cvc.length >= 3 &&
 			fullName.trim().length > 0
 		);
-	}, [ paymentMethod, cardNumber, expiry, cvc, fullName ] );
+	}, [ cardNumber, expiry, cvc, fullName ] );
 
 	const handlePay = () => {
 		setStep( 'processing' );
@@ -263,76 +257,37 @@ export default function UpgradeSlideOver( {
 										details
 									</h4>
 
-									<div
-										className="upgrade-slide-over__method-tabs"
-										role="radiogroup"
-										aria-label="Payment method"
-									>
-										{ PAYMENT_METHODS.map( ( method ) => (
-											<button
-												key={ method }
-												type="button"
-												role="radio"
-												aria-checked={ paymentMethod === method }
-												aria-label={ method }
-												className={ paymentMethod === method ? 'is-selected' : undefined }
-												onClick={ () => setPaymentMethod( method ) }
-											>
-												<PaymentMethodIcon method={ method } />
-												{ /* The Apple Pay mark already reads "Pay". */ }
-												{ method !== 'Apple Pay' && <span>{ method }</span> }
-											</button>
-										) ) }
-									</div>
-
 									<div className="upgrade-slide-over__payment-card">
-										{ paymentMethod === 'Credit card' ? (
-											<>
-												<div className="upgrade-slide-over__card-row">
-													<InputControl
-														label="Card number"
-														placeholder="1234 1234 1234 1234"
-														autoComplete="cc-number"
-														inputMode="numeric"
-														suffix={ <CardBrandChips /> }
-														value={ cardNumber }
-														onChange={ ( event ) =>
-															setCardNumber( formatCardNumber( event.target.value ) )
-														}
-													/>
-													<InputControl
-														label="Expiry date"
-														placeholder="MM / YY"
-														autoComplete="cc-exp"
-														inputMode="numeric"
-														value={ expiry }
-														onChange={ ( event ) =>
-															setExpiry( formatExpiry( event.target.value ) )
-														}
-													/>
-													<InputControl
-														label="Security code"
-														placeholder="CVC"
-														autoComplete="cc-csc"
-														inputMode="numeric"
-														suffix={ <Gridicon icon="credit-card" size={ 18 } /> }
-														value={ cvc }
-														onChange={ ( event ) =>
-															setCvc( event.target.value.replace( /\D/g, '' ).slice( 0, 4 ) )
-														}
-													/>
-												</div>
-												<p className="upgrade-slide-over__card-terms">
-													By providing your card information, you allow WordPress.com to charge your
-													card for future payments in accordance with their terms.
-												</p>
-											</>
-										) : (
-											<p className="upgrade-slide-over__method-note">
-												You'll be redirected to { paymentMethod } to complete your purchase
-												securely.
-											</p>
-										) }
+										<div className="upgrade-slide-over__card-row">
+											<InputControl
+												label="Card number"
+												placeholder="1234 1234 1234 1234"
+												autoComplete="cc-number"
+												inputMode="numeric"
+												value={ cardNumber }
+												onChange={ ( event ) =>
+													setCardNumber( formatCardNumber( event.target.value ) )
+												}
+											/>
+											<InputControl
+												label="Expiry date"
+												placeholder="MM / YY"
+												autoComplete="cc-exp"
+												inputMode="numeric"
+												value={ expiry }
+												onChange={ ( event ) => setExpiry( formatExpiry( event.target.value ) ) }
+											/>
+											<InputControl
+												label="Security code"
+												placeholder="CVC"
+												autoComplete="cc-csc"
+												inputMode="numeric"
+												value={ cvc }
+												onChange={ ( event ) =>
+													setCvc( event.target.value.replace( /\D/g, '' ).slice( 0, 4 ) )
+												}
+											/>
+										</div>
 
 										<InputControl
 											label="Full name"
