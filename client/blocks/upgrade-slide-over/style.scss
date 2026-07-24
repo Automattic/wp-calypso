@@ -254,7 +254,8 @@ body.upgrade-slide-over-open {
 		white-space: nowrap;
 	}
 
-	&__coupon-link {
+	&__coupon-link,
+	&__change-method {
 		align-self: flex-start;
 		border: 0;
 		background: transparent;
@@ -271,6 +272,52 @@ body.upgrade-slide-over-open {
 		&:focus-visible {
 			outline: var( --wpds-border-width-focus ) solid var( --wpds-color-stroke-focus-brand );
 			outline-offset: 1px;
+		}
+	}
+
+	&__change-method {
+		font-size: var( --wpds-typography-font-size-sm );
+	}
+
+	// Prototype-only mode switch pinned to the bottom-left of the screen.
+	&__proto-toggle {
+		position: fixed;
+		left: var( --wpds-dimension-padding-lg );
+		bottom: var( --wpds-dimension-padding-lg );
+		z-index: 100500;
+		display: flex;
+		align-items: center;
+		gap: var( --wpds-dimension-gap-xs );
+		padding: var( --wpds-dimension-padding-xs );
+		border: var( --wpds-border-width-xs ) solid var( --wpds-color-stroke-surface-neutral );
+		border-radius: var( --wpds-border-radius-lg );
+		background: var( --wpds-color-bg-surface-neutral-strong );
+		box-shadow: var( --wpds-elevation-md );
+		font-size: var( --wpds-typography-font-size-sm );
+
+		span {
+			padding: 0 var( --wpds-dimension-padding-sm );
+			color: var( --wpds-color-fg-content-neutral-weak );
+		}
+
+		button {
+			border: 0;
+			padding: var( --wpds-dimension-padding-xs ) var( --wpds-dimension-padding-sm );
+			border-radius: var( --wpds-border-radius-md );
+			background: transparent;
+			color: var( --wpds-color-fg-interactive-neutral );
+			font-size: var( --wpds-typography-font-size-sm );
+			font-weight: var( --wpds-typography-font-weight-medium );
+			cursor: pointer;
+
+			&:hover {
+				background: var( --wpds-color-bg-interactive-neutral-weak-active );
+			}
+
+			&.is-active {
+				background: var( --wpds-color-bg-interactive-neutral-strong );
+				color: var( --wpds-color-fg-interactive-neutral-strong );
+			}
 		}
 	}
 

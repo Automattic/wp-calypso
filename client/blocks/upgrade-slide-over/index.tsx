@@ -78,6 +78,12 @@ export default function UpgradeSlideOver( {
 	const [ taxIdType, setTaxIdType ] = useState( 'EU VAT number' );
 	const [ taxId, setTaxId ] = useState( '' );
 	const [ showErrors, setShowErrors ] = useState( false );
+	// Prototype-only: toggles between a user with a saved card and one without.
+	const [ hasSavedCard, setHasSavedCard ] = useState( false );
+	// Set by "Change payment method" to enter a new card despite a saved one.
+	const [ useDifferentCard, setUseDifferentCard ] = useState( false );
+
+	const showingSavedCard = hasSavedCard && ! useDifferentCard;
 	const panelRef = useRef< HTMLDivElement >( null );
 	const closeTimer = useRef< ReturnType< typeof setTimeout > | undefined >( undefined );
 
@@ -133,12 +139,14 @@ export default function UpgradeSlideOver( {
 		return () => document.removeEventListener( 'keydown', onKeyDown );
 	}, [ requestClose, step ] );
 
-	// Per-field validity; errors only show after a pay attempt.
+	// Per-field validity; errors only show after a pay attempt. A saved card
+	// is always payable.
 	const cardNumberValid = cardNumber.replace( /\D/g, '' ).length >= 15;
 	const expiryValid = expiry.replace( /\D/g, '' ).length === 4;
 	const cvcValid = cvc.length >= 3;
 	const fullNameValid = fullName.trim().length > 0;
-	const canPay = cardNumberValid && expiryValid && cvcValid && fullNameValid;
+	const canPay =
+		showingSavedCard || ( cardNumberValid && expiryValid && cvcValid && fullNameValid );
 
 	const handlePay = () => {
 		if ( ! canPay ) {
@@ -151,6 +159,12 @@ export default function UpgradeSlideOver( {
 		setTimeout( () => setStep( 'success' ), 1400 );
 	};
 
+	const switchPrototypeMode = ( savedCard: boolean ) => {
+		setHasSavedCard( savedCard );
+		setUseDifferentCard( false );
+		setShowErrors( false );
+	};
+
 	const content = (
 		<div className={ `upgrade-slide-over ${ isVisible ? 'is-visible' : '' }` } role="presentation">
 			<button
@@ -160,6 +174,24 @@ export default function UpgradeSlideOver( {
 				tabIndex={ -1 }
 				onClick={ step !== 'processing' ? requestClose : undefined }
 			/>
+			{ /* Prototype-only mode switch, not part of the design. */ }
+			<div className="upgrade-slide-over__proto-toggle" role="group" aria-label="Prototype mode">
+				<span>Prototype</span>
+				<button
+					type="button"
+					className={ hasSavedCard ? 'is-active' : undefined }
+					onClick={ () => switchPrototypeMode( true ) }
+				>
+					Card
+				</button>
+				<button
+					type="button"
+					className={ ! hasSavedCard ? 'is-active' : undefined }
+					onClick={ () => switchPrototypeMode( false ) }
+				>
+					No card
+				</button>
+			</div>
 			<div
 				className="upgrade-slide-over__panel"
 				role="dialog"
@@ -261,94 +293,121 @@ export default function UpgradeSlideOver( {
 										details
 									</h4>
 
-									<div className="upgrade-slide-over__payment-card">
-										<div className="upgrade-slide-over__card-row">
-											<InputControl
-												label="Card number"
-												placeholder="1234 1234 1234 1234"
-												autoComplete="cc-number"
-												inputMode="numeric"
-												className={ showErrors && ! cardNumberValid ? 'is-error' : undefined }
-												value={ cardNumber }
-												onChange={ ( event ) =>
-													setCardNumber( formatCardNumber( event.target.value ) )
-												}
+									{ showingSavedCard ? (
+										<div className="upgrade-slide-over__payment-card">
+											<div className="upgrade-slide-over__card-row">
+												<InputControl label="Card number" readOnly value="•••• •••• •••• 4242" />
+												<InputControl label="Expiry date" readOnly value="12 / 27" />
+												<InputControl label="Security code" readOnly value="•••" />
+											</div>
+											<InputControl label="Full name" readOnly value="Núria Peña" />
+											<SelectControl
+												label="Country or region"
+												value={ countryItems.find( ( item ) => item.value === 'Spain' ) }
+												items={ countryItems }
+												disabled
 											/>
-											<InputControl
-												label="Expiry date"
-												placeholder="MM / YY"
-												autoComplete="cc-exp"
-												inputMode="numeric"
-												className={ showErrors && ! expiryValid ? 'is-error' : undefined }
-												value={ expiry }
-												onChange={ ( event ) => setExpiry( formatExpiry( event.target.value ) ) }
-											/>
-											<InputControl
-												label="Security code"
-												placeholder="CVC"
-												autoComplete="cc-csc"
-												inputMode="numeric"
-												className={ showErrors && ! cvcValid ? 'is-error' : undefined }
-												value={ cvc }
-												onChange={ ( event ) =>
-													setCvc( event.target.value.replace( /\D/g, '' ).slice( 0, 4 ) )
-												}
-											/>
+											<InputControl label="Address" readOnly value="Carrer de Mallorca, 401" />
+											<button
+												type="button"
+												className="upgrade-slide-over__change-method"
+												onClick={ () => setUseDifferentCard( true ) }
+											>
+												Change payment method
+											</button>
 										</div>
-										{ showErrors && ! canPay && (
-											<p className="upgrade-slide-over__card-error" role="alert">
-												Check your card details: the highlighted fields are incomplete or invalid.
-											</p>
-										) }
-
-										<InputControl
-											label="Full name"
-											placeholder="Jane Doe"
-											autoComplete="name"
-											className={ showErrors && ! fullNameValid ? 'is-error' : undefined }
-											value={ fullName }
-											onChange={ ( event ) => setFullName( event.target.value ) }
-										/>
-										<SelectControl
-											label="Country or region"
-											value={ countryItems.find( ( item ) => item.value === country ) }
-											items={ countryItems }
-											onValueChange={ ( value ) => setCountry( unwrapSelectValue( value ) ) }
-										/>
-										<InputControl
-											label="Address"
-											autoComplete="street-address"
-											value={ address }
-											onChange={ ( event ) => setAddress( event.target.value ) }
-										/>
-										<label className="upgrade-slide-over__checkbox-row">
-											<input
-												type="checkbox"
-												checked={ useAsPrimary }
-												onChange={ ( event ) => setUseAsPrimary( event.target.checked ) }
-											/>
-											<span>Use the billing address as my account's primary address</span>
-										</label>
-										<div className="upgrade-slide-over__tax-block">
-											<span className="upgrade-slide-over__tax-label">Tax ID (optional)</span>
-											<div className="upgrade-slide-over__tax-row">
-												<SelectControl
-													label="Tax ID type"
-													hideLabelFromVision
-													value={ taxIdTypeItems.find( ( item ) => item.value === taxIdType ) }
-													items={ taxIdTypeItems }
-													onValueChange={ ( value ) => setTaxIdType( unwrapSelectValue( value ) ) }
+									) : (
+										<div className="upgrade-slide-over__payment-card">
+											<div className="upgrade-slide-over__card-row">
+												<InputControl
+													label="Card number"
+													placeholder="1234 1234 1234 1234"
+													autoComplete="cc-number"
+													inputMode="numeric"
+													className={ showErrors && ! cardNumberValid ? 'is-error' : undefined }
+													value={ cardNumber }
+													onChange={ ( event ) =>
+														setCardNumber( formatCardNumber( event.target.value ) )
+													}
 												/>
 												<InputControl
-													label="Tax ID"
-													hideLabelFromVision
-													placeholder="ES00000000"
-													value={ taxId }
-													onChange={ ( event ) => setTaxId( event.target.value ) }
+													label="Expiry date"
+													placeholder="MM / YY"
+													autoComplete="cc-exp"
+													inputMode="numeric"
+													className={ showErrors && ! expiryValid ? 'is-error' : undefined }
+													value={ expiry }
+													onChange={ ( event ) => setExpiry( formatExpiry( event.target.value ) ) }
+												/>
+												<InputControl
+													label="Security code"
+													placeholder="CVC"
+													autoComplete="cc-csc"
+													inputMode="numeric"
+													className={ showErrors && ! cvcValid ? 'is-error' : undefined }
+													value={ cvc }
+													onChange={ ( event ) =>
+														setCvc( event.target.value.replace( /\D/g, '' ).slice( 0, 4 ) )
+													}
 												/>
 											</div>
+											{ showErrors && ! canPay && (
+												<p className="upgrade-slide-over__card-error" role="alert">
+													Check your card details: the highlighted fields are incomplete or invalid.
+												</p>
+											) }
+
+											<InputControl
+												label="Full name"
+												placeholder="Jane Doe"
+												autoComplete="name"
+												className={ showErrors && ! fullNameValid ? 'is-error' : undefined }
+												value={ fullName }
+												onChange={ ( event ) => setFullName( event.target.value ) }
+											/>
+											<SelectControl
+												label="Country or region"
+												value={ countryItems.find( ( item ) => item.value === country ) }
+												items={ countryItems }
+												onValueChange={ ( value ) => setCountry( unwrapSelectValue( value ) ) }
+											/>
+											<InputControl
+												label="Address"
+												autoComplete="street-address"
+												value={ address }
+												onChange={ ( event ) => setAddress( event.target.value ) }
+											/>
+											<label className="upgrade-slide-over__checkbox-row">
+												<input
+													type="checkbox"
+													checked={ useAsPrimary }
+													onChange={ ( event ) => setUseAsPrimary( event.target.checked ) }
+												/>
+												<span>Use the billing address as my account's primary address</span>
+											</label>
+											<div className="upgrade-slide-over__tax-block">
+												<span className="upgrade-slide-over__tax-label">Tax ID (optional)</span>
+												<div className="upgrade-slide-over__tax-row">
+													<SelectControl
+														label="Tax ID type"
+														hideLabelFromVision
+														value={ taxIdTypeItems.find( ( item ) => item.value === taxIdType ) }
+														items={ taxIdTypeItems }
+														onValueChange={ ( value ) =>
+															setTaxIdType( unwrapSelectValue( value ) )
+														}
+													/>
+													<InputControl
+														label="Tax ID"
+														hideLabelFromVision
+														placeholder="ES00000000"
+														value={ taxId }
+														onChange={ ( event ) => setTaxId( event.target.value ) }
+													/>
+												</div>
+											</div>
 										</div>
-									</div>
+									) }
 								</section>
 
 								<div className="upgrade-slide-over__summary">
