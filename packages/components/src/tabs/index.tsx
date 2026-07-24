@@ -51,12 +51,12 @@ export const Tabs = Object.assign(
 			selectOnMove,
 			orientation,
 			defaultSelectedId: externalToInternalTabId( defaultTabId, instanceId ),
-			setSelectedId: ( newSelectedId ) => {
+			setSelectedId: ( newSelectedId: string | null | undefined ) => {
 				onSelect?.( internalToExternalTabId( newSelectedId, instanceId ) );
 			},
 			selectedId: externalToInternalTabId( selectedTabId, instanceId ),
 			defaultActiveId: externalToInternalTabId( defaultActiveTabId, instanceId ),
-			setActiveId: ( newActiveId ) => {
+			setActiveId: ( newActiveId: string | null | undefined ) => {
 				onActiveTabIdChange?.( internalToExternalTabId( newActiveId, instanceId ) );
 			},
 			activeId: externalToInternalTabId( activeTabId, instanceId ),
@@ -70,7 +70,12 @@ export const Tabs = Object.assign(
 			requestAnimationFrame( () => {
 				const focusedElement = items?.[ 0 ]?.element?.ownerDocument.activeElement;
 
-				if ( ! focusedElement || ! items.some( ( item ) => focusedElement === item.element ) ) {
+				if (
+					! focusedElement ||
+					! items.some(
+						( item: Ariakit.TabStoreState[ 'items' ][ number ] ) => focusedElement === item.element
+					)
+				) {
 					return; // Return early if no tabs are focused.
 				}
 
