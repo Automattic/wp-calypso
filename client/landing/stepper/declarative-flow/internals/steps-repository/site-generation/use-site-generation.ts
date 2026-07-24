@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { logBuildWowEvent } from 'calypso/landing/stepper/utils/build-wow';
-import { pollForBuildWowStatus } from './build-status-poller';
+import { getStepIndexForStatus, pollForBuildWowStatus } from './build-status-poller';
 
 export type SiteGenerationStep = {
 	id: string;
@@ -44,9 +44,10 @@ export function useSiteGeneration( {
 	steps: Array< Pick< SiteGenerationStep, 'id' | 'label' > >;
 } ): SiteGenerationState {
 	const [ activeStepIndex, setActiveStepIndex ] = useState( 0 );
-	const [ hasReachedDeliveryPhase, setHasReachedDeliveryPhase ] = useState( false );
+	const [ statusStepIndex, setStatusStepIndex ] = useState( -1 );
 	const [ hasTimedOut, setHasTimedOut ] = useState( false );
 	const hasRequiredParameters = Boolean( siteIdentifier && editorUrl );
+	const stepCount = steps.length;
 
 	useEffect( () => {
 		if ( ! siteIdentifier || ! editorUrl || hasTimedOut ) {
@@ -67,10 +68,21 @@ export function useSiteGeneration( {
 			// user only ever sees the calm "your brief is saved, check again" state
 			// instead of a dead end.
 			onFailed: ( status ) => {
-				logBuildWowEvent( 'site_generation_failed', { status } );
+				logBuildWowEvent( 'site_generation_failed', {
+					status,
+					site_identifier: siteIdentifier,
+				} );
 				setHasTimedOut( true );
 			},
-			onProgress: () => setHasReachedDeliveryPhase( true ),
+			onProgress: ( status ) =>
+				setStatusStepIndex( ( previous ) =>
+					Math.max( previous, getStepIndexForStatus( status, stepCount ) ?? -1 )
+				),
+			onRequestError: ( error ) =>
+				logBuildWowEvent( 'site_generation_status_request_failed', {
+					site_identifier: siteIdentifier,
+					error: error instanceof Error ? error.message : String( error ),
+				} ),
 		} );
 
 		return () => {
@@ -78,7 +90,7 @@ export function useSiteGeneration( {
 			window.clearTimeout( generationTimeout );
 			stopPolling();
 		};
-	}, [ editorUrl, siteIdentifier, hasTimedOut ] );
+	}, [ editorUrl, siteIdentifier, hasTimedOut, stepCount ] );
 
 	let failureReason: SiteGenerationFailureReason | undefined;
 	if ( ! hasRequiredParameters ) {
@@ -87,10 +99,10 @@ export function useSiteGeneration( {
 		failureReason = 'timed-out';
 	}
 
-	// Once the backend reports a real delivery-phase status, generation is done:
-	// advance to the final step so the progress tracks reality instead of the
-	// fixed timers (keeping the designed step labels as-is).
-	const effectiveActiveIndex = hasReachedDeliveryPhase ? steps.length - 1 : activeStepIndex;
+	// Real delivery-phase statuses drive the progress ahead of the fixed timers,
+	// never behind them, so the display only ever moves forward (keeping the
+	// designed step labels as-is).
+	const effectiveActiveIndex = Math.max( activeStepIndex, statusStepIndex );
 
 	return {
 		status: failureReason ? 'failed' : 'working',

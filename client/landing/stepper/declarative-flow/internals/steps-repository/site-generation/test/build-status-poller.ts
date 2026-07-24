@@ -84,6 +84,30 @@ describe( 'pollForBuildWowStatus', () => {
 		expect( fetchStatus ).toHaveBeenCalledTimes( 3 );
 	} );
 
+	it( 'ignores a non-string status instead of throwing', async () => {
+		const fetchStatus = jest
+			.fn()
+			.mockResolvedValueOnce( { build_status: 1 } )
+			.mockResolvedValueOnce( { build_status: 'live' } );
+		const onReady = jest.fn();
+		const onProgress = jest.fn();
+
+		pollForBuildWowStatus( {
+			siteIdentifier: '123',
+			onReady,
+			onFailed: jest.fn(),
+			onProgress,
+			pollIntervalMs: 1000,
+			fetchStatus,
+		} );
+
+		await jest.advanceTimersByTimeAsync( 0 );
+		expect( onProgress ).not.toHaveBeenCalled();
+
+		await jest.advanceTimersByTimeAsync( 1000 );
+		expect( onReady ).toHaveBeenCalledTimes( 1 );
+	} );
+
 	it( 'continues polling after a temporary request failure', async () => {
 		const fetchStatus = jest
 			.fn()
@@ -101,6 +125,49 @@ describe( 'pollForBuildWowStatus', () => {
 
 		await jest.advanceTimersByTimeAsync( 1000 );
 		expect( onReady ).toHaveBeenCalledTimes( 1 );
+	} );
+
+	it( 'reports only the first failure of a run of request errors', async () => {
+		const fetchStatus = jest.fn().mockRejectedValue( new Error( 'Unavailable' ) );
+		const onRequestError = jest.fn();
+
+		pollForBuildWowStatus( {
+			siteIdentifier: '123',
+			onReady: jest.fn(),
+			onFailed: jest.fn(),
+			onRequestError,
+			pollIntervalMs: 1000,
+			fetchStatus,
+		} );
+
+		await jest.advanceTimersByTimeAsync( 3000 );
+
+		expect( fetchStatus.mock.calls.length ).toBeGreaterThan( 1 );
+		expect( onRequestError ).toHaveBeenCalledTimes( 1 );
+		expect( onRequestError.mock.calls[ 0 ][ 0 ] ).toBeInstanceOf( Error );
+	} );
+
+	it( 'stops polling when a callback throws instead of treating it as a request failure', async () => {
+		const fetchStatus = jest.fn().mockResolvedValue( { build_status: 'live' } );
+		const onReady = jest.fn( () => {
+			throw new Error( 'Navigation blocked' );
+		} );
+		const onRequestError = jest.fn();
+
+		pollForBuildWowStatus( {
+			siteIdentifier: '123',
+			onReady,
+			onFailed: jest.fn(),
+			onRequestError,
+			pollIntervalMs: 1000,
+			fetchStatus,
+		} );
+
+		await jest.advanceTimersByTimeAsync( 5000 );
+
+		expect( onReady ).toHaveBeenCalledTimes( 1 );
+		expect( fetchStatus ).toHaveBeenCalledTimes( 1 );
+		expect( onRequestError ).not.toHaveBeenCalled();
 	} );
 
 	it( 'aborts a status request that does not settle', async () => {
