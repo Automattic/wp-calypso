@@ -6,17 +6,20 @@ import { useEffect, useState } from 'react';
 import { BundleCard } from '../components/bundle-card';
 import { Cart } from '../components/cart';
 import { FeaturedSearchResults } from '../components/featured-search-results';
+import { InlineBundleRow } from '../components/inline-bundle-row';
 import { SearchBar } from '../components/search-bar';
 import { SearchNotice } from '../components/search-notice';
 import { SearchResults } from '../components/search-results';
 import { SkipSuggestion } from '../components/skip-suggestion';
 import { UnavailableSearchResult } from '../components/unavailable-search-result';
-import { isFqdnQuery } from '../helpers';
+import { getBundlePrimaryDomain, isFqdnQuery } from '../helpers';
+import { useInlineBundles } from '../hooks/use-inline-bundles';
 import { useIsCurrentMutation } from '../hooks/use-is-current-mutation';
 import { useRequestTracking } from '../hooks/use-request-tracking';
 import { useSuggestionsList } from '../hooks/use-suggestions-list';
 import { DOMAIN_BUNDLE_UNAVAILABLE_ERROR_CODE } from './constants';
 import { useDomainSearch } from './context';
+import type { InlineBundleEntry } from '../hooks/use-inline-bundles';
 import type { BundleSuggestion } from '@automattic/api-core';
 
 const hasErrorCode = ( error: unknown, code: string ) =>
@@ -98,7 +101,7 @@ export const ResultsPage = () => {
 		},
 		onSuccess: ( { wasAdded }, { bundle } ) => {
 			if ( wasAdded ) {
-				events.onBundleAddToCart( bundle );
+				events.onBundleAddToCart( bundle, 'card' );
 			}
 		},
 		networkMode: 'always',
@@ -144,6 +147,10 @@ export const ResultsPage = () => {
 		regularSuggestions,
 		bundleSuggestion,
 	} = useSuggestionsList();
+	// Hoisted here (rather than called inside SearchResults) so the featured-trigger
+	// inline rows and the regular-list inline rows share a single hook instance,
+	// and thus one set of bundle requests.
+	const { getInlineBundle } = useInlineBundles();
 	// The top BundleCard is the FQDN path only; a bare-term search shows inline
 	// bundle rows beneath trigger suggestions instead (see useInlineBundles).
 	const isFqdn = isFqdnQuery( query );
@@ -153,6 +160,53 @@ export const ResultsPage = () => {
 	const visibleBundleSuggestion = isFqdn ? bundleSuggestion : undefined;
 	const numberOfInitialVisibleSuggestions =
 		config.numberOfDomainsResultsPerPage - featuredSuggestions.length;
+
+	// A trigger domain promoted into the featured section (e.g. the bare-term
+	// search `example` surfaces `example.com` as a featured card) still needs its
+	// inline bundle offer, which the regular list would otherwise own. Derive one
+	// row per featured trigger that has (or is fetching) a bundle, rendered below
+	// the featured section.
+	const visibleBundlePrimaryFqdn =
+		visibleBundleSuggestion && visibleBundleSuggestion.domains.length > 0
+			? getBundlePrimaryDomain( visibleBundleSuggestion ).domain.toLowerCase()
+			: undefined;
+
+	const featuredInlineBundles = featuredSuggestions
+		.map( ( { suggestion } ) => {
+			const inlineBundle = getInlineBundle( suggestion );
+
+			if ( ! inlineBundle || ( ! inlineBundle.isLoading && ! inlineBundle.bundle ) ) {
+				return null;
+			}
+
+			// A per-FQDN bundle's primary is the trigger itself, so the featured
+			// suggestion string is the inline offer's primary FQDN. Suppress the row
+			// only when a currently-visible top BundleCard already resolves to that
+			// same primary — never merely because it matches the typed query, so a
+			// withheld/absent top card still leaves the inline offer visible.
+			const primaryFqdn =
+				inlineBundle.bundle && inlineBundle.bundle.domains.length > 0
+					? getBundlePrimaryDomain( inlineBundle.bundle ).domain.toLowerCase()
+					: suggestion.toLowerCase();
+
+			if ( visibleBundlePrimaryFqdn && primaryFqdn === visibleBundlePrimaryFqdn ) {
+				return null;
+			}
+
+			// InlineBundleRow renders nothing for a resolved bundle without at least
+			// one companion beyond the primary, so drop the entry here too — otherwise
+			// the role="list" wrapper below would render with no listitem children.
+			if (
+				! inlineBundle.isLoading &&
+				inlineBundle.bundle &&
+				! inlineBundle.bundle.domains.some( ( { domain } ) => domain.toLowerCase() !== primaryFqdn )
+			) {
+				return null;
+			}
+
+			return { key: primaryFqdn, entry: inlineBundle };
+		} )
+		.filter( ( item ): item is { key: string; entry: InlineBundleEntry } => item !== null );
 
 	useRequestTracking();
 
@@ -166,7 +220,7 @@ export const ResultsPage = () => {
 
 	useEffect( () => {
 		if ( shownBundleGroupId && visibleBundleSuggestion ) {
-			events.onBundleShown( visibleBundleSuggestion );
+			events.onBundleShown( visibleBundleSuggestion, 'card' );
 		}
 		// Intentionally keyed only on the group id: we want exactly one event per
 		// bundle that appears, not one per render or per `events`/object identity change.
@@ -229,12 +283,24 @@ export const ResultsPage = () => {
 						) }
 					</FeaturedSearchResults>
 				) }
+				{ /* Inline bundle offers for triggers promoted into the featured section.
+				     Rendered full-width below the section (not inside FeaturedDomainSuggestionsList,
+				     which is a row-direction Flex) in a minimal role="list" wrapper so each
+				     row's role="listitem" has a valid parent. */ }
+				{ ! isLoadingSuggestions && featuredInlineBundles.length > 0 && (
+					<div role="list" className="domain-search--results__featured-inline-bundles">
+						{ featuredInlineBundles.map( ( { key, entry } ) => (
+							<InlineBundleRow key={ key } bundle={ entry.bundle } isLoading={ entry.isLoading } />
+						) ) }
+					</div>
+				) }
 				{ isLoadingSuggestions ? (
 					<SearchResults.Placeholder />
 				) : (
 					<SearchResults
 						suggestions={ regularSuggestions }
 						numberOfInitialVisibleSuggestions={ numberOfInitialVisibleSuggestions }
+						getInlineBundle={ getInlineBundle }
 					/>
 				) }
 			</VStack>
