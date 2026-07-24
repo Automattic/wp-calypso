@@ -25,11 +25,11 @@ Used studio-blue for the primary+accent.
 .color-scheme.is-blue {
 	/* Variables used in Calypso blue */
 	--theme-text-color: #fff; /* $text-color */
-	--theme-base-color: #52accc; /* $base-color */
+	--theme-base-color: #245278; /* $base-color */
 	--theme-submenu-text-color: #e2ecf1; /* $menu-submenu-text */
-	--theme-submenu-background-color: #4796b3; /* From wp-admin*/
+	--theme-submenu-background-color: #1c3f5d; /* From wp-admin*/
 	--theme-icon-color: #e5f8ff; /* $icon-color */
-	--theme-highlight-color: #096484; /* $highlight-color */
+	--theme-highlight-color: #437aa8; /* $highlight-color */
 	--theme-notification-color: #e1a948; /* Direct from wp-admin */
 
 	/* Primary */
@@ -64,12 +64,12 @@ Used studio-blue for the primary+accent.
 	--color-accent-90: var(--color-deprecated-blue-90);
 	--color-accent-100: var(--color-deprecated-blue-100);
 	--color-masterbar-background: var(--theme-base-color);
-	--color-masterbar-border: #6eb9d4; /* $adminbar-avatar-frame */
+	--color-masterbar-border: #2c6593; /* $adminbar-avatar-frame */
 	--color-masterbar-text: var(--theme-text-color);
 	--color-masterbar-submenu-text: var(--theme-submenu-text-color);
 	--color-masterbar-icon: var(--theme-icon-color);
 	--color-masterbar-highlight: var(--theme-text-color);
-	--color-masterbar-submenu-group-background: #74b6ce; /* wp-admin ul.ab-sub-secondary */
+	--color-masterbar-submenu-group-background: #33648d; /* wp-admin ul.ab-sub-secondary */
 	--color-global-masterbar-site-info-background: var(--color-masterbar-submenu-group-background);
 	--color-masterbar-unread-dot-background: var(--theme-notification-color);
 

@@ -23,11 +23,11 @@ The wp-admin highlight color hue is 27, while studio-orange ranges from 25 to 35
 .color-scheme.is-coffee {
 	/* Variables used in Calypso Coffee */
 	--theme-text-color: #fff; /* $text-color */
-	--theme-base-color: #59524c; /* $base-color */
-	--theme-submenu-text-color: #cdcbc9; /* $menu-submenu-text */
-	--theme-submenu-background-color: #46403c; /* $menu-submenu-background */
+	--theme-base-color: #5c4c40; /* $base-color */
+	--theme-submenu-text-color: #cec9c6; /* $menu-submenu-text */
+	--theme-submenu-background-color: #473b31; /* $menu-submenu-background */
 	--theme-icon-color: #ece6f6; /* $icon-color */
-	--theme-highlight-color: #c7a589; /* $highlight-color */
+	--theme-highlight-color: #916745; /* $highlight-color */
 	--theme-notification-color: #9ea476; /* Direct from wp-admin */
 
 	/* Primary */
@@ -62,12 +62,12 @@ The wp-admin highlight color hue is 27, while studio-orange ranges from 25 to 35
 	--color-accent-90: var(--studio-orange-90);
 	--color-accent-100: var(--studio-orange-100);
 	--color-masterbar-background: var(--theme-base-color);
-	--color-masterbar-border: #6c645c; /* $adminbar-avatar-frame */
+	--color-masterbar-border: #715d4f; /* $adminbar-avatar-frame */
 	--color-masterbar-text: var(--theme-text-color);
 	--color-masterbar-submenu-text: var(--theme-submenu-text-color);
 	--color-masterbar-icon: var(--theme-icon-color);
 	--color-masterbar-highlight: var(--theme-highlight-color);
-	--color-masterbar-submenu-group-background: #656463; /* wp-admin ul.ab-sub-secondary */
+	--color-masterbar-submenu-group-background: #6a5e56; /* wp-admin ul.ab-sub-secondary */
 	--color-global-masterbar-site-info-background: var(--color-masterbar-submenu-group-background);
 	--color-masterbar-unread-dot-background: var(--theme-notification-color);
 

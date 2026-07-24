@@ -35,11 +35,11 @@ Created this definition in color-studio to generate 0-100 shades:
 .color-scheme.is-ectoplasm {
 	/* Variables used in Calypso Ectoplasm */
 	--theme-text-color: #fff; /* $text-color */
-	--theme-base-color: #523f6d; /* $base-color */
-	--theme-submenu-text-color: #cbc5d3; /* $menu-submenu-text */
-	--theme-submenu-background-color: #413256; /* $menu-submenu-background */
+	--theme-base-color: #4a3369; /* $base-color */
+	--theme-submenu-text-color: #c9c2d2; /* $menu-submenu-text */
+	--theme-submenu-background-color: #392751; /* $menu-submenu-background */
 	--theme-icon-color: #ece6f6; /* $icon-color */
-	--theme-highlight-color: #a3b745; /* $highlight-color */
+	--theme-highlight-color: #646c3e; /* $highlight-color */
 	--theme-notification-color: #d46f15; /* Direct from wp-admin */
 
 	--ectoplasm-green-0: #f2f5e1;
@@ -86,12 +86,12 @@ Created this definition in color-studio to generate 0-100 shades:
 	--color-accent-90: var(--ectoplasm-green-90);
 	--color-accent-100: var(--ectoplasm-green-100);
 	--color-masterbar-background: var(--theme-base-color);
-	--color-masterbar-border: #634c84; /* $adminbar-avatar-frame */
+	--color-masterbar-border: #5b3f81; /* $adminbar-avatar-frame */
 	--color-masterbar-text: var(--theme-text-color);
 	--color-masterbar-submenu-text: var(--theme-submenu-text-color);
 	--color-masterbar-icon: var(--theme-icon-color);
 	--color-masterbar-highlight: var(--theme-highlight-color);
-	--color-masterbar-submenu-group-background: #64537c; /* wp-admin ul.ab-sub-secondary */
+	--color-masterbar-submenu-group-background: #5c467a; /* wp-admin ul.ab-sub-secondary */
 	--color-global-masterbar-site-info-background: var(--color-masterbar-submenu-group-background);
 	--color-masterbar-unread-dot-background: var(--theme-notification-color);
 
