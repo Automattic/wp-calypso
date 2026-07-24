@@ -19,9 +19,13 @@ jest.mock( 'calypso/landing/stepper/utils/build-wow', () => ( {
 const pollMock = pollForBuildWowStatus as jest.Mock;
 const logMock = logBuildWowEvent as jest.Mock;
 
+// Mirrors the five steps site-generation/index.tsx ships. A shorter fixture would
+// be degenerate: at three steps the delivery-phase mapping collapses to identity.
 const STEPS = [
 	{ id: 'preparing', label: 'Preparing your site' },
+	{ id: 'designing', label: 'Choosing your design' },
 	{ id: 'building', label: 'Building your pages' },
+	{ id: 'polishing', label: 'Polishing your design' },
 	{ id: 'finalizing', label: 'Getting everything ready' },
 ];
 
@@ -110,8 +114,21 @@ describe( 'useSiteGeneration', () => {
 			onProgress( 'delivering' );
 		} );
 		expect( result.current.steps.map( ( step ) => step.status ) ).toEqual( [
+			'complete',
+			'complete',
 			'active',
 			'pending',
+			'pending',
+		] );
+
+		act( () => {
+			onProgress( 'activating' );
+		} );
+		expect( result.current.steps.map( ( step ) => step.status ) ).toEqual( [
+			'complete',
+			'complete',
+			'complete',
+			'active',
 			'pending',
 		] );
 
@@ -119,6 +136,8 @@ describe( 'useSiteGeneration', () => {
 			onProgress( 'verifying' );
 		} );
 		expect( result.current.steps.map( ( step ) => step.status ) ).toEqual( [
+			'complete',
+			'complete',
 			'complete',
 			'complete',
 			'active',

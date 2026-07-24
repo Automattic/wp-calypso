@@ -55,7 +55,10 @@ export function useSiteGeneration( {
 		}
 
 		const progressTimeouts = STEP_DELAYS.map( ( delay, index ) =>
-			window.setTimeout( () => setActiveStepIndex( index + 1 ), delay )
+			window.setTimeout(
+				() => setActiveStepIndex( ( previous ) => Math.max( previous, index + 1 ) ),
+				delay
+			)
 		);
 		const generationTimeout = window.setTimeout(
 			() => setHasTimedOut( true ),
@@ -78,10 +81,10 @@ export function useSiteGeneration( {
 				setStatusStepIndex( ( previous ) =>
 					Math.max( previous, getStepIndexForStatus( status, stepCount ) ?? -1 )
 				),
-			onRequestError: ( error ) =>
+			onRequestError: ( reason ) =>
 				logBuildWowEvent( 'site_generation_status_request_failed', {
 					site_identifier: siteIdentifier,
-					error: error instanceof Error ? error.message : String( error ),
+					error: reason,
 				} ),
 		} );
 
@@ -101,8 +104,13 @@ export function useSiteGeneration( {
 
 	// Real delivery-phase statuses drive the progress ahead of the fixed timers,
 	// never behind them, so the display only ever moves forward (keeping the
-	// designed step labels as-is).
-	const effectiveActiveIndex = Math.max( activeStepIndex, statusStepIndex );
+	// designed step labels as-is). Clamped because STEP_DELAYS can outrun a step
+	// list shorter than its own length, which would leave every step complete and
+	// none active.
+	const effectiveActiveIndex = Math.min(
+		stepCount - 1,
+		Math.max( activeStepIndex, statusStepIndex )
+	);
 
 	return {
 		status: failureReason ? 'failed' : 'working',

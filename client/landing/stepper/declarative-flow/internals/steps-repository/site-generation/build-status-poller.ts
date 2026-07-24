@@ -12,13 +12,15 @@ import wpcom from 'calypso/lib/wp';
 const BUILD_WOW_LIVE_STATUS = 'live';
 const BUILD_WOW_FAILED_STATUS_PREFIX = 'failed:';
 
-export const BUILD_WOW_DELIVERY_PHASES = [ 'delivering', 'activating', 'verifying' ];
+export const BUILD_WOW_DELIVERY_PHASES = [ 'delivering', 'activating', 'verifying' ] as const;
+
+const MAX_REPORTED_ERROR_REASONS = 3;
 
 // Maps a delivery phase onto the tail of the designed step list, so a build that
 // is already `delivering` when this screen loads does not jump straight to the
 // last step. Returns null for a status outside the known walk.
 export function getStepIndexForStatus( status: string, stepCount: number ): number | null {
-	const phase = BUILD_WOW_DELIVERY_PHASES.indexOf( status );
+	const phase = ( BUILD_WOW_DELIVERY_PHASES as readonly string[] ).indexOf( status );
 	if ( phase === -1 || stepCount === 0 ) {
 		return null;
 	}
@@ -28,6 +30,28 @@ export function getStepIndexForStatus( status: string, stepCount: number ): numb
 
 function isBuildWowFailedStatus( status: string ): boolean {
 	return status.startsWith( BUILD_WOW_FAILED_STATUS_PREFIX );
+}
+
+// Non-terminal callbacks run through this so a throwing consumer cannot escape
+// poll() and leave the loop unscheduled, which would stall polling for the rest
+// of the generation window.
+function reportSafely( report: () => void ): void {
+	try {
+		report();
+	} catch {}
+}
+
+// An aborted proxy request rejects with a DOM Event rather than an Error
+// (wpcom-proxy-request passes the abort event straight to the callback), which
+// stringifies to a useless "[object Event]".
+function describeRequestError( error: unknown ): string {
+	if ( error instanceof Error ) {
+		return error.message;
+	}
+	if ( error && typeof error === 'object' && 'message' in error ) {
+		return String( ( error as { message: unknown } ).message );
+	}
+	return String( error );
 }
 
 type BuildWowStatusResponse = {
@@ -63,7 +87,7 @@ export function pollForBuildWowStatus( {
 	onReady: () => void;
 	onFailed: ( status: string ) => void;
 	onProgress?: ( status: string ) => void;
-	onRequestError?: ( error: unknown ) => void;
+	onRequestError?: ( reason: string ) => void;
 	pollIntervalMs?: number;
 	requestTimeoutMs?: number;
 	fetchStatus?: FetchStatus;
@@ -72,7 +96,7 @@ export function pollForBuildWowStatus( {
 	let pollTimeout: ReturnType< typeof setTimeout > | undefined;
 	let requestTimeout: ReturnType< typeof setTimeout > | undefined;
 	let requestController: AbortController | undefined;
-	let consecutiveFailures = 0;
+	const reportedReasons = new Set< string >();
 
 	const poll = async () => {
 		const controller = new AbortController();
@@ -85,25 +109,37 @@ export function pollForBuildWowStatus( {
 		try {
 			const response = await fetchStatus( siteIdentifier, controller.signal );
 			status = typeof response.build_status === 'string' ? response.build_status : undefined;
-			consecutiveFailures = 0;
 		} catch ( error ) {
 			// A failed status request does not mean the generation failed; keep polling.
-			// Only the first failure of a run is reported: at a 3s interval an outage
-			// would otherwise emit hundreds of identical entries.
-			consecutiveFailures += 1;
-			if ( consecutiveFailures === 1 ) {
-				onRequestError?.( error );
+			// Nothing is reported once the poller has been stopped: tearing down aborts
+			// the in-flight request, and a user navigating away must not look like an
+			// outage. Otherwise report each distinct reason once, up to a small cap, so
+			// a 3s interval cannot emit hundreds of entries but a later, more
+			// informative error is not hidden behind the first one either.
+			if ( isActive ) {
+				const reason = controller.signal.aborted
+					? `request timed out after ${ requestTimeoutMs }ms`
+					: describeRequestError( error );
+				if (
+					! reportedReasons.has( reason ) &&
+					reportedReasons.size < MAX_REPORTED_ERROR_REASONS
+				) {
+					reportedReasons.add( reason );
+					reportSafely( () => onRequestError?.( reason ) );
+				}
 			}
 		} finally {
 			clearTimeout( timeout );
+			requestController = undefined;
+			requestTimeout = undefined;
 		}
 
 		if ( ! isActive ) {
 			return;
 		}
 
-		// Callbacks are dispatched outside the try so a throw from one of them cannot
-		// be mistaken for a request failure and silently reschedule the poll.
+		// Terminal callbacks are dispatched outside the try so a throw from one of them
+		// cannot be mistaken for a request failure and silently reschedule the poll.
 		if ( status === BUILD_WOW_LIVE_STATUS ) {
 			onReady();
 			return;
@@ -112,8 +148,10 @@ export function pollForBuildWowStatus( {
 			onFailed( status );
 			return;
 		}
+		// onProgress is not terminal, so a throw from it must not kill the loop.
 		if ( status ) {
-			onProgress?.( status );
+			const progressStatus = status;
+			reportSafely( () => onProgress?.( progressStatus ) );
 		}
 
 		pollTimeout = setTimeout( () => {
