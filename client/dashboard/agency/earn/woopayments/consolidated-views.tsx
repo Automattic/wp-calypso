@@ -1,6 +1,6 @@
 import { formatCurrency } from '@automattic/number-formatters';
 import {
-	__experimentalHStack as HStack,
+	__experimentalGrid as Grid,
 	__experimentalText as Text,
 	__experimentalVStack as VStack,
 	Button,
@@ -9,8 +9,6 @@ import { __ } from '@wordpress/i18n';
 import ConsolidatedStatCard from '../../../components/consolidated-stat-card';
 import PayoutCards from './payout-cards';
 import type { WooPaymentsData } from '@automattic/api-core';
-
-import './consolidated-views.scss';
 
 const WOOPAYMENTS_LEARN_MORE_LINK =
 	'https://agencieshelp.automattic.com/knowledge-base/earn-revenue-share-when-clients-use-woopayments/';
@@ -31,7 +29,7 @@ export default function ConsolidatedViews( {
 		woopaymentsData?.data?.estimated?.current_quarter?.payout ?? 0;
 
 	return (
-		<HStack className="woopayments-consolidated-views" alignment="stretch" spacing={ 4 } wrap>
+		<Grid templateColumns="repeat(auto-fit, minmax(240px, 1fr))" gap={ 4 }>
 			<ConsolidatedStatCard
 				value={ formatCurrency( totalCommission, 'USD' ) }
 				footerText={ __( 'Total WooPayments commissions paid' ) }
@@ -58,6 +56,6 @@ export default function ConsolidatedViews( {
 				previousQuarterExpectedCommission={ previousQuarterExpectedCommission }
 				currentQuarterExpectedCommission={ currentQuarterExpectedCommission }
 			/>
-		</HStack>
+		</Grid>
 	);
 }
