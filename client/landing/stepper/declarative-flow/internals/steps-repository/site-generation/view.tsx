@@ -104,29 +104,29 @@ function ErrorCanvas( {
 	onRetry: () => void;
 } ) {
 	const translate = useTranslate();
-	const hasTimedOut = failureReason === 'timed-out';
-	const timedOutDescription = HAS_EMAIL_NOTIFICATIONS
-		? translate( 'Your brief is saved. We’ll email you when your site is ready.' )
-		: translate( 'Your brief is saved.' );
+
+	let title = translate( 'We couldn’t check your site' );
+	let description = translate( 'The site or editor destination is missing from this page.' );
+	let actionLabel = translate( 'Reload' );
+
+	if ( failureReason === 'timed-out' ) {
+		title = translate( 'This is taking longer than expected' );
+		description = HAS_EMAIL_NOTIFICATIONS
+			? translate( 'Your brief is saved. We’ll email you when your site is ready.' )
+			: translate( 'Your brief is saved.' );
+		actionLabel = translate( 'Check again' );
+	}
 
 	return (
 		<div aria-live="polite" className="site-generation__outcome" role="status">
 			<div className="site-generation__outcome-icon" aria-hidden="true">
 				<WordPressMark />
 			</div>
-			<h1 className="site-generation__outcome-title">
-				{ hasTimedOut
-					? translate( 'This is taking longer than expected' )
-					: translate( 'We couldn’t check your site' ) }
-			</h1>
-			<p className="site-generation__outcome-description">
-				{ hasTimedOut
-					? timedOutDescription
-					: translate( 'The site or editor destination is missing from this page.' ) }
-			</p>
+			<h1 className="site-generation__outcome-title">{ title }</h1>
+			<p className="site-generation__outcome-description">{ description }</p>
 			<div className="site-generation__outcome-actions">
 				<Button onClick={ onRetry } variant="primary">
-					{ hasTimedOut ? translate( 'Check again' ) : translate( 'Reload' ) }
+					{ actionLabel }
 				</Button>
 			</div>
 		</div>

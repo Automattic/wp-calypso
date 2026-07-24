@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
-import { pollForBuildWowReadySticker } from './blog-sticker-poller';
+import { logBuildWowEvent } from 'calypso/landing/stepper/utils/build-wow';
+import { pollForBuildWowStatus } from './build-status-poller';
 
 export type SiteGenerationStep = {
 	id: string;
@@ -43,6 +44,7 @@ export function useSiteGeneration( {
 	steps: Array< Pick< SiteGenerationStep, 'id' | 'label' > >;
 } ): SiteGenerationState {
 	const [ activeStepIndex, setActiveStepIndex ] = useState( 0 );
+	const [ hasReachedDeliveryPhase, setHasReachedDeliveryPhase ] = useState( false );
 	const [ hasTimedOut, setHasTimedOut ] = useState( false );
 	const hasRequiredParameters = Boolean( siteIdentifier && editorUrl );
 
@@ -58,9 +60,17 @@ export function useSiteGeneration( {
 			() => setHasTimedOut( true ),
 			GENERATION_TIMEOUT_MS
 		);
-		const stopPolling = pollForBuildWowReadySticker( {
+		const stopPolling = pollForBuildWowStatus( {
 			siteIdentifier,
 			onReady: () => window.location.assign( editorUrl ),
+			// A failed build is logged for us but never surfaced as an error: the
+			// user only ever sees the calm "your brief is saved, check again" state
+			// instead of a dead end.
+			onFailed: ( status ) => {
+				logBuildWowEvent( 'site_generation_failed', { status } );
+				setHasTimedOut( true );
+			},
+			onProgress: () => setHasReachedDeliveryPhase( true ),
 		} );
 
 		return () => {
@@ -77,9 +87,14 @@ export function useSiteGeneration( {
 		failureReason = 'timed-out';
 	}
 
+	// Once the backend reports a real delivery-phase status, generation is done:
+	// advance to the final step so the progress tracks reality instead of the
+	// fixed timers (keeping the designed step labels as-is).
+	const effectiveActiveIndex = hasReachedDeliveryPhase ? steps.length - 1 : activeStepIndex;
+
 	return {
 		status: failureReason ? 'failed' : 'working',
 		failureReason,
-		steps: getStepsWithProgress( steps, activeStepIndex ),
+		steps: getStepsWithProgress( steps, effectiveActiveIndex ),
 	};
 }
