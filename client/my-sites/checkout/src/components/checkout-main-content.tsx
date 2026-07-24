@@ -628,8 +628,7 @@ export default function CheckoutMainContent( {
 	const isLargeViewport = useViewportMatch( 'large', '>=' );
 
 	const [ , isCheckoutUiRedesignV1 ] = useCheckoutUiRedesignExperiment();
-	const { isLoading: isMobileCheckoutStickySummaryLoading, isMobileCheckoutStickySummary } =
-		useMobileCheckoutStickySummaryExperiment();
+	const { isMobileCheckoutStickySummary } = useMobileCheckoutStickySummaryExperiment();
 	const originalPriceForHeader = responseCart.products.reduce(
 		( sum, product ) => sum + product.item_original_subtotal_integer,
 		0
@@ -667,18 +666,6 @@ export default function CheckoutMainContent( {
 					<Loading className="checkout__pending-content" title={ headingText } />
 				</WPCheckoutCompletedMainContent>
 			</WPCheckoutCompletedWrapper>
-		);
-	}
-
-	// Wait for the assignment before painting, so treatment users aren't measured
-	// on control UI. Must stay after the completed-transaction check so a finished
-	// payment is never held behind ExPlat. Only eligible surfaces reach here.
-	if ( isMobileCheckoutStickySummaryLoading ) {
-		return (
-			<>
-				<PerformanceTrackerStop />
-				<Step.Loading />
-			</>
 		);
 	}
 

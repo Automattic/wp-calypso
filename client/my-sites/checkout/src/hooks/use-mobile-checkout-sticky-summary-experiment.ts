@@ -11,8 +11,11 @@ export interface MobileCheckoutStickySummaryExperiment {
 }
 
 /**
- * `isLoading` is load-bearing: callers must suppress both treatment and control
- * UI until it resolves, or the treatment cohort is measured partly on control UI.
+ * `isLoading` is load-bearing: checkout must not paint its steps until the
+ * assignment resolves, or the treatment cohort is measured partly on control UI.
+ * That gating lives in `checkoutLoadingConditions` in `checkout-main.tsx`
+ * alongside checkout's other load blockers; consumers of
+ * `isMobileCheckoutStickySummary` don't need to check `isLoading` themselves.
  *
  * Eligibility is gated to where the treatment can actually show — mobile inside a
  * StepContainerV2 flow. These components also render on `/me/purchases` (via
