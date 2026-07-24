@@ -766,7 +766,7 @@ class ManagePurchase extends Component<
 				tagName="button"
 				displayAsLink
 				href={ `/plans/storage/${ siteSlug }` }
-				onClick={ this.handleUpgradeClick }
+				onClick={ this.handleUpgradeStorageClick }
 			>
 				<Icon icon={ cloud } className="card__icon" />
 				{ translate( 'Upgrade storage' ) }

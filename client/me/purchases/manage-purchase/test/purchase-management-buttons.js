@@ -337,11 +337,12 @@ describe( 'Purchase Management Buttons', () => {
 		}
 	);
 
-	// Storage-eligible Jetpack products (Backup T1 / Security T1) show two CTAs:
-	// the generic plan upgrade (/plans) plus a dedicated "Upgrade storage"
-	// (/plans/storage). Backup T1 exercises the shared render path without
-	// pulling in the Jetpack-plan plugin-keys query.
-	it( 'renders both a plan upgrade and a storage upgrade button for a storage-eligible product', async () => {
+	// Storage-eligible Jetpack products (Backup T1 / Security T1) show a plan
+	// upgrade CTA (/plans) plus a dedicated "Upgrade storage" CTA
+	// (/plans/storage), each rendered both in the button row and in the
+	// options list at the bottom. Backup T1 exercises the shared render path
+	// without pulling in the Jetpack-plan plugin-keys query.
+	it( 'renders both a plan upgrade and a storage upgrade CTA for a storage-eligible product', async () => {
 		nock( 'https://public-api.wordpress.com' )
 			.get( '/rest/v1.2/me/payment-methods?expired=include' )
 			.reply( 200 );
@@ -363,13 +364,15 @@ describe( 'Purchase Management Buttons', () => {
 			</QueryClientProvider>
 		);
 
-		expect( await screen.findByText( 'Upgrade' ) ).toHaveAttribute(
+		expect( await screen.findByText( 'Upgrade plan' ) ).toHaveAttribute(
 			'href',
 			'/plans/onecooltestsite.com'
 		);
-		expect( screen.getByText( 'Upgrade storage' ) ).toHaveAttribute(
-			'href',
-			'/plans/storage/onecooltestsite.com'
+
+		const storageCtas = screen.getAllByText( 'Upgrade storage' );
+		expect( storageCtas ).toHaveLength( 2 );
+		storageCtas.forEach( ( cta ) =>
+			expect( cta ).toHaveAttribute( 'href', '/plans/storage/onecooltestsite.com' )
 		);
 	} );
 
