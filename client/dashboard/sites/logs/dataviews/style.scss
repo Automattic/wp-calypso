@@ -65,12 +65,14 @@
 	cursor: pointer;
 }
 
-/* TEMPORARY: this screen scrolls instead of paginating, so the footer holds
-   nothing — but DataViews still mounts it partway through a fetch, which
-   resizes the scroll container under the reader. Hide it until the
-   @wordpress/dataviews 17.2.0 bump lands, which stops tying the footer's
+/* TEMPORARY: these two screens scroll instead of paginating, so the footer
+   holds nothing — but DataViews still mounts it partway through a fetch, which
+   resizes the scroll container under the reader. Scoped to php and server
+   because the activity log does paginate and needs its footer. Hide it until
+   the @wordpress/dataviews 17.2.0 bump lands, which stops tying the footer's
    visibility to the loading state, then remove this rule. */
-.site-logs-card .dataviews-footer {
+.site-logs-card--php .dataviews-footer,
+.site-logs-card--server .dataviews-footer {
 	display: none;
 }
 
