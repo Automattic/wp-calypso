@@ -6,7 +6,14 @@ import type { SiteGenerationFailureReason, SiteGenerationState } from './use-sit
 const WordPressMark = () => <Icon className="site-generation__wordpress-mark" icon={ wordpress } />;
 
 const CheckmarkIcon = (
-	<svg aria-hidden="true" fill="none" height="12" viewBox="0 0 12 12" width="12">
+	<svg
+		aria-hidden="true"
+		className="site-build-progress__check"
+		fill="none"
+		height="12"
+		viewBox="0 0 12 12"
+		width="12"
+	>
 		<path
 			d="M10 3L4.5 8.5L2 6"
 			stroke="currentColor"
@@ -27,7 +34,7 @@ function BuildVisualization( { state }: { state: SiteGenerationState } ) {
 			<div className="site-generation__build-status">
 				<span className="site-generation__activity-grid">
 					{ Array.from( { length: 9 }, ( _, index ) => (
-						<span key={ index } />
+						<span className="site-generation__activity-dot" key={ index } />
 					) ) }
 				</span>
 				<span>{ statusLabel }</span>
@@ -37,28 +44,28 @@ function BuildVisualization( { state }: { state: SiteGenerationState } ) {
 				<div className="site-generation__preview-bar">
 					<WordPressMark />
 					<div className="site-generation__preview-nav">
-						<span />
-						<span />
-						<span />
+						<span className="site-generation__preview-nav-item" />
+						<span className="site-generation__preview-nav-item" />
+						<span className="site-generation__preview-nav-item" />
 					</div>
 				</div>
 				<div className="site-generation__preview-content">
 					<div className="site-generation__preview-copy">
-						<span className="is-eyebrow" />
-						<span className="is-heading" />
-						<span className="is-heading is-short" />
-						<span className="is-copy" />
-						<span className="is-copy is-short" />
-						<span className="is-button" />
+						<span className="site-generation__preview-line is-eyebrow" />
+						<span className="site-generation__preview-line is-heading" />
+						<span className="site-generation__preview-line is-heading is-short" />
+						<span className="site-generation__preview-line is-copy" />
+						<span className="site-generation__preview-line is-copy is-short" />
+						<span className="site-generation__preview-line is-button" />
 					</div>
 					<div className="site-generation__preview-media">
 						<WordPressMark />
 					</div>
 				</div>
 				<div className="site-generation__preview-cards">
-					<span />
-					<span />
-					<span />
+					<span className="site-generation__preview-card" />
+					<span className="site-generation__preview-card" />
+					<span className="site-generation__preview-card" />
 				</div>
 				<div className="site-generation__preview-scan" />
 			</div>
@@ -73,8 +80,10 @@ function WaitingCanvas( { state }: { state: SiteGenerationState } ) {
 		<div className="site-generation__waiting">
 			<BuildVisualization state={ state } />
 			<div className="site-generation__waiting-copy">
-				<h1>{ translate( 'We’re building your site' ) }</h1>
-				<p>
+				<h1 className="site-generation__waiting-title">
+					{ translate( 'We’re building your site' ) }
+				</h1>
+				<p className="site-generation__waiting-description">
 					{ translate(
 						'This can take a few minutes. We’ll keep you updated as your site comes together.'
 					) }
@@ -99,12 +108,12 @@ function ErrorCanvas( {
 			<div className="site-generation__outcome-icon" aria-hidden="true">
 				<WordPressMark />
 			</div>
-			<h1>
+			<h1 className="site-generation__outcome-title">
 				{ hasTimedOut
 					? translate( 'This is taking longer than expected' )
 					: translate( 'We couldn’t check your site' ) }
 			</h1>
-			<p>
+			<p className="site-generation__outcome-description">
 				{ hasTimedOut
 					? translate( 'Your brief is saved. We’ll email you when your site is ready.' )
 					: translate( 'The site or editor destination is missing from this page.' ) }
@@ -174,8 +183,12 @@ function BuildProgress( { state }: { state: SiteGenerationState } ) {
 			</ul>
 			{ hasFailed && (
 				<Notice className="site-generation__sidebar-notice" isDismissible={ false } status="info">
-					<strong>{ translate( 'Your brief is saved' ) }</strong>
-					<span>{ translate( 'You can safely check its status again.' ) }</span>
+					<div className="site-generation__sidebar-notice-content">
+						<strong>{ translate( 'Your brief is saved' ) }</strong>
+						<span className="site-generation__sidebar-notice-detail">
+							{ translate( 'You can safely check its status again.' ) }
+						</span>
+					</div>
 				</Notice>
 			) }
 		</div>
@@ -213,7 +226,9 @@ export function SiteGenerationView( {
 					</div>
 				</header>
 				<div className="site-generation__conversation">
-					<p>{ translate( 'Your site is being prepared. You can follow its progress here.' ) }</p>
+					<p className="site-generation__conversation-message">
+						{ translate( 'Your site is being prepared. You can follow its progress here.' ) }
+					</p>
 					<BuildProgress state={ state } />
 				</div>
 				<p className="site-generation__completion-note">
