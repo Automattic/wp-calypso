@@ -55,11 +55,11 @@ describe( 'User Can log in', () => {
 		await mkdir( path.dirname( CONSOLE_PATH ), { recursive: true } );
 		consoleStream = await createWriteStream( CONSOLE_PATH );
 
+		// Important! Do not enable `recordHar`: the login POST body and session cookies land in the
+		// artifact in cleartext.
 		electronApp = await electron.launch( {
 			executablePath: APP_PATH,
 			args: LAUNCH_ARGS,
-			// Do not enable `recordHar`: the login POST body and session cookies land in the
-			// artifact in cleartext.
 			timeout: 0,
 			env: {
 				...process.env,
