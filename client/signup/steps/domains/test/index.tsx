@@ -34,13 +34,11 @@ const baseProps = {
 	previousStepName: null,
 };
 
-function renderStep( props = baseProps, options = {} ) {
+function renderStep( props = baseProps ) {
 	mockWPCOMDomainSearch.mockClear();
-	renderWithProvider( <DomainSearchStep { ...props } />, options );
+	renderWithProvider( <DomainSearchStep { ...props } /> );
 	return mockWPCOMDomainSearch.mock.calls[ 0 ][ 0 ].events;
 }
-
-const LOGGED_IN_STATE = { currentUser: { id: 12345 } };
 
 describe( 'DomainSearchStep — domain-only checkout simplification', () => {
 	beforeEach( () => {
@@ -48,11 +46,10 @@ describe( 'DomainSearchStep — domain-only checkout simplification', () => {
 		mockWPCOMDomainSearch.mockReturnValue( null );
 	} );
 
-	it( 'auto-submits the skipped steps and routes logged-out users to the account step', () => {
+	it( 'auto-submits site-or-domain, site-picker, and plans-site-selected in the domain flow', () => {
 		const submitSignupStep = jest.fn();
-		const goToStep = jest.fn();
 		const goToNextStep = jest.fn();
-		const events = renderStep( { ...baseProps, submitSignupStep, goToStep, goToNextStep } );
+		const events = renderStep( { ...baseProps, submitSignupStep, goToNextStep } );
 
 		events.onContinue( [ domainItem ] );
 
@@ -86,27 +83,7 @@ describe( 'DomainSearchStep — domain-only checkout simplification', () => {
 			expect.objectContaining( { stepName: 'plans-site-selected', wasSkipped: true } ),
 			expect.objectContaining( { cartItems: null } )
 		);
-		// Logged out: jump to the account step instead of the skipped site-or-domain step.
-		expect( goToStep ).toHaveBeenCalledTimes( 1 );
-		expect( goToStep ).toHaveBeenCalledWith( expect.stringMatching( /^user/ ) );
-		expect( goToNextStep ).not.toHaveBeenCalled();
-	} );
-
-	it( 'skips straight to checkout for logged-in users in the domain flow', () => {
-		const submitSignupStep = jest.fn();
-		const goToStep = jest.fn();
-		const goToNextStep = jest.fn();
-		const events = renderStep(
-			{ ...baseProps, submitSignupStep, goToStep, goToNextStep },
-			{ initialState: LOGGED_IN_STATE }
-		);
-
-		events.onContinue( [ domainItem ] );
-
-		// Same auto-submitted steps, but no account step remains, so proceed to checkout.
-		expect( submitSignupStep ).toHaveBeenCalledTimes( 4 );
 		expect( goToNextStep ).toHaveBeenCalledTimes( 1 );
-		expect( goToStep ).not.toHaveBeenCalled();
 	} );
 
 	it( 'submits the domain step and does not skip steps in a non-domain flow', () => {
