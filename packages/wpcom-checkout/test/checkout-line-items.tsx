@@ -156,7 +156,7 @@ describe( 'LineItemSublabelAndPrice', () => {
 					product={ yearlyPlan }
 					shouldShowComparison
 					compareToPrice={ compareToPrice }
-					isMobileStickySummary
+					isMobileCheckoutStickySummary
 				/>
 			);
 
@@ -184,7 +184,7 @@ describe( 'LineItemSublabelAndPrice', () => {
 					product={ yearlyPlan }
 					shouldShowComparison
 					compareToPrice={ compareToPrice }
-					isMobileStickySummary
+					isMobileCheckoutStickySummary
 				/>
 			);
 
@@ -197,7 +197,7 @@ describe( 'LineItemSublabelAndPrice', () => {
 					product={ yearlyPlan }
 					shouldShowComparison
 					compareToPrice={ compareToPrice }
-					isMobileStickySummary
+					isMobileCheckoutStickySummary
 					isRenewalPricingExperiment
 				/>
 			);

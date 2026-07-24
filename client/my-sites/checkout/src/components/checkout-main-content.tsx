@@ -1225,7 +1225,7 @@ export default function CheckoutMainContent( {
  * cascade. `isMobileCheckoutStickySummary` is already false above the `small`
  * breakpoint, so no additional viewport guard is needed here.
  */
-const mobileStickySummaryStyles = css`
+const mobileCheckoutStickySummaryStyles = css`
 	/* The submit button is portaled into the fixed sticky bar, so the native
 	   last-step reservation for it (--submit-button-height) is dead weight —
 	   zero it, or it stacks with the padding below into an odd trailing gap.
@@ -1375,7 +1375,7 @@ const mobileStickySummaryStyles = css`
 	   (small viewports) so lock to row + 13/52px (Figma 3971:13286
 	   row height) so each row matches Figma with logos sitting
 	   beside the title even on the narrowest devices. Font size
-	   lives here (not only in the V1 block) so mobile-sticky users
+	   lives here (not only in the V1 block) so mobile-checkout-sticky-summary users
 	   on the non-V1 baseline still get 13px. */
 	.checkout-payment-methods .has-highlight > label {
 		min-height: 52px;
@@ -2145,7 +2145,7 @@ const StepContainerV2CheckoutFixer = styled.div< {
 				padding-block-start: 24px;
 			}
 		` }
-	${ ( props ) => props.isMobileCheckoutStickySummary && mobileStickySummaryStyles }
+	${ ( props ) => props.isMobileCheckoutStickySummary && mobileCheckoutStickySummaryStyles }
 `;
 
 const CheckoutSummary = styled.div`

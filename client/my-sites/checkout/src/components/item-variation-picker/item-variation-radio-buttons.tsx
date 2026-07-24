@@ -13,7 +13,7 @@ const TermOptions = styled.ul`
 	margin: 20px 0;
 	padding: 0;
 
-	&.is-mobile-sticky-summary {
+	&.is-mobile-checkout-sticky-summary {
 		background: var( --color-surface );
 		border: 1px solid var( --studio-gray-5 );
 		border-radius: 8px;
@@ -30,25 +30,25 @@ const TermOptionsItem = styled.li`
 		margin-top: 0;
 	}
 
-	.is-mobile-sticky-summary & {
+	.is-mobile-checkout-sticky-summary & {
 		margin: 0;
 	}
 
-	.is-mobile-sticky-summary &:not( :last-of-type ) {
+	.is-mobile-checkout-sticky-summary &:not( :last-of-type ) {
 		border-block-end: 1px solid var( --studio-gray-5 );
 	}
 
 	/* Flatten the per-row card border from RadioButton — the ul is the card now. */
-	.is-mobile-sticky-summary & .has-highlight {
+	.is-mobile-checkout-sticky-summary & .has-highlight {
 		border-radius: 0;
 	}
-	.is-mobile-sticky-summary & .has-highlight::before,
-	.is-mobile-sticky-summary & .has-highlight:hover::before {
+	.is-mobile-checkout-sticky-summary & .has-highlight::before,
+	.is-mobile-checkout-sticky-summary & .has-highlight:hover::before {
 		border: none;
 	}
 
 	/* Tighten the label and reposition the radio dot to the Figma's 16px gutter. */
-	.is-mobile-sticky-summary & label {
+	.is-mobile-checkout-sticky-summary & label {
 		padding-block: 16px;
 		padding-inline-start: 40px;
 		padding-inline-end: 16px;
@@ -59,13 +59,13 @@ const TermOptionsItem = styled.li`
 		color: var( --studio-gray-100 );
 	}
 
-	.is-mobile-sticky-summary & label::before {
+	.is-mobile-checkout-sticky-summary & label::before {
 		inset-inline-start: 16px;
 		inset-block-start: 50%;
 		transform: translateY( -50% );
 	}
 
-	.is-mobile-sticky-summary & label::after {
+	.is-mobile-checkout-sticky-summary & label::after {
 		inset-inline-start: 20px;
 		inset-block-start: 50%;
 		margin-block-start: 0;
@@ -124,8 +124,7 @@ export const ItemVariationRadioButtons: FunctionComponent< ItemVariationPickerPr
 	variants,
 } ) => {
 	const translate = useTranslate();
-	const { isMobileCheckoutStickySummary: isMobileStickySummary } =
-		useMobileCheckoutStickySummaryExperiment();
+	const { isMobileCheckoutStickySummary } = useMobileCheckoutStickySummaryExperiment();
 	const [ optimisticSelectedItem, setOptimisticSelectedItem ] = useState(
 		selectedItem.product_slug
 	);
@@ -150,7 +149,7 @@ export const ItemVariationRadioButtons: FunctionComponent< ItemVariationPickerPr
 			role="radiogroup"
 			aria-label={ translate( 'Pick a product term' ) }
 			className={ clsx( 'item-variation-picker', {
-				'is-mobile-sticky-summary': isMobileStickySummary,
+				'is-mobile-checkout-sticky-summary': isMobileCheckoutStickySummary,
 			} ) }
 		>
 			{ variants.map( ( productVariant: WPCOMProductVariant ) => (

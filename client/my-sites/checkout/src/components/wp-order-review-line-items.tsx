@@ -364,8 +364,7 @@ function LineItemWrapper( {
 	const [ restorableProducts, setRestorableProducts ] = useRestorableProducts();
 	const isRenewal = isWpComProductRenewal( product );
 	const isWooMobile = isWcMobileApp();
-	const { isMobileCheckoutStickySummary: isMobileStickySummary } =
-		useMobileCheckoutStickySummaryExperiment();
+	const { isMobileCheckoutStickySummary } = useMobileCheckoutStickySummaryExperiment();
 	let isDeletable = canItemBeRemovedFromCart( product, responseCart ) && ! isWooMobile;
 	const has100YearPlanProduct = has100YearPlan( responseCart );
 	const signupFlowName = getSignupCompleteFlowName();
@@ -494,7 +493,7 @@ function LineItemWrapper( {
 				shouldShowComparison={ shouldShowComparison }
 				compareToPrice={ compareToPrice }
 				isRenewalPricingExperiment={ isRenewalPricingExperiment }
-				isMobileStickySummary={ isMobileStickySummary }
+				isMobileCheckoutStickySummary={ isMobileCheckoutStickySummary }
 			>
 				<DropdownWrapper>
 					{ finalShouldShowVariantSelector && (

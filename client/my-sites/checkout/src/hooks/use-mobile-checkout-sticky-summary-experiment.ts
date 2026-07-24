@@ -33,6 +33,13 @@ export interface MobileCheckoutStickySummaryExperiment {
  * breakpoint can disagree with ones already mounted. Hoisting this to a context
  * provided once by `CheckoutMain` would remove that; not worth the churn while
  * this is a short-lived experiment.
+ *
+ * Teardown: everything belonging to this experiment is named after it, in one of
+ * three cases — `MobileCheckoutStickySummary` (identifiers),
+ * `mobile-checkout-sticky-summary` (CSS classes and file names) and
+ * `mobile_checkout_sticky_summary` (experiment name and query param). All three
+ * fall out of `grep -rEi 'mobile[-_]?checkout[-_]?sticky[-_]?summary'`; keep it
+ * that way when adding to the treatment.
  */
 export function useMobileCheckoutStickySummaryExperiment(): MobileCheckoutStickySummaryExperiment {
 	const isMobileViewport = useViewportMatch( 'small', '<' );

@@ -14,7 +14,7 @@ import { useMobileCheckoutStickySummaryExperiment } from 'calypso/my-sites/check
 import useCartKey from '../../../use-cart-key';
 import type { WPCOMProductVariant } from './types';
 
-const Discount = styled.span< { isMobileStickySummary?: boolean } >`
+const Discount = styled.span< { isMobileCheckoutStickySummary?: boolean } >`
 	text-align: center;
 	color: ${ colorStudio.colors[ 'Green 80' ] };
 
@@ -31,7 +31,7 @@ const Discount = styled.span< { isMobileStickySummary?: boolean } >`
 	}
 
 	${ ( props ) =>
-		props.isMobileStickySummary &&
+		props.isMobileCheckoutStickySummary &&
 		`
 		color: ${ colorStudio.colors[ 'Green 80' ] };
 		background-color: rgba( 184, 230, 191, 0.68 );
@@ -44,11 +44,14 @@ const Discount = styled.span< { isMobileStickySummary?: boolean } >`
 	` }
 `;
 
-const Price = styled.span< { isCheckoutUiRedesignV1?: boolean; isMobileStickySummary?: boolean } >`
+const Price = styled.span< {
+	isCheckoutUiRedesignV1?: boolean;
+	isMobileCheckoutStickySummary?: boolean;
+} >`
 	color: ${ colorStudio.colors[ 'Black' ] };
 	${ ( props ) => props.isCheckoutUiRedesignV1 && 'padding-right: 6px;' }
 	${ ( props ) =>
-		props.isMobileStickySummary &&
+		props.isMobileCheckoutStickySummary &&
 		`
 		color: var( --studio-gray-100 );
 		font-size: 13px;
@@ -61,7 +64,7 @@ const PriceSuffix = styled.span`
 	font-weight: 400;
 `;
 
-const Variant = styled.div< { isMobileStickySummary?: boolean } >`
+const Variant = styled.div< { isMobileCheckoutStickySummary?: boolean } >`
 	align-items: center;
 	display: flex;
 	font-size: 16px;
@@ -71,7 +74,7 @@ const Variant = styled.div< { isMobileStickySummary?: boolean } >`
 	width: 100%;
 
 	${ ( props ) =>
-		props.isMobileStickySummary &&
+		props.isMobileCheckoutStickySummary &&
 		`
 		color: var( --studio-gray-100 );
 		font-size: 13px;
@@ -104,11 +107,11 @@ const PriceArea = styled.span< { inlineDiscount?: boolean; isCheckoutUiRedesignV
 
 const DiscountPercentage: FunctionComponent< {
 	percent: number;
-	isMobileStickySummary?: boolean;
-} > = ( { percent, isMobileStickySummary } ) => {
+	isMobileCheckoutStickySummary?: boolean;
+} > = ( { percent, isMobileCheckoutStickySummary } ) => {
 	const translate = useTranslate();
 	return (
-		<Discount isMobileStickySummary={ isMobileStickySummary }>
+		<Discount isMobileCheckoutStickySummary={ isMobileCheckoutStickySummary }>
 			{ translate( 'Save %(percent)s%%', {
 				args: {
 					percent,
@@ -127,8 +130,7 @@ export const ItemVariantRadioPrice: FunctionComponent< {
 	const { couponStatus } = useShoppingCart( cartKey );
 	const isApplyingCoupon = couponStatus === 'pending';
 	const [ , isCheckoutUiRedesignV1 ] = useCheckoutUiRedesignExperiment();
-	const { isMobileCheckoutStickySummary: isMobileStickySummary } =
-		useMobileCheckoutStickySummaryExperiment();
+	const { isMobileCheckoutStickySummary } = useMobileCheckoutStickySummaryExperiment();
 	const compareToInfo = compareTo ? fromVariantPriceData( compareTo ) : null;
 	const variantInfo = fromVariantPriceData( variant );
 	const discountPercentage = compareToInfo
@@ -152,7 +154,7 @@ export const ItemVariantRadioPrice: FunctionComponent< {
 	} );
 
 	const priceDisplay = ( () => {
-		if ( isMobileStickySummary ) {
+		if ( isMobileCheckoutStickySummary ) {
 			// Render the suffix in its own span so the medium weight on
 			// <Price> doesn't bleed into "/mo" (Figma 2392:15326 wants
 			// regular).
@@ -179,9 +181,9 @@ export const ItemVariantRadioPrice: FunctionComponent< {
 	const label =
 		variant.termIntervalInMonths === 1 ? translate( 'Month' ) : variant.variantLabel.noun;
 	const showInlineDiscount =
-		( isCheckoutUiRedesignV1 || isMobileStickySummary ) && discountPercentage > 0;
+		( isCheckoutUiRedesignV1 || isMobileCheckoutStickySummary ) && discountPercentage > 0;
 	return (
-		<Variant isMobileStickySummary={ isMobileStickySummary }>
+		<Variant isMobileCheckoutStickySummary={ isMobileCheckoutStickySummary }>
 			<VariantTermLabel isCheckoutUiRedesignV1={ isCheckoutUiRedesignV1 }>
 				{ label }
 			</VariantTermLabel>
@@ -196,18 +198,18 @@ export const ItemVariantRadioPrice: FunctionComponent< {
 						{ showInlineDiscount && (
 							<DiscountPercentage
 								percent={ discountPercentage }
-								isMobileStickySummary={ isMobileStickySummary }
+								isMobileCheckoutStickySummary={ isMobileCheckoutStickySummary }
 							/>
 						) }
 						<Price
 							isCheckoutUiRedesignV1={ isCheckoutUiRedesignV1 }
-							isMobileStickySummary={ isMobileStickySummary }
+							isMobileCheckoutStickySummary={ isMobileCheckoutStickySummary }
 						>
 							{ priceDisplay }
 						</Price>
-						{ ! isCheckoutUiRedesignV1 && ! isMobileStickySummary && discountPercentage > 0 && (
-							<DiscountPercentage percent={ discountPercentage } />
-						) }
+						{ ! isCheckoutUiRedesignV1 &&
+							! isMobileCheckoutStickySummary &&
+							discountPercentage > 0 && <DiscountPercentage percent={ discountPercentage } /> }
 					</>
 				) }
 			</PriceArea>

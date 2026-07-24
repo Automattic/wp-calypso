@@ -911,14 +911,14 @@ export function LineItemSublabelAndPrice( {
 	shouldShowComparison,
 	compareToPrice,
 	isRenewalPricingExperiment,
-	isMobileStickySummary,
+	isMobileCheckoutStickySummary,
 	isCartUpdating,
 }: {
 	product: ResponseCartProduct;
 	shouldShowComparison?: boolean;
 	compareToPrice?: number;
 	isRenewalPricingExperiment?: boolean;
-	isMobileStickySummary?: boolean;
+	isMobileCheckoutStickySummary?: boolean;
 	isCartUpdating?: boolean;
 } ) {
 	const translate = useTranslate();
@@ -1092,10 +1092,10 @@ export function LineItemSublabelAndPrice( {
 			stripZeros: true,
 		} );
 		// Gated off for the sticky summary: the strikethrough moves inline next to
-		// the price (see mobileStickyMonthlyCycleCrossedOutDisplay), so without this
+		// the price (see mobileCheckoutStickyMonthlyCycleCrossedOutDisplay), so without this
 		// it would render in both places.
 		const showCrossedOutPrice =
-			! isMobileStickySummary &&
+			! isMobileCheckoutStickySummary &&
 			product.item_original_subtotal_integer / ( product.months_per_bill_period ?? 1 ) !==
 				compareToPrice;
 
@@ -1137,20 +1137,20 @@ export function LineItemSublabelAndPrice( {
 								args: { price: actualMonthlyPrice },
 							} ) }
 						{ ! isRenewalPricingExperiment &&
-							isMobileStickySummary &&
+							isMobileCheckoutStickySummary &&
 							translate( '%(price)s billed annually', {
 								args: { price: actualSubtotal },
 								comment:
 									"Annual price formatted with the currency (e.g. '$99.99'); shown as the sublabel of a yearly plan line item in the mobile sticky checkout summary.",
 							} ) }
 						{ ! isRenewalPricingExperiment &&
-							! isMobileStickySummary &&
+							! isMobileCheckoutStickySummary &&
 							translate( 'Billed every year' ) }
 					</LineItemSublabelTitle>
 					{ showCrossedOutPrice && (
 						<s>
 							{ monthlyPrice }
-							{ ! isMobileStickySummary && <> { translate( '/month' ) }</> }
+							{ ! isMobileCheckoutStickySummary && <> { translate( '/month' ) }</> }
 						</s>
 					) }
 				</>
@@ -1166,14 +1166,14 @@ export function LineItemSublabelAndPrice( {
 								args: { price: actualMonthlyPrice },
 							} ) }
 						{ ! isRenewalPricingExperiment &&
-							isMobileStickySummary &&
+							isMobileCheckoutStickySummary &&
 							translate( '%(price)s billed every two years', {
 								args: { price: actualSubtotal },
 								comment:
 									"Total price formatted with the currency (e.g. '$99.99'); shown as the sublabel of a two-year plan line item in the mobile sticky checkout summary.",
 							} ) }
 						{ ! isRenewalPricingExperiment &&
-							! isMobileStickySummary &&
+							! isMobileCheckoutStickySummary &&
 							translate( 'Billed every 2 years' ) }
 					</LineItemSublabelTitle>
 					{ showCrossedOutPrice && (
@@ -1194,14 +1194,14 @@ export function LineItemSublabelAndPrice( {
 								args: { price: actualMonthlyPrice },
 							} ) }
 						{ ! isRenewalPricingExperiment &&
-							isMobileStickySummary &&
+							isMobileCheckoutStickySummary &&
 							translate( '%(price)s billed every three years', {
 								args: { price: actualSubtotal },
 								comment:
 									"Total price formatted with the currency (e.g. '$99.99'); shown as the sublabel of a three-year plan line item in the mobile sticky checkout summary.",
 							} ) }
 						{ ! isRenewalPricingExperiment &&
-							! isMobileStickySummary &&
+							! isMobileCheckoutStickySummary &&
 							translate( 'Billed every 3 years' ) }
 					</LineItemSublabelTitle>
 					{ showCrossedOutPrice && (
@@ -1633,8 +1633,8 @@ function LineItemPriceContent( {
 	actualAmountDisplay,
 	originalAmountDisplay,
 	stackedCrossedOutDisplay,
-	isMobileStickySummary,
-	mobileStickyMonthlyCycleCrossedOutDisplay,
+	isMobileCheckoutStickySummary,
+	mobileCheckoutStickyMonthlyCycleCrossedOutDisplay,
 }: {
 	isCartUpdating: boolean;
 	shouldShowComparison?: boolean;
@@ -1645,8 +1645,8 @@ function LineItemPriceContent( {
 	actualAmountDisplay: string;
 	originalAmountDisplay: string;
 	stackedCrossedOutDisplay?: string;
-	isMobileStickySummary?: boolean;
-	mobileStickyMonthlyCycleCrossedOutDisplay?: string;
+	isMobileCheckoutStickySummary?: boolean;
+	mobileCheckoutStickyMonthlyCycleCrossedOutDisplay?: string;
 } ) {
 	const translate = useTranslate();
 
@@ -1662,10 +1662,10 @@ function LineItemPriceContent( {
 					crossedOutAmount={
 						isDiscounted && ! isRenewalPricingExperiment
 							? originalMonthlyAmountDisplay
-							: mobileStickyMonthlyCycleCrossedOutDisplay
+							: mobileCheckoutStickyMonthlyCycleCrossedOutDisplay
 					}
 				/>
-				{ isMobileStickySummary ? translate( '/mo' ) : <> { translate( '/month' ) }</> }
+				{ isMobileCheckoutStickySummary ? translate( '/mo' ) : <> { translate( '/month' ) }</> }
 			</>
 		);
 	}
@@ -1700,7 +1700,7 @@ function CheckoutLineItem( {
 	shouldShowComparison,
 	compareToPrice,
 	isRenewalPricingExperiment,
-	isMobileStickySummary,
+	isMobileCheckoutStickySummary,
 }: PropsWithChildren< {
 	product: ResponseCartProduct;
 	className?: string;
@@ -1721,7 +1721,7 @@ function CheckoutLineItem( {
 	shouldShowComparison?: boolean;
 	compareToPrice?: number;
 	isRenewalPricingExperiment?: boolean;
-	isMobileStickySummary?: boolean;
+	isMobileCheckoutStickySummary?: boolean;
 } > ) {
 	const translate = useTranslate();
 	const hasBundledDomainsInCart = responseCart.products.some(
@@ -1804,8 +1804,8 @@ function CheckoutLineItem( {
 	// 3838:3619/3620). Only fills in where control shows none — the consumer keeps
 	// the pre-discount strikethrough ahead of this. Gated on isRenewalPricingExperiment
 	// so it doesn't leak a strikethrough into that experiment's arm.
-	const mobileStickyMonthlyCycleCrossedOutDisplay =
-		isMobileStickySummary &&
+	const mobileCheckoutStickyMonthlyCycleCrossedOutDisplay =
+		isMobileCheckoutStickySummary &&
 		! isRenewalPricingExperiment &&
 		shouldShowComparison &&
 		compareToPrice &&
@@ -1842,7 +1842,7 @@ function CheckoutLineItem( {
 	// add-on, Akismet has its own slug pattern distinct from Jetpack, so the
 	// specific checks come before the broader ones.
 	const removeLabel = ( () => {
-		if ( ! isMobileStickySummary ) {
+		if ( ! isMobileCheckoutStickySummary ) {
 			return translate( 'Remove from cart' );
 		}
 		if ( isPlan( product ) ) {
@@ -1950,8 +1950,10 @@ function CheckoutLineItem( {
 					actualAmountDisplay={ actualAmountDisplay }
 					originalAmountDisplay={ originalAmountDisplay }
 					stackedCrossedOutDisplay={ stackedCrossedOutDisplay }
-					isMobileStickySummary={ isMobileStickySummary }
-					mobileStickyMonthlyCycleCrossedOutDisplay={ mobileStickyMonthlyCycleCrossedOutDisplay }
+					isMobileCheckoutStickySummary={ isMobileCheckoutStickySummary }
+					mobileCheckoutStickyMonthlyCycleCrossedOutDisplay={
+						mobileCheckoutStickyMonthlyCycleCrossedOutDisplay
+					}
 				/>
 			</span>
 
@@ -1967,7 +1969,7 @@ function CheckoutLineItem( {
 								shouldShowComparison={ shouldShowComparison }
 								compareToPrice={ compareToPrice }
 								isRenewalPricingExperiment={ isRenewalPricingExperiment }
-								isMobileStickySummary={ isMobileStickySummary }
+								isMobileCheckoutStickySummary={ isMobileCheckoutStickySummary }
 								isCartUpdating={ isCartUpdating }
 							/>
 							<DomainDiscountCallout product={ product } />
@@ -1987,7 +1989,7 @@ function CheckoutLineItem( {
 					<LineItemSublabelAndPrice
 						product={ product }
 						isRenewalPricingExperiment={ isRenewalPricingExperiment }
-						isMobileStickySummary={ isMobileStickySummary }
+						isMobileCheckoutStickySummary={ isMobileCheckoutStickySummary }
 						isCartUpdating={ isCartUpdating }
 					/>
 				</LineItemMeta>
