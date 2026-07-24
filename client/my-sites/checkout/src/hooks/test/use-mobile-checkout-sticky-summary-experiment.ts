@@ -150,6 +150,37 @@ describe( 'useMobileCheckoutStickySummaryExperiment', () => {
 		} );
 	} );
 
+	// useViewportMatch is reactive. If eligibility could flip false -> true
+	// mid-session, ExPlat would start loading, isLoading would go back to true, and
+	// checkout would unmount its step group along with anything already typed.
+	describe( 'eligibility is frozen at mount', () => {
+		it( 'stays ineligible when the viewport later narrows past the breakpoint', () => {
+			mockUseViewportMatch.mockReturnValue( false );
+
+			const { rerender } = renderHook( () => useMobileCheckoutStickySummaryExperiment() );
+
+			mockUseViewportMatch.mockReturnValue( true );
+			rerender();
+
+			expect( mockUseExperiment ).toHaveBeenLastCalledWith(
+				'calypso_mobile_checkout_sticky_summary_v1',
+				{ isEligible: false }
+			);
+		} );
+
+		it( 'keeps a participant in the treatment when the viewport later widens', () => {
+			mockUseExperiment.mockReturnValue( [ false, treatmentAssignment ] );
+
+			const { result, rerender } = renderHook( () => useMobileCheckoutStickySummaryExperiment() );
+			expect( result.current.isMobileCheckoutStickySummary ).toBe( true );
+
+			mockUseViewportMatch.mockReturnValue( false );
+			rerender();
+
+			expect( result.current.isMobileCheckoutStickySummary ).toBe( true );
+		} );
+	} );
+
 	it( 'honors the QA query-param override on eligible surfaces', () => {
 		window.history.replaceState( {}, '', '/?mobile_checkout_sticky_summary=1' );
 

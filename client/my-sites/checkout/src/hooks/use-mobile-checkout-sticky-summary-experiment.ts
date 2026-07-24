@@ -1,4 +1,5 @@
 import { useViewportMatch } from '@wordpress/compose';
+import { useRef } from 'react';
 import { useInitialIsInStepContainerV2FlowContext } from 'calypso/layout/utils';
 import { useExperiment } from 'calypso/lib/explat';
 
@@ -20,11 +21,23 @@ export interface MobileCheckoutStickySummaryExperiment {
  * Eligibility is gated to where the treatment can actually show — mobile inside a
  * StepContainerV2 flow. These components also render on `/me/purchases` (via
  * `useCreateCreditCard`), where enrolling would fire an exposure nobody can see.
+ *
+ * Eligibility is frozen at mount, mirroring
+ * `useInitialIsInStepContainerV2FlowContext`. `useViewportMatch` is reactive, and
+ * letting eligibility flip false -> true mid-session starts an ExPlat load, which
+ * puts `isLoading` back to true, drives checkout's form status to LOADING and
+ * unmounts the step group — taking anything the participant has typed with it.
+ * Freezing also keeps a participant in one arm for the whole session.
+ *
+ * The freeze is per call site, so components that mount after a resize across the
+ * breakpoint can disagree with ones already mounted. Hoisting this to a context
+ * provided once by `CheckoutMain` would remove that; not worth the churn while
+ * this is a short-lived experiment.
  */
 export function useMobileCheckoutStickySummaryExperiment(): MobileCheckoutStickySummaryExperiment {
 	const isMobileViewport = useViewportMatch( 'small', '<' );
 	const isStepContainerV2 = useInitialIsInStepContainerV2FlowContext();
-	const isEligible = isMobileViewport && isStepContainerV2;
+	const isEligible = useRef( isMobileViewport && isStepContainerV2 ).current;
 	const [ isLoading, assignment ] = useExperiment( EXPERIMENT_NAME, {
 		isEligible,
 	} );
