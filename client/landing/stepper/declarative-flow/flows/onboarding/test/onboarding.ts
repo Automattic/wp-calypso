@@ -4,7 +4,7 @@
 import { renderHook } from '@testing-library/react';
 import { clearSessionStorageQuery } from 'calypso/components/domains/wpcom-domain-search/use-query-handler';
 import { loadExperimentAssignment } from 'calypso/lib/explat';
-import onboarding, { resolvePersonalizationVariation } from '../onboarding';
+import onboarding, { resolveLaunchpadPersonalizationVariation } from '../onboarding';
 
 jest.mock( 'calypso/components/domains/wpcom-domain-search/use-query-handler', () => ( {
 	clearSessionStorageQuery: jest.fn(),
@@ -94,11 +94,11 @@ describe( 'onboarding flow side effects', () => {
 	} );
 } );
 
-describe( 'resolvePersonalizationVariation', () => {
+describe( 'resolveLaunchpadPersonalizationVariation', () => {
 	beforeEach( () => jest.clearAllMocks() );
 
 	it( 'forces ai_launchpad when the diy-launchpad override is present', async () => {
-		await expect( resolvePersonalizationVariation( '1' ) ).resolves.toBe( 'ai_launchpad' );
+		await expect( resolveLaunchpadPersonalizationVariation( '1' ) ).resolves.toBe( 'ai_launchpad' );
 		expect( loadExperimentAssignment ).not.toHaveBeenCalled();
 	} );
 
@@ -106,7 +106,7 @@ describe( 'resolvePersonalizationVariation', () => {
 		( loadExperimentAssignment as jest.Mock ).mockResolvedValue( {
 			variationName: 'no_guidance',
 		} );
-		await expect( resolvePersonalizationVariation( null ) ).resolves.toBe( 'no_guidance' );
+		await expect( resolveLaunchpadPersonalizationVariation( null ) ).resolves.toBe( 'no_guidance' );
 		expect( loadExperimentAssignment ).toHaveBeenCalledWith(
 			'wpcom_launchpad_personalization_202607_v1'
 		);
@@ -114,6 +114,6 @@ describe( 'resolvePersonalizationVariation', () => {
 
 	it( 'falls back to control on an unrecognized assignment', async () => {
 		( loadExperimentAssignment as jest.Mock ).mockResolvedValue( { variationName: null } );
-		await expect( resolvePersonalizationVariation( null ) ).resolves.toBe( 'control' );
+		await expect( resolveLaunchpadPersonalizationVariation( null ) ).resolves.toBe( 'control' );
 	} );
 } );

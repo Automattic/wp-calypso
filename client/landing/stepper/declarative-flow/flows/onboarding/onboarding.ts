@@ -55,7 +55,7 @@ import type { DomainSuggestion } from '@automattic/api-core';
  * dev/QA override that forces the `ai_launchpad` variation without consulting ExPlat;
  * otherwise the variation comes from the sticky ExPlat assignment.
  */
-export async function resolvePersonalizationVariation(
+export async function resolveLaunchpadPersonalizationVariation(
 	diyLaunchpad: string | null
 ): Promise< LaunchpadPersonalizationVariation > {
 	if ( diyLaunchpad ) {
@@ -125,13 +125,14 @@ const onboarding: FlowV2< typeof initialize > = {
 		): Promise< [ string, string | null, string | null ] > => {
 			// Launchpad-personalization treatments land straight in wp-admin instead of My Home:
 			// ai_launchpad in Site Setup (enabling the AI launchpad), no_guidance on the dashboard.
-			const personalizationVariation = await resolvePersonalizationVariation( diyLaunchpad );
-			if ( personalizationVariation !== 'control' && providedDependencies.siteSlug ) {
+			const launchpadPersonalizationVariation =
+				await resolveLaunchpadPersonalizationVariation( diyLaunchpad );
+			if ( launchpadPersonalizationVariation !== 'control' && providedDependencies.siteSlug ) {
 				const siteSlug = providedDependencies.siteSlug as string;
 				const site = await resolveSelect( SITE_STORE ).getSite( siteSlug );
 				const adminUrl = site?.options?.admin_url ?? `https://${ siteSlug }/wp-admin/`;
 				const destination = getLaunchpadPersonalizationDestination( {
-					variation: personalizationVariation,
+					variation: launchpadPersonalizationVariation,
 					adminUrl,
 					enableAiLaunchpad: true,
 				} );
@@ -407,8 +408,10 @@ const onboarding: FlowV2< typeof initialize > = {
 									steps_total: checkoutStepperPosition.total,
 								} )
 							);
-						} else if ( ( await resolvePersonalizationVariation( diyLaunchpad ) ) !== 'control' ) {
-							// Personalization treatments skip the AI/manual chooser and land straight in wp-admin.
+						} else if (
+							( await resolveLaunchpadPersonalizationVariation( diyLaunchpad ) ) !== 'control'
+						) {
+							// Launchpad personalization treatments skip the AI/manual chooser and land straight in wp-admin.
 							window.location.replace( destination );
 						} else if (
 							refParameter === WOO_HOSTING_SOLUTIONS_REF &&
