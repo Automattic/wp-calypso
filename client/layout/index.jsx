@@ -120,10 +120,12 @@ const loadSupportArticleDialog = () =>
 	import(
 		/* webpackChunkName: "async-load-calypso-blocks-support-article-dialog" */ 'calypso/blocks/support-article-dialog'
 	);
+// Chunk name deliberately avoids "cookie"/"banner": ad blockers match those in
+// request URLs, and this chunk is a dependency of pages (onboarding, login) that
+// break outright if it fails to load. Keep it in sync with the other importer in
+// client/landing/stepper/index.tsx.
 const loadCookieBanner = () =>
-	import(
-		/* webpackChunkName: "async-load-calypso-blocks-cookie-banner" */ 'calypso/blocks/cookie-banner'
-	);
+	import( /* webpackChunkName: "async-load-calypso-blocks-cb" */ 'calypso/blocks/cookie-banner' );
 const loadAppBanner = () =>
 	import(
 		/* webpackChunkName: "async-load-calypso-blocks-app-banner" */ 'calypso/blocks/app-banner'
@@ -439,7 +441,7 @@ class Layout extends Component {
 					<AsyncLoad require={ loadSupportArticleDialog } placeholder={ null } />
 				) }
 				{ config.isEnabled( 'cookie-banner' ) && (
-					<AsyncLoad require={ loadCookieBanner } placeholder={ null } />
+					<AsyncLoad require={ loadCookieBanner } placeholder={ null } errorBoundary />
 				) }
 				{ config.isEnabled( 'layout/app-banner' ) && (
 					<AsyncLoad require={ loadAppBanner } placeholder={ null } />

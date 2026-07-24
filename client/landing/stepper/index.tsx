@@ -59,10 +59,12 @@ import type { CurrentUser, HelpCenterSelect, HelpCenterDispatch } from '@automat
 import type { AnyAction } from 'redux';
 import type { WpcomRequestParams } from 'wpcom-proxy-request';
 
+// Chunk name deliberately avoids "cookie"/"banner": ad blockers match those in
+// request URLs, and this chunk is a dependency of pages (onboarding, login) that
+// break outright if it fails to load. Keep it in sync with the other importer in
+// client/layout/index.jsx.
 const loadCookieBanner = () =>
-	import(
-		/* webpackChunkName: "async-load-calypso-blocks-cookie-banner" */ 'calypso/blocks/cookie-banner'
-	);
+	import( /* webpackChunkName: "async-load-calypso-blocks-cb" */ 'calypso/blocks/cookie-banner' );
 const loadGlobalNotices = () =>
 	import(
 		/* webpackChunkName: "async-load-calypso-components-global-notices" */ 'calypso/components/global-notices'
@@ -275,7 +277,7 @@ async function main() {
 					<BrowserRouter basename="setup">
 						<FlowRenderer flow={ flow } steps={ flowSteps } />
 						{ config.isEnabled( 'cookie-banner' ) && (
-							<AsyncLoad require={ loadCookieBanner } placeholder={ null } />
+							<AsyncLoad require={ loadCookieBanner } placeholder={ null } errorBoundary />
 						) }
 						<AsyncLoad require={ loadGlobalNotices } placeholder={ null } id="notices" />
 					</BrowserRouter>
