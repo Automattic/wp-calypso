@@ -1,6 +1,7 @@
 import { useTranslate } from 'i18n-calypso';
 import { useMemo } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
+import { getSafeEditorUrl } from './editor-url';
 import { useSiteGeneration } from './use-site-generation';
 import { SiteGenerationView } from './view';
 import type { Step as StepType } from '../../types';
@@ -9,8 +10,8 @@ import './style.scss';
 const SiteGeneration: StepType = function SiteGeneration() {
 	const translate = useTranslate();
 	const query = useMemo( () => new URLSearchParams( window.location.search ), [] );
-	const siteIdentifier = query.get( 'siteId' ) ?? query.get( 'siteSlug' );
-	const editorUrl = query.get( 'editorUrl' );
+	const siteIdentifier = query.get( 'siteId' ) || query.get( 'siteSlug' );
+	const editorUrl = getSafeEditorUrl( query.get( 'editorUrl' ) );
 	const steps = useMemo(
 		() => [
 			{ id: 'preparing', label: translate( 'Preparing your site' ) },
