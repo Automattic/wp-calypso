@@ -53,6 +53,7 @@ export function JetpackMonitorPreview( { site, trackEvent, hasError = false }: P
 						site={ site }
 						trackEvent={ trackEvent }
 						hasError={ hasError }
+						showSummary
 					/>
 				) }
 			</div>

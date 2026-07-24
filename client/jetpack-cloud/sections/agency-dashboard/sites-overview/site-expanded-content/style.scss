@@ -309,3 +309,156 @@ $color-yellow: var(--studio-yellow-50);
 	color: var(--studio-gray-40);
 	margin-block: 6px;
 }
+
+/**
+ * Detailed monitor activity: summary stats, status pill, full-height status bar and legend.
+ * Opted into via the `showSummary` prop, so the compact dashboard card is unaffected.
+ */
+.site-expanded-content__monitor-activity-detailed {
+	.expanded-card__header {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: baseline;
+		justify-content: space-between;
+		gap: 8px;
+		overflow: visible;
+	}
+
+	.site-expanded-content__monitor-range {
+		@include body-medium;
+		color: var(--studio-gray-50);
+	}
+
+	.site-expanded-content__monitor-summary {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: center;
+		justify-content: space-between;
+		gap: 16px;
+		margin-block-end: 20px;
+	}
+
+	.site-expanded-content__monitor-stats {
+		display: flex;
+		flex-wrap: wrap;
+		row-gap: 8px;
+	}
+
+	// Trailing dividers keep every stat flush with the card edge when the row wraps.
+	.site-expanded-content__monitor-stat {
+		padding-inline-end: 24px;
+		margin-inline-end: 24px;
+		border-inline-end: 1px solid var(--studio-gray-5);
+
+		&:last-child {
+			padding-inline-end: 0;
+			margin-inline-end: 0;
+			border-inline-end: none;
+		}
+	}
+
+	.site-expanded-content__monitor-stat-value {
+		@include heading-2x-large;
+		display: block;
+		color: var(--studio-gray-100);
+	}
+
+	.site-expanded-content__monitor-stat-label {
+		@include body-medium;
+		display: block;
+		color: var(--studio-gray-50);
+	}
+
+	.site-expanded-content__monitor-status {
+		@include heading-medium;
+		display: inline-flex;
+		align-items: center;
+		gap: 8px;
+		padding: 6px 14px;
+		border-radius: 16px;
+		white-space: nowrap;
+	}
+
+	.site-expanded-content__monitor-status-dot {
+		flex-shrink: 0;
+		width: 8px;
+		height: 8px;
+		border-radius: 4px;
+		background-color: currentColor;
+	}
+
+	.site-expanded-content__monitor-status-is-up {
+		background-color: var(--studio-green-0);
+		color: var(--studio-green-60);
+	}
+
+	.site-expanded-content__monitor-status-is-down {
+		background-color: var(--studio-red-0);
+		color: var(--studio-red-60);
+	}
+
+	.site-expanded-content__chart {
+		.chart__bars {
+			gap: 4px;
+			overflow: hidden;
+		}
+
+		.chart .chart__bar {
+			height: 48px;
+			gap: 4px;
+
+			.chart__bar-section {
+				inset-inline: 0;
+				border-radius: 3px;
+				text-align: unset;
+			}
+
+			// The compact card renders downtime as a thin marker; here it is a full-height block.
+			&.site-expanded-content__chart-bar-is-downtime {
+				height: 48px !important;
+				position: static !important;
+			}
+		}
+	}
+
+	.site-expanded-content__x-axis-pointers {
+		@include body-small;
+		margin-block-start: 8px;
+		color: var(--studio-gray-50);
+	}
+
+	.site-expanded-content__monitor-legend {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 8px 20px;
+		margin-block-start: 16px;
+	}
+
+	.site-expanded-content__monitor-legend-item {
+		@include body-medium;
+		display: inline-flex;
+		align-items: center;
+		gap: 8px;
+		color: var(--studio-gray-60);
+	}
+
+	.site-expanded-content__monitor-legend-swatch {
+		flex-shrink: 0;
+		width: 12px;
+		height: 12px;
+		border-radius: 3px;
+
+		&.is-uptime {
+			background-color: $color-green;
+		}
+
+		&.is-downtime {
+			background-color: $color-red;
+		}
+
+		&.is-not-monitored {
+			background-color: var(--studio-gray-0);
+			border: 1px solid var(--studio-gray-5);
+		}
+	}
+}
