@@ -31,7 +31,7 @@ interface MomentProps {
 }
 
 interface AutoRenewDisablingDialogConnectedProps {
-	isAtomicSite: boolean;
+	isAtomicSite: boolean | null;
 }
 
 interface AutoRenewDisablingDialogProps {
