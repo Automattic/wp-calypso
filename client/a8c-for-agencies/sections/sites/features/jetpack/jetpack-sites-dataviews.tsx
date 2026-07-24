@@ -26,6 +26,21 @@ import useGetSiteErrors from '../../sites-dataviews/hooks/use-get-site-errors';
 import { AllowedTypes, Site, SiteData } from '../../types';
 import type { Action, Field } from '@wordpress/dataviews';
 
+const SitePreviewTourTarget = ( { children }: { children: ReactNode } ) => {
+	const [ context, setContext ] = useState< HTMLElement | null >();
+
+	return (
+		<>
+			<div ref={ setContext }>{ children }</div>
+			<GuidedTourStep
+				id="sites-walkthrough-site-preview"
+				tourId="sitesWalkthrough"
+				context={ context }
+			/>
+		</>
+	);
+};
+
 export const JetpackSitesDataViews = ( {
 	data,
 	isLoading,
@@ -121,6 +136,12 @@ export const JetpackSitesDataViews = ( {
 	const [ scanRef, setScanRef ] = useState< HTMLElement | null >();
 	const [ pluginsRef, setPluginsRef ] = useState< HTMLElement | null >();
 
+	const sitePreviewTourTargetId = sites.find(
+		( item ) =>
+			! item.site.value.is_simple &&
+			( isNotProduction || ! item.site.value.sticker?.includes( 'migration-in-progress' ) )
+	)?.site.value.blog_id;
+
 	const fields = useMemo< Field< SiteData >[] >(
 		() => [
 			{
@@ -172,7 +193,9 @@ export const JetpackSitesDataViews = ( {
 					}
 					const site = item.site.value;
 
-					return (
+					const isSitePreviewTourTarget = site.blog_id === sitePreviewTourTargetId;
+
+					const siteField = (
 						<div
 							className={ clsx( {
 								'is-site-selected': site.blog_id === dataViewsState.selectedItem?.blog_id,
@@ -186,6 +209,12 @@ export const JetpackSitesDataViews = ( {
 								errors={ getSiteErrors( item ) }
 							/>
 						</div>
+					);
+
+					return isSitePreviewTourTarget ? (
+						<SitePreviewTourTarget>{ siteField }</SitePreviewTourTarget>
+					) : (
+						siteField
 					);
 				},
 				enableHiding: false,
@@ -382,6 +411,7 @@ export const JetpackSitesDataViews = ( {
 			monitorRef,
 			scanRef,
 			pluginsRef,
+			sitePreviewTourTargetId,
 			isLoading,
 			dataViewsState.selectedItem?.blog_id,
 			openSitePreviewPane,
