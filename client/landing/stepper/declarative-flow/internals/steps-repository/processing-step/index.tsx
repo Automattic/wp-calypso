@@ -23,10 +23,11 @@ import { useInterval } from 'calypso/lib/interval';
 import getWccomFrom from 'calypso/state/selectors/get-wccom-from';
 import useCaptureFlowException from '../../../../hooks/use-capture-flow-exception';
 import { shouldUseStepContainerV2 } from '../../../helpers/should-use-step-container-v2';
-import { ProcessingResult } from './constants';
+import { DEFAULT_LOADING_MESSAGE_DURATION, ProcessingResult } from './constants';
 import { useProcessingLoadingMessages } from './hooks/use-processing-loading-messages';
 import HundredYearPlanFlowProcessingScreen from './hundred-year-plan-flow-processing-screen';
 import TailoredFlowPreCheckoutScreen from './tailored-flow-precheckout-screen';
+import type { ProcessingLoadingMessage, LoadingMessage } from './hooks/types';
 import type { Step as StepType } from '../../types';
 import type { OnboardSelect } from '@automattic/data-stores';
 import type { SiteIntent } from '@automattic/data-stores/src/onboard';
@@ -58,13 +59,21 @@ const ProcessingStep: StepType< {
 	accepts: {
 		title?: string;
 		subtitle?: string;
+		loadingMessages?: ProcessingLoadingMessage[];
 	};
 } > = function ( props ) {
 	const { submit } = props.navigation;
 	const { flow } = props;
 
 	const { __ } = useI18n();
-	const loadingMessages = useProcessingLoadingMessages( flow );
+	const defaultLoadingMessages = useProcessingLoadingMessages( flow );
+	const loadingMessages: LoadingMessage[] =
+		props.loadingMessages && props.loadingMessages.length > 0
+			? props.loadingMessages.map( ( message ) => ( {
+					...message,
+					duration: message.duration ?? DEFAULT_LOADING_MESSAGE_DURATION,
+			  } ) )
+			: defaultLoadingMessages;
 
 	const [ currentMessageIndex, setCurrentMessageIndex ] = useState( 0 );
 	const [ hasActionSuccessfullyRun, setHasActionSuccessfullyRun ] = useState( false );

@@ -393,6 +393,17 @@ flows keep working unchanged:
   `PlansFeaturesMain` into the existing `plans-grid-next` override path). All optional and
   default-safe. See
   [`steps-repository/unified-plans/index.tsx`](/client/landing/stepper/declarative-flow/internals/steps-repository/unified-plans/index.tsx).
+- The `processing` (`processing-step`) step exposes `loadingMessages` (a
+  `{ title: string; subtitle?: ReactNode; duration?: number }[]` override for the rotating
+  loading-carousel copy — the "Laying the foundations" / "Turning on the lights" / … sequence).
+  When a flow passes it via `useStepsProps()` it replaces the default per-flow / per-intent carousel
+  computed by `useProcessingLoadingMessages`; omitting it preserves today's messages. `duration` is
+  optional and falls back to `DEFAULT_LOADING_MESSAGE_DURATION`. The override applies to both the V2
+  `Step.Loading` and V1 `StepContainer` render paths; the tailored (`TailoredFlowPreCheckoutScreen`,
+  newsletter / update-design) and hundred-year processing screens short-circuit earlier and keep
+  their own dedicated copy, so they are intentionally out of scope. The pre-existing `title` /
+  `subtitle` props still override the single visible frame and win over the carousel. See
+  [`steps-repository/processing-step/index.tsx`](/client/landing/stepper/declarative-flow/internals/steps-repository/processing-step/index.tsx).
 
 #### Renaming steps
 
