@@ -31,7 +31,6 @@ switch ( process.platform ) {
 
 const CONSOLE_PATH = path.join( __dirname, '../results/console.log' );
 const SCREENSHOT_PATH = path.join( __dirname, '../results/screenshot.png' );
-const HAR_PATH = path.join( __dirname, '../results/network.har' );
 const WP_DEBUG_LOG = path.resolve( __dirname, '../results/app.log' );
 
 const BASE_URL = process.env.WP_DESKTOP_BASE_URL?.replace( /\/$/, '' ) ?? 'https://wordpress.com';
@@ -59,10 +58,9 @@ describe( 'User Can log in', () => {
 		electronApp = await electron.launch( {
 			executablePath: APP_PATH,
 			args: LAUNCH_ARGS,
+			// Do not enable `recordHar`: the login POST body and session cookies land in the
+			// artifact in cleartext.
 			timeout: 0,
-			recordHar: {
-				path: HAR_PATH,
-			},
 			env: {
 				...process.env,
 				WP_DESKTOP_BASE_URL: BASE_URL,
