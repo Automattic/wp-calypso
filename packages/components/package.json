@@ -69,7 +69,7 @@
 		"@wordpress/primitives": "^4.48.0",
 		"@wordpress/private-apis": "^1.51.0",
 		"@wordpress/react-i18n": "^4.48.0",
-		"@wordpress/ui": "^0.17.0",
+		"@wordpress/ui": "^0.18.0",
 		"@wordpress/url": "^4.48.0",
 		"@wordpress/warning": "3.48.0",
 		"canvas-confetti": "^1.6.0",
