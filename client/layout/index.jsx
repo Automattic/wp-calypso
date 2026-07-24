@@ -122,7 +122,7 @@ const loadSupportArticleDialog = () =>
 	);
 const loadCookieBanner = () =>
 	import(
-		/* webpackChunkName: "async-load-calypso-blocks-cookie-banner" */ 'calypso/blocks/cookie-banner'
+		/* webpackChunkName: "async-load-calypso-blocks-privacy-prefs" */ 'calypso/blocks/cookie-banner'
 	);
 const loadAppBanner = () =>
 	import(
