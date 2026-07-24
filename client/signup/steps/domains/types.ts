@@ -2,7 +2,7 @@ export type StepProps = {
 	stepSectionName: string | null;
 	stepName: string;
 	flowName: string;
-	goToStep: () => void;
+	goToStep: ( stepName?: string, stepSectionName?: string, flowName?: string ) => void;
 	goToNextStep: () => void;
 	submitSignupStep: ( step: unknown, dependencies: unknown ) => void;
 	queryObject: Record< string, string | undefined >;
