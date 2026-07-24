@@ -1,8 +1,8 @@
 import { formatCurrency } from '@automattic/number-formatters';
 import { __experimentalVStack as VStack } from '@wordpress/components';
 import { __, sprintf } from '@wordpress/i18n';
-import InlineSupportLink from '../../../components/inline-support-link';
 import ConsolidatedStatCard from '../../../components/consolidated-stat-card';
+import InlineSupportLink from '../../../components/inline-support-link';
 import { formatDate } from '../../../utils/datetime';
 import useGetPayoutData from './hooks/use-payout-data';
 
