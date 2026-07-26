@@ -9,40 +9,33 @@
  *
  * 1. The prefix is actually reaching the compiled output at all (catches the whole scoping step
  *    silently no-op'ing, e.g. a broken loader wiring).
- * 2. Each mount point that styles its own root element (`.jp-stats-widget`, `.color-scheme.is-*`,
- *    `.stats-widget-content.color-scheme`) still has a real, non-empty, *unprefixed* rule in the
- *    compiled output.
+ * 2. No compiled rule self-nests one of `entryPointRoots` (`.jp-stats-dashboard`,
+ *    `.jp-stats-widget`) under `prefix` — i.e. `:where(<roots>) X` where X's compound selector
+ *    contains one of those two. That shape can never match anything, since Jetpack's PHP places
+ *    both directly on the page: they're never nested inside each other or inside a portal root,
+ *    so they can never satisfy the ancestor requirement the prefix just added. This is exactly
+ *    how apps/odyssey-stats#STATS-368 broke, and how `.jp-stats-dashboard` itself was *also*
+ *    broken until this same change added its missing `exclude` entry: a mount point's own root
+ *    styling loses its `exclude` entry and gets nested under the very prefix it's a root of.
  *
- * Check 2's expected selectors are intentionally hand-maintained here rather than imported from
- * webpack-css-scope.js's `exclude` list: this is exactly how apps/odyssey-stats#STATS-368 broke
- * (wp-calypso#112498 dropped a mount point from the scoping config without anyone noticing, since
- * a missing exclude entry produces no build error or JS exception, just dead CSS). Importing the
- * list under test would make this check blind to the same class of regression happening again.
+ * Check 2 only covers `entryPointRoots`, not every selector in `prefix`: the portal roots
+ * (`.color-scheme`, `.ReactModalPortal`, etc.) are routinely — and correctly — nested *inside*
+ * `.jp-stats-dashboard`/`.jp-stats-widget` for per-section theming (see
+ * `.color-scheme.is-light .masterbar` in css-scope.test.js), so a rule scoping through one of
+ * them is normally still live. Whether that's true can't be derived from the compiled CSS alone
+ * — it depends on the real DOM hierarchy between mount points, which only `entryPointRoots`
+ * (hand-maintained, right next to `prefix` in webpack-css-scope.js) encodes. Adding a new
+ * standalone entry point later means adding it there too, the same way it already needs adding to
+ * `prefix` and, if it styles its own root, to `exclude`.
  */
 
 const fs = require( 'fs' );
 const path = require( 'path' );
 const postcss = require( 'postcss' );
-const { prefix } = require( '../webpack-css-scope' );
+const selectorParser = require( 'postcss-selector-parser' );
+const { prefix, entryPointRoots } = require( '../webpack-css-scope' );
 
 const distDir = path.join( __dirname, '..', 'dist' );
-
-const SELF_SCOPED_TARGETS = [
-	{
-		description: '.jp-stats-widget (the WP-Admin dashboard widget styling its own mount point)',
-		pattern: /^\.jp-stats-widget(?![\w-])/,
-	},
-	{
-		description:
-			'.color-scheme.is-<scheme> (colour scheme vars set on the element that carries the class)',
-		pattern: /^\.color-scheme\.is-[\w-]+$/,
-	},
-	{
-		description:
-			'.stats-widget-content.color-scheme (the widget’s primary→accent remap on its own root)',
-		pattern: /^\.stats-widget-content\.color-scheme$/,
-	},
-];
 
 function readCompiledCss() {
 	if ( ! fs.existsSync( distDir ) ) {
@@ -64,12 +57,6 @@ function collectRules( css ) {
 	return rules;
 }
 
-function hasNonEmptyMatch( rules, matches ) {
-	return rules.some(
-		( rule ) => rule.nodes.length > 0 && rule.selectors.some( ( selector ) => matches( selector ) )
-	);
-}
-
 // Minification strips the whitespace after commas inside `:where(...)`, so comparing against the
 // `prefix` string as written in webpack-css-scope.js requires normalizing both sides first.
 function normalizeWhereGroupSpacing( selector ) {
@@ -77,35 +64,93 @@ function normalizeWhereGroupSpacing( selector ) {
 }
 
 /**
+ * Given a rule selector that starts with the `:where(<roots>)` prefix, returns the individual
+ * simple selectors (e.g. `['.jp-stats-widget', '.is-ready']`) making up the compound selector
+ * immediately following it — i.e. whatever the prefix is scoping this rule's content to.
+ *
+ * Only walks the selector's top-level node sequence (not a recursive `.walk()`), so it doesn't
+ * descend into `:where(...)`'s own argument list — those are the roots themselves, not "after".
+ */
+function getCompoundAfterPrefix( selector ) {
+	const compoundNodes = [];
+	let sawWhere = false;
+	let sawFirstCombinator = false;
+
+	selectorParser( ( selectors ) => {
+		for ( const node of selectors.first.nodes ) {
+			if ( ! sawWhere ) {
+				sawWhere = node.type === 'pseudo' && node.value === ':where';
+				continue;
+			}
+			if ( node.type === 'combinator' ) {
+				if ( ! sawFirstCombinator ) {
+					sawFirstCombinator = true;
+					continue;
+				}
+				break;
+			}
+			compoundNodes.push( node.toString() );
+		}
+	} ).processSync( selector );
+
+	return compoundNodes;
+}
+
+/**
  * Pure check: given compiled CSS text, returns a list of human-readable failure messages (empty
  * when everything is scoped correctly). Split out from `run()` so it's unit-testable against
  * hand-written CSS without needing a real `dist/` build on disk.
+ *
+ * `prefixToCheck`/`entryPointRootsToCheck` default to the real values from webpack-css-scope.js;
+ * tests pass different ones to prove the check follows whatever `entryPointRoots` is configured
+ * to, rather than a list of "known" mount points hard-coded into this file.
  */
-function findScopeFailures( css ) {
+function findScopeFailures(
+	css,
+	prefixToCheck = prefix,
+	entryPointRootsToCheck = entryPointRoots
+) {
 	const rules = collectRules( css );
-	const failures = [];
-	const normalizedPrefix = normalizeWhereGroupSpacing( prefix );
-
-	if (
-		! hasNonEmptyMatch( rules, ( selector ) =>
+	const normalizedPrefix = normalizeWhereGroupSpacing( prefixToCheck );
+	const prefixedRules = rules.filter( ( rule ) =>
+		rule.selectors.some( ( selector ) =>
 			normalizeWhereGroupSpacing( selector ).startsWith( normalizedPrefix )
 		)
-	) {
+	);
+	const failures = [];
+
+	if ( ! prefixedRules.some( ( rule ) => rule.nodes.length > 0 ) ) {
 		failures.push(
 			'No compiled rule was prefixed with the postcss-prefix-selector scope at all — the ' +
 				'scoping step may not be running. Check webpack.config.js and webpack-css-scope.js.'
 		);
+		return failures;
 	}
 
-	for ( const target of SELF_SCOPED_TARGETS ) {
-		if ( ! hasNonEmptyMatch( rules, ( selector ) => target.pattern.test( selector ) ) ) {
-			failures.push(
-				`No non-empty, unprefixed rule found for ${ target.description }. Either the source ` +
-					'CSS for this mount point was removed (drop the matching entry from ' +
-					'webpack-css-scope.js’s `exclude` list too), or it lost its exclude entry and is ' +
-					'now nested under itself — which is the STATS-368 failure mode: the rule compiles ' +
-					'but can never match anything at runtime.'
+	for ( const rule of prefixedRules ) {
+		if ( rule.nodes.length === 0 ) {
+			continue;
+		}
+
+		for ( const selector of rule.selectors ) {
+			if ( ! normalizeWhereGroupSpacing( selector ).startsWith( normalizedPrefix ) ) {
+				continue;
+			}
+
+			const compoundNodes = getCompoundAfterPrefix( selector );
+			const selfNestedRoot = entryPointRootsToCheck.find( ( root ) =>
+				compoundNodes.includes( root )
 			);
+
+			if ( selfNestedRoot ) {
+				failures.push(
+					`Dead rule found: \`${ selector.trim() }\` nests ${ selfNestedRoot } under a ` +
+						'`:where(...)` group it is itself a member of, so it can never match anything ' +
+						`(Jetpack's PHP places ${ selfNestedRoot } directly on the page — it never has a ` +
+						'matching ancestor). Add an `exclude` entry for it in webpack-css-scope.js — this ' +
+						'is the STATS-368 failure mode.'
+				);
+			}
 		}
 	}
 

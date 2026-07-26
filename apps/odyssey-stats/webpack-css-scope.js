@@ -15,6 +15,15 @@
 const prefix =
 	':where(.jp-stats-dashboard, .color-scheme, .ReactModalPortal, [data-base-ui-portal], [data-wp-compat-overlay-slot], .components-modal__screen-overlay, .jp-stats-widget)';
 
+// The subset of `prefix`'s roots that Jetpack's PHP places directly as top-level mount points —
+// never nested inside each other or inside a portal root. Unlike the portal roots (.color-scheme,
+// .ReactModalPortal, etc.), which are routinely nested *inside* one of these two for per-section
+// theming, these two can never have a matching ancestor, so self-nesting them under `prefix` is
+// always dead, at any depth in the selector chain — not just when they style themselves directly.
+// verify-css-scope.js uses this list (rather than re-deriving it from `prefix`) to check for that
+// specific failure mode without flagging legitimate portal-root nesting as a false positive.
+const entryPointRoots = [ '.jp-stats-dashboard', '.jp-stats-widget' ];
+
 const ignoreFiles = [
 	// Already hand-scoped; re-prefixing would double-nest it.
 	'odyssey-stats/src/app.scss',
@@ -40,6 +49,13 @@ const exclude = [
 	/^:lang\(/, // :lang(he) .rtl
 	/^\[lang/, // [lang*=fr] .wp-brand-font
 	/^\[dir[~|^$*]?=/, // [dir=rtl] .chevron
+	// .jp-stats-dashboard styling its own mount element or its descendants (e.g. wp-admin.scss's
+	// WP-Admin layout overrides — sidebar width vars, padding fixes, fixed-nav fixes), including
+	// compound forms like `.jp-stats-dashboard.theme-default .focus-content`. It's one of the
+	// prefix roots above and, unlike the portal roots, is never nested inside another one — Jetpack's
+	// PHP places it directly on the page — so nesting it under itself would go dead at any depth,
+	// same problem :root/html/body have. Lookahead (not `$`) avoids also matching unrelated classes.
+	/^\.jp-stats-dashboard(?![\w-])/,
 	// .jp-stats-widget styling its own mount element (widget/index.scss), including compound
 	// forms like `.jp-stats-widget.is-ready` or `.jp-stats-widget :hover`. It's already one of
 	// the prefix roots above, so nesting it as a descendant of itself would go dead — same
@@ -57,4 +73,4 @@ const exclude = [
 	/^\.stats-widget-content\.color-scheme$/,
 ];
 
-module.exports = { prefix, ignoreFiles, exclude };
+module.exports = { prefix, entryPointRoots, ignoreFiles, exclude };

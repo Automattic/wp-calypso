@@ -76,6 +76,32 @@ describe( 'Odyssey Stats CSS scoping (webpack-css-scope.js)', () => {
 		expect( compiled ).not.toMatch( /^\.jp-stats-widget-extra/m );
 	} );
 
+	it( 'leaves .jp-stats-dashboard matching the dashboard mount itself, and rules nested under it in source, unprefixed', () => {
+		// Mirrors wp-admin.scss's `.jp-stats-dashboard { --sidebar-width-max: 160px; & .layout__content { ... } }`
+		// pattern: both the bare root rule and a rule nested under it in the source need to survive
+		// unprefixed, since .jp-stats-dashboard is one of the prefix roots and Jetpack's PHP places
+		// it directly on the page — same self-scoping problem .jp-stats-widget above has.
+		const compiled = compile(
+			'.jp-stats-dashboard { --sidebar-width-max: 160px; }\n' +
+				'.jp-stats-dashboard .layout__content { padding-top: 0; }',
+			{ from: 'odyssey-stats/src/styles/wp-admin.scss' }
+		);
+		document.body.innerHTML =
+			'<div class="jp-stats-dashboard"><div class="layout__content" id="layout-content"></div></div>';
+		const style = document.createElement( 'style' );
+		style.textContent = compiled;
+		document.head.appendChild( style );
+
+		expect(
+			getComputedStyle( document.querySelector( '.jp-stats-dashboard' ) ).getPropertyValue(
+				'--sidebar-width-max'
+			)
+		).toBe( '160px' );
+		expect( getComputedStyle( document.getElementById( 'layout-content' ) ).paddingTop ).toBe(
+			'0px'
+		);
+	} );
+
 	it( 'leaves app.scss (already hand-scoped to .jp-stats-dashboard) unprefixed', () => {
 		const compiled = compile( '.jp-stats-dashboard .card { border: 0; }', {
 			from: 'odyssey-stats/src/app.scss',
