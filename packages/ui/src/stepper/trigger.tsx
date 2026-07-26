@@ -2,7 +2,6 @@
 import { Accordion } from '@base-ui/react/accordion';
 import { Tabs } from '@base-ui/react/tabs';
 import { createElement, forwardRef, useCallback, useMemo, useRef } from '@wordpress/element';
-import { Button } from '@wordpress/ui';
 import clsx from 'clsx';
 import { useStepContext, useStepperContext } from './context';
 import styles from './style.module.scss';
@@ -16,7 +15,7 @@ type StepperTriggerProps = ComponentProps< 'button' > & {
 export const StepperTrigger = forwardRef< HTMLElement, StepperTriggerProps >(
 	function StepperTrigger( { children, className, ...props }, forwardedRef ) {
 		const { orientation, headingLevel, registerTriggerRef } = useStepperContext();
-		const { value, isCurrent, isDisabled } = useStepContext();
+		const { value, isCurrent, isDisabled, status } = useStepContext();
 
 		// Keep a stable ref to forwardedRef so callbackRef doesn't change
 		// identity when the parent passes an inline callback ref.
@@ -42,13 +41,17 @@ export const StepperTrigger = forwardRef< HTMLElement, StepperTriggerProps >(
 		// Stable reference so Accordion.Header does not remount on every render
 		const headerElement = useMemo( () => createElement( `h${ headingLevel }` ), [ headingLevel ] );
 
+		// Both branches render Base UI's default native <button> (no render prop).
+		// It is styled as a custom step-navigation control modelled on
+		// @wordpress/ui Tabs — see the `.trigger` rules in style.module.scss —
+		// rather than through @wordpress/ui Button.
 		if ( orientation === 'vertical' ) {
 			return (
 				<Accordion.Header render={ headerElement } className={ styles[ 'trigger-heading' ] }>
 					<Accordion.Trigger
 						ref={ callbackRef as Ref< HTMLButtonElement > }
-						render={ <Button variant="minimal" /> }
 						aria-current={ isCurrent ? 'step' : undefined }
+						data-status={ status }
 						className={ clsx( styles[ 'trigger' ], className ) }
 						{ ...props }
 						onClick={ ( e ) => {
@@ -76,8 +79,8 @@ export const StepperTrigger = forwardRef< HTMLElement, StepperTriggerProps >(
 				ref={ callbackRef as Ref< HTMLButtonElement > }
 				value={ value }
 				disabled={ isDisabled }
-				render={ <Button variant="minimal" /> }
 				aria-current={ isCurrent ? 'step' : undefined }
+				data-status={ status }
 				className={ clsx( styles[ 'trigger' ], className ) }
 				{ ...props }
 			>
