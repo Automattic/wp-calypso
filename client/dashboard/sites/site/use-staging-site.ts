@@ -228,7 +228,7 @@ export default function useStagingSite( site: Site ) {
 				recordTracksEvent( 'calypso_hosting_configuration_staging_site_add_failure' );
 				createErrorNotice(
 					sprintf(
-						// translators: %(reason)s: is why adding the staging site failed.
+						// translators: %(reason)s: the reason the staging site creation failed.
 						__( 'Failed to create staging site: %(reason)s' ),
 						{ reason: error.message }
 					),
