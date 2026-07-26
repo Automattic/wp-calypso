@@ -158,6 +158,31 @@ object CalypsoApps: BuildType({
 			"""
 		}
 
+		// Post-build checks that need a completed `dist/` to run against (e.g. asserting
+		// something about the compiled output itself, not just that the build succeeded). Kept as
+		// its own step, separate from "Build artifacts", so a failure here is attributed to this
+		// step specifically in the TeamCity UI rather than buried inside that step's combined,
+		// multi-app log output.
+		bashNodeScript {
+			name = "Verify build artifacts"
+			scriptContent = """
+				set -x
+				apps=""
+				for dir in ./apps/*/; do
+					# Only include apps which define the "teamcity:verify-app" script.
+					if [ "$(cat ${'$'}dir/package.json | jq -r '.scripts["teamcity:verify-app"]')" = "null" ] ; then
+						continue
+					fi
+					apps+="${'$'}(cat ${'$'}dir/package.json | jq -r '.name'),"
+				done
+
+				echo "${'$'}{apps%,}" | tr ',' '\n' | xargs -I {} -P 0 -n 1 bash -c '
+					echo "Verifying {}"
+					yarn workspace "{}" run teamcity:verify-app || exit 1
+				'
+			"""
+		}
+
 		// After the artifacts are built, we process them. This includes comparing
 		// with each previous release (to determine if a new release is needed),
 		// and then sending Slack/GitHub notifications as needed.
