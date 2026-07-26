@@ -24,28 +24,33 @@
 	width: var( --a8c-ui-stepper-indicator-size );
 	height: var( --a8c-ui-stepper-indicator-size );
 	border-radius: 50%;
-	border: var( --wpds-border-width-xs ) solid var( --wpds-color-fg-interactive-neutral );
+	// No explicit color or background: the glyph color is inherited from the
+	// .trigger button (which owns the per-state colors), the border reads it
+	// via currentColor, and the background stays transparent.
+	border: var( --wpds-border-width-xs ) solid currentColor;
 	flex-shrink: 0;
 	font-size: var( --wpds-typography-font-size-sm );
 	font-weight: 400;
-	color: var( --wpds-color-fg-interactive-neutral );
-	background: var( --wpds-color-bg-surface-neutral-strong );
 }
 
 // Current step
 .indicator.is-current {
-	border-color: var( --wpds-color-fg-content-neutral );
-	background: var( --wpds-color-fg-content-neutral );
-	color: var( --wpds-color-bg-surface-neutral-strong );
 	font-weight: 600;
 }
 
-// Completed step
-.indicator.is-completed {
-	border-color: var( --wpds-color-fg-content-neutral-weak );
-	background: transparent;
-	color: var( --wpds-color-fg-content-neutral-weak );
+// Current step, number variant — solid filled circle. Uses the strong
+// interactive pairing (dark fill, light glyph), like a solid neutral Button.
+// The explicit colors also keep the fill stable on hover, avoiding a ring
+// against the dark background.
+.indicator.is-current[data-indicator-variant='number'] {
+	border-color: var( --wpds-color-bg-interactive-neutral-strong );
+	background: var( --wpds-color-bg-interactive-neutral-strong );
+	color: var( --wpds-color-fg-interactive-neutral-strong );
+}
 
+// Completed step — the check icon and circle inherit the trigger's color,
+// so they always match the title text.
+.indicator.is-completed {
 	svg {
 		stroke: currentColor;
 		stroke-width: 1.5px;
@@ -61,14 +66,13 @@
 // Bullet indicator variant
 // ---------------------------------------------------------------------------
 
-// Upcoming: dashed gray-700 circle, no icon
+// Upcoming: dashed circle, no icon (weak color inherited from the trigger)
 .indicator[data-indicator-variant='bullet'] {
 	border-style: dashed;
-	border-color: var( --wpds-color-fg-content-neutral-weak );
-	color: var( --wpds-color-fg-content-neutral-weak );
 }
 
-// Current: 16px solid gray-900 ring, transparent background + half-circle dome
+// Current: smaller solid ring + half-circle dome (color inherited from the
+// trigger, which reads at full neutral strength for the current step).
 // The margin compensates for the size reduction vs upcoming (size → size-sm)
 // so the indicator centres stay aligned vertically across states.
 .indicator.is-current[data-indicator-variant='bullet'] {
@@ -76,32 +80,14 @@
 	height: var( --a8c-ui-stepper-indicator-size-sm );
 	margin: var( --a8c-ui-stepper-indicator-offset );
 	border-style: solid;
-	border-color: var( --wpds-color-fg-content-neutral );
-	background: transparent;
-	color: var( --wpds-color-fg-content-neutral );
 }
 
-// Completed: 16px, solid border (color inherited from .indicator.is-completed)
+// Completed: 16px, solid border (color inherited from the trigger)
 .indicator.is-completed[data-indicator-variant='bullet'] {
 	width: var( --a8c-ui-stepper-indicator-size-sm );
 	height: var( --a8c-ui-stepper-indicator-size-sm );
 	margin: var( --a8c-ui-stepper-indicator-offset );
 	border-style: solid;
-}
-
-// Upcoming step titles
-[data-indicator-variant] .title {
-	color: var( --wpds-color-fg-interactive-neutral );
-}
-
-// Completed step titles — same weight as upcoming but full neutral (not weak)
-[data-indicator-variant] [data-status='completed'] .title {
-	color: var( --wpds-color-fg-interactive-neutral-active );
-}
-
-// Current/active step title — full neutral, bold (weight set on the trigger below)
-[data-indicator-variant] [data-current] .title {
-	color: var( --wpds-color-fg-interactive-neutral-active );
 }
 
 // ---------------------------------------------------------------------------
@@ -113,44 +99,37 @@
 	padding: 0;
 }
 
+// The trigger renders as a minimal neutral Button. Button owns the
+// interactive state styling: rest/hover/focus/active/disabled foreground
+// colours, the focus ring and the cursor. The rules here are layout/anatomy
+// plus the one state Button has no concept of: a step being "upcoming".
 .trigger {
 	display: flex;
 	align-items: center;
 	justify-content: flex-start;
 	gap: var( --wpds-dimension-gap-sm );
 	padding: 0;
-	background: none;
-	border: none;
 	height: auto;
 	text-align: start;
 	width: 100%;
 
-	&:hover:not( [aria-disabled='true'] ) {
-		.title {
-			color: var( --wpds-color-fg-interactive-brand );
-		}
+	// Steps read as plain labels, not pill buttons, so the minimal variant's
+	// weak background + border chrome is dropped. This is an anatomy choice,
+	// not a state override: Button still owns the foreground colours.
+	background: none;
+	border: none;
 
-		// Number-variant current step has a solid filled circle — skip border change
-		// to avoid an accent ring appearing against the dark background on hover.
-		.indicator:not( .is-current[data-indicator-variant='number'] ) {
-			border-color: var( --wpds-color-fg-interactive-brand );
-		}
+	// Step labels read as text, so the rest weight is regular rather than
+	// Button's medium; only the active step's title is bolded (rule below).
+	font-weight: var( --wpds-typography-font-weight-regular );
 
-		// Pull icon color for completed and current steps (SVG/dome use currentColor).
-		// Number-variant current steps keep their original number color on hover.
-		.indicator.is-completed,
-		.indicator.is-current:not( [data-indicator-variant='number'] ) {
-			color: var( --wpds-color-fg-interactive-brand );
-		}
-	}
-
-	&[aria-disabled='true'] {
-		cursor: default;
-
-		&,
-		.title {
-			color: var( --wpds-color-fg-interactive-neutral-disabled );
-		}
+	// The only Stepper-specific colour state: steps that are neither completed
+	// nor current are de-emphasised. Feeding Button's own foreground custom
+	// property (rather than setting `color`) keeps Button in charge of every
+	// state: it reads this value for the rest state and still swaps in its
+	// -active / -disabled tokens for hover, focus and disabled on its own.
+	&:not( [data-status='completed'] ):not( [aria-current='step'] ) {
+		--wp-ui-button-foreground-color: var( --wpds-color-fg-interactive-neutral-weak );
 	}
 
 	&[aria-expanded='true'],
@@ -191,12 +170,15 @@
 // Title and Description
 // ---------------------------------------------------------------------------
 
-// Title color is set by the `[data-indicator-variant] … .title` rules above;
-// the root always renders `data-indicator-variant`, so no base color is needed.
+// Title and description both live inside the Button and inherit its per-state
+// foreground colour: Button sets `color` on the trigger, Text sets none, so it
+// cascades down. Neither sets its own colour, so hover/focus/disabled states
+// keep flowing from the Button. The size step (body-md title vs body-sm
+// description) is what visually separates them.
 .title {
 	font-weight: inherit;
 }
 
 .description {
-	color: var( --wpds-color-fg-content-neutral-weak );
+	color: inherit;
 }
