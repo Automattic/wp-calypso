@@ -69,13 +69,13 @@ function getVariationConfig( variationName: string ): VariationConfig {
 				),
 				ctas: [
 					{
-						id: 'manual-new',
+						id: 'browse-themes',
 						label: __( 'Browse new themes' ),
 						href: THEMES_SHOWCASE_URL,
 						variant: 'primary',
 					},
 					{
-						id: 'manual-continue',
+						id: 'manual-new',
 						label: __( 'Create a new site' ),
 						href: ONBOARDING_URL,
 						variant: 'tertiary',
@@ -90,13 +90,13 @@ function getVariationConfig( variationName: string ): VariationConfig {
 				),
 				ctas: [
 					{
-						id: 'content-new',
+						id: 'write-post',
 						label: __( 'Write your next post' ),
 						href: NEW_POST_URL,
 						variant: 'primary',
 					},
 					{
-						id: 'content-new-site',
+						id: 'manual-new',
 						label: __( 'Create a new site' ),
 						href: ONBOARDING_URL,
 						variant: 'tertiary',
@@ -117,7 +117,7 @@ function getVariationConfig( variationName: string ): VariationConfig {
 						variant: 'primary',
 					},
 					{
-						id: 'design-new',
+						id: 'manual-new',
 						label: __( 'Create a new site' ),
 						href: ONBOARDING_URL,
 						variant: 'tertiary',
@@ -166,9 +166,9 @@ export default function ResurrectedWelcomeModal( {
 			omission: '…',
 		} );
 		resolvedCtas = resolvedCtas.map( ( cta ) =>
-			cta.id === 'content-new'
+			cta.id === 'write-post'
 				? {
-						id: 'content-draft',
+						id: 'continue-draft',
 						label: getDraftCtaLabel( truncatedDraftTitle ),
 						href: `/post/${ lastDraft.siteId }/${ lastDraft.id }`,
 						variant: 'primary',
@@ -205,10 +205,9 @@ export default function ResurrectedWelcomeModal( {
 					<div className="resurrected-welcome-modal__actions">
 						{ resolvedCtas.map( ( cta ) => {
 							const variant = cta.variant ?? 'primary';
-							const isLoading =
-								isContentVariation && isLastDraftLoading && cta.id === 'content-new';
+							const isLoading = isContentVariation && isLastDraftLoading && cta.id === 'write-post';
 							const ctaTitle =
-								cta.id === 'content-draft' && lastDraft
+								cta.id === 'continue-draft' && lastDraft
 									? getDraftCtaLabel( lastDraft.title )
 									: undefined;
 

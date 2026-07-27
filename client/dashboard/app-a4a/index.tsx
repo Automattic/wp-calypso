@@ -39,6 +39,7 @@ boot( {
 		reader: false,
 		help: true,
 		notifications: false,
+		resurrectedWelcomeModal: false,
 		me: false,
 		plugins: false,
 		commandPalette: false,

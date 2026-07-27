@@ -34,6 +34,7 @@ boot( {
 		reader: false,
 		help: true,
 		notifications: false,
+		resurrectedWelcomeModal: false,
 		me: {
 			billing: {
 				monetizeSubscriptions: false,
