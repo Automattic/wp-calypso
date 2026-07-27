@@ -1,5 +1,18 @@
-import { getBackupField } from './backup';
-import { getBoostField } from './boost';
+import {
+	getBackupField,
+	getHostField,
+	getLastPublishedField,
+	getLikesField,
+	getPhpVersionField,
+	getPlanField,
+	getPreviewField,
+	getStorageField,
+	getSubscribersField,
+	getViewsField,
+	getVisibilityField,
+	getVisitorsField,
+	getWpVersionField,
+} from './details';
 import { getSiteIconField, getSiteNameField, getSiteUrlField } from './site';
 import type { AgencySite } from '@automattic/api-core';
 import type { Field } from '@wordpress/dataviews';
@@ -11,10 +24,21 @@ export function getAgencyFields(
 	onSiteClick?: ( site: AgencySite ) => void
 ): Field< AgencySite >[] {
 	return [
-		getSiteIconField( viewType ),
 		getSiteNameField( onSiteClick ),
 		getSiteUrlField(),
-		getBoostField(),
+		getSiteIconField( viewType ),
+		getSubscribersField(),
 		getBackupField(),
+		getPlanField(),
+		getVisibilityField(),
+		getWpVersionField(),
+		getPreviewField(),
+		getLastPublishedField(),
+		getVisitorsField(),
+		getViewsField(),
+		getLikesField(),
+		getPhpVersionField(),
+		getStorageField(),
+		getHostField(),
 	];
 }
