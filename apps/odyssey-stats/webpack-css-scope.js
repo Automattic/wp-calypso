@@ -11,9 +11,12 @@
 // own mount point. The rest are portal roots first-party components can render into:
 // .color-scheme/.ReactModalPortal (Popover/Dialog), [data-base-ui-portal]/[data-wp-compat-overlay-slot]
 // (@wordpress/ui Popover/Tooltip/Dialog, e.g. StatsInfotip), .components-modal__screen-overlay
-// (@wordpress/components Modal, e.g. the UTM builder, stats upsell modal, and feedback modal).
+// (@wordpress/components Modal, e.g. the UTM builder, stats upsell modal, and feedback modal),
+// .components-popover__fallback-container (@wordpress/components Popover/Dropdown/DropdownMenu —
+// document.body.append(container) whenever there's no <Popover.Slot> ancestor, which there never
+// is here since Odyssey/Calypso Stats render no SlotFillProvider).
 const prefix =
-	':where(.jp-stats-dashboard, .color-scheme, .ReactModalPortal, [data-base-ui-portal], [data-wp-compat-overlay-slot], .components-modal__screen-overlay, .jp-stats-widget)';
+	':where(.jp-stats-dashboard, .color-scheme, .ReactModalPortal, [data-base-ui-portal], [data-wp-compat-overlay-slot], .components-modal__screen-overlay, .components-popover__fallback-container, .jp-stats-widget)';
 
 // The subset of `prefix`'s roots that Jetpack's PHP places directly as top-level mount points —
 // never nested inside each other or inside a portal root. Unlike the portal roots (.color-scheme,
@@ -22,7 +25,14 @@ const prefix =
 // always dead, at any depth in the selector chain — not just when they style themselves directly.
 // verify-css-scope.js uses this list (rather than re-deriving it from `prefix`) to check for that
 // specific failure mode without flagging legitimate portal-root nesting as a false positive.
-const entryPointRoots = [ '.jp-stats-dashboard', '.jp-stats-widget' ];
+const entryPointRoots = [
+	'.jp-stats-dashboard',
+	'.jp-stats-widget',
+	// @wordpress/components' Popover fallback container: unconditionally document.body.append'd
+	// (node_modules/@wordpress/components/src/popover/index.tsx) whenever there's no <Popover.Slot>
+	// ancestor — which there never is here — so it can never nest inside another root either.
+	'.components-popover__fallback-container',
+];
 
 // The remaining `prefix` roots: portal roots first-party components render into, which — unlike
 // entryPointRoots — can legitimately be nested inside .jp-stats-dashboard/.jp-stats-widget.
@@ -85,6 +95,13 @@ const exclude = [
 	// .stats-widget-content.color-scheme carries the widget's primary→accent remap on its own
 	// root element (scoped-theme-for-widget.scss); same self-scoping reason.
 	/^\.stats-widget-content\.color-scheme$/,
+	// @wordpress/components' Tooltip (built on @ariakit/react, not @wordpress/ui/base-ui — already
+	// imported in client/my-sites/stats/stats-list/action-{link,promote,spam}.jsx) always portals
+	// to document.body via Ariakit's own portal, with no class/attribute on the wrapper to add to
+	// `prefix` — only the rendered content carries `.components-tooltip`. No first-party rule
+	// targets it today, but if one ever does, prefixing it would go dead the same way the mount
+	// roots above do; excluding it pre-emptively means that regression can't happen silently.
+	/^\.components-tooltip(?![\w-])/,
 ];
 
 module.exports = { prefix, entryPointRoots, portalRoots, ignoreFiles, exclude };

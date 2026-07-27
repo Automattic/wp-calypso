@@ -133,4 +133,31 @@ describe( 'Odyssey Stats CSS scoping (webpack-css-scope.js)', () => {
 		expect( compiled ).not.toContain( ':where(' );
 		expect( compiled ).toMatch( /^\.stats-widget-content\.color-scheme/m );
 	} );
+
+	it( 'scopes content inside a @wordpress/components Popover fallback container, mirroring the modal/widget mounts', () => {
+		const compiled = compile( '.card { color: rgb(4, 5, 6); }' );
+		document.body.innerHTML =
+			'<div class="components-popover__fallback-container"><div class="card" id="popover-card"></div></div>' +
+			'<div id="adminmenu"><div class="card" id="adminmenu-card"></div></div>';
+		const style = document.createElement( 'style' );
+		style.textContent = compiled;
+		document.head.appendChild( style );
+
+		expect( getComputedStyle( document.getElementById( 'popover-card' ) ).color ).toBe(
+			'rgb(4, 5, 6)'
+		);
+		expect( getComputedStyle( document.getElementById( 'adminmenu-card' ) ).color ).not.toBe(
+			'rgb(4, 5, 6)'
+		);
+	} );
+
+	it( 'leaves .components-tooltip unprefixed — @wordpress/components Tooltip has no attribute to scope its wrapper', () => {
+		const compiled = compile( '.components-tooltip { color: red; }' );
+
+		// If prefixed, this would require an ancestor of .components-tooltip matching one of the
+		// roots — but Ariakit always portals it straight to document.body, so no such ancestor can
+		// exist. Same self-scoping case as .jp-stats-widget, just for a third-party wrapper class.
+		expect( compiled ).not.toContain( ':where(' );
+		expect( compiled ).toMatch( /^\.components-tooltip/m );
+	} );
 } );

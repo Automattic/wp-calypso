@@ -1,7 +1,7 @@
 import { findScopeFailures } from '../../../bin/verify-css-scope';
 
 const PREFIX =
-	':where(.jp-stats-dashboard, .color-scheme, .ReactModalPortal, [data-base-ui-portal], [data-wp-compat-overlay-slot], .components-modal__screen-overlay, .jp-stats-widget)';
+	':where(.jp-stats-dashboard, .color-scheme, .ReactModalPortal, [data-base-ui-portal], [data-wp-compat-overlay-slot], .components-modal__screen-overlay, .components-popover__fallback-container, .jp-stats-widget)';
 
 /**
  * A minimal compiled bundle that satisfies every check: one prefixed rule (proving the scoping
@@ -66,6 +66,21 @@ describe( 'verify-css-scope findScopeFailures', () => {
 		);
 	} );
 
+	it( 'flags .components-popover__fallback-container self-nesting — the @wordpress/components Popover fallback', () => {
+		const css = `
+			${ PREFIX } .card{color:red}
+			.jp-stats-dashboard{--sidebar-width-max:160px}
+			.jp-stats-widget{background:#fff}
+			${ PREFIX } .components-popover__fallback-container{position:fixed}
+		`;
+
+		expect( findScopeFailures( css ) ).toEqual( [
+			expect.stringContaining(
+				'nests .components-popover__fallback-container under a `:where(...)` group'
+			),
+		] );
+	} );
+
 	it( 'does not flag a portal root (.color-scheme) nested inside an entry-point root — that is legitimate, not dead', () => {
 		// .color-scheme.is-light .masterbar is routinely nested *inside* .jp-stats-dashboard for
 		// per-section theming (see css-scope.test.js), so it has a real, different ancestor
@@ -117,7 +132,7 @@ describe( 'verify-css-scope findScopeFailures', () => {
 
 	it( 'is unaffected by minification stripping whitespace after commas in :where(...)', () => {
 		const minifiedPrefix =
-			':where(.jp-stats-dashboard,.color-scheme,.ReactModalPortal,[data-base-ui-portal],[data-wp-compat-overlay-slot],.components-modal__screen-overlay,.jp-stats-widget)';
+			':where(.jp-stats-dashboard,.color-scheme,.ReactModalPortal,[data-base-ui-portal],[data-wp-compat-overlay-slot],.components-modal__screen-overlay,.components-popover__fallback-container,.jp-stats-widget)';
 		const css = `
 			${ minifiedPrefix } .card{color:red}
 			.jp-stats-dashboard{--sidebar-width-max:160px}
