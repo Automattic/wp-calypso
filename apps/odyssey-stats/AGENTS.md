@@ -61,6 +61,8 @@ Odyssey only owns the `#wpcom` subtree of a wp-admin page, so `webpack.config.js
 
 `yarn verify:css-scope` (runs as part of `teamcity:build-app`) builds and checks the compiled CSS for exactly this failure — a root nested under a `:where(...)` group it's already a member of — and fails loudly if any `prefix` root is left unclassified. See `bin/verify-css-scope.js`.
 
+The `:where(prefix)` string gets repeated on every scoped rule (not deduped), so it's normal for it to make up roughly half the raw compiled CSS — that's not a bug. Gzip compresses the repetition down to a few KB, so the real network cost is small (the whole CSS bundle is ~84 KiB gzipped) and CSS isn't in `size-limit`'s budget. Don't "fix" this by shrinking the `prefix` list.
+
 ## Conventions
 
 - New data fetching: use TanStack Query hooks in `src/hooks/`

@@ -35,10 +35,7 @@ function buildFixture( compiledCss ) {
 
 describe( 'Odyssey Stats CSS scoping (webpack-css-scope.js)', () => {
 	it( 'scopes a shared component selector under both .jp-stats-dashboard and .jp-stats-widget, but not outside either', () => {
-		// A distinctive, non-default color, so a passing assertion actually proves the rule
-		// applied — unlike e.g. `border-width`, whose computed value collapses to 0 regardless of
-		// the declared width whenever `border-style` is left at its `none` default, which would
-		// make an unscoped/never-applied rule indistinguishable from a correctly scoped one.
+		// Distinctive non-default color, so a passing assertion actually proves the rule applied.
 		const compiled = compile( '.card { color: rgb(1, 2, 3); }', {
 			from: 'odyssey-stats/src/widget/index.scss',
 		} );
@@ -59,10 +56,6 @@ describe( 'Odyssey Stats CSS scoping (webpack-css-scope.js)', () => {
 		);
 		const { widgetRoot } = buildFixture( compiled );
 
-		// If these rules got nested under the prefix (`:where(...) .jp-stats-widget {...}`),
-		// they'd require an ancestor of `.jp-stats-widget` matching the prefix — which doesn't
-		// exist, since `.jp-stats-widget` IS one of the prefix roots. That's the exact bug this
-		// exclusion prevents: verify it by asserting the styles actually apply to the root itself.
 		expect( getComputedStyle( widgetRoot ).color ).toBe( 'green' );
 
 		widgetRoot.classList.add( 'is-ready' );
@@ -77,10 +70,7 @@ describe( 'Odyssey Stats CSS scoping (webpack-css-scope.js)', () => {
 	} );
 
 	it( 'leaves .jp-stats-dashboard matching the dashboard mount itself, and rules nested under it in source, unprefixed', () => {
-		// Mirrors wp-admin.scss's `.jp-stats-dashboard { --sidebar-width-max: 160px; & .layout__content { ... } }`
-		// pattern: both the bare root rule and a rule nested under it in the source need to survive
-		// unprefixed, since .jp-stats-dashboard is one of the prefix roots and Jetpack's PHP places
-		// it directly on the page — same self-scoping problem .jp-stats-widget above has.
+		// Mirrors wp-admin.scss's `.jp-stats-dashboard { --sidebar-width-max: 160px; & .layout__content { ... } }`.
 		const compiled = compile(
 			'.jp-stats-dashboard { --sidebar-width-max: 160px; }\n' +
 				'.jp-stats-dashboard .layout__content { padding-top: 0; }',
@@ -113,8 +103,6 @@ describe( 'Odyssey Stats CSS scoping (webpack-css-scope.js)', () => {
 	it( 'leaves .color-scheme.is-<scheme> unprefixed — it sets the scheme vars on the element that carries the class', () => {
 		const compiled = compile( '.color-scheme.is-midnight { --color-accent: red; }' );
 
-		// Prefixing it would require a scope-root ancestor above an element that IS a scope root,
-		// so the rule would go dead — the same self-scoping case as the mount roots.
 		expect( compiled ).not.toContain( ':where(' );
 		expect( compiled ).toMatch( /^\.color-scheme\.is-midnight/m );
 	} );
@@ -154,9 +142,6 @@ describe( 'Odyssey Stats CSS scoping (webpack-css-scope.js)', () => {
 	it( 'leaves .components-tooltip unprefixed — @wordpress/components Tooltip has no attribute to scope its wrapper', () => {
 		const compiled = compile( '.components-tooltip { color: red; }' );
 
-		// If prefixed, this would require an ancestor of .components-tooltip matching one of the
-		// roots — but Ariakit always portals it straight to document.body, so no such ancestor can
-		// exist. Same self-scoping case as .jp-stats-widget, just for a third-party wrapper class.
 		expect( compiled ).not.toContain( ':where(' );
 		expect( compiled ).toMatch( /^\.components-tooltip/m );
 	} );

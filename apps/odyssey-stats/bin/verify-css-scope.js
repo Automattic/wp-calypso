@@ -1,37 +1,24 @@
 /**
  * Post-build check for the `postcss-prefix-selector` scoping in webpack.config.js (see
  * AGENTS.md > CSS Scoping and webpack-css-scope.js). Automates the manual check AGENTS.md
- * documents: build, then grep the compiled CSS for the affected class to confirm it's scoped
- * (or intentionally left unscoped), not silently dead.
+ * documents: build, then grep the compiled CSS to confirm a selector is scoped (or intentionally
+ * left unscoped), not silently dead — checked here against the real `dist/*.css` output, not the
+ * hand-written strings css-scope.test.js runs the plugin against.
  *
- * Three things are verified against the real `dist/*.css` output, not the hand-written CSS
- * strings postcss-prefix-selector's options are unit-tested against in css-scope.test.js:
+ * Three checks:
+ * 1. The prefix reaches the compiled output at all (catches the scoping step silently no-op'ing).
+ * 2. Every root in `prefix` is classified in `entryPointRoots` or `portalRoots` — otherwise a new
+ *    root added to `prefix` without also classifying it would silently skip check 3 below.
+ * 3. No compiled rule self-nests an `entryPointRoots` selector under `prefix` — i.e.
+ *    `:where(<roots>) X` where X's compound contains one of them. That's always dead: those roots
+ *    are placed directly on the page and never nested inside another root, so they can never
+ *    satisfy the ancestor requirement the prefix just added. This is the STATS-368 failure mode.
  *
- * 1. The prefix is actually reaching the compiled output at all (catches the whole scoping step
- *    silently no-op'ing, e.g. a broken loader wiring).
- * 2. Every root in `prefix` is classified in `entryPointRoots` or `portalRoots`. Without this,
- *    adding a new root to `prefix` without also classifying it here would silently fall through
- *    check 3 below rather than failing loudly — the check would just never know the new root
- *    exists, which defeats the point of automating this at all.
- * 3. No compiled rule self-nests one of `entryPointRoots` (`.jp-stats-dashboard`,
- *    `.jp-stats-widget`) under `prefix` — i.e. `:where(<roots>) X` where X's compound selector
- *    contains one of those two. That shape can never match anything, since Jetpack's PHP places
- *    both directly on the page: they're never nested inside each other or inside a portal root,
- *    so they can never satisfy the ancestor requirement the prefix just added. This is exactly
- *    how apps/odyssey-stats#STATS-368 broke, and how `.jp-stats-dashboard` itself was *also*
- *    broken until this same change added its missing `exclude` entry: a mount point's own root
- *    styling loses its `exclude` entry and gets nested under the very prefix it's a root of.
- *
- * Check 3 only covers `entryPointRoots`, not every selector in `prefix`: the portal roots
- * (`.color-scheme`, `.ReactModalPortal`, etc.) are routinely — and correctly — nested *inside*
- * `.jp-stats-dashboard`/`.jp-stats-widget` for per-section theming (see
- * `.color-scheme.is-light .masterbar` in css-scope.test.js), so a rule scoping through one of
- * them is normally still live. Whether that's true can't be derived from the compiled CSS alone
- * — it depends on the real DOM hierarchy between mount points, which only `entryPointRoots`/
- * `portalRoots` (hand-maintained, right next to `prefix` in webpack-css-scope.js) encode. Check 2
- * is what makes that hand-maintenance actually load-bearing instead of just hopeful: a new root
- * added to `prefix` and left unclassified fails the build immediately, naming the root and
- * telling the developer which two lists to add it to.
+ * Check 3 only covers `entryPointRoots`, not every `prefix` selector: portal roots (`.color-scheme`
+ * etc.) are routinely, correctly nested *inside* `.jp-stats-dashboard`/`.jp-stats-widget`, so
+ * flagging them the same way would false-positive. Which list a root belongs in can't be derived
+ * from the compiled CSS — it depends on the real DOM hierarchy between mount points, which only
+ * `entryPointRoots`/`portalRoots` (webpack-css-scope.js) encode.
  */
 
 const fs = require( 'fs' );
@@ -62,16 +49,13 @@ function collectRules( css ) {
 	return rules;
 }
 
-// Minification strips the whitespace after commas inside `:where(...)`, so comparing against the
-// `prefix` string as written in webpack-css-scope.js requires normalizing both sides first.
+// Minification strips whitespace after commas inside `:where(...)`, so comparing against `prefix`
+// as written in webpack-css-scope.js requires normalizing both sides first.
 function normalizeWhereGroupSpacing( selector ) {
 	return selector.replace( /,\s+/g, ',' );
 }
 
-/**
- * The individual root selectors inside a `:where(...)` prefix string, as their string forms (e.g.
- * `.jp-stats-dashboard`, `[data-base-ui-portal]`).
- */
+// The individual root selectors inside a `:where(...)` prefix string.
 function getPrefixRoots( prefixToParse ) {
 	const roots = [];
 	selectorParser( ( selectors ) => {
@@ -85,12 +69,9 @@ function getPrefixRoots( prefixToParse ) {
 }
 
 /**
- * Given a rule selector that starts with the `:where(<roots>)` prefix, returns the individual
- * simple selectors (e.g. `['.jp-stats-widget', '.is-ready']`) making up the compound selector
- * immediately following it — i.e. whatever the prefix is scoping this rule's content to.
- *
- * Only walks the selector's top-level node sequence (not a recursive `.walk()`), so it doesn't
- * descend into `:where(...)`'s own argument list — those are the roots themselves, not "after".
+ * Given a rule selector starting with the `:where(<roots>)` prefix, returns the simple selectors
+ * making up the compound immediately following it (e.g. `['.jp-stats-widget', '.is-ready']`) — top
+ * level only, so it doesn't descend into `:where(...)`'s own argument list.
  */
 function getCompoundAfterPrefix( selector ) {
 	const compoundNodes = [];
@@ -118,13 +99,12 @@ function getCompoundAfterPrefix( selector ) {
 }
 
 /**
- * Pure check: given compiled CSS text, returns a list of human-readable failure messages (empty
- * when everything is scoped correctly). Split out from `run()` so it's unit-testable against
- * hand-written CSS without needing a real `dist/` build on disk.
+ * Given compiled CSS text, returns human-readable failure messages (empty when everything's fine).
+ * Split from `run()` so it's unit-testable against hand-written CSS without a real `dist/` build.
  *
  * `prefixToCheck`/`entryPointRootsToCheck`/`portalRootsToCheck` default to the real values from
- * webpack-css-scope.js; tests pass different ones to prove the check follows whatever those are
- * configured to, rather than a list of "known" mount points hard-coded into this file.
+ * webpack-css-scope.js; tests override them to prove the check follows whatever those are
+ * configured to, not a hard-coded list.
  */
 function findScopeFailures(
 	css,
