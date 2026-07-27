@@ -41,7 +41,7 @@ export const HelpCenterSearch = ( { onSearchChange, currentRoute }: HelpCenterSe
 		[]
 	);
 	const { contextSearch } = useContextBasedSearchMapping( currentRoute );
-	const cta = useHelpCenterCTA();
+	const cta = useHelpCenterCTA( 'help-center-home' );
 	const { isLoading: isLoadingSearchResults } = useHelpSearchQuery(
 		searchQuery || contextTerm || contextSearch,
 		locale,
@@ -63,7 +63,7 @@ export const HelpCenterSearch = ( { onSearchChange, currentRoute }: HelpCenterSe
 
 	return (
 		<div className="inline-help__search">
-			{ cta?.variant === 'banner' && <HelpCenterCTA { ...cta } /> }
+			{ cta && <HelpCenterCTA { ...cta } /> }
 			{ featureConfig.home.recentConversations && (
 				<>
 					<HelpCenterRecentConversations />

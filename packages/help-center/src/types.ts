@@ -86,6 +86,7 @@ interface Eligibility {
 interface SupportStatusCTA {
 	id: string;
 	variant: string;
+	placement: string;
 	url: string;
 	title: string;
 	description?: string;
