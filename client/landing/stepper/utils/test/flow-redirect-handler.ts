@@ -72,17 +72,6 @@ describe( 'flow redirect handler', () => {
 		expect( recordTracksEvent ).not.toHaveBeenCalled();
 	} );
 
-	it( 'does not redirect an explicit build-wow request', () => {
-		const didRedirect = redirectPathIfNecessary(
-			'/setup/ai-site-builder',
-			'?build_wow=1&spec_id=spec-123'
-		);
-
-		expect( didRedirect ).toBe( false );
-		expect( replace ).not.toHaveBeenCalled();
-		expect( recordTracksEvent ).not.toHaveBeenCalled();
-	} );
-
 	it( 'does not match the separate AI Site Builder Spec flow', () => {
 		const didRedirect = redirectPathIfNecessary(
 			'/setup/ai-site-builder-spec/site-spec',

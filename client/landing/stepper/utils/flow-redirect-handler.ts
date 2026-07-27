@@ -16,9 +16,7 @@ const AI_SITE_BUILDER_REDIRECT: RedirectRule = {
 	flow: AI_SITE_BUILDER_FLOW,
 	to: `/setup/${ AI_SITE_BUILDER_ONBOARDING_FLOW }`,
 	shouldRedirect: ( searchParams ) =>
-		! searchParams.has( 'siteId' ) &&
-		! searchParams.has( 'siteSlug' ) &&
-		searchParams.get( 'build_wow' ) !== '1',
+		! searchParams.has( 'siteId' ) && ! searchParams.has( 'siteSlug' ),
 	replace: true,
 };
 
