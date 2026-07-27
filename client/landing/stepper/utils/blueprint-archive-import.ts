@@ -123,6 +123,26 @@ export async function startBlueprintArchiveImport(
 }
 
 /**
+ * Apply the confirmed site spec on top of the already-imported blueprint site:
+ * writes the user's site title/tagline synchronously, stamps blueprint
+ * provenance, and materializes the spec into the site knowledge store. Runs
+ * after the import completes and before the redirect. Non-destructive.
+ */
+export async function applyBlueprintSpec(
+	siteIdentifier: string,
+	specId: string,
+	blueprintSlug: string
+): Promise< unknown > {
+	return wpcom.req.post(
+		{
+			path: `/sites/${ siteIdentifier }/big-sky/apply-blueprint-spec`,
+			apiNamespace: 'wpcom/v2',
+		},
+		{ spec_id: specId, blueprint_id: blueprintSlug }
+	);
+}
+
+/**
  * Poll the site's import status until the backup import finishes.
  * Resolves on success; throws on a terminal failure or timeout.
  */
