@@ -42,7 +42,7 @@ function isCalypsoLiveDotcomHostname( hostname ) {
 
 /**
  * The CALYPSO_LIVE_IMAGE envvar is injected into the Docker container
- * by Teamcity. This allows the client to use the calypo.live redirector
+ * by TeamCity. This allows the client to use the calypso.live redirector
  * to generate links for other dashboard variants.
  */
 function getLiveImageRef() {
