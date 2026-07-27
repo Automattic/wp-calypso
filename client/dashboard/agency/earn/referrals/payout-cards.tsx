@@ -1,5 +1,5 @@
 import { formatCurrency } from '@automattic/number-formatters';
-import { __experimentalVStack as VStack } from '@wordpress/components';
+import { __experimentalText as Text, __experimentalVStack as VStack } from '@wordpress/components';
 import { __, sprintf } from '@wordpress/i18n';
 import ConsolidatedStatCard from '../../../components/consolidated-stat-card';
 import InlineSupportLink from '../../../components/inline-support-link';
@@ -38,17 +38,17 @@ function PayoutAmount( {
 			popoverTitle={ popoverTitle }
 			popoverContent={
 				<VStack spacing={ 3 }>
-					<div>
+					<Text>
 						{ __(
 							'When your client buys products or hosting from Automattic for Agencies, they are billed on the first of every month rather than immediately. We estimate the commission based on the active use for the current month.'
 						) }
-					</div>
+					</Text>
 
-					<VStack spacing={ 1 }>
-						<span>{ __( 'Payout range:' ) }</span>
-						<strong>{ activityWindow }</strong>
+					<VStack spacing={ 0.5 }>
+						<Text>{ __( 'Payout range:' ) }</Text>
+						<Text weight={ 600 }>{ activityWindow }</Text>
 						{ handleHalfQuarter && (
-							<div>
+							<Text>
 								{ sprintf(
 									/* translators: %s is the current date, e.g. "Jan 5" */
 									__( '(Earnings shown up to %s)' ),
@@ -57,29 +57,29 @@ function PayoutAmount( {
 										day: 'numeric',
 									} )
 								) }
-							</div>
+							</Text>
 						) }
 					</VStack>
 
-					<VStack spacing={ 1 }>
-						<span>{ __( 'Payout date:' ) }</span>
-						<strong>{ payoutDate }*</strong>
+					<VStack spacing={ 0.5 }>
+						<Text>{ __( 'Payout date:' ) }</Text>
+						<Text weight={ 600 }>{ payoutDate }*</Text>
 					</VStack>
 
-					<div>
+					<Text>
 						{ __(
 							'*Commissions are paid quarterly, after a 60-day waiting period, excluding refunds and chargebacks.'
 						) }
-					</div>
+					</Text>
 
-					<div>
+					<Text>
 						<InlineSupportLink
 							supportLink={ AGENCY_EARNINGS_LEARN_MORE_LINK }
 							forceOpenInHelpCenter
 						>
 							{ __( 'Learn more' ) }
 						</InlineSupportLink>
-					</div>
+					</Text>
 				</VStack>
 			}
 			isLoading={ isFetching }
