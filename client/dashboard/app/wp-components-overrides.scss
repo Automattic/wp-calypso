@@ -9,3 +9,10 @@
 :root {
 	--wpds-typography-font-weight-emphasis: 499;
 }
+
+// 37.0.0 offsets the button focus ring by its own width, leaving a gap. Keep the ring
+// against the edge as before. The panel body toggle sets its own inset ring, so leave
+// it be. Remove to adopt the detached design-system ring.
+.components-button:focus:not( :active ):not( .components-panel__body-toggle ) {
+	outline-offset: 0;
+}
