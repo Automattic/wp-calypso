@@ -1,6 +1,7 @@
 import { mapMarker } from '@wordpress/icons';
 import { localize, translate } from 'i18n-calypso';
 import { connect } from 'react-redux';
+import InlineSupportLink from 'calypso/components/inline-support-link';
 import useStatsStrings from 'calypso/my-sites/stats/hooks/use-stats-strings';
 import { getSiteSlug, isJetpackSite } from 'calypso/state/sites/selectors';
 import {
@@ -47,9 +48,36 @@ const StatsEmailModule: React.FC< StatsEmailModuleProps & StatsEmailMapStateProp
 	const metricLabel = statType === 'clicks' ? translate( 'Clicks' ) : translate( 'Opens' );
 	const hasData = Array.isArray( data ) && data.length > 0;
 
+	const countriesEmptyDescription =
+		statType === 'clicks'
+			? translate( 'Clicks by {{link}}location{{/link}} will appear here.', {
+					comment: '{{link}} links to support documentation.',
+					components: {
+						link: (
+							<InlineSupportLink
+								supportContext={ isJetpack ? 'stats-countries-jetpack' : 'stats-countries' }
+								showIcon={ false }
+							/>
+						),
+					},
+					context: 'Stats: Info box label when the email Countries module is empty',
+			  } )
+			: translate( 'Opens by {{link}}location{{/link}} will appear here.', {
+					comment: '{{link}} links to support documentation.',
+					components: {
+						link: (
+							<InlineSupportLink
+								supportContext={ isJetpack ? 'stats-countries-jetpack' : 'stats-countries' }
+								showIcon={ false }
+							/>
+						),
+					},
+					context: 'Stats: Info box label when the email Countries module is empty',
+			  } );
+
 	const emptyMessage =
 		path === 'countries' ? (
-			<EmptyModuleCard icon={ mapMarker } description={ moduleStrings.empty } />
+			<EmptyModuleCard icon={ mapMarker } description={ countriesEmptyDescription } />
 		) : (
 			moduleStrings.empty
 		);
