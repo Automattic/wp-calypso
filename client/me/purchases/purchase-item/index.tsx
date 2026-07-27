@@ -19,7 +19,7 @@ import { getPaymentMethodImageURL, razorpayImage as upiImage } from '@automattic
 import { ExternalLink, Button } from '@wordpress/components';
 import { Icon, cautionFilled as warningIcon } from '@wordpress/icons';
 import clsx from 'clsx';
-import { localize, useTranslate } from 'i18n-calypso';
+import { fixMe, localize, useTranslate } from 'i18n-calypso';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import akismetIcon from 'calypso/assets/images/icons/akismet-icon.svg';
@@ -29,6 +29,7 @@ import payPalImage from 'calypso/assets/images/upgrades/paypal-full.svg';
 import SiteIcon from 'calypso/blocks/site-icon';
 import InfoPopover from 'calypso/components/info-popover';
 import { withLocalizedMoment, useLocalizedMoment } from 'calypso/components/localized-moment';
+import { getCalendarDaysUntil, getRelativeDayString } from 'calypso/dashboard/utils/datetime';
 import TrackComponentView from 'calypso/lib/analytics/track-component-view';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import {
@@ -589,17 +590,40 @@ export function PurchaseItemStatus( {
 	}
 
 	if ( isExpiring( purchase ) && ! isAkismetFreeProduct( purchase ) ) {
-		if ( expiry < moment().add( 30, 'days' ) && ! isRecentMonthlyPurchase( purchase ) ) {
+		const expiresOnText = translate( 'Expires on {{span}}%s{{/span}}', {
+			args: expiry.format( 'LL' ),
+			components: {
+				span: <span className="purchase-item__date" />,
+			},
+		} );
+		const daysUntilExpiry = getCalendarDaysUntil( expiry.toDate() );
+
+		// Covers both "later today" and a purchase whose expiry date has passed
+		// but which the backend still reports as expiring.
+		if ( daysUntilExpiry <= 0 ) {
+			return (
+				<span className="purchase-item__is-error">
+					{ fixMe( {
+						text: 'Expires today',
+						newCopy: translate( 'Expires today' ),
+						oldCopy: expiresOnText,
+					} ) }
+					<TrackImpression warning="purchase-expiring" />
+				</span>
+			);
+		}
+
+		if ( daysUntilExpiry <= 30 && ! isRecentMonthlyPurchase( purchase ) ) {
 			const expiryClass =
-				expiry < moment().add( 7, 'days' )
-					? 'purchase-item__is-error'
-					: 'purchase-item__is-warning';
+				daysUntilExpiry <= 7 ? 'purchase-item__is-error' : 'purchase-item__is-warning';
 
 			return (
 				<span className={ expiryClass }>
 					{ translate( 'Expires %(timeUntilExpiry)s on {{span}}%(date)s{{/span}}', {
 						args: {
-							timeUntilExpiry: expiry.fromNow(),
+							// The branch above already excludes today and past dates, but
+							// the clamp keeps that guarantee local to this call.
+							timeUntilExpiry: getRelativeDayString( expiry.toDate(), 'upcoming' ),
 							date: expiry.format( 'LL' ),
 						},
 						components: {
@@ -611,12 +635,7 @@ export function PurchaseItemStatus( {
 			);
 		}
 
-		return translate( 'Expires on {{span}}%s{{/span}}', {
-			args: expiry.format( 'LL' ),
-			components: {
-				span: <span className="purchase-item__date" />,
-			},
-		} );
+		return expiresOnText;
 	}
 
 	if ( isExpiredOrRemoved( purchase ) ) {
@@ -626,18 +645,22 @@ export function PurchaseItemStatus( {
 			} );
 		}
 
-		const isExpiredToday = moment().diff( expiry, 'hours' ) < 24;
+		// getCalendarDaysUntil counts forward, so this is negative once the expiry
+		// date has passed. Anything else means the expiry lands today or later —
+		// later being a purchase removed ahead of its expiry date — and both read
+		// as "Expired today" rather than "Expired in 3 days".
+		const expiredBeforeToday = getCalendarDaysUntil( expiry.toDate() ) < 0;
 		const expiredTodayText = translate( 'Expired today' );
 		const expiredFromNowText = translate( 'Expired %(timeSinceExpiry)s', {
 			args: {
-				timeSinceExpiry: expiry.fromNow(),
+				timeSinceExpiry: getRelativeDayString( expiry.toDate(), 'past' ),
 			},
 			context: 'timeSinceExpiry is of the form "[number] [time-period] ago" i.e. "3 days ago"',
 		} );
 
 		return (
 			<span className="purchase-item__is-error">
-				{ isExpiredToday ? expiredTodayText : expiredFromNowText }
+				{ expiredBeforeToday ? expiredFromNowText : expiredTodayText }
 				<TrackImpression warning="purchase-expired" />
 			</span>
 		);

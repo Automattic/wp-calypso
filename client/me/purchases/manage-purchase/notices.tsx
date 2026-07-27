@@ -31,6 +31,7 @@ import Notice, { NoticeStatus } from 'calypso/components/notice';
 import NoticeAction from 'calypso/components/notice/notice-action';
 import { useIsSplitCancelRemoveEnabled } from 'calypso/dashboard/me/billing-purchases/cancel-purchase/use-is-split-cancel-remove-enabled';
 import { getProductNounForCategory } from 'calypso/dashboard/me/billing-purchases/purchase-settings/classify-purchase-for-copy';
+import { getCalendarDaysUntil, getRelativeDayString } from 'calypso/dashboard/utils/datetime';
 import TrackComponentView from 'calypso/lib/analytics/track-component-view';
 import { createPurchasesArray } from 'calypso/lib/purchases/assembler';
 import { getTrialCheckoutUrl } from 'calypso/lib/trials/get-trial-checkout-url';
@@ -423,16 +424,18 @@ class PurchaseNotice extends Component<
 	}
 
 	getExpiringText( purchase: Purchase ) {
-		const { translate, moment, selectedSite } = this.props;
-		const expiry = moment( purchase.expiry_date );
+		const { translate, selectedSite } = this.props;
 
 		if ( selectedSite && purchase.expiry_status === 'manual-renew' && ! is100Year( purchase ) ) {
 			return this.getExpiringLaterText( purchase );
 		}
 
-		if ( isMonthlyPurchase( purchase ) ) {
-			const daysToExpiry = expiry.diff( moment(), 'days' );
+		const daysToExpiry = getCalendarDaysUntil( new Date( purchase.expiry_date ) );
 
+		// A monthly purchase expiring today (or already past its expiry date, while
+		// still reported as expiring) falls through to the relative wording below,
+		// which renders "today" rather than "in 0 days".
+		if ( isMonthlyPurchase( purchase ) && daysToExpiry > 0 ) {
 			if ( purchase.is_attached_to_holding_site ) {
 				return translate( '%(purchaseName)s will expire and be removed in %(daysToExpiry)d days.', {
 					args: {
@@ -457,7 +460,7 @@ class PurchaseNotice extends Component<
 			return translate( '%(purchaseName)s will expire and be removed %(expiry)s.', {
 				args: {
 					purchaseName: getName( purchase ),
-					expiry: expiry.fromNow(),
+					expiry: getRelativeDayString( new Date( purchase.expiry_date ), 'upcoming' ),
 				},
 			} );
 		}
@@ -465,7 +468,7 @@ class PurchaseNotice extends Component<
 		return translate( '%(purchaseName)s will expire and be removed from your site %(expiry)s.', {
 			args: {
 				purchaseName: getName( purchase ),
-				expiry: expiry.fromNow(),
+				expiry: getRelativeDayString( new Date( purchase.expiry_date ), 'upcoming' ),
 			},
 		} );
 	}
@@ -477,13 +480,12 @@ class PurchaseNotice extends Component<
 	 * @returns  {string}  Translated text for the warning message.
 	 */
 	getExpiringLaterText( purchase: Purchase, autoRenewingUpgradesLink?: ReactElement ): ReactNode {
-		const { translate, moment } = this.props;
-		const expiry = moment( purchase.expiry_date );
+		const { translate } = this.props;
 
 		const translateOptions: TranslateOptions = {
 			args: {
 				purchaseName: getName( purchase ),
-				expiry: expiry.fromNow(),
+				expiry: getRelativeDayString( new Date( purchase.expiry_date ), 'upcoming' ),
 			},
 		};
 
@@ -641,14 +643,8 @@ class PurchaseNotice extends Component<
 			PLAN_MIGRATION_TRIAL_MONTHLY,
 			PLAN_HOSTING_TRIAL_MONTHLY,
 		];
-		const {
-			moment,
-			purchase,
-			purchaseAttachedTo,
-			selectedSite,
-			translate,
-			getManagePurchaseUrlFor,
-		} = this.props;
+		const { purchase, purchaseAttachedTo, selectedSite, translate, getManagePurchaseUrlFor } =
+			this.props;
 
 		// For purchases included with a plan (for example, a domain mapping
 		// bundled with the plan), the plan purchase is used on this page when
@@ -698,7 +694,7 @@ class PurchaseNotice extends Component<
 					args: {
 						purchaseName: getName( currentPurchase ),
 						includedPurchaseName: getName( includedPurchase ),
-						expiry: moment( currentPurchase.expiry_date ).fromNow(),
+						expiry: getRelativeDayString( new Date( currentPurchase.expiry_date ), 'upcoming' ),
 					},
 					components: {
 						managePurchase: (
@@ -806,14 +802,22 @@ class PurchaseNotice extends Component<
 			( otherPurchase ) => Number( moment( otherPurchase.expiry_date ).format( 'X' ) )
 		);
 
-		const expiry = moment( currentPurchase.expiry_date );
+		// These slots feed both past-tense ("expired %(expiry)s") and future-tense
+		// ("will expire %(expiry)s") sentences, so each is clamped to match the
+		// tense of the scenario it lands in.
 		const translateOptions = {
 			args: {
 				purchaseName: getName( currentPurchase ),
 				includedPurchaseName: getName( includedPurchase ),
-				expiry: expiry.fromNow(),
+				expiry: getRelativeDayString(
+					new Date( currentPurchase.expiry_date ),
+					isExpiredOrRemoved( currentPurchase ) ? 'past' : 'upcoming'
+				),
 				earliestOtherExpiry: earliestOtherExpiringPurchase
-					? moment( earliestOtherExpiringPurchase.expiry_date ).fromNow()
+					? getRelativeDayString(
+							new Date( earliestOtherExpiringPurchase.expiry_date ),
+							isExpiredOrRemoved( earliestOtherExpiringPurchase ) ? 'past' : 'upcoming'
+					  )
 					: '',
 			},
 			components: {
