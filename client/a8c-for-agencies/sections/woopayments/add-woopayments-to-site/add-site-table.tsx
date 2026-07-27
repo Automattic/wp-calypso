@@ -40,7 +40,8 @@ const AddWooPaymentsToSiteTable = ( {
 	const [ dataViewsState, setDataViewsState ] = useState< DataViewsState >( {
 		...initialDataViewsState,
 		fields: [ 'site' ],
-		layout: { density: 'compact' },
+		// Prevents DataViews from wrapping the header in a padded menu button that misaligns the radio control.
+		layout: { density: 'compact', enableMoving: false },
 	} );
 
 	const onSelectSite = useCallback(
