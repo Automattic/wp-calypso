@@ -31,11 +31,7 @@ const DAY_IN_SECONDS = 86400;
 const EXPERIMENT_NAME = 'calypso_onboarding_account_recovery_modal_202606';
 const EXPERIMENT_TREATMENT_VARIATION = 'no_recovery_modal';
 
-/**
- * Lifetime cap on how many times a user is nudged. Each dismissal counts as one nudge; once the cap
- * is reached the interstitial never shows again. Keeps the modal from becoming a recurring
- * annoyance for users who repeatedly snooze without setting up recovery.
- */
+/** Lifetime nudge cap — each dismissal (not impression) counts as one view. */
 const MAX_INTERSTITIAL_VIEWS = 3;
 
 /**
