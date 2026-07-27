@@ -49,8 +49,14 @@ function VisibilityCardUnlaunched( { site }: { site: Site } ) {
 
 	const { data: launchpad } = useQuery( {
 		...siteLaunchpadQuery( site.ID, getLaunchpadChecklistSlug( site ) ),
-		enabled: ! isAiLaunchpad,
+		enabled: ! isAiLaunchpad && ! isNoGuidance,
 	} );
+
+	// The no_guidance launchpad-personalization variation gets no setup guidance at all:
+	// the card behaves like a plain coming-soon site, pointing at the visibility settings.
+	if ( isNoGuidance ) {
+		return <VisibilityCardComingSoon site={ site } />;
+	}
 
 	const tasks = ( isAiLaunchpad ? aiTasks : launchpad?.checklist ) ?? [];
 	const numberOfTasks = tasks.length;
@@ -58,18 +64,6 @@ function VisibilityCardUnlaunched( { site }: { site: Site } ) {
 	const isLaunchpadCompleted = completedTasks && completedTasks === numberOfTasks;
 
 	const setupLink = setupUrl ?? wpcomLink( `/home/${ site.slug }` );
-
-	// The no_guidance launchpad-personalization variation omits the progress circle entirely.
-	const progressProps = isNoGuidance
-		? {}
-		: {
-				progress: {
-					value: completedTasks,
-					max: numberOfTasks,
-					label: `${ completedTasks }/${ numberOfTasks }`,
-					...( isLaunchpadCompleted && { variant: 'success' as const } ),
-				},
-		  };
 
 	return (
 		<OverviewCard
@@ -85,7 +79,12 @@ function VisibilityCardUnlaunched( { site }: { site: Site } ) {
 						description: __( 'Finish setting up your site.' ),
 						externalLink: setupLink,
 				  } ) }
-			{ ...progressProps }
+			progress={ {
+				value: completedTasks,
+				max: numberOfTasks,
+				label: `${ completedTasks }/${ numberOfTasks }`,
+				...( isLaunchpadCompleted && { variant: 'success' as const } ),
+			} }
 		/>
 	);
 }
