@@ -42,6 +42,26 @@ export const HelpCenterCTA: React.FC< HelpCenterCTAProps > = ( {
 		} );
 	};
 
+	if ( variant === 'banner' && ! actionLabel ) {
+		return (
+			<a
+				className="help-center-cta__banner help-center-cta__banner--link"
+				href={ url }
+				target="_blank"
+				rel="noreferrer"
+				onClick={ trackClick }
+			>
+				<span className="help-center-cta__banner-content">
+					<span className="help-center-cta__title">
+						<strong>{ title }</strong>
+					</span>
+					{ description && <span className="help-center-cta__description">{ description }</span> }
+				</span>
+				<Icon icon={ external } size={ 20 } />
+			</a>
+		);
+	}
+
 	if ( variant === 'link-list-item' ) {
 		return (
 			<li className="help-center-cta__resource-item help-center-link__item">

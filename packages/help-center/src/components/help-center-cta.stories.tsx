@@ -116,6 +116,21 @@ export const BannerWithoutAction: Story = {
 	),
 };
 
+/** What the v1 campaign ships: title-only banner, the whole thing is the link. */
+export const BannerTitleOnly: Story = {
+	args: {
+		...sampleArgs,
+		variant: 'banner',
+		title: 'Book Your Free Onboarding Call',
+		description: undefined,
+	},
+	render: ( args ) => (
+		<PanelChrome>
+			<HelpCenterCTA { ...args } />
+		</PanelChrome>
+	),
+};
+
 export const LinkListItem: Story = {
 	args: {
 		...sampleArgs,

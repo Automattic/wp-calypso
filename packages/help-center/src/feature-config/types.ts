@@ -22,6 +22,8 @@ export type HelpCenterFeatureConfig = {
 	home: {
 		/** Show the recent conversations section on the home screen. */
 		recentConversations: boolean;
+		/** Show the contextual CTA served by the support-status endpoint. */
+		contextualCta: boolean;
 	};
 	moreResources: {
 		/** Show the entire More Resources section. */

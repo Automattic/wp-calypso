@@ -76,12 +76,15 @@ describe( 'HelpCenterCTA', () => {
 			expect( link ).toHaveAttribute( 'rel', 'noreferrer' );
 		} );
 
-		it( 'renders no link when actionLabel is not provided', () => {
+		it( 'makes the whole banner a single link when actionLabel is not provided', () => {
 			render( <HelpCenterCTA { ...baseProps } variant="banner" /> );
 
-			expect( screen.getByText( baseProps.title ) ).toBeVisible();
-			expect( screen.getByText( baseProps.description ) ).toBeVisible();
-			expect( screen.queryByRole( 'link' ) ).not.toBeInTheDocument();
+			const link = screen.getByRole( 'link' );
+			expect( link ).toHaveAttribute( 'href', baseProps.url );
+			expect( link ).toHaveAttribute( 'target', '_blank' );
+			expect( link ).toHaveAttribute( 'rel', 'noreferrer' );
+			expect( link ).toHaveTextContent( baseProps.title );
+			expect( link ).toHaveTextContent( baseProps.description );
 		} );
 
 		it( 'still fires the impression event when actionLabel is not provided', () => {
@@ -89,6 +92,20 @@ describe( 'HelpCenterCTA', () => {
 
 			expect( mockRecordTracksEvent ).toHaveBeenCalledTimes( 1 );
 			expect( mockRecordTracksEvent ).toHaveBeenCalledWith( 'calypso_helpcenter_cta_impression', {
+				cta_id: baseProps.ctaId,
+				variant: 'banner',
+				placement: baseProps.placement,
+			} );
+		} );
+
+		it( 'fires the click event when the whole-banner link is clicked', async () => {
+			const user = userEvent.setup();
+			render( <HelpCenterCTA { ...baseProps } variant="banner" /> );
+			mockRecordTracksEvent.mockClear();
+
+			await user.click( screen.getByRole( 'link' ) );
+
+			expect( mockRecordTracksEvent ).toHaveBeenCalledWith( 'calypso_helpcenter_cta_click', {
 				cta_id: baseProps.ctaId,
 				variant: 'banner',
 				placement: baseProps.placement,
