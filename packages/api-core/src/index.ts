@@ -64,6 +64,7 @@ export * from './me-memberships';
 export * from './me-notification-devices';
 export * from './me-notification-settings';
 export * from './me-payment-methods';
+export * from './me-posts';
 export * from './me-preferences';
 export * from './me-settings';
 export * from './me-shopping-cart';
