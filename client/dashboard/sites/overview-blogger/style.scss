@@ -1,0 +1,332 @@
+@import "@wordpress/base-styles/colors";
+
+.blogger-overview-preview {
+	position: relative;
+	overflow: hidden;
+
+	// The theme screenshots are tall portrait images; keep them out of the
+	// height calculation so the preview adapts to the sibling cards instead
+	// of inflating the row.
+	min-block-size: 240px;
+
+	a {
+		position: absolute;
+		inset: 0;
+		display: block;
+	}
+
+	img {
+		display: block;
+		inline-size: 100%;
+		block-size: 100%;
+		object-fit: cover;
+		object-position: top center;
+		background: $gray-100;
+		transition: transform 0.4s ease;
+	}
+
+	a:hover img,
+	a:focus-visible img {
+		transform: scale(1.04);
+	}
+
+	a:hover .blogger-overview-preview__overlay,
+	a:focus-visible .blogger-overview-preview__overlay {
+		opacity: 1;
+	}
+}
+
+.blogger-overview-preview__overlay {
+	position: absolute;
+	inset: 0;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	background: color-mix( in srgb, $gray-900 28%, transparent );
+	opacity: 0;
+	transition: opacity 0.2s ease;
+}
+
+// Visual stand-in for a DS primary button — a real <Button> can't be nested
+// inside the preview link.
+.blogger-overview-preview__label {
+	display: inline-flex;
+	align-items: center;
+	block-size: 40px;
+	padding: 0 16px;
+	background: var(--wp-components-color-accent, var(--wp-admin-theme-color));
+	color: var(--wp-components-color-accent-inverted, $white);
+	border-radius: 4px;
+	font-size: 13px;
+	font-weight: 400;
+	line-height: 1;
+}
+
+// Stretch the support card so the side column bottom-aligns with the
+// activity card next to it.
+.blogger-overview-side > .dashboard-overview-card:last-child {
+	flex-grow: 1;
+}
+
+// Stretch the activity card to the full column height so its bottom aligns
+// with the support card, keeping the "See all activity" footer pinned. The
+// wp Card wraps header/body/footer in an unclassed inner view, so the flex
+// column goes on that wrapper, not on the card itself.
+.blogger-overview-activity {
+	flex-grow: 1;
+
+	> div:first-child {
+		display: flex;
+		flex-direction: column;
+	}
+
+	.components-card__body {
+		flex: 1 1 0;
+		// Keeps a useful list height when the row stacks and nothing constrains
+		// the card (e.g. mobile); past this, the list scrolls.
+		min-block-size: 280px;
+		overflow-y: auto;
+	}
+}
+
+.blogger-overview-support__columns {
+	display: grid;
+	grid-template-columns: repeat(2, minmax(0, 1fr));
+	gap: 24px;
+	align-items: start;
+
+	@media ( max-width: 660px ) {
+		grid-template-columns: minmax(0, 1fr);
+	}
+}
+
+.blogger-overview-support__list {
+	border: 1px solid $gray-200;
+	border-radius: 8px;
+}
+
+a.blogger-overview-support__row {
+	display: flex;
+	align-items: center;
+	gap: 12px;
+	padding: 12px 16px;
+	text-decoration: none;
+	color: $gray-900;
+	fill: $gray-700;
+	font-size: 14px;
+	line-height: 20px;
+
+	+ .blogger-overview-support__row {
+		border-block-start: 1px solid $gray-100;
+	}
+
+	&:hover {
+		color: var(--wp-admin-theme-color);
+		fill: var(--wp-admin-theme-color);
+	}
+}
+
+.blogger-overview-support__row-label {
+	flex: 1;
+}
+
+.blogger-overview-support__row-indicator {
+	fill: $gray-600;
+}
+
+.blogger-overview-activity__icon {
+	box-sizing: border-box;
+	flex-shrink: 0;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	inline-size: 40px;
+	block-size: 40px;
+	border-radius: 50%;
+	background: $gray-100;
+	fill: $gray-700;
+}
+
+.blogger-overview-promo {
+	box-sizing: border-box;
+
+	// The sibling secondary-cards row inherits `order: 2` from the shared
+	// overview styles; keep the banner after it.
+	order: 3;
+	border-radius: 8px;
+	padding: 48px;
+
+	@media ( max-width: 660px ) {
+		padding: 24px;
+	}
+}
+
+h2.blogger-overview-promo__title {
+	margin: 0;
+	font-family: Recoleta, serif;
+	font-size: 32px;
+	font-weight: 400;
+	line-height: 1.25;
+}
+
+p.blogger-overview-promo__description {
+	margin: 0;
+	font-size: 14px;
+	line-height: 20px;
+	max-inline-size: 480px;
+}
+
+// Free: warm sunrise, light — a domain is an aspiration, not a warning.
+.blogger-overview-promo.is-domain {
+	background: linear-gradient(
+		120deg,
+		color-mix( in srgb, $alert-yellow 30%, $white ) 0%,
+		color-mix( in srgb, $alert-red 12%, $white ) 100%
+	);
+
+	h2.blogger-overview-promo__title {
+		color: $gray-900;
+	}
+
+	p.blogger-overview-promo__description {
+		color: $gray-700;
+	}
+}
+
+.blogger-overview-promo__browser {
+	display: flex;
+	align-items: center;
+	gap: 12px;
+	padding: 12px 16px;
+	border-radius: 8px;
+	background: $white;
+	box-shadow: 0 8px 24px color-mix( in srgb, $gray-900 12%, transparent );
+}
+
+.blogger-overview-promo__browser-dots {
+	display: flex;
+	gap: 5px;
+
+	i {
+		inline-size: 8px;
+		block-size: 8px;
+		border-radius: 50%;
+		background: $gray-200;
+	}
+}
+
+.blogger-overview-promo__browser-address {
+	display: flex;
+	align-items: center;
+	gap: 6px;
+	padding: 6px 14px;
+	border-radius: 16px;
+	background: $gray-100;
+	color: $gray-900;
+	font-size: 14px;
+	font-weight: 500;
+
+	svg {
+		fill: $alert-green;
+	}
+}
+
+// Premium: cool dawn light — Business as a growth kit, not a warning.
+.blogger-overview-promo.is-grow {
+	background: linear-gradient(
+		120deg,
+		color-mix( in srgb, var( --wp-admin-theme-color ) 14%, $white ) 0%,
+		color-mix( in srgb, $alert-green 14%, $white ) 100%
+	);
+
+	h2.blogger-overview-promo__title {
+		color: $gray-900;
+	}
+
+	p.blogger-overview-promo__description {
+		color: $gray-700;
+	}
+}
+
+.blogger-overview-promo__perks {
+	display: grid;
+	grid-template-columns: repeat( 2, auto );
+	gap: 12px;
+}
+
+.blogger-overview-promo__perk {
+	display: inline-flex;
+	align-items: center;
+	gap: 8px;
+	padding: 10px 16px;
+	border-radius: 8px;
+	background: $white;
+	box-shadow: 0 4px 16px color-mix( in srgb, $gray-900 10%, transparent );
+	color: $gray-900;
+	font-size: 13px;
+	font-weight: 500;
+
+	svg {
+		flex-shrink: 0;
+		fill: var( --wp-admin-theme-color );
+	}
+}
+
+// Business: deep green prosperity — money talks in money colors.
+.blogger-overview-promo.is-monetize {
+	background: linear-gradient(
+		120deg,
+		$gray-900 0%,
+		color-mix( in srgb, $alert-green 45%, $black ) 100%
+	);
+
+	h2.blogger-overview-promo__title {
+		color: $white;
+	}
+
+	p.blogger-overview-promo__description {
+		color: $gray-200;
+	}
+}
+
+.blogger-overview-promo__earnings {
+	display: flex;
+	flex-direction: column;
+	gap: 8px;
+	padding: 20px 24px;
+	border-radius: 8px;
+	background: $white;
+	box-shadow: 0 8px 24px color-mix( in srgb, $black 25%, transparent );
+}
+
+.blogger-overview-promo__earnings-label {
+	color: $gray-700;
+	font-size: 12px;
+	line-height: 16px;
+	max-inline-size: 200px;
+}
+
+.blogger-overview-promo__earnings-value {
+	color: $gray-900;
+	font-family: Recoleta, serif;
+	font-size: 32px;
+	line-height: 1.1;
+
+	small {
+		color: $gray-700;
+		font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+		font-size: 13px;
+	}
+}
+
+.blogger-overview-promo .components-button.blogger-overview-promo__button-inverted {
+	color: $gray-900;
+	background: $white;
+	border-radius: 2px;
+
+	&:hover:not( :disabled ),
+	&:focus:not( :disabled ) {
+		color: $gray-900;
+		background: $gray-100;
+	}
+}

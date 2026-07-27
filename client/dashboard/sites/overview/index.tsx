@@ -15,6 +15,7 @@ import { useRef } from 'react';
 import { useAnalytics } from '../../app/analytics';
 import { useAppContext } from '../../app/context';
 import { PerformanceTrackerStop } from '../../app/performance-tracking';
+import { useWorkspace } from '../../app/workspace';
 import { GuidedTourContextProvider, GuidedTourStep } from '../../components/guided-tour';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
@@ -23,6 +24,9 @@ import { isSelfHostedJetpackConnected, isCommerceGarden } from '../../utils/site
 import { SitesNoticeArbiter } from '../notice-arbiter';
 import AgencySiteShareCard from '../overview-agency-site-share-card';
 import BackupCard from '../overview-backup-card';
+import BloggerSiteOverview from '../overview-blogger';
+import { isMockBloggerSiteSlug } from '../overview-blogger/mock-sites';
+import DeveloperSiteOverview from '../overview-developer';
 import DIFMUpsellCard from '../overview-difm-upsell-card';
 import DomainsCard from '../overview-domains-card';
 import OverviewFlexUsageCard from '../overview-flex-usage-card';
@@ -301,4 +305,13 @@ function SiteOverview( {
 	);
 }
 
-export default SiteOverview;
+export default function SiteOverviewRoot( props: Parameters< typeof SiteOverview >[ 0 ] ) {
+	const workspace = useWorkspace();
+	if ( isMockBloggerSiteSlug( props.siteSlug ) ) {
+		if ( workspace !== 'essential' ) {
+			return <DeveloperSiteOverview siteSlug={ props.siteSlug } />;
+		}
+		return <BloggerSiteOverview siteSlug={ props.siteSlug } />;
+	}
+	return <SiteOverview { ...props } />;
+}

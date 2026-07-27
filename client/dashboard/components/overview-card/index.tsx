@@ -50,7 +50,7 @@ export interface OverviewCardProps {
 	upsellFeatureId?: string;
 
 	bottom?: ReactNode;
-	onClick?: () => void;
+	onClick?: ( event?: React.MouseEvent ) => void;
 }
 
 export default function OverviewCard( {
@@ -184,8 +184,8 @@ export default function OverviewCard( {
 		</HStack>
 	);
 
-	const handleClick = () => {
-		onClick?.();
+	const handleClick = ( event?: React.MouseEvent ) => {
+		onClick?.( event );
 
 		if ( tracksId ) {
 			if ( intent === 'upsell' ) {
