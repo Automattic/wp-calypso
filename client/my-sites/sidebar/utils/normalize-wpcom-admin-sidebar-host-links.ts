@@ -11,7 +11,7 @@ const WPCOM_HOST_ROUTE_PREFIXES = [
 	'/purchases/subscriptions/',
 ];
 
-function getPathname( url: unknown ): string | null {
+export function getPathname( url: unknown ): string | null {
 	if ( typeof url !== 'string' || url.trim() === '' ) {
 		return null;
 	}

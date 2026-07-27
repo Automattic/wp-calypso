@@ -151,6 +151,7 @@
 		"security/security-checkup": true,
 		"server-side-rendering": true,
 		"settings/security/monitor": true,
+		"sidebar/purchases-dashboard-link": false,
 		"sign-in-with-apple": true,
 		"sign-in-with-apple/redirect": true,
 		"signup/social": true,

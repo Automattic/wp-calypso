@@ -122,6 +122,7 @@
 		"security/security-checkup": true,
 		"server-side-rendering": true,
 		"settings/security/monitor": true,
+		"sidebar/purchases-dashboard-link": false,
 		"sign-in-with-apple": true,
 		"signup/social": true,
 		"signup/social-first": true,
