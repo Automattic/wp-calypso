@@ -60,6 +60,7 @@ module.exports = {
 							'!@automattic/components/src/breadcrumbs',
 							'!@automattic/components/src/breadcrumbs/types',
 							'!@automattic/components/src/logos',
+							'!@automattic/components/src/resurrected-welcome-modal',
 							'!@automattic/date-range-picker',
 							'!@automattic/domain-search',
 							'!@automattic/domains-table',
