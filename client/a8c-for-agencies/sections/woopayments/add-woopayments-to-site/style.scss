@@ -7,6 +7,13 @@
 	.components-modal__content {
 		padding-bottom: 0;
 	}
+
+	// `.redesigned-a8c-table.search-enabled` collapses the DataViews view-actions
+	// padding to 1px, which leaves the search field glued to the table header.
+	// Restore the block-end padding so the list has room to breathe.
+	.redesigned-a8c-table.search-enabled .dataviews__view-actions {
+		padding-block-end: 16px;
+	}
 }
 
 .woopayments-add-site-modal__footer {
