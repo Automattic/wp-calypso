@@ -35,6 +35,7 @@ jest.mock( 'calypso/lib/resurrected-users', () => ( {
 const contentEligibility = {
 	isLoading: false,
 	isResurrectedSixMonths: true,
+	isResurrectedThreeMonths: true,
 	hasActivePaidSubscription: false,
 	isEligible: true,
 	variationName: WELCOME_BACK_VARIATIONS.content,
