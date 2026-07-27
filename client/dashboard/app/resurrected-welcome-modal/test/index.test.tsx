@@ -136,4 +136,29 @@ describe( 'ResurrectedWelcomeModalGate', () => {
 		} );
 		expect( screen.queryByRole( 'dialog' ) ).not.toBeInTheDocument();
 	} );
+
+	test( 'dismisses the modal when a navigation CTA is clicked', async () => {
+		mockUseEligibility.mockReturnValue( {
+			...eligibleUser,
+			variationName: 'treatment_manual_dual',
+		} );
+		const user = userEvent.setup();
+		const { recordTracksEvent } = render( <ResurrectedWelcomeModalGate /> );
+		const cta = screen.getByRole( 'link', { name: 'Create a new site' } );
+		cta.addEventListener( 'click', ( event ) => event.preventDefault() );
+
+		await user.click( cta );
+
+		expect( window.sessionStorage.getItem( 'wpcom_resurrected_welcome_modal_dismissed' ) ).toBe(
+			'true'
+		);
+		expect( recordTracksEvent ).toHaveBeenCalledWith(
+			'calypso_resurrected_welcome_modal_cta_click',
+			{
+				variation: 'treatment_manual_dual',
+				cta_id: 'manual-new',
+			}
+		);
+		expect( screen.queryByRole( 'dialog' ) ).not.toBeInTheDocument();
+	} );
 } );

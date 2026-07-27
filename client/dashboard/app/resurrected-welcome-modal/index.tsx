@@ -149,9 +149,7 @@ export function ResurrectedWelcomeModalGate( {
 				cta_id: cta.id,
 			} );
 
-			if ( cta.isDismissOnly ) {
-				persistDismissal( 'cta' );
-			}
+			persistDismissal( 'cta' );
 		},
 		[ persistDismissal, recordTracksEvent, variationName ]
 	);

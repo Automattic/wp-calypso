@@ -97,9 +97,7 @@ export const ResurrectedWelcomeModalGate = ( {
 				cta_id: cta.id,
 			} );
 
-			if ( cta.isDismissOnly ) {
-				persistDismissal( 'cta' );
-			}
+			persistDismissal( 'cta' );
 		},
 		[ variationName, persistDismissal ]
 	);
