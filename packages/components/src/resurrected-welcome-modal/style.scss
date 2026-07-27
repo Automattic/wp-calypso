@@ -17,7 +17,7 @@
 	padding: 16px;
 }
 
-@media (max-width: 480px) {
+@media ( max-width: 480px ) {
 	.resurrected-welcome-modal.components-modal__frame {
 		width: 100%;
 		max-width: calc( 100vw - 16px );
@@ -61,8 +61,8 @@
 	background-repeat: no-repeat;
 	background-size: 100% 100%;
 	background-position: top center;
-	background-color: #edf3ff;
-	background-image: url( ./media/bg-02.webp );
+	background-color: var( --color-surface-backdrop );
+	background-image: url( ./bg-02.webp );
 }
 
 .resurrected-welcome-modal__close {
@@ -77,12 +77,12 @@
 	display: flex;
 	align-items: center;
 	justify-content: center;
-	color: var( --color-text, #101517 );
+	color: var( --color-text );
 	cursor: pointer;
 }
 
 .resurrected-welcome-modal__close--light {
-	color: #fff;
+	color: var( --color-text-inverted );
 }
 
 .resurrected-welcome-modal__close--light svg {
