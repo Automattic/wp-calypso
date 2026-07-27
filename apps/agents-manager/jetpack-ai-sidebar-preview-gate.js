@@ -38,6 +38,6 @@ export function shouldSuppressJetpackAiSidebarPreview() {
 	);
 	data.agentProviders = remaining;
 
-	// Mount only when another provider (Block Notes, Big Sky, …) still needs AM.
+	// Mount only when another provider (AI Block Notes, Big Sky, …) still needs AM.
 	return remaining.length === 0;
 }

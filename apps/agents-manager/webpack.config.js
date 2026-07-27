@@ -29,7 +29,7 @@ function applyPostCssConfig( rules, config ) {
 }
 
 function getIndividualConfig( options = {} ) {
-	const { name, env, argv, injectPolyfill = true } = options;
+	const { name, entry = name, env, argv, injectPolyfill = true } = options;
 
 	const outputPath = path.join( __dirname, 'dist' );
 	const webpackConfig = getBaseWebpackConfig( env, argv );
@@ -37,7 +37,7 @@ function getIndividualConfig( options = {} ) {
 	return {
 		...webpackConfig,
 		mode: isDevelopment ? 'development' : 'production',
-		entry: { [ name ]: path.join( __dirname, name ) },
+		entry: { [ name ]: path.join( __dirname, entry ) },
 		output: {
 			...webpackConfig.output,
 			path: outputPath,
@@ -57,10 +57,10 @@ function getIndividualConfig( options = {} ) {
 						filename: 'images/[name].[contenthash:8][ext]',
 					},
 				},
-				// Handle image assets from block-notes package
+				// Handle image assets from the AI Block Notes package.
 				{
 					test: /\.(webp|png|jpg|jpeg|gif|svg)$/i,
-					include: /block-notes/,
+					include: /ai-block-notes/,
 					type: 'asset/resource',
 					generator: {
 						filename: 'images/[name].[contenthash:8][ext]',
@@ -111,7 +111,7 @@ function getIndividualConfig( options = {} ) {
 					// self-hosted sites where the package isn't registered as a script.
 					if (
 						( name === 'image-studio' ||
-							name === 'block-notes' ||
+							entry === 'ai-block-notes' ||
 							name === 'jetpack-ai-sidebar' ) &&
 						request === '@wordpress/abilities'
 					) {
@@ -256,7 +256,8 @@ function getWebpackConfig( env = { source: '' }, argv = {} ) {
 		getIndividualConfig( { env, argv, name: 'jetpack-ai-sidebar' } ),
 		getIndividualConfig( { env, argv, name: 'agents-manager-gutenberg-disconnected' } ),
 		getIndividualConfig( { env, argv, name: 'agents-manager-wp-admin-disconnected' } ),
-		getIndividualConfig( { env, argv, name: 'block-notes' } ),
+		// Jetpack 16.1 requires the legacy output basename; only the source entry is renamed.
+		getIndividualConfig( { env, argv, name: 'block-notes', entry: 'ai-block-notes' } ),
 		getIndividualConfig( { env, argv, name: 'agents-manager-ciab' } ),
 		getIndividualConfig( { env, argv, name: 'agents-manager-wooai' } ),
 		getReaderConfig( { env, argv } ),
