@@ -50,6 +50,7 @@ import {
 	type ReactNode,
 } from 'react';
 import { createPortal } from 'react-dom';
+import InlineSupportLink from 'calypso/components/inline-support-link';
 import Loading from 'calypso/components/loading';
 import { OnboardingProgress } from 'calypso/landing/stepper/declarative-flow/internals/steps-repository/components/onboarding-progress';
 import { useShowOnboardingProgress } from 'calypso/landing/stepper/declarative-flow/internals/steps-repository/components/onboarding-progress/use-show-onboarding-progress';
@@ -229,11 +230,18 @@ const ContactFormTitle = () => {
 	const contactDetailsType = getContactDetailsType( responseCart );
 
 	if ( contactDetailsType === 'domain' ) {
+		const titleText =
+			! isActive && isComplete
+				? translate( 'Contact information' )
+				: translate( 'Enter your contact information' );
+
 		return (
 			<>
-				{ ! isActive && isComplete
-					? String( translate( 'Contact information' ) )
-					: String( translate( 'Enter your contact information' ) ) }
+				{ titleText }{ ' ' }
+				<InlineSupportLink
+					supportContext="domain-contact-information-requirements"
+					showIcon={ false }
+				/>
 			</>
 		);
 	}
