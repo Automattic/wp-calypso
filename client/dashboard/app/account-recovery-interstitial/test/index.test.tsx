@@ -55,7 +55,7 @@ function mockPreferences( calypso_preferences: Partial< UserPreferences > = {} )
 		.reply( 200, { calypso_preferences } );
 }
 
-const EXPERIMENT_NAME = 'calypso_onboarding_account_recovery_modal_202606';
+const EXPERIMENT_NAME = 'calypso_onboarding_account_recovery_modal_202607';
 const TREATMENT_VARIATION = 'no_recovery_modal';
 
 // The interstitial is hidden only for users in the `no_recovery_modal` treatment; control and

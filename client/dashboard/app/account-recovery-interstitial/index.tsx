@@ -28,7 +28,7 @@ const DAY_IN_SECONDS = 86400;
  * ExPlat A/B experiment gating the interstitial. Users in the `no_recovery_modal` variation will _not_ see the
  * modal; everyone else (control / unassigned) does.
  */
-const EXPERIMENT_NAME = 'calypso_onboarding_account_recovery_modal_202606';
+const EXPERIMENT_NAME = 'calypso_onboarding_account_recovery_modal_202607';
 const EXPERIMENT_TREATMENT_VARIATION = 'no_recovery_modal';
 
 /**
