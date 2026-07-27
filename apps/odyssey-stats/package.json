@@ -25,8 +25,7 @@
 		"test:js": "yarn run -T test-apps apps/odyssey-stats",
 		"test:js:watch": "yarn test:js --watch",
 		"test:size": "size-limit",
-		"verify:css-scope": "node ./bin/verify-css-scope.js",
-		"teamcity:build-app": "yarn run build && yarn run test:size && yarn run verify:css-scope",
+		"teamcity:build-app": "yarn run build && yarn run test:size",
 		"translate": "rm -rf dist/strings && mkdir -p dist && wp-babel-makepot '../../{client,packages,apps}/**/*.{js,jsx,ts,tsx}' --ignore '**/node_modules/**,**/test/**,**/*.d.ts' --base '../../' --dir './dist/strings' --jobs 4 --output './dist/odyssey-strings.pot' && build-app-languages --stringsFilePath=./dist/odyssey-strings.pot"
 	},
 	"dependencies": {
@@ -72,7 +71,6 @@
 		"path-browserify": "^1.0.1",
 		"postcss": "^8.5.15",
 		"postcss-prefix-selector": "^1.16.1",
-		"postcss-selector-parser": "^6.1.2",
 		"size-limit": "^8.2.6",
 		"webpack": "^5.99.8",
 		"webpack-bundle-analyzer": "^4.10.2"

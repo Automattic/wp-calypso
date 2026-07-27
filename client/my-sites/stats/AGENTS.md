@@ -142,7 +142,7 @@ This code is shared with Odyssey Stats (`apps/odyssey-stats/`). When making chan
 
 ### Odyssey CSS Scoping and Portals
 
-Odyssey scopes first-party CSS to a fixed list of mount/portal roots (see `apps/odyssey-stats/AGENTS.md` > CSS Scoping). Any new modal/dialog/popover/tooltip mechanism here that portals to an unlisted root will silently lose its Odyssey styling while looking fine in Calypso — add it to `webpack-css-scope.js`'s `prefix` and classify it in `entryPointRoots`/`portalRoots` by checking where it actually attaches in source (e.g. `root-child.tsx`'s `appendChild` target), not by guessing from usage.
+Odyssey scopes first-party CSS to a fixed list of mount/portal roots (see `apps/odyssey-stats/AGENTS.md` > CSS Scoping). Any new modal/dialog/popover/tooltip mechanism here that portals to an unlisted root will silently lose its Odyssey styling while looking fine in Calypso — add it to `webpack-css-scope.js`'s `prefix`, checking where it actually attaches in source (e.g. `root-child.tsx`'s `appendChild` target), not guessing from usage.
 
 ## Key Hooks Reference
 
