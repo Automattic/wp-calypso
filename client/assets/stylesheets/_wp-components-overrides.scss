@@ -215,23 +215,6 @@
 	}
 }
 
-/* @wordpress/components emphasis font weight ----------------------------------------- *
- * 37.0.0 moved Button and other emphasised labels from the legacy medium weight onto
- * `--wpds-typography-font-weight-emphasis`, which the design system sets to 600. Hold
- * the previous 499 so button text keeps its existing weight. Remove this to adopt the
- * heavier design-system weight. */
-:root {
-	--wpds-typography-font-weight-emphasis: 499;
-}
-
-/* @wordpress/components button focus ring offset ------------------------------------ *
- * 37.0.0 offsets the button focus ring by its own width, leaving a gap. Keep the ring
- * against the edge as before. The panel body toggle sets its own inset ring, so leave
- * it be. Remove to adopt the detached design-system ring. */
-.components-button:focus:not(:active):not(.components-panel__body-toggle) {
-	outline-offset: 0;
-}
-
 /* @wordpress/components RadioControl overrides --------------------------------------- */
 .components-radio-control {
 	&__input[type="radio"] {

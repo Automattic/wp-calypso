@@ -55,7 +55,7 @@
 		"@automattic/typography": "workspace:^",
 		"@emotion/react": "11.11.1",
 		"@emotion/styled": "^11.11.0",
-		"@wordpress/components": "^37.0.0",
+		"@wordpress/components": "^35.0.0",
 		"@wordpress/data": "^10.48.0",
 		"@wordpress/element": "^8.0.0",
 		"@wordpress/icons": "^13.3.0",

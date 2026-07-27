@@ -54,7 +54,7 @@
 		"@automattic/number-formatters": "^1.2.0",
 		"@automattic/urls": "workspace:^",
 		"@tanstack/react-query": "^5.83.0",
-		"@wordpress/components": "^37.0.0",
+		"@wordpress/components": "^35.0.0",
 		"@wordpress/compose": "^8.2.0",
 		"@wordpress/data": "^10.48.0",
 		"@wordpress/element": "^8.0.0",

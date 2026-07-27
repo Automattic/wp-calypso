@@ -15,8 +15,6 @@
 		block-size: auto;
 		opacity: 1;
 		overflow: clip;
-		// Menu item focus rings sit just outside the element: a 2px ring. Leave
-		// room for it, or the clip slices it.
 		overflow-clip-margin: 2px;
 	}
 

@@ -217,7 +217,7 @@ export function MastodonTagFeedPanel( { connection, hashtag }: Props ) {
 							<ExternalLink
 								className="mastodon-tag-feed__external-link"
 								href={ externalTagUrl }
-								rel="noopener noreferrer"
+								rel="noreferrer"
 							>
 								{ translate( 'View on Mastodon' ) }
 							</ExternalLink>

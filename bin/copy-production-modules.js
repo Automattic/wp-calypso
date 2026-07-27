@@ -77,16 +77,9 @@ function processPackage( pkgName, context ) {
 	// collect dependencies from various fields
 	const depFields = [ 'dependencies', 'peerDependencies', 'optionalDependencies' ];
 	const pkgDeps = depFields.flatMap( ( type ) => Object.keys( pkgJson[ type ] || {} ) );
-	// Anything the package itself marks as optional may legitimately be missing.
-	// `optionalDependencies` matters for packages that list one prebuilt binary per
-	// platform, such as esbuild: only the current platform's is ever installed, so
-	// treating them as required fails everywhere.
-	const optionalPkgDeps = [
-		...Object.keys( pkgJson.optionalDependencies || {} ),
-		...Object.keys( pkgJson.peerDependenciesMeta || {} ).filter(
-			( dep ) => pkgJson.peerDependenciesMeta[ dep ].optional === true
-		),
-	];
+	const optionalPkgDeps = Object.keys( pkgJson.peerDependenciesMeta || [] ).filter(
+		( dep ) => pkgJson.peerDependenciesMeta[ dep ].optional === true
+	);
 
 	// bail out if package has no dependencies
 	if ( ! pkgDeps.length ) {

@@ -9,10 +9,6 @@ global.TextDecoder = TextDecoder;
 
 global.ResizeObserver = require( 'resize-observer-polyfill' );
 
-// JSDOM implements `CSS.escape` but not `CSS.supports`, which Ariakit calls for
-// feature detection. Report everything as unsupported so it takes its fallbacks.
-global.CSS = { ...global.CSS, supports: () => false };
-
 global.matchMedia = jest.fn( ( query ) => ( {
 	matches: false,
 	media: query,

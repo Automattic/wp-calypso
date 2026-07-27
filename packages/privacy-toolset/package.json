@@ -42,7 +42,7 @@
 		"storybook:start": "storybook dev"
 	},
 	"dependencies": {
-		"@wordpress/components": "^37.0.0",
+		"@wordpress/components": "^35.0.0",
 		"clsx": "^2.1.1",
 		"react-modal": "^3.16.3",
 		"tslib": "^2.8.1"

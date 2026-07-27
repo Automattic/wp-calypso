@@ -189,7 +189,7 @@ $font-sf-pro-display: "SF Pro Display", $sans;
 			// inset here too would stack. Mirrors the block's
 			// `@media (max-width: $break-small)` rule.
 			@media (min-width: ($break-small + 1px)) {
-				background: var(--wpds-color-background-surface-neutral-strong);
+				background: var(--wpds-color-bg-surface-neutral-strong);
 				padding-inline: var(--wpds-dimension-padding-2xl, 24px);
 			}
 		}

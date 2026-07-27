@@ -184,7 +184,8 @@ export function PostCardEmbedExternal( {
 						<ExternalLink
 							className="social-post-card-embed-external__publication-pill-link"
 							href={ pillUrl }
-							rel="noopener noreferrer"
+							// ExternalLink adds `external noopener`; keep `noreferrer` too.
+							rel="noreferrer"
 							onClick={ handleViewPublication }
 						>
 							{ translate( 'View publication' ) }

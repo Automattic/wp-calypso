@@ -84,7 +84,7 @@ exports[`ContactDetailsFormFields default fields should render 1`] = `
             class="components-notice is-warning"
           >
             <div
-              class="components-visually-hidden"
+              class="components-visually-hidden css-1ragr82-PolymorphicDiv e19lxcc00"
               data-visually-hidden=""
               data-wp-c16t="true"
               data-wp-component="VisuallyHidden"
