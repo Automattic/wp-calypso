@@ -4,8 +4,8 @@
 
 import { renderHook } from '@testing-library/react';
 import { useHelpCenterCTA } from '../use-help-center-cta';
+import type { HelpCenterCTAVariant } from '../../components/help-center-cta';
 import type { SupportStatus } from '../../types';
-import type { HelpCenterCTAPlacement } from '../use-help-center-cta';
 
 const mockUseFeatureConfig = jest.fn();
 const mockUseSupportStatus = jest.fn();
@@ -21,7 +21,6 @@ jest.mock( '../../data/use-support-status', () => ( {
 const bannerCta = {
 	id: 'onboarding-call-v1',
 	variant: 'banner',
-	placement: 'help-center-home',
 	url: 'https://savvycal.com/CustomerExperience/wordpresscom-onboarding-hc',
 	title: 'Book Your Free Onboarding Call',
 };
@@ -30,17 +29,17 @@ const setup = ( {
 	enabled = true,
 	isLoading = false,
 	cta = bannerCta,
-	placement = 'help-center-home',
+	variant = 'banner',
 }: {
 	enabled?: boolean;
 	isLoading?: boolean;
 	cta?: SupportStatus[ 'cta' ] | null;
-	placement?: HelpCenterCTAPlacement;
+	variant?: HelpCenterCTAVariant;
 } = {} ) => {
 	mockUseFeatureConfig.mockReturnValue( { contextualCta: { enabled } } );
 	mockUseSupportStatus.mockReturnValue( { data: cta ? { cta } : {}, isLoading } );
 
-	return renderHook( () => useHelpCenterCTA( placement ) );
+	return renderHook( () => useHelpCenterCTA( variant ) );
 };
 
 describe( 'useHelpCenterCTA', () => {
@@ -62,12 +61,12 @@ describe( 'useHelpCenterCTA', () => {
 		} );
 	} );
 
-	it( 'passes through the optional description and action label', () => {
+	it( 'passes through the optional description and link copy', () => {
 		const { result } = setup( {
 			cta: {
 				...bannerCta,
 				description: 'Talk one-on-one with a Happiness Engineer.',
-				action_label: 'Book your free call',
+				url_text: 'Book your free call',
 			},
 		} );
 
@@ -77,28 +76,31 @@ describe( 'useHelpCenterCTA', () => {
 		} );
 	} );
 
-	it( 'only answers the slot the backend placed the CTA in', () => {
-		expect( setup( { placement: 'help-center-more-resources' } ).result.current ).toBeNull();
-
-		const listCta = {
-			...bannerCta,
-			variant: 'link-list-item',
-			placement: 'help-center-more-resources',
-		};
-
-		expect( setup( { cta: listCta, placement: 'help-center-home' } ).result.current ).toBeNull();
-		expect(
-			setup( { cta: listCta, placement: 'help-center-more-resources' } ).result.current
-		).toMatchObject( { variant: 'link-list-item', placement: 'help-center-more-resources' } );
-	} );
-
-	it( 'returns null for a variant the slot cannot render', () => {
+	it( 'reports the link-list item against the More resources placement', () => {
 		const { result } = setup( {
-			cta: { ...bannerCta, placement: 'help-center-more-resources' },
-			placement: 'help-center-more-resources',
+			cta: { ...bannerCta, variant: 'link-list-item' },
+			variant: 'link-list-item',
 		} );
 
-		expect( result.current ).toBeNull();
+		expect( result.current ).toMatchObject( {
+			variant: 'link-list-item',
+			placement: 'help-center-more-resources',
+		} );
+	} );
+
+	it( 'only answers the slot the backend built the CTA for', () => {
+		expect( setup( { variant: 'link-list-item' } ).result.current ).toBeNull();
+		expect(
+			setup( { cta: { ...bannerCta, variant: 'link-list-item' }, variant: 'banner' } ).result
+				.current
+		).toBeNull();
+	} );
+
+	it( 'renders in no slot at all for an unknown variant', () => {
+		const unknown = { ...bannerCta, variant: 'default' };
+
+		expect( setup( { cta: unknown, variant: 'banner' } ).result.current ).toBeNull();
+		expect( setup( { cta: unknown, variant: 'link-list-item' } ).result.current ).toBeNull();
 	} );
 
 	it( 'returns null while support status is loading', () => {
@@ -109,12 +111,6 @@ describe( 'useHelpCenterCTA', () => {
 
 	it( 'returns null when the payload carries no cta', () => {
 		const { result } = setup( { cta: null } );
-
-		expect( result.current ).toBeNull();
-	} );
-
-	it( 'returns null for an unknown variant', () => {
-		const { result } = setup( { cta: { ...bannerCta, variant: 'default' } } );
 
 		expect( result.current ).toBeNull();
 	} );

@@ -15,7 +15,7 @@ export const HelpCenterMoreResources = () => {
 	const { sectionName } = useHelpCenterContext();
 	const featureConfig = useFeatureConfig();
 	const navigate = useNavigate();
-	const cta = useHelpCenterCTA( 'help-center-more-resources' );
+	const cta = useHelpCenterCTA( 'link-list-item' );
 
 	const trackMoreResourcesButtonClick = ( resource: string ) => {
 		recordTracksEvent( 'calypso_help_moreresources_click', {

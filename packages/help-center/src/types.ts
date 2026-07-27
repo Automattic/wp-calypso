@@ -86,11 +86,10 @@ interface Eligibility {
 interface SupportStatusCTA {
 	id: string;
 	variant: string;
-	placement: string;
 	url: string;
 	title: string;
 	description?: string;
-	action_label?: string;
+	url_text?: string;
 }
 
 export interface SupportStatus {

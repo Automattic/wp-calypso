@@ -41,7 +41,7 @@ export const HelpCenterSearch = ( { onSearchChange, currentRoute }: HelpCenterSe
 		[]
 	);
 	const { contextSearch } = useContextBasedSearchMapping( currentRoute );
-	const cta = useHelpCenterCTA( 'help-center-home' );
+	const cta = useHelpCenterCTA( 'banner' );
 	const { isLoading: isLoadingSearchResults } = useHelpSearchQuery(
 		searchQuery || contextTerm || contextSearch,
 		locale,
