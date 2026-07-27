@@ -8,10 +8,11 @@ import { useInterval } from 'calypso/lib/interval';
 import { waitFor } from 'calypso/my-sites/marketplace/util';
 import { useSelector, useDispatch } from 'calypso/state';
 import { transferStates } from 'calypso/state/automated-transfer/constants';
-import { fetchSitePlugins } from 'calypso/state/plugins/installed/actions';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { getSiteAdminUrl } from 'calypso/state/sites/selectors';
 import { requestActiveTheme } from 'calypso/state/themes/actions';
+import { isMarketplacePluginActivationFlow } from './marketplace-plugin-flow';
+import { useMarketplacePluginPolling } from './use-marketplace-plugin-polling';
 
 // The redirect machinery: once a flow completes it fetches the freshest site data, resolves the
 // destination URL, keeps polling where a flow finishes in the background, and navigates. Plugin and
@@ -76,21 +77,15 @@ export function useThankYouRedirect( {
 	// Prefer fresh URL when available; if in atomic flow, wait for fresh URL
 	const pluginsUrlFinal = atomicFlow ? pluginsUrlFresh : pluginsUrlFresh || pluginsUrlSelector;
 
-	// For marketplace plugins (e.g. sensei-pro), the atomic transfer + plugin install
-	// is initiated during checkout, not by this component. The wporg data is unavailable,
-	// so atomicFlow is never set. Once the site is atomic, poll for installed plugins
-	// so that the existing redirect (installedPlugin && pluginActive) fires.
-	const isMarketplacePluginFlow =
-		! atomicFlow &&
-		! isPluginUploadFlow &&
-		!! pluginSlug &&
-		!! freshSite?.is_wpcom_atomic &&
-		wporgPlugin?.wporg === false;
+	const isMarketplacePluginFlow = isMarketplacePluginActivationFlow( {
+		atomicFlow,
+		isPluginUploadFlow,
+		pluginSlug,
+		freshSite,
+		wporgPlugin,
+	} );
 
-	useInterval(
-		() => dispatch( fetchSitePlugins( siteId ) ),
-		isMarketplacePluginFlow && ! pluginActive ? 3000 : null
-	);
+	useMarketplacePluginPolling( { siteId, enabled: isMarketplacePluginFlow && ! pluginActive } );
 
 	const canManagePlugins = useSelector( ( state ) => {
 		return siteHasFeature( state, selectedSite?.ID, WPCOM_FEATURES_MANAGE_PLUGINS );
