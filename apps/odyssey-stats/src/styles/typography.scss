@@ -37,6 +37,8 @@ $highlight-card-tooltip-font: Inter, $display-type-font;
 // Replace fonts in client/my-sites/stats/all-time-highlights-section/style.scss.
 .stats__all-time-highlights-section .highlight-card-detail-item-content,
 // Replace fonts in packages/components/src/mobile-promo-card/style.scss.
-.promo-card__title {
+.promo-card__title,
+// Replace fonts in client/my-sites/stats/stats-email-detail/style.scss (the "Email opens" / "Email clicks" heading).
+.stats__email-detail > div > h1 {
 	font-family: $display-type-font;
 }
