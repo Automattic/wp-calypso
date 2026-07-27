@@ -142,9 +142,7 @@ This code is shared with Odyssey Stats (`apps/odyssey-stats/`). When making chan
 
 ### Odyssey CSS Scoping and Portals
 
-Odyssey's build scopes first-party CSS to `.jp-stats-dashboard` plus a fixed list of known portal-root classes/attributes (see `apps/odyssey-stats/AGENTS.md` > CSS Scoping). Any new modal/dialog/popover/tooltip mechanism added here (e.g. `@wordpress/components` `Modal`, a new `Popover`/`Tooltip` library) that renders via `createPortal` to an _unlisted_ root will silently lose its styling in Odyssey even though it looks fine in Calypso — update that prefix list when introducing one.
-
-If the new mechanism _dynamically creates_ its own root node (e.g. `document.createElement` + `appendChild`, the way `apps/odyssey-stats/src/components/root-child.tsx` does), classify it in `apps/odyssey-stats/webpack-css-scope.js` by reading where that code actually attaches the element — `entryPointRoots` if it appends to `document.body` (or otherwise never nests inside `.jp-stats-dashboard`/`.jp-stats-widget`), `portalRoots` if it renders inline within one of them. Don't infer this from how the component is _used_ elsewhere; a wrong classification produces dead CSS that `yarn verify:css-scope` won't catch, since `portalRoots` are deliberately exempt from its self-nesting check.
+Odyssey scopes first-party CSS to a fixed list of mount/portal roots (see `apps/odyssey-stats/AGENTS.md` > CSS Scoping). Any new modal/dialog/popover/tooltip mechanism here that portals to an unlisted root will silently lose its Odyssey styling while looking fine in Calypso — add it to `webpack-css-scope.js`'s `prefix` and classify it in `entryPointRoots`/`portalRoots` by checking where it actually attaches in source (e.g. `root-child.tsx`'s `appendChild` target), not by guessing from usage.
 
 ## Key Hooks Reference
 
