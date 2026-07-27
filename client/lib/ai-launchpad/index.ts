@@ -1,6 +1,23 @@
+import { loadExperimentAssignment } from 'calypso/lib/explat';
+
 export const LAUNCHPAD_PERSONALIZATION_EXPERIMENT = 'wpcom_launchpad_personalization_202607_v1';
 
 export type LaunchpadPersonalizationVariation = 'control' | 'ai_launchpad' | 'no_guidance';
+
+/**
+ * Resolve the launchpad-personalization variation. The `?diy-launchpad` query param is a
+ * dev/QA override that forces the `ai_launchpad` variation without consulting ExPlat;
+ * otherwise the variation comes from the sticky ExPlat assignment.
+ */
+export async function resolveLaunchpadPersonalizationVariation(
+	diyLaunchpad: string | null
+): Promise< LaunchpadPersonalizationVariation > {
+	if ( diyLaunchpad ) {
+		return 'ai_launchpad';
+	}
+	const assignment = await loadExperimentAssignment( LAUNCHPAD_PERSONALIZATION_EXPERIMENT );
+	return normalizeVariation( assignment?.variationName );
+}
 
 /**
  * Map an ExPlat variation name onto a known variation. Anything unrecognized (including

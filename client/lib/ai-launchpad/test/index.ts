@@ -1,8 +1,14 @@
+import { loadExperimentAssignment } from 'calypso/lib/explat';
 import {
 	LAUNCHPAD_PERSONALIZATION_EXPERIMENT,
 	normalizeVariation,
 	getLaunchpadPersonalizationDestination,
+	resolveLaunchpadPersonalizationVariation,
 } from '../index';
+
+jest.mock( 'calypso/lib/explat', () => ( {
+	loadExperimentAssignment: jest.fn(),
+} ) );
 
 describe( 'launchpad personalization experiment', () => {
 	it( 'exposes the agreed experiment name', () => {
@@ -22,6 +28,34 @@ describe( 'launchpad personalization experiment', () => {
 			expect( normalizeVariation( 'something-else' ) ).toBe( 'control' );
 			expect( normalizeVariation( null ) ).toBe( 'control' );
 			expect( normalizeVariation( undefined ) ).toBe( 'control' );
+		} );
+	} );
+
+	describe( 'resolveLaunchpadPersonalizationVariation', () => {
+		beforeEach( () => jest.clearAllMocks() );
+
+		it( 'forces ai_launchpad when the diy-launchpad override is present', async () => {
+			await expect( resolveLaunchpadPersonalizationVariation( '1' ) ).resolves.toBe(
+				'ai_launchpad'
+			);
+			expect( loadExperimentAssignment ).not.toHaveBeenCalled();
+		} );
+
+		it( 'reads the variation from ExPlat when no override is present', async () => {
+			( loadExperimentAssignment as jest.Mock ).mockResolvedValue( {
+				variationName: 'no_guidance',
+			} );
+			await expect( resolveLaunchpadPersonalizationVariation( null ) ).resolves.toBe(
+				'no_guidance'
+			);
+			expect( loadExperimentAssignment ).toHaveBeenCalledWith(
+				'wpcom_launchpad_personalization_202607_v1'
+			);
+		} );
+
+		it( 'falls back to control on an unrecognized assignment', async () => {
+			( loadExperimentAssignment as jest.Mock ).mockResolvedValue( { variationName: null } );
+			await expect( resolveLaunchpadPersonalizationVariation( null ) ).resolves.toBe( 'control' );
 		} );
 	} );
 
