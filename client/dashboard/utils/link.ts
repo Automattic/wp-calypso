@@ -53,7 +53,7 @@ export function dashboardOrigins(): string[] {
 	// On calypso.live previews both apps are reached through the redirector,
 	// so back_to/cancel_to round trips land on this origin.
 	if ( config( 'calypso_live_image' ) ) {
-		origins.push( 'https://calypso.live' );
+		origins.push( CALYPSO_LIVE_ORIGIN );
 	}
 
 	return origins;
