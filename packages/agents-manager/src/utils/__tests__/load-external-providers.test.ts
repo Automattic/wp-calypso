@@ -50,6 +50,19 @@ describe( 'mergeCapabilitiesInto', () => {
 		expect( merged.supportsRegenerateAction ).toBe( true );
 	} );
 
+	it( 'sets composerDisabled when the provider declares it', () => {
+		const merged: ProviderCapabilities = {};
+		mergeCapabilitiesInto( merged, { composerDisabled: true } );
+		expect( merged.composerDisabled ).toBe( true );
+	} );
+
+	it( 'rejects a non-boolean composerDisabled (untyped runtime modules)', () => {
+		const merged: ProviderCapabilities = {};
+		mergeCapabilitiesInto( merged, { composerDisabled: 'true' } );
+		mergeCapabilitiesInto( merged, { composerDisabled: 1 } );
+		expect( merged.composerDisabled ).toBeUndefined();
+	} );
+
 	it( 'leaves supportsSplitScreen unset when the provider declares false', () => {
 		const merged: ProviderCapabilities = {};
 		mergeCapabilitiesInto( merged, { supportsSplitScreen: false } );
