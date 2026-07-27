@@ -185,50 +185,52 @@ export function VatForm( {
 					/>
 				) }
 			</div>
-			<div className="vat-form__row">
-				<Field
-					id={ section + '-vat-organization' }
-					type="text"
-					label={ getVatFormString( 'organizationFieldLabel' ) }
-					value={ vatDetailsInForm.name ?? '' }
-					disabled={ isDisabled }
-					onChange={ ( newValue: string ) => {
-						setVatDetailsInForm( {
-							...vatDetailsInForm,
-							name: newValue,
-						} );
-					} }
-				/>
-				<Field
-					id={ section + '-vat-id' }
-					type="text"
-					label={ getVatFormString( 'vatIdFieldLabel' ) }
-					value={ vatDetailsInForm.id ?? '' }
-					disabled={ isDisabled || Boolean( vatDetailsFromServer.id ) }
-					onChange={ ( newValue: string ) => {
-						setVatDetailsInForm( {
-							...vatDetailsInForm,
-							id: newValue,
-						} );
-					} }
-					prefix={ vatDetailsInForm?.country ? vatDetailsInForm.country : '' }
-				/>
-			</div>
-			<div className="vat-form__row vat-form__row--full-width">
-				<Field
-					id={ section + '-vat-address' }
-					type="text"
-					label={ getVatFormString( 'vatAddressFieldLabel' ) }
-					value={ vatDetailsInForm.address ?? '' }
-					autoComplete={ `section-${ section } street-address` }
-					disabled={ isDisabled }
-					onChange={ ( newValue: string ) => {
-						setVatDetailsInForm( {
-							...vatDetailsInForm,
-							address: newValue,
-						} );
-					} }
-				/>
+			<div className="vat-form__expanded">
+				<div className="vat-form__row">
+					<Field
+						id={ section + '-vat-organization' }
+						type="text"
+						label={ getVatFormString( 'organizationFieldLabel' ) }
+						value={ vatDetailsInForm.name ?? '' }
+						disabled={ isDisabled }
+						onChange={ ( newValue: string ) => {
+							setVatDetailsInForm( {
+								...vatDetailsInForm,
+								name: newValue,
+							} );
+						} }
+					/>
+					<Field
+						id={ section + '-vat-id' }
+						type="text"
+						label={ getVatFormString( 'vatIdFieldLabel' ) }
+						value={ vatDetailsInForm.id ?? '' }
+						disabled={ isDisabled || Boolean( vatDetailsFromServer.id ) }
+						onChange={ ( newValue: string ) => {
+							setVatDetailsInForm( {
+								...vatDetailsInForm,
+								id: newValue,
+							} );
+						} }
+						prefix={ vatDetailsInForm?.country ? vatDetailsInForm.country : '' }
+					/>
+				</div>
+				<div className="vat-form__row vat-form__row--full-width">
+					<Field
+						id={ section + '-vat-address' }
+						type="text"
+						label={ getVatFormString( 'vatAddressFieldLabel' ) }
+						value={ vatDetailsInForm.address ?? '' }
+						autoComplete={ `section-${ section } street-address` }
+						disabled={ isDisabled }
+						onChange={ ( newValue: string ) => {
+							setVatDetailsInForm( {
+								...vatDetailsInForm,
+								address: newValue,
+							} );
+						} }
+					/>
+				</div>
 			</div>
 			{ vatDetailsFromServer.id && (
 				<div>
