@@ -15,6 +15,27 @@
 const prefix =
 	':where(.jp-stats-dashboard, .color-scheme, .ReactModalPortal, [data-base-ui-portal], [data-wp-compat-overlay-slot], .components-modal__screen-overlay, .components-popover__fallback-container, .jp-stats-widget)';
 
+// `prefix` roots that are always document.body-appended and never nested inside another root, so
+// self-nesting them under `prefix` is always dead — unlike the portal roots below, which routinely
+// nest legitimately inside these two. verify-css-scope.js uses this to check for that failure mode
+// without flagging legitimate portal-root nesting as a false positive.
+const entryPointRoots = [
+	'.jp-stats-dashboard',
+	'.jp-stats-widget',
+	'.components-popover__fallback-container',
+];
+
+// The rest of `prefix`'s roots: legitimately nestable inside entryPointRoots. verify-css-scope.js
+// fails the build if a `prefix` root isn't classified in entryPointRoots or here — otherwise a new
+// root added to `prefix` without updating this file would silently go unchecked.
+const portalRoots = [
+	'.color-scheme',
+	'.ReactModalPortal',
+	'[data-base-ui-portal]',
+	'[data-wp-compat-overlay-slot]',
+	'.components-modal__screen-overlay',
+];
+
 const ignoreFiles = [
 	// Already hand-scoped; re-prefixing would double-nest it.
 	'odyssey-stats/src/app.scss',
@@ -55,4 +76,4 @@ const exclude = [
 	/^\.components-tooltip(?![\w-])/,
 ];
 
-module.exports = { prefix, ignoreFiles, exclude };
+module.exports = { prefix, entryPointRoots, portalRoots, ignoreFiles, exclude };
