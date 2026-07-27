@@ -2,7 +2,7 @@ import {
 	accountRecoveryQuery,
 	userSettingsQuery,
 	userPreferenceQuery,
-	userPreferenceMutation,
+	userPreferencesMutation,
 } from '@automattic/api-queries';
 import { isSupportSession } from '@automattic/calypso-support-session';
 import { useMutation, useQuery } from '@tanstack/react-query';
@@ -105,12 +105,7 @@ export default function AccountRecoveryInterstitial() {
 		userPreferenceQuery( 'hosting-dashboard-opt-in-welcome-modal-dismissed' )
 	);
 
-	const snoozeMutation = useMutation(
-		userPreferenceMutation( 'account-recovery-interstitial-snoozed-until' )
-	);
-	const viewCountMutation = useMutation(
-		userPreferenceMutation( 'account-recovery-interstitial-view-count' )
-	);
+	const dismissMutation = useMutation( userPreferencesMutation() );
 
 	const [ isDismissed, setIsDismissed ] = useState( false );
 
@@ -197,8 +192,12 @@ export default function AccountRecoveryInterstitial() {
 	const { primaryCta, secondaryCta } = copy;
 
 	const snooze = () => {
-		snoozeMutation.mutate( now + snoozeDays * DAY_IN_SECONDS );
-		viewCountMutation.mutate( ( viewCount ?? 0 ) + 1 );
+		// Both writes go in a single request. Firing two separate preference mutations races on the
+		// server's read-modify-write of the whole preferences blob, so one silently clobbers the other.
+		dismissMutation.mutate( {
+			'account-recovery-interstitial-snoozed-until': now + snoozeDays * DAY_IN_SECONDS,
+			'account-recovery-interstitial-view-count': ( viewCount ?? 0 ) + 1,
+		} );
 		setIsDismissed( true );
 	};
 

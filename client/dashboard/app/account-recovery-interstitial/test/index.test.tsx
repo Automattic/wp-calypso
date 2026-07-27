@@ -55,29 +55,16 @@ function mockPreferences( calypso_preferences: Partial< UserPreferences > = {} )
 		.reply( 200, { calypso_preferences } );
 }
 
-// Dismissing fires two independent preference writes (snooze + view-count) to the same endpoint.
-// nock matches each request to the interceptor whose body predicate fits, so the two values are
-// captured independently regardless of which POST lands first.
+// Dismissing writes the snooze and view-count preferences in a single request, so both values are
+// captured from one POST body. (They must not be split into two concurrent writes — that races on
+// the server's read-modify-write of the whole preferences blob and one silently clobbers the other.)
 function mockDismissalWrites() {
 	const captured: { snoozedUntil?: number; viewCount?: number } = {};
 	nock( 'https://public-api.wordpress.com' )
 		.post( '/rest/v1.1/me/preferences', ( body ) => {
-			const value = body.calypso_preferences?.[ 'account-recovery-interstitial-snoozed-until' ];
-			if ( typeof value !== 'number' ) {
-				return false;
-			}
-			captured.snoozedUntil = value;
-			return true;
-		} )
-		.query( true )
-		.reply( 200, {} );
-	nock( 'https://public-api.wordpress.com' )
-		.post( '/rest/v1.1/me/preferences', ( body ) => {
-			const value = body.calypso_preferences?.[ 'account-recovery-interstitial-view-count' ];
-			if ( typeof value !== 'number' ) {
-				return false;
-			}
-			captured.viewCount = value;
+			const prefs = body.calypso_preferences ?? {};
+			captured.snoozedUntil = prefs[ 'account-recovery-interstitial-snoozed-until' ];
+			captured.viewCount = prefs[ 'account-recovery-interstitial-view-count' ];
 			return true;
 		} )
 		.query( true )
