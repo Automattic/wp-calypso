@@ -50,7 +50,7 @@ const StatsEmailModule: React.FC< StatsEmailModuleProps & StatsEmailMapStateProp
 
 	const countriesEmptyDescription =
 		statType === 'clicks'
-			? translate( 'Clicks by {{link}}location{{/link}} will appear here.', {
+			? translate( 'Clicks by {{link}}countries{{/link}} will appear here.', {
 					comment: '{{link}} links to support documentation.',
 					components: {
 						link: (
@@ -62,7 +62,7 @@ const StatsEmailModule: React.FC< StatsEmailModuleProps & StatsEmailMapStateProp
 					},
 					context: 'Stats: Info box label when the email Countries module is empty',
 			  } )
-			: translate( 'Opens by {{link}}location{{/link}} will appear here.', {
+			: translate( 'Opens by {{link}}countries{{/link}} will appear here.', {
 					comment: '{{link}} links to support documentation.',
 					components: {
 						link: (
