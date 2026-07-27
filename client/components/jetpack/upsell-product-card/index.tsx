@@ -30,15 +30,14 @@ import slugToSelectorProduct from 'calypso/my-sites/plans/jetpack-plans/slug-to-
 import useItemPrice from 'calypso/my-sites/plans/jetpack-plans/use-item-price';
 import { useSelector } from 'calypso/state';
 import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selectors';
-import useProductsQuery from 'calypso/state/partner-portal/licenses/hooks/use-products-query';
 import {
 	getCurrentPartner,
 	hasJetpackPartnerAccess as hasJetpackPartnerAccessSelector,
 } from 'calypso/state/partner-portal/partner/selectors';
-import { APIProductFamilyProduct } from 'calypso/state/partner-portal/types';
 import { getSiteAvailableProduct } from 'calypso/state/sites/products/selectors';
 import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import UnusedLicenseNotice from '../unassigned-license-notice';
+import useLicenseProduct, { getLicenseProductPrice } from './use-license-product';
 import type {
 	Duration,
 	SelectorProduct,
@@ -79,7 +78,6 @@ const UpsellProductCard: React.FC< UpsellProductCardProps > = ( {
 	let discountedPrice: number | undefined;
 	let discountText: TranslateResult | undefined;
 	let isFetchingPrices: boolean;
-	let manageProduct: APIProductFamilyProduct | undefined;
 	let nonManageProductPrice: number | null = null;
 	let onCtaButtonClickInternal = onCtaButtonClick;
 	let originalPrice: number;
@@ -95,18 +93,21 @@ const UpsellProductCard: React.FC< UpsellProductCardProps > = ( {
 		isFetching: isFetchingNonManagePrices,
 	} = useItemPrice( siteId, item, item?.monthlyProductSlug || '' );
 
-	const { data: products, isFetching: isFetchingManagePrices } = useProductsQuery();
+	const {
+		productSlug: manageProductSlug,
+		product: manageProduct,
+		isFetched: areManagePricesFetched,
+		isFetching: isFetchingManagePrices,
+	} = useLicenseProduct( nonManageProductSlug );
 
 	if ( hasJetpackPartnerAccess ) {
-		const manageProductSlug = nonManageProductSlug.replace( '_yearly', '' ).replace( /_/g, '-' );
-		manageProduct = products?.find( ( product ) => product.slug === manageProductSlug );
 		isFetchingPrices = isFetchingManagePrices || !! isFetchingNonManagePrices;
 		if ( manageProduct ) {
 			aboveButtonText = null;
 			billingTerm = TERM_MONTHLY;
 			ctaButtonURL = '#';
 			currencyCode = manageProduct.currency;
-			originalPrice = parseFloat( manageProduct.amount );
+			originalPrice = getLicenseProductPrice( manageProduct );
 
 			if (
 				manageProductSlug === 'jetpack-search' &&
@@ -170,7 +171,8 @@ const UpsellProductCard: React.FC< UpsellProductCardProps > = ( {
 		}
 	}
 
-	const isManageProductMissing = hasJetpackPartnerAccess && ! isFetchingPrices && ! manageProduct;
+	const isManageProductMissing =
+		hasJetpackPartnerAccess && areManagePricesFetched && ! manageProduct;
 
 	if ( nonManageCurrencyCode === 'USD' ) {
 		if ( nonManageDiscountedPriceTotal ) {
