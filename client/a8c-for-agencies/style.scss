@@ -120,6 +120,13 @@
 		}
 	}
 
+	// The shared consolidated stat card (reused from the dashboard) renders its
+	// info popover trigger as a borderless icon button; the button-border rule
+	// above would otherwise box it.
+	.consolidated-stat-card .components-button.has-icon:not( .is-primary ) {
+		border-color: transparent;
+	}
+
 	.button.split-button__toggle {
 		border-radius: 0 4px 4px 0;
 
