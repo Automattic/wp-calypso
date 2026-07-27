@@ -1,8 +1,41 @@
 import config from '@automattic/calypso-config';
 import { getCurrentDashboard, getDashboardFromQuery, buildDashboardLink } from '../app/routing';
 import { A4A_SIGNUP_PATHS } from '../section';
-import { calypsoLiveLink } from './calypso-live';
 import { isDashboardBackport } from './is-dashboard-backport';
+
+const CALYPSO_LIVE_ORIGIN = 'https://calypso.live';
+
+/**
+ * On a calypso.live preview, returns a redirector link that resolves to the
+ * previewed build's container for the given app flavour. Returns null
+ * everywhere else, so callers fall back to their normal static URLs.
+ *
+ * `env` selects the flavour: 'wpcom' for classic Calypso, 'dashboard' for the
+ * my.wordpress.com Dashboard. The redirector carries the path and any remaining
+ * query params across its 302.
+ */
+export function calypsoLiveRedirectorLink(
+	path: string,
+	env: 'wpcom' | 'dashboard'
+): string | null {
+	const image = config( 'calypso_live_image' );
+	if ( ! image ) {
+		return null;
+	}
+
+	const url = new URL( path, CALYPSO_LIVE_ORIGIN );
+
+	if ( url.origin !== CALYPSO_LIVE_ORIGIN ) {
+		// `path` was an absolute URL.
+		return null;
+	}
+
+	url.searchParams.set( 'image', String( image ) );
+	if ( env === 'dashboard' ) {
+		url.searchParams.set( 'env', env );
+	}
+	return url.href;
+}
 
 /**
  * This function returns all the origins for the dashboard.
@@ -55,7 +88,7 @@ export function wpcomLink( path: string ) {
 			return path;
 		}
 	}
-	return calypsoLiveLink( path ) ?? new URL( path, config( 'wpcom_url' ) ).href;
+	return calypsoLiveRedirectorLink( path, 'wpcom' ) ?? new URL( path, config( 'wpcom_url' ) ).href;
 }
 
 /**
