@@ -86,8 +86,8 @@ const EmailVerification: StepType< {
 			<DocumentHead title={ title } />
 			{ /* Confirming in another tab of this browser resolves the step immediately. */ }
 			<UserVerificationChecker />
-			{ /* No back button: the site already exists by the time this gate shows, so
-			   the only ways forward are confirming or skipping to the dashboard. */ }
+			{ /* No back button for now: the previous step is account creation, which a
+			   logged-in user can't return to. A "change email" affordance is pending design. */ }
 			<Step.CenteredColumnLayout
 				columnWidth={ 4 }
 				verticalAlign="center"

@@ -18,7 +18,6 @@ import { loadExperimentAssignment } from 'calypso/lib/explat';
 import { pathToUrl } from 'calypso/lib/url';
 import {
 	persistSignupDestination,
-	retrieveSignupDestination,
 	setSignupCompleteFlowName,
 	setSignupCompleteSlug,
 	clearSignupCompleteSlug,
@@ -27,11 +26,7 @@ import {
 	clearSignupCompleteSiteID,
 } from 'calypso/signup/storageUtils';
 import { useSelector, useDispatch as useReduxDispatch } from 'calypso/state';
-import {
-	getCurrentUser,
-	isCurrentUserEmailVerified,
-	isUserLoggedIn,
-} from 'calypso/state/current-user/selectors';
+import { getCurrentUser, isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { setSelectedSiteId } from 'calypso/state/ui/actions';
 import { State } from '../../../../../../packages/data-stores/src/plans/reducer';
 import { isPlanProductFree } from '../../../../../../packages/data-stores/src/plans/selectors';
@@ -57,14 +52,15 @@ import type { DomainSuggestion } from '@automattic/api-core';
 
 function initialize() {
 	const steps = [
+		// Runs first, right after account creation: it requires a logged-in user, so a
+		// logged-out visitor authenticates and lands here before the rest of the flow.
+		// Social signups arrive verified and the step skips itself through to domains.
+		...( isEnabled( 'onboarding/email-verification' ) ? [ STEPS.EMAIL_VERIFICATION ] : [] ),
 		STEPS.DOMAIN_SEARCH,
 		STEPS.USE_MY_DOMAIN,
 		STEPS.UNIFIED_PLANS,
 		STEPS.SITE_CREATION_STEP,
 		STEPS.PROCESSING,
-		// Gates the dashboard after the site exists, so a free-plan signup gets their
-		// site first and confirms their email at the door.
-		...( isEnabled( 'onboarding/email-verification' ) ? [ STEPS.EMAIL_VERIFICATION ] : [] ),
 		STEPS.POST_CHECKOUT_ONBOARDING,
 		STEPS.SETUP_YOUR_SITE_AI,
 	];
@@ -108,8 +104,6 @@ const onboarding: FlowV2< typeof initialize > = {
 		const { setShouldShowNotification } = usePurchasePlanNotification();
 
 		const playgroundId = queryParams.get( 'playground' );
-
-		const isEmailVerified = useSelector( isCurrentUserEmailVerified );
 
 		/**
 		 * Returns [destination, backDestination] for the post-checkout destination.
@@ -270,13 +264,9 @@ const onboarding: FlowV2< typeof initialize > = {
 					return navigate( 'create-site', undefined, false );
 				}
 				case 'email-verification':
-					// Reached only after the site exists (see the processing case). Whether the
-					// user confirmed or skipped, send them on to the dashboard we had queued up.
-					// Replace, not assign: leaving this step in history lets Back return to it,
-					// where a confirmed user auto-submits and a skipped user is gated again.
-					return window.location.replace(
-						retrieveSignupDestination() || `/home/${ siteSlugParam }`
-					);
+					// The gate sits right after account creation, so whether the user confirmed
+					// or skipped, carry on into the flow proper.
+					return navigate( 'domains' );
 				case 'create-site':
 					return navigate( 'processing', undefined, true );
 				case 'post-checkout-onboarding': {
@@ -466,17 +456,6 @@ const onboarding: FlowV2< typeof initialize > = {
 							return navigate( 'setup-your-site-ai' );
 						} else if ( providedDependencies?.postCheckoutBigSky ) {
 							return navigate( 'setup-your-site-ai' );
-						} else if (
-							isEnabled( 'onboarding/email-verification' ) &&
-							! planCartItem &&
-							! isEmailVerified
-						) {
-							// Free-plan signups confirm their email at the door. The site already
-							// exists, so this gate can't trigger a duplicate creation; the queued
-							// destination is persisted above and used once the step resolves.
-							// Replace so processing is removed from history, as it is on the
-							// non-gated path below.
-							return navigate( 'email-verification', undefined, true );
 						} else {
 							// replace the location to delete processing step from history.
 							window.location.replace( destination );
