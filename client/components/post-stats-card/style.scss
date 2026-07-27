@@ -66,6 +66,9 @@ $border-radius: 5px; // stylelint-disable-line scales/radii
 	font-weight: 500;
 	grid-area: heading;
 	line-height: 1.3;
+	// In Odyssey the wp-admin host styles bare `h4` with `margin: 1.33em 0`;
+	// the fixed 26px grid row used to absorb it, but an auto row grows with it.
+	margin: 0;
 }
 
 .post-stats-card__post-info {
