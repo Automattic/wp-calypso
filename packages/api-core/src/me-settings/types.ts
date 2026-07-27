@@ -71,6 +71,7 @@ export interface UserSettings {
 	user_email: string;
 	user_login: string;
 	user_URL: string;
+	last_admin_activity_timestamp: number | string;
 	language?: string;
 	locale_variant?: string;
 	i18n_empathy_mode?: boolean;
