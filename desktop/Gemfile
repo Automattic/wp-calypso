@@ -6,6 +6,4 @@ source 'https://rubygems.org'
 # (fastlane/fastlane#21794).
 gem 'rb-readline'
 gem 'fastlane', '~> 2.236', '>= 2.236.1'
-# TEMPORARY: pinned to the branch adding `macos_verify_code_signing`.
-# Revert to a released version once wordpress-mobile/release-toolkit#757 ships.
-gem 'fastlane-plugin-wpmreleasetoolkit', git: 'https://github.com/wordpress-mobile/release-toolkit', branch: 'mokagio/ainfra-2709-macos-verify-signing'
+gem 'fastlane-plugin-wpmreleasetoolkit', '~> 14.11'

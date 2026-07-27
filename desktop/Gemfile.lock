@@ -1,27 +1,3 @@
-GIT
-  remote: https://github.com/wordpress-mobile/release-toolkit
-  revision: eb24b509908ad5146cef034042b9d0dbd93ef113
-  branch: mokagio/ainfra-2709-macos-verify-signing
-  specs:
-    fastlane-plugin-wpmreleasetoolkit (14.10.0)
-      buildkit (~> 1.5)
-      chroma (= 0.2.0)
-      diffy (~> 3.3)
-      dotenv (~> 2.8)
-      fastlane (~> 2.237)
-      gettext (~> 3.5)
-      git (~> 1.3)
-      google-cloud-storage (~> 1.31)
-      java-properties (~> 0.3.0)
-      nokogiri (~> 1.19, >= 1.19.4)
-      octokit (~> 6.1)
-      parallel (~> 1.14)
-      plist (~> 3.1)
-      progress_bar (~> 1.3)
-      rake (>= 12.3, < 14.0)
-      rake-compiler (~> 1.0)
-      xcodeproj (~> 1.22)
-
 GEM
   remote: https://rubygems.org/
   specs:
@@ -153,6 +129,24 @@ GEM
       xcodeproj (>= 1.13.0, < 2.0.0)
       xcpretty (~> 0.4.1)
       xcpretty-travis-formatter (>= 0.0.3, < 2.0.0)
+    fastlane-plugin-wpmreleasetoolkit (14.11.0)
+      buildkit (~> 1.5)
+      chroma (= 0.2.0)
+      diffy (~> 3.3)
+      dotenv (~> 2.8)
+      fastlane (~> 2.237)
+      gettext (~> 3.5)
+      git (~> 1.3)
+      google-cloud-storage (~> 1.31)
+      java-properties (~> 0.3.0)
+      nokogiri (~> 1.19, >= 1.19.4)
+      octokit (~> 6.1)
+      parallel (~> 1.14)
+      plist (~> 3.1)
+      progress_bar (~> 1.3)
+      rake (>= 12.3, < 14.0)
+      rake-compiler (~> 1.0)
+      xcodeproj (~> 1.22)
     fastlane-sirp (1.1.0)
     fiddle (1.1.8)
     forwardable (1.4.0)
@@ -307,7 +301,7 @@ PLATFORMS
 
 DEPENDENCIES
   fastlane (~> 2.236, >= 2.236.1)
-  fastlane-plugin-wpmreleasetoolkit!
+  fastlane-plugin-wpmreleasetoolkit (~> 14.11)
   rb-readline
 
 BUNDLED WITH
