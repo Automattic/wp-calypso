@@ -86,7 +86,7 @@ const PlanUsage: React.FC< PlanUsageProps > = ( {
 				} ) }
 				<StatsInfotip
 					className="plan-usage-heading-info"
-					iconSize={ 18 }
+					iconSize={ 24 }
 					label={ translate( 'Learn more about billable views' ) }
 					side="bottom"
 				>
