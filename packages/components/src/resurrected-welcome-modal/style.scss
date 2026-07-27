@@ -68,8 +68,8 @@
 
 .resurrected-welcome-modal__close {
 	position: absolute;
-	top: 16px;
-	right: 16px;
+	inset-block-start: 16px;
+	inset-inline-end: 16px;
 	width: 24px;
 	height: 24px;
 	border: 0;
@@ -94,7 +94,7 @@
 .resurrected-welcome-modal__content {
 	margin-top: 0;
 	padding: 26px;
-	text-align: left;
+	text-align: start;
 }
 
 .resurrected-welcome-modal__title {
