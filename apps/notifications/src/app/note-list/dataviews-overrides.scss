@@ -96,7 +96,7 @@
 	}
 
 	div[role="article"]:has(.is-unread) + div[role="article"]:has(.is-unread) {
-		border-top: 1px solid rgba(var(--wp-admin-theme-color--rgb), 0.12);
+		border-top: 1px solid var(--wpds-color-stroke-surface-neutral, #dbdbdb);
 	}
 
 	// We override hover styles for unread items.
