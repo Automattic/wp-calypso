@@ -217,6 +217,36 @@ describe( '<AccountRecoveryInterstitial>', () => {
 		} );
 	} );
 
+	test( 'does not show once the lifetime view cap has been reached', async () => {
+		// The user has already been nudged 3 times; the cap means they are never shown it again,
+		// even though they still have no recovery method and are not snoozed.
+		mockAccountRecovery( NONE_RECOVERY );
+		mockUserSettings( { two_step_enabled: false } );
+		mockPreferences( { 'account-recovery-interstitial-view-count': 3 } );
+
+		const { recordTracksEvent } = render( <AccountRecoveryInterstitial /> );
+
+		await waitFor( () => {
+			expect( screen.queryByRole( 'dialog' ) ).not.toBeInTheDocument();
+		} );
+		expect( recordTracksEvent ).not.toHaveBeenCalledWith(
+			'calypso_account_recovery_nudge_interstitial_impression',
+			expect.anything()
+		);
+	} );
+
+	test( 'still shows when the view count is below the cap', async () => {
+		mockAccountRecovery( NONE_RECOVERY );
+		mockUserSettings( { two_step_enabled: false } );
+		mockPreferences( { 'account-recovery-interstitial-view-count': 2 } );
+
+		render( <AccountRecoveryInterstitial /> );
+
+		expect(
+			await screen.findByRole( 'dialog', { name: 'Add a way back into your account' } )
+		).toBeVisible();
+	} );
+
 	test( 'snoozes (writes the preference and closes) when the reminder link is clicked', async () => {
 		const user = userEvent.setup();
 		mockAccountRecovery( NONE_RECOVERY );
@@ -228,6 +258,15 @@ describe( '<AccountRecoveryInterstitial>', () => {
 			.post( '/rest/v1.1/me/preferences', ( body ) => {
 				snoozedValue = body.calypso_preferences?.[ 'account-recovery-interstitial-snoozed-until' ];
 				return typeof snoozedValue === 'number';
+			} )
+			.query( true )
+			.reply( 200, {} );
+
+		let viewCountValue: number | undefined;
+		const viewCountPost = nock( 'https://public-api.wordpress.com' )
+			.post( '/rest/v1.1/me/preferences', ( body ) => {
+				viewCountValue = body.calypso_preferences?.[ 'account-recovery-interstitial-view-count' ];
+				return typeof viewCountValue === 'number';
 			} )
 			.query( true )
 			.reply( 200, {} );
@@ -244,6 +283,9 @@ describe( '<AccountRecoveryInterstitial>', () => {
 		expect( savePost.isDone() ).toBe( true );
 		// none-tier window is 14 days into the future.
 		expect( snoozedValue ).toBeGreaterThan( Math.floor( Date.now() / 1000 ) );
+		// First dismissal bumps the lifetime view count from 0 to 1.
+		expect( viewCountPost.isDone() ).toBe( true );
+		expect( viewCountValue ).toBe( 1 );
 		expect( recordTracksEvent ).toHaveBeenCalledWith(
 			'calypso_account_recovery_nudge_interstitial_dismiss',
 			{

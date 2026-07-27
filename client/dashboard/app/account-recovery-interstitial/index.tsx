@@ -32,6 +32,13 @@ const EXPERIMENT_NAME = 'calypso_onboarding_account_recovery_modal_202606';
 const EXPERIMENT_TREATMENT_VARIATION = 'no_recovery_modal';
 
 /**
+ * Lifetime cap on how many times a user is nudged. Each dismissal counts as one nudge; once the cap
+ * is reached the interstitial never shows again. Keeps the modal from becoming a recurring
+ * annoyance for users who repeatedly snooze without setting up recovery.
+ */
+const MAX_INTERSTITIAL_VIEWS = 3;
+
+/**
  * Snooze windows (in days) by security level
  */
 const SNOOZE_DAYS: Record< SecurityLevel, number > = {
@@ -88,6 +95,9 @@ export default function AccountRecoveryInterstitial() {
 	const { data: snoozeUntilPersisted, isSuccess: isSnoozeLoaded } = useQuery(
 		userPreferenceQuery( 'account-recovery-interstitial-snoozed-until' )
 	);
+	const { data: viewCount, isSuccess: isViewCountLoaded } = useQuery(
+		userPreferenceQuery( 'account-recovery-interstitial-view-count' )
+	);
 	const { data: dashboardOptIn, isSuccess: isDashboardOptInLoaded } = useQuery(
 		userPreferenceQuery( 'hosting-dashboard-opt-in' )
 	);
@@ -97,6 +107,9 @@ export default function AccountRecoveryInterstitial() {
 
 	const snoozeMutation = useMutation(
 		userPreferenceMutation( 'account-recovery-interstitial-snoozed-until' )
+	);
+	const viewCountMutation = useMutation(
+		userPreferenceMutation( 'account-recovery-interstitial-view-count' )
 	);
 
 	const [ isDismissed, setIsDismissed ] = useState( false );
@@ -117,6 +130,7 @@ export default function AccountRecoveryInterstitial() {
 	const snoozeDays = SNOOZE_DAYS[ securityLevel ];
 
 	const isSnoozed = !! snoozeUntilPersisted && now < snoozeUntilPersisted;
+	const hasReachedViewCap = ( viewCount ?? 0 ) >= MAX_INTERSTITIAL_VIEWS;
 
 	// Suppress the interstitial while the dashboard welcome modal is still pending, so the two
 	// full-page modals don't stack on the first dashboard load. The welcome-modal state is latched
@@ -138,9 +152,11 @@ export default function AccountRecoveryInterstitial() {
 		isAccountRecoveryLoaded &&
 		isUserSettingsLoaded &&
 		isSnoozeLoaded &&
+		isViewCountLoaded &&
 		isWelcomeDataLoaded &&
 		! isWelcomeModalPending &&
 		! isSnoozed &&
+		! hasReachedViewCap &&
 		! isSupportSession() &&
 		securityLevel !== 'strong';
 
@@ -182,6 +198,7 @@ export default function AccountRecoveryInterstitial() {
 
 	const snooze = () => {
 		snoozeMutation.mutate( now + snoozeDays * DAY_IN_SECONDS );
+		viewCountMutation.mutate( ( viewCount ?? 0 ) + 1 );
 		setIsDismissed( true );
 	};
 
