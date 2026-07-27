@@ -31,8 +31,8 @@ const DAY_IN_SECONDS = 86400;
 const EXPERIMENT_NAME = 'calypso_onboarding_account_recovery_modal_202606';
 const EXPERIMENT_TREATMENT_VARIATION = 'no_recovery_modal';
 
-/** Lifetime nudge cap — each dismissal (not impression) counts as one view. */
-const MAX_INTERSTITIAL_VIEWS = 3;
+/** Lifetime nudge cap — counts dismissals, not impressions. */
+const MAX_INTERSTITIAL_DISMISSALS = 3;
 
 /**
  * Snooze windows (in days) by security level
@@ -91,8 +91,8 @@ export default function AccountRecoveryInterstitial() {
 	const { data: snoozeUntilPersisted, isSuccess: isSnoozeLoaded } = useQuery(
 		userPreferenceQuery( 'account-recovery-interstitial-snoozed-until' )
 	);
-	const { data: viewCount, isSuccess: isViewCountLoaded } = useQuery(
-		userPreferenceQuery( 'account-recovery-interstitial-view-count' )
+	const { data: dismissCount, isSuccess: isDismissCountLoaded } = useQuery(
+		userPreferenceQuery( 'account-recovery-interstitial-dismiss-count' )
 	);
 	const { data: dashboardOptIn, isSuccess: isDashboardOptInLoaded } = useQuery(
 		userPreferenceQuery( 'hosting-dashboard-opt-in' )
@@ -121,7 +121,7 @@ export default function AccountRecoveryInterstitial() {
 	const snoozeDays = SNOOZE_DAYS[ securityLevel ];
 
 	const isSnoozed = !! snoozeUntilPersisted && now < snoozeUntilPersisted;
-	const hasReachedViewCap = ( viewCount ?? 0 ) >= MAX_INTERSTITIAL_VIEWS;
+	const hasReachedDismissCap = ( dismissCount ?? 0 ) >= MAX_INTERSTITIAL_DISMISSALS;
 
 	// Suppress the interstitial while the dashboard welcome modal is still pending, so the two
 	// full-page modals don't stack on the first dashboard load. The welcome-modal state is latched
@@ -143,11 +143,11 @@ export default function AccountRecoveryInterstitial() {
 		isAccountRecoveryLoaded &&
 		isUserSettingsLoaded &&
 		isSnoozeLoaded &&
-		isViewCountLoaded &&
+		isDismissCountLoaded &&
 		isWelcomeDataLoaded &&
 		! isWelcomeModalPending &&
 		! isSnoozed &&
-		! hasReachedViewCap &&
+		! hasReachedDismissCap &&
 		! isSupportSession() &&
 		securityLevel !== 'strong';
 
@@ -192,7 +192,7 @@ export default function AccountRecoveryInterstitial() {
 		// server's read-modify-write of the whole preferences blob, so one silently clobbers the other.
 		dismissMutation.mutate( {
 			'account-recovery-interstitial-snoozed-until': now + snoozeDays * DAY_IN_SECONDS,
-			'account-recovery-interstitial-view-count': ( viewCount ?? 0 ) + 1,
+			'account-recovery-interstitial-dismiss-count': ( dismissCount ?? 0 ) + 1,
 		} );
 		setIsDismissed( true );
 	};
