@@ -55,6 +55,36 @@ function mockPreferences( calypso_preferences: Partial< UserPreferences > = {} )
 		.reply( 200, { calypso_preferences } );
 }
 
+// Dismissing fires two independent preference writes (snooze + view-count) to the same endpoint.
+// nock matches each request to the interceptor whose body predicate fits, so the two values are
+// captured independently regardless of which POST lands first.
+function mockDismissalWrites() {
+	const captured: { snoozedUntil?: number; viewCount?: number } = {};
+	nock( 'https://public-api.wordpress.com' )
+		.post( '/rest/v1.1/me/preferences', ( body ) => {
+			const value = body.calypso_preferences?.[ 'account-recovery-interstitial-snoozed-until' ];
+			if ( typeof value !== 'number' ) {
+				return false;
+			}
+			captured.snoozedUntil = value;
+			return true;
+		} )
+		.query( true )
+		.reply( 200, {} );
+	nock( 'https://public-api.wordpress.com' )
+		.post( '/rest/v1.1/me/preferences', ( body ) => {
+			const value = body.calypso_preferences?.[ 'account-recovery-interstitial-view-count' ];
+			if ( typeof value !== 'number' ) {
+				return false;
+			}
+			captured.viewCount = value;
+			return true;
+		} )
+		.query( true )
+		.reply( 200, {} );
+	return captured;
+}
+
 const EXPERIMENT_NAME = 'calypso_onboarding_account_recovery_modal_202606';
 const TREATMENT_VARIATION = 'no_recovery_modal';
 
@@ -252,24 +282,7 @@ describe( '<AccountRecoveryInterstitial>', () => {
 		mockAccountRecovery( NONE_RECOVERY );
 		mockUserSettings( { two_step_enabled: false } );
 		mockPreferences();
-
-		let snoozedValue: number | undefined;
-		const savePost = nock( 'https://public-api.wordpress.com' )
-			.post( '/rest/v1.1/me/preferences', ( body ) => {
-				snoozedValue = body.calypso_preferences?.[ 'account-recovery-interstitial-snoozed-until' ];
-				return typeof snoozedValue === 'number';
-			} )
-			.query( true )
-			.reply( 200, {} );
-
-		let viewCountValue: number | undefined;
-		const viewCountPost = nock( 'https://public-api.wordpress.com' )
-			.post( '/rest/v1.1/me/preferences', ( body ) => {
-				viewCountValue = body.calypso_preferences?.[ 'account-recovery-interstitial-view-count' ];
-				return typeof viewCountValue === 'number';
-			} )
-			.query( true )
-			.reply( 200, {} );
+		const writes = mockDismissalWrites();
 
 		const { recordTracksEvent } = render( <AccountRecoveryInterstitial /> );
 
@@ -280,12 +293,10 @@ describe( '<AccountRecoveryInterstitial>', () => {
 		await waitFor( () => {
 			expect( screen.queryByRole( 'dialog' ) ).not.toBeInTheDocument();
 		} );
-		expect( savePost.isDone() ).toBe( true );
 		// none-tier window is 14 days into the future.
-		expect( snoozedValue ).toBeGreaterThan( Math.floor( Date.now() / 1000 ) );
-		// First dismissal bumps the lifetime view count from 0 to 1.
-		expect( viewCountPost.isDone() ).toBe( true );
-		expect( viewCountValue ).toBe( 1 );
+		await waitFor( () => {
+			expect( writes.snoozedUntil ).toBeGreaterThan( Math.floor( Date.now() / 1000 ) );
+		} );
 		expect( recordTracksEvent ).toHaveBeenCalledWith(
 			'calypso_account_recovery_nudge_interstitial_dismiss',
 			{
@@ -297,6 +308,76 @@ describe( '<AccountRecoveryInterstitial>', () => {
 				snooze_period: 14,
 			}
 		);
+	} );
+
+	test( 'increments the lifetime view count on the first dismissal', async () => {
+		const user = userEvent.setup();
+		mockAccountRecovery( NONE_RECOVERY );
+		mockUserSettings( { two_step_enabled: false } );
+		mockPreferences();
+		const writes = mockDismissalWrites();
+
+		render( <AccountRecoveryInterstitial /> );
+
+		await screen.findByRole( 'dialog' );
+		await user.click( screen.getByRole( 'button', { name: 'Remind me in 14 days' } ) );
+
+		await waitFor( () => {
+			expect( writes.viewCount ).toBe( 1 );
+		} );
+	} );
+
+	test( 'writes the capping value on the final allowed dismissal', async () => {
+		// With two prior views, a third dismissal writes exactly 3 — the value that trips the cap on
+		// the next load. Guards the `>= MAX_INTERSTITIAL_VIEWS` boundary against an off-by-one.
+		const user = userEvent.setup();
+		mockAccountRecovery( NONE_RECOVERY );
+		mockUserSettings( { two_step_enabled: false } );
+		mockPreferences( { 'account-recovery-interstitial-view-count': 2 } );
+		const writes = mockDismissalWrites();
+
+		render( <AccountRecoveryInterstitial /> );
+
+		await screen.findByRole( 'dialog' );
+		await user.click( screen.getByRole( 'button', { name: 'Remind me in 14 days' } ) );
+
+		await waitFor( () => {
+			expect( writes.viewCount ).toBe( 3 );
+		} );
+	} );
+
+	test( 'records the click, snoozes, and bumps the view count on a CTA click', async () => {
+		const user = userEvent.setup();
+		mockAccountRecovery( NONE_RECOVERY );
+		mockUserSettings( { two_step_enabled: false } );
+		mockPreferences();
+		const writes = mockDismissalWrites();
+
+		const { recordTracksEvent } = render( <AccountRecoveryInterstitial /> );
+
+		await screen.findByRole( 'dialog' );
+		await user.click( screen.getByRole( 'button', { name: 'Set up recovery email or phone' } ) );
+
+		await waitFor( () => {
+			expect( screen.queryByRole( 'dialog' ) ).not.toBeInTheDocument();
+		} );
+		expect( recordTracksEvent ).toHaveBeenCalledWith(
+			'calypso_account_recovery_nudge_interstitial_cta_click',
+			{
+				security_level: 'none',
+				has_recovery_email: false,
+				has_recovery_phone: false,
+				has_two_factor: false,
+				has_backup_codes: false,
+				cta_id: 'set_up_recovery',
+			}
+		);
+		// Clicking a CTA both nudges the counter and snoozes, so the user isn't re-prompted while
+		// they head off to set up recovery.
+		await waitFor( () => {
+			expect( writes.viewCount ).toBe( 1 );
+		} );
+		expect( writes.snoozedUntil ).toBeGreaterThan( Math.floor( Date.now() / 1000 ) );
 	} );
 
 	test( 'does not show (and records nothing) for a Happiness Engineer in a support session', async () => {
