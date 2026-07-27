@@ -12695,7 +12695,7 @@ __metadata:
     electron-store: "npm:^8.1.0"
     electron-updater: "npm:6.3.0"
     jest: "npm:^29.7.0"
-    js-yaml: "npm:5.2.1"
+    js-yaml: "npm:5.2.2"
     playwright: "npm:1.57.0"
     postcss: "npm:^8.5.15"
     react: "npm:^18.3.1"
@@ -22236,14 +22236,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"js-yaml@npm:5.2.1":
-  version: 5.2.1
-  resolution: "js-yaml@npm:5.2.1"
+"js-yaml@npm:5.2.2":
+  version: 5.2.2
+  resolution: "js-yaml@npm:5.2.2"
   dependencies:
     argparse: "npm:^2.0.1"
   bin:
     js-yaml: bin/js-yaml.mjs
-  checksum: 8eadf08efc738a656c2838f6617b0cc508944f66f568eb4d435e858261b889a6806d98f44fb6ffdba21a0c68e4bdff1ac35516724882e1dab8fc2cc59150c881
+  checksum: e8ded203b235b3d562818c67bf362122abbcee89e507b62bddcdd3085b2f2dd866071e5e78f8e617d41d1a0c0baa1cec12a8fdec5859c571bf862adf585e2684
   languageName: node
   linkType: hard
 
