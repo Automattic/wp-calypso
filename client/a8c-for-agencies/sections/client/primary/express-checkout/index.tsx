@@ -1,6 +1,5 @@
 import { StripeHookProvider } from '@automattic/calypso-stripe';
 import { CheckoutErrorBoundary } from '@automattic/composite-checkout';
-import { addQueryArgs } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
 import { getStripeConfiguration } from 'calypso/lib/store-transactions';
 import CalypsoShoppingCartProvider from 'calypso/my-sites/checkout/calypso-shopping-cart-provider';
@@ -10,6 +9,7 @@ import { getCurrentUserLocale, isUserLoggedIn } from 'calypso/state/current-user
 import ClientCheckoutV2Error from '../../checkout-v2-error';
 import ClientCheckoutV2Placeholder from '../../checkout-v2-placeholder';
 import useClientCheckout from '../../hooks/use-client-checkout';
+import getClientCheckoutRedirectUrl from '../../lib/get-client-checkout-redirect-url';
 
 const EXPRESS_CHECKOUT_REDIRECT_URL = 'https://agencies.automattic.com/client/subscriptions';
 
@@ -29,11 +29,10 @@ function ClientExpressCheckoutContent() {
 		return <ClientCheckoutV2Error title={ translate( 'Error' ) } message={ error } />;
 	}
 
-	const redirectTo = wpcomHostingProductSlug
-		? addQueryArgs( EXPRESS_CHECKOUT_REDIRECT_URL, {
-				wpcom_plan_purchased: wpcomHostingProductSlug,
-		  } )
-		: EXPRESS_CHECKOUT_REDIRECT_URL;
+	const redirectTo = getClientCheckoutRedirectUrl(
+		EXPRESS_CHECKOUT_REDIRECT_URL,
+		wpcomHostingProductSlug
+	);
 
 	return (
 		<CheckoutMain

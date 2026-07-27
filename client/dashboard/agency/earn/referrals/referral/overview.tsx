@@ -5,6 +5,7 @@ import { __experimentalGrid as Grid, __experimentalHStack as HStack } from '@wor
 import { DataViews } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
 import { useMemo } from 'react';
+import { useAnalytics } from '../../../../app/analytics';
 import { useLocale } from '../../../../app/locale';
 import { PageHeader } from '../../../../components/page-header';
 import PageLayout from '../../../../components/page-layout';
@@ -82,6 +83,7 @@ export default function ReferralOverview() {
 		referralCommissionPayoutQuery( agencyId )
 	);
 	const { data: products } = useQuery( agencyProductsQuery( agencyId ) );
+	const { recordTracksEvent } = useAnalytics();
 
 	const referralFields = useMemo( () => getReferralFields( products ), [ products ] );
 	const purchaseFields = useMemo( () => getPurchaseFields( products ), [ products ] );
@@ -119,6 +121,8 @@ export default function ReferralOverview() {
 				referralCommissionPayout={ commissionPayout }
 				isLoadingCommissionPayout={ isLoadingCommissionPayout }
 				locale={ locale }
+				products={ products }
+				recordTracksEvent={ recordTracksEvent }
 			/>
 			<Grid templateColumns="repeat(auto-fit, minmax(320px, 1fr))" gap={ 6 } align="start">
 				<PreviewListCard

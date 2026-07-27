@@ -5,18 +5,19 @@ import {
 } from '@wordpress/components';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
-import FollowButton from 'calypso/blocks/follow-button/button';
 import BloganuaryHeader from 'calypso/components/bloganuary-header';
 import NavigationHeader from 'calypso/components/navigation-header';
 import { addQueryArgs } from 'calypso/lib/url';
 import { recordAction } from 'calypso/reader/stats';
 import { useRecordReaderTracksEvent } from 'calypso/state/reader/analytics/useRecordReaderTracksEvent';
+import { TagFollowButton } from './follow-tag-button';
 import type { JSX } from 'react';
 
 interface TagStreamHeaderProps {
 	encodedTagSlug: string;
 	description?: string;
 	following?: boolean;
+	followDisabled?: boolean;
 	isPlaceholder?: boolean;
 	onFollowToggle?: () => void;
 	showFollow: boolean;
@@ -30,6 +31,7 @@ export default function TagStreamHeader( props: TagStreamHeaderProps ): JSX.Elem
 		description,
 		encodedTagSlug,
 		following,
+		followDisabled,
 		isPlaceholder,
 		onFollowToggle,
 		showFollow,
@@ -102,11 +104,11 @@ export default function TagStreamHeader( props: TagStreamHeaderProps ): JSX.Elem
 					</div>
 					<div className="tag-stream__header-follow">
 						{ showFollow && (
-							<FollowButton
-								followLabel={ translate( 'Follow tag' ) }
-								followingLabel={ translate( 'Following tag' ) }
+							<TagFollowButton
 								following={ following }
-								onFollowToggle={ onFollowToggle }
+								disabled={ followDisabled }
+								tagName={ title }
+								onToggle={ () => onFollowToggle?.() }
 							/>
 						) }
 					</div>

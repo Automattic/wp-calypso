@@ -2,7 +2,10 @@
  * @jest-environment jsdom
  */
 import { mockedSites } from '../../../../data/sites.ts';
-import { A4A_SITES_DASHBOARD_DEFAULT_CATEGORY } from '../../constants';
+import {
+	A4A_SITES_DASHBOARD_DEFAULT_CATEGORY,
+	A4A_SITES_DASHBOARD_DEFAULT_FEATURE,
+} from '../../constants';
 import { updateSitesDashboardUrl } from '../update-sites-dashboard-url';
 
 describe( 'updateSitesDashboardUrl returns correct URL', () => {
@@ -11,7 +14,7 @@ describe( 'updateSitesDashboardUrl returns correct URL', () => {
 
 	const defaultSitesParams = {
 		setCategory: setCategoryMock,
-		selectedSiteFeature: 'jetpack-boost',
+		selectedSiteFeature: A4A_SITES_DASHBOARD_DEFAULT_FEATURE,
 		currentPage: 1,
 		sort: { field: 'url', direction: 'asc' },
 	};
@@ -65,7 +68,7 @@ describe( 'updateSitesDashboardUrl returns correct URL', () => {
 		} );
 
 		expect( setCategoryMock ).toHaveBeenCalledTimes( 1 );
-		expect( updatedUrl ).toBe( '/sites/overview/elegantsuperbly.wpcomstaging.com' );
+		expect( updatedUrl ).toBe( '/sites/overview/elegantsuperbly.wpcomstaging.com/jetpack-backup' );
 	} );
 
 	test( 'returns correct URL when a site is selected with filters and search', () => {
@@ -76,7 +79,7 @@ describe( 'updateSitesDashboardUrl returns correct URL', () => {
 			...defaultSitesParams,
 		} );
 
-		expect( updatedUrl ).toBe( '/sites/overview/elegantsuperbly.wpcomstaging.com' );
+		expect( updatedUrl ).toBe( '/sites/overview/elegantsuperbly.wpcomstaging.com/jetpack-backup' );
 	} );
 
 	test( 'returns correct URL with filters and search applied', () => {
@@ -120,6 +123,6 @@ describe( 'updateSitesDashboardUrl returns correct URL', () => {
 			...defaultSitesParams,
 		} );
 
-		expect( updatedUrl ).toBe( '/sites/overview/elegantsuperbly.wpcomstaging.com' );
+		expect( updatedUrl ).toBe( '/sites/overview/elegantsuperbly.wpcomstaging.com/jetpack-backup' );
 	} );
 } );

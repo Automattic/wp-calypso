@@ -95,7 +95,7 @@ describe( 'ReaderSidebarListsListItem', () => {
 			expect( container.querySelector( '.a8c-count' ) ).toBeNull();
 		} );
 
-		it( 'does not show a count when every feed is fully seen', () => {
+		it( 'does not show a count when every feed is fully read', () => {
 			const listNoUnseen: ReadList = {
 				...list,
 				feeds: [
@@ -128,7 +128,7 @@ describe( 'ReaderSidebarListsListItem', () => {
 		} );
 	} );
 
-	describe( 'mark all as seen', () => {
+	describe( 'mark all as read', () => {
 		const listWithUnseen: ReadList = {
 			...list,
 			feeds: [
@@ -137,12 +137,12 @@ describe( 'ReaderSidebarListsListItem', () => {
 			],
 		};
 
-		it( 'marks the list feeds as seen', async () => {
+		it( 'marks the list feeds as read', async () => {
 			const user = userEvent.setup();
 			renderWithProvider( <ReaderSidebarListsListItem list={ listWithUnseen } path="/reader" /> );
 
 			await user.click( screen.getByRole( 'button', { name: 'More actions' } ) );
-			await user.click( screen.getByRole( 'menuitem', { name: 'Mark all as seen' } ) );
+			await user.click( screen.getByRole( 'menuitem', { name: 'Mark all as read' } ) );
 
 			expect( mockMarkAllAsSeen ).toHaveBeenCalledWith( {
 				identifier: 'sidebar-list',
@@ -151,18 +151,24 @@ describe( 'ReaderSidebarListsListItem', () => {
 			} );
 		} );
 
-		it( 'disables the action when the list is fully seen', async () => {
+		it( 'disables the action when the list is fully read', async () => {
 			const user = userEvent.setup();
 			renderWithProvider(
 				<ReaderSidebarListsListItem
-					list={ { ...list, feeds: [ { feed_id: 1, unseen_count: 0 } ] } }
+					list={ {
+						...list,
+						feeds: [
+							{ feed_id: 1, unseen_count: 0 },
+							{ feed_id: 2, unseen_count: 0 },
+						],
+					} }
 					path="/reader"
 				/>
 			);
 
 			await user.click( screen.getByRole( 'button', { name: 'More actions' } ) );
 
-			expect( screen.getByRole( 'menuitem', { name: 'Mark all as seen' } ) ).toHaveAttribute(
+			expect( screen.getByRole( 'menuitem', { name: 'Mark all as read' } ) ).toHaveAttribute(
 				'aria-disabled',
 				'true'
 			);

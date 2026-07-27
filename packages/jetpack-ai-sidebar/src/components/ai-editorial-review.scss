@@ -105,6 +105,9 @@
 	--jetpack-ai-review-primary: var(--color-primary, var(--wp-admin-theme-color, #3858e9));
 	--jetpack-ai-review-primary-foreground: var(--color-primary-foreground, #fff);
 
+	// Agenttic's message row has a spacing-4 inline gutter. Let the review
+	// content fill that gutter, then restore it only for non-card content.
+	margin-inline: calc(-1 * var(--spacing-4));
 	display: flex;
 	flex-direction: column;
 	font-size: 13px;
@@ -132,6 +135,14 @@
 		background: transparent;
 		border: 0;
 		border-top: 1px solid rgba(255, 255, 255, 0.08);
+
+		&.is-opened {
+			padding-inline: 0;
+
+			> .components-panel__body-title {
+				margin-inline: 0;
+			}
+		}
 
 		&:first-child {
 			border-top: 0;
@@ -174,12 +185,17 @@
 		fill: currentColor;
 	}
 
-	// Content region bottom spacing. Keep cards out of this broad PanelBody
-	// rule so their own internal padding is not overwritten.
+	// Content-region gutter and bottom spacing. Keep cards out of this broad
+	// PanelBody rule so their own internal padding is not overwritten.
 	.components-panel__body.is-opened
 		> :not(.components-panel__body-title):not(.jetpack-ai-editorial-review__card):not(
 			.jetpack-ai-editorial-review__conflict-card
-		) {
+		):not(.jetpack-ai-feedback-list__item):not(.jetpack-ai-feedback-list__items) {
+		padding: 0 var(--spacing-4) 0.75rem;
+	}
+
+	.components-panel__body.is-opened > .jetpack-ai-feedback-list__item,
+	.components-panel__body.is-opened > .jetpack-ai-feedback-list__items {
 		padding: 0 0 0.75rem;
 	}
 
@@ -546,7 +562,7 @@
 	// lifts specificity above AM's `.Message-module_message ul` list styling.
 	& &__stats {
 		list-style: none;
-		padding: 0;
+		padding: 0 var(--spacing-4);
 		margin: 0 0 0.875rem;
 		display: flex;
 		flex-wrap: wrap;
@@ -635,10 +651,10 @@
 	&__conflict-card {
 		border: 1px solid rgba(232, 165, 32, 0.35);
 		border-radius: 8px;
-		// Generous padding — the card holds a title row, BlockRef, two reviewer
-		// positions, an AI inset, and an actions row. Tighter values made the
-		// stretched action buttons feel like they were kissing the border.
-		padding: 1.25rem 1.5rem;
+		// Retain extra vertical room for the denser conflict layout while matching
+		// the shared review cards' inline content gutter.
+		padding-block: 1.25rem;
+		padding-inline: var(--spacing-4);
 		margin-bottom: 0.75rem;
 		background: rgba(232, 165, 32, 0.04);
 		transition:
@@ -679,7 +695,8 @@
 	}
 
 	& &__conflict-card:not(.is-collapsed) {
-		padding: 1.25rem 1.5rem;
+		padding-block: 1.25rem;
+		padding-inline: var(--spacing-4);
 	}
 
 	&__conflict-header {
@@ -859,11 +876,8 @@
 	}
 
 	// ---------- Conflict action buttons ----------
-	// is-reviewer (ghost) / is-accept (primary AI) / is-dismiss (ghost). Wrap
-	// to multiple rows on narrow sidebars; extra padding for two-line labels.
-	// Resolution controls stack in two groups: reviewer options wrap two-up,
-	// then a fixed [Accept AI resolution][Dismiss] pair — so that pairing never
-	// depends on the parity of the reviewer count.
+	// Reviewer options wrap two-up above the shared Apply AI change + Dismiss row,
+	// so the two groups never depend on the reviewer count's parity.
 	&__conflict-resolution {
 		display: flex;
 		flex-direction: column;
@@ -883,17 +897,12 @@
 		padding: 0.625rem 0.875rem;
 	}
 
-	// The AI + Dismiss row: an even, fixed pair (or Dismiss alone when there is
-	// no AI recommendation). The parent column owns the top spacing.
-	&__conflict-resolution &__actions {
-		margin-top: 0;
-		gap: 0.5rem;
-	}
+	// The conflict card already owns the shared action row's inline inset.
+	&__conflict-resolution .jetpack-ai-feedback-list__actions {
+		--jetpack-ai-feedback-list-primary: var(--jetpack-ai-review-primary);
+		--jetpack-ai-feedback-list-primary-foreground: var(--jetpack-ai-review-primary-foreground);
 
-	&__conflict-resolution &__actions &__action {
-		flex: 1 1 0;
-		min-height: 42px;
-		padding: 0.625rem 0.875rem;
+		padding: 0;
 	}
 
 	&__action.is-reviewer {

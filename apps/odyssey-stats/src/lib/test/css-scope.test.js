@@ -35,10 +35,7 @@ function buildFixture( compiledCss ) {
 
 describe( 'Odyssey Stats CSS scoping (webpack-css-scope.js)', () => {
 	it( 'scopes a shared component selector under both .jp-stats-dashboard and .jp-stats-widget, but not outside either', () => {
-		// A distinctive, non-default color, so a passing assertion actually proves the rule
-		// applied — unlike e.g. `border-width`, whose computed value collapses to 0 regardless of
-		// the declared width whenever `border-style` is left at its `none` default, which would
-		// make an unscoped/never-applied rule indistinguishable from a correctly scoped one.
+		// Distinctive non-default color, so a passing assertion actually proves the rule applied.
 		const compiled = compile( '.card { color: rgb(1, 2, 3); }', {
 			from: 'odyssey-stats/src/widget/index.scss',
 		} );
@@ -59,10 +56,6 @@ describe( 'Odyssey Stats CSS scoping (webpack-css-scope.js)', () => {
 		);
 		const { widgetRoot } = buildFixture( compiled );
 
-		// If these rules got nested under the prefix (`:where(...) .jp-stats-widget {...}`),
-		// they'd require an ancestor of `.jp-stats-widget` matching the prefix — which doesn't
-		// exist, since `.jp-stats-widget` IS one of the prefix roots. That's the exact bug this
-		// exclusion prevents: verify it by asserting the styles actually apply to the root itself.
 		expect( getComputedStyle( widgetRoot ).color ).toBe( 'green' );
 
 		widgetRoot.classList.add( 'is-ready' );
@@ -76,11 +69,80 @@ describe( 'Odyssey Stats CSS scoping (webpack-css-scope.js)', () => {
 		expect( compiled ).not.toMatch( /^\.jp-stats-widget-extra/m );
 	} );
 
+	it( 'leaves .jp-stats-dashboard matching the dashboard mount itself, and rules nested under it in source, unprefixed', () => {
+		// Mirrors wp-admin.scss's `.jp-stats-dashboard { --sidebar-width-max: 160px; & .layout__content { ... } }`.
+		const compiled = compile(
+			'.jp-stats-dashboard { --sidebar-width-max: 160px; }\n' +
+				'.jp-stats-dashboard .layout__content { padding-top: 0; }',
+			{ from: 'odyssey-stats/src/styles/wp-admin.scss' }
+		);
+		document.body.innerHTML =
+			'<div class="jp-stats-dashboard"><div class="layout__content" id="layout-content"></div></div>';
+		const style = document.createElement( 'style' );
+		style.textContent = compiled;
+		document.head.appendChild( style );
+
+		expect(
+			getComputedStyle( document.querySelector( '.jp-stats-dashboard' ) ).getPropertyValue(
+				'--sidebar-width-max'
+			)
+		).toBe( '160px' );
+		expect( getComputedStyle( document.getElementById( 'layout-content' ) ).paddingTop ).toBe(
+			'0px'
+		);
+	} );
+
 	it( 'leaves app.scss (already hand-scoped to .jp-stats-dashboard) unprefixed', () => {
 		const compiled = compile( '.jp-stats-dashboard .card { border: 0; }', {
 			from: 'odyssey-stats/src/app.scss',
 		} );
 
 		expect( compiled.trim() ).toBe( '.jp-stats-dashboard .card { border: 0; }' );
+	} );
+
+	it( 'leaves .color-scheme.is-<scheme> unprefixed — it sets the scheme vars on the element that carries the class', () => {
+		const compiled = compile( '.color-scheme.is-midnight { --color-accent: red; }' );
+
+		expect( compiled ).not.toContain( ':where(' );
+		expect( compiled ).toMatch( /^\.color-scheme\.is-midnight/m );
+	} );
+
+	it( 'still prefixes a nested rule under a colour scheme — only the self-scoping compound is exempt', () => {
+		const compiled = compile( '.color-scheme.is-light .masterbar { color: green; }' );
+
+		expect( compiled ).toContain( ':where(' );
+	} );
+
+	it( 'leaves .stats-widget-content.color-scheme unprefixed — the widget primary→accent remap on its own root', () => {
+		const compiled = compile( '.stats-widget-content.color-scheme { --color-primary: red; }', {
+			from: 'odyssey-stats/src/styles/scoped-theme-for-widget.scss',
+		} );
+
+		expect( compiled ).not.toContain( ':where(' );
+		expect( compiled ).toMatch( /^\.stats-widget-content\.color-scheme/m );
+	} );
+
+	it( 'scopes content inside a @wordpress/components Popover fallback container, mirroring the modal/widget mounts', () => {
+		const compiled = compile( '.card { color: rgb(4, 5, 6); }' );
+		document.body.innerHTML =
+			'<div class="components-popover__fallback-container"><div class="card" id="popover-card"></div></div>' +
+			'<div id="adminmenu"><div class="card" id="adminmenu-card"></div></div>';
+		const style = document.createElement( 'style' );
+		style.textContent = compiled;
+		document.head.appendChild( style );
+
+		expect( getComputedStyle( document.getElementById( 'popover-card' ) ).color ).toBe(
+			'rgb(4, 5, 6)'
+		);
+		expect( getComputedStyle( document.getElementById( 'adminmenu-card' ) ).color ).not.toBe(
+			'rgb(4, 5, 6)'
+		);
+	} );
+
+	it( 'leaves .components-tooltip unprefixed — @wordpress/components Tooltip has no attribute to scope its wrapper', () => {
+		const compiled = compile( '.components-tooltip { color: red; }' );
+
+		expect( compiled ).not.toContain( ':where(' );
+		expect( compiled ).toMatch( /^\.components-tooltip/m );
 	} );
 } );

@@ -114,6 +114,7 @@ export const Header = ( {
 		( select ) => select( imageStudioStore ).getEntryPoint() as ImageStudioEntryPoint | null,
 		[]
 	);
+	const isVideoMode = entryPoint === ImageStudioEntryPoint.PostEditorFeatureClip;
 
 	// Helper function to get save button text based on entry point
 	const getSaveButtonText = ( currentEntryPoint: ImageStudioEntryPoint | null ): string => {
@@ -193,17 +194,21 @@ export const Header = ( {
 		<div className="image-studio-header">
 			<div className="image-studio-header__inner">
 				<div className="image-studio-header__left">
-					{ leftContent ? (
-						leftContent
-					) : (
-						<h2
-							className={ cn( 'components-modal__header-heading', 'image-studio-header__title', {
-								'image-studio-sr-only': showTitle,
-							} ) }
-						>
-							{ __( 'Jetpack Image Editor', __i18n_text_domain__ ) }
-						</h2>
-					) }
+					{ leftContent
+						? leftContent
+						: ! isVideoMode && (
+								<h2
+									className={ cn(
+										'components-modal__header-heading',
+										'image-studio-header__title',
+										{
+											'image-studio-sr-only': showTitle,
+										}
+									) }
+								>
+									{ __( 'Jetpack Image Editor', __i18n_text_domain__ ) }
+								</h2>
+						  ) }
 				</div>
 
 				{ showNavigationPill && (
@@ -355,7 +360,11 @@ export const Header = ( {
 					) }
 					<Button
 						icon={ <Icon icon={ close } /> }
-						label={ __( 'Close image editor', __i18n_text_domain__ ) }
+						label={
+							isVideoMode
+								? __( 'Close', __i18n_text_domain__ )
+								: __( 'Close image editor', __i18n_text_domain__ )
+						}
 						onClick={ () => onClose() }
 						disabled={ isSaving }
 					/>

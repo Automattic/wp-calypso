@@ -70,6 +70,18 @@ export interface ReviewCardProps {
 	classPrefix?: string;
 }
 
+interface ReviewCardApplyAction {
+	label: string;
+	onClick: () => void;
+}
+
+interface ReviewCardActionsProps {
+	applyAction?: ReviewCardApplyAction;
+	classPrefix?: string;
+	disabled: boolean;
+	onDismiss: () => void;
+}
+
 const DEFAULT_PREFIX = 'jetpack-ai-feedback-list';
 
 function getApplyLabel( status: ReviewCardStatus ): string {
@@ -83,6 +95,37 @@ function getApplyLabel( status: ReviewCardStatus ): string {
 		default:
 			return __( 'Apply change', __i18n_text_domain__ );
 	}
+}
+
+/** Shared action row for applicable review cards and conflict resolutions. */
+export function ReviewCardActions( {
+	applyAction,
+	classPrefix = DEFAULT_PREFIX,
+	disabled,
+	onDismiss,
+}: ReviewCardActionsProps ) {
+	return (
+		<div className={ `${ classPrefix }__actions` }>
+			{ applyAction && (
+				<button
+					type="button"
+					className={ `${ classPrefix }__action-button is-primary` }
+					onClick={ applyAction.onClick }
+					disabled={ disabled }
+				>
+					{ applyAction.label }
+				</button>
+			) }
+			<button
+				type="button"
+				className={ `${ classPrefix }__action-button is-dismiss` }
+				onClick={ onDismiss }
+				disabled={ disabled }
+			>
+				{ __( 'Dismiss', __i18n_text_domain__ ) }
+			</button>
+		</div>
+	);
 }
 
 /**
@@ -192,49 +235,44 @@ export default function ReviewCard( {
 				</div>
 			) }
 			{ reasonNote && <p className={ `${ classPrefix }__reason-note` }>{ reasonNote }</p> }
-			<div className={ `${ classPrefix }__actions` }>
-				{ showApply ? (
+			{ showApply ? (
+				<ReviewCardActions
+					applyAction={ { label: getApplyLabel( status ), onClick: onApply } }
+					classPrefix={ classPrefix }
+					disabled={ disabled || status === 'applying' }
+					onDismiss={ onDismiss }
+				/>
+			) : (
+				<div className={ `${ classPrefix }__actions` }>
 					<button
 						type="button"
 						className={ `${ classPrefix }__action-button is-primary` }
-						onClick={ onApply }
-						disabled={ disabled || status === 'applying' }
+						onClick={ onGoToSection }
+						disabled={ disabled || ! canGoToSection }
 					>
-						{ getApplyLabel( status ) }
+						{ __( 'Go to section', __i18n_text_domain__ ) }
 					</button>
-				) : (
-					<>
+					{ showCopy && (
 						<button
 							type="button"
-							className={ `${ classPrefix }__action-button is-primary` }
-							onClick={ onGoToSection }
-							disabled={ disabled || ! canGoToSection }
+							className={ `${ classPrefix }__action-button is-copy` }
+							onClick={ onCopy }
+							disabled={ disabled }
 						>
-							{ __( 'Go to section', __i18n_text_domain__ ) }
+							{ copied ? __( 'Copied', __i18n_text_domain__ ) : __( 'Copy', __i18n_text_domain__ ) }
 						</button>
-						{ showCopy && (
-							<button
-								type="button"
-								className={ `${ classPrefix }__action-button is-copy` }
-								onClick={ onCopy }
-								disabled={ disabled }
-							>
-								{ copied
-									? __( 'Copied', __i18n_text_domain__ )
-									: __( 'Copy', __i18n_text_domain__ ) }
-							</button>
-						) }
-					</>
-				) }
-				<button
-					type="button"
-					className={ `${ classPrefix }__action-button is-dismiss` }
-					onClick={ onDismiss }
-					disabled={ disabled || status === 'applying' }
-				>
-					{ __( 'Dismiss', __i18n_text_domain__ ) }
-				</button>
-			</div>
+					) }
+
+					<button
+						type="button"
+						className={ `${ classPrefix }__action-button is-dismiss` }
+						onClick={ onDismiss }
+						disabled={ disabled || status === 'applying' }
+					>
+						{ __( 'Dismiss', __i18n_text_domain__ ) }
+					</button>
+				</div>
+			) }
 			{ status === 'failed' && showApply && (
 				<p className={ `${ classPrefix }__status is-failed` }>{ failureMessage }</p>
 			) }

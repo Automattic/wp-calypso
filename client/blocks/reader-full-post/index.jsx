@@ -5,7 +5,7 @@ import { Gridicon, EmbedContainer } from '@automattic/components';
 import { isDefaultLocale } from '@automattic/i18n-utils';
 import { pickBy } from '@automattic/js-utils';
 import clsx from 'clsx';
-import { translate } from 'i18n-calypso';
+import { fixMe, translate } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { createRef, Component, useMemo } from 'react';
 import { connect } from 'react-redux';
@@ -662,8 +662,16 @@ export class FullPostView extends Component {
 	renderMarkAsSeenButton = () => {
 		const { post } = this.props;
 		const label = post.is_seen
-			? translate( 'Mark post as unseen' )
-			: translate( 'Mark post as seen' );
+			? fixMe( {
+					text: 'Mark post as unread',
+					newCopy: translate( 'Mark post as unread' ),
+					oldCopy: translate( 'Mark post as unseen' ),
+			  } )
+			: fixMe( {
+					text: 'Mark post as read',
+					newCopy: translate( 'Mark post as read' ),
+					oldCopy: translate( 'Mark post as seen' ),
+			  } );
 
 		return (
 			<button

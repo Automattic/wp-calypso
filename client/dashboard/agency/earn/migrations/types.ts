@@ -1,5 +1,4 @@
 import type { MigrationCommissionSite } from '@automattic/api-core';
-import type { ReactNode } from 'react';
 
 /**
  * @deprecated Prefer importing `MigrationCommissionSite` from `@automattic/api-core`.
@@ -9,7 +8,9 @@ export type TaggedSite = MigrationCommissionSite;
 
 export type RecordTracksEvent = ( name: string, properties?: Record< string, unknown > ) => void;
 
+// Dashboard snackbars accept string content only, so notice callbacks are
+// narrowed to strings across both hosts.
 export type ShowSuccessNotice = (
-	message: ReactNode,
+	message: string,
 	options?: { id?: string; duration?: number }
 ) => void;

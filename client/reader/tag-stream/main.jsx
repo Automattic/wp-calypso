@@ -124,6 +124,7 @@ class TagStream extends Component {
 				showFollow={ !! ( tag && tag.id ) }
 				following={ this.isSubscribed() }
 				onFollowToggle={ this.toggleFollowing }
+				followDisabled={ this.props.isTogglingFollow }
 				showSort={ showSort }
 				sort={ this.props.sort }
 			/>
@@ -190,8 +191,12 @@ function withTagFollowMutations( Inner ) {
 	return function WithTagFollowMutations( props ) {
 		const queryClient = useQueryClient();
 		const dispatch = useDispatch();
-		const { mutate: follow } = useMutation( followReadTagMutation( queryClient ) );
-		const { mutate: unfollow } = useMutation( unfollowReadTagMutation( queryClient ) );
+		const { mutate: follow, isPending: isFollowPending } = useMutation(
+			followReadTagMutation( queryClient )
+		);
+		const { mutate: unfollow, isPending: isUnfollowPending } = useMutation(
+			unfollowReadTagMutation( queryClient )
+		);
 
 		const followTag = ( tag ) =>
 			follow( tag, {
@@ -208,7 +213,14 @@ function withTagFollowMutations( Inner ) {
 					),
 			} );
 
-		return <Inner { ...props } followTag={ followTag } unfollowTag={ unfollowTag } />;
+		return (
+			<Inner
+				{ ...props }
+				followTag={ followTag }
+				unfollowTag={ unfollowTag }
+				isTogglingFollow={ isFollowPending || isUnfollowPending }
+			/>
+		);
 	};
 }
 

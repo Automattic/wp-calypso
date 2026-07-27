@@ -11,6 +11,7 @@ import {
 	isRequestingEmailStats,
 } from 'calypso/state/stats/emails/selectors';
 import TopCard from './top-card';
+import '../components/highlight-cards/style.scss';
 import './style.scss';
 
 export default function StatsEmailTopRow( { siteId, postId, statType, className, post } ) {
@@ -41,10 +42,10 @@ export default function StatsEmailTopRow( { siteId, postId, statType, className,
 							icon={ <Icon icon={ send } /> }
 							emailIsSending={ emailIsSending }
 						/>
-						{ counts?.unique_opens ? (
+						{ isRequesting || counts?.unique_opens ? (
 							<TopCard
 								heading={ translate( 'Unique opens' ) }
-								value={ counts.unique_opens }
+								value={ counts?.unique_opens }
 								isLoading={ isRequesting && ! counts?.hasOwnProperty( 'unique_opens' ) }
 								icon={ <Icon icon={ seen } /> }
 							/>

@@ -84,6 +84,7 @@ export class ReaderSidebarOrganizationsList extends Component {
 				moreMenuActions={
 					<MoreMenuActions
 						identifier={ this.identifierForOrganizationId( organization.id ) }
+						isSingleFeed={ false }
 						feedIds={ feedsInfo.feedIds }
 						feedUrls={ feedsInfo.feedUrls }
 						unseenCount={ feedsInfo.unseenCount }

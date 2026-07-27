@@ -19,6 +19,8 @@
 	--color-text-black: var(--studio-black);
 	--wp-components-color-accent: var(--studio-automattic-blue-50);
 	--wp-admin-theme-color: var(--studio-automattic-blue-50);
+	// Match the dashboard so backported components' links use the brand primary.
+	--color-link: var(--color-primary);
 
 	// FIXME: Need to move this colors to a color scheme file
 	--color-scary-0: var(--studio-red-0);
@@ -90,7 +92,7 @@
 
 .theme-a8c-for-agencies {
 
-	.components-button:not( .dataviews-view-table-header-button ),
+	.components-button:not( .dataviews-view-table-header-button ):not( .components-navigator-back-button ),
 	.button {
 		display: inline-flex;
 		align-items: center;
@@ -116,6 +118,13 @@
 		&.is-borderless.is-primary:hover {
 			color: var(--color-primary-60);
 		}
+	}
+
+	// The shared consolidated stat card (reused from the dashboard) renders its
+	// info popover trigger as a borderless icon button; the button-border rule
+	// above would otherwise box it.
+	.consolidated-stat-card .components-button.has-icon:not( .is-primary ) {
+		border-color: transparent;
 	}
 
 	.button.split-button__toggle {

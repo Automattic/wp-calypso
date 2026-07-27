@@ -1,5 +1,6 @@
 import { wpcom } from '../wpcom-fetcher';
 import type {
+	BundleMetadata,
 	BundleSuggestion,
 	DomainSuggestion,
 	DomainSuggestionQuery,
@@ -76,19 +77,27 @@ export async function fetchAvailableTlds( search?: string, vendor?: string ): Pr
 }
 
 /**
- * Fetch a bundle suggestion for a search query.
+ * Fetch the bundle metadata for a search query.
  *
- * Calls the `with_bundles=1` opt-in on `/domains/suggestions` (DOMAINS-2166),
- * which wraps the response as `{ domain_suggestions, bundle_suggestion }`. We
- * only need the `bundle_suggestion` portion here. The backend gates the bundle
- * on its own feature flag and returns `null` when no bundle applies; the
- * frontend `domain-bundling` flag additionally gates whether this fetcher runs
- * at all (see the `bundleSuggestionQuery` consumer).
+ * Calls the `with_bundles=1` opt-in on `/domains/suggestions` (DOMAINS-2166 /
+ * DOMAINS-2207), which wraps the response as
+ * `{ domain_suggestions, bundle_suggestion, bundle_triggers }`. We return the
+ * two bundle fields together so a single request serves both consumers:
+ * `bundle_suggestion` powers the top `BundleCard` on an FQDN query, while
+ * `bundle_triggers` is the cheap catalogue of TLDs (currently just `com`) that
+ * offer an inline bundle when added to the cart. The backend gates each field
+ * on its own feature flag and omits it when nothing applies; this fetcher
+ * normalises a missing suggestion to `null` and missing triggers to `[]`. The
+ * frontend `domain-bundling` flag additionally gates whether the query runs at
+ * all (see the `bundleMetadataQuery` consumers).
  * @param search The domain search query (an SLD or FQDN).
- * @returns A bundle suggestion, or null when no bundle applies.
+ * @returns The bundle suggestion (or null) and the trigger TLDs (or []).
  */
-export async function fetchBundleSuggestion( search: string ): Promise< BundleSuggestion | null > {
-	const response: { bundle_suggestion?: BundleSuggestion | null } = await wpcom.req.get(
+export async function fetchBundleMetadata( search: string ): Promise< BundleMetadata > {
+	const response: {
+		bundle_suggestion?: BundleSuggestion | null;
+		bundle_triggers?: string[];
+	} = await wpcom.req.get(
 		{
 			apiVersion: '1.1',
 			path: '/domains/suggestions',
@@ -100,34 +109,10 @@ export async function fetchBundleSuggestion( search: string ): Promise< BundleSu
 		}
 	);
 
-	return response.bundle_suggestion ?? null;
-}
-
-/**
- * Fetch the inline-bundle trigger TLDs for a search query.
- *
- * Reads the `bundle_triggers` field off the same `with_bundles=1` opt-in on
- * `/domains/suggestions` (DOMAINS-2207). This is a cheap, catalogue-only list of
- * the TLDs (currently just `com`) that, when added to the cart from a bare-term
- * search, offer an inline bundle. The backend returns `[]` when the discounts
- * flag is off; this fetcher normalises a missing field to `[]` as well.
- * @param search The bare-term domain search query.
- * @returns The trigger TLDs, or an empty array when no triggers apply.
- */
-export async function fetchBundleTriggers( search: string ): Promise< string[] > {
-	const response: { bundle_triggers?: string[] } = await wpcom.req.get(
-		{
-			apiVersion: '1.1',
-			path: '/domains/suggestions',
-		},
-		{
-			query: search.trim().toLocaleLowerCase(),
-			vendor: 'variation2_front',
-			with_bundles: 1,
-		}
-	);
-
-	return response.bundle_triggers ?? [];
+	return {
+		bundle_suggestion: response.bundle_suggestion ?? null,
+		bundle_triggers: response.bundle_triggers ?? [],
+	};
 }
 
 /**

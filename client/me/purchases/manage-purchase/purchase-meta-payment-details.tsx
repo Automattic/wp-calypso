@@ -1,15 +1,19 @@
+import { isPurchaseOneTimePurchase, type Purchase } from '@automattic/api-core';
 import { isAkismetFreeProduct, isDomainTransfer } from '@automattic/calypso-products';
+import {
+	isAkismetHoldingSitePurchase,
+	isMarketplaceHoldingSitePurchase,
+} from 'calypso/dashboard/utils/purchase';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
-import { isOneTimePurchase, isPaidWithCreditCard, isPartnerPurchase } from 'calypso/lib/purchases';
 import { useStoredPaymentMethods } from 'calypso/my-sites/checkout/src/hooks/use-stored-payment-methods';
 import {
 	canEditPaymentDetails,
-	isAkismetHoldingSitePurchase,
-	isMarketplaceHoldingSitePurchase,
-} from '../utils';
+	isPaidWithCreditCard,
+	isPartnerPurchase,
+} from '../lib/raw-purchase-helpers';
 import PaymentInfoBlock from './payment-info-block';
+import type { GetChangePaymentMethodUrlFor } from '../lib/types';
 import type { SiteDetails } from '@automattic/data-stores';
-import type { Purchase, GetChangePaymentMethodUrlFor } from 'calypso/lib/purchases/types';
 
 interface PaymentProps {
 	purchase: Purchase;
@@ -50,12 +54,12 @@ function PurchaseMetaPaymentDetails( {
 
 	const handleAddPaymentMethodClick = () => {
 		recordTracksEvent( 'calypso_purchases_add_payment_method_from_warning', {
-			product_slug: purchase.productSlug,
+			product_slug: purchase.product_slug,
 		} );
 	};
 
 	if (
-		isOneTimePurchase( purchase ) ||
+		isPurchaseOneTimePurchase( purchase ) ||
 		isDomainTransfer( purchase ) ||
 		isAkismetFreeProduct( purchase )
 	) {

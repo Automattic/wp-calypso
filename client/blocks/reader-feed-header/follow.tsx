@@ -2,7 +2,7 @@ import { isAutomatticianQuery } from '@automattic/api-queries';
 import { useQuery } from '@tanstack/react-query';
 import { Icon, seen } from '@wordpress/icons';
 import { filterURLForDisplay } from '@wordpress/url';
-import { useTranslate } from 'i18n-calypso';
+import { fixMe, useTranslate } from 'i18n-calypso';
 import { useState, type JSX } from 'react';
 import { shallowEqual } from 'react-redux';
 import SiteNotificationSettings from 'calypso/blocks/reader-site-notification-settings';
@@ -131,7 +131,11 @@ export default function ReaderFeedHeaderFollow( props: ReaderFeedHeaderFollowPro
 	const allSeen = resolvedFeed?.unseen_count === 0;
 	const isSeenEnabled =
 		isAutomattician || isEligibleForUnseen( { isWPForTeamsItem, hasOrganization } );
-	const seenBtnMsg = translate( 'Mark all as seen' );
+	const seenBtnMsg = fixMe( {
+		text: 'Mark all as read',
+		newCopy: translate( 'Mark all as read' ),
+		oldCopy: translate( 'Mark all as seen' ),
+	} ) as string;
 
 	return (
 		<div className="reader-feed-header__follow">

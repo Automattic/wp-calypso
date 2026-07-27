@@ -131,18 +131,32 @@ jest.mock( '@wordpress/components', () => {
 	const React = jest.requireActual< typeof import('react') >( 'react' );
 	return {
 		Panel: ( { children, className }: any ) =>
-			React.createElement( 'div', { className }, children ),
+			React.createElement(
+				'div',
+				{ className: [ 'components-panel', className ].filter( Boolean ).join( ' ' ) },
+				children
+			),
 		PanelBody: ( { title, children, className, opened, onToggle }: any ) =>
 			React.createElement(
 				'section',
-				{ className, 'data-testid': 'panel-body' },
+				{
+					className: [ 'components-panel__body', className, opened !== false && 'is-opened' ]
+						.filter( Boolean )
+						.join( ' ' ),
+					'data-testid': 'panel-body',
+				},
 				React.createElement(
-					'button',
-					{
-						type: 'button',
-						onClick: () => onToggle && onToggle( ! opened ),
-					},
-					title
+					'h2',
+					{ className: 'components-panel__body-title' },
+					React.createElement(
+						'button',
+						{
+							className: 'components-panel__body-toggle',
+							type: 'button',
+							onClick: () => onToggle && onToggle( ! opened ),
+						},
+						title
+					)
 				),
 				opened !== false ? children : null
 			),
@@ -221,7 +235,7 @@ describe( 'AiEditorialReview — smoke render', () => {
 	} );
 
 	it( 'renders all five sections when the payload is fully populated', () => {
-		render(
+		const { container } = render(
 			<AiEditorialReview
 				{ ...basePayload( {
 					conflicts: [
@@ -250,6 +264,13 @@ describe( 'AiEditorialReview — smoke render', () => {
 							rationale: 'Concise.',
 							supported_by_reviewers: [ 'Marcus' ],
 						},
+						{
+							block_index: 1,
+							current_text: 'voted last Tuesday',
+							suggested_text: 'approved on Tuesday',
+							rationale: 'Use precise language.',
+							supported_by_reviewers: [],
+						},
 					],
 					guideline_violations: [
 						{
@@ -276,6 +297,22 @@ describe( 'AiEditorialReview — smoke render', () => {
 		expect( screen.getByText( 'was voted upon' ) ).toBeInTheDocument();
 		expect( screen.getByText( 'Avoid passive voice.' ) ).toBeInTheDocument();
 		expect( screen.getByText( 'Passive voice detected.' ) ).toBeInTheDocument();
+
+		// These direct-child classes are stylesheet layout hooks: card lists use the
+		// full content width while prose retains the chat-message gutter.
+		const root = container.querySelector( '.jetpack-ai-editorial-review' );
+		expect( root ).toBeInTheDocument();
+		const editItems = root?.querySelector(
+			'.jetpack-ai-editorial-review__edits > .jetpack-ai-feedback-list__items'
+		);
+		expect( editItems ).toBeInTheDocument();
+		expect( editItems?.children ).toHaveLength( 2 );
+		expect( editItems?.firstElementChild ).toHaveClass( 'jetpack-ai-feedback-list__item' );
+		expect(
+			root?.querySelector(
+				'.jetpack-ai-editorial-review__violations > .jetpack-ai-feedback-list__items'
+			)
+		).toBeInTheDocument();
 	} );
 
 	it( 'tracks the rendered result with aggregate counts', async () => {
@@ -375,7 +412,7 @@ describe( 'AiEditorialReview — smoke render', () => {
 		).toBeInTheDocument();
 		expect( screen.getByTitle( 'Jump to conflicts' ) ).toBeDisabled();
 		expect( screen.getByTitle( 'Jump to suggested edits' ) ).toBeDisabled();
-		expect( screen.getByRole( 'button', { name: 'Accept AI resolution' } ) ).toBeDisabled();
+		expect( screen.getByRole( 'button', { name: 'Apply AI change' } ) ).toBeDisabled();
 		// Stale → the edit can't one-click apply EVEN THOUGH the current post still
 		// contains the source text: Go to section (disabled) stands in for a dead
 		// Apply, and the card is not tagged "Manual edit".
@@ -1109,7 +1146,7 @@ describe( 'AiEditorialReview — conflict resolutions', () => {
 		render( <AiEditorialReview { ...conflictPayload } /> );
 
 		await act( async () => {
-			fireEvent.click( screen.getByRole( 'button', { name: "Accept Marcus's wording" } ) );
+			fireEvent.click( screen.getByRole( 'button', { name: "Apply Marcus's wording" } ) );
 		} );
 
 		expect( mockApplyReviewEdit ).toHaveBeenCalledWith(
@@ -1131,7 +1168,7 @@ describe( 'AiEditorialReview — conflict resolutions', () => {
 		render( <AiEditorialReview { ...conflictPayload } /> );
 
 		await act( async () => {
-			fireEvent.click( screen.getByRole( 'button', { name: 'Accept AI resolution' } ) );
+			fireEvent.click( screen.getByRole( 'button', { name: 'Apply AI change' } ) );
 		} );
 
 		expect( mockApplyReviewEdit ).toHaveBeenCalledWith(
@@ -1142,6 +1179,18 @@ describe( 'AiEditorialReview — conflict resolutions', () => {
 			expect.any( Function ),
 			undefined
 		);
+	} );
+
+	it( 'offers an AI-specific retry when applying the AI candidate fails', async () => {
+		mockApplyReviewEdit.mockResolvedValueOnce( { success: false } );
+
+		render( <AiEditorialReview { ...conflictPayload } /> );
+
+		await act( async () => {
+			fireEvent.click( screen.getByRole( 'button', { name: 'Apply AI change' } ) );
+		} );
+
+		expect( screen.getByRole( 'button', { name: 'Retry AI change' } ) ).toBeInTheDocument();
 	} );
 
 	it( 'groups reviewer options separately from the fixed AI + Dismiss pair', () => {
@@ -1191,38 +1240,36 @@ describe( 'AiEditorialReview — conflict resolutions', () => {
 			'.jetpack-ai-editorial-review__conflict-candidates'
 		);
 		const resolve = document.querySelector(
-			'.jetpack-ai-editorial-review__conflict-resolution .jetpack-ai-editorial-review__actions'
+			'.jetpack-ai-editorial-review__conflict-resolution .jetpack-ai-feedback-list__actions'
 		);
 		expect( candidates ).toBeInTheDocument();
 		expect( resolve ).toBeInTheDocument();
 
 		// All three reviewer options are in the candidates group, none in the pair.
-		for ( const name of [
-			"Accept Ada's wording",
-			"Accept Ben's wording",
-			"Accept Cai's wording",
-		] ) {
+		for ( const name of [ "Apply Ada's wording", "Apply Ben's wording", "Apply Cai's wording" ] ) {
 			const btn = screen.getByRole( 'button', { name } );
 			expect( candidates ).toContainElement( btn );
 			expect( resolve ).not.toContainElement( btn );
 		}
 
 		// AI + Dismiss are the fixed pair, not mixed into the reviewer grid.
-		const ai = screen.getByRole( 'button', { name: 'Accept AI resolution' } );
+		const ai = screen.getByRole( 'button', { name: 'Apply AI change' } );
 		const dismiss = screen.getByRole( 'button', { name: 'Dismiss' } );
 		expect( resolve ).toContainElement( ai );
 		expect( resolve ).toContainElement( dismiss );
+		expect( ai ).toHaveClass( 'jetpack-ai-feedback-list__action-button', 'is-primary' );
+		expect( dismiss ).toHaveClass( 'jetpack-ai-feedback-list__action-button', 'is-dismiss' );
 		expect( candidates ).not.toContainElement( ai );
 		expect( candidates ).not.toContainElement( dismiss );
 	} );
 
-	it( 'resolves in place on accept — keeps the header, shows Applied + Undo, and Undo restores the options', async () => {
+	it( 'resolves in place on apply — keeps the header, shows Applied + Undo, and Undo restores the options', async () => {
 		mockApplyReviewEdit.mockResolvedValueOnce( { success: true } );
 
 		render( <AiEditorialReview { ...conflictPayload } /> );
 
 		await act( async () => {
-			fireEvent.click( screen.getByRole( 'button', { name: 'Accept AI resolution' } ) );
+			fireEvent.click( screen.getByRole( 'button', { name: 'Apply AI change' } ) );
 		} );
 
 		await waitFor( () => {
@@ -1235,14 +1282,12 @@ describe( 'AiEditorialReview — conflict resolutions', () => {
 		const undoBtn = screen.getByText( 'Undo' );
 		expect( undoBtn ).toBeInTheDocument();
 		// The active resolution options are gone while resolved.
-		expect(
-			screen.queryByRole( 'button', { name: 'Accept AI resolution' } )
-		).not.toBeInTheDocument();
+		expect( screen.queryByRole( 'button', { name: 'Apply AI change' } ) ).not.toBeInTheDocument();
 
 		fireEvent.click( undoBtn );
 
 		// Undo brings back the active card with its resolution options.
-		expect( screen.getByRole( 'button', { name: 'Accept AI resolution' } ) ).toBeInTheDocument();
+		expect( screen.getByRole( 'button', { name: 'Apply AI change' } ) ).toBeInTheDocument();
 		expect( screen.queryByText( 'Applied' ) ).not.toBeInTheDocument();
 	} );
 
@@ -1257,7 +1302,7 @@ describe( 'AiEditorialReview — conflict resolutions', () => {
 		render( <AiEditorialReview { ...conflictPayload } /> );
 
 		await act( async () => {
-			fireEvent.click( screen.getByRole( 'button', { name: 'Accept AI resolution' } ) );
+			fireEvent.click( screen.getByRole( 'button', { name: 'Apply AI change' } ) );
 		} );
 
 		await waitFor( () => {
@@ -1274,18 +1319,16 @@ describe( 'AiEditorialReview — conflict resolutions', () => {
 		);
 		expect( mockUndoBlockEdit ).toHaveBeenCalledTimes( 1 );
 		expect( screen.getByText( 'Applied' ) ).toBeInTheDocument();
-		expect(
-			screen.queryByRole( 'button', { name: 'Accept AI resolution' } )
-		).not.toBeInTheDocument();
+		expect( screen.queryByRole( 'button', { name: 'Apply AI change' } ) ).not.toBeInTheDocument();
 		expect( screen.getByText( 'Undo' ) ).toBeInTheDocument();
 
 		fireEvent.click( screen.getByText( 'Undo' ) );
 
 		expect( mockUndoBlockEdit ).toHaveBeenCalledTimes( 2 );
-		expect( screen.getByRole( 'button', { name: 'Accept AI resolution' } ) ).toBeInTheDocument();
+		expect( screen.getByRole( 'button', { name: 'Apply AI change' } ) ).toBeInTheDocument();
 	} );
 
-	it( 'renders unsupported conflict candidates as manual guidance without accept buttons', () => {
+	it( 'renders unsupported conflict candidates as manual guidance without apply buttons', () => {
 		mockBlocks = [
 			...blocks,
 			{ clientId: 'b3', name: 'core/list', attributes: { content: 'List content' } },
@@ -1317,16 +1360,14 @@ describe( 'AiEditorialReview — conflict resolutions', () => {
 		);
 
 		expect( screen.getByText( 'Needs manual edit — no exact source text' ) ).toBeInTheDocument();
-		expect(
-			screen.queryByRole( 'button', { name: 'Accept AI resolution' } )
-		).not.toBeInTheDocument();
+		expect( screen.queryByRole( 'button', { name: 'Apply AI change' } ) ).not.toBeInTheDocument();
 		expect( screen.getByRole( 'button', { name: 'Dismiss' } ) ).toBeInTheDocument();
 
 		expect( mockApplyReviewEdit ).not.toHaveBeenCalled();
 		expect( screen.queryByText( /Apply all/ ) ).not.toBeInTheDocument();
 	} );
 
-	it( 'renders post-wide conflict candidates as manual guidance without accept buttons', () => {
+	it( 'renders post-wide conflict candidates as manual guidance without apply buttons', () => {
 		render(
 			<AiEditorialReview
 				{ ...basePayload( {
@@ -1354,9 +1395,7 @@ describe( 'AiEditorialReview — conflict resolutions', () => {
 		);
 
 		expect( screen.getByText( 'Needs manual edit — no single block target' ) ).toBeInTheDocument();
-		expect(
-			screen.queryByRole( 'button', { name: 'Accept AI resolution' } )
-		).not.toBeInTheDocument();
+		expect( screen.queryByRole( 'button', { name: 'Apply AI change' } ) ).not.toBeInTheDocument();
 		expect( screen.getByRole( 'button', { name: 'Dismiss' } ) ).toBeInTheDocument();
 
 		expect( mockApplyReviewEdit ).not.toHaveBeenCalled();
@@ -1390,9 +1429,7 @@ describe( 'AiEditorialReview — conflict resolutions', () => {
 		);
 
 		expect( screen.getByText( 'Needs manual edit — no exact source text' ) ).toBeInTheDocument();
-		expect(
-			screen.queryByRole( 'button', { name: 'Accept AI resolution' } )
-		).not.toBeInTheDocument();
+		expect( screen.queryByRole( 'button', { name: 'Apply AI change' } ) ).not.toBeInTheDocument();
 		expect( screen.getByRole( 'button', { name: 'Dismiss' } ) ).toBeInTheDocument();
 
 		expect( mockApplyReviewEdit ).not.toHaveBeenCalled();
@@ -1442,9 +1479,7 @@ describe( 'AiEditorialReview — conflict resolutions', () => {
 			expect(
 				screen.getByText( 'Needs manual edit — source text appears more than once' )
 			).toBeInTheDocument();
-			expect(
-				screen.queryByRole( 'button', { name: 'Accept AI resolution' } )
-			).not.toBeInTheDocument();
+			expect( screen.queryByRole( 'button', { name: 'Apply AI change' } ) ).not.toBeInTheDocument();
 			expect( screen.getByRole( 'button', { name: 'Dismiss' } ) ).toBeInTheDocument();
 
 			expect( mockApplyReviewEdit ).not.toHaveBeenCalled();
@@ -1773,7 +1808,7 @@ describe( 'AiEditorialReview — HTML fragment display', () => {
 		expect( aiText?.querySelector( 'a' ) ).not.toHaveAttribute( 'href' );
 
 		await act( async () => {
-			fireEvent.click( screen.getByRole( 'button', { name: 'Accept AI resolution' } ) );
+			fireEvent.click( screen.getByRole( 'button', { name: 'Apply AI change' } ) );
 		} );
 
 		expect( mockApplyReviewEdit ).toHaveBeenCalledWith(

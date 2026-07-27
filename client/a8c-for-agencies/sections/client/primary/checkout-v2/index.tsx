@@ -1,6 +1,5 @@
 import { StripeHookProvider } from '@automattic/calypso-stripe';
 import { CheckoutErrorBoundary } from '@automattic/composite-checkout';
-import { addQueryArgs } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
 import A4ALogo from 'calypso/a8c-for-agencies/components/a4a-logo';
 import { getStripeConfiguration } from 'calypso/lib/store-transactions';
@@ -11,6 +10,7 @@ import { getCurrentUserLocale } from 'calypso/state/current-user/selectors';
 import ClientCheckoutV2Error from '../../checkout-v2-error';
 import ClientCheckoutV2Placeholder from '../../checkout-v2-placeholder';
 import useClientCheckout from '../../hooks/use-client-checkout';
+import getClientCheckoutRedirectUrl from '../../lib/get-client-checkout-redirect-url';
 
 import './style.scss';
 
@@ -26,9 +26,7 @@ function ClientCheckoutContent() {
 		} );
 
 	const subscriptionsUrl = window.location.origin + '/client/subscriptions';
-	const redirectTo = wpcomHostingProductSlug
-		? addQueryArgs( subscriptionsUrl, { wpcom_plan_purchased: wpcomHostingProductSlug } )
-		: subscriptionsUrl;
+	const redirectTo = getClientCheckoutRedirectUrl( subscriptionsUrl, wpcomHostingProductSlug );
 
 	if ( ! isReady ) {
 		return <ClientCheckoutV2Placeholder />;

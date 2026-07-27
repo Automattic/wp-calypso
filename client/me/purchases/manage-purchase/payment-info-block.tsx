@@ -1,3 +1,4 @@
+import { getPurchasePayment } from '@automattic/api-core';
 import { Button } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
@@ -8,12 +9,11 @@ import {
 	isPaidWithCreditCard,
 	isPaidWithCredits,
 	isPaidWithPayPalDirect,
-	mightStillAutoRenew,
 	paymentLogoType,
 	hasPaymentMethod,
-} from 'calypso/lib/purchases';
+} from '../lib/raw-purchase-helpers';
+import type { Purchase } from '@automattic/api-core';
 import type { StoredPaymentMethod } from '@automattic/wpcom-checkout';
-import type { Purchase } from 'calypso/lib/purchases/types';
 import type { ReactNode } from 'react';
 
 export default function PaymentInfoBlock( {
@@ -29,15 +29,16 @@ export default function PaymentInfoBlock( {
 } ) {
 	const translate = useTranslate();
 	const moment = useLocalizedMoment();
+	const payment = getPurchasePayment( purchase );
 	const isBackupMethodAvailable = cards.some(
-		( card ) => card.stored_details_id !== purchase.payment.storedDetailsId && card.is_backup
+		( card ) => card.stored_details_id !== payment.storedDetailsId && card.is_backup
 	);
 
 	if ( isIncludedWithPlan( purchase ) ) {
 		return <PaymentInfoBlockWrapper>{ translate( 'Included with plan' ) }</PaymentInfoBlockWrapper>;
 	}
 
-	if ( ! purchase.isAutoRenewEnabled && isPaidWithCredits( purchase ) ) {
+	if ( ! purchase.is_auto_renew_enabled && isPaidWithCredits( purchase ) ) {
 		return <PaymentInfoBlockWrapper>{ translate( 'None' ) }</PaymentInfoBlockWrapper>;
 	}
 
@@ -52,7 +53,7 @@ export default function PaymentInfoBlock( {
 		);
 	}
 
-	const willNotBeBilled = ! mightStillAutoRenew( purchase );
+	const willNotBeBilled = ! purchase.might_still_auto_renew;
 
 	if (
 		hasPaymentMethod( purchase ) &&
@@ -64,7 +65,7 @@ export default function PaymentInfoBlock( {
 			<PaymentInfoBlockWrapper>
 				<span className="manage-purchase__payment-method">
 					<PaymentLogo type={ logoType } disabled={ willNotBeBilled } />
-					{ purchase.payment.creditCard?.number ?? '' }
+					{ payment.creditCard?.number ?? '' }
 				</span>
 				{ willNotBeBilled && <WillNotBeBilledNotice /> }
 				{ isBackupMethodAvailable && ! willNotBeBilled && <BackupPaymentMethodNotice /> }
@@ -85,7 +86,7 @@ export default function PaymentInfoBlock( {
 				</span>
 				{ translate( 'expiring %(cardExpiry)s', {
 					args: {
-						cardExpiry: moment( purchase.payment.expiryDate, 'MM/YY' ).format( 'MMMM YYYY' ),
+						cardExpiry: moment( payment.expiryDate, 'MM/YY' ).format( 'MMMM YYYY' ),
 					},
 				} ) }
 				{ willNotBeBilled && <WillNotBeBilledNotice /> }
@@ -105,11 +106,11 @@ export default function PaymentInfoBlock( {
 		);
 	}
 
-	if ( purchase.isInAppPurchase ) {
+	if ( purchase.is_iap_purchase ) {
 		return <PaymentInfoBlockWrapper>{ translate( 'In-App Purchase' ) }</PaymentInfoBlockWrapper>;
 	}
 
-	if ( purchase.isAutoRenewEnabled && ! hasPaymentMethod( purchase ) ) {
+	if ( purchase.is_auto_renew_enabled && ! hasPaymentMethod( purchase ) ) {
 		return (
 			<PaymentInfoBlockWrapper>
 				<NoPaymentMethodWarning
@@ -123,7 +124,7 @@ export default function PaymentInfoBlock( {
 	if (
 		! isRechargeable( purchase ) &&
 		hasPaymentMethod( purchase ) &&
-		purchase.isAutoRenewEnabled
+		purchase.is_auto_renew_enabled
 	) {
 		return (
 			<PaymentInfoBlockWrapper>

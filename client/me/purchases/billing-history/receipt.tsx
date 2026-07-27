@@ -79,7 +79,7 @@ interface BillingReceiptProps {
 }
 
 interface BillingReceiptConnectedProps {
-	transactionFetchError?: string;
+	transactionFetchError: boolean;
 	transaction: BillingTransaction | undefined;
 	translate: LocalizeProps[ 'translate' ];
 	previousRoute: string;

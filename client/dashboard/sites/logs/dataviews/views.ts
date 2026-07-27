@@ -3,14 +3,12 @@ import type { View } from '@wordpress/dataviews';
 
 export const DEFAULT_PER_PAGE = 50;
 
-// `infiniteScrollEnabled` is intentionally omitted: this view does its own
-// scroll-driven `fetchNextPage()` (see `index.tsx`). Enabling DataViews' own
-// infinite scroll on top of that makes `useData` window the rows and drop
-// off-screen ones, which fights the custom handler and looks janky.
 const DEFAULT_VIEW = {
 	type: 'table',
 	perPage: DEFAULT_PER_PAGE,
 	showLevels: false,
+	infiniteScrollEnabled: true,
+	startPosition: 1,
 } satisfies Partial< View >;
 
 export const DEFAULT_PHP_LOGS_VIEW: View = {

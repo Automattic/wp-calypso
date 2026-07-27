@@ -1,11 +1,17 @@
 import { formatCurrency } from '@automattic/number-formatters';
-import { __experimentalGrid as Grid, Button } from '@wordpress/components';
-import { createInterpolateElement } from '@wordpress/element';
+import {
+	Button,
+	__experimentalGrid as Grid,
+	__experimentalText as Text,
+	__experimentalVStack as VStack,
+} from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
-import ConsolidatedStatCard from './consolidated-stat-card';
+import ConsolidatedStatCard from '../../../components/consolidated-stat-card';
+import InlineSupportLink from '../../../components/inline-support-link';
 import useConsolidatedPayoutData from './hooks/use-consolidated-payout-data';
+import { downloadCommissionsCsv } from './lib/download-commissions-csv';
 import PayoutCards from './payout-cards';
-import type { Referral, ReferralCommissionPayout } from '@automattic/api-core';
+import type { AgencyProduct, Referral, ReferralCommissionPayout } from '@automattic/api-core';
 
 const AGENCY_EARNINGS_LEARN_MORE_LINK =
 	'https://agencieshelp.automattic.com/knowledge-base/automattic-for-agencies-earnings/';
@@ -33,6 +39,10 @@ interface ConsolidatedViewsProps {
 	isLoadingCommissionPayout?: boolean;
 	/** Each app passes its own user locale for date formatting. */
 	locale?: string;
+	/** Product catalog for resolving commission rates in the CSV export. */
+	products?: AgencyProduct[];
+	/** Each app passes its own analytics client. */
+	recordTracksEvent?: ( eventName: string, properties?: Record< string, unknown > ) => void;
 }
 
 export default function ConsolidatedViews( {
@@ -42,6 +52,8 @@ export default function ConsolidatedViews( {
 	isLoading,
 	isLoadingCommissionPayout,
 	locale,
+	products,
+	recordTracksEvent,
 }: ConsolidatedViewsProps ) {
 	const { previousQuarterExpectedCommission, currentQuarterExpectedCommission, pendingOrders } =
 		useConsolidatedPayoutData( referrals );
@@ -49,6 +61,23 @@ export default function ConsolidatedViews( {
 	const totalPayouts = isSingleClient
 		? findClientTotalCommission( referrals[ 0 ], referralCommissionPayout )
 		: referralCommissionPayout?.total_commission;
+
+	const handleDownloadCsv = () => {
+		recordTracksEvent?.( 'calypso_a4a_referrals_download_commissions_csv', {
+			detailed_view: isSingleClient,
+		} );
+		downloadCommissionsCsv( {
+			referrals,
+			products: products ?? [],
+			referralCommissionPayout,
+			isSingleClient,
+			clientEmail: isSingleClient ? referrals[ 0 ]?.client?.email : undefined,
+		} );
+	};
+
+	// Referrals supply each row's quantity and commission rate, so offering the
+	// download before they arrive would produce a CSV with rows missing.
+	const canDownloadCsv = ! isLoading && !! products && !! totalPayouts && totalPayouts > 0;
 
 	return (
 		<Grid
@@ -61,16 +90,27 @@ export default function ConsolidatedViews( {
 				footerText={
 					isSingleClient ? __( 'All payouts for this client' ) : __( 'All time referral payouts' )
 				}
+				footerAction={
+					canDownloadCsv ? (
+						<Button variant="link" onClick={ handleDownloadCsv }>
+							{ __( 'Download CSV' ) }
+						</Button>
+					) : undefined
+				}
 				popoverTitle={ __( 'Total payouts' ) }
-				popoverContent={ createInterpolateElement(
-					__(
-						'The exact amount your agency has been paid out for referrals.<br/><br/><a>Learn more</a>'
-					),
-					{
-						br: <br />,
-						a: <Button variant="link" href={ AGENCY_EARNINGS_LEARN_MORE_LINK } target="_blank" />,
-					}
-				) }
+				popoverContent={
+					<VStack spacing={ 3 }>
+						<Text>{ __( 'The exact amount your agency has been paid out for referrals.' ) }</Text>
+						<Text>
+							<InlineSupportLink
+								supportLink={ AGENCY_EARNINGS_LEARN_MORE_LINK }
+								forceOpenInHelpCenter
+							>
+								{ __( 'Learn more' ) }
+							</InlineSupportLink>
+						</Text>
+					</VStack>
+				}
 				isLoading={ isLoading || isLoadingCommissionPayout }
 			/>
 			<PayoutCards
@@ -83,15 +123,19 @@ export default function ConsolidatedViews( {
 				value={ pendingOrders }
 				footerText={ __( 'Pending referral orders' ) }
 				popoverTitle={ __( 'Pending orders' ) }
-				popoverContent={ createInterpolateElement(
-					__(
-						'These are the number of pending referrals (unpaid carts).<br/><br/><a>Learn more</a>'
-					),
-					{
-						br: <br />,
-						a: <Button variant="link" href={ AGENCY_EARNINGS_LEARN_MORE_LINK } target="_blank" />,
-					}
-				) }
+				popoverContent={
+					<VStack spacing={ 3 }>
+						<Text>{ __( 'These are the number of pending referrals (unpaid carts).' ) }</Text>
+						<Text>
+							<InlineSupportLink
+								supportLink={ AGENCY_EARNINGS_LEARN_MORE_LINK }
+								forceOpenInHelpCenter
+							>
+								{ __( 'Learn more' ) }
+							</InlineSupportLink>
+						</Text>
+					</VStack>
+				}
 				isLoading={ isLoading }
 			/>
 		</Grid>

@@ -182,7 +182,7 @@ export interface CancelPurchaseActions {
 	) => void;
 	clearPurchases: () => void;
 	fetchUserPurchases: ( userId: number ) => Promise< Purchases.RawPurchase[] | undefined >;
-	refreshSitePlans: ( siteId: string | number ) => void;
+	refreshSitePlans: ( siteId: number ) => void;
 	removePurchaseFromState: ( purchaseId: string | number ) => Purchases.RawPurchase | null;
 	restorePurchaseToState: ( purchase: Purchases.RawPurchase ) => void;
 	successNotice: (
@@ -202,7 +202,7 @@ export interface CancelPurchaseConnectedProps {
 	currentUserId: number | null;
 	hasLoadedSites: boolean;
 	hasLoadedUserPurchasesFromServer: boolean;
-	includedDomainPurchase: Purchases.Purchase;
+	includedDomainPurchase?: Purchases.Purchase;
 	isAkismet: boolean;
 	isDomainRegistrationPurchase: boolean;
 	isHundredYearDomain: boolean | undefined;
@@ -210,9 +210,9 @@ export interface CancelPurchaseConnectedProps {
 	isJetpackPurchase: boolean;
 	isSplitCancelRemoveEnabled: boolean;
 	productsList: Record< string, { product_type: string; billing_product_slug: string } >;
-	purchase: Purchases.Purchase;
-	purchases: Purchases.Purchase[];
-	site: SiteDetails;
+	purchase?: Purchases.Purchase;
+	purchases: Purchases.Purchase[] | undefined;
+	site: SiteDetails | null | undefined;
 	hasSetupAds: boolean;
 	hasCustomPrimaryDomain: boolean | null;
 	wpcomDomain: string | null;
@@ -387,6 +387,10 @@ class CancelPurchase extends Component< CancelPurchaseAllProps, CancelPurchaseSt
 		const { includedDomainPurchase, purchase, isJetpack, isAkismet, isDomainRegistrationPurchase } =
 			this.props;
 
+		if ( ! purchase ) {
+			return;
+		}
+
 		// Jetpack/Akismet products and domain registrations render their
 		// cancellation survey inside CancelPurchaseButton as a dialog rather than
 		// the unified pre-survey screen. Under the split flag with
@@ -469,18 +473,22 @@ class CancelPurchase extends Component< CancelPurchaseAllProps, CancelPurchaseSt
 	// hasLoadedUserPurchasesFromServer and render the loading placeholder
 	// over the survey.
 	fireMutationFromConfirm = async () => {
-		const { isJetpack, isAkismet, isDomainRegistrationPurchase } = this.props;
+		const { isJetpack, isAkismet, isDomainRegistrationPurchase, purchase } = this.props;
 		const isDialogProduct = isJetpack || isAkismet || isDomainRegistrationPurchase;
+
+		if ( ! purchase ) {
+			return;
+		}
 
 		this.setState( { isLoading: true } );
 		try {
-			const flowType = this.getCancelFlowType( this.props.purchase );
+			const flowType = this.getCancelFlowType( purchase );
 			const isAutoRenewIntent = flowType === CANCEL_FLOW_TYPE.CANCEL_AUTORENEW;
 			const result = isAutoRenewIntent
-				? await this.cancelPurchase( this.props.purchase )
-				: await this.cancelAndRefund( this.props.purchase );
+				? await this.cancelPurchase( purchase )
+				: await this.cancelAndRefund( purchase );
 			if ( result.success ) {
-				const refundable = ! isAutoRenewIntent && hasAmountAvailableToRefund( this.props.purchase );
+				const refundable = ! isAutoRenewIntent && hasAmountAvailableToRefund( purchase );
 				if ( ! isAutoRenewIntent ) {
 					await this.handleMarketplaceSubscriptions( refundable );
 				}
@@ -643,13 +651,19 @@ class CancelPurchase extends Component< CancelPurchaseAllProps, CancelPurchaseSt
 	};
 
 	onSurveyComplete = async () => {
+		const { purchase } = this.props;
+
+		if ( ! purchase ) {
+			return;
+		}
+
 		// Flag-on path: the mutation already fired at confirm-click via
 		// fireMutationFromConfirm. fireMutationFromConfirm intentionally
 		// skipped clearPurchases / refreshSitePlans so they wouldn't flip
 		// isDataLoading mid-survey; we run them here, immediately before
 		// the redirect, so the destination page picks up fresh server data.
 		if ( this.shouldFireMutationOnConfirm() ) {
-			this.props.refreshSitePlans( this.props.purchase.siteId );
+			this.props.refreshSitePlans( purchase.siteId );
 			this.props.clearPurchases();
 			if ( this.state.fireMutationWasRefund ) {
 				const managePurchaseUrl = ( this.props.getManagePurchaseUrlFor ?? managePurchase )(
@@ -668,13 +682,13 @@ class CancelPurchase extends Component< CancelPurchaseAllProps, CancelPurchaseSt
 		this.setState( { isLoading: true } );
 
 		const isAutoRenewIntent = this.state.cancelIntent === 'autorenew';
-		const isRemoveDeleteFlow = this.isLegacyRemoveDeleteFlow( this.props.purchase );
+		const isRemoveDeleteFlow = this.isLegacyRemoveDeleteFlow( purchase );
 
 		// Optimistic path: strip cache → navigate → fire mutation in background
 		if ( isRemoveDeleteFlow ) {
 			// Capture props before the timeout — connect() + useSyncExternalStore
 			// may update this.props synchronously when the Redux store changes.
-			const { purchase, purchaseId, atomicTransfer, purchaseListUrl, translate } = this.props;
+			const { purchaseId, atomicTransfer, purchaseListUrl, translate } = this.props;
 			const productNoun = getProductNounForCategory( classifyPurchaseForCopy( purchase ) );
 			const isAtomic = Boolean( atomicTransfer?.created_at );
 			const backupRedirect = purchaseListUrl ?? purchasesRoot;
@@ -713,14 +727,12 @@ class CancelPurchase extends Component< CancelPurchaseAllProps, CancelPurchaseSt
 
 		try {
 			const result = isAutoRenewIntent
-				? await this.cancelPurchase( this.props.purchase )
-				: await this.submitCancelAndRefundPurchase( this.props.purchase );
+				? await this.cancelPurchase( purchase )
+				: await this.submitCancelAndRefundPurchase( purchase );
 			if ( result.success ) {
-				const refundable = isAutoRenewIntent
-					? false
-					: hasAmountAvailableToRefund( this.props.purchase );
+				const refundable = isAutoRenewIntent ? false : hasAmountAvailableToRefund( purchase );
 				await this.handleMarketplaceSubscriptions( refundable );
-				this.props.refreshSitePlans( this.props.purchase.siteId );
+				this.props.refreshSitePlans( purchase.siteId );
 				this.props.clearPurchases();
 				this.props.successNotice( result.message, {
 					displayOnNextPage: true,
@@ -750,8 +762,9 @@ class CancelPurchase extends Component< CancelPurchaseAllProps, CancelPurchaseSt
 	};
 
 	handleSurveyClose = () => {
-		if ( this.shouldFireMutationOnConfirm() ) {
-			this.props.refreshSitePlans( this.props.purchase.siteId );
+		const { purchase } = this.props;
+		if ( this.shouldFireMutationOnConfirm() && purchase ) {
+			this.props.refreshSitePlans( purchase.siteId );
 			this.props.clearPurchases();
 			const managePurchaseUrl = ( this.props.getManagePurchaseUrlFor ?? managePurchase )(
 				this.props.siteSlug,
@@ -796,6 +809,9 @@ class CancelPurchase extends Component< CancelPurchaseAllProps, CancelPurchaseSt
 
 	downgradeClick = ( upsell: string ) => {
 		const { purchase } = this.props;
+		if ( ! purchase ) {
+			return;
+		}
 		let downgradePlan = getDowngradePlanFromPurchase( purchase );
 		if ( 'downgrade-monthly' === upsell ) {
 			const monthlyProductSlug = getMonthlyPlanByYearly( purchase.productSlug );
@@ -814,7 +830,7 @@ class CancelPurchase extends Component< CancelPurchaseAllProps, CancelPurchaseSt
 				type: 'downgrade',
 				to_product_id: downgradePlan.getProductId(),
 			},
-			( error: Error, response: { message: string } ) => {
+			( error: Error | null, response: { message: string } ) => {
 				this.setState( { isLoading: false } );
 
 				if ( error ) {
@@ -836,6 +852,9 @@ class CancelPurchase extends Component< CancelPurchaseAllProps, CancelPurchaseSt
 		}
 
 		const { purchase } = this.props;
+		if ( ! purchase ) {
+			return;
+		}
 		const monthlyProductSlug = getMonthlyPlanByYearly( purchase.productSlug );
 		const downgradePlan = getPlan( monthlyProductSlug );
 
@@ -896,6 +915,10 @@ class CancelPurchase extends Component< CancelPurchaseAllProps, CancelPurchaseSt
 	freeMonthOfferClick = async () => {
 		const { purchase } = this.props;
 
+		if ( ! purchase ) {
+			return;
+		}
+
 		this.setState( { isLoading: true } );
 
 		try {
@@ -921,6 +944,10 @@ class CancelPurchase extends Component< CancelPurchaseAllProps, CancelPurchaseSt
 		const { purchase } = this.props;
 		const newValue = ! this.state.domainConfirmationConfirmed;
 
+		if ( ! purchase ) {
+			return;
+		}
+
 		this.setState( { domainConfirmationConfirmed: newValue } );
 
 		// Record tracks event for domain confirmation checkbox
@@ -933,6 +960,9 @@ class CancelPurchase extends Component< CancelPurchaseAllProps, CancelPurchaseSt
 
 	onKeepSubscriptionClick = () => {
 		const { purchase } = this.props;
+		if ( ! purchase ) {
+			return;
+		}
 		this.props.recordTracksEvent( 'calypso_purchases_keep_subscription', {
 			product_slug: purchase.productSlug,
 			purchase_id: purchase.id,
@@ -942,7 +972,7 @@ class CancelPurchase extends Component< CancelPurchaseAllProps, CancelPurchaseSt
 	getActiveMarketplaceSubscriptions() {
 		const { purchase, purchases, productsList } = this.props;
 
-		if ( ! isPlan( purchase ) ) {
+		if ( ! purchase || ! purchases || ! isPlan( purchase ) ) {
 			return [];
 		}
 
@@ -954,7 +984,7 @@ class CancelPurchase extends Component< CancelPurchaseAllProps, CancelPurchaseSt
 	renderRefundAmountString = (
 		purchase: Purchases.Purchase,
 		cancelBundledDomain: boolean,
-		includedDomainPurchase: Purchases.Purchase
+		includedDomainPurchase: Purchases.Purchase | undefined
 	) => {
 		const { refundInteger, totalRefundInteger, totalRefundCurrency } = purchase;
 
@@ -1017,6 +1047,10 @@ class CancelPurchase extends Component< CancelPurchaseAllProps, CancelPurchaseSt
 			isDomainRegistrationPurchase,
 		} = this.props;
 
+		if ( ! purchase ) {
+			return null;
+		}
+
 		// Check if we need atomic revert confirmation
 		const needsAtomicRevertConfirmation =
 			this.props.atomicTransfer?.created_at && ! isRefundable( purchase );
@@ -1078,11 +1112,18 @@ class CancelPurchase extends Component< CancelPurchaseAllProps, CancelPurchaseSt
 	renderCancelButton = () => {
 		const cancelButtonProps = this.getCancelPurchaseButtonProps();
 
+		if ( ! cancelButtonProps ) {
+			return null;
+		}
+
 		return <CancelPurchaseButton { ...cancelButtonProps } />;
 	};
 
 	renderKeepSubscriptionButton = () => {
 		const { purchase, siteSlug } = this.props;
+		if ( ! purchase ) {
+			return null;
+		}
 		const label = getButtonLabels( {
 			purchase: toPurchaseForCopy( purchase ),
 			intent: this.getDisplayVariant(),
@@ -1117,6 +1158,10 @@ class CancelPurchase extends Component< CancelPurchaseAllProps, CancelPurchaseSt
 			selectedDomainIsGravatar,
 		} = this.props;
 		const { isSplitCancelRemoveEnabled } = this.props;
+
+		if ( ! purchase ) {
+			return null;
+		}
 		const cancellationFeatures = purchaseCancelFeatures?.features ?? [];
 
 		// Build site-dependency warnings shown inline under the flag.
@@ -1321,7 +1366,7 @@ class CancelPurchase extends Component< CancelPurchaseAllProps, CancelPurchaseSt
 		const { includedDomainPurchase, purchase } = this.props;
 		const { cancelBundledDomain, confirmCancelBundledDomain } = this.state;
 
-		if ( ! includedDomainPurchase || ! isSubscription( purchase ) ) {
+		if ( ! purchase || ! includedDomainPurchase || ! isSubscription( purchase ) ) {
 			return null;
 		}
 
@@ -1401,6 +1446,9 @@ class CancelPurchase extends Component< CancelPurchaseAllProps, CancelPurchaseSt
 		}
 
 		const { purchase, isJetpack, isAkismet, isDomainRegistrationPurchase, intent } = this.props;
+		if ( ! purchase ) {
+			return null;
+		}
 		const { siteName, siteId } = purchase;
 
 		const displayVariant = this.getDisplayVariant();
@@ -1440,7 +1488,7 @@ class CancelPurchase extends Component< CancelPurchaseAllProps, CancelPurchaseSt
 				{ ! isJetpack && ! isAkismet && ! isDomainRegistrationPurchase && (
 					<CancelPurchaseForm
 						disableButtons={ this.state.isLoading }
-						purchase={ purchase }
+						purchase={ purchase.rawPurchase }
 						isVisible={ this.state.surveyShown }
 						onClose={ this.handleSurveyClose }
 						onSurveyComplete={ this.onSurveyComplete }
@@ -1542,14 +1590,16 @@ const ConnectedCancelPurchase = connect(
 			currentUserId: getCurrentUserId( state as object ),
 			hasLoadedSites: ! isRequestingSites( state ),
 			hasLoadedUserPurchasesFromServer: hasLoadedUserPurchasesFromServer( state ),
-			isJetpackPurchase,
-			isJetpack: purchase && ( isJetpackPlan( purchase ) || isJetpackProduct( purchase ) ),
-			isAkismet: purchase && isAkismetProduct( purchase ),
-			isDomainRegistrationPurchase: purchase && isDomainRegistration( purchase ),
+			isJetpackPurchase: Boolean( isJetpackPurchase ),
+			isJetpack: Boolean(
+				purchase && ( isJetpackPlan( purchase ) || isJetpackProduct( purchase ) )
+			),
+			isAkismet: Boolean( purchase && isAkismetProduct( purchase ) ),
+			isDomainRegistrationPurchase: Boolean( purchase && isDomainRegistration( purchase ) ),
 			purchase,
 			purchases,
 			productsList,
-			includedDomainPurchase: getIncludedDomainPurchase( state, purchase ),
+			includedDomainPurchase: getIncludedDomainPurchase( state, purchase ) ?? undefined,
 			site,
 			isHundredYearDomain: selectedDomain?.isHundredYearDomain,
 			atomicTransfer: getAtomicTransfer( state, purchase?.siteId ),
@@ -1579,10 +1629,7 @@ const ConnectedCancelPurchase = connect(
 function CancelPurchaseWithExperiment( props: CancelPurchaseProps ) {
 	const isSplitCancelRemoveEnabled = useIsSplitCancelRemoveEnabled();
 	const { data: purchaseCancelFeatures, isPending: isPurchaseCancelFeaturesLoading } = useQuery(
-		purchaseCancelFeaturesQuery(
-			props.purchaseId,
-			isSplitCancelRemoveEnabled ? 'treatment' : 'control'
-		)
+		purchaseCancelFeaturesQuery( props.purchaseId )
 	);
 	return (
 		<ConnectedCancelPurchase

@@ -1,8 +1,6 @@
 import { AkismetPlans, TitanMailSlugs } from '@automattic/api-core';
 import { _n, __, sprintf } from '@wordpress/i18n';
 import { intervalToDuration } from 'date-fns';
-import { TitanPlanTier } from '../../../emails/types';
-import { getTitanTierFromSlug } from '../../../emails/utils/titan-tiers';
 import { isGSuiteOrGoogleWorkspaceProductSlug, DisplayVariant } from '../../../utils/purchase';
 
 /**
@@ -583,58 +581,6 @@ export function getButtonLabels( { purchase, intent }: ConfirmationCopyArgs ): {
 		primary: __( 'Cancel subscription' ),
 		secondary: __( 'Keep subscription' ),
 	};
-}
-
-/**
- * Curated "what you'll lose" list for a Titan (Professional Email) subscription,
- * keyed off the purchase's tier. Returns null when the purchase is not a Titan
- * tier product.
- *
- * The server-provided cancel-features list is tier-unaware for Titan (it returns
- * the Pro feature set regardless of tier), so the cancel flow prefers this list
- * for Titan purchases to show the storage and highlights that match the tier the
- * user is actually on.
- */
-export function getTitanCancellationLossItems( purchase: PurchaseForCopy ): string[] | null {
-	const tier = getTitanTierFromSlug( purchase.product_slug );
-	if ( ! tier ) {
-		return null;
-	}
-
-	const customEmail = __( 'Your custom email address' );
-	const emailCalendarContacts = __( 'Email, calendar, and contacts' );
-	const webAndMobile = __( 'Access on web and mobile' );
-	const support = __( '24/7 email support' );
-
-	switch ( tier ) {
-		case TitanPlanTier.Premium:
-			return [
-				customEmail,
-				__( '50 GB of mailbox storage' ),
-				emailCalendarContacts,
-				webAndMobile,
-				__( 'Two-factor authentication, priority inbox, and more' ),
-				support,
-			];
-		case TitanPlanTier.Ultra:
-			return [
-				customEmail,
-				__( '100 GB of mailbox storage' ),
-				emailCalendarContacts,
-				webAndMobile,
-				__( 'Titan AI, email campaigns, and more' ),
-				support,
-			];
-		case TitanPlanTier.Pro:
-		default:
-			return [
-				customEmail,
-				__( '30 GB of mailbox storage' ),
-				emailCalendarContacts,
-				webAndMobile,
-				support,
-			];
-	}
 }
 
 /**

@@ -125,6 +125,7 @@ const ReaderSidebarRecent = ( { isOpen, onClick, path, className }: Props ): Rea
 			moreMenuActions={
 				<MoreMenuActions
 					identifier="following"
+					isSingleFeed={ false }
 					feedIds={ feedsInfo.feedIds }
 					feedUrls={ feedsInfo.feedUrls }
 					unseenCount={ feedsInfo.unseenCount }

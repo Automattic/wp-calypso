@@ -1,5 +1,7 @@
+import { purchaseQuery } from '@automattic/api-queries';
 import { isJetpackPlan, isFreeJetpackPlan } from '@automattic/calypso-products';
 import { Card, FormLabel } from '@automattic/components';
+import { useQuery } from '@tanstack/react-query';
 import { localize, LocalizeProps } from 'i18n-calypso';
 import { Component } from 'react';
 import { connect } from 'react-redux';
@@ -7,21 +9,17 @@ import ClipboardButtonInput from 'calypso/components/clipboard-button-input';
 import QueryPluginKeys from 'calypso/components/data/query-plugin-keys';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import SectionHeader from 'calypso/components/section-header';
-import { getName, isPartnerPurchase, isRemoved } from 'calypso/lib/purchases';
 import { getPluginsForSite } from 'calypso/state/plugins/premium/selectors';
-import {
-	getByPurchaseId,
-	hasLoadedSitePurchasesFromServer,
-	hasLoadedUserPurchasesFromServer,
-} from 'calypso/state/purchases/selectors';
 import { isRequestingSites, getSite } from 'calypso/state/sites/selectors';
+import { getName, isPartnerPurchase, isRemoved } from '../../lib/raw-purchase-helpers';
 import PlanBillingPeriod from './billing-period';
-import type { Purchases, SiteDetails } from '@automattic/data-stores';
+import type { Purchase } from '@automattic/api-core';
+import type { SiteDetails } from '@automattic/data-stores';
 
 import './style.scss';
 
 export interface PurchasePlanDetailsConnectedProps {
-	purchase: Purchases.Purchase | undefined;
+	purchase: Purchase | undefined;
 	hasLoadedSites: boolean;
 	hasLoadedPurchasesFromServer: boolean;
 	pluginList: Array< {
@@ -117,17 +115,37 @@ export class PurchasePlanDetails extends Component<
 	}
 }
 
-export default connect( ( state, props: PurchasePlanDetailsProps ) => {
-	const purchase = getByPurchaseId( state, props.purchaseId );
-	const siteId = purchase ? purchase.siteId : null;
-	return {
-		hasLoadedSites: ! isRequestingSites( state ),
-		site: purchase ? getSite( state, purchase.siteId ) : null,
-		hasLoadedPurchasesFromServer: siteId
-			? hasLoadedSitePurchasesFromServer( state )
-			: hasLoadedUserPurchasesFromServer( state ),
-		purchase,
-		pluginList: getPluginsForSite( state, siteId ?? 0 ),
-		siteId,
-	};
-} )( localize( PurchasePlanDetails ) );
+const ConnectedPurchasePlanDetails = connect(
+	(
+		state,
+		props: PurchasePlanDetailsProps & {
+			purchase: Purchase | undefined;
+			hasLoadedPurchasesFromServer: boolean;
+		}
+	) => {
+		const { purchase } = props;
+		const siteId = purchase ? purchase.blog_id : null;
+		return {
+			hasLoadedSites: ! isRequestingSites( state ),
+			site: purchase ? getSite( state, purchase.blog_id ) : null,
+			hasLoadedPurchasesFromServer: props.hasLoadedPurchasesFromServer,
+			purchase,
+			pluginList: getPluginsForSite( state, siteId ?? 0 ),
+			siteId,
+		};
+	}
+)( localize( PurchasePlanDetails ) );
+
+export default function PurchasePlanDetailsContainer( props: PurchasePlanDetailsProps ) {
+	const { data: purchase, isPending } = useQuery( {
+		...purchaseQuery( Number( props.purchaseId ) ),
+		enabled: Boolean( props.purchaseId ),
+	} );
+	return (
+		<ConnectedPurchasePlanDetails
+			{ ...props }
+			purchase={ purchase }
+			hasLoadedPurchasesFromServer={ ! isPending }
+		/>
+	);
+}

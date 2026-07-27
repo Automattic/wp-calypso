@@ -87,6 +87,7 @@ export const tagListing = ( context, next ) => {
 				) }
 				startDate={ startDate }
 				onUpdatesShown={ trackUpdatesLoaded.bind( null, mcKey ) } // eslint-disable-line
+				placeholder={ null }
 			/>
 		</>
 	);

@@ -1,6 +1,6 @@
-@import "@automattic/typography/styles/variables";
+@import '@automattic/typography/styles/variables';
 
-@import "calypso/assets/stylesheets/shared/mixins/breakpoints";
+@import 'calypso/assets/stylesheets/shared/mixins/breakpoints';
 
 @import '@wordpress/base-styles/breakpoints';
 @import '@wordpress/base-styles/mixins';
@@ -310,6 +310,12 @@
 	}
 
 	&.sites-dashboard__layout {
+		.backup__page > .admin-ui-navigable-region,
+		.scan > .admin-ui-navigable-region,
+		.scan-new > .admin-ui-navigable-region {
+			background-color: transparent;
+		}
+
 		.activity-card-list .activity-card .activity-card__time {
 			background: none;
 		}
@@ -319,18 +325,18 @@
 		.button.toolbar__button {
 			background: transparent;
 			border-color: transparent;
-			color: var(--color-neutral-70);
+			color: var( --color-neutral-70 );
 
 			&:hover {
 				background: transparent;
 				border-color: transparent;
-				color: var(--color-neutral-70);
+				color: var( --color-neutral-70 );
 			}
 
 			&:focus {
 				background: transparent;
 				border-color: transparent;
-				color: var(--color-neutral-70);
+				color: var( --color-neutral-70 );
 				box-shadow: none;
 			}
 		}

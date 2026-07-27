@@ -14,7 +14,6 @@ import {
 	getRemoveLossIntro,
 	getSingleItemCancelCopy,
 	getSingleItemRemoveCopy,
-	getTitanCancellationLossItems,
 } from './get-confirmation-copy';
 import type { Purchase, CancellationFeature } from '@automattic/api-core';
 
@@ -34,15 +33,11 @@ const CancelPurchaseFeatureList = ( {
 	cancellationFeatures: CancellationFeature[];
 	cancellationChanges: FeatureObject[];
 } ) => {
-	// Titan's server-provided feature list is tier-unaware, so for Titan
-	// purchases we derive the loss list from the tier the user is on. Everything
-	// else uses the server list, falling back to a per-product-type item so every
-	// confirmation screen shows at least one concrete thing the user is giving up.
-	const titanLossItems = getTitanCancellationLossItems( purchase );
+	// Use the server-provided cancellation feature list, falling back to a
+	// per-product-type item so every confirmation screen shows at least one
+	// concrete thing the user is giving up.
 	let lossItems: Array< { key: string; title: string } >;
-	if ( titanLossItems ) {
-		lossItems = titanLossItems.map( ( title, idx ) => ( { key: `titan-${ idx }`, title } ) );
-	} else if ( cancellationFeatures.length ) {
+	if ( cancellationFeatures.length ) {
 		lossItems = cancellationFeatures
 			.filter( ( feature ): feature is CancellationFeature => Boolean( feature ) )
 			.map( ( feature ) => ( { key: String( feature.feature_id ), title: feature.title } ) );

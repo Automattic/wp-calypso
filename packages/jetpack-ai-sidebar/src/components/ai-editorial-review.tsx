@@ -38,7 +38,7 @@ import {
 } from '../utils/tracking';
 import { useCopyToClipboard } from '../utils/use-copy-to-clipboard';
 import BlockRef, { getBlockTypeName, type BlockSnapshot } from './block-ref';
-import ReviewCard, { type ReviewCardRow } from './review-card';
+import ReviewCard, { ReviewCardActions, type ReviewCardRow } from './review-card';
 import ReviewerChip, { type ReviewerMetadata } from './reviewer-chip';
 
 /**
@@ -216,18 +216,18 @@ function getGuidelineCategoryLabel( category: GuidelineViolation[ 'category' ] )
  * Lookup rather than a nested ternary. Keeps the JSX flat and makes eslint
  * `no-nested-ternary` happy while still i18n-ing each phrase.
  * @param status Current conflict row status.
- * @returns Label for the "Accept AI resolution" button.
+ * @returns Label for the "Apply AI change" button.
  */
 function getAiButtonLabel( status: EditStatus ): string {
 	switch ( status ) {
 		case 'applying':
 			return __( 'Applying…', __i18n_text_domain__ );
 		case 'accepted':
-			return __( 'Accepted', __i18n_text_domain__ );
+			return __( 'Applied', __i18n_text_domain__ );
 		case 'failed':
-			return __( 'Retry AI resolution', __i18n_text_domain__ );
+			return __( 'Retry AI change', __i18n_text_domain__ );
 		default:
-			return __( 'Accept AI resolution', __i18n_text_domain__ );
+			return __( 'Apply AI change', __i18n_text_domain__ );
 	}
 }
 
@@ -1340,7 +1340,7 @@ export default function AiEditorialReview( {
 																	>
 																		{ sprintf(
 																			/* translators: %s is a short label, e.g. "Marcus's wording" */
-																			__( 'Accept %s', __i18n_text_domain__ ),
+																			__( 'Apply %s', __i18n_text_domain__ ),
 																			candidate.label
 																		) }
 																	</button>
@@ -1348,28 +1348,18 @@ export default function AiEditorialReview( {
 															} ) }
 														</div>
 													) }
-													<div className="jetpack-ai-editorial-review__actions">
-														{ aiCandidate && (
-															<button
-																type="button"
-																className="jetpack-ai-editorial-review__action is-accept"
-																disabled={ actionsDisabled }
-																onClick={ () => handleAcceptCandidate( i, aiCandidate ) }
-															>
-																{ getAiButtonLabel( status ) }
-															</button>
-														) }
-														<button
-															type="button"
-															className="jetpack-ai-editorial-review__action is-dismiss"
-															disabled={ actionsDisabled }
-															onClick={ () => handleDismissConflict( i ) }
-														>
-															{ /* status can never be 'dismissed' here — the
-															collapsed branch above renders for that case */ }
-															{ __( 'Dismiss', __i18n_text_domain__ ) }
-														</button>
-													</div>
+													<ReviewCardActions
+														applyAction={
+															aiCandidate
+																? {
+																		label: getAiButtonLabel( status ),
+																		onClick: () => handleAcceptCandidate( i, aiCandidate ),
+																  }
+																: undefined
+														}
+														disabled={ actionsDisabled }
+														onDismiss={ () => handleDismissConflict( i ) }
+													/>
 												</div>
 											</article>
 										);
@@ -1429,139 +1419,141 @@ export default function AiEditorialReview( {
 									opened={ openSections.edits }
 									onToggle={ ( next: boolean ) => setSectionOpen( 'edits', next ) }
 								>
-									{ suggested_edits.map( ( edit, i ) => {
-										const status = editStatuses[ i ] ?? 'pending';
-										const requiresManual = isManualSuggestedEdit( edit );
-										const targetBlock =
-											edit.block_index !== null ? getBlock( edit.block_index ) : null;
-										// Item-level reason it can't be applied (drift / block gone / ambiguous) — not stale.
-										const disabledReason = requiresManual
-											? undefined
-											: getBlockEditDisabledReason(
-													edit.block_index,
-													edit.current_text,
-													edit.editable_attribute
-											  );
-										// Stale can't apply anything (block refs point at the wrong post) even if the
-										// current post still contains the text — so Go to section, never a dead Apply.
-										const canApply = ! requiresManual && ! disabledReason && ! isPostStale;
-										// Manual tag reflects the edit, not staleness (disabledReason is against the current post).
-										const isManualEdit = requiresManual || ( ! isPostStale && !! disabledReason );
-										// Keep Apply while an apply is in flight, unless the review went stale mid-apply.
-										const showApply = canApply || ( ! isPostStale && status === 'applying' );
-										const canGoToSection = !! focusCurrentPostBlock && !! targetBlock;
-										// Show the diff only while the exact source text is still present in the post.
-										const currentTextPresent =
-											!! edit.current_text &&
-											!! targetBlock &&
-											countOccurrences(
-												getEditableBlockContent(
-													targetBlock,
-													edit.editable_attribute,
+									<div className="jetpack-ai-feedback-list__items">
+										{ suggested_edits.map( ( edit, i ) => {
+											const status = editStatuses[ i ] ?? 'pending';
+											const requiresManual = isManualSuggestedEdit( edit );
+											const targetBlock =
+												edit.block_index !== null ? getBlock( edit.block_index ) : null;
+											// Item-level reason it can't be applied (drift / block gone / ambiguous) — not stale.
+											const disabledReason = requiresManual
+												? undefined
+												: getBlockEditDisabledReason(
+														edit.block_index,
+														edit.current_text,
+														edit.editable_attribute
+												  );
+											// Stale can't apply anything (block refs point at the wrong post) even if the
+											// current post still contains the text — so Go to section, never a dead Apply.
+											const canApply = ! requiresManual && ! disabledReason && ! isPostStale;
+											// Manual tag reflects the edit, not staleness (disabledReason is against the current post).
+											const isManualEdit = requiresManual || ( ! isPostStale && !! disabledReason );
+											// Keep Apply while an apply is in flight, unless the review went stale mid-apply.
+											const showApply = canApply || ( ! isPostStale && status === 'applying' );
+											const canGoToSection = !! focusCurrentPostBlock && !! targetBlock;
+											// Show the diff only while the exact source text is still present in the post.
+											const currentTextPresent =
+												!! edit.current_text &&
+												!! targetBlock &&
+												countOccurrences(
+													getEditableBlockContent(
+														targetBlock,
+														edit.editable_attribute,
+														edit.current_text
+													),
 													edit.current_text
-												),
-												edit.current_text
-											) >= 1;
-										const showDiff = currentTextPresent && !! edit.suggested_text;
-										const suggestionText = edit.suggested_text;
-										const key = `edit-${ i }`;
-										const categoryLabel =
-											edit.feedback_category ||
-											( targetBlock
-												? getBlockTypeName( targetBlock.name ?? '' )
-												: __( 'Suggested edit', __i18n_text_domain__ ) );
-										const categoryBadge = sprintf(
-											/* translators: 1: editorial category, 2: position in the run, 3: total edits. */
-											__( '%1$s (%2$d/%3$d)', __i18n_text_domain__ ),
-											categoryLabel,
-											i + 1,
-											suggested_edits.length
-										);
-										const bodyRows: ReviewCardRow[] = [];
-										if ( edit.rationale ) {
-											bodyRows.push( {
-												tag: __( 'Why', __i18n_text_domain__ ),
-												text: edit.rationale,
-												variant: 'current',
-												element: 'text',
-											} );
-										}
-										if ( showDiff ) {
-											bodyRows.push( {
-												tag: __( 'Current', __i18n_text_domain__ ),
-												text: edit.current_text,
-												previewHtml: edit.current_text_html,
-												variant: 'current',
-												element: 'del',
-											} );
-											bodyRows.push( {
-												tag: __( 'New', __i18n_text_domain__ ),
-												text: edit.suggested_text,
-												previewHtml: edit.suggested_text_html,
-												variant: 'new',
-												element: 'ins',
-											} );
-										} else if ( edit.suggested_text ) {
-											bodyRows.push( {
-												tag: __( 'Suggestion', __i18n_text_domain__ ),
-												text: edit.suggested_text,
-												previewHtml: edit.suggested_text_html,
-												variant: 'new',
-												element: 'text',
-											} );
-										}
-										const footer =
-											edit.supported_by_reviewers.length > 0 ? (
-												<p className="jetpack-ai-editorial-review__reviewers">
-													{ __( 'Requested by:', __i18n_text_domain__ ) }{ ' ' }
-													{ edit.supported_by_reviewers.map( ( r, j ) => (
-														<span key={ `edit-${ i }-rev-${ j }` }>
-															{ j > 0 && ' ' }
-															<ReviewerChip
-																name={ r }
-																metadata={ getReviewerMetadata( r ) }
-																variant="compact"
-															/>
-														</span>
-													) ) }
-												</p>
-											) : undefined;
+												) >= 1;
+											const showDiff = currentTextPresent && !! edit.suggested_text;
+											const suggestionText = edit.suggested_text;
+											const key = `edit-${ i }`;
+											const categoryLabel =
+												edit.feedback_category ||
+												( targetBlock
+													? getBlockTypeName( targetBlock.name ?? '' )
+													: __( 'Suggested edit', __i18n_text_domain__ ) );
+											const categoryBadge = sprintf(
+												/* translators: 1: editorial category, 2: position in the run, 3: total edits. */
+												__( '%1$s (%2$d/%3$d)', __i18n_text_domain__ ),
+												categoryLabel,
+												i + 1,
+												suggested_edits.length
+											);
+											const bodyRows: ReviewCardRow[] = [];
+											if ( edit.rationale ) {
+												bodyRows.push( {
+													tag: __( 'Why', __i18n_text_domain__ ),
+													text: edit.rationale,
+													variant: 'current',
+													element: 'text',
+												} );
+											}
+											if ( showDiff ) {
+												bodyRows.push( {
+													tag: __( 'Current', __i18n_text_domain__ ),
+													text: edit.current_text,
+													previewHtml: edit.current_text_html,
+													variant: 'current',
+													element: 'del',
+												} );
+												bodyRows.push( {
+													tag: __( 'New', __i18n_text_domain__ ),
+													text: edit.suggested_text,
+													previewHtml: edit.suggested_text_html,
+													variant: 'new',
+													element: 'ins',
+												} );
+											} else if ( edit.suggested_text ) {
+												bodyRows.push( {
+													tag: __( 'Suggestion', __i18n_text_domain__ ),
+													text: edit.suggested_text,
+													previewHtml: edit.suggested_text_html,
+													variant: 'new',
+													element: 'text',
+												} );
+											}
+											const footer =
+												edit.supported_by_reviewers.length > 0 ? (
+													<p className="jetpack-ai-editorial-review__reviewers">
+														{ __( 'Requested by:', __i18n_text_domain__ ) }{ ' ' }
+														{ edit.supported_by_reviewers.map( ( r, j ) => (
+															<span key={ `edit-${ i }-rev-${ j }` }>
+																{ j > 0 && ' ' }
+																<ReviewerChip
+																	name={ r }
+																	metadata={ getReviewerMetadata( r ) }
+																	variant="compact"
+																/>
+															</span>
+														) ) }
+													</p>
+												) : undefined;
 
-										return (
-											<ReviewCard
-												key={ key }
-												model={ {
-													badge: categoryBadge,
-													isManualEdit,
-													blockIndex: edit.block_index,
-													bodyRows,
-													reasonNote: isPostStale ? undefined : disabledReason,
-												} }
-												blocks={ blocks }
-												status={ status }
-												showApply={ showApply }
-												canGoToSection={ canGoToSection }
-												showCopy={ !! suggestionText && clipboardSupported }
-												copied={ copiedKey === key }
-												disabled={ isPostStale || bulkRunning }
-												failureMessage={ __(
-													'Could not apply automatically. The original text may have changed.',
-													__i18n_text_domain__
-												) }
-												onApply={ () => handleAcceptEdit( edit, i ) }
-												onGoToSection={ () => focusBlock( edit.block_index ) }
-												onCopy={ () => {
-													if ( suggestionText ) {
-														copyToClipboard( key, suggestionText );
-													}
-												} }
-												onDismiss={ () => handleDismissEdit( i ) }
-												onUndo={ () => handleUndoEdit( i ) }
-												onFocusBlock={ focusCurrentPostBlock }
-												footer={ footer }
-											/>
-										);
-									} ) }
+											return (
+												<ReviewCard
+													key={ key }
+													model={ {
+														badge: categoryBadge,
+														isManualEdit,
+														blockIndex: edit.block_index,
+														bodyRows,
+														reasonNote: isPostStale ? undefined : disabledReason,
+													} }
+													blocks={ blocks }
+													status={ status }
+													showApply={ showApply }
+													canGoToSection={ canGoToSection }
+													showCopy={ !! suggestionText && clipboardSupported }
+													copied={ copiedKey === key }
+													disabled={ isPostStale || bulkRunning }
+													failureMessage={ __(
+														'Could not apply automatically. The original text may have changed.',
+														__i18n_text_domain__
+													) }
+													onApply={ () => handleAcceptEdit( edit, i ) }
+													onGoToSection={ () => focusBlock( edit.block_index ) }
+													onCopy={ () => {
+														if ( suggestionText ) {
+															copyToClipboard( key, suggestionText );
+														}
+													} }
+													onDismiss={ () => handleDismissEdit( i ) }
+													onUndo={ () => handleUndoEdit( i ) }
+													onFocusBlock={ focusCurrentPostBlock }
+													footer={ footer }
+												/>
+											);
+										} ) }
+									</div>
 								</PanelBody>
 							</div>
 						) }

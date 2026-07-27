@@ -9,27 +9,35 @@ import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import PaymentInfoBlock from '../payment-info-block';
 
+function toMonthYear( date ) {
+	return `${ String( date.getMonth() + 1 ).padStart( 2, '0' ) }/${ String(
+		date.getFullYear()
+	).slice( -2 ) }`;
+}
+
 describe( 'PaymentInfoBlock', () => {
 	describe.each( [
 		[ 'enabled', undefined ],
-		[ 'disabled', 'manualRenew' ],
+		[ 'disabled', 'manual-renew' ],
 	] )( 'when auto-renew is %s', ( autoRenewStatus, expiryStatus ) => {
+		const isEnabled = autoRenewStatus === 'enabled';
+
 		describe( 'when the purchase has credits as the payment method', () => {
 			const purchase = {
-				expiryStatus,
-				payment: { type: 'credits' },
-				isRechargeable: false,
-				isAutoRenewEnabled: autoRenewStatus === 'enabled',
-				mightStillAutoRenew: autoRenewStatus === 'enabled',
+				expiry_status: expiryStatus,
+				payment_type: 'credits',
+				is_rechargeable: false,
+				is_auto_renew_enabled: isEnabled,
+				might_still_auto_renew: isEnabled,
 			};
 
 			it(
-				autoRenewStatus === 'enabled'
+				isEnabled
 					? 'renders "You don’t have a payment method to renew this subscription"'
 					: 'renders "None"',
 				() => {
 					render( <PaymentInfoBlock purchase={ purchase } cards={ [] } /> );
-					if ( autoRenewStatus === 'enabled' ) {
+					if ( isEnabled ) {
 						expect( screen.getByLabelText( 'Payment method' ) ).toHaveTextContent(
 							'You don’t have a payment method to renew this subscription'
 						);
@@ -49,9 +57,9 @@ describe( 'PaymentInfoBlock', () => {
 
 		describe( 'when the purchase has included-with-plan as the payment method', () => {
 			const purchase = {
-				expiryStatus: 'included',
-				isAutoRenewEnabled: autoRenewStatus === 'enabled',
-				mightStillAutoRenew: autoRenewStatus === 'enabled',
+				expiry_status: 'included',
+				is_auto_renew_enabled: isEnabled,
+				might_still_auto_renew: isEnabled,
 			};
 
 			it( 'renders "Included with plan"', () => {
@@ -71,20 +79,19 @@ describe( 'PaymentInfoBlock', () => {
 
 		describe( 'when the purchase has no payment method', () => {
 			const purchase = {
-				expiryStatus,
-				isRechargeable: false,
-				payment: {},
-				isAutoRenewEnabled: autoRenewStatus === 'enabled',
-				mightStillAutoRenew: autoRenewStatus === 'enabled',
+				expiry_status: expiryStatus,
+				is_rechargeable: false,
+				is_auto_renew_enabled: isEnabled,
+				might_still_auto_renew: isEnabled,
 			};
 
 			it(
-				autoRenewStatus === 'enabled'
+				isEnabled
 					? 'renders "You don’t have a payment method to renew this subscription"'
 					: 'renders "None"',
 				() => {
 					render( <PaymentInfoBlock purchase={ purchase } cards={ [] } /> );
-					if ( autoRenewStatus === 'enabled' ) {
+					if ( isEnabled ) {
 						expect( screen.getByLabelText( 'Payment method' ) ).toHaveTextContent(
 							'You don’t have a payment method to renew this subscription'
 						);
@@ -104,20 +111,20 @@ describe( 'PaymentInfoBlock', () => {
 
 		describe( 'when the purchase has a non-rechargable payment method', () => {
 			const purchase = {
-				expiryStatus,
-				payment: { type: 'ideal' },
-				isRechargeable: false,
-				isAutoRenewEnabled: autoRenewStatus === 'enabled',
-				mightStillAutoRenew: autoRenewStatus === 'enabled',
+				expiry_status: expiryStatus,
+				payment_type: 'ideal',
+				is_rechargeable: false,
+				is_auto_renew_enabled: isEnabled,
+				might_still_auto_renew: isEnabled,
 			};
 
 			it(
-				autoRenewStatus === 'enabled'
+				isEnabled
 					? 'renders "You don’t have a payment method to renew this subscription"'
 					: 'renders "None"',
 				() => {
 					render( <PaymentInfoBlock purchase={ purchase } cards={ [] } /> );
-					if ( autoRenewStatus === 'enabled' ) {
+					if ( isEnabled ) {
 						expect( screen.getByLabelText( 'Payment method' ) ).toHaveTextContent(
 							'You don’t have a payment method to renew this subscription'
 						);
@@ -136,17 +143,16 @@ describe( 'PaymentInfoBlock', () => {
 		} );
 
 		describe( 'when the purchase has a credit card as the payment method', () => {
-			const expiryDate = new Date();
-			expiryDate.setDate( expiryDate.getDate() + 365 );
 			const purchase = {
-				expiryStatus,
-				payment: {
-					type: 'credit_card',
-					creditCard: { number: '1234', expiryDate, type: 'mastercard' },
-				},
-				isRechargeable: true,
-				isAutoRenewEnabled: autoRenewStatus === 'enabled',
-				mightStillAutoRenew: autoRenewStatus === 'enabled',
+				expiry_status: expiryStatus,
+				payment_type: 'credit_card',
+				payment_details: '1234',
+				payment_expiry: '12/30',
+				payment_card_type: 'mastercard',
+				payment_card_display_brand: 'mastercard',
+				is_rechargeable: true,
+				is_auto_renew_enabled: isEnabled,
+				might_still_auto_renew: isEnabled,
 			};
 
 			it( 'renders the credit card last4', () => {
@@ -160,12 +166,10 @@ describe( 'PaymentInfoBlock', () => {
 			} );
 
 			it(
-				autoRenewStatus === 'enabled'
-					? 'does not render "will not be billed"'
-					: 'renders "will not be billed"',
+				isEnabled ? 'does not render "will not be billed"' : 'renders "will not be billed"',
 				() => {
 					render( <PaymentInfoBlock purchase={ purchase } cards={ [] } /> );
-					if ( expiryStatus === 'manualRenew' ) {
+					if ( ! isEnabled ) {
 						expect( screen.getByLabelText( 'Payment method' ) ).toHaveTextContent(
 							'will not be billed'
 						);
@@ -179,24 +183,21 @@ describe( 'PaymentInfoBlock', () => {
 		} );
 
 		it(
-			autoRenewStatus === 'enabled'
-				? 'does not render disabled payment logo'
-				: 'renders disabled payment logo',
+			isEnabled ? 'does not render disabled payment logo' : 'renders disabled payment logo',
 			() => {
-				const expiryDate = new Date();
-				expiryDate.setDate( expiryDate.getDate() + 365 );
 				const purchase = {
-					expiryStatus,
-					payment: {
-						type: 'credit_card',
-						creditCard: { number: '1234', expiryDate, type: 'mastercard' },
-					},
-					isRechargeable: true,
-					isAutoRenewEnabled: autoRenewStatus === 'enabled',
-					mightStillAutoRenew: autoRenewStatus === 'enabled',
+					expiry_status: expiryStatus,
+					payment_type: 'credit_card',
+					payment_details: '1234',
+					payment_expiry: '12/30',
+					payment_card_type: 'mastercard',
+					payment_card_display_brand: 'mastercard',
+					is_rechargeable: true,
+					is_auto_renew_enabled: isEnabled,
+					might_still_auto_renew: isEnabled,
 				};
 				render( <PaymentInfoBlock purchase={ purchase } cards={ [] } /> );
-				if ( expiryStatus === 'manualRenew' ) {
+				if ( ! isEnabled ) {
 					expect( screen.getByLabelText( 'Mastercard' ) ).toHaveClass( 'disabled' );
 				} else {
 					expect( screen.getByLabelText( 'Mastercard' ) ).not.toHaveClass( 'disabled' );
@@ -206,13 +207,11 @@ describe( 'PaymentInfoBlock', () => {
 
 		describe( 'when the purchase has PayPal as the payment method', () => {
 			const purchase = {
-				expiryStatus,
-				payment: {
-					type: 'paypal',
-				},
-				isRechargeable: true,
-				isAutoRenewEnabled: autoRenewStatus === 'enabled',
-				mightStillAutoRenew: autoRenewStatus === 'enabled',
+				expiry_status: expiryStatus,
+				payment_type: 'paypal',
+				is_rechargeable: true,
+				is_auto_renew_enabled: isEnabled,
+				might_still_auto_renew: isEnabled,
 			};
 
 			it( 'renders PayPal logo', () => {
@@ -221,12 +220,10 @@ describe( 'PaymentInfoBlock', () => {
 			} );
 
 			it(
-				autoRenewStatus === 'enabled'
-					? 'does not render "will not be billed"'
-					: 'renders "will not be billed"',
+				isEnabled ? 'does not render "will not be billed"' : 'renders "will not be billed"',
 				() => {
 					render( <PaymentInfoBlock purchase={ purchase } cards={ [] } /> );
-					if ( expiryStatus === 'manualRenew' ) {
+					if ( ! isEnabled ) {
 						expect( screen.getByLabelText( 'Payment method' ) ).toHaveTextContent(
 							'will not be billed'
 						);
@@ -240,34 +237,32 @@ describe( 'PaymentInfoBlock', () => {
 		} );
 
 		it( 'renders the card when the purchase is expired and has a credit card as the payment method', () => {
-			const expiryDate = new Date();
-			expiryDate.setDate( expiryDate.getDate() - 365 );
 			const purchase = {
-				expiryStatus: 'expired',
-				payment: {
-					type: 'credit_card',
-					creditCard: { number: '1234', expiryDate, type: 'mastercard' },
-				},
-				isRechargeable: true,
-				isAutoRenewEnabled: autoRenewStatus === 'enabled',
-				mightStillAutoRenew: autoRenewStatus === 'enabled',
+				expiry_status: 'expired',
+				payment_type: 'credit_card',
+				payment_details: '1234',
+				payment_expiry: '12/30',
+				payment_card_type: 'mastercard',
+				payment_card_display_brand: 'mastercard',
+				is_rechargeable: true,
+				is_auto_renew_enabled: isEnabled,
+				might_still_auto_renew: isEnabled,
 			};
 			render( <PaymentInfoBlock purchase={ purchase } cards={ [] } /> );
 			expect( screen.getByLabelText( 'Payment method' ) ).toHaveTextContent( '1234' );
 		} );
 
 		it( 'renders the card when the purchase has nearly expired and has a credit card as the payment method', () => {
-			const expiryDate = new Date();
-			expiryDate.setDate( expiryDate.getDate() - 365 );
 			const purchase = {
-				expiryStatus: 'expiring',
-				payment: {
-					type: 'credit_card',
-					creditCard: { number: '1234', expiryDate, type: 'mastercard' },
-				},
-				isRechargeable: true,
-				isAutoRenewEnabled: autoRenewStatus === 'enabled',
-				mightStillAutoRenew: autoRenewStatus === 'enabled',
+				expiry_status: 'expiring',
+				payment_type: 'credit_card',
+				payment_details: '1234',
+				payment_expiry: '12/30',
+				payment_card_type: 'mastercard',
+				payment_card_display_brand: 'mastercard',
+				is_rechargeable: true,
+				is_auto_renew_enabled: isEnabled,
+				might_still_auto_renew: isEnabled,
 			};
 			render( <PaymentInfoBlock purchase={ purchase } cards={ [] } /> );
 			expect( screen.getByLabelText( 'Payment method' ) ).toHaveTextContent( '1234' );
@@ -277,14 +272,12 @@ describe( 'PaymentInfoBlock', () => {
 			const expiryDate = new Date();
 			expiryDate.setDate( expiryDate.getDate() + 365 );
 			const purchase = {
-				expiryStatus,
-				payment: {
-					type: 'paypal_direct',
-					expiryDate,
-				},
-				isRechargeable: true,
-				isAutoRenewEnabled: autoRenewStatus === 'enabled',
-				mightStillAutoRenew: autoRenewStatus === 'enabled',
+				expiry_status: expiryStatus,
+				payment_type: 'paypal_direct',
+				payment_expiry: toMonthYear( expiryDate ),
+				is_rechargeable: true,
+				is_auto_renew_enabled: isEnabled,
+				might_still_auto_renew: isEnabled,
 			};
 
 			it( 'renders the expiration date', () => {
@@ -302,12 +295,10 @@ describe( 'PaymentInfoBlock', () => {
 			} );
 
 			it(
-				autoRenewStatus === 'enabled'
-					? 'does not render "will not be billed"'
-					: 'renders "will not be billed"',
+				isEnabled ? 'does not render "will not be billed"' : 'renders "will not be billed"',
 				() => {
 					render( <PaymentInfoBlock purchase={ purchase } cards={ [] } /> );
-					if ( expiryStatus === 'manualRenew' ) {
+					if ( ! isEnabled ) {
 						expect( screen.getByLabelText( 'Payment method' ) ).toHaveTextContent(
 							'will not be billed'
 						);
@@ -320,7 +311,7 @@ describe( 'PaymentInfoBlock', () => {
 			);
 
 			it(
-				autoRenewStatus === 'enabled'
+				isEnabled
 					? 'renders backup method warning if there is a backup available'
 					: 'does not render backup method warning even if there is a backup available',
 				() => {
@@ -341,7 +332,7 @@ describe( 'PaymentInfoBlock', () => {
 						is_backup: true,
 					};
 					render( <PaymentInfoBlock purchase={ purchase } cards={ [ mockBackupCard ] } /> );
-					if ( autoRenewStatus === 'enabled' ) {
+					if ( isEnabled ) {
 						expect( screen.getByLabelText( 'Payment method' ) ).toHaveTextContent(
 							'If the renewal fails, a backup payment method may be used.'
 						);
@@ -379,7 +370,7 @@ describe( 'PaymentInfoBlock', () => {
 	} );
 	it( 'shows warning if auto-renew is enabled without a payment method', () => {
 		const purchase = {
-			isAutoRenewEnabled: true,
+			is_auto_renew_enabled: true,
 		};
 		render( <PaymentInfoBlock purchase={ purchase } cards={ [] } /> );
 		expect(
@@ -389,10 +380,10 @@ describe( 'PaymentInfoBlock', () => {
 
 	describe( 'the inline "Add payment method" link', () => {
 		const noMethodPurchase = {
-			expiryStatus: undefined,
-			payment: { type: 'none' },
-			isRechargeable: false,
-			isAutoRenewEnabled: true,
+			expiry_status: undefined,
+			payment_type: 'none',
+			is_rechargeable: false,
+			is_auto_renew_enabled: true,
 		};
 
 		it( 'renders a link with the given href when addPaymentMethodUrl is provided', () => {

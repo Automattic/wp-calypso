@@ -452,10 +452,7 @@ function CancelPurchaseInner() {
 	const { data: plans } = useSuspenseQuery( plansQuery() );
 	const isSplitCancelRemoveEnabled = useIsSplitCancelRemoveEnabled();
 	const { data: purchaseCancelFeatures } = useQuery(
-		purchaseCancelFeaturesQuery(
-			parseInt( purchaseId, 10 ),
-			isSplitCancelRemoveEnabled ? 'treatment' : 'control'
-		)
+		purchaseCancelFeaturesQuery( parseInt( purchaseId, 10 ) )
 	);
 
 	const lastSiteQueryIsError = useRef< boolean >( false );

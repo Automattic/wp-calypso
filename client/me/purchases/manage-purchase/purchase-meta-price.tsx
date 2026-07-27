@@ -1,3 +1,4 @@
+import { getPurchaseIntroductoryOffer, isPurchaseOneTimePurchase } from '@automattic/api-core';
 import {
 	isDIFMProduct,
 	isDomainTransfer,
@@ -9,18 +10,14 @@ import {
 } from '@automattic/calypso-products';
 import { formatCurrency } from '@automattic/number-formatters';
 import { useTranslate } from 'i18n-calypso';
-import {
-	isIncludedWithPlan,
-	isOneTimePurchase,
-	getDIFMTieredPurchaseDetails,
-} from 'calypso/lib/purchases';
-import type { Purchase } from 'calypso/lib/purchases/types';
+import { isIncludedWithPlan, getDIFMTieredPurchaseDetails } from '../lib/raw-purchase-helpers';
+import type { Purchase } from '@automattic/api-core';
 
 function PurchaseMetaPrice( { purchase }: { purchase: Purchase } ) {
 	const translate = useTranslate();
-	const { priceInteger, currencyCode } = purchase;
+	const { price_integer: priceInteger, currency_code: currencyCode } = purchase;
 
-	if ( isOneTimePurchase( purchase ) || isDomainTransfer( purchase ) ) {
+	if ( isPurchaseOneTimePurchase( purchase ) || isDomainTransfer( purchase ) ) {
 		if ( isDIFMProduct( purchase ) ) {
 			const difmTieredPurchaseDetails = getDIFMTieredPurchaseDetails( purchase );
 			if (
@@ -84,7 +81,7 @@ function PurchaseMetaPrice( { purchase }: { purchase: Purchase } ) {
 	}
 
 	const getPeriod = () => {
-		switch ( purchase.billPeriodDays ) {
+		switch ( purchase.bill_period_days as number ) {
 			case PLAN_TRIENNIAL_PERIOD:
 				return translate( 'three years' );
 			case PLAN_BIENNIAL_PERIOD:
@@ -118,7 +115,7 @@ function PurchaseMetaPrice( { purchase }: { purchase: Purchase } ) {
 			// For introductory offers with prorated renewals, it's confusing to see
 			// the renewal price as "x/year", so we will just show the renewal
 			// price by itself.
-			purchase.introductoryOffer?.isNextRenewalProrated
+			getPurchaseIntroductoryOffer( purchase )?.isNextRenewalProrated
 		) {
 			return (
 				<span>

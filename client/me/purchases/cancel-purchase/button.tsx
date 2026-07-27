@@ -42,7 +42,7 @@ export interface CancelPurchaseButtonProps {
 	purchaseListUrl?: string;
 	siteSlug: string;
 	cancelBundledDomain: boolean;
-	includedDomainPurchase: Purchases.Purchase;
+	includedDomainPurchase?: Purchases.Purchase;
 	disabled?: boolean;
 	textVariant?: string;
 	displayVariant?: DisplayVariant;
@@ -207,7 +207,7 @@ class CancelPurchaseButton extends Component<
 				{ ! isJetpack && ! isAkismet && ! isDomainRegistration( purchase ) && (
 					<CancelPurchaseForm
 						disableButtons={ disableButtons }
-						purchase={ purchase }
+						purchase={ purchase.rawPurchase }
 						isVisible={ showDialog }
 						onClose={ this.closeDialog }
 						onSurveyComplete={ this.handleSurveyComplete }

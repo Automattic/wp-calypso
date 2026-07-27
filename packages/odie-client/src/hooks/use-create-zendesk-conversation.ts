@@ -1,3 +1,4 @@
+import { useHasEnTranslation } from '@automattic/i18n-utils';
 import {
 	useUpdateZendeskUserFields,
 	ZENDESK_CUSTOM_FIELD_AI_CHAT_ID,
@@ -37,6 +38,7 @@ export const useCreateZendeskConversation = () => {
 	const navigate = useNavigate();
 	const location = useLocation();
 	const interactionStatusByUuid = useOpenInteractionStatusMap();
+	const hasEnTranslation = useHasEnTranslation();
 
 	const getErrorMessage = ( error: unknown ) =>
 		error instanceof Error ? error.message : error?.toString?.() ?? 'Unknown error';
@@ -260,7 +262,7 @@ export const useCreateZendeskConversation = () => {
 				conversationId: conversationId,
 				messages: [
 					...prevChat.messages,
-					...getOdieTransferMessages( currentSupportInteraction?.bot_slug ),
+					...getOdieTransferMessages( currentSupportInteraction?.bot_slug, hasEnTranslation ),
 					getZendeskChatStartedMetaMessage(),
 				],
 				provider: 'zendesk',

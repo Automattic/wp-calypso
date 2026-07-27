@@ -1,3 +1,4 @@
+import { mapMarker } from '@wordpress/icons';
 import { localize, translate } from 'i18n-calypso';
 import { connect } from 'react-redux';
 import useStatsStrings from 'calypso/my-sites/stats/hooks/use-stats-strings';
@@ -8,6 +9,7 @@ import {
 } from 'calypso/state/stats/emails/selectors';
 import { IAppState } from 'calypso/state/types';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import EmptyModuleCard from '../components/empty-module-card';
 import Geochart from '../geochart';
 import ErrorPanel from '../stats-error';
 import StatsListCard from '../stats-list/stats-list-card';
@@ -43,6 +45,23 @@ const StatsEmailModule: React.FC< StatsEmailModuleProps & StatsEmailMapStateProp
 
 	const hasError = false; // TODO: Support error state in redux store
 	const metricLabel = statType === 'clicks' ? translate( 'Clicks' ) : translate( 'Opens' );
+	const hasData = Array.isArray( data ) && data.length > 0;
+
+	const countriesEmptyDescription =
+		statType === 'clicks'
+			? translate( 'Clicks by countries will appear here.', {
+					context: 'Stats: Info box label when the email Countries module is empty',
+			  } )
+			: translate( 'Opens by countries will appear here.', {
+					context: 'Stats: Info box label when the email Countries module is empty',
+			  } );
+
+	const emptyMessage =
+		path === 'countries' ? (
+			<EmptyModuleCard icon={ mapMarker } description={ countriesEmptyDescription } />
+		) : (
+			moduleStrings.empty
+		);
 
 	return (
 		// @ts-ignore: Suppress missing props error
@@ -50,12 +69,13 @@ const StatsEmailModule: React.FC< StatsEmailModuleProps & StatsEmailMapStateProp
 			title={ moduleStrings.title }
 			moduleType={ path }
 			data={ data }
-			emptyMessage={ moduleStrings.empty }
+			emptyMessage={ emptyMessage }
 			error={ hasError && <ErrorPanel /> }
 			loader={ isLoading && <StatsModulePlaceholder isLoading={ isLoading } /> }
 			metricLabel={ metricLabel }
 			heroElement={
-				path === 'countries' && (
+				path === 'countries' &&
+				( isLoading || hasData ) && (
 					<Geochart
 						kind="email"
 						statType={ statType }

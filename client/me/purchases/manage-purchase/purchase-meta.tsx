@@ -1,3 +1,5 @@
+import { isPurchaseExpiring, isPurchaseOneTimePurchase } from '@automattic/api-core';
+import { purchaseQuery } from '@automattic/api-queries';
 import {
 	isConciergeSession,
 	isDomainRegistration,
@@ -8,47 +10,41 @@ import {
 import { Card } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { CALYPSO_CONTACT, JETPACK_SUPPORT } from '@automattic/urls';
+import { useQuery } from '@tanstack/react-query';
 import { ExternalLink } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import { useState, useEffect, type JSX } from 'react';
 import ClipboardButton from 'calypso/components/forms/clipboard-button';
 import FormTextInput from 'calypso/components/forms/form-text-input';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
+import { isAkismetHoldingSitePurchase } from 'calypso/dashboard/utils/purchase';
 import useAkismetKeyQuery from 'calypso/data/akismet/use-akismet-key-query';
 import useUserLicenseBySubscriptionQuery from 'calypso/data/jetpack-licensing/use-user-license-by-subscription-query';
 import { ResponseDomain } from 'calypso/lib/domains/types';
+import { useSelector } from 'calypso/state';
+import { getCurrentUser } from 'calypso/state/current-user/selectors';
+import { getAllDomains } from 'calypso/state/sites/domains/selectors';
+import { getSite, isRequestingSites } from 'calypso/state/sites/selectors';
 import {
 	getName,
 	isExpiredOrRemoved,
-	isExpiring,
 	isIncludedWithPlan,
-	isOneTimePurchase,
 	isRenewingBeforeExpiration,
 	isSubscription,
-} from 'calypso/lib/purchases';
-import { useSelector } from 'calypso/state';
-import { getCurrentUser } from 'calypso/state/current-user/selectors';
-import { getByPurchaseId } from 'calypso/state/purchases/selectors';
-import { getAllDomains } from 'calypso/state/sites/domains/selectors';
-import { getSite, isRequestingSites } from 'calypso/state/sites/selectors';
+} from '../lib/raw-purchase-helpers';
 import { managePurchase } from '../paths';
-import { isAkismetHoldingSitePurchase } from '../utils';
 import PurchaseMetaAutoRenewCouponDetail from './purchase-meta-auto-renew-coupon-detail';
 import PurchaseMetaExpiration from './purchase-meta-expiration';
 import PurchaseMetaIntroductoryOfferDetail from './purchase-meta-introductory-offer-detail';
 import PurchaseMetaOwner from './purchase-meta-owner';
 import PurchaseMetaPaymentDetails from './purchase-meta-payment-details';
 import PurchaseMetaPrice from './purchase-meta-price';
+import type { GetChangePaymentMethodUrlFor, GetManagePurchaseUrlFor } from '../lib/types';
+import type { Purchase } from '@automattic/api-core';
 import type { SiteDetails } from '@automattic/data-stores';
-import type {
-	GetChangePaymentMethodUrlFor,
-	GetManagePurchaseUrlFor,
-	Purchase,
-} from 'calypso/lib/purchases/types';
 
 export interface PurchaseMetaProps {
 	purchaseId: number | false;
-	hasLoadedPurchasesFromServer: boolean;
 	siteSlug: string;
 	getChangePaymentMethodUrlFor: GetChangePaymentMethodUrlFor;
 	getManagePurchaseUrlFor?: GetManagePurchaseUrlFor;
@@ -57,7 +53,6 @@ export interface PurchaseMetaProps {
 
 export default function PurchaseMeta( {
 	purchaseId = false,
-	hasLoadedPurchasesFromServer = false,
 	siteSlug,
 	getChangePaymentMethodUrlFor,
 	getManagePurchaseUrlFor = managePurchase,
@@ -65,16 +60,17 @@ export default function PurchaseMeta( {
 }: PurchaseMetaProps ) {
 	const translate = useTranslate();
 
-	const purchase = useSelector( ( state ) =>
-		purchaseId ? getByPurchaseId( state, purchaseId ) : undefined
-	);
-	const site = useSelector( ( state ) => getSite( state, purchase?.siteId ) ) || null;
+	const { data: purchase, isPending } = useQuery( {
+		...purchaseQuery( Number( purchaseId ) ),
+		enabled: Boolean( purchaseId ),
+	} );
+	const site = useSelector( ( state ) => getSite( state, purchase?.blog_id ) ) || null;
 
 	// TODO: if the owner is not the currently logged-in user, retrieve their info from users list
 	const currentUser = useSelector( getCurrentUser );
-	const owner = currentUser && purchase?.userId === currentUser.ID ? currentUser : null;
+	const owner = currentUser && purchase?.user_id === currentUser.ID ? currentUser : null;
 
-	const isDataLoading = useSelector( isRequestingSites ) || ! hasLoadedPurchasesFromServer;
+	const isDataLoading = useSelector( isRequestingSites ) || isPending;
 
 	const allDomains = useSelector( getAllDomains );
 
@@ -85,7 +81,7 @@ export default function PurchaseMeta( {
 	const showJetpackUserLicense = isJetpackProduct( purchase ) || isJetpackPlan( purchase );
 	const isAkismetPurchase = isAkismetHoldingSitePurchase( purchase );
 
-	const domainDetails = allDomains?.[ purchase.siteId ]?.find(
+	const domainDetails = allDomains?.[ purchase.blog_id ]?.find(
 		( domain: ResponseDomain ) => domain.domain === purchase.meta
 	);
 
@@ -97,8 +93,8 @@ export default function PurchaseMeta( {
 			? translate( 'Price' )
 			: translate( 'Renewal Price' );
 
-	const hideRenewalPriceSection = isOneTimePurchase( purchase );
-	const hideTaxString = isIncludedWithPlan( purchase ) || purchase?.priceInteger === 0;
+	const hideRenewalPriceSection = isPurchaseOneTimePurchase( purchase );
+	const hideTaxString = isIncludedWithPlan( purchase ) || purchase?.price_integer === 0;
 
 	// To-do: There isn't currently a way to get the taxName based on the country.
 	// The country is not included in the purchase information envelope
@@ -173,7 +169,7 @@ function renderRenewsOrExpiresOnLabel( {
 	domainDetails?: ResponseDomain | null;
 	translate: ReturnType< typeof useTranslate >;
 } ): string | null {
-	if ( isExpiring( purchase ) ) {
+	if ( isPurchaseExpiring( purchase ) ) {
 		if ( isDomainRegistration( purchase ) ) {
 			if ( domainDetails?.isHundredYearDomain ) {
 				return translate( 'Paid until' );
@@ -185,7 +181,7 @@ function renderRenewsOrExpiresOnLabel( {
 			return translate( 'Subscription expires on' );
 		}
 
-		if ( isOneTimePurchase( purchase ) ) {
+		if ( isPurchaseOneTimePurchase( purchase ) ) {
 			return translate( 'Expires on' );
 		}
 	}
@@ -203,7 +199,7 @@ function renderRenewsOrExpiresOnLabel( {
 			return translate( 'Subscription expired on' );
 		}
 
-		if ( isOneTimePurchase( purchase ) ) {
+		if ( isPurchaseOneTimePurchase( purchase ) ) {
 			return translate( 'Expired on' );
 		}
 	}
@@ -219,7 +215,7 @@ function renderRenewsOrExpiresOnLabel( {
 		return translate( 'Subscription renews on' );
 	}
 
-	if ( isOneTimePurchase( purchase ) ) {
+	if ( isPurchaseOneTimePurchase( purchase ) ) {
 		return translate( 'Renews on' );
 	}
 
@@ -240,7 +236,10 @@ function renderRenewsOrExpiresOn( {
 	getManagePurchaseUrlFor: GetManagePurchaseUrlFor;
 } ): JSX.Element | null {
 	if ( isIncludedWithPlan( purchase ) && siteSlug ) {
-		const attachedPlanUrl = getManagePurchaseUrlFor( siteSlug, purchase.attachedToPurchaseId );
+		const attachedPlanUrl = getManagePurchaseUrlFor(
+			siteSlug,
+			Number( purchase.attached_to_purchase_id )
+		);
 
 		return (
 			<span>
@@ -249,15 +248,15 @@ function renderRenewsOrExpiresOn( {
 		);
 	}
 
-	if ( isExpiring( purchase ) || isExpiredOrRemoved( purchase ) ) {
-		return <>{ moment( purchase.expiryDate ).format( 'LL' ) }</>;
+	if ( isPurchaseExpiring( purchase ) || isExpiredOrRemoved( purchase ) ) {
+		return <>{ moment( purchase.expiry_date ).format( 'LL' ) }</>;
 	}
 
 	if ( isRenewingBeforeExpiration( purchase ) ) {
-		return <>{ moment( purchase.renewDate ).format( 'LL' ) }</>;
+		return <>{ moment( purchase.renew_date ).format( 'LL' ) }</>;
 	}
 
-	if ( isOneTimePurchase( purchase ) ) {
+	if ( isPurchaseOneTimePurchase( purchase ) ) {
 		return <>{ translate( 'Never Expires' ) }</>;
 	}
 	return null;
@@ -291,7 +290,7 @@ function RenewErrorMessage( {
 
 	const isJetpack = purchase && ( isJetpackPlan( purchase ) || isJetpackProduct( purchase ) );
 
-	if ( purchase.isAttachedToHoldingSite ) {
+	if ( purchase.is_attached_to_holding_site ) {
 		return null;
 	}
 

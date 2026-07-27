@@ -706,7 +706,7 @@ const PlansFeaturesMain = ( {
 		if ( currentPlanPurchaseId ) {
 			try {
 				await queryClient.ensureQueryData(
-					purchaseCancelFeaturesQuery( currentPlanPurchaseId, 'control', planSlug )
+					purchaseCancelFeaturesQuery( currentPlanPurchaseId, 'treatment', planSlug )
 				);
 			} catch {
 				// Open the modal regardless; its own query will retry and show a spinner.

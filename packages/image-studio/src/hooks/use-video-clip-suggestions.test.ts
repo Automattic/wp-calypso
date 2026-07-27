@@ -288,7 +288,7 @@ describe( 'useVideoClipSuggestions', () => {
 		);
 	} );
 
-	it( 'inlines the plain-text post body into the loader prompt and passes a video-flavored buildSystemPrompt', () => {
+	it( 'references page context in the loader prompt (no inlined body) and passes a video-flavored buildSystemPrompt', () => {
 		renderHook( () =>
 			useVideoClipSuggestions( {
 				registerSuggestions: jest.fn(),
@@ -298,9 +298,9 @@ describe( 'useVideoClipSuggestions', () => {
 		);
 
 		const callArgs = mockUseAsyncSuggestionsLoader.mock.calls[ 0 ][ 0 ];
-		expect( callArgs.prompt ).toContain( 'POST BODY:' );
-		expect( callArgs.prompt ).toContain( 'A quiet coastal kitchen at dawn.' );
-		expect( callArgs.prompt ).not.toContain( '[[client.gutenberg_page' );
+		expect( callArgs.prompt ).toContain( '[[client.gutenberg_page.simple_structure]]' );
+		expect( callArgs.prompt ).not.toContain( 'POST BODY:' );
+		expect( callArgs.prompt ).not.toContain( 'A quiet coastal kitchen at dawn.' );
 		expect( typeof callArgs.buildSystemPrompt ).toBe( 'function' );
 
 		const built = callArgs.buildSystemPrompt( 'inner prompt body', 'en' );

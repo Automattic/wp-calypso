@@ -15,6 +15,9 @@
 	);
 	--jetpack-ai-feedback-list-applied: #079d2c;
 
+	// Agenttic's message row has a spacing-4 inline gutter. Let the review
+	// content fill that gutter, then restore it only for non-card content.
+	margin-inline: calc( -1 * var( --spacing-4 ) );
 	display: flex;
 	flex-direction: column;
 	font-size: 13px;
@@ -53,6 +56,14 @@
 		border: 0;
 		border-top: 1px solid color-mix( in srgb, currentColor 10%, transparent );
 
+		&.is-opened {
+			padding-inline: 0;
+
+			> .components-panel__body-title {
+				margin-inline: 0;
+			}
+		}
+
 		&:first-child {
 			border-top: 0;
 		}
@@ -86,7 +97,12 @@
 		fill: currentColor;
 	}
 
-	.components-panel__body.is-opened > :not( .components-panel__body-title ) {
+	.components-panel__body.is-opened
+		> :not( .components-panel__body-title ):not( .jetpack-ai-feedback-list__items ) {
+		padding: 0 var( --spacing-4 ) 0.75rem;
+	}
+
+	.components-panel__body.is-opened > .jetpack-ai-feedback-list__items {
 		padding: 0 0 0.75rem;
 	}
 
@@ -162,7 +178,7 @@
 		align-items: center;
 		justify-content: space-between;
 		gap: 0.75rem;
-		padding: 0.75rem 1rem 0.5rem;
+		padding: 0.75rem var( --spacing-4 ) 0.5rem;
 	}
 
 	// Applicable badge: plain category + position, e.g. "Spacing (1/1)".
@@ -181,7 +197,7 @@
 	// edit can't be one-click applied. The category badge stays on the row below.
 	&__manual-tag {
 		display: inline-block;
-		margin: 0.75rem 1rem 0;
+		margin: 0.75rem var( --spacing-4 ) 0;
 		padding: 0.125rem 0.5rem;
 		border-radius: 4px;
 		background: #fdf8ee;
@@ -262,7 +278,7 @@
 		display: flex;
 		flex-direction: column;
 		gap: 0.25rem;
-		padding: 0.625rem 1rem;
+		padding: 0.625rem var( --spacing-4 );
 
 		// The second row (New / Suggestion) is the highlighted band.
 		&.is-new {
@@ -320,7 +336,7 @@
 	// changed"). Muted; sits under the body, above the actions.
 	&__reason-note {
 		margin: 0;
-		padding: 0 1rem 0.75rem;
+		padding: 0 var( --spacing-4 ) 0.75rem;
 		font-size: 12px;
 		opacity: 0.7;
 	}
@@ -330,7 +346,7 @@
 		flex-wrap: wrap;
 		align-items: center;
 		gap: 0.5rem;
-		padding: 0.75rem 1rem;
+		padding: 0.75rem var( --spacing-4 );
 	}
 
 	// Buttons are tertiary (text) by default; primary and resolution states opt in.
@@ -417,7 +433,7 @@
 	}
 
 	&__status {
-		padding: 0 1rem 0.75rem;
+		padding: 0 var( --spacing-4 ) 0.75rem;
 		font-size: 12px;
 	}
 
@@ -427,12 +443,12 @@
 
 	// Card footer slot (e.g. AER reviewer chips) — match the actions-row inset.
 	&__footer-slot {
-		padding: 0 1rem 0.75rem;
+		padding: 0 var( --spacing-4 ) 0.75rem;
 	}
 
 	&__footer {
 		margin-top: 0.75rem;
-		padding-top: 0.75rem;
+		padding-block-start: 0.75rem;
 		border-top: 1px solid color-mix( in srgb, currentColor 10%, transparent );
 	}
 

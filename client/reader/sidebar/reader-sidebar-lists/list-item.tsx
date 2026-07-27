@@ -101,6 +101,7 @@ const ReaderSidebarListsListItem = ( {
 					<span className="sidebar__actions-and-count">
 						<MoreMenuActions
 							identifier="sidebar-list"
+							isSingleFeed={ false }
 							feedIds={ feedIds }
 							feedUrls={ [] }
 							unseenCount={ unseenCount }

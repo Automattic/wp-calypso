@@ -1,6 +1,7 @@
 import { info } from '@wordpress/icons';
 import { Icon, Popover, VisuallyHidden } from '@wordpress/ui';
 import clsx from 'clsx';
+import useWPAdminTheme from 'calypso/my-sites/stats/hooks/use-wp-admin-theme';
 import type { ComponentProps, MouseEvent, ReactNode } from 'react';
 
 import './style.scss';
@@ -37,6 +38,7 @@ export default function StatsInfotip( {
 	align = 'center',
 	triggerClassName,
 }: StatsInfotipProps ) {
+	const customTheme = useWPAdminTheme();
 	return (
 		<span className={ clsx( 'stats-infotip', className ) }>
 			<Popover.Root>
@@ -52,7 +54,11 @@ export default function StatsInfotip( {
 					<Icon icon={ info } size={ iconSize } />
 				</Popover.Trigger>
 				<Popover.Popup
-					className={ clsx( 'stats-infotip__popup', popupClassName ) }
+					className={ clsx(
+						'stats-infotip__popup',
+						popupClassName,
+						customTheme && `color-scheme ${ customTheme }`
+					) }
 					positioner={
 						<Popover.Positioner
 							className="stats-infotip__positioner"

@@ -59,7 +59,7 @@ export const purchaseQuery = ( purchaseId: number ) =>
  */
 export const purchaseCancelFeaturesQuery = (
 	purchaseId: number,
-	variant: 'control' | 'treatment' = 'control',
+	variant: 'control' | 'treatment' = 'treatment',
 	targetProductSlug?: string
 ) =>
 	queryOptions( {

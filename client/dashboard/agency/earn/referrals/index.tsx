@@ -1,5 +1,6 @@
 import {
 	activeAgencyQuery,
+	agencyProductsQuery,
 	referralsQuery,
 	referralCommissionPayoutQuery,
 } from '@automattic/api-queries';
@@ -7,15 +8,16 @@ import { useQuery } from '@tanstack/react-query';
 import { Link } from '@tanstack/react-router';
 import { __ } from '@wordpress/i18n';
 import { useState } from 'react';
+import { useAnalytics } from '../../../app/analytics';
 import { useLocale } from '../../../app/locale';
 import { DataViewsCard } from '../../../components/dataviews';
 import { PageHeader } from '../../../components/page-header';
 import PageLayout from '../../../components/page-layout';
 import RouterLinkButton from '../../../components/router-link-button';
+import MissingPaymentSettingsNotice from '../missing-payment-settings-notice';
 import ConsolidatedViews from './consolidated-views';
 import { DEFAULT_VIEW } from './dataviews/views';
 import ReferralsEmptyState from './empty-state';
-import MissingPaymentSettingsNotice from './missing-payment-settings-notice';
 import ReferralsList from './referrals-list';
 import type { View } from '@wordpress/dataviews';
 
@@ -30,6 +32,8 @@ export default function EarnReferrals() {
 	const { data: commissionPayout, isLoading: isLoadingCommissionPayout } = useQuery(
 		referralCommissionPayoutQuery( agencyId )
 	);
+	const { data: products } = useQuery( agencyProductsQuery( agencyId ) );
+	const { recordTracksEvent } = useAnalytics();
 
 	const [ view, setView ] = useState< View >( DEFAULT_VIEW );
 
@@ -52,7 +56,7 @@ export default function EarnReferrals() {
 					}
 				/>
 			}
-			notices={ <MissingPaymentSettingsNotice hasReferrals={ hasReferrals } /> }
+			notices={ <MissingPaymentSettingsNotice hasCommissionActivity={ hasReferrals } /> }
 		>
 			{ ! isLoading && ! hasReferrals ? (
 				<ReferralsEmptyState agencyId={ agencyId } />
@@ -64,6 +68,8 @@ export default function EarnReferrals() {
 						isLoading={ isLoading }
 						isLoadingCommissionPayout={ isLoadingCommissionPayout }
 						locale={ locale }
+						products={ products }
+						recordTracksEvent={ recordTracksEvent }
 					/>
 					<DataViewsCard>
 						<ReferralsList
