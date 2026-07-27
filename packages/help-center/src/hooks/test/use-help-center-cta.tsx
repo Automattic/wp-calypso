@@ -36,7 +36,7 @@ const setup = ( {
 	mockUseFeatureConfig.mockReturnValue( { home: { contextualCta } } );
 	mockUseSupportStatus.mockReturnValue( { data: cta ? { cta } : {}, isLoading } );
 
-	return renderHook( () => useHelpCenterCTA( 'help-center-home' ) );
+	return renderHook( () => useHelpCenterCTA() );
 };
 
 describe( 'useHelpCenterCTA', () => {

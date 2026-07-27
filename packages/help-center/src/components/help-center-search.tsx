@@ -4,12 +4,7 @@ import { useSelect } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
 import InlineHelpSearchCard from 'calypso/blocks/inline-help/inline-help-search-card';
 import { useFeatureConfig, useHelpCenterContext } from '../contexts/HelpCenterContext';
-import {
-	useHelpCenterSearch,
-	useGetHistoryChats,
-	useHelpCenterCTA,
-	HELP_CENTER_CTA_HOME_PLACEMENT,
-} from '../hooks';
+import { useHelpCenterSearch, useGetHistoryChats, useHelpCenterCTA } from '../hooks';
 import { useContextBasedSearchMapping } from '../hooks/use-context-based-search-mapping';
 import { useHelpSearchQuery } from '../hooks/use-help-search-query';
 import { HELP_CENTER_STORE } from '../stores';
@@ -46,7 +41,7 @@ export const HelpCenterSearch = ( { onSearchChange, currentRoute }: HelpCenterSe
 		[]
 	);
 	const { contextSearch } = useContextBasedSearchMapping( currentRoute );
-	const cta = useHelpCenterCTA( HELP_CENTER_CTA_HOME_PLACEMENT );
+	const cta = useHelpCenterCTA();
 	const { isLoading: isLoadingSearchResults } = useHelpSearchQuery(
 		searchQuery || contextTerm || contextSearch,
 		locale,
