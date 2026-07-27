@@ -175,6 +175,11 @@
 
 	@media ( min-width: $break-large ) {
 		&.sites-dashboard__layout:not( .preview-hidden ) {
+			// The error preview sets its own content padding.
+			.hosting-dashboard-item-view:not( .site-error-preview ) .hosting-dashboard-item-view__content {
+				padding-block-start: 24px;
+			}
+
 			.sites-overview {
 				padding: 0;
 
@@ -310,16 +315,6 @@
 	}
 
 	&.sites-dashboard__layout {
-		// The shared item view leaves 48px between the tab strip and the content.
-		// Halve it here only — the rule is shared with the Dotcom sites and domain panes.
-		.hosting-dashboard-item-view:not( .site-error-preview ) {
-			@include break-large {
-				.hosting-dashboard-item-view__content {
-					padding-block-start: 24px;
-				}
-			}
-		}
-
 		.backup__page > .admin-ui-navigable-region,
 		.scan > .admin-ui-navigable-region,
 		.scan-new > .admin-ui-navigable-region,
