@@ -11,6 +11,7 @@ import {
 	isRequestingEmailStats,
 } from 'calypso/state/stats/emails/selectors';
 import TopCard from './top-card';
+import '../components/highlight-cards/style.scss';
 import './style.scss';
 
 export default function StatsEmailTopRow( { siteId, postId, statType, className, post } ) {
