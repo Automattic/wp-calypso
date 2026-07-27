@@ -1402,8 +1402,19 @@ const mobileCheckoutStickySummaryStyles = css`
 		flex-wrap: nowrap;
 		gap: 4px;
 	}
+	/* PaymentLogo lays its wrappers out for the legacy row: the brand
+	   wrapper nudges itself down 4px and the fallback lock icon is
+	   absolutely positioned (top 14px / right 10px), so it escapes the
+	   row and lands over the divider. Flatten both so every chip is an
+	   in-flow flex item the row can centre. */
+	.checkout-payment-methods .credit-card__logos > span,
+	.checkout-payment-methods .payment-logos > span {
+		position: static;
+		transform: none;
+	}
 	.checkout-payment-methods .credit-card__logos svg,
 	.checkout-payment-methods .payment-logos svg {
+		position: static;
 		background: ${ colorStudio.colors[ 'White' ] };
 		border: 1px solid var( --wp-components-color-gray-200, #e0e0e0 );
 		border-radius: 4px;
