@@ -15,9 +15,18 @@ import { errorNotice } from 'calypso/state/notices/actions';
 import AnalysisProgress from './analysis-progress';
 import AnalysisTypeCards from './analysis-type-cards';
 import AmplifySiteSelector from './site-selector';
-import type { AmplifyMode } from 'calypso/a8c-for-agencies/data/amplify/types';
+import type { AmplifyApiError, AmplifyMode } from 'calypso/a8c-for-agencies/data/amplify/types';
 
 import './style.scss';
+
+function isSiteUnreachableError( error: AmplifyApiError | null ) {
+	return (
+		error?.code === 'site_unreachable' ||
+		Object.values( error?.data?.details ?? {} ).some(
+			( detail ) => detail.code === 'site_unreachable'
+		)
+	);
+}
 
 export default function AmplifyAddSiteModal( { onClose }: { onClose: () => void } ) {
 	const dispatch = useDispatch();
@@ -34,12 +43,11 @@ export default function AmplifyAddSiteModal( { onClose }: { onClose: () => void 
 		// to the progress view instead of showing a notice.
 		onSuccess: () => setInProgress( true ),
 		onError: ( error ) => {
-			const message =
-				error?.code === 'site_unreachable'
-					? __(
-							'We couldn’t reach this site to analyze it. Make sure it’s online and publicly accessible, then try again.'
-					  )
-					: __( 'Could not start the analysis. Please try again.' );
+			const message = isSiteUnreachableError( error )
+				? __(
+						'We couldn’t reach this site to analyze it. Make sure it’s online and publicly accessible, then try again.'
+				  )
+				: __( 'Could not start the analysis. Please try again.' );
 			dispatch(
 				errorNotice( message, {
 					id: 'amplify-analysis-error',
