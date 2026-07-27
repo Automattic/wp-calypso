@@ -43,11 +43,11 @@
 		"@automattic/calypso-analytics": "workspace:^",
 		"@automattic/i18n-utils": "workspace:^",
 		"@wordpress/api-fetch": "^7.48.0",
-		"@wordpress/components": "^35.0.0",
+		"@wordpress/components": "^37.0.0",
 		"@wordpress/data": "^10.48.0",
 		"@wordpress/i18n": "^6.21.0",
 		"@wordpress/icons": "^13.3.0",
-		"@wordpress/ui": "^0.17.0",
+		"@wordpress/ui": "^0.18.0",
 		"clsx": "^2.1.1",
 		"wpcom-proxy-request": "workspace:^"
 	},

@@ -52,7 +52,7 @@
 		"@automattic/domain-search": "workspace:^",
 		"@automattic/i18n-utils": "workspace:^",
 		"@automattic/shopping-cart": "workspace:^",
-		"@wordpress/components": "^35.0.0",
+		"@wordpress/components": "^37.0.0",
 		"@wordpress/compose": "^8.2.0",
 		"@wordpress/data": "^10.48.0",
 		"@wordpress/icons": "^13.3.0",

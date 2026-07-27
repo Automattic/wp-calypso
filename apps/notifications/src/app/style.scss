@@ -1,6 +1,7 @@
 @use "calypso/assets/stylesheets/shared/mixins/dark-theme" as ui-mixins;
 @import "@wordpress/base-styles/breakpoints";
 @import "@wordpress/base-styles/mixins";
+@import "calypso/dashboard/app/wp-components-overrides.scss";
 
 $wpnc-pane-width: 448px;
 $wpnc-pane-border: 1px solid var(--color-border-subtle, #c3c4c7);
