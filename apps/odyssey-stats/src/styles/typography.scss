@@ -32,7 +32,13 @@ $highlight-card-tooltip-font: Inter, $display-type-font;
 .highlight-card-heading {
 	font-family: $highlight-card-heading-font;
 }
-.highlight-card-count-value {
+// Doubled up for the same reason as ".highlight-cards-heading" above: this class is also rendered
+// from the stats-email-top-row component (client/my-sites/stats/stats-email-top-row/top-card.jsx),
+// which is a different lazily-loaded route chunk than the rest of HighlightCards, so an un-doubled
+// rule here can lose a specificity tie against the original (un-patched) rule depending on load
+// order. Confirmed live: rendered in Recoleta on the Email opens/clicks pages while every other
+// page using the same class rendered correctly.
+.highlight-card-count-value.highlight-card-count-value {
 	font-family: $highlight-card-count-font;
 }
 .highlight-card-tooltip-content {
