@@ -6,8 +6,8 @@ import { FunctionComponent, useMemo, useCallback, useState, useEffect, useRef } 
 import { dismissCard } from 'calypso/blocks/dismissible-card/actions';
 import { isCardDismissed } from 'calypso/blocks/dismissible-card/selectors';
 import QueryUserPurchases from 'calypso/components/data/query-user-purchases';
-import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import SectionHeader from 'calypso/components/section-header';
+import { getRelativeDayString } from 'calypso/dashboard/utils/datetime';
 import TrackComponentView from 'calypso/lib/analytics/track-component-view';
 import { getRenewalItemFromProduct } from 'calypso/lib/cart-values/cart-items';
 import { getName, isRenewingBeforeExpiration, isExpiredOrRemoved } from 'calypso/lib/purchases';
@@ -60,7 +60,6 @@ interface Props {
 const UpcomingRenewalsReminder: FunctionComponent< Props > = ( { cart, addItemToCart } ) => {
 	const reduxDispatch = useDispatch();
 	const translate = useTranslate();
-	const moment = useLocalizedMoment();
 	const selectedSite = useSelector( ( state ) => getSelectedSite( state ) as SelectedSite );
 	const renewableSitePurchases: Purchase[] = useSelector( ( state ) =>
 		getRenewableSitePurchases( state, selectedSite?.ID )
@@ -207,7 +206,6 @@ const UpcomingRenewalsReminder: FunctionComponent< Props > = ( { cart, addItemTo
 
 	const { message, buttonLabel } = getMessages( {
 		translate,
-		moment,
 		selectedSite,
 		setUpcomingRenewalsDialogVisible: openAllPurchasesDialog,
 		renewablePurchasesNotAlreadyInCart,
@@ -247,13 +245,11 @@ const UpcomingRenewalsReminder: FunctionComponent< Props > = ( { cart, addItemTo
 
 function getMessages( {
 	translate,
-	moment,
 	selectedSite,
 	setUpcomingRenewalsDialogVisible,
 	renewablePurchasesNotAlreadyInCart,
 }: {
 	translate: ReturnType< typeof useTranslate >;
-	moment: ReturnType< typeof useLocalizedMoment >;
 	selectedSite: SelectedSite;
 	setUpcomingRenewalsDialogVisible: ( isVisible: boolean ) => void;
 	renewablePurchasesNotAlreadyInCart: Purchase[];
@@ -294,10 +290,15 @@ function getMessages( {
 	let message: TranslateResult = '';
 	const translateOptions = {
 		comment:
-			'"expiry" is relative to the present time and it is already localized, eg. "in a year", "in a month", "a week ago"',
+			'"expiry" is relative to the present time and it is already localized, eg. "in a year", "a week ago", "today"',
 		args: {
 			purchaseName: getName( purchase ),
-			expiry: moment( purchase.expiryDate ).fromNow(),
+			// This slot feeds both "expired %(expiry)s" and "is expiring %(expiry)s",
+			// so it is clamped to match the tense of the branch it lands in.
+			expiry: getRelativeDayString(
+				new Date( purchase.expiryDate ),
+				isExpiredOrRemoved( purchase ) ? 'past' : 'upcoming'
+			),
 		},
 	};
 
@@ -321,10 +322,10 @@ function getMessages( {
 	} else if ( isRenewingBeforeExpiration( purchase ) ) {
 		const renewingTranslateOptions = {
 			comment:
-				'"relativeRenewDate" is relative to the present time and it is already localized, eg. "in a year", "in a month"',
+				'"relativeRenewDate" is relative to the present time and it is already localized, eg. "in a year", "in a month", "today"',
 			args: {
 				purchaseName: getName( purchase ),
-				relativeRenewDate: moment( purchase.renewDate ).fromNow(),
+				relativeRenewDate: getRelativeDayString( new Date( purchase.renewDate ), 'upcoming' ),
 			},
 		};
 		if ( isDomainRegistration( purchase ) ) {
