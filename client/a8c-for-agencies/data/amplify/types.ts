@@ -41,8 +41,20 @@ export interface ArchiveAmplifyReportParams {
 	reportId: string;
 }
 
+export interface AmplifyApiErrorDetail {
+	code: string;
+	message: string;
+}
+
 export interface AmplifyApiError {
 	status: number;
 	code: string | null;
 	message: string;
+	// A parameter validation failure surfaces as `rest_invalid_param` at the
+	// top level; the code that actually says what went wrong sits under
+	// `data.details`, keyed by parameter name.
+	data?: {
+		status?: number;
+		details?: Record< string, AmplifyApiErrorDetail >;
+	};
 }
