@@ -96,6 +96,25 @@ describe( 'verify-css-scope findScopeFailures', () => {
 		] );
 	} );
 
+	it( 'fails loudly if a root exists in prefix but was never classified as an entry point or portal root', () => {
+		// This is the case that actually answers "does this catch a newly added root": if someone
+		// adds `.jp-stats-new-widget` to `prefix` but forgets to also add it to `entryPointRoots`
+		// or `portalRoots`, the self-nesting check above would simply never look at it — silently,
+		// the same failure class STATS-368 was about. This check makes that impossible to miss.
+		const futurePrefix = ':where(.jp-stats-dashboard, .jp-stats-new-widget)';
+		const css = `
+			${ futurePrefix } .card{color:red}
+			.jp-stats-dashboard{--sidebar-width-max:160px}
+		`;
+
+		// Note: no third argument — .jp-stats-new-widget is deliberately left unclassified.
+		expect( findScopeFailures( css, futurePrefix, [ '.jp-stats-dashboard' ] ) ).toEqual( [
+			expect.stringContaining(
+				'.jp-stats-new-widget is in `prefix` but not classified in `entryPointRoots` or `portalRoots`'
+			),
+		] );
+	} );
+
 	it( 'is unaffected by minification stripping whitespace after commas in :where(...)', () => {
 		const minifiedPrefix =
 			':where(.jp-stats-dashboard,.color-scheme,.ReactModalPortal,[data-base-ui-portal],[data-wp-compat-overlay-slot],.components-modal__screen-overlay,.jp-stats-widget)';

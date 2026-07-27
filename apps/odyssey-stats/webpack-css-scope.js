@@ -24,6 +24,20 @@ const prefix =
 // specific failure mode without flagging legitimate portal-root nesting as a false positive.
 const entryPointRoots = [ '.jp-stats-dashboard', '.jp-stats-widget' ];
 
+// The remaining `prefix` roots: portal roots first-party components render into, which — unlike
+// entryPointRoots — can legitimately be nested inside .jp-stats-dashboard/.jp-stats-widget.
+// verify-css-scope.js cross-checks entryPointRoots + portalRoots against `prefix`'s actual roots
+// and fails if a root in `prefix` isn't classified in either list: without that check, adding a
+// new root to `prefix` without also updating this file would silently fall through both checks
+// rather than failing loudly, defeating the point of automating this in the first place.
+const portalRoots = [
+	'.color-scheme',
+	'.ReactModalPortal',
+	'[data-base-ui-portal]',
+	'[data-wp-compat-overlay-slot]',
+	'.components-modal__screen-overlay',
+];
+
 const ignoreFiles = [
 	// Already hand-scoped; re-prefixing would double-nest it.
 	'odyssey-stats/src/app.scss',
@@ -73,4 +87,4 @@ const exclude = [
 	/^\.stats-widget-content\.color-scheme$/,
 ];
 
-module.exports = { prefix, entryPointRoots, ignoreFiles, exclude };
+module.exports = { prefix, entryPointRoots, portalRoots, ignoreFiles, exclude };
