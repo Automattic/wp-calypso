@@ -55,8 +55,8 @@ function getDraftCtaLabel( draftTitle: string ): string {
 		return __( 'Finish Draft' );
 	}
 
-	// translators: %s is the title of a draft post.
-	return sprintf( __( 'Finish Draft: "%s"' ), draftTitle );
+	// translators: %(draftTitle)s is the title of a draft post.
+	return sprintf( __( 'Finish Draft: "%(draftTitle)s"' ), { draftTitle } );
 }
 
 function getVariationConfig( variationName: string ): VariationConfig {
