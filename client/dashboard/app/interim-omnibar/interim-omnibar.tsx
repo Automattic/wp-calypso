@@ -3,6 +3,7 @@ import { useShouldUseUnifiedAgent } from '@automattic/agents-manager';
 import {
 	purchaseQuery,
 	queryClient,
+	siteAdminMenuQuery,
 	siteCurrentPlanQuery,
 	siteHourlyViewsQuery,
 } from '@automattic/api-queries';
@@ -81,6 +82,14 @@ export function InterimOmnibar( {
 	const { data: hourlyViews } = useQuery(
 		{
 			...siteHourlyViewsQuery( site?.ID ?? 0 ),
+			enabled: !! site,
+		},
+		queryClient
+	);
+
+	const { data: adminMenu } = useQuery(
+		{
+			...siteAdminMenuQuery( site?.ID ?? 0 ),
 			enabled: !! site,
 		},
 		queryClient
@@ -191,7 +200,7 @@ export function InterimOmnibar( {
 					isNotificationsShowing={ false }
 					isMigrationInProgress={ false }
 					migrationStatus={ null }
-					adminMenu={ null }
+					adminMenu={ adminMenu ?? null }
 					// Actions
 					setNextLayoutFocus={ noop }
 					activateNextLayoutFocus={ () => onToggleMenu?.() }

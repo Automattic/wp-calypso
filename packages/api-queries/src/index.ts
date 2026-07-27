@@ -105,6 +105,7 @@ export * from './site-activity-log-backup';
 export * from './site-address-change';
 export * from './site-apm';
 export * from './site-admin-bar';
+export * from './site-admin-menu';
 export * from './site-agency';
 export * from './site-ai-launchpad';
 export * from './site-atomic-transfers';
