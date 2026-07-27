@@ -6,8 +6,8 @@ import isDashboardEnv from 'calypso/dashboard/utils/is-dashboard-env';
  *
  * A calypso.live PR preview runs each app flavour (classic Calypso, Multi-site
  * Dashboard) in its own container under a random `container-*.calypso.live`
- * hostname, so the static `wpcom_url`/`dashboard_url` config values would send
- * cross-app links to production/staging — off the previewed build entirely.
+ * hostname, so the static app URLs in config would send cross-app links to
+ * production/staging — off the previewed build entirely.
  *
  * A container cannot derive its sibling's hostname, but it doesn't have to:
  * the calypso.live redirector resolves an image ref to a running container and
@@ -22,18 +22,12 @@ import isDashboardEnv from 'calypso/dashboard/utils/is-dashboard-env';
  * pulling it anonymously, and the `commit-<sha>` tags TeamCity also pushes are
  * not pullable that way, so every such link 404s with "Image ... not found".
  *
- * So both app URLs point at the redirector rather than at a resolved origin.
- * Nothing is resolved server side: no fetch, no polling, no per-render race
- * with a cold sibling. The cost is an extra hop per cross-app navigation, and
- * the same for the app's links to itself — a container's own flavour resolves
- * back to itself, since container identity is keyed on the image ref and env.
- * Keeping both keys on the redirector is what makes `back_to`/cancel targets
- * round trip: the two containers agree on the `https://calypso.live` origin,
- * which `dashboardOrigins()` allowlists, whereas neither can predict the
- * other's container hostname.
+ * The server only hands the ref to the client; the link builders in
+ * `client/dashboard/utils/calypso-live.ts` decide what to do with it. Nothing
+ * is resolved server side: no fetch, no polling, no per-render race with a cold
+ * sibling.
  */
 
-const REDIRECTOR_ORIGIN = 'https://calypso.live';
 const IMAGE_REF_PATTERN = /^registry\.a8c\.com\/calypso\/app:build-\d+$/;
 
 // The A4A Dashboard shares the dotcom Dashboard's env id, and is told apart
@@ -49,21 +43,12 @@ function getImageRef(): string | null {
 	return imageRef && IMAGE_REF_PATTERN.test( imageRef ) ? imageRef : null;
 }
 
-function buildRedirectorUrl( imageRef: string, env?: string ): string {
-	const url = new URL( REDIRECTOR_ORIGIN );
-	url.searchParams.set( 'image', imageRef );
-	if ( env ) {
-		url.searchParams.set( 'env', env );
-	}
-	return url.href;
-}
-
 /**
- * Returns clientData config overrides for a calypso.live preview request, or
+ * Returns clientData config additions for a calypso.live preview request, or
  * null when the request isn't one (production, staging and local dev are
  * unaffected).
  */
-export function getCalypsoLiveUrlOverrides(
+export function getCalypsoLiveClientConfig(
 	hostname: string | undefined
 ): Record< string, string > | null {
 	const imageRef = getImageRef();
@@ -76,8 +61,5 @@ export function getCalypsoLiveUrlOverrides(
 		return null;
 	}
 
-	return {
-		wpcom_url: buildRedirectorUrl( imageRef ),
-		dashboard_url: buildRedirectorUrl( imageRef, 'dashboard' ),
-	};
+	return { calypso_live_image: imageRef };
 }

@@ -15,7 +15,7 @@ import {
 	getTranslationChunkFileUrl,
 } from 'calypso/lib/i18n-utils/switch-locale';
 import { getCacheKey } from 'calypso/server/isomorphic-routing';
-import { getCalypsoLiveUrlOverrides } from 'calypso/server/lib/calypso-live-links';
+import { getCalypsoLiveClientConfig } from 'calypso/server/lib/calypso-live-links';
 import performanceMark from 'calypso/server/lib/performance-mark';
 import stateCache from 'calypso/server/state-cache';
 import {
@@ -317,7 +317,7 @@ export function serverRender( req, res ) {
 	performanceMark( req.context, 'final render', true );
 	context.clientData = {
 		...customizeClientDataForRequest( req, config.clientData ),
-		...getCalypsoLiveUrlOverrides( req.hostname ),
+		...getCalypsoLiveClientConfig( req.hostname ),
 	};
 
 	attachBuildTimestamp( context );

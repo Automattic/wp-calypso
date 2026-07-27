@@ -1,7 +1,7 @@
 import config from '@automattic/calypso-config';
 import { getCurrentDashboard, getDashboardFromQuery, buildDashboardLink } from '../app/routing';
 import { A4A_SIGNUP_PATHS } from '../section';
-import { buildLinkFromBaseUrl } from './base-url';
+import { calypsoLiveLink } from './calypso-live';
 import { isDashboardBackport } from './is-dashboard-backport';
 
 /**
@@ -17,14 +17,10 @@ export function dashboardOrigins(): string[] {
 		`http://my.a4a.localhost:${ port }`,
 	];
 
-	// The configured dashboard URL can differ from the static list, e.g. on
-	// calypso.live previews where it points at the preview's own dashboard.
-	const dashboardUrl = config( 'dashboard_url' );
-	if ( dashboardUrl ) {
-		const origin = new URL( String( dashboardUrl ) ).origin;
-		if ( ! origins.includes( origin ) ) {
-			origins.push( origin );
-		}
+	// On calypso.live previews both apps are reached through the redirector,
+	// so back_to/cancel_to round trips land on this origin.
+	if ( config( 'calypso_live_image' ) ) {
+		origins.push( 'https://calypso.live' );
 	}
 
 	return origins;
@@ -59,7 +55,7 @@ export function wpcomLink( path: string ) {
 			return path;
 		}
 	}
-	return buildLinkFromBaseUrl( path, String( config( 'wpcom_url' ) ) );
+	return calypsoLiveLink( path ) ?? new URL( path, config( 'wpcom_url' ) ).href;
 }
 
 /**
@@ -117,8 +113,5 @@ export function reauthRequiredLink() {
 	const isSameOrigin = wpcomUrl.startsWith( window.location.origin );
 	const currentPath = isSameOrigin ? window.location.pathname : window.location.href;
 
-	return buildLinkFromBaseUrl(
-		`/me/reauth-required?redirect_to=${ encodeURIComponent( currentPath ) }`,
-		wpcomUrl
-	);
+	return `${ wpcomUrl }/me/reauth-required?redirect_to=${ encodeURIComponent( currentPath ) }`;
 }
