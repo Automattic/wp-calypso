@@ -48,7 +48,7 @@ export default function ConsolidatedStatCard( {
 								<Button
 									size="small"
 									icon={ info }
-									iconSize={ 16 }
+									iconSize={ 18 }
 									ref={ setInfoAnchor }
 									label={ popoverTitle }
 									onClick={ () => setShowPopover( ( visible ) => ! visible ) }
