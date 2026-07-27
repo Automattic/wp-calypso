@@ -25,9 +25,9 @@ import {
 import { logToLogstash } from 'calypso/lib/logstash';
 import { useSiteSpec } from 'calypso/lib/site-spec';
 import {
+	getBlueprintSiteSpecConfig,
 	getBuildWowSiteSpecConfig,
 	getCiabSiteSpecConfig,
-	getDefaultSiteSpecConfig,
 	getEarlyProvisionSiteSpecConfig,
 	type SiteSpecConfig,
 } from 'calypso/lib/site-spec/utils';
@@ -456,7 +456,9 @@ const SiteSpec: StepType = function SiteSpec() {
 	} else if ( shouldImportBlueprint ) {
 		siteSpecStep = (
 			<SiteSpecContainer
-				siteSpecConfig={ getDefaultSiteSpecConfig() }
+				siteSpecConfig={ getBlueprintSiteSpecConfig( {
+					blueprintId: blueprintArchiveSlug,
+				} ) }
 				onSpecConfirm={ handleBlueprintArchiveSpecConfirm }
 			/>
 		);
