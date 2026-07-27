@@ -1,8 +1,29 @@
-import { BLOG_FLOW } from '@automattic/onboarding';
+import {
+	AI_SITE_BUILDER_FLOW,
+	AI_SITE_BUILDER_ONBOARDING_FLOW,
+	BLOG_FLOW,
+} from '@automattic/onboarding';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 
-// Flows to redirect
-const REMOVED_TAILORED_FLOWS = [
+type RedirectRule = {
+	flow: string;
+	to: string;
+	shouldRedirect?: ( searchParams: URLSearchParams ) => boolean;
+	replace?: boolean;
+};
+
+const AI_SITE_BUILDER_REDIRECT: RedirectRule = {
+	flow: AI_SITE_BUILDER_FLOW,
+	to: `/setup/${ AI_SITE_BUILDER_ONBOARDING_FLOW }`,
+	shouldRedirect: ( searchParams ) =>
+		! searchParams.has( 'siteId' ) &&
+		! searchParams.has( 'siteSlug' ) &&
+		searchParams.get( 'build_wow' ) !== '1',
+	replace: true,
+};
+
+// Flows to redirect and treat as removed throughout Calypso.
+const REMOVED_TAILORED_FLOWS: RedirectRule[] = [
 	{ flow: 'ai-assembler', to: '/start:lang?' },
 	{ flow: BLOG_FLOW, to: '/start:lang?' },
 	{ flow: 'free', to: '/start/free:lang?' },
@@ -19,6 +40,8 @@ const REMOVED_TAILORED_FLOWS = [
 	{ flow: 'domain-upsell', to: '/setup/domain-and-plan' },
 ];
 
+const FLOW_REDIRECTS = [ AI_SITE_BUILDER_REDIRECT, ...REMOVED_TAILORED_FLOWS ];
+
 export const isRemovedFlow = ( flowToCheck: string ) =>
 	!! REMOVED_TAILORED_FLOWS.find( ( { flow } ) => flow === flowToCheck );
 
@@ -28,11 +51,14 @@ const langPattern = '(?:/([a-z]{2}(?:-[a-z]{2})?))?/?$';
 // Test against a location pathname and build a redirect URL
 const redirectPathIfNecessary = ( pathname: string, search: string ) => {
 	// Add trailing slash to pathname if not present
-	pathname = pathname.endsWith( '/' ) ? pathname : pathname + '/';
+	const normalizedPathname = pathname.endsWith( '/' ) ? pathname : pathname + '/';
+	const searchParams = new URLSearchParams( search );
 
 	// Find the matching redirect route
-	const route = REMOVED_TAILORED_FLOWS.find( ( { flow } ) =>
-		pathname.startsWith( `/setup/${ flow }/` )
+	const route = FLOW_REDIRECTS.find(
+		( { flow, shouldRedirect } ) =>
+			normalizedPathname.startsWith( `/setup/${ flow }/` ) &&
+			( shouldRedirect?.( searchParams ) ?? true )
 	);
 
 	// If no route is found we don't redirect and return false
@@ -41,7 +67,7 @@ const redirectPathIfNecessary = ( pathname: string, search: string ) => {
 	}
 
 	// Find the language code in the pathname if present
-	const [ , lang ] = pathname.match( langPattern ) ?? [];
+	const [ , lang ] = normalizedPathname.match( langPattern ) ?? [];
 
 	// Replace the ":lang?" placeholder in the "to" field with the matched language or empty string if not present
 	const redirectUrl = route.to.replace( ':lang?', lang ? `/${ lang }` : '' );
@@ -49,15 +75,40 @@ const redirectPathIfNecessary = ( pathname: string, search: string ) => {
 	// Construct the final URL with search parameters if present
 	const finalUrl = `${ redirectUrl }${ search }`;
 
-	// Track the redirect event
-	recordTracksEvent( 'calypso_tailored_flows_redirect', {
-		redirect_from_url: location.pathname + location.search,
-		redirect_to_url: finalUrl,
-		referrer: document.referrer,
-	} );
+	if ( route.flow === AI_SITE_BUILDER_FLOW ) {
+		const legacyStep =
+			normalizedPathname.slice( `/setup/${ AI_SITE_BUILDER_FLOW }/`.length ).split( '/' )[ 0 ] ||
+			'initial';
+
+		recordTracksEvent( 'calypso_ai_site_builder_legacy_redirect', {
+			from_flow: AI_SITE_BUILDER_FLOW,
+			to_flow: AI_SITE_BUILDER_ONBOARDING_FLOW,
+			legacy_step: legacyStep,
+			...( searchParams.get( 'ref' ) && { ref: searchParams.get( 'ref' ) } ),
+			...( searchParams.get( 'source' ) && { source: searchParams.get( 'source' ) } ),
+			has_prompt: searchParams.has( 'prompt' ),
+			has_spec_id: searchParams.has( 'spec_id' ),
+			has_create_garden_site: searchParams.has( 'create_garden_site' ),
+			...( ( searchParams.get( 'provision_target' ) ||
+				searchParams.get( 'early_provision_target' ) ) && {
+				provision_target:
+					searchParams.get( 'provision_target' ) || searchParams.get( 'early_provision_target' ),
+			} ),
+		} );
+	} else {
+		recordTracksEvent( 'calypso_tailored_flows_redirect', {
+			redirect_from_url: location.pathname + location.search,
+			redirect_to_url: finalUrl,
+			referrer: document.referrer,
+		} );
+	}
 
 	// Perform the actual redirection
-	window.location.href = finalUrl;
+	if ( route.replace ) {
+		window.location.replace( finalUrl );
+	} else {
+		window.location.href = finalUrl;
+	}
 
 	return true;
 };
