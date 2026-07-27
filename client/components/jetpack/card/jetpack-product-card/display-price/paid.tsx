@@ -8,6 +8,9 @@ import type { Duration } from 'calypso/my-sites/plans/jetpack-plans/types';
 import type { Moment } from 'moment';
 import type { ReactNode } from 'react';
 
+// Some consumers import `Paid` directly, bypassing the wrapper that imports these styles.
+import './style.scss';
+
 type OwnProps = {
 	discountedPrice?: number;
 	discountedPriceDuration?: number;
@@ -24,19 +27,11 @@ type OwnProps = {
 	customTimeFrameBillingTerms?: ReactNode;
 };
 
-const Placeholder: React.FC< OwnProps > = ( { billingTerm, expiryDate, discountedPrice } ) => {
+const Placeholder: React.FC = () => {
 	return (
 		<>
-			<PlanPrice
-				original
-				className="display-price__original-price"
-				rawPrice={ 0.01 }
-				currencyCode="USD"
-			/>
-			{ typeof discountedPrice === 'number' && (
-				<PlanPrice discounted rawPrice={ 0.01 } currencyCode="USD" />
-			) }
-			<TimeFrame expiryDate={ expiryDate } billingTerm={ billingTerm } />
+			<div className="display-price__price-placeholder" />
+			<div className="display-price__time-frame-placeholder" />
 		</>
 	);
 };
@@ -116,9 +111,9 @@ const Paid: React.FC< OwnProps > = ( props ) => {
 		? Math.floor( ( ( originalPrice - finalPrice ) / originalPrice ) * 100 )
 		: 0;
 
-	// Placeholder (while prices are loading)
+	// Placeholder (while prices are loading, or when they are unavailable)
 	if ( ! currencyCode || ! originalPrice || pricesAreFetching ) {
-		return <Placeholder { ...props } />;
+		return <Placeholder />;
 	}
 
 	const formattedOriginalPrice = formatCurrency( originalPrice, currencyCode, {

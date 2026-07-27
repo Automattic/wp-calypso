@@ -27,6 +27,12 @@
 		display: flex;
 	}
 
+	&__price-error {
+		margin: 24px 0 16px;
+		color: var(--color-text-subtle);
+		font-size: $font-body-small;
+	}
+
 	&__discount-label {
 		display: inline-block;
 		align-self: flex-start;

@@ -72,8 +72,8 @@ const UpsellProductCard: React.FC< UpsellProductCardProps > = ( {
 	);
 	const isA4AEnabled = isA8CForAgencies();
 
-	let aboveButtonText: TranslateResult | null;
-	let billingTerm: Duration;
+	let aboveButtonText: TranslateResult | null = null;
+	let billingTerm: Duration = TERM_MONTHLY;
 	let ctaButtonURL: string | undefined;
 	let currencyCode: string | null;
 	let discountedPrice: number | undefined;
@@ -170,6 +170,8 @@ const UpsellProductCard: React.FC< UpsellProductCardProps > = ( {
 		}
 	}
 
+	const isManageProductMissing = hasJetpackPartnerAccess && ! isFetchingPrices && ! manageProduct;
+
 	if ( nonManageCurrencyCode === 'USD' ) {
 		if ( nonManageDiscountedPriceTotal ) {
 			nonManageProductPrice = nonManageDiscountedPriceTotal;
@@ -223,7 +225,7 @@ const UpsellProductCard: React.FC< UpsellProductCardProps > = ( {
 							</li>
 						) ) }
 				</ul>
-				{ hasJetpackPartnerAccess && (
+				{ hasJetpackPartnerAccess && ! isManageProductMissing && (
 					<b>
 						{ isA4AEnabled
 							? translate( 'Price per license:' )
@@ -231,20 +233,28 @@ const UpsellProductCard: React.FC< UpsellProductCardProps > = ( {
 					</b>
 				) }
 				<div className="upsell-product-card__price-container">
-					<DisplayPrice
-						isFree={ ! isFetchingPrices && originalPrice === 0 }
-						discountedPrice={ discountedPrice }
-						currencyCode={ currencyCode }
-						originalPrice={ originalPrice ?? 0 }
-						pricesAreFetching={ isFetchingPrices }
-						belowPriceText={ item.belowPriceText }
-						tooltipText={ tooltipText }
-						billingTerm={ billingTerm }
-						productName={ displayName }
-						hideSavingLabel={ false }
-					/>
-					{ discountText && ! isFetchingPrices && (
-						<div className="upsell-product-card__discount-label">{ discountText }</div>
+					{ isManageProductMissing ? (
+						<p className="upsell-product-card__price-error">
+							{ translate( 'We couldn’t load pricing for this product. Please try again later.' ) }
+						</p>
+					) : (
+						<>
+							<DisplayPrice
+								isFree={ ! isFetchingPrices && originalPrice === 0 }
+								discountedPrice={ discountedPrice }
+								currencyCode={ currencyCode }
+								originalPrice={ originalPrice ?? 0 }
+								pricesAreFetching={ isFetchingPrices }
+								belowPriceText={ item.belowPriceText }
+								tooltipText={ tooltipText }
+								billingTerm={ billingTerm }
+								productName={ displayName }
+								hideSavingLabel={ false }
+							/>
+							{ discountText && ! isFetchingPrices && (
+								<div className="upsell-product-card__discount-label">{ discountText }</div>
+							) }
+						</>
 					) }
 				</div>
 				{ aboveButtonText && (
@@ -273,6 +283,7 @@ const UpsellProductCard: React.FC< UpsellProductCardProps > = ( {
 				onCtaButtonClick={ onCtaButtonClickInternal }
 				ctaButtonURL={ ctaButtonURL }
 				ctaButtonLabel={ ctaButtonLabel }
+				hideCtaButton={ isManageProductMissing }
 				cardImage={ upsellImageUrl }
 				cardImageAlt={ upsellImageAlt }
 			>
