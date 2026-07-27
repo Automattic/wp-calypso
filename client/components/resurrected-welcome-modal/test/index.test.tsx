@@ -178,7 +178,7 @@ describe( 'ResurrectedWelcomeModalGate content variation', () => {
 			'calypso_resurrected_welcome_modal_cta_click',
 			{
 				variation: WELCOME_BACK_VARIATIONS.content,
-				cta_id: 'content-new',
+				cta_id: 'write-post',
 			}
 		);
 		expect( screen.queryByRole( 'dialog' ) ).not.toBeInTheDocument();
