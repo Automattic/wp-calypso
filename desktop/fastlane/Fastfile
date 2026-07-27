@@ -73,10 +73,6 @@ platform :mac do
   # Verify that the .app bundles electron-builder produced are signed with our
   # Developer ID and carry a notarization ticket.
   #
-  # `electron-builder` only warns when it can't find a valid signing identity: it
-  # skips signing and the build "passes" with binaries Apple's notary service
-  # later rejects. Run this right after the build so that fails the job here.
-  #
   lane :verify_code_signing do
     macos_verify_code_signing(
       artifact_path: Dir[File.join(PROJECT_ROOT_FOLDER, 'release', 'mac*', '*.app')],
@@ -107,8 +103,8 @@ platform :mac do
       )
     end
 
-    # `electron-builder` leaves the disk images themselves unsigned — only the app
-    # inside them is signed — so the stapled ticket is all there is to check here.
+    # `electron-builder` only signs the app inside a dmg, not the dmg itself, 
+    # so the stapled ticket is all there is to check here.
     macos_verify_code_signing(artifact_path: dmg_paths)
   end
 end
