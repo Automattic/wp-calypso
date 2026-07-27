@@ -1,5 +1,5 @@
 import { HelpCenter } from '@automattic/data-stores';
-import { StepContainer, Step } from '@automattic/onboarding';
+import { StepContainer, Step, isOnboardingFlow } from '@automattic/onboarding';
 import { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 import { useViewportMatch } from '@wordpress/compose';
 import { useDispatch, useSelect } from '@wordpress/data';
@@ -28,7 +28,6 @@ import { hasDashboardOptIn } from 'calypso/state/dashboard/selectors';
 import { useQuery } from '../../../../hooks/use-query';
 import { useOnboardingStepCounter } from '../../../flows/onboarding/use-onboarding-step-counter';
 import { shouldUseStepContainerV2 } from '../../../helpers/should-use-step-container-v2';
-import { useOnboardingHelpExperiment } from '../components/use-onboarding-help-experiment';
 import type { Step as StepType } from '../../types';
 import type { HelpCenterSelect } from '@automattic/data-stores';
 
@@ -86,7 +85,7 @@ const UseMyDomain: StepType< {
 		}
 		setShowHelpCenter( ! isHelpCenterShown );
 	};
-	const { showHelp: showHelpCenter } = useOnboardingHelpExperiment( flow );
+	const showHelpCenter = isOnboardingFlow( flow );
 
 	const handleGoBack = () => {
 		if ( String( getQueryArg( window.location.search, 'step' ) ?? '' ) === 'transfer-or-connect' ) {
