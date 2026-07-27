@@ -100,11 +100,12 @@ const UpsellProductCard: React.FC< UpsellProductCardProps > = ( {
 		isFetching: isFetchingManagePrices,
 	} = useLicenseProduct( nonManageProductSlug );
 
+	const isManageProductMissing =
+		hasJetpackPartnerAccess && areManagePricesFetched && ! manageProduct;
+
 	if ( hasJetpackPartnerAccess ) {
 		isFetchingPrices = isFetchingManagePrices || !! isFetchingNonManagePrices;
 		if ( manageProduct ) {
-			aboveButtonText = null;
-			billingTerm = TERM_MONTHLY;
 			ctaButtonURL = '#';
 			currencyCode = manageProduct.currency;
 			originalPrice = getLicenseProductPrice( manageProduct );
@@ -170,9 +171,6 @@ const UpsellProductCard: React.FC< UpsellProductCardProps > = ( {
 			}
 		}
 	}
-
-	const isManageProductMissing =
-		hasJetpackPartnerAccess && areManagePricesFetched && ! manageProduct;
 
 	if ( nonManageCurrencyCode === 'USD' ) {
 		if ( nonManageDiscountedPriceTotal ) {

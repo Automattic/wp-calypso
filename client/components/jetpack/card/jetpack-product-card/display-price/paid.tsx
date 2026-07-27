@@ -27,15 +27,6 @@ type OwnProps = {
 	customTimeFrameBillingTerms?: ReactNode;
 };
 
-const Placeholder: React.FC = () => {
-	return (
-		<>
-			<div className="display-price__price-placeholder" />
-			<div className="display-price__time-frame-placeholder" />
-		</>
-	);
-};
-
 const DiscountedPrice: React.FC< OwnProps & { finalPrice: number } > = ( {
 	discountedPriceFirst,
 	originalPrice,
@@ -113,7 +104,12 @@ const Paid: React.FC< OwnProps > = ( props ) => {
 
 	// Placeholder (while prices are loading, or when they are unavailable)
 	if ( ! currencyCode || ! originalPrice || pricesAreFetching ) {
-		return <Placeholder />;
+		return (
+			<>
+				<div className="display-price__price-placeholder" />
+				<div className="display-price__time-frame-placeholder" />
+			</>
+		);
 	}
 
 	const formattedOriginalPrice = formatCurrency( originalPrice, currencyCode, {

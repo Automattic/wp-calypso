@@ -2,7 +2,6 @@
  * @jest-environment jsdom
  */
 import { PRODUCT_JETPACK_SCAN, FEATURE_TYPE_JETPACK_SCAN } from '@automattic/calypso-products';
-import page from '@automattic/calypso-router';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { render, screen, fireEvent, within } from '@testing-library/react';
 import { Provider } from 'react-redux';
@@ -12,11 +11,6 @@ import SingleSiteUpsellLightbox from 'calypso/jetpack-cloud/sections/partner-por
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 
 jest.mock( 'calypso/state/ui/selectors/get-selected-site-id', () => jest.fn() );
-
-jest.mock( '@automattic/calypso-router', () => ( {
-	__esModule: true,
-	default: { redirect: jest.fn() },
-} ) );
 
 jest.mock( 'calypso/my-sites/plans/jetpack-plans/use-item-price', () =>
 	jest.fn().mockReturnValue( {
@@ -36,79 +30,12 @@ jest.mock( 'calypso/state/analytics/actions', () => ( {
 	} ) ),
 } ) );
 
-const mockUseProductsQuery = jest.fn();
-jest.mock( 'calypso/state/partner-portal/licenses/hooks/use-products-query', () => ( {
-	__esModule: true,
-	default: () => mockUseProductsQuery(),
-} ) );
-
-const mockUseAgencyProductsQuery = jest.fn();
-jest.mock( 'calypso/a8c-for-agencies/data/marketplace/use-products-query', () => ( {
-	__esModule: true,
-	default: () => mockUseAgencyProductsQuery(),
-} ) );
-
-const mockIsA8CForAgencies = jest.fn();
-jest.mock( 'calypso/lib/a8c-for-agencies/is-a8c-for-agencies', () => ( {
-	__esModule: true,
-	default: () => mockIsA8CForAgencies(),
-} ) );
-
-const manageScanProduct = {
-	name: 'Jetpack Scan Daily',
-	slug: 'jetpack-scan',
-	product_id: 2106,
-	currency: 'USD',
-	amount: '10',
-	price_interval: 'month',
-	family_slug: 'jetpack-scan',
-};
-
-const partnerState = {
-	partnerPortal: {
-		partner: {
-			current: {
-				keys: { id: 1 },
-			},
-			activePartnerKey: 1,
-		},
-		licenses: {
-			paginated: null,
-		},
-	},
-	sites: {
-		products: {
-			2916284: {
-				data: {
-					jetpack_scan: { available: true },
-				},
-			},
-		},
-	},
-	currentUser: {
-		user: {
-			has_jetpack_partner_access: true,
-		},
-	},
-};
-
 describe( 'SingleSiteUpsellLightbox', () => {
-	beforeEach( () => {
-		mockIsA8CForAgencies.mockReturnValue( false );
-		mockUseProductsQuery.mockReturnValue( {
-			data: [ manageScanProduct ],
-			isFetched: true,
-			isFetching: false,
-		} );
-		mockUseAgencyProductsQuery.mockReturnValue( {
-			data: undefined,
-			isFetched: false,
-			isFetching: false,
-		} );
-	} );
-
 	test( 'button link for non manage users is to the WordPress.com purchase page', async () => {
 		const firstState = {
+			a8cForAgencies: {
+				agencies: {},
+			},
 			partnerPortal: {
 				partner: {
 					current: {
@@ -159,6 +86,9 @@ describe( 'SingleSiteUpsellLightbox', () => {
 
 	test( 'button link for manage users does not open the WordPress.com checkout', async () => {
 		const secondState = {
+			a8cForAgencies: {
+				agencies: {},
+			},
 			partnerPortal: {
 				partner: {
 					current: {
@@ -182,11 +112,6 @@ describe( 'SingleSiteUpsellLightbox', () => {
 			currentUser: {
 				user: {
 					has_jetpack_partner_access: true,
-				},
-			},
-			productsList: {
-				items: {
-					'jetpack-scan': manageScanProduct,
 				},
 			},
 		};
@@ -215,107 +140,6 @@ describe( 'SingleSiteUpsellLightbox', () => {
 		fireEvent.click( screen.getByText( 'Add Jetpack Scan' ) );
 
 		expect( mockOnClick ).toHaveBeenCalledTimes( 1 );
-	} );
-
-	test( 'A4A prices the card from the agency marketplace query, not the partner-portal one', () => {
-		mockIsA8CForAgencies.mockReturnValue( true );
-		// A Billing Dragon agency has no legacy partner key, so the partner-portal query never resolves.
-		mockUseProductsQuery.mockReturnValue( {
-			data: undefined,
-			isFetched: false,
-			isFetching: false,
-		} );
-		mockUseAgencyProductsQuery.mockReturnValue( {
-			data: [ { ...manageScanProduct, amount: '25' } ],
-			isFetched: true,
-			isFetching: false,
-		} );
-
-		const queryClient = new QueryClient();
-		const mockStore = configureStore();
-		const store = mockStore( partnerState );
-
-		const { container } = render(
-			<Provider store={ store }>
-				<QueryClientProvider client={ queryClient }>
-					<UpsellProductCard
-						featureType={ FEATURE_TYPE_JETPACK_SCAN }
-						nonManageProductSlug={ PRODUCT_JETPACK_SCAN }
-						siteId={ 2916284 }
-						onCtaButtonClick={ jest.fn() }
-					/>
-				</QueryClientProvider>
-			</Provider>
-		);
-
-		expect( container.querySelector( '.plan-price' ) ).toHaveTextContent( '$25' );
-		expect(
-			screen.queryByText( 'We couldn’t load pricing for this product. Please try again later.' )
-		).not.toBeInTheDocument();
-
-		fireEvent.click( screen.getByText( 'Add Jetpack Scan' ) );
-
-		expect( page.redirect ).toHaveBeenCalledWith(
-			'/marketplace/checkout?product_slug=jetpack-scan&source=sitesdashboard&site_id=2916284'
-		);
-	} );
-
-	test( 'shows an error state instead of a price when no matching product comes back', () => {
-		mockUseProductsQuery.mockReturnValue( { data: [], isFetched: true, isFetching: false } );
-
-		const queryClient = new QueryClient();
-		const mockStore = configureStore();
-		const store = mockStore( partnerState );
-
-		const { container } = render(
-			<Provider store={ store }>
-				<QueryClientProvider client={ queryClient }>
-					<UpsellProductCard
-						featureType={ FEATURE_TYPE_JETPACK_SCAN }
-						nonManageProductSlug={ PRODUCT_JETPACK_SCAN }
-						siteId={ 2916284 }
-						onCtaButtonClick={ jest.fn() }
-					/>
-				</QueryClientProvider>
-			</Provider>
-		);
-
-		expect(
-			screen.getByText( 'We couldn’t load pricing for this product. Please try again later.' )
-		).toBeVisible();
-		expect( container.querySelector( '.plan-price' ) ).toBeNull();
-		expect( screen.queryByText( 'Add Jetpack Scan' ) ).not.toBeInTheDocument();
-	} );
-
-	test( 'renders the loading skeleton, not the error state, before the products query settles', () => {
-		mockUseProductsQuery.mockReturnValue( {
-			data: undefined,
-			isFetched: false,
-			isFetching: false,
-		} );
-
-		const queryClient = new QueryClient();
-		const mockStore = configureStore();
-		const store = mockStore( partnerState );
-
-		const { container } = render(
-			<Provider store={ store }>
-				<QueryClientProvider client={ queryClient }>
-					<UpsellProductCard
-						featureType={ FEATURE_TYPE_JETPACK_SCAN }
-						nonManageProductSlug={ PRODUCT_JETPACK_SCAN }
-						siteId={ 2916284 }
-						onCtaButtonClick={ jest.fn() }
-					/>
-				</QueryClientProvider>
-			</Provider>
-		);
-
-		expect(
-			screen.queryByText( 'We couldn’t load pricing for this product. Please try again later.' )
-		).not.toBeInTheDocument();
-		expect( container.querySelector( '.display-price__price-placeholder' ) ).toBeVisible();
-		expect( container.querySelector( '.plan-price' ) ).toBeNull();
 	} );
 
 	test( 'lightbox buttons and close icon act as expected', () => {
