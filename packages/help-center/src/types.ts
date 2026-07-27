@@ -87,6 +87,9 @@ interface SupportStatusCTA {
 	id: string;
 	variant: string;
 	url: string;
+	title: string;
+	description?: string;
+	action_label?: string;
 }
 
 export interface SupportStatus {

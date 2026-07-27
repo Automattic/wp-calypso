@@ -21,6 +21,7 @@ const eligibleCta = {
 	id: 'onboarding-call-v1',
 	variant: 'banner',
 	url: 'https://savvycal.com/CustomerExperience/wordpresscom-onboarding-hc',
+	title: 'Book Your Free Onboarding Call',
 };
 
 const setup = ( {
@@ -43,7 +44,7 @@ describe( 'useHelpCenterCTA', () => {
 		jest.clearAllMocks();
 	} );
 
-	it( 'returns renderable props for an eligible user', () => {
+	it( 'maps the payload onto renderable props', () => {
 		const { result } = setup();
 
 		expect( result.current ).toEqual( {
@@ -51,8 +52,24 @@ describe( 'useHelpCenterCTA', () => {
 			ctaId: 'onboarding-call-v1',
 			placement: 'help-center-home',
 			url: eligibleCta.url,
-			title: 'Book Your Free Onboarding Call',
+			title: eligibleCta.title,
 			description: undefined,
+			actionLabel: undefined,
+		} );
+	} );
+
+	it( 'passes through the optional description and action label', () => {
+		const { result } = setup( {
+			cta: {
+				...eligibleCta,
+				description: 'Talk one-on-one with a Happiness Engineer.',
+				action_label: 'Book your free call',
+			},
+		} );
+
+		expect( result.current ).toMatchObject( {
+			description: 'Talk one-on-one with a Happiness Engineer.',
+			actionLabel: 'Book your free call',
 		} );
 	} );
 
@@ -68,16 +85,15 @@ describe( 'useHelpCenterCTA', () => {
 		expect( result.current ).toBeNull();
 	} );
 
-	it( 'returns null for a campaign id it has no copy for', () => {
-		const { result } = setup( { cta: { ...eligibleCta, id: 'unknown-campaign' } } );
-
-		expect( result.current ).toBeNull();
-	} );
-
 	it( 'returns null for an unsupported variant', () => {
 		const { result } = setup( { cta: { ...eligibleCta, variant: 'default' } } );
 
 		expect( result.current ).toBeNull();
+	} );
+
+	it( 'returns null when the payload is missing a title or a url', () => {
+		expect( setup( { cta: { ...eligibleCta, title: '' } } ).result.current ).toBeNull();
+		expect( setup( { cta: { ...eligibleCta, url: '' } } ).result.current ).toBeNull();
 	} );
 
 	it( 'skips the CTA and the support-status fetch when the product disables it', () => {
