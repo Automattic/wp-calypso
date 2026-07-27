@@ -1,8 +1,6 @@
-import { useQueryClient } from '@tanstack/react-query';
 import { Button } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { bell } from '@wordpress/icons';
-import { useEffect, useRef } from 'react';
 import A4AEmptyState from 'calypso/a8c-for-agencies/components/a4a-empty-state';
 import DocumentHead from 'calypso/components/data/document-head';
 import { useToggleActivateMonitor } from 'calypso/jetpack-cloud/sections/agency-dashboard/hooks';
@@ -22,16 +20,6 @@ export function JetpackMonitorPreview( { site, trackEvent, hasError = false }: P
 	const toggleActivateMonitor = useToggleActivateMonitor( [ site ] );
 	const statuses = useSelector( getSiteMonitorStatuses );
 	const isActivating = statuses?.[ site.blog_id ] === 'loading';
-
-	const queryClient = useQueryClient();
-	const wasActivating = useRef( false );
-
-	useEffect( () => {
-		if ( wasActivating.current && ! isActivating ) {
-			queryClient.invalidateQueries( { queryKey: [ 'jetpack-agency-dashboard-sites' ] } );
-		}
-		wasActivating.current = isActivating;
-	}, [ isActivating, queryClient ] );
 
 	const handleActivate = () => {
 		trackEvent( 'monitor_preview_activate_monitor_click' );
