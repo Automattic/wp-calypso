@@ -194,19 +194,21 @@ export const Header = ( {
 		<div className="image-studio-header">
 			<div className="image-studio-header__inner">
 				<div className="image-studio-header__left">
-					{ leftContent ? (
-						leftContent
-					) : (
-						<h2
-							className={ cn( 'components-modal__header-heading', 'image-studio-header__title', {
-								'image-studio-sr-only': showTitle,
-							} ) }
-						>
-							{ isVideoMode
-								? __( 'Jetpack Video Editor', __i18n_text_domain__ )
-								: __( 'Jetpack Image Editor', __i18n_text_domain__ ) }
-						</h2>
-					) }
+					{ leftContent
+						? leftContent
+						: ! isVideoMode && (
+								<h2
+									className={ cn(
+										'components-modal__header-heading',
+										'image-studio-header__title',
+										{
+											'image-studio-sr-only': showTitle,
+										}
+									) }
+								>
+									{ __( 'Jetpack Image Editor', __i18n_text_domain__ ) }
+								</h2>
+						  ) }
 				</div>
 
 				{ showNavigationPill && (
@@ -360,7 +362,7 @@ export const Header = ( {
 						icon={ <Icon icon={ close } /> }
 						label={
 							isVideoMode
-								? __( 'Close video editor', __i18n_text_domain__ )
+								? __( 'Close', __i18n_text_domain__ )
 								: __( 'Close image editor', __i18n_text_domain__ )
 						}
 						onClick={ () => onClose() }

@@ -212,18 +212,18 @@ describe( 'Header', () => {
 				} );
 			} );
 
-			it( 'labels the close button for the video editor', () => {
+			it( 'labels the close button with a plain Close label', () => {
 				render( <Header { ...defaultProps } mode={ ImageStudioMode.Generate } /> );
 
-				expect( screen.getByLabelText( 'Close video editor' ) ).toBeInTheDocument();
+				expect( screen.getByLabelText( 'Close' ) ).toBeInTheDocument();
 				expect( screen.queryByLabelText( 'Close image editor' ) ).not.toBeInTheDocument();
 			} );
 
-			it( 'renders the video editor title', () => {
+			it( 'does not render the image editor title', () => {
 				render( <Header { ...defaultProps } mode={ ImageStudioMode.Generate } /> );
 
-				expect( screen.getByText( 'Jetpack Video Editor' ) ).toBeInTheDocument();
 				expect( screen.queryByText( 'Jetpack Image Editor' ) ).not.toBeInTheDocument();
+				expect( screen.queryByRole( 'heading' ) ).not.toBeInTheDocument();
 			} );
 		} );
 
