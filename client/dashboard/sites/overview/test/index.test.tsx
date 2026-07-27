@@ -243,7 +243,7 @@ describe( '<SiteOverview>', () => {
 		expect( await getCard( 'The perfect domain awaits' ) ).toBeVisible();
 	} );
 
-	test( 'hides the visibility progress bar for the no_guidance launchpad-personalization variation', async () => {
+	test( 'shows a plain coming-soon visibility card for the no_guidance launchpad-personalization variation', async () => {
 		assignPersonalizationVariation( 'no_guidance' );
 		mockSite( { ...site, launch_status: 'unlaunched' } as Site );
 		render( <SiteOverview siteSlug={ site.slug } /> );
@@ -251,10 +251,11 @@ describe( '<SiteOverview>', () => {
 		await screen.findByRole( 'heading', { name: 'Test Site' } );
 		await waitForFeatureGatedCards( 'Business' );
 
-		const card = await getCard( 'Finish setting up your site' );
+		const card = await getCard( 'Ready to go public?' );
 		await waitFor( () =>
 			expect( within( card ).queryByRole( 'progressbar' ) ).not.toBeInTheDocument()
 		);
+		expect( screen.queryByText( 'Finish setting up your site.' ) ).not.toBeInTheDocument();
 	} );
 
 	test( 'renders the overview of a commerce garden site', async () => {
