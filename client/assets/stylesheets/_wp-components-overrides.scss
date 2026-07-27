@@ -232,6 +232,14 @@
 	outline-offset: 0;
 }
 
+/* 37.0.0 draws the secondary border with `border-color` instead of the inset box-shadow
+ * Calypso and several packages still use, so it leaks as a stray accent outline. Turn it
+ * off and keep the box-shadow as the border. Destructive buttons keep their red border. */
+:where(.components-button.is-secondary:not(.is-destructive)) {
+	border-color: transparent !important;
+	box-shadow: inset 0 0 0 1px var(--wp-components-color-accent, var(--wp-admin-theme-color, #3858e9));
+}
+
 /* @wordpress/components RadioControl overrides --------------------------------------- */
 .components-radio-control {
 	&__input[type="radio"] {
