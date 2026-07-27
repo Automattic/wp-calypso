@@ -15,6 +15,7 @@ type RedirectRule = {
 const AI_SITE_BUILDER_REDIRECT: RedirectRule = {
 	flow: AI_SITE_BUILDER_FLOW,
 	to: `/setup/${ AI_SITE_BUILDER_ONBOARDING_FLOW }`,
+	// Existing free-trial sites still use the legacy domains and plans steps to upgrade and launch.
 	shouldRedirect: ( searchParams ) =>
 		! searchParams.has( 'siteId' ) && ! searchParams.has( 'siteSlug' ),
 	replace: true,

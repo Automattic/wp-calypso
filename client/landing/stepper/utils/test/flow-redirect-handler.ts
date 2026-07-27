@@ -62,10 +62,19 @@ describe( 'flow redirect handler', () => {
 	} );
 
 	it.each( [
-		[ 'site id', '?siteId=123&redirect=site-launch' ],
-		[ 'site slug', '?siteSlug=example.wordpress.com&redirect=site-launch' ],
-	] )( 'preserves the existing-site upgrade path identified by %s', ( _label, search ) => {
-		const didRedirect = redirectPathIfNecessary( '/setup/ai-site-builder/domains', search );
+		[
+			'domains with a site id',
+			'/setup/ai-site-builder/domains',
+			'?siteId=123&redirect=site-launch',
+		],
+		[ 'plans with a site id', '/setup/ai-site-builder/plans', '?siteId=123&redirect=site-launch' ],
+		[
+			'plans with a site slug',
+			'/setup/ai-site-builder/plans',
+			'?siteSlug=example.wordpress.com&redirect=site-launch',
+		],
+	] )( 'preserves the existing-site upgrade path through %s', ( _label, pathname, search ) => {
+		const didRedirect = redirectPathIfNecessary( pathname, search );
 
 		expect( didRedirect ).toBe( false );
 		expect( replace ).not.toHaveBeenCalled();
