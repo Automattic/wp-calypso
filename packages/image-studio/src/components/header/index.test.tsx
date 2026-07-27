@@ -78,6 +78,7 @@ jest.mock( '../../store', () => ( {
 		EditorSidebar: 'editor_sidebar',
 		JetpackExternalMediaBlock: 'jetpack_external_media_block',
 		JetpackExternalMediaFeaturedImage: 'jetpack_external_media_featured_image',
+		PostEditorFeatureClip: 'post_editor_feature_clip',
 	},
 } ) );
 
@@ -195,6 +196,35 @@ describe( 'Header', () => {
 			render( <Header { ...defaultProps } /> );
 
 			expect( screen.getByLabelText( 'Close image editor' ) ).toBeInTheDocument();
+		} );
+
+		describe( 'video mode (Feature Clip entry point)', () => {
+			beforeEach( () => {
+				mockUseSelect.mockImplementation( ( selector: any ) => {
+					const result = selector( () => ( {
+						getImageStudioAiProcessing: () => false,
+						getHasUpdatedMetadata: () => false,
+						getIsAnnotationMode: () => false,
+						getDraftIds: () => [],
+						getEntryPoint: () => ImageStudioEntryPoint.PostEditorFeatureClip,
+					} ) );
+					return result;
+				} );
+			} );
+
+			it( 'labels the close button for the video editor', () => {
+				render( <Header { ...defaultProps } mode={ ImageStudioMode.Generate } /> );
+
+				expect( screen.getByLabelText( 'Close video editor' ) ).toBeInTheDocument();
+				expect( screen.queryByLabelText( 'Close image editor' ) ).not.toBeInTheDocument();
+			} );
+
+			it( 'renders the video editor title', () => {
+				render( <Header { ...defaultProps } mode={ ImageStudioMode.Generate } /> );
+
+				expect( screen.getByText( 'Jetpack Video Editor' ) ).toBeInTheDocument();
+				expect( screen.queryByText( 'Jetpack Image Editor' ) ).not.toBeInTheDocument();
+			} );
 		} );
 
 		it( 'renders custom left content when provided', () => {
