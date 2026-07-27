@@ -13,45 +13,40 @@ import isDashboardEnv from 'calypso/dashboard/utils/is-dashboard-env';
  * the calypso.live redirector resolves an image ref to a running container and
  * carries the path and remaining query params across the 302, so
  * `https://calypso.live/domains/add/foo.blog?image=<ref>&env=dashboard` lands
- * on `https://container-x.calypso.live/domains/add/foo.blog`. The image ref for
- * the container's own build is `registry.a8c.com/calypso/app:commit-<sha>`,
- * from the `COMMIT_SHA` baked into the image.
+ * on `https://container-x.calypso.live/domains/add/foo.blog`. One ref covers
+ * both flavours: they run the same image, and `env` picks the flavour.
+ *
+ * The ref has to be the build-numbered tag TeamCity bakes in as
+ * `CALYPSO_LIVE_IMAGE` — the same one the calypso.live PR comment links to.
+ * Deriving it from `COMMIT_SHA` does not work: calypso.live resolves a ref by
+ * pulling it anonymously, and the `commit-<sha>` tags TeamCity also pushes are
+ * not pullable that way, so every such link 404s with "Image ... not found".
  *
  * So both app URLs point at the redirector rather than at a resolved origin.
  * Nothing is resolved server side: no fetch, no polling, no per-render race
  * with a cold sibling. The cost is an extra hop per cross-app navigation, and
  * the same for the app's links to itself — a container's own flavour resolves
- * back to itself, since container identity is keyed on the image ref. Keeping
- * both keys on the redirector is what makes `back_to`/cancel targets round
- * trip: the two containers agree on the `https://calypso.live` origin, which
- * `dashboardOrigins()` allowlists, whereas neither can predict the other's
- * container hostname.
+ * back to itself, since container identity is keyed on the image ref and env.
+ * Keeping both keys on the redirector is what makes `back_to`/cancel targets
+ * round trip: the two containers agree on the `https://calypso.live` origin,
+ * which `dashboardOrigins()` allowlists, whereas neither can predict the
+ * other's container hostname.
  */
 
-const IMAGE_REPOSITORY = 'registry.a8c.com/calypso/app';
 const REDIRECTOR_ORIGIN = 'https://calypso.live';
+const IMAGE_REF_PATTERN = /^registry\.a8c\.com\/calypso\/app:build-\d+$/;
 
-// Dashboard variants (CIAB, A4A) share dashboard env ids but run on suffixed
-// calypso.live hostnames; only the dotcom flavours participate.
-const EXCLUDED_HOSTNAME_SUFFIXES = [
-	'-ciab.calypso.live',
-	'-a4a.calypso.live',
-	'-jetpack.calypso.live',
-];
+// The A4A Dashboard shares the dotcom Dashboard's env id, and is told apart
+// only by the `-a4a` suffix calypso.live gives its container.
+const A4A_HOSTNAME_SUFFIX = '-a4a.calypso.live';
 
 function isCalypsoLiveDotcomHostname( hostname: string | undefined ): boolean {
-	if ( ! hostname?.endsWith( '.calypso.live' ) ) {
-		return false;
-	}
-	return ! EXCLUDED_HOSTNAME_SUFFIXES.some( ( suffix ) => hostname.endsWith( suffix ) );
+	return !! hostname?.endsWith( '.calypso.live' ) && ! hostname.endsWith( A4A_HOSTNAME_SUFFIX );
 }
 
-function getCommitPinnedImageRef(): string | null {
-	const sha = process.env.COMMIT_SHA;
-	if ( ! sha || ! /^[0-9a-f]{40}$/.test( sha ) ) {
-		return null;
-	}
-	return `${ IMAGE_REPOSITORY }:commit-${ sha }`;
+function getImageRef(): string | null {
+	const imageRef = process.env.CALYPSO_LIVE_IMAGE;
+	return imageRef && IMAGE_REF_PATTERN.test( imageRef ) ? imageRef : null;
 }
 
 function buildRedirectorUrl( imageRef: string, env?: string ): string {
@@ -71,7 +66,7 @@ function buildRedirectorUrl( imageRef: string, env?: string ): string {
 export function getCalypsoLiveUrlOverrides(
 	hostname: string | undefined
 ): Record< string, string > | null {
-	const imageRef = getCommitPinnedImageRef();
+	const imageRef = getImageRef();
 	if ( ! isCalypsoLiveDotcomHostname( hostname ) || ! imageRef ) {
 		return null;
 	}
