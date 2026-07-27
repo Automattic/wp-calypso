@@ -21,8 +21,7 @@ $border-radius: 5px; // stylelint-disable-line scales/radii
 	font-family: $font-sf-pro-text;
 	font-size: $font-body-small;
 	grid-template-columns: minmax(10px, 1.5fr) minmax(0, auto);
-	// 26px is the height of the heading, the remaining should be auto.
-	grid-template-rows: 26px auto auto;
+	grid-template-rows: auto auto auto;
 	grid-template-areas:
 		"heading thumbnail"
 		"post thumbnail"
