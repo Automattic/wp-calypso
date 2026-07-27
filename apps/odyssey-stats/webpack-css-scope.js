@@ -7,13 +7,34 @@
  * real plugin instead of a hand-copied stand-in that can drift from what actually ships.
  */
 
-// .jp-stats-dashboard for normal content, .jp-stats-widget for the WP-Admin dashboard widget's
-// own mount point. The rest are portal roots first-party components can render into:
-// .color-scheme/.ReactModalPortal (Popover/Dialog), [data-base-ui-portal]/[data-wp-compat-overlay-slot]
-// (@wordpress/ui Popover/Tooltip/Dialog, e.g. StatsInfotip), .components-modal__screen-overlay
-// (@wordpress/components Modal, e.g. the UTM builder, stats upsell modal, and feedback modal).
+// .jp-stats-dashboard: normal content. .jp-stats-widget: the WP-Admin dashboard widget's mount.
+// The rest are portal roots: .color-scheme/.ReactModalPortal (Popover/Dialog),
+// [data-base-ui-portal]/[data-wp-compat-overlay-slot] (@wordpress/ui), .components-modal__screen-overlay
+// (@wordpress/components Modal), .components-popover__fallback-container (@wordpress/components
+// Popover/Dropdown, document.body-appended since we render no <Popover.Slot>/SlotFillProvider).
 const prefix =
-	':where(.jp-stats-dashboard, .color-scheme, .ReactModalPortal, [data-base-ui-portal], [data-wp-compat-overlay-slot], .components-modal__screen-overlay, .jp-stats-widget)';
+	':where(.jp-stats-dashboard, .color-scheme, .ReactModalPortal, [data-base-ui-portal], [data-wp-compat-overlay-slot], .components-modal__screen-overlay, .components-popover__fallback-container, .jp-stats-widget)';
+
+// `prefix` roots that are always document.body-appended and never nested inside another root, so
+// self-nesting them under `prefix` is always dead — unlike the portal roots below, which routinely
+// nest legitimately inside these two. verify-css-scope.js uses this to check for that failure mode
+// without flagging legitimate portal-root nesting as a false positive.
+const entryPointRoots = [
+	'.jp-stats-dashboard',
+	'.jp-stats-widget',
+	'.components-popover__fallback-container',
+];
+
+// The rest of `prefix`'s roots: legitimately nestable inside entryPointRoots. verify-css-scope.js
+// fails the build if a `prefix` root isn't classified in entryPointRoots or here — otherwise a new
+// root added to `prefix` without updating this file would silently go unchecked.
+const portalRoots = [
+	'.color-scheme',
+	'.ReactModalPortal',
+	'[data-base-ui-portal]',
+	'[data-wp-compat-overlay-slot]',
+	'.components-modal__screen-overlay',
+];
 
 const ignoreFiles = [
 	// Already hand-scoped; re-prefixing would double-nest it.
@@ -21,10 +42,8 @@ const ignoreFiles = [
 	// Calypso's global stylesheet (html/body reset, @wordpress/components CSS) — left unscoped
 	// for now.
 	'client/assets/stylesheets/style.scss',
-	// @visx/tooltip's TooltipInPortal (used by the line chart tooltip) portals to an unmarked
-	// <body> div, always wrapped in a `.visx-tooltip` element. This file already self-scopes
-	// under `.visx-tooltip` (like app.scss does under `[id="wpcom"]`) — re-prefixing would
-	// double-nest it.
+	// @visx/tooltip's TooltipInPortal (line chart tooltip) self-scopes under `.visx-tooltip`
+	// already — re-prefixing would double-nest it.
 	'client/my-sites/stats/components/line-chart/styles.scss',
 	// Third-party CSS is out of scope here.
 	/node_modules/,
@@ -40,21 +59,21 @@ const exclude = [
 	/^:lang\(/, // :lang(he) .rtl
 	/^\[lang/, // [lang*=fr] .wp-brand-font
 	/^\[dir[~|^$*]?=/, // [dir=rtl] .chevron
-	// .jp-stats-widget styling its own mount element (widget/index.scss), including compound
-	// forms like `.jp-stats-widget.is-ready` or `.jp-stats-widget :hover`. It's already one of
-	// the prefix roots above, so nesting it as a descendant of itself would go dead — same
-	// problem :root/html/body have. Lookahead (not `$`) avoids also matching unrelated classes
-	// like `.jp-stats-widget-extra`.
+	// .jp-stats-dashboard styling itself or descendants (wp-admin.scss). Compound forms too, e.g.
+	// `.jp-stats-dashboard.theme-default .focus-content`.
+	/^\.jp-stats-dashboard(?![\w-])/,
+	// .jp-stats-widget styling itself (widget/index.scss). Compound forms too, e.g.
+	// `.jp-stats-widget.is-ready` or `.jp-stats-widget :hover`.
 	/^\.jp-stats-widget(?![\w-])/,
-	// .color-scheme.is-<scheme> from @automattic/calypso-color-schemes sets the accent/primary
-	// scales on the element that carries the class itself (main dashboard, portals, widget), so
-	// prefixing it as a descendant of a scope root would go dead — same self-scoping case as the
-	// mount roots above. Anchored to the full compound so nested rules like
-	// `.color-scheme.is-light .masterbar` still get prefixed.
+	// .color-scheme.is-<scheme> sets vars on the element that carries the class itself. Anchored
+	// to the full compound so nested rules like `.color-scheme.is-light .masterbar` still prefix.
 	/^\.color-scheme\.is-[\w-]+$/,
-	// .stats-widget-content.color-scheme carries the widget's primary→accent remap on its own
-	// root element (scoped-theme-for-widget.scss); same self-scoping reason.
+	// .stats-widget-content.color-scheme: widget's primary→accent remap on its own root element.
 	/^\.stats-widget-content\.color-scheme$/,
+	// @wordpress/components' Tooltip (Ariakit, not @wordpress/ui) portals to document.body with no
+	// class/attribute on the wrapper — only its content carries `.components-tooltip`. Nothing
+	// targets it today; excluded pre-emptively so that stays true if something ever does.
+	/^\.components-tooltip(?![\w-])/,
 ];
 
-module.exports = { prefix, ignoreFiles, exclude };
+module.exports = { prefix, entryPointRoots, portalRoots, ignoreFiles, exclude };

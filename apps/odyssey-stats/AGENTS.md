@@ -53,12 +53,15 @@ Odyssey routes API calls through Jetpack REST API, not `public-api.wordpress.com
 
 ### CSS Scoping
 
-Odyssey only owns the `#wpcom` subtree of a wp-admin page (wp-admin chrome is a sibling under the same `<body>`), so `webpack.config.js` runs a `postcss-prefix-selector` step scoping first-party component styles to `.jp-stats-dashboard`, the WP-Admin dashboard widget's own mount point (`.jp-stats-widget`), and known portal roots (`.color-scheme`, `.ReactModalPortal`, `[data-base-ui-portal]`, `[data-wp-compat-overlay-slot]`, `.components-modal__screen-overlay` for `@wordpress/components` `Modal`). Two lists there need updating as the app evolves:
+Odyssey only owns the `#wpcom` subtree of a wp-admin page, so `webpack.config.js` scopes first-party CSS via `postcss-prefix-selector` to known mount points and portal roots. Four lists in `webpack-css-scope.js` need updating as the app evolves:
 
-- **Prefix target list** — add a new mount point or portal root if a component renders under a wrapper not already listed (e.g. a new standalone entry point, or a component that renders through a new `Popover`/`Dialog`/`Tooltip` library).
-- **`exclude` list** — add a pattern if a selector legitimately targets the real `<html>`/`<body>`/`:root` (RTL flags, `:lang()`, scroll-lock, etc.); prefixing those makes them permanently dead instead of just scoped.
+- **`prefix`** — add a new mount point or portal root when a component renders under a wrapper not already listed.
+- **`exclude`** — add a pattern for a selector that legitimately targets `<html>`/`<body>`/`:root`, or a mount point's own root element; prefixing those makes them permanently dead instead of scoped.
+- **`entryPointRoots`** / **`portalRoots`** — every `prefix` root must go in exactly one. `entryPointRoots` is for standalone mounts never nested inside another root; `portalRoots` for roots that legitimately nest _inside_ one (e.g. `.color-scheme.is-light .masterbar`). Classify by checking where the root actually attaches in source (its `appendChild`/portal target, e.g. `root-child.tsx`), not by guessing from usage — a wrong `portalRoots` classification produces dead CSS the automated check won't catch, since that's exactly the case it treats as legitimate.
 
-After changing either list, do a production build and grep the compiled CSS for the affected class to confirm it's scoped (or intentionally left unscoped), not silently dead.
+`yarn verify:css-scope` (runs as part of `teamcity:build-app`) builds and checks the compiled CSS for exactly this failure — a root nested under a `:where(...)` group it's already a member of — and fails loudly if any `prefix` root is left unclassified. See `bin/verify-css-scope.js`.
+
+The `:where(prefix)` string gets repeated on every scoped rule (not deduped), so it's normal for it to make up roughly half the raw compiled CSS — that's not a bug. Gzip compresses the repetition down to a few KB, so the real network cost is small (the whole CSS bundle is ~84 KiB gzipped) and CSS isn't in `size-limit`'s budget. Don't "fix" this by shrinking the `prefix` list.
 
 ## Conventions
 
