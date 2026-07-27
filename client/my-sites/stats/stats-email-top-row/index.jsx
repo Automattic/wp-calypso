@@ -41,10 +41,10 @@ export default function StatsEmailTopRow( { siteId, postId, statType, className,
 							icon={ <Icon icon={ send } /> }
 							emailIsSending={ emailIsSending }
 						/>
-						{ counts?.unique_opens ? (
+						{ isRequesting || counts?.unique_opens ? (
 							<TopCard
 								heading={ translate( 'Unique opens' ) }
-								value={ counts.unique_opens }
+								value={ counts?.unique_opens }
 								isLoading={ isRequesting && ! counts?.hasOwnProperty( 'unique_opens' ) }
 								icon={ <Icon icon={ seen } /> }
 							/>
