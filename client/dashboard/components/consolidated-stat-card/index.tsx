@@ -6,7 +6,7 @@ import {
 	Button,
 	Popover,
 } from '@wordpress/components';
-import { Icon, info } from '@wordpress/icons';
+import { info } from '@wordpress/icons';
 import { useState } from 'react';
 import { Card, CardBody } from '../card';
 import { TextSkeleton } from '../text-skeleton';
@@ -47,12 +47,12 @@ export default function ConsolidatedStatCard( {
 							<>
 								<Button
 									size="small"
+									icon={ info }
+									iconSize={ 18 }
 									ref={ setInfoAnchor }
-									aria-label={ popoverTitle }
+									label={ popoverTitle }
 									onClick={ () => setShowPopover( ( visible ) => ! visible ) }
-								>
-									<Icon icon={ info } size={ 16 } />
-								</Button>
+								/>
 								{ showPopover && (
 									<Popover
 										anchor={ infoAnchor }
