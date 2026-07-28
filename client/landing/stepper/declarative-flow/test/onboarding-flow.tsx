@@ -138,6 +138,7 @@ describe( 'Onboarding Flow', () => {
 				expect( addSurvicate ).toHaveBeenCalledWith( {
 					email: 'test@example.com',
 					registrationDate: '2024-01-15T00:00:00+00:00',
+					userId: 123,
 				} );
 
 				rerender(
