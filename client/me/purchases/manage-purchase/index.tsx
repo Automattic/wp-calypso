@@ -158,6 +158,7 @@ import {
 	isExpiredAndInGracePeriod,
 	isExpiredOrRemoved,
 	isExpiredWithNoAutoRenewAttemptsLeft,
+	isIncludedWithPlan,
 	isPaidWithCredits,
 	isPartnerPurchase,
 	isRemoved,
@@ -869,13 +870,17 @@ class ManagePurchase extends Component<
 
 		const canRefund = hasAmountAvailableToRefund( purchase );
 		const autoRenewOn = !! purchase.is_auto_renew_enabled;
+		// A domain connection bundled with a plan renews with that plan, so Cancel
+		// is never offered for it (see `canAutoRenewBeTurnedOff`) and removal is the
+		// only action available — regardless of what auto-renew reports.
+		const isBundledDomainConnection = isIncludedWithPlan( purchase ) && isDomainMapping( purchase );
 
 		// Show Remove when auto-renew is off, OR when the purchase is in its
 		// post-expiry grace period (Cancel is not offered there, so Remove is the
 		// only way to act on it — matching the Dashboard). The refund-eligible case
 		// is surfaced inside the cancel flow via RefundEligibilityNotice instead of
 		// a parallel Remove CTA.
-		if ( autoRenewOn && ! isExpiredAndInGracePeriod( purchase ) ) {
+		if ( ! isBundledDomainConnection && autoRenewOn && ! isExpiredAndInGracePeriod( purchase ) ) {
 			return null;
 		}
 
@@ -1306,14 +1311,7 @@ class ManagePurchase extends Component<
 
 				<span className="manage-purchase__settings-link">
 					{ ! isJetpackCloud() && site && (
-						// Temporary bridge (SHILL-2256): ProductLink still expects the
-						// camelCase Purchase. Remove once it reads the raw shape.
-						<ProductLink
-							purchase={ createPurchaseObject(
-								purchase as unknown as Parameters< typeof createPurchaseObject >[ 0 ]
-							) }
-							selectedSite={ site }
-						/>
+						<ProductLink purchase={ purchase } selectedSite={ site } />
 					) }
 				</span>
 

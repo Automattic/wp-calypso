@@ -519,6 +519,14 @@ export function isDomainTransfer( purchase: Purchase | ObjectWithProductSlug ): 
 	return purchase.product_slug === DomainProductSlugs.TRANSFER_IN;
 }
 
+/**
+ * A domain connection (also known as a domain mapping): a domain registered
+ * elsewhere that points at a WordPress.com site.
+ */
+export function isDomainMapping( purchase: Purchase | ObjectWithProductSlug ): boolean {
+	return purchase.product_slug === DomainProductSlugs.DOMAIN_MAPPING;
+}
+
 export function isSiteRedirect( purchase: Purchase ): boolean {
 	return purchase.product_slug === OFFSITE_REDIRECT;
 }
@@ -860,7 +868,11 @@ export function getMutationFlowType(
 		return getPurchaseCancellationFlowType( purchase );
 	}
 
-	if ( purchase.is_auto_renew_enabled && hasAmountAvailableToRefund( purchase ) ) {
+	// intent === 'remove': refundability alone decides the endpoint. A purchase
+	// still inside its refund window goes through cancel-and-refund rather than
+	// the bare DELETE — auto-renew is typically already off by the time Remove is
+	// offered (the user cancelled first), so it must not gate the refund.
+	if ( hasAmountAvailableToRefund( purchase ) ) {
 		return CANCEL_FLOW_TYPE.CANCEL_WITH_REFUND;
 	}
 	return CANCEL_FLOW_TYPE.REMOVE;

@@ -171,7 +171,7 @@ $border-radius: 5px; // stylelint-disable-line scales/radii
 
 .stats-video-metric-tabs {
 	display: grid;
-	grid-template-columns: repeat(3, 1fr);
+	grid-template-columns: repeat(4, 1fr);
 	gap: 16px;
 	list-style: none;
 	// The chart's 42px-wide x-axis labels wrap onto a second line for
