@@ -40,29 +40,20 @@ object BuildDockerImage : BuildType({
 
     data class EnvConfig(
         val label: String,
+        val baseUrl: String = "https://calypso.live",
         val envQuery: String, // e.g. "" or "&env=jetpack"
         val qrEnv: String,    // e.g. "flags=oauth" or "env=jetpack&flags=oauth"
     )
 
     val imageBase = "registry.a8c.com/calypso/app"
 	val commitImageExistsParam = "dockerImage.commitImageExists"
-	val baseUrl = "https://calypso.live"
 
     val environments = listOf(
         EnvConfig(
-            label = "Calypso Live",
+            label = "Calypso Live (/home)",
+            baseUrl = "https://calypso.live/home",
             envQuery = "",
             qrEnv = "flags=oauth",
-        ),
-        EnvConfig(
-            label = "Jetpack Cloud Live",
-            envQuery = "&env=jetpack",
-            qrEnv = "env=jetpack&flags=oauth",
-        ),
-        EnvConfig(
-            label = "Automattic for Agencies Live",
-            envQuery = "&env=a8c-for-agencies",
-            qrEnv = "env=a8c-for-agencies&flags=oauth",
         ),
 		EnvConfig(
 			label = "Dashboard Live (dotcom)",
@@ -73,6 +64,16 @@ object BuildDockerImage : BuildType({
 			label = "Dashboard Live (A4A)",
 			envQuery = "&env=dashboard-a4a",
 			qrEnv = "env=dashboard-a4a&flags=oauth",
+		),
+		EnvConfig(
+            label = "Jetpack Cloud Live",
+            envQuery = "&env=jetpack",
+            qrEnv = "env=jetpack&flags=oauth",
+		),
+        EnvConfig(
+			label = "Automattic for Agencies Live",
+			envQuery = "&env=a8c-for-agencies",
+			qrEnv = "env=a8c-for-agencies&flags=oauth",
 		)
     )
 
@@ -81,11 +82,11 @@ object BuildDockerImage : BuildType({
             appendLine(
                 """
                 <details>
-                  <summary>${env.label} <a href="${baseUrl}?image=$imageBase:build-%build.number%${env.envQuery}">(direct link)</a></summary>
+                  <summary>${env.label} <a href="${env.baseUrl}?image=$imageBase:build-%build.number%${env.envQuery}">(direct link)</a></summary>
                   <table>
                     <tr>
                       <td>
-                        <a href="${baseUrl}?image=$imageBase:build-%build.number%${env.envQuery}">${baseUrl}?image=$imageBase:build-%build.number%${env.envQuery}</a>
+                        <a href="${env.baseUrl}?image=$imageBase:build-%build.number%${env.envQuery}">${env.baseUrl}?image=$imageBase:build-%build.number%${env.envQuery}</a>
                       </td>
                     </tr>
                   </table>

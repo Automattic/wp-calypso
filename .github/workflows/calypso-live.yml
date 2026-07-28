@@ -48,41 +48,18 @@ jobs:
             }
 
             const link = `https://calypso.live?${{steps.build_link.outputs.QUERY}}`;
+            const homeLink = `https://calypso.live/home?${{steps.build_link.outputs.QUERY}}`;
 
             const body = trimIndent(`
               <!--calypso-live-watermark:apr@v1-->
               <details>
                 <summary>
-                  Calypso Live <a href="${link}">(direct link)</a>
+                  Calypso Live (/home) <a href="${homeLink}">(direct link)</a>
                 </summary>
                 <table>
                   <tr>
                     <td>
-                      <a href="${link}">${link}</a>
-                    </td>
-                  </tr>
-                </table>
-              </details>
-              <details>
-                <summary>
-                  Jetpack Cloud Live <a href="${link}&env=jetpack">(direct link)</a>
-                </summary>
-                <table>
-                  <tr>
-                    <td>
-                      <a href="${link}&env=jetpack">${link}&env=jetpack</a>
-                    </td>
-                  </tr>
-                </table>
-              </details>
-              <details>
-                <summary>
-                  Automattic for Agencies Live <a href="${link}&env=a8c-for-agencies">(direct link)</a>
-                </summary>
-                <table>
-                  <tr>
-                    <td>
-                      <a href="${link}&env=a8c-for-agencies">${link}&env=a8c-for-agencies</a>
+                      <a href="${homeLink}">${homeLink}</a>
                     </td>
                   </tr>
                 </table>
@@ -107,6 +84,30 @@ jobs:
                   <tr>
                     <td>
                       <a href="${link}&env=dashboard-a4a">${link}&env=dashboard-a4a</a>
+                    </td>
+                  </tr>
+                </table>
+              </details>
+              <details>
+                <summary>
+                  Jetpack Cloud Live <a href="${link}&env=jetpack">(direct link)</a>
+                </summary>
+                <table>
+                  <tr>
+                    <td>
+                      <a href="${link}&env=jetpack">${link}&env=jetpack</a>
+                    </td>
+                  </tr>
+                </table>
+              </details>
+              <details>
+                <summary>
+                  Automattic for Agencies Live <a href="${link}&env=a8c-for-agencies">(direct link)</a>
+                </summary>
+                <table>
+                  <tr>
+                    <td>
+                      <a href="${link}&env=a8c-for-agencies">${link}&env=a8c-for-agencies</a>
                     </td>
                   </tr>
                 </table>
