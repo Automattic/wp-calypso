@@ -43,7 +43,7 @@ export default function ContentInfo( {
 				? `${ siteAdminUrl }upload.php`
 				: wpcomLink( `/media/${ siteDomain }` ),
 		],
-		[ 'plugin_count', 'plugin', `https://${ siteDomain }/wp-admin/plugins.php` ],
+		[ 'plugin_count', 'plugin', siteAdminUrl ? `${ siteAdminUrl }plugins.php` : `https://${ siteDomain }/wp-admin/plugins.php` ],
 	];
 
 	const content: ContentItem[] = types
