@@ -271,6 +271,13 @@ function isCreditCardFormValid(
 				}
 			} );
 
+			if ( ! isValid ) {
+				// Unlike the stripe branch above, nothing here previously
+				// surfaced an error notice or scrolled the invalid fields
+				// into view, so the button appeared to do nothing.
+				setFieldsError();
+			}
+
 			debug( 'ebanx validation - cardholder name and contact details', {
 				isValid,
 			} );
