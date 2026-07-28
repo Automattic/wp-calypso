@@ -78,12 +78,12 @@ export function useThankYouRedirect( {
 		siteHasFeature( state, selectedSite?.ID, WPCOM_FEATURES_MANAGE_PLUGINS )
 	);
 
-	// A checkout-initiated plugin install (transfer + install happen during checkout, not here, so
-	// atomicFlow is never set) that has landed on an Atomic site — the case this recovers. It does NOT
-	// gate on wporgPlugin.wporg: wordpress.org answers 200 with an empty body for a marketplace-only
-	// slug, which the store normalizes to wporg: true, so that never holds for the plugins we recover.
-	const isRecoveryFlow =
-		! atomicFlow && ! isPluginUploadFlow && !! pluginSlug && !! freshSite?.is_wpcom_atomic;
+	// A plugin install that has landed on an Atomic site with the plugin possibly still inactive.
+	// Covers both the checkout-initiated flow (atomicFlow never set) and the flow where this component
+	// drives the transfer (atomicFlow set) — in both, the transfer can complete before the plugin is
+	// activated. It does NOT gate on wporgPlugin.wporg: wordpress.org answers 200 with an empty body
+	// for a marketplace-only slug, which the store normalizes to wporg: true, so that never holds.
+	const isRecoveryFlow = ! isPluginUploadFlow && !! pluginSlug && !! freshSite?.is_wpcom_atomic;
 
 	usePostTransferPluginRecovery( {
 		siteId,
@@ -91,8 +91,10 @@ export function useThankYouRedirect( {
 		// isAtomicTransferReady already requires manage_options, which the transfer propagates after
 		// is_wpcom_atomic flips; activating during that gap would fail and burn the retry budget.
 		canActivate: !! isAtomicTransferReady,
-		// The step-driven flow activates at currentStep 1, so this hook owns activation only at step 0.
-		ownsActivation: currentStep === 0,
+		// The step-driven effect only activates at currentStep 1, so this hook owns activation at every
+		// other step — including step 2 of the atomic-transfer flow, where the plugin lands after that
+		// effect's window and would otherwise never be activated.
+		ownsActivation: currentStep !== 1,
 		installedPlugin,
 	} );
 	// Check completition of all flows and redirect to thank you page
@@ -103,8 +105,10 @@ export function useThankYouRedirect( {
 			// - Install with the help of uploading archive of a plugins
 			// - If it's simple site which doesn't support plugins, then installing and activation happens at the same time with upgrading to Business plan
 			( installedPlugin && pluginActive ) ||
-			// Transfer to atomic using a marketplace plugin
+			// Transfer to atomic using a marketplace plugin — wait for the plugin to actually be active,
+			// not just for the transfer to complete, or we redirect with the plugin still inactive.
 			( atomicFlow &&
+				pluginActive &&
 				transferStates.COMPLETE === automatedTransferStatus &&
 				canManagePlugins &&
 				isAtomicTransferReady ) ||
