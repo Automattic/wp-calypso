@@ -36,8 +36,8 @@ import {
 } from 'calypso/dashboard/me/billing-purchases/cancel-purchase/get-solutions-for-reason';
 import { CardActionContext, RENEW_COUPON, SOLUTION_CARD_CONFIG } from './solution-cards-config';
 import UpsellStep from './upsell-step';
+import type { Purchase } from '@automattic/api-core';
 import type { SiteDetails } from '@automattic/data-stores';
-import type { Purchase } from 'calypso/lib/purchases/types';
 
 const HELP_CENTER_STORE = HelpCenter.register();
 
@@ -93,7 +93,7 @@ function getTranslatedTitle( id: string, translate: ( s: string ) => string ): s
 		case 'built-by':
 			return translate( 'Let us build for you' );
 		case 'ask-ai-assistant':
-			return translate( 'Ask our AI assistant' );
+			return translate( 'Ask WordPress Agent' );
 		case 'upgrade-for-full-access':
 			return translate( 'Pick another paid plan for access to more features' );
 		case 'get-theme-addon':
@@ -133,7 +133,7 @@ function getTranslatedSubtitle(
 		case 'built-by':
 			return translate( 'Our team can build your site so you can focus on what matters.' );
 		case 'ask-ai-assistant':
-			return translate( 'Use our AI assistant to quickly find solutions.' );
+			return translate( 'Use WordPress Agent to quickly find solutions.' );
 		case 'upgrade-for-full-access':
 			return translate( 'Get the business plan to access all available plugins and themes.' );
 		case 'get-theme-addon':
@@ -196,13 +196,13 @@ export default function SolutionsCardsUpsellStep( {
 		useDataStoreDispatch( HELP_CENTER_STORE );
 	const { data: canConnectToZendeskMessaging } = useCanConnectToZendeskMessaging();
 
-	const showSwitchToMonthly = isAnnualOrLongerPlan( purchase.productSlug );
+	const showSwitchToMonthly = isAnnualOrLongerPlan( purchase.product_slug );
 	const showSwitchToYearly =
-		! isAnnualOrLongerPlan( purchase.productSlug ) &&
-		!! getYearlyPlanByMonthly( purchase.productSlug );
+		! isAnnualOrLongerPlan( purchase.product_slug ) &&
+		!! getYearlyPlanByMonthly( purchase.product_slug );
 
 	const hideChangePlan =
-		isPersonalPlan( purchase.productSlug ) && PRICE_MOTIVATED_REASONS.has( cancellationReason );
+		isPersonalPlan( purchase.product_slug ) && PRICE_MOTIVATED_REASONS.has( cancellationReason );
 
 	const filteredSolutions = solutions?.filter( ( card ) => {
 		if ( card.id === 'switch-to-monthly' && ! showSwitchToMonthly ) {
@@ -232,14 +232,14 @@ export default function SolutionsCardsUpsellStep( {
 	}
 
 	const changePlanUrl = `/plans/${ site.slug }`;
-	const baseRenewUrl = `/checkout/${ site.slug }/${ purchase.productSlug }?coupon=${ RENEW_COUPON }`;
+	const baseRenewUrl = `/checkout/${ site.slug }/${ purchase.product_slug }?coupon=${ RENEW_COUPON }`;
 	const renewNowUrl = purchaseSettingsUrl
 		? addQueryArgs( baseRenewUrl, {
 				redirect_to: purchaseSettingsUrl,
 				cancel_to: purchaseSettingsUrl,
 		  } )
 		: baseRenewUrl;
-	const yearlySlug = getYearlyPlanByMonthly( purchase.productSlug );
+	const yearlySlug = getYearlyPlanByMonthly( purchase.product_slug );
 	const yearlyPlanUrl = yearlySlug
 		? addQueryArgs( `/checkout/${ site.slug }/${ yearlySlug }`, {
 				redirect_to: `/purchases/subscriptions/${ site.slug }`,

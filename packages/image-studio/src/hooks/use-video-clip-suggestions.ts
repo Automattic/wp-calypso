@@ -11,15 +11,12 @@ import {
 import { useAsyncSuggestionsLoader } from './use-async-suggestions-loader';
 import type { AgentMessage } from '../types/agenttic';
 
-const MAX_POST_BODY_CHARS = 2000;
 const EMPTY_SUGGESTIONS: Suggestion[] = [];
 
 /**
- * The post body is inlined verbatim because the suggestions endpoint does
- * not run server-side `[[client.gutenberg_page.simple_structure]]`
- * substitution — sending that placeholder leaves the LLM with no context
- * and an active video tool, and it ends up calling the tool instead of
- * returning chips.
+ * Suggestions for the Cinematic style. The post's content and structure reach
+ * the model via the server-resolved page context in the system prompt, so this
+ * prompt carries only the direction instructions — no inlined post body.
  *
  * Each chip prompt weaves together 5-7 axes drawn from a pool of eight
  * (camera, subject, lighting, texture, time-of-day, audio, palette,
@@ -33,9 +30,8 @@ const EMPTY_SUGGESTIONS: Suggestion[] = [];
  * Each chip may also include an optional closing-direction sub-clause
  * — exposes the chat-steerable `closerStatement` affordance via example.
  */
-export function buildVideoClipSuggestionsPrompt( postBody: string ): string {
-	const trimmed = postBody.slice( 0, MAX_POST_BODY_CHARS );
-	return `Below is the body of a WordPress post. Propose 3 rich directional prompts for an 8-second 9:16 vertical video clip that would complement the post.
+export function buildVideoClipSuggestionsPrompt(): string {
+	return `Using the WordPress post's content and structure available to you in context [[client.gutenberg_page.simple_structure]], propose 3 rich directional prompts for an 8-second 9:16 vertical video clip that would complement the post.
 
 Each prompt MUST be:
 - Grounded in the post's subject matter (a place, object, environment, mood, or texture mentioned in the post — not the post's literal headline).
@@ -57,26 +53,14 @@ Each chip MAY also include an optional closing-direction sub-clause (a short phr
 - 60-120 words. As rich as the chosen axes warrant; do not pad.
 - No trailing punctuation.
 - People may appear — only adults, no children or minors. Describe them generically (e.g. "a barista", "a hiker") with no named individuals, public figures, or recognizable likenesses.
-- Free of crowds, on-screen text, signage, dialogue, or copyrighted properties — these are non-negotiable for the safety pipeline.
-
-POST BODY:
-${ trimmed }`;
+- Free of crowds, on-screen text, signage, dialogue, or copyrighted properties — these are non-negotiable for the safety pipeline.`;
 }
 
 /**
- * Suggestions for the Highlights style. The Highlights flow doesn't use the
- * user prompt to describe what the video should LOOK like — the cloud render
- * path (wpcom/generate-html-for-video → wpcom/generate-video-for-studio with
- * mode='editframe') composes the HTML server-side from the post itself. The
- * user prompt's role is purely editorial steering of that composer. The six
- * axes below are the editorial analogue of the cinematic builder's
- * cinematography axes — they map 1:1 to what generate-html-for-video
- * actually honors (lead/focus, audience, voice, structure, beat emphasis,
- * closer/CTA). Each chip weaves 2-3 of them, never cinematography.
+ * Builds the prompt that proposes editorial steers for the Highlights style.
  */
-export function buildHighlightsClipSuggestionsPrompt( postBody: string ): string {
-	const trimmed = postBody.slice( 0, MAX_POST_BODY_CHARS );
-	return `Below is the body of a WordPress post. Propose 3 short editorial steers a user could pick to shape a 20-second summary video derived from this post.
+export function buildHighlightsClipSuggestionsPrompt(): string {
+	return `Using the WordPress post's content and structure available to you in context [[client.gutenberg_page.simple_structure]], propose 3 short editorial steers a user could pick to shape a 20-second summary video derived from this post.
 
 The video is rendered automatically from the post's content — these steers DO NOT describe what it should look like. They tell the composer WHICH parts to emphasize and HOW to frame them. Editorial direction, never cinematography.
 
@@ -97,10 +81,7 @@ Each steer MUST:
 
 Well-formed example (for a post about an autumn family weekend): "For families with young kids, structure it as three weekend outings and emphasize the orchard apple-picking and the lantern-lit harvest festival" — Audience + Structure + Emphasis, each axis naming a pointable detail from the post.
 
-Across the 3 chips, cover distinct axis combinations and distinct angles on the post — don't let two chips lean on the same pair.
-
-POST BODY:
-${ trimmed }`;
+Across the 3 chips, cover distinct axis combinations and distinct angles on the post — don't let two chips lean on the same pair.`;
 }
 
 function buildVideoClipSystemPrompt( suggestionPrompt: string, locale: string ): string {
@@ -226,8 +207,8 @@ export function useVideoClipSuggestions( {
 	if ( enabled ) {
 		prompt =
 			styleKey === 'highlights'
-				? buildHighlightsClipSuggestionsPrompt( postBodyText )
-				: buildVideoClipSuggestionsPrompt( postBodyText );
+				? buildHighlightsClipSuggestionsPrompt()
+				: buildVideoClipSuggestionsPrompt();
 	}
 
 	// Pair the right system-prompt builder with the user-prompt variant.

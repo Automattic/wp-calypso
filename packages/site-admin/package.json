@@ -50,7 +50,7 @@
 	"dependencies": {
 		"@wordpress/base-styles": "^9.1.0",
 		"@wordpress/commands": "^1.48.0",
-		"@wordpress/components": "^35.0.0",
+		"@wordpress/components": "^37.0.0",
 		"@wordpress/compose": "^8.2.0",
 		"@wordpress/core-data": "^7.48.0",
 		"@wordpress/dom": "^4.48.0",

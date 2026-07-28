@@ -5,7 +5,7 @@ import {
 	type PlanSlug,
 } from '@automattic/calypso-products';
 import { Plans } from '@automattic/data-stores';
-import { ResponseCartProduct } from '@automattic/shopping-cart';
+import { ResponseCartProduct, type ResponseCart } from '@automattic/shopping-cart';
 import { useMemo } from 'react';
 import useCheckPlanAvailabilityForPurchase from 'calypso/my-sites/plans-features-main/hooks/use-check-plan-availability-for-purchase';
 
@@ -87,4 +87,23 @@ export function getSimulatedCostBeforeDiscounts(
 	return (
 		monthlyPrices[ product.product_slug as PlanSlug ] || product.item_original_subtotal_integer
 	);
+}
+
+/**
+ * Sums `getSimulatedCostBeforeDiscounts` across the cart to give the basis for
+ * the crossed-out subtotal shown in checkout.
+ *
+ * The returned value is in the smallest unit for the currency.
+ * @param responseCart - The cart.
+ * @param monthlyPrices - Map of plan slug to equivalent monthly total, from `useEquivalentMonthlyTotals`.
+ */
+export function getSubtotalBeforeDiscounts(
+	responseCart: ResponseCart,
+	monthlyPrices: Record< PlanSlug, number >
+): number {
+	return responseCart.products.reduce( ( subtotal, product ) => {
+		const originalAmountInteger = getSimulatedCostBeforeDiscounts( product, monthlyPrices );
+		// In specific cases (e.g. premium domains) the original price (renewal) is lower than the due price.
+		return subtotal + Math.max( product.item_subtotal_integer, originalAmountInteger );
+	}, 0 );
 }

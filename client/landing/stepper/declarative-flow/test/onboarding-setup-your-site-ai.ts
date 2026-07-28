@@ -4,6 +4,13 @@
 import onboarding from '../flows/onboarding/onboarding';
 import { renderFlow } from './helpers';
 
+// The blank-site exit awaits the launchpad-personalization ExPlat assignment before
+// redirecting. Resolve it synchronously to control (variationName: null) so the
+// redirect fires within the test's tick instead of waiting on a real network fetch.
+jest.mock( 'calypso/lib/explat', () => ( {
+	loadExperimentAssignment: jest.fn( () => Promise.resolve( { variationName: null } ) ),
+} ) );
+
 const originalLocation = window.location;
 const tick = () => new Promise( ( resolve ) => setTimeout( resolve, 0 ) );
 

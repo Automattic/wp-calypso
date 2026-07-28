@@ -45,7 +45,7 @@
 		"me/legacy-contact": false,
 		"onboarding/interval-dropdown": true,
 		"performance/apm": false,
-		"plans/delayed-downgrade": false,
+		"plans/delayed-downgrade": true,
 		"plans/expired-downgrade": true,
 		"plans/hosting-trial": true,
 		"plans/migration-trial": true,
@@ -56,6 +56,7 @@
 		"rum-tracking/logstash": true,
 		"site-spec": true,
 		"two-factor/enhanced-security": true,
+		"webauthn/related-origin-requests": true,
 		"wordpress-ai-tools": true,
 		"wpcom-user-bootstrap": true
 	},

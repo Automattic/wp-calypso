@@ -207,7 +207,7 @@ class CancelPurchaseButton extends Component<
 				{ ! isJetpack && ! isAkismet && ! isDomainRegistration( purchase ) && (
 					<CancelPurchaseForm
 						disableButtons={ disableButtons }
-						purchase={ purchase }
+						purchase={ purchase.rawPurchase }
 						isVisible={ showDialog }
 						onClose={ this.closeDialog }
 						onSurveyComplete={ this.handleSurveyComplete }

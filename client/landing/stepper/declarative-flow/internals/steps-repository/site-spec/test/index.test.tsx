@@ -141,7 +141,7 @@ describe( 'SiteSpec early provisioning step', () => {
 		expect( redirect.searchParams.has( 'create_garden_site' ) ).toBe( false );
 	} );
 
-	it( 'attaches a confirmed spec to the existing build-wow site and redirects to Site Editor', async () => {
+	it( 'attaches a confirmed spec and redirects immediately to site generation', async () => {
 		mockQueryParams = new URLSearchParams( 'build_wow=1&siteSlug=example.wordpress.com' );
 		wpcomPostMock.mockResolvedValue( {
 			blog_id: 123,
@@ -174,9 +174,14 @@ describe( 'SiteSpec early provisioning step', () => {
 			}
 		);
 
-		const redirect = new URL( window.location.href );
-		expect( redirect.pathname ).toBe( '/wp-admin/site-editor.php' );
-		expect( redirect.searchParams.get( 'spec_id' ) ).toBe( 'spec-456' );
+		const redirect = new URL( window.location.href, 'https://wordpress.com' );
+		expect( redirect.pathname ).toBe( '/setup/ai-site-builder-spec/site-generation' );
+		expect( redirect.searchParams.get( 'siteId' ) ).toBe( '123' );
+		expect( redirect.searchParams.get( 'siteSlug' ) ).toBe( 'example.wordpress.com' );
+		expect( redirect.searchParams.get( 'specId' ) ).toBe( 'spec-456' );
+		expect( redirect.searchParams.get( 'editorUrl' ) ).toBe(
+			'https://example.wordpress.com/wp-admin/site-editor.php?spec_id=spec-456'
+		);
 
 		expect( logToLogstashMock ).toHaveBeenCalledWith(
 			expect.objectContaining( {
@@ -185,7 +190,6 @@ describe( 'SiteSpec early provisioning step', () => {
 					type: 'build_wow_spec_confirm_response',
 					spec_id: 'spec-456',
 					site_identifier: 'example.wordpress.com',
-					ready_for_editor: true,
 					atomic_ready_for_editor: true,
 					remote_option_ready: true,
 					is_atomic: true,

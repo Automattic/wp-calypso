@@ -163,6 +163,11 @@ export const STEPS = {
 		asyncComponent: () => import( './steps-repository/site-spec' ),
 	},
 
+	SITE_GENERATION: {
+		slug: 'site-generation',
+		asyncComponent: () => import( './steps-repository/site-generation' ),
+	},
+
 	LAUNCHPAD: { slug: 'launchpad', asyncComponent: () => import( './steps-repository/launchpad' ) },
 
 	OPTIONS: {

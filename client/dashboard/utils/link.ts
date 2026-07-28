@@ -3,18 +3,60 @@ import { getCurrentDashboard, getDashboardFromQuery, buildDashboardLink } from '
 import { A4A_SIGNUP_PATHS } from '../section';
 import { isDashboardBackport } from './is-dashboard-backport';
 
+const CALYPSO_LIVE_ORIGIN = 'https://calypso.live';
+
+/**
+ * On a calypso.live preview, returns a redirector link that resolves to the
+ * previewed build's container for the given app flavour. Returns null
+ * everywhere else, so callers fall back to their normal static URLs.
+ *
+ * `env` selects the flavour: 'wpcom' for classic Calypso, 'dashboard' for the
+ * my.wordpress.com Dashboard. The redirector carries the path and any remaining
+ * query params across its 302.
+ */
+export function calypsoLiveRedirectorLink(
+	path: string,
+	env: 'wpcom' | 'dashboard'
+): string | null {
+	const image = config( 'calypso_live_image' );
+	if ( ! image ) {
+		return null;
+	}
+
+	const url = new URL( path, CALYPSO_LIVE_ORIGIN );
+
+	if ( url.origin !== CALYPSO_LIVE_ORIGIN ) {
+		// `path` was an absolute URL.
+		return null;
+	}
+
+	url.searchParams.set( 'image', String( image ) );
+	if ( env === 'dashboard' ) {
+		url.searchParams.set( 'env', env );
+	}
+	return url.href;
+}
+
 /**
  * This function returns all the origins for the dashboard.
  */
 export function dashboardOrigins(): string[] {
 	const port = config( 'port' ) ?? 3000;
-	return [
+	const origins = [
 		`http://my.localhost:${ port }`,
 		'https://my.wordpress.com',
 		`http://my.woo.localhost:${ port }`,
 		'https://my.woo.ai',
 		`http://my.a4a.localhost:${ port }`,
 	];
+
+	// On calypso.live previews both apps are reached through the redirector,
+	// so back_to/cancel_to round trips land on this origin.
+	if ( config( 'calypso_live_image' ) ) {
+		origins.push( CALYPSO_LIVE_ORIGIN );
+	}
+
+	return origins;
 }
 
 /**
@@ -46,7 +88,7 @@ export function wpcomLink( path: string ) {
 			return path;
 		}
 	}
-	return new URL( path, config( 'wpcom_url' ) ).href;
+	return calypsoLiveRedirectorLink( path, 'wpcom' ) ?? new URL( path, config( 'wpcom_url' ) ).href;
 }
 
 /**

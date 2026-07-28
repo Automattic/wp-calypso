@@ -18,7 +18,6 @@ import {
 } from 'calypso/state/sites/selectors';
 import { hasReadersAsLandingPage } from 'calypso/state/sites/selectors/has-reader-as-landing-page';
 import { hasSitesAsLandingPage } from 'calypso/state/sites/selectors/has-sites-as-landing-page';
-import { getSelectedSiteId } from './state/ui/selectors';
 
 /**
  * @param clientRouter Unused. We can't use the isomorphic router because we want to do redirects.
@@ -91,12 +90,7 @@ const waitForPrefs = () => async ( dispatch, getState ) => {
 };
 
 const getSitesLink = ( isDashboardOptIn ) => {
-	// In development environments, don't redirect to the Dashboard subdomain as it might not be the intent.
-	// For instance, developers might use the Calypso Live link to test something not in the Dashboard,
-	// but they get redirected to the Dashboard subdomain, and lose the Calypso Live domain in the process.
-	// As a temporary workaround, we send them to the v1 /sites instead.
-	// TODO: The workaround will need to change once we deprecate v1 /sites.
-	if ( isDashboardOptIn && ! [ 'development', 'wpcalypso' ].includes( config( 'env_id' ) ) ) {
+	if ( isDashboardOptIn ) {
 		bumpStat( 'dashboard-redirect', 'landing-page' );
 		return dashboardLink( '/sites' );
 	}
@@ -121,9 +115,9 @@ async function getLoggedInLandingPage( { dispatch, getState } ) {
 
 	// determine the primary site ID (it's a property of "current user" object) and then
 	// ensure that the primary site info is loaded into Redux before proceeding.
-	const primaryOrSelectedSiteId = getSelectedSiteId( getState() ) || getPrimarySiteId( getState() );
-	await dispatch( waitForSite( primaryOrSelectedSiteId ) );
-	const primarySiteSlug = getSiteSlug( getState(), primaryOrSelectedSiteId );
+	const primarySiteId = getPrimarySiteId( getState() );
+	await dispatch( waitForSite( primarySiteId ) );
+	const primarySiteSlug = getSiteSlug( getState(), primarySiteId );
 
 	if ( ! primarySiteSlug ) {
 		if ( getIsSubscriptionOnly( getState() ) ) {
@@ -134,20 +128,11 @@ async function getLoggedInLandingPage( { dispatch, getState } ) {
 		return getSitesLink( dashboardOptIn );
 	}
 
-	const isCustomerHomeEnabled = canCurrentUserUseCustomerHome(
-		getState(),
-		primaryOrSelectedSiteId
-	);
+	const isCustomerHomeEnabled = canCurrentUserUseCustomerHome( getState(), primarySiteId );
 
 	if ( isCustomerHomeEnabled ) {
-		if ( isAdminInterfaceWPAdmin( getState(), primaryOrSelectedSiteId ) ) {
-			if ( [ 'development', 'wpcalypso' ].includes( config( 'env_id' ) ) ) {
-				// On Calypso Live and dev environments, don't redirect to wp-admin
-				// as it navigates the user away from the testing environment.
-				return getSitesLink( dashboardOptIn );
-			}
-			// This URL starts with 'https://' because it's the access to wp-admin.
-			return getSiteAdminUrl( getState(), primaryOrSelectedSiteId );
+		if ( isAdminInterfaceWPAdmin( getState(), primarySiteId ) ) {
+			return getSiteAdminUrl( getState(), primarySiteId );
 		}
 		return `/home/${ primarySiteSlug }`;
 	}

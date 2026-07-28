@@ -30,6 +30,7 @@ import { useOmnibarEvent } from '../omnibar/events';
 import OmnibarSiteSwitcher from '../omnibar/omnibar-site-switcher';
 import { useSyncOmnibarSite } from '../omnibar/site';
 import ResponsiveSidebar from '../responsive-sidebar';
+import { ResurrectedWelcomeModalGate } from '../resurrected-welcome-modal';
 import Snackbars from '../snackbars';
 import { OptInWelcomeModal } from '../welcome-modal';
 import './style.scss';
@@ -58,13 +59,27 @@ function Root() {
 	const isOptInWelcomeModalEnabled =
 		! isDashboardBackport() && ! isE2ETest() && isEnabled( 'dashboard/opt-in-welcome-modal' );
 	const { name, supports, LoadingLogo = WordPressLogo } = useAppContext();
+	const isResurrectedWelcomeModalEnabled =
+		supports.resurrectedWelcomeModal && ! isDashboardBackport() && ! isE2ETest();
 	const isFetching = useIsFetching();
 	const isMutating = useIsMutating();
 	const router = useRouter();
 	const queryClient = useQueryClient();
 	const queryCache = queryClient.getQueryCache();
 	const [ isSidebarOpen, setIsSidebarOpen ] = useState( false );
+	const [ resurrectedModalState, setResurrectedModalState ] = useState<
+		'pending' | 'eligible' | 'ineligible'
+	>( isResurrectedWelcomeModalEnabled ? 'pending' : 'ineligible' );
 	const closeSidebar = useCallback( () => setIsSidebarOpen( false ), [ setIsSidebarOpen ] );
+	const handleResurrectedModalEligibility = useCallback( ( willDisplay: boolean ) => {
+		setResurrectedModalState( ( state ) => {
+			if ( state !== 'pending' ) {
+				return state;
+			}
+
+			return willDisplay ? 'eligible' : 'ineligible';
+		} );
+	}, [] );
 
 	useSyncOmnibarSite();
 	useTrackVisitedAreas();
@@ -198,8 +213,15 @@ function Root() {
 			<OmnibarSiteSwitcher />
 			<Snackbars />
 			<CheckoutSuccessFlashMessage />
-			{ isAccountRecoveryInterstitialEnabled && <AccountRecoveryInterstitial /> }
-			{ isOptInWelcomeModalEnabled && <OptInWelcomeModal /> }
+			{ isResurrectedWelcomeModalEnabled && (
+				<ResurrectedWelcomeModalGate onEligibilityResolved={ handleResurrectedModalEligibility } />
+			) }
+			{ resurrectedModalState === 'ineligible' && isAccountRecoveryInterstitialEnabled && (
+				<AccountRecoveryInterstitial />
+			) }
+			{ resurrectedModalState === 'ineligible' && isOptInWelcomeModalEnabled && (
+				<OptInWelcomeModal />
+			) }
 			<PageViewTracker />
 			<MutationErrorTracker />
 			<NavigationBlockerRegistry />

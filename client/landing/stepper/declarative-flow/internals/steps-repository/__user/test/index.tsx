@@ -18,7 +18,7 @@ import { usePartnerBranding } from 'calypso/lib/partner-branding';
 import loginReducer from 'calypso/state/login/reducer';
 import routeReducer from 'calypso/state/route/reducer';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
-import UserStep from '..';
+import UserStep, { type UserStepAccepts } from '..';
 
 const mockUseViewportMatch = useViewportMatch as unknown as jest.Mock;
 const mockUsePartnerBranding = usePartnerBranding as unknown as jest.Mock;
@@ -43,10 +43,18 @@ describe( 'User email signup step', () => {
 		mockUsePartnerBranding.mockReturnValue( noPartnerBranding );
 	} );
 
-	const renderUserStep = ( url = '/onboarding/user?user_email=test@example.com' ) => {
+	const renderUserStep = (
+		url = '/onboarding/user?user_email=test@example.com',
+		props: Partial< UserStepAccepts > = {}
+	) => {
 		return renderWithProvider(
 			<MemoryRouter initialEntries={ [ url ] }>
-				<UserStep flow="onboarding" stepName="user" navigation={ { submit: jest.fn() } } />
+				<UserStep
+					flow="onboarding"
+					stepName="user"
+					navigation={ { submit: jest.fn() } }
+					{ ...props }
+				/>
 			</MemoryRouter>,
 			{ reducers: { login: loginReducer, route: routeReducer } }
 		);
@@ -113,6 +121,29 @@ describe( 'User email signup step', () => {
 			expect(
 				screen.queryByText( /By continuing with any of the options above/i )
 			).not.toBeInTheDocument();
+		} );
+	} );
+
+	describe( 'accepts-props overrides', () => {
+		it( 'overrides the heading with headerText', () => {
+			renderUserStep( '/onboarding/user', { headerText: 'Join thousands of creators' } );
+			expect( screen.getByRole( 'heading', { name: 'Join thousands of creators' } ) ).toBeVisible();
+			expect(
+				screen.queryByRole( 'heading', { name: 'Create your account' } )
+			).not.toBeInTheDocument();
+		} );
+
+		it( 'renders subHeaderText beneath the title', () => {
+			renderUserStep( '/onboarding/user', { subHeaderText: 'Free forever, no card required' } );
+			expect( screen.getByText( 'Free forever, no card required' ) ).toBeVisible();
+		} );
+
+		it( 'renders with hideLoginLink and a restricted provider set without blowing up', () => {
+			renderUserStep( '/onboarding/user', {
+				hideLoginLink: true,
+				allowedSocialServices: [ 'google', 'apple' ],
+			} );
+			expect( screen.getByRole( 'heading', { name: 'Create your account' } ) ).toBeVisible();
 		} );
 	} );
 } );

@@ -31,6 +31,7 @@ boot( {
 		reader: true,
 		help: true,
 		notifications: true,
+		resurrectedWelcomeModal: true,
 		me: {
 			billing: {
 				monetizeSubscriptions: true,

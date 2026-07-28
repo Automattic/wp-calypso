@@ -611,7 +611,11 @@ const ImageStudioContent = withInstanceId(
 					className={ modalClasses }
 					__experimentalHideHeader
 					onRequestClose={ handleRequestClose }
-					aria-label={ __( 'Image Studio', __i18n_text_domain__ ) }
+					aria-label={
+						isVideoMode
+							? __( 'Video Studio', __i18n_text_domain__ )
+							: __( 'Image Studio', __i18n_text_domain__ )
+					}
 				>
 					<div className="image-studio-modal__content">
 						<Header
@@ -678,7 +682,7 @@ const ImageStudioContent = withInstanceId(
 									/>
 								) : (
 									<div className="image-studio-agent-loading">
-										{ __( 'Loading AI assistant…', __i18n_text_domain__ ) }
+										{ __( 'Loading WordPress Agent…', __i18n_text_domain__ ) }
 									</div>
 								)
 							}

@@ -35,6 +35,7 @@ jest.mock( 'calypso/lib/resurrected-users', () => ( {
 const contentEligibility = {
 	isLoading: false,
 	isResurrectedSixMonths: true,
+	isResurrectedThreeMonths: true,
 	hasActivePaidSubscription: false,
 	isEligible: true,
 	variationName: WELCOME_BACK_VARIATIONS.content,
@@ -154,5 +155,32 @@ describe( 'ResurrectedWelcomeModalGate content variation', () => {
 			'calypso_resurrected_welcome_modal_cta_click',
 			expect.anything()
 		);
+	} );
+
+	it( 'dismisses the modal when a navigation CTA is clicked', async () => {
+		mockUseResurrectedFreeUserEligibility.mockReturnValue( {
+			...contentEligibility,
+			isForcedVariation: false,
+		} );
+		mockUseLastDraftQuery.mockReturnValue( { data: null, isPending: false } );
+		const user = userEvent.setup();
+
+		renderWithProvider( <ResurrectedWelcomeModalGate /> );
+		const cta = screen.getByRole( 'link', { name: 'Write your next post' } );
+		cta.addEventListener( 'click', ( event ) => event.preventDefault() );
+
+		await user.click( cta );
+
+		expect( window.sessionStorage.getItem( 'wpcom_resurrected_welcome_modal_dismissed' ) ).toBe(
+			'true'
+		);
+		expect( mockRecordTracksEvent ).toHaveBeenCalledWith(
+			'calypso_resurrected_welcome_modal_cta_click',
+			{
+				variation: WELCOME_BACK_VARIATIONS.content,
+				cta_id: 'write-post',
+			}
+		);
+		expect( screen.queryByRole( 'dialog' ) ).not.toBeInTheDocument();
 	} );
 } );

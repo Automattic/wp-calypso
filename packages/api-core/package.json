@@ -41,7 +41,7 @@
 		"@automattic/i18n-utils": "workspace:^",
 		"@automattic/languages": "workspace:^",
 		"@automattic/shopping-cart": "workspace:^",
-		"@wordpress/dataviews": "^16.0.0",
+		"@wordpress/dataviews": "^17.2.0",
 		"@wordpress/html-entities": "^4.48.0",
 		"@wordpress/i18n": "^6.21.0",
 		"@wordpress/url": "^4.48.0",

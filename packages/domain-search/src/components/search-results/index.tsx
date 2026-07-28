@@ -1,5 +1,4 @@
 import { useCallback, useState } from 'react';
-import { useInlineBundles } from '../../hooks/use-inline-bundles';
 import { useDomainSearch } from '../../page/context';
 import {
 	DomainSuggestionsList,
@@ -9,16 +8,18 @@ import {
 import { InlineBundleRow } from '../inline-bundle-row';
 import { SearchResultsItem } from './item';
 import { SearchResultsPlaceholder } from './placeholder';
+import type { InlineBundleEntry } from '../../hooks/use-inline-bundles';
 
 const SearchResults = ( {
 	suggestions,
 	numberOfInitialVisibleSuggestions,
+	getInlineBundle,
 }: {
 	suggestions: string[];
 	numberOfInitialVisibleSuggestions?: number;
+	getInlineBundle: ( fqdn: string ) => InlineBundleEntry | undefined;
 } ) => {
 	const { filter, resetFilter, events, config } = useDomainSearch();
-	const { getInlineBundle } = useInlineBundles();
 	const [ numberOfVisibleSuggestions, setnumberOfVisibleSuggestions ] = useState(
 		numberOfInitialVisibleSuggestions ?? config.numberOfDomainsResultsPerPage
 	);
