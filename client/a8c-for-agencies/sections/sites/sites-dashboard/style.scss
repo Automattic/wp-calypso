@@ -175,6 +175,11 @@
 
 	@media ( min-width: $break-large ) {
 		&.sites-dashboard__layout:not( .preview-hidden ) {
+			// The error preview sets its own content padding.
+			.hosting-dashboard-item-view:not( .site-error-preview ) .hosting-dashboard-item-view__content {
+				padding-block-start: 24px;
+			}
+
 			.sites-overview {
 				padding: 0;
 
@@ -312,7 +317,8 @@
 	&.sites-dashboard__layout {
 		.backup__page > .admin-ui-navigable-region,
 		.scan > .admin-ui-navigable-region,
-		.scan-new > .admin-ui-navigable-region {
+		.scan-new > .admin-ui-navigable-region,
+		.activity-log-v2 > .admin-ui-navigable-region {
 			background-color: transparent;
 		}
 

@@ -57,6 +57,7 @@ export * from './me-monetize';
 export * from './me-notifications-devices';
 export * from './me-notifications-settings';
 export * from './me-payment-methods';
+export * from './me-posts';
 export * from './me-preferences';
 export * from './me-settings';
 export * from './me-social-logins';

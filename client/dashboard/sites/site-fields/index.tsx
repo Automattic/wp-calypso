@@ -17,6 +17,8 @@ import {
 import { useResizeObserver } from '@wordpress/compose';
 import { __, sprintf } from '@wordpress/i18n';
 import { useInView } from 'react-intersection-observer';
+import { LAUNCHPAD_PERSONALIZATION_EXPERIMENT, normalizeVariation } from 'calypso/lib/ai-launchpad';
+import { useExperiment } from 'calypso/lib/explat';
 import { useAnalytics } from '../../app/analytics';
 import ComponentViewTracker from '../../components/component-view-tracker';
 import SiteIcon from '../../components/site-icon';
@@ -335,8 +337,14 @@ export function MediaStorage( { site }: { site?: Site } ) {
 function SiteLaunchNag( { siteSlug }: { siteSlug: string } ) {
 	const { recordTracksEvent } = useAnalytics();
 	const { isCompleted, setupUrl } = useAiLaunchpad( siteSlug );
+	const [ , personalizationAssignment ] = useExperiment( LAUNCHPAD_PERSONALIZATION_EXPERIMENT );
 
 	if ( isCompleted ) {
+		return null;
+	}
+
+	// The no_guidance launchpad-personalization variation shows no launchpad mention at all.
+	if ( normalizeVariation( personalizationAssignment?.variationName ) === 'no_guidance' ) {
 		return null;
 	}
 

@@ -2,11 +2,26 @@
  * @jest-environment jsdom
  */
 
-import { screen, waitFor } from '@testing-library/react';
+import { screen, waitFor, within } from '@testing-library/react';
 import nock from 'nock';
+import { LAUNCHPAD_PERSONALIZATION_EXPERIMENT } from 'calypso/lib/ai-launchpad';
 import { render } from '../../../test-utils';
 import SiteOverview from '../index';
 import type { Site } from '@automattic/api-core';
+
+// Seed a live ExPlat assignment into the storage the real useExperiment hook reads from, so it
+// resolves to the given variation through its normal code path — no module or network mocking.
+function assignPersonalizationVariation( variationName: string | null ) {
+	window.localStorage.setItem(
+		`explat-experiment--${ LAUNCHPAD_PERSONALIZATION_EXPERIMENT }`,
+		JSON.stringify( {
+			experimentName: LAUNCHPAD_PERSONALIZATION_EXPERIMENT,
+			variationName,
+			retrievedTimestamp: Date.now(),
+			ttl: 3600,
+		} )
+	);
+}
 
 const site = {
 	ID: 1,
@@ -146,6 +161,10 @@ describe( '<SiteOverview>', () => {
 			.reply( 200, {} );
 	} );
 
+	afterEach( () => {
+		window.localStorage.clear();
+	} );
+
 	test( 'renders the overview of a site with free plan', async () => {
 		mockSite( {
 			...site,
@@ -222,6 +241,21 @@ describe( '<SiteOverview>', () => {
 		expect( await getCard( 'Finish setting up your site' ) ).toBeVisible();
 		expect( await getCard( 'We’ll bring your vision to life' ) ).toBeVisible();
 		expect( await getCard( 'The perfect domain awaits' ) ).toBeVisible();
+	} );
+
+	test( 'shows a plain coming-soon visibility card for the no_guidance launchpad-personalization variation', async () => {
+		assignPersonalizationVariation( 'no_guidance' );
+		mockSite( { ...site, launch_status: 'unlaunched' } as Site );
+		render( <SiteOverview siteSlug={ site.slug } /> );
+
+		await screen.findByRole( 'heading', { name: 'Test Site' } );
+		await waitForFeatureGatedCards( 'Business' );
+
+		const card = await getCard( 'Ready to go public?' );
+		await waitFor( () =>
+			expect( within( card ).queryByRole( 'progressbar' ) ).not.toBeInTheDocument()
+		);
+		expect( screen.queryByText( 'Finish setting up your site.' ) ).not.toBeInTheDocument();
 	} );
 
 	test( 'renders the overview of a commerce garden site', async () => {

@@ -4,6 +4,8 @@ import { captureException } from '@automattic/calypso-sentry';
 import { fetchLaunchpad } from '@automattic/data-stores';
 import { areLaunchpadTasksCompleted } from 'calypso/landing/stepper/declarative-flow/internals/steps-repository/launchpad/task-helper';
 import { isRemovedFlow } from 'calypso/landing/stepper/utils/flow-redirect-handler';
+import { LAUNCHPAD_PERSONALIZATION_EXPERIMENT, normalizeVariation } from 'calypso/lib/ai-launchpad';
+import { loadExperimentAssignment } from 'calypso/lib/explat';
 import { getQueryArgs } from 'calypso/lib/query-args';
 import { getSiteFragment } from 'calypso/lib/route';
 import { bumpStat } from 'calypso/state/analytics/actions';
@@ -85,6 +87,19 @@ export async function maybeRedirect( context, next ) {
 			siteId,
 			aiLaunchpadStatus === 'active' ? 'admin.php?page=site-setup-wp-admin' : 'index.php'
 		);
+		if ( redirectUrl ) {
+			window.location.replace( redirectUrl );
+			return;
+		}
+	}
+
+	// The no_guidance launchpad-personalization variation gets no guidance surface at all:
+	// keep these sites off My Home, landing them on the plain wp-admin dashboard.
+	const personalizationAssignment = await loadExperimentAssignment(
+		LAUNCHPAD_PERSONALIZATION_EXPERIMENT
+	);
+	if ( normalizeVariation( personalizationAssignment?.variationName ) === 'no_guidance' ) {
+		const redirectUrl = getSiteAdminUrl( state, siteId, 'index.php' );
 		if ( redirectUrl ) {
 			window.location.replace( redirectUrl );
 			return;

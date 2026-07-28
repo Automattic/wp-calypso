@@ -3,10 +3,9 @@ import { Link } from '@tanstack/react-router';
 import { Button } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
-import { differenceInCalendarDays } from 'date-fns';
 import { purchaseSettingsRoute } from '../../../app/router/me';
 import Notice from '../../../components/notice';
-import { getRelativeTimeString } from '../../../utils/datetime';
+import { getCalendarDaysUntil, getRelativeDayString } from '../../../utils/datetime';
 import {
 	isIncludedWithPlan,
 	isExpiring,
@@ -105,7 +104,7 @@ export function PurchaseExpiringNotice( {
 							includedPurchaseName: includedPurchase.is_domain
 								? includedPurchase.meta ?? ''
 								: includedPurchase.product_name,
-							expiry: getRelativeTimeString( new Date( currentPurchase.expiry_date ) ),
+							expiry: getRelativeDayString( new Date( currentPurchase.expiry_date ), 'upcoming' ),
 						}
 					),
 					{
@@ -157,10 +156,15 @@ function ExpiringText( {
 	}
 
 	const purchaseName = purchase.is_domain ? purchase.meta ?? '' : purchase.product_name;
+	const daysToExpiry = getCalendarDaysUntil( new Date( purchase.expiry_date ) );
 
-	if ( purchase.bill_period_days === SubscriptionBillPeriod.PLAN_MONTHLY_PERIOD ) {
-		const daysToExpiry = differenceInCalendarDays( new Date( purchase.expiry_date ), new Date() );
-
+	// A monthly purchase expiring today (or already past its expiry date, while
+	// still reported as expiring) falls through to the relative wording below,
+	// which renders "today" rather than "in 0 days".
+	if (
+		purchase.bill_period_days === SubscriptionBillPeriod.PLAN_MONTHLY_PERIOD &&
+		daysToExpiry > 0
+	) {
 		if ( purchase.is_attached_to_holding_site ) {
 			return sprintf(
 				// translators: %(purchaseName)s: the name of the plan, %(daysToExpiry)d: a number of days
@@ -191,7 +195,7 @@ function ExpiringText( {
 		// translators: purchaseName is the name of the plan and expiry is a formatted string like "in 3 months".
 		return sprintf( __( '%(purchaseName)s will expire and be removed %(expiry)s.' ), {
 			purchaseName,
-			expiry: getRelativeTimeString( new Date( purchase.expiry_date ) ),
+			expiry: getRelativeDayString( new Date( purchase.expiry_date ), 'upcoming' ),
 		} );
 	}
 
@@ -202,7 +206,7 @@ function ExpiringText( {
 		  __( '%(purchaseName)s will expire and be removed from your site %(expiry)s.' );
 	return sprintf( message, {
 		purchaseName,
-		expiry: getRelativeTimeString( new Date( purchase.expiry_date ) ),
+		expiry: getRelativeDayString( new Date( purchase.expiry_date ), 'upcoming' ),
 	} );
 }
 
@@ -216,7 +220,7 @@ export function ExpiringLaterText( {
 	isDomainWithoutSite?: boolean;
 } ) {
 	const purchaseName = purchase.is_domain ? purchase.meta ?? '' : purchase.product_name;
-	const expiry = getRelativeTimeString( new Date( purchase.expiry_date ) );
+	const expiry = getRelativeDayString( new Date( purchase.expiry_date ), 'upcoming' );
 
 	if ( purchase.payment_type === 'credits' ) {
 		if ( autoRenewingUpgradesAction ) {

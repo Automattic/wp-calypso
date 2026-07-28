@@ -137,15 +137,18 @@ export function SitesDashboard() {
 			return;
 		}
 
-		if (
-			dataViewsState.selectedItem &&
-			dataViewsState.selectedItem.url === initialSelectedSiteUrl
-		) {
-			return;
-		}
-
 		if ( ! isLoading && ! isError && data && initialSelectedSiteUrl ) {
 			const site = data.sites.find( ( site: Site ) => site.url === initialSelectedSiteUrl );
+
+			// The preview pane reads its site off this snapshot, so re-point it when a refetch
+			// produces a new object for the same site. React Query's structural sharing keeps the
+			// reference stable while the data is unchanged, which is what stops this from looping.
+			if (
+				dataViewsState.selectedItem?.url === initialSelectedSiteUrl &&
+				( ! site || site === dataViewsState.selectedItem )
+			) {
+				return;
+			}
 
 			setDataViewsState( ( prevState: DataViewsState ) => ( {
 				...prevState,

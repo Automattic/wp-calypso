@@ -245,6 +245,7 @@ object BuildDockerImage : BuildType({
 			--build-arg base_image=%base_image%
 			--build-arg cache_seed_image=%cache_seed_image%
 			--build-arg commit_sha=${Settings.WpCalypso.paramRefs.buildVcsNumber}
+			--build-arg calypso_live_image=$imageBase:build-%build.number%
 			--build-arg profile=%PROFILE%
 			--build-arg manual_sentry_release=%MANUAL_SENTRY_RELEASE%
 			--build-arg is_default_branch=%teamcity.build.branch.is_default%

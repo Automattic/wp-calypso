@@ -1,4 +1,4 @@
-import { DataHelper, DomainsPage } from '@automattic/calypso-e2e';
+import { DataHelper } from '@automattic/calypso-e2e';
 import { expect, skipIfMailosaurLimitReached, skipIfNotTrunk, tags, test } from '../../lib/pw-base';
 
 test.describe(
@@ -10,17 +10,15 @@ test.describe(
 		skipIfNotTrunk();
 		skipIfMailosaurLimitReached();
 
-		// Skipped for now; can be updated once we're sure all onboarding tests will go
-		// through the MSD flow. See https://github.com/Automattic/wp-calypso/pull/112586
-		// and https://github.com/Automattic/wp-calypso/pull/112587.
-		test.skip( 'As a user, I can add a domain to my existing site', async ( {
+		test( 'As a user, I can add a domain to my existing site', async ( {
 			componentDomainSearch,
 			componentSidebar,
 			helperData,
 			page,
 			pageCartCheckout,
+			pageDashboardSiteDomains,
+			pageSignupPickPlan,
 			sitePublic,
-			viewportName,
 		} ) => {
 			let selectedDomain: string;
 
@@ -31,17 +29,14 @@ test.describe(
 				await componentSidebar.navigate( 'Upgrades', 'Domains' );
 			} );
 
-			await test.step( 'And I add a domain to the site', async function () {
-				const domainsPage = new DomainsPage( page );
-				if ( viewportName === 'mobile' ) {
-					await domainsPage.clickSearchForDomain(); // Add domain button is hidden on mobile
-				} else {
-					await domainsPage.addDomain();
-				}
+			await test.step( 'And I start a search for a new domain', async function () {
+				await pageDashboardSiteDomains.searchForNewDomain();
 			} );
 
 			await test.step( 'And I choose the first suggestion', async function () {
-				componentDomainSearch.container = page.getByRole( 'main' );
+				// The stepper has no `main` landmark, and the page carries unrelated list items,
+				// so we need scoping.
+				componentDomainSearch.container = page.locator( '.domain-search' );
 				selectedDomain = await componentDomainSearch.selectFirstSuggestion();
 				expect( selectedDomain ).not.toBe( '' );
 			} );
@@ -50,8 +45,8 @@ test.describe(
 				await componentDomainSearch.continue();
 			} );
 
-			await test.step( 'And I decline Titan Email upsell', async function () {
-				await componentDomainSearch.skipDomainEmailUpsell();
+			await test.step( 'And I continue with the free plan', async function () {
+				await pageSignupPickPlan.selectEscapeHatchWithoutSiteCreation( 'Free' );
 			} );
 
 			await test.step( 'Then I see the domain at checkout', async function () {

@@ -104,7 +104,6 @@
 		box-sizing: border-box;
 		border-radius: 4px;
 
-		border-color: var(--color-accent-5);
 		fill: var(--color-accent-100);
 
 		&:hover,
@@ -118,13 +117,6 @@
 		&.is-borderless.is-primary:hover {
 			color: var(--color-primary-60);
 		}
-	}
-
-	// The shared consolidated stat card (reused from the dashboard) renders its
-	// info popover trigger as a borderless icon button; the button-border rule
-	// above would otherwise box it.
-	.consolidated-stat-card .components-button.has-icon:not( .is-primary ) {
-		border-color: transparent;
 	}
 
 	.button.split-button__toggle {

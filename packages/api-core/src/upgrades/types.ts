@@ -207,10 +207,26 @@ export interface Purchase {
 	is_past_expiry_date: boolean;
 
 	/**
-	 * Whole days until the subscription expires, rounded down. Uses a UTC midnight
-	 * basis, so it can go negative up to a day before `is_past_expiry_date`
-	 * (end-of-day basis) does, and can read up to a day off from the viewer's local
-	 * time zone. Null for purchases with no expiry time (one-time and perpetual).
+	 * Whole days from today until the subscription expires, counted in UTC.
+	 * Negative once the subscription has expired, and null for subscriptions
+	 * that never expire (for example, one-time purchases).
+	 *
+	 * Don't use this in text that counts down to a date the viewer can also
+	 * see; the fact that it is UTC-based means it can disagree by 1 day with
+	 * the viewer's own time zone. For example, a subscription expiration date
+	 * of July 30 (midnight UTC) will be shown as July 29 in any timezone west
+	 * of UTC (such as New York). As a result, the viewer will expect the
+	 * displayed days until expiration to equal 2 any time during the day on
+	 * July 27 in their time zone, and to equal 1 any time during the day on
+	 * July 28 in their time zone, etc. To get that behavior, see
+	 * `getCalendarDaysUntil` and `getRelativeDayString` in
+	 * `client/dashboard/utils/datetime.ts` instead.
+	 *
+	 * By contrast, do use this when the answer should match the server's time
+	 * rather than the viewer's time. If you want the count of days to change
+	 * at the same moment the subscription itself can change state (for
+	 * example, as soon as the subscription's `expiry_status` becomes
+	 * "expired"), then this property is a good choice.
 	 */
 	days_until_expiry: number | null;
 

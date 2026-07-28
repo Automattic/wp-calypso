@@ -146,6 +146,11 @@ COPY --from=builder --chown=nobody:nobody /calypso/public /calypso/public
 COPY --from=builder --chown=nobody:nobody /calypso/config /calypso/config
 COPY --from=builder --chown=nobody:nobody /calypso/package.json /calypso/package.json
 
+# The tag calypso.live can resolve this image by. Declared last because it
+# changes on every build, and would otherwise invalidate the layers above.
+ARG calypso_live_image=""
+ENV CALYPSO_LIVE_IMAGE=$calypso_live_image
+
 USER nobody
 ENTRYPOINT ["/sbin/tini", "--"]
 CMD ["node", "--unhandled-rejections=warn", "build/server.js"]

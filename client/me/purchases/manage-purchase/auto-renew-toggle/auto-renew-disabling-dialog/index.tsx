@@ -13,7 +13,6 @@ import { ConfirmDialog, DialogContent, DialogFooter } from 'calypso/components/c
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
 import CancelAutoRenewalForm from 'calypso/components/marketing-survey/cancel-auto-renewal-form';
 import { isAkismetHoldingSitePurchase } from 'calypso/dashboard/utils/purchase';
-import { createPurchaseObject } from 'calypso/lib/purchases/assembler';
 import isSiteAtomic from 'calypso/state/selectors/is-site-automated-transfer';
 import { isExpiredAndInGracePeriod } from '../../../lib/raw-purchase-helpers';
 import type { Purchase } from '@automattic/api-core';
@@ -480,9 +479,7 @@ class AutoRenewDisablingDialog extends Component<
 
 		return (
 			<CancelAutoRenewalForm
-				// Temporary bridge (SHILL-2256): CancelAutoRenewalForm still expects the
-				// camelCase Purchase. Remove once the cancel survey reads the raw shape.
-				purchase={ createPurchaseObject( purchase ) }
+				purchase={ purchase }
 				selectedSiteId={ purchase.blog_id }
 				isVisible={ isVisible }
 				onClose={ this.closeAndCleanup }

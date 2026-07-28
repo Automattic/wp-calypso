@@ -158,7 +158,8 @@ export const createSite = async (
 	gardenPartnerName?: string | null,
 	specId?: string | null,
 	ref?: string,
-	provisionTarget?: string | null
+	provisionTarget?: string | null,
+	aiLaunchpadEnabled?: boolean
 ) => {
 	const siteUrl = storedSiteUrl || domainItem?.domain_name;
 
@@ -217,6 +218,10 @@ export const createSite = async (
 					: {} ),
 				...( siteGoals && { site_goals: siteGoals } ),
 				...( ( ref ?? refParam ) && { ref: ref ?? refParam } ),
+				// Enables the wp-admin AI Launchpad from the moment the site exists, so every
+				// post-checkout path (direct, chooser, Big Sky return) converges on it. The
+				// option is in the WoA transfer allowlist, so it survives the Atomic transfer.
+				...( aiLaunchpadEnabled && { wpcom_ai_launchpad_enabled: true } ),
 				// Trigger backend build for ai-site-builder flow with commerce garden and spec_id
 				...( flowName === AI_SITE_BUILDER_FLOW &&
 					gardenName === 'commerce' &&
