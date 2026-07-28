@@ -7,7 +7,7 @@ export const RESEND_COOLDOWN_SECONDS = 60;
 
 const STORAGE_KEY = 'onboarding-email-verification-gate';
 
-export function gateScope( flow: string, userId: number | string | undefined ): string {
+export function gateScope( flow: string, userId: number | string | null | undefined ): string {
 	return `${ flow }:${ userId ?? '' }`;
 }
 

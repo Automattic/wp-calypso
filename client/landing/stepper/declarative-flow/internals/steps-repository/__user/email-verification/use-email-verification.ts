@@ -29,14 +29,10 @@ export function useEmailVerification( flow: string, scope: string ) {
 	const isVerified = useSelector( isCurrentUserEmailVerified );
 	const sendVerificationEmail = useSendEmailVerification();
 
-	// The cooldown is driven by this in-memory send time, not by re-reading storage each
-	// tick: if persistence is unavailable, storage would report no send and reset the
-	// cooldown to zero, letting the user resend every second. Seed it from the persisted
-	// time (to survive a refresh), or from now when there's nothing stored.
-	const sentAtRef = useRef< number >( 0 );
-	if ( ! sentAtRef.current ) {
-		sentAtRef.current = gateSentAt( scope ) || Date.now();
-	}
+	// The cooldown runs off this in-memory send time. Re-reading storage each tick would
+	// report no send when persistence is unavailable and reset the cooldown to zero. Seed
+	// from the persisted time to survive a refresh, or now when there's nothing stored.
+	const sentAtRef = useRef( gateSentAt( scope ) || Date.now() );
 
 	const [ isSending, setIsSending ] = useState( false );
 	const [ hasSendError, setHasSendError ] = useState( false );

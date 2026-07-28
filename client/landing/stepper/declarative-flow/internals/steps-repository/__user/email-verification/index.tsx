@@ -102,7 +102,9 @@ const EmailVerificationGate = ( { flow, scope, logo, onDone }: Props ) => {
 			<Step.CenteredColumnLayout
 				columnWidth={ 4 }
 				verticalAlign="center"
-				className="onboarding-email-verification"
+				// `step-container-v2--user` opts the gate into the account step's V2 layout
+				// contract, so the step's legacy-layout styles skip it.
+				className="onboarding-email-verification step-container-v2--user"
 				topBar={ <Step.TopBar logo={ logo } /> }
 				heading={
 					<div
