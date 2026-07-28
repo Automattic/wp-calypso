@@ -4,6 +4,7 @@ import { setSelectedSiteId } from 'calypso/state/ui/actions';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { A4A_PLUGINS_LINK } from '../../components/sidebar-menu/lib/constants';
 import MainSidebar from '../../components/sidebar-menu/main';
+import prefetchAllSitesPlugins from './lib/prefetch-all-sites-plugins';
 
 // Reset selected site id for multi-site view since it is never reset
 // and the plugins component behaves differently when there
@@ -27,6 +28,7 @@ export const pluginsContext: Callback = ( context ) => {
 
 export const pluginManagementContext: Callback = ( context, next ) => {
 	resetSite( context );
+	context.store.dispatch( prefetchAllSitesPlugins() );
 	context.secondary = <MainSidebar path={ context.path } />;
 	context.primary = (
 		<>
@@ -38,6 +40,7 @@ export const pluginManagementContext: Callback = ( context, next ) => {
 
 export const pluginDetailsContext: Callback = ( context, next ) => {
 	resetSite( context );
+	context.store.dispatch( prefetchAllSitesPlugins() );
 	context.secondary = <MainSidebar path={ context.path } />;
 	context.primary = (
 		<>
