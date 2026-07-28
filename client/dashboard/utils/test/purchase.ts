@@ -15,6 +15,7 @@ import {
 	mightStillAutoRenew,
 	isExpiredWithNoAutoRenewAttemptsLeft,
 	creditCardExpiresBeforeSubscription,
+	getRenewalUrlFromPurchase,
 } from '../purchase';
 import type { Purchase } from '@automattic/api-core';
 
@@ -407,5 +408,35 @@ describe( 'creditCardExpiresBeforeSubscription', () => {
 				} )
 			)
 		).toBe( false );
+	} );
+} );
+
+describe( 'getRenewalUrlFromPurchase', () => {
+	test( 'omits the site slug for an A4A holding site purchase', () => {
+		const url = getRenewalUrlFromPurchase(
+			makePurchase( {
+				ID: 28259013,
+				product_slug: 'pressable_build_monthly',
+				meta: 'is-a4a',
+				is_attached_to_holding_site: true,
+				site_slug: 'siteless.agencies.automattic.com::yETR9VrPZIMpOMIL6CICWl36',
+			} )
+		);
+
+		expect( url ).toContain( '/checkout/pressable_build_monthly:is-a4a/renew/28259013/?' );
+		expect( url ).not.toContain( 'siteless.agencies.automattic.com' );
+	} );
+
+	test( 'keeps the site slug for a regular site purchase', () => {
+		const url = getRenewalUrlFromPurchase(
+			makePurchase( {
+				ID: 12345,
+				product_slug: 'business-bundle',
+				is_attached_to_holding_site: false,
+				site_slug: 'example.wordpress.com',
+			} )
+		);
+
+		expect( url ).toContain( '/checkout/business-bundle/renew/12345/example.wordpress.com?' );
 	} );
 } );
