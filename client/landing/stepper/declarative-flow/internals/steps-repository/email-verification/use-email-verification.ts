@@ -1,5 +1,5 @@
 import { fetchUser } from '@automattic/api-core';
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { useSendEmailVerification } from 'calypso/landing/stepper/hooks/use-send-email-verification';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { EVERY_FIVE_SECONDS, EVERY_SECOND, useInterval } from 'calypso/lib/interval';
@@ -9,14 +9,14 @@ import { getCurrentUser, isCurrentUserEmailVerified } from 'calypso/state/curren
 import {
 	cooldownRemainingSeconds,
 	gateScope,
-	hasLastSentAt,
 	RESEND_COOLDOWN_SECONDS,
 	writeLastSentAt,
 } from './storage';
 
-// Cross-tab/device confirmation only reaches this tab by polling `/me`
-// (`UserVerificationChecker` handles the same-browser case instantly). Cap the
-// polling so a tab left open overnight doesn't hit `/me` forever.
+// Cross-device confirmation only reaches this tab by polling `/me` (`UserVerificationChecker`
+// covers the same-browser case instantly). Cap the polling so a tab left open overnight
+// doesn't hit `/me` forever, and only poll while the tab is visible — the user is usually
+// away in their email app while this screen is up.
 const POLL_LIMIT_MS = 15 * 60 * 1000;
 
 export function useEmailVerification( flow: string ) {
@@ -36,79 +36,63 @@ export function useEmailVerification( flow: string ) {
 	const [ isChecking, setIsChecking ] = useState( false );
 	const [ hasFailedCheck, setHasFailedCheck ] = useState( false );
 	const [ hasCheckError, setHasCheckError ] = useState( false );
+	const [ isVisible, setIsVisible ] = useState( () => document.visibilityState === 'visible' );
 
-	const send = useCallback(
-		async ( isResend: boolean ) => {
-			setIsSending( true );
-			setHasSendError( false );
+	// The initial email is the activation email from account creation; this only resends.
+	const resend = useCallback( async () => {
+		setIsSending( true );
+		setHasSendError( false );
 
-			try {
-				const { success } = await sendVerificationEmail();
-				if ( ! success ) {
-					throw new Error( 'unsuccessful_response' );
-				}
-				writeLastSentAt( scope, Date.now() );
-				setSecondsUntilResend( RESEND_COOLDOWN_SECONDS );
-				// A fresh link restarts the polling window: the user might confirm this
-				// new link from another device long after the previous window lapsed.
-				setIsPollingExpired( false );
-				setPollWindowKey( ( key ) => key + 1 );
-				recordTracksEvent( 'calypso_signup_email_verification_email_sent', {
-					flow,
-					is_resend: isResend,
-				} );
-			} catch ( error ) {
-				setHasSendError( true );
-				recordTracksEvent( 'calypso_signup_email_verification_email_send_failed', {
-					flow,
-					is_resend: isResend,
-					error: error instanceof Error ? error.message : String( error ),
-				} );
-			} finally {
-				setIsSending( false );
+		try {
+			const { success } = await sendVerificationEmail();
+			if ( ! success ) {
+				throw new Error( 'unsuccessful_response' );
 			}
-		},
-		[ sendVerificationEmail, flow, scope ]
-	);
-
-	// Account creation already sent the activation email seconds ago, so don't fire
-	// another one — record it as the initial send and seed the cooldown from here.
-	// Only the resend button calls the endpoint. Keyed by an actual stored timestamp
-	// (not "cooldown === 0"), so refreshing after the window lapses doesn't restart a
-	// fresh cooldown; the resend button becomes available as it should.
-	const hasSeededCooldown = useRef( false );
-	useEffect( () => {
-		if ( hasSeededCooldown.current || isVerified ) {
-			return;
-		}
-		hasSeededCooldown.current = true;
-		if ( ! hasLastSentAt( scope ) ) {
 			writeLastSentAt( scope, Date.now() );
 			setSecondsUntilResend( RESEND_COOLDOWN_SECONDS );
+			// A fresh link restarts the polling window: the user might confirm this new
+			// link from another device long after the previous window lapsed.
+			setIsPollingExpired( false );
+			setPollWindowKey( ( key ) => key + 1 );
 			recordTracksEvent( 'calypso_signup_email_verification_email_sent', {
 				flow,
-				is_resend: false,
+				is_resend: true,
 			} );
+		} catch ( error ) {
+			setHasSendError( true );
+			recordTracksEvent( 'calypso_signup_email_verification_email_send_failed', {
+				flow,
+				is_resend: true,
+				error: error instanceof Error ? error.message : String( error ),
+			} );
+		} finally {
+			setIsSending( false );
 		}
-	}, [ isVerified, flow, scope ] );
+	}, [ sendVerificationEmail, flow, scope ] );
 
-	// Recompute from the stored send time rather than decrementing: mobile browsers
-	// suspend timers while the user is in their email app, so a plain counter would
-	// under-count the elapsed cooldown. Also refresh the moment the tab is shown again.
+	// Recompute the cooldown from the stored send time rather than decrementing: mobile
+	// browsers suspend timers while the user is in their email app.
 	useInterval(
 		() => setSecondsUntilResend( cooldownRemainingSeconds( scope ) ),
 		secondsUntilResend > 0 && EVERY_SECOND
 	);
 
+	// Track visibility, and on becoming visible refresh the cooldown and check `/me`
+	// once immediately instead of waiting for the next poll tick.
 	useEffect( () => {
-		const refreshOnVisible = () => {
-			if ( document.visibilityState === 'visible' ) {
+		const onVisibilityChange = () => {
+			const visible = document.visibilityState === 'visible';
+			setIsVisible( visible );
+			if ( visible ) {
 				setSecondsUntilResend( cooldownRemainingSeconds( scope ) );
+				if ( ! isVerified ) {
+					dispatch( fetchCurrentUser() );
+				}
 			}
 		};
-		document.addEventListener( 'visibilitychange', refreshOnVisible );
-		return () => document.removeEventListener( 'visibilitychange', refreshOnVisible );
-	}, [ scope ] );
+		document.addEventListener( 'visibilitychange', onVisibilityChange );
+		return () => document.removeEventListener( 'visibilitychange', onVisibilityChange );
+	}, [ scope, isVerified, dispatch ] );
 
 	useEffect( () => {
 		if ( isVerified ) {
@@ -120,7 +104,7 @@ export function useEmailVerification( flow: string ) {
 
 	useInterval(
 		() => dispatch( fetchCurrentUser() ),
-		! isVerified && ! isPollingExpired && EVERY_FIVE_SECONDS
+		isVisible && ! isVerified && ! isPollingExpired && EVERY_FIVE_SECONDS
 	);
 
 	const checkNow = useCallback( async () => {
@@ -155,6 +139,6 @@ export function useEmailVerification( flow: string ) {
 		hasFailedCheck,
 		hasCheckError,
 		checkNow,
-		resend: useCallback( () => send( true ), [ send ] ),
+		resend,
 	};
 }

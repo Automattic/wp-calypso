@@ -1,14 +1,15 @@
-// Session-storage state for the email-verification gate, keyed by flow and user
-// so it survives leaving/re-entering the account step or a full refresh — component
-// state alone would reset and either re-send, reset the cooldown, or (for the gate
-// itself) let the user slip past without a confirmed/skipped event.
+// Session-storage state for the email-verification gate, keyed by flow and user so
+// it survives leaving/re-entering the account step or a refresh. The `pending` marker
+// is set precisely when this onboarding attempt creates an email account and cleared
+// when the gate is confirmed or skipped — so it, not a general signup marker, is what
+// makes the gate eligible.
 
 export const RESEND_COOLDOWN_SECONDS = 60;
 
 const LAST_SENT_KEY = 'onboarding-email-verification-last-sent';
-const RESOLVED_KEY = 'onboarding-email-verification-resolved';
+const PENDING_KEY = 'onboarding-email-verification-pending';
 
-export function gateScope( flow: string, userId: number | undefined ): string {
+export function gateScope( flow: string, userId: number | string | undefined ): string {
 	return `${ flow }:${ userId ?? '' }`;
 }
 
@@ -28,12 +29,28 @@ function write( key: string, scope: string, value: string ): void {
 	}
 }
 
-export function readLastSentAt( scope: string ): number {
-	return Number( read( LAST_SENT_KEY, scope ) ) || 0;
+function remove( key: string, scope: string ): void {
+	try {
+		sessionStorage.removeItem( `${ key }:${ scope }` );
+	} catch {
+		// no-op
+	}
 }
 
-export function hasLastSentAt( scope: string ): boolean {
-	return readLastSentAt( scope ) > 0;
+export function isVerificationPending( scope: string ): boolean {
+	return read( PENDING_KEY, scope ) === '1';
+}
+
+export function markVerificationPending( scope: string ): void {
+	write( PENDING_KEY, scope, '1' );
+}
+
+export function clearVerificationPending( scope: string ): void {
+	remove( PENDING_KEY, scope );
+}
+
+export function readLastSentAt( scope: string ): number {
+	return Number( read( LAST_SENT_KEY, scope ) ) || 0;
 }
 
 export function writeLastSentAt( scope: string, at: number ): void {
@@ -43,14 +60,4 @@ export function writeLastSentAt( scope: string, at: number ): void {
 export function cooldownRemainingSeconds( scope: string ): number {
 	const remainingMs = RESEND_COOLDOWN_SECONDS * 1000 - ( Date.now() - readLastSentAt( scope ) );
 	return remainingMs > 0 ? Math.min( Math.ceil( remainingMs / 1000 ), RESEND_COOLDOWN_SECONDS ) : 0;
-}
-
-// The gate is "resolved" once the user confirms or skips it. Persisted so a refresh
-// re-shows the gate while it is still pending, but not after it has been dealt with.
-export function isGateResolved( scope: string ): boolean {
-	return read( RESOLVED_KEY, scope ) === '1';
-}
-
-export function markGateResolved( scope: string ): void {
-	write( RESOLVED_KEY, scope, '1' );
 }

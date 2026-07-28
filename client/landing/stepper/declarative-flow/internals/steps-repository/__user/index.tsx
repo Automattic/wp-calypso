@@ -20,7 +20,7 @@ import { usePartnerBranding } from 'calypso/lib/partner-branding';
 import { login } from 'calypso/lib/paths';
 import { AccountCreateReturn } from 'calypso/lib/signup/api/type';
 import wpcom from 'calypso/lib/wp';
-import { getSignupIsNewUser, setSignupIsNewUser } from 'calypso/signup/storageUtils';
+import { setSignupIsNewUser } from 'calypso/signup/storageUtils';
 import WpcomLoginForm from 'calypso/signup/wpcom-login-form';
 import { useSelector } from 'calypso/state';
 import { fetchCurrentUser } from 'calypso/state/current-user/actions';
@@ -32,7 +32,13 @@ import {
 import { shouldUseStepContainerV2 } from '../../../helpers/should-use-step-container-v2';
 import { Step as StepType } from '../../types';
 import EmailVerificationGate from '../email-verification';
-import { gateScope, isGateResolved, markGateResolved } from '../email-verification/storage';
+import {
+	clearVerificationPending,
+	gateScope,
+	isVerificationPending,
+	markVerificationPending,
+	writeLastSentAt,
+} from '../email-verification/storage';
 import { useHandleSocialResponse } from './handle-social-response';
 import { SignupSlider } from './signup-slider';
 import useAccountCreationExperiment from './use-account-creation-experiment';
@@ -79,18 +85,15 @@ const UserStepComponent: StepType< { accepts: UserStepAccepts } > = function Use
 	const [ wpAccountCreateResponse, setWpAccountCreateResponse ] = useState< AccountCreateReturn >();
 	const [ verificationRequired, setVerificationRequired ] = useState( false );
 
-	// Only a fresh email/password signup on the onboarding flow (behind the flag) is
-	// gated on verification. `getSignupIsNewUser` is set at email account creation and
-	// cleared at signup-complete, so it (unlike component state) survives a refresh —
-	// the gate re-appears rather than being silently skipped. Social signups arrive
-	// verified and existing sessions have no new-user flag, so both proceed.
+	// The gate is eligible only while a "pending" marker set by this attempt's email
+	// account creation is present (see `handleCreateAccountSuccess`). It's persisted, so
+	// it survives a refresh; social/existing sessions never set it.
 	const scope = gateScope( flow, userId );
 	const requiresEmailVerification =
 		config.isEnabled( 'onboarding/email-verification' ) &&
 		flow === ONBOARDING_FLOW &&
-		Boolean( userId && getSignupIsNewUser( userId ) ) &&
-		! isEmailVerified &&
-		! isGateResolved( scope );
+		isVerificationPending( scope ) &&
+		! isEmailVerified;
 	const { socialServiceResponse } = useSocialService();
 	const { topBarLogo, partnerConfig, signupTosElement } = usePartnerBranding();
 
@@ -148,8 +151,20 @@ const UserStepComponent: StepType< { accepts: UserStepAccepts } > = function Use
 	const shouldRenderLocaleSuggestions = ! isLoggedIn; // For logged-in users, we respect the user language settings
 
 	const handleCreateAccountSuccess = ( data: AccountCreateReturn ) => {
-		if ( 'ID' in data ) {
-			setSignupIsNewUser( data.ID );
+		if ( ! ( 'ID' in data ) ) {
+			return;
+		}
+		setSignupIsNewUser( data.ID );
+		if ( config.isEnabled( 'onboarding/email-verification' ) && flow === ONBOARDING_FLOW ) {
+			// This attempt just created an email account: make the gate eligible, and treat
+			// the activation email as the initial send so the resend cooldown starts here.
+			const gateKey = gateScope( flow, data.ID );
+			markVerificationPending( gateKey );
+			writeLastSentAt( gateKey, Date.now() );
+			recordTracksEvent( 'calypso_signup_email_verification_email_sent', {
+				flow,
+				is_resend: false,
+			} );
 		}
 	};
 
@@ -225,7 +240,7 @@ const UserStepComponent: StepType< { accepts: UserStepAccepts } > = function Use
 			<EmailVerificationGate
 				flow={ flow }
 				onDone={ () => {
-					markGateResolved( scope );
+					clearVerificationPending( scope );
 					navigation.submit?.();
 				} }
 			/>

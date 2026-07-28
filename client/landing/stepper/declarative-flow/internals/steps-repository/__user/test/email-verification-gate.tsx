@@ -15,6 +15,7 @@ import initialReducer from 'calypso/state/reducer';
 import uiReducer from 'calypso/state/ui/reducer';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import UserStep from '..';
+import { gateScope, markVerificationPending } from '../../email-verification/storage';
 import useAccountCreationExperiment from '../use-account-creation-experiment';
 import useMobileLayoutExperiment from '../use-mobile-layout-experiment';
 
@@ -53,7 +54,24 @@ jest.mock( '../handle-social-response', () => ( {
 } ) );
 jest.mock( 'calypso/blocks/signup-form/signup-form-social-first', () => ( {
 	__esModule: true,
-	default: () => <div data-testid="signup-form" />,
+	// A stand-in whose button simulates a successful email account creation, the way
+	// the real form's `onCreateAccountSuccess` + `goToNextStep` fire.
+	default: ( {
+		onCreateAccountSuccess,
+		goToNextStep,
+	}: {
+		onCreateAccountSuccess?: ( data: { ID: number } ) => void;
+		goToNextStep?: ( data: { bearer_token: string; ID: number } ) => void;
+	} ) => (
+		<button
+			onClick={ () => {
+				onCreateAccountSuccess?.( { ID: 1 } );
+				goToNextStep?.( { bearer_token: 'test-token', ID: 1 } );
+			} }
+		>
+			create-email-account
+		</button>
+	),
 	MobileCompactTosNotice: () => null,
 } ) );
 
@@ -65,7 +83,7 @@ const mockUseAccountCreationExperiment = useAccountCreationExperiment as unknown
 const USER_ID = 1;
 const EMAIL = 'onboarder@example.com';
 const GATE_HEADING = 'Confirm your email address';
-const newUserKey = `wpcom_signup_is_new_user_${ USER_ID }`;
+const SCOPE = gateScope( 'onboarding', USER_ID );
 
 interface ReducerWithAdd {
 	addReducer( keys: string[], reducer: unknown ): ReducerWithAdd;
@@ -88,6 +106,9 @@ const makeStore = ( emailVerified: boolean ) =>
 		applyMiddleware( thunkMiddleware )
 	);
 
+const makeLoggedOutStore = () =>
+	createStore( rootReducer, { currentUser: {} }, applyMiddleware( thunkMiddleware ) );
+
 const renderUser = ( store: ReturnType< typeof makeStore > ) => {
 	const submit = jest.fn();
 	const { unmount } = renderWithProvider(
@@ -102,7 +123,8 @@ const renderUser = ( store: ReturnType< typeof makeStore > ) => {
 describe( 'account step email verification gate', () => {
 	beforeEach( () => {
 		mockConfig.enabledFlags.add( 'onboarding/email-verification' );
-		localStorage.setItem( newUserKey, 'true' );
+		// Most cases start already past account creation, with the gate marked pending.
+		markVerificationPending( SCOPE );
 		mockUseMobileLayoutExperiment.mockReturnValue( {
 			isLoading: false,
 			isEligible: false,
@@ -158,7 +180,7 @@ describe( 'account step email verification gate', () => {
 		await userEvent.click( await screen.findByRole( 'button', { name: 'I’ll do this later' } ) );
 		expect( submit ).toHaveBeenCalledTimes( 1 );
 
-		// Refresh: the persisted "resolved" state means the gate does not reappear.
+		// Refresh: skipping cleared the pending marker, so the gate does not reappear.
 		unmount();
 		const second = renderUser( makeStore( false ) );
 
@@ -171,8 +193,29 @@ describe( 'account step email verification gate', () => {
 		await screen.findByRole( 'heading', { name: GATE_HEADING } );
 		first.unmount();
 
-		// A refresh remounts with the same persisted new-user signal, still unresolved.
+		// A refresh remounts with the pending marker still set (unresolved).
 		const { submit } = renderUser( makeStore( false ) );
+
+		expect( await screen.findByRole( 'heading', { name: GATE_HEADING } ) ).toBeVisible();
+		expect( submit ).not.toHaveBeenCalled();
+	} );
+
+	it( 'marks the gate pending on email account creation, then shows it once logged in', async () => {
+		// Nothing pending yet; the user has not created an account.
+		sessionStorage.clear();
+		const store = makeLoggedOutStore();
+		const { submit } = renderUser( store );
+
+		expect( screen.queryByRole( 'heading', { name: GATE_HEADING } ) ).not.toBeInTheDocument();
+
+		await userEvent.click( screen.getByRole( 'button', { name: 'create-email-account' } ) );
+		// Account creation logs the user in.
+		act( () => {
+			store.dispatch( {
+				type: CURRENT_USER_RECEIVE,
+				user: { ID: USER_ID, email: EMAIL, email_verified: false },
+			} );
+		} );
 
 		expect( await screen.findByRole( 'heading', { name: GATE_HEADING } ) ).toBeVisible();
 		expect( submit ).not.toHaveBeenCalled();
@@ -185,8 +228,8 @@ describe( 'account step email verification gate', () => {
 		expect( screen.queryByRole( 'heading', { name: GATE_HEADING } ) ).not.toBeInTheDocument();
 	} );
 
-	it( 'skips the gate for an existing session with no new-user signal', async () => {
-		localStorage.removeItem( newUserKey );
+	it( 'skips the gate for an existing session with nothing pending', async () => {
+		sessionStorage.clear();
 		const { submit } = renderUser( makeStore( false ) );
 
 		await waitFor( () => expect( submit ).toHaveBeenCalled() );

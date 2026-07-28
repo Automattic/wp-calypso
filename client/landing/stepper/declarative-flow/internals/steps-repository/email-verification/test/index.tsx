@@ -17,6 +17,7 @@ import uiReducer from 'calypso/state/ui/reducer';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import EmailVerificationGate from '..';
 import { renderStep } from '../../test/helpers';
+import { readLastSentAt, writeLastSentAt } from '../storage';
 
 jest.mock( 'calypso/lib/analytics/tracks' );
 
@@ -54,7 +55,14 @@ const currentUserState = ( emailVerified: boolean ) => ( {
 	},
 } );
 
+const SCOPE = `${ FLOW }:${ USER_ID }`;
+
 const render = ( { onDone = jest.fn() }: { onDone?: jest.Mock } = {} ) => {
+	// The account step writes the initial-send timestamp on account creation; simulate
+	// that once so the cooldown is active. A remount (refresh) must not rewrite it.
+	if ( readLastSentAt( SCOPE ) === 0 ) {
+		writeLastSentAt( SCOPE, Date.now() );
+	}
 	const result = renderStep( <EmailVerificationGate flow={ FLOW } onDone={ onDone } />, {
 		initialState: currentUserState( false ),
 	} );
@@ -73,23 +81,22 @@ describe( 'EmailVerificationGate', () => {
 
 	afterAll( () => nock.enableNetConnect() );
 
-	it( 'does not resend on mount (signup already sent one) and records the initial send', async () => {
+	it( 'shows the seeded cooldown on mount without sending or recording a send', async () => {
 		const request = mockSendVerificationEmail();
 
 		render();
 
 		expect( screen.getByRole( 'heading', { name: 'Confirm your email address' } ) ).toBeVisible();
 		expect( screen.getByText( EMAIL ) ).toBeVisible();
-
-		// The signup activation email is treated as the initial send: the cooldown is
-		// seeded and the "sent" event recorded, without hitting the endpoint again.
 		await waitFor( () =>
 			expect( screen.getByText( /You can resend the email in 60s\./ ) ).toBeVisible()
 		);
+
 		expect( request.isDone() ).toBe( false );
-		expect( recordTracksEvent ).toHaveBeenCalledWith(
+		// The initial send is recorded by the account step, not the gate.
+		expect( recordTracksEvent ).not.toHaveBeenCalledWith(
 			'calypso_signup_email_verification_email_sent',
-			{ flow: FLOW, is_resend: false }
+			expect.anything()
 		);
 	} );
 
