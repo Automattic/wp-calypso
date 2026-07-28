@@ -35,6 +35,7 @@ AM ability registration (`registerAmAbilities()`) is surface-agnostic by design 
 - **Never rename an ability while migrating it** — the name is the key the route settings match on; renaming silently drops it from every surface.
 - **Guard mutating callbacks in place**: when migrating a callback that changes editor state (e.g. `apply-block-edits`, `set-styles`), start it with an `isEditorPage()` early-return that returns an error result. Inert callbacks (e.g. `show-component`) need no guard.
 - **Per migration, grep the route-settings files** for the ability name to confirm which surfaces expose it.
+- **Mark transitional code with `TODO(am-migration):`** — the shared prefix surfaces all migration cleanup in one grep, whichever ticket owns it.
 
 ## Pitfalls
 

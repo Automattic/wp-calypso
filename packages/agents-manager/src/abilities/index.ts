@@ -43,7 +43,7 @@ export async function registerAmAbilities(): Promise< void > {
 		try {
 			await registerAbility( ability );
 		} catch ( error ) {
-			// TODO(AI-1080): Collapse this replace branch once Big Sky deletes its
+			// TODO(am-migration): Collapse this replace branch once Big Sky deletes its
 			// ability copies — with nothing left to collide, plain register
 			// plus the warning suffices.
 			// Only retry when another copy actually holds the name — without
