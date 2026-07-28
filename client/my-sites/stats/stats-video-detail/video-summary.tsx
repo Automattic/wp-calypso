@@ -16,6 +16,7 @@ import DatePicker from '../stats-date-label';
 import StatsPeriodHeader from '../stats-period-header';
 import StatsPeriodNavigation from '../stats-period-navigation';
 import SummaryChart from '../stats-summary';
+import { calculatePlayWeightedRetention } from './retention';
 import VideoMetricTabs, { VideoStatType, VideoMetricValues } from './video-metric-tabs';
 
 type UiPeriod = 'day' | 'week' | 'month' | 'year';
@@ -204,13 +205,7 @@ export default function VideoSummary( {
 	}, [ visibleRows, uiPeriod, moment ] );
 
 	// Card totals cover the window shown in the chart (the current page).
-	// Retention can't be summed across buckets: the canonical formula is
-	// play-weighted — rate = (watch_time / plays) / duration — and the video
-	// duration isn't in the response. But every bucket satisfies
-	// rate_i = (watch_i / plays_i) / duration, so the constant is recovered
-	// from any bucket with plays and a non-zero rate, and the window rate is
-	// (Σwatch / Σplays) scaled by it — matching the endpoint's own `total`
-	// computation rather than a naive average of the daily rates.
+	// Retention is play-weighted rather than summed — see retention.ts.
 	const metricValues: VideoMetricValues = useMemo( () => {
 		const sumOf = ( type: VideoStatType ) =>
 			visibleRows.reduce( ( total, row ) => total + metricValue( row, type ), 0 );
@@ -218,23 +213,13 @@ export default function VideoSummary( {
 			!! availableMetrics && availableMetrics.includes( METRIC_COLUMNS[ type ] );
 
 		let retention: number | null = null;
-		if ( has( 'retention_rate' ) && has( 'views' ) && has( 'watch_time' ) ) {
-			const plays = sumOf( 'views' );
-			const reference = visibleRows.find(
-				( row ) =>
-					metricValue( row, 'views' ) > 0 &&
-					metricValue( row, 'watch_time' ) > 0 &&
-					metricValue( row, 'retention_rate' ) > 0
+		if ( has( 'retention_rate' ) && has( 'views' ) ) {
+			retention = calculatePlayWeightedRetention(
+				visibleRows.map( ( row ) => ( {
+					plays: metricValue( row, 'views' ),
+					retentionRate: metricValue( row, 'retention_rate' ),
+				} ) )
 			);
-			if ( plays > 0 && reference ) {
-				const referencePerPlay =
-					metricValue( reference, 'watch_time' ) / metricValue( reference, 'views' );
-				retention =
-					( sumOf( 'watch_time' ) / plays ) *
-					( metricValue( reference, 'retention_rate' ) / referencePerPlay );
-			} else {
-				retention = 0;
-			}
 		}
 
 		return {
