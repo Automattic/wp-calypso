@@ -8,6 +8,7 @@ import {
 	getDisplayVariant,
 	getMutationFlowType,
 	getPurchaseCancellationFlowType,
+	hasQueryableSite,
 	isExpiredAndInGracePeriod,
 	isExpiredOrRemoved,
 	isRemoved,
@@ -318,5 +319,28 @@ describe( 'isExpiredWithNoAutoRenewAttemptsLeft', () => {
 				} )
 			)
 		).toBe( false );
+	} );
+} );
+
+describe( 'hasQueryableSite', () => {
+	test( 'is true for a purchase attached to a real site', () => {
+		expect( hasQueryableSite( makePurchase( { blog_id: 12345 } ) ) ).toBe( true );
+	} );
+
+	test( 'is false for a holding-site purchase (siteless Akismet)', () => {
+		expect(
+			hasQueryableSite(
+				makePurchase( {
+					blog_id: 12345,
+					is_attached_to_holding_site: true,
+					product_type: 'akismet',
+					product_slug: 'ak_personal_yearly',
+				} )
+			)
+		).toBe( false );
+	} );
+
+	test( 'is false when there is no blog_id at all', () => {
+		expect( hasQueryableSite( makePurchase( { blog_id: 0 } ) ) ).toBe( false );
 	} );
 } );

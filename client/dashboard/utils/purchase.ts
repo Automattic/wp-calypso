@@ -276,6 +276,19 @@ export function isJetpackHoldingSitePurchase( purchase: Purchase ): boolean {
 }
 
 /**
+ * Whether site-scoped endpoints can be called for this purchase's `blog_id`.
+ *
+ * Holding-site purchases (siteless Akismet/Jetpack/Marketplace/A4A) are attached
+ * to a placeholder blog the user is not a member of, so `/sites/{blog_id}/…`
+ * returns `403 authorization_required`. The dashboard's auth layer reads that as
+ * a signed-out session and redirects to `/log-in`, which bounces straight back —
+ * an infinite loop. Gate site queries and site-dependent UI on this.
+ */
+export function hasQueryableSite( purchase: Purchase ): boolean {
+	return Boolean( purchase.blog_id ) && ! purchase.is_attached_to_holding_site;
+}
+
+/**
  * Return the bill period as a sentence case string. Note that Purchae includes
  * this text already as `bill_period_label` but it is not sentence case and has
  * no punctuation.

@@ -1,6 +1,7 @@
 import { __experimentalVStack as VStack } from '@wordpress/components';
 import { sprintf, __ } from '@wordpress/i18n';
 import {
+	hasQueryableSite,
 	isAkismetProduct,
 	isGSuiteOrGoogleWorkspaceProductSlug,
 	DisplayVariant,
@@ -239,7 +240,9 @@ export default function CancellationMainContent( {
 				</h2>
 			) }
 
-			<BackupRetentionOptionOnCancelPurchase siteId={ purchase.blog_id } purchase={ purchase } />
+			{ hasQueryableSite( purchase ) && (
+				<BackupRetentionOptionOnCancelPurchase siteId={ purchase.blog_id } purchase={ purchase } />
+			) }
 
 			{ isGSuite && ! isSplitCancelRemoveEnabled && (
 				<GSuiteAccessMessage purchase={ purchase } selectedDomain={ selectedDomain } />
