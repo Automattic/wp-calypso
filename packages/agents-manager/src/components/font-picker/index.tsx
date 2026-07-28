@@ -25,7 +25,6 @@ export default function FontPicker( {
 
 	const { sortedVariations, activeTitle, handleSelect } = usePickerVariations( {
 		variations: fontVariations,
-		pickActionName: 'fontPickerItemSelected',
 		variationType: 'font',
 		getLiveValue: ( globalStyles ) => globalStyles.settings?.typography?.fontFamilies?.theme,
 		getValue: ( variation ) => variation.settings?.typography?.fontFamilies?.theme,

@@ -9,7 +9,6 @@ interface Props {
 export default function ColorPicker( { variations }: Props ) {
 	const { sortedVariations, activeTitle, handleSelect } = usePickerVariations( {
 		variations,
-		pickActionName: 'colorPickerItemSelected',
 		variationType: 'color',
 		getLiveValue: ( globalStyles ) => globalStyles.settings?.color?.palette?.theme,
 		getValue: ( variation ) => variation.settings?.color?.palette?.theme,

@@ -86,7 +86,7 @@ describe( 'usePickerVariations', () => {
 
 	it( 'records the pick into the site editor actions', () => {
 		const { result } = renderHook( () =>
-			usePickerVariations( makeOptions( { pickActionName: 'colorPickerItemSelected' } ) )
+			usePickerVariations( makeOptions( { variationType: 'color' } ) )
 		);
 
 		act( () => {

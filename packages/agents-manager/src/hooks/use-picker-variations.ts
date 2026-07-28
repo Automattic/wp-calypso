@@ -16,9 +16,11 @@ const MAX_VARIATIONS = 24;
 
 interface Options {
 	variations?: StyleVariation[];
-	/** Recorded into `siteEditorActions` (agent context) when a pick applies. */
-	pickActionName?: string;
-	/** Applies the type's pre-merge style reset (button/font) on pick. */
+	/**
+	 * Drives the per-type pick behavior: the pre-merge style reset
+	 * (button/font), the variation-click Tracks event, and the
+	 * `siteEditorActions` entry recorded for agent context.
+	 */
 	variationType?: StyleVariationType;
 	/** Reads the live value from the editor's global styles. */
 	getLiveValue: ( globalStyles: GlobalStyles ) => unknown;
@@ -38,7 +40,6 @@ interface Options {
  */
 export default function usePickerVariations( {
 	variations,
-	pickActionName,
 	variationType,
 	getLiveValue,
 	getValue,
@@ -119,12 +120,12 @@ export default function usePickerVariations( {
 			}
 			if ( setStyles( variation, variationType ) ) {
 				setActiveTitle( variation.title ?? null );
-				if ( pickActionName ) {
-					setSiteEditorAction( pickActionName, variation.title ?? null );
+				if ( variationType ) {
+					setSiteEditorAction( `${ variationType }PickerItemSelected`, variation.title ?? null );
 				}
 			}
 		},
-		[ setStyles, pickActionName, variationType ]
+		[ setStyles, variationType ]
 	);
 
 	return { sortedVariations, activeTitle, handleSelect };
