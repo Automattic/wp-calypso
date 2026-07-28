@@ -4,10 +4,8 @@
 // @ts-nocheck - TODO: Fix TypeScript issues
 import config from '@automattic/calypso-config';
 import { ONBOARDING_FLOW } from '@automattic/onboarding';
-import { screen, waitFor } from '@testing-library/react';
-import userEvent from '@testing-library/user-event';
 import React from 'react';
-import { MemoryRouter, useLocation, useNavigate } from 'react-router';
+import { MemoryRouter } from 'react-router';
 import { addSurvicate } from 'calypso/lib/analytics/survicate';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import onboarding from '../flows/onboarding/onboarding';
@@ -82,95 +80,18 @@ describe( 'Onboarding Flow', () => {
 		enabledFlags.clear();
 	} );
 
-	describe( 'Email verification step', () => {
-		it( 'places the gate first and requires login, so it runs right after account creation', () => {
+	describe( 'Email verification gate', () => {
+		// The gate is an interstitial rendered by the account step, not a routed
+		// flow step — so it never appears in the flow's step list.
+		it( 'is not a routed step in the flow', () => {
 			enabledFlags.add( 'onboarding/email-verification' );
-
-			const steps = onboarding.initialize();
-
-			expect( steps[ 0 ].slug ).toBe( STEPS.EMAIL_VERIFICATION.slug );
-			expect( steps[ 0 ].requiresLoggedInUser ).toBe( true );
-		} );
-
-		it( 'omits the gate entirely when the flag is off', () => {
 			const slugs = onboarding.initialize().map( ( step ) => step.slug );
 
-			expect( slugs ).not.toContain( STEPS.EMAIL_VERIFICATION.slug );
+			expect( slugs ).not.toContain( 'email-verification' );
 			expect( slugs[ 0 ] ).toBe( STEPS.DOMAIN_SEARCH.slug );
 		} );
 
-		it( 'continues into the flow (domains) once the email step resolves', () => {
-			enabledFlags.add( 'onboarding/email-verification' );
-			const { runUseStepNavigationSubmit } = renderFlow( onboarding );
-
-			runUseStepNavigationSubmit( {
-				currentStep: STEPS.EMAIL_VERIFICATION.slug,
-				dependencies: { emailVerified: true },
-			} );
-
-			expect( getFlowLocation().path ).toBe( `/${ STEPS.DOMAIN_SEARCH.slug }` );
-		} );
-
-		it.each( [ true, false ] )(
-			'replaces the gate with domains so Back cannot return to it (emailVerified=%s)',
-			async ( emailVerified ) => {
-				enabledFlags.add( 'onboarding/email-verification' );
-
-				const stepPath = ( slug: string ) => `/${ ONBOARDING_FLOW }/${ slug }`;
-
-				const Harness = () => {
-					const navigate = useNavigate();
-					const location = useLocation();
-					const currentStep = location.pathname.split( '/' ).pop() as string;
-					const navigateAdapter = ( nextStep: string, _extraData?: unknown, replace = false ) =>
-						navigate( stepPath( nextStep ), { replace } );
-					const { submit } = onboarding.useStepNavigation( currentStep, navigateAdapter ) as {
-						submit: ( args: { slug: string; providedDependencies: unknown } ) => void;
-					};
-
-					return (
-						<>
-							<p data-testid="pathname">{ location.pathname }</p>
-							<button
-								onClick={ () =>
-									submit( { slug: currentStep, providedDependencies: { emailVerified } } )
-								}
-							>
-								submit
-							</button>
-							<button onClick={ () => navigate( -1 ) }>back</button>
-						</>
-					);
-				};
-
-				// The account step precedes the gate in history.
-				renderWithProvider(
-					<MemoryRouter
-						initialEntries={ [ stepPath( 'user' ), stepPath( STEPS.EMAIL_VERIFICATION.slug ) ] }
-						initialIndex={ 1 }
-					>
-						<Harness />
-					</MemoryRouter>,
-					{ initialState: { currentUser: { id: 'some-id' } } }
-				);
-
-				await userEvent.click( screen.getByRole( 'button', { name: 'submit' } ) );
-				await waitFor( () =>
-					expect( screen.getByTestId( 'pathname' ) ).toHaveTextContent(
-						stepPath( STEPS.DOMAIN_SEARCH.slug )
-					)
-				);
-
-				// The gate was replaced, so Back lands on the account step, not the gate.
-				await userEvent.click( screen.getByRole( 'button', { name: 'back' } ) );
-				expect( screen.getByTestId( 'pathname' ) ).not.toHaveTextContent(
-					stepPath( STEPS.EMAIL_VERIFICATION.slug )
-				);
-			}
-		);
-
-		it( 'sends free-plan signups to site creation (no gate mid-flow)', () => {
-			enabledFlags.add( 'onboarding/email-verification' );
+		it( 'sends free-plan signups to site creation', () => {
 			const { runUseStepNavigationSubmit } = renderFlow( onboarding );
 
 			runUseStepNavigationSubmit( {
@@ -181,8 +102,7 @@ describe( 'Onboarding Flow', () => {
 			expect( getFlowLocation().path ).toBe( `/${ STEPS.SITE_CREATION_STEP.slug }` );
 		} );
 
-		it( 'lands on the dashboard from processing without any gate', async () => {
-			enabledFlags.add( 'onboarding/email-verification' );
+		it( 'lands on the dashboard from processing', async () => {
 			const { runUseStepNavigationSubmit } = renderFlow( onboarding );
 
 			await runUseStepNavigationSubmit( {

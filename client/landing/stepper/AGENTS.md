@@ -106,7 +106,6 @@ export default myFlow;
 | `STEPS.*` constant    | slug                  | Purpose                            |
 | --------------------- | --------------------- | ---------------------------------- |
 | `SEGMENTATION_SURVEY` | `segmentation-survey` | Survey to segment user by use case |
-| `EMAIL_VERIFICATION`  | `email-verification`  | Wait for email confirmation        |
 | `DESIGN_SETUP`        | `design-setup`        | Select a theme / design            |
 | `SITE_OPTIONS`        | `options`             | Set site title, tagline, icon      |
 | `SETUP_BLOG`          | `setup-blog`          | Blog-specific setup step           |

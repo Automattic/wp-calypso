@@ -1,5 +1,5 @@
 import config from '@automattic/calypso-config';
-import { Step, StepContainer } from '@automattic/onboarding';
+import { ONBOARDING_FLOW, Step, StepContainer } from '@automattic/onboarding';
 import { Button } from '@wordpress/components';
 import { useViewportMatch } from '@wordpress/compose';
 import { useEffect, useState } from '@wordpress/element';
@@ -24,9 +24,10 @@ import { setSignupIsNewUser } from 'calypso/signup/storageUtils';
 import WpcomLoginForm from 'calypso/signup/wpcom-login-form';
 import { useSelector } from 'calypso/state';
 import { fetchCurrentUser } from 'calypso/state/current-user/actions';
-import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
+import { isCurrentUserEmailVerified, isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { shouldUseStepContainerV2 } from '../../../helpers/should-use-step-container-v2';
 import { Step as StepType } from '../../types';
+import EmailVerificationGate from '../email-verification';
 import { useHandleSocialResponse } from './handle-social-response';
 import { SignupSlider } from './signup-slider';
 import useAccountCreationExperiment from './use-account-creation-experiment';
@@ -65,10 +66,21 @@ const UserStepComponent: StepType< { accepts: UserStepAccepts } > = function Use
 } ) {
 	const translate = useTranslate();
 	const isLoggedIn = useSelector( isUserLoggedIn );
+	const isEmailVerified = useSelector( isCurrentUserEmailVerified );
 	const queryArgs = useQuery();
 	const dispatch = useDispatch();
 	const { handleSocialResponse, notice, accountCreateResponse } = useHandleSocialResponse( flow );
 	const [ wpAccountCreateResponse, setWpAccountCreateResponse ] = useState< AccountCreateReturn >();
+	const [ verificationRequired, setVerificationRequired ] = useState( false );
+
+	// Only an email/password signup on the onboarding flow (behind the flag) is gated
+	// on email verification here. Social logins and existing sessions never created an
+	// account through the form, so `wpAccountCreateResponse` is unset and they proceed.
+	const requiresEmailVerification =
+		config.isEnabled( 'onboarding/email-verification' ) &&
+		flow === ONBOARDING_FLOW &&
+		Boolean( wpAccountCreateResponse && 'bearer_token' in wpAccountCreateResponse ) &&
+		! isEmailVerified;
 	const { socialServiceResponse } = useSocialService();
 	const { topBarLogo, partnerConfig, signupTosElement } = usePartnerBranding();
 
@@ -96,10 +108,14 @@ const UserStepComponent: StepType< { accepts: UserStepAccepts } > = function Use
 		}
 		if ( ! isLoggedIn ) {
 			dispatch( fetchCurrentUser() as unknown as AnyAction );
+		} else if ( requiresEmailVerification ) {
+			// Hold here and show the verification gate instead of advancing; the gate
+			// calls back to `submit` once the user confirms or skips.
+			setVerificationRequired( true );
 		} else {
 			navigation.submit?.();
 		}
-	}, [ dispatch, isLoggedIn, navigation, wpAccountCreateResponse ] );
+	}, [ dispatch, isLoggedIn, navigation, wpAccountCreateResponse, requiresEmailVerification ] );
 
 	const locale = useFlowLocale();
 
@@ -184,6 +200,10 @@ const UserStepComponent: StepType< { accepts: UserStepAccepts } > = function Use
 			) }
 		</>
 	);
+
+	if ( verificationRequired ) {
+		return <EmailVerificationGate flow={ flow } onDone={ () => navigation.submit?.() } />;
+	}
 
 	if ( isStepContainerV2 ) {
 		let headingText = headerText ?? translate( 'Create your account' );

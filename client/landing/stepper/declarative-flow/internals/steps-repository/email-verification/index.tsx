@@ -6,33 +6,22 @@ import { useCallback, useEffect, useMemo, useRef } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import UserVerificationChecker from 'calypso/lib/user/verification-checker';
-import { getSignupIsNewUser } from 'calypso/signup/storageUtils';
 import { useSelector } from 'calypso/state';
-import { getCurrentUser, isCurrentUserEmailVerified } from 'calypso/state/current-user/selectors';
+import { getCurrentUser } from 'calypso/state/current-user/selectors';
 import { useEmailVerification } from './use-email-verification';
-import type { Step as StepType } from '../../types';
 
 import './style.scss';
 
-const EmailVerification: StepType< {
-	submits: {
-		emailVerified: boolean;
-	};
-} > = function EmailVerification( { navigation, flow } ) {
+interface Props {
+	flow: string;
+	// Called once the user confirms (`true`) or skips (`false`). The account step
+	// decides when to render this gate, so eligibility isn't re-checked here.
+	onDone: ( emailVerified: boolean ) => void;
+}
+
+const EmailVerificationGate = ( { flow, onDone }: Props ) => {
 	const { __ } = useI18n();
 	const user = useSelector( getCurrentUser );
-	const isVerifiedAtEntry = useSelector( isCurrentUserEmailVerified );
-
-	// Capture eligibility once. Only new email signups who arrive unverified see the
-	// gate; social logins and existing accounts (and anyone already verified) pass
-	// straight through without recording a view or confirmation.
-	const eligibility = useRef< boolean | null >( null );
-	if ( eligibility.current === null ) {
-		eligibility.current =
-			Boolean( user?.ID && getSignupIsNewUser( user.ID ) ) && ! isVerifiedAtEntry;
-	}
-	const isEligible = eligibility.current;
-
 	const {
 		isVerified,
 		isSending,
@@ -43,7 +32,7 @@ const EmailVerification: StepType< {
 		hasCheckError,
 		checkNow,
 		resend,
-	} = useEmailVerification( flow, isEligible );
+	} = useEmailVerification( flow );
 
 	const shownAt = useRef( Date.now() );
 	const hasSubmitted = useRef( false );
@@ -66,27 +55,17 @@ const EmailVerification: StepType< {
 					seconds_on_step: Math.round( ( Date.now() - shownAt.current ) / 1000 ),
 				}
 			);
-			navigation.submit( { emailVerified } );
+			onDone( emailVerified );
 		},
-		[ flow, navigation ]
+		[ flow, onDone ]
 	);
-
-	// Ineligible visitors continue immediately with no tracking, so the experiment
-	// only ever counts people who actually went through verification.
-	useEffect( () => {
-		if ( isEligible || hasSubmitted.current ) {
-			return;
-		}
-		hasSubmitted.current = true;
-		navigation.submit( { emailVerified: isVerified } );
-	}, [ isEligible, isVerified, navigation ] );
 
 	// Record confirmation only for a genuine unverified → verified transition.
 	useEffect( () => {
-		if ( isEligible && isVerified ) {
+		if ( isVerified ) {
 			finish( true );
 		}
-	}, [ isEligible, isVerified, finish ] );
+	}, [ isVerified, finish ] );
 
 	const onSkip = () => finish( false );
 
@@ -105,17 +84,11 @@ const EmailVerification: StepType< {
 		[ __, user?.email ]
 	);
 
-	if ( ! isEligible ) {
-		return null;
-	}
-
 	return (
 		<>
 			<DocumentHead title={ title } />
 			{ /* Confirming in another tab of this browser resolves the step immediately. */ }
 			<UserVerificationChecker />
-			{ /* No back button for now: the previous step is account creation, which a
-			   logged-in user can't return to. A "change email" affordance is pending design. */ }
 			<Step.CenteredColumnLayout
 				columnWidth={ 4 }
 				verticalAlign="center"
@@ -178,4 +151,4 @@ const EmailVerification: StepType< {
 	);
 };
 
-export default EmailVerification;
+export default EmailVerificationGate;

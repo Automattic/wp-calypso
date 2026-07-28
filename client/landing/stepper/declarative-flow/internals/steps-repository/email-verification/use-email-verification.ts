@@ -44,7 +44,7 @@ function cooldownRemainingSeconds( scope: string ): number {
 	return remainingMs > 0 ? Math.min( Math.ceil( remainingMs / 1000 ), RESEND_COOLDOWN_SECONDS ) : 0;
 }
 
-export function useEmailVerification( flow: string, enabled: boolean ) {
+export function useEmailVerification( flow: string ) {
 	const dispatch = useDispatch();
 	const isVerified = useSelector( isCurrentUserEmailVerified );
 	const userId = useSelector( getCurrentUser )?.ID;
@@ -107,7 +107,7 @@ export function useEmailVerification( flow: string, enabled: boolean ) {
 	// fresh cooldown; the resend button becomes available as it should.
 	const hasSeededCooldown = useRef( false );
 	useEffect( () => {
-		if ( ! enabled || hasSeededCooldown.current || isVerified ) {
+		if ( hasSeededCooldown.current || isVerified ) {
 			return;
 		}
 		hasSeededCooldown.current = true;
@@ -119,7 +119,7 @@ export function useEmailVerification( flow: string, enabled: boolean ) {
 				is_resend: false,
 			} );
 		}
-	}, [ enabled, isVerified, flow, scope ] );
+	}, [ isVerified, flow, scope ] );
 
 	// Recompute from the stored send time rather than decrementing: mobile browsers
 	// suspend timers while the user is in their email app, so a plain counter would
@@ -140,16 +140,16 @@ export function useEmailVerification( flow: string, enabled: boolean ) {
 	}, [ scope ] );
 
 	useEffect( () => {
-		if ( ! enabled || isVerified ) {
+		if ( isVerified ) {
 			return;
 		}
 		const timer = setTimeout( () => setIsPollingExpired( true ), POLL_LIMIT_MS );
 		return () => clearTimeout( timer );
-	}, [ enabled, isVerified, pollWindowKey ] );
+	}, [ isVerified, pollWindowKey ] );
 
 	useInterval(
 		() => dispatch( fetchCurrentUser() ),
-		enabled && ! isVerified && ! isPollingExpired && EVERY_FIVE_SECONDS
+		! isVerified && ! isPollingExpired && EVERY_FIVE_SECONDS
 	);
 
 	const checkNow = useCallback( async () => {

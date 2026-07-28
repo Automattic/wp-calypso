@@ -52,10 +52,6 @@ import type { DomainSuggestion } from '@automattic/api-core';
 
 function initialize() {
 	const steps = [
-		// Runs first, right after account creation: it requires a logged-in user, so a
-		// logged-out visitor authenticates and lands here before the rest of the flow.
-		// Social signups arrive verified and the step skips itself through to domains.
-		...( isEnabled( 'onboarding/email-verification' ) ? [ STEPS.EMAIL_VERIFICATION ] : [] ),
 		STEPS.DOMAIN_SEARCH,
 		STEPS.USE_MY_DOMAIN,
 		STEPS.UNIFIED_PLANS,
@@ -263,12 +259,6 @@ const onboarding: FlowV2< typeof initialize > = {
 
 					return navigate( 'create-site', undefined, false );
 				}
-				case 'email-verification':
-					// The gate sits right after account creation, so whether the user confirmed
-					// or skipped, carry on into the flow proper. Replace so Back from domains
-					// can't return to the gate (where a confirmed user would auto-submit and a
-					// skipped user would be gated again).
-					return navigate( 'domains', undefined, true );
 				case 'create-site':
 					return navigate( 'processing', undefined, true );
 				case 'post-checkout-onboarding': {
