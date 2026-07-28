@@ -86,17 +86,28 @@
 
 /* A4A */
 .theme-a8c-for-agencies {
+	// 37.0.0's design tokens hardcode the stock blue for the wpds brand and focus colors,
+	// bypassing their --wp-admin-theme-color fallbacks; point them at the A4A primary.
+	--wpds-color-stroke-focus: var(--color-primary);
+	--wpds-color-foreground-interactive-brand: var(--color-primary);
+	--wpds-color-foreground-interactive-brand-active: var(--color-primary-70);
+	--wpds-color-stroke-interactive-brand: var(--color-primary);
+	--wpds-color-stroke-interactive-brand-active: var(--color-primary-70);
+	--wpds-color-background-interactive-brand-weak-active: var(--color-primary-0);
+	--wpds-color-background-interactive-brand-strong: var(--color-primary);
+	--wpds-color-background-interactive-brand-strong-active: var(--color-primary-70);
+
 	.components-button:not(.is-destructive) {
 		--wp-components-color-accent: var(--color-primary);
 		--wp-components-color-accent-darker-10: var(--color-primary-60);
 		--wp-components-color-accent-darker-20: var(--color-primary-60);
 	}
 
-	// A4A secondary buttons keep a subtle neutral border. 37.0.0's border-color is forced off
-	// by the Calypso override and reinstated as a box-shadow; restore the neutral border here
+	// A4A secondary buttons keep a primary border. 37.0.0's border-color is forced off
+	// by the Calypso override and reinstated as a box-shadow; restore the border here
 	// and drop the box-shadow. Buttons with their own outline keep it (higher specificity).
-	:where(.components-button.is-secondary:not(.is-destructive)) {
-		border-color: var(--color-accent-5) !important;
+	:where(.components-button.is-secondary:not(.is-destructive):not(:disabled)) {
+		border-color: var(--color-primary) !important;
 		box-shadow: none;
 	}
 }
@@ -243,7 +254,7 @@
 /* 37.0.0 draws the secondary border with `border-color` instead of the inset box-shadow
  * Calypso and several packages still use, so it leaks as a stray accent outline. Turn it
  * off and keep the box-shadow as the border. Destructive buttons keep their red border. */
-:where(.components-button.is-secondary:not(.is-destructive)) {
+:where(.components-button.is-secondary:not(.is-destructive):not(:disabled)) {
 	border-color: transparent !important;
 	box-shadow: inset 0 0 0 1px var(--wp-components-color-accent, var(--wp-admin-theme-color, #3858e9));
 }
