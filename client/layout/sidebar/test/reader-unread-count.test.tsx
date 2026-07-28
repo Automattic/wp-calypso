@@ -26,12 +26,20 @@ describe( 'ReaderUnreadCount', () => {
 		expect( container.querySelector( '.a8c-count' ) ).toHaveAccessibleName( '4 unread (30 days)' );
 	} );
 
-	test( 'should show the 30-day tooltip on hover', async () => {
+	test( 'should not show the tooltip until the badge is hovered', () => {
+		render( <ReaderUnreadCount count={ 4 } /> );
+		expect( screen.queryByRole( 'tooltip' ) ).not.toBeInTheDocument();
+	} );
+
+	test( 'should show the tooltip on hover and hide it on unhover', async () => {
 		const user = userEvent.setup();
 		const { container } = render( <ReaderUnreadCount count={ 4 } /> );
 		const badge = container.querySelector( '.a8c-count' ) as HTMLElement;
 
 		await user.hover( badge );
-		expect( await screen.findByText( '4 unread (30 days)' ) ).toBeVisible();
+		expect( await screen.findByRole( 'tooltip' ) ).toHaveTextContent( '4 unread (30 days)' );
+
+		await user.unhover( badge );
+		expect( screen.queryByRole( 'tooltip' ) ).not.toBeInTheDocument();
 	} );
 } );
