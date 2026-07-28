@@ -506,6 +506,14 @@ export function isDomainTransfer( purchase: Purchase | ObjectWithProductSlug ): 
 	return purchase.product_slug === DomainProductSlugs.TRANSFER_IN;
 }
 
+/**
+ * A domain connection (also known as a domain mapping): a domain registered
+ * elsewhere that points at a WordPress.com site.
+ */
+export function isDomainMapping( purchase: Purchase | ObjectWithProductSlug ): boolean {
+	return purchase.product_slug === DomainProductSlugs.DOMAIN_MAPPING;
+}
+
 export function isSiteRedirect( purchase: Purchase ): boolean {
 	return purchase.product_slug === OFFSITE_REDIRECT;
 }

@@ -91,6 +91,7 @@ import {
 	isTitanMail,
 	isGoogleWorkspace,
 	isDomainTransfer,
+	isDomainMapping,
 	isDotcomPlan,
 	getRenewalUrlFromPurchase,
 	isStorageUpgradeEligible,
@@ -319,6 +320,11 @@ export function CancelOrRemoveActionButton( { purchase }: { purchase: Purchase }
 
 	const hasRefund = hasAmountAvailableToRefund( purchase );
 	const autoRenewOn = purchase.is_auto_renew_enabled;
+	// A purchase bundled with a plan renews with that plan, so cancelling its
+	// auto-renew is meaningless — removal is the only action that does anything.
+	// Only domain connections can be removed on their own; the rest of a plan's
+	// bundle has to go with the plan.
+	const isBundledWithPlan = isIncludedWithPlan( purchase );
 	// Domain transfer gate: non-refundable transfers can't be cancelled without
 	// support intervention (preserves legacy behavior on classic; adds it to
 	// dashboard). Remove button is unaffected — a completed transfer with
@@ -341,8 +347,13 @@ export function CancelOrRemoveActionButton( { purchase }: { purchase: Purchase }
 	// delete endpoints all accept the call in pending-renewal state, so we
 	// don't need to special-case it.
 	const showCancel =
-		autoRenewOn && ! isTransferNonRefundable && ! isExpiredAndInGracePeriod( purchase );
-	const showRemove = ! autoRenewOn || isExpiredAndInGracePeriod( purchase );
+		! isBundledWithPlan &&
+		autoRenewOn &&
+		! isTransferNonRefundable &&
+		! isExpiredAndInGracePeriod( purchase );
+	const showRemove = isBundledWithPlan
+		? isDomainMapping( purchase )
+		: ! autoRenewOn || isExpiredAndInGracePeriod( purchase );
 
 	if ( ! showCancel && ! showRemove ) {
 		return null;

@@ -310,14 +310,12 @@ class CancelPurchase extends Component< CancelPurchaseAllProps, CancelPurchaseSt
 			return false;
 		}
 
-		// Under the split flag, any purchase reached via ?intent=remove renders
-		// the unified confirmation screen. Allow through regardless of
-		// canAutoRenewBeTurnedOff so the page doesn't redirect away.
-		if (
-			! isValidForCancellation &&
-			props.isSplitCancelRemoveEnabled &&
-			props.intent === 'remove'
-		) {
+		// Any purchase reached via ?intent=remove renders the unified confirmation
+		// screen. Allow through regardless of canAutoRenewBeTurnedOff so the page
+		// doesn't redirect away: the Remove CTA on Purchase Settings is offered
+		// precisely for purchases that can't be cancelled (expired ones, and
+		// domain connections bundled with a plan).
+		if ( ! isValidForCancellation && props.intent === 'remove' ) {
 			return true;
 		}
 
@@ -601,20 +599,16 @@ class CancelPurchase extends Component< CancelPurchaseAllProps, CancelPurchaseSt
 
 	/**
 	 * Returns true when the user clicked Remove on Purchase Settings AND the
-	 * purchase is non-refundable. In that case the legacy flow should call
-	 * DELETE rather than disable-auto-renew (the previous fallthrough). Gated
-	 * by the split cancel/remove experiment because it changes
-	 * user-visible post-action state (different endpoint, deleted row vs.
-	 * expiring row).
+	 * purchase is non-refundable. In that case the flow calls DELETE rather than
+	 * disable-auto-renew (the previous fallthrough), which for a purchase that
+	 * can't be cancelled — an expired one, or a domain connection bundled with a
+	 * plan — did nothing at all.
 	 *
 	 * Refundable purchases continue to flow through `cancelAndRefund` so the
 	 * user still receives their refund — `getMutationFlowType` returns
 	 * `CANCEL_WITH_REFUND` in that case.
 	 */
 	isLegacyRemoveDeleteFlow = ( purchase: Purchases.Purchase ) => {
-		if ( ! this.props.isSplitCancelRemoveEnabled ) {
-			return false;
-		}
 		if ( this.props.intent !== 'remove' ) {
 			return false;
 		}
