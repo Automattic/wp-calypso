@@ -18,7 +18,7 @@ interface InterimOmnibarData {
 	currentRoute: string;
 	onToggleMenu?: () => void;
 	onToggleNotifications?: () => void;
-	showCommandPalette: boolean;
+	commandPalette: boolean;
 }
 
 /**
@@ -75,7 +75,7 @@ function useInterimOmnibarData( {
 			onToggleNotifications,
 			// Kept out of the SSR-mirroring render so the first client render matches
 			// the server (which doesn't render the button); it appears post-hydration.
-			showCommandPalette: false,
+			commandPalette: false,
 		};
 	}
 
@@ -85,7 +85,7 @@ function useInterimOmnibarData( {
 		currentRoute: window.location.pathname,
 		onToggleMenu,
 		onToggleNotifications,
-		showCommandPalette: supports.commandPalette,
+		commandPalette: supports.commandPalette,
 	};
 }
 

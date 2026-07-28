@@ -3,11 +3,11 @@ import config from '@automattic/calypso-config';
 import { isEcommercePlan } from '@automattic/calypso-products';
 import { Gridicon } from '@automattic/components';
 import { Badge } from '@automattic/ui';
-import clsx from 'clsx';
 // @ts-expect-error The commands package is not yet typed.
 import { store as commandsStore } from '@wordpress/commands';
 import { dispatch } from '@wordpress/data';
 import { displayShortcut } from '@wordpress/keycodes';
+import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { parse } from 'qs';
@@ -122,7 +122,7 @@ class MasterbarLoggedIn extends Component {
 		useUnifiedAgent: PropTypes.bool,
 		launchButton: PropTypes.node,
 		sitePlanUrl: PropTypes.string,
-		showCommandPalette: PropTypes.bool,
+		commandPalette: PropTypes.bool,
 	};
 
 	state = { mounted: false };
@@ -1058,7 +1058,7 @@ class MasterbarLoggedIn extends Component {
 					{ this.renderSidebarMobileMenu() }
 					{ this.renderMySites() }
 					{ this.renderSiteMenu() }
-					{ this.props.showCommandPalette && this.renderCommandPalette() }
+					{ this.props.commandPalette && this.renderCommandPalette() }
 					{ this.renderUpdatesMenu() }
 					{ this.renderCommentsMenu() }
 					{ this.renderSiteActionMenu() }

@@ -51,10 +51,10 @@ export default async function loadOmnibar( events: OmnibarEvents, config: AppCon
 
 	hydrateRoot(
 		container,
-		<I18NContext.Provider value={ i18n }>
-			<AppProvider config={ config }>
+		<AppProvider config={ config }>
+			<I18NContext.Provider value={ i18n }>
 				<InterimOmnibarContainer initialUser={ window.currentUser ?? null } events={ events } />
-			</AppProvider>
-		</I18NContext.Provider>
+			</I18NContext.Provider>
+		</AppProvider>
 	);
 }
