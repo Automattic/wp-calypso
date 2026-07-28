@@ -114,6 +114,36 @@ function setUkExtra(
 	return { extra: { ...item.extra, uk: { ...getUkExtra( item ), ...edits } } };
 }
 
+/**
+ * Sets the registrant type, dropping the conditional values the new type does
+ * not ask for.
+ *
+ * Hiding those fields is not enough: their values stay on the payload, and the
+ * registrar validates a registration number's format whenever one is present,
+ * whatever the registrant type. A number left behind by an earlier selection
+ * would fail validation with no control on screen to correct it.
+ */
+function setUkRegistrantType(
+	item: DomainContactDetails,
+	registrantType: string
+): Partial< DomainContactDetails > {
+	const { tradingName, registrationNumber, ...rest } = getUkExtra( item );
+
+	return {
+		extra: {
+			...item.extra,
+			uk: {
+				...rest,
+				registrantType,
+				...( requiresTradingName( registrantType ) && tradingName ? { tradingName } : {} ),
+				...( requiresRegistrationNumber( registrantType ) && registrationNumber
+					? { registrationNumber }
+					: {} ),
+			},
+		},
+	};
+}
+
 export function requiresTradingName( registrantType?: string ) {
 	return !! registrantType && TRADING_NAME_REQUIRED_FOR.includes( registrantType );
 }
@@ -149,7 +179,7 @@ export const getUkContactFormFields = (
 				} ) ),
 			],
 			getValue: ( { item } ) => getUkExtra( item ).registrantType ?? '',
-			setValue: ( { item, value } ) => setUkExtra( item, { registrantType: value } ),
+			setValue: ( { item, value } ) => setUkRegistrantType( item, value ),
 			isValid: { required: true },
 		},
 	];

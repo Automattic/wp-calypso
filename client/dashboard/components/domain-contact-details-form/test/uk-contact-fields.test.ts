@@ -135,6 +135,54 @@ describe( 'getUkContactFormFields', () => {
 		} );
 	} );
 
+	it( 'drops the conditional values a newly picked registrant type does not ask for', () => {
+		const item: DomainContactDetails = {
+			optOutTransferLock: false,
+			extra: {
+				ca: { legalType: 'CCT' },
+				uk: {
+					registrantType: 'LTD',
+					tradingName: 'Stuart Lee Therapy',
+					registrationNumber: '12345678',
+				},
+			},
+		};
+
+		const registrantType = fieldById(
+			getUkContactFormFields( 'LTD' ),
+			UK_FIELD_IDS.registrantType
+		);
+
+		// Left behind, they stay on the payload with no control on screen to fix
+		// them — and the registrar checks a registration number's format whether
+		// or not the type requires one.
+		expect( registrantType?.setValue?.( { item, value: 'IND' } ) ).toEqual( {
+			extra: { ca: { legalType: 'CCT' }, uk: { registrantType: 'IND' } },
+		} );
+	} );
+
+	it( 'keeps a conditional value the new registrant type still asks for', () => {
+		const item: DomainContactDetails = {
+			optOutTransferLock: false,
+			extra: {
+				uk: {
+					registrantType: 'LTD',
+					tradingName: 'Stuart Lee Therapy',
+					registrationNumber: '12345678',
+				},
+			},
+		};
+
+		const registrantType = fieldById(
+			getUkContactFormFields( 'LTD' ),
+			UK_FIELD_IDS.registrantType
+		);
+
+		expect( registrantType?.setValue?.( { item, value: 'STRA' } ) ).toEqual( {
+			extra: { uk: { registrantType: 'STRA', tradingName: 'Stuart Lee Therapy' } },
+		} );
+	} );
+
 	it( 'rejects a registration number that does not match the registrar format', () => {
 		const field = fieldById( getUkContactFormFields( 'LTD' ), UK_FIELD_IDS.registrationNumber );
 

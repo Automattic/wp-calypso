@@ -15,7 +15,7 @@ import Breadcrumbs from '../../app/breadcrumbs';
 import { domainsContactInfoRoute, domainsIndexRoute } from '../../app/router/domains';
 import ContactForm from '../../components/domain-contact-details-form/contact-form';
 import {
-	hasUkDomain,
+	isUkDomain,
 	mapWhoisExtraToUkContactExtra,
 } from '../../components/domain-contact-details-form/uk-contact-fields';
 import Notice from '../../components/notice';
@@ -89,15 +89,24 @@ export default function DomainsContactInfo() {
 
 		const initialData = aggregateWhoisDataWithMostCommonValues( registrantWhois );
 
+		// Only the .uk domains carry registrant details, so they vote alone. The
+		// loader keeps `whoisData` in `selectedDomains` order, which is what makes
+		// the index check work. Counting the rest in would let their empty values
+		// win the majority and drop a prefill the .uk domains agreed on.
+		const ukRegistrantWhois = whoisData
+			.filter( ( _, index ) => isUkDomain( selectedDomains[ index ] ) )
+			.flat()
+			.filter( ( whois ) => whois.type === WhoisType.REGISTRANT );
+
 		// Follow the same most-common-value rule as every other field: when the
 		// selected .uk domains disagree on registrant type there is no single right
 		// answer, so the majority one is offered and the registrant can correct it.
 		const mostCommonExtraValue = ( fieldName: string ) =>
 			mostCommonValueInArray(
-				registrantWhois.map( ( whois ) => whois.extra?.[ fieldName ] ?? '' )
+				ukRegistrantWhois.map( ( whois ) => whois.extra?.[ fieldName ] ?? '' )
 			) ?? '';
 
-		const ukExtra = hasUkDomain( selectedDomains )
+		const ukExtra = ukRegistrantWhois.length
 			? mapWhoisExtraToUkContactExtra( {
 					registrant_type: mostCommonExtraValue( 'registrant_type' ),
 					trading_name: mostCommonExtraValue( 'trading_name' ),
