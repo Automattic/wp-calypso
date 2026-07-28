@@ -35,19 +35,13 @@ const defaultProps = {
 };
 
 describe( 'ButtonPicker', () => {
-	it( 'renders VariationPicker with variations', () => {
+	it( 'renders VariationPicker with the variations, button type, and default page size', () => {
 		const { getByTestId } = render( <ButtonPicker { ...defaultProps } /> );
-		expect( getByTestId( 'mock-variation-picker' ) ).toHaveAttribute( 'data-count', '2' );
-	} );
+		const picker = getByTestId( 'mock-variation-picker' );
 
-	it( 'passes type="button" to VariationPicker', () => {
-		const { getByTestId } = render( <ButtonPicker { ...defaultProps } /> );
-		expect( getByTestId( 'mock-variation-picker' ) ).toHaveAttribute( 'data-type', 'button' );
-	} );
-
-	it( 'uses default maxToShow of 12', () => {
-		const { getByTestId } = render( <ButtonPicker { ...defaultProps } /> );
-		expect( getByTestId( 'mock-variation-picker' ) ).toHaveAttribute( 'data-max', '12' );
+		expect( picker ).toHaveAttribute( 'data-count', '2' );
+		expect( picker ).toHaveAttribute( 'data-type', 'button' );
+		expect( picker ).toHaveAttribute( 'data-max', '12' );
 	} );
 
 	it( 'renders null when no variations', () => {

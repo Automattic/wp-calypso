@@ -45,6 +45,12 @@ describe( 'showComponentCallback', () => {
 		expect( JSON.parse( result.agentMessage! ).data.summary ).toBe( 'Pick a color palette.' );
 	} );
 
+	it( 'falls back to the default message for a non-string summary', async () => {
+		const result = await showComponentCallback( makeInput( { summary: 5 as unknown as string } ) );
+
+		expect( result.result.message ).toBe( 'Choose from the options I provided.' );
+	} );
+
 	it( 'includes `followUpTasks` in the output', async () => {
 		const result = await showComponentCallback( makeInput( { followUpTasks: true } ) );
 

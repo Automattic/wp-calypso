@@ -45,7 +45,10 @@ describe( 'Variation', () => {
 		expect( onSelect ).toHaveBeenCalledWith( mockVariation );
 	} );
 
-	it( 'handles ENTER key press', () => {
+	it.each( [
+		[ 'Enter', 'Enter' ],
+		[ 'Space', ' ' ],
+	] )( 'selects the variation on %s', ( _name, key ) => {
 		const onSelect = jest.fn();
 		render(
 			<Variation
@@ -55,7 +58,7 @@ describe( 'Variation', () => {
 				onSelect={ onSelect }
 			/>
 		);
-		fireEvent.keyDown( screen.getByRole( 'button' ), { key: 'Enter' } );
+		fireEvent.keyDown( screen.getByRole( 'button' ), { key } );
 		expect( onSelect ).toHaveBeenCalledWith( mockVariation );
 	} );
 

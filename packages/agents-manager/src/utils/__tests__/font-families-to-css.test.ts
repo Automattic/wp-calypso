@@ -1,7 +1,7 @@
 /**
  * @jest-environment jsdom
  */
-import { fontFamiliesToCSS } from '../font-families-to-css';
+import { fontFamiliesToCSS, injectFontFamiliesIntoEditorIframe } from '../font-families-to-css';
 
 const mockGetCurrentTheme = jest.fn();
 jest.mock( '@wordpress/core-data', () => ( { store: 'core' } ) );
@@ -138,6 +138,28 @@ describe( 'fontFamiliesToCSS', () => {
 		expect( css ).not.toContain( 'not-a-descriptor' );
 	} );
 
+	it( 'drops font sources with disallowed URL schemes', () => {
+		const css = fontFamiliesToCSS( [
+			{
+				name: 'Sneaky',
+				fontFamily: '"Sneaky", serif',
+				fontFace: [ { fontFamily: 'Sneaky', src: [ 'javascript:alert(1)' ] } ],
+			},
+		] );
+
+		expect( css ).toBe( '' );
+	} );
+
+	it( 'ignores malformed entries without throwing', () => {
+		const css = fontFamiliesToCSS( [
+			null,
+			{ name: 'No Faces', fontFamily: '"No Faces", serif', fontFace: {} },
+			{ name: 'Null Face', fontFamily: '"Null Face", serif', fontFace: [ null ] },
+		] as unknown as Parameters< typeof fontFamiliesToCSS >[ 0 ] );
+
+		expect( css ).toBe( '' );
+	} );
+
 	it( 'returns empty string for empty font families', () => {
 		expect( fontFamiliesToCSS( [] ) ).toBe( '' );
 	} );
@@ -147,5 +169,32 @@ describe( 'fontFamiliesToCSS', () => {
 			{ name: 'Test Font', fontFamily: '"Test Font", sans-serif' },
 		] );
 		expect( css ).toBe( '' );
+	} );
+} );
+
+describe( 'injectFontFamiliesIntoEditorIframe', () => {
+	const families = [
+		{
+			name: 'Inter',
+			fontFamily: '"Inter", sans-serif',
+			fontFace: [ { fontFamily: 'Inter', src: [ 'https://example.com/inter.woff2' ] } ],
+		},
+	];
+
+	beforeEach( () => {
+		jest.clearAllMocks();
+		document.body.innerHTML = '<iframe name="editor-canvas"></iframe>';
+	} );
+
+	it( 'reuses one style element and does not duplicate CSS across calls', () => {
+		injectFontFamiliesIntoEditorIframe( families );
+		injectFontFamiliesIntoEditorIframe( families );
+
+		const canvasDocument =
+			document.querySelector< HTMLIFrameElement >( '[name="editor-canvas"]' )!.contentDocument!;
+		const styles = canvasDocument.querySelectorAll( 'style' );
+
+		expect( styles ).toHaveLength( 1 );
+		expect( styles[ 0 ].textContent?.match( /@font-face/g ) ).toHaveLength( 1 );
 	} );
 } );
