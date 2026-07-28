@@ -1,5 +1,7 @@
 import deepmerge from 'deepmerge';
 
+// Deliberately local — `@automattic/global-styles` has a similar merge helper,
+// but it would pull editor-only dependencies into the widgets.wp.com bundles.
 const replace = < T >( _: T, source: T ): T => source;
 
 /**

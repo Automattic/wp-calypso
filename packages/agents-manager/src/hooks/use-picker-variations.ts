@@ -15,8 +15,6 @@ const MAX_VARIATIONS = 24;
 
 interface Options {
 	variations?: StyleVariation[];
-	/** Highlighted title until the live value is read from the store. */
-	initialActiveTitle?: string | null;
 	/** Recorded into `siteEditorActions` (agent context) when a pick applies. */
 	pickActionName?: string;
 	/** Reads the live value from the editor's global styles. */
@@ -37,14 +35,13 @@ interface Options {
  */
 export default function usePickerVariations( {
 	variations,
-	initialActiveTitle = null,
 	pickActionName,
 	getLiveValue,
 	getValue,
 	createCurrent,
 }: Options ) {
 	const setStyles = useStyles();
-	const [ activeTitle, setActiveTitle ] = useState< string | null >( initialActiveTitle );
+	const [ activeTitle, setActiveTitle ] = useState< string | null >( null );
 
 	// Drop falsy/untitled entries and duplicate titles before any render.
 	const safeVariations = useMemo(

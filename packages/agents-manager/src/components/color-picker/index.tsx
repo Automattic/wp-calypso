@@ -4,13 +4,11 @@ import type { StyleVariation } from '../styles-preview';
 
 interface Props {
 	variations?: StyleVariation[];
-	currentColor?: string | null;
 }
 
-export default function ColorPicker( { variations, currentColor = null }: Props ) {
+export default function ColorPicker( { variations }: Props ) {
 	const { sortedVariations, activeTitle, handleSelect } = usePickerVariations( {
 		variations,
-		initialActiveTitle: currentColor,
 		pickActionName: 'colorPickerItemSelected',
 		getLiveValue: ( globalStyles ) => globalStyles.settings?.color?.palette?.theme,
 		getValue: ( variation ) => variation.settings?.color?.palette?.theme,

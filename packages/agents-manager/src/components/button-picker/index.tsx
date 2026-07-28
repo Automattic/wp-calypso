@@ -10,17 +10,14 @@ const getButtonBorder = ( variation: StyleVariation ): unknown =>
 interface Props {
 	buttonVariations?: StyleVariation[];
 	maxButtonsToShow?: number;
-	currentButtonStyle?: string | null;
 }
 
 export default function ButtonPicker( {
 	buttonVariations,
 	maxButtonsToShow = MAX_BUTTONS_TO_SHOW,
-	currentButtonStyle = null,
 }: Props ) {
 	const { sortedVariations, activeTitle, handleSelect } = usePickerVariations( {
 		variations: buttonVariations,
-		initialActiveTitle: currentButtonStyle,
 		pickActionName: 'buttonPickerItemSelected',
 		getLiveValue: ( globalStyles ) => globalStyles.styles?.elements?.button?.border,
 		getValue: getButtonBorder,

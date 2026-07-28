@@ -8,14 +8,12 @@ interface Props {
 	variations?: StyleVariation[];
 	themeVariations?: StyleVariation[];
 	dynamicVariations?: StyleVariation[];
-	currentFont?: string | null;
 }
 
 export default function FontPicker( {
 	variations = [],
 	themeVariations = [],
 	dynamicVariations = [],
-	currentFont = null,
 }: Props ) {
 	// Combine theme + dynamic + direct variations; the picker hook dedupes by title.
 	const fontVariations = useMemo( () => {
@@ -27,7 +25,6 @@ export default function FontPicker( {
 
 	const { sortedVariations, activeTitle, handleSelect } = usePickerVariations( {
 		variations: fontVariations,
-		initialActiveTitle: currentFont,
 		pickActionName: 'fontPickerItemSelected',
 		getLiveValue: ( globalStyles ) => globalStyles.settings?.typography?.fontFamilies?.theme,
 		getValue: ( variation ) => variation.settings?.typography?.fontFamilies?.theme,
