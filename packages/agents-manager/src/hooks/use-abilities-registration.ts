@@ -9,6 +9,9 @@ import { registerAmAbilities } from '../abilities';
  */
 export default function useAbilitiesRegistration(): void {
 	useEffect( () => {
+		// TODO: Remove this testing switch once Big Sky deletes its ability
+		// copies — with no provider fallback left, skipping registration would
+		// only break the tools.
 		if ( new URLSearchParams( window.location.search ).get( 'am_abilities' ) === '0' ) {
 			return;
 		}
