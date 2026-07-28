@@ -14,6 +14,10 @@ import { useMemo } from 'react';
 import Breadcrumbs from '../../app/breadcrumbs';
 import { domainsContactInfoRoute, domainsIndexRoute } from '../../app/router/domains';
 import ContactForm from '../../components/domain-contact-details-form/contact-form';
+import {
+	hasUkDomain,
+	mapWhoisExtraToUkContactExtra,
+} from '../../components/domain-contact-details-form/uk-contact-fields';
 import Notice from '../../components/notice';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
@@ -79,12 +83,34 @@ export default function DomainsContactInfo() {
 			return { initialData, key: JSON.stringify( initialData ) };
 		}
 
-		const initialData = aggregateWhoisDataWithMostCommonValues(
-			whoisData.flat().filter( ( whois ) => whois.type === WhoisType.REGISTRANT )
-		);
+		const registrantWhois = whoisData
+			.flat()
+			.filter( ( whois ) => whois.type === WhoisType.REGISTRANT );
+
+		const initialData = aggregateWhoisDataWithMostCommonValues( registrantWhois );
+
+		// Follow the same most-common-value rule as every other field: when the
+		// selected .uk domains disagree on registrant type there is no single right
+		// answer, so the majority one is offered and the registrant can correct it.
+		const mostCommonExtraValue = ( fieldName: string ) =>
+			mostCommonValueInArray(
+				registrantWhois.map( ( whois ) => whois.extra?.[ fieldName ] ?? '' )
+			) ?? '';
+
+		const ukExtra = hasUkDomain( selectedDomains )
+			? mapWhoisExtraToUkContactExtra( {
+					registrant_type: mostCommonExtraValue( 'registrant_type' ),
+					trading_name: mostCommonExtraValue( 'trading_name' ),
+					registration_number: mostCommonExtraValue( 'registration_number' ),
+			  } )
+			: undefined;
+
+		if ( ukExtra ) {
+			initialData.extra = { uk: ukExtra };
+		}
 
 		return { initialData, key: JSON.stringify( initialData ) };
-	}, [ whoisData ] );
+	}, [ whoisData, selectedDomains ] );
 
 	const domainsWithUnmodifiableContactInfo = useMemo( () => {
 		return domainDetails
@@ -164,6 +190,7 @@ export default function DomainsContactInfo() {
 		>
 			<ContactForm
 				key={ key }
+				domainNames={ selectedDomains }
 				initialData={ initialData }
 				beforeForm={
 					<Notice
