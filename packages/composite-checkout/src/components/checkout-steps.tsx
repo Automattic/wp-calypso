@@ -733,6 +733,20 @@ export function CheckoutFormSubmit( {
 		customPropertyForSubmitButtonHeight
 	);
 
+	// If validation fails below, the active step may be scrolled out of view
+	// (e.g. behind a sticky submit button), which would otherwise make the
+	// button look like it did nothing when it in fact surfaced errors.
+	const scrollActiveStepIntoView = useCallback( () => {
+		const activeStepId = Object.entries( stepIdMap ).find(
+			( [ , num ] ) => num === activeStepNumber
+		)?.[ 0 ];
+		if ( activeStepId ) {
+			document
+				.getElementById( activeStepId )
+				?.scrollIntoView?.( { behavior: 'smooth', block: 'start' } );
+		}
+	}, [ activeStepNumber, stepIdMap ] );
+
 	// Wrap validateForm to first validate any active step before submission
 	const wrappedValidateForm = useCallback( async () => {
 		// Only validate if there's an actual active step (within the range of registered steps)
@@ -751,6 +765,7 @@ export function CheckoutFormSubmit( {
 
 				if ( ! isStepComplete ) {
 					// Step validation failed, don't proceed with submission
+					scrollActiveStepIntoView();
 					return false;
 				}
 
@@ -761,7 +776,11 @@ export function CheckoutFormSubmit( {
 
 		// Now run the payment method validation if provided
 		if ( validateForm ) {
-			return await validateForm();
+			const isFormValid = await validateForm();
+			if ( ! isFormValid ) {
+				scrollActiveStepIntoView();
+			}
+			return isFormValid;
 		}
 
 		return true;
@@ -773,6 +792,7 @@ export function CheckoutFormSubmit( {
 		getStepCompleteCallback,
 		setStepCompleteStatus,
 		validateForm,
+		scrollActiveStepIntoView,
 	] );
 
 	const isDisabled = ( () => {
