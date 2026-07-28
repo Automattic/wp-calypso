@@ -104,7 +104,11 @@ marketplace subscriptions on site.
 5. **Survey completion tracked per-purchase** — Stored in user preferences to avoid
    re-surveying. A new survey won't appear for a purchase that was already surveyed.
 
-6. **Siteless purchases** — Some products (Akismet, Jetpack, Marketplace) use temporary sites (`siteless.{jetpack|akismet|marketplace.wp|a4a}.com`). Guard with `purchase.is_attached_to_holding_site`. Never call `siteBySlugQuery()` for these — use `purchase.domain` or `purchase.blog_id` for display, skip site-dependent UI entirely.
+6. **Siteless purchases** — Some products (Akismet, Jetpack, Marketplace) use temporary sites (`siteless.{jetpack|akismet|marketplace.wp|a4a}.com`). Guard with `hasQueryableSite( purchase )` (`utils/purchase.ts`), which wraps `purchase.is_attached_to_holding_site`. Never fire **any** site-scoped query for these — not just `siteBySlugQuery()`, but anything hitting `/sites/{blog_id}/…` (`siteFeaturesQuery`, `sitePurchasesQuery`, `siteByIdQuery`, `siteDomainsQuery`, `cancellationOffersQuery`, backup queries, …). Use `purchase.domain` or `purchase.blog_id` for display, and skip site-dependent UI entirely.
+
+   The user is not a member of the holding site, so those requests return `403 authorization_required`. `AuthProvider` (`app/auth/index.tsx`) subscribes to the whole query cache and treats that error as a signed-out session, redirecting to `/log-in` — which bounces straight back, looping forever (SHILL-2295). Note that `.catch()` on `ensureQueryData` does **not** protect you: the redirect is driven by the query *cache* entry going to `error`, not by the rejected promise. The query must not fire at all (`enabled: false`).
+
+   When gating a query with `enabled`, read `isLoading` rather than `isPending` in loading conditions. A disabled query stays `isPending` forever, so an `isPending`-based gate leaves the screen stuck on its loading placeholder.
 
 7. **Transferred purchases** — Always check ownership before allowing purchase actions.
 
