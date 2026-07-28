@@ -217,7 +217,7 @@ function isCreditCardFormValid(
 		case 'stripe': {
 			const fields = selectors.getFields( store.getState() );
 			const cardholderName = fields.cardholderName;
-			if ( ! cardholderName?.value.length ) {
+			if ( ! cardholderName?.value?.length ) {
 				// Touch the field so it displays a validation error
 				store.dispatch( actions.setFieldValue( 'cardholderName', '' ) );
 				store.dispatch( actions.setFieldError( 'cardholderName', __( 'This field is required' ) ) );
@@ -234,7 +234,7 @@ function isCreditCardFormValid(
 				);
 				setFieldsError();
 			}
-			if ( areThereErrors || ! cardholderName?.value.length || incompleteFieldKeys.length > 0 ) {
+			if ( areThereErrors || ! cardholderName?.value?.length || incompleteFieldKeys.length > 0 ) {
 				debug( 'card info is not valid', { errors, incompleteFieldKeys, cardholderName } );
 
 				return false;
