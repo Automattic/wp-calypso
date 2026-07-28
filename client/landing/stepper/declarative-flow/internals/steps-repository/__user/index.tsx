@@ -73,15 +73,17 @@ const UserStepComponent: StepType< { accepts: UserStepAccepts } > = function Use
 	const { handleSocialResponse, notice, accountCreateResponse } = useHandleSocialResponse( flow );
 	const [ wpAccountCreateResponse, setWpAccountCreateResponse ] = useState< AccountCreateReturn >();
 
-	// The gate holds this step while a pending marker set by this attempt's email account
-	// creation is present (see `handleCreateAccountSuccess`). It's persisted, so it survives
-	// a refresh; social/existing sessions never set it. The gate owns resolution — it
-	// records the outcome, clears the marker, and submits — so an already-verified pending
-	// user (e.g. confirmed during a reload) still completes the bookkeeping.
+	// The gate holds this step while this attempt's email account creation is unresolved.
+	// `pendingThisSession` is the in-session source of truth, so the gate still shows even
+	// if persisting the marker failed (e.g. storage disabled); the persisted marker only
+	// restores that state after a refresh. Social/existing sessions never set either. The
+	// gate owns resolution — it records the outcome and clears the marker — so an
+	// already-verified pending user (e.g. confirmed during a reload) still completes it.
+	const [ pendingThisSession, setPendingThisSession ] = useState( false );
 	const scope = gateScope( flow, userId );
 	const gateEnabled =
 		config.isEnabled( 'onboarding/email-verification' ) && flow === ONBOARDING_FLOW;
-	const requiresEmailVerification = gateEnabled && isGatePending( scope );
+	const requiresEmailVerification = gateEnabled && ( pendingThisSession || isGatePending( scope ) );
 	const { socialServiceResponse } = useSocialService();
 	const { topBarLogo, partnerConfig, signupTosElement } = usePartnerBranding();
 
@@ -116,8 +118,9 @@ const UserStepComponent: StepType< { accepts: UserStepAccepts } > = function Use
 		if ( ! isLoggedIn ) {
 			dispatch( fetchCurrentUser() as unknown as AnyAction );
 		} else if ( ! requiresEmailVerification ) {
-			// Nothing pending — advance. While a marker is pending the gate is rendered
-			// instead, and it owns the transition (via `onDone`), so the two never race.
+			// Nothing pending — advance. While pending the gate is rendered instead and owns
+			// the transition (via `onDone`); `pendingThisSession` stays set until it does, so
+			// this branch never fires underneath it.
 			navigation.submit?.();
 		}
 	}, [ dispatch, isLoggedIn, navigation, requiresEmailVerification ] );
@@ -141,6 +144,7 @@ const UserStepComponent: StepType< { accepts: UserStepAccepts } > = function Use
 		if ( gateEnabled ) {
 			// This attempt just created an email account: open the gate and treat the
 			// activation email as the initial send so the resend cooldown starts here.
+			setPendingThisSession( true );
 			beginGate( gateScope( flow, data.ID ) );
 			recordTracksEvent( 'calypso_signup_email_verification_email_sent', {
 				flow,

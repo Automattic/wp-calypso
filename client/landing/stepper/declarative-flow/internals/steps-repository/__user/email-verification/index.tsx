@@ -39,9 +39,17 @@ const EmailVerificationGate = ( { flow, logo, onDone }: Props ) => {
 	} = useEmailVerification( flow );
 
 	const hasSubmitted = useRef( false );
+	const headingRef = useRef< HTMLDivElement >( null );
 	const scope = gateScope( flow, user?.ID );
 
 	const title = __( 'Confirm your email address' );
+
+	// This gate replaces the account form in place, without a route change, so move focus
+	// onto its heading on mount — otherwise focus is stranded on the now-unmounted submit
+	// button and assistive tech isn't told the screen changed.
+	useEffect( () => {
+		headingRef.current?.focus();
+	}, [] );
 
 	const finish = useCallback(
 		( emailVerified: boolean ) => {
@@ -99,7 +107,15 @@ const EmailVerificationGate = ( { flow, logo, onDone }: Props ) => {
 				verticalAlign="center"
 				className="onboarding-email-verification"
 				topBar={ <Step.TopBar logo={ logo } /> }
-				heading={ <Step.Heading align="center" text={ title } subText={ subText } /> }
+				heading={
+					<div
+						ref={ headingRef }
+						tabIndex={ -1 }
+						className="onboarding-email-verification__heading"
+					>
+						<Step.Heading align="center" text={ title } subText={ subText } />
+					</div>
+				}
 			>
 				<Step.PrimaryButton onClick={ checkNow } isBusy={ isChecking } disabled={ isChecking }>
 					{ __( 'I’ve confirmed my email' ) }

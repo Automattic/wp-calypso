@@ -214,6 +214,31 @@ describe( 'account step email verification gate', () => {
 		expect( submit ).not.toHaveBeenCalled();
 	} );
 
+	it( 'still shows the gate when persisting the pending marker fails', async () => {
+		sessionStorage.clear();
+		const setItem = jest.spyOn( Storage.prototype, 'setItem' ).mockImplementation( () => {
+			throw new Error( 'storage disabled' );
+		} );
+
+		try {
+			const store = makeLoggedOutStore();
+			renderUser( store );
+
+			await userEvent.click( screen.getByRole( 'button', { name: 'create-email-account' } ) );
+			act( () => {
+				store.dispatch( {
+					type: CURRENT_USER_RECEIVE,
+					user: { ID: USER_ID, email: EMAIL, email_verified: false },
+				} );
+			} );
+
+			// The persisted marker never landed, but in-session state still gates.
+			expect( await screen.findByRole( 'heading', { name: GATE_HEADING } ) ).toBeVisible();
+		} finally {
+			setItem.mockRestore();
+		}
+	} );
+
 	it( 'skips the gate for an already-verified (social) signup', async () => {
 		// Social signups never open the gate, so nothing is pending.
 		sessionStorage.clear();

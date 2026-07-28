@@ -6,6 +6,12 @@
 	text-align: center;
 }
 
+// Focus is moved here programmatically on mount to announce the screen change; it isn't
+// a tab stop, so suppress the outline the big heading region would otherwise show.
+.onboarding-email-verification__heading:focus {
+	outline: none;
+}
+
 .onboarding-email-verification__notice {
 	color: var(--color-text-subtle);
 	font-size: 0.875rem;

@@ -111,6 +111,15 @@ describe( 'EmailVerificationGate', () => {
 		expect( screen.getByTestId( 'brand-logo' ) ).toBeVisible();
 	} );
 
+	it( 'moves focus onto the gate on mount so the screen change is announced', () => {
+		render();
+
+		// The gate replaces the account form in place; focus should land on its heading
+		// region rather than being stranded on the now-unmounted submit button.
+		const heading = screen.getByRole( 'heading', { name: 'Confirm your email address' } );
+		expect( heading.closest( '.onboarding-email-verification__heading' ) ).toHaveFocus();
+	} );
+
 	it( 'keeps resend available after refreshing once the cooldown has expired', async () => {
 		jest.useFakeTimers();
 
