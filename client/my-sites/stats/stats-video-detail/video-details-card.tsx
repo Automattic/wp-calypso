@@ -50,14 +50,13 @@ export default function VideoDetailsCard( {
 				) }
 			</div>
 			{ posterUrl && (
+				// The card already shows the video's title next to the image, so
+				// the thumbnail adds no information for screen readers — treat it
+				// as decorative.
 				<img
 					className="stats-video-details-card__thumbnail"
 					src={ posterUrl }
-					alt={ translate( 'Thumbnail for a video titled "%(title)s"', {
-						args: { title: title ?? '' },
-						comment: 'Alt-text for a video thumbnail.',
-						textOnly: true,
-					} ) }
+					alt=""
 					onError={ () => setFailedPoster( posterUrl ) }
 				/>
 			) }
