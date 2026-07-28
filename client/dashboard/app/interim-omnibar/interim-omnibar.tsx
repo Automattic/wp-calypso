@@ -25,7 +25,7 @@ import { getUserLanguage } from '../shared-locale-loader';
 import { OmnibarLaunchButton } from './omnibar-launch-button';
 import { createOmnibarStore } from './omnibar-store';
 import { OmnibarWorkspaceItem } from './omnibar-workspace-item';
-import type { User, Site } from '@automattic/api-core';
+import type { User, Site, AdminMenuItem } from '@automattic/api-core';
 
 const LocalizedMasterbarLoggedIn = localize( MasterbarLoggedIn );
 
@@ -34,6 +34,34 @@ const noop = () => {};
 // Separate query client for the legacy masterbar so its internal queries
 // (e.g. useGetDomainsQuery in MasterbarLaunchButton) don't pollute the Dashboard cache.
 const omnibarQueryClient = new QueryClient();
+
+// Prototype: local dev has no admin-menu API, so the updates and comments
+// nodes would vanish from the omnibar. Feed the masterbar the same counts
+// the wp-admin side shows, keeping the bar identical across environments.
+const MOCK_ADMIN_MENU: AdminMenuItem[] = [
+	{
+		slug: 'untangling-updates',
+		title: 'Updates',
+		type: 'menu-item',
+		children: [
+			{
+				slug: 'update-core-php',
+				title: 'Updates',
+				type: 'menu-item',
+				count: 5,
+				url: 'http://localhost:8881/wp-admin/update-core.php',
+			},
+		],
+	},
+	{
+		slug: 'untangling-comments',
+		title: 'Comments',
+		type: 'menu-item',
+		icon: 'dashicons-admin-comments',
+		count: 0,
+		url: 'http://localhost:8881/wp-admin/edit-comments.php',
+	},
+];
 
 // Minimal placeholder so MasterbarLoggedIn doesn't crash during SSR.
 const emptyUser = {
@@ -201,7 +229,7 @@ export function InterimOmnibar( {
 					isNotificationsShowing={ false }
 					isMigrationInProgress={ false }
 					migrationStatus={ null }
-					adminMenu={ adminMenu ?? null }
+					adminMenu={ adminMenu ?? MOCK_ADMIN_MENU }
 					additionalProfileMenuItems={ [
 						{ label: <OmnibarWorkspaceItem />, className: 'masterbar__workspace' },
 					] }
