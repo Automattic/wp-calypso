@@ -4,9 +4,9 @@ export interface MarketingSurveyResponse {
 }
 
 export interface MarketingSurveyResponses {
-	purchaseId: number;
-	purchase: string;
-	[ key: string ]: string | number | MarketingSurveyResponse;
+	purchaseId?: number;
+	purchase?: string;
+	[ key: string ]: string | number | MarketingSurveyResponse | undefined;
 }
 
 export interface MarketingSurveyDetails {

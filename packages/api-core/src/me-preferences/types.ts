@@ -22,6 +22,11 @@ export interface VisitCounter {
 	lastUpdated: number | null; // Result of Date.now(), or null before the first visit
 }
 
+export interface A4AFeedbackPreferenceEntry {
+	lastSubmittedAt?: number;
+	lastSkippedAt?: number;
+}
+
 export interface UserPreferences {
 	recentSites?: number[];
 	'hosting-dashboard-color-scheme'?: 'light' | 'dark' | 'system';
@@ -46,4 +51,5 @@ export interface UserPreferences {
 	'reader-profile-posts-visibility'?: 'public' | 'hidden';
 	'reader-profile-sites-visibility'?: 'public' | 'hidden';
 	'reader-profile-hidden-sites'?: number[];
+	'a4a-feedback'?: Record< string, A4AFeedbackPreferenceEntry >;
 }
