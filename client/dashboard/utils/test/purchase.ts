@@ -108,11 +108,20 @@ describe( 'getMutationFlowType', () => {
 		).toBe( CANCEL_FLOW_TYPE.CANCEL_WITH_REFUND );
 	} );
 
-	test( 'intent=remove + auto-renew off → REMOVE (DELETE)', () => {
+	test( 'intent=remove + auto-renew off + refund available → CANCEL_WITH_REFUND', () => {
 		expect(
 			getMutationFlowType(
 				'remove',
 				makePurchase( { is_auto_renew_enabled: false, is_refundable: true, refund_amount: 50 } )
+			)
+		).toBe( CANCEL_FLOW_TYPE.CANCEL_WITH_REFUND );
+	} );
+
+	test( 'intent=remove + auto-renew off + no refund → REMOVE (DELETE)', () => {
+		expect(
+			getMutationFlowType(
+				'remove',
+				makePurchase( { is_auto_renew_enabled: false, is_refundable: false, refund_amount: 0 } )
 			)
 		).toBe( CANCEL_FLOW_TYPE.REMOVE );
 	} );
