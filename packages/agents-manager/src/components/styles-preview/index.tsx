@@ -119,11 +119,6 @@ const normalizedWidth = 200;
 const normalizedHeight = 80;
 const normalizedColorSwatchSize = 32;
 
-const THROTTLE_OPTIONS = {
-	leading: true,
-	trailing: true,
-};
-
 /**
  * Resolve a color value that may be a WordPress preset variable to an actual hex color.
  */
@@ -241,8 +236,8 @@ export default function StylesPreview( { type, variation }: Props ) {
 	}, [ variation, type, globalStyles ] );
 
 	const fontFamilies =
-		mergedStyles?.settings?.typography?.fontFamilies?.theme ||
-		globalStyles?.settings?.typography?.fontFamilies?.theme;
+		mergedStyles.settings?.typography?.fontFamilies?.theme ||
+		globalStyles.settings?.typography?.fontFamilies?.theme;
 
 	// Resolve CSS variable font families (e.g. `var(--wp--preset--font-family--bitter)`)
 	// to actual font names from the variation's `fontFamilies` settings.
@@ -271,16 +266,14 @@ export default function StylesPreview( { type, variation }: Props ) {
 	const headerFontWeight =
 		getHeaderStyleValue( mergedStyles, 'typography.fontWeight' ) ?? fontWeight;
 	const headerFontStyle = getHeaderStyleValue( mergedStyles, 'typography.fontStyle' ) ?? fontStyle;
-	const backgroundColor = globalStyles?.styles?.color?.background;
+	const backgroundColor = globalStyles.styles?.color?.background;
 
-	const [ width, setWidth ] = useState< number | undefined >();
+	const [ throttledWidth, setThrottledWidthState ] = useState< number | undefined >();
+	const setThrottledWidth = useThrottle( setThrottledWidthState, 250 );
 	const containerResizeRef = useResizeObserver( ( [ entry ] ) =>
-		setWidth( entry.contentRect.width )
+		setThrottledWidth( entry.contentRect.width )
 	);
-	const [ throttledWidth, setThrottledWidthState ] = useState( width );
 	const [ ratioState, setRatioState ] = useState< number >();
-
-	const setThrottledWidth = useThrottle( setThrottledWidthState, 250, THROTTLE_OPTIONS );
 
 	const activeTextColor = resolveColor( textColor, paletteColors, 'black' );
 
@@ -308,12 +301,6 @@ export default function StylesPreview( { type, variation }: Props ) {
 	}, [ type, mergedStyles, paletteColors ] );
 
 	useLayoutEffect( () => {
-		if ( width ) {
-			setThrottledWidth( width );
-		}
-	}, [ width, setThrottledWidth ] );
-
-	useLayoutEffect( () => {
 		const newRatio = throttledWidth ? throttledWidth / normalizedWidth : 1;
 		const ratioDiff = newRatio - ( ratioState || 0 );
 		const isRatioDiffBigEnough = Math.abs( ratioDiff ) > 0.1;
@@ -323,7 +310,7 @@ export default function StylesPreview( { type, variation }: Props ) {
 		}
 	}, [ throttledWidth, ratioState ] );
 
-	const fallbackRatio = width ? width / normalizedWidth : 1;
+	const fallbackRatio = throttledWidth ? throttledWidth / normalizedWidth : 1;
 	const ratio = ratioState ? ratioState : fallbackRatio;
 
 	const getColorsToShow = () => {

@@ -5,7 +5,7 @@ import {
 	__experimentalVStack as VStack,
 } from '@wordpress/components';
 import { useResizeObserver } from '@wordpress/compose';
-import { memo, useMemo, useState } from '@wordpress/element';
+import { memo, useState } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { chevronLeft, chevronRight } from '@wordpress/icons';
 import Variation from './variation';
@@ -61,10 +61,7 @@ function VariationPicker( { variations, type, maxToShow, onSelect, activeVariati
 	const page = Math.min( pageIndex, totalPages - 1 );
 	const first = page * perPage;
 
-	const variationsToShow = useMemo(
-		() => ( showAll ? variations : variations.slice( first, first + perPage ) ),
-		[ variations, first, perPage, showAll ]
-	);
+	const variationsToShow = showAll ? variations : variations.slice( first, first + perPage );
 
 	return (
 		<div className="agents-manager-variation-picker" ref={ resizeRef }>

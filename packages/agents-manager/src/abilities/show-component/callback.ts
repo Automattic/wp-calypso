@@ -16,7 +16,7 @@ export interface ShowComponentInput {
  * Returns a JSON `agentMessage` for `convertToolMessagesToComponents()`.
  */
 export async function showComponentCallback( input: ShowComponentInput ): Promise< AbilityResult > {
-	const { type, props = {}, summary, followUpTasks } = input;
+	const { type, props, summary, followUpTasks } = input;
 
 	if ( ! props || typeof props !== 'object' || Object.keys( props ).length === 0 ) {
 		// eslint-disable-next-line no-console

@@ -29,10 +29,9 @@ export function findMatchingVariation(
 /**
  * Ensure the currently-applied variation is the first option in the list.
  *
- * - Deduplicates variations by title.
  * - If a variation matches `liveValue`, move it to index 0.
  * - If no match and `createCurrent` is provided, prepend a synthetic variation.
- * @param variations    - The list of variations.
+ * @param variations    - The list of variations (already deduped by the caller).
  * @param liveValue     - The current value from the store to match against.
  * @param getValue      - Extracts the comparable value from a variation.
  * @param createCurrent - Optional factory to create a synthetic variation when no match.
@@ -43,38 +42,29 @@ export default function ensureCurrentFirst(
 	getValue: ( v: StyleVariation ) => unknown,
 	createCurrent?: () => StyleVariation | null
 ): StyleVariation[] {
-	if ( ! variations.length ) {
+	if ( ! variations.length || ! liveValue ) {
 		return variations;
 	}
 
-	const unique = dedupeByTitle( variations );
-
-	if ( ! liveValue ) {
-		return unique;
-	}
-
-	const match = findMatchingVariation( unique, liveValue, getValue );
-	const matchIndex = match ? unique.indexOf( match ) : -1;
+	const liveStr = JSON.stringify( liveValue );
+	const matchIndex = variations.findIndex(
+		( variation ) => JSON.stringify( getValue( variation ) ) === liveStr
+	);
 
 	// Match found — move to front.
 	if ( matchIndex > 0 ) {
-		const sorted = [ ...unique ];
-		sorted.splice( matchIndex, 1 );
-		return [ match as StyleVariation, ...sorted ];
-	}
-
-	// Already at index 0.
-	if ( matchIndex === 0 ) {
-		return unique;
+		const sorted = [ ...variations ];
+		const [ match ] = sorted.splice( matchIndex, 1 );
+		return [ match, ...sorted ];
 	}
 
 	// No match — prepend a synthetic "current" variation if factory provided.
-	if ( createCurrent ) {
+	if ( matchIndex === -1 && createCurrent ) {
 		const current = createCurrent();
 		if ( current ) {
-			return [ current, ...unique ];
+			return [ current, ...variations ];
 		}
 	}
 
-	return unique;
+	return variations;
 }

@@ -1,7 +1,7 @@
 /**
  * @jest-environment jsdom
  */
-import ensureCurrentFirst from '../ensure-current-first';
+import ensureCurrentFirst, { dedupeByTitle } from '../ensure-current-first';
 import type { StyleVariation } from '../../components/styles-preview';
 
 const makeVariation = ( title: string, palette?: string[] ): StyleVariation =>
@@ -52,21 +52,26 @@ describe( 'ensureCurrentFirst', () => {
 		expect( result[ 0 ].title ).toBe( 'Bold' );
 	} );
 
-	it( 'deduplicates by title', () => {
-		const duped = [ ...variations, makeVariation( 'Bold', [ 'red', 'blue' ] ) ];
-		const result = ensureCurrentFirst( duped, [ 'pink', 'lavender' ], getValue );
-		expect( result ).toHaveLength( 3 );
-		expect( result[ 0 ].title ).toBe( 'Pastel' );
-	} );
-
 	it( 'returns unchanged for empty variations', () => {
 		const result = ensureCurrentFirst( [], [ 'red' ], getValue );
 		expect( result ).toHaveLength( 0 );
 	} );
 
-	it( 'deduplicates even when liveValue is null', () => {
+	it( 'returns unchanged when liveValue is null', () => {
 		const result = ensureCurrentFirst( variations, null, getValue );
-		expect( result ).toHaveLength( 3 );
-		expect( result[ 0 ].title ).toBe( 'Bold' );
+		expect( result ).toEqual( variations );
+	} );
+} );
+
+describe( 'dedupeByTitle', () => {
+	it( 'drops duplicate and untitled variations', () => {
+		const duped = [
+			makeVariation( 'Bold' ),
+			makeVariation( 'Bold' ),
+			{ settings: {}, styles: {} } as StyleVariation,
+			makeVariation( 'Pastel' ),
+		];
+
+		expect( dedupeByTitle( duped ).map( ( v ) => v.title ) ).toEqual( [ 'Bold', 'Pastel' ] );
 	} );
 } );
