@@ -142,6 +142,17 @@ $border-radius: 5px; // stylelint-disable-line scales/radii
 	}
 }
 
+// The link box doesn't participate in the card grid — the image inside keeps
+// its grid-area, so the layout is identical with or without the link.
+.stats-video-details-card__thumbnail-link {
+	display: contents;
+
+	&:focus-visible .stats-video-details-card__thumbnail {
+		outline: 2px solid var(--color-primary);
+		outline-offset: 2px;
+	}
+}
+
 .stats-video-details-card__thumbnail {
 	align-self: center;
 	aspect-ratio: 16 / 9;

@@ -10,11 +10,13 @@ export default function VideoDetailsCard( {
 	title,
 	date,
 	poster,
+	mediaLibraryUrl,
 	isLoading = false,
 }: {
 	title: string | null;
 	date: string | null;
 	poster?: string | null;
+	mediaLibraryUrl?: string | null;
 	isLoading?: boolean;
 } ) {
 	const translate = useTranslate();
@@ -28,6 +30,18 @@ export default function VideoDetailsCard( {
 	}
 
 	const posterUrl = poster && poster !== failedPoster ? poster : null;
+
+	// The card already shows the video's title next to the image, so the
+	// thumbnail adds no information for screen readers — treat it as
+	// decorative.
+	const renderThumbnail = ( url: string ) => (
+		<img
+			className="stats-video-details-card__thumbnail"
+			src={ url }
+			alt=""
+			onError={ () => setFailedPoster( url ) }
+		/>
+	);
 
 	return (
 		<Card
@@ -49,17 +63,19 @@ export default function VideoDetailsCard( {
 					</div>
 				) }
 			</div>
-			{ posterUrl && (
-				// The card already shows the video's title next to the image, so
-				// the thumbnail adds no information for screen readers — treat it
-				// as decorative.
-				<img
-					className="stats-video-details-card__thumbnail"
-					src={ posterUrl }
-					alt=""
-					onError={ () => setFailedPoster( posterUrl ) }
-				/>
-			) }
+			{ posterUrl &&
+				( mediaLibraryUrl ? (
+					// The link, not the decorative image, carries the accessible name.
+					<a
+						className="stats-video-details-card__thumbnail-link"
+						href={ mediaLibraryUrl }
+						aria-label={ translate( 'View the video in the media library', { textOnly: true } ) }
+					>
+						{ renderThumbnail( posterUrl ) }
+					</a>
+				) : (
+					renderThumbnail( posterUrl )
+				) ) }
 		</Card>
 	);
 }
