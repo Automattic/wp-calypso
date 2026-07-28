@@ -36,7 +36,11 @@ import {
 import { store as videoStudioStore } from '../stores/video-studio';
 import { ImageStudioMode, type ImageStudioProps, ToolbarOption } from '../types';
 import { defaultAgentConfigFactory } from '../utils/agent-config';
-import { trackImageStudioError, trackImageStudioPromptSent } from '../utils/tracking';
+import {
+	getImageStudioRequestErrorType,
+	trackImageStudioError,
+	trackImageStudioPromptSent,
+} from '../utils/tracking';
 import AnnotationCanvas from './annotation-canvas';
 import { AspectRatioPicker } from './aspect-ratio-picker';
 import { CanvasControls } from './canvas-controls';
@@ -172,7 +176,7 @@ function ImageStudioAgentChat( {
 				// Track the error
 				trackImageStudioError( {
 					mode,
-					errorType: mode === ImageStudioMode.Edit ? 'edit_failed' : 'generation_failed',
+					errorType: getImageStudioRequestErrorType( error, mode ),
 					attachmentId,
 				} );
 				// Re-throw to allow error to be handled by the UI
