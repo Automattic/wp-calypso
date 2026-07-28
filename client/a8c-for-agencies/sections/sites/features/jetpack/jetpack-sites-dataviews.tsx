@@ -10,6 +10,7 @@ import {
 	ItemsDataViewsType,
 } from 'calypso/a8c-for-agencies/components/items-dashboard/items-dataviews/interfaces';
 import SiteSetFavorite from 'calypso/a8c-for-agencies/sections/sites/site-set-favorite';
+import SitesEmptyState from 'calypso/a8c-for-agencies/sections/sites/sites-dashboard/sites-empty-state';
 import SitesDashboardContext from 'calypso/a8c-for-agencies/sections/sites/sites-dashboard-context';
 import { SitesDataViewsProps } from 'calypso/a8c-for-agencies/sections/sites/sites-dataviews/interfaces';
 import SiteDataField from 'calypso/a8c-for-agencies/sections/sites/sites-dataviews/site-data-field';
@@ -513,7 +514,19 @@ export const JetpackSitesDataViews = ( {
 	}, [ fields, dataViewsState, setDataViewsState, data, actions, selection, onSelectionChange ] );
 
 	return (
-		<ItemsDataViews data={ itemsData } isLoading={ isLoading } className={ className }>
+		<ItemsDataViews
+			data={ itemsData }
+			isLoading={ isLoading }
+			className={ className }
+			empty={
+				<SitesEmptyState
+					filters={ dataViewsState.filters }
+					search={ dataViewsState.search }
+					showOnlyFavorites={ showOnlyFavorites }
+					showOnlyDevelopmentSites={ showOnlyDevelopmentSites }
+				/>
+			}
+		>
 			<HStack
 				className="dataviews__view-actions"
 				alignment="top"

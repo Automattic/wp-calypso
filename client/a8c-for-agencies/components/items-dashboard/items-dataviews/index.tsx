@@ -23,6 +23,7 @@ export type ItemsDataViewsProps = {
 	isLoading?: boolean;
 	className?: string;
 	children?: ReactNode;
+	empty?: ReactNode;
 };
 
 const ItemsDataViews = ( {
@@ -30,6 +31,7 @@ const ItemsDataViews = ( {
 	isLoading = false,
 	className,
 	children,
+	empty,
 }: ItemsDataViewsProps ) => {
 	const translate = useTranslate();
 	const scrollContainerRef = useRef< HTMLElement >( undefined );
@@ -80,6 +82,7 @@ const ItemsDataViews = ( {
 				selection={ data.selection }
 				onChangeSelection={ data.onSelectionChange }
 				header={ data.header }
+				empty={ empty }
 			>
 				{ children }
 			</DataViews>
