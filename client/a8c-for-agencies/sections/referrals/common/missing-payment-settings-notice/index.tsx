@@ -52,7 +52,8 @@ export const MissingPaymentSettingsNotice = ( {
 			>
 				<div>{ getDescription() }</div>
 				<Button
-					className="missing-payment-settings-notice__button is-dark"
+					className="missing-payment-settings-notice__button"
+					variant="primary"
 					href={ commissionType ? 'payment-settings' : A4A_REFERRALS_PAYMENT_SETTINGS }
 				>
 					{ translate( 'Add payout information now' ) }
