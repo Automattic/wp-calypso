@@ -4,7 +4,7 @@
  * redesign can be explored at /sites/<slug> without real API data.
  */
 import {
-	persistQueryClientPromise,
+	getPersistQueryClientPromise,
 	queryClient,
 	siteByIdQuery,
 	siteBySlugQuery,
@@ -32,6 +32,10 @@ interface MockSiteInput {
 	solo?: boolean;
 }
 
+// Local Studio site running the untangling-prototype mu-plugin, so the
+// MSD → WP Admin round trip works end-to-end in the demo.
+const LOCAL_WP_ADMIN_URL = 'http://localhost:8881/wp-admin/';
+
 function makeMockSite( input: MockSiteInput ): Site {
 	return {
 		ID: input.ID,
@@ -47,7 +51,7 @@ function makeMockSite( input: MockSiteInput ): Site {
 		feed_URL: `${ input.URL }/feed/`,
 		subscribers_count: 0,
 		options: {
-			admin_url: `${ input.URL }/wp-admin/`,
+			admin_url: LOCAL_WP_ADMIN_URL,
 			created_at: '2025-09-14T10:00:00+00:00',
 			updated_at: '2026-07-14T15:43:00+00:00',
 			software_version: '7.0.1',
@@ -272,7 +276,7 @@ export function seedMockBloggerSiteCaches() {
 		}
 	}
 
-	persistQueryClientPromise.then( () => {
+	getPersistQueryClientPromise().then( () => {
 		for ( const input of MOCK_SITE_INPUTS ) {
 			const site = MOCK_SITE_BY_SLUG.get( input.slug ) as Site;
 			queryClient.setQueryData( siteBySlugQuery( input.slug ).queryKey, site );
