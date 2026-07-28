@@ -9,11 +9,13 @@ import { withLocalizedMoment } from 'calypso/components/localized-moment';
 import { getPostStats, isRequestingPostStats } from 'calypso/state/stats/posts/selectors';
 import { STATS_SUMMARY_MAX_BARS } from '../constants';
 import StatsModuleUTM from '../features/modules/stats-utm';
+import { getMomentSiteZone } from '../hooks/use-moment-site-zone';
 import { StatsGlobalValuesContext } from '../pages/providers/global-provider';
 import DatePicker from '../stats-date-label';
 import StatsPeriodHeader from '../stats-period-header';
 import StatsPeriodNavigation from '../stats-period-navigation';
 import SummaryChart from '../stats-summary';
+import { getPublishMonthKey } from './publish-month';
 
 import './style.scss';
 
@@ -37,6 +39,7 @@ class StatsPostSummary extends Component {
 		siteId: PropTypes.number,
 		translate: PropTypes.func,
 		supportsUTMStats: PropTypes.bool,
+		momentSiteZone: PropTypes.func,
 	};
 
 	state = {
@@ -177,15 +180,11 @@ class StatsPostSummary extends Component {
 				// paginating into fake empty bars; post-publish months with
 				// zero views are kept, consistent with Days/Weeks paging.
 				const today = moment();
-				// post_date is the post's site-local publish time, matching the
-				// site-local month buckets; the post_date_gmt fallback is GMT,
-				// so parse it as GMT rather than in the viewer's timezone.
-				// Comparing YYYY-MM keys keeps the trim independent of the
-				// viewer's zone either way.
-				const publishMoment = stats.post?.post_date
-					? moment( stats.post.post_date )
-					: moment.utc( stats.post?.post_date_gmt ?? null );
-				const publishMonth = publishMoment.isValid() ? publishMoment.format( 'YYYY-MM' ) : null;
+				// The month buckets are site-local, so the publish boundary is
+				// resolved in the site's timezone too (see getPublishMonthKey);
+				// comparing YYYY-MM keys keeps the trim independent of the
+				// viewer's zone.
+				const publishMonth = getPublishMonthKey( stats.post, this.props.momentSiteZone );
 				return [ ...statsByMonth( stats, moment ) ].filter(
 					( record ) =>
 						moment( record.startDate ).isSameOrBefore( today, 'month' ) &&
@@ -344,4 +343,5 @@ class StatsPostSummary extends Component {
 export default connect( ( state, { siteId, postId } ) => ( {
 	stats: getPostStats( state, siteId, postId ),
 	isRequesting: isRequestingPostStats( state, siteId, postId ),
+	momentSiteZone: getMomentSiteZone( state, siteId ),
 } ) )( localize( withLocalizedMoment( StatsPostSummary ) ) );
