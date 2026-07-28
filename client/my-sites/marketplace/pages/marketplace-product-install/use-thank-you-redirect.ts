@@ -11,8 +11,7 @@ import { transferStates } from 'calypso/state/automated-transfer/constants';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { getSiteAdminUrl } from 'calypso/state/sites/selectors';
 import { requestActiveTheme } from 'calypso/state/themes/actions';
-import { isMarketplacePluginActivationFlow } from './marketplace-plugin-flow';
-import { useMarketplacePluginPolling } from './use-marketplace-plugin-polling';
+import { usePostTransferPluginRecovery } from './use-post-transfer-plugin-recovery';
 
 // The redirect machinery: once a flow completes it fetches the freshest site data, resolves the
 // destination URL, keeps polling where a flow finishes in the background, and navigates. Plugin and
@@ -25,7 +24,6 @@ export function useThankYouRedirect( {
 	isPluginUploadFlow,
 	pluginSlug,
 	themeSlug,
-	wporgPlugin,
 	wpOrgTheme,
 	isThemeActive,
 	installedPlugin,
@@ -42,7 +40,6 @@ export function useThankYouRedirect( {
 	isPluginUploadFlow: boolean;
 	pluginSlug: string;
 	themeSlug: string;
-	wporgPlugin: { wporg?: boolean } | null | undefined;
 	wpOrgTheme: { id?: string } | null | undefined;
 	isThemeActive: boolean;
 	installedPlugin: { slug?: string; id?: string } | null | undefined;
@@ -77,18 +74,26 @@ export function useThankYouRedirect( {
 	// Prefer fresh URL when available; if in atomic flow, wait for fresh URL
 	const pluginsUrlFinal = atomicFlow ? pluginsUrlFresh : pluginsUrlFresh || pluginsUrlSelector;
 
-	const isMarketplacePluginFlow = isMarketplacePluginActivationFlow( {
-		atomicFlow,
-		isPluginUploadFlow,
-		pluginSlug,
-		freshSite,
-		wporgPlugin,
-	} );
+	const canManagePlugins = useSelector( ( state ) =>
+		siteHasFeature( state, selectedSite?.ID, WPCOM_FEATURES_MANAGE_PLUGINS )
+	);
 
-	useMarketplacePluginPolling( { siteId, enabled: isMarketplacePluginFlow && ! pluginActive } );
+	// A checkout-initiated plugin install (transfer + install happen during checkout, not here, so
+	// atomicFlow is never set) that has landed on an Atomic site — the case this recovers. It does NOT
+	// gate on wporgPlugin.wporg: wordpress.org answers 200 with an empty body for a marketplace-only
+	// slug, which the store normalizes to wporg: true, so that never holds for the plugins we recover.
+	const isRecoveryFlow =
+		! atomicFlow && ! isPluginUploadFlow && !! pluginSlug && !! freshSite?.is_wpcom_atomic;
 
-	const canManagePlugins = useSelector( ( state ) => {
-		return siteHasFeature( state, selectedSite?.ID, WPCOM_FEATURES_MANAGE_PLUGINS );
+	usePostTransferPluginRecovery( {
+		siteId,
+		enabled: isRecoveryFlow && ! pluginActive,
+		// isAtomicTransferReady already requires manage_options, which the transfer propagates after
+		// is_wpcom_atomic flips; activating during that gap would fail and burn the retry budget.
+		canActivate: !! isAtomicTransferReady,
+		// The step-driven flow activates at currentStep 1, so this hook owns activation only at step 0.
+		ownsActivation: currentStep === 0,
+		installedPlugin,
 	} );
 	// Check completition of all flows and redirect to thank you page
 	useEffect( () => {

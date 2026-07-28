@@ -1,4 +1,6 @@
+import { marketplacePluginQuery } from '@automattic/api-queries';
 import { WPCOM_FEATURES_ATOMIC } from '@automattic/calypso-products';
+import { useQuery } from '@tanstack/react-query';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, useState, useMemo, useRef } from 'react';
 import { useQueryTheme } from 'calypso/components/data/query-theme';
@@ -88,11 +90,23 @@ export function useProductInstall( {
 		getUploadedPluginId( state, siteId )
 	) as string;
 	const pluginUploadComplete = useSelector( ( state ) => isPluginUploadComplete( state, siteId ) );
+
+	// Installed plugins are indexed by the slug they were installed under, which for a marketplace
+	// product is its software_slug (e.g. js-composer installs as js_composer), not the route slug.
+	// A .org slug 404s here, which is expected — don't retry it — and falls back to the route slug.
+	const { data: marketplacePlugin } = useQuery( {
+		...marketplacePluginQuery( pluginSlug ),
+		enabled: !! pluginSlug,
+		retry: ( count, error ) => ( error as { status?: number } )?.status !== 404 && count < 2,
+	} );
+	const installedPluginSlug = isPluginUploadFlow
+		? uploadedPluginSlug
+		: marketplacePlugin?.software_slug || marketplacePlugin?.org_slug || pluginSlug;
 	const installedPlugin = useSelector( ( state ) =>
-		getPluginOnSite( state, siteId, isPluginUploadFlow ? uploadedPluginSlug : pluginSlug )
+		getPluginOnSite( state, siteId, installedPluginSlug )
 	);
 	const pluginActive = useSelector( ( state ) =>
-		isPluginActive( state, siteId, isPluginUploadFlow ? uploadedPluginSlug : pluginSlug )
+		isPluginActive( state, siteId, installedPluginSlug )
 	);
 	const automatedTransferStatus = useSelector( ( state ) =>
 		getAutomatedTransferStatus( state, siteId )
@@ -252,7 +266,6 @@ export function useProductInstall( {
 		isPluginUploadFlow,
 		pluginSlug,
 		themeSlug,
-		wporgPlugin,
 		wpOrgTheme,
 		isThemeActive,
 		installedPlugin,
