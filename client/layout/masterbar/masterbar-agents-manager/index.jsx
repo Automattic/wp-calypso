@@ -5,7 +5,6 @@ import { usePrevious } from '@wordpress/compose';
 import { useSelect as useDateStoreSelect } from '@wordpress/data';
 import { useEffect } from '@wordpress/element';
 import { Icon, comment, backup, page, video, rss } from '@wordpress/icons';
-import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { useSelector } from 'react-redux';
 import getIsNotificationsOpen from 'calypso/state/selectors/is-notifications-open';
@@ -150,10 +149,7 @@ const MasterbarAgentsManager = ( { tooltip } ) => {
 	return (
 		<Item
 			onClick={ trackIconInteraction }
-			className={ clsx( 'masterbar__item-agents-manager', {
-				'is-active': agentsManagerVisible,
-				'is-menu-panel': true,
-			} ) }
+			className="masterbar__item-agents-manager"
 			wrapperClassName="is-menu-panel"
 			tooltip={ tooltip }
 			icon={ <HelpIcon /> }
