@@ -13,6 +13,7 @@ import poweredByTitanLogo from '../../resources/powered-by-titan-caps.svg';
 import { IntervalLength, MailboxProvider, TitanPlanTier } from '../../types';
 import { getTrialMonths } from '../../utils/get-trial-months';
 import { isEligibleForIntroductoryOffer } from '../../utils/is-eligible-for-introductory-offer';
+import { TITAN_TIER_ORDER } from '../../utils/titan-tiers';
 import type { Domain, EmailSubscription, Product } from '@automattic/api-core';
 
 interface TitanPlan {
@@ -100,14 +101,6 @@ const getTierDetails = ( tier: TitanPlanTier ): { description: string; features:
 	}
 };
 
-// Tiers ordered from lowest to highest, used to tell upgrades from downgrades
-// relative to the current tier.
-const TIER_ORDER: TitanPlanTier[] = [
-	TitanPlanTier.Pro,
-	TitanPlanTier.Premium,
-	TitanPlanTier.Ultra,
-];
-
 export function TitanPlanGrid( {
 	domain,
 	domainName,
@@ -121,10 +114,11 @@ export function TitanPlanGrid( {
 	interval: IntervalLength;
 	available: boolean;
 	// The tier the user is currently subscribed to. When set, the grid is in
-	// upgrade mode: lower tiers are shown with a disabled button, the current
-	// tier is labeled, and higher tiers offer an upgrade.
+	// upgrade mode: the current tier is labeled, higher tiers offer an upgrade,
+	// and lower tiers offer a downgrade.
 	currentTier?: TitanPlanTier;
-	// Called when a higher tier is selected in upgrade mode (currentTier set).
+	// Called when a different tier is selected in upgrade mode (currentTier set):
+	// a higher tier is an upgrade, a lower tier a downgrade.
 	onUpgrade?: ( tier: TitanPlanTier ) => void;
 } ) {
 	const navigate = useNavigate();
@@ -178,14 +172,15 @@ export function TitanPlanGrid( {
 		},
 	];
 
-	// All tiers stay visible when upgrading; lower tiers render with a disabled
-	// button since this flow cannot downgrade.
+	// All tiers stay visible when upgrading; lower tiers offer a downgrade.
 	const isLowerTier = ( tier: TitanPlanTier ) =>
-		currentTier ? TIER_ORDER.indexOf( tier ) < TIER_ORDER.indexOf( currentTier ) : false;
+		currentTier
+			? TITAN_TIER_ORDER.indexOf( tier ) < TITAN_TIER_ORDER.indexOf( currentTier )
+			: false;
 
 	// The tier that gets the emphasized (primary) button: the recommended plan when
 	// buying, or the recommended upgrade target when upgrading. The current and lower
-	// tiers are never emphasized because their buttons are disabled.
+	// tiers are never emphasized because upgrading is the encouraged action.
 	const primaryTier = ( () => {
 		const candidates = currentTier
 			? plans.filter( ( plan ) => plan.tier !== currentTier && ! isLowerTier( plan.tier ) )
@@ -214,7 +209,7 @@ export function TitanPlanGrid( {
 				if ( isCurrentPlan ) {
 					actionLabel = __( 'Current plan' );
 				} else if ( isDowngrade ) {
-					actionLabel = __( 'Included in your plan' );
+					actionLabel = __( 'Downgrade' );
 				} else if ( currentTier ) {
 					actionLabel = __( 'Upgrade' );
 				} else if ( plan.hasFreeTrial ) {
@@ -288,7 +283,7 @@ export function TitanPlanGrid( {
 							__next40pxDefaultSize
 							className="email-provider-action"
 							variant={ plan.tier === primaryTier ? 'primary' : 'secondary' }
-							disabled={ ! available || isCurrentPlan || isDowngrade }
+							disabled={ ! available || isCurrentPlan }
 							onClick={ () => {
 								// Upgrade mode goes to checkout for the picked tier; otherwise the
 								// grid is buying a new plan, so collect mailboxes first.

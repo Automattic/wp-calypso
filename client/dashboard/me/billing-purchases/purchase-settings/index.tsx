@@ -121,6 +121,8 @@ import {
 	AddMailboxesActionItem,
 	EmailPlanMailboxCard,
 	EmailPlanPriceCard,
+	ManageEmailPlanActionItem,
+	isEmailPlanAtHighestTier,
 	isEmailPlanManagementEnabled,
 } from './email-plan';
 import { getCancelButtonCopy, getRemoveButtonCopy } from './get-cancel-remove-copy';
@@ -439,6 +441,11 @@ function canUpgradePurchase( purchase: Purchase ): boolean {
 	if ( isTitanMail( purchase ) && ! config.isEnabled( 'emails/titan-tiers' ) ) {
 		return false;
 	}
+	// The highest email tier has nothing to upgrade to; "Manage your plan"
+	// takes over so the user can still reach the plan grid.
+	if ( isEmailPlanAtHighestTier( purchase ) ) {
+		return false;
+	}
 	return true;
 }
 
@@ -727,6 +734,9 @@ function PurchaseSettingsActions( { purchase }: { purchase: Purchase } ) {
 				<ReinstallButton purchase={ purchase } />
 				<JetpackCRMDownloadsButton purchase={ purchase } />
 				<UpgradeActionButton purchase={ purchase } />
+				{ ! isExpiredOrRemoved( purchase ) && isEmailPlanAtHighestTier( purchase ) && (
+					<ManageEmailPlanActionItem purchase={ purchase } />
+				) }
 				<StorageUpgradeActionButton purchase={ purchase } />
 				{ ! isExpiredOrRemoved( purchase ) && isEmailPlanManagementEnabled( purchase ) && (
 					<AddMailboxesActionItem purchase={ purchase } />
