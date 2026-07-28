@@ -41,7 +41,7 @@ All exports live in `src/index.ts`. This is intentionally a single-file provider
 | `jetpack_ai__show_component`      | `handleShowComponent`       | via `getChatComponent` | Renders Jetpack AI chat components                                |
 | `big_sky__show_component`         | `handleLegacyShowComponent` | Jetpack or Big Sky     | Temporary migration support; delegates non-Jetpack types          |
 | `wpcom/update-block-content`      | `handleUpdateBlockContent`  | _(chat text)_          | Updates block content with shimmer effect                         |
-| `jetpack_ai__apply_draft_content` | `handleApplyDraftContent`   | _(chat text)_          | Writes a first draft into an empty post (`draftAssist` flag only) |
+| `jetpack_ai__apply_draft_content` | `handleApplyDraftContent`   | _(chat text)_          | Writes a first draft into an empty post or page (`draftAssist` flag only); never over an existing title |
 
 ### Show-component pattern
 
@@ -91,10 +91,12 @@ For tools that perform an editor action (like `update-block-content`):
 
 **Draft assist** (`draft-entry.ts`, `draftAssist` flag, post/page only):
 
-- **Placeholder**: `bodyPlaceholder` is swapped while `core/editor`'s `isEditedPostEmpty()` is true, via a `wp.data.subscribe` loop. The editor re-pushes its own settings whenever they change, so the sync re-applies on every tick, re-captures the editor's current value each time, and restores only if the placeholder is still ours.
+- **Placeholder**: `bodyPlaceholder` is swapped while `core/editor`'s `isEditedPostEmpty()` is true, via a `wp.data.subscribe` loop. The editor re-pushes its own settings whenever they change, so the sync re-applies on every tick, re-captures the editor's current value each time, and restores only if the placeholder is still ours. The loop runs on every store tick, so it must stay cheap and must not throw: every selector/dispatch goes through `callStoreMethod()` (guarding the store *lookup* alone is not enough — a throwing selector would take down `wp.data`'s whole listener loop). It unsubscribes itself (`stopBodyPlaceholderSync()`, also the test teardown) as soon as the entry point cannot apply — flag off, or a resolved post type that isn't post/page. An *unresolved* post type is not a stop condition; the editor just hasn't booted yet.
 - **`/draft` trigger prefix, not `/`**: Gutenberg's autocomplete resolves to exactly one completer per keystroke — longest/latest-ending trigger prefix wins, ties broken by array order (`getAutocompleteMatch` in `@wordpress/components`). A second `/` completer would either never fire (appended) or shadow the core block inserter (prepended). Keep the distinct prefix.
 - **Chat handoff**: `submitChatMessage` is optional on `window.__agentsManagerActions` and only exists once the chat panel mounts — poll for it after `isReady`/`agents-manager-ready`, and fall back to `setChatInput`.
-- **Empty-post guard**: `handleApplyDraftContent` refuses (and returns `returnToAgent: true` so the agent can explain) unless `isEditedPostEmpty()` is true and the markup parses to at least one block. It must never blank a post.
+- **Handler guards** (`utils/apply-draft-content.ts`): the ability is registered for the whole editor surface, so `handleApplyDraftContent` re-checks everything the entry point checks. It refuses (returning `returnToAgent: true` so the agent can explain) unless the post type is in `DRAFT_ASSIST_POST_TYPES` (`utils/draft-assist.ts`, shared with the entry point — in the site editor `core/editor` serves templates, where an "empty" entity is normal and a draft would become site-wide content) and `isEditedPostEmpty()` is true. It must never blank a post.
+- **Title is never overwritten**: `isEditedPostEmpty()` is content-only — it ignores the title (Gutenberg `packages/editor/src/store/selectors.js`), so an "empty" post can still carry a title the user typed. The handler reads `getEditedPostAttribute( 'title' )` and writes the model's (trimmed) title only when the editor positively reports an empty one; otherwise it applies the body, skips the title, and reports `titleSkipped: true`. Do not weaken this to "the model will omit `title`".
+- **Parsing is not a validation step**: `@wordpress/blocks` is externalized to the host's `wp.blocks`, whose `parse()` turns non-block text into freeform / `core/missing` blocks — it does not return `[]` and does not throw. Prose that isn't block markup is therefore applied as-is, which is fine because the post is empty by the guard above. The `length === 0` branch is defensive only; don't write tests that mock `parse` into rejecting, they assert a path production never takes.
 
 ## Context Provider
 
@@ -104,8 +106,11 @@ For tools that perform an editor action (like `update-block-content`):
 - Serialized block tree (`currentPageContent`)
 - Selected block's `clientId` and resolved text content
 - Environment identifier (`'gutenberg'`)
+- Host feature verdicts the orchestrator gates server abilities on: `jetpackSEOSuggestionsEnabled`, `jetpackAiDraftAssistEnabled`
 
 Changes here affect AI response quality. The orchestrator uses `selectedBlockClientId` to target block operations and `currentPageContent` for whole-page understanding.
+
+**The feature-verdict keys are pinned cross-repo contracts — don't rename them, and always send `false` rather than omitting the key.** wpcom grants those abilities by ability category on every editor surface and has no view of this client's preview flags; its exclusions read these keys to decide whether the ability is usable here. Drop `jetpackAiDraftAssistEnabled` and production clients that never registered `handleApplyDraftContent` get the tool routed to them and answer "No handler found for tool".
 
 ## Checkpoint / Undo
 

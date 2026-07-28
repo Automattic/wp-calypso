@@ -13,6 +13,7 @@
 
 import { addFilter } from '@wordpress/hooks';
 import { __ } from '@wordpress/i18n';
+import { isDraftAssistPostType } from '../utils/draft-assist';
 import { isDraftAssistEnabled } from '../utils/preview-features';
 import {
 	type DraftAssistContentType,
@@ -42,8 +43,6 @@ const CHAT_COMPOSER_MAX_ATTEMPTS = 50;
 /** Retries for `wp.data` not being registered yet when this bundle loads. */
 const STORE_RETRY_INTERVAL_MS = 300;
 const STORE_MAX_RETRIES = 20;
-
-const DRAFT_ASSIST_POST_TYPES = [ 'post', 'page' ];
 
 type AgentsManagerActions = {
 	isReady?: boolean;
@@ -106,14 +105,44 @@ function getWpDataStore( kind: 'select' | 'dispatch', storeName: string ): any |
 }
 
 /**
+ * Call a store selector or action without letting a throw escape.
+ *
+ * The sync below runs inside `wp.data`'s listener loop, where an exception
+ * would break every other subscriber for the rest of the page's life. Guarding
+ * only store acquisition is not enough — the selectors themselves can throw.
+ * @param store  - Store object from `getWpDataStore`.
+ * @param method - Selector or action name.
+ * @param args   - Arguments to pass.
+ * @returns The return value, or undefined when the method is missing or threw.
+ */
+function callStoreMethod< T >( store: any, method: string, ...args: unknown[] ): T | undefined {
+	try {
+		const fn = store?.[ method ];
+		return typeof fn === 'function' ? fn.apply( store, args ) : undefined;
+	} catch {
+		return undefined;
+	}
+}
+
+/**
+ * The editor's current post type, once it is known.
+ * @returns The post type, or undefined while the editor is still resolving one.
+ */
+function getCurrentPostType(): string | undefined {
+	const postType = callStoreMethod< string >(
+		getWpDataStore( 'select', 'core/editor' ),
+		'getCurrentPostType'
+	);
+	return typeof postType === 'string' && postType !== '' ? postType : undefined;
+}
+
+/**
  * The current editor entity, when draft assist applies to it.
  * @returns 'post' / 'page', or null for any other post type (or none yet).
  */
 function getDraftAssistContentType(): DraftAssistContentType | null {
-	const postType = getWpDataStore( 'select', 'core/editor' )?.getCurrentPostType?.();
-	return DRAFT_ASSIST_POST_TYPES.includes( postType )
-		? ( postType as DraftAssistContentType )
-		: null;
+	const postType = getCurrentPostType();
+	return isDraftAssistPostType( postType ) ? postType : null;
 }
 
 function isDraftAssistAvailable(): boolean {
@@ -127,6 +156,26 @@ function getDraftPlaceholder(): string {
 }
 
 /**
+ * Hand the placeholder back to whoever owned it before us.
+ * @param currentPlaceholder - The placeholder currently in the editor settings.
+ */
+function restoreBodyPlaceholder( currentPlaceholder: string | undefined ): void {
+	if ( ! placeholderApplied ) {
+		return;
+	}
+	placeholderApplied = false;
+	const previousPlaceholder = defaultBodyPlaceholder;
+	defaultBodyPlaceholder = undefined;
+	if ( currentPlaceholder !== getDraftPlaceholder() ) {
+		// Someone else owns the placeholder now — don't stomp on it.
+		return;
+	}
+	callStoreMethod( getWpDataStore( 'dispatch', 'core/block-editor' ), 'updateSettings', {
+		bodyPlaceholder: previousPlaceholder,
+	} );
+}
+
+/**
  * Keep `bodyPlaceholder` in sync with post emptiness.
  *
  * The editor re-pushes its own settings whenever they change, so this runs on
@@ -134,9 +183,15 @@ function getDraftPlaceholder(): string {
  * each time so restoring hands back whatever it currently wants, not a stale
  * snapshot; and restore is skipped when something else already changed the
  * placeholder out from under us.
+ *
+ * Once it is clear draft assist does not apply to this editor at all, the
+ * subscription is dropped rather than left running for the page's lifetime.
  */
 function syncBodyPlaceholder(): void {
-	const settings = getWpDataStore( 'select', 'core/block-editor' )?.getSettings?.();
+	const settings = callStoreMethod< { bodyPlaceholder?: unknown } >(
+		getWpDataStore( 'select', 'core/block-editor' ),
+		'getSettings'
+	);
 	if ( ! settings ) {
 		return;
 	}
@@ -144,11 +199,24 @@ function syncBodyPlaceholder(): void {
 	const draftPlaceholder = getDraftPlaceholder();
 	const currentPlaceholder =
 		typeof settings.bodyPlaceholder === 'string' ? settings.bodyPlaceholder : undefined;
-	const contentType = getDraftAssistContentType();
-	const editor = getWpDataStore( 'select', 'core/editor' );
-	const shouldPrompt = !! contentType && editor?.isEditedPostEmpty?.() === true;
+	// An undefined post type only means the editor has not resolved one yet, so
+	// keep waiting; a resolved post type we don't support never becomes one we do.
+	const postType = getCurrentPostType();
+	if (
+		! isDraftAssistEnabled() ||
+		( postType !== undefined && ! isDraftAssistPostType( postType ) )
+	) {
+		restoreBodyPlaceholder( currentPlaceholder );
+		stopBodyPlaceholderSync();
+		return;
+	}
 
-	if ( shouldPrompt ) {
+	const contentType = isDraftAssistPostType( postType ) ? postType : null;
+	const isPostEmpty =
+		callStoreMethod< boolean >( getWpDataStore( 'select', 'core/editor' ), 'isEditedPostEmpty' ) ===
+		true;
+
+	if ( !! contentType && isPostEmpty ) {
 		if ( currentPlaceholder === draftPlaceholder ) {
 			return;
 		}
@@ -157,29 +225,17 @@ function syncBodyPlaceholder(): void {
 			return;
 		}
 		defaultBodyPlaceholder = currentPlaceholder;
-		blockEditor.updateSettings( { bodyPlaceholder: draftPlaceholder } );
+		callStoreMethod( blockEditor, 'updateSettings', { bodyPlaceholder: draftPlaceholder } );
 		placeholderApplied = true;
 
-		if ( ! entryPointShownTracked && contentType ) {
+		if ( ! entryPointShownTracked ) {
 			entryPointShownTracked = true;
 			trackDraftAssistEntryPointShown( { contentType } );
 		}
 		return;
 	}
 
-	if ( ! placeholderApplied ) {
-		return;
-	}
-	placeholderApplied = false;
-	const previousPlaceholder = defaultBodyPlaceholder;
-	defaultBodyPlaceholder = undefined;
-	if ( currentPlaceholder !== draftPlaceholder ) {
-		// Someone else owns the placeholder now — don't stomp on it.
-		return;
-	}
-	getWpDataStore( 'dispatch', 'core/block-editor' )?.updateSettings?.( {
-		bodyPlaceholder: previousPlaceholder,
-	} );
+	restoreBodyPlaceholder( currentPlaceholder );
 }
 
 function startBodyPlaceholderSync(): void {
@@ -198,8 +254,31 @@ function startBodyPlaceholderSync(): void {
 		return;
 	}
 
-	placeholderSyncUnsubscribe = wpData.subscribe( syncBodyPlaceholder ) ?? null;
+	const unsubscribe = callStoreMethod< () => void >( wpData, 'subscribe', syncBodyPlaceholder );
+	placeholderSyncUnsubscribe = typeof unsubscribe === 'function' ? unsubscribe : null;
+	// Runs after the assignment so this first pass can already unsubscribe when
+	// draft assist does not apply to the editor that just loaded.
 	syncBodyPlaceholder();
+}
+
+/**
+ * Drop the placeholder subscription.
+ *
+ * Called as soon as the entry point turns out not to apply — otherwise the sync
+ * would run on every `wp.data` store tick for the lifetime of the page, on
+ * every editor including the ones draft assist never touches. Also the teardown
+ * the tests use between cases.
+ */
+export function stopBodyPlaceholderSync(): void {
+	const unsubscribe = placeholderSyncUnsubscribe;
+	placeholderSyncUnsubscribe = null;
+	if ( typeof unsubscribe === 'function' ) {
+		try {
+			unsubscribe();
+		} catch {
+			// Nothing to do: the registry is the one holding the listener.
+		}
+	}
 }
 
 // ---------- Chat trigger ----------

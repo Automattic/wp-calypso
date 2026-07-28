@@ -40,6 +40,8 @@ type EditorStores = {
 	updateSettings: jest.Mock;
 	notify: () => void;
 	setPostEmpty: ( isEmpty: boolean ) => void;
+	setPostType: ( postType: string ) => void;
+	listenerCount: () => number;
 	subscribe: jest.Mock;
 	unsubscribe: jest.Mock;
 };
@@ -49,23 +51,33 @@ function installEditorStores( {
 	isEmpty = true,
 	bodyPlaceholder = DEFAULT_PLACEHOLDER,
 	withWpData = true,
+	getSettingsThrows = false,
+	isEditedPostEmptyThrows = false,
 }: {
 	postType?: string;
 	isEmpty?: boolean;
 	bodyPlaceholder?: string;
 	withWpData?: boolean;
+	getSettingsThrows?: boolean;
+	isEditedPostEmptyThrows?: boolean;
 } = {} ): EditorStores {
 	const settings: { bodyPlaceholder?: string } = { bodyPlaceholder };
-	const listeners: Array< () => void > = [];
+	let listeners: Array< () => void > = [];
 	let postEmpty = isEmpty;
+	let currentPostType = postType;
 
 	const updateSettings = jest.fn( ( next: { bodyPlaceholder?: string } ) => {
 		Object.assign( settings, next );
 	} );
+	// Mirrors `wp.data`: the returned function actually detaches the listener, so
+	// a leaked subscription shows up as a listener that keeps being called.
 	const unsubscribe = jest.fn();
 	const subscribe = jest.fn( ( listener: () => void ) => {
 		listeners.push( listener );
-		return unsubscribe;
+		return () => {
+			unsubscribe();
+			listeners = listeners.filter( ( candidate ) => candidate !== listener );
+		};
 	} );
 
 	if ( withWpData ) {
@@ -75,12 +87,24 @@ function installEditorStores( {
 				select: ( store: string ) => {
 					if ( store === 'core/editor' ) {
 						return {
-							getCurrentPostType: () => postType,
-							isEditedPostEmpty: () => postEmpty,
+							getCurrentPostType: () => currentPostType,
+							isEditedPostEmpty: () => {
+								if ( isEditedPostEmptyThrows ) {
+									throw new Error( 'isEditedPostEmpty exploded' );
+								}
+								return postEmpty;
+							},
 						};
 					}
 					if ( store === 'core/block-editor' ) {
-						return { getSettings: () => settings };
+						return {
+							getSettings: () => {
+								if ( getSettingsThrows ) {
+									throw new Error( 'getSettings exploded' );
+								}
+								return settings;
+							},
+						};
 					}
 					return undefined;
 				},
@@ -97,9 +121,13 @@ function installEditorStores( {
 		updateSettings,
 		subscribe,
 		unsubscribe,
-		notify: () => listeners.forEach( ( listener ) => listener() ),
+		notify: () => [ ...listeners ].forEach( ( listener ) => listener() ),
+		listenerCount: () => listeners.length,
 		setPostEmpty: ( value: boolean ) => {
 			postEmpty = value;
+		},
+		setPostType: ( value: string ) => {
+			currentPostType = value;
 		},
 	};
 }
@@ -278,6 +306,28 @@ describe( 'draft assist entry point', () => {
 			expect( stores.settings.bodyPlaceholder ).toBe( DEFAULT_PLACEHOLDER );
 		} );
 
+		it( 'survives a selector that throws instead of breaking the store loop', async () => {
+			installFeature();
+			const stores = installEditorStores( { isEditedPostEmptyThrows: true } );
+			const { registerDraftEntry } = await loadDraftEntry();
+
+			// A throw here would otherwise propagate into wp.data's listener loop
+			// and take out every other subscriber on the page.
+			expect( () => registerDraftEntry() ).not.toThrow();
+			expect( () => stores.notify() ).not.toThrow();
+			expect( stores.updateSettings ).not.toHaveBeenCalled();
+		} );
+
+		it( 'survives getSettings throwing', async () => {
+			installFeature();
+			const stores = installEditorStores( { getSettingsThrows: true } );
+			const { registerDraftEntry } = await loadDraftEntry();
+
+			expect( () => registerDraftEntry() ).not.toThrow();
+			expect( () => stores.notify() ).not.toThrow();
+			expect( stores.updateSettings ).not.toHaveBeenCalled();
+		} );
+
 		it( 'tracks the entry point being shown once', async () => {
 			installFeature();
 			const stores = installEditorStores();
@@ -290,6 +340,97 @@ describe( 'draft assist entry point', () => {
 			expect( getTracksCalls( 'jetpack_ai_draft_assist_entry_point_shown' ) ).toEqual( [
 				[ 'jetpack_ai_draft_assist_entry_point_shown', { content_type: 'post' } ],
 			] );
+		} );
+	} );
+
+	describe( 'subscription lifetime', () => {
+		it( 'unsubscribes instead of syncing forever on an unsupported post type', async () => {
+			installFeature();
+			const stores = installEditorStores( { postType: 'wp_template' } );
+			const { registerDraftEntry } = await loadDraftEntry();
+
+			registerDraftEntry();
+
+			expect( stores.unsubscribe ).toHaveBeenCalledTimes( 1 );
+			expect( stores.listenerCount() ).toBe( 0 );
+		} );
+
+		it( 'keeps listening until the editor has resolved a post type', async () => {
+			installFeature();
+			const stores = installEditorStores( { postType: '' } );
+			const { registerDraftEntry } = await loadDraftEntry();
+
+			registerDraftEntry();
+			expect( stores.unsubscribe ).not.toHaveBeenCalled();
+			expect( stores.updateSettings ).not.toHaveBeenCalled();
+
+			stores.setPostType( 'post' );
+			stores.notify();
+
+			expect( stores.settings.bodyPlaceholder ).toBe( DRAFT_PLACEHOLDER );
+			expect( stores.listenerCount() ).toBe( 1 );
+		} );
+
+		it( 'gives the placeholder back and stops when the post type turns out unsupported', async () => {
+			installFeature();
+			const stores = installEditorStores( { postType: '' } );
+			const { registerDraftEntry } = await loadDraftEntry();
+
+			registerDraftEntry();
+			stores.setPostType( 'post' );
+			stores.notify();
+			expect( stores.settings.bodyPlaceholder ).toBe( DRAFT_PLACEHOLDER );
+
+			stores.setPostType( 'wp_template' );
+			stores.notify();
+
+			expect( stores.settings.bodyPlaceholder ).toBe( DEFAULT_PLACEHOLDER );
+			expect( stores.unsubscribe ).toHaveBeenCalledTimes( 1 );
+			expect( stores.listenerCount() ).toBe( 0 );
+		} );
+
+		it( 'stops when the feature flag stops being available', async () => {
+			installFeature();
+			const stores = installEditorStores();
+			const { registerDraftEntry } = await loadDraftEntry();
+
+			registerDraftEntry();
+			delete ( globalThis as any ).agentsManagerData;
+			stores.notify();
+
+			expect( stores.settings.bodyPlaceholder ).toBe( DEFAULT_PLACEHOLDER );
+			expect( stores.unsubscribe ).toHaveBeenCalledTimes( 1 );
+			expect( stores.listenerCount() ).toBe( 0 );
+		} );
+
+		it( 'stops syncing after an explicit teardown', async () => {
+			installFeature();
+			const stores = installEditorStores();
+			const { registerDraftEntry, stopBodyPlaceholderSync } = await loadDraftEntry();
+
+			registerDraftEntry();
+			stopBodyPlaceholderSync();
+			stores.updateSettings.mockClear();
+			stores.settings.bodyPlaceholder = DEFAULT_PLACEHOLDER;
+			stores.notify();
+
+			expect( stores.unsubscribe ).toHaveBeenCalledTimes( 1 );
+			expect( stores.listenerCount() ).toBe( 0 );
+			expect( stores.updateSettings ).not.toHaveBeenCalled();
+			expect( stores.settings.bodyPlaceholder ).toBe( DEFAULT_PLACEHOLDER );
+		} );
+
+		it( 'is safe to tear down more than once, and before anything subscribed', async () => {
+			installFeature();
+			const stores = installEditorStores();
+			const { registerDraftEntry, stopBodyPlaceholderSync } = await loadDraftEntry();
+
+			expect( () => stopBodyPlaceholderSync() ).not.toThrow();
+			registerDraftEntry();
+			stopBodyPlaceholderSync();
+
+			expect( () => stopBodyPlaceholderSync() ).not.toThrow();
+			expect( stores.unsubscribe ).toHaveBeenCalledTimes( 1 );
 		} );
 	} );
 

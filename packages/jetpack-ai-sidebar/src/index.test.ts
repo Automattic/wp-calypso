@@ -468,6 +468,31 @@ describe( 'contextProvider.getClientContext', () => {
 	it( 'defaults jetpackSEOSuggestionsEnabled to false when no sidebar config is present', () => {
 		expect( contextProvider.getClientContext().jetpackSEOSuggestionsEnabled ).toBe( false );
 	} );
+
+	// Pinned cross-repo contract: wpcom drops the draft ability unless the client
+	// says draft assist is live here, because the server grants it by ability
+	// category on every editor surface and cannot see this client's flag.
+	it( 'forwards jetpackAiDraftAssistEnabled = true when the host enables draft assist', () => {
+		installAiEditorialReviewData( { draftAssist: true } );
+		expect( contextProvider.getClientContext().jetpackAiDraftAssistEnabled ).toBe( true );
+	} );
+
+	it( 'forwards jetpackAiDraftAssistEnabled = false when the host disables draft assist', () => {
+		installAiEditorialReviewData( { draftAssist: false } );
+		expect( contextProvider.getClientContext().jetpackAiDraftAssistEnabled ).toBe( false );
+	} );
+
+	it( 'sends jetpackAiDraftAssistEnabled = false rather than omitting it when the flag is off', () => {
+		installAiEditorialReviewData();
+		const context = contextProvider.getClientContext();
+
+		expect( context ).toHaveProperty( 'jetpackAiDraftAssistEnabled' );
+		expect( context.jetpackAiDraftAssistEnabled ).toBe( false );
+	} );
+
+	it( 'defaults jetpackAiDraftAssistEnabled to false when no sidebar config is present', () => {
+		expect( contextProvider.getClientContext().jetpackAiDraftAssistEnabled ).toBe( false );
+	} );
 } );
 
 describe( 'getChatComponent', () => {
@@ -4031,7 +4056,42 @@ describe( 'toolProvider', () => {
 			const resetBlocks = jest.fn();
 			( window as any ).wp.data = {
 				select: ( store: string ) =>
-					store === 'core/editor' ? { isEditedPostEmpty: () => false } : undefined,
+					store === 'core/editor'
+						? {
+								isEditedPostEmpty: () => false,
+								getCurrentPostType: () => 'post',
+								getEditedPostAttribute: () => '',
+						  }
+						: undefined,
+				dispatch: ( store: string ) =>
+					store === 'core/block-editor' ? { resetBlocks } : undefined,
+			};
+
+			const { result, returnToAgent } = ( await toolProvider.executeAbility(
+				'jetpack_ai__apply_draft_content',
+				{ markup: '<!-- wp:paragraph --><p>x</p><!-- /wp:paragraph -->', contentType: 'post' }
+			) ) as any;
+
+			expect( resetBlocks ).not.toHaveBeenCalled();
+			expect( result ).toMatchObject( { success: false, error: expect.any( String ) } );
+			expect( result.error ).toMatch( /already has content/ );
+			expect( returnToAgent ).toBe( true );
+		} );
+
+		it( 'refuses to write into a template served by core/editor in the site editor', async () => {
+			installAiEditorialReviewData( { draftAssist: true } );
+			const resetBlocks = jest.fn();
+			( window as any ).wp.data = {
+				select: ( store: string ) =>
+					store === 'core/editor'
+						? {
+								// An unedited template reads as empty, which is exactly why the
+								// emptiness guard alone is not enough here.
+								isEditedPostEmpty: () => true,
+								getCurrentPostType: () => 'wp_template',
+								getEditedPostAttribute: () => '',
+						  }
+						: undefined,
 				dispatch: ( store: string ) =>
 					store === 'core/block-editor' ? { resetBlocks } : undefined,
 			};
@@ -4043,6 +4103,7 @@ describe( 'toolProvider', () => {
 
 			expect( resetBlocks ).not.toHaveBeenCalled();
 			expect( result ).toMatchObject( { success: false } );
+			expect( result.error ).toMatch( /only writes into posts and pages/ );
 			expect( returnToAgent ).toBe( true );
 		} );
 

@@ -162,7 +162,11 @@ export function trackSplitScreenGuideClick( options: TrackSplitScreenGuideOption
 export type DraftAssistContentType = 'post' | 'page';
 
 /** Why a draft could not be written into the editor. */
-export type DraftAssistRejectionReason = 'post_not_empty' | 'invalid_markup' | 'editor_unavailable';
+export type DraftAssistRejectionReason =
+	| 'post_not_empty'
+	| 'invalid_markup'
+	| 'editor_unavailable'
+	| 'unsupported_post_type';
 
 /**
  * Tracks the draft assist entry point becoming visible in the editor — i.e. the

@@ -8,16 +8,18 @@
  * `jetpack_ai__apply_draft_content`, so both spellings must be recognized —
  * same pattern as `wpcom/update-block-content` (see `tool-provider.ts`).
  *
- * The handler only ever writes into a genuinely empty post. Refusing is
- * returned to the agent (`returnToAgent: true`) so it can tell the user why
- * nothing happened; a successful write is not (`returnToAgent: false`, matching
- * the other editor-mutating handlers in this package), with the model's own
- * `summary` surfaced as the chat message.
+ * The handler only ever writes into a genuinely empty post, of a post type
+ * draft assist supports, and never over a title the user already typed.
+ * Refusing is returned to the agent (`returnToAgent: true`) so it can tell the
+ * user why nothing happened; a successful write is not (`returnToAgent: false`,
+ * matching the other editor-mutating handlers in this package), with the
+ * model's own `summary` surfaced as the chat message.
  */
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
 import { parse } from '@wordpress/blocks';
+import { isDraftAssistPostType } from './draft-assist';
 import {
 	type DraftAssistContentType,
 	type DraftAssistRejectionReason,
@@ -57,7 +59,7 @@ export const APPLY_DRAFT_CONTENT_ABILITY: Tool = {
 			title: {
 				type: 'string',
 				description:
-					'Optional: a title for the post. When omitted, the existing title is left alone.',
+					'Optional: a title for the post. The existing title is left alone when this is omitted, and also whenever the post already has a title — the user typed that one.',
 			},
 		},
 		required: [ 'markup', 'contentType', 'summary' ],
@@ -81,6 +83,11 @@ export interface ApplyDraftContentResult {
 	agentMessage?: string;
 	blockCount?: number;
 	titleUpdated?: boolean;
+	/**
+	 * True when the model supplied a title but the post already had one, so the
+	 * user's title was kept. Surfaced in the result so the agent can say so.
+	 */
+	titleSkipped?: boolean;
 }
 
 // Store access mirrors `block-actions.ts`: read through `window.wp.data` with
@@ -95,6 +102,22 @@ function getWpDataStore( kind: 'select' | 'dispatch', storeName: string ): any |
 		return wpData[ kind ]( storeName ) ?? null;
 	} catch {
 		return null;
+	}
+}
+
+/**
+ * Call a store selector without letting a throw escape this handler.
+ * @param store  - Store object from `getWpDataStore`.
+ * @param method - Selector name.
+ * @param args   - Selector arguments.
+ * @returns The selector's return value, or undefined if it is missing or threw.
+ */
+function selectSafely< T >( store: any, method: string, ...args: unknown[] ): T | undefined {
+	try {
+		const selector = store?.[ method ];
+		return typeof selector === 'function' ? selector.apply( store, args ) : undefined;
+	} catch {
+		return undefined;
 	}
 }
 
@@ -131,6 +154,19 @@ export function handleApplyDraftContent( input: any ): ApplyDraftContentResult {
 		return reject( contentType, 'editor_unavailable', 'Editor not available' );
 	}
 
+	// The ability is registered for the whole editor surface, but `core/editor`
+	// also serves templates and template parts in the site editor — where an
+	// "empty" entity is normal and a draft would become site-wide content. Only
+	// the post types the entry point offers may be written into.
+	const postType = selectSafely< string >( editor, 'getCurrentPostType' );
+	if ( ! isDraftAssistPostType( postType ) ) {
+		return reject(
+			contentType,
+			'unsupported_post_type',
+			'Draft assist only writes into posts and pages, and this editor is showing something else. Nothing was changed.'
+		);
+	}
+
 	// The whole point of the guard: never overwrite writing the user already has.
 	if ( ! editor.isEditedPostEmpty() ) {
 		return reject(
@@ -140,14 +176,29 @@ export function handleApplyDraftContent( input: any ): ApplyDraftContentResult {
 		);
 	}
 
+	// `isEditedPostEmpty()` only looks at content, so an empty post can still
+	// carry a title the user typed. Never overwrite it — and don't rely on the
+	// model omitting `title`.
+	const existingTitle = selectSafely< unknown >( editor, 'getEditedPostAttribute', 'title' );
+	// The title is only written when the editor positively reports an empty one.
+	// An unreadable title counts as present: skipping costs the user a retitle,
+	// overwriting costs them their words.
+	const hasExistingTitle = typeof existingTitle === 'string' ? existingTitle.trim() !== '' : true;
+
 	let blocks: unknown[] = [];
 	try {
 		blocks = parse( markup ) ?? [];
 	} catch {
 		blocks = [];
 	}
+	// Defensive only. `@wordpress/blocks` is externalized to the host's
+	// `wp.blocks`, whose `parse()` turns unrecognized input into freeform /
+	// `core/missing` blocks rather than returning `[]` or throwing — so in
+	// practice this branch does not fire, and prose that is not block markup is
+	// applied as freeform. That is acceptable because the post is empty by the
+	// guard above; the branch exists so a host that ever does return nothing
+	// cannot blank the canvas.
 	if ( ! Array.isArray( blocks ) || blocks.length === 0 ) {
-		// Blanking the canvas on unparseable markup would be worse than failing.
 		return reject(
 			contentType,
 			'invalid_markup',
@@ -160,7 +211,9 @@ export function handleApplyDraftContent( input: any ): ApplyDraftContentResult {
 		return reject( contentType, 'editor_unavailable', 'Block editor not available' );
 	}
 
-	const wantsTitle = typeof title === 'string' && title.trim() !== '';
+	const requestedTitle = typeof title === 'string' ? title.trim() : '';
+	const titleSkipped = requestedTitle !== '' && hasExistingTitle;
+	const wantsTitle = requestedTitle !== '' && ! hasExistingTitle;
 	const editorDispatch = wantsTitle ? getWpDataStore( 'dispatch', 'core/editor' ) : null;
 	if ( wantsTitle && typeof editorDispatch?.editPost !== 'function' ) {
 		return reject( contentType, 'editor_unavailable', 'Editor not available' );
@@ -177,7 +230,7 @@ export function handleApplyDraftContent( input: any ): ApplyDraftContentResult {
 	let titleUpdated = false;
 	if ( wantsTitle ) {
 		try {
-			editorDispatch.editPost( { title } );
+			editorDispatch.editPost( { title: requestedTitle } );
 			titleUpdated = true;
 		} catch {
 			// Non-fatal — the draft is in the canvas, the user can retitle it.
@@ -194,6 +247,7 @@ export function handleApplyDraftContent( input: any ): ApplyDraftContentResult {
 		success: true,
 		blockCount: blocks.length,
 		titleUpdated,
+		titleSkipped,
 		// Same convention as `handleUpdateBlockContent`: the edit is the end of
 		// the turn, and the model's summary is what the user reads in chat.
 		returnToAgent: false,

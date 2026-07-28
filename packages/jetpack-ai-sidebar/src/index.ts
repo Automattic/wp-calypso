@@ -1092,6 +1092,13 @@ export const contextProvider = {
 			// suggestion abilities when they aren't usable on this site — e.g. a
 			// free-text query on a self-hosted site with the SEO module disabled.
 			jetpackSEOSuggestionsEnabled: isSeoSuggestionsEnabled(),
+			// Pinned cross-repo contract with the wpcom draft ability: the server
+			// grants it by ability category on every editor surface and has no view
+			// of this client's preview flag, so it drops the ability unless this key
+			// says the client can actually handle the tool call. Without it the
+			// orchestrator would route `jetpack_ai__apply_draft_content` to clients
+			// that never registered a handler. Do not rename.
+			jetpackAiDraftAssistEnabled: isDraftAssistEnabled(),
 			contextEntries: [
 				{
 					id: 'selected-block-content',

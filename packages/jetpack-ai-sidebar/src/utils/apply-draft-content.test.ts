@@ -32,20 +32,31 @@ const MARKUP = '<!-- wp:paragraph --><p>Drafted.</p><!-- /wp:paragraph -->';
 
 function installEditorMock( {
 	isEmpty = true,
+	postType = 'post',
+	existingTitle = '',
 	withEditor = true,
 	withBlockEditor = true,
+	withTitleSelector = true,
 	resetBlocksThrows = false,
 	editPostThrows = false,
 }: {
 	isEmpty?: boolean;
+	/** `null` stands for an editor that has not resolved a post type yet. */
+	postType?: string | null;
+	existingTitle?: string;
 	withEditor?: boolean;
 	withBlockEditor?: boolean;
+	withTitleSelector?: boolean;
 	resetBlocksThrows?: boolean;
 	editPostThrows?: boolean;
 } = {} ) {
-	const editPost = jest.fn( () => {
+	let currentTitle = existingTitle;
+	const editPost = jest.fn( ( edits: { title?: string } ) => {
 		if ( editPostThrows ) {
 			throw new Error( 'editPost failed' );
+		}
+		if ( typeof edits?.title === 'string' ) {
+			currentTitle = edits.title;
 		}
 	} );
 	const resetBlocks = jest.fn( () => {
@@ -54,11 +65,21 @@ function installEditorMock( {
 		}
 	} );
 	const isEditedPostEmpty = jest.fn( () => isEmpty );
+	const getCurrentPostType = jest.fn( () => postType ?? undefined );
+	const getEditedPostAttribute = jest.fn( ( attribute: string ) =>
+		attribute === 'title' ? currentTitle : undefined
+	);
 
 	( window as any ).wp = {
 		data: {
 			select: ( store: string ) =>
-				store === 'core/editor' && withEditor ? { isEditedPostEmpty } : undefined,
+				store === 'core/editor' && withEditor
+					? {
+							isEditedPostEmpty,
+							getCurrentPostType,
+							...( withTitleSelector ? { getEditedPostAttribute } : {} ),
+					  }
+					: undefined,
 			dispatch: ( store: string ) => {
 				if ( store === 'core/editor' && withEditor ) {
 					return { editPost };
@@ -71,7 +92,14 @@ function installEditorMock( {
 		},
 	};
 
-	return { editPost, resetBlocks, isEditedPostEmpty };
+	return {
+		editPost,
+		resetBlocks,
+		isEditedPostEmpty,
+		getCurrentPostType,
+		getEditedPostAttribute,
+		getTitle: () => currentTitle,
+	};
 }
 
 function getTracksCalls( eventName: string ) {
@@ -153,7 +181,7 @@ describe( 'handleApplyDraftContent', () => {
 		] );
 	} );
 
-	it( 'sets the title when one is supplied', () => {
+	it( 'sets the title when one is supplied and the post has none', () => {
 		const { editPost } = installEditorMock();
 
 		const result = handleApplyDraftContent( {
@@ -164,7 +192,21 @@ describe( 'handleApplyDraftContent', () => {
 		} );
 
 		expect( editPost ).toHaveBeenCalledWith( { title: 'About us' } );
-		expect( result.titleUpdated ).toBe( true );
+		expect( result ).toMatchObject( { titleUpdated: true, titleSkipped: false } );
+	} );
+
+	it( 'trims the title it writes', () => {
+		const { editPost, getTitle } = installEditorMock();
+
+		handleApplyDraftContent( {
+			markup: MARKUP,
+			contentType: 'post',
+			summary: 'Drafted an intro.',
+			title: '  Spaced out  ',
+		} );
+
+		expect( editPost ).toHaveBeenCalledWith( { title: 'Spaced out' } );
+		expect( getTitle() ).toBe( 'Spaced out' );
 	} );
 
 	it.each( [
@@ -183,46 +225,190 @@ describe( 'handleApplyDraftContent', () => {
 
 		expect( editPost ).not.toHaveBeenCalled();
 		expect( resetBlocks ).toHaveBeenCalledTimes( 1 );
-		expect( result ).toMatchObject( { success: true, titleUpdated: false } );
+		expect( result ).toMatchObject( { success: true, titleUpdated: false, titleSkipped: false } );
 	} );
 
-	it( 'fails without blanking the post when the markup parses to no blocks', () => {
-		mockedParse.mockReturnValue( [] );
-		const { resetBlocks, editPost } = installEditorMock();
+	describe( 'a title the user already typed', () => {
+		// `isEditedPostEmpty()` is content-only — it ignores the title entirely
+		// (Gutenberg `packages/editor/src/store/selectors.js`). So the post can be
+		// "empty" and still carry a title the user typed, and the handler has to
+		// protect it itself rather than trusting the model to omit `title`.
+		it( 'keeps the existing title and still writes the body', () => {
+			const { editPost, resetBlocks, getTitle } = installEditorMock( {
+				existingTitle: 'My own title',
+			} );
 
-		const result = handleApplyDraftContent( {
-			markup: 'not really block markup',
-			contentType: 'post',
-			summary: 'Drafted an intro.',
-			title: 'Unwanted',
+			const result = handleApplyDraftContent( {
+				markup: MARKUP,
+				contentType: 'post',
+				summary: 'Drafted an intro.',
+				title: 'A title the model preferred',
+			} );
+
+			expect( editPost ).not.toHaveBeenCalled();
+			expect( getTitle() ).toBe( 'My own title' );
+			expect( resetBlocks ).toHaveBeenCalledWith( [ PARAGRAPH_BLOCK ] );
+			expect( result ).toMatchObject( {
+				success: true,
+				blockCount: 1,
+				titleUpdated: false,
+				// Reported so the agent can tell the user their title was kept.
+				titleSkipped: true,
+			} );
 		} );
 
-		expect( resetBlocks ).not.toHaveBeenCalled();
-		expect( editPost ).not.toHaveBeenCalled();
-		expect( result ).toMatchObject( { success: false, returnToAgent: true } );
-		expect( result.error ).toMatch( /could not be parsed/ );
-		expect( getTracksCalls( 'jetpack_ai_draft_assist_draft_rejected' ) ).toEqual( [
-			[
-				'jetpack_ai_draft_assist_draft_rejected',
-				{ content_type: 'post', reason: 'invalid_markup' },
-			],
-		] );
+		it( 'treats a whitespace-only existing title as no title', () => {
+			const { editPost } = installEditorMock( { existingTitle: '   ' } );
+
+			const result = handleApplyDraftContent( {
+				markup: MARKUP,
+				contentType: 'post',
+				summary: 'Drafted an intro.',
+				title: 'Generated title',
+			} );
+
+			expect( editPost ).toHaveBeenCalledWith( { title: 'Generated title' } );
+			expect( result ).toMatchObject( { titleUpdated: true, titleSkipped: false } );
+		} );
+
+		it( 'skips the title write when the current title cannot be read', () => {
+			const { editPost, resetBlocks } = installEditorMock( { withTitleSelector: false } );
+
+			const result = handleApplyDraftContent( {
+				markup: MARKUP,
+				contentType: 'post',
+				summary: 'Drafted an intro.',
+				title: 'Generated title',
+			} );
+
+			expect( editPost ).not.toHaveBeenCalled();
+			expect( resetBlocks ).toHaveBeenCalledTimes( 1 );
+			expect( result ).toMatchObject( { success: true, titleUpdated: false, titleSkipped: true } );
+		} );
 	} );
 
-	it( 'fails without blanking the post when parsing throws', () => {
-		mockedParse.mockImplementation( () => {
-			throw new Error( 'bad markup' );
-		} );
-		const { resetBlocks } = installEditorMock();
+	describe( 'post type guard', () => {
+		// The ability is granted on every editor surface. In the site editor
+		// `core/editor` serves templates, where an empty entity is normal and a
+		// draft would become site-wide content.
+		it.each( [
+			[ 'a template', 'wp_template' ],
+			[ 'a template part', 'wp_template_part' ],
+			[ 'a pattern', 'wp_block' ],
+			[ 'an unresolved post type', null ],
+		] )( 'refuses to write into %s', ( _label, postType ) => {
+			const { resetBlocks, editPost, isEditedPostEmpty } = installEditorMock( { postType } );
 
-		const result = handleApplyDraftContent( {
-			markup: MARKUP,
-			contentType: 'post',
-			summary: 'Drafted an intro.',
+			const result = handleApplyDraftContent( {
+				markup: MARKUP,
+				contentType: 'post',
+				summary: 'Drafted an intro.',
+				title: 'Unwanted',
+			} );
+
+			expect( resetBlocks ).not.toHaveBeenCalled();
+			expect( editPost ).not.toHaveBeenCalled();
+			expect( isEditedPostEmpty ).not.toHaveBeenCalled();
+			expect( result ).toMatchObject( { success: false, returnToAgent: true } );
+			expect( result.error ).toMatch( /only writes into posts and pages/ );
+			expect( getTracksCalls( 'jetpack_ai_draft_assist_draft_rejected' ) ).toEqual( [
+				[
+					'jetpack_ai_draft_assist_draft_rejected',
+					{ content_type: 'post', reason: 'unsupported_post_type' },
+				],
+			] );
 		} );
 
-		expect( resetBlocks ).not.toHaveBeenCalled();
-		expect( result ).toMatchObject( { success: false, returnToAgent: true } );
+		it.each( [ [ 'post' ], [ 'page' ] ] )( 'writes into a %s', ( postType ) => {
+			const { resetBlocks } = installEditorMock( { postType } );
+
+			const result = handleApplyDraftContent( {
+				markup: MARKUP,
+				contentType: postType,
+				summary: 'Drafted.',
+			} );
+
+			expect( resetBlocks ).toHaveBeenCalledWith( [ PARAGRAPH_BLOCK ] );
+			expect( result.success ).toBe( true );
+		} );
+	} );
+
+	describe( 'markup parsing', () => {
+		// `@wordpress/blocks` is externalized to the host's `wp.blocks`. Its real
+		// `parse()` turns text that is not block markup into freeform /
+		// `core/missing` blocks — it does not return `[]` and does not throw. The
+		// mock below mirrors that instead of manufacturing a rejection path
+		// production never takes.
+		it( 'applies freeform output from plain, non-block text', () => {
+			const freeform = { name: 'core/freeform', attributes: { content: 'Just prose.' } } as any;
+			mockedParse.mockReturnValue( [ freeform ] );
+			const { resetBlocks } = installEditorMock();
+
+			const result = handleApplyDraftContent( {
+				markup: 'Just prose.',
+				contentType: 'post',
+				summary: 'Drafted an intro.',
+			} );
+
+			// Acceptable: the post is empty by the guard above, so nothing is lost.
+			expect( resetBlocks ).toHaveBeenCalledWith( [ freeform ] );
+			expect( result ).toMatchObject( { success: true, blockCount: 1 } );
+		} );
+
+		it( 'applies core/missing blocks from markup naming unknown blocks', () => {
+			const missing = { name: 'core/missing', attributes: { originalName: 'acme/widget' } } as any;
+			mockedParse.mockReturnValue( [ missing ] );
+			const { resetBlocks } = installEditorMock();
+
+			const result = handleApplyDraftContent( {
+				markup: '<!-- wp:acme/widget /-->',
+				contentType: 'post',
+				summary: 'Drafted an intro.',
+			} );
+
+			expect( resetBlocks ).toHaveBeenCalledWith( [ missing ] );
+			expect( result.success ).toBe( true );
+		} );
+
+		it( 'is defensive about a parser that returns nothing, which the real one does not', () => {
+			mockedParse.mockReturnValue( [] );
+			const { resetBlocks, editPost } = installEditorMock();
+
+			const result = handleApplyDraftContent( {
+				markup: 'not really block markup',
+				contentType: 'post',
+				summary: 'Drafted an intro.',
+				title: 'Unwanted',
+			} );
+
+			// The point of the branch: an empty parse must never blank the canvas.
+			expect( resetBlocks ).not.toHaveBeenCalled();
+			expect( editPost ).not.toHaveBeenCalled();
+			expect( result ).toMatchObject( { success: false, returnToAgent: true } );
+			expect( result.error ).toMatch( /could not be parsed/ );
+			expect( getTracksCalls( 'jetpack_ai_draft_assist_draft_rejected' ) ).toEqual( [
+				[
+					'jetpack_ai_draft_assist_draft_rejected',
+					{ content_type: 'post', reason: 'invalid_markup' },
+				],
+			] );
+		} );
+
+		it( 'is defensive about a parser that throws, which the real one does not', () => {
+			mockedParse.mockImplementation( () => {
+				throw new Error( 'bad markup' );
+			} );
+			const { resetBlocks } = installEditorMock();
+
+			const result = handleApplyDraftContent( {
+				markup: MARKUP,
+				contentType: 'post',
+				summary: 'Drafted an intro.',
+			} );
+
+			expect( resetBlocks ).not.toHaveBeenCalled();
+			expect( result ).toMatchObject( { success: false, returnToAgent: true } );
+		} );
 	} );
 
 	it.each( [
