@@ -202,17 +202,12 @@ export default function convertToolMessagesToComponents( {
 		if ( isShowComponentTool( textData.tool_id ) ) {
 			const toolData = textData.data ?? {};
 			const { type: contentType, props, followUpTasks, isCurrent, postId, summary } = toolData;
-			// Big Sky's pattern picker no longer renders in AM chats (its backend
-			// ability is Easy-Site-Editor-only) — history messages get the notice below.
-			// TODO (ability-migration): Remove once Big Sky drops its pattern-picker chat component; the
-			// provider fallthrough then resolves nothing and the notice happens on its own.
-			const isDeprecatedType = contentType === 'pattern-picker';
 			// The testing switch flips rendering to the provider components too,
 			// so the comparison covers the whole flow.
 			const amComponent = isAmAbilitiesDisabled() ? null : getAmComponent( contentType );
 			// AM components take precedence; other types resolve through the external
 			// providers (e.g. jetpack-ai-sidebar's title pickers) via `getChatComponent`.
-			const Component = isDeprecatedType ? null : amComponent ?? getChatComponent?.( contentType );
+			const Component = amComponent ?? getChatComponent?.( contentType );
 			// Provider components resolve by `contentType`; AM components are pre-resolved.
 			const ownerProps = amComponent ? {} : { contentType };
 

@@ -227,7 +227,7 @@ describe( 'convertToolMessagesToComponents', () => {
 		expect( result[ 0 ].suppressThinking ).toBe( false );
 	} );
 
-	it( 'renders the notice for deprecated pattern-picker messages even when a provider component exists', () => {
+	it( 'renders the provider pattern picker disabled for history rows', () => {
 		const message = createToolMessage( LEGACY_SHOW_COMPONENT_TOOL_ID, {
 			type: 'pattern-picker',
 			props: { patterns: [] },
@@ -240,9 +240,9 @@ describe( 'convertToolMessagesToComponents', () => {
 		} );
 
 		expect( result ).toHaveLength( 1 );
-		expect( result[ 0 ].content ).toEqual( [
-			{ type: 'text', text: 'This option is no longer available.' },
-		] );
+		expect( result[ 0 ].content[ 0 ] ).toMatchObject( { component: MockComponent } );
+		// History rows carry no `isCurrent`, so the message renders inert.
+		expect( result[ 0 ].disabled ).toBe( true );
 	} );
 
 	it( 'renders the notice for prototype-member component types', () => {
