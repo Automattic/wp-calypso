@@ -33,11 +33,15 @@ describe( 'Video Studio Store', () => {
 			const state = getInitialState();
 
 			expect( state ).toEqual( {
-				selectedStyle: 'cinematic',
+				selectedStyle: 'highlights',
 				currentVideoUrl: null,
 				currentAttachmentId: null,
 				currentDurationSeconds: null,
 			} );
+		} );
+
+		it( 'defaults the selected style to highlights', () => {
+			expect( getInitialState().selectedStyle ).toBe( 'highlights' );
 		} );
 	} );
 
@@ -102,7 +106,7 @@ describe( 'Video Studio Store', () => {
 			);
 
 			expect( state.currentVideoUrl ).toBe( 'https://example.com/clip.mp4' );
-			expect( state.selectedStyle ).toBe( 'cinematic' );
+			expect( state.selectedStyle ).toBe( 'highlights' );
 			expect( state.currentAttachmentId ).toBeNull();
 			expect( state.currentDurationSeconds ).toBeNull();
 		} );
@@ -178,7 +182,7 @@ describe( 'Video Studio Store', () => {
 
 		it( 'selectors return correct values on the initial state', () => {
 			const state = getInitialState();
-			expect( selectors.getSelectedStyle( state ) ).toBe( 'cinematic' );
+			expect( selectors.getSelectedStyle( state ) ).toBe( 'highlights' );
 			expect( selectors.getCurrentVideoUrl( state ) ).toBeNull();
 			expect( selectors.getCurrentAttachmentId( state ) ).toBeNull();
 			expect( selectors.getCurrentDurationSeconds( state ) ).toBeNull();
