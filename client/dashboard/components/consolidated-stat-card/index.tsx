@@ -6,6 +6,7 @@ import {
 	Button,
 	Popover,
 } from '@wordpress/components';
+import { __, sprintf } from '@wordpress/i18n';
 import { info } from '@wordpress/icons';
 import { useState } from 'react';
 import { Card, CardBody } from '../card';
@@ -50,7 +51,16 @@ export default function ConsolidatedStatCard( {
 									icon={ info }
 									iconSize={ 18 }
 									ref={ setInfoAnchor }
-									label={ popoverTitle }
+									title={ __( 'Click to learn more' ) }
+									aria-label={
+										popoverTitle
+											? sprintf(
+													/* translators: %s is the name of the stat, e.g. "Total payouts" */
+													__( 'Click to learn more about %s' ),
+													popoverTitle
+											  )
+											: __( 'Click to learn more' )
+									}
 									onClick={ () => setShowPopover( ( visible ) => ! visible ) }
 								/>
 								{ showPopover && (
