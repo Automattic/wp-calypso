@@ -1,11 +1,11 @@
 import { ReadList } from '@automattic/api-core';
 import { isAutomatticianQuery } from '@automattic/api-queries';
-import { Count } from '@automattic/components';
 import { useQuery } from '@tanstack/react-query';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, useRef } from 'react';
 import { useSelector } from 'react-redux';
 import AutoDirection from 'calypso/components/auto-direction';
+import ReaderUnreadCount from 'calypso/layout/sidebar/reader-unread-count';
 import { recordAction, recordGaEvent } from 'calypso/reader/stats';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
 import { useRecordReaderTracksEvent } from 'calypso/state/reader/analytics/useRecordReaderTracksEvent';
@@ -106,7 +106,7 @@ const ReaderSidebarListsListItem = ( {
 							feedUrls={ [] }
 							unseenCount={ unseenCount }
 						/>
-						{ unseenCount > 0 && <Count count={ unseenCount } compact /> }
+						<ReaderUnreadCount count={ unseenCount } />
 					</span>
 				) }
 			</MenuItemLink>

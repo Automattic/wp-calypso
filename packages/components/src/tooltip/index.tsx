@@ -1,25 +1,25 @@
 import { useMobileBreakpoint } from '@automattic/viewport-react';
 import clsx from 'clsx';
-import PropTypes from 'prop-types';
 import Popover from '../popover';
+import type { ReactNode } from 'react';
 
 import './style.scss';
 
-/**
- * @param {{
- *   autoPosition?: boolean;
- *   className?: string;
- *   id?: string;
- *   isVisible?: boolean;
- *   position?: string;
- *   status?: string;
- *   showDelay?: number;
- *   showOnMobile?: boolean;
- *   hideArrow?: boolean;
- *   children?: import('react').ReactNode;
- *   context?: any;
- * }} props
- */
+interface TooltipProps {
+	autoPosition?: boolean;
+	className?: string;
+	id?: string;
+	isVisible?: boolean;
+	position?: string;
+	status?: string;
+	showDelay?: number;
+	showOnMobile?: boolean;
+	hideArrow?: boolean;
+	focusOnShow?: boolean;
+	children?: ReactNode;
+	context?: Element | { current: Element | null } | null;
+}
+
 function Tooltip( {
 	autoPosition = true,
 	className,
@@ -30,9 +30,10 @@ function Tooltip( {
 	showDelay = 100,
 	showOnMobile = false,
 	hideArrow = false,
+	focusOnShow,
 	children,
 	context,
-} ) {
+}: TooltipProps ) {
 	const isMobile = useMobileBreakpoint();
 
 	if ( ! showOnMobile && isMobile ) {
@@ -48,6 +49,7 @@ function Tooltip( {
 			autoPosition={ autoPosition }
 			className={ classes }
 			context={ context }
+			focusOnShow={ focusOnShow }
 			id={ id }
 			isVisible={ isVisible }
 			position={ position }
@@ -58,19 +60,5 @@ function Tooltip( {
 		</Popover>
 	);
 }
-
-Tooltip.propTypes = {
-	autoPosition: PropTypes.bool,
-	className: PropTypes.string,
-	id: PropTypes.string,
-	isVisible: PropTypes.bool,
-	position: PropTypes.string,
-	status: PropTypes.string,
-	showDelay: PropTypes.number,
-	showOnMobile: PropTypes.bool,
-	hideArrow: PropTypes.bool,
-	children: PropTypes.node,
-	context: PropTypes.any,
-};
 
 export default Tooltip;
