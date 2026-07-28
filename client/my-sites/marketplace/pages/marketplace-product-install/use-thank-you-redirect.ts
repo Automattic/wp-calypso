@@ -91,10 +91,11 @@ export function useThankYouRedirect( {
 		// isAtomicTransferReady already requires manage_options, which the transfer propagates after
 		// is_wpcom_atomic flips; activating during that gap would fail and burn the retry budget.
 		canActivate: !! isAtomicTransferReady,
-		// The step-driven effect only activates at currentStep 1, so this hook owns activation at every
-		// other step — including step 2 of the atomic-transfer flow, where the plugin lands after that
-		// effect's window and would otherwise never be activated.
-		ownsActivation: currentStep !== 1,
+		// Two recovery windows: the checkout-initiated flow, which sits at step 0 while it observes a
+		// background transfer, and the component-driven transfer, whose plugin lands at step 2 after the
+		// step-driven effect's activation window (step 1). Leaving ordinary in-place installs to that
+		// effect avoids a redundant activation racing it at step 2.
+		ownsActivation: ( ! atomicFlow && currentStep === 0 ) || ( atomicFlow && currentStep === 2 ),
 		installedPlugin,
 	} );
 	// Check completition of all flows and redirect to thank you page
@@ -104,14 +105,10 @@ export function useThankYouRedirect( {
 			// - Click on "Install and activate" button for any plugin on /plugins/<site_name>
 			// - Install with the help of uploading archive of a plugins
 			// - If it's simple site which doesn't support plugins, then installing and activation happens at the same time with upgrading to Business plan
+			// This also covers the atomic-transfer flows (checkout-initiated and component-driven): the
+			// plugin only reads active once the transfer is far enough along, and for an atomicFlow the
+			// redirect URL below resolves only after the transfer completes, so no separate arm is needed.
 			( installedPlugin && pluginActive ) ||
-			// Transfer to atomic using a marketplace plugin — wait for the plugin to actually be active,
-			// not just for the transfer to complete, or we redirect with the plugin still inactive.
-			( atomicFlow &&
-				pluginActive &&
-				transferStates.COMPLETE === automatedTransferStatus &&
-				canManagePlugins &&
-				isAtomicTransferReady ) ||
 			// Transfer to atomic uploading a zip plugin
 			( uploadedPluginSlug &&
 				isPluginUploadFlow &&
@@ -131,7 +128,6 @@ export function useThankYouRedirect( {
 	}, [
 		pluginActive,
 		automatedTransferStatus,
-		atomicFlow,
 		isPluginUploadFlow,
 		isAtomic,
 		canManagePlugins,

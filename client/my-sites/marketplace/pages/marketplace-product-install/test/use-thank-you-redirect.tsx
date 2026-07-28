@@ -67,15 +67,22 @@ describe( 'useThankYouRedirect', () => {
 	beforeEach( () => {
 		jest.clearAllMocks();
 		mockRecoveryProps = undefined;
-		mockFreshSite = undefined;
+		mockFreshSite = null;
 	} );
 
-	it( 'owns activation at every step except the step-driven effect window (currentStep 1)', () => {
-		render( { currentStep: 0 } );
+	it( 'owns activation only in the two recovery windows', () => {
+		// Checkout-initiated flow observes a background transfer from step 0.
+		render( { atomicFlow: false, currentStep: 0 } );
 		expect( mockRecoveryProps?.ownsActivation ).toBe( true );
-		render( { currentStep: 1 } );
+		render( { atomicFlow: false, currentStep: 2 } );
 		expect( mockRecoveryProps?.ownsActivation ).toBe( false );
-		render( { currentStep: 2 } );
+
+		// Component-driven transfer lands the plugin at step 2.
+		render( { atomicFlow: true, currentStep: 0 } );
+		expect( mockRecoveryProps?.ownsActivation ).toBe( false );
+		render( { atomicFlow: true, currentStep: 1 } );
+		expect( mockRecoveryProps?.ownsActivation ).toBe( false );
+		render( { atomicFlow: true, currentStep: 2 } );
 		expect( mockRecoveryProps?.ownsActivation ).toBe( true );
 	} );
 
