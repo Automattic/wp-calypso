@@ -1,0 +1,6 @@
+// Hover-tooltip-only charts (no onClick handler): bars still highlight on
+// hover so the tooltip has an anchor, but a pointer cursor would promise a
+// click action that doesn't exist.
+.is-summary-chart.is-hover-only .chart__bar:hover {
+	cursor: default;
+}
