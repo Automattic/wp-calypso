@@ -25,7 +25,14 @@ const fs = require( 'fs' );
 const path = require( 'path' );
 const postcss = require( 'postcss' );
 const selectorParser = require( 'postcss-selector-parser' );
-const { prefix, entryPointRoots, portalRoots } = require( '../webpack-css-scope' );
+const {
+	prefix,
+	entryPointRoots,
+	portalRoots,
+	vendorPrefix,
+	vendorEntryPointRoots,
+	vendorPortalRoots,
+} = require( '../webpack-css-scope' );
 
 const distDir = path.join( __dirname, '..', 'dist' );
 
@@ -176,7 +183,11 @@ function findScopeFailures(
 }
 
 function run() {
-	const failures = findScopeFailures( readCompiledCss() );
+	const css = readCompiledCss();
+	const failures = [
+		...findScopeFailures( css ),
+		...findScopeFailures( css, vendorPrefix, vendorEntryPointRoots, vendorPortalRoots ),
+	];
 
 	if ( failures.length > 0 ) {
 		// eslint-disable-next-line no-console

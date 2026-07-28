@@ -107,6 +107,14 @@ module.exports = {
 						// `.button`, etc.) can't collide with wp-admin's own chrome. See
 						// AGENTS.md > CSS Scoping and webpack-css-scope.js.
 						prefixSelectorPlugin( cssScope ),
+						// Separately scopes our bundled @wordpress/components base CSS with a
+						// narrower prefix than the one above — see webpack-css-scope.js's
+						// `vendorPrefix` for why it can't share the same one.
+						prefixSelectorPlugin( {
+							prefix: cssScope.vendorPrefix,
+							includeFiles: cssScope.vendorIncludeFiles,
+							exclude: cssScope.exclude,
+						} ),
 						autoprefixerPlugin(),
 					],
 				},

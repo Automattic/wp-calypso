@@ -39,13 +39,16 @@ const portalRoots = [
 const ignoreFiles = [
 	// Already hand-scoped; re-prefixing would double-nest it.
 	'odyssey-stats/src/app.scss',
-	// Calypso's global stylesheet (html/body reset, @wordpress/components CSS) — left unscoped
-	// for now.
+	// Calypso's global stylesheet (html/body reset, colour schemes, wp-components overrides) —
+	// left unscoped for now.
 	'client/assets/stylesheets/style.scss',
 	// @visx/tooltip's TooltipInPortal (line chart tooltip) self-scopes under `.visx-tooltip`
 	// already — re-prefixing would double-nest it.
 	'client/my-sites/stats/components/line-chart/styles.scss',
-	// Third-party CSS is out of scope here.
+	// Third-party CSS is out of scope here. Our own bundled copy of @wordpress/components' base
+	// CSS is the one exception — see `vendorPrefix` below, applied by a separate plugin instance
+	// via `vendorIncludeFiles` instead of being carved out of this blanket rule, since it needs a
+	// narrower prefix than everything else in this file gets.
 	/node_modules/,
 ];
 
@@ -76,4 +79,43 @@ const exclude = [
 	/^\.components-tooltip(?![\w-])/,
 ];
 
-module.exports = { prefix, entryPointRoots, portalRoots, ignoreFiles, exclude };
+// A second, narrower prefix used only for our bundled copy of `@wordpress/components`' own base
+// CSS (`node_modules/@wordpress/components/build-style/style.css`, applied via `vendorIncludeFiles`
+// through a separate postcss-prefix-selector instance in webpack.config.js — see AGENTS.md > CSS
+// Scoping). That file defines Modal/Popover structure classes (`.components-modal__frame`,
+// `.components-modal__header`, `.components-modal__content`, ...) which wp-admin's own instances
+// of the same components carry too — e.g. the command palette, also a `@wordpress/components`
+// Modal built from the same shared code Odyssey's JS externalizes to (`wp.components.Modal`).
+// `.components-modal__screen-overlay` and `.components-popover__fallback-container` (both in
+// `prefix` above) sit on that shared wrapper element, so — unlike when they anchor Odyssey's own
+// compound-scoped overrides elsewhere (e.g. `.stats-utm-builder__overlay .components-modal__header`,
+// which stays specific because of the extra class) — they don't distinguish "our modal" from
+// "core's modal" for the vendor CSS's own bare selectors. `.is-odyssey-stats` does: Odyssey's own
+// Modal instances add it via `overlayClassName` (see stats-upsell-modal, stats-module-utm-builder,
+// feedback/modal), and core never emits it, so the vendor scope anchors on that instead.
+const vendorPrefix =
+	':where(.jp-stats-dashboard, .color-scheme, .is-odyssey-stats, .ReactModalPortal, [data-base-ui-portal], [data-wp-compat-overlay-slot], .jp-stats-widget)';
+
+const vendorEntryPointRoots = [ '.jp-stats-dashboard', '.jp-stats-widget' ];
+
+const vendorPortalRoots = [
+	'.color-scheme',
+	'.is-odyssey-stats',
+	'.ReactModalPortal',
+	'[data-base-ui-portal]',
+	'[data-wp-compat-overlay-slot]',
+];
+
+const vendorIncludeFiles = [ /node_modules\/@wordpress\/components\/build-style\/style\.css/ ];
+
+module.exports = {
+	prefix,
+	entryPointRoots,
+	portalRoots,
+	ignoreFiles,
+	exclude,
+	vendorPrefix,
+	vendorEntryPointRoots,
+	vendorPortalRoots,
+	vendorIncludeFiles,
+};

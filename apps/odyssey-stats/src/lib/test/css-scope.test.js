@@ -12,6 +12,21 @@ function compile( css, { from } = {} ) {
 }
 
 /**
+ * Same as `compile`, but through the narrower `vendorPrefix` scope applied only to our bundled
+ * wordpress-components base CSS (see webpack-css-scope.js's `vendorPrefix` and
+ * webpack.config.js's second `prefixSelectorPlugin` instance).
+ */
+function compileVendor( css, { from } = {} ) {
+	return postcss( [
+		prefixSelectorPlugin( {
+			prefix: cssScope.vendorPrefix,
+			includeFiles: cssScope.vendorIncludeFiles,
+			exclude: cssScope.exclude,
+		} ),
+	] ).process( css, { from } ).css;
+}
+
+/**
  * Builds a DOM fixture with a `.jp-stats-dashboard` mount, a `.jp-stats-widget` mount, and
  * unrelated wp-admin chrome outside both, injects the compiled CSS, and returns the elements
  * tests match selectors against.
@@ -144,5 +159,68 @@ describe( 'Odyssey Stats CSS scoping (webpack-css-scope.js)', () => {
 
 		expect( compiled ).not.toContain( ':where(' );
 		expect( compiled ).toMatch( /^\.components-tooltip/m );
+	} );
+
+	it( 'leaves our bundled @wordpress/components base CSS unprefixed under the main scope — it gets its own narrower one instead', () => {
+		const compiled = compile( '.components-modal__frame { padding: 24px; }', {
+			from: 'node_modules/@wordpress/components/build-style/style.css',
+		} );
+
+		expect( compiled ).not.toContain( ':where(' );
+	} );
+
+	it( 'leaves other third-party node_modules CSS unprefixed', () => {
+		const compiled = compile( '.some-other-package { color: red; }', {
+			from: 'node_modules/some-other-package/style.css',
+		} );
+
+		expect( compiled ).not.toContain( ':where(' );
+		expect( compiled ).toMatch( /^\.some-other-package/m );
+	} );
+
+	describe( 'vendorPrefix (our bundled @wordpress/components base CSS)', () => {
+		const from = 'node_modules/@wordpress/components/build-style/style.css';
+
+		it( "does NOT scope to .components-modal__screen-overlay alone — wp-admin's own Modal instances (e.g. the command palette) carry that class too", () => {
+			// Mirrors the package's own Modal styling, which — left unscoped entirely — matched
+			// wp-admin's own instance of the same component since both ship the same
+			// unnamespaced class names. .components-modal__screen-overlay can't be the anchor
+			// here (unlike in the main `prefix`) because it's on the shared overlay wrapper
+			// every Modal gets, ours and core's alike.
+			const compiled = compileVendor( '.components-modal__frame { padding: 24px; }', { from } );
+			document.body.innerHTML =
+				'<div class="components-modal__screen-overlay"><div class="components-modal__frame" id="core-command-palette"></div></div>';
+			const style = document.createElement( 'style' );
+			style.textContent = compiled;
+			document.head.appendChild( style );
+
+			expect(
+				getComputedStyle( document.getElementById( 'core-command-palette' ) ).padding
+			).not.toBe( '24px' );
+		} );
+
+		it( 'scopes to .is-odyssey-stats — the marker our own Modal instances add via overlayClassName', () => {
+			const compiled = compileVendor( '.components-modal__frame { padding: 24px; }', { from } );
+			// @wordpress/components applies `overlayClassName` to the same element that carries
+			// .components-modal__screen-overlay, so a real Odyssey modal's overlay carries both.
+			document.body.innerHTML =
+				'<div class="components-modal__screen-overlay is-odyssey-stats"><div class="components-modal__frame" id="odyssey-modal"></div></div>';
+			const style = document.createElement( 'style' );
+			style.textContent = compiled;
+			document.head.appendChild( style );
+
+			expect( getComputedStyle( document.getElementById( 'odyssey-modal' ) ).padding ).toBe(
+				'24px'
+			);
+		} );
+
+		it( 'leaves other third-party node_modules CSS untouched — includeFiles limits it to our own vendor copy', () => {
+			const compiled = compileVendor( '.some-other-package { color: red; }', {
+				from: 'node_modules/some-other-package/style.css',
+			} );
+
+			expect( compiled ).not.toContain( ':where(' );
+			expect( compiled ).toMatch( /^\.some-other-package/m );
+		} );
 	} );
 } );

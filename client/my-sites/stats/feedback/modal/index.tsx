@@ -1,3 +1,4 @@
+import { isEnabled } from '@automattic/calypso-config';
 import { Button, Modal, TextareaControl } from '@wordpress/components';
 import { close } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
@@ -111,6 +112,9 @@ const FeedbackModal: React.FC< ModalProps > = ( { siteId, onClose } ) => {
 	return (
 		<Modal
 			className="stats-feedback-modal"
+			// Lets Odyssey scope @wordpress/components' own Modal CSS to this instance instead of
+			// leaking onto wp-admin's own Modals (e.g. the command palette). See AGENTS.md > CSS Scoping.
+			overlayClassName={ isEnabled( 'is_odyssey' ) ? 'is-odyssey-stats' : undefined }
 			onRequestClose={ () => {
 				handleClose( true );
 			} }

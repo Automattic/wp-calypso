@@ -59,7 +59,14 @@ export default function StatsUpsellModal( { siteId }: { siteId: number } ) {
 	};
 
 	return (
-		<Modal className="stats-upsell-modal" onRequestClose={ closeModal } __experimentalHideHeader>
+		<Modal
+			className="stats-upsell-modal"
+			// Lets Odyssey scope @wordpress/components' own Modal CSS to this instance instead of
+			// leaking onto wp-admin's own Modals (e.g. the command palette). See AGENTS.md > CSS Scoping.
+			overlayClassName={ isEnabled( 'is_odyssey' ) ? 'is-odyssey-stats' : undefined }
+			onRequestClose={ closeModal }
+			__experimentalHideHeader
+		>
 			<TrackComponentView
 				eventName={ `${ eventPrefix }_stats_upsell_modal_view` }
 				eventProperties={ {
