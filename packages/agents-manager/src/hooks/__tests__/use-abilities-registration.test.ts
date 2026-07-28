@@ -26,4 +26,12 @@ describe( 'useAbilitiesRegistration', () => {
 
 		expect( registerAmAbilities ).not.toHaveBeenCalled();
 	} );
+
+	it.each( [ '1', 'off', '' ] )( 'still registers with `?am_abilities=%s`', ( value ) => {
+		window.history.replaceState( {}, '', `/?am_abilities=${ value }` );
+
+		renderHook( () => useAbilitiesRegistration() );
+
+		expect( registerAmAbilities ).toHaveBeenCalledTimes( 1 );
+	} );
 } );
