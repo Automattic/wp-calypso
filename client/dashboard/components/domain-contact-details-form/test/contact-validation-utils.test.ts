@@ -20,10 +20,22 @@ describe( 'mapValidationMessagesToFieldErrors', () => {
 	} );
 
 	it( 'ignores fields with empty message arrays and non-field keys', () => {
-		const messages = {
+		const messages: ContactValidationResponseMessages = {
 			state: [],
-			extra: { ca: { cira_agreement_accepted: [ 'nope' ] } },
-		} as unknown as ContactValidationResponseMessages;
+			unrecognized_field: [ 'nope' ],
+		};
+
+		expect( mapValidationMessagesToFieldErrors( messages ) ).toEqual( {} );
+	} );
+
+	it( 'ignores TLD extra-field errors, which arrive under dot-qualified keys', () => {
+		// The endpoint reports nested properties as `extra.uk.registrant_type`, not
+		// as a nested object. The form has no controls for them, so they map to
+		// nothing rather than being mistaken for a top-level field error.
+		const messages: ContactValidationResponseMessages = {
+			'extra.uk.registrant_type': [ 'Please choose a registrant type.' ],
+			'extra.ca.cira_agreement_accepted': [ 'nope' ],
+		};
 
 		expect( mapValidationMessagesToFieldErrors( messages ) ).toEqual( {} );
 	} );

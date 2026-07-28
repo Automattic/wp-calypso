@@ -14,12 +14,12 @@ export type AsyncValidator = (
 ) => Promise< DomainContactValidationResponse >;
 
 /**
- * Maps DomainContactDetails field IDs (camelCase) to API response keys (snake_case)
+ * Maps DomainContactDetails field IDs (camelCase) to API response keys (snake_case).
+ *
+ * A `null` means the field has no counterpart in the validation response, so
+ * errors for it are never surfaced against a form field.
  */
-export const FIELD_TO_API_KEY_MAP: Record<
-	keyof DomainContactDetails,
-	keyof ContactValidationResponseMessages | null
-> = {
+export const FIELD_TO_API_KEY_MAP: Record< keyof DomainContactDetails, string | null > = {
 	firstName: 'first_name',
 	lastName: 'last_name',
 	organization: 'organization',
@@ -34,7 +34,10 @@ export const FIELD_TO_API_KEY_MAP: Record<
 	fax: 'fax',
 	vatId: 'vat_id',
 	optOutTransferLock: null, // Not validated by API
-	extra: null, // Has nested structure, handled separately if needed
+	// TLD extra fields have no single response key: each one is reported under its
+	// own dot-qualified key (`extra.uk.registrant_type`). The form has no controls
+	// for them yet, so their errors reach the user only via `messages_simple`.
+	extra: null,
 };
 
 /**
@@ -77,8 +80,7 @@ export const createFieldAsyncValidator = (
 
 			// Extract field-specific error from messages
 			const fieldErrors = result.messages[ apiKey ];
-			// Check if fieldErrors is a string array (not the 'extra' object type)
-			if ( Array.isArray( fieldErrors ) && fieldErrors.length > 0 ) {
+			if ( fieldErrors && fieldErrors.length > 0 ) {
 				return fieldErrors[ 0 ]; // Return first error message
 			}
 
@@ -108,7 +110,7 @@ export const mapValidationMessagesToFieldErrors = (
 
 	for ( const [ fieldId, apiKey ] of Object.entries( FIELD_TO_API_KEY_MAP ) as [
 		keyof DomainContactDetails,
-		keyof ContactValidationResponseMessages | null,
+		string | null,
 	][] ) {
 		if ( ! apiKey ) {
 			continue;

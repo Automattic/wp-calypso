@@ -58,44 +58,17 @@ export type ContactValidationRequestContactInformation = {
 	vat_id?: string;
 };
 
-export type ContactValidationResponseMessagesExtra = {
-	ca?: {
-		lang?: string[];
-		legal_type?: string[];
-		cira_agreement_accepted?: string[];
-	};
-	uk?: {
-		registrant_type?: string[];
-		registration_number?: string[];
-		trading_name?: string[];
-	};
-	fr?: {
-		registrant_type?: string[];
-		trademark_number?: string[];
-		siren_siret?: string[];
-	};
-	is_for_business?: boolean;
-};
-
-export type ContactValidationResponseMessages = {
-	first_name?: string[];
-	last_name?: string[];
-	organization?: string[];
-	email?: string[];
-	phone?: string[];
-	phone_number_country?: string[];
-	address_1?: string[];
-	address_2?: string[];
-	city?: string[];
-	state?: string[];
-	postal_code?: string[];
-	country_code?: string[];
-	fax?: string[];
-	vat_id?: string[];
-	extra?: ContactValidationResponseMessagesExtra;
-};
-
-export type RawContactValidationResponseMessages = Record< string, string[] >;
+/**
+ * Per-field validation messages, keyed by the name of the field that failed.
+ *
+ * The map is always flat. Errors on nested properties carry a dot-qualified key
+ * rather than a nested object — a failing `.uk` registrant type arrives as
+ * `{ 'extra.uk.registrant_type': [ … ] }`, never as
+ * `{ extra: { uk: { registrant_type: [ … ] } } }`. The per-TLD JSON schemas set
+ * those qualified names explicitly via `error_field`, so they are identical on
+ * v1.1 and v1.2 of the endpoint.
+ */
+export type ContactValidationResponseMessages = Record< string, string[] >;
 
 export type DomainContactValidationResponse =
 	| { success: true }
