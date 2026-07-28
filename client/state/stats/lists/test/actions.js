@@ -111,7 +111,11 @@ describe( 'actions', () => {
 		test( 'should forward video stats range query parameters', () => {
 			const query = { postId: 31533, statType: 'all', period: 'day', num: -1 };
 
-			return requestSiteStats( SITE_ID, STAT_TYPE_VIDEO, query )( spy ).then( () => {
+			return requestSiteStats(
+				SITE_ID,
+				STAT_TYPE_VIDEO,
+				query
+			)( spy ).then( () => {
 				expect( spy ).toHaveBeenCalledWith(
 					expect.objectContaining( {
 						type: SITE_STATS_RECEIVE,
