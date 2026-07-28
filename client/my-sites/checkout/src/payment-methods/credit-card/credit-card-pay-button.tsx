@@ -1,5 +1,10 @@
 import { useStripe } from '@automattic/calypso-stripe';
-import { Button, FormStatus, useFormStatus } from '@automattic/composite-checkout';
+import {
+	Button,
+	FormStatus,
+	useFormStatus,
+	PAYMENT_METHOD_STEP_ID,
+} from '@automattic/composite-checkout';
 import { useElements, CardNumberElement } from '@stripe/react-stripe-js';
 import { useSelect } from '@wordpress/data';
 import { useState, useEffect } from '@wordpress/element';
@@ -62,7 +67,13 @@ export default function CreditCardPayButton( {
 	const reduxDispatch = useDispatch();
 	useEffect( () => {
 		if ( displayFieldsError ) {
-			document.body.scrollTop = document.documentElement.scrollTop = 0;
+			// The invalid fields live in the payment step, which may be scrolled
+			// out of view (e.g. behind a sticky submit button), making the click
+			// look like a no-op. Bring the step's fields back into view instead
+			// of jumping to the top of the page.
+			document
+				.getElementById( PAYMENT_METHOD_STEP_ID )
+				?.scrollIntoView?.( { behavior: 'smooth', block: 'start' } );
 			reduxDispatch( errorNotice( displayFieldsError, { ariaLive: 'assertive', role: 'alert' } ) );
 			setDisplayFieldsError( '' );
 		}
