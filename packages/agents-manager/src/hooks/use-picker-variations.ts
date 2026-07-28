@@ -5,6 +5,7 @@ import ensureCurrentFirst, {
 	findMatchingVariation,
 } from '../utils/ensure-current-first';
 import { setSiteEditorAction } from '../utils/site-editor-context';
+import { recordBigSkyTracksEvent } from '../utils/tracks';
 import useGlobalStyles from './use-global-styles';
 import useStyles, { type StyleVariationType } from './use-styles';
 import type { GlobalStyles, StyleVariation } from '../components/styles-preview';
@@ -109,6 +110,13 @@ export default function usePickerVariations( {
 	const handleSelect = useCallback(
 		( variation: StyleVariation ) => {
 			hasSortedRef.current = true;
+			if ( variationType ) {
+				// Big Sky's variation-click event names and props, so the
+				// existing dashboards keep working.
+				recordBigSkyTracksEvent( `${ variationType }_variation_click`, {
+					[ variationType ]: variation.title,
+				} );
+			}
 			if ( setStyles( variation, variationType ) ) {
 				setActiveTitle( variation.title ?? null );
 				if ( pickActionName ) {

@@ -22,6 +22,12 @@ jest.mock( '../../utils/site-editor-context', () => ( {
 	setSiteEditorAction: ( name: string, value: unknown ) => mockSetSiteEditorAction( name, value ),
 } ) );
 
+const mockRecordBigSkyTracksEvent = jest.fn();
+jest.mock( '../../utils/tracks', () => ( {
+	recordBigSkyTracksEvent: ( name: string, props: unknown ) =>
+		mockRecordBigSkyTracksEvent( name, props ),
+} ) );
+
 const variations = [
 	{ title: 'Bold', settings: { value: 'bold' } },
 	{ title: 'Pastel', settings: { value: 'pastel' } },
@@ -130,6 +136,18 @@ describe( 'usePickerVariations', () => {
 		act( () => result.current.handleSelect( variations[ 0 ] ) );
 
 		expect( mockSetStyles ).toHaveBeenCalledWith( variations[ 0 ], 'button' );
+	} );
+
+	it( "fires Big Sky's variation-click event on pick", () => {
+		const { result } = renderHook( () =>
+			usePickerVariations( makeOptions( { variationType: 'button' } ) )
+		);
+
+		act( () => result.current.handleSelect( variations[ 0 ] ) );
+
+		expect( mockRecordBigSkyTracksEvent ).toHaveBeenCalledWith( 'button_variation_click', {
+			button: 'Bold',
+		} );
 	} );
 
 	it( 'keeps the picked variation highlighted when several share the live value', () => {
