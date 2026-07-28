@@ -1,5 +1,7 @@
 import './style.scss';
+import { isAutomatticianQuery } from '@automattic/api-queries';
 import page from '@automattic/calypso-router';
+import { useQuery } from '@tanstack/react-query';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import React, { useState } from 'react';
@@ -68,6 +70,8 @@ const ReaderSidebarRecent = ( { isOpen, onClick, path, className }: Props ): Rea
 	const [ showAllSites, setShowAllSites ] = useState( false );
 	const sites = useSubscribedSites();
 	const feedsInfo = useSubscribedFeedsInfo();
+	const { data: isAutomattician } = useQuery( isAutomatticianQuery() );
+	const isSeenEnabled = isAutomattician;
 	const selectedSiteFeedId = useSelector< AppState, number | null >( getSelectedRecentFeedId );
 	const moment = useLocalizedMoment();
 	const recordReaderTracksEvent = useRecordReaderTracksEvent();
@@ -117,7 +121,9 @@ const ReaderSidebarRecent = ( { isOpen, onClick, path, className }: Props ): Rea
 			className={ clsx( 'reader-sidebar-recent', 'has-counts', className, {
 				'sidebar__menu--selected': isRecentStream && ( ! isOpen || selectedSiteFeedId === null ),
 			} ) }
-			count={ feedsInfo.unseenCount > 0 ? feedsInfo.unseenCount : undefined }
+			customCount={
+				isSeenEnabled ? <ReaderUnreadCount count={ feedsInfo.unseenCount } /> : undefined
+			}
 			icon={ null }
 			materialIcon={ null }
 			materialIconStyle={ null }
@@ -163,7 +169,7 @@ const ReaderSidebarRecent = ( { isOpen, onClick, path, className }: Props ): Rea
 											unseenCount={ unseenCount }
 										/>
 									) }
-									<ReaderUnreadCount count={ unseenCount } />
+									{ isSeenEnabled && <ReaderUnreadCount count={ unseenCount } /> }
 								</span>
 							</MenuItemLink>
 						</AutoDirection>

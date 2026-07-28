@@ -28,10 +28,8 @@ export function Count( {
 	const [ isTooltipVisible, setIsTooltipVisible ] = useState( false );
 	const effectiveNumberFormat = numberFormatFromProps ?? formatNumber;
 
-	const handleMouseEnter = () => setIsTooltipVisible( true );
-	const handleMouseLeave = () => setIsTooltipVisible( false );
-	const handleFocus = () => setIsTooltipVisible( true );
-	const handleBlur = () => setIsTooltipVisible( false );
+	const showTooltip = () => setIsTooltipVisible( true );
+	const hideTooltip = () => setIsTooltipVisible( false );
 
 	return (
 		<>
@@ -40,10 +38,8 @@ export function Count( {
 				ref={ spanRef }
 				aria-label={ ariaLabel }
 				tabIndex={ tabIndex }
-				onMouseEnter={ tooltipText ? handleMouseEnter : undefined }
-				onMouseLeave={ tooltipText ? handleMouseLeave : undefined }
-				onFocus={ tooltipText ? handleFocus : undefined }
-				onBlur={ tooltipText ? handleBlur : undefined }
+				onMouseEnter={ tooltipText ? showTooltip : undefined }
+				onMouseLeave={ tooltipText ? hideTooltip : undefined }
 				{ ...props }
 			>
 				{ compact ? formatNumberCompact( count ) : effectiveNumberFormat( count ) }
@@ -51,7 +47,7 @@ export function Count( {
 
 			{ tooltipText && (
 				<Tooltip
-					context={ spanRef.current }
+					context={ spanRef }
 					focusOnShow={ false }
 					isVisible={ isTooltipVisible }
 					showDelay={ 500 }

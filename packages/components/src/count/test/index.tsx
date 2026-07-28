@@ -43,19 +43,4 @@ describe( 'Count', () => {
 		await user.unhover( badge );
 		expect( screen.queryByText( 'Number of unread posts' ) ).not.toBeInTheDocument();
 	} );
-
-	test( 'should show the tooltip on keyboard focus when focusable and `tooltipText` is provided', async () => {
-		const user = userEvent.setup();
-		const { container } = render(
-			<Count count={ 5 } tooltipText="Number of unread posts" tabIndex={ 0 } />
-		);
-		const badge = container.querySelector( '.a8c-count' ) as HTMLElement;
-
-		await user.tab();
-		expect( badge ).toHaveFocus();
-		expect( await screen.findByText( 'Number of unread posts' ) ).toBeVisible();
-
-		await user.tab();
-		expect( screen.queryByText( 'Number of unread posts' ) ).not.toBeInTheDocument();
-	} );
 } );

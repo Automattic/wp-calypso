@@ -17,6 +17,15 @@ jest.mock( 'calypso/reader/stats', () => ( {
 	recordGaEvent: jest.fn(),
 } ) );
 
+jest.mock( '@automattic/api-queries', () => ( {
+	...jest.requireActual( '@automattic/api-queries' ),
+	isAutomatticianQuery: () => ( {
+		queryKey: [ 'test', 'is-automattician' ],
+		queryFn: () => true,
+		initialData: true,
+	} ),
+} ) );
+
 let mockSubscribedSites: Partial< SiteSubscriptionItem >[] = [];
 let mockSubscribedFeedsInfo = { unseenCount: 0, feedIds: [], feedUrls: [] };
 jest.mock( 'calypso/reader/data/site-subscriptions', () => ( {

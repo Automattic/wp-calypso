@@ -1,15 +1,15 @@
-import { Gridicon, MaterialIcon } from '@automattic/components';
+import { Count, Gridicon, MaterialIcon } from '@automattic/components';
 import { Button } from '@wordpress/components';
 import { Icon, chevronDown } from '@wordpress/icons';
 import { useTranslate, type TranslateResult } from 'i18n-calypso';
 import SidebarHeading from 'calypso/layout/sidebar/heading';
 import { decodeEntities } from 'calypso/lib/formatting';
-import ReaderUnreadCount from './reader-unread-count';
 import type { KeyboardEvent, MouseEvent, ReactNode } from 'react';
 
 interface ExpandableSidebarHeadingProps {
 	title: TranslateResult;
 	count?: number;
+	customCount?: ReactNode;
 	onClick?: ( event?: MouseEvent< HTMLAnchorElement > ) => void;
 	customIcon?: ReactNode;
 	icon?: string | null;
@@ -30,6 +30,7 @@ interface ExpandableSidebarHeadingProps {
 const ExpandableSidebarHeading = ( {
 	title,
 	count,
+	customCount,
 	icon,
 	customIcon,
 	materialIcon,
@@ -67,7 +68,7 @@ const ExpandableSidebarHeading = ( {
 				{ renderedTitle }
 				<span className="sidebar__actions-and-count">
 					{ moreMenuActions }
-					<ReaderUnreadCount count={ count } />
+					{ customCount ?? ( count && count > 0 ? <Count count={ count } /> : null ) }
 				</span>
 				{ inlineText && <span className="sidebar__inline-text">{ inlineText }</span> }
 			</span>

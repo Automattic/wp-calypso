@@ -26,13 +26,12 @@ describe( 'ReaderUnreadCount', () => {
 		expect( container.querySelector( '.a8c-count' ) ).toHaveAccessibleName( '4 unread (30 days)' );
 	} );
 
-	test( 'should show the 30-day tooltip on keyboard focus', async () => {
+	test( 'should show the 30-day tooltip on hover', async () => {
 		const user = userEvent.setup();
 		const { container } = render( <ReaderUnreadCount count={ 4 } /> );
 		const badge = container.querySelector( '.a8c-count' ) as HTMLElement;
 
-		await user.tab();
-		expect( badge ).toHaveFocus();
+		await user.hover( badge );
 		expect( await screen.findByText( '4 unread (30 days)' ) ).toBeVisible();
 	} );
 } );
