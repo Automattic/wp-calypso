@@ -182,11 +182,41 @@ function findScopeFailures(
 	return failures;
 }
 
+/**
+ * `.components-modal__screen-overlay` is the one vendor-CSS selector that styles the exact element
+ * `.is-odyssey-stats` (via `overlayClassName`) is added to — never a descendant of it, since
+ * `@wordpress/components` Modal always portals straight to `document.body`. If any compiled rule for
+ * it still has the default ancestor-prefixed form (`:where(vendorPrefix) .components-modal__screen-
+ * overlay`), it's permanently dead — nothing can ever be an ancestor of an element carrying its own
+ * marker class. `webpack-css-scope.js`'s `vendorTransform` compounds `.is-odyssey-stats` onto the
+ * selector itself instead; this check catches it silently regressing (e.g. a `@wordpress/components`
+ * upgrade changing the selector text so `vendorTransform`'s regex stops matching it). This is the
+ * STATS-251 failure mode.
+ */
+function findVendorOverlaySelfNestingFailures( css, vendorPrefixToCheck ) {
+	const normalizedPrefix = normalizeWhereGroupSpacing( vendorPrefixToCheck );
+	const deadForm = `${ normalizedPrefix } .components-modal__screen-overlay`;
+
+	return collectRules( css )
+		.filter( ( rule ) => rule.nodes.length > 0 )
+		.flatMap( ( rule ) => rule.selectors )
+		.filter( ( selector ) => normalizeWhereGroupSpacing( selector ).startsWith( deadForm ) )
+		.map(
+			( selector ) =>
+				`Dead rule found: \`${ selector.trim() }\` requires an ancestor to match the vendor ` +
+				'prefix, but .components-modal__screen-overlay is the element `.is-odyssey-stats` ' +
+				"itself is added to (via overlayClassName) — it's never a descendant of a marked " +
+				'ancestor. Check that `vendorTransform` in webpack-css-scope.js still matches this ' +
+				'selector — this is the STATS-251 failure mode.'
+		);
+}
+
 function run() {
 	const css = readCompiledCss();
 	const failures = [
 		...findScopeFailures( css ),
 		...findScopeFailures( css, vendorPrefix, vendorEntryPointRoots, vendorPortalRoots ),
+		...findVendorOverlaySelfNestingFailures( css, vendorPrefix ),
 	];
 
 	if ( failures.length > 0 ) {
@@ -205,4 +235,4 @@ if ( require.main === module ) {
 	run();
 }
 
-module.exports = { findScopeFailures };
+module.exports = { findScopeFailures, findVendorOverlaySelfNestingFailures };

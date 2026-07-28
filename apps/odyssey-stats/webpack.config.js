@@ -114,6 +114,7 @@ module.exports = {
 							prefix: cssScope.vendorPrefix,
 							includeFiles: cssScope.vendorIncludeFiles,
 							exclude: cssScope.exclude,
+							transform: cssScope.vendorTransform,
 						} ),
 						autoprefixerPlugin(),
 					],

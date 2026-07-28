@@ -22,6 +22,7 @@ function compileVendor( css, { from } = {} ) {
 			prefix: cssScope.vendorPrefix,
 			includeFiles: cssScope.vendorIncludeFiles,
 			exclude: cssScope.exclude,
+			transform: cssScope.vendorTransform,
 		} ),
 	] ).process( css, { from } ).css;
 }
@@ -221,6 +222,62 @@ describe( 'Odyssey Stats CSS scoping (webpack-css-scope.js)', () => {
 
 			expect( compiled ).not.toContain( ':where(' );
 			expect( compiled ).toMatch( /^\.some-other-package/m );
+		} );
+
+		describe( '.components-modal__screen-overlay itself (STATS-251 regression: the overlay styles its own element, not a descendant)', () => {
+			// overlayClassName lands on the exact same div as .components-modal__screen-overlay, and
+			// that div is a direct child of <body> (Modal always portals straight there) — no
+			// ancestor of it ever carries a vendorPrefix root. A rule staying in the default
+			// ancestor-prefixed form here (`:where(vendorPrefix) .components-modal__screen-overlay`)
+			// would be permanently dead, since nothing can ever be an ancestor of an element carrying
+			// its own marker class.
+			const overlayRule = '.components-modal__screen-overlay { position: fixed; }';
+
+			it( 'applies to our own modal — .is-odyssey-stats is compounded onto the selector itself, not required as an ancestor', () => {
+				const compiled = compileVendor( overlayRule, { from } );
+				document.body.innerHTML =
+					'<div class="components-modal__screen-overlay is-odyssey-stats" id="odyssey-overlay"></div>';
+				const style = document.createElement( 'style' );
+				style.textContent = compiled;
+				document.head.appendChild( style );
+
+				expect( getComputedStyle( document.getElementById( 'odyssey-overlay' ) ).position ).toBe(
+					'fixed'
+				);
+			} );
+
+			it( "does NOT apply to wp-admin's own instance (e.g. the command palette), which never carries .is-odyssey-stats", () => {
+				const compiled = compileVendor( overlayRule, { from } );
+				document.body.innerHTML =
+					'<div class="components-modal__screen-overlay" id="core-overlay"></div>';
+				const style = document.createElement( 'style' );
+				style.textContent = compiled;
+				document.head.appendChild( style );
+
+				expect( getComputedStyle( document.getElementById( 'core-overlay' ) ).position ).not.toBe(
+					'fixed'
+				);
+			} );
+
+			it( 'still applies through the .is-animating-out compound, and still scopes a real descendant selector chained after it', () => {
+				const compiled = compileVendor(
+					'.components-modal__screen-overlay.is-animating-out { opacity: 0; }\n' +
+						'.components-modal__screen-overlay.is-animating-out .components-modal__frame { animation-name: disappear; }',
+					{ from }
+				);
+				document.body.innerHTML =
+					'<div class="components-modal__screen-overlay is-animating-out is-odyssey-stats">' +
+					'<div class="components-modal__frame" id="odyssey-frame"></div></div>';
+				const style = document.createElement( 'style' );
+				style.textContent = compiled;
+				document.head.appendChild( style );
+
+				const overlay = document.querySelector( '.components-modal__screen-overlay' );
+				expect( getComputedStyle( overlay ).opacity ).toBe( '0' );
+				expect( getComputedStyle( document.getElementById( 'odyssey-frame' ) ).animationName ).toBe(
+					'disappear'
+				);
+			} );
 		} );
 	} );
 } );

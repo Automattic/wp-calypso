@@ -1,4 +1,7 @@
-import { findScopeFailures } from '../../../bin/verify-css-scope';
+import {
+	findScopeFailures,
+	findVendorOverlaySelfNestingFailures,
+} from '../../../bin/verify-css-scope';
 
 const PREFIX =
 	':where(.jp-stats-dashboard, .color-scheme, .ReactModalPortal, [data-base-ui-portal], [data-wp-compat-overlay-slot], .components-modal__screen-overlay, .components-popover__fallback-container, .jp-stats-widget)';
@@ -119,5 +122,36 @@ describe( 'verify-css-scope findScopeFailures', () => {
 		`;
 
 		expect( findScopeFailures( css ) ).toEqual( [] );
+	} );
+} );
+
+describe( 'verify-css-scope findVendorOverlaySelfNestingFailures', () => {
+	const VENDOR_PREFIX =
+		':where(.jp-stats-dashboard, .color-scheme, .is-odyssey-stats, .ReactModalPortal, [data-base-ui-portal], [data-wp-compat-overlay-slot], .jp-stats-widget)';
+
+	it( 'flags .components-modal__screen-overlay left in the default ancestor-prefixed form — the STATS-251 regression', () => {
+		const css = `
+			${ VENDOR_PREFIX } .components-modal__frame{padding:24px}
+			${ VENDOR_PREFIX } .components-modal__screen-overlay{position:fixed}
+		`;
+
+		expect( findVendorOverlaySelfNestingFailures( css, VENDOR_PREFIX ) ).toEqual( [
+			expect.stringContaining( 'requires an ancestor to match the vendor prefix' ),
+		] );
+	} );
+
+	it( 'does not flag .components-modal__screen-overlay compiled via vendorTransform (self-compounded, not ancestor-prefixed)', () => {
+		const css = `
+			.components-modal__screen-overlay.is-odyssey-stats{position:fixed}
+			${ VENDOR_PREFIX } .components-modal__frame{padding:24px}
+		`;
+
+		expect( findVendorOverlaySelfNestingFailures( css, VENDOR_PREFIX ) ).toEqual( [] );
+	} );
+
+	it( 'does not flag unrelated vendor selectors', () => {
+		const css = `${ VENDOR_PREFIX } .components-popover__content{padding:8px}`;
+
+		expect( findVendorOverlaySelfNestingFailures( css, VENDOR_PREFIX ) ).toEqual( [] );
 	} );
 } );

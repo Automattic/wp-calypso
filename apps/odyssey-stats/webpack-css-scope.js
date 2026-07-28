@@ -93,20 +93,48 @@ const exclude = [
 // "core's modal" for the vendor CSS's own bare selectors. `.is-odyssey-stats` does: Odyssey's own
 // Modal instances add it via `overlayClassName` (see stats-upsell-modal, stats-module-utm-builder,
 // feedback/modal), and core never emits it, so the vendor scope anchors on that instead.
-const vendorPrefix =
-	':where(.jp-stats-dashboard, .color-scheme, .is-odyssey-stats, .ReactModalPortal, [data-base-ui-portal], [data-wp-compat-overlay-slot], .jp-stats-widget)';
+const VENDOR_OVERLAY_SELF_MARKER = '.is-odyssey-stats';
+
+const vendorPrefix = `:where(.jp-stats-dashboard, .color-scheme, ${ VENDOR_OVERLAY_SELF_MARKER }, .ReactModalPortal, [data-base-ui-portal], [data-wp-compat-overlay-slot], .jp-stats-widget)`;
 
 const vendorEntryPointRoots = [ '.jp-stats-dashboard', '.jp-stats-widget' ];
 
 const vendorPortalRoots = [
 	'.color-scheme',
-	'.is-odyssey-stats',
+	VENDOR_OVERLAY_SELF_MARKER,
 	'.ReactModalPortal',
 	'[data-base-ui-portal]',
 	'[data-wp-compat-overlay-slot]',
 ];
 
 const vendorIncludeFiles = [ /node_modules\/@wordpress\/components\/build-style\/style\.css/ ];
+
+// `overlayClassName` lands on the exact same element that carries `.components-modal__screen-overlay`
+// (see `node_modules/@wordpress/components/build-module/modal/index.mjs`:
+// `clsx("components-modal__screen-overlay", overlayClassnameProp)`) — never on an ancestor, since
+// Modal always portals straight to `document.body` with nothing of Odyssey's own in between. The
+// vendor CSS's own selectors that start with `.components-modal__screen-overlay` (its base
+// position/backdrop rule, plus the `.is-animating-out` variant) style that element itself, so the
+// default ancestor-based prefixing (`:where(vendorPrefix) .components-modal__screen-overlay`) can
+// never match them — nothing is ever an ancestor of an element carrying its own marker class. Left
+// alone, that makes Odyssey's own modals lose their fixed positioning and dimmed backdrop, since none
+// of their first-party SCSS re-declares it (see AGENTS.md > CSS Scoping).
+//
+// Selectors targeting a genuine descendant instead (`.components-modal__frame` etc.) don't have this
+// problem: the overlay div is a real ancestor of those, so requiring an ancestor with
+// `.is-odyssey-stats` correctly matches via that same overlay div.
+const vendorOverlaySelfSelector = /^\.components-modal__screen-overlay(?:\.[\w-]+)*/;
+
+function vendorTransform( _prefix, selector, prefixedSelector ) {
+	if ( vendorOverlaySelfSelector.test( selector ) ) {
+		return selector.replace(
+			vendorOverlaySelfSelector,
+			( leadingCompound ) => `${ leadingCompound }${ VENDOR_OVERLAY_SELF_MARKER }`
+		);
+	}
+
+	return prefixedSelector;
+}
 
 module.exports = {
 	prefix,
@@ -118,4 +146,5 @@ module.exports = {
 	vendorEntryPointRoots,
 	vendorPortalRoots,
 	vendorIncludeFiles,
+	vendorTransform,
 };
