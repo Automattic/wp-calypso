@@ -83,7 +83,7 @@ describe( 'ReaderSidebarRecent unseen counts', () => {
 		const betaRow = screen.getByRole( 'link', { name: /Beta/ } ).closest( 'li' );
 
 		expect( alphaRow?.querySelector( '.a8c-count' ) ).toHaveTextContent( '4' );
-		expect( alphaRow?.querySelector( '.a8c-count' ) ).toHaveAccessibleName( '4 unseen posts' );
+		expect( alphaRow?.querySelector( '.a8c-count' ) ).toHaveAccessibleName( '4 unread (30 days)' );
 		expect( betaRow?.querySelector( '.a8c-count' ) ).toBeNull();
 	} );
 } );

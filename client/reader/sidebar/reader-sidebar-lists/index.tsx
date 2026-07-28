@@ -48,7 +48,6 @@ const ReaderSidebarLists = ( {
 				expanded={ isOpen ?? false }
 				title={ translate( 'Lists' ) }
 				count={ isSeenEnabled ? totalUnseenCount : 0 }
-				compactCount
 				onClick={ onClick }
 				disableFlyout
 				className={ clsx( {

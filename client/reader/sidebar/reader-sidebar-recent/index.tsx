@@ -1,6 +1,5 @@
 import './style.scss';
 import page from '@automattic/calypso-router';
-import { Count } from '@automattic/components';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import React, { useState } from 'react';
@@ -9,6 +8,7 @@ import { SiteIcon } from 'calypso/blocks/site-icon';
 import AutoDirection from 'calypso/components/auto-direction';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import ExpandableSidebarMenu from 'calypso/layout/sidebar/expandable';
+import ReaderUnreadCount from 'calypso/layout/sidebar/reader-unread-count';
 import { useSubscribedFeedsInfo, useSubscribedSites } from 'calypso/reader/data/site-subscriptions';
 import { getSiteDomain } from 'calypso/reader/get-helpers';
 import { formatUrlForDisplay } from 'calypso/reader/lib/feed-display-helper';
@@ -135,11 +135,6 @@ const ReaderSidebarRecent = ( { isOpen, onClick, path, className }: Props ): Rea
 			{ sitesToShow.map( ( site ) => {
 				const displayName = getReaderSidebarSiteName( site );
 				const unseenCount = site.unseen_count ?? 0;
-				const unseenCountLabel = translate( '%(count)d unseen post', '%(count)d unseen posts', {
-					count: unseenCount,
-					args: { count: unseenCount },
-					comment: '%(count)d is the number of unseen posts.',
-				} );
 				const feedId = site.feed_ID ? Number( site.feed_ID ) : null;
 
 				return (
@@ -168,13 +163,7 @@ const ReaderSidebarRecent = ( { isOpen, onClick, path, className }: Props ): Rea
 											unseenCount={ unseenCount }
 										/>
 									) }
-									{ unseenCount > 0 && (
-										<Count
-											count={ unseenCount }
-											compact
-											aria-label={ unseenCountLabel as string }
-										/>
-									) }
+									<ReaderUnreadCount count={ unseenCount } />
 								</span>
 							</MenuItemLink>
 						</AutoDirection>
