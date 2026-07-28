@@ -682,7 +682,7 @@ const ImageStudioContent = withInstanceId(
 									/>
 								) : (
 									<div className="image-studio-agent-loading">
-										{ __( 'Loading AI assistant…', __i18n_text_domain__ ) }
+										{ __( 'Loading WordPress Agent…', __i18n_text_domain__ ) }
 									</div>
 								)
 							}
