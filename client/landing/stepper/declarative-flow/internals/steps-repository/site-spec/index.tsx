@@ -16,6 +16,7 @@ import {
 	startBlueprintArchiveImport,
 	waitForAtomicTransferComplete,
 	waitForBlueprintImportComplete,
+	waitForSiteEditorReady,
 } from 'calypso/landing/stepper/utils/blueprint-archive-import';
 import {
 	getBuildWowSiteIdentifier,
@@ -407,6 +408,13 @@ const SiteSpec: StepType = function SiteSpec() {
 						} );
 					}
 				}
+
+				// The import record can flip to FINISHED before the freshly
+				// transferred Atomic site can serve its template parts, which makes
+				// the editor's first load render the header block as an error until a
+				// manual reload. Wait until the header template part is queryable
+				// before redirecting (times out gracefully so we never strand).
+				await waitForSiteEditorReady( blueprintArchiveSiteIdentifier );
 
 				const adminUrl = await getSiteAdminUrl( blueprintArchiveSiteIdentifier );
 				const siteEditorUrl = getSiteEditorUrl( adminUrl );

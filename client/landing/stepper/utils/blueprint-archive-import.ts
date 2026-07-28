@@ -186,6 +186,45 @@ export async function waitForBlueprintImportComplete(
 }
 
 /**
+ * Poll the site's template-parts REST endpoint until the theme's `header`
+ * template part is served, so we only redirect into the Site Editor once the
+ * freshly-transferred Atomic site can actually render it. Without this, the
+ * editor's first load can race the import (theme/template parts not yet
+ * queryable) and the header block renders as an error until a manual reload.
+ *
+ * Resolves on ready OR on timeout — a timeout must not block handing the user
+ * off to their site (a manual reload still recovers).
+ */
+export async function waitForSiteEditorReady(
+	siteIdentifier: string,
+	{ totalTimeoutSeconds = 60, pollIntervalMs = 3000 } = {}
+): Promise< void > {
+	const deadline = Date.now() + totalTimeoutSeconds * 1000;
+
+	while ( Date.now() < deadline ) {
+		try {
+			const parts = ( await wpcom.req.get( {
+				path: `/sites/${ siteIdentifier }/template-parts`,
+				apiNamespace: 'wp/v2',
+			} ) ) as Array< { slug?: string; area?: string } >;
+
+			if (
+				Array.isArray( parts ) &&
+				parts.some( ( part ) => part?.slug === 'header' || part?.area === 'header' )
+			) {
+				return;
+			}
+		} catch {
+			// Site not ready to serve template parts yet — keep polling.
+		}
+
+		await wait( pollIntervalMs );
+	}
+
+	// Timed out: redirect anyway rather than stranding the user.
+}
+
+/**
  * Poll the canonical Atomic transfer status endpoint until the site's transfer
  * to Atomic completes. Resolves on a complete state; throws on a terminal
  * failure or timeout. A missing transfer (404 before the backup_import job
