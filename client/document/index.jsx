@@ -191,7 +191,6 @@ class Document extends Component {
 									user={ user || null }
 									site={ null }
 									currentRoute={ this.props.path ?? '/' }
-									showCommandPalette={ sectionName === DOTCOM_DASHBOARD_SECTION_DEFINITION.name }
 								/>
 							</I18NContext.Provider>
 						</div>

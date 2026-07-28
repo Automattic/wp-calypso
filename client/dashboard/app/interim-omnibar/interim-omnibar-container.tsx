@@ -2,6 +2,7 @@ import { omnibarSiteIdQuery, queryClient, siteByIdQuery } from '@automattic/api-
 import { useQuery } from '@tanstack/react-query';
 import { useCallback, useEffect, useState } from 'react';
 import { AUTH_QUERY_KEY, initializeCurrentUser } from '../auth';
+import { useAppContext } from '../context';
 import { InterimOmnibar } from './interim-omnibar';
 import type { OmnibarEvents } from '../omnibar/events';
 import type { Site, User } from '@automattic/api-core';
@@ -9,7 +10,6 @@ import type { Site, User } from '@automattic/api-core';
 interface InterimOmnibarContainerProps {
 	initialUser: User | null;
 	events: OmnibarEvents;
-	showCommandPalette?: boolean;
 }
 
 interface InterimOmnibarData {
@@ -18,6 +18,7 @@ interface InterimOmnibarData {
 	currentRoute: string;
 	onToggleMenu?: () => void;
 	onToggleNotifications?: () => void;
+	showCommandPalette: boolean;
 }
 
 /**
@@ -30,6 +31,7 @@ function useInterimOmnibarData( {
 	initialUser,
 	events,
 }: InterimOmnibarContainerProps ): InterimOmnibarData {
+	const { supports } = useAppContext();
 	const [ hydrated, setHydrated ] = useState( false );
 	useEffect( () => {
 		setHydrated( true );
@@ -71,6 +73,9 @@ function useInterimOmnibarData( {
 			currentRoute: window.location.pathname,
 			onToggleMenu,
 			onToggleNotifications,
+			// Kept out of the SSR-mirroring render so the first client render matches
+			// the server (which doesn't render the button); it appears post-hydration.
+			showCommandPalette: false,
 		};
 	}
 
@@ -80,10 +85,11 @@ function useInterimOmnibarData( {
 		currentRoute: window.location.pathname,
 		onToggleMenu,
 		onToggleNotifications,
+		showCommandPalette: supports.commandPalette,
 	};
 }
 
 export function InterimOmnibarContainer( props: InterimOmnibarContainerProps ) {
 	const data = useInterimOmnibarData( props );
-	return <InterimOmnibar { ...data } showCommandPalette={ props.showCommandPalette } />;
+	return <InterimOmnibar { ...data } />;
 }

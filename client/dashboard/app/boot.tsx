@@ -45,7 +45,7 @@ function boot( config: AppConfig ) {
 		import( './omnibar' ).then( ( m ) => m.default() ).catch( captureException );
 	} else {
 		import( './interim-omnibar' )
-			.then( ( m ) => m.default( omnibarEvents, config.supports.commandPalette ) )
+			.then( ( m ) => m.default( omnibarEvents, config ) )
 			.catch( captureException );
 	}
 

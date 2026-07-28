@@ -2,10 +2,12 @@ import { isSupportSession } from '@automattic/calypso-support-session';
 // eslint-disable-next-line no-restricted-imports
 import { I18N, I18NContext } from 'i18n-calypso';
 import { hydrateRoot } from 'react-dom/client';
+import { AppProvider } from '../context';
 import { getUserLanguage, loadUserLocaleData } from '../shared-locale-loader';
+import type { AppConfig } from '../context';
 import type { OmnibarEvents } from '../omnibar/events';
 
-export default async function loadOmnibar( events: OmnibarEvents, showCommandPalette = false ) {
+export default async function loadOmnibar( events: OmnibarEvents, config: AppConfig ) {
 	const container = document.getElementById( 'wpcom-omnibar' );
 	if ( ! container ) {
 		return;
@@ -50,11 +52,9 @@ export default async function loadOmnibar( events: OmnibarEvents, showCommandPal
 	hydrateRoot(
 		container,
 		<I18NContext.Provider value={ i18n }>
-			<InterimOmnibarContainer
-				initialUser={ window.currentUser ?? null }
-				events={ events }
-				showCommandPalette={ showCommandPalette }
-			/>
+			<AppProvider config={ config }>
+				<InterimOmnibarContainer initialUser={ window.currentUser ?? null } events={ events } />
+			</AppProvider>
 		</I18NContext.Provider>
 	);
 }
