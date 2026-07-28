@@ -2780,7 +2780,9 @@ const FEATURES_LIST: FeatureList = {
 			) {
 				return i18n.translate( 'WordPress Agent and tools' );
 			}
-			return i18n.translate( 'Enhanced WordPress Agent and tools' );
+			// Falls back to the older, already-translated title until the new one is translated.
+			// Once it is, drop the check and return 'WordPress Agent and tools' unconditionally.
+			return i18n.translate( 'Enhanced AI assistant and tools' );
 		},
 		getDescription: () =>
 			i18n.translate(
