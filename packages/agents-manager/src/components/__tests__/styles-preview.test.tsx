@@ -78,7 +78,13 @@ jest.mock( '@wordpress/components', () => ( {
 } ) );
 
 jest.mock( '@wordpress/compose', () => ( {
-	useResizeObserver: () => [ null, { width: 500 } ],
+	useResizeObserver:
+		( callback: ( entries: { contentRect: { width: number } }[] ) => void ) =>
+		( element: Element | null ) => {
+			if ( element ) {
+				callback( [ { contentRect: { width: 500 } } ] );
+			}
+		},
 	useThrottle: ( fn: ( ...args: unknown[] ) => void ) => fn,
 } ) );
 

@@ -273,7 +273,10 @@ export default function StylesPreview( { type, variation }: Props ) {
 	const headerFontStyle = getHeaderStyleValue( mergedStyles, 'typography.fontStyle' ) ?? fontStyle;
 	const backgroundColor = globalStyles?.styles?.color?.background;
 
-	const [ containerResizeListener, { width } ] = useResizeObserver();
+	const [ width, setWidth ] = useState< number | undefined >();
+	const containerResizeRef = useResizeObserver( ( [ entry ] ) =>
+		setWidth( entry.contentRect.width )
+	);
 	const [ throttledWidth, setThrottledWidthState ] = useState( width );
 	const [ ratioState, setRatioState ] = useState< number >();
 
@@ -350,7 +353,7 @@ export default function StylesPreview( { type, variation }: Props ) {
 
 	return (
 		<>
-			<div style={ { position: 'relative' } }>{ containerResizeListener }</div>
+			<div ref={ containerResizeRef } />
 			<Iframe
 				className="agents-manager-styles-preview__iframe"
 				style={ {
