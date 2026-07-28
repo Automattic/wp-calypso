@@ -1,4 +1,5 @@
 jest.mock( '@wordpress/abilities', () => ( {
+	getAbility: jest.fn(),
 	registerAbility: jest.fn(),
 	registerAbilityCategory: jest.fn(),
 	unregisterAbility: jest.fn(),
@@ -13,6 +14,7 @@ async function load() {
 	const { registerAmAbilities } = await import( '..' );
 	return { registerAmAbilities, ...abilities } as {
 		registerAmAbilities: () => Promise< void >;
+		getAbility: jest.Mock;
 		registerAbility: jest.Mock;
 		registerAbilityCategory: jest.Mock;
 		unregisterAbility: jest.Mock;
@@ -43,14 +45,29 @@ describe( 'registerAmAbilities', () => {
 	} );
 
 	it( 'replaces a provider copy when the name is already registered', async () => {
-		const { registerAmAbilities, registerAbility, unregisterAbility } = await load();
+		const { registerAmAbilities, getAbility, registerAbility, unregisterAbility } = await load();
 		registerAbility.mockRejectedValueOnce(
 			new Error( 'Ability "big-sky/show-component" is already registered' )
 		);
+		getAbility.mockReturnValue( { name: 'big-sky/show-component' } );
 
 		await registerAmAbilities();
 
 		expect( unregisterAbility ).toHaveBeenCalledWith( 'big-sky/show-component' );
 		expect( registerAbility ).toHaveBeenCalledTimes( 2 );
+	} );
+
+	it( 'does not unregister when the failure is not a collision', async () => {
+		const warn = jest.spyOn( console, 'warn' ).mockImplementation( () => {} );
+		const { registerAmAbilities, getAbility, registerAbility, unregisterAbility } = await load();
+		registerAbility.mockRejectedValueOnce( new Error( 'Invalid ability definition' ) );
+		getAbility.mockReturnValue( undefined );
+
+		await registerAmAbilities();
+
+		expect( unregisterAbility ).not.toHaveBeenCalled();
+		expect( registerAbility ).toHaveBeenCalledTimes( 1 );
+		expect( warn ).toHaveBeenCalled();
+		warn.mockRestore();
 	} );
 } );

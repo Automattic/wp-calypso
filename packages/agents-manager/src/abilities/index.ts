@@ -1,4 +1,9 @@
-import { registerAbility, registerAbilityCategory, unregisterAbility } from '@wordpress/abilities';
+import {
+	getAbility,
+	registerAbility,
+	registerAbilityCategory,
+	unregisterAbility,
+} from '@wordpress/abilities';
 import { BIG_SKY_ABILITY_CATEGORY } from './constants';
 import { showComponentAbility } from './show-component';
 import type { Ability } from './types';
@@ -37,13 +42,24 @@ export async function registerAmAbilities(): Promise< void > {
 	for ( const ability of AM_ABILITIES ) {
 		try {
 			await registerAbility( ability );
-		} catch {
+		} catch ( error ) {
+			// Only a name collision (a provider's copy) is recoverable by
+			// replacing — after any other failure, unregistering would just
+			// destroy the provider's working copy.
+			if ( ! getAbility( ability.name ) ) {
+				// eslint-disable-next-line no-console
+				console.warn( `[AgentsManager] Failed to register ability: ${ ability.name }`, error );
+				continue;
+			}
 			try {
 				await unregisterAbility( ability.name );
 				await registerAbility( ability );
-			} catch ( error ) {
+			} catch ( replaceError ) {
 				// eslint-disable-next-line no-console
-				console.warn( `[AgentsManager] Failed to register ability: ${ ability.name }`, error );
+				console.warn(
+					`[AgentsManager] Failed to register ability: ${ ability.name }`,
+					replaceError
+				);
 			}
 		}
 	}
