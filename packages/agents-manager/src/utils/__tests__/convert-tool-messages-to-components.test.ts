@@ -53,6 +53,7 @@ const createToolMessage = (
 describe( 'convertToolMessagesToComponents', () => {
 	beforeEach( () => {
 		jest.clearAllMocks();
+		window.history.replaceState( {}, '', '/' );
 	} );
 
 	it( 'passes through user messages unchanged', () => {
@@ -166,7 +167,6 @@ describe( 'convertToolMessagesToComponents', () => {
 			messages: [ message ],
 			getChatComponent,
 		} );
-		window.history.replaceState( {}, '', '/' );
 
 		expect( getChatComponent ).toHaveBeenCalledWith( 'color-picker' );
 		expect( result[ 0 ].content[ 0 ] ).toMatchObject( { component: MockComponent } );
