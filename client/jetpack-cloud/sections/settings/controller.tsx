@@ -11,10 +11,11 @@ import JetpackStagingSitesManagement from 'calypso/components/jetpack-staging-si
 import Main from 'calypso/components/main';
 import SidebarNavigation from 'calypso/components/sidebar-navigation';
 import {
-	getAgencyDisconnectSiteHref,
 	getAgencyDisconnectSiteId,
+	getAgencyDisconnectSiteQueryArgs,
 } from 'calypso/jetpack-cloud/sections/utils/agency-disconnect-site-paths';
 import { dashboardPath } from 'calypso/lib/jetpack/paths';
+import { addQueryArgs } from 'calypso/lib/url';
 import DisconnectSite from 'calypso/my-sites/site-settings/disconnect-site';
 import ConfirmDisconnection from 'calypso/my-sites/site-settings/disconnect-site/confirm';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
@@ -149,11 +150,14 @@ export const disconnectSiteConfirm: Callback = ( context, next ) => {
 	const { hasAgencySiteId, siteId, siteSlug } = getAgencyDisconnectSiteContext( context );
 	const agencyDisconnectType = typeof type === 'string' ? type : undefined;
 	const backHref = siteId
-		? getAgencyDisconnectSiteHref( {
-				siteId,
-				siteSlug,
-				type: agencyDisconnectType,
-		  } )
+		? addQueryArgs(
+				getAgencyDisconnectSiteQueryArgs( {
+					siteId,
+					siteSlug,
+					type: agencyDisconnectType,
+				} ),
+				`/settings/disconnect-site/${ siteSlug }`
+		  )
 		: undefined;
 
 	context.primary = (

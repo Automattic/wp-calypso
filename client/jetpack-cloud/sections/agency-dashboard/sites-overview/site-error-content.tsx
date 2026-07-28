@@ -1,9 +1,8 @@
 import { Gridicon } from '@automattic/components';
+import { addQueryArgs } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
-import {
-	getDisconnectedAgencySiteRemovalHref,
-	getDisconnectedAgencySiteTroubleshootingHref,
-} from 'calypso/jetpack-cloud/sections/utils/agency-disconnect-site-paths';
+import { getDisconnectedAgencySiteQueryArgs } from 'calypso/jetpack-cloud/sections/utils/agency-disconnect-site-paths';
+import { urlToSlug } from 'calypso/lib/url/http-utils';
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 
@@ -16,10 +15,11 @@ export default function SiteErrorContent( {
 } ) {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
-	const linkArgs = {
+	const siteSlug = urlToSlug( siteUrl );
+	const disconnectQueryArgs = getDisconnectedAgencySiteQueryArgs( {
 		siteId,
-		siteUrl,
-	};
+		siteSlug,
+	} );
 
 	const handleClickFixNow = () => {
 		dispatch( recordTracksEvent( 'calypso_jetpack_agency_dashboard_fix_connection_click' ) );
@@ -40,13 +40,16 @@ export default function SiteErrorContent( {
 				<a
 					onClick={ handleClickFixNow }
 					className="sites-overview__error-message-link"
-					href={ getDisconnectedAgencySiteTroubleshootingHref( linkArgs ) }
+					href={ addQueryArgs( `/settings/disconnect-site/${ siteSlug }`, disconnectQueryArgs ) }
 				>
 					{ translate( 'Fix now' ) }
 				</a>
 				<a
 					className="sites-overview__error-message-link"
-					href={ getDisconnectedAgencySiteRemovalHref( linkArgs ) }
+					href={ addQueryArgs(
+						`/settings/disconnect-site/confirm/${ siteSlug }`,
+						disconnectQueryArgs
+					) }
 				>
 					{ translate( 'Remove site' ) }
 				</a>

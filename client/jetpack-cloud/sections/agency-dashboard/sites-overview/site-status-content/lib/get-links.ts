@@ -1,5 +1,6 @@
 import { isEnabled } from '@automattic/calypso-config';
-import { getDisconnectedAgencySiteTroubleshootingHref } from 'calypso/jetpack-cloud/sections/utils/agency-disconnect-site-paths';
+import { addQueryArgs } from '@wordpress/url';
+import { getDisconnectedAgencySiteQueryArgs } from 'calypso/jetpack-cloud/sections/utils/agency-disconnect-site-paths';
 import { urlToSlug } from 'calypso/lib/url/http-utils';
 import { AllowedTypes } from '../../types';
 
@@ -41,7 +42,10 @@ const getLinks = (
 			isExternalLink = isWPCOMAtomicSiteCreationEnabled && isAtomicSite;
 
 			if ( siteError && siteId && ! isExternalLink ) {
-				link = getDisconnectedAgencySiteTroubleshootingHref( { siteId, siteUrl } );
+				link = addQueryArgs(
+					`/settings/disconnect-site/${ siteSlug }`,
+					getDisconnectedAgencySiteQueryArgs( { siteId, siteSlug } )
+				);
 			}
 			break;
 		}
