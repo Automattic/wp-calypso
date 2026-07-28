@@ -90,12 +90,6 @@
 	--a4a-brand-blue-80: #12304a;
 }
 
-/* 37.0.0 draws the secondary border with `border-color`; A4A buttons are borderless by
- * design, so turn it off. Buttons that want an outline still draw their own box-shadow. */
-:where(.components-button.is-secondary:not(.is-destructive)) {
-	border-color: transparent !important;
-}
-
 .theme-a8c-for-agencies {
 
 	.components-button:not( .dataviews-view-table-header-button ):not( .components-navigator-back-button ),
