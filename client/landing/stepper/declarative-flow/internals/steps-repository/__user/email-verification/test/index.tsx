@@ -272,6 +272,34 @@ describe( 'EmailVerificationGate', () => {
 		expect( onDone ).not.toHaveBeenCalled();
 	} );
 
+	it( 'clears a stale check notice when the email is resent', async () => {
+		jest.useFakeTimers();
+		const user = userEvent.setup( { advanceTimers: jest.advanceTimersByTime } );
+		render();
+
+		act( () => {
+			jest.advanceTimersByTime( COOLDOWN_MS );
+		} );
+
+		// A manual check comes back still unconfirmed.
+		mockFetchUser( false );
+		await user.click( screen.getByRole( 'button', { name: 'I’ve confirmed my email' } ) );
+		expect(
+			await screen.findByText( /We haven’t received your confirmation yet\./ )
+		).toBeVisible();
+
+		// Resending supersedes that check, so its notice clears alongside the fresh cooldown.
+		mockSendVerificationEmail();
+		await user.click( screen.getByRole( 'button', { name: 'resend the email' } ) );
+		await waitFor( () =>
+			expect( screen.getByText( /You can resend the email in 60s\./ ) ).toBeVisible()
+		);
+
+		expect(
+			screen.queryByText( /We haven’t received your confirmation yet\./ )
+		).not.toBeInTheDocument();
+	} );
+
 	it( 'surfaces an unsuccessful resend and keeps resend available', async () => {
 		jest.useFakeTimers();
 		const user = userEvent.setup( { advanceTimers: jest.advanceTimersByTime } );

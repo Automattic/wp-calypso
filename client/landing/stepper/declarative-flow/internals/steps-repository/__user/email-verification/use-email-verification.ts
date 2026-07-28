@@ -48,6 +48,9 @@ export function useEmailVerification( flow: string, scope: string ) {
 	const resend = useCallback( async () => {
 		setIsSending( true );
 		setHasSendError( false );
+		// A resend supersedes an earlier check, so clear its stale "still unconfirmed"/error
+		// notice rather than leaving it beside the fresh cooldown.
+		setCheckStatus( 'idle' );
 
 		try {
 			const { success } = await sendVerificationEmail();
@@ -116,6 +119,7 @@ export function useEmailVerification( flow: string, scope: string ) {
 
 	const checkNow = useCallback( async () => {
 		setCheckStatus( 'checking' );
+		setHasSendError( false );
 		recordTracksEvent( 'calypso_signup_email_verification_check_click', { flow } );
 
 		try {
