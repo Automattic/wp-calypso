@@ -16,7 +16,6 @@ interface RnaActionCardProps {
 	ctaButtonURL?: string;
 	ctaButtonLabel: TranslateResult;
 	ctaButtonExternal?: boolean;
-	hideCtaButton?: boolean;
 	ctaTracksEvent?: string;
 	cardImage?: string;
 	cardImageAlt?: string;
@@ -36,7 +35,6 @@ const JetpackRnaActionCard: React.FC< RnaActionCardProps > = ( {
 	ctaButtonURL,
 	ctaButtonLabel,
 	ctaButtonExternal,
-	hideCtaButton,
 	ctaTracksEvent,
 	cardImage = DefaultImage,
 	cardImageAlt,
@@ -81,21 +79,19 @@ const JetpackRnaActionCard: React.FC< RnaActionCardProps > = ( {
 					{ children && children }
 				</div>
 				<div className="jetpack-rna-action-card__action">
-					{ ! hideCtaButton && (
-						<Button
-							primary
-							className="jetpack-rna-action-card__button"
-							onClick={ handleCtaButtonClick }
-							href={ ctaButtonURL ? ctaButtonURL : '#' }
-							disabled={ ! ctaButtonURL }
-							target={ ctaButtonExternal ? '_blank' : '_self' }
-							rel={ ctaButtonExternal ? 'noopener noreferrer' : '' }
-						>
-							{ ctaButtonLabel }
-							{ ctaButtonExternal && ' ' }
-							{ ctaButtonExternal && <Gridicon icon="external" size={ 16 } /> }
-						</Button>
-					) }
+					<Button
+						primary
+						className="jetpack-rna-action-card__button"
+						onClick={ handleCtaButtonClick }
+						href={ ctaButtonURL ? ctaButtonURL : '#' }
+						disabled={ ! ctaButtonURL }
+						target={ ctaButtonExternal ? '_blank' : '_self' }
+						rel={ ctaButtonExternal ? 'noopener noreferrer' : '' }
+					>
+						{ ctaButtonLabel }
+						{ ctaButtonExternal && ' ' }
+						{ ctaButtonExternal && <Gridicon icon="external" size={ 16 } /> }
+					</Button>
 					{ secondaryCtaURL && (
 						<div className="jetpack-rna-action-card__secondary-cta">
 							<a

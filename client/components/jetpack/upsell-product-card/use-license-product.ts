@@ -23,7 +23,7 @@ export default function useLicenseProduct( nonManageProductSlug: string ) {
 	// keyed on the agency id and picks the Billing Dragon endpoint when the agency is on it.
 	const agencyQuery = useAgencyProductsQuery();
 	const partnerPortalQuery = usePartnerPortalProductsQuery();
-	const { data, isFetched, isFetching } = isA8CForAgencies() ? agencyQuery : partnerPortalQuery;
+	const { data, isFetching } = isA8CForAgencies() ? agencyQuery : partnerPortalQuery;
 
 	const productSlug = nonManageProductSlug.replace( '_yearly', '' ).replace( /_/g, '-' );
 	const products: APIProductFamilyProduct[] | undefined = data;
@@ -31,7 +31,6 @@ export default function useLicenseProduct( nonManageProductSlug: string ) {
 	return {
 		productSlug,
 		product: products?.find( ( product ) => product.slug === productSlug ),
-		isFetched,
 		isFetching,
 	};
 }
