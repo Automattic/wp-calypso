@@ -1,8 +1,10 @@
 import { Button, DropdownMenu } from '@wordpress/components';
 import { useDispatch } from '@wordpress/data';
+import { useCallback, useState } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { close, lineSolid, moreVertical, backup, chevronLeft, Icon } from '@wordpress/icons';
 import { useNavigate } from 'react-router-dom';
+import { useRegisterCustomActions } from '../../hooks/custom-actions';
 import useHasAiChatEntryButton from '../../hooks/use-has-ai-chat-entry-button';
 import { AGENTS_MANAGER_STORE } from '../../stores';
 import { isReaderChatHost } from '../../utils/is-reader-chat-agent';
@@ -25,6 +27,10 @@ export default function ChatHeader( { onClose, options, title, onBack, isDocked 
 	const navigate = useNavigate();
 	const { setIsMinimized } = useDispatch( AGENTS_MANAGER_STORE );
 	const hasAiChatEntry = useHasAiChatEntryButton();
+	const [ isMoreOptionsOpen, setIsMoreOptionsOpen ] = useState( false );
+	const openChatMoreOptions = useCallback( () => setIsMoreOptionsOpen( true ), [] );
+
+	useRegisterCustomActions( { openChatMoreOptions } );
 
 	// Minimize only applies to the floating chat reachable from an AI chat entry button
 	// (wp-admin bar, Calypso masterbar, or editor toolbar).
@@ -54,6 +60,8 @@ export default function ChatHeader( { onClose, options, title, onBack, isDocked 
 					controls={ options }
 					icon={ moreVertical }
 					label={ __( 'More Options', __i18n_text_domain__ ) }
+					open={ isMoreOptionsOpen }
+					onToggle={ setIsMoreOptionsOpen }
 					// Render inside the panel node so opening the menu doesn't blur the panel
 					popoverProps={ {
 						className: 'agents-manager-chat-header__menu-popover',

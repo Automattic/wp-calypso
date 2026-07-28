@@ -2,7 +2,7 @@
  * @jest-environment jsdom
  */
 /* eslint-disable import/order -- jest.mock calls must precede imports */
-import { fireEvent, render, screen } from '@testing-library/react';
+import { act, fireEvent, render, screen } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
 
 const mockSetIsMinimized = jest.fn();
@@ -24,7 +24,19 @@ jest.mock( '@wordpress/components', () => ( {
 			{ children }
 		</button>
 	),
-	DropdownMenu: ( { label }: { label?: string } ) => <button>{ label }</button>,
+	DropdownMenu: ( {
+		label,
+		onToggle,
+		open,
+	}: {
+		label?: string;
+		onToggle?: ( willOpen: boolean ) => void;
+		open?: boolean;
+	} ) => (
+		<button aria-expanded={ open } onClick={ () => onToggle?.( ! open ) }>
+			{ label }
+		</button>
+	),
 } ) );
 jest.mock( '@wordpress/i18n', () => ( { __: ( text: string ) => text } ) );
 jest.mock( '@wordpress/icons', () => ( {
@@ -86,6 +98,7 @@ describe( 'ChatHeader', () => {
 		document.getElementById( 'wp-admin-bar-agents-manager-ai-chat' )?.remove();
 		delete ( globalThis as { agentsManagerData?: unknown } ).agentsManagerData;
 		document.querySelector( '.masterbar__item-agents-manager-ai-chat' )?.remove();
+		delete window.__agentsManagerActions;
 	} );
 
 	it( 'renders the title with a matching title attribute so the full text shows on hover when truncated', () => {
@@ -154,5 +167,15 @@ describe( 'ChatHeader', () => {
 		renderChatHeader( undefined, false );
 
 		expect( screen.getByText( 'Minimize' ) ).toBeInTheDocument();
+	} );
+
+	it( 'opens the More Options menu through the cross-bundle action', () => {
+		renderChatHeader();
+
+		expect( screen.getByText( 'More Options' ) ).toHaveAttribute( 'aria-expanded', 'false' );
+
+		act( () => window.__agentsManagerActions?.openChatMoreOptions() );
+
+		expect( screen.getByText( 'More Options' ) ).toHaveAttribute( 'aria-expanded', 'true' );
 	} );
 } );

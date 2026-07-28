@@ -111,6 +111,7 @@ interface AgentsManagerActions {
 	setChatEnabled: ( isEnabled: boolean ) => void;
 	setChatCompactMode: ( isCompact: boolean ) => void;
 	setChatDesktopMediaQuery: ( query: string ) => void;
+	openChatMoreOptions: () => void;
 	setChatInput?: ( value: string ) => void;
 	submitChatMessage?: ( message?: string ) => Promise< void >;
 	setContextEntry: ( entry: AgentsManagerExternalContextEntry ) => void;

@@ -25,6 +25,7 @@ export interface PostFeedbackProps {
 	items?: FeedbackListItem[];
 	sections?: FeedbackListSection[];
 	postId?: EditorPostId;
+	isMessageStale?: boolean;
 }
 
 /**
@@ -32,13 +33,20 @@ export interface PostFeedbackProps {
  * @param {PostFeedbackProps} props Component props.
  * @returns React element.
  */
-export default function PostFeedback( { summary, items, sections, postId }: PostFeedbackProps ) {
+export default function PostFeedback( {
+	summary,
+	items,
+	sections,
+	postId,
+	isMessageStale,
+}: PostFeedbackProps ) {
 	return (
 		<FeedbackList
 			summary={ summary }
 			items={ items }
 			sections={ sections }
 			postId={ postId }
+			isMessageStale={ isMessageStale }
 			sectionFallbackTitle={ __( 'Suggested edits', __i18n_text_domain__ ) }
 			staleWarning={ __(
 				'Feedback context changed. Generate feedback again for this post.',

@@ -23,6 +23,7 @@ export interface ProofreadProps {
 	items?: FeedbackListItem[];
 	sections?: FeedbackListSection[];
 	postId?: EditorPostId;
+	isMessageStale?: boolean;
 }
 
 /**
@@ -30,13 +31,20 @@ export interface ProofreadProps {
  * @param {ProofreadProps} props Component props.
  * @returns React element.
  */
-export default function Proofread( { summary, items, sections, postId }: ProofreadProps ) {
+export default function Proofread( {
+	summary,
+	items,
+	sections,
+	postId,
+	isMessageStale,
+}: ProofreadProps ) {
 	return (
 		<FeedbackList
 			summary={ summary }
 			items={ items }
 			sections={ sections }
 			postId={ postId }
+			isMessageStale={ isMessageStale }
 			sectionFallbackTitle={ __( 'Suggested edits', __i18n_text_domain__ ) }
 			staleWarning={ __(
 				'Review context changed. Run the spelling and grammar check again for this post.',

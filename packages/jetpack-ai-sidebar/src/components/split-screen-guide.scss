@@ -1,0 +1,16 @@
+.jetpack-ai-split-screen-guide {
+	margin-inline: var( --spacing-4 );
+	margin-block-end: var( --spacing-4 );
+
+	// Agenttic's dark message rule assigns its foreground colour to every
+	// descendant, overriding the light info Notice's own accessible colours.
+	.components-notice__content,
+	.components-notice__content * {
+		color: var( --wp-components-notice-text-color, #001b4f );
+	}
+
+	.components-notice__dismiss,
+	.components-notice__dismiss * {
+		color: var( --wpds-color-foreground-interactive-neutral, #1e1e1e );
+	}
+}
