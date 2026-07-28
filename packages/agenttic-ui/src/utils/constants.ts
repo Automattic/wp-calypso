@@ -1,3 +1,5 @@
+import type { BoundaryInsets } from '../types';
+
 export const STYLE_CONSTANTS = {
 	COLLAPSED_SIZE: 56,
 	COMPACT_WIDTH: 372,
@@ -7,6 +9,34 @@ export const STYLE_CONSTANTS = {
 	PADDING: 16,
 	VIEWPORT_OFFSET: 16,
 } as const;
+
+// The historical fixed gap on every side (VIEWPORT_OFFSET).
+export const DEFAULT_BOUNDARY_INSETS: BoundaryInsets = {
+	top: STYLE_CONSTANTS.VIEWPORT_OFFSET,
+	right: STYLE_CONSTANTS.VIEWPORT_OFFSET,
+	bottom: STYLE_CONSTANTS.VIEWPORT_OFFSET,
+	left: STYLE_CONSTANTS.VIEWPORT_OFFSET,
+};
+
+/**
+ * Resolve the `boundaryInset` prop into a full per-side insets object. A
+ * number applies to all sides; a partial object fills missing sides with the
+ * 16px default; undefined returns the shared default object.
+ *
+ * @param inset - The consumer-supplied boundaryInset prop
+ * @return The resolved per-side insets
+ */
+export function resolveBoundaryInset(
+	inset?: number | Partial< BoundaryInsets >
+): BoundaryInsets {
+	if ( inset === undefined ) {
+		return DEFAULT_BOUNDARY_INSETS;
+	}
+	if ( typeof inset === 'number' ) {
+		return { top: inset, right: inset, bottom: inset, left: inset };
+	}
+	return { ...DEFAULT_BOUNDARY_INSETS, ...inset };
+}
 
 // The 8 resize handles. Edges map to a single axis; corners resize both. Cursor
 // follows the edge orientation. The className maps to a CSS rule that positions

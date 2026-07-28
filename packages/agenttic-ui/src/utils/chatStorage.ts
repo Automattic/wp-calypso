@@ -2,7 +2,8 @@
  * Utility functions for persisting chat UI preferences in localStorage
  */
 
-import { STYLE_CONSTANTS } from './constants';
+import { DEFAULT_BOUNDARY_INSETS, STYLE_CONSTANTS } from './constants';
+import type { BoundaryInsets } from '../types';
 
 const STORAGE_KEY = 'agenttic-chat-position';
 
@@ -35,8 +36,8 @@ export function getChatPosition(
 /**
  * Clamp a free-drag pixel offset to the inset viewport so the panel can't be
  * stranded off-screen. Uses the same constraint geometry as the drag box:
- * x in [0, innerWidth - width - VIEWPORT_OFFSET*2], y in
- * [2*VIEWPORT_OFFSET + height - innerHeight, 0]. When the viewport is smaller
+ * x in [0, innerWidth - width - left - right], y in
+ * [top + bottom + height - innerHeight, 0]. When the viewport is smaller
  * than the panel the min bound wins (Math.min runs after Math.max).
  *
  * @param position   - The free-drag pixel offset to clamp
@@ -44,17 +45,17 @@ export function getChatPosition(
  * @param position.y - Vertical offset
  * @param width      - Panel width
  * @param height     - Panel height
+ * @param insets     - Per-side viewport insets (boundaryInset)
  * @return The clamped { x, y } pixel offset
  */
 export function clampFreeDragPosition(
 	{ x, y }: { x: number; y: number },
 	width: number,
-	height: number
+	height: number,
+	insets: BoundaryInsets = DEFAULT_BOUNDARY_INSETS
 ): { x: number; y: number } {
-	const maxX =
-		window.innerWidth - width - STYLE_CONSTANTS.VIEWPORT_OFFSET * 2;
-	const minY =
-		2 * STYLE_CONSTANTS.VIEWPORT_OFFSET + height - window.innerHeight;
+	const maxX = window.innerWidth - width - insets.left - insets.right;
+	const minY = insets.top + insets.bottom + height - window.innerHeight;
 
 	return {
 		x: Math.max( 0, Math.min( x, maxX ) ),
@@ -64,24 +65,24 @@ export function clampFreeDragPosition(
 
 /**
  * Analytic corner-snap transform offset for a docked panel. The panel is
- * CSS-anchored at `left: VIEWPORT_OFFSET`, `bottom: VIEWPORT_OFFSET`, so the
+ * CSS-anchored at `left: insets.left`, `bottom: insets.bottom`, so the
  * bottom edge is docked by CSS and needs no measurement — the docked `y`
  * transform is always 0. The right corner's x matches the `maxX` in
  * clampFreeDragPosition and the `cornerX` in getInitialChatPosition.
  *
  * @param side       - The corner side to dock to
  * @param panelWidth - Panel width
+ * @param insets     - Per-side viewport insets (boundaryInset)
  * @return The docked { x, y } transform offset
  */
 export function getCornerSnapPosition(
 	side: 'left' | 'right',
-	panelWidth: number
+	panelWidth: number,
+	insets: BoundaryInsets = DEFAULT_BOUNDARY_INSETS
 ): { x: number; y: number } {
 	const x =
 		side === 'right'
-			? window.innerWidth -
-			  panelWidth -
-			  STYLE_CONSTANTS.VIEWPORT_OFFSET * 2
+			? window.innerWidth - panelWidth - insets.left - insets.right
 			: 0;
 	return { x, y: 0 };
 }
@@ -101,6 +102,7 @@ export function getCornerSnapPosition(
  * @param options.side                    - The saved corner side
  * @param options.width                   - Panel width (defaults to COMPACT_WIDTH)
  * @param options.height                  - Panel height (defaults to EXPANDED_HEIGHT)
+ * @param options.insets                  - Per-side viewport insets (boundaryInset)
  * @return The initial { x, y } pixel position
  */
 export function getInitialChatPosition( {
@@ -109,16 +111,18 @@ export function getInitialChatPosition( {
 	side,
 	width = STYLE_CONSTANTS.COMPACT_WIDTH,
 	height = STYLE_CONSTANTS.EXPANDED_HEIGHT,
+	insets = DEFAULT_BOUNDARY_INSETS,
 }: {
 	freeDrag: boolean;
 	initialFreeDragPosition: { x: number; y: number } | undefined;
 	side: ChatPosition;
 	width?: number;
 	height?: number;
+	insets?: BoundaryInsets;
 } ): { x: number; y: number } {
 	const cornerX =
 		side === 'right'
-			? window.innerWidth - width - STYLE_CONSTANTS.VIEWPORT_OFFSET * 2
+			? window.innerWidth - width - insets.left - insets.right
 			: 0;
 
 	if ( ! freeDrag || initialFreeDragPosition === undefined ) {
@@ -126,7 +130,12 @@ export function getInitialChatPosition( {
 	}
 
 	// Clamp the seed so a persisted off-screen position is pulled back on-screen.
-	return clampFreeDragPosition( initialFreeDragPosition, width, height );
+	return clampFreeDragPosition(
+		initialFreeDragPosition,
+		width,
+		height,
+		insets
+	);
 }
 
 /**

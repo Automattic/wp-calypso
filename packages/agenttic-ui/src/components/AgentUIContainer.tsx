@@ -5,6 +5,7 @@ import { loadAgentticTranslations } from '../utils/translation-loader';
 import { useChat } from '../hooks/useChat';
 import { useInput } from '../hooks/useInput';
 import { useFloatingPanel } from '../hooks/useFloatingPanel';
+import { useBoundaryInsets } from '../hooks/useBoundaryInsets';
 import { useWindowFocusStatus } from '../hooks/useWindowFocusStatus';
 import type { AgentUIProps, Suggestion } from '../types';
 import { cn } from '../utils/classNames';
@@ -65,6 +66,7 @@ export function AgentUIContainer( {
 	freeDrag = false,
 	initialFreeDragPosition,
 	onFreeDragEnd,
+	boundaryInset,
 	resizable = false,
 	defaultSize,
 	size,
@@ -188,6 +190,8 @@ export function AgentUIContainer( {
 	const [ compactHeight, setCompactHeight ] = useState( 56 );
 	const compactRef = useRef< HTMLDivElement >( null );
 
+	const insets = useBoundaryInsets( boundaryInset );
+
 	// Drag + resize compose here (see useFloatingPanel for the seam).
 	const {
 		x,
@@ -220,6 +224,7 @@ export function AgentUIContainer( {
 		onFreeDragEnd,
 		onResize,
 		onResizeEnd,
+		insets,
 	} );
 
 	// Dedup-aware reporter for the actually-rendered suggestion set. Owned here so
@@ -526,10 +531,10 @@ export function AgentUIContainer( {
 				ref={ constraintsRef }
 				style={ {
 					position: 'fixed',
-					top: STYLE_CONSTANTS.VIEWPORT_OFFSET,
-					left: STYLE_CONSTANTS.VIEWPORT_OFFSET,
-					right: STYLE_CONSTANTS.VIEWPORT_OFFSET,
-					bottom: STYLE_CONSTANTS.VIEWPORT_OFFSET,
+					top: insets.top,
+					left: insets.left,
+					right: insets.right,
+					bottom: insets.bottom,
 					pointerEvents: 'none',
 				} }
 			/>
@@ -559,16 +564,13 @@ export function AgentUIContainer( {
 				// Glide the dock offset between states; `initial={ false }` skips it on mount.
 				initial={ false }
 				animate={ {
-					bottom:
-						chat.state === 'minimized'
-							? 0
-							: STYLE_CONSTANTS.VIEWPORT_OFFSET,
+					bottom: chat.state === 'minimized' ? 0 : insets.bottom,
 				} }
 				transition={ morphSpring }
 				style={ {
 					x,
 					y,
-					left: STYLE_CONSTANTS.VIEWPORT_OFFSET,
+					left: insets.left,
 					cursor: draggableStates.includes( chat.state )
 						? 'grab'
 						: 'default',
