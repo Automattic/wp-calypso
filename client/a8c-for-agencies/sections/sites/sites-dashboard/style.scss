@@ -850,6 +850,18 @@
 		color: var( --color-scary-50 );
 	}
 
+	// Scoped here rather than on the shared status column, which Jetpack Cloud also renders.
+	// The hover underline sits on the value so it picks up the status color; on the anchor
+	// it would resolve to the link blue instead.
+	.sites-overview__row-status > a {
+		text-decoration: none;
+
+		&:hover > *,
+		&:focus-visible > * {
+			text-decoration: underline;
+		}
+	}
+
 	@mixin boost-score-style( $color, $background-color ) {
 		@extend .sites-overview__column-content;
 		color: $color;
