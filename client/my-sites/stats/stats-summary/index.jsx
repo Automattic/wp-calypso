@@ -72,7 +72,7 @@ class StatsSummaryChart extends Component {
 				{
 					label: tabLabel,
 					className: sectionClass,
-					value: formatNumber( record.value ),
+					value: record.formattedValue ?? formatNumber( record.value ),
 					icon: this.iconByChartType( chartType ),
 				},
 			];

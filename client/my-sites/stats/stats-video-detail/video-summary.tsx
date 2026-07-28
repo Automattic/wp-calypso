@@ -17,7 +17,11 @@ import StatsPeriodHeader from '../stats-period-header';
 import StatsPeriodNavigation from '../stats-period-navigation';
 import SummaryChart from '../stats-summary';
 import { calculatePlayWeightedRetention } from './retention';
-import VideoMetricTabs, { VideoStatType, VideoMetricValues } from './video-metric-tabs';
+import VideoMetricTabs, {
+	formatValue,
+	VideoStatType,
+	VideoMetricValues,
+} from './video-metric-tabs';
 
 type UiPeriod = 'day' | 'week' | 'month' | 'year';
 
@@ -26,6 +30,7 @@ interface ChartRecord {
 	periodLabel: string;
 	startDate: string;
 	value: number;
+	formattedValue?: string;
 }
 
 // A range-mode series row from the statsVideo normalizer: the period start
@@ -125,36 +130,43 @@ export default function VideoSummary( {
 			visibleRows.map( ( row ) => {
 				const start = moment( row.period );
 				const value = metricValue( row, statType );
+				// Views and impressions tooltips show the exact count; hours
+				// watched and retention rate reuse the metric-tab formatting
+				// (one decimal, % suffix) so the tooltip matches the card.
+				const record = {
+					startDate: row.period,
+					value,
+					formattedValue:
+						statType === 'watch_time' || statType === 'retention_rate'
+							? formatValue( statType, value )
+							: undefined,
+				};
 				switch ( uiPeriod ) {
 					case 'week':
 						return {
+							...record,
 							period: start.format( 'MMM D' ),
 							periodLabel: `${ start.format( 'L' ) } - ${ moment( row.period )
 								.add( 6, 'days' )
 								.format( 'L' ) }`,
-							startDate: row.period,
-							value,
 						};
 					case 'month':
 						return {
+							...record,
 							period: start.format( 'MMM YYYY' ),
 							periodLabel: start.format( 'MMMM YYYY' ),
-							startDate: row.period,
-							value,
 						};
 					case 'year':
 						return {
+							...record,
 							period: start.format( 'YYYY' ),
 							periodLabel: start.format( 'YYYY' ),
-							startDate: row.period,
-							value,
 						};
 					default:
 						return {
+							...record,
 							period: start.format( 'MMM D' ),
 							periodLabel: start.format( 'LL' ),
-							startDate: row.period,
-							value,
 						};
 				}
 			} ),

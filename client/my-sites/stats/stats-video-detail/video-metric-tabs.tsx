@@ -9,7 +9,7 @@ export type VideoStatType = 'views' | 'impressions' | 'watch_time' | 'retention_
 // `null` renders a loading placeholder.
 export type VideoMetricValues = Record< VideoStatType, number | null >;
 
-function formatValue( statType: VideoStatType, value: number | null ) {
+export function formatValue( statType: VideoStatType, value: number | null ) {
 	if ( value === null ) {
 		return '-';
 	}
