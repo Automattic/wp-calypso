@@ -5,10 +5,9 @@ import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { EVERY_FIVE_SECONDS, EVERY_SECOND, useInterval } from 'calypso/lib/interval';
 import { useDispatch, useSelector } from 'calypso/state';
 import { fetchCurrentUser, setUserEmailVerified } from 'calypso/state/current-user/actions';
-import { getCurrentUser, isCurrentUserEmailVerified } from 'calypso/state/current-user/selectors';
+import { isCurrentUserEmailVerified } from 'calypso/state/current-user/selectors';
 import {
 	cooldownRemainingSeconds,
-	gateScope,
 	gateSentAt,
 	markResent,
 	RESEND_COOLDOWN_SECONDS,
@@ -20,11 +19,14 @@ import {
 // away in their email app while this screen is up.
 const POLL_LIMIT_MS = 15 * 60 * 1000;
 
-export function useEmailVerification( flow: string ) {
+// The manual "I've confirmed" check: idle, in flight, came back still unconfirmed, or the
+// request itself failed (kept distinct from unconfirmed so a network error isn't mistaken
+// for an unverified email).
+type CheckStatus = 'idle' | 'checking' | 'unconfirmed' | 'error';
+
+export function useEmailVerification( flow: string, scope: string ) {
 	const dispatch = useDispatch();
 	const isVerified = useSelector( isCurrentUserEmailVerified );
-	const userId = useSelector( getCurrentUser )?.ID;
-	const scope = gateScope( flow, userId );
 	const sendVerificationEmail = useSendEmailVerification();
 
 	// The cooldown is driven by this in-memory send time, not by re-reading storage each
@@ -43,9 +45,7 @@ export function useEmailVerification( flow: string ) {
 	);
 	const [ isPollingExpired, setIsPollingExpired ] = useState( false );
 	const [ pollWindowKey, setPollWindowKey ] = useState( 0 );
-	const [ isChecking, setIsChecking ] = useState( false );
-	const [ hasFailedCheck, setHasFailedCheck ] = useState( false );
-	const [ hasCheckError, setHasCheckError ] = useState( false );
+	const [ checkStatus, setCheckStatus ] = useState< CheckStatus >( 'idle' );
 	const [ isVisible, setIsVisible ] = useState( () => document.visibilityState === 'visible' );
 
 	// The initial email is the activation email from account creation; this only resends.
@@ -81,8 +81,8 @@ export function useEmailVerification( flow: string ) {
 		}
 	}, [ sendVerificationEmail, flow, scope ] );
 
-	// Recompute the cooldown from the stored send time rather than decrementing: mobile
-	// browsers suspend timers while the user is in their email app.
+	// Recompute the cooldown from the send time rather than decrementing a counter: mobile
+	// browsers suspend timers while the user is away in their email app.
 	useInterval(
 		() => setSecondsUntilResend( cooldownRemainingSeconds( sentAtRef.current ) ),
 		secondsUntilResend > 0 && EVERY_SECOND
@@ -103,7 +103,7 @@ export function useEmailVerification( flow: string ) {
 		};
 		document.addEventListener( 'visibilitychange', onVisibilityChange );
 		return () => document.removeEventListener( 'visibilitychange', onVisibilityChange );
-	}, [ scope, isVerified, dispatch ] );
+	}, [ isVerified, dispatch ] );
 
 	useEffect( () => {
 		if ( isVerified ) {
@@ -119,10 +119,7 @@ export function useEmailVerification( flow: string ) {
 	);
 
 	const checkNow = useCallback( async () => {
-		setIsChecking( true );
-		setHasFailedCheck( false );
-		setHasCheckError( false );
-
+		setCheckStatus( 'checking' );
 		recordTracksEvent( 'calypso_signup_email_verification_check_click', { flow } );
 
 		try {
@@ -132,12 +129,10 @@ export function useEmailVerification( flow: string ) {
 			if ( email_verified ) {
 				dispatch( setUserEmailVerified( true ) );
 			} else {
-				setHasFailedCheck( true );
+				setCheckStatus( 'unconfirmed' );
 			}
 		} catch {
-			setHasCheckError( true );
-		} finally {
-			setIsChecking( false );
+			setCheckStatus( 'error' );
 		}
 	}, [ dispatch, flow ] );
 
@@ -146,9 +141,7 @@ export function useEmailVerification( flow: string ) {
 		isSending,
 		hasSendError,
 		secondsUntilResend,
-		isChecking,
-		hasFailedCheck,
-		hasCheckError,
+		checkStatus,
 		checkNow,
 		resend,
 	};

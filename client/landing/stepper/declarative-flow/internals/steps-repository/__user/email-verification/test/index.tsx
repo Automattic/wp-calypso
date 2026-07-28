@@ -66,7 +66,7 @@ const render = ( { onDone = jest.fn(), logo }: { onDone?: jest.Mock; logo?: Reac
 		beginGate( SCOPE );
 	}
 	const result = renderStep(
-		<EmailVerificationGate flow={ FLOW } logo={ logo } onDone={ onDone } />,
+		<EmailVerificationGate flow={ FLOW } scope={ SCOPE } logo={ logo } onDone={ onDone } />,
 		{
 			initialState: currentUserState( false ),
 		}
@@ -159,7 +159,7 @@ describe( 'EmailVerificationGate', () => {
 
 		renderWithProvider(
 			<MemoryRouter>
-				<EmailVerificationGate flow={ FLOW } onDone={ onDone } />
+				<EmailVerificationGate flow={ FLOW } scope={ SCOPE } onDone={ onDone } />
 			</MemoryRouter>,
 			{ store }
 		);
@@ -193,7 +193,7 @@ describe( 'EmailVerificationGate', () => {
 
 		const onDone = jest.fn();
 		// Already verified, so the gate confirms immediately on mount.
-		renderStep( <EmailVerificationGate flow={ FLOW } onDone={ onDone } />, {
+		renderStep( <EmailVerificationGate flow={ FLOW } scope={ SCOPE } onDone={ onDone } />, {
 			initialState: currentUserState( true ),
 		} );
 
@@ -220,7 +220,7 @@ describe( 'EmailVerificationGate', () => {
 					logo: null,
 				} }
 			>
-				<EmailVerificationGate flow={ FLOW } onDone={ onDone } />
+				<EmailVerificationGate flow={ FLOW } scope={ SCOPE } onDone={ onDone } />
 			</Step.StepContainerV2Provider>,
 			{ initialState: currentUserState( false ) }
 		);

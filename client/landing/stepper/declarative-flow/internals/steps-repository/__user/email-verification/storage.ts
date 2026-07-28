@@ -1,9 +1,7 @@
-// One session-storage record for the email-verification gate, keyed by flow and user,
-// so its state survives leaving/re-entering the account step or a refresh:
-//   - pending: this attempt created an email account and hasn't confirmed/skipped yet.
-//   - sentAt:  when the (initial or resent) verification email was sent — the cooldown anchor.
-//   - shownAt: when the gate first rendered — the duration anchor, so the metric excludes
-//              the account-creation → gate loading time and is correct even after a refresh.
+// One session-storage record per gate attempt, keyed by flow and user, so its state
+// survives leaving/re-entering the account step or a refresh. The record's presence means
+// the gate is pending; resolving removes it. `sentAt` anchors the resend cooldown and
+// `shownAt` (stamped when the gate first renders) anchors the duration metric.
 
 export const RESEND_COOLDOWN_SECONDS = 60;
 
@@ -14,14 +12,17 @@ export function gateScope( flow: string, userId: number | string | undefined ): 
 }
 
 interface GateRecord {
-	pending: boolean;
 	sentAt: number;
 	shownAt: number;
 }
 
+function storageKey( scope: string ): string {
+	return `${ STORAGE_KEY }:${ scope }`;
+}
+
 function read( scope: string ): GateRecord | null {
 	try {
-		const raw = sessionStorage.getItem( `${ STORAGE_KEY }:${ scope }` );
+		const raw = sessionStorage.getItem( storageKey( scope ) );
 		return raw ? ( JSON.parse( raw ) as GateRecord ) : null;
 	} catch {
 		return null;
@@ -30,7 +31,7 @@ function read( scope: string ): GateRecord | null {
 
 function write( scope: string, record: GateRecord ): void {
 	try {
-		sessionStorage.setItem( `${ STORAGE_KEY }:${ scope }`, JSON.stringify( record ) );
+		sessionStorage.setItem( storageKey( scope ), JSON.stringify( record ) );
 	} catch {
 		// Ignore storage failures (private mode, quota); the state just won't persist.
 	}
@@ -39,11 +40,11 @@ function write( scope: string, record: GateRecord ): void {
 // Called at email account creation: open the gate and record the activation email as
 // the initial send. `shownAt` is filled in later, when the gate first renders.
 export function beginGate( scope: string ): void {
-	write( scope, { pending: true, sentAt: Date.now(), shownAt: 0 } );
+	write( scope, { sentAt: Date.now(), shownAt: 0 } );
 }
 
-// Called when the gate first renders, so the duration metric excludes the time spent
-// loading the token and hydrating the current user between account creation and the gate.
+// Stamped when the gate first renders, so the duration metric excludes the token-load and
+// user-hydration wait between account creation and the gate.
 export function markGateShown( scope: string ): void {
 	const record = read( scope );
 	if ( record && ! record.shownAt ) {
@@ -52,14 +53,15 @@ export function markGateShown( scope: string ): void {
 }
 
 export function isGatePending( scope: string ): boolean {
-	return read( scope )?.pending === true;
+	return read( scope ) !== null;
 }
 
 // Called on confirm or skip.
 export function resolveGate( scope: string ): void {
-	const record = read( scope );
-	if ( record ) {
-		write( scope, { ...record, pending: false } );
+	try {
+		sessionStorage.removeItem( storageKey( scope ) );
+	} catch {
+		// Ignore storage failures; the in-session state has already moved on.
 	}
 }
 

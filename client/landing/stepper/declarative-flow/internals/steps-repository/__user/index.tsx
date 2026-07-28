@@ -73,12 +73,9 @@ const UserStepComponent: StepType< { accepts: UserStepAccepts } > = function Use
 	const { handleSocialResponse, notice, accountCreateResponse } = useHandleSocialResponse( flow );
 	const [ wpAccountCreateResponse, setWpAccountCreateResponse ] = useState< AccountCreateReturn >();
 
-	// The gate holds this step while this attempt's email account creation is unresolved.
-	// `pendingThisSession` is the in-session source of truth, so the gate still shows even
-	// if persisting the marker failed (e.g. storage disabled); the persisted marker only
-	// restores that state after a refresh. Social/existing sessions never set either. The
-	// gate owns resolution — it records the outcome and clears the marker — so an
-	// already-verified pending user (e.g. confirmed during a reload) still completes it.
+	// `pendingThisSession` is the in-session source of truth, so a failed storage write
+	// can't skip the gate; the persisted marker only restores it after a refresh. Social
+	// and existing sessions never open the gate, and the gate itself owns resolution.
 	const [ pendingThisSession, setPendingThisSession ] = useState( false );
 	const scope = gateScope( flow, userId );
 	const gateEnabled =
@@ -118,9 +115,8 @@ const UserStepComponent: StepType< { accepts: UserStepAccepts } > = function Use
 		if ( ! isLoggedIn ) {
 			dispatch( fetchCurrentUser() as unknown as AnyAction );
 		} else if ( ! requiresEmailVerification ) {
-			// Nothing pending — advance. While pending the gate is rendered instead and owns
-			// the transition (via `onDone`); `pendingThisSession` stays set until it does, so
-			// this branch never fires underneath it.
+			// While pending, the gate renders instead and owns the transition via `onDone`;
+			// `pendingThisSession` stays set until then, so this never submits underneath it.
 			navigation.submit?.();
 		}
 	}, [ dispatch, isLoggedIn, navigation, requiresEmailVerification ] );
@@ -142,8 +138,8 @@ const UserStepComponent: StepType< { accepts: UserStepAccepts } > = function Use
 		}
 		setSignupIsNewUser( data.ID );
 		if ( gateEnabled ) {
-			// This attempt just created an email account: open the gate and treat the
-			// activation email as the initial send so the resend cooldown starts here.
+			// Open the gate; the activation email from signup counts as the initial send, so
+			// the resend cooldown starts here rather than the gate sending a second email.
 			setPendingThisSession( true );
 			beginGate( gateScope( flow, data.ID ) );
 			recordTracksEvent( 'calypso_signup_email_verification_email_sent', {
@@ -224,6 +220,7 @@ const UserStepComponent: StepType< { accepts: UserStepAccepts } > = function Use
 		return (
 			<EmailVerificationGate
 				flow={ flow }
+				scope={ scope }
 				logo={ topBarLogo }
 				onDone={ () => {
 					resolveGate( scope );

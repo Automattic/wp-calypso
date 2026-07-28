@@ -8,13 +8,15 @@ import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import UserVerificationChecker from 'calypso/lib/user/verification-checker';
 import { useSelector } from 'calypso/state';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
-import { gateScope, gateShownAt, markGateShown } from './storage';
+import { gateShownAt, markGateShown } from './storage';
 import { useEmailVerification } from './use-email-verification';
 
 import './style.scss';
 
 interface Props {
 	flow: string;
+	// Storage scope for this attempt, computed once by the account step.
+	scope: string;
 	// Partner/Woo branding logo from the account step, so the gate keeps the same top
 	// bar the signup screen had instead of switching to an unbranded one.
 	logo?: ReactNode;
@@ -23,29 +25,18 @@ interface Props {
 	onDone: () => void;
 }
 
-const EmailVerificationGate = ( { flow, logo, onDone }: Props ) => {
+const EmailVerificationGate = ( { flow, scope, logo, onDone }: Props ) => {
 	const { __ } = useI18n();
 	const user = useSelector( getCurrentUser );
-	const {
-		isVerified,
-		isSending,
-		hasSendError,
-		secondsUntilResend,
-		isChecking,
-		hasFailedCheck,
-		hasCheckError,
-		checkNow,
-		resend,
-	} = useEmailVerification( flow );
+	const { isVerified, isSending, hasSendError, secondsUntilResend, checkStatus, checkNow, resend } =
+		useEmailVerification( flow, scope );
 
 	const hasSubmitted = useRef( false );
 	const headingRef = useRef< HTMLDivElement >( null );
-	const scope = gateScope( flow, user?.ID );
 
 	const title = __( 'Confirm your email address' );
 
-	// Stamp the shown-at time now that the gate is actually on screen, so the duration
-	// metric doesn't count the loading between account creation and this render.
+	// Stamp the shown-at time now the gate is actually on screen (see storage.ts).
 	useEffect( () => {
 		markGateShown( scope );
 	}, [ scope ] );
@@ -123,11 +114,15 @@ const EmailVerificationGate = ( { flow, logo, onDone }: Props ) => {
 					</div>
 				}
 			>
-				<Step.PrimaryButton onClick={ checkNow } isBusy={ isChecking } disabled={ isChecking }>
+				<Step.PrimaryButton
+					onClick={ checkNow }
+					isBusy={ checkStatus === 'checking' }
+					disabled={ checkStatus === 'checking' }
+				>
 					{ __( 'I’ve confirmed my email' ) }
 				</Step.PrimaryButton>
 
-				{ hasFailedCheck && (
+				{ checkStatus === 'unconfirmed' && (
 					<p className="onboarding-email-verification__notice" role="status">
 						{ __(
 							'We haven’t received your confirmation yet. Open the link in your inbox, then try again.'
@@ -135,7 +130,7 @@ const EmailVerificationGate = ( { flow, logo, onDone }: Props ) => {
 					</p>
 				) }
 
-				{ hasCheckError && (
+				{ checkStatus === 'error' && (
 					<p className="onboarding-email-verification__notice is-error" role="alert">
 						{ __( 'We couldn’t check right now. Please try again in a moment.' ) }
 					</p>
