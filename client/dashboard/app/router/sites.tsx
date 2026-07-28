@@ -28,6 +28,7 @@ import {
 	sitePlansQuery,
 	siteBySlugQuery,
 	siteByIdQuery,
+	siteAdminMenuQuery,
 	siteCrontabsQuery,
 	sitePreviewLinksQuery,
 	sitePrimaryDataCenterQuery,
@@ -179,6 +180,10 @@ export const siteRoute = createRoute( {
 		const otherEnvironmentSiteId = site.is_wpcom_staging_site
 			? site.options?.wpcom_production_blog_id
 			: site.options?.wpcom_staging_blog_ids?.[ 0 ];
+
+		// Warm the omnibar admin menu without gating the route transition.
+		queryClient.prefetchQuery( siteAdminMenuQuery( site.ID ) );
+
 		await Promise.all( [
 			otherEnvironmentSiteId &&
 				queryClient.ensureQueryData( siteByIdQuery( otherEnvironmentSiteId ) ),
