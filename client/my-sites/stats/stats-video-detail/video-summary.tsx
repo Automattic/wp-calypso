@@ -81,7 +81,6 @@ export default function VideoSummary( {
 	const [ statType, setStatType ] = useState< VideoStatType >(
 		isVideoStatType( initialStatType ) ? initialStatType : 'views'
 	);
-	const [ selectedRecord, setSelectedRecord ] = useState< ChartRecord | null >( null );
 
 	// One request per granularity: statType=all returns every metric series in
 	// a single response, and num=-1 windows it from the video's publish date,
@@ -173,14 +172,8 @@ export default function VideoSummary( {
 		[ visibleRows, statType, uiPeriod, moment ]
 	);
 
-	// No bar is highlighted by default; the header shows the range instead of
-	// a single bar's date, so defaulting to the most recent bar would highlight
-	// it for no reason until the user actually clicks one.
-	const selected = selectedRecord;
-
 	// The header shows the date range the visible bars cover (like the Post
-	// Details chart's page-range header), rather than the period of whichever
-	// single bar is selected, so it reads the same across every
+	// Details chart's page-range header), so it reads the same across every
 	// Day/Week/Month/Year tab and matches Post Details' behavior.
 	const chartDateRange = useMemo( () => {
 		if ( ! visibleRows.length ) {
@@ -245,12 +238,6 @@ export default function VideoSummary( {
 	const selectPeriod = ( newPeriod: UiPeriod ) => () => {
 		setUiPeriod( newPeriod );
 		setPage( 1 );
-		setSelectedRecord( null );
-	};
-
-	const selectStatType = ( newStatType: VideoStatType ) => {
-		setStatType( newStatType );
-		setSelectedRecord( null );
 	};
 
 	// Arrows page the whole visible window of bars, like the Post Details
@@ -258,10 +245,8 @@ export default function VideoSummary( {
 	const onPeriodChange = ( { direction }: { direction: string } ) => {
 		if ( 'previous' === direction && page < maxPages ) {
 			setPage( page + 1 );
-			setSelectedRecord( null );
 		} else if ( 'next' === direction && page > 1 ) {
 			setPage( page - 1 );
-			setSelectedRecord( null );
 		}
 	};
 
@@ -283,7 +268,6 @@ export default function VideoSummary( {
 		<div
 			className={ clsx( 'stats-video-summary', 'is-chart-tabs', {
 				'is-period-year': uiPeriod === 'year',
-				'has-less-than-three-bars': chartData.length > 0 && chartData.length < 3,
 			} ) }
 		>
 			{ siteId && (
@@ -298,12 +282,7 @@ export default function VideoSummary( {
 					disableNextArrow={ page <= 1 }
 					date={ null }
 				>
-					<DatePicker
-						period={ uiPeriod }
-						date={ selected?.startDate }
-						dateRange={ chartDateRange }
-						isShort
-					/>
+					<DatePicker period={ uiPeriod } dateRange={ chartDateRange } isShort />
 				</StatsPeriodNavigation>
 				<SegmentedControl primary>
 					{ periods.map( ( { id, label } ) => (
@@ -326,13 +305,11 @@ export default function VideoSummary( {
 				labelKey="periodLabel"
 				chartType="video"
 				sectionClass="is-video"
-				selected={ selected }
-				onClick={ setSelectedRecord }
 				tabLabel={ tabLabels[ statType ] }
 				type="video"
 			/>
 
-			<VideoMetricTabs values={ metricValues } selected={ statType } onSelect={ selectStatType } />
+			<VideoMetricTabs values={ metricValues } selected={ statType } onSelect={ setStatType } />
 		</div>
 	);
 }
