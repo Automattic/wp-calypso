@@ -22,13 +22,12 @@ export default function ButtonPicker( {
 		variationType: 'button',
 		getLiveValue: ( globalStyles ) => globalStyles.styles?.elements?.button?.border,
 		getValue: getButtonBorder,
-		createCurrent: ( liveValue ) =>
+		// Snapshot the applied styles so picking "Current" restores the full
+		// previous button treatment (border, spacing, colors), not just the
+		// border — the button reset clears what the snapshot doesn't carry.
+		createCurrent: ( _liveValue, globalStyles ) =>
 			( {
-				styles: {
-					elements: {
-						button: { border: liveValue },
-					},
-				},
+				styles: globalStyles.styles ?? {},
 			} ) as Omit< StyleVariation, 'title' >,
 	} );
 

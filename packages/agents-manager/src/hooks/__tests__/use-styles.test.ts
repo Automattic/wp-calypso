@@ -238,6 +238,124 @@ describe( 'useStyles', () => {
 		} );
 	} );
 
+	it( 'keeps the original stash across consecutive outline picks', () => {
+		mockCurrentRecord.styles.elements.button = {
+			border: { radius: '100px' },
+			color: { background: 'transparent !important', text: 'currentColor !important' },
+			buttonColor: { background: '#fff', text: '#000' },
+		};
+		const { result } = renderHook( () => useStyles() );
+
+		act( () => {
+			result.current(
+				{
+					title: 'Square, Outline',
+					styles: {
+						elements: {
+							button: {
+								border: { width: '2px' },
+								color: {
+									background: 'transparent !important',
+									text: 'currentColor !important',
+								},
+							},
+						},
+					},
+				},
+				'button'
+			);
+		} );
+
+		const merged = mockEditEntityRecord.mock.calls[ 0 ][ 3 ];
+		expect( merged.styles.elements.button.buttonColor ).toEqual( {
+			background: '#fff',
+			text: '#000',
+		} );
+	} );
+
+	it( 'replaces a stale subscriptions mirror instead of merging into it', () => {
+		mockCurrentRecord.styles = {
+			...mockCurrentRecord.styles,
+			blocks: {
+				'jetpack/subscriptions': { elements: { button: { color: { text: 'stale !important' } } } },
+			},
+		} as unknown as ReturnType< typeof makeRecord >[ 'styles' ];
+		const { result } = renderHook( () => useStyles() );
+
+		act( () => {
+			result.current(
+				{ title: 'Pill', styles: { elements: { button: { border: { radius: '100px' } } } } },
+				'button'
+			);
+		} );
+
+		const merged = mockEditEntityRecord.mock.calls[ 0 ][ 3 ];
+		expect( merged.styles.blocks[ 'jetpack/subscriptions' ].elements ).toEqual( {
+			button: { border: { radius: '100px !important' } },
+		} );
+	} );
+
+	it( 'clears block-variation button styles on a button pick', () => {
+		mockCurrentRecord.styles = {
+			...mockCurrentRecord.styles,
+			blocks: {
+				'core/group': {
+					variations: {
+						fancy: { elements: { button: { border: { radius: '9px' }, color: { text: '#111' } } } },
+					},
+				},
+			},
+		} as unknown as ReturnType< typeof makeRecord >[ 'styles' ];
+		const { result } = renderHook( () => useStyles() );
+
+		act( () => {
+			result.current(
+				{ title: 'Pill', styles: { elements: { button: { border: { radius: '100px' } } } } },
+				'button'
+			);
+		} );
+
+		const merged = mockEditEntityRecord.mock.calls[ 0 ][ 3 ];
+		expect( merged.styles.blocks[ 'core/group' ].variations.fancy.elements.button ).toEqual( {
+			color: { text: '#111' },
+		} );
+	} );
+
+	it( 'does not apply a button variation settings object', () => {
+		const { result } = renderHook( () => useStyles() );
+
+		act( () => {
+			result.current(
+				{
+					title: 'Pill',
+					settings: { color: { palette: { theme: [ { slug: 'sneaky', color: '#bad' } ] } } },
+					styles: { elements: { button: { border: { radius: '100px' } } } },
+				},
+				'button'
+			);
+		} );
+
+		const merged = mockEditEntityRecord.mock.calls[ 0 ][ 3 ];
+		expect( merged.settings ).toEqual( mockCurrentRecord.settings );
+	} );
+
+	it( 'strips block-level typography on a font pick', () => {
+		mockCurrentRecord.styles = {
+			...mockCurrentRecord.styles,
+			blocks: {
+				'core/quote': { typography: { fontStyle: 'italic' }, color: { text: '#222' } },
+			},
+		} as unknown as ReturnType< typeof makeRecord >[ 'styles' ];
+		const { result } = renderHook( () => useStyles() );
+
+		act( () => {
+			result.current( { title: 'Modern Sans', styles: {} }, 'font' );
+		} );
+
+		const merged = mockEditEntityRecord.mock.calls[ 0 ][ 3 ];
+		expect( merged.styles.blocks[ 'core/quote' ] ).toEqual( { color: { text: '#222' } } );
+	} );
+
 	it( 'restores the stashed button color when leaving an outline variation', () => {
 		mockCurrentRecord.styles.elements.button = {
 			border: { radius: '100px' },

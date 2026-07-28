@@ -46,9 +46,11 @@ export default function useStyles() {
 					  };
 
 			const merged = {
-				settings: variation.settings
-					? mergeGlobalStyles( base.settings || {}, variation.settings )
-					: base.settings,
+				// Big Sky never applies a button variation's `settings`.
+				settings:
+					variation.settings && variationType !== 'button'
+						? mergeGlobalStyles( base.settings || {}, variation.settings )
+						: base.settings,
 				styles: variation.styles
 					? mergeGlobalStyles( base.styles || {}, variation.styles )
 					: base.styles,

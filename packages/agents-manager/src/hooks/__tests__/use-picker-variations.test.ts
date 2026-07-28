@@ -122,6 +122,16 @@ describe( 'usePickerVariations', () => {
 		expect( result.current.activeTitle ).toBe( 'Pastel' );
 	} );
 
+	it( 'passes the variation type through to the apply', () => {
+		const { result } = renderHook( () =>
+			usePickerVariations( makeOptions( { variationType: 'button' } ) )
+		);
+
+		act( () => result.current.handleSelect( variations[ 0 ] ) );
+
+		expect( mockSetStyles ).toHaveBeenCalledWith( variations[ 0 ], 'button' );
+	} );
+
 	it( 'keeps the picked variation highlighted when several share the live value', () => {
 		const twins = [
 			{ title: 'Twin A', settings: { value: { v: 'dup' } } },
