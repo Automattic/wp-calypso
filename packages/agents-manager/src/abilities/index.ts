@@ -46,9 +46,9 @@ export async function registerAmAbilities(): Promise< void > {
 			// TODO(AI-1080): Collapse this replace branch once Big Sky deletes its
 			// ability copies — with nothing left to collide, plain register
 			// plus the warning suffices.
-			// Only a name collision (a provider's copy) is recoverable by
-			// replacing — after any other failure, unregistering would just
-			// destroy the provider's working copy.
+			// Only retry when another copy actually holds the name — without
+			// one, the failure is not a collision and re-registering would
+			// fail the same way.
 			if ( ! getAbility( ability.name ) ) {
 				// eslint-disable-next-line no-console
 				console.warn( `[AgentsManager] Failed to register ability: ${ ability.name }`, error );

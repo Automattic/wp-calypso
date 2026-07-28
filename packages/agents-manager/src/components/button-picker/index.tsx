@@ -22,13 +22,15 @@ export default function ButtonPicker( {
 		variationType: 'button',
 		getLiveValue: ( globalStyles ) => globalStyles.styles?.elements?.button?.border,
 		getValue: getButtonBorder,
-		// Snapshot the applied styles so picking "Current" restores the full
-		// previous button treatment (border, spacing, colors), not just the
-		// border — the button reset clears what the snapshot doesn't carry.
-		createCurrent: ( _liveValue, globalStyles ) =>
-			( {
-				styles: globalStyles.styles ?? {},
-			} ) as Omit< StyleVariation, 'title' >,
+		// Snapshot the applied button element so picking "Current" restores the
+		// full previous button treatment (border, spacing, colors) — the button
+		// reset clears what the snapshot doesn't carry, and anything beyond the
+		// button would leak into the subscriptions mirror.
+		createCurrent: ( _liveValue, globalStyles ) => {
+			const { buttonColor: _stash, ...button } = ( globalStyles.styles?.elements?.button ??
+				{} ) as Record< string, unknown >;
+			return { styles: { elements: { button } } } as Omit< StyleVariation, 'title' >;
+		},
 	} );
 
 	if ( ! sortedVariations.length ) {
