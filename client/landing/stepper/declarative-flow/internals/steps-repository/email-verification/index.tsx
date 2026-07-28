@@ -6,8 +6,9 @@ import { useCallback, useEffect, useMemo, useRef } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import UserVerificationChecker from 'calypso/lib/user/verification-checker';
+import { getSignupIsNewUser } from 'calypso/signup/storageUtils';
 import { useSelector } from 'calypso/state';
-import { getCurrentUser } from 'calypso/state/current-user/selectors';
+import { getCurrentUser, isCurrentUserEmailVerified } from 'calypso/state/current-user/selectors';
 import { useEmailVerification } from './use-email-verification';
 import type { Step as StepType } from '../../types';
 
@@ -20,6 +21,18 @@ const EmailVerification: StepType< {
 } > = function EmailVerification( { navigation, flow } ) {
 	const { __ } = useI18n();
 	const user = useSelector( getCurrentUser );
+	const isVerifiedAtEntry = useSelector( isCurrentUserEmailVerified );
+
+	// Capture eligibility once. Only new email signups who arrive unverified see the
+	// gate; social logins and existing accounts (and anyone already verified) pass
+	// straight through without recording a view or confirmation.
+	const eligibility = useRef< boolean | null >( null );
+	if ( eligibility.current === null ) {
+		eligibility.current =
+			Boolean( user?.ID && getSignupIsNewUser( user.ID ) ) && ! isVerifiedAtEntry;
+	}
+	const isEligible = eligibility.current;
+
 	const {
 		isVerified,
 		isSending,
@@ -30,7 +43,7 @@ const EmailVerification: StepType< {
 		hasCheckError,
 		checkNow,
 		resend,
-	} = useEmailVerification( flow );
+	} = useEmailVerification( flow, isEligible );
 
 	const shownAt = useRef( Date.now() );
 	const hasSubmitted = useRef( false );
@@ -58,11 +71,22 @@ const EmailVerification: StepType< {
 		[ flow, navigation ]
 	);
 
+	// Ineligible visitors continue immediately with no tracking, so the experiment
+	// only ever counts people who actually went through verification.
 	useEffect( () => {
-		if ( isVerified ) {
+		if ( isEligible || hasSubmitted.current ) {
+			return;
+		}
+		hasSubmitted.current = true;
+		navigation.submit( { emailVerified: isVerified } );
+	}, [ isEligible, isVerified, navigation ] );
+
+	// Record confirmation only for a genuine unverified → verified transition.
+	useEffect( () => {
+		if ( isEligible && isVerified ) {
 			finish( true );
 		}
-	}, [ isVerified, finish ] );
+	}, [ isEligible, isVerified, finish ] );
 
 	const onSkip = () => finish( false );
 
@@ -80,6 +104,10 @@ const EmailVerification: StepType< {
 			),
 		[ __, user?.email ]
 	);
+
+	if ( ! isEligible ) {
+		return null;
+	}
 
 	return (
 		<>

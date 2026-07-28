@@ -40,7 +40,7 @@ function cooldownRemainingSeconds( flow: string ): number {
 	return remainingMs > 0 ? Math.min( Math.ceil( remainingMs / 1000 ), RESEND_COOLDOWN_SECONDS ) : 0;
 }
 
-export function useEmailVerification( flow: string ) {
+export function useEmailVerification( flow: string, enabled: boolean ) {
 	const dispatch = useDispatch();
 	const isVerified = useSelector( isCurrentUserEmailVerified );
 	const sendVerificationEmail = useSendEmailVerification();
@@ -94,19 +94,20 @@ export function useEmailVerification( flow: string ) {
 		sendRef.current = send;
 	} );
 
-	// The signup email was sent minutes ago and is buried by now. Send a fresh
-	// link so the one the user is being asked to click is at the top of the inbox —
-	// unless a recent send is still within its cooldown (Back-and-return or refresh).
-	const hasSentOnMount = useRef( false );
+	// Account creation already sent the activation email seconds ago, so don't fire
+	// another one — just seed the resend cooldown from here. Only the resend button
+	// calls the endpoint. (A remount within the window keeps the persisted cooldown.)
+	const hasSeededCooldown = useRef( false );
 	useEffect( () => {
-		if ( hasSentOnMount.current || isVerified ) {
+		if ( ! enabled || hasSeededCooldown.current || isVerified ) {
 			return;
 		}
-		hasSentOnMount.current = true;
+		hasSeededCooldown.current = true;
 		if ( cooldownRemainingSeconds( flow ) === 0 ) {
-			sendRef.current( false );
+			writeLastSentAt( flow, Date.now() );
+			setSecondsUntilResend( RESEND_COOLDOWN_SECONDS );
 		}
-	}, [ isVerified, flow ] );
+	}, [ enabled, isVerified, flow ] );
 
 	// Recompute from the stored send time rather than decrementing: mobile browsers
 	// suspend timers while the user is in their email app, so a plain counter would
@@ -127,16 +128,16 @@ export function useEmailVerification( flow: string ) {
 	}, [ flow ] );
 
 	useEffect( () => {
-		if ( isVerified ) {
+		if ( ! enabled || isVerified ) {
 			return;
 		}
 		const timer = setTimeout( () => setIsPollingExpired( true ), POLL_LIMIT_MS );
 		return () => clearTimeout( timer );
-	}, [ isVerified, pollWindowKey ] );
+	}, [ enabled, isVerified, pollWindowKey ] );
 
 	useInterval(
 		() => dispatch( fetchCurrentUser() ),
-		! isVerified && ! isPollingExpired && EVERY_FIVE_SECONDS
+		enabled && ! isVerified && ! isPollingExpired && EVERY_FIVE_SECONDS
 	);
 
 	const checkNow = useCallback( async () => {

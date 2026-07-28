@@ -265,8 +265,10 @@ const onboarding: FlowV2< typeof initialize > = {
 				}
 				case 'email-verification':
 					// The gate sits right after account creation, so whether the user confirmed
-					// or skipped, carry on into the flow proper.
-					return navigate( 'domains' );
+					// or skipped, carry on into the flow proper. Replace so Back from domains
+					// can't return to the gate (where a confirmed user would auto-submit and a
+					// skipped user would be gated again).
+					return navigate( 'domains', undefined, true );
 				case 'create-site':
 					return navigate( 'processing', undefined, true );
 				case 'post-checkout-onboarding': {

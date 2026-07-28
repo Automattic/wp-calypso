@@ -8,17 +8,20 @@ Please improve the instructions on how to test this flow.
 
 ### Email verification step
 
-Gated behind the `onboarding/email-verification` feature flag, and only reached by
-signups that pick the free plan while their email address is still unconfirmed —
-social signups arrive confirmed and never see it. The step gates the dashboard
-*after* the site is created, not before.
+Gated behind the `onboarding/email-verification` feature flag. It runs **right
+after account creation** (before domains), for **every new email/password
+signup** regardless of plan. Social logins and existing/already-verified accounts
+pass straight through without seeing it (or being counted). The activation email
+from signup is the one to confirm — the step doesn't send another; only the manual
+"resend" does.
 
-1. Sign up with an email and password at /setup/onboarding.
-2. Pick a domain, then choose the free plan. The site is created first.
-3. Verify: the `email-verification` step appears before the dashboard, and a
-   confirmation email arrives.
-4. Open the link from the email in another tab. The onboarding tab should move on
-   to the dashboard on its own.
+1. In an incognito window, go to /setup/onboarding and create a new account with
+   an email and password.
+2. Verify: immediately after account creation, the `email-verification` step
+   appears, before the domains step. No second email is sent.
+3. Open the activation link from the signup email in another tab. The onboarding
+   tab should move on to domains on its own.
+4. Alternatively, "I'll do this later" continues to domains without confirming.
 
 ## Owned by
 

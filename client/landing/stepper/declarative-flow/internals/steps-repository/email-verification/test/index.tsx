@@ -30,6 +30,7 @@ jest.mock( 'calypso/state/current-user/actions', () => ( {
 } ) );
 
 const EMAIL = 'onboarder@example.com';
+const USER_ID = 1;
 const COOLDOWN_MS = 60 * 1000;
 
 const mockApi = () => nock( 'https://public-api.wordpress.com:443' );
@@ -41,17 +42,21 @@ const mockFetchUser = ( emailVerified: boolean ) =>
 	mockApi()
 		.get( '/rest/v1.1/me' )
 		.query( true )
-		.reply( 200, { ID: 1, email: EMAIL, email_verified: emailVerified } );
+		.reply( 200, { ID: USER_ID, email: EMAIL, email_verified: emailVerified } );
 
 const mockFetchUserError = () =>
 	mockApi().get( '/rest/v1.1/me' ).query( true ).reply( 500, { error: 'server_error' } );
 
 const currentUserState = ( emailVerified: boolean ) => ( {
 	currentUser: {
-		id: 1,
-		user: { ID: 1, email: EMAIL, email_verified: emailVerified },
+		id: USER_ID,
+		user: { ID: USER_ID, email: EMAIL, email_verified: emailVerified },
 	},
 } );
+
+// The gate only activates for a brand-new email signup; the user step sets this
+// flag on account creation. Existing/social users don't have it.
+const markNewSignup = () => localStorage.setItem( `wpcom_signup_is_new_user_${ USER_ID }`, 'true' );
 
 const stepProps = ( props?: Partial< StepProps > ) =>
 	mockStepProps( {
@@ -62,11 +67,16 @@ const stepProps = ( props?: Partial< StepProps > ) =>
 
 const render = ( {
 	emailVerified = false,
+	newSignup = true,
 	...props
-}: Partial< StepProps > & { emailVerified?: boolean } = {} ) =>
-	renderStep( <EmailVerification { ...stepProps( props ) } />, {
+}: Partial< StepProps > & { emailVerified?: boolean; newSignup?: boolean } = {} ) => {
+	if ( newSignup ) {
+		markNewSignup();
+	}
+	return renderStep( <EmailVerification { ...stepProps( props ) } />, {
 		initialState: currentUserState( emailVerified ),
 	} );
+};
 
 describe( 'EmailVerification', () => {
 	beforeAll( () => nock.disableNetConnect() );
@@ -76,11 +86,12 @@ describe( 'EmailVerification', () => {
 		jest.useRealTimers();
 		nock.cleanAll();
 		sessionStorage.clear();
+		localStorage.clear();
 	} );
 
 	afterAll( () => nock.enableNetConnect() );
 
-	it( 'sends a fresh confirmation email on mount and shows where it went', async () => {
+	it( 'does not resend on mount (signup already sent one) and shows where the link went', async () => {
 		const request = mockSendVerificationEmail();
 
 		render();
@@ -88,16 +99,15 @@ describe( 'EmailVerification', () => {
 		expect( screen.getByRole( 'heading', { name: 'Confirm your email address' } ) ).toBeVisible();
 		expect( screen.getByText( EMAIL ) ).toBeVisible();
 
-		await waitFor( () => expect( request.isDone() ).toBe( true ) );
+		// The signup activation email is treated as the initial send: the cooldown is
+		// seeded without hitting the endpoint again.
 		await waitFor( () =>
-			expect( recordTracksEvent ).toHaveBeenCalledWith(
-				'calypso_signup_email_verification_email_sent',
-				{ flow: 'onboarding', is_resend: false }
-			)
+			expect( screen.getByText( /You can resend the email in 60s\./ ) ).toBeVisible()
 		);
+		expect( request.isDone() ).toBe( false );
 	} );
 
-	it( 'submits straight away when the email is already confirmed, without sending again', async () => {
+	it( 'passes an already-verified user straight through without sending or tracking', async () => {
 		const submit = jest.fn();
 		const request = mockSendVerificationEmail();
 
@@ -105,10 +115,34 @@ describe( 'EmailVerification', () => {
 
 		await waitFor( () => expect( submit ).toHaveBeenCalledWith( { emailVerified: true } ) );
 		expect( request.isDone() ).toBe( false );
+		expect(
+			screen.queryByRole( 'heading', { name: 'Confirm your email address' } )
+		).not.toBeInTheDocument();
+		expect( recordTracksEvent ).not.toHaveBeenCalledWith(
+			'calypso_signup_email_verification_confirmed',
+			expect.anything()
+		);
+	} );
+
+	it( 'passes existing (non-signup) users straight through without a gate', async () => {
+		const submit = jest.fn();
+		const request = mockSendVerificationEmail();
+
+		render( { newSignup: false, navigation: { submit } } );
+
+		await waitFor( () => expect( submit ).toHaveBeenCalledWith( { emailVerified: false } ) );
+		expect( request.isDone() ).toBe( false );
+		expect(
+			screen.queryByRole( 'heading', { name: 'Confirm your email address' } )
+		).not.toBeInTheDocument();
+		expect( recordTracksEvent ).not.toHaveBeenCalledWith(
+			'calypso_signup_email_verification_confirmed',
+			expect.anything()
+		);
 	} );
 
 	it( 'advances as soon as the confirmation lands in another tab', async () => {
-		mockSendVerificationEmail();
+		markNewSignup();
 		const submit = jest.fn();
 		// Only the slices this step touches: its own user state, plus the two
 		// `DocumentHead` reads.
@@ -136,15 +170,18 @@ describe( 'EmailVerification', () => {
 		act( () => {
 			store.dispatch( {
 				type: CURRENT_USER_RECEIVE,
-				user: { ID: 1, email: EMAIL, email_verified: true },
+				user: { ID: USER_ID, email: EMAIL, email_verified: true },
 			} );
 		} );
 
 		await waitFor( () => expect( submit ).toHaveBeenCalledWith( { emailVerified: true } ) );
+		expect( recordTracksEvent ).toHaveBeenCalledWith(
+			'calypso_signup_email_verification_confirmed',
+			expect.objectContaining( { flow: 'onboarding' } )
+		);
 	} );
 
 	it( 'lets the user carry on without confirming', async () => {
-		mockSendVerificationEmail();
 		const submit = jest.fn();
 
 		render( { navigation: { submit } } );
@@ -159,7 +196,6 @@ describe( 'EmailVerification', () => {
 	} );
 
 	it( 'advances when the manual check finds the email confirmed', async () => {
-		mockSendVerificationEmail();
 		mockFetchUser( true );
 		const submit = jest.fn();
 
@@ -171,7 +207,6 @@ describe( 'EmailVerification', () => {
 	} );
 
 	it( 'tells the user when the manual check still shows the email unconfirmed', async () => {
-		mockSendVerificationEmail();
 		mockFetchUser( false );
 		const submit = jest.fn();
 
@@ -186,7 +221,6 @@ describe( 'EmailVerification', () => {
 	} );
 
 	it( 'distinguishes a failed check request from an unconfirmed email', async () => {
-		mockSendVerificationEmail();
 		mockFetchUserError();
 		const submit = jest.fn();
 
@@ -201,27 +235,37 @@ describe( 'EmailVerification', () => {
 		expect( submit ).not.toHaveBeenCalled();
 	} );
 
-	it( 'surfaces an unsuccessful send and keeps resend available', async () => {
-		mockSendVerificationEmail( { success: false } );
+	it( 'surfaces an unsuccessful resend and keeps resend available', async () => {
+		jest.useFakeTimers();
+		const user = userEvent.setup( { advanceTimers: jest.advanceTimersByTime } );
 
 		render();
+
+		await waitFor( () =>
+			expect( screen.getByText( /You can resend the email in 60s\./ ) ).toBeVisible()
+		);
+		act( () => {
+			jest.advanceTimersByTime( COOLDOWN_MS );
+		} );
+
+		mockSendVerificationEmail( { success: false } );
+		await user.click( await screen.findByRole( 'button', { name: 'resend the email' } ) );
 
 		expect( await screen.findByText( /We couldn’t send the email\./ ) ).toBeVisible();
 		expect( screen.getByRole( 'button', { name: 'resend the email' } ) ).toBeVisible();
 		expect( recordTracksEvent ).toHaveBeenCalledWith(
 			'calypso_signup_email_verification_email_send_failed',
-			expect.objectContaining( { flow: 'onboarding', is_resend: false } )
+			expect.objectContaining( { flow: 'onboarding', is_resend: true } )
 		);
 	} );
 
-	it( 'holds off on resending until the cooldown expires', async () => {
+	it( 'holds off on resending until the seeded cooldown expires', async () => {
 		jest.useFakeTimers();
 		const user = userEvent.setup( { advanceTimers: jest.advanceTimersByTime } );
-		mockSendVerificationEmail();
 
 		render();
 
-		// The send on mount starts the cooldown, so there is nothing to click yet.
+		// The seeded cooldown (from the signup email) means there is nothing to click yet.
 		await waitFor( () =>
 			expect( screen.getByText( /You can resend the email in 60s\./ ) ).toBeVisible()
 		);
@@ -245,10 +289,9 @@ describe( 'EmailVerification', () => {
 
 	it( 'keeps the cooldown when the step is revisited within the window, without resending', async () => {
 		jest.useFakeTimers();
-		mockSendVerificationEmail();
 
 		const { unmount } = render();
-		// Waiting for the fresh cooldown confirms the send resolved and persisted.
+		// The cooldown is seeded from the signup email, without a send.
 		await waitFor( () =>
 			expect( screen.getByText( /You can resend the email in 60s\./ ) ).toBeVisible()
 		);
@@ -259,7 +302,7 @@ describe( 'EmailVerification', () => {
 		} );
 		unmount();
 
-		// Returning to the step (Back, then Free again) must not fire another send…
+		// Returning to the step must not fire a send…
 		const secondSend = mockSendVerificationEmail();
 		render();
 
@@ -272,7 +315,6 @@ describe( 'EmailVerification', () => {
 
 	it( 'catches the cooldown up after the tab was suspended', async () => {
 		jest.useFakeTimers();
-		mockSendVerificationEmail();
 
 		render();
 		await waitFor( () =>
@@ -293,7 +335,6 @@ describe( 'EmailVerification', () => {
 	it( 'restarts the polling window after a resend so a later remote confirmation still advances', async () => {
 		jest.useFakeTimers();
 		const user = userEvent.setup( { advanceTimers: jest.advanceTimersByTime } );
-		mockSendVerificationEmail();
 		// The poll is a no-op until the user confirms on another device.
 		( fetchCurrentUser as jest.Mock ).mockReturnValue( { type: 'TEST_NOOP' } );
 		const submit = jest.fn();
