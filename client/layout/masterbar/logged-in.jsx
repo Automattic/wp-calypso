@@ -7,7 +7,7 @@ import clsx from 'clsx';
 // @ts-expect-error The commands package is not yet typed.
 import { store as commandsStore } from '@wordpress/commands';
 import { dispatch } from '@wordpress/data';
-import { Icon, search } from '@wordpress/icons';
+import { displayShortcut } from '@wordpress/keycodes';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { parse } from 'qs';
@@ -1000,11 +1000,12 @@ class MasterbarLoggedIn extends Component {
 		return (
 			<Item
 				className="masterbar__item-command-palette"
-				icon={ <Icon icon={ search } /> }
 				onClick={ this.openCommandPalette }
 				tooltip={ translate( 'Search' ) }
 				ariaLabel={ translate( 'Search' ) }
-			/>
+			>
+				<span aria-hidden="true">{ displayShortcut.primary( 'k' ) }</span>
+			</Item>
 		);
 	}
 

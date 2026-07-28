@@ -398,6 +398,12 @@ body.is-mobile-app-view {
 		padding: 0 0 0 6px;
 	}
 
+	&.masterbar__item-command-palette .masterbar__item-content {
+		display: flex;
+		align-items: center;
+		line-height: 1;
+	}
+
 	.dashicons-before {
 		height: 20px;
 		color: var(--color-masterbar-icon);
