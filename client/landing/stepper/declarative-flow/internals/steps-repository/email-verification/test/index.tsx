@@ -100,11 +100,38 @@ describe( 'EmailVerification', () => {
 		expect( screen.getByText( EMAIL ) ).toBeVisible();
 
 		// The signup activation email is treated as the initial send: the cooldown is
-		// seeded without hitting the endpoint again.
+		// seeded and the "sent" event recorded, without hitting the endpoint again.
 		await waitFor( () =>
 			expect( screen.getByText( /You can resend the email in 60s\./ ) ).toBeVisible()
 		);
 		expect( request.isDone() ).toBe( false );
+		expect( recordTracksEvent ).toHaveBeenCalledWith(
+			'calypso_signup_email_verification_email_sent',
+			{ flow: 'onboarding', is_resend: false }
+		);
+	} );
+
+	it( 'keeps resend available after refreshing once the cooldown has expired', async () => {
+		jest.useFakeTimers();
+
+		const { unmount } = render();
+		await waitFor( () =>
+			expect( screen.getByText( /You can resend the email in 60s\./ ) ).toBeVisible()
+		);
+
+		// The whole cooldown elapses, then the user refreshes (remount).
+		act( () => {
+			jest.advanceTimersByTime( 61 * 1000 );
+		} );
+		unmount();
+
+		const secondSend = mockSendVerificationEmail();
+		render();
+
+		// Resend is available immediately — no fresh 60-second wait, and no new email.
+		expect( await screen.findByRole( 'button', { name: 'resend the email' } ) ).toBeVisible();
+		expect( screen.queryByText( /You can resend the email in \d+s\./ ) ).not.toBeInTheDocument();
+		expect( secondSend.isDone() ).toBe( false );
 	} );
 
 	it( 'passes an already-verified user straight through without sending or tracking', async () => {

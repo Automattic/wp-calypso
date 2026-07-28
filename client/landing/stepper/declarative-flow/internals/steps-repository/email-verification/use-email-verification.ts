@@ -5,7 +5,7 @@ import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { EVERY_FIVE_SECONDS, EVERY_SECOND, useInterval } from 'calypso/lib/interval';
 import { useDispatch, useSelector } from 'calypso/state';
 import { fetchCurrentUser, setUserEmailVerified } from 'calypso/state/current-user/actions';
-import { isCurrentUserEmailVerified } from 'calypso/state/current-user/selectors';
+import { getCurrentUser, isCurrentUserEmailVerified } from 'calypso/state/current-user/selectors';
 
 const RESEND_COOLDOWN_SECONDS = 60;
 
@@ -14,41 +14,47 @@ const RESEND_COOLDOWN_SECONDS = 60;
 // polling so a tab left open overnight doesn't hit `/me` forever.
 const POLL_LIMIT_MS = 15 * 60 * 1000;
 
-// The cooldown lives in session storage, keyed by flow, so it survives leaving
-// and re-entering the step (via Back) or a refresh — the component state alone
-// would reset and let the user resend immediately.
+// The cooldown lives in session storage, keyed by flow and user, so it survives
+// leaving and re-entering the step (via Back) or a refresh — the component state
+// alone would reset and let the user resend immediately.
 const LAST_SENT_STORAGE_KEY = 'onboarding-email-verification-last-sent';
 
-function readLastSentAt( flow: string ): number {
+function readLastSentAt( scope: string ): number {
 	try {
-		return Number( sessionStorage.getItem( `${ LAST_SENT_STORAGE_KEY }:${ flow }` ) ) || 0;
+		return Number( sessionStorage.getItem( `${ LAST_SENT_STORAGE_KEY }:${ scope }` ) ) || 0;
 	} catch {
 		return 0;
 	}
 }
 
-function writeLastSentAt( flow: string, at: number ): void {
+function hasLastSentAt( scope: string ): boolean {
+	return readLastSentAt( scope ) > 0;
+}
+
+function writeLastSentAt( scope: string, at: number ): void {
 	try {
-		sessionStorage.setItem( `${ LAST_SENT_STORAGE_KEY }:${ flow }`, String( at ) );
+		sessionStorage.setItem( `${ LAST_SENT_STORAGE_KEY }:${ scope }`, String( at ) );
 	} catch {
 		// Ignore storage failures (private mode, quota); the cooldown just won't persist.
 	}
 }
 
-function cooldownRemainingSeconds( flow: string ): number {
-	const remainingMs = RESEND_COOLDOWN_SECONDS * 1000 - ( Date.now() - readLastSentAt( flow ) );
+function cooldownRemainingSeconds( scope: string ): number {
+	const remainingMs = RESEND_COOLDOWN_SECONDS * 1000 - ( Date.now() - readLastSentAt( scope ) );
 	return remainingMs > 0 ? Math.min( Math.ceil( remainingMs / 1000 ), RESEND_COOLDOWN_SECONDS ) : 0;
 }
 
 export function useEmailVerification( flow: string, enabled: boolean ) {
 	const dispatch = useDispatch();
 	const isVerified = useSelector( isCurrentUserEmailVerified );
+	const userId = useSelector( getCurrentUser )?.ID;
+	const scope = `${ flow }:${ userId ?? '' }`;
 	const sendVerificationEmail = useSendEmailVerification();
 
 	const [ isSending, setIsSending ] = useState( false );
 	const [ hasSendError, setHasSendError ] = useState( false );
 	const [ secondsUntilResend, setSecondsUntilResend ] = useState( () =>
-		cooldownRemainingSeconds( flow )
+		cooldownRemainingSeconds( scope )
 	);
 	const [ isPollingExpired, setIsPollingExpired ] = useState( false );
 	const [ pollWindowKey, setPollWindowKey ] = useState( 0 );
@@ -65,7 +71,7 @@ export function useEmailVerification( flow: string, enabled: boolean ) {
 			if ( ! success ) {
 				throw new Error( 'unsuccessful_response' );
 			}
-			writeLastSentAt( flow, Date.now() );
+			writeLastSentAt( scope, Date.now() );
 			setSecondsUntilResend( RESEND_COOLDOWN_SECONDS );
 			// A fresh link restarts the polling window: the user might confirm this
 			// new link from another device long after the previous window lapsed.
@@ -95,37 +101,43 @@ export function useEmailVerification( flow: string, enabled: boolean ) {
 	} );
 
 	// Account creation already sent the activation email seconds ago, so don't fire
-	// another one — just seed the resend cooldown from here. Only the resend button
-	// calls the endpoint. (A remount within the window keeps the persisted cooldown.)
+	// another one — record it as the initial send and seed the cooldown from here.
+	// Only the resend button calls the endpoint. Keyed by an actual stored timestamp
+	// (not "cooldown === 0"), so refreshing after the window lapses doesn't restart a
+	// fresh cooldown; the resend button becomes available as it should.
 	const hasSeededCooldown = useRef( false );
 	useEffect( () => {
 		if ( ! enabled || hasSeededCooldown.current || isVerified ) {
 			return;
 		}
 		hasSeededCooldown.current = true;
-		if ( cooldownRemainingSeconds( flow ) === 0 ) {
-			writeLastSentAt( flow, Date.now() );
+		if ( ! hasLastSentAt( scope ) ) {
+			writeLastSentAt( scope, Date.now() );
 			setSecondsUntilResend( RESEND_COOLDOWN_SECONDS );
+			recordTracksEvent( 'calypso_signup_email_verification_email_sent', {
+				flow,
+				is_resend: false,
+			} );
 		}
-	}, [ enabled, isVerified, flow ] );
+	}, [ enabled, isVerified, flow, scope ] );
 
 	// Recompute from the stored send time rather than decrementing: mobile browsers
 	// suspend timers while the user is in their email app, so a plain counter would
 	// under-count the elapsed cooldown. Also refresh the moment the tab is shown again.
 	useInterval(
-		() => setSecondsUntilResend( cooldownRemainingSeconds( flow ) ),
+		() => setSecondsUntilResend( cooldownRemainingSeconds( scope ) ),
 		secondsUntilResend > 0 && EVERY_SECOND
 	);
 
 	useEffect( () => {
 		const refreshOnVisible = () => {
 			if ( document.visibilityState === 'visible' ) {
-				setSecondsUntilResend( cooldownRemainingSeconds( flow ) );
+				setSecondsUntilResend( cooldownRemainingSeconds( scope ) );
 			}
 		};
 		document.addEventListener( 'visibilitychange', refreshOnVisible );
 		return () => document.removeEventListener( 'visibilitychange', refreshOnVisible );
-	}, [ flow ] );
+	}, [ scope ] );
 
 	useEffect( () => {
 		if ( ! enabled || isVerified ) {
