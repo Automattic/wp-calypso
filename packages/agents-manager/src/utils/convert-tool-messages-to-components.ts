@@ -203,7 +203,7 @@ export default function convertToolMessagesToComponents( {
 			const { type: contentType, props, followUpTasks, isCurrent, postId, summary } = toolData;
 			// Big Sky's pattern picker no longer renders in AM chats (its backend
 			// ability is Easy-Site-Editor-only) — history messages get the notice below.
-			// TODO(ability-migration): Remove once Big Sky drops its pattern-picker chat component; the
+			// TODO (ability-migration): Remove once Big Sky drops its pattern-picker chat component; the
 			// provider fallthrough then resolves nothing and the notice happens on its own.
 			const isDeprecatedType = contentType === 'pattern-picker';
 			const amComponent = getAmComponent( contentType );
@@ -334,7 +334,7 @@ export default function convertToolMessagesToComponents( {
 		}
 
 		// Handle start over tool message
-		// TODO(ability-migration): Double-check whether this branch is still needed when the
+		// TODO (ability-migration): Double-check whether this branch is still needed when the
 		// `client-assistants` ability migrates. No agent offers that tool
 		// today — only old conversation history still contains it.
 		if (
