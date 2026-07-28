@@ -1306,14 +1306,7 @@ class ManagePurchase extends Component<
 
 				<span className="manage-purchase__settings-link">
 					{ ! isJetpackCloud() && site && (
-						// Temporary bridge (SHILL-2256): ProductLink still expects the
-						// camelCase Purchase. Remove once it reads the raw shape.
-						<ProductLink
-							purchase={ createPurchaseObject(
-								purchase as unknown as Parameters< typeof createPurchaseObject >[ 0 ]
-							) }
-							selectedSite={ site }
-						/>
+						<ProductLink purchase={ purchase } selectedSite={ site } />
 					) }
 				</span>
 
