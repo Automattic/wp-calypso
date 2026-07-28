@@ -163,7 +163,7 @@ describe( 'useProductInstall progression', () => {
 	} );
 	afterEach( () => jest.useRealTimers() );
 
-	it( 'installs in place, keeps the setup step visible, then activates on completion', async () => {
+	it( 'installs in place, advances to the install step, then activates on completion', async () => {
 		const { result, store } = renderProgress(
 			{ pluginSlug: 'give' },
 			{ ...marketplaceHandoff, ...jetpackSite }
@@ -177,10 +177,6 @@ describe( 'useProductInstall progression', () => {
 		);
 		expect( initiatePluginTransfer ).not.toHaveBeenCalled();
 
-		expect( result.current.currentStep ).toBe( 0 );
-		await advance( 999 );
-		expect( result.current.currentStep ).toBe( 0 );
-		await advance( 1 );
 		expect( result.current.currentStep ).toBe( 1 );
 
 		await act( async () => {
@@ -193,7 +189,7 @@ describe( 'useProductInstall progression', () => {
 		expect( result.current.currentStep ).toBe( 2 );
 	} );
 
-	it( 'activates a plugin that finishes installing during the setup delay', async () => {
+	it( 'activates a plugin that is already present when the install step begins', async () => {
 		const { result, store } = renderProgress(
 			{ pluginSlug: 'give' },
 			{ ...marketplaceHandoff, ...jetpackSite }
@@ -204,7 +200,6 @@ describe( 'useProductInstall progression', () => {
 				receiveSitePlugins( SITE_ID, [ { slug: 'give', id: 'give/give', active: false } ] )
 			);
 		} );
-		await advance( 1000 );
 
 		expect( activatePlugin ).toHaveBeenCalledTimes( 1 );
 		expect( result.current.currentStep ).toBe( 2 );
@@ -255,8 +250,6 @@ describe( 'useProductInstall progression', () => {
 		);
 		expect( installPlugin ).not.toHaveBeenCalled();
 
-		expect( result.current.currentStep ).toBe( 0 );
-		await advance( 1000 );
 		expect( result.current.currentStep ).toBe( 1 );
 
 		// Production reports completion from polling first, and only then refreshes the site. The

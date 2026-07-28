@@ -49,6 +49,9 @@ export function usePostTransferPluginRecovery( {
 				dispatch( activatePlugin( siteId, { slug: installedPlugin.slug, id: installedPlugin.id } ) )
 			).finally( () => {
 				inFlightRef.current = false;
+				// Refresh right away so the now-active plugin is observed immediately, rather than waiting
+				// for the next poll — the caller's redirect is gated on that active state.
+				dispatch( fetchSitePlugins( siteId ) );
 			} );
 		},
 		enabled ? POLL_INTERVAL_MS : null

@@ -5,7 +5,6 @@ import { useQuery } from '@tanstack/react-query';
 import { useEffect } from 'react';
 import { isAtomicTransferredSite } from 'calypso/dashboard/utils/site-atomic-transfers';
 import { useInterval } from 'calypso/lib/interval';
-import { waitFor } from 'calypso/my-sites/marketplace/util';
 import { useSelector, useDispatch } from 'calypso/state';
 import { transferStates } from 'calypso/state/automated-transfer/constants';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
@@ -121,9 +120,7 @@ export function useThankYouRedirect( {
 			if ( ! pluginsUrlFinal ) {
 				return;
 			}
-			waitFor( 1 ).then( () => {
-				window.location.href = pluginsUrlFinal as string;
-			} );
+			window.location.href = pluginsUrlFinal as string;
 		}
 	}, [
 		pluginActive,
@@ -140,10 +137,8 @@ export function useThankYouRedirect( {
 	// Validate theme is already active
 	useEffect( () => {
 		if ( themeSlug && wpOrgTheme && isThemeActive ) {
-			waitFor( 1 ).then( () =>
-				page.redirect(
-					`/marketplace/thank-you/${ selectedSiteSlug }?themes=${ themeSlug }&hide-progress-bar`
-				)
+			page.redirect(
+				`/marketplace/thank-you/${ selectedSiteSlug }?themes=${ themeSlug }&hide-progress-bar`
 			);
 		}
 	}, [ themeSlug, wpOrgTheme, isThemeActive, selectedSiteSlug ] );
