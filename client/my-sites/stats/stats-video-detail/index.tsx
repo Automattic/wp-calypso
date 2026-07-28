@@ -32,6 +32,7 @@ interface StatsVideoDetailProps {
 interface VideoStatsPost {
 	post_title?: string;
 	post_date?: string;
+	poster?: string | null;
 }
 
 export default function StatsVideoDetail( { postId, period, context }: StatsVideoDetailProps ) {
@@ -75,6 +76,7 @@ export default function StatsVideoDetail( { postId, period, context }: StatsVide
 
 	const videoTitle = videoStatsPost?.post_title || null;
 	const videoDate = videoStatsPost?.post_date || null;
+	const videoPoster = videoStatsPost?.poster || null;
 	// Loading until statsVideo answers (success or failure); a response
 	// without a post means there is genuinely no title and the card hides.
 	const isVideoInfoLoading = ! videoStatsData && ! hasVideoInfoFailed;
@@ -102,6 +104,7 @@ export default function StatsVideoDetail( { postId, period, context }: StatsVide
 					<VideoDetailsCard
 						title={ videoTitle }
 						date={ videoDate }
+						poster={ videoPoster }
 						isLoading={ isVideoInfoLoading }
 					/>
 					<VideoSummary postId={ postId } initialStatType={ statType } />

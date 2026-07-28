@@ -126,6 +126,32 @@ $border-radius: 5px; // stylelint-disable-line scales/radii
 	}
 }
 
+.stats-video-details-card.has-thumbnail {
+	display: grid;
+	grid-template-areas:
+		"heading thumbnail"
+		"info thumbnail";
+	grid-template-columns: minmax(0, 1fr) auto;
+
+	.stats-video-details-card__heading {
+		grid-area: heading;
+	}
+
+	.stats-video-details-card__info {
+		grid-area: info;
+	}
+}
+
+.stats-video-details-card__thumbnail {
+	align-self: center;
+	aspect-ratio: 16 / 9;
+	border-radius: $border-radius;
+	display: block;
+	grid-area: thumbnail;
+	object-fit: cover;
+	width: 192px;
+}
+
 .stats-video-embeds-card {
 	border-color: var(--studio-gray-5);
 	border-radius: 5px; /* stylelint-disable-line scales/radii */
@@ -260,5 +286,16 @@ $border-radius: 5px; // stylelint-disable-line scales/radii
 
 	.stats-video-details-card {
 		gap: 12px;
+	}
+
+	.stats-video-details-card.has-thumbnail {
+		grid-template-areas:
+			"heading heading"
+			"info thumbnail";
+	}
+
+	.stats-video-details-card__thumbnail {
+		aspect-ratio: 1;
+		width: 84px;
 	}
 }
