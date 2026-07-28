@@ -31,7 +31,7 @@ export default function SecurityKeyReregisterNotice() {
 				}
 			>
 				{ __(
-					'There was an issue during setup, and your security key can’t be used to sign in. But don’t fret — your account is still secure.'
+					'There was an issue during setup, so your security key might not always work when you sign in. But don’t fret — your account is still secure.'
 				) }
 			</Notice>
 		</>
