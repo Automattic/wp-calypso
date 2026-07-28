@@ -1,9 +1,5 @@
 import { formatCurrency } from '@automattic/number-formatters';
-import {
-	__experimentalGrid as Grid,
-	__experimentalText as Text,
-	__experimentalVStack as VStack,
-} from '@wordpress/components';
+import { __experimentalGrid as Grid, __experimentalText as Text } from '@wordpress/components';
 import { __, sprintf } from '@wordpress/i18n';
 import ConsolidatedStatCard from '../../../../components/consolidated-stat-card';
 import type { TaggedSite } from '../types';
@@ -44,13 +40,11 @@ export default function MigrationsConsolidatedCommissions( { items }: { items: T
 				) }
 				popoverTitle={ __( 'Migration commissions' ) }
 				popoverContent={
-					<VStack spacing={ 3 }>
-						<Text>
-							{ __(
-								'The amount shown is an estimate and may be adjusted at the time of payout following a review of migrated sites against the commission eligibility requirements.'
-							) }
-						</Text>
-					</VStack>
+					<Text>
+						{ __(
+							'The amount shown is an estimate and may be adjusted at the time of payout following a review of migrated sites against the commission eligibility requirements.'
+						) }
+					</Text>
 				}
 			/>
 			<ConsolidatedStatCard
