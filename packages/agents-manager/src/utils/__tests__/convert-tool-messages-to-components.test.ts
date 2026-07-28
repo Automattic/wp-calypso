@@ -153,6 +153,25 @@ describe( 'convertToolMessagesToComponents', () => {
 		} );
 	} );
 
+	it( 'renders the provider component for a migrated type with `?am_abilities=0`', () => {
+		window.history.replaceState( {}, '', '/?am_abilities=0' );
+		const message = createToolMessage( LEGACY_SHOW_COMPONENT_TOOL_ID, {
+			type: 'color-picker',
+			props: { variations: [] },
+			isCurrent: true,
+		} );
+		const getChatComponent = jest.fn().mockReturnValue( MockComponent );
+
+		const result = convertToolMessagesToComponents( {
+			messages: [ message ],
+			getChatComponent,
+		} );
+		window.history.replaceState( {}, '', '/' );
+
+		expect( getChatComponent ).toHaveBeenCalledWith( 'color-picker' );
+		expect( result[ 0 ].content[ 0 ] ).toMatchObject( { component: MockComponent } );
+	} );
+
 	it( 'renders legacy Big Sky show-component messages during migration', () => {
 		const message = createToolMessage( LEGACY_SHOW_COMPONENT_TOOL_ID, {
 			type: 'my-component',

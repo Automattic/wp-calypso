@@ -3,6 +3,7 @@ import ButtonPicker from '../components/button-picker';
 import ColorPicker from '../components/color-picker';
 import { EscalationButton } from '../components/escalation-button';
 import FontPicker from '../components/font-picker';
+import isAmAbilitiesDisabled from './is-am-abilities-disabled';
 import { isShowComponentTool } from './show-component-tools';
 import { getDisplayMessageFromToolData, isDisplayableToolMessageTool } from './tool-message-utils';
 import type { GetChatComponent } from './load-external-providers';
@@ -206,7 +207,9 @@ export default function convertToolMessagesToComponents( {
 			// TODO (ability-migration): Remove once Big Sky drops its pattern-picker chat component; the
 			// provider fallthrough then resolves nothing and the notice happens on its own.
 			const isDeprecatedType = contentType === 'pattern-picker';
-			const amComponent = getAmComponent( contentType );
+			// The testing switch flips rendering to the provider components too,
+			// so the comparison covers the whole flow.
+			const amComponent = isAmAbilitiesDisabled() ? null : getAmComponent( contentType );
 			// AM components take precedence; other types resolve through the external
 			// providers (e.g. jetpack-ai-sidebar's title pickers) via `getChatComponent`.
 			const Component = isDeprecatedType ? null : amComponent ?? getChatComponent?.( contentType );
