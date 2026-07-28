@@ -110,6 +110,16 @@ describe( 'usePostTransferPluginRecovery', () => {
 		expect( activatePlugin ).toHaveBeenCalledTimes( 3 );
 	} );
 
+	it( 'refreshes the plugin list right after activating, without waiting for the next poll', async () => {
+		render();
+		tick();
+		expect( activatePlugin ).toHaveBeenCalledTimes( 1 );
+		const pollFetches = fetchSitePlugins.mock.calls.length;
+		await settle();
+		expect( fetchSitePlugins.mock.calls.length ).toBeGreaterThan( pollFetches );
+		expect( fetchSitePlugins ).toHaveBeenLastCalledWith( 1 );
+	} );
+
 	it( 'does not activate when it does not own activation (the step-driven flow does)', () => {
 		render( { ownsActivation: false } );
 		tick();

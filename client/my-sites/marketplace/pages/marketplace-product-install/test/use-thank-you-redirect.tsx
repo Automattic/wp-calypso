@@ -29,11 +29,8 @@ jest.mock( '@automattic/api-queries', () => ( {
 // canManagePlugins — the plan feature gate on the redirect.
 jest.mock( 'calypso/state/selectors/site-has-feature', () => () => true );
 
-// Capture the pre-redirect delay call instead of navigating.
-jest.mock( 'calypso/my-sites/marketplace/util', () => ( {
-	waitFor: jest.fn( () => new Promise( () => {} ) ),
-} ) );
-const { waitFor: navDelay } = jest.requireMock( 'calypso/my-sites/marketplace/util' );
+const PLUGINS_URL =
+	'https://example.wpcomstaging.com/wp-admin/plugins.php?activate=true&plugin_status=active';
 
 const ATOMIC_READY = {
 	ID: 1,
@@ -64,10 +61,27 @@ const render = ( overrides?: Partial< Props > ) =>
 	renderHookWithProvider( () => useThankYouRedirect( { ...baseProps, ...overrides } ) );
 
 describe( 'useThankYouRedirect', () => {
+	// jsdom can't navigate, so stand in a plain location object and read back the href the hook sets.
+	let originalLocation: Location;
+
 	beforeEach( () => {
 		jest.clearAllMocks();
 		mockRecoveryProps = undefined;
 		mockFreshSite = null;
+		originalLocation = window.location;
+		Object.defineProperty( window, 'location', {
+			configurable: true,
+			writable: true,
+			value: { ...originalLocation, href: '' },
+		} );
+	} );
+
+	afterEach( () => {
+		Object.defineProperty( window, 'location', {
+			configurable: true,
+			writable: true,
+			value: originalLocation,
+		} );
 	} );
 
 	it( 'owns activation only in the two recovery windows', () => {
@@ -97,12 +111,12 @@ describe( 'useThankYouRedirect', () => {
 		render( { atomicFlow: true, pluginActive: false } );
 		// Wait for the fresh site to resolve (readiness satisfied), so a premature redirect would fire.
 		await waitFor( () => expect( mockRecoveryProps?.canActivate ).toBe( true ) );
-		expect( navDelay ).not.toHaveBeenCalled();
+		expect( window.location.href ).toBe( '' );
 	} );
 
 	it( 'redirects once the plugin is active', async () => {
 		mockFreshSite = ATOMIC_READY;
 		render( { atomicFlow: true, pluginActive: true } );
-		await waitFor( () => expect( navDelay ).toHaveBeenCalled() );
+		await waitFor( () => expect( window.location.href ).toBe( PLUGINS_URL ) );
 	} );
 } );

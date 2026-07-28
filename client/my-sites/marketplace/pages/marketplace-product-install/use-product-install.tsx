@@ -4,7 +4,6 @@ import { useQuery } from '@tanstack/react-query';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, useState, useMemo, useRef } from 'react';
 import { useQueryTheme } from 'calypso/components/data/query-theme';
-import { waitFor } from 'calypso/my-sites/marketplace/util';
 import { useSelector, useDispatch } from 'calypso/state';
 import { initiateAtomicTransfer } from 'calypso/state/atomic/transfers/actions';
 import { transferStates } from 'calypso/state/automated-transfer/constants';
@@ -201,11 +200,6 @@ export function useProductInstall( {
 		}
 
 		installFlowInitiatedRef.current = true;
-		// Intentionally uncancelable: the ref blocks re-entry, so tying this to the effect's
-		// lifetime would let a dependency change drop the step advance rather than reschedule it.
-		const triggerInstallFlow = () => {
-			waitFor( 1 ).then( () => setCurrentStep( 1 ) );
-		};
 
 		if ( installStrategy === 'in-place' ) {
 			if ( wpOrgTheme ) {
@@ -219,7 +213,7 @@ export function useProductInstall( {
 			setAtomicFlow( true );
 			dispatch( initiateTransfer( siteId, null, pluginSlug, '', 'plugin_install' ) );
 		}
-		triggerInstallFlow();
+		setCurrentStep( 1 );
 	}, [
 		marketplaceInstallationInProgress,
 		directInstallationAllowed,
