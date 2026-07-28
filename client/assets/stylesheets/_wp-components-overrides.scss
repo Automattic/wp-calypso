@@ -86,6 +86,17 @@
 
 /* A4A */
 .theme-a8c-for-agencies {
+	// 37.0.0's design tokens hardcode the stock blue for the wpds brand and focus colors,
+	// bypassing their --wp-admin-theme-color fallbacks; point them at the A4A primary.
+	--wpds-color-stroke-focus: var(--color-primary);
+	--wpds-color-foreground-interactive-brand: var(--color-primary);
+	--wpds-color-foreground-interactive-brand-active: var(--color-primary-70);
+	--wpds-color-stroke-interactive-brand: var(--color-primary);
+	--wpds-color-stroke-interactive-brand-active: var(--color-primary-70);
+	--wpds-color-background-interactive-brand-weak-active: var(--color-primary-0);
+	--wpds-color-background-interactive-brand-strong: var(--color-primary);
+	--wpds-color-background-interactive-brand-strong-active: var(--color-primary-70);
+
 	.components-button:not(.is-destructive) {
 		--wp-components-color-accent: var(--color-primary);
 		--wp-components-color-accent-darker-10: var(--color-primary-60);
