@@ -65,11 +65,17 @@ export default function VideoDetailsCard( {
 			</div>
 			{ posterUrl &&
 				( mediaLibraryUrl ? (
-					// The link, not the decorative image, carries the accessible name.
+					// The link, not the decorative image, carries the accessible
+					// name. It opens in a new tab: the media library (wp-admin in
+					// Odyssey) has no way back to this stats page.
 					<a
 						className="stats-video-details-card__thumbnail-link"
 						href={ mediaLibraryUrl }
-						aria-label={ translate( 'View the video in the media library', { textOnly: true } ) }
+						target="_blank"
+						rel="noopener noreferrer"
+						aria-label={ translate( 'View the video in the media library (opens in a new tab)', {
+							textOnly: true,
+						} ) }
 					>
 						{ renderThumbnail( posterUrl ) }
 					</a>

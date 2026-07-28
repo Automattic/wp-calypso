@@ -35,8 +35,12 @@ describe( 'VideoDetailsCard', () => {
 			/>
 		);
 
-		const link = screen.getByRole( 'link', { name: 'View the video in the media library' } );
+		const link = screen.getByRole( 'link', {
+			name: 'View the video in the media library (opens in a new tab)',
+		} );
 		expect( link ).toHaveAttribute( 'href', MEDIA_URL );
+		expect( link ).toHaveAttribute( 'target', '_blank' );
+		expect( link ).toHaveAttribute( 'rel', 'noopener noreferrer' );
 		expect( link.querySelector( 'img.stats-video-details-card__thumbnail' ) ).toHaveAttribute(
 			'alt',
 			''
