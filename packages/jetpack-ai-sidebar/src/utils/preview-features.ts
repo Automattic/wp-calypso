@@ -6,7 +6,8 @@ type SidebarFeature =
 	| 'blockToolbarButton'
 	| 'optimizeTitleSuggestion'
 	| 'seoSuggestions'
-	| 'excerptSuggestion';
+	| 'excerptSuggestion'
+	| 'draftAssist';
 
 function getAgentsManagerData() {
 	return typeof agentsManagerData !== 'undefined' ? agentsManagerData : undefined;
@@ -47,6 +48,15 @@ export function isSeoSuggestionsEnabled(): boolean {
  */
 export function isExcerptSuggestionEnabled(): boolean {
 	return isSidebarFeatureEnabled( 'excerptSuggestion', false );
+}
+
+/**
+ * Draft assist: the `/draft` editor entry point and the
+ * `jetpack-ai/apply-draft-content` client ability that writes the first draft
+ * into an empty post. The host (Jetpack) populates `features.draftAssist`.
+ */
+export function isDraftAssistEnabled(): boolean {
+	return isSidebarFeatureEnabled( 'draftAssist', false );
 }
 
 export function isBlockTransformationsEnabled(): boolean {

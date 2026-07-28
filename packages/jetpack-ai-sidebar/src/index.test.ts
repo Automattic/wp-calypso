@@ -65,6 +65,7 @@ const LEGACY_SHOW_COMPONENT_TOOL_ID = 'big_sky__show_component';
 const UPDATE_BLOCK_CONTENT_TOOL_ID = 'wpcom__update_block_content';
 const SHOW_COMPONENT_ABILITY_NAME = 'jetpack-ai/show-component';
 const LEGACY_SHOW_COMPONENT_ABILITY_NAME = 'big-sky/show-component';
+const APPLY_DRAFT_CONTENT_ABILITY_NAME = 'jetpack-ai/apply-draft-content';
 
 function appendRootBlockListLayout( doc: Document = document ): HTMLElement {
 	const layout = doc.createElement( 'div' );
@@ -3986,6 +3987,78 @@ describe( 'toolProvider', () => {
 			const parsed = JSON.parse( result.agentMessage );
 			expect( typeof parsed.data.calypsoCheckpointId ).toBe( 'string' );
 			expect( parsed.data.calypsoCheckpointId.length ).toBeGreaterThan( 0 );
+		} );
+	} );
+
+	describe( 'apply-draft-content', () => {
+		it( 'is not offered by default', async () => {
+			const abilities = await toolProvider.getAbilities();
+			const names = abilities.map( ( a: any ) => a.name );
+
+			expect( names ).not.toContain( APPLY_DRAFT_CONTENT_ABILITY_NAME );
+		} );
+
+		it( 'is offered with a callback when the draft assist feature is enabled', async () => {
+			installAiEditorialReviewData( { draftAssist: true } );
+
+			const abilities = await toolProvider.getAbilities();
+			const draftAbility = abilities.find(
+				( a: any ) => a.name === APPLY_DRAFT_CONTENT_ABILITY_NAME
+			);
+
+			expect( draftAbility ).toBeDefined();
+			expect( draftAbility.id ).toBe( 'jetpack_ai__apply_draft_content' );
+			expect( typeof draftAbility.callback ).toBe( 'function' );
+		} );
+
+		it( 'replaces any server-provided copy of the ability', async () => {
+			installAiEditorialReviewData( { draftAssist: true } );
+			( window as any ).wp.abilities = {
+				getAbilities: jest
+					.fn()
+					.mockResolvedValue( [ { name: APPLY_DRAFT_CONTENT_ABILITY_NAME, id: 'server-copy' } ] ),
+			};
+
+			const abilities = await toolProvider.getAbilities();
+			const matches = abilities.filter( ( a: any ) => a.name === APPLY_DRAFT_CONTENT_ABILITY_NAME );
+
+			expect( matches ).toHaveLength( 1 );
+			expect( matches[ 0 ].id ).toBe( 'jetpack_ai__apply_draft_content' );
+		} );
+
+		it( 'refuses to write into a post that is not empty', async () => {
+			installAiEditorialReviewData( { draftAssist: true } );
+			const resetBlocks = jest.fn();
+			( window as any ).wp.data = {
+				select: ( store: string ) =>
+					store === 'core/editor' ? { isEditedPostEmpty: () => false } : undefined,
+				dispatch: ( store: string ) =>
+					store === 'core/block-editor' ? { resetBlocks } : undefined,
+			};
+
+			const { result, returnToAgent } = ( await toolProvider.executeAbility(
+				'jetpack_ai__apply_draft_content',
+				{ markup: '<!-- wp:paragraph --><p>x</p><!-- /wp:paragraph -->', contentType: 'post' }
+			) ) as any;
+
+			expect( resetBlocks ).not.toHaveBeenCalled();
+			expect( result ).toMatchObject( { success: false } );
+			expect( returnToAgent ).toBe( true );
+		} );
+
+		it( 'is not dispatched when the feature is disabled', async () => {
+			const executeAbility = jest.fn().mockResolvedValue( { result: 'delegated' } );
+			( window as any ).wp.abilities = { executeAbility };
+
+			await toolProvider.executeAbility( 'jetpack_ai__apply_draft_content', {
+				markup: '<!-- wp:paragraph --><p>x</p><!-- /wp:paragraph -->',
+				contentType: 'post',
+			} );
+
+			expect( executeAbility ).toHaveBeenCalledWith( 'jetpack_ai__apply_draft_content', {
+				markup: '<!-- wp:paragraph --><p>x</p><!-- /wp:paragraph -->',
+				contentType: 'post',
+			} );
 		} );
 	} );
 } );

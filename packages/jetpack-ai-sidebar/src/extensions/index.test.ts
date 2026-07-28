@@ -1,5 +1,6 @@
 const mockAddFilter = jest.fn();
 const mockWithJetpackAiToolbarButton = jest.fn();
+const mockRegisterDraftEntry = jest.fn();
 
 jest.mock( '@wordpress/hooks', () => ( {
 	addFilter: mockAddFilter,
@@ -7,6 +8,10 @@ jest.mock( '@wordpress/hooks', () => ( {
 
 jest.mock( './block-toolbar-extension', () => ( {
 	withJetpackAiToolbarButton: mockWithJetpackAiToolbarButton,
+} ) );
+
+jest.mock( './draft-entry', () => ( {
+	registerDraftEntry: mockRegisterDraftEntry,
 } ) );
 
 function installPreview( features: Record< string, boolean > = {}, enabled = true ) {
@@ -26,6 +31,7 @@ describe( 'Jetpack AI sidebar extension registration', () => {
 	beforeEach( () => {
 		mockAddFilter.mockClear();
 		mockWithJetpackAiToolbarButton.mockClear();
+		mockRegisterDraftEntry.mockClear();
 		delete ( globalThis as Record< string, unknown > ).agentsManagerData;
 		jest.resetModules();
 	} );
@@ -76,5 +82,23 @@ describe( 'Jetpack AI sidebar extension registration', () => {
 		registerBlockEditorFilters();
 
 		expect( mockAddFilter ).not.toHaveBeenCalled();
+	} );
+
+	it( 'registers the draft entry point even when the toolbar button is disabled', async () => {
+		installPreview( { blockToolbarButton: false, draftAssist: true } );
+		const { registerBlockEditorFilters } = await import( './index' );
+
+		registerBlockEditorFilters();
+
+		expect( mockAddFilter ).not.toHaveBeenCalled();
+		expect( mockRegisterDraftEntry ).toHaveBeenCalledTimes( 1 );
+	} );
+
+	it( 'defers the draft entry point flag check to the draft entry module', async () => {
+		const { registerBlockEditorFilters } = await import( './index' );
+
+		registerBlockEditorFilters();
+
+		expect( mockRegisterDraftEntry ).toHaveBeenCalledTimes( 1 );
 	} );
 } );

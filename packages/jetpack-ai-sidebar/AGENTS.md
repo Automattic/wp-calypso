@@ -36,11 +36,12 @@ All exports live in `src/index.ts`. This is intentionally a single-file provider
 
 ## Tools
 
-| Tool ID                      | Handler                     | UI Component           | Description                                              |
-| ---------------------------- | --------------------------- | ---------------------- | -------------------------------------------------------- |
-| `jetpack_ai__show_component` | `handleShowComponent`       | via `getChatComponent` | Renders Jetpack AI chat components                       |
-| `big_sky__show_component`    | `handleLegacyShowComponent` | Jetpack or Big Sky     | Temporary migration support; delegates non-Jetpack types |
-| `wpcom/update-block-content` | `handleUpdateBlockContent`  | _(chat text)_          | Updates block content with shimmer effect                |
+| Tool ID                           | Handler                     | UI Component           | Description                                                       |
+| --------------------------------- | --------------------------- | ---------------------- | ----------------------------------------------------------------- |
+| `jetpack_ai__show_component`      | `handleShowComponent`       | via `getChatComponent` | Renders Jetpack AI chat components                                |
+| `big_sky__show_component`         | `handleLegacyShowComponent` | Jetpack or Big Sky     | Temporary migration support; delegates non-Jetpack types          |
+| `wpcom/update-block-content`      | `handleUpdateBlockContent`  | _(chat text)_          | Updates block content with shimmer effect                         |
+| `jetpack_ai__apply_draft_content` | `handleApplyDraftContent`   | _(chat text)_          | Writes a first draft into an empty post (`draftAssist` flag only) |
 
 ### Show-component pattern
 
@@ -83,6 +84,17 @@ For tools that perform an editor action (like `update-block-content`):
 3. Add the handler function in `src/index.ts`
 4. Register the ability in `toolProvider.getAbilities()` with a callback
 5. Add a fallback case in `toolProvider.executeAbility()`
+
+## Editor entry points (`src/extensions/`)
+
+`registerBlockEditorFilters()` (called once by `apps/agents-manager/jetpack-ai-sidebar.js`) registers the block toolbar button and the draft assist entry point. Each is independently flag-gated — do not nest one gate inside the other.
+
+**Draft assist** (`draft-entry.ts`, `draftAssist` flag, post/page only):
+
+- **Placeholder**: `bodyPlaceholder` is swapped while `core/editor`'s `isEditedPostEmpty()` is true, via a `wp.data.subscribe` loop. The editor re-pushes its own settings whenever they change, so the sync re-applies on every tick, re-captures the editor's current value each time, and restores only if the placeholder is still ours.
+- **`/draft` trigger prefix, not `/`**: Gutenberg's autocomplete resolves to exactly one completer per keystroke — longest/latest-ending trigger prefix wins, ties broken by array order (`getAutocompleteMatch` in `@wordpress/components`). A second `/` completer would either never fire (appended) or shadow the core block inserter (prepended). Keep the distinct prefix.
+- **Chat handoff**: `submitChatMessage` is optional on `window.__agentsManagerActions` and only exists once the chat panel mounts — poll for it after `isReady`/`agents-manager-ready`, and fall back to `setChatInput`.
+- **Empty-post guard**: `handleApplyDraftContent` refuses (and returns `returnToAgent: true` so the agent can explain) unless `isEditedPostEmpty()` is true and the markup parses to at least one block. It must never blank a post.
 
 ## Context Provider
 
@@ -141,4 +153,4 @@ Test files go alongside source: `foo.ts` → `foo.test.ts`.
 - Before/after screenshots for UI changes (especially TitlePicker or shimmer effects)
 - Test with both block selected and no block selected states
 
-**Last updated**: 2026-04-10
+**Last updated**: 2026-07-28

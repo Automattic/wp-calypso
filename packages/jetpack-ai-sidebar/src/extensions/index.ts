@@ -1,10 +1,11 @@
 import { addFilter } from '@wordpress/hooks';
 import { isBlockToolbarButtonEnabled } from '../utils/preview-features';
 import { withJetpackAiToolbarButton } from './block-toolbar-extension';
+import { registerDraftEntry } from './draft-entry';
 
 let filtersRegistered = false;
 
-export function registerBlockEditorFilters(): void {
+function registerBlockToolbarFilter(): void {
 	if ( filtersRegistered ) {
 		return;
 	}
@@ -20,4 +21,11 @@ export function registerBlockEditorFilters(): void {
 
 	filtersRegistered = true;
 	addFilter( 'editor.BlockEdit', 'jetpack-ai-sidebar/block-toolbar', withJetpackAiToolbarButton );
+}
+
+export function registerBlockEditorFilters(): void {
+	registerBlockToolbarFilter();
+	// Independently flag-gated: the draft entry point must register even when
+	// the block toolbar button is off.
+	registerDraftEntry();
 }

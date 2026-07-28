@@ -157,3 +157,87 @@ export function trackSplitScreenGuideClick( options: TrackSplitScreenGuideOption
 		getSplitScreenGuideProperties( options )
 	);
 }
+
+/** Editor entity draft assist targets. Mirrors the ability's `contentType`. */
+export type DraftAssistContentType = 'post' | 'page';
+
+/** Why a draft could not be written into the editor. */
+export type DraftAssistRejectionReason = 'post_not_empty' | 'invalid_markup' | 'editor_unavailable';
+
+/**
+ * Tracks the draft assist entry point becoming visible in the editor — i.e. the
+ * `/draft` placeholder replacing the default one on an empty post or page.
+ * @param options             - Tracking options
+ * @param options.contentType - Editor entity the entry point is offered on.
+ */
+export function trackDraftAssistEntryPointShown( {
+	contentType,
+}: {
+	contentType: DraftAssistContentType;
+} ): void {
+	recordTracksEvent( 'ai_draft_assist_entry_point_shown', {
+		content_type: contentType,
+	} );
+}
+
+/**
+ * Tracks the user firing the draft assist entry point.
+ * @param options                  - Tracking options
+ * @param options.contentType      - Editor entity the draft was requested for.
+ * @param options.fromSlashCommand - Whether the `/draft` autocompleter fired it.
+ */
+export function trackDraftAssistEntryPointTriggered( {
+	contentType,
+	fromSlashCommand,
+}: {
+	contentType: DraftAssistContentType;
+	fromSlashCommand: boolean;
+} ): void {
+	recordTracksEvent( 'ai_draft_assist_entry_point_triggered', {
+		content_type: contentType,
+		from_slash_command: fromSlashCommand,
+	} );
+}
+
+/**
+ * Tracks a generated draft being written into the editor canvas.
+ * @param options             - Tracking options
+ * @param options.contentType - Editor entity the draft was applied to.
+ * @param options.blockCount  - Number of top-level blocks the markup parsed into.
+ * @param options.hasTitle    - Whether the draft also set the post title.
+ */
+export function trackDraftAssistDraftApplied( {
+	contentType,
+	blockCount,
+	hasTitle,
+}: {
+	contentType: DraftAssistContentType;
+	blockCount: number;
+	hasTitle: boolean;
+} ): void {
+	recordTracksEvent( 'ai_draft_assist_draft_applied', {
+		content_type: contentType,
+		block_count: blockCount,
+		has_title: hasTitle,
+	} );
+}
+
+/**
+ * Tracks a generated draft being refused before anything was written — most
+ * importantly when the post already had content the draft would have replaced.
+ * @param options             - Tracking options
+ * @param options.contentType - Editor entity the draft was meant for.
+ * @param options.reason      - Why the draft was refused.
+ */
+export function trackDraftAssistDraftRejected( {
+	contentType,
+	reason,
+}: {
+	contentType: DraftAssistContentType;
+	reason: DraftAssistRejectionReason;
+} ): void {
+	recordTracksEvent( 'ai_draft_assist_draft_rejected', {
+		content_type: contentType,
+		reason,
+	} );
+}
