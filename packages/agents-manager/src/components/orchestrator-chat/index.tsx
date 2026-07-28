@@ -173,7 +173,7 @@ interface Props {
 	isCompactMode: boolean;
 	/** Navigation continuation hook for post-navigation conversation resumption. */
 	useNavigationContinuation?: NavigationContinuationHook;
-	/** The external providers' abilities-setup hook (e.g. Big Sky, jetpack-ai-sidebar). Invoked after custom actions registration. */
+	/** The external providers' abilities-setup hook (e.g. jetpack-ai-sidebar; Big Sky until its abilities finish migrating). Invoked after custom actions registration. */
 	useProviderAbilitiesSetup?: AbilitiesSetupHook;
 	/** Hook for providing dynamic suggestions based on context (e.g., selected block). */
 	useSuggestions?: UseSuggestionsHook;
