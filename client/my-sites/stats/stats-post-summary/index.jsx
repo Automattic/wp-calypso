@@ -177,11 +177,19 @@ class StatsPostSummary extends Component {
 				// paginating into fake empty bars; post-publish months with
 				// zero views are kept, consistent with Days/Weeks paging.
 				const today = moment();
-				const publishDate = stats.post?.post_date ?? stats.post?.post_date_gmt;
+				// post_date is the post's site-local publish time, matching the
+				// site-local month buckets; the post_date_gmt fallback is GMT,
+				// so parse it as GMT rather than in the viewer's timezone.
+				// Comparing YYYY-MM keys keeps the trim independent of the
+				// viewer's zone either way.
+				const publishMoment = stats.post?.post_date
+					? moment( stats.post.post_date )
+					: moment.utc( stats.post?.post_date_gmt ?? null );
+				const publishMonth = publishMoment.isValid() ? publishMoment.format( 'YYYY-MM' ) : null;
 				return [ ...statsByMonth( stats, moment ) ].filter(
 					( record ) =>
 						moment( record.startDate ).isSameOrBefore( today, 'month' ) &&
-						( ! publishDate || ! moment( record.startDate ).isBefore( publishDate, 'month' ) )
+						( ! publishMonth || record.startDate.slice( 0, 7 ) >= publishMonth )
 				);
 			}
 			default:
