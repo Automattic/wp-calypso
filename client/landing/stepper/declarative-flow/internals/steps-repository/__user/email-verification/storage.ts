@@ -2,8 +2,8 @@
 // so its state survives leaving/re-entering the account step or a refresh:
 //   - pending: this attempt created an email account and hasn't confirmed/skipped yet.
 //   - sentAt:  when the (initial or resent) verification email was sent — the cooldown anchor.
-//   - shownAt: when the gate first opened — the duration anchor, so the metric is correct
-//              even after a refresh.
+//   - shownAt: when the gate first rendered — the duration anchor, so the metric excludes
+//              the account-creation → gate loading time and is correct even after a refresh.
 
 export const RESEND_COOLDOWN_SECONDS = 60;
 
@@ -37,10 +37,18 @@ function write( scope: string, record: GateRecord ): void {
 }
 
 // Called at email account creation: open the gate and record the activation email as
-// the initial send.
+// the initial send. `shownAt` is filled in later, when the gate first renders.
 export function beginGate( scope: string ): void {
-	const now = Date.now();
-	write( scope, { pending: true, sentAt: now, shownAt: now } );
+	write( scope, { pending: true, sentAt: Date.now(), shownAt: 0 } );
+}
+
+// Called when the gate first renders, so the duration metric excludes the time spent
+// loading the token and hydrating the current user between account creation and the gate.
+export function markGateShown( scope: string ): void {
+	const record = read( scope );
+	if ( record && ! record.shownAt ) {
+		write( scope, { ...record, shownAt: Date.now() } );
+	}
 }
 
 export function isGatePending( scope: string ): boolean {
@@ -64,11 +72,14 @@ export function markResent( scope: string ): void {
 }
 
 export function gateShownAt( scope: string ): number {
-	return read( scope )?.shownAt ?? Date.now();
+	return read( scope )?.shownAt || Date.now();
 }
 
-export function cooldownRemainingSeconds( scope: string ): number {
-	const sentAt = read( scope )?.sentAt ?? 0;
+export function gateSentAt( scope: string ): number {
+	return read( scope )?.sentAt ?? 0;
+}
+
+export function cooldownRemainingSeconds( sentAt: number ): number {
 	const remainingMs = RESEND_COOLDOWN_SECONDS * 1000 - ( Date.now() - sentAt );
 	return remainingMs > 0 ? Math.min( Math.ceil( remainingMs / 1000 ), RESEND_COOLDOWN_SECONDS ) : 0;
 }

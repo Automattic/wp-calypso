@@ -8,7 +8,7 @@ import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import UserVerificationChecker from 'calypso/lib/user/verification-checker';
 import { useSelector } from 'calypso/state';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
-import { gateScope, gateShownAt } from './storage';
+import { gateScope, gateShownAt, markGateShown } from './storage';
 import { useEmailVerification } from './use-email-verification';
 
 import './style.scss';
@@ -43,6 +43,12 @@ const EmailVerificationGate = ( { flow, logo, onDone }: Props ) => {
 	const scope = gateScope( flow, user?.ID );
 
 	const title = __( 'Confirm your email address' );
+
+	// Stamp the shown-at time now that the gate is actually on screen, so the duration
+	// metric doesn't count the loading between account creation and this render.
+	useEffect( () => {
+		markGateShown( scope );
+	}, [ scope ] );
 
 	// This gate replaces the account form in place, without a route change, so move focus
 	// onto its heading on mount — otherwise focus is stranded on the now-unmounted submit

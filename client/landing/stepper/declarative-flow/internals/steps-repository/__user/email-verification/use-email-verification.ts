@@ -1,5 +1,5 @@
 import { fetchUser } from '@automattic/api-core';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { useSendEmailVerification } from 'calypso/landing/stepper/hooks/use-send-email-verification';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { EVERY_FIVE_SECONDS, EVERY_SECOND, useInterval } from 'calypso/lib/interval';
@@ -9,6 +9,7 @@ import { getCurrentUser, isCurrentUserEmailVerified } from 'calypso/state/curren
 import {
 	cooldownRemainingSeconds,
 	gateScope,
+	gateSentAt,
 	markResent,
 	RESEND_COOLDOWN_SECONDS,
 } from './storage';
@@ -26,10 +27,19 @@ export function useEmailVerification( flow: string ) {
 	const scope = gateScope( flow, userId );
 	const sendVerificationEmail = useSendEmailVerification();
 
+	// The cooldown is driven by this in-memory send time, not by re-reading storage each
+	// tick: if persistence is unavailable, storage would report no send and reset the
+	// cooldown to zero, letting the user resend every second. Seed it from the persisted
+	// time (to survive a refresh), or from now when there's nothing stored.
+	const sentAtRef = useRef< number >( 0 );
+	if ( ! sentAtRef.current ) {
+		sentAtRef.current = gateSentAt( scope ) || Date.now();
+	}
+
 	const [ isSending, setIsSending ] = useState( false );
 	const [ hasSendError, setHasSendError ] = useState( false );
 	const [ secondsUntilResend, setSecondsUntilResend ] = useState( () =>
-		cooldownRemainingSeconds( scope )
+		cooldownRemainingSeconds( sentAtRef.current )
 	);
 	const [ isPollingExpired, setIsPollingExpired ] = useState( false );
 	const [ pollWindowKey, setPollWindowKey ] = useState( 0 );
@@ -48,6 +58,7 @@ export function useEmailVerification( flow: string ) {
 			if ( ! success ) {
 				throw new Error( 'unsuccessful_response' );
 			}
+			sentAtRef.current = Date.now();
 			markResent( scope );
 			setSecondsUntilResend( RESEND_COOLDOWN_SECONDS );
 			// A fresh link restarts the polling window: the user might confirm this new
@@ -73,7 +84,7 @@ export function useEmailVerification( flow: string ) {
 	// Recompute the cooldown from the stored send time rather than decrementing: mobile
 	// browsers suspend timers while the user is in their email app.
 	useInterval(
-		() => setSecondsUntilResend( cooldownRemainingSeconds( scope ) ),
+		() => setSecondsUntilResend( cooldownRemainingSeconds( sentAtRef.current ) ),
 		secondsUntilResend > 0 && EVERY_SECOND
 	);
 
@@ -84,7 +95,7 @@ export function useEmailVerification( flow: string ) {
 			const visible = document.visibilityState === 'visible';
 			setIsVisible( visible );
 			if ( visible ) {
-				setSecondsUntilResend( cooldownRemainingSeconds( scope ) );
+				setSecondsUntilResend( cooldownRemainingSeconds( sentAtRef.current ) );
 				if ( ! isVerified ) {
 					dispatch( fetchCurrentUser() );
 				}

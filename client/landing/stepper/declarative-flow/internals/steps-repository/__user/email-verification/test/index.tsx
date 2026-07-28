@@ -182,6 +182,28 @@ describe( 'EmailVerificationGate', () => {
 		);
 	} );
 
+	it( 'measures duration from when the gate is shown, not from account creation', async () => {
+		jest.useFakeTimers();
+		beginGate( SCOPE );
+
+		// Loading the token and hydrating the user takes time before the gate can render.
+		act( () => {
+			jest.advanceTimersByTime( 10_000 );
+		} );
+
+		const onDone = jest.fn();
+		// Already verified, so the gate confirms immediately on mount.
+		renderStep( <EmailVerificationGate flow={ FLOW } onDone={ onDone } />, {
+			initialState: currentUserState( true ),
+		} );
+
+		await waitFor( () => expect( onDone ).toHaveBeenCalled() );
+		expect( recordTracksEvent ).toHaveBeenCalledWith(
+			'calypso_signup_email_verification_confirmed',
+			expect.objectContaining( { seconds_on_step: 0 } )
+		);
+	} );
+
 	it( 'skipping fires only the verification event, not the generic step-skip event', async () => {
 		beginGate( SCOPE );
 		const onDone = jest.fn();
@@ -304,6 +326,45 @@ describe( 'EmailVerificationGate', () => {
 			'calypso_signup_email_verification_email_sent',
 			{ flow: FLOW, is_resend: true }
 		);
+	} );
+
+	it( 'keeps the resend cooldown when session storage is unavailable', async () => {
+		jest.useFakeTimers();
+		const user = userEvent.setup( { advanceTimers: jest.advanceTimersByTime } );
+		const setItem = jest.spyOn( Storage.prototype, 'setItem' ).mockImplementation( () => {
+			throw new Error( 'storage disabled' );
+		} );
+
+		try {
+			render();
+
+			// The initial cooldown holds even though nothing could be persisted.
+			await waitFor( () =>
+				expect( screen.getByText( /You can resend the email in 60s\./ ) ).toBeVisible()
+			);
+			expect(
+				screen.queryByRole( 'button', { name: 'resend the email' } )
+			).not.toBeInTheDocument();
+
+			act( () => {
+				jest.advanceTimersByTime( COOLDOWN_MS );
+			} );
+
+			const resendRequest = mockSendVerificationEmail();
+			await user.click( await screen.findByRole( 'button', { name: 'resend the email' } ) );
+			await waitFor( () =>
+				expect( screen.getByText( /You can resend the email in 60s\./ ) ).toBeVisible()
+			);
+
+			// …and the fresh cooldown counts down instead of snapping back to zero.
+			act( () => {
+				jest.advanceTimersByTime( 1000 );
+			} );
+			expect( screen.getByText( /You can resend the email in 59s\./ ) ).toBeVisible();
+			expect( resendRequest.isDone() ).toBe( true );
+		} finally {
+			setItem.mockRestore();
+		}
 	} );
 
 	it( 'keeps the cooldown when the gate is revisited within the window, without resending', async () => {
