@@ -5,6 +5,7 @@ import { setUser } from '@automattic/calypso-sentry';
 import { isSupportUserSession } from '@automattic/calypso-support-session';
 import { magnificentNonEnLocales } from '@automattic/i18n-utils';
 import {
+	hashKey,
 	useQuery,
 	useQueryClient,
 	type QueryCacheNotifyEvent,
@@ -140,10 +141,37 @@ export function AuthProvider( { children }: { children: React.ReactNode } ) {
 		window.location.href = loginUrl;
 	}, [ supports.startStoreRoute ] );
 
+	// Re-checks the session with the one request whose failure unambiguously means
+	// it is gone. Concurrent callers share a single in-flight check; the verdict is
+	// deliberately not cached beyond that, so a session that expires later is
+	// still caught.
+	const sessionCheck = useRef< Promise< boolean > | null >( null );
+	const sessionIsStillValid = useCallback( (): Promise< boolean > => {
+		if ( sessionCheck.current ) {
+			return sessionCheck.current;
+		}
+		const check = fetchUser().then(
+			() => true,
+			() => false
+		);
+		sessionCheck.current = check;
+		check.finally( () => {
+			if ( sessionCheck.current === check ) {
+				sessionCheck.current = null;
+			}
+		} );
+		return check;
+	}, [] );
+
 	// Subscribe to network errors and when errors occur due to being logged
 	// out, redirect the user to the log in screen.
 	useEffect( () => {
-		const isAuthError = ( { statusCode, error = '' }: WPError ) => {
+		// These errors mean "you may not read this resource", which happens both
+		// when the session has expired and when the session is fine but the
+		// resource belongs to someone else. An expired token and a site the user
+		// is not a member of return the same error string and the same status
+		// code, so the error alone cannot tell the two apart.
+		const isPossibleAuthError = ( { statusCode, error = '' }: WPError ) => {
 			if ( [ 'authorization_required' ].includes( error ) ) {
 				return true;
 			}
@@ -155,14 +183,32 @@ export function AuthProvider( { children }: { children: React.ReactNode } ) {
 			return false;
 		};
 
+		const isSessionQuery = ( event: MutationCacheNotifyEvent | QueryCacheNotifyEvent ) =>
+			'query' in event && hashKey( event.query.queryKey ) === hashKey( AUTH_QUERY_KEY );
+
 		const handleEvent = ( event: MutationCacheNotifyEvent | QueryCacheNotifyEvent ) => {
 			if (
 				event.type === 'updated' &&
 				event.action.type === 'error' &&
 				isWpError( event.action.error ) &&
-				isAuthError( event.action.error )
+				isPossibleAuthError( event.action.error )
 			) {
-				handleAuthError();
+				// The session request itself failed — no need to ask again.
+				if ( isSessionQuery( event ) ) {
+					handleAuthError();
+					return;
+				}
+
+				// Otherwise confirm the session is actually gone before logging the
+				// user out. Redirecting on the error alone signs out users who are
+				// still authenticated, and when the page that triggered the request
+				// is also the redirect target, /log-in bounces straight back into
+				// the same request — an infinite loop (SHILL-2295).
+				void sessionIsStillValid().then( ( isValid ) => {
+					if ( ! isValid ) {
+						handleAuthError();
+					}
+				} );
 			}
 		};
 		const unsubMutationCache = queryClient.getMutationCache().subscribe( handleEvent );
@@ -171,7 +217,7 @@ export function AuthProvider( { children }: { children: React.ReactNode } ) {
 			unsubMutationCache();
 			unsubQueryCache();
 		};
-	}, [ queryClient, handleAuthError ] );
+	}, [ queryClient, handleAuthError, sessionIsStillValid ] );
 
 	useEffect( () => {
 		if ( user?.ID ) {
