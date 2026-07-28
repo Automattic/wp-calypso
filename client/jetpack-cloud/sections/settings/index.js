@@ -8,13 +8,14 @@ import {
 	showNotAuthorizedForNonAdmins,
 	settings,
 } from 'calypso/jetpack-cloud/sections/settings/controller';
+import { getAgencyDisconnectSiteId } from 'calypso/jetpack-cloud/sections/utils/agency-disconnect-site-paths';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import { confirmDisconnectPath, disconnectPath, settingsPath } from 'calypso/lib/jetpack/paths';
 import wrapInSiteOffsetProvider from 'calypso/lib/wrap-in-site-offset';
 import { navigation, siteSelection, sites } from 'calypso/my-sites/controller';
 
 const siteSelectionUnlessAgencySiteIdProvided = ( context, next ) => {
-	if ( context.query.site_id ) {
+	if ( getAgencyDisconnectSiteId( context.query.site_id ) ) {
 		next();
 		return;
 	}

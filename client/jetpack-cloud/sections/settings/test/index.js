@@ -94,4 +94,19 @@ describe( 'Jetpack Cloud settings routes', () => {
 
 		expect( siteSelection ).toHaveBeenCalledWith( context, next );
 	} );
+
+	test( 'uses normal site selection for confirm routes with an invalid agency site id', () => {
+		settingsRoutes();
+
+		const confirmRoute = page.mock.calls.find(
+			( [ path ] ) => path === '/settings/disconnect-site/confirm/:site'
+		);
+		const maybeSiteSelection = confirmRoute[ 2 ];
+		const context = { query: { site_id: 'not-a-number' } };
+		const next = jest.fn();
+
+		maybeSiteSelection( context, next );
+
+		expect( siteSelection ).toHaveBeenCalledWith( context, next );
+	} );
 } );
