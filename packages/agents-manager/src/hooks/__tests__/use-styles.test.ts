@@ -11,13 +11,20 @@ jest.mock( '../../utils/is-editor-page', () => ( {
 
 const mockEditEntityRecord = jest.fn();
 let mockGlobalStylesId: string | null = 'global-styles-1';
-const mockCurrentRecord = {
+const makeRecord = () => ( {
 	settings: { color: { palette: { theme: [ { slug: 'primary', color: '#000' } ] } } },
 	styles: {
 		color: { text: '#000', background: '#fff' },
-		elements: { button: { border: { radius: '4px', color: 'red' } } },
+		elements: {
+			button: {
+				border: { radius: '4px', color: 'red' },
+				spacing: { padding: '8px' },
+				color: { background: '#fff', text: '#000' },
+			} as Record< string, unknown >,
+		},
 	},
-};
+} );
+let mockCurrentRecord = makeRecord();
 
 jest.mock( '@wordpress/core-data', () => ( { store: 'core' } ) );
 jest.mock( '@wordpress/data', () => ( {
@@ -34,6 +41,7 @@ describe( 'useStyles', () => {
 		jest.clearAllMocks();
 		( isEditorPage as jest.Mock ).mockReturnValue( true );
 		mockGlobalStylesId = 'global-styles-1';
+		mockCurrentRecord = makeRecord();
 	} );
 
 	it( 'does not apply off the editor page', () => {
@@ -115,5 +123,138 @@ describe( 'useStyles', () => {
 
 		const merged = mockEditEntityRecord.mock.calls[ 0 ][ 3 ];
 		expect( merged.styles.elements.button.border ).toEqual( { width: '2px', style: 'solid' } );
+	} );
+
+	it( 'resets button border and spacing before merging a button variation', () => {
+		const { result } = renderHook( () => useStyles() );
+
+		act( () => {
+			result.current(
+				{ title: 'Pill', styles: { elements: { button: { border: { radius: '100px' } } } } },
+				'button'
+			);
+		} );
+
+		const merged = mockEditEntityRecord.mock.calls[ 0 ][ 3 ];
+		expect( merged.styles.elements.button ).toEqual( {
+			border: { radius: '100px' },
+			color: { background: '#fff', text: '#000' },
+		} );
+	} );
+
+	it( 'stashes the previous button color when applying an outline variation', () => {
+		const { result } = renderHook( () => useStyles() );
+
+		act( () => {
+			result.current(
+				{
+					title: 'Rounded, Outline',
+					styles: {
+						elements: {
+							button: {
+								border: { radius: '100px', width: '2px' },
+								color: {
+									background: 'transparent !important',
+									text: 'currentColor !important',
+								},
+							},
+						},
+					},
+				},
+				'button'
+			);
+		} );
+
+		const merged = mockEditEntityRecord.mock.calls[ 0 ][ 3 ];
+		expect( merged.styles.elements.button.buttonColor ).toEqual( {
+			background: '#fff',
+			text: '#000',
+		} );
+		expect( merged.styles.elements.button.color ).toEqual( {
+			background: 'transparent !important',
+			text: 'currentColor !important',
+		} );
+	} );
+
+	it( 'strips the applied typography before merging a font variation', () => {
+		mockCurrentRecord = {
+			settings: { typography: { fluid: true } },
+			styles: {
+				typography: { fontFamily: 'Old' },
+				elements: { h1: { typography: { fontWeight: '700' }, color: { text: '#111' } } },
+			},
+		} as unknown as ReturnType< typeof makeRecord >;
+		const { result } = renderHook( () => useStyles() );
+
+		act( () => {
+			result.current(
+				{
+					title: 'Modern Sans',
+					settings: { typography: { fontFamilies: { theme: [ { name: 'Inter' } ] } } },
+					styles: { elements: { h1: { typography: { fontFamily: 'Inter' } } } },
+				} as never,
+				'font'
+			);
+		} );
+
+		const merged = mockEditEntityRecord.mock.calls[ 0 ][ 3 ];
+		expect( merged.settings.typography ).toEqual( {
+			fontFamilies: { theme: [ { name: 'Inter' } ] },
+		} );
+		expect( merged.styles.typography ).toBeUndefined();
+		expect( merged.styles.elements.h1 ).toEqual( {
+			color: { text: '#111' },
+			typography: { fontFamily: 'Inter' },
+		} );
+	} );
+
+	it( 'mirrors button styles onto the subscriptions block with !important', () => {
+		const { result } = renderHook( () => useStyles() );
+
+		act( () => {
+			result.current(
+				{
+					title: 'Pill',
+					styles: {
+						elements: {
+							button: {
+								border: { radius: '100px' },
+								spacing: { padding: { left: '2rem', right: '2rem', top: '1rem' } },
+							},
+						},
+					},
+				},
+				'button'
+			);
+		} );
+
+		const merged = mockEditEntityRecord.mock.calls[ 0 ][ 3 ];
+		const mirrored = merged.styles.blocks[ 'jetpack/subscriptions' ].elements.button;
+		expect( mirrored.border ).toEqual( { radius: '100px !important' } );
+		// Vertical padding is not mirrored — it would break the input height.
+		expect( mirrored.spacing.padding ).toEqual( {
+			left: '2rem !important',
+			right: '2rem !important',
+		} );
+	} );
+
+	it( 'restores the stashed button color when leaving an outline variation', () => {
+		mockCurrentRecord.styles.elements.button = {
+			border: { radius: '100px' },
+			color: { background: 'transparent !important', text: 'currentColor !important' },
+			buttonColor: { background: '#fff', text: '#000' },
+		};
+		const { result } = renderHook( () => useStyles() );
+
+		act( () => {
+			result.current(
+				{ title: 'Square', styles: { elements: { button: { border: { radius: '0' } } } } },
+				'button'
+			);
+		} );
+
+		const merged = mockEditEntityRecord.mock.calls[ 0 ][ 3 ];
+		expect( merged.styles.elements.button.color ).toEqual( { background: '#fff', text: '#000' } );
+		expect( merged.styles.elements.button.border ).toEqual( { radius: '0' } );
 	} );
 } );

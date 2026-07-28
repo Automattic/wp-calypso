@@ -6,7 +6,7 @@ import ensureCurrentFirst, {
 } from '../utils/ensure-current-first';
 import { setSiteEditorAction } from '../utils/site-editor-context';
 import useGlobalStyles from './use-global-styles';
-import useStyles from './use-styles';
+import useStyles, { type StyleVariationType } from './use-styles';
 import type { GlobalStyles, StyleVariation } from '../components/styles-preview';
 
 // Hard cap on rendered options — every card is a full editor iframe and the
@@ -17,6 +17,8 @@ interface Options {
 	variations?: StyleVariation[];
 	/** Recorded into `siteEditorActions` (agent context) when a pick applies. */
 	pickActionName?: string;
+	/** Applies the type's pre-merge style reset (button/font) on pick. */
+	variationType?: StyleVariationType;
 	/** Reads the live value from the editor's global styles. */
 	getLiveValue: ( globalStyles: GlobalStyles ) => unknown;
 	/** Extracts the comparable value from a variation. */
@@ -36,6 +38,7 @@ interface Options {
 export default function usePickerVariations( {
 	variations,
 	pickActionName,
+	variationType,
 	getLiveValue,
 	getValue,
 	createCurrent,
@@ -106,14 +109,14 @@ export default function usePickerVariations( {
 	const handleSelect = useCallback(
 		( variation: StyleVariation ) => {
 			hasSortedRef.current = true;
-			if ( setStyles( variation ) ) {
+			if ( setStyles( variation, variationType ) ) {
 				setActiveTitle( variation.title ?? null );
 				if ( pickActionName ) {
 					setSiteEditorAction( pickActionName, variation.title ?? null );
 				}
 			}
 		},
-		[ setStyles, pickActionName ]
+		[ setStyles, pickActionName, variationType ]
 	);
 
 	return { sortedVariations, activeTitle, handleSelect };

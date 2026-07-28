@@ -118,7 +118,7 @@ describe( 'usePickerVariations', () => {
 
 		act( () => result.current.handleSelect( variations[ 1 ] ) );
 
-		expect( mockSetStyles ).toHaveBeenCalledWith( variations[ 1 ] );
+		expect( mockSetStyles ).toHaveBeenCalledWith( variations[ 1 ], undefined );
 		expect( result.current.activeTitle ).toBe( 'Pastel' );
 	} );
 

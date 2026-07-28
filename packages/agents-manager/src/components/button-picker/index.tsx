@@ -19,6 +19,7 @@ export default function ButtonPicker( {
 	const { sortedVariations, activeTitle, handleSelect } = usePickerVariations( {
 		variations: buttonVariations,
 		pickActionName: 'buttonPickerItemSelected',
+		variationType: 'button',
 		getLiveValue: ( globalStyles ) => globalStyles.styles?.elements?.button?.border,
 		getValue: getButtonBorder,
 		createCurrent: ( liveValue ) =>
