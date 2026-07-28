@@ -59,6 +59,9 @@ describe( 'actions', () => {
 					error: 'not_found',
 				} )
 				.get( `/rest/v1.1/sites/${ SITE_ID }/stats/video/31533` )
+				.reply( 200, VIDEO_RESPONSE )
+				.get( `/rest/v1.1/sites/${ SITE_ID }/stats/video/31533` )
+				.query( { statType: 'all', period: 'day', num: '-1' } )
 				.reply( 200, VIDEO_RESPONSE );
 		} );
 
@@ -100,6 +103,22 @@ describe( 'actions', () => {
 						statType: STAT_TYPE_VIDEO,
 						data: VIDEO_RESPONSE,
 						query: { postId: 31533 },
+					} )
+				);
+			} );
+		} );
+
+		test( 'should forward video stats range query parameters', () => {
+			const query = { postId: 31533, statType: 'all', period: 'day', num: -1 };
+
+			return requestSiteStats( SITE_ID, STAT_TYPE_VIDEO, query )( spy ).then( () => {
+				expect( spy ).toHaveBeenCalledWith(
+					expect.objectContaining( {
+						type: SITE_STATS_RECEIVE,
+						siteId: SITE_ID,
+						statType: STAT_TYPE_VIDEO,
+						data: VIDEO_RESPONSE,
+						query,
 					} )
 				);
 			} );
