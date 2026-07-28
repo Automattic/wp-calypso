@@ -138,7 +138,8 @@ describe( 'usePickerVariations', () => {
 		expect( mockSetStyles ).toHaveBeenCalledWith( variations[ 0 ], 'button' );
 	} );
 
-	it( "fires Big Sky's variation-click event on pick", () => {
+	it( "fires Big Sky's variation-click event on pick, even when the apply fails", () => {
+		mockSetStyles.mockReturnValueOnce( false );
 		const { result } = renderHook( () =>
 			usePickerVariations( makeOptions( { variationType: 'button' } ) )
 		);

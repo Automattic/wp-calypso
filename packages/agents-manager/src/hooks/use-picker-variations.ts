@@ -112,7 +112,7 @@ export default function usePickerVariations( {
 		( variation: StyleVariation ) => {
 			hasSortedRef.current = true;
 			if ( variationType ) {
-				// Big Sky's variation-click event names and props, so the
+				// Fire Big Sky's variation-click event name and props, so the
 				// existing dashboards keep working.
 				recordBigSkyTracksEvent( `${ variationType }_variation_click`, {
 					[ variationType ]: variation.title,
