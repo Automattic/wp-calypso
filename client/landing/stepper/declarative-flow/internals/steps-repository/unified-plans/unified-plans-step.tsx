@@ -127,6 +127,8 @@ export interface UnifiedPlansStepProps {
 	headerText?: string;
 	subHeaderText?: string;
 	highlightLabelOverrides?: { [ K in PlanSlug ]?: TranslateResult };
+	badgeTextOverrides?: { [ K in PlanSlug ]?: TranslateResult };
+	taglineOverrides?: { [ K in PlanSlug ]?: TranslateResult };
 	fallbackHeaderText?: string;
 	deemphasizeFreePlan?: boolean;
 	useStepperWrapper?: boolean;
@@ -247,6 +249,8 @@ function UnifiedPlansStep( {
 	headerText,
 	subHeaderText,
 	highlightLabelOverrides,
+	badgeTextOverrides,
+	taglineOverrides,
 	useEmailOnboardingSubheader,
 	onPlanIntervalUpdate,
 	positionInFlow,
@@ -692,6 +696,8 @@ function UnifiedPlansStep( {
 				hideEnterprisePlan={ hideEnterprisePlan }
 				hidePlanTypeSelector={ hidePlanTypeSelector }
 				highlightLabelOverrides={ highlightLabelOverrides }
+				badgeTextOverrides={ badgeTextOverrides }
+				taglineOverrides={ taglineOverrides }
 				removePaidDomain={ handleRemovePaidDomain }
 				setSiteUrlAsFreeDomainSuggestion={ handleSetSiteUrlAsFreeDomainSuggestion }
 				coupon={ coupon ?? undefined }

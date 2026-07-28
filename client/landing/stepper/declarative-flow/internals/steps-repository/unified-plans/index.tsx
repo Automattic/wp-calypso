@@ -52,6 +52,8 @@ const PlansStepAdaptor: StepType< {
 		hidePlanTypeSelector?: boolean;
 		defaultInterval?: SupportedIntervalTypes;
 		highlightLabelOverrides?: { [ K in PlanSlug ]?: TranslateResult };
+		badgeTextOverrides?: { [ K in PlanSlug ]?: TranslateResult };
+		taglineOverrides?: { [ K in PlanSlug ]?: TranslateResult };
 		wrapperProps?: {
 			hideBack?: boolean;
 			goBack?: () => void;
@@ -76,6 +78,8 @@ const PlansStepAdaptor: StepType< {
 		hidePlanTypeSelector: hidePlanTypeSelectorOverride,
 		defaultInterval,
 		highlightLabelOverrides,
+		badgeTextOverrides,
+		taglineOverrides,
 	} = props;
 	const [ stepState, setStepState ] = useStepPersistedState< ProvidedDependencies >( 'plans-step' );
 	const siteSlug = useSiteSlug();
@@ -209,6 +213,8 @@ const PlansStepAdaptor: StepType< {
 			headerText={ headerText }
 			subHeaderText={ subHeaderText }
 			highlightLabelOverrides={ highlightLabelOverrides }
+			badgeTextOverrides={ badgeTextOverrides }
+			taglineOverrides={ taglineOverrides }
 			selectedSite={ site ?? undefined }
 			saveSignupStep={ ( step ) => {
 				setStepState( ( mostRecentState = { ...stepState, ...step } as ProvidedDependencies ) );

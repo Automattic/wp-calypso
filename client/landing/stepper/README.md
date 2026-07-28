@@ -388,10 +388,14 @@ flows keep working unchanged:
   `hidePremiumPlan`, `hideEcommercePlan` and `hidePlanTypeSelector` (each OR-ed over today's
   computed value, so passing nothing preserves the theme- and downgrade-based defaults),
   `defaultInterval` (seeds the billing term — `monthly` / `yearly` / `2yearly` / `3yearly` —
-  while the URL still wins once the user switches), and `highlightLabelOverrides` (a
+  while the URL still wins once the user switches), `highlightLabelOverrides` (a
   `{ [PlanSlug]: TranslateResult }` map that re-labels a plan's highlight tag, threaded through
-  `PlansFeaturesMain` into the existing `plans-grid-next` override path). All optional and
-  default-safe. See
+  `PlansFeaturesMain` into the existing `plans-grid-next` override path), and `badgeTextOverrides`
+  / `taglineOverrides` (both `{ [PlanSlug]: TranslateResult }` maps — the first overrides a plan's
+  `titleBadge`, the pill next to the plan title, resolved in `useTitleBadges`; the second overrides
+  a plan's `tagline`, the line under the title, winning over the computed and experiment copy in
+  `useGridPlans`. Both are honored by the features grid only — the comparison grid renders neither
+  field). All optional and default-safe. See
   [`steps-repository/unified-plans/index.tsx`](/client/landing/stepper/declarative-flow/internals/steps-repository/unified-plans/index.tsx).
 - The `__user` (`user`) step exposes `headerText`, `subHeaderText`, `hideLoginLink` (hides the
   top-level "Log in" link in the V2 top bar / V1 footer — note the email-first account-step

@@ -75,6 +75,8 @@ describe( 'Plans accepts-props', () => {
 			hidePlanTypeSelector: true,
 			intervalType: '2yearly',
 			highlightLabelOverrides: { [ PLAN_BUSINESS ]: 'Best for stores' },
+			badgeTextOverrides: { [ PLAN_BUSINESS ]: 'Team favorite' },
+			taglineOverrides: { [ PLAN_BUSINESS ]: 'Best for scaling stores' },
 		} );
 		const stepWrapper = await waitFor( () => screen.getByTestId( 'stepper-step-wrapper' ) );
 		expect( stepWrapper ).toBeVisible();

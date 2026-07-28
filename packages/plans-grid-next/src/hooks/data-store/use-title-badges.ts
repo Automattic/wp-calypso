@@ -6,13 +6,21 @@ import type { TranslateResult } from 'i18n-calypso';
 interface Props {
 	intent?: PlansIntent;
 	planSlugs: PlanSlug[];
+	badgeTextOverrides?: { [ K in PlanSlug ]?: TranslateResult };
 }
 
-const useTitleBadges = ( { intent, planSlugs }: Props ) => {
+const useTitleBadges = ( { intent, planSlugs, badgeTextOverrides }: Props ) => {
 	const translate = useTranslate();
 
 	return planSlugs.reduce(
 		( acc, planSlug ) => {
+			if ( badgeTextOverrides?.[ planSlug ] ) {
+				return {
+					...acc,
+					[ planSlug ]: badgeTextOverrides[ planSlug ],
+				};
+			}
+
 			let label;
 
 			if ( 'plans-woo-hosted' === intent && isWooHostedBasicPlan( planSlug ) ) {
