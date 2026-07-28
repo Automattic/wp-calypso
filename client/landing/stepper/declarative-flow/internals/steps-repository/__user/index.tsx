@@ -24,21 +24,11 @@ import { setSignupIsNewUser } from 'calypso/signup/storageUtils';
 import WpcomLoginForm from 'calypso/signup/wpcom-login-form';
 import { useSelector } from 'calypso/state';
 import { fetchCurrentUser } from 'calypso/state/current-user/actions';
-import {
-	getCurrentUser,
-	isCurrentUserEmailVerified,
-	isUserLoggedIn,
-} from 'calypso/state/current-user/selectors';
+import { getCurrentUser, isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { shouldUseStepContainerV2 } from '../../../helpers/should-use-step-container-v2';
 import { Step as StepType } from '../../types';
-import EmailVerificationGate from '../email-verification';
-import {
-	beginGate,
-	gateScope,
-	gateShownAt,
-	isGatePending,
-	resolveGate,
-} from '../email-verification/storage';
+import EmailVerificationGate from './email-verification';
+import { beginGate, gateScope, isGatePending, resolveGate } from './email-verification/storage';
 import { useHandleSocialResponse } from './handle-social-response';
 import { SignupSlider } from './signup-slider';
 import useAccountCreationExperiment from './use-account-creation-experiment';
@@ -77,21 +67,21 @@ const UserStepComponent: StepType< { accepts: UserStepAccepts } > = function Use
 } ) {
 	const translate = useTranslate();
 	const isLoggedIn = useSelector( isUserLoggedIn );
-	const isEmailVerified = useSelector( isCurrentUserEmailVerified );
 	const userId = useSelector( getCurrentUser )?.ID;
 	const queryArgs = useQuery();
 	const dispatch = useDispatch();
 	const { handleSocialResponse, notice, accountCreateResponse } = useHandleSocialResponse( flow );
 	const [ wpAccountCreateResponse, setWpAccountCreateResponse ] = useState< AccountCreateReturn >();
-	const [ verificationRequired, setVerificationRequired ] = useState( false );
 
-	// The gate is eligible only while the pending marker set by this attempt's email
-	// account creation is present (see `handleCreateAccountSuccess`). It's persisted, so
-	// it survives a refresh; social/existing sessions never set it.
+	// The gate holds this step while a pending marker set by this attempt's email account
+	// creation is present (see `handleCreateAccountSuccess`). It's persisted, so it survives
+	// a refresh; social/existing sessions never set it. The gate owns resolution — it
+	// records the outcome, clears the marker, and submits — so an already-verified pending
+	// user (e.g. confirmed during a reload) still completes the bookkeeping.
 	const scope = gateScope( flow, userId );
 	const gateEnabled =
 		config.isEnabled( 'onboarding/email-verification' ) && flow === ONBOARDING_FLOW;
-	const requiresEmailVerification = gateEnabled && isGatePending( scope ) && ! isEmailVerified;
+	const requiresEmailVerification = gateEnabled && isGatePending( scope );
 	const { socialServiceResponse } = useSocialService();
 	const { topBarLogo, partnerConfig, signupTosElement } = usePartnerBranding();
 
@@ -125,35 +115,12 @@ const UserStepComponent: StepType< { accepts: UserStepAccepts } > = function Use
 	useEffect( () => {
 		if ( ! isLoggedIn ) {
 			dispatch( fetchCurrentUser() as unknown as AnyAction );
-		} else if ( requiresEmailVerification ) {
-			// Hold here and show the verification gate instead of advancing.
-			setVerificationRequired( true );
-		} else if ( ! verificationRequired ) {
-			// The gate hasn't latched. If the email was verified while the marker was
-			// still pending (e.g. confirmed during a reload before the gate could show),
-			// count it as a confirmation and clear the marker before continuing.
-			if ( gateEnabled && isEmailVerified && isGatePending( scope ) ) {
-				recordTracksEvent( 'calypso_signup_email_verification_confirmed', {
-					flow,
-					seconds_on_step: Math.round( ( Date.now() - gateShownAt( scope ) ) / 1000 ),
-				} );
-				resolveGate( scope );
-			}
-			// Once the gate has latched, it owns the transition (via `onDone`); this
-			// branch is skipped then so navigation isn't scheduled twice.
+		} else if ( ! requiresEmailVerification ) {
+			// Nothing pending — advance. While a marker is pending the gate is rendered
+			// instead, and it owns the transition (via `onDone`), so the two never race.
 			navigation.submit?.();
 		}
-	}, [
-		dispatch,
-		flow,
-		gateEnabled,
-		isEmailVerified,
-		isLoggedIn,
-		navigation,
-		requiresEmailVerification,
-		scope,
-		verificationRequired,
-	] );
+	}, [ dispatch, isLoggedIn, navigation, requiresEmailVerification ] );
 
 	const locale = useFlowLocale();
 
@@ -249,10 +216,11 @@ const UserStepComponent: StepType< { accepts: UserStepAccepts } > = function Use
 		</>
 	);
 
-	if ( verificationRequired ) {
+	if ( isLoggedIn && requiresEmailVerification ) {
 		return (
 			<EmailVerificationGate
 				flow={ flow }
+				logo={ topBarLogo }
 				onDone={ () => {
 					resolveGate( scope );
 					navigation.submit?.();

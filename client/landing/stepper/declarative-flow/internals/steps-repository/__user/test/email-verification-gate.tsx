@@ -16,7 +16,7 @@ import initialReducer from 'calypso/state/reducer';
 import uiReducer from 'calypso/state/ui/reducer';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import UserStep from '..';
-import { beginGate, gateScope, isGatePending } from '../../email-verification/storage';
+import { beginGate, gateScope, isGatePending } from '../email-verification/storage';
 import useAccountCreationExperiment from '../use-account-creation-experiment';
 
 jest.mock( 'calypso/lib/analytics/tracks' );
@@ -227,18 +227,18 @@ describe( 'account step email verification gate', () => {
 		);
 	} );
 
-	it( 'resolves as a confirmation when the email is verified before the gate shows', async () => {
-		// The gate is pending (from account creation) but verification already landed,
-		// e.g. confirmed during a reload before the gate could latch.
+	it( 'resolves as a confirmation when a pending user is already verified on mount', async () => {
+		// The marker is pending (from account creation) but verification already landed —
+		// e.g. the activation link opened in this tab, or a reload after confirming. The
+		// gate still mounts, sees the verified user, records the confirmation, and advances.
 		const { submit } = renderUser( makeStore( true ) );
 
-		await waitFor( () => expect( submit ).toHaveBeenCalled() );
-		expect( screen.queryByRole( 'heading', { name: GATE_HEADING } ) ).not.toBeInTheDocument();
+		await waitFor( () => expect( submit ).toHaveBeenCalledTimes( 1 ) );
 		expect( recordTracksEvent ).toHaveBeenCalledWith(
 			'calypso_signup_email_verification_confirmed',
 			expect.objectContaining( { flow: 'onboarding' } )
 		);
-		// The marker is cleared so a later refresh won't re-show the gate.
+		// The marker is cleared so a later refresh won't re-gate the user.
 		expect( isGatePending( SCOPE ) ).toBe( false );
 	} );
 

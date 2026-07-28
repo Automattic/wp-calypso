@@ -5,6 +5,7 @@ import { Step } from '@automattic/onboarding';
 import { act, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
+import { type ReactNode } from 'react';
 import { MemoryRouter } from 'react-router';
 // eslint-disable-next-line no-restricted-imports
 import { applyMiddleware, combineReducers, createStore } from 'redux';
@@ -17,7 +18,7 @@ import documentHeadReducer from 'calypso/state/document-head/reducer';
 import uiReducer from 'calypso/state/ui/reducer';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import EmailVerificationGate from '..';
-import { renderStep } from '../../test/helpers';
+import { renderStep } from '../../../test/helpers';
 import { beginGate, isGatePending } from '../storage';
 
 jest.mock( 'calypso/lib/analytics/tracks' );
@@ -58,15 +59,18 @@ const currentUserState = ( emailVerified: boolean ) => ( {
 
 const SCOPE = `${ FLOW }:${ USER_ID }`;
 
-const render = ( { onDone = jest.fn() }: { onDone?: jest.Mock } = {} ) => {
+const render = ( { onDone = jest.fn(), logo }: { onDone?: jest.Mock; logo?: ReactNode } = {} ) => {
 	// The account step opens the gate on account creation, seeding the send/shown
 	// timestamps; simulate that once. A remount (refresh) must not rewrite them.
 	if ( ! isGatePending( SCOPE ) ) {
 		beginGate( SCOPE );
 	}
-	const result = renderStep( <EmailVerificationGate flow={ FLOW } onDone={ onDone } />, {
-		initialState: currentUserState( false ),
-	} );
+	const result = renderStep(
+		<EmailVerificationGate flow={ FLOW } logo={ logo } onDone={ onDone } />,
+		{
+			initialState: currentUserState( false ),
+		}
+	);
 	return { ...result, onDone };
 };
 
@@ -99,6 +103,12 @@ describe( 'EmailVerificationGate', () => {
 			'calypso_signup_email_verification_email_sent',
 			expect.anything()
 		);
+	} );
+
+	it( 'keeps the account step’s branding logo in the top bar', () => {
+		render( { logo: <span data-testid="brand-logo">Woo</span> } );
+
+		expect( screen.getByTestId( 'brand-logo' ) ).toBeVisible();
 	} );
 
 	it( 'keeps resend available after refreshing once the cooldown has expired', async () => {
@@ -274,12 +284,16 @@ describe( 'EmailVerificationGate', () => {
 		const resendRequest = mockSendVerificationEmail();
 		await user.click( await screen.findByRole( 'button', { name: 'resend the email' } ) );
 
-		await waitFor( () => expect( resendRequest.isDone() ).toBe( true ) );
+		// A successful resend restarts the 60s cooldown; waiting for that UI change also
+		// lets the send's promise chain settle before asserting on its side effects.
 		await waitFor( () =>
-			expect( recordTracksEvent ).toHaveBeenCalledWith(
-				'calypso_signup_email_verification_email_sent',
-				{ flow: FLOW, is_resend: true }
-			)
+			expect( screen.getByText( /You can resend the email in 60s\./ ) ).toBeVisible()
+		);
+
+		expect( resendRequest.isDone() ).toBe( true );
+		expect( recordTracksEvent ).toHaveBeenCalledWith(
+			'calypso_signup_email_verification_email_sent',
+			{ flow: FLOW, is_resend: true }
 		);
 	} );
 

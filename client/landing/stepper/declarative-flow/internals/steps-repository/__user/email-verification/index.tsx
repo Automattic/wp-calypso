@@ -2,7 +2,7 @@ import { Step } from '@automattic/onboarding';
 import { createInterpolateElement } from '@wordpress/element';
 import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
-import { useCallback, useEffect, useMemo, useRef } from 'react';
+import { useCallback, useEffect, useMemo, useRef, type ReactNode } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import UserVerificationChecker from 'calypso/lib/user/verification-checker';
@@ -15,12 +15,15 @@ import './style.scss';
 
 interface Props {
 	flow: string;
+	// Partner/Woo branding logo from the account step, so the gate keeps the same top
+	// bar the signup screen had instead of switching to an unbranded one.
+	logo?: ReactNode;
 	// Called once the user confirms or skips. The account step decides when to render
 	// this gate and what to do next, so eligibility isn't re-checked here.
 	onDone: () => void;
 }
 
-const EmailVerificationGate = ( { flow, onDone }: Props ) => {
+const EmailVerificationGate = ( { flow, logo, onDone }: Props ) => {
 	const { __ } = useI18n();
 	const user = useSelector( getCurrentUser );
 	const {
@@ -61,7 +64,8 @@ const EmailVerificationGate = ( { flow, onDone }: Props ) => {
 		[ flow, onDone, scope ]
 	);
 
-	// Record confirmation only for a genuine unverified → verified transition.
+	// Confirm as soon as the user is verified — whether they confirm while the gate is
+	// open, or the gate mounts already-verified (e.g. a reload after confirming).
 	useEffect( () => {
 		if ( isVerified ) {
 			finish( true );
@@ -94,7 +98,7 @@ const EmailVerificationGate = ( { flow, onDone }: Props ) => {
 				columnWidth={ 4 }
 				verticalAlign="center"
 				className="onboarding-email-verification"
-				topBar={ <Step.TopBar /> }
+				topBar={ <Step.TopBar logo={ logo } /> }
 				heading={ <Step.Heading align="center" text={ title } subText={ subText } /> }
 			>
 				<Step.PrimaryButton onClick={ checkNow } isBusy={ isChecking } disabled={ isChecking }>
