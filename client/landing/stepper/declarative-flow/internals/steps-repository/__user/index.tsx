@@ -107,18 +107,24 @@ const UserStepComponent: StepType< { accepts: UserStepAccepts } > = function Use
 		useAccountCreationExperiment( { flow } );
 	const isEmailFirstVariant = isWooReferrer || isEmailFirstFromExperiment;
 
+	// Load the new account's token and refresh the current user. Depends only on the
+	// account-create response, so gate/navigation state changes don't repeat it.
 	useEffect( () => {
-		if ( wpAccountCreateResponse && 'bearer_token' in wpAccountCreateResponse ) {
-			wpcom.loadToken( wpAccountCreateResponse.bearer_token );
-			if ( ! config.isEnabled( 'oauth' ) ) {
-				reloadProxy();
-				requestAllBlogsAccess();
-			}
-			// Allow retries of fetching new users after creation. New user sign-ups go to one DC
-			// but follow-up API calls go to the closest DC, which may be different and might not
-			// have replicated the user data yet.
-			dispatch( fetchCurrentUser( { retry: true } ) as unknown as AnyAction );
+		if ( ! ( wpAccountCreateResponse && 'bearer_token' in wpAccountCreateResponse ) ) {
+			return;
 		}
+		wpcom.loadToken( wpAccountCreateResponse.bearer_token );
+		if ( ! config.isEnabled( 'oauth' ) ) {
+			reloadProxy();
+			requestAllBlogsAccess();
+		}
+		// Allow retries of fetching new users after creation. New user sign-ups go to one DC
+		// but follow-up API calls go to the closest DC, which may be different and might not
+		// have replicated the user data yet.
+		dispatch( fetchCurrentUser( { retry: true } ) as unknown as AnyAction );
+	}, [ dispatch, wpAccountCreateResponse ] );
+
+	useEffect( () => {
 		if ( ! isLoggedIn ) {
 			dispatch( fetchCurrentUser() as unknown as AnyAction );
 		} else if ( requiresEmailVerification ) {
@@ -130,14 +136,7 @@ const UserStepComponent: StepType< { accepts: UserStepAccepts } > = function Use
 			// back to false, or the navigation would be scheduled twice.
 			navigation.submit?.();
 		}
-	}, [
-		dispatch,
-		isLoggedIn,
-		navigation,
-		wpAccountCreateResponse,
-		requiresEmailVerification,
-		verificationRequired,
-	] );
+	}, [ dispatch, isLoggedIn, navigation, requiresEmailVerification, verificationRequired ] );
 
 	const locale = useFlowLocale();
 

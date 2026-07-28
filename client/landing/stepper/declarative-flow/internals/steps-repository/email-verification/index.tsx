@@ -145,7 +145,10 @@ const EmailVerificationGate = ( { flow, onDone }: Props ) => {
 						  ) }
 				</p>
 
-				<Step.SkipButton onClick={ onSkip }>{ __( 'I’ll do this later' ) }</Step.SkipButton>
+				{ /* LinkButton, not SkipButton: the gate lives on the `user` route, so
+				   SkipButton's automatic `calypso_signup_skip_step` would wrongly report a
+				   skip of account creation. Only our own `_skipped` event should fire. */ }
+				<Step.LinkButton onClick={ onSkip }>{ __( 'I’ll do this later' ) }</Step.LinkButton>
 			</Step.CenteredColumnLayout>
 		</>
 	);
