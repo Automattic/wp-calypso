@@ -42,7 +42,7 @@ boot( {
 			apps: true,
 		},
 		plugins: true,
-		commandPalette: false,
+		commandPalette: true,
 		domainOnlySites: true,
 		siteOverview: {
 			preview: false,

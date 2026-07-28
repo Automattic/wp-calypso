@@ -47,6 +47,7 @@ interface Props {
 	currentRoute: string;
 	onToggleMenu?: () => void;
 	onToggleNotifications?: () => void;
+	showCommandPalette?: boolean;
 }
 
 export function InterimOmnibar( {
@@ -55,6 +56,7 @@ export function InterimOmnibar( {
 	currentRoute,
 	onToggleMenu,
 	onToggleNotifications,
+	showCommandPalette,
 }: Props ) {
 	const user = userProp ?? emptyUser;
 	const siteId = site?.ID ?? null;
@@ -192,6 +194,7 @@ export function InterimOmnibar( {
 					isCheckoutFailed={ false }
 					loadHelpCenterIcon
 					loadAgentsManager
+					showCommandPalette={ showCommandPalette }
 					isGlobalSidebarVisible={ false }
 					isGravatarDomain={ false }
 					dashboardOptIn

@@ -9,6 +9,7 @@ import type { Site, User } from '@automattic/api-core';
 interface InterimOmnibarContainerProps {
 	initialUser: User | null;
 	events: OmnibarEvents;
+	showCommandPalette?: boolean;
 }
 
 interface InterimOmnibarData {
@@ -84,5 +85,5 @@ function useInterimOmnibarData( {
 
 export function InterimOmnibarContainer( props: InterimOmnibarContainerProps ) {
 	const data = useInterimOmnibarData( props );
-	return <InterimOmnibar { ...data } />;
+	return <InterimOmnibar { ...data } showCommandPalette={ props.showCommandPalette } />;
 }

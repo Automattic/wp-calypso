@@ -5,7 +5,7 @@ import { hydrateRoot } from 'react-dom/client';
 import { getUserLanguage, loadUserLocaleData } from '../shared-locale-loader';
 import type { OmnibarEvents } from '../omnibar/events';
 
-export default async function loadOmnibar( events: OmnibarEvents ) {
+export default async function loadOmnibar( events: OmnibarEvents, showCommandPalette = false ) {
 	const container = document.getElementById( 'wpcom-omnibar' );
 	if ( ! container ) {
 		return;
@@ -50,7 +50,11 @@ export default async function loadOmnibar( events: OmnibarEvents ) {
 	hydrateRoot(
 		container,
 		<I18NContext.Provider value={ i18n }>
-			<InterimOmnibarContainer initialUser={ window.currentUser ?? null } events={ events } />
+			<InterimOmnibarContainer
+				initialUser={ window.currentUser ?? null }
+				events={ events }
+				showCommandPalette={ showCommandPalette }
+			/>
 		</I18NContext.Provider>
 	);
 }

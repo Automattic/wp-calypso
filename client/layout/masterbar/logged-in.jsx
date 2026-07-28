@@ -4,6 +4,10 @@ import { isEcommercePlan } from '@automattic/calypso-products';
 import { Gridicon } from '@automattic/components';
 import { Badge } from '@automattic/ui';
 import clsx from 'clsx';
+// @ts-expect-error The commands package is not yet typed.
+import { store as commandsStore } from '@wordpress/commands';
+import { dispatch } from '@wordpress/data';
+import { Icon, search } from '@wordpress/icons';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { parse } from 'qs';
@@ -118,6 +122,7 @@ class MasterbarLoggedIn extends Component {
 		useUnifiedAgent: PropTypes.bool,
 		launchButton: PropTypes.node,
 		sitePlanUrl: PropTypes.string,
+		showCommandPalette: PropTypes.bool,
 	};
 
 	state = { mounted: false };
@@ -986,6 +991,23 @@ class MasterbarLoggedIn extends Component {
 		);
 	}
 
+	openCommandPalette = () => {
+		dispatch( commandsStore ).open();
+	};
+
+	renderCommandPalette() {
+		const { translate } = this.props;
+		return (
+			<Item
+				className="masterbar__item-command-palette"
+				icon={ <Icon icon={ search } /> }
+				onClick={ this.openCommandPalette }
+				tooltip={ translate( 'Search' ) }
+				ariaLabel={ translate( 'Search' ) }
+			/>
+		);
+	}
+
 	clickAgentsManagerAiChat = () => {
 		// Toggle: close the chat if it's already showing, otherwise resume the active
 		// conversation and open it.
@@ -1043,6 +1065,7 @@ class MasterbarLoggedIn extends Component {
 					{ this.renderLaunchButton() }
 				</div>
 				<div className="masterbar__section masterbar__section--right">
+					{ this.props.showCommandPalette && this.renderCommandPalette() }
 					{ this.renderCart() }
 					{ this.renderReader() }
 					{ loadHelpCenterIcon && this.renderHelpCenter() }
