@@ -37,8 +37,8 @@ const withImportant = ( value: unknown ): unknown => {
 
 /**
  * Mirrors a button variation's element styles onto the `jetpack/subscriptions`
- * block with `!important`, matching Big Sky — subscribe-form buttons pick up
- * the new button treatment even though the block styles itself.
+ * block with `!important`, matching Big Sky — the block styles its own
+ * buttons, which would otherwise ignore the new treatment.
  */
 export function mirrorButtonStylesToSubscriptionsBlock(
 	styles: NonNullable< GlobalStyles[ 'styles' ] >,
