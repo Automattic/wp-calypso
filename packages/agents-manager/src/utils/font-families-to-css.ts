@@ -228,6 +228,8 @@ export function fontFamiliesToCSS( fontFamilies: FontFamily[] ): string {
 	return css;
 }
 
+const FONT_STYLE_ELEMENT_ID = 'agents-manager-font-faces';
+
 /**
  * Injects `@font-face` CSS for font families into the editor canvas iframe.
  */
@@ -239,9 +241,20 @@ export function injectFontFamiliesIntoEditorIframe( fontFamilies: FontFamily[] )
 	const canvasIframeDocument =
 		document.querySelector< HTMLIFrameElement >( '[name="editor-canvas"]' )?.contentDocument ??
 		null;
-	if ( canvasIframeDocument ) {
-		const style = document.createElement( 'style' );
-		style.textContent = css;
+	if ( ! canvasIframeDocument ) {
+		return;
+	}
+	// Reuse one style element per canvas — repeated injections (mount preload,
+	// every pick, several pickers in history) must not pile up style tags.
+	let style = canvasIframeDocument.getElementById(
+		FONT_STYLE_ELEMENT_ID
+	) as HTMLStyleElement | null;
+	if ( ! style ) {
+		style = canvasIframeDocument.createElement( 'style' );
+		style.id = FONT_STYLE_ELEMENT_ID;
 		canvasIframeDocument.head.appendChild( style );
+	}
+	if ( ! style.textContent?.includes( css ) ) {
+		style.textContent += css;
 	}
 }

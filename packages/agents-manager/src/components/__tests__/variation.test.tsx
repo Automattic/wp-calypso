@@ -13,9 +13,6 @@ jest.mock( '../styles-preview', () => {
 
 const defaultProps = {
 	onSelect: jest.fn(),
-	globalStyles: {},
-	paletteColors: [],
-	themeColors: [],
 };
 
 const mockVariation = {

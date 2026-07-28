@@ -76,7 +76,10 @@ function VariationPicker( { variations, type, maxToShow, onSelect, activeVariati
 				>
 					{ variationsToShow.map( ( variation, index ) => (
 						// An empty `text` disables the tooltip for non-font types.
-						<Tooltip key={ index } text={ type === 'font' ? variation.title : '' }>
+						<Tooltip
+							key={ variation.title ?? index }
+							text={ type === 'font' ? variation.title : '' }
+						>
 							<div>
 								<Variation
 									variation={ variation }
