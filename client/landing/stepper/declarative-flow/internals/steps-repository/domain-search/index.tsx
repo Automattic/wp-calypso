@@ -94,6 +94,8 @@ const DomainSearchStep: StepType< {
 		hideFreeDomainPromo?: boolean;
 		freeDomainPromoTitle?: string;
 		freeDomainPromoSubtitle?: string;
+		freeSubdomainTitle?: string;
+		freeSubdomainButtonLabel?: string;
 		allowedTlds?: string[];
 	};
 } > = function DomainSearchStep( {
@@ -105,6 +107,8 @@ const DomainSearchStep: StepType< {
 	hideFreeDomainPromo,
 	freeDomainPromoTitle,
 	freeDomainPromoSubtitle,
+	freeSubdomainTitle,
+	freeSubdomainButtonLabel,
 	allowedTlds: allowedTldsProp,
 } ) {
 	const userSiteCount = useSelector( getCurrentUserSiteCount );
@@ -197,9 +201,13 @@ const DomainSearchStep: StepType< {
 				! isHundredYearDomainFlow( flow ) &&
 				! isDomainFlow( flow ) &&
 				! isDomainAndPlanFlow( flow ),
-			// AI Website Builder onboarding requires a paid plan, so skipping the
-			// domain doesn't start a free site — drop the "start free" framing.
-			skipSuggestionCopy: getSkipSuggestionCopy( flow, __ ),
+			// Free-subdomain skip card copy: per-flow `freeSubdomainTitle` /
+			// `freeSubdomainButtonLabel` overrides win, else the flow default
+			// (AI Website Builder onboarding drops the "start free" framing).
+			skipSuggestionCopy: getSkipSuggestionCopy( flow, __, {
+				title: freeSubdomainTitle,
+				buttonText: freeSubdomainButtonLabel,
+			} ),
 			includeDotBlogSubdomain:
 				! isHundredYearPlanFlow( flow ) &&
 				! isHundredYearDomainFlow( flow ) &&
@@ -214,7 +222,17 @@ const DomainSearchStep: StepType< {
 				! isHundredYearPlanFlow( flow ) &&
 				( isHundredYearDomainFlow( flow ) ? !! query : true ),
 		};
-	}, [ __, flow, isCiab, isWooHostingSolutions, tldQuery, query, allowedTldsProp ] );
+	}, [
+		__,
+		flow,
+		isCiab,
+		isWooHostingSolutions,
+		tldQuery,
+		query,
+		allowedTldsProp,
+		freeSubdomainTitle,
+		freeSubdomainButtonLabel,
+	] );
 
 	const { submit } = navigation;
 
