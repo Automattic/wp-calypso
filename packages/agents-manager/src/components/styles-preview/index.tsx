@@ -132,10 +132,10 @@ function resolveColor(
 	palette: PaletteColor[] | undefined,
 	defaultValue: string | null = null
 ): string | undefined {
-	if ( ! editorColor ) {
+	// Colors and palettes can arrive malformed through model-generated props.
+	if ( ! editorColor || typeof editorColor !== 'string' ) {
 		return undefined;
 	}
-	// Palettes can arrive malformed through model-generated variation props.
 	const safePalette = Array.isArray( palette ) ? palette : [];
 
 	// Handle WordPress block format: var:preset|color|theme-2
@@ -200,7 +200,7 @@ function getBorderStyles(
 		if ( border.style !== undefined ) {
 			borderStyles.borderStyle = border.style;
 		}
-		if ( border.color !== undefined ) {
+		if ( typeof border.color === 'string' ) {
 			borderStyles.borderColor = border.color.replace( ' !important', '' );
 		}
 		if ( border.radius !== undefined ) {
@@ -231,8 +231,8 @@ export default function StylesPreview( { type, variation }: Props ) {
 	const globalStyles = storeGlobalStyles ?? EMPTY_GLOBAL_STYLES;
 	const paletteColors = globalStyles.settings?.color?.palette?.theme ?? EMPTY_PALETTE;
 
-	// For typography previews: use ONLY the variation to prevent leaking active global styles.
-	// For other types: merge variation with `globalStyles` to get custom colors.
+	// Font previews use the variation alone so the specimen shows its own
+	// typography; other types merge over `globalStyles` for custom colors.
 	const mergedStyles: GlobalStyles = useMemo( () => {
 		if ( variation && type === 'font' ) {
 			return variation as GlobalStyles;
@@ -248,11 +248,11 @@ export default function StylesPreview( { type, variation }: Props ) {
 	// to actual font names from the variation's `fontFamilies` settings.
 	const FONT_FAMILY_VAR_PREFIX = 'var(--wp--preset--font-family--';
 	const resolveFontFamily = ( value: string | undefined ): string | undefined => {
-		if ( ! value?.startsWith( FONT_FAMILY_VAR_PREFIX ) ) {
+		if ( typeof value !== 'string' || ! value.startsWith( FONT_FAMILY_VAR_PREFIX ) ) {
 			return value;
 		}
 		const slug = value.slice( FONT_FAMILY_VAR_PREFIX.length, -1 );
-		return fontFamilies?.find( ( f ) => f.slug === slug )?.fontFamily ?? value;
+		return fontFamilies?.find( ( f ) => f?.slug === slug )?.fontFamily ?? value;
 	};
 
 	const fontFamily =

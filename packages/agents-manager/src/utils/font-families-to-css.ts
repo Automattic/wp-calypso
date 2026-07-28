@@ -137,15 +137,30 @@ function getActiveThemeBaseUrl(): string {
 	return '';
 }
 
+// Only emit URLs the canvas can actually fetch — drops unresolved `file:`
+// refs and unexpected schemes from model-generated font props.
+const ALLOWED_FONT_SRC_PROTOCOLS = new Set( [ 'https:', 'http:', 'data:' ] );
+
+function isLoadableFontSrc( url: string ): boolean {
+	if ( ! url ) {
+		return false;
+	}
+	try {
+		return ALLOWED_FONT_SRC_PROTOCOLS.has( new URL( url, window.location.href ).protocol );
+	} catch {
+		return false;
+	}
+}
+
 function resolveFontFaceSrc( src: unknown, themeBaseUrl: string ): string | string[] | null {
 	if ( typeof src === 'string' ) {
 		const resolved = resolveFileSrcToThemeUrl( src, themeBaseUrl );
-		return resolved.startsWith( 'file:' ) ? null : resolved;
+		return isLoadableFontSrc( resolved ) ? resolved : null;
 	}
 	if ( Array.isArray( src ) ) {
 		const resolved = ( src as string[] )
 			.map( ( url ) => resolveFileSrcToThemeUrl( url, themeBaseUrl ) )
-			.filter( ( url ) => url && ! url.startsWith( 'file:' ) );
+			.filter( isLoadableFontSrc );
 		return resolved.length ? resolved : null;
 	}
 	return null;
@@ -192,10 +207,11 @@ export function fontFamiliesToCSS( fontFamilies: FontFamily[] ): string {
 		return css;
 	}
 	const themeBaseUrl = getActiveThemeBaseUrl();
+	// Entries can arrive malformed through model-generated variation props.
 	fontFamilies.forEach( ( fontFamily ) => {
-		if ( fontFamily.fontFace ) {
+		if ( fontFamily && Array.isArray( fontFamily.fontFace ) ) {
 			fontFamily.fontFace.forEach( ( fontFace ) => {
-				if ( fontFace.src ) {
+				if ( fontFace && typeof fontFace === 'object' && fontFace.src ) {
 					const src = resolveFontFaceSrc( fontFace.src, themeBaseUrl );
 					if ( ! src ) {
 						return;

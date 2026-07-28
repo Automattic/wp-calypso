@@ -4,14 +4,21 @@ import ensureCurrentFirst, {
 	dedupeByTitle,
 	findMatchingVariation,
 } from '../utils/ensure-current-first';
+import { setSiteEditorAction } from '../utils/site-editor-context';
 import useGlobalStyles from './use-global-styles';
 import useStyles from './use-styles';
 import type { GlobalStyles, StyleVariation } from '../components/styles-preview';
+
+// Hard cap on rendered options — every card is a full editor iframe and the
+// list length comes from model-generated props.
+const MAX_VARIATIONS = 24;
 
 interface Options {
 	variations?: StyleVariation[];
 	/** Highlighted title until the live value is read from the store. */
 	initialActiveTitle?: string | null;
+	/** Recorded into `siteEditorActions` (agent context) when a pick applies. */
+	pickActionName?: string;
 	/** Reads the live value from the editor's global styles. */
 	getLiveValue: ( globalStyles: GlobalStyles ) => unknown;
 	/** Extracts the comparable value from a variation. */
@@ -25,12 +32,13 @@ interface Options {
 
 /**
  * Shared state for the style pickers: sorts the currently-applied variation
- * first (once, when the store loads), highlights the matching title, and
- * applies selections to the editor's global styles.
+ * first (once, when the live value first loads), highlights the matching
+ * title, and applies selections to the editor's global styles.
  */
 export default function usePickerVariations( {
 	variations,
 	initialActiveTitle = null,
+	pickActionName,
 	getLiveValue,
 	getValue,
 	createCurrent,
@@ -40,7 +48,10 @@ export default function usePickerVariations( {
 
 	// Drop falsy/untitled entries and duplicate titles before any render.
 	const safeVariations = useMemo(
-		() => ( Array.isArray( variations ) ? dedupeByTitle( variations.filter( Boolean ) ) : [] ),
+		() =>
+			Array.isArray( variations )
+				? dedupeByTitle( variations.filter( Boolean ) ).slice( 0, MAX_VARIATIONS )
+				: [],
 		[ variations ]
 	);
 
@@ -52,7 +63,9 @@ export default function usePickerVariations( {
 	const accessorsRef = useRef( { getValue, createCurrent } );
 	accessorsRef.current = { getValue, createCurrent };
 
-	// Move the currently-applied variation to index 0 (once, when the store loads).
+	// Move the currently-applied variation to index 0 — once, when the live
+	// value first loads. Picking marks the sort done so a late-arriving live
+	// value can never reshuffle the grid under the user.
 	const [ sortedVariations, setSortedVariations ] = useState( safeVariations );
 	const hasSortedRef = useRef( false );
 
@@ -95,11 +108,15 @@ export default function usePickerVariations( {
 
 	const handleSelect = useCallback(
 		( variation: StyleVariation ) => {
+			hasSortedRef.current = true;
 			if ( setStyles( variation ) ) {
 				setActiveTitle( variation.title ?? null );
+				if ( pickActionName ) {
+					setSiteEditorAction( pickActionName, variation.title ?? null );
+				}
 			}
 		},
-		[ setStyles ]
+		[ setStyles, pickActionName ]
 	);
 
 	return { sortedVariations, activeTitle, handleSelect };

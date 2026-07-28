@@ -41,7 +41,8 @@ export async function showComponentCallback( input: ShowComponentInput ): Promis
 	 )?.getCurrentPostId?.();
 
 	const successMessage =
-		summary?.trim() || __( 'Choose from the options I provided.', __i18n_text_domain__ );
+		( typeof summary === 'string' && summary.trim() ) ||
+		__( 'Choose from the options I provided.', __i18n_text_domain__ );
 
 	return {
 		result: {

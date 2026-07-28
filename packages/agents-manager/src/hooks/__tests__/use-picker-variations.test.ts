@@ -17,6 +17,11 @@ jest.mock( '../use-global-styles', () => ( {
 	default: () => ( { globalStylesId: null, globalStyles: mockGlobalStyles } ),
 } ) );
 
+const mockSetSiteEditorAction = jest.fn();
+jest.mock( '../../utils/site-editor-context', () => ( {
+	setSiteEditorAction: ( name: string, value: unknown ) => mockSetSiteEditorAction( name, value ),
+} ) );
+
 const variations = [
 	{ title: 'Bold', settings: { value: 'bold' } },
 	{ title: 'Pastel', settings: { value: 'pastel' } },
@@ -42,6 +47,47 @@ describe( 'usePickerVariations', () => {
 
 		expect( result.current.sortedVariations ).toEqual( variations );
 		expect( result.current.activeTitle ).toBeNull();
+	} );
+
+	it( 'caps the variation list at 24 options', () => {
+		const many = Array.from( { length: 30 }, ( _, index ) => ( {
+			title: `Variation ${ index + 1 }`,
+			settings: { value: `v${ index + 1 }` },
+		} ) ) as unknown as StyleVariation[];
+		const { result } = renderHook( () =>
+			usePickerVariations( makeOptions( { variations: many } ) )
+		);
+
+		expect( result.current.sortedVariations ).toHaveLength( 24 );
+	} );
+
+	it( 'does not sort after the user has picked', () => {
+		const { result, rerender } = renderHook( () => usePickerVariations( makeOptions() ) );
+
+		act( () => {
+			result.current.handleSelect( variations[ 1 ] );
+		} );
+
+		// A live value arriving after a pick must not reshuffle the grid.
+		mockGlobalStyles = { live: 'pastel' };
+		rerender();
+
+		expect( result.current.sortedVariations.map( ( v ) => v.title ) ).toEqual( [
+			'Bold',
+			'Pastel',
+		] );
+	} );
+
+	it( 'records the pick into the site editor actions', () => {
+		const { result } = renderHook( () =>
+			usePickerVariations( makeOptions( { pickActionName: 'colorPickerItemSelected' } ) )
+		);
+
+		act( () => {
+			result.current.handleSelect( variations[ 0 ] );
+		} );
+
+		expect( mockSetSiteEditorAction ).toHaveBeenCalledWith( 'colorPickerItemSelected', 'Bold' );
 	} );
 
 	it( 'moves the matching variation first and highlights it', () => {

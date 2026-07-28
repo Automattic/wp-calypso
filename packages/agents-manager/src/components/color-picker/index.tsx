@@ -11,6 +11,7 @@ export default function ColorPicker( { variations, currentColor = null }: Props 
 	const { sortedVariations, activeTitle, handleSelect } = usePickerVariations( {
 		variations,
 		initialActiveTitle: currentColor,
+		pickActionName: 'colorPickerItemSelected',
 		getLiveValue: ( globalStyles ) => globalStyles.settings?.color?.palette?.theme,
 		getValue: ( variation ) => variation.settings?.color?.palette?.theme,
 		createCurrent: ( liveValue, globalStyles ) =>

@@ -2,7 +2,12 @@
  * @jest-environment jsdom
  */
 import { renderHook, act } from '@testing-library/react';
+import { isEditorPage } from '../../utils/is-editor-page';
 import useStyles from '../use-styles';
+
+jest.mock( '../../utils/is-editor-page', () => ( {
+	isEditorPage: jest.fn( () => true ),
+} ) );
 
 const mockEditEntityRecord = jest.fn();
 let mockGlobalStylesId: string | null = 'global-styles-1';
@@ -27,7 +32,21 @@ jest.mock( '@wordpress/data', () => ( {
 describe( 'useStyles', () => {
 	beforeEach( () => {
 		jest.clearAllMocks();
+		( isEditorPage as jest.Mock ).mockReturnValue( true );
 		mockGlobalStylesId = 'global-styles-1';
+	} );
+
+	it( 'does not apply off the editor page', () => {
+		( isEditorPage as jest.Mock ).mockReturnValue( false );
+		const { result } = renderHook( () => useStyles() );
+
+		let applied: boolean | undefined;
+		act( () => {
+			applied = result.current( { title: 'Bold', styles: {} } );
+		} );
+
+		expect( applied ).toBe( false );
+		expect( mockEditEntityRecord ).not.toHaveBeenCalled();
 	} );
 
 	it( 'merges variation into global styles', () => {

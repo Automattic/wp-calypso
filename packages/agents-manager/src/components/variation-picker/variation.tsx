@@ -15,8 +15,8 @@ export default function Variation( { variation, type, isActive = false, onSelect
 		onSelect?.( variation );
 	};
 
-	const selectOnEnter = ( event: React.KeyboardEvent ) => {
-		if ( event.key === 'Enter' ) {
+	const selectOnKeyDown = ( event: React.KeyboardEvent ) => {
+		if ( event.key === 'Enter' || event.key === ' ' ) {
 			event.preventDefault();
 			handleSelectVariation();
 		}
@@ -39,7 +39,7 @@ export default function Variation( { variation, type, isActive = false, onSelect
 			} ) }
 			role="button"
 			onClick={ handleSelectVariation }
-			onKeyDown={ selectOnEnter }
+			onKeyDown={ selectOnKeyDown }
 			tabIndex={ 0 }
 			aria-label={ label }
 			aria-current={ isActive }

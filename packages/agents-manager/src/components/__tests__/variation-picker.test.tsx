@@ -48,7 +48,7 @@ const mockVariations = [
 	{ title: 'Variation 3', settings: {}, styles: {} },
 ];
 
-const manyVariations = Array.from( { length: 8 }, ( _, index ) => ( {
+const manyVariations = Array.from( { length: 9 }, ( _, index ) => ( {
 	title: `Variation ${ index + 1 }`,
 	settings: {},
 	styles: {},
@@ -89,7 +89,7 @@ describe( 'VariationPicker', () => {
 			/>
 		);
 
-		expect( screen.getAllByTestId( 'variation' ) ).toHaveLength( 8 );
+		expect( screen.getAllByTestId( 'variation' ) ).toHaveLength( 9 );
 		expect(
 			container.querySelector( '.agents-manager-variation-picker__arrows' )
 		).not.toBeInTheDocument();
@@ -97,7 +97,7 @@ describe( 'VariationPicker', () => {
 	// 584px is the exact four-column width: 4 × 140px tracks + 3 × 8px gaps.
 	it.each( [
 		[ 583, 6 ],
-		[ 584, 8 ],
+		[ 584, 9 ],
 	] )( 'pins the show-all breakpoint at %dpx', ( px, shown ) => {
 		mockWidth = px;
 		render(

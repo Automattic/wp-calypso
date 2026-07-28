@@ -76,8 +76,11 @@ describe( 'FontPicker', () => {
 		};
 		const { getByTestId } = render( <FontPicker variations={ [ variation ] } /> );
 
+		// The mount preload also injects — only the pick-path call counts here.
+		( injectFontFamiliesIntoEditorIframe as jest.Mock ).mockClear();
 		fireEvent.click( getByTestId( 'mock-variation-picker' ) );
 
-		expect( injectFontFamiliesIntoEditorIframe ).toHaveBeenLastCalledWith( families );
+		expect( injectFontFamiliesIntoEditorIframe ).toHaveBeenCalledTimes( 1 );
+		expect( injectFontFamiliesIntoEditorIframe ).toHaveBeenCalledWith( families );
 	} );
 } );

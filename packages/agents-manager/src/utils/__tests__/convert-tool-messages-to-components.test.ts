@@ -559,6 +559,12 @@ describe( 'convertToolMessagesToComponents', () => {
 			disabled: false,
 		},
 		{
+			name: 'stays enabled when a number `postId` matches a string `currentPostId`',
+			data: { type: 'my-component', isCurrent: true, postId: 10 },
+			currentPostId: '10',
+			disabled: false,
+		},
+		{
 			name: 'stays enabled when `postId` is missing from the tool message',
 			data: { type: 'my-component', isCurrent: true },
 			currentPostId: 20,
