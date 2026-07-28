@@ -20,14 +20,19 @@ import { usePartnerBranding } from 'calypso/lib/partner-branding';
 import { login } from 'calypso/lib/paths';
 import { AccountCreateReturn } from 'calypso/lib/signup/api/type';
 import wpcom from 'calypso/lib/wp';
-import { setSignupIsNewUser } from 'calypso/signup/storageUtils';
+import { getSignupIsNewUser, setSignupIsNewUser } from 'calypso/signup/storageUtils';
 import WpcomLoginForm from 'calypso/signup/wpcom-login-form';
 import { useSelector } from 'calypso/state';
 import { fetchCurrentUser } from 'calypso/state/current-user/actions';
-import { isCurrentUserEmailVerified, isUserLoggedIn } from 'calypso/state/current-user/selectors';
+import {
+	getCurrentUser,
+	isCurrentUserEmailVerified,
+	isUserLoggedIn,
+} from 'calypso/state/current-user/selectors';
 import { shouldUseStepContainerV2 } from '../../../helpers/should-use-step-container-v2';
 import { Step as StepType } from '../../types';
 import EmailVerificationGate from '../email-verification';
+import { gateScope, isGateResolved, markGateResolved } from '../email-verification/storage';
 import { useHandleSocialResponse } from './handle-social-response';
 import { SignupSlider } from './signup-slider';
 import useAccountCreationExperiment from './use-account-creation-experiment';
@@ -67,20 +72,25 @@ const UserStepComponent: StepType< { accepts: UserStepAccepts } > = function Use
 	const translate = useTranslate();
 	const isLoggedIn = useSelector( isUserLoggedIn );
 	const isEmailVerified = useSelector( isCurrentUserEmailVerified );
+	const userId = useSelector( getCurrentUser )?.ID;
 	const queryArgs = useQuery();
 	const dispatch = useDispatch();
 	const { handleSocialResponse, notice, accountCreateResponse } = useHandleSocialResponse( flow );
 	const [ wpAccountCreateResponse, setWpAccountCreateResponse ] = useState< AccountCreateReturn >();
 	const [ verificationRequired, setVerificationRequired ] = useState( false );
 
-	// Only an email/password signup on the onboarding flow (behind the flag) is gated
-	// on email verification here. Social logins and existing sessions never created an
-	// account through the form, so `wpAccountCreateResponse` is unset and they proceed.
+	// Only a fresh email/password signup on the onboarding flow (behind the flag) is
+	// gated on verification. `getSignupIsNewUser` is set at email account creation and
+	// cleared at signup-complete, so it (unlike component state) survives a refresh —
+	// the gate re-appears rather than being silently skipped. Social signups arrive
+	// verified and existing sessions have no new-user flag, so both proceed.
+	const scope = gateScope( flow, userId );
 	const requiresEmailVerification =
 		config.isEnabled( 'onboarding/email-verification' ) &&
 		flow === ONBOARDING_FLOW &&
-		Boolean( wpAccountCreateResponse && 'bearer_token' in wpAccountCreateResponse ) &&
-		! isEmailVerified;
+		Boolean( userId && getSignupIsNewUser( userId ) ) &&
+		! isEmailVerified &&
+		! isGateResolved( scope );
 	const { socialServiceResponse } = useSocialService();
 	const { topBarLogo, partnerConfig, signupTosElement } = usePartnerBranding();
 
@@ -109,13 +119,22 @@ const UserStepComponent: StepType< { accepts: UserStepAccepts } > = function Use
 		if ( ! isLoggedIn ) {
 			dispatch( fetchCurrentUser() as unknown as AnyAction );
 		} else if ( requiresEmailVerification ) {
-			// Hold here and show the verification gate instead of advancing; the gate
-			// calls back to `submit` once the user confirms or skips.
+			// Hold here and show the verification gate instead of advancing.
 			setVerificationRequired( true );
-		} else {
+		} else if ( ! verificationRequired ) {
+			// Once the gate has latched, it owns the transition (via `onDone`); don't
+			// also auto-submit here when verification flips `requiresEmailVerification`
+			// back to false, or the navigation would be scheduled twice.
 			navigation.submit?.();
 		}
-	}, [ dispatch, isLoggedIn, navigation, wpAccountCreateResponse, requiresEmailVerification ] );
+	}, [
+		dispatch,
+		isLoggedIn,
+		navigation,
+		wpAccountCreateResponse,
+		requiresEmailVerification,
+		verificationRequired,
+	] );
 
 	const locale = useFlowLocale();
 
@@ -202,7 +221,15 @@ const UserStepComponent: StepType< { accepts: UserStepAccepts } > = function Use
 	);
 
 	if ( verificationRequired ) {
-		return <EmailVerificationGate flow={ flow } onDone={ () => navigation.submit?.() } />;
+		return (
+			<EmailVerificationGate
+				flow={ flow }
+				onDone={ () => {
+					markGateResolved( scope );
+					navigation.submit?.();
+				} }
+			/>
+		);
 	}
 
 	if ( isStepContainerV2 ) {

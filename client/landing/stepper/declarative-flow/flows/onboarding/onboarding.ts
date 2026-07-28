@@ -256,7 +256,6 @@ const onboarding: FlowV2< typeof initialize > = {
 					setProductCartItems( products.filter( ( product ) => product !== null ) );
 
 					setSignupCompleteFlowName( flowName );
-
 					return navigate( 'create-site', undefined, false );
 				}
 				case 'create-site':

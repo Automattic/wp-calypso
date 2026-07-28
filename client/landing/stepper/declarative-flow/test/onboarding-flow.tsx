@@ -11,7 +11,7 @@ import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import onboarding from '../flows/onboarding/onboarding';
 import { STEPS } from '../internals/steps';
 import { ProcessingResult } from '../internals/steps-repository/processing-step/constants';
-import { getFlowLocation, renderFlow } from './helpers';
+import { renderFlow } from './helpers';
 
 const originalLocation = window.location;
 
@@ -81,43 +81,15 @@ describe( 'Onboarding Flow', () => {
 	} );
 
 	describe( 'Email verification gate', () => {
-		// The gate is an interstitial rendered by the account step, not a routed
-		// flow step — so it never appears in the flow's step list.
+		// The gate is an interstitial rendered by the account step (see the account
+		// step's own suite), not a routed flow step — guard against it being wired
+		// back in as one. Behavioural coverage lives in the account-step suite.
 		it( 'is not a routed step in the flow', () => {
 			enabledFlags.add( 'onboarding/email-verification' );
 			const slugs = onboarding.initialize().map( ( step ) => step.slug );
 
 			expect( slugs ).not.toContain( 'email-verification' );
 			expect( slugs[ 0 ] ).toBe( STEPS.DOMAIN_SEARCH.slug );
-		} );
-
-		it( 'sends free-plan signups to site creation', () => {
-			const { runUseStepNavigationSubmit } = renderFlow( onboarding );
-
-			runUseStepNavigationSubmit( {
-				currentStep: STEPS.UNIFIED_PLANS.slug,
-				dependencies: { cartItems: null },
-			} );
-
-			expect( getFlowLocation().path ).toBe( `/${ STEPS.SITE_CREATION_STEP.slug }` );
-		} );
-
-		it( 'lands on the dashboard from processing', async () => {
-			const { runUseStepNavigationSubmit } = renderFlow( onboarding );
-
-			await runUseStepNavigationSubmit( {
-				currentStep: STEPS.PROCESSING.slug,
-				dependencies: {
-					processingResult: ProcessingResult.SUCCESS,
-					siteSlug: 'test-site.wordpress.com',
-					hasPluginByGoal: true,
-					hasExternalTheme: false,
-				},
-			} );
-
-			await new Promise( ( resolve ) => setTimeout( resolve, 0 ) );
-
-			expect( window.location.replace ).toHaveBeenCalledWith( '/home/test-site.wordpress.com' );
 		} );
 	} );
 

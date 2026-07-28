@@ -6,49 +6,24 @@ import { EVERY_FIVE_SECONDS, EVERY_SECOND, useInterval } from 'calypso/lib/inter
 import { useDispatch, useSelector } from 'calypso/state';
 import { fetchCurrentUser, setUserEmailVerified } from 'calypso/state/current-user/actions';
 import { getCurrentUser, isCurrentUserEmailVerified } from 'calypso/state/current-user/selectors';
-
-const RESEND_COOLDOWN_SECONDS = 60;
+import {
+	cooldownRemainingSeconds,
+	gateScope,
+	hasLastSentAt,
+	RESEND_COOLDOWN_SECONDS,
+	writeLastSentAt,
+} from './storage';
 
 // Cross-tab/device confirmation only reaches this tab by polling `/me`
 // (`UserVerificationChecker` handles the same-browser case instantly). Cap the
 // polling so a tab left open overnight doesn't hit `/me` forever.
 const POLL_LIMIT_MS = 15 * 60 * 1000;
 
-// The cooldown lives in session storage, keyed by flow and user, so it survives
-// leaving and re-entering the step (via Back) or a refresh — the component state
-// alone would reset and let the user resend immediately.
-const LAST_SENT_STORAGE_KEY = 'onboarding-email-verification-last-sent';
-
-function readLastSentAt( scope: string ): number {
-	try {
-		return Number( sessionStorage.getItem( `${ LAST_SENT_STORAGE_KEY }:${ scope }` ) ) || 0;
-	} catch {
-		return 0;
-	}
-}
-
-function hasLastSentAt( scope: string ): boolean {
-	return readLastSentAt( scope ) > 0;
-}
-
-function writeLastSentAt( scope: string, at: number ): void {
-	try {
-		sessionStorage.setItem( `${ LAST_SENT_STORAGE_KEY }:${ scope }`, String( at ) );
-	} catch {
-		// Ignore storage failures (private mode, quota); the cooldown just won't persist.
-	}
-}
-
-function cooldownRemainingSeconds( scope: string ): number {
-	const remainingMs = RESEND_COOLDOWN_SECONDS * 1000 - ( Date.now() - readLastSentAt( scope ) );
-	return remainingMs > 0 ? Math.min( Math.ceil( remainingMs / 1000 ), RESEND_COOLDOWN_SECONDS ) : 0;
-}
-
 export function useEmailVerification( flow: string ) {
 	const dispatch = useDispatch();
 	const isVerified = useSelector( isCurrentUserEmailVerified );
 	const userId = useSelector( getCurrentUser )?.ID;
-	const scope = `${ flow }:${ userId ?? '' }`;
+	const scope = gateScope( flow, userId );
 	const sendVerificationEmail = useSendEmailVerification();
 
 	const [ isSending, setIsSending ] = useState( false );
@@ -62,43 +37,39 @@ export function useEmailVerification( flow: string ) {
 	const [ hasFailedCheck, setHasFailedCheck ] = useState( false );
 	const [ hasCheckError, setHasCheckError ] = useState( false );
 
-	const send = async ( isResend: boolean ) => {
-		setIsSending( true );
-		setHasSendError( false );
+	const send = useCallback(
+		async ( isResend: boolean ) => {
+			setIsSending( true );
+			setHasSendError( false );
 
-		try {
-			const { success } = await sendVerificationEmail();
-			if ( ! success ) {
-				throw new Error( 'unsuccessful_response' );
+			try {
+				const { success } = await sendVerificationEmail();
+				if ( ! success ) {
+					throw new Error( 'unsuccessful_response' );
+				}
+				writeLastSentAt( scope, Date.now() );
+				setSecondsUntilResend( RESEND_COOLDOWN_SECONDS );
+				// A fresh link restarts the polling window: the user might confirm this
+				// new link from another device long after the previous window lapsed.
+				setIsPollingExpired( false );
+				setPollWindowKey( ( key ) => key + 1 );
+				recordTracksEvent( 'calypso_signup_email_verification_email_sent', {
+					flow,
+					is_resend: isResend,
+				} );
+			} catch ( error ) {
+				setHasSendError( true );
+				recordTracksEvent( 'calypso_signup_email_verification_email_send_failed', {
+					flow,
+					is_resend: isResend,
+					error: error instanceof Error ? error.message : String( error ),
+				} );
+			} finally {
+				setIsSending( false );
 			}
-			writeLastSentAt( scope, Date.now() );
-			setSecondsUntilResend( RESEND_COOLDOWN_SECONDS );
-			// A fresh link restarts the polling window: the user might confirm this
-			// new link from another device long after the previous window lapsed.
-			setIsPollingExpired( false );
-			setPollWindowKey( ( key ) => key + 1 );
-			recordTracksEvent( 'calypso_signup_email_verification_email_sent', {
-				flow,
-				is_resend: isResend,
-			} );
-		} catch ( error ) {
-			setHasSendError( true );
-			recordTracksEvent( 'calypso_signup_email_verification_email_send_failed', {
-				flow,
-				is_resend: isResend,
-				error: error instanceof Error ? error.message : String( error ),
-			} );
-		} finally {
-			setIsSending( false );
-		}
-	};
-
-	// `useSendEmailVerification` hands back a fresh closure every render, so `send`
-	// is never stable. Callers reach it through the ref to stay stable themselves.
-	const sendRef = useRef( send );
-	useEffect( () => {
-		sendRef.current = send;
-	} );
+		},
+		[ sendVerificationEmail, flow, scope ]
+	);
 
 	// Account creation already sent the activation email seconds ago, so don't fire
 	// another one — record it as the initial send and seed the cooldown from here.
@@ -184,6 +155,6 @@ export function useEmailVerification( flow: string ) {
 		hasFailedCheck,
 		hasCheckError,
 		checkNow,
-		resend: useCallback( () => sendRef.current( true ), [] ),
+		resend: useCallback( () => send( true ), [ send ] ),
 	};
 }

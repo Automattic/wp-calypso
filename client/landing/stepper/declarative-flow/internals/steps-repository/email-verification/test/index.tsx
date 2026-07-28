@@ -148,7 +148,7 @@ describe( 'EmailVerificationGate', () => {
 			} );
 		} );
 
-		await waitFor( () => expect( onDone ).toHaveBeenCalledWith( true ) );
+		await waitFor( () => expect( onDone ).toHaveBeenCalled() );
 		expect( recordTracksEvent ).toHaveBeenCalledWith(
 			'calypso_signup_email_verification_confirmed',
 			expect.objectContaining( { flow: FLOW } )
@@ -160,7 +160,7 @@ describe( 'EmailVerificationGate', () => {
 
 		await userEvent.click( screen.getByRole( 'button', { name: 'I’ll do this later' } ) );
 
-		expect( onDone ).toHaveBeenCalledWith( false );
+		expect( onDone ).toHaveBeenCalled();
 		expect( recordTracksEvent ).toHaveBeenCalledWith(
 			'calypso_signup_email_verification_skipped',
 			expect.objectContaining( { flow: FLOW } )
@@ -173,7 +173,7 @@ describe( 'EmailVerificationGate', () => {
 
 		await userEvent.click( screen.getByRole( 'button', { name: 'I’ve confirmed my email' } ) );
 
-		await waitFor( () => expect( onDone ).toHaveBeenCalledWith( true ) );
+		await waitFor( () => expect( onDone ).toHaveBeenCalled() );
 	} );
 
 	it( 'tells the user when the manual check still shows the email unconfirmed', async () => {
@@ -327,6 +327,6 @@ describe( 'EmailVerificationGate', () => {
 
 		// The restarted poll fires, picks up the confirmation, and advances.
 		await jest.advanceTimersByTimeAsync( 5000 );
-		await waitFor( () => expect( onDone ).toHaveBeenCalledWith( true ) );
+		await waitFor( () => expect( onDone ).toHaveBeenCalled() );
 	} );
 } );

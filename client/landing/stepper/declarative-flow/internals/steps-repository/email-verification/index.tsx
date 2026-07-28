@@ -14,9 +14,9 @@ import './style.scss';
 
 interface Props {
 	flow: string;
-	// Called once the user confirms (`true`) or skips (`false`). The account step
-	// decides when to render this gate, so eligibility isn't re-checked here.
-	onDone: ( emailVerified: boolean ) => void;
+	// Called once the user confirms or skips. The account step decides when to render
+	// this gate and what to do next, so eligibility isn't re-checked here.
+	onDone: () => void;
 }
 
 const EmailVerificationGate = ( { flow, onDone }: Props ) => {
@@ -55,7 +55,7 @@ const EmailVerificationGate = ( { flow, onDone }: Props ) => {
 					seconds_on_step: Math.round( ( Date.now() - shownAt.current ) / 1000 ),
 				}
 			);
-			onDone( emailVerified );
+			onDone();
 		},
 		[ flow, onDone ]
 	);
