@@ -30,7 +30,6 @@ export function useThankYouRedirect( {
 	pluginActive,
 	uploadedPluginSlug,
 	atomicFlow,
-	isAtomic,
 	automatedTransferStatus,
 }: {
 	siteId: number;
@@ -46,7 +45,6 @@ export function useThankYouRedirect( {
 	pluginActive: boolean;
 	uploadedPluginSlug: string;
 	atomicFlow: boolean;
-	isAtomic: boolean | null;
 	automatedTransferStatus: string | null;
 } ) {
 	const dispatch = useDispatch();
@@ -109,10 +107,10 @@ export function useThankYouRedirect( {
 			// plugin only reads active once the transfer is far enough along, and for an atomicFlow the
 			// redirect URL below resolves only after the transfer completes, so no separate arm is needed.
 			( installedPlugin && pluginActive ) ||
-			// Transfer to atomic uploading a zip plugin
+			// Zip-upload transfer to Atomic. The transfer makes the site Atomic, so this must not gate on
+			// the site being non-Atomic — isAtomicTransferReady already confirms the transfer landed.
 			( uploadedPluginSlug &&
 				isPluginUploadFlow &&
-				! isAtomic &&
 				transferStates.COMPLETE === automatedTransferStatus &&
 				canManagePlugins &&
 				isAtomicTransferReady )
@@ -129,7 +127,6 @@ export function useThankYouRedirect( {
 		pluginActive,
 		automatedTransferStatus,
 		isPluginUploadFlow,
-		isAtomic,
 		canManagePlugins,
 		installedPlugin,
 		uploadedPluginSlug,

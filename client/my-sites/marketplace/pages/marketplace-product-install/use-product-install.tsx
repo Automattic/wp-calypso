@@ -272,7 +272,6 @@ export function useProductInstall( {
 		pluginActive,
 		uploadedPluginSlug,
 		atomicFlow,
-		isAtomic,
 		automatedTransferStatus,
 	} );
 

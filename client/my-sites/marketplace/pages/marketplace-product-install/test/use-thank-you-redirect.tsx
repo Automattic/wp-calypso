@@ -57,7 +57,6 @@ const baseProps: Props = {
 	pluginActive: false,
 	uploadedPluginSlug: '',
 	atomicFlow: true,
-	isAtomic: true,
 	automatedTransferStatus: transferStates.COMPLETE,
 };
 const render = ( overrides?: Partial< Props > ) =>
@@ -103,6 +102,21 @@ describe( 'useThankYouRedirect', () => {
 	it( 'redirects once the plugin is active', async () => {
 		mockFreshSite = ATOMIC_READY;
 		render( { atomicFlow: true, pluginActive: true } );
+		await waitFor( () => expect( navDelay ).toHaveBeenCalled() );
+	} );
+
+	it( 'redirects the zip-upload transfer flow once the Atomic transfer is ready', async () => {
+		mockFreshSite = ATOMIC_READY;
+		// The transfer has completed, so the site now reads as Atomic — the redirect must still fire.
+		render( {
+			isPluginUploadFlow: true,
+			pluginSlug: '',
+			uploadedPluginSlug: 'taipeiplugins',
+			installedPlugin: null,
+			pluginActive: false,
+			atomicFlow: false,
+			automatedTransferStatus: transferStates.COMPLETE,
+		} );
 		await waitFor( () => expect( navDelay ).toHaveBeenCalled() );
 	} );
 } );
