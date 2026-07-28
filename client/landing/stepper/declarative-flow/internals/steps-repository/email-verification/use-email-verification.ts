@@ -9,8 +9,8 @@ import { getCurrentUser, isCurrentUserEmailVerified } from 'calypso/state/curren
 import {
 	cooldownRemainingSeconds,
 	gateScope,
+	markResent,
 	RESEND_COOLDOWN_SECONDS,
-	writeLastSentAt,
 } from './storage';
 
 // Cross-device confirmation only reaches this tab by polling `/me` (`UserVerificationChecker`
@@ -48,7 +48,7 @@ export function useEmailVerification( flow: string ) {
 			if ( ! success ) {
 				throw new Error( 'unsuccessful_response' );
 			}
-			writeLastSentAt( scope, Date.now() );
+			markResent( scope );
 			setSecondsUntilResend( RESEND_COOLDOWN_SECONDS );
 			// A fresh link restarts the polling window: the user might confirm this new
 			// link from another device long after the previous window lapsed.

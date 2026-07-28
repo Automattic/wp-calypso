@@ -8,6 +8,7 @@ import { MemoryRouter } from 'react-router-dom';
 // eslint-disable-next-line no-restricted-imports
 import { applyMiddleware, createStore, type Reducer } from 'redux';
 import { thunk as thunkMiddleware } from 'redux-thunk';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { usePartnerBranding } from 'calypso/lib/partner-branding';
 import { CURRENT_USER_RECEIVE } from 'calypso/state/action-types';
 import documentHeadReducer from 'calypso/state/document-head/reducer';
@@ -15,9 +16,8 @@ import initialReducer from 'calypso/state/reducer';
 import uiReducer from 'calypso/state/ui/reducer';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import UserStep from '..';
-import { gateScope, markVerificationPending } from '../../email-verification/storage';
+import { beginGate, gateScope, isGatePending } from '../../email-verification/storage';
 import useAccountCreationExperiment from '../use-account-creation-experiment';
-import useMobileLayoutExperiment from '../use-mobile-layout-experiment';
 
 jest.mock( 'calypso/lib/analytics/tracks' );
 
@@ -39,7 +39,6 @@ jest.mock( '@automattic/calypso-config', () => {
 	return configFn;
 } );
 
-jest.mock( '../use-mobile-layout-experiment', () => jest.fn() );
 jest.mock( 'calypso/lib/partner-branding', () => ( { usePartnerBranding: jest.fn() } ) );
 jest.mock( '../use-account-creation-experiment', () => jest.fn() );
 jest.mock( '../use-social-service', () => ( {
@@ -65,8 +64,9 @@ jest.mock( 'calypso/blocks/signup-form/signup-form-social-first', () => ( {
 	} ) => (
 		<button
 			onClick={ () => {
-				onCreateAccountSuccess?.( { ID: 1 } );
+				// Production order: goToNextStep fires before onCreateAccountSuccess.
 				goToNextStep?.( { bearer_token: 'test-token', ID: 1 } );
+				onCreateAccountSuccess?.( { ID: 1 } );
 			} }
 		>
 			create-email-account
@@ -76,7 +76,6 @@ jest.mock( 'calypso/blocks/signup-form/signup-form-social-first', () => ( {
 } ) );
 
 const mockConfig = config as unknown as { enabledFlags: Set< string > };
-const mockUseMobileLayoutExperiment = useMobileLayoutExperiment as unknown as jest.Mock;
 const mockUsePartnerBranding = usePartnerBranding as unknown as jest.Mock;
 const mockUseAccountCreationExperiment = useAccountCreationExperiment as unknown as jest.Mock;
 
@@ -123,14 +122,8 @@ const renderUser = ( store: ReturnType< typeof makeStore > ) => {
 describe( 'account step email verification gate', () => {
 	beforeEach( () => {
 		mockConfig.enabledFlags.add( 'onboarding/email-verification' );
-		// Most cases start already past account creation, with the gate marked pending.
-		markVerificationPending( SCOPE );
-		mockUseMobileLayoutExperiment.mockReturnValue( {
-			isLoading: false,
-			isEligible: false,
-			isMobileTreatment: false,
-			isMobileTreatmentTosTop: false,
-		} );
+		// Most cases start already past account creation, with the gate open (pending).
+		beginGate( SCOPE );
 		mockUsePartnerBranding.mockReturnValue( {
 			hasCustomBranding: false,
 			partnerConfig: null,
@@ -222,10 +215,31 @@ describe( 'account step email verification gate', () => {
 	} );
 
 	it( 'skips the gate for an already-verified (social) signup', async () => {
+		// Social signups never open the gate, so nothing is pending.
+		sessionStorage.clear();
 		const { submit } = renderUser( makeStore( true ) );
 
 		await waitFor( () => expect( submit ).toHaveBeenCalled() );
 		expect( screen.queryByRole( 'heading', { name: GATE_HEADING } ) ).not.toBeInTheDocument();
+		expect( recordTracksEvent ).not.toHaveBeenCalledWith(
+			'calypso_signup_email_verification_confirmed',
+			expect.anything()
+		);
+	} );
+
+	it( 'resolves as a confirmation when the email is verified before the gate shows', async () => {
+		// The gate is pending (from account creation) but verification already landed,
+		// e.g. confirmed during a reload before the gate could latch.
+		const { submit } = renderUser( makeStore( true ) );
+
+		await waitFor( () => expect( submit ).toHaveBeenCalled() );
+		expect( screen.queryByRole( 'heading', { name: GATE_HEADING } ) ).not.toBeInTheDocument();
+		expect( recordTracksEvent ).toHaveBeenCalledWith(
+			'calypso_signup_email_verification_confirmed',
+			expect.objectContaining( { flow: 'onboarding' } )
+		);
+		// The marker is cleared so a later refresh won't re-show the gate.
+		expect( isGatePending( SCOPE ) ).toBe( false );
 	} );
 
 	it( 'skips the gate for an existing session with nothing pending', async () => {

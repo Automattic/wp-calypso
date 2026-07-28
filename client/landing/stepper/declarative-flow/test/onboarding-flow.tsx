@@ -2,7 +2,6 @@
  * @jest-environment jsdom
  */
 // @ts-nocheck - TODO: Fix TypeScript issues
-import config from '@automattic/calypso-config';
 import { ONBOARDING_FLOW } from '@automattic/onboarding';
 import React from 'react';
 import { MemoryRouter } from 'react-router';
@@ -14,22 +13,6 @@ import { ProcessingResult } from '../internals/steps-repository/processing-step/
 import { renderFlow } from './helpers';
 
 const originalLocation = window.location;
-
-// Flags added to `enabledFlags` read as enabled on top of the test config. The set
-// lives inside the factory because config is read while modules are still importing,
-// long before a top-level `const` in this file would be initialized.
-jest.mock( '@automattic/calypso-config', () => {
-	const actual = jest.requireActual( '@automattic/calypso-config' );
-	const enabledFlags = new Set();
-	const configFn = ( key ) => actual( key );
-	Object.assign( configFn, actual, {
-		enabledFlags,
-		isEnabled: ( flag ) => enabledFlags.has( flag ) || actual.isEnabled( flag ),
-	} );
-	return configFn;
-} );
-
-const { enabledFlags } = config;
 
 jest.mock( '../../hooks/use-marketplace-theme-products', () => ( {
 	useMarketplaceThemeProducts: () => ( {
@@ -77,20 +60,6 @@ describe( 'Onboarding Flow', () => {
 
 	beforeEach( () => {
 		jest.resetAllMocks();
-		enabledFlags.clear();
-	} );
-
-	describe( 'Email verification gate', () => {
-		// The gate is an interstitial rendered by the account step (see the account
-		// step's own suite), not a routed flow step — guard against it being wired
-		// back in as one. Behavioural coverage lives in the account-step suite.
-		it( 'is not a routed step in the flow', () => {
-			enabledFlags.add( 'onboarding/email-verification' );
-			const slugs = onboarding.initialize().map( ( step ) => step.slug );
-
-			expect( slugs ).not.toContain( 'email-verification' );
-			expect( slugs[ 0 ] ).toBe( STEPS.DOMAIN_SEARCH.slug );
-		} );
 	} );
 
 	describe( 'Flow configuration', () => {

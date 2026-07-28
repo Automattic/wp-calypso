@@ -1,63 +1,74 @@
-// Session-storage state for the email-verification gate, keyed by flow and user so
-// it survives leaving/re-entering the account step or a refresh. The `pending` marker
-// is set precisely when this onboarding attempt creates an email account and cleared
-// when the gate is confirmed or skipped — so it, not a general signup marker, is what
-// makes the gate eligible.
+// One session-storage record for the email-verification gate, keyed by flow and user,
+// so its state survives leaving/re-entering the account step or a refresh:
+//   - pending: this attempt created an email account and hasn't confirmed/skipped yet.
+//   - sentAt:  when the (initial or resent) verification email was sent — the cooldown anchor.
+//   - shownAt: when the gate first opened — the duration anchor, so the metric is correct
+//              even after a refresh.
 
 export const RESEND_COOLDOWN_SECONDS = 60;
 
-const LAST_SENT_KEY = 'onboarding-email-verification-last-sent';
-const PENDING_KEY = 'onboarding-email-verification-pending';
+const STORAGE_KEY = 'onboarding-email-verification-gate';
 
 export function gateScope( flow: string, userId: number | string | undefined ): string {
 	return `${ flow }:${ userId ?? '' }`;
 }
 
-function read( key: string, scope: string ): string | null {
+interface GateRecord {
+	pending: boolean;
+	sentAt: number;
+	shownAt: number;
+}
+
+function read( scope: string ): GateRecord | null {
 	try {
-		return sessionStorage.getItem( `${ key }:${ scope }` );
+		const raw = sessionStorage.getItem( `${ STORAGE_KEY }:${ scope }` );
+		return raw ? ( JSON.parse( raw ) as GateRecord ) : null;
 	} catch {
 		return null;
 	}
 }
 
-function write( key: string, scope: string, value: string ): void {
+function write( scope: string, record: GateRecord ): void {
 	try {
-		sessionStorage.setItem( `${ key }:${ scope }`, value );
+		sessionStorage.setItem( `${ STORAGE_KEY }:${ scope }`, JSON.stringify( record ) );
 	} catch {
 		// Ignore storage failures (private mode, quota); the state just won't persist.
 	}
 }
 
-function remove( key: string, scope: string ): void {
-	try {
-		sessionStorage.removeItem( `${ key }:${ scope }` );
-	} catch {
-		// no-op
+// Called at email account creation: open the gate and record the activation email as
+// the initial send.
+export function beginGate( scope: string ): void {
+	const now = Date.now();
+	write( scope, { pending: true, sentAt: now, shownAt: now } );
+}
+
+export function isGatePending( scope: string ): boolean {
+	return read( scope )?.pending === true;
+}
+
+// Called on confirm or skip.
+export function resolveGate( scope: string ): void {
+	const record = read( scope );
+	if ( record ) {
+		write( scope, { ...record, pending: false } );
 	}
 }
 
-export function isVerificationPending( scope: string ): boolean {
-	return read( PENDING_KEY, scope ) === '1';
+// Called on a successful resend to restart the cooldown.
+export function markResent( scope: string ): void {
+	const record = read( scope );
+	if ( record ) {
+		write( scope, { ...record, sentAt: Date.now() } );
+	}
 }
 
-export function markVerificationPending( scope: string ): void {
-	write( PENDING_KEY, scope, '1' );
-}
-
-export function clearVerificationPending( scope: string ): void {
-	remove( PENDING_KEY, scope );
-}
-
-export function readLastSentAt( scope: string ): number {
-	return Number( read( LAST_SENT_KEY, scope ) ) || 0;
-}
-
-export function writeLastSentAt( scope: string, at: number ): void {
-	write( LAST_SENT_KEY, scope, String( at ) );
+export function gateShownAt( scope: string ): number {
+	return read( scope )?.shownAt ?? Date.now();
 }
 
 export function cooldownRemainingSeconds( scope: string ): number {
-	const remainingMs = RESEND_COOLDOWN_SECONDS * 1000 - ( Date.now() - readLastSentAt( scope ) );
+	const sentAt = read( scope )?.sentAt ?? 0;
+	const remainingMs = RESEND_COOLDOWN_SECONDS * 1000 - ( Date.now() - sentAt );
 	return remainingMs > 0 ? Math.min( Math.ceil( remainingMs / 1000 ), RESEND_COOLDOWN_SECONDS ) : 0;
 }

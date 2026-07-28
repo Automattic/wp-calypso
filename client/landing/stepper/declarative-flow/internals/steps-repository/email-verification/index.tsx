@@ -8,6 +8,7 @@ import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import UserVerificationChecker from 'calypso/lib/user/verification-checker';
 import { useSelector } from 'calypso/state';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
+import { gateScope, gateShownAt } from './storage';
 import { useEmailVerification } from './use-email-verification';
 
 import './style.scss';
@@ -34,8 +35,8 @@ const EmailVerificationGate = ( { flow, onDone }: Props ) => {
 		resend,
 	} = useEmailVerification( flow );
 
-	const shownAt = useRef( Date.now() );
 	const hasSubmitted = useRef( false );
+	const scope = gateScope( flow, user?.ID );
 
 	const title = __( 'Confirm your email address' );
 
@@ -52,12 +53,12 @@ const EmailVerificationGate = ( { flow, onDone }: Props ) => {
 					: 'calypso_signup_email_verification_skipped',
 				{
 					flow,
-					seconds_on_step: Math.round( ( Date.now() - shownAt.current ) / 1000 ),
+					seconds_on_step: Math.round( ( Date.now() - gateShownAt( scope ) ) / 1000 ),
 				}
 			);
 			onDone();
 		},
-		[ flow, onDone ]
+		[ flow, onDone, scope ]
 	);
 
 	// Record confirmation only for a genuine unverified → verified transition.

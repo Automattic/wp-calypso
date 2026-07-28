@@ -18,7 +18,7 @@ import uiReducer from 'calypso/state/ui/reducer';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import EmailVerificationGate from '..';
 import { renderStep } from '../../test/helpers';
-import { readLastSentAt, writeLastSentAt } from '../storage';
+import { beginGate, isGatePending } from '../storage';
 
 jest.mock( 'calypso/lib/analytics/tracks' );
 
@@ -59,10 +59,10 @@ const currentUserState = ( emailVerified: boolean ) => ( {
 const SCOPE = `${ FLOW }:${ USER_ID }`;
 
 const render = ( { onDone = jest.fn() }: { onDone?: jest.Mock } = {} ) => {
-	// The account step writes the initial-send timestamp on account creation; simulate
-	// that once so the cooldown is active. A remount (refresh) must not rewrite it.
-	if ( readLastSentAt( SCOPE ) === 0 ) {
-		writeLastSentAt( SCOPE, Date.now() );
+	// The account step opens the gate on account creation, seeding the send/shown
+	// timestamps; simulate that once. A remount (refresh) must not rewrite them.
+	if ( ! isGatePending( SCOPE ) ) {
+		beginGate( SCOPE );
 	}
 	const result = renderStep( <EmailVerificationGate flow={ FLOW } onDone={ onDone } />, {
 		initialState: currentUserState( false ),
@@ -164,7 +164,7 @@ describe( 'EmailVerificationGate', () => {
 	} );
 
 	it( 'skipping fires only the verification event, not the generic step-skip event', async () => {
-		writeLastSentAt( SCOPE, Date.now() );
+		beginGate( SCOPE );
 		const onDone = jest.fn();
 		// The generic skip event is recorded through the step-container context. Spy on
 		// it to prove the gate (on the `user` route) doesn't fire `calypso_signup_skip_step`.

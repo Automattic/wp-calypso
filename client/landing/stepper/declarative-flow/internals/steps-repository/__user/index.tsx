@@ -33,11 +33,11 @@ import { shouldUseStepContainerV2 } from '../../../helpers/should-use-step-conta
 import { Step as StepType } from '../../types';
 import EmailVerificationGate from '../email-verification';
 import {
-	clearVerificationPending,
+	beginGate,
 	gateScope,
-	isVerificationPending,
-	markVerificationPending,
-	writeLastSentAt,
+	gateShownAt,
+	isGatePending,
+	resolveGate,
 } from '../email-verification/storage';
 import { useHandleSocialResponse } from './handle-social-response';
 import { SignupSlider } from './signup-slider';
@@ -85,15 +85,13 @@ const UserStepComponent: StepType< { accepts: UserStepAccepts } > = function Use
 	const [ wpAccountCreateResponse, setWpAccountCreateResponse ] = useState< AccountCreateReturn >();
 	const [ verificationRequired, setVerificationRequired ] = useState( false );
 
-	// The gate is eligible only while a "pending" marker set by this attempt's email
+	// The gate is eligible only while the pending marker set by this attempt's email
 	// account creation is present (see `handleCreateAccountSuccess`). It's persisted, so
 	// it survives a refresh; social/existing sessions never set it.
 	const scope = gateScope( flow, userId );
-	const requiresEmailVerification =
-		config.isEnabled( 'onboarding/email-verification' ) &&
-		flow === ONBOARDING_FLOW &&
-		isVerificationPending( scope ) &&
-		! isEmailVerified;
+	const gateEnabled =
+		config.isEnabled( 'onboarding/email-verification' ) && flow === ONBOARDING_FLOW;
+	const requiresEmailVerification = gateEnabled && isGatePending( scope ) && ! isEmailVerified;
 	const { socialServiceResponse } = useSocialService();
 	const { topBarLogo, partnerConfig, signupTosElement } = usePartnerBranding();
 
@@ -131,12 +129,31 @@ const UserStepComponent: StepType< { accepts: UserStepAccepts } > = function Use
 			// Hold here and show the verification gate instead of advancing.
 			setVerificationRequired( true );
 		} else if ( ! verificationRequired ) {
-			// Once the gate has latched, it owns the transition (via `onDone`); don't
-			// also auto-submit here when verification flips `requiresEmailVerification`
-			// back to false, or the navigation would be scheduled twice.
+			// The gate hasn't latched. If the email was verified while the marker was
+			// still pending (e.g. confirmed during a reload before the gate could show),
+			// count it as a confirmation and clear the marker before continuing.
+			if ( gateEnabled && isEmailVerified && isGatePending( scope ) ) {
+				recordTracksEvent( 'calypso_signup_email_verification_confirmed', {
+					flow,
+					seconds_on_step: Math.round( ( Date.now() - gateShownAt( scope ) ) / 1000 ),
+				} );
+				resolveGate( scope );
+			}
+			// Once the gate has latched, it owns the transition (via `onDone`); this
+			// branch is skipped then so navigation isn't scheduled twice.
 			navigation.submit?.();
 		}
-	}, [ dispatch, isLoggedIn, navigation, requiresEmailVerification, verificationRequired ] );
+	}, [
+		dispatch,
+		flow,
+		gateEnabled,
+		isEmailVerified,
+		isLoggedIn,
+		navigation,
+		requiresEmailVerification,
+		scope,
+		verificationRequired,
+	] );
 
 	const locale = useFlowLocale();
 
@@ -154,12 +171,10 @@ const UserStepComponent: StepType< { accepts: UserStepAccepts } > = function Use
 			return;
 		}
 		setSignupIsNewUser( data.ID );
-		if ( config.isEnabled( 'onboarding/email-verification' ) && flow === ONBOARDING_FLOW ) {
-			// This attempt just created an email account: make the gate eligible, and treat
-			// the activation email as the initial send so the resend cooldown starts here.
-			const gateKey = gateScope( flow, data.ID );
-			markVerificationPending( gateKey );
-			writeLastSentAt( gateKey, Date.now() );
+		if ( gateEnabled ) {
+			// This attempt just created an email account: open the gate and treat the
+			// activation email as the initial send so the resend cooldown starts here.
+			beginGate( gateScope( flow, data.ID ) );
 			recordTracksEvent( 'calypso_signup_email_verification_email_sent', {
 				flow,
 				is_resend: false,
@@ -239,7 +254,7 @@ const UserStepComponent: StepType< { accepts: UserStepAccepts } > = function Use
 			<EmailVerificationGate
 				flow={ flow }
 				onDone={ () => {
-					clearVerificationPending( scope );
+					resolveGate( scope );
 					navigation.submit?.();
 				} }
 			/>
