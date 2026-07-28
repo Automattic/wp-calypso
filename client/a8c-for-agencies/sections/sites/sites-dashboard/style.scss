@@ -281,7 +281,10 @@
 		}
 	}
 
-	thead .dataviews-view-table__row th span {
+	// The Plugins dashboard reuses the `.sites-dashboard` root class, so this header-label
+	// typography reaches its select-all checkbox as soon as this chunk is in the document. The
+	// 20px line-height stretches that 16px container, pushing the centred indicator off-centre.
+	thead .dataviews-view-table__row th span:not( .components-checkbox-control__input-container ) {
 		@include heading-small;
 		line-height: 20px;
 		color: var( --color-accent-80 );
