@@ -478,8 +478,8 @@ export async function loadExternalProviders(): Promise< LoadedProviders > {
 
 	// Collect exports that need to be merged across all providers.
 	// AM's own provider goes first: tool execution resolves first-write-wins
-	// by ability name, so migrated abilities execute through AM even while
-	// external providers still ship their copies.
+	// by ability name, so a migrated ability executes through AM even if an
+	// external provider still ships its copy.
 	const allToolProviders: ToolProvider[] = [ amToolProvider ];
 	const allContextProviders: ContextProvider[] = [];
 	const allMarkdownComponents: MarkdownComponents[] = [];

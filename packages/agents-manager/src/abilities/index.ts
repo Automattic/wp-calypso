@@ -26,7 +26,7 @@ const getOwnedAbilities = () => ( isAmAbilitiesDisabled() ? [] : AM_ABILITIES );
  * Serves AM-owned abilities to the agent's tool pipeline. Tool calls resolve
  * through the provider chain first-write-wins by ability name, and this
  * provider is placed before the external ones — so each migrated ability
- * executes through AM even while providers still ship their copies.
+ * executes through AM even if a provider still ships its copy.
  */
 export const amToolProvider: ToolProvider = {
 	getAbilities: async () => getOwnedAbilities(),
