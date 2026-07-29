@@ -1,5 +1,6 @@
 import {
 	AUTOMATED_TRANSFER_ELIGIBILITY_UPDATE as ELIGIBILITY_UPDATE,
+	AUTOMATED_TRANSFER_INITIATE_WITH_PLUGIN_ZIP as INITIATE_WITH_PLUGIN_ZIP,
 	AUTOMATED_TRANSFER_STATUS_REQUEST as REQUEST_STATUS,
 	AUTOMATED_TRANSFER_STATUS_REQUEST_FAILURE as REQUEST_STATUS_FAILURE,
 } from 'calypso/state/action-types';
@@ -19,6 +20,14 @@ describe( 'state', () => {
 
 				test( 'should not overwrite the status when a valid state already exists', () => {
 					expect( status( transferStates.START, update ) ).toEqual( transferStates.START );
+				} );
+			} );
+
+			describe( 'plugin zip upload', () => {
+				test( 'should clear a persisted outcome when a new transfer is initiated', () => {
+					const initiate = { type: INITIATE_WITH_PLUGIN_ZIP };
+
+					expect( status( transferStates.COMPLETE, initiate ) ).toEqual( transferStates.START );
 				} );
 			} );
 

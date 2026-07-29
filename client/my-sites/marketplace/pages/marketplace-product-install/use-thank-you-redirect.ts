@@ -8,7 +8,12 @@ import { useSelector, useDispatch } from 'calypso/state';
 import { transferStates } from 'calypso/state/automated-transfer/constants';
 import { getSiteAdminUrl } from 'calypso/state/sites/selectors';
 import { requestActiveTheme } from 'calypso/state/themes/actions';
+import { useDelayedCondition } from './use-delayed-condition';
 import { usePostTransferPluginRecovery } from './use-post-transfer-plugin-recovery';
+
+// The plugin list is polled once an upload's transfer lands, so give the uploaded plugin a few
+// rounds to appear before treating the install as unconfirmed.
+const INSTALL_CONFIRMATION_GRACE_PERIOD_MS = 10000;
 
 // The redirect machinery: once a flow completes it fetches the freshest site data, resolves the
 // destination URL, keeps polling where a flow finishes in the background, and navigates. Plugin and
@@ -56,16 +61,18 @@ export function useThankYouRedirect( {
 
 	const freshAdminUrl = freshSite?.options?.admin_url;
 	const isAtomicTransferReady = freshSite ? isAtomicTransferredSite( freshSite ) : false;
-	const pluginsUrlFresh = freshAdminUrl
-		? `${ freshAdminUrl }plugins.php?activate=true&plugin_status=active`
-		: null;
 
-	const pluginsUrlSelector = useSelector( ( state ) =>
-		getSiteAdminUrl( state, siteId, 'plugins.php?activate=true&plugin_status=active' )
-	);
+	const adminUrlSelector = useSelector( ( state ) => getSiteAdminUrl( state, siteId ) );
 
 	// Prefer fresh URL when available; if in atomic flow, wait for fresh URL
-	const pluginsUrlFinal = atomicFlow ? pluginsUrlFresh : pluginsUrlFresh || pluginsUrlSelector;
+	const adminUrl = atomicFlow ? freshAdminUrl : freshAdminUrl || adminUrlSelector;
+
+	// The activated view announces a result, so it is only for a plugin seen active. The plain list
+	// claims nothing, which is all we can honestly say when the install went unconfirmed.
+	const activatedPluginsUrl = adminUrl
+		? `${ adminUrl }plugins.php?activate=true&plugin_status=active`
+		: null;
+	const pluginsUrl = adminUrl ? `${ adminUrl }plugins.php` : null;
 
 	// `isAtomic` reads the Redux site, which the completing transfer refreshes, so it flips true at
 	// the same moment the readiness checks below start passing. Latch what the upload arm actually
@@ -83,9 +90,29 @@ export function useThankYouRedirect( {
 	// for a marketplace-only slug, which the store normalizes to wporg: true, so that never holds.
 	const isRecoveryFlow = ! isPluginUploadFlow && !! pluginSlug && !! freshSite?.is_wpcom_atomic;
 
+	const pluginConfirmedActive = !! ( installedPlugin && pluginActive );
+
+	// An uploaded archive whose transfer has finished and left a reachable site behind. That says the
+	// transfer is over, not that the plugin is there: the transfer installs and activates the archive
+	// but reports complete either way, so a failed download, copy or install ends up here too.
+	const uploadTransferSettled = !! (
+		isPluginUploadFlow &&
+		startedNonAtomic &&
+		transferStates.COMPLETE === automatedTransferStatus &&
+		isAtomicTransferReady
+	);
+
+	// So give the plugin list, which is polled below, time to actually show the plugin. Only once it
+	// hasn't is the install unconfirmed — either it failed, or it succeeded under a slug the transfer
+	// could not read off the archive and never reported.
+	const uploadInstallUnconfirmed = useDelayedCondition(
+		uploadTransferSettled && ! pluginConfirmedActive,
+		INSTALL_CONFIRMATION_GRACE_PERIOD_MS
+	);
+
 	usePostTransferPluginRecovery( {
 		siteId,
-		enabled: isRecoveryFlow && ! pluginActive,
+		enabled: ( isRecoveryFlow || uploadTransferSettled ) && ! pluginActive,
 		// isAtomicTransferReady already requires manage_options, which the transfer propagates after
 		// is_wpcom_atomic flips; activating during that gap would fail and burn the retry budget.
 		canActivate: !! isAtomicTransferReady,
@@ -98,40 +125,25 @@ export function useThankYouRedirect( {
 	} );
 	// Check completition of all flows and redirect to thank you page
 	useEffect( () => {
-		if (
-			// Happens in 3 cases:
-			// - Click on "Install and activate" button for any plugin on /plugins/<site_name>
-			// - Install with the help of uploading archive of a plugins
-			// - If it's simple site which doesn't support plugins, then installing and activation happens at the same time with upgrading to Business plan
-			// This also covers the atomic-transfer flows (checkout-initiated and component-driven): the
-			// plugin only reads active once the transfer is far enough along, and for an atomicFlow the
-			// redirect URL below resolves only after the transfer completes, so no separate arm is needed.
-			( installedPlugin && pluginActive ) ||
-			// A zip upload that transferred the site. The transfer installs and activates the archive
-			// before it reports complete, so a completed transfer on a site that started out non-Atomic
-			// is the whole signal. It can't wait on the plugin itself: the plugin list was fetched while
-			// the site was still Simple, and the uploaded slug is absent whenever the transfer couldn't
-			// read it off the archive — neither survives an otherwise successful install.
-			( isPluginUploadFlow &&
-				startedNonAtomic &&
-				transferStates.COMPLETE === automatedTransferStatus &&
-				isAtomicTransferReady )
-		) {
-			// Require a resolved pluginsUrlFinal before redirecting
-			if ( ! pluginsUrlFinal ) {
-				return;
-			}
-			window.location.href = pluginsUrlFinal as string;
+		// Happens in 3 cases:
+		// - Click on "Install and activate" button for any plugin on /plugins/<site_name>
+		// - Install with the help of uploading archive of a plugins
+		// - If it's simple site which doesn't support plugins, then installing and activation happens at the same time with upgrading to Business plan
+		// This also covers the atomic-transfer flows (checkout-initiated and component-driven): the
+		// plugin only reads active once the transfer is far enough along, and for an atomicFlow the
+		// redirect URL below resolves only after the transfer completes, so no separate arm is needed.
+		if ( pluginConfirmedActive && activatedPluginsUrl ) {
+			window.location.href = activatedPluginsUrl;
+			return;
 		}
-	}, [
-		pluginActive,
-		automatedTransferStatus,
-		isPluginUploadFlow,
-		startedNonAtomic,
-		installedPlugin,
-		pluginsUrlFinal,
-		isAtomicTransferReady,
-	] ); // We need to trigger this hook also when `automatedTransferStatus` changes cause the plugin install is done on the background in that case.
+
+		// An upload the transfer finished without the plugin ever appearing. Nothing here is evidence
+		// the install worked, so land on the plugin list rather than the activated view, which would
+		// announce a plugin that may not be there.
+		if ( uploadInstallUnconfirmed && pluginsUrl ) {
+			window.location.href = pluginsUrl;
+		}
+	}, [ pluginConfirmedActive, uploadInstallUnconfirmed, activatedPluginsUrl, pluginsUrl ] ); // We need to trigger this hook also when `automatedTransferStatus` changes cause the plugin install is done on the background in that case.
 
 	// Validate theme is already active
 	useEffect( () => {

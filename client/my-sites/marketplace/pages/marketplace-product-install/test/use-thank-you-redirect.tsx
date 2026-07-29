@@ -28,6 +28,9 @@ jest.mock( '@automattic/api-queries', () => ( {
 
 const PLUGINS_URL =
 	'https://example.wpcomstaging.com/wp-admin/plugins.php?activate=true&plugin_status=active';
+// Where an install that could not be confirmed lands: the list itself, claiming nothing.
+const PLUGINS_LIST_URL = 'https://example.wpcomstaging.com/wp-admin/plugins.php';
+const CONFIRMATION_GRACE_MS = 10000;
 
 const ATOMIC_READY = {
 	ID: 1,
@@ -91,6 +94,7 @@ describe( 'useThankYouRedirect', () => {
 	} );
 
 	afterEach( () => {
+		jest.useRealTimers();
 		Object.defineProperty( window, 'location', {
 			configurable: true,
 			writable: true,
@@ -134,34 +138,68 @@ describe( 'useThankYouRedirect', () => {
 		await waitFor( () => expect( window.location.href ).toBe( PLUGINS_URL ) );
 	} );
 
-	it( 'redirects an uploaded zip once its transfer completes, though the site now reads Atomic', async () => {
+	it( 'looks for the uploaded plugin once its transfer completes, though the site now reads Atomic', async () => {
 		mockFreshSite = ATOMIC_READY;
 		const { rerender } = render( {
 			...UPLOAD_PROPS,
 			isAtomic: false,
 			automatedTransferStatus: transferStates.ACTIVE,
 		} );
-		expect( window.location.href ).toBe( '' );
+		await waitFor( () => expect( mockRecoveryProps?.canActivate ).toBe( true ) );
+		expect( mockRecoveryProps?.enabled ).toBe( false );
 
 		// Completing the transfer refreshes the site, so `isAtomic` turns true alongside the status.
 		rerender( { isAtomic: true, automatedTransferStatus: transferStates.COMPLETE } );
+		await waitFor( () => expect( mockRecoveryProps?.enabled ).toBe( true ) );
+	} );
+
+	it( 'redirects an uploaded zip to the activated view once its plugin reads active', async () => {
+		mockFreshSite = ATOMIC_READY;
+		const { rerender } = render( { ...UPLOAD_PROPS, isAtomic: false } );
+		await waitFor( () => expect( mockRecoveryProps?.enabled ).toBe( true ) );
+
+		// The polled plugin list turns up the uploaded plugin, active.
+		rerender( {
+			isAtomic: true,
+			installedPlugin: { slug: 'uploaded', id: 'uploaded/uploaded' },
+			pluginActive: true,
+		} );
 		await waitFor( () => expect( window.location.href ).toBe( PLUGINS_URL ) );
 	} );
 
-	it( 'waits for the transferred site to become reachable before redirecting an uploaded zip', async () => {
+	it( 'sends an unconfirmed upload to the plain plugin list, not the activated view', async () => {
+		// The transfer reports complete whether or not the archive installed, so with no plugin to
+		// show for it the destination must not announce one.
+		jest.useFakeTimers();
+		mockFreshSite = ATOMIC_READY;
+		render( { ...UPLOAD_PROPS, isAtomic: false } );
+		await waitFor( () => expect( mockRecoveryProps?.enabled ).toBe( true ) );
+
+		expect( window.location.href ).toBe( '' );
+		act( () => jest.advanceTimersByTime( CONFIRMATION_GRACE_MS ) );
+		expect( window.location.href ).toBe( PLUGINS_LIST_URL );
+	} );
+
+	it( 'waits for the transferred site to become reachable before giving up on an uploaded zip', async () => {
 		// Atomic, but the capabilities wp-admin needs have not propagated yet.
+		jest.useFakeTimers();
 		mockFreshSite = { ...ATOMIC_READY, capabilities: { manage_options: false } };
 		render( { ...UPLOAD_PROPS, isAtomic: false } );
 		await act( async () => {} );
+
+		act( () => jest.advanceTimersByTime( CONFIRMATION_GRACE_MS ) );
 		expect( window.location.href ).toBe( '' );
 	} );
 
 	it( 'does not redirect an upload to a site that was already Atomic', async () => {
 		// Nothing transferred, so a stale completed status must not stand in for the install.
+		jest.useFakeTimers();
 		mockFreshSite = ATOMIC_READY;
 		render( { ...UPLOAD_PROPS, isAtomic: true } );
 		// Readiness is satisfied, so an arm that ignored the starting state would have redirected.
 		await waitFor( () => expect( mockRecoveryProps?.canActivate ).toBe( true ) );
+
+		act( () => jest.advanceTimersByTime( CONFIRMATION_GRACE_MS ) );
 		expect( window.location.href ).toBe( '' );
 	} );
 } );
