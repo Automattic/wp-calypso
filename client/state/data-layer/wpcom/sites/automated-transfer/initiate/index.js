@@ -70,6 +70,9 @@ export const receiveError = ( { siteId }, error ) => {
 		showErrorNotice( error ),
 		pluginUploadError( siteId, error ),
 		initiateAutomatedTransferWithPluginZipFailure( siteId ),
+		// The endpoint creates the transfer before it validates the archive, so this error may well
+		// have left one running. Ask the status endpoint rather than assuming nothing started.
+		fetchAutomatedTransferStatus( siteId ),
 	];
 };
 

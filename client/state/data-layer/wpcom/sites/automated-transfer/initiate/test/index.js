@@ -126,6 +126,13 @@ describe( 'receiveError', () => {
 		const result = receiveResponse( { siteId }, INITIATE_FAILURE_RESPONSE );
 		expect( result[ 3 ] ).toEqual( initiateAutomatedTransferWithPluginZipFailure( siteId ) );
 	} );
+
+	// The endpoint creates the transfer before it validates the archive, so an error can arrive with
+	// one already running. Only the status endpoint knows.
+	test( 'should ask for the real transfer status rather than assume none started', () => {
+		const result = receiveError( { siteId }, ERROR_RESPONSE );
+		expect( result[ 4 ] ).toEqual( fetchAutomatedTransferStatus( siteId ) );
+	} );
 } );
 
 describe( 'updateUploadProgress', () => {

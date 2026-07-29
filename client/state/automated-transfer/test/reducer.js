@@ -31,10 +31,12 @@ describe( 'state', () => {
 					expect( status( transferStates.COMPLETE, initiate ) ).toEqual( transferStates.START );
 				} );
 
-				test( 'should take the started status back when initiation fails', () => {
+				// FAILURE would read as a transfer that started and broke, which sends screens gated on
+				// the status to their contact-support path over a zip that was merely rejected.
+				test( 'should take the started status back when initiation returns an error', () => {
 					const failure = { type: INITIATE_WITH_PLUGIN_ZIP_FAILURE };
 
-					expect( status( transferStates.START, failure ) ).toEqual( transferStates.FAILURE );
+					expect( status( transferStates.START, failure ) ).toEqual( transferStates.NONE );
 				} );
 			} );
 

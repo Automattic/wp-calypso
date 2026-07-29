@@ -32,8 +32,11 @@ export const status = withPersistence( ( state = null, action ) => {
 		case INITIATE_WITH_PLUGIN_ZIP:
 			return transferStates.START;
 		case INITIATE_FAILURE:
-		case INITIATE_WITH_PLUGIN_ZIP_FAILURE:
 			return transferStates.FAILURE;
+		// Not FAILURE: as far as anything reading this state is concerned nothing was ever started, and
+		// a transfer recorded as failed puts unrelated screens into their contact-support path.
+		case INITIATE_WITH_PLUGIN_ZIP_FAILURE:
+			return transferStates.NONE;
 		case SET_STATUS:
 			return action.status;
 		case TRANSFER_UPDATE:
