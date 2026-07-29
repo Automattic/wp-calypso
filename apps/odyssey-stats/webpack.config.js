@@ -153,7 +153,11 @@ module.exports = {
 		} ),
 		...SassConfig.plugins( {
 			filename: '[name].min.css',
-			chunkFilename: '[contenthash].css',
+			// [name] resolves from the `webpackChunkName` magic comment on the dynamic `import()`
+			// that pulled the chunk in (falls back to a numeric id for chunks with none), matching
+			// the JS chunkFilename pattern below instead of shipping every split CSS file under an
+			// unreadable bare hash.
+			chunkFilename: '[name].[contenthash].css',
 			minify: ! isDevelopment,
 		} ),
 		new DependencyExtractionWebpackPlugin( {
