@@ -309,7 +309,12 @@ export default function AgentDock( {
 					title: isSplitScreen
 						? __( 'Exit split screen', __i18n_text_domain__ )
 						: __( 'Split screen sidebar', __i18n_text_domain__ ),
-					onClick: () => setIsSplitScreen( ! isSplitScreen ),
+					onClick: () => {
+						recordBigSkyTracksEvent( 'ai_chat_more_options_click', {
+							type: isSplitScreen ? 'exit_split_screen' : 'split_screen',
+						} );
+						setIsSplitScreen( ! isSplitScreen );
+					},
 				},
 		].filter( Boolean ) as ChatHeaderOptions;
 	};

@@ -40,6 +40,7 @@ export default function Proofread( {
 }: ProofreadProps ) {
 	return (
 		<FeedbackList
+			componentType="proofread"
 			summary={ summary }
 			items={ items }
 			sections={ sections }

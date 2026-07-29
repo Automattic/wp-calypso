@@ -42,6 +42,7 @@ export default function PostFeedback( {
 }: PostFeedbackProps ) {
 	return (
 		<FeedbackList
+			componentType="post-feedback"
 			summary={ summary }
 			items={ items }
 			sections={ sections }

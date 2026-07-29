@@ -995,7 +995,10 @@ export default function AiEditorialReview( {
 			aria-disabled={ isPostStale || undefined }
 			onMouseDownCapture={ handleRootMouseDown }
 		>
-			<SplitScreenGuide isStale={ isMessageStale || isPostStale } />
+			<SplitScreenGuide
+				componentType="ai-editorial-review"
+				isStale={ isMessageStale || isPostStale }
+			/>
 			{ isPostStale && (
 				<p className="jetpack-ai-editorial-review__stale-warning" role="note">
 					{ __(

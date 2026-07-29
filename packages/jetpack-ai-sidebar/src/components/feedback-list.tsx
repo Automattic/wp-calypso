@@ -82,6 +82,8 @@ export type EditorPostId = number | string;
  * come from the show-component payload; everything here is flow configuration.
  */
 export interface FeedbackListProps {
+	/** Existing show-component type used to segment guide tracking. */
+	componentType: string;
 	summary: string;
 	items?: FeedbackListItem[];
 	sections?: FeedbackListSection[];
@@ -206,6 +208,7 @@ function getApplyUnavailableReason(
  * @returns React element.
  */
 export default function FeedbackList( {
+	componentType,
 	summary,
 	items,
 	sections,
@@ -400,7 +403,7 @@ export default function FeedbackList( {
 			className={ `${ CLASS_PREFIX }${ isPostStale ? ' is-post-stale' : '' }` }
 			onMouseDownCapture={ handleRootMouseDown }
 		>
-			<SplitScreenGuide isStale={ isMessageStale || isPostStale } />
+			<SplitScreenGuide componentType={ componentType } isStale={ isMessageStale || isPostStale } />
 			{ isPostStale && (
 				<p className={ `${ CLASS_PREFIX }__stale-warning` } role="note">
 					{ staleWarning }
