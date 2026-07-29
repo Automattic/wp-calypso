@@ -35,8 +35,11 @@ import {
 	BlazeCampaignPage,
 	BlockWidgetEditorComponent,
 	CartCheckoutPage,
+	DashboardMeSidebarComponent,
 	DashboardPage,
+	DashboardPurchasesPage,
 	DashboardSiteDomainsPage,
+	DashboardSnackbarComponent,
 	DashboardVisibilitySettingsPage,
 	DataHelper,
 	DomainSearchComponent,
@@ -170,6 +173,14 @@ export const test = base.extend<
 		 * Component for searching/selecting domains during signup flows.
 		 */
 		componentDomainSearch: DomainSearchComponent;
+		/**
+		 * Component for the Multi-site Dashboard `/me` sidebar (profile/settings).
+		 */
+		componentDashboardMeSidebar: DashboardMeSidebarComponent;
+		/**
+		 * Component for the Multi-site Dashboard snackbar notices.
+		 */
+		componentDashboardSnackbar: DashboardSnackbarComponent;
 		/**
 		 * Component for the Me sidebar (profile/settings)
 		 */
@@ -327,6 +338,10 @@ export const test = base.extend<
 		 */
 		pagePurchases: PurchasesPage;
 		/**
+		 * Page object representing the Multi-site Dashboard Billing > Active upgrades screens.
+		 */
+		pageDashboardPurchases: DashboardPurchasesPage;
+		/**
 		 * Page object representing the WordPress.com themes detail page.
 		 */
 		pageThemeDetails: ThemesDetailPage;
@@ -424,6 +439,14 @@ export const test = base.extend<
 	componentBlockWidgetEditor: async ( { page }, use ) => {
 		const blockWidgetEditorComponent = new BlockWidgetEditorComponent( page );
 		await use( blockWidgetEditorComponent );
+	},
+	componentDashboardMeSidebar: async ( { page }, use ) => {
+		const dashboardMeSidebarComponent = new DashboardMeSidebarComponent( page );
+		await use( dashboardMeSidebarComponent );
+	},
+	componentDashboardSnackbar: async ( { page }, use ) => {
+		const dashboardSnackbarComponent = new DashboardSnackbarComponent( page );
+		await use( dashboardSnackbarComponent );
 	},
 	componentMeSidebar: async ( { page }, use ) => {
 		const meSidebarComponent = new MeSidebarComponent( page );
@@ -596,6 +619,10 @@ export const test = base.extend<
 	pagePurchases: async ( { page }, use ) => {
 		const purchasesPage = new PurchasesPage( page );
 		await use( purchasesPage );
+	},
+	pageDashboardPurchases: async ( { page }, use ) => {
+		const dashboardPurchasesPage = new DashboardPurchasesPage( page );
+		await use( dashboardPurchasesPage );
 	},
 	pageThemeDetails: async ( { page }, use ) => {
 		const themesDetailPage = new ThemesDetailPage( page );
