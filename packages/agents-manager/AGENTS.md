@@ -33,6 +33,8 @@ AM ability registration (`registerAmAbilities()`) is surface-agnostic by design 
 
 - **The backend route settings are the scope authority** (`wpcom` repo, `lib/ai/agents/route-settings/wp-orchestrator/`): deny-by-default, per-URL allowlists rebuild each agent's tool set from scratch. Client-side registration and provider advertisement never make an ability callable.
 - **Execution ownership comes from provider order, not the registry** — tool calls resolve through the provider chain first-write-wins by ability name, and `amToolProvider` is placed before the external providers. Registering an ability in the `@wordpress/abilities` registry alone does not route execution to it.
+- **Migrating an ability = a folder under `src/abilities/` + an `AM_ABILITIES` entry** — `amToolProvider` then executes it ahead of the provider's copy. If it renders a chat component, also add its type to `AM_COMPONENTS` in the converter.
+- **Test both implementations with `?am_abilities=0`** — the switch flips execution, registration, and rendering to the provider copies in one move.
 - **Never rename an ability while migrating it** — the name is the key the route settings match on; renaming silently drops it from every surface.
 - **Guard mutating callbacks in place**: when migrating a callback that changes editor state (e.g. `apply-block-edits`, `set-styles`), start it with an `isEditorPage()` early-return that returns an error result. Inert callbacks (e.g. `show-component`) need no guard.
 - **Per migration, grep the route-settings files** for the ability name to confirm which surfaces expose it.
@@ -42,6 +44,7 @@ AM ability registration (`registerAmAbilities()`) is surface-agnostic by design 
 
 - **Two deployment targets**: Every change must work in both Calypso (SPA) and Simple/Atomic/CIAB (via `widgets.wp.com` bundles). They use different bootstrap paths.
 - **asset.json sync gap**: Adding/removing `@wordpress/*` dependencies changes `.asset.json` files, which Jetpack fetches from production — not your sandbox. Dependency changes require a deploy to take effect on Atomic.
+- **Unregistered script handles**: `@wordpress/*` packages WordPress doesn't register as scripts (e.g. `@wordpress/abilities`, `@wordpress/ui`) must stay force-bundled in `apps/agents-manager/webpack.config.js` — an externalized unregistered dependency makes `WP_Scripts` silently drop the whole bundle.
 - **Disconnected variants**: Several entry points have `-disconnected` versions showing minimal UI. Changes to shared code can silently break these.
 - **Help Center dequeue**: On Gutenberg pages, the Agents Manager dequeues Help Center scripts to prevent duplicate UI. If debugging missing Help Center behavior, check this interaction.
 - **Extension interface changes**: Modifying `extension-types.ts` affects all provider plugins (Big Sky, etc.) across repos.
