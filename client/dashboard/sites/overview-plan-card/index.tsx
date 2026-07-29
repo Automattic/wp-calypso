@@ -3,6 +3,7 @@ import { siteCurrentPlanQuery, siteByIdQuery, purchaseQuery } from '@automattic/
 import { JetpackLogo } from '@automattic/components/src/logos/jetpack-logo';
 import { useQuery } from '@tanstack/react-query';
 import {
+	Button,
 	__experimentalGrid as Grid,
 	__experimentalText as Text,
 	__experimentalVStack as VStack,
@@ -11,9 +12,13 @@ import {
 } from '@wordpress/components';
 import { __, sprintf } from '@wordpress/i18n';
 import { wordpress } from '@wordpress/icons';
+import { useAnalytics } from '../../app/analytics';
+import { purchasesRoute } from '../../app/router/me';
 import { commerceGardenPlan } from '../../components/icons';
 import OverviewCard from '../../components/overview-card';
 import { PurchaseExpiryStatus } from '../../components/purchase-expiry-status';
+import RouterLinkButton from '../../components/router-link-button';
+import { isDashboardBackport } from '../../utils/is-dashboard-backport';
 import {
 	getJetpackProductsForSite,
 	getSitePlanDisplayName,
@@ -48,6 +53,37 @@ function SitePlanStats( { site }: { site: Site } ) {
 			<SiteStorageStat site={ site } />
 			<SiteBandwidthStat site={ site } />
 		</VStack>
+	);
+}
+
+function SeeAllPurchasesLink( { site }: { site: Site } ) {
+	const { recordTracksEvent } = useAnalytics();
+
+	const handleClick = () => {
+		recordTracksEvent( 'calypso_dashboard_site_overview_see_all_purchases_click' );
+	};
+
+	if ( isDashboardBackport() ) {
+		return (
+			<Button
+				variant="link"
+				href={ `/purchases/subscriptions/${ site.slug }` }
+				onClick={ handleClick }
+			>
+				{ __( 'See all purchases' ) }
+			</Button>
+		);
+	}
+
+	return (
+		<RouterLinkButton
+			variant="link"
+			to={ purchasesRoute.fullPath }
+			search={ { site: site.ID } }
+			onClick={ handleClick }
+		>
+			{ __( 'See all purchases' ) }
+		</RouterLinkButton>
 	);
 }
 
@@ -115,7 +151,12 @@ function WpcomPlanCard( {
 			link={ getSitePlanUrl( site, purchase ) }
 			tracksId="site-overview-plan"
 			isLoading={ isLoading }
-			bottom={ <SitePlanStats site={ site } /> }
+			bottom={
+				<VStack spacing={ 3 }>
+					<SitePlanStats site={ site } />
+					{ purchase && <SeeAllPurchasesLink site={ site } /> }
+				</VStack>
+			}
 		/>
 	);
 }
