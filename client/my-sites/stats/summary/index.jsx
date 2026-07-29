@@ -37,6 +37,7 @@ import DownloadCsv from '../stats-download-csv';
 import DownloadCsvUpsell from '../stats-download-csv-upsell';
 import AllTimeNav from '../stats-module/all-time-nav';
 import PageViewTracker from '../stats-page-view-tracker';
+import VideosPerformance from '../stats-videos-performance';
 import VideoPressStatsModule from '../videopress-stats-module';
 
 import './style.scss';
@@ -299,6 +300,7 @@ class StatsSummary extends Component {
 				summaryView = (
 					<Fragment key="videopress-stats-module">
 						{ this.renderSummaryHeader( path, statType, false, moduleQuery ) }
+						<VideosPerformance siteId={ siteId } query={ moduleQuery } />
 						<VideoPressStatsModule
 							path={ path }
 							moduleStrings={ statsStrings.videoplays }
