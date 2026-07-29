@@ -31,7 +31,7 @@ const HELP_CENTER_STORE = HelpCenter.register();
 function getBotSlug(
 	supportInteraction: SupportInteraction | undefined,
 	newInteractionsBotSlug: string,
-	loggedOutOdieBotSlug = 'wpcom-workflow-chat_loggedout',
+	loggedOutOdieBotSlug: string,
 	isLoggedOutSession: boolean
 ): string {
 	if ( supportInteraction ) {
@@ -130,6 +130,7 @@ export const useSendOdieMessage = ( signal: AbortSignal ) => {
 		forceEmailSupport,
 		trackEvent,
 		newInteractionsBotSlug,
+		newLoggedOutInteractionsBotSlug,
 		externalChatProvider,
 		externalChatId,
 	} = useOdieAssistantContext();
@@ -137,7 +138,7 @@ export const useSendOdieMessage = ( signal: AbortSignal ) => {
 	const botSlug = getBotSlug(
 		currentSupportInteraction,
 		newInteractionsBotSlug,
-		loggedOutOdieBotSlug ?? undefined,
+		loggedOutOdieBotSlug ?? newLoggedOutInteractionsBotSlug,
 		// The user can be logged in but still wants to continue the logged out session.
 		isLoggedOutSession || ! isLoggedIn
 	);

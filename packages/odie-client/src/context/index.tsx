@@ -2,7 +2,11 @@ import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { useSelect } from '@wordpress/data';
 import { createContext, useCallback, useContext, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { HELP_CENTER_STORE, ODIE_NEW_INTERACTIONS_BOT_SLUG } from '../constants';
+import {
+	HELP_CENTER_STORE,
+	ODIE_NEW_INTERACTIONS_BOT_SLUG,
+	ODIE_NEW_LOGGED_OUT_INTERACTIONS_BOT_SLUG,
+} from '../constants';
 import { useOdieBroadcastWithCallbacks } from '../data';
 import { useGetCombinedChat } from '../hooks';
 import { isOdieAllowedBot, getIsRequestingHumanSupport } from '../utils';
@@ -32,6 +36,7 @@ export const OdieAssistantContext = createContext< OdieAssistantContextInterface
 	addMessage: noop,
 	botName: 'Wapuu',
 	newInteractionsBotSlug: ODIE_NEW_INTERACTIONS_BOT_SLUG,
+	newLoggedOutInteractionsBotSlug: ODIE_NEW_LOGGED_OUT_INTERACTIONS_BOT_SLUG,
 	chat: emptyChat,
 	canConnectToZendesk: false,
 	isLoadingCanConnectToZendesk: false,
@@ -63,6 +68,7 @@ export const odieBroadcastClientId = Math.random().toString( 36 ).substring( 2, 
 export const OdieAssistantProvider: React.FC< OdieAssistantProviderProps > = ( {
 	botName = 'Wapuu assistant',
 	newInteractionsBotSlug,
+	newLoggedOutInteractionsBotSlug,
 	newInteractionsBotVersion,
 	isUserEligibleForPaidSupport = true,
 	canConnectToZendesk = false,
@@ -171,6 +177,7 @@ export const OdieAssistantProvider: React.FC< OdieAssistantProviderProps > = ( {
 				addMessage,
 				botName,
 				newInteractionsBotSlug: dynamicNewInteractionsBotSlug,
+				newLoggedOutInteractionsBotSlug,
 				chat: mainChatState,
 				setChat: setMainChatState,
 				clearChat,
