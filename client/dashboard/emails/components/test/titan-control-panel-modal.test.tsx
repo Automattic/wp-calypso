@@ -130,7 +130,9 @@ describe( '<TitanControlPanelModal>', () => {
 		await waitFor( () => expect( scope.isDone() ).toBe( true ) );
 	} );
 
-	test( 'closes the blank tab and warns when the auto-login URL cannot be fetched', async () => {
+	// The error snackbar itself comes from the mutation's withSnackbar meta, which the
+	// global Snackbars subscriber renders outside this component.
+	test( 'closes the blank tab when the auto-login URL cannot be fetched', async () => {
 		useLargeViewport();
 		mockDomain( ORDER_ID );
 		nock( 'https://public-api.wordpress.com' )

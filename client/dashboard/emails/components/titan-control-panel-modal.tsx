@@ -3,12 +3,11 @@ import { domainQuery, titanControlPanelAutoLoginUrlMutation } from '@automattic/
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { __experimentalVStack as VStack, Icon, Spinner } from '@wordpress/components';
 import { useViewportMatch } from '@wordpress/compose';
-import { useDispatch } from '@wordpress/data';
 import { __, sprintf } from '@wordpress/i18n';
 import { cloudUpload, desktop, login, mobile, settings, tool } from '@wordpress/icons';
-import { store as noticesStore } from '@wordpress/notices';
 import { useState } from 'react';
 import { useAnalytics } from '../../app/analytics';
+import { withSnackbar } from '../../app/snackbars/with-snackbar';
 import Notice from '../../components/notice';
 import SummaryButton from '../../components/summary-button';
 import { SummaryButtonList } from '../../components/summary-button-list';
@@ -46,7 +45,7 @@ function getControlPanelLinks(): ControlPanelLink[] {
 			context: TitanControlPanelContext.GET_MOBILE_APP,
 			icon: mobile,
 			title: __( 'Get mobile app' ),
-			description: __( "Download Titan's Android and iOS apps to access your emails on the go" ),
+			description: __( 'Download Titan’s Android and iOS apps to access your emails on the go' ),
 		},
 		{
 			context: TitanControlPanelContext.IMPORT_EMAIL_DATA,
@@ -81,11 +80,14 @@ function getControlPanelLinks(): ControlPanelLink[] {
 export default function TitanControlPanelModal( { domainName }: { domainName: string } ) {
 	const isLargeViewport = useViewportMatch( 'large' );
 	const { recordTracksEvent } = useAnalytics();
-	const { createErrorNotice } = useDispatch( noticesStore );
 	const [ pendingContext, setPendingContext ] = useState< string | null >( null );
 
 	const { data: domain, isLoading: isLoadingDomain } = useQuery( domainQuery( domainName ) );
-	const { mutateAsync: fetchAutoLoginUrl } = useMutation( titanControlPanelAutoLoginUrlMutation() );
+	const { mutateAsync: fetchAutoLoginUrl } = useMutation(
+		withSnackbar( titanControlPanelAutoLoginUrlMutation(), {
+			error: __( 'Failed to open the control panel.' ),
+		} )
+	);
 
 	const orderId = domain?.titan_mail_subscription?.order_id;
 	const hasSubscription = ! isLoadingDomain && !! orderId;
@@ -115,10 +117,6 @@ export default function TitanControlPanelModal( { domainName }: { domainName: st
 			}
 		} catch {
 			controlPanelWindow?.close();
-			createErrorNotice(
-				__( 'We could not open the control panel. Please try again in a few minutes.' ),
-				{ type: 'snackbar' }
-			);
 		} finally {
 			setPendingContext( null );
 		}
