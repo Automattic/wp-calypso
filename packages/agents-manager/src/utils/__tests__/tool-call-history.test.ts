@@ -1,5 +1,6 @@
 import { getAgentManager } from '@automattic/agenttic-client';
 import { DOLLY_AGENT_ID } from '../../constants';
+import { BIG_SKY_SHOW_COMPONENT_TOOL_ID } from '../show-component-tools';
 import { getToolCallIdFromConversationHistory } from '../tool-call-history';
 
 jest.mock( '@automattic/agenttic-client', () => ( { getAgentManager: jest.fn() } ), {
@@ -27,22 +28,26 @@ describe( 'getToolCallIdFromConversationHistory', () => {
 	it( 'returns null when no agent manager exists', () => {
 		mockGetAgentManager.mockReturnValue( undefined );
 
-		expect( getToolCallIdFromConversationHistory( 'big_sky__show_component' ) ).toBeNull();
+		expect( getToolCallIdFromConversationHistory( BIG_SKY_SHOW_COMPONENT_TOOL_ID ) ).toBeNull();
 	} );
 
 	it( 'returns the most recent matching call by default', () => {
 		setHistory( [
-			toolCallMessage( 'big_sky__show_component', 'toolu_1' ),
-			toolCallMessage( 'big_sky__show_component', 'toolu_2' ),
+			toolCallMessage( BIG_SKY_SHOW_COMPONENT_TOOL_ID, 'toolu_1' ),
+			toolCallMessage( BIG_SKY_SHOW_COMPONENT_TOOL_ID, 'toolu_2' ),
 		] );
 
-		expect( getToolCallIdFromConversationHistory( 'big_sky__show_component' ) ).toBe( 'toolu_2' );
+		expect( getToolCallIdFromConversationHistory( BIG_SKY_SHOW_COMPONENT_TOOL_ID ) ).toBe(
+			'toolu_2'
+		);
 	} );
 
 	it( 'checks the dolly agent too', () => {
-		setHistory( [ toolCallMessage( 'big_sky__show_component', 'toolu_1' ) ], DOLLY_AGENT_ID );
+		setHistory( [ toolCallMessage( BIG_SKY_SHOW_COMPONENT_TOOL_ID, 'toolu_1' ) ], DOLLY_AGENT_ID );
 
-		expect( getToolCallIdFromConversationHistory( 'big_sky__show_component' ) ).toBe( 'toolu_1' );
+		expect( getToolCallIdFromConversationHistory( BIG_SKY_SHOW_COMPONENT_TOOL_ID ) ).toBe(
+			'toolu_1'
+		);
 	} );
 
 	it.each( [
@@ -50,11 +55,11 @@ describe( 'getToolCallIdFromConversationHistory', () => {
 			'a different tool',
 			{ toolId: 'big_sky__editor_navigate', toolCallId: 'toolu_1', arguments: {} },
 		],
-		[ 'no tool call id', { toolId: 'big_sky__show_component', arguments: {} } ],
-		[ 'no arguments', { toolId: 'big_sky__show_component', toolCallId: 'toolu_1' } ],
+		[ 'no tool call id', { toolId: BIG_SKY_SHOW_COMPONENT_TOOL_ID, arguments: {} } ],
+		[ 'no arguments', { toolId: BIG_SKY_SHOW_COMPONENT_TOOL_ID, toolCallId: 'toolu_1' } ],
 	] )( 'ignores history parts with %s', ( _case, data ) => {
 		setHistory( [ { parts: [ { data } ] } ] );
 
-		expect( getToolCallIdFromConversationHistory( 'big_sky__show_component' ) ).toBeNull();
+		expect( getToolCallIdFromConversationHistory( BIG_SKY_SHOW_COMPONENT_TOOL_ID ) ).toBeNull();
 	} );
 } );

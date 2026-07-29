@@ -1,4 +1,5 @@
 import {
+	RESTORE_CHECKPOINT_TOOL_ID,
 	clearCheckpoint,
 	getCheckpoint,
 	getCheckpoints,
@@ -39,6 +40,9 @@ const mockGetToolCallId = getToolCallIdFromConversationHistory as jest.Mock;
 const mockGetProviderCheckpoints = getProviderCheckpoints as jest.Mock;
 const mockGetProviderCheckpointKeys = getProviderCheckpointKeys as jest.Mock;
 
+const RESTORE_CALL_ID = 'toolu_restore';
+const RESTORE_SUMMARY = 'I undid the color change.';
+
 const TARGET_CHECKPOINT = {
 	id: 'toolu_target',
 	toolId: 'big_sky__show_component',
@@ -54,7 +58,7 @@ const makeProviderCheckpoints = () => ( {
 
 const makeInput = ( overrides = {} ) => ( {
 	checkpointId: TARGET_CHECKPOINT.id,
-	summary: 'I undid the color change.',
+	summary: RESTORE_SUMMARY,
 	requestIntentType: 'undo' as const,
 	...overrides,
 } );
@@ -112,7 +116,7 @@ describe( 'restoreCheckpointCallback', () => {
 		expect( result ).toEqual( {
 			result: {
 				success: true,
-				message: 'I undid the color change.',
+				message: RESTORE_SUMMARY,
 				details: { checkpointId: TARGET_CHECKPOINT.id },
 			},
 			returnToAgent: true,
@@ -127,16 +131,16 @@ describe( 'restoreCheckpointCallback', () => {
 	] as const )(
 		'records a reciprocal checkpoint with the %s intent flipped to %s',
 		async ( requestIntentType, reciprocal ) => {
-			mockGetToolCallId.mockReturnValue( 'toolu_restore' );
+			mockGetToolCallId.mockReturnValue( RESTORE_CALL_ID );
 
 			await restoreCheckpointCallback( makeInput( { requestIntentType } ) );
 
 			expect( setCheckpoint ).toHaveBeenCalledWith(
-				'toolu_restore',
+				RESTORE_CALL_ID,
 				TARGET_CHECKPOINT.checkpointKeys,
 				{
 					toolId: 'big_sky__restore_checkpoint',
-					summary: 'I undid the color change.',
+					summary: RESTORE_SUMMARY,
 					restoresCheckpointId: TARGET_CHECKPOINT.id,
 					restoredCheckpointToolId: TARGET_CHECKPOINT.toolId,
 					requestIntentType: reciprocal,
@@ -147,7 +151,7 @@ describe( 'restoreCheckpointCallback', () => {
 	);
 
 	it( 'keeps an existing checkpoint under the restore call id', async () => {
-		mockGetToolCallId.mockReturnValue( 'toolu_restore' );
+		mockGetToolCallId.mockReturnValue( RESTORE_CALL_ID );
 		mockHasCheckpoint.mockReturnValue( true );
 
 		await restoreCheckpointCallback( makeInput() );
@@ -162,23 +166,23 @@ describe( 'restoreCheckpointCallback', () => {
 	} );
 
 	it( 'clears stale restore reciprocals after a successful restore', async () => {
-		mockGetToolCallId.mockReturnValue( 'toolu_restore' );
+		mockGetToolCallId.mockReturnValue( RESTORE_CALL_ID );
 		mockGetCheckpoints.mockReturnValue( [
 			TARGET_CHECKPOINT,
 			{
 				id: 'toolu_old_redo',
-				toolId: 'big_sky__restore_checkpoint',
+				toolId: RESTORE_CHECKPOINT_TOOL_ID,
 				checkpointKeys: [],
 				requestIntentType: 'redo',
 			},
-			{ id: 'toolu_legacy', toolId: 'big_sky__restore_checkpoint', checkpointKeys: [] },
+			{ id: 'toolu_legacy', toolId: RESTORE_CHECKPOINT_TOOL_ID, checkpointKeys: [] },
 			{
 				id: 'toolu_other_intent',
-				toolId: 'big_sky__restore_checkpoint',
+				toolId: RESTORE_CHECKPOINT_TOOL_ID,
 				checkpointKeys: [],
 				requestIntentType: 'undo',
 			},
-			{ id: 'toolu_restore', toolId: 'big_sky__restore_checkpoint', checkpointKeys: [] },
+			{ id: RESTORE_CALL_ID, toolId: RESTORE_CHECKPOINT_TOOL_ID, checkpointKeys: [] },
 		] );
 
 		await restoreCheckpointCallback( makeInput() );
@@ -201,7 +205,7 @@ describe( 'restoreCheckpointCallback', () => {
 		expect( result ).toEqual( {
 			result: {
 				success: true,
-				message: 'I undid the color change.',
+				message: RESTORE_SUMMARY,
 				details: { checkpointId: TARGET_CHECKPOINT.id },
 			},
 			returnToAgent: true,
@@ -210,7 +214,7 @@ describe( 'restoreCheckpointCallback', () => {
 
 	it( 'records the reciprocal in the provider store scoped to the target keys', async () => {
 		mockGetCheckpoint.mockReturnValue( undefined );
-		mockGetToolCallId.mockReturnValue( 'toolu_restore' );
+		mockGetToolCallId.mockReturnValue( RESTORE_CALL_ID );
 		mockGetProviderCheckpointKeys.mockReturnValue( [ 'site_title', 'site_metadata' ] );
 		const providerCheckpoints = makeProviderCheckpoints();
 		mockGetProviderCheckpoints.mockReturnValue( providerCheckpoints );
@@ -219,12 +223,12 @@ describe( 'restoreCheckpointCallback', () => {
 
 		expect( mockGetProviderCheckpointKeys ).toHaveBeenCalledWith( TARGET_CHECKPOINT.id );
 		expect( providerCheckpoints.setCheckpoint ).toHaveBeenCalledWith(
-			'toolu_restore',
+			RESTORE_CALL_ID,
 			[ 'site_title', 'site_metadata' ],
 			{
-				toolCallId: 'toolu_restore',
+				toolCallId: RESTORE_CALL_ID,
 				toolId: 'big_sky__restore_checkpoint',
-				summary: 'I undid the color change.',
+				summary: RESTORE_SUMMARY,
 				restoresCheckpointId: TARGET_CHECKPOINT.id,
 				requestIntentType: 'redo',
 				createdByRequestIntentType: 'undo',
@@ -235,7 +239,7 @@ describe( 'restoreCheckpointCallback', () => {
 
 	it( 'skips the reciprocal when the target keys are unreadable', async () => {
 		mockGetCheckpoint.mockReturnValue( undefined );
-		mockGetToolCallId.mockReturnValue( 'toolu_restore' );
+		mockGetToolCallId.mockReturnValue( RESTORE_CALL_ID );
 		const providerCheckpoints = makeProviderCheckpoints();
 		mockGetProviderCheckpoints.mockReturnValue( providerCheckpoints );
 
@@ -248,7 +252,7 @@ describe( 'restoreCheckpointCallback', () => {
 
 	it( 'drops the provider reciprocal when a delegated restore fails', async () => {
 		mockGetCheckpoint.mockReturnValue( undefined );
-		mockGetToolCallId.mockReturnValue( 'toolu_restore' );
+		mockGetToolCallId.mockReturnValue( RESTORE_CALL_ID );
 		mockGetProviderCheckpointKeys.mockReturnValue( [ 'site_title' ] );
 		const providerCheckpoints = makeProviderCheckpoints();
 		providerCheckpoints.restoreCheckpoint.mockRejectedValueOnce( new Error( 'Restore exploded.' ) );
@@ -256,12 +260,12 @@ describe( 'restoreCheckpointCallback', () => {
 
 		const result = await restoreCheckpointCallback( makeInput() );
 
-		expect( providerCheckpoints.clearCheckpoint ).toHaveBeenCalledWith( 'toolu_restore' );
+		expect( providerCheckpoints.clearCheckpoint ).toHaveBeenCalledWith( RESTORE_CALL_ID );
 		expect( result.result ).toMatchObject( { success: false, error: 'Restore exploded.' } );
 	} );
 
 	it( 'reports a failed restore and drops the just-created reciprocal', async () => {
-		mockGetToolCallId.mockReturnValue( 'toolu_restore' );
+		mockGetToolCallId.mockReturnValue( RESTORE_CALL_ID );
 		( restoreCheckpoint as jest.Mock ).mockRejectedValueOnce( new Error( 'Restore exploded.' ) );
 
 		const result = await restoreCheckpointCallback( makeInput() );
@@ -272,11 +276,11 @@ describe( 'restoreCheckpointCallback', () => {
 			details: { checkpointId: TARGET_CHECKPOINT.id },
 		} );
 		expect( clearCheckpoint ).toHaveBeenCalledTimes( 1 );
-		expect( clearCheckpoint ).toHaveBeenCalledWith( 'toolu_restore' );
+		expect( clearCheckpoint ).toHaveBeenCalledWith( RESTORE_CALL_ID );
 	} );
 
 	it( 'keeps a pre-existing reciprocal when the restore fails', async () => {
-		mockGetToolCallId.mockReturnValue( 'toolu_restore' );
+		mockGetToolCallId.mockReturnValue( RESTORE_CALL_ID );
 		mockHasCheckpoint.mockReturnValue( true );
 		( restoreCheckpoint as jest.Mock ).mockRejectedValueOnce( new Error( 'Restore exploded.' ) );
 
