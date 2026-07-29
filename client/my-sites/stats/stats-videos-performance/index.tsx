@@ -6,11 +6,17 @@ import {
 import { useShouldGateStats } from '../hooks/use-should-gate-stats';
 import { aggregateVideoPerformance, flattenVideoPlaysRows } from './aggregate';
 import VideosPerformanceCards from './cards';
-import type { StatsStateProps } from '../features/modules/types';
+import type { StatsQueryType, StatsStateProps } from '../features/modules/types';
 
 const STAT_TYPE = 'statsVideoPlays';
 
-export default function VideosPerformance( { siteId, query }: { siteId: number; query: object } ) {
+export default function VideosPerformance( {
+	siteId,
+	query,
+}: {
+	siteId: number;
+	query: StatsQueryType;
+} ) {
 	const isGated = useShouldGateStats( STAT_TYPE );
 	// Relies on the videos list already querying with `complete_stats: 1` (set
 	// in summary/index.jsx); flattenVideoPlaysRows reads the per-video
