@@ -7,7 +7,9 @@ import { dispatch, select } from '@wordpress/data';
  * Ported from Big Sky's `use-checkpoint` as plain functions — AM abilities
  * execute as plain callbacks, so no hook wiring is needed. Only the
  * global-styles domain (`color`/`font`/`button` keys) restores today; the
- * block, page, and navigation domains land with their abilities.
+ * block, page, and navigation domains land with their abilities. Until then,
+ * checkpoints for those domains live in Big Sky's store and restore through
+ * the `provider-checkpoints` bridge.
  *
  * Big Sky additionally re-applies the checkpoint's variation titles after the
  * snapshot restore to sync its variation-selection store. AM has no such
