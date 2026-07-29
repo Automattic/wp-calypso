@@ -1,7 +1,7 @@
 import { Step } from '@automattic/onboarding';
 import { createInterpolateElement } from '@wordpress/element';
 import { sprintf } from '@wordpress/i18n';
-import { external } from '@wordpress/icons';
+import { chevronLeft, external } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
 import { useCallback, useEffect, useMemo, useRef, type ReactNode } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
@@ -22,12 +22,15 @@ interface Props {
 	// Partner/Woo branding logo from the account step, so the gate keeps the same top
 	// bar the signup screen had instead of switching to an unbranded one.
 	logo?: ReactNode;
-	// Called once the user confirms or skips. The account step decides when to render
-	// this gate and what to do next, so eligibility isn't re-checked here.
+	// Called once the user confirms. The account step decides when to render this gate and
+	// what to do next, so eligibility isn't re-checked here.
 	onDone: () => void;
+	// Called when the user wants to fix a mistyped address; the account step takes them
+	// back to its "Create your account" form.
+	onUpdateEmail: () => void;
 }
 
-const EmailVerificationGate = ( { flow, scope, logo, onDone }: Props ) => {
+const EmailVerificationGate = ( { flow, scope, logo, onDone, onUpdateEmail }: Props ) => {
 	const { __ } = useI18n();
 	const user = useSelector( getCurrentUser );
 	const { isVerified, isSending, hasSendError, secondsUntilResend, checkStatus, checkNow, resend } =
@@ -44,6 +47,11 @@ const EmailVerificationGate = ( { flow, scope, logo, onDone }: Props ) => {
 			flow,
 			provider: inboxLink?.providerName,
 		} );
+
+	const updateEmail = () => {
+		recordTracksEvent( 'calypso_signup_email_verification_update_email', { flow } );
+		onUpdateEmail();
+	};
 
 	// Stamp the shown-at time now the gate is actually on screen (see storage.ts).
 	useEffect( () => {
@@ -173,6 +181,10 @@ const EmailVerificationGate = ( { flow, scope, logo, onDone }: Props ) => {
 						{ __( 'We couldn’t send the email. Please try again in a moment.' ) }
 					</p>
 				) }
+
+				<Step.LinkButton onClick={ updateEmail } icon={ chevronLeft } iconPosition="left">
+					{ __( 'Update email' ) }
+				</Step.LinkButton>
 			</Step.CenteredColumnLayout>
 		</>
 	);

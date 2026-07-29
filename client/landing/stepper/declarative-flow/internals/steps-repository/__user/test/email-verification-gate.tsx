@@ -188,6 +188,18 @@ describe( 'account step email verification gate', () => {
 		expect( screen.queryByRole( 'heading', { name: GATE_HEADING } ) ).not.toBeInTheDocument();
 	} );
 
+	it( 'goes back to the account form when the user updates their email', async () => {
+		const { submit } = renderUser( makeStore( false ) );
+		await screen.findByRole( 'heading', { name: GATE_HEADING } );
+
+		await userEvent.click( screen.getByRole( 'button', { name: 'Update email' } ) );
+
+		// The account form reappears in place of the gate, without advancing the flow.
+		expect( screen.getByRole( 'button', { name: 'create-email-account' } ) ).toBeVisible();
+		expect( screen.queryByRole( 'heading', { name: GATE_HEADING } ) ).not.toBeInTheDocument();
+		expect( submit ).not.toHaveBeenCalled();
+	} );
+
 	it( 're-shows the gate after a refresh while it is still pending', async () => {
 		const first = renderUser( makeStore( false ) );
 		await screen.findByRole( 'heading', { name: GATE_HEADING } );

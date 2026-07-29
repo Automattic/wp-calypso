@@ -65,7 +65,13 @@ const render = ( { onDone = jest.fn(), logo }: { onDone?: jest.Mock; logo?: Reac
 		beginGate( SCOPE );
 	}
 	const result = renderStep(
-		<EmailVerificationGate flow={ FLOW } scope={ SCOPE } logo={ logo } onDone={ onDone } />,
+		<EmailVerificationGate
+			flow={ FLOW }
+			scope={ SCOPE }
+			logo={ logo }
+			onDone={ onDone }
+			onUpdateEmail={ jest.fn() }
+		/>,
 		{
 			initialState: currentUserState( false ),
 		}
@@ -120,14 +126,22 @@ describe( 'EmailVerificationGate', () => {
 	} );
 
 	it( 'offers a sniper-link inbox button for a known email provider', async () => {
-		renderStep( <EmailVerificationGate flow={ FLOW } scope={ SCOPE } onDone={ jest.fn() } />, {
-			initialState: {
-				currentUser: {
-					id: USER_ID,
-					user: { ID: USER_ID, email: 'onboarder@gmail.com', email_verified: false },
+		renderStep(
+			<EmailVerificationGate
+				flow={ FLOW }
+				scope={ SCOPE }
+				onDone={ jest.fn() }
+				onUpdateEmail={ jest.fn() }
+			/>,
+			{
+				initialState: {
+					currentUser: {
+						id: USER_ID,
+						user: { ID: USER_ID, email: 'onboarder@gmail.com', email_verified: false },
+					},
 				},
-			},
-		} );
+			}
+		);
 
 		const openButton = await screen.findByRole( 'link', { name: 'Open email inbox' } );
 		expect( openButton.getAttribute( 'href' ) ).toContain( 'mail.google.com' );
@@ -149,6 +163,27 @@ describe( 'EmailVerificationGate', () => {
 		// `onboarder@example.com` has no known inbox link.
 		expect( screen.getByRole( 'button', { name: 'I’ve confirmed my email' } ) ).toBeVisible();
 		expect( screen.queryByRole( 'link', { name: /^Open / } ) ).not.toBeInTheDocument();
+	} );
+
+	it( 'asks the account step to go back when the user updates their email', async () => {
+		const onUpdateEmail = jest.fn();
+		renderStep(
+			<EmailVerificationGate
+				flow={ FLOW }
+				scope={ SCOPE }
+				onDone={ jest.fn() }
+				onUpdateEmail={ onUpdateEmail }
+			/>,
+			{ initialState: currentUserState( false ) }
+		);
+
+		await userEvent.click( screen.getByRole( 'button', { name: 'Update email' } ) );
+
+		expect( onUpdateEmail ).toHaveBeenCalled();
+		expect( recordTracksEvent ).toHaveBeenCalledWith(
+			'calypso_signup_email_verification_update_email',
+			expect.objectContaining( { flow: FLOW } )
+		);
 	} );
 
 	it( 'keeps resend available after refreshing once the cooldown has expired', async () => {
@@ -190,7 +225,12 @@ describe( 'EmailVerificationGate', () => {
 
 		renderWithProvider(
 			<MemoryRouter>
-				<EmailVerificationGate flow={ FLOW } scope={ SCOPE } onDone={ onDone } />
+				<EmailVerificationGate
+					flow={ FLOW }
+					scope={ SCOPE }
+					onDone={ onDone }
+					onUpdateEmail={ jest.fn() }
+				/>
 			</MemoryRouter>,
 			{ store }
 		);
@@ -224,9 +264,17 @@ describe( 'EmailVerificationGate', () => {
 
 		const onDone = jest.fn();
 		// Already verified, so the gate confirms immediately on mount.
-		renderStep( <EmailVerificationGate flow={ FLOW } scope={ SCOPE } onDone={ onDone } />, {
-			initialState: currentUserState( true ),
-		} );
+		renderStep(
+			<EmailVerificationGate
+				flow={ FLOW }
+				scope={ SCOPE }
+				onDone={ onDone }
+				onUpdateEmail={ jest.fn() }
+			/>,
+			{
+				initialState: currentUserState( true ),
+			}
+		);
 
 		await waitFor( () => expect( onDone ).toHaveBeenCalled() );
 		expect( recordTracksEvent ).toHaveBeenCalledWith(
