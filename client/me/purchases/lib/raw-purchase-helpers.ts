@@ -38,6 +38,7 @@ import {
 	isA4AHoldingSitePurchase,
 	isAgencyPartnerType,
 	isMarketplaceHoldingSitePurchase,
+	isPartnerPurchase,
 } from 'calypso/dashboard/utils/purchase';
 import { addPaymentMethod, changePaymentMethod } from '../paths';
 import type { Purchase } from '@automattic/api-core';
@@ -142,10 +143,6 @@ export function isPaidWithCreditCard( purchase: Purchase ): boolean {
 
 export function isPaidWithPayPalDirect( purchase: Purchase ): boolean {
 	return purchase.payment_type === 'paypal_direct' && Boolean( purchase.payment_expiry );
-}
-
-export function isPartnerPurchase( purchase: Purchase ): boolean {
-	return !! purchase.partner_name;
 }
 
 export function getChangePaymentMethodPath( siteSlug: string, purchase: Purchase ): string {

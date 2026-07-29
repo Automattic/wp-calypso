@@ -695,8 +695,8 @@ export function needsToRenewSoon( purchase: Purchase ): boolean {
 
 export function isPartnerPurchase(
 	purchase: Purchase
-): purchase is Purchase & { partnerType: string } {
-	return !! purchase?.partner_name;
+): purchase is Purchase & { partner_name: string } {
+	return !! purchase.partner_name;
 }
 
 export function isAgencyPartnerType( partnerType: string ) {
