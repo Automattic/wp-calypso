@@ -36,6 +36,21 @@ export const transferInProgress = [
 	transferStates.PROVISIONED,
 ] as const;
 
+/**
+ * States a transfer does not move on from. Anything else — including phases not listed in
+ * `transferInProgress`, such as uploading, backfilling and the switcheroo — means one is running.
+ */
+export const transferEndStates = [
+	transferStates.NONE,
+	transferStates.COMPLETE,
+	transferStates.COMPLETED,
+	transferStates.FAILURE,
+	transferStates.ERROR,
+	transferStates.REVERTED,
+	transferStates.REQUEST_FAILURE,
+	transferStates.NULL,
+] as const;
+
 export const transferRevertingInProgress = [ transferStates.RELOCATING_REVERT ] as const;
 
 export type TransferStates = ( typeof transferStates )[ keyof typeof transferStates ];

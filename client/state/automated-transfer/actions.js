@@ -2,6 +2,7 @@ import {
 	AUTOMATED_TRANSFER_ELIGIBILITY_REQUEST,
 	AUTOMATED_TRANSFER_ELIGIBILITY_UPDATE,
 	AUTOMATED_TRANSFER_INITIATE_WITH_PLUGIN_ZIP,
+	AUTOMATED_TRANSFER_INITIATE_WITH_PLUGIN_ZIP_FAILURE,
 	AUTOMATED_TRANSFER_STATUS_REQUEST,
 	AUTOMATED_TRANSFER_STATUS_SET,
 	AUTOMATED_TRANSFER_STATUS_REQUEST_FAILURE,
@@ -26,6 +27,20 @@ export const initiateAutomatedTransferWithPluginZip = ( siteId, pluginZip ) => (
 	type: AUTOMATED_TRANSFER_INITIATE_WITH_PLUGIN_ZIP,
 	siteId,
 	pluginZip,
+} );
+
+/**
+ * Report that a transfer initiated with a plugin zip never started.
+ *
+ * The initiation is optimistic — the status reads as started the moment the upload begins — so a
+ * rejected archive or a failed request has to take that back, or the site stays recorded as
+ * transferring for every screen that reads the status.
+ * @param {number} siteId The id of the site whose transfer failed to start
+ * @returns {Object} An action object
+ */
+export const initiateAutomatedTransferWithPluginZipFailure = ( siteId ) => ( {
+	type: AUTOMATED_TRANSFER_INITIATE_WITH_PLUGIN_ZIP_FAILURE,
+	siteId,
 } );
 
 /**

@@ -1,6 +1,7 @@
 import {
 	AUTOMATED_TRANSFER_ELIGIBILITY_UPDATE as ELIGIBILITY_UPDATE,
 	AUTOMATED_TRANSFER_INITIATE_WITH_PLUGIN_ZIP as INITIATE_WITH_PLUGIN_ZIP,
+	AUTOMATED_TRANSFER_INITIATE_WITH_PLUGIN_ZIP_FAILURE as INITIATE_WITH_PLUGIN_ZIP_FAILURE,
 	AUTOMATED_TRANSFER_STATUS_REQUEST as REQUEST_STATUS,
 	AUTOMATED_TRANSFER_STATUS_REQUEST_FAILURE as REQUEST_STATUS_FAILURE,
 } from 'calypso/state/action-types';
@@ -28,6 +29,12 @@ describe( 'state', () => {
 					const initiate = { type: INITIATE_WITH_PLUGIN_ZIP };
 
 					expect( status( transferStates.COMPLETE, initiate ) ).toEqual( transferStates.START );
+				} );
+
+				test( 'should take the started status back when initiation fails', () => {
+					const failure = { type: INITIATE_WITH_PLUGIN_ZIP_FAILURE };
+
+					expect( status( transferStates.START, failure ) ).toEqual( transferStates.FAILURE );
 				} );
 			} );
 

@@ -5,21 +5,28 @@ import { useEffect, useRef } from 'react';
 import { isAtomicTransferredSite } from 'calypso/dashboard/utils/site-atomic-transfers';
 import { useInterval } from 'calypso/lib/interval';
 import { useSelector, useDispatch } from 'calypso/state';
-import { transferInProgress, transferStates } from 'calypso/state/automated-transfer/constants';
+import { transferEndStates, transferStates } from 'calypso/state/automated-transfer/constants';
 import { getSiteAdminUrl } from 'calypso/state/sites/selectors';
 import { requestActiveTheme } from 'calypso/state/themes/actions';
 import { useDelayedCondition } from './use-delayed-condition';
-import { usePostTransferPluginRecovery } from './use-post-transfer-plugin-recovery';
+import {
+	PLUGIN_POLL_INTERVAL_MS,
+	usePostTransferPluginRecovery,
+} from './use-post-transfer-plugin-recovery';
 
-// The plugin list is polled once an upload's transfer lands, so give the uploaded plugin a few
-// rounds to appear before treating the install as unconfirmed.
-const INSTALL_CONFIRMATION_GRACE_PERIOD_MS = 10000;
+// How long the plugin list gets to turn up the uploaded plugin. Long enough that a poll started
+// just inside the window, and any activation its result triggers, still lands in time.
+const INSTALL_CONFIRMATION_GRACE_PERIOD_MS = PLUGIN_POLL_INTERVAL_MS * 5;
 
 const pluginsAdminUrl = ( adminUrl: string | null | undefined, query = '' ) =>
 	adminUrl ? `${ adminUrl }plugins.php${ query }` : null;
 
+// Every phase that isn't an end state means a transfer is under way — including uploading and the
+// switcheroo, which this page can well be mounted during.
 const isTransferRunning = ( status: string | null ) =>
-	( transferInProgress as readonly ( string | null )[] ).includes( status );
+	!! status &&
+	status !== transferStates.INQUIRING &&
+	! ( transferEndStates as readonly ( string | null )[] ).includes( status );
 
 // The redirect machinery: once a flow completes it fetches the freshest site data, resolves the
 // destination URL, keeps polling where a flow finishes in the background, and navigates. Plugin and

@@ -3,7 +3,7 @@ import { useInterval } from 'calypso/lib/interval';
 import { useDispatch } from 'calypso/state';
 import { activatePlugin, fetchSitePlugins } from 'calypso/state/plugins/installed/actions';
 
-const POLL_INTERVAL_MS = 3000;
+export const PLUGIN_POLL_INTERVAL_MS = 3000;
 const MAX_ACTIVATION_ATTEMPTS = 3;
 
 // The Atomic transfer can report complete before the checkout-installed plugin is activated, leaving it
@@ -54,6 +54,6 @@ export function usePostTransferPluginRecovery( {
 				dispatch( fetchSitePlugins( siteId ) );
 			} );
 		},
-		enabled ? POLL_INTERVAL_MS : null
+		enabled ? PLUGIN_POLL_INTERVAL_MS : null
 	);
 }

@@ -4,6 +4,7 @@
 import { act, waitFor } from '@testing-library/react';
 import { transferStates } from 'calypso/state/automated-transfer/constants';
 import { renderHookWithProvider } from 'calypso/test-helpers/testing-library';
+import { PLUGIN_POLL_INTERVAL_MS } from '../use-post-transfer-plugin-recovery';
 import { useThankYouRedirect } from '../use-thank-you-redirect';
 
 // Capture what the recovery hook is wired with.
@@ -11,6 +12,7 @@ let mockRecoveryProps:
 	| { enabled: boolean; canActivate: boolean; ownsActivation: boolean }
 	| undefined;
 jest.mock( '../use-post-transfer-plugin-recovery', () => ( {
+	...jest.requireActual( '../use-post-transfer-plugin-recovery' ),
 	usePostTransferPluginRecovery: ( props: typeof mockRecoveryProps ) => {
 		mockRecoveryProps = props;
 	},
@@ -30,7 +32,7 @@ const PLUGINS_URL =
 	'https://example.wpcomstaging.com/wp-admin/plugins.php?activate=true&plugin_status=active';
 // Where an install that could not be confirmed lands: the list itself, claiming nothing.
 const PLUGINS_LIST_URL = 'https://example.wpcomstaging.com/wp-admin/plugins.php';
-const CONFIRMATION_GRACE_MS = 10000;
+const CONFIRMATION_GRACE_MS = PLUGIN_POLL_INTERVAL_MS * 5;
 
 const ATOMIC_READY = {
 	ID: 1,
@@ -186,6 +188,22 @@ describe( 'useThankYouRedirect', () => {
 		rerender( { automatedTransferStatus: transferStates.COMPLETE } );
 		act( () => jest.advanceTimersByTime( CONFIRMATION_GRACE_MS ) );
 		expect( window.location.href ).toBe( '' );
+	} );
+
+	it( 'recognises a transfer it first sees mid-upload, past the early phases', async () => {
+		// Loading this section can outlast the first status polls, so the flow can arrive at any live
+		// phase — `uploading` is what the initiate response itself reports.
+		jest.useFakeTimers();
+		mockFreshSite = ATOMIC_READY;
+		const { rerender } = render( {
+			...UPLOAD_PROPS,
+			automatedTransferStatus: transferStates.UPLOADING,
+		} );
+		await waitFor( () => expect( mockRecoveryProps?.canActivate ).toBe( true ) );
+
+		rerender( { automatedTransferStatus: transferStates.COMPLETE } );
+		act( () => jest.advanceTimersByTime( CONFIRMATION_GRACE_MS ) );
+		expect( window.location.href ).toBe( PLUGINS_LIST_URL );
 	} );
 
 	it( 'does not redirect an upload that never transferred', async () => {

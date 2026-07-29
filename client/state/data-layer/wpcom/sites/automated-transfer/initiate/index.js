@@ -1,7 +1,10 @@
 import { translate } from 'i18n-calypso';
 import { AUTOMATED_TRANSFER_INITIATE_WITH_PLUGIN_ZIP } from 'calypso/state/action-types';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import { fetchAutomatedTransferStatus } from 'calypso/state/automated-transfer/actions';
+import {
+	fetchAutomatedTransferStatus,
+	initiateAutomatedTransferWithPluginZipFailure,
+} from 'calypso/state/automated-transfer/actions';
 import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
 import { http } from 'calypso/state/data-layer/wpcom-http/actions';
 import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
@@ -66,6 +69,7 @@ export const receiveError = ( { siteId }, error ) => {
 		} ),
 		showErrorNotice( error ),
 		pluginUploadError( siteId, error ),
+		initiateAutomatedTransferWithPluginZipFailure( siteId ),
 	];
 };
 
