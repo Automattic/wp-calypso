@@ -5,7 +5,7 @@ import { useTranslate } from 'i18n-calypso';
 import { A4A_REPORTS_LINK } from 'calypso/a8c-for-agencies/sections/reports/constants';
 import Sidebar from '../sidebar';
 import useReportsMenuItems from './hooks/use-reports-menu-items';
-import { A4A_SITES_LINK } from './lib/constants';
+import { A4A_OVERVIEW_LINK } from './lib/constants';
 
 type Props = {
 	path: string;
@@ -25,10 +25,10 @@ export default function ReportsSidebar( { path }: Props ) {
 				</div>
 			}
 			backButtonProps={ {
-				label: translate( 'Back to Sites' ),
+				label: translate( 'Back to overview' ),
 				icon: chevronLeft,
 				onClick: () => {
-					page( A4A_SITES_LINK );
+					page( A4A_OVERVIEW_LINK );
 				},
 			} }
 			menuItems={ menuItems }
