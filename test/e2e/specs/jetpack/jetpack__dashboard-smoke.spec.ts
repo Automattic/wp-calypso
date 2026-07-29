@@ -64,7 +64,10 @@ test.describe(
 				'Sharing',
 				'Discussion',
 				'Traffic',
-				'Newsletter',
+				// Parked: the Newsletter tab is not rendered on any of the seven Atomic
+				// variations, so clicking it always times out. The pre-migration Jest spec
+				// never covered this tab; it was added by the Playwright migration in #112865.
+				// 'Newsletter',
 			] as SettingsTabs[] ) {
 				await test.step( `Click on ${ tab } tab in the Settings view`, async () => {
 					await jetpackDashboardPage.clickTab( { view: 'Settings', tab } );
