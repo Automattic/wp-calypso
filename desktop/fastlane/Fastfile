@@ -74,8 +74,11 @@ platform :mac do
   # Developer ID and carry a notarization ticket.
   #
   lane :verify_code_signing do
+    app_paths = Dir[ File.join( PROJECT_ROOT_FOLDER, 'release', 'mac*', '*.app' ) ]
+    UI.user_error!( 'No .app artifacts found to verify code signing.' ) if app_paths.empty?
+
     macos_verify_code_signing(
-      artifact_path: Dir[File.join(PROJECT_ROOT_FOLDER, 'release', 'mac*', '*.app')],
+      artifact_path: app_paths,
       expected_authority: "Developer ID Application: Automattic, Inc. (#{TEAM_ID})"
     )
   end
