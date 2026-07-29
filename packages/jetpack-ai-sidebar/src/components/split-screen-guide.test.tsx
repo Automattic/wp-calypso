@@ -49,7 +49,7 @@ describe( 'SplitScreenGuide', () => {
 
 		expect(
 			screen.getByText(
-				'Before continuing, I recommend reviewing this feedback in split screen for a better experience. You can switch through the dropdown menu at the top of this chat, or clicking this button:'
+				'For a better read of this feedback, switch to split screen. Use the menu at the top of this chat, or this button:'
 			)
 		).toBeVisible();
 		expect( screen.getByRole( 'button', { name: 'Switch to split screen mode' } ) ).toBeVisible();

@@ -46,7 +46,7 @@ export default function SplitScreenGuide( { isStale = false }: SplitScreenGuideP
 		<div className="jetpack-ai-split-screen-guide">
 			<p className="jetpack-ai-split-screen-guide__message">
 				{ __(
-					'Before continuing, I recommend reviewing this feedback in split screen for a better experience. You can switch through the dropdown menu at the top of this chat, or clicking this button:',
+					'For a better read of this feedback, switch to split screen. Use the menu at the top of this chat, or this button:',
 					__i18n_text_domain__
 				) }
 			</p>
