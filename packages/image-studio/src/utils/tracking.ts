@@ -163,8 +163,11 @@ function recordFeatureClipEvent(
 	properties: Record< string, string | number | boolean > = {}
 ): void {
 	recordImageStudioEvent( eventName, {
-		placement: ImageStudioEntryPoint.PostEditorFeatureClip,
 		...properties,
+		// Last, so the placement is guaranteed rather than merely defaulted. An
+		// event that needs a different one doesn't belong in this family and
+		// should call recordImageStudioEvent directly.
+		placement: ImageStudioEntryPoint.PostEditorFeatureClip,
 	} );
 }
 

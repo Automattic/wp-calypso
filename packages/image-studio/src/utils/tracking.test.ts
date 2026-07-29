@@ -496,6 +496,26 @@ describe( 'feature clip tracking helpers', () => {
 		} );
 	} );
 
+	it( 'pins the Feature Clip placement even against a caller-supplied one', () => {
+		// The wrapper's guarantee is that these events are always attributable to
+		// the Feature Clip flow, so a placement passed by a call site must not be
+		// able to weaken it.
+		selectMock.mockReturnValue( {
+			getEntryPoint: jest.fn( () => null ),
+		} );
+
+		trackImageStudioGenericShareClicked( {
+			surface: 'sidebar',
+			method: 'web-share',
+			placement: ImageStudioEntryPoint.MediaLibrary,
+		} as Parameters< typeof trackImageStudioGenericShareClicked >[ 0 ] );
+
+		expect( recordTracksEventMock ).toHaveBeenCalledWith(
+			'jetpack_big_sky_image_studio_feature_clip_generic_share_clicked',
+			expect.objectContaining( { placement: 'post_editor_feature_clip' } )
+		);
+	} );
+
 	it( 'keeps surface distinct from placement on Feature Clip events', () => {
 		// `surface` says where inside the feature ('sidebar' / 'modal'); `placement`
 		// says which entry point the flow came from. They are different properties
