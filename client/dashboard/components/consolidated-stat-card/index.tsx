@@ -56,10 +56,10 @@ export default function ConsolidatedStatCard( {
 										popoverTitle
 											? sprintf(
 													/* translators: %s is the name of the stat, e.g. "Total payouts" */
-													__( 'Click to learn more about %s' ),
+													__( 'Learn more about %s' ),
 													popoverTitle
 											  )
-											: __( 'Click to learn more' )
+											: __( 'Learn more' )
 									}
 									onClick={ () => setShowPopover( ( visible ) => ! visible ) }
 								/>

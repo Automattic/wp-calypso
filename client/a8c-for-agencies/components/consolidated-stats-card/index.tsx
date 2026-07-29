@@ -39,10 +39,10 @@ const CardInfo = ( { children, wrapperRef, footerText, title, footerAction }: Ca
 							title={ translate( 'Click to learn more' ) }
 							aria-label={
 								title
-									? ( translate( 'Click to learn more about %(statName)s', {
+									? ( translate( 'Learn more about %(statName)s', {
 											args: { statName: title },
 									  } ) as string )
-									: translate( 'Click to learn more' )
+									: translate( 'Learn more' )
 							}
 							onActivate={ () => setShowPopover( true ) }
 						>
