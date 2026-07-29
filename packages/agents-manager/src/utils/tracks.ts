@@ -9,6 +9,7 @@
  */
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { select } from '@wordpress/data';
+import { DOLLY_AGENT_ID } from '../constants';
 import { getSessionId } from './agent-session';
 import { isReaderChatAgent, isReaderChatHost } from './is-reader-chat-agent';
 import { getResolvedAgentId } from './resolved-agent-id';
@@ -115,7 +116,7 @@ export function recordBigSkyTracksEvent( eventName: string, props: TracksProps =
 export function recordAgentsManagerTracksEvent( eventName: string, props: TracksProps = {} ): void {
 	const baseProps: TracksProps = {
 		ai_session_id: getSessionId(),
-		agent_name: 'dolly',
+		agent_name: DOLLY_AGENT_ID,
 		surface: isReaderChatHost() ? 'reader-chat' : 'editor',
 		path: typeof window !== 'undefined' ? window.location.pathname : '',
 		is_test: getIsTest(),

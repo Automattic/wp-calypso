@@ -11,6 +11,7 @@ jest.mock( '../use-unified-ai-chat', () => ( {
 	useUnifiedAiChat: jest.fn(),
 } ) );
 
+import { DOLLY_AGENT_ID } from '../../constants';
 import { renderHook } from '@testing-library/react';
 import { useUnifiedAiChat } from '../use-unified-ai-chat';
 import { ORCHESTRATOR_AGENT_ID, UNIFIED_CHAT_AGENT_ID } from '../../constants';
@@ -99,7 +100,7 @@ describe( 'useAgentConfig', () => {
 
 	it( 'uses a Dolly host override from `agentsManagerData.agentId`', () => {
 		( globalThis as Record< string, unknown > ).agentsManagerData = {
-			agentId: 'dolly',
+			agentId: DOLLY_AGENT_ID,
 		};
 		const { result } = renderHook( () => useAgentConfig() );
 		expect( result.current.agentId ).toBe( 'dolly' );

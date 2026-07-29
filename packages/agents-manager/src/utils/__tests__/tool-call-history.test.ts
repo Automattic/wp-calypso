@@ -1,4 +1,5 @@
 import { getAgentManager } from '@automattic/agenttic-client';
+import { DOLLY_AGENT_ID } from '../../constants';
 import { getToolCallIdFromConversationHistory } from '../tool-call-history';
 
 jest.mock( '@automattic/agenttic-client', () => ( { getAgentManager: jest.fn() } ), {
@@ -39,7 +40,7 @@ describe( 'getToolCallIdFromConversationHistory', () => {
 	} );
 
 	it( 'checks the dolly agent too', () => {
-		setHistory( [ toolCallMessage( 'big_sky__show_component', 'toolu_1' ) ], 'dolly' );
+		setHistory( [ toolCallMessage( 'big_sky__show_component', 'toolu_1' ) ], DOLLY_AGENT_ID );
 
 		expect( getToolCallIdFromConversationHistory( 'big_sky__show_component' ) ).toBe( 'toolu_1' );
 	} );

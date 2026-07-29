@@ -10,6 +10,7 @@ jest.mock( '../can-connect-to-zendesk', () => ( {
 	canConnectToZendesk: jest.fn( () => Promise.resolve( false ) ),
 } ) );
 
+import { DOLLY_AGENT_ID } from '../../constants';
 import { createAgentConfig } from '../create-agent-config';
 import { canConnectToZendesk } from '../can-connect-to-zendesk';
 import { clearSiteEditorActions, setSiteEditorAction } from '../site-editor-context';
@@ -103,7 +104,7 @@ describe( 'createAgentConfig', () => {
 	it( 'adds site editor constructor arguments from the host environment', async () => {
 		const config = await createAgentConfig( {
 			sessionId: 'session-1',
-			agentId: 'dolly',
+			agentId: DOLLY_AGENT_ID,
 			environment: 'site-editor',
 			version: '1.2.3',
 		} );
@@ -122,7 +123,7 @@ describe( 'createAgentConfig', () => {
 	it( 'adds site editor constructor arguments when the route is site-editor.php', async () => {
 		const config = await createAgentConfig( {
 			sessionId: 'session-1',
-			agentId: 'dolly',
+			agentId: DOLLY_AGENT_ID,
 			currentRoute: '/wp-admin/site-editor.php',
 		} );
 		const context = config.contextProvider?.getClientContext();
@@ -139,7 +140,7 @@ describe( 'createAgentConfig', () => {
 	it( 'adds loaded provider IDs to default client context', async () => {
 		const config = await createAgentConfig( {
 			sessionId: 'session-1',
-			agentId: 'dolly',
+			agentId: DOLLY_AGENT_ID,
 			providerIds: [ 'jetpack-ai-sidebar', 'woocommerce-ai' ],
 		} );
 		const context = config.contextProvider?.getClientContext();
@@ -156,7 +157,7 @@ describe( 'createAgentConfig', () => {
 
 		const config = await createAgentConfig( {
 			sessionId: 'session-1',
-			agentId: 'dolly',
+			agentId: DOLLY_AGENT_ID,
 		} );
 		const context = config.contextProvider?.getClientContext();
 
@@ -175,7 +176,7 @@ describe( 'createAgentConfig', () => {
 		const config = await createAgentConfig( {
 			sessionId: 'session-1',
 			siteId: 987,
-			agentId: 'dolly',
+			agentId: DOLLY_AGENT_ID,
 			environment: 'site-editor',
 			providerIds: [ 'jetpack-ai-sidebar', 'woocommerce-ai' ],
 			contextProvider: {
