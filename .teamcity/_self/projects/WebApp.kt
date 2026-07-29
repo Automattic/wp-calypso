@@ -40,58 +40,97 @@ object BuildDockerImage : BuildType({
 
     data class EnvConfig(
         val label: String,
+        val baseUrl: String = "https://calypso.live",
         val envQuery: String, // e.g. "" or "&env=jetpack"
         val qrEnv: String,    // e.g. "flags=oauth" or "env=jetpack&flags=oauth"
     )
 
-    val imageBase = "registry.a8c.com/calypso/app"
-	val commitImageExistsParam = "dockerImage.commitImageExists"
-	val baseUrl = "https://calypso.live"
-
-    val environments = listOf(
-        EnvConfig(
-            label = "Calypso Live",
-            envQuery = "",
-            qrEnv = "flags=oauth",
-        ),
-        EnvConfig(
-            label = "Jetpack Cloud Live",
-            envQuery = "&env=jetpack",
-            qrEnv = "env=jetpack&flags=oauth",
-        ),
-        EnvConfig(
-            label = "Automattic for Agencies Live",
-            envQuery = "&env=a8c-for-agencies",
-            qrEnv = "env=a8c-for-agencies&flags=oauth",
-        ),
-		EnvConfig(
-			label = "Dashboard Live (dotcom)",
-			envQuery = "&env=dashboard",
-			qrEnv = "env=dashboard&flags=oauth",
-		),
-		EnvConfig(
-			label = "Dashboard Live (A4A)",
-			envQuery = "&env=dashboard-a4a",
-			qrEnv = "env=dashboard-a4a&flags=oauth",
-		)
+    data class EnvGroup(
+        val label: String,
+        val environments: List<EnvConfig>,
     )
 
+    val imageBase = "registry.a8c.com/calypso/app"
+	val commitImageExistsParam = "dockerImage.commitImageExists"
+
+    val environmentGroups = listOf(
+        EnvGroup(
+            label = "WordPress.com",
+            environments = listOf(
+                EnvConfig(
+                    label = "Dashboard Live",
+                    envQuery = "&env=dashboard",
+                    qrEnv = "env=dashboard&flags=oauth",
+                ),
+                EnvConfig(
+                    label = "Calypso Live (/home)",
+                    baseUrl = "https://calypso.live/home",
+                    envQuery = "",
+                    qrEnv = "flags=oauth",
+                ),
+            ),
+        ),
+        EnvGroup(
+            label = "Automattic for Agencies",
+            environments = listOf(
+                EnvConfig(
+                    label = "Dashboard Live",
+                    envQuery = "&env=dashboard-a4a",
+                    qrEnv = "env=dashboard-a4a&flags=oauth",
+                ),
+                EnvConfig(
+                    label = "Automattic for Agencies Live",
+                    envQuery = "&env=a8c-for-agencies",
+                    qrEnv = "env=a8c-for-agencies&flags=oauth",
+                ),
+            ),
+        ),
+        EnvGroup(
+            label = "Jetpack Cloud",
+            environments = listOf(
+                EnvConfig(
+                    label = "Jetpack Cloud Live",
+                    envQuery = "&env=jetpack",
+                    qrEnv = "env=jetpack&flags=oauth",
+                ),
+            ),
+        )
+    )
+
+    fun renderEnv(env: EnvConfig): String {
+        val url = "${env.baseUrl}?image=$imageBase:build-%build.number%${env.envQuery}"
+        return """
+            <details>
+              <summary>${env.label} <a href="$url">(direct link)</a></summary>
+              <table>
+                <tr>
+                  <td>
+                    <a href="$url">$url</a>
+                  </td>
+                </tr>
+              </table>
+            </details>
+            """.trimIndent()
+    }
+
     val htmlBlock = buildString {
-        environments.forEach { env ->
-            appendLine(
-                """
-                <details>
-                  <summary>${env.label} <a href="${baseUrl}?image=$imageBase:build-%build.number%${env.envQuery}">(direct link)</a></summary>
-                  <table>
-                    <tr>
-                      <td>
-                        <a href="${baseUrl}?image=$imageBase:build-%build.number%${env.envQuery}">${baseUrl}?image=$imageBase:build-%build.number%${env.envQuery}</a>
-                      </td>
-                    </tr>
-                  </table>
-                </details>
-                """.trimIndent()
-            )
+        environmentGroups.forEachIndexed { index, group ->
+            if (index > 0) {
+                appendLine("<hr>")
+            }
+            // A group holding a single environment renders as a bare item, without a heading.
+            if (group.environments.size == 1) {
+                appendLine(renderEnv(group.environments.single()))
+            } else {
+                appendLine("<p>${group.label}</p>")
+                appendLine("<ul>")
+                group.environments.forEach { env ->
+                    appendLine("<li>")
+                    appendLine(renderEnv(env))
+                    appendLine("</li>")
+                }
+                appendLine("</ul>")
+            }
             appendLine()
         }
     }
@@ -245,6 +284,7 @@ object BuildDockerImage : BuildType({
 			--build-arg base_image=%base_image%
 			--build-arg cache_seed_image=%cache_seed_image%
 			--build-arg commit_sha=${Settings.WpCalypso.paramRefs.buildVcsNumber}
+			--build-arg calypso_live_image=$imageBase:build-%build.number%
 			--build-arg profile=%PROFILE%
 			--build-arg manual_sentry_release=%MANUAL_SENTRY_RELEASE%
 			--build-arg is_default_branch=%teamcity.build.branch.is_default%

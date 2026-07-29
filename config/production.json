@@ -138,6 +138,7 @@
 		"purchases/new-payment-methods": true,
 		"purchases/split-cancel-remove": false,
 		"push-notifications": true,
+		"resurrected-users/90-day-eligibility": true,
 		"reader/social": true,
 		"reader/spaces": false,
 		"reader/full-errors": false,

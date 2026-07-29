@@ -21,15 +21,12 @@ $border-radius: 5px; // stylelint-disable-line scales/radii
 	font-family: $font-sf-pro-text;
 	font-size: $font-body-small;
 	grid-template-columns: minmax(10px, 1.5fr) minmax(0, auto);
-	// 26px is the height of the heading, the remaining should be auto.
-	grid-template-rows: 26px auto auto;
 	grid-template-areas:
 		"heading thumbnail"
 		"post thumbnail"
 		"counts thumbnail";
 	margin-bottom: 0;
 	max-width: 100%;
-	max-height: 255px;
 	padding: $card-padding;
 	gap: $card-padding;
 
@@ -67,6 +64,9 @@ $border-radius: 5px; // stylelint-disable-line scales/radii
 	font-weight: 500;
 	grid-area: heading;
 	line-height: 1.3;
+	// In Odyssey the wp-admin host styles bare `h4` with `margin: 1.33em 0`;
+	// the fixed 26px grid row used to absorb it, but an auto row grows with it.
+	margin: 0;
 }
 
 .post-stats-card__post-info {
@@ -170,7 +170,6 @@ $border-radius: 5px; // stylelint-disable-line scales/radii
 			"heading heading"
 			"post thumbnail"
 			"counts counts";
-		max-height: initial;
 		padding: $card-padding 0;
 	}
 	.post-stats-card__thumbnail {

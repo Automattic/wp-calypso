@@ -1644,7 +1644,7 @@ describe( 'utils', () => {
 						data: { date: '7-10', p: '0' },
 						pages: [],
 					} )
-				).toEqual( { pages: [], data: [], post: null } );
+				).toEqual( { pages: [], data: [], post: null, metrics: null, rows: null, total: null } );
 			} );
 
 			test( 'should skip non-tuple entries in the data array', () => {
@@ -1657,6 +1657,9 @@ describe( 'utils', () => {
 					pages: [],
 					data: [ { period: '2016-11-12', value: 1 } ],
 					post: null,
+					metrics: null,
+					rows: null,
+					total: null,
 				} );
 			} );
 
@@ -1700,6 +1703,9 @@ describe( 'utils', () => {
 						},
 					],
 					post: null,
+					metrics: null,
+					rows: null,
+					total: null,
 				} );
 			} );
 
@@ -1713,6 +1719,59 @@ describe( 'utils', () => {
 					pages: [],
 					data: [],
 					post,
+					metrics: null,
+					rows: null,
+					total: null,
+				} );
+			} );
+
+			test( 'should key range-mode rows by the metric names in fields', () => {
+				expect(
+					normalizers.statsVideo( {
+						fields: [ 'period', 'plays', 'impressions', 'watch_time', 'retention_rate' ],
+						data: [
+							[ '2026-07-01', 3, 10, 0.5, 25.5 ],
+							[ '2026-07-02', '0', 4, 0, 0 ],
+						],
+						pages: [],
+						total: { plays: 3, impressions: 14, watch_time: 0.5, retention_rate: 25.5 },
+					} )
+				).toEqual( {
+					pages: [],
+					data: [
+						{ period: '2026-07-01', value: 3 },
+						{ period: '2026-07-02', value: '0' },
+					],
+					post: null,
+					metrics: [ 'plays', 'impressions', 'watch_time', 'retention_rate' ],
+					rows: [
+						{
+							period: '2026-07-01',
+							plays: 3,
+							impressions: 10,
+							watch_time: 0.5,
+							retention_rate: 25.5,
+						},
+						{ period: '2026-07-02', plays: 0, impressions: 4, watch_time: 0, retention_rate: 0 },
+					],
+					total: { plays: 3, impressions: 14, watch_time: 0.5, retention_rate: 25.5 },
+				} );
+			} );
+
+			test( 'should build single-metric rows from a two-column fields list', () => {
+				expect(
+					normalizers.statsVideo( {
+						fields: [ 'period', 'impressions' ],
+						data: [ [ '2026-07-01', 7 ] ],
+						pages: [],
+					} )
+				).toEqual( {
+					pages: [],
+					data: [ { period: '2026-07-01', value: 7 } ],
+					post: null,
+					metrics: [ 'impressions' ],
+					rows: [ { period: '2026-07-01', impressions: 7 } ],
+					total: null,
 				} );
 			} );
 		} );

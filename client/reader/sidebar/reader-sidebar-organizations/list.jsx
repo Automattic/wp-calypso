@@ -4,6 +4,7 @@ import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import ExpandableSidebarMenu from 'calypso/layout/sidebar/expandable';
+import ReaderUnreadCount from 'calypso/layout/sidebar/reader-unread-count';
 import {
 	useOrganizationFeedsInfo,
 	useOrganizationSiteSubscriptions,
@@ -72,7 +73,7 @@ export class ReaderSidebarOrganizationsList extends Component {
 			<ExpandableSidebarMenu
 				expanded={ this.props.isOrganizationOpen }
 				title={ organization.title }
-				count={ feedsInfo.unseenCount }
+				customCount={ <ReaderUnreadCount count={ feedsInfo.unseenCount } /> }
 				onClick={ this.selectMenu }
 				expandableIconClick={ this.toggleMenu }
 				disableFlyout

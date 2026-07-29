@@ -57,7 +57,11 @@ export function getMutationFlowType( intent: CancelIntent | null, purchase: Purc
 		return getPurchaseCancellationFlowType( purchase );
 	}
 
-	if ( purchase?.isAutoRenewEnabled && hasAmountAvailableToRefund( purchase ) ) {
+	// intent === 'remove': refundability alone decides the endpoint. A purchase
+	// still inside its refund window goes through cancel-and-refund rather than
+	// the bare DELETE — auto-renew is typically already off by the time Remove is
+	// offered (the user cancelled first), so it must not gate the refund.
+	if ( purchase && hasAmountAvailableToRefund( purchase ) ) {
 		return CANCEL_FLOW_TYPE.CANCEL_WITH_REFUND;
 	}
 	return CANCEL_FLOW_TYPE.REMOVE;

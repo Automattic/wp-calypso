@@ -1,10 +1,10 @@
-import { Count } from '@automattic/components';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import { SiteIcon } from 'calypso/blocks/site-icon';
 import AutoDirection from 'calypso/components/auto-direction';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
+import ReaderUnreadCount from 'calypso/layout/sidebar/reader-unread-count';
 import { MoreMenuActions } from 'calypso/reader/sidebar/more-menu-actions';
 import { recordAction, recordGaEvent } from 'calypso/reader/stats';
 import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
@@ -61,7 +61,7 @@ export class ReaderSidebarOrganizationsListItem extends Component {
 								unseenCount={ site.unseen_count }
 							/>
 						) }
-						{ site.unseen_count > 0 && <Count count={ site.unseen_count } compact /> }
+						<ReaderUnreadCount count={ site.unseen_count } />
 					</span>
 				</MenuItemLink>
 			</MenuItem>

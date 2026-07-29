@@ -231,6 +231,25 @@ body.is-mobile-app-view {
 		gap: 6px;
 	}
 
+	&.masterbar__item-my-site.has-site-icon {
+		gap: 6px;
+
+		.masterbar__item-site-icon {
+			width: 20px;
+			height: 20px;
+			border-radius: 2px;
+			background: #f0f0f1;
+		}
+
+		@media only screen and (max-width: 781px) {
+			.masterbar__item-site-icon {
+				width: 28px;
+				height: 28px;
+				border-radius: 4px;
+			}
+		}
+	}
+
 	@media only screen and (max-width: 781px) {
 		&.masterbar__item-my-site {
 			padding-left: inherit;

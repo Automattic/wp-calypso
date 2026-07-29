@@ -4,7 +4,7 @@ import { formatCurrency } from '@automattic/number-formatters';
 import { useTranslate, TranslateResult } from 'i18n-calypso';
 import { FunctionComponent, Fragment, useState, useEffect, useCallback, useMemo } from 'react';
 import FormInputCheckbox from 'calypso/components/forms/form-checkbox';
-import { useLocalizedMoment } from 'calypso/components/localized-moment';
+import { getRelativeDayString } from 'calypso/dashboard/utils/datetime';
 import {
 	getName,
 	getRenewalPrice,
@@ -35,28 +35,27 @@ interface Props {
 
 function getExpiresText(
 	translate: ReturnType< typeof useTranslate >,
-	moment: ReturnType< typeof useLocalizedMoment >,
 	purchase: Purchase
 ): TranslateResult {
 	if ( isRenewingBeforeExpiration( purchase ) ) {
 		return translate( 'renews %(renewDate)s', {
 			comment:
-				'"renewDate" is relative to the present time and it is already localized, eg. "in a year", "in a month"',
-			args: { renewDate: moment( purchase.renewDate ).fromNow() },
+				'"renewDate" is relative to the present time and it is already localized, eg. "in a year", "in a month", "today"',
+			args: { renewDate: getRelativeDayString( new Date( purchase.renewDate ), 'upcoming' ) },
 		} );
 	}
 	if ( isExpiredOrRemoved( purchase ) ) {
 		return translate( 'expired %(expiry)s', {
 			comment:
-				'"expiry" is relative to the present time and it is already localized, eg. "in a year", "in a month", "a week ago"',
-			args: { expiry: moment( purchase.expiryDate ).fromNow() },
+				'"expiry" is relative to the present time and it is already localized, eg. "a week ago", "today"',
+			args: { expiry: getRelativeDayString( new Date( purchase.expiryDate ), 'past' ) },
 		} );
 	}
 	return translate( 'expires %(expiry)s', {
 		comment:
-			'"expiry" is relative to the present time and it is already localized, eg. "in a year", "in a month", "a week ago"',
+			'"expiry" is relative to the present time and it is already localized, eg. "in a year", "in a month", "today"',
 		args: {
-			expiry: moment( purchase.expiryDate ).fromNow(),
+			expiry: getRelativeDayString( new Date( purchase.expiryDate ), 'upcoming' ),
 		},
 	} );
 }
@@ -72,7 +71,6 @@ const UpcomingRenewalsDialog: FunctionComponent< Props > = ( {
 	getManagePurchaseUrlFor = managePurchase,
 } ) => {
 	const translate = useTranslate();
-	const moment = useLocalizedMoment();
 	const [ selectedPurchases, setSelectedPurchases ] = useState< number[] >( [] );
 
 	const purchasesSortByRecentExpiryDate = useMemo(
@@ -109,7 +107,7 @@ const UpcomingRenewalsDialog: FunctionComponent< Props > = ( {
 			</h3>
 			<hr />
 			{ purchasesSortByRecentExpiryDate.map( ( purchase ) => {
-				const expiresText = getExpiresText( translate, moment, purchase ) as string;
+				const expiresText = getExpiresText( translate, purchase ) as string;
 				const purchaseTypeText = purchaseType( purchase );
 				const onChange = () => {
 					if ( selectedPurchases.includes( purchase.id ) ) {

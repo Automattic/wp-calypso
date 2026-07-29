@@ -1,5 +1,9 @@
-import { registerTwoStepAuthSecurityKeyMutation } from '@automattic/api-queries';
-import { useMutation } from '@tanstack/react-query';
+import {
+	registerTwoStepAuthSecurityKeyMutation,
+	userPreferenceMutation,
+	userPreferenceQuery,
+} from '@automattic/api-queries';
+import { useMutation, useQuery } from '@tanstack/react-query';
 import {
 	Modal,
 	Button,
@@ -34,6 +38,13 @@ export default function RegisterKey( { onClose }: { onClose: () => void } ) {
 		registerTwoStepAuthSecurityKeyMutation( getSecurityKeyHostname() )
 	);
 
+	const { data: isReregisterRequired } = useQuery(
+		userPreferenceQuery( 'two_step_security_key_reregister_required' )
+	);
+	const { mutate: setReregisterRequired } = useMutation(
+		userPreferenceMutation( 'two_step_security_key_reregister_required' )
+	);
+
 	const handleSubmit = async ( e: React.FormEvent< HTMLFormElement > ) => {
 		e.preventDefault();
 		recordTracksEvent(
@@ -41,6 +52,9 @@ export default function RegisterKey( { onClose }: { onClose: () => void } ) {
 		);
 		registerSecurityKey( formData.keyName.trim(), {
 			onSuccess: () => {
+				if ( isReregisterRequired ) {
+					setReregisterRequired( false );
+				}
 				createSuccessNotice(
 					/* translators: %s is the security key name */
 					sprintf( __( 'Security key "%s" added.' ), formData.keyName ),

@@ -2010,6 +2010,8 @@ __metadata:
     html-webpack-plugin: "npm:^5.6.3"
     jest: "npm:^29.7.0"
     moment: "npm:^2.30.1"
+    moment-timezone: "npm:^0.5.48"
+    moment-timezone-data-webpack-plugin: "npm:^1.5.1"
     path-browserify: "npm:^1.0.1"
     postcss: "npm:^8.5.15"
     postcss-prefix-selector: "npm:^1.16.1"
@@ -18802,9 +18804,9 @@ __metadata:
   linkType: hard
 
 "fast-uri@npm:^3.0.1":
-  version: 3.1.2
-  resolution: "fast-uri@npm:3.1.2"
-  checksum: 5b35641895959f3f7ab7a7b1b5542bded159346f25ec9f256817b206d50b64eda5828e90d605a2e2fc645c90519a7259c2bab2c942ee728c88b88e5be21b090d
+  version: 3.1.4
+  resolution: "fast-uri@npm:3.1.4"
+  checksum: f90948821ceb49980f64f89b8216ba498f5957f26035be813526a55b6145d26cbd63ef5618d5205a3292b31edc9c08589749350cd72bd86c7095eb434dceb757
   languageName: node
   linkType: hard
 
@@ -24983,12 +24985,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"nanoid@npm:^3.3.12":
-  version: 3.3.12
-  resolution: "nanoid@npm:3.3.12"
+"nanoid@npm:^3.3.16":
+  version: 3.3.16
+  resolution: "nanoid@npm:3.3.16"
   bin:
     nanoid: bin/nanoid.cjs
-  checksum: ba142b7b39e11e80c16dd74b0365d407880c87c1cf7e1480956981ae940ee36060fa5b6f092cd1e315184dd19244c657bd017d03327bd3c62247d691c5e8edfb
+  checksum: bbf2dcffe22d2b62d16de2711752070b539c0f644c7916f823ad6521986b2078cbe524f2d6240f58c46e9141ea0c7b87a029e100c0f7f175228cacaf30e41bba
   languageName: node
   linkType: hard
 
@@ -26933,13 +26935,13 @@ __metadata:
   linkType: hard
 
 "postcss@npm:^8.2.4, postcss@npm:^8.3.11, postcss@npm:^8.3.5, postcss@npm:^8.4.21, postcss@npm:^8.4.33, postcss@npm:^8.5.15, postcss@npm:^8.5.3":
-  version: 8.5.16
-  resolution: "postcss@npm:8.5.16"
+  version: 8.5.24
+  resolution: "postcss@npm:8.5.24"
   dependencies:
-    nanoid: "npm:^3.3.12"
+    nanoid: "npm:^3.3.16"
     picocolors: "npm:^1.1.1"
     source-map-js: "npm:^1.2.1"
-  checksum: 625de7a02f662f3a340964d14b487bd5097adf16f5f171e257d19005ba37aea8768ee446557500e88e91ca46b4d14d6cb4a0bf033c6ec0c8c0b660d85719f1ef
+  checksum: b3854840ffee4604249a1bad97291105a974009d63b068b716dbee1d2e034bb965353a9fb4d6e957ede475b2acf4167cd4b1d41074f8dd3ce2fe488b60c8ce44
   languageName: node
   linkType: hard
 

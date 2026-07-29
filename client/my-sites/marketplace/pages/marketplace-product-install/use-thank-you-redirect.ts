@@ -5,14 +5,12 @@ import { useQuery } from '@tanstack/react-query';
 import { useEffect } from 'react';
 import { isAtomicTransferredSite } from 'calypso/dashboard/utils/site-atomic-transfers';
 import { useInterval } from 'calypso/lib/interval';
-import { waitFor } from 'calypso/my-sites/marketplace/util';
 import { useSelector, useDispatch } from 'calypso/state';
 import { transferStates } from 'calypso/state/automated-transfer/constants';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { getSiteAdminUrl } from 'calypso/state/sites/selectors';
 import { requestActiveTheme } from 'calypso/state/themes/actions';
-import { isMarketplacePluginActivationFlow } from './marketplace-plugin-flow';
-import { useMarketplacePluginPolling } from './use-marketplace-plugin-polling';
+import { usePostTransferPluginRecovery } from './use-post-transfer-plugin-recovery';
 
 // The redirect machinery: once a flow completes it fetches the freshest site data, resolves the
 // destination URL, keeps polling where a flow finishes in the background, and navigates. Plugin and
@@ -25,7 +23,6 @@ export function useThankYouRedirect( {
 	isPluginUploadFlow,
 	pluginSlug,
 	themeSlug,
-	wporgPlugin,
 	wpOrgTheme,
 	isThemeActive,
 	installedPlugin,
@@ -42,7 +39,6 @@ export function useThankYouRedirect( {
 	isPluginUploadFlow: boolean;
 	pluginSlug: string;
 	themeSlug: string;
-	wporgPlugin: { wporg?: boolean } | null | undefined;
 	wpOrgTheme: { id?: string } | null | undefined;
 	isThemeActive: boolean;
 	installedPlugin: { slug?: string; id?: string } | null | undefined;
@@ -77,18 +73,29 @@ export function useThankYouRedirect( {
 	// Prefer fresh URL when available; if in atomic flow, wait for fresh URL
 	const pluginsUrlFinal = atomicFlow ? pluginsUrlFresh : pluginsUrlFresh || pluginsUrlSelector;
 
-	const isMarketplacePluginFlow = isMarketplacePluginActivationFlow( {
-		atomicFlow,
-		isPluginUploadFlow,
-		pluginSlug,
-		freshSite,
-		wporgPlugin,
-	} );
+	const canManagePlugins = useSelector( ( state ) =>
+		siteHasFeature( state, selectedSite?.ID, WPCOM_FEATURES_MANAGE_PLUGINS )
+	);
 
-	useMarketplacePluginPolling( { siteId, enabled: isMarketplacePluginFlow && ! pluginActive } );
+	// A plugin install that has landed on an Atomic site with the plugin possibly still inactive.
+	// Covers both the checkout-initiated flow (atomicFlow never set) and the flow where this component
+	// drives the transfer (atomicFlow set) — in both, the transfer can complete before the plugin is
+	// activated. It does NOT gate on wporgPlugin.wporg: wordpress.org answers 200 with an empty body
+	// for a marketplace-only slug, which the store normalizes to wporg: true, so that never holds.
+	const isRecoveryFlow = ! isPluginUploadFlow && !! pluginSlug && !! freshSite?.is_wpcom_atomic;
 
-	const canManagePlugins = useSelector( ( state ) => {
-		return siteHasFeature( state, selectedSite?.ID, WPCOM_FEATURES_MANAGE_PLUGINS );
+	usePostTransferPluginRecovery( {
+		siteId,
+		enabled: isRecoveryFlow && ! pluginActive,
+		// isAtomicTransferReady already requires manage_options, which the transfer propagates after
+		// is_wpcom_atomic flips; activating during that gap would fail and burn the retry budget.
+		canActivate: !! isAtomicTransferReady,
+		// Two recovery windows: the checkout-initiated flow, which sits at step 0 while it observes a
+		// background transfer, and the component-driven transfer, whose plugin lands at step 2 after the
+		// step-driven effect's activation window (step 1). Leaving ordinary in-place installs to that
+		// effect avoids a redundant activation racing it at step 2.
+		ownsActivation: ( ! atomicFlow && currentStep === 0 ) || ( atomicFlow && currentStep === 2 ),
+		installedPlugin,
 	} );
 	// Check completition of all flows and redirect to thank you page
 	useEffect( () => {
@@ -97,12 +104,10 @@ export function useThankYouRedirect( {
 			// - Click on "Install and activate" button for any plugin on /plugins/<site_name>
 			// - Install with the help of uploading archive of a plugins
 			// - If it's simple site which doesn't support plugins, then installing and activation happens at the same time with upgrading to Business plan
+			// This also covers the atomic-transfer flows (checkout-initiated and component-driven): the
+			// plugin only reads active once the transfer is far enough along, and for an atomicFlow the
+			// redirect URL below resolves only after the transfer completes, so no separate arm is needed.
 			( installedPlugin && pluginActive ) ||
-			// Transfer to atomic using a marketplace plugin
-			( atomicFlow &&
-				transferStates.COMPLETE === automatedTransferStatus &&
-				canManagePlugins &&
-				isAtomicTransferReady ) ||
 			// Transfer to atomic uploading a zip plugin
 			( uploadedPluginSlug &&
 				isPluginUploadFlow &&
@@ -115,14 +120,11 @@ export function useThankYouRedirect( {
 			if ( ! pluginsUrlFinal ) {
 				return;
 			}
-			waitFor( 1 ).then( () => {
-				window.location.href = pluginsUrlFinal as string;
-			} );
+			window.location.href = pluginsUrlFinal as string;
 		}
 	}, [
 		pluginActive,
 		automatedTransferStatus,
-		atomicFlow,
 		isPluginUploadFlow,
 		isAtomic,
 		canManagePlugins,
@@ -135,10 +137,8 @@ export function useThankYouRedirect( {
 	// Validate theme is already active
 	useEffect( () => {
 		if ( themeSlug && wpOrgTheme && isThemeActive ) {
-			waitFor( 1 ).then( () =>
-				page.redirect(
-					`/marketplace/thank-you/${ selectedSiteSlug }?themes=${ themeSlug }&hide-progress-bar`
-				)
+			page.redirect(
+				`/marketplace/thank-you/${ selectedSiteSlug }?themes=${ themeSlug }&hide-progress-bar`
 			);
 		}
 	}, [ themeSlug, wpOrgTheme, isThemeActive, selectedSiteSlug ] );

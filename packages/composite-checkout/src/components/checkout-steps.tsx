@@ -66,6 +66,7 @@ const CheckoutStepGroupContext = createContext< CheckoutStepGroupStore >( {
 		stepIdMap: {},
 		stepCompleteCallbackMap: {},
 		stepSkipValidationOnSubmitMap: {},
+		suppressNextForwardScroll: false,
 	},
 	actions: {
 		makeStepActive: noop,
@@ -77,6 +78,7 @@ const CheckoutStepGroupContext = createContext< CheckoutStepGroupStore >( {
 		getStepCompleteCallback: noopPromise,
 		getStepNumberFromId: noop,
 		setTotalSteps: noop,
+		setSuppressNextForwardScroll: noop,
 	},
 	subscription: new SubscriptionManager(),
 } );
@@ -100,6 +102,7 @@ function createCheckoutStepGroupState(): CheckoutStepGroupState {
 		stepIdMap: {},
 		stepCompleteCallbackMap: {},
 		stepSkipValidationOnSubmitMap: {},
+		suppressNextForwardScroll: false,
 	};
 }
 
@@ -254,6 +257,14 @@ function createCheckoutStepGroupActions(
 		return true;
 	};
 
+	// Allows a consumer to opt the next forward step change out of the
+	// scroll-into-view behavior below (e.g. a step auto-completing on load
+	// rather than the shopper pressing "Continue"). Consumed once by the
+	// scroll effect the next time it runs.
+	const setSuppressNextForwardScroll = ( value: boolean ) => {
+		state.suppressNextForwardScroll = value;
+	};
+
 	return {
 		setActiveStepNumber,
 		setStepCompleteStatus,
@@ -264,6 +275,7 @@ function createCheckoutStepGroupActions(
 		setStepComplete,
 		completeAllSteps,
 		makeStepActive,
+		setSuppressNextForwardScroll,
 	};
 }
 
@@ -451,11 +463,15 @@ function CheckoutStepGroupWrapper( {
 			// view. This corrects the viewport position on mobile after the previous
 			// step's content collapses and causes the layout to shift.
 			if ( scrollToStepOnForwardNavigation && newStep > prevStep ) {
-				const newStepId = Object.entries( store.state.stepIdMap ).find(
-					( [ , num ] ) => num === newStep
-				)?.[ 0 ];
-				if ( newStepId ) {
-					document.getElementById( newStepId )?.scrollIntoView?.( { block: 'start' } );
+				if ( store.state.suppressNextForwardScroll ) {
+					store.state.suppressNextForwardScroll = false;
+				} else {
+					const newStepId = Object.entries( store.state.stepIdMap ).find(
+						( [ , num ] ) => num === newStep
+					)?.[ 0 ];
+					if ( newStepId ) {
+						document.getElementById( newStepId )?.scrollIntoView?.( { block: 'start' } );
+					}
 				}
 			}
 		}
@@ -717,6 +733,20 @@ export function CheckoutFormSubmit( {
 		customPropertyForSubmitButtonHeight
 	);
 
+	// If validation fails below, the active step may be scrolled out of view
+	// (e.g. behind a sticky submit button), which would otherwise make the
+	// button look like it did nothing when it in fact surfaced errors.
+	const scrollActiveStepIntoView = useCallback( () => {
+		const activeStepId = Object.entries( stepIdMap ).find(
+			( [ , num ] ) => num === activeStepNumber
+		)?.[ 0 ];
+		if ( activeStepId ) {
+			document
+				.getElementById( activeStepId )
+				?.scrollIntoView?.( { behavior: 'smooth', block: 'start' } );
+		}
+	}, [ activeStepNumber, stepIdMap ] );
+
 	// Wrap validateForm to first validate any active step before submission
 	const wrappedValidateForm = useCallback( async () => {
 		// Only validate if there's an actual active step (within the range of registered steps)
@@ -735,6 +765,7 @@ export function CheckoutFormSubmit( {
 
 				if ( ! isStepComplete ) {
 					// Step validation failed, don't proceed with submission
+					scrollActiveStepIntoView();
 					return false;
 				}
 
@@ -745,7 +776,11 @@ export function CheckoutFormSubmit( {
 
 		// Now run the payment method validation if provided
 		if ( validateForm ) {
-			return await validateForm();
+			const isFormValid = await validateForm();
+			if ( ! isFormValid ) {
+				scrollActiveStepIntoView();
+			}
+			return isFormValid;
 		}
 
 		return true;
@@ -757,6 +792,7 @@ export function CheckoutFormSubmit( {
 		getStepCompleteCallback,
 		setStepCompleteStatus,
 		validateForm,
+		scrollActiveStepIntoView,
 	] );
 
 	const isDisabled = ( () => {
@@ -1079,6 +1115,17 @@ export function useSetStepComplete(): SetStepComplete {
 export function useCompleteAllSteps(): CompleteAllSteps {
 	const store = useContext( CheckoutStepGroupContext );
 	return store.actions.completeAllSteps;
+}
+
+/**
+ * Opts the next forward step change out of the scroll-into-view behavior
+ * (see `scrollToStepOnForwardNavigation`). Intended for step changes caused
+ * by something other than the shopper pressing "Continue" (e.g. a step
+ * auto-completing on load), where jumping the viewport would be surprising.
+ */
+export function useSuppressNextForwardScroll(): ( value: boolean ) => void {
+	const store = useContext( CheckoutStepGroupContext );
+	return store.actions.setSuppressNextForwardScroll;
 }
 
 export function useMakeStepActive(): MakeStepActive {

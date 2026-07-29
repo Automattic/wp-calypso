@@ -50,6 +50,7 @@ export function useSurvicate() {
 				}
 
 				const cleanupTraits = setSurvicateVisitorTraits( {
+					user_id: String( user.ID ),
 					email: user.email,
 					account_age_in_days: getAccountAgeInDays( user.date ),
 				} );

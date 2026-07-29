@@ -52,6 +52,7 @@
 		"plans/upgradeable-storage": true,
 		"posthog-tracking": true,
 		"purchases/split-cancel-remove": false,
+		"resurrected-users/90-day-eligibility": true,
 		"rum-tracking/logstash": true,
 		"site-spec": true,
 		"two-factor/enhanced-security": true,

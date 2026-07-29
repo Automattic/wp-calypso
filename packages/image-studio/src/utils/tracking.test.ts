@@ -6,7 +6,9 @@
 import { recordTracksEvent as recordTracksEventBase } from '@automattic/calypso-analytics';
 import { select } from '@wordpress/data';
 import { ImageStudioEntryPoint } from '../store';
+import { ImageStudioMode } from '../types';
 import {
+	getImageStudioRequestErrorType,
 	trackImageStudioClosed,
 	trackImageStudioOpened,
 	trackImageStudioReelShareClicked,
@@ -31,6 +33,27 @@ jest.mock( '../utils/session', () => ( {
 
 const recordTracksEventMock = recordTracksEventBase as jest.Mock;
 const selectMock = select as jest.Mock;
+
+describe( 'getImageStudioRequestErrorType', () => {
+	it( 'identifies the streamed free-credit exhaustion error as quota exceeded', () => {
+		const error = new Error(
+			'Streaming error: Congratulations on exploring Image Studio and reaching the free requests limit! Upgrade now to keep using it. https://jetpack.com/redirect/?source=jetpack-ai-yearly-tier-upgrade-nudge'
+		);
+
+		expect( getImageStudioRequestErrorType( error, ImageStudioMode.Generate ) ).toBe(
+			'quota_exceeded'
+		);
+	} );
+
+	it.each( [
+		[ ImageStudioMode.Generate, 'generation_failed' ],
+		[ ImageStudioMode.Edit, 'edit_failed' ],
+	] as const )( 'preserves the generic %s failure type for other errors', ( mode, errorType ) => {
+		expect( getImageStudioRequestErrorType( new Error( 'Provider failed' ), mode ) ).toBe(
+			errorType
+		);
+	} );
+} );
 
 describe( 'trackImageStudioOpened', () => {
 	beforeEach( () => {
@@ -439,6 +462,99 @@ describe( 'feature clip tracking helpers', () => {
 		expect( recordTracksEventMock ).toHaveBeenCalledWith(
 			'jetpack_big_sky_image_studio_feature_clip_panel_viewed',
 			expect.objectContaining( { sessionid: 'test-session-id' } )
+		);
+	} );
+
+	it( 'sends placement on feature_clip_panel_viewed when the store has no entry point', () => {
+		// The panel mounts with the editor sidebar, before anything has opened
+		// Image Studio, so the store cannot supply the placement here.
+		selectMock.mockReturnValue( {
+			getEntryPoint: jest.fn( () => null ),
+		} );
+
+		trackImageStudioFeatureClipPanelViewed();
+
+		expect( recordTracksEventMock ).toHaveBeenCalledWith(
+			'jetpack_big_sky_image_studio_feature_clip_panel_viewed',
+			expect.objectContaining( { placement: 'post_editor_feature_clip' } )
+		);
+	} );
+
+	it( 'keeps its own placement on feature_clip_panel_viewed when the store holds another entry point', () => {
+		// Opening Image Studio elsewhere in the page load leaves that entry point
+		// in the store. The panel event still came from the panel, so its own
+		// placement has to win over the fallback.
+		selectMock.mockReturnValue( {
+			getEntryPoint: jest.fn( () => ImageStudioEntryPoint.EditorBlock ),
+		} );
+
+		trackImageStudioFeatureClipPanelViewed();
+
+		expect( recordTracksEventMock ).toHaveBeenCalledWith(
+			'jetpack_big_sky_image_studio_feature_clip_panel_viewed',
+			expect.objectContaining( { placement: 'post_editor_feature_clip' } )
+		);
+	} );
+
+	it( 'sends the Feature Clip placement on sidebar share events, where the store is empty', () => {
+		// Sharing straight from the panel never opens Image Studio, so the store
+		// has no entry point — the case that left these events unfilterable.
+		selectMock.mockReturnValue( {
+			getEntryPoint: jest.fn( () => null ),
+		} );
+
+		trackImageStudioGenericShareClicked( { surface: 'sidebar', method: 'web-share' } );
+		trackImageStudioReelShareCancelled( { surface: 'sidebar' } );
+		trackImageStudioFeatureClipAddedToPost( { attachmentId: 12 } );
+
+		[
+			'jetpack_big_sky_image_studio_feature_clip_generic_share_clicked',
+			'jetpack_big_sky_image_studio_feature_clip_share_cancelled',
+			'jetpack_big_sky_image_studio_feature_clip_added_to_post',
+		].forEach( ( eventName ) => {
+			expect( recordTracksEventMock ).toHaveBeenCalledWith(
+				eventName,
+				expect.objectContaining( { placement: 'post_editor_feature_clip' } )
+			);
+		} );
+	} );
+
+	it( 'pins the Feature Clip placement even against a caller-supplied one', () => {
+		// The wrapper's guarantee is that these events are always attributable to
+		// the Feature Clip flow, so a placement passed by a call site must not be
+		// able to weaken it.
+		selectMock.mockReturnValue( {
+			getEntryPoint: jest.fn( () => null ),
+		} );
+
+		trackImageStudioGenericShareClicked( {
+			surface: 'sidebar',
+			method: 'web-share',
+			placement: ImageStudioEntryPoint.MediaLibrary,
+		} as Parameters< typeof trackImageStudioGenericShareClicked >[ 0 ] );
+
+		expect( recordTracksEventMock ).toHaveBeenCalledWith(
+			'jetpack_big_sky_image_studio_feature_clip_generic_share_clicked',
+			expect.objectContaining( { placement: 'post_editor_feature_clip' } )
+		);
+	} );
+
+	it( 'keeps surface distinct from placement on Feature Clip events', () => {
+		// `surface` says where inside the feature ('sidebar' / 'modal'); `placement`
+		// says which entry point the flow came from. They are different properties
+		// and both have to survive.
+		selectMock.mockReturnValue( {
+			getEntryPoint: jest.fn( () => null ),
+		} );
+
+		trackImageStudioGenericShareClicked( { surface: 'modal', method: 'web-share' } );
+
+		expect( recordTracksEventMock ).toHaveBeenCalledWith(
+			'jetpack_big_sky_image_studio_feature_clip_generic_share_clicked',
+			expect.objectContaining( {
+				surface: 'modal',
+				placement: 'post_editor_feature_clip',
+			} )
 		);
 	} );
 } );

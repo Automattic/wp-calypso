@@ -40,12 +40,28 @@ import './style.scss';
 // flag enabled, but the local-dev one does).
 const MOBILE_SOCIAL_SERVICES: SignupAllowedService[] = [ 'google', 'apple', 'github' ];
 
-const UserStepComponent: StepType = function UserStep( {
+export type UserStepAccepts = {
+	headerText?: string;
+	subHeaderText?: string;
+	/**
+	 * Hides the top-level "Log in" link (V2 top bar / V1 footer). The email-first
+	 * account-step variant keeps its own in-form "Have an account? Log in" link.
+	 * Existing users can still sign in via the social / email buttons either way.
+	 */
+	hideLoginLink?: boolean;
+	allowedSocialServices?: SignupAllowedService[];
+};
+
+const UserStepComponent: StepType< { accepts: UserStepAccepts } > = function UserStep( {
 	flow,
 	stepName,
 	navigation,
 	redirectTo = window.location.href,
 	signupUrl = window.location.href,
+	headerText,
+	subHeaderText,
+	hideLoginLink,
+	allowedSocialServices: allowedSocialServicesProp,
 } ) {
 	const translate = useTranslate();
 	const isLoggedIn = useSelector( isUserLoggedIn );
@@ -126,7 +142,10 @@ const UserStepComponent: StepType = function UserStep( {
 	// — it keeps the "partners never get the compact SSO set" invariant local to
 	// this line and safe if the eligibility above is ever refactored.
 	const allowedSocialServices =
-		isMobileCompactLayout && ! partnerConfig ? MOBILE_SOCIAL_SERVICES : partnerConfig?.ssoProviders;
+		allowedSocialServicesProp ??
+		( isMobileCompactLayout && ! partnerConfig
+			? MOBILE_SOCIAL_SERVICES
+			: partnerConfig?.ssoProviders );
 	// customTosElement is reserved for partner branding (legal); the form's
 	// mobile-compact branch renders MobileCompactTosNotice as its own fallback
 	// when no customTosElement is provided. Routing the notice through
@@ -167,8 +186,8 @@ const UserStepComponent: StepType = function UserStep( {
 	);
 
 	if ( isStepContainerV2 ) {
-		let headingText = translate( 'Create your account' );
-		let headingSubText;
+		let headingText = headerText ?? translate( 'Create your account' );
+		let headingSubText = subHeaderText;
 		if ( partnerConfig ) {
 			headingText = translate( 'Create an account for %(partner)s', {
 				args: { partner: partnerConfig.displayName },
@@ -197,7 +216,7 @@ const UserStepComponent: StepType = function UserStep( {
 					navigation.goBack ? <Step.BackButton onClick={ navigation.goBack } /> : undefined
 				}
 				rightElement={
-					isEmailFirstVariant ? null : (
+					hideLoginLink || isEmailFirstVariant ? null : (
 						<Step.LinkButton href={ loginLink }>{ translate( 'Log in' ) }</Step.LinkButton>
 					)
 				}
@@ -259,7 +278,8 @@ const UserStepComponent: StepType = function UserStep( {
 					<>
 						<FormattedHeader
 							align="center"
-							headerText={ translate( 'Create your account' ) }
+							headerText={ headerText ?? translate( 'Create your account' ) }
+							subHeaderText={ subHeaderText }
 							brandFont
 						/>
 						{ stepContent }
@@ -267,13 +287,15 @@ const UserStepComponent: StepType = function UserStep( {
 				}
 				recordTracksEvent={ recordTracksEvent }
 				customizedActionButtons={
-					<Button
-						className="step-wrapper__navigation-link forward"
-						href={ loginLink }
-						variant="link"
-					>
-						<span>{ translate( 'Log in' ) }</span>
-					</Button>
+					hideLoginLink ? undefined : (
+						<Button
+							className="step-wrapper__navigation-link forward"
+							href={ loginLink }
+							variant="link"
+						>
+							<span>{ translate( 'Log in' ) }</span>
+						</Button>
+					)
 				}
 			/>
 		</>
