@@ -5,18 +5,18 @@ import { act, waitFor } from '@testing-library/react';
 import { transferStates } from 'calypso/state/automated-transfer/constants';
 import { renderHookWithProvider } from 'calypso/test-helpers/testing-library';
 import { useThankYouRedirect } from '../use-thank-you-redirect';
-import type { PluginRecoveryProgress } from '../use-post-transfer-plugin-recovery';
+import type { PluginRecoveryStatus } from '../use-post-transfer-plugin-recovery';
 
 // Capture what the recovery hook is wired with, and stand in for the progress it reports back.
 let mockRecoveryProps:
 	| { enabled: boolean; canActivate: boolean; ownsActivation: boolean }
 	| undefined;
-let mockRecoveryProgress: PluginRecoveryProgress;
+let mockRecoveryStatus: PluginRecoveryStatus;
 jest.mock( '../use-post-transfer-plugin-recovery', () => ( {
 	...jest.requireActual( '../use-post-transfer-plugin-recovery' ),
 	usePostTransferPluginRecovery: ( props: typeof mockRecoveryProps ) => {
 		mockRecoveryProps = props;
-		return mockRecoveryProgress;
+		return mockRecoveryStatus;
 	},
 } ) );
 
@@ -34,15 +34,6 @@ const PLUGINS_URL =
 	'https://example.wpcomstaging.com/wp-admin/plugins.php?activate=true&plugin_status=active';
 // Where an install that could not be confirmed lands: the list itself, claiming nothing.
 const PLUGINS_LIST_URL = 'https://example.wpcomstaging.com/wp-admin/plugins.php';
-// Rounds of polling before the flow stops expecting the plugin.
-const CONFIRMATION_POLLS = 5;
-// The poll has gone looking and found nothing, which is when the fallback becomes available.
-const SEARCHED_AND_EMPTY: PluginRecoveryProgress = {
-	completedPolls: CONFIRMATION_POLLS,
-	failedPolls: 0,
-	requestInFlight: false,
-	activationExhausted: false,
-};
 
 const ATOMIC_READY = {
 	ID: 1,
@@ -101,7 +92,8 @@ describe( 'useThankYouRedirect', () => {
 	beforeEach( () => {
 		jest.clearAllMocks();
 		mockRecoveryProps = undefined;
-		mockRecoveryProgress = SEARCHED_AND_EMPTY;
+		// Looked, found nothing: the state in which the fallback becomes available.
+		mockRecoveryStatus = 'exhausted';
 		mockFreshSite = null;
 		originalLocation = window.location;
 		Object.defineProperty( window, 'location', {
@@ -247,7 +239,7 @@ describe( 'useThankYouRedirect', () => {
 	it( 'keeps waiting while a plugin-list request is still out', async () => {
 		// The answer may be in that request; navigating would abandon it and whatever it triggers.
 		mockFreshSite = ATOMIC_READY;
-		mockRecoveryProgress = { ...SEARCHED_AND_EMPTY, requestInFlight: true };
+		mockRecoveryStatus = 'searching';
 		const { rerender } = render( UPLOAD_PROPS );
 		await waitFor( () => expect( mockRecoveryProps?.canActivate ).toBe( true ) );
 
@@ -258,7 +250,7 @@ describe( 'useThankYouRedirect', () => {
 
 	it( 'keeps waiting while the poll still has rounds to go', async () => {
 		mockFreshSite = ATOMIC_READY;
-		mockRecoveryProgress = { ...SEARCHED_AND_EMPTY, completedPolls: CONFIRMATION_POLLS - 1 };
+		mockRecoveryStatus = 'searching';
 		const { rerender } = render( UPLOAD_PROPS );
 		await waitFor( () => expect( mockRecoveryProps?.canActivate ).toBe( true ) );
 
@@ -270,6 +262,7 @@ describe( 'useThankYouRedirect', () => {
 	it( 'waits on a plugin that turned up inactive rather than giving up on it', async () => {
 		// Activation is still to come, and it is what turns this into the activated view.
 		mockFreshSite = ATOMIC_READY;
+		mockRecoveryStatus = 'searching';
 		const { rerender } = render( UPLOAD_PROPS );
 		await waitFor( () => expect( mockRecoveryProps?.canActivate ).toBe( true ) );
 
@@ -285,7 +278,7 @@ describe( 'useThankYouRedirect', () => {
 	it( 'gives up on a plugin that turned up but will not activate', async () => {
 		// Otherwise an install whose activation keeps failing has nothing to end the wait.
 		mockFreshSite = ATOMIC_READY;
-		mockRecoveryProgress = { ...SEARCHED_AND_EMPTY, activationExhausted: true };
+		mockRecoveryStatus = 'exhausted';
 		const { rerender } = render( UPLOAD_PROPS );
 		await waitFor( () => expect( mockRecoveryProps?.canActivate ).toBe( true ) );
 

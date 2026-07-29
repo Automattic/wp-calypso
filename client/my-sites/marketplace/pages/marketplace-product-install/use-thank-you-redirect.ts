@@ -10,11 +10,6 @@ import { getSiteAdminUrl } from 'calypso/state/sites/selectors';
 import { requestActiveTheme } from 'calypso/state/themes/actions';
 import { usePostTransferPluginRecovery } from './use-post-transfer-plugin-recovery';
 
-// Rounds of polling the uploaded plugin gets to turn up in before the flow stops expecting it.
-const CONFIRMATION_POLLS = 5;
-// Rounds whose request failed outright before the flow gives up on ever reading the list.
-const MAX_POLL_FAILURES = 5;
-
 const pluginsAdminUrl = ( adminUrl: string | null | undefined, query = '' ) =>
 	adminUrl ? `${ adminUrl }plugins.php${ query }` : null;
 
@@ -85,15 +80,13 @@ export function useThankYouRedirect( {
 	// for a marketplace-only slug, which the store normalizes to wporg: true, so that never holds.
 	const isRecoveryFlow = ! isPluginUploadFlow && !! pluginSlug && !! freshSite?.is_wpcom_atomic;
 
-	// A rejected archive leaves the error screen up while the transfer it optimistically started can
-	// still be running behind it — the endpoint creates the transfer before it validates the archive.
-	// Nothing about a failed attempt should navigate: the error is what the customer is there to read.
+	// A rejected archive can still be transferring behind its error screen, since the endpoint creates
+	// the transfer before validating the archive. Nothing about a failed attempt should navigate.
 	const uploadAttemptFailed = isPluginUploadFlow && uploadFailed;
 
 	const pluginConfirmedActive = !! ( installedPlugin && pluginActive ) && ! uploadAttemptFailed;
 
-	// The upload's transfer is over and the site is reachable. This is not evidence the archive
-	// installed: the transfer reports complete whether the install succeeded, failed, or was skipped.
+	// The upload's transfer is over and the site is reachable.
 	const uploadTransferSettled = !! (
 		isTransferredUpload &&
 		! uploadAttemptFailed &&
@@ -102,55 +95,37 @@ export function useThankYouRedirect( {
 		isAtomicTransferReady
 	);
 
-	const { completedPolls, failedPolls, requestInFlight, activationExhausted } =
-		usePostTransferPluginRecovery( {
-			siteId,
-			enabled: ( isRecoveryFlow || uploadTransferSettled ) && ! pluginActive,
-			runImmediately: uploadTransferSettled,
-			// isAtomicTransferReady already requires manage_options, which the transfer propagates after
-			// is_wpcom_atomic flips; activating during that gap would fail and burn the retry budget.
-			canActivate: !! isAtomicTransferReady,
-			// Two recovery windows: the checkout-initiated flow, which sits at step 0 while it observes a
-			// background transfer, and the component-driven transfer, whose plugin lands at step 2 after the
-			// step-driven effect's activation window (step 1). A transferred upload is this hook's outright:
-			// its plugin needs retrying, and the step-driven effect stands down for that flow. Leaving
-			// ordinary in-place installs to that effect avoids a redundant activation racing it at step 2.
-			ownsActivation:
-				uploadTransferSettled ||
-				( ! atomicFlow && currentStep === 0 ) ||
-				( atomicFlow && currentStep === 2 ),
-			installedPlugin,
-		} );
+	const recoveryStatus = usePostTransferPluginRecovery( {
+		siteId,
+		enabled: ( isRecoveryFlow || uploadTransferSettled ) && ! pluginActive,
+		runImmediately: uploadTransferSettled,
+		// isAtomicTransferReady already requires manage_options, which the transfer propagates after
+		// is_wpcom_atomic flips; activating during that gap would fail and burn the retry budget.
+		canActivate: !! isAtomicTransferReady,
+		// A transferred upload's plugin is this hook's; the other flows hand theirs over at the step
+		// shown, and activating outside those windows would race the owner that has it.
+		ownsActivation:
+			uploadTransferSettled ||
+			( ! atomicFlow && currentStep === 0 ) ||
+			( atomicFlow && currentStep === 2 ),
+		installedPlugin,
+	} );
 
-	// Stop expecting the uploaded plugin only after rounds of polling have gone looking and come back
-	// with nothing — a clock would run out mid-request, and navigating abandons whatever it was doing.
-	// A plugin that turned up but will not activate has also stopped being worth waiting for, and the
-	// plain list shows it either way.
-	// Either the site reported its plugins enough times without the uploaded one turning up, or the
-	// list could not be read at all — a wait for an answer that is not coming still has to end.
-	const searchConcluded = completedPolls >= CONFIRMATION_POLLS || failedPolls >= MAX_POLL_FAILURES;
-	const uploadInstallUnconfirmed =
-		uploadTransferSettled &&
-		! requestInFlight &&
-		searchConcluded &&
-		( ! installedPlugin || activationExhausted );
+	// The transfer being over says nothing about the archive: it reports complete whether the install
+	// worked, failed, or was skipped. Only the search for the plugin itself can settle that.
+	const uploadInstallUnconfirmed = uploadTransferSettled && recoveryStatus === 'exhausted';
 
 	// Check completition of all flows and redirect to thank you page
 	useEffect( () => {
-		// Happens in 3 cases:
-		// - Click on "Install and activate" button for any plugin on /plugins/<site_name>
-		// - Install with the help of uploading archive of a plugins
-		// - If it's simple site which doesn't support plugins, then installing and activation happens at the same time with upgrading to Business plan
-		// This also covers the atomic-transfer flows (checkout-initiated and component-driven): the
-		// plugin only reads active once the transfer is far enough along, and for an atomicFlow the
-		// redirect URL below resolves only after the transfer completes, so no separate arm is needed.
+		// Every flow lands here the same way: the plugin reads active. That covers an in-place install,
+		// an upload, and both atomic-transfer flows, whose plugin only reads active once the transfer is
+		// far enough along.
 		if ( pluginConfirmedActive && activatedPluginsUrl ) {
 			window.location.href = activatedPluginsUrl;
 			return;
 		}
 
-		// An upload that finished transferring without the plugin ever appearing: land on the list
-		// rather than the activated view, which would announce a plugin that may not be there.
+		// An upload with no plugin to show for it: the list claims nothing, the activated view would.
 		if ( uploadInstallUnconfirmed && pluginsUrl ) {
 			window.location.href = pluginsUrl;
 		}

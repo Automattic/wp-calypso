@@ -73,31 +73,25 @@ describe( 'usePostTransferPluginRecovery', () => {
 		mockListRead = true;
 	} );
 
-	it( 'does not count a request that failed as a round of looking', async () => {
-		// The previous list stays in place when a request fails, so counting it would let a run of
-		// failures pass for a site reporting no plugin at all.
-		mockListRead = false;
-		const { result } = render( { installedPlugin: null } );
-		await settle();
-		for ( let i = 0; i < 4; i++ ) {
-			await tick();
-		}
-
-		expect( result.current.completedPolls ).toBe( 0 );
-		expect( result.current.failedPolls ).toBe( 5 );
-	} );
-
-	it( 'counts the first list the site does report, after failures', async () => {
+	it( 'does not let failed requests stand in for looks at the site', async () => {
+		// A request that failed left the previous list in place. Were the two counted together, the
+		// rounds below would add up to a conclusion that the plugin is not there.
 		mockListRead = false;
 		const { result } = render( { installedPlugin: null } );
 		await settle();
 		await tick();
-		expect( result.current.completedPolls ).toBe( 0 );
+		await tick();
 
 		mockListRead = true;
 		await tick();
-		expect( result.current.completedPolls ).toBe( 1 );
-		expect( result.current.failedPolls ).toBe( 2 );
+		await tick();
+		expect( result.current ).toBe( 'searching' );
+
+		// Looks at the site do add up.
+		await tick();
+		await tick();
+		await tick();
+		expect( result.current ).toBe( 'exhausted' );
 	} );
 
 	it( 'polls the site plugins on an interval while enabled', async () => {
@@ -115,29 +109,44 @@ describe( 'usePostTransferPluginRecovery', () => {
 
 	it( 'runs one plugin-list request at a time', async () => {
 		// Overlapping requests can settle out of order, so a round would not mean a current answer.
-		const { result } = render( { installedPlugin: null } );
-		expect( result.current.requestInFlight ).toBe( true );
+		render( { installedPlugin: null } );
 		const duringFirst = fetchSitePlugins.mock.calls.length;
 		tickNow();
 		expect( fetchSitePlugins.mock.calls.length ).toBe( duringFirst );
-		expect( result.current.requestInFlight ).toBe( true );
 
-		await act( async () => {} );
-		expect( result.current.requestInFlight ).toBe( false );
-		expect( result.current.completedPolls ).toBe( 1 );
+		await settle();
+		await tick();
+		expect( fetchSitePlugins.mock.calls.length ).toBeGreaterThan( duringFirst );
 	} );
 
-	it( 'reports activation as exhausted once its attempts are spent', async () => {
+	it( 'keeps searching for a plugin it has found until activation is spent', async () => {
 		const { result } = render();
-		expect( result.current.activationExhausted ).toBe( false );
+		await settle();
+		expect( result.current ).toBe( 'searching' );
 
-		for ( let i = 0; i < 3; i++ ) {
-			await act( async () => {
-				await tick();
-			} );
+		for ( let i = 0; i < 6; i++ ) {
+			await tick();
 		}
 		expect( activatePlugin ).toHaveBeenCalledTimes( 3 );
-		expect( result.current.activationExhausted ).toBe( true );
+		expect( result.current ).toBe( 'exhausted' );
+	} );
+
+	it( 'does not start an extra attempt when the plugin it acts on changes identity', async () => {
+		// The plugin can drop out of the store and come back as a list request lands. Re-reading it must
+		// not start a cycle off the interval's schedule, which would spend the retries in a burst.
+		const { rerender } = render();
+		await settle();
+		expect( activatePlugin ).toHaveBeenCalledTimes( 1 );
+
+		rerender( { ...defaults, installedPlugin: null } );
+		await settle();
+		rerender( { ...defaults, installedPlugin: { ...INSTALLED } } );
+		await settle();
+		expect( activatePlugin ).toHaveBeenCalledTimes( 1 );
+
+		// The interval still owns every retry after the first.
+		await tick();
+		expect( activatePlugin ).toHaveBeenCalledTimes( 2 );
 	} );
 
 	it( 'does not poll while disabled', async () => {

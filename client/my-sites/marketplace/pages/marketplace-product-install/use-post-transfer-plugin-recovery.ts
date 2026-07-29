@@ -3,28 +3,22 @@ import { useInterval } from 'calypso/lib/interval';
 import { useDispatch } from 'calypso/state';
 import { activatePlugin, fetchSitePlugins } from 'calypso/state/plugins/installed/actions';
 
-export const PLUGIN_POLL_INTERVAL_MS = 3000;
+const PLUGIN_POLL_INTERVAL_MS = 3000;
 const MAX_ACTIVATION_ATTEMPTS = 3;
+// Rounds in which the site reported its plugins without the expected one turning up.
+const MAX_EMPTY_ROUNDS = 5;
+// Rounds whose request failed, which say nothing about what is installed but cannot go on forever.
+const MAX_FAILED_ROUNDS = 5;
 
-export type PluginRecoveryProgress = {
-	/** Rounds in which the site actually reported its plugins. A request that failed read nothing. */
-	completedPolls: number;
-	/** Rounds whose request failed, which say nothing about what is installed. */
-	failedPolls: number;
-	/** A cycle is out: what the plugin list says now may be about to change. */
-	requestInFlight: boolean;
-	/** Activation was tried as often as it is going to be, and its last refresh has landed. */
-	activationExhausted: boolean;
-};
+/** `searching` while there is still something to wait for; `exhausted` once there is not. */
+export type PluginRecoveryStatus = 'searching' | 'exhausted';
 
 // The Atomic transfer can report complete before the plugin is activated, leaving it installed but
 // inactive. Poll the plugin list and nudge it active; that flips `pluginActive`, which the caller's
 // redirect watches for and which disables this hook.
 //
-// One cycle at a time, and activation and its refresh belong to the same cycle: a list read while an
-// activation is in flight answers for a moment that has already passed, and two cycles at once would
-// let a slower one overwrite a newer answer. Reports its own progress so the caller can wait on
-// rounds of looking rather than on a clock that knows nothing about the requests it races.
+// One cycle at a time, and activation and its refresh belong to the same cycle: a list read taken
+// while an activation is in flight answers for a moment that has already passed.
 export function usePostTransferPluginRecovery( {
 	siteId,
 	enabled,
@@ -35,71 +29,78 @@ export function usePostTransferPluginRecovery( {
 }: {
 	siteId: number;
 	enabled: boolean;
-	/** Look once on becoming enabled, for a flow whose plugin is already there to be found. */
+	/** Look once on becoming enabled, for a flow whose plugin should already be there to find. */
 	runImmediately: boolean;
 	canActivate: boolean;
 	ownsActivation: boolean;
 	installedPlugin: { slug?: string; id?: string } | null | undefined;
-} ): PluginRecoveryProgress {
+} ): PluginRecoveryStatus {
 	const dispatch = useDispatch();
 	const attemptsRef = useRef( 0 );
 	const inFlightRef = useRef( false );
-	const [ completedPolls, setCompletedPolls ] = useState( 0 );
-	const [ failedPolls, setFailedPolls ] = useState( 0 );
-	const [ requestInFlight, setRequestInFlight ] = useState( false );
+	const [ emptyRounds, setEmptyRounds ] = useState( 0 );
+	const [ failedRounds, setFailedRounds ] = useState( 0 );
+	const [ busy, setBusy ] = useState( false );
 	const [ activationExhausted, setActivationExhausted ] = useState( false );
 
-	const pluginId = installedPlugin?.id;
-	const pluginSlug = installedPlugin?.slug;
+	// Read through a ref so that the plugin a cycle acts on cannot, by changing this callback's
+	// identity, re-arm the effect below and start cycles off the interval's schedule.
+	const cycleInputs = useRef( { canActivate, ownsActivation, installedPlugin } );
+	cycleInputs.current = { canActivate, ownsActivation, installedPlugin };
 
 	const runCycle = useCallback( () => {
 		if ( inFlightRef.current ) {
 			return;
 		}
 
+		const {
+			canActivate: ready,
+			ownsActivation: owns,
+			installedPlugin: plugin,
+		} = cycleInputs.current;
 		// Activation is gated on: the transfer being usable (capability gap); this hook owning
-		// activation (the step-driven flow owns it otherwise); a plugin to act on; a bounded budget.
+		// activation (another flow owns it otherwise); a plugin to act on; a bounded budget.
 		const activating =
-			canActivate && ownsActivation && !! pluginId && attemptsRef.current < MAX_ACTIVATION_ATTEMPTS;
+			ready && owns && !! plugin?.id && attemptsRef.current < MAX_ACTIVATION_ATTEMPTS;
 
 		inFlightRef.current = true;
-		setRequestInFlight( true );
+		setBusy( true );
 
 		if ( activating ) {
 			attemptsRef.current += 1;
 		}
 
-		const activation = activating
-			? Promise.resolve( dispatch( activatePlugin( siteId, { slug: pluginSlug, id: pluginId } ) ) )
-			: Promise.resolve();
+		const activation =
+			activating && plugin
+				? Promise.resolve(
+						dispatch( activatePlugin( siteId, { slug: plugin.slug, id: plugin.id } ) )
+				  )
+				: Promise.resolve();
 
-		// The refresh always follows, so an activation that worked is observed at once rather than an
-		// interval later — the caller's redirect is gated on that active state.
 		activation
 			.catch( () => undefined )
 			.then( () => Promise.resolve( dispatch( fetchSitePlugins( siteId ) ) ) )
 			.catch( () => false )
 			.then( ( listRead ) => {
-				// A request that failed left the previous list in place. Counting it as a round of
-				// looking would let a run of failures pass for a site reporting no plugin at all.
+				// A request that failed left the previous list in place, so it was not a look at the site.
 				if ( listRead === false ) {
-					setFailedPolls( ( count ) => count + 1 );
+					setFailedRounds( ( count ) => count + 1 );
 				} else {
-					setCompletedPolls( ( count ) => count + 1 );
+					setEmptyRounds( ( count ) => count + 1 );
 				}
 			} )
 			.finally( () => {
 				inFlightRef.current = false;
-				setRequestInFlight( false );
+				setBusy( false );
 				if ( activating && attemptsRef.current >= MAX_ACTIVATION_ATTEMPTS ) {
 					setActivationExhausted( true );
 				}
 			} );
-	}, [ canActivate, ownsActivation, pluginId, pluginSlug, dispatch, siteId ] );
+	}, [ dispatch, siteId ] );
 
 	// The interval only fires after its first delay, and a transfer has already kept the customer
-	// waiting; look once straight away where the plugin is expected to be there already. Flows whose
-	// own activation window is still opening keep the delay, so this does not act ahead of them.
+	// waiting; look once straight away where the plugin should be there already. Flows whose own
+	// activation window is still opening keep the delay, so this does not act ahead of them.
 	useEffect( () => {
 		if ( enabled && runImmediately ) {
 			runCycle();
@@ -108,5 +109,11 @@ export function usePostTransferPluginRecovery( {
 
 	useInterval( runCycle, enabled ? PLUGIN_POLL_INTERVAL_MS : null );
 
-	return { completedPolls, failedPolls, requestInFlight, activationExhausted };
+	// Nothing is left to wait for once the site has been read enough times without the plugin showing
+	// up, or cannot be read at all. A plugin that did show up is waited on until activation has been
+	// tried as often as it is going to be.
+	const searched = emptyRounds >= MAX_EMPTY_ROUNDS || failedRounds >= MAX_FAILED_ROUNDS;
+	const nothingLeftToTry = ! installedPlugin || activationExhausted;
+
+	return searched && ! busy && nothingLeftToTry ? 'exhausted' : 'searching';
 }
