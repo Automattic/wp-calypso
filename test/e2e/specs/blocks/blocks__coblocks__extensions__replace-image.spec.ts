@@ -23,9 +23,9 @@ if ( envVariables.TEST_ON_ATOMIC ) {
  * 	- theme: a non-block-based theme (eg. Twenty-Twenty One)
  */
 test.describe( 'CoBlocks: Extensions: Replace Image', { tag: [ tags.GUTENBERG ] }, () => {
-	const accountName = getTestAccountByFeature( features );
-
 	test( 'As a user, I can replace an image in the editor', async ( { page, pageEditor } ) => {
+		// Must resolve inside the test: a throw at describe scope aborts collection for the entire run.
+		const accountName = getTestAccountByFeature( features );
 		let imageFile: TestFile;
 		let imageBlock: ImageBlock;
 		let uploadedImageURL: string;

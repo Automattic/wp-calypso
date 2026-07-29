@@ -20,12 +20,12 @@ if ( isAtomic ) {
  * 	- theme: a non-block-based theme (eg. Twenty-Twenty One)
  */
 test.describe( 'CoBlocks: Extensions: Gutter Control', { tag: [ tags.GUTENBERG ] }, () => {
-	const accountName = getTestAccountByFeature( features );
-
 	test( 'As a user, I can change CoBlocks gutter control settings', async ( {
 		page,
 		pageEditor,
 	} ) => {
+		// Must resolve inside the test: a throw at describe scope aborts collection for the entire run.
+		const accountName = getTestAccountByFeature( features );
 		let pricingTableBlock: PricingTableBlock;
 
 		await test.step( 'Given I am authenticated', async () => {
