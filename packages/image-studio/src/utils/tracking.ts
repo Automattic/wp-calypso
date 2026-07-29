@@ -7,9 +7,12 @@
 
 import { recordTracksEvent as recordTracksEventBase } from '@automattic/calypso-analytics';
 import { select } from '@wordpress/data';
+// ImageStudioEntryPoint is a value import here, not type-only: the Feature Clip
+// wrapper reads the enum member at runtime.
 import { store as imageStudioStore, ImageStudioEntryPoint } from '../store';
+import { ImageStudioMode, type MetadataField } from '../types';
 import { getSessionId } from '../utils/session';
-import type { ImageStudioMode, MetadataField } from '../types';
+import { parseErrorUrl } from './parse-error-url';
 
 const TRACKS_PREFIX = 'jetpack_big_sky';
 const SITE_TYPES = [ 'simple', 'atomic', 'jetpack' ] as const;
@@ -225,18 +228,21 @@ interface TrackImageStudioImageGeneratedOptions {
 	isAnnotated: boolean;
 }
 
+type ImageStudioErrorType =
+	| 'generation_failed'
+	| 'edit_failed'
+	| 'quota_exceeded'
+	| 'ability_failed'
+	| 'preparation_failed'
+	| 'draft_cleanup_failed'
+	| 'draft_cleanup_permission_denied'
+	| 'delete_permanently_failed'
+	| 'save_metadata_failed'
+	| 'other';
+
 interface TrackImageStudioErrorOptions {
 	mode: ImageStudioMode;
-	errorType:
-		| 'generation_failed'
-		| 'edit_failed'
-		| 'ability_failed'
-		| 'preparation_failed'
-		| 'draft_cleanup_failed'
-		| 'draft_cleanup_permission_denied'
-		| 'delete_permanently_failed'
-		| 'save_metadata_failed'
-		| 'other';
+	errorType: ImageStudioErrorType;
 	attachmentId?: number;
 }
 
@@ -249,6 +255,29 @@ interface TrackImageStudioImageFeedbackOptions {
 interface TrackImageStudioFileNavigatedOptions {
 	attachmentId: number;
 	direction: 'previous' | 'next';
+}
+
+/**
+ * Classifies request errors for Image Studio error tracking.
+ * @param error - The request error
+ * @param mode  - The active Image Studio mode
+ * @returns The corresponding tracking error type
+ */
+export function getImageStudioRequestErrorType(
+	error: unknown,
+	mode: ImageStudioMode
+): ImageStudioErrorType {
+	const message =
+		error && typeof error === 'object' && 'message' in error
+			? String( error.message )
+			: String( error ?? '' );
+
+	// The agent endpoint exposes usage-quota errors to the client through an appended upgrade URL.
+	if ( parseErrorUrl( message ).isUpgradeUrl ) {
+		return 'quota_exceeded';
+	}
+
+	return mode === ImageStudioMode.Edit ? 'edit_failed' : 'generation_failed';
 }
 
 /**

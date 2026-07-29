@@ -6,7 +6,9 @@
 import { recordTracksEvent as recordTracksEventBase } from '@automattic/calypso-analytics';
 import { select } from '@wordpress/data';
 import { ImageStudioEntryPoint } from '../store';
+import { ImageStudioMode } from '../types';
 import {
+	getImageStudioRequestErrorType,
 	trackImageStudioClosed,
 	trackImageStudioOpened,
 	trackImageStudioReelShareClicked,
@@ -31,6 +33,27 @@ jest.mock( '../utils/session', () => ( {
 
 const recordTracksEventMock = recordTracksEventBase as jest.Mock;
 const selectMock = select as jest.Mock;
+
+describe( 'getImageStudioRequestErrorType', () => {
+	it( 'identifies the streamed free-credit exhaustion error as quota exceeded', () => {
+		const error = new Error(
+			'Streaming error: Congratulations on exploring Image Studio and reaching the free requests limit! Upgrade now to keep using it. https://jetpack.com/redirect/?source=jetpack-ai-yearly-tier-upgrade-nudge'
+		);
+
+		expect( getImageStudioRequestErrorType( error, ImageStudioMode.Generate ) ).toBe(
+			'quota_exceeded'
+		);
+	} );
+
+	it.each( [
+		[ ImageStudioMode.Generate, 'generation_failed' ],
+		[ ImageStudioMode.Edit, 'edit_failed' ],
+	] as const )( 'preserves the generic %s failure type for other errors', ( mode, errorType ) => {
+		expect( getImageStudioRequestErrorType( new Error( 'Provider failed' ), mode ) ).toBe(
+			errorType
+		);
+	} );
+} );
 
 describe( 'trackImageStudioOpened', () => {
 	beforeEach( () => {
