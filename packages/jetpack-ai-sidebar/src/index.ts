@@ -80,7 +80,6 @@ let wasAgentProcessing = false;
 let pendingBlockShimmerClientId: string | null = null;
 let blockShimmerStartedForRequest = false;
 let suppressCurrentPageContentForNextContext = false;
-let jetpackAIRequestScopeForNextContext: 'selected-block' | null = null;
 
 /** Whether `_suggestion_rendered` has fired this page life (once-per-session). */
 let suggestionRenderedFiredOnce = false;
@@ -757,9 +756,7 @@ export const contextProvider = {
 		let selectedBlockContent = '';
 		let currentPostType: string | undefined;
 		const suppressCurrentPageContent = suppressCurrentPageContentForNextContext;
-		const jetpackAIRequestScope = jetpackAIRequestScopeForNextContext;
 		suppressCurrentPageContentForNextContext = false;
-		jetpackAIRequestScopeForNextContext = null;
 
 		if ( wpData ) {
 			const editor = wpData.select( 'core/editor' );
@@ -792,7 +789,6 @@ export const contextProvider = {
 			},
 			currentPageContent,
 			selectedBlockClientId,
-			...( jetpackAIRequestScope && { jetpackAIRequestScope } ),
 			// Forward the host's SEO Enhancer verdict (plan + Jetpack SEO Tools
 			// module + kill switches) so the orchestrator can drop the SEO
 			// suggestion abilities when they aren't usable on this site — e.g. a
@@ -1173,11 +1169,6 @@ export function useSuggestions(
 			pendingBlockShimmerClientId = BLOCK_SUGGESTIONS.some( matchesSuggestion )
 				? getSelectedOrRememberedBlock()?.clientId ?? null
 				: null;
-			jetpackAIRequestScopeForNextContext = null;
-
-			if ( BLOCK_SUGGESTIONS.some( matchesSuggestion ) ) {
-				jetpackAIRequestScopeForNextContext = 'selected-block';
-			}
 
 			if ( matchesSuggestion( POST_FEEDBACK_SUGGESTION ) ) {
 				suppressCurrentPageContentForNextContext = true;

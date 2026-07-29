@@ -2838,19 +2838,18 @@ describe( 'contextProvider', () => {
 		const proofreadContext = contextProvider.getClientContext();
 		expect( proofreadContext.currentPageContent ).toEqual( [] );
 		expect( proofreadContext.jetpackAi ).toBeUndefined();
-		expect( proofreadContext.jetpackAIRequestScope ).toBeUndefined();
 		expect( contextProvider.getClientContext().currentPageContent ).toHaveLength( 1 );
 		expect( contextProvider.getClientContext().jetpackAi ).toBeUndefined();
 	} );
 
-	it( 'scopes only the next block suggestion request to the selected block', () => {
+	it( 'keeps the selected block context available after a block suggestion click', () => {
 		installAiEditorialReviewData();
-		installContextProviderMock();
 		mockSelectedBlock = {
 			clientId: 'selected-block',
 			name: 'core/paragraph',
 			attributes: { content: 'Selected paragraph' },
 		};
+		installPostTypeMock( 'post' );
 
 		render( React.createElement( SuggestionsProbe, { onSuggestions: jest.fn() } ) );
 
@@ -2862,8 +2861,13 @@ describe( 'contextProvider', () => {
 			);
 		} );
 
-		expect( contextProvider.getClientContext().jetpackAIRequestScope ).toBe( 'selected-block' );
-		expect( contextProvider.getClientContext().jetpackAIRequestScope ).toBeUndefined();
+		const context = contextProvider.getClientContext();
+		expect( context.selectedBlockClientId ).toBe( 'selected-block' );
+		expect( context.contextEntries ).toContainEqual( {
+			id: 'selected-block-content',
+			type: 'selected-block-content',
+			data: { content: 'Selected paragraph' },
+		} );
 	} );
 
 	it( 'clears pending Simple Review content suppression when another suggestion is clicked', () => {
