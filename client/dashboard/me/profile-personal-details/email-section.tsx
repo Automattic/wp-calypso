@@ -16,7 +16,8 @@ interface EmailSectionProps {
 	value: string;
 	onChange: ( value: string ) => void;
 	disabled?: boolean;
-	userData: UserSettings;
+	userSettings: UserSettings;
+	isEmailVerified: boolean;
 	onValidationChange?: ( isValid: boolean ) => void;
 }
 
@@ -41,7 +42,8 @@ export default function EmailSection( {
 	value,
 	onChange,
 	disabled = false,
-	userData,
+	userSettings,
+	isEmailVerified,
 	onValidationChange,
 }: EmailSectionProps ) {
 	const mutation = cancelPendingEmailChangeMutation();
@@ -61,9 +63,9 @@ export default function EmailSection( {
 		},
 	} );
 
-	const isEmailPending = userData.user_email_change_pending;
-	const pendingEmail = userData.new_user_email;
-	const currentEmail = isEmailPending && pendingEmail ? pendingEmail : userData.user_email;
+	const isEmailPending = userSettings.user_email_change_pending;
+	const pendingEmail = userSettings.new_user_email;
+	const currentEmail = isEmailPending && pendingEmail ? pendingEmail : userSettings.user_email;
 
 	const [ emailValidationState, setEmailValidationState ] =
 		useEmailValidation( onValidationChange );
@@ -191,9 +193,15 @@ export default function EmailSection( {
 			}
 		}
 
+		// The saved email address has never been verified (and no change is pending).
+		if ( ! isEmailVerified ) {
+			return __( 'Your email has not been verified yet.' );
+		}
+
 		return null;
 	}, [
 		isEmailPending,
+		isEmailVerified,
 		showCustomDomainWarning,
 		value,
 		currentEmail,
