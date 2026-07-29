@@ -179,15 +179,17 @@ class StatsPostSummary extends Component {
 				// months before the post was published. Drop both rather than
 				// paginating into fake empty bars; post-publish months with
 				// zero views are kept, consistent with Days/Weeks paging.
-				const today = moment();
-				// The month buckets are site-local, so the publish boundary is
-				// resolved in the site's timezone too (see getPublishMonthKey);
-				// comparing YYYY-MM keys keeps the trim independent of the
-				// viewer's zone.
+				// The month buckets are site-local, so both boundaries resolve
+				// in the site's timezone: the current month from the site's
+				// "now" (a viewer a day behind the site must not hide the
+				// site's current month) and the publish boundary via
+				// getPublishMonthKey. Comparing YYYY-MM keys keeps the trim
+				// independent of the viewer's zone.
+				const currentMonth = this.props.momentSiteZone().format( 'YYYY-MM' );
 				const publishMonth = getPublishMonthKey( stats.post, this.props.momentSiteZone );
 				return [ ...statsByMonth( stats, moment ) ].filter(
 					( record ) =>
-						moment( record.startDate ).isSameOrBefore( today, 'month' ) &&
+						record.startDate.slice( 0, 7 ) <= currentMonth &&
 						( ! publishMonth || record.startDate.slice( 0, 7 ) >= publishMonth )
 				);
 			}
@@ -227,9 +229,13 @@ class StatsPostSummary extends Component {
 
 		// Don't extend the range into the future when the last bar is still
 		// the current, in-progress period (e.g. this month before it ends).
-		const today = moment();
-		if ( end.isAfter( today, 'day' ) ) {
-			end = today;
+		// "Today" is the site's, not the viewer's — the bars are site-local
+		// days, so a viewer behind the site's timezone must not clamp the
+		// range a day short (or vice versa). Comparing date keys sidesteps
+		// mixed-zone moment math; callers only format() the result.
+		const siteToday = this.props.momentSiteZone();
+		if ( end.format( 'YYYY-MM-DD' ) > siteToday.format( 'YYYY-MM-DD' ) ) {
+			end = siteToday;
 		}
 
 		return { start, end };

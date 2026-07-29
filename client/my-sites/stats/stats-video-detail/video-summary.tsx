@@ -12,6 +12,7 @@ import {
 } from 'calypso/state/stats/lists/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { STATS_SUMMARY_MAX_BARS } from '../constants';
+import { useMomentInSite } from '../hooks/use-moment-site-zone';
 import DatePicker from '../stats-date-label';
 import StatsPeriodHeader from '../stats-period-header';
 import StatsPeriodNavigation from '../stats-period-navigation';
@@ -75,6 +76,7 @@ export default function VideoSummary( {
 } ) {
 	const translate = useTranslate();
 	const moment = useLocalizedMoment();
+	const momentSiteZone = useMomentInSite();
 	const siteId = useSelector( getSelectedSiteId );
 	const [ uiPeriod, setUiPeriod ] = useState< UiPeriod >( 'day' );
 	const [ page, setPage ] = useState( 1 );
@@ -197,17 +199,18 @@ export default function VideoSummary( {
 		}
 
 		// Don't extend the range into the future when the last bucket is
-		// still the current, in-progress period.
-		const today = moment();
-		if ( end.isAfter( today, 'day' ) ) {
-			end = today;
-		}
+		// still the current, in-progress period. "Today" is the site's, not
+		// the viewer's: the buckets are site-local, so a viewer behind the
+		// site's timezone must not clamp the header a day short (or vice
+		// versa). Comparing date keys sidesteps mixed-zone moment math.
+		const siteToday = momentSiteZone().format( 'YYYY-MM-DD' );
+		const chartEnd = end.format( 'YYYY-MM-DD' );
 
 		return {
 			chartStart: start.format( 'YYYY-MM-DD' ),
-			chartEnd: end.format( 'YYYY-MM-DD' ),
+			chartEnd: chartEnd > siteToday ? siteToday : chartEnd,
 		};
-	}, [ visibleRows, uiPeriod, moment ] );
+	}, [ visibleRows, uiPeriod, moment, momentSiteZone ] );
 
 	// Card totals cover the window shown in the chart (the current page).
 	// Retention is play-weighted rather than summed — see retention.ts.
