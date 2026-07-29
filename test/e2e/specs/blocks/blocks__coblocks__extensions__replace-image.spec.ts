@@ -23,9 +23,10 @@ if ( envVariables.TEST_ON_ATOMIC ) {
  * 	- theme: a non-block-based theme (eg. Twenty-Twenty One)
  */
 test.describe( 'CoBlocks: Extensions: Replace Image', { tag: [ tags.GUTENBERG ] }, () => {
-	const accountName = getTestAccountByFeature( features );
-
 	test( 'As a user, I can replace an image in the editor', async ( { page, pageEditor } ) => {
+		// Resolved here, not at describe scope: Playwright loads every spec during collection
+		// regardless of --grep, so a throw for an unmatched feature key aborts the whole run.
+		const accountName = getTestAccountByFeature( features );
 		let imageFile: TestFile;
 		let imageBlock: ImageBlock;
 		let uploadedImageURL: string;
