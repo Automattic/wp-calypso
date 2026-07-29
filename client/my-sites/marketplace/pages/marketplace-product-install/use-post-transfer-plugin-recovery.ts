@@ -1,4 +1,4 @@
-import { useRef } from 'react';
+import { useRef, useState } from 'react';
 import { useInterval } from 'calypso/lib/interval';
 import { useDispatch } from 'calypso/state';
 import { activatePlugin, fetchSitePlugins } from 'calypso/state/plugins/installed/actions';
@@ -10,6 +10,9 @@ const MAX_ACTIVATION_ATTEMPTS = 3;
 // installed but inactive. Poll the plugin list and nudge it active; that flips `pluginActive`, which the
 // caller's redirect watches for and which disables this hook. If activation never lands the poll keeps
 // running, so a late backend activation is still caught.
+//
+// Reports how many plugin-list fetches have come back, which is what tells the caller whether the list
+// it is reading answers for this attempt, and when the poll has had its turns.
 export function usePostTransferPluginRecovery( {
 	siteId,
 	enabled,
@@ -22,14 +25,20 @@ export function usePostTransferPluginRecovery( {
 	canActivate: boolean;
 	ownsActivation: boolean;
 	installedPlugin: { slug?: string; id?: string } | null | undefined;
-} ): void {
+} ): { settledFetches: number } {
 	const dispatch = useDispatch();
 	const attemptsRef = useRef( 0 );
 	const inFlightRef = useRef( false );
+	const [ settledFetches, setSettledFetches ] = useState( 0 );
+
+	const fetchPlugins = () =>
+		Promise.resolve( dispatch( fetchSitePlugins( siteId ) ) ).finally( () =>
+			setSettledFetches( ( count ) => count + 1 )
+		);
 
 	useInterval(
 		() => {
-			dispatch( fetchSitePlugins( siteId ) );
+			fetchPlugins();
 
 			// Gate activation on: the transfer being usable (capability gap); this hook owning activation
 			// (the step-driven flow owns it otherwise); one settled attempt at a time; a bounded budget.
@@ -51,9 +60,11 @@ export function usePostTransferPluginRecovery( {
 				inFlightRef.current = false;
 				// Refresh right away so the now-active plugin is observed immediately, rather than waiting
 				// for the next poll — the caller's redirect is gated on that active state.
-				dispatch( fetchSitePlugins( siteId ) );
+				fetchPlugins();
 			} );
 		},
 		enabled ? PLUGIN_POLL_INTERVAL_MS : null
 	);
+
+	return { settledFetches };
 }
