@@ -39,6 +39,7 @@ const CONFIRMATION_POLLS = 5;
 // The poll has gone looking and found nothing, which is when the fallback becomes available.
 const SEARCHED_AND_EMPTY: PluginRecoveryProgress = {
 	completedPolls: CONFIRMATION_POLLS,
+	failedPolls: 0,
 	requestInFlight: false,
 	activationExhausted: false,
 };
@@ -65,6 +66,7 @@ const baseProps: Props = {
 	atomicFlow: true,
 	automatedTransferStatus: transferStates.COMPLETE,
 	transferObserved: false,
+	isTransferredUpload: false,
 	uploadFailed: false,
 };
 
@@ -78,6 +80,7 @@ const UPLOAD_PROPS: Partial< Props > = {
 	atomicFlow: false,
 	automatedTransferStatus: transferStates.ACTIVE,
 	transferObserved: true,
+	isTransferredUpload: true,
 };
 
 const render = ( overrides?: Partial< Props > ) => {

@@ -12,6 +12,8 @@ import { usePostTransferPluginRecovery } from './use-post-transfer-plugin-recove
 
 // Rounds of polling the uploaded plugin gets to turn up in before the flow stops expecting it.
 const CONFIRMATION_POLLS = 5;
+// Rounds whose request failed outright before the flow gives up on ever reading the list.
+const MAX_POLL_FAILURES = 5;
 
 const pluginsAdminUrl = ( adminUrl: string | null | undefined, query = '' ) =>
 	adminUrl ? `${ adminUrl }plugins.php${ query }` : null;
@@ -33,6 +35,7 @@ export function useThankYouRedirect( {
 	atomicFlow,
 	automatedTransferStatus,
 	transferObserved,
+	isTransferredUpload,
 	uploadFailed,
 }: {
 	siteId: number;
@@ -48,6 +51,7 @@ export function useThankYouRedirect( {
 	atomicFlow: boolean;
 	automatedTransferStatus: string | null;
 	transferObserved: boolean;
+	isTransferredUpload: boolean;
 	uploadFailed: boolean;
 } ) {
 	const dispatch = useDispatch();
@@ -91,39 +95,43 @@ export function useThankYouRedirect( {
 	// The upload's transfer is over and the site is reachable. This is not evidence the archive
 	// installed: the transfer reports complete whether the install succeeded, failed, or was skipped.
 	const uploadTransferSettled = !! (
-		isPluginUploadFlow &&
+		isTransferredUpload &&
 		! uploadAttemptFailed &&
 		transferObserved &&
 		transferStates.COMPLETE === automatedTransferStatus &&
 		isAtomicTransferReady
 	);
 
-	const { completedPolls, requestInFlight, activationExhausted } = usePostTransferPluginRecovery( {
-		siteId,
-		enabled: ( isRecoveryFlow || uploadTransferSettled ) && ! pluginActive,
-		// isAtomicTransferReady already requires manage_options, which the transfer propagates after
-		// is_wpcom_atomic flips; activating during that gap would fail and burn the retry budget.
-		canActivate: !! isAtomicTransferReady,
-		// Two recovery windows: the checkout-initiated flow, which sits at step 0 while it observes a
-		// background transfer, and the component-driven transfer, whose plugin lands at step 2 after the
-		// step-driven effect's activation window (step 1). A transferred upload is this hook's outright:
-		// its plugin needs retrying, and the step-driven effect stands down for that flow. Leaving
-		// ordinary in-place installs to that effect avoids a redundant activation racing it at step 2.
-		ownsActivation:
-			uploadTransferSettled ||
-			( ! atomicFlow && currentStep === 0 ) ||
-			( atomicFlow && currentStep === 2 ),
-		installedPlugin,
-	} );
+	const { completedPolls, failedPolls, requestInFlight, activationExhausted } =
+		usePostTransferPluginRecovery( {
+			siteId,
+			enabled: ( isRecoveryFlow || uploadTransferSettled ) && ! pluginActive,
+			// isAtomicTransferReady already requires manage_options, which the transfer propagates after
+			// is_wpcom_atomic flips; activating during that gap would fail and burn the retry budget.
+			canActivate: !! isAtomicTransferReady,
+			// Two recovery windows: the checkout-initiated flow, which sits at step 0 while it observes a
+			// background transfer, and the component-driven transfer, whose plugin lands at step 2 after the
+			// step-driven effect's activation window (step 1). A transferred upload is this hook's outright:
+			// its plugin needs retrying, and the step-driven effect stands down for that flow. Leaving
+			// ordinary in-place installs to that effect avoids a redundant activation racing it at step 2.
+			ownsActivation:
+				uploadTransferSettled ||
+				( ! atomicFlow && currentStep === 0 ) ||
+				( atomicFlow && currentStep === 2 ),
+			installedPlugin,
+		} );
 
 	// Stop expecting the uploaded plugin only after rounds of polling have gone looking and come back
 	// with nothing — a clock would run out mid-request, and navigating abandons whatever it was doing.
 	// A plugin that turned up but will not activate has also stopped being worth waiting for, and the
 	// plain list shows it either way.
+	// Either the site reported its plugins enough times without the uploaded one turning up, or the
+	// list could not be read at all — a wait for an answer that is not coming still has to end.
+	const searchConcluded = completedPolls >= CONFIRMATION_POLLS || failedPolls >= MAX_POLL_FAILURES;
 	const uploadInstallUnconfirmed =
 		uploadTransferSettled &&
 		! requestInFlight &&
-		completedPolls >= CONFIRMATION_POLLS &&
+		searchConcluded &&
 		( ! installedPlugin || activationExhausted );
 
 	// Check completition of all flows and redirect to thank you page

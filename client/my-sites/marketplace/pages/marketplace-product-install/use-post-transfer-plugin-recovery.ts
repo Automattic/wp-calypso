@@ -7,8 +7,10 @@ export const PLUGIN_POLL_INTERVAL_MS = 3000;
 const MAX_ACTIVATION_ATTEMPTS = 3;
 
 export type PluginRecoveryProgress = {
-	/** Cycles that have come back. Only one runs at a time, so this counts rounds of looking. */
+	/** Rounds in which the site actually reported its plugins. A request that failed read nothing. */
 	completedPolls: number;
+	/** Rounds whose request failed, which say nothing about what is installed. */
+	failedPolls: number;
 	/** A cycle is out: what the plugin list says now may be about to change. */
 	requestInFlight: boolean;
 	/** Activation was tried as often as it is going to be, and its last refresh has landed. */
@@ -40,6 +42,7 @@ export function usePostTransferPluginRecovery( {
 	const attemptsRef = useRef( 0 );
 	const inFlightRef = useRef( false );
 	const [ completedPolls, setCompletedPolls ] = useState( 0 );
+	const [ failedPolls, setFailedPolls ] = useState( 0 );
 	const [ requestInFlight, setRequestInFlight ] = useState( false );
 	const [ activationExhausted, setActivationExhausted ] = useState( false );
 
@@ -72,11 +75,19 @@ export function usePostTransferPluginRecovery( {
 		activation
 			.catch( () => undefined )
 			.then( () => Promise.resolve( dispatch( fetchSitePlugins( siteId ) ) ) )
-			.catch( () => undefined )
+			.catch( () => false )
+			.then( ( listRead ) => {
+				// A request that failed left the previous list in place. Counting it as a round of
+				// looking would let a run of failures pass for a site reporting no plugin at all.
+				if ( listRead === false ) {
+					setFailedPolls( ( count ) => count + 1 );
+				} else {
+					setCompletedPolls( ( count ) => count + 1 );
+				}
+			} )
 			.finally( () => {
 				inFlightRef.current = false;
 				setRequestInFlight( false );
-				setCompletedPolls( ( count ) => count + 1 );
 				if ( activating && attemptsRef.current >= MAX_ACTIVATION_ATTEMPTS ) {
 					setActivationExhausted( true );
 				}
@@ -93,5 +104,5 @@ export function usePostTransferPluginRecovery( {
 
 	useInterval( runCycle, enabled ? PLUGIN_POLL_INTERVAL_MS : null );
 
-	return { completedPolls, requestInFlight, activationExhausted };
+	return { completedPolls, failedPolls, requestInFlight, activationExhausted };
 }

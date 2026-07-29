@@ -20,6 +20,7 @@ import { fetchPluginData as wporgFetchPluginData } from 'calypso/state/plugins/w
 import { getPlugin, isFetched } from 'calypso/state/plugins/wporg/selectors';
 import { getCurrentQueryArguments } from 'calypso/state/selectors/get-current-query-arguments';
 import getPluginUploadError from 'calypso/state/selectors/get-plugin-upload-error';
+import getPluginUploadMethod from 'calypso/state/selectors/get-plugin-upload-method';
 import getPluginUploadProgress from 'calypso/state/selectors/get-plugin-upload-progress';
 import getUploadedPluginId from 'calypso/state/selectors/get-uploaded-plugin-id';
 import isPluginUploadComplete from 'calypso/state/selectors/is-plugin-upload-complete';
@@ -118,9 +119,13 @@ export function useProductInstall( {
 		transferObservedRef.current = true;
 	}
 	const transferObserved = transferObservedRef.current;
+	// Which path this upload took, recorded when it started rather than read back from the site's
+	// transfer status: that status is shared and persisted, so a transfer from another session can
+	// still look live and would hand a direct upload's plugin to the wrong owner.
+	const uploadMethod = useSelector( ( state ) => getPluginUploadMethod( state, siteId ) );
 	// A zip upload that brought the site to Atomic. Its plugin arrives with the transfer rather than
 	// through an install this page dispatched, so the recovery poll is what watches for it.
-	const isTransferredUpload = isPluginUploadFlow && transferObserved;
+	const isTransferredUpload = isPluginUploadFlow && uploadMethod === 'transfer';
 
 	const pluginInstallStatus = useSelector( ( state ) =>
 		getStatusForPlugin( state, siteId, pluginSlug )
@@ -289,6 +294,7 @@ export function useProductInstall( {
 		atomicFlow,
 		automatedTransferStatus,
 		transferObserved,
+		isTransferredUpload,
 		uploadFailed: !! pluginUploadError,
 	} );
 

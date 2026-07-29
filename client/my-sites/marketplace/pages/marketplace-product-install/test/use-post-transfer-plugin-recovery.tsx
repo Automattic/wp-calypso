@@ -4,7 +4,11 @@
 import { act, renderHook } from '@testing-library/react';
 import { usePostTransferPluginRecovery } from '../use-post-transfer-plugin-recovery';
 
-const mockDispatch = jest.fn();
+// What the dispatched plugin-list thunk resolves to: true when the site reported its plugins.
+let mockListRead: boolean | undefined = true;
+const mockDispatch = jest.fn( ( action: { type?: string } ) =>
+	action?.type === 'FETCH_SITE_PLUGINS' ? Promise.resolve( mockListRead ) : undefined
+);
 jest.mock( 'calypso/state', () => ( {
 	useDispatch: () => mockDispatch,
 } ) );
@@ -65,6 +69,34 @@ describe( 'usePostTransferPluginRecovery', () => {
 		jest.clearAllMocks();
 		mockIntervalCallback = null;
 		mockIntervalDelay = null;
+		mockListRead = true;
+	} );
+
+	it( 'does not count a request that failed as a round of looking', async () => {
+		// The previous list stays in place when a request fails, so counting it would let a run of
+		// failures pass for a site reporting no plugin at all.
+		mockListRead = false;
+		const { result } = render( { installedPlugin: null } );
+		await settle();
+		for ( let i = 0; i < 4; i++ ) {
+			await tick();
+		}
+
+		expect( result.current.completedPolls ).toBe( 0 );
+		expect( result.current.failedPolls ).toBe( 5 );
+	} );
+
+	it( 'counts the first list the site does report, after failures', async () => {
+		mockListRead = false;
+		const { result } = render( { installedPlugin: null } );
+		await settle();
+		await tick();
+		expect( result.current.completedPolls ).toBe( 0 );
+
+		mockListRead = true;
+		await tick();
+		expect( result.current.completedPolls ).toBe( 1 );
+		expect( result.current.failedPolls ).toBe( 2 );
 	} );
 
 	it( 'polls the site plugins on an interval while enabled', async () => {

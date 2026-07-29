@@ -34,6 +34,22 @@ export const uploadedPluginId = keyedReducer( 'siteId', ( state = {}, action ) =
 	return state;
 } );
 
+// How the attempt on screen was started. Which of the two upload paths a flow is on decides who
+// installs and activates its plugin, and that cannot be read back from the site's transfer status:
+// that is shared, persisted, and may describe a transfer from another session entirely.
+export const uploadMethod = keyedReducer( 'siteId', ( state = null, action ) => {
+	switch ( action.type ) {
+		case PLUGIN_UPLOAD:
+			return 'direct';
+		case AUTOMATED_TRANSFER_INITIATE_WITH_PLUGIN_ZIP:
+			return 'transfer';
+		case PLUGIN_UPLOAD_CLEAR:
+			return null;
+	}
+
+	return state;
+} );
+
 export const uploadError = keyedReducer( 'siteId', ( state = {}, action ) => {
 	switch ( action.type ) {
 		case PLUGIN_UPLOAD_ERROR: {
@@ -98,6 +114,7 @@ export const inProgress = keyedReducer( 'siteId', ( state = {}, action ) => {
 
 export default combineReducers( {
 	uploadedPluginId,
+	uploadMethod,
 	uploadError,
 	progressPercent,
 	inProgress,

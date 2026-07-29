@@ -51,6 +51,7 @@ const tick = async () => {
 // A transferred upload whose plugin turned up but is not switched on.
 const INACTIVE_PLUGIN: Partial< Props > = {
 	transferObserved: true,
+	isTransferredUpload: true,
 	automatedTransferStatus: transferStates.COMPLETE,
 	installedPlugin: { slug: 'uploaded', id: 'uploaded/uploaded' },
 	pluginActive: false,
@@ -81,6 +82,7 @@ const uploadProps: Props = {
 	atomicFlow: false,
 	automatedTransferStatus: null,
 	transferObserved: false,
+	isTransferredUpload: false,
 	uploadFailed: false,
 };
 
@@ -126,6 +128,7 @@ describe( 'upload redirect wiring', () => {
 	it( 'starts looking for the plugin as soon as a transferred upload lands', async () => {
 		const { rerender } = render( {
 			transferObserved: true,
+			isTransferredUpload: true,
 			automatedTransferStatus: transferStates.ACTIVE,
 		} );
 		await act( async () => {} );
@@ -134,6 +137,7 @@ describe( 'upload redirect wiring', () => {
 		rerender( {
 			...uploadProps,
 			transferObserved: true,
+			isTransferredUpload: true,
 			automatedTransferStatus: transferStates.COMPLETE,
 		} );
 		await waitFor( () => expect( fetchSitePlugins ).toHaveBeenCalledWith( 1 ) );
