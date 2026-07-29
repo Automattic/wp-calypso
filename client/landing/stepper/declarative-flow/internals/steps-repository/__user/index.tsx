@@ -79,9 +79,6 @@ const UserStepComponent: StepType< { accepts: UserStepAccepts } > = function Use
 	// of truth (so a failed storage write can't skip the gate); storage restores it after a
 	// refresh. Social and existing sessions never open the gate.
 	const [ pendingScope, setPendingScope ] = useState< string | null >( null );
-	// Set when the user picks "Update email" on the gate: re-show the account form so they
-	// can fix a mistyped address, without clearing the pending marker (which would advance).
-	const [ editingEmail, setEditingEmail ] = useState( false );
 	const storedScope = gateEnabled ? gateScope( flow, userId ) : null;
 	const activeScope =
 		pendingScope ?? ( storedScope && isGatePending( storedScope ) ? storedScope : null );
@@ -147,7 +144,6 @@ const UserStepComponent: StepType< { accepts: UserStepAccepts } > = function Use
 			const gateKey = gateScope( flow, data.ID );
 			beginGate( gateKey );
 			setPendingScope( gateKey );
-			setEditingEmail( false );
 			recordTracksEvent( 'calypso_signup_email_verification_email_sent', {
 				flow,
 				is_resend: false,
@@ -222,7 +218,7 @@ const UserStepComponent: StepType< { accepts: UserStepAccepts } > = function Use
 		</>
 	);
 
-	if ( isLoggedIn && activeScope && ! editingEmail ) {
+	if ( isLoggedIn && activeScope ) {
 		return (
 			<EmailVerificationGate
 				flow={ flow }
@@ -232,7 +228,6 @@ const UserStepComponent: StepType< { accepts: UserStepAccepts } > = function Use
 					resolveGate( activeScope );
 					navigation.submit?.();
 				} }
-				onUpdateEmail={ () => setEditingEmail( true ) }
 			/>
 		);
 	}

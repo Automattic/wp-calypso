@@ -8,6 +8,12 @@ describe( 'getInboxLink', () => {
 		expect( link?.url ).toContain( 'wordpress.com' );
 	} );
 
+	it( 'targets the signup mailbox by email so multi-account users land in the right inbox', () => {
+		expect( getInboxLink( 'someone@gmail.com' )?.url ).toContain(
+			'authuser=someone%40gmail.com'
+		);
+	} );
+
 	it( 'matches the domain case-insensitively', () => {
 		expect( getInboxLink( 'Someone@GMAIL.com' )?.providerName ).toBe( 'Gmail' );
 	} );

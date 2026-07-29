@@ -44,26 +44,29 @@ export function useEmailVerification( flow: string, scope: string ) {
 	const [ checkStatus, setCheckStatus ] = useState< CheckStatus >( 'idle' );
 	const [ isVisible, setIsVisible ] = useState( () => document.visibilityState === 'visible' );
 
+	// Record that a fresh verification email just went out: restart the cooldown and reopen
+	// the polling window (the user might confirm this new link from another device long
+	// after the previous window lapsed), and clear any stale check notice.
+	const noteSent = useCallback( () => {
+		sentAtRef.current = Date.now();
+		markResent( scope );
+		setSecondsUntilResend( RESEND_COOLDOWN_SECONDS );
+		setIsPollingExpired( false );
+		setPollWindowKey( ( key ) => key + 1 );
+		setCheckStatus( 'idle' );
+	}, [ scope ] );
+
 	// The initial email is the activation email from account creation; this only resends.
 	const resend = useCallback( async () => {
 		setIsSending( true );
 		setHasSendError( false );
-		// A resend supersedes an earlier check, so clear its stale "still unconfirmed"/error
-		// notice rather than leaving it beside the fresh cooldown.
-		setCheckStatus( 'idle' );
 
 		try {
 			const { success } = await sendVerificationEmail();
 			if ( ! success ) {
 				throw new Error( 'unsuccessful_response' );
 			}
-			sentAtRef.current = Date.now();
-			markResent( scope );
-			setSecondsUntilResend( RESEND_COOLDOWN_SECONDS );
-			// A fresh link restarts the polling window: the user might confirm this new
-			// link from another device long after the previous window lapsed.
-			setIsPollingExpired( false );
-			setPollWindowKey( ( key ) => key + 1 );
+			noteSent();
 			recordTracksEvent( 'calypso_signup_email_verification_email_sent', {
 				flow,
 				is_resend: true,
@@ -78,7 +81,7 @@ export function useEmailVerification( flow: string, scope: string ) {
 		} finally {
 			setIsSending( false );
 		}
-	}, [ sendVerificationEmail, flow, scope ] );
+	}, [ sendVerificationEmail, flow, noteSent ] );
 
 	// Recompute the cooldown from the send time rather than decrementing a counter: mobile
 	// browsers suspend timers while the user is away in their email app.
@@ -144,5 +147,6 @@ export function useEmailVerification( flow: string, scope: string ) {
 		checkStatus,
 		checkNow,
 		resend,
+		noteSent,
 	};
 }

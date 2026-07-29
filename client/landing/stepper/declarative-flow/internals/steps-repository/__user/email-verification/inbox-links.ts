@@ -9,35 +9,45 @@ export interface InboxLink {
 	url: string;
 }
 
-// Common webmail providers, keyed by email domain. Gmail and Yahoo take a search URL
-// pre-filtered to our sender; the rest deep-link to the inbox (no reliable search URL).
-const PROVIDERS: Record< string, InboxLink > = {
+// Common webmail providers, keyed by email domain. The URL is built from the address so
+// multi-account users land on the right mailbox (e.g. Gmail's `authuser`). Gmail and Yahoo
+// also pre-filter to our sender; the rest just deep-link to the inbox.
+const PROVIDERS: Record< string, { providerName: string; url: ( email: string ) => string } > = {
 	'gmail.com': {
 		providerName: 'Gmail',
-		url: `https://mail.google.com/mail/u/0/#search/from%3A${ SENDER }+newer_than%3A1d`,
+		url: ( email ) =>
+			`https://mail.google.com/mail/u/?authuser=${ encodeURIComponent(
+				email
+			) }#search/from%3A${ SENDER }+newer_than%3A1d`,
 	},
 	'googlemail.com': {
 		providerName: 'Gmail',
-		url: `https://mail.google.com/mail/u/0/#search/from%3A${ SENDER }+newer_than%3A1d`,
+		url: ( email ) =>
+			`https://mail.google.com/mail/u/?authuser=${ encodeURIComponent(
+				email
+			) }#search/from%3A${ SENDER }+newer_than%3A1d`,
 	},
 	'yahoo.com': {
 		providerName: 'Yahoo Mail',
-		url: `https://mail.yahoo.com/d/search/keyword=from%253A${ SENDER }`,
+		url: () => `https://mail.yahoo.com/d/search/keyword=from%253A${ SENDER }`,
 	},
-	'outlook.com': { providerName: 'Outlook', url: 'https://outlook.live.com/mail/0/' },
-	'hotmail.com': { providerName: 'Outlook', url: 'https://outlook.live.com/mail/0/' },
-	'live.com': { providerName: 'Outlook', url: 'https://outlook.live.com/mail/0/' },
-	'msn.com': { providerName: 'Outlook', url: 'https://outlook.live.com/mail/0/' },
-	'icloud.com': { providerName: 'iCloud Mail', url: 'https://www.icloud.com/mail/' },
-	'me.com': { providerName: 'iCloud Mail', url: 'https://www.icloud.com/mail/' },
-	'mac.com': { providerName: 'iCloud Mail', url: 'https://www.icloud.com/mail/' },
-	'aol.com': { providerName: 'AOL Mail', url: 'https://mail.aol.com/' },
-	'proton.me': { providerName: 'Proton Mail', url: 'https://mail.proton.me/u/0/' },
-	'protonmail.com': { providerName: 'Proton Mail', url: 'https://mail.proton.me/u/0/' },
+	'outlook.com': { providerName: 'Outlook', url: () => 'https://outlook.live.com/mail/0/' },
+	'hotmail.com': { providerName: 'Outlook', url: () => 'https://outlook.live.com/mail/0/' },
+	'live.com': { providerName: 'Outlook', url: () => 'https://outlook.live.com/mail/0/' },
+	'msn.com': { providerName: 'Outlook', url: () => 'https://outlook.live.com/mail/0/' },
+	'icloud.com': { providerName: 'iCloud Mail', url: () => 'https://www.icloud.com/mail/' },
+	'me.com': { providerName: 'iCloud Mail', url: () => 'https://www.icloud.com/mail/' },
+	'mac.com': { providerName: 'iCloud Mail', url: () => 'https://www.icloud.com/mail/' },
+	'aol.com': { providerName: 'AOL Mail', url: () => 'https://mail.aol.com/' },
+	'proton.me': { providerName: 'Proton Mail', url: () => 'https://mail.proton.me/u/0/' },
+	'protonmail.com': { providerName: 'Proton Mail', url: () => 'https://mail.proton.me/u/0/' },
 };
 
 // The inbox link for an email's provider, or null for an unrecognized/self-hosted domain.
 export function getInboxLink( email: string | undefined ): InboxLink | null {
 	const domain = email ? extractDomainWithExtension( email ) : undefined;
-	return ( domain && PROVIDERS[ domain ] ) || null;
+	const provider = domain ? PROVIDERS[ domain ] : undefined;
+	return provider && email
+		? { providerName: provider.providerName, url: provider.url( email ) }
+		: null;
 }
