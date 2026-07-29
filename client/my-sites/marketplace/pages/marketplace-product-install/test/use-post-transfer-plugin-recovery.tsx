@@ -1,7 +1,7 @@
 /**
  * @jest-environment jsdom
  */
-import { renderHook } from '@testing-library/react';
+import { act, renderHook } from '@testing-library/react';
 import { usePostTransferPluginRecovery } from '../use-post-transfer-plugin-recovery';
 
 const mockDispatch = jest.fn();
@@ -61,6 +61,37 @@ describe( 'usePostTransferPluginRecovery', () => {
 		expect( mockIntervalDelay ).toBe( 3000 );
 		tick();
 		expect( fetchSitePlugins ).toHaveBeenCalledWith( 1 );
+	} );
+
+	it( 'looks once straight away rather than waiting out the first interval', () => {
+		render( { installedPlugin: null } );
+		expect( fetchSitePlugins ).toHaveBeenCalledWith( 1 );
+	} );
+
+	it( 'runs one plugin-list request at a time', async () => {
+		// Overlapping requests can settle out of order, so a round would not mean a current answer.
+		const { result } = render( { installedPlugin: null } );
+		const duringFirst = fetchSitePlugins.mock.calls.length;
+		tick();
+		expect( fetchSitePlugins.mock.calls.length ).toBe( duringFirst );
+		expect( result.current.pollInFlight ).toBe( true );
+
+		await act( async () => {} );
+		expect( result.current.pollInFlight ).toBe( false );
+		expect( result.current.completedPolls ).toBe( 1 );
+	} );
+
+	it( 'reports activation as exhausted once its attempts are spent', async () => {
+		const { result } = render();
+		expect( result.current.activationExhausted ).toBe( false );
+
+		for ( let i = 0; i < 3; i++ ) {
+			await act( async () => {
+				tick();
+			} );
+		}
+		expect( activatePlugin ).toHaveBeenCalledTimes( 3 );
+		expect( result.current.activationExhausted ).toBe( true );
 	} );
 
 	it( 'does not poll while disabled', () => {

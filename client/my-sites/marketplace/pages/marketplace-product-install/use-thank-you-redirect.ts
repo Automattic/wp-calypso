@@ -8,15 +8,10 @@ import { useSelector, useDispatch } from 'calypso/state';
 import { isTransferRunning, transferStates } from 'calypso/state/automated-transfer/constants';
 import { getSiteAdminUrl } from 'calypso/state/sites/selectors';
 import { requestActiveTheme } from 'calypso/state/themes/actions';
-import { useDelayedCondition } from './use-delayed-condition';
-import {
-	PLUGIN_POLL_INTERVAL_MS,
-	usePostTransferPluginRecovery,
-} from './use-post-transfer-plugin-recovery';
+import { usePostTransferPluginRecovery } from './use-post-transfer-plugin-recovery';
 
-// How long the plugin list gets to turn up the uploaded plugin. Long enough that a poll started
-// just inside the window, and any activation its result triggers, still lands in time.
-const INSTALL_CONFIRMATION_GRACE_PERIOD_MS = PLUGIN_POLL_INTERVAL_MS * 5;
+// Rounds of polling the uploaded plugin gets to turn up in before the flow stops expecting it.
+const CONFIRMATION_POLLS = 5;
 
 const pluginsAdminUrl = ( adminUrl: string | null | undefined, query = '' ) =>
 	adminUrl ? `${ adminUrl }plugins.php${ query }` : null;
@@ -109,14 +104,7 @@ export function useThankYouRedirect( {
 		isAtomicTransferReady
 	);
 
-	// Which is why the plugin list, polled below, gets a window to show the plugin before we conclude
-	// it never will.
-	const uploadInstallUnconfirmed = useDelayedCondition(
-		uploadTransferSettled && ! pluginConfirmedActive,
-		INSTALL_CONFIRMATION_GRACE_PERIOD_MS
-	);
-
-	usePostTransferPluginRecovery( {
+	const { completedPolls, pollInFlight, activationExhausted } = usePostTransferPluginRecovery( {
 		siteId,
 		enabled: ( isRecoveryFlow || uploadTransferSettled ) && ! pluginActive,
 		// isAtomicTransferReady already requires manage_options, which the transfer propagates after
@@ -129,6 +117,17 @@ export function useThankYouRedirect( {
 		ownsActivation: ( ! atomicFlow && currentStep === 0 ) || ( atomicFlow && currentStep === 2 ),
 		installedPlugin,
 	} );
+
+	// Stop expecting the uploaded plugin only after rounds of polling have gone looking and come back
+	// with nothing — a clock would run out mid-request, and navigating abandons whatever it was doing.
+	// A plugin that turned up but will not activate has also stopped being worth waiting for, and the
+	// plain list shows it either way.
+	const uploadInstallUnconfirmed =
+		uploadTransferSettled &&
+		! pollInFlight &&
+		completedPolls >= CONFIRMATION_POLLS &&
+		( ! installedPlugin || activationExhausted );
+
 	// Check completition of all flows and redirect to thank you page
 	useEffect( () => {
 		// Happens in 3 cases:
