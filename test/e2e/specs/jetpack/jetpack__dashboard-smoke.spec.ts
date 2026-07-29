@@ -23,12 +23,13 @@ test.describe(
 	DataHelper.createSuiteTitle( 'Jetpack: Dashboard Smoke Test' ),
 	{ tag: [ tags.JETPACK_WPCOM_INTEGRATION ] },
 	() => {
-		const accountName = getTestAccountByFeature( envToFeatureKey( envVariables ) );
-		const testAccount = new TestAccount( accountName );
-
 		test( 'As a user, I can navigate Jetpack Dashboard tabs and Settings', async ( { page } ) => {
 			test.skip( envVariables.TEST_ON_ATOMIC !== true, 'Only runs on Atomic sites' );
 
+			// Must resolve inside the test: a throw at describe scope aborts collection for the entire run.
+			const testAccount = new TestAccount(
+				getTestAccountByFeature( envToFeatureKey( envVariables ) )
+			);
 			let jetpackDashboardPage: JetpackDashboardPage;
 
 			await test.step( 'Authenticate', async () => {
@@ -57,6 +58,8 @@ test.describe(
 				} );
 			}
 
+			// Newsletter is deliberately absent: Jetpack does not render that tab on any Atomic
+			// variation, and this test only runs on Atomic. See TESTOPS-148.
 			for ( const tab of [
 				'Security',
 				'Performance',
@@ -64,10 +67,6 @@ test.describe(
 				'Sharing',
 				'Discussion',
 				'Traffic',
-				// Parked (TESTOPS-148): the Newsletter tab is not rendered on any of the seven
-				// Atomic variations, so clicking it always times out. The pre-migration Jest
-				// spec never covered this tab; it was added by the migration in #112865.
-				// 'Newsletter',
 			] as SettingsTabs[] ) {
 				await test.step( `Click on ${ tab } tab in the Settings view`, async () => {
 					await jetpackDashboardPage.clickTab( { view: 'Settings', tab } );
