@@ -1,13 +1,11 @@
 import { siteByIdQuery } from '@automattic/api-queries';
-import { WPCOM_FEATURES_MANAGE_PLUGINS } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
 import { useQuery } from '@tanstack/react-query';
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import { isAtomicTransferredSite } from 'calypso/dashboard/utils/site-atomic-transfers';
 import { useInterval } from 'calypso/lib/interval';
 import { useSelector, useDispatch } from 'calypso/state';
 import { transferStates } from 'calypso/state/automated-transfer/constants';
-import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { getSiteAdminUrl } from 'calypso/state/sites/selectors';
 import { requestActiveTheme } from 'calypso/state/themes/actions';
 import { usePostTransferPluginRecovery } from './use-post-transfer-plugin-recovery';
@@ -17,7 +15,6 @@ import { usePostTransferPluginRecovery } from './use-post-transfer-plugin-recove
 // upload flows land on wp-admin's plugins page; a theme flow goes to the marketplace thank-you page.
 export function useThankYouRedirect( {
 	siteId,
-	selectedSite,
 	selectedSiteSlug,
 	currentStep,
 	isPluginUploadFlow,
@@ -27,13 +24,11 @@ export function useThankYouRedirect( {
 	isThemeActive,
 	installedPlugin,
 	pluginActive,
-	uploadedPluginSlug,
 	atomicFlow,
 	isAtomic,
 	automatedTransferStatus,
 }: {
 	siteId: number;
-	selectedSite: { ID?: number } | null | undefined;
 	selectedSiteSlug: string | null;
 	currentStep: number;
 	isPluginUploadFlow: boolean;
@@ -43,7 +38,6 @@ export function useThankYouRedirect( {
 	isThemeActive: boolean;
 	installedPlugin: { slug?: string; id?: string } | null | undefined;
 	pluginActive: boolean;
-	uploadedPluginSlug: string;
 	atomicFlow: boolean;
 	isAtomic: boolean | null;
 	automatedTransferStatus: string | null;
@@ -73,9 +67,14 @@ export function useThankYouRedirect( {
 	// Prefer fresh URL when available; if in atomic flow, wait for fresh URL
 	const pluginsUrlFinal = atomicFlow ? pluginsUrlFresh : pluginsUrlFresh || pluginsUrlSelector;
 
-	const canManagePlugins = useSelector( ( state ) =>
-		siteHasFeature( state, selectedSite?.ID, WPCOM_FEATURES_MANAGE_PLUGINS )
-	);
+	// `isAtomic` reads the Redux site, which the completing transfer refreshes, so it flips true at
+	// the same moment the readiness checks below start passing. Latch what the upload arm actually
+	// asks — did this flow begin before the site was Atomic — so the two stop contradicting.
+	const startedNonAtomicRef = useRef< boolean | null >( null );
+	if ( startedNonAtomicRef.current === null && isAtomic !== null ) {
+		startedNonAtomicRef.current = ! isAtomic;
+	}
+	const startedNonAtomic = startedNonAtomicRef.current === true;
 
 	// A plugin install that has landed on an Atomic site with the plugin possibly still inactive.
 	// Covers both the checkout-initiated flow (atomicFlow never set) and the flow where this component
@@ -108,12 +107,14 @@ export function useThankYouRedirect( {
 			// plugin only reads active once the transfer is far enough along, and for an atomicFlow the
 			// redirect URL below resolves only after the transfer completes, so no separate arm is needed.
 			( installedPlugin && pluginActive ) ||
-			// Transfer to atomic uploading a zip plugin
-			( uploadedPluginSlug &&
-				isPluginUploadFlow &&
-				! isAtomic &&
+			// A zip upload that transferred the site. The transfer installs and activates the archive
+			// before it reports complete, so a completed transfer on a site that started out non-Atomic
+			// is the whole signal. It can't wait on the plugin itself: the plugin list was fetched while
+			// the site was still Simple, and the uploaded slug is absent whenever the transfer couldn't
+			// read it off the archive — neither survives an otherwise successful install.
+			( isPluginUploadFlow &&
+				startedNonAtomic &&
 				transferStates.COMPLETE === automatedTransferStatus &&
-				canManagePlugins &&
 				isAtomicTransferReady )
 		) {
 			// Require a resolved pluginsUrlFinal before redirecting
@@ -126,10 +127,8 @@ export function useThankYouRedirect( {
 		pluginActive,
 		automatedTransferStatus,
 		isPluginUploadFlow,
-		isAtomic,
-		canManagePlugins,
+		startedNonAtomic,
 		installedPlugin,
-		uploadedPluginSlug,
 		pluginsUrlFinal,
 		isAtomicTransferReady,
 	] ); // We need to trigger this hook also when `automatedTransferStatus` changes cause the plugin install is done on the background in that case.

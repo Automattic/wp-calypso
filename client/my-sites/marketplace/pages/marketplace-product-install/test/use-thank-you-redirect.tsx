@@ -1,7 +1,7 @@
 /**
  * @jest-environment jsdom
  */
-import { waitFor } from '@testing-library/react';
+import { act, waitFor } from '@testing-library/react';
 import { transferStates } from 'calypso/state/automated-transfer/constants';
 import { renderHookWithProvider } from 'calypso/test-helpers/testing-library';
 import { useThankYouRedirect } from '../use-thank-you-redirect';
@@ -26,9 +26,6 @@ jest.mock( '@automattic/api-queries', () => ( {
 	} ),
 } ) );
 
-// canManagePlugins — the plan feature gate on the redirect.
-jest.mock( 'calypso/state/selectors/site-has-feature', () => () => true );
-
 const PLUGINS_URL =
 	'https://example.wpcomstaging.com/wp-admin/plugins.php?activate=true&plugin_status=active';
 
@@ -42,7 +39,6 @@ const ATOMIC_READY = {
 type Props = Parameters< typeof useThankYouRedirect >[ 0 ];
 const baseProps: Props = {
 	siteId: 1,
-	selectedSite: { ID: 1 },
 	selectedSiteSlug: 'example.wordpress.com',
 	currentStep: 2,
 	isPluginUploadFlow: false,
@@ -52,13 +48,31 @@ const baseProps: Props = {
 	isThemeActive: false,
 	installedPlugin: { slug: 'give', id: 'give/give' },
 	pluginActive: false,
-	uploadedPluginSlug: '',
 	atomicFlow: true,
 	isAtomic: true,
 	automatedTransferStatus: transferStates.COMPLETE,
 };
-const render = ( overrides?: Partial< Props > ) =>
-	renderHookWithProvider( () => useThankYouRedirect( { ...baseProps, ...overrides } ) );
+
+// A zip upload: no product slug in the route, and no plugin in the store, since the list was
+// fetched while the site was still Simple.
+const UPLOAD_PROPS: Partial< Props > = {
+	isPluginUploadFlow: true,
+	pluginSlug: '',
+	installedPlugin: null,
+	pluginActive: false,
+	atomicFlow: false,
+};
+
+const render = ( overrides?: Partial< Props > ) => {
+	const { rerender, ...rest } = renderHookWithProvider(
+		( props: Props ) => useThankYouRedirect( props ),
+		{ initialProps: { ...baseProps, ...overrides } }
+	);
+	return {
+		...rest,
+		rerender: ( next: Partial< Props > ) => rerender( { ...baseProps, ...overrides, ...next } ),
+	};
+};
 
 describe( 'useThankYouRedirect', () => {
 	// jsdom can't navigate, so stand in a plain location object and read back the href the hook sets.
@@ -118,5 +132,36 @@ describe( 'useThankYouRedirect', () => {
 		mockFreshSite = ATOMIC_READY;
 		render( { atomicFlow: true, pluginActive: true } );
 		await waitFor( () => expect( window.location.href ).toBe( PLUGINS_URL ) );
+	} );
+
+	it( 'redirects an uploaded zip once its transfer completes, though the site now reads Atomic', async () => {
+		mockFreshSite = ATOMIC_READY;
+		const { rerender } = render( {
+			...UPLOAD_PROPS,
+			isAtomic: false,
+			automatedTransferStatus: transferStates.ACTIVE,
+		} );
+		expect( window.location.href ).toBe( '' );
+
+		// Completing the transfer refreshes the site, so `isAtomic` turns true alongside the status.
+		rerender( { isAtomic: true, automatedTransferStatus: transferStates.COMPLETE } );
+		await waitFor( () => expect( window.location.href ).toBe( PLUGINS_URL ) );
+	} );
+
+	it( 'waits for the transferred site to become reachable before redirecting an uploaded zip', async () => {
+		// Atomic, but the capabilities wp-admin needs have not propagated yet.
+		mockFreshSite = { ...ATOMIC_READY, capabilities: { manage_options: false } };
+		render( { ...UPLOAD_PROPS, isAtomic: false } );
+		await act( async () => {} );
+		expect( window.location.href ).toBe( '' );
+	} );
+
+	it( 'does not redirect an upload to a site that was already Atomic', async () => {
+		// Nothing transferred, so a stale completed status must not stand in for the install.
+		mockFreshSite = ATOMIC_READY;
+		render( { ...UPLOAD_PROPS, isAtomic: true } );
+		// Readiness is satisfied, so an arm that ignored the starting state would have redirected.
+		await waitFor( () => expect( mockRecoveryProps?.canActivate ).toBe( true ) );
+		expect( window.location.href ).toBe( '' );
 	} );
 } );

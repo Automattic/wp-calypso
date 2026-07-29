@@ -254,7 +254,6 @@ export function useProductInstall( {
 
 	useThankYouRedirect( {
 		siteId,
-		selectedSite,
 		selectedSiteSlug,
 		currentStep,
 		isPluginUploadFlow,
@@ -264,7 +263,6 @@ export function useProductInstall( {
 		isThemeActive,
 		installedPlugin,
 		pluginActive,
-		uploadedPluginSlug,
 		atomicFlow,
 		isAtomic,
 		automatedTransferStatus,
