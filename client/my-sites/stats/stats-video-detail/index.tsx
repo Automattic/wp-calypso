@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, useLayoutEffect, useMemo } from 'react';
 import titlecase from 'to-title-case';
@@ -7,6 +8,8 @@ import {
 	recordCurrentScreen,
 } from 'calypso/my-sites/stats/hooks/use-stats-navigation-history';
 import { useSelector } from 'calypso/state';
+import { getSiteSlug } from 'calypso/state/sites/selectors';
+import getSiteAdminUrl from 'calypso/state/sites/selectors/get-site-admin-url';
 import {
 	getSiteStatsNormalizedData,
 	hasSiteStatsQueryFailed,
@@ -32,6 +35,7 @@ interface StatsVideoDetailProps {
 interface VideoStatsPost {
 	post_title?: string;
 	post_date?: string;
+	poster?: string | null;
 }
 
 export default function StatsVideoDetail( { postId, period, context }: StatsVideoDetailProps ) {
@@ -56,6 +60,17 @@ export default function StatsVideoDetail( { postId, period, context }: StatsVide
 		siteId ? hasSiteStatsQueryFailed( state, siteId, 'statsVideo', videoInfoQuery ) : false
 	);
 	const videoStatsPost = videoStatsData?.post ?? null;
+
+	// Per the STATS-296 spec the thumbnail links to the video in the media
+	// library: wp-admin's upload.php in Odyssey, the /media route in Calypso
+	// (which itself forwards default-interface sites to upload.php). The
+	// video's stats id is its attachment id.
+	const isOdysseyStats = config.isEnabled( 'is_running_in_jetpack_site' );
+	const siteSlug = useSelector( ( state ) => getSiteSlug( state, siteId ) );
+	const siteAdminUrl = useSelector( ( state ) => getSiteAdminUrl( state, siteId ) );
+	const mediaLibraryUrl = isOdysseyStats
+		? siteAdminUrl && `${ siteAdminUrl }upload.php?item=${ postId }`
+		: siteSlug && `/media/${ siteSlug }/${ postId }`;
 	const breadcrumbTrail = useStatsBreadcrumbTrail();
 	const statType = context.query.statType ?? null;
 
@@ -75,6 +90,7 @@ export default function StatsVideoDetail( { postId, period, context }: StatsVide
 
 	const videoTitle = videoStatsPost?.post_title || null;
 	const videoDate = videoStatsPost?.post_date || null;
+	const videoPoster = videoStatsPost?.poster || null;
 	// Loading until statsVideo answers (success or failure); a response
 	// without a post means there is genuinely no title and the card hides.
 	const isVideoInfoLoading = ! videoStatsData && ! hasVideoInfoFailed;
@@ -102,6 +118,8 @@ export default function StatsVideoDetail( { postId, period, context }: StatsVide
 					<VideoDetailsCard
 						title={ videoTitle }
 						date={ videoDate }
+						poster={ videoPoster }
+						mediaLibraryUrl={ mediaLibraryUrl || null }
 						isLoading={ isVideoInfoLoading }
 					/>
 					<VideoSummary postId={ postId } initialStatType={ statType } />
