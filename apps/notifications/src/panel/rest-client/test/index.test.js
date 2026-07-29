@@ -10,6 +10,9 @@ import getUnreadNoteIds from '../../state/selectors/get-unread-note-ids';
 import Client from '../index';
 import { init } from '../wpcom';
 
+// Mirrors settings.max_limit in the client.
+const MAX_LIMIT = 200;
+
 // Distinct, monotonic timestamps so ordering is unambiguous: a higher id is a
 // newer note, so the lowest id is always the oldest (last) in the sorted list.
 const makeNote = ( id ) => ( {
@@ -123,16 +126,34 @@ describe( 'RestClient', () => {
 			expect( getCalls ).toHaveLength( 0 );
 		} );
 
-		it( 'stops paging when a capped page echoes back only the anchor', () => {
-			// 99 loaded leaves one slot under max_limit, so the next page is capped to
-			// number=1. An inclusive `before` echoes that single anchor note back, so
-			// the page is full-size (1 of 1) yet adds nothing new. Without the no-new-id
-			// check this never latches and the catch-up loop refetches forever.
-			store.dispatch( actions.notes.addNotes( fullPage( 99, 100 ) ) ); // ids 100..2
+		it( 'requests the final slot plus the echoed anchor when one short of the cap', () => {
+			// One short of max_limit leaves a single slot. An inclusive `before` echoes
+			// the anchor back, so the page is sized to the slot plus one for that anchor
+			// (number=2). ids (MAX_LIMIT)..2, oldest is id 2.
+			store.dispatch( actions.notes.addNotes( fullPage( MAX_LIMIT - 1, MAX_LIMIT ) ) );
 
 			client.loadMore();
 			expect( getCalls ).toHaveLength( 1 );
-			expect( getCalls[ 0 ].query.number ).toBe( 1 ); // capped to the remaining slot
+			expect( getCalls[ 0 ].query.number ).toBe( 2 ); // remaining slot + echoed anchor
+
+			// Server echoes the anchor (id 2) and returns the genuinely older note
+			// (id 1), filling the window to the cap.
+			getCalls[ 0 ].callback( null, {
+				notes: [ makeNote( 2 ), makeNote( 1 ) ],
+				last_seen_time: 0,
+			} );
+
+			expect( getAllNotes( store.getState() ) ).toHaveLength( MAX_LIMIT );
+		} );
+
+		it( 'latches when a capped page returns only the echoed anchor', () => {
+			// Same one-short-of-cap setup, but the server is exhausted: the page returns
+			// just the anchor. The no-new guard must latch instead of refetching.
+			// ids (MAX_LIMIT)..2, oldest is id 2.
+			store.dispatch( actions.notes.addNotes( fullPage( MAX_LIMIT - 1, MAX_LIMIT ) ) );
+
+			client.loadMore();
+			expect( getCalls ).toHaveLength( 1 );
 
 			const oldest = getAllNotes( store.getState() ).slice( -1 )[ 0 ]; // id 2
 			getCalls[ 0 ].callback( null, { notes: [ oldest ], last_seen_time: 0 } );
@@ -145,12 +166,46 @@ describe( 'RestClient', () => {
 		} );
 
 		it( 'reports no more notes once the cap is reached', () => {
-			// 100 notes (settings.max_limit) loaded means we never page past the cap.
-			store.dispatch( actions.notes.addNotes( fullPage( 100, 100 ) ) );
+			// A full max_limit window loaded means we never page past the cap.
+			store.dispatch( actions.notes.addNotes( fullPage( MAX_LIMIT, MAX_LIMIT ) ) );
 			expect( client.hasMoreNotes() ).toBe( false );
 
 			client.loadMore();
 			expect( getCalls ).toHaveLength( 0 );
+		} );
+
+		// End-to-end against a server with effectively unlimited notes and an inclusive
+		// `before` cursor (production WP.com behavior): the window must page all the way
+		// to the cap despite each older page echoing the anchor back.
+		it( 'loads exactly max_limit unique notes by paging to the cap', () => {
+			const TOP_ID = 1000; // server has ids 1000..1, far more than the cap.
+			// Map an inclusive `before` (epoch seconds) back to its anchor id and
+			// return the anchor plus the notes immediately older than it.
+			const epochBase = Math.floor( Date.parse( makeNote( 0 ).timestamp ) / 1000 );
+			const respondInclusive = ( call ) => {
+				const { number, before } = call.query;
+				const startId = before === undefined ? TOP_ID : before - epochBase;
+				const notes = [];
+				for ( let i = 0; i < number && startId - i >= 1; i++ ) {
+					notes.push( makeNote( startId - i ) );
+				}
+				call.callback( null, { notes, last_seen_time: 0 } );
+			};
+
+			client.getNotes();
+			respondInclusive( getCalls[ 0 ] );
+
+			for ( let i = 0; i < 100 && client.hasMoreNotes(); i++ ) {
+				getCalls.length = 0;
+				client.loadMore();
+				if ( ! getCalls.length ) {
+					break;
+				}
+				respondInclusive( getCalls[ getCalls.length - 1 ] );
+			}
+
+			const unique = new Set( getAllNotes( store.getState() ).map( ( n ) => n.id ) );
+			expect( unique.size ).toBe( MAX_LIMIT );
 		} );
 
 		// A filtered (Unread) fetch drops older notes into the shared store. The All
@@ -398,14 +453,15 @@ describe( 'RestClient', () => {
 			client.setFilter( { unread: 1 } );
 			getCalls[ 0 ].callback( null, { notes: fullPage( 10, 209 ), last_seen_time: 0 } );
 
-			// Page in full older pages until the list reaches max_limit (100).
-			for ( let oldest = 199; oldest >= 119; oldest -= 10 ) {
+			// Page in full older pages (10 at a time) until the list reaches max_limit.
+			// Starts at 10 loaded (ids 209..200); each page adds the next 10 older ids.
+			for ( let oldest = 199; oldest >= 219 - MAX_LIMIT; oldest -= 10 ) {
 				getCalls.length = 0;
 				client.loadMore();
 				getCalls[ 0 ].callback( null, { notes: fullPage( 10, oldest ), last_seen_time: 0 } );
 			}
 
-			expect( getUnreadNoteIds( store.getState() ) ).toHaveLength( 100 );
+			expect( getUnreadNoteIds( store.getState() ) ).toHaveLength( MAX_LIMIT );
 			expect( client.filteredHasMore ).toBe( false );
 
 			// At the cap, load-more must not fire another request.

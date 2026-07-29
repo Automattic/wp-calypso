@@ -26,8 +26,7 @@ interface ExpandableSidebarMenuProps {
 	className?: string;
 	title: TranslateResult;
 	count?: number;
-	countLabel?: string;
-	compactCount?: boolean;
+	customCount?: ReactNode;
 	onClick?: ( event?: MouseEvent< HTMLAnchorElement > ) => void;
 	icon?: string | null;
 	materialIcon?: string | null;
@@ -72,8 +71,7 @@ export const ExpandableSidebarMenu = ( menuProps: ExpandableSidebarMenuProps ) =
 		className,
 		title,
 		count,
-		countLabel,
-		compactCount,
+		customCount,
 		onClick,
 		icon,
 		materialIcon,
@@ -144,8 +142,7 @@ export const ExpandableSidebarMenu = ( menuProps: ExpandableSidebarMenuProps ) =
 				<ExpandableSidebarHeading
 					title={ title }
 					count={ count }
-					countLabel={ countLabel }
-					compactCount={ compactCount }
+					customCount={ customCount }
 					onClick={
 						typeof onClick === 'function'
 							? ( event ) => {

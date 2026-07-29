@@ -13,22 +13,26 @@ $modal-content-padding: 32px;
 	overflow: hidden;
 }
 
-.stats-utm-builder__overlay {
+// Anchored on the modal frame, never on `.stats-utm-builder__overlay`: that class is the
+// Modal's portal root, and Odyssey prefixes first-party CSS with the portal root as an
+// ancestor, so nesting under it asks for the overlay inside itself and never matches.
+// The frame is a real descendant, so the same rules survive prefixing.
+.stats-utm-builder__frame {
 	@media (min-width: $break-large) {
-		.components-modal__frame {
+		// Compound with the base class to keep specificity over @wordpress/components' own
+		// `.components-modal__frame` max-height, which the prefix's `:where()` doesn't add to.
+		&.components-modal__frame {
 			max-height: 85%;
 		}
 	}
 
-	.components-modal__header {
+	// Mirrors @wordpress/components' own `.components-modal__header .components-modal__header-heading`
+	// so this outranks it — the prefix's `:where()` adds no specificity of its own.
+	.components-modal__header .components-modal__header-heading {
 		font-family: $font-recoleta;
-	
-		// Overwrite the modal's class
-		h1.components-modal__header-heading {
-			font-size: 32px;
-			line-height: 39px;
-			font-weight: 400;
-		}
+		font-size: 32px;
+		line-height: 39px;
+		font-weight: 400;
 	}
 }
 
@@ -41,11 +45,7 @@ $modal-content-padding: 32px;
 	}
 }
 
-// Focused-field outline follows the admin accent. Deliberately not nested
-// under `.stats-utm-builder__overlay`: that class is the Modal's portal root,
-// and Odyssey prefixes CSS with the portal root as an ancestor — nesting would
-// ask for the overlay inside itself and never match. Leading with the fields
-// wrapper keeps a valid descendant chain; `input[type="text"]` outranks the
+// Focused-field outline follows the admin accent. `input[type="text"]` outranks the
 // base `.form-text-input:focus` rule.
 .stats-utm-builder__fields input[type="text"].form-text-input:focus {
 	border-color: var(--color-accent);

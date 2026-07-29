@@ -25,6 +25,7 @@ const defaultValues: Required< UserPreferences > = {
 	'reader-profile-posts-visibility': 'public',
 	'reader-profile-sites-visibility': 'public',
 	'reader-profile-hidden-sites': [],
+	two_step_security_key_reregister_required: false,
 };
 
 const staticPreferenceStatIds: Record< string, string > = {
@@ -43,6 +44,7 @@ const staticPreferenceStatIds: Record< string, string > = {
 	'reader-profile-posts-visibility': 'postvis',
 	'reader-profile-sites-visibility': 'sitevis',
 	'reader-profile-hidden-sites': 'hidsit',
+	two_step_security_key_reregister_required: '2fakey',
 };
 
 const dynamicPreferenceStatPrefixes: Record< string, string > = {

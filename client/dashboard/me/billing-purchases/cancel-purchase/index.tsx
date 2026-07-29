@@ -60,6 +60,7 @@ import {
 	getPurchaseCancellationFlowType,
 	hasAmountAvailableToRefund,
 	hasMarketplaceProduct,
+	hasQueryableSite,
 	isAgencyPartnerType,
 	isRemoved,
 	isGSuiteOrGoogleWorkspaceProductSlug,
@@ -445,10 +446,18 @@ function CancelPurchaseInner() {
 	// mutation's invalidation tears down livePurchase.
 	const purchase = ( snapshotPurchase ?? livePurchase ) as Purchase;
 
-	const { data: sitePurchases } = useSuspenseQuery( sitePurchasesQuery( purchase.blog_id ) );
-	const { data: siteFeatures, isPending: siteFeaturesQueryIsPending } = useSuspenseQuery(
-		siteFeaturesQuery( purchase.blog_id )
-	);
+	// Holding-site purchases are attached to a blog the user cannot read, so every
+	// site-scoped request below would 403 and trip the auth layer's /log-in redirect.
+	const purchaseHasQueryableSite = hasQueryableSite( purchase );
+
+	const { data: sitePurchases } = useQuery( {
+		...sitePurchasesQuery( purchase.blog_id ),
+		enabled: purchaseHasQueryableSite,
+	} );
+	const { data: siteFeatures, isLoading: siteFeaturesQueryIsLoading } = useQuery( {
+		...siteFeaturesQuery( purchase.blog_id ),
+		enabled: purchaseHasQueryableSite,
+	} );
 	const { data: plans } = useSuspenseQuery( plansQuery() );
 	const isSplitCancelRemoveEnabled = useIsSplitCancelRemoveEnabled();
 	const { data: purchaseCancelFeatures } = useQuery(
@@ -456,21 +465,25 @@ function CancelPurchaseInner() {
 	);
 
 	const lastSiteQueryIsError = useRef< boolean >( false );
-	const { data: hasBeenExtended } = useQuery( hasPurchaseBeenExtendedQuery( purchase.blog_id ) );
+	const { data: hasBeenExtended } = useQuery( {
+		...hasPurchaseBeenExtendedQuery( purchase.blog_id ),
+		enabled: purchaseHasQueryableSite,
+	} );
 	const {
 		data: site,
-		isPending: siteQueryIsPending,
+		isLoading: siteQueryIsLoading,
 		isError: siteQueryIsError,
 	} = useQuery( {
 		...siteByIdQuery( purchase.blog_id ),
-		enabled: ! lastSiteQueryIsError.current,
+		enabled: purchaseHasQueryableSite && ! lastSiteQueryIsError.current,
 	} );
 	if ( siteQueryIsError ) {
 		lastSiteQueryIsError.current = siteQueryIsError;
 	}
-	const { data: atomicTransfer, isPending: siteLatestAtomicTransferQueryIsPending } = useQuery(
-		siteLatestAtomicTransferQuery( purchase.blog_id )
-	);
+	const { data: atomicTransfer, isLoading: siteLatestAtomicTransferQueryIsLoading } = useQuery( {
+		...siteLatestAtomicTransferQuery( purchase.blog_id ),
+		enabled: purchaseHasQueryableSite,
+	} );
 	const { data: productsList, isPending: productsQueryIsPending } = useQuery( productsQuery() );
 	const { data: selectedDomain, isPending: domainQueryIsPending } = useQuery( {
 		...domainQuery( purchase.meta ?? '' ),
@@ -478,12 +491,16 @@ function CancelPurchaseInner() {
 	} );
 	// site.options.unmapped_url is incorrect for .home.blog sites — read the
 	// actual WPCOM domain from the site's domain list instead.
-	const { data: siteDomains } = useQuery( siteDomainsQuery( purchase.blog_id ) );
+	const { data: siteDomains } = useQuery( {
+		...siteDomainsQuery( purchase.blog_id ),
+		enabled: purchaseHasQueryableSite,
+	} );
 	const wpcomDomain =
 		siteDomains?.find( ( d ) => d.wpcom_domain || d.is_wpcom_staging_domain )?.domain ?? null;
-	const { data: cancellationOffers } = useQuery(
-		cancellationOffersQuery( purchase.blog_id, purchase.ID )
-	);
+	const { data: cancellationOffers } = useQuery( {
+		...cancellationOffersQuery( purchase.blog_id, purchase.ID ),
+		enabled: purchaseHasQueryableSite,
+	} );
 	const { data: userPreferenceForSurveyComplete, isPending: userPreferencesQueryIsPending } =
 		useQuery( userPreferenceQuery( getCancelPurchaseSurveyCompletedPreferenceKey( purchase.ID ) ) );
 	const userHasCompletedCancelSurveyForPurchase = Boolean( userPreferenceForSurveyComplete );
@@ -561,10 +578,9 @@ function CancelPurchaseInner() {
 			return [];
 		}
 
-		const subs =
-			purchases.filter( ( _purchase ) =>
-				hasMarketplaceProduct( Object.values( productsList ), _purchase.product_slug )
-			) ?? [];
+		const subs = ( purchases ?? [] ).filter( ( _purchase ) =>
+			hasMarketplaceProduct( Object.values( productsList ), _purchase.product_slug )
+		);
 		return subs;
 	};
 
@@ -1483,11 +1499,11 @@ function CancelPurchaseInner() {
 	const createdErrorNoticeForRedirect = useRef< boolean >( undefined );
 
 	const isDataLoading =
-		siteFeaturesQueryIsPending ||
-		( ! lastSiteQueryIsError.current && siteQueryIsPending ) ||
+		siteFeaturesQueryIsLoading ||
+		( ! lastSiteQueryIsError.current && siteQueryIsLoading ) ||
 		purchaseQueryIsPending ||
 		( Boolean( purchase.meta ) && domainQueryIsPending ) ||
-		siteLatestAtomicTransferQueryIsPending ||
+		siteLatestAtomicTransferQueryIsLoading ||
 		productsQueryIsPending ||
 		userPreferencesQueryIsPending;
 
@@ -1634,7 +1650,7 @@ function CancelPurchaseInner() {
 	}
 
 	const isImport = Boolean( site && ( site?.options?.import_engine ?? false ) );
-	const hasBackupsFeature = siteFeatures?.active?.indexOf( 'backups' ) >= 0;
+	const hasBackupsFeature = Boolean( siteFeatures?.active?.includes( 'backups' ) );
 	const siteSlug = purchase.site_slug ?? site?.slug ?? '';
 
 	if ( ! state?.initialized && purchase ) {

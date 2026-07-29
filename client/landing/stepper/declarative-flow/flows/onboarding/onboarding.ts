@@ -501,9 +501,9 @@ const onboarding: FlowV2< typeof initialize > = {
 		 */
 		useEffect( () => {
 			if ( isLoggedIn && user?.email && user?.date ) {
-				addSurvicate( { email: user.email, registrationDate: user.date } );
+				addSurvicate( { email: user.email, registrationDate: user.date, userId: user.ID } );
 			}
-		}, [ isLoggedIn, currentStepSlug, user?.email, user?.date ] );
+		}, [ isLoggedIn, currentStepSlug, user?.email, user?.date, user?.ID ] );
 
 		// Preload the visual split experiment
 		useEffect( () => {

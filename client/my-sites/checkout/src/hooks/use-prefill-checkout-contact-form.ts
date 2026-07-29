@@ -1,5 +1,5 @@
 import config from '@automattic/calypso-config';
-import { useCompleteAllSteps } from '@automattic/composite-checkout';
+import { useCompleteAllSteps, useSuppressNextForwardScroll } from '@automattic/composite-checkout';
 import { getCountryPostalCodeSupport } from '@automattic/wpcom-checkout';
 import { useDispatch as useWordPressDataDispatch } from '@wordpress/data';
 import debugFactory from 'debug';
@@ -17,11 +17,13 @@ const debug = debugFactory( 'calypso:use-prefill-checkout-contact-form' );
 
 function useCachedContactDetailsForCheckoutForm(
 	cachedContactDetails: PossiblyCompleteDomainContactDetails | null,
-	setShouldShowContactDetailsValidationErrors?: ( allowed: boolean ) => void
+	setShouldShowContactDetailsValidationErrors?: ( allowed: boolean ) => void,
+	suppressScrollOnAutoComplete?: boolean
 ): boolean {
 	const countriesList = useCountryList();
 	const reduxDispatch = useReduxDispatch();
 	const completeAllSteps = useCompleteAllSteps();
+	const suppressNextForwardScroll = useSuppressNextForwardScroll();
 	const [ isComplete, setComplete ] = useState( false );
 	const didFillForm = useRef( false );
 
@@ -84,6 +86,11 @@ function useCachedContactDetailsForCheckoutForm(
 				}
 				if ( cachedContactDetails.countryCode ) {
 					setShouldShowContactDetailsValidationErrors?.( false );
+					// Auto-completing on load shouldn't jump the viewport the way a
+					// shopper pressing "Continue" would.
+					if ( suppressScrollOnAutoComplete ) {
+						suppressNextForwardScroll( true );
+					}
 					debug( 'Contact details are populated; attempting to auto-complete all steps' );
 					return completeAllSteps();
 				}
@@ -124,6 +131,8 @@ function useCachedContactDetailsForCheckoutForm(
 		setShouldShowContactDetailsValidationErrors,
 		reduxDispatch,
 		completeAllSteps,
+		suppressNextForwardScroll,
+		suppressScrollOnAutoComplete,
 		cachedContactDetails,
 		arePostalCodesSupported,
 		loadDomainContactDetailsFromCache,
@@ -140,15 +149,18 @@ function useCachedContactDetailsForCheckoutForm(
 export function usePrefillCheckoutContactForm( {
 	setShouldShowContactDetailsValidationErrors,
 	isLoggedOut,
+	suppressScrollOnAutoComplete,
 }: {
 	setShouldShowContactDetailsValidationErrors?: ( allowed: boolean ) => void;
 	isLoggedOut?: boolean;
+	suppressScrollOnAutoComplete?: boolean;
 } ): boolean {
 	const { contactDetails, isError } = useCachedContactDetails( { isLoggedOut } );
 
 	const hasCompleted = useCachedContactDetailsForCheckoutForm(
 		contactDetails,
-		setShouldShowContactDetailsValidationErrors
+		setShouldShowContactDetailsValidationErrors,
+		suppressScrollOnAutoComplete
 	);
 
 	// If there is an error, we return it as true and let the form handle it.

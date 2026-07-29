@@ -8,6 +8,7 @@ import {
 	getDisplayVariant,
 	getMutationFlowType,
 	getPurchaseCancellationFlowType,
+	hasQueryableSite,
 	isExpiredAndInGracePeriod,
 	isExpiredOrRemoved,
 	isRemoved,
@@ -108,11 +109,20 @@ describe( 'getMutationFlowType', () => {
 		).toBe( CANCEL_FLOW_TYPE.CANCEL_WITH_REFUND );
 	} );
 
-	test( 'intent=remove + auto-renew off → REMOVE (DELETE)', () => {
+	test( 'intent=remove + auto-renew off + refund available → CANCEL_WITH_REFUND', () => {
 		expect(
 			getMutationFlowType(
 				'remove',
 				makePurchase( { is_auto_renew_enabled: false, is_refundable: true, refund_amount: 50 } )
+			)
+		).toBe( CANCEL_FLOW_TYPE.CANCEL_WITH_REFUND );
+	} );
+
+	test( 'intent=remove + auto-renew off + no refund → REMOVE (DELETE)', () => {
+		expect(
+			getMutationFlowType(
+				'remove',
+				makePurchase( { is_auto_renew_enabled: false, is_refundable: false, refund_amount: 0 } )
 			)
 		).toBe( CANCEL_FLOW_TYPE.REMOVE );
 	} );
@@ -309,5 +319,28 @@ describe( 'isExpiredWithNoAutoRenewAttemptsLeft', () => {
 				} )
 			)
 		).toBe( false );
+	} );
+} );
+
+describe( 'hasQueryableSite', () => {
+	test( 'is true for a purchase attached to a real site', () => {
+		expect( hasQueryableSite( makePurchase( { blog_id: 12345 } ) ) ).toBe( true );
+	} );
+
+	test( 'is false for a holding-site purchase (siteless Akismet)', () => {
+		expect(
+			hasQueryableSite(
+				makePurchase( {
+					blog_id: 12345,
+					is_attached_to_holding_site: true,
+					product_type: 'akismet',
+					product_slug: 'ak_personal_yearly',
+				} )
+			)
+		).toBe( false );
+	} );
+
+	test( 'is false when there is no blog_id at all', () => {
+		expect( hasQueryableSite( makePurchase( { blog_id: 0 } ) ) ).toBe( false );
 	} );
 } );

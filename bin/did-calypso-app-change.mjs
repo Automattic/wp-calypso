@@ -36,7 +36,7 @@ export default async function didCalypsoAppChange( { slug, dir, artifactDir } ) 
 
 	try {
 		await exec(
-			`diff -r --exclude="*.js.map" --exclude="*.asset.php" --exclude="build_meta.json" --exclude="README.md" ${ artifactDir } ${ prevReleaseDir }`,
+			`diff -qr --exclude="*.js.map" --exclude="*.asset.php" --exclude="build_meta.json" --exclude="README.md" ${ artifactDir } ${ prevReleaseDir }`,
 			{ cwd: dir, maxBuffer: 1024 * 1024 * 32 } // 32MB buffer for large diffs.
 		);
 		return false;

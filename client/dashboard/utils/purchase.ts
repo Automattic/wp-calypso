@@ -276,6 +276,19 @@ export function isJetpackHoldingSitePurchase( purchase: Purchase ): boolean {
 }
 
 /**
+ * Whether site-scoped endpoints can be called for this purchase's `blog_id`.
+ *
+ * Holding-site purchases (siteless Akismet/Jetpack/Marketplace/A4A) are attached
+ * to a placeholder blog the user is not a member of, so `/sites/{blog_id}/…`
+ * returns `403 authorization_required`. The dashboard's auth layer reads that as
+ * a signed-out session and redirects to `/log-in`, which bounces straight back —
+ * an infinite loop. Gate site queries and site-dependent UI on this.
+ */
+export function hasQueryableSite( purchase: Purchase ): boolean {
+	return Boolean( purchase.blog_id ) && ! purchase.is_attached_to_holding_site;
+}
+
+/**
  * Return the bill period as a sentence case string. Note that Purchae includes
  * this text already as `bill_period_label` but it is not sentence case and has
  * no punctuation.
@@ -504,6 +517,14 @@ export function isGoogleWorkspace( purchase: Purchase | ObjectWithProductSlug ):
 
 export function isDomainTransfer( purchase: Purchase | ObjectWithProductSlug ): boolean {
 	return purchase.product_slug === DomainProductSlugs.TRANSFER_IN;
+}
+
+/**
+ * A domain connection (also known as a domain mapping): a domain registered
+ * elsewhere that points at a WordPress.com site.
+ */
+export function isDomainMapping( purchase: Purchase | ObjectWithProductSlug ): boolean {
+	return purchase.product_slug === DomainProductSlugs.DOMAIN_MAPPING;
 }
 
 export function isSiteRedirect( purchase: Purchase ): boolean {
@@ -847,7 +868,11 @@ export function getMutationFlowType(
 		return getPurchaseCancellationFlowType( purchase );
 	}
 
-	if ( purchase.is_auto_renew_enabled && hasAmountAvailableToRefund( purchase ) ) {
+	// intent === 'remove': refundability alone decides the endpoint. A purchase
+	// still inside its refund window goes through cancel-and-refund rather than
+	// the bare DELETE — auto-renew is typically already off by the time Remove is
+	// offered (the user cancelled first), so it must not gate the refund.
+	if ( hasAmountAvailableToRefund( purchase ) ) {
 		return CANCEL_FLOW_TYPE.CANCEL_WITH_REFUND;
 	}
 	return CANCEL_FLOW_TYPE.REMOVE;

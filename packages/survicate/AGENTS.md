@@ -22,7 +22,7 @@ visible package-wide. The methods we use:
 
 - `invokeEvent(name)` — trigger an event-based survey.
 - `closeSurvey()` — dismiss any currently displayed survey.
-- `setVisitorTraits(traits)` — attach traits (email, account age) used for targeting.
+- `setVisitorTraits(traits)` — attach traits (user ID, email, account age) used for targeting.
 - `addEventListener(event, handler)` / `removeEventListener` — subscribe to SDK events
   such as `survey_displayed`.
 - `destroyVisitor()` — reset the visitor.
@@ -76,8 +76,9 @@ deferred-until-`SurvicateReady` path.
 Visitor traits are published from **two** independent `setSurvicateVisitorTraits`
 call sites, and this is intentional — don't consolidate them into one:
 
-- `useSurvicate` pushes **identity** traits (`email`, `account_age_in_days`) once
-  from the authenticated user, right after the script loads, next to the
+- `useSurvicate` pushes **identity** traits (`user_id`, `email`,
+  `account_age_in_days`) once from the authenticated user, right after the script
+  loads, next to the
   `calypso_survicate_user_not_available_error` tracks event that fires when the
   email is missing at load time.
 - `useSurvicateVisitTraits` pushes **behavioral** traits (`msd_visits_<slug>`)

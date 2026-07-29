@@ -208,6 +208,41 @@ describe( 'Purchase Management Buttons', () => {
 		expect( screen.queryByText( /Cancel subscription/ ) ).not.toBeInTheDocument();
 	} );
 
+	it( 'renders a Remove button for a domain connection bundled with a plan, even though auto-renew is ON', async () => {
+		nock( 'https://public-api.wordpress.com' )
+			.get( '/rest/v1.2/me/payment-methods?expired=include' )
+			.reply( 200 );
+
+		const store = createMockReduxStoreForPurchase(
+			{
+				...purchase,
+				product_id: 5,
+				product_slug: 'domain_map',
+				product_name: 'Domain Connection',
+				product_type: 'domain_map',
+				meta: 'onecooltestsite.com',
+				expiry_status: 'included',
+				is_auto_renew_enabled: true,
+			},
+			{ 212628935: [ { name: 'onecooltestsite.com' } ] }
+		);
+
+		render(
+			<QueryClientProvider client={ queryClient }>
+				<ReduxProvider store={ store }>
+					<ManagePurchase
+						purchaseId={ Number( purchase.ID ) }
+						isSiteLevel
+						siteSlug="onecooltestsite.com"
+					/>
+				</ReduxProvider>
+			</QueryClientProvider>
+		);
+
+		expect( await screen.findByText( /Remove Domain Connection/ ) ).toBeVisible();
+		expect( screen.queryByText( /Cancel subscription/ ) ).not.toBeInTheDocument();
+	} );
+
 	it( 'renders a Remove button with product-name language for an Akismet purchase attached to an akismet siteless holding site when auto-renew is OFF', async () => {
 		nock( 'https://public-api.wordpress.com' )
 			.get( '/rest/v1.1/me/payment-methods?expired=include' )

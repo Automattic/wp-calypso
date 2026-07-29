@@ -157,13 +157,21 @@ $font-sf-pro-display: "SF Pro Display", $sans;
 		}
 
 		// Each crumb (separator + label) wraps in a span that is the actual
-		// flex item; without min-width: 0 on it, the label inside can never
-		// shrink and the ellipsis rules below have no effect.
+		// flex item. Intermediate crumbs must not shrink: their content
+		// (separator and link) is flex-shrink: 0, so a shrinking wrapper just
+		// overflows and the label paints over the next crumb. Only the last
+		// crumb — the current page — shrinks, so its min-width: 0 lets the
+		// label's ellipsis rules below take effect.
 		.stats-breadcrumbs__item {
 			display: inline-flex;
 			align-items: center;
 			gap: 8px;
-			min-width: 0;
+			flex-shrink: 0;
+
+			&:last-child {
+				flex-shrink: 1;
+				min-width: 0;
+			}
 		}
 
 		.stats-breadcrumbs__link {

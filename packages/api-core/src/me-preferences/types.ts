@@ -46,4 +46,5 @@ export interface UserPreferences {
 	'reader-profile-posts-visibility'?: 'public' | 'hidden';
 	'reader-profile-sites-visibility'?: 'public' | 'hidden';
 	'reader-profile-hidden-sites'?: number[];
+	two_step_security_key_reregister_required?: boolean;
 }
