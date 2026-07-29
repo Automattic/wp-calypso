@@ -10,7 +10,7 @@ import UserVerificationChecker from 'calypso/lib/user/verification-checker';
 import { useSelector } from 'calypso/state';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
 import { getInboxLink } from './inbox-links';
-import { gateShownAt, markGateShown } from './storage';
+import { gateShownAt, getPendingEmail, markGateShown, setPendingEmail } from './storage';
 import { useEmailVerification } from './use-email-verification';
 import { useUpdateEmail } from './use-update-email';
 
@@ -31,6 +31,19 @@ interface Props {
 const EmailVerificationGate = ( { flow, scope, logo, onDone }: Props ) => {
 	const { __ } = useI18n();
 	const user = useSelector( getCurrentUser );
+	const hasSubmitted = useRef( false );
+	const headingRef = useRef< HTMLDivElement >( null );
+	const emailInputRef = useRef< HTMLInputElement >( null );
+
+	// After a change the account keeps its old email until the new one is confirmed, so track
+	// the pending new address to display and re-verify against. It's persisted (seeded from
+	// storage here) so it survives a refresh — `/me` alone can't recover it.
+	const [ pendingEmail, setPendingEmailState ] = useState< string | null >(
+		() => getPendingEmail( scope ) ?? null
+	);
+	const [ isEditing, setIsEditing ] = useState( false );
+	const [ emailInput, setEmailInput ] = useState( '' );
+
 	const {
 		isVerified,
 		isSending,
@@ -40,18 +53,8 @@ const EmailVerificationGate = ( { flow, scope, logo, onDone }: Props ) => {
 		checkNow,
 		resend,
 		noteSent,
-	} = useEmailVerification( flow, scope );
+	} = useEmailVerification( flow, scope, pendingEmail );
 	const { status: updateStatus, updateEmail } = useUpdateEmail();
-
-	const hasSubmitted = useRef( false );
-	const headingRef = useRef< HTMLDivElement >( null );
-	const emailInputRef = useRef< HTMLInputElement >( null );
-
-	// After a change the account keeps its old email until the new one is confirmed, so
-	// track the pending new address to display and re-verify against.
-	const [ pendingEmail, setPendingEmail ] = useState< string | null >( null );
-	const [ isEditing, setIsEditing ] = useState( false );
-	const [ emailInput, setEmailInput ] = useState( '' );
 
 	const shownEmail = pendingEmail ?? user?.email ?? '';
 	const inboxLink = getInboxLink( shownEmail );
@@ -118,31 +121,16 @@ const EmailVerificationGate = ( { flow, scope, logo, onDone }: Props ) => {
 			setIsEditing( false );
 			return;
 		}
-		const ok = await updateEmail( next );
-		if ( ok ) {
-			// The change sends a fresh confirmation to the new address; verify against it now.
-			setPendingEmail( next );
+		const target = await updateEmail( next );
+		if ( target ) {
+			// The change sends a fresh confirmation to the new address; persist and verify
+			// against it, and move focus back to the heading now the form is gone.
+			setPendingEmail( scope, target );
+			setPendingEmailState( target );
 			noteSent();
 			setIsEditing( false );
+			headingRef.current?.focus();
 		}
-	};
-
-	// A resend after a change must re-issue the pending change (which mails the new
-	// address); the plain resend targets the account's current address.
-	const isResending = isSending || updateStatus === 'saving';
-	const handleResend = async () => {
-		if ( pendingEmail ) {
-			const ok = await updateEmail( pendingEmail );
-			if ( ok ) {
-				noteSent();
-				recordTracksEvent( 'calypso_signup_email_verification_email_sent', {
-					flow,
-					is_resend: true,
-				} );
-			}
-			return;
-		}
-		resend();
 	};
 
 	const subText = useMemo(
@@ -240,9 +228,9 @@ const EmailVerificationGate = ( { flow, scope, logo, onDone }: Props ) => {
 						) }
 
 						<Step.SecondaryButton
-							onClick={ handleResend }
-							disabled={ isResending || secondsUntilResend > 0 }
-							isBusy={ isResending }
+							onClick={ resend }
+							disabled={ isSending || secondsUntilResend > 0 }
+							isBusy={ isSending }
 						>
 							{ secondsUntilResend > 0
 								? sprintf(

@@ -1,7 +1,9 @@
 // One session-storage record per gate attempt, keyed by flow and user, so its state
 // survives leaving/re-entering the account step or a refresh. The record's presence means
-// the gate is pending; resolving removes it. `sentAt` anchors the resend cooldown and
-// `shownAt` (stamped when the gate first renders) anchors the duration metric.
+// the gate is pending; resolving removes it. `sentAt` anchors the resend cooldown,
+// `shownAt` (stamped when the gate first renders) anchors the duration metric, and
+// `pendingEmail` holds the new address after "Update email" (a pending change leaves
+// `/me` on the old address, so the gate can't recover the target after a refresh otherwise).
 
 export const RESEND_COOLDOWN_SECONDS = 60;
 
@@ -14,6 +16,7 @@ export function gateScope( flow: string, userId: number | string | null | undefi
 interface GateRecord {
 	sentAt: number;
 	shownAt: number;
+	pendingEmail?: string;
 }
 
 function storageKey( scope: string ): string {
@@ -56,7 +59,7 @@ export function isGatePending( scope: string ): boolean {
 	return read( scope ) !== null;
 }
 
-// Called on confirm or skip.
+// Called once the email is confirmed.
 export function resolveGate( scope: string ): void {
 	try {
 		sessionStorage.removeItem( storageKey( scope ) );
@@ -71,6 +74,19 @@ export function markResent( scope: string ): void {
 	if ( record ) {
 		write( scope, { ...record, sentAt: Date.now() } );
 	}
+}
+
+// Called after "Update email" so the new address (a pending change `/me` won't report)
+// survives a refresh, and drives the display, inbox link, and resend target.
+export function setPendingEmail( scope: string, email: string ): void {
+	const record = read( scope );
+	if ( record ) {
+		write( scope, { ...record, pendingEmail: email } );
+	}
+}
+
+export function getPendingEmail( scope: string ): string | undefined {
+	return read( scope )?.pendingEmail;
 }
 
 export function gateShownAt( scope: string ): number {

@@ -18,7 +18,7 @@ import uiReducer from 'calypso/state/ui/reducer';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import EmailVerificationGate from '..';
 import { renderStep } from '../../../test/helpers';
-import { beginGate, isGatePending } from '../storage';
+import { beginGate, isGatePending, setPendingEmail } from '../storage';
 
 jest.mock( 'calypso/lib/analytics/tracks' );
 
@@ -170,6 +170,70 @@ describe( 'EmailVerificationGate', () => {
 		expect( recordTracksEvent ).toHaveBeenCalledWith(
 			'calypso_signup_email_verification_update_email',
 			expect.objectContaining( { flow: FLOW } )
+		);
+	} );
+
+	it( 'keeps the updated address after a refresh', async () => {
+		mockApi()
+			.post( '/rest/v1.1/me/settings' )
+			.reply( 200, { user_email_change_pending: true, new_user_email: 'correct@example.com' } );
+		const { unmount } = render();
+
+		await userEvent.click( screen.getByRole( 'button', { name: 'Update email' } ) );
+		await userEvent.clear( screen.getByRole( 'textbox', { name: 'Email address' } ) );
+		await userEvent.type(
+			screen.getByRole( 'textbox', { name: 'Email address' } ),
+			'correct@example.com'
+		);
+		await userEvent.click( screen.getByRole( 'button', { name: 'Save' } ) );
+		await screen.findByText( 'correct@example.com' );
+
+		// A refresh remounts and restores the pending address from storage, not from `/me`.
+		unmount();
+		render();
+
+		expect( await screen.findByText( 'correct@example.com' ) ).toBeVisible();
+	} );
+
+	it( 'returns focus to the heading after saving a new email', async () => {
+		mockApi()
+			.post( '/rest/v1.1/me/settings' )
+			.reply( 200, { user_email_change_pending: true, new_user_email: 'correct@example.com' } );
+		render();
+
+		await userEvent.click( screen.getByRole( 'button', { name: 'Update email' } ) );
+		await userEvent.clear( screen.getByRole( 'textbox', { name: 'Email address' } ) );
+		await userEvent.type(
+			screen.getByRole( 'textbox', { name: 'Email address' } ),
+			'correct@example.com'
+		);
+		await userEvent.click( screen.getByRole( 'button', { name: 'Save' } ) );
+		await screen.findByText( 'correct@example.com' );
+
+		const heading = screen.getByRole( 'heading', { name: 'Verify your email' } );
+		expect( heading.closest( '.onboarding-email-verification__heading' ) ).toHaveFocus();
+	} );
+
+	it( 'surfaces a failed resend of the updated address on the verification screen', async () => {
+		jest.useFakeTimers();
+		const user = userEvent.setup( { advanceTimers: jest.advanceTimersByTime } );
+		// Start already past an update, with the pending address restored from storage.
+		beginGate( SCOPE );
+		setPendingEmail( SCOPE, 'correct@example.com' );
+		render();
+
+		act( () => {
+			jest.advanceTimersByTime( COOLDOWN_MS );
+		} );
+
+		// The resend re-issues the pending change; make it fail.
+		mockApi().post( '/rest/v1.1/me/settings' ).reply( 500, { error: 'server_error' } );
+		await user.click( await screen.findByRole( 'button', { name: 'Resend' } ) );
+
+		expect( await screen.findByText( /We couldn’t send the email\./ ) ).toBeVisible();
+		expect( recordTracksEvent ).toHaveBeenCalledWith(
+			'calypso_signup_email_verification_email_send_failed',
+			expect.objectContaining( { flow: FLOW, is_resend: true } )
 		);
 	} );
 

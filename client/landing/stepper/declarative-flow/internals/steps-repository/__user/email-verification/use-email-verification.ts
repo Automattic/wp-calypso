@@ -1,4 +1,4 @@
-import { fetchUser } from '@automattic/api-core';
+import { fetchUser, updateUserSettings } from '@automattic/api-core';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { useSendEmailVerification } from 'calypso/landing/stepper/hooks/use-send-email-verification';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
@@ -24,7 +24,7 @@ const POLL_LIMIT_MS = 15 * 60 * 1000;
 // for an unverified email).
 type CheckStatus = 'idle' | 'checking' | 'unconfirmed' | 'error';
 
-export function useEmailVerification( flow: string, scope: string ) {
+export function useEmailVerification( flow: string, scope: string, pendingEmail: string | null ) {
 	const dispatch = useDispatch();
 	const isVerified = useSelector( isCurrentUserEmailVerified );
 	const sendVerificationEmail = useSendEmailVerification();
@@ -54,17 +54,24 @@ export function useEmailVerification( flow: string, scope: string ) {
 		setIsPollingExpired( false );
 		setPollWindowKey( ( key ) => key + 1 );
 		setCheckStatus( 'idle' );
+		setHasSendError( false );
 	}, [ scope ] );
 
-	// The initial email is the activation email from account creation; this only resends.
+	// One resend for both cases, so errors and the send/failure events always surface on the
+	// verification screen. When a change is pending the plain resend would mail the account's
+	// current (old) address, so re-issue the change instead — that re-sends to the new one.
 	const resend = useCallback( async () => {
 		setIsSending( true );
 		setHasSendError( false );
 
 		try {
-			const { success } = await sendVerificationEmail();
-			if ( ! success ) {
-				throw new Error( 'unsuccessful_response' );
+			if ( pendingEmail ) {
+				await updateUserSettings( { user_email: pendingEmail } );
+			} else {
+				const { success } = await sendVerificationEmail();
+				if ( ! success ) {
+					throw new Error( 'unsuccessful_response' );
+				}
 			}
 			noteSent();
 			recordTracksEvent( 'calypso_signup_email_verification_email_sent', {
@@ -81,7 +88,7 @@ export function useEmailVerification( flow: string, scope: string ) {
 		} finally {
 			setIsSending( false );
 		}
-	}, [ sendVerificationEmail, flow, noteSent ] );
+	}, [ pendingEmail, sendVerificationEmail, flow, noteSent ] );
 
 	// Recompute the cooldown from the send time rather than decrementing a counter: mobile
 	// browsers suspend timers while the user is away in their email app.
@@ -130,7 +137,10 @@ export function useEmailVerification( flow: string, scope: string ) {
 			// mistaken for an unconfirmed email the way `fetchCurrentUser` would.
 			const { email_verified } = await fetchUser();
 			if ( email_verified ) {
+				// Flip the flag now for a responsive finish, and refresh the whole user so
+				// downstream steps see the (possibly changed) address, not just the flag.
 				dispatch( setUserEmailVerified( true ) );
+				dispatch( fetchCurrentUser() );
 			} else {
 				setCheckStatus( 'unconfirmed' );
 			}
