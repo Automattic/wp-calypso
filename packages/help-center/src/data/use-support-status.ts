@@ -5,7 +5,7 @@ import { useHelpCenterContext } from '../contexts/HelpCenterContext';
 import { SupportStatus } from '../types';
 
 // Bump me to invalidate the cache.
-const VERSION = 3;
+const VERSION = 2;
 
 interface APIFetchOptions {
 	global: boolean;

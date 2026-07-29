@@ -1,64 +1,83 @@
+/* eslint-disable wpcalypso/jsx-classname-namespace */
 import { recordTracksEvent } from '@automattic/calypso-analytics';
+import { calendar, external, Icon } from '@wordpress/icons';
 import { useEffect } from 'react';
-import { Banner, LinkListItem } from './help-center-cta-variants';
 import './help-center-cta.scss';
-import type { HelpCenterCTAVariantProps } from './help-center-cta-variants';
 
-interface HelpCenterCTAVariantDefinition {
-	/** Where this variant renders. Reported with the Tracks events. */
-	placement: string;
-	Component: React.FC< HelpCenterCTAVariantProps >;
-}
+export type HelpCenterCTAVariant = 'banner' | 'link-list-item';
 
-/**
- * Every variant the backend can ask for. A new one is a new entry here plus a
- * component in `help-center-cta-variants.tsx` — nothing else knows the list.
- */
-export const HELP_CENTER_CTA_VARIANTS = {
-	banner: { placement: 'help-center-home', Component: Banner },
-	'link-list-item': { placement: 'help-center-more-resources', Component: LinkListItem },
-} as const satisfies Record< string, HelpCenterCTAVariantDefinition >;
-
-export type HelpCenterCTAVariant = keyof typeof HELP_CENTER_CTA_VARIANTS;
-
-export interface HelpCenterCTAProps extends Omit< HelpCenterCTAVariantProps, 'onClick' > {
+export interface HelpCenterCTAProps {
 	variant: HelpCenterCTAVariant;
 	ctaId: string;
+	placement: string;
+	url: string;
+	title: string;
+	description?: string;
+	actionLabel?: string;
 }
 
-// Module-level so it survives remounts (e.g. search filtering the More
-// resources list) and only resets on a full page load, per cta_id.
-const reportedCtaIds = new Set< string >();
-
-function useCTATracking(
-	eventProps: { cta_id: string; variant: string; placement: string } | null
-) {
+export const HelpCenterCTA: React.FC< HelpCenterCTAProps > = ( {
+	variant,
+	ctaId,
+	placement,
+	url,
+	title,
+	description,
+	actionLabel,
+} ) => {
 	useEffect( () => {
-		if ( ! eventProps || reportedCtaIds.has( eventProps.cta_id ) ) {
-			return;
-		}
-		reportedCtaIds.add( eventProps.cta_id );
-		recordTracksEvent( 'calypso_helpcenter_cta_impression', eventProps );
+		recordTracksEvent( 'calypso_helpcenter_cta_impression', {
+			cta_id: ctaId,
+			variant,
+			placement,
+		} );
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [ eventProps?.cta_id ] );
+	}, [] );
 
-	return () => {
-		if ( eventProps ) {
-			recordTracksEvent( 'calypso_helpcenter_cta_click', eventProps );
-		}
+	const trackClick = () => {
+		recordTracksEvent( 'calypso_helpcenter_cta_click', {
+			cta_id: ctaId,
+			variant,
+			placement,
+		} );
 	};
-}
 
-export const HelpCenterCTA: React.FC< HelpCenterCTAProps > = ( { variant, ctaId, ...content } ) => {
-	const variantDefinition = HELP_CENTER_CTA_VARIANTS[ variant ];
-	const trackClick = useCTATracking(
-		variantDefinition ? { cta_id: ctaId, variant, placement: variantDefinition.placement } : null
-	);
-
-	if ( ! variantDefinition ) {
-		return null;
+	if ( variant === 'link-list-item' ) {
+		return (
+			<li className="help-center-cta__resource-item help-center-link__item">
+				<div className="help-center-link__cell">
+					<a href={ url } target="_blank" rel="noreferrer" onClick={ trackClick }>
+						<Icon icon={ calendar } size={ 24 } />
+						<span>
+							<span className="help-center-cta__resource-title">{ title }</span>
+							{ description && (
+								<span className="help-center-cta__resource-description">{ description }</span>
+							) }
+						</span>
+						<Icon icon={ external } size={ 20 } />
+					</a>
+				</div>
+			</li>
+		);
 	}
 
-	const { Component } = variantDefinition;
-	return <Component { ...content } onClick={ trackClick } />;
+	return (
+		<div className="help-center-cta__banner">
+			<p className="help-center-cta__title">
+				<strong>{ title }</strong>
+			</p>
+			{ description && <p className="help-center-cta__description">{ description }</p> }
+			{ actionLabel && (
+				<a
+					className="help-center-cta__action"
+					href={ url }
+					target="_blank"
+					rel="noreferrer"
+					onClick={ trackClick }
+				>
+					{ actionLabel }
+				</a>
+			) }
+		</div>
+	);
 };

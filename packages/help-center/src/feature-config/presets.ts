@@ -15,9 +15,6 @@ const wpcomPreset: HelpCenterFeatureConfig = {
 	home: {
 		recentConversations: true,
 	},
-	contextualCta: {
-		enabled: true,
-	},
 	moreResources: {
 		visible: true,
 		supportHistory: true,
@@ -45,9 +42,6 @@ const a4aPreset: HelpCenterFeatureConfig = {
 	home: {
 		recentConversations: false,
 	},
-	contextualCta: {
-		enabled: false,
-	},
 	moreResources: {
 		visible: false,
 		supportHistory: false,
@@ -74,9 +68,6 @@ const commerceGardenPreset: HelpCenterFeatureConfig = {
 	},
 	home: {
 		recentConversations: true,
-	},
-	contextualCta: {
-		enabled: false,
 	},
 	moreResources: {
 		visible: true,
