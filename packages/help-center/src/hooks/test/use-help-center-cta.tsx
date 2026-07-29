@@ -120,6 +120,20 @@ describe( 'useHelpCenterCTA', () => {
 		expect( setup( { cta: { ...bannerCta, url: '' } } ).result.current ).toBeNull();
 	} );
 
+	it( 'refuses a destination that is not an http(s) url', () => {
+		expect(
+			setup( { cta: { ...bannerCta, url: 'javascript:alert(1)' } } ).result.current // eslint-disable-line no-script-url
+		).toBeNull();
+		expect(
+			setup( { cta: { ...bannerCta, url: 'data:text/html,hi' } } ).result.current
+		).toBeNull();
+		expect( setup( { cta: { ...bannerCta, url: 'not a url' } } ).result.current ).toBeNull();
+	} );
+
+	it( 'refuses a relative destination', () => {
+		expect( setup( { cta: { ...bannerCta, url: '/help/contact' } } ).result.current ).toBeNull();
+	} );
+
 	it( 'skips the CTA and the support-status fetch when the product disables it', () => {
 		const { result } = setup( { enabled: false } );
 
