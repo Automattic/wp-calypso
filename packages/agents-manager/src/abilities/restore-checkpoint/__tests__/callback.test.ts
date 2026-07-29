@@ -6,7 +6,10 @@ import {
 	setCheckpoint,
 } from '../../../utils/checkpoints';
 import { isEditorPage } from '../../../utils/is-editor-page';
-import { getProviderCheckpoints } from '../../../utils/provider-checkpoints';
+import {
+	getProviderCheckpointKeys,
+	getProviderCheckpoints,
+} from '../../../utils/provider-checkpoints';
 import { getToolCallIdFromConversationHistory } from '../../../utils/tool-call-history';
 import { restoreCheckpointCallback } from '../callback';
 
@@ -20,6 +23,7 @@ jest.mock( '../../../utils/checkpoints', () => ( {
 } ) );
 jest.mock( '../../../utils/is-editor-page', () => ( { isEditorPage: jest.fn( () => true ) } ) );
 jest.mock( '../../../utils/provider-checkpoints', () => ( {
+	getProviderCheckpointKeys: jest.fn( () => null ),
 	getProviderCheckpoints: jest.fn(),
 } ) );
 jest.mock( '../../../utils/tool-call-history', () => ( {
@@ -30,6 +34,7 @@ const mockGetCheckpoints = getCheckpoints as jest.Mock;
 const mockHasCheckpoint = hasCheckpoint as jest.Mock;
 const mockGetToolCallId = getToolCallIdFromConversationHistory as jest.Mock;
 const mockGetProviderCheckpoints = getProviderCheckpoints as jest.Mock;
+const mockGetProviderCheckpointKeys = getProviderCheckpointKeys as jest.Mock;
 
 const makeProviderCheckpoints = () => ( {
 	hasCheckpoint: jest.fn( ( id: string ) => id === 'toolu_target' ),
@@ -54,6 +59,7 @@ beforeEach( () => {
 	] );
 	mockGetToolCallId.mockReturnValue( null );
 	mockGetProviderCheckpoints.mockReturnValue( undefined );
+	mockGetProviderCheckpointKeys.mockReturnValue( null );
 } );
 
 describe( 'restoreCheckpointCallback', () => {
@@ -189,28 +195,48 @@ describe( 'restoreCheckpointCallback', () => {
 		} );
 	} );
 
-	it( 'records the reciprocal in the provider store for a delegated restore', async () => {
+	it( 'records the reciprocal in the provider store scoped to the target keys', async () => {
 		mockHasCheckpoint.mockReturnValue( false );
 		mockGetToolCallId.mockReturnValue( 'toolu_restore' );
+		mockGetProviderCheckpointKeys.mockReturnValue( [ 'site_title', 'site_metadata' ] );
 		const providerCheckpoints = makeProviderCheckpoints();
 		mockGetProviderCheckpoints.mockReturnValue( providerCheckpoints );
 
 		await restoreCheckpointCallback( makeInput() );
 
-		expect( providerCheckpoints.setCheckpoint ).toHaveBeenCalledWith( 'toolu_restore', [], {
-			toolCallId: 'toolu_restore',
-			toolId: 'big_sky__restore_checkpoint',
-			summary: 'I undid the color change.',
-			restoresCheckpointId: 'toolu_target',
-			requestIntentType: 'redo',
-			createdByRequestIntentType: 'undo',
-		} );
+		expect( mockGetProviderCheckpointKeys ).toHaveBeenCalledWith( 'toolu_target' );
+		expect( providerCheckpoints.setCheckpoint ).toHaveBeenCalledWith(
+			'toolu_restore',
+			[ 'site_title', 'site_metadata' ],
+			{
+				toolCallId: 'toolu_restore',
+				toolId: 'big_sky__restore_checkpoint',
+				summary: 'I undid the color change.',
+				restoresCheckpointId: 'toolu_target',
+				requestIntentType: 'redo',
+				createdByRequestIntentType: 'undo',
+			}
+		);
 		expect( setCheckpoint ).not.toHaveBeenCalled();
+	} );
+
+	it( 'skips the reciprocal when the target keys are unreadable', async () => {
+		mockHasCheckpoint.mockReturnValue( false );
+		mockGetToolCallId.mockReturnValue( 'toolu_restore' );
+		const providerCheckpoints = makeProviderCheckpoints();
+		mockGetProviderCheckpoints.mockReturnValue( providerCheckpoints );
+
+		const result = await restoreCheckpointCallback( makeInput() );
+
+		expect( providerCheckpoints.setCheckpoint ).not.toHaveBeenCalled();
+		expect( providerCheckpoints.restoreCheckpoint ).toHaveBeenCalledWith( 'toolu_target' );
+		expect( result.result.success ).toBe( true );
 	} );
 
 	it( 'drops the provider reciprocal when a delegated restore fails', async () => {
 		mockHasCheckpoint.mockReturnValue( false );
 		mockGetToolCallId.mockReturnValue( 'toolu_restore' );
+		mockGetProviderCheckpointKeys.mockReturnValue( [ 'site_title' ] );
 		const providerCheckpoints = makeProviderCheckpoints();
 		providerCheckpoints.restoreCheckpoint.mockRejectedValueOnce( new Error( 'Restore exploded.' ) );
 		mockGetProviderCheckpoints.mockReturnValue( providerCheckpoints );

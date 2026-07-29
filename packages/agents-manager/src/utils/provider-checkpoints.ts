@@ -1,3 +1,4 @@
+import { select } from '@wordpress/data';
 import type { UseCheckpointReturn } from './load-external-providers';
 
 // TODO (ability-migration): Delete this bridge once the last checkpoint-writing
@@ -18,4 +19,22 @@ export function setProviderCheckpoints( checkpoints: UseCheckpointReturn | undef
 
 export function getProviderCheckpoints(): UseCheckpointReturn | undefined {
 	return providerCheckpoints;
+}
+
+// Big Sky's wp.data store — read directly because the provider's
+// `useCheckpoint` export has no record accessor.
+const PROVIDER_STORE_NAME = 'ai-assembler';
+
+type ProviderStoreSelect = {
+	getCheckpoints?: () => { id?: string; checkpointKeys?: string[] }[] | undefined;
+};
+
+/**
+ * The scoped keys of a provider-held checkpoint, or `null` when unreadable.
+ */
+export function getProviderCheckpointKeys( id: string ): string[] | null {
+	const checkpoints =
+		( select( PROVIDER_STORE_NAME ) as ProviderStoreSelect | undefined )?.getCheckpoints?.() ?? [];
+	const checkpoint = checkpoints.find( ( record ) => record?.id === id );
+	return Array.isArray( checkpoint?.checkpointKeys ) ? checkpoint.checkpointKeys : null;
 }

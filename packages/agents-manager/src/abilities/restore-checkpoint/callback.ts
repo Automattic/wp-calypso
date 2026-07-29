@@ -8,7 +8,10 @@ import {
 	setCheckpoint,
 } from '../../utils/checkpoints';
 import { isEditorPage } from '../../utils/is-editor-page';
-import { getProviderCheckpoints } from '../../utils/provider-checkpoints';
+import {
+	getProviderCheckpointKeys,
+	getProviderCheckpoints,
+} from '../../utils/provider-checkpoints';
 import { getToolCallIdFromConversationHistory } from '../../utils/tool-call-history';
 import type { UseCheckpointReturn } from '../../utils/load-external-providers';
 import type { AbilityResult } from '../types';
@@ -60,23 +63,27 @@ function restoreFailedResult( error: unknown, checkpointId: string ): AbilityRes
 }
 
 // Restores a checkpoint Big Sky still holds — its tools write to its own store
-// until they migrate. The reciprocal is recorded there too, keyless: the
-// foreign target's scoped keys are not readable through the bridge, and Big
-// Sky restores keyless records via its legacy full-snapshot path.
+// until they migrate. The reciprocal is recorded there too, scoped to the
+// target's keys: a keyless record would redo through Big Sky's legacy
+// full-snapshot path, which re-applies its (stale) variation titles over
+// AM-applied styles. When the keys are unreadable, no reciprocal is recorded
+// — no redo beats a wrong redo.
 async function restoreProviderCheckpoint(
 	providerCheckpoints: UseCheckpointReturn,
 	{ checkpointId, summary, requestIntentType = 'restore' }: RestoreCheckpointInput
 ): Promise< AbilityResult > {
+	const reciprocalKeys = getProviderCheckpointKeys( checkpointId );
 	const restoreToolCallId = getToolCallIdFromConversationHistory( RESTORE_CHECKPOINT_TOOL_ID );
 	const reciprocalId =
+		reciprocalKeys &&
 		restoreToolCallId &&
 		! hasCheckpoint( restoreToolCallId ) &&
 		! providerCheckpoints.hasCheckpoint( restoreToolCallId )
 			? restoreToolCallId
 			: null;
 
-	if ( reciprocalId ) {
-		providerCheckpoints.setCheckpoint( reciprocalId, [], {
+	if ( reciprocalId && reciprocalKeys ) {
+		providerCheckpoints.setCheckpoint( reciprocalId, reciprocalKeys, {
 			toolCallId: reciprocalId,
 			toolId: RESTORE_CHECKPOINT_TOOL_ID,
 			summary,
