@@ -11,7 +11,7 @@ export class DashboardPurchasesPage {
 	/**
 	 * Constructs an instance of the page.
 	 *
-	 * @param {Page} page The underlying page.
+	 * @param page The underlying page.
 	 */
 	constructor( page: Page ) {
 		this.page = page;

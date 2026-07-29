@@ -18,10 +18,10 @@ const STEP_BUTTON_TIMEOUT = 30 * 1000;
  * on the `intent=remove` path this flow drives). `cancelAtomicPurchaseFlow`
  * covers the classic equivalent.
  *
- * @param {Page} page Page the survey is rendered on.
+ * @param page Page the survey is rendered on.
  * @param feedback Answers to give to the survey.
- * @param {CancelReason} feedback.reason Cancellation reason to select.
- * @param {string} feedback.customReasonText Free-text elaboration on the reason.
+ * @param feedback.reason Cancellation reason to select.
+ * @param feedback.customReasonText Free-text elaboration on the reason.
  */
 export async function cancelDashboardPurchaseFlow(
 	page: Page,
