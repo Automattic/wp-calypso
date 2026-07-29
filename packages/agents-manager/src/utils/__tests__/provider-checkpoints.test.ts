@@ -1,6 +1,6 @@
 import { select } from '@wordpress/data';
 import {
-	getProviderCheckpointKeys,
+	getProviderCheckpoint,
 	getProviderCheckpoints,
 	setProviderCheckpoints,
 } from '../provider-checkpoints';
@@ -27,17 +27,34 @@ describe( 'setProviderCheckpoints / getProviderCheckpoints', () => {
 	} );
 } );
 
-describe( 'getProviderCheckpointKeys', () => {
-	it( 'reads the scoped keys of a provider-held checkpoint', () => {
+describe( 'getProviderCheckpoint', () => {
+	it( 'reads the restore-relevant fields of a provider-held checkpoint', () => {
 		mockSelect.mockReturnValue( {
 			getCheckpoints: () => [
-				{ id: 'toolu_1', checkpointKeys: [ 'site_title', 'site_metadata' ] },
+				{
+					id: 'toolu_1',
+					checkpointKeys: [ 'page', 'navigation' ],
+					pageRename: { pageId: 12, oldTitle: 'About', newTitle: 'Our Story' },
+					navigationRecords: { 'nav-1': {} },
+				},
 				{ id: 'toolu_2', checkpointKeys: [ 'blocks' ] },
 			],
 		} );
 
-		expect( getProviderCheckpointKeys( 'toolu_1' ) ).toEqual( [ 'site_title', 'site_metadata' ] );
+		expect( getProviderCheckpoint( 'toolu_1' ) ).toEqual( {
+			checkpointKeys: [ 'page', 'navigation' ],
+			pageRename: { pageId: 12, oldTitle: 'About', newTitle: 'Our Story' },
+			navigationRecords: { 'nav-1': {} },
+		} );
 		expect( mockSelect ).toHaveBeenCalledWith( 'ai-assembler' );
+	} );
+
+	it( 'omits the optional fields the record does not carry', () => {
+		mockSelect.mockReturnValue( {
+			getCheckpoints: () => [ { id: 'toolu_1', checkpointKeys: [ 'site_title' ] } ],
+		} );
+
+		expect( getProviderCheckpoint( 'toolu_1' ) ).toEqual( { checkpointKeys: [ 'site_title' ] } );
 	} );
 
 	it.each( [
@@ -55,6 +72,6 @@ describe( 'getProviderCheckpointKeys', () => {
 	] )( 'returns null when %s', ( _case, storeSelect ) => {
 		mockSelect.mockReturnValue( storeSelect );
 
-		expect( getProviderCheckpointKeys( 'toolu_1' ) ).toBeNull();
+		expect( getProviderCheckpoint( 'toolu_1' ) ).toBeNull();
 	} );
 } );

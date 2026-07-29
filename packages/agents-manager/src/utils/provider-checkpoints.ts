@@ -25,20 +25,32 @@ export function getProviderCheckpoints(): UseCheckpointReturn | undefined {
 // `useCheckpoint` export has no record accessor.
 const PROVIDER_STORE_NAME = 'ai-assembler';
 
+export interface ProviderCheckpoint {
+	checkpointKeys: string[];
+	pageRename?: { pageId: string | number; oldTitle: string; newTitle: string };
+	navigationRecords?: Record< string, unknown >;
+}
+
 type ProviderStoreSelect = {
-	getCheckpoints?: () => { id?: string; checkpointKeys?: string[] }[] | undefined;
+	getCheckpoints?: () => ( { id?: string } & Partial< ProviderCheckpoint > )[] | undefined;
 };
 
 /**
- * The scoped keys of a provider-held checkpoint, or `null` when the record is
- * unreadable or keyless — Big Sky writes keyless checkpoints for some entity
- * edits, and those restore via its legacy full-snapshot path.
+ * The restore-relevant fields of a provider-held checkpoint, or `null` when
+ * the record is unreadable or keyless — Big Sky writes keyless checkpoints
+ * for some entity edits, and those restore via its legacy full-snapshot path.
  */
-export function getProviderCheckpointKeys( id: string ): string[] | null {
+export function getProviderCheckpoint( id: string ): ProviderCheckpoint | null {
 	const checkpoints =
 		( select( PROVIDER_STORE_NAME ) as ProviderStoreSelect | undefined )?.getCheckpoints?.() ?? [];
 	const checkpoint = checkpoints.find( ( record ) => record?.id === id );
-	return Array.isArray( checkpoint?.checkpointKeys ) && checkpoint.checkpointKeys.length
-		? checkpoint.checkpointKeys
-		: null;
+	if ( ! Array.isArray( checkpoint?.checkpointKeys ) || ! checkpoint.checkpointKeys.length ) {
+		return null;
+	}
+
+	return {
+		checkpointKeys: checkpoint.checkpointKeys,
+		...( checkpoint.pageRename && { pageRename: checkpoint.pageRename } ),
+		...( checkpoint.navigationRecords && { navigationRecords: checkpoint.navigationRecords } ),
+	};
 }

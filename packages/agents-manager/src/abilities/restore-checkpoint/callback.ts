@@ -9,10 +9,7 @@ import {
 	setCheckpoint,
 } from '../../utils/checkpoints';
 import { isEditorPage } from '../../utils/is-editor-page';
-import {
-	getProviderCheckpointKeys,
-	getProviderCheckpoints,
-} from '../../utils/provider-checkpoints';
+import { getProviderCheckpoint, getProviderCheckpoints } from '../../utils/provider-checkpoints';
 import { getToolCallIdFromConversationHistory } from '../../utils/tool-call-history';
 import type { CheckpointMetadata } from '../../utils/checkpoints';
 import type { UseCheckpointReturn } from '../../utils/load-external-providers';
@@ -69,31 +66,46 @@ function restoreFailedResult( error: unknown, checkpointId: string ): AbilityRes
 // target's keys: a keyless record would redo through Big Sky's legacy
 // full-snapshot path, which re-applies its (stale) variation titles over
 // AM-applied styles. Unreadable or keyless targets get no reciprocal — no
-// redo beats a wrong redo.
+// redo beats a wrong redo. The page-rename flip and navigation snapshots are
+// copied like Big Sky's own tool does, so a redo re-applies them.
 async function restoreProviderCheckpoint(
 	providerCheckpoints: UseCheckpointReturn,
 	{ checkpointId, summary, requestIntentType = 'restore' }: RestoreCheckpointInput
 ): Promise< AbilityResult > {
-	const reciprocalKeys = getProviderCheckpointKeys( checkpointId );
+	const targetCheckpoint = getProviderCheckpoint( checkpointId );
 	const restoreToolCallId = getToolCallIdFromConversationHistory( RESTORE_CHECKPOINT_TOOL_ID );
 	const reciprocalId =
-		reciprocalKeys &&
+		targetCheckpoint &&
 		restoreToolCallId &&
 		! hasCheckpoint( restoreToolCallId ) &&
 		! providerCheckpoints.hasCheckpoint( restoreToolCallId )
 			? restoreToolCallId
 			: null;
 
-	if ( reciprocalId && reciprocalKeys ) {
+	if ( reciprocalId && targetCheckpoint ) {
+		const { pageRename } = targetCheckpoint;
 		// `toolCallId` matches Big Sky's own record shape in its store.
-		providerCheckpoints.setCheckpoint( reciprocalId, reciprocalKeys, {
+		providerCheckpoints.setCheckpoint( reciprocalId, targetCheckpoint.checkpointKeys, {
 			toolCallId: reciprocalId,
 			toolId: RESTORE_CHECKPOINT_TOOL_ID,
 			summary,
 			restoresCheckpointId: checkpointId,
 			requestIntentType: getReciprocalRequestIntentType( requestIntentType ),
 			createdByRequestIntentType: requestIntentType,
+			...( pageRename && {
+				pageRename: {
+					pageId: pageRename.pageId,
+					oldTitle: pageRename.newTitle,
+					newTitle: pageRename.oldTitle,
+				},
+			} ),
 		} );
+
+		// Capture the navigation snapshots before the restore mutates them.
+		Object.keys( targetCheckpoint.navigationRecords ?? {} ).forEach(
+			( navigationId ) =>
+				providerCheckpoints.addNavigationToCheckpoint?.( reciprocalId, navigationId )
+		);
 	}
 
 	try {
