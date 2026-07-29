@@ -65,13 +65,20 @@ The `:where(prefix)` string gets repeated on every scoped rule (not deduped), so
 
 #### @wordpress/components' base CSS
 
-`webpack.config.js` aliases `@wordpress/components/build-style/style.css` to an empty stylesheet, so Odyssey does **not** bundle it. Odyssey's JS already externalizes `@wordpress/components` to the page's own `wp.components` (via `DependencyExtractionWebpackPlugin`), and `jetpack-stats-admin` declares the matching `wp-components` stylesheet as a dependency of Odyssey's own — so wp-admin supplies both halves, correctly paired and correctly ordered.
+Odyssey's JS externalizes `@wordpress/components` to the page's own `wp.components` (via `DependencyExtractionWebpackPlugin`), so the matching stylesheet should come from wp-admin too. **WP 7.0+ enqueues `wp-components` globally** for the command palette, so on those versions it's already on the page.
 
-Bundling Calypso's copy as well would put two independently-versioned copies of the same unnamespaced class names (`.components-modal__frame`, `.components-button`, ...) on one page, colliding with wp-admin's own instances of those components — that's what made WP 7.0's command palette render with the wrong padding and off-centre (STATS-251). Scoping that copy isn't a real fix either: `.components-modal__screen-overlay`/`.components-popover__fallback-container` sit on the shared wrapper every Modal/Popover gets, ours and core's alike, so they can't distinguish "our modal" from "core's".
+Shipping our own copy alongside it puts two independently-versioned copies of the same unnamespaced class names (`.components-modal__frame`, `.components-button`, …) on one page, colliding with wp-admin's own instances of those components. They genuinely disagree — core sets `.components-modal__frame` to `min-width: 350px; margin: auto`, ours to `320px` / `margin: 0` — which is what left WP 7.0's command palette off-centre with the wrong padding (STATS-251). Scoping our copy isn't a real fix either: `.components-modal__screen-overlay`/`.components-popover__fallback-container` sit on the shared wrapper every Modal/Popover gets, ours and core's alike, so they can't distinguish "our modal" from "core's".
 
-The alias is scoped to this build only. `client/assets/stylesheets/style.scss` still imports that vendor CSS for Calypso, Blaze Dashboard, Stepper and friends — they're standalone SPAs with no wp-admin to inherit it from, so removing it there would break them.
+So it's loaded **conditionally**, by `src/lib/load-wp-components-style.ts`, awaited in `AppBoot` before anything renders:
 
-**If Odyssey ever needs a `@wordpress/components` style that wp-admin doesn't provide, add it as first-party SCSS — don't un-stub the alias.**
+- **WP 7.0+** — wp-admin already provides it. Resolves immediately, no request.
+- **below 7.0** — nothing provides it, so our copy is fetched as its own async chunk. Those versions have no command palette, so there's nothing for it to collide with.
+
+Two `webpack.config.js` aliases make that work: `@wordpress/components/build-style/style.css` is stubbed to an empty file so `style.scss`'s unconditional import doesn't pull it into the main bundle, and `odyssey-wp-components-style` points at the real file for the dynamic `import()`. The stub is scoped to this build only — `client/assets/stylesheets/style.scss` still imports the vendor CSS for Calypso, Blaze Dashboard and Stepper, which are standalone SPAs with no wp-admin to inherit it from.
+
+Note the widget entry (`widget-loader`) never imported `style.scss` — it uses `assets/stylesheets/vendor` — so it has always relied on wp-admin for this and is unaffected.
+
+**If Odyssey ever needs a `@wordpress/components` style that wp-admin doesn't provide, add it as first-party SCSS — don't bundle the vendor file unconditionally.**
 
 ## Conventions
 

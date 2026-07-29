@@ -125,15 +125,23 @@ module.exports = {
 		alias: {
 			// Resolve fast-deep-equal/es6 to fast-deep-equal/es6/index.js.
 			'fast-deep-equal/es6': 'fast-deep-equal/es6/index.js',
-			// Odyssey runs inside wp-admin, which already loads @wordpress/components' base CSS —
-			// jetpack-stats-admin declares it as a stylesheet dependency. Bundling Calypso's copy
-			// too would put two independently-versioned copies of the same unnamespaced classes on
-			// one page, which collide with wp-admin's own component instances (e.g. the command
-			// palette). Calypso/Blaze/Stepper still need it from `style.scss` — they're standalone
-			// SPAs with no wp-admin to inherit it from — so stub it out for this build only.
+			// Keep @wordpress/components' base CSS out of the main bundle. wp-admin normally serves
+			// that stylesheet already (see src/lib/load-wp-components-style.ts), and a second,
+			// independently-versioned copy of these unnamespaced class names collides with
+			// wp-admin's own component instances. `style.scss` imports it unconditionally because
+			// Calypso/Blaze/Stepper are standalone SPAs that genuinely need it, so stub that
+			// import out for this build only...
 			'@wordpress/components/build-style/style.css': path.join(
 				__dirname,
 				'src/styles/empty-vendor-components.css'
+			),
+			// ...and expose the real file under a name of our own, so `load-wp-components-style.ts`
+			// can pull it in as an async chunk on the sites where wp-admin doesn't provide it.
+			// Resolved by path rather than `require.resolve`, which rejects this subpath: the
+			// package's `exports` map doesn't list it, though webpack's own resolver accepts it.
+			'odyssey-wp-components-style': path.join(
+				__dirname,
+				'../../node_modules/@wordpress/components/build-style/style.css'
 			),
 		},
 	},
