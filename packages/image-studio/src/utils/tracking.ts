@@ -7,7 +7,9 @@
 
 import { recordTracksEvent as recordTracksEventBase } from '@automattic/calypso-analytics';
 import { select } from '@wordpress/data';
-import { store as imageStudioStore, type ImageStudioEntryPoint } from '../store';
+// ImageStudioEntryPoint is a value import here, not type-only: the Feature Clip
+// wrapper reads the enum member at runtime.
+import { store as imageStudioStore, ImageStudioEntryPoint } from '../store';
 import { ImageStudioMode, type MetadataField } from '../types';
 import { getSessionId } from '../utils/session';
 import { parseErrorUrl } from './parse-error-url';
@@ -121,7 +123,12 @@ function recordImageStudioEvent(
 
 	baseProps.site_type = siteType;
 
-	if ( entryPoint ) {
+	// The store's entry point is only a fallback. An event that knows its own
+	// placement passes it explicitly, and must keep it: the store holds whichever
+	// entry point was used last in this page load, which for an event that fires
+	// on mount rather than on open would report where the user happened to have
+	// been rather than where the event came from.
+	if ( entryPoint && undefined === baseProps.placement ) {
 		baseProps.placement = entryPoint;
 	}
 
@@ -140,6 +147,31 @@ function recordImageStudioEvent(
 	baseProps.is_test = !! imageStudioWindowData?.isDevMode;
 
 	recordTracksEvent( eventName, baseProps );
+}
+
+/**
+ * Records a Feature Clip event, always carrying the Feature Clip placement.
+ *
+ * Every event in this family belongs to the post-editor Feature Clip flow,
+ * whether it fires from the sidebar panel or from the modal opened out of it.
+ * The store can't be relied on for that: the panel and its share actions run
+ * before anything opens Image Studio, so the entry point is still null and the
+ * event would go out with no placement and no way to filter it.
+ *
+ * @param eventName  Event name, without the tracks prefix.
+ * @param properties Event-specific properties.
+ */
+function recordFeatureClipEvent(
+	eventName: string,
+	properties: Record< string, string | number | boolean > = {}
+): void {
+	recordImageStudioEvent( eventName, {
+		...properties,
+		// Last, so the placement is guaranteed rather than merely defaulted. An
+		// event that needs a different one doesn't belong in this family and
+		// should call recordImageStudioEvent directly.
+		placement: ImageStudioEntryPoint.PostEditorFeatureClip,
+	} );
 }
 
 interface TrackImageStudioOpenedOptions {
@@ -673,7 +705,7 @@ export function trackImageStudioReelShareClicked( {
 	if ( durationSeconds != null ) {
 		properties.duration_seconds = durationSeconds;
 	}
-	recordImageStudioEvent( 'image_studio_feature_clip_share_clicked', properties );
+	recordFeatureClipEvent( 'image_studio_feature_clip_share_clicked', properties );
 }
 
 /**
@@ -686,7 +718,7 @@ export function trackImageStudioReelShareNotConnected( {
 }: {
 	surface: ShareSurface;
 } ): void {
-	recordImageStudioEvent( 'image_studio_feature_clip_share_not_connected', { surface } );
+	recordFeatureClipEvent( 'image_studio_feature_clip_share_not_connected', { surface } );
 }
 
 /**
@@ -700,7 +732,7 @@ export function trackImageStudioReelShareConnectionDisabled( {
 }: {
 	surface: ShareSurface;
 } ): void {
-	recordImageStudioEvent( 'image_studio_feature_clip_share_connection_disabled', { surface } );
+	recordFeatureClipEvent( 'image_studio_feature_clip_share_connection_disabled', { surface } );
 }
 
 /**
@@ -713,7 +745,7 @@ export function trackImageStudioReelShareNotPublished( {
 }: {
 	surface: ShareSurface;
 } ): void {
-	recordImageStudioEvent( 'image_studio_feature_clip_share_post_not_published', { surface } );
+	recordFeatureClipEvent( 'image_studio_feature_clip_share_post_not_published', { surface } );
 }
 
 /**
@@ -726,7 +758,7 @@ export function trackImageStudioReelShareInvalidState( {
 }: {
 	surface: ShareSurface;
 } ): void {
-	recordImageStudioEvent( 'image_studio_feature_clip_share_invalid_state', { surface } );
+	recordFeatureClipEvent( 'image_studio_feature_clip_share_invalid_state', { surface } );
 }
 
 /**
@@ -735,7 +767,7 @@ export function trackImageStudioReelShareInvalidState( {
  * @param options.surface - Where the share originated ('sidebar' | 'modal')
  */
 export function trackImageStudioReelShareCancelled( { surface }: { surface: ShareSurface } ): void {
-	recordImageStudioEvent( 'image_studio_feature_clip_share_cancelled', { surface } );
+	recordFeatureClipEvent( 'image_studio_feature_clip_share_cancelled', { surface } );
 }
 
 /**
@@ -748,7 +780,7 @@ export function trackImageStudioReelShareDispatched( {
 }: {
 	surface: ShareSurface;
 } ): void {
-	recordImageStudioEvent( 'image_studio_feature_clip_share_dispatched', { surface } );
+	recordFeatureClipEvent( 'image_studio_feature_clip_share_dispatched', { surface } );
 }
 
 /**
@@ -768,7 +800,7 @@ export function trackImageStudioReelShareFailed( {
 	if ( errorMessage ) {
 		properties.error_message = errorMessage;
 	}
-	recordImageStudioEvent( 'image_studio_feature_clip_share_failed', properties );
+	recordFeatureClipEvent( 'image_studio_feature_clip_share_failed', properties );
 }
 
 /**
@@ -786,7 +818,7 @@ export function trackImageStudioGenericShareClicked( {
 	surface: ShareSurface;
 	method: 'web-share' | 'web-share-unsupported';
 } ): void {
-	recordImageStudioEvent( 'image_studio_feature_clip_generic_share_clicked', { surface, method } );
+	recordFeatureClipEvent( 'image_studio_feature_clip_generic_share_clicked', { surface, method } );
 }
 
 /**
@@ -803,7 +835,7 @@ export function trackImageStudioGenericShareCompleted( {
 	surface: ShareSurface;
 	method: 'web-share';
 } ): void {
-	recordImageStudioEvent( 'image_studio_feature_clip_generic_share_completed', {
+	recordFeatureClipEvent( 'image_studio_feature_clip_generic_share_completed', {
 		surface,
 		method,
 	} );
@@ -835,7 +867,7 @@ export function trackImageStudioGenericShareFailed( {
 	if ( failureKind ) {
 		properties.failure_kind = failureKind;
 	}
-	recordImageStudioEvent( 'image_studio_feature_clip_generic_share_failed', properties );
+	recordFeatureClipEvent( 'image_studio_feature_clip_generic_share_failed', properties );
 }
 
 /**
@@ -849,7 +881,7 @@ export function trackImageStudioFeatureClipAddedToPost( {
 }: {
 	attachmentId: number;
 } ): void {
-	recordImageStudioEvent( 'image_studio_feature_clip_added_to_post', {
+	recordFeatureClipEvent( 'image_studio_feature_clip_added_to_post', {
 		attachment_id: attachmentId,
 		surface: 'sidebar',
 	} );
@@ -861,7 +893,7 @@ export function trackImageStudioFeatureClipAddedToPost( {
  * engagement rates.
  */
 export function trackImageStudioFeatureClipPanelViewed(): void {
-	recordImageStudioEvent( 'image_studio_feature_clip_panel_viewed' );
+	recordFeatureClipEvent( 'image_studio_feature_clip_panel_viewed' );
 }
 
 /**
@@ -870,7 +902,7 @@ export function trackImageStudioFeatureClipPanelViewed(): void {
  * impression denominator for how often closing mid-generation happens.
  */
 export function trackImageStudioFeatureClipCloseWarningShown(): void {
-	recordImageStudioEvent( 'image_studio_feature_clip_close_warning_shown' );
+	recordFeatureClipEvent( 'image_studio_feature_clip_close_warning_shown' );
 }
 
 /**
@@ -878,7 +910,7 @@ export function trackImageStudioFeatureClipCloseWarningShown(): void {
  * generating ("Cancel").
  */
 export function trackImageStudioFeatureClipCloseWarningKeptGenerating(): void {
-	recordImageStudioEvent( 'image_studio_feature_clip_close_warning_kept_generating' );
+	recordFeatureClipEvent( 'image_studio_feature_clip_close_warning_kept_generating' );
 }
 
 /**
@@ -886,5 +918,5 @@ export function trackImageStudioFeatureClipCloseWarningKeptGenerating(): void {
  * generation and closing the modal ("Stop and close").
  */
 export function trackImageStudioFeatureClipCloseWarningStopped(): void {
-	recordImageStudioEvent( 'image_studio_feature_clip_close_warning_stopped' );
+	recordFeatureClipEvent( 'image_studio_feature_clip_close_warning_stopped' );
 }
