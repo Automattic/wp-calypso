@@ -12,6 +12,9 @@ import { combineReducers, keyedReducer } from 'calypso/state/utils';
 export const uploadedPluginId = keyedReducer( 'siteId', ( state = {}, action ) => {
 	switch ( action.type ) {
 		case PLUGIN_UPLOAD:
+		// A transfer reports the slug it read off the archive, so the previous upload's slug has to go
+		// with the upload that produced it — otherwise the new one is watched under the old name.
+		case AUTOMATED_TRANSFER_INITIATE_WITH_PLUGIN_ZIP:
 			return null;
 		case PLUGIN_UPLOAD_COMPLETE: {
 			const { pluginId } = action;

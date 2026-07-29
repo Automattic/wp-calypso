@@ -52,18 +52,18 @@ const baseProps: Props = {
 	installedPlugin: { slug: 'give', id: 'give/give' },
 	pluginActive: false,
 	atomicFlow: true,
-	isAtomic: true,
 	automatedTransferStatus: transferStates.COMPLETE,
 };
 
-// A zip upload: no product slug in the route, and no plugin in the store, since the list was
-// fetched while the site was still Simple.
+// A zip upload mid-transfer: no product slug in the route, and no plugin in the store, since the
+// list was fetched while the site was still Simple.
 const UPLOAD_PROPS: Partial< Props > = {
 	isPluginUploadFlow: true,
 	pluginSlug: '',
 	installedPlugin: null,
 	pluginActive: false,
 	atomicFlow: false,
+	automatedTransferStatus: transferStates.ACTIVE,
 };
 
 const render = ( overrides?: Partial< Props > ) => {
@@ -138,29 +138,24 @@ describe( 'useThankYouRedirect', () => {
 		await waitFor( () => expect( window.location.href ).toBe( PLUGINS_URL ) );
 	} );
 
-	it( 'looks for the uploaded plugin once its transfer completes, though the site now reads Atomic', async () => {
+	it( 'looks for the uploaded plugin once its transfer completes', async () => {
 		mockFreshSite = ATOMIC_READY;
-		const { rerender } = render( {
-			...UPLOAD_PROPS,
-			isAtomic: false,
-			automatedTransferStatus: transferStates.ACTIVE,
-		} );
+		const { rerender } = render( UPLOAD_PROPS );
 		await waitFor( () => expect( mockRecoveryProps?.canActivate ).toBe( true ) );
 		expect( mockRecoveryProps?.enabled ).toBe( false );
 
-		// Completing the transfer refreshes the site, so `isAtomic` turns true alongside the status.
-		rerender( { isAtomic: true, automatedTransferStatus: transferStates.COMPLETE } );
+		rerender( { automatedTransferStatus: transferStates.COMPLETE } );
 		await waitFor( () => expect( mockRecoveryProps?.enabled ).toBe( true ) );
 	} );
 
 	it( 'redirects an uploaded zip to the activated view once its plugin reads active', async () => {
 		mockFreshSite = ATOMIC_READY;
-		const { rerender } = render( { ...UPLOAD_PROPS, isAtomic: false } );
-		await waitFor( () => expect( mockRecoveryProps?.enabled ).toBe( true ) );
+		const { rerender } = render( UPLOAD_PROPS );
+		await waitFor( () => expect( mockRecoveryProps?.canActivate ).toBe( true ) );
 
 		// The polled plugin list turns up the uploaded plugin, active.
 		rerender( {
-			isAtomic: true,
+			automatedTransferStatus: transferStates.COMPLETE,
 			installedPlugin: { slug: 'uploaded', id: 'uploaded/uploaded' },
 			pluginActive: true,
 		} );
@@ -172,9 +167,10 @@ describe( 'useThankYouRedirect', () => {
 		// show for it the destination must not announce one.
 		jest.useFakeTimers();
 		mockFreshSite = ATOMIC_READY;
-		render( { ...UPLOAD_PROPS, isAtomic: false } );
-		await waitFor( () => expect( mockRecoveryProps?.enabled ).toBe( true ) );
+		const { rerender } = render( UPLOAD_PROPS );
+		await waitFor( () => expect( mockRecoveryProps?.canActivate ).toBe( true ) );
 
+		rerender( { automatedTransferStatus: transferStates.COMPLETE } );
 		expect( window.location.href ).toBe( '' );
 		act( () => jest.advanceTimersByTime( CONFIRMATION_GRACE_MS ) );
 		expect( window.location.href ).toBe( PLUGINS_LIST_URL );
@@ -184,19 +180,20 @@ describe( 'useThankYouRedirect', () => {
 		// Atomic, but the capabilities wp-admin needs have not propagated yet.
 		jest.useFakeTimers();
 		mockFreshSite = { ...ATOMIC_READY, capabilities: { manage_options: false } };
-		render( { ...UPLOAD_PROPS, isAtomic: false } );
+		const { rerender } = render( UPLOAD_PROPS );
 		await act( async () => {} );
 
+		rerender( { automatedTransferStatus: transferStates.COMPLETE } );
 		act( () => jest.advanceTimersByTime( CONFIRMATION_GRACE_MS ) );
 		expect( window.location.href ).toBe( '' );
 	} );
 
-	it( 'does not redirect an upload to a site that was already Atomic', async () => {
-		// Nothing transferred, so a stale completed status must not stand in for the install.
+	it( 'does not redirect an upload that never transferred', async () => {
+		// A completed status left over from an earlier transfer must not stand in for this install.
 		jest.useFakeTimers();
 		mockFreshSite = ATOMIC_READY;
-		render( { ...UPLOAD_PROPS, isAtomic: true } );
-		// Readiness is satisfied, so an arm that ignored the starting state would have redirected.
+		render( { ...UPLOAD_PROPS, automatedTransferStatus: transferStates.COMPLETE } );
+		// Readiness is satisfied, so an arm that trusted the status alone would have redirected.
 		await waitFor( () => expect( mockRecoveryProps?.canActivate ).toBe( true ) );
 
 		act( () => jest.advanceTimersByTime( CONFIRMATION_GRACE_MS ) );

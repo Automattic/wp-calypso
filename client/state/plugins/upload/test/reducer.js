@@ -46,6 +46,14 @@ describe( 'uploadedPluginId', () => {
 		const state = uploadedPluginId( { [ siteId ]: pluginId }, pluginUploadError( siteId, error ) );
 		expect( state[ siteId ] ).toBeNull();
 	} );
+
+	test( 'should be empty after a zip transfer starts', () => {
+		const state = uploadedPluginId(
+			{ [ siteId ]: pluginId },
+			initiateAutomatedTransferWithPluginZip( siteId, 'plugin.zip' )
+		);
+		expect( state[ siteId ] ).toBeNull();
+	} );
 } );
 
 describe( 'uploadError', () => {

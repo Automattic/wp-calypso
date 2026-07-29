@@ -5,7 +5,7 @@ import { useEffect, useRef } from 'react';
 import { isAtomicTransferredSite } from 'calypso/dashboard/utils/site-atomic-transfers';
 import { useInterval } from 'calypso/lib/interval';
 import { useSelector, useDispatch } from 'calypso/state';
-import { transferStates } from 'calypso/state/automated-transfer/constants';
+import { transferInProgress, transferStates } from 'calypso/state/automated-transfer/constants';
 import { getSiteAdminUrl } from 'calypso/state/sites/selectors';
 import { requestActiveTheme } from 'calypso/state/themes/actions';
 import { useDelayedCondition } from './use-delayed-condition';
@@ -14,6 +14,12 @@ import { usePostTransferPluginRecovery } from './use-post-transfer-plugin-recove
 // The plugin list is polled once an upload's transfer lands, so give the uploaded plugin a few
 // rounds to appear before treating the install as unconfirmed.
 const INSTALL_CONFIRMATION_GRACE_PERIOD_MS = 10000;
+
+const pluginsAdminUrl = ( adminUrl: string | null | undefined, query = '' ) =>
+	adminUrl ? `${ adminUrl }plugins.php${ query }` : null;
+
+const isTransferRunning = ( status: string | null ) =>
+	( transferInProgress as readonly ( string | null )[] ).includes( status );
 
 // The redirect machinery: once a flow completes it fetches the freshest site data, resolves the
 // destination URL, keeps polling where a flow finishes in the background, and navigates. Plugin and
@@ -30,7 +36,6 @@ export function useThankYouRedirect( {
 	installedPlugin,
 	pluginActive,
 	atomicFlow,
-	isAtomic,
 	automatedTransferStatus,
 }: {
 	siteId: number;
@@ -44,7 +49,6 @@ export function useThankYouRedirect( {
 	installedPlugin: { slug?: string; id?: string } | null | undefined;
 	pluginActive: boolean;
 	atomicFlow: boolean;
-	isAtomic: boolean | null;
 	automatedTransferStatus: string | null;
 } ) {
 	const dispatch = useDispatch();
@@ -67,21 +71,17 @@ export function useThankYouRedirect( {
 	// Prefer fresh URL when available; if in atomic flow, wait for fresh URL
 	const adminUrl = atomicFlow ? freshAdminUrl : freshAdminUrl || adminUrlSelector;
 
-	// The activated view announces a result, so it is only for a plugin seen active. The plain list
-	// claims nothing, which is all we can honestly say when the install went unconfirmed.
-	const activatedPluginsUrl = adminUrl
-		? `${ adminUrl }plugins.php?activate=true&plugin_status=active`
-		: null;
-	const pluginsUrl = adminUrl ? `${ adminUrl }plugins.php` : null;
+	// The activated view announces a result; the plain list claims nothing.
+	const activatedPluginsUrl = pluginsAdminUrl( adminUrl, '?activate=true&plugin_status=active' );
+	const pluginsUrl = pluginsAdminUrl( adminUrl );
 
-	// `isAtomic` reads the Redux site, which the completing transfer refreshes, so it flips true at
-	// the same moment the readiness checks below start passing. Latch what the upload arm actually
-	// asks — did this flow begin before the site was Atomic — so the two stop contradicting.
-	const startedNonAtomicRef = useRef< boolean | null >( null );
-	if ( startedNonAtomicRef.current === null && isAtomic !== null ) {
-		startedNonAtomicRef.current = ! isAtomic;
+	// Remember that a transfer ran during this flow: a completed status on its own can be left over
+	// from an earlier transfer, and an upload to an already-Atomic site never transfers at all.
+	const transferObservedRef = useRef( false );
+	if ( isTransferRunning( automatedTransferStatus ) ) {
+		transferObservedRef.current = true;
 	}
-	const startedNonAtomic = startedNonAtomicRef.current === true;
+	const transferObserved = transferObservedRef.current;
 
 	// A plugin install that has landed on an Atomic site with the plugin possibly still inactive.
 	// Covers both the checkout-initiated flow (atomicFlow never set) and the flow where this component
@@ -92,19 +92,17 @@ export function useThankYouRedirect( {
 
 	const pluginConfirmedActive = !! ( installedPlugin && pluginActive );
 
-	// An uploaded archive whose transfer has finished and left a reachable site behind. That says the
-	// transfer is over, not that the plugin is there: the transfer installs and activates the archive
-	// but reports complete either way, so a failed download, copy or install ends up here too.
+	// The upload's transfer is over and the site is reachable. This is not evidence the archive
+	// installed: the transfer reports complete whether the install succeeded, failed, or was skipped.
 	const uploadTransferSettled = !! (
 		isPluginUploadFlow &&
-		startedNonAtomic &&
+		transferObserved &&
 		transferStates.COMPLETE === automatedTransferStatus &&
 		isAtomicTransferReady
 	);
 
-	// So give the plugin list, which is polled below, time to actually show the plugin. Only once it
-	// hasn't is the install unconfirmed — either it failed, or it succeeded under a slug the transfer
-	// could not read off the archive and never reported.
+	// Which is why the plugin list, polled below, gets a window to show the plugin before we conclude
+	// it never will.
 	const uploadInstallUnconfirmed = useDelayedCondition(
 		uploadTransferSettled && ! pluginConfirmedActive,
 		INSTALL_CONFIRMATION_GRACE_PERIOD_MS
@@ -137,13 +135,12 @@ export function useThankYouRedirect( {
 			return;
 		}
 
-		// An upload the transfer finished without the plugin ever appearing. Nothing here is evidence
-		// the install worked, so land on the plugin list rather than the activated view, which would
-		// announce a plugin that may not be there.
+		// An upload that finished transferring without the plugin ever appearing: land on the list
+		// rather than the activated view, which would announce a plugin that may not be there.
 		if ( uploadInstallUnconfirmed && pluginsUrl ) {
 			window.location.href = pluginsUrl;
 		}
-	}, [ pluginConfirmedActive, uploadInstallUnconfirmed, activatedPluginsUrl, pluginsUrl ] ); // We need to trigger this hook also when `automatedTransferStatus` changes cause the plugin install is done on the background in that case.
+	}, [ pluginConfirmedActive, uploadInstallUnconfirmed, activatedPluginsUrl, pluginsUrl ] );
 
 	// Validate theme is already active
 	useEffect( () => {
