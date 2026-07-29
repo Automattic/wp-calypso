@@ -1,10 +1,13 @@
+/**
+ * @group gutenberg
+ */
+
 import {
 	BlockFlow,
 	DataHelper,
 	LayoutGridBlockFlow,
 	YouTubeBlockFlow,
 } from '@automattic/calypso-e2e';
-import { tags } from '../../lib/pw-base';
 import { createBlockTests } from './shared/block-smoke-testing';
 
 const blockFlows: BlockFlow[] = [
@@ -18,4 +21,4 @@ const blockFlows: BlockFlow[] = [
 	} ),
 ];
 
-createBlockTests( 'Blocks: Core', blockFlows, [ tags.GUTENBERG ] );
+createBlockTests( 'Blocks: Core', blockFlows );

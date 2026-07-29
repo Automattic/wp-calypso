@@ -1,13 +1,16 @@
+/**
+ * @group gutenberg
+ * @group jetpack-wpcom-integration
+ */
 import {
 	BlockFlow,
 	BusinessHoursFlow,
-	ContactInfoBlockFlow,
-	DataHelper,
+	WhatsAppButtonFlow,
 	PaidContentBlockFlow,
 	SubscribeFlow,
-	WhatsAppButtonFlow,
+	ContactInfoBlockFlow,
+	DataHelper,
 } from '@automattic/calypso-e2e';
-import { tags } from '../../lib/pw-base';
 import { createBlockTests } from './shared/block-smoke-testing';
 
 const blockFlows: BlockFlow[] = [
@@ -21,7 +24,4 @@ const blockFlows: BlockFlow[] = [
 	} ),
 ];
 
-createBlockTests( 'Blocks: Jetpack Grow', blockFlows, [
-	tags.GUTENBERG,
-	tags.JETPACK_WPCOM_INTEGRATION,
-] );
+createBlockTests( 'Blocks: Jetpack Grow', blockFlows );

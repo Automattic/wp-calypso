@@ -1,5 +1,13 @@
-import { BlockFlow, InstagramBlockFlow } from '@automattic/calypso-e2e';
-import { tags } from '../../lib/pw-base';
+/**
+ * @group gutenberg
+ * @group jetpack-wpcom-integration
+ */
+
+import {
+	InstagramBlockFlow,
+	// TwitterBlockFlow,
+	BlockFlow,
+} from '@automattic/calypso-e2e';
 import { createBlockTests } from './shared/block-smoke-testing';
 
 const blockFlows: BlockFlow[] = [
@@ -15,7 +23,4 @@ const blockFlows: BlockFlow[] = [
 	//} ),
 ];
 
-createBlockTests( 'Blocks: Jetpack Extended Core Blocks', blockFlows, [
-	tags.GUTENBERG,
-	tags.JETPACK_WPCOM_INTEGRATION,
-] );
+createBlockTests( 'Blocks: Jetpack Extended Core Blocks', blockFlows );

@@ -160,14 +160,8 @@ export class PublishedPostPage {
 	 * @param {string} email Email address to subscribe.
 	 */
 	async subscribe( email: string ) {
-		// A post can render more than one subscribe form (e.g. an in-content
-		// block plus a footer widget), so scope to the first one.
-		const form = this.anchor
-			.locator( 'form' )
-			.filter( { has: this.page.getByPlaceholder( /type your email/i ) } )
-			.first();
-		await form.getByPlaceholder( /type your email/i ).fill( email );
-		await form.getByRole( 'button', { name: 'Subscribe' } ).click();
+		await this.anchor.getByPlaceholder( /type your email/i ).fill( email );
+		await this.anchor.getByRole( 'button', { name: 'Subscribe' } ).click();
 
 		// The popup dialog is in its own iframe.
 		const iframe = this.page.frameLocator( 'iframe[id="memberships-modal-iframe"]' );

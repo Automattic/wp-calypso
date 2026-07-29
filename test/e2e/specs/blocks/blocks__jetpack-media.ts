@@ -1,12 +1,15 @@
+/**
+ * @group gutenberg
+ * @group jetpack-wpcom-integration
+ */
 import {
 	BlockFlow,
-	envVariables,
-	ImageCompareFlow,
 	SlideshowBlockFlow,
 	TiledGalleryBlockFlow,
+	envVariables,
+	ImageCompareFlow,
 } from '@automattic/calypso-e2e';
-import { tags } from '../../lib/pw-base';
-import { ALT_TEST_IMAGE_PATH, TEST_IMAGE_PATH } from '../constants';
+import { TEST_IMAGE_PATH, ALT_TEST_IMAGE_PATH } from '../constants';
 import { createBlockTests } from './shared/block-smoke-testing';
 
 const blockFlows: BlockFlow[] = [
@@ -23,7 +26,4 @@ if ( envVariables.ATOMIC_VARIATION !== 'private' ) {
 	);
 }
 
-createBlockTests( 'Blocks: Jetpack Media', blockFlows, [
-	tags.GUTENBERG,
-	tags.JETPACK_WPCOM_INTEGRATION,
-] );
+createBlockTests( 'Blocks: Jetpack Media', blockFlows );

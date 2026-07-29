@@ -187,10 +187,7 @@ export async function clickNavTab(
 export async function reloadAndRetry(
 	page: Page,
 	func: ( page: Page ) => Promise< void >,
-	options?: {
-		onReload?: ( response: Response | null ) => Promise< void > | void;
-		waitUntil?: 'load' | 'domcontentloaded' | 'networkidle' | 'commit';
-	}
+	options?: { onReload?: ( response: Response | null ) => Promise< void > | void }
 ): Promise< void > {
 	for ( let retries = 3; retries > 0; retries -= 1 ) {
 		try {
@@ -200,7 +197,7 @@ export async function reloadAndRetry(
 			if ( retries === 1 ) {
 				throw err;
 			} else {
-				const response = await page.reload( { waitUntil: options?.waitUntil } );
+				const response = await page.reload();
 				await options?.onReload?.( response );
 			}
 		}

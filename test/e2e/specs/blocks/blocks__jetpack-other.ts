@@ -1,12 +1,15 @@
+/**
+ * @group gutenberg
+ * @group jetpack-wpcom-integration
+ */
 import {
 	BlockFlow,
-	envVariables,
-	GifFlow,
-	MapFlow,
-	RelatedPostsFlow,
 	StarRatingBlock,
+	MapFlow,
+	GifFlow,
+	envVariables,
+	RelatedPostsFlow,
 } from '@automattic/calypso-e2e';
-import { tags } from '../../lib/pw-base';
 import { createBlockTests } from './shared/block-smoke-testing';
 
 const blockFlows: BlockFlow[] = [
@@ -14,7 +17,7 @@ const blockFlows: BlockFlow[] = [
 	new GifFlow( { query: 'https://giphy.com/embed/MDJ9IbxxvDUQM' } ),
 ];
 
-// Private sites change behavior of the Map block.
+// Private sites change behaivor of the Map block.
 // @see: https://github.com/Automattic/jetpack/issues/32991
 // Related posts block do not show up on private sites, as one would expect.
 if ( envVariables.ATOMIC_VARIATION !== 'private' ) {
@@ -28,7 +31,4 @@ if ( envVariables.ATOMIC_VARIATION !== 'private' ) {
 	);
 }
 
-createBlockTests( 'Blocks: Other Jetpack Blocks', blockFlows, [
-	tags.GUTENBERG,
-	tags.JETPACK_WPCOM_INTEGRATION,
-] );
+createBlockTests( 'Blocks: Other Jetpack Blocks', blockFlows );

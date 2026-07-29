@@ -1,4 +1,4 @@
-import { DataHelper, PostResponse, TestAccount } from '@automattic/calypso-e2e';
+import { DataHelper } from '@automattic/calypso-e2e';
 import { expect, tags, test } from '../../lib/pw-base';
 import { TEST_IMAGE_PATH } from '../constants';
 
@@ -6,55 +6,31 @@ test.describe(
 	DataHelper.createSuiteTitle( 'Blaze Ads: Promote' ),
 	{ tag: [ tags.CALYPSO_PR, tags.JETPACK_WPCOM_INTEGRATION ] },
 	() => {
-		let newPostDetails: PostResponse;
-		let testAccount: TestAccount;
-
-		test.afterAll( async () => {
-			if ( ! newPostDetails ) {
-				return;
-			}
-
-			await testAccount.restAPI.deletePost(
-				testAccount.credentials.testSites?.primary.id as number,
-				newPostDetails.ID
-			);
-		} );
-
-		test( 'As a WordPress.com user, I can promote my content using Jetpack Blaze', async ( {
-			accountGivenByEnvironment,
+		test( 'As a WordPress.com free plan user with a simple site, I can promote my content using Jetpack Blaze', async ( {
 			accountSimpleSiteFreePlan,
-			environment,
 			helperData,
 			helperMedia,
 			page,
 			pageAdvertising,
 			pageBlazeCampaign,
 		} ) => {
-			test.skip(
-				environment.ATOMIC_VARIATION === 'private',
-				'Blaze is unavailable on private sites'
-			);
-
-			testAccount = environment.TEST_ON_ATOMIC
-				? accountGivenByEnvironment
-				: accountSimpleSiteFreePlan;
 			const pageTitle = helperData.getRandomPhrase().slice( 0, 20 );
 			const snippet = Array( 2 ).fill( helperData.getRandomPhrase() ).toString();
 
-			await test.step( `Given I am authenticated as '${ testAccount.accountName }'`, async function () {
-				await testAccount.authenticate( page );
+			await test.step( `Given I am authenticated as '${ accountSimpleSiteFreePlan.accountName }'`, async function () {
+				await accountSimpleSiteFreePlan.authenticate( page );
 			} );
 
 			await test.step( 'And my site has a published post', async function () {
-				const hasPosts = await testAccount.restAPI.siteHasPost(
-					testAccount.credentials.testSites?.primary.id as number,
+				const hasPosts = await accountSimpleSiteFreePlan.restAPI.siteHasPost(
+					accountSimpleSiteFreePlan.credentials.testSites?.primary.id as number,
 					{ state: 'publish' }
 				);
 
 				if ( ! hasPosts ) {
 					console.log( 'Creating a new post for the site' );
-					newPostDetails = await testAccount.restAPI.createPost(
-						testAccount.credentials.testSites?.primary.id as number,
+					await accountSimpleSiteFreePlan.restAPI.createPost(
+						accountSimpleSiteFreePlan.credentials.testSites?.primary.id as number,
 						{
 							title: pageTitle,
 						}
@@ -63,7 +39,7 @@ test.describe(
 			} );
 
 			await test.step( 'When I visit the Tools > Blaze Ads page', async function () {
-				await pageAdvertising.visit( testAccount.getSiteURL( { protocol: false } ) );
+				await pageAdvertising.visit( accountSimpleSiteFreePlan.getSiteURL( { protocol: false } ) );
 			} );
 
 			await test.step( 'Then I see the Blaze Ads page for my site', async function () {
