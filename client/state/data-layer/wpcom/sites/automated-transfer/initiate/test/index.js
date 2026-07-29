@@ -127,11 +127,12 @@ describe( 'receiveError', () => {
 		expect( result[ 3 ] ).toEqual( initiateAutomatedTransferWithPluginZipFailure( siteId ) );
 	} );
 
-	// The endpoint creates the transfer before it validates the archive, so an error can arrive with
-	// one already running. Only the status endpoint knows.
-	test( 'should ask for the real transfer status rather than assume none started', () => {
+	// Reconciling against the status endpoint would answer for the site's latest transfer rather than
+	// this attempt, turning a rejected upload back into one in progress.
+	test( 'should not go on to ask for the transfer status', () => {
 		const result = receiveError( { siteId }, ERROR_RESPONSE );
-		expect( result[ 4 ] ).toEqual( fetchAutomatedTransferStatus( siteId ) );
+		expect( result ).toHaveLength( 4 );
+		expect( result ).not.toContainEqual( fetchAutomatedTransferStatus( siteId ) );
 	} );
 } );
 

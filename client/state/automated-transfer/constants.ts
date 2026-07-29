@@ -37,19 +37,29 @@ export const transferInProgress = [
 ] as const;
 
 /**
- * States a transfer does not move on from. Anything else — including phases not listed in
- * `transferInProgress`, such as uploading, backfilling and the switcheroo — means one is running.
+ * States a transfer does not move on from.
  */
 export const transferEndStates = [
 	transferStates.NONE,
 	transferStates.COMPLETE,
 	transferStates.COMPLETED,
 	transferStates.FAILURE,
+	transferStates.CONFLICTS,
 	transferStates.ERROR,
 	transferStates.REVERTED,
 	transferStates.REQUEST_FAILURE,
 	transferStates.NULL,
 ] as const;
+
+/**
+ * Whether a transfer is under way. True for every phase that is not an end state, including ones
+ * `transferInProgress` leaves out — uploading, backfilling, the switcheroo. Inquiring is not a
+ * transfer: it is what eligibility polling leaves behind before anything has been started.
+ */
+export const isTransferRunning = ( status: string | null | undefined ): boolean =>
+	!! status &&
+	status !== transferStates.INQUIRING &&
+	! ( transferEndStates as readonly ( string | null )[] ).includes( status );
 
 export const transferRevertingInProgress = [ transferStates.RELOCATING_REVERT ] as const;
 

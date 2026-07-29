@@ -69,10 +69,11 @@ export const receiveError = ( { siteId }, error ) => {
 		} ),
 		showErrorNotice( error ),
 		pluginUploadError( siteId, error ),
+		// Only clears what the optimistic initiation set. The endpoint creates the transfer before it
+		// validates the archive, so one may still be running — but the status endpoint answers for the
+		// site's latest transfer, not for this attempt, and reconciling against it turns a rejected
+		// upload back into an upload in progress. Telling the two apart needs the transfer's id.
 		initiateAutomatedTransferWithPluginZipFailure( siteId ),
-		// The endpoint creates the transfer before it validates the archive, so this error may well
-		// have left one running. Ask the status endpoint rather than assuming nothing started.
-		fetchAutomatedTransferStatus( siteId ),
 	];
 };
 

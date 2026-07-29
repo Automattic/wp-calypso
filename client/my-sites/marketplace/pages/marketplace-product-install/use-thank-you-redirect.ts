@@ -5,7 +5,7 @@ import { useEffect, useRef } from 'react';
 import { isAtomicTransferredSite } from 'calypso/dashboard/utils/site-atomic-transfers';
 import { useInterval } from 'calypso/lib/interval';
 import { useSelector, useDispatch } from 'calypso/state';
-import { transferEndStates, transferStates } from 'calypso/state/automated-transfer/constants';
+import { isTransferRunning, transferStates } from 'calypso/state/automated-transfer/constants';
 import { getSiteAdminUrl } from 'calypso/state/sites/selectors';
 import { requestActiveTheme } from 'calypso/state/themes/actions';
 import { useDelayedCondition } from './use-delayed-condition';
@@ -20,13 +20,6 @@ const INSTALL_CONFIRMATION_GRACE_PERIOD_MS = PLUGIN_POLL_INTERVAL_MS * 5;
 
 const pluginsAdminUrl = ( adminUrl: string | null | undefined, query = '' ) =>
 	adminUrl ? `${ adminUrl }plugins.php${ query }` : null;
-
-// Every phase that isn't an end state means a transfer is under way — including uploading and the
-// switcheroo, which this page can well be mounted during.
-const isTransferRunning = ( status: string | null ) =>
-	!! status &&
-	status !== transferStates.INQUIRING &&
-	! ( transferEndStates as readonly ( string | null )[] ).includes( status );
 
 // The redirect machinery: once a flow completes it fetches the freshest site data, resolves the
 // destination URL, keeps polling where a flow finishes in the background, and navigates. Plugin and

@@ -56,6 +56,45 @@ describe( 'uploadedPluginId', () => {
 	} );
 } );
 
+describe( 'a new zip attempt', () => {
+	// The upload page only clears the last attempt when nothing looks in progress, so a retry that
+	// follows a rejected upload would otherwise open showing the error it was meant to replace.
+	test( 'should drop the previous error', () => {
+		const state = uploadError(
+			{ [ siteId ]: error },
+			initiateAutomatedTransferWithPluginZip( siteId, 'plugin.zip' )
+		);
+		expect( state[ siteId ] ).toBeNull();
+	} );
+
+	test( 'should start its progress from zero', () => {
+		const state = progressPercent(
+			{ [ siteId ]: 100 },
+			initiateAutomatedTransferWithPluginZip( siteId, 'plugin.zip' )
+		);
+		expect( state[ siteId ] ).toBe( 0 );
+	} );
+} );
+
+describe( 'inProgress across transfer statuses', () => {
+	// Hiding the drop zone for a transfer that has stopped leaves no way to try again.
+	test( 'should end on a transfer that errored, not just one that completed', () => {
+		const state = inProgress(
+			{ [ siteId ]: true },
+			setAutomatedTransferStatus( siteId, 'error', null )
+		);
+		expect( state[ siteId ] ).toBe( false );
+	} );
+
+	test( 'should stay in progress while the transfer is still running', () => {
+		const state = inProgress(
+			{ [ siteId ]: true },
+			setAutomatedTransferStatus( siteId, 'uploading', null )
+		);
+		expect( state[ siteId ] ).toBe( true );
+	} );
+} );
+
 describe( 'uploadError', () => {
 	test( 'should contain error after failed upload', () => {
 		const state = uploadError( {}, pluginUploadError( siteId, error ) );
