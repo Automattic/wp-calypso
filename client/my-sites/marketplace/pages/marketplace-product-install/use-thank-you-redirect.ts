@@ -5,7 +5,7 @@ import { useEffect } from 'react';
 import { isAtomicTransferredSite } from 'calypso/dashboard/utils/site-atomic-transfers';
 import { useInterval } from 'calypso/lib/interval';
 import { useSelector, useDispatch } from 'calypso/state';
-import { transferStates } from 'calypso/state/automated-transfer/constants';
+import { isTransferComplete } from 'calypso/state/automated-transfer/constants';
 import { getSiteAdminUrl } from 'calypso/state/sites/selectors';
 import { requestActiveTheme } from 'calypso/state/themes/actions';
 import { usePostTransferPluginRecovery } from './use-post-transfer-plugin-recovery';
@@ -59,7 +59,7 @@ export function useThankYouRedirect( {
 	// Fetch fresh site data (including admin_url) post-transfer
 	const { data: freshSite } = useQuery( {
 		...siteByIdQuery( siteId ?? 0 ),
-		enabled: !! siteId && ( ! atomicFlow || automatedTransferStatus === transferStates.COMPLETE ),
+		enabled: !! siteId && ( ! atomicFlow || isTransferComplete( automatedTransferStatus ) ),
 		refetchInterval: ( query ) =>
 			query.state.data && isAtomicTransferredSite( query.state.data ) ? false : 2000,
 		staleTime: 0,
@@ -98,7 +98,7 @@ export function useThankYouRedirect( {
 		isTransferredUpload &&
 		! uploadAttemptFailed &&
 		transferObserved &&
-		transferStates.COMPLETE === automatedTransferStatus &&
+		isTransferComplete( automatedTransferStatus ) &&
 		isAtomicTransferReady
 	);
 
@@ -106,6 +106,7 @@ export function useThankYouRedirect( {
 		usePostTransferPluginRecovery( {
 			siteId,
 			enabled: ( isRecoveryFlow || uploadTransferSettled ) && ! pluginActive,
+			runImmediately: uploadTransferSettled,
 			// isAtomicTransferReady already requires manage_options, which the transfer propagates after
 			// is_wpcom_atomic flips; activating during that gap would fail and burn the retry budget.
 			canActivate: !! isAtomicTransferReady,

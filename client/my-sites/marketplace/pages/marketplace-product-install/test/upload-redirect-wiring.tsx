@@ -144,6 +144,38 @@ describe( 'upload redirect wiring', () => {
 		expect( window.location.href ).toBe( '' );
 	} );
 
+	it( "looks for a transferred upload's plugin at once, not an interval later", async () => {
+		// The transfer has already installed it, and the customer has already waited out the transfer.
+		render( {
+			transferObserved: true,
+			isTransferredUpload: true,
+			automatedTransferStatus: transferStates.COMPLETE,
+		} );
+
+		await waitFor( () => expect( fetchSitePlugins ).toHaveBeenCalledWith( 1 ) );
+	} );
+
+	it( 'does not activate an in-place install before its own flow has the chance', async () => {
+		// This flow hands activation over at step 1; acting on the first render would take it early.
+		render( {
+			isPluginUploadFlow: false,
+			pluginSlug: 'give',
+			currentStep: 0,
+			installedPlugin: { slug: 'give', id: 'give/give' },
+			pluginActive: false,
+		} );
+		// Let the site read resolve, which is what makes recovery eligible at all.
+		await act( async () => {
+			await new Promise( ( resolve ) => setTimeout( resolve, 0 ) );
+		} );
+
+		expect( activatePlugin ).not.toHaveBeenCalled();
+
+		// And it is eligible: the interval it waits for does activate, so the check above meant it.
+		await tick();
+		expect( activatePlugin ).toHaveBeenCalledTimes( 1 );
+	} );
+
 	it( 'ends an inactive transferred upload on the plain list once activation is spent', async () => {
 		// Nothing else activates this flow's plugin, so if recovery gives up the wait has to end.
 		render( INACTIVE_PLUGIN );

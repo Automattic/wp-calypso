@@ -6,7 +6,11 @@ import { useEffect, useState, useMemo, useRef } from 'react';
 import { useQueryTheme } from 'calypso/components/data/query-theme';
 import { useSelector, useDispatch } from 'calypso/state';
 import { initiateAtomicTransfer } from 'calypso/state/atomic/transfers/actions';
-import { isTransferRunning, transferStates } from 'calypso/state/automated-transfer/constants';
+import {
+	isTransferComplete,
+	isTransferRunning,
+	transferStates,
+} from 'calypso/state/automated-transfer/constants';
 import { getAutomatedTransferStatus } from 'calypso/state/automated-transfer/selectors';
 import { getPurchaseFlowState } from 'calypso/state/marketplace/purchase-flow/selectors';
 import { MARKETPLACE_ASYNC_PROCESS_STATUS } from 'calypso/state/marketplace/types';
@@ -126,6 +130,9 @@ export function useProductInstall( {
 	// A zip upload that brought the site to Atomic. Its plugin arrives with the transfer rather than
 	// through an install this page dispatched, so the recovery poll is what watches for it.
 	const isTransferredUpload = isPluginUploadFlow && uploadMethod === 'transfer';
+	// Recovery only takes activation once it has seen the transfer this upload is waiting on. Standing
+	// down before then would leave the plugin with no owner at all, which is worse than either.
+	const recoveryOwnsActivation = isTransferredUpload && transferObserved;
 
 	const pluginInstallStatus = useSelector( ( state ) =>
 		getStatusForPlugin( state, siteId, pluginSlug )
@@ -245,7 +252,7 @@ export function useProductInstall( {
 
 	// Validate completion of atomic transfer flow
 	useEffect( () => {
-		if ( atomicFlow && currentStep === 1 && transferStates.COMPLETE === automatedTransferStatus ) {
+		if ( atomicFlow && currentStep === 1 && isTransferComplete( automatedTransferStatus ) ) {
 			setCurrentStep( 2 );
 		}
 	}, [ atomicFlow, automatedTransferStatus, currentStep ] );
@@ -260,7 +267,7 @@ export function useProductInstall( {
 			currentStep === 1 &&
 			( ! isPluginUploadFlow || pluginUploadComplete )
 		) {
-			if ( ! isTransferredUpload ) {
+			if ( ! recoveryOwnsActivation ) {
 				dispatch(
 					activatePlugin( siteId, {
 						slug: installedPlugin?.slug,
@@ -274,7 +281,7 @@ export function useProductInstall( {
 		installedPlugin,
 		currentStep,
 		isPluginUploadFlow,
-		isTransferredUpload,
+		recoveryOwnsActivation,
 		pluginUploadComplete,
 		dispatch,
 		siteId,

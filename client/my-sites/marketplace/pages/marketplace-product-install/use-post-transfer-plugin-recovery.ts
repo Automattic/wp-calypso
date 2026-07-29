@@ -28,12 +28,15 @@ export type PluginRecoveryProgress = {
 export function usePostTransferPluginRecovery( {
 	siteId,
 	enabled,
+	runImmediately,
 	canActivate,
 	ownsActivation,
 	installedPlugin,
 }: {
 	siteId: number;
 	enabled: boolean;
+	/** Look once on becoming enabled, for a flow whose plugin is already there to be found. */
+	runImmediately: boolean;
 	canActivate: boolean;
 	ownsActivation: boolean;
 	installedPlugin: { slug?: string; id?: string } | null | undefined;
@@ -94,13 +97,14 @@ export function usePostTransferPluginRecovery( {
 			} );
 	}, [ canActivate, ownsActivation, pluginId, pluginSlug, dispatch, siteId ] );
 
-	// The interval only fires after its first delay, and the transfer has already kept the customer
-	// waiting; look once as soon as there is a reason to.
+	// The interval only fires after its first delay, and a transfer has already kept the customer
+	// waiting; look once straight away where the plugin is expected to be there already. Flows whose
+	// own activation window is still opening keep the delay, so this does not act ahead of them.
 	useEffect( () => {
-		if ( enabled ) {
+		if ( enabled && runImmediately ) {
 			runCycle();
 		}
-	}, [ enabled, runCycle ] );
+	}, [ enabled, runImmediately, runCycle ] );
 
 	useInterval( runCycle, enabled ? PLUGIN_POLL_INTERVAL_MS : null );
 

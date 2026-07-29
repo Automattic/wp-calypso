@@ -2,6 +2,7 @@
  * @jest-environment jsdom
  */
 import { act } from '@testing-library/react';
+import { setAutomatedTransferStatus } from 'calypso/state/automated-transfer/actions';
 import automatedTransferReducer from 'calypso/state/automated-transfer/reducer';
 import marketplaceReducer from 'calypso/state/marketplace/reducer';
 import pluginsReducer from 'calypso/state/plugins/reducer';
@@ -73,7 +74,26 @@ describe( 'useProductInstall', () => {
 			expect( activations?.action ).toBe( 'ACTIVATE_PLUGIN' );
 		} );
 
-		it( 'leaves a transferred upload to the recovery poll', () => {
+		it( 'leaves a transferred upload to the recovery poll once its transfer has been seen', () => {
+			// Recovery only takes over having seen the transfer, so the flow has to run through one.
+			const { store } = renderHookWithProvider( () => useProductInstall( {} ), {
+				reducers,
+				initialState: uploadAwaitingActivation( 'transfer', 'active' ),
+			} );
+
+			act( () => {
+				store.dispatch( setAutomatedTransferStatus( SITE_ID, 'complete', 'uploaded' ) );
+				jest.advanceTimersByTime( 2000 );
+			} );
+
+			expect(
+				store.getState().plugins.installed.status?.[ SITE_ID ]?.[ 'uploaded/uploaded' ]
+			).toBeUndefined();
+		} );
+
+		it( 'still activates a transferred upload whose transfer it never saw running', () => {
+			// Nothing has told recovery this flow is its own, so the original owner keeps it: better a
+			// single attempt than a plugin both of them leave switched off.
 			const { store } = renderHookWithProvider( () => useProductInstall( {} ), {
 				reducers,
 				initialState: uploadAwaitingActivation( 'transfer', 'complete' ),
@@ -84,8 +104,8 @@ describe( 'useProductInstall', () => {
 			} );
 
 			expect(
-				store.getState().plugins.installed.status?.[ SITE_ID ]?.[ 'uploaded/uploaded' ]
-			).toBeUndefined();
+				store.getState().plugins.installed.status?.[ SITE_ID ]?.[ 'uploaded/uploaded' ]?.action
+			).toBe( 'ACTIVATE_PLUGIN' );
 		} );
 	} );
 

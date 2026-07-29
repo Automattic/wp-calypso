@@ -41,6 +41,7 @@ type Props = Parameters< typeof usePostTransferPluginRecovery >[ 0 ];
 const defaults: Props = {
 	siteId: 1,
 	enabled: true,
+	runImmediately: true,
 	canActivate: true,
 	ownsActivation: true,
 	installedPlugin: INSTALLED,

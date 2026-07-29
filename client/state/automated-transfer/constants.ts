@@ -51,6 +51,10 @@ export const transferEndStates = [
 	transferStates.NULL,
 ] as const;
 
+/** A transfer that finished successfully, under either spelling the backend uses for it. */
+export const isTransferComplete = ( status: string | null | undefined ): boolean =>
+	status === transferStates.COMPLETE || status === transferStates.COMPLETED;
+
 /**
  * Whether a transfer is under way. True for every phase that is not an end state, including ones
  * `transferInProgress` leaves out — uploading, backfilling, the switcheroo. Inquiring is not a
