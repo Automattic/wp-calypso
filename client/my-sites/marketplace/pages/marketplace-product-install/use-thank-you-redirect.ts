@@ -44,6 +44,7 @@ export function useThankYouRedirect( {
 	pluginActive,
 	atomicFlow,
 	automatedTransferStatus,
+	uploadFailed,
 }: {
 	siteId: number;
 	selectedSiteSlug: string | null;
@@ -57,6 +58,7 @@ export function useThankYouRedirect( {
 	pluginActive: boolean;
 	atomicFlow: boolean;
 	automatedTransferStatus: string | null;
+	uploadFailed: boolean;
 } ) {
 	const dispatch = useDispatch();
 
@@ -97,12 +99,18 @@ export function useThankYouRedirect( {
 	// for a marketplace-only slug, which the store normalizes to wporg: true, so that never holds.
 	const isRecoveryFlow = ! isPluginUploadFlow && !! pluginSlug && !! freshSite?.is_wpcom_atomic;
 
-	const pluginConfirmedActive = !! ( installedPlugin && pluginActive );
+	// A rejected archive leaves the error screen up while the transfer it optimistically started can
+	// still be running behind it — the endpoint creates the transfer before it validates the archive.
+	// Nothing about a failed attempt should navigate: the error is what the customer is there to read.
+	const uploadAttemptFailed = isPluginUploadFlow && uploadFailed;
+
+	const pluginConfirmedActive = !! ( installedPlugin && pluginActive ) && ! uploadAttemptFailed;
 
 	// The upload's transfer is over and the site is reachable. This is not evidence the archive
 	// installed: the transfer reports complete whether the install succeeded, failed, or was skipped.
 	const uploadTransferSettled = !! (
 		isPluginUploadFlow &&
+		! uploadAttemptFailed &&
 		transferObserved &&
 		transferStates.COMPLETE === automatedTransferStatus &&
 		isAtomicTransferReady

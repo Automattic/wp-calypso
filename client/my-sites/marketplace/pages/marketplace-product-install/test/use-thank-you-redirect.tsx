@@ -55,6 +55,7 @@ const baseProps: Props = {
 	pluginActive: false,
 	atomicFlow: true,
 	automatedTransferStatus: transferStates.COMPLETE,
+	uploadFailed: false,
 };
 
 // A zip upload mid-transfer: no product slug in the route, and no plugin in the store, since the
@@ -204,6 +205,36 @@ describe( 'useThankYouRedirect', () => {
 		rerender( { automatedTransferStatus: transferStates.COMPLETE } );
 		act( () => jest.advanceTimersByTime( CONFIRMATION_GRACE_MS ) );
 		expect( window.location.href ).toBe( PLUGINS_LIST_URL );
+	} );
+
+	it( 'leaves a rejected upload on its error screen, transfer or no transfer', async () => {
+		// The endpoint creates the transfer before it validates the archive, so a rejected zip can
+		// still transfer to completion behind the error. Navigating would take the error away.
+		jest.useFakeTimers();
+		mockFreshSite = ATOMIC_READY;
+		const { rerender } = render( { ...UPLOAD_PROPS, uploadFailed: true } );
+		await waitFor( () => expect( mockRecoveryProps?.canActivate ).toBe( true ) );
+
+		rerender( { uploadFailed: true, automatedTransferStatus: transferStates.COMPLETE } );
+		act( () => jest.advanceTimersByTime( CONFIRMATION_GRACE_MS ) );
+		expect( window.location.href ).toBe( '' );
+	} );
+
+	it( 'does not send a rejected upload to the activated view on a stale plugin', async () => {
+		// Reconciliation can restore a slug that matches something already active in the store.
+		jest.useFakeTimers();
+		mockFreshSite = ATOMIC_READY;
+		render( {
+			...UPLOAD_PROPS,
+			uploadFailed: true,
+			automatedTransferStatus: transferStates.COMPLETE,
+			installedPlugin: { slug: 'uploaded', id: 'uploaded/uploaded' },
+			pluginActive: true,
+		} );
+		await waitFor( () => expect( mockRecoveryProps?.canActivate ).toBe( true ) );
+
+		act( () => jest.advanceTimersByTime( CONFIRMATION_GRACE_MS ) );
+		expect( window.location.href ).toBe( '' );
 	} );
 
 	it( 'does not redirect an upload that never transferred', async () => {

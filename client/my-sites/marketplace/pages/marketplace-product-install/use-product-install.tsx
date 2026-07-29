@@ -265,6 +265,7 @@ export function useProductInstall( {
 		pluginActive,
 		atomicFlow,
 		automatedTransferStatus,
+		uploadFailed: !! pluginUploadError,
 	} );
 
 	const steps = useMemo( () => {
