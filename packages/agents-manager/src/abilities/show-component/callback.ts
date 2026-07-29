@@ -1,8 +1,16 @@
 import { select } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
+import { checkpointKeys, setCheckpoint } from '../../utils/checkpoints';
 import { BIG_SKY_SHOW_COMPONENT_TOOL_ID } from '../../utils/show-component-tools';
+import { getToolCallIdFromConversationHistory } from '../../utils/tool-call-history';
 import type { AbilityResult } from '../types';
 import type { ShowComponentType } from './index';
+
+const CHECKPOINT_KEYS_BY_TYPE: Record< ShowComponentType, string[] > = {
+	'button-picker': [ checkpointKeys.BUTTON ],
+	'font-picker': [ checkpointKeys.FONT ],
+	'color-picker': [ checkpointKeys.COLOR ],
+};
 
 export interface ShowComponentInput {
 	type: ShowComponentType;
@@ -43,6 +51,21 @@ export async function showComponentCallback( input: ShowComponentInput ): Promis
 	const successMessage =
 		( typeof summary === 'string' && summary.trim() ) ||
 		__( 'Choose from the options I provided.', __i18n_text_domain__ );
+
+	// Snapshot the pre-pick state under this call's id, scoped to the picker's
+	// style domain — the checkpoint `restore-checkpoint` can undo picks with.
+	// Unknown types get no checkpoint; the schema enum is advisory only.
+	const checkpointKeysForType = CHECKPOINT_KEYS_BY_TYPE[ type ];
+	const toolCallId = checkpointKeysForType
+		? getToolCallIdFromConversationHistory( BIG_SKY_SHOW_COMPONENT_TOOL_ID )
+		: null;
+	if ( toolCallId ) {
+		setCheckpoint( toolCallId, checkpointKeysForType, {
+			toolCallId,
+			toolId: BIG_SKY_SHOW_COMPONENT_TOOL_ID,
+			summary: successMessage,
+		} );
+	}
 
 	return {
 		result: {

@@ -6,13 +6,14 @@ import {
 } from '@wordpress/abilities';
 import isAmAbilitiesDisabled from '../utils/is-am-abilities-disabled';
 import { BIG_SKY_ABILITY_CATEGORY } from './constants';
+import { restoreCheckpointAbility } from './restore-checkpoint';
 import { showComponentAbility } from './show-component';
 import type { ToolProvider } from '../extension-types';
 import type { Ability } from './types';
 
 // AM-owned abilities. Migrating an ability from Big Sky = add its folder
 // under `abilities/` and list it here.
-const AM_ABILITIES: Ability[] = [ showComponentAbility ];
+const AM_ABILITIES: Ability[] = [ restoreCheckpointAbility, showComponentAbility ];
 
 // The agent routes tool calls with `/` → `__` and `-` → `_`.
 export const normalizeAbilityName = ( name: string ) =>

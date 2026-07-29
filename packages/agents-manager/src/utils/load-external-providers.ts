@@ -13,7 +13,9 @@
 
 import { getAgentManager, UIMessage } from '@automattic/agenttic-client';
 import { amToolProvider, normalizeAbilityName } from '../abilities';
+import { getAvailableCheckpoints } from './checkpoints';
 import { getAgentsManagerInlineData } from './get-agents-manager-inline-data';
+import isAmAbilitiesDisabled from './is-am-abilities-disabled';
 import { isReaderChatAgent } from './is-reader-chat-agent';
 import { useReaderFollowupSuggestions } from './reader-followup-hook';
 import type {
@@ -322,6 +324,39 @@ function getFallbackClientContext(): ClientContextType {
 	};
 }
 
+// TODO (ability-migration): Remove the replacement once Big Sky deletes its
+// checkpoint context — providers then stop advertising unrestorable ids.
+/**
+ * Replaces the provider-advertised `availableCheckpoints` with AM's own list.
+ * AM owns `restore-checkpoint` execution, so provider-held checkpoints can no
+ * longer be restored — advertising them would steer the agent into failing
+ * restores. The `?am_abilities=0` switch keeps the provider list, matching
+ * the provider-executed restore it flips to.
+ */
+function withAmCheckpoints(
+	contextProvider: ContextProvider | undefined
+): ContextProvider | undefined {
+	if ( ! contextProvider ) {
+		return undefined;
+	}
+
+	return {
+		getClientContext: () => {
+			const context = contextProvider.getClientContext();
+			if ( isAmAbilitiesDisabled() ) {
+				return context;
+			}
+
+			const amCheckpoints = getAvailableCheckpoints();
+			if ( ! amCheckpoints.length && context.availableCheckpoints === undefined ) {
+				return context;
+			}
+
+			return { ...context, availableCheckpoints: amCheckpoints };
+		},
+	};
+}
+
 export function mergeContextProviders(
 	contextProviders: ContextProvider[]
 ): ContextProvider | undefined {
@@ -577,7 +612,7 @@ export async function loadExternalProviders(): Promise< LoadedProviders > {
 		}
 	}
 
-	const mergedContextProvider = mergeContextProviders( allContextProviders );
+	const mergedContextProvider = withAmCheckpoints( mergeContextProviders( allContextProviders ) );
 	const mergedMarkdownComponents = mergeMarkdownComponentsFromProviders( allMarkdownComponents );
 	const mergedMarkdownExtensions = mergeMarkdownExtensionsFromProviders( allMarkdownExtensions );
 

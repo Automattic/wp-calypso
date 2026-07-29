@@ -5,6 +5,10 @@ jest.mock( '@wordpress/abilities', () => ( {
 	unregisterAbility: jest.fn(),
 } ) );
 jest.mock( '@wordpress/data', () => ( { select: () => undefined } ) );
+jest.mock( '@wordpress/core-data', () => ( { store: 'core' } ) );
+jest.mock( '@automattic/agenttic-client', () => ( { getAgentManager: jest.fn() } ), {
+	virtual: true,
+} );
 
 // `registerAmAbilities` runs once per module instance, so each test loads a
 // fresh module (and the matching mock instances) to start clean.
@@ -34,7 +38,10 @@ describe( 'registerAmAbilities', () => {
 		expect( registerAbilityCategory ).toHaveBeenCalledTimes( 1 );
 		expect( registerAbilityCategory ).toHaveBeenCalledWith( 'big-sky', expect.any( Object ) );
 
-		expect( registerAbility ).toHaveBeenCalledTimes( 1 );
+		expect( registerAbility ).toHaveBeenCalledTimes( 2 );
+		expect( registerAbility ).toHaveBeenCalledWith(
+			expect.objectContaining( { name: 'big-sky/restore-checkpoint' } )
+		);
 		expect( registerAbility ).toHaveBeenCalledWith(
 			expect.objectContaining( { name: 'big-sky/show-component' } )
 		);
@@ -47,14 +54,14 @@ describe( 'registerAmAbilities', () => {
 	it( 'replaces a provider copy when the name is already registered', async () => {
 		const { registerAmAbilities, getAbility, registerAbility, unregisterAbility } = await load();
 		registerAbility.mockRejectedValueOnce(
-			new Error( 'Ability "big-sky/show-component" is already registered' )
+			new Error( 'Ability "big-sky/restore-checkpoint" is already registered' )
 		);
-		getAbility.mockReturnValue( { name: 'big-sky/show-component' } );
+		getAbility.mockReturnValue( { name: 'big-sky/restore-checkpoint' } );
 
 		await registerAmAbilities();
 
-		expect( unregisterAbility ).toHaveBeenCalledWith( 'big-sky/show-component' );
-		expect( registerAbility ).toHaveBeenCalledTimes( 2 );
+		expect( unregisterAbility ).toHaveBeenCalledWith( 'big-sky/restore-checkpoint' );
+		expect( registerAbility ).toHaveBeenCalledTimes( 3 );
 	} );
 
 	it( 'does not unregister when the failure is not a collision', async () => {
@@ -66,7 +73,7 @@ describe( 'registerAmAbilities', () => {
 		await registerAmAbilities();
 
 		expect( unregisterAbility ).not.toHaveBeenCalled();
-		expect( registerAbility ).toHaveBeenCalledTimes( 1 );
+		expect( registerAbility ).toHaveBeenCalledTimes( 2 );
 		expect( warn ).toHaveBeenCalled();
 		warn.mockRestore();
 	} );
