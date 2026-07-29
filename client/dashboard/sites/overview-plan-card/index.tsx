@@ -1,5 +1,5 @@
 import { DotcomPlans, JetpackPlans, WooHostedPlans } from '@automattic/api-core';
-import { siteCurrentPlanQuery, siteByIdQuery, purchaseQuery } from '@automattic/api-queries';
+import { siteCurrentPlanQuery, siteByIdQuery, sitePurchasesQuery } from '@automattic/api-queries';
 import { JetpackLogo } from '@automattic/components/src/logos/jetpack-logo';
 import { useQuery } from '@tanstack/react-query';
 import {
@@ -136,10 +136,12 @@ function JetpackPlanCard( {
 function WpcomPlanCard( {
 	site,
 	purchase,
+	hasPurchases,
 	isLoading,
 }: {
 	site: Site;
 	purchase?: Purchase;
+	hasPurchases: boolean;
 	isLoading: boolean;
 } ) {
 	return (
@@ -154,7 +156,7 @@ function WpcomPlanCard( {
 			bottom={
 				<VStack spacing={ 3 }>
 					<SitePlanStats site={ site } />
-					{ purchase && <SeeAllPurchasesLink site={ site } /> }
+					{ hasPurchases && <SeeAllPurchasesLink site={ site } /> }
 				</VStack>
 			}
 		/>
@@ -224,12 +226,12 @@ function CommerceGardenPlanCard( {
 
 export default function PlanCard( { site }: { site: Site } ) {
 	const { data: plan, isLoading: isLoadingPlan } = useQuery( siteCurrentPlanQuery( site.ID ) );
-	const { data: purchase, isLoading: isLoadingPurchase } = useQuery( {
-		...purchaseQuery( plan?.id ?? 0 ),
-		enabled: !! plan?.id,
-	} );
+	const { data: purchases, isLoading: isLoadingPurchases } = useQuery(
+		sitePurchasesQuery( site.ID )
+	);
+	const purchase = purchases?.find( ( sitePurchase ) => sitePurchase.ID === plan?.id );
 
-	const isLoading = isLoadingPlan || isLoadingPurchase;
+	const isLoading = isLoadingPlan || isLoadingPurchases;
 
 	if ( site.is_a4a_dev_site ) {
 		return <AgencyPlanCard site={ site } isLoading={ isLoading } />;
@@ -247,7 +249,14 @@ export default function PlanCard( { site }: { site: Site } ) {
 		return <WpcomStagingSitePlanCard site={ site } />;
 	}
 
-	return <WpcomPlanCard site={ site } purchase={ purchase } isLoading={ isLoading } />;
+	return (
+		<WpcomPlanCard
+			site={ site }
+			purchase={ purchase }
+			hasPurchases={ ( purchases?.length ?? 0 ) > 0 }
+			isLoading={ isLoading }
+		/>
+	);
 }
 
 function getCardDescription( site: Site, purchase?: Purchase ) {
