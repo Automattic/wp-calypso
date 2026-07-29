@@ -12,6 +12,7 @@
  */
 
 import { getAgentManager, UIMessage } from '@automattic/agenttic-client';
+import { amToolProvider, normalizeAbilityName } from '../abilities';
 import { getAgentsManagerInlineData } from './get-agents-manager-inline-data';
 import { isReaderChatAgent } from './is-reader-chat-agent';
 import { useReaderFollowupSuggestions } from './reader-followup-hook';
@@ -476,7 +477,10 @@ export async function loadExternalProviders(): Promise< LoadedProviders > {
 	let mergedSuppressEmptyViewDefaults = false;
 
 	// Collect exports that need to be merged across all providers.
-	const allToolProviders: ToolProvider[] = [];
+	// AM's own provider goes first: tool execution resolves first-write-wins
+	// by ability name, so migrated abilities execute through AM even while
+	// external providers still ship their copies.
+	const allToolProviders: ToolProvider[] = [ amToolProvider ];
 	const allContextProviders: ContextProvider[] = [];
 	const allMarkdownComponents: MarkdownComponents[] = [];
 	const allMarkdownExtensions: MarkdownExtensions[] = [];
@@ -583,10 +587,6 @@ export async function loadExternalProviders(): Promise< LoadedProviders > {
 	if ( allToolProviders.length === 1 ) {
 		mergedToolProvider = allToolProviders[ 0 ];
 	} else if ( allToolProviders.length > 1 ) {
-		// Normalize ability names: AM converts `/` → `__` and `-` → `_` when
-		// routing tool calls, so we match on either the raw or normalized form.
-		const normalize = ( name: string ) => name.replace( /\//g, '__' ).replace( /-/g, '_' );
-
 		// Query providers live on each call rather than snapshotting at load.
 		// agenttic-client calls getAbilities()/executeAbility() fresh every turn,
 		// so abilities registered later stay visible. Big Sky, for one, registers
@@ -626,7 +626,7 @@ export async function loadExternalProviders(): Promise< LoadedProviders > {
 				const results = await collectAbilityResults();
 				for ( let i = 0; i < allToolProviders.length; i++ ) {
 					const owns = results[ i ].some(
-						( ability ) => ability.name === name || normalize( ability.name ) === name
+						( ability ) => ability.name === name || normalizeAbilityName( ability.name ) === name
 					);
 					if ( owns ) {
 						return allToolProviders[ i ].executeAbility( name, args );

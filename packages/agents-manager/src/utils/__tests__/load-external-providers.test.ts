@@ -6,6 +6,7 @@ import {
 	mergeCapabilitiesInto,
 	mergeUseSuggestionsHooks,
 } from '../load-external-providers';
+import { showComponentAbility } from '../../abilities/show-component';
 import type { Ability } from '../../extension-types';
 import type { ProviderCapabilities, UseSuggestionsHook } from '../load-external-providers';
 
@@ -141,6 +142,7 @@ describe( 'loadExternalProviders', () => {
 		const providers = await loadExternalProviders();
 
 		await expect( providers.toolProvider?.getAbilities() ).resolves.toEqual( [
+			showComponentAbility,
 			createAbility( 'host/navigate' ),
 			createAbility( 'woocommerce/get-products' ),
 		] );
@@ -169,6 +171,7 @@ describe( 'loadExternalProviders', () => {
 		const providers = await loadExternalProviders();
 
 		await expect( providers.toolProvider?.getAbilities() ).resolves.toEqual( [
+			showComponentAbility,
 			createAbility( 'shared/action' ),
 		] );
 		await expect( providers.toolProvider?.executeAbility( 'shared/action', {} ) ).resolves.toEqual(
@@ -178,6 +181,43 @@ describe( 'loadExternalProviders', () => {
 		);
 		expect( firstProvider.executeAbility ).toHaveBeenCalled();
 		expect( secondProvider.executeAbility ).not.toHaveBeenCalled();
+	} );
+
+	it( 'executes migrated abilities through AM before any provider copy', async () => {
+		const bigSkyProvider = {
+			getAbilities: jest.fn( () =>
+				Promise.resolve( [ createAbility( 'big-sky/show-component' ) ] )
+			),
+			executeAbility: jest.fn( () => Promise.resolve( { handledBy: 'big-sky' } ) ),
+		};
+		setAgentsManagerData( { agentProviders: [ { toolProvider: bigSkyProvider } ] } );
+
+		const providers = await loadExternalProviders();
+		const result = ( await providers.toolProvider?.executeAbility( 'big_sky__show_component', {
+			type: 'color-picker',
+			props: { variations: [] },
+		} ) ) as { result?: { success?: boolean } };
+
+		expect( result?.result?.success ).toBe( true );
+		expect( bigSkyProvider.executeAbility ).not.toHaveBeenCalled();
+	} );
+
+	it( 'flips execution to the provider copy with `?am_abilities=0`', async () => {
+		window.history.replaceState( {}, '', '/?am_abilities=0' );
+		const bigSkyProvider = {
+			getAbilities: jest.fn( () =>
+				Promise.resolve( [ createAbility( 'big-sky/show-component' ) ] )
+			),
+			executeAbility: jest.fn( () => Promise.resolve( { handledBy: 'big-sky' } ) ),
+		};
+		setAgentsManagerData( { agentProviders: [ { toolProvider: bigSkyProvider } ] } );
+
+		const providers = await loadExternalProviders();
+		const result = await providers.toolProvider?.executeAbility( 'big_sky__show_component', {} );
+		window.history.replaceState( {}, '', '/' );
+
+		expect( result ).toEqual( { handledBy: 'big-sky' } );
+		expect( bigSkyProvider.executeAbility ).toHaveBeenCalled();
 	} );
 
 	it( 'returns valid IDs for loaded providers and ignores missing, empty, and duplicate IDs', async () => {
@@ -442,6 +482,7 @@ describe( 'loadExternalProviders', () => {
 		editorAbilityRegistered = true;
 
 		await expect( providers.toolProvider?.getAbilities() ).resolves.toEqual( [
+			showComponentAbility,
 			createAbility( 'big-sky/apply-block-edits' ),
 			createAbility( 'wpcom/manage-site' ),
 		] );

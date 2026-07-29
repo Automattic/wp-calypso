@@ -32,6 +32,7 @@ cd apps/agents-manager && yarn dev --sync
 AM ability registration (`registerAmAbilities()`) is surface-agnostic by design — it runs wherever the chat mounts, and that is safe because registration grants nothing:
 
 - **The backend route settings are the scope authority** (`wpcom` repo, `lib/ai/agents/route-settings/wp-orchestrator/`): deny-by-default, per-URL allowlists rebuild each agent's tool set from scratch. Client-side registration and provider advertisement never make an ability callable.
+- **Execution ownership comes from provider order, not the registry** — tool calls resolve through the provider chain first-write-wins by ability name, and `amToolProvider` is placed before the external providers. Registering an ability in the `@wordpress/abilities` registry alone does not route execution to it.
 - **Never rename an ability while migrating it** — the name is the key the route settings match on; renaming silently drops it from every surface.
 - **Guard mutating callbacks in place**: when migrating a callback that changes editor state (e.g. `apply-block-edits`, `set-styles`), start it with an `isEditorPage()` early-return that returns an error result. Inert callbacks (e.g. `show-component`) need no guard.
 - **Per migration, grep the route-settings files** for the ability name to confirm which surfaces expose it.
