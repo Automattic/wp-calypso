@@ -26,16 +26,21 @@ export interface HelpCenterCTAProps extends Omit< HelpCenterCTAVariantProps, 'on
 	ctaId: string;
 }
 
+// Module-level so it survives remounts (e.g. search filtering the More
+// resources list) and only resets on a full page load, per cta_id.
+const reportedCtaIds = new Set< string >();
+
 function useCTATracking(
 	eventProps: { cta_id: string; variant: string; placement: string } | null
 ) {
 	useEffect( () => {
-		if ( ! eventProps ) {
+		if ( ! eventProps || reportedCtaIds.has( eventProps.cta_id ) ) {
 			return;
 		}
+		reportedCtaIds.add( eventProps.cta_id );
 		recordTracksEvent( 'calypso_helpcenter_cta_impression', eventProps );
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [] );
+	}, [ eventProps?.cta_id ] );
 
 	return () => {
 		if ( eventProps ) {
