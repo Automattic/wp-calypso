@@ -4,7 +4,6 @@ import { render, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 // Mock dependencies - MUST be before imports that use them
 jest.mock( '@automattic/agenttic-ui', () => {
-	// eslint-disable-next-line @typescript-eslint/no-require-imports
 	const React = require( 'react' );
 	const { useState } = React;
 
@@ -55,12 +54,6 @@ jest.mock( '@wordpress/data', () => ( {
 
 jest.mock( '@wordpress/i18n', () => ( {
 	__: ( text: string ) => text,
-	sprintf: ( format: string, ...args: string[] ) => {
-		let seq = 0;
-		return format
-			.replace( /%(\d+)\$s/g, ( _match, n: string ) => String( args[ Number( n ) - 1 ] ) )
-			.replace( /%s/g, () => String( args[ seq++ ] ) );
-	},
 } ) );
 
 jest.mock( '../../utils/tracking', () => ( {
@@ -442,26 +435,22 @@ describe( 'StylePicker', () => {
 			} );
 		} );
 
-		it( 'exports Highlights + Cinematic video styles, both active', () => {
+		it( 'exports Cinematic (active) + Highlights (disabled teaser) video styles', () => {
 			expect( VIDEO_STYLE_OPTIONS ).toHaveLength( 2 );
 
-			// Highlights leads the list — it is the default video style and reads
-			// first in the picker.
 			expect( VIDEO_STYLE_OPTIONS[ 0 ] ).toMatchObject( {
-				label: 'Highlights',
-				value: 'highlights',
-			} );
-			expect( VIDEO_STYLE_OPTIONS[ 0 ].disabled ).toBeFalsy();
-			expect( VIDEO_STYLE_OPTIONS[ 0 ].preview ).toBeTruthy();
-			expect( VIDEO_STYLE_OPTIONS[ 0 ].badge ).toBe( 'New' );
-
-			expect( VIDEO_STYLE_OPTIONS[ 1 ] ).toMatchObject( {
 				label: 'Cinematic',
 				value: 'cinematic',
 			} );
-			expect( VIDEO_STYLE_OPTIONS[ 1 ].disabled ).toBeFalsy();
+			expect( VIDEO_STYLE_OPTIONS[ 0 ].disabled ).toBeFalsy();
+			expect( VIDEO_STYLE_OPTIONS[ 0 ].preview ).toBeTruthy();
+
+			expect( VIDEO_STYLE_OPTIONS[ 1 ] ).toMatchObject( {
+				label: 'Highlights (Coming Soon)',
+				value: 'highlights',
+				disabled: true,
+			} );
 			expect( VIDEO_STYLE_OPTIONS[ 1 ].preview ).toBeTruthy();
-			expect( VIDEO_STYLE_OPTIONS[ 1 ].badge ).toBeFalsy();
 		} );
 
 		it( 'renders video options when variant="video"', async () => {
@@ -476,6 +465,16 @@ describe( 'StylePicker', () => {
 			// Image-only options should not appear in the video dropdown.
 			expect( dropdown ).not.toHaveTextContent( 'Anime' );
 			expect( dropdown ).not.toHaveTextContent( 'Pixel Art' );
+		} );
+
+		it( 'renders the disabled video style as an inert (native-disabled) card', async () => {
+			const user = userEvent.setup();
+			render( <StylePicker mode={ ImageStudioMode.Generate } variant="video" /> );
+
+			await user.click( screen.getByTestId( 'toolbar-button' ) );
+			const dropdown = screen.getByTestId( 'dropdown-content' );
+			const highlightsCard = within( dropdown ).getByRole( 'button', { name: /Highlights/ } );
+			expect( highlightsCard ).toBeDisabled();
 		} );
 
 		it( 'maps style values correctly', async () => {
@@ -515,9 +514,23 @@ describe( 'StylePicker', () => {
 		} );
 	} );
 
-	describe( 'Highlights video style', () => {
-		it( 'shows Highlights as an enabled option with a preview for all users', async () => {
+	describe( 'Dev-mode Highlights gating', () => {
+		it( 'keeps Highlights disabled with the Coming Soon teaser when isDevMode is unset', async () => {
 			const user = userEvent.setup();
+			render( <StylePicker mode={ ImageStudioMode.Generate } variant="video" /> );
+
+			await user.click( screen.getByTestId( 'toolbar-button' ) );
+			const dropdown = screen.getByTestId( 'dropdown-content' );
+			const highlightsCard = within( dropdown ).getByRole( 'button', { name: /Highlights/ } );
+
+			expect( highlightsCard ).toBeDisabled();
+			expect( highlightsCard ).toHaveTextContent( 'Highlights (Coming Soon)' );
+		} );
+
+		it( 'unlocks Highlights with the a12s label, enabled card, and a preview when isDevMode is true', async () => {
+			const user = userEvent.setup();
+			( window as Record< string, unknown > ).imageStudioData = { isDevMode: true };
+
 			render( <StylePicker mode={ ImageStudioMode.Generate } variant="video" /> );
 
 			await user.click( screen.getByTestId( 'toolbar-button' ) );
@@ -525,28 +538,8 @@ describe( 'StylePicker', () => {
 			const highlightsCard = within( dropdown ).getByRole( 'button', { name: /Highlights/ } );
 
 			expect( highlightsCard ).not.toBeDisabled();
-			expect( highlightsCard ).toHaveTextContent( 'Highlights' );
-			expect( highlightsCard ).not.toHaveTextContent( 'Coming Soon' );
+			expect( highlightsCard ).toHaveTextContent( 'Highlights (a12s only)' );
 			expect( highlightsCard.querySelector( 'img' ) ).toBeInTheDocument();
-		} );
-
-		it( 'renders a "New" badge on the Highlights card only', async () => {
-			const user = userEvent.setup();
-			render( <StylePicker mode={ ImageStudioMode.Generate } variant="video" /> );
-
-			await user.click( screen.getByTestId( 'toolbar-button' ) );
-			const dropdown = screen.getByTestId( 'dropdown-content' );
-
-			const highlightsCard = within( dropdown ).getByRole( 'button', { name: /Highlights/ } );
-			const badge = highlightsCard.querySelector( '.image-studio-input-toolbar-card__badge' );
-			expect( badge ).toBeInTheDocument();
-			expect( badge ).toHaveTextContent( 'New' );
-
-			// The non-badged Cinematic card must not render a badge.
-			const cinematicCard = within( dropdown ).getByRole( 'button', { name: /Cinematic/ } );
-			expect(
-				cinematicCard.querySelector( '.image-studio-input-toolbar-card__badge' )
-			).not.toBeInTheDocument();
 		} );
 	} );
 
@@ -568,33 +561,6 @@ describe( 'StylePicker', () => {
 			rerender( <StylePicker mode={ ImageStudioMode.Generate } /> );
 
 			expect( screen.getByTestId( 'toolbar-button' ) ).toHaveTextContent( 'Cinematic' );
-		} );
-
-		it( 'appends the badge to the collapsed label for a badged video style', () => {
-			mockUseSelect.mockImplementation( ( selector: any ) =>
-				selector( () => ( {
-					getSelectedStyle: () => 'highlights',
-				} ) )
-			);
-
-			render( <StylePicker mode={ ImageStudioMode.Generate } variant="video" /> );
-
-			// Highlights carries a "New" badge, so the closed toolbar reads "Highlights (New)".
-			expect( screen.getByTestId( 'toolbar-button' ) ).toHaveTextContent( 'Highlights (New)' );
-		} );
-
-		it( 'leaves the collapsed label unchanged for an un-badged video style', () => {
-			mockUseSelect.mockImplementation( ( selector: any ) =>
-				selector( () => ( {
-					getSelectedStyle: () => 'cinematic',
-				} ) )
-			);
-
-			render( <StylePicker mode={ ImageStudioMode.Generate } variant="video" /> );
-
-			const toolbarButton = screen.getByTestId( 'toolbar-button' );
-			expect( toolbarButton ).toHaveTextContent( 'Cinematic' );
-			expect( toolbarButton ).not.toHaveTextContent( '(New)' );
 		} );
 
 		it( 'handles unknown selected style gracefully', () => {

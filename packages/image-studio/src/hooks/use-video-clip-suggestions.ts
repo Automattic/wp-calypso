@@ -57,7 +57,12 @@ Each chip MAY also include an optional closing-direction sub-clause (a short phr
 }
 
 /**
- * Builds the prompt that proposes editorial steers for the Highlights style.
+ * Suggestions for the Highlights style. The post's content and structure reach
+ * the model via the server-resolved page context in the system prompt (the
+ * same channel the image suggestions use), so this prompt carries only the
+ * editorial-steering instructions — no inlined post body. Each chip weaves 2-3
+ * of six editorial axes (lead / audience / voice / structure / emphasis /
+ * closer), never cinematography.
  */
 export function buildHighlightsClipSuggestionsPrompt(): string {
 	return `Using the WordPress post's content and structure available to you in context [[client.gutenberg_page.simple_structure]], propose 3 short editorial steers a user could pick to shape a 20-second summary video derived from this post.
