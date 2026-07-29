@@ -157,7 +157,8 @@ describe( 'restoreCheckpointCallback', () => {
 		] );
 	} );
 
-	it( 'reports a failed restore without crashing', async () => {
+	it( 'reports a failed restore and drops the just-created reciprocal', async () => {
+		mockGetToolCallId.mockReturnValue( 'toolu_restore' );
 		( restoreCheckpoint as jest.Mock ).mockRejectedValueOnce( new Error( 'Restore exploded.' ) );
 
 		const result = await restoreCheckpointCallback( makeInput() );
@@ -167,6 +168,17 @@ describe( 'restoreCheckpointCallback', () => {
 			error: 'Restore exploded.',
 			details: { checkpointId: 'toolu_target' },
 		} );
+		expect( clearCheckpoint ).toHaveBeenCalledTimes( 1 );
+		expect( clearCheckpoint ).toHaveBeenCalledWith( 'toolu_restore' );
+	} );
+
+	it( 'keeps a pre-existing reciprocal when the restore fails', async () => {
+		mockGetToolCallId.mockReturnValue( 'toolu_restore' );
+		mockHasCheckpoint.mockReturnValue( true );
+		( restoreCheckpoint as jest.Mock ).mockRejectedValueOnce( new Error( 'Restore exploded.' ) );
+
+		await restoreCheckpointCallback( makeInput() );
+
 		expect( clearCheckpoint ).not.toHaveBeenCalled();
 	} );
 } );

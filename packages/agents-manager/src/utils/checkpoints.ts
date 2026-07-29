@@ -116,7 +116,12 @@ function restoreThemeSnapshot( checkpoint: CheckpointRecord ): void {
 		throw new Error( 'Global styles are unavailable to restore into.' );
 	}
 
-	( dispatch( coreStore ) as CoreDispatch | undefined )?.editEntityRecord(
+	const coreDispatch = dispatch( coreStore ) as CoreDispatch | undefined;
+	if ( ! coreDispatch ) {
+		throw new Error( 'Global styles are unavailable to restore into.' );
+	}
+
+	coreDispatch.editEntityRecord(
 		'root',
 		'globalStyles',
 		globalStylesId,

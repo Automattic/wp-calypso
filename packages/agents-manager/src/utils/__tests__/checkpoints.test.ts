@@ -224,6 +224,16 @@ describe( 'restoreCheckpoint', () => {
 		expect( editEntityRecord ).not.toHaveBeenCalled();
 	} );
 
+	it( 'rejects when the editor data store is gone', async () => {
+		const { setCheckpoint, restoreCheckpoint, checkpointKeys } = await loadCheckpoints();
+		setCheckpoint( 'toolu_1', [ checkpointKeys.COLOR ] );
+		jest.requireMock( '@wordpress/data' ).dispatch.mockReturnValue( undefined );
+
+		await expect( restoreCheckpoint( 'toolu_1' ) ).rejects.toThrow(
+			'Global styles are unavailable to restore into.'
+		);
+	} );
+
 	it( 'rejects when the global-styles id is gone', async () => {
 		const {
 			setCheckpoint,

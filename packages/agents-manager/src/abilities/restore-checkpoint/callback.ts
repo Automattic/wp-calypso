@@ -79,11 +79,14 @@ export async function restoreCheckpointCallback(
 	const restoreToolCallId = getToolCallIdFromConversationHistory( RESTORE_CHECKPOINT_TOOL_ID );
 	const reciprocalRequestIntentType = getReciprocalRequestIntentType( requestIntentType );
 
+	const reciprocalId =
+		restoreToolCallId && ! hasCheckpoint( restoreToolCallId ) ? restoreToolCallId : null;
+
 	// Record the pre-restore state under this call's own id, so an explicit
 	// redo can step back over this restore.
-	if ( restoreToolCallId && ! hasCheckpoint( restoreToolCallId ) ) {
-		setCheckpoint( restoreToolCallId, targetCheckpoint?.checkpointKeys ?? [], {
-			toolCallId: restoreToolCallId,
+	if ( reciprocalId ) {
+		setCheckpoint( reciprocalId, targetCheckpoint?.checkpointKeys ?? [], {
+			toolCallId: reciprocalId,
 			toolId: RESTORE_CHECKPOINT_TOOL_ID,
 			summary,
 			restoresCheckpointId: checkpointId,
@@ -96,6 +99,11 @@ export async function restoreCheckpointCallback(
 	try {
 		await restoreCheckpoint( checkpointId );
 	} catch ( error ) {
+		// A failed restore leaves the editor unchanged — drop the reciprocal
+		// so it does not advertise a redo for a restore that never happened.
+		if ( reciprocalId ) {
+			clearCheckpoint( reciprocalId );
+		}
 		return errorResult(
 			__(
 				'I did not restore that checkpoint because it may replace or remove too much current content.',
