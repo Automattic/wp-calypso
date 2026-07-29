@@ -24,7 +24,6 @@ Consuming the API? See [Public API](#public-api). Adding a new action? See [Addi
 | `setChatEnabled`           | `(isEnabled: boolean) => void`                          | Enable or disable chat rendering.                                         |
 | `setChatCompactMode`       | `(isCompact: boolean) => void`                          | Toggle compact mode (undocked only).                                      |
 | `setChatDesktopMediaQuery` | `(query: string) => void`                               | Media query used to decide whether the chat can dock into the sidebar.    |
-| `openChatMoreOptions`      | `() => void`                                            | Open the chat header's More Options menu.                                 |
 | `setChatInput` \*          | `(value: string) => void`                               | Set the chat input value and focus it.                                    |
 | `submitChatMessage` \*     | `(message?: string) => Promise<void>`                   | Submit a message programmatically. If omitted, submits the current input. |
 | `setContextEntry`          | `(entry) => void`                                       | Add or replace a context entry sent with the next chat message.           |
@@ -91,7 +90,6 @@ window.__agentsManagerActions.setChatDocked( true );
 window.__agentsManagerActions.setChatCompactMode( true );
 window.__agentsManagerActions.setChatEnabled( false );
 window.__agentsManagerActions.setChatDesktopMediaQuery( '(min-width: 1200px)' );
-window.__agentsManagerActions.openChatMoreOptions();
 
 // Navigate within the chat
 window.__agentsManagerActions.chatNavigate( '/chat', {

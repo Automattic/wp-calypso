@@ -7,33 +7,17 @@ import { fireEvent, render, screen } from '@testing-library/react';
 import React from 'react';
 import SplitScreenGuide from './split-screen-guide';
 
-const DISMISSED_STORAGE_KEY = 'jetpack-ai-sidebar-split-screen-guide-dismissed';
 const mockSetIsSplitScreen = jest.fn();
-const mockOpenChatMoreOptions = jest.fn();
 let mockAgentsManagerState: {
 	isDocked?: boolean;
 	isSplitScreen?: boolean;
 };
 
 jest.mock( '@wordpress/components', () => ( {
-	Notice: ( {
-		actions,
-		children,
-		onRemove,
-	}: {
-		actions: Array< { label: string; onClick: () => void } >;
-		children: React.ReactNode;
-		onRemove: () => void;
-	} ) => (
-		<div role="note">
-			<div>{ children }</div>
-			{ actions.map( ( action ) => (
-				<button key={ action.label } onClick={ action.onClick }>
-					{ action.label }
-				</button>
-			) ) }
-			<button aria-label="Dismiss" onClick={ onRemove } />
-		</div>
+	Button: ( { children, onClick }: { children: React.ReactNode; onClick: () => void } ) => (
+		<button type="button" onClick={ onClick }>
+			{ children }
+		</button>
 	),
 } ) );
 
@@ -58,62 +42,50 @@ describe( 'SplitScreenGuide', () => {
 			isSplitScreen: false,
 		};
 		mockSetIsSplitScreen.mockClear();
-		mockOpenChatMoreOptions.mockClear();
-		localStorage.clear();
-		(
-			window as Window & {
-				__agentsManagerActions?: { openChatMoreOptions?: () => void };
-			}
-		 ).__agentsManagerActions = {
-			openChatMoreOptions: mockOpenChatMoreOptions,
-		};
 	} );
 
-	afterEach( () => {
-		delete (
-			window as Window & {
-				__agentsManagerActions?: { openChatMoreOptions?: () => void };
-			}
-		 ).__agentsManagerActions;
-	} );
-
-	it( 'renders a native tip for a current result in the docked sidebar', () => {
+	it( 'renders a chat-native suggestion for a current result in the docked sidebar', () => {
 		render( <SplitScreenGuide /> );
 
-		expect( screen.getByRole( 'note' ) ).toHaveTextContent(
-			'Tip: Review this feedback in split screen for better experience'
+		expect(
+			screen.getByText(
+				'Before continuing, I recommend reviewing this feedback in split screen for a better experience. You can switch through the dropdown menu at the top of this chat, or clicking this button:'
+			)
+		).toBeVisible();
+		expect( screen.getByRole( 'button', { name: 'Switch to split screen mode' } ) ).toBeVisible();
+		expect( screen.queryByText( 'Show' ) ).not.toBeInTheDocument();
+	} );
+
+	it( 'switches directly to split screen', () => {
+		render( <SplitScreenGuide /> );
+
+		fireEvent.click(
+			screen.getByRole( 'button', {
+				name: 'Switch to split screen mode',
+			} )
 		);
-		expect( screen.getByRole( 'button', { name: 'Switch' } ) ).toBeVisible();
-		expect( screen.getByRole( 'button', { name: 'Show' } ) ).toBeVisible();
-	} );
-
-	it( 'switches directly to split screen and remembers the dismissal', () => {
-		render( <SplitScreenGuide /> );
-
-		fireEvent.click( screen.getByRole( 'button', { name: 'Switch' } ) );
 
 		expect( mockSetIsSplitScreen ).toHaveBeenCalledWith( true );
-		expect( localStorage.getItem( DISMISSED_STORAGE_KEY ) ).toBe( '1' );
-		expect( screen.queryByRole( 'note' ) ).not.toBeInTheDocument();
 	} );
 
-	it( 'opens the existing More Options menu and remembers the dismissal', () => {
-		render( <SplitScreenGuide /> );
+	it( 'reappears after returning from split screen to the docked sidebar', () => {
+		const { rerender } = render( <SplitScreenGuide /> );
 
-		fireEvent.click( screen.getByRole( 'button', { name: 'Show' } ) );
+		mockAgentsManagerState.isSplitScreen = true;
+		rerender( <SplitScreenGuide /> );
+		expect(
+			screen.queryByRole( 'button', {
+				name: 'Switch to split screen mode',
+			} )
+		).not.toBeInTheDocument();
 
-		expect( mockOpenChatMoreOptions ).toHaveBeenCalledTimes( 1 );
-		expect( localStorage.getItem( DISMISSED_STORAGE_KEY ) ).toBe( '1' );
-		expect( screen.queryByRole( 'note' ) ).not.toBeInTheDocument();
-	} );
-
-	it( 'persists an explicit dismissal', () => {
-		render( <SplitScreenGuide /> );
-
-		fireEvent.click( screen.getByRole( 'button', { name: 'Dismiss' } ) );
-
-		expect( localStorage.getItem( DISMISSED_STORAGE_KEY ) ).toBe( '1' );
-		expect( screen.queryByRole( 'note' ) ).not.toBeInTheDocument();
+		mockAgentsManagerState.isSplitScreen = false;
+		rerender( <SplitScreenGuide /> );
+		expect(
+			screen.getByRole( 'button', {
+				name: 'Switch to split screen mode',
+			} )
+		).toBeVisible();
 	} );
 
 	it.each( [
@@ -137,14 +109,10 @@ describe( 'SplitScreenGuide', () => {
 
 		render( <SplitScreenGuide { ...props } /> );
 
-		expect( screen.queryByRole( 'note' ) ).not.toBeInTheDocument();
-	} );
-
-	it( 'does not render after it has been dismissed', () => {
-		localStorage.setItem( DISMISSED_STORAGE_KEY, '1' );
-
-		render( <SplitScreenGuide /> );
-
-		expect( screen.queryByRole( 'note' ) ).not.toBeInTheDocument();
+		expect(
+			screen.queryByRole( 'button', {
+				name: 'Switch to split screen mode',
+			} )
+		).not.toBeInTheDocument();
 	} );
 } );
