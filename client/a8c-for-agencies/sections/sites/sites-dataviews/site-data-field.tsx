@@ -48,7 +48,10 @@ const SiteDataField = ( {
 					</Badge>
 				) }
 				{ isDevSite && (
-					<Badge className="status-badge" type="info-purple">
+					<Badge
+						className="status-badge sites-dataviews__site-development-badge"
+						type="info-purple"
+					>
 						{ translate( 'Development' ) }
 					</Badge>
 				) }
