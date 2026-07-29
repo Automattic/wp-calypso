@@ -9,11 +9,11 @@ import { useState, useEffect, useCallback, useMemo, useRef } from 'react';
 import { useSelector } from 'react-redux';
 import getAllNotes from '../../panel/state/selectors/get-all-notes';
 import getFilteredLoading from '../../panel/state/selectors/get-filtered-loading';
+import getFilteredNoteIds from '../../panel/state/selectors/get-filtered-note-ids';
 import getHiddenNoteIds from '../../panel/state/selectors/get-hidden-note-ids';
 import getIsLoading from '../../panel/state/selectors/get-is-loading';
 import { getIsNoteRead } from '../../panel/state/selectors/get-is-note-read';
 import getNotes from '../../panel/state/selectors/get-notes';
-import getUnreadNoteIds from '../../panel/state/selectors/get-unread-note-ids';
 import { getFilters } from '../../panel/templates/filters';
 import { useAppContext } from '../context';
 import { getFields } from './dataviews';
@@ -51,19 +51,20 @@ type NoteListProps = {
 const NoteList = ( { filterName, selectedNoteId, setSelectedNoteId }: NoteListProps ) => {
 	const filter = getFilters()[ filterName ];
 	const allNotes = useSelector( ( state ) => getAllNotes( state ) || [] ) as Note[];
-	const unreadNoteIds = useSelector( ( state ) => getUnreadNoteIds( state ) ) as number[];
+	const filteredNoteIds = useSelector( ( state ) => getFilteredNoteIds( state ) ) as number[];
 
-	// "Unread" renders the server's id list; other tabs client-filter the cache.
-	// `filter.filter` still runs on top so an in-app read drops out before a refetch.
+	// The "All" tab renders the whole cache; every filtered tab renders the
+	// server's id list for the active filter. `filter.filter` still runs on top so
+	// an in-app change (e.g. reading a note on Unread) drops it out before a refetch.
 	let notes: Note[];
-	if ( filterName === 'unread' ) {
+	if ( filterName === 'all' ) {
+		notes = allNotes.filter( ( note ) => filter.filter( note ) );
+	} else {
 		const notesById = new Map( allNotes.map( ( note ) => [ note.id, note ] ) );
-		notes = unreadNoteIds
+		notes = filteredNoteIds
 			.map( ( id ) => notesById.get( id ) )
 			.filter( ( note ): note is Note => !! note )
 			.filter( ( note ) => filter.filter( note ) );
-	} else {
-		notes = allNotes.filter( ( note ) => filter.filter( note ) );
 	}
 
 	// Filter out hidden notes, i.e. notes that have been just marked as spam or moved to the trash.
@@ -87,10 +88,10 @@ const NoteList = ( { filterName, selectedNoteId, setSelectedNoteId }: NoteListPr
 		hasInitiallyLoaded.current = true;
 	}
 
-	// Drive the client's server-side filter from the active tab. Only "unread"
-	// maps to a filter today; other tabs stay client-filtered.
+	// Drive the client's server-side filter from the active tab. Each filter maps
+	// to a query fragment (or null for "All"); the client refetches on change.
 	useEffect( () => {
-		client?.setFilter( filterName === 'unread' ? { unread: 1 } : null );
+		client?.setFilter( getFilters()[ filterName ].query );
 	}, [ client, filterName ] );
 
 	const onChangeSelection = ( selection: string[] ) => {
@@ -178,9 +179,9 @@ const NoteList = ( { filterName, selectedNoteId, setSelectedNoteId }: NoteListPr
 	useNoteListNavigationKeyboardShortcuts( { noteListRef, visibleNotes } );
 
 	// Spinner instead of an empty message while the view may still be filling: more
-	// cache pages to search, or the Unread fetch in flight. Unread keys off the
+	// notes to page, or a filtered fetch in flight. A filtered tab keys off the
 	// in-flight filter, not the shared `isLoading` the background poll also toggles.
-	const showEmptyLoader = hasMoreNotes || ( filterName === 'unread' && !! filteredLoading?.unread );
+	const showEmptyLoader = hasMoreNotes || ( filterName !== 'all' && !! filteredLoading );
 
 	// `groupBy` forces DataViews' list layout off its infinite-scroll path, which
 	// is the only path that renders its built-in load-more spinner — so we render

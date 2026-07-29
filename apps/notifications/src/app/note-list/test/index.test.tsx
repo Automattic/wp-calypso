@@ -94,7 +94,7 @@ describe( 'NoteList loading state', () => {
 	it( 'keeps DataViews mounted when the Unread list empties mid-fetch', () => {
 		const store = initStore();
 		store.dispatch( actions.notes.addNotes( [ makeNote( 800, 'Unread one' ) ] ) );
-		store.dispatch( actions.notes.setUnreadNoteIds( [ 800 ] ) );
+		store.dispatch( actions.notes.setFilteredNoteIds( [ 800 ] ) );
 		store.dispatch( actions.ui.loadedNotes() );
 		const { container } = renderUnread( store );
 
@@ -104,7 +104,7 @@ describe( 'NoteList loading state', () => {
 		// A refetch clears the id list and flips loading on: the list is empty while
 		// the request is in flight.
 		act( () => {
-			store.dispatch( actions.notes.setUnreadNoteIds( [] ) );
+			store.dispatch( actions.notes.setFilteredNoteIds( [] ) );
 			store.dispatch( actions.ui.loadNotes( { filter: { unread: 1 } } ) );
 		} );
 
@@ -123,7 +123,7 @@ describe( 'NoteList loading state', () => {
 				makeNote( 801, 'Only in cache' ),
 			] )
 		);
-		store.dispatch( actions.notes.setUnreadNoteIds( [ 800 ] ) );
+		store.dispatch( actions.notes.setFilteredNoteIds( [ 800 ] ) );
 		store.dispatch( actions.ui.loadedNotes() );
 
 		renderUnread( store );
@@ -139,7 +139,7 @@ describe( 'NoteList loading state', () => {
 		store.dispatch(
 			actions.notes.addNotes( [ makeNote( 800, 'Unread one' ), makeNote( 801, 'Unread two' ) ] )
 		);
-		store.dispatch( actions.notes.setUnreadNoteIds( [ 800, 801 ] ) );
+		store.dispatch( actions.notes.setFilteredNoteIds( [ 800, 801 ] ) );
 		store.dispatch( actions.notes.readNote( 800 ) );
 		store.dispatch( actions.ui.loadedNotes() );
 
@@ -154,7 +154,7 @@ describe( 'NoteList loading state', () => {
 		store.dispatch(
 			actions.notes.addNotes( [ makeNote( 810, 'Keep me' ), makeNote( 811, 'Trash me' ) ] )
 		);
-		store.dispatch( actions.notes.setUnreadNoteIds( [ 810, 811 ] ) );
+		store.dispatch( actions.notes.setFilteredNoteIds( [ 810, 811 ] ) );
 		store.dispatch( actions.notes.trashNote( 811 ) );
 		store.dispatch( actions.ui.loadedNotes() );
 
@@ -203,14 +203,17 @@ describe( 'NoteList loading state', () => {
 		expect( headers ).toEqual( [ 'Today', 'Older than a month' ] );
 	} );
 
-	it( 'client-filters the Comments tab from the shared cache', () => {
+	it( 'renders the Comments tab from the server filtered id list, not the whole cache', () => {
 		const store = initStore();
+		// Both notes are cached, but only the comment is in the server's filtered id
+		// list for the Comments tab; the like is not, so it must not render.
 		store.dispatch(
 			actions.notes.addNotes( [
 				makeNote( 900, 'A comment', 'comment' ),
 				makeNote( 901, 'A like', 'like' ),
 			] )
 		);
+		store.dispatch( actions.notes.setFilteredNoteIds( [ 900 ] ) );
 		store.dispatch( actions.ui.loadedNotes() );
 
 		renderTab( store, 'comments' as FilterName );
@@ -219,9 +222,9 @@ describe( 'NoteList loading state', () => {
 		expect( screen.queryByText( 'A like' ) ).not.toBeInTheDocument();
 	} );
 
-	// Once the cache is exhausted (no more to page), a background refresh must not
-	// flash the spinner over the settled empty message.
-	it( 'keeps the empty message on a settled client-filtered tab during a refresh', () => {
+	// Once the filtered fetch is exhausted (no more to page), a background poll must
+	// not flash the spinner over the settled empty message.
+	it( 'keeps the empty message on a settled filtered tab during a refresh', () => {
 		const store = initStore();
 		store.dispatch( actions.ui.loadedNotes() );
 		renderTab( store, 'comments' as FilterName ); // client.hasMoreNotes() is false
@@ -234,9 +237,9 @@ describe( 'NoteList loading state', () => {
 		expect( screen.getByText( 'No new comments yet!' ) ).toBeVisible();
 	} );
 
-	// While a client-filtered tab still has cache pages to search, show the spinner
-	// rather than flashing its empty message before matching notes arrive.
-	it( 'shows the loader on a client-filtered tab while the cache still has pages', () => {
+	// While a filtered tab still has notes to page, show the spinner rather than
+	// flashing its empty message before matching notes arrive.
+	it( 'shows the loader on a filtered tab while more notes are pageable', () => {
 		const store = initStore();
 		store.dispatch( actions.ui.loadedNotes() );
 		const { container } = renderTab( store, 'comments' as FilterName, {
