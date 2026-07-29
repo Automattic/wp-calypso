@@ -32,6 +32,7 @@ import NoticeAction from 'calypso/components/notice/notice-action';
 import { useIsSplitCancelRemoveEnabled } from 'calypso/dashboard/me/billing-purchases/cancel-purchase/use-is-split-cancel-remove-enabled';
 import { getProductNounForCategory } from 'calypso/dashboard/me/billing-purchases/purchase-settings/classify-purchase-for-copy';
 import { getCalendarDaysUntil, getRelativeDayString } from 'calypso/dashboard/utils/datetime';
+import { isPartnerPurchase } from 'calypso/dashboard/utils/purchase';
 import TrackComponentView from 'calypso/lib/analytics/track-component-view';
 import { createPurchasesArray } from 'calypso/lib/purchases/assembler';
 import { getTrialCheckoutUrl } from 'calypso/lib/trials/get-trial-checkout-url';
@@ -46,7 +47,6 @@ import {
 	hasPaymentMethod,
 	isCloseToExpiration,
 	isIncludedWithPlan,
-	isPartnerPurchase,
 	isRecentMonthlyPurchase,
 	isRenewable,
 	isRechargeable,

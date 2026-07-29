@@ -1,6 +1,6 @@
 import { AgentUI, cn } from '@automattic/agenttic-ui';
 import { useDispatch, useSelect } from '@wordpress/data';
-import { __, sprintf } from '@wordpress/i18n';
+import { __ } from '@wordpress/i18n';
 import threeDModelPreview from '../../assets/3d-model.webp';
 import analogFilmPreview from '../../assets/analog-film.webp';
 import animePreview from '../../assets/anime.webp';
@@ -19,6 +19,7 @@ import photographicPreview from '../../assets/photographic.webp';
 import pixelArtPreview from '../../assets/pixel-art.webp';
 import texturePreview from '../../assets/texture.webp';
 import videoCinematicPreview from '../../assets/video/styles/cinematic.webp';
+import videoHighlightsSoonPreview from '../../assets/video/styles/highlights-soon.webp';
 import videoHighlightsPreview from '../../assets/video/styles/highlights.webp';
 import vividPreview from '../../assets/vivid.webp';
 import { store as imageStudioStore } from '../../store';
@@ -45,8 +46,6 @@ interface StyleOption {
 	// Renders the card with the native disabled attribute + a greyed-out
 	// .is-disabled style — used to tease an upcoming style.
 	disabled?: boolean;
-	// Small pill rendered on the card corner (e.g. "New") to flag a fresh style.
-	badge?: string;
 }
 
 export const STYLE_OPTIONS: StyleOption[] = [
@@ -134,22 +133,34 @@ export const STYLE_OPTIONS: StyleOption[] = [
 	},
 ];
 
+// The prior Informative / Promotional video styles collapse into one
+// "Cinematic" preset — they were the same Veo chain with cosmetically
+// different prompt templates, which never read as meaningfully distinct.
+// "Highlights" is server-rendered via EditFrame Cloud on this branch
+// (LLM-composed HTML → EditFrame /api/v1/renders → MP4 → media library);
+// the in-browser encoding implementation lives on the older compositor
+// branches and is preserved there.
+//
+// Production default ships Cinematic-only; Highlights is disabled with a
+// "coming soon" preview. The StylePicker component swaps in the live
+// preview and enables the card when window.imageStudioData.isDevMode is
+// true (a12s testing).
 export const VIDEO_STYLE_OPTIONS: StyleOption[] = [
-	{
-		label: __( 'Highlights', __i18n_text_domain__ ),
-		value: 'highlights',
-		preview: videoHighlightsPreview,
-		description: __(
-			"Build a 20-second recap clip using your post's images and key points.",
-			__i18n_text_domain__
-		),
-		badge: __( 'New', __i18n_text_domain__ ),
-	},
 	{
 		label: __( 'Cinematic', __i18n_text_domain__ ),
 		value: 'cinematic',
 		preview: videoCinematicPreview,
 		description: __( 'Create an 8-second b-roll mood clip from a prompt.', __i18n_text_domain__ ),
+	},
+	{
+		label: __( 'Highlights (Coming Soon)', __i18n_text_domain__ ),
+		value: 'highlights',
+		preview: videoHighlightsSoonPreview,
+		description: __(
+			"Build a 20-second recap clip using your post's images and key points.",
+			__i18n_text_domain__
+		),
+		disabled: true,
 	},
 ];
 
@@ -169,7 +180,23 @@ export function StylePicker( { disabled = false, mode, variant = 'image' }: Styl
 		[ targetStore ]
 	);
 
-	const options = isVideo ? VIDEO_STYLE_OPTIONS : STYLE_OPTIONS;
+	// Dev-mode override: unlock Highlights, swap to the live preview, and
+	// flip the label to "(a12s only)". Production default keeps the
+	// "Coming Soon" label + teaser preview + disabled state while we
+	// launch Cinematic-only.
+	const isDevMode = typeof window !== 'undefined' && window.imageStudioData?.isDevMode === true;
+	const options = isVideo
+		? VIDEO_STYLE_OPTIONS.map( ( opt ) =>
+				opt.value === 'highlights' && isDevMode
+					? {
+							...opt,
+							label: __( 'Highlights (a12s only)', __i18n_text_domain__ ),
+							preview: videoHighlightsPreview,
+							disabled: false,
+					  }
+					: opt
+		  )
+		: STYLE_OPTIONS;
 
 	const handleStyleSelect = ( value: string ) => {
 		setSelectedStyle( value );
@@ -188,25 +215,9 @@ export function StylePicker( { disabled = false, mode, variant = 'image' }: Styl
 		} );
 	};
 
-	const selectedOption = options.find( ( opt ) => opt.value === selectedStyle );
-	// Carry the card's badge (e.g. "New") into the collapsed toolbar label, so a
-	// freshly-added style still reads as new once it is the selected one and the
-	// dropdown is closed.
-	const getSelectedLabel = () => {
-		if ( ! selectedOption ) {
-			return __( 'Style', __i18n_text_domain__ );
-		}
-		if ( ! selectedOption.badge ) {
-			return selectedOption.label;
-		}
-		return sprintf(
-			/* translators: 1: style name, e.g. "Highlights". 2: short badge, e.g. "New". */
-			__( '%1$s (%2$s)', __i18n_text_domain__ ),
-			selectedOption.label,
-			selectedOption.badge
-		);
-	};
-	const selectedLabel = getSelectedLabel();
+	const selectedLabel =
+		options.find( ( opt ) => opt.value === selectedStyle )?.label ??
+		__( 'Style', __i18n_text_domain__ );
 
 	return (
 		<AgentUI.InputToolbar
@@ -227,9 +238,6 @@ export function StylePicker( { disabled = false, mode, variant = 'image' }: Styl
 						} ) }
 						onClick={ () => handleStyleSelect( option.value ) }
 					>
-						{ option.badge ? (
-							<span className="image-studio-input-toolbar-card__badge">{ option.badge }</span>
-						) : null }
 						<span className="image-studio-input-toolbar-card__image-wrapper">
 							<img
 								src={ option.preview ?? '' }

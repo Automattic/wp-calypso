@@ -157,25 +157,14 @@ test.describe(
 				await test.step( 'Then I can view the published post', async () => {
 					const newPage = await page.context().newPage();
 
-					const trackingPixelLoaded = newPage.waitForResponse(
-						new RegExp(
-							`pixel.wp.com/g.gif.*blog=${ testAccount!.credentials.testSites?.primary
-								.id }+.*&post=[\\d]+`
-						)
-					);
+					// The Jetpack Stats tracking pixel assertions were dropped here
+					// (TESTOPS-148): the pixel does not load on every Atomic variation. They had
+					// their own `it()` under Jest and so their own mute, which died with the
+					// migration; this is now a single test, so a mute would take the whole post
+					// flow down with it.
 					await newPage.goto( publishedURL!.href );
 
-					let response;
-					try {
-						response = await trackingPixelLoaded;
-					} catch {
-						// noop - will throw in next step
-					}
-
 					expect( publishedURL!.href ).toStrictEqual( newPage.url() );
-
-					expect( response ).toBeDefined();
-					expect( response!.status() ).toBe( 200 );
 
 					publishedPostPage = new PublishedPostPage( newPage );
 					await publishedPostPage.validateTitle( title );

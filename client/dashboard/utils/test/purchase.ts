@@ -14,6 +14,7 @@ import {
 	isRemoved,
 	mightStillAutoRenew,
 	isExpiredWithNoAutoRenewAttemptsLeft,
+	creditCardExpiresBeforeSubscription,
 } from '../purchase';
 import type { Purchase } from '@automattic/api-core';
 
@@ -342,5 +343,69 @@ describe( 'hasQueryableSite', () => {
 
 	test( 'is false when there is no blog_id at all', () => {
 		expect( hasQueryableSite( makePurchase( { blog_id: 0 } ) ) ).toBe( false );
+	} );
+} );
+
+describe( 'creditCardExpiresBeforeSubscription', () => {
+	test( 'is true when the card expires before the subscription', () => {
+		expect(
+			creditCardExpiresBeforeSubscription(
+				makePurchase( {
+					payment_type: 'credit_card',
+					payment_expiry_date: '2027-01-31',
+					expiry_date: '2027-06-01',
+				} )
+			)
+		).toBe( true );
+	} );
+
+	test( 'is false when the card outlives the subscription', () => {
+		expect(
+			creditCardExpiresBeforeSubscription(
+				makePurchase( {
+					payment_type: 'credit_card',
+					payment_expiry_date: '2027-06-30',
+					expiry_date: '2027-01-01',
+				} )
+			)
+		).toBe( false );
+	} );
+
+	test( 'falls back to payment_expiry when payment_expiry_date is absent', () => {
+		expect(
+			creditCardExpiresBeforeSubscription(
+				makePurchase( {
+					payment_type: 'credit_card',
+					payment_expiry: '01/27',
+					expiry_date: '2027-06-01',
+				} )
+			)
+		).toBe( true );
+	} );
+
+	// The API returns no expiry date for some purchases even though the type
+	// says otherwise, and parsing it as a date throws.
+	test( 'is false when the purchase has no expiry date', () => {
+		expect(
+			creditCardExpiresBeforeSubscription(
+				makePurchase( {
+					payment_type: 'credit_card',
+					payment_expiry_date: '2027-01-31',
+					expiry_date: null as unknown as string,
+				} )
+			)
+		).toBe( false );
+	} );
+
+	test( 'is false when the purchase has no expiry date and only payment_expiry', () => {
+		expect(
+			creditCardExpiresBeforeSubscription(
+				makePurchase( {
+					payment_type: 'credit_card',
+					payment_expiry: '01/27',
+					expiry_date: null as unknown as string,
+				} )
+			)
+		).toBe( false );
 	} );
 } );
