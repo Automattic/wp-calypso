@@ -46,14 +46,14 @@ const TARGET_CHECKPOINT = {
 };
 
 const makeProviderCheckpoints = () => ( {
-	hasCheckpoint: jest.fn( ( id: string ) => id === 'toolu_target' ),
+	hasCheckpoint: jest.fn( ( id: string ) => id === TARGET_CHECKPOINT.id ),
 	restoreCheckpoint: jest.fn( () => Promise.resolve() ),
 	setCheckpoint: jest.fn(),
 	clearCheckpoint: jest.fn(),
 } );
 
 const makeInput = ( overrides = {} ) => ( {
-	checkpointId: 'toolu_target',
+	checkpointId: TARGET_CHECKPOINT.id,
 	summary: 'I undid the color change.',
 	requestIntentType: 'undo' as const,
 	...overrides,
@@ -108,12 +108,12 @@ describe( 'restoreCheckpointCallback', () => {
 	it( 'restores the checkpoint and confirms with the given summary', async () => {
 		const result = await restoreCheckpointCallback( makeInput() );
 
-		expect( restoreCheckpoint ).toHaveBeenCalledWith( 'toolu_target' );
+		expect( restoreCheckpoint ).toHaveBeenCalledWith( TARGET_CHECKPOINT.id );
 		expect( result ).toEqual( {
 			result: {
 				success: true,
 				message: 'I undid the color change.',
-				details: { checkpointId: 'toolu_target' },
+				details: { checkpointId: TARGET_CHECKPOINT.id },
 			},
 			returnToAgent: true,
 		} );
@@ -131,14 +131,18 @@ describe( 'restoreCheckpointCallback', () => {
 
 			await restoreCheckpointCallback( makeInput( { requestIntentType } ) );
 
-			expect( setCheckpoint ).toHaveBeenCalledWith( 'toolu_restore', [ 'color' ], {
-				toolId: 'big_sky__restore_checkpoint',
-				summary: 'I undid the color change.',
-				restoresCheckpointId: 'toolu_target',
-				restoredCheckpointToolId: 'big_sky__show_component',
-				requestIntentType: reciprocal,
-				createdByRequestIntentType: requestIntentType ?? 'restore',
-			} );
+			expect( setCheckpoint ).toHaveBeenCalledWith(
+				'toolu_restore',
+				TARGET_CHECKPOINT.checkpointKeys,
+				{
+					toolId: 'big_sky__restore_checkpoint',
+					summary: 'I undid the color change.',
+					restoresCheckpointId: TARGET_CHECKPOINT.id,
+					restoredCheckpointToolId: TARGET_CHECKPOINT.toolId,
+					requestIntentType: reciprocal,
+					createdByRequestIntentType: requestIntentType ?? 'restore',
+				}
+			);
 		}
 	);
 
@@ -160,7 +164,7 @@ describe( 'restoreCheckpointCallback', () => {
 	it( 'clears stale restore reciprocals after a successful restore', async () => {
 		mockGetToolCallId.mockReturnValue( 'toolu_restore' );
 		mockGetCheckpoints.mockReturnValue( [
-			{ id: 'toolu_target', toolId: 'big_sky__show_component', checkpointKeys: [ 'color' ] },
+			TARGET_CHECKPOINT,
 			{
 				id: 'toolu_old_redo',
 				toolId: 'big_sky__restore_checkpoint',
@@ -192,13 +196,13 @@ describe( 'restoreCheckpointCallback', () => {
 
 		const result = await restoreCheckpointCallback( makeInput() );
 
-		expect( providerCheckpoints.restoreCheckpoint ).toHaveBeenCalledWith( 'toolu_target' );
+		expect( providerCheckpoints.restoreCheckpoint ).toHaveBeenCalledWith( TARGET_CHECKPOINT.id );
 		expect( restoreCheckpoint ).not.toHaveBeenCalled();
 		expect( result ).toEqual( {
 			result: {
 				success: true,
 				message: 'I undid the color change.',
-				details: { checkpointId: 'toolu_target' },
+				details: { checkpointId: TARGET_CHECKPOINT.id },
 			},
 			returnToAgent: true,
 		} );
@@ -213,7 +217,7 @@ describe( 'restoreCheckpointCallback', () => {
 
 		await restoreCheckpointCallback( makeInput() );
 
-		expect( mockGetProviderCheckpointKeys ).toHaveBeenCalledWith( 'toolu_target' );
+		expect( mockGetProviderCheckpointKeys ).toHaveBeenCalledWith( TARGET_CHECKPOINT.id );
 		expect( providerCheckpoints.setCheckpoint ).toHaveBeenCalledWith(
 			'toolu_restore',
 			[ 'site_title', 'site_metadata' ],
@@ -221,7 +225,7 @@ describe( 'restoreCheckpointCallback', () => {
 				toolCallId: 'toolu_restore',
 				toolId: 'big_sky__restore_checkpoint',
 				summary: 'I undid the color change.',
-				restoresCheckpointId: 'toolu_target',
+				restoresCheckpointId: TARGET_CHECKPOINT.id,
 				requestIntentType: 'redo',
 				createdByRequestIntentType: 'undo',
 			}
@@ -238,7 +242,7 @@ describe( 'restoreCheckpointCallback', () => {
 		const result = await restoreCheckpointCallback( makeInput() );
 
 		expect( providerCheckpoints.setCheckpoint ).not.toHaveBeenCalled();
-		expect( providerCheckpoints.restoreCheckpoint ).toHaveBeenCalledWith( 'toolu_target' );
+		expect( providerCheckpoints.restoreCheckpoint ).toHaveBeenCalledWith( TARGET_CHECKPOINT.id );
 		expect( result.result.success ).toBe( true );
 	} );
 
@@ -265,7 +269,7 @@ describe( 'restoreCheckpointCallback', () => {
 		expect( result.result ).toMatchObject( {
 			success: false,
 			error: 'Restore exploded.',
-			details: { checkpointId: 'toolu_target' },
+			details: { checkpointId: TARGET_CHECKPOINT.id },
 		} );
 		expect( clearCheckpoint ).toHaveBeenCalledTimes( 1 );
 		expect( clearCheckpoint ).toHaveBeenCalledWith( 'toolu_restore' );
