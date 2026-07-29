@@ -231,11 +231,16 @@ class StatsPostSummary extends Component {
 		// the current, in-progress period (e.g. this month before it ends).
 		// "Today" is the site's, not the viewer's — the bars are site-local
 		// days, so a viewer behind the site's timezone must not clamp the
-		// range a day short (or vice versa). Comparing date keys sidesteps
-		// mixed-zone moment math; callers only format() the result.
-		const siteToday = this.props.momentSiteZone();
-		if ( end.format( 'YYYY-MM-DD' ) > siteToday.format( 'YYYY-MM-DD' ) ) {
-			end = siteToday;
+		// range a day short (or vice versa). But never clamp below the newest
+		// bucket actually charted: after a timezone change the data can hold
+		// buckets past the site's current clock, and the header must still
+		// cover the bars it labels. Comparing date keys sidesteps mixed-zone
+		// moment math; callers only format() the result.
+		const siteTodayKey = this.props.momentSiteZone().format( 'YYYY-MM-DD' );
+		const newestBucketKey = chartData[ chartData.length - 1 ].startDate;
+		const clampKey = siteTodayKey > newestBucketKey ? siteTodayKey : newestBucketKey;
+		if ( end.format( 'YYYY-MM-DD' ) > clampKey ) {
+			end = moment( clampKey );
 		}
 
 		return { start, end };

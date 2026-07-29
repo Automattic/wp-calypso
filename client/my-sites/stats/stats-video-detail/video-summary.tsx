@@ -202,13 +202,18 @@ export default function VideoSummary( {
 		// still the current, in-progress period. "Today" is the site's, not
 		// the viewer's: the buckets are site-local, so a viewer behind the
 		// site's timezone must not clamp the header a day short (or vice
-		// versa). Comparing date keys sidesteps mixed-zone moment math.
+		// versa). But never clamp below the newest bucket actually charted:
+		// after a timezone change the data can hold buckets past the site's
+		// current clock, and the header must still cover the bars it labels.
+		// Comparing date keys sidesteps mixed-zone moment math.
 		const siteToday = momentSiteZone().format( 'YYYY-MM-DD' );
+		const newestBucket = visibleRows[ visibleRows.length - 1 ].period;
+		const clampKey = siteToday > newestBucket ? siteToday : newestBucket;
 		const chartEnd = end.format( 'YYYY-MM-DD' );
 
 		return {
 			chartStart: start.format( 'YYYY-MM-DD' ),
-			chartEnd: chartEnd > siteToday ? siteToday : chartEnd,
+			chartEnd: chartEnd > clampKey ? clampKey : chartEnd,
 		};
 	}, [ visibleRows, uiPeriod, moment, momentSiteZone ] );
 
