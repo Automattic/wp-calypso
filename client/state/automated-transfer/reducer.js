@@ -1,8 +1,6 @@
 import { withStorageKey } from '@automattic/state-utils';
 import {
 	AUTOMATED_TRANSFER_ELIGIBILITY_UPDATE as ELIGIBILITY_UPDATE,
-	AUTOMATED_TRANSFER_INITIATE_WITH_PLUGIN_ZIP as INITIATE_WITH_PLUGIN_ZIP,
-	AUTOMATED_TRANSFER_INITIATE_WITH_PLUGIN_ZIP_FAILURE as INITIATE_WITH_PLUGIN_ZIP_FAILURE,
 	AUTOMATED_TRANSFER_STATUS_SET as SET_STATUS,
 	AUTOMATED_TRANSFER_STATUS_REQUEST as REQUEST_STATUS,
 	AUTOMATED_TRANSFER_STATUS_REQUEST_FAILURE as REQUEST_STATUS_FAILURE,
@@ -26,17 +24,10 @@ export const status = withPersistence( ( state = null, action ) => {
 	switch ( action.type ) {
 		case ELIGIBILITY_UPDATE:
 			return state || transferStates.INQUIRING;
-		// This state is persisted, so a new transfer has to clear the outcome of the last one:
-		// otherwise a site that transferred before starts its next one already reading as complete.
 		case INITIATE:
-		case INITIATE_WITH_PLUGIN_ZIP:
 			return transferStates.START;
 		case INITIATE_FAILURE:
 			return transferStates.FAILURE;
-		// Not FAILURE: as far as anything reading this state is concerned nothing was ever started, and
-		// a transfer recorded as failed puts unrelated screens into their contact-support path.
-		case INITIATE_WITH_PLUGIN_ZIP_FAILURE:
-			return transferStates.NONE;
 		case SET_STATUS:
 			return action.status;
 		case TRANSFER_UPDATE:

@@ -1,10 +1,7 @@
 import { translate } from 'i18n-calypso';
 import { AUTOMATED_TRANSFER_INITIATE_WITH_PLUGIN_ZIP } from 'calypso/state/action-types';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import {
-	fetchAutomatedTransferStatus,
-	initiateAutomatedTransferWithPluginZipFailure,
-} from 'calypso/state/automated-transfer/actions';
+import { fetchAutomatedTransferStatus } from 'calypso/state/automated-transfer/actions';
 import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
 import { http } from 'calypso/state/data-layer/wpcom-http/actions';
 import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
@@ -69,11 +66,6 @@ export const receiveError = ( { siteId }, error ) => {
 		} ),
 		showErrorNotice( error ),
 		pluginUploadError( siteId, error ),
-		// Only clears what the optimistic initiation set. The endpoint creates the transfer before it
-		// validates the archive, so one may still be running — but the status endpoint answers for the
-		// site's latest transfer, not for this attempt, and reconciling against it turns a rejected
-		// upload back into an upload in progress. Telling the two apart needs the transfer's id.
-		initiateAutomatedTransferWithPluginZipFailure( siteId ),
 	];
 };
 

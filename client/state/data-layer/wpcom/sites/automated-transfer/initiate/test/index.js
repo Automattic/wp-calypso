@@ -1,8 +1,5 @@
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import {
-	fetchAutomatedTransferStatus,
-	initiateAutomatedTransferWithPluginZipFailure,
-} from 'calypso/state/automated-transfer/actions';
+import { fetchAutomatedTransferStatus } from 'calypso/state/automated-transfer/actions';
 import { http } from 'calypso/state/data-layer/wpcom-http/actions';
 import {
 	pluginUploadError,
@@ -113,26 +110,6 @@ describe( 'receiveError', () => {
 				error: 'invalid_input',
 			} )
 		);
-	} );
-
-	// Initiating marks the site as transferring before the request resolves, so a rejected archive
-	// has to take that back or the site stays recorded as transferring for good.
-	test( 'should take back the transfer the upload optimistically started', () => {
-		const result = receiveError( { siteId }, ERROR_RESPONSE );
-		expect( result[ 3 ] ).toEqual( initiateAutomatedTransferWithPluginZipFailure( siteId ) );
-	} );
-
-	test( 'should take it back on an unsuccessful initiation too', () => {
-		const result = receiveResponse( { siteId }, INITIATE_FAILURE_RESPONSE );
-		expect( result[ 3 ] ).toEqual( initiateAutomatedTransferWithPluginZipFailure( siteId ) );
-	} );
-
-	// Reconciling against the status endpoint would answer for the site's latest transfer rather than
-	// this attempt, turning a rejected upload back into one in progress.
-	test( 'should not go on to ask for the transfer status', () => {
-		const result = receiveError( { siteId }, ERROR_RESPONSE );
-		expect( result ).toHaveLength( 4 );
-		expect( result ).not.toContainEqual( fetchAutomatedTransferStatus( siteId ) );
 	} );
 } );
 
