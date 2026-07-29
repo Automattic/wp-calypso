@@ -605,17 +605,13 @@ export function fetchSitePlugins( siteId ) {
 		};
 		dispatch( { ...defaultAction, type: PLUGINS_REQUEST } );
 
-		// Resolves to whether the list was actually read: a caller waiting for the site to report its
-		// plugins cannot treat a request that failed as a site with no plugins to report.
 		const receivePluginsDispatchSuccess = ( data ) => {
 			dispatch( receiveSitePlugins( siteId, data.plugins ) );
 			dispatch( { ...defaultAction, type: PLUGINS_REQUEST_SUCCESS } );
-			return true;
 		};
 
 		const receivePluginsDispatchFail = ( error ) => {
 			dispatch( { ...defaultAction, type: PLUGINS_REQUEST_FAILURE, error } );
-			return false;
 		};
 
 		return wpcom

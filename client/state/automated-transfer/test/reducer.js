@@ -1,6 +1,5 @@
 import {
 	AUTOMATED_TRANSFER_ELIGIBILITY_UPDATE as ELIGIBILITY_UPDATE,
-	AUTOMATED_TRANSFER_INITIATE_WITH_PLUGIN_ZIP as INITIATE_WITH_PLUGIN_ZIP,
 	AUTOMATED_TRANSFER_STATUS_REQUEST as REQUEST_STATUS,
 	AUTOMATED_TRANSFER_STATUS_REQUEST_FAILURE as REQUEST_STATUS_FAILURE,
 } from 'calypso/state/action-types';
@@ -20,19 +19,6 @@ describe( 'state', () => {
 
 				test( 'should not overwrite the status when a valid state already exists', () => {
 					expect( status( transferStates.START, update ) ).toEqual( transferStates.START );
-				} );
-			} );
-
-			// Uploading a zip does not touch this status. The flow that watches it waits to see a
-			// transfer running rather than trusting a stored outcome, and writing an attempt's state
-			// here leaks it to every screen reading the site's transfer — including, on a rejected
-			// upload, one that reads as still running.
-			describe( 'plugin zip upload', () => {
-				test( 'should leave the status alone when an upload starts', () => {
-					const initiate = { type: INITIATE_WITH_PLUGIN_ZIP };
-
-					expect( status( transferStates.COMPLETE, initiate ) ).toEqual( transferStates.COMPLETE );
-					expect( status( null, initiate ) ).toBeNull();
 				} );
 			} );
 

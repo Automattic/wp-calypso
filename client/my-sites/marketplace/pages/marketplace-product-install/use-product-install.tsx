@@ -6,11 +6,7 @@ import { useEffect, useState, useMemo, useRef } from 'react';
 import { useQueryTheme } from 'calypso/components/data/query-theme';
 import { useSelector, useDispatch } from 'calypso/state';
 import { initiateAtomicTransfer } from 'calypso/state/atomic/transfers/actions';
-import {
-	isTransferComplete,
-	isTransferRunning,
-	transferStates,
-} from 'calypso/state/automated-transfer/constants';
+import { transferStates } from 'calypso/state/automated-transfer/constants';
 import { getAutomatedTransferStatus } from 'calypso/state/automated-transfer/selectors';
 import { getPurchaseFlowState } from 'calypso/state/marketplace/purchase-flow/selectors';
 import { MARKETPLACE_ASYNC_PROCESS_STATUS } from 'calypso/state/marketplace/types';
@@ -94,6 +90,11 @@ export function useProductInstall( {
 		getUploadedPluginId( state, siteId )
 	) as string;
 	const pluginUploadComplete = useSelector( ( state ) => isPluginUploadComplete( state, siteId ) );
+	// A zip upload that brought the site to Atomic. Its plugin arrives with the transfer rather than
+	// through an install this page dispatched, so the recovery poll is what watches for it — and
+	// retries its activation, which the one-shot effect below cannot.
+	const uploadMethod = useSelector( ( state ) => getPluginUploadMethod( state, siteId ) );
+	const isTransferredUpload = isPluginUploadFlow && uploadMethod === 'transfer';
 
 	// Installed plugins are indexed by the slug they were installed under, which for a marketplace
 	// product is its software_slug (e.g. js-composer installs as js_composer), not the route slug.
@@ -115,24 +116,6 @@ export function useProductInstall( {
 	const automatedTransferStatus = useSelector( ( state ) =>
 		getAutomatedTransferStatus( state, siteId )
 	);
-
-	// Remember that a transfer ran during this flow: a completed status on its own can be left over
-	// from an earlier transfer, and an upload to an already-Atomic site never transfers at all.
-	const transferObservedRef = useRef( false );
-	if ( isTransferRunning( automatedTransferStatus ) ) {
-		transferObservedRef.current = true;
-	}
-	const transferObserved = transferObservedRef.current;
-	// Which path this upload took, recorded when it started rather than read back from the site's
-	// transfer status: that status is shared and persisted, so a transfer from another session can
-	// still look live and would hand a direct upload's plugin to the wrong owner.
-	const uploadMethod = useSelector( ( state ) => getPluginUploadMethod( state, siteId ) );
-	// A zip upload that brought the site to Atomic. Its plugin arrives with the transfer rather than
-	// through an install this page dispatched, so the recovery poll is what watches for it.
-	const isTransferredUpload = isPluginUploadFlow && uploadMethod === 'transfer';
-	// Recovery only takes activation once it has seen the transfer this upload is waiting on. Standing
-	// down before then would leave the plugin with no owner at all, which is worse than either.
-	const recoveryOwnsActivation = isTransferredUpload && transferObserved;
 
 	const pluginInstallStatus = useSelector( ( state ) =>
 		getStatusForPlugin( state, siteId, pluginSlug )
@@ -252,22 +235,20 @@ export function useProductInstall( {
 
 	// Validate completion of atomic transfer flow
 	useEffect( () => {
-		if ( atomicFlow && currentStep === 1 && isTransferComplete( automatedTransferStatus ) ) {
+		if ( atomicFlow && currentStep === 1 && transferStates.COMPLETE === automatedTransferStatus ) {
 			setCurrentStep( 2 );
 		}
 	}, [ atomicFlow, automatedTransferStatus, currentStep ] );
 
 	// Activate once the plugin is installed and the installing step is reached. currentStep is a
 	// dependency so a plugin that appears before that step still activates when the step catches up.
-	// A transferred upload's plugin is left to the recovery poll, which retries: this fires once, and
-	// two owners activating the same plugin would issue the requests concurrently.
 	useEffect( () => {
 		if (
 			installedPlugin &&
 			currentStep === 1 &&
 			( ! isPluginUploadFlow || pluginUploadComplete )
 		) {
-			if ( ! recoveryOwnsActivation ) {
+			if ( ! isTransferredUpload ) {
 				dispatch(
 					activatePlugin( siteId, {
 						slug: installedPlugin?.slug,
@@ -281,7 +262,7 @@ export function useProductInstall( {
 		installedPlugin,
 		currentStep,
 		isPluginUploadFlow,
-		recoveryOwnsActivation,
+		isTransferredUpload,
 		pluginUploadComplete,
 		dispatch,
 		siteId,
@@ -300,9 +281,7 @@ export function useProductInstall( {
 		pluginActive,
 		atomicFlow,
 		automatedTransferStatus,
-		transferObserved,
 		isTransferredUpload,
-		uploadFailed: !! pluginUploadError,
 	} );
 
 	const steps = useMemo( () => {

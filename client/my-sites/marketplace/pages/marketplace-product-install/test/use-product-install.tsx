@@ -2,8 +2,6 @@
  * @jest-environment jsdom
  */
 import { act } from '@testing-library/react';
-import { setAutomatedTransferStatus } from 'calypso/state/automated-transfer/actions';
-import automatedTransferReducer from 'calypso/state/automated-transfer/reducer';
 import marketplaceReducer from 'calypso/state/marketplace/reducer';
 import pluginsReducer from 'calypso/state/plugins/reducer';
 import themesReducer from 'calypso/state/themes/reducer';
@@ -13,7 +11,6 @@ import { useProductInstall } from '../use-product-install';
 
 // useProductInstall reads several section-lazy slices that the bare test store doesn't register.
 const reducers = {
-	automatedTransfer: automatedTransferReducer,
 	plugins: pluginsReducer,
 	themes: themesReducer,
 	marketplace: marketplaceReducer,
@@ -28,11 +25,10 @@ const renderProductInstall = (
 ) => renderHookWithProvider( () => useProductInstall( props ), { reducers, initialState } );
 
 // An upload whose plugin is installed but switched off, on a site already Atomic. `uploadMethod` is
-// what says which path the attempt took; the transfer status is site-wide and may describe another.
-const uploadAwaitingActivation = ( uploadMethod: string, transferStatus: string | null ) => ( {
+// what says which path the attempt took, and so who is responsible for activating what it left.
+const uploadAwaitingActivation = ( uploadMethod: string ) => ( {
 	ui: { selectedSiteId: SITE_ID },
 	sites: { items: { [ SITE_ID ]: { ID: SITE_ID, options: { is_automated_transfer: true } } } },
-	automatedTransfer: { [ SITE_ID ]: { status: transferStatus } },
 	plugins: {
 		upload: {
 			uploadMethod: { [ SITE_ID ]: uploadMethod },
@@ -46,6 +42,12 @@ const uploadAwaitingActivation = ( uploadMethod: string, transferStatus: string 
 	},
 } );
 
+type PluginStatuses = {
+	plugins: { installed: { status?: Record< number, Record< string, { action?: string } > > } };
+};
+const activationOf = ( store: { getState: () => PluginStatuses } ) =>
+	store.getState().plugins.installed.status?.[ SITE_ID ]?.[ 'uploaded/uploaded' ]?.action;
+
 const withUploadError = ( uploadError: object ) => ( {
 	ui: { selectedSiteId: SITE_ID },
 	plugins: { upload: { uploadError: { [ SITE_ID ]: uploadError } } },
@@ -57,55 +59,31 @@ describe( 'useProductInstall', () => {
 		beforeEach( () => jest.useFakeTimers() );
 		afterEach( () => jest.useRealTimers() );
 
-		// A tab closed mid-transfer leaves a live-looking status behind for good. Reading the attempt
-		// off that would hand a later direct upload's plugin to a poll that is not watching for it.
-		it( 'activates a direct upload itself, whatever the site transfer status says', () => {
+		it( 'activates a direct upload itself', () => {
 			const { store } = renderHookWithProvider( () => useProductInstall( {} ), {
 				reducers,
-				initialState: uploadAwaitingActivation( 'direct', 'active' ),
+				initialState: uploadAwaitingActivation( 'direct' ),
 			} );
 
 			act( () => {
 				jest.advanceTimersByTime( 2000 );
 			} );
 
-			const activations =
-				store.getState().plugins.installed.status?.[ SITE_ID ]?.[ 'uploaded/uploaded' ];
-			expect( activations?.action ).toBe( 'ACTIVATE_PLUGIN' );
+			expect( activationOf( store ) ).toBe( 'ACTIVATE_PLUGIN' );
 		} );
 
-		it( 'leaves a transferred upload to the recovery poll once its transfer has been seen', () => {
-			// Recovery only takes over having seen the transfer, so the flow has to run through one.
+		it( 'leaves a transferred upload to the recovery poll, which can retry', () => {
+			// Activating here as well would put two owners on the same plugin at once.
 			const { store } = renderHookWithProvider( () => useProductInstall( {} ), {
 				reducers,
-				initialState: uploadAwaitingActivation( 'transfer', 'active' ),
-			} );
-
-			act( () => {
-				store.dispatch( setAutomatedTransferStatus( SITE_ID, 'complete', 'uploaded' ) );
-				jest.advanceTimersByTime( 2000 );
-			} );
-
-			expect(
-				store.getState().plugins.installed.status?.[ SITE_ID ]?.[ 'uploaded/uploaded' ]
-			).toBeUndefined();
-		} );
-
-		it( 'still activates a transferred upload whose transfer it never saw running', () => {
-			// Nothing has told recovery this flow is its own, so the original owner keeps it: better a
-			// single attempt than a plugin both of them leave switched off.
-			const { store } = renderHookWithProvider( () => useProductInstall( {} ), {
-				reducers,
-				initialState: uploadAwaitingActivation( 'transfer', 'complete' ),
+				initialState: uploadAwaitingActivation( 'transfer' ),
 			} );
 
 			act( () => {
 				jest.advanceTimersByTime( 2000 );
 			} );
 
-			expect(
-				store.getState().plugins.installed.status?.[ SITE_ID ]?.[ 'uploaded/uploaded' ]?.action
-			).toBe( 'ACTIVATE_PLUGIN' );
+			expect( activationOf( store ) ).toBeUndefined();
 		} );
 	} );
 

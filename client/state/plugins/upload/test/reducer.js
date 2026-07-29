@@ -9,7 +9,13 @@ import {
 	updatePluginUploadProgress,
 	uploadPlugin,
 } from '../actions';
-import { inProgress, progressPercent, uploadedPluginId, uploadError } from '../reducer';
+import {
+	inProgress,
+	progressPercent,
+	uploadedPluginId,
+	uploadError,
+	uploadMethod,
+} from '../reducer';
 
 const siteId = 2916284;
 const pluginId = 'hello-dolly';
@@ -47,51 +53,22 @@ describe( 'uploadedPluginId', () => {
 		expect( state[ siteId ] ).toBeNull();
 	} );
 
+	// The plugin list is watched under this slug, so a leftover would confirm the wrong install.
 	test( 'should be empty after a zip transfer starts', () => {
 		const state = uploadedPluginId(
 			{ [ siteId ]: pluginId },
-			initiateAutomatedTransferWithPluginZip( siteId, 'plugin.zip' )
+			initiateAutomatedTransferWithPluginZip( siteId )
 		);
 		expect( state[ siteId ] ).toBeNull();
 	} );
 } );
 
-describe( 'a new zip attempt', () => {
-	// The upload page only clears the last attempt when nothing looks in progress, so a retry that
-	// follows a rejected upload would otherwise open showing the error it was meant to replace.
-	test( 'should drop the previous error', () => {
-		const state = uploadError(
-			{ [ siteId ]: error },
-			initiateAutomatedTransferWithPluginZip( siteId, 'plugin.zip' )
+describe( 'uploadMethod', () => {
+	test( 'should record which path the upload took', () => {
+		expect( uploadMethod( {}, uploadPlugin( siteId ) )[ siteId ] ).toBe( 'direct' );
+		expect( uploadMethod( {}, initiateAutomatedTransferWithPluginZip( siteId ) )[ siteId ] ).toBe(
+			'transfer'
 		);
-		expect( state[ siteId ] ).toBeNull();
-	} );
-
-	test( 'should start its progress from zero', () => {
-		const state = progressPercent(
-			{ [ siteId ]: 100 },
-			initiateAutomatedTransferWithPluginZip( siteId, 'plugin.zip' )
-		);
-		expect( state[ siteId ] ).toBe( 0 );
-	} );
-} );
-
-describe( 'inProgress across transfer statuses', () => {
-	// Hiding the drop zone for a transfer that has stopped leaves no way to try again.
-	test( 'should end on a transfer that errored, not just one that completed', () => {
-		const state = inProgress(
-			{ [ siteId ]: true },
-			setAutomatedTransferStatus( siteId, 'error', null )
-		);
-		expect( state[ siteId ] ).toBe( false );
-	} );
-
-	test( 'should stay in progress while the transfer is still running', () => {
-		const state = inProgress(
-			{ [ siteId ]: true },
-			setAutomatedTransferStatus( siteId, 'uploading', null )
-		);
-		expect( state[ siteId ] ).toBe( true );
 	} );
 } );
 

@@ -1,22 +1,18 @@
 /**
  * @jest-environment jsdom
  */
-import { act, waitFor } from '@testing-library/react';
+import { waitFor } from '@testing-library/react';
 import { transferStates } from 'calypso/state/automated-transfer/constants';
 import { renderHookWithProvider } from 'calypso/test-helpers/testing-library';
 import { useThankYouRedirect } from '../use-thank-you-redirect';
-import type { PluginRecoveryStatus } from '../use-post-transfer-plugin-recovery';
 
-// Capture what the recovery hook is wired with, and stand in for the progress it reports back.
+// Capture what the recovery hook is wired with.
 let mockRecoveryProps:
 	| { enabled: boolean; canActivate: boolean; ownsActivation: boolean }
 	| undefined;
-let mockRecoveryStatus: PluginRecoveryStatus;
 jest.mock( '../use-post-transfer-plugin-recovery', () => ( {
-	...jest.requireActual( '../use-post-transfer-plugin-recovery' ),
 	usePostTransferPluginRecovery: ( props: typeof mockRecoveryProps ) => {
 		mockRecoveryProps = props;
-		return mockRecoveryStatus;
 	},
 } ) );
 
@@ -32,8 +28,6 @@ jest.mock( '@automattic/api-queries', () => ( {
 
 const PLUGINS_URL =
 	'https://example.wpcomstaging.com/wp-admin/plugins.php?activate=true&plugin_status=active';
-// Where an install that could not be confirmed lands: the list itself, claiming nothing.
-const PLUGINS_LIST_URL = 'https://example.wpcomstaging.com/wp-admin/plugins.php';
 
 const ATOMIC_READY = {
 	ID: 1,
@@ -56,22 +50,18 @@ const baseProps: Props = {
 	pluginActive: false,
 	atomicFlow: true,
 	automatedTransferStatus: transferStates.COMPLETE,
-	transferObserved: false,
 	isTransferredUpload: false,
-	uploadFailed: false,
 };
-
-// A zip upload mid-transfer: no product slug in the route, and no plugin in the store, since the
-// list was fetched while the site was still Simple.
+// A zip upload whose transfer is running: no product slug in the route, and no plugin in the store,
+// since the list was last fetched while the site was still Simple.
 const UPLOAD_PROPS: Partial< Props > = {
 	isPluginUploadFlow: true,
+	isTransferredUpload: true,
 	pluginSlug: '',
 	installedPlugin: null,
 	pluginActive: false,
 	atomicFlow: false,
 	automatedTransferStatus: transferStates.ACTIVE,
-	transferObserved: true,
-	isTransferredUpload: true,
 };
 
 const render = ( overrides?: Partial< Props > ) => {
@@ -92,8 +82,6 @@ describe( 'useThankYouRedirect', () => {
 	beforeEach( () => {
 		jest.clearAllMocks();
 		mockRecoveryProps = undefined;
-		// Looked, found nothing: the state in which the fallback becomes available.
-		mockRecoveryStatus = 'exhausted';
 		mockFreshSite = null;
 		originalLocation = window.location;
 		Object.defineProperty( window, 'location', {
@@ -104,7 +92,6 @@ describe( 'useThankYouRedirect', () => {
 	} );
 
 	afterEach( () => {
-		jest.useRealTimers();
 		Object.defineProperty( window, 'location', {
 			configurable: true,
 			writable: true,
@@ -142,13 +129,8 @@ describe( 'useThankYouRedirect', () => {
 		expect( window.location.href ).toBe( '' );
 	} );
 
-	it( 'redirects once the plugin is active', async () => {
-		mockFreshSite = ATOMIC_READY;
-		render( { atomicFlow: true, pluginActive: true } );
-		await waitFor( () => expect( window.location.href ).toBe( PLUGINS_URL ) );
-	} );
-
-	it( 'looks for the uploaded plugin once its transfer completes', async () => {
+	it( 'looks for an uploaded plugin, and owns activating it, once its transfer completes', async () => {
+		// It arrives with the transfer, so nothing else is watching for it or can retry activating it.
 		mockFreshSite = ATOMIC_READY;
 		const { rerender } = render( UPLOAD_PROPS );
 		await waitFor( () => expect( mockRecoveryProps?.canActivate ).toBe( true ) );
@@ -156,9 +138,10 @@ describe( 'useThankYouRedirect', () => {
 
 		rerender( { automatedTransferStatus: transferStates.COMPLETE } );
 		await waitFor( () => expect( mockRecoveryProps?.enabled ).toBe( true ) );
+		expect( mockRecoveryProps?.ownsActivation ).toBe( true );
 	} );
 
-	it( 'redirects an uploaded zip to the activated view once its plugin reads active', async () => {
+	it( 'redirects an uploaded zip once its plugin reads active', async () => {
 		mockFreshSite = ATOMIC_READY;
 		const { rerender } = render( UPLOAD_PROPS );
 		await waitFor( () => expect( mockRecoveryProps?.canActivate ).toBe( true ) );
@@ -172,136 +155,22 @@ describe( 'useThankYouRedirect', () => {
 		await waitFor( () => expect( window.location.href ).toBe( PLUGINS_URL ) );
 	} );
 
-	it( 'sends an unconfirmed upload to the plain plugin list, not the activated view', async () => {
-		// The transfer reports complete whether or not the archive installed, so with no plugin to
-		// show for it the destination must not announce one.
-		mockFreshSite = ATOMIC_READY;
-		const { rerender } = render( UPLOAD_PROPS );
-		await waitFor( () => expect( mockRecoveryProps?.canActivate ).toBe( true ) );
-
-		rerender( { automatedTransferStatus: transferStates.COMPLETE } );
-		await waitFor( () => expect( window.location.href ).toBe( PLUGINS_LIST_URL ) );
-	} );
-
-	it( 'waits for the transferred site to become reachable before giving up on an uploaded zip', async () => {
-		// Atomic, but the capabilities wp-admin needs have not propagated yet.
-		mockFreshSite = { ...ATOMIC_READY, capabilities: { manage_options: false } };
-		const { rerender } = render( UPLOAD_PROPS );
-		await act( async () => {} );
-
-		rerender( { automatedTransferStatus: transferStates.COMPLETE } );
-		await act( async () => {} );
-		expect( window.location.href ).toBe( '' );
-	} );
-
-	it( 'recognises a transfer it first sees mid-upload, past the early phases', async () => {
-		// Loading this section can outlast the first status polls, so the flow can arrive at any live
-		// phase — `uploading` is what the initiate response itself reports.
-		mockFreshSite = ATOMIC_READY;
-		const { rerender } = render( {
-			...UPLOAD_PROPS,
-			automatedTransferStatus: transferStates.UPLOADING,
-		} );
-		await waitFor( () => expect( mockRecoveryProps?.canActivate ).toBe( true ) );
-
-		rerender( { automatedTransferStatus: transferStates.COMPLETE } );
-		await waitFor( () => expect( window.location.href ).toBe( PLUGINS_LIST_URL ) );
-	} );
-
-	it( 'leaves a rejected upload on its error screen, transfer or no transfer', async () => {
-		// The endpoint creates the transfer before it validates the archive, so a rejected zip can
-		// still transfer to completion behind the error. Navigating would take the error away.
-		mockFreshSite = ATOMIC_READY;
-		const { rerender } = render( { ...UPLOAD_PROPS, uploadFailed: true } );
-		await waitFor( () => expect( mockRecoveryProps?.canActivate ).toBe( true ) );
-
-		rerender( { uploadFailed: true, automatedTransferStatus: transferStates.COMPLETE } );
-		await act( async () => {} );
-		expect( window.location.href ).toBe( '' );
-	} );
-
-	it( 'does not send a rejected upload to the activated view on a stale plugin', async () => {
-		// Reconciliation can restore a slug that matches something already active in the store.
+	it( 'does not look for a plugin on an upload that never transferred', async () => {
+		// A direct upload to an Atomic site installs in place; its own flow activates and redirects.
 		mockFreshSite = ATOMIC_READY;
 		render( {
 			...UPLOAD_PROPS,
-			uploadFailed: true,
-			automatedTransferStatus: transferStates.COMPLETE,
-			installedPlugin: { slug: 'uploaded', id: 'uploaded/uploaded' },
-			pluginActive: true,
-		} );
-		await waitFor( () => expect( mockRecoveryProps?.canActivate ).toBe( true ) );
-
-		await act( async () => {} );
-		expect( window.location.href ).toBe( '' );
-	} );
-
-	it( 'keeps waiting while a plugin-list request is still out', async () => {
-		// The answer may be in that request; navigating would abandon it and whatever it triggers.
-		mockFreshSite = ATOMIC_READY;
-		mockRecoveryStatus = 'searching';
-		const { rerender } = render( UPLOAD_PROPS );
-		await waitFor( () => expect( mockRecoveryProps?.canActivate ).toBe( true ) );
-
-		rerender( { automatedTransferStatus: transferStates.COMPLETE } );
-		await act( async () => {} );
-		expect( window.location.href ).toBe( '' );
-	} );
-
-	it( 'keeps waiting while the poll still has rounds to go', async () => {
-		mockFreshSite = ATOMIC_READY;
-		mockRecoveryStatus = 'searching';
-		const { rerender } = render( UPLOAD_PROPS );
-		await waitFor( () => expect( mockRecoveryProps?.canActivate ).toBe( true ) );
-
-		rerender( { automatedTransferStatus: transferStates.COMPLETE } );
-		await act( async () => {} );
-		expect( window.location.href ).toBe( '' );
-	} );
-
-	it( 'waits on a plugin that turned up inactive rather than giving up on it', async () => {
-		// Activation is still to come, and it is what turns this into the activated view.
-		mockFreshSite = ATOMIC_READY;
-		mockRecoveryStatus = 'searching';
-		const { rerender } = render( UPLOAD_PROPS );
-		await waitFor( () => expect( mockRecoveryProps?.canActivate ).toBe( true ) );
-
-		rerender( {
-			automatedTransferStatus: transferStates.COMPLETE,
-			installedPlugin: { slug: 'uploaded', id: 'uploaded/uploaded' },
-			pluginActive: false,
-		} );
-		await act( async () => {} );
-		expect( window.location.href ).toBe( '' );
-	} );
-
-	it( 'gives up on a plugin that turned up but will not activate', async () => {
-		// Otherwise an install whose activation keeps failing has nothing to end the wait.
-		mockFreshSite = ATOMIC_READY;
-		mockRecoveryStatus = 'exhausted';
-		const { rerender } = render( UPLOAD_PROPS );
-		await waitFor( () => expect( mockRecoveryProps?.canActivate ).toBe( true ) );
-
-		rerender( {
-			automatedTransferStatus: transferStates.COMPLETE,
-			installedPlugin: { slug: 'uploaded', id: 'uploaded/uploaded' },
-			pluginActive: false,
-		} );
-		await waitFor( () => expect( window.location.href ).toBe( PLUGINS_LIST_URL ) );
-	} );
-
-	it( 'does not redirect an upload that never transferred', async () => {
-		// A completed status left over from an earlier transfer must not stand in for this install.
-		mockFreshSite = ATOMIC_READY;
-		render( {
-			...UPLOAD_PROPS,
-			transferObserved: false,
+			isTransferredUpload: false,
 			automatedTransferStatus: transferStates.COMPLETE,
 		} );
-		// Readiness is satisfied, so an arm that trusted the status alone would have redirected.
 		await waitFor( () => expect( mockRecoveryProps?.canActivate ).toBe( true ) );
 
-		await act( async () => {} );
-		expect( window.location.href ).toBe( '' );
+		expect( mockRecoveryProps?.enabled ).toBe( false );
+	} );
+
+	it( 'redirects once the plugin is active', async () => {
+		mockFreshSite = ATOMIC_READY;
+		render( { atomicFlow: true, pluginActive: true } );
+		await waitFor( () => expect( window.location.href ).toBe( PLUGINS_URL ) );
 	} );
 } );
