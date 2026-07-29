@@ -1,6 +1,6 @@
 import { ComponentSwapper } from '@automattic/components';
 import { formatNumber } from '@automattic/number-formatters';
-import { Icon, seen, video, percent, scheduled } from '@wordpress/icons';
+import { Icon, seen, video, chartBar, scheduled } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import CountCard from '../components/highlight-cards/count-card';
 import MobileHighlightCardListing from '../components/highlight-cards/mobile-highlight-cards';
@@ -56,7 +56,7 @@ export default function VideosPerformanceCards( {
 		},
 		{
 			key: 'retention_rate',
-			icon: percent,
+			icon: chartBar,
 			heading: translate( 'Retention rate', { textOnly: true } ),
 			count: null,
 			preformattedValue:
