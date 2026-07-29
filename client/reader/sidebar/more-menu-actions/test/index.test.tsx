@@ -6,7 +6,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { ComponentProps } from 'react';
-import { MoreMenuActions } from '../index';
+import MoreMenuActions from '../index';
 
 const mockMarkAllAsSeen = jest.fn();
 jest.mock( 'calypso/reader/data/seen-posts', () => ( {
@@ -18,12 +18,26 @@ jest.mock( 'calypso/state/reader/analytics/useRecordReaderTracksEvent', () => ( 
 	useRecordReaderTracksEvent: () => mockRecordReaderTracksEvent,
 } ) );
 
+const mockUnsubscribeWithUndo = jest.fn();
+jest.mock( 'calypso/reader/data/site-subscriptions', () => ( {
+	useUnsubscribeWithUndo: () => mockUnsubscribeWithUndo,
+} ) );
+
 const defaultProps: ComponentProps< typeof MoreMenuActions > = {
 	identifier: 'following',
 	isSingleFeed: false,
 	feedIds: [ 1, 2 ],
 	feedUrls: [ 'https://example.com/feed', 'https://another.example.com/feed' ],
 	unseenCount: 3,
+};
+
+const singleFeedProps = {
+	isSingleFeed: true,
+	feedIds: [ 1 ],
+	feedUrls: [ 'https://example.com/feed' ],
+	blogId: 42,
+	siteName: 'Example Blog',
+	source: 'recent',
 };
 
 function renderMoreMenuActions( props = {} ) {
@@ -131,6 +145,52 @@ describe( 'MoreMenuActions', () => {
 			expect(
 				screen.queryByRole( 'menuitem', { name: 'Mark all as read' } )
 			).not.toBeInTheDocument();
+		} );
+	} );
+
+	describe( 'unsubscribe', () => {
+		test( 'renders the action for a single feed', async () => {
+			const user = userEvent.setup();
+			renderMoreMenuActions( singleFeedProps );
+
+			await openMoreActionsMenu( user );
+
+			expect( screen.getByRole( 'menuitem', { name: 'Unsubscribe' } ) ).toBeEnabled();
+		} );
+
+		test( 'is hidden on a section header', async () => {
+			const user = userEvent.setup();
+			renderMoreMenuActions( { ...singleFeedProps, isSingleFeed: false } );
+
+			await openMoreActionsMenu( user );
+
+			expect( screen.queryByRole( 'menuitem', { name: 'Unsubscribe' } ) ).not.toBeInTheDocument();
+		} );
+
+		test( 'is hidden when there is no feed URL', async () => {
+			const user = userEvent.setup();
+			renderMoreMenuActions( { ...singleFeedProps, feedUrls: [] } );
+
+			await openMoreActionsMenu( user );
+
+			expect( screen.queryByRole( 'menuitem', { name: 'Unsubscribe' } ) ).not.toBeInTheDocument();
+		} );
+
+		test( 'unsubscribes the feed and notifies the host', async () => {
+			const user = userEvent.setup();
+			const onUnsubscribed = jest.fn();
+			renderMoreMenuActions( { ...singleFeedProps, onUnsubscribed } );
+
+			await openMoreActionsMenu( user );
+			await user.click( screen.getByRole( 'menuitem', { name: 'Unsubscribe' } ) );
+
+			expect( mockUnsubscribeWithUndo ).toHaveBeenCalledWith( {
+				feedUrl: singleFeedProps.feedUrls[ 0 ],
+				blogId: singleFeedProps.blogId,
+				siteName: singleFeedProps.siteName,
+				source: singleFeedProps.source,
+			} );
+			expect( onUnsubscribed ).toHaveBeenCalled();
 		} );
 	} );
 } );

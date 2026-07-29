@@ -11,7 +11,7 @@ import { getCurrentUser } from 'calypso/state/current-user/selectors';
 import { useRecordReaderTracksEvent } from 'calypso/state/reader/analytics/useRecordReaderTracksEvent';
 import ReaderSidebarHelper from '../helper';
 import { MenuItem, MenuItemLink } from '../menu';
-import { MoreMenuActions } from '../more-menu-actions';
+import MoreMenuActions from '../more-menu-actions';
 
 interface ReaderSidebarListsListItemProps {
 	list: ReadList;

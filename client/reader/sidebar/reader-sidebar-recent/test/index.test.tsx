@@ -31,6 +31,7 @@ let mockSubscribedFeedsInfo = { unseenCount: 0, feedIds: [], feedUrls: [] };
 jest.mock( 'calypso/reader/data/site-subscriptions', () => ( {
 	useSubscribedSites: () => mockSubscribedSites,
 	useSubscribedFeedsInfo: () => mockSubscribedFeedsInfo,
+	useUnsubscribeWithUndo: () => jest.fn(),
 } ) );
 
 function createSubscriptionItem(

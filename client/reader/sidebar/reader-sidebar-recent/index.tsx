@@ -14,7 +14,7 @@ import ReaderUnreadCount from 'calypso/layout/sidebar/reader-unread-count';
 import { useSubscribedFeedsInfo, useSubscribedSites } from 'calypso/reader/data/site-subscriptions';
 import { getSiteDomain } from 'calypso/reader/get-helpers';
 import { formatUrlForDisplay } from 'calypso/reader/lib/feed-display-helper';
-import { MoreMenuActions } from 'calypso/reader/sidebar/more-menu-actions';
+import MoreMenuActions from 'calypso/reader/sidebar/more-menu-actions';
 import { recordAction, recordGaEvent } from 'calypso/reader/stats';
 import { useRecordReaderTracksEvent } from 'calypso/state/reader/analytics/useRecordReaderTracksEvent';
 import { getSelectedRecentFeedId } from 'calypso/state/reader-ui/sidebar/selectors';
@@ -134,6 +134,7 @@ const ReaderSidebarRecent = ( { isOpen, onClick, path, className }: Props ): Rea
 					isSingleFeed={ false }
 					feedIds={ feedsInfo.feedIds }
 					feedUrls={ feedsInfo.feedUrls }
+					source="sidebar-recent-header"
 					unseenCount={ feedsInfo.unseenCount }
 				/>
 			}
@@ -166,7 +167,15 @@ const ReaderSidebarRecent = ( { isOpen, onClick, path, className }: Props ): Rea
 											identifier={ `feed:${ feedId }` }
 											feedIds={ [ feedId ] }
 											feedUrls={ [ site.feed_URL ] }
+											source="sidebar-recent-item"
 											unseenCount={ unseenCount }
+											blogId={ Number( site.blog_ID ) }
+											siteName={ displayName }
+											onUnsubscribed={ () => {
+												if ( feedId === selectedSiteFeedId ) {
+													page( '/reader' );
+												}
+											} }
 										/>
 									) }
 									{ isSeenEnabled && <ReaderUnreadCount count={ unseenCount } /> }
