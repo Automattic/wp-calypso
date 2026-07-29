@@ -90,6 +90,9 @@ interface SupportStatusCTA {
 	title: string;
 	description?: string;
 	url_text?: string;
+	/** Unix timestamp, seconds. Not yet returned by the backend. */
+	purchased_at?: number;
+	plan_family?: string;
 }
 
 export interface SupportStatus {

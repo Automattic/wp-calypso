@@ -154,6 +154,41 @@ describe( 'useHelpCenterCTA', () => {
 		expect( setup( { cta: { ...bannerCta, url: '/help/contact' } } ).result.current ).toBeNull();
 	} );
 
+	it( 'passes through purchased_at and plan_family, renamed to camelCase', () => {
+		const { result } = setup( {
+			cta: { ...bannerCta, purchased_at: 1234567890, plan_family: 'business' },
+		} );
+
+		expect( result.current ).toMatchObject( {
+			purchasedAt: 1234567890,
+			planFamily: 'business',
+		} );
+	} );
+
+	it( 'drops purchased_at and plan_family when they are not of the right type', () => {
+		const cta = {
+			...bannerCta,
+			purchased_at: 'yesterday',
+			plan_family: 42,
+		} as unknown as SupportStatus[ 'cta' ];
+
+		const { result } = setup( { cta } );
+
+		expect( result.current ).toMatchObject( {
+			purchasedAt: undefined,
+			planFamily: undefined,
+		} );
+	} );
+
+	it( 'renders the CTA without purchasedAt or planFamily when they are absent from the payload', () => {
+		const { result } = setup();
+
+		expect( result.current ).toMatchObject( {
+			purchasedAt: undefined,
+			planFamily: undefined,
+		} );
+	} );
+
 	it( 'returns null and asks the support-status query to stay disabled when the product disables it', () => {
 		const { result } = setup( { enabled: false } );
 
