@@ -146,6 +146,28 @@ function recordImageStudioEvent(
 	recordTracksEvent( eventName, baseProps );
 }
 
+/**
+ * Records a Feature Clip event, always carrying the Feature Clip placement.
+ *
+ * Every event in this family belongs to the post-editor Feature Clip flow,
+ * whether it fires from the sidebar panel or from the modal opened out of it.
+ * The store can't be relied on for that: the panel and its share actions run
+ * before anything opens Image Studio, so the entry point is still null and the
+ * event would go out with no placement and no way to filter it.
+ *
+ * @param eventName  Event name, without the tracks prefix.
+ * @param properties Event-specific properties.
+ */
+function recordFeatureClipEvent(
+	eventName: string,
+	properties: Record< string, string | number | boolean > = {}
+): void {
+	recordImageStudioEvent( eventName, {
+		placement: ImageStudioEntryPoint.PostEditorFeatureClip,
+		...properties,
+	} );
+}
+
 interface TrackImageStudioOpenedOptions {
 	mode: ImageStudioMode;
 	attachmentId?: number;
@@ -651,7 +673,7 @@ export function trackImageStudioReelShareClicked( {
 	if ( durationSeconds != null ) {
 		properties.duration_seconds = durationSeconds;
 	}
-	recordImageStudioEvent( 'image_studio_feature_clip_share_clicked', properties );
+	recordFeatureClipEvent( 'image_studio_feature_clip_share_clicked', properties );
 }
 
 /**
@@ -664,7 +686,7 @@ export function trackImageStudioReelShareNotConnected( {
 }: {
 	surface: ShareSurface;
 } ): void {
-	recordImageStudioEvent( 'image_studio_feature_clip_share_not_connected', { surface } );
+	recordFeatureClipEvent( 'image_studio_feature_clip_share_not_connected', { surface } );
 }
 
 /**
@@ -678,7 +700,7 @@ export function trackImageStudioReelShareConnectionDisabled( {
 }: {
 	surface: ShareSurface;
 } ): void {
-	recordImageStudioEvent( 'image_studio_feature_clip_share_connection_disabled', { surface } );
+	recordFeatureClipEvent( 'image_studio_feature_clip_share_connection_disabled', { surface } );
 }
 
 /**
@@ -691,7 +713,7 @@ export function trackImageStudioReelShareNotPublished( {
 }: {
 	surface: ShareSurface;
 } ): void {
-	recordImageStudioEvent( 'image_studio_feature_clip_share_post_not_published', { surface } );
+	recordFeatureClipEvent( 'image_studio_feature_clip_share_post_not_published', { surface } );
 }
 
 /**
@@ -704,7 +726,7 @@ export function trackImageStudioReelShareInvalidState( {
 }: {
 	surface: ShareSurface;
 } ): void {
-	recordImageStudioEvent( 'image_studio_feature_clip_share_invalid_state', { surface } );
+	recordFeatureClipEvent( 'image_studio_feature_clip_share_invalid_state', { surface } );
 }
 
 /**
@@ -713,7 +735,7 @@ export function trackImageStudioReelShareInvalidState( {
  * @param options.surface - Where the share originated ('sidebar' | 'modal')
  */
 export function trackImageStudioReelShareCancelled( { surface }: { surface: ShareSurface } ): void {
-	recordImageStudioEvent( 'image_studio_feature_clip_share_cancelled', { surface } );
+	recordFeatureClipEvent( 'image_studio_feature_clip_share_cancelled', { surface } );
 }
 
 /**
@@ -726,7 +748,7 @@ export function trackImageStudioReelShareDispatched( {
 }: {
 	surface: ShareSurface;
 } ): void {
-	recordImageStudioEvent( 'image_studio_feature_clip_share_dispatched', { surface } );
+	recordFeatureClipEvent( 'image_studio_feature_clip_share_dispatched', { surface } );
 }
 
 /**
@@ -746,7 +768,7 @@ export function trackImageStudioReelShareFailed( {
 	if ( errorMessage ) {
 		properties.error_message = errorMessage;
 	}
-	recordImageStudioEvent( 'image_studio_feature_clip_share_failed', properties );
+	recordFeatureClipEvent( 'image_studio_feature_clip_share_failed', properties );
 }
 
 /**
@@ -764,7 +786,7 @@ export function trackImageStudioGenericShareClicked( {
 	surface: ShareSurface;
 	method: 'web-share' | 'web-share-unsupported';
 } ): void {
-	recordImageStudioEvent( 'image_studio_feature_clip_generic_share_clicked', { surface, method } );
+	recordFeatureClipEvent( 'image_studio_feature_clip_generic_share_clicked', { surface, method } );
 }
 
 /**
@@ -781,7 +803,7 @@ export function trackImageStudioGenericShareCompleted( {
 	surface: ShareSurface;
 	method: 'web-share';
 } ): void {
-	recordImageStudioEvent( 'image_studio_feature_clip_generic_share_completed', {
+	recordFeatureClipEvent( 'image_studio_feature_clip_generic_share_completed', {
 		surface,
 		method,
 	} );
@@ -813,7 +835,7 @@ export function trackImageStudioGenericShareFailed( {
 	if ( failureKind ) {
 		properties.failure_kind = failureKind;
 	}
-	recordImageStudioEvent( 'image_studio_feature_clip_generic_share_failed', properties );
+	recordFeatureClipEvent( 'image_studio_feature_clip_generic_share_failed', properties );
 }
 
 /**
@@ -827,7 +849,7 @@ export function trackImageStudioFeatureClipAddedToPost( {
 }: {
 	attachmentId: number;
 } ): void {
-	recordImageStudioEvent( 'image_studio_feature_clip_added_to_post', {
+	recordFeatureClipEvent( 'image_studio_feature_clip_added_to_post', {
 		attachment_id: attachmentId,
 		surface: 'sidebar',
 	} );
@@ -839,13 +861,7 @@ export function trackImageStudioFeatureClipAddedToPost( {
  * engagement rates.
  */
 export function trackImageStudioFeatureClipPanelViewed(): void {
-	// Sent explicitly rather than left to the store: the panel is rendered by the
-	// editor sidebar, so at mount nothing has opened Image Studio yet and the
-	// store's entry point is still null. Without this the event carries no
-	// placement and cannot be excluded from Image Studio metrics.
-	recordImageStudioEvent( 'image_studio_feature_clip_panel_viewed', {
-		placement: ImageStudioEntryPoint.PostEditorFeatureClip,
-	} );
+	recordFeatureClipEvent( 'image_studio_feature_clip_panel_viewed' );
 }
 
 /**
@@ -854,7 +870,7 @@ export function trackImageStudioFeatureClipPanelViewed(): void {
  * impression denominator for how often closing mid-generation happens.
  */
 export function trackImageStudioFeatureClipCloseWarningShown(): void {
-	recordImageStudioEvent( 'image_studio_feature_clip_close_warning_shown' );
+	recordFeatureClipEvent( 'image_studio_feature_clip_close_warning_shown' );
 }
 
 /**
@@ -862,7 +878,7 @@ export function trackImageStudioFeatureClipCloseWarningShown(): void {
  * generating ("Cancel").
  */
 export function trackImageStudioFeatureClipCloseWarningKeptGenerating(): void {
-	recordImageStudioEvent( 'image_studio_feature_clip_close_warning_kept_generating' );
+	recordFeatureClipEvent( 'image_studio_feature_clip_close_warning_kept_generating' );
 }
 
 /**
@@ -870,5 +886,5 @@ export function trackImageStudioFeatureClipCloseWarningKeptGenerating(): void {
  * generation and closing the modal ("Stop and close").
  */
 export function trackImageStudioFeatureClipCloseWarningStopped(): void {
-	recordImageStudioEvent( 'image_studio_feature_clip_close_warning_stopped' );
+	recordFeatureClipEvent( 'image_studio_feature_clip_close_warning_stopped' );
 }

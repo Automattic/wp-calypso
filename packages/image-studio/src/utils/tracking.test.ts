@@ -472,4 +472,46 @@ describe( 'feature clip tracking helpers', () => {
 			expect.objectContaining( { placement: 'post_editor_feature_clip' } )
 		);
 	} );
+
+	it( 'sends the Feature Clip placement on sidebar share events, where the store is empty', () => {
+		// Sharing straight from the panel never opens Image Studio, so the store
+		// has no entry point — the case that left these events unfilterable.
+		selectMock.mockReturnValue( {
+			getEntryPoint: jest.fn( () => null ),
+		} );
+
+		trackImageStudioGenericShareClicked( { surface: 'sidebar', method: 'web-share' } );
+		trackImageStudioReelShareCancelled( { surface: 'sidebar' } );
+		trackImageStudioFeatureClipAddedToPost( { attachmentId: 12 } );
+
+		[
+			'jetpack_big_sky_image_studio_feature_clip_generic_share_clicked',
+			'jetpack_big_sky_image_studio_feature_clip_share_cancelled',
+			'jetpack_big_sky_image_studio_feature_clip_added_to_post',
+		].forEach( ( eventName ) => {
+			expect( recordTracksEventMock ).toHaveBeenCalledWith(
+				eventName,
+				expect.objectContaining( { placement: 'post_editor_feature_clip' } )
+			);
+		} );
+	} );
+
+	it( 'keeps surface distinct from placement on Feature Clip events', () => {
+		// `surface` says where inside the feature ('sidebar' / 'modal'); `placement`
+		// says which entry point the flow came from. They are different properties
+		// and both have to survive.
+		selectMock.mockReturnValue( {
+			getEntryPoint: jest.fn( () => null ),
+		} );
+
+		trackImageStudioGenericShareClicked( { surface: 'modal', method: 'web-share' } );
+
+		expect( recordTracksEventMock ).toHaveBeenCalledWith(
+			'jetpack_big_sky_image_studio_feature_clip_generic_share_clicked',
+			expect.objectContaining( {
+				surface: 'modal',
+				placement: 'post_editor_feature_clip',
+			} )
+		);
+	} );
 } );
