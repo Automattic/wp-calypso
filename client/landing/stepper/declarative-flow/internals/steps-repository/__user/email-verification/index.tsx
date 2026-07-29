@@ -1,6 +1,7 @@
 import { Step } from '@automattic/onboarding';
 import { createInterpolateElement } from '@wordpress/element';
 import { sprintf } from '@wordpress/i18n';
+import { external } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
 import { useCallback, useEffect, useMemo, useRef, type ReactNode } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
@@ -36,7 +37,7 @@ const EmailVerificationGate = ( { flow, scope, logo, onDone }: Props ) => {
 	const headingRef = useRef< HTMLDivElement >( null );
 	const inboxLink = getInboxLink( user?.email );
 
-	const title = __( 'Confirm your email address' );
+	const title = __( 'Verify your email' );
 
 	const openInbox = () =>
 		recordTracksEvent( 'calypso_signup_email_verification_open_inbox', {
@@ -91,9 +92,9 @@ const EmailVerificationGate = ( { flow, scope, logo, onDone }: Props ) => {
 		() =>
 			createInterpolateElement(
 				sprintf(
-					// translators: %s is the email address the confirmation link was sent to.
+					// translators: %s is the email address the verification link was sent to.
 					__(
-						'Click the link we sent to <email>%s</email> and we’ll pick up right where you left off.'
+						'We just sent an email to <email>%s</email>. Click the link in the email to verify your account.'
 					),
 					user?.email ?? ''
 				),
@@ -133,12 +134,10 @@ const EmailVerificationGate = ( { flow, scope, logo, onDone }: Props ) => {
 						target="_blank"
 						rel="noreferrer noopener"
 						onClick={ openInbox }
+						icon={ external }
+						iconPosition="right"
 					>
-						{ sprintf(
-							// translators: %s is an email provider name, e.g. "Gmail".
-							__( 'Open %s' ),
-							inboxLink.providerName
-						) }
+						{ __( 'Open email inbox' ) }
 					</Step.PrimaryButton>
 				) : (
 					<Step.PrimaryButton
@@ -149,6 +148,20 @@ const EmailVerificationGate = ( { flow, scope, logo, onDone }: Props ) => {
 						{ __( 'I’ve confirmed my email' ) }
 					</Step.PrimaryButton>
 				) }
+
+				<Step.SecondaryButton
+					onClick={ resend }
+					disabled={ isSending || secondsUntilResend > 0 }
+					isBusy={ isSending }
+				>
+					{ secondsUntilResend > 0
+						? sprintf(
+								// translators: %d is the number of seconds until the email can be resent.
+								__( 'Resend in %ds' ),
+								secondsUntilResend
+						  )
+						: __( 'Resend' ) }
+				</Step.SecondaryButton>
 
 				{ checkStatus === 'unconfirmed' && (
 					<p className="onboarding-email-verification__notice" role="status">
@@ -169,31 +182,6 @@ const EmailVerificationGate = ( { flow, scope, logo, onDone }: Props ) => {
 						{ __( 'We couldn’t send the email. Please try again in a moment.' ) }
 					</p>
 				) }
-
-				<p className="onboarding-email-verification__resend">
-					{ secondsUntilResend > 0
-						? sprintf(
-								// translators: %d is the number of seconds the user has to wait before the email can be sent again.
-								__(
-									'Nothing in your inbox? Check your spam folder. You can resend the email in %ds.'
-								),
-								secondsUntilResend
-						  )
-						: createInterpolateElement(
-								__(
-									'Nothing in your inbox? Check your spam folder, or <resend>resend the email</resend>.'
-								),
-								{
-									resend: (
-										<Step.LinkButton
-											onClick={ resend }
-											disabled={ isSending }
-											isBusy={ isSending }
-										/>
-									),
-								}
-						  ) }
-				</p>
 
 				{ /* LinkButton, not SkipButton: the gate lives on the `user` route, so
 				   SkipButton's automatic `calypso_signup_skip_step` would wrongly report a

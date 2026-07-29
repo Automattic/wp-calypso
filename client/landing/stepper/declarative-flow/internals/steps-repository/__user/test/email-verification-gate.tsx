@@ -81,7 +81,7 @@ const mockUseAccountCreationExperiment = useAccountCreationExperiment as unknown
 
 const USER_ID = 1;
 const EMAIL = 'onboarder@example.com';
-const GATE_HEADING = 'Confirm your email address';
+const GATE_HEADING = 'Verify your email';
 const SCOPE = gateScope( 'onboarding', USER_ID );
 
 interface ReducerWithAdd {

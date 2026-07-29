@@ -91,10 +91,10 @@ describe( 'EmailVerificationGate', () => {
 
 		render();
 
-		expect( screen.getByRole( 'heading', { name: 'Confirm your email address' } ) ).toBeVisible();
+		expect( screen.getByRole( 'heading', { name: 'Verify your email' } ) ).toBeVisible();
 		expect( screen.getByText( EMAIL ) ).toBeVisible();
 		await waitFor( () =>
-			expect( screen.getByText( /You can resend the email in 60s\./ ) ).toBeVisible()
+			expect( screen.getByRole( 'button', { name: 'Resend in 60s' } ) ).toBeVisible()
 		);
 
 		expect( request.isDone() ).toBe( false );
@@ -116,7 +116,7 @@ describe( 'EmailVerificationGate', () => {
 
 		// The gate replaces the account form in place; focus should land on its heading
 		// region rather than being stranded on the now-unmounted submit button.
-		const heading = screen.getByRole( 'heading', { name: 'Confirm your email address' } );
+		const heading = screen.getByRole( 'heading', { name: 'Verify your email' } );
 		expect( heading.closest( '.onboarding-email-verification__heading' ) ).toHaveFocus();
 	} );
 
@@ -130,7 +130,7 @@ describe( 'EmailVerificationGate', () => {
 			},
 		} );
 
-		const openButton = await screen.findByRole( 'link', { name: 'Open Gmail' } );
+		const openButton = await screen.findByRole( 'link', { name: 'Open email inbox' } );
 		expect( openButton.getAttribute( 'href' ) ).toContain( 'mail.google.com' );
 		// The inbox CTA replaces the manual re-check for known providers.
 		expect(
@@ -157,7 +157,7 @@ describe( 'EmailVerificationGate', () => {
 
 		const { unmount } = render();
 		await waitFor( () =>
-			expect( screen.getByText( /You can resend the email in 60s\./ ) ).toBeVisible()
+			expect( screen.getByRole( 'button', { name: 'Resend in 60s' } ) ).toBeVisible()
 		);
 
 		// The whole cooldown elapses, then the user refreshes (remount).
@@ -170,8 +170,8 @@ describe( 'EmailVerificationGate', () => {
 		render();
 
 		// Resend is available immediately — no fresh 60-second wait, and no new email.
-		expect( await screen.findByRole( 'button', { name: 'resend the email' } ) ).toBeVisible();
-		expect( screen.queryByText( /You can resend the email in \d+s\./ ) ).not.toBeInTheDocument();
+		expect( await screen.findByRole( 'button', { name: 'Resend' } ) ).toBeVisible();
+		expect( screen.queryByRole( 'button', { name: /Resend in \d+s/ } ) ).not.toBeInTheDocument();
 		expect( secondSend.isDone() ).toBe( false );
 	} );
 
@@ -322,9 +322,9 @@ describe( 'EmailVerificationGate', () => {
 
 		// Resending supersedes that check, so its notice clears alongside the fresh cooldown.
 		mockSendVerificationEmail();
-		await user.click( screen.getByRole( 'button', { name: 'resend the email' } ) );
+		await user.click( screen.getByRole( 'button', { name: 'Resend' } ) );
 		await waitFor( () =>
-			expect( screen.getByText( /You can resend the email in 60s\./ ) ).toBeVisible()
+			expect( screen.getByRole( 'button', { name: 'Resend in 60s' } ) ).toBeVisible()
 		);
 
 		expect(
@@ -339,17 +339,17 @@ describe( 'EmailVerificationGate', () => {
 		render();
 
 		await waitFor( () =>
-			expect( screen.getByText( /You can resend the email in 60s\./ ) ).toBeVisible()
+			expect( screen.getByRole( 'button', { name: 'Resend in 60s' } ) ).toBeVisible()
 		);
 		act( () => {
 			jest.advanceTimersByTime( COOLDOWN_MS );
 		} );
 
 		mockSendVerificationEmail( { success: false } );
-		await user.click( await screen.findByRole( 'button', { name: 'resend the email' } ) );
+		await user.click( await screen.findByRole( 'button', { name: 'Resend' } ) );
 
 		expect( await screen.findByText( /We couldn’t send the email\./ ) ).toBeVisible();
-		expect( screen.getByRole( 'button', { name: 'resend the email' } ) ).toBeVisible();
+		expect( screen.getByRole( 'button', { name: 'Resend' } ) ).toBeVisible();
 		expect( recordTracksEvent ).toHaveBeenCalledWith(
 			'calypso_signup_email_verification_email_send_failed',
 			expect.objectContaining( { flow: FLOW, is_resend: true } )
@@ -364,21 +364,21 @@ describe( 'EmailVerificationGate', () => {
 
 		// The seeded cooldown (from the signup email) means there is nothing to click yet.
 		await waitFor( () =>
-			expect( screen.getByText( /You can resend the email in 60s\./ ) ).toBeVisible()
+			expect( screen.getByRole( 'button', { name: 'Resend in 60s' } ) ).toBeVisible()
 		);
-		expect( screen.queryByRole( 'button', { name: 'resend the email' } ) ).not.toBeInTheDocument();
+		expect( screen.queryByRole( 'button', { name: 'Resend' } ) ).not.toBeInTheDocument();
 
 		act( () => {
 			jest.advanceTimersByTime( COOLDOWN_MS );
 		} );
 
 		const resendRequest = mockSendVerificationEmail();
-		await user.click( await screen.findByRole( 'button', { name: 'resend the email' } ) );
+		await user.click( await screen.findByRole( 'button', { name: 'Resend' } ) );
 
 		// A successful resend restarts the 60s cooldown; waiting for that UI change also
 		// lets the send's promise chain settle before asserting on its side effects.
 		await waitFor( () =>
-			expect( screen.getByText( /You can resend the email in 60s\./ ) ).toBeVisible()
+			expect( screen.getByRole( 'button', { name: 'Resend in 60s' } ) ).toBeVisible()
 		);
 
 		expect( resendRequest.isDone() ).toBe( true );
@@ -400,27 +400,25 @@ describe( 'EmailVerificationGate', () => {
 
 			// The initial cooldown holds even though nothing could be persisted.
 			await waitFor( () =>
-				expect( screen.getByText( /You can resend the email in 60s\./ ) ).toBeVisible()
+				expect( screen.getByRole( 'button', { name: 'Resend in 60s' } ) ).toBeVisible()
 			);
-			expect(
-				screen.queryByRole( 'button', { name: 'resend the email' } )
-			).not.toBeInTheDocument();
+			expect( screen.queryByRole( 'button', { name: 'Resend' } ) ).not.toBeInTheDocument();
 
 			act( () => {
 				jest.advanceTimersByTime( COOLDOWN_MS );
 			} );
 
 			const resendRequest = mockSendVerificationEmail();
-			await user.click( await screen.findByRole( 'button', { name: 'resend the email' } ) );
+			await user.click( await screen.findByRole( 'button', { name: 'Resend' } ) );
 			await waitFor( () =>
-				expect( screen.getByText( /You can resend the email in 60s\./ ) ).toBeVisible()
+				expect( screen.getByRole( 'button', { name: 'Resend in 60s' } ) ).toBeVisible()
 			);
 
 			// …and the fresh cooldown counts down instead of snapping back to zero.
 			act( () => {
 				jest.advanceTimersByTime( 1000 );
 			} );
-			expect( screen.getByText( /You can resend the email in 59s\./ ) ).toBeVisible();
+			expect( screen.getByRole( 'button', { name: 'Resend in 59s' } ) ).toBeVisible();
 			expect( resendRequest.isDone() ).toBe( true );
 		} finally {
 			setItem.mockRestore();
@@ -432,7 +430,7 @@ describe( 'EmailVerificationGate', () => {
 
 		const { unmount } = render();
 		await waitFor( () =>
-			expect( screen.getByText( /You can resend the email in 60s\./ ) ).toBeVisible()
+			expect( screen.getByRole( 'button', { name: 'Resend in 60s' } ) ).toBeVisible()
 		);
 
 		// 20 seconds of the 60-second cooldown elapse, then the user leaves.
@@ -447,7 +445,7 @@ describe( 'EmailVerificationGate', () => {
 
 		// …and the countdown resumes from what was left rather than resetting to 60.
 		await waitFor( () =>
-			expect( screen.getByText( /You can resend the email in 40s\./ ) ).toBeVisible()
+			expect( screen.getByRole( 'button', { name: 'Resend in 40s' } ) ).toBeVisible()
 		);
 		expect( secondSend.isDone() ).toBe( false );
 	} );
@@ -457,7 +455,7 @@ describe( 'EmailVerificationGate', () => {
 
 		render();
 		await waitFor( () =>
-			expect( screen.getByText( /You can resend the email in 60s\./ ) ).toBeVisible()
+			expect( screen.getByRole( 'button', { name: 'Resend in 60s' } ) ).toBeVisible()
 		);
 
 		// Simulate a phone suspending JS while the user is in their email app: the
@@ -468,7 +466,7 @@ describe( 'EmailVerificationGate', () => {
 		} );
 
 		// On return, the cooldown reflects real elapsed time, not the paused counter.
-		expect( screen.getByRole( 'button', { name: 'resend the email' } ) ).toBeVisible();
+		expect( screen.getByRole( 'button', { name: 'Resend' } ) ).toBeVisible();
 	} );
 
 	it( 'restarts the polling window after a resend so a later remote confirmation still advances', async () => {
@@ -494,9 +492,9 @@ describe( 'EmailVerificationGate', () => {
 		// Resending restarts the window. Waiting for the fresh cooldown confirms the
 		// send resolved and its state (including the reopened window) has applied.
 		mockSendVerificationEmail();
-		await user.click( await screen.findByRole( 'button', { name: 'resend the email' } ) );
+		await user.click( await screen.findByRole( 'button', { name: 'Resend' } ) );
 		await waitFor( () =>
-			expect( screen.getByText( /You can resend the email in \d+s\./ ) ).toBeVisible()
+			expect( screen.getByRole( 'button', { name: /Resend in \d+s/ } ) ).toBeVisible()
 		);
 
 		// The restarted poll fires, picks up the confirmation, and advances.

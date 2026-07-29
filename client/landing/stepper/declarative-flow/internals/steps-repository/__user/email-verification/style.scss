@@ -4,6 +4,12 @@
 	flex-direction: column;
 	gap: 16px;
 	text-align: center;
+
+	.step-container-v2__primary-button,
+	.step-container-v2__secondary-button {
+		justify-content: center;
+		width: 100%;
+	}
 }
 
 // Focus is moved here programmatically on mount to announce the screen change; it isn't
@@ -20,10 +26,4 @@
 
 .onboarding-email-verification__notice.is-error {
 	color: var(--color-error);
-}
-
-.onboarding-email-verification__resend {
-	color: var(--color-text-subtle);
-	font-size: 0.875rem;
-	margin: 0;
 }
