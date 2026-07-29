@@ -120,6 +120,38 @@ describe( 'EmailVerificationGate', () => {
 		expect( heading.closest( '.onboarding-email-verification__heading' ) ).toHaveFocus();
 	} );
 
+	it( 'offers a sniper-link inbox button for a known email provider', async () => {
+		renderStep( <EmailVerificationGate flow={ FLOW } scope={ SCOPE } onDone={ jest.fn() } />, {
+			initialState: {
+				currentUser: {
+					id: USER_ID,
+					user: { ID: USER_ID, email: 'onboarder@gmail.com', email_verified: false },
+				},
+			},
+		} );
+
+		const openButton = await screen.findByRole( 'link', { name: 'Open Gmail' } );
+		expect( openButton.getAttribute( 'href' ) ).toContain( 'mail.google.com' );
+		// The inbox CTA replaces the manual re-check for known providers.
+		expect(
+			screen.queryByRole( 'button', { name: 'I’ve confirmed my email' } )
+		).not.toBeInTheDocument();
+
+		await userEvent.click( openButton );
+		expect( recordTracksEvent ).toHaveBeenCalledWith(
+			'calypso_signup_email_verification_open_inbox',
+			expect.objectContaining( { flow: FLOW, provider: 'Gmail' } )
+		);
+	} );
+
+	it( 'falls back to a manual re-check for an unrecognized provider', () => {
+		render();
+
+		// `onboarder@example.com` has no known inbox link.
+		expect( screen.getByRole( 'button', { name: 'I’ve confirmed my email' } ) ).toBeVisible();
+		expect( screen.queryByRole( 'link', { name: /^Open / } ) ).not.toBeInTheDocument();
+	} );
+
 	it( 'keeps resend available after refreshing once the cooldown has expired', async () => {
 		jest.useFakeTimers();
 

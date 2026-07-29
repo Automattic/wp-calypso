@@ -8,6 +8,7 @@ import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import UserVerificationChecker from 'calypso/lib/user/verification-checker';
 import { useSelector } from 'calypso/state';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
+import { getInboxLink } from './inbox-links';
 import { gateShownAt, markGateShown } from './storage';
 import { useEmailVerification } from './use-email-verification';
 
@@ -33,8 +34,15 @@ const EmailVerificationGate = ( { flow, scope, logo, onDone }: Props ) => {
 
 	const hasSubmitted = useRef( false );
 	const headingRef = useRef< HTMLDivElement >( null );
+	const inboxLink = getInboxLink( user?.email );
 
 	const title = __( 'Confirm your email address' );
+
+	const openInbox = () =>
+		recordTracksEvent( 'calypso_signup_email_verification_open_inbox', {
+			flow,
+			provider: inboxLink?.providerName,
+		} );
 
 	// Stamp the shown-at time now the gate is actually on screen (see storage.ts).
 	useEffect( () => {
@@ -116,13 +124,31 @@ const EmailVerificationGate = ( { flow, scope, logo, onDone }: Props ) => {
 					</div>
 				}
 			>
-				<Step.PrimaryButton
-					onClick={ checkNow }
-					isBusy={ checkStatus === 'checking' }
-					disabled={ checkStatus === 'checking' }
-				>
-					{ __( 'I’ve confirmed my email' ) }
-				</Step.PrimaryButton>
+				{ /* Sniper-link CTA: drop the user straight into their inbox, pre-filtered to
+				   our sender. Confirming the link there resolves the gate by polling. When the
+				   provider is unknown, fall back to a manual "I've confirmed" re-check. */ }
+				{ inboxLink ? (
+					<Step.PrimaryButton
+						href={ inboxLink.url }
+						target="_blank"
+						rel="noreferrer noopener"
+						onClick={ openInbox }
+					>
+						{ sprintf(
+							// translators: %s is an email provider name, e.g. "Gmail".
+							__( 'Open %s' ),
+							inboxLink.providerName
+						) }
+					</Step.PrimaryButton>
+				) : (
+					<Step.PrimaryButton
+						onClick={ checkNow }
+						isBusy={ checkStatus === 'checking' }
+						disabled={ checkStatus === 'checking' }
+					>
+						{ __( 'I’ve confirmed my email' ) }
+					</Step.PrimaryButton>
+				) }
 
 				{ checkStatus === 'unconfirmed' && (
 					<p className="onboarding-email-verification__notice" role="status">
