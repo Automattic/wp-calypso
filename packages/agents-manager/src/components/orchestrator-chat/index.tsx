@@ -38,6 +38,7 @@ import { isReaderChatAgent } from '../../utils/is-reader-chat-agent';
 import { mergeEmptyViewSuggestions } from '../../utils/merge-empty-view-suggestions';
 import { getOrchestratorErrorMessage } from '../../utils/orchestrator-error-message';
 import { persistLastActivity } from '../../utils/persist-last-activity';
+import { setProviderCheckpoints } from '../../utils/provider-checkpoints';
 import { getReaderChatErrorMessage } from '../../utils/reader-chat-error-message';
 import { isShowComponentTool } from '../../utils/show-component-tools';
 import { recordBigSkyTracksEvent } from '../../utils/tracks';
@@ -443,6 +444,14 @@ export default function OrchestratorChat( {
 	// Register an "Undo" action on agent messages with checkpoints.
 	const checkpoint = useCheckpoint?.();
 	useCheckpointAction( registerMessageActions, checkpoint );
+
+	// TODO (ability-migration): Remove once the last checkpoint-writing Big Sky
+	// ability migrates. Keeps the provider checkpoint store reachable for the
+	// `restore-checkpoint` delegation while Big Sky still writes checkpoints.
+	useEffect( () => {
+		setProviderCheckpoints( checkpoint );
+		return () => setProviderCheckpoints( undefined );
+	}, [ checkpoint ] );
 
 	// Register thumbs-up/down feedback actions on agent messages.
 	const { showFeedbackInput, submitFeedbackText, resetFeedback, getFeedbackActionsForMessage } =

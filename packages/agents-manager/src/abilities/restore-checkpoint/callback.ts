@@ -8,7 +8,9 @@ import {
 	setCheckpoint,
 } from '../../utils/checkpoints';
 import { isEditorPage } from '../../utils/is-editor-page';
+import { getProviderCheckpoints } from '../../utils/provider-checkpoints';
 import { getToolCallIdFromConversationHistory } from '../../utils/tool-call-history';
+import type { UseCheckpointReturn } from '../../utils/load-external-providers';
 import type { AbilityResult } from '../types';
 
 export interface RestoreCheckpointInput {
@@ -42,6 +44,60 @@ function errorResult(
 	};
 }
 
+function restoredResult( summary: string, checkpointId: string ): AbilityResult {
+	return {
+		result: { success: true, message: summary, details: { checkpointId } },
+		returnToAgent: true,
+	};
+}
+
+function restoreFailedResult( error: unknown, checkpointId: string ): AbilityResult {
+	return errorResult(
+		__( 'I could not restore that checkpoint.', __i18n_text_domain__ ),
+		error instanceof Error ? error.message : String( error ),
+		{ checkpointId }
+	);
+}
+
+// Restores a checkpoint Big Sky still holds — its tools write to its own store
+// until they migrate. The reciprocal is recorded there too, keyless: the
+// foreign target's scoped keys are not readable through the bridge, and Big
+// Sky restores keyless records via its legacy full-snapshot path.
+async function restoreProviderCheckpoint(
+	providerCheckpoints: UseCheckpointReturn,
+	{ checkpointId, summary, requestIntentType = 'restore' }: RestoreCheckpointInput
+): Promise< AbilityResult > {
+	const restoreToolCallId = getToolCallIdFromConversationHistory( RESTORE_CHECKPOINT_TOOL_ID );
+	const reciprocalId =
+		restoreToolCallId &&
+		! hasCheckpoint( restoreToolCallId ) &&
+		! providerCheckpoints.hasCheckpoint( restoreToolCallId )
+			? restoreToolCallId
+			: null;
+
+	if ( reciprocalId ) {
+		providerCheckpoints.setCheckpoint( reciprocalId, [], {
+			toolCallId: reciprocalId,
+			toolId: RESTORE_CHECKPOINT_TOOL_ID,
+			summary,
+			restoresCheckpointId: checkpointId,
+			requestIntentType: getReciprocalRequestIntentType( requestIntentType ),
+			createdByRequestIntentType: requestIntentType,
+		} );
+	}
+
+	try {
+		await providerCheckpoints.restoreCheckpoint( checkpointId );
+	} catch ( error ) {
+		if ( reciprocalId ) {
+			providerCheckpoints.clearCheckpoint( reciprocalId );
+		}
+		return restoreFailedResult( error, checkpointId );
+	}
+
+	return restoredResult( summary, checkpointId );
+}
+
 /**
  * The `restore-checkpoint` ability callback.
  */
@@ -68,6 +124,14 @@ export async function restoreCheckpointCallback(
 	}
 
 	if ( ! hasCheckpoint( checkpointId ) ) {
+		// TODO (ability-migration): Delete the delegation once the last
+		// checkpoint-writing Big Sky ability migrates — every checkpoint then
+		// lives in AM's own store.
+		const providerCheckpoints = getProviderCheckpoints();
+		if ( providerCheckpoints?.hasCheckpoint( checkpointId ) ) {
+			return restoreProviderCheckpoint( providerCheckpoints, input );
+		}
+
 		return errorResult(
 			__( 'I could not find a checkpoint for that ID.', __i18n_text_domain__ ),
 			`Checkpoint not found: ${ checkpointId }`,
@@ -104,14 +168,7 @@ export async function restoreCheckpointCallback(
 		if ( reciprocalId ) {
 			clearCheckpoint( reciprocalId );
 		}
-		return errorResult(
-			__(
-				'I did not restore that checkpoint because it may replace or remove too much current content.',
-				__i18n_text_domain__
-			),
-			error instanceof Error ? error.message : String( error ),
-			{ checkpointId }
-		);
+		return restoreFailedResult( error, checkpointId );
 	}
 
 	// Only the newest reciprocal stays valid — a stale one would redo over
@@ -128,8 +185,5 @@ export async function restoreCheckpointCallback(
 			.forEach( ( { id } ) => clearCheckpoint( id ) );
 	}
 
-	return {
-		result: { success: true, message: summary, details: { checkpointId } },
-		returnToAgent: true,
-	};
+	return restoredResult( summary, checkpointId );
 }

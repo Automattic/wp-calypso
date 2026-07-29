@@ -15,7 +15,6 @@ import { getAgentManager, UIMessage } from '@automattic/agenttic-client';
 import { amToolProvider, normalizeAbilityName } from '../abilities';
 import { getAvailableCheckpoints } from './checkpoints';
 import { getAgentsManagerInlineData } from './get-agents-manager-inline-data';
-import isAmAbilitiesDisabled from './is-am-abilities-disabled';
 import { isReaderChatAgent } from './is-reader-chat-agent';
 import { useReaderFollowupSuggestions } from './reader-followup-hook';
 import type {
@@ -108,7 +107,7 @@ export type GetChatComponent = ( type: ChatComponentType ) => React.ComponentTyp
  */
 export type UseCheckpointReturn = {
 	getLastEditorState: () => unknown;
-	setCheckpoint: ( id: string, keys?: string[] ) => void;
+	setCheckpoint: ( id: string, keys?: string[], metadata?: Record< string, unknown > ) => void;
 	addCheckpointKeys: ( id: string, keys: string[] ) => void;
 	restoreCheckpoint: ( id: string ) => Promise< void >;
 	addNewPageToCheckpoint: ( pageId: string ) => void;
@@ -324,14 +323,12 @@ function getFallbackClientContext(): ClientContextType {
 	};
 }
 
-// TODO (ability-migration): Remove the replacement once Big Sky deletes its
-// checkpoint context — providers then stop advertising unrestorable ids.
+// TODO (ability-migration): Remove the merge once Big Sky deletes its
+// checkpoint context feed — AM's list then stands alone.
 /**
- * Replaces the provider-advertised `availableCheckpoints` with AM's own list.
- * AM owns `restore-checkpoint` execution, so provider-held checkpoints can no
- * longer be restored — advertising them would steer the agent into failing
- * restores. The `?am_abilities=0` switch keeps the provider list, matching
- * the provider-executed restore it flips to.
+ * Appends AM's checkpoints to the provider-advertised `availableCheckpoints`,
+ * so the agent sees every restorable id — the provider's (restored through
+ * the provider-checkpoints bridge) and AM's own.
  */
 function withAmCheckpoints(
 	contextProvider: ContextProvider | undefined
@@ -343,16 +340,20 @@ function withAmCheckpoints(
 	return {
 		getClientContext: () => {
 			const context = contextProvider.getClientContext();
-			if ( isAmAbilitiesDisabled() ) {
-				return context;
-			}
-
 			const amCheckpoints = getAvailableCheckpoints();
-			if ( ! amCheckpoints.length && context.availableCheckpoints === undefined ) {
+			if ( ! amCheckpoints.length ) {
 				return context;
 			}
 
-			return { ...context, availableCheckpoints: amCheckpoints };
+			const providerCheckpoints = Array.isArray( context.availableCheckpoints )
+				? context.availableCheckpoints
+				: [];
+			return {
+				...context,
+				availableCheckpoints: [ ...providerCheckpoints, ...amCheckpoints ].map(
+					( item, index ) => ( { ...item, checkpointIndex: index } )
+				),
+			};
 		},
 	};
 }

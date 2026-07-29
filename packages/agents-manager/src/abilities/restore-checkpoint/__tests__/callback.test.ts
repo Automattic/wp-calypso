@@ -6,6 +6,7 @@ import {
 	setCheckpoint,
 } from '../../../utils/checkpoints';
 import { isEditorPage } from '../../../utils/is-editor-page';
+import { getProviderCheckpoints } from '../../../utils/provider-checkpoints';
 import { getToolCallIdFromConversationHistory } from '../../../utils/tool-call-history';
 import { restoreCheckpointCallback } from '../callback';
 
@@ -18,6 +19,9 @@ jest.mock( '../../../utils/checkpoints', () => ( {
 	setCheckpoint: jest.fn(),
 } ) );
 jest.mock( '../../../utils/is-editor-page', () => ( { isEditorPage: jest.fn( () => true ) } ) );
+jest.mock( '../../../utils/provider-checkpoints', () => ( {
+	getProviderCheckpoints: jest.fn(),
+} ) );
 jest.mock( '../../../utils/tool-call-history', () => ( {
 	getToolCallIdFromConversationHistory: jest.fn( () => null ),
 } ) );
@@ -25,6 +29,14 @@ jest.mock( '../../../utils/tool-call-history', () => ( {
 const mockGetCheckpoints = getCheckpoints as jest.Mock;
 const mockHasCheckpoint = hasCheckpoint as jest.Mock;
 const mockGetToolCallId = getToolCallIdFromConversationHistory as jest.Mock;
+const mockGetProviderCheckpoints = getProviderCheckpoints as jest.Mock;
+
+const makeProviderCheckpoints = () => ( {
+	hasCheckpoint: jest.fn( ( id: string ) => id === 'toolu_target' ),
+	restoreCheckpoint: jest.fn( () => Promise.resolve() ),
+	setCheckpoint: jest.fn(),
+	clearCheckpoint: jest.fn(),
+} );
 
 const makeInput = ( overrides = {} ) => ( {
 	checkpointId: 'toolu_target',
@@ -41,6 +53,7 @@ beforeEach( () => {
 		{ id: 'toolu_target', toolId: 'big_sky__show_component', checkpointKeys: [ 'color' ] },
 	] );
 	mockGetToolCallId.mockReturnValue( null );
+	mockGetProviderCheckpoints.mockReturnValue( undefined );
 } );
 
 describe( 'restoreCheckpointCallback', () => {
@@ -155,6 +168,57 @@ describe( 'restoreCheckpointCallback', () => {
 			'toolu_old_redo',
 			'toolu_legacy',
 		] );
+	} );
+
+	it( 'delegates to the provider store when AM does not hold the id', async () => {
+		mockHasCheckpoint.mockReturnValue( false );
+		const providerCheckpoints = makeProviderCheckpoints();
+		mockGetProviderCheckpoints.mockReturnValue( providerCheckpoints );
+
+		const result = await restoreCheckpointCallback( makeInput() );
+
+		expect( providerCheckpoints.restoreCheckpoint ).toHaveBeenCalledWith( 'toolu_target' );
+		expect( restoreCheckpoint ).not.toHaveBeenCalled();
+		expect( result ).toEqual( {
+			result: {
+				success: true,
+				message: 'I undid the color change.',
+				details: { checkpointId: 'toolu_target' },
+			},
+			returnToAgent: true,
+		} );
+	} );
+
+	it( 'records the reciprocal in the provider store for a delegated restore', async () => {
+		mockHasCheckpoint.mockReturnValue( false );
+		mockGetToolCallId.mockReturnValue( 'toolu_restore' );
+		const providerCheckpoints = makeProviderCheckpoints();
+		mockGetProviderCheckpoints.mockReturnValue( providerCheckpoints );
+
+		await restoreCheckpointCallback( makeInput() );
+
+		expect( providerCheckpoints.setCheckpoint ).toHaveBeenCalledWith( 'toolu_restore', [], {
+			toolCallId: 'toolu_restore',
+			toolId: 'big_sky__restore_checkpoint',
+			summary: 'I undid the color change.',
+			restoresCheckpointId: 'toolu_target',
+			requestIntentType: 'redo',
+			createdByRequestIntentType: 'undo',
+		} );
+		expect( setCheckpoint ).not.toHaveBeenCalled();
+	} );
+
+	it( 'drops the provider reciprocal when a delegated restore fails', async () => {
+		mockHasCheckpoint.mockReturnValue( false );
+		mockGetToolCallId.mockReturnValue( 'toolu_restore' );
+		const providerCheckpoints = makeProviderCheckpoints();
+		providerCheckpoints.restoreCheckpoint.mockRejectedValueOnce( new Error( 'Restore exploded.' ) );
+		mockGetProviderCheckpoints.mockReturnValue( providerCheckpoints );
+
+		const result = await restoreCheckpointCallback( makeInput() );
+
+		expect( providerCheckpoints.clearCheckpoint ).toHaveBeenCalledWith( 'toolu_restore' );
+		expect( result.result ).toMatchObject( { success: false, error: 'Restore exploded.' } );
 	} );
 
 	it( 'reports a failed restore and drops the just-created reciprocal', async () => {

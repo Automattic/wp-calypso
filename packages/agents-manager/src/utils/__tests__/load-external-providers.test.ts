@@ -441,7 +441,7 @@ describe( 'loadExternalProviders', () => {
 		consoleWarn.mockRestore();
 	} );
 
-	it( 'replaces the provider checkpoint list with AM-restorable checkpoints', async () => {
+	it( 'appends AM checkpoints after the provider checkpoint list', async () => {
 		jest
 			.mocked( getAvailableCheckpoints )
 			.mockReturnValueOnce( [
@@ -468,36 +468,12 @@ describe( 'loadExternalProviders', () => {
 		const providers = await loadExternalProviders();
 
 		expect( providers.contextProvider?.getClientContext().availableCheckpoints ).toEqual( [
-			{ checkpointId: 'toolu_am', checkpointIndex: 0, checkpointKeys: [ 'color' ] },
+			{ checkpointId: 'toolu_bsp', checkpointIndex: 0, checkpointKeys: [ 'blocks' ] },
+			{ checkpointId: 'toolu_am', checkpointIndex: 1, checkpointKeys: [ 'color' ] },
 		] );
 	} );
 
-	it( 'empties the provider checkpoint list when AM has no checkpoints', async () => {
-		setAgentsManagerData( {
-			agentProviders: [
-				{
-					contextProvider: {
-						getClientContext: () => ( {
-							url: 'https://example.com/wp-admin/site-editor.php',
-							pathname: '/wp-admin/site-editor.php',
-							search: '',
-							environment: 'wp-admin',
-							availableCheckpoints: [
-								{ checkpointId: 'toolu_bsp', checkpointIndex: 0, checkpointKeys: [ 'blocks' ] },
-							],
-						} ),
-					},
-				},
-			],
-		} );
-
-		const providers = await loadExternalProviders();
-
-		expect( providers.contextProvider?.getClientContext().availableCheckpoints ).toEqual( [] );
-	} );
-
-	it( 'keeps the provider checkpoint list with `?am_abilities=0`', async () => {
-		window.history.replaceState( {}, '', '/?am_abilities=0' );
+	it( 'leaves the provider checkpoint list untouched when AM has none', async () => {
 		const providerCheckpoints = [
 			{ checkpointId: 'toolu_bsp', checkpointIndex: 0, checkpointKeys: [ 'blocks' ] },
 		];
