@@ -11,10 +11,9 @@ jest.mock( '../use-unified-ai-chat', () => ( {
 	useUnifiedAiChat: jest.fn(),
 } ) );
 
-import { DOLLY_AGENT_ID } from '../../constants';
 import { renderHook } from '@testing-library/react';
 import { useUnifiedAiChat } from '../use-unified-ai-chat';
-import { ORCHESTRATOR_AGENT_ID, UNIFIED_CHAT_AGENT_ID } from '../../constants';
+import { DOLLY_AGENT_ID, ORCHESTRATOR_AGENT_ID, UNIFIED_CHAT_AGENT_ID } from '../../constants';
 import { useAgentConfig } from '../use-agent-config';
 
 const mockUseUnifiedAiChat = useUnifiedAiChat as jest.Mock;
