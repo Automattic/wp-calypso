@@ -6,7 +6,7 @@ import { useEffect, useState, useMemo, useRef } from 'react';
 import { useQueryTheme } from 'calypso/components/data/query-theme';
 import { useSelector, useDispatch } from 'calypso/state';
 import { initiateAtomicTransfer } from 'calypso/state/atomic/transfers/actions';
-import { transferStates } from 'calypso/state/automated-transfer/constants';
+import { isTransferRunning, transferStates } from 'calypso/state/automated-transfer/constants';
 import { getAutomatedTransferStatus } from 'calypso/state/automated-transfer/selectors';
 import { getPurchaseFlowState } from 'calypso/state/marketplace/purchase-flow/selectors';
 import { MARKETPLACE_ASYNC_PROCESS_STATUS } from 'calypso/state/marketplace/types';
@@ -110,6 +110,17 @@ export function useProductInstall( {
 	const automatedTransferStatus = useSelector( ( state ) =>
 		getAutomatedTransferStatus( state, siteId )
 	);
+
+	// Remember that a transfer ran during this flow: a completed status on its own can be left over
+	// from an earlier transfer, and an upload to an already-Atomic site never transfers at all.
+	const transferObservedRef = useRef( false );
+	if ( isTransferRunning( automatedTransferStatus ) ) {
+		transferObservedRef.current = true;
+	}
+	const transferObserved = transferObservedRef.current;
+	// A zip upload that brought the site to Atomic. Its plugin arrives with the transfer rather than
+	// through an install this page dispatched, so the recovery poll is what watches for it.
+	const isTransferredUpload = isPluginUploadFlow && transferObserved;
 
 	const pluginInstallStatus = useSelector( ( state ) =>
 		getStatusForPlugin( state, siteId, pluginSlug )
@@ -236,21 +247,33 @@ export function useProductInstall( {
 
 	// Activate once the plugin is installed and the installing step is reached. currentStep is a
 	// dependency so a plugin that appears before that step still activates when the step catches up.
+	// A transferred upload's plugin is left to the recovery poll, which retries: this fires once, and
+	// two owners activating the same plugin would issue the requests concurrently.
 	useEffect( () => {
 		if (
 			installedPlugin &&
 			currentStep === 1 &&
 			( ! isPluginUploadFlow || pluginUploadComplete )
 		) {
-			dispatch(
-				activatePlugin( siteId, {
-					slug: installedPlugin?.slug,
-					id: installedPlugin?.id,
-				} )
-			);
+			if ( ! isTransferredUpload ) {
+				dispatch(
+					activatePlugin( siteId, {
+						slug: installedPlugin?.slug,
+						id: installedPlugin?.id,
+					} )
+				);
+			}
 			setCurrentStep( 2 );
 		}
-	}, [ installedPlugin, currentStep, isPluginUploadFlow, pluginUploadComplete, dispatch, siteId ] );
+	}, [
+		installedPlugin,
+		currentStep,
+		isPluginUploadFlow,
+		isTransferredUpload,
+		pluginUploadComplete,
+		dispatch,
+		siteId,
+	] );
 
 	useThankYouRedirect( {
 		siteId,
@@ -265,6 +288,7 @@ export function useProductInstall( {
 		pluginActive,
 		atomicFlow,
 		automatedTransferStatus,
+		transferObserved,
 		uploadFailed: !! pluginUploadError,
 	} );
 

@@ -13,6 +13,17 @@ jest.mock( 'calypso/state/plugins/installed/actions', () => ( {
 	activatePlugin: jest.fn( () => ( { type: 'ACTIVATE_PLUGIN' } ) ),
 } ) );
 
+// Drive the recovery poll's clock from the test; the hooks themselves stay real. Only a scheduled
+// interval is captured — the redirect hook also registers a dormant one for theme polling.
+let mockIntervalCallback: ( () => void ) | null = null;
+jest.mock( 'calypso/lib/interval', () => ( {
+	useInterval: ( callback: () => void, delay: number | null ) => {
+		if ( delay !== null ) {
+			mockIntervalCallback = callback;
+		}
+	},
+} ) );
+
 let mockFreshSite: unknown;
 jest.mock( '@automattic/api-queries', () => ( {
 	...jest.requireActual( '@automattic/api-queries' ),
@@ -22,10 +33,32 @@ jest.mock( '@automattic/api-queries', () => ( {
 	} ),
 } ) );
 
-const { fetchSitePlugins } = jest.requireMock( 'calypso/state/plugins/installed/actions' );
+const { fetchSitePlugins, activatePlugin } = jest.requireMock(
+	'calypso/state/plugins/installed/actions'
+);
+// A cycle chains several promises before it settles; let them all run.
+const flush = () =>
+	act( async () => {
+		for ( let i = 0; i < 8; i++ ) {
+			await Promise.resolve();
+		}
+	} );
+const tick = async () => {
+	act( () => void mockIntervalCallback?.() );
+	await flush();
+};
+
+// A transferred upload whose plugin turned up but is not switched on.
+const INACTIVE_PLUGIN: Partial< Props > = {
+	transferObserved: true,
+	automatedTransferStatus: transferStates.COMPLETE,
+	installedPlugin: { slug: 'uploaded', id: 'uploaded/uploaded' },
+	pluginActive: false,
+};
 
 const PLUGINS_URL =
 	'https://example.wpcomstaging.com/wp-admin/plugins.php?activate=true&plugin_status=active';
+const PLUGINS_LIST_URL = 'https://example.wpcomstaging.com/wp-admin/plugins.php';
 const ATOMIC_READY = {
 	ID: 1,
 	is_wpcom_atomic: true,
@@ -47,6 +80,7 @@ const uploadProps: Props = {
 	pluginActive: false,
 	atomicFlow: false,
 	automatedTransferStatus: null,
+	transferObserved: false,
 	uploadFailed: false,
 };
 
@@ -90,12 +124,55 @@ describe( 'upload redirect wiring', () => {
 	} );
 
 	it( 'starts looking for the plugin as soon as a transferred upload lands', async () => {
-		const { rerender } = render( { automatedTransferStatus: transferStates.ACTIVE } );
+		const { rerender } = render( {
+			transferObserved: true,
+			automatedTransferStatus: transferStates.ACTIVE,
+		} );
 		await act( async () => {} );
 		expect( fetchSitePlugins ).not.toHaveBeenCalled();
 
-		rerender( { ...uploadProps, automatedTransferStatus: transferStates.COMPLETE } );
+		rerender( {
+			...uploadProps,
+			transferObserved: true,
+			automatedTransferStatus: transferStates.COMPLETE,
+		} );
 		await waitFor( () => expect( fetchSitePlugins ).toHaveBeenCalledWith( 1 ) );
 		expect( window.location.href ).toBe( '' );
+	} );
+
+	it( 'ends an inactive transferred upload on the plain list once activation is spent', async () => {
+		// Nothing else activates this flow's plugin, so if recovery gives up the wait has to end.
+		render( INACTIVE_PLUGIN );
+		await waitFor( () => expect( activatePlugin ).toHaveBeenCalled() );
+
+		for ( let round = 0; round < 6 && ! window.location.href; round++ ) {
+			await tick();
+		}
+
+		expect( activatePlugin ).toHaveBeenCalledTimes( 3 );
+		expect( window.location.href ).toBe( PLUGINS_LIST_URL );
+	} );
+
+	it( 'holds the next plugin-list request until the activation before it has finished', async () => {
+		// A list read taken while an activation is in flight answers for a moment already gone.
+		render( INACTIVE_PLUGIN );
+		await waitFor( () => expect( activatePlugin ).toHaveBeenCalledTimes( 1 ) );
+
+		await flush();
+		const activationsBefore = activatePlugin.mock.calls.length;
+		const listReadsBefore = fetchSitePlugins.mock.calls.length;
+
+		// Two ticks with nothing awaited between them: the second finds the first still running, and
+		// no list request goes out alongside the activation.
+		act( () => {
+			mockIntervalCallback?.();
+			mockIntervalCallback?.();
+		} );
+		expect( activatePlugin.mock.calls.length ).toBe( activationsBefore + 1 );
+		expect( fetchSitePlugins.mock.calls.length ).toBe( listReadsBefore );
+
+		// The refresh belongs to the activation's own cycle, and always follows it.
+		await flush();
+		expect( fetchSitePlugins.mock.calls.length ).toBeGreaterThan( listReadsBefore );
 	} );
 } );

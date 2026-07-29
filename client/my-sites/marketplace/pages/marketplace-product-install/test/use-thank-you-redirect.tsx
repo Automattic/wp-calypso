@@ -39,7 +39,7 @@ const CONFIRMATION_POLLS = 5;
 // The poll has gone looking and found nothing, which is when the fallback becomes available.
 const SEARCHED_AND_EMPTY: PluginRecoveryProgress = {
 	completedPolls: CONFIRMATION_POLLS,
-	pollInFlight: false,
+	requestInFlight: false,
 	activationExhausted: false,
 };
 
@@ -64,6 +64,7 @@ const baseProps: Props = {
 	pluginActive: false,
 	atomicFlow: true,
 	automatedTransferStatus: transferStates.COMPLETE,
+	transferObserved: false,
 	uploadFailed: false,
 };
 
@@ -76,6 +77,7 @@ const UPLOAD_PROPS: Partial< Props > = {
 	pluginActive: false,
 	atomicFlow: false,
 	automatedTransferStatus: transferStates.ACTIVE,
+	transferObserved: true,
 };
 
 const render = ( overrides?: Partial< Props > ) => {
@@ -242,7 +244,7 @@ describe( 'useThankYouRedirect', () => {
 	it( 'keeps waiting while a plugin-list request is still out', async () => {
 		// The answer may be in that request; navigating would abandon it and whatever it triggers.
 		mockFreshSite = ATOMIC_READY;
-		mockRecoveryProgress = { ...SEARCHED_AND_EMPTY, pollInFlight: true };
+		mockRecoveryProgress = { ...SEARCHED_AND_EMPTY, requestInFlight: true };
 		const { rerender } = render( UPLOAD_PROPS );
 		await waitFor( () => expect( mockRecoveryProps?.canActivate ).toBe( true ) );
 
@@ -295,7 +297,11 @@ describe( 'useThankYouRedirect', () => {
 	it( 'does not redirect an upload that never transferred', async () => {
 		// A completed status left over from an earlier transfer must not stand in for this install.
 		mockFreshSite = ATOMIC_READY;
-		render( { ...UPLOAD_PROPS, automatedTransferStatus: transferStates.COMPLETE } );
+		render( {
+			...UPLOAD_PROPS,
+			transferObserved: false,
+			automatedTransferStatus: transferStates.COMPLETE,
+		} );
 		// Readiness is satisfied, so an arm that trusted the status alone would have redirected.
 		await waitFor( () => expect( mockRecoveryProps?.canActivate ).toBe( true ) );
 

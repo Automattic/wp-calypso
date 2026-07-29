@@ -1,11 +1,11 @@
 import { siteByIdQuery } from '@automattic/api-queries';
 import page from '@automattic/calypso-router';
 import { useQuery } from '@tanstack/react-query';
-import { useEffect, useRef } from 'react';
+import { useEffect } from 'react';
 import { isAtomicTransferredSite } from 'calypso/dashboard/utils/site-atomic-transfers';
 import { useInterval } from 'calypso/lib/interval';
 import { useSelector, useDispatch } from 'calypso/state';
-import { isTransferRunning, transferStates } from 'calypso/state/automated-transfer/constants';
+import { transferStates } from 'calypso/state/automated-transfer/constants';
 import { getSiteAdminUrl } from 'calypso/state/sites/selectors';
 import { requestActiveTheme } from 'calypso/state/themes/actions';
 import { usePostTransferPluginRecovery } from './use-post-transfer-plugin-recovery';
@@ -32,6 +32,7 @@ export function useThankYouRedirect( {
 	pluginActive,
 	atomicFlow,
 	automatedTransferStatus,
+	transferObserved,
 	uploadFailed,
 }: {
 	siteId: number;
@@ -46,6 +47,7 @@ export function useThankYouRedirect( {
 	pluginActive: boolean;
 	atomicFlow: boolean;
 	automatedTransferStatus: string | null;
+	transferObserved: boolean;
 	uploadFailed: boolean;
 } ) {
 	const dispatch = useDispatch();
@@ -72,14 +74,6 @@ export function useThankYouRedirect( {
 	const activatedPluginsUrl = pluginsAdminUrl( adminUrl, '?activate=true&plugin_status=active' );
 	const pluginsUrl = pluginsAdminUrl( adminUrl );
 
-	// Remember that a transfer ran during this flow: a completed status on its own can be left over
-	// from an earlier transfer, and an upload to an already-Atomic site never transfers at all.
-	const transferObservedRef = useRef( false );
-	if ( isTransferRunning( automatedTransferStatus ) ) {
-		transferObservedRef.current = true;
-	}
-	const transferObserved = transferObservedRef.current;
-
 	// A plugin install that has landed on an Atomic site with the plugin possibly still inactive.
 	// Covers both the checkout-initiated flow (atomicFlow never set) and the flow where this component
 	// drives the transfer (atomicFlow set) — in both, the transfer can complete before the plugin is
@@ -104,7 +98,7 @@ export function useThankYouRedirect( {
 		isAtomicTransferReady
 	);
 
-	const { completedPolls, pollInFlight, activationExhausted } = usePostTransferPluginRecovery( {
+	const { completedPolls, requestInFlight, activationExhausted } = usePostTransferPluginRecovery( {
 		siteId,
 		enabled: ( isRecoveryFlow || uploadTransferSettled ) && ! pluginActive,
 		// isAtomicTransferReady already requires manage_options, which the transfer propagates after
@@ -112,9 +106,13 @@ export function useThankYouRedirect( {
 		canActivate: !! isAtomicTransferReady,
 		// Two recovery windows: the checkout-initiated flow, which sits at step 0 while it observes a
 		// background transfer, and the component-driven transfer, whose plugin lands at step 2 after the
-		// step-driven effect's activation window (step 1). Leaving ordinary in-place installs to that
-		// effect avoids a redundant activation racing it at step 2.
-		ownsActivation: ( ! atomicFlow && currentStep === 0 ) || ( atomicFlow && currentStep === 2 ),
+		// step-driven effect's activation window (step 1). A transferred upload is this hook's outright:
+		// its plugin needs retrying, and the step-driven effect stands down for that flow. Leaving
+		// ordinary in-place installs to that effect avoids a redundant activation racing it at step 2.
+		ownsActivation:
+			uploadTransferSettled ||
+			( ! atomicFlow && currentStep === 0 ) ||
+			( atomicFlow && currentStep === 2 ),
 		installedPlugin,
 	} );
 
@@ -124,7 +122,7 @@ export function useThankYouRedirect( {
 	// plain list shows it either way.
 	const uploadInstallUnconfirmed =
 		uploadTransferSettled &&
-		! pollInFlight &&
+		! requestInFlight &&
 		completedPolls >= CONFIRMATION_POLLS &&
 		( ! installedPlugin || activationExhausted );
 
