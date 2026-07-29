@@ -53,7 +53,6 @@ describe( 'useHelpCenterCTA', () => {
 		expect( result.current ).toEqual( {
 			variant: 'banner',
 			ctaId: 'onboarding-call-v1',
-			placement: 'help-center-home',
 			url: bannerCta.url,
 			title: bannerCta.title,
 			description: undefined,
@@ -76,16 +75,13 @@ describe( 'useHelpCenterCTA', () => {
 		} );
 	} );
 
-	it( 'reports the link-list item against the More resources placement', () => {
+	it( 'maps the link-list item variant', () => {
 		const { result } = setup( {
 			cta: { ...bannerCta, variant: 'link-list-item' },
 			variant: 'link-list-item',
 		} );
 
-		expect( result.current ).toMatchObject( {
-			variant: 'link-list-item',
-			placement: 'help-center-more-resources',
-		} );
+		expect( result.current ).toMatchObject( { variant: 'link-list-item' } );
 	} );
 
 	it( 'only answers the slot the backend built the CTA for', () => {

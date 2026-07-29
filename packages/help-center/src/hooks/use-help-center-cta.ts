@@ -2,12 +2,6 @@ import { useFeatureConfig } from '../contexts/HelpCenterContext';
 import { useSupportStatus } from '../data/use-support-status';
 import type { HelpCenterCTAProps, HelpCenterCTAVariant } from '../components/help-center-cta';
 
-/** Where each variant renders. Reported with the Tracks events. */
-const VARIANT_PLACEMENTS: Record< HelpCenterCTAVariant, string > = {
-	banner: 'help-center-home',
-	'link-list-item': 'help-center-more-resources',
-};
-
 /**
  * The destination is campaign data, so it can be edited without a deploy. Only
  * follow it when it is an absolute http(s) URL, never `javascript:` or `data:`.
@@ -45,7 +39,6 @@ export function useHelpCenterCTA( variant: HelpCenterCTAVariant ): HelpCenterCTA
 	return {
 		variant,
 		ctaId: cta.id,
-		placement: VARIANT_PLACEMENTS[ variant ],
 		url: cta.url,
 		title: cta.title,
 		description: cta.description,

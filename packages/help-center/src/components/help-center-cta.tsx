@@ -1,103 +1,43 @@
-/* eslint-disable wpcalypso/jsx-classname-namespace */
 import { recordTracksEvent } from '@automattic/calypso-analytics';
-import { calendar, external, Icon } from '@wordpress/icons';
 import { useEffect } from 'react';
+import { Banner, LinkListItem } from './help-center-cta-variants';
 import './help-center-cta.scss';
+import type { HelpCenterCTAVariantProps } from './help-center-cta-variants';
 
-export type HelpCenterCTAVariant = 'banner' | 'link-list-item';
-
-export interface HelpCenterCTAProps {
-	variant: HelpCenterCTAVariant;
-	ctaId: string;
+interface HelpCenterCTAVariantDefinition {
+	/** Where this variant renders. Reported with the Tracks events. */
 	placement: string;
-	url: string;
-	title: string;
-	description?: string;
-	actionLabel?: string;
+	Component: React.FC< HelpCenterCTAVariantProps >;
 }
 
-export const HelpCenterCTA: React.FC< HelpCenterCTAProps > = ( {
-	variant,
-	ctaId,
-	placement,
-	url,
-	title,
-	description,
-	actionLabel,
-} ) => {
+/**
+ * Every variant the backend can ask for. A new one is a new entry here plus a
+ * component in `help-center-cta-variants.tsx` — nothing else knows the list.
+ */
+export const HELP_CENTER_CTA_VARIANTS = {
+	banner: { placement: 'help-center-home', Component: Banner },
+	'link-list-item': { placement: 'help-center-more-resources', Component: LinkListItem },
+} as const satisfies Record< string, HelpCenterCTAVariantDefinition >;
+
+export type HelpCenterCTAVariant = keyof typeof HELP_CENTER_CTA_VARIANTS;
+
+export interface HelpCenterCTAProps extends Omit< HelpCenterCTAVariantProps, 'onClick' > {
+	variant: HelpCenterCTAVariant;
+	ctaId: string;
+}
+
+function useCTATracking( eventProps: { cta_id: string; variant: string; placement: string } ) {
 	useEffect( () => {
-		recordTracksEvent( 'calypso_helpcenter_cta_impression', {
-			cta_id: ctaId,
-			variant,
-			placement,
-		} );
+		recordTracksEvent( 'calypso_helpcenter_cta_impression', eventProps );
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [] );
 
-	const trackClick = () => {
-		recordTracksEvent( 'calypso_helpcenter_cta_click', {
-			cta_id: ctaId,
-			variant,
-			placement,
-		} );
-	};
+	return () => recordTracksEvent( 'calypso_helpcenter_cta_click', eventProps );
+}
 
-	if ( variant === 'banner' && ! actionLabel ) {
-		return (
-			<a
-				className="help-center-cta__banner help-center-cta__banner--link"
-				href={ url }
-				target="_blank"
-				rel="noreferrer"
-				onClick={ trackClick }
-			>
-				<span className="help-center-cta__banner-content">
-					<span className="help-center-cta__title">
-						<strong>{ title }</strong>
-					</span>
-					{ description && <span className="help-center-cta__description">{ description }</span> }
-				</span>
-				<Icon icon={ external } size={ 20 } />
-			</a>
-		);
-	}
+export const HelpCenterCTA: React.FC< HelpCenterCTAProps > = ( { variant, ctaId, ...content } ) => {
+	const { placement, Component } = HELP_CENTER_CTA_VARIANTS[ variant ];
+	const trackClick = useCTATracking( { cta_id: ctaId, variant, placement } );
 
-	if ( variant === 'link-list-item' ) {
-		return (
-			<li className="help-center-cta__resource-item help-center-link__item">
-				<div className="help-center-link__cell">
-					<a href={ url } target="_blank" rel="noreferrer" onClick={ trackClick }>
-						<Icon icon={ calendar } size={ 24 } />
-						<span>
-							<span className="help-center-cta__resource-title">{ title }</span>
-							{ description && (
-								<span className="help-center-cta__resource-description">{ description }</span>
-							) }
-						</span>
-						<Icon icon={ external } size={ 20 } />
-					</a>
-				</div>
-			</li>
-		);
-	}
-
-	return (
-		<div className="help-center-cta__banner">
-			<p className="help-center-cta__title">
-				<strong>{ title }</strong>
-			</p>
-			{ description && <p className="help-center-cta__description">{ description }</p> }
-			{ actionLabel && (
-				<a
-					className="help-center-cta__action"
-					href={ url }
-					target="_blank"
-					rel="noreferrer"
-					onClick={ trackClick }
-				>
-					{ actionLabel }
-				</a>
-			) }
-		</div>
-	);
+	return <Component { ...content } onClick={ trackClick } />;
 };

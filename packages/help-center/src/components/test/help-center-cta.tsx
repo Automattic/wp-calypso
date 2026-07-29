@@ -15,7 +15,6 @@ jest.mock( '@automattic/calypso-analytics', () => ( {
 
 const baseProps = {
 	ctaId: 'onboarding-call-v1',
-	placement: 'help-center-home',
 	url: 'https://calendly.example.com/onboarding',
 	title: 'Get set up with a free onboarding call',
 	description: 'Talk one-on-one with a Happiness Engineer and get your new site off the ground.',
@@ -46,7 +45,7 @@ describe( 'HelpCenterCTA', () => {
 			expect( mockRecordTracksEvent ).toHaveBeenCalledWith( 'calypso_helpcenter_cta_impression', {
 				cta_id: baseProps.ctaId,
 				variant: 'banner',
-				placement: baseProps.placement,
+				placement: 'help-center-home',
 			} );
 		} );
 
@@ -62,7 +61,7 @@ describe( 'HelpCenterCTA', () => {
 			expect( mockRecordTracksEvent ).toHaveBeenCalledWith( 'calypso_helpcenter_cta_click', {
 				cta_id: baseProps.ctaId,
 				variant: 'banner',
-				placement: baseProps.placement,
+				placement: 'help-center-home',
 			} );
 		} );
 
@@ -94,7 +93,7 @@ describe( 'HelpCenterCTA', () => {
 			expect( mockRecordTracksEvent ).toHaveBeenCalledWith( 'calypso_helpcenter_cta_impression', {
 				cta_id: baseProps.ctaId,
 				variant: 'banner',
-				placement: baseProps.placement,
+				placement: 'help-center-home',
 			} );
 		} );
 
@@ -108,7 +107,7 @@ describe( 'HelpCenterCTA', () => {
 			expect( mockRecordTracksEvent ).toHaveBeenCalledWith( 'calypso_helpcenter_cta_click', {
 				cta_id: baseProps.ctaId,
 				variant: 'banner',
-				placement: baseProps.placement,
+				placement: 'help-center-home',
 			} );
 		} );
 	} );
@@ -136,7 +135,7 @@ describe( 'HelpCenterCTA', () => {
 			expect( mockRecordTracksEvent ).toHaveBeenCalledWith( 'calypso_helpcenter_cta_impression', {
 				cta_id: baseProps.ctaId,
 				variant: 'link-list-item',
-				placement: baseProps.placement,
+				placement: 'help-center-more-resources',
 			} );
 		} );
 
@@ -154,7 +153,7 @@ describe( 'HelpCenterCTA', () => {
 			expect( mockRecordTracksEvent ).toHaveBeenCalledWith( 'calypso_helpcenter_cta_click', {
 				cta_id: baseProps.ctaId,
 				variant: 'link-list-item',
-				placement: baseProps.placement,
+				placement: 'help-center-more-resources',
 			} );
 		} );
 
