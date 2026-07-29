@@ -1,7 +1,8 @@
 import { getAgentManager } from '@automattic/agenttic-client';
+import { DOLLY_AGENT_ID, ORCHESTRATOR_AGENT_ID } from '../constants';
 
 // The agent keys AM chats run under.
-const AGENT_KEYS_TO_CHECK = [ 'dolly', 'wp-orchestrator' ];
+const AGENT_KEYS_TO_CHECK = [ DOLLY_AGENT_ID, ORCHESTRATOR_AGENT_ID ];
 
 interface HistoryMessage {
 	parts?: {
@@ -25,7 +26,7 @@ type HistoryManager = {
  */
 export function getToolCallIdFromConversationHistory( toolId: string ): string | null {
 	const manager = getAgentManager() as unknown as HistoryManager | undefined;
-	const matches: string[] = [];
+	let latestToolCallId: string | null = null;
 
 	for ( const agentKey of AGENT_KEYS_TO_CHECK ) {
 		if ( ! manager?.hasAgent?.( agentKey ) ) {
@@ -35,14 +36,12 @@ export function getToolCallIdFromConversationHistory( toolId: string ): string |
 		for ( const message of manager.getConversationHistory?.( agentKey ) || [] ) {
 			for ( const part of message.parts || [] ) {
 				const data = part?.data;
-				if ( data?.toolId !== toolId || ! data.toolCallId || ! data.arguments ) {
-					continue;
+				if ( data?.toolId === toolId && data.toolCallId && data.arguments ) {
+					latestToolCallId = data.toolCallId;
 				}
-
-				matches.push( data.toolCallId );
 			}
 		}
 	}
 
-	return matches[ matches.length - 1 ] ?? null;
+	return latestToolCallId;
 }

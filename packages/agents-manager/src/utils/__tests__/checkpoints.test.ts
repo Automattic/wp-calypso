@@ -105,13 +105,15 @@ describe( 'setCheckpoint', () => {
 
 describe( 'hasCheckpoint / clearCheckpoint / getCheckpoints', () => {
 	it( 'tracks and clears checkpoints by id, oldest first', async () => {
-		const { setCheckpoint, hasCheckpoint, clearCheckpoint, getCheckpoints } =
+		const { setCheckpoint, hasCheckpoint, getCheckpoint, clearCheckpoint, getCheckpoints } =
 			await loadCheckpoints();
 
 		setCheckpoint( 'toolu_1', [] );
 		setCheckpoint( 'toolu_2', [] );
 
 		expect( hasCheckpoint( 'toolu_1' ) ).toBe( true );
+		expect( getCheckpoint( 'toolu_1' ) ).toMatchObject( { id: 'toolu_1' } );
+		expect( getCheckpoint( 'toolu_missing' ) ).toBeUndefined();
 		expect( getCheckpoints().map( ( { id } ) => id ) ).toEqual( [ 'toolu_1', 'toolu_2' ] );
 
 		clearCheckpoint( 'toolu_1' );
@@ -131,7 +133,6 @@ describe( 'getAvailableCheckpoints', () => {
 	it( 'lists checkpoint metadata without snapshots and marks the latest per tool', async () => {
 		const { setCheckpoint, getAvailableCheckpoints, checkpointKeys } = await loadCheckpoints();
 		setCheckpoint( 'toolu_1', [ checkpointKeys.COLOR ], {
-			toolCallId: 'toolu_1',
 			toolId: 'big_sky__show_component',
 			summary: 'Color picker shown.',
 		} );

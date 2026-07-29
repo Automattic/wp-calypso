@@ -2,6 +2,7 @@ import { __ } from '@wordpress/i18n';
 import {
 	RESTORE_CHECKPOINT_TOOL_ID,
 	clearCheckpoint,
+	getCheckpoint,
 	getCheckpoints,
 	hasCheckpoint,
 	restoreCheckpoint,
@@ -13,13 +14,14 @@ import {
 	getProviderCheckpoints,
 } from '../../utils/provider-checkpoints';
 import { getToolCallIdFromConversationHistory } from '../../utils/tool-call-history';
+import type { CheckpointMetadata } from '../../utils/checkpoints';
 import type { UseCheckpointReturn } from '../../utils/load-external-providers';
 import type { AbilityResult } from '../types';
 
 export interface RestoreCheckpointInput {
 	checkpointId: string;
 	summary: string;
-	requestIntentType?: 'undo' | 'redo' | 'restore';
+	requestIntentType?: CheckpointMetadata[ 'requestIntentType' ];
 }
 
 // A restore's reciprocal checkpoint steps back over the restore itself, so an
@@ -83,6 +85,7 @@ async function restoreProviderCheckpoint(
 			: null;
 
 	if ( reciprocalId && reciprocalKeys ) {
+		// `toolCallId` matches Big Sky's own record shape in its store.
 		providerCheckpoints.setCheckpoint( reciprocalId, reciprocalKeys, {
 			toolCallId: reciprocalId,
 			toolId: RESTORE_CHECKPOINT_TOOL_ID,
@@ -130,7 +133,8 @@ export async function restoreCheckpointCallback(
 		);
 	}
 
-	if ( ! hasCheckpoint( checkpointId ) ) {
+	const targetCheckpoint = getCheckpoint( checkpointId );
+	if ( ! targetCheckpoint ) {
 		// TODO (ability-migration): Delete the delegation once the last
 		// checkpoint-writing Big Sky ability migrates — every checkpoint then
 		// lives in AM's own store.
@@ -146,7 +150,6 @@ export async function restoreCheckpointCallback(
 		);
 	}
 
-	const targetCheckpoint = getCheckpoints().find( ( { id } ) => id === checkpointId );
 	const restoreToolCallId = getToolCallIdFromConversationHistory( RESTORE_CHECKPOINT_TOOL_ID );
 	const reciprocalRequestIntentType = getReciprocalRequestIntentType( requestIntentType );
 
@@ -156,12 +159,11 @@ export async function restoreCheckpointCallback(
 	// Record the pre-restore state under this call's own id, so an explicit
 	// redo can step back over this restore.
 	if ( reciprocalId ) {
-		setCheckpoint( reciprocalId, targetCheckpoint?.checkpointKeys ?? [], {
-			toolCallId: reciprocalId,
+		setCheckpoint( reciprocalId, targetCheckpoint.checkpointKeys, {
 			toolId: RESTORE_CHECKPOINT_TOOL_ID,
 			summary,
 			restoresCheckpointId: checkpointId,
-			restoredCheckpointToolId: targetCheckpoint?.toolId,
+			restoredCheckpointToolId: targetCheckpoint.toolId,
 			requestIntentType: reciprocalRequestIntentType,
 			createdByRequestIntentType: requestIntentType,
 		} );

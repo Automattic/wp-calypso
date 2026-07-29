@@ -28,7 +28,6 @@ const THEME_KEYS: string[] = [ checkpointKeys.COLOR, checkpointKeys.FONT, checkp
 export const RESTORE_CHECKPOINT_TOOL_ID = 'big_sky__restore_checkpoint';
 
 export interface CheckpointMetadata {
-	toolCallId?: string;
 	toolId?: string;
 	summary?: string;
 	requestIntentType?: 'undo' | 'redo' | 'restore';
@@ -157,6 +156,10 @@ export function hasCheckpoint( id: string ): boolean {
 	return records.has( id );
 }
 
+export function getCheckpoint( id: string ): CheckpointRecord | undefined {
+	return records.get( id );
+}
+
 export function clearCheckpoint( id: string ): void {
 	records.delete( id );
 }
@@ -178,7 +181,7 @@ export async function restoreCheckpoint( id: string ): Promise< void > {
 	restoreThemeSnapshot( checkpoint );
 }
 
-export type CheckpointContextItem = Omit< CheckpointMetadata, 'toolCallId' > & {
+export type CheckpointContextItem = CheckpointMetadata & {
 	checkpointId: string;
 	checkpointIndex: number;
 	checkpointKeys: string[];
@@ -198,16 +201,13 @@ export function getAvailableCheckpoints(): CheckpointContextItem[] {
 		}
 	} );
 
-	// The snapshot stays out of the model-facing list, and `toolCallId` would
-	// only duplicate `checkpointId`.
-	return checkpoints.map(
-		( { id, toolCallId: _toolCallId, themeBeforeUpdate: _snapshot, ...checkpoint }, index ) => ( {
-			...checkpoint,
-			checkpointId: id,
-			checkpointIndex: index,
-			...( checkpoint.toolId && {
-				isLatestForTool: latestIndexByToolId[ checkpoint.toolId ] === index,
-			} ),
-		} )
-	);
+	// The snapshot stays out of the model-facing list.
+	return checkpoints.map( ( { id, themeBeforeUpdate: _snapshot, ...checkpoint }, index ) => ( {
+		...checkpoint,
+		checkpointId: id,
+		checkpointIndex: index,
+		...( checkpoint.toolId && {
+			isLatestForTool: latestIndexByToolId[ checkpoint.toolId ] === index,
+		} ),
+	} ) );
 }

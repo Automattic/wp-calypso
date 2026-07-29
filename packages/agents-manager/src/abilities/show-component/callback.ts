@@ -61,7 +61,6 @@ export async function showComponentCallback( input: ShowComponentInput ): Promis
 		: null;
 	if ( toolCallId ) {
 		setCheckpoint( toolCallId, checkpointKeysForType, {
-			toolCallId,
 			toolId: BIG_SKY_SHOW_COMPONENT_TOOL_ID,
 			summary: successMessage,
 		} );

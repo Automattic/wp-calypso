@@ -76,7 +76,6 @@ describe( 'showComponentCallback', () => {
 		await showComponentCallback( makeInput( { type } ) );
 
 		expect( setCheckpoint ).toHaveBeenCalledWith( 'toolu_9', keys, {
-			toolCallId: 'toolu_9',
 			toolId: 'big_sky__show_component',
 			summary: 'Choose from the options I provided.',
 		} );
