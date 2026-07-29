@@ -23,7 +23,7 @@ if ( envVariables.TEST_ON_ATOMIC ) {
  */
 test.describe( 'CoBlocks: Extensions: Cover Styles', { tag: [ tags.GUTENBERG ] }, () => {
 	test( 'As a user, I can change CoBlocks cover styles', async ( { page, pageEditor } ) => {
-		// Resolved in-test: a describe-scope throw aborts collection for the whole run.
+		// Must resolve inside the test: a throw at describe scope aborts collection for the entire run.
 		const accountName = getTestAccountByFeature( features );
 		let imageFile: TestFile;
 		let coverBlock: CoverBlock;

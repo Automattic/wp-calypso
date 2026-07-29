@@ -24,7 +24,7 @@ test.describe( 'CoBlocks: Extensions: Gutter Control', { tag: [ tags.GUTENBERG ]
 		page,
 		pageEditor,
 	} ) => {
-		// Resolved in-test: a describe-scope throw aborts collection for the whole run.
+		// Must resolve inside the test: a throw at describe scope aborts collection for the entire run.
 		const accountName = getTestAccountByFeature( features );
 		let pricingTableBlock: PricingTableBlock;
 

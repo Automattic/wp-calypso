@@ -32,7 +32,7 @@ test.describe( 'CoBlocks: Blocks', { tag: [ tags.GUTENBERG ] }, () => {
 	const clicktoTweetBlockTweet = 'Tweet text';
 
 	test( 'As a user, I can use CoBlocks in a post', async ( { page, pageEditor } ) => {
-		// Resolved in-test: a describe-scope throw aborts collection for the whole run.
+		// Must resolve inside the test: a throw at describe scope aborts collection for the entire run.
 		const accountName = getTestAccountByFeature( features );
 		let pricingTableBlock: PricingTableBlock;
 		let logoImage: TestFile;
