@@ -4,16 +4,19 @@ import { useQuery } from '@tanstack/react-query';
 import { useEffect, useRef } from 'react';
 import { isAtomicTransferredSite } from 'calypso/dashboard/utils/site-atomic-transfers';
 import { useInterval } from 'calypso/lib/interval';
-import { ACTIVATE_PLUGIN } from 'calypso/lib/plugins/constants';
 import { useSelector, useDispatch } from 'calypso/state';
 import { transferEndStates, transferStates } from 'calypso/state/automated-transfer/constants';
-import { isPluginActionInProgress } from 'calypso/state/plugins/installed/selectors-ts';
 import { getSiteAdminUrl } from 'calypso/state/sites/selectors';
 import { requestActiveTheme } from 'calypso/state/themes/actions';
-import { usePostTransferPluginRecovery } from './use-post-transfer-plugin-recovery';
+import { useDelayedCondition } from './use-delayed-condition';
+import {
+	PLUGIN_POLL_INTERVAL_MS,
+	usePostTransferPluginRecovery,
+} from './use-post-transfer-plugin-recovery';
 
-// How many plugin-list fetches have to come back empty-handed before an upload is given up on.
-const CONFIRMATION_FETCHES = 3;
+// How long the plugin list gets to turn up the uploaded plugin. Long enough that a poll started
+// just inside the window, and any activation its result triggers, still lands in time.
+const INSTALL_CONFIRMATION_GRACE_PERIOD_MS = PLUGIN_POLL_INTERVAL_MS * 5;
 
 const pluginsAdminUrl = ( adminUrl: string | null | undefined, query = '' ) =>
 	adminUrl ? `${ adminUrl }plugins.php${ query }` : null;
@@ -94,7 +97,7 @@ export function useThankYouRedirect( {
 	// for a marketplace-only slug, which the store normalizes to wporg: true, so that never holds.
 	const isRecoveryFlow = ! isPluginUploadFlow && !! pluginSlug && !! freshSite?.is_wpcom_atomic;
 
-	const pluginActiveInStore = !! ( installedPlugin && pluginActive );
+	const pluginConfirmedActive = !! ( installedPlugin && pluginActive );
 
 	// The upload's transfer is over and the site is reachable. This is not evidence the archive
 	// installed: the transfer reports complete whether the install succeeded, failed, or was skipped.
@@ -105,7 +108,14 @@ export function useThankYouRedirect( {
 		isAtomicTransferReady
 	);
 
-	const { settledFetches } = usePostTransferPluginRecovery( {
+	// Which is why the plugin list, polled below, gets a window to show the plugin before we conclude
+	// it never will.
+	const uploadInstallUnconfirmed = useDelayedCondition(
+		uploadTransferSettled && ! pluginConfirmedActive,
+		INSTALL_CONFIRMATION_GRACE_PERIOD_MS
+	);
+
+	usePostTransferPluginRecovery( {
 		siteId,
 		enabled: ( isRecoveryFlow || uploadTransferSettled ) && ! pluginActive,
 		// isAtomicTransferReady already requires manage_options, which the transfer propagates after
@@ -118,29 +128,6 @@ export function useThankYouRedirect( {
 		ownsActivation: ( ! atomicFlow && currentStep === 0 ) || ( atomicFlow && currentStep === 2 ),
 		installedPlugin,
 	} );
-
-	// Whoever is activating — this page's step-driven effect or the recovery poll — navigating over
-	// the request would abandon it and leave an installed plugin switched off.
-	const activationInProgress = useSelector( ( state ) =>
-		installedPlugin?.id
-			? isPluginActionInProgress( state, siteId, installedPlugin.id, ACTIVATE_PLUGIN )
-			: false
-	);
-
-	// An upload can only trust the plugin list once a fetch of its own has come back: the store keeps
-	// whatever it held for this site, and a re-upload restores the same slug, so an entry from an
-	// earlier install would otherwise pass as this one.
-	const pluginConfirmedActive =
-		pluginActiveInStore && ( ! isPluginUploadFlow || settledFetches > 0 );
-
-	// Give up on an upload only once the poll has had its turns and nothing is still in flight, rather
-	// than on a clock that can run out while the answer is on its way.
-	const uploadInstallUnconfirmed =
-		uploadTransferSettled &&
-		! pluginConfirmedActive &&
-		! activationInProgress &&
-		settledFetches >= CONFIRMATION_FETCHES;
-
 	// Check completition of all flows and redirect to thank you page
 	useEffect( () => {
 		// Happens in 3 cases:
@@ -150,7 +137,7 @@ export function useThankYouRedirect( {
 		// This also covers the atomic-transfer flows (checkout-initiated and component-driven): the
 		// plugin only reads active once the transfer is far enough along, and for an atomicFlow the
 		// redirect URL below resolves only after the transfer completes, so no separate arm is needed.
-		if ( pluginConfirmedActive && ! activationInProgress && activatedPluginsUrl ) {
+		if ( pluginConfirmedActive && activatedPluginsUrl ) {
 			window.location.href = activatedPluginsUrl;
 			return;
 		}
@@ -160,13 +147,7 @@ export function useThankYouRedirect( {
 		if ( uploadInstallUnconfirmed && pluginsUrl ) {
 			window.location.href = pluginsUrl;
 		}
-	}, [
-		pluginConfirmedActive,
-		activationInProgress,
-		uploadInstallUnconfirmed,
-		activatedPluginsUrl,
-		pluginsUrl,
-	] );
+	}, [ pluginConfirmedActive, uploadInstallUnconfirmed, activatedPluginsUrl, pluginsUrl ] );
 
 	// Validate theme is already active
 	useEffect( () => {
