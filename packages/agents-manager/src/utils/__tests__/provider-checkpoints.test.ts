@@ -48,6 +48,10 @@ describe( 'getProviderCheckpointKeys', () => {
 			'the keys are not an array',
 			{ getCheckpoints: () => [ { id: 'toolu_1', checkpointKeys: 'color' } ] },
 		],
+		[
+			'the checkpoint is keyless',
+			{ getCheckpoints: () => [ { id: 'toolu_1', checkpointKeys: [] } ] },
+		],
 	] )( 'returns null when %s', ( _case, storeSelect ) => {
 		mockSelect.mockReturnValue( storeSelect );
 

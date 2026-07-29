@@ -30,11 +30,15 @@ type ProviderStoreSelect = {
 };
 
 /**
- * The scoped keys of a provider-held checkpoint, or `null` when unreadable.
+ * The scoped keys of a provider-held checkpoint, or `null` when the record is
+ * unreadable or keyless — Big Sky writes keyless checkpoints for some entity
+ * edits, and those restore via its legacy full-snapshot path.
  */
 export function getProviderCheckpointKeys( id: string ): string[] | null {
 	const checkpoints =
 		( select( PROVIDER_STORE_NAME ) as ProviderStoreSelect | undefined )?.getCheckpoints?.() ?? [];
 	const checkpoint = checkpoints.find( ( record ) => record?.id === id );
-	return Array.isArray( checkpoint?.checkpointKeys ) ? checkpoint.checkpointKeys : null;
+	return Array.isArray( checkpoint?.checkpointKeys ) && checkpoint.checkpointKeys.length
+		? checkpoint.checkpointKeys
+		: null;
 }

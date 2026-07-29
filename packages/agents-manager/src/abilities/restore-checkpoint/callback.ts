@@ -66,8 +66,8 @@ function restoreFailedResult( error: unknown, checkpointId: string ): AbilityRes
 // until they migrate. The reciprocal is recorded there too, scoped to the
 // target's keys: a keyless record would redo through Big Sky's legacy
 // full-snapshot path, which re-applies its (stale) variation titles over
-// AM-applied styles. When the keys are unreadable, no reciprocal is recorded
-// — no redo beats a wrong redo.
+// AM-applied styles. Unreadable or keyless targets get no reciprocal — no
+// redo beats a wrong redo.
 async function restoreProviderCheckpoint(
 	providerCheckpoints: UseCheckpointReturn,
 	{ checkpointId, summary, requestIntentType = 'restore' }: RestoreCheckpointInput
