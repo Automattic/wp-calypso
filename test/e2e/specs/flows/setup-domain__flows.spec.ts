@@ -288,10 +288,9 @@ test.describe(
 		} ) => {
 			// This test chains several genuinely slow flows end to end: creating a
 			// paid site, completing checkout, adding a domain, and finally
-			// cancelling the plan in the Multi-site Dashboard with a real refund
-			// round-trip. The default 120s per-test budget is too tight for all of
-			// that, so widen it for this test only.
-			// test.setTimeout( 300 * 1000 );
+			// cancelling the plan with a real refund round-trip. The default 120s
+			// per-test budget is too tight for all of that, so widen it for this
+			// test only.
 			test.setTimeout( 240 * 1000 );
 
 			const planName = 'Personal';
@@ -543,10 +542,10 @@ test.describe(
 		} ) => {
 			// This test chains several genuinely slow flows end to end: creating a
 			// paid site, completing checkout, adding a domain, and finally
-			// cancelling the plan in the Multi-site Dashboard with a real refund
-			// round-trip. The default 120s per-test budget is too tight for all of
-			// that, so widen it for this test only.
-			test.setTimeout( 300 * 1000 );
+			// cancelling the plan with a real refund round-trip. The default 120s
+			// per-test budget is too tight for all of that, so widen it for this
+			// test only.
+			test.setTimeout( 240 * 1000 );
 
 			const planName = 'Personal';
 			const testUser = helperData.getNewTestUser();
