@@ -1001,8 +1001,9 @@ class MasterbarLoggedIn extends Component {
 			<Item
 				className="masterbar__item-command-palette"
 				onClick={ this.openCommandPalette }
-				tooltip={ translate( 'Search' ) }
-				ariaLabel={ translate( 'Search' ) }
+				icon={ <span className="dashicons-before dashicons-search" /> }
+				tooltip={ translate( 'Open command palette' ) }
+				ariaLabel={ translate( 'Open command palette' ) }
 			>
 				<span aria-hidden="true">{ displayShortcut.primary( 'k' ) }</span>
 			</Item>

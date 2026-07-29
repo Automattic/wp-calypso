@@ -398,10 +398,14 @@ body.is-mobile-app-view {
 		padding: 0 0 0 6px;
 	}
 
-	&.masterbar__item-command-palette .masterbar__item-content {
-		display: flex;
-		align-items: center;
-		line-height: 1;
+	&.masterbar__item-command-palette {
+		gap: 6px;
+
+		.masterbar__item-content {
+			display: flex;
+			align-items: center;
+			line-height: 1;
+		}
 	}
 
 	.dashicons-before {
