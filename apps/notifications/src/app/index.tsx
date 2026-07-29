@@ -5,14 +5,13 @@ import { Provider } from 'react-redux';
 import repliesCache from '../panel/comment-replies-cache';
 import { modifierKeyIsActive } from '../panel/helpers/input';
 import { logError } from '../panel/helpers/log-error';
-import RestClient from '../panel/rest-client';
-import { init as initAPI } from '../panel/rest-client/wpcom';
-import { init as initStore } from '../panel/state';
+import { init as initStore, store } from '../panel/state';
 import { SET_IS_SHOWING } from '../panel/state/action-types';
 import actions from '../panel/state/actions';
 import { addListeners, removeListeners } from '../panel/state/create-listener-middleware';
 import getIsPanelOpen from '../panel/state/selectors/get-is-panel-open';
 import getKeyboardShortcutsEnabled from '../panel/state/selectors/get-keyboard-shortcuts-enabled';
+import { getClient, initClient } from './client';
 import { AppProvider } from './context';
 import ErrorBoundary from './error-boundary';
 import Note from './note';
@@ -22,20 +21,17 @@ import type { FilterName } from './types';
 
 import './style.scss';
 
-let client: any;
-
-let store = initStore();
-
 repliesCache.cleanup();
 
 /**
  * Force a manual refresh of the notes data
  */
-export const refreshNotes = () => client && client.refreshNotes.call( client );
+export const refreshNotes = () => getClient()?.refreshNotes();
 
 const defaultHandlers = {
 	APP_REFRESH_NOTES: [
 		( _store: any, action: any ) => {
+			const client = getClient();
 			if ( ! client ) {
 				return;
 			}
@@ -133,40 +129,30 @@ const NotificationApp = ( {
 	actionHandlers?: any;
 	wpcom: any;
 } ) => {
-	const [ isReady, setIsReady ] = useState( !! client );
+	const [ isReady, setIsReady ] = useState( !! getClient() );
 
 	useEffect( () => {
+		initClient( wpcom );
+		setIsReady( true );
+
 		store.dispatch( { type: 'APP_IS_READY' } );
 		store.dispatch( { type: SET_IS_SHOWING, isShowing: true } );
-		client?.setVisibility( { isShowing: true, isVisible: true } );
+		getClient()?.setVisibility( { isShowing: true, isVisible: ! document.hidden } );
 
 		return () => {
 			store.dispatch( { type: SET_IS_SHOWING, isShowing: false } );
-			client?.setVisibility( { isShowing: false, isVisible: false } );
+			getClient()?.setVisibility( { isShowing: false, isVisible: ! document.hidden } );
 		};
-	}, [] );
-
-	useEffect( () => {
-		initAPI( wpcom );
-
-		if ( ! client ) {
-			client = new RestClient();
-			client.locale = locale;
-			client?.setVisibility( { isShowing: true, isVisible: true } );
-			setIsReady( true );
-		}
 	}, [ wpcom ] );
 
 	useEffect( () => {
 		if ( customEnhancer ) {
-			store = initStore( { customEnhancer } );
+			initStore( { customEnhancer } );
 		}
 	}, [ customEnhancer ] );
 
 	useEffect( () => {
-		if ( client ) {
-			client.locale = locale;
-		}
+		getClient()?.setLocale( locale );
 	}, [ locale ] );
 
 	useEffect( () => {
@@ -237,7 +223,7 @@ const NotificationApp = ( {
 	return (
 		<ErrorBoundary>
 			<Provider store={ store }>
-				<AppProvider client={ client } locale={ locale }>
+				<AppProvider client={ getClient() } locale={ locale }>
 					<NotificationContent isDismissible={ isDismissible } />
 				</AppProvider>
 			</Provider>

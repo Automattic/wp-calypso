@@ -63,6 +63,25 @@ export default function Notifications( {
 		omnibarEvents.notificationsOpen.emit( isOpen );
 	}, [ isOpen ] );
 
+	useEffect( () => {
+		let unsubscribe: ( () => void ) | undefined;
+		let cancelled = false;
+
+		import( '@automattic/notifications/src/app/client' ).then( ( { subscribeUnseenCount } ) => {
+			if ( ! cancelled ) {
+				unsubscribe = subscribeUnseenCount( wpcom, ( count ) => {
+					setHasUnseenNotifications( count > 0 );
+					omnibarEvents.notificationsUnseenCount.emit( count );
+				} );
+			}
+		} );
+
+		return () => {
+			cancelled = true;
+			unsubscribe?.();
+		};
+	}, [] );
+
 	const handleClose = () => {
 		handleToggle( false );
 	};
