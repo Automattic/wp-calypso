@@ -11,9 +11,9 @@ import { createBlockTests } from './shared/block-smoke-testing';
 
 const blockFlows: BlockFlow[] = [
 	new StarRatingBlock( { rating: 3.5 } ),
-	// Parked: giphy changed the content of their embed, so the flow can no longer find the
-	// player. Was muted project-wide under the Jest test ID (TeamCity mute 1559); the migrated
-	// suite is one test, so a mute would now take every other block here down with it.
+	// Parked (TESTOPS-148): giphy changed the content of their embed, so the flow can no longer
+	// find the player. The mute this had under the Jest test ID died with the migration, and the
+	// migrated suite is one test, so a mute would now take every other block here down with it.
 	// new GifFlow( { query: 'https://giphy.com/embed/MDJ9IbxxvDUQM' } ),
 ];
 

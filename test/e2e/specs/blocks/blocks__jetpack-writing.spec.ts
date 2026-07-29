@@ -3,9 +3,9 @@ import { tags } from '../../lib/pw-base';
 import { createBlockTests } from './shared/block-smoke-testing';
 
 const blockFlows: BlockFlow[] = [
-	// Parked: has been failing to configure the block since April 2026. Was muted project-wide
-	// under the Jest test ID (TeamCity mute 1501); the migrated suite is one test, so a mute
-	// would now take every other block here down with it.
+	// Parked (TESTOPS-148): has been failing to configure the block since April 2026. The mute
+	// this had under the Jest test ID died with the migration, and the migrated suite is one
+	// test, so a mute would now take every other block here down with it.
 	// new AIAssistantFlow(
 	// 	{
 	// 		query: 'In two short sentences, tell me about Vancouver, Canada.',
