@@ -57,36 +57,27 @@ const EmailVerificationGate = ( { flow, scope, logo, onDone }: Props ) => {
 		headingRef.current?.focus();
 	}, [] );
 
-	const finish = useCallback(
-		( emailVerified: boolean ) => {
-			if ( hasSubmitted.current ) {
-				return;
-			}
+	// Resolve as soon as the user is verified — whether they confirm while the gate is open,
+	// or the gate mounts already-verified (e.g. a reload after confirming). This is a hard
+	// gate, so verification is the only way through.
+	const finish = useCallback( () => {
+		if ( hasSubmitted.current ) {
+			return;
+		}
 
-			hasSubmitted.current = true;
-			recordTracksEvent(
-				emailVerified
-					? 'calypso_signup_email_verification_confirmed'
-					: 'calypso_signup_email_verification_skipped',
-				{
-					flow,
-					seconds_on_step: Math.round( ( Date.now() - gateShownAt( scope ) ) / 1000 ),
-				}
-			);
-			onDone();
-		},
-		[ flow, onDone, scope ]
-	);
+		hasSubmitted.current = true;
+		recordTracksEvent( 'calypso_signup_email_verification_confirmed', {
+			flow,
+			seconds_on_step: Math.round( ( Date.now() - gateShownAt( scope ) ) / 1000 ),
+		} );
+		onDone();
+	}, [ flow, onDone, scope ] );
 
-	// Confirm as soon as the user is verified — whether they confirm while the gate is
-	// open, or the gate mounts already-verified (e.g. a reload after confirming).
 	useEffect( () => {
 		if ( isVerified ) {
-			finish( true );
+			finish();
 		}
 	}, [ isVerified, finish ] );
-
-	const onSkip = () => finish( false );
 
 	const subText = useMemo(
 		() =>
@@ -182,11 +173,6 @@ const EmailVerificationGate = ( { flow, scope, logo, onDone }: Props ) => {
 						{ __( 'We couldn’t send the email. Please try again in a moment.' ) }
 					</p>
 				) }
-
-				{ /* LinkButton, not SkipButton: the gate lives on the `user` route, so
-				   SkipButton's automatic `calypso_signup_skip_step` would wrongly report a
-				   skip of account creation. Only our own `_skipped` event should fire. */ }
-				<Step.LinkButton onClick={ onSkip }>{ __( 'I’ll do this later' ) }</Step.LinkButton>
 			</Step.CenteredColumnLayout>
 		</>
 	);

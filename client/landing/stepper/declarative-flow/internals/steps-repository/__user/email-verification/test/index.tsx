@@ -1,7 +1,6 @@
 /**
  * @jest-environment jsdom
  */
-import { Step } from '@automattic/onboarding';
 import { act, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
@@ -233,40 +232,6 @@ describe( 'EmailVerificationGate', () => {
 		expect( recordTracksEvent ).toHaveBeenCalledWith(
 			'calypso_signup_email_verification_confirmed',
 			expect.objectContaining( { seconds_on_step: 0 } )
-		);
-	} );
-
-	it( 'skipping fires only the verification event, not the generic step-skip event', async () => {
-		beginGate( SCOPE );
-		const onDone = jest.fn();
-		// The generic skip event is recorded through the step-container context. Spy on
-		// it to prove the gate (on the `user` route) doesn't fire `calypso_signup_skip_step`.
-		const contextRecordTracksEvent = jest.fn();
-
-		renderStep(
-			<Step.StepContainerV2Provider
-				value={ {
-					flowName: FLOW,
-					stepName: 'user',
-					recordTracksEvent: contextRecordTracksEvent,
-					logo: null,
-				} }
-			>
-				<EmailVerificationGate flow={ FLOW } scope={ SCOPE } onDone={ onDone } />
-			</Step.StepContainerV2Provider>,
-			{ initialState: currentUserState( false ) }
-		);
-
-		await userEvent.click( screen.getByRole( 'button', { name: 'I’ll do this later' } ) );
-
-		expect( onDone ).toHaveBeenCalled();
-		expect( recordTracksEvent ).toHaveBeenCalledWith(
-			'calypso_signup_email_verification_skipped',
-			expect.objectContaining( { flow: FLOW } )
-		);
-		expect( contextRecordTracksEvent ).not.toHaveBeenCalledWith(
-			'calypso_signup_skip_step',
-			expect.anything()
 		);
 	} );
 

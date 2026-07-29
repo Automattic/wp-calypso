@@ -167,15 +167,22 @@ describe( 'account step email verification gate', () => {
 		await waitFor( () => expect( submit ).toHaveBeenCalledTimes( 1 ) );
 	} );
 
-	it( 'skipping continues exactly once and resolves the gate for a later refresh', async () => {
-		const { submit, unmount } = renderUser( makeStore( false ) );
+	it( 'confirmation resolves the gate so it does not reappear on a later refresh', async () => {
+		const store = makeStore( false );
+		const { submit, unmount } = renderUser( store );
 
-		await userEvent.click( await screen.findByRole( 'button', { name: 'I’ll do this later' } ) );
-		expect( submit ).toHaveBeenCalledTimes( 1 );
+		await screen.findByRole( 'heading', { name: GATE_HEADING } );
+		act( () => {
+			store.dispatch( {
+				type: CURRENT_USER_RECEIVE,
+				user: { ID: USER_ID, email: EMAIL, email_verified: true },
+			} );
+		} );
+		await waitFor( () => expect( submit ).toHaveBeenCalledTimes( 1 ) );
 
-		// Refresh: skipping cleared the pending marker, so the gate does not reappear.
+		// Refresh: confirming cleared the pending marker, so the gate does not reappear.
 		unmount();
-		const second = renderUser( makeStore( false ) );
+		const second = renderUser( makeStore( true ) );
 
 		await waitFor( () => expect( second.submit ).toHaveBeenCalled() );
 		expect( screen.queryByRole( 'heading', { name: GATE_HEADING } ) ).not.toBeInTheDocument();
