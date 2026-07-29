@@ -1,12 +1,12 @@
 /**
  * @jest-environment jsdom
  */
+import { showComponentAbility } from '../../abilities/show-component';
 import {
 	loadExternalProviders,
 	mergeCapabilitiesInto,
 	mergeUseSuggestionsHooks,
 } from '../load-external-providers';
-import { showComponentAbility } from '../../abilities/show-component';
 import type { Ability } from '../../extension-types';
 import type { ProviderCapabilities, UseSuggestionsHook } from '../load-external-providers';
 
