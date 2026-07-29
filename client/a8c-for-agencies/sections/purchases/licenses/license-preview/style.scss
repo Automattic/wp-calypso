@@ -45,17 +45,7 @@
 	&,
 	&:visited {
 		@include heading-medium;
-		display: flex;
-		flex-direction: row;
-		gap: 4px;
-		align-items: center;
-		text-decoration: underline;
 		color: var(--color-text);
-	}
-
-	.gridicon {
-		fill: var(--color-text);
-
 	}
 }
 
