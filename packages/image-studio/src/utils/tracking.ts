@@ -23,6 +23,7 @@ type ImageStudioTrackingData = {
 	siteType?: string;
 	isA11n?: boolean;
 	isDevMode?: boolean;
+	version?: string;
 };
 
 /**
@@ -112,9 +113,15 @@ function recordImageStudioEvent(
 	const blogId = getTrackingBlogId();
 	const siteType = getTrackingSiteType();
 	const imageStudioWindowData = getImageStudioWindowData();
+	const sessionId = getSessionId();
 	const baseProps: Record< string, string | number | boolean > = {
 		...properties,
-		sessionid: getSessionId(),
+		agent_name: 'image_studio',
+		// The standard prefers the string `none` over a missing value.
+		agent_version: imageStudioWindowData?.version || 'none',
+		ai_session_id: sessionId,
+		// The standard name is `ai_session_id`. Keep `sessionid` as well for backwards compatibility
+		sessionid: sessionId,
 	};
 
 	if ( blogId ) {
