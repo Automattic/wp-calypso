@@ -7,6 +7,7 @@ import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import React from 'react';
 import { HelpCenterCTA } from '../help-center-cta';
+import type { HelpCenterCTAVariant } from '../help-center-cta';
 
 const mockRecordTracksEvent = jest.fn();
 jest.mock( '@automattic/calypso-analytics', () => ( {
@@ -109,6 +110,20 @@ describe( 'HelpCenterCTA', () => {
 				variant: 'banner',
 				placement: 'help-center-home',
 			} );
+		} );
+	} );
+
+	describe( 'unregistered variant', () => {
+		it( 'renders nothing and fires no Tracks event', () => {
+			const { container } = render(
+				<HelpCenterCTA
+					{ ...baseProps }
+					variant={ 'not-a-real-variant' as unknown as HelpCenterCTAVariant }
+				/>
+			);
+
+			expect( container ).toBeEmptyDOMElement();
+			expect( mockRecordTracksEvent ).not.toHaveBeenCalled();
 		} );
 	} );
 

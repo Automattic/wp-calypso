@@ -116,6 +116,30 @@ describe( 'useHelpCenterCTA', () => {
 		expect( setup( { cta: { ...bannerCta, url: '' } } ).result.current ).toBeNull();
 	} );
 
+	it( 'returns null when the payload is missing an id', () => {
+		expect( setup( { cta: { ...bannerCta, id: '' } } ).result.current ).toBeNull();
+	} );
+
+	it( 'returns null when the title is not a string', () => {
+		const cta = {
+			...bannerCta,
+			title: [ 'Book Your Free Onboarding Call' ],
+		} as unknown as SupportStatus[ 'cta' ];
+
+		expect( setup( { cta } ).result.current ).toBeNull();
+	} );
+
+	it( 'renders the CTA without a description when it is not a string', () => {
+		const cta = {
+			...bannerCta,
+			description: { text: 'Talk one-on-one with a Happiness Engineer.' },
+		} as unknown as SupportStatus[ 'cta' ];
+
+		const { result } = setup( { cta } );
+
+		expect( result.current ).toMatchObject( { description: undefined } );
+	} );
+
 	it( 'refuses a destination that is not an http(s) url', () => {
 		expect(
 			setup( { cta: { ...bannerCta, url: 'javascript:alert(1)' } } ).result.current // eslint-disable-line no-script-url
@@ -130,7 +154,7 @@ describe( 'useHelpCenterCTA', () => {
 		expect( setup( { cta: { ...bannerCta, url: '/help/contact' } } ).result.current ).toBeNull();
 	} );
 
-	it( 'skips the CTA and the support-status fetch when the product disables it', () => {
+	it( 'returns null and asks the support-status query to stay disabled when the product disables it', () => {
 		const { result } = setup( { enabled: false } );
 
 		expect( result.current ).toBeNull();

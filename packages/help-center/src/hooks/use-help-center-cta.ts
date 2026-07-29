@@ -32,7 +32,14 @@ export function useHelpCenterCTA( variant: HelpCenterCTAVariant ): HelpCenterCTA
 		return null;
 	}
 
-	if ( cta.variant !== variant || ! cta.title || ! cta.url || ! isSafeUrl( cta.url ) ) {
+	if (
+		cta.variant !== variant ||
+		! cta.id ||
+		typeof cta.title !== 'string' ||
+		! cta.title ||
+		! cta.url ||
+		! isSafeUrl( cta.url )
+	) {
 		return null;
 	}
 
@@ -41,7 +48,7 @@ export function useHelpCenterCTA( variant: HelpCenterCTAVariant ): HelpCenterCTA
 		ctaId: cta.id,
 		url: cta.url,
 		title: cta.title,
-		description: cta.description,
-		actionLabel: cta.url_text,
+		description: typeof cta.description === 'string' ? cta.description : undefined,
+		actionLabel: typeof cta.url_text === 'string' ? cta.url_text : undefined,
 	};
 }

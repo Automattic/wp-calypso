@@ -26,18 +26,34 @@ export interface HelpCenterCTAProps extends Omit< HelpCenterCTAVariantProps, 'on
 	ctaId: string;
 }
 
-function useCTATracking( eventProps: { cta_id: string; variant: string; placement: string } ) {
+function useCTATracking(
+	eventProps: { cta_id: string; variant: string; placement: string } | null
+) {
 	useEffect( () => {
+		if ( ! eventProps ) {
+			return;
+		}
 		recordTracksEvent( 'calypso_helpcenter_cta_impression', eventProps );
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [] );
 
-	return () => recordTracksEvent( 'calypso_helpcenter_cta_click', eventProps );
+	return () => {
+		if ( eventProps ) {
+			recordTracksEvent( 'calypso_helpcenter_cta_click', eventProps );
+		}
+	};
 }
 
 export const HelpCenterCTA: React.FC< HelpCenterCTAProps > = ( { variant, ctaId, ...content } ) => {
-	const { placement, Component } = HELP_CENTER_CTA_VARIANTS[ variant ];
-	const trackClick = useCTATracking( { cta_id: ctaId, variant, placement } );
+	const variantDefinition = HELP_CENTER_CTA_VARIANTS[ variant ];
+	const trackClick = useCTATracking(
+		variantDefinition ? { cta_id: ctaId, variant, placement: variantDefinition.placement } : null
+	);
 
+	if ( ! variantDefinition ) {
+		return null;
+	}
+
+	const { Component } = variantDefinition;
 	return <Component { ...content } onClick={ trackClick } />;
 };
