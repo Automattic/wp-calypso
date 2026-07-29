@@ -39,6 +39,12 @@ const mockGetToolCallId = getToolCallIdFromConversationHistory as jest.Mock;
 const mockGetProviderCheckpoints = getProviderCheckpoints as jest.Mock;
 const mockGetProviderCheckpointKeys = getProviderCheckpointKeys as jest.Mock;
 
+const TARGET_CHECKPOINT = {
+	id: 'toolu_target',
+	toolId: 'big_sky__show_component',
+	checkpointKeys: [ 'color' ],
+};
+
 const makeProviderCheckpoints = () => ( {
 	hasCheckpoint: jest.fn( ( id: string ) => id === 'toolu_target' ),
 	restoreCheckpoint: jest.fn( () => Promise.resolve() ),
@@ -58,13 +64,9 @@ beforeEach( () => {
 	( isEditorPage as jest.Mock ).mockReturnValue( true );
 	mockHasCheckpoint.mockReturnValue( false );
 	mockGetCheckpoint.mockImplementation( ( id: string ) =>
-		id === 'toolu_target'
-			? { id: 'toolu_target', toolId: 'big_sky__show_component', checkpointKeys: [ 'color' ] }
-			: undefined
+		id === TARGET_CHECKPOINT.id ? TARGET_CHECKPOINT : undefined
 	);
-	mockGetCheckpoints.mockReturnValue( [
-		{ id: 'toolu_target', toolId: 'big_sky__show_component', checkpointKeys: [ 'color' ] },
-	] );
+	mockGetCheckpoints.mockReturnValue( [ TARGET_CHECKPOINT ] );
 	mockGetToolCallId.mockReturnValue( null );
 	mockGetProviderCheckpoints.mockReturnValue( undefined );
 	mockGetProviderCheckpointKeys.mockReturnValue( null );
