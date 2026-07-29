@@ -56,8 +56,6 @@ export const A4A_WOOPAYMENTS_PAYMENT_SETTINGS_LINK = `${ A4A_WOOPAYMENTS_LINK }/
 export const A4A_WOOPAYMENTS_SITE_SETUP_LINK = `${ A4A_WOOPAYMENTS_LINK }/site-setup`;
 export const A4A_WOOPAYMENTS_OVERVIEW_LINK = `${ A4A_WOOPAYMENTS_LINK }/overview`;
 export const A4A_EXCLUSIVE_OFFERS_LINK = '/exclusive-offers';
-export const A4A_AMPLIFY_LINK = '/amplify';
-export const A4A_AMPLIFY_REPORTS_LINK = `${ A4A_AMPLIFY_LINK }/reports`;
 export const A4A_RESOURCES_LINK = '/resources-and-tools';
 export const A4A_LEARN_LINK = `${ A4A_RESOURCES_LINK }/learn`;
 export const A4A_AGENT_STUDIO_LINK = `${ A4A_RESOURCES_LINK }/agent-studio`;
@@ -66,6 +64,11 @@ export const A4A_AI_MCP_LINK = `${ A4A_RESOURCES_LINK }/ai-mcp`;
 export const A4A_AI_MCP_AVAILABLE_TOOLS_LINK = `${ A4A_AI_MCP_LINK }/tools`;
 export const A4A_AI_MCP_CONNECT_LINK = `${ A4A_AI_MCP_LINK }/connect`;
 export const A4A_BENCHMARKS_LINK = `${ A4A_RESOURCES_LINK }/benchmarks`;
+export const A4A_AMPLIFY_LINK = `${ A4A_RESOURCES_LINK }/amplify`;
+export const A4A_AMPLIFY_REPORTS_LINK = `${ A4A_AMPLIFY_LINK }/reports`;
+// Amplify used to live at the top level; the old URLs redirect to the nested ones.
+export const A4A_AMPLIFY_LEGACY_LINK = '/amplify';
+export const A4A_AMPLIFY_REPORTS_LEGACY_LINK = `${ A4A_AMPLIFY_LEGACY_LINK }/reports`;
 
 // Client
 export const A4A_CLIENT_LANDING_LINK = '/client/landing';

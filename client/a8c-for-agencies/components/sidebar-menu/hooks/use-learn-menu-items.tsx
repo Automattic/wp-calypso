@@ -53,20 +53,6 @@ const useLearnMenuItems = ( path: string ) => {
 						},
 				  ]
 				: [] ),
-			...( isAiMcpEnabled
-				? [
-						{
-							icon: <BigSkyLogo.CentralLogo heartless size={ 24 } />,
-							path: A4A_AI_MCP_LINK,
-							link: A4A_AI_MCP_LINK,
-							title: translate( 'AI and MCP' ),
-							badge: translate( 'Beta' ),
-							trackEventProps: {
-								menu_item: 'Automattic for Agencies / Resources and tools / AI and MCP',
-							},
-						},
-				  ]
-				: [] ),
 			{
 				icon: tool,
 				path: A4A_DEV_TOOLS_LINK,
@@ -85,6 +71,20 @@ const useLearnMenuItems = ( path: string ) => {
 					menu_item: 'Automattic for Agencies / Resources and tools / Learn',
 				},
 			},
+			...( isAiMcpEnabled
+				? [
+						{
+							icon: <BigSkyLogo.CentralLogo heartless size={ 24 } />,
+							path: A4A_AI_MCP_LINK,
+							link: A4A_AI_MCP_LINK,
+							title: translate( 'AI and MCP' ),
+							badge: translate( 'Beta' ),
+							trackEventProps: {
+								menu_item: 'Automattic for Agencies / Resources and tools / AI and MCP',
+							},
+						},
+				  ]
+				: [] ),
 			...( isAmplifyEnabled
 				? [
 						{

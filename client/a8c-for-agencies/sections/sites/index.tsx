@@ -2,6 +2,8 @@ import page from '@automattic/calypso-router';
 import { A4A_SITES_LINK_NEEDS_SETUP } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
 import { requireAccessContext } from 'calypso/a8c-for-agencies/controller';
 import { makeLayout, render as clientRender } from 'calypso/controller';
+import { isSectionNameEnabled } from 'calypso/sections-filter';
+import { registerReportsRoutes } from '../reports';
 import {
 	addSitesContext,
 	sitesContext,
@@ -11,6 +13,12 @@ import {
 import { FeatureRoutes as loadFeatureRoutes } from './features/routes';
 
 export default function () {
+	// Reports lives at /sites/reports, so it has to be claimed before the
+	// `/sites/:category` catch-all below swallows it.
+	if ( isSectionNameEnabled( 'a8c-for-agencies-reports' ) ) {
+		registerReportsRoutes();
+	}
+
 	// Always keep this route at the top since it's the most specific /sites route
 	page(
 		A4A_SITES_LINK_NEEDS_SETUP,
