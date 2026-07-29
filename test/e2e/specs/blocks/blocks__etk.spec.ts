@@ -1,13 +1,11 @@
-/**
- * @group gutenberg
- */
 import {
 	BlockFlow,
 	BlogPostsBlockFlow,
+	DataHelper,
 	PostCarouselBlockFlow,
 	TimelineBlockFlow,
-	DataHelper,
 } from '@automattic/calypso-e2e';
+import { tags } from '../../lib/pw-base';
 import { createBlockTests } from './shared/block-smoke-testing';
 
 const blockFlows: BlockFlow[] = [
@@ -19,4 +17,4 @@ const blockFlows: BlockFlow[] = [
 	} ),
 ];
 
-createBlockTests( 'Blocks: ETK', blockFlows );
+createBlockTests( 'Blocks: ETK', blockFlows, [ tags.GUTENBERG ] );

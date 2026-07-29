@@ -1,29 +1,29 @@
 import {
 	BlockFlow,
-	EditorPage,
+	DataHelper,
 	EditorContext,
 	PublishedPostContext,
 	TestAccount,
 	envVariables,
 	getTestAccountByFeature,
 	envToFeatureKey,
-	DataHelper,
 } from '@automattic/calypso-e2e';
-import { Page, Browser } from 'playwright';
-
-declare const browser: Browser;
+import { expect, tags as allTags, test } from '../../../lib/pw-base';
 
 /**
  * Creates a suite of block smoke tests for a set of block flows.
  *
  * @param specName The parent name of the spec to use in the top-level describe. E.g. "CoBlocks"
  * @param blockFlows A list of block flows to put under test.
+ * @param testTags Playwright tags to apply to the test suite. Defaults to [ tags.GUTENBERG ].
  */
-export function createBlockTests( specName: string, blockFlows: BlockFlow[] ): void {
-	describe( DataHelper.createSuiteTitle( specName ), function () {
+export function createBlockTests(
+	specName: string,
+	blockFlows: BlockFlow[],
+	testTags: string[] = [ allTags.GUTENBERG ]
+): void {
+	test.describe( DataHelper.createSuiteTitle( specName ), { tag: testTags }, () => {
 		const features = envToFeatureKey( envVariables );
-		// @todo Does it make sense to create a `simpleSitePersonalPlanUserEdge` with GB edge?
-		// for now, it will pick up the default `gutenbergAtomicSiteEdgeUser` if edge is set.
 		const accountName = getTestAccountByFeature( features, [
 			{
 				gutenberg: 'stable',
@@ -32,43 +32,31 @@ export function createBlockTests( specName: string, blockFlows: BlockFlow[] ): v
 			},
 		] );
 
-		let page: Page;
-		let editorPage: EditorPage;
-		let editorContext: EditorContext;
-		let publishedPostContext: PublishedPostContext;
-		let testAccount: TestAccount;
-		let siteSlug: string;
+		test( `${ specName }: smoke test blocks`, async ( { page, pageEditor } ) => {
+			let editorContext: EditorContext;
+			let publishedPostContext: PublishedPostContext;
 
-		beforeAll( async () => {
-			page = await browser.newPage();
-			editorPage = new EditorPage( page );
-			testAccount = new TestAccount( accountName );
-			await testAccount.authenticate( page );
-			siteSlug = testAccount.getSiteURL( { protocol: false } );
-		} );
+			await test.step( 'Given I am authenticated', async () => {
+				const testAccount = new TestAccount( accountName );
+				await testAccount.authenticate( page );
+			} );
 
-		it( 'Go to the new post page', async () => {
-			await editorPage.visit( 'post', { siteSlug } );
-		} );
+			await test.step( 'When I visit the new post page', async () => {
+				const siteSlug = new TestAccount( accountName ).getSiteURL( { protocol: false } );
+				await pageEditor.visit( 'post', { siteSlug } );
+			} );
 
-		it( 'Enter post title', async () => {
-			await editorPage.enterTitle( `${ specName } - ${ DataHelper.getDateString( 'ISO-8601' ) }` );
-		} );
+			await test.step( 'When I enter the post title', async () => {
+				await pageEditor.enterTitle(
+					`${ specName } - ${ DataHelper.getDateString( 'ISO-8601' ) }`
+				);
+			} );
 
-		describe( 'Add and configure blocks in the editor', function () {
-			const used = new Set();
 			for ( const blockFlow of blockFlows ) {
 				const prefix = blockFlow.blockTestName ?? blockFlow.blockSidebarName;
 
-				if ( used.has( prefix ) ) {
-					throw new Error(
-						`Test name prefix "${ prefix }" is used by multiple BlockFlows! Set \`blockTestName\` to disambiguate.`
-					);
-				}
-				used.add( prefix );
-
-				it( `${ prefix }: Add the block from the sidebar`, async function () {
-					const blockHandle = await editorPage.addBlockFromSidebar(
+				await test.step( `${ prefix }: Add the block from the sidebar`, async () => {
+					const blockHandle = await pageEditor.addBlockFromSidebar(
 						blockFlow.blockSidebarName,
 						blockFlow.blockEditorSelector,
 						{
@@ -79,42 +67,38 @@ export function createBlockTests( specName: string, blockFlows: BlockFlow[] ): v
 						}
 					);
 					const id = await blockHandle.getAttribute( 'id' );
-					const editorCanvas = await editorPage.getEditorCanvas();
+					const editorCanvas = await pageEditor.getEditorCanvas();
 					const addedBlockLocator = editorCanvas.locator( `#${ id }` );
 					editorContext = {
 						page,
-						editorPage,
+						editorPage: pageEditor,
 						addedBlockLocator,
 					};
 				} );
 
-				it( `${ prefix }: Configure the block`, async function () {
+				await test.step( `${ prefix }: Configure the block`, async () => {
 					if ( blockFlow.configure ) {
 						await blockFlow.configure( editorContext );
 					}
 				} );
 
-				it( `${ prefix }: There are no block warnings or errors in the editor`, async function () {
-					expect( await editorPage.editorHasBlockWarnings() ).toBe( false );
+				await test.step( `${ prefix }: There are no block warnings or errors in the editor`, async () => {
+					expect( await pageEditor.editorHasBlockWarnings() ).toBe( false );
 				} );
 			}
-		} );
 
-		describe( 'Publishing the post', function () {
-			it( 'Publish and visit post', async function () {
-				await editorPage.publish( { visit: true, timeout: 15 * 1000 } );
+			await test.step( 'When I publish and visit the post', async () => {
+				await pageEditor.publish( { visit: true, timeout: 15 * 1000 } );
 				publishedPostContext = {
-					browser: browser,
-					page: page,
+					browser: page.context().browser()!,
+					page,
 				};
 			} );
-		} );
 
-		describe( 'Validating blocks in published post.', function () {
 			for ( const blockFlow of blockFlows ) {
 				const prefix = blockFlow.blockTestName ?? blockFlow.blockSidebarName;
 
-				it( `${ prefix }: Expected content is in published post`, async function () {
+				await test.step( `${ prefix }: Expected content is in published post`, async () => {
 					if ( blockFlow.validateAfterPublish ) {
 						await blockFlow.validateAfterPublish( publishedPostContext );
 					}
