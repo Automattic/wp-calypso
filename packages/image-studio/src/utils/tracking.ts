@@ -7,7 +7,7 @@
 
 import { recordTracksEvent as recordTracksEventBase } from '@automattic/calypso-analytics';
 import { select } from '@wordpress/data';
-import { store as imageStudioStore, type ImageStudioEntryPoint } from '../store';
+import { store as imageStudioStore, ImageStudioEntryPoint } from '../store';
 import { getSessionId } from '../utils/session';
 import type { ImageStudioMode, MetadataField } from '../types';
 
@@ -120,7 +120,12 @@ function recordImageStudioEvent(
 
 	baseProps.site_type = siteType;
 
-	if ( entryPoint ) {
+	// The store's entry point is only a fallback. An event that knows its own
+	// placement passes it explicitly, and must keep it: the store holds whichever
+	// entry point was used last in this page load, which for an event that fires
+	// on mount rather than on open would report where the user happened to have
+	// been rather than where the event came from.
+	if ( entryPoint && undefined === baseProps.placement ) {
 		baseProps.placement = entryPoint;
 	}
 
@@ -834,7 +839,13 @@ export function trackImageStudioFeatureClipAddedToPost( {
  * engagement rates.
  */
 export function trackImageStudioFeatureClipPanelViewed(): void {
-	recordImageStudioEvent( 'image_studio_feature_clip_panel_viewed' );
+	// Sent explicitly rather than left to the store: the panel is rendered by the
+	// editor sidebar, so at mount nothing has opened Image Studio yet and the
+	// store's entry point is still null. Without this the event carries no
+	// placement and cannot be excluded from Image Studio metrics.
+	recordImageStudioEvent( 'image_studio_feature_clip_panel_viewed', {
+		placement: ImageStudioEntryPoint.PostEditorFeatureClip,
+	} );
 }
 
 /**

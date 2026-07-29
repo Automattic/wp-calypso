@@ -441,4 +441,35 @@ describe( 'feature clip tracking helpers', () => {
 			expect.objectContaining( { sessionid: 'test-session-id' } )
 		);
 	} );
+
+	it( 'sends placement on feature_clip_panel_viewed when the store has no entry point', () => {
+		// The panel mounts with the editor sidebar, before anything has opened
+		// Image Studio, so the store cannot supply the placement here.
+		selectMock.mockReturnValue( {
+			getEntryPoint: jest.fn( () => null ),
+		} );
+
+		trackImageStudioFeatureClipPanelViewed();
+
+		expect( recordTracksEventMock ).toHaveBeenCalledWith(
+			'jetpack_big_sky_image_studio_feature_clip_panel_viewed',
+			expect.objectContaining( { placement: 'post_editor_feature_clip' } )
+		);
+	} );
+
+	it( 'keeps its own placement on feature_clip_panel_viewed when the store holds another entry point', () => {
+		// Opening Image Studio elsewhere in the page load leaves that entry point
+		// in the store. The panel event still came from the panel, so its own
+		// placement has to win over the fallback.
+		selectMock.mockReturnValue( {
+			getEntryPoint: jest.fn( () => ImageStudioEntryPoint.EditorBlock ),
+		} );
+
+		trackImageStudioFeatureClipPanelViewed();
+
+		expect( recordTracksEventMock ).toHaveBeenCalledWith(
+			'jetpack_big_sky_image_studio_feature_clip_panel_viewed',
+			expect.objectContaining( { placement: 'post_editor_feature_clip' } )
+		);
+	} );
 } );
