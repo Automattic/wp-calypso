@@ -11,14 +11,17 @@ import {
 	people,
 	starEmpty,
 	plugins,
+	chartBar,
 	box,
 	shortcode,
+	megaphone,
 } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { useMemo } from 'react';
 import PaymentRiskNoticeMenuIndicator from 'calypso/a8c-for-agencies/components/payment-risk-notice-banner/menu-indicator';
 import usePaymentRiskNotice from 'calypso/a8c-for-agencies/components/payment-risk-notice-banner/use-payment-risk-notice';
 import { isPathAllowed } from 'calypso/a8c-for-agencies/lib/permission';
+import { A4A_REPORTS_LINK } from 'calypso/a8c-for-agencies/sections/reports/constants';
 import wooPaymentsIcon from 'calypso/assets/images/a8c-for-agencies/woopayments/woo-sidebar-icon.svg';
 import { isSectionNameEnabled } from 'calypso/sections-filter';
 import { useSelector } from 'calypso/state';
@@ -42,6 +45,7 @@ import {
 	A4A_RESOURCES_LINK,
 	A4A_AGENT_STUDIO_LINK,
 	A4A_EXCLUSIVE_OFFERS_LINK,
+	A4A_AMPLIFY_LINK,
 } from '../lib/constants';
 import { createItem } from '../lib/utils';
 
@@ -223,6 +227,32 @@ const useMainMenuItems = ( path: string ) => {
 						},
 				  ]
 				: [] ),
+			...( agency?.amplify?.allowed
+				? [
+						{
+							icon: megaphone,
+							path: A4A_AMPLIFY_LINK,
+							link: A4A_AMPLIFY_LINK,
+							title: translate( 'Amplify' ),
+							badge: translate( 'Beta' ),
+							trackEventProps: {
+								menu_item: 'Automattic for Agencies / Amplify',
+							},
+							withChevron: true,
+						},
+				  ]
+				: [] ),
+			{
+				icon: chartBar,
+				path: A4A_REPORTS_LINK,
+				link: A4A_REPORTS_LINK,
+				title: translate( 'Reports' ),
+				badge: translate( 'Beta' ),
+				trackEventProps: {
+					menu_item: 'Automattic for Agencies / Reports',
+				},
+				withChevron: true,
+			},
 		]
 			.map( ( item ) => createItem( item, path ) )
 			.filter( ( item ) => isPathAllowed( item.link, agency ) );
