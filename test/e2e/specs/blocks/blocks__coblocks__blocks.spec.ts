@@ -32,8 +32,7 @@ test.describe( 'CoBlocks: Blocks', { tag: [ tags.GUTENBERG ] }, () => {
 	const clicktoTweetBlockTweet = 'Tweet text';
 
 	test( 'As a user, I can use CoBlocks in a post', async ( { page, pageEditor } ) => {
-		// Resolved here, not at describe scope: Playwright loads every spec during collection
-		// regardless of --grep, so a throw for an unmatched feature key aborts the whole run.
+		// Resolved in-test: a describe-scope throw aborts collection for the whole run.
 		const accountName = getTestAccountByFeature( features );
 		let pricingTableBlock: PricingTableBlock;
 		let logoImage: TestFile;

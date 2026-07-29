@@ -24,8 +24,7 @@ if ( envVariables.TEST_ON_ATOMIC ) {
  */
 test.describe( 'CoBlocks: Extensions: Replace Image', { tag: [ tags.GUTENBERG ] }, () => {
 	test( 'As a user, I can replace an image in the editor', async ( { page, pageEditor } ) => {
-		// Resolved here, not at describe scope: Playwright loads every spec during collection
-		// regardless of --grep, so a throw for an unmatched feature key aborts the whole run.
+		// Resolved in-test: a describe-scope throw aborts collection for the whole run.
 		const accountName = getTestAccountByFeature( features );
 		let imageFile: TestFile;
 		let imageBlock: ImageBlock;
