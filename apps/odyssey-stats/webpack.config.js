@@ -107,15 +107,6 @@ module.exports = {
 						// `.button`, etc.) can't collide with wp-admin's own chrome. See
 						// AGENTS.md > CSS Scoping and webpack-css-scope.js.
 						prefixSelectorPlugin( cssScope ),
-						// Separately scopes our bundled @wordpress/components base CSS with a
-						// narrower prefix than the one above — see webpack-css-scope.js's
-						// `vendorPrefix` for why it can't share the same one.
-						prefixSelectorPlugin( {
-							prefix: cssScope.vendorPrefix,
-							includeFiles: cssScope.vendorIncludeFiles,
-							exclude: cssScope.exclude,
-							transform: cssScope.vendorTransform,
-						} ),
 						autoprefixerPlugin(),
 					],
 				},
@@ -134,6 +125,16 @@ module.exports = {
 		alias: {
 			// Resolve fast-deep-equal/es6 to fast-deep-equal/es6/index.js.
 			'fast-deep-equal/es6': 'fast-deep-equal/es6/index.js',
+			// Odyssey runs inside wp-admin, which already loads @wordpress/components' base CSS —
+			// jetpack-stats-admin declares it as a stylesheet dependency. Bundling Calypso's copy
+			// too would put two independently-versioned copies of the same unnamespaced classes on
+			// one page, which collide with wp-admin's own component instances (e.g. the command
+			// palette). Calypso/Blaze/Stepper still need it from `style.scss` — they're standalone
+			// SPAs with no wp-admin to inherit it from — so stub it out for this build only.
+			'@wordpress/components/build-style/style.css': path.join(
+				__dirname,
+				'src/styles/empty-vendor-components.css'
+			),
 		},
 	},
 	node: false,
