@@ -2,12 +2,13 @@
  * @jest-environment jsdom
  */
 import { render, screen } from '@testing-library/react';
-import { getCurrentUserCannotAddEmailReason, getSelectedDomain } from 'calypso/lib/domains';
+import { getSelectedDomain } from 'calypso/lib/domains';
 import { hasEmailForwards } from 'calypso/lib/domains/email-forwarding';
 import {
 	EMAIL_WARNING_CODE_DOMAIN_STATE_RESTRICTED,
 	EMAIL_WARNING_CODE_GRAVATAR_DOMAIN,
 	EMAIL_WARNING_CODE_OTHER_USER_OWNS_DOMAIN_SUBSCRIPTION,
+	EMAIL_WARNING_CODE_OTHER_USER_OWNS_EMAIL,
 } from 'calypso/lib/emails/email-provider-constants';
 import EmailForwardingLink from '../index';
 import type { ResponseDomain } from 'calypso/lib/domains/types';
@@ -31,8 +32,11 @@ jest.mock( 'calypso/state/ui/selectors', () => ( {
 } ) );
 
 jest.mock( 'calypso/lib/domains', () => ( {
-	getCurrentUserCannotAddEmailReason: jest.fn(
-		( domain: ResponseDomain | undefined ) => domain?.currentUserCannotAddEmailReason ?? null
+	canCurrentUserAddEmail: jest.fn(
+		( domain: ResponseDomain | undefined ) => !! domain?.currentUserCanAddEmail
+	),
+	getCurrentUserCannotAddEmailReason: jest.fn( ( domain: ResponseDomain | undefined ) =>
+		domain && ! domain.currentUserCanAddEmail ? domain.currentUserCannotAddEmailReason : null
 	),
 	getSelectedDomain: jest.fn(),
 } ) );
@@ -57,9 +61,6 @@ describe( 'EmailForwardingLink', () => {
 	beforeEach( () => {
 		jest.clearAllMocks();
 		( hasEmailForwards as jest.Mock ).mockReturnValue( false );
-		( getCurrentUserCannotAddEmailReason as jest.Mock ).mockImplementation(
-			( domain: ResponseDomain | undefined ) => domain?.currentUserCannotAddEmailReason ?? null
-		);
 	} );
 
 	it( 'renders the email forwarding promo for a regular domain without forwards', () => {
@@ -91,7 +92,6 @@ describe( 'EmailForwardingLink', () => {
 
 		const { container } = render( <EmailForwardingLink selectedDomainName="example.com" /> );
 
-		expect( screen.queryByText( promoMatcher ) ).not.toBeInTheDocument();
 		expect( container ).toBeEmptyDOMElement();
 	} );
 
@@ -112,22 +112,23 @@ describe( 'EmailForwardingLink', () => {
 		expect( screen.queryByText( promoMatcher ) ).not.toBeInTheDocument();
 	} );
 
-	it.each( [ EMAIL_WARNING_CODE_DOMAIN_STATE_RESTRICTED, EMAIL_WARNING_CODE_GRAVATAR_DOMAIN ] )(
-		'renders nothing when add-forwarding is blocked by %s',
-		( code ) => {
-			( getSelectedDomain as jest.Mock ).mockReturnValue( {
-				...regularDomain,
-				currentUserCanAddEmail: false,
-				currentUserCannotAddEmailReason: {
-					code,
-					message: 'Email forwarding is unavailable for this domain.',
-				},
-			} );
+	it.each( [
+		EMAIL_WARNING_CODE_DOMAIN_STATE_RESTRICTED,
+		EMAIL_WARNING_CODE_GRAVATAR_DOMAIN,
+		EMAIL_WARNING_CODE_OTHER_USER_OWNS_EMAIL,
+		'domain-expired',
+	] )( 'renders nothing when the user cannot add email because of %s', ( code ) => {
+		( getSelectedDomain as jest.Mock ).mockReturnValue( {
+			...regularDomain,
+			currentUserCanAddEmail: false,
+			currentUserCannotAddEmailReason: {
+				code,
+				message: 'Email forwarding is unavailable for this domain.',
+			},
+		} );
 
-			const { container } = render( <EmailForwardingLink selectedDomainName="example.com" /> );
+		const { container } = render( <EmailForwardingLink selectedDomainName="example.com" /> );
 
-			expect( screen.queryByText( promoMatcher ) ).not.toBeInTheDocument();
-			expect( container ).toBeEmptyDOMElement();
-		}
-	);
+		expect( container ).toBeEmptyDOMElement();
+	} );
 } );

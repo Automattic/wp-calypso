@@ -1,10 +1,11 @@
 import { useTranslate } from 'i18n-calypso';
-import { getCurrentUserCannotAddEmailReason, getSelectedDomain } from 'calypso/lib/domains';
-import { hasEmailForwards } from 'calypso/lib/domains/email-forwarding';
 import {
-	EMAIL_WARNING_CODE_DOMAIN_STATE_RESTRICTED,
-	EMAIL_WARNING_CODE_GRAVATAR_DOMAIN,
-} from 'calypso/lib/emails/email-provider-constants';
+	canCurrentUserAddEmail,
+	getCurrentUserCannotAddEmailReason,
+	getSelectedDomain,
+} from 'calypso/lib/domains';
+import { hasEmailForwards } from 'calypso/lib/domains/email-forwarding';
+import { EMAIL_WARNING_CODE_OTHER_USER_OWNS_DOMAIN_SUBSCRIPTION } from 'calypso/lib/emails/email-provider-constants';
 import { getAddEmailForwardsPath } from 'calypso/my-sites/email/paths';
 import { useSelector } from 'calypso/state';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
@@ -40,12 +41,14 @@ const EmailForwardingLink = ( { selectedDomainName }: EmailForwardingLinkProps )
 
 	const hasExistingEmailForwards = hasEmailForwards( domain );
 	const cannotAddEmailWarningReason = getCurrentUserCannotAddEmailReason( domain );
-	const cannotAddEmailWarningCode = cannotAddEmailWarningReason?.code ?? null;
-	const isEmailForwardingRestricted =
-		cannotAddEmailWarningCode === EMAIL_WARNING_CODE_DOMAIN_STATE_RESTRICTED ||
-		cannotAddEmailWarningCode === EMAIL_WARNING_CODE_GRAVATAR_DOMAIN;
 
-	if ( hasExistingEmailForwards || isEmailForwardingRestricted ) {
+	// Site admins who don't own the domain subscription can't buy paid email, but they can
+	// still set up free forwarding. Every other restriction also blocks forwarding itself.
+	const canShowEmailForwarding =
+		canCurrentUserAddEmail( domain ) ||
+		cannotAddEmailWarningReason?.code === EMAIL_WARNING_CODE_OTHER_USER_OWNS_DOMAIN_SUBSCRIPTION;
+
+	if ( hasExistingEmailForwards || ! canShowEmailForwarding ) {
 		return null;
 	}
 
