@@ -5,6 +5,7 @@ import { GeneratorReturnType } from '../mapped-types';
 import { SiteDetails } from '../site';
 import { CurrentUser } from '../user/types';
 import { STORE_KEY } from './constants';
+import { persistLoggedOutOdieChat } from './logged-out-odie-chat';
 import { persistPreference } from './utils';
 import type { HelpCenterOptions, HelpCenterShowOptions, LoggedOutOdieChat } from './types';
 
@@ -65,11 +66,19 @@ export const setIsMinimized = function ( minimized: boolean ) {
 	} as const;
 };
 
-export const setLoggedOutOdieChat = ( session: LoggedOutOdieChat | undefined ) =>
-	( {
+export const setLoggedOutOdieChat = (
+	session: LoggedOutOdieChat | undefined,
+	shouldHandOff = false
+) => {
+	if ( session ) {
+		persistLoggedOutOdieChat( session, shouldHandOff );
+	}
+
+	return {
 		type: 'HELP_CENTER_SET_LOGGED_OUT_ODIE_CHAT',
 		session,
-	} ) as const;
+	} as const;
+};
 
 export const setIsChatLoaded = ( isChatLoaded: boolean ) =>
 	( {

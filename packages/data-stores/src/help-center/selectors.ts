@@ -1,4 +1,4 @@
-import { isLoggedOutOdieChat } from './logged-out-odie-chat';
+import { getPersistedLoggedOutOdieChat, isLoggedOutOdieChat } from './logged-out-odie-chat';
 import type { State } from './reducer';
 
 export const isHelpCenterShown = ( state: State ) => state.showHelpCenter;
@@ -13,6 +13,12 @@ export const getZendeskConnectionStatus = ( state: State ) => state.zendeskConne
 export const getIsMinimized = ( state: State ) => state.isMinimized;
 export const getIsChatLoaded = ( state: State ) => state.isChatLoaded;
 export const getLoggedOutOdieChat = ( state: State, botSlug: string ) => {
+	const persistedSession = getPersistedLoggedOutOdieChat( botSlug );
+
+	if ( persistedSession ) {
+		return persistedSession;
+	}
+
 	const session = state.loggedOutOdieChats?.[ botSlug ];
 
 	if ( session ) {

@@ -41,4 +41,8 @@ export function register(): typeof STORE_KEY {
 }
 
 export { setHelpCenterAppId } from './utils';
+export {
+	consumeLoggedOutOdieChatHandoff,
+	getPendingLoggedOutOdieChat,
+} from './logged-out-odie-chat';
 export type { HelpCenterSite } from './types';

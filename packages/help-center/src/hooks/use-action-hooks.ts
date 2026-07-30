@@ -1,16 +1,26 @@
-import { HelpCenterSelect } from '@automattic/data-stores';
+import { HelpCenter, HelpCenterSelect } from '@automattic/data-stores';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { useEffect } from '@wordpress/element';
+import { useHelpCenterContext } from '../contexts/HelpCenterContext';
 import { HELP_CENTER_STORE } from '../stores';
 
 /**
  * Add your conditions here to open the Help Center automatically when they're met.
  */
 export const useActionHooks = () => {
-	const { setShowHelpCenter, setShowSupportDoc, setNavigateToRoute, setNewMessagingChat } =
-		useDispatch( 'automattic/help-center' );
+	const {
+		setLoggedOutOdieChat,
+		setShowHelpCenter,
+		setShowSupportDoc,
+		setNavigateToRoute,
+		setNewMessagingChat,
+	} = useDispatch( 'automattic/help-center' );
+	const { currentUser, newLoggedOutInteractionsBotSlug } = useHelpCenterContext();
 	const queryParams = new URLSearchParams( window.location.search );
+	const pendingLoggedOutSession = currentUser?.ID
+		? HelpCenter.getPendingLoggedOutOdieChat( newLoggedOutInteractionsBotSlug )
+		: undefined;
 
 	const helpCenterRouterHistory = useSelect(
 		( select ) => ( select( HELP_CENTER_STORE ) as HelpCenterSelect ).getHelpCenterRouterHistory(),
@@ -27,6 +37,22 @@ export const useActionHooks = () => {
 	const areDependenciesLoading = isResolving;
 
 	const actionHooks = [
+		{
+			condition() {
+				return !! pendingLoggedOutSession;
+			},
+			action() {
+				if ( ! pendingLoggedOutSession ) {
+					return;
+				}
+
+				setLoggedOutOdieChat( pendingLoggedOutSession );
+				setNavigateToRoute( '/' );
+				setShowHelpCenter( true );
+				HelpCenter.consumeLoggedOutOdieChatHandoff( newLoggedOutInteractionsBotSlug );
+			},
+		},
+
 		/**
 		 * Open to the support doc for the Subscribe block.
 		 */

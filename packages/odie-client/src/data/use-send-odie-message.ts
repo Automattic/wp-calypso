@@ -134,15 +134,15 @@ export const useSendOdieMessage = ( signal: AbortSignal ) => {
 	);
 
 	const updateLoggedOutSession = useCallback(
-		( chatId: string, sessionId: string, botSlug: string ) => {
+		( chatId: number, sessionId: string, botSlug: string ) => {
 			const params = new URLSearchParams( location.search );
-			params.set( 'chatId', chatId );
+			params.set( 'chatId', chatId.toString() );
 			params.set( 'sessionId', sessionId );
 			params.set( 'botSlug', botSlug );
 			navigate( `${ location.pathname }?${ params.toString() }`, { replace: true } );
-			setLoggedOutOdieChat( { odieId: chatId, sessionId, botSlug } );
+			setLoggedOutOdieChat( { odieId: chatId, sessionId, botSlug }, ! isLoggedIn );
 		},
-		[ location.pathname, location.search, navigate, setLoggedOutOdieChat ]
+		[ isLoggedIn, location.pathname, location.search, navigate, setLoggedOutOdieChat ]
 	);
 
 	const hasBeenWarnedAboutExistingConversation = chat?.messages?.some(
@@ -342,7 +342,7 @@ export const useSendOdieMessage = ( signal: AbortSignal ) => {
 			try {
 				if ( isLoggedOutSession ) {
 					// If the user is not logged in, we don't need to create a new support interaction.
-					updateLoggedOutSession( chatId.toString(), returnedChat.session_id, botSlug );
+					updateLoggedOutSession( chatId, returnedChat.session_id, botSlug );
 				} else if ( ! supportInteraction && chatId ) {
 					supportInteraction = await startNewInteraction( {
 						event_external_id: chatId.toString(),

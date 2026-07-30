@@ -1,4 +1,13 @@
+/**
+ * @jest-environment jsdom
+ */
+
 import { setLoggedOutOdieChat } from '../actions';
+import {
+	consumeLoggedOutOdieChatHandoff,
+	getPendingLoggedOutOdieChat,
+	getPersistedLoggedOutOdieChat,
+} from '../logged-out-odie-chat';
 import { loggedOutOdieChat, loggedOutOdieChats } from '../reducer';
 import { getLoggedOutOdieChat } from '../selectors';
 import type { State } from '../reducer';
@@ -17,6 +26,10 @@ const wooSession: LoggedOutOdieChat = {
 };
 
 describe( 'logged-out Odie chat persistence', () => {
+	beforeEach( () => {
+		window.localStorage.clear();
+	} );
+
 	it( 'stores sessions by bot slug while keeping the latest singular value', () => {
 		const wpcomSessions = loggedOutOdieChats( undefined, setLoggedOutOdieChat( wpcomSession ) );
 		const sessions = loggedOutOdieChats( wpcomSessions, setLoggedOutOdieChat( wooSession ) );
@@ -59,5 +72,39 @@ describe( 'logged-out Odie chat persistence', () => {
 
 		expect( getLoggedOutOdieChat( state, wpcomSession.botSlug ) ).toEqual( wpcomSession );
 		expect( getLoggedOutOdieChat( state, wooSession.botSlug ) ).toEqual( wooSession );
+	} );
+
+	it( 'persists each bot session under its own local storage key', () => {
+		setLoggedOutOdieChat( wpcomSession, true );
+		setLoggedOutOdieChat( wooSession, true );
+
+		expect( getPersistedLoggedOutOdieChat( wpcomSession.botSlug ) ).toEqual( wpcomSession );
+		expect( getPersistedLoggedOutOdieChat( wooSession.botSlug ) ).toEqual( wooSession );
+		expect( window.localStorage.length ).toBe( 4 );
+	} );
+
+	it( 'keeps a persisted bot session when shared Help Center state is overwritten', () => {
+		setLoggedOutOdieChat( wpcomSession, true );
+		const overwrittenState = {
+			loggedOutOdieChat: wooSession,
+			loggedOutOdieChats: {
+				[ wooSession.botSlug ]: wooSession,
+			},
+		} as State;
+
+		expect( getLoggedOutOdieChat( overwrittenState, wpcomSession.botSlug ) ).toEqual(
+			wpcomSession
+		);
+	} );
+
+	it( 'consumes a handoff without removing the persisted bot session', () => {
+		setLoggedOutOdieChat( wpcomSession, true );
+
+		expect( getPendingLoggedOutOdieChat( wpcomSession.botSlug ) ).toEqual( wpcomSession );
+
+		consumeLoggedOutOdieChatHandoff( wpcomSession.botSlug );
+
+		expect( getPendingLoggedOutOdieChat( wpcomSession.botSlug ) ).toBeUndefined();
+		expect( getPersistedLoggedOutOdieChat( wpcomSession.botSlug ) ).toEqual( wpcomSession );
 	} );
 } );
