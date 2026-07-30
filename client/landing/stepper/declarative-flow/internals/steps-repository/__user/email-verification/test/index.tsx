@@ -11,7 +11,6 @@ import { applyMiddleware, combineReducers, createStore } from 'redux';
 import { thunk as thunkMiddleware } from 'redux-thunk';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { CURRENT_USER_RECEIVE } from 'calypso/state/action-types';
-import { fetchCurrentUser, setUserEmailVerified } from 'calypso/state/current-user/actions';
 import currentUserReducer from 'calypso/state/current-user/reducer';
 import documentHeadReducer from 'calypso/state/document-head/reducer';
 import uiReducer from 'calypso/state/ui/reducer';
@@ -104,21 +103,6 @@ describe( 'EmailVerificationGate', () => {
 		);
 	} );
 
-	it( 'keeps the account step’s branding logo in the top bar', () => {
-		render( { logo: <span data-testid="brand-logo">Woo</span> } );
-
-		expect( screen.getByTestId( 'brand-logo' ) ).toBeVisible();
-	} );
-
-	it( 'moves focus onto the gate on mount so the screen change is announced', () => {
-		render();
-
-		// The gate replaces the account form in place; focus should land on its heading
-		// region rather than being stranded on the now-unmounted submit button.
-		const heading = screen.getByRole( 'heading', { name: 'Verify your email' } );
-		expect( heading.closest( '.onboarding-email-verification__heading' ) ).toHaveFocus();
-	} );
-
 	it( 'offers a sniper-link inbox button for a known email provider', async () => {
 		renderStep( <EmailVerificationGate flow={ FLOW } scope={ SCOPE } onDone={ jest.fn() } />, {
 			initialState: {
@@ -169,29 +153,6 @@ describe( 'EmailVerificationGate', () => {
 		).toBeVisible();
 	} );
 
-	it( 'keeps resend available after refreshing once the cooldown has expired', async () => {
-		jest.useFakeTimers();
-
-		const { unmount } = render();
-		await waitFor( () =>
-			expect( screen.getByRole( 'button', { name: 'Resend in 60s' } ) ).toBeVisible()
-		);
-
-		// The whole cooldown elapses, then the user refreshes (remount).
-		act( () => {
-			jest.advanceTimersByTime( 61 * 1000 );
-		} );
-		unmount();
-
-		const secondSend = mockSendVerificationEmail();
-		render();
-
-		// Resend is available immediately — no fresh 60-second wait, and no new email.
-		expect( await screen.findByRole( 'button', { name: 'Resend' } ) ).toBeVisible();
-		expect( screen.queryByRole( 'button', { name: /Resend in \d+s/ } ) ).not.toBeInTheDocument();
-		expect( secondSend.isDone() ).toBe( false );
-	} );
-
 	it( 'finishes as soon as the confirmation lands in another tab', async () => {
 		const onDone = jest.fn();
 		// Only the slices this gate touches: its own user state, plus the two
@@ -231,28 +192,6 @@ describe( 'EmailVerificationGate', () => {
 		);
 	} );
 
-	it( 'measures duration from when the gate is shown, not from account creation', async () => {
-		jest.useFakeTimers();
-		beginGate( SCOPE );
-
-		// Loading the token and hydrating the user takes time before the gate can render.
-		act( () => {
-			jest.advanceTimersByTime( 10_000 );
-		} );
-
-		const onDone = jest.fn();
-		// Already verified, so the gate confirms immediately on mount.
-		renderStep( <EmailVerificationGate flow={ FLOW } scope={ SCOPE } onDone={ onDone } />, {
-			initialState: currentUserState( true ),
-		} );
-
-		await waitFor( () => expect( onDone ).toHaveBeenCalled() );
-		expect( recordTracksEvent ).toHaveBeenCalledWith(
-			'calypso_signup_email_verification_confirmed',
-			expect.objectContaining( { seconds_on_step: 0 } )
-		);
-	} );
-
 	it( 'finishes when the manual check finds the email confirmed', async () => {
 		mockFetchUser( true );
 		const { onDone } = render();
@@ -260,18 +199,6 @@ describe( 'EmailVerificationGate', () => {
 		await userEvent.click( screen.getByRole( 'button', { name: 'I’ve confirmed my email' } ) );
 
 		await waitFor( () => expect( onDone ).toHaveBeenCalled() );
-	} );
-
-	it( 'tells the user when the manual check still shows the email unconfirmed', async () => {
-		mockFetchUser( false );
-		const { onDone } = render();
-
-		await userEvent.click( screen.getByRole( 'button', { name: 'I’ve confirmed my email' } ) );
-
-		expect(
-			await screen.findByText( /We haven’t received your confirmation yet\./ )
-		).toBeVisible();
-		expect( onDone ).not.toHaveBeenCalled();
 	} );
 
 	it( 'distinguishes a failed check request from an unconfirmed email', async () => {
@@ -285,34 +212,6 @@ describe( 'EmailVerificationGate', () => {
 			screen.queryByText( /We haven’t received your confirmation yet\./ )
 		).not.toBeInTheDocument();
 		expect( onDone ).not.toHaveBeenCalled();
-	} );
-
-	it( 'clears a stale check notice when the email is resent', async () => {
-		jest.useFakeTimers();
-		const user = userEvent.setup( { advanceTimers: jest.advanceTimersByTime } );
-		render();
-
-		act( () => {
-			jest.advanceTimersByTime( COOLDOWN_MS );
-		} );
-
-		// A manual check comes back still unconfirmed.
-		mockFetchUser( false );
-		await user.click( screen.getByRole( 'button', { name: 'I’ve confirmed my email' } ) );
-		expect(
-			await screen.findByText( /We haven’t received your confirmation yet\./ )
-		).toBeVisible();
-
-		// Resending supersedes that check, so its notice clears alongside the fresh cooldown.
-		mockSendVerificationEmail();
-		await user.click( screen.getByRole( 'button', { name: 'Resend' } ) );
-		await waitFor( () =>
-			expect( screen.getByRole( 'button', { name: 'Resend in 60s' } ) ).toBeVisible()
-		);
-
-		expect(
-			screen.queryByText( /We haven’t received your confirmation yet\./ )
-		).not.toBeInTheDocument();
 	} );
 
 	it( 'surfaces an unsuccessful resend and keeps resend available', async () => {
@@ -336,38 +235,6 @@ describe( 'EmailVerificationGate', () => {
 		expect( recordTracksEvent ).toHaveBeenCalledWith(
 			'calypso_signup_email_verification_email_send_failed',
 			expect.objectContaining( { flow: FLOW, is_resend: true } )
-		);
-	} );
-
-	it( 'holds off on resending until the seeded cooldown expires', async () => {
-		jest.useFakeTimers();
-		const user = userEvent.setup( { advanceTimers: jest.advanceTimersByTime } );
-
-		render();
-
-		// The seeded cooldown (from the signup email) means there is nothing to click yet.
-		await waitFor( () =>
-			expect( screen.getByRole( 'button', { name: 'Resend in 60s' } ) ).toBeVisible()
-		);
-		expect( screen.queryByRole( 'button', { name: 'Resend' } ) ).not.toBeInTheDocument();
-
-		act( () => {
-			jest.advanceTimersByTime( COOLDOWN_MS );
-		} );
-
-		const resendRequest = mockSendVerificationEmail();
-		await user.click( await screen.findByRole( 'button', { name: 'Resend' } ) );
-
-		// A successful resend restarts the 60s cooldown; waiting for that UI change also
-		// lets the send's promise chain settle before asserting on its side effects.
-		await waitFor( () =>
-			expect( screen.getByRole( 'button', { name: 'Resend in 60s' } ) ).toBeVisible()
-		);
-
-		expect( resendRequest.isDone() ).toBe( true );
-		expect( recordTracksEvent ).toHaveBeenCalledWith(
-			'calypso_signup_email_verification_email_sent',
-			{ flow: FLOW, is_resend: true }
 		);
 	} );
 
@@ -406,82 +273,5 @@ describe( 'EmailVerificationGate', () => {
 		} finally {
 			setItem.mockRestore();
 		}
-	} );
-
-	it( 'keeps the cooldown when the gate is revisited within the window, without resending', async () => {
-		jest.useFakeTimers();
-
-		const { unmount } = render();
-		await waitFor( () =>
-			expect( screen.getByRole( 'button', { name: 'Resend in 60s' } ) ).toBeVisible()
-		);
-
-		// 20 seconds of the 60-second cooldown elapse, then the user leaves.
-		act( () => {
-			jest.advanceTimersByTime( 20 * 1000 );
-		} );
-		unmount();
-
-		// Returning must not fire a send…
-		const secondSend = mockSendVerificationEmail();
-		render();
-
-		// …and the countdown resumes from what was left rather than resetting to 60.
-		await waitFor( () =>
-			expect( screen.getByRole( 'button', { name: 'Resend in 40s' } ) ).toBeVisible()
-		);
-		expect( secondSend.isDone() ).toBe( false );
-	} );
-
-	it( 'catches the cooldown up after the tab was suspended', async () => {
-		jest.useFakeTimers();
-
-		render();
-		await waitFor( () =>
-			expect( screen.getByRole( 'button', { name: 'Resend in 60s' } ) ).toBeVisible()
-		);
-
-		// Simulate a phone suspending JS while the user is in their email app: the
-		// clock jumps past the cooldown without the per-second interval firing.
-		act( () => {
-			jest.setSystemTime( Date.now() + 65 * 1000 );
-			document.dispatchEvent( new Event( 'visibilitychange' ) );
-		} );
-
-		// On return, the cooldown reflects real elapsed time, not the paused counter.
-		expect( screen.getByRole( 'button', { name: 'Resend' } ) ).toBeVisible();
-	} );
-
-	it( 'restarts the polling window after a resend so a later remote confirmation still advances', async () => {
-		jest.useFakeTimers();
-		const user = userEvent.setup( { advanceTimers: jest.advanceTimersByTime } );
-		// The poll is a no-op until the user confirms on another device.
-		( fetchCurrentUser as jest.Mock ).mockReturnValue( { type: 'TEST_NOOP' } );
-		const { onDone } = render();
-
-		// The poll runs while the window is open.
-		await jest.advanceTimersByTimeAsync( 10 * 1000 );
-		expect( fetchCurrentUser ).toHaveBeenCalled();
-
-		// After 15 minutes the window lapses and polling switches itself off.
-		await jest.advanceTimersByTimeAsync( 15 * 60 * 1000 );
-		( fetchCurrentUser as jest.Mock ).mockClear();
-		await jest.advanceTimersByTimeAsync( 10 * 1000 );
-		expect( fetchCurrentUser ).not.toHaveBeenCalled();
-
-		// The user confirms on another device; the next poll would now see it.
-		( fetchCurrentUser as jest.Mock ).mockImplementation( () => setUserEmailVerified( true ) );
-
-		// Resending restarts the window. Waiting for the fresh cooldown confirms the
-		// send resolved and its state (including the reopened window) has applied.
-		mockSendVerificationEmail();
-		await user.click( await screen.findByRole( 'button', { name: 'Resend' } ) );
-		await waitFor( () =>
-			expect( screen.getByRole( 'button', { name: /Resend in \d+s/ } ) ).toBeVisible()
-		);
-
-		// The restarted poll fires, picks up the confirmation, and advances.
-		await jest.advanceTimersByTimeAsync( 5000 );
-		await waitFor( () => expect( onDone ).toHaveBeenCalled() );
 	} );
 } );

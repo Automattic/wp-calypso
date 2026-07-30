@@ -78,7 +78,6 @@
 		"migration/ssh-migration": false,
 		"oauth/unified-experience": false,
 		"onboarding/create-course": false,
-		"onboarding/email-verification": false,
 		"onboarding/import-from-blogger": true,
 		"onboarding/import-from-medium": true,
 		"onboarding/import-from-squarespace": true,

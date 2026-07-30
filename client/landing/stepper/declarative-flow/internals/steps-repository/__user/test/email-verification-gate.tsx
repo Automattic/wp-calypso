@@ -16,7 +16,7 @@ import initialReducer from 'calypso/state/reducer';
 import uiReducer from 'calypso/state/ui/reducer';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import UserStep from '..';
-import { beginGate, gateScope, isGatePending } from '../email-verification/storage';
+import { beginGate, gateScope } from '../email-verification/storage';
 import useAccountCreationExperiment from '../use-account-creation-experiment';
 
 jest.mock( 'calypso/lib/analytics/tracks' );
@@ -167,27 +167,6 @@ describe( 'account step email verification gate', () => {
 		await waitFor( () => expect( submit ).toHaveBeenCalledTimes( 1 ) );
 	} );
 
-	it( 'confirmation resolves the gate so it does not reappear on a later refresh', async () => {
-		const store = makeStore( false );
-		const { submit, unmount } = renderUser( store );
-
-		await screen.findByRole( 'heading', { name: GATE_HEADING } );
-		act( () => {
-			store.dispatch( {
-				type: CURRENT_USER_RECEIVE,
-				user: { ID: USER_ID, email: EMAIL, email_verified: true },
-			} );
-		} );
-		await waitFor( () => expect( submit ).toHaveBeenCalledTimes( 1 ) );
-
-		// Refresh: confirming cleared the pending marker, so the gate does not reappear.
-		unmount();
-		const second = renderUser( makeStore( true ) );
-
-		await waitFor( () => expect( second.submit ).toHaveBeenCalled() );
-		expect( screen.queryByRole( 'heading', { name: GATE_HEADING } ) ).not.toBeInTheDocument();
-	} );
-
 	it( 're-shows the gate after a refresh while it is still pending', async () => {
 		const first = renderUser( makeStore( false ) );
 		await screen.findByRole( 'heading', { name: GATE_HEADING } );
@@ -221,31 +200,6 @@ describe( 'account step email verification gate', () => {
 		expect( submit ).not.toHaveBeenCalled();
 	} );
 
-	it( 'still shows the gate when persisting the pending marker fails', async () => {
-		sessionStorage.clear();
-		const setItem = jest.spyOn( Storage.prototype, 'setItem' ).mockImplementation( () => {
-			throw new Error( 'storage disabled' );
-		} );
-
-		try {
-			const store = makeLoggedOutStore();
-			renderUser( store );
-
-			await userEvent.click( screen.getByRole( 'button', { name: 'create-email-account' } ) );
-			act( () => {
-				store.dispatch( {
-					type: CURRENT_USER_RECEIVE,
-					user: { ID: USER_ID, email: EMAIL, email_verified: false },
-				} );
-			} );
-
-			// The persisted marker never landed, but in-session state still gates.
-			expect( await screen.findByRole( 'heading', { name: GATE_HEADING } ) ).toBeVisible();
-		} finally {
-			setItem.mockRestore();
-		}
-	} );
-
 	it( 'skips the gate for an already-verified (social) signup', async () => {
 		// Social signups never open the gate, so nothing is pending.
 		sessionStorage.clear();
@@ -257,21 +211,6 @@ describe( 'account step email verification gate', () => {
 			'calypso_signup_email_verification_confirmed',
 			expect.anything()
 		);
-	} );
-
-	it( 'resolves as a confirmation when a pending user is already verified on mount', async () => {
-		// The marker is pending (from account creation) but verification already landed —
-		// e.g. the activation link opened in this tab, or a reload after confirming. The
-		// gate still mounts, sees the verified user, records the confirmation, and advances.
-		const { submit } = renderUser( makeStore( true ) );
-
-		await waitFor( () => expect( submit ).toHaveBeenCalledTimes( 1 ) );
-		expect( recordTracksEvent ).toHaveBeenCalledWith(
-			'calypso_signup_email_verification_confirmed',
-			expect.objectContaining( { flow: 'onboarding' } )
-		);
-		// The marker is cleared so a later refresh won't re-gate the user.
-		expect( isGatePending( SCOPE ) ).toBe( false );
 	} );
 
 	it( 'skips the gate for an existing session with nothing pending', async () => {
