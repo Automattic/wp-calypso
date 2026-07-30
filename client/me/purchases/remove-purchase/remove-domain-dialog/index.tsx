@@ -1,35 +1,56 @@
 import { Dialog, FormLabel } from '@automattic/components';
-import { localize } from 'i18n-calypso';
-import PropTypes from 'prop-types';
-import { Component, Fragment } from 'react';
+import clsx from 'clsx';
+import { localize, LocalizeProps } from 'i18n-calypso';
+import { Component, Fragment, type ReactElement } from 'react';
 import { connect } from 'react-redux';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormSectionHeading from 'calypso/components/forms/form-section-heading';
 import FormTextInput from 'calypso/components/forms/form-text-input';
 import { getSelectedDomain } from 'calypso/lib/domains';
-import { getName } from 'calypso/lib/purchases';
 import { hasTitanMailWithUs } from 'calypso/lib/titan';
 import { domainManagementEdit, domainManagementTransferOut } from 'calypso/my-sites/domains/paths';
 import { getCurrentUserEmail } from 'calypso/state/current-user/selectors';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import { getDomainsBySiteId } from 'calypso/state/sites/domains/selectors';
 import { getSiteSlug } from 'calypso/state/sites/selectors';
+import { getName } from '../../lib/raw-purchase-helpers';
+import type { Purchase } from '@automattic/api-core';
+import type { BaseButton } from '@automattic/components';
+import type { AppState } from 'calypso/types';
 
-class RemoveDomainDialog extends Component {
-	static propTypes = {
-		isRemoving: PropTypes.bool.isRequired,
-		isDialogVisible: PropTypes.bool.isRequired,
-		removePurchase: PropTypes.func.isRequired,
-		closeDialog: PropTypes.func.isRequired,
-		purchase: PropTypes.object,
-	};
+interface RemoveDomainDialogOwnProps {
+	isRemoving: boolean;
+	isDialogVisible: boolean;
+	removePurchase: ( closeDialog: () => void ) => void;
+	closeDialog: () => void;
+	purchase: Purchase;
+	chatButton?: ReactElement;
+}
 
-	state = {
+interface RemoveDomainDialogConnectedProps {
+	isGravatarRestrictedDomain: boolean | undefined;
+	hasTitanWithUs: boolean;
+	currentRoute: string | null;
+	userEmail: string | null;
+	slug: string | null;
+}
+
+type RemoveDomainDialogProps = RemoveDomainDialogOwnProps &
+	RemoveDomainDialogConnectedProps &
+	LocalizeProps;
+
+interface RemoveDomainDialogState {
+	step: number;
+	domainValidated: boolean;
+}
+
+class RemoveDomainDialog extends Component< RemoveDomainDialogProps, RemoveDomainDialogState > {
+	state: RemoveDomainDialogState = {
 		step: 1,
 		domainValidated: false,
 	};
 
-	renderDomainDeletionWarning( productName ) {
+	renderDomainDeletionWarning( productName: string ) {
 		const { translate, slug, currentRoute, isGravatarRestrictedDomain } = this.props;
 
 		return (
@@ -53,9 +74,17 @@ class RemoveDomainDialog extends Component {
 							args: { domain: productName },
 							components: {
 								strong: <strong />,
-								moveAnchor: <a href={ domainManagementEdit( slug, productName, currentRoute ) } />,
+								moveAnchor: (
+									<a href={ domainManagementEdit( slug ?? '', productName, currentRoute ?? '' ) } />
+								),
 								transferAnchor: (
-									<a href={ domainManagementTransferOut( slug, productName, currentRoute ) } />
+									<a
+										href={ domainManagementTransferOut(
+											slug ?? '',
+											productName,
+											currentRoute ?? ''
+										) }
+									/>
 								),
 							},
 						}
@@ -66,7 +95,7 @@ class RemoveDomainDialog extends Component {
 		);
 	}
 
-	renderFirstStep( productName ) {
+	renderFirstStep( productName: string ) {
 		const { translate } = this.props;
 
 		return (
@@ -83,7 +112,7 @@ class RemoveDomainDialog extends Component {
 		);
 	}
 
-	onDomainChange = ( event ) => {
+	onDomainChange = ( event: React.ChangeEvent< HTMLInputElement > ) => {
 		const productName = getName( this.props.purchase );
 		this.setState( { domainValidated: event.currentTarget.value === productName } );
 	};
@@ -118,7 +147,7 @@ class RemoveDomainDialog extends Component {
 		);
 	}
 
-	renderFinalStep( productName ) {
+	renderFinalStep( productName: string ) {
 		const { translate } = this.props;
 
 		return (
@@ -152,13 +181,13 @@ class RemoveDomainDialog extends Component {
 		);
 	}
 
-	nextStep = ( closeDialog ) => {
+	nextStep = ( closeDialog: () => void ) => {
 		if ( this.props.isRemoving ) {
 			return;
 		}
 
 		const productName = getName( this.props.purchase );
-		const isEmailBasedOnDomain = this.props.userEmail.endsWith( productName );
+		const isEmailBasedOnDomain = Boolean( this.props.userEmail?.endsWith( productName ) );
 
 		switch ( this.state.step ) {
 			case 1:
@@ -185,7 +214,7 @@ class RemoveDomainDialog extends Component {
 		const { purchase, translate, chatButton } = this.props;
 		const productName = getName( purchase );
 
-		const buttons = [
+		const buttons: ( ReactElement | BaseButton )[] = [
 			{
 				action: 'cancel',
 				disabled: this.props.isRemoving,
@@ -195,11 +224,11 @@ class RemoveDomainDialog extends Component {
 				? [
 						{
 							action: 'remove',
-							additionalClassNames: [
-								this.props.isRemoving ? 'is-busy' : '',
-								this.state.step === 3 ? 'is-scary' : '',
-								'dialog__button--domains-remove',
-							],
+							additionalClassNames: clsx(
+								this.props.isRemoving && 'is-busy',
+								this.state.step === 3 && 'is-scary',
+								'dialog__button--domains-remove'
+							),
 							isPrimary: true,
 							disabled: this.state.step === 3 && ! this.state.domainValidated,
 							label:
@@ -227,15 +256,15 @@ class RemoveDomainDialog extends Component {
 				leaveTimeout={ 0 }
 			>
 				{ this.state.step === 1 && this.renderFirstStep( productName ) }
-				{ this.state.step === 2 && this.renderUpdateEmailStep( productName ) }
+				{ this.state.step === 2 && this.renderUpdateEmailStep() }
 				{ this.state.step === 3 && this.renderFinalStep( productName ) }
 			</Dialog>
 		);
 	}
 }
 
-export default connect( ( state, ownProps ) => {
-	const domains = getDomainsBySiteId( state, ownProps.purchase.siteId );
+export default connect( ( state: AppState, ownProps: RemoveDomainDialogOwnProps ) => {
+	const domains = getDomainsBySiteId( state, ownProps.purchase.blog_id );
 	const selectedDomainName = getName( ownProps.purchase );
 	const selectedDomain = getSelectedDomain( { domains, selectedDomainName } );
 	return {
@@ -243,6 +272,6 @@ export default connect( ( state, ownProps ) => {
 		hasTitanWithUs: hasTitanMailWithUs( selectedDomain ),
 		currentRoute: getCurrentRoute( state ),
 		userEmail: getCurrentUserEmail( state ),
-		slug: getSiteSlug( state, ownProps.purchase.siteId ),
+		slug: getSiteSlug( state, ownProps.purchase.blog_id ),
 	};
 } )( localize( RemoveDomainDialog ) );
