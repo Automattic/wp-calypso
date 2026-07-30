@@ -3,7 +3,10 @@
  */
 
 import { render, screen } from '@testing-library/react';
-import { EMAIL_WARNING_CODE_OTHER_USER_OWNS_DOMAIN_SUBSCRIPTION } from 'calypso/lib/emails/email-provider-constants';
+import {
+	EMAIL_WARNING_CODE_OTHER_USER_OWNS_DOMAIN_SUBSCRIPTION,
+	EMAIL_WARNING_CODE_OTHER_USER_OWNS_EMAIL,
+} from 'calypso/lib/emails/email-provider-constants';
 import { useDispatch, useSelector } from 'calypso/state';
 import EmailProvidersStackedComparison from '..';
 import type { ResponseDomain } from 'calypso/lib/domains/types';
@@ -154,5 +157,19 @@ describe( 'EmailProvidersStackedComparison', () => {
 		expect( screen.getByText( 'Email service can only be purchased' ) ).toBeVisible();
 		expect( screen.queryByText( 'Billing interval' ) ).not.toBeInTheDocument();
 		expect( screen.getByText( 'Email forwarding link' ) ).toBeVisible();
+	} );
+
+	// Domain ownership is the only paid-email blocker this page treats as still forwardable.
+	// Anything else, including reasons it doesn't recognize, has to stay hidden.
+	it( 'hides the forwarding link for any other reason email is unavailable', () => {
+		renderComparison( {
+			...nonOwnerDomainWithoutForwards,
+			currentUserCannotAddEmailReason: {
+				code: EMAIL_WARNING_CODE_OTHER_USER_OWNS_EMAIL,
+				message: 'Another user owns the email subscription.',
+			},
+		} as ResponseDomain );
+
+		expect( screen.queryByText( 'Email forwarding link' ) ).not.toBeInTheDocument();
 	} );
 } );

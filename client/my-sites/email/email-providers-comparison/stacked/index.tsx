@@ -26,14 +26,16 @@ import {
 	hasEmailForwards,
 	getDomainsWithEmailForwards,
 } from 'calypso/lib/domains/email-forwarding';
-import { EMAIL_WARNING_CODE_DOMAIN_STATE_RESTRICTED } from 'calypso/lib/emails/email-provider-constants';
+import {
+	EMAIL_WARNING_CODE_DOMAIN_STATE_RESTRICTED,
+	EMAIL_WARNING_CODE_OTHER_USER_OWNS_DOMAIN_SUBSCRIPTION,
+} from 'calypso/lib/emails/email-provider-constants';
 import { hasGSuiteSupportedDomain } from 'calypso/lib/gsuite';
 import { GOOGLE_WORKSPACE_PRODUCT_TYPE } from 'calypso/lib/gsuite/constants';
 import { domainAddNew } from 'calypso/my-sites/domains/paths';
 import { EmailDomainStateRestrictedMessage } from 'calypso/my-sites/email/email-domain-state-restricted-message';
 import EmailExistingForwardsNotice from 'calypso/my-sites/email/email-existing-forwards-notice';
 import EmailExistingPaidServiceNotice from 'calypso/my-sites/email/email-existing-paid-service-notice';
-import { canPromoteEmailForwarding } from 'calypso/my-sites/email/email-forwarding-eligibility';
 import { EmailNonDomainOwnerMessage } from 'calypso/my-sites/email/email-non-domain-owner-message';
 import { BillingIntervalToggle } from 'calypso/my-sites/email/email-providers-comparison/billing-interval-toggle';
 import EmailForwardingLink from 'calypso/my-sites/email/email-providers-comparison/email-forwarding-link';
@@ -107,7 +109,9 @@ const EmailProvidersStackedComparison = ( {
 	// This page only promotes forwarding to users it can't sell paid email to when the sole
 	// blocker is domain ownership. Other paid-email blockers stay hidden here even where they
 	// wouldn't rule out forwarding elsewhere, preserving what this page offered before.
-	const canShowEmailForwarding = canPromoteEmailForwarding( domain );
+	const canShowEmailForwarding =
+		currentUserCanAddEmail ||
+		cannotAddEmailWarningCode === EMAIL_WARNING_CODE_OTHER_USER_OWNS_DOMAIN_SUBSCRIPTION;
 
 	const isGSuiteSupported =
 		domain && canPurchaseGSuite && ( isDomainInCart || hasGSuiteSupportedDomain( [ domain ] ) );
