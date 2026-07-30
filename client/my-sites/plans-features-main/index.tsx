@@ -845,8 +845,8 @@ const PlansFeaturesMain = ( {
 	};
 
 	// Badge the plan a scheduled downgrade will land on so the user remembers it
-	// is queued. The term selector is hidden while a downgrade is pending, so the
-	// target product slug always matches the displayed plan slug.
+	// is queued. Keyed by exact product slug, so the badge only shows while the grid
+	// is displaying the downgrade target's term.
 	const highlightLabelOverridesWithDowngrade = useMemo( () => {
 		if ( ! delayedDowngradeToProductSlug ) {
 			return highlightLabelOverrides;

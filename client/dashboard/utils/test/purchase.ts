@@ -16,6 +16,7 @@ import {
 	isExpiredWithNoAutoRenewAttemptsLeft,
 	creditCardExpiresBeforeSubscription,
 	getRenewalUrlFromPurchase,
+	isPurchaseDowngradeEligible,
 } from '../purchase';
 import type { Purchase } from '@automattic/api-core';
 
@@ -438,5 +439,59 @@ describe( 'getRenewalUrlFromPurchase', () => {
 		);
 
 		expect( url ).toContain( '/checkout/business-bundle/renew/12345/example.wordpress.com?' );
+	} );
+} );
+
+describe( 'isPurchaseDowngradeEligible', () => {
+	// Both `plans/expired-downgrade` and `plans/delayed-downgrade` are enabled in
+	// every config, so these exercise the shipping behaviour.
+	test( 'is true for a downgradable plan', () => {
+		expect(
+			isPurchaseDowngradeEligible(
+				makePurchase( { is_plan: true, is_plan_type_downgradable: true } )
+			)
+		).toBe( true );
+	} );
+
+	test( 'is false for a plan with nothing below it', () => {
+		expect(
+			isPurchaseDowngradeEligible(
+				makePurchase( { is_plan: true, is_plan_type_downgradable: false } )
+			)
+		).toBe( false );
+	} );
+
+	test( 'is false for a non-plan product', () => {
+		expect(
+			isPurchaseDowngradeEligible(
+				makePurchase( { is_plan: false, is_plan_type_downgradable: true } )
+			)
+		).toBe( false );
+	} );
+
+	test( 'is true for a downgradable plan past its expiry date', () => {
+		expect(
+			isPurchaseDowngradeEligible(
+				makePurchase( {
+					is_plan: true,
+					is_plan_type_downgradable: true,
+					is_past_expiry_date: true,
+					expiry_status: 'expired',
+					subscription_status: 'active',
+				} )
+			)
+		).toBe( true );
+	} );
+
+	test( 'is true for a downgradable plan inside its refund window', () => {
+		expect(
+			isPurchaseDowngradeEligible(
+				makePurchase( {
+					is_plan: true,
+					is_plan_type_downgradable: true,
+					is_within_initial_refund_window: true,
+				} )
+			)
+		).toBe( true );
 	} );
 } );
