@@ -178,7 +178,7 @@ export function OverviewPreviewPane( {
 							true,
 							selectedSiteFeature,
 							setSelectedSiteFeature,
-							<SiteDetails site={ site } />
+							showNoAccess ? <A4ARequestWPAdminAccess /> : <SiteDetails site={ site } />
 						),
 				  ]
 				: [] ),
