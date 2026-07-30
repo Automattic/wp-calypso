@@ -3,10 +3,17 @@
 	flex-direction: column;
 	gap: 16px;
 
-	// Full-width buttons per the design; the shared button styles already center content.
+	// Full-width buttons per the design.
 	.step-container-v2__primary-button,
 	.step-container-v2__secondary-button {
 		width: 100%;
+	}
+
+	// The inbox button carries an icon, so WordPress's Button left-justifies it
+	// (`.has-icon.has-text`); the design centers the label. Match that selector's
+	// specificity plus the scope class to win.
+	.step-container-v2__primary-button.has-icon.has-text {
+		justify-content: center;
 	}
 }
 

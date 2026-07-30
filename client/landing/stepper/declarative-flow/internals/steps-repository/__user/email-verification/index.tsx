@@ -1,7 +1,7 @@
 import { Step } from '@automattic/onboarding';
 import { createInterpolateElement } from '@wordpress/element';
 import { sprintf } from '@wordpress/i18n';
-import { external } from '@wordpress/icons';
+import { arrowUpRight } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
 import { useCallback, useEffect, useMemo, useRef, type ReactNode } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
@@ -124,7 +124,7 @@ const EmailVerificationGate = ( { flow, scope, logo, onDone }: Props ) => {
 						target="_blank"
 						rel="noreferrer noopener"
 						onClick={ openInbox }
-						icon={ external }
+						icon={ arrowUpRight }
 						iconPosition="right"
 					>
 						{ __( 'Open email inbox' ) }
