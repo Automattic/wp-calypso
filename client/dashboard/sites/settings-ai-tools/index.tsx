@@ -116,7 +116,7 @@ const features = [
 ];
 
 const upgradeRequiredText = __( 'Upgrade your plan to enable this setting.' );
-const upgradeRequiredBadge = { text: __( 'Upgrade required' ) };
+const upgradeRequiredBadge = { text: __( 'Upgrade required' ), intent: 'info' as const };
 
 function UpgradeRequiredBadge() {
 	return (
@@ -482,22 +482,23 @@ export default function AIToolsSettings( { siteSlug }: { siteSlug: string } ) {
 					disabled={ ! isAvailable }
 				/>
 				{ config.isEnabled( 'dolly/telegram' ) && (
-					<SummaryButton
-						className={ ! isAvailable ? 'ai-tools-settings__locked-card' : undefined }
-						href={ wpcomLink( TELEGRAM_CONNECTION_PATH ) }
-						title={ __( 'Connect Telegram' ) }
-						description={ __(
-							'Connect your WordPress.com account to Telegram. This connection is shared across multiple sites.'
-						) }
-						decoration={ <Icon icon={ send } size={ 24 } /> }
-						onClick={ () => {
-							recordTracksEvent( 'calypso_dashboard_ai_tool_connect_telegram_click', {
-								site_id: site.ID,
-							} );
-						} }
-						badges={ ! isAvailable ? [ upgradeRequiredBadge ] : undefined }
-						disabled={ ! isAvailable }
-					/>
+					<div className={ ! isAvailable ? 'ai-tools-settings__locked-card' : undefined }>
+						<SummaryButton
+							href={ wpcomLink( TELEGRAM_CONNECTION_PATH ) }
+							title={ __( 'Connect Telegram' ) }
+							description={ __(
+								'Connect your WordPress.com account to Telegram. This connection is shared across multiple sites.'
+							) }
+							decoration={ <Icon icon={ send } size={ 24 } /> }
+							onClick={ () => {
+								recordTracksEvent( 'calypso_dashboard_ai_tool_connect_telegram_click', {
+									site_id: site.ID,
+								} );
+							} }
+							badges={ ! isAvailable ? [ upgradeRequiredBadge ] : undefined }
+							disabled={ ! isAvailable }
+						/>
+					</div>
 				) }
 				{ config.isEnabled( 'mcp-settings' ) && isAvailable && (
 					<>

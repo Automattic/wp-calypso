@@ -251,10 +251,9 @@ describe( '<AIToolsSettings>', () => {
 			'Upgrade your plan to enable this setting.'
 		);
 
-		expect( screen.getByRole( 'button', { name: /Connect Telegram/ } ) ).toHaveAttribute(
-			'aria-disabled',
-			'true'
-		);
+		const telegramButton = screen.getByRole( 'button', { name: /Connect Telegram/ } );
+		expect( telegramButton ).toHaveClass( 'dashboard-summary-button' );
+		expect( telegramButton ).toHaveAttribute( 'aria-disabled', 'true' );
 
 		expect(
 			screen.queryByRole( 'heading', { name: 'External AI agent access' } )
