@@ -1,7 +1,6 @@
 import { localizeUrl } from '@automattic/i18n-utils';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { useEffect } from '@wordpress/element';
-import { useHelpCenterContext } from '../contexts/HelpCenterContext';
 import { HELP_CENTER_STORE } from '../stores';
 import type { HelpCenterSelect } from '@automattic/data-stores';
 
@@ -9,54 +8,23 @@ import type { HelpCenterSelect } from '@automattic/data-stores';
  * Add your conditions here to open the Help Center automatically when they're met.
  */
 export const useActionHooks = () => {
-	const {
-		consumeLoggedOutOdieChatHandoff,
-		setShowHelpCenter,
-		setShowSupportDoc,
-		setNavigateToRoute,
-		setNewMessagingChat,
-	} = useDispatch( 'automattic/help-center' );
-	const { currentUser, newLoggedOutInteractionsBotSlug } = useHelpCenterContext();
+	const { setShowHelpCenter, setShowSupportDoc, setNavigateToRoute, setNewMessagingChat } =
+		useDispatch( 'automattic/help-center' );
 	const queryParams = new URLSearchParams( window.location.search );
 
-	const { helpCenterRouterHistory, pendingLoggedOutSession } = useSelect(
-		( select ) => {
-			const store = select( HELP_CENTER_STORE ) as HelpCenterSelect;
-
-			return {
-				helpCenterRouterHistory: store.getHelpCenterRouterHistory(),
-				pendingLoggedOutSession: currentUser?.ID
-					? store.getPendingLoggedOutOdieChat( newLoggedOutInteractionsBotSlug )
-					: undefined,
-			};
-		},
-		[ currentUser?.ID, newLoggedOutInteractionsBotSlug ]
+	const helpCenterRouterHistory = useSelect(
+		( select ) => ( select( HELP_CENTER_STORE ) as HelpCenterSelect ).getHelpCenterRouterHistory(),
+		[]
 	);
 
-	// Wait for both preferences so stale router history cannot win the login handoff race.
-	const areDependenciesLoading = useSelect( ( select ) => {
-		const store = select( HELP_CENTER_STORE ) as HelpCenterSelect;
-		return (
-			store.isResolving( 'isHelpCenterShown' ) || store.isResolving( 'getHelpCenterRouterHistory' )
-		);
-	}, [] );
+	// Wait until the Help Center persisted state is loaded.
+	const isResolving = useSelect(
+		( select ) =>
+			( select( HELP_CENTER_STORE ) as HelpCenterSelect ).isResolving( 'isHelpCenterShown' ),
+		[]
+	);
 
-	useEffect( () => {
-		if ( areDependenciesLoading || ! pendingLoggedOutSession ) {
-			return;
-		}
-
-		setNavigateToRoute( '/' );
-		setShowHelpCenter( true );
-		consumeLoggedOutOdieChatHandoff( newLoggedOutInteractionsBotSlug );
-	}, [
-		areDependenciesLoading,
-		consumeLoggedOutOdieChatHandoff,
-		newLoggedOutInteractionsBotSlug,
-		pendingLoggedOutSession,
-		setNavigateToRoute,
-		setShowHelpCenter,
-	] );
+	const areDependenciesLoading = isResolving;
 
 	const actionHooks = [
 		/**

@@ -2,7 +2,20 @@ import { HelpCenterThunkProps } from './types';
 import { getPersistedPreference } from './utils';
 
 export function isHelpCenterShown() {
-	return async ( { dispatch }: HelpCenterThunkProps ) => {
+	return async ( { dispatch, select }: HelpCenterThunkProps ) => {
+		if ( select.hasLoggedOutOdieChat() ) {
+			dispatch( {
+				type: 'HELP_CENTER_SET_NAVIGATE_TO_ROUTE',
+				route: '/',
+				coalesceParams: false,
+			} as const );
+			dispatch( {
+				type: 'HELP_CENTER_SET_SHOW',
+				show: true,
+			} as const );
+			return;
+		}
+
 		try {
 			const helpCenterOpen = await getPersistedPreference( 'help_center_open' );
 

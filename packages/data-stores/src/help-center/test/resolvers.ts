@@ -1,4 +1,4 @@
-import { getHelpCenterRouterHistory } from '../resolvers';
+import { getHelpCenterRouterHistory, isHelpCenterShown } from '../resolvers';
 import { getPersistedPreference } from '../utils';
 import type { HelpCenterThunkProps } from '../types';
 
@@ -13,6 +13,47 @@ const mockGetPersistedPreference = getPersistedPreference as jest.MockedFunction
 describe( 'Help Center resolvers', () => {
 	beforeEach( () => {
 		jest.clearAllMocks();
+	} );
+
+	it( 'opens at home when a logged-out session is persisted', async () => {
+		const dispatch = jest.fn();
+		const select = {
+			hasLoggedOutOdieChat: jest.fn( () => true ),
+		};
+
+		await isHelpCenterShown()( {
+			dispatch,
+			select,
+		} as unknown as HelpCenterThunkProps );
+
+		expect( mockGetPersistedPreference ).not.toHaveBeenCalled();
+		expect( dispatch ).toHaveBeenNthCalledWith( 1, {
+			type: 'HELP_CENTER_SET_NAVIGATE_TO_ROUTE',
+			route: '/',
+			coalesceParams: false,
+		} );
+		expect( dispatch ).toHaveBeenNthCalledWith( 2, {
+			type: 'HELP_CENTER_SET_SHOW',
+			show: true,
+		} );
+	} );
+
+	it( 'uses the open preference when there is no logged-out session', async () => {
+		mockGetPersistedPreference.mockResolvedValue( true );
+		const dispatch = jest.fn();
+		const select = {
+			hasLoggedOutOdieChat: jest.fn( () => false ),
+		};
+
+		await isHelpCenterShown()( {
+			dispatch,
+			select,
+		} as unknown as HelpCenterThunkProps );
+
+		expect( dispatch ).toHaveBeenCalledWith( {
+			type: 'HELP_CENTER_SET_SHOW',
+			show: true,
+		} );
 	} );
 
 	it( 'restores router history when no navigation was requested', async () => {

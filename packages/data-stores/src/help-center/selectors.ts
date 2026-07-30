@@ -34,8 +34,19 @@ export const getLoggedOutOdieChat = ( state: State, botSlug: string ) => {
 	// Read the temporary keyed shape previously persisted under the singular field.
 	return legacySession?.[ botSlug ];
 };
-export const getPendingLoggedOutOdieChat = ( state: State, botSlug: string ) =>
-	state.loggedOutOdieChatHandoffs?.[ botSlug ] ? getLoggedOutOdieChat( state, botSlug ) : undefined;
+export const hasLoggedOutOdieChat = ( state: State ) => {
+	if ( state.loggedOutOdieChats && Object.keys( state.loggedOutOdieChats ).length ) {
+		return true;
+	}
+
+	const legacySession = state.loggedOutOdieChat;
+
+	if ( isLoggedOutOdieChat( legacySession ) ) {
+		return true;
+	}
+
+	return Object.values( legacySession ?? {} ).some( isLoggedOutOdieChat );
+};
 export const getAreSoundNotificationsEnabled = ( state: State ) =>
 	state.areSoundNotificationsEnabled;
 export const getZendeskClientId = ( state: State ) => state.zendeskClientId;

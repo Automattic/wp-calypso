@@ -65,20 +65,10 @@ export const setIsMinimized = function ( minimized: boolean ) {
 	} as const;
 };
 
-export const setLoggedOutOdieChat = (
-	session: LoggedOutOdieChat | undefined,
-	shouldHandOff = false
-) =>
+export const setLoggedOutOdieChat = ( session: LoggedOutOdieChat | undefined ) =>
 	( {
 		type: 'HELP_CENTER_SET_LOGGED_OUT_ODIE_CHAT',
 		session,
-		shouldHandOff,
-	} ) as const;
-
-export const consumeLoggedOutOdieChatHandoff = ( botSlug: string ) =>
-	( {
-		type: 'HELP_CENTER_CONSUME_LOGGED_OUT_ODIE_CHAT_HANDOFF',
-		botSlug,
 	} ) as const;
 
 export const setIsChatLoaded = ( isChatLoaded: boolean ) =>
@@ -334,7 +324,6 @@ export type HelpCenterAction =
 			| typeof setIsChatLoaded
 			| typeof setAreSoundNotificationsEnabled
 			| typeof setZendeskClientId
-			| typeof consumeLoggedOutOdieChatHandoff
 			| typeof setSupportTypingStatus
 			| typeof setZendeskConnectionStatus
 			| typeof setNavigateToRoute

@@ -140,9 +140,9 @@ export const useSendOdieMessage = ( signal: AbortSignal ) => {
 			params.set( 'sessionId', sessionId );
 			params.set( 'botSlug', botSlug );
 			navigate( `${ location.pathname }?${ params.toString() }`, { replace: true } );
-			setLoggedOutOdieChat( { odieId: chatId, sessionId, botSlug }, ! isLoggedIn );
+			setLoggedOutOdieChat( { odieId: chatId, sessionId, botSlug } );
 		},
-		[ isLoggedIn, location.pathname, location.search, navigate, setLoggedOutOdieChat ]
+		[ location.pathname, location.search, navigate, setLoggedOutOdieChat ]
 	);
 
 	const hasBeenWarnedAboutExistingConversation = chat?.messages?.some(
