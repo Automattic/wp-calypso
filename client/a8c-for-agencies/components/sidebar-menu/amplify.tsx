@@ -4,7 +4,7 @@ import { __ } from '@wordpress/i18n';
 import { chevronLeft } from '@wordpress/icons';
 import Sidebar from '../sidebar';
 import useAmplifyMenuItems from './hooks/use-amplify-menu-items';
-import { A4A_AMPLIFY_LINK, A4A_OVERVIEW_LINK } from './lib/constants';
+import { A4A_AMPLIFY_LINK, A4A_RESOURCES_LINK } from './lib/constants';
 
 type Props = {
 	path: string;
@@ -23,10 +23,10 @@ export default function AmplifySidebar( { path }: Props ) {
 				</div>
 			}
 			backButtonProps={ {
-				label: __( 'Back to overview' ),
+				label: __( 'Back to Resources and tools' ),
 				icon: chevronLeft,
 				onClick: () => {
-					page( A4A_OVERVIEW_LINK );
+					page( A4A_RESOURCES_LINK );
 				},
 			} }
 			menuItems={ menuItems }

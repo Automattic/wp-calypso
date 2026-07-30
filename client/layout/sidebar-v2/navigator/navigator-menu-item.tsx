@@ -47,6 +47,8 @@ export const SidebarNavigatorMenuItem = ( {
 			<Item
 				className={ clsx( 'sidebar-v2__menu-item', {
 					'is-active': isSelected,
+					'has-badge': !! badge,
+					'has-chevron': withChevron,
 				} ) }
 				onClick={ () => onClickMenuItem( link ) }
 				href={ link }

@@ -88,3 +88,15 @@
 	align-items: center;
 	gap: 8px;
 }
+
+.a4a-sidebar .sidebar-v2__menu-item.has-badge {
+	.sidebar-menu-item__title-with-badge {
+		justify-content: space-between;
+	}
+
+	// Items with a chevron end 32px (24px icon + 8px stack gap) sooner than items
+	// without one; reserving that space keeps stacked badges on the same column.
+	&:not(.has-chevron) .sidebar-menu-item__title-with-badge {
+		padding-inline-end: 32px;
+	}
+}

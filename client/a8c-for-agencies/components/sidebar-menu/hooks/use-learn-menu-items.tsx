@@ -1,13 +1,16 @@
 import { isEnabled } from '@automattic/calypso-config';
 import { BigSkyLogo } from '@automattic/components/src/logos/big-sky-logo';
-import { brush, chartBar, pages, tool } from '@wordpress/icons';
+import { brush, chartBar, megaphone, pages, tool } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { useMemo } from 'react';
 import { useSelector } from 'react-redux';
+import { isPathAllowed } from 'calypso/a8c-for-agencies/lib/permission';
+import { isSectionNameEnabled } from 'calypso/sections-filter';
 import { getActiveAgency } from 'calypso/state/a8c-for-agencies/agency/selectors';
 import {
 	A4A_AGENT_STUDIO_LINK,
 	A4A_AI_MCP_LINK,
+	A4A_AMPLIFY_LINK,
 	A4A_BENCHMARKS_LINK,
 	A4A_DEV_TOOLS_LINK,
 	A4A_LEARN_LINK,
@@ -21,6 +24,12 @@ const useLearnMenuItems = ( path: string ) => {
 	const isAgentStudioEnabled = isEnabled( 'a4a-agent-studio' );
 	const isAiMcpEnabled = !! agency?.mcp?.allowed;
 	const isBenchmarksEnabled = isEnabled( 'a4a-benchmarks' );
+	// The section flag matters as well as the agency flag: with the Amplify section off, the
+	// learn section's `/resources-and-tools` prefix swallows the URL and nothing ever renders.
+	const isAmplifyEnabled =
+		isSectionNameEnabled( 'a8c-for-agencies-amplify' ) &&
+		!! agency?.amplify?.allowed &&
+		isPathAllowed( A4A_AMPLIFY_LINK, agency );
 
 	const menuItems = useMemo( () => {
 		return [
@@ -50,20 +59,6 @@ const useLearnMenuItems = ( path: string ) => {
 						},
 				  ]
 				: [] ),
-			...( isAiMcpEnabled
-				? [
-						{
-							icon: <BigSkyLogo.CentralLogo heartless size={ 24 } />,
-							path: A4A_AI_MCP_LINK,
-							link: A4A_AI_MCP_LINK,
-							title: translate( 'AI and MCP' ),
-							badge: translate( 'Beta' ),
-							trackEventProps: {
-								menu_item: 'Automattic for Agencies / Resources and tools / AI and MCP',
-							},
-						},
-				  ]
-				: [] ),
 			{
 				icon: tool,
 				path: A4A_DEV_TOOLS_LINK,
@@ -82,8 +77,44 @@ const useLearnMenuItems = ( path: string ) => {
 					menu_item: 'Automattic for Agencies / Resources and tools / Learn',
 				},
 			},
+			...( isAiMcpEnabled
+				? [
+						{
+							icon: <BigSkyLogo.CentralLogo heartless size={ 24 } />,
+							path: A4A_AI_MCP_LINK,
+							link: A4A_AI_MCP_LINK,
+							title: translate( 'AI and MCP' ),
+							badge: translate( 'Beta' ),
+							trackEventProps: {
+								menu_item: 'Automattic for Agencies / Resources and tools / AI and MCP',
+							},
+						},
+				  ]
+				: [] ),
+			...( isAmplifyEnabled
+				? [
+						{
+							icon: megaphone,
+							path: A4A_AMPLIFY_LINK,
+							link: A4A_AMPLIFY_LINK,
+							title: translate( 'Amplify' ),
+							badge: translate( 'Beta' ),
+							trackEventProps: {
+								menu_item: 'Automattic for Agencies / Resources and tools / Amplify',
+							},
+							withChevron: true,
+						},
+				  ]
+				: [] ),
 		].map( ( item ) => createItem( item, path ) );
-	}, [ path, translate, isAgentStudioEnabled, isAiMcpEnabled, isBenchmarksEnabled ] );
+	}, [
+		path,
+		translate,
+		isAgentStudioEnabled,
+		isAiMcpEnabled,
+		isAmplifyEnabled,
+		isBenchmarksEnabled,
+	] );
 
 	return menuItems;
 };

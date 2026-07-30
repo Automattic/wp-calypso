@@ -1,8 +1,20 @@
-import { category, code, starEmpty, tool, cautionFilled as warning } from '@wordpress/icons';
+import {
+	category,
+	chartBar,
+	code,
+	starEmpty,
+	tool,
+	cautionFilled as warning,
+} from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { useMemo } from 'react';
 import useFetchPendingSites from 'calypso/a8c-for-agencies/data/sites/use-fetch-pending-sites';
 import useNoActiveSite from 'calypso/a8c-for-agencies/hooks/use-no-active-site';
+import { isPathAllowed } from 'calypso/a8c-for-agencies/lib/permission';
+import { A4A_REPORTS_LINK } from 'calypso/a8c-for-agencies/sections/reports/constants';
+import { isSectionNameEnabled } from 'calypso/sections-filter';
+import { useSelector } from 'calypso/state';
+import { getActiveAgency } from 'calypso/state/a8c-for-agencies/agency/selectors';
 import {
 	A4A_SITES_LINK,
 	A4A_SITES_LINK_DEVELOPMENT,
@@ -14,7 +26,12 @@ import { createItem } from '../lib/utils';
 
 const useSitesMenuItems = ( path: string ) => {
 	const translate = useTranslate();
+	const agency = useSelector( getActiveAgency );
 	const noActiveSite = useNoActiveSite();
+	// Mirrors the guard in the sites section: without it `/sites/reports` falls through to the
+	// `/sites/:category` catch-all and renders the sites dashboard instead.
+	const isReportsAllowed =
+		isSectionNameEnabled( 'a8c-for-agencies-reports' ) && isPathAllowed( A4A_REPORTS_LINK, agency );
 	const { data } = useFetchPendingSites();
 	const totalAvailableSites =
 		data?.filter(
@@ -85,7 +102,24 @@ const useSitesMenuItems = ( path: string ) => {
 			} );
 		}
 
-		return items.map( ( item ) => createItem( item, path ) );
-	}, [ noActiveSite, path, translate, shouldAddNeedsSetup ] );
+		const reportsItems = isReportsAllowed
+			? [
+					{
+						id: 'sites-reports-menu-item',
+						icon: chartBar,
+						path: A4A_SITES_LINK,
+						link: A4A_REPORTS_LINK,
+						title: translate( 'Reports' ),
+						badge: translate( 'Beta' ),
+						trackEventProps: {
+							menu_item: 'Automattic for Agencies / Sites / Reports',
+						},
+						withChevron: true,
+					},
+			  ]
+			: [];
+
+		return [ ...items, ...reportsItems ].map( ( item ) => createItem( item, path ) );
+	}, [ isReportsAllowed, noActiveSite, path, translate, shouldAddNeedsSetup ] );
 };
 export default useSitesMenuItems;

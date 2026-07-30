@@ -55,7 +55,7 @@ export const ALL_TIERS: TierItem[] = [
 					{
 						id: 'create-client-reports',
 						label: __( 'Create Client Reports' ),
-						href: '/reports',
+						href: '/sites/reports',
 					},
 					{
 						id: 'manage-purchases',

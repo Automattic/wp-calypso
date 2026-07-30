@@ -861,8 +861,10 @@ const sections = [
 		group: 'a8c-for-agencies',
 	},
 	{
+		// Reports now lives under `/sites/reports` and is registered by the sites section;
+		// this retired path only exists so the module can redirect it.
 		name: 'a8c-for-agencies-reports',
-		paths: [ '/reports', '/reports/overview', '/reports/dashboard' ],
+		paths: [ '/reports' ],
 		module: 'calypso/a8c-for-agencies/sections/reports',
 		group: 'a8c-for-agencies',
 	},
@@ -1008,7 +1010,8 @@ const sections = [
 	},
 	{
 		name: 'a8c-for-agencies-amplify',
-		paths: [ '/amplify' ],
+		// `/amplify` is the retired top-level path, kept so the module can redirect it.
+		paths: [ '/resources-and-tools/amplify', '/amplify' ],
 		module: 'calypso/a8c-for-agencies/sections/amplify',
 		group: 'a8c-for-agencies',
 	},
