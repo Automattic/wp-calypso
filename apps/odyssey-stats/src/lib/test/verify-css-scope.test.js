@@ -1,7 +1,5 @@
 import { findScopeFailures } from '../../../bin/verify-css-scope';
-
-const PREFIX =
-	':where(.jp-stats-dashboard, .color-scheme, .ReactModalPortal, [data-base-ui-portal], [data-wp-compat-overlay-slot], .components-modal__screen-overlay, .components-popover__fallback-container, .jp-stats-widget)';
+import { prefix as PREFIX } from '../../../webpack-css-scope';
 
 // One prefixed rule, both entry points self-styled unprefixed, and a portal root legitimately
 // nested inside the prefix — satisfies every check.
@@ -110,8 +108,7 @@ describe( 'verify-css-scope findScopeFailures', () => {
 	} );
 
 	it( 'is unaffected by minification stripping whitespace after commas in :where(...)', () => {
-		const minifiedPrefix =
-			':where(.jp-stats-dashboard,.color-scheme,.ReactModalPortal,[data-base-ui-portal],[data-wp-compat-overlay-slot],.components-modal__screen-overlay,.components-popover__fallback-container,.jp-stats-widget)';
+		const minifiedPrefix = PREFIX.replace( /,\s+/g, ',' );
 		const css = `
 			${ minifiedPrefix } .card{color:red}
 			.jp-stats-dashboard{--sidebar-width-max:160px}
