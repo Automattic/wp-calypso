@@ -273,8 +273,51 @@ function injectScopedReset() {
 	document.head.appendChild( style );
 }
 
+/**
+ * Apply the Site Chat brand accent as agenttic-ui design tokens.
+ *
+ * Two things make this trickier than it looks:
+ *
+ * 1. The chat panel is portalled to `body`, so a rule scoped to the
+ *    `#jetpack-reader-chat` mount node never reaches it. We target the same
+ *    selectors `injectScopedReset` already relies on.
+ * 2. The variables are NOT set on `:root`. `--color-primary` is a common
+ *    custom property name, and defining it globally would silently restyle
+ *    the host blog's own theme.
+ *
+ * Emits nothing when the site has no accent — agenttic's default stands.
+ * @param {Object} brand The brand object from JetpackReaderChatConfig.
+ */
+function injectBrandTokens( brand ) {
+	const accent = brand?.accent;
+	if ( ! accent || document.getElementById( 'jetpack-reader-chat-brand' ) ) {
+		return;
+	}
+
+	// Jetpack precomputes the accessible foreground; fall back to white only
+	// if an older PHP deploy sent an accent without one.
+	const accentForeground = brand?.accentForeground || '#ffffff';
+
+	const style = document.createElement( 'style' );
+	style.id = 'jetpack-reader-chat-brand';
+	style.textContent = `
+		.agents-manager-chat,
+		.agents-manager-sidebar-fab,
+		.components-popover {
+			--color-primary: ${ accent };
+			--color-primary-foreground: ${ accentForeground };
+		}
+		.agents-manager-brand-logo {
+			border-radius: 50%;
+			object-fit: cover;
+		}
+	`;
+	document.head.appendChild( style );
+}
+
 // Read config injected by PHP.
 const readerConfig = window.JetpackReaderChatConfig || {};
+const readerBrand = readerConfig.brand || {};
 const readerAgentId = readerConfig.agentId || 'reader-chat';
 const readerSiteId = normalizeReaderSiteId( readerConfig.siteId );
 const readerCurrentPost = getReaderCurrentPost( readerConfig );
@@ -291,6 +334,12 @@ window.agentsManagerData.emptyViewHeading = getReaderEmptyViewHeading( readerCon
 window.agentsManagerData.currentPost = readerCurrentPost;
 window.agentsManagerData.siteName = readerConfig.siteName || '';
 window.agentsManagerData.siteUrl = readerConfig.siteUrl || '';
+
+// Site Chat brand kit. Jetpack omits keys that resolve to nothing, and an
+// older cached copy of this bundle may run against PHP that sends no brand at
+// all — so both sides degrade to the unbranded look rather than throwing.
+window.agentsManagerData.brandName = readerBrand.name || '';
+window.agentsManagerData.brandLogoUrl = readerBrand.logoUrl || '';
 
 /**
  * Build fallback suggested prompts based on the current page context.
@@ -392,6 +441,12 @@ function getReaderCurrentPost( config ) {
 }
 
 function getReaderEmptyViewHeading( config ) {
+	// An owner-set greeting wins; otherwise stay contextual to the page.
+	const greeting = config?.brand?.greeting;
+	if ( greeting ) {
+		return greeting;
+	}
+
 	return getReaderCurrentPost( config )
 		? 'Ask me anything about this post.'
 		: 'Ask me anything about this blog.';
@@ -1109,6 +1164,7 @@ function ReaderChatApp() {
 const container = document.getElementById( 'jetpack-reader-chat' );
 if ( container ) {
 	injectScopedReset();
+	injectBrandTokens( readerBrand );
 	setupFollowupChips();
 	setupTracksEvents();
 	setupCollapsedLauncherPointerFallback();
@@ -1150,6 +1206,7 @@ export {
 	normalizeReaderSiteId,
 	decodeHtmlEntities,
 	getReaderEmptyViewHeading,
+	injectBrandTokens,
 	getReaderClientContext,
 	normalizeSuggestions,
 	parseSuggestionsResponse,

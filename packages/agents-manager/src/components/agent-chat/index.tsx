@@ -10,7 +10,7 @@ import {
 	type UploadedImage,
 } from '@automattic/agenttic-ui';
 import { useDispatch, useSelect } from '@wordpress/data';
-import { useCallback, useMemo, useRef } from '@wordpress/element';
+import { useCallback, useMemo, useRef, useState } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import clsx from 'clsx';
 import { formatWritingSuggestionLabels } from '../../hooks/use-empty-view-suggestions';
@@ -19,6 +19,7 @@ import { AGENTS_MANAGER_STORE } from '../../stores';
 import { getAgentsManagerInlineData } from '../../utils/get-agents-manager-inline-data';
 import { isEditorPage } from '../../utils/is-editor-page';
 import { isReaderChatHost } from '../../utils/is-reader-chat-agent';
+import { getBrandName, getBrandLogoUrl } from '../../utils/site-chat-brand';
 import { recordBigSkyTracksEvent } from '../../utils/tracks';
 import ChatHeader, { type Options as ChatHeaderOptions } from '../chat-header';
 import ChatMessageSkeleton from '../chat-message-skeleton';
@@ -135,6 +136,33 @@ function getEmptyViewHeading(): string {
 		return __( 'Ask me anything about this blog.', __i18n_text_domain__ );
 	}
 	return __( 'Howdy! How can I help you today?', __i18n_text_domain__ );
+}
+
+/**
+ * Renders the site's logo, falling back to the default agent icon if the image
+ * fails to load.
+ *
+ * The fallback matters: this mounts on every page of a public blog, so a
+ * deleted or unreachable Site Icon must degrade to the stock mark rather than
+ * paint a broken-image box across the whole site.
+ */
+function BrandLogo( { src, size = 32 }: { src: string; size?: number } ) {
+	const [ failed, setFailed ] = useState( false );
+
+	if ( failed ) {
+		return <AI size={ size } />;
+	}
+
+	return (
+		<img
+			src={ src }
+			alt=""
+			width={ size }
+			height={ size }
+			className="agents-manager-brand-logo"
+			onError={ () => setFailed( true ) }
+		/>
+	);
 }
 
 function getEmptyViewHelp(): string {
@@ -287,8 +315,13 @@ export default function AgentChat( {
 		}
 	}, [ trackImageUpload ] );
 
+	const brandName = getBrandName();
+	const brandLogoUrl = getBrandLogoUrl();
+
 	return (
 		<AgentUI.Container
+			triggerTitle={ brandName }
+			triggerIcon={ brandLogoUrl ? <BrandLogo src={ brandLogoUrl } /> : undefined }
 			initialChatPosition={ floatingPosition }
 			onChatPositionChange={ ( position ) => setFloatingPosition( position ) }
 			initialFreeDragPosition={ freeDragPosition ?? undefined }
@@ -327,13 +360,18 @@ export default function AgentChat( {
 						suggestions={ emptyViewSuggestions }
 						groupWritingSuggestions={ groupWritingSuggestions }
 						onSuggestionClick={ onSuggestionClick }
-						icon={ <AI size={ 32 } /> }
+						icon={ brandLogoUrl ? <BrandLogo src={ brandLogoUrl } /> : <AI size={ 32 } /> }
 					/>
 				)
 			}
 		>
 			<AgentUI.ConversationView ref={ conversationViewRef }>
-				<ChatHeader onClose={ onClose } options={ chatHeaderOptions } isDocked={ isDocked } />
+				<ChatHeader
+					onClose={ onClose }
+					options={ chatHeaderOptions }
+					isDocked={ isDocked }
+					title={ brandName }
+				/>
 				{ isLoadingConversation ? <ChatMessageSkeleton count={ 3 } /> : <AgentUI.Messages /> }
 				{ ( onContextCardAction || onContextCardDismiss ) && (
 					<ContextCards onAction={ onContextCardAction } onDismiss={ onContextCardDismiss } />
