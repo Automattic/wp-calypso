@@ -442,32 +442,22 @@ export function LicensePreviewPlaceholder() {
 		<div className="license-preview license-preview--placeholder">
 			<LicenseListItem className="license-preview__card">
 				<div>
-					<h3 className="license-preview__domain">{ translate( 'Loading' ) }</h3>
-
-					<div className="license-preview__product" />
+					<div className="license-preview__placeholder-bar">{ translate( 'Loading' ) }</div>
 				</div>
 
 				<div>
-					<div className="license-preview__label">{ translate( 'Issued on:' ) }</div>
-
-					<div />
+					<div className="license-preview__placeholder-bar" />
 				</div>
 
 				<div>
-					<div className="license-preview__label">{ translate( 'Assigned on:' ) }</div>
-
-					<div />
+					<div className="license-preview__placeholder-bar" />
 				</div>
 
 				<div>
-					<div className="license-preview__label">{ translate( 'Revoked on:' ) }</div>
-
-					<div />
+					<div className="license-preview__placeholder-bar" />
 				</div>
 
-				<div>
-					<div className="license-preview__copy-license-key" />
-				</div>
+				<div />
 
 				<div />
 			</LicenseListItem>
