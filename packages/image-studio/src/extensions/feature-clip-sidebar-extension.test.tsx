@@ -40,6 +40,7 @@ let mockReelVisible = false;
 let mockGenericVisible = false;
 let mockReelIsConfirming = false;
 let mockReelIgDisplayName: string | null = null;
+let mockSlotIsRendering = true;
 const mockReelRequestShare = jest.fn();
 const mockReelConfirmShare = jest.fn();
 const mockReelCancelShare = jest.fn();
@@ -65,13 +66,14 @@ jest.mock( '@wordpress/components', () => ( {
 			{ children ?? icon }
 		</button>
 	),
-	// Stands in for the Jetpack sidebar Slot, which Jetpack's editor bundle
-	// mounts in production but nothing mounts in jsdom. Rendering children
-	// inline puts the panel body in the DOM for the queries below; recording
-	// the name asserts the Fill targets Jetpack's sidebar.
+	// Stands in for the Jetpack sidebar Slot. `mockSlotIsRendering` picks which
+	// real-world case to simulate: children rendered inline (Jetpack's sidebar
+	// is open, so the Slot renders its fills) or nothing at all (no Jetpack
+	// bundle, or the sidebar is closed — a Fill with no rendering Slot mounts
+	// no children). Recording the name asserts the Fill targets Jetpack.
 	Fill: ( { name, children }: { name: string; children: React.ReactNode } ) => {
 		mockFill( name );
-		return <>{ children }</>;
+		return mockSlotIsRendering ? <>{ children }</> : null;
 	},
 	PanelBody: ( { children }: { children: React.ReactNode } ) => <>{ children }</>,
 	VisuallyHidden: ( { children }: { children: React.ReactNode } ) => <span>{ children }</span>,
@@ -241,6 +243,7 @@ describe( 'feature-clip-sidebar-extension', () => {
 		mockGenericVisible = false;
 		mockReelIsConfirming = false;
 		mockReelIgDisplayName = null;
+		mockSlotIsRendering = true;
 		( window as Record< string, unknown > ).imageStudioData = { canGenerateVideoClips: true };
 		jest.resetModules();
 	} );
@@ -291,6 +294,21 @@ describe( 'feature-clip-sidebar-extension', () => {
 			expect( screen.getAllByText( 'Turn this post into a short vertical video.' ) ).toHaveLength(
 				1
 			);
+		} );
+
+		it( 'renders no body and fires no impression when the Slot is not rendering', () => {
+			// No Jetpack editor bundle, or the sidebar is closed. The body must
+			// stay unmounted so its getMedia resolution and panel-viewed
+			// impression never run on an editor load nobody looked at.
+			mockSlotIsRendering = false;
+			const { FeatureClipPanel } = require( './feature-clip-sidebar-extension' );
+			render( <FeatureClipPanel /> );
+
+			expect( mockFill ).toHaveBeenCalledWith( 'JetpackPluginSidebar' );
+			expect(
+				screen.queryByText( 'Turn this post into a short vertical video.' )
+			).not.toBeInTheDocument();
+			expect( mockTrackPanelViewed ).not.toHaveBeenCalled();
 		} );
 
 		it( 'fills the Jetpack sidebar regardless of clip state', () => {

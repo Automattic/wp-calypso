@@ -2,8 +2,11 @@
  * "Generate Feature Clip" post-editor sidebar panel.
  *
  * Rendered only into the Jetpack sidebar, via a `Fill` into Jetpack's
- * `"JetpackPluginSidebar"` SlotFill. The Fill is inert when the Jetpack editor
- * bundle isn't loaded, so the panel simply doesn't appear there.
+ * `"JetpackPluginSidebar"` SlotFill. Jetpack feeds that Slot's fills through
+ * `PluginSidebar`, whose children mount only while the sidebar is open — so
+ * the Fill's contents stay unmounted both when the Jetpack editor bundle is
+ * absent and when the user simply hasn't opened the sidebar. Everything with
+ * a side effect therefore lives inside the Fill (see `FeatureClipPanel`).
  *
  * When no clip is linked to the post, shows a short description + Generate
  * clip button. Once a clip exists (via the `_jetpack_feature_clip_id` post
@@ -257,7 +260,16 @@ function FeatureClipPanel(): JSX.Element | null {
 		return null;
 	}
 
-	return <FeatureClipPanelBody postType={ postType } postId={ postId } />;
+	// The body lives INSIDE the Fill on purpose. A Fill whose Slot isn't
+	// rendering renders no children, so every hook below — the `getMedia`
+	// resolution and the panel-viewed impression — stays dormant until
+	// Jetpack's sidebar actually shows the panel. Hoisting the body out here
+	// would fire both on every editor load instead.
+	return (
+		<Fill name="JetpackPluginSidebar">
+			<FeatureClipPanelBody postType={ postType } postId={ postId } />
+		</Fill>
+	);
 }
 
 interface FeatureClipPanelBodyProps {
@@ -351,16 +363,14 @@ function FeatureClipPanelBody( { postType, postId }: FeatureClipPanelBodyProps )
 	} )();
 
 	return (
-		<Fill name="JetpackPluginSidebar">
-			<PanelBody
-				// PanelBody.title is typed as string but renders any ReactNode at runtime;
-				// the badge must live in the title row so it stays visible when the panel is collapsed.
-				title={ titleNode as unknown as string }
-				className="image-studio-feature-clip-panel"
-			>
-				{ body }
-			</PanelBody>
-		</Fill>
+		<PanelBody
+			// PanelBody.title is typed as string but renders any ReactNode at runtime;
+			// the badge must live in the title row so it stays visible when the panel is collapsed.
+			title={ titleNode as unknown as string }
+			className="image-studio-feature-clip-panel"
+		>
+			{ body }
+		</PanelBody>
 	);
 }
 
