@@ -53,6 +53,10 @@ const NoteList = ( { filterName, selectedNoteId, setSelectedNoteId }: NoteListPr
 	const allNotes = useSelector( ( state ) => getAllNotes( state ) || [] ) as Note[];
 	const filteredNoteIds = useSelector( ( state ) => getFilteredNoteIds( state ) ) as number[];
 
+	// `filteredNoteIds` still holds the previous tab's list until the effect below
+	// applies this tab's filter, so ignore it until then to avoid a stale flash.
+	const [ hasAppliedFilter, setHasAppliedFilter ] = useState( false );
+
 	// The "All" tab renders the whole cache; every filtered tab renders the
 	// server's id list for the active filter. `filter.filter` still runs on top so
 	// an in-app change (e.g. reading a note on Unread) drops it out before a refetch.
@@ -61,7 +65,7 @@ const NoteList = ( { filterName, selectedNoteId, setSelectedNoteId }: NoteListPr
 		notes = allNotes.filter( ( note ) => filter.filter( note ) );
 	} else {
 		const notesById = new Map( allNotes.map( ( note ) => [ note.id, note ] ) );
-		notes = filteredNoteIds
+		notes = ( hasAppliedFilter ? filteredNoteIds : [] )
 			.map( ( id ) => notesById.get( id ) )
 			.filter( ( note ): note is Note => !! note )
 			.filter( ( note ) => filter.filter( note ) );
@@ -91,7 +95,11 @@ const NoteList = ( { filterName, selectedNoteId, setSelectedNoteId }: NoteListPr
 	// Drive the client's server-side filter from the active tab. Each filter maps
 	// to a query fragment (or null for "All"); the client refetches on change.
 	useEffect( () => {
-		client?.setFilter( getFilters()[ filterName ].query );
+		if ( ! client ) {
+			return;
+		}
+		client.setFilter( getFilters()[ filterName ].query );
+		setHasAppliedFilter( true );
 	}, [ client, filterName ] );
 
 	const onChangeSelection = ( selection: string[] ) => {
@@ -179,9 +187,11 @@ const NoteList = ( { filterName, selectedNoteId, setSelectedNoteId }: NoteListPr
 	useNoteListNavigationKeyboardShortcuts( { noteListRef, visibleNotes } );
 
 	// Spinner instead of an empty message while the view may still be filling: more
-	// notes to page, or a filtered fetch in flight. A filtered tab keys off the
-	// in-flight filter, not the shared `isLoading` the background poll also toggles.
-	const showEmptyLoader = hasMoreNotes || ( filterName !== 'all' && !! filteredLoading );
+	// notes to page, a filtered fetch in flight, or the tab's filter not yet applied.
+	// A filtered tab keys off the in-flight filter, not the shared `isLoading` the
+	// background poll also toggles.
+	const showEmptyLoader =
+		hasMoreNotes || ( filterName !== 'all' && ( ! hasAppliedFilter || !! filteredLoading ) );
 
 	// `groupBy` forces DataViews' list layout off its infinite-scroll path, which
 	// is the only path that renders its built-in load-more spinner — so we render
