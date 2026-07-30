@@ -1,5 +1,4 @@
 import { siteByIdQuery } from '@automattic/api-queries';
-import { WPCOM_FEATURES_MANAGE_PLUGINS } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
 import { useQuery } from '@tanstack/react-query';
 import { useEffect } from 'react';
@@ -7,7 +6,6 @@ import { isAtomicTransferredSite } from 'calypso/dashboard/utils/site-atomic-tra
 import { useInterval } from 'calypso/lib/interval';
 import { useSelector, useDispatch } from 'calypso/state';
 import { transferStates } from 'calypso/state/automated-transfer/constants';
-import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { getSiteAdminUrl } from 'calypso/state/sites/selectors';
 import { requestActiveTheme } from 'calypso/state/themes/actions';
 import { usePostTransferPluginRecovery } from './use-post-transfer-plugin-recovery';
@@ -17,7 +15,6 @@ import { usePostTransferPluginRecovery } from './use-post-transfer-plugin-recove
 // upload flows land on wp-admin's plugins page; a theme flow goes to the marketplace thank-you page.
 export function useThankYouRedirect( {
 	siteId,
-	selectedSite,
 	selectedSiteSlug,
 	currentStep,
 	isPluginUploadFlow,
@@ -27,13 +24,11 @@ export function useThankYouRedirect( {
 	isThemeActive,
 	installedPlugin,
 	pluginActive,
-	uploadedPluginSlug,
 	atomicFlow,
-	isAtomic,
 	automatedTransferStatus,
+	isTransferredUpload,
 }: {
 	siteId: number;
-	selectedSite: { ID?: number } | null | undefined;
 	selectedSiteSlug: string | null;
 	currentStep: number;
 	isPluginUploadFlow: boolean;
@@ -43,10 +38,9 @@ export function useThankYouRedirect( {
 	isThemeActive: boolean;
 	installedPlugin: { slug?: string; id?: string } | null | undefined;
 	pluginActive: boolean;
-	uploadedPluginSlug: string;
 	atomicFlow: boolean;
-	isAtomic: boolean | null;
 	automatedTransferStatus: string | null;
+	isTransferredUpload: boolean;
 } ) {
 	const dispatch = useDispatch();
 
@@ -73,10 +67,6 @@ export function useThankYouRedirect( {
 	// Prefer fresh URL when available; if in atomic flow, wait for fresh URL
 	const pluginsUrlFinal = atomicFlow ? pluginsUrlFresh : pluginsUrlFresh || pluginsUrlSelector;
 
-	const canManagePlugins = useSelector( ( state ) =>
-		siteHasFeature( state, selectedSite?.ID, WPCOM_FEATURES_MANAGE_PLUGINS )
-	);
-
 	// A plugin install that has landed on an Atomic site with the plugin possibly still inactive.
 	// Covers both the checkout-initiated flow (atomicFlow never set) and the flow where this component
 	// drives the transfer (atomicFlow set) — in both, the transfer can complete before the plugin is
@@ -84,55 +74,39 @@ export function useThankYouRedirect( {
 	// for a marketplace-only slug, which the store normalizes to wporg: true, so that never holds.
 	const isRecoveryFlow = ! isPluginUploadFlow && !! pluginSlug && !! freshSite?.is_wpcom_atomic;
 
+	// A zip upload's transfer installs the archive and can report complete before activating it. Until
+	// the plugin list is read again the plugin cannot be seen at all: it was last fetched while the
+	// site was still Simple.
+	const uploadTransferSettled =
+		isTransferredUpload &&
+		automatedTransferStatus === transferStates.COMPLETE &&
+		!! isAtomicTransferReady;
+
 	usePostTransferPluginRecovery( {
 		siteId,
-		enabled: isRecoveryFlow && ! pluginActive,
+		enabled: ( isRecoveryFlow || uploadTransferSettled ) && ! pluginActive,
 		// isAtomicTransferReady already requires manage_options, which the transfer propagates after
 		// is_wpcom_atomic flips; activating during that gap would fail and burn the retry budget.
 		canActivate: !! isAtomicTransferReady,
 		// Two recovery windows: the checkout-initiated flow, which sits at step 0 while it observes a
 		// background transfer, and the component-driven transfer, whose plugin lands at step 2 after the
-		// step-driven effect's activation window (step 1). Leaving ordinary in-place installs to that
-		// effect avoids a redundant activation racing it at step 2.
-		ownsActivation: ( ! atomicFlow && currentStep === 0 ) || ( atomicFlow && currentStep === 2 ),
+		// step-driven effect's activation window (step 1). A transferred upload's plugin is this hook's
+		// outright, since it needs retrying and the step-driven effect stands down for that flow.
+		// Leaving ordinary in-place installs to that effect avoids a redundant activation at step 2.
+		ownsActivation:
+			uploadTransferSettled ||
+			( ! atomicFlow && currentStep === 0 ) ||
+			( atomicFlow && currentStep === 2 ),
 		installedPlugin,
 	} );
-	// Check completition of all flows and redirect to thank you page
+	// Every plugin flow lands here the same way: the plugin reads active. For the ones a transfer
+	// drives, that is only true once the transfer is far enough along and the site is reachable, which
+	// is also when the URL below resolves.
 	useEffect( () => {
-		if (
-			// Happens in 3 cases:
-			// - Click on "Install and activate" button for any plugin on /plugins/<site_name>
-			// - Install with the help of uploading archive of a plugins
-			// - If it's simple site which doesn't support plugins, then installing and activation happens at the same time with upgrading to Business plan
-			// This also covers the atomic-transfer flows (checkout-initiated and component-driven): the
-			// plugin only reads active once the transfer is far enough along, and for an atomicFlow the
-			// redirect URL below resolves only after the transfer completes, so no separate arm is needed.
-			( installedPlugin && pluginActive ) ||
-			// Transfer to atomic uploading a zip plugin
-			( uploadedPluginSlug &&
-				isPluginUploadFlow &&
-				! isAtomic &&
-				transferStates.COMPLETE === automatedTransferStatus &&
-				canManagePlugins &&
-				isAtomicTransferReady )
-		) {
-			// Require a resolved pluginsUrlFinal before redirecting
-			if ( ! pluginsUrlFinal ) {
-				return;
-			}
-			window.location.href = pluginsUrlFinal as string;
+		if ( installedPlugin && pluginActive && pluginsUrlFinal ) {
+			window.location.href = pluginsUrlFinal;
 		}
-	}, [
-		pluginActive,
-		automatedTransferStatus,
-		isPluginUploadFlow,
-		isAtomic,
-		canManagePlugins,
-		installedPlugin,
-		uploadedPluginSlug,
-		pluginsUrlFinal,
-		isAtomicTransferReady,
-	] ); // We need to trigger this hook also when `automatedTransferStatus` changes cause the plugin install is done on the background in that case.
+	}, [ installedPlugin, pluginActive, pluginsUrlFinal ] );
 
 	// Validate theme is already active
 	useEffect( () => {

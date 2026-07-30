@@ -20,6 +20,7 @@ import { fetchPluginData as wporgFetchPluginData } from 'calypso/state/plugins/w
 import { getPlugin, isFetched } from 'calypso/state/plugins/wporg/selectors';
 import { getCurrentQueryArguments } from 'calypso/state/selectors/get-current-query-arguments';
 import getPluginUploadError from 'calypso/state/selectors/get-plugin-upload-error';
+import getPluginUploadMethod from 'calypso/state/selectors/get-plugin-upload-method';
 import getPluginUploadProgress from 'calypso/state/selectors/get-plugin-upload-progress';
 import getUploadedPluginId from 'calypso/state/selectors/get-uploaded-plugin-id';
 import isPluginUploadComplete from 'calypso/state/selectors/is-plugin-upload-complete';
@@ -89,6 +90,11 @@ export function useProductInstall( {
 		getUploadedPluginId( state, siteId )
 	) as string;
 	const pluginUploadComplete = useSelector( ( state ) => isPluginUploadComplete( state, siteId ) );
+	// A zip upload that brought the site to Atomic. Its plugin arrives with the transfer rather than
+	// through an install this page dispatched, so the recovery poll is what watches for it — and
+	// retries its activation, which the one-shot effect below cannot.
+	const uploadMethod = useSelector( ( state ) => getPluginUploadMethod( state, siteId ) );
+	const isTransferredUpload = isPluginUploadFlow && uploadMethod === 'transfer';
 
 	// Installed plugins are indexed by the slug they were installed under, which for a marketplace
 	// product is its software_slug (e.g. js-composer installs as js_composer), not the route slug.
@@ -242,19 +248,28 @@ export function useProductInstall( {
 			currentStep === 1 &&
 			( ! isPluginUploadFlow || pluginUploadComplete )
 		) {
-			dispatch(
-				activatePlugin( siteId, {
-					slug: installedPlugin?.slug,
-					id: installedPlugin?.id,
-				} )
-			);
+			if ( ! isTransferredUpload ) {
+				dispatch(
+					activatePlugin( siteId, {
+						slug: installedPlugin?.slug,
+						id: installedPlugin?.id,
+					} )
+				);
+			}
 			setCurrentStep( 2 );
 		}
-	}, [ installedPlugin, currentStep, isPluginUploadFlow, pluginUploadComplete, dispatch, siteId ] );
+	}, [
+		installedPlugin,
+		currentStep,
+		isPluginUploadFlow,
+		isTransferredUpload,
+		pluginUploadComplete,
+		dispatch,
+		siteId,
+	] );
 
 	useThankYouRedirect( {
 		siteId,
-		selectedSite,
 		selectedSiteSlug,
 		currentStep,
 		isPluginUploadFlow,
@@ -264,10 +279,9 @@ export function useProductInstall( {
 		isThemeActive,
 		installedPlugin,
 		pluginActive,
-		uploadedPluginSlug,
 		atomicFlow,
-		isAtomic,
 		automatedTransferStatus,
+		isTransferredUpload,
 	} );
 
 	const steps = useMemo( () => {
