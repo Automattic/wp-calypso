@@ -65,13 +65,13 @@ jest.mock( '@wordpress/components', () => ( {
 			{ children ?? icon }
 		</button>
 	),
-	// Faithful to real SlotFill semantics: a Fill with no matching Slot
-	// mounted (none in jsdom) renders nothing. Recording the name lets us
-	// assert the Jetpack-sidebar wiring without duplicating the body in the
-	// DOM (which would break every single-match query below).
-	Fill: ( { name }: { name: string } ) => {
+	// Stands in for the Jetpack sidebar Slot, which Jetpack's editor bundle
+	// mounts in production but nothing mounts in jsdom. Rendering children
+	// inline puts the panel body in the DOM for the queries below; recording
+	// the name asserts the Fill targets Jetpack's sidebar.
+	Fill: ( { name, children }: { name: string; children: React.ReactNode } ) => {
 		mockFill( name );
-		return null;
+		return <>{ children }</>;
 	},
 	PanelBody: ( { children }: { children: React.ReactNode } ) => <>{ children }</>,
 	VisuallyHidden: ( { children }: { children: React.ReactNode } ) => <span>{ children }</span>,
@@ -139,16 +139,6 @@ const mockUseEffect = jest.requireActual< typeof import('react') >( 'react' ).us
 
 jest.mock( '@wordpress/element', () => ( {
 	useEffect: mockUseEffect,
-} ) );
-
-jest.mock( '@wordpress/editor', () => ( {
-	PluginDocumentSettingPanel: ( {
-		children,
-		title,
-	}: {
-		children: React.ReactNode;
-		title: string;
-	} ) => <section aria-label={ title }>{ children }</section>,
 } ) );
 
 jest.mock( '@wordpress/i18n', () => ( {
@@ -285,13 +275,22 @@ describe( 'feature-clip-sidebar-extension', () => {
 		expect( mockRegisterPlugin.mock.calls[ 0 ][ 0 ] ).toBe( 'image-studio-feature-clip' );
 	} );
 
-	describe( 'dual-render (document + Jetpack sidebars)', () => {
-		it( 'also fills the Jetpack sidebar SlotFill', () => {
+	describe( 'render target (Jetpack sidebar only)', () => {
+		it( 'fills the Jetpack sidebar SlotFill', () => {
 			const { FeatureClipPanel } = require( './feature-clip-sidebar-extension' );
 			render( <FeatureClipPanel /> );
-			// The document-sidebar copy is asserted by every other test; this
-			// confirms the second render target — Jetpack's sidebar slot.
 			expect( mockFill ).toHaveBeenCalledWith( 'JetpackPluginSidebar' );
+		} );
+
+		it( 'renders into the Jetpack sidebar and nowhere else', () => {
+			const { FeatureClipPanel } = require( './feature-clip-sidebar-extension' );
+			render( <FeatureClipPanel /> );
+			// One render target only — a second Fill (or a document-sidebar
+			// panel alongside it) would duplicate the body.
+			expect( mockFill ).toHaveBeenCalledTimes( 1 );
+			expect( screen.getAllByText( 'Turn this post into a short vertical video.' ) ).toHaveLength(
+				1
+			);
 		} );
 
 		it( 'fills the Jetpack sidebar regardless of clip state', () => {
