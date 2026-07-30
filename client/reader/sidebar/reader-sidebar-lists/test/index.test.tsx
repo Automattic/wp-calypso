@@ -109,7 +109,7 @@ describe( 'ReaderSidebarLists', () => {
 			await user.click( screen.getByRole( 'menuitem', { name: 'Mark all as read' } ) );
 
 			expect( mockMarkAllAsSeen ).toHaveBeenCalledWith( {
-				identifier: 'sidebar-lists',
+				identifier: '',
 				feedIds: [ 10, 11, 20 ],
 				feedUrls: [],
 			} );

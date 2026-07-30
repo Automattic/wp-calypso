@@ -12,8 +12,7 @@ import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import ExpandableSidebarMenu from 'calypso/layout/sidebar/expandable';
 import ReaderUnreadCount from 'calypso/layout/sidebar/reader-unread-count';
 import { useSubscribedFeedsInfo, useSubscribedSites } from 'calypso/reader/data/site-subscriptions';
-import { getSiteDomain } from 'calypso/reader/get-helpers';
-import { formatUrlForDisplay } from 'calypso/reader/lib/feed-display-helper';
+import { getReaderSidebarSiteName } from 'calypso/reader/get-helpers';
 import MoreMenuActions from 'calypso/reader/sidebar/more-menu-actions';
 import { recordAction, recordGaEvent } from 'calypso/reader/stats';
 import { useRecordReaderTracksEvent } from 'calypso/state/reader/analytics/useRecordReaderTracksEvent';
@@ -30,40 +29,6 @@ type Props = {
 
 const SITE_DISPLAY_CUTOFF = 5;
 const RECENT_PATH_REGEX = /^\/reader(?:\/recent\/\d+)?\/?(?:\?|$)/;
-
-type ReaderSidebarSite = Pick< ReturnType< typeof useSubscribedSites >[ number ], 'name' | 'URL' >;
-
-const isFreeWpcomSubdomain = ( host = '' ): boolean => /\.wordpress\.com$/i.test( host );
-
-/**
- * Label for a followed site: real title, else an `r/subreddit` handle, else the
- * resolved domain. Untitled WordPress.com sites come back named after their free
- * subdomain, so those fall through to the domain from `URL`.
- */
-export function getReaderSidebarSiteName( site: ReaderSidebarSite ): string {
-	const siteName = site.name ?? '';
-	// `name` may be URL-shaped, so normalize before the subdomain check.
-	const normalizedName = formatUrlForDisplay( siteName ) || siteName;
-
-	if ( siteName && ! isFreeWpcomSubdomain( normalizedName ) ) {
-		return siteName;
-	}
-
-	// A title-less subreddit reads best as its `r/name` (or `u/name`) handle, since
-	// every subreddit resolves to the same generic `reddit.com` domain. The host is
-	// anchored so only genuine `reddit.com` feeds qualify.
-	const reddit = site.URL?.match( /^https?:\/\/(?:[^/]+\.)?reddit\.com\/(r|user)\/([^/?#]+)/i );
-	if ( reddit ) {
-		return `${ reddit[ 1 ].toLowerCase() === 'user' ? 'u' : 'r' }/${ reddit[ 2 ] }`;
-	}
-
-	const siteDomain = site.URL ? getSiteDomain( { site: { URL: site.URL } } ) : undefined;
-	if ( siteDomain ) {
-		return siteDomain;
-	}
-
-	return siteName;
-}
 
 const ReaderSidebarRecent = ( { isOpen, onClick, path, className }: Props ): React.JSX.Element => {
 	const translate = useTranslate();
@@ -169,7 +134,6 @@ const ReaderSidebarRecent = ( { isOpen, onClick, path, className }: Props ): Rea
 											feedUrls={ [ site.feed_URL ] }
 											source="sidebar-recent-item"
 											unseenCount={ unseenCount }
-											blogId={ Number( site.blog_ID ) }
 											siteName={ displayName }
 											onUnsubscribed={ () => {
 												if ( feedId === selectedSiteFeedId ) {

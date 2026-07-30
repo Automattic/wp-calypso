@@ -24,13 +24,12 @@ jest.mock( 'calypso/state', () => ( {
 
 const params = {
 	feedUrl: 'https://example.com/feed',
-	blogId: 42,
 	siteName: 'Example Blog',
 	source: 'recent',
 };
 
-const target = { feedUrl: params.feedUrl, blogId: params.blogId };
-const eventProps = { blog_id: params.blogId, source: params.source };
+const target = { feedUrl: params.feedUrl };
+const eventProps = { feed_url: params.feedUrl, source: params.source };
 
 // The notice action carries the Undo handler in its options, which is the only  way to exercise undo without rendering the global notices tree.
 const getNotice = () => mockDispatch.mock.calls[ 0 ][ 0 ].notice;
@@ -50,7 +49,7 @@ describe( 'useUnsubscribeWithUndo', () => {
 			'calypso_reader_unsubscribe_clicked',
 			eventProps
 		);
-		expect( getNotice().text ).toBe( 'Unsubscribed from Example Blog.' );
+		expect( getNotice().text ).toBe( 'Success! You are now unsubscribed from "Example Blog".' );
 		expect( getNotice().button ).toBe( 'Undo' );
 	} );
 
@@ -59,7 +58,9 @@ describe( 'useUnsubscribeWithUndo', () => {
 
 		result.current( { ...params, siteName: undefined } );
 
-		expect( getNotice().text ).toBe( `Unsubscribed from ${ params.feedUrl }.` );
+		expect( getNotice().text ).toBe(
+			`Success! You are now unsubscribed from "${ params.feedUrl }".`
+		);
 	} );
 
 	test( 'undo re-subscribes and dismisses the notice', () => {

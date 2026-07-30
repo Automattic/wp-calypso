@@ -19,7 +19,7 @@ jest.mock( 'calypso/state/reader/analytics/useRecordReaderTracksEvent', () => ( 
 } ) );
 
 const mockUnsubscribeWithUndo = jest.fn();
-jest.mock( 'calypso/reader/data/site-subscriptions', () => ( {
+jest.mock( 'calypso/reader/data/site-subscriptions/use-unsubscribe-with-undo', () => ( {
 	useUnsubscribeWithUndo: () => mockUnsubscribeWithUndo,
 } ) );
 
@@ -29,15 +29,17 @@ const defaultProps: ComponentProps< typeof MoreMenuActions > = {
 	feedIds: [ 1, 2 ],
 	feedUrls: [ 'https://example.com/feed', 'https://another.example.com/feed' ],
 	unseenCount: 3,
+	source: 'testing',
 };
 
-const singleFeedProps = {
+const singleFeedProps: ComponentProps< typeof MoreMenuActions > = {
+	identifier: 'feed:1',
 	isSingleFeed: true,
 	feedIds: [ 1 ],
 	feedUrls: [ 'https://example.com/feed' ],
-	blogId: 42,
 	siteName: 'Example Blog',
-	source: 'recent',
+	source: 'testing',
+	unseenCount: 0,
 };
 
 function renderMoreMenuActions( props = {} ) {
@@ -88,7 +90,7 @@ describe( 'MoreMenuActions', () => {
 
 		expect( mockRecordReaderTracksEvent ).toHaveBeenCalledWith(
 			'calypso_reader_mark_all_as_seen_clicked',
-			{ source: defaultProps.identifier }
+			{ source: defaultProps.source }
 		);
 		expect( mockMarkAllAsSeen ).toHaveBeenCalledWith( {
 			identifier: defaultProps.identifier,
@@ -186,7 +188,6 @@ describe( 'MoreMenuActions', () => {
 
 			expect( mockUnsubscribeWithUndo ).toHaveBeenCalledWith( {
 				feedUrl: singleFeedProps.feedUrls[ 0 ],
-				blogId: singleFeedProps.blogId,
 				siteName: singleFeedProps.siteName,
 				source: singleFeedProps.source,
 			} );

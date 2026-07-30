@@ -6,8 +6,8 @@ import { SiteIcon } from 'calypso/blocks/site-icon';
 import AutoDirection from 'calypso/components/auto-direction';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
 import ReaderUnreadCount from 'calypso/layout/sidebar/reader-unread-count';
-import { MoreMenuActions } from 'calypso/reader/sidebar/more-menu-actions';
-import { getReaderSidebarSiteName } from 'calypso/reader/sidebar/reader-sidebar-recent';
+import { getReaderSidebarSiteName } from 'calypso/reader/get-helpers';
+import MoreMenuActions from 'calypso/reader/sidebar/more-menu-actions';
 import { recordAction, recordGaEvent } from 'calypso/reader/stats';
 import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
 import ReaderSidebarHelper from '../helper';
@@ -62,7 +62,6 @@ export class ReaderSidebarOrganizationsListItem extends Component {
 								feedIds={ [ feedId ] }
 								feedUrls={ [ site.feed_URL ] }
 								unseenCount={ site.unseen_count }
-								blogId={ site.blog_ID }
 								siteName={ getReaderSidebarSiteName( site ) }
 								source="reader-organization-item"
 								onUnsubscribed={ () => {

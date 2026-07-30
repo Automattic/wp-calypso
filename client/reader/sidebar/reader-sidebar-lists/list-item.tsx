@@ -6,6 +6,7 @@ import { useEffect, useRef } from 'react';
 import { useSelector } from 'react-redux';
 import AutoDirection from 'calypso/components/auto-direction';
 import ReaderUnreadCount from 'calypso/layout/sidebar/reader-unread-count';
+import { getListStreamKey } from 'calypso/reader/list/controller';
 import { recordAction, recordGaEvent } from 'calypso/reader/stats';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
 import { useRecordReaderTracksEvent } from 'calypso/state/reader/analytics/useRecordReaderTracksEvent';
@@ -100,10 +101,11 @@ const ReaderSidebarListsListItem = ( {
 				{ isSeenEnabled && (
 					<span className="sidebar__actions-and-count">
 						<MoreMenuActions
-							identifier="sidebar-list"
+							identifier={ getListStreamKey( list.owner, list.slug ) }
 							isSingleFeed={ false }
 							feedIds={ feedIds }
 							feedUrls={ [] }
+							source="sidebar-list-item"
 							unseenCount={ unseenCount }
 						/>
 						<ReaderUnreadCount count={ unseenCount } />

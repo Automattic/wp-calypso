@@ -57,10 +57,11 @@ const ReaderSidebarLists = ( {
 				expandableIconClick={ onClick }
 				moreMenuActions={
 					<MoreMenuActions
-						identifier="sidebar-lists"
+						identifier=""
 						isSingleFeed={ false }
 						feedIds={ allFeedIds }
 						feedUrls={ [] }
+						source="sidebar-list-header"
 						unseenCount={ totalUnseenCount }
 					/>
 				}

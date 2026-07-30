@@ -6,7 +6,7 @@ import { DropdownMenu } from '@wordpress/components';
 import { check, moreHorizontal, trash } from '@wordpress/icons';
 import { fixMe, useTranslate } from 'i18n-calypso';
 import { useMarkAllAsSeenMutation } from 'calypso/reader/data/seen-posts';
-import { useUnsubscribeWithUndo } from 'calypso/reader/data/site-subscriptions';
+import { useUnsubscribeWithUndo } from 'calypso/reader/data/site-subscriptions/use-unsubscribe-with-undo';
 import { useRecordReaderTracksEvent } from 'calypso/state/reader/analytics/useRecordReaderTracksEvent';
 
 type MoreMenuActionsProps = {
@@ -17,7 +17,6 @@ type MoreMenuActionsProps = {
 	unseenCount: number;
 
 	// Props for the single feed case.
-	blogId?: number;
 	isSingleFeed?: boolean;
 	siteName?: string;
 	onUnsubscribed?: () => void;
@@ -30,7 +29,6 @@ export default function MoreMenuActions( {
 	feedUrls,
 	source,
 	unseenCount,
-	blogId,
 	siteName,
 	onUnsubscribed,
 }: MoreMenuActionsProps ) {
@@ -57,7 +55,7 @@ export default function MoreMenuActions( {
 			return;
 		}
 
-		unsubscribeWithUndo( { feedUrl, blogId, siteName, source } );
+		unsubscribeWithUndo( { feedUrl, siteName, source } );
 		onUnsubscribed?.();
 	};
 
@@ -98,16 +96,20 @@ export default function MoreMenuActions( {
 		isDisabled: unseenCount === 0,
 	};
 
-	const unsubscribeControl = {
-		title: translate( 'Unsubscribe' ) as string,
-		icon: trash,
-		onClick: handleUnsubscribe,
-	};
-
 	// Each nested set renders as its own group; DropdownMenu draws a separator before the first item of every set after the first.
-	const controls = isSingleFeed
-		? [ [ markAsSeenControl ], [ unsubscribeControl ] ]
-		: [ [ markAsSeenControl ] ];
+	const controls = [ [ markAsSeenControl ] ];
+
+	// Add the unsubscribe control if this is a single feed.
+	if ( isSingleFeed && feedUrls.length === 1 ) {
+		const unsubscribeControl = {
+			title: translate( 'Unsubscribe' ) as string,
+			icon: trash,
+			onClick: handleUnsubscribe,
+			isDisabled: false,
+		};
+
+		controls.push( [ unsubscribeControl ] );
+	}
 
 	return (
 		// eslint-disable-next-line jsx-a11y/no-static-element-interactions

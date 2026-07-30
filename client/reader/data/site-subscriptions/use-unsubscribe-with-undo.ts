@@ -8,7 +8,6 @@ const UNSUBSCRIBE_NOTICE_ID = 'reader-sidebar-unsubscribe-with-undo';
 
 interface UnsubscribeWithUndoParams {
 	feedUrl: string;
-	blogId?: number;
 	siteName?: string;
 	source?: string;
 }
@@ -23,9 +22,9 @@ export const useUnsubscribeWithUndo = () => {
 	const { mutate: followSite } = useFollowSite();
 	const { mutate: unfollowSite } = useUnfollowSite();
 
-	return ( { feedUrl, blogId, siteName, source }: UnsubscribeWithUndoParams ): void => {
-		const target = { feedUrl, blogId: blogId ?? undefined };
-		const eventProps = { blog_id: target.blogId, feed_url: target.feedUrl, source };
+	return ( { feedUrl, siteName, source }: UnsubscribeWithUndoParams ): void => {
+		const target = { feedUrl };
+		const eventProps = { feed_url: target.feedUrl, source };
 
 		recordReaderTracksEvent( 'calypso_reader_unsubscribe_clicked', eventProps );
 		unfollowSite( target );
