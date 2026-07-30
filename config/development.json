@@ -159,6 +159,7 @@
 		"oauth": false,
 		"oauth/unified-experience": true,
 		"onboarding/create-course": false,
+		"onboarding/email-verification": false,
 		"onboarding/import-from-blogger": true,
 		"onboarding/import-from-medium": true,
 		"onboarding/import-from-squarespace": true,
