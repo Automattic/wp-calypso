@@ -40,12 +40,18 @@
 	inset-block-start: 3px;
 }
 
-.license-preview__product-pressable-link {
+.theme-a8c-for-agencies a.license-preview__product-pressable-link {
 
 	&,
-	&:visited {
+	&:visited,
+	&:active {
 		@include heading-medium;
-		color: var(--color-text);
+		color: var(--color-text-subtle);
+	}
+
+	&:hover,
+	&:focus {
+		color: var(--color-neutral-70);
 	}
 }
 
