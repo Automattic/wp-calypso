@@ -1,4 +1,6 @@
 .overview__relaunch-welcome-tour.components-button.is-secondary {
+	display: flex;
+	justify-content: center;
 	width: 100%;
 	font-weight: 500;
 	color: var(--color-accent);
