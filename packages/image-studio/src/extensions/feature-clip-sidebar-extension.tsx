@@ -1,12 +1,12 @@
 /**
  * "Generate Feature Clip" post-editor sidebar panel.
  *
- * Dual-rendered, mirroring Jetpack SEO's pattern: the same body renders into
- * BOTH the default WordPress document sidebar (via `PluginDocumentSettingPanel`
- * from `@wordpress/editor`) AND the Jetpack sidebar (via a `Fill` into
- * Jetpack's `"JetpackPluginSidebar"` SlotFill). The Fill is inert when the
- * Jetpack editor bundle isn't loaded, so the document-sidebar copy always
- * shows and the Jetpack-sidebar copy is purely additive.
+ * Rendered only into the Jetpack sidebar, via a `Fill` into Jetpack's
+ * `"JetpackPluginSidebar"` SlotFill. Jetpack feeds that Slot's fills through
+ * `PluginSidebar`, whose children mount only while the sidebar is open — so
+ * the Fill's contents stay unmounted both when the Jetpack editor bundle is
+ * absent and when the user simply hasn't opened the sidebar. Everything with
+ * a side effect therefore lives inside the Fill (see `FeatureClipPanel`).
  *
  * When no clip is linked to the post, shows a short description + Generate
  * clip button. Once a clip exists (via the `_jetpack_feature_clip_id` post
@@ -17,7 +17,6 @@ import { createBlock } from '@wordpress/blocks';
 import { Button, Fill, Notice, PanelBody, VisuallyHidden } from '@wordpress/components';
 import { useEntityProp } from '@wordpress/core-data';
 import { dispatch, useSelect } from '@wordpress/data';
-import { PluginDocumentSettingPanel } from '@wordpress/editor';
 import { useEffect } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { share } from '@wordpress/icons';
@@ -40,7 +39,6 @@ import type { JSX } from 'react';
 import './feature-clip-sidebar.scss';
 
 const PLUGIN_NAME = 'image-studio-feature-clip';
-const PANEL_NAME = 'image-studio-feature-clip-panel';
 
 interface MediaRecord {
 	id: number;
@@ -262,7 +260,16 @@ function FeatureClipPanel(): JSX.Element | null {
 		return null;
 	}
 
-	return <FeatureClipPanelBody postType={ postType } postId={ postId } />;
+	// The body lives INSIDE the Fill on purpose. A Fill whose Slot isn't
+	// rendering renders no children, so every hook below — the `getMedia`
+	// resolution and the panel-viewed impression — stays dormant until
+	// Jetpack's sidebar actually shows the panel. Hoisting the body out here
+	// would fire both on every editor load instead.
+	return (
+		<Fill name="JetpackPluginSidebar">
+			<FeatureClipPanelBody postType={ postType } postId={ postId } />
+		</Fill>
+	);
 }
 
 interface FeatureClipPanelBodyProps {
@@ -339,11 +346,6 @@ function FeatureClipPanelBody( { postType, postId }: FeatureClipPanelBodyProps )
 	const hasLoadError =
 		!! featureClipId && hasResolvedAttachment && ! attachment && !! resolutionError;
 
-	// Body is described once and rendered into both sidebars. Each SlotFill
-	// portal instantiates its own subtree, so FeatureClipPreview's share
-	// hooks get one instance per sidebar — safe: the hooks have no
-	// mount-time side effects and only the visible sidebar is interacted
-	// with (same dual-instance shape as Jetpack SEO's shared panels).
 	const body = ( () => {
 		if ( hasUsableClip ) {
 			return (
@@ -361,27 +363,14 @@ function FeatureClipPanelBody( { postType, postId }: FeatureClipPanelBodyProps )
 	} )();
 
 	return (
-		<>
-			<PluginDocumentSettingPanel
-				name={ PANEL_NAME }
-				// PluginDocumentSettingPanel.title is typed as string but renders any ReactNode at runtime;
-				// the badge must live in the title row so it stays visible when the panel is collapsed.
-				title={ titleNode as unknown as string }
-				className="image-studio-feature-clip-panel"
-			>
-				{ body }
-			</PluginDocumentSettingPanel>
-			<Fill name="JetpackPluginSidebar">
-				<PanelBody
-					// PanelBody.title is typed as string but renders any ReactNode
-					// at runtime — same cast rationale as the document panel above.
-					title={ titleNode as unknown as string }
-					className="image-studio-feature-clip-panel"
-				>
-					{ body }
-				</PanelBody>
-			</Fill>
-		</>
+		<PanelBody
+			// PanelBody.title is typed as string but renders any ReactNode at runtime;
+			// the badge must live in the title row so it stays visible when the panel is collapsed.
+			title={ titleNode as unknown as string }
+			className="image-studio-feature-clip-panel"
+		>
+			{ body }
+		</PanelBody>
 	);
 }
 
@@ -391,7 +380,7 @@ let pluginRegistered = false;
  * Register the "Generate Feature Clip" sidebar plugin.
  *
  * Idempotent — safe to call multiple times. Skips registration when the
- * editor package isn't loaded on the page (e.g. wp-admin Media Library).
+ * plugins package isn't loaded on the page (e.g. wp-admin Media Library).
  */
 export function registerFeatureClipSidebar(): void {
 	if ( window.imageStudioData?.canGenerateVideoClips !== true ) {
@@ -402,7 +391,7 @@ export function registerFeatureClipSidebar(): void {
 		return;
 	}
 
-	if ( typeof PluginDocumentSettingPanel !== 'function' ) {
+	if ( typeof registerPlugin !== 'function' ) {
 		return;
 	}
 
@@ -418,5 +407,4 @@ export {
 	FeatureClipEmptyState,
 	FeatureClipSkeleton,
 	PLUGIN_NAME,
-	PANEL_NAME,
 };
