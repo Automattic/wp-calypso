@@ -1,7 +1,12 @@
+@import '@wordpress/base-styles/breakpoints';
+@import '@wordpress/base-styles/mixins';
+
 .onboarding-email-verification {
 	display: flex;
 	flex-direction: column;
 	gap: 16px;
+	// The layout runs with `noGap`, so this is the whole distance below the title.
+	margin-block-start: 24px;
 
 	// Full-width buttons per the design.
 	.step-container-v2__primary-button,
@@ -14,6 +19,21 @@
 	// specificity plus the scope class to win.
 	.step-container-v2__primary-button.has-icon.has-text {
 		justify-content: center;
+	}
+}
+
+// Typography mirrors `.step-container-v2__heading p`, which this replaces — the
+// description lives in the content row so it shares the buttons' width.
+.onboarding-email-verification__sub-text {
+	// Combined with the container's 16px flex gap, this puts the buttons 32px below.
+	margin-block: 0 16px;
+	color: var(--color-text);
+	font-size: 0.875rem;
+	line-height: 1.5;
+	text-wrap: balance;
+
+	@include break-large {
+		font-size: 1rem;
 	}
 }
 

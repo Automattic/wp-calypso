@@ -15,6 +15,10 @@ import { useEmailVerification } from './use-email-verification';
 
 import './style.scss';
 
+// The description sits in the content row rather than the heading, so the heading
+// (which receives focus on mount) points at it to keep the announcement complete.
+const SUB_TEXT_ID = 'onboarding-email-verification-sub-text';
+
 interface Props {
 	flow: string;
 	// Storage scope for this attempt, computed once by the account step.
@@ -101,7 +105,12 @@ const EmailVerificationGate = ( { flow, scope, logo, onDone }: Props ) => {
 			<UserVerificationChecker />
 			<Step.CenteredColumnLayout
 				columnWidth={ 4 }
+				// Same column width as the content row, so the copy lines up with the buttons.
+				headingColumnWidth={ 4 }
 				verticalAlign="center"
+				// The gap below the title is 24px rather than the layout default, so it's
+				// declared on the content row instead (see style.scss).
+				noGap
 				// `step-container-v2--user` opts the gate into the account step's V2 layout
 				// contract, so the step's legacy-layout styles skip it.
 				className="onboarding-email-verification step-container-v2--user"
@@ -110,12 +119,17 @@ const EmailVerificationGate = ( { flow, scope, logo, onDone }: Props ) => {
 					<div
 						ref={ headingRef }
 						tabIndex={ -1 }
+						aria-describedby={ SUB_TEXT_ID }
 						className="onboarding-email-verification__heading"
 					>
-						<Step.Heading align="left" text={ title } subText={ subText } />
+						<Step.Heading align="left" text={ title } />
 					</div>
 				}
 			>
+				<p className="onboarding-email-verification__sub-text" id={ SUB_TEXT_ID }>
+					{ subText }
+				</p>
+
 				{ /* For a known provider, deep-link to its inbox; confirming there resolves the
 				   gate by polling. Unknown providers get a manual "I've confirmed" re-check. */ }
 				{ inboxLink ? (
