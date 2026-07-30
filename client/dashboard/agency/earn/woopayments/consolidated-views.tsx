@@ -3,10 +3,10 @@ import {
 	__experimentalGrid as Grid,
 	__experimentalText as Text,
 	__experimentalVStack as VStack,
-	Button,
 } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import ConsolidatedStatCard from '../../../components/consolidated-stat-card';
+import InlineSupportLink from '../../../components/inline-support-link';
 import PayoutCards from './payout-cards';
 import type { WooPaymentsData } from '@automattic/api-core';
 
@@ -45,11 +45,11 @@ export default function ConsolidatedViews( {
 								'The total amount of transactions processed through WooPayments across all your client sites.'
 							) }
 						</Text>
-						<div>
-							<Button variant="link" href={ WOOPAYMENTS_LEARN_MORE_LINK } target="_blank">
+						<Text>
+							<InlineSupportLink supportLink={ WOOPAYMENTS_LEARN_MORE_LINK } forceOpenInHelpCenter>
 								{ __( 'Learn more' ) }
-							</Button>
-						</div>
+							</InlineSupportLink>
+						</Text>
 					</VStack>
 				}
 				isLoading={ isLoading }
