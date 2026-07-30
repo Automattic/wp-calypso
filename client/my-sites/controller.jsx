@@ -6,7 +6,6 @@ import i18n from 'i18n-calypso';
 import { createElement } from 'react';
 import EmptyContentComponent from 'calypso/components/empty-content';
 import NoSitesMessage from 'calypso/components/empty-content/no-sites-message';
-import Loading from 'calypso/components/loading';
 import {
 	makeLayout,
 	render as clientRender,
@@ -582,15 +581,6 @@ function capabilitiesArePropagating( state, site ) {
 	return canCurrentUser( state, site.ID, 'manage_options' ) === true;
 }
 
-function renderWaitingForSiteCapabilities( context ) {
-	context.primary = createElement( Loading, {
-		title: i18n.translate( 'Loading your site…' ),
-	} );
-
-	makeLayout( context, noop );
-	clientRender( context );
-}
-
 /*
  * Set up site selection based on last URL param and/or handle no-sites error cases
  */
@@ -723,10 +713,6 @@ function requestAndSelectSite( context, next, { siteFragment, isUnlinkedCheckout
 					attempt < UNMANAGEABLE_SITE_RETRY_LIMIT &&
 					capabilitiesArePropagating( getState(), site )
 				) {
-					if ( attempt === 0 ) {
-						renderWaitingForSiteCapabilities( context );
-					}
-
 					const retryDelay = UNMANAGEABLE_SITE_RETRY_DELAY * 2 ** attempt;
 
 					return new Promise( ( resolve ) =>

@@ -266,8 +266,8 @@ describe( 'siteSelection', () => {
 		await jest.advanceTimersByTimeAsync( 0 );
 		expect( requestSite ).toHaveBeenCalledTimes( 1 );
 		expect( next ).not.toHaveBeenCalled();
-		// A placeholder stands in for the section while we wait.
-		expect( context.primary ).toBeTruthy();
+		// Nothing is rendered while we wait, so the page the user is on stays put.
+		expect( context.primary ).toBeUndefined();
 
 		// Capabilities propagate, so the retry lands the site in the state.
 		state = manageableSiteState;
