@@ -7,7 +7,7 @@ import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import ExpandableSidebarMenu from 'calypso/layout/sidebar/expandable';
 import ReaderUnreadCount from 'calypso/layout/sidebar/reader-unread-count';
-import { MoreMenuActions } from '../more-menu-actions';
+import MoreMenuActions from '../more-menu-actions';
 import ReaderSidebarListsList from './list';
 
 interface ReaderSidebarListsProps {
@@ -57,10 +57,11 @@ const ReaderSidebarLists = ( {
 				expandableIconClick={ onClick }
 				moreMenuActions={
 					<MoreMenuActions
-						identifier="sidebar-lists"
+						identifier=""
 						isSingleFeed={ false }
 						feedIds={ allFeedIds }
 						feedUrls={ [] }
+						source="sidebar-list-header"
 						unseenCount={ totalUnseenCount }
 					/>
 				}

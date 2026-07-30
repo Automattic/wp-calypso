@@ -12,7 +12,7 @@ import {
 import { AUTOMATTIC_ORG_ID, P2_ORG_ID } from 'calypso/state/reader/organizations/constants';
 import { toggleReaderSidebarOrganization } from 'calypso/state/reader-ui/sidebar/actions';
 import { isOrganizationOpen } from 'calypso/state/reader-ui/sidebar/selectors';
-import { MoreMenuActions } from '../more-menu-actions';
+import MoreMenuActions from '../more-menu-actions';
 import ReaderSidebarOrganizationsListItem from './list-item';
 
 export class ReaderSidebarOrganizationsList extends Component {
@@ -41,10 +41,19 @@ export class ReaderSidebarOrganizationsList extends Component {
 	};
 
 	renderSites() {
-		const { sites, path } = this.props;
+		const { sites, path, organization } = this.props;
+		const fallbackPath = organization.slug ? `/reader/${ organization.slug }` : '/reader';
+
 		return sites.map(
 			( site ) =>
-				site && <ReaderSidebarOrganizationsListItem key={ site.ID } path={ path } site={ site } />
+				site && (
+					<ReaderSidebarOrganizationsListItem
+						key={ site.ID }
+						path={ path }
+						site={ site }
+						fallbackPath={ fallbackPath }
+					/>
+				)
 		);
 	}
 
@@ -88,6 +97,7 @@ export class ReaderSidebarOrganizationsList extends Component {
 						isSingleFeed={ false }
 						feedIds={ feedsInfo.feedIds }
 						feedUrls={ feedsInfo.feedUrls }
+						source="reader-organization-header"
 						unseenCount={ feedsInfo.unseenCount }
 					/>
 				}
