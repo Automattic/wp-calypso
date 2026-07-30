@@ -1,4 +1,4 @@
-import { useQuery } from '@tanstack/react-query';
+import { keepPreviousData, useQuery } from '@tanstack/react-query';
 import isA8CForAgencies from 'calypso/lib/a8c-for-agencies/is-a8c-for-agencies';
 import wpcom, { wpcomJetpackLicensing as wpcomJpl } from 'calypso/lib/wp';
 import type {
@@ -45,6 +45,9 @@ export interface FetchDashboardSitesArgsInterface {
 	sort?: DashboardSortInterface;
 	perPage?: number;
 	agencyId?: number;
+	// Keep the previous results visible (dimmed) while a new query fetches, instead
+	// of blanking the list. Opt-in so other consumers of this hook are unaffected.
+	keepPreviousData?: boolean;
 }
 
 const useFetchDashboardSites = (
@@ -56,6 +59,7 @@ const useFetchDashboardSites = (
 		sort,
 		perPage,
 		agencyId,
+		keepPreviousData: shouldKeepPreviousData = false,
 	}: FetchDashboardSitesArgsInterface,
 	isEnabled = true
 ) => {
@@ -111,6 +115,7 @@ const useFetchDashboardSites = (
 				totalFavorites: data.total_favorites,
 			};
 		},
+		placeholderData: shouldKeepPreviousData ? keepPreviousData : undefined,
 		enabled: isAgencyOrPartnerAuthEnabled && isEnabled,
 	} );
 };

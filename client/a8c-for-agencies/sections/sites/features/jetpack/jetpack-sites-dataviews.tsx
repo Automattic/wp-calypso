@@ -18,7 +18,6 @@ import { DataViews } from 'calypso/components/dataviews';
 import { GuidedTourStep } from 'calypso/components/guided-tour/step';
 import SiteStatusContent from 'calypso/jetpack-cloud/sections/agency-dashboard/sites-overview/site-status-content';
 import { JETPACK_MANAGE_ONBOARDING_TOURS_EXAMPLE_SITE } from 'calypso/jetpack-cloud/sections/onboarding-tours/constants';
-import TextPlaceholder from 'calypso/jetpack-cloud/sections/partner-portal/text-placeholder';
 import { useFetchTestConnections } from '../../hooks/use-fetch-test-connection';
 import useFormattedSites from '../../hooks/use-formatted-sites';
 import { useSiteActionsDataViews } from '../../site-actions/use-site-actions';
@@ -44,6 +43,7 @@ const SitePreviewTourTarget = ( { children }: { children: ReactNode } ) => {
 export const JetpackSitesDataViews = ( {
 	data,
 	isLoading,
+	isFetching,
 	isLargeScreen,
 	setDataViewsState,
 	setSelectedSiteFeature,
@@ -106,10 +106,6 @@ export const JetpackSitesDataViews = ( {
 
 	const renderField = useCallback(
 		( column: AllowedTypes, item: SiteData ) => {
-			if ( isLoading ) {
-				return <TextPlaceholder />;
-			}
-
 			if ( column ) {
 				return (
 					<>
@@ -124,7 +120,7 @@ export const JetpackSitesDataViews = ( {
 				);
 			}
 		},
-		[ isLoading, isLargeScreen ]
+		[ isLargeScreen ]
 	);
 
 	// Legacy refs for guided tour popovers
@@ -188,9 +184,6 @@ export const JetpackSitesDataViews = ( {
 				),
 				getValue: ( { item }: { item: SiteData } ) => item.site.value.url,
 				render: ( { item }: { item: SiteData } ): ReactNode => {
-					if ( isLoading ) {
-						return <TextPlaceholder />;
-					}
 					const site = item.site.value;
 
 					const isSitePreviewTourTarget = site.blog_id === sitePreviewTourTargetId;
@@ -203,7 +196,6 @@ export const JetpackSitesDataViews = ( {
 						>
 							<SiteDataField
 								site={ site }
-								isLoading={ isLoading }
 								isDevSite={ item.isDevSite }
 								onSiteTitleClick={ openSitePreviewPane }
 								errors={ getSiteErrors( item ) }
@@ -382,10 +374,6 @@ export const JetpackSitesDataViews = ( {
 				),
 				getValue: ( { item }: { item: SiteData } ) => item.isFavorite,
 				render: ( { item }: { item: SiteData } ) => {
-					if ( isLoading ) {
-						return <TextPlaceholder />;
-					}
-
 					return (
 						<>
 							<span className="sites-dataviews__favorite-btn-wrapper">
@@ -412,7 +400,6 @@ export const JetpackSitesDataViews = ( {
 			scanRef,
 			pluginsRef,
 			sitePreviewTourTargetId,
-			isLoading,
 			dataViewsState.selectedItem?.blog_id,
 			openSitePreviewPane,
 			getSiteErrors,
@@ -517,7 +504,11 @@ export const JetpackSitesDataViews = ( {
 	}, [ fields, dataViewsState, setDataViewsState, data, actions ] );
 
 	return (
-		<ItemsDataViews data={ itemsData } isLoading={ isLoading } className={ className }>
+		<ItemsDataViews
+			data={ itemsData }
+			isLoading={ isFetching ?? isLoading }
+			className={ className }
+		>
 			<HStack
 				className="dataviews__view-actions"
 				alignment="top"

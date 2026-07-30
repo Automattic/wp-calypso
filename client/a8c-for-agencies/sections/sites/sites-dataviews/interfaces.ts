@@ -15,6 +15,7 @@ export interface SitesDataViewsProps {
 	forceTourExampleSite?: boolean;
 	isLargeScreen: boolean;
 	isLoading: boolean;
+	isFetching?: boolean;
 	setDataViewsState: ( callback: ( prevState: DataViewsState ) => DataViewsState ) => void;
 	setSelectedSiteFeature: ( siteFeature: string | undefined ) => void;
 	dataViewsState: DataViewsState;

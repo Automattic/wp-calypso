@@ -121,7 +121,7 @@ export function SitesDashboard() {
 	// Temporarily set perPage to 100 on Development sites page due to unresolved ES issue (https://github.com/Automattic/dotcom-forge/issues/8806)
 	const sitesPerPage = showOnlyDevelopmentSites ? 100 : dataViewsState.perPage;
 
-	const { data, isError, isLoading, refetch } = useFetchDashboardSites( {
+	const { data, isError, isLoading, isFetching, refetch } = useFetchDashboardSites( {
 		isPartnerOAuthTokenLoaded: false,
 		searchQuery: dataViewsState?.search,
 		currentPage: dataViewsState.page ?? 1,
@@ -129,6 +129,7 @@ export function SitesDashboard() {
 		sort: dataViewsState.sort,
 		perPage: sitesPerPage,
 		agencyId,
+		keepPreviousData: true,
 	} );
 
 	useEffect( () => {
@@ -289,6 +290,7 @@ export function SitesDashboard() {
 						className={ clsx( 'sites-overview__content' ) }
 						data={ data }
 						isLoading={ isLoading }
+						isFetching={ isFetching }
 						isLargeScreen={ isLargeScreen || false }
 						setDataViewsState={ setDataViewsState }
 						setSelectedSiteFeature={ setSelectedSiteFeature }
