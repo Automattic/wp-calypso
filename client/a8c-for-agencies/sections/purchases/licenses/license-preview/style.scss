@@ -46,12 +46,12 @@
 	&:visited,
 	&:active {
 		@include heading-medium;
-		color: var(--color-text-subtle);
+		color: var(--color-accent-80);
 	}
 
 	&:hover,
 	&:focus {
-		color: var(--color-neutral-70);
+		color: var(--color-accent-80);
 	}
 }
 
