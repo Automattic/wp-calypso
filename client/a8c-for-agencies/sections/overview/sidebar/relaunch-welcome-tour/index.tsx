@@ -1,5 +1,4 @@
 import { Button } from '@wordpress/components';
-import { layout } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { ONBOARDING_TOUR_HASH } from 'calypso/a8c-for-agencies/components/hoc/with-onboarding-tour/hooks/use-onboarding-tour';
 import { useDispatch } from 'calypso/state';
@@ -19,7 +18,6 @@ export default function OverviewSidebarRelaunchWelcomeTour() {
 			className="overview__sidebar-button"
 			__next40pxDefaultSize
 			variant="secondary"
-			icon={ layout }
 			onClick={ handleRelaunchWelcomeTour }
 			style={ {
 				justifyContent: 'center',
