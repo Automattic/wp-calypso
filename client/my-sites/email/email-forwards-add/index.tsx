@@ -11,12 +11,13 @@ import HeaderCake from 'calypso/components/header-cake';
 import Main from 'calypso/components/main';
 import Notice from 'calypso/components/notice';
 import SectionHeader from 'calypso/components/section-header';
-import { getCurrentUserCannotAddEmailReason, getSelectedDomain } from 'calypso/lib/domains';
+import { getSelectedDomain } from 'calypso/lib/domains';
 import {
 	EMAIL_WARNING_CODE_DOMAIN_STATE_RESTRICTED,
 	EMAIL_WARNING_CODE_GRAVATAR_DOMAIN,
 } from 'calypso/lib/emails/email-provider-constants';
 import EmailForwardingAddNewCompactList from 'calypso/my-sites/email/email-forwarding/email-forwarding-add-new-compact-list';
+import { getEmailForwardingRestrictionCode } from 'calypso/my-sites/email/email-forwarding-eligibility';
 import EmailHeader from 'calypso/my-sites/email/email-header';
 import {
 	getEmailManagementPath,
@@ -69,11 +70,7 @@ const EmailForwardsAdd = ( {
 	);
 	const showMxWarning = !! selectedDomain?.hasWpcomNameservers && hasMxRecords;
 
-	const cannotAddEmailWarningReason = getCurrentUserCannotAddEmailReason( selectedDomain );
-	const isGravatarRestrictedDomain =
-		cannotAddEmailWarningReason?.code === EMAIL_WARNING_CODE_GRAVATAR_DOMAIN;
-	const isDomainStateRestricted =
-		cannotAddEmailWarningReason?.code === EMAIL_WARNING_CODE_DOMAIN_STATE_RESTRICTED;
+	const forwardingRestrictionCode = getEmailForwardingRestrictionCode( selectedDomain );
 
 	const goToEmail = useCallback( (): void => {
 		if ( ! selectedSite ) {
@@ -97,7 +94,7 @@ const EmailForwardsAdd = ( {
 	}, [ currentRoute, selectedDomainName, selectedSite ] );
 
 	const renderRestrictedDomainStatus = () => {
-		if ( isGravatarRestrictedDomain ) {
+		if ( forwardingRestrictionCode === EMAIL_WARNING_CODE_GRAVATAR_DOMAIN ) {
 			return (
 				<Notice showDismiss={ false } className="email-forwards-add__notice">
 					{ translate(
@@ -106,7 +103,7 @@ const EmailForwardsAdd = ( {
 				</Notice>
 			);
 		}
-		if ( isDomainStateRestricted ) {
+		if ( forwardingRestrictionCode === EMAIL_WARNING_CODE_DOMAIN_STATE_RESTRICTED ) {
 			return (
 				<Notice showDismiss={ false } className="email-forwards-add__notice">
 					{ translate(
@@ -128,29 +125,28 @@ const EmailForwardsAdd = ( {
 		}
 	};
 
-	const content =
-		isGravatarRestrictedDomain || isDomainStateRestricted ? (
-			renderRestrictedDomainStatus()
-		) : (
-			<Card>
-				{ areDomainsLoading && (
-					<div className="email-forwards-add__placeholder">
-						<p />
-						<p />
-						<Button disabled />
-					</div>
-				) }
+	const content = forwardingRestrictionCode ? (
+		renderRestrictedDomainStatus()
+	) : (
+		<Card>
+			{ areDomainsLoading && (
+				<div className="email-forwards-add__placeholder">
+					<p />
+					<p />
+					<Button disabled />
+				</div>
+			) }
 
-				{ ! areDomainsLoading && (
-					<EmailForwardingAddNewCompactList
-						onAddedEmailForwards={ onAddedEmailForwards }
-						selectedDomainName={ selectedDomainName }
-						showFormHeader={ showFormHeader }
-						showMxWarning={ showMxWarning }
-					/>
-				) }
-			</Card>
-		);
+			{ ! areDomainsLoading && (
+				<EmailForwardingAddNewCompactList
+					onAddedEmailForwards={ onAddedEmailForwards }
+					selectedDomainName={ selectedDomainName }
+					showFormHeader={ showFormHeader }
+					showMxWarning={ showMxWarning }
+				/>
+			) }
+		</Card>
+	);
 
 	return (
 		<>

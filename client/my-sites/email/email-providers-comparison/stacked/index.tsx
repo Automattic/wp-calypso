@@ -106,9 +106,9 @@ const EmailProvidersStackedComparison = ( {
 	const showEmailPurchaseDisabledMessage = ! currentUserCanAddEmail && ! isDomainInCart;
 	const cannotAddEmailWarningCode = getCurrentUserCannotAddEmailReason( domain )?.code ?? null;
 
-	// Site admins who don't own the domain subscription can't buy paid email here, but they can
-	// still set up free forwarding. Any other reason for being unable to add email also rules
-	// forwarding out, so it stays hidden.
+	// This page only promotes forwarding to users it can't sell paid email to when the sole
+	// blocker is domain ownership. Other paid-email blockers stay hidden here even where they
+	// wouldn't rule out forwarding elsewhere, preserving what this page offered before.
 	const canShowEmailForwarding =
 		currentUserCanAddEmail ||
 		cannotAddEmailWarningCode === EMAIL_WARNING_CODE_OTHER_USER_OWNS_DOMAIN_SUBSCRIPTION;

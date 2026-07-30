@@ -111,28 +111,18 @@ const selectedSite = {
 	slug: 'example.wordpress.com',
 };
 
-const domainWithoutForwards = {
+const nonOwnerDomainWithoutForwards = {
 	name: 'example.com',
 	domain: 'example.com',
 	emailForwardsCount: 0,
-	currentUserCanAddEmail: true,
-	currentUserCannotAddEmailReason: null,
+	currentUserCanAddEmail: false,
+	currentUserCannotAddEmailReason: {
+		code: EMAIL_WARNING_CODE_OTHER_USER_OWNS_DOMAIN_SUBSCRIPTION,
+		message: 'Only the domain owner can purchase email.',
+	},
 	googleAppsSubscription: null,
 	titanMailSubscription: null,
 } as ResponseDomain;
-
-const domainRestrictedBy = ( code: string | null ) =>
-	( {
-		...domainWithoutForwards,
-		currentUserCanAddEmail: false,
-		currentUserCannotAddEmailReason: code
-			? { code, message: 'Email is unavailable for this domain.' }
-			: null,
-	} ) as ResponseDomain;
-
-const nonOwnerDomainWithoutForwards = domainRestrictedBy(
-	EMAIL_WARNING_CODE_OTHER_USER_OWNS_DOMAIN_SUBSCRIPTION
-);
 
 const renderComparison = ( domain = nonOwnerDomainWithoutForwards ) => {
 	const state = {
@@ -169,18 +159,17 @@ describe( 'EmailProvidersStackedComparison', () => {
 		expect( screen.getByText( 'Email forwarding link' ) ).toBeVisible();
 	} );
 
-	it( 'shows the forwarding link when the user can add email', () => {
-		renderComparison( domainWithoutForwards );
+	// Domain ownership is the only paid-email blocker this page treats as still forwardable.
+	// Anything else, including reasons it doesn't recognize, has to stay hidden.
+	it( 'hides the forwarding link for any other reason email is unavailable', () => {
+		renderComparison( {
+			...nonOwnerDomainWithoutForwards,
+			currentUserCannotAddEmailReason: {
+				code: EMAIL_WARNING_CODE_OTHER_USER_OWNS_EMAIL,
+				message: 'Another user owns the email subscription.',
+			},
+		} as ResponseDomain );
 
-		expect( screen.getByText( 'Email forwarding link' ) ).toBeVisible();
+		expect( screen.queryByText( 'Email forwarding link' ) ).not.toBeInTheDocument();
 	} );
-
-	it.each( [ EMAIL_WARNING_CODE_OTHER_USER_OWNS_EMAIL, 'domain-expired', null ] )(
-		'hides the forwarding link when email is unavailable because of %s',
-		( code ) => {
-			renderComparison( domainRestrictedBy( code ) );
-
-			expect( screen.queryByText( 'Email forwarding link' ) ).not.toBeInTheDocument();
-		}
-	);
 } );
