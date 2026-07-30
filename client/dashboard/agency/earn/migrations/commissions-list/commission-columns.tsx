@@ -26,7 +26,7 @@ export const MigratedOnColumn = ( {
 	locale: string;
 } ) => {
 	const date = new Date( migratedOn * 1000 );
-	return <>{ formatDate( date, locale, { day: '2-digit', month: 'short', year: 'numeric' } ) }</>;
+	return <>{ formatDate( date, locale ) }</>;
 };
 
 export const ReviewStatusColumn = ( {

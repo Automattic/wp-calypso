@@ -50,7 +50,7 @@ export const ReportDateColumn = ( { date }: { date: number | null } ) => {
 	}
 
 	const dateObj = new Date( date * 1000 );
-	return <FormattedDate date={ dateObj } format="DD MMM YYYY HH:mm" />;
+	return <FormattedDate date={ dateObj } format="ll HH:mm" />;
 };
 
 export const ReportTimeframeColumn = ( {
@@ -86,8 +86,8 @@ export const ReportTimeframeColumn = ( {
 					{ timeframeText }
 				</span>
 				<Tooltip context={ tooltipRef.current } isVisible={ showTooltip } position="top">
-					<FormattedDate date={ startDateObj } format="DD MMM YYYY" /> -
-					<FormattedDate date={ endDateObj } format="DD MMM YYYY" />
+					<FormattedDate date={ startDateObj } format="ll" /> -
+					<FormattedDate date={ endDateObj } format="ll" />
 				</Tooltip>
 			</>
 		);

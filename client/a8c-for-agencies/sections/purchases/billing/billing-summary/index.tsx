@@ -102,7 +102,7 @@ export default function BillingSummary() {
 					{ billing.isSuccess && <CostTooltip /> }
 					{ billing.isSuccess &&
 						/* translators: fullMonth (e.g. "January") and fullYear (e.g. "2024") */
-						translate( 'Projected cost for %(fullMonth)s, %(fullYear)s', {
+						translate( 'Projected cost for %(fullMonth)s %(fullYear)s', {
 							args: {
 								fullMonth: moment( billing.data.date ).format( 'MMMM' ),
 								fullYear: moment( billing.data.date ).format( 'YYYY' ),

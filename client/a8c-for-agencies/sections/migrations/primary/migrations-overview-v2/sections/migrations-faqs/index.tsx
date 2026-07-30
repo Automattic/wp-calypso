@@ -1,12 +1,9 @@
-import { formatCurrency } from '@automattic/number-formatters';
-import { ExternalLink } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback } from 'react';
 import PageSection from 'calypso/a8c-for-agencies/components/page-section';
 import { A4A_MIGRATIONS_PAYMENT_SETTINGS } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
 import useHelpCenter from 'calypso/a8c-for-agencies/hooks/use-help-center';
 import FoldableFAQ from 'calypso/components/foldable-faq';
-import { preventWidows } from 'calypso/lib/formatting';
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 
@@ -73,51 +70,6 @@ export default function MigrationsFAQs() {
 			question: translate( 'How do you calculate my buyout credit?' ),
 			answer: translate(
 				'We will ask you to provide a copy of your current contract or invoice to determine the remaining time on your plan. We will then credit you for the same amount of time left on the plan that you choose in Automattic for Agencies.'
-			),
-		},
-		{
-			id: 'multiple-sites-migration-offers',
-			question: translate( 'Are there any special offers for agencies moving multiple sites?' ),
-			answer: (
-				<>
-					{ preventWidows(
-						translate(
-							"Receive %(amount)s for each site you migrate to Pressable or WordPress.com, up to %(maxAmount)s.* If you're a WP\u00A0Engine customer, we'll also credit the costs to set you free. {{a}}Full Terms{{/a}}",
-							{
-								args: {
-									amount: formatCurrency( 100, 'USD' ),
-									maxAmount: formatCurrency( 10000, 'USD' ),
-								},
-								components: {
-									a: (
-										<ExternalLink
-											href="https://automattic.com/for-agencies/program-incentives"
-											children={ null }
-										/>
-									),
-								},
-							}
-						)
-					) }
-					<br />
-					<br />
-					{ translate(
-						'* The migration limit is %(maxAmount)s for WP\u00A0Engine and %(maxAmount)s for other hosts. Offer valid until %(endDate)s',
-						{
-							args: {
-								maxAmount: formatCurrency( 10000, 'USD' ),
-								endDate: new Date( '2025-01-31T00:00:00' ).toLocaleDateString(
-									translate.localeSlug,
-									{
-										year: 'numeric',
-										month: 'long',
-										day: 'numeric',
-									}
-								),
-							},
-						}
-					) }
-				</>
 			),
 		},
 		{

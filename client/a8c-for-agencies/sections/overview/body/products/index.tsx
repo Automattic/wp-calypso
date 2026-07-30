@@ -63,7 +63,7 @@ const OverviewBodyProducts = () => {
 		title: translate( 'WooCommerce' ),
 		titleIcon: <img width={ 40 } src={ WooLogoColor } alt="WooCommerce" />,
 		description: translate(
-			'WooCommerce is the platform that offers unlimited potential to build the perfect ecommerce experiences for your clients. No matter what success looks like, you can do it with WooCommerce. Purchase Woo extensions in bulk to save big.'
+			'WooCommerce is the platform that offers unlimited potential to build perfect ecommerce experiences for your clients. No matter what success looks like, you can do it with WooCommerce. Purchase Woo extensions in bulk to save big.'
 		),
 		highlights: [
 			translate( 'AutomateWoo: Grow sales with less effort using powerful marketing automation.' ),
