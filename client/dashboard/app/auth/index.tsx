@@ -144,7 +144,15 @@ export function AuthProvider( { children }: { children: React.ReactNode } ) {
 	// out, redirect the user to the log in screen.
 	useEffect( () => {
 		const isAuthError = ( { statusCode, error = '' }: WPError ) => {
-			return statusCode === 401 && [ 'authorization_required', 'rest_forbidden' ].includes( error );
+			if ( [ 'authorization_required' ].includes( error ) ) {
+				return true;
+			}
+
+			if ( statusCode === 401 && error === 'rest_forbidden' ) {
+				return true;
+			}
+
+			return false;
 		};
 
 		const handleEvent = ( event: MutationCacheNotifyEvent | QueryCacheNotifyEvent ) => {
