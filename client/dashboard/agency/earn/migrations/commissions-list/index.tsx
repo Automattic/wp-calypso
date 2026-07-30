@@ -1,6 +1,6 @@
 import { __experimentalHStack as HStack } from '@wordpress/components';
 import { useViewportMatch } from '@wordpress/compose';
-import { DataViews } from '@wordpress/dataviews';
+import { DataViews, filterSortAndPaginate } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
 import { useCallback, useMemo, type ComponentType, type ReactNode, useState } from 'react';
 import RequestReviewModal from '../request-review-modal';
@@ -75,7 +75,10 @@ export default function MigrationsCommissionsList( {
 
 	// `type`/`layout` follow the viewport; derive them at render so we don't sync
 	// derived state through an effect. User-driven view changes stay in `view`.
-	const responsiveView: View = { ...view, ...responsiveViewParts( isDesktop ) };
+	const responsiveView: View = useMemo(
+		() => ( { ...view, ...responsiveViewParts( isDesktop ) } ),
+		[ view, isDesktop ]
+	);
 
 	const [ activeModal, setActiveModal ] = useState< ActiveModal >( null );
 
@@ -93,18 +96,14 @@ export default function MigrationsCommissionsList( {
 
 	const actions = useCommissionListActions( { onUntagSite, onRequestReview } );
 
-	const pagination = {
-		totalItems: items.length,
-		totalPages: 1,
-	};
-
 	const fields: Field< TaggedSite >[] = useMemo(
 		() => [
 			{
 				id: 'site',
 				label: __( 'Site' ),
-				getValue: () => '-',
+				getValue: ( { item }: { item: TaggedSite } ) => item.url,
 				render: ( { item }: { item: TaggedSite } ): ReactNode => <SiteColumn site={ item.url } />,
+				enableGlobalSearch: true,
 				enableHiding: false,
 				enableSorting: false,
 			},
@@ -139,28 +138,33 @@ export default function MigrationsCommissionsList( {
 		[ locale ]
 	);
 
+	const { data, paginationInfo } = useMemo(
+		() => filterSortAndPaginate( items, responsiveView, fields ),
+		[ items, responsiveView, fields ]
+	);
+
 	return (
 		<>
 			<TableWrapper>
 				<DataViews
-					data={ items }
+					data={ data }
 					view={ responsiveView }
 					onChangeView={ setView }
 					fields={ fields }
-					search={ false }
+					searchLabel={ __( 'Search by site' ) }
 					actions={ actions }
 					getItemId={ ( item ) => `${ item.id }` }
-					paginationInfo={ pagination }
+					paginationInfo={ paginationInfo }
 					defaultLayouts={ { table: {}, list: {} } }
 				>
-					{ isDesktop && (
-						<HStack
-							className="dataviews__view-actions commissions-list__view-actions"
-							justify="end"
-						>
-							<DataViews.ViewConfig />
-						</HStack>
-					) }
+					<HStack
+						className="dataviews__view-actions commissions-list__view-actions"
+						justify="space-between"
+						alignment="center"
+					>
+						<DataViews.Search />
+						{ isDesktop && <DataViews.ViewConfig /> }
+					</HStack>
 					<DataViews.Layout />
 					<DataViews.Footer />
 				</DataViews>

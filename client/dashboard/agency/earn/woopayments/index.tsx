@@ -4,6 +4,7 @@ import { __experimentalVStack as VStack } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { useMemo } from 'react';
 import { useAnalytics } from '../../../app/analytics';
+import { useLocale } from '../../../app/locale';
 import { DataViewsCard } from '../../../components/dataviews';
 import { PageHeader } from '../../../components/page-header';
 import PageLayout from '../../../components/page-layout';
@@ -28,6 +29,7 @@ export default function EarnWooPayments() {
 		sitesWithPluginsStates,
 	} = useWooPaymentsDashboardData( agencyId );
 	const { recordTracksEvent } = useAnalytics();
+	const locale = useLocale();
 	const { downloadCommissionsReport } = useDownloadCommissionsReport( agencyId );
 
 	const excludedSiteIds = useMemo(
@@ -70,6 +72,7 @@ export default function EarnWooPayments() {
 					<ConsolidatedViews
 						woopaymentsData={ woopaymentsData }
 						isLoading={ isLoadingWooPaymentsData }
+						locale={ locale }
 					/>
 					<DataViewsCard>
 						<CommissionsTable

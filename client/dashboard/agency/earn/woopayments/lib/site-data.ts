@@ -1,4 +1,4 @@
-import { areNextAndCurrentPayoutDatesEqual } from './get-next-payout-date';
+import { areNextAndCurrentPayoutDatesEqual } from '../../referrals/lib/get-next-payout-date';
 import type { WooPaymentsData } from '@automattic/api-core';
 
 interface WooPaymentsSiteData {

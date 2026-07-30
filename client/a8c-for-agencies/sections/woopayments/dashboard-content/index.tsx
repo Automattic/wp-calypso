@@ -1,3 +1,4 @@
+import { useLocale } from '@automattic/i18n-utils';
 import { __experimentalVStack as VStack } from '@wordpress/components';
 import { useCallback } from 'react';
 import CommissionsTable from 'calypso/dashboard/agency/earn/woopayments/commissions-table';
@@ -24,6 +25,7 @@ const WooPaymentsDashboardContent = ( {
 	sitesWithPluginsStates,
 }: WooPaymentsDashboardContentProps ) => {
 	const dispatch = useDispatch();
+	const locale = useLocale();
 	const { downloadCommissionsReport } = useDownloadCommissionsReport( agencyId );
 
 	const recordTracks = useCallback(
@@ -38,6 +40,7 @@ const WooPaymentsDashboardContent = ( {
 			<ConsolidatedViews
 				woopaymentsData={ woopaymentsData }
 				isLoading={ isLoadingWooPaymentsData }
+				locale={ locale }
 			/>
 			<div className="redesigned-a8c-table full-width">
 				<CommissionsTable
