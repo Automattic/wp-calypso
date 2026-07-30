@@ -193,11 +193,17 @@ describe( 'recordNoSitesPageView', () => {
 describe( 'siteSelection', () => {
 	const SITE_ID = 1;
 	const SITE_SLUG = 'example.com';
+	const USER_ID = 7;
+
+	// Total number of requests once every retry has been used up: the initial one plus one per
+	// entry in the backoff schedule.
+	const REQUESTS_WHEN_EXHAUSTED = 6;
+	const LONGER_THAN_THE_WHOLE_BACKOFF = 60000;
 
 	// A site the current user can't manage yet is kept out of the state by `requestSite`, even
 	// though the API returns it. See the `capabilities` guard in `state/sites/actions`.
 	const unmanageableSiteState = {
-		currentUser: { user: { site_count: 2, visible_site_count: 2 } },
+		currentUser: { id: USER_ID, user: { site_count: 2, visible_site_count: 2 }, capabilities: {} },
 		preferences: { remoteValues: {} },
 		sites: { items: {}, domains: { items: {} } },
 		ui: { selectedSiteId: null },
@@ -211,6 +217,20 @@ describe( 'siteSelection', () => {
 		},
 		ui: { selectedSiteId: SITE_ID },
 	};
+
+	// The `/me/sites` bootstrap saw the user as an admin of the site, so missing capabilities on
+	// the site response are propagation lag rather than a lack of access.
+	const wasAdminState = {
+		...unmanageableSiteState,
+		currentUser: {
+			...unmanageableSiteState.currentUser,
+			capabilities: { [ SITE_ID ]: { manage_options: true } },
+		},
+	};
+
+	function respondWithSite( site ) {
+		requestSite.mockReturnValue( () => Promise.resolve( { ID: SITE_ID, ...site } ) );
+	}
 
 	function selectSite( getState ) {
 		const next = jest.fn();
@@ -226,13 +246,13 @@ describe( 'siteSelection', () => {
 		page.current = context.path;
 		siteSelection( context, next );
 
-		return next;
+		return { next, context };
 	}
 
 	beforeEach( () => {
 		jest.useFakeTimers();
 		requestSite.mockReset();
-		requestSite.mockReturnValue( () => Promise.resolve( { ID: SITE_ID } ) );
+		respondWithSite( { site_owner: USER_ID } );
 	} );
 
 	afterEach( () => {
@@ -240,37 +260,66 @@ describe( 'siteSelection', () => {
 		page.current = '';
 	} );
 
-	it( 'should retry when the site is returned by the API but is not manageable yet', async () => {
+	it( 'should retry when the current user owns a site that is not manageable yet', async () => {
 		let state = unmanageableSiteState;
-		const next = selectSite( () => state );
+		const { next, context } = selectSite( () => state );
 
 		await jest.advanceTimersByTimeAsync( 0 );
 		expect( requestSite ).toHaveBeenCalledTimes( 1 );
 		expect( next ).not.toHaveBeenCalled();
+		// A placeholder stands in for the section while we wait.
+		expect( context.primary ).toBeTruthy();
 
 		// Capabilities propagate, so the retry lands the site in the state.
 		state = manageableSiteState;
-		await jest.advanceTimersByTimeAsync( 2000 );
+		await jest.advanceTimersByTimeAsync( 1000 );
 
 		expect( requestSite ).toHaveBeenCalledTimes( 2 );
 		expect( next ).toHaveBeenCalled();
 	} );
 
-	it( 'should give up retrying once the limit is reached', async () => {
-		const next = selectSite( () => unmanageableSiteState );
+	it( 'should retry when the current user was an admin of the site', async () => {
+		respondWithSite( { site_owner: USER_ID + 1 } );
 
-		await jest.advanceTimersByTimeAsync( 10000 );
+		let state = wasAdminState;
+		const { next } = selectSite( () => state );
 
-		expect( requestSite ).toHaveBeenCalledTimes( 3 );
+		await jest.advanceTimersByTimeAsync( 0 );
+		expect( requestSite ).toHaveBeenCalledTimes( 1 );
+
+		state = manageableSiteState;
+		await jest.advanceTimersByTimeAsync( 1000 );
+
+		expect( requestSite ).toHaveBeenCalledTimes( 2 );
+		expect( next ).toHaveBeenCalled();
+	} );
+
+	it( 'should not retry when nothing suggests the user has access to the site', async () => {
+		respondWithSite( { site_owner: USER_ID + 1 } );
+
+		const { next } = selectSite( () => unmanageableSiteState );
+
+		await jest.advanceTimersByTimeAsync( LONGER_THAN_THE_WHOLE_BACKOFF );
+
+		expect( requestSite ).toHaveBeenCalledTimes( 1 );
+		expect( next ).not.toHaveBeenCalled();
+	} );
+
+	it( 'should give up retrying once the backoff is exhausted', async () => {
+		const { next } = selectSite( () => unmanageableSiteState );
+
+		await jest.advanceTimersByTimeAsync( LONGER_THAN_THE_WHOLE_BACKOFF );
+
+		expect( requestSite ).toHaveBeenCalledTimes( REQUESTS_WHEN_EXHAUSTED );
 		expect( next ).not.toHaveBeenCalled();
 	} );
 
 	it( 'should stop retrying when the user navigates away', async () => {
-		const next = selectSite( () => unmanageableSiteState );
+		const { next } = selectSite( () => unmanageableSiteState );
 
 		await jest.advanceTimersByTimeAsync( 0 );
 		page.current = '/reader';
-		await jest.advanceTimersByTimeAsync( 10000 );
+		await jest.advanceTimersByTimeAsync( LONGER_THAN_THE_WHOLE_BACKOFF );
 
 		expect( requestSite ).toHaveBeenCalledTimes( 1 );
 		expect( next ).not.toHaveBeenCalled();

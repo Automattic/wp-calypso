@@ -6,6 +6,7 @@ import i18n from 'i18n-calypso';
 import { createElement } from 'react';
 import EmptyContentComponent from 'calypso/components/empty-content';
 import NoSitesMessage from 'calypso/components/empty-content/no-sites-message';
+import Loading from 'calypso/components/loading';
 import {
 	makeLayout,
 	render as clientRender,
@@ -56,6 +57,7 @@ import NavigationComponent from 'calypso/my-sites/navigation';
 import SitesComponent from 'calypso/my-sites/sites';
 import {
 	getCurrentUser,
+	getCurrentUserId,
 	isUserLoggedIn,
 	getCurrentUserSiteCount,
 } from 'calypso/state/current-user/selectors';
@@ -63,6 +65,7 @@ import { hasDashboardOptIn } from 'calypso/state/dashboard/selectors';
 import { successNotice, warningNotice, errorNotice } from 'calypso/state/notices/actions';
 import { savePreference } from 'calypso/state/preferences/actions';
 import { hasReceivedRemotePreferences, getPreference } from 'calypso/state/preferences/selectors';
+import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import getP2HubBlogId from 'calypso/state/selectors/get-p2-hub-blog-id';
 import getPrimaryDomainBySiteId from 'calypso/state/selectors/get-primary-domain-by-site-id';
 import getPrimarySiteId from 'calypso/state/selectors/get-primary-site-id';
@@ -562,12 +565,40 @@ const PATHS_EXCLUDED_FROM_SINGLE_SITE_CONTEXT_FOR_SINGLE_SITE_USERS = [
 /*
  * A site the current user can't manage is deliberately kept out of the state by `requestSite`,
  * so the API can hand us back a site that we then fail to select. Capabilities need a moment to
- * propagate after a site is created or transferred to Atomic, so retry a few times before
+ * propagate after a site is created or transferred to Atomic, so wait for them instead of
  * concluding that the user has no access - otherwise a post-checkout redirect lands on the
  * "You don't have access to that site" page for a site that was just paid for.
+ *
+ * Waiting is only worth it when we can tell the two cases apart: an absent `capabilities` is
+ * either propagation lag or a site the user was never a member of. `capabilitiesArePropagating`
+ * makes that call, and we only back off for as long as it says yes.
  */
-const UNMANAGEABLE_SITE_RETRY_LIMIT = 2;
-const UNMANAGEABLE_SITE_RETRY_DELAY = 2000;
+const UNMANAGEABLE_SITE_RETRY_DELAYS = [ 1000, 2000, 4000, 8000, 15000 ];
+
+/*
+ * Whether the site's missing capabilities are expected to show up shortly, based on signals that
+ * don't themselves depend on capabilities having propagated:
+ *
+ * - the current user owns the site, which covers a site they just created or paid for;
+ * - the current user was an admin of the site per the `/me/sites` bootstrap, which covers a site
+ *   being transferred to Atomic.
+ */
+function capabilitiesArePropagating( state, site ) {
+	if ( site.site_owner && site.site_owner === getCurrentUserId( state ) ) {
+		return true;
+	}
+
+	return canCurrentUser( state, site.ID, 'manage_options' ) === true;
+}
+
+function renderWaitingForSiteCapabilities( context ) {
+	context.primary = createElement( Loading, {
+		title: i18n.translate( 'Loading your site…' ),
+	} );
+
+	makeLayout( context, noop );
+	clientRender( context );
+}
 
 /*
  * Set up site selection based on last URL param and/or handle no-sites error cases
@@ -681,13 +712,13 @@ export function siteSelection( context, next ) {
 		requestAndSelectSite( context, next, {
 			siteFragment,
 			isUnlinkedCheckout,
-			retriesLeft: UNMANAGEABLE_SITE_RETRY_LIMIT,
+			attempt: 0,
 		} );
 	}
 }
 
 // Fetch the site by siteFragment and then try to select it again
-function requestAndSelectSite( context, next, { siteFragment, isUnlinkedCheckout, retriesLeft } ) {
+function requestAndSelectSite( context, next, { siteFragment, isUnlinkedCheckout, attempt } ) {
 	const { getState, dispatch } = getStore( context );
 
 	return dispatch( requestSite( siteFragment ) )
@@ -696,7 +727,17 @@ function requestAndSelectSite( context, next, { siteFragment, isUnlinkedCheckout
 			let freshSiteId;
 
 			if ( site && site.ID ) {
-				if ( ! getSite( getState(), site.ID ) && retriesLeft > 0 ) {
+				const retryDelay = UNMANAGEABLE_SITE_RETRY_DELAYS[ attempt ];
+
+				if (
+					! getSite( getState(), site.ID ) &&
+					retryDelay !== undefined &&
+					capabilitiesArePropagating( getState(), site )
+				) {
+					if ( attempt === 0 ) {
+						renderWaitingForSiteCapabilities( context );
+					}
+
 					return new Promise( ( resolve ) =>
 						setTimeout( () => {
 							// Give up if the user navigated away while we were waiting, so that this
@@ -710,10 +751,10 @@ function requestAndSelectSite( context, next, { siteFragment, isUnlinkedCheckout
 								requestAndSelectSite( context, next, {
 									siteFragment,
 									isUnlinkedCheckout,
-									retriesLeft: retriesLeft - 1,
+									attempt: attempt + 1,
 								} )
 							);
-						}, UNMANAGEABLE_SITE_RETRY_DELAY )
+						}, retryDelay )
 					);
 				}
 
