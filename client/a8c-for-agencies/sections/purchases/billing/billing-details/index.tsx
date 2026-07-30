@@ -145,7 +145,7 @@ export default function BillingDetails() {
 						{ billing.isSuccess &&
 							translate( 'Projected cost for {{bold}}%(date)s{{/bold}}', {
 								components: { bold: <strong style={ { whiteSpace: 'nowrap' } } /> },
-								args: { date: moment( billing.data.date ).format( 'MMMM, YYYY' ) },
+								args: { date: moment( billing.data.date ).format( 'MMMM YYYY' ) },
 							} ) }
 
 						{ billing.isLoading && <TextPlaceholder /> }

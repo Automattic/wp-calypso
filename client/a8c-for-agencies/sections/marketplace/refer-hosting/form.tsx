@@ -219,7 +219,7 @@ export default function ReferHostingForm( {
 			title={ formTitle }
 			autocomplete="off"
 			description={ translate(
-				'Once submitted, our team will take it from there. We will keep you informed of our progress along the way. All fields are required unless marked as optional'
+				'Once submitted, our team will take it from there. We will keep you informed of our progress along the way. All fields are required unless marked as optional.'
 			) }
 		>
 			<FormSection title={ companyTitle }>
