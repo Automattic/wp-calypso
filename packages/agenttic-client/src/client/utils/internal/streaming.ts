@@ -1,15 +1,22 @@
 import type { Message, Task, TaskUpdate } from '../../types/index';
 import { logger } from '../logger';
 import {
-	extractTextFromMessage,
 	extractProgressDataFromMessage,
+	extractTextFromMessage,
 	generateMessageId,
 } from '../core';
 
 /**
  * Parse a stream chunk from a server-sent events stream.
  * This function processes an incoming chunk of data, potentially combined with a buffer
- * from previous chunks, and extracts complete SSE events.
+ * from previous chunks, and extracts events.
+ *
+ * An event is emitted when its `data:` field is terminated by a blank-line delimiter,
+ * OR when the trailing `data:` payload already parses as complete JSON even though no
+ * delimiter has arrived yet. The latter lets WPCOM streams that hold the connection open
+ * (e.g. `input-required` tool calls) surface a complete event immediately instead of
+ * waiting for a delimiter or stream close. Payloads that do not yet parse as valid JSON
+ * stay in `nextBuffer` until a later chunk completes them.
  * @param chunk
  * @param buffer
  */
@@ -38,15 +45,17 @@ export function parseStreamChunk(
 				? currentStreamData.substring( searchStartIndex )
 				: currentStreamData.substring( searchStartIndex, newlineIndex );
 
-		if ( line.startsWith( 'data:' ) ) {
+		const fieldLine = line.trimStart();
+
+		if ( fieldLine.startsWith( 'data:' ) ) {
 			// If eventPayload is not empty, it means this data line is a continuation
 			// of a multi-line data field for the current event. SSE spec says to join with a newline character.
 			if ( eventPayload !== '' ) {
 				eventPayload += '\n';
 			}
 			// Add the data part of the line (stripping "data: " or "data:")
-			eventPayload += line.substring(
-				line.startsWith( 'data: ' ) ? 6 : 5
+			eventPayload += fieldLine.substring(
+				fieldLine.startsWith( 'data: ' ) ? 6 : 5
 			);
 		} else if ( line.trim() === '' ) {
 			// Blank line: indicates the end of an event
@@ -78,6 +87,16 @@ export function parseStreamChunk(
 		}
 	}
 
+	if ( eventPayload ) {
+		try {
+			events.push( JSON.parse( eventPayload ) );
+			lastCompleteEventEnd = currentStreamData.length;
+		} catch {
+			// Keep buffering until a later chunk completes the JSON payload or
+			// the SSE blank-line delimiter arrives.
+		}
+	}
+
 	// Return the original SSE format data for any incomplete event
 	// This preserves "data: " prefixes for the next call
 	const nextBuffer = currentStreamData.substring( lastCompleteEventEnd );
@@ -91,6 +110,26 @@ export function parseStreamChunk(
 export interface ParseSSEStreamOptions {
 	/** Whether to process delta messages for token streaming. Default: false */
 	supportDeltas?: boolean;
+}
+
+function getResultTaskId( result: {
+	id?: string;
+	taskId?: string;
+} ): string | undefined {
+	return result.id ?? result.taskId;
+}
+
+function isFinalTaskUpdate( result: {
+	final?: boolean;
+	status?: { state?: string; final?: boolean };
+} ): boolean {
+	return (
+		result.final === true ||
+		result.status?.final === true ||
+		result.status?.state === 'completed' ||
+		result.status?.state === 'failed' ||
+		result.status?.state === 'canceled'
+	);
 }
 
 /**
@@ -109,7 +148,132 @@ export async function* parseSSEStream(
 	let buffer = '';
 	const accumulator = new DeltaAccumulator();
 	let currentTaskId: string | null = null;
-	let lastStatus: any = null;
+
+	const processEvents = async function* (
+		events: Record< string, any >[]
+	): AsyncIterable< TaskUpdate > {
+		for ( let i = 0; i < events.length; i++ ) {
+			const event = events[ i ];
+
+			// Pace delta messages for smoother rendering (only delay between deltas, not first one)
+			if (
+				i > 0 &&
+				event.method === 'message/delta' &&
+				typeof requestAnimationFrame !== 'undefined'
+			) {
+				await new Promise( ( resolve ) => {
+					requestAnimationFrame( () => resolve( undefined ) );
+				} );
+			}
+
+			if ( event.error ) {
+				throw new Error( `Streaming error: ${ event.error.message }` );
+			}
+
+			// Handle delta messages
+			if (
+				supportDeltas &&
+				event.method === 'message/delta' &&
+				event.params?.delta
+			) {
+				const delta = event.params.delta as StreamDelta;
+
+				try {
+					let processed = false;
+					if ( isToolCallStreamDelta( delta ) ) {
+						accumulator.processToolCallDelta( delta );
+						processed = true;
+					} else if ( delta.deltaType === 'content' ) {
+						accumulator.processContentDelta( delta.content );
+						processed = true;
+					}
+
+					if ( processed ) {
+						if ( ! currentTaskId && event.params.id ) {
+							currentTaskId = event.params.id;
+						}
+						if ( currentTaskId ) {
+							yield {
+								id: currentTaskId,
+								status: {
+									state: 'working',
+									message: accumulator.getCurrentMessage(),
+								},
+								final: false,
+								text: accumulator.getTextContent(),
+								kind: 'delta',
+							};
+						}
+					}
+				} catch ( error ) {
+					// Log error but continue processing
+					logger( 'Failed to process delta: %o', error );
+				}
+			}
+			// Handle regular task updates
+			else if ( event.result && event.result.status ) {
+				const taskId = getResultTaskId( event.result );
+				// Store task ID for delta messages
+				if ( taskId ) {
+					currentTaskId = taskId;
+				}
+				// When token streaming is enabled, the final message already contains
+				// the complete text. We can now reset the accumulator since streaming is complete.
+				if (
+					accumulator.getTextContent() ||
+					accumulator.getCurrentMessage().parts.length > 0
+				) {
+					accumulator.reset();
+				}
+
+				const statusMessage = event.result.status?.message || {
+					role: 'agent',
+					parts: [],
+				};
+				const progress =
+					extractProgressDataFromMessage( statusMessage );
+				const update: TaskUpdate = {
+					id: taskId ?? currentTaskId ?? '',
+					sessionId: event.result.sessionId,
+					status: event.result.status,
+					final: isFinalTaskUpdate( event.result ),
+					text: extractTextFromMessage( statusMessage ),
+					progressMessage: progress?.summary,
+					progressPhase: progress?.phase,
+					kind: 'status',
+				};
+
+				yield update;
+			}
+			// Handle regular JSON-RPC responses (for non-token-streaming)
+			else if ( event.id && event.result ) {
+				const taskId = getResultTaskId( event.result );
+				// This is a regular response, not a delta
+				if ( taskId ) {
+					currentTaskId = taskId;
+				}
+				if ( event.result.status ) {
+					const statusMessage = event.result.status?.message || {
+						role: 'agent',
+						parts: [],
+					};
+					const progress =
+						extractProgressDataFromMessage( statusMessage );
+					const update: TaskUpdate = {
+						id: taskId ?? currentTaskId ?? '',
+						sessionId: event.result.sessionId,
+						status: event.result.status,
+						final: isFinalTaskUpdate( event.result ),
+						text: extractTextFromMessage( statusMessage ),
+						progressMessage: progress?.summary,
+						progressPhase: progress?.phase,
+						kind: 'status',
+					};
+					yield update;
+				}
+			}
+		}
+	};
 
 	try {
 		while ( true ) {
@@ -122,138 +286,29 @@ export async function* parseSSEStream(
 			const { events, nextBuffer } = parseStreamChunk( chunk, buffer );
 
 			if ( events && Array.isArray( events ) ) {
-				for ( let i = 0; i < events.length; i++ ) {
-					const event = events[ i ];
-
-					// Pace delta messages for smoother rendering (only delay between deltas, not first one)
-					if (
-						i > 0 &&
-						event.method === 'message/delta' &&
-						typeof requestAnimationFrame !== 'undefined'
-					) {
-						await new Promise( ( resolve ) => {
-							requestAnimationFrame( () => resolve( undefined ) );
-						} );
-					}
-
-					if ( event.error ) {
-						throw new Error(
-							`Streaming error: ${ event.error.message }`
-						);
-					}
-
-					// Handle delta messages
-					if (
-						supportDeltas &&
-						event.method === 'message/delta' &&
-						event.params?.delta
-					) {
-						const delta = event.params.delta as StreamDelta;
-
-						try {
-							let processed = false;
-							if ( isToolCallStreamDelta( delta ) ) {
-								accumulator.processToolCallDelta( delta );
-								processed = true;
-							} else if ( delta.deltaType === 'content' ) {
-								accumulator.processContentDelta(
-									delta.content
-								);
-								processed = true;
-							}
-
-							if ( processed ) {
-								if ( ! currentTaskId && event.params.id ) {
-									currentTaskId = event.params.id;
-								}
-								if ( currentTaskId ) {
-									yield {
-										id: currentTaskId,
-										status: {
-											state: 'working',
-											message:
-												accumulator.getCurrentMessage(),
-										},
-										final: false,
-										text: accumulator.getTextContent(),
-										kind: 'delta',
-									};
-								}
-							}
-						} catch ( error ) {
-							// Log error but continue processing
-							logger( 'Failed to process delta: %o', error );
-						}
-					}
-					// Handle regular task updates
-					else if ( event.result && event.result.status ) {
-						// Store task ID for delta messages
-						currentTaskId = event.result.id;
-						lastStatus = event.result.status;
-
-						// When token streaming is enabled, the final message already contains
-						// the complete text. We can now reset the accumulator since streaming is complete.
-						if (
-							accumulator.getTextContent() ||
-							accumulator.getCurrentMessage().parts.length > 0
-						) {
-							accumulator.reset();
-						}
-
-						const statusMessage = event.result.status?.message || {
-							role: 'agent',
-							parts: [],
-						};
-						const progress =
-							extractProgressDataFromMessage( statusMessage );
-						const update: TaskUpdate = {
-							id: event.result.id,
-							sessionId: event.result.sessionId,
-							status: event.result.status,
-							final:
-								event.result.status.state === 'completed' ||
-								event.result.status.state === 'failed' ||
-								event.result.status.state === 'canceled',
-							text: extractTextFromMessage( statusMessage ),
-							progressMessage: progress?.summary,
-							progressPhase: progress?.phase,
-							kind: 'status',
-						};
-
-						yield update;
-					}
-					// Handle regular JSON-RPC responses (for non-token-streaming)
-					else if ( event.id && event.result ) {
-						// This is a regular response, not a delta
-						currentTaskId = event.result.id;
-						if ( event.result.status ) {
-							const statusMessage = event.result.status
-								?.message || {
-								role: 'agent',
-								parts: [],
-							};
-							const progress =
-								extractProgressDataFromMessage( statusMessage );
-							const update: TaskUpdate = {
-								id: event.result.id,
-								sessionId: event.result.sessionId,
-								status: event.result.status,
-								final:
-									event.result.status.state === 'completed' ||
-									event.result.status.state === 'failed' ||
-									event.result.status.state === 'canceled',
-								text: extractTextFromMessage( statusMessage ),
-								progressMessage: progress?.summary,
-								progressPhase: progress?.phase,
-								kind: 'status',
-							};
-							yield update;
-						}
-					}
-				}
+				yield* processEvents( events );
 			}
 
 			buffer = nextBuffer;
+		}
+
+		const finalChunk = decoder.decode();
+		const { events, nextBuffer } = parseStreamChunk( finalChunk, buffer );
+		if ( events.length > 0 ) {
+			yield* processEvents( events );
+		}
+
+		if ( nextBuffer.trim() ) {
+			const flushed = parseStreamChunk( '\n\n', nextBuffer );
+			if ( flushed.events.length > 0 ) {
+				yield* processEvents( flushed.events );
+			}
+			if ( flushed.nextBuffer.trim() ) {
+				logger(
+					'Discarding incomplete SSE payload at stream end: %s',
+					flushed.nextBuffer
+				);
+			}
 		}
 	} finally {
 		reader.releaseLock();
@@ -465,7 +520,7 @@ export class DeltaAccumulator {
 		}
 
 		// Add tool calls if present
-		for ( const [ index, toolCall ] of this.toolCalls ) {
+		for ( const toolCall of this.toolCalls.values() ) {
 			if ( toolCall.toolName ) {
 				// Only add tool call if we have at least the name
 				const argumentsStr = toolCall.argumentFragments.join( '' );

@@ -36,6 +36,16 @@ import { logger } from './utils/logger';
 const DEFAULT_TIMEOUT = 120000;
 
 /**
+ * Convert an ability name to the identifier used for OpenAI tool calls.
+ *
+ * @param abilityName - The WordPress ability name
+ * @return The sanitized tool identifier
+ */
+function sanitizeAbilityName( abilityName: string ): string {
+	return abilityName.replace( /\//g, '__' ).replace( /-/g, '_' );
+}
+
+/**
  * Execute a tool or ability with automatic routing.
  *
  * This function checks if the toolId matches any registered abilities
@@ -67,9 +77,7 @@ async function executeToolOrAbility(
 				// 2. Backend converts to sanitized for OpenAI function signature
 				// 3. OpenAI calls with sanitized name
 				// 4. We receive sanitized toolId back from backend for LLM tool calls
-				const toolName = ability.name
-					.replace( /\//g, '__' )
-					.replace( /-/g, '_' );
+				const toolName = sanitizeAbilityName( ability.name );
 
 				if ( toolId === toolName || toolId === ability.name ) {
 					// client side callback, execute it
@@ -183,7 +191,7 @@ async function hasMatchingToolCallbacks(
 	toolProvider: any,
 	message: Message
 ): Promise< boolean > {
-	if ( ! toolProvider || ! message || ! toolProvider.getAvailableTools ) {
+	if ( ! toolProvider || ! message ) {
 		return false;
 	}
 
@@ -192,20 +200,41 @@ async function hasMatchingToolCallbacks(
 		return false;
 	}
 
-	try {
-		const availableTools = await toolProvider.getAvailableTools();
+	if ( toolProvider.getAvailableTools ) {
+		try {
+			const availableTools = await toolProvider.getAvailableTools();
 
-		// Check if any tool call has a matching callback
-		for ( const toolCall of toolCalls ) {
-			const hasCallback = availableTools.some(
-				( tool: any ) => tool.id === toolCall.data.toolId
-			);
-			if ( hasCallback ) {
+			const hasMatchingTool =
+				!! toolProvider.executeTool &&
+				toolCalls.some( ( toolCall ) =>
+					availableTools.some(
+						( tool: any ) => tool.id === toolCall.data.toolId
+					)
+				);
+			if ( hasMatchingTool ) {
 				return true;
 			}
+		} catch {
+			// Continue checking abilities when tool discovery fails.
 		}
-	} catch {
-		return false;
+	}
+
+	if ( toolProvider.getAbilities ) {
+		try {
+			const abilities = await toolProvider.getAbilities();
+
+			return toolCalls.some( ( toolCall ) =>
+				abilities.some(
+					( ability: any ) =>
+						( ability.callback || toolProvider.executeAbility ) &&
+						( ability.name === toolCall.data.toolId ||
+							sanitizeAbilityName( ability.name ) ===
+								toolCall.data.toolId )
+				)
+			);
+		} catch {
+			return false;
+		}
 	}
 
 	return false;
@@ -542,13 +571,35 @@ async function* processAgentResponseStream(
 	requestOptions?: RequestOptions
 ): AsyncIterable< TaskUpdate > {
 	for await ( const update of stream ) {
+		const inputRequiredMessage =
+			update.status.state === 'input-required' &&
+			update.status.message &&
+			toolProvider
+				? update.status.message
+				: undefined;
+		const hasInputRequiredToolCalls = inputRequiredMessage
+			? await hasMatchingToolCallbacks(
+					toolProvider,
+					inputRequiredMessage
+			  )
+			: false;
+		const inputRequiredToolCalls =
+			hasInputRequiredToolCalls && inputRequiredMessage
+				? extractToolCallsFromMessage( inputRequiredMessage )
+				: [];
+
 		// Capture sessionId from server response for fresh chats
 		// This ensures continuations use the sessionId assigned by the server
 		if ( update.sessionId && ! sessionId ) {
 			sessionId = update.sessionId;
 		}
 
-		yield update;
+		yield hasInputRequiredToolCalls
+			? {
+					...update,
+					final: false,
+			  }
+			: update;
 
 		// Handle running state tool calls (async execution without blocking)
 		if (
@@ -604,9 +655,7 @@ async function* processAgentResponseStream(
 			update.status.message &&
 			toolProvider
 		) {
-			const toolCalls = extractToolCallsFromMessage(
-				update.status.message
-			);
+			const toolCalls = inputRequiredToolCalls;
 			if ( toolCalls.length > 0 ) {
 				// Execute all tool calls
 				const toolResults: ToolResultDataPart[] = [];

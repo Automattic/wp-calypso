@@ -18,6 +18,15 @@ function streamFromEvents( events: unknown[] ): ReadableStream< Uint8Array > {
 	} );
 }
 
+function streamFromRaw( payload: string ): ReadableStream< Uint8Array > {
+	return new ReadableStream( {
+		start( controller ) {
+			controller.enqueue( encoder.encode( payload ) );
+			controller.close();
+		},
+	} );
+}
+
 describe( 'parseSSEStream', () => {
 	it( 'surfaces live tool-call data parts from tool_argument deltas', async () => {
 		const updates = [];
@@ -590,5 +599,287 @@ describe( 'parseSSEStream', () => {
 		expect( updates[ 1 ].final ).toBe( false );
 		expect( updates[ 2 ].kind ).toBe( 'status' );
 		expect( updates[ 2 ].final ).toBe( true );
+	} );
+
+	it( 'uses taskId from WPCOM TaskStatusUpdateEvent results', async () => {
+		const updates = [];
+		const stream = streamFromEvents( [
+			{
+				jsonrpc: '2.0',
+				id: 'req-1',
+				result: {
+					type: 'TaskStatusUpdateEvent',
+					taskId: 'task-wpcom',
+					sessionId: 'session-wpcom',
+					status: {
+						state: 'input-required',
+						final: true,
+						message: {
+							kind: 'message',
+							messageId: 'resp-block-notes',
+							role: 'agent',
+							parts: [
+								{
+									type: 'data',
+									data: {
+										toolCallId: 'call-block-notes',
+										toolId: 'big_sky__block_notes',
+										arguments: {
+											operation: 'reply',
+											blockNoteId: 6,
+											notes: 'Looks good.',
+										},
+									},
+								},
+							],
+						},
+					},
+				},
+			},
+		] );
+
+		for await ( const update of parseSSEStream( stream ) ) {
+			updates.push( update );
+		}
+
+		expect( updates ).toHaveLength( 1 );
+		expect( updates[ 0 ] ).toMatchObject( {
+			id: 'task-wpcom',
+			sessionId: 'session-wpcom',
+			final: true,
+			kind: 'status',
+			status: {
+				state: 'input-required',
+				message: {
+					parts: [
+						{
+							type: 'data',
+							data: {
+								toolId: 'big_sky__block_notes',
+								arguments: {
+									operation: 'reply',
+									blockNoteId: 6,
+								},
+							},
+						},
+					],
+				},
+			},
+		} );
+	} );
+
+	it( 'flushes a final SSE data line when the stream closes without a blank delimiter', async () => {
+		const updates = [];
+		const event = {
+			jsonrpc: '2.0',
+			id: 'req-undelimited',
+			result: {
+				type: 'TaskStatusUpdateEvent',
+				taskId: 'task-undelimited',
+				sessionId: 'session-undelimited',
+				status: {
+					state: 'input-required',
+					final: true,
+					message: {
+						kind: 'message',
+						messageId: 'resp-undelimited',
+						role: 'agent',
+						parts: [
+							{
+								type: 'data',
+								data: {
+									toolCallId: 'call-undelimited',
+									toolId: 'big_sky__block_notes',
+									arguments: {
+										operation: 'get',
+										blockNoteId: 17,
+									},
+								},
+							},
+						],
+					},
+				},
+			},
+		};
+		const stream = streamFromRaw( `data: ${ JSON.stringify( event ) }` );
+
+		for await ( const update of parseSSEStream( stream ) ) {
+			updates.push( update );
+		}
+
+		expect( updates ).toHaveLength( 1 );
+		expect( updates[ 0 ] ).toMatchObject( {
+			id: 'task-undelimited',
+			sessionId: 'session-undelimited',
+			final: true,
+			status: {
+				state: 'input-required',
+				message: {
+					parts: [
+						{
+							type: 'data',
+							data: {
+								toolCallId: 'call-undelimited',
+								toolId: 'big_sky__block_notes',
+							},
+						},
+					],
+				},
+			},
+		} );
+	} );
+
+	it( 'parses WPCOM SSE data lines with leading whitespace', async () => {
+		const updates = [];
+		const event = {
+			jsonrpc: '2.0',
+			id: 'req-leading-space',
+			result: {
+				type: 'TaskStatusUpdateEvent',
+				taskId: 'task-leading-space',
+				sessionId: 'session-leading-space',
+				status: {
+					state: 'input-required',
+					final: true,
+					message: {
+						kind: 'message',
+						messageId: 'resp-leading-space',
+						role: 'agent',
+						parts: [
+							{
+								type: 'data',
+								data: {
+									toolCallId: 'call-leading-space',
+									toolId: 'big_sky__block_notes',
+									arguments: {
+										operation: 'get',
+										blockNoteId: 22,
+									},
+								},
+							},
+						],
+					},
+				},
+			},
+		};
+		const stream = streamFromRaw(
+			`  data: ${ JSON.stringify( event ) }\n\n`
+		);
+
+		for await ( const update of parseSSEStream( stream ) ) {
+			updates.push( update );
+		}
+
+		expect( updates ).toHaveLength( 1 );
+		expect( updates[ 0 ] ).toMatchObject( {
+			id: 'task-leading-space',
+			sessionId: 'session-leading-space',
+			final: true,
+			status: {
+				state: 'input-required',
+				message: {
+					parts: [
+						{
+							type: 'data',
+							data: {
+								toolCallId: 'call-leading-space',
+								toolId: 'big_sky__block_notes',
+							},
+						},
+					],
+				},
+			},
+		} );
+	} );
+
+	it( 'emits a complete undelimited SSE data line before the stream closes', async () => {
+		const event = {
+			jsonrpc: '2.0',
+			id: 'req-open-undelimited',
+			result: {
+				type: 'TaskStatusUpdateEvent',
+				taskId: 'task-open-undelimited',
+				status: {
+					state: 'input-required',
+					final: true,
+					message: {
+						kind: 'message',
+						messageId: 'resp-open-undelimited',
+						role: 'agent',
+						parts: [
+							{
+								type: 'data',
+								data: {
+									toolCallId: 'call-open-undelimited',
+									toolId: 'big_sky__block_notes',
+									arguments: {
+										operation: 'reply',
+										blockNoteId: 18,
+									},
+								},
+							},
+						],
+					},
+				},
+			},
+		};
+		const stream = new ReadableStream< Uint8Array >( {
+			start( controller ) {
+				controller.enqueue(
+					encoder.encode( `data: ${ JSON.stringify( event ) }` )
+				);
+			},
+		} );
+
+		const iterator = parseSSEStream( stream )[ Symbol.asyncIterator ]();
+		const result = await Promise.race( [
+			iterator.next(),
+			new Promise< 'timeout' >( ( resolve ) =>
+				setTimeout( () => resolve( 'timeout' ), 50 )
+			),
+		] );
+
+		expect( result ).not.toBe( 'timeout' );
+		expect( result ).toMatchObject( {
+			done: false,
+			value: {
+				id: 'task-open-undelimited',
+				final: true,
+				status: {
+					state: 'input-required',
+				},
+			},
+		} );
+
+		await iterator.return?.();
+	} );
+
+	it( 'honors top-level final on non-terminal status updates', async () => {
+		const updates = [];
+		const stream = streamFromEvents( [
+			{
+				jsonrpc: '2.0',
+				result: {
+					taskId: 'task-final',
+					final: true,
+					status: {
+						state: 'input-required',
+						message: {
+							kind: 'message',
+							messageId: 'resp-final',
+							role: 'agent',
+							parts: [],
+						},
+					},
+				},
+			},
+		] );
+
+		for await ( const update of parseSSEStream( stream ) ) {
+			updates.push( update );
+		}
+
+		expect( updates[ 0 ].id ).toBe( 'task-final' );
+		expect( updates[ 0 ].final ).toBe( true );
 	} );
 } );

@@ -1,5 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import { createClient } from './index';
+import { createClient, sendMessageAndWait } from './index';
 import { createTextMessage } from './utils/index';
 import type { ToolProvider } from './types/index';
 
@@ -17,6 +17,223 @@ describe( 'Client', () => {
 	} );
 
 	describe( 'Message ID behavior', () => {
+		it( 'continues WPCOM final input-required tool call events before resolving', async () => {
+			let executedToolCallId: string | undefined;
+			const mockToolProvider: ToolProvider = {
+				async getAvailableTools() {
+					return [
+						{
+							id: 'test-tool',
+							name: 'Test Tool',
+							description: 'A test tool',
+							input_schema: {
+								type: 'object',
+								properties: {},
+							},
+						},
+					];
+				},
+				async executeTool(
+					toolId: string,
+					args: any,
+					messageId?: string,
+					toolCallId?: string
+				) {
+					executedToolCallId = toolCallId;
+					return {
+						result: { toolId, args, messageId },
+						returnToAgent: true,
+					};
+				},
+			};
+
+			const encoder = new TextEncoder();
+			mockFetch.mockResolvedValueOnce( {
+				ok: true,
+				status: 200,
+				headers: new Headers( {
+					'content-type': 'text/event-stream',
+				} ),
+				body: new ReadableStream( {
+					start( controller ) {
+						const inputRequiredEvent = JSON.stringify( {
+							jsonrpc: '2.0',
+							id: 'req-wpcom-input',
+							result: {
+								type: 'TaskStatusUpdateEvent',
+								taskId: 'task-wpcom-input',
+								status: {
+									state: 'input-required',
+									message: {
+										messageId: 'resp-tool-call',
+										role: 'agent',
+										kind: 'message',
+										parts: [
+											{
+												type: 'data',
+												data: {
+													toolCallId: 'call-wpcom',
+													toolId: 'test-tool',
+													arguments: {
+														input: 'from-wpcom',
+													},
+												},
+											},
+										],
+									},
+									final: true,
+								},
+								sessionId: 'session-wpcom',
+							},
+						} );
+
+						controller.enqueue(
+							encoder.encode(
+								`data: ${ inputRequiredEvent }\n\n`
+							)
+						);
+						controller.close();
+					},
+				} ),
+			} );
+
+			mockFetch.mockResolvedValueOnce( {
+				ok: true,
+				status: 200,
+				headers: new Headers( {
+					'content-type': 'text/event-stream',
+				} ),
+				body: new ReadableStream( {
+					start( controller ) {
+						const completionEvent = JSON.stringify( {
+							jsonrpc: '2.0',
+							id: 'req-wpcom-complete',
+							result: {
+								type: 'TaskStatusUpdateEvent',
+								taskId: 'task-wpcom-input',
+								status: {
+									state: 'completed',
+									message: {
+										role: 'agent',
+										kind: 'message',
+										parts: [
+											{
+												type: 'text',
+												text: 'Done after tool call.',
+											},
+										],
+									},
+									final: true,
+								},
+								sessionId: 'session-wpcom',
+							},
+						} );
+
+						controller.enqueue(
+							encoder.encode( `data: ${ completionEvent }\n\n` )
+						);
+						controller.close();
+					},
+				} ),
+			} );
+
+			const client = createClient( {
+				agentId: 'test-agent',
+				toolProvider: mockToolProvider,
+			} );
+
+			const result = await sendMessageAndWait( client, {
+				message: createTextMessage( 'Please use the test tool' ),
+			} );
+
+			expect( executedToolCallId ).toBe( 'call-wpcom' );
+			expect( mockFetch ).toHaveBeenCalledTimes( 2 );
+			expect( result.final ).toBe( true );
+			expect( result.text ).toBe( 'Done after tool call.' );
+		} );
+
+		it( 'preserves final input-required events when an advertised tool has no executable handler', async () => {
+			const mockToolProvider: ToolProvider = {
+				async getAvailableTools() {
+					return [
+						{
+							id: 'available-tool',
+							name: 'Available Tool',
+							description: 'An available tool',
+							input_schema: {
+								type: 'object',
+								properties: {},
+							},
+						},
+					];
+				},
+			};
+
+			const encoder = new TextEncoder();
+			mockFetch.mockResolvedValueOnce( {
+				ok: true,
+				status: 200,
+				headers: new Headers( {
+					'content-type': 'text/event-stream',
+				} ),
+				body: new ReadableStream( {
+					start( controller ) {
+						const inputRequiredEvent = JSON.stringify( {
+							jsonrpc: '2.0',
+							id: 'req-input',
+							result: {
+								type: 'TaskStatusUpdateEvent',
+								taskId: 'task-input',
+								status: {
+									state: 'input-required',
+									message: {
+										messageId: 'resp-unavailable-tool',
+										role: 'agent',
+										kind: 'message',
+										parts: [
+											{
+												type: 'data',
+												data: {
+													toolCallId:
+														'call-unavailable',
+													toolId: 'available-tool',
+													arguments: {},
+												},
+											},
+										],
+									},
+									final: true,
+								},
+								sessionId: 'session-input',
+							},
+						} );
+
+						controller.enqueue(
+							encoder.encode(
+								`data: ${ inputRequiredEvent }\n\n`
+							)
+						);
+						controller.close();
+					},
+				} ),
+			} );
+
+			const client = createClient( {
+				agentId: 'test-agent',
+				toolProvider: mockToolProvider,
+			} );
+
+			const result = await sendMessageAndWait( client, {
+				message: createTextMessage(
+					'Request an unavailable client tool'
+				),
+			} );
+
+			expect( mockFetch ).toHaveBeenCalledTimes( 1 );
+			expect( result.final ).toBe( true );
+			expect( result.status.state ).toBe( 'input-required' );
+		} );
+
 		it( 'should pass message ID to tool execution when message has an ID', async () => {
 			// Arrange: Create a mock tool provider that captures the messageId parameter
 			let capturedMessageId: string | undefined;
@@ -1026,7 +1243,9 @@ describe( 'Client', () => {
 			};
 
 			const mockToolProvider: ToolProvider = {
-				abilities: [ ability ],
+				async getAbilities() {
+					return [ ability ];
+				},
 				async getAvailableTools() {
 					return [];
 				},
@@ -1162,7 +1381,9 @@ describe( 'Client', () => {
 			};
 
 			const mockToolProvider: ToolProvider = {
-				abilities: [ ability ],
+				async getAbilities() {
+					return [ ability ];
+				},
 				async getAvailableTools() {
 					return [];
 				},
@@ -1304,7 +1525,9 @@ describe( 'Client', () => {
 
 			let toolExecuted = false;
 			const mockToolProvider: ToolProvider = {
-				abilities: [ ability ],
+				async getAbilities() {
+					return [ ability ];
+				},
 				async getAvailableTools() {
 					return [
 						{
@@ -1450,7 +1673,9 @@ describe( 'Client', () => {
 			};
 
 			const mockToolProvider: ToolProvider = {
-				abilities: [ ability ],
+				async getAbilities() {
+					return [ ability ];
+				},
 				async getAvailableTools() {
 					return [];
 				},
