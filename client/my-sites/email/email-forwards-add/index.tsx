@@ -17,6 +17,7 @@ import {
 	EMAIL_WARNING_CODE_GRAVATAR_DOMAIN,
 } from 'calypso/lib/emails/email-provider-constants';
 import EmailForwardingAddNewCompactList from 'calypso/my-sites/email/email-forwarding/email-forwarding-add-new-compact-list';
+import { isEmailForwardingRestricted } from 'calypso/my-sites/email/email-forwarding-eligibility';
 import EmailHeader from 'calypso/my-sites/email/email-header';
 import {
 	getEmailManagementPath,
@@ -128,29 +129,28 @@ const EmailForwardsAdd = ( {
 		}
 	};
 
-	const content =
-		isGravatarRestrictedDomain || isDomainStateRestricted ? (
-			renderRestrictedDomainStatus()
-		) : (
-			<Card>
-				{ areDomainsLoading && (
-					<div className="email-forwards-add__placeholder">
-						<p />
-						<p />
-						<Button disabled />
-					</div>
-				) }
+	const content = isEmailForwardingRestricted( selectedDomain ) ? (
+		renderRestrictedDomainStatus()
+	) : (
+		<Card>
+			{ areDomainsLoading && (
+				<div className="email-forwards-add__placeholder">
+					<p />
+					<p />
+					<Button disabled />
+				</div>
+			) }
 
-				{ ! areDomainsLoading && (
-					<EmailForwardingAddNewCompactList
-						onAddedEmailForwards={ onAddedEmailForwards }
-						selectedDomainName={ selectedDomainName }
-						showFormHeader={ showFormHeader }
-						showMxWarning={ showMxWarning }
-					/>
-				) }
-			</Card>
-		);
+			{ ! areDomainsLoading && (
+				<EmailForwardingAddNewCompactList
+					onAddedEmailForwards={ onAddedEmailForwards }
+					selectedDomainName={ selectedDomainName }
+					showFormHeader={ showFormHeader }
+					showMxWarning={ showMxWarning }
+				/>
+			) }
+		</Card>
+	);
 
 	return (
 		<>

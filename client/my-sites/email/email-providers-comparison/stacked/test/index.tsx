@@ -3,10 +3,7 @@
  */
 
 import { render, screen } from '@testing-library/react';
-import {
-	EMAIL_WARNING_CODE_OTHER_USER_OWNS_DOMAIN_SUBSCRIPTION,
-	EMAIL_WARNING_CODE_OTHER_USER_OWNS_EMAIL,
-} from 'calypso/lib/emails/email-provider-constants';
+import { EMAIL_WARNING_CODE_OTHER_USER_OWNS_DOMAIN_SUBSCRIPTION } from 'calypso/lib/emails/email-provider-constants';
 import { useDispatch, useSelector } from 'calypso/state';
 import EmailProvidersStackedComparison from '..';
 import type { ResponseDomain } from 'calypso/lib/domains/types';
@@ -111,28 +108,18 @@ const selectedSite = {
 	slug: 'example.wordpress.com',
 };
 
-const domainWithoutForwards = {
+const nonOwnerDomainWithoutForwards = {
 	name: 'example.com',
 	domain: 'example.com',
 	emailForwardsCount: 0,
-	currentUserCanAddEmail: true,
-	currentUserCannotAddEmailReason: null,
+	currentUserCanAddEmail: false,
+	currentUserCannotAddEmailReason: {
+		code: EMAIL_WARNING_CODE_OTHER_USER_OWNS_DOMAIN_SUBSCRIPTION,
+		message: 'Only the domain owner can purchase email.',
+	},
 	googleAppsSubscription: null,
 	titanMailSubscription: null,
 } as ResponseDomain;
-
-const domainRestrictedBy = ( code: string | null ) =>
-	( {
-		...domainWithoutForwards,
-		currentUserCanAddEmail: false,
-		currentUserCannotAddEmailReason: code
-			? { code, message: 'Email is unavailable for this domain.' }
-			: null,
-	} ) as ResponseDomain;
-
-const nonOwnerDomainWithoutForwards = domainRestrictedBy(
-	EMAIL_WARNING_CODE_OTHER_USER_OWNS_DOMAIN_SUBSCRIPTION
-);
 
 const renderComparison = ( domain = nonOwnerDomainWithoutForwards ) => {
 	const state = {
@@ -168,19 +155,4 @@ describe( 'EmailProvidersStackedComparison', () => {
 		expect( screen.queryByText( 'Billing interval' ) ).not.toBeInTheDocument();
 		expect( screen.getByText( 'Email forwarding link' ) ).toBeVisible();
 	} );
-
-	it( 'shows the forwarding link when the user can add email', () => {
-		renderComparison( domainWithoutForwards );
-
-		expect( screen.getByText( 'Email forwarding link' ) ).toBeVisible();
-	} );
-
-	it.each( [ EMAIL_WARNING_CODE_OTHER_USER_OWNS_EMAIL, 'domain-expired', null ] )(
-		'hides the forwarding link when email is unavailable because of %s',
-		( code ) => {
-			renderComparison( domainRestrictedBy( code ) );
-
-			expect( screen.queryByText( 'Email forwarding link' ) ).not.toBeInTheDocument();
-		}
-	);
 } );

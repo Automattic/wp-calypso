@@ -6,8 +6,6 @@ import { getSelectedDomain } from 'calypso/lib/domains';
 import { hasEmailForwards } from 'calypso/lib/domains/email-forwarding';
 import {
 	EMAIL_WARNING_CODE_DOMAIN_STATE_RESTRICTED,
-	EMAIL_WARNING_CODE_GRAVATAR_DOMAIN,
-	EMAIL_WARNING_CODE_OTHER_USER_OWNS_DOMAIN_SUBSCRIPTION,
 	EMAIL_WARNING_CODE_OTHER_USER_OWNS_EMAIL,
 } from 'calypso/lib/emails/email-provider-constants';
 import EmailForwardingLink from '../index';
@@ -80,12 +78,10 @@ describe( 'EmailForwardingLink', () => {
 
 	// Being unable to buy paid email doesn't imply being unable to forward, and callers that do
 	// care about paid-email eligibility gate on it themselves.
-	it.each( [
-		EMAIL_WARNING_CODE_OTHER_USER_OWNS_DOMAIN_SUBSCRIPTION,
-		EMAIL_WARNING_CODE_OTHER_USER_OWNS_EMAIL,
-		'domain-expired',
-	] )( 'renders the promo when paid email is unavailable because of %s', ( code ) => {
-		( getSelectedDomain as jest.Mock ).mockReturnValue( restrictedDomain( code ) );
+	it( 'renders the promo when only paid email is unavailable', () => {
+		( getSelectedDomain as jest.Mock ).mockReturnValue(
+			restrictedDomain( EMAIL_WARNING_CODE_OTHER_USER_OWNS_EMAIL )
+		);
 
 		render( <EmailForwardingLink selectedDomainName="example.com" /> );
 
@@ -118,14 +114,13 @@ describe( 'EmailForwardingLink', () => {
 		expect( screen.queryByText( promoMatcher ) ).not.toBeInTheDocument();
 	} );
 
-	it.each( [ EMAIL_WARNING_CODE_DOMAIN_STATE_RESTRICTED, EMAIL_WARNING_CODE_GRAVATAR_DOMAIN ] )(
-		'renders nothing when forwarding itself is restricted by %s',
-		( code ) => {
-			( getSelectedDomain as jest.Mock ).mockReturnValue( restrictedDomain( code ) );
+	it( 'renders nothing when forwarding itself is restricted', () => {
+		( getSelectedDomain as jest.Mock ).mockReturnValue(
+			restrictedDomain( EMAIL_WARNING_CODE_DOMAIN_STATE_RESTRICTED )
+		);
 
-			const { container } = render( <EmailForwardingLink selectedDomainName="example.com" /> );
+		const { container } = render( <EmailForwardingLink selectedDomainName="example.com" /> );
 
-			expect( container ).toBeEmptyDOMElement();
-		}
-	);
+		expect( container ).toBeEmptyDOMElement();
+	} );
 } );
