@@ -55,6 +55,7 @@ describe( 'HelpCenterCTA', () => {
 				cta_id: baseProps.ctaId,
 				variant: 'banner',
 				placement: 'help-center-home',
+				locale: 'en',
 			} );
 		} );
 
@@ -72,6 +73,7 @@ describe( 'HelpCenterCTA', () => {
 				cta_id: baseProps.ctaId,
 				variant: 'banner',
 				placement: 'help-center-home',
+				locale: 'en',
 			} );
 		} );
 
@@ -107,6 +109,7 @@ describe( 'HelpCenterCTA', () => {
 				cta_id: baseProps.ctaId,
 				variant: 'banner',
 				placement: 'help-center-home',
+				locale: 'en',
 			} );
 		} );
 
@@ -122,6 +125,7 @@ describe( 'HelpCenterCTA', () => {
 				cta_id: baseProps.ctaId,
 				variant: 'banner',
 				placement: 'help-center-home',
+				locale: 'en',
 			} );
 		} );
 	} );
@@ -167,6 +171,7 @@ describe( 'HelpCenterCTA', () => {
 				cta_id: baseProps.ctaId,
 				variant: 'link-list-item',
 				placement: 'help-center-more-resources',
+				locale: 'en',
 			} );
 		} );
 
@@ -186,6 +191,7 @@ describe( 'HelpCenterCTA', () => {
 				cta_id: baseProps.ctaId,
 				variant: 'link-list-item',
 				placement: 'help-center-more-resources',
+				locale: 'en',
 			} );
 		} );
 
@@ -245,6 +251,138 @@ describe( 'HelpCenterCTA', () => {
 				( [ eventName ] ) => eventName === 'calypso_helpcenter_cta_click'
 			);
 			expect( clickCalls ).toHaveLength( 2 );
+		} );
+	} );
+
+	describe( 'day-of-window and campaign properties', () => {
+		beforeEach( () => {
+			jest.useFakeTimers();
+			jest.setSystemTime( new Date( '2026-07-29T00:00:00Z' ) );
+		} );
+
+		afterEach( () => {
+			jest.useRealTimers();
+		} );
+
+		function setupUserEvent() {
+			return userEvent.setup( { advanceTimers: jest.advanceTimersByTime } );
+		}
+
+		it( 'includes days_since_purchase, plan_family, and locale on the impression', () => {
+			const baseProps = makeBaseProps();
+			const purchasedAt = Math.floor( Date.now() / 1000 ) - 3 * 86400;
+
+			render(
+				<HelpCenterCTA
+					{ ...baseProps }
+					variant="banner"
+					purchasedAt={ purchasedAt }
+					planFamily="business"
+				/>
+			);
+
+			expect( mockRecordTracksEvent ).toHaveBeenCalledWith( 'calypso_helpcenter_cta_impression', {
+				cta_id: baseProps.ctaId,
+				variant: 'banner',
+				placement: 'help-center-home',
+				plan_family: 'business',
+				locale: 'en',
+				days_since_purchase: 3,
+			} );
+		} );
+
+		it( 'includes days_since_purchase, plan_family, and locale on the click', async () => {
+			const user = setupUserEvent();
+			const baseProps = makeBaseProps();
+			const purchasedAt = Math.floor( Date.now() / 1000 ) - 3 * 86400;
+
+			render(
+				<HelpCenterCTA
+					{ ...baseProps }
+					variant="banner"
+					purchasedAt={ purchasedAt }
+					planFamily="business"
+				/>
+			);
+			mockRecordTracksEvent.mockClear();
+
+			await user.click( screen.getByRole( 'link' ) );
+
+			expect( mockRecordTracksEvent ).toHaveBeenCalledWith( 'calypso_helpcenter_cta_click', {
+				cta_id: baseProps.ctaId,
+				variant: 'banner',
+				placement: 'help-center-home',
+				plan_family: 'business',
+				locale: 'en',
+				days_since_purchase: 3,
+			} );
+		} );
+
+		it( 'reports a later day on a click that happens days after the impression', async () => {
+			const user = setupUserEvent();
+			const baseProps = makeBaseProps();
+			const purchasedAt = Math.floor( Date.now() / 1000 );
+
+			render( <HelpCenterCTA { ...baseProps } variant="banner" purchasedAt={ purchasedAt } /> );
+
+			const [ , impressionProps ] = mockRecordTracksEvent.mock.calls.find(
+				( [ eventName ] ) => eventName === 'calypso_helpcenter_cta_impression'
+			);
+			mockRecordTracksEvent.mockClear();
+
+			jest.setSystemTime( new Date( Date.now() + 3 * 86400 * 1000 ) );
+			await user.click( screen.getByRole( 'link' ) );
+
+			const [ , clickProps ] = mockRecordTracksEvent.mock.calls.find(
+				( [ eventName ] ) => eventName === 'calypso_helpcenter_cta_click'
+			);
+			expect( clickProps.days_since_purchase ).toBeGreaterThan(
+				impressionProps.days_since_purchase
+			);
+		} );
+
+		it( 'clamps a purchase far in the past to day 29', () => {
+			const baseProps = makeBaseProps();
+			const purchasedAt = Math.floor( Date.now() / 1000 ) - 45 * 86400;
+
+			render( <HelpCenterCTA { ...baseProps } variant="banner" purchasedAt={ purchasedAt } /> );
+
+			expect( mockRecordTracksEvent ).toHaveBeenCalledWith(
+				'calypso_helpcenter_cta_impression',
+				expect.objectContaining( { days_since_purchase: 29 } )
+			);
+		} );
+
+		it( 'clamps a purchase timestamp in the future to day 0', () => {
+			const baseProps = makeBaseProps();
+			const purchasedAt = Math.floor( Date.now() / 1000 ) + 86400;
+
+			render( <HelpCenterCTA { ...baseProps } variant="banner" purchasedAt={ purchasedAt } /> );
+
+			expect( mockRecordTracksEvent ).toHaveBeenCalledWith(
+				'calypso_helpcenter_cta_impression',
+				expect.objectContaining( { days_since_purchase: 0 } )
+			);
+		} );
+
+		it( 'omits days_since_purchase from both events when purchasedAt is not supplied', async () => {
+			const user = setupUserEvent();
+			const baseProps = makeBaseProps();
+
+			render( <HelpCenterCTA { ...baseProps } variant="banner" /> );
+
+			const [ , impressionProps ] = mockRecordTracksEvent.mock.calls.find(
+				( [ eventName ] ) => eventName === 'calypso_helpcenter_cta_impression'
+			);
+			expect( impressionProps ).not.toHaveProperty( 'days_since_purchase' );
+
+			mockRecordTracksEvent.mockClear();
+			await user.click( screen.getByRole( 'link' ) );
+
+			const [ , clickProps ] = mockRecordTracksEvent.mock.calls.find(
+				( [ eventName ] ) => eventName === 'calypso_helpcenter_cta_click'
+			);
+			expect( clickProps ).not.toHaveProperty( 'days_since_purchase' );
 		} );
 	} );
 } );
