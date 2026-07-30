@@ -197,6 +197,10 @@ export function renderNoVisibleSites( context ) {
 function renderSelectedSiteNotFound( context ) {
 	setSectionMiddleware( { group: 'sites' } )( context );
 
+	recordTracksEvent( 'calypso_site_selection_no_access', {
+		path: sectionify( context.path ),
+	} );
+
 	context.primary = createElement( EmptyContentComponent, {
 		title: i18n.translate( "You don't have access to that site" ),
 		line: i18n.translate(
@@ -556,6 +560,16 @@ const PATHS_EXCLUDED_FROM_SINGLE_SITE_CONTEXT_FOR_SINGLE_SITE_USERS = [
 ];
 
 /*
+ * A site the current user can't manage is deliberately kept out of the state by `requestSite`,
+ * so the API can hand us back a site that we then fail to select. Capabilities need a moment to
+ * propagate after a site is created or transferred to Atomic, so retry a few times before
+ * concluding that the user has no access - otherwise a post-checkout redirect lands on the
+ * "You don't have access to that site" page for a site that was just paid for.
+ */
+const UNMANAGEABLE_SITE_RETRY_LIMIT = 2;
+const UNMANAGEABLE_SITE_RETRY_DELAY = 2000;
+
+/*
  * Set up site selection based on last URL param and/or handle no-sites error cases
  */
 export function siteSelection( context, next ) {
@@ -664,57 +678,83 @@ export function siteSelection( context, next ) {
 			}
 		} );
 	} else {
-		// Fetch the site by siteFragment and then try to select again
-		dispatch( requestSite( siteFragment ) )
-			.catch( () => null )
-			.then( ( site ) => {
-				let freshSiteId;
+		requestAndSelectSite( context, next, {
+			siteFragment,
+			isUnlinkedCheckout,
+			retriesLeft: UNMANAGEABLE_SITE_RETRY_LIMIT,
+		} );
+	}
+}
+
+// Fetch the site by siteFragment and then try to select it again
+function requestAndSelectSite( context, next, { siteFragment, isUnlinkedCheckout, retriesLeft } ) {
+	const { getState, dispatch } = getStore( context );
+
+	return dispatch( requestSite( siteFragment ) )
+		.catch( () => null )
+		.then( ( site ) => {
+			let freshSiteId;
+
+			if ( site && site.ID ) {
+				if ( ! getSite( getState(), site.ID ) && retriesLeft > 0 ) {
+					return new Promise( ( resolve ) =>
+						setTimeout(
+							() =>
+								resolve(
+									requestAndSelectSite( context, next, {
+										siteFragment,
+										isUnlinkedCheckout,
+										retriesLeft: retriesLeft - 1,
+									} )
+								),
+							UNMANAGEABLE_SITE_RETRY_DELAY
+						)
+					);
+				}
 
 				// If we found a site using the fragment and the fragment matches the *.wordpress.com domain for a site with a mapped domain,
 				// redirect to the mapped domain, e.g /site-editor/example.wordpress.com -> /site-editor/example.com
-				if ( site && site.ID ) {
-					const siteSlug = getSiteSlug( getState(), site.ID );
-					const unmappedSlug = withoutHttp( getSiteOption( getState(), site.ID, 'unmapped_url' ) );
+				const siteSlug = getSiteSlug( getState(), site.ID );
+				const unmappedSlug = withoutHttp( getSiteOption( getState(), site.ID, 'unmapped_url' ) );
 
-					if ( unmappedSlug !== siteSlug && unmappedSlug === siteFragment ) {
-						const hash = context.hashstring ? `#${ context.hashstring }` : '';
-						return page.redirect( context.path.replace( siteFragment, siteSlug ) + hash );
-					}
-
-					freshSiteId = site.ID;
+				if ( unmappedSlug !== siteSlug && unmappedSlug === siteFragment ) {
+					const hash = context.hashstring ? `#${ context.hashstring }` : '';
+					return page.redirect( context.path.replace( siteFragment, siteSlug ) + hash );
 				}
 
-				freshSiteId ??= getSiteId( getState(), siteFragment );
+				freshSiteId = site.ID;
+			}
 
-				if ( ! freshSiteId ) {
-					const wpcomStagingFragment = siteFragment
-						.toString()
-						.replace( /\b.wordpress.com/, '.wpcomstaging.com' );
-					freshSiteId = getSiteId( getState(), wpcomStagingFragment );
-				}
+			freshSiteId ??= getSiteId( getState(), siteFragment );
 
-				// If the user is presumably not connected to WPCOM, we ignore the site ID we found.
-				// Details: p9dueE-6Hf-p2
-				if ( freshSiteId && ! isUnlinkedCheckout ) {
-					// onSelectedSiteAvailable might render an error page about domain-only sites or redirect
-					// to wp-admin. In that case, don't continue handling the route.
-					dispatch( setSelectedSiteId( freshSiteId ) );
-					if ( onSelectedSiteAvailable( context ) ) {
-						next();
-					}
-				} else if ( shouldRedirectToJetpackAuthorize( context, site ) ) {
-					navigate( getJetpackAuthorizeURL( context, site ) );
-				} else {
-					// If the site has loaded but siteId is still invalid then redirect to allSitesPath.
-					const siteFragmentOffset = context.path.indexOf( `/${ siteFragment }` );
-					let allSitesPath = context.path.substring( 0, siteFragmentOffset );
-					if ( context.querystring ) {
-						allSitesPath += `?${ context.querystring }`;
-					}
-					page.redirect( allSitesPath );
+			if ( ! freshSiteId ) {
+				const wpcomStagingFragment = siteFragment
+					.toString()
+					.replace( /\b.wordpress.com/, '.wpcomstaging.com' );
+				freshSiteId = getSiteId( getState(), wpcomStagingFragment );
+			}
+
+			// If the user is presumably not connected to WPCOM, we ignore the site ID we found.
+			// Details: p9dueE-6Hf-p2
+			if ( freshSiteId && ! isUnlinkedCheckout ) {
+				// onSelectedSiteAvailable might render an error page about domain-only sites or redirect
+				// to wp-admin. In that case, don't continue handling the route.
+				dispatch( setSelectedSiteId( freshSiteId ) );
+				if ( onSelectedSiteAvailable( context ) ) {
+					next();
 				}
-			} );
-	}
+			} else if ( shouldRedirectToJetpackAuthorize( context, site ) ) {
+				navigate( getJetpackAuthorizeURL( context, site ) );
+			} else {
+				// If the site has loaded but siteId is still invalid then redirect to allSitesPath.
+				const siteFragmentOffset = context.path.indexOf( `/${ siteFragment }` );
+				let allSitesPath = context.path.substring( 0, siteFragmentOffset );
+				if ( context.querystring ) {
+					allSitesPath += `?${ context.querystring }`;
+				}
+				page.redirect( allSitesPath );
+			}
+		} );
 }
 
 export function loggedInSiteSelection( context, next ) {

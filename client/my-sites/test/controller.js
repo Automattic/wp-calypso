@@ -7,12 +7,18 @@ import configureStore from 'redux-mock-store';
 import { thunk } from 'redux-thunk';
 import * as pageView from 'calypso/lib/analytics/page-view';
 import { PREFERENCES_SET } from 'calypso/state/action-types';
+import { requestSite } from 'calypso/state/sites/actions';
 import {
 	updateRecentSitesPreferences,
 	recordNoSitesPageView,
 	recordNoVisibleSitesPageView,
 	redirectToPrimary,
+	siteSelection,
 } from '../controller';
+
+jest.mock( 'calypso/state/sites/actions', () => ( {
+	requestSite: jest.fn(),
+} ) );
 
 const middlewares = [ thunk ];
 const mockStore = configureStore( middlewares );
@@ -180,6 +186,80 @@ describe( 'recordNoSitesPageView', () => {
 		} );
 
 		spy.mockRestore();
+	} );
+} );
+
+describe( 'siteSelection', () => {
+	const SITE_ID = 1;
+	const SITE_SLUG = 'example.com';
+
+	// A site the current user can't manage yet is kept out of the state by `requestSite`, even
+	// though the API returns it. See the `capabilities` guard in `state/sites/actions`.
+	const unmanageableSiteState = {
+		currentUser: { user: { site_count: 2, visible_site_count: 2 } },
+		preferences: { remoteValues: {} },
+		sites: { items: {}, domains: { items: {} } },
+		ui: { selectedSiteId: null },
+	};
+
+	const manageableSiteState = {
+		...unmanageableSiteState,
+		sites: {
+			...unmanageableSiteState.sites,
+			items: { [ SITE_ID ]: { ID: SITE_ID, URL: `https://${ SITE_SLUG }` } },
+		},
+		ui: { selectedSiteId: SITE_ID },
+	};
+
+	function selectSite( getState ) {
+		const next = jest.fn();
+		const context = {
+			store: mockStore( getState ),
+			path: `/home/${ SITE_SLUG }`,
+			pathname: `/home/${ SITE_SLUG }`,
+			params: { site: SITE_SLUG },
+			query: {},
+			section: {},
+		};
+
+		siteSelection( context, next );
+
+		return next;
+	}
+
+	beforeEach( () => {
+		jest.useFakeTimers();
+		requestSite.mockReset();
+		requestSite.mockReturnValue( () => Promise.resolve( { ID: SITE_ID } ) );
+	} );
+
+	afterEach( () => {
+		jest.useRealTimers();
+	} );
+
+	it( 'should retry when the site is returned by the API but is not manageable yet', async () => {
+		let state = unmanageableSiteState;
+		const next = selectSite( () => state );
+
+		await jest.advanceTimersByTimeAsync( 0 );
+		expect( requestSite ).toHaveBeenCalledTimes( 1 );
+		expect( next ).not.toHaveBeenCalled();
+
+		// Capabilities propagate, so the retry lands the site in the state.
+		state = manageableSiteState;
+		await jest.advanceTimersByTimeAsync( 2000 );
+
+		expect( requestSite ).toHaveBeenCalledTimes( 2 );
+		expect( next ).toHaveBeenCalled();
+	} );
+
+	it( 'should give up retrying once the limit is reached', async () => {
+		const next = selectSite( () => unmanageableSiteState );
+
+		await jest.advanceTimersByTimeAsync( 10000 );
+
+		expect( requestSite ).toHaveBeenCalledTimes( 3 );
+		expect( next ).not.toHaveBeenCalled();
 	} );
 } );
 
