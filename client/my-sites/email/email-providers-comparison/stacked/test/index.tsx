@@ -7,7 +7,7 @@ import { EMAIL_WARNING_CODE_OTHER_USER_OWNS_DOMAIN_SUBSCRIPTION } from 'calypso/
 import { useDispatch, useSelector } from 'calypso/state';
 import EmailProvidersStackedComparison from '..';
 import type { ResponseDomain } from 'calypso/lib/domains/types';
-import type { ReactElement, ReactNode } from 'react';
+import type { ReactNode } from 'react';
 
 jest.mock( '@automattic/calypso-products', () => ( {
 	GOOGLE_WORKSPACE_BUSINESS_STARTER_MONTHLY: 'google-workspace-business-starter-monthly',
@@ -21,32 +21,11 @@ jest.mock( '@wordpress/url', () => ( {
 	getQueryArgs: jest.fn( () => ( {} ) ),
 } ) );
 
-jest.mock( 'i18n-calypso', () => {
-	const React = require( 'react' );
-
-	const translate = ( text: string, options?: { components?: { a?: ReactElement } } ) => {
-		if ( options?.components?.a ) {
-			const [ beforeLink, rest = '' ] = text.split( '{{a}}' );
-			const [ linkText, afterLink = '' ] = rest.split( '{{/a}}' );
-
-			return (
-				<>
-					{ beforeLink }
-					{ React.cloneElement( options.components.a, {}, linkText ) }
-					{ afterLink }
-				</>
-			);
-		}
-
-		return text;
-	};
-
-	return {
-		localize: ( component: unknown ) => component,
-		translate,
-		useTranslate: () => translate,
-	};
-} );
+jest.mock( 'i18n-calypso', () => ( {
+	localize: ( component: unknown ) => component,
+	translate: ( text: string ) => text,
+	useTranslate: () => ( text: string ) => text,
+} ) );
 
 jest.mock( 'calypso/lib/domains', () => ( {
 	canCurrentUserAddEmail: jest.fn( ( domain ) => !! domain?.currentUserCanAddEmail ),
@@ -81,6 +60,9 @@ jest.mock( 'calypso/my-sites/email/email-non-domain-owner-message', () => ( {
 jest.mock( 'calypso/my-sites/email/email-providers-comparison/billing-interval-toggle', () => ( {
 	BillingIntervalToggle: () => <div>Billing interval</div>,
 } ) );
+jest.mock( 'calypso/my-sites/email/email-providers-comparison/email-forwarding-link', () => () => (
+	<div>Email forwarding link</div>
+) );
 jest.mock(
 	'calypso/my-sites/email/email-providers-comparison/stacked/provider-cards/email-upsell-navigation',
 	() => () => null
@@ -171,9 +153,6 @@ describe( 'EmailProvidersStackedComparison', () => {
 
 		expect( screen.getByText( 'Email service can only be purchased' ) ).toBeVisible();
 		expect( screen.queryByText( 'Billing interval' ) ).not.toBeInTheDocument();
-		expect( screen.getByRole( 'link', { name: 'Email Forwarding' } ) ).toHaveAttribute(
-			'href',
-			'/email/example.com/forwarding/add/example.wordpress.com?source=purchase'
-		);
+		expect( screen.getByText( 'Email forwarding link' ) ).toBeVisible();
 	} );
 } );
