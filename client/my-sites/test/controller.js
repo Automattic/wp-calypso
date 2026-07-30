@@ -323,6 +323,19 @@ describe( 'siteSelection', () => {
 		expect( requestSite ).toHaveBeenCalledTimes( 1 );
 		expect( next ).not.toHaveBeenCalled();
 	} );
+
+	it( 'should not select the site when the user navigates away mid-request', async () => {
+		let state = unmanageableSiteState;
+		const { next, context } = selectSite( () => state );
+
+		// The in-flight request comes back with a perfectly selectable site.
+		state = manageableSiteState;
+		page.current = '/reader';
+		await jest.advanceTimersByTimeAsync( LONGER_THAN_THE_WHOLE_BACKOFF );
+
+		expect( next ).not.toHaveBeenCalled();
+		expect( context.store.getActions() ).toEqual( [] );
+	} );
 } );
 
 describe( 'redirectToPrimary', () => {

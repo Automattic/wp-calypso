@@ -570,6 +570,12 @@ const PATHS_EXCLUDED_FROM_SINGLE_SITE_CONTEXT_FOR_SINGLE_SITE_USERS = [
 const UNMANAGEABLE_SITE_RETRY_LIMIT = 3;
 const UNMANAGEABLE_SITE_RETRY_DELAY = 1000;
 
+// A wait can outlast the route that asked for it, so anything resuming after an await must bail
+// out rather than select a site or redirect out of the page the user moved on to.
+function hasNavigatedAwayFrom( context ) {
+	return page.current !== context.path;
+}
+
 // Missing capabilities are propagation lag rather than a lack of access when something that
 // doesn't depend on them says otherwise: the user owns the site, or `/me/sites` saw them as
 // an admin of it.
@@ -705,6 +711,10 @@ function requestAndSelectSite( context, next, { siteFragment, isUnlinkedCheckout
 	return dispatch( requestSite( siteFragment ) )
 		.catch( () => null )
 		.then( ( site ) => {
+			if ( hasNavigatedAwayFrom( context ) ) {
+				return;
+			}
+
 			let freshSiteId;
 
 			if ( site && site.ID ) {
@@ -717,9 +727,7 @@ function requestAndSelectSite( context, next, { siteFragment, isUnlinkedCheckout
 
 					return new Promise( ( resolve ) =>
 						setTimeout( () => {
-							// Give up if the user navigated away while we were waiting, so that this
-							// route doesn't select a site or redirect out of the page they moved on to.
-							if ( page.current !== context.path ) {
+							if ( hasNavigatedAwayFrom( context ) ) {
 								resolve();
 								return;
 							}
