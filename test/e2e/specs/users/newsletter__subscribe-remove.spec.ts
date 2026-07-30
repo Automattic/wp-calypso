@@ -18,27 +18,28 @@ import {
 	envVariables,
 	getTestAccountByFeature,
 } from '@automattic/calypso-e2e';
-import { expect, tags, test } from '../../lib/pw-base';
+import { expect, skipIfNotJetpackDeployment, tags, test } from '../../lib/pw-base';
 
 test.describe(
 	DataHelper.createSuiteTitle( 'Newsletter: Subscribe and Remove' ),
 	{ tag: [ tags.JETPACK_WPCOM_INTEGRATION ] },
 	() => {
+		// Subscription confirmation emails only go out from a site with Jetpack
+		// Subscriptions; the default account's site does not have them.
+		skipIfNotJetpackDeployment();
+
 		const inboxID = SecretsManager.secrets.mailosaur.manualTesting;
 		const postTitle = DataHelper.getDateString( 'ISO-8601' ) as string;
 		const emailClient = new EmailClient();
 		const testEmail = emailClient.getTestEmailAddress( inboxID );
 
-		const features = envToFeatureKey( envVariables );
-		const accountName = getTestAccountByFeature( features );
-		const testAccount = new TestAccount( accountName );
-
+		let testAccount: TestAccount;
 		let newPostDetails: PostResponse;
 		let restAPIClient: RestAPIClient;
 
 		test.afterAll( async () => {
 			try {
-				if ( restAPIClient && newPostDetails ) {
+				if ( testAccount && restAPIClient && newPostDetails ) {
 					await restAPIClient.deleteSubscriber(
 						testAccount.credentials.testSites?.primary.id as number,
 						testEmail
@@ -63,6 +64,8 @@ test.describe(
 			);
 
 			await test.step( 'Setup: create post with Subscribe block via API', async () => {
+				// Must resolve inside the test: a throw at describe scope aborts collection for the entire run.
+				testAccount = new TestAccount( getTestAccountByFeature( envToFeatureKey( envVariables ) ) );
 				restAPIClient = new RestAPIClient( testAccount.credentials );
 				newPostDetails = await restAPIClient.createPost(
 					testAccount.credentials.testSites?.primary.id as number,
