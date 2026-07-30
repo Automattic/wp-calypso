@@ -220,7 +220,8 @@ describe( 'getAgentEmailVCard', () => {
 } );
 
 describe( '<AIToolsSettings>', () => {
-	test( 'shows the settings as disabled below the upgrade callout when unavailable', () => {
+	test( 'shows the settings as disabled below the upgrade callout when unavailable', async () => {
+		const user = userEvent.setup();
 		renderAIToolsSettings( '', false, site, false, true );
 
 		expect( screen.getByText( 'Your dream site is just a prompt away' ) ).toBeVisible();
@@ -251,7 +252,12 @@ describe( '<AIToolsSettings>', () => {
 		} );
 		expect( mcpToggle ).toBeDisabled();
 		expect( mcpToggle ).toHaveAccessibleDescription( 'Upgrade your plan to enable this setting.' );
-		expect( screen.getAllByText( 'Upgrade required' ) ).toHaveLength( 4 );
+		const upgradeBadges = screen.getAllByText( 'Upgrade required' );
+		expect( upgradeBadges ).toHaveLength( 7 );
+		await user.hover( upgradeBadges[ 0 ] );
+		expect( await screen.findByRole( 'tooltip' ) ).toHaveTextContent(
+			'Upgrade your plan to enable this setting.'
+		);
 
 		expect( screen.getByRole( 'button', { name: /Connect Telegram/ } ) ).toHaveAttribute(
 			'aria-disabled',

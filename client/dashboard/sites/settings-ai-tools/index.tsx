@@ -11,6 +11,7 @@ import {
 	userSettingsQuery,
 } from '@automattic/api-queries';
 import config from '@automattic/calypso-config';
+import { Badge } from '@automattic/ui';
 import { useMutation, useQuery, useSuspenseQuery } from '@tanstack/react-query';
 import {
 	__experimentalHStack as HStack,
@@ -19,6 +20,7 @@ import {
 	Button,
 	Icon,
 	ToggleControl,
+	Tooltip,
 } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
@@ -115,6 +117,14 @@ const features = [
 
 const upgradeRequiredText = __( 'Upgrade your plan to enable this setting.' );
 const upgradeRequiredBadge = { text: __( 'Upgrade required' ) };
+
+function UpgradeRequiredBadge() {
+	return (
+		<Tooltip text={ upgradeRequiredText } placement="top">
+			<Badge intent="info">{ upgradeRequiredBadge.text }</Badge>
+		</Tooltip>
+	);
+}
 
 const TELEGRAM_CONNECTION_PATH = '/me/developer';
 
@@ -258,6 +268,7 @@ function EmailAssistantCard( {
 					<SectionHeader
 						title={ __( 'Email WordPress Agent' ) }
 						description={ __( 'Email this site’s WordPress Agent using a private address.' ) }
+						actions={ disabled ? <UpgradeRequiredBadge /> : undefined }
 						level={ 3 }
 					/>
 					<ToggleControl
@@ -437,6 +448,7 @@ export default function AIToolsSettings( { siteSlug }: { siteSlug: string } ) {
 							<SectionHeader
 								title={ __( 'WordPress Agent' ) }
 								description={ __( 'Helps with site setup, content, design, and more.' ) }
+								actions={ ! isAvailable ? <UpgradeRequiredBadge /> : undefined }
 								level={ 3 }
 							/>
 							<ToggleControl
@@ -496,6 +508,7 @@ export default function AIToolsSettings( { siteSlug }: { siteSlug: string } ) {
 									<SectionHeader
 										title={ __( 'External AI agent access' ) }
 										description={ __( 'Allow external AI agents to access this site via MCP.' ) }
+										actions={ ! isAvailable ? <UpgradeRequiredBadge /> : undefined }
 										level={ 3 }
 									/>
 									<ToggleControl
@@ -560,7 +573,11 @@ export default function AIToolsSettings( { siteSlug }: { siteSlug: string } ) {
 				) }
 				{ isEnabled && (
 					<VStack spacing={ 3 }>
-						<SectionHeader title={ __( 'Ways to get started' ) } level={ 3 } />
+						<SectionHeader
+							title={ __( 'Ways to get started' ) }
+							actions={ ! isAvailable ? <UpgradeRequiredBadge /> : undefined }
+							level={ 3 }
+						/>
 						<SummaryButtonList>
 							<SummaryButton
 								title={ __( 'Get answers' ) }
