@@ -13,20 +13,23 @@ import {
 	envVariables,
 	getTestAccountByFeature,
 } from '@automattic/calypso-e2e';
-import { expect, tags, test } from '../../lib/pw-base';
+import { expect, skipIfNotJetpackTarget, tags, test } from '../../lib/pw-base';
 
 test.describe(
 	DataHelper.createSuiteTitle( 'Jetpack Instant Search' ),
 	{ tag: [ tags.JETPACK_WPCOM_INTEGRATION ] },
 	() => {
-		const features = envToFeatureKey( envVariables );
-		const accountName = getTestAccountByFeature( features );
+		// Instant Search only loads on a site with the Jetpack Search product.
+		skipIfNotJetpackTarget();
 
 		test( 'As a user, I can use Jetpack Instant Search', async ( { page } ) => {
 			test.skip(
 				envVariables.ATOMIC_VARIATION === 'private',
 				'Search not available on private sites'
 			);
+
+			// Must resolve inside the test: a throw at describe scope aborts collection for the entire run.
+			const accountName = getTestAccountByFeature( envToFeatureKey( envVariables ) );
 
 			const searchString = DataHelper.getRandomPhrase();
 			const postWithSearchBlockTitle = `Search Block ${ DataHelper.getTimestamp() }-${ DataHelper.getRandomInteger(

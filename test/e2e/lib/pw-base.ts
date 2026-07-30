@@ -777,6 +777,30 @@ export function skipIfNotTrunk(): void {
 }
 
 /**
+ * Skips the current test suite when the run does not target a Jetpack deployment site.
+ *
+ * `wpcom-deployment` is the only value any build type sets, and only it resolves an
+ * account owning a site with the Jetpack site features (Instant Search, Subscriptions)
+ * some specs need. Every other run resolves an account whose site has none of them —
+ * the Calypso PR matrix reaches these specs whenever a shared E2E file change drops
+ * its `--grep` and runs the whole suite.
+ *
+ * @example
+ * ```typescript
+ * test.describe( 'My Test Suite', () => {
+ *   skipIfNotJetpackTarget();
+ *   test( 'my test', async () => { ... });
+ * });
+ * ```
+ */
+export function skipIfNotJetpackTarget(): void {
+	test.skip(
+		envVariables.JETPACK_TARGET !== 'wpcom-deployment',
+		'Skipping: requires a test site with Jetpack features (JETPACK_TARGET=wpcom-deployment)'
+	);
+}
+
+/**
  * Deletes an ephemeral test site. Retries transient failures and never throws:
  * it runs from fixture teardown, which Playwright executes even when the test
  * fails or times out, so a cleanup hiccup must not redden a passing test. On
