@@ -2,10 +2,10 @@
     Defines the options used for the @wp/data persistence plugin, 
     which include a persistent storage implementation to add data expiration handling.
 */
-export const ONE_WEEK_PERSISTENCE_STORAGE_KEY = 'WPCOM_7_DAYS_PERSISTENCE';
+const storageKey = 'WPCOM_7_DAYS_PERSISTENCE';
 const PERSISTENCE_INTERVAL = 7 * 24 * 3600000; // days * hours in days * ms in hour
-const STORAGE_KEY = ONE_WEEK_PERSISTENCE_STORAGE_KEY;
-const STORAGE_TS_KEY = ONE_WEEK_PERSISTENCE_STORAGE_KEY + '_TS';
+const STORAGE_KEY = storageKey;
+const STORAGE_TS_KEY = storageKey + '_TS';
 
 // A plain object fallback if localStorage is not available
 const objStore: { [ key: string ]: string } = {};
@@ -52,7 +52,7 @@ const hasFreshParam = (): boolean => {
 };
 
 // Handle data expiration by providing a storage object override to the @wp/data persistence plugin.
-export const oneWeekPersistenceStorage: Pick< Storage, 'getItem' | 'setItem' > = {
+const storage: Pick< Storage, 'getItem' | 'setItem' > = {
 	getItem( key ) {
 		const timestamp = storageHandler.getItem( STORAGE_TS_KEY );
 
@@ -73,7 +73,7 @@ export const oneWeekPersistenceStorage: Pick< Storage, 'getItem' | 'setItem' > =
 
 const persistOptions = {
 	storageKey: STORAGE_KEY,
-	storage: oneWeekPersistenceStorage,
+	storage,
 };
 
 export default persistOptions;

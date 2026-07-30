@@ -2,18 +2,9 @@
  * @jest-environment jsdom
  */
 
-import { dispatch } from '@wordpress/data';
-import {
-	ONE_WEEK_PERSISTENCE_STORAGE_KEY,
-	oneWeekPersistenceStorage,
-} from '../../plugins/one-week-persistence-config';
-import {
-	consumeLoggedOutOdieChatHandoff,
-	restorePersistedLoggedOutOdieChatState,
-	setLoggedOutOdieChat,
-} from '../actions';
+import { dispatch, select } from '@wordpress/data';
+import { consumeLoggedOutOdieChatHandoff, setLoggedOutOdieChat } from '../actions';
 import { register } from '../index';
-import { getPersistedLoggedOutOdieChatState } from '../persistence';
 import { loggedOutOdieChat, loggedOutOdieChatHandoffs, loggedOutOdieChats } from '../reducer';
 import { getLoggedOutOdieChat, getPendingLoggedOutOdieChat } from '../selectors';
 import type { State } from '../reducer';
@@ -155,65 +146,50 @@ describe( 'logged-out Odie chat persistence', () => {
 		expect( getLoggedOutOdieChat( state, wooSession.botSlug ) ).toEqual( wooSession );
 	} );
 
-	it( 'normalizes persisted legacy chat shapes before restoring the store', () => {
-		oneWeekPersistenceStorage.setItem(
-			ONE_WEEK_PERSISTENCE_STORAGE_KEY,
+	it( 'hydrates and persists sessions and handoffs through the Help Center store', () => {
+		window.localStorage.setItem( 'WPCOM_7_DAYS_PERSISTENCE_TS', String( Date.now() ) );
+		window.localStorage.setItem(
+			'WPCOM_7_DAYS_PERSISTENCE',
 			JSON.stringify( {
 				'automattic/help-center': {
-					loggedOutOdieChat: {
-						[ wpcomSession.botSlug ]: wpcomSession,
-					},
+					loggedOutOdieChat: wpcomSession,
 					loggedOutOdieChats: {
-						[ wooSession.botSlug ]: wooSession,
+						[ wpcomSession.botSlug ]: wpcomSession,
 					},
 					loggedOutOdieChatHandoffs: {
 						[ wpcomSession.botSlug ]: true,
-						invalid: false,
 					},
 				},
 			} )
 		);
 
-		const persistedState = getPersistedLoggedOutOdieChatState();
-
-		expect( persistedState ).toEqual( {
-			loggedOutOdieChat: undefined,
-			loggedOutOdieChats: {
-				[ wpcomSession.botSlug ]: wpcomSession,
-				[ wooSession.botSlug ]: wooSession,
-			},
-			loggedOutOdieChatHandoffs: {
-				[ wpcomSession.botSlug ]: true,
-			},
-		} );
-
-		const action = restorePersistedLoggedOutOdieChatState( persistedState! );
-		expect( loggedOutOdieChat( wooSession, action ) ).toBeUndefined();
-		expect( loggedOutOdieChats( { stale: wpcomSession }, action ) ).toEqual(
-			persistedState?.loggedOutOdieChats
-		);
-		expect( loggedOutOdieChatHandoffs( { stale: true }, action ) ).toEqual(
-			persistedState?.loggedOutOdieChatHandoffs
-		);
-	} );
-
-	it( 'persists sessions and handoffs through the Help Center store', () => {
 		const storeKey = register();
+		const storeSelect = select( storeKey ) as unknown as {
+			getLoggedOutOdieChat: ( botSlug: string ) => LoggedOutOdieChat | undefined;
+			getPendingLoggedOutOdieChat: ( botSlug: string ) => LoggedOutOdieChat | undefined;
+		};
 		const storeDispatch = dispatch( storeKey ) as unknown as {
 			consumeLoggedOutOdieChatHandoff: typeof consumeLoggedOutOdieChatHandoff;
 			setLoggedOutOdieChat: typeof setLoggedOutOdieChat;
 		};
 
-		storeDispatch.setLoggedOutOdieChat( wpcomSession, true );
+		expect( storeSelect.getLoggedOutOdieChat( wpcomSession.botSlug ) ).toEqual( wpcomSession );
+		expect( storeSelect.getPendingLoggedOutOdieChat( wpcomSession.botSlug ) ).toEqual(
+			wpcomSession
+		);
+
+		storeDispatch.setLoggedOutOdieChat( wooSession, true );
 
 		const persistedWithHandoff = JSON.parse(
 			window.localStorage.getItem( 'WPCOM_7_DAYS_PERSISTENCE' ) ?? '{}'
 		);
 		expect( persistedWithHandoff[ storeKey ].loggedOutOdieChats ).toEqual( {
 			[ wpcomSession.botSlug ]: wpcomSession,
+			[ wooSession.botSlug ]: wooSession,
 		} );
 		expect( persistedWithHandoff[ storeKey ].loggedOutOdieChatHandoffs ).toEqual( {
 			[ wpcomSession.botSlug ]: true,
+			[ wooSession.botSlug ]: true,
 		} );
 
 		storeDispatch.consumeLoggedOutOdieChatHandoff( wpcomSession.botSlug );
@@ -223,7 +199,10 @@ describe( 'logged-out Odie chat persistence', () => {
 		);
 		expect( persistedAfterHandoff[ storeKey ].loggedOutOdieChats ).toEqual( {
 			[ wpcomSession.botSlug ]: wpcomSession,
+			[ wooSession.botSlug ]: wooSession,
 		} );
-		expect( persistedAfterHandoff[ storeKey ].loggedOutOdieChatHandoffs ).toBeUndefined();
+		expect( persistedAfterHandoff[ storeKey ].loggedOutOdieChatHandoffs ).toEqual( {
+			[ wooSession.botSlug ]: true,
+		} );
 	} );
 } );

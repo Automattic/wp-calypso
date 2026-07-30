@@ -71,8 +71,6 @@ export const loggedOutOdieChat: Reducer<
 		// Keep the singular value for backward compatibility with independently deployed clients.
 		case 'HELP_CENTER_SET_LOGGED_OUT_ODIE_CHAT':
 			return action.session;
-		case 'HELP_CENTER_RESTORE_PERSISTED_LOGGED_OUT_ODIE_CHAT_STATE':
-			return action.state.loggedOutOdieChat;
 	}
 	return state;
 };
@@ -89,8 +87,6 @@ export const loggedOutOdieChats: Reducer< LoggedOutOdieChats | undefined, HelpCe
 						[ action.session.botSlug ]: action.session,
 				  }
 				: undefined;
-		case 'HELP_CENTER_RESTORE_PERSISTED_LOGGED_OUT_ODIE_CHAT_STATE':
-			return action.state.loggedOutOdieChats;
 	}
 	return state;
 };
@@ -118,8 +114,6 @@ export const loggedOutOdieChatHandoffs: Reducer<
 
 			return Object.keys( remainingHandoffs ).length ? remainingHandoffs : undefined;
 		}
-		case 'HELP_CENTER_RESTORE_PERSISTED_LOGGED_OUT_ODIE_CHAT_STATE':
-			return action.state.loggedOutOdieChatHandoffs;
 	}
 	return state;
 };
