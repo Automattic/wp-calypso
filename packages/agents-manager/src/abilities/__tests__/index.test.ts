@@ -10,14 +10,20 @@ jest.mock( '@automattic/agenttic-client', () => ( { getAgentManager: jest.fn() }
 	virtual: true,
 } );
 
+const mockShowComponentCallback = jest.fn();
+jest.mock( '../show-component', () => ( {
+	showComponentAbility: { name: 'big-sky/show-component', callback: mockShowComponentCallback },
+} ) );
+
 // `registerAmAbilities` runs once per module instance, so each test loads a
 // fresh module (and the matching mock instances) to start clean.
 async function load() {
 	jest.resetModules();
 	const abilities = jest.requireMock( '@wordpress/abilities' );
-	const { registerAmAbilities } = await import( '..' );
-	return { registerAmAbilities, ...abilities } as {
+	const { registerAmAbilities, amToolProvider } = await import( '..' );
+	return { registerAmAbilities, amToolProvider, ...abilities } as {
 		registerAmAbilities: () => Promise< void >;
+		amToolProvider: ( typeof import('..') )[ 'amToolProvider' ];
 		getAbility: jest.Mock;
 		registerAbility: jest.Mock;
 		registerAbilityCategory: jest.Mock;
@@ -26,6 +32,42 @@ async function load() {
 }
 
 beforeEach( () => jest.clearAllMocks() );
+
+describe( 'amToolProvider', () => {
+	it( 'executes an owned ability by its normalized name', async () => {
+		mockShowComponentCallback.mockResolvedValueOnce( { result: { success: true } } );
+		const { amToolProvider } = await load();
+
+		await expect( amToolProvider.executeAbility( 'big_sky__show_component', {} ) ).resolves.toEqual(
+			{ result: { success: true } }
+		);
+		expect( mockShowComponentCallback ).toHaveBeenCalledWith( {} );
+	} );
+
+	it( 'logs and rethrows when an owned ability fails', async () => {
+		const error = jest.spyOn( console, 'error' ).mockImplementation( () => {} );
+		mockShowComponentCallback.mockRejectedValueOnce( new Error( 'Callback exploded.' ) );
+		const { amToolProvider } = await load();
+
+		await expect( amToolProvider.executeAbility( 'big_sky__show_component', {} ) ).rejects.toThrow(
+			'Callback exploded.'
+		);
+		expect( error ).toHaveBeenCalledWith(
+			'[AgentsManager] Ability "big_sky__show_component" failed:',
+			expect.any( Error )
+		);
+	} );
+
+	it( 'logs and rethrows for an ability it does not own', async () => {
+		const error = jest.spyOn( console, 'error' ).mockImplementation( () => {} );
+		const { amToolProvider } = await load();
+
+		await expect( amToolProvider.executeAbility( 'big-sky/unknown', {} ) ).rejects.toThrow(
+			'Agents Manager does not own the ability: big-sky/unknown'
+		);
+		expect( error ).toHaveBeenCalled();
+	} );
+} );
 
 describe( 'registerAmAbilities', () => {
 	it( 'registers the category, then the abilities, exactly once', async () => {

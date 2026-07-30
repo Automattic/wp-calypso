@@ -32,13 +32,19 @@ const getOwnedAbilities = () => ( isAmAbilitiesDisabled() ? [] : AM_ABILITIES );
 export const amToolProvider: ToolProvider = {
 	getAbilities: async () => getOwnedAbilities(),
 	executeAbility: async ( name: string, args: unknown ) => {
-		const ability = getOwnedAbilities().find(
-			( candidate ) => candidate.name === name || normalizeAbilityName( candidate.name ) === name
-		);
-		if ( ! ability?.callback ) {
-			throw new Error( `Agents Manager does not own the ability: ${ name }` );
+		try {
+			const ability = getOwnedAbilities().find(
+				( candidate ) => candidate.name === name || normalizeAbilityName( candidate.name ) === name
+			);
+			if ( ! ability?.callback ) {
+				throw new Error( `Agents Manager does not own the ability: ${ name }` );
+			}
+			return await ( ability.callback as ( input: unknown ) => Promise< unknown > )( args );
+		} catch ( error ) {
+			// eslint-disable-next-line no-console
+			console.error( `[AgentsManager] Ability "${ name }" failed:`, error );
+			throw error;
 		}
-		return ( ability.callback as ( input: unknown ) => Promise< unknown > )( args );
 	},
 };
 
