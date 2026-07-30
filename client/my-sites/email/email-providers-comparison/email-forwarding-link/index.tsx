@@ -1,11 +1,10 @@
 import { useTranslate } from 'i18n-calypso';
-import {
-	canCurrentUserAddEmail,
-	getCurrentUserCannotAddEmailReason,
-	getSelectedDomain,
-} from 'calypso/lib/domains';
+import { getCurrentUserCannotAddEmailReason, getSelectedDomain } from 'calypso/lib/domains';
 import { hasEmailForwards } from 'calypso/lib/domains/email-forwarding';
-import { EMAIL_WARNING_CODE_OTHER_USER_OWNS_DOMAIN_SUBSCRIPTION } from 'calypso/lib/emails/email-provider-constants';
+import {
+	EMAIL_WARNING_CODE_DOMAIN_STATE_RESTRICTED,
+	EMAIL_WARNING_CODE_GRAVATAR_DOMAIN,
+} from 'calypso/lib/emails/email-provider-constants';
 import { getAddEmailForwardsPath } from 'calypso/my-sites/email/paths';
 import { useSelector } from 'calypso/state';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
@@ -40,15 +39,16 @@ const EmailForwardingLink = ( { selectedDomainName }: EmailForwardingLinkProps )
 	}
 
 	const hasExistingEmailForwards = hasEmailForwards( domain );
-	const cannotAddEmailWarningReason = getCurrentUserCannotAddEmailReason( domain );
+	const cannotAddEmailWarningCode = getCurrentUserCannotAddEmailReason( domain )?.code ?? null;
 
-	// Site admins who don't own the domain subscription can't buy paid email, but they can
-	// still set up free forwarding. Every other restriction also blocks forwarding itself.
-	const canShowEmailForwarding =
-		canCurrentUserAddEmail( domain ) ||
-		cannotAddEmailWarningReason?.code === EMAIL_WARNING_CODE_OTHER_USER_OWNS_DOMAIN_SUBSCRIPTION;
+	// Only restrictions that block forwarding itself belong here, matching the guards on the
+	// add-forwarding page. Paid-email eligibility is a separate question, so callers that care
+	// about it gate on it themselves.
+	const isEmailForwardingRestricted =
+		cannotAddEmailWarningCode === EMAIL_WARNING_CODE_DOMAIN_STATE_RESTRICTED ||
+		cannotAddEmailWarningCode === EMAIL_WARNING_CODE_GRAVATAR_DOMAIN;
 
-	if ( hasExistingEmailForwards || ! canShowEmailForwarding ) {
+	if ( hasExistingEmailForwards || isEmailForwardingRestricted ) {
 		return null;
 	}
 

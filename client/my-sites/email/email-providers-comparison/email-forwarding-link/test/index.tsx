@@ -32,9 +32,6 @@ jest.mock( 'calypso/state/ui/selectors', () => ( {
 } ) );
 
 jest.mock( 'calypso/lib/domains', () => ( {
-	canCurrentUserAddEmail: jest.fn(
-		( domain: ResponseDomain | undefined ) => !! domain?.currentUserCanAddEmail
-	),
 	getCurrentUserCannotAddEmailReason: jest.fn( ( domain: ResponseDomain | undefined ) =>
 		domain && ! domain.currentUserCanAddEmail ? domain.currentUserCannotAddEmailReason : null
 	),
@@ -57,6 +54,16 @@ const regularDomain = {
 	currentUserCannotAddEmailReason: null,
 } as ResponseDomain;
 
+const restrictedDomain = ( code: string ) =>
+	( {
+		...regularDomain,
+		currentUserCanAddEmail: false,
+		currentUserCannotAddEmailReason: {
+			code,
+			message: 'Email is unavailable for this domain.',
+		},
+	} ) as ResponseDomain;
+
 describe( 'EmailForwardingLink', () => {
 	beforeEach( () => {
 		jest.clearAllMocks();
@@ -71,15 +78,14 @@ describe( 'EmailForwardingLink', () => {
 		expect( screen.getByText( promoMatcher ) ).toBeVisible();
 	} );
 
-	it( 'renders the email forwarding promo for a non-owner who cannot purchase paid email', () => {
-		( getSelectedDomain as jest.Mock ).mockReturnValue( {
-			...regularDomain,
-			currentUserCanAddEmail: false,
-			currentUserCannotAddEmailReason: {
-				code: EMAIL_WARNING_CODE_OTHER_USER_OWNS_DOMAIN_SUBSCRIPTION,
-				message: 'Only the domain owner can purchase email.',
-			},
-		} );
+	// Being unable to buy paid email doesn't imply being unable to forward, and callers that do
+	// care about paid-email eligibility gate on it themselves.
+	it.each( [
+		EMAIL_WARNING_CODE_OTHER_USER_OWNS_DOMAIN_SUBSCRIPTION,
+		EMAIL_WARNING_CODE_OTHER_USER_OWNS_EMAIL,
+		'domain-expired',
+	] )( 'renders the promo when paid email is unavailable because of %s', ( code ) => {
+		( getSelectedDomain as jest.Mock ).mockReturnValue( restrictedDomain( code ) );
 
 		render( <EmailForwardingLink selectedDomainName="example.com" /> );
 
@@ -112,23 +118,14 @@ describe( 'EmailForwardingLink', () => {
 		expect( screen.queryByText( promoMatcher ) ).not.toBeInTheDocument();
 	} );
 
-	it.each( [
-		EMAIL_WARNING_CODE_DOMAIN_STATE_RESTRICTED,
-		EMAIL_WARNING_CODE_GRAVATAR_DOMAIN,
-		EMAIL_WARNING_CODE_OTHER_USER_OWNS_EMAIL,
-		'domain-expired',
-	] )( 'renders nothing when the user cannot add email because of %s', ( code ) => {
-		( getSelectedDomain as jest.Mock ).mockReturnValue( {
-			...regularDomain,
-			currentUserCanAddEmail: false,
-			currentUserCannotAddEmailReason: {
-				code,
-				message: 'Email forwarding is unavailable for this domain.',
-			},
-		} );
+	it.each( [ EMAIL_WARNING_CODE_DOMAIN_STATE_RESTRICTED, EMAIL_WARNING_CODE_GRAVATAR_DOMAIN ] )(
+		'renders nothing when forwarding itself is restricted by %s',
+		( code ) => {
+			( getSelectedDomain as jest.Mock ).mockReturnValue( restrictedDomain( code ) );
 
-		const { container } = render( <EmailForwardingLink selectedDomainName="example.com" /> );
+			const { container } = render( <EmailForwardingLink selectedDomainName="example.com" /> );
 
-		expect( container ).toBeEmptyDOMElement();
-	} );
+			expect( container ).toBeEmptyDOMElement();
+		}
+	);
 } );

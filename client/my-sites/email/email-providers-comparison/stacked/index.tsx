@@ -26,7 +26,10 @@ import {
 	hasEmailForwards,
 	getDomainsWithEmailForwards,
 } from 'calypso/lib/domains/email-forwarding';
-import { EMAIL_WARNING_CODE_DOMAIN_STATE_RESTRICTED } from 'calypso/lib/emails/email-provider-constants';
+import {
+	EMAIL_WARNING_CODE_DOMAIN_STATE_RESTRICTED,
+	EMAIL_WARNING_CODE_OTHER_USER_OWNS_DOMAIN_SUBSCRIPTION,
+} from 'calypso/lib/emails/email-provider-constants';
 import { hasGSuiteSupportedDomain } from 'calypso/lib/gsuite';
 import { GOOGLE_WORKSPACE_PRODUCT_TYPE } from 'calypso/lib/gsuite/constants';
 import { domainAddNew } from 'calypso/my-sites/domains/paths';
@@ -101,6 +104,14 @@ const EmailProvidersStackedComparison = ( {
 
 	const currentUserCanAddEmail = canCurrentUserAddEmail( domain );
 	const showEmailPurchaseDisabledMessage = ! currentUserCanAddEmail && ! isDomainInCart;
+	const cannotAddEmailWarningCode = getCurrentUserCannotAddEmailReason( domain )?.code ?? null;
+
+	// Site admins who don't own the domain subscription can't buy paid email here, but they can
+	// still set up free forwarding. Any other reason for being unable to add email also rules
+	// forwarding out, so it stays hidden.
+	const canShowEmailForwarding =
+		currentUserCanAddEmail ||
+		cannotAddEmailWarningCode === EMAIL_WARNING_CODE_OTHER_USER_OWNS_DOMAIN_SUBSCRIPTION;
 
 	const isGSuiteSupported =
 		domain && canPurchaseGSuite && ( isDomainInCart || hasGSuiteSupportedDomain( [ domain ] ) );
@@ -241,9 +252,6 @@ const EmailProvidersStackedComparison = ( {
 	};
 
 	const renderEmailPurchaseDisabledMessage = () => {
-		const cannotAddEmailWarningReason = getCurrentUserCannotAddEmailReason( domain );
-		const cannotAddEmailWarningCode = cannotAddEmailWarningReason?.code ?? null;
-
 		switch ( cannotAddEmailWarningCode ) {
 			case EMAIL_WARNING_CODE_DOMAIN_STATE_RESTRICTED:
 				return <EmailDomainStateRestrictedMessage domainName={ selectedDomainName } />;
@@ -322,7 +330,9 @@ const EmailProvidersStackedComparison = ( {
 				{ shouldPromoteGoogleWorkspace ? [ ...emailProviderCards ].reverse() : emailProviderCards }
 			</>
 
-			{ ! isDomainInCart && <EmailForwardingLink selectedDomainName={ selectedDomainName } /> }
+			{ ! isDomainInCart && canShowEmailForwarding && (
+				<EmailForwardingLink selectedDomainName={ selectedDomainName } />
+			) }
 
 			<TrackComponentView
 				eventName="calypso_email_providers_comparison_page_view"
