@@ -93,12 +93,10 @@ export const isTestModeEnvironment = () => {
 		return false;
 	}
 
-	// In the Calypso SPA context, env_id follows the config file convention and ends with
-	// 'development', 'horizon', or 'stage' (e.g. 'dashboard-stage', 'jetpack-cloud-horizon').
-	// In the widgets.wp.com bundle context, apps/help-center/config.js always declares
-	// 'production' (that bundle never runs on localhost), while apps/agents-manager/config.js
-	// still sets env_id to 'staging' for dev-mode users. Both map to test mode.
-	const testEnvironmentSuffixes = [ 'development', 'horizon', 'stage', 'staging' ];
+	// In the Calypso SPA context, only local development env_ids are test mode, e.g.
+	// 'development' or 'jetpack-cloud-development'. 'staging' is set by
+	// apps/agents-manager/config.js for dev-mode users and also maps to test mode.
+	const testEnvironmentSuffixes = [ 'development', 'staging' ];
 	const isTestEnvironment = testEnvironmentSuffixes.some(
 		( suffix ) => envId === suffix || envId?.endsWith( `-${ suffix }` )
 	);
