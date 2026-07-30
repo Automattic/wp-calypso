@@ -5,6 +5,7 @@ import { useTranslate } from 'i18n-calypso';
 import { useMemo } from 'react';
 import { useSelector } from 'react-redux';
 import { isPathAllowed } from 'calypso/a8c-for-agencies/lib/permission';
+import { isSectionNameEnabled } from 'calypso/sections-filter';
 import { getActiveAgency } from 'calypso/state/a8c-for-agencies/agency/selectors';
 import {
 	A4A_AGENT_STUDIO_LINK,
@@ -23,7 +24,12 @@ const useLearnMenuItems = ( path: string ) => {
 	const isAgentStudioEnabled = isEnabled( 'a4a-agent-studio' );
 	const isAiMcpEnabled = !! agency?.mcp?.allowed;
 	const isBenchmarksEnabled = isEnabled( 'a4a-benchmarks' );
-	const isAmplifyEnabled = !! agency?.amplify?.allowed && isPathAllowed( A4A_AMPLIFY_LINK, agency );
+	// The section flag matters as well as the agency flag: with the Amplify section off, the
+	// learn section's `/resources-and-tools` prefix swallows the URL and nothing ever renders.
+	const isAmplifyEnabled =
+		isSectionNameEnabled( 'a8c-for-agencies-amplify' ) &&
+		!! agency?.amplify?.allowed &&
+		isPathAllowed( A4A_AMPLIFY_LINK, agency );
 
 	const menuItems = useMemo( () => {
 		return [

@@ -12,6 +12,7 @@ import useFetchPendingSites from 'calypso/a8c-for-agencies/data/sites/use-fetch-
 import useNoActiveSite from 'calypso/a8c-for-agencies/hooks/use-no-active-site';
 import { isPathAllowed } from 'calypso/a8c-for-agencies/lib/permission';
 import { A4A_REPORTS_LINK } from 'calypso/a8c-for-agencies/sections/reports/constants';
+import { isSectionNameEnabled } from 'calypso/sections-filter';
 import { useSelector } from 'calypso/state';
 import { getActiveAgency } from 'calypso/state/a8c-for-agencies/agency/selectors';
 import {
@@ -27,7 +28,10 @@ const useSitesMenuItems = ( path: string ) => {
 	const translate = useTranslate();
 	const agency = useSelector( getActiveAgency );
 	const noActiveSite = useNoActiveSite();
-	const isReportsAllowed = isPathAllowed( A4A_REPORTS_LINK, agency );
+	// Mirrors the guard in the sites section: without it `/sites/reports` falls through to the
+	// `/sites/:category` catch-all and renders the sites dashboard instead.
+	const isReportsAllowed =
+		isSectionNameEnabled( 'a8c-for-agencies-reports' ) && isPathAllowed( A4A_REPORTS_LINK, agency );
 	const { data } = useFetchPendingSites();
 	const totalAvailableSites =
 		data?.filter(
