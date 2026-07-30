@@ -56,7 +56,6 @@ export function isGatePending( scope: string ): boolean {
 	return read( scope ) !== null;
 }
 
-// Called once the email is confirmed.
 export function resolveGate( scope: string ): void {
 	try {
 		sessionStorage.removeItem( storageKey( scope ) );
@@ -65,7 +64,6 @@ export function resolveGate( scope: string ): void {
 	}
 }
 
-// Called on a successful resend to restart the cooldown.
 export function markResent( scope: string ): void {
 	const record = read( scope );
 	if ( record ) {

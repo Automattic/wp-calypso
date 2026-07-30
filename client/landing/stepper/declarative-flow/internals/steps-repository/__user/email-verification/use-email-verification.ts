@@ -19,9 +19,8 @@ import {
 // away in their email app while this screen is up.
 const POLL_LIMIT_MS = 15 * 60 * 1000;
 
-// The manual "I've confirmed" check: idle, in flight, came back still unconfirmed, or the
-// request itself failed (kept distinct from unconfirmed so a network error isn't mistaken
-// for an unverified email).
+// `error` (the request failed) is kept distinct from `unconfirmed` so a network failure
+// isn't mistaken for an unverified email.
 type CheckStatus = 'idle' | 'checking' | 'unconfirmed' | 'error';
 
 export function useEmailVerification( flow: string, scope: string ) {

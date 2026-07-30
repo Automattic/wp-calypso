@@ -8,7 +8,7 @@ import DocumentHead from 'calypso/components/data/document-head';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import UserVerificationChecker from 'calypso/lib/user/verification-checker';
 import { useSelector } from 'calypso/state';
-import { getCurrentUser } from 'calypso/state/current-user/selectors';
+import { getCurrentUserEmail } from 'calypso/state/current-user/selectors';
 import { getInboxLink } from './inbox-links';
 import { gateShownAt, markGateShown } from './storage';
 import { useEmailVerification } from './use-email-verification';
@@ -29,13 +29,13 @@ interface Props {
 
 const EmailVerificationGate = ( { flow, scope, logo, onDone }: Props ) => {
 	const { __ } = useI18n();
-	const user = useSelector( getCurrentUser );
+	const email = useSelector( getCurrentUserEmail );
 	const { isVerified, isSending, hasSendError, secondsUntilResend, checkStatus, checkNow, resend } =
 		useEmailVerification( flow, scope );
 
 	const hasSubmitted = useRef( false );
 	const headingRef = useRef< HTMLDivElement >( null );
-	const inboxLink = getInboxLink( user?.email );
+	const inboxLink = getInboxLink( email ?? undefined );
 
 	const title = __( 'Verify your email' );
 
@@ -87,11 +87,11 @@ const EmailVerificationGate = ( { flow, scope, logo, onDone }: Props ) => {
 					__(
 						'We just sent an email to <email>%s</email>. Click the link in the email to verify your account.'
 					),
-					user?.email ?? ''
+					email ?? ''
 				),
 				{ email: <strong /> }
 			),
-		[ __, user?.email ]
+		[ __, email ]
 	);
 
 	return (
@@ -116,9 +116,8 @@ const EmailVerificationGate = ( { flow, scope, logo, onDone }: Props ) => {
 					</div>
 				}
 			>
-				{ /* Sniper-link CTA: drop the user straight into their inbox, pre-filtered to our
-				   sender. Confirming the link there resolves the gate by polling. When the provider
-				   is unknown, fall back to a manual "I've confirmed" re-check. */ }
+				{ /* For a known provider, deep-link to its inbox; confirming there resolves the
+				   gate by polling. Unknown providers get a manual "I've confirmed" re-check. */ }
 				{ inboxLink ? (
 					<Step.PrimaryButton
 						href={ inboxLink.url }
