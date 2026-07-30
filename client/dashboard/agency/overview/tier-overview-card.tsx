@@ -37,7 +37,7 @@ function TierFooterSection( {
 			<Text variant="muted" size={ 11 } weight={ 500 } lineHeight="16px" upperCase>
 				{ label }
 			</Text>
-			<HStack justify="space-between" alignment="center">
+			<HStack justify="space-between" alignment="center" wrap>
 				<Text lineHeight="20px">{ title }</Text>
 				{ action }
 			</HStack>
