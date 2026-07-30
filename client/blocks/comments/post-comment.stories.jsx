@@ -1,14 +1,15 @@
 import { Card } from '@automattic/components';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { Provider } from 'react-redux';
-import { createStore } from 'redux';
+import { applyMiddleware, createStore } from 'redux';
+import { thunk as thunkMiddleware } from 'redux-thunk';
 import PostComment from './post-comment';
 
 const queryClient = new QueryClient( {
 	defaultOptions: { queries: { retry: false } },
 } );
 
-const store = createStore( () => ( {
+const initialState = {
 	currentUser: {
 		id: 12345678,
 		user: {
@@ -18,7 +19,9 @@ const store = createStore( () => ( {
 			primary_blog: 200,
 		},
 	},
-} ) );
+};
+
+const store = createStore( ( state = initialState ) => state, applyMiddleware( thunkMiddleware ) );
 
 const post = {
 	ID: 100,
