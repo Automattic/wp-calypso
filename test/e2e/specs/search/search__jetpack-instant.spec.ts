@@ -11,16 +11,22 @@ import {
 	TestAccount,
 	envToFeatureKey,
 	envVariables,
+	type FeatureCriteria,
 	getTestAccountByFeature,
 } from '@automattic/calypso-e2e';
 import { expect, tags, test } from '../../lib/pw-base';
+
+const jetpackSearchAccountCriteria: FeatureCriteria[] = [
+	{ gutenberg: 'stable', siteType: 'simple', accountName: 'jetpackStagingUser' },
+	{ gutenberg: 'edge', siteType: 'simple', accountName: 'jetpackStagingUser' },
+];
 
 test.describe(
 	DataHelper.createSuiteTitle( 'Jetpack Instant Search' ),
 	{ tag: [ tags.JETPACK_WPCOM_INTEGRATION ] },
 	() => {
 		const features = envToFeatureKey( envVariables );
-		const accountName = getTestAccountByFeature( features );
+		const accountName = getTestAccountByFeature( features, jetpackSearchAccountCriteria );
 
 		test( 'As a user, I can use Jetpack Instant Search', async ( { page } ) => {
 			test.skip(
@@ -62,7 +68,11 @@ test.describe(
 					waitUntil: 'domcontentloaded',
 				} );
 
-				await waitForSearchJsPromise;
+				const searchJsResponse = await waitForSearchJsPromise.catch( () => null );
+				expect(
+					searchJsResponse,
+					`Jetpack Instant Search JS did not load for ${ accountName }. Confirm the account's primary site has a Jetpack Search plan and instant search enabled.`
+				).not.toBeNull();
 
 				searchModalComponent = new JetpackInstantSearchModalComponent( page );
 			} );
