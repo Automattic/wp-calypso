@@ -5,7 +5,7 @@ import { isE2ETest, isInSupportSession } from '../utils';
 import { controls as wpcomRequestControls } from '../wpcom-request-controls';
 import * as actions from './actions';
 import { STORE_KEY } from './constants';
-import { getLoggedOutOdieChatHandoffSessions } from './persistence';
+import { getPersistedLoggedOutOdieChatState } from './persistence';
 import reducer, { State } from './reducer';
 import * as resolvers from './resolvers';
 import * as selectors from './selectors';
@@ -19,6 +19,7 @@ export function register(): typeof STORE_KEY {
 	registerPlugins();
 
 	if ( ! isRegistered ) {
+		const persistedLoggedOutChatState = getPersistedLoggedOutOdieChatState();
 		const store = registerStore( STORE_KEY, {
 			actions,
 			reducer,
@@ -37,10 +38,9 @@ export function register(): typeof STORE_KEY {
 			resolvers: enabledPersistedOpenState ? resolvers : undefined,
 		} );
 
-		// The store may already exist before this bundle loads, so replay a pending login handoff.
-		for ( const session of getLoggedOutOdieChatHandoffSessions() ) {
-			store.dispatch( actions.setLoggedOutOdieChat( session, true ) );
-		}
+		// Independently deployed bundles can stack persistence plugins with stale cached state.
+		// Restore through the store after registration so this adapter's persisted chat state wins.
+		store.dispatch( actions.restorePersistedLoggedOutOdieChatState( persistedLoggedOutChatState ) );
 
 		isRegistered = true;
 	}

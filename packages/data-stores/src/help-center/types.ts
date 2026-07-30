@@ -64,6 +64,12 @@ export type LoggedOutOdieChats = Record< string, LoggedOutOdieChat >;
 
 export type LoggedOutOdieChatHandoffs = Record< string, true >;
 
+export type PersistedLoggedOutOdieChatState = {
+	loggedOutOdieChat?: LoggedOutOdieChat | LoggedOutOdieChats;
+	loggedOutOdieChats?: LoggedOutOdieChats;
+	loggedOutOdieChatHandoffs?: LoggedOutOdieChatHandoffs;
+};
+
 export interface Preferences {
 	calypso_preferences: {
 		help_center_open: boolean | undefined;

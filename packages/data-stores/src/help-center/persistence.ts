@@ -1,57 +1,95 @@
-import { getLoggedOutOdieChatHandoff } from '../plugins/one-week-persistence-config';
+import {
+	ONE_WEEK_PERSISTENCE_STORAGE_KEY,
+	oneWeekPersistenceStorage,
+} from '../plugins/one-week-persistence-config';
 import { STORE_KEY } from './constants';
-import type { LoggedOutOdieChat, LoggedOutOdieChats } from './types';
+import type {
+	LoggedOutOdieChat,
+	LoggedOutOdieChatHandoffs,
+	LoggedOutOdieChats,
+	PersistedLoggedOutOdieChatState,
+} from './types';
+
+const isRecord = ( value: unknown ): value is Record< string, unknown > =>
+	typeof value === 'object' && value !== null;
 
 const isLoggedOutOdieChat = ( value: unknown ): value is LoggedOutOdieChat =>
-	typeof value === 'object' &&
-	value !== null &&
-	'odieId' in value &&
+	isRecord( value ) &&
 	typeof value.odieId === 'number' &&
-	'sessionId' in value &&
 	typeof value.sessionId === 'string' &&
-	'botSlug' in value &&
 	typeof value.botSlug === 'string';
 
-export const getLoggedOutOdieChatHandoffSessions = (): LoggedOutOdieChat[] => {
-	const value = getLoggedOutOdieChatHandoff();
+const getLoggedOutOdieChats = ( value: unknown ): LoggedOutOdieChats | undefined => {
+	if ( ! isRecord( value ) || isLoggedOutOdieChat( value ) ) {
+		return undefined;
+	}
+
+	const chats = Object.entries( value ).reduce< LoggedOutOdieChats >(
+		( result, [ botSlug, session ] ) => {
+			if ( isLoggedOutOdieChat( session ) && session.botSlug === botSlug ) {
+				result[ botSlug ] = session;
+			}
+			return result;
+		},
+		{}
+	);
+
+	return Object.keys( chats ).length ? chats : undefined;
+};
+
+const getLoggedOutOdieChatHandoffs = ( value: unknown ): LoggedOutOdieChatHandoffs | undefined => {
+	if ( ! isRecord( value ) ) {
+		return undefined;
+	}
+
+	const handoffs = Object.entries( value ).reduce< LoggedOutOdieChatHandoffs >(
+		( result, [ botSlug, shouldHandOff ] ) => {
+			if ( shouldHandOff === true ) {
+				result[ botSlug ] = true;
+			}
+			return result;
+		},
+		{}
+	);
+
+	return Object.keys( handoffs ).length ? handoffs : undefined;
+};
+
+export const getPersistedLoggedOutOdieChatState = (): PersistedLoggedOutOdieChatState => {
+	const value = oneWeekPersistenceStorage.getItem( ONE_WEEK_PERSISTENCE_STORAGE_KEY );
 
 	if ( ! value ) {
-		return [];
+		return {};
 	}
 
 	try {
 		const persistedState: unknown = JSON.parse( value );
-		if ( typeof persistedState !== 'object' || persistedState === null ) {
-			return [];
+		if ( ! isRecord( persistedState ) ) {
+			return {};
 		}
 
-		const helpCenterState = ( persistedState as Record< string, unknown > )[ STORE_KEY ];
-		if ( typeof helpCenterState !== 'object' || helpCenterState === null ) {
-			return [];
+		const helpCenterState = persistedState[ STORE_KEY ];
+		if ( ! isRecord( helpCenterState ) ) {
+			return {};
 		}
 
-		const { loggedOutOdieChat, loggedOutOdieChats, loggedOutOdieChatHandoffs } =
-			helpCenterState as {
-				loggedOutOdieChat?: LoggedOutOdieChat | LoggedOutOdieChats;
-				loggedOutOdieChats?: LoggedOutOdieChats;
-				loggedOutOdieChatHandoffs?: Record< string, true >;
-			};
+		const singularChat = isLoggedOutOdieChat( helpCenterState.loggedOutOdieChat )
+			? helpCenterState.loggedOutOdieChat
+			: undefined;
+		const legacyChats = getLoggedOutOdieChats( helpCenterState.loggedOutOdieChat );
+		const chats = {
+			...legacyChats,
+			...getLoggedOutOdieChats( helpCenterState.loggedOutOdieChats ),
+		};
 
-		return Object.keys( loggedOutOdieChatHandoffs ?? {} ).flatMap( ( botSlug ) => {
-			const session = loggedOutOdieChats?.[ botSlug ];
-			if ( isLoggedOutOdieChat( session ) ) {
-				return [ session ];
-			}
-
-			// Read the singular and temporary keyed shapes for backwards compatibility.
-			if ( isLoggedOutOdieChat( loggedOutOdieChat ) ) {
-				return loggedOutOdieChat.botSlug === botSlug ? [ loggedOutOdieChat ] : [];
-			}
-
-			const legacySession = loggedOutOdieChat?.[ botSlug ];
-			return isLoggedOutOdieChat( legacySession ) ? [ legacySession ] : [];
-		} );
+		return {
+			loggedOutOdieChat: singularChat,
+			loggedOutOdieChats: Object.keys( chats ).length ? chats : undefined,
+			loggedOutOdieChatHandoffs: getLoggedOutOdieChatHandoffs(
+				helpCenterState.loggedOutOdieChatHandoffs
+			),
+		};
 	} catch {
-		return [];
+		return {};
 	}
 };

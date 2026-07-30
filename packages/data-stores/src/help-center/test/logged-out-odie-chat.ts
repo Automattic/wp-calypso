@@ -3,10 +3,17 @@
  */
 
 import { dispatch } from '@wordpress/data';
-import { oneWeekPersistenceStorage } from '../../plugins/one-week-persistence-config';
-import { consumeLoggedOutOdieChatHandoff, setLoggedOutOdieChat } from '../actions';
+import {
+	ONE_WEEK_PERSISTENCE_STORAGE_KEY,
+	oneWeekPersistenceStorage,
+} from '../../plugins/one-week-persistence-config';
+import {
+	consumeLoggedOutOdieChatHandoff,
+	restorePersistedLoggedOutOdieChatState,
+	setLoggedOutOdieChat,
+} from '../actions';
 import { register } from '../index';
-import { getLoggedOutOdieChatHandoffSessions } from '../persistence';
+import { getPersistedLoggedOutOdieChatState } from '../persistence';
 import { loggedOutOdieChat, loggedOutOdieChatHandoffs, loggedOutOdieChats } from '../reducer';
 import { getLoggedOutOdieChat, getPendingLoggedOutOdieChat } from '../selectors';
 import type { State } from '../reducer';
@@ -27,7 +34,6 @@ const wooSession: LoggedOutOdieChat = {
 describe( 'logged-out Odie chat persistence', () => {
 	beforeEach( () => {
 		window.localStorage.clear();
-		window.sessionStorage.clear();
 	} );
 
 	it( 'stores sessions by bot slug while keeping the latest singular value', () => {
@@ -149,6 +155,48 @@ describe( 'logged-out Odie chat persistence', () => {
 		expect( getLoggedOutOdieChat( state, wooSession.botSlug ) ).toEqual( wooSession );
 	} );
 
+	it( 'normalizes persisted legacy chat shapes before restoring the store', () => {
+		oneWeekPersistenceStorage.setItem(
+			ONE_WEEK_PERSISTENCE_STORAGE_KEY,
+			JSON.stringify( {
+				'automattic/help-center': {
+					loggedOutOdieChat: {
+						[ wpcomSession.botSlug ]: wpcomSession,
+					},
+					loggedOutOdieChats: {
+						[ wooSession.botSlug ]: wooSession,
+					},
+					loggedOutOdieChatHandoffs: {
+						[ wpcomSession.botSlug ]: true,
+						invalid: false,
+					},
+				},
+			} )
+		);
+
+		const persistedState = getPersistedLoggedOutOdieChatState();
+
+		expect( persistedState ).toEqual( {
+			loggedOutOdieChat: undefined,
+			loggedOutOdieChats: {
+				[ wpcomSession.botSlug ]: wpcomSession,
+				[ wooSession.botSlug ]: wooSession,
+			},
+			loggedOutOdieChatHandoffs: {
+				[ wpcomSession.botSlug ]: true,
+			},
+		} );
+
+		const action = restorePersistedLoggedOutOdieChatState( persistedState! );
+		expect( loggedOutOdieChat( wooSession, action ) ).toBeUndefined();
+		expect( loggedOutOdieChats( { stale: wpcomSession }, action ) ).toEqual(
+			persistedState?.loggedOutOdieChats
+		);
+		expect( loggedOutOdieChatHandoffs( { stale: true }, action ) ).toEqual(
+			persistedState?.loggedOutOdieChatHandoffs
+		);
+	} );
+
 	it( 'persists sessions and handoffs through the Help Center store', () => {
 		const storeKey = register();
 		const storeDispatch = dispatch( storeKey ) as unknown as {
@@ -177,86 +225,5 @@ describe( 'logged-out Odie chat persistence', () => {
 			[ wpcomSession.botSlug ]: wpcomSession,
 		} );
 		expect( persistedAfterHandoff[ storeKey ].loggedOutOdieChatHandoffs ).toBeUndefined();
-	} );
-
-	it( 'restores only a pending logged-out chat after the login storage reset', () => {
-		const storeKey = register();
-		const persistedSession = {
-			[ storeKey ]: {
-				loggedOutOdieChat: wpcomSession,
-				loggedOutOdieChats: {
-					[ wpcomSession.botSlug ]: wpcomSession,
-				},
-				loggedOutOdieChatHandoffs: {
-					[ wpcomSession.botSlug ]: true,
-				},
-				message: 'do not restore',
-			},
-			'another/store': {
-				value: 'do not restore',
-			},
-		};
-		oneWeekPersistenceStorage.setItem(
-			'WPCOM_7_DAYS_PERSISTENCE',
-			JSON.stringify( persistedSession )
-		);
-
-		window.localStorage.clear();
-		const staleSession = {
-			...wpcomSession,
-			odieId: 999,
-			sessionId: 'stale-session',
-		};
-		window.localStorage.setItem(
-			'WPCOM_7_DAYS_PERSISTENCE',
-			JSON.stringify( {
-				[ storeKey ]: {
-					loggedOutOdieChat: staleSession,
-					loggedOutOdieChats: {
-						[ staleSession.botSlug ]: staleSession,
-					},
-					message: 'keep current store state',
-				},
-				'another/store': {
-					value: 'keep current store state',
-				},
-			} )
-		);
-		window.localStorage.setItem( 'WPCOM_7_DAYS_PERSISTENCE_TS', JSON.stringify( Date.now() ) );
-
-		const restoredState = JSON.parse(
-			oneWeekPersistenceStorage.getItem( 'WPCOM_7_DAYS_PERSISTENCE' ) ?? '{}'
-		);
-		expect( restoredState ).toEqual( {
-			[ storeKey ]: {
-				loggedOutOdieChat: wpcomSession,
-				loggedOutOdieChats: {
-					[ wpcomSession.botSlug ]: wpcomSession,
-				},
-				loggedOutOdieChatHandoffs: {
-					[ wpcomSession.botSlug ]: true,
-				},
-				message: 'keep current store state',
-			},
-			'another/store': {
-				value: 'keep current store state',
-			},
-		} );
-		expect( getLoggedOutOdieChatHandoffSessions() ).toEqual( [ wpcomSession ] );
-
-		oneWeekPersistenceStorage.setItem(
-			'WPCOM_7_DAYS_PERSISTENCE',
-			JSON.stringify( {
-				[ storeKey ]: {
-					loggedOutOdieChat: wpcomSession,
-					loggedOutOdieChats: {
-						[ wpcomSession.botSlug ]: wpcomSession,
-					},
-				},
-			} )
-		);
-		window.localStorage.clear();
-
-		expect( oneWeekPersistenceStorage.getItem( 'WPCOM_7_DAYS_PERSISTENCE' ) ).toBeNull();
 	} );
 } );

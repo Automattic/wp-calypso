@@ -33,14 +33,13 @@ export const useActionHooks = () => {
 		[ currentUser?.ID, newLoggedOutInteractionsBotSlug ]
 	);
 
-	// Wait until the Help Center persisted state is loaded.
-	const isResolving = useSelect(
-		( select ) =>
-			( select( HELP_CENTER_STORE ) as HelpCenterSelect ).isResolving( 'isHelpCenterShown' ),
-		[]
-	);
-
-	const areDependenciesLoading = isResolving;
+	// Wait for both preferences so stale router history cannot win the login handoff race.
+	const areDependenciesLoading = useSelect( ( select ) => {
+		const store = select( HELP_CENTER_STORE ) as HelpCenterSelect;
+		return (
+			store.isResolving( 'isHelpCenterShown' ) || store.isResolving( 'getHelpCenterRouterHistory' )
+		);
+	}, [] );
 
 	useEffect( () => {
 		if ( areDependenciesLoading || ! pendingLoggedOutSession ) {

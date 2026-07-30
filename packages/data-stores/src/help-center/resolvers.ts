@@ -32,7 +32,7 @@ export function getHelpCenterRouterHistory() {
 			const routerHistory = await getPersistedPreference( 'help_center_router_history' );
 
 			// We only want to auto-open, we don't want to auto-close (and potentially overrule the user's action).
-			if ( routerHistory ) {
+			if ( routerHistory && typeof select.getNavigateToRoute()?.route === 'undefined' ) {
 				dispatch( {
 					type: 'HELP_CENTER_SET_HELP_CENTER_ROUTER_HISTORY',
 					history: routerHistory,

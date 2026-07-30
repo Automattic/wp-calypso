@@ -6,7 +6,12 @@ import { SiteDetails } from '../site';
 import { CurrentUser } from '../user/types';
 import { STORE_KEY } from './constants';
 import { persistPreference } from './utils';
-import type { HelpCenterOptions, HelpCenterShowOptions, LoggedOutOdieChat } from './types';
+import type {
+	HelpCenterOptions,
+	HelpCenterShowOptions,
+	LoggedOutOdieChat,
+	PersistedLoggedOutOdieChatState,
+} from './types';
 
 declare global {
 	interface Window {
@@ -79,6 +84,12 @@ export const consumeLoggedOutOdieChatHandoff = ( botSlug: string ) =>
 	( {
 		type: 'HELP_CENTER_CONSUME_LOGGED_OUT_ODIE_CHAT_HANDOFF',
 		botSlug,
+	} ) as const;
+
+export const restorePersistedLoggedOutOdieChatState = ( state: PersistedLoggedOutOdieChatState ) =>
+	( {
+		type: 'HELP_CENTER_RESTORE_PERSISTED_LOGGED_OUT_ODIE_CHAT_STATE',
+		state,
 	} ) as const;
 
 export const setIsChatLoaded = ( isChatLoaded: boolean ) =>
@@ -327,6 +338,7 @@ export type HelpCenterAction =
 			| typeof resetStore
 			| typeof setMessage
 			| typeof setLoggedOutOdieChat
+			| typeof restorePersistedLoggedOutOdieChatState
 			| typeof setContextTerm
 			| typeof setUserDeclaredSite
 			| typeof setUserDeclaredSiteUrl

@@ -19,6 +19,7 @@ const mockSetNewMessagingChat = jest.fn();
 const mockGetHelpCenterRouterHistory = jest.fn();
 const mockIsResolving = jest.fn();
 let mockCurrentUserId = 1;
+let mockResolvingSelectors = new Set< string >();
 
 jest.mock( '@wordpress/data', () => ( {
 	useDispatch: () => ( {
@@ -52,7 +53,10 @@ describe( 'useActionHooks', () => {
 		jest.useFakeTimers();
 		jest.clearAllMocks();
 		mockCurrentUserId = 1;
-		mockIsResolving.mockReturnValue( false );
+		mockResolvingSelectors = new Set();
+		mockIsResolving.mockImplementation( ( selector: string ) =>
+			mockResolvingSelectors.has( selector )
+		);
 		mockGetPendingLoggedOutOdieChat.mockReturnValue( mockLoggedOutSession );
 	} );
 
@@ -114,13 +118,28 @@ describe( 'useActionHooks', () => {
 	} );
 
 	it( 'waits for persisted Help Center state before consuming the handoff', () => {
-		mockIsResolving.mockReturnValue( true );
+		mockResolvingSelectors.add( 'isHelpCenterShown' );
 		const { rerender } = renderHook( () => useActionHooks() );
 
 		expect( mockSetNavigateToRoute ).not.toHaveBeenCalled();
 		expect( mockConsumeLoggedOutOdieChatHandoff ).not.toHaveBeenCalled();
 
-		mockIsResolving.mockReturnValue( false );
+		mockResolvingSelectors.clear();
+		rerender();
+
+		expect( mockSetNavigateToRoute ).toHaveBeenCalledWith( '/' );
+		expect( mockSetShowHelpCenter ).toHaveBeenCalledWith( true );
+		expect( mockConsumeLoggedOutOdieChatHandoff ).toHaveBeenCalledWith( mockLoggedOutBotSlug );
+	} );
+
+	it( 'waits for persisted router history before consuming the handoff', () => {
+		mockResolvingSelectors.add( 'getHelpCenterRouterHistory' );
+		const { rerender } = renderHook( () => useActionHooks() );
+
+		expect( mockSetNavigateToRoute ).not.toHaveBeenCalled();
+		expect( mockConsumeLoggedOutOdieChatHandoff ).not.toHaveBeenCalled();
+
+		mockResolvingSelectors.clear();
 		rerender();
 
 		expect( mockSetNavigateToRoute ).toHaveBeenCalledWith( '/' );
