@@ -563,26 +563,17 @@ const PATHS_EXCLUDED_FROM_SINGLE_SITE_CONTEXT_FOR_SINGLE_SITE_USERS = [
 ];
 
 /*
- * A site the current user can't manage is deliberately kept out of the state by `requestSite`,
- * so the API can hand us back a site that we then fail to select. Capabilities need a moment to
- * propagate after a site is created or transferred to Atomic, so wait for them instead of
- * concluding that the user has no access - otherwise a post-checkout redirect lands on the
- * "You don't have access to that site" page for a site that was just paid for.
- *
- * Waiting is only worth it when we can tell the two cases apart: an absent `capabilities` is
- * either propagation lag or a site the user was never a member of. `capabilitiesArePropagating`
- * makes that call, and we only back off for as long as it says yes.
+ * `requestSite` keeps a site we can't manage out of the state, so the API can hand us back a site
+ * that we then fail to select. Capabilities take a moment to propagate after a site is created or
+ * transferred to Atomic, so wait for them rather than sending a just-paid-for site to the
+ * "You don't have access to that site" page.
  */
-const UNMANAGEABLE_SITE_RETRY_DELAYS = [ 1000, 2000, 4000, 8000, 15000 ];
+const UNMANAGEABLE_SITE_RETRY_LIMIT = 3;
+const UNMANAGEABLE_SITE_RETRY_DELAY = 1000;
 
-/*
- * Whether the site's missing capabilities are expected to show up shortly, based on signals that
- * don't themselves depend on capabilities having propagated:
- *
- * - the current user owns the site, which covers a site they just created or paid for;
- * - the current user was an admin of the site per the `/me/sites` bootstrap, which covers a site
- *   being transferred to Atomic.
- */
+// Missing capabilities are propagation lag rather than a lack of access when something that
+// doesn't depend on them says otherwise: the user owns the site, or `/me/sites` saw them as
+// an admin of it.
 function capabilitiesArePropagating( state, site ) {
 	if ( site.site_owner && site.site_owner === getCurrentUserId( state ) ) {
 		return true;
@@ -727,16 +718,16 @@ function requestAndSelectSite( context, next, { siteFragment, isUnlinkedCheckout
 			let freshSiteId;
 
 			if ( site && site.ID ) {
-				const retryDelay = UNMANAGEABLE_SITE_RETRY_DELAYS[ attempt ];
-
 				if (
 					! getSite( getState(), site.ID ) &&
-					retryDelay !== undefined &&
+					attempt < UNMANAGEABLE_SITE_RETRY_LIMIT &&
 					capabilitiesArePropagating( getState(), site )
 				) {
 					if ( attempt === 0 ) {
 						renderWaitingForSiteCapabilities( context );
 					}
+
+					const retryDelay = UNMANAGEABLE_SITE_RETRY_DELAY * 2 ** attempt;
 
 					return new Promise( ( resolve ) =>
 						setTimeout( () => {

@@ -195,9 +195,8 @@ describe( 'siteSelection', () => {
 	const SITE_SLUG = 'example.com';
 	const USER_ID = 7;
 
-	// Total number of requests once every retry has been used up: the initial one plus one per
-	// entry in the backoff schedule.
-	const REQUESTS_WHEN_EXHAUSTED = 6;
+	// Total number of requests once every retry has been used up: the initial one plus the retries.
+	const REQUESTS_WHEN_EXHAUSTED = 4;
 	const LONGER_THAN_THE_WHOLE_BACKOFF = 60000;
 
 	// A site the current user can't manage yet is kept out of the state by `requestSite`, even

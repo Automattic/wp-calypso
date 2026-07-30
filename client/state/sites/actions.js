@@ -189,9 +189,8 @@ export function requestSite( siteFragment, atomicCapabilitiesRetriesLeft = 3 ) {
 				if ( site && site.capabilities ) {
 					const state = getState();
 
-					// `sites.items` and `currentUser.capabilities` are both keyed by site ID, so look
-					// them up by ID rather than by the fragment we were called with, which is usually
-					// a slug.
+					// Both maps are keyed by site ID, not by the fragment we were called with,
+					// which is usually a slug.
 					const wasAtomic = state?.sites?.items?.[ site.ID ]?.options?.is_wpcom_atomic;
 					const isAtomic = site?.options?.is_wpcom_atomic;
 					const hasSiteTransferredToAtomic = ! wasAtomic && isAtomic;
