@@ -299,6 +299,19 @@ export function summary( context, next ) {
 	let siteId = context.params.site;
 	const siteFragment = getSiteFragment( context.path );
 	const queryOptions = context.query;
+
+	// See the matching comment in site() above: normalize chartStart/chartEnd
+	// once, here at the route boundary, before getSummaryDateRangeFromQuery's
+	// strict YYYY-MM-DD parsing ever sees them. An unpadded value otherwise
+	// fails that strict check, silently discarding the whole chartStart/
+	// chartEnd pair and falling back to the default range.
+	if ( queryOptions.chartStart ) {
+		queryOptions.chartStart = normalizeChartDateParam( queryOptions.chartStart );
+	}
+	if ( queryOptions.chartEnd ) {
+		queryOptions.chartEnd = normalizeChartDateParam( queryOptions.chartEnd );
+	}
+
 	const contextModule = context.params.module;
 	const filters = [
 		{
