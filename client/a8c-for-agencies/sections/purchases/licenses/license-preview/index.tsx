@@ -168,7 +168,7 @@ export default function LicensePreview( {
 			return;
 		}
 
-		page.redirect( redirectUrl );
+		page( redirectUrl );
 	}, [ isWPCOMLicense, licenseKey, paymentMethodRequired, referral, translate, dispatch ] );
 
 	useEffect( () => {
