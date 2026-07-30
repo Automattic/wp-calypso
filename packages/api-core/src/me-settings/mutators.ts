@@ -45,3 +45,10 @@ export async function updateUserSettings(
 export async function validatePassword( password: string ): Promise< PasswordValidationResponse > {
 	return await wpcom.req.post( '/me/settings/password/validate', { password } );
 }
+
+export async function sendVerificationEmail(): Promise< void > {
+	return await wpcom.req.post( {
+		path: '/me/send-verification-email',
+		apiVersion: '1.1',
+	} );
+}

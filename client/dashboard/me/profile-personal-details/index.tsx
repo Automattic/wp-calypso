@@ -14,6 +14,7 @@ import { useViewportMatch } from '@wordpress/compose';
 import { DataForm, Field, Form } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
 import { useState, useMemo, useCallback } from 'react';
+import { useAuth } from '../../app/auth';
 import { NavigationBlocker } from '../../app/navigation-blocker';
 import { withSnackbar } from '../../app/snackbars/with-snackbar';
 import { Card, CardBody } from '../../components/card';
@@ -26,6 +27,7 @@ import type { UserSettings } from '@automattic/api-core';
 import './style.scss';
 
 export default function PersonalDetailsSection() {
+	const { user } = useAuth();
 	const { data: userSettings } = useSuspenseQuery( userSettingsQuery() );
 	const { data: isAutomattician } = useSuspenseQuery( isAutomatticianQuery() );
 	const isMobile = useViewportMatch( 'small', '<' );
@@ -43,7 +45,7 @@ export default function PersonalDetailsSection() {
 	const data = useMemo( () => ( { ...userSettings, ...edits } ), [ userSettings, edits ] );
 
 	const currentUsername = userSettings.user_login || '';
-	const isEmailVerified = userSettings.email_verified ?? true;
+	const isEmailVerified = user.email_verified;
 	const canChangeUsername = userSettings.user_login_can_be_changed ?? true;
 
 	// Form event handlers
@@ -146,7 +148,10 @@ export default function PersonalDetailsSection() {
 						/>
 
 						{ /* Email verification banner */ }
-						<EmailVerificationBanner userData={ userSettings } />
+						<EmailVerificationBanner
+							userSettings={ userSettings }
+							isEmailVerified={ isEmailVerified }
+						/>
 
 						<NavigationBlocker shouldBlock={ isDirty } />
 
@@ -174,7 +179,8 @@ export default function PersonalDetailsSection() {
 							value={ data.user_email || '' }
 							onChange={ ( value ) => handleFieldChange( { user_email: value } ) }
 							disabled={ isSaving }
-							userData={ userSettings }
+							userSettings={ userSettings }
+							isEmailVerified={ isEmailVerified }
 							onValidationChange={ setIsEmailValid }
 						/>
 

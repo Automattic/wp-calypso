@@ -8,7 +8,7 @@ import userEvent from '@testing-library/user-event';
 import nock from 'nock';
 import { render } from '../../../test-utils';
 import PersonalDetailsSection from '../index';
-import type { UserSettings } from '@automattic/api-core';
+import type { User, UserSettings } from '@automattic/api-core';
 
 const settings = {
 	first_name: 'John',
@@ -19,6 +19,14 @@ const settings = {
 	user_login_can_be_changed: true,
 	is_dev_account: false,
 } as unknown as UserSettings;
+
+const unverifiedUser = {
+	ID: 1,
+	username: 'johndoe',
+	email: 'john@example.com',
+	email_verified: false,
+	language: 'en',
+} as User;
 
 function mockUserSettings( data: UserSettings ) {
 	return nock( 'https://public-api.wordpress.com' )
@@ -128,10 +136,10 @@ describe( '<PersonalDetailsSection>', () => {
 		} );
 
 		test( 'disables username field for unverified email users', async () => {
-			mockUserSettings( { ...settings, email_verified: false } as unknown as UserSettings );
+			mockUserSettings( settings );
 			mockIsAutomattician( false );
 
-			render( <PersonalDetailsSection /> );
+			render( <PersonalDetailsSection />, { user: unverifiedUser } );
 
 			await waitFor( () => {
 				expect( screen.getByRole( 'textbox', { name: 'Username' } ) ).toBeDisabled();
@@ -201,6 +209,18 @@ describe( '<PersonalDetailsSection>', () => {
 				expect( screen.getByRole( 'textbox', { name: 'Email address' } ) ).toBeDisabled();
 			} );
 			expect( screen.getByText( 'Your email has not been verified yet.' ) ).toBeVisible();
+		} );
+
+		test( 'shows the unverified notice when the account email is not verified', async () => {
+			mockUserSettings( settings );
+			mockIsAutomattician( false );
+
+			render( <PersonalDetailsSection />, { user: unverifiedUser } );
+
+			await screen.findByRole( 'textbox', { name: 'Email address' } );
+
+			expect( screen.getByText( 'Your email has not been verified yet.' ) ).toBeVisible();
+			expect( screen.getByText( 'Verify your email' ) ).toBeVisible();
 		} );
 
 		test( 'cancels pending email change', async () => {
