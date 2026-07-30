@@ -1,12 +1,30 @@
-import { localize } from 'i18n-calypso';
-import PropTypes from 'prop-types';
+import { localize, LocalizeProps } from 'i18n-calypso';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import MultipleChoiceQuestion from 'calypso/components/multiple-choice-question';
 import { getGoogleMailServiceFamily } from 'calypso/lib/gsuite';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import type { Purchase } from '@automattic/api-core';
 
-class GSuiteCancellationSurvey extends Component {
+interface GSuiteCancellationSurveyOwnProps {
+	disabled: boolean;
+	onSurveyAnswerChange: ( surveyAnswerId: string | null, surveyAnswerText: string ) => void;
+	purchase: Purchase;
+	surveyAnswerId?: string | null;
+	surveyAnswerText?: string;
+}
+
+const mapDispatchToProps = {
+	recordTracksEvent,
+};
+
+type GSuiteCancellationSurveyProps = GSuiteCancellationSurveyOwnProps &
+	typeof mapDispatchToProps &
+	LocalizeProps;
+
+class GSuiteCancellationSurvey extends Component< GSuiteCancellationSurveyProps > {
+	static defaultProps = {};
+
 	componentDidMount() {
 		this.props.recordTracksEvent( 'calypso_purchases_gsuite_remove_purchase_survey_view' );
 	}
@@ -15,7 +33,7 @@ class GSuiteCancellationSurvey extends Component {
 		const {
 			disabled,
 			onSurveyAnswerChange,
-			purchase: { productSlug },
+			purchase: { product_slug: productSlug },
 			surveyAnswerId,
 			surveyAnswerText,
 			translate,
@@ -67,15 +85,4 @@ class GSuiteCancellationSurvey extends Component {
 	}
 }
 
-GSuiteCancellationSurvey.propTypes = {
-	disabled: PropTypes.bool.isRequired,
-	onSurveyAnswerChange: PropTypes.func.isRequired,
-	purchase: PropTypes.object.isRequired,
-	translate: PropTypes.func.isRequired,
-	surveyAnswerId: PropTypes.string,
-	surveyAnswerText: PropTypes.string,
-};
-
-export default connect( null, {
-	recordTracksEvent,
-} )( localize( GSuiteCancellationSurvey ) );
+export default connect( null, mapDispatchToProps )( localize( GSuiteCancellationSurvey ) );
