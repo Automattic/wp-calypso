@@ -64,6 +64,7 @@ export default function CommissionsTable( {
 				label: __( 'Site' ),
 				getValue: ( { item } ) => item.siteUrl,
 				render: ( { item } ) => <SiteColumn site={ item.siteUrl } />,
+				enableGlobalSearch: true,
 				enableHiding: false,
 				enableSorting: false,
 			},
@@ -201,7 +202,7 @@ export default function CommissionsTable( {
 				getItemId={ ( item ) => `${ item.blogId }` }
 				paginationInfo={ paginationInfo }
 				fields={ fields }
-				search={ false }
+				searchLabel={ __( 'Search by site' ) }
 				actions={ actions }
 				view={ view }
 				onChangeView={ setView }
@@ -209,8 +210,10 @@ export default function CommissionsTable( {
 			>
 				<HStack
 					className="dataviews__view-actions woopayments-commissions__view-actions"
-					justify="end"
+					justify="space-between"
+					alignment="center"
 				>
+					<WPDataViews.Search />
 					<WPDataViews.ViewConfig />
 				</HStack>
 				<WPDataViews.Layout />

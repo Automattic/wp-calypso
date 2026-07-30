@@ -7,7 +7,7 @@ import {
 import { __ } from '@wordpress/i18n';
 import ConsolidatedStatCard from '../../../components/consolidated-stat-card';
 import InlineSupportLink from '../../../components/inline-support-link';
-import PayoutCards from './payout-cards';
+import PayoutCards from '../referrals/payout-cards';
 import type { WooPaymentsData } from '@automattic/api-core';
 
 const WOOPAYMENTS_LEARN_MORE_LINK =
@@ -16,11 +16,14 @@ const WOOPAYMENTS_LEARN_MORE_LINK =
 interface ConsolidatedViewsProps {
 	woopaymentsData?: WooPaymentsData;
 	isLoading: boolean;
+	/** Each app passes its own user locale for date formatting. */
+	locale?: string;
 }
 
 export default function ConsolidatedViews( {
 	woopaymentsData,
 	isLoading,
+	locale,
 }: ConsolidatedViewsProps ) {
 	const totalCommission = woopaymentsData?.data?.total?.payout ?? 0;
 	const previousQuarterExpectedCommission =
@@ -59,6 +62,7 @@ export default function ConsolidatedViews( {
 				isFetching={ isLoading }
 				previousQuarterExpectedCommission={ previousQuarterExpectedCommission }
 				currentQuarterExpectedCommission={ currentQuarterExpectedCommission }
+				locale={ locale }
 			/>
 		</Grid>
 	);

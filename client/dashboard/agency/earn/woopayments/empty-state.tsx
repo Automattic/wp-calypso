@@ -1,11 +1,11 @@
 import { activeAgencyQuery } from '@automattic/api-queries';
 import { useQuery } from '@tanstack/react-query';
-import { Button } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import wooPaymentsLogo from 'calypso/assets/images/a8c-for-agencies/woopayments/logo.svg';
 import { useAnalytics } from '../../../app/analytics';
 import { ActionList } from '../../../components/action-list';
 import EmptyState from '../../../components/empty-state';
+import InlineSupportLink from '../../../components/inline-support-link';
 import AddWooPaymentsToSite from './add-woopayments-to-site';
 
 import './empty-state.scss';
@@ -57,17 +57,15 @@ export default function WooPaymentsDashboardEmptyState() {
 							title={ __( 'Learn more about the program' ) }
 							description={ __( 'Check out the full details in the Knowledge Base.' ) }
 							actions={
-								<Button
-									variant="secondary"
-									size="compact"
-									href={ WOOPAYMENTS_LEARN_MORE_LINK }
-									target="_blank"
+								<InlineSupportLink
+									supportLink={ WOOPAYMENTS_LEARN_MORE_LINK }
+									forceOpenInHelpCenter
 									onClick={ () =>
 										recordTracksEvent( 'calypso_a4a_woopayments_learn_more_about_program_click' )
 									}
 								>
 									{ __( 'Learn more' ) }
-								</Button>
+								</InlineSupportLink>
 							}
 						/>
 					</ActionList>
