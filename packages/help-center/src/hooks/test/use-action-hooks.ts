@@ -12,7 +12,6 @@ const mockLoggedOutSession = {
 };
 const mockGetPendingLoggedOutOdieChat = jest.fn();
 const mockConsumeLoggedOutOdieChatHandoff = jest.fn();
-const mockSetLoggedOutOdieChat = jest.fn();
 const mockSetShowHelpCenter = jest.fn();
 const mockSetShowSupportDoc = jest.fn();
 const mockSetNavigateToRoute = jest.fn();
@@ -21,17 +20,9 @@ const mockGetHelpCenterRouterHistory = jest.fn();
 const mockIsResolving = jest.fn();
 let mockCurrentUserId = 1;
 
-jest.mock( '@automattic/data-stores', () => ( {
-	HelpCenter: {
-		consumeLoggedOutOdieChatHandoff: mockConsumeLoggedOutOdieChatHandoff,
-		getPendingLoggedOutOdieChat: mockGetPendingLoggedOutOdieChat,
-		register: () => 'help-center',
-	},
-} ) );
-
 jest.mock( '@wordpress/data', () => ( {
 	useDispatch: () => ( {
-		setLoggedOutOdieChat: mockSetLoggedOutOdieChat,
+		consumeLoggedOutOdieChatHandoff: mockConsumeLoggedOutOdieChatHandoff,
 		setShowHelpCenter: mockSetShowHelpCenter,
 		setShowSupportDoc: mockSetShowSupportDoc,
 		setNavigateToRoute: mockSetNavigateToRoute,
@@ -39,6 +30,7 @@ jest.mock( '@wordpress/data', () => ( {
 	} ),
 	useSelect: ( callback: ( select: () => unknown ) => unknown ) =>
 		callback( () => ( {
+			getPendingLoggedOutOdieChat: mockGetPendingLoggedOutOdieChat,
 			getHelpCenterRouterHistory: mockGetHelpCenterRouterHistory,
 			isResolving: mockIsResolving,
 		} ) ),
@@ -75,7 +67,6 @@ describe( 'useActionHooks', () => {
 			jest.runOnlyPendingTimers();
 		} );
 
-		expect( mockSetLoggedOutOdieChat ).toHaveBeenCalledWith( mockLoggedOutSession );
 		expect( mockSetNavigateToRoute ).toHaveBeenCalledWith( '/' );
 		expect( mockSetShowHelpCenter ).toHaveBeenCalledWith( true );
 		expect( mockConsumeLoggedOutOdieChatHandoff ).toHaveBeenCalledWith( mockLoggedOutBotSlug );
@@ -91,7 +82,63 @@ describe( 'useActionHooks', () => {
 		} );
 
 		expect( mockGetPendingLoggedOutOdieChat ).not.toHaveBeenCalled();
-		expect( mockSetLoggedOutOdieChat ).not.toHaveBeenCalled();
 		expect( mockConsumeLoggedOutOdieChatHandoff ).not.toHaveBeenCalled();
+	} );
+
+	it( 'consumes the handoff when the current user becomes logged in', () => {
+		mockCurrentUserId = 0;
+		const { rerender } = renderHook( () => useActionHooks() );
+
+		expect( mockConsumeLoggedOutOdieChatHandoff ).not.toHaveBeenCalled();
+
+		mockCurrentUserId = 1;
+		rerender();
+
+		expect( mockSetNavigateToRoute ).toHaveBeenCalledWith( '/' );
+		expect( mockSetShowHelpCenter ).toHaveBeenCalledWith( true );
+		expect( mockConsumeLoggedOutOdieChatHandoff ).toHaveBeenCalledWith( mockLoggedOutBotSlug );
+	} );
+
+	it( 'does nothing when there is no pending handoff', () => {
+		mockGetPendingLoggedOutOdieChat.mockReturnValue( undefined );
+
+		renderHook( () => useActionHooks() );
+
+		act( () => {
+			jest.runOnlyPendingTimers();
+		} );
+
+		expect( mockSetNavigateToRoute ).not.toHaveBeenCalled();
+		expect( mockSetShowHelpCenter ).not.toHaveBeenCalled();
+		expect( mockConsumeLoggedOutOdieChatHandoff ).not.toHaveBeenCalled();
+	} );
+
+	it( 'waits for persisted Help Center state before consuming the handoff', () => {
+		mockIsResolving.mockReturnValue( true );
+		const { rerender } = renderHook( () => useActionHooks() );
+
+		expect( mockSetNavigateToRoute ).not.toHaveBeenCalled();
+		expect( mockConsumeLoggedOutOdieChatHandoff ).not.toHaveBeenCalled();
+
+		mockIsResolving.mockReturnValue( false );
+		rerender();
+
+		expect( mockSetNavigateToRoute ).toHaveBeenCalledWith( '/' );
+		expect( mockSetShowHelpCenter ).toHaveBeenCalledWith( true );
+		expect( mockConsumeLoggedOutOdieChatHandoff ).toHaveBeenCalledWith( mockLoggedOutBotSlug );
+	} );
+
+	it( 'reacts when a pending handoff becomes available after the first render', () => {
+		mockGetPendingLoggedOutOdieChat.mockReturnValueOnce( undefined );
+		const { rerender } = renderHook( () => useActionHooks() );
+
+		expect( mockConsumeLoggedOutOdieChatHandoff ).not.toHaveBeenCalled();
+
+		mockGetPendingLoggedOutOdieChat.mockReturnValue( mockLoggedOutSession );
+		rerender();
+
+		expect( mockSetNavigateToRoute ).toHaveBeenCalledWith( '/' );
+		expect( mockSetShowHelpCenter ).toHaveBeenCalledWith( true );
+		expect( mockConsumeLoggedOutOdieChatHandoff ).toHaveBeenCalledWith( mockLoggedOutBotSlug );
 	} );
 } );

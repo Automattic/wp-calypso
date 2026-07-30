@@ -5,6 +5,7 @@ import { isE2ETest, isInSupportSession } from '../utils';
 import { controls as wpcomRequestControls } from '../wpcom-request-controls';
 import * as actions from './actions';
 import { STORE_KEY } from './constants';
+import { getLoggedOutOdieChatHandoffSessions } from './persistence';
 import reducer, { State } from './reducer';
 import * as resolvers from './resolvers';
 import * as selectors from './selectors';
@@ -18,7 +19,7 @@ export function register(): typeof STORE_KEY {
 	registerPlugins();
 
 	if ( ! isRegistered ) {
-		registerStore( STORE_KEY, {
+		const store = registerStore( STORE_KEY, {
 			actions,
 			reducer,
 			controls: { ...controls, ...wpcomRequestControls },
@@ -30,10 +31,17 @@ export function register(): typeof STORE_KEY {
 				'subject',
 				'loggedOutOdieChat',
 				'loggedOutOdieChats',
+				'loggedOutOdieChatHandoffs',
 			],
 			// Don't persist the open state for e2e users, because parallel tests will start interfering with each other.
 			resolvers: enabledPersistedOpenState ? resolvers : undefined,
 		} );
+
+		// The store may already exist before this bundle loads, so replay a pending login handoff.
+		for ( const session of getLoggedOutOdieChatHandoffSessions() ) {
+			store.dispatch( actions.setLoggedOutOdieChat( session, true ) );
+		}
+
 		isRegistered = true;
 	}
 
@@ -41,8 +49,4 @@ export function register(): typeof STORE_KEY {
 }
 
 export { setHelpCenterAppId } from './utils';
-export {
-	consumeLoggedOutOdieChatHandoff,
-	getPendingLoggedOutOdieChat,
-} from './logged-out-odie-chat';
 export type { HelpCenterSite } from './types';

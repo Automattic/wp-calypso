@@ -3,7 +3,12 @@ import { Location } from 'history';
 import { SiteDetails } from '../site';
 import { CurrentUser } from '../user/types';
 import type { HelpCenterAction } from './actions';
-import type { HelpCenterOptions, LoggedOutOdieChat, LoggedOutOdieChats } from './types';
+import type {
+	HelpCenterOptions,
+	LoggedOutOdieChat,
+	LoggedOutOdieChatHandoffs,
+	LoggedOutOdieChats,
+} from './types';
 import type { Reducer } from 'redux';
 
 const showHelpCenter: Reducer< boolean | undefined, HelpCenterAction > = ( state, action ) => {
@@ -82,6 +87,33 @@ export const loggedOutOdieChats: Reducer< LoggedOutOdieChats | undefined, HelpCe
 						[ action.session.botSlug ]: action.session,
 				  }
 				: undefined;
+	}
+	return state;
+};
+
+export const loggedOutOdieChatHandoffs: Reducer<
+	LoggedOutOdieChatHandoffs | undefined,
+	HelpCenterAction
+> = ( state = undefined, action ) => {
+	switch ( action.type ) {
+		case 'HELP_CENTER_SET_LOGGED_OUT_ODIE_CHAT':
+			return action.session && action.shouldHandOff
+				? {
+						...state,
+						[ action.session.botSlug ]: true,
+				  }
+				: state;
+		case 'HELP_CENTER_CONSUME_LOGGED_OUT_ODIE_CHAT_HANDOFF': {
+			if ( ! state?.[ action.botSlug ] ) {
+				return state;
+			}
+
+			const remainingHandoffs = Object.fromEntries(
+				Object.entries( state ).filter( ( [ botSlug ] ) => botSlug !== action.botSlug )
+			);
+
+			return Object.keys( remainingHandoffs ).length ? remainingHandoffs : undefined;
+		}
 	}
 	return state;
 };
@@ -257,6 +289,7 @@ const reducer = combineReducers( {
 	helpCenterRouterHistory,
 	loggedOutOdieChat,
 	loggedOutOdieChats,
+	loggedOutOdieChatHandoffs,
 	hasPremiumSupport,
 	contextTerm,
 	helpCenterOptions,

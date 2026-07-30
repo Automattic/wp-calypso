@@ -1,16 +1,16 @@
-import { HelpCenter, HelpCenterSelect } from '@automattic/data-stores';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { useEffect } from '@wordpress/element';
 import { useHelpCenterContext } from '../contexts/HelpCenterContext';
 import { HELP_CENTER_STORE } from '../stores';
+import type { HelpCenterSelect } from '@automattic/data-stores';
 
 /**
  * Add your conditions here to open the Help Center automatically when they're met.
  */
 export const useActionHooks = () => {
 	const {
-		setLoggedOutOdieChat,
+		consumeLoggedOutOdieChatHandoff,
 		setShowHelpCenter,
 		setShowSupportDoc,
 		setNavigateToRoute,
@@ -18,13 +18,19 @@ export const useActionHooks = () => {
 	} = useDispatch( 'automattic/help-center' );
 	const { currentUser, newLoggedOutInteractionsBotSlug } = useHelpCenterContext();
 	const queryParams = new URLSearchParams( window.location.search );
-	const pendingLoggedOutSession = currentUser?.ID
-		? HelpCenter.getPendingLoggedOutOdieChat( newLoggedOutInteractionsBotSlug )
-		: undefined;
 
-	const helpCenterRouterHistory = useSelect(
-		( select ) => ( select( HELP_CENTER_STORE ) as HelpCenterSelect ).getHelpCenterRouterHistory(),
-		[]
+	const { helpCenterRouterHistory, pendingLoggedOutSession } = useSelect(
+		( select ) => {
+			const store = select( HELP_CENTER_STORE ) as HelpCenterSelect;
+
+			return {
+				helpCenterRouterHistory: store.getHelpCenterRouterHistory(),
+				pendingLoggedOutSession: currentUser?.ID
+					? store.getPendingLoggedOutOdieChat( newLoggedOutInteractionsBotSlug )
+					: undefined,
+			};
+		},
+		[ currentUser?.ID, newLoggedOutInteractionsBotSlug ]
 	);
 
 	// Wait until the Help Center persisted state is loaded.
@@ -36,23 +42,24 @@ export const useActionHooks = () => {
 
 	const areDependenciesLoading = isResolving;
 
+	useEffect( () => {
+		if ( areDependenciesLoading || ! pendingLoggedOutSession ) {
+			return;
+		}
+
+		setNavigateToRoute( '/' );
+		setShowHelpCenter( true );
+		consumeLoggedOutOdieChatHandoff( newLoggedOutInteractionsBotSlug );
+	}, [
+		areDependenciesLoading,
+		consumeLoggedOutOdieChatHandoff,
+		newLoggedOutInteractionsBotSlug,
+		pendingLoggedOutSession,
+		setNavigateToRoute,
+		setShowHelpCenter,
+	] );
+
 	const actionHooks = [
-		{
-			condition() {
-				return !! pendingLoggedOutSession;
-			},
-			action() {
-				if ( ! pendingLoggedOutSession ) {
-					return;
-				}
-
-				setLoggedOutOdieChat( pendingLoggedOutSession );
-				setNavigateToRoute( '/' );
-				setShowHelpCenter( true );
-				HelpCenter.consumeLoggedOutOdieChatHandoff( newLoggedOutInteractionsBotSlug );
-			},
-		},
-
 		/**
 		 * Open to the support doc for the Subscribe block.
 		 */
