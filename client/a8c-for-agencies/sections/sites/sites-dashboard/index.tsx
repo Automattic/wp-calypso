@@ -39,7 +39,7 @@ import { OverviewPreviewPane } from '../features/a4a/overview-preview-pane';
 import SitesDashboardContext from '../sites-dashboard-context';
 import SitesHeaderActions from '../sites-header-actions';
 import SiteNotifications from '../sites-notifications';
-import SitesDashboardEmptyState from './empty-state';
+import SitesDashboardEmptyState, { type SitesEmptyStateVariant } from './empty-state';
 import { getSelectedFilters } from './get-selected-filters';
 import ProvisioningSiteNotification from './provisioning-site-notification';
 import { updateSitesDashboardUrl } from './update-sites-dashboard-url';
@@ -145,6 +145,9 @@ export function SitesDashboard() {
 
 	const hasNoFavoritesYet =
 		isUnfilteredView && showOnlyFavorites && ( data?.totalFavorites ?? 0 ) === 0;
+
+	const hasNoDevelopmentSitesYet =
+		isUnfilteredView && showOnlyDevelopmentSites && ( data?.totalDevelopmentSites ?? 0 ) === 0;
 
 	useEffect( () => {
 		if ( dataViewsState.selectedItem && ! initialSelectedSiteUrl ) {
@@ -253,7 +256,16 @@ export function SitesDashboard() {
 		tourId = 'addSiteStep1';
 	}
 
-	const shouldShowEmptyState = ! tourId && ( hasNoSitesYet || hasNoFavoritesYet );
+	let emptyStateVariant: SitesEmptyStateVariant | null = null;
+	if ( ! tourId ) {
+		if ( hasNoSitesYet ) {
+			emptyStateVariant = 'no-sites';
+		} else if ( hasNoFavoritesYet ) {
+			emptyStateVariant = 'no-favorites';
+		} else if ( hasNoDevelopmentSitesYet ) {
+			emptyStateVariant = 'no-development';
+		}
+	}
 
 	return (
 		<Layout
@@ -286,23 +298,8 @@ export function SitesDashboard() {
 
 				<SiteNotifications />
 				{ tourId && <GuidedTour defaultTourId={ tourId } /> }
-				{ shouldShowEmptyState ? (
-					<SitesDashboardEmptyState
-						title={
-							hasNoSitesYet
-								? translate( 'Add your first site' )
-								: translate( 'No favorite sites yet' )
-						}
-						message={
-							hasNoSitesYet
-								? translate(
-										'To get started, add a site using the “Add sites” button at the top of the page.'
-								  )
-								: translate(
-										'Mark a site as a favorite with the star icon to quickly find it here.'
-								  )
-						}
-					/>
+				{ emptyStateVariant ? (
+					<SitesDashboardEmptyState variant={ emptyStateVariant } />
 				) : (
 					<DashboardDataContext.Provider
 						value={ {
