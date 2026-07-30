@@ -248,8 +248,9 @@ class ThemeSheet extends Component {
 		softLaunched: PropTypes.bool,
 		// eslint-disable-next-line camelcase -- passed through from the wpcom theme API.
 		has_blueprint: PropTypes.bool,
+		// A dotcomblueprints post slug (string); numeric blueprint-library ids are also tolerated.
 		// eslint-disable-next-line camelcase -- passed through from the wpcom theme API.
-		blueprint_id: PropTypes.number,
+		blueprint_id: PropTypes.oneOfType( [ PropTypes.string, PropTypes.number ] ),
 		defaultOption: PropTypes.shape( {
 			label: PropTypes.string,
 			action: PropTypes.func,

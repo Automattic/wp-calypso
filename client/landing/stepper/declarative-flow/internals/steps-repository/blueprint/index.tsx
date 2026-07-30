@@ -5,7 +5,7 @@ import { useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import DocumentHead from 'calypso/components/data/document-head';
 import Loading from 'calypso/components/loading';
-import { getBlueprintID } from 'calypso/landing/stepper/declarative-flow/internals/steps-repository/playground/lib/blueprint';
+import { getBlueprintArchiveIdentifier } from 'calypso/landing/stepper/declarative-flow/internals/steps-repository/playground/lib/blueprint';
 import { ONBOARD_STORE } from 'calypso/landing/stepper/stores';
 import { checkBlueprintExists } from 'calypso/landing/stepper/utils/blueprint-archive-import';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
@@ -19,7 +19,7 @@ export const BlueprintStep: StepType = ( { navigation } ) => {
 
 	useEffect( () => {
 		const fetchBlueprint = async () => {
-			const id = getBlueprintID( query );
+			const id = getBlueprintArchiveIdentifier( query );
 
 			if ( ! id ) {
 				return;
@@ -33,7 +33,7 @@ export const BlueprintStep: StepType = ( { navigation } ) => {
 				return;
 			}
 
-			// Save the Blueprint library ID to the store
+			// Save the blueprint identifier (dotcomblueprints slug or numeric id) to the store.
 			setBlueprint( id );
 			submit();
 		};
