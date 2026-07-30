@@ -13,11 +13,13 @@ const {
 	defaultRequestToHandle,
 } = require( '@wordpress/dependency-extraction-webpack-plugin/lib/util' );
 const autoprefixerPlugin = require( 'autoprefixer' );
+const MomentTimezoneDataPlugin = require( 'moment-timezone-data-webpack-plugin' );
 const prefixSelectorPlugin = require( 'postcss-prefix-selector' );
 const webpack = require( 'webpack' );
 const { BundleAnalyzerPlugin } = require( 'webpack-bundle-analyzer' );
 const cacheIdentifier = require( '../../build-tools/babel/babel-loader-cache-identifier' );
 const GenerateChunksMapPlugin = require( '../../build-tools/webpack/generate-chunks-map-plugin' );
+const cssScope = require( './webpack-css-scope' );
 
 const shouldEmitStats = process.env.EMIT_STATS && process.env.EMIT_STATS !== 'false';
 const isDevelopment = process.env.NODE_ENV !== 'production';
@@ -101,44 +103,11 @@ module.exports = {
 					// own `postcss.config.js` that they use for their webpack bundling process.
 					config: false,
 					plugins: [
-						// Scopes this repo's own component styles to .jp-stats-dashboard (the class
-						// on Odyssey's mount point), so generic classes (`.card`, `.button`, etc.)
-						// can't collide with wp-admin's own chrome. See AGENTS.md > CSS Scoping.
-						prefixSelectorPlugin( {
-							// .jp-stats-dashboard for normal content. The rest are portal roots
-							// first-party components can render into: .color-scheme/.ReactModalPortal
-							// (Popover/Dialog), [data-base-ui-portal]/[data-wp-compat-overlay-slot]
-							// (@wordpress/ui Popover/Tooltip/Dialog, e.g. StatsInfotip),
-							// .components-modal__screen-overlay (@wordpress/components Modal, e.g. the
-							// UTM builder, stats upsell modal, and feedback modal).
-							prefix:
-								':where(.jp-stats-dashboard, .color-scheme, .ReactModalPortal, [data-base-ui-portal], [data-wp-compat-overlay-slot], .components-modal__screen-overlay)',
-							ignoreFiles: [
-								// Already hand-scoped; re-prefixing would double-nest it.
-								'odyssey-stats/src/app.scss',
-								// Calypso's global stylesheet (html/body reset, @wordpress/components
-								// CSS) — left unscoped for now.
-								'client/assets/stylesheets/style.scss',
-								// @visx/tooltip's TooltipInPortal (used by the line chart tooltip)
-								// portals to an unmarked <body> div, always wrapped in a `.visx-tooltip`
-								// element. This file already self-scopes under `.visx-tooltip` (like
-								// app.scss does under `[id="wpcom"]`) — re-prefixing would double-nest it.
-								'client/my-sites/stats/components/line-chart/styles.scss',
-								// Third-party CSS is out of scope here.
-								/node_modules/,
-							],
-							// Selectors that target the real <html>/<body>/document root. Prefixing
-							// these would require #wpcom to be its own ancestor, which is impossible —
-							// the rule would just go dead. Leave them unscoped instead.
-							exclude: [
-								/^:root(?![\w-])/, // :root, :root[data-theme=dark] .foo
-								/(^|[\s,])(html|body)(?=$|[\s.[:#,])/, // html.rtl, body.lockscroll
-								/^\.rtl(?![\w-])/, // .rtl button
-								/^:lang\(/, // :lang(he) .rtl
-								/^\[lang/, // [lang*=fr] .wp-brand-font
-								/^\[dir[~|^$*]?=/, // [dir=rtl] .chevron
-							],
-						} ),
+						// Scopes this repo's own component styles to .jp-stats-dashboard and
+						// .jp-stats-widget (Odyssey's mount points), so generic classes (`.card`,
+						// `.button`, etc.) can't collide with wp-admin's own chrome. See
+						// AGENTS.md > CSS Scoping and webpack-css-scope.js.
+						prefixSelectorPlugin( cssScope ),
 						autoprefixerPlugin(),
 					],
 				},
@@ -157,6 +126,24 @@ module.exports = {
 		alias: {
 			// Resolve fast-deep-equal/es6 to fast-deep-equal/es6/index.js.
 			'fast-deep-equal/es6': 'fast-deep-equal/es6/index.js',
+			// Keep @wordpress/components' base CSS out of the main bundle. wp-admin normally serves
+			// that stylesheet already (see src/lib/load-wp-components-style.ts), and a second,
+			// independently-versioned copy of these unnamespaced class names collides with
+			// wp-admin's own component instances. `style.scss` imports it unconditionally because
+			// Calypso/Blaze/Stepper are standalone SPAs that genuinely need it, so stub that
+			// import out for this build only...
+			'@wordpress/components/build-style/style.css': path.join(
+				__dirname,
+				'src/styles/empty-vendor-components.css'
+			),
+			// ...and expose the real file under a name of our own, so `load-wp-components-style.ts`
+			// can pull it in as an async chunk on the sites where wp-admin doesn't provide it.
+			// Resolved by path rather than `require.resolve`, which rejects this subpath: the
+			// package's `exports` map doesn't list it, though webpack's own resolver accepts it.
+			'odyssey-wp-components-style': path.join(
+				__dirname,
+				'../../node_modules/@wordpress/components/build-style/style.css'
+			),
 		},
 	},
 	node: false,
@@ -167,7 +154,11 @@ module.exports = {
 		} ),
 		...SassConfig.plugins( {
 			filename: '[name].min.css',
-			chunkFilename: '[contenthash].css',
+			// [name] resolves from the `webpackChunkName` magic comment on the dynamic `import()`
+			// that pulled the chunk in (falls back to a numeric id for chunks with none), matching
+			// the JS chunkFilename pattern below instead of shipping every split CSS file under an
+			// unreadable bare hash.
+			chunkFilename: '[name].[contenthash].css',
 			minify: ! isDevelopment,
 		} ),
 		new DependencyExtractionWebpackPlugin( {
@@ -234,6 +225,11 @@ module.exports = {
 			'calypso/lib/explat/internals/logger-browser-replacement'
 		),
 		new webpack.IgnorePlugin( { resourceRegExp: /^\.\/locale$/, contextRegExp: /moment$/ } ),
+		new MomentTimezoneDataPlugin( {
+			startYear: 2000,
+			endYear: 2030,
+			cacheDir: path.resolve( cachePath, 'moment-timezone' ),
+		} ),
 		new ExtensiveLodashReplacementPlugin(),
 		new InlineConstantExportsPlugin( /\/client\/state\/action-types.[tj]s$/ ),
 		new InlineConstantExportsPlugin( /\/client\/state\/themes\/action-types.[tj]s$/ ),

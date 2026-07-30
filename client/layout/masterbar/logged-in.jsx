@@ -3,6 +3,11 @@ import config from '@automattic/calypso-config';
 import { isEcommercePlan } from '@automattic/calypso-products';
 import { Gridicon } from '@automattic/components';
 import { Badge } from '@automattic/ui';
+// @ts-expect-error The commands package is not yet typed.
+import { store as commandsStore } from '@wordpress/commands';
+import { dispatch } from '@wordpress/data';
+import { displayShortcut } from '@wordpress/keycodes';
+import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { parse } from 'qs';
@@ -13,6 +18,7 @@ import AsyncLoad from 'calypso/components/async-load';
 import Gravatar from 'calypso/components/gravatar';
 import { dashboardLink, wpcomLink } from 'calypso/dashboard/utils/link';
 import { navigate } from 'calypso/lib/navigate';
+import resizeImageUrl from 'calypso/lib/resize-image-url';
 import wpcom from 'calypso/lib/wp';
 import { domainManagementList } from 'calypso/my-sites/domains/paths';
 import { preload } from 'calypso/sections-helper';
@@ -116,6 +122,7 @@ class MasterbarLoggedIn extends Component {
 		useUnifiedAgent: PropTypes.bool,
 		launchButton: PropTypes.node,
 		sitePlanUrl: PropTypes.string,
+		commandPalette: PropTypes.bool,
 	};
 
 	state = { mounted: false };
@@ -611,11 +618,25 @@ class MasterbarLoggedIn extends Component {
 			} );
 		}
 
+		const siteIconUrl = site?.icon?.img || site?.icon?.ico;
+		const hasSiteIcon = !! siteIconUrl;
+		const icon = hasSiteIcon ? (
+			<img
+				className="masterbar__item-site-icon"
+				src={ resizeImageUrl( siteIconUrl, 40 ) }
+				alt=""
+				width={ 20 }
+				height={ 20 }
+			/>
+		) : (
+			<span className="dashicons-before dashicons-admin-home" />
+		);
+
 		return (
 			<Item
-				className="masterbar__item-my-site"
+				className={ clsx( 'masterbar__item-my-site', { 'has-site-icon': hasSiteIcon } ) }
 				url={ siteUrl }
-				icon={ <span className="dashicons-before dashicons-admin-home" /> }
+				icon={ icon }
 				tipTarget="visit-site"
 				subItems={ [ menuItems ] }
 			>
@@ -970,6 +991,25 @@ class MasterbarLoggedIn extends Component {
 		);
 	}
 
+	openCommandPalette = () => {
+		dispatch( commandsStore ).open();
+	};
+
+	renderCommandPalette() {
+		const { translate } = this.props;
+		return (
+			<Item
+				className="masterbar__item-command-palette"
+				onClick={ this.openCommandPalette }
+				icon={ <span className="dashicons-before dashicons-search" /> }
+				tooltip={ translate( 'Open command palette' ) }
+				ariaLabel={ translate( 'Open command palette' ) }
+			>
+				<span aria-hidden="true">{ displayShortcut.primary( 'k' ) }</span>
+			</Item>
+		);
+	}
+
 	clickAgentsManagerAiChat = () => {
 		// Toggle: close the chat if it's already showing, otherwise resume the active
 		// conversation and open it.
@@ -1019,6 +1059,7 @@ class MasterbarLoggedIn extends Component {
 					{ this.renderSidebarMobileMenu() }
 					{ this.renderMySites() }
 					{ this.renderSiteMenu() }
+					{ this.props.commandPalette && this.renderCommandPalette() }
 					{ this.renderUpdatesMenu() }
 					{ this.renderCommentsMenu() }
 					{ this.renderSiteActionMenu() }

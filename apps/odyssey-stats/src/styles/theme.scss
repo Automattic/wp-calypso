@@ -1,8 +1,7 @@
 @import "variables";
 
-:root,
-.color-scheme.is-jetpack {
-	@include jetpack-theme-for-odyssey-stats;
+.jp-stats-dashboard {
+	@include odyssey-stats-base-vars;
 }
 
 // Stats Dashboard

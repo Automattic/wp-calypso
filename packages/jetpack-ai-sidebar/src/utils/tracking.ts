@@ -64,7 +64,7 @@ interface TrackBlockTransformationSuggestionOptions {
 }
 
 /**
- * Tracks the empty-view "AI Editorial Review" suggestion appearing.
+ * Tracks the AI Editorial Review empty-view suggestion appearing.
  */
 export function trackAiEditorialReviewSuggestionRendered(): void {
 	recordTracksEvent( 'ai_editorial_review_suggestion_rendered' );

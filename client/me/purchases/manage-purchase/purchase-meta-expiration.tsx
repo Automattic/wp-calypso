@@ -13,32 +13,33 @@ import InfoPopover from 'calypso/components/info-popover';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import { useIsSplitCancelRemoveEnabled } from 'calypso/dashboard/me/billing-purchases/cancel-purchase/use-is-split-cancel-remove-enabled';
+import {
+	isAkismetHoldingSitePurchase,
+	isA4AHoldingSitePurchase,
+	isA4ABillingDragonPurchase,
+} from 'calypso/dashboard/utils/purchase';
 import { ResponseDomain } from 'calypso/lib/domains/types';
+import { useSelector } from 'calypso/state';
+import { getCurrentUserId } from 'calypso/state/current-user/selectors';
+import { getAllDomains } from 'calypso/state/sites/domains/selectors';
 import {
 	hasPaymentMethod,
 	isRechargeable,
 	isCloseToExpiration,
 	isRenewable,
-	isExpired,
-	isInExpirationGracePeriod,
-} from 'calypso/lib/purchases';
-import {
-	isAkismetHoldingSitePurchase,
-	isA4AHoldingSitePurchase,
-	isA4ABillingDragonPurchase,
-} from 'calypso/me/purchases/utils';
-import { useSelector } from 'calypso/state';
-import { getCurrentUserId } from 'calypso/state/current-user/selectors';
-import { getAllDomains } from 'calypso/state/sites/domains/selectors';
+	isExpiredAndInGracePeriod,
+	isExpiredWithNoAutoRenewAttemptsLeft,
+	isRemoved,
+} from '../lib/raw-purchase-helpers';
 import AutoRenewToggle from './auto-renew-toggle';
-import type { SiteDetails } from '@automattic/data-stores';
 import type {
-	Purchase,
 	GetChangePaymentMethodUrlFor,
 	RenderRenewsOrExpiresOn,
 	RenderRenewsOrExpiresOnLabel,
 	GetManagePurchaseUrlFor,
-} from 'calypso/lib/purchases/types';
+} from '../lib/types';
+import type { Purchase } from '@automattic/api-core';
+import type { SiteDetails } from '@automattic/data-stores';
 
 interface ExpirationProps {
 	purchase: Purchase;
@@ -61,16 +62,16 @@ function PurchaseMetaExpiration( {
 }: ExpirationProps ) {
 	const translate = useTranslate();
 	const moment = useLocalizedMoment();
-	const isProductOwner = purchase?.userId === useSelector( getCurrentUserId );
+	const isProductOwner = purchase?.user_id === useSelector( getCurrentUserId );
 	const isJetpackPurchase = isJetpackPlan( purchase ) || isJetpackProduct( purchase );
 	const isCancellableSitelessPurchase =
 		isAkismetHoldingSitePurchase( purchase ) || isA4AHoldingSitePurchase( purchase );
-	const isAutorenewalEnabled = purchase?.isAutoRenewEnabled ?? false;
+	const isAutorenewalEnabled = purchase?.is_auto_renew_enabled ?? false;
 	const isJetpackPurchaseUsingPrimaryCancellationFlow =
 		isJetpackPurchase && config.isEnabled( 'jetpack/cancel-through-main-flow' );
 
 	const allDomains = useSelector( getAllDomains );
-	const domainDetails = allDomains?.[ purchase.siteId ]?.find(
+	const domainDetails = allDomains?.[ purchase.blog_id ]?.find(
 		( domain: ResponseDomain ) => domain.domain === purchase.meta
 	);
 	const isSplitEnabled = useIsSplitCancelRemoveEnabled();
@@ -78,18 +79,26 @@ function PurchaseMetaExpiration( {
 	if (
 		! purchase ||
 		isDomainTransfer( purchase ) ||
-		purchase?.isInAppPurchase ||
+		purchase?.is_iap_purchase ||
 		isAkismetFreeProduct( purchase )
 	) {
 		return null;
 	}
 
 	const hideAutoRenew =
-		( JETPACK_LEGACY_PLANS.some( ( plan ) => plan === purchase.productSlug ) &&
+		( JETPACK_LEGACY_PLANS.some( ( plan ) => plan === purchase.product_slug ) &&
 			! isRenewable( purchase ) ) ||
 		is100Year( purchase );
 
-	if ( isRenewable( purchase ) && ! isExpired( purchase ) ) {
+	// We need to allow auto-renew to be disabled if there are still upcoming
+	// renewal attempts, and because of that we should allow it to be enabled
+	// too (so it can be turned back on after disabling it). But otherwise we
+	// don't want people to be able to toggle it, since if the subscription is
+	// past expiration and there are no more renewal attempts then the toggle
+	// won't have a meaningful effect.
+	const couldHaveUpcomingRenewalAttempts = ! isExpiredWithNoAutoRenewAttemptsLeft( purchase );
+
+	if ( isRenewable( purchase ) && ! isRemoved( purchase ) && couldHaveUpcomingRenewalAttempts ) {
 		const dateSpan = <span className="manage-purchase__detail-date-span" />;
 		// If a jetpack site has been disconnected, the "site" prop will be null here.
 		// We allow the empty site if an A4A BD purchase since clients often don't have access to the site so it'll be null.
@@ -137,20 +146,20 @@ function PurchaseMetaExpiration( {
 			! hideAutoRenew &&
 			hasPaymentMethod( purchase ) &&
 			isRechargeable( purchase ) &&
-			! isInExpirationGracePeriod( purchase )
+			! isExpiredAndInGracePeriod( purchase )
 		) {
 			subsBillingText = translate( 'You will be billed on {{dateSpan}}%(renewDate)s{{/dateSpan}}', {
 				args: {
-					renewDate: purchase.renewDate && moment( purchase.renewDate ).format( 'LL' ),
+					renewDate: purchase.renew_date && moment( purchase.renew_date ).format( 'LL' ),
 				},
 				components: {
 					dateSpan,
 				},
 			} );
-		} else if ( isInExpirationGracePeriod( purchase ) ) {
+		} else if ( isExpiredAndInGracePeriod( purchase ) ) {
 			subsBillingText = translate( 'Expired on {{dateSpan}}%(expireDate)s{{/dateSpan}}', {
 				args: {
-					expireDate: moment( purchase.expiryDate ).format( 'LL' ),
+					expireDate: moment( purchase.expiry_date ).format( 'LL' ),
 				},
 				components: {
 					dateSpan,
@@ -160,7 +169,7 @@ function PurchaseMetaExpiration( {
 		} else {
 			subsBillingText = translate( 'Expires on {{dateSpan}}%(expireDate)s{{/dateSpan}}', {
 				args: {
-					expireDate: moment( purchase.expiryDate ).format( 'LL' ),
+					expireDate: moment( purchase.expiry_date ).format( 'LL' ),
 				},
 				components: {
 					dateSpan,
@@ -169,16 +178,16 @@ function PurchaseMetaExpiration( {
 		}
 
 		if ( is100Year( purchase ) ) {
-			subsBillingText = moment( purchase.expiryDate ).format( 'LL' );
+			subsBillingText = moment( purchase.expiry_date ).format( 'LL' );
 		}
 		const shouldShowTooltip = () => {
-			if ( ! purchase.expiryDate || ! purchase.renewDate || is100Year( purchase ) ) {
+			if ( ! purchase.expiry_date || ! purchase.renew_date || is100Year( purchase ) ) {
 				return false;
 			}
 
 			if (
-				purchase.renewDate !== purchase.expiryDate &&
-				( purchase.expiryStatus === 'active' || purchase.expiryStatus === 'auto-renewing' )
+				purchase.renew_date !== purchase.expiry_date &&
+				( purchase.expiry_status === 'active' || purchase.expiry_status === 'auto-renewing' )
 			) {
 				return true;
 			}
@@ -226,7 +235,7 @@ function PurchaseMetaExpiration( {
 								'Your subscription is paid through {{dateSpan}}%(expireDate)s{{/dateSpan}}, but will be renewed prior to that date. {{inlineSupportLink}}Learn more{{/inlineSupportLink}}',
 								{
 									args: {
-										expireDate: moment( purchase.expiryDate ).format( 'LL' ),
+										expireDate: moment( purchase.expiry_date ).format( 'LL' ),
 									},
 									components: {
 										dateSpan,

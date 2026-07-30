@@ -45,6 +45,7 @@ object CalypsoE2ETestsBuildTemplate : Template({
     	}
 
 		commitStatusPublisher {
+			id = "calypso_e2e_commit_status_publisher"
 			vcsRootExtId = "${Settings.WpCalypso.id}"
 			publisher = github {
 				githubUrl = "https://api.github.com"

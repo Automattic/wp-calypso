@@ -192,6 +192,7 @@ export const FlowRenderer: React.FC< {
 					stepName="user"
 					redirectTo={ postAuthStepPath }
 					signupUrl={ signupUrl }
+					{ ...stepsProps?.[ PRIVATE_STEPS.USER.slug ] }
 				/>
 			);
 		}

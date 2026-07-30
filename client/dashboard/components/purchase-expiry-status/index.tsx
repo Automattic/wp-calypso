@@ -1,4 +1,5 @@
 import { SubscriptionBillPeriod, getPlanNames } from '@automattic/api-core';
+import { translationExists } from '@automattic/i18n-utils';
 import { formatCurrency } from '@automattic/number-formatters';
 import { Button, ExternalLink } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
@@ -6,24 +7,18 @@ import { __, sprintf } from '@wordpress/i18n';
 import { useHelpCenter } from '../../app/help-center';
 import { useLocale } from '../../app/locale';
 import { Text } from '../../components/text';
-import {
-	formatDate,
-	isWithinLast,
-	isWithinNext,
-	getRelativeTimeString,
-} from '../../utils/datetime';
+import { formatDate, getCalendarDaysUntil, getRelativeDayString } from '../../utils/datetime';
 import {
 	isA4ABillingDragonPurchase,
 	isRecentMonthlyPurchase,
-	isRenewing,
+	isRenewingBeforeExpiration,
 	isExpiring,
-	isExpired,
+	isExpiredOrRemoved,
 	isIncludedWithPlan,
 	isOneTimePurchase,
 	isAkismetFreeProduct,
 	creditCardHasAlreadyExpired,
 	creditCardExpiresBeforeSubscription,
-	isInExpirationGracePeriod,
 	isCentennialPurchase,
 } from '../../utils/purchase';
 import type { Purchase } from '@automattic/api-core';
@@ -157,8 +152,7 @@ export function PurchaseExpiryStatus( {
 	if (
 		purchase.introductory_offer?.is_within_period &&
 		isIntroductoryOfferFreeTrial &&
-		isRenewing( purchase ) &&
-		! isInExpirationGracePeriod( purchase )
+		isRenewingBeforeExpiration( purchase )
 	) {
 		return createInterpolateElement(
 			sprintf(
@@ -185,7 +179,7 @@ export function PurchaseExpiryStatus( {
 	if (
 		purchase.introductory_offer?.is_within_period &&
 		isIntroductoryOfferFreeTrial &&
-		! isInExpirationGracePeriod( purchase )
+		! isExpiredOrRemoved( purchase )
 	) {
 		return (
 			<span>
@@ -199,7 +193,7 @@ export function PurchaseExpiryStatus( {
 		);
 	}
 
-	const isRenewingOnDate = Boolean( isRenewing( purchase ) && purchase.renew_date );
+	const isRenewingOnDate = Boolean( isRenewingBeforeExpiration( purchase ) && purchase.renew_date );
 	if ( isRenewingOnDate && creditCardHasAlreadyExpired( purchase ) ) {
 		return <span>{ __( 'Credit card expired' ) }</span>;
 	}
@@ -215,27 +209,6 @@ export function PurchaseExpiryStatus( {
 					}
 				) }
 			</span>
-		);
-	}
-
-	// Check if expired within the grace period (not actually expired)
-	if ( isInExpirationGracePeriod( purchase ) ) {
-		if ( isRenewing( purchase ) ) {
-			// Auto-renew ON, renewal failing
-			return <Text intent="error">{ __( 'Pending renewal' ) }</Text>;
-		}
-
-		// Auto-renew OFF (isExpiring)
-		return (
-			<Text intent="error">
-				{ sprintf(
-					// translators: timeSinceExpiry is of the form "[number] [time-period] ago" i.e. "3 days ago"
-					__( 'Expired %(timeSinceExpiry)s' ),
-					{
-						timeSinceExpiry: getRelativeTimeString( new Date( purchase.expiry_date ) ),
-					}
-				) }
-			</Text>
 		);
 	}
 
@@ -337,14 +310,29 @@ export function PurchaseExpiryStatus( {
 		}
 	}
 
+	const expiresOnText = createInterpolateElement(
+		// translators: date is a formatted expiry date
+		__( 'Expires on <date />' ),
+		{
+			date: <FormattedExpiryDate locale={ locale } purchase={ purchase } />,
+		}
+	);
+
 	if ( isExpiring( purchase ) && ! isAkismetFreeProduct( purchase ) ) {
-		if (
-			isWithinNext( new Date( purchase.expiry_date ), 30, 'days' ) &&
-			! isRecentMonthlyPurchase( purchase )
-		) {
-			const intent = isWithinNext( new Date( purchase.expiry_date ), 7, 'days' )
-				? ( 'error' as const )
-				: ( 'warning' as const );
+		const daysUntilExpiry = getCalendarDaysUntil( new Date( purchase.expiry_date ) );
+
+		// Covers both "later today" and a purchase whose expiry date has passed
+		// but which the backend still reports as expiring.
+		if ( daysUntilExpiry <= 0 ) {
+			return (
+				<Text intent="error">
+					{ translationExists( 'Expires today' ) ? __( 'Expires today' ) : expiresOnText }
+				</Text>
+			);
+		}
+
+		if ( daysUntilExpiry <= 30 && ! isRecentMonthlyPurchase( purchase ) ) {
+			const intent = daysUntilExpiry <= 7 ? ( 'error' as const ) : ( 'warning' as const );
 
 			return (
 				<Text intent={ intent }>
@@ -353,7 +341,12 @@ export function PurchaseExpiryStatus( {
 							// translators: timeUntilExpiry is a formatted expiration string like "in 30 days" and date is a formatted expiry date
 							__( 'Expires %(timeUntilExpiry)s on <date />' ),
 							{
-								timeUntilExpiry: getRelativeTimeString( new Date( purchase.expiry_date ) ),
+								// The branch above already excludes today and past dates, but
+								// the clamp keeps that guarantee local to this call.
+								timeUntilExpiry: getRelativeDayString(
+									new Date( purchase.expiry_date ),
+									'upcoming'
+								),
 							}
 						),
 						{
@@ -364,30 +357,30 @@ export function PurchaseExpiryStatus( {
 			);
 		}
 
-		return createInterpolateElement(
-			// translators: date is a formatted expiry date
-			__( 'Expires on <date />' ),
-			{
-				date: <FormattedExpiryDate locale={ locale } purchase={ purchase } />,
-			}
-		);
+		return expiresOnText;
 	}
-	if ( isExpired( purchase ) && 'concierge-session' === purchase.product_slug ) {
+	if ( isExpiredOrRemoved( purchase ) && 'concierge-session' === purchase.product_slug ) {
 		// translators: %s is a formatted expiry date
 		return sprintf( __( 'Session used on %s' ), [
 			formatDate( new Date( purchase.expiry_date ), locale, { dateStyle: 'long' } ),
 		] );
 	}
 
-	if ( isExpired( purchase ) ) {
-		const isExpiredToday = isWithinLast( new Date( purchase.expiry_date ), 24, 'hours' );
+	if ( isExpiredOrRemoved( purchase ) ) {
+		// getCalendarDaysUntil counts forward, so this is negative once the expiry
+		// date has passed. Anything else means the expiry lands today or later —
+		// later being a purchase removed ahead of its expiry date — and both read
+		// as "Expired today" rather than "Expired in 3 days".
+		const expiredBeforeToday = getCalendarDaysUntil( new Date( purchase.expiry_date ) ) < 0;
 		const expiredTodayText = __( 'Expired today' );
 		// translators: timeSinceExpiry is of the form "[number] [time-period] ago" i.e. "3 days ago"
 		const expiredFromNowText = sprintf( __( 'Expired %(timeSinceExpiry)s' ), {
-			timeSinceExpiry: getRelativeTimeString( new Date( purchase.expiry_date ) ),
+			timeSinceExpiry: getRelativeDayString( new Date( purchase.expiry_date ), 'past' ),
 		} );
 
-		return <Text intent="error">{ isExpiredToday ? expiredTodayText : expiredFromNowText }</Text>;
+		return (
+			<Text intent="error">{ expiredBeforeToday ? expiredFromNowText : expiredTodayText }</Text>
+		);
 	}
 
 	if ( isIncludedWithPlan( purchase ) ) {

@@ -20,6 +20,7 @@
 	"login_url": false,
 	"logout_url": false,
 	"wpcom_url": "https://wordpress.com",
+	"calypso_live_image": false,
 	"wpcom_signup_url": false,
 	"wpcom_login_url": false,
 	"wpcom_authorize_endpoint": false,
@@ -225,7 +226,7 @@
 	"blackbox_url": "https://blackbox-api.wp.com/v1/dist/v.js",
 	"blackbox_api_key": "e16ecd5d7848b169d97088e4c69065d8",
 	"site_spec": {
-		"script_url": "https://widgets.wp.com/site-spec/v1.13.0/index.js",
-		"css_url": "https://widgets.wp.com/site-spec/v1.13.0/style.css"
+		"script_url": "https://widgets.wp.com/site-spec/v1.13.3/index.js",
+		"css_url": "https://widgets.wp.com/site-spec/v1.13.3/style.css"
 	}
 }

@@ -7,16 +7,28 @@ import { isEditorPage } from './is-editor-page';
  */
 const EDITOR_ENTRY_MEDIA_QUERY = '(min-width: 480px)';
 
+let adminBarInEditorSnapshot: boolean | undefined;
+
 /**
- * Whether Gutenberg's "admin bar in editor" (omnibar) experiment is active — it renders a top
- * admin bar in the fullscreen editor. Both signals below are set server-side by Gutenberg core.
+ * Whether a top admin bar is present in the editor — Gutenberg's "admin bar in editor" (omnibar)
+ * experiment, or any context that renders a visible `#wpadminbar`. When it is, the editor toolbar
+ * entry points move into the admin bar instead.
+ *
+ * Snapshotted on first read and kept for the page's lifetime: the signals change as the user
+ * toggles editor modes (fullscreen, distraction-free), and the entry points must not hop between
+ * the toolbar and the admin bar.
  */
 export function isAdminBarInEditor(): boolean {
-	const hasExperimentFlag = !! ( window as Window & { __experimentalAdminBarInEditor?: boolean } )
-		.__experimentalAdminBarInEditor;
-	const hasBodyClass = document.body.classList.contains( 'has-admin-bar-in-editor' );
+	if ( adminBarInEditorSnapshot === undefined ) {
+		const hasExperimentFlag = !! ( window as Window & { __experimentalAdminBarInEditor?: boolean } )
+			.__experimentalAdminBarInEditor;
+		const hasBodyClass = document.body.classList.contains( 'has-admin-bar-in-editor' );
+		const hasVisibleAdminBar = ( document.getElementById( 'wpadminbar' )?.offsetHeight ?? 0 ) > 0;
 
-	return hasExperimentFlag || hasBodyClass;
+		adminBarInEditorSnapshot = hasExperimentFlag || hasBodyClass || hasVisibleAdminBar;
+	}
+
+	return adminBarInEditorSnapshot;
 }
 
 /**

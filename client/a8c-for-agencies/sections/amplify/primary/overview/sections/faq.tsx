@@ -27,7 +27,14 @@ const FAQS = [
 		id: 'how-is-the-score-calculated',
 		question: __( 'How is the score calculated?' ),
 		answer: __(
-			'Every score is a combination of programmatic checks and AI analysis. Programmatic checks cover signals with one right answer: element presence, character counts, contrast ratios, HTTP status, and page speed measurements. AI analysis covers signals that require judgment, including visual polish, content clarity, trust signal quality, and audience resonance. Each criterion is weighted by its real-world impact on conversion or discoverability, and the total adds up to 100 points per mode.'
+			'Every score Amplify by Automattic for Agencies produces is grounded in established research, published standards, and established resources. Each score combines programmatic checks with AI analysis. Programmatic checks cover signals with one right answer, such as element presence, character counts, contrast ratios, HTTP status, and page speed measurements. AI analysis covers signals that require judgment, including visual polish, content clarity, trust signal quality, and audience resonance. Each criterion is weighted by its real-world impact on conversion or discoverability, and the total adds up to 100 points per mode.'
+		),
+	},
+	{
+		id: 'how-to-read-your-score',
+		question: __( 'How do I read my score?' ),
+		answer: __(
+			'Amplify scores are directional indicators grounded in established research and the expertise of Automattic. They are not definitive verdicts. A score reflects a point-in-time audit of your homepage and may not account for all site-specific context, audience nuances, or intentional design decisions.'
 		),
 	},
 	{

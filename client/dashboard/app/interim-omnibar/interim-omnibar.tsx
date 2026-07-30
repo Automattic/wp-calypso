@@ -3,6 +3,7 @@ import { useShouldUseUnifiedAgent } from '@automattic/agents-manager';
 import {
 	purchaseQuery,
 	queryClient,
+	siteAdminMenuQuery,
 	siteCurrentPlanQuery,
 	siteHourlyViewsQuery,
 } from '@automattic/api-queries';
@@ -46,6 +47,7 @@ interface Props {
 	currentRoute: string;
 	onToggleMenu?: () => void;
 	onToggleNotifications?: () => void;
+	commandPalette?: boolean;
 }
 
 export function InterimOmnibar( {
@@ -54,6 +56,7 @@ export function InterimOmnibar( {
 	currentRoute,
 	onToggleMenu,
 	onToggleNotifications,
+	commandPalette,
 }: Props ) {
 	const user = userProp ?? emptyUser;
 	const siteId = site?.ID ?? null;
@@ -81,6 +84,14 @@ export function InterimOmnibar( {
 	const { data: hourlyViews } = useQuery(
 		{
 			...siteHourlyViewsQuery( site?.ID ?? 0 ),
+			enabled: !! site,
+		},
+		queryClient
+	);
+
+	const { data: adminMenu } = useQuery(
+		{
+			...siteAdminMenuQuery( site?.ID ?? 0 ),
 			enabled: !! site,
 		},
 		queryClient
@@ -183,6 +194,7 @@ export function InterimOmnibar( {
 					isCheckoutFailed={ false }
 					loadHelpCenterIcon
 					loadAgentsManager
+					commandPalette={ commandPalette }
 					isGlobalSidebarVisible={ false }
 					isGravatarDomain={ false }
 					dashboardOptIn
@@ -191,7 +203,7 @@ export function InterimOmnibar( {
 					isNotificationsShowing={ false }
 					isMigrationInProgress={ false }
 					migrationStatus={ null }
-					adminMenu={ null }
+					adminMenu={ adminMenu ?? null }
 					// Actions
 					setNextLayoutFocus={ noop }
 					activateNextLayoutFocus={ () => onToggleMenu?.() }

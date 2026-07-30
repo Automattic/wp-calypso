@@ -15,6 +15,8 @@ import { __, _x } from '@wordpress/i18n';
 /**
  * Internal dependencies
  */
+import AiEditorialReview from './components/ai-editorial-review';
+import './components/ai-editorial-review.scss';
 import './components/block-ref.scss';
 import ExcerptPicker from './components/excerpt-picker';
 import './components/feedback-list.scss';
@@ -22,8 +24,6 @@ import ImageAltTextPicker from './components/image-alt-text-picker';
 import './components/image-alt-text-picker.scss';
 import PostFeedback from './components/post-feedback';
 import Proofread from './components/proofread';
-import ReviewMediation from './components/review-mediation';
-import './components/review-mediation.scss';
 import SeoDescriptionPicker from './components/seo-description-picker';
 import SeoTitlePicker from './components/seo-title-picker';
 import './components/base-suggestion-picker.scss';
@@ -43,6 +43,7 @@ import {
 	getSelectedOrRememberedBlock,
 	rememberSelectedBlock,
 	clearRememberedSelectedBlock,
+	notifyBlockActionComplete,
 	BLOCK_ACTION_COMPLETE_EVENT,
 	SELECTED_BLOCK_CLEAR_EVENT,
 } from './utils/block-actions';
@@ -76,7 +77,10 @@ export { registerBlockEditorFilters } from './extensions';
 
 let clearSuggestionsFn: ( () => void ) | null = null;
 let wasAgentProcessing = false;
+let pendingBlockShimmerClientId: string | null = null;
+let blockShimmerStartedForRequest = false;
 let suppressCurrentPageContentForNextContext = false;
+let jetpackAIRequestScopeForNextContext: 'selected-block' | null = null;
 
 /** Whether `_suggestion_rendered` has fired this page life (once-per-session). */
 let suggestionRenderedFiredOnce = false;
@@ -154,14 +158,9 @@ const SEO_ENHANCER_SUGGESTION = {
 	],
 };
 
-/**
- * Editor-level suggestion to run AI Editorial Review on saved content.
- *
- * The id remains stable because saved chats/tests may still refer to the
- * original review-mediation identifier.
- */
+/** Editor-level suggestion to run AI Editorial Review on saved content. */
 const AI_EDITORIAL_REVIEW_SUGGESTION = {
-	id: 'mediate-review-notes',
+	id: 'ai-editorial-review',
 	label: __( 'Editorial Review', __i18n_text_domain__ ),
 	description: __( 'In-depth review against your content guidelines.', __i18n_text_domain__ ),
 	prompt: __(
@@ -396,10 +395,12 @@ function applySuggestionLimit< T extends { id: string } >(
 
 const SHOW_COMPONENT_TOOL_ID = 'jetpack_ai__show_component';
 const LEGACY_SHOW_COMPONENT_TOOL_ID = 'big_sky__show_component';
+const SHOW_COMPONENT_ABILITY_NAME = 'jetpack-ai/show-component';
+const LEGACY_SHOW_COMPONENT_ABILITY_NAME = 'big-sky/show-component';
 const SHOW_COMPONENT_TOOL_IDS = [ SHOW_COMPONENT_TOOL_ID, LEGACY_SHOW_COMPONENT_TOOL_ID ];
 
 /**
- * Client-side ability definition for `jetpack_ai__show_component`.
+ * Client-side ability definition for `jetpack-ai/show-component`.
  *
  * Surfaced to AM via `toolProvider.getAbilities()` so the orchestrator
  * recognizes Jetpack-owned component tool calls. Same pattern as
@@ -407,7 +408,7 @@ const SHOW_COMPONENT_TOOL_IDS = [ SHOW_COMPONENT_TOOL_ID, LEGACY_SHOW_COMPONENT_
  */
 const SHOW_COMPONENT_ABILITY: any = {
 	id: SHOW_COMPONENT_TOOL_ID,
-	name: SHOW_COMPONENT_TOOL_ID,
+	name: SHOW_COMPONENT_ABILITY_NAME,
 	label: 'Show component',
 	category: 'jetpack-ai',
 	description: 'Render an interactive component in the chat.',
@@ -424,7 +425,7 @@ const SHOW_COMPONENT_ABILITY: any = {
 const LEGACY_SHOW_COMPONENT_ABILITY: any = {
 	...SHOW_COMPONENT_ABILITY,
 	id: LEGACY_SHOW_COMPONENT_TOOL_ID,
-	name: LEGACY_SHOW_COMPONENT_TOOL_ID,
+	name: LEGACY_SHOW_COMPONENT_ABILITY_NAME,
 };
 
 function hasShowComponentType( type: unknown ): type is string {
@@ -469,7 +470,7 @@ function handleShowComponent( input: any ): any {
 		isCurrent: true,
 		hideZoomAction: true,
 	};
-	if ( type === 'review-mediation' || type === 'post-feedback' || type === 'proofread' ) {
+	if ( type === 'ai-editorial-review' || type === 'post-feedback' || type === 'proofread' ) {
 		const reviewedPostId =
 			normalizeEditorPostId( componentProps.postId ) ?? getCurrentEditorPostId();
 		if ( reviewedPostId ) {
@@ -564,8 +565,8 @@ function getAbilitiesExecuteAbility():
 // ---------- useAbilitiesSetup ----------
 
 /**
- * Captures AM's clearSuggestions callback and processing state so the provider
- * can hide chips and run block-edit shimmers at the right time.
+ * Captures AM's clearSuggestions callback and starts request-time shimmer only
+ * for a known contextual block transformation.
  */
 export function useAbilitiesSetup( actions: {
 	addMessage: ( message: any ) => void;
@@ -578,10 +579,16 @@ export function useAbilitiesSetup( actions: {
 	}
 
 	const isProcessing = actions.isProcessing === true;
-	if ( isProcessing && ! wasAgentProcessing ) {
-		startBlockShimmer();
+	if ( isProcessing && ! wasAgentProcessing && pendingBlockShimmerClientId ) {
+		startBlockShimmer( pendingBlockShimmerClientId );
+		blockShimmerStartedForRequest = true;
 	} else if ( ! isProcessing && wasAgentProcessing ) {
 		stopBlockShimmer();
+		if ( blockShimmerStartedForRequest ) {
+			notifyBlockActionComplete();
+		}
+		pendingBlockShimmerClientId = null;
+		blockShimmerStartedForRequest = false;
 	}
 	wasAgentProcessing = isProcessing;
 }
@@ -611,7 +618,15 @@ function filterAbility( abilities: any[], toolId: string ): any[] {
 }
 
 function isShowComponentTool( toolId: string ): boolean {
-	return SHOW_COMPONENT_TOOL_IDS.includes( toolId );
+	return (
+		SHOW_COMPONENT_TOOL_IDS.includes( toolId ) ||
+		toolId === SHOW_COMPONENT_ABILITY_NAME ||
+		toolId === LEGACY_SHOW_COMPONENT_ABILITY_NAME
+	);
+}
+
+function isLegacyShowComponentTool( toolId: string ): boolean {
+	return toolId === LEGACY_SHOW_COMPONENT_TOOL_ID || toolId === LEGACY_SHOW_COMPONENT_ABILITY_NAME;
 }
 
 export const toolProvider = {
@@ -675,7 +690,7 @@ export const toolProvider = {
 			return { result, returnToAgent: false };
 		}
 
-		if ( name === LEGACY_SHOW_COMPONENT_TOOL_ID && shouldDelegateLegacyShowComponent( args ) ) {
+		if ( isLegacyShowComponentTool( name ) && shouldDelegateLegacyShowComponent( args ) ) {
 			const executeAbility = getAbilitiesExecuteAbility();
 			if ( executeAbility ) {
 				return executeAbility( 'big-sky/show-component', args );
@@ -742,7 +757,9 @@ export const contextProvider = {
 		let selectedBlockContent = '';
 		let currentPostType: string | undefined;
 		const suppressCurrentPageContent = suppressCurrentPageContentForNextContext;
+		const jetpackAIRequestScope = jetpackAIRequestScopeForNextContext;
 		suppressCurrentPageContentForNextContext = false;
+		jetpackAIRequestScopeForNextContext = null;
 
 		if ( wpData ) {
 			const editor = wpData.select( 'core/editor' );
@@ -775,6 +792,7 @@ export const contextProvider = {
 			},
 			currentPageContent,
 			selectedBlockClientId,
+			...( jetpackAIRequestScope && { jetpackAIRequestScope } ),
 			// Forward the host's SEO Enhancer verdict (plan + Jetpack SEO Tools
 			// module + kill switches) so the orchestrator can drop the SEO
 			// suggestion abilities when they aren't usable on this site — e.g. a
@@ -785,6 +803,11 @@ export const contextProvider = {
 					id: 'selected-block-content',
 					type: 'selected-block-content',
 					data: selectedBlockContent ? { content: selectedBlockContent } : null,
+				},
+				{
+					id: 'ai-editorial-review-contract',
+					type: 'ai-editorial-review-contract',
+					data: { version: 2 },
 				},
 			],
 		};
@@ -814,8 +837,8 @@ export function getChatComponent( type: string ): ComponentType | null {
 	if ( type === 'image-alt-text-picker' ) {
 		return ImageAltTextPicker as ComponentType;
 	}
-	if ( type === 'review-mediation' ) {
-		return ReviewMediation as ComponentType;
+	if ( type === 'ai-editorial-review' ) {
+		return AiEditorialReview as ComponentType;
 	}
 	if ( type === 'post-feedback' ) {
 		return PostFeedback as ComponentType;
@@ -1147,6 +1170,14 @@ export function useSuggestions(
 			setHidden( true );
 			clearSuggestionsFn?.();
 			suppressCurrentPageContentForNextContext = false;
+			pendingBlockShimmerClientId = BLOCK_SUGGESTIONS.some( matchesSuggestion )
+				? getSelectedOrRememberedBlock()?.clientId ?? null
+				: null;
+			jetpackAIRequestScopeForNextContext = null;
+
+			if ( BLOCK_SUGGESTIONS.some( matchesSuggestion ) ) {
+				jetpackAIRequestScopeForNextContext = 'selected-block';
+			}
 
 			if ( matchesSuggestion( POST_FEEDBACK_SUGGESTION ) ) {
 				suppressCurrentPageContentForNextContext = true;
@@ -1163,6 +1194,7 @@ export function useSuggestions(
 
 	useEffect( () => {
 		const handleBlockActionComplete = () => {
+			blockShimmerStartedForRequest = false;
 			setHidden( false );
 		};
 		window.addEventListener( BLOCK_ACTION_COMPLETE_EVENT, handleBlockActionComplete );
@@ -1174,6 +1206,7 @@ export function useSuggestions(
 	useEffect( () => {
 		const handleSelectedBlockClear = () => {
 			clearRememberedSelectedBlock();
+			pendingBlockShimmerClientId = null;
 			setHidden( false );
 		};
 		window.addEventListener( SELECTED_BLOCK_CLEAR_EVENT, handleSelectedBlockClear );
@@ -1205,6 +1238,7 @@ export function useSuggestions(
 
 	// Re-show suggestions when block selection changes (unless conversation is active)
 	useEffect( () => {
+		pendingBlockShimmerClientId = null;
 		setHidden( false );
 	}, [ editorContext.selectedBlock?.clientId ] );
 

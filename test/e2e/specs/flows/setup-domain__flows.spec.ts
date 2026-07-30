@@ -1,6 +1,6 @@
 import {
 	BrowserManager,
-	cancelAtomicPurchaseFlow,
+	cancelDashboardPurchaseFlow,
 	NewSiteResponse,
 	NewTestUserDetails,
 	NewUserResponse,
@@ -272,23 +272,19 @@ test.describe(
 			} );
 		} );
 
-		// Skipped for now; can be updated once we're sure all onboarding tests will go
-		// through the MSD flow. See https://github.com/Automattic/wp-calypso/pull/112586
-		// and https://github.com/Automattic/wp-calypso/pull/112587.
-		test.skip( 'As a new user, I can create a paid site, add a domain, then cancel the plan', async ( {
+		test( 'As a new user, I can create a paid site, add a domain, then cancel the plan', async ( {
 			page,
+			componentDashboardMeSidebar,
+			componentDashboardSnackbar,
 			componentDomainSearch,
 			componentSelectItems,
 			componentSiteSelect,
-			componentMeSidebar,
-			componentNotice,
 			helperData,
 			pageCartCheckout,
+			pageDashboardPurchases,
 			pagePostCheckoutSetupSite,
 			pageSignupPickPlan,
 			pageUserSignUp,
-			pageMyProfile,
-			pagePurchases,
 		} ) => {
 			// This test chains several genuinely slow flows end to end: creating a
 			// paid site, completing checkout, adding a domain, and finally
@@ -385,35 +381,34 @@ test.describe(
 				await pageCartCheckout.validateCartItem( selectedDomain );
 			} );
 
-			await test.step( 'And I navigate to Me > Purchases', async function () {
-				await pageMyProfile.visit();
-				await componentMeSidebar.openMobileMenu();
-				await componentMeSidebar.navigate( 'Purchases' );
+			await test.step( 'And I navigate to Billing > Active upgrades', async function () {
+				await page.goto( helperData.getDashboardURL( '/me' ) );
+				await componentDashboardMeSidebar.openMobileMenu();
+				await componentDashboardMeSidebar.navigate( 'Billing' );
+				await page.getByRole( 'link', { name: 'Active upgrades', exact: true } ).click();
 			} );
 
 			await test.step( 'And I view details of the purchased plan', async function () {
-				await pagePurchases.clickOnPurchase(
+				await pageDashboardPurchases.clickOnPurchase(
 					`WordPress.com ${ planName }`,
 					newSiteDetails.blog_details.site_slug as string
 				);
-				await pagePurchases.cancelPurchase( 'Cancel plan' );
 			} );
 
 			await test.step( 'And I cancel the plan renewal', async function () {
-				// cancelAtomicPurchaseFlow now blocks until the cancel-and-refund
-				// API request resolves, so by the time it returns the success
-				// notice is rendering. The notice still carries a 10s auto-dismiss
-				// duration, so keep a comfortable margin to observe it.
-				await cancelAtomicPurchaseFlow( page, {
+				await pageDashboardPurchases.cancelPurchase();
+
+				// cancelDashboardPurchaseFlow blocks until the cancel-and-refund API
+				// request resolves, so by the time it returns the success snackbar is
+				// rendering.
+				await cancelDashboardPurchaseFlow( page, {
 					reason: 'Another reason…',
 					customReasonText: 'E2E TEST CANCELLATION',
 				} );
 
-				await componentNotice.noticeShown(
+				await componentDashboardSnackbar.noticeShown(
 					'Your refund has been processed and your purchase removed.',
-					{
-						timeout: 30 * 1000,
-					}
+					{ exact: true }
 				);
 			} );
 		} );
@@ -533,21 +528,17 @@ test.describe(
 			} );
 		} );
 
-		// Skipped for now; can be updated once we're sure all onboarding tests will go
-		// through the MSD flow. See https://github.com/Automattic/wp-calypso/pull/112586
-		// and https://github.com/Automattic/wp-calypso/pull/112587.
-		test.skip( 'As a new user, I can create a paid site, add a domain using pre-selected site flow, then cancel the plan', async ( {
+		test( 'As a new user, I can create a paid site, add a domain using pre-selected site flow, then cancel the plan', async ( {
 			page,
+			componentDashboardMeSidebar,
+			componentDashboardSnackbar,
 			componentDomainSearch,
-			componentMeSidebar,
-			componentNotice,
 			helperData,
 			pageCartCheckout,
+			pageDashboardPurchases,
 			pagePostCheckoutSetupSite,
 			pageSignupPickPlan,
 			pageUserSignUp,
-			pageMyProfile,
-			pagePurchases,
 		} ) => {
 			// This test chains several genuinely slow flows end to end: creating a
 			// paid site, completing checkout, adding a domain, and finally
@@ -622,35 +613,33 @@ test.describe(
 				await pageCartCheckout.validateCartItem( selectedDomain );
 			} );
 
-			await test.step( 'And I navigate to Me > Purchases', async function () {
-				await pageMyProfile.visit();
-				await componentMeSidebar.openMobileMenu();
-				await componentMeSidebar.navigate( 'Purchases' );
+			await test.step( 'And I navigate to Billing > Active upgrades', async function () {
+				await page.goto( helperData.getDashboardURL( '/me' ) );
+				await componentDashboardMeSidebar.openMobileMenu();
+				await componentDashboardMeSidebar.navigate( 'Billing' );
+				await page.getByRole( 'link', { name: 'Active upgrades', exact: true } ).click();
 			} );
 
 			await test.step( 'And I view details of the purchased plan', async function () {
-				await pagePurchases.clickOnPurchase(
+				await pageDashboardPurchases.clickOnPurchase(
 					`WordPress.com ${ planName }`,
 					newSiteDetails.blog_details.site_slug as string
 				);
-				await pagePurchases.cancelPurchase( 'Cancel plan' );
+				await pageDashboardPurchases.cancelPurchase();
 			} );
 
 			await test.step( 'And I cancel the plan renewal', async function () {
-				// cancelAtomicPurchaseFlow now blocks until the cancel-and-refund
-				// API request resolves, so by the time it returns the success
-				// notice is rendering. The notice still carries a 10s auto-dismiss
-				// duration, so keep a comfortable margin to observe it.
-				await cancelAtomicPurchaseFlow( page, {
+				// cancelDashboardPurchaseFlow blocks until the cancel-and-refund API
+				// request resolves, so by the time it returns the success snackbar is
+				// rendering.
+				await cancelDashboardPurchaseFlow( page, {
 					reason: 'Another reason…',
 					customReasonText: 'E2E TEST CANCELLATION',
 				} );
 
-				await componentNotice.noticeShown(
+				await componentDashboardSnackbar.noticeShown(
 					'Your refund has been processed and your purchase removed.',
-					{
-						timeout: 30 * 1000,
-					}
+					{ exact: true }
 				);
 			} );
 		} );

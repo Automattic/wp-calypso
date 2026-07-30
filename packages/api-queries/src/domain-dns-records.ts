@@ -18,6 +18,7 @@ export const domainDnsQuery = ( domainName: string ) =>
 
 export const domainDnsMutation = ( domainName: string ) =>
 	mutationOptions( {
+		meta: { statId: 'domain-dns-update' },
 		mutationFn: ( {
 			recordsToAdd,
 			recordsToRemove,
@@ -34,6 +35,7 @@ export const domainDnsMutation = ( domainName: string ) =>
 
 export const domainDnsEmailMutation = ( domainName: string ) =>
 	mutationOptions( {
+		meta: { statId: 'domain-dns-email-restore' },
 		mutationFn: () => restoreDefaultEmailRecords( domainName ),
 		onSuccess: () => {
 			queryClient.invalidateQueries( {
@@ -44,6 +46,7 @@ export const domainDnsEmailMutation = ( domainName: string ) =>
 
 export const domainDnsApplyTemplateMutation = ( domainName: string ) =>
 	mutationOptions( {
+		meta: { statId: 'domain-dns-tmpl-apply' },
 		mutationFn: ( {
 			provider,
 			service,
@@ -60,6 +63,7 @@ export const domainDnsApplyTemplateMutation = ( domainName: string ) =>
 
 export const domainDnsImportBindMutation = ( domainName: string ) =>
 	mutationOptions( {
+		meta: { statId: 'domain-dns-bind-import' },
 		mutationFn: ( file: File ) => importDnsBind( domainName, file ),
 		onSuccess: () => {
 			queryClient.invalidateQueries( domainDnsQuery( domainName ) );

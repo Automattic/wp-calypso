@@ -20,6 +20,7 @@ jest.mock( 'calypso/state/reader/analytics/useRecordReaderTracksEvent', () => ( 
 
 const defaultProps: ComponentProps< typeof MoreMenuActions > = {
 	identifier: 'following',
+	isSingleFeed: false,
 	feedIds: [ 1, 2 ],
 	feedUrls: [ 'https://example.com/feed', 'https://another.example.com/feed' ],
 	unseenCount: 3,
@@ -53,7 +54,7 @@ describe( 'MoreMenuActions', () => {
 		jest.clearAllMocks();
 	} );
 
-	test( 'renders the mark all as seen action', async () => {
+	test( 'renders the mark all as read action', async () => {
 		const user = userEvent.setup();
 		renderMoreMenuActions();
 
@@ -61,7 +62,7 @@ describe( 'MoreMenuActions', () => {
 
 		await openMoreActionsMenu( user );
 
-		expect( screen.getByRole( 'menuitem', { name: 'Mark all as seen' } ) ).toBeEnabled();
+		expect( screen.getByRole( 'menuitem', { name: 'Mark all as read' } ) ).toBeEnabled();
 	} );
 
 	test( 'marks all posts as seen and records the tracks event', async () => {
@@ -69,7 +70,7 @@ describe( 'MoreMenuActions', () => {
 		renderMoreMenuActions();
 
 		await openMoreActionsMenu( user );
-		await user.click( screen.getByRole( 'menuitem', { name: 'Mark all as seen' } ) );
+		await user.click( screen.getByRole( 'menuitem', { name: 'Mark all as read' } ) );
 
 		expect( mockRecordReaderTracksEvent ).toHaveBeenCalledWith(
 			'calypso_reader_mark_all_as_seen_clicked',
@@ -88,12 +89,48 @@ describe( 'MoreMenuActions', () => {
 
 		await openMoreActionsMenu( user );
 
-		const markAllAsSeenButton = screen.getByRole( 'menuitem', { name: 'Mark all as seen' } );
+		const markAllAsSeenButton = screen.getByRole( 'menuitem', { name: 'Mark all as read' } );
 		expect( markAllAsSeenButton ).toHaveAttribute( 'aria-disabled', 'true' );
 
 		await user.click( markAllAsSeenButton );
 
 		expect( mockRecordReaderTracksEvent ).not.toHaveBeenCalled();
 		expect( mockMarkAllAsSeen ).not.toHaveBeenCalled();
+	} );
+
+	describe( 'action title', () => {
+		test( 'uses the plural title when isSingleFeed is false', async () => {
+			const user = userEvent.setup();
+			renderMoreMenuActions( { isSingleFeed: false } );
+
+			await openMoreActionsMenu( user );
+
+			expect( screen.getByRole( 'menuitem', { name: 'Mark all as read' } ) ).toBeInTheDocument();
+			expect( screen.queryByRole( 'menuitem', { name: 'Mark as read' } ) ).not.toBeInTheDocument();
+		} );
+
+		test( 'uses the singular title when isSingleFeed is true', async () => {
+			const user = userEvent.setup();
+			renderMoreMenuActions( { isSingleFeed: true } );
+
+			await openMoreActionsMenu( user );
+
+			expect( screen.getByRole( 'menuitem', { name: 'Mark as read' } ) ).toBeInTheDocument();
+			expect(
+				screen.queryByRole( 'menuitem', { name: 'Mark all as read' } )
+			).not.toBeInTheDocument();
+		} );
+
+		test( 'defaults to the singular title when isSingleFeed is not provided', async () => {
+			const user = userEvent.setup();
+			renderMoreMenuActions( { isSingleFeed: undefined } );
+
+			await openMoreActionsMenu( user );
+
+			expect( screen.getByRole( 'menuitem', { name: 'Mark as read' } ) ).toBeInTheDocument();
+			expect(
+				screen.queryByRole( 'menuitem', { name: 'Mark all as read' } )
+			).not.toBeInTheDocument();
+		} );
 	} );
 } );

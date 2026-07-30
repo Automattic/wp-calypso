@@ -19,6 +19,7 @@ export const accountRecoveryQuery = () =>
 
 export const updateAccountRecoveryEmailMutation = () =>
 	mutationOptions( {
+		meta: { statId: 'recovery-email-update' },
 		mutationFn: updateAccountRecoveryEmail,
 		onSuccess: ( _, email ) => {
 			queryClient.setQueryData(
@@ -30,6 +31,7 @@ export const updateAccountRecoveryEmailMutation = () =>
 
 export const removeAccountRecoveryEmailMutation = () =>
 	mutationOptions( {
+		meta: { statId: 'recovery-email-remove' },
 		mutationFn: removeAccountRecoveryEmail,
 		onSuccess: () => {
 			queryClient.setQueryData(
@@ -41,6 +43,7 @@ export const removeAccountRecoveryEmailMutation = () =>
 
 export const resendAccountRecoveryEmailValidationMutation = () =>
 	mutationOptions( {
+		meta: { statId: 'recovery-email-resend' },
 		mutationFn: resendAccountRecoveryEmailValidation,
 	} );
 
@@ -52,6 +55,7 @@ type UpdateAccountRecoverySMSMutationParams = {
 
 export const updateAccountRecoverySMSMutation = () =>
 	mutationOptions( {
+		meta: { statId: 'recovery-sms-update' },
 		mutationFn: ( { countryCode, phoneNumber }: UpdateAccountRecoverySMSMutationParams ) =>
 			updateAccountRecoverySMS( countryCode, phoneNumber ),
 		onSuccess: ( _, sms ) => {
@@ -74,6 +78,7 @@ export const updateAccountRecoverySMSMutation = () =>
 
 export const removeAccountRecoverySMSMutation = () =>
 	mutationOptions( {
+		meta: { statId: 'recovery-sms-remove' },
 		mutationFn: removeAccountRecoverySMS,
 		onSuccess: () => {
 			queryClient.setQueryData(
@@ -85,11 +90,13 @@ export const removeAccountRecoverySMSMutation = () =>
 
 export const resendAccountRecoverySMSValidationMutation = () =>
 	mutationOptions( {
+		meta: { statId: 'recovery-sms-resend' },
 		mutationFn: resendAccountRecoverySMSValidation,
 	} );
 
 export const validateAccountRecoverySMSCodeMutation = () =>
 	mutationOptions( {
+		meta: { statId: 'recovery-sms-code-validate' },
 		mutationFn: validateAccountRecoverySMSCode,
 		onSuccess: () => {
 			queryClient.setQueryData(

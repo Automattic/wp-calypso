@@ -1,5 +1,6 @@
 @import "@wordpress/base-styles/breakpoints";
 @import "@wordpress/base-styles/mixins";
+@import "@wordpress/dataviews/build-style/style.css";
 
 .migrations-commissions {
 	&:not(.full-width-layout-with-table) .hosting-dashboard-layout__body-wrapper {
@@ -19,7 +20,7 @@
 		}
 	}
 
-	.step-section-item__content {
+	.commissions-step-section-item-content {
 		max-width: none;
 
 		ul {
@@ -35,14 +36,20 @@
 		}
 	}
 
-	.migrations-commissions__content {
-		.consolidated-commissions {
-			padding: 16px;
+	// Classic-only page inset; the list gap comes from the shared content's VStack, so
+	// this sets only the top and horizontal inset. Keep in sync with
+	// dashboard/agency/earn/migrations/consolidated-commissions.
+	.consolidated-commissions {
+		padding-block-start: 16px;
+		padding-inline: 16px;
 
-			@include break-large {
-				padding: 16px 64px 48px;
-				flex-direction: row;
-			}
+		@include break-large {
+			padding-inline: 64px;
 		}
+	}
+
+	// Classic-only: inset the cog to line up with the 64px table content padding.
+	.commissions-list__view-actions {
+		padding-inline: 64px;
 	}
 }

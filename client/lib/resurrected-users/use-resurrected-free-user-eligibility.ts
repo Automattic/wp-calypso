@@ -1,6 +1,7 @@
 import config from '@automattic/calypso-config';
 import { useEffect, useMemo } from '@wordpress/element';
-import { isRenewing, isSubscription } from 'calypso/lib/purchases';
+import { useExperiment } from 'calypso/lib/explat';
+import { isRenewingBeforeExpiration, isSubscription } from 'calypso/lib/purchases';
 import { useDispatch, useSelector } from 'calypso/state';
 import { getCurrentUserId } from 'calypso/state/current-user/selectors';
 import { fetchUserPurchases } from 'calypso/state/purchases/actions';
@@ -12,7 +13,10 @@ import {
 import getUserSettings from 'calypso/state/selectors/get-user-settings';
 import { isFetchingUserSettings } from 'calypso/state/user-settings/selectors';
 import {
+	RESURRECTED_FREE_USERS_EXPERIMENT,
+	RESURRECTION_DAY_LIMIT_3M,
 	RESURRECTION_DAY_LIMIT_EXPERIMENT,
+	WELCOME_BACK_90_DAY_ELIGIBILITY_FLAG,
 	WELCOME_BACK_MODAL_FORCE_FLAG,
 	WELCOME_BACK_VARIATION_MANUAL,
 } from './constants';
@@ -22,6 +26,7 @@ import type { Purchase } from 'calypso/lib/purchases/types';
 interface EligibilityResult {
 	isLoading: boolean;
 	isResurrectedSixMonths: boolean;
+	isResurrectedThreeMonths: boolean;
 	hasActivePaidSubscription: boolean | null;
 	isEligible: boolean;
 	variationName: string | null;
@@ -33,7 +38,9 @@ function hasActivePaidSubscription( purchases: Purchase[] | null ): boolean | nu
 		return null;
 	}
 
-	return purchases.some( ( purchase ) => isSubscription( purchase ) && isRenewing( purchase ) );
+	return purchases.some(
+		( purchase ) => isSubscription( purchase ) && isRenewingBeforeExpiration( purchase )
+	);
 }
 
 export function useResurrectedFreeUserEligibility(): EligibilityResult {
@@ -70,36 +77,55 @@ export function useResurrectedFreeUserEligibility(): EligibilityResult {
 		() => hasExceededDormancyThreshold( lastSeen, RESURRECTION_DAY_LIMIT_EXPERIMENT ),
 		[ lastSeen ]
 	);
+	const isResurrectedThreeMonths = useMemo(
+		() => hasExceededDormancyThreshold( lastSeen, RESURRECTION_DAY_LIMIT_3M ),
+		[ lastSeen ]
+	);
 
 	const hasActiveSubscriptions = useMemo(
 		() => hasActivePaidSubscription( purchases ),
 		[ purchases ]
 	);
 
-	const baseEligibility = isResurrectedSixMonths && hasActiveSubscriptions === false;
+	const isResurrected = config.isEnabled( WELCOME_BACK_90_DAY_ELIGIBILITY_FLAG )
+		? isResurrectedThreeMonths
+		: isResurrectedSixMonths;
+	const baseEligibility = isResurrected && hasActiveSubscriptions === false;
+	const [ isExperimentLoading, experimentAssignment ] = useExperiment(
+		RESURRECTED_FREE_USERS_EXPERIMENT,
+		{
+			isEligible: baseEligibility,
+		}
+	);
 
+	const variationName = experimentAssignment?.variationName ?? WELCOME_BACK_VARIATION_MANUAL;
 	const isForcedByFlag = config.isEnabled( WELCOME_BACK_MODAL_FORCE_FLAG );
+	const experimentReady = ! isExperimentLoading && !! variationName;
 
 	if ( isForcedByFlag ) {
 		return {
 			isLoading: false,
 			isResurrectedSixMonths,
+			isResurrectedThreeMonths,
 			hasActivePaidSubscription: hasActiveSubscriptions,
 			isEligible: true,
-			variationName: WELCOME_BACK_VARIATION_MANUAL,
+			variationName,
 			isForcedVariation: true,
 		};
 	}
 
-	const isLoading = isUserSettingsFetching || ! purchasesLoaded || isUserPurchasesFetching;
-
-	const variationName = baseEligibility ? WELCOME_BACK_VARIATION_MANUAL : null;
+	const isLoading =
+		isUserSettingsFetching ||
+		! purchasesLoaded ||
+		isUserPurchasesFetching ||
+		( baseEligibility && isExperimentLoading );
 
 	return {
 		isLoading,
 		isResurrectedSixMonths,
+		isResurrectedThreeMonths,
 		hasActivePaidSubscription: hasActiveSubscriptions,
-		isEligible: baseEligibility,
+		isEligible: baseEligibility && experimentReady,
 		variationName,
 		isForcedVariation: false,
 	};

@@ -91,6 +91,7 @@ export const allowedPaymentMethodsQuery = () =>
 
 export const saveCreditCardMutation = () =>
 	mutationOptions( {
+		meta: { statId: 'credit-card-save' },
 		mutationFn: ( params: SaveCreditCardParams ) => saveCreditCard( params ),
 		onSuccess: () => {
 			queryClient.invalidateQueries( {
@@ -101,6 +102,7 @@ export const saveCreditCardMutation = () =>
 
 export const updateCreditCardMutation = () =>
 	mutationOptions( {
+		meta: { statId: 'credit-card-update' },
 		mutationFn: ( params: UpdateCreditCardParams ) => updateCreditCard( params ),
 		onSuccess: () => {
 			queryClient.invalidateQueries( {

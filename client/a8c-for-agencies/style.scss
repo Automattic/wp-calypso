@@ -19,6 +19,8 @@
 	--color-text-black: var(--studio-black);
 	--wp-components-color-accent: var(--studio-automattic-blue-50);
 	--wp-admin-theme-color: var(--studio-automattic-blue-50);
+	// Match the dashboard so backported components' links use the brand primary.
+	--color-link: var(--color-primary);
 
 	// FIXME: Need to move this colors to a color scheme file
 	--color-scary-0: var(--studio-red-0);
@@ -90,7 +92,7 @@
 
 .theme-a8c-for-agencies {
 
-	.components-button:not( .dataviews-view-table-header-button ),
+	.components-button:not( .dataviews-view-table-header-button ):not( .components-navigator-back-button ),
 	.button {
 		display: inline-flex;
 		align-items: center;
@@ -102,7 +104,6 @@
 		box-sizing: border-box;
 		border-radius: 4px;
 
-		border-color: var(--color-accent-5);
 		fill: var(--color-accent-100);
 
 		&:hover,

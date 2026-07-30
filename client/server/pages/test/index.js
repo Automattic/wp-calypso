@@ -60,6 +60,7 @@ jest.mock( 'calypso/server/render', () => ( {
 	attachBuildTimestamp: jest.fn(),
 	attachHead: jest.fn(),
 	attachI18n: jest.fn(),
+	bumpStat: jest.fn(),
 } ) );
 
 jest.mock( 'calypso/server/state-cache', () => new Map() );

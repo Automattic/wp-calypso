@@ -1,5 +1,6 @@
 # yaml-language-server: $schema=https://raw.githubusercontent.com/buildkite/pipeline-schema/main/schema.json
 ---
+
 # Variables used in this pipeline are defined in `shared-pipeline-vars`, which is `source`'d before calling `buildkite-agent pipeline upload`
 
 steps:
@@ -24,7 +25,13 @@ steps:
       - desktop/release/*.dmg
       - desktop/release/*.blockmap
       - desktop/release/*.yml
-      - desktop/test/e2e/results/**/*
+      # List the E2E results explicitly.
+      #
+      # A glob here would upload whatever the run leaves behind, which might
+      # include HAR files with accidentally leaked credentials
+      - desktop/test/e2e/results/app.log
+      - desktop/test/e2e/results/console.log
+      - desktop/test/e2e/results/screenshot.png
 
   - label: ":desktop_computer: Build desktop (linux, unsigned)"
     key: desktop-build-linux
@@ -41,12 +48,15 @@ steps:
           userns: host
           environment:
             - BUILDKITE_TAG
-            - E2EGUTENBERGUSER
-            - E2EPASSWORD
+            - WP_DESKTOP_E2E_USERNAME
+            - WP_DESKTOP_E2E_PASSWORD
     command: .buildkite/commands/build-desktop-linux.sh
     artifact_paths:
       - desktop/release/*
-      - desktop/test/e2e/results/**/*
+      # See the note on the mac step's E2E results.
+      - desktop/test/e2e/results/app.log
+      - desktop/test/e2e/results/console.log
+      - desktop/test/e2e/results/screenshot.png
 
   - label: ":windows: Build desktop (windows store, unsigned)"
     key: desktop-build-windows-store

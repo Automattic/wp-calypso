@@ -83,10 +83,6 @@ if ($env:FORCE_PFX_SIGNING) {
     Invoke-Checked { & 'setup_azure_trusted_signing.ps1' }
 }
 
-# electron-builder skips signing on CI PR builds unless this is set - needed to
-# exercise signing here. Gate to trunk/release before production.
-$env:CSC_FOR_PULL_REQUEST = 'true'
-
 Write-Output "--- :windows: Building signed NSIS installer"
 Invoke-Checked { yarn run build:main }
 Invoke-Checked { yarn electron-builder --config electron-builder.json build --publish never }

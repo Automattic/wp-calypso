@@ -323,3 +323,15 @@ export interface BundleSuggestion {
 	 */
 	catalogue_version: string;
 }
+
+/**
+ * The bundle-related portion of the `with_bundles=1` `/domains/suggestions`
+ * response, normalised for the frontend. Both fields come from the same
+ * request: `bundle_suggestion` powers the top `BundleCard` on an FQDN query,
+ * `bundle_triggers` is the catalogue of TLDs that offer an inline bundle on
+ * cart-add. Fetched together so a single query serves both consumers.
+ */
+export interface BundleMetadata {
+	bundle_suggestion: BundleSuggestion | null;
+	bundle_triggers: string[];
+}

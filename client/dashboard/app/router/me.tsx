@@ -53,6 +53,7 @@ import {
 	getPurchaseCancellationFlowType,
 	getDisplayVariant,
 	getRenewUrlForPurchases,
+	hasQueryableSite,
 	isDotcomPlan,
 	CANCEL_FLOW_TYPE,
 	type CancelIntent,
@@ -468,12 +469,14 @@ export const cancelPurchaseRoute = createRoute( {
 			return { purchase: undefined, intent };
 		}
 		await Promise.all( [
-			queryClient.ensureQueryData( sitePurchasesQuery( purchase.blog_id ) ),
+			...( hasQueryableSite( purchase )
+				? [
+						queryClient.ensureQueryData( sitePurchasesQuery( purchase.blog_id ) ),
+						queryClient.ensureQueryData( siteFeaturesQuery( purchase.blog_id ) ),
+				  ]
+				: [] ),
 			queryClient.ensureQueryData( productsQuery() ),
-			queryClient.ensureQueryData( siteFeaturesQuery( purchase.blog_id ) ),
 			queryClient.ensureQueryData( plansQuery() ),
-			// Prefetch the default (control) variant; the component refetches
-			// under the 'treatment' key when the split-cancel-remove flag is on.
 			queryClient.ensureQueryData( purchaseCancelFeaturesQuery( purchase.ID ) ),
 		] );
 		return { purchase, intent };

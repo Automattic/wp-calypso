@@ -16,6 +16,8 @@ import StatsModulePlaceholder from '../stats-module/placeholder';
 import StatsTabs from '../stats-tabs';
 import StatsTab from '../stats-tabs/tab';
 
+import './style.scss';
+
 class StatsSummaryChart extends Component {
 	static propTypes = {
 		data: PropTypes.array,
@@ -23,14 +25,11 @@ class StatsSummaryChart extends Component {
 		isLoading: PropTypes.bool,
 		chartType: PropTypes.string.isRequired,
 		labelKey: PropTypes.string.isRequired,
+		onClick: PropTypes.func,
 		sectionClass: PropTypes.string.isRequired,
 		selected: PropTypes.object,
 		tabLabel: PropTypes.string.isRequired,
 		type: PropTypes.string,
-	};
-
-	static defaultProps = {
-		onClick: () => {},
 	};
 
 	barClick = ( bar ) => {
@@ -72,7 +71,7 @@ class StatsSummaryChart extends Component {
 				{
 					label: tabLabel,
 					className: sectionClass,
-					value: formatNumber( record.value ),
+					value: record.formattedValue ?? formatNumber( record.value ),
 					icon: this.iconByChartType( chartType ),
 				},
 			];
@@ -89,7 +88,15 @@ class StatsSummaryChart extends Component {
 	}
 
 	render() {
-		const { dataKey, isLoading, chartType, labelKey, selected, tabLabel, type } = this.props;
+		const { dataKey, isLoading, chartType, labelKey, onClick, selected, tabLabel, type } =
+			this.props;
+		// Without an onClick handler the bars are hover-tooltip only: no click
+		// handling (which would also log a Google event) and no pointer cursor
+		// suggesting the bars do something.
+		const chartProps = {
+			data: this.buildChartData(),
+			...( onClick ? { barClick: this.barClick } : {} ),
+		};
 		const label = selected ? ': ' + selected[ labelKey ] : '';
 		const tabOptions = {
 			attr: labelKey,
@@ -103,16 +110,26 @@ class StatsSummaryChart extends Component {
 		const isModernized = 'post' === type || 'video' === type;
 
 		return isModernized ? (
-			<div className={ clsx( 'is-summary-chart', { 'is-loading': isLoading } ) }>
+			<div
+				className={ clsx( 'is-summary-chart', {
+					'is-loading': isLoading,
+					'is-hover-only': ! onClick,
+				} ) }
+			>
 				<StatsModulePlaceholder className="is-chart" isLoading={ isLoading } />
-				<ElementChart data={ this.buildChartData() } barClick={ this.barClick }>
+				<ElementChart { ...chartProps }>
 					<StatsEmptyState />
 				</ElementChart>
 			</div>
 		) : (
-			<Card className={ clsx( 'stats-module', 'is-summary-chart', { 'is-loading': isLoading } ) }>
+			<Card
+				className={ clsx( 'stats-module', 'is-summary-chart', {
+					'is-loading': isLoading,
+					'is-hover-only': ! onClick,
+				} ) }
+			>
 				<StatsModulePlaceholder className="is-chart" isLoading={ isLoading } />
-				<ElementChart data={ this.buildChartData() } barClick={ this.barClick }>
+				<ElementChart { ...chartProps }>
 					<StatsEmptyState />
 				</ElementChart>
 				<StatsTabs>

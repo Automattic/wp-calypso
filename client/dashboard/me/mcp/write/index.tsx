@@ -16,6 +16,7 @@ import { groupToolsByGroup, groupToolsBySubCategory } from '../../../../me/mcp/g
 import { getGroupDescriptors, getAccountMcpAbilities } from '../../../../me/mcp/utils';
 import { useAnalytics } from '../../../app/analytics';
 import Breadcrumbs from '../../../app/breadcrumbs';
+import { withSnackbar } from '../../../app/snackbars/with-snackbar';
 import { Card, CardBody } from '../../../components/card';
 import ComponentViewTracker from '../../../components/component-view-tracker';
 import { PageHeader } from '../../../components/page-header';
@@ -66,15 +67,12 @@ export default function McpWrite() {
 	const groups = groupToolsByGroup( allTools, groupDescriptors ) as ToolGroup[];
 	const pageAllEnabled = allTools.length > 0 && allTools.every( ( [ , tool ] ) => tool.enabled );
 
-	const mutation = useMutation( {
-		...userSettingsMutation(),
-		meta: {
-			snackbar: {
-				success: __( 'MCP settings saved.' ),
-				error: __( 'Failed to save MCP settings.' ),
-			},
-		},
-	} );
+	const mutation = useMutation(
+		withSnackbar( userSettingsMutation(), {
+			success: __( 'MCP settings saved.' ),
+			error: __( 'Failed to save MCP settings.' ),
+		} )
+	);
 
 	const handleToolChange = ( toolId: string, enabled: boolean, groupName: string | null ) => {
 		mutation.mutate(

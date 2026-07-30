@@ -82,13 +82,22 @@ $data-view-border-color: #f1f1f1;
 		.dataviews-view-table__row .a4a-text-placeholder {
 			width: 50px;
 		}
+
+		// Align the search toolbar / view config with the 64px-indented columns.
+		.referrals-list__view-actions {
+			padding-inline: 64px;
+		}
 	}
 
 	&:not(.full-width-layout-with-table) .hosting-dashboard-layout__body-wrapper {
 		max-width: 700px;
 	}
 
-	.consolidated-view {
+	// Scoped to the list column so the detail view's cards keep their own inset.
+	.referrals-layout__column .referrals-consolidated-views {
+		// The HStack is `width: 100%` and content-box, so the inline padding would
+		// otherwise add to the full width and overflow the body wrapper.
+		box-sizing: border-box;
 		padding: 16px;
 
 		@include breakpoint-deprecated( ">660px" ) {
@@ -103,6 +112,17 @@ $data-view-border-color: #f1f1f1;
 	}
 
 	&.referrals-layout--has-selected {
+		// The collapsed column is narrow, so the wide overview inset doesn't fit.
+		.referrals-list__view-actions {
+			padding-inline: 24px;
+			padding-block: 16px;
+		}
+
+		// Let the search toolbar's own padding set the spacing evenly above and below.
+		.hosting-dashboard-layout__body {
+			padding-block-start: 0;
+		}
+
 		ul.dataviews-view-list {
 			margin: 0;
 			list-style: none;
@@ -114,6 +134,16 @@ $data-view-border-color: #f1f1f1;
 
 		.dataviews-view-list__item .components-flex {
 			gap: 0;
+		}
+
+		.referrals-list__client {
+			display: flex;
+			align-items: center;
+			min-height: 48px;
+		}
+
+		.redesigned-a8c-table {
+			--wpds-dimension-padding-lg: 4px;
 		}
 
 		.hosting-dashboard-layout__top-wrapper > * {

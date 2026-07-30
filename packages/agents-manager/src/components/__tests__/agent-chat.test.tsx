@@ -388,9 +388,9 @@ describe( 'AgentChat', () => {
 				prompt: 'Proofread this saved content',
 			},
 			{
-				id: 'mediate-review-notes',
+				id: 'ai-editorial-review',
 				label: 'Editorial Review',
-				prompt: 'Run an editorial review',
+				prompt: 'Run an AI Editorial Review',
 			},
 		];
 		const suggestions = [ designSuggestion, whatElseSuggestion, ...writingSuggestions ];

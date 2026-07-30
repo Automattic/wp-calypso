@@ -14,6 +14,7 @@ import { __, sprintf } from '@wordpress/i18n';
 import { ReactElement } from 'react';
 import { useAnalytics } from '../../app/analytics';
 import { domainSecurityRoute } from '../../app/router/domains';
+import { withSnackbar } from '../../app/snackbars/with-snackbar';
 import { ButtonStack } from '../../components/button-stack';
 import { Card, CardBody } from '../../components/card';
 import InlineSupportLink from '../../components/inline-support-link';
@@ -28,16 +29,13 @@ interface SslCertificateProps {
 
 export default function SslCertificate( { domainName, domain, sslDetails }: SslCertificateProps ) {
 	const { recordTracksEvent } = useAnalytics();
-	const mutation = useMutation( {
-		...provisionSslCertificateMutation( domainName ),
-		meta: {
-			snackbar: {
-				/* translators: %s is the domain name */
-				success: sprintf( __( 'New SSL certificate requested for %s.' ), domainName ),
-				error: { source: 'server' },
-			},
-		},
-	} );
+	const mutation = useMutation(
+		withSnackbar( provisionSslCertificateMutation( domainName ), {
+			/* translators: %s is the domain name */
+			success: sprintf( __( 'New SSL certificate requested for %s.' ), domainName ),
+			error: { source: 'server' },
+		} )
+	);
 
 	const getSslStatusMessage = ( sslDetails: SslDetails ) => {
 		const hasFailureReasons =

@@ -1,4 +1,7 @@
 import { PriceTierEntry } from '@automattic/calypso-products';
+import type { RawPurchase } from '@automattic/api-core';
+
+export type { RawPurchase };
 
 export interface Purchase {
 	amount: number;
@@ -48,11 +51,38 @@ export interface Purchase {
 	expiryStatus: string;
 
 	/**
-	 * Whole days until expiry, rounded down, negative once past expiry. Measured
-	 * against UTC midnight, so it can be up to a day off from the viewer's local
-	 * time zone. Null for purchases with no expiry time (one-time and perpetual).
+	 * Whole days from today until the subscription expires, counted in UTC.
+	 * Negative once the subscription has expired, and null for subscriptions
+	 * that never expire (for example, one-time purchases).
+	 *
+	 * Don't use this in text that counts down to a date the viewer can also
+	 * see; the fact that it is UTC-based means it can disagree by 1 day with
+	 * the viewer's own time zone. For example, a subscription expiration date
+	 * of July 30 (midnight UTC) will be shown as July 29 in any timezone west
+	 * of UTC (such as New York). As a result, the viewer will expect the
+	 * displayed days until expiration to equal 2 any time during the day on
+	 * July 27 in their time zone, and to equal 1 any time during the day on
+	 * July 28 in their time zone, etc. To get that behavior, see
+	 * `getCalendarDaysUntil` and `getRelativeDayString` in
+	 * `client/dashboard/utils/datetime.ts` instead.
+	 *
+	 * By contrast, do use this when the answer should match the server's time
+	 * rather than the viewer's time. If you want the count of days to change at
+	 * the same moment the subscription itself can change state (for example,
+	 * as soon as the subscription's `expiryStatus` becomes "expired"), then
+	 * this property is a good choice.
 	 */
 	daysUntilExpiry: number | null;
+
+	/**
+	 * True if the subscription's expiry date has already passed, whether it is
+	 * still active (i.e. in its post-expiry grace period) or has since been
+	 * removed. Closely tracks `expiryStatus === 'expired'`; the two only diverge
+	 * for a subscription removed before its expiry date (which reports 'expired'
+	 * while this stays false). Always false for purchases with no expiry time.
+	 */
+	isPastExpiryDate: boolean;
+
 	iapPurchaseManagementLink: string | null;
 	id: number;
 
@@ -74,6 +104,8 @@ export interface Purchase {
 	isLocked: boolean;
 	isPlan: boolean;
 	isPlanTypeDowngradable: boolean;
+	isPastLastAutoRenewAttemptDate: boolean;
+	mightStillAutoRenew: boolean;
 	isRechargeable: boolean;
 	isRefundable: boolean;
 	isWithinInitialRefundWindow: boolean;
@@ -144,13 +176,20 @@ export interface Purchase {
 	regularPriceInteger: number;
 
 	/**
-	 * The date this subscription will next attempt to auto-renew (ISO 8601).
+	 * The date of the next scheduled auto-renewal attempt (ISO 8601), or an
+	 * empty string when no renewal is scheduled.
 	 *
-	 * For active/auto-renewing subscriptions this is the next *renewal attempt*
-	 * date, NOT the expiry date: WordPress.com begins attempting renewals before
+	 * Populated only when the subscription is set to auto-renew and a renewal
+	 * attempt is still upcoming. WordPress.com begins attempting renewals before
 	 * a subscription expires (e.g. non-monthly WordPress.com plans first attempt
-	 * ~30 days before `expiryDate`). For subscriptions that are not renewing
-	 * (expiring, manual-renew, etc.) it falls back to the expiry date.
+	 * ~30 days before `expiryDate`) and can keep attempting during the
+	 * post-expiry grace period, so this date may fall before or after
+	 * `expiryDate`.
+	 *
+	 * An empty string means no attempt is scheduled: auto-renew is off, or the
+	 * subscription is in its grace period past the final auto-renewal attempt.
+	 * It does NOT fall back to the expiry date — read `expiryDate` explicitly
+	 * where an expiry date is wanted.
 	 */
 	renewDate: string;
 	saleAmount?: number;
@@ -226,6 +265,11 @@ export interface Purchase {
 	 * renewal, or null when no delayed downgrade is scheduled.
 	 */
 	delayedDowngradeToProductSlug: string | null;
+
+	/**
+	 * The raw purchase object. Useful for migrating away from this legacy shape.
+	 */
+	rawPurchase: RawPurchase;
 }
 
 export interface PurchasePriceTier {
@@ -241,8 +285,6 @@ export interface RawPurchasePriceTierEntry extends PriceTierEntry {
 	minimum_price_monthly_display: never;
 	maximum_price_monthly_display: never;
 }
-
-export type { RawPurchase } from '@automattic/api-core';
 
 export interface RefundOptions {
 	to_product_id: number;

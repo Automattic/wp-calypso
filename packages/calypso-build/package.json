@@ -54,7 +54,7 @@
 		"postcss-loader": "^6.2.1",
 		"recursive-copy": "^2.0.14",
 		"sass": "1.77.8",
-		"sass-loader": "^14.2.1",
+		"sass-loader": "^16.0.5",
 		"semver": "^7.7.2",
 		"terser-webpack-plugin": "^5.3.14",
 		"thread-loader": "^3.0.4",

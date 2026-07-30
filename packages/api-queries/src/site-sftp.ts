@@ -29,6 +29,7 @@ const updateCurrentSftpUsers = ( currentSftpUsers: SftpUser[] | undefined, sftpU
 
 export const siteSftpUsersCreateMutation = ( siteId: number ) =>
 	mutationOptions( {
+		meta: { statId: 'site-sftp-users-create' },
 		mutationFn: () => createSftpUser( siteId ),
 		onSuccess: ( createdSftpUser ) => {
 			queryClient.setQueryData( siteSftpUsersQuery( siteId ).queryKey, ( currentSftpUsers ) =>
@@ -39,6 +40,7 @@ export const siteSftpUsersCreateMutation = ( siteId: number ) =>
 
 export const siteSftpUsersResetPasswordMutation = ( siteId: number ) =>
 	mutationOptions( {
+		meta: { statId: 'site-sftp-users-pw-reset' },
 		mutationFn: ( sshUsername: string ) => resetSftpPassword( siteId, sshUsername ),
 		onSuccess: ( updatedSftpUser ) => {
 			queryClient.setQueryData( siteSftpUsersQuery( siteId ).queryKey, ( currentSftpUsers ) =>

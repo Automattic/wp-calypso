@@ -1,6 +1,15 @@
 /* eslint-disable wpcalypso/jsx-classname-namespace */
-import { SubscriptionBillPeriod, type CancellationFeature } from '@automattic/api-core';
-import { purchaseCancelFeaturesQuery } from '@automattic/api-queries';
+import {
+	isPurchaseOneTimePurchase,
+	SubscriptionBillPeriod,
+	type CancellationFeature,
+	type Purchase,
+} from '@automattic/api-core';
+import {
+	purchaseCancelFeaturesQuery,
+	purchaseQuery,
+	sitePurchasesQuery,
+} from '@automattic/api-queries';
 import config from '@automattic/calypso-config';
 import {
 	isPersonal,
@@ -15,7 +24,6 @@ import {
 	isDomainTransfer,
 	isGoogleWorkspace,
 	isGSuiteOrGoogleWorkspace,
-	isThemePurchase,
 	isJetpackProduct,
 	isConciergeSession,
 	isTitanMail,
@@ -61,8 +69,7 @@ import { Plans, type SiteDetails } from '@automattic/data-stores';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { DOMAIN_CANCEL, SUPPORT_ROOT } from '@automattic/urls';
 import { useQuery } from '@tanstack/react-query';
-import { hasTranslation } from '@wordpress/i18n';
-import { check, column, Icon, payment, reusableBlock, tool, trash, upload } from '@wordpress/icons';
+import { check, column, Icon, payment, reusableBlock, tool, trash, cloud } from '@wordpress/icons';
 import clsx from 'clsx';
 import { localize, LocalizeProps, useTranslate } from 'i18n-calypso';
 import moment from 'moment';
@@ -81,49 +88,31 @@ import CancelPurchaseForm from 'calypso/components/marketing-survey/cancel-purch
 import Notice from 'calypso/components/notice';
 import NoticeAction from 'calypso/components/notice/notice-action';
 import VerticalNavItem from 'calypso/components/vertical-nav/item';
-import { useIsSplitCancelRemoveEnabled } from 'calypso/dashboard/me/billing-purchases/cancel-purchase/use-is-split-cancel-remove-enabled';
 import {
 	getCancelButtonCopy,
 	getRemoveButtonCopy,
 } from 'calypso/dashboard/me/billing-purchases/purchase-settings/get-cancel-remove-copy';
+import {
+	getPurchaseCancellationFlowType,
+	isA4ABillingDragonPurchase,
+	isA4AHoldingSitePurchase,
+	isAkismetHoldingSitePurchase,
+	isJetpackHoldingSitePurchase,
+	isMarketplaceHoldingSitePurchase,
+	isPartnerPurchase,
+} from 'calypso/dashboard/utils/purchase';
 import reinstallPlugins from 'calypso/data/marketplace/reinstall-plugins-api';
 import HundredYearPlanLogo from 'calypso/landing/stepper/declarative-flow/internals/steps-repository/hundred-year-plan-step-wrapper/hundred-year-plan-logo';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { getSelectedDomain, resolveDomainStatus } from 'calypso/lib/domains';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
-import {
-	getDomainRegistrationAgreementUrl,
-	getDisplayName,
-	getPartnerName,
-	getRenewalPriceInSmallestUnit,
-	handleRenewMultiplePurchasesClick,
-	handleRenewNowClick,
-	hasAmountAvailableToRefund,
-	hasPaymentMethod,
-	isPaidWithCredits,
-	canAutoRenewBeTurnedOff,
-	isExpired,
-	isInExpirationGracePeriod,
-	isWithinRefundWindowDowngradeEligible,
-	isOneTimePurchase,
-	isPartnerPurchase,
-	isRenewable,
-	isSubscription,
-	isCloseToExpiration,
-	purchaseType,
-	getName,
-	shouldRenderMonthlyRenewalOption,
-	getDIFMTieredPurchaseDetails,
-	canExplicitRenew,
-} from 'calypso/lib/purchases';
-import { getPurchaseCancellationFlowType } from 'calypso/lib/purchases/utils';
+import { handleRenewMultiplePurchasesClick, handleRenewNowClick } from 'calypso/lib/purchases';
+import { createPurchaseObject } from 'calypso/lib/purchases/assembler';
 import { hasCustomDomain } from 'calypso/lib/site/utils';
 import { addQueryArgs } from 'calypso/lib/url';
-import NonPrimaryDomainDialog from 'calypso/me/purchases/non-primary-domain-dialog';
 import ProductLink from 'calypso/me/purchases/product-link';
 import titles from 'calypso/me/purchases/titles';
 import TrackPurchasePageView from 'calypso/me/purchases/track-purchase-page-view';
-import WordAdsEligibilityWarningDialog from 'calypso/me/purchases/wordads-eligibility-warning-dialog';
 import PlanRenewalMessage from 'calypso/my-sites/plans/jetpack-plans/plan-renewal-message';
 import useCheckPlanAvailabilityForPurchase from 'calypso/my-sites/plans-features-main/hooks/use-check-plan-availability-for-purchase';
 import {
@@ -140,14 +129,7 @@ import {
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 import { getPreference } from 'calypso/state/preferences/selectors';
 import { getProductsList } from 'calypso/state/products-list/selectors';
-import {
-	getSitePurchases,
-	getByPurchaseId,
-	hasLoadedUserPurchasesFromServer,
-	hasLoadedSitePurchasesFromServer,
-	getRenewableSitePurchases,
-	willAtomicSiteRevertAfterPurchaseDeactivation,
-} from 'calypso/state/purchases/selectors';
+import { willAtomicSiteRevertAfterPurchaseDeactivation } from 'calypso/state/purchases/selectors';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import getPrimaryDomainBySiteId from 'calypso/state/selectors/get-primary-domain-by-site-id';
 import isDomainOnly from 'calypso/state/selectors/is-domain-only-site';
@@ -163,33 +145,43 @@ import { getCanonicalTheme } from 'calypso/state/themes/selectors';
 import { CalypsoDispatch, IAppState } from 'calypso/state/types';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { isRequestingWordAdsApprovalForSite } from 'calypso/state/wordads/approve/selectors';
+import {
+	canAutoRenewBeTurnedOff,
+	canEditPaymentDetails,
+	getChangePaymentMethodPath,
+	getDIFMTieredPurchaseDetails,
+	getDisplayName,
+	getName,
+	getRenewalPriceInSmallestUnit,
+	hasAmountAvailableToRefund,
+	hasPaymentMethod,
+	isCloseToExpiration,
+	isExpiredAndInGracePeriod,
+	isExpiredOrRemoved,
+	isExpiredWithNoAutoRenewAttemptsLeft,
+	isIncludedWithPlan,
+	isPaidWithCredits,
+	isRemoved,
+	isRenewable,
+	isWithinRefundWindowDowngradeEligible,
+	needsToRenewSoon,
+	purchaseType,
+	shouldRenderMonthlyRenewalOption,
+} from '../lib/raw-purchase-helpers';
 import { cancelPurchase, managePurchase, purchasesRoot } from '../paths';
 import PurchaseSiteHeader from '../purchases-site/header';
-import RemovePurchase from '../remove-purchase';
 import {
-	canEditPaymentDetails,
 	getAddNewPaymentMethodPath,
-	getChangePaymentMethodPath,
-	isJetpackHoldingSitePurchase,
-	isAkismetHoldingSitePurchase,
-	isMarketplaceHoldingSitePurchase,
-	isA4AHoldingSitePurchase,
-	isA4ABillingDragonPurchase,
 	getCancelPurchaseSurveyCompletedPreferenceKey,
 } from '../utils';
 import { classifyPurchaseForCopy } from './classify-purchase-for-copy';
 import PurchaseNotice from './notices';
 import PurchasePlanDetails from './plan-details';
 import PurchaseMeta from './purchase-meta';
+import type { GetChangePaymentMethodUrlFor, GetManagePurchaseUrlFor } from '../lib/types';
 import type { FilteredPlan, PlanSlug } from '@automattic/calypso-products';
 import type { SupportedSlugs } from '@automattic/components/src/product-icon/config';
 import type { ResponseDomain } from 'calypso/lib/domains/types';
-import type { TracksProps } from 'calypso/lib/purchases';
-import type {
-	GetChangePaymentMethodUrlFor,
-	GetManagePurchaseUrlFor,
-	Purchase,
-} from 'calypso/lib/purchases/types';
 import type { ProductListItem } from 'calypso/state/products-list/selectors/get-products-list';
 import type { Theme } from 'calypso/types';
 
@@ -219,7 +211,6 @@ export interface ManagePurchaseProps {
 }
 
 export interface ManagePurchaseConnectedProps {
-	isSplitCancelRemoveEnabled: boolean;
 	cancellationFeatures: CancellationFeature[] | null;
 	hasCustomPrimaryDomain?: boolean | null;
 	hasLoadedDomains?: boolean;
@@ -252,24 +243,13 @@ export interface ManagePurchaseConnectedProps {
 
 	// Actions
 
-	handleRenewMultiplePurchasesClick: (
-		purchases: Purchase[],
-		siteSlug: string,
-		options?: { redirectTo?: string; tracksProps?: TracksProps }
-	) => void;
-	handleRenewNowClick: (
-		purchase: Purchase,
-		siteSlug: string,
-		options?: { redirectTo?: string; tracksProps?: TracksProps }
-	) => void;
+	handleRenewMultiplePurchasesClick: typeof handleRenewMultiplePurchasesClick;
+	handleRenewNowClick: typeof handleRenewNowClick;
 	errorNotice: ( message: string, options?: { duration?: number } ) => void;
 	successNotice: ( message: string, options?: { duration?: number } ) => void;
 }
 
 interface ManagePurchaseState {
-	showNonPrimaryDomainWarningDialog: boolean;
-	showWordAdsEligibilityWarningDialog: boolean;
-	cancelLink: string | null;
 	isRemoving: boolean;
 	isCancelSurveyVisible: boolean;
 	isReinstalling: boolean;
@@ -298,9 +278,6 @@ class ManagePurchase extends Component<
 	ManagePurchaseState
 > {
 	state = {
-		showNonPrimaryDomainWarningDialog: false,
-		showWordAdsEligibilityWarningDialog: false,
-		cancelLink: null,
 		isRemoving: false,
 		isCancelSurveyVisible: false,
 		isReinstalling: false,
@@ -348,7 +325,13 @@ class ManagePurchase extends Component<
 			isA4AHoldingSitePurchase( purchase );
 
 		// If this renewal is for a siteless purchase, we'll drop the site slug
-		this.props.handleRenewNowClick( purchase, ! isSitelessRenewal ? siteSlug : '', options );
+		// Temporary bridge (SHILL-2256): handleRenewNowClick still expects the
+		// camelCase Purchase. Remove once it reads the raw shape.
+		this.props.handleRenewNowClick(
+			createPurchaseObject( purchase as unknown as Parameters< typeof createPurchaseObject >[ 0 ] ),
+			! isSitelessRenewal ? siteSlug : '',
+			options
+		);
 	};
 
 	handleRenewMonthly = () => {
@@ -373,24 +356,22 @@ class ManagePurchase extends Component<
 	handleRenewMultiplePurchases = ( purchases: Purchase[] ) => {
 		const { siteSlug, redirectTo } = this.props;
 		const options = redirectTo ? { redirectTo } : undefined;
-		this.props.handleRenewMultiplePurchasesClick( purchases, siteSlug, options );
+		// Temporary bridge (SHILL-2256): handleRenewMultiplePurchasesClick still
+		// expects the camelCase Purchase. Remove once it reads the raw shape.
+		this.props.handleRenewMultiplePurchasesClick(
+			purchases.map( ( p ) =>
+				createPurchaseObject( p as unknown as Parameters< typeof createPurchaseObject >[ 0 ] )
+			),
+			siteSlug,
+			options
+		);
 	};
-
-	shouldShowNonPrimaryDomainWarning() {
-		const { hasNonPrimaryDomainsFlag, hasCustomPrimaryDomain, purchase } = this.props;
-		return hasNonPrimaryDomainsFlag && purchase && isPlan( purchase ) && hasCustomPrimaryDomain;
-	}
-
-	shouldShowWordAdsEligibilityWarning() {
-		const { hasSetupAds, purchase } = this.props;
-		return hasSetupAds && purchase && isPlan( purchase );
-	}
 
 	isPendingDomainRegistration( purchase: Purchase ): boolean {
 		if ( ! isDomainRegistration( purchase ) ) {
 			return false;
 		}
-		const domain = this.props.domainsDetails[ purchase.siteId ].find(
+		const domain = this.props.domainsDetails[ purchase.blog_id ].find(
 			( domain ) => domain.name === purchase.meta
 		);
 		return domain?.pendingRegistrationAtRegistry ?? false;
@@ -414,7 +395,7 @@ class ManagePurchase extends Component<
 			return null;
 		}
 
-		if ( ! canExplicitRenew( purchase ) ) {
+		if ( ! purchase.can_explicit_renew ) {
 			return null;
 		}
 
@@ -453,13 +434,13 @@ class ManagePurchase extends Component<
 			! isP2Plus( purchase );
 		const isUpgradeableProduct =
 			! isPlan( purchase ) &&
-			( isJetpackBackupT1Slug( purchase.productSlug ) || isAkismetProduct( purchase ) );
+			( isJetpackBackupT1Slug( purchase.product_slug ) || isAkismetProduct( purchase ) );
 
 		if ( ! isUpgradeablePlan && ! isUpgradeableProduct ) {
 			return null;
 		}
 
-		if ( isExpired( purchase ) ) {
+		if ( isExpiredOrRemoved( purchase ) ) {
 			return null;
 		}
 
@@ -473,7 +454,41 @@ class ManagePurchase extends Component<
 		// Show the upgrade button without the primary style if both buttons are present
 		return (
 			<Button primary={ !! preventRenewal } compact href={ upgradeUrl }>
-				{ translate( 'Upgrade' ) }
+				{ translate( 'Upgrade plan' ) }
+			</Button>
+		);
+	}
+
+	renderStorageUpgradeButton( preventRenewal: boolean ) {
+		const { purchase, translate, siteSlug } = this.props;
+		if ( ! purchase ) {
+			return null;
+		}
+
+		if ( isPartnerPurchase( purchase ) || isA4ABillingDragonPurchase( purchase ) ) {
+			return null;
+		}
+
+		const isUpgradeableBackupProduct = (
+			JETPACK_BACKUP_T1_PRODUCTS as ReadonlyArray< string >
+		 ).includes( purchase.product_slug );
+		const isUpgradeableSecurityPlan = (
+			JETPACK_SECURITY_T1_PLANS as ReadonlyArray< string >
+		 ).includes( purchase.product_slug );
+
+		if ( ! isUpgradeableSecurityPlan && ! isUpgradeableBackupProduct ) {
+			return null;
+		}
+
+		if ( isExpiredOrRemoved( purchase ) ) {
+			return null;
+		}
+
+		// If the "renew now" button is showing, it will be using primary styles
+		// Show the upgrade button without the primary style if both buttons are present
+		return (
+			<Button primary={ !! preventRenewal } compact href={ `/plans/storage/${ siteSlug }` }>
+				{ translate( 'Upgrade storage' ) }
 			</Button>
 		);
 	}
@@ -496,7 +511,7 @@ class ManagePurchase extends Component<
 			return null;
 		}
 
-		if ( ! canExplicitRenew( purchase ) ) {
+		if ( ! purchase.can_explicit_renew ) {
 			return null;
 		}
 
@@ -519,7 +534,7 @@ class ManagePurchase extends Component<
 			return null;
 		}
 
-		const billPeriodDays = purchase.billPeriodDays;
+		const billPeriodDays = purchase.bill_period_days;
 		const isAnnualRenewal = billPeriodDays === SubscriptionBillPeriod.PLAN_ANNUAL_PERIOD;
 
 		if ( isAnnualRenewal ) {
@@ -558,8 +573,20 @@ class ManagePurchase extends Component<
 		}
 
 		recordTracksEvent( 'calypso_purchases_upgrade_plan', {
-			status: isExpired( purchase ) ? 'expired' : 'active',
-			plan: purchase.productName,
+			status: isExpiredOrRemoved( purchase ) ? 'expired' : 'active',
+			plan: purchase.product_name,
+		} );
+	};
+
+	handleUpgradeStorageClick = () => {
+		const { purchase } = this.props;
+		if ( ! purchase ) {
+			return null;
+		}
+
+		recordTracksEvent( 'calypso_purchases_upgrade_storage', {
+			status: isExpiredOrRemoved( purchase ) ? 'expired' : 'active',
+			plan: purchase.product_name,
 		} );
 	};
 
@@ -569,44 +596,33 @@ class ManagePurchase extends Component<
 			return null;
 		}
 
-		const isUpgradeableBackupProduct = (
-			JETPACK_BACKUP_T1_PRODUCTS as ReadonlyArray< string >
-		 ).includes( purchase.productSlug );
-		const isUpgradeableSecurityPlan = (
-			JETPACK_SECURITY_T1_PLANS as ReadonlyArray< string >
-		 ).includes( purchase.productSlug );
-
 		if ( isAkismetProduct( purchase ) ) {
 			// For the first Iteration of Calypso Akismet checkout we are only suggesting
 			// for immediate upgrades to the next plan. We will change this in the future
 			// with appropriate page.
-			if ( AKISMET_UPGRADES_PRODUCTS_MAP.hasOwnProperty( purchase.productSlug ) ) {
+			if ( AKISMET_UPGRADES_PRODUCTS_MAP.hasOwnProperty( purchase.product_slug ) ) {
 				return AKISMET_UPGRADES_PRODUCTS_MAP[
-					purchase.productSlug as keyof typeof AKISMET_UPGRADES_PRODUCTS_MAP
+					purchase.product_slug as keyof typeof AKISMET_UPGRADES_PRODUCTS_MAP
 				];
 			}
 
 			return null;
 		}
 
-		if ( isJetpackGrowthPlan( purchase.productSlug ) ) {
+		if ( isJetpackGrowthPlan( purchase.product_slug ) ) {
 			const upgradePlan =
 				JETPACK_GROWTH_UPGRADE_MAP[
-					purchase.productSlug as keyof typeof JETPACK_GROWTH_UPGRADE_MAP
+					purchase.product_slug as keyof typeof JETPACK_GROWTH_UPGRADE_MAP
 				];
 			return `/checkout/${ siteSlug }/${ upgradePlan }`;
 		}
 
-		if ( isJetpackStarterPlan( purchase.productSlug ) ) {
+		if ( isJetpackStarterPlan( purchase.product_slug ) ) {
 			const upgradePlan =
 				JETPACK_STARTER_UPGRADE_MAP[
-					purchase.productSlug as keyof typeof JETPACK_STARTER_UPGRADE_MAP
+					purchase.product_slug as keyof typeof JETPACK_STARTER_UPGRADE_MAP
 				];
 			return `/checkout/${ siteSlug }/${ upgradePlan }`;
-		}
-
-		if ( isUpgradeableBackupProduct || isUpgradeableSecurityPlan ) {
-			return `/plans/storage/${ siteSlug }`;
 		}
 
 		return `/plans/${ siteSlug }`;
@@ -617,12 +633,12 @@ class ManagePurchase extends Component<
 		if ( ! purchase || ! isPlan( purchase ) ) {
 			return false;
 		}
-		if ( ! purchase.isPlanTypeDowngradable ) {
+		if ( ! purchase.is_plan_type_downgradable ) {
 			return false;
 		}
 		const expiredOrRefundDowngrade =
 			config.isEnabled( 'plans/expired-downgrade' ) &&
-			( isInExpirationGracePeriod( purchase ) ||
+			( isExpiredAndInGracePeriod( purchase ) ||
 				isWithinRefundWindowDowngradeEligible( purchase ) );
 		const delayedDowngrade = config.isEnabled( 'plans/delayed-downgrade' );
 		return expiredOrRefundDowngrade || delayedDowngrade;
@@ -642,8 +658,8 @@ class ManagePurchase extends Component<
 		// either the instant-downgrade handler or the checkout pending page
 		// (analogous to `:receiptId`).
 		const redirectTo = getManagePurchaseUrlFor( siteSlug, ':purchaseId' ) + '?plan_changed=true';
-		const cancelTo = getManagePurchaseUrlFor( siteSlug, purchase.id );
-		const intervalType = getPlanGridIntervalType( purchase.billPeriodDays );
+		const cancelTo = getManagePurchaseUrlFor( siteSlug, purchase.ID );
+		const intervalType = getPlanGridIntervalType( purchase.bill_period_days );
 		const href = addQueryArgs(
 			{
 				siteSlug,
@@ -689,23 +705,20 @@ class ManagePurchase extends Component<
 
 		const isUpgradeableBackupProduct = (
 			JETPACK_BACKUP_T1_PRODUCTS as ReadonlyArray< string >
-		 ).includes( purchase.productSlug );
+		 ).includes( purchase.product_slug );
 		const isUpgradeableProduct = isUpgradeableBackupProduct;
 
 		if ( ! isUpgradeablePlan && ! isUpgradeableProduct ) {
 			return null;
 		}
 
-		let icon;
 		let buttonText;
 
-		if ( isExpired( purchase ) ) {
-			icon = column;
+		if ( isExpiredOrRemoved( purchase ) ) {
 			buttonText = isUpgradeablePlan
 				? translate( 'Pick another plan' )
 				: translate( 'Pick another product' );
 		} else {
-			icon = upload;
 			buttonText = isUpgradeablePlan ? translate( 'Upgrade plan' ) : translate( 'Upgrade product' );
 		}
 
@@ -718,8 +731,46 @@ class ManagePurchase extends Component<
 				href={ upgradeUrl }
 				onClick={ this.handleUpgradeClick }
 			>
-				<Icon icon={ icon } className="card__icon" />
+				<Icon icon={ column } className="card__icon" />
 				{ buttonText }
+			</CompactCard>
+		);
+	}
+
+	renderUpgradeStorageNavItem() {
+		const { purchase, translate, siteSlug } = this.props;
+		if ( ! purchase ) {
+			return null;
+		}
+
+		if ( isPartnerPurchase( purchase ) || isA4ABillingDragonPurchase( purchase ) ) {
+			return null;
+		}
+
+		const isUpgradeableBackupProduct = (
+			JETPACK_BACKUP_T1_PRODUCTS as ReadonlyArray< string >
+		 ).includes( purchase.product_slug );
+		const isUpgradeableSecurityPlan = (
+			JETPACK_SECURITY_T1_PLANS as ReadonlyArray< string >
+		 ).includes( purchase.product_slug );
+
+		if ( ! isUpgradeableSecurityPlan && ! isUpgradeableBackupProduct ) {
+			return null;
+		}
+
+		if ( isExpiredOrRemoved( purchase ) ) {
+			return null;
+		}
+
+		return (
+			<CompactCard
+				tagName="button"
+				displayAsLink
+				href={ `/plans/storage/${ siteSlug }` }
+				onClick={ this.handleUpgradeStorageClick }
+			>
+				<Icon icon={ cloud } className="card__icon" />
+				{ translate( 'Upgrade storage' ) }
 			</CompactCard>
 		);
 	}
@@ -729,7 +780,7 @@ class ManagePurchase extends Component<
 	};
 
 	getDomainDetailsFromPurchase = ( purchase: Purchase ): ResponseDomain | undefined => {
-		return this.props.domainsDetails?.[ purchase.siteId ]?.find(
+		return this.props.domainsDetails?.[ purchase.blog_id ]?.find(
 			( domain ) => domain.domain === purchase.meta
 		);
 	};
@@ -783,18 +834,18 @@ class ManagePurchase extends Component<
 		const { purchase, translate } = this.props;
 
 		// Only show for Jetpack CRM Products
-		if ( ! isJetpackCrmProduct( purchase?.productSlug ) ) {
+		if ( ! isJetpackCrmProduct( purchase?.product_slug ) ) {
 			return null;
 		}
 
 		const handleCrmDownloadsClick = () => {
 			recordTracksEvent( 'calypso_purchases_crm_downloads_click', {
-				product_slug: purchase?.productSlug || '',
+				product_slug: purchase?.product_slug || '',
 			} );
 		};
 
 		// We'll pass the purchase ID in the URL, and the CRM Downloads component will fetch the actual license key
-		const path = `/purchases/crm-downloads/${ purchase?.id }`;
+		const path = `/purchases/crm-downloads/${ purchase?.ID }`;
 
 		return (
 			<CompactCard href={ path } onClick={ handleCrmDownloadsClick }>
@@ -802,28 +853,6 @@ class ManagePurchase extends Component<
 				{ translate( 'CRM Downloads' ) }
 			</CompactCard>
 		);
-	}
-
-	renderActionDetails( nonRefundableTranslatedActionDetails?: string ) {
-		const { purchase, translate } = this.props;
-
-		if ( ! purchase ) {
-			return null;
-		}
-
-		// Hide if refund window has lapsed.
-		if ( ! hasAmountAvailableToRefund( purchase ) || ! purchase?.mostRecentRenewDate ) {
-			if ( ! nonRefundableTranslatedActionDetails ) {
-				return null;
-			}
-			return this.renderActionDetailsText( nonRefundableTranslatedActionDetails, {
-				className: 'manage-purchase__refund-text',
-			} );
-		}
-
-		return this.renderActionDetailsText( translate( 'Refund available' ), {
-			className: 'manage-purchase__refund-text',
-		} );
 	}
 
 	renderActionDetailsText(
@@ -834,38 +863,26 @@ class ManagePurchase extends Component<
 	}
 
 	renderRemovePurchaseNavItem() {
-		const {
-			hasLoadedSites,
-			hasNonPrimaryDomainsFlag,
-			hasCustomPrimaryDomain,
-			hasCompletedCancelPurchaseSurvey,
-			site,
-			purchase,
-			purchaseListUrl,
-			translate,
-		} = this.props;
+		const { purchase } = this.props;
 		if ( ! purchase ) {
 			return null;
 		}
 
-		const isSplitEnabled = this.props.isSplitCancelRemoveEnabled;
 		const canRefund = hasAmountAvailableToRefund( purchase );
-		const autoRenewOn = !! purchase.isAutoRenewEnabled;
+		const autoRenewOn = !! purchase.is_auto_renew_enabled;
+		// A domain connection bundled with a plan renews with that plan, so Cancel
+		// is never offered for it (see `canAutoRenewBeTurnedOff`) and removal is the
+		// only action available — regardless of what auto-renew reports.
+		const isBundledDomainConnection = isIncludedWithPlan( purchase ) && isDomainMapping( purchase );
 
-		// Visibility:
-		//   Off flag → mutually exclusive with Cancel (preserves today's behavior).
-		//   On flag  → Remove only when auto-renew is already off. The refund-eligible
-		//              case is surfaced inside the cancel flow via
-		//              RefundEligibilityNotice instead of a parallel Remove CTA.
-		if ( isSplitEnabled ) {
-			if ( autoRenewOn ) {
-				return null;
-			}
-		} else if ( canAutoRenewBeTurnedOff( purchase ) ) {
+		// Show Remove when auto-renew is off, OR when the purchase is in its
+		// post-expiry grace period (Cancel is not offered there, so Remove is the
+		// only way to act on it — matching the Dashboard). The refund-eligible case
+		// is surfaced inside the cancel flow via RefundEligibilityNotice instead of
+		// a parallel Remove CTA.
+		if ( ! isBundledDomainConnection && autoRenewOn && ! isExpiredAndInGracePeriod( purchase ) ) {
 			return null;
 		}
-
-		const isPlanPurchase = isPlan( purchase );
 
 		// 100-year plans and domains can't be removed via self-serve.
 		if ( is100Year( purchase ) ) {
@@ -875,149 +892,45 @@ class ManagePurchase extends Component<
 			return null;
 		}
 
-		if ( isSplitEnabled ) {
-			const removeCopy = getRemoveButtonCopy( {
-				category: classifyPurchaseForCopy( purchase ),
-				productName: purchase.productName,
-				hasRefund: canRefund,
-			} );
+		const removeCopy = getRemoveButtonCopy( {
+			category: classifyPurchaseForCopy( purchase ),
+			productName: purchase.product_name,
+			hasRefund: canRefund,
+		} );
 
-			// All removes route through the unified confirmation screen via
-			// ?intent=remove. isDataValid on the cancel page now accepts any
-			// intent=remove purchase under the flag, so non-refundable and
-			// domain removes both land on the confirmation screen correctly.
-			const baseLink = ( this.props.getCancelPurchaseUrlFor ?? cancelPurchase )(
-				this.props.siteSlug,
-				purchase.id
-			);
-			const link = `${ baseLink }?intent=remove`;
-			return (
-				<CompactCard href={ link } className="remove-purchase__card">
-					<Icon icon={ trash } className="card__icon" />
-					{ removeCopy.label }
-					{ this.renderActionDetailsText( removeCopy.description, {
-						className: 'manage-purchase__refund-text',
-					} ) }
-				</CompactCard>
-			);
-		}
-
-		let text = translate( 'Cancel subscription' );
-
-		if ( isPlanPurchase ) {
-			text = translate( 'Cancel plan' );
-		} else if ( isDomainRegistration( purchase ) ) {
-			text = translate( 'Cancel domain subscription' );
-		}
-
-		return (
-			<RemovePurchase
-				hasLoadedSites={ hasLoadedSites }
-				hasLoadedUserPurchasesFromServer={ this.props.hasLoadedPurchasesFromServer }
-				hasNonPrimaryDomainsFlag={ hasNonPrimaryDomainsFlag }
-				hasSetupAds={ this.props.hasSetupAds }
-				hasCustomPrimaryDomain={ hasCustomPrimaryDomain }
-				activeSubscriptions={ this.getActiveMarketplaceSubscriptions() }
-				site={ site }
-				purchase={ purchase }
-				purchaseListUrl={ purchaseListUrl ?? purchasesRoot }
-				linkIcon="chevron-right"
-				skipRemovePlanSurvey={ isPlanPurchase && hasCompletedCancelPurchaseSurvey }
-			>
-				<Icon icon={ trash } className="card__icon" />
-				{ text }
-				{ this.renderActionDetails(
-					String(
-						purchase.expiryStatus === 'expired'
-							? translate( 'Expired purchase will be removed.' )
-							: translate( 'Will expire immediately and be removed' )
-					)
-				) }
-			</RemovePurchase>
+		// All removes route through the unified confirmation screen via
+		// ?intent=remove. isDataValid on the cancel page accepts any intent=remove
+		// purchase, so non-refundable and domain removes both land on the
+		// confirmation screen correctly.
+		const baseLink = ( this.props.getCancelPurchaseUrlFor ?? cancelPurchase )(
+			this.props.siteSlug,
+			purchase.ID
 		);
-	}
-
-	showNonPrimaryDomainWarningDialog( cancelLink: string ) {
-		this.setState( {
-			showNonPrimaryDomainWarningDialog: true,
-			showWordAdsEligibilityWarningDialog: false,
-			isRemoving: false,
-			isCancelSurveyVisible: false,
-			cancelLink,
-		} );
-	}
-
-	showWordAdsEligibilityWarningDialog( cancelLink: string ) {
-		this.setState( {
-			showNonPrimaryDomainWarningDialog: false,
-			showWordAdsEligibilityWarningDialog: true,
-			isRemoving: false,
-			isCancelSurveyVisible: false,
-			cancelLink,
-		} );
+		const link = `${ baseLink }?intent=remove`;
+		return (
+			<CompactCard href={ link } className="remove-purchase__card">
+				<Icon icon={ trash } className="card__icon" />
+				{ removeCopy.label }
+				{ this.renderActionDetailsText( removeCopy.description, {
+					className: 'manage-purchase__refund-text',
+				} ) }
+			</CompactCard>
+		);
 	}
 
 	showPreCancellationModalDialog = () => {
 		this.setState( {
-			showNonPrimaryDomainWarningDialog: false,
-			showWordAdsEligibilityWarningDialog: false,
 			isRemoving: false,
 			isCancelSurveyVisible: true,
-			cancelLink: null,
 		} );
 	};
 
 	closeDialog = () => {
 		this.setState( {
-			showNonPrimaryDomainWarningDialog: false,
-			showWordAdsEligibilityWarningDialog: false,
 			isRemoving: false,
 			isCancelSurveyVisible: false,
-			cancelLink: null,
 		} );
 	};
-
-	goToCancelLink = () => {
-		const cancelLink = this.state.cancelLink;
-		if ( ! cancelLink ) {
-			return;
-		}
-		this.closeDialog();
-		page( cancelLink );
-	};
-
-	renderNonPrimaryDomainWarningDialog( site: SiteDetails, purchase: Purchase ) {
-		if ( this.state.showNonPrimaryDomainWarningDialog ) {
-			return (
-				<NonPrimaryDomainDialog
-					isDialogVisible={ this.state.showNonPrimaryDomainWarningDialog }
-					closeDialog={ this.closeDialog }
-					removePlan={ this.goToCancelLink }
-					planName={ getName( purchase ) }
-					oldDomainName={ site.domain }
-					newDomainName={ site.wpcom_url }
-					hasSetupAds={ this.props.hasSetupAds }
-				/>
-			);
-		}
-
-		return null;
-	}
-
-	renderWordAdsEligibilityWarningDialog( purchase: Purchase ) {
-		if ( this.state.showWordAdsEligibilityWarningDialog ) {
-			return (
-				<WordAdsEligibilityWarningDialog
-					isDialogVisible={ this.state.showWordAdsEligibilityWarningDialog }
-					closeDialog={ this.closeDialog }
-					removePlan={ this.goToCancelLink }
-					planName={ getName( purchase ) }
-				/>
-			);
-		}
-
-		return null;
-	}
 
 	renderCancelSurvey() {
 		const { purchase } = this.props;
@@ -1029,7 +942,9 @@ class ManagePurchase extends Component<
 			<CancelPurchaseForm
 				disableButtons={ this.state.isRemoving }
 				purchase={ purchase }
-				linkedPurchases={ this.getActiveMarketplaceSubscriptions() }
+				linkedPurchases={ this.getActiveMarketplaceSubscriptions().map( ( p ) =>
+					createPurchaseObject( p as unknown as Parameters< typeof createPurchaseObject >[ 0 ] )
+				) }
 				isVisible={ this.state.isCancelSurveyVisible }
 				onClose={ this.closeDialog }
 				onSurveyComplete={ this.cancelSubscription }
@@ -1043,7 +958,7 @@ class ManagePurchase extends Component<
 		if ( ! this.props.purchase ) {
 			return null;
 		}
-		const siteId = this.props.purchase.siteId;
+		const siteId = this.props.purchase.blog_id;
 		try {
 			const response = await reinstallPlugins( siteId );
 
@@ -1062,7 +977,7 @@ class ManagePurchase extends Component<
 			return null;
 		}
 
-		if ( ! hasMarketplaceProduct( productsList, purchase.productSlug ) ) {
+		if ( ! hasMarketplaceProduct( productsList, purchase.product_slug ) ) {
 			return null;
 		}
 
@@ -1094,23 +1009,22 @@ class ManagePurchase extends Component<
 	};
 
 	renderCancelPurchaseNavItem() {
-		const { isAtomicSite, purchase, translate } = this.props;
+		const { isAtomicSite, purchase } = this.props;
 		if ( ! purchase ) {
 			return null;
 		}
-		const { id } = purchase;
-		const isSplitEnabled = this.props.isSplitCancelRemoveEnabled;
+		const { ID: id } = purchase;
 
 		if ( ! canAutoRenewBeTurnedOff( purchase ) ) {
 			return null;
 		}
 
-		// Under flag: only show the Cancel button when auto-renew is still on
-		// (i.e. the user hasn't already cancelled the subscription). The Remove
-		// button owns the auto-renew-off state. `canAutoRenewBeTurnedOff` returns
-		// true for refundable purchases even when auto-renew is already off, so
-		// the explicit `isAutoRenewEnabled` check is needed.
-		if ( isSplitEnabled && ! purchase.isAutoRenewEnabled ) {
+		// Only show the Cancel button when auto-renew is still on (i.e. the user
+		// hasn't already cancelled the subscription). The Remove button owns the
+		// auto-renew-off state. `canAutoRenewBeTurnedOff` returns true for
+		// refundable purchases even when auto-renew is already off, so the explicit
+		// `isAutoRenewEnabled` check is needed.
+		if ( ! purchase.is_auto_renew_enabled ) {
 			return null;
 		}
 
@@ -1137,50 +1051,30 @@ class ManagePurchase extends Component<
 			return null;
 		}
 
-		const expiryDateDisplay = moment( purchase.expiryDate ).format( 'LL' );
-		// Under flag: use non-breaking spaces so the formatted date stays on one
-		// line in narrow viewports. Off flag we preserve trunk's exact output.
-		const cancelCopy = isSplitEnabled
-			? getCancelButtonCopy( {
-					category: classifyPurchaseForCopy( purchase ),
-					productName: purchase.productName,
-					expiryDateFormatted: expiryDateDisplay.replace( / /g, '\u00A0' ),
-			  } )
-			: null;
+		const expiryDateDisplay = moment( purchase.expiry_date ).format( 'LL' );
+		// Use non-breaking spaces so the formatted date stays on one line in narrow
+		// viewports.
+		const cancelCopy = getCancelButtonCopy( {
+			category: classifyPurchaseForCopy( purchase ),
+			productName: purchase.product_name,
+			expiryDateFormatted: expiryDateDisplay.replace( / /g, '\u00A0' ),
+		} );
 
-		const onClick = ( event: { preventDefault: () => void } ) => {
+		const onClick = () => {
 			recordTracksEvent( 'calypso_purchases_manage_purchase_cancel_click', {
-				product_slug: purchase.productSlug,
+				product_slug: purchase.product_slug,
 				is_atomic: isAtomicSite,
-				link_text: cancelCopy ? cancelCopy.label : getCancelPurchaseNavText( purchase, translate ),
+				link_text: cancelCopy.label,
 			} );
-
-			if ( ! isSplitEnabled && this.shouldShowWordAdsEligibilityWarning() ) {
-				event.preventDefault();
-				this.showWordAdsEligibilityWarningDialog( link );
-			}
-
-			if ( ! isSplitEnabled && this.shouldShowNonPrimaryDomainWarning() ) {
-				event.preventDefault();
-				this.showNonPrimaryDomainWarningDialog( link );
-			}
 		};
 
 		return (
 			<CompactCard href={ link } className="remove-purchase__card" onClick={ onClick }>
 				<Icon icon={ trash } className="card__icon" />
-				{ cancelCopy ? cancelCopy.label : getCancelPurchaseNavText( purchase, translate ) }
-				{ cancelCopy
-					? this.renderActionDetailsText( cancelCopy.description, {
-							className: 'manage-purchase__refund-text',
-					  } )
-					: this.renderActionDetails(
-							String(
-								translate( 'Will remain active until %(expiryDate)s', {
-									args: { expiryDate: expiryDateDisplay },
-								} )
-							)
-					  ) }
+				{ cancelCopy.label }
+				{ this.renderActionDetailsText( cancelCopy.description, {
+					className: 'manage-purchase__refund-text',
+				} ) }
 			</CompactCard>
 		);
 	}
@@ -1194,7 +1088,7 @@ class ManagePurchase extends Component<
 		if ( isPlan( purchase ) || isJetpackProduct( purchase ) ) {
 			return (
 				<div className="manage-purchase__plan-icon">
-					<ProductIcon slug={ purchase.productSlug as SupportedSlugs } />
+					<ProductIcon slug={ purchase.product_slug as SupportedSlugs } />
 				</div>
 			);
 		}
@@ -1223,7 +1117,7 @@ class ManagePurchase extends Component<
 			);
 		}
 
-		if ( isThemePurchase( purchase ) ) {
+		if ( purchase.product_type === 'theme' ) {
 			return (
 				<div className="manage-purchase__plan-icon">
 					<Gridicon icon="themes" size={ 54 } />
@@ -1249,10 +1143,10 @@ class ManagePurchase extends Component<
 		}
 
 		if ( isPlan( purchase ) && plan ) {
-			return plan.getDescription();
+			return null;
 		}
 
-		if ( isThemePurchase( purchase ) && theme ) {
+		if ( purchase.product_type === 'theme' && theme ) {
 			return theme.description;
 		}
 
@@ -1313,7 +1207,7 @@ class ManagePurchase extends Component<
 						'Business email with Gmail. Includes other collaboration and productivity tools from Google.'
 				  );
 
-			if ( purchase.purchaseRenewalQuantity ) {
+			if ( purchase.renewal_price_tier_usage_quantity ) {
 				return (
 					<>
 						{ description }{ ' ' }
@@ -1321,9 +1215,9 @@ class ManagePurchase extends Component<
 							'This purchase is for %(numberOfMailboxes)d mailbox for the domain %(domain)s.',
 							'This purchase is for %(numberOfMailboxes)d mailboxes for the domain %(domain)s.',
 							{
-								count: purchase.purchaseRenewalQuantity,
+								count: purchase.renewal_price_tier_usage_quantity,
 								args: {
-									numberOfMailboxes: purchase.purchaseRenewalQuantity,
+									numberOfMailboxes: purchase.renewal_price_tier_usage_quantity,
 									domain: purchase.meta as string,
 								},
 							}
@@ -1342,8 +1236,7 @@ class ManagePurchase extends Component<
 	}
 
 	renderPurchaseDescription() {
-		const { purchase, site, translate, isSplitCancelRemoveEnabled, cancellationFeatures } =
-			this.props;
+		const { purchase, site, translate, cancellationFeatures } = this.props;
 
 		if ( ! purchase ) {
 			return null;
@@ -1353,24 +1246,7 @@ class ManagePurchase extends Component<
 			return null;
 		}
 
-		// When the split flag is on and the API has returned features for this
-		// purchase, show the feature list instead of the description.
-		if ( isSplitCancelRemoveEnabled && cancellationFeatures && cancellationFeatures.length > 0 ) {
-			return (
-				<div className="manage-purchase__content">
-					<ul className="manage-purchase__feature-list-items">
-						{ cancellationFeatures.map( ( feature ) => (
-							<li key={ feature.feature_id } className="manage-purchase__feature-list-item">
-								<Icon icon={ check } size={ 24 } className="manage-purchase__feature-icon" />
-								<span>{ feature.title }</span>
-							</li>
-						) ) }
-					</ul>
-				</div>
-			);
-		}
-
-		const registrationAgreementUrl = getDomainRegistrationAgreementUrl( purchase );
+		const registrationAgreementUrl = purchase.domain_registration_agreement_url;
 		const domainRegistrationAgreementLinkText = translate( 'Domain Registration Agreement' );
 
 		const helpOptions = {
@@ -1400,22 +1276,37 @@ class ManagePurchase extends Component<
 			'Domain transfers can take anywhere from five to seven days to complete.'
 		);
 
+		const purchaseDescription = this.getPurchaseDescription() ?? null;
+
 		return (
 			<div className="manage-purchase__content">
 				<span className="manage-purchase__description">
-					<div className="manage-purchase__content-domain-description">
-						{ this.getPurchaseDescription() }
-					</div>
-					<div className="manage-purchase__content-domain-description">
-						{ purchase.productType === 'domain_transfer' && (
-							<>
+					{ purchaseDescription && (
+						<div className="manage-purchase__content-purchase-description">
+							{ purchaseDescription }
+						</div>
+					) }
+					{ purchase.product_type === 'domain_transfer' && (
+						<>
+							<div className="manage-purchase__content-domain-description">
 								{ cancelText } { domainTransferDuration }
-							</>
-						) }
-					</div>
-					<div className="manage-purchase__content-domain-description">
-						{ purchase.productType === 'domain_transfer' && supportText }
-					</div>
+							</div>
+							<div className="manage-purchase__content-domain-description">{ supportText }</div>
+						</>
+					) }
+					{ cancellationFeatures && cancellationFeatures.length > 0 && (
+						<div className="manage-purchase__content-purchase-features">
+							<strong>{ translate( 'Included with your purchase' ) }</strong>
+							<ul className="manage-purchase__feature-list-items">
+								{ cancellationFeatures.map( ( feature ) => (
+									<li key={ feature.feature_id } className="manage-purchase__feature-list-item">
+										<Icon icon={ check } size={ 24 } className="manage-purchase__feature-icon" />
+										<span>{ feature.title }</span>
+									</li>
+								) ) }
+							</ul>
+						</div>
+					) }
 				</span>
 
 				<span className="manage-purchase__settings-link">
@@ -1434,12 +1325,7 @@ class ManagePurchase extends Component<
 	}
 
 	renderPlaceholder() {
-		const {
-			siteSlug,
-			hasLoadedPurchasesFromServer,
-			getManagePurchaseUrlFor,
-			getChangePaymentMethodUrlFor,
-		} = this.props;
+		const { siteSlug, getManagePurchaseUrlFor, getChangePaymentMethodUrlFor } = this.props;
 
 		return (
 			<Fragment>
@@ -1458,7 +1344,6 @@ class ManagePurchase extends Component<
 					<PurchaseMeta
 						purchaseId={ false }
 						siteSlug={ siteSlug }
-						hasLoadedPurchasesFromServer={ hasLoadedPurchasesFromServer }
 						getManagePurchaseUrlFor={ getManagePurchaseUrlFor ?? managePurchase }
 						getChangePaymentMethodUrlFor={
 							getChangePaymentMethodUrlFor ?? getChangePaymentMethodPath
@@ -1490,7 +1375,7 @@ class ManagePurchase extends Component<
 			return '';
 		}
 
-		if ( ! plan || ! isWpComMonthlyPlan( purchase.productSlug ) ) {
+		if ( ! plan || ! isWpComMonthlyPlan( purchase.product_slug ) ) {
 			return getDisplayName( purchase );
 		}
 
@@ -1508,7 +1393,7 @@ class ManagePurchase extends Component<
 		}
 
 		return purchases.filter( ( _purchase ) =>
-			hasMarketplaceProduct( productsList, _purchase.productSlug )
+			hasMarketplaceProduct( productsList, _purchase.product_slug )
 		);
 	}
 
@@ -1524,7 +1409,6 @@ class ManagePurchase extends Component<
 			getManagePurchaseUrlFor,
 			siteSlug,
 			getChangePaymentMethodUrlFor,
-			hasLoadedPurchasesFromServer,
 		} = this.props;
 
 		if ( ! purchase ) {
@@ -1534,14 +1418,19 @@ class ManagePurchase extends Component<
 		const isActive100YearPurchase = is100Year( purchase ) && ! isCloseToExpiration( purchase );
 
 		const classes = clsx( 'manage-purchase__info', {
-			'is-expired': purchase && isExpired( purchase ),
-			'is-personal': purchase && isPersonal( purchase ),
-			'is-premium': purchase && isPremium( purchase ),
-			'is-business': purchase && isBusiness( purchase ),
-			'is-jetpack-product': purchase && isJetpackProduct( purchase ),
+			// Style the purchase as expired only once it is removed, or once its
+			// post-expiry grace period ends with no auto-renewal attempts left.
+			// While attempts remain it is still recoverable (the user can fix the
+			// payment method and/or turn auto-renew back on, and the toggle is shown
+			// in that state), so we do not style it as dead.
+			'is-expired': isRemoved( purchase ) || isExpiredWithNoAutoRenewAttemptsLeft( purchase ),
+			'is-personal': isPersonal( purchase ),
+			'is-premium': isPremium( purchase ),
+			'is-business': isBusiness( purchase ),
+			'is-jetpack-product': isJetpackProduct( purchase ),
 		} );
-		const siteName = purchase.siteName;
-		const siteId = purchase.siteId;
+		const siteName = this.props.site?.name ?? this.props.siteSlug;
+		const siteId = purchase.blog_id;
 
 		const renderMonthlyRenewalOption = shouldRenderMonthlyRenewalOption( purchase );
 		const isHundredYearDomain = this.isHundredYearDomain( purchase );
@@ -1549,7 +1438,15 @@ class ManagePurchase extends Component<
 		return (
 			<Fragment>
 				{ ( this.props.showHeader ?? true ) && (
-					<PurchaseSiteHeader siteId={ siteId } name={ siteName } purchase={ purchase } />
+					// Temporary bridge (SHILL-2256): PurchaseSiteHeader still expects the
+					// camelCase Purchase. Remove once it reads the raw shape.
+					<PurchaseSiteHeader
+						siteId={ siteId }
+						name={ siteName }
+						purchase={ createPurchaseObject(
+							purchase as unknown as Parameters< typeof createPurchaseObject >[ 0 ]
+						) }
+					/>
 				) }
 				<Card className={ classes }>
 					<header className="manage-purchase__header">
@@ -1566,27 +1463,28 @@ class ManagePurchase extends Component<
 									<div className="manage-purchase__contact-partner">
 										{ translate( 'Please contact %(partnerName)s for details', {
 											args: {
-												partnerName: getPartnerName( purchase ) ?? '',
+												partnerName: purchase.partner_name ?? '',
 											},
 										} ) }
 									</div>
 								) : (
 									<>
-										{ isOneTimePurchase( purchase ) && (
+										{ isPurchaseOneTimePurchase( purchase ) && (
 											<PlanPrice
-												rawPrice={ purchase.regularPriceInteger }
+												rawPrice={ purchase.regular_price_integer }
 												isSmallestUnit
-												currencyCode={ purchase.currencyCode }
-												isOnSale={ !! purchase.saleAmount }
+												currencyCode={ purchase.currency_code }
+												isOnSale={ !! purchase.sale_amount }
 											/>
 										) }
 									</>
 								) }
 							</div>
 						</div>
-						{ isProductOwner && ! purchase.isLocked && (
+						{ isProductOwner && ! purchase.is_locked && (
 							<div className="manage-purchase__renew-upgrade-buttons">
 								{ this.renderUpgradeButton( preventRenewal ) }
+								{ this.renderStorageUpgradeButton( preventRenewal ) }
 								{ ! preventRenewal && this.renderRenewButton() }
 							</div>
 						) }
@@ -1594,9 +1492,8 @@ class ManagePurchase extends Component<
 					{ this.renderPurchaseDescription() }
 					{ ( ! isPartnerPurchase( purchase ) || isA4ABillingDragonPurchase( purchase ) ) && (
 						<PurchaseMeta
-							purchaseId={ purchase.id }
+							purchaseId={ purchase.ID }
 							siteSlug={ siteSlug }
-							hasLoadedPurchasesFromServer={ hasLoadedPurchasesFromServer }
 							getManagePurchaseUrlFor={ getManagePurchaseUrlFor ?? managePurchase }
 							getChangePaymentMethodUrlFor={
 								getChangePaymentMethodUrlFor ?? getChangePaymentMethodPath
@@ -1611,7 +1508,7 @@ class ManagePurchase extends Component<
 						isProductOwner={ isProductOwner ?? undefined }
 					/>
 				) }
-				{ isProductOwner && ! purchase.isLocked && (
+				{ isProductOwner && ! purchase.is_locked && (
 					<>
 						{ this.renderChangePlanNavItem() }
 						{ ! preventRenewal &&
@@ -1623,6 +1520,7 @@ class ManagePurchase extends Component<
 						{ ! preventRenewal && renderMonthlyRenewalOption && this.renderRenewMonthlyNavItem() }
 						{ /* TODO: Add ability to Renew Akismet subscription */ }
 						{ this.renderUpgradeNavItem() }
+						{ this.renderUpgradeStorageNavItem() }
 						{ this.renderEditPaymentMethodNavItem() }
 						{ config.isEnabled( 'jetpack/crm-downloads' ) && this.renderCrmDownloadsNavItem() }
 						{ this.renderReinstall() }
@@ -1683,14 +1581,14 @@ class ManagePurchase extends Component<
 
 		if (
 			purchase &&
-			( JETPACK_LEGACY_PLANS as ReadonlyArray< string > ).includes( purchase.productSlug )
+			( JETPACK_LEGACY_PLANS as ReadonlyArray< string > ).includes( purchase.product_slug )
 		) {
 			showExpiryNotice = isCloseToExpiration( purchase );
 		}
 
 		let preventRenewal = false;
 
-		if ( ! canExplicitRenew( purchase ) ) {
+		if ( ! purchase.can_explicit_renew ) {
 			preventRenewal = true;
 		}
 
@@ -1742,8 +1640,6 @@ class ManagePurchase extends Component<
 					purchase={ purchase }
 				/>
 				{ this.renderPurchaseDetail( preventRenewal ) }
-				{ this.renderWordAdsEligibilityWarningDialog( purchase ) }
-				{ site && this.renderNonPrimaryDomainWarningDialog( site, purchase ) }
 			</Fragment>
 		);
 	}
@@ -1768,7 +1664,7 @@ function addPaymentMethodLinkText( {
 
 function BBEPurchaseDescription( { purchase }: { purchase: Purchase } ) {
 	const translate = useTranslate();
-	const siteSlug = useSelector( ( state ) => getSiteSlug( state, purchase.siteId ) );
+	const siteSlug = useSelector( ( state ) => getSiteSlug( state, purchase.blog_id ) );
 	const { isLoading, data: websiteContentQueryResult } = useGetWebsiteContentQuery( siteSlug );
 	const difmTieredPurchaseDetails = getDIFMTieredPurchaseDetails( purchase );
 	if ( ! difmTieredPurchaseDetails ) {
@@ -1861,6 +1757,11 @@ function PlanOverlapNotice( {
 	siteId: number;
 	purchase: Purchase;
 } ) {
+	// Temporary bridge (SHILL-2256): ProductPlanOverlapNotices still expects the
+	// camelCase Purchase. Remove once it reads the raw shape.
+	const currentPurchase = createPurchaseObject(
+		purchase as unknown as Parameters< typeof createPurchaseObject >[ 0 ]
+	);
 	if ( isSiteLevel ) {
 		if ( ! selectedSiteId ) {
 			// Probably still loading
@@ -1873,7 +1774,7 @@ function PlanOverlapNotice( {
 				plans={ JETPACK_PLANS }
 				products={ JETPACK_PRODUCTS_LIST }
 				siteId={ selectedSiteId }
-				currentPurchase={ purchase }
+				currentPurchase={ currentPurchase }
 			/>
 		);
 	}
@@ -1888,7 +1789,7 @@ function PlanOverlapNotice( {
 			plans={ JETPACK_PLANS }
 			products={ JETPACK_PRODUCTS_LIST }
 			siteId={ siteId }
-			currentPurchase={ purchase }
+			currentPurchase={ currentPurchase }
 		/>
 	);
 }
@@ -1935,73 +1836,76 @@ const WrappedManagePurchase = (
 	);
 };
 
-const ConnectedManagePurchase = connect( ( state: IAppState, props: ManagePurchaseProps ) => {
-	const purchase = getByPurchaseId( state, props.purchaseId );
+const ConnectedManagePurchase = connect(
+	(
+		state: IAppState,
+		props: ManagePurchaseProps & {
+			purchase: Purchase | undefined;
+			purchaseAttachedTo: Purchase | null;
+			purchases: Purchase[] | undefined;
+			renewableSitePurchases: Purchase[];
+			hasLoadedPurchasesFromServer: boolean;
+		}
+	) => {
+		const { purchase, purchaseAttachedTo, purchases, renewableSitePurchases } = props;
+		const selectedSiteId = getSelectedSiteId( state );
+		const siteId = purchase?.blog_id ?? null;
+		const userId = getCurrentUserId( state );
+		const isProductOwner = purchase && purchase.user_id === userId;
+		const isPurchasePlan = purchase && isPlan( purchase );
+		const isPurchaseTheme = purchase && purchase.product_type === 'theme';
+		const productsList = getProductsList( state );
+		const site = getSite( state, siteId ?? undefined );
+		const hasLoadedSites = ! isRequestingSites( state );
+		const hasLoadedDomains = hasLoadedSiteDomains( state, siteId );
+		const relatedMonthlyPlanSlug = getMonthlyPlanByYearly( purchase?.product_slug ?? '' );
+		const primaryDomain = getPrimaryDomainBySiteId( state, siteId );
+		const currentRoute = getCurrentRoute( state );
+		const domains = purchase && getDomainsBySiteId( state, purchase.blog_id );
+		const selectedDomainName = purchase && getName( purchase );
+		const selectedDomain =
+			domains && selectedDomainName && getSelectedDomain( { domains, selectedDomainName } );
 
-	const purchaseAttachedTo =
-		purchase && purchase.attachedToPurchaseId
-			? getByPurchaseId( state, purchase.attachedToPurchaseId )
-			: null;
-	const selectedSiteId = getSelectedSiteId( state );
-	const siteId = purchase?.siteId ?? null;
-	const purchases = purchase && getSitePurchases( state, purchase.siteId );
-	const userId = getCurrentUserId( state );
-	const isProductOwner = purchase && purchase.userId === userId;
-	const renewableSitePurchases = getRenewableSitePurchases( state, siteId );
-	const isPurchasePlan = purchase && isPlan( purchase );
-	const isPurchaseTheme = purchase && isThemePurchase( purchase );
-	const productsList = getProductsList( state );
-	const site = getSite( state, siteId ?? undefined );
-	const hasLoadedSites = ! isRequestingSites( state );
-	const hasLoadedDomains = hasLoadedSiteDomains( state, siteId );
-	const relatedMonthlyPlanSlug = getMonthlyPlanByYearly( purchase?.productSlug ?? '' );
-	const primaryDomain = getPrimaryDomainBySiteId( state, siteId );
-	const currentRoute = getCurrentRoute( state );
-	const domains = purchase && getDomainsBySiteId( state, purchase.siteId );
-	const selectedDomainName = purchase && getName( purchase );
-	const selectedDomain =
-		domains && selectedDomainName && getSelectedDomain( { domains, selectedDomainName } );
-
-	return {
-		currentRoute,
-		domainsDetails: getAllDomains( state ),
-		hasCustomPrimaryDomain: hasCustomDomain( site ),
-		hasLoadedDomains,
-		hasLoadedPurchasesFromServer: props.isSiteLevel
-			? hasLoadedSitePurchasesFromServer( state )
-			: hasLoadedUserPurchasesFromServer( state ),
-		hasLoadedSites,
-		hasNonPrimaryDomainsFlag: getCurrentUser( state )
-			? currentUserHasFlag( state, NON_PRIMARY_DOMAINS_TO_FREE_USERS )
-			: false,
-		hasSetupAds: Boolean(
-			site?.options?.wordads || isRequestingWordAdsApprovalForSite( state, site )
-		),
-		hasCompletedCancelPurchaseSurvey: purchase
-			? getPreference( state, getCancelPurchaseSurveyCompletedPreferenceKey( purchase.id ) )
-			: false,
-		isAtomicSite: isSiteAtomic( state, siteId ),
-		isDomainOnlySite: purchase && isDomainOnly( state, purchase.siteId ),
-		isProductOwner,
-		willAtomicSiteRevert: purchase
-			? willAtomicSiteRevertAfterPurchaseDeactivation( state, purchase.id, [] )
-			: false,
-		isPurchaseTheme,
-		plan: isPurchasePlan && applyTestFiltersToPlansList( purchase.productSlug, undefined ),
-		primaryDomain: primaryDomain,
-		productsList,
-		purchase,
-		purchaseAttachedTo,
-		purchases,
-		relatedMonthlyPlanSlug,
-		renewableSitePurchases,
-		selectedDomain,
-		selectedSiteId,
-		site,
-		siteId,
-		theme: isPurchaseTheme && siteId && getCanonicalTheme( state, siteId, purchase.meta ?? null ),
-	};
-}, mapDispatchToProps )( localize( WrappedManagePurchase ) );
+		return {
+			currentRoute,
+			domainsDetails: getAllDomains( state ),
+			hasCustomPrimaryDomain: hasCustomDomain( site ),
+			hasLoadedDomains,
+			hasLoadedPurchasesFromServer: props.hasLoadedPurchasesFromServer,
+			hasLoadedSites,
+			hasNonPrimaryDomainsFlag: getCurrentUser( state )
+				? currentUserHasFlag( state, NON_PRIMARY_DOMAINS_TO_FREE_USERS )
+				: false,
+			hasSetupAds: Boolean(
+				site?.options?.wordads || isRequestingWordAdsApprovalForSite( state, site )
+			),
+			hasCompletedCancelPurchaseSurvey: purchase
+				? getPreference( state, getCancelPurchaseSurveyCompletedPreferenceKey( purchase.ID ) )
+				: false,
+			isAtomicSite: isSiteAtomic( state, siteId ),
+			isDomainOnlySite: purchase && isDomainOnly( state, purchase.blog_id ),
+			isProductOwner,
+			willAtomicSiteRevert: purchase
+				? willAtomicSiteRevertAfterPurchaseDeactivation( state, purchase.ID, [] )
+				: false,
+			isPurchaseTheme,
+			plan: isPurchasePlan && applyTestFiltersToPlansList( purchase.product_slug, undefined ),
+			primaryDomain: primaryDomain,
+			productsList,
+			purchase,
+			purchaseAttachedTo,
+			purchases,
+			relatedMonthlyPlanSlug,
+			renewableSitePurchases,
+			selectedDomain,
+			selectedSiteId,
+			site,
+			siteId,
+			theme: isPurchaseTheme && siteId && getCanonicalTheme( state, siteId, purchase.meta ?? null ),
+		};
+	},
+	mapDispatchToProps
+)( localize( WrappedManagePurchase ) );
 
 function mapDispatchToProps( dispatch: CalypsoDispatch ) {
 	return {
@@ -2019,40 +1923,34 @@ function mapDispatchToProps( dispatch: CalypsoDispatch ) {
 }
 
 function ManagePurchaseWithExperiment( props: ManagePurchaseProps ) {
-	const isSplitCancelRemoveEnabled = useIsSplitCancelRemoveEnabled();
 	const { data: cancelFeaturesResponse } = useQuery( {
-		...purchaseCancelFeaturesQuery( props.purchaseId, 'treatment' ),
-		enabled: isSplitCancelRemoveEnabled,
+		...purchaseCancelFeaturesQuery( props.purchaseId ),
 	} );
-	const cancellationFeatures = isSplitCancelRemoveEnabled
-		? cancelFeaturesResponse?.features ?? null
-		: null;
+	const cancellationFeatures = cancelFeaturesResponse?.features ?? null;
+	const { data: purchase, isPending: isPurchasePending } = useQuery( {
+		...purchaseQuery( Number( props.purchaseId ) ),
+		enabled: Boolean( props.purchaseId ),
+	} );
+	const { data: purchaseAttachedTo } = useQuery( {
+		...purchaseQuery( Number( purchase?.attached_to_purchase_id ) ),
+		enabled: Boolean( purchase?.attached_to_purchase_id ),
+	} );
+	const { data: sitePurchases } = useQuery( {
+		...sitePurchasesQuery( purchase?.blog_id ?? 0 ),
+		enabled: Boolean( purchase?.blog_id ),
+	} );
+	const renewableSitePurchases = ( sitePurchases ?? [] ).filter( needsToRenewSoon );
 	return (
 		<ConnectedManagePurchase
 			{ ...props }
-			isSplitCancelRemoveEnabled={ isSplitCancelRemoveEnabled }
 			cancellationFeatures={ cancellationFeatures }
+			purchase={ purchase }
+			purchaseAttachedTo={ purchaseAttachedTo ?? null }
+			purchases={ sitePurchases }
+			renewableSitePurchases={ renewableSitePurchases }
+			hasLoadedPurchasesFromServer={ ! isPurchasePending }
 		/>
 	);
 }
 
 export default ManagePurchaseWithExperiment;
-
-function getCancelPurchaseNavText(
-	purchase: Purchase,
-	translate: LocalizeProps[ 'translate' ]
-): string {
-	if ( isDomainRegistration( purchase ) ) {
-		if ( hasTranslation( 'Cancel domain subscription' ) ) {
-			return translate( 'Cancel domain subscription' );
-		}
-		return translate( 'Cancel domain' );
-	} else if ( isPlan( purchase ) ) {
-		return translate( 'Cancel plan' );
-	} else if ( isSubscription( purchase ) ) {
-		return translate( 'Cancel subscription' );
-	} else if ( isOneTimePurchase( purchase ) ) {
-		return translate( 'Cancel' );
-	}
-	return '';
-}

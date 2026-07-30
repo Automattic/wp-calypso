@@ -2,10 +2,11 @@ import type { AiLaunchpadSiteOptions, AiLaunchpadStatus } from './types';
 
 /**
  * Derives the AI Launchpad state from site options, mirroring the server-side
- * eligibility gate (`AI_Launchpad::is_eligible()` in jetpack-mu-wpcom): enabled,
- * not dismissed, and not already onboarded through an AI flow. Keep the two in
- * sync when the server gate changes. Only administrators get the AI Launchpad,
- * matching the wp-admin menu swap.
+ * eligibility gate (`AI_Launchpad::is_eligible()` in jetpack-mu-wpcom): enabled
+ * and not dismissed. AI-built (Big Sky) sites are eligible like any other — the
+ * tasklist tailors to what the build already covered. Keep the two in sync when
+ * the server gate changes. Only administrators get the AI Launchpad, matching
+ * the wp-admin menu swap.
  *
  * - `'active'`: the AI Launchpad replaces My Home and the legacy launchpad.
  * - `'completed'`: every task is done; setup surfaces should be hidden.
@@ -21,13 +22,6 @@ export function getAiLaunchpadStatus( site: {
 
 	const options = site.options;
 	if ( ! options?.wpcom_ai_launchpad_enabled || options.wpcom_ai_launchpad_dismissed ) {
-		return null;
-	}
-
-	if (
-		options.site_intent === 'ai-assembler' ||
-		options.site_creation_flow === 'ai-site-builder'
-	) {
 		return null;
 	}
 

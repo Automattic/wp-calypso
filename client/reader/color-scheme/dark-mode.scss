@@ -31,6 +31,7 @@
 		color: var( --dashboard__text-color );
 	}
 
+	.layout.is-global-sidebar-visible .layout__primary:not( :has( > * ) ),
 	.layout.is-global-sidebar-visible .layout__primary > div:not( :has( .recent-feed ) ) {
 		border-color: var( --color-border-subtle );
 	}

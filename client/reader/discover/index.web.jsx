@@ -15,6 +15,7 @@ import {
 	trackUpdatesLoaded,
 	trackScrollPage,
 } from 'calypso/reader/controller-helper';
+import { readerNotFound } from 'calypso/reader/lib/reader-router';
 import { recordTrack } from 'calypso/reader/stats';
 import { getCurrentTabFromURL } from 'calypso/reader/utils';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
@@ -75,6 +76,7 @@ const discover = ( context, next ) => {
 				className="is-discover-stream"
 				selectedTab={ selectedTab }
 				query={ context.query }
+				placeholder={ null }
 			/>
 		</>
 	);
@@ -99,4 +101,6 @@ export default function ( router ) {
 
 	//
 	router( getDiscoverRoutes( anyLangParam ), ...commonMiddleware );
+
+	router( '/discover/*', readerNotFound );
 }

@@ -7,6 +7,11 @@ import { addQueryArgs, getQueryArg, getQueryArgs } from '@wordpress/url';
 import { useEffect } from 'react';
 import { clearSessionStorageQuery } from 'calypso/components/domains/wpcom-domain-search/use-query-handler';
 import { WOO_HOSTING_SOLUTIONS_REF } from 'calypso/landing/stepper/constants';
+import {
+	getLaunchpadPersonalizationDestination,
+	resolveLaunchpadPersonalizationVariation,
+	type LaunchpadPersonalizationVariation,
+} from 'calypso/lib/ai-launchpad';
 import { SIGNUP_DOMAIN_ORIGIN } from 'calypso/lib/analytics/signup';
 import { addSurvicate } from 'calypso/lib/analytics/survicate';
 import { loadExperimentAssignment } from 'calypso/lib/explat';
@@ -100,21 +105,9 @@ const onboarding: FlowV2< typeof initialize > = {
 		 */
 		const getPostCheckoutDestination = async (
 			providedDependencies: ProvidedDependencies,
-			planCartItem: MinimalRequestCartProduct | null
+			planCartItem: MinimalRequestCartProduct | null,
+			launchpadPersonalizationVariation: LaunchpadPersonalizationVariation
 		): Promise< [ string, string | null, string | null ] > => {
-			// Site Setup replaces My Home, so the diy-launchpad cohort must land there directly:
-			// any other destination (e.g. /home) would be the orphaned screen we just removed.
-			if ( diyLaunchpad && providedDependencies.siteSlug ) {
-				const siteSlug = providedDependencies.siteSlug as string;
-				const site = await resolveSelect( SITE_STORE ).getSite( siteSlug );
-				const adminUrl = site?.options?.admin_url ?? `https://${ siteSlug }/wp-admin/`;
-				return [
-					`${ adminUrl }admin.php?page=site-setup-wp-admin&enable-ai-launchpad=1`,
-					null,
-					null,
-				];
-			}
-
 			if ( ! providedDependencies.hasExternalTheme && providedDependencies.hasPluginByGoal ) {
 				return [ `/home/${ providedDependencies.siteSlug }`, null, null ];
 			}
@@ -152,6 +145,24 @@ const onboarding: FlowV2< typeof initialize > = {
 				const site = await resolveSelect( SITE_STORE ).getSite( siteSlug );
 				const adminUrl = site?.options?.admin_url ?? `https://${ siteSlug }/wp-admin/`;
 				return [ `${ adminUrl }admin.php?page=wc-admin`, null, null ];
+			}
+
+			// Launchpad-personalization treatments replace only the default My Home landing:
+			// ai_launchpad lands in Site Setup, no_guidance on the wp-admin dashboard. The
+			// functional handoffs above (plugin install, playground/blueprint import, Woo)
+			// keep their destinations regardless of the assigned variation.
+			if ( launchpadPersonalizationVariation !== 'control' && providedDependencies.siteSlug ) {
+				const siteSlug = providedDependencies.siteSlug as string;
+				const site = await resolveSelect( SITE_STORE ).getSite( siteSlug );
+				const adminUrl = site?.options?.admin_url ?? `https://${ siteSlug }/wp-admin/`;
+				const destination = getLaunchpadPersonalizationDestination( {
+					variation: launchpadPersonalizationVariation,
+					adminUrl,
+					enableAiLaunchpad: true,
+				} );
+				if ( destination ) {
+					return [ destination, null, null ];
+				}
 			}
 
 			return getOnboardingPostCheckoutDestination( {
@@ -301,15 +312,34 @@ const onboarding: FlowV2< typeof initialize > = {
 							);
 							return;
 						}
-						case 'blank-site':
+						case 'blank-site': {
 							if ( refParameter === WOO_HOSTING_SOLUTIONS_REF ) {
 								const site = await resolveSelect( SITE_STORE ).getSite( siteSlug );
 								const adminUrl = site?.options?.admin_url ?? `https://${ siteSlug }/wp-admin/`;
 								window.location.assign( `${ adminUrl }admin.php?page=wc-admin` );
-							} else {
-								window.location.assign( `/home/${ siteSlug }` );
+								return;
 							}
+
+							// Launchpad-personalization treatments land in wp-admin instead of My Home
+							// (which would bounce them there anyway, one redirect later).
+							const variation = await resolveLaunchpadPersonalizationVariation( diyLaunchpad );
+							if ( variation !== 'control' ) {
+								const site = await resolveSelect( SITE_STORE ).getSite( siteSlug );
+								const adminUrl = site?.options?.admin_url ?? `https://${ siteSlug }/wp-admin/`;
+								const destination = getLaunchpadPersonalizationDestination( {
+									variation,
+									adminUrl,
+									enableAiLaunchpad: true,
+								} );
+								if ( destination ) {
+									window.location.assign( destination );
+									return;
+								}
+							}
+
+							window.location.assign( `/home/${ siteSlug }` );
 							return;
+						}
 						default:
 							return;
 					}
@@ -333,8 +363,14 @@ const onboarding: FlowV2< typeof initialize > = {
 						return;
 					}
 
+					const launchpadPersonalizationVariation =
+						await resolveLaunchpadPersonalizationVariation( diyLaunchpad );
 					const [ destination, backDestination, backDestinationDomains ] =
-						await getPostCheckoutDestination( providedDependencies, planCartItem );
+						await getPostCheckoutDestination(
+							providedDependencies,
+							planCartItem,
+							launchpadPersonalizationVariation
+						);
 					if ( providedDependencies.processingResult === ProcessingResult.SUCCESS ) {
 						persistSignupDestination( destination );
 						setSignupCompleteFlowName( flowName );
@@ -382,9 +418,6 @@ const onboarding: FlowV2< typeof initialize > = {
 									steps_total: checkoutStepperPosition.total,
 								} )
 							);
-						} else if ( diyLaunchpad ) {
-							// The diy-launchpad cohort skips the AI/manual chooser and lands straight in Site Setup.
-							window.location.replace( destination );
 						} else if (
 							refParameter === WOO_HOSTING_SOLUTIONS_REF &&
 							isEnabled( 'onboarding/woo-hosting-post-purchase-setup-choice' )
@@ -468,9 +501,9 @@ const onboarding: FlowV2< typeof initialize > = {
 		 */
 		useEffect( () => {
 			if ( isLoggedIn && user?.email && user?.date ) {
-				addSurvicate( { email: user.email, registrationDate: user.date } );
+				addSurvicate( { email: user.email, registrationDate: user.date, userId: user.ID } );
 			}
-		}, [ isLoggedIn, currentStepSlug, user?.email, user?.date ] );
+		}, [ isLoggedIn, currentStepSlug, user?.email, user?.date, user?.ID ] );
 
 		// Preload the visual split experiment
 		useEffect( () => {

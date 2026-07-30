@@ -1,5 +1,17 @@
-@import "variables";
-
-.stats-widget-content {
-	@include jetpack-theme-for-odyssey-stats;
+.stats-widget-content.color-scheme {
+	--color-primary: var(--color-accent);
+	--color-primary-dark: var(--color-accent-dark);
+	--color-primary-light: var(--color-accent-light);
+	--color-primary-0: var(--color-accent-0);
+	--color-primary-5: var(--color-accent-5);
+	--color-primary-10: var(--color-accent-10);
+	--color-primary-20: var(--color-accent-20);
+	--color-primary-30: var(--color-accent-30);
+	--color-primary-40: var(--color-accent-40);
+	--color-primary-50: var(--color-accent-50);
+	--color-primary-60: var(--color-accent-60);
+	--color-primary-70: var(--color-accent-70);
+	--color-primary-80: var(--color-accent-80);
+	--color-primary-90: var(--color-accent-90);
+	--color-primary-100: var(--color-accent-100);
 }

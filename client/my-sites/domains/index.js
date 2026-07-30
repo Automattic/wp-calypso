@@ -439,9 +439,7 @@ export default function () {
 		paths.domainUseMyDomain( ':site' ),
 		siteSelection,
 		setupPreferences,
-		maybeRedirectToMultiSiteDashboard(
-			( params, queries ) => `/domains/${ queries.initialQuery }/domain-transfer-setup`
-		),
+		domainsController.maybeRedirectUseMyDomainToDashboardSetup,
 		navigation,
 		domainsController.redirectIfNoSite( '/domains/add' ),
 		domainsController.jetpackNoDomainsWarning,

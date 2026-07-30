@@ -79,9 +79,9 @@ This mixin generates alias variables for a color palette. For example, the
 	--wp-components-color-accent-darker-10: var( --studio-blue-90 );
 	--wp-components-color-accent-darker-20: var( --studio-blue-100 );
 	--wp-components-color-accent-inverted: #fff;
-	--wpds-color-fg-interactive-brand: var( --wp-components-color-accent );
-	--wpds-color-fg-interactive-brand-active: var( --wp-components-color-accent-darker-20 );
-	--wpds-color-stroke-focus-brand: var( --wp-components-color-accent );
+	--wpds-color-foreground-interactive-brand: var( --wp-components-color-accent );
+	--wpds-color-foreground-interactive-brand-active: var( --wp-components-color-accent-darker-20 );
+	--wpds-color-stroke-focus: var( --wp-components-color-accent );
 	--wp-components-color-gray-800: #e0e0e0;
 	--wp-components-color-gray-700: #bdbdbd;
 	--wp-components-color-gray-600: #8a8a8a;
@@ -296,6 +296,24 @@ This mixin generates alias variables for a color palette. For example, the
 	--color-link-dark: var( --wp-admin-theme-color-darker-10 );
 	--color-link-light: var( --wp-admin-theme-color );
 	--color-print: var( --dashboard-item-selected__background-color );
+}
+
+@mixin color-scheme-dark-theme-action-list {
+	.action-list .action-item {
+		border-bottom-color: var( --dashboard-surface__border-color );
+	}
+
+	.icon-list-item__decoration svg {
+		fill: var( --dashboard-subtle__color );
+	}
+
+	.action-item .components-v-stack > .components-text:first-child {
+		color: var( --dashboard__text-color );
+	}
+
+	.action-item .components-v-stack > .components-text:last-child {
+		color: var( --dashboard-subtle__color );
+	}
 }
 
 @mixin color-scheme-dark-theme-card {
@@ -809,6 +827,7 @@ This mixin generates alias variables for a color palette. For example, the
 }
 
 @mixin color-scheme-dark-theme-common-components {
+	@include color-scheme-dark-theme-action-list;
 	@include color-scheme-dark-theme-card;
 	@include color-scheme-dark-theme-form-controls;
 	@include color-scheme-dark-theme-summary-button;

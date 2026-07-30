@@ -14,9 +14,8 @@ import { CardDivider } from '../../../components/card';
 import { formatDate } from '../../../utils/datetime';
 import {
 	getSubtitleForDisplay,
-	isExpired,
-	isRenewing,
-	isInExpirationGracePeriod,
+	isRenewingBeforeExpiration,
+	isExpiredOrRemoved,
 } from '../../../utils/purchase';
 import type { Purchase } from '@automattic/api-core';
 
@@ -38,7 +37,7 @@ function getRenewalDescription(
 		stripZeros: true,
 	} );
 
-	if ( isRenewing( item ) ) {
+	if ( isRenewingBeforeExpiration( item ) ) {
 		const date = formatDate( new Date( item.renew_date ), locale, { dateStyle: 'long' } );
 		if ( subtitleText && hasEnTranslation( '%1$s: Renews at %2$s on %3$s' ) ) {
 			return sprintf(
@@ -56,7 +55,7 @@ function getRenewalDescription(
 
 	const date = formatDate( new Date( item.expiry_date ), locale, { dateStyle: 'long' } );
 
-	if ( isExpired( item ) || isInExpirationGracePeriod( item ) ) {
+	if ( isExpiredOrRemoved( item ) ) {
 		if ( subtitleText && hasEnTranslation( '%1$s: Expired on %2$s' ) ) {
 			return sprintf(
 				// translators: %1$s: purchase type subtitle (e.g. “Site plan”), %2$s: formatted date
@@ -96,8 +95,8 @@ export function UpcomingRenewalsDialog( {
 	const purchasesSortByRecentExpiryDate = useMemo(
 		() =>
 			[ ...purchases ].sort( ( a, b ) => {
-				const compareDateA = isRenewing( a ) ? a.renew_date : a.expiry_date;
-				const compareDateB = isRenewing( b ) ? b.renew_date : b.expiry_date;
+				const compareDateA = isRenewingBeforeExpiration( a ) ? a.renew_date : a.expiry_date;
+				const compareDateB = isRenewingBeforeExpiration( b ) ? b.renew_date : b.expiry_date;
 				return compareDateA?.localeCompare?.( compareDateB );
 			} ),
 		[ purchases ]

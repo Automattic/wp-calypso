@@ -17,6 +17,4 @@ export interface AiLaunchpadSiteOptions {
 	wpcom_ai_launchpad_enabled?: boolean;
 	wpcom_ai_launchpad_dismissed?: boolean;
 	wpcom_ai_launchpad_completed?: boolean;
-	site_intent?: string;
-	site_creation_flow?: string;
 }

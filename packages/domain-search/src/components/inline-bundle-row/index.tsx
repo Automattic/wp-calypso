@@ -9,6 +9,8 @@ import {
 import { sprintf } from '@wordpress/i18n';
 import { arrowRight, Icon, lockOutline, plus } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
+import { useEffect } from 'react';
+import { getBundlePrimaryDomain } from '../../helpers/get-bundle-primary-domain';
 import { getTld } from '../../helpers/get-tld';
 import { useIsCurrentMutation } from '../../hooks/use-is-current-mutation';
 import { useDomainSearch } from '../../page/context';
@@ -57,11 +59,34 @@ export const InlineBundleRow = ( { bundle, isLoading }: InlineBundleRowProps ) =
 			await cart.onAddBundle( bundleToAdd );
 		},
 		onSuccess: ( _result, bundleToAdd ) => {
-			events.onBundleAddToCart( bundleToAdd );
+			events.onBundleAddToCart( bundleToAdd, 'inline' );
 		},
 		networkMode: 'always',
 		retry: false,
 	} );
+
+	// Fire `onBundleShown` once per distinct inline bundle that actually renders.
+	// Keyed on the group id so a new bundle (different trigger) re-fires while
+	// re-renders of the same bundle do not. The guard mirrors the render
+	// conditions below (loaded, has members, and offers at least one companion),
+	// so a loading or empty row never counts as shown. Mirrors the top-card
+	// `shownBundleGroupId` pattern in results.tsx.
+	const shownBundleGroupId =
+		! isLoading &&
+		bundle &&
+		bundle.domains.length > 0 &&
+		bundle.domains.some( ( domain ) => domain.domain !== getBundlePrimaryDomain( bundle ).domain )
+			? bundle.bundle_group_id
+			: undefined;
+
+	useEffect( () => {
+		if ( shownBundleGroupId && bundle ) {
+			events.onBundleShown( bundle, 'inline' );
+		}
+		// Intentionally keyed only on the group id: exactly one event per bundle that
+		// appears, not one per render or per `events`/object identity change.
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [ shownBundleGroupId ] );
 
 	if ( isLoading ) {
 		return (
@@ -82,8 +107,7 @@ export const InlineBundleRow = ( { bundle, isLoading }: InlineBundleRowProps ) =
 
 	// The line leads with the added (primary) domain in full, then the companion
 	// extensions the bundle adds: `thalasso.world + .info + .vip`.
-	const primary =
-		bundle.domains.find( ( domain ) => domain.role === 'primary' ) ?? bundle.domains[ 0 ];
+	const primary = getBundlePrimaryDomain( bundle );
 	const companions = bundle.domains.filter( ( domain ) => domain.domain !== primary.domain );
 
 	if ( companions.length === 0 ) {

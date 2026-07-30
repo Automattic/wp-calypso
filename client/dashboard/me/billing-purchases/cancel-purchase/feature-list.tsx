@@ -7,14 +7,13 @@ import { __ } from '@wordpress/i18n';
 import { close, info } from '@wordpress/icons';
 import { intlFormat } from 'date-fns';
 import { Text } from '../../../components/text';
-import { DisplayVariant } from '../../../utils/purchase';
+import { DisplayVariant, isExpiredAndInGracePeriod } from '../../../utils/purchase';
 import {
 	getCancelLossIntro,
 	getFallbackLossItems,
 	getRemoveLossIntro,
 	getSingleItemCancelCopy,
 	getSingleItemRemoveCopy,
-	getTitanCancellationLossItems,
 } from './get-confirmation-copy';
 import type { Purchase, CancellationFeature } from '@automattic/api-core';
 
@@ -34,15 +33,11 @@ const CancelPurchaseFeatureList = ( {
 	cancellationFeatures: CancellationFeature[];
 	cancellationChanges: FeatureObject[];
 } ) => {
-	// Titan's server-provided feature list is tier-unaware, so for Titan
-	// purchases we derive the loss list from the tier the user is on. Everything
-	// else uses the server list, falling back to a per-product-type item so every
-	// confirmation screen shows at least one concrete thing the user is giving up.
-	const titanLossItems = getTitanCancellationLossItems( purchase );
+	// Use the server-provided cancellation feature list, falling back to a
+	// per-product-type item so every confirmation screen shows at least one
+	// concrete thing the user is giving up.
 	let lossItems: Array< { key: string; title: string } >;
-	if ( titanLossItems ) {
-		lossItems = titanLossItems.map( ( title, idx ) => ( { key: `titan-${ idx }`, title } ) );
-	} else if ( cancellationFeatures.length ) {
+	if ( cancellationFeatures.length ) {
 		lossItems = cancellationFeatures
 			.filter( ( feature ): feature is CancellationFeature => Boolean( feature ) )
 			.map( ( feature ) => ( { key: String( feature.feature_id ), title: feature.title } ) );
@@ -68,10 +63,11 @@ const CancelPurchaseFeatureList = ( {
 				'\u00a0'
 		  )
 		: '';
+	const inGracePeriod = isExpiredAndInGracePeriod( purchase );
 	const introCopy =
 		displayVariant === 'remove'
 			? getRemoveLossIntro( purchase )
-			: getCancelLossIntro( purchase, fullExpiryDate );
+			: getCancelLossIntro( purchase, fullExpiryDate, inGracePeriod );
 
 	return (
 		<VStack spacing={ 6 }>
@@ -79,7 +75,7 @@ const CancelPurchaseFeatureList = ( {
 				<Text as="p">
 					{ displayVariant === 'remove'
 						? getSingleItemRemoveCopy( purchase )
-						: getSingleItemCancelCopy( purchase, fullExpiryDate ) }
+						: getSingleItemCancelCopy( purchase, fullExpiryDate, inGracePeriod ) }
 				</Text>
 			) : (
 				lossItems.length > 0 && (

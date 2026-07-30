@@ -6,19 +6,19 @@ import { __, sprintf } from '@wordpress/i18n';
 import { useState } from 'react';
 import { purchaseSettingsRoute, changePaymentMethodRoute } from '../../../app/router/me';
 import Notice from '../../../components/notice';
-import { getRelativeTimeString, isWithinNext } from '../../../utils/datetime';
+import { getRelativeDayString, isWithinNext } from '../../../utils/datetime';
 import {
-	isExpired,
 	isExpiring,
-	isFailedAutoRenewal,
 	isIncludedWithPlan,
-	isRenewing,
+	isRemoved,
+	isRenewingBeforeExpiration,
 	needsToRenewSoon,
 	isRecentMonthlyPurchase,
 	creditCardExpiresBeforeSubscription,
 	creditCardHasAlreadyExpired,
 	getRenewUrlForPurchases,
-	isInExpirationGracePeriod,
+	isExpiredAndInGracePeriod,
+	isExpiredOrRemoved,
 } from '../../../utils/purchase';
 import { ExpiringLaterText } from './purchase-expiring-notice';
 import { shouldShowCardExpiringWarning } from './purchase-notice';
@@ -34,7 +34,7 @@ export function shouldShowOtherRenewablePurchasesNotice(
 	if ( ! purchase.site_slug ) {
 		return false;
 	}
-	if ( isExpired( purchase ) ) {
+	if ( isRemoved( purchase ) ) {
 		return false;
 	}
 
@@ -56,14 +56,9 @@ export function shouldShowOtherRenewablePurchasesNotice(
 
 	// Calculate purchase states once
 	const currentPurchaseIsExpiring =
-		isExpiring( currentPurchase ) ||
-		isExpired( currentPurchase ) ||
-		isInExpirationGracePeriod( currentPurchase );
+		isExpiring( currentPurchase ) || isExpiredOrRemoved( currentPurchase );
 	const anotherPurchaseIsExpiring = otherRenewableSitePurchases.some(
-		( otherPurchase ) =>
-			isExpiring( otherPurchase ) ||
-			isExpired( otherPurchase ) ||
-			isInExpirationGracePeriod( otherPurchase )
+		( otherPurchase ) => isExpiring( otherPurchase ) || isExpiredOrRemoved( otherPurchase )
 	);
 
 	// Special case: centennial plans with no expiring purchases don't show notices
@@ -81,7 +76,8 @@ export function shouldShowOtherRenewablePurchasesNotice(
 
 	if ( needsCreditCardCheck ) {
 		const currentPurchaseCreditCardExpiresBeforeSubscription =
-			isRenewing( currentPurchase ) && creditCardExpiresBeforeSubscription( currentPurchase );
+			isRenewingBeforeExpiration( currentPurchase ) &&
+			creditCardExpiresBeforeSubscription( currentPurchase );
 
 		// Don't show if credit card expires but no payment card ID
 		if ( currentPurchaseCreditCardExpiresBeforeSubscription && ! currentPurchase.payment_card_id ) {
@@ -167,6 +163,10 @@ export function OtherRenewablePurchasesNotice( {
 		return null;
 	}
 
+	if ( isRemoved( purchase ) ) {
+		return null;
+	}
+
 	// For purchases included with a plan (for example, a domain mapping
 	// bundled with the plan), the plan purchase should be used here, since
 	// that is the one that can be directly renewed.
@@ -188,23 +188,20 @@ export function OtherRenewablePurchasesNotice( {
 	// Main logic branches for determining which message to display.
 	const currentPurchaseNeedsToRenewSoon = needsToRenewSoon( currentPurchase );
 	const currentPurchaseCreditCardExpiresBeforeSubscription =
-		isRenewing( currentPurchase ) && creditCardExpiresBeforeSubscription( currentPurchase );
+		isRenewingBeforeExpiration( currentPurchase ) &&
+		creditCardExpiresBeforeSubscription( currentPurchase );
 	const currentPurchaseIsExpiring =
-		isExpiring( currentPurchase ) ||
-		isExpired( currentPurchase ) ||
-		isInExpirationGracePeriod( currentPurchase );
+		isExpiring( currentPurchase ) || isExpiredOrRemoved( currentPurchase );
 	const anotherPurchaseIsExpiring = otherRenewableSitePurchases.some(
-		( otherPurchase ) =>
-			isExpiring( otherPurchase ) ||
-			isExpired( otherPurchase ) ||
-			isInExpirationGracePeriod( otherPurchase )
+		( otherPurchase ) => isExpiring( otherPurchase ) || isExpiredOrRemoved( otherPurchase )
 	);
 
 	// Other information needed by some of the messages.
 	const suppressErrorStylingForCurrentPurchase =
-		isRecentMonthlyPurchase( currentPurchase ) && ! isExpired( currentPurchase );
+		isRecentMonthlyPurchase( currentPurchase ) && ! isExpiredOrRemoved( currentPurchase );
 	const suppressErrorStylingForOtherPurchases = otherRenewableSitePurchases.every(
-		( otherPurchase ) => isRecentMonthlyPurchase( otherPurchase ) && ! isExpired( otherPurchase )
+		( otherPurchase ) =>
+			isRecentMonthlyPurchase( otherPurchase ) && ! isExpiredOrRemoved( otherPurchase )
 	);
 	const anotherPurchaseIsCloseToExpiration = otherRenewableSitePurchases.some( ( otherPurchase ) =>
 		isWithinNext(
@@ -213,15 +210,12 @@ export function OtherRenewablePurchasesNotice( {
 			'days'
 		)
 	);
-	const anotherPurchaseIsExpired = otherRenewableSitePurchases.some(
-		( otherPurchase ) => isExpired( otherPurchase ) || isInExpirationGracePeriod( otherPurchase )
+	const anotherPurchaseIsExpired = otherRenewableSitePurchases.some( ( otherPurchase ) =>
+		isExpiredOrRemoved( otherPurchase )
 	);
 	const expiringPurchases = otherRenewableSitePurchases
 		.filter(
-			( otherPurchase ) =>
-				isExpiring( otherPurchase ) ||
-				isExpired( otherPurchase ) ||
-				isInExpirationGracePeriod( otherPurchase )
+			( otherPurchase ) => isExpiring( otherPurchase ) || isExpiredOrRemoved( otherPurchase )
 		)
 		.sort( ( a, b ) => new Date( a.expiry_date ).getTime() - new Date( b.expiry_date ).getTime() );
 	const earliestOtherExpiringPurchase: Purchase | undefined =
@@ -230,12 +224,21 @@ export function OtherRenewablePurchasesNotice( {
 	const purchaseName = currentPurchase.is_domain
 		? currentPurchase.meta ?? ''
 		: currentPurchase.product_name;
-	const expiry = getRelativeTimeString( new Date( currentPurchase.expiry_date ) );
+	// These slots feed both past-tense ("expired %(expiry)s") and future-tense
+	// ("will expire %(expiry)s") sentences, so each is clamped to match the
+	// tense of the scenario it lands in.
+	const expiry = getRelativeDayString(
+		new Date( currentPurchase.expiry_date ),
+		isExpiredOrRemoved( currentPurchase ) ? 'past' : 'upcoming'
+	);
 	const includedPurchaseName = includedPurchase.is_domain
 		? includedPurchase.meta ?? ''
 		: includedPurchase.product_name;
 	const earliestOtherExpiry = earliestOtherExpiringPurchase
-		? getRelativeTimeString( new Date( earliestOtherExpiringPurchase.expiry_date ) )
+		? getRelativeDayString(
+				new Date( earliestOtherExpiringPurchase.expiry_date ),
+				isExpiredOrRemoved( earliestOtherExpiringPurchase ) ? 'past' : 'upcoming'
+		  )
 		: '';
 	const openUpcomingRenewalsDialog = () => setUpcomingRenewalsDialogVisible( true );
 	const link = <Button variant="link" onClick={ () => openUpcomingRenewalsDialog() } />;
@@ -254,14 +257,7 @@ export function OtherRenewablePurchasesNotice( {
 			( window.location.href = getRenewUrlForPurchases( renewableSitePurchases ) );
 		const noticeActionText = __( 'Renew all' );
 
-		if ( isFailedAutoRenewal( currentPurchase ) ) {
-			noticeText = createInterpolateElement(
-				__(
-					'There was a problem processing your renewal. You have <link>other upgrades</link> on this site that may also be affected. Please renew now to avoid disruption to your service.'
-				),
-				{ link }
-			);
-		} else if ( isInExpirationGracePeriod( currentPurchase ) ) {
+		if ( isExpiredAndInGracePeriod( currentPurchase ) ) {
 			if ( currentPurchase.is_domain_registration ) {
 				noticeText = createInterpolateElement(
 					sprintf(
@@ -428,14 +424,7 @@ export function OtherRenewablePurchasesNotice( {
 		let noticeText: React.ReactNode;
 		const noticeStatus = suppressErrorStylingForCurrentPurchase ? 'info' : 'error';
 
-		if ( isFailedAutoRenewal( currentPurchase ) ) {
-			noticeText = createInterpolateElement(
-				__(
-					'There was a problem processing your renewal. You also have <link>other upgrades</link> scheduled to renew soon. Please renew now to avoid disruption to your service.'
-				),
-				{ link }
-			);
-		} else if ( isInExpirationGracePeriod( currentPurchase ) ) {
+		if ( isExpiredAndInGracePeriod( currentPurchase ) ) {
 			if ( currentPurchase.is_domain_registration ) {
 				noticeText = createInterpolateElement(
 					sprintf(
@@ -785,16 +774,8 @@ export function OtherRenewablePurchasesNotice( {
 		! anotherPurchaseIsExpiring
 	) {
 		const noticeText = ( () => {
-			if ( isFailedAutoRenewal( currentPurchase ) ) {
-				return createInterpolateElement(
-					__(
-						'There was a problem processing your renewal. You also have <link>other upgrades</link> scheduled to renew soon. Please renew now to avoid disruption to your service.'
-					),
-					{ link }
-				);
-			}
 			// Grace period: if expiry date is past, show "expired" message instead of "will expire"
-			if ( isInExpirationGracePeriod( currentPurchase ) ) {
+			if ( isExpiredAndInGracePeriod( currentPurchase ) ) {
 				if ( currentPurchase.is_domain_registration ) {
 					return createInterpolateElement(
 						sprintf(

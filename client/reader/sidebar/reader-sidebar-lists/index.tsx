@@ -6,6 +6,7 @@ import { useQuery } from '@tanstack/react-query';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import ExpandableSidebarMenu from 'calypso/layout/sidebar/expandable';
+import ReaderUnreadCount from 'calypso/layout/sidebar/reader-unread-count';
 import { MoreMenuActions } from '../more-menu-actions';
 import ReaderSidebarListsList from './list';
 
@@ -47,8 +48,7 @@ const ReaderSidebarLists = ( {
 			<ExpandableSidebarMenu
 				expanded={ isOpen ?? false }
 				title={ translate( 'Lists' ) }
-				count={ isSeenEnabled ? totalUnseenCount : 0 }
-				compactCount
+				customCount={ isSeenEnabled ? <ReaderUnreadCount count={ totalUnseenCount } /> : undefined }
 				onClick={ onClick }
 				disableFlyout
 				className={ clsx( {
@@ -58,6 +58,7 @@ const ReaderSidebarLists = ( {
 				moreMenuActions={
 					<MoreMenuActions
 						identifier="sidebar-lists"
+						isSingleFeed={ false }
 						feedIds={ allFeedIds }
 						feedUrls={ [] }
 						unseenCount={ totalUnseenCount }

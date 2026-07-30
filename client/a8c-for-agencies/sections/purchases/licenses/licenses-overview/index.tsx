@@ -63,6 +63,9 @@ export default function LicensesOverview( {
 
 	const showEmptyStateContent = isFetched && data?.all === 0;
 
+	// Counts aren't search-scoped: a zero means the tab is empty, not that an active query missed.
+	const showSearch = !! search || data?.[ filter ] !== 0;
+
 	return (
 		<Layout className="licenses-overview" title={ title } wide withBorder>
 			<LicensesOverviewContext.Provider value={ context }>
@@ -91,7 +94,7 @@ export default function LicensesOverview( {
 						<EmptyState />
 					) : (
 						<>
-							<LicenseSearch />
+							{ showSearch && <LicenseSearch /> }
 							<LicenseList />
 						</>
 					) }

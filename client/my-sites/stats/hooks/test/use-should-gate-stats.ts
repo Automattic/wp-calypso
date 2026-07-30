@@ -438,6 +438,7 @@ describe( 'shouldGateStats in Odyssey stats', () => {
 						blog_id: siteId,
 						product_slug: 'jetpack_stats_yearly',
 						expiry_status: 'active',
+						subscription_status: 'active',
 					},
 				],
 			},

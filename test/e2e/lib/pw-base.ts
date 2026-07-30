@@ -35,7 +35,11 @@ import {
 	BlazeCampaignPage,
 	BlockWidgetEditorComponent,
 	CartCheckoutPage,
+	DashboardMeSidebarComponent,
 	DashboardPage,
+	DashboardPurchasesPage,
+	DashboardSiteDomainsPage,
+	DashboardSnackbarComponent,
 	DashboardVisibilitySettingsPage,
 	DataHelper,
 	DomainSearchComponent,
@@ -170,6 +174,14 @@ export const test = base.extend<
 		 */
 		componentDomainSearch: DomainSearchComponent;
 		/**
+		 * Component for the Multi-site Dashboard `/me` sidebar (profile/settings).
+		 */
+		componentDashboardMeSidebar: DashboardMeSidebarComponent;
+		/**
+		 * Component for the Multi-site Dashboard snackbar notices.
+		 */
+		componentDashboardSnackbar: DashboardSnackbarComponent;
+		/**
 		 * Component for the Me sidebar (profile/settings)
 		 */
 		componentMeSidebar: MeSidebarComponent;
@@ -217,6 +229,10 @@ export const test = base.extend<
 		 * Page object representing the WordPress.com dashboard.
 		 */
 		pageDashboard: DashboardPage;
+		/**
+		 * Page object representing a single site's Domains screen (`/sites/:slug/domains`) in the WordPress.com dashboard.
+		 */
+		pageDashboardSiteDomains: DashboardSiteDomainsPage;
 		/**
 		 * Page object representing the cart checkout page.
 		 */
@@ -322,6 +338,10 @@ export const test = base.extend<
 		 */
 		pagePurchases: PurchasesPage;
 		/**
+		 * Page object representing the Multi-site Dashboard Billing > Active upgrades screens.
+		 */
+		pageDashboardPurchases: DashboardPurchasesPage;
+		/**
 		 * Page object representing the WordPress.com themes detail page.
 		 */
 		pageThemeDetails: ThemesDetailPage;
@@ -420,6 +440,14 @@ export const test = base.extend<
 		const blockWidgetEditorComponent = new BlockWidgetEditorComponent( page );
 		await use( blockWidgetEditorComponent );
 	},
+	componentDashboardMeSidebar: async ( { page }, use ) => {
+		const dashboardMeSidebarComponent = new DashboardMeSidebarComponent( page );
+		await use( dashboardMeSidebarComponent );
+	},
+	componentDashboardSnackbar: async ( { page }, use ) => {
+		const dashboardSnackbarComponent = new DashboardSnackbarComponent( page );
+		await use( dashboardSnackbarComponent );
+	},
 	componentMeSidebar: async ( { page }, use ) => {
 		const meSidebarComponent = new MeSidebarComponent( page );
 		await use( meSidebarComponent );
@@ -480,6 +508,10 @@ export const test = base.extend<
 	pageDashboard: async ( { page }, use ) => {
 		const dashboardPage = new DashboardPage( page );
 		await use( dashboardPage );
+	},
+	pageDashboardSiteDomains: async ( { page }, use ) => {
+		const dashboardSiteDomainsPage = new DashboardSiteDomainsPage( page );
+		await use( dashboardSiteDomainsPage );
 	},
 	pageCartCheckout: async ( { page }, use ) => {
 		const cartCheckoutPage = new CartCheckoutPage( page );
@@ -587,6 +619,10 @@ export const test = base.extend<
 	pagePurchases: async ( { page }, use ) => {
 		const purchasesPage = new PurchasesPage( page );
 		await use( purchasesPage );
+	},
+	pageDashboardPurchases: async ( { page }, use ) => {
+		const dashboardPurchasesPage = new DashboardPurchasesPage( page );
+		await use( dashboardPurchasesPage );
 	},
 	pageThemeDetails: async ( { page }, use ) => {
 		const themesDetailPage = new ThemesDetailPage( page );

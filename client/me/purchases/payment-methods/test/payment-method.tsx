@@ -72,6 +72,7 @@ const mockPurchases = [
 		meta: 'associatedsubscription.wordpress.com',
 		payment: { storedDetailsId: '1234' },
 		isAutoRenewEnabled: true,
+		mightStillAutoRenew: true,
 		renewDate: '2080-12-31',
 		id: '1234',
 	},

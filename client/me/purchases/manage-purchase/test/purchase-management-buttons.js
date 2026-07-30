@@ -2,11 +2,14 @@
  * @jest-environment jsdom
  */
 
+import { normalizePurchase } from '@automattic/api-core';
+import { purchaseQuery, sitePurchasesQuery } from '@automattic/api-queries';
 import {
 	AKISMET_PRODUCTS_LIST,
 	PRODUCT_AKISMET_ENTERPRISE_GT2M_MONTHLY,
 	PRODUCT_AKISMET_ENTERPRISE_GT2M_YEARLY,
 	AKISMET_UPGRADES_PRODUCTS_MAP,
+	PRODUCT_JETPACK_BACKUP_T1_YEARLY,
 } from '@automattic/calypso-products';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { render, screen } from '@testing-library/react';
@@ -102,7 +105,19 @@ function getSiteForPurchase( purchaseForSite ) {
 	};
 }
 
+const queryClient = new QueryClient( {
+	defaultOptions: { queries: { staleTime: Infinity, retry: false } },
+} );
+
+function seedPurchaseQueries( purchaseForQuery ) {
+	// Match what fetchPurchase() returns (string ids coerced to numbers, etc.).
+	const normalized = normalizePurchase( purchaseForQuery );
+	queryClient.setQueryData( purchaseQuery( normalized.ID ).queryKey, normalized );
+	queryClient.setQueryData( sitePurchasesQuery( normalized.blog_id ).queryKey, [ normalized ] );
+}
+
 function createMockReduxStoreForPurchase( purchaseForRedux, domains_items = {} ) {
+	seedPurchaseQueries( purchaseForRedux );
 	return createReduxStore(
 		{
 			currentUser: { id: Number( purchaseForRedux.user_id ) },
@@ -143,36 +158,9 @@ async function findPaymentMethodNavItem() {
 }
 
 describe( 'Purchase Management Buttons', () => {
-	const queryClient = new QueryClient();
-
 	beforeEach( () => {
-		// Default to the split-cancel-remove flow being enabled (matches config/test.json);
-		// individual tests opt out to exercise the flag-off path.
+		queryClient.clear();
 		useIsSplitCancelRemoveEnabled.mockReturnValue( true );
-	} );
-
-	it( 'cancel button links to the cancel flow with intent=cancel even when the split flag is off', async () => {
-		useIsSplitCancelRemoveEnabled.mockReturnValue( false );
-		nock( 'https://public-api.wordpress.com' )
-			.get( '/rest/v1.2/me/payment-methods?expired=include' )
-			.reply( 200 );
-
-		const store = createMockReduxStoreForPurchase( { ...purchase, is_auto_renew_enabled: true } );
-
-		render(
-			<QueryClientProvider client={ queryClient }>
-				<ReduxProvider store={ store }>
-					<ManagePurchase
-						purchaseId={ Number( purchase.ID ) }
-						isSiteLevel
-						siteSlug="onecooltestsite.com"
-					/>
-				</ReduxProvider>
-			</QueryClientProvider>
-		);
-
-		const cancelLink = await screen.findByRole( 'link', { name: /Cancel plan/i } );
-		expect( cancelLink ).toHaveAttribute( 'href', expect.stringContaining( 'intent=cancel' ) );
 	} );
 
 	it( 'renders a cancel button when auto-renew is ON', async () => {
@@ -217,6 +205,41 @@ describe( 'Purchase Management Buttons', () => {
 		);
 		expect( await screen.findByText( /will be removed immediately/ ) ).toBeVisible();
 		expect( await screen.findByText( /Remove plan/ ) ).toBeVisible();
+		expect( screen.queryByText( /Cancel subscription/ ) ).not.toBeInTheDocument();
+	} );
+
+	it( 'renders a Remove button for a domain connection bundled with a plan, even though auto-renew is ON', async () => {
+		nock( 'https://public-api.wordpress.com' )
+			.get( '/rest/v1.2/me/payment-methods?expired=include' )
+			.reply( 200 );
+
+		const store = createMockReduxStoreForPurchase(
+			{
+				...purchase,
+				product_id: 5,
+				product_slug: 'domain_map',
+				product_name: 'Domain Connection',
+				product_type: 'domain_map',
+				meta: 'onecooltestsite.com',
+				expiry_status: 'included',
+				is_auto_renew_enabled: true,
+			},
+			{ 212628935: [ { name: 'onecooltestsite.com' } ] }
+		);
+
+		render(
+			<QueryClientProvider client={ queryClient }>
+				<ReduxProvider store={ store }>
+					<ManagePurchase
+						purchaseId={ Number( purchase.ID ) }
+						isSiteLevel
+						siteSlug="onecooltestsite.com"
+					/>
+				</ReduxProvider>
+			</QueryClientProvider>
+		);
+
+		expect( await screen.findByText( /Remove Domain Connection/ ) ).toBeVisible();
 		expect( screen.queryByText( /Cancel subscription/ ) ).not.toBeInTheDocument();
 	} );
 
@@ -349,6 +372,45 @@ describe( 'Purchase Management Buttons', () => {
 		}
 	);
 
+	// Storage-eligible Jetpack products (Backup T1 / Security T1) show a plan
+	// upgrade CTA (/plans) plus a dedicated "Upgrade storage" CTA
+	// (/plans/storage), each rendered both in the button row and in the
+	// options list at the bottom. Backup T1 exercises the shared render path
+	// without pulling in the Jetpack-plan plugin-keys query.
+	it( 'renders both a plan upgrade and a storage upgrade CTA for a storage-eligible product', async () => {
+		nock( 'https://public-api.wordpress.com' )
+			.get( '/rest/v1.2/me/payment-methods?expired=include' )
+			.reply( 200 );
+
+		const store = createMockReduxStoreForPurchase( {
+			...purchase,
+			product_slug: PRODUCT_JETPACK_BACKUP_T1_YEARLY,
+		} );
+
+		render(
+			<QueryClientProvider client={ queryClient }>
+				<ReduxProvider store={ store }>
+					<ManagePurchase
+						purchaseId={ Number( purchase.ID ) }
+						isSiteLevel
+						siteSlug="onecooltestsite.com"
+					/>
+				</ReduxProvider>
+			</QueryClientProvider>
+		);
+
+		expect( await screen.findByText( 'Upgrade plan' ) ).toHaveAttribute(
+			'href',
+			'/plans/onecooltestsite.com'
+		);
+
+		const storageCtas = screen.getAllByText( 'Upgrade storage' );
+		expect( storageCtas ).toHaveLength( 2 );
+		storageCtas.forEach( ( cta ) =>
+			expect( cta ).toHaveAttribute( 'href', '/plans/storage/onecooltestsite.com' )
+		);
+	} );
+
 	it( 'renders payment method nav item for A4A billingdragon purchase on a real site', async () => {
 		nock( 'https://public-api.wordpress.com' )
 			.get( '/rest/v1.2/me/payment-methods?expired=include' )
@@ -409,6 +471,7 @@ describe( 'Purchase Management Buttons', () => {
 			},
 			( state ) => state
 		);
+		seedPurchaseQueries( a4aPurchase );
 
 		render(
 			<QueryClientProvider client={ queryClient }>

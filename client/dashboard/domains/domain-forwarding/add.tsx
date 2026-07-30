@@ -4,6 +4,7 @@ import { useRouter } from '@tanstack/react-router';
 import { __, sprintf } from '@wordpress/i18n';
 import Breadcrumbs from '../../app/breadcrumbs';
 import { domainRoute, domainForwardingRoute } from '../../app/router/domains';
+import { withSnackbar } from '../../app/snackbars/with-snackbar';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import DomainForwardingForm from './form';
@@ -15,16 +16,13 @@ import type { DomainForwardingSaveData } from '@automattic/api-core';
 export default function AddDomainForwarding() {
 	const router = useRouter();
 	const { domainName } = domainRoute.useParams();
-	const saveMutation = useMutation( {
-		...domainForwardingSaveMutation( domainName ),
-		meta: {
-			snackbar: {
-				/* translators: %s is the domain name */
-				success: sprintf( __( 'Domain forwarding rule for %s saved.' ), domainName ),
-				error: { source: 'server' },
-			},
-		},
-	} );
+	const saveMutation = useMutation(
+		withSnackbar( domainForwardingSaveMutation( domainName ), {
+			/* translators: %s is the domain name */
+			success: sprintf( __( 'Domain forwarding rule for %s saved.' ), domainName ),
+			error: { source: 'server' },
+		} )
+	);
 	const { data: domainData } = useSuspenseQuery( domainQuery( domainName ) );
 	const forceSubdomainsOnly = domainData?.primary_domain && ! domainData?.is_domain_only_site;
 

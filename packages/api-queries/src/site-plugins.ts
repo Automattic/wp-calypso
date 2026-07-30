@@ -66,6 +66,7 @@ const invalidatePluginsForSite = ( siteId: number ) => {
 
 export const sitePluginActivateMutation = () =>
 	mutationOptions( {
+		meta: { statId: 'site-plugin-activate' },
 		mutationFn: ( vars: { siteId: number; pluginId: string } ) =>
 			activateSitePlugin( vars.siteId, vars.pluginId ),
 		onSuccess: ( _data, vars: { siteId: number } ) => invalidatePluginsForSite( vars.siteId ),
@@ -73,6 +74,7 @@ export const sitePluginActivateMutation = () =>
 
 export const sitePluginDeactivateMutation = ( invalidateQueriesOnSuccess = true ) =>
 	mutationOptions( {
+		meta: { statId: 'site-plugin-deactivate' },
 		mutationFn: ( vars: { siteId: number; pluginId: string } ) =>
 			deactivateSitePlugin( vars.siteId, vars.pluginId ),
 		onSuccess: ( _data, vars: { siteId: number } ) => {
@@ -84,6 +86,7 @@ export const sitePluginDeactivateMutation = ( invalidateQueriesOnSuccess = true 
 
 export const sitePluginUpdateMutation = () =>
 	mutationOptions( {
+		meta: { statId: 'site-plugin-update' },
 		mutationFn: ( vars: { siteId: number; pluginId: string } ) =>
 			updateSitePlugin( vars.siteId, vars.pluginId ),
 		onSuccess: ( _data, vars: { siteId: number } ) => invalidatePluginsForSite( vars.siteId ),
@@ -91,6 +94,7 @@ export const sitePluginUpdateMutation = () =>
 
 export const sitePluginAutoupdateEnableMutation = () =>
 	mutationOptions( {
+		meta: { statId: 'site-plugin-auto-enable' },
 		mutationFn: ( vars: { siteId: number; pluginId: string } ) =>
 			enableSitePluginAutoupdate( vars.siteId, vars.pluginId ),
 		onSuccess: ( _data, vars: { siteId: number } ) => invalidatePluginsForSite( vars.siteId ),
@@ -98,6 +102,7 @@ export const sitePluginAutoupdateEnableMutation = () =>
 
 export const sitePluginAutoupdateDisableMutation = ( invalidateQueriesOnSuccess = true ) =>
 	mutationOptions( {
+		meta: { statId: 'site-plugin-auto-disable' },
 		mutationFn: ( vars: { siteId: number; pluginId: string } ) =>
 			disableSitePluginAutoupdate( vars.siteId, vars.pluginId ),
 		onSuccess: ( _data, vars: { siteId: number } ) => {
@@ -109,6 +114,7 @@ export const sitePluginAutoupdateDisableMutation = ( invalidateQueriesOnSuccess 
 
 export const sitePluginInstallMutation = () =>
 	mutationOptions( {
+		meta: { statId: 'site-plugin-install' },
 		mutationFn: ( vars: { siteId: number; pluginId: string } ) =>
 			installSitePlugin( vars.siteId, vars.pluginId ),
 		onSuccess: ( _data, vars: { siteId: number } ) => invalidatePluginsForSite( vars.siteId ),
@@ -116,6 +122,7 @@ export const sitePluginInstallMutation = () =>
 
 export const siteCorePluginInstallMutation = () =>
 	mutationOptions( {
+		meta: { statId: 'site-core-plugin-install' },
 		mutationFn: ( vars: { siteId: number; slug: string } ) =>
 			installSiteCorePlugin( vars.siteId, vars.slug ),
 		onSuccess: ( _data, vars: { siteId: number } ) => invalidateSiteCorePlugins( vars.siteId ),
@@ -123,6 +130,7 @@ export const siteCorePluginInstallMutation = () =>
 
 export const siteCorePluginActivateMutation = () =>
 	mutationOptions( {
+		meta: { statId: 'site-core-plugin-activate' },
 		mutationFn: ( vars: { siteId: number; plugin: string } ) =>
 			activateSiteCorePlugin( vars.siteId, vars.plugin ),
 		onSuccess: ( _data, vars: { siteId: number } ) => invalidateSiteCorePlugins( vars.siteId ),
@@ -130,6 +138,7 @@ export const siteCorePluginActivateMutation = () =>
 
 export const sitePluginRemoveMutation = ( invalidateQueriesOnSuccess = true ) =>
 	mutationOptions( {
+		meta: { statId: 'site-plugin-remove' },
 		mutationFn: ( vars: { siteId: number; pluginId: string } ) =>
 			removeSitePlugin( vars.siteId, vars.pluginId ),
 		onSuccess: ( _data, vars: { siteId: number } ) => {

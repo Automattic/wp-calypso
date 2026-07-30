@@ -37,7 +37,7 @@ const loadTrackingTool = ( trackingTool, store ) => {
 	if ( trackingTool === 'Survicate' ) {
 		const user = getCurrentUser( store.getState() );
 		if ( user?.email && user?.date ) {
-			addSurvicate( { email: user.email, registrationDate: user.date } );
+			addSurvicate( { email: user.email, registrationDate: user.date, userId: user.ID } );
 		}
 	}
 };

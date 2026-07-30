@@ -5,14 +5,12 @@
 import { renderHook } from '@testing-library/react';
 import useFetchAllLicenses from 'calypso/a8c-for-agencies/data/purchases/use-fetch-all-licenses';
 import useFetchSitesWithPlugins from 'calypso/a8c-for-agencies/data/sites/use-fetch-sites-with-plugins';
-import useFetchTaggedSitesForMigration from 'calypso/a8c-for-agencies/sections/migrations/hooks/use-fetch-tagged-sites-for-migration';
+import useFetchTaggedSitesForMigration from 'calypso/dashboard/agency/earn/migrations/hooks/use-fetch-tagged-sites-for-migration';
 import useFetchReferrals from '../../../hooks/use-fetch-referrals';
 import useHasCommissionActivity from '../use-has-commission-activity';
 
 jest.mock( '../../../hooks/use-fetch-referrals' );
-jest.mock(
-	'calypso/a8c-for-agencies/sections/migrations/hooks/use-fetch-tagged-sites-for-migration'
-);
+jest.mock( 'calypso/dashboard/agency/earn/migrations/hooks/use-fetch-tagged-sites-for-migration' );
 jest.mock( 'calypso/a8c-for-agencies/data/purchases/use-fetch-all-licenses' );
 jest.mock( 'calypso/a8c-for-agencies/data/sites/use-fetch-sites-with-plugins' );
 

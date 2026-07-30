@@ -3,6 +3,14 @@ declare module '@wordpress/block-editor' {
 		children?: import('react').ReactNode;
 		group?: string;
 	} >;
+	export const RichText: {
+		Content: import('react').ComponentType<
+			{
+				tagName?: keyof import('react').JSX.IntrinsicElements;
+				value: string;
+			} & import('react').HTMLAttributes< HTMLElement >
+		>;
+	};
 }
 
 /**

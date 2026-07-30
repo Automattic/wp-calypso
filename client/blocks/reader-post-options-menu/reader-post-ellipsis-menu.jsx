@@ -1,6 +1,6 @@
 import page from '@automattic/calypso-router';
 import { pencil as edit, external, Icon, seen, published, unseen } from '@wordpress/icons';
-import { localize } from 'i18n-calypso';
+import { fixMe, localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
@@ -298,7 +298,17 @@ class ReaderPostEllipsisMenu extends Component {
 						useWordPressIcon
 						iconSize={ 24 }
 					>
-						{ isSeen ? translate( 'Mark as unseen' ) : translate( 'Mark as seen' ) }
+						{ isSeen
+							? fixMe( {
+									text: 'Mark as unread',
+									newCopy: translate( 'Mark as unread' ),
+									oldCopy: translate( 'Mark as unseen' ),
+							  } )
+							: fixMe( {
+									text: 'Mark as read',
+									newCopy: translate( 'Mark as read' ),
+									oldCopy: translate( 'Mark as seen' ),
+							  } ) }
 					</PopoverMenuItem>
 				) }
 

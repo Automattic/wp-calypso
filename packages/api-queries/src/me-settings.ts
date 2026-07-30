@@ -1,6 +1,7 @@
-import { fetchUserSettings, updateUserSettings } from '@automattic/api-core';
+import { fetchUserSettings, sendVerificationEmail, updateUserSettings } from '@automattic/api-core';
 import { queryOptions, mutationOptions } from '@tanstack/react-query';
 import { queryClient, clearQueryClient } from './query-client';
+import type { UserSettings } from '@automattic/api-core';
 
 export const userSettingsQuery = () =>
 	queryOptions( {
@@ -10,6 +11,7 @@ export const userSettingsQuery = () =>
 
 export const userSettingsMutation = () =>
 	mutationOptions( {
+		meta: { statId: 'user-settings-update' },
 		mutationFn: updateUserSettings,
 		onSuccess: ( newData, variables ) => {
 			queryClient.setQueryData(
@@ -29,6 +31,7 @@ export const userSettingsMutation = () =>
 
 export const cancelPendingEmailChangeMutation = () =>
 	mutationOptions( {
+		meta: { statId: 'email-change-cancel' },
 		mutationFn: () => updateUserSettings( { user_email_change_pending: false } ),
 		onSuccess: ( newData ) => {
 			queryClient.setQueryData(
@@ -44,6 +47,7 @@ export const cancelPendingEmailChangeMutation = () =>
 
 export const resendEmailVerificationMutation = ( email: string ) =>
 	mutationOptions( {
+		meta: { statId: 'email-verify-resend' },
 		mutationFn: () => updateUserSettings( { user_email: email } ),
 		onSuccess: ( newData ) => {
 			queryClient.setQueryData(
@@ -54,5 +58,15 @@ export const resendEmailVerificationMutation = ( email: string ) =>
 						...newData,
 					}
 			);
+		},
+	} );
+
+export const sendEmailVerificationMutation = () =>
+	mutationOptions( {
+		meta: { statId: 'email-verify-send' },
+		// Return `{}` to match `resendEmailVerificationMutation`'s data type.
+		mutationFn: async (): Promise< Partial< UserSettings > > => {
+			await sendVerificationEmail();
+			return {};
 		},
 	} );

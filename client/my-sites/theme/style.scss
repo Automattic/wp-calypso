@@ -727,6 +727,10 @@ $button-border: 4px;
 	}
 }
 
+.theme__sheet-content .action-list {
+	margin-block-end: 24px;
+}
+
 .theme__sheet-placeholder {
 	color: transparent;
 	background-color: rgba( 255, 255, 255, 0.4 );
@@ -736,7 +740,7 @@ $button-border: 4px;
 .theme__sheet-features {
 	margin-bottom: 24px;
 
-	.card {
+	.card, .card.is-compact {
 		background-color: transparent;
 		box-shadow: none;
 		padding: 0;
@@ -852,9 +856,6 @@ $button-border: 4px;
 		}
 		.theme__sheet-reviews-summary {
 			padding-top: 16px;
-		}
-		.theme__sheet-features .card.is-compact {
-			padding: 16px 0;
 		}
 	}
 }
