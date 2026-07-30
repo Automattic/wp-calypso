@@ -261,6 +261,7 @@ export const agencyTeamRoute = createRoute( {
 
 // `/earn` – summary of the agency's earning programs (default Earn screen)
 export const earnOverviewRoute = createRoute( {
+	// TODO: replace with a top-level `a4a_read_earnings` capability when one exists.
 	staticData: { requiresAgencyCapability: [ 'a4a_read_referrals', 'a4a_read_migrations' ] },
 	head: () => ( { meta: [ { title: __( 'Overview' ) } ] } ),
 	getParentRoute: () => agencyRoute,
@@ -310,6 +311,7 @@ export const earnMigrationsRoute = createRoute( {
 
 // `/earn/payout-settings` – where and how the agency gets paid
 export const earnPayoutSettingsRoute = createRoute( {
+	// TODO: replace with a top-level `a4a_read_earnings` capability when one exists.
 	staticData: { requiresAgencyCapability: [ 'a4a_read_referrals', 'a4a_read_migrations' ] },
 	head: () => ( { meta: [ { title: __( 'Payout settings' ) } ] } ),
 	getParentRoute: () => agencyRoute,
@@ -322,6 +324,7 @@ export const earnPayoutSettingsRoute = createRoute( {
 
 // `/earn/referrals/$referralId` – referral (client) detail view; hosts the tab routes
 export const earnReferralRoute = createRoute( {
+	staticData: { requiresAgencyCapability: 'a4a_read_referrals' },
 	head: () => ( { meta: [ { title: __( 'Referral details' ) } ] } ),
 	getParentRoute: () => agencyRoute,
 	path: 'earn/referrals/$referralId',

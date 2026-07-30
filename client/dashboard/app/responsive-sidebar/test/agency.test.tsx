@@ -29,8 +29,8 @@ const config = {
 
 function mockAgency( capabilities: string[] ) {
 	nock( 'https://public-api.wordpress.com' )
+		.persist()
 		.get( '/wpcom/v2/agency' )
-		.times( 2 )
 		.reply( 200, [ { id: 1, mcp: { allowed: true }, user: { capabilities } } ] );
 }
 
@@ -47,10 +47,6 @@ async function renderSidebar( capabilities: string[] ) {
 }
 
 describe( '<AgencySidebar>', () => {
-	afterEach( () => {
-		nock.cleanAll();
-	} );
-
 	test( 'shows every menu item when the user holds every capability', async () => {
 		await renderSidebar( [
 			'a4a_read_managed_sites',
@@ -97,5 +93,20 @@ describe( '<AgencySidebar>', () => {
 		expect( screen.getByRole( 'link', { name: 'Payout settings' } ) ).toBeVisible();
 		expect( screen.queryByRole( 'link', { name: 'Referrals' } ) ).not.toBeInTheDocument();
 		expect( screen.queryByRole( 'link', { name: 'WooPayments' } ) ).not.toBeInTheDocument();
+	} );
+
+	// MCP is the one item gated by both a tier flag (`mcp.allowed`) and a
+	// capability (`a4a_read_learn`). `mockAgency` always reports the tier flag
+	// on, so these cases isolate the capability gate.
+	test( 'shows MCP when the agency is MCP-enabled and the user holds the learn capability', async () => {
+		await renderSidebar( [ 'a4a_read_learn' ] );
+
+		expect( screen.getByRole( 'link', { name: 'MCP' } ) ).toBeVisible();
+	} );
+
+	test( 'hides MCP when the agency is MCP-enabled but the user lacks the learn capability', async () => {
+		await renderSidebar( [ 'a4a_read_managed_sites' ] );
+
+		expect( screen.queryByRole( 'link', { name: 'MCP' } ) ).not.toBeInTheDocument();
 	} );
 } );

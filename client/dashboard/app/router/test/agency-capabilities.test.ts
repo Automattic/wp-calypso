@@ -2,7 +2,39 @@
  * @jest-environment jsdom
  */
 
-import { hasAnyCapability, isAllowedByCapabilities } from '../agency';
+import { createAgencyRoutes, hasAnyCapability, isAllowedByCapabilities } from '../agency';
+import type { StaticDataRouteOption } from '@tanstack/react-router';
+
+type RouteNode = {
+	options?: { path?: string; staticData?: StaticDataRouteOption };
+	children?: RouteNode[];
+};
+
+// Routes that are intentionally reachable by any agency member, so they carry
+// no `requiresAgencyCapability`. Anything else must be guarded by itself or an
+// ancestor; a new unguarded route will fail the coverage test below.
+const OPEN_ROUTE_PATHS = new Set( [
+	'', // the pathless `agency` guard route itself
+	'overview', // the fallback the capability guard redirects to
+] );
+
+function collectUnguardedRoutes(
+	route: RouteNode,
+	ancestorGuarded: boolean,
+	parentPath: string
+): string[] {
+	const path = route.options?.path;
+	const fullPath = path ? [ parentPath, path ].filter( Boolean ).join( '/' ) : parentPath;
+	const guarded = ancestorGuarded || !! route.options?.staticData?.requiresAgencyCapability;
+	const children = Array.isArray( route.children ) ? route.children : [];
+
+	const unguarded = ! guarded && ! OPEN_ROUTE_PATHS.has( fullPath ) ? [ fullPath ] : [];
+
+	return children.reduce< string[] >(
+		( acc, child ) => acc.concat( collectUnguardedRoutes( child, guarded, fullPath ) ),
+		unguarded
+	);
+}
 
 describe( 'hasAnyCapability', () => {
 	test( 'returns true when the single required capability is present', () => {
@@ -67,5 +99,17 @@ describe( 'isAllowedByCapabilities', () => {
 				[ 'a4a_read_users' ]
 			)
 		).toBe( false );
+	} );
+} );
+
+describe( 'createAgencyRoutes capability coverage', () => {
+	test( 'every agency route is capability-guarded or explicitly open', () => {
+		const routes = createAgencyRoutes() as RouteNode[];
+		const unguarded = routes.reduce< string[] >(
+			( acc, route ) => acc.concat( collectUnguardedRoutes( route, false, '' ) ),
+			[]
+		);
+
+		expect( unguarded ).toEqual( [] );
 	} );
 } );
