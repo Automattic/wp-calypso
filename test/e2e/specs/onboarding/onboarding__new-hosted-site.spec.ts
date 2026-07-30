@@ -12,7 +12,7 @@ import {
 	cancelDashboardPurchaseFlow,
 	removeDashboardUpgradeFlow,
 } from '@automattic/calypso-e2e';
-import { /*skipIfNotTrunk, */ tags, test } from '../../lib/pw-base';
+import { /*skipIfNotTrunk, */ tags, test, expect } from '../../lib/pw-base';
 import { apiCancelAtomicPlan, apiCloseAccount } from '../shared';
 
 test.describe(
@@ -154,6 +154,10 @@ test.describe(
 				await snackbar.noticeShown( 'Your refund has been processed and your purchase removed.', {
 					exact: true,
 				} );
+			} );
+
+			await test.step( 'make fail so i can watch video', () => {
+				expect( 2 ).toBe( 3 );
 			} );
 		} );
 	}
