@@ -148,10 +148,10 @@ export interface Client {
 	getNotes: () => void;
 	getNotesList: () => void;
 	getFilteredNotes: () => void;
-	setFilter: ( filter: Record< string, unknown > | null ) => void;
+	setFilter: ( filterName: FilterName ) => void;
 	updateLastSeenTime: ( proposedTime: number, fromStorage: boolean ) => boolean;
 	loadMore: () => void;
-	hasMoreNotes: () => boolean;
+	hasMoreNotes: ( filterName?: FilterName ) => boolean;
 	refreshNotes: () => void;
 	setVisibility: ( { isShowing, isVisible }: { isShowing: boolean; isVisible: boolean } ) => void;
 }

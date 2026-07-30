@@ -61,12 +61,12 @@ export const noteLikes = ( state = {}, { type, noteId, isLiked } ) => {
 	return state;
 };
 
-// Ordered id list backing the active server-filtered view (Unread, Comments,
-// Subscribers, Likes). Holds the server's answer for which notes belong to the
-// current filter; the notes themselves live in `allNotes`.
-export const filteredNoteIds = ( state = [], { type, noteIds } ) => {
+// Ordered id lists for the filtered tabs, keyed by tab name so each keeps its own
+// last result. Absent key = never fetched (show the loader); present (even []) =
+// loaded. The notes themselves live in `allNotes`.
+export const filteredNoteIds = ( state = {}, { type, filterKey, noteIds } ) => {
 	if ( types.SET_FILTERED_NOTE_IDS === type ) {
-		return noteIds;
+		return { ...state, [ filterKey ]: noteIds };
 	}
 
 	return state;
