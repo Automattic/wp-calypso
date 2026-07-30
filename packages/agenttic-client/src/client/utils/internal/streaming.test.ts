@@ -1,4 +1,4 @@
-import { describe, expect, it } from 'vitest';
+import { afterEach, describe, expect, it, vi } from 'vitest';
 import { parseSSEStream } from './streaming';
 
 const encoder = new TextEncoder();
@@ -881,5 +881,110 @@ describe( 'parseSSEStream', () => {
 
 		expect( updates[ 0 ].id ).toBe( 'task-final' );
 		expect( updates[ 0 ].final ).toBe( true );
+	} );
+
+	describe( 'delta pacing', () => {
+		afterEach( () => {
+			vi.unstubAllGlobals();
+			vi.restoreAllMocks();
+		} );
+
+		function contentDelta( index: number ): unknown {
+			return {
+				jsonrpc: '2.0',
+				method: 'message/delta',
+				params: {
+					id: 'task-paced',
+					delta: {
+						type: 'delta',
+						deltaType: 'content',
+						content: `token-${ index } `,
+					},
+				},
+			};
+		}
+
+		function singleChunkStreamOf(
+			count: number
+		): ReadableStream< Uint8Array > {
+			// One network chunk carrying the whole backlog, which is what the
+			// client sees when the server finished while events were buffered.
+			const payload = Array.from( { length: count }, ( _, index ) =>
+				sseEvent( contentDelta( index ) )
+			).join( '' );
+			return streamFromRaw( payload );
+		}
+
+		it( 'drains an already-buffered burst of deltas without pacing each one', async () => {
+			const rafSpy = vi.fn( ( callback: FrameRequestCallback ) => {
+				return setTimeout(
+					() => callback( performance.now() ),
+					0
+				) as unknown as number;
+			} );
+			vi.stubGlobal( 'requestAnimationFrame', rafSpy );
+
+			const updates = [];
+			for await ( const update of parseSSEStream(
+				singleChunkStreamOf( 60 ),
+				{ supportDeltas: true }
+			) ) {
+				updates.push( update );
+			}
+
+			expect( updates ).toHaveLength( 60 );
+			expect( updates[ 59 ].text ).toContain( 'token-59' );
+			// A buffered backlog must not wait one frame per delta; only the
+			// occasional yield when the processing budget is exhausted.
+			expect( rafSpy.mock.calls.length ).toBeLessThanOrEqual( 5 );
+		} );
+
+		it( 'delivers all buffered deltas even when requestAnimationFrame never fires', async () => {
+			// Hidden tabs and occluded windows throttle or pause rAF
+			// entirely; delivery must not stall behind it.
+			vi.stubGlobal( 'requestAnimationFrame', vi.fn() );
+			// Make every delta appear to exhaust the processing budget so
+			// the pacing path is exercised on each event.
+			let fakeNow = 0;
+			vi.spyOn( Date, 'now' ).mockImplementation(
+				() => ( fakeNow += 20 )
+			);
+
+			const updates = [];
+			for await ( const update of parseSSEStream(
+				singleChunkStreamOf( 5 ),
+				{ supportDeltas: true }
+			) ) {
+				updates.push( update );
+			}
+
+			expect( updates ).toHaveLength( 5 );
+			expect( updates[ 4 ].text ).toContain( 'token-4' );
+		}, 3000 );
+
+		it( 'still yields to a frame between deltas once the processing budget is exceeded', async () => {
+			const rafSpy = vi.fn( ( callback: FrameRequestCallback ) => {
+				return setTimeout(
+					() => callback( performance.now() ),
+					0
+				) as unknown as number;
+			} );
+			vi.stubGlobal( 'requestAnimationFrame', rafSpy );
+			let fakeNow = 0;
+			vi.spyOn( Date, 'now' ).mockImplementation(
+				() => ( fakeNow += 20 )
+			);
+
+			const updates = [];
+			for await ( const update of parseSSEStream(
+				singleChunkStreamOf( 5 ),
+				{ supportDeltas: true }
+			) ) {
+				updates.push( update );
+			}
+
+			expect( updates ).toHaveLength( 5 );
+			expect( rafSpy.mock.calls.length ).toBeGreaterThanOrEqual( 1 );
+		} );
 	} );
 } );
