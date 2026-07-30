@@ -804,11 +804,6 @@ export const contextProvider = {
 					type: 'selected-block-content',
 					data: selectedBlockContent ? { content: selectedBlockContent } : null,
 				},
-				{
-					id: 'ai-editorial-review-contract',
-					type: 'ai-editorial-review-contract',
-					data: { version: 2 },
-				},
 			],
 		};
 	},
