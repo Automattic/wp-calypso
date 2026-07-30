@@ -8,7 +8,11 @@ import {
 	setCheckpoint,
 } from '../../../utils/checkpoints';
 import { isEditorPage } from '../../../utils/is-editor-page';
-import { getProviderCheckpoint, getProviderCheckpoints } from '../../../utils/provider-checkpoints';
+import {
+	getProviderCheckpoint,
+	getProviderCheckpointRecords,
+	getProviderCheckpoints,
+} from '../../../utils/provider-checkpoints';
 import { getToolCallIdFromConversationHistory } from '../../../utils/tool-call-history';
 import { restoreCheckpointCallback } from '../callback';
 
@@ -24,6 +28,7 @@ jest.mock( '../../../utils/checkpoints', () => ( {
 jest.mock( '../../../utils/is-editor-page', () => ( { isEditorPage: jest.fn( () => true ) } ) );
 jest.mock( '../../../utils/provider-checkpoints', () => ( {
 	getProviderCheckpoint: jest.fn( () => null ),
+	getProviderCheckpointRecords: jest.fn( () => [] ),
 	getProviderCheckpoints: jest.fn(),
 } ) );
 jest.mock( '../../../utils/tool-call-history', () => ( {
@@ -36,6 +41,7 @@ const mockHasCheckpoint = hasCheckpoint as jest.Mock;
 const mockGetToolCallId = getToolCallIdFromConversationHistory as jest.Mock;
 const mockGetProviderCheckpoints = getProviderCheckpoints as jest.Mock;
 const mockGetProviderCheckpoint = getProviderCheckpoint as jest.Mock;
+const mockGetProviderCheckpointRecords = getProviderCheckpointRecords as jest.Mock;
 
 const RESTORE_CALL_ID = 'toolu_restore';
 const RESTORE_SUMMARY = 'I undid the color change.';
@@ -72,6 +78,7 @@ beforeEach( () => {
 	mockGetToolCallId.mockReturnValue( null );
 	mockGetProviderCheckpoints.mockReturnValue( undefined );
 	mockGetProviderCheckpoint.mockReturnValue( null );
+	mockGetProviderCheckpointRecords.mockReturnValue( [] );
 } );
 
 describe( 'restoreCheckpointCallback', () => {
@@ -189,6 +196,72 @@ describe( 'restoreCheckpointCallback', () => {
 			'toolu_old_redo',
 			'toolu_legacy',
 		] );
+	} );
+
+	it( 'clears stale reciprocals from the provider store after an AM restore', async () => {
+		mockGetToolCallId.mockReturnValue( RESTORE_CALL_ID );
+		const providerCheckpoints = makeProviderCheckpoints();
+		mockGetProviderCheckpoints.mockReturnValue( providerCheckpoints );
+		mockGetProviderCheckpointRecords.mockReturnValue( [
+			{
+				id: 'toolu_provider_stale',
+				toolId: RESTORE_CHECKPOINT_TOOL_ID,
+				requestIntentType: 'redo',
+			},
+			{ id: 'toolu_provider_edit', toolId: 'big_sky__edit_entity_record' },
+		] );
+
+		await restoreCheckpointCallback( makeInput() );
+
+		expect( providerCheckpoints.clearCheckpoint.mock.calls.flat() ).toEqual( [
+			'toolu_provider_stale',
+		] );
+	} );
+
+	it( 'clears stale reciprocals from both stores after a delegated restore', async () => {
+		mockGetCheckpoint.mockReturnValue( undefined );
+		mockGetToolCallId.mockReturnValue( RESTORE_CALL_ID );
+		const providerCheckpoints = makeProviderCheckpoints();
+		mockGetProviderCheckpoints.mockReturnValue( providerCheckpoints );
+		mockGetCheckpoints.mockReturnValue( [
+			{ id: 'toolu_am_stale', toolId: RESTORE_CHECKPOINT_TOOL_ID, requestIntentType: 'redo' },
+		] );
+		mockGetProviderCheckpointRecords.mockReturnValue( [
+			{
+				id: 'toolu_provider_stale',
+				toolId: RESTORE_CHECKPOINT_TOOL_ID,
+				requestIntentType: 'redo',
+			},
+		] );
+
+		await restoreCheckpointCallback( makeInput() );
+
+		expect( ( clearCheckpoint as jest.Mock ).mock.calls.flat() ).toEqual( [ 'toolu_am_stale' ] );
+		expect( providerCheckpoints.clearCheckpoint.mock.calls.flat() ).toEqual( [
+			'toolu_provider_stale',
+		] );
+	} );
+
+	it( 'restores even when recording the provider reciprocal fails', async () => {
+		const error = jest.spyOn( console, 'error' ).mockImplementation( () => {} );
+		mockGetCheckpoint.mockReturnValue( undefined );
+		mockGetToolCallId.mockReturnValue( RESTORE_CALL_ID );
+		mockGetProviderCheckpoint.mockReturnValue( { checkpointKeys: [ 'site_title' ] } );
+		const providerCheckpoints = makeProviderCheckpoints();
+		providerCheckpoints.setCheckpoint.mockImplementationOnce( () => {
+			throw new Error( 'Snapshot exploded.' );
+		} );
+		mockGetProviderCheckpoints.mockReturnValue( providerCheckpoints );
+
+		const result = await restoreCheckpointCallback( makeInput() );
+
+		expect( providerCheckpoints.restoreCheckpoint ).toHaveBeenCalledWith( TARGET_CHECKPOINT.id );
+		expect( providerCheckpoints.clearCheckpoint ).toHaveBeenCalledWith( RESTORE_CALL_ID );
+		expect( result.result.success ).toBe( true );
+		expect( error ).toHaveBeenCalledWith(
+			`[AgentsManager] Failed to record a redo checkpoint for ${ TARGET_CHECKPOINT.id }:`,
+			expect.any( Error )
+		);
 	} );
 
 	it( 'delegates to the provider store when AM does not hold the id', async () => {

@@ -1,6 +1,7 @@
 import { select } from '@wordpress/data';
 import {
 	getProviderCheckpoint,
+	getProviderCheckpointRecords,
 	getProviderCheckpoints,
 	setProviderCheckpoints,
 } from '../provider-checkpoints';
@@ -73,5 +74,31 @@ describe( 'getProviderCheckpoint', () => {
 		mockSelect.mockReturnValue( storeSelect );
 
 		expect( getProviderCheckpoint( 'toolu_1' ) ).toBeNull();
+	} );
+} );
+
+describe( 'getProviderCheckpointRecords', () => {
+	it( 'lists every provider-held checkpoint that carries an id', () => {
+		mockSelect.mockReturnValue( {
+			getCheckpoints: () => [
+				{ id: 'toolu_1', toolId: 'big_sky__restore_checkpoint', requestIntentType: 'redo' },
+				{ id: 'toolu_2', checkpointKeys: [ 'blocks' ] },
+				{ checkpointKeys: [ 'color' ] },
+			],
+		} );
+
+		expect( getProviderCheckpointRecords() ).toEqual( [
+			{ id: 'toolu_1', toolId: 'big_sky__restore_checkpoint', requestIntentType: 'redo' },
+			{ id: 'toolu_2', checkpointKeys: [ 'blocks' ] },
+		] );
+	} );
+
+	it.each( [
+		[ 'the store is not registered', undefined ],
+		[ 'the selector is missing', {} ],
+	] )( 'returns an empty list when %s', ( _case, storeSelect ) => {
+		mockSelect.mockReturnValue( storeSelect );
+
+		expect( getProviderCheckpointRecords() ).toEqual( [] );
 	} );
 } );

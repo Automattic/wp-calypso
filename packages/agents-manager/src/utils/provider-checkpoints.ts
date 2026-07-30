@@ -31,9 +31,23 @@ export interface ProviderCheckpoint {
 	navigationRecords?: Record< string, unknown >;
 }
 
+export interface ProviderCheckpointRecord {
+	id: string;
+	toolId?: string;
+	requestIntentType?: string;
+}
+
+type ProviderStoreRecord = Partial< ProviderCheckpointRecord & ProviderCheckpoint >;
+
 type ProviderStoreSelect = {
-	getCheckpoints?: () => ( { id?: string } & Partial< ProviderCheckpoint > )[] | undefined;
+	getCheckpoints?: () => ProviderStoreRecord[] | undefined;
 };
+
+function getProviderStoreRecords(): ProviderStoreRecord[] {
+	return (
+		( select( PROVIDER_STORE_NAME ) as ProviderStoreSelect | undefined )?.getCheckpoints?.() ?? []
+	);
+}
 
 /**
  * The restore-relevant fields of a provider-held checkpoint, or `null` when
@@ -41,9 +55,7 @@ type ProviderStoreSelect = {
  * for some entity edits, and those restore via its legacy full-snapshot path.
  */
 export function getProviderCheckpoint( id: string ): ProviderCheckpoint | null {
-	const checkpoints =
-		( select( PROVIDER_STORE_NAME ) as ProviderStoreSelect | undefined )?.getCheckpoints?.() ?? [];
-	const checkpoint = checkpoints.find( ( record ) => record?.id === id );
+	const checkpoint = getProviderStoreRecords().find( ( record ) => record?.id === id );
 	if ( ! Array.isArray( checkpoint?.checkpointKeys ) || ! checkpoint.checkpointKeys.length ) {
 		return null;
 	}
@@ -53,4 +65,14 @@ export function getProviderCheckpoint( id: string ): ProviderCheckpoint | null {
 		...( checkpoint.pageRename && { pageRename: checkpoint.pageRename } ),
 		...( checkpoint.navigationRecords && { navigationRecords: checkpoint.navigationRecords } ),
 	};
+}
+
+/**
+ * Identity fields of every provider-held checkpoint — lets the restore sweep
+ * clear stale reciprocals from Big Sky's store too.
+ */
+export function getProviderCheckpointRecords(): ProviderCheckpointRecord[] {
+	return getProviderStoreRecords().filter(
+		( record ): record is ProviderCheckpointRecord => typeof record?.id === 'string'
+	);
 }
