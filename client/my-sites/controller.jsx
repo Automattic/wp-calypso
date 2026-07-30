@@ -668,20 +668,22 @@ export function siteSelection( context, next ) {
 		dispatch( requestSite( siteFragment ) )
 			.catch( () => null )
 			.then( ( site ) => {
-				let freshSiteId;
+				// `requestSite` doesn't store sites the user can't manage, so an ID that isn't
+				// in state means the fragment resolved to a site that isn't theirs.
+				let freshSiteId = getSiteId( getState(), site?.ID );
 
 				// If we found a site using the fragment and the fragment matches the *.wordpress.com domain for a site with a mapped domain,
 				// redirect to the mapped domain, e.g /site-editor/example.wordpress.com -> /site-editor/example.com
-				if ( site && site.ID ) {
-					const siteSlug = getSiteSlug( getState(), site.ID );
-					const unmappedSlug = withoutHttp( getSiteOption( getState(), site.ID, 'unmapped_url' ) );
+				if ( freshSiteId ) {
+					const siteSlug = getSiteSlug( getState(), freshSiteId );
+					const unmappedSlug = withoutHttp(
+						getSiteOption( getState(), freshSiteId, 'unmapped_url' )
+					);
 
 					if ( unmappedSlug !== siteSlug && unmappedSlug === siteFragment ) {
 						const hash = context.hashstring ? `#${ context.hashstring }` : '';
 						return page.redirect( context.path.replace( siteFragment, siteSlug ) + hash );
 					}
-
-					freshSiteId = site.ID;
 				}
 
 				freshSiteId ??= getSiteId( getState(), siteFragment );

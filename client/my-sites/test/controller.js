@@ -6,13 +6,19 @@ import page from '@automattic/calypso-router';
 import configureStore from 'redux-mock-store';
 import { thunk } from 'redux-thunk';
 import * as pageView from 'calypso/lib/analytics/page-view';
-import { PREFERENCES_SET } from 'calypso/state/action-types';
+import { PREFERENCES_SET, SELECTED_SITE_SET } from 'calypso/state/action-types';
+import { requestSite } from 'calypso/state/sites/actions';
 import {
 	updateRecentSitesPreferences,
 	recordNoSitesPageView,
 	recordNoVisibleSitesPageView,
 	redirectToPrimary,
+	siteSelection,
 } from '../controller';
+
+jest.mock( 'calypso/state/sites/actions', () => ( {
+	requestSite: jest.fn(),
+} ) );
 
 const middlewares = [ thunk ];
 const mockStore = configureStore( middlewares );
@@ -180,6 +186,82 @@ describe( 'recordNoSitesPageView', () => {
 		} );
 
 		spy.mockRestore();
+	} );
+} );
+
+describe( 'siteSelection', () => {
+	const siteId = 1;
+	const siteFragment = 'example.com';
+
+	// A mock store never reduces the `setSelectedSiteId` this dispatches, so
+	// `selectedSiteId` stands in for the state after it.
+	const buildStore = ( items, selectedSiteId = null ) =>
+		mockStore( {
+			currentUser: { user: { site_count: 2, visible_site_count: 2 } },
+			sites: { items, domains: { items: {} }, plans: {} },
+			ui: { selectedSiteId },
+			preferences: { remoteValues: null },
+		} );
+
+	const buildContext = ( store ) => ( {
+		store,
+		path: `/home/${ siteFragment }`,
+		pathname: `/home/${ siteFragment }`,
+		params: { site: siteFragment },
+		query: {},
+		querystring: '',
+		section: { enableNoSites: false },
+	} );
+
+	const selectedSiteAction = ( store ) =>
+		store.getActions().find( ( { type } ) => type === SELECTED_SITE_SET );
+
+	let redirectSpy;
+	let next;
+
+	beforeEach( () => {
+		redirectSpy = jest.spyOn( page, 'redirect' ).mockImplementation( () => {} );
+		next = jest.fn();
+	} );
+
+	afterEach( () => {
+		redirectSpy.mockRestore();
+	} );
+
+	it( 'should not select a fetched site that is absent from state', async () => {
+		requestSite.mockReturnValue( () => Promise.resolve( { ID: 2, URL: 'https://example.com' } ) );
+		const store = buildStore( { [ siteId ]: {} } );
+
+		siteSelection( buildContext( store ), next );
+		await new Promise( process.nextTick );
+
+		expect( selectedSiteAction( store ) ).toBeUndefined();
+		expect( next ).not.toHaveBeenCalled();
+		expect( redirectSpy ).toHaveBeenCalledWith( '/home' );
+	} );
+
+	it( 'should select a fetched site that is in state under a different slug', async () => {
+		requestSite.mockReturnValue( () =>
+			Promise.resolve( { ID: siteId, URL: 'https://example.wordpress.com' } )
+		);
+		const store = buildStore(
+			{
+				[ siteId ]: {
+					ID: siteId,
+					URL: 'https://example.wordpress.com',
+					capabilities: { manage_options: true },
+					options: { unmapped_url: 'https://example.wordpress.com' },
+				},
+			},
+			siteId
+		);
+
+		siteSelection( buildContext( store ), next );
+		await new Promise( process.nextTick );
+
+		expect( selectedSiteAction( store )?.siteId ).toEqual( siteId );
+		expect( redirectSpy ).not.toHaveBeenCalled();
+		expect( next ).toHaveBeenCalled();
 	} );
 } );
 
