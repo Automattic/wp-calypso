@@ -1,3 +1,4 @@
+import { isAutomatticianQuery } from '@automattic/api-queries';
 import { getTracksAnonymousUserId } from '@automattic/calypso-analytics';
 import config from '@automattic/calypso-config';
 import {
@@ -17,6 +18,7 @@ import {
 } from '@automattic/design-picker';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { isWithinBreakpoint, subscribeIsWithinBreakpoint } from '@automattic/viewport';
+import { useQuery } from '@tanstack/react-query';
 import {
 	MenuItem,
 	Dropdown,
@@ -28,9 +30,9 @@ import {
 import { createHigherOrderComponent } from '@wordpress/compose';
 import { chevronDown, chevronUp, Icon, external } from '@wordpress/icons';
 import { __dangerousOptInToUnstableAPIsOnlyForCoreModules } from '@wordpress/private-apis';
-import { hasQueryArg } from '@wordpress/url';
+import { addQueryArgs, hasQueryArg } from '@wordpress/url';
 import clsx from 'clsx';
-import { localize, getLocaleSlug } from 'i18n-calypso';
+import { localize, getLocaleSlug, useTranslate } from 'i18n-calypso';
 import photon from 'photon';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
@@ -152,6 +154,62 @@ const { Badge } = unlock( privateApis );
 
 const SiteIntent = Onboard.SiteIntent;
 
+/**
+ * Secondary Theme Sheet CTA: when the wpcom theme API marks a theme with a
+ * matching blueprint archive (has_blueprint / blueprint_id), offer to build a
+ * new WoA site from it via the onboarding blueprint flow.
+ *
+ * A function component (rather than a ThemeSheet method) so it can read the
+ * Automattician check via the `isAutomatticianQuery` hook. Gated to
+ * Automatticians for now, behind the `themes/blueprint-cta` feature flag.
+ */
+function BlueprintCtaButton( {
+	hasBlueprint,
+	blueprintId,
+	themeId,
+	themeType,
+	themeTier,
+	isLoading,
+	recordTracksEvent: recordCtaTracksEvent,
+} ) {
+	const translate = useTranslate();
+	const { data: isAutomattician } = useQuery( isAutomatticianQuery() );
+
+	if (
+		! config.isEnabled( 'themes/blueprint-cta' ) ||
+		! isAutomattician ||
+		! hasBlueprint ||
+		! blueprintId
+	) {
+		return null;
+	}
+
+	// The onboarding blueprint step (getBlueprintID) accepts a numeric
+	// blueprint-library id via ?blueprint=<id>.
+	const href = addQueryArgs( '/setup/onboarding/blueprint', {
+		blueprint: blueprintId,
+		ref: `theme-${ themeId }`,
+	} );
+
+	return (
+		<Button
+			className="theme__sheet-blueprint-button"
+			href={ href }
+			onClick={ () =>
+				recordCtaTracksEvent( 'calypso_theme_sheet_blueprint_button_click', {
+					theme: themeId,
+					theme_type: themeType,
+					theme_tier: themeTier?.slug,
+					blueprint_id: blueprintId,
+				} )
+			}
+			disabled={ isLoading }
+		>
+			{ translate( 'Build a site with this blueprint' ) }
+		</Button>
+	);
+}
+
 class ThemeSheet extends Component {
 	static displayName = 'ThemeSheet';
 
@@ -188,6 +246,10 @@ class ThemeSheet extends Component {
 		backPath: PropTypes.string,
 		isWpcomTheme: PropTypes.bool,
 		softLaunched: PropTypes.bool,
+		// eslint-disable-next-line camelcase -- passed through from the wpcom theme API.
+		has_blueprint: PropTypes.bool,
+		// eslint-disable-next-line camelcase -- passed through from the wpcom theme API.
+		blueprint_id: PropTypes.number,
 		defaultOption: PropTypes.shape( {
 			label: PropTypes.string,
 			action: PropTypes.func,
@@ -708,6 +770,7 @@ class ThemeSheet extends Component {
 							( this.shouldRenderUnlockStyleButton()
 								? this.renderUnlockStyleButton()
 								: this.renderButton() ) }
+						{ this.renderBlueprintButton() }
 					</div>
 					{ this.renderDisclaimer() }
 				</div>
@@ -986,6 +1049,26 @@ class ThemeSheet extends Component {
 			>
 				{ this.isLoaded() ? label : placeholder }
 			</Button>
+		);
+	};
+
+	// Secondary CTA: when the theme has a matching blueprint archive on
+	// blueprintlibrary.wordpress.com (surfaced by the wpcom theme API as
+	// has_blueprint / blueprint_id), offer to build a new WoA site from it via the
+	// onboarding blueprint flow. Gated by the themes/blueprint-cta feature flag.
+	renderBlueprintButton = () => {
+		return (
+			<BlueprintCtaButton
+				// eslint-disable-next-line camelcase -- passed through from the wpcom theme API.
+				hasBlueprint={ this.props.has_blueprint }
+				// eslint-disable-next-line camelcase -- passed through from the wpcom theme API.
+				blueprintId={ this.props.blueprint_id }
+				themeId={ this.props.themeId }
+				themeType={ this.props.themeType }
+				themeTier={ this.props.themeTier }
+				isLoading={ this.isLoading() }
+				recordTracksEvent={ this.props.recordTracksEvent }
+			/>
 		);
 	};
 
