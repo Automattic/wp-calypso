@@ -1,12 +1,13 @@
+import { purchaseQuery } from '@automattic/api-queries';
 import { isDomainRegistration } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
 import { Card, CompactCard, FormLabel } from '@automattic/components';
-import { localize } from 'i18n-calypso';
-import PropTypes from 'prop-types';
+import { useQuery } from '@tanstack/react-query';
+import { localize, LocalizeProps, TranslateResult } from 'i18n-calypso';
 import { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
 import ActionPanelLink from 'calypso/components/action-panel/link';
-import QueryUserPurchases from 'calypso/components/data/query-user-purchases';
 import FormattedHeader from 'calypso/components/formatted-header';
 import FormButton from 'calypso/components/forms/form-button';
 import FormCheckbox from 'calypso/components/forms/form-checkbox';
@@ -15,43 +16,73 @@ import FormTextarea from 'calypso/components/forms/form-textarea';
 import HeaderCakeBack from 'calypso/components/header-cake/back';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
-import { getName as getDomainName } from 'calypso/lib/purchases';
 import { cancelAndRefundPurchase } from 'calypso/lib/purchases/actions';
 import { cancelPurchase, purchasesRoot } from 'calypso/me/purchases/paths';
 import TrackPurchasePageView from 'calypso/me/purchases/track-purchase-page-view';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 import { clearPurchases } from 'calypso/state/purchases/actions';
-import {
-	getByPurchaseId,
-	hasLoadedUserPurchasesFromServer,
-} from 'calypso/state/purchases/selectors';
 import isDomainOnly from 'calypso/state/selectors/is-domain-only-site';
 import { receiveDeletedSite } from 'calypso/state/sites/actions';
 import { refreshSitePlans } from 'calypso/state/sites/plans/actions';
 import { isRequestingSites } from 'calypso/state/sites/selectors';
 import { setAllSitesSelected } from 'calypso/state/ui/actions';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
-import { isDataLoading } from '../utils';
+import { getName as getDomainName } from '../lib/raw-purchase-helpers';
 import cancellationReasons from './cancellation-reasons';
 import ConfirmCancelDomainLoadingPlaceholder from './loading-placeholder';
+import type { Purchase } from '@automattic/api-core';
+import type { SiteDetails } from '@automattic/data-stores';
+import type { CalypsoDispatch } from 'calypso/state/types';
+import type { AppState } from 'calypso/types';
+import type { ChangeEvent, SyntheticEvent } from 'react';
 
 import './style.scss';
 
-class ConfirmCancelDomain extends Component {
-	static propTypes = {
-		purchaseListUrl: PropTypes.string,
-		getCancelPurchaseUrlFor: PropTypes.func,
-		hasLoadedUserPurchasesFromServer: PropTypes.bool.isRequired,
-		isDomainOnlySite: PropTypes.bool,
-		purchaseId: PropTypes.number.isRequired,
-		receiveDeletedSite: PropTypes.func.isRequired,
-		purchase: PropTypes.object,
-		selectedSite: PropTypes.oneOfType( [ PropTypes.bool, PropTypes.object ] ),
-		setAllSitesSelected: PropTypes.func.isRequired,
-		siteSlug: PropTypes.string.isRequired,
-	};
+interface CancellationReason {
+	value: string;
+	label: TranslateResult;
+	helpMessage: TranslateResult;
+	showTextarea?: boolean;
+}
 
-	state = {
+interface ConfirmCancelDomainOwnProps {
+	purchaseId: number;
+	siteSlug: string;
+	purchaseListUrl?: string;
+	getCancelPurchaseUrlFor?: ( siteSlug: string, purchaseId: number ) => string;
+}
+
+interface ConfirmCancelDomainQueryProps {
+	purchase: Purchase | undefined;
+	hasLoadedPurchasesFromServer: boolean;
+}
+
+interface ConfirmCancelDomainConnectedProps {
+	hasLoadedSites: boolean;
+	isDomainOnlySite: boolean | null;
+	selectedSite: SiteDetails | null | undefined;
+	clearPurchases: typeof clearPurchases;
+	errorNotice: typeof errorNotice;
+	refreshSitePlans: typeof refreshSitePlans;
+	receiveDeletedSite: typeof receiveDeletedSite;
+	setAllSitesSelected: typeof setAllSitesSelected;
+	successNotice: typeof successNotice;
+}
+
+type ConfirmCancelDomainProps = ConfirmCancelDomainOwnProps &
+	ConfirmCancelDomainQueryProps &
+	ConfirmCancelDomainConnectedProps &
+	LocalizeProps;
+
+interface ConfirmCancelDomainState {
+	selectedReason: CancellationReason | null;
+	message: string;
+	confirmed: boolean;
+	submitting: boolean;
+}
+
+class ConfirmCancelDomain extends Component< ConfirmCancelDomainProps, ConfirmCancelDomainState > {
+	state: ConfirmCancelDomainState = {
 		selectedReason: null,
 		message: '',
 		confirmed: false,
@@ -71,15 +102,19 @@ class ConfirmCancelDomain extends Component {
 		this.redirectIfDataIsInvalid();
 	}
 
+	isDataLoading = () => {
+		return ! this.props.hasLoadedSites || ! this.props.hasLoadedPurchasesFromServer;
+	};
+
 	redirectIfDataIsInvalid = () => {
-		if ( isDataLoading( this.props ) || this.state.submitting ) {
-			return null;
+		if ( this.isDataLoading() || this.state.submitting ) {
+			return;
 		}
 
 		const { purchase, selectedSite } = this.props;
 
 		if ( ! purchase || ! isDomainRegistration( purchase ) || ! selectedSite ) {
-			page.redirect( this.props.purchaseListUrl );
+			page.redirect( this.props.purchaseListUrl ?? purchasesRoot );
 		}
 	};
 
@@ -93,29 +128,34 @@ class ConfirmCancelDomain extends Component {
 		return [ 'other_host', 'transfer' ].indexOf( selectedReason.value ) === -1;
 	};
 
-	onSubmit = ( event ) => {
+	onSubmit = ( event: SyntheticEvent ) => {
 		event.preventDefault();
 
 		const { purchase } = this.props;
+
+		if ( ! purchase || ! this.state.selectedReason ) {
+			return;
+		}
+
 		const purchaseName = getDomainName( purchase );
 
 		const data = {
 			domain_cancel_reason: this.state.selectedReason.value,
 			domain_cancel_message: this.state.message,
 			confirm: true,
-			product_id: purchase.productId,
-			blog_id: purchase.siteId,
+			product_id: purchase.product_id,
+			blog_id: purchase.blog_id,
 			domain: purchaseName,
 		};
 
 		this.setState( { submitting: true } );
 
-		cancelAndRefundPurchase( purchase.id, data, ( error ) => {
+		cancelAndRefundPurchase( purchase.ID, data, ( error ) => {
 			this.setState( { submitting: false } );
 
 			const { isDomainOnlySite, translate, selectedSite } = this.props;
 
-			if ( isDomainOnlySite ) {
+			if ( isDomainOnlySite && selectedSite ) {
 				this.props.receiveDeletedSite( selectedSite.ID );
 				this.props.setAllSitesSelected();
 			}
@@ -135,11 +175,11 @@ class ConfirmCancelDomain extends Component {
 				return;
 			}
 
-			this.props.refreshSitePlans( purchase.siteId );
+			this.props.refreshSitePlans( purchase.blog_id );
 			this.props.clearPurchases();
 
 			recordTracksEvent( 'calypso_domain_cancel_form_submit', {
-				product_slug: purchase.productSlug,
+				product_slug: purchase.product_slug,
 			} );
 
 			const successMessage = translate(
@@ -147,16 +187,17 @@ class ConfirmCancelDomain extends Component {
 				{ args: { purchaseName } }
 			);
 			this.props.successNotice( successMessage, { displayOnNextPage: true } );
-			page.redirect( this.props.purchaseListUrl );
+			page.redirect( this.props.purchaseListUrl ?? purchasesRoot );
 		} );
 	};
 
-	onReasonChange = ( event ) => {
-		const select = event.currentTarget;
+	onReasonChange = ( event: ChangeEvent< HTMLSelectElement > ) => {
+		const value = event.currentTarget.value;
 		this.setState( {
-			selectedReason: cancellationReasons.find(
-				( reason ) => reason.value === select[ select.selectedIndex ].value
-			),
+			selectedReason:
+				( cancellationReasons as CancellationReason[] ).find(
+					( reason ) => reason.value === value
+				) ?? null,
 		} );
 	};
 
@@ -164,7 +205,7 @@ class ConfirmCancelDomain extends Component {
 		this.setState( { confirmed: ! this.state.confirmed } );
 	};
 
-	onMessageChange = ( event ) => {
+	onMessageChange = ( event: ChangeEvent< HTMLTextAreaElement > ) => {
 		this.setState( {
 			message: event.target.value,
 		} );
@@ -242,10 +283,9 @@ class ConfirmCancelDomain extends Component {
 	};
 
 	render() {
-		if ( isDataLoading( this.props ) || ! this.props.purchase ) {
+		if ( this.isDataLoading() || ! this.props.purchase ) {
 			return (
 				<div>
-					<QueryUserPurchases />
 					<ConfirmCancelDomainLoadingPlaceholder />
 				</div>
 			);
@@ -269,7 +309,7 @@ class ConfirmCancelDomain extends Component {
 					<div className="confirm-cancel-domain__back">
 						<HeaderCakeBack
 							icon="chevron-left"
-							href={ this.props.getCancelPurchaseUrlFor(
+							href={ this.props.getCancelPurchaseUrlFor?.(
 								this.props.siteSlug,
 								this.props.purchaseId
 							) }
@@ -293,10 +333,10 @@ class ConfirmCancelDomain extends Component {
 						onChange={ this.onReasonChange }
 						defaultValue="disabled"
 					>
-						<option disabled="disabled" value="disabled" key="disabled">
+						<option disabled value="disabled" key="disabled">
 							{ this.props.translate( 'Please let us know why you wish to cancel.' ) }
 						</option>
-						{ cancellationReasons.map( ( { value, label } ) => (
+						{ ( cancellationReasons as CancellationReason[] ).map( ( { value, label } ) => (
 							<option value={ value } key={ value }>
 								{ label }
 							</option>
@@ -311,24 +351,47 @@ class ConfirmCancelDomain extends Component {
 	}
 }
 
-export default connect(
-	( state, props ) => {
+function mapDispatchToProps( dispatch: CalypsoDispatch ) {
+	return bindActionCreators(
+		{
+			clearPurchases,
+			errorNotice,
+			refreshSitePlans,
+			receiveDeletedSite,
+			setAllSitesSelected,
+			successNotice,
+		},
+		dispatch
+	);
+}
+
+const ConnectedConfirmCancelDomain = connect(
+	( state: AppState, props: ConfirmCancelDomainOwnProps & ConfirmCancelDomainQueryProps ) => {
 		const selectedSite = getSelectedSite( state );
+		const selectedSiteId: number | null = selectedSite ? selectedSite.ID : null;
 
 		return {
 			hasLoadedSites: ! isRequestingSites( state ),
-			hasLoadedUserPurchasesFromServer: hasLoadedUserPurchasesFromServer( state ),
-			isDomainOnlySite: isDomainOnly( state, selectedSite && selectedSite.ID ),
-			purchase: getByPurchaseId( state, props.purchaseId ),
+			hasLoadedPurchasesFromServer: props.hasLoadedPurchasesFromServer,
+			isDomainOnlySite: isDomainOnly( state, selectedSiteId ),
+			purchase: props.purchase,
 			selectedSite,
 		};
 	},
-	{
-		clearPurchases,
-		errorNotice,
-		refreshSitePlans,
-		receiveDeletedSite,
-		setAllSitesSelected,
-		successNotice,
-	}
+	mapDispatchToProps
 )( localize( ConfirmCancelDomain ) );
+
+export default function ConfirmCancelDomainContainer( props: ConfirmCancelDomainOwnProps ) {
+	const { data: purchase, isPending } = useQuery( {
+		...purchaseQuery( props.purchaseId ),
+		enabled: Boolean( props.purchaseId ),
+	} );
+
+	return (
+		<ConnectedConfirmCancelDomain
+			{ ...props }
+			purchase={ purchase }
+			hasLoadedPurchasesFromServer={ ! isPending }
+		/>
+	);
+}
