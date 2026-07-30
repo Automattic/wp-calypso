@@ -99,33 +99,14 @@ export function useThankYouRedirect( {
 			( atomicFlow && currentStep === 2 ),
 		installedPlugin,
 	} );
-	// Check completition of all flows and redirect to thank you page
+	// Every plugin flow lands here the same way: the plugin reads active. For the ones a transfer
+	// drives, that is only true once the transfer is far enough along and the site is reachable, which
+	// is also when the URL below resolves.
 	useEffect( () => {
-		if (
-			// Happens in 3 cases:
-			// - Click on "Install and activate" button for any plugin on /plugins/<site_name>
-			// - Install with the help of uploading archive of a plugins
-			// - If it's simple site which doesn't support plugins, then installing and activation happens at the same time with upgrading to Business plan
-			// This also covers the atomic-transfer flows (checkout-initiated and component-driven): the
-			// plugin only reads active once the transfer is far enough along, and for an atomicFlow the
-			// redirect URL below resolves only after the transfer completes, so no separate arm is needed.
-			installedPlugin &&
-			pluginActive
-		) {
-			// Require a resolved pluginsUrlFinal before redirecting
-			if ( ! pluginsUrlFinal ) {
-				return;
-			}
-			window.location.href = pluginsUrlFinal as string;
+		if ( installedPlugin && pluginActive && pluginsUrlFinal ) {
+			window.location.href = pluginsUrlFinal;
 		}
-	}, [
-		pluginActive,
-		automatedTransferStatus,
-		isPluginUploadFlow,
-		installedPlugin,
-		pluginsUrlFinal,
-		isAtomicTransferReady,
-	] ); // We need to trigger this hook also when `automatedTransferStatus` changes cause the plugin install is done on the background in that case.
+	}, [ installedPlugin, pluginActive, pluginsUrlFinal ] );
 
 	// Validate theme is already active
 	useEffect( () => {
