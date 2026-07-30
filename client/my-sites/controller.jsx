@@ -718,7 +718,10 @@ function requestAndSelectSite( context, next, { siteFragment, isUnlinkedCheckout
 			let freshSiteId;
 
 			if ( site && site.ID ) {
+				// An unlinked checkout ignores the site it finds below, so waiting on its
+				// capabilities would only delay the Jetpack authorization.
 				if (
+					! isUnlinkedCheckout &&
 					! getSite( getState(), site.ID ) &&
 					attempt < UNMANAGEABLE_SITE_RETRY_LIMIT &&
 					capabilitiesArePropagating( getState(), site )

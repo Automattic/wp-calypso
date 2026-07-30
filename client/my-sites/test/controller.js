@@ -231,7 +231,7 @@ describe( 'siteSelection', () => {
 		requestSite.mockReturnValue( () => Promise.resolve( { ID: SITE_ID, ...site } ) );
 	}
 
-	function selectSite( getState ) {
+	function selectSite( getState, overrides ) {
 		const next = jest.fn();
 		const context = {
 			store: mockStore( getState ),
@@ -240,6 +240,7 @@ describe( 'siteSelection', () => {
 			params: { site: SITE_SLUG },
 			query: {},
 			section: {},
+			...overrides,
 		};
 
 		page.current = context.path;
@@ -252,10 +253,13 @@ describe( 'siteSelection', () => {
 		jest.useFakeTimers();
 		requestSite.mockReset();
 		respondWithSite( { site_owner: USER_ID } );
+		// page.js builds a Context that reaches for the document, which this environment lacks.
+		jest.spyOn( page, 'redirect' ).mockImplementation( () => {} );
 	} );
 
 	afterEach( () => {
 		jest.useRealTimers();
+		jest.restoreAllMocks();
 		page.current = '';
 	} );
 
@@ -302,6 +306,22 @@ describe( 'siteSelection', () => {
 
 		expect( requestSite ).toHaveBeenCalledTimes( 1 );
 		expect( next ).not.toHaveBeenCalled();
+	} );
+
+	it( 'should not retry an unlinked checkout, which ignores the site it finds', async () => {
+		const checkoutPath = `/checkout/${ SITE_SLUG }/jetpack_security_t1_yearly`;
+		const { next } = selectSite( () => unmanageableSiteState, {
+			path: checkoutPath,
+			pathname: checkoutPath,
+			query: { unlinked: '1' },
+		} );
+
+		await jest.advanceTimersByTimeAsync( LONGER_THAN_THE_WHOLE_BACKOFF );
+
+		expect( requestSite ).toHaveBeenCalledTimes( 1 );
+		expect( next ).not.toHaveBeenCalled();
+		// It settled on its redirect straight away instead of waiting out the backoff.
+		expect( page.redirect ).toHaveBeenCalled();
 	} );
 
 	it( 'should give up retrying once the backoff is exhausted', async () => {
