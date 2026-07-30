@@ -181,13 +181,16 @@ function getVCardFileName( siteDomain: string ) {
 function EmailAssistantCard( {
 	site,
 	recordTracksEvent,
+	disabled = false,
 }: {
 	site: Site;
 	recordTracksEvent: ReturnType< typeof useAnalytics >[ 'recordTracksEvent' ];
+	disabled?: boolean;
 } ) {
-	const { data: postByEmailSettings, isLoading: isPostByEmailSettingsLoading } = useQuery(
-		sitePostByEmailSettingsQuery( site )
-	);
+	const { data: postByEmailSettings, isLoading: isPostByEmailSettingsLoading } = useQuery( {
+		...sitePostByEmailSettingsQuery( site ),
+		enabled: ! disabled,
+	} );
 	const agentEmailAddress = getAgentEmailAddress( postByEmailSettings?.post_by_email_address );
 	const isAgentEmailEnabled = !! agentEmailAddress;
 	const vCardHref = agentEmailAddress ? getVCardDataUrl( site.slug, agentEmailAddress ) : undefined;
@@ -200,7 +203,7 @@ function EmailAssistantCard( {
 		} )
 	);
 	const isEmailAddressActionDisabled =
-		isPostByEmailSettingsLoading || emailAddressMutation.isPending;
+		disabled || isPostByEmailSettingsLoading || emailAddressMutation.isPending;
 
 	const handleEmailAddressToggle = ( enabled: boolean ) => {
 		emailAddressMutation.mutate(
@@ -421,24 +424,7 @@ export default function AIToolsSettings( { siteSlug }: { siteSlug: string } ) {
 		);
 	};
 
-	const renderContent = () => {
-		if ( ! isAvailable ) {
-			return (
-				<UpsellCallout
-					site={ site }
-					feature={ HostingFeatures.BIG_SKY }
-					upsellId="ai-tools"
-					upsellPlanRequirement="any"
-					upsellTitle={ __( 'Your dream site is just a prompt away' ) }
-					upsellDescription={ __(
-						'Get WordPress Agent to help you build, edit, and redesign your site with ease.'
-					) }
-					upsellIcon={ comment }
-					upsellImage={ upsellIllustrationUrl }
-				/>
-			);
-		}
-
+	const renderSettings = () => {
 		return (
 			<>
 				<Card>
@@ -452,7 +438,7 @@ export default function AIToolsSettings( { siteSlug }: { siteSlug: string } ) {
 							<ToggleControl
 								__nextHasNoMarginBottom
 								checked={ isEnabled }
-								disabled={ mutation.isPending }
+								disabled={ ! isAvailable || mutation.isPending }
 								label={ __( 'Enable WordPress Agent' ) }
 								onChange={ handleToggle }
 							/>
@@ -475,7 +461,11 @@ export default function AIToolsSettings( { siteSlug }: { siteSlug: string } ) {
 						</CardFooter>
 					) }
 				</Card>
-				<EmailAssistantCard site={ site } recordTracksEvent={ recordTracksEvent } />
+				<EmailAssistantCard
+					site={ site }
+					recordTracksEvent={ recordTracksEvent }
+					disabled={ ! isAvailable }
+				/>
 				{ config.isEnabled( 'dolly/telegram' ) && (
 					<SummaryButton
 						href={ wpcomLink( TELEGRAM_CONNECTION_PATH ) }
@@ -489,6 +479,7 @@ export default function AIToolsSettings( { siteSlug }: { siteSlug: string } ) {
 								site_id: site.ID,
 							} );
 						} }
+						disabled={ ! isAvailable }
 					/>
 				) }
 				{ config.isEnabled( 'mcp-settings' ) && (
@@ -504,7 +495,7 @@ export default function AIToolsSettings( { siteSlug }: { siteSlug: string } ) {
 									<ToggleControl
 										__nextHasNoMarginBottom
 										checked={ isMcpEnabled }
-										disabled={ mcpMutation.isPending }
+										disabled={ ! isAvailable || mcpMutation.isPending }
 										label={ __( 'Enable MCP access for this site' ) }
 										onChange={ handleMcpToggle }
 									/>
@@ -519,6 +510,7 @@ export default function AIToolsSettings( { siteSlug }: { siteSlug: string } ) {
 										title={ __( 'Read' ) }
 										decoration={ <Icon icon={ seen } size={ 24 } /> }
 										badges={ [ readBadge ] }
+										disabled={ ! isAvailable }
 									/>
 									<RouterLinkSummaryButton
 										to={ `/sites/${ siteSlug }/settings/ai-tools/write` }
@@ -526,6 +518,7 @@ export default function AIToolsSettings( { siteSlug }: { siteSlug: string } ) {
 										title={ __( 'Write' ) }
 										decoration={ <Icon icon={ pencil } size={ 24 } /> }
 										badges={ [ writeBadge ] }
+										disabled={ ! isAvailable }
 									/>
 								</>
 							) }
@@ -536,6 +529,7 @@ export default function AIToolsSettings( { siteSlug }: { siteSlug: string } ) {
 								title={ __( 'Connect external AI agent' ) }
 								description={ __( 'Get instructions for connecting your external AI assistant.' ) }
 								decoration={ <Icon icon={ connection } size={ 24 } /> }
+								disabled={ ! isAvailable }
 							/>
 						) }
 					</>
@@ -563,6 +557,7 @@ export default function AIToolsSettings( { siteSlug }: { siteSlug: string } ) {
 							<SummaryButton
 								title={ __( 'Get answers' ) }
 								decoration={ <Icon icon={ help } /> }
+								disabled={ ! isAvailable }
 								onClick={ () => {
 									recordTracksEvent( 'calypso_dashboard_ai_tool_get_answers_click' );
 									setNavigateToRoute( '/odie' );
@@ -573,6 +568,7 @@ export default function AIToolsSettings( { siteSlug }: { siteSlug: string } ) {
 								href={ `${ site.options?.admin_url }site-editor.php?canvas=edit` }
 								title={ __( 'Update your site design' ) }
 								decoration={ <Icon icon={ brush } /> }
+								disabled={ ! isAvailable }
 								onClick={ () => {
 									recordTracksEvent( 'calypso_dashboard_ai_tool_edit_site_click' );
 								} }
@@ -581,6 +577,7 @@ export default function AIToolsSettings( { siteSlug }: { siteSlug: string } ) {
 								href={ `${ site.options?.admin_url }post-new.php` }
 								title={ __( 'Draft and revise content' ) }
 								decoration={ <Icon icon={ termDescription } /> }
+								disabled={ ! isAvailable }
 								onClick={ () => {
 									recordTracksEvent( 'calypso_dashboard_ai_tool_draft_post_click' );
 								} }
@@ -589,6 +586,7 @@ export default function AIToolsSettings( { siteSlug }: { siteSlug: string } ) {
 								href={ `${ site.options?.admin_url }upload.php?ai-assistant` }
 								title={ __( 'Create beautiful images' ) }
 								decoration={ <Icon icon={ image } /> }
+								disabled={ ! isAvailable }
 								onClick={ () => {
 									recordTracksEvent( 'calypso_dashboard_ai_tool_create_images_click' );
 								} }
@@ -611,7 +609,21 @@ export default function AIToolsSettings( { siteSlug }: { siteSlug: string } ) {
 				/>
 			}
 		>
-			{ renderContent() }
+			{ ! isAvailable && (
+				<UpsellCallout
+					site={ site }
+					feature={ HostingFeatures.BIG_SKY }
+					upsellId="ai-tools"
+					upsellPlanRequirement="any"
+					upsellTitle={ __( 'Your dream site is just a prompt away' ) }
+					upsellDescription={ __(
+						'Get WordPress Agent to help you build, edit, and redesign your site with ease.'
+					) }
+					upsellIcon={ comment }
+					upsellImage={ upsellIllustrationUrl }
+				/>
+			) }
+			{ renderSettings() }
 		</PageLayout>
 	);
 }

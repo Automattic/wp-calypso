@@ -47,16 +47,32 @@ afterAll( () => {
 	disable( 'dolly/telegram' );
 } );
 
-function seedQueries( postByEmailAddress = '', seedPostByEmailSettings = true, activeSite = site ) {
+function seedQueries(
+	postByEmailAddress = '',
+	seedPostByEmailSettings = true,
+	activeSite = site,
+	isAvailable = true,
+	isMcpEnabled = false
+) {
 	queryClient.setQueryData( siteBySlugQuery( activeSite.slug ).queryKey, activeSite );
 	queryClient.setQueryData( bigSkyPluginQuery( activeSite.ID ).queryKey, {
 		blog_id: activeSite.ID,
 		enabled: false,
-		available: true,
+		available: isAvailable,
 		on_free_trial: false,
 	} );
 	queryClient.setQueryData( userSettingsQuery().queryKey, {
-		mcp_abilities: {},
+		mcp_abilities: {
+			sites: isMcpEnabled
+				? [
+						{
+							blog_id: activeSite.ID,
+							site_level_enabled: true,
+							abilities: {},
+						},
+				  ]
+				: [],
+		},
 	} as UserSettings );
 	if ( seedPostByEmailSettings ) {
 		queryClient.setQueryData( sitePostByEmailSettingsQuery( activeSite ).queryKey, {
@@ -129,9 +145,11 @@ function mockJetpackPostByEmailSettingsFailure() {
 function renderAIToolsSettings(
 	postByEmailAddress = '',
 	seedPostByEmailSettings = true,
-	activeSite = site
+	activeSite = site,
+	isAvailable = true,
+	isMcpEnabled = false
 ) {
-	seedQueries( postByEmailAddress, seedPostByEmailSettings, activeSite );
+	seedQueries( postByEmailAddress, seedPostByEmailSettings, activeSite, isAvailable, isMcpEnabled );
 
 	return render( <AIToolsSettings siteSlug={ activeSite.slug } />, { queryClient } );
 }
@@ -202,6 +220,43 @@ describe( 'getAgentEmailVCard', () => {
 } );
 
 describe( '<AIToolsSettings>', () => {
+	test( 'shows the settings as disabled below the upgrade callout when unavailable', () => {
+		renderAIToolsSettings( '', false, site, false, true );
+
+		expect( screen.getByText( 'Your dream site is just a prompt away' ) ).toBeVisible();
+		expect( screen.getByRole( 'button', { name: 'Upgrade plan' } ) ).toBeEnabled();
+
+		expect( screen.getByRole( 'heading', { name: 'WordPress Agent' } ) ).toBeVisible();
+		expect( screen.getByRole( 'checkbox', { name: 'Enable WordPress Agent' } ) ).toBeDisabled();
+
+		expect( screen.getByRole( 'heading', { name: 'Email WordPress Agent' } ) ).toBeVisible();
+		expect(
+			screen.getByRole( 'checkbox', {
+				name: 'Enable WordPress Agent email address',
+			} )
+		).toBeDisabled();
+		expect(
+			queryClient.getQueryState( sitePostByEmailSettingsQuery( site ).queryKey )?.fetchStatus
+		).toBe( 'idle' );
+
+		expect( screen.getByRole( 'heading', { name: 'External AI agent access' } ) ).toBeVisible();
+		expect(
+			screen.getByRole( 'checkbox', { name: 'Enable MCP access for this site' } )
+		).toBeDisabled();
+
+		expect( screen.getByRole( 'button', { name: /Connect Telegram/ } ) ).toHaveAttribute(
+			'aria-disabled',
+			'true'
+		);
+
+		for ( const linkName of [ 'Read', 'Write', 'Connect external AI agent' ] ) {
+			expect( screen.getByRole( 'link', { name: new RegExp( linkName ) } ) ).toHaveAttribute(
+				'aria-disabled',
+				'true'
+			);
+		}
+	} );
+
 	test( 'enables, copies, regenerates, and disables the WordPress Agent email address', async () => {
 		const user = userEvent.setup();
 		mockClipboard();
