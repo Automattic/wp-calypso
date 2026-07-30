@@ -73,19 +73,6 @@ describe( 'getMomentSiteZone', () => {
 			expect( summer.utcOffset() ).toBe( -240 );
 		} );
 
-		it( 'should resolve an unpadded date string to the same day as its padded equivalent', () => {
-			( getSiteTimezoneValue as jest.Mock ).mockReturnValue( 'America/New_York' );
-			( getSiteOption as jest.Mock ).mockReturnValue( null );
-			( getSiteGmtOffset as jest.Mock ).mockReturnValue( null );
-
-			const momentFn = getMomentSiteZone( mockState, siteId );
-			const unpadded = momentFn( '2026-7-28' );
-			const padded = momentFn( '2026-07-28' );
-
-			expect( unpadded.format( 'YYYY-MM-DD' ) ).toBe( '2026-07-28' );
-			expect( unpadded.isSame( padded, 'day' ) ).toBe( true );
-		} );
-
 		it( 'should not use invalid timezone string', () => {
 			( getSiteTimezoneValue as jest.Mock ).mockReturnValue( 'Invalid/Timezone' );
 			( getSiteOption as jest.Mock ).mockReturnValue( null );

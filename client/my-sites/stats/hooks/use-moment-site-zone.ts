@@ -36,24 +36,10 @@ export const getMomentSiteZone = createSelector(
 			( getSiteOption( state, siteId, 'gmt_offset' ) as number );
 
 		return ( dateInput?: moment.MomentInput ) => {
-			// Moment's fallback parser (used for date strings it doesn't recognize as
-			// ISO 8601) parses them as a browser-local Date first, which shifts the
-			// calendar day once converted to a non-UTC zone below. Zero-pad naive
-			// date-only strings (e.g. '2026-7-28' -> '2026-07-28') so moment always
-			// recognizes them as ISO and interprets them AS the site's timezone.
-			const normalizedDateInput =
-				typeof dateInput === 'string' && /^\d{4}-\d{1,2}-\d{1,2}$/.test( dateInput )
-					? dateInput.replace(
-							/^(\d{4})-(\d{1,2})-(\d{1,2})$/,
-							( _match, year, month, day ) =>
-								`${ year }-${ month.padStart( 2, '0' ) }-${ day.padStart( 2, '0' ) }`
-					  )
-					: dateInput;
-
 			// Case 1: Site has IANA timezone (e.g., 'America/New_York')
 			// This is the best option as it handles DST automatically
 			if ( timezoneString && timezoneString !== '' && moment.tz.zone( timezoneString ) ) {
-				return moment.tz( normalizedDateInput, timezoneString ).locale( localeSlug );
+				return moment.tz( dateInput, timezoneString ).locale( localeSlug );
 			}
 
 			// Case 2: Site has GMT offset only (e.g., -5 for EST)
@@ -61,29 +47,23 @@ export const getMomentSiteZone = createSelector(
 			if ( Number.isFinite( gmtOffset ) ) {
 				// Determine if the input is a naive date string (no timezone info)
 				const isNaiveDateString =
-					typeof normalizedDateInput === 'string' &&
-					! /[+-]\d{2}:\d{2}|Z/i.test( normalizedDateInput );
+					typeof dateInput === 'string' && ! /[+-]\d{2}:\d{2}|Z/i.test( dateInput );
 
 				if ( isNaiveDateString ) {
 					// Naive string like '2024-01-15' or '2024-01-15 10:30'
 					// Parse as UTC, then shift to site offset while keeping the wall-clock time
 					// Result: '2024-01-15 00:00:00' interpreted in site timezone
-					return moment
-						.utc( normalizedDateInput )
-						.utcOffset( gmtOffset, true )
-						.locale( localeSlug );
+					return moment.utc( dateInput ).utcOffset( gmtOffset, true ).locale( localeSlug );
 				}
 
 				// Date object, moment instance, or string with timezone
 				// Convert the absolute time to the site's timezone
-				return moment( normalizedDateInput ).utcOffset( gmtOffset ).locale( localeSlug );
+				return moment( dateInput ).utcOffset( gmtOffset ).locale( localeSlug );
 			}
 
 			// Case 3: No timezone info available
 			// Fall back to browser's local timezone
-			return (
-				normalizedDateInput !== undefined ? moment( normalizedDateInput ) : moment()
-			).locale( localeSlug );
+			return ( dateInput !== undefined ? moment( dateInput ) : moment() ).locale( localeSlug );
 		};
 	},
 	[
