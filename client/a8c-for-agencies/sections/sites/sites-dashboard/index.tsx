@@ -253,6 +253,8 @@ export function SitesDashboard() {
 		tourId = 'addSiteStep1';
 	}
 
+	const shouldShowEmptyState = ! tourId && ( hasNoSitesYet || hasNoFavoritesYet );
+
 	return (
 		<Layout
 			className={ clsx(
@@ -284,7 +286,7 @@ export function SitesDashboard() {
 
 				<SiteNotifications />
 				{ tourId && <GuidedTour defaultTourId={ tourId } /> }
-				{ ! tourId && ( hasNoSitesYet || hasNoFavoritesYet ) ? (
+				{ shouldShowEmptyState ? (
 					<SitesDashboardEmptyState
 						title={
 							hasNoSitesYet
