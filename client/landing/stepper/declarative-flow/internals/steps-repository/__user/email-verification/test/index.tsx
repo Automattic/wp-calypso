@@ -123,7 +123,7 @@ describe( 'EmailVerificationGate', () => {
 		await userEvent.click( openButton );
 		expect( recordTracksEvent ).toHaveBeenCalledWith(
 			'calypso_signup_email_verification_open_inbox',
-			expect.objectContaining( { flow: FLOW, provider: 'Gmail' } )
+			expect.objectContaining( { flow: FLOW, provider: 'gmail' } )
 		);
 	} );
 

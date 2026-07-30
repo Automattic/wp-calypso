@@ -3,7 +3,7 @@ import { getInboxLink } from '../inbox-links';
 describe( 'getInboxLink', () => {
 	it( 'maps a known provider to its inbox, pre-filtered to our sender', () => {
 		const link = getInboxLink( 'someone@gmail.com' );
-		expect( link?.providerName ).toBe( 'Gmail' );
+		expect( link?.provider ).toBe( 'gmail' );
 		expect( link?.url ).toContain( 'mail.google.com' );
 		expect( link?.url ).toContain( 'wordpress.com' );
 	} );

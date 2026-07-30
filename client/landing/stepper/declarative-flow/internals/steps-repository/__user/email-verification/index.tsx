@@ -76,7 +76,7 @@ const EmailVerificationGate = ( { flow, scope, logo, onDone }: Props ) => {
 	const openInbox = () =>
 		recordTracksEvent( 'calypso_signup_email_verification_open_inbox', {
 			flow,
-			provider: inboxLink?.providerName,
+			provider: inboxLink?.provider,
 		} );
 
 	const subText = useMemo(
