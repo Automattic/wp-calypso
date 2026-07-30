@@ -1,4 +1,4 @@
-import { isLegacyLoggedOutOdieChat } from './logged-out-odie-chat';
+import { isLoggedOutOdieChat } from './logged-out-odie-chat';
 import type { State } from './reducer';
 
 export const isHelpCenterShown = ( state: State ) => state.showHelpCenter;
@@ -13,17 +13,20 @@ export const getZendeskConnectionStatus = ( state: State ) => state.zendeskConne
 export const getIsMinimized = ( state: State ) => state.isMinimized;
 export const getIsChatLoaded = ( state: State ) => state.isChatLoaded;
 export const getLoggedOutOdieChat = ( state: State, botSlug: string ) => {
-	const sessions = state.loggedOutOdieChat;
+	const session = state.loggedOutOdieChats?.[ botSlug ];
 
-	if ( ! sessions ) {
-		return undefined;
+	if ( session ) {
+		return session;
 	}
 
-	if ( isLegacyLoggedOutOdieChat( sessions ) ) {
-		return sessions.botSlug === botSlug ? sessions : undefined;
+	const legacySession = state.loggedOutOdieChat;
+
+	if ( isLoggedOutOdieChat( legacySession ) ) {
+		return legacySession.botSlug === botSlug ? legacySession : undefined;
 	}
 
-	return sessions[ botSlug ];
+	// Read the temporary keyed shape previously persisted under the singular field.
+	return legacySession?.[ botSlug ];
 };
 export const getAreSoundNotificationsEnabled = ( state: State ) =>
 	state.areSoundNotificationsEnabled;

@@ -11,7 +11,6 @@ import {
 	getOdieErrorMessageNonEligible,
 	getExistingConversationMessage,
 	getConversationLimitReachedMessage,
-	ODIE_DEFAULT_BOT_SLUG_LEGACY,
 	getErrorMessageUnknownError,
 } from '../constants';
 import { useOdieAssistantContext } from '../context';
@@ -20,6 +19,7 @@ import { useLoggedOutSession } from '../hooks/use-logged-out-session';
 import { useOpenInteractionStatusMap } from '../hooks/use-open-interaction-status-map';
 import { generateUUID, getOdieIdFromInteraction, getIsRequestingHumanSupport } from '../utils';
 import { hasRecentEscalationAttempt } from '../utils/chat-utils';
+import { getBotSlug } from '../utils/get-bot-slug';
 import { getOpenLiveInteractions } from '../utils/get-open-live-interactions';
 import { getIsAgentsManagerAvailable } from '../utils/is-agents-manager-available';
 import { useCurrentSupportInteraction } from './use-current-support-interaction';
@@ -27,26 +27,6 @@ import { useManageSupportInteraction, broadcastOdieMessage } from '.';
 import type { Chat, Message, ReturnedChat, SupportInteraction } from '../types';
 
 const HELP_CENTER_STORE = HelpCenter.register();
-
-function getBotSlug(
-	supportInteraction: SupportInteraction | undefined,
-	newInteractionsBotSlug: string,
-	loggedOutOdieBotSlug: string,
-	isLoggedOutSession: boolean
-): string {
-	if ( supportInteraction ) {
-		// Legacy support interactions have their botSlug set to `''`. We need to use the legacy bot slug for them.
-		return supportInteraction.bot_slug || ODIE_DEFAULT_BOT_SLUG_LEGACY;
-	}
-
-	if ( isLoggedOutSession ) {
-		return loggedOutOdieBotSlug;
-	}
-
-	// When the interaction is undefined, it means we're sending the first message to Odie, which is done before the interaction is created.
-	// In this case, we use the new interactions bot slug.
-	return newInteractionsBotSlug;
-}
 
 const getErrorMessageForSiteIdAndInternalMessageId = (
 	selectedSiteId: number | null | undefined,

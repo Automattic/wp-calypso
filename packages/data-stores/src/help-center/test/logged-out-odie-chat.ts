@@ -1,5 +1,5 @@
 import { setLoggedOutOdieChat } from '../actions';
-import reducer from '../reducer';
+import { loggedOutOdieChat, loggedOutOdieChats } from '../reducer';
 import { getLoggedOutOdieChat } from '../selectors';
 import type { State } from '../reducer';
 import type { LoggedOutOdieChat } from '../types';
@@ -17,26 +17,47 @@ const wooSession: LoggedOutOdieChat = {
 };
 
 describe( 'logged-out Odie chat persistence', () => {
-	it( 'stores sessions by bot slug', () => {
-		const wpcomState = reducer( undefined, setLoggedOutOdieChat( wpcomSession ) );
-		const state = reducer( wpcomState, setLoggedOutOdieChat( wooSession ) );
+	it( 'stores sessions by bot slug while keeping the latest singular value', () => {
+		const wpcomSessions = loggedOutOdieChats( undefined, setLoggedOutOdieChat( wpcomSession ) );
+		const sessions = loggedOutOdieChats( wpcomSessions, setLoggedOutOdieChat( wooSession ) );
+		const legacySession = loggedOutOdieChat( wpcomSession, setLoggedOutOdieChat( wooSession ) );
+		const state = {
+			loggedOutOdieChat: legacySession,
+			loggedOutOdieChats: sessions,
+		} as State;
 
 		expect( getLoggedOutOdieChat( state, wpcomSession.botSlug ) ).toEqual( wpcomSession );
 		expect( getLoggedOutOdieChat( state, wooSession.botSlug ) ).toEqual( wooSession );
+		expect( state.loggedOutOdieChat ).toEqual( wooSession );
 	} );
 
 	it( 'reads a persisted session from the legacy storage shape', () => {
 		const legacyState = {
-			...reducer( undefined, setLoggedOutOdieChat( undefined ) ),
 			loggedOutOdieChat: wpcomSession,
 		} as State;
 
 		expect( getLoggedOutOdieChat( legacyState, wpcomSession.botSlug ) ).toEqual( wpcomSession );
 		expect( getLoggedOutOdieChat( legacyState, wooSession.botSlug ) ).toBeUndefined();
 
-		const migratedState = reducer( legacyState, setLoggedOutOdieChat( wooSession ) );
+		const migratedSessions = loggedOutOdieChats( undefined, setLoggedOutOdieChat( wooSession ) );
+		const migratedState = {
+			loggedOutOdieChat: wpcomSession,
+			loggedOutOdieChats: migratedSessions,
+		} as State;
 
 		expect( getLoggedOutOdieChat( migratedState, wpcomSession.botSlug ) ).toEqual( wpcomSession );
 		expect( getLoggedOutOdieChat( migratedState, wooSession.botSlug ) ).toEqual( wooSession );
+	} );
+
+	it( 'reads the temporary keyed shape from the singular storage field', () => {
+		const state = {
+			loggedOutOdieChat: {
+				[ wpcomSession.botSlug ]: wpcomSession,
+				[ wooSession.botSlug ]: wooSession,
+			},
+		} as State;
+
+		expect( getLoggedOutOdieChat( state, wpcomSession.botSlug ) ).toEqual( wpcomSession );
+		expect( getLoggedOutOdieChat( state, wooSession.botSlug ) ).toEqual( wooSession );
 	} );
 } );

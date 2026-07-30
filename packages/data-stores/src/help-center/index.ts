@@ -29,6 +29,7 @@ export function register(): typeof STORE_KEY {
 				'userDeclaredSiteUrl',
 				'subject',
 				'loggedOutOdieChat',
+				'loggedOutOdieChats',
 			],
 			// Don't persist the open state for e2e users, because parallel tests will start interfering with each other.
 			resolvers: enabledPersistedOpenState ? resolvers : undefined,

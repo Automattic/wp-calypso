@@ -2,7 +2,6 @@ import { combineReducers } from '@wordpress/data';
 import { Location } from 'history';
 import { SiteDetails } from '../site';
 import { CurrentUser } from '../user/types';
-import { isLegacyLoggedOutOdieChat } from './logged-out-odie-chat';
 import type { HelpCenterAction } from './actions';
 import type { HelpCenterOptions, LoggedOutOdieChat, LoggedOutOdieChats } from './types';
 import type { Reducer } from 'redux';
@@ -59,23 +58,30 @@ const helpCenterRouterHistory: Reducer<
 	return state;
 };
 
-const loggedOutOdieChat: Reducer<
+export const loggedOutOdieChat: Reducer<
 	LoggedOutOdieChat | LoggedOutOdieChats | undefined,
 	HelpCenterAction
 > = ( state = undefined, action ) => {
 	switch ( action.type ) {
-		case 'HELP_CENTER_SET_LOGGED_OUT_ODIE_CHAT': {
-			if ( ! action.session ) {
-				return undefined;
-			}
+		// Keep the singular value for backward compatibility with independently deployed clients.
+		case 'HELP_CENTER_SET_LOGGED_OUT_ODIE_CHAT':
+			return action.session;
+	}
+	return state;
+};
 
-			const sessions = isLegacyLoggedOutOdieChat( state ) ? { [ state.botSlug ]: state } : state;
-
-			return {
-				...sessions,
-				[ action.session.botSlug ]: action.session,
-			};
-		}
+export const loggedOutOdieChats: Reducer< LoggedOutOdieChats | undefined, HelpCenterAction > = (
+	state = undefined,
+	action
+) => {
+	switch ( action.type ) {
+		case 'HELP_CENTER_SET_LOGGED_OUT_ODIE_CHAT':
+			return action.session
+				? {
+						...state,
+						[ action.session.botSlug ]: action.session,
+				  }
+				: undefined;
 	}
 	return state;
 };
@@ -250,6 +256,7 @@ const reducer = combineReducers( {
 	odieBotNameSlug,
 	helpCenterRouterHistory,
 	loggedOutOdieChat,
+	loggedOutOdieChats,
 	hasPremiumSupport,
 	contextTerm,
 	helpCenterOptions,
