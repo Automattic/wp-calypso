@@ -16,7 +16,7 @@ import StatsSite from './site';
 import StatsEmailDetail from './stats-email-detail';
 import StatsEmailSummary from './stats-email-summary';
 import StatsPageLoader from './stats-page-loader';
-import { appendQueryStringForRedirection } from './utils';
+import { appendQueryStringForRedirection, normalizeChartDateParam } from './utils';
 
 const loadOverview = () =>
 	import( /* webpackChunkName: "async-load-calypso-my-sites-stats-overview" */ './overview' );
@@ -190,6 +190,18 @@ export function site( context, next ) {
 		query: queryOptions,
 		store,
 	} = context;
+
+	// Normalize chartStart/chartEnd once, here at the route boundary, so every
+	// downstream consumer of context.query (StatsSite and its children, plus
+	// redirects that forward context.query as-is) only ever sees a canonical
+	// YYYY-MM-DD string instead of whatever a hand-edited or old-format URL
+	// (e.g. an unpadded '2026-7-28') supplied.
+	if ( queryOptions.chartStart ) {
+		queryOptions.chartStart = normalizeChartDateParam( queryOptions.chartStart );
+	}
+	if ( queryOptions.chartEnd ) {
+		queryOptions.chartEnd = normalizeChartDateParam( queryOptions.chartEnd );
+	}
 
 	const filters = getSiteFilters( givenSiteId );
 	const state = store.getState();

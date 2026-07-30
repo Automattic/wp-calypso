@@ -347,24 +347,9 @@ function StatsBody( { siteId, chartTab = 'views', date, context, isInternal, ...
 				}
 			}
 
-			// Zero-pad naive YYYY-M-D style dates (e.g. an unpadded chartStart/chartEnd
-			// URL param) before parsing. For sites with an IANA timezone, momentInSite
-			// hands unrecognized non-ISO strings to moment's legacy Date() fallback,
-			// which parses them as UTC and can shift the result to the wrong calendar
-			// day once converted to the site's timezone. Padding also keeps chartStart/
-			// chartEnd in a canonical format so they stay comparable as strings.
-			const normalizedInput =
-				typeof inputDate === 'string' && /^\d{4}-\d{1,2}-\d{1,2}$/.test( inputDate )
-					? inputDate.replace(
-							/^(\d{4})-(\d{1,2})-(\d{1,2})$/,
-							( _match, year, month, day ) =>
-								`${ year }-${ month.padStart( 2, '0' ) }-${ day.padStart( 2, '0' ) }`
-					  )
-					: inputDate;
+			const isValid = momentInSite( inputDate ).isValid();
 
-			const isValid = momentInSite( normalizedInput ).isValid();
-
-			return isValid ? normalizedInput : null;
+			return isValid ? inputDate : null;
 		},
 		[ storedShortcut, momentInSite ]
 	);
