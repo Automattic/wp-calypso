@@ -788,12 +788,12 @@ export function skipIfNotTrunk(): void {
  * @example
  * ```typescript
  * test.describe( 'My Test Suite', () => {
- *   skipIfNotJetpackTarget();
+ *   skipIfNotJetpackDeployment();
  *   test( 'my test', async () => { ... });
  * });
  * ```
  */
-export function skipIfNotJetpackTarget(): void {
+export function skipIfNotJetpackDeployment(): void {
 	test.skip(
 		envVariables.JETPACK_TARGET !== 'wpcom-deployment',
 		'Skipping: requires a test site with Jetpack features (JETPACK_TARGET=wpcom-deployment)'

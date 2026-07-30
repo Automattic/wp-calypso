@@ -13,14 +13,14 @@ import {
 	envVariables,
 	getTestAccountByFeature,
 } from '@automattic/calypso-e2e';
-import { expect, skipIfNotJetpackTarget, tags, test } from '../../lib/pw-base';
+import { expect, skipIfNotJetpackDeployment, tags, test } from '../../lib/pw-base';
 
 test.describe(
 	DataHelper.createSuiteTitle( 'Jetpack Instant Search' ),
 	{ tag: [ tags.JETPACK_WPCOM_INTEGRATION ] },
 	() => {
 		// Instant Search only loads on a site with the Jetpack Search product.
-		skipIfNotJetpackTarget();
+		skipIfNotJetpackDeployment();
 
 		test( 'As a user, I can use Jetpack Instant Search', async ( { page } ) => {
 			test.skip(

@@ -18,7 +18,7 @@ import {
 	envVariables,
 	getTestAccountByFeature,
 } from '@automattic/calypso-e2e';
-import { expect, skipIfNotJetpackTarget, tags, test } from '../../lib/pw-base';
+import { expect, skipIfNotJetpackDeployment, tags, test } from '../../lib/pw-base';
 
 test.describe(
 	DataHelper.createSuiteTitle( 'Newsletter: Subscribe and Remove' ),
@@ -26,7 +26,7 @@ test.describe(
 	() => {
 		// Subscription confirmation emails only go out from a site with Jetpack
 		// Subscriptions; the default account's site does not have them.
-		skipIfNotJetpackTarget();
+		skipIfNotJetpackDeployment();
 
 		const inboxID = SecretsManager.secrets.mailosaur.manualTesting;
 		const postTitle = DataHelper.getDateString( 'ISO-8601' ) as string;
