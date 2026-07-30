@@ -21,6 +21,7 @@ import { Container } from '../types';
 import HelpCenterContent from './help-center-content';
 import HelpCenterFooter from './help-center-footer';
 import HelpCenterHeader from './help-center-header';
+import { ZendeskStagingNotice } from './help-center-zendesk-staging-notice';
 import { PersistentRouter } from './persistent-router';
 import type { HelpCenterSelect } from '@automattic/data-stores';
 interface OptionalDraggableProps extends Partial< DraggableProps > {
@@ -170,6 +171,7 @@ const HelpCenterContainer: React.FC< Container > = ( { handleClose, hidden, curr
 			>
 				<Card className={ classNames } ref={ cardMergeRefs }>
 					<HelpCenterHeader onDismiss={ onDismiss } />
+					{ ! isMinimized && <ZendeskStagingNotice /> }
 					<HelpCenterContent currentRoute={ currentRoute } />
 					{ ! isMinimized && <HelpCenterFooter /> }
 					{ ! isMobile && (

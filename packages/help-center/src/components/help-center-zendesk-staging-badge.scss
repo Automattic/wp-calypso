@@ -1,0 +1,20 @@
+@import "variables";
+
+.help-center-zendesk-staging-badge {
+	display: inline-flex;
+	align-items: center;
+	gap: 4px;
+	margin-left: 8px;
+	padding: 1px 6px;
+	border-radius: 4px;
+	background-color: $help-center-notice-background;
+	color: $help-center-notice-color;
+	font-size: $font-body-extra-small;
+	font-weight: 500;
+	white-space: nowrap;
+
+	.components-icon {
+		flex-shrink: 0;
+		fill: currentColor;
+	}
+}
