@@ -152,9 +152,13 @@ export function OverviewPreviewPane( {
 							true,
 							selectedSiteFeature,
 							setSelectedSiteFeature,
-							<div className="a4a-site-performance">
-								<SitePerformance />
-							</div>
+							showNoAccess ? (
+								<A4ARequestWPAdminAccess />
+							) : (
+								<div className="a4a-site-performance">
+									<SitePerformance />
+								</div>
+							)
 						),
 				  ]
 				: [] ),
