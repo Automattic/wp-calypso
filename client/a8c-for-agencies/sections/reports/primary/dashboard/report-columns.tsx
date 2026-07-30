@@ -9,7 +9,9 @@ import FormattedDate from 'calypso/components/formatted-date';
 import { urlToSlug } from 'calypso/lib/url/http-utils';
 import type { ReportStatus } from '../../types';
 
-export const ReportSiteColumn = ( { site }: { site: string } ) => urlToSlug( site );
+export const ReportSiteColumn = ( { site }: { site: string } ) => (
+	<span className="reports-list__site">{ urlToSlug( site ) }</span>
+);
 
 export const ReportCountColumn = ( { count, onClick }: { count: number; onClick: () => void } ) => {
 	const translate = useTranslate();
