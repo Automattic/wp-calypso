@@ -35,6 +35,16 @@ describe( 'getBotSlug', () => {
 		);
 	} );
 
+	it( 'keeps a resumed logged-out session on its bot slug when an interaction is present', () => {
+		const supportInteraction = {
+			bot_slug: loggedInBotSlug,
+		};
+
+		expect( getBotSlug( supportInteraction, loggedInBotSlug, loggedOutBotSlug, true ) ).toBe(
+			loggedOutBotSlug
+		);
+	} );
+
 	it( 'uses the configured logged-in bot slug for a new logged-in chat', () => {
 		expect( getBotSlug( undefined, loggedInBotSlug, loggedOutBotSlug, false ) ).toBe(
 			loggedInBotSlug

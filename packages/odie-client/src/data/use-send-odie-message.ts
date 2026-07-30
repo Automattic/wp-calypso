@@ -22,6 +22,7 @@ import { hasRecentEscalationAttempt } from '../utils/chat-utils';
 import { getBotSlug } from '../utils/get-bot-slug';
 import { getOpenLiveInteractions } from '../utils/get-open-live-interactions';
 import { getIsAgentsManagerAvailable } from '../utils/is-agents-manager-available';
+import { requestLoggedOutWpcomOdie } from './request-logged-out-wpcom-odie';
 import { useCurrentSupportInteraction } from './use-current-support-interaction';
 import { useManageSupportInteraction, broadcastOdieMessage } from '.';
 import type { Chat, Message, ReturnedChat, SupportInteraction } from '../types';
@@ -253,34 +254,55 @@ export const useSendOdieMessage = ( signal: AbortSignal ) => {
 			const isAgentsManagerAvailable = getIsAgentsManagerAvailable();
 			const context = { selectedSiteId, currentScreen, pathname, isAgentsManagerAvailable };
 
-			return canAccessWpcomApis()
-				? wpcomRequest< ReturnedChat >( {
-						method: 'POST',
-						path: `/odie/chat/${ botSlug }${ chatIdSegment }`,
-						apiNamespace: 'wpcom/v2',
-						signal,
-						body: {
-							message: message.content,
-							...( version && { version } ),
-							...( sessionId && { session_id: sessionId } ),
-							...( externalChatProvider && { external_chat_provider: externalChatProvider } ),
-							...( externalChatId && { external_chat_id: externalChatId } ),
-							context,
-						},
-				  } )
-				: apiFetch< ReturnedChat >( {
-						path: `/help-center/odie/chat/${ botSlug }${ chatIdSegment }`,
-						method: 'POST',
-						signal,
-						data: {
-							message: message.content,
-							...( version && { version } ),
-							...( sessionId && { session_id: sessionId } ),
-							...( externalChatProvider && { external_chat_provider: externalChatProvider } ),
-							...( externalChatId && { external_chat_id: externalChatId } ),
-							context,
-						},
-				  } );
+			if ( canAccessWpcomApis() ) {
+				if ( isLoggedOutSession ) {
+					return requestLoggedOutWpcomOdie< ReturnedChat >(
+						`/odie/chat/${ botSlug }${ chatIdSegment }`,
+						{
+							method: 'POST',
+							signal,
+							body: {
+								message: message.content,
+								...( version && { version } ),
+								...( sessionId && { session_id: sessionId } ),
+								...( externalChatProvider && {
+									external_chat_provider: externalChatProvider,
+								} ),
+								...( externalChatId && { external_chat_id: externalChatId } ),
+								context,
+							},
+						}
+					);
+				}
+
+				return wpcomRequest< ReturnedChat >( {
+					method: 'POST',
+					path: `/odie/chat/${ botSlug }${ chatIdSegment }`,
+					apiNamespace: 'wpcom/v2',
+					signal,
+					body: {
+						message: message.content,
+						...( version && { version } ),
+						...( externalChatProvider && { external_chat_provider: externalChatProvider } ),
+						...( externalChatId && { external_chat_id: externalChatId } ),
+						context,
+					},
+				} );
+			}
+
+			return apiFetch< ReturnedChat >( {
+				path: `/help-center/odie/chat/${ botSlug }${ chatIdSegment }`,
+				method: 'POST',
+				signal,
+				data: {
+					message: message.content,
+					...( version && { version } ),
+					...( sessionId && { session_id: sessionId } ),
+					...( externalChatProvider && { external_chat_provider: externalChatProvider } ),
+					...( externalChatId && { external_chat_id: externalChatId } ),
+					context,
+				},
+			} );
 		},
 		onMutate: () => {
 			setChatStatus( 'sending' );
