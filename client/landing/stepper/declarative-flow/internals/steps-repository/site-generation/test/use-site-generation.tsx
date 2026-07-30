@@ -4,8 +4,14 @@
 
 import { act, renderHook } from '@testing-library/react';
 import { logBuildWowEvent } from 'calypso/landing/stepper/utils/build-wow';
+import { pollForBuildProgress } from '../build-progress-poller';
 import { pollForBuildWowStatus } from '../build-status-poller';
 import { useSiteGeneration } from '../use-site-generation';
+
+jest.mock( '../build-progress-poller', () => ( {
+	...jest.requireActual( '../build-progress-poller' ),
+	pollForBuildProgress: jest.fn( () => jest.fn() ),
+} ) );
 
 jest.mock( '../build-status-poller', () => ( {
 	...jest.requireActual( '../build-status-poller' ),
@@ -16,44 +22,62 @@ jest.mock( 'calypso/landing/stepper/utils/build-wow', () => ( {
 	logBuildWowEvent: jest.fn(),
 } ) );
 
-const pollMock = pollForBuildWowStatus as jest.Mock;
+const progressPollMock = pollForBuildProgress as jest.Mock;
+const statusPollMock = pollForBuildWowStatus as jest.Mock;
 const logMock = logBuildWowEvent as jest.Mock;
+const originalLocation = window.location;
 
-// Mirrors the five steps site-generation/index.tsx ships. A shorter fixture would
-// be degenerate: at three steps the delivery-phase mapping collapses to identity.
 const STEPS = [
 	{ id: 'preparing', label: 'Preparing your site' },
 	{ id: 'designing', label: 'Choosing your design' },
 	{ id: 'building', label: 'Building your pages' },
-	{ id: 'polishing', label: 'Polishing your design' },
-	{ id: 'finalizing', label: 'Getting everything ready' },
+	{ id: 'images', label: 'Adding your images' },
+	{ id: 'polishing', label: 'Polishing your site' },
+	{ id: 'publishing', label: 'Publishing your site' },
 ];
 
 describe( 'useSiteGeneration', () => {
 	beforeEach( () => {
 		jest.useFakeTimers();
-		pollMock.mockClear();
-		pollMock.mockReturnValue( jest.fn() );
+		Object.defineProperty( window, 'location', {
+			value: { ...originalLocation, assign: jest.fn() },
+			configurable: true,
+		} );
+		progressPollMock.mockClear();
+		progressPollMock.mockReturnValue( jest.fn() );
+		statusPollMock.mockClear();
+		statusPollMock.mockReturnValue( jest.fn() );
 		logMock.mockClear();
 	} );
 
 	afterEach( () => {
 		jest.useRealTimers();
+		Object.defineProperty( window, 'location', {
+			value: originalLocation,
+			configurable: true,
+		} );
 	} );
 
 	it( 'fails with missing-parameters when the editor URL is absent', () => {
 		const { result } = renderHook( () =>
-			useSiteGeneration( { siteIdentifier: '123', editorUrl: null, steps: STEPS } )
+			useSiteGeneration( {
+				siteIdentifier: '123',
+				editorUrl: null,
+				steps: STEPS,
+			} )
 		);
 
 		expect( result.current.status ).toBe( 'failed' );
 		expect( result.current.failureReason ).toBe( 'missing-parameters' );
-		expect( pollMock ).not.toHaveBeenCalled();
+		expect( progressPollMock ).not.toHaveBeenCalled();
+		expect( statusPollMock ).not.toHaveBeenCalled();
 	} );
 
 	it( 'polls while working and fails with timed-out after the generation deadline', () => {
-		const stopPolling = jest.fn();
-		pollMock.mockReturnValue( stopPolling );
+		const stopProgressPolling = jest.fn();
+		const stopStatusPolling = jest.fn();
+		progressPollMock.mockReturnValue( stopProgressPolling );
+		statusPollMock.mockReturnValue( stopStatusPolling );
 
 		const { result } = renderHook( () =>
 			useSiteGeneration( {
@@ -64,7 +88,8 @@ describe( 'useSiteGeneration', () => {
 		);
 
 		expect( result.current.status ).toBe( 'working' );
-		expect( pollMock ).toHaveBeenCalledTimes( 1 );
+		expect( progressPollMock ).toHaveBeenCalledTimes( 1 );
+		expect( statusPollMock ).toHaveBeenCalledTimes( 1 );
 
 		act( () => {
 			jest.advanceTimersByTime( 30 * 60 * 1000 );
@@ -72,7 +97,8 @@ describe( 'useSiteGeneration', () => {
 
 		expect( result.current.status ).toBe( 'failed' );
 		expect( result.current.failureReason ).toBe( 'timed-out' );
-		expect( stopPolling ).toHaveBeenCalled();
+		expect( stopProgressPolling ).toHaveBeenCalled();
+		expect( stopStatusPolling ).toHaveBeenCalled();
 	} );
 
 	it( 'shows the calm fallback (never an error) when the backend reports a failed build', () => {
@@ -84,7 +110,7 @@ describe( 'useSiteGeneration', () => {
 			} )
 		);
 
-		const { onFailed } = pollMock.mock.calls[ 0 ][ 0 ];
+		const { onFailed } = statusPollMock.mock.calls[ 0 ][ 0 ];
 		act( () => {
 			onFailed( 'failed:build_wow_theme_activation_failed' );
 		} );
@@ -97,7 +123,31 @@ describe( 'useSiteGeneration', () => {
 		} );
 	} );
 
-	it( 'maps each delivery phase to its own step rather than jumping to the last', () => {
+	it( 'redirects only when the build status poller reports that the site is ready', () => {
+		renderHook( () =>
+			useSiteGeneration( {
+				siteIdentifier: '123',
+				editorUrl: 'https://example.wordpress.com/wp-admin/site-editor.php',
+				steps: STEPS,
+			} )
+		);
+
+		const { onProgress } = progressPollMock.mock.calls[ 0 ][ 0 ];
+		act( () => {
+			onProgress( { current: 'done' } );
+		} );
+		expect( window.location.assign ).not.toHaveBeenCalled();
+
+		const { onReady } = statusPollMock.mock.calls[ 0 ][ 0 ];
+		act( () => {
+			onReady();
+		} );
+		expect( window.location.assign ).toHaveBeenCalledWith(
+			'https://example.wordpress.com/wp-admin/site-editor.php'
+		);
+	} );
+
+	it( 'advances from persisted generation milestones and keeps completed steps visible', () => {
 		const { result } = renderHook( () =>
 			useSiteGeneration( {
 				siteIdentifier: '123',
@@ -106,36 +156,48 @@ describe( 'useSiteGeneration', () => {
 			} )
 		);
 
-		const { onProgress } = pollMock.mock.calls[ 0 ][ 0 ];
+		const { onProgress } = progressPollMock.mock.calls[ 0 ][ 0 ];
 
-		// `delivering` is the status already recorded when this screen loads, so it
-		// must not complete the whole list.
 		act( () => {
-			onProgress( 'delivering' );
+			onProgress( { current: 'theme-json' } );
 		} );
 		expect( result.current.steps.map( ( step ) => step.status ) ).toEqual( [
+			'complete',
+			'active',
+			'pending',
+			'pending',
+			'pending',
+			'pending',
+		] );
+
+		act( () => {
+			onProgress( { current: 'assemble-pages' } );
+		} );
+		expect( result.current.steps.map( ( step ) => step.status ) ).toEqual( [
+			'complete',
 			'complete',
 			'complete',
 			'active',
 			'pending',
 			'pending',
 		] );
+	} );
 
+	it( 'moves to publishing when theme generation completes', () => {
+		const { result } = renderHook( () =>
+			useSiteGeneration( {
+				siteIdentifier: '123',
+				editorUrl: 'https://example.wordpress.com/wp-admin/site-editor.php',
+				steps: STEPS,
+			} )
+		);
+
+		const { onProgress } = progressPollMock.mock.calls[ 0 ][ 0 ];
 		act( () => {
-			onProgress( 'activating' );
+			onProgress( { current: 'generate' } );
 		} );
 		expect( result.current.steps.map( ( step ) => step.status ) ).toEqual( [
 			'complete',
-			'complete',
-			'complete',
-			'active',
-			'pending',
-		] );
-
-		act( () => {
-			onProgress( 'verifying' );
-		} );
-		expect( result.current.steps.map( ( step ) => step.status ) ).toEqual( [
 			'complete',
 			'complete',
 			'complete',
@@ -153,14 +215,13 @@ describe( 'useSiteGeneration', () => {
 			} )
 		);
 
-		const { onProgress } = pollMock.mock.calls[ 0 ][ 0 ];
+		const { onProgress } = progressPollMock.mock.calls[ 0 ][ 0 ];
 		act( () => {
-			onProgress( 'verifying' );
-			onProgress( 'delivering' );
+			onProgress( { current: 'validate-theme' } );
+			onProgress( { current: 'theme-json' } );
 		} );
 
-		const steps = result.current.steps;
-		expect( steps[ steps.length - 1 ].status ).toBe( 'active' );
+		expect( result.current.steps[ 4 ].status ).toBe( 'active' );
 	} );
 
 	it( 'ignores an unrecognized status instead of advancing progress', () => {
@@ -172,9 +233,9 @@ describe( 'useSiteGeneration', () => {
 			} )
 		);
 
-		const { onProgress } = pollMock.mock.calls[ 0 ][ 0 ];
+		const { onProgress } = progressPollMock.mock.calls[ 0 ][ 0 ];
 		act( () => {
-			onProgress( 'something-unexpected' );
+			onProgress( { current: 'internal-step' } );
 		} );
 
 		expect( result.current.steps[ 0 ].status ).toBe( 'active' );

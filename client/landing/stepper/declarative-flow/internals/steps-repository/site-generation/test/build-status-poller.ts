@@ -5,19 +5,19 @@
 import { getStepIndexForStatus, pollForBuildWowStatus } from '../build-status-poller';
 
 describe( 'getStepIndexForStatus', () => {
-	// The shipping step list has five entries (see site-generation/index.tsx), which
+	// The shipping step list has six entries (see site-generation/index.tsx), which
 	// is the arity that matters and the one a three-step fixture cannot exercise —
 	// at three, the tail offset is zero and every mapping looks like identity.
-	it( 'maps the delivery walk onto the last three of the five shipping steps', () => {
-		expect( getStepIndexForStatus( 'delivering', 5 ) ).toBe( 2 );
-		expect( getStepIndexForStatus( 'activating', 5 ) ).toBe( 3 );
-		expect( getStepIndexForStatus( 'verifying', 5 ) ).toBe( 4 );
+	it( 'maps the delivery walk onto the last three of the six shipping steps', () => {
+		expect( getStepIndexForStatus( 'delivering', 6 ) ).toBe( 3 );
+		expect( getStepIndexForStatus( 'activating', 6 ) ).toBe( 4 );
+		expect( getStepIndexForStatus( 'verifying', 6 ) ).toBe( 5 );
 	} );
 
 	it( 'returns null for a status outside the known walk', () => {
-		expect( getStepIndexForStatus( 'live', 5 ) ).toBeNull();
-		expect( getStepIndexForStatus( 'failed:whatever', 5 ) ).toBeNull();
-		expect( getStepIndexForStatus( '', 5 ) ).toBeNull();
+		expect( getStepIndexForStatus( 'live', 6 ) ).toBeNull();
+		expect( getStepIndexForStatus( 'failed:whatever', 6 ) ).toBeNull();
+		expect( getStepIndexForStatus( '', 6 ) ).toBeNull();
 	} );
 
 	it( 'stays in range for step lists shorter than the delivery walk', () => {

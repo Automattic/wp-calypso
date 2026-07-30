@@ -17,8 +17,9 @@ const SiteGeneration: StepType = function SiteGeneration() {
 			{ id: 'preparing', label: translate( 'Preparing your site' ) },
 			{ id: 'designing', label: translate( 'Choosing your design' ) },
 			{ id: 'building', label: translate( 'Building your pages' ) },
-			{ id: 'polishing', label: translate( 'Polishing your design' ) },
-			{ id: 'finalizing', label: translate( 'Getting everything ready' ) },
+			{ id: 'images', label: translate( 'Adding your images' ) },
+			{ id: 'polishing', label: translate( 'Polishing your site' ) },
+			{ id: 'publishing', label: translate( 'Publishing your site' ) },
 		],
 		[ translate ]
 	);
