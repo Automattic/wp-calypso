@@ -3,7 +3,7 @@ import { Location } from 'history';
 import { SiteDetails } from '../site';
 import { CurrentUser } from '../user/types';
 import type { HelpCenterAction } from './actions';
-import type { HelpCenterOptions } from './types';
+import type { HelpCenterOptions, LoggedOutOdieChat, LoggedOutOdieChats } from './types';
 import type { Reducer } from 'redux';
 
 const showHelpCenter: Reducer< boolean | undefined, HelpCenterAction > = ( state, action ) => {
@@ -59,12 +59,25 @@ const helpCenterRouterHistory: Reducer<
 };
 
 const loggedOutOdieChat: Reducer<
-	{ odieId: number; sessionId: string; botSlug: string } | undefined,
+	LoggedOutOdieChat | LoggedOutOdieChats | undefined,
 	HelpCenterAction
 > = ( state = undefined, action ) => {
 	switch ( action.type ) {
-		case 'HELP_CENTER_SET_LOGGED_OUT_ODIE_CHAT':
-			return action.session;
+		case 'HELP_CENTER_SET_LOGGED_OUT_ODIE_CHAT': {
+			if ( ! action.session ) {
+				return undefined;
+			}
+
+			const sessions =
+				state && typeof ( state as LoggedOutOdieChat ).botSlug === 'string'
+					? { [ ( state as LoggedOutOdieChat ).botSlug ]: state as LoggedOutOdieChat }
+					: state;
+
+			return {
+				...sessions,
+				[ action.session.botSlug ]: action.session,
+			};
+		}
 	}
 	return state;
 };

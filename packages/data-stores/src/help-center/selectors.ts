@@ -1,4 +1,5 @@
 import type { State } from './reducer';
+import type { LoggedOutOdieChat, LoggedOutOdieChats } from './types';
 
 export const isHelpCenterShown = ( state: State ) => state.showHelpCenter;
 export const isMessagingLauncherShown = ( state: State ) => state.showMessagingLauncher;
@@ -11,7 +12,20 @@ export const getUnreadCount = ( state: State ) => state.unreadCount;
 export const getZendeskConnectionStatus = ( state: State ) => state.zendeskConnectionStatus;
 export const getIsMinimized = ( state: State ) => state.isMinimized;
 export const getIsChatLoaded = ( state: State ) => state.isChatLoaded;
-export const getLoggedOutOdieChat = ( state: State ) => state.loggedOutOdieChat;
+export const getLoggedOutOdieChat = ( state: State, botSlug: string ) => {
+	const sessions = state.loggedOutOdieChat;
+
+	if ( ! sessions ) {
+		return undefined;
+	}
+
+	if ( typeof ( sessions as LoggedOutOdieChat ).botSlug === 'string' ) {
+		const legacySession = sessions as LoggedOutOdieChat;
+		return legacySession.botSlug === botSlug ? legacySession : undefined;
+	}
+
+	return ( sessions as LoggedOutOdieChats )[ botSlug ];
+};
 export const getAreSoundNotificationsEnabled = ( state: State ) =>
 	state.areSoundNotificationsEnabled;
 export const getZendeskClientId = ( state: State ) => state.zendeskClientId;
