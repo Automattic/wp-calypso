@@ -97,6 +97,23 @@ describe( 'showComponentCallback', () => {
 		expect( setCheckpoint ).not.toHaveBeenCalled();
 	} );
 
+	it( 'logs and returns an error result when showing the component throws', async () => {
+		const error = jest.spyOn( console, 'error' ).mockImplementation( () => {} );
+		jest.mocked( getToolCallIdFromConversationHistory ).mockReturnValueOnce( 'toolu_9' );
+		jest.mocked( setCheckpoint ).mockImplementationOnce( () => {
+			throw new Error( 'Snapshot exploded.' );
+		} );
+
+		const result = await showComponentCallback( makeInput() );
+
+		expect( result.result ).toMatchObject( { success: false, error: 'Snapshot exploded.' } );
+		expect( result.agentMessage ).toBeUndefined();
+		expect( error ).toHaveBeenCalledWith(
+			'[AgentsManager] Error showing component color-picker:',
+			expect.any( Error )
+		);
+	} );
+
 	it( 'returns a structured error result when props is null', async () => {
 		const result = await showComponentCallback(
 			makeInput( { props: null as unknown as ShowComponentInput[ 'props' ] } )

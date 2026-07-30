@@ -280,6 +280,7 @@ describe( 'restoreCheckpointCallback', () => {
 	} );
 
 	it( 'drops the provider reciprocal when a delegated restore fails', async () => {
+		jest.spyOn( console, 'error' ).mockImplementation( () => {} );
 		mockGetCheckpoint.mockReturnValue( undefined );
 		mockGetToolCallId.mockReturnValue( RESTORE_CALL_ID );
 		mockGetProviderCheckpoint.mockReturnValue( { checkpointKeys: [ 'site_title' ] } );
@@ -294,6 +295,7 @@ describe( 'restoreCheckpointCallback', () => {
 	} );
 
 	it( 'reports a failed restore and drops the just-created reciprocal', async () => {
+		const error = jest.spyOn( console, 'error' ).mockImplementation( () => {} );
 		mockGetToolCallId.mockReturnValue( RESTORE_CALL_ID );
 		( restoreCheckpoint as jest.Mock ).mockRejectedValueOnce( new Error( 'Restore exploded.' ) );
 
@@ -306,9 +308,14 @@ describe( 'restoreCheckpointCallback', () => {
 		} );
 		expect( clearCheckpoint ).toHaveBeenCalledTimes( 1 );
 		expect( clearCheckpoint ).toHaveBeenCalledWith( RESTORE_CALL_ID );
+		expect( error ).toHaveBeenCalledWith(
+			`[AgentsManager] Error restoring checkpoint ${ TARGET_CHECKPOINT.id }:`,
+			expect.any( Error )
+		);
 	} );
 
 	it( 'keeps a pre-existing reciprocal when the restore fails', async () => {
+		jest.spyOn( console, 'error' ).mockImplementation( () => {} );
 		mockGetToolCallId.mockReturnValue( RESTORE_CALL_ID );
 		mockHasCheckpoint.mockReturnValue( true );
 		( restoreCheckpoint as jest.Mock ).mockRejectedValueOnce( new Error( 'Restore exploded.' ) );

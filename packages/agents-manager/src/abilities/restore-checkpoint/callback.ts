@@ -54,6 +54,9 @@ function restoredResult( summary: string, checkpointId: string ): AbilityResult 
 }
 
 function restoreFailedResult( error: unknown, checkpointId: string ): AbilityResult {
+	// eslint-disable-next-line no-console
+	console.error( `[AgentsManager] Error restoring checkpoint ${ checkpointId }:`, error );
+
 	return errorResult(
 		__( 'I could not restore that checkpoint.', __i18n_text_domain__ ),
 		error instanceof Error ? error.message : String( error ),
