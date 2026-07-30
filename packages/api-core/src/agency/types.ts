@@ -7,6 +7,8 @@ export type AgencyTierId =
 
 export type AgencyTierStatus = 'early_access' | 'tier_protected';
 
+export type AgencyApprovalStatus = 'pending' | 'approved' | 'rejected';
+
 export interface AgencyTier {
 	id?: AgencyTierId;
 	label?: string;
@@ -51,6 +53,7 @@ export interface Agency {
 		allowed: boolean;
 	};
 	influenced_revenue?: number;
+	approval_status?: AgencyApprovalStatus | '';
 	created_at: string;
 	billing_system?: 'billingdragon' | 'legacy';
 	user?: {

@@ -50,7 +50,9 @@ export const agencyQuery = () =>
 			return agency;
 		},
 		// Agency membership rarely changes within a session, so we avoid
-		// refetching on every mount, focus, and route-guard check.
+		// refetching on every mount, focus, and route-guard check. Not persisted,
+		// so a page reload always revalidates.
+		meta: { persist: false },
 		staleTime: 5 * 60 * 1000,
 	} );
 
@@ -68,6 +70,9 @@ export const activeAgencyQuery = () =>
 			}
 			return null;
 		},
+		// Not persisted: tier, influenced revenue and approval status change server-side
+		// and are shown prominently on the overview, so a reload must revalidate them.
+		meta: { persist: false },
 		staleTime: 5 * 60 * 1000,
 		retry: false,
 	} );
