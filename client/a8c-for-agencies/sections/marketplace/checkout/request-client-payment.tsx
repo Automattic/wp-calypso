@@ -122,9 +122,10 @@ function RequestClientPayment( { checkoutItems, termPricing }: Props ) {
 	const agencyId = useSelector( getActiveAgencyId );
 	const uploadLogo = useUploadLogo();
 	const { mutate: requestPayment, isPending } = useRequestClientPaymentMutation();
-	const { data: referrals, refetch: refetchReferrals } = useQuery(
-		referralsQuery( agencyId ?? 0 )
-	);
+	const { data: referrals, refetch: refetchReferrals } = useQuery( {
+		...referralsQuery( agencyId ?? 0 ),
+		refetchOnWindowFocus: false,
+	} );
 
 	const hasCompletedForm = !! email && !! message;
 	// Disable Send/Copy when "Use a different logo" is selected but no logo is uploaded

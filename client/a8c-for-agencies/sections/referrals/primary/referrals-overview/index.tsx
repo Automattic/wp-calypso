@@ -66,14 +66,17 @@ export default function ReferralsOverview() {
 	const isDesktop = useDesktopBreakpoint();
 
 	const { data: tipaltiData, isFetching } = useGetTipaltiPayee();
+	// The page renders its loading state from isFetching, so a refetch on window
+	// focus would flash it. MSD renders from isLoading and keeps the default.
 	const { data: referralCommissionPayout, isFetching: isFetchingReferralCommissionPayout } =
-		useQuery( referralCommissionPayoutQuery( agencyId ) );
+		useQuery( { ...referralCommissionPayoutQuery( agencyId ), refetchOnWindowFocus: false } );
 
 	const wrapperRef = useRef< HTMLButtonElement | null >( null );
 
-	const { data: referrals, isFetching: isFetchingReferrals } = useQuery(
-		referralsQuery( agencyId )
-	);
+	const { data: referrals, isFetching: isFetchingReferrals } = useQuery( {
+		...referralsQuery( agencyId ),
+		refetchOnWindowFocus: false,
+	} );
 
 	const hasReferrals = !! referrals?.length;
 

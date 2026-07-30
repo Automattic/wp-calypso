@@ -20,7 +20,10 @@ import { getActiveAgencyId } from 'calypso/state/a8c-for-agencies/agency/selecto
  */
 export default function useHasCommissionActivity() {
 	const agencyId = useSelector( getActiveAgencyId ) ?? 0;
-	const { data: referrals, isLoading: isLoadingReferrals } = useQuery( referralsQuery( agencyId ) );
+	const { data: referrals, isLoading: isLoadingReferrals } = useQuery( {
+		...referralsQuery( agencyId ),
+		refetchOnWindowFocus: false,
+	} );
 
 	const { data: taggedSites, isLoading: isLoadingMigrations } = useFetchTaggedSitesForMigration();
 
