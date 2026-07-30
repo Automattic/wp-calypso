@@ -1,15 +1,9 @@
 // One session-storage record per gate attempt, keyed by flow and user, so its state
 // survives leaving/re-entering the account step or a refresh. The record's presence means
-// the gate is pending; resolving removes it. `sentAt` anchors the resend cooldown,
-// `shownAt` (stamped when the gate first renders) anchors the duration metric, and
-// `pendingEmail` holds the new address after "Update email" (a pending change leaves
-// `/me` on the old address, so the gate can't recover the target after a refresh otherwise).
+// the gate is pending; resolving removes it. `sentAt` anchors the resend cooldown and
+// `shownAt` (stamped when the gate first renders) anchors the duration metric.
 
 export const RESEND_COOLDOWN_SECONDS = 60;
-
-// Resending a pending email change re-issues the change, which the backend rate-limits at
-// ~15 minutes; match it so we don't offer a resend that would silently no-op.
-export const PENDING_EMAIL_RESEND_COOLDOWN_SECONDS = 15 * 60;
 
 const STORAGE_KEY = 'onboarding-email-verification-gate';
 
@@ -20,7 +14,6 @@ export function gateScope( flow: string, userId: number | string | null | undefi
 interface GateRecord {
 	sentAt: number;
 	shownAt: number;
-	pendingEmail?: string;
 }
 
 function storageKey( scope: string ): string {
@@ -80,19 +73,6 @@ export function markResent( scope: string ): void {
 	}
 }
 
-// Called after "Update email" so the new address (a pending change `/me` won't report)
-// survives a refresh, and drives the display, inbox link, and resend target.
-export function setPendingEmail( scope: string, email: string ): void {
-	const record = read( scope );
-	if ( record ) {
-		write( scope, { ...record, pendingEmail: email } );
-	}
-}
-
-export function getPendingEmail( scope: string ): string | undefined {
-	return read( scope )?.pendingEmail;
-}
-
 export function gateShownAt( scope: string ): number {
 	return read( scope )?.shownAt || Date.now();
 }
@@ -101,10 +81,7 @@ export function gateSentAt( scope: string ): number {
 	return read( scope )?.sentAt ?? 0;
 }
 
-export function cooldownRemainingSeconds(
-	sentAt: number,
-	maxSeconds: number = RESEND_COOLDOWN_SECONDS
-): number {
-	const remainingMs = maxSeconds * 1000 - ( Date.now() - sentAt );
-	return remainingMs > 0 ? Math.min( Math.ceil( remainingMs / 1000 ), maxSeconds ) : 0;
+export function cooldownRemainingSeconds( sentAt: number ): number {
+	const remainingMs = RESEND_COOLDOWN_SECONDS * 1000 - ( Date.now() - sentAt );
+	return remainingMs > 0 ? Math.min( Math.ceil( remainingMs / 1000 ), RESEND_COOLDOWN_SECONDS ) : 0;
 }
