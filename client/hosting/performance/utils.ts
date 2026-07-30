@@ -1,4 +1,9 @@
 import isA8CForAgencies from 'calypso/lib/a8c-for-agencies/is-a8c-for-agencies';
+import type { SiteDetails } from '@automattic/data-stores';
+
+export function isPublicSite( site: SiteDetails | null | undefined ) {
+	return !! site && ! site.is_coming_soon && ! site.is_private;
+}
 
 export function isValidURL( url: string ) {
 	if ( 'canParse' in URL ) {
