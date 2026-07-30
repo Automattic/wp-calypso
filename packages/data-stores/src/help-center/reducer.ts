@@ -2,6 +2,7 @@ import { combineReducers } from '@wordpress/data';
 import { Location } from 'history';
 import { SiteDetails } from '../site';
 import { CurrentUser } from '../user/types';
+import { isLegacyLoggedOutOdieChat } from './logged-out-odie-chat';
 import type { HelpCenterAction } from './actions';
 import type { HelpCenterOptions, LoggedOutOdieChat, LoggedOutOdieChats } from './types';
 import type { Reducer } from 'redux';
@@ -68,10 +69,7 @@ const loggedOutOdieChat: Reducer<
 				return undefined;
 			}
 
-			const sessions =
-				state && typeof ( state as LoggedOutOdieChat ).botSlug === 'string'
-					? { [ ( state as LoggedOutOdieChat ).botSlug ]: state as LoggedOutOdieChat }
-					: state;
+			const sessions = isLegacyLoggedOutOdieChat( state ) ? { [ state.botSlug ]: state } : state;
 
 			return {
 				...sessions,

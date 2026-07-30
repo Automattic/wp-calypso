@@ -1,5 +1,5 @@
+import { isLegacyLoggedOutOdieChat } from './logged-out-odie-chat';
 import type { State } from './reducer';
-import type { LoggedOutOdieChat, LoggedOutOdieChats } from './types';
 
 export const isHelpCenterShown = ( state: State ) => state.showHelpCenter;
 export const isMessagingLauncherShown = ( state: State ) => state.showMessagingLauncher;
@@ -19,12 +19,11 @@ export const getLoggedOutOdieChat = ( state: State, botSlug: string ) => {
 		return undefined;
 	}
 
-	if ( typeof ( sessions as LoggedOutOdieChat ).botSlug === 'string' ) {
-		const legacySession = sessions as LoggedOutOdieChat;
-		return legacySession.botSlug === botSlug ? legacySession : undefined;
+	if ( isLegacyLoggedOutOdieChat( sessions ) ) {
+		return sessions.botSlug === botSlug ? sessions : undefined;
 	}
 
-	return ( sessions as LoggedOutOdieChats )[ botSlug ];
+	return sessions[ botSlug ];
 };
 export const getAreSoundNotificationsEnabled = ( state: State ) =>
 	state.areSoundNotificationsEnabled;
