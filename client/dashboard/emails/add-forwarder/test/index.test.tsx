@@ -1,28 +1,29 @@
 /**
  * @jest-environment jsdom
  */
-import { EmailProvider } from '@automattic/api-core';
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
 import { render } from '../../../test-utils';
 import AddEmailForwarder from '../index';
-import type { EmailAccount } from '@automattic/api-core';
+import type { DomainSummary } from '@automattic/api-core';
 
 const DOMAIN = 'example.com';
 
-function mockApi() {
+function mockApi( { domains }: { domains?: DomainSummary[] } = {} ) {
 	// Eligible forwarding domain so the form renders.
 	nock( 'https://public-api.wordpress.com' )
-		.get( '/rest/v1/me/mailboxes' )
+		.get( '/rest/v1.2/all-domains' )
 		.query( true )
-		.reply( 200, [
-			{
-				account_type: EmailProvider.Forwarding,
-				can_user_add_email: true,
-				domains: [ { domain: DOMAIN } ],
-			},
-		] as EmailAccount[] );
+		.reply( 200, {
+			domains: domains ?? [
+				{
+					domain: DOMAIN,
+					subtype: { id: 'domain_registration', label: 'Domain Registration' },
+					current_user_is_owner: true,
+				} as DomainSummary,
+			],
+		} );
 
 	// Existing forwarders for the eligible domain (queried on render).
 	nock( 'https://public-api.wordpress.com' )
@@ -76,5 +77,42 @@ describe( '<AddEmailForwarder>', () => {
 		expect( screen.getByText( 'first@example.com' ) ).toBeVisible();
 		expect( screen.getByText( 'second@example.com' ) ).toBeVisible();
 		expect( screen.queryByText( 'Please enter a valid email address.' ) ).not.toBeInTheDocument();
+	} );
+
+	// DOTMSD-1477
+	test( 'offers a domain the user administers but does not own', async () => {
+		mockApi( {
+			domains: [
+				{
+					domain: DOMAIN,
+					subtype: { id: 'domain_registration', label: 'Domain Registration' },
+					current_user_is_owner: false,
+				} as DomainSummary,
+			],
+		} );
+		render( <AddEmailForwarder /> );
+
+		expect( await screen.findByLabelText( 'Forward to' ) ).toBeVisible();
+		expect( screen.getByRole( 'option', { name: DOMAIN } ) ).toBeInTheDocument();
+		expect(
+			screen.queryByText( 'You do not have any domains eligible for email forwarding.' )
+		).not.toBeInTheDocument();
+	} );
+
+	test( 'keeps the empty state when the user only has a default address', async () => {
+		mockApi( {
+			domains: [
+				{
+					domain: 'example.wordpress.com',
+					subtype: { id: 'default_address', label: 'Default Address' },
+					current_user_is_owner: true,
+				} as DomainSummary,
+			],
+		} );
+		render( <AddEmailForwarder /> );
+
+		expect(
+			await screen.findByText( 'You do not have any domains eligible for email forwarding.' )
+		).toBeVisible();
 	} );
 } );

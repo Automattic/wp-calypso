@@ -1,10 +1,5 @@
-import { EmailProvider } from '@automattic/api-core';
-import {
-	addEmailForwarderMutation,
-	domainDnsQuery,
-	domainQuery,
-	userMailboxesQuery,
-} from '@automattic/api-queries';
+import { DomainSubtype } from '@automattic/api-core';
+import { addEmailForwarderMutation, domainDnsQuery, domainQuery } from '@automattic/api-queries';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { useNavigate } from '@tanstack/react-router';
 import {
@@ -49,7 +44,7 @@ export interface FormData {
 }
 
 function AddEmailForwarder() {
-	const { basePath } = useAppContext();
+	const { basePath, queries } = useAppContext();
 	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
 	const { recordTracksEvent } = useAnalytics();
 
@@ -58,19 +53,18 @@ function AddEmailForwarder() {
 	);
 	const navigate = useNavigate();
 
-	const { data: allEmailAccounts, isLoading: isLoadingEmailAccounts } = useQuery(
-		userMailboxesQuery()
+	const { data: allDomains, isLoading: isLoadingDomains } = useQuery( queries.domainsQuery() );
+
+	// Forwarding is free, so it doesn't depend on who owns the domain subscription — that
+	// only decides who may buy paid email. Listing the user's own domains keeps this form
+	// reachable for administrators who aren't the owner.
+	const eligibleDomains = useMemo(
+		() =>
+			( allDomains ?? [] )
+				.filter( ( d ) => d.subtype.id !== DomainSubtype.DEFAULT_ADDRESS )
+				.map( ( d ) => d.domain ),
+		[ allDomains ]
 	);
-
-	const eligibleDomains = useMemo( () => {
-		const forwardingAccounts = ( allEmailAccounts ?? [] ).filter(
-			( account ) => account.account_type === EmailProvider.Forwarding && account.can_user_add_email
-		);
-
-		return forwardingAccounts.flatMap( ( account ) =>
-			account.domains.map( ( { domain } ) => domain )
-		);
-	}, [ allEmailAccounts ] );
 
 	const [ formData, setFormData ] = useState< FormData >( {
 		localPart: '',
@@ -157,7 +151,7 @@ function AddEmailForwarder() {
 
 	const isBusy =
 		isAddingEmailForwarder ||
-		isLoadingEmailAccounts ||
+		isLoadingDomains ||
 		isLoadingDomainMaxForwards ||
 		isLoadingNewForwardingAddresses;
 	const allFieldsSet = !! formData.localPart && !! formData.domain && !! forwardingAddresses.length;
@@ -257,7 +251,7 @@ function AddEmailForwarder() {
 		);
 	};
 
-	if ( isLoadingEmailAccounts ) {
+	if ( isLoadingDomains ) {
 		return (
 			<PageLayout header={ <PageHeader prefix={ <Breadcrumbs length={ 2 } /> } /> } size="small">
 				<Spinner
