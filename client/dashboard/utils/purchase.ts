@@ -627,8 +627,8 @@ function getCheckoutProductSlugFromPurchase( purchase: Purchase ): string {
 }
 
 function getCheckoutSiteSlugForPurchase( purchase: Purchase ): string {
-	if ( isAkismetProduct( purchase ) ) {
-		// Akismet checkout never uses a site slug.
+	// Neither Akismet nor A4A holding sites should use a site slug
+	if ( isAkismetProduct( purchase ) || isA4AHoldingSitePurchase( purchase ) ) {
 		return '';
 	}
 	return purchase.site_slug || '';
