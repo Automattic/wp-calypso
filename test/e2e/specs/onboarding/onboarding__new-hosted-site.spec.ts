@@ -1,25 +1,26 @@
 import {
 	BrowserManager,
 	CartCheckoutPage,
+	DashboardMeSidebarComponent,
+	DashboardPurchasesPage,
+	DashboardSnackbarComponent,
 	DataHelper,
-	MeSidebarComponent,
-	MyProfilePage,
 	NewUserResponse,
-	NoticeComponent,
 	PlansPage,
-	PurchasesPage,
 	RestAPIClient,
 	UserSignupPage,
-	cancelAtomicPurchaseFlow,
-	cancelSubscriptionFlow,
+	cancelDashboardPurchaseFlow,
+	removeDashboardUpgradeFlow,
 } from '@automattic/calypso-e2e';
-import { tags, test } from '../../lib/pw-base';
+import { skipIfNotTrunk, tags, test } from '../../lib/pw-base';
 import { apiCancelAtomicPlan, apiCloseAccount } from '../shared';
 
 test.describe(
 	DataHelper.createSuiteTitle( 'New Hosted Site Flow: Purchase a hosted site and cancel it' ),
 	{ tag: [ tags.CALYPSO_RELEASE ] },
 	() => {
+		skipIfNotTrunk();
+
 		const planName = 'Business';
 		const testUser = DataHelper.getNewTestUser();
 		let newUserDetails: NewUserResponse | undefined;
@@ -51,10 +52,7 @@ test.describe(
 			} );
 		} );
 
-		// Skipped for now; can be updated once we're sure all onboarding tests will go
-		// through the MSD flow. See https://github.com/Automattic/wp-calypso/pull/112586
-		// and https://github.com/Automattic/wp-calypso/pull/112587.
-		test.skip( 'As a new user, I can purchase a hosted site and cancel it', async ( { page } ) => {
+		test( 'As a new user, I can purchase a hosted site and cancel it', async ( { page } ) => {
 			// ~360s of dominant waits (90s purchase + 180s Atomic transfer + 30s
 			// checkout + two 30s refund notices) plus signup, billing and two
 			// cancellation navigations; 420s covers the worst case.
@@ -115,47 +113,47 @@ test.describe(
 				siteSlug = new URL( page.url() ).hostname;
 			} );
 
-			await test.step( 'When I navigate to Me > Purchases to cancel add-on', async () => {
-				const mePage = new MyProfilePage( page );
-				await mePage.visit();
-				const meSidebarComponent = new MeSidebarComponent( page );
-				await meSidebarComponent.openMobileMenu();
-				await meSidebarComponent.navigate( 'Purchases' );
+			await test.step( 'When I navigate to Billing > Active upgrades to cancel add-on', async () => {
+				await page.goto( DataHelper.getDashboardURL( '/me' ) );
+				const meSidebar = new DashboardMeSidebarComponent( page );
+				await meSidebar.openMobileMenu();
+				await meSidebar.navigate( 'Billing' );
+				await page.getByRole( 'link', { name: 'Active upgrades', exact: true } ).click();
 			} );
 
 			await test.step( 'When I cancel storage add-on', async () => {
-				const purchasesPage = new PurchasesPage( page );
+				const purchasesPage = new DashboardPurchasesPage( page );
 				await purchasesPage.clickOnPurchase( 'Storage Add-On Space Upgrade 50 GB', siteSlug! );
-				await purchasesPage.cancelPurchase( 'Cancel subscription' );
-				await cancelSubscriptionFlow( page );
-				const noticeComponent = new NoticeComponent( page );
-				await noticeComponent.noticeShown(
-					'Your refund has been processed and your purchase removed.',
-					{ timeout: 30 * 1000 }
-				);
+				await purchasesPage.cancelPurchase();
+				await removeDashboardUpgradeFlow( page, {
+					improvementText: 'E2E TEST CANCELLATION',
+				} );
+				const snackbar = new DashboardSnackbarComponent( page );
+				await snackbar.noticeShown( 'Your refund has been processed and your purchase removed.', {
+					exact: true,
+				} );
 			} );
 
-			await test.step( 'When I navigate to Me > Purchases to cancel plan', async () => {
-				const mePage = new MyProfilePage( page );
-				await mePage.visit();
-				const meSidebarComponent = new MeSidebarComponent( page );
-				await meSidebarComponent.openMobileMenu();
-				await meSidebarComponent.navigate( 'Purchases' );
+			await test.step( 'When I navigate to Billing > Active upgrades to cancel plan', async () => {
+				await page.goto( DataHelper.getDashboardURL( '/me' ) );
+				const meSidebar = new DashboardMeSidebarComponent( page );
+				await meSidebar.openMobileMenu();
+				await meSidebar.navigate( 'Billing' );
+				await page.getByRole( 'link', { name: 'Active upgrades', exact: true } ).click();
 			} );
 
 			await test.step( 'When I cancel plan', async () => {
-				const purchasesPage = new PurchasesPage( page );
+				const purchasesPage = new DashboardPurchasesPage( page );
 				await purchasesPage.clickOnPurchase( `WordPress.com ${ planName }`, siteSlug! );
-				await purchasesPage.cancelPurchase( 'Cancel plan' );
-				await cancelAtomicPurchaseFlow( page, {
+				await purchasesPage.cancelPurchase();
+				await cancelDashboardPurchaseFlow( page, {
 					reason: 'Another reason…',
 					customReasonText: 'E2E TEST CANCELLATION',
 				} );
-				const noticeComponent = new NoticeComponent( page );
-				await noticeComponent.noticeShown(
-					'Your refund has been processed and your purchase removed.',
-					{ timeout: 30 * 1000 }
-				);
+				const snackbar = new DashboardSnackbarComponent( page );
+				await snackbar.noticeShown( 'Your refund has been processed and your purchase removed.', {
+					exact: true,
+				} );
 			} );
 		} );
 	}
