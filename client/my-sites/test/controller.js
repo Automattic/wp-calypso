@@ -17,6 +17,7 @@ import {
 } from '../controller';
 
 jest.mock( 'calypso/state/sites/actions', () => ( {
+	...jest.requireActual( 'calypso/state/sites/actions' ),
 	requestSite: jest.fn(),
 } ) );
 
@@ -222,6 +223,7 @@ describe( 'siteSelection', () => {
 			section: {},
 		};
 
+		page.current = context.path;
 		siteSelection( context, next );
 
 		return next;
@@ -235,6 +237,7 @@ describe( 'siteSelection', () => {
 
 	afterEach( () => {
 		jest.useRealTimers();
+		page.current = '';
 	} );
 
 	it( 'should retry when the site is returned by the API but is not manageable yet', async () => {
@@ -259,6 +262,17 @@ describe( 'siteSelection', () => {
 		await jest.advanceTimersByTimeAsync( 10000 );
 
 		expect( requestSite ).toHaveBeenCalledTimes( 3 );
+		expect( next ).not.toHaveBeenCalled();
+	} );
+
+	it( 'should stop retrying when the user navigates away', async () => {
+		const next = selectSite( () => unmanageableSiteState );
+
+		await jest.advanceTimersByTimeAsync( 0 );
+		page.current = '/reader';
+		await jest.advanceTimersByTimeAsync( 10000 );
+
+		expect( requestSite ).toHaveBeenCalledTimes( 1 );
 		expect( next ).not.toHaveBeenCalled();
 	} );
 } );

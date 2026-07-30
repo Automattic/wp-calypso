@@ -698,17 +698,22 @@ function requestAndSelectSite( context, next, { siteFragment, isUnlinkedCheckout
 			if ( site && site.ID ) {
 				if ( ! getSite( getState(), site.ID ) && retriesLeft > 0 ) {
 					return new Promise( ( resolve ) =>
-						setTimeout(
-							() =>
-								resolve(
-									requestAndSelectSite( context, next, {
-										siteFragment,
-										isUnlinkedCheckout,
-										retriesLeft: retriesLeft - 1,
-									} )
-								),
-							UNMANAGEABLE_SITE_RETRY_DELAY
-						)
+						setTimeout( () => {
+							// Give up if the user navigated away while we were waiting, so that this
+							// route doesn't select a site or redirect out of the page they moved on to.
+							if ( page.current !== context.path ) {
+								resolve();
+								return;
+							}
+
+							resolve(
+								requestAndSelectSite( context, next, {
+									siteFragment,
+									isUnlinkedCheckout,
+									retriesLeft: retriesLeft - 1,
+								} )
+							);
+						}, UNMANAGEABLE_SITE_RETRY_DELAY )
 					);
 				}
 
