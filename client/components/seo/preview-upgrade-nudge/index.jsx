@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import {
 	findFirstSimilarPlanKey,
 	TERM_ANNUALLY,
@@ -15,20 +16,39 @@ import UpsellNudge from 'calypso/blocks/upsell-nudge';
 import QueryProducts from 'calypso/components/data/query-products-list';
 import FeatureExample from 'calypso/components/feature-example';
 import TrackComponentView from 'calypso/lib/analytics/track-component-view';
+import { addQueryArgs } from 'calypso/lib/url';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
-import { isJetpackSite } from 'calypso/state/sites/selectors';
+import { getSiteSlug, isJetpackSite } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import upgradeNudgeImage from './preview-upgrade-nudge.webp';
 
 import './style.scss';
 
+// In wp-admin (Odyssey) UpsellNudge's default Calypso-relative /plans link
+// would resolve against the site's own domain and 404, so link to
+// wordpress.com absolutely there; elsewhere the default is correct.
+export const getUpgradeNudgeHref = ( { isOdyssey, siteSlug, plan } ) =>
+	isOdyssey && siteSlug
+		? addQueryArgs(
+				{ feature: FEATURE_SEO_PREVIEW_TOOLS, plan },
+				`https://wordpress.com/plans/${ siteSlug }`
+		  )
+		: undefined;
+
 export const SeoPreviewNudge = ( {
 	canCurrentUserUpgrade,
 	translate,
 	site,
+	siteSlug,
 	isJetpack = false,
 } ) => {
 	const planName = getPlan( PLAN_BUSINESS )?.getTitle() ?? '';
+	const plan =
+		site &&
+		findFirstSimilarPlanKey(
+			site.plan.product_slug,
+			isJetpack ? { type: TYPE_SECURITY_DAILY, term: TERM_ANNUALLY } : { type: TYPE_BUSINESS }
+		);
 	return (
 		<div className="preview-upgrade-nudge">
 			{ /** QueryProducts added to ensure currency-code state gets populated for usages of getCurrentUserCurrencyCode */ }
@@ -37,13 +57,12 @@ export const SeoPreviewNudge = ( {
 
 			<UpsellNudge
 				showIcon
-				plan={
-					site &&
-					findFirstSimilarPlanKey(
-						site.plan.product_slug,
-						isJetpack ? { type: TYPE_SECURITY_DAILY, term: TERM_ANNUALLY } : { type: TYPE_BUSINESS }
-					)
-				}
+				plan={ plan }
+				href={ getUpgradeNudgeHref( {
+					isOdyssey: config.isEnabled( 'is_odyssey' ),
+					siteSlug,
+					plan,
+				} ) }
 				title={
 					canCurrentUserUpgrade
 						? translate( 'Upgrade to a %(planName)s plan to unlock the power of our SEO tools!', {
@@ -111,6 +130,7 @@ const mapStateToProps = ( state, ownProps ) => {
 
 	return {
 		isJetpack,
+		siteSlug: getSiteSlug( state, site.ID ),
 		canCurrentUserUpgrade: canCurrentUser( state, getSelectedSiteId( state ), 'manage_options' ),
 	};
 };
