@@ -103,7 +103,7 @@ describe( 'EmailVerificationGate', () => {
 		);
 	} );
 
-	it( 'offers a sniper-link inbox button for a known email provider', async () => {
+	it( 'offers an inbox button that deep-links to a known provider', async () => {
 		renderStep( <EmailVerificationGate flow={ FLOW } scope={ SCOPE } onDone={ jest.fn() } />, {
 			initialState: {
 				currentUser: {
@@ -115,7 +115,8 @@ describe( 'EmailVerificationGate', () => {
 
 		const openButton = await screen.findByRole( 'link', { name: 'Open email inbox' } );
 		expect( openButton.getAttribute( 'href' ) ).toContain( 'mail.google.com' );
-		// The inbox CTA replaces the manual re-check for known providers.
+		// For a known provider the inbox link is the primary action, so the manual-check
+		// button isn't shown (a secondary re-check link remains — see the next test).
 		expect(
 			screen.queryByRole( 'button', { name: 'I’ve confirmed my email' } )
 		).not.toBeInTheDocument();

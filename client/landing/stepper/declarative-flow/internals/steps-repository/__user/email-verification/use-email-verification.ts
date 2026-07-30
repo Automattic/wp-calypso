@@ -45,7 +45,9 @@ export function useEmailVerification( flow: string, scope: string ) {
 	const [ isVisible, setIsVisible ] = useState( () => document.visibilityState === 'visible' );
 
 	// The initial email is the activation email from account creation; this only resends.
-	const resend = useCallback( async () => {
+	// A plain function (not useCallback): it's only ever an onClick handler, and
+	// `sendVerificationEmail` isn't referentially stable, so memoizing would be a no-op.
+	const resend = async () => {
 		setIsSending( true );
 		setHasSendError( false );
 
@@ -76,7 +78,7 @@ export function useEmailVerification( flow: string, scope: string ) {
 		} finally {
 			setIsSending( false );
 		}
-	}, [ sendVerificationEmail, flow, scope ] );
+	};
 
 	// Recompute the cooldown from the send time rather than decrementing a counter: mobile
 	// browsers suspend timers while the user is away in their email app.

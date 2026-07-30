@@ -5,9 +5,9 @@
 	gap: 16px;
 	text-align: center;
 
+	// Full-width buttons per the design; the shared button styles already center content.
 	.step-container-v2__primary-button,
 	.step-container-v2__secondary-button {
-		justify-content: center;
 		width: 100%;
 	}
 }
