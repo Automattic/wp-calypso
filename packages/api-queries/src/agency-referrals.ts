@@ -72,6 +72,28 @@ export const referralCommissionPayoutQuery = ( agencyId: number ) =>
 		enabled: !! agencyId,
 	} );
 
+/**
+ * Returns the referrals list with the given referral order marked archived,
+ * preserving the grouped-by-client shape produced by `referralsQuery`. Exported
+ * for hosts that run their own QueryClient and apply the optimistic update at
+ * the call site.
+ */
+export function archiveReferralInList( referrals: Referral[], referralId: number ): Referral[] {
+	return referrals.map( ( client ) => {
+		if ( ! client.referrals.some( ( order ) => order.id === referralId ) ) {
+			return client;
+		}
+		const orders = client.referrals.map( ( order ) =>
+			order.id === referralId ? { ...order, status: 'archived' } : order
+		);
+		return {
+			...client,
+			referrals: orders,
+			referralStatuses: orders.map( ( order ) => order.status ),
+		};
+	} );
+}
+
 export const archiveReferralMutation = ( agencyId: number ) => {
 	const queryKey = referralsQuery( agencyId ).queryKey;
 	return mutationOptions( {
@@ -81,22 +103,7 @@ export const archiveReferralMutation = ( agencyId: number ) => {
 			await queryClient.cancelQueries( { queryKey } );
 			const previous = queryClient.getQueryData< Referral[] >( queryKey );
 			if ( previous ) {
-				queryClient.setQueryData(
-					queryKey,
-					previous.map( ( client ) => {
-						if ( ! client.referrals.some( ( order ) => order.id === referralId ) ) {
-							return client;
-						}
-						const referrals = client.referrals.map( ( order ) =>
-							order.id === referralId ? { ...order, status: 'archived' } : order
-						);
-						return {
-							...client,
-							referrals,
-							referralStatuses: referrals.map( ( order ) => order.status ),
-						};
-					} )
-				);
+				queryClient.setQueryData( queryKey, archiveReferralInList( previous, referralId ) );
 			}
 			return { previous };
 		},

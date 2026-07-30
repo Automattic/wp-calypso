@@ -1,3 +1,5 @@
+import { referralsQuery } from '@automattic/api-queries';
+import { useQuery } from '@tanstack/react-query';
 import useFetchAllLicenses from 'calypso/a8c-for-agencies/data/purchases/use-fetch-all-licenses';
 import useFetchSitesWithPlugins from 'calypso/a8c-for-agencies/data/sites/use-fetch-sites-with-plugins';
 import useFetchTaggedSitesForMigration from 'calypso/dashboard/agency/earn/migrations/hooks/use-fetch-tagged-sites-for-migration';
@@ -6,7 +8,8 @@ import {
 	LicenseSortField,
 	LicenseSortDirection,
 } from 'calypso/jetpack-cloud/sections/partner-portal/types';
-import useFetchReferrals from '../../hooks/use-fetch-referrals';
+import { useSelector } from 'calypso/state';
+import { getActiveAgencyId } from 'calypso/state/a8c-for-agencies/agency/selectors';
 
 /**
  * Determines whether the agency has performed any commission-generating
@@ -16,7 +19,8 @@ import useFetchReferrals from '../../hooks/use-fetch-referrals';
  * the UI for brand-new accounts that have no context for it yet.
  */
 export default function useHasCommissionActivity() {
-	const { data: referrals, isLoading: isLoadingReferrals } = useFetchReferrals();
+	const agencyId = useSelector( getActiveAgencyId ) ?? 0;
+	const { data: referrals, isLoading: isLoadingReferrals } = useQuery( referralsQuery( agencyId ) );
 
 	const { data: taggedSites, isLoading: isLoadingMigrations } = useFetchTaggedSitesForMigration();
 
