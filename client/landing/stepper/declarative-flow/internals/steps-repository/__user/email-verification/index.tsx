@@ -112,7 +112,7 @@ const EmailVerificationGate = ( { flow, scope, logo, onDone }: Props ) => {
 						tabIndex={ -1 }
 						className="onboarding-email-verification__heading"
 					>
-						<Step.Heading align="center" text={ title } subText={ subText } />
+						<Step.Heading align="left" text={ title } subText={ subText } />
 					</div>
 				}
 			>
