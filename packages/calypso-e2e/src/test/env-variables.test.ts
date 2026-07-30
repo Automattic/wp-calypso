@@ -1,4 +1,4 @@
-import { describe, expect, test, afterEach } from '@jest/globals';
+import { afterAll, beforeEach, describe, expect, test } from '@jest/globals';
 import envVariables from '../env-variables';
 
 const URL_ENV_VARS = [
@@ -10,9 +10,25 @@ const URL_ENV_VARS = [
 	'WPCOM_BASE_URL',
 ] as const;
 
+const AMBIENT_VALUES = URL_ENV_VARS.map( ( name ) => process.env[ name ] );
+
 describe( 'EnvVariables Tests', function () {
-	afterEach( function () {
+	// Each case starts from the unset state so the assertions never depend on the
+	// shell that launched Jest, or on the order the cases run in.
+	beforeEach( function () {
 		URL_ENV_VARS.forEach( ( name ) => delete process.env[ name ] );
+	} );
+
+	// Jest workers are reused across test files, so hand the environment back.
+	afterAll( function () {
+		URL_ENV_VARS.forEach( ( name, index ) => {
+			const ambient = AMBIENT_VALUES[ index ];
+			if ( ambient === undefined ) {
+				delete process.env[ name ];
+			} else {
+				process.env[ name ] = ambient;
+			}
+		} );
 	} );
 
 	// CI templates export these unconditionally, so an unset variable arrives as an

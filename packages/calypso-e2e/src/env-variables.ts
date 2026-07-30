@@ -287,8 +287,7 @@ class EnvVariables implements SupportedEnvVariables {
 			const envVarName = property as keyof SupportedEnvVariables;
 			// Access each property
 			// Any validation errors within the getter will throw an exception here.
-			// eslint-disable-next-line @typescript-eslint/no-unused-expressions
-			this[ envVarName ];
+			void this[ envVarName ];
 		}
 	}
 }
