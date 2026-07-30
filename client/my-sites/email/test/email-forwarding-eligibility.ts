@@ -6,70 +6,56 @@ import {
 } from 'calypso/lib/emails/email-provider-constants';
 import {
 	canPromoteEmailForwarding,
-	isEmailForwardingRestricted,
+	getEmailForwardingRestrictionCode,
 } from 'calypso/my-sites/email/email-forwarding-eligibility';
 import type { ResponseDomain } from 'calypso/lib/domains/types';
 
-const domainThatCanAddEmail = { currentUserCanAddEmail: true } as ResponseDomain;
-
-const domainBlockedBy = ( code: string | null ) =>
+const blockedBy = ( code: string | null ) =>
 	( {
 		currentUserCanAddEmail: false,
 		currentUserCannotAddEmailReason: code ? { code, message: 'Email is unavailable.' } : null,
 	} ) as ResponseDomain;
 
-describe( 'isEmailForwardingRestricted', () => {
-	it.each( [ EMAIL_WARNING_CODE_DOMAIN_STATE_RESTRICTED, EMAIL_WARNING_CODE_GRAVATAR_DOMAIN ] )(
-		'is true for %s, which blocks forwarding itself',
-		( code ) => {
-			expect( isEmailForwardingRestricted( domainBlockedBy( code ) ) ).toBe( true );
+// Forwarding restrictions and paid-email eligibility are deliberately different questions: only
+// the first two codes stop forwarding, while only domain-subscription ownership is a paid-email
+// blocker that still permits it. Anything unrecognized fails closed on both counts.
+const cases: [ string, ResponseDomain | undefined, string | null, boolean ][] = [
+	[ 'can add email', { currentUserCanAddEmail: true } as ResponseDomain, null, true ],
+	[
+		EMAIL_WARNING_CODE_DOMAIN_STATE_RESTRICTED,
+		blockedBy( EMAIL_WARNING_CODE_DOMAIN_STATE_RESTRICTED ),
+		EMAIL_WARNING_CODE_DOMAIN_STATE_RESTRICTED,
+		false,
+	],
+	[
+		EMAIL_WARNING_CODE_GRAVATAR_DOMAIN,
+		blockedBy( EMAIL_WARNING_CODE_GRAVATAR_DOMAIN ),
+		EMAIL_WARNING_CODE_GRAVATAR_DOMAIN,
+		false,
+	],
+	[
+		EMAIL_WARNING_CODE_OTHER_USER_OWNS_DOMAIN_SUBSCRIPTION,
+		blockedBy( EMAIL_WARNING_CODE_OTHER_USER_OWNS_DOMAIN_SUBSCRIPTION ),
+		null,
+		true,
+	],
+	[
+		EMAIL_WARNING_CODE_OTHER_USER_OWNS_EMAIL,
+		blockedBy( EMAIL_WARNING_CODE_OTHER_USER_OWNS_EMAIL ),
+		null,
+		false,
+	],
+	[ 'an unrecognized code', blockedBy( 'domain-expired' ), null, false ],
+	[ 'no reason at all', blockedBy( null ), null, false ],
+	[ 'no domain', undefined, null, false ],
+];
+
+describe( 'email forwarding eligibility', () => {
+	it.each( cases )(
+		'%s: forwarding restriction %s, promotable %s',
+		( _label, domain, restrictionCode, canPromote ) => {
+			expect( getEmailForwardingRestrictionCode( domain ) ).toBe( restrictionCode );
+			expect( canPromoteEmailForwarding( domain ) ).toBe( canPromote );
 		}
 	);
-
-	it.each( [
-		EMAIL_WARNING_CODE_OTHER_USER_OWNS_DOMAIN_SUBSCRIPTION,
-		EMAIL_WARNING_CODE_OTHER_USER_OWNS_EMAIL,
-		'domain-expired',
-		null,
-	] )( 'is false for %s, which only blocks paid email', ( code ) => {
-		expect( isEmailForwardingRestricted( domainBlockedBy( code ) ) ).toBe( false );
-	} );
-
-	it( 'is false when the user can add email', () => {
-		expect( isEmailForwardingRestricted( domainThatCanAddEmail ) ).toBe( false );
-	} );
-
-	it( 'is false without a domain', () => {
-		expect( isEmailForwardingRestricted( undefined ) ).toBe( false );
-	} );
-} );
-
-describe( 'canPromoteEmailForwarding', () => {
-	it( 'is true when the user can add email', () => {
-		expect( canPromoteEmailForwarding( domainThatCanAddEmail ) ).toBe( true );
-	} );
-
-	it( 'is true for a site admin who does not own the domain subscription', () => {
-		expect(
-			canPromoteEmailForwarding(
-				domainBlockedBy( EMAIL_WARNING_CODE_OTHER_USER_OWNS_DOMAIN_SUBSCRIPTION )
-			)
-		).toBe( true );
-	} );
-
-	// Anything else fails closed, including codes this code doesn't recognize and a blocked
-	// domain that arrives without a reason at all.
-	it.each( [
-		EMAIL_WARNING_CODE_OTHER_USER_OWNS_EMAIL,
-		EMAIL_WARNING_CODE_DOMAIN_STATE_RESTRICTED,
-		EMAIL_WARNING_CODE_GRAVATAR_DOMAIN,
-		'domain-expired',
-		null,
-	] )( 'is false for %s', ( code ) => {
-		expect( canPromoteEmailForwarding( domainBlockedBy( code ) ) ).toBe( false );
-	} );
-
-	it( 'is false without a domain', () => {
-		expect( canPromoteEmailForwarding( undefined ) ).toBe( false );
-	} );
 } );

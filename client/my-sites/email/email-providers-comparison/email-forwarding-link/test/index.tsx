@@ -4,10 +4,7 @@
 import { render, screen } from '@testing-library/react';
 import { getSelectedDomain } from 'calypso/lib/domains';
 import { hasEmailForwards } from 'calypso/lib/domains/email-forwarding';
-import {
-	EMAIL_WARNING_CODE_DOMAIN_STATE_RESTRICTED,
-	EMAIL_WARNING_CODE_OTHER_USER_OWNS_EMAIL,
-} from 'calypso/lib/emails/email-provider-constants';
+import { EMAIL_WARNING_CODE_DOMAIN_STATE_RESTRICTED } from 'calypso/lib/emails/email-provider-constants';
 import EmailForwardingLink from '../index';
 import type { ResponseDomain } from 'calypso/lib/domains/types';
 
@@ -52,15 +49,14 @@ const regularDomain = {
 	currentUserCannotAddEmailReason: null,
 } as ResponseDomain;
 
-const restrictedDomain = ( code: string ) =>
-	( {
-		...regularDomain,
-		currentUserCanAddEmail: false,
-		currentUserCannotAddEmailReason: {
-			code,
-			message: 'Email is unavailable for this domain.',
-		},
-	} ) as ResponseDomain;
+const domainStateRestrictedDomain = {
+	...regularDomain,
+	currentUserCanAddEmail: false,
+	currentUserCannotAddEmailReason: {
+		code: EMAIL_WARNING_CODE_DOMAIN_STATE_RESTRICTED,
+		message: 'Email is unavailable for this domain.',
+	},
+} as ResponseDomain;
 
 describe( 'EmailForwardingLink', () => {
 	beforeEach( () => {
@@ -70,18 +66,6 @@ describe( 'EmailForwardingLink', () => {
 
 	it( 'renders the email forwarding promo for a regular domain without forwards', () => {
 		( getSelectedDomain as jest.Mock ).mockReturnValue( regularDomain );
-
-		render( <EmailForwardingLink selectedDomainName="example.com" /> );
-
-		expect( screen.getByText( promoMatcher ) ).toBeVisible();
-	} );
-
-	// Being unable to buy paid email doesn't imply being unable to forward, and callers that do
-	// care about paid-email eligibility gate on it themselves.
-	it( 'renders the promo when only paid email is unavailable', () => {
-		( getSelectedDomain as jest.Mock ).mockReturnValue(
-			restrictedDomain( EMAIL_WARNING_CODE_OTHER_USER_OWNS_EMAIL )
-		);
 
 		render( <EmailForwardingLink selectedDomainName="example.com" /> );
 
@@ -115,9 +99,7 @@ describe( 'EmailForwardingLink', () => {
 	} );
 
 	it( 'renders nothing when forwarding itself is restricted', () => {
-		( getSelectedDomain as jest.Mock ).mockReturnValue(
-			restrictedDomain( EMAIL_WARNING_CODE_DOMAIN_STATE_RESTRICTED )
-		);
+		( getSelectedDomain as jest.Mock ).mockReturnValue( domainStateRestrictedDomain );
 
 		const { container } = render( <EmailForwardingLink selectedDomainName="example.com" /> );
 

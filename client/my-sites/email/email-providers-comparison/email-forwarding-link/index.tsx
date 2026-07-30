@@ -1,7 +1,7 @@
 import { useTranslate } from 'i18n-calypso';
 import { getSelectedDomain } from 'calypso/lib/domains';
 import { hasEmailForwards } from 'calypso/lib/domains/email-forwarding';
-import { isEmailForwardingRestricted } from 'calypso/my-sites/email/email-forwarding-eligibility';
+import { getEmailForwardingRestrictionCode } from 'calypso/my-sites/email/email-forwarding-eligibility';
 import { getAddEmailForwardsPath } from 'calypso/my-sites/email/paths';
 import { useSelector } from 'calypso/state';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
@@ -35,7 +35,7 @@ const EmailForwardingLink = ( { selectedDomainName }: EmailForwardingLinkProps )
 		return null;
 	}
 
-	if ( hasEmailForwards( domain ) || isEmailForwardingRestricted( domain ) ) {
+	if ( hasEmailForwards( domain ) || getEmailForwardingRestrictionCode( domain ) ) {
 		return null;
 	}
 

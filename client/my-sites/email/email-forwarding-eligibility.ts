@@ -7,17 +7,22 @@ import {
 import type { ResponseDomain } from 'calypso/lib/domains/types';
 
 /**
- * Restrictions that block email forwarding itself, rather than blocking paid email. The
- * add-forwarding page refuses to render its form for these, so anything linking to it must
- * apply the same check or the link leads to a dead end.
+ * The restriction that blocks email forwarding itself, or null when forwarding is available.
+ * The add-forwarding page refuses to render its form for these, so anything linking to it must
+ * apply the same check or the link leads to a dead end. Callers that explain the restriction can
+ * switch on the returned code.
  */
-export function isEmailForwardingRestricted( domain: ResponseDomain | undefined ) {
+export function getEmailForwardingRestrictionCode( domain: ResponseDomain | undefined ) {
 	const cannotAddEmailWarningCode = getCurrentUserCannotAddEmailReason( domain )?.code ?? null;
 
-	return (
-		cannotAddEmailWarningCode === EMAIL_WARNING_CODE_DOMAIN_STATE_RESTRICTED ||
-		cannotAddEmailWarningCode === EMAIL_WARNING_CODE_GRAVATAR_DOMAIN
-	);
+	switch ( cannotAddEmailWarningCode ) {
+		case EMAIL_WARNING_CODE_DOMAIN_STATE_RESTRICTED:
+		case EMAIL_WARNING_CODE_GRAVATAR_DOMAIN:
+			return cannotAddEmailWarningCode;
+
+		default:
+			return null;
+	}
 }
 
 /**
@@ -27,10 +32,12 @@ export function isEmailForwardingRestricted( domain: ResponseDomain | undefined 
  * code doesn't recognize.
  */
 export function canPromoteEmailForwarding( domain: ResponseDomain | undefined ) {
-	const cannotAddEmailWarningCode = getCurrentUserCannotAddEmailReason( domain )?.code ?? null;
+	if ( canCurrentUserAddEmail( domain ) ) {
+		return true;
+	}
 
 	return (
-		canCurrentUserAddEmail( domain ) ||
-		cannotAddEmailWarningCode === EMAIL_WARNING_CODE_OTHER_USER_OWNS_DOMAIN_SUBSCRIPTION
+		getCurrentUserCannotAddEmailReason( domain )?.code ===
+		EMAIL_WARNING_CODE_OTHER_USER_OWNS_DOMAIN_SUBSCRIPTION
 	);
 }
