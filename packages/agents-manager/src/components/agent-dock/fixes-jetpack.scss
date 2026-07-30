@@ -1,4 +1,4 @@
-body.wp-admin.agents-manager-sidebar-container--sidebar-open:not( .modal-open ) {
+body.wp-admin.agents-manager-sidebar-container--sidebar-open {
 	&:is(
 			[class*='jetpack_page_'],
 			[class*='plugins_page_wpcom-'],

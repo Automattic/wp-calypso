@@ -80,7 +80,7 @@
 }
 
 // Docked chat dark-mode overrides
-@include docked-chat-without-modal {
+@include docked-chat {
 	.agents-manager-conversation-history-view {
 		&__content {
 			padding-top: 0;

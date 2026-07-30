@@ -55,7 +55,7 @@
 }
 
 // Docked chat overrides
-@include docked-chat-without-modal {
+@include docked-chat {
 	.agents-manager-selected-block {
 		margin-top: 8px;
 	}

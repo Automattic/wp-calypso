@@ -97,7 +97,7 @@ body.wp-admin.agents-manager-sidebar-container--closing {
 	}
 }
 
-body.wp-admin.agents-manager-sidebar-container--sidebar-open:not( .modal-open ) {
+body.wp-admin.agents-manager-sidebar-container--sidebar-open {
 	@include wp-admin-sidebar-open-specific( $admin-menu-width-classic );
 	@include notice-panel-open( '#wpnt-notes-panel2' );
 
@@ -432,7 +432,7 @@ body.post-new-php.agents-manager-sidebar-container {
 }
 
 // Base layout for the docked chat sidebar
-@include docked-chat-without-modal {
+@include docked-chat {
 	visibility: hidden;
 	position: fixed;
 	top: 0;
@@ -462,6 +462,11 @@ body.post-new-php.agents-manager-sidebar-container {
 			height: 32px;
 		}
 	}
+}
+
+body.wp-admin.modal-open .agents-manager-chat--docked {
+	pointer-events: none;
+	z-index: $agents-manager-z-index-below-modal !important;
 }
 
 /* Agenttic UI: Styles for both docked and undocked chat */
@@ -656,7 +661,7 @@ body.post-new-php.agents-manager-sidebar-container {
 }
 
 /* Agenttic UI: Styles for the docked chat */
-@include docked-chat-without-modal {
+@include docked-chat {
 	.agenttic {
 		.Message-module_message {
 			.big-sky__dock__menu__variation-picker {

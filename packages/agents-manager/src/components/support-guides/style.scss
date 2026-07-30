@@ -91,7 +91,7 @@
 }
 
 // Docked chat overrides
-@include docked-chat-without-modal {
+@include docked-chat {
 	.agent-manager-support-guides-wrapper {
 		padding-left: 0;
 		padding-right: 0;

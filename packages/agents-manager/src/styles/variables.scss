@@ -17,6 +17,8 @@ $overlay-panel-z-index-focused: 999995;
 $agents-manager-z-index-docked: $overlay-panel-z-index-base;
 $agents-manager-z-index-focused: $overlay-panel-z-index-focused;
 $agents-manager-z-index-sidebar: $overlay-panel-z-index-base - 1;
+// Core wp-admin modal backdrops start above this layer.
+$agents-manager-z-index-below-modal: 100000;
 
 /* WP Admin */
 $admin-menu-width-unified: 272px;
