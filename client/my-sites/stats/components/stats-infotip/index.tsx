@@ -1,6 +1,7 @@
 import { info } from '@wordpress/icons';
 import { Icon, Popover, VisuallyHidden } from '@wordpress/ui';
 import clsx from 'clsx';
+import { useRef } from 'react';
 import useWPAdminTheme from 'calypso/my-sites/stats/hooks/use-wp-admin-theme';
 import type { ComponentProps, MouseEvent, ReactNode } from 'react';
 
@@ -39,10 +40,13 @@ export default function StatsInfotip( {
 	triggerClassName,
 }: StatsInfotipProps ) {
 	const customTheme = useWPAdminTheme();
+	const triggerRef = useRef< HTMLButtonElement >( null );
+
 	return (
 		<span className={ clsx( 'stats-infotip', className ) }>
 			<Popover.Root>
 				<Popover.Trigger
+					ref={ triggerRef }
 					type="button"
 					openOnHover
 					delay={ HOVER_DELAY_MS }
@@ -65,6 +69,14 @@ export default function StatsInfotip( {
 							side={ side }
 							align={ align }
 							sideOffset={ POPUP_SIDE_OFFSET_PX }
+							// wp-admin's fixed left side nav isn't a clipping ancestor of the popup
+							// (it's a sibling, not an overflow:hidden container), so the default
+							// 'clipping-ancestors' collision boundary never sees it and the popup
+							// can render underneath it. Point collision detection at the actual
+							// content area instead, same as DateRange does for its own Popover.
+							collisionBoundary={
+								triggerRef.current?.closest( '.main, #wpcontent, .layout__content' ) ?? undefined
+							}
 						/>
 					}
 				>

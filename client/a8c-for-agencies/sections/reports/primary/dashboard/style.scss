@@ -35,6 +35,20 @@
 			gap: 0;
 		}
 
+		.reports-list__view-actions {
+			padding-block: 0 16px;
+		}
+
+		.reports-list__site {
+			display: flex;
+			align-items: center;
+			min-height: 48px;
+		}
+
+		.redesigned-a8c-table {
+			--wpds-dimension-padding-lg: 4px;
+		}
+
 		.hosting-dashboard-layout__top-wrapper > * {
 			padding-inline: 24px;
 		}

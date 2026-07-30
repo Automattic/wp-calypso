@@ -131,6 +131,7 @@ export default function ReportsList( {
 						}
 					},
 					pagination: paginationInfo,
+					selection: dataViewsState.selectedItem ? [ dataViewsState.selectedItem.site ] : [],
 					enableSearch: false,
 					fields,
 					actions,
@@ -140,7 +141,7 @@ export default function ReportsList( {
 				} }
 			>
 				<HStack
-					className="dataviews__view-actions"
+					className="dataviews__view-actions reports-list__view-actions"
 					justify="end"
 					style={ {
 						paddingInline: isNarrowView || dataViewsState.selectedItem ? '16px' : '64px',

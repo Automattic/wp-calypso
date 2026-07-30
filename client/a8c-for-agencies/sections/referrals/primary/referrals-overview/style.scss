@@ -115,6 +115,7 @@ $data-view-border-color: #f1f1f1;
 		// The collapsed column is narrow, so the wide overview inset doesn't fit.
 		.referrals-list__view-actions {
 			padding-inline: 24px;
+			padding-block: 16px;
 		}
 
 		// Let the search toolbar's own padding set the spacing evenly above and below.
@@ -133,6 +134,16 @@ $data-view-border-color: #f1f1f1;
 
 		.dataviews-view-list__item .components-flex {
 			gap: 0;
+		}
+
+		.referrals-list__client {
+			display: flex;
+			align-items: center;
+			min-height: 48px;
+		}
+
+		.redesigned-a8c-table {
+			--wpds-dimension-padding-lg: 4px;
 		}
 
 		.hosting-dashboard-layout__top-wrapper > * {
@@ -246,9 +257,4 @@ $data-view-border-color: #f1f1f1;
 	ul {
 		margin: 16px;
 	}
-}
-
-.referrals-list__client {
-	@include body-medium;
-	color: var(--color-accent-80);
 }

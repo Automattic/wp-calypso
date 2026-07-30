@@ -101,6 +101,33 @@ export const appendQueryStringForRedirection = ( pathname, query = {} ) => {
 };
 
 /**
+ * Zero-pad a naive `YYYY-M-D`-style date string (e.g. an unpadded chartStart/chartEnd
+ * URL param) to the canonical `YYYY-MM-DD` form. Non-matching input (already padded,
+ * not a date-only string, or not a string at all) is returned unchanged.
+ *
+ * moment's IANA-timezone parsing (see getMomentSiteZone) hands unrecognized non-ISO
+ * strings to its legacy Date() fallback, which parses them as UTC and can shift the
+ * result to the wrong calendar day once converted to the site's timezone. Normalizing
+ * the param at the point it enters the app (route params) avoids that entirely, and
+ * keeps every downstream consumer comparing canonical, identically-formatted strings.
+ * @param {*} value The raw query param value.
+ * @returns {*} The zero-padded date string, or the original value if it doesn't match.
+ */
+export const normalizeChartDateParam = ( value ) => {
+	if ( typeof value !== 'string' ) {
+		return value;
+	}
+
+	const match = value.match( /^(\d{4})-(\d{1,2})-(\d{1,2})$/ );
+	if ( ! match ) {
+		return value;
+	}
+
+	const [ , year, month, day ] = match;
+	return `${ year }-${ month.padStart( 2, '0' ) }-${ day.padStart( 2, '0' ) }`;
+};
+
+/**
  * Parse a date string into a Date object in the timezone of browser.
  * @param {string|number} dateString YYYY-MM-DD format or a timestamp
  * @returns {Date} A Date object in the timezone of the browser.
