@@ -113,6 +113,9 @@ const features = [
 	__( 'Create beautiful images without leaving WordPress' ),
 ];
 
+const upgradeRequiredText = __( 'Upgrade your plan to enable this setting.' );
+const upgradeRequiredBadge = { text: __( 'Upgrade required' ) };
+
 const TELEGRAM_CONNECTION_PATH = '/me/developer';
 
 const INVALID_POST_BY_EMAIL_VALUES = new Set( [
@@ -261,6 +264,7 @@ function EmailAssistantCard( {
 						__nextHasNoMarginBottom
 						checked={ isAgentEmailEnabled }
 						disabled={ isEmailAddressActionDisabled }
+						help={ disabled ? upgradeRequiredText : undefined }
 						label={ __( 'Enable WordPress Agent email address' ) }
 						onChange={ handleEmailAddressToggle }
 					/>
@@ -439,6 +443,7 @@ export default function AIToolsSettings( { siteSlug }: { siteSlug: string } ) {
 								__nextHasNoMarginBottom
 								checked={ isEnabled }
 								disabled={ ! isAvailable || mutation.isPending }
+								help={ ! isAvailable ? upgradeRequiredText : undefined }
 								label={ __( 'Enable WordPress Agent' ) }
 								onChange={ handleToggle }
 							/>
@@ -479,6 +484,7 @@ export default function AIToolsSettings( { siteSlug }: { siteSlug: string } ) {
 								site_id: site.ID,
 							} );
 						} }
+						badges={ ! isAvailable ? [ upgradeRequiredBadge ] : undefined }
 						disabled={ ! isAvailable }
 					/>
 				) }
@@ -496,6 +502,7 @@ export default function AIToolsSettings( { siteSlug }: { siteSlug: string } ) {
 										__nextHasNoMarginBottom
 										checked={ isMcpEnabled }
 										disabled={ ! isAvailable || mcpMutation.isPending }
+										help={ ! isAvailable ? upgradeRequiredText : undefined }
 										label={ __( 'Enable MCP access for this site' ) }
 										onChange={ handleMcpToggle }
 									/>
@@ -509,7 +516,7 @@ export default function AIToolsSettings( { siteSlug }: { siteSlug: string } ) {
 										density="medium"
 										title={ __( 'Read' ) }
 										decoration={ <Icon icon={ seen } size={ 24 } /> }
-										badges={ [ readBadge ] }
+										badges={ ! isAvailable ? [ readBadge, upgradeRequiredBadge ] : [ readBadge ] }
 										disabled={ ! isAvailable }
 									/>
 									<RouterLinkSummaryButton
@@ -517,7 +524,7 @@ export default function AIToolsSettings( { siteSlug }: { siteSlug: string } ) {
 										density="medium"
 										title={ __( 'Write' ) }
 										decoration={ <Icon icon={ pencil } size={ 24 } /> }
-										badges={ [ writeBadge ] }
+										badges={ ! isAvailable ? [ writeBadge, upgradeRequiredBadge ] : [ writeBadge ] }
 										disabled={ ! isAvailable }
 									/>
 								</>
@@ -529,6 +536,7 @@ export default function AIToolsSettings( { siteSlug }: { siteSlug: string } ) {
 								title={ __( 'Connect external AI agent' ) }
 								description={ __( 'Get instructions for connecting your external AI assistant.' ) }
 								decoration={ <Icon icon={ connection } size={ 24 } /> }
+								badges={ ! isAvailable ? [ upgradeRequiredBadge ] : undefined }
 								disabled={ ! isAvailable }
 							/>
 						) }
@@ -557,6 +565,7 @@ export default function AIToolsSettings( { siteSlug }: { siteSlug: string } ) {
 							<SummaryButton
 								title={ __( 'Get answers' ) }
 								decoration={ <Icon icon={ help } /> }
+								badges={ ! isAvailable ? [ upgradeRequiredBadge ] : undefined }
 								disabled={ ! isAvailable }
 								onClick={ () => {
 									recordTracksEvent( 'calypso_dashboard_ai_tool_get_answers_click' );
@@ -568,6 +577,7 @@ export default function AIToolsSettings( { siteSlug }: { siteSlug: string } ) {
 								href={ `${ site.options?.admin_url }site-editor.php?canvas=edit` }
 								title={ __( 'Update your site design' ) }
 								decoration={ <Icon icon={ brush } /> }
+								badges={ ! isAvailable ? [ upgradeRequiredBadge ] : undefined }
 								disabled={ ! isAvailable }
 								onClick={ () => {
 									recordTracksEvent( 'calypso_dashboard_ai_tool_edit_site_click' );
@@ -577,6 +587,7 @@ export default function AIToolsSettings( { siteSlug }: { siteSlug: string } ) {
 								href={ `${ site.options?.admin_url }post-new.php` }
 								title={ __( 'Draft and revise content' ) }
 								decoration={ <Icon icon={ termDescription } /> }
+								badges={ ! isAvailable ? [ upgradeRequiredBadge ] : undefined }
 								disabled={ ! isAvailable }
 								onClick={ () => {
 									recordTracksEvent( 'calypso_dashboard_ai_tool_draft_post_click' );
@@ -586,6 +597,7 @@ export default function AIToolsSettings( { siteSlug }: { siteSlug: string } ) {
 								href={ `${ site.options?.admin_url }upload.php?ai-assistant` }
 								title={ __( 'Create beautiful images' ) }
 								decoration={ <Icon icon={ image } /> }
+								badges={ ! isAvailable ? [ upgradeRequiredBadge ] : undefined }
 								disabled={ ! isAvailable }
 								onClick={ () => {
 									recordTracksEvent( 'calypso_dashboard_ai_tool_create_images_click' );

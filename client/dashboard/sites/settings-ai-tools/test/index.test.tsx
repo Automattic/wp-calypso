@@ -227,22 +227,31 @@ describe( '<AIToolsSettings>', () => {
 		expect( screen.getByRole( 'button', { name: 'Upgrade plan' } ) ).toBeEnabled();
 
 		expect( screen.getByRole( 'heading', { name: 'WordPress Agent' } ) ).toBeVisible();
-		expect( screen.getByRole( 'checkbox', { name: 'Enable WordPress Agent' } ) ).toBeDisabled();
+		const agentToggle = screen.getByRole( 'checkbox', { name: 'Enable WordPress Agent' } );
+		expect( agentToggle ).toBeDisabled();
+		expect( agentToggle ).toHaveAccessibleDescription(
+			'Upgrade your plan to enable this setting.'
+		);
 
 		expect( screen.getByRole( 'heading', { name: 'Email WordPress Agent' } ) ).toBeVisible();
-		expect(
-			screen.getByRole( 'checkbox', {
-				name: 'Enable WordPress Agent email address',
-			} )
-		).toBeDisabled();
+		const emailToggle = screen.getByRole( 'checkbox', {
+			name: 'Enable WordPress Agent email address',
+		} );
+		expect( emailToggle ).toBeDisabled();
+		expect( emailToggle ).toHaveAccessibleDescription(
+			'Upgrade your plan to enable this setting.'
+		);
 		expect(
 			queryClient.getQueryState( sitePostByEmailSettingsQuery( site ).queryKey )?.fetchStatus
 		).toBe( 'idle' );
 
 		expect( screen.getByRole( 'heading', { name: 'External AI agent access' } ) ).toBeVisible();
-		expect(
-			screen.getByRole( 'checkbox', { name: 'Enable MCP access for this site' } )
-		).toBeDisabled();
+		const mcpToggle = screen.getByRole( 'checkbox', {
+			name: 'Enable MCP access for this site',
+		} );
+		expect( mcpToggle ).toBeDisabled();
+		expect( mcpToggle ).toHaveAccessibleDescription( 'Upgrade your plan to enable this setting.' );
+		expect( screen.getAllByText( 'Upgrade required' ) ).toHaveLength( 4 );
 
 		expect( screen.getByRole( 'button', { name: /Connect Telegram/ } ) ).toHaveAttribute(
 			'aria-disabled',
