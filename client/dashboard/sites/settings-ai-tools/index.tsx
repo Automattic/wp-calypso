@@ -275,7 +275,6 @@ function EmailAssistantCard( {
 						__nextHasNoMarginBottom
 						checked={ isAgentEmailEnabled }
 						disabled={ isEmailAddressActionDisabled }
-						help={ disabled ? upgradeRequiredText : undefined }
 						label={ __( 'Enable WordPress Agent email address' ) }
 						onChange={ handleEmailAddressToggle }
 					/>
@@ -455,7 +454,6 @@ export default function AIToolsSettings( { siteSlug }: { siteSlug: string } ) {
 								__nextHasNoMarginBottom
 								checked={ isEnabled }
 								disabled={ ! isAvailable || mutation.isPending }
-								help={ ! isAvailable ? upgradeRequiredText : undefined }
 								label={ __( 'Enable WordPress Agent' ) }
 								onChange={ handleToggle }
 							/>
@@ -515,7 +513,6 @@ export default function AIToolsSettings( { siteSlug }: { siteSlug: string } ) {
 										__nextHasNoMarginBottom
 										checked={ isMcpEnabled }
 										disabled={ ! isAvailable || mcpMutation.isPending }
-										help={ ! isAvailable ? upgradeRequiredText : undefined }
 										label={ __( 'Enable MCP access for this site' ) }
 										onChange={ handleMcpToggle }
 									/>

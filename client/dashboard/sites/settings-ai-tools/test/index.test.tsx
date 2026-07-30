@@ -230,18 +230,12 @@ describe( '<AIToolsSettings>', () => {
 		expect( screen.getByRole( 'heading', { name: 'WordPress Agent' } ) ).toBeVisible();
 		const agentToggle = screen.getByRole( 'checkbox', { name: 'Enable WordPress Agent' } );
 		expect( agentToggle ).toBeDisabled();
-		expect( agentToggle ).toHaveAccessibleDescription(
-			'Upgrade your plan to enable this setting.'
-		);
 
 		expect( screen.getByRole( 'heading', { name: 'Email WordPress Agent' } ) ).toBeVisible();
 		const emailToggle = screen.getByRole( 'checkbox', {
 			name: 'Enable WordPress Agent email address',
 		} );
 		expect( emailToggle ).toBeDisabled();
-		expect( emailToggle ).toHaveAccessibleDescription(
-			'Upgrade your plan to enable this setting.'
-		);
 		expect(
 			queryClient.getQueryState( sitePostByEmailSettingsQuery( site ).queryKey )?.fetchStatus
 		).toBe( 'idle' );
@@ -251,7 +245,9 @@ describe( '<AIToolsSettings>', () => {
 			name: 'Enable MCP access for this site',
 		} );
 		expect( mcpToggle ).toBeDisabled();
-		expect( mcpToggle ).toHaveAccessibleDescription( 'Upgrade your plan to enable this setting.' );
+		expect(
+			screen.queryByText( 'Upgrade your plan to enable this setting.' )
+		).not.toBeInTheDocument();
 		const upgradeBadges = screen.getAllByText( 'Upgrade required' );
 		expect( upgradeBadges ).toHaveLength( 7 );
 		await user.hover( upgradeBadges[ 0 ] );
