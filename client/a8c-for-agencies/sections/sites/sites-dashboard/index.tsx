@@ -39,6 +39,7 @@ import { OverviewPreviewPane } from '../features/a4a/overview-preview-pane';
 import SitesDashboardContext from '../sites-dashboard-context';
 import SitesHeaderActions from '../sites-header-actions';
 import SiteNotifications from '../sites-notifications';
+import SitesDashboardEmptyState from './empty-state';
 import { getSelectedFilters } from './get-selected-filters';
 import ProvisioningSiteNotification from './provisioning-site-notification';
 import { updateSitesDashboardUrl } from './update-sites-dashboard-url';
@@ -130,6 +131,20 @@ export function SitesDashboard() {
 		perPage: sitesPerPage,
 		agencyId,
 	} );
+
+	// Show an onboarding empty state when the current view is empty on its own — not
+	// because a search or filter narrowed it down.
+	const isUnfilteredView =
+		! isLoading && ! isError && ! dataViewsState.search && selectedFilters.length === 0;
+
+	const hasNoSitesYet =
+		isUnfilteredView &&
+		! showOnlyFavorites &&
+		! showOnlyDevelopmentSites &&
+		( data?.total ?? 0 ) === 0;
+
+	const hasNoFavoritesYet =
+		isUnfilteredView && showOnlyFavorites && ( data?.totalFavorites ?? 0 ) === 0;
 
 	useEffect( () => {
 		if ( dataViewsState.selectedItem && ! initialSelectedSiteUrl ) {
@@ -269,33 +284,52 @@ export function SitesDashboard() {
 
 				<SiteNotifications />
 				{ tourId && <GuidedTour defaultTourId={ tourId } /> }
-				<DashboardDataContext.Provider
-					value={ {
-						verifiedContacts: {
-							emails: verifiedContacts?.emails ?? [],
-							phoneNumbers: verifiedContacts?.phoneNumbers ?? [],
-							refetchIfFailed: () => {
-								if ( fetchContactFailed ) {
-									refetchContacts();
-								}
-								return;
-							},
-						},
-						products: products ?? [],
-						isLargeScreen: isLargeScreen || false,
-					} }
-				>
-					<JetpackSitesDataViews
-						className={ clsx( 'sites-overview__content' ) }
-						data={ data }
-						isLoading={ isLoading }
-						isLargeScreen={ isLargeScreen || false }
-						setDataViewsState={ setDataViewsState }
-						setSelectedSiteFeature={ setSelectedSiteFeature }
-						dataViewsState={ dataViewsState }
-						onRefetchSite={ refetch }
+				{ ! tourId && ( hasNoSitesYet || hasNoFavoritesYet ) ? (
+					<SitesDashboardEmptyState
+						title={
+							hasNoSitesYet
+								? translate( 'Add your first site' )
+								: translate( 'No favorite sites yet' )
+						}
+						message={
+							hasNoSitesYet
+								? translate(
+										'To get started, add a site using the “Add sites” button at the top of the page.'
+								  )
+								: translate(
+										'Mark a site as a favorite with the star icon to quickly find it here.'
+								  )
+						}
 					/>
-				</DashboardDataContext.Provider>
+				) : (
+					<DashboardDataContext.Provider
+						value={ {
+							verifiedContacts: {
+								emails: verifiedContacts?.emails ?? [],
+								phoneNumbers: verifiedContacts?.phoneNumbers ?? [],
+								refetchIfFailed: () => {
+									if ( fetchContactFailed ) {
+										refetchContacts();
+									}
+									return;
+								},
+							},
+							products: products ?? [],
+							isLargeScreen: isLargeScreen || false,
+						} }
+					>
+						<JetpackSitesDataViews
+							className={ clsx( 'sites-overview__content' ) }
+							data={ data }
+							isLoading={ isLoading }
+							isLargeScreen={ isLargeScreen || false }
+							setDataViewsState={ setDataViewsState }
+							setSelectedSiteFeature={ setSelectedSiteFeature }
+							dataViewsState={ dataViewsState }
+							onRefetchSite={ refetch }
+						/>
+					</DashboardDataContext.Provider>
+				) }
 			</LayoutColumn>
 
 			{ dataViewsState.selectedItem && (
