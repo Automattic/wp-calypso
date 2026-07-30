@@ -347,9 +347,12 @@ function StatsBody( { siteId, chartTab = 'views', date, context, isInternal, ...
 				}
 			}
 
-			const isValid = momentInSite( inputDate ).isValid();
+			const parsedDate = momentInSite( inputDate );
 
-			return isValid ? inputDate : null;
+			// Normalize to YYYY-MM-DD so callers can rely on a canonical format
+			// (e.g. comparing chartStart/chartEnd as strings) regardless of how
+			// the input was originally formatted (e.g. an unpadded URL param).
+			return parsedDate.isValid() ? parsedDate.format( DATE_FORMAT ) : null;
 		},
 		[ storedShortcut, momentInSite ]
 	);
