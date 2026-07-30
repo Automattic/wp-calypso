@@ -63,9 +63,11 @@ function mockApi( { domains, accounts }: { domains: DomainSummary[]; accounts: E
 		.query( true )
 		.reply( 200, { domains } );
 
+	// The flag is what makes the endpoint report domains the user manages but doesn't own,
+	// so match on it rather than accepting any query.
 	nock( 'https://public-api.wordpress.com' )
 		.get( '/rest/v1/me/mailboxes' )
-		.query( true )
+		.query( ( q ) => q.include_all_managed_domains === 'true' )
 		.reply( 200, accounts );
 }
 
