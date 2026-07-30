@@ -9,7 +9,9 @@
 // The ProgressBar component officially supports a custom width via its
 // `className` prop — see the "With Custom Width" Storybook example:
 // https://wordpress.github.io/gutenberg/?path=/docs/components-progressbar--docs#with-custom-width
-.agency-tiers-influenced-revenue-bar {
+// The class is doubled to outrank the track's own emotion styles (width: 160px),
+// which have equal specificity and would otherwise win or lose on injection order.
+.agency-tiers-influenced-revenue-bar.agency-tiers-influenced-revenue-bar {
 	width: 100%;
 
 	// ProgressBar has no colour prop: its track and indicator both derive from
