@@ -181,8 +181,7 @@ export function getSitePurchaseStorageUpgradeUrl( purchase: Purchase ): string |
 }
 
 // Map the purchase's billing term to the plans grid's `intervalType` param so the
-// grid opens on the same term as the current plan. Downgrades only work within the
-// same term, and the grid hides the term selector in the downgrade flow.
+// grid opens on the same term as the current plan.
 function getPlanGridIntervalType( purchase: Purchase ): string | undefined {
 	switch ( purchase.bill_period_days ) {
 		case SubscriptionBillPeriod.PLAN_MONTHLY_PERIOD:
