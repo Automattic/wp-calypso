@@ -262,7 +262,7 @@ function EmailAssistantCard( {
 	};
 
 	return (
-		<Card>
+		<Card className={ disabled ? 'ai-tools-settings__locked-card' : undefined }>
 			<CardBody>
 				<VStack spacing={ 4 }>
 					<SectionHeader
@@ -441,7 +441,7 @@ export default function AIToolsSettings( { siteSlug }: { siteSlug: string } ) {
 	const renderSettings = () => {
 		return (
 			<>
-				<Card>
+				<Card className={ ! isAvailable ? 'ai-tools-settings__locked-card' : undefined }>
 					<CardBody>
 						<VStack spacing={ 4 }>
 							<SectionHeader
@@ -483,6 +483,7 @@ export default function AIToolsSettings( { siteSlug }: { siteSlug: string } ) {
 				/>
 				{ config.isEnabled( 'dolly/telegram' ) && (
 					<SummaryButton
+						className={ ! isAvailable ? 'ai-tools-settings__locked-card' : undefined }
 						href={ wpcomLink( TELEGRAM_CONNECTION_PATH ) }
 						title={ __( 'Connect Telegram' ) }
 						description={ __(
@@ -498,7 +499,7 @@ export default function AIToolsSettings( { siteSlug }: { siteSlug: string } ) {
 						disabled={ ! isAvailable }
 					/>
 				) }
-				{ config.isEnabled( 'mcp-settings' ) && (
+				{ config.isEnabled( 'mcp-settings' ) && isAvailable && (
 					<>
 						<Card className="mcp-settings__access-card">
 							<CardBody>
@@ -506,13 +507,12 @@ export default function AIToolsSettings( { siteSlug }: { siteSlug: string } ) {
 									<SectionHeader
 										title={ __( 'External AI agent access' ) }
 										description={ __( 'Allow external AI agents to access this site via MCP.' ) }
-										actions={ ! isAvailable ? <UpgradeRequiredBadge /> : undefined }
 										level={ 3 }
 									/>
 									<ToggleControl
 										__nextHasNoMarginBottom
 										checked={ isMcpEnabled }
-										disabled={ ! isAvailable || mcpMutation.isPending }
+										disabled={ mcpMutation.isPending }
 										label={ __( 'Enable MCP access for this site' ) }
 										onChange={ handleMcpToggle }
 									/>
@@ -526,16 +526,14 @@ export default function AIToolsSettings( { siteSlug }: { siteSlug: string } ) {
 										density="medium"
 										title={ __( 'Read' ) }
 										decoration={ <Icon icon={ seen } size={ 24 } /> }
-										badges={ ! isAvailable ? [ readBadge, upgradeRequiredBadge ] : [ readBadge ] }
-										disabled={ ! isAvailable }
+										badges={ [ readBadge ] }
 									/>
 									<RouterLinkSummaryButton
 										to={ `/sites/${ siteSlug }/settings/ai-tools/write` }
 										density="medium"
 										title={ __( 'Write' ) }
 										decoration={ <Icon icon={ pencil } size={ 24 } /> }
-										badges={ ! isAvailable ? [ writeBadge, upgradeRequiredBadge ] : [ writeBadge ] }
-										disabled={ ! isAvailable }
+										badges={ [ writeBadge ] }
 									/>
 								</>
 							) }
@@ -546,8 +544,6 @@ export default function AIToolsSettings( { siteSlug }: { siteSlug: string } ) {
 								title={ __( 'Connect external AI agent' ) }
 								description={ __( 'Get instructions for connecting your external AI assistant.' ) }
 								decoration={ <Icon icon={ connection } size={ 24 } /> }
-								badges={ ! isAvailable ? [ upgradeRequiredBadge ] : undefined }
-								disabled={ ! isAvailable }
 							/>
 						) }
 					</>
@@ -569,7 +565,10 @@ export default function AIToolsSettings( { siteSlug }: { siteSlug: string } ) {
 					</ConfirmModal>
 				) }
 				{ isEnabled && (
-					<VStack spacing={ 3 }>
+					<VStack
+						className={ ! isAvailable ? 'ai-tools-settings__locked-card' : undefined }
+						spacing={ 3 }
+					>
 						<SectionHeader
 							title={ __( 'Ways to get started' ) }
 							actions={ ! isAvailable ? <UpgradeRequiredBadge /> : undefined }

@@ -222,10 +222,11 @@ describe( 'getAgentEmailVCard', () => {
 describe( '<AIToolsSettings>', () => {
 	test( 'shows the settings as disabled below the upgrade callout when unavailable', async () => {
 		const user = userEvent.setup();
-		renderAIToolsSettings( '', false, site, false, true );
+		const { container } = renderAIToolsSettings( '', false, site, false, true );
 
 		expect( screen.getByText( 'Your dream site is just a prompt away' ) ).toBeVisible();
 		expect( screen.getByRole( 'button', { name: 'Upgrade plan' } ) ).toBeEnabled();
+		expect( container.querySelectorAll( '.ai-tools-settings__locked-card' ) ).toHaveLength( 3 );
 
 		expect( screen.getByRole( 'heading', { name: 'WordPress Agent' } ) ).toBeVisible();
 		const agentToggle = screen.getByRole( 'checkbox', { name: 'Enable WordPress Agent' } );
@@ -240,16 +241,11 @@ describe( '<AIToolsSettings>', () => {
 			queryClient.getQueryState( sitePostByEmailSettingsQuery( site ).queryKey )?.fetchStatus
 		).toBe( 'idle' );
 
-		expect( screen.getByRole( 'heading', { name: 'External AI agent access' } ) ).toBeVisible();
-		const mcpToggle = screen.getByRole( 'checkbox', {
-			name: 'Enable MCP access for this site',
-		} );
-		expect( mcpToggle ).toBeDisabled();
 		expect(
 			screen.queryByText( 'Upgrade your plan to enable this setting.' )
 		).not.toBeInTheDocument();
 		const upgradeBadges = screen.getAllByText( 'Upgrade required' );
-		expect( upgradeBadges ).toHaveLength( 7 );
+		expect( upgradeBadges ).toHaveLength( 3 );
 		await user.hover( upgradeBadges[ 0 ] );
 		expect( await screen.findByRole( 'tooltip' ) ).toHaveTextContent(
 			'Upgrade your plan to enable this setting.'
@@ -260,12 +256,29 @@ describe( '<AIToolsSettings>', () => {
 			'true'
 		);
 
-		for ( const linkName of [ 'Read', 'Write', 'Connect external AI agent' ] ) {
-			expect( screen.getByRole( 'link', { name: new RegExp( linkName ) } ) ).toHaveAttribute(
-				'aria-disabled',
-				'true'
-			);
-		}
+		expect(
+			screen.queryByRole( 'heading', { name: 'External AI agent access' } )
+		).not.toBeInTheDocument();
+		expect(
+			screen.queryByRole( 'checkbox', { name: 'Enable MCP access for this site' } )
+		).not.toBeInTheDocument();
+		expect(
+			screen.queryByRole( 'link', { name: /^Connect external AI agent/ } )
+		).not.toBeInTheDocument();
+	} );
+
+	test( 'shows MCP settings without upgrade badging when available', async () => {
+		renderAIToolsSettings( '', true, site, true, true );
+
+		expect( await screen.findByText( 'Learn more' ) ).toBeVisible();
+		expect( screen.getByRole( 'heading', { name: 'External AI agent access' } ) ).toBeVisible();
+		expect(
+			screen.getByRole( 'checkbox', { name: 'Enable MCP access for this site' } )
+		).toBeEnabled();
+		expect( screen.getByRole( 'link', { name: /^Read/ } ) ).toBeVisible();
+		expect( screen.getByRole( 'link', { name: /^Write/ } ) ).toBeVisible();
+		expect( screen.getByRole( 'link', { name: /^Connect external AI agent/ } ) ).toBeVisible();
+		expect( screen.queryByText( 'Upgrade required' ) ).not.toBeInTheDocument();
 	} );
 
 	test( 'enables, copies, regenerates, and disables the WordPress Agent email address', async () => {
