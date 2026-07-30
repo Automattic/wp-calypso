@@ -10,7 +10,13 @@ import UserVerificationChecker from 'calypso/lib/user/verification-checker';
 import { useSelector } from 'calypso/state';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
 import { getInboxLink } from './inbox-links';
-import { gateShownAt, getPendingEmail, markGateShown, setPendingEmail } from './storage';
+import {
+	gateShownAt,
+	getPendingEmail,
+	markGateShown,
+	PENDING_EMAIL_RESEND_COOLDOWN_SECONDS,
+	setPendingEmail,
+} from './storage';
 import { useEmailVerification } from './use-email-verification';
 import { useUpdateEmail } from './use-update-email';
 
@@ -114,22 +120,28 @@ const EmailVerificationGate = ( { flow, scope, logo, onDone }: Props ) => {
 		setIsEditing( true );
 	};
 
+	// Closing the editor removes the focused field, so return focus to the heading.
+	const closeEditor = () => {
+		setIsEditing( false );
+		headingRef.current?.focus();
+	};
+
 	const submitNewEmail = async ( event: React.FormEvent ) => {
 		event.preventDefault();
 		const next = emailInput.trim();
 		if ( ! next || next === shownEmail ) {
-			setIsEditing( false );
+			closeEditor();
 			return;
 		}
-		const target = await updateEmail( next );
+		const target = await updateEmail( next, Boolean( pendingEmail ) );
 		if ( target ) {
 			// The change sends a fresh confirmation to the new address; persist and verify
-			// against it, and move focus back to the heading now the form is gone.
+			// against it. Pass the pending-change cooldown explicitly — this render's
+			// `noteSent` still sees the pre-switch (60s) one.
 			setPendingEmail( scope, target );
 			setPendingEmailState( target );
-			noteSent();
-			setIsEditing( false );
-			headingRef.current?.focus();
+			noteSent( PENDING_EMAIL_RESEND_COOLDOWN_SECONDS );
+			closeEditor();
 		}
 	};
 
@@ -193,11 +205,7 @@ const EmailVerificationGate = ( { flow, scope, logo, onDone }: Props ) => {
 								{ __( 'We couldn’t update your email. Please try again in a moment.' ) }
 							</p>
 						) }
-						<Step.LinkButton
-							onClick={ () => setIsEditing( false ) }
-							icon={ chevronLeft }
-							iconPosition="left"
-						>
+						<Step.LinkButton onClick={ closeEditor } icon={ chevronLeft } iconPosition="left">
 							{ __( 'Back' ) }
 						</Step.LinkButton>
 					</form>

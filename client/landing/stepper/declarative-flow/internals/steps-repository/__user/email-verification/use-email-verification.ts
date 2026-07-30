@@ -3,6 +3,7 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { useSendEmailVerification } from 'calypso/landing/stepper/hooks/use-send-email-verification';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { EVERY_FIVE_SECONDS, EVERY_SECOND, useInterval } from 'calypso/lib/interval';
+import { filterUserObject } from 'calypso/lib/user/shared-utils/filter-user-object';
 import { useDispatch, useSelector } from 'calypso/state';
 import { fetchCurrentUser, setCurrentUser } from 'calypso/state/current-user/actions';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
@@ -67,15 +68,20 @@ export function useEmailVerification( flow: string, scope: string, pendingEmail:
 	// Record that a fresh verification email just went out: restart the cooldown and reopen
 	// the polling window (the user might confirm this new link from another device long
 	// after the previous window lapsed), and clear any stale check notice.
-	const noteSent = useCallback( () => {
-		sentAtRef.current = Date.now();
-		markResent( scope );
-		setSecondsUntilResend( cooldownSeconds );
-		setIsPollingExpired( false );
-		setPollWindowKey( ( key ) => key + 1 );
-		setCheckStatus( 'idle' );
-		setHasSendError( false );
-	}, [ scope, cooldownSeconds ] );
+	const noteSent = useCallback(
+		// `overrideCooldown` covers the send that also switches the cooldown type (updating
+		// to a pending address): this closure still sees the pre-switch `cooldownSeconds`.
+		( overrideCooldown?: number ) => {
+			sentAtRef.current = Date.now();
+			markResent( scope );
+			setSecondsUntilResend( overrideCooldown ?? cooldownSeconds );
+			setIsPollingExpired( false );
+			setPollWindowKey( ( key ) => key + 1 );
+			setCheckStatus( 'idle' );
+			setHasSendError( false );
+		},
+		[ scope, cooldownSeconds ]
+	);
 
 	// One resend for both cases, so errors and the send/failure events always surface on the
 	// verification screen. When a change is pending the plain resend would mail the account's
@@ -158,8 +164,10 @@ export function useEmailVerification( flow: string, scope: string, pendingEmail:
 			const checkedUser = await fetchUser();
 			if ( isTargetVerified( checkedUser, targetEmail ) ) {
 				// Commit the whole fetched user (not just a flag) so downstream steps see the
-				// confirmed address; the `targetVerified` effect then finishes the gate.
-				dispatch( setCurrentUser( checkedUser ) );
+				// confirmed address; normalize it the way the standard `/me` fetch does so
+				// computed fields (locale, primary site) aren't dropped. The `targetVerified`
+				// effect then finishes the gate.
+				dispatch( setCurrentUser( filterUserObject( checkedUser ) ) );
 			} else {
 				setCheckStatus( 'unconfirmed' );
 			}

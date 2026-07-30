@@ -245,6 +245,63 @@ describe( 'EmailVerificationGate', () => {
 		await waitFor( () => expect( onDone ).toHaveBeenCalledTimes( 1 ) );
 	} );
 
+	it( 'shows the long pending-change cooldown immediately after updating, not 60s', async () => {
+		mockApi()
+			.post( '/rest/v1.1/me/settings' )
+			.reply( 200, { user_email_change_pending: true, new_user_email: 'b@example.com' } );
+		render();
+
+		await userEvent.click( screen.getByRole( 'button', { name: 'Update email' } ) );
+		await userEvent.clear( screen.getByRole( 'textbox', { name: 'Email address' } ) );
+		await userEvent.type(
+			screen.getByRole( 'textbox', { name: 'Email address' } ),
+			'b@example.com'
+		);
+		await userEvent.click( screen.getByRole( 'button', { name: 'Save' } ) );
+		await screen.findByText( 'b@example.com' );
+
+		// The pending-change cooldown (~15 min), never a flash of the 60s original one.
+		expect( screen.getByRole( 'button', { name: /Resend in [89]\d\ds/ } ) ).toBeVisible();
+		expect( screen.queryByRole( 'button', { name: 'Resend in 60s' } ) ).not.toBeInTheDocument();
+	} );
+
+	it( 'cancels the current pending change before requesting another correction', async () => {
+		mockApi()
+			.post( '/rest/v1.1/me/settings' )
+			.reply( 200, { user_email_change_pending: true, new_user_email: 'b@example.com' } );
+		render();
+
+		await userEvent.click( screen.getByRole( 'button', { name: 'Update email' } ) );
+		await userEvent.clear( screen.getByRole( 'textbox', { name: 'Email address' } ) );
+		await userEvent.type(
+			screen.getByRole( 'textbox', { name: 'Email address' } ),
+			'b@example.com'
+		);
+		await userEvent.click( screen.getByRole( 'button', { name: 'Save' } ) );
+		await screen.findByText( 'b@example.com' );
+
+		// A second correction must first cancel the pending change, then request the new one —
+		// the backend rejects replacing a pending address within its window.
+		const cancel = mockApi()
+			.post( '/rest/v1.1/me/settings', ( body ) => body.user_email_change_pending === false )
+			.reply( 200, { user_email_change_pending: false } );
+		const setNew = mockApi()
+			.post( '/rest/v1.1/me/settings', ( body ) => body.user_email === 'c@example.com' )
+			.reply( 200, { user_email_change_pending: true, new_user_email: 'c@example.com' } );
+
+		await userEvent.click( screen.getByRole( 'button', { name: 'Update email' } ) );
+		await userEvent.clear( screen.getByRole( 'textbox', { name: 'Email address' } ) );
+		await userEvent.type(
+			screen.getByRole( 'textbox', { name: 'Email address' } ),
+			'c@example.com'
+		);
+		await userEvent.click( screen.getByRole( 'button', { name: 'Save' } ) );
+
+		expect( await screen.findByText( 'c@example.com' ) ).toBeVisible();
+		expect( cancel.isDone() ).toBe( true );
+		expect( setNew.isDone() ).toBe( true );
+	} );
+
 	it( 'returns focus to the heading after saving a new email', async () => {
 		mockApi()
 			.post( '/rest/v1.1/me/settings' )
