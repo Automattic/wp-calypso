@@ -1,11 +1,8 @@
 import { formatCurrency } from '@automattic/number-formatters';
-import {
-	__experimentalText as Text,
-	__experimentalVStack as VStack,
-	Button,
-} from '@wordpress/components';
+import { __experimentalText as Text, __experimentalVStack as VStack } from '@wordpress/components';
 import { __, sprintf } from '@wordpress/i18n';
 import ConsolidatedStatCard from '../../../components/consolidated-stat-card';
+import InlineSupportLink from '../../../components/inline-support-link';
 import useGetPayoutData from './lib/use-get-payout-data';
 
 const AGENCY_EARNINGS_LEARN_MORE_LINK =
@@ -72,11 +69,14 @@ function PayoutAmount( {
 						) }
 					</Text>
 
-					<div>
-						<Button variant="link" href={ AGENCY_EARNINGS_LEARN_MORE_LINK } target="_blank">
+					<Text>
+						<InlineSupportLink
+							supportLink={ AGENCY_EARNINGS_LEARN_MORE_LINK }
+							forceOpenInHelpCenter
+						>
 							{ __( 'Learn more' ) }
-						</Button>
-					</div>
+						</InlineSupportLink>
+					</Text>
 				</VStack>
 			}
 			isLoading={ isFetching }
