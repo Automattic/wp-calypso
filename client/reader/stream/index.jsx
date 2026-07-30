@@ -880,7 +880,7 @@ const withStreamPosts = ( WrappedComponent ) =>
 
 		const streamType = getStreamType( props.streamKey ?? '' );
 		const shouldPoll =
-			! [ 'search', 'custom_recs_posts_with_images', 'discover', 'space_discover' ].includes(
+			! [ 'search', 'custom_recs_posts_with_images', 'discover', 'shelf_discover' ].includes(
 				streamType
 			) && ! props.forcePlaceholders;
 

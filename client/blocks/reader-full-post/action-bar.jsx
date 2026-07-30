@@ -6,7 +6,7 @@ import PostEditButton from 'calypso/blocks/post-edit-button';
 import ReaderCommentIcon from 'calypso/reader/components/icons/comment-icon';
 import LikeButton from 'calypso/reader/like-button';
 import { isLikeable } from 'calypso/reader/post/capabilities';
-import { SubscribeWithSpaceButton } from 'calypso/reader/spaces/subscribe-with-space';
+import { SubscribeWithShelfButton } from 'calypso/reader/shelves/subscribe-with-shelf';
 import { recordAction, recordPermalinkClick } from 'calypso/reader/stats';
 import { userCan } from 'calypso/state/posts/utils';
 
@@ -88,7 +88,7 @@ const ReaderFullPostActionBar = ( {
 					<PostEditButton post={ post } site={ site } iconSize={ 24 } onClick={ onEditClick } />
 				) }
 				{ followUrl && (
-					<SubscribeWithSpaceButton
+					<SubscribeWithShelfButton
 						feedId={ feedId }
 						siteId={ siteId }
 						siteUrl={ followUrl }

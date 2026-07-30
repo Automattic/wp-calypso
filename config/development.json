@@ -188,7 +188,7 @@
 		"push-notifications": true,
 		"resurrected-users/90-day-eligibility": true,
 		"reader/social": true,
-		"reader/spaces": true,
+		"reader/shelves": true,
 		"reader/full-errors": true,
 		"reader/msd-enabled": true,
 		"reader/onboarding-rsm": true,

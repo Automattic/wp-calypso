@@ -112,7 +112,7 @@
 		"purchases/split-cancel-remove": false,
 		"resurrected-users/90-day-eligibility": true,
 		"reader/social": true,
-		"reader/spaces": true,
+		"reader/shelves": true,
 		"reader/full-errors": false,
 		"reader/msd-enabled": true,
 		"reader/onboarding-rsm": true,

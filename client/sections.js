@@ -525,8 +525,8 @@ const sections = [
 	},
 	{
 		name: 'reader',
-		paths: [ '/reader/spaces', '/reader/spaces/:id' ],
-		module: 'calypso/reader/spaces',
+		paths: [ '/reader/shelves', '/reader/shelves/:id' ],
+		module: 'calypso/reader/shelves',
 		group: 'reader',
 		enableLoggedOut: false,
 		trackLoadPerformance: true,

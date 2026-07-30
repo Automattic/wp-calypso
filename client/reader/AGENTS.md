@@ -84,7 +84,7 @@ export function useReadFoo( id: string | null | undefined, options?: ReadFooQuer
 }
 ```
 
-Callers then pass config explicitly — `useReadFoo( id, { enabled: ! isCreate, refetchOnMount: 'always' } )` — instead of `useReadFoo( isCreate ? null : id )`. See `useSpaceBySlug` in `client/reader/data/spaces/index.ts`.
+Callers then pass config explicitly — `useReadFoo( id, { enabled: ! isCreate, refetchOnMount: 'always' } )` — instead of `useReadFoo( isCreate ? null : id )`. See `useShelfBySlug` in `client/reader/data/shelves/index.ts`.
 
 ### Mutation factories must accept the consumer's `QueryClient`
 
@@ -163,7 +163,7 @@ patches React Query caches, walk this list:
 
 ### Stream keys
 
-Stream types are identified by unique keys. Examples of stream keys include `following`, `feed:{feedId}`, `site:{siteId}`, `tag:{tagSlug}`, `search:{json}`, `discover:*`, `conversations`, `conversations-a8c`, `p2`, `a8c`, `likes`, `recommendations_posts`, `recent`, `recent:{feedId}`, `list:{...}`, `user:{id}`, `tag_popular:{tag}`, `space:{spaceId}` (a Reader Space's posts feed, served by `/wpcom/v2/reader/spaces/{id}/posts`), `space_discover:{spaceId}` (a Reader Space's Discover feed — recommended on-topic posts the user doesn't follow, served by `/wpcom/v2/reader/spaces/{id}/discover`), and `custom_recs_*`. These keys index state in `state.reader.streams`.
+Stream types are identified by unique keys. Examples of stream keys include `following`, `feed:{feedId}`, `site:{siteId}`, `tag:{tagSlug}`, `search:{json}`, `discover:*`, `conversations`, `conversations-a8c`, `p2`, `a8c`, `likes`, `recommendations_posts`, `recent`, `recent:{feedId}`, `list:{...}`, `user:{id}`, `tag_popular:{tag}`, `shelf:{shelfId}` (a Reader Shelf's posts feed, served by `/wpcom/v2/reader/shelves/{id}/posts`), `shelf_discover:{shelfId}` (a Reader Shelf's Discover feed — recommended on-topic posts the user doesn't follow, served by `/wpcom/v2/reader/shelves/{id}/discover`), and `custom_recs_*`. These keys index state in `state.reader.streams`.
 
 ### Post keys
 

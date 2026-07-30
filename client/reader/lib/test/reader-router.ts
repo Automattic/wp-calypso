@@ -10,12 +10,12 @@ describe( 'reader-router', () => {
 			const noop = () => {};
 			readerPage( '/reader/conversations', noop );
 			readerPage( '/reader/feeds/:feed/posts/:post', noop );
-			readerPage( '/reader/spaces/:slug/:tab', noop );
+			readerPage( '/reader/shelves/:slug/:tab', noop );
 
 			// Known: exact static route and parameterized routes with real segments.
 			expect( isKnownReaderRoute( '/reader/conversations' ) ).toBe( true );
 			expect( isKnownReaderRoute( '/reader/feeds/123/posts/456' ) ).toBe( true );
-			expect( isKnownReaderRoute( '/reader/spaces/design/discover' ) ).toBe( true );
+			expect( isKnownReaderRoute( '/reader/shelves/design/discover' ) ).toBe( true );
 
 			// Query strings and a trailing slash are ignored when matching.
 			expect( isKnownReaderRoute( '/reader/conversations?ref=x' ) ).toBe( true );
