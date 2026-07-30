@@ -195,6 +195,56 @@ describe( 'EmailVerificationGate', () => {
 		expect( await screen.findByText( 'correct@example.com' ) ).toBeVisible();
 	} );
 
+	it( 'stays gated until the newly-entered address (not the old one) is verified', async () => {
+		mockApi()
+			.post( '/rest/v1.1/me/settings' )
+			.reply( 200, { user_email_change_pending: true, new_user_email: 'new@example.com' } );
+		const onDone = jest.fn();
+		const store = createStore(
+			combineReducers( {
+				currentUser: currentUserReducer,
+				documentHead: documentHeadReducer,
+				ui: uiReducer,
+			} ),
+			currentUserState( false ),
+			applyMiddleware( thunkMiddleware )
+		);
+		beginGate( SCOPE );
+		renderWithProvider(
+			<MemoryRouter>
+				<EmailVerificationGate flow={ FLOW } scope={ SCOPE } onDone={ onDone } />
+			</MemoryRouter>,
+			{ store }
+		);
+
+		await userEvent.click( screen.getByRole( 'button', { name: 'Update email' } ) );
+		await userEvent.clear( screen.getByRole( 'textbox', { name: 'Email address' } ) );
+		await userEvent.type(
+			screen.getByRole( 'textbox', { name: 'Email address' } ),
+			'new@example.com'
+		);
+		await userEvent.click( screen.getByRole( 'button', { name: 'Save' } ) );
+		await screen.findByText( 'new@example.com' );
+
+		// The original address becomes verified, but it isn't the requested target — hold.
+		act( () => {
+			store.dispatch( {
+				type: CURRENT_USER_RECEIVE,
+				user: { ID: USER_ID, email: EMAIL, email_verified: true },
+			} );
+		} );
+		expect( onDone ).not.toHaveBeenCalled();
+
+		// The new address is confirmed and becomes the account email — now finish.
+		act( () => {
+			store.dispatch( {
+				type: CURRENT_USER_RECEIVE,
+				user: { ID: USER_ID, email: 'new@example.com', email_verified: true },
+			} );
+		} );
+		await waitFor( () => expect( onDone ).toHaveBeenCalledTimes( 1 ) );
+	} );
+
 	it( 'returns focus to the heading after saving a new email', async () => {
 		mockApi()
 			.post( '/rest/v1.1/me/settings' )
@@ -222,8 +272,9 @@ describe( 'EmailVerificationGate', () => {
 		setPendingEmail( SCOPE, 'correct@example.com' );
 		render();
 
+		// A pending change uses the longer 15-minute cooldown before resend is offered.
 		act( () => {
-			jest.advanceTimersByTime( COOLDOWN_MS );
+			jest.advanceTimersByTime( 15 * 60 * 1000 );
 		} );
 
 		// The resend re-issues the pending change; make it fail.

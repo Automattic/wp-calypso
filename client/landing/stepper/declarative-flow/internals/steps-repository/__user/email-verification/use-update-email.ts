@@ -21,7 +21,11 @@ export function useUpdateEmail() {
 				// Refresh so downstream onboarding/analytics see the change rather than the old email.
 				dispatch( fetchCurrentUser() );
 				setStatus( 'idle' );
-				return settings.new_user_email ?? newEmail;
+				// Only treat it as a real change when the backend established a pending one — a
+				// no-op response shouldn't make the gate switch its target or claim a send.
+				return settings.user_email_change_pending && settings.new_user_email
+					? settings.new_user_email
+					: null;
 			} catch {
 				setStatus( 'error' );
 				return null;
