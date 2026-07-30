@@ -6,7 +6,7 @@ import { SiteDetails } from '../site';
 import { CurrentUser } from '../user/types';
 import { STORE_KEY } from './constants';
 import { persistPreference } from './utils';
-import type { HelpCenterOptions, HelpCenterShowOptions } from './types';
+import type { HelpCenterOptions, HelpCenterShowOptions, LoggedOutOdieChat } from './types';
 
 declare global {
 	interface Window {
@@ -65,9 +65,7 @@ export const setIsMinimized = function ( minimized: boolean ) {
 	} as const;
 };
 
-export const setLoggedOutOdieChat = (
-	session: { odieId: number; sessionId: string; botSlug: string } | undefined
-) =>
+export const setLoggedOutOdieChat = ( session: LoggedOutOdieChat | undefined ) =>
 	( {
 		type: 'HELP_CENTER_SET_LOGGED_OUT_ODIE_CHAT',
 		session,
@@ -326,7 +324,6 @@ export type HelpCenterAction =
 			| typeof setIsChatLoaded
 			| typeof setAreSoundNotificationsEnabled
 			| typeof setZendeskClientId
-			| typeof setLoggedOutOdieChat
 			| typeof setSupportTypingStatus
 			| typeof setZendeskConnectionStatus
 			| typeof setNavigateToRoute

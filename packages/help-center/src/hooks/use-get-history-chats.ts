@@ -131,17 +131,20 @@ const splitConversationsByRecency = (
 export const useGetHistoryChats = (): UseGetHistoryChatsResult => {
 	const [ recentConversations, setRecentConversations ] = useState< Conversations >( [] );
 	const [ archivedConversations, setArchivedConversations ] = useState< Conversations >( [] );
-	const { newInteractionsBotSlug } = useHelpCenterContext();
+	const { newInteractionsBotSlug, newLoggedOutInteractionsBotSlug } = useHelpCenterContext();
 	const featureConfig = useFeatureConfig();
 
-	const { isChatLoaded, loggedOutSession } = useSelect( ( select ) => {
-		const store = select( HELP_CENTER_STORE ) as HelpCenterSelect;
+	const { isChatLoaded, loggedOutSession } = useSelect(
+		( select ) => {
+			const store = select( HELP_CENTER_STORE ) as HelpCenterSelect;
 
-		return {
-			isChatLoaded: store.getIsChatLoaded(),
-			loggedOutSession: store.getLoggedOutOdieChat(),
-		};
-	}, [] );
+			return {
+				isChatLoaded: store.getIsChatLoaded(),
+				loggedOutSession: store.getLoggedOutOdieChat( newLoggedOutInteractionsBotSlug ),
+			};
+		},
+		[ newLoggedOutInteractionsBotSlug ]
+	);
 
 	const loggedOutChat = useOdieChat(
 		loggedOutSession ? loggedOutSession.odieId : null,
