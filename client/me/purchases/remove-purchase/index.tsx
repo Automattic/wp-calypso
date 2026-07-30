@@ -334,7 +334,7 @@ class RemovePurchase extends Component< RemovePurchaseProps, RemovePurchaseState
 		return (
 			<CancelJetpackForm
 				disableButtons={ this.state.isRemoving }
-				purchase={ createPurchaseObject( purchase ) }
+				purchase={ purchase }
 				purchaseListUrl={ purchaseListUrl ?? purchasesRoot }
 				isVisible={ this.state.isDialogVisible }
 				onClose={ this.closeDialog }
@@ -388,7 +388,7 @@ class RemovePurchase extends Component< RemovePurchaseProps, RemovePurchaseState
 				<GSuiteCancellationPurchaseDialog
 					isVisible={ this.state.isDialogVisible }
 					onClose={ this.closeDialog }
-					purchase={ createPurchaseObject( purchase ) }
+					purchase={ purchase }
 					site={ this.props.site }
 				/>
 			);
