@@ -1,29 +1,31 @@
 /**
  * @jest-environment jsdom
  */
+import { EmailProvider } from '@automattic/api-core';
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
 import { render } from '../../../test-utils';
 import AddEmailForwarder from '../index';
-import type { DomainSummary } from '@automattic/api-core';
+import type { EmailAccount } from '@automattic/api-core';
 
 const DOMAIN = 'example.com';
 
-function mockApi( { domains }: { domains?: DomainSummary[] } = {} ) {
+function mockApi( { accounts }: { accounts?: EmailAccount[] } = {} ) {
 	// Eligible forwarding domain so the form renders.
 	nock( 'https://public-api.wordpress.com' )
-		.get( '/rest/v1.2/all-domains' )
+		.get( '/rest/v1/me/mailboxes' )
 		.query( true )
-		.reply( 200, {
-			domains: domains ?? [
+		.reply(
+			200,
+			accounts ?? [
 				{
-					domain: DOMAIN,
-					subtype: { id: 'domain_registration', label: 'Domain Registration' },
-					current_user_is_owner: true,
-				} as DomainSummary,
-			],
-		} );
+					account_type: EmailProvider.Forwarding,
+					can_user_add_email: true,
+					domains: [ { domain: DOMAIN } ],
+				},
+			]
+		);
 
 	// Existing forwarders for the eligible domain (queried on render).
 	nock( 'https://public-api.wordpress.com' )
@@ -80,14 +82,14 @@ describe( '<AddEmailForwarder>', () => {
 	} );
 
 	// DOTMSD-1477
-	test( 'offers a domain the user administers but does not own', async () => {
+	test( 'offers a domain the user cannot buy paid email for', async () => {
 		mockApi( {
-			domains: [
+			accounts: [
 				{
-					domain: DOMAIN,
-					subtype: { id: 'domain_registration', label: 'Domain Registration' },
-					current_user_is_owner: false,
-				} as DomainSummary,
+					account_type: EmailProvider.Forwarding,
+					can_user_add_email: false,
+					domains: [ { domain: DOMAIN } ],
+				} as EmailAccount,
 			],
 		} );
 		render( <AddEmailForwarder /> );
@@ -99,16 +101,8 @@ describe( '<AddEmailForwarder>', () => {
 		).not.toBeInTheDocument();
 	} );
 
-	test( 'keeps the empty state when the user only has a default address', async () => {
-		mockApi( {
-			domains: [
-				{
-					domain: 'example.wordpress.com',
-					subtype: { id: 'default_address', label: 'Default Address' },
-					current_user_is_owner: true,
-				} as DomainSummary,
-			],
-		} );
+	test( 'keeps the empty state when no domain supports forwarding', async () => {
+		mockApi( { accounts: [] } );
 		render( <AddEmailForwarder /> );
 
 		expect(

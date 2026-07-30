@@ -34,7 +34,7 @@ function Emails() {
 	const { domainName: domainNameFilter }: { domainName?: string } = emailsRoute.useSearch();
 	const { data: allDomains } = useSuspenseQuery( queries.domainsQuery() );
 	// Domain ownership gates buying paid email, not managing email on the domain, so
-	// administrators who don't own the domain still belong here. See DOTMSD-1477.
+	// administrators who don't own the domain still belong here.
 	const domains = ( allDomains ?? [] ).filter(
 		( d ) => d.subtype.id !== DomainSubtype.DEFAULT_ADDRESS
 	);
