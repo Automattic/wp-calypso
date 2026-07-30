@@ -257,14 +257,12 @@ export function SitesDashboard() {
 	}
 
 	let emptyStateVariant: SitesEmptyStateVariant | null = null;
-	if ( ! tourId ) {
-		if ( hasNoSitesYet ) {
-			emptyStateVariant = 'no-sites';
-		} else if ( hasNoFavoritesYet ) {
-			emptyStateVariant = 'no-favorites';
-		} else if ( hasNoDevelopmentSitesYet ) {
-			emptyStateVariant = 'no-development';
-		}
+	if ( hasNoSitesYet ) {
+		emptyStateVariant = 'no-sites';
+	} else if ( hasNoFavoritesYet ) {
+		emptyStateVariant = 'no-favorites';
+	} else if ( hasNoDevelopmentSitesYet ) {
+		emptyStateVariant = 'no-development';
 	}
 
 	return (
