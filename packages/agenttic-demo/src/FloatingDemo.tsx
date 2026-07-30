@@ -402,6 +402,7 @@ const FloatingDemo: React.FC< {
 				onResize={ setChatSize }
 				onResizeEnd={ setChatSize }
 				onSuggestionsRendered={ ( shown ) => console.log( shown ) }
+				boundaryInset={ { top: 46 } }
 			/>
 		</div>
 	);

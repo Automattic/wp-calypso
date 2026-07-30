@@ -5,7 +5,8 @@ import {
 	getChatPosition,
 	getInitialChatPosition,
 } from '../utils/chatStorage';
-import type { ChatSize, ChatState } from '../types';
+import type { BoundaryInsets, ChatSize, ChatState } from '../types';
+import { DEFAULT_BOUNDARY_INSETS } from '../utils/constants';
 import { useResizablePanel } from './useResizablePanel';
 import { useFloatingPanelPosition } from './useFloatingPanelPosition';
 
@@ -24,6 +25,8 @@ export interface UseFloatingPanelArgs {
 	onFreeDragEnd?: ( position: { x: number; y: number } ) => void;
 	onResize?: ( size: ChatSize ) => void;
 	onResizeEnd?: ( size: ChatSize ) => void;
+	// Per-side viewport insets (resolved boundaryInset).
+	insets?: BoundaryInsets;
 }
 
 // Composes the two sub-hooks (resize owns width/height, drag owns snap/side) over
@@ -46,6 +49,7 @@ export function useFloatingPanel( {
 	onFreeDragEnd,
 	onResize,
 	onResizeEnd,
+	insets = DEFAULT_BOUNDARY_INSETS,
 }: UseFloatingPanelArgs ) {
 	// Seed the shared x/y so a persisted free-drag position (or right-corner dock)
 	// applies on mount. Lazy: useMotionValue only reads its argument on the first
@@ -63,6 +67,7 @@ export function useFloatingPanel( {
 			side: getChatPosition( initialChatPosition ),
 			width: mountsAtCustomSize ? defaultSize?.width : undefined,
 			height: mountsAtCustomSize ? defaultSize?.height : undefined,
+			insets,
 		} );
 	} );
 	const x = useMotionValue( seed.x );
@@ -83,6 +88,7 @@ export function useFloatingPanel( {
 		maxSize,
 		chatState,
 		compactHeight,
+		insets,
 		x,
 		y,
 		repositionForResize: ( deltaWidth ) =>
@@ -109,6 +115,7 @@ export function useFloatingPanel( {
 		y,
 		getPanelSize: resize.getPanelSize,
 		clampResizedSize: resize.clampToViewport,
+		insets,
 	} );
 
 	useLayoutEffect( () => {

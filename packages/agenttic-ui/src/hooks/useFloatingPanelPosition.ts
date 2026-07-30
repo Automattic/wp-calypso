@@ -5,7 +5,7 @@ import {
 	type PanInfo,
 	useDragControls,
 } from 'framer-motion';
-import { DRAG_CONSTANTS, STYLE_CONSTANTS } from '../utils/constants';
+import { DEFAULT_BOUNDARY_INSETS, DRAG_CONSTANTS } from '../utils/constants';
 import { morphSpring } from '../components/animations';
 import {
 	type ChatPosition,
@@ -14,7 +14,7 @@ import {
 	getCornerSnapPosition,
 	setChatPosition,
 } from '../utils/chatStorage';
-import type { ChatSize, ChatState } from '../types';
+import type { BoundaryInsets, ChatSize, ChatState } from '../types';
 
 export interface UseFloatingPanelPositionArgs {
 	freeDrag: boolean;
@@ -31,6 +31,8 @@ export interface UseFloatingPanelPositionArgs {
 	// Re-clamps the resized size into the current viewport; the window-resize
 	// handler calls it first so the position clamp reads the corrected size.
 	clampResizedSize: () => void;
+	// Per-side viewport insets (resolved boundaryInset).
+	insets?: BoundaryInsets;
 }
 
 export interface UseFloatingPanelPositionResult {
@@ -69,6 +71,7 @@ export function useFloatingPanelPosition( {
 	y,
 	getPanelSize,
 	clampResizedSize,
+	insets = DEFAULT_BOUNDARY_INSETS,
 }: UseFloatingPanelPositionArgs ): UseFloatingPanelPositionResult {
 	const [ isDragging, setIsDragging ] = useState( false );
 	const [ currentSide, setCurrentSide ] = useState< ChatPosition >( () =>
@@ -81,15 +84,19 @@ export function useFloatingPanelPosition( {
 	const dragControls = useDragControls();
 
 	// Analytic (DOM-free) corner-snap target: the panel is CSS-anchored at
-	// left/bottom VIEWPORT_OFFSET, so the docked transform derives from side +
+	// left/bottom insets, so the docked transform derives from side +
 	// width alone. Reading the DOM mid-animation snapshotted a stale height and
 	// drifted `y` upward on the first grow click.
 	const calculateSnapPosition = useCallback(
 		( side?: 'left' | 'right' ) => {
 			const targetSide = side ?? currentSide;
-			return getCornerSnapPosition( targetSide, getPanelSize().width );
+			return getCornerSnapPosition(
+				targetSide,
+				getPanelSize().width,
+				insets
+			);
 		},
-		[ currentSide, getPanelSize ]
+		[ currentSide, getPanelSize, insets ]
 	);
 
 	const handlePointerDown = useCallback(
@@ -153,7 +160,8 @@ export function useFloatingPanelPosition( {
 				const clamped = clampFreeDragPosition(
 					dropped,
 					panelSize.width,
-					panelSize.height
+					panelSize.height,
+					insets
 				);
 				if ( clamped.x !== dropped.x ) {
 					animate( x, clamped.x, DRAG_CONSTANTS.SPRING_CONFIG );
@@ -187,6 +195,7 @@ export function useFloatingPanelPosition( {
 			freeDrag,
 			onFreeDragEnd,
 			getPanelSize,
+			insets,
 		]
 	);
 
@@ -202,11 +211,8 @@ export function useFloatingPanelPosition( {
 		}
 
 		// Determine side from the panel's center in viewport coords. x.get() is
-		// the transform offset from the panel's CSS left: VIEWPORT_OFFSET origin.
-		const panelCenter =
-			STYLE_CONSTANTS.VIEWPORT_OFFSET +
-			x.get() +
-			getPanelSize().width / 2;
+		// the transform offset from the panel's CSS left: insets.left origin.
+		const panelCenter = insets.left + x.get() + getPanelSize().width / 2;
 		const newSide = panelCenter < window.innerWidth / 2 ? 'left' : 'right';
 
 		if ( currentSide !== newSide ) {
@@ -227,6 +233,7 @@ export function useFloatingPanelPosition( {
 		onChatPositionChange,
 		currentSide,
 		getPanelSize,
+		insets,
 	] );
 
 	// In free-drag mode `bottom: 0` already docks the panel bottom on minimize, so
@@ -278,13 +285,11 @@ export function useFloatingPanelPosition( {
 		( panelHeight: number ): { y: number; skipY: boolean } => {
 			const currentY = y.get();
 			const minY =
-				2 * STYLE_CONSTANTS.VIEWPORT_OFFSET +
-				panelHeight -
-				window.innerHeight;
+				insets.top + insets.bottom + panelHeight - window.innerHeight;
 			const clampedY = Math.max( minY, Math.min( currentY, 0 ) );
 			return { y: clampedY, skipY: clampedY === currentY };
 		},
-		[ y ]
+		[ y, insets ]
 	);
 
 	// Shared position-reconcile: the on-screen target for the CURRENT size + side.
@@ -309,7 +314,8 @@ export function useFloatingPanelPosition( {
 				const maxX =
 					window.innerWidth -
 					panelSize.width -
-					2 * STYLE_CONSTANTS.VIEWPORT_OFFSET;
+					insets.left -
+					insets.right;
 				const sideShift = currentSide === 'right' ? deltaWidth : 0;
 				const xClamped = Math.max(
 					0,
@@ -322,7 +328,8 @@ export function useFloatingPanelPosition( {
 			// Corner-snap: analytic dock x (no DOM read → no stale-height drift).
 			const snapX = getCornerSnapPosition(
 				currentSide,
-				panelSize.width
+				panelSize.width,
+				insets
 			).x;
 
 			// While minimized the `y` transform is pinned to 0 and `bottom: 0` keeps
@@ -335,7 +342,15 @@ export function useFloatingPanelPosition( {
 			const vertical = holdYWithTopGuard( panelSize.height );
 			return { x: snapX, y: vertical.y, skipY: vertical.skipY };
 		},
-		[ freeDrag, x, currentSide, chatState, holdYWithTopGuard, getPanelSize ]
+		[
+			freeDrag,
+			x,
+			currentSide,
+			chatState,
+			holdYWithTopGuard,
+			getPanelSize,
+			insets,
+		]
 	);
 
 	// Reconcile x/y after a programmatic size change, animating with the morph
@@ -354,6 +369,23 @@ export function useFloatingPanelPosition( {
 		},
 		[ isDragging, computeReconciledPosition, x, y ]
 	);
+
+	// Boundary insets can change at runtime (e.g. a fixed header appearing or
+	// growing). Same order as the window-resize handler — clamp the committed
+	// size into the new box first, then re-clamp/re-snap the position — but
+	// animated via repositionForResize so the correction reads as one motion
+	// (it also no-ops mid-drag; the drop clamp finishes the job with the new
+	// insets). The ref seed skips the mount run.
+	const prevInsetsRef = useRef( insets );
+	useEffect( () => {
+		if ( prevInsetsRef.current === insets ) {
+			return;
+		}
+		prevInsetsRef.current = insets;
+
+		clampResizedSize();
+		repositionForResize( 0 );
+	}, [ insets, clampResizedSize, repositionForResize ] );
 
 	// Window resize: clamp the resized SIZE back into the new box first (so the
 	// position clamp reads the corrected size), then clamp/snap the POSITION.

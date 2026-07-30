@@ -339,7 +339,10 @@ const FloatingCompactDemo: React.FC<{ currentTheme: 'light' | 'dark' }> = ( { cu
 				>
 					Remount
 				</button>
-				<MessageTester addMessage={ addMessage } onClear={ () => loadMessages( [] ) } />
+				<MessageTester
+					addMessage={ addMessage }
+					onClear={ () => loadMessages( [] ) }
+				/>
 			</div>
 			<AgentUI
 				key={ remountKey }
@@ -370,6 +373,7 @@ const FloatingCompactDemo: React.FC<{ currentTheme: 'light' | 'dark' }> = ( { cu
 				freeDrag={ freeDragEnabled }
 				initialFreeDragPosition={ freeDragPosition }
 				onFreeDragEnd={ setFreeDragPosition }
+				boundaryInset={ { top: 46 } }
 			/>
 		</div>
 	);

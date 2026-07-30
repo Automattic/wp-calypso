@@ -8,6 +8,15 @@ export interface ChatSize {
 	height: number;
 }
 
+// Per-side gap (px) between the viewport edges and the floating panel's
+// allowed area. See AgentUIProps.boundaryInset.
+export interface BoundaryInsets {
+	top: number;
+	right: number;
+	bottom: number;
+	left: number;
+}
+
 export interface SuggestionOption {
 	id: string;
 	label: string;
@@ -137,6 +146,7 @@ export interface AgentUIProps {
 
 	// Drag and drop props
 	draggableStates?: ChatState[]; // Specify which chat states allow dragging (defaults to ['expanded'] for backward compatibility)
+	boundaryInset?: number | Partial< BoundaryInsets >; // Gap (px) between the viewport edges and the floating panel's allowed area (anchor, drag and resize bounds). A number applies to all sides; an object overrides per side. Every side defaults to 16. E.g. { top: 80 } keeps the panel out from under a fixed header
 	freeDrag?: boolean; // Keep the panel where dropped instead of snapping to a corner (position is ephemeral, resets on reload/resize)
 	initialFreeDragPosition?: { x: number; y: number }; // Seed the free-drag pixel position on mount (only applied when freeDrag is on)
 	onFreeDragEnd?: ( position: { x: number; y: number } ) => void; // Reports the dropped free-drag pixel position so consumers can persist it
