@@ -2,11 +2,15 @@ import page from '@automattic/calypso-router';
 import { StripeHookProvider } from '@automattic/calypso-stripe';
 import { CheckoutErrorBoundary } from '@automattic/composite-checkout';
 import { createRequestCartProduct, useShoppingCart } from '@automattic/shopping-cart';
+import { getQueryArg } from '@wordpress/url';
 import debugFactory from 'debug';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, useState } from 'react';
 import A4ALogo from 'calypso/a8c-for-agencies/components/a4a-logo';
-import { A4A_MARKETPLACE_LINK } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
+import {
+	A4A_LICENSES_LINK,
+	A4A_MARKETPLACE_LINK,
+} from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
 import { getStripeConfiguration } from 'calypso/lib/store-transactions';
 import CalypsoShoppingCartProvider from 'calypso/my-sites/checkout/calypso-shopping-cart-provider';
 import CheckoutMain from 'calypso/my-sites/checkout/src/components/checkout-main';
@@ -17,6 +21,7 @@ import { getCurrentUserLocale } from 'calypso/state/current-user/selectors';
 import hasLoadedSites from 'calypso/state/selectors/has-loaded-sites';
 import getSite from 'calypso/state/sites/selectors/get-site';
 import { setSelectedSiteId } from 'calypso/state/ui/actions';
+import { getAutoAssignLicenseUrl } from '../lib/assign-license-url';
 import ClientCheckoutError from './checkout-error';
 import ClientCheckoutPlaceholder from './checkout-placeholder';
 import type { ShoppingCartItem } from '../types';
@@ -214,6 +219,14 @@ function BillingDragonCheckoutContent( {
 		}
 	}, [ isReady, error, replaceProductsInCart, responseCart, agency, cartItems, isPlanCheckout ] );
 
+	const assignToSiteId = Number( getQueryArg( window.location.href, 'site_id' ) ) || undefined;
+
+	const redirectTo =
+		window.location.origin +
+		( assignToSiteId && cartItems.length === 1
+			? getAutoAssignLicenseUrl( assignToSiteId, cartItems[ 0 ].slug )
+			: A4A_LICENSES_LINK );
+
 	// Debugging: Set a timeout to force showing the checkout after 2 seconds
 	// Todo: This was reduced from 10 seconds to 2 seconds to check if it works well. Better UX.
 	useEffect( () => {
@@ -248,7 +261,7 @@ function BillingDragonCheckoutContent( {
 			) }
 			<CheckoutMain
 				sitelessCheckoutType="a4a"
-				redirectTo={ window.location.origin + '/purchases/licenses' }
+				redirectTo={ redirectTo }
 				customizedPreviousPath="/marketplace"
 				siteSlug={ siteSlug ?? '' }
 				siteId={ siteId ?? 0 }

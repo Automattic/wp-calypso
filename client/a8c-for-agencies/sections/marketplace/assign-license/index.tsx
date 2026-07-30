@@ -38,6 +38,7 @@ import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 import { DEFAULT_SORT_DIRECTION, DEFAULT_SORT_FIELD } from '../../sites/constants';
 import { Site } from '../../sites/types';
 import AssignLicenseStepProgress from '../assign-license-step-progress';
+import { isFromSitesDashboard } from '../lib/assign-license-url';
 import getAssignLicenseSuccessMessage from '../lib/get-assign-license-success-message';
 import useAssignLicensesToSite from '../products-overview/hooks/use-assign-licenses-to-site';
 import { SITE_CARDS_PER_PAGE } from './constants';
@@ -47,9 +48,10 @@ import './styles.scss';
 type Props = {
 	initialPage: number;
 	initialSearch: string;
+	preselectedSiteId?: number;
 };
 
-export default function AssignLicense( { initialPage, initialSearch }: Props ) {
+export default function AssignLicense( { initialPage, initialSearch, preselectedSiteId }: Props ) {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 
@@ -136,6 +138,18 @@ export default function AssignLicense( { initialPage, initialSearch }: Props ) {
 
 		setTotalSites( data?.total );
 	}, [ data, isError, isLoading ] );
+
+	useEffect( () => {
+		if ( ! preselectedSiteId || selectedSite.ID ) {
+			return;
+		}
+
+		const site = data?.sites?.find( ( s: Site ) => s.blog_id === preselectedSiteId );
+
+		if ( site ) {
+			setSelectedSite( { ID: site.blog_id, domain: site.url_with_scheme } );
+		}
+	}, [ data?.sites, preselectedSiteId, selectedSite.ID ] );
 
 	useEffect( () => {
 		const urlSearch = getQueryArg( window.location.search, 'search' );
@@ -233,7 +247,7 @@ export default function AssignLicense( { initialPage, initialSearch }: Props ) {
 			);
 		}
 
-		const fromDashboard = getQueryArg( window.location.href, 'source' ) === 'dashboard';
+		const fromDashboard = isFromSitesDashboard( window.location.href );
 		const redirectUrl = fromDashboard ? A4A_SITES_LINK : A4A_LICENSES_LINK;
 		return isFeedbackShown
 			? page.redirect( redirectUrl )

@@ -10,6 +10,8 @@ import { useSelector } from 'calypso/state';
 import { getActiveAgencyId } from 'calypso/state/a8c-for-agencies/agency/selectors';
 import formatLicenses from './lib/format-licenses';
 
+export const FETCH_LICENSES_QUERY_KEY_PREFIX = 'a4a-licenses';
+
 export const getFetchLicensesQueryKey = (
 	filter: LicenseFilter,
 	search: string,
@@ -19,7 +21,16 @@ export const getFetchLicensesQueryKey = (
 	perPage: number,
 	agencyId?: number
 ) => {
-	return [ 'a4a-licenses', filter, search, sortField, sortDirection, page, perPage, agencyId ];
+	return [
+		FETCH_LICENSES_QUERY_KEY_PREFIX,
+		filter,
+		search,
+		sortField,
+		sortDirection,
+		page,
+		perPage,
+		agencyId,
+	];
 };
 
 export default function useFetchLicenses(
@@ -28,7 +39,8 @@ export default function useFetchLicenses(
 	sortField: LicenseSortField,
 	sortDirection: LicenseSortDirection,
 	page: number,
-	perPage: number = LICENSES_PER_PAGE
+	perPage: number = LICENSES_PER_PAGE,
+	enabled: boolean = true
 ) {
 	const agencyId = useSelector( getActiveAgencyId );
 
@@ -66,7 +78,7 @@ export default function useFetchLicenses(
 				totalPages: data.total_pages,
 			};
 		},
-		enabled: !! agencyId,
+		enabled: enabled && !! agencyId,
 		refetchOnWindowFocus: false,
 	} );
 }

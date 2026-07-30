@@ -163,14 +163,19 @@ export const checkoutContext: Callback = ( context, next ) => {
 	next();
 };
 export const assignLicenseContext: Callback = ( context, next ) => {
-	const { page, search } = context.query;
+	const { page, search, site_id } = context.query;
 	const initialPage = parseInt( page ) || 1;
+	const siteId = parseInt( site_id );
 
 	context.secondary = <MarketplaceSidebar path={ context.path } />;
 	context.primary = (
 		<>
 			<PageViewTracker title="Marketplace > Assign License" path={ context.path } />
-			<AssignLicense initialPage={ initialPage } initialSearch={ search || '' } />
+			<AssignLicense
+				initialPage={ initialPage }
+				initialSearch={ search || '' }
+				preselectedSiteId={ siteId > 0 ? siteId : undefined }
+			/>
 		</>
 	);
 	next();

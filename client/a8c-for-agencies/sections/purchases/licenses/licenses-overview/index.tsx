@@ -19,6 +19,7 @@ import LayoutHeader, {
 } from 'calypso/layout/hosting-dashboard/header';
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import useAutoAssignLicense from '../hooks/use-auto-assign-license';
 import LicenseList from '../license-list';
 import LicenseSearch from '../license-search';
 import LicenseStateFilter from '../license-state-filter';
@@ -44,6 +45,8 @@ export default function LicensesOverview( {
 }: Props ) {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
+
+	useAutoAssignLicense();
 
 	const title = translate( 'Licenses' );
 
