@@ -10,7 +10,7 @@ import {
 	type UploadedImage,
 	type TrailingActions,
 } from '@automattic/agenttic-ui';
-import { useCallback, useMemo, useRef } from '@wordpress/element';
+import { useCallback, useMemo, useRef, useState } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import clsx from 'clsx';
 import { formatWritingSuggestionLabels } from '../../hooks/use-empty-view-suggestions';
@@ -21,6 +21,7 @@ import isAmAbilitiesDisabled from '../../utils/is-am-abilities-disabled';
 import { isEditorPage } from '../../utils/is-editor-page';
 import { isReaderChatHost } from '../../utils/is-reader-chat-agent';
 import lazyComponent from '../../utils/lazy-component';
+import { getBrandName, getBrandLogoUrl } from '../../utils/site-chat-brand';
 import { isSiteEditorContext } from '../../utils/site-editor-context';
 import { recordBigSkyTracksEvent } from '../../utils/tracks';
 import ChatHeader, { type Options as ChatHeaderOptions } from '../chat-header';
@@ -28,6 +29,7 @@ import ChatMessageSkeleton from '../chat-message-skeleton';
 import ContextCards from '../context-cards';
 import CustomALink from '../custom-a-link';
 import FeedbackInput from '../feedback-input';
+import { AI } from '../icons';
 import getSuggestionClickPayload from './get-suggestion-click-payload';
 import GroupedEmptyView from './grouped-empty-view';
 import type { UseImageUploadResult } from '../../hooks/use-image-upload';
@@ -157,6 +159,33 @@ function getEmptyViewHeading(): string {
 		return __( 'Ask me anything about this blog.', __i18n_text_domain__ );
 	}
 	return __( 'What should we work on next?', __i18n_text_domain__ );
+}
+
+/**
+ * Renders the site's logo, falling back to the default agent icon if the image
+ * fails to load.
+ *
+ * The fallback matters: this mounts on every page of a public blog, so a
+ * deleted or unreachable Site Icon must degrade to the stock mark rather than
+ * paint a broken-image box across the whole site.
+ */
+function BrandLogo( { src, size = 32 }: { src: string; size?: number } ) {
+	const [ failed, setFailed ] = useState( false );
+
+	if ( failed ) {
+		return <AI size={ size } />;
+	}
+
+	return (
+		<img
+			src={ src }
+			alt=""
+			width={ size }
+			height={ size }
+			className="agents-manager-brand-logo"
+			onError={ () => setFailed( true ) }
+		/>
+	);
 }
 
 function getEmptyViewHelp(): string {
@@ -309,9 +338,13 @@ export default function AgentChat( {
 		}
 	}, [ trackImageUpload ] );
 
+	const brandName = getBrandName();
+	const brandLogoUrl = getBrandLogoUrl();
+
 	return (
 		<AgentUI.Container
 			{ ...floatingPanelProps }
+			triggerIcon={ brandLogoUrl ? <BrandLogo src={ brandLogoUrl } /> : undefined }
 			className={ clsx( 'agenttic', { dark: isDocked } ) }
 			messages={ messages }
 			isProcessing={ isProcessing }
@@ -327,7 +360,7 @@ export default function AgentChat( {
 			onSuggestionClick={ onSuggestionClick ? handleDisplayedSuggestionClick : undefined }
 			onSuggestionsRendered={ onSuggestionsRendered }
 			floatingChatState={ floatingChatState }
-			triggerTitle={ __( 'Agent', __i18n_text_domain__ ) }
+			triggerTitle={ brandName ?? __( 'Agent', __i18n_text_domain__ ) }
 			onClose={ onClose }
 			onExpand={ onExpand }
 			onStop={ onAbort }
@@ -350,13 +383,19 @@ export default function AgentChat( {
 						suggestions={ emptyViewSuggestions }
 						groupWritingSuggestions={ groupWritingSuggestions }
 						onSuggestionClick={ onSuggestionClick }
+						icon={ brandLogoUrl ? <BrandLogo src={ brandLogoUrl } /> : undefined }
 					/>
 				)
 			}
 		>
 			<AgentUI.ConversationView ref={ conversationViewRef }>
 				{ ! isAmAbilitiesDisabled() && isSiteEditorContext() && <EditorHistoryBridge /> }
-				<ChatHeader onClose={ onClose } options={ chatHeaderOptions } isDocked={ isDocked } />
+				<ChatHeader
+					onClose={ onClose }
+					options={ chatHeaderOptions }
+					isDocked={ isDocked }
+					title={ brandName }
+				/>
 				{ isLoadingConversation ? <ChatMessageSkeleton count={ 3 } /> : <AgentUI.Messages /> }
 				{ ( onContextCardAction || onContextCardDismiss ) && (
 					<ContextCards onAction={ onContextCardAction } onDismiss={ onContextCardDismiss } />

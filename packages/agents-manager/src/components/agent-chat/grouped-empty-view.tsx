@@ -12,11 +12,13 @@ import {
 } from '../../hooks/use-empty-view-suggestions';
 import { isEditorPage } from '../../utils/is-editor-page';
 import getSuggestionClickPayload from './get-suggestion-click-payload';
+import type { ReactNode } from 'react';
 import './grouped-empty-view.scss';
 
 interface Props {
 	heading: string;
 	help?: string;
+	icon?: ReactNode;
 	suggestions: Suggestion[];
 	groupWritingSuggestions: boolean;
 	onSuggestionClick?: (
@@ -28,6 +30,7 @@ interface Props {
 export default function GroupedEmptyView( {
 	heading,
 	help,
+	icon,
 	suggestions,
 	groupWritingSuggestions,
 	onSuggestionClick,
@@ -64,6 +67,7 @@ export default function GroupedEmptyView( {
 			<EmptyView
 				heading={ heading }
 				help={ help }
+				icon={ icon }
 				suggestions={ displaySuggestions }
 				onSuggestionClick={ handleSuggestionClick }
 			/>
@@ -87,6 +91,7 @@ export default function GroupedEmptyView( {
 		>
 			<EmptyView
 				heading={ heading }
+				icon={ icon }
 				suggestions={ topLevelSuggestions }
 				onSuggestionClick={ handleSuggestionClick }
 			/>

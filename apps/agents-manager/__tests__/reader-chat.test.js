@@ -76,6 +76,7 @@ const {
 	parseSuggestionsResponse,
 	getSuggestionsFetchHeaders,
 	injectScopedReset,
+	injectBrandTokens,
 	watchFirstChatOpen,
 } = require( '../reader-chat' );
 
@@ -296,6 +297,86 @@ describe( 'getReaderEmptyViewHeading', () => {
 				currentPost: { id: 1, title: 'Home', url: 'https://example.com/' },
 			} )
 		).toBe( 'Ask me anything about this blog.' );
+	} );
+
+	it( 'prefers an owner-set greeting over the contextual default', () => {
+		expect(
+			getReaderEmptyViewHeading( {
+				currentPost: { id: 1 },
+				brand: { greeting: 'What can I find for you?' },
+			} )
+		).toBe( 'What can I find for you?' );
+	} );
+
+	it( 'falls back to contextual copy when the brand carries no greeting', () => {
+		expect( getReaderEmptyViewHeading( { brand: {} } ) ).toBe( 'Ask me anything about this blog.' );
+	} );
+} );
+
+// ---------------------------------------------------------------------------
+// injectBrandTokens
+// ---------------------------------------------------------------------------
+
+describe( 'injectBrandTokens', () => {
+	beforeEach( () => {
+		document.head.querySelector( '#jetpack-reader-chat-brand' )?.remove();
+		getElementByIdSpy.mockImplementation( getElementById );
+	} );
+
+	afterEach( () => {
+		getElementByIdSpy.mockReturnValue( null );
+	} );
+
+	it( 'emits nothing when the site has no accent', () => {
+		injectBrandTokens( {} );
+		expect( document.head.querySelector( '#jetpack-reader-chat-brand' ) ).toBeNull();
+	} );
+
+	it( 'emits nothing when there is no brand at all', () => {
+		injectBrandTokens( undefined );
+		expect( document.head.querySelector( '#jetpack-reader-chat-brand' ) ).toBeNull();
+	} );
+
+	it( 'sets the accent tokens from the brand', () => {
+		injectBrandTokens( { accent: '#2271b1', accentForeground: '#ffffff' } );
+
+		const css = document.head.querySelector( '#jetpack-reader-chat-brand' ).textContent;
+		expect( css ).toContain( '--color-primary: #2271b1;' );
+		expect( css ).toContain( '--color-primary-foreground: #ffffff;' );
+	} );
+
+	it( 'targets the portalled selectors, since the panel mounts on body', () => {
+		injectBrandTokens( { accent: '#2271b1', accentForeground: '#ffffff' } );
+
+		const css = document.head.querySelector( '#jetpack-reader-chat-brand' ).textContent;
+		expect( css ).toContain( '.agents-manager-chat' );
+		expect( css ).toContain( '.agents-manager-sidebar-fab' );
+		expect( css ).toContain( '.components-popover' );
+	} );
+
+	it( 'never defines the tokens globally, which would restyle the host theme', () => {
+		injectBrandTokens( { accent: '#2271b1', accentForeground: '#ffffff' } );
+
+		const css = document.head.querySelector( '#jetpack-reader-chat-brand' ).textContent;
+		expect( css ).not.toMatch( /:root/ );
+		expect( css ).not.toMatch( /(^|[^-\w])html\s*[,{]/ );
+	} );
+
+	it( 'defaults the foreground when an older deploy sends an accent without one', () => {
+		injectBrandTokens( { accent: '#2271b1' } );
+
+		const css = document.head.querySelector( '#jetpack-reader-chat-brand' ).textContent;
+		expect( css ).toContain( '--color-primary-foreground: #ffffff;' );
+	} );
+
+	it( 'does not inject twice', () => {
+		injectBrandTokens( { accent: '#2271b1', accentForeground: '#ffffff' } );
+		injectBrandTokens( { accent: '#ff0000', accentForeground: '#000000' } );
+
+		expect( document.head.querySelectorAll( '#jetpack-reader-chat-brand' ) ).toHaveLength( 1 );
+		expect( document.head.querySelector( '#jetpack-reader-chat-brand' ).textContent ).toContain(
+			'#2271b1'
+		);
 	} );
 } );
 
