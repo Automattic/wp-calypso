@@ -250,10 +250,6 @@ function HelpCenterContent() {
 		/>
 	);
 
-	const botProps = helpCenterData.isCommerceGarden
-		? { newInteractionsBotSlug: 'ciab-workflow-support_chat' }
-		: {};
-
 	return (
 		<>
 			{ showHelpIcon &&
@@ -272,7 +268,8 @@ function HelpCenterContent() {
 				onboardingUrl="https://wordpress.com/start"
 				handleClose={ closeCallback }
 				product={ helpCenterData.isCommerceGarden ? 'commerce-garden' : undefined }
-				{ ...botProps }
+				newInteractionsBotSlug={ helpCenterData.newInteractionsBotSlug }
+				newLoggedOutInteractionsBotSlug={ helpCenterData.newLoggedOutInteractionsBotSlug }
 			/>
 		</>
 	);
