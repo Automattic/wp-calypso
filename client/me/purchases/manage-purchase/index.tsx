@@ -99,6 +99,7 @@ import {
 	isAkismetHoldingSitePurchase,
 	isJetpackHoldingSitePurchase,
 	isMarketplaceHoldingSitePurchase,
+	isPartnerPurchase,
 } from 'calypso/dashboard/utils/purchase';
 import reinstallPlugins from 'calypso/data/marketplace/reinstall-plugins-api';
 import HundredYearPlanLogo from 'calypso/landing/stepper/declarative-flow/internals/steps-repository/hundred-year-plan-step-wrapper/hundred-year-plan-logo';
@@ -160,7 +161,6 @@ import {
 	isExpiredWithNoAutoRenewAttemptsLeft,
 	isIncludedWithPlan,
 	isPaidWithCredits,
-	isPartnerPurchase,
 	isRemoved,
 	isRenewable,
 	isWithinRefundWindowDowngradeEligible,

@@ -40,22 +40,18 @@
 	inset-block-start: 3px;
 }
 
-.license-preview__product-pressable-link {
+.theme-a8c-for-agencies a.license-preview__product-pressable-link {
 
 	&,
-	&:visited {
+	&:visited,
+	&:active {
 		@include heading-medium;
-		display: flex;
-		flex-direction: row;
-		gap: 4px;
-		align-items: center;
-		text-decoration: underline;
-		color: var(--color-text);
+		color: var(--color-text-subtle);
 	}
 
-	.gridicon {
-		fill: var(--color-text);
-
+	&:hover,
+	&:focus {
+		color: var(--color-neutral-70);
 	}
 }
 

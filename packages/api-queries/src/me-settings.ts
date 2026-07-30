@@ -1,6 +1,7 @@
-import { fetchUserSettings, updateUserSettings } from '@automattic/api-core';
+import { fetchUserSettings, sendVerificationEmail, updateUserSettings } from '@automattic/api-core';
 import { queryOptions, mutationOptions } from '@tanstack/react-query';
 import { queryClient, clearQueryClient } from './query-client';
+import type { UserSettings } from '@automattic/api-core';
 
 export const userSettingsQuery = () =>
 	queryOptions( {
@@ -57,5 +58,15 @@ export const resendEmailVerificationMutation = ( email: string ) =>
 						...newData,
 					}
 			);
+		},
+	} );
+
+export const sendEmailVerificationMutation = () =>
+	mutationOptions( {
+		meta: { statId: 'email-verify-send' },
+		// Return `{}` to match `resendEmailVerificationMutation`'s data type.
+		mutationFn: async (): Promise< Partial< UserSettings > > => {
+			await sendVerificationEmail();
+			return {};
 		},
 	} );

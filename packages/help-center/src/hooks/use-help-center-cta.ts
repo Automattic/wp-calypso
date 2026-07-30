@@ -50,5 +50,7 @@ export function useHelpCenterCTA( variant: HelpCenterCTAVariant ): HelpCenterCTA
 		title: cta.title,
 		description: typeof cta.description === 'string' ? cta.description : undefined,
 		actionLabel: typeof cta.url_text === 'string' ? cta.url_text : undefined,
+		purchasedAt: Number.isFinite( cta.purchased_at ) ? cta.purchased_at : undefined,
+		planFamily: typeof cta.plan_family === 'string' ? cta.plan_family : undefined,
 	};
 }

@@ -3,6 +3,10 @@ import config from '@automattic/calypso-config';
 import { isEcommercePlan } from '@automattic/calypso-products';
 import { Gridicon } from '@automattic/components';
 import { Badge } from '@automattic/ui';
+// @ts-expect-error The commands package is not yet typed.
+import { store as commandsStore } from '@wordpress/commands';
+import { dispatch } from '@wordpress/data';
+import { displayShortcut } from '@wordpress/keycodes';
 import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
@@ -118,6 +122,7 @@ class MasterbarLoggedIn extends Component {
 		useUnifiedAgent: PropTypes.bool,
 		launchButton: PropTypes.node,
 		sitePlanUrl: PropTypes.string,
+		commandPalette: PropTypes.bool,
 	};
 
 	state = { mounted: false };
@@ -986,6 +991,25 @@ class MasterbarLoggedIn extends Component {
 		);
 	}
 
+	openCommandPalette = () => {
+		dispatch( commandsStore ).open();
+	};
+
+	renderCommandPalette() {
+		const { translate } = this.props;
+		return (
+			<Item
+				className="masterbar__item-command-palette"
+				onClick={ this.openCommandPalette }
+				icon={ <span className="dashicons-before dashicons-search" /> }
+				tooltip={ translate( 'Open command palette' ) }
+				ariaLabel={ translate( 'Open command palette' ) }
+			>
+				<span aria-hidden="true">{ displayShortcut.primary( 'k' ) }</span>
+			</Item>
+		);
+	}
+
 	clickAgentsManagerAiChat = () => {
 		// Toggle: close the chat if it's already showing, otherwise resume the active
 		// conversation and open it.
@@ -1035,6 +1059,7 @@ class MasterbarLoggedIn extends Component {
 					{ this.renderSidebarMobileMenu() }
 					{ this.renderMySites() }
 					{ this.renderSiteMenu() }
+					{ this.props.commandPalette && this.renderCommandPalette() }
 					{ this.renderUpdatesMenu() }
 					{ this.renderCommentsMenu() }
 					{ this.renderSiteActionMenu() }

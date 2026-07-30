@@ -24,12 +24,69 @@ const renderProductInstall = (
 	initialState?: object
 ) => renderHookWithProvider( () => useProductInstall( props ), { reducers, initialState } );
 
+// An upload whose plugin is installed but switched off, on a site already Atomic. `uploadMethod` is
+// what says which path the attempt took, and so who is responsible for activating what it left.
+const uploadAwaitingActivation = ( uploadMethod: string ) => ( {
+	ui: { selectedSiteId: SITE_ID },
+	sites: { items: { [ SITE_ID ]: { ID: SITE_ID, options: { is_automated_transfer: true } } } },
+	plugins: {
+		upload: {
+			uploadMethod: { [ SITE_ID ]: uploadMethod },
+			uploadedPluginId: { [ SITE_ID ]: 'uploaded' },
+			inProgress: { [ SITE_ID ]: false },
+			progressPercent: { [ SITE_ID ]: 100 },
+		},
+		installed: {
+			plugins: { [ SITE_ID ]: [ { slug: 'uploaded', id: 'uploaded/uploaded', active: false } ] },
+		},
+	},
+} );
+
+type PluginStatuses = {
+	plugins: { installed: { status?: Record< number, Record< string, { action?: string } > > } };
+};
+const activationOf = ( store: { getState: () => PluginStatuses } ) =>
+	store.getState().plugins.installed.status?.[ SITE_ID ]?.[ 'uploaded/uploaded' ]?.action;
+
 const withUploadError = ( uploadError: object ) => ( {
 	ui: { selectedSiteId: SITE_ID },
 	plugins: { upload: { uploadError: { [ SITE_ID ]: uploadError } } },
 } );
 
 describe( 'useProductInstall', () => {
+	describe( 'who activates an uploaded plugin', () => {
+		// The upload step advances on a timer before activation is reached.
+		beforeEach( () => jest.useFakeTimers() );
+		afterEach( () => jest.useRealTimers() );
+
+		it( 'activates a direct upload itself', () => {
+			const { store } = renderHookWithProvider( () => useProductInstall( {} ), {
+				reducers,
+				initialState: uploadAwaitingActivation( 'direct' ),
+			} );
+
+			act( () => {
+				jest.advanceTimersByTime( 2000 );
+			} );
+
+			expect( activationOf( store ) ).toBe( 'ACTIVATE_PLUGIN' );
+		} );
+
+		it( 'leaves a transferred upload to the recovery poll, which can retry', () => {
+			// Activating here as well would put two owners on the same plugin at once.
+			const { store } = renderHookWithProvider( () => useProductInstall( {} ), {
+				reducers,
+				initialState: uploadAwaitingActivation( 'transfer' ),
+			} );
+
+			act( () => {
+				jest.advanceTimersByTime( 2000 );
+			} );
+
+			expect( activationOf( store ) ).toBeUndefined();
+		} );
+	} );
+
 	describe( 'steps', () => {
 		it( 'lists set-up, install, and activate for a marketplace plugin', () => {
 			const { result } = renderProductInstall( { pluginSlug: 'give' } );

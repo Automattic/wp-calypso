@@ -11,6 +11,7 @@ const defaultUser = {
 	ID: 1,
 	username: 'testuser',
 	email: 'test@example.com',
+	email_verified: true,
 	language: 'en',
 } as User;
 

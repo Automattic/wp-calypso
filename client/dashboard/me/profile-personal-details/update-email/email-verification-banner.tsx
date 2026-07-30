@@ -1,4 +1,8 @@
-import { resendEmailVerificationMutation } from '@automattic/api-queries';
+import {
+	cancelPendingEmailChangeMutation,
+	resendEmailVerificationMutation,
+	sendEmailVerificationMutation,
+} from '@automattic/api-queries';
 import { useMutation } from '@tanstack/react-query';
 import { Link } from '@tanstack/react-router';
 import { Button } from '@wordpress/components';
@@ -43,12 +47,16 @@ function cleanUpEmailVerificationParams() {
 }
 
 interface EmailVerificationBannerProps {
-	userData: UserSettings;
+	userSettings: UserSettings;
+	isEmailVerified: boolean;
 }
 
-export default function EmailVerificationBanner( { userData }: EmailVerificationBannerProps ) {
+export default function EmailVerificationBanner( {
+	userSettings,
+	isEmailVerified,
+}: EmailVerificationBannerProps ) {
 	const { createErrorNotice } = useDispatch( noticesStore );
-	const [ showResendButton, setShowResendButton ] = useState( true );
+	const [ canResend, setCanResend ] = useState( true );
 
 	// Extract verification params to avoid multiple URL parsing calls
 	const {
@@ -73,8 +81,10 @@ export default function EmailVerificationBanner( { userData }: EmailVerification
 		return null;
 	} );
 
-	const isEmailPending = userData.user_email_change_pending;
-	const pendingEmail = userData.new_user_email;
+	const pendingEmail = userSettings.new_user_email;
+	const isEmailChangePending = !! userSettings.user_email_change_pending && !! pendingEmail;
+	const shouldShowVerifyNotice = isEmailChangePending || ! isEmailVerified;
+	const unverifiedEmail = isEmailChangePending ? pendingEmail : userSettings.user_email;
 
 	useEffect( () => {
 		// Handle error cases
@@ -102,32 +112,31 @@ export default function EmailVerificationBanner( { userData }: EmailVerification
 		emailVerificationFailed,
 	] );
 
-	// Resend email
+	const resendMutation = isEmailChangePending
+		? resendEmailVerificationMutation( pendingEmail || '' )
+		: sendEmailVerificationMutation();
+
 	const { mutate: resendEmail, isPending: isResendPending } = useMutation( {
-		...withSnackbar( resendEmailVerificationMutation( pendingEmail || '' ), {
-			success: pendingEmail
+		...withSnackbar( resendMutation, {
+			success: unverifiedEmail
 				? sprintf(
-						/* translators: %s is the user's new email address they're trying to change to */
+						/* translators: %s is the email address awaiting verification */
 						__( 'We sent an email to %s. Please check your inbox to verify your email.' ),
-						pendingEmail
+						unverifiedEmail
 				  )
 				: __( 'Verification email sent.' ),
 			error: __( 'Failed to resend verification email.' ),
 		} ),
-		onSuccess: () => {
-			setShowResendButton( false );
-		},
-		onError: () => {
-			setShowResendButton( true );
-		},
+		onSuccess: () => setCanResend( false ),
+		onError: () => setCanResend( true ),
 	} );
 
-	const handleResendEmail = () => {
-		if ( ! pendingEmail ) {
-			return;
-		}
-		resendEmail();
-	};
+	const { mutate: cancelPendingEmail, isPending: isCancelPending } = useMutation(
+		withSnackbar( cancelPendingEmailChangeMutation(), {
+			success: __( 'Pending email change canceled.' ),
+			error: __( 'Failed to cancel pending email change.' ),
+		} )
+	);
 
 	if ( showSuccessNotice ) {
 		const wasEmailChange = verificationType === 'email_change';
@@ -156,8 +165,8 @@ export default function EmailVerificationBanner( { userData }: EmailVerification
 		);
 	}
 
-	// Show pending email verification notice
-	if ( ! isEmailPending || ! pendingEmail ) {
+	// Show the verification notice for a pending change or an unverified account email.
+	if ( ! shouldShowVerifyNotice || ! unverifiedEmail ) {
 		return null;
 	}
 
@@ -167,20 +176,37 @@ export default function EmailVerificationBanner( { userData }: EmailVerification
 				variant="warning"
 				title={ __( 'Verify your email' ) }
 				actions={
-					showResendButton && (
-						<Button variant="link" onClick={ handleResendEmail } disabled={ isResendPending }>
+					<>
+						<Button
+							variant="primary"
+							__next40pxDefaultSize
+							onClick={ () => resendEmail() }
+							disabled={ isResendPending || ! canResend }
+							isBusy={ isResendPending }
+						>
 							{ __( 'Resend email' ) }
 						</Button>
-					)
+						{ isEmailChangePending && (
+							<Button
+								variant="secondary"
+								__next40pxDefaultSize
+								onClick={ () => cancelPendingEmail() }
+								disabled={ isCancelPending }
+								isBusy={ isCancelPending }
+							>
+								{ __( 'Cancel the pending email change' ) }
+							</Button>
+						) }
+					</>
 				}
 			>
 				{ createInterpolateElement(
 					sprintf(
-						/* translators: %s is the user's new email address they're trying to change to */
+						/* translators: %s is the email address awaiting verification */
 						__(
 							'Check your inbox at <strong>%s</strong> for the confirmation email, or click "Resend email" to get a new one.'
 						),
-						pendingEmail
+						unverifiedEmail
 					),
 					{
 						strong: <strong />,

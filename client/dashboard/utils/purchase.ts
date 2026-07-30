@@ -184,6 +184,10 @@ export function creditCardExpiresBeforeSubscription( purchase: Purchase ): boole
 	if ( 'credit_card' !== purchase.payment_type ) {
 		return false;
 	}
+	// Some purchases have no expiry date, so there is nothing to compare against.
+	if ( ! purchase.expiry_date ) {
+		return false;
+	}
 	// For 100 years plans, the credit card will probably always expire before
 	// the subscription so we should only consider this true if we are close to
 	// the expiration date.
@@ -691,8 +695,8 @@ export function needsToRenewSoon( purchase: Purchase ): boolean {
 
 export function isPartnerPurchase(
 	purchase: Purchase
-): purchase is Purchase & { partnerType: string } {
-	return !! purchase?.partner_name;
+): purchase is Purchase & { partner_name: string } {
+	return !! purchase.partner_name;
 }
 
 export function isAgencyPartnerType( partnerType: string ) {
