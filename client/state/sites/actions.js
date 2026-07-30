@@ -148,9 +148,11 @@ export function requestSites() {
  * Returns a function which, when invoked, triggers a network request to fetch
  * a site.
  * @param {number|string} siteFragment Site ID or slug
+ * @param {number} [atomicCapabilitiesRetriesLeft] Internal: how many times we may still re-request
+ * the site while it waits for its capabilities to propagate after an Atomic transfer.
  * @returns {import('redux-thunk').ThunkAction} Action thunk
  */
-export function requestSite( siteFragment ) {
+export function requestSite( siteFragment, atomicCapabilitiesRetriesLeft = 3 ) {
 	function doRequest( forceWpcom ) {
 		const query = { apiVersion: '1.2' };
 		if ( forceWpcom ) {
@@ -187,11 +189,14 @@ export function requestSite( siteFragment ) {
 				if ( site && site.capabilities ) {
 					const state = getState();
 
-					const wasAtomic = state?.sites?.items?.[ siteFragment ]?.options?.is_wpcom_atomic;
+					// `sites.items` and `currentUser.capabilities` are both keyed by site ID, so look
+					// them up by ID rather than by the fragment we were called with, which is usually
+					// a slug.
+					const wasAtomic = state?.sites?.items?.[ site.ID ]?.options?.is_wpcom_atomic;
 					const isAtomic = site?.options?.is_wpcom_atomic;
 					const hasSiteTransferredToAtomic = ! wasAtomic && isAtomic;
 
-					const wasAdmin = state?.currentUser?.capabilities?.[ siteFragment ]?.manage_options;
+					const wasAdmin = state?.currentUser?.capabilities?.[ site.ID ]?.manage_options;
 					const isAdmin = site?.capabilities?.manage_options;
 					const hasMismatchingCapabilities = wasAdmin && ! isAdmin;
 
@@ -200,14 +205,24 @@ export function requestSite( siteFragment ) {
 					 * after transfer, so let's hold off updating the state until the
 					 * endpoint returns accurate data.
 					 */
-					if ( hasSiteTransferredToAtomic && hasMismatchingCapabilities ) {
+					if (
+						hasSiteTransferredToAtomic &&
+						hasMismatchingCapabilities &&
+						atomicCapabilitiesRetriesLeft > 0
+					) {
 						// Update Redux state with the site data before retrying,
 						// so the UI can see the latest state (e.g. isJetpack
 						// flipping to true). Capabilities will self-correct on
 						// subsequent requests once they propagate on the server.
 						dispatch( receiveSite( omit( site, '_headers' ) ) );
 						return new Promise( ( resolve ) => {
-							setTimeout( () => resolve( dispatch( requestSite( siteFragment ) ) ), 2000 );
+							setTimeout(
+								() =>
+									resolve(
+										dispatch( requestSite( siteFragment, atomicCapabilitiesRetriesLeft - 1 ) )
+									),
+								2000
+							);
 						} );
 					}
 
