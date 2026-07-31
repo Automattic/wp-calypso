@@ -14,7 +14,7 @@ import {
 } from '@automattic/api-queries';
 import { useHasEnTranslation } from '@automattic/i18n-utils';
 import { useMutation, useQuery, useSuspenseQuery } from '@tanstack/react-query';
-import { Link } from '@tanstack/react-router';
+import { Link, useRouter } from '@tanstack/react-router';
 import { Button } from '@wordpress/components';
 import { useDispatch } from '@wordpress/data';
 import { createInterpolateElement } from '@wordpress/element';
@@ -27,6 +27,11 @@ import { useAuth } from '../../../app/auth';
 import { useLocale } from '../../../app/locale';
 import { changePaymentMethodRoute, purchaseSettingsRoute } from '../../../app/router/me';
 import Notice from '../../../components/notice';
+import {
+	PlanExpiryNotice,
+	hasPlanExpiryNotice,
+	isEligibleForPlanExpiryNotice,
+} from '../../../components/plan-expiry-notice';
 import { formatDate } from '../../../utils/datetime';
 import { wpcomLink } from '../../../utils/link';
 import {
@@ -42,7 +47,12 @@ import {
 	getRenewalUrlFromPurchase,
 	isAkismetFreeProduct,
 } from '../../../utils/purchase';
-import { getSitePurchaseUpgradeUrl, getUpgradedPurchaseRedirectUrl } from '../../../utils/site-url';
+import {
+	getPlanChangeReturnUrls,
+	getSitePurchaseUpgradeUrl,
+	getUpgradedPurchaseRedirectUrl,
+	getWpcomPlanChangeUrl,
+} from '../../../utils/site-url';
 import { useIsSplitCancelRemoveEnabled } from '../cancel-purchase/use-is-split-cancel-remove-enabled';
 import { CancellationOfferNotice } from './cancellation-offer-notice';
 import {
@@ -69,6 +79,7 @@ export function PurchaseNotice( { purchase }: { purchase: Purchase } ) {
 		intent,
 	} = purchaseSettingsRoute.useSearch();
 	const navigate = purchaseSettingsRoute.useNavigate();
+	const router = useRouter();
 	// Show the transient cancelled success notice once after a cancel redirects
 	// here. The URL search param is cleared immediately so that a refresh / back
 	// navigation falls through to the regular expiring notice.
@@ -321,6 +332,27 @@ export function PurchaseNotice( { purchase }: { purchase: Purchase } ) {
 		return <ConciergeConsumedNotice />;
 	}
 
+	// A plan that is expiring, expired, or otherwise at risk of not renewing
+	// takes precedence over everything below: it is the one thing on this page
+	// that needs the customer to act.
+	if ( hasPlanExpiryNotice( purchase ) ) {
+		return (
+			<PlanExpiryNotice
+				purchase={ purchase }
+				addPaymentMethodUrl={
+					router.buildLocation( {
+						to: changePaymentMethodRoute.fullPath,
+						params: { purchaseId: purchase.ID },
+					} ).href
+				}
+				viewOtherPlansUrl={ getWpcomPlanChangeUrl( purchase, getPlanChangeReturnUrls() ) }
+				locale={ locale }
+				surface="dashboard-purchase-settings"
+				recordTracksEvent={ recordTracksEvent }
+			/>
+		);
+	}
+
 	if (
 		shouldShowOtherRenewablePurchasesNotice(
 			purchase,
@@ -393,6 +425,13 @@ function shouldShowExpiredRenewNotice(
 	}
 
 	if ( isAkismetFreeProduct( currentPurchase ) ) {
+		return false;
+	}
+
+	// PlanExpiryNotice owns this scenario for the plans it covers. When it
+	// stays quiet for one of them that is a decision, not a gap, so we must
+	// not fall back on this weaker message.
+	if ( isEligibleForPlanExpiryNotice( currentPurchase ) ) {
 		return false;
 	}
 

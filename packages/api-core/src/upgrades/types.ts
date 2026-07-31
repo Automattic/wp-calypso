@@ -452,6 +452,18 @@ export interface Purchase {
 	is_auto_renew_enabled: boolean;
 
 	/**
+	 * True if the purchase is past the UTC date of its first auto-renewal attempt.
+	 *
+	 * Once this is `true` the subscription has had at least one chance to renew
+	 * itself and has not taken it.
+	 *
+	 * The same caveats as `is_past_last_auto_renew_attempt_date` apply: it is
+	 * unaffected by whether auto-renew is actually enabled, and it is
+	 * day-granular.
+	 */
+	is_past_first_auto_renew_attempt_date: boolean;
+
+	/**
 	 * True if the purchase is past the UTC date of its final auto-renewal attempt.
 	 *
 	 * Note that whether or not auto-renew is actually enabled has no bearing

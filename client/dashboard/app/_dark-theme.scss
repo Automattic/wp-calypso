@@ -89,6 +89,14 @@
 	@include color-scheme-dark-theme-card;
 
 	.components-surface.components-card.dashboard-notice {
+		// White would be wrong here. Use a grey slightly lighter than the notice,
+		// so the button still stands out from it.
+		--dashboard-notice-action__background-color: color-mix(
+			in srgb,
+			var( --dashboard-surface__background-color ) 90%,
+			var( --dashboard__text-color )
+		);
+
 		&.is-info {
 			background-color: color-mix(
 				in srgb,

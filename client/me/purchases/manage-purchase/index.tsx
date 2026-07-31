@@ -62,6 +62,7 @@ import { Plans, type SiteDetails } from '@automattic/data-stores';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { DOMAIN_CANCEL, SUPPORT_ROOT } from '@automattic/urls';
 import { useQuery } from '@tanstack/react-query';
+import { Button as WPButton } from '@wordpress/components';
 import { check, column, Icon, payment, reusableBlock, tool, trash, cloud } from '@wordpress/icons';
 import clsx from 'clsx';
 import { localize, LocalizeProps, useTranslate } from 'i18n-calypso';
@@ -78,9 +79,9 @@ import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
 import QueryUserPurchases from 'calypso/components/data/query-user-purchases';
 import HeaderCake from 'calypso/components/header-cake';
 import CancelPurchaseForm from 'calypso/components/marketing-survey/cancel-purchase-form';
-import Notice from 'calypso/components/notice';
-import NoticeAction from 'calypso/components/notice/notice-action';
 import VerticalNavItem from 'calypso/components/vertical-nav/item';
+import Notice from 'calypso/dashboard/components/notice';
+import { hasPlanExpiryNotice } from 'calypso/dashboard/components/plan-expiry-notice';
 import {
 	getCancelButtonCopy,
 	getRemoveButtonCopy,
@@ -209,6 +210,12 @@ export interface ManagePurchaseConnectedProps {
 	hasLoadedDomains?: boolean;
 	hasLoadedPurchasesFromServer: boolean;
 	hasLoadedSites: boolean;
+	/**
+	 * Refetches the purchase this page is showing. Needed because Calypso reads
+	 * it from its own query client, which the `@automattic/api-queries` mutations
+	 * do not invalidate.
+	 */
+	refetchPurchase?: () => void;
 	hasCompletedCancelPurchaseSurvey: boolean | null;
 	hasNonPrimaryDomainsFlag?: boolean;
 	hasSetupAds?: boolean;
@@ -1445,7 +1452,7 @@ class ManagePurchase extends Component<
 								) }
 							</div>
 						</div>
-						{ isProductOwner && ! purchase.is_locked && (
+						{ isProductOwner && ! purchase.is_locked && ! hasPlanExpiryNotice( purchase ) && (
 							<div className="manage-purchase__renew-upgrade-buttons">
 								{ this.renderUpgradeButton( preventRenewal ) }
 								{ this.renderStorageUpgradeButton( preventRenewal ) }
@@ -1572,36 +1579,49 @@ class ManagePurchase extends Component<
 				>
 					{ this.props.cardTitle || titles.managePurchase }
 				</HeaderCake>
-				{ showExpiryNotice ? (
-					<Notice status="is-info" text={ <PlanRenewalMessage /> } showDismiss={ false }>
-						<NoticeAction href={ `/plans/${ siteSlug || '' }` }>
-							{ translate( 'View plans' ) }
-						</NoticeAction>
-					</Notice>
-				) : (
-					<PurchaseNotice
-						isDataLoading={ this.isDataLoading( this.props ) }
-						handleRenew={ this.handleRenew }
-						handleRenewMultiplePurchases={ this.handleRenewMultiplePurchases }
-						selectedSite={ site }
+				<div className="manage-purchase__notices">
+					{ showExpiryNotice ? (
+						<Notice
+							variant="info"
+							actions={
+								<WPButton variant="secondary" href={ `/plans/${ siteSlug || '' }` }>
+									{ translate( 'View plans' ) }
+								</WPButton>
+							}
+						>
+							<PlanRenewalMessage />
+						</Notice>
+					) : (
+						<PurchaseNotice
+							isDataLoading={ this.isDataLoading( this.props ) }
+							handleRenew={ this.handleRenew }
+							handleRenewMultiplePurchases={ this.handleRenewMultiplePurchases }
+							selectedSite={ site }
+							purchase={ purchase }
+							purchaseAttachedTo={ purchaseAttachedTo }
+							renewableSitePurchases={ renewableSitePurchases }
+							changePaymentMethodPath={ changePaymentMethodPath }
+							viewOtherPlansUrl={ this.buildPlanChangeAction()?.href }
+							renewReturnUrl={ ( getManagePurchaseUrlFor ?? managePurchase )(
+								siteSlug,
+								purchase.ID
+							) }
+							getManagePurchaseUrlFor={ getManagePurchaseUrlFor ?? managePurchase }
+							isProductOwner={ isProductOwner ?? false }
+							willAtomicSiteRevert={ willAtomicSiteRevert }
+							getAddNewPaymentMethodUrlFor={
+								getAddNewPaymentMethodUrlFor ?? getAddNewPaymentMethodPath
+							}
+							refetchPurchase={ this.props.refetchPurchase }
+						/>
+					) }
+					<PlanOverlapNotice
+						isSiteLevel={ this.props.isSiteLevel ?? false }
+						selectedSiteId={ this.props.selectedSiteId ?? 0 }
+						siteId={ this.props.siteId ?? 0 }
 						purchase={ purchase }
-						purchaseAttachedTo={ purchaseAttachedTo }
-						renewableSitePurchases={ renewableSitePurchases }
-						changePaymentMethodPath={ changePaymentMethodPath }
-						getManagePurchaseUrlFor={ getManagePurchaseUrlFor ?? managePurchase }
-						isProductOwner={ isProductOwner ?? false }
-						willAtomicSiteRevert={ willAtomicSiteRevert }
-						getAddNewPaymentMethodUrlFor={
-							getAddNewPaymentMethodUrlFor ?? getAddNewPaymentMethodPath
-						}
 					/>
-				) }
-				<PlanOverlapNotice
-					isSiteLevel={ this.props.isSiteLevel ?? false }
-					selectedSiteId={ this.props.selectedSiteId ?? 0 }
-					siteId={ this.props.siteId ?? 0 }
-					purchase={ purchase }
-				/>
+				</div>
 				{ this.renderPurchaseDetail( preventRenewal ) }
 			</Fragment>
 		);
@@ -1808,6 +1828,7 @@ const ConnectedManagePurchase = connect(
 			purchases: Purchase[] | undefined;
 			renewableSitePurchases: Purchase[];
 			hasLoadedPurchasesFromServer: boolean;
+			refetchPurchase?: () => void;
 		}
 	) => {
 		const { purchase, purchaseAttachedTo, purchases, renewableSitePurchases } = props;
@@ -1890,7 +1911,11 @@ function ManagePurchaseWithExperiment( props: ManagePurchaseProps ) {
 		...purchaseCancelFeaturesQuery( props.purchaseId ),
 	} );
 	const cancellationFeatures = cancelFeaturesResponse?.features ?? null;
-	const { data: purchase, isPending: isPurchasePending } = useQuery( {
+	const {
+		data: purchase,
+		isPending: isPurchasePending,
+		refetch: refetchPurchase,
+	} = useQuery( {
 		...purchaseQuery( Number( props.purchaseId ) ),
 		enabled: Boolean( props.purchaseId ),
 	} );
@@ -1912,6 +1937,7 @@ function ManagePurchaseWithExperiment( props: ManagePurchaseProps ) {
 			purchases={ sitePurchases }
 			renewableSitePurchases={ renewableSitePurchases }
 			hasLoadedPurchasesFromServer={ ! isPurchasePending }
+			refetchPurchase={ refetchPurchase }
 		/>
 	);
 }
