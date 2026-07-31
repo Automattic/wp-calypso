@@ -2,7 +2,7 @@ import { siteBackupActivityLogGroupCountsQuery } from '@automattic/api-queries';
 import { useQuery } from '@tanstack/react-query';
 import { filterSortAndPaginate } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
-import { useEffect, useMemo } from 'react';
+import { useEffect, useMemo, useRef } from 'react';
 import { usePersistentView } from '../../app/hooks/use-persistent-view';
 import { DataViews, DataViewsCard } from '../../components/dataviews';
 import { buildTimeRangeForActivityLog } from '../../utils/site-activity-log';
@@ -47,6 +47,46 @@ export function BackupsList( {
 	activityLog: ActivityLogEntry[];
 	isLoadingActivityLog: boolean;
 } ) {
+	const containerRef = useRef< HTMLDivElement >( null );
+
+	// The DataViews "select all" checkbox has no accessible label in the version
+	// of @wordpress/dataviews used here. Observe the container and add aria-label
+	// once the checkbox appears in the DOM (it is injected dynamically when items
+	// are selected).
+	useEffect( () => {
+		const container = containerRef.current;
+		if ( ! container ) {
+			return;
+		}
+
+		const labelSelectAllCheckbox = () => {
+			// In list view the checkbox lives in the bulk-actions footer;
+			// in table view it lives in the thead checkbox column.
+			const checkboxes = container.querySelectorAll< HTMLInputElement >(
+				'.dataviews-bulk-actions-footer input[type="checkbox"], thead .dataviews-view-table__checkbox-column input[type="checkbox"]'
+			);
+			for ( const checkbox of checkboxes ) {
+				if (
+					checkbox.getAttribute( 'aria-label' ) ||
+					checkbox.getAttribute( 'aria-labelledby' )
+				) {
+					continue;
+				}
+				const labelEl = checkbox.id
+					? container.querySelector< HTMLLabelElement >( `label[for="${ checkbox.id }"]` )
+					: null;
+				if ( ! labelEl?.textContent?.trim() ) {
+					checkbox.setAttribute( 'aria-label', __( 'Select all' ) );
+				}
+			}
+		};
+
+		const observer = new MutationObserver( labelSelectAllCheckbox );
+		observer.observe( container, { childList: true, subtree: true } );
+		labelSelectAllCheckbox();
+		return () => observer.disconnect();
+	}, [] ); // Run once; MutationObserver watches for subsequent DOM changes.
+
 	const { view, updateView, resetView } = usePersistentView( {
 		slug: 'site-backups',
 		defaultView,
@@ -87,7 +127,7 @@ export function BackupsList( {
 	};
 
 	return (
-		<DataViewsCard>
+		<DataViewsCard ref={ containerRef }>
 			<DataViews< ActivityLogEntry >
 				getItemId={ ( item ) => item.activity_id }
 				data={ filteredData }
