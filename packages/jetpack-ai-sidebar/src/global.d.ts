@@ -46,7 +46,6 @@ interface Window {
 	bigSkyInitialState?: {
 		bigSkyVersion?: string;
 		isFreeTrial?: string;
-		isDevMode?: string;
 		currentScreen?: { screen?: string };
 	};
 }

@@ -63,7 +63,6 @@ describe( 'Jetpack AI sidebar tracking', () => {
 		( globalThis as Record< string, unknown > ).agentsManagerData = { isDevMode: false };
 		window.bigSkyInitialState = {
 			isFreeTrial: '',
-			isDevMode: '',
 			currentScreen: { screen: 'post' },
 		};
 		mockedSelect.mockReturnValue( {
@@ -195,10 +194,10 @@ describe( 'Jetpack AI sidebar tracking', () => {
 		} );
 	} );
 
-	it( 'uses Big Sky test, free-trial, and screen context', () => {
+	it( 'uses Agents Manager test and Big Sky free-trial and screen context', () => {
+		( globalThis as Record< string, unknown > ).agentsManagerData = { isDevMode: true };
 		window.bigSkyInitialState = {
 			isFreeTrial: '1',
-			isDevMode: '1',
 			currentScreen: { screen: 'site-editor' },
 		};
 
@@ -211,6 +210,19 @@ describe( 'Jetpack AI sidebar tracking', () => {
 				session_type: 'free-trial-session',
 				screen: 'site-editor',
 			} )
+		);
+	} );
+
+	it( 'does not use Big Sky dev mode as test context', () => {
+		( window as unknown as { bigSkyInitialState: { isDevMode: string } } ).bigSkyInitialState = {
+			isDevMode: '1',
+		};
+
+		trackSplitScreenGuideClick( { componentType: 'proofread' } );
+
+		expect( mockedRecordTracksEvent ).toHaveBeenCalledWith(
+			'jetpack_ai_split_screen_guide_click',
+			expect.objectContaining( { is_test: false } )
 		);
 	} );
 

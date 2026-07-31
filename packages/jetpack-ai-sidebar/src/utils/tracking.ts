@@ -24,7 +24,6 @@ type EditorSelectStore =
 type BigSkyTrackingData = {
 	sessionType: string;
 	screen: string;
-	isDevMode: boolean;
 };
 
 function getSessionId(): string | undefined {
@@ -49,20 +48,17 @@ function getCurrentPostType(): string {
 function getBigSkyTrackingData(): BigSkyTrackingData {
 	const state = typeof window !== 'undefined' ? window.bigSkyInitialState : undefined;
 	if ( ! state ) {
-		return { sessionType: 'unknown', screen: 'site-editor', isDevMode: false };
+		return { sessionType: 'unknown', screen: 'site-editor' };
 	}
 
 	return {
 		sessionType: state.isFreeTrial ? 'free-trial-session' : 'paid-user-session',
 		screen: state.currentScreen?.screen ?? 'site-editor',
-		isDevMode: !! state.isDevMode,
 	};
 }
 
-function getIsTest( bigSkyIsDevMode: boolean ): boolean {
-	const agentsManagerIsDevMode =
-		typeof agentsManagerData !== 'undefined' && !! agentsManagerData?.isDevMode;
-	return agentsManagerIsDevMode || bigSkyIsDevMode;
+function getIsTest(): boolean {
+	return typeof agentsManagerData !== 'undefined' && !! agentsManagerData?.isDevMode;
 }
 
 function recordTracksEvent( eventName: string, properties: TrackProperties = {} ): void {
@@ -117,7 +113,7 @@ function getSplitScreenGuideProperties( {
 		component_type: componentType,
 		guide_variant: 'inline_action_card',
 		post_type: getCurrentPostType(),
-		is_test: getIsTest( bigSky.isDevMode ),
+		is_test: getIsTest(),
 		session_type: bigSky.sessionType,
 		screen: bigSky.screen,
 	};
