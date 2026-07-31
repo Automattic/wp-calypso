@@ -128,78 +128,67 @@ const EmailVerificationGate = ( { flow, scope, logo, onDone }: Props ) => {
 					</div>
 				}
 			>
-				<VStack spacing={ 4 }>
+				<VStack spacing={ 8 }>
 					<p className="onboarding-email-verification__sub-text" id={ SUB_TEXT_ID }>
 						{ subText }
 					</p>
 
-					{ /* Calypso's Button rather than the Step.* ones: the design is drawn from its
-					   outline, radius, and weight, which the step-container buttons don't share. */ }
+					<VStack spacing={ 3 }>
+						{ /* Calypso's Button rather than the Step.* ones: the design is drawn from its
+						   outline, radius, and weight, which the step-container buttons don't share. */ }
 
-					{ /* For a known provider, deep-link to its inbox; confirming there resolves the
-					   gate by polling. Unknown providers get a manual "I've confirmed" re-check. */ }
-					{ inboxLink ? (
-						<Button primary href={ inboxLink.url } target="_blank" onClick={ openInbox }>
-							{ __( 'Open email inbox' ) }
-							<Icon icon={ arrowUpRight } size={ 16 } fill="currentColor" />
-						</Button>
-					) : (
+						{ /* For a known provider, deep-link to its inbox; confirming there resolves the
+						   gate by polling. Unknown providers get a manual "I've confirmed" re-check. */ }
+						{ inboxLink ? (
+							<Button primary href={ inboxLink.url } target="_blank" onClick={ openInbox }>
+								{ __( 'Open email inbox' ) }
+								<Icon icon={ arrowUpRight } size={ 16 } fill="currentColor" />
+							</Button>
+						) : (
+							<Button
+								primary
+								onClick={ checkNow }
+								busy={ checkStatus === 'checking' }
+								disabled={ checkStatus === 'checking' }
+							>
+								{ __( 'I’ve confirmed my email' ) }
+							</Button>
+						) }
+
 						<Button
-							primary
-							onClick={ checkNow }
-							busy={ checkStatus === 'checking' }
-							disabled={ checkStatus === 'checking' }
+							onClick={ resend }
+							disabled={ isSending || secondsUntilResend > 0 }
+							busy={ isSending }
 						>
-							{ __( 'I’ve confirmed my email' ) }
+							{ secondsUntilResend > 0
+								? sprintf(
+										// translators: %d is the number of seconds until the email can be resent.
+										__( 'Resend in %ds' ),
+										secondsUntilResend
+								  )
+								: __( 'Resend' ) }
 						</Button>
-					) }
 
-					<Button
-						onClick={ resend }
-						disabled={ isSending || secondsUntilResend > 0 }
-						busy={ isSending }
-					>
-						{ secondsUntilResend > 0
-							? sprintf(
-									// translators: %d is the number of seconds until the email can be resent.
-									__( 'Resend in %ds' ),
-									secondsUntilResend
-							  )
-							: __( 'Resend' ) }
-					</Button>
+						{ checkStatus === 'unconfirmed' && (
+							<p className="onboarding-email-verification__notice" role="status">
+								{ __(
+									'We haven’t received your confirmation yet. Open the link in your inbox, then try again.'
+								) }
+							</p>
+						) }
 
-					{ checkStatus === 'unconfirmed' && (
-						<p className="onboarding-email-verification__notice" role="status">
-							{ __(
-								'We haven’t received your confirmation yet. Open the link in your inbox, then try again.'
-							) }
-						</p>
-					) }
+						{ checkStatus === 'error' && (
+							<p className="onboarding-email-verification__notice is-error" role="alert">
+								{ __( 'We couldn’t check right now. Please try again in a moment.' ) }
+							</p>
+						) }
 
-					{ checkStatus === 'error' && (
-						<p className="onboarding-email-verification__notice is-error" role="alert">
-							{ __( 'We couldn’t check right now. Please try again in a moment.' ) }
-						</p>
-					) }
-
-					{ hasSendError && (
-						<p className="onboarding-email-verification__notice is-error" role="alert">
-							{ __( 'We couldn’t send the email. Please try again in a moment.' ) }
-						</p>
-					) }
-
-					{ /* Known providers get the inbox link as the primary action, so also keep a manual
-					   check reachable — e.g. after confirming on a phone once polling has stopped.
-					   Unknown providers already have it as the primary button. */ }
-					{ inboxLink && (
-						<Step.LinkButton
-							onClick={ checkNow }
-							isBusy={ checkStatus === 'checking' }
-							disabled={ checkStatus === 'checking' }
-						>
-							{ __( 'I’ve already confirmed my email' ) }
-						</Step.LinkButton>
-					) }
+						{ hasSendError && (
+							<p className="onboarding-email-verification__notice is-error" role="alert">
+								{ __( 'We couldn’t send the email. Please try again in a moment.' ) }
+							</p>
+						) }
+					</VStack>
 				</VStack>
 			</Step.CenteredColumnLayout>
 		</>

@@ -136,7 +136,7 @@ describe( 'EmailVerificationGate', () => {
 		expect( screen.queryByRole( 'link', { name: /^Open / } ) ).not.toBeInTheDocument();
 	} );
 
-	it( 'keeps a manual re-check reachable for known providers', () => {
+	it( 'offers only the inbox link for known providers', () => {
 		renderStep( <EmailVerificationGate flow={ FLOW } scope={ SCOPE } onDone={ jest.fn() } />, {
 			initialState: {
 				currentUser: {
@@ -146,12 +146,12 @@ describe( 'EmailVerificationGate', () => {
 			},
 		} );
 
-		// The inbox link is the primary CTA, but the manual check stays available so a
-		// phone confirmation can still release the gate after polling stops.
+		// The manual re-check is the fallback for providers without an inbox link, not a
+		// second action alongside it.
 		expect( screen.getByRole( 'link', { name: 'Open email inbox' } ) ).toBeVisible();
 		expect(
-			screen.getByRole( 'button', { name: 'I’ve already confirmed my email' } )
-		).toBeVisible();
+			screen.queryByRole( 'button', { name: /confirmed my email/ } )
+		).not.toBeInTheDocument();
 	} );
 
 	it( 'finishes as soon as the confirmation lands in another tab', async () => {

@@ -14,8 +14,8 @@
 // The description lives in the content row so it shares the buttons' width, which
 // takes it out of `.step-container-v2__heading p` and its typography.
 .onboarding-email-verification__sub-text {
-	// Combined with the stack's 16px gap, this puts the buttons 32px below.
-	margin-block: 0 16px;
+	// The stack owns the spacing below; this only drops the paragraph's own margins.
+	margin-block: 0;
 	color: var(--color-text);
 	font-size: 15px;
 	line-height: 1.5;
