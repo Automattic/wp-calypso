@@ -75,7 +75,9 @@
 
 /* wp-admin */
 // wp-admin keeps its native layout: `#wpwrap` shrinks, the admin bar stays
-// full-width, and the docked chat fills the freed strip below it.
+// full-width, and the docked chat fills the freed strip below it. The
+// Gutenberg editors follow the same layout, with their viewport-pinned
+// pieces offset clear of the chat.
 body.wp-admin.agents-manager-sidebar-container:not( .modal-open ) {
 	@include shrink-sidebar-base( '#wpwrap', $admin-bar-height );
 
