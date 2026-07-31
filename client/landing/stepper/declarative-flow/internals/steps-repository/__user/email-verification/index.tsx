@@ -141,12 +141,7 @@ const EmailVerificationGate = ( { flow, scope, logo, onDone }: Props ) => {
 					{ inboxLink ? (
 						<Button primary href={ inboxLink.url } target="_blank" onClick={ openInbox }>
 							{ __( 'Open email inbox' ) }
-							<Icon
-								className="onboarding-email-verification__inbox-icon"
-								icon={ arrowUpRight }
-								size={ 16 }
-								fill="currentColor"
-							/>
+							<Icon icon={ arrowUpRight } size={ 16 } fill="currentColor" />
 						</Button>
 					) : (
 						<Button

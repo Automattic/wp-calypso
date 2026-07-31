@@ -1,12 +1,14 @@
 .onboarding-email-verification {
 	// The layout runs with `noGap`, so this is the whole distance below the title.
 	margin-block-start: 24px;
-}
 
-// The button lays its content out inline, so without this the arrow sits on the text
-// baseline — riding above the label and stretching the button past its 40px height.
-.onboarding-email-verification__inbox-icon {
-	vertical-align: middle;
+	// The button lays its content out inline, which leaves the label and the arrow
+	// meeting on a shared text baseline instead of centered against each other.
+	.button.is-primary {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+	}
 }
 
 // The description lives in the content row so it shares the buttons' width, which
