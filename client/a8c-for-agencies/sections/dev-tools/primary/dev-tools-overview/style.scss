@@ -14,7 +14,7 @@
 
 .dev-tools-overview .dev-tools-overview__intro {
 	max-width: 1500px;
-	padding: 0;
+	padding: 0 16px;
 	margin-inline: auto;
 
 	@include breakpoint-deprecated( ">660px" ) {
