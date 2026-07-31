@@ -9,7 +9,6 @@ import EllipsisMenu from 'calypso/components/ellipsis-menu';
 import PopoverMenuItem from 'calypso/components/popover-menu/item';
 import ReaderFollowConversationIcon from 'calypso/reader/components/icons/follow-conversation-icon';
 import { useIsSeenEnabled, withSeenPostsMutations } from 'calypso/reader/data/seen-posts';
-import { useHasSiteSubscriptionOrganization } from 'calypso/reader/data/site-subscriptions';
 import ReaderFollowButton from 'calypso/reader/follow-button';
 import { READER_POST_OPTIONS_MENU } from 'calypso/reader/follow-sources';
 import { isAutomatticTeamMember } from 'calypso/reader/lib/teams';
@@ -19,8 +18,6 @@ import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import * as PostUtils from 'calypso/state/posts/utils';
 import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
 import { blockSite } from 'calypso/state/reader/site-blocks/actions';
-import getCurrentRoute from 'calypso/state/selectors/get-current-route';
-import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
 import ReaderPostOptionsMenuBlogStickers from './blog-stickers';
 
 const noop = () => {};
@@ -38,6 +35,7 @@ class ReaderPostEllipsisMenu extends Component {
 		showReportPost: PropTypes.bool,
 		showReportSite: PropTypes.bool,
 		teams: PropTypes.array,
+		isSeenEnabled: PropTypes.bool,
 	};
 
 	static defaultProps = {
@@ -344,19 +342,7 @@ class ReaderPostEllipsisMenu extends Component {
 }
 
 const ConnectedPostEllipsisMenu = connect(
-	( state, { feed, post: { is_external, site_ID } = {} } ) => {
-		const siteId = is_external ? null : site_ID;
-
-		return Object.assign(
-			{ currentRoute: getCurrentRoute( state ) },
-			{
-				isWPForTeamsItem:
-					isSiteWPForTeams( state, siteId ) ||
-					( feed?.blog_ID ? isSiteWPForTeams( state, feed.blog_ID ) : false ),
-			},
-			{ isLoggedIn: isUserLoggedIn( state ) }
-		);
-	},
+	( state ) => ( { isLoggedIn: isUserLoggedIn( state ) } ),
 	{
 		blockSite,
 		recordReaderTracksEvent,
@@ -366,14 +352,7 @@ const ConnectedPostEllipsisMenu = connect(
 export default function PostEllipsisMenuContainer( props ) {
 	const { feed_ID: feedId, is_external: isExternal, site_ID: siteId } = props.post ?? {};
 	const blogId = isExternal ? null : siteId;
-	const hasOrganization = useHasSiteSubscriptionOrganization( feedId, blogId );
 	const isSeenEnabled = useIsSeenEnabled( { feedId, blogId, post: props.post } );
 
-	return (
-		<ConnectedPostEllipsisMenu
-			{ ...props }
-			hasOrganization={ hasOrganization }
-			isSeenEnabled={ isSeenEnabled }
-		/>
-	);
+	return <ConnectedPostEllipsisMenu { ...props } isSeenEnabled={ isSeenEnabled } />;
 }

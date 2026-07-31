@@ -21,6 +21,12 @@ jest.mock( 'calypso/reader/stream/use-stream-post-key-selection', () => ( {
 	useStreamPostKeySelection: jest.fn(),
 } ) );
 
+// The seen gate reads React Query caches these tests don't provide.
+jest.mock( 'calypso/reader/data/seen-posts', () => ( {
+	useIsSeenEnabled: jest.fn( () => false ),
+	withSeenPostsMutations: ( WrappedComponent ) => WrappedComponent,
+} ) );
+
 jest.mock( 'calypso/reader/stats', () => ( {
 	recordAction: jest.fn(),
 	recordGaEvent: jest.fn(),

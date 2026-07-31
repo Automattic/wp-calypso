@@ -14,12 +14,10 @@ import { withReaderTeams } from 'calypso/components/data/with-reader-teams';
 import { useFeedQuery } from 'calypso/reader/data/feed';
 import DisplayTypes from 'calypso/reader/data/post/display-types';
 import { useIsSeenEnabled } from 'calypso/reader/data/seen-posts';
-import { useHasSiteSubscriptionOrganization } from 'calypso/reader/data/site-subscriptions';
 import * as stats from 'calypso/reader/stats';
 import { expandCard as expandCardAction } from 'calypso/state/reader-ui/card-expansions/actions';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import isReaderCardExpanded from 'calypso/state/selectors/is-reader-card-expanded';
-import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
 import PostByline from './byline';
 import ConversationPost from './conversation-post';
 import GalleryPost from './gallery';
@@ -43,9 +41,8 @@ class ReaderPostCard extends Component {
 		showSiteName: PropTypes.bool,
 		postKey: PropTypes.object,
 		compact: PropTypes.bool,
-		isWPForTeamsItem: PropTypes.bool,
 		teams: PropTypes.array,
-		hasOrganization: PropTypes.bool,
+		isSeenEnabled: PropTypes.bool,
 		fixedHeaderHeight: PropTypes.number,
 		streamKey: PropTypes.string,
 		commentsApiDisabled: PropTypes.bool,
@@ -316,10 +313,6 @@ const ConnectedReaderPostCard = compose(
 	connect(
 		( state, ownProps ) => ( {
 			currentRoute: getCurrentRoute( state ),
-			isWPForTeamsItem:
-				ownProps.postKey &&
-				( isSiteWPForTeams( state, ownProps.postKey.blogId ) ||
-					( ownProps.feed?.blog_ID ? isSiteWPForTeams( state, ownProps.feed.blog_ID ) : false ) ),
 			isExpanded: isReaderCardExpanded( state, ownProps.postKey ),
 		} ),
 		{ expandCard: expandCardAction }
@@ -328,17 +321,10 @@ const ConnectedReaderPostCard = compose(
 
 export default function ReaderPostCardContainer( props ) {
 	const feedId = props.postKey?.feedId ?? props.post?.feed_ID;
-	const blogId = props.postKey?.blogId ?? props.post?.site_ID;
 	const { data: fetchedFeed } = useFeedQuery( feedId );
-	const hasOrganization = useHasSiteSubscriptionOrganization( feedId, blogId );
+	const feed = props.feed ?? fetchedFeed;
+	const blogId = props.postKey?.blogId ?? props.post?.site_ID ?? feed?.blog_ID;
 	const isSeenEnabled = useIsSeenEnabled( { feedId, blogId, post: props.post } );
 
-	return (
-		<ConnectedReaderPostCard
-			{ ...props }
-			feed={ props.feed ?? fetchedFeed }
-			hasOrganization={ hasOrganization }
-			isSeenEnabled={ isSeenEnabled }
-		/>
-	);
+	return <ConnectedReaderPostCard { ...props } feed={ feed } isSeenEnabled={ isSeenEnabled } />;
 }

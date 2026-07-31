@@ -6,14 +6,10 @@ import closest from 'component-closest';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { createRef, PureComponent } from 'react';
-import { connect } from 'react-redux';
 import UserAvatar from 'calypso/blocks/user-avatar';
 import { useFeedQuery } from 'calypso/reader/data/feed';
 import { useIsSeenEnabled } from 'calypso/reader/data/seen-posts';
 import { useSite } from 'calypso/reader/data/site';
-import { useHasSiteSubscriptionOrganization } from 'calypso/reader/data/site-subscriptions';
-import getCurrentRoute from 'calypso/state/selectors/get-current-route';
-import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
 
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 class CrossPost extends PureComponent {
@@ -27,9 +23,7 @@ class CrossPost extends PureComponent {
 		postKey: PropTypes.object,
 		site: PropTypes.object,
 		feed: PropTypes.object,
-		isWPForTeamsItem: PropTypes.bool,
-		currentRoute: PropTypes.string,
-		hasOrganization: PropTypes.bool,
+		isSeenEnabled: PropTypes.bool,
 	};
 
 	cardRef = createRef();
@@ -210,18 +204,7 @@ class CrossPost extends PureComponent {
 }
 /* eslint-enable wpcalypso/jsx-classname-namespace */
 
-const ConnectedCrossPost = connect( ( state, ownProps ) => {
-	const { blogId } = ownProps.postKey;
-	const feed = ownProps.feed;
-	const site = ownProps.site;
-	return {
-		currentRoute: getCurrentRoute( state ),
-		isWPForTeamsItem:
-			isSiteWPForTeams( state, blogId ) ||
-			( feed?.blog_ID ? isSiteWPForTeams( state, feed.blog_ID ) : false ) ||
-			( site?.ID ? isSiteWPForTeams( state, site.ID ) : false ),
-	};
-} )( localize( CrossPost ) );
+const LocalizedCrossPost = localize( CrossPost );
 
 export default function CrossPostContainer( props ) {
 	const { feedId, blogId } = props.postKey || {};
@@ -230,15 +213,17 @@ export default function CrossPostContainer( props ) {
 	const { site } = useSite( siteId );
 	const resolvedFeedId = feedId || site?.feed_ID;
 	const { data: feedFromSite } = useFeedQuery( feedFromKey ? undefined : resolvedFeedId );
-	const hasOrganization = useHasSiteSubscriptionOrganization( feedId, blogId );
-	const isSeenEnabled = useIsSeenEnabled( { feedId, blogId, post: props.post } );
+	const isSeenEnabled = useIsSeenEnabled( {
+		feedId: resolvedFeedId,
+		blogId: siteId,
+		post: props.post,
+	} );
 
 	return (
-		<ConnectedCrossPost
+		<LocalizedCrossPost
 			{ ...props }
 			site={ site }
 			feed={ feedFromKey || feedFromSite }
-			hasOrganization={ hasOrganization }
 			isSeenEnabled={ isSeenEnabled }
 		/>
 	);
