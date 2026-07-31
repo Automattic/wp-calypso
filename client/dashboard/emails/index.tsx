@@ -1,4 +1,4 @@
-import { DomainSubtype, EmailBox } from '@automattic/api-core';
+import { DomainSubtype } from '@automattic/api-core';
 import { userMailboxesQuery } from '@automattic/api-queries';
 import { useSuspenseQuery } from '@tanstack/react-query';
 import { useNavigate } from '@tanstack/react-router';
@@ -33,8 +33,6 @@ function Emails() {
 	const { data: allEmailAccounts } = useSuspenseQuery( userMailboxesQuery() );
 	const { domainName: domainNameFilter }: { domainName?: string } = emailsRoute.useSearch();
 	const { data: allDomains } = useSuspenseQuery( queries.domainsQuery() );
-	// Domain ownership gates buying paid email, not managing email on the domain, so
-	// administrators who don't own the domain still belong here.
 	const domains = ( allDomains ?? [] ).filter(
 		( d ) => d.subtype.id !== DomainSubtype.DEFAULT_ADDRESS
 	);
@@ -46,13 +44,13 @@ function Emails() {
 		return domains.filter( ( d ) => domainsWithEmailsList.includes( d.domain ) );
 	}, [ allEmailAccounts, domains ] );
 
-	const emails: Email[] = useMemo( () => {
+	const emails = useMemo( () => {
 		if ( ! allEmailAccounts?.length ) {
 			return [];
 		}
 		return allEmailAccounts.flatMap( ( account ) =>
-			account.emails.map( ( box: EmailBox ) => mapMailboxToEmail( box, account ) )
-		) as Email[];
+			account.emails.map( ( box ) => mapMailboxToEmail( box, account ) )
+		);
 	}, [ allEmailAccounts ] );
 
 	// Gather domains with unused mailbox warnings

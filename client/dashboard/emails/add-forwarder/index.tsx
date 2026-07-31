@@ -62,8 +62,8 @@ function AddEmailForwarder() {
 		userMailboxesQuery()
 	);
 
-	// Forwarding is free, so don't gate it on `can_user_add_email` — that only decides who
-	// may buy paid email, and it excludes administrators who don't own the domain.
+	// The endpoint emits a forwarding account for every domain that can host forwarding, whether
+	// or not any forwarders exist on it yet, so this covers the first-forwarder case too.
 	const eligibleDomains = useMemo( () => {
 		const forwardingAccounts = ( allEmailAccounts ?? [] ).filter(
 			( account ) => account.account_type === EmailProvider.Forwarding
