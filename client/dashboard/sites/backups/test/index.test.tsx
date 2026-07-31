@@ -190,6 +190,21 @@ function renderBackupsListPage( {
 	return render( <BackupsListPage /> );
 }
 
+test( 'all checkboxes rendered by DataViews have accessible names', async () => {
+	// Guard against DOTMSD-1476: @wordpress/dataviews renders a "select all"
+	// checkbox without a label when items are selected.
+	mockRouterParams.rewindId = 'rewind-123';
+	renderBackupsListPage();
+
+	await waitFor( () => {
+		expect( screen.getByText( 'Daily backup completed successfully' ) ).toBeVisible();
+	} );
+
+	for ( const checkbox of screen.queryAllByRole( 'checkbox' ) ) {
+		expect( checkbox ).toHaveAccessibleName();
+	}
+} );
+
 test.each( summaryTestCases )(
 	'renders the details section correctly for rewindId %s',
 	async ( rewindId, summary ) => {
