@@ -51,8 +51,7 @@ test.describe(
 			await test.step( 'When I add Story block', async () => {
 				await pageEditor.addBlockFromSidebar(
 					StoryBlock.blockName,
-					StoryBlock.blockEditorSelector,
-					{ noSearch: true }
+					StoryBlock.blockEditorSelector
 				);
 			} );
 
