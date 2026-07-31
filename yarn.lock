@@ -9701,13 +9701,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/seed-random@npm:^2.2.4":
-  version: 2.2.4
-  resolution: "@types/seed-random@npm:2.2.4"
-  checksum: 99b32d9207b0ef81d349f425b32cbd3af840808596bb5ea04cb3a72d6fac3147ebd6216ceb3e734d3504e6c36a53a9dc9eb1d8d79d4995ccf3003c852eae4651
-  languageName: node
-  linkType: hard
-
 "@types/semver@npm:^7.3.4":
   version: 7.5.3
   resolution: "@types/semver@npm:7.5.3"
@@ -15837,15 +15830,6 @@ __metadata:
     crc-32: "npm:^1.2.0"
     readable-stream: "npm:^3.4.0"
   checksum: 215b515775296c9f152cbb8435c9e39552876042d52eec6569508f2bfc6d7c6cfa4bc8939002457c7f612e9b995a377f7abbaf473b961941b816361574913c9c
-  languageName: node
-  linkType: hard
-
-"crc32@npm:^0.2.2":
-  version: 0.2.2
-  resolution: "crc32@npm:0.2.2"
-  bin:
-    crc32: ./bin/runner.js
-  checksum: ed475a5618c948112010677751819a03ff2259c8e52d11f427c4a901d9c560d859a7c623c7885e84e811ebffc9e2c4d1aff4e685475647ab3bc2f423b86905fe
   languageName: node
   linkType: hard
 
@@ -26146,10 +26130,7 @@ __metadata:
   resolution: "photon@workspace:packages/photon"
   dependencies:
     "@automattic/calypso-typescript-config": "workspace:^"
-    "@types/seed-random": "npm:^2.2.4"
-    crc32: "npm:^0.2.2"
     debug: "npm:^4.4.1"
-    seed-random: "npm:^2.2.0"
     tslib: "npm:^2.8.1"
     typescript: "npm:^6.0.3"
   languageName: unknown
@@ -29835,13 +29816,6 @@ __metadata:
     ajv-formats: "npm:^2.1.1"
     ajv-keywords: "npm:^5.1.0"
   checksum: 1c8d2c480a026d7c02ab2ecbe5919133a096d6a721a3f201fa50663e4f30f6d6ba020dfddd93cb828b66b922e76b342e103edd19a62c95c8f60e9079cc403202
-  languageName: node
-  linkType: hard
-
-"seed-random@npm:^2.2.0":
-  version: 2.2.0
-  resolution: "seed-random@npm:2.2.0"
-  checksum: 5d48dedf312e8075faa899664ec5867e3b088a11d0e955d7c6bcfffcd7fc6de5dbb51c41c24ef48060ee6a9592cad607e5c44306b4fd4828667451afe16b09a5
   languageName: node
   linkType: hard
 
