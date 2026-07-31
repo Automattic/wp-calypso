@@ -57,13 +57,27 @@ function useSignupContext(): SignupContext | null {
 	return context;
 }
 
+export type PhoneData = {
+	phoneNumber?: string;
+	countryCode?: string;
+	phoneNumberFull?: string;
+};
+
 type Props = {
 	onContinue: ( data: Partial< AgencyDetailsSignupPayload > ) => void;
 	initialFormData: Partial< AgencyDetailsSignupPayload >;
+	initialPhone?: PhoneData;
+	onPhoneChange?: ( phone: PhoneData ) => void;
 	withEmail?: boolean;
 };
 
-const SignupContactForm = ( { onContinue, initialFormData, withEmail = false }: Props ) => {
+const SignupContactForm = ( {
+	onContinue,
+	initialFormData,
+	initialPhone,
+	onPhoneChange,
+	withEmail = false,
+}: Props ) => {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 
@@ -111,7 +125,13 @@ const SignupContactForm = ( { onContinue, initialFormData, withEmail = false }: 
 			...prev,
 			phoneNumber: data.phoneNumberFull,
 		} ) );
-		setPhoneCountryCode( data.phoneNumber && data.countryData?.code ? data.countryData.code : '' );
+		const countryCode = data.phoneNumber && data.countryData?.code ? data.countryData.code : '';
+		setPhoneCountryCode( countryCode );
+		onPhoneChange?.( {
+			phoneNumber: data.phoneNumber,
+			countryCode: data.countryData?.code,
+			phoneNumberFull: data.phoneNumberFull,
+		} );
 	};
 
 	const dataToContinue: Partial< AgencyDetailsSignupPayload > = useMemo(
@@ -362,7 +382,8 @@ const SignupContactForm = ( { onContinue, initialFormData, withEmail = false }: 
 				countrySelectProps={ {
 					id: 'country_code',
 				} }
-				initialCountryCode="US"
+				initialCountryCode={ initialPhone?.countryCode || 'US' }
+				initialPhoneNumber={ initialPhone?.phoneNumber }
 			/>
 
 			<div className="signup-contact-form__tos">

@@ -16,7 +16,7 @@ import StepProgress from '../step-progress';
 import BlueprintForm from './blueprint-form';
 import BlueprintForm2 from './blueprint-form-2';
 import ChoiceBlueprint from './choice-blueprint';
-import SignupContactForm from './contact-form';
+import SignupContactForm, { PhoneData } from './contact-form';
 import FinishSignupSurvey from './finish-signup-survey';
 import useSubmitSignup from './hooks/use-submit-signup';
 import PersonalizationForm from './personalization';
@@ -88,6 +88,7 @@ const MultiStepForm = ( {
 	const isDarkMode = useIsDarkMode();
 
 	const [ formData, setFormData ] = useState< Partial< AgencyDetailsSignupPayload > >( {} );
+	const [ phone, setPhone ] = useState< PhoneData >( {} );
 
 	const steps: Step[] = [
 		{
@@ -192,6 +193,8 @@ const MultiStepForm = ( {
 					<SignupContactForm
 						onContinue={ ( data ) => updateDataAndContinue( data, 2 ) }
 						initialFormData={ formData }
+						initialPhone={ phone }
+						onPhoneChange={ setPhone }
 						withEmail={ signupWithMagicLinkFlow }
 					/>
 				);
