@@ -1,5 +1,4 @@
-import { localize } from 'i18n-calypso';
-import PropTypes from 'prop-types';
+import { localize, LocalizeProps } from 'i18n-calypso';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import CardHeading from 'calypso/components/card-heading';
@@ -9,8 +8,34 @@ import { getSelectedDomain } from 'calypso/lib/domains';
 import { getGoogleMailServiceFamily, getGSuiteSubscriptionStatus } from 'calypso/lib/gsuite';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getDomainsBySiteId } from 'calypso/state/sites/domains/selectors';
+import type { Purchase } from '@automattic/api-core';
+import type { AppState } from 'calypso/types';
 
-class GSuiteCancellationFeatures extends Component {
+interface GSuiteCancellationFeaturesOwnProps {
+	purchase: Purchase;
+}
+
+function mapStateToProps( state: AppState, { purchase }: GSuiteCancellationFeaturesOwnProps ) {
+	return {
+		selectedDomain: getSelectedDomain( {
+			domains: getDomainsBySiteId( state, purchase.blog_id ),
+			selectedDomainName: purchase.meta ?? '',
+		} ),
+	};
+}
+
+const mapDispatchToProps = {
+	recordTracksEvent,
+};
+
+type GSuiteCancellationFeaturesProps = GSuiteCancellationFeaturesOwnProps &
+	ReturnType< typeof mapStateToProps > &
+	typeof mapDispatchToProps &
+	LocalizeProps;
+
+class GSuiteCancellationFeatures extends Component< GSuiteCancellationFeaturesProps > {
+	static defaultProps = {};
+
 	componentDidMount() {
 		this.props.recordTracksEvent( 'calypso_purchases_gsuite_remove_purchase_features_view' );
 	}
@@ -21,7 +46,8 @@ class GSuiteCancellationFeatures extends Component {
 
 	getAccessMessage = () => {
 		const { selectedDomain, purchase, translate } = this.props;
-		const { meta: domainName, productSlug } = purchase;
+		const domainName = purchase.meta ?? '';
+		const { product_slug: productSlug } = purchase;
 		const googleMailService = getGoogleMailServiceFamily( productSlug );
 		const googleSubscriptionStatus = getGSuiteSubscriptionStatus( selectedDomain );
 
@@ -68,7 +94,8 @@ class GSuiteCancellationFeatures extends Component {
 
 	render() {
 		const { purchase, translate } = this.props;
-		const { meta: domainName, productSlug } = purchase;
+		const domainName = purchase.meta ?? '';
+		const { product_slug: productSlug } = purchase;
 
 		return (
 			<div className="gsuite-cancel-purchase-dialog__features">
@@ -84,28 +111,16 @@ class GSuiteCancellationFeatures extends Component {
 
 				<GSuiteFeatures productSlug={ productSlug } domainName={ domainName } type="list" />
 
-				<GSuiteLearnMore onClick={ this.handleLearnMoreClick } productSlug={ productSlug } />
+				<GSuiteLearnMore
+					onLearnMoreClick={ this.handleLearnMoreClick }
+					productSlug={ productSlug }
+				/>
 			</div>
 		);
 	}
 }
 
-GSuiteCancellationFeatures.propTypes = {
-	purchase: PropTypes.object.isRequired,
-	recordTracksEvent: PropTypes.func.isRequired,
-	translate: PropTypes.func.isRequired,
-};
-
 export default connect(
-	( state, { purchase } ) => {
-		return {
-			selectedDomain: getSelectedDomain( {
-				domains: getDomainsBySiteId( state, purchase.siteId ),
-				selectedDomainName: purchase.meta,
-			} ),
-		};
-	},
-	{
-		recordTracksEvent,
-	}
+	mapStateToProps,
+	mapDispatchToProps
 )( localize( GSuiteCancellationFeatures ) );

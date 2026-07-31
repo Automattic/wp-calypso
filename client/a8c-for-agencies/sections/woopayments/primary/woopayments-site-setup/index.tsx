@@ -240,7 +240,7 @@ const WooPaymentsSiteSetup = ( { siteId }: { siteId: string } ) => {
 									<>
 										<div>
 											{ translate(
-												"Once the plugin is installed and configured, each time a transaction occurs, you'll earn commisions!"
+												"Once the plugin is installed and configured, each time a transaction occurs, you'll earn commissions!"
 											) }
 										</div>
 										<Button

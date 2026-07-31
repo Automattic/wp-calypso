@@ -9,6 +9,28 @@ type CancelReason = 'Another reason…';
 const STEP_BUTTON_TIMEOUT = 30 * 1000;
 
 /**
+ * Returns a promise for the cancel-and-refund response fired when a Multi-site
+ * Dashboard removal survey is completed.
+ *
+ * Both the plan and the non-plan (add-on) surveys hit `POST
+ * wpcom/v2/upgrades/<id>/cancel`; the API proxy URL contains
+ * `upgrades/<id>/cancel`. Start listening *before* clicking the final button so
+ * the listener cannot miss a fast response, then block on it so the caller's
+ * snackbar assertion only has to catch the notice render (it auto-dismisses).
+ *
+ * @param page Page the survey is rendered on.
+ */
+function waitForUpgradeCancel( page: Page ) {
+	return page.waitForResponse(
+		( response ) =>
+			response.request().method() === 'POST' && /\/upgrades\/\d+\/cancel/.test( response.url() ),
+		// A refund is a real server round-trip and can be slow in the test
+		// environment, so allow a generous window.
+		{ timeout: 60 * 1000 }
+	);
+}
+
+/**
  * Completes the Multi-site Dashboard cancellation confirmation and survey for a
  * plan being removed with a refund.
  *
@@ -55,17 +77,8 @@ export async function cancelDashboardPurchaseFlow(
 		.getByRole( 'radio', { name: "I'm staying here and using the free plan.", exact: true } )
 		.check();
 
-	// Submitting the final step fires the cancel-and-refund request. Start
-	// listening for its response *before* clicking so the listener cannot miss
-	// a fast response. The request hits `wpcom/v2/purchases/<id>/cancel`; the
-	// API proxy URL contains `purchases/<id>/cancel`.
-	const cancelResponsePromise = page.waitForResponse(
-		( response ) =>
-			response.request().method() === 'POST' && /\/upgrades\/\d+\/cancel/.test( response.url() ),
-		// A refund is a real server round-trip and can be slow in the test
-		// environment, so allow a generous window.
-		{ timeout: 60 * 1000 }
-	);
+	// Submitting the final step fires the cancel-and-refund request.
+	const cancelResponsePromise = waitForUpgradeCancel( page );
 
 	// The final step button also offers a "Skip and remove" shortcut alongside
 	// "Complete removal"; take the one that submits the answers.
@@ -78,5 +91,35 @@ export async function cancelDashboardPurchaseFlow(
 	// the cancel request actually resolves so the caller's snackbar assertion
 	// only has to cover the notice render, not the full network round-trip —
 	// the success snackbar auto-dismisses shortly after it appears.
+	await cancelResponsePromise;
+}
+
+/**
+ * Completes the Multi-site Dashboard removal survey for a non-plan upgrade being
+ * removed with a refund (eg. a storage add-on).
+ *
+ * A non-plan upgrade's survey is a single step — the optional "What's one thing
+ * we could have done better?" free-text field — with none of the reason or
+ * next-adventure questions a plan removal asks. `cancelDashboardPurchaseFlow`
+ * covers the richer plan survey.
+ *
+ * @param page Page the survey is rendered on.
+ * @param feedback Answers to give to the survey.
+ * @param feedback.improvementText Free-text answer to the improvement question.
+ */
+export async function removeDashboardUpgradeFlow(
+	page: Page,
+	feedback: { improvementText: string }
+) {
+	// The field's accessible name resolves to its "Optional" placeholder rather
+	// than its visible label.
+	await page.getByRole( 'textbox', { name: 'Optional' } ).fill( feedback.improvementText );
+
+	const cancelResponsePromise = waitForUpgradeCancel( page );
+
+	await page
+		.getByRole( 'button', { name: 'Complete removal', exact: true } )
+		.click( { timeout: STEP_BUTTON_TIMEOUT } );
+
 	await cancelResponsePromise;
 }

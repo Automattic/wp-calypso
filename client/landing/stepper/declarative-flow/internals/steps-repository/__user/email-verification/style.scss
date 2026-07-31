@@ -1,0 +1,39 @@
+.onboarding-email-verification {
+	// The layout runs with `noGap`, so this is the whole distance below the title.
+	margin-block-start: 24px;
+
+	// The button lays its content out inline, which would leave the label and the arrow
+	// meeting on a shared text baseline rather than centered against each other.
+	.button.is-primary {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+	}
+}
+
+// The description lives in the content row to share the buttons' width, so it no longer
+// inherits `.step-container-v2__heading p`.
+.onboarding-email-verification__sub-text {
+	// The stack owns the spacing below; this only drops the paragraph's own margins.
+	margin-block: 0;
+	color: var(--color-text);
+	font-size: 15px;
+	line-height: 1.5;
+	text-wrap: balance;
+}
+
+// Focus lands here programmatically to announce the screen change; it isn't a tab stop, so
+// suppress the outline the heading region would otherwise show.
+.onboarding-email-verification__heading:focus {
+	outline: none;
+}
+
+.onboarding-email-verification__notice {
+	color: var(--color-text-subtle);
+	font-size: 0.875rem;
+	margin: 0;
+}
+
+.onboarding-email-verification__notice.is-error {
+	color: var(--color-error);
+}

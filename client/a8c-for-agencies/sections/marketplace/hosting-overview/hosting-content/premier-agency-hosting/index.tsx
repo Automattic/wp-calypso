@@ -125,7 +125,7 @@ export default function PremierAgencyHosting( { onAddToCart }: Props ) {
 				heading={ translate( 'Jetpack Complete included' ) }
 				subheading={ translate( "Supercharge your clients' sites" ) }
 				description={ translate(
-					'Every Pressable site comes with a free Jetpack Complete license — an %(amount)s/year/site value.',
+					'Every Pressable site comes with a free Jetpack Complete license — a %(amount)s/year/site value.',
 					{
 						args: {
 							amount: formatCurrency( 899, 'USD' ),

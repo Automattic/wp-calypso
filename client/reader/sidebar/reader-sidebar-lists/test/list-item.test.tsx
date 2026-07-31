@@ -4,6 +4,7 @@
 import { ReadList } from '@automattic/api-core';
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { getListStreamKey } from 'calypso/reader/list/controller';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import ReaderSidebarListsListItem from '../list-item';
 
@@ -145,7 +146,7 @@ describe( 'ReaderSidebarListsListItem', () => {
 			await user.click( screen.getByRole( 'menuitem', { name: 'Mark all as read' } ) );
 
 			expect( mockMarkAllAsSeen ).toHaveBeenCalledWith( {
-				identifier: 'sidebar-list',
+				identifier: getListStreamKey( listWithUnseen.owner, listWithUnseen.slug ),
 				feedIds: [ 1, 2 ],
 				feedUrls: [],
 			} );

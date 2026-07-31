@@ -10,6 +10,7 @@ import {
 	WPCOM_DIFM_LITE,
 	OFFSITE_REDIRECT,
 } from '@automattic/api-core';
+import config from '@automattic/calypso-config';
 import { formatNumber } from '@automattic/number-formatters';
 import { __, sprintf } from '@wordpress/i18n';
 import { addQueryArgs } from '@wordpress/url';
@@ -627,8 +628,8 @@ function getCheckoutProductSlugFromPurchase( purchase: Purchase ): string {
 }
 
 function getCheckoutSiteSlugForPurchase( purchase: Purchase ): string {
-	if ( isAkismetProduct( purchase ) ) {
-		// Akismet checkout never uses a site slug.
+	// Neither Akismet nor A4A holding sites should use a site slug
+	if ( isAkismetProduct( purchase ) || isA4AHoldingSitePurchase( purchase ) ) {
 		return '';
 	}
 	return purchase.site_slug || '';
@@ -787,6 +788,26 @@ export function isWithinRefundWindowDowngradeEligible( purchase: Purchase ): boo
 		purchase.is_within_initial_refund_window &&
 		! isExpiredOrRemoved( purchase )
 	);
+}
+
+/**
+ * Whether to offer this purchase downgrade options as well as upgrades. Covers
+ * three downgrade flows, each gated by its own flag:
+ *   - past expiry (downgrade-to-checkout) — `plans/expired-downgrade`
+ *   - within refund window (instant downgrade) — `plans/expired-downgrade`
+ *   - active downgradable plan (delayed downgrade) — `plans/delayed-downgrade`
+ *
+ * Only ever true for WordPress.com plans.
+ */
+export function isPurchaseDowngradeEligible( purchase: Purchase ): boolean {
+	if ( ! purchase.is_plan || ! purchase.is_plan_type_downgradable ) {
+		return false;
+	}
+	const expiredOrRefundDowngrade =
+		config.isEnabled( 'plans/expired-downgrade' ) &&
+		( purchase.is_past_expiry_date || isWithinRefundWindowDowngradeEligible( purchase ) );
+	const delayedDowngrade = config.isEnabled( 'plans/delayed-downgrade' );
+	return expiredOrRefundDowngrade || delayedDowngrade;
 }
 
 /**

@@ -14,17 +14,21 @@ import page from '@automattic/calypso-router';
 import { CompactCard, Gridicon } from '@automattic/components';
 import { invokeSurvicateEvent } from '@automattic/survicate';
 import clsx from 'clsx';
-import { localize } from 'i18n-calypso';
-import PropTypes from 'prop-types';
-import { Component } from 'react';
+import { localize, LocalizeProps } from 'i18n-calypso';
+import { Component, type MouseEvent, type ReactNode } from 'react';
 import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
 import CancelJetpackForm from 'calypso/components/marketing-survey/cancel-jetpack-form';
 import CancelPurchaseForm from 'calypso/components/marketing-survey/cancel-purchase-form';
 import { CANCEL_FLOW_TYPE } from 'calypso/components/marketing-survey/cancel-purchase-form/constants';
 import PrecancellationChatButton from 'calypso/components/marketing-survey/cancel-purchase-form/precancellation-chat-button';
 import GSuiteCancellationPurchaseDialog from 'calypso/components/marketing-survey/gsuite-cancel-purchase-dialog';
 import VerticalNavItem from 'calypso/components/vertical-nav/item';
-import { getName, isRemovable } from 'calypso/lib/purchases';
+import {
+	isAkismetHoldingSitePurchase,
+	isJetpackHoldingSitePurchase,
+} from 'calypso/dashboard/utils/purchase';
+import { createPurchaseObject } from 'calypso/lib/purchases/assembler';
 import NonPrimaryDomainDialog from 'calypso/me/purchases/non-primary-domain-dialog';
 import WordAdsEligibilityWarningDialog from 'calypso/me/purchases/wordads-eligibility-warning-dialog';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
@@ -36,43 +40,67 @@ import isDomainOnly from 'calypso/state/selectors/is-domain-only-site';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
 import { receiveDeletedSite } from 'calypso/state/sites/actions';
 import { setAllSitesSelected } from 'calypso/state/ui/actions';
+import { getName } from '../lib/raw-purchase-helpers';
 import { MarketPlaceSubscriptionsDialog } from '../marketplace-subscriptions-dialog';
 import { purchasesRoot } from '../paths';
-import {
-	isDataLoading,
-	isAkismetHoldingSitePurchase,
-	isJetpackHoldingSitePurchase,
-} from '../utils';
+import { isDataLoading } from '../utils';
 import RemoveDomainDialog from './remove-domain-dialog';
+import type { Purchase } from '@automattic/api-core';
+import type { SiteDetails } from '@automattic/data-stores';
+import type { CalypsoDispatch } from 'calypso/state/types';
+import type { AppState } from 'calypso/types';
 import './style.scss';
 
-class RemovePurchase extends Component {
-	static propTypes = {
-		hasLoadedUserPurchasesFromServer: PropTypes.bool.isRequired,
-		hasNonPrimaryDomainsFlag: PropTypes.bool,
-		hasSetupAds: PropTypes.bool,
-		isDomainOnlySite: PropTypes.bool,
-		hasCustomPrimaryDomain: PropTypes.bool,
-		receiveDeletedSite: PropTypes.func.isRequired,
-		removePurchase: PropTypes.func.isRequired,
-		purchase: PropTypes.object,
-		site: PropTypes.object,
-		setAllSitesSelected: PropTypes.func.isRequired,
-		userId: PropTypes.number.isRequired,
-		useVerticalNavItem: PropTypes.bool,
-		onClickTracks: PropTypes.func,
-		purchaseListUrl: PropTypes.string,
-		activeSubscriptions: PropTypes.array,
-		linkIcon: PropTypes.string,
-		primaryDomain: PropTypes.object,
-		skipRemovePlanSurvey: PropTypes.bool,
-	};
+interface RemovePurchaseOwnProps {
+	hasLoadedSites: boolean;
+	hasLoadedUserPurchasesFromServer: boolean;
+	hasNonPrimaryDomainsFlag?: boolean;
+	hasSetupAds?: boolean;
+	hasCustomPrimaryDomain?: boolean;
+	purchase: Purchase;
+	site?: SiteDetails | null;
+	useVerticalNavItem?: boolean;
+	onClickTracks?: ( event: MouseEvent ) => void;
+	purchaseListUrl?: string;
+	activeSubscriptions?: Purchase[];
+	linkIcon?: string;
+	skipRemovePlanSurvey?: boolean;
+	className?: string;
+	children?: ReactNode;
+}
 
+interface RemovePurchaseConnectedProps {
+	isDomainOnlySite: boolean | null;
+	isAtomicSite: boolean | null;
+	isJetpack: boolean;
+	isAkismet: boolean;
+	userId: number | null;
+	primaryDomain: ReturnType< typeof getPrimaryDomainBySiteId >;
+	errorNotice: typeof errorNotice;
+	receiveDeletedSite: typeof receiveDeletedSite;
+	recordTracksEvent: typeof recordTracksEvent;
+	removePurchase: typeof removePurchase;
+	setAllSitesSelected: typeof setAllSitesSelected;
+	successNotice: typeof successNotice;
+}
+
+type RemovePurchaseProps = RemovePurchaseOwnProps & RemovePurchaseConnectedProps & LocalizeProps;
+
+interface RemovePurchaseState {
+	isDialogVisible: boolean;
+	isRemoving: boolean;
+	isShowingNonPrimaryDomainWarning: boolean;
+	isShowingMarketplaceSubscriptionsDialog: boolean;
+	isShowingPreCancellationDialog: boolean;
+	isShowingWordAdsEligibilityWarningDialog: boolean;
+}
+
+class RemovePurchase extends Component< RemovePurchaseProps, RemovePurchaseState > {
 	static defaultProps = {
 		purchaseListUrl: purchasesRoot,
 	};
 
-	state = {
+	state: RemovePurchaseState = {
 		isDialogVisible: false,
 		isRemoving: false,
 		isShowingNonPrimaryDomainWarning: false,
@@ -101,7 +129,7 @@ class RemovePurchase extends Component {
 		} );
 	};
 
-	openDialog = () => {
+	openDialog = ( event: MouseEvent ) => {
 		event.preventDefault();
 		if ( this.props.onClickTracks ) {
 			this.props.onClickTracks( event );
@@ -146,12 +174,6 @@ class RemovePurchase extends Component {
 		}
 	};
 
-	componentDidMount = () => {
-		if ( this.props.showDialog ) {
-			this.actuallyOpenDialog();
-		}
-	};
-
 	onClickChatButton = () => {
 		this.setState( { isDialogVisible: false } );
 	};
@@ -166,20 +188,20 @@ class RemovePurchase extends Component {
 			// no need to await here, as
 			// - the success/error messages are handled for each request separately
 			// - the plan removal is awaited below
-			activeSubscriptions.forEach( ( s ) => this.handlePurchaseRemoval( s ) );
+			activeSubscriptions?.forEach( ( s ) => this.handlePurchaseRemoval( s ) );
 		}
 
 		await this.handlePurchaseRemoval( purchase );
 		invokeSurvicateEvent( 'purchaseRemoved' );
 
-		page( purchaseListUrl );
+		page( purchaseListUrl ?? purchasesRoot );
 	};
 
-	handlePurchaseRemoval = async ( purchase ) => {
+	handlePurchaseRemoval = async ( purchase: Purchase ) => {
 		const { userId, isDomainOnlySite, translate } = this.props;
 
 		try {
-			await this.props.removePurchase( purchase.id, userId );
+			await this.props.removePurchase( purchase.ID, userId );
 
 			const productName = getName( purchase );
 			let successMessage;
@@ -197,7 +219,7 @@ class RemovePurchase extends Component {
 
 			if ( isDomainRegistration( purchase ) ) {
 				if ( isDomainOnlySite ) {
-					this.props.receiveDeletedSite( purchase.siteId );
+					this.props.receiveDeletedSite( purchase.blog_id );
 					this.props.setAllSitesSelected();
 				}
 
@@ -210,14 +232,14 @@ class RemovePurchase extends Component {
 		} catch ( error ) {
 			this.setState( { isRemoving: false } );
 			this.closeDialog();
-			this.props.errorNotice( error.message, { displayOnNextPage: true } );
+			this.props.errorNotice( ( error as Error ).message, { displayOnNextPage: true } );
 		}
 	};
 
 	getChatButton = () => (
 		<PrecancellationChatButton
 			onClick={ this.onClickChatButton }
-			purchase={ this.props.purchase.rawPurchase }
+			purchase={ this.props.purchase }
 			className="remove-domain-dialog__chat-button"
 		/>
 	);
@@ -242,8 +264,8 @@ class RemovePurchase extends Component {
 				closeDialog={ this.closeDialog }
 				removePlan={ this.showRemovePlanDialog }
 				planName={ getName( purchase ) }
-				oldDomainName={ site.domain }
-				newDomainName={ site.wpcom_url }
+				oldDomainName={ site?.domain }
+				newDomainName={ site?.wpcom_url }
 				hasSetupAds={ hasSetupAds }
 			/>
 		);
@@ -280,7 +302,7 @@ class RemovePurchase extends Component {
 		return (
 			<CancelPurchaseForm
 				disableButtons={ this.state.isRemoving }
-				purchase={ purchase.rawPurchase }
+				purchase={ purchase }
 				isVisible={ this.state.isDialogVisible }
 				onClose={ this.closeDialog }
 				onSurveyComplete={ this.removePurchase }
@@ -295,8 +317,8 @@ class RemovePurchase extends Component {
 		return (
 			<CancelPurchaseForm
 				disableButtons={ this.state.isRemoving }
-				purchase={ purchase.rawPurchase }
-				linkedPurchases={ activeSubscriptions }
+				purchase={ purchase }
+				linkedPurchases={ activeSubscriptions?.map( createPurchaseObject ) }
 				isVisible={ this.state.isDialogVisible }
 				onClose={ this.closeDialog }
 				onSurveyComplete={ this.removePurchase }
@@ -313,7 +335,7 @@ class RemovePurchase extends Component {
 			<CancelJetpackForm
 				disableButtons={ this.state.isRemoving }
 				purchase={ purchase }
-				purchaseListUrl={ purchaseListUrl }
+				purchaseListUrl={ purchaseListUrl ?? purchasesRoot }
 				isVisible={ this.state.isDialogVisible }
 				onClose={ this.closeDialog }
 				onSurveyComplete={ this.removePurchase }
@@ -325,7 +347,7 @@ class RemovePurchase extends Component {
 	shouldHandleMarketplaceSubscriptions() {
 		const { activeSubscriptions } = this.props;
 
-		return activeSubscriptions?.length > 0;
+		return Boolean( activeSubscriptions?.length );
 	}
 
 	renderMarketplaceSubscriptionsDialog() {
@@ -336,7 +358,12 @@ class RemovePurchase extends Component {
 				closeDialog={ this.closeDialog }
 				removePlan={ this.showRemovePlanDialog }
 				planName={ getName( purchase ) }
-				activeSubscriptions={ activeSubscriptions }
+				activeSubscriptions={
+					activeSubscriptions?.map( ( subscription ) => ( {
+						id: subscription.ID,
+						productName: subscription.product_name,
+					} ) ) ?? []
+				}
 			/>
 		);
 	}
@@ -388,7 +415,7 @@ class RemovePurchase extends Component {
 		const { className, purchase, translate, useVerticalNavItem } = this.props;
 		const productName = getName( purchase );
 
-		if ( ! isRemovable( purchase ) ) {
+		if ( ! purchase.is_removable ) {
 			return null;
 		}
 
@@ -432,25 +459,29 @@ class RemovePurchase extends Component {
 	}
 }
 
-export default connect(
-	( state, { purchase } ) => {
-		const isJetpack = purchase && ( isJetpackPlan( purchase ) || isJetpackProduct( purchase ) );
-		const isAkismet = purchase && isAkismetProduct( purchase );
-		return {
-			isDomainOnlySite: purchase && isDomainOnly( state, purchase.siteId ),
-			isAtomicSite: isSiteAutomatedTransfer( state, purchase.siteId ),
-			isJetpack,
-			isAkismet,
-			userId: getCurrentUserId( state ),
-			primaryDomain: getPrimaryDomainBySiteId( state, purchase.siteId ),
-		};
-	},
-	{
-		errorNotice,
-		receiveDeletedSite,
-		recordTracksEvent,
-		removePurchase,
-		setAllSitesSelected,
-		successNotice,
-	}
-)( localize( RemovePurchase ) );
+function mapDispatchToProps( dispatch: CalypsoDispatch ) {
+	return bindActionCreators(
+		{
+			errorNotice,
+			receiveDeletedSite,
+			recordTracksEvent,
+			removePurchase,
+			setAllSitesSelected,
+			successNotice,
+		},
+		dispatch
+	);
+}
+
+export default connect( ( state: AppState, { purchase }: RemovePurchaseOwnProps ) => {
+	const isJetpack = purchase && ( isJetpackPlan( purchase ) || isJetpackProduct( purchase ) );
+	const isAkismet = purchase && isAkismetProduct( purchase );
+	return {
+		isDomainOnlySite: purchase && isDomainOnly( state, purchase.blog_id ),
+		isAtomicSite: isSiteAutomatedTransfer( state, purchase.blog_id ),
+		isJetpack,
+		isAkismet,
+		userId: getCurrentUserId( state ),
+		primaryDomain: getPrimaryDomainBySiteId( state, purchase.blog_id ),
+	};
+}, mapDispatchToProps )( localize( RemovePurchase ) );

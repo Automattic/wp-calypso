@@ -11,9 +11,11 @@
 // The rest are portal roots: .color-scheme/.ReactModalPortal (Popover/Dialog),
 // [data-base-ui-portal]/[data-wp-compat-overlay-slot] (@wordpress/ui), .components-modal__screen-overlay
 // (@wordpress/components Modal), .components-popover__fallback-container (@wordpress/components
-// Popover/Dropdown, document.body-appended since we render no <Popover.Slot>/SlotFillProvider).
+// Popover/Dropdown, document.body-appended since we render no <Popover.Slot>/SlotFillProvider),
+// .web-preview (the post-preview modal, RootChild-portaled into a classless document.body div —
+// the modal's own root rules are `exclude`d below for the same reason).
 const prefix =
-	':where(.jp-stats-dashboard, .color-scheme, .ReactModalPortal, [data-base-ui-portal], [data-wp-compat-overlay-slot], .components-modal__screen-overlay, .components-popover__fallback-container, .jp-stats-widget)';
+	':where(.jp-stats-dashboard, .color-scheme, .ReactModalPortal, [data-base-ui-portal], [data-wp-compat-overlay-slot], .components-modal__screen-overlay, .components-popover__fallback-container, .jp-stats-widget, .web-preview)';
 
 // `prefix` roots that are always document.body-appended and never nested inside another root, so
 // self-nesting them under `prefix` is always dead — unlike the portal roots below, which routinely
@@ -23,6 +25,7 @@ const entryPointRoots = [
 	'.jp-stats-dashboard',
 	'.jp-stats-widget',
 	'.components-popover__fallback-container',
+	'.web-preview',
 ];
 
 // The rest of `prefix`'s roots: legitimately nestable inside entryPointRoots. verify-css-scope.js
@@ -74,6 +77,11 @@ const exclude = [
 	// class/attribute on the wrapper — only its content carries `.components-tooltip`. Nothing
 	// targets it today; excluded pre-emptively so that stays true if something ever does.
 	/^\.components-tooltip(?![\w-])/,
+	// The WebPreview modal (post detail "View Post") styling itself, incl. compound forms like
+	// `.web-preview.is-visible` and descendant rules anchored on the root. RootChild portals it
+	// into a classless document.body div, so the root has no scope ancestor; its BEM descendants
+	// (`.web-preview__*`) don't match this anchor and stay scoped via `.web-preview` in `prefix`.
+	/^\.web-preview(?![\w-])/,
 ];
 
 module.exports = { prefix, entryPointRoots, portalRoots, ignoreFiles, exclude };
