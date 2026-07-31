@@ -133,32 +133,31 @@ const EmailVerificationGate = ( { flow, scope, logo, onDone }: Props ) => {
 						{ subText }
 					</p>
 
+					{ /* Calypso's Button rather than the Step.* ones: the design is drawn from its
+					   outline, radius, and weight, which the step-container buttons don't share. */ }
+
 					{ /* For a known provider, deep-link to its inbox; confirming there resolves the
 					   gate by polling. Unknown providers get a manual "I've confirmed" re-check. */ }
 					{ inboxLink ? (
-						<Step.PrimaryButton
-							href={ inboxLink.url }
-							target="_blank"
-							rel="noreferrer noopener"
-							onClick={ openInbox }
-						>
+						<Button primary href={ inboxLink.url } target="_blank" onClick={ openInbox }>
 							{ __( 'Open email inbox' ) }
-							{ /* A child rather than the `icon` prop, which would add WordPress's
-							   icon-button treatment: a 4px gap and start-justified content. */ }
-							<Icon icon={ arrowUpRight } size={ 16 } />
-						</Step.PrimaryButton>
+							<Icon
+								className="onboarding-email-verification__inbox-icon"
+								icon={ arrowUpRight }
+								size={ 16 }
+							/>
+						</Button>
 					) : (
-						<Step.PrimaryButton
+						<Button
+							primary
 							onClick={ checkNow }
-							isBusy={ checkStatus === 'checking' }
+							busy={ checkStatus === 'checking' }
 							disabled={ checkStatus === 'checking' }
 						>
 							{ __( 'I’ve confirmed my email' ) }
-						</Step.PrimaryButton>
+						</Button>
 					) }
 
-					{ /* Not Step.SecondaryButton: that renders an accent-outlined button, while the
-					   design calls for the neutral outline this one has by default. */ }
 					<Button
 						onClick={ resend }
 						disabled={ isSending || secondsUntilResend > 0 }

@@ -1,11 +1,12 @@
 .onboarding-email-verification {
 	// The layout runs with `noGap`, so this is the whole distance below the title.
 	margin-block-start: 24px;
+}
 
-	// The design uses regular weight; WordPress's Button defaults to semibold.
-	.step-container-v2__primary-button {
-		font-weight: 400;
-	}
+// The button lays its content out inline, so without this the arrow sits on the text
+// baseline — riding above the label and stretching the button past its 40px height.
+.onboarding-email-verification__inbox-icon {
+	vertical-align: middle;
 }
 
 // The description lives in the content row so it shares the buttons' width, which
