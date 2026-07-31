@@ -91,14 +91,11 @@
 }
 
 .theme-a8c-for-agencies {
-	// Stop wrapped copy from stranding a single word on its own last line.
-	// `text-wrap` is inherited, so declaring it here also covers the shared
-	// components A4A pulls in from other clients. Elements that set their own
-	// `white-space: nowrap` still win for themselves and their children.
+	// Keep wrapped text from stranding a single word on the last line. This is
+	// inherited, so it reaches components borrowed from other clients too.
 	text-wrap: pretty;
 
-	// `pretty` only shortens the rag; short blocks need the lines evened out.
-	// Browsers stop balancing past a handful of lines, so long copy keeps `pretty`.
+	// `pretty` only fixes the last line. Short blocks need every line evened out.
 	:is(h1, h2, h3, h4, h5, h6, li, td, th, dd, figcaption) {
 		text-wrap: balance;
 	}
