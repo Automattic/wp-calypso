@@ -96,6 +96,13 @@ body.wp-admin.agents-manager-sidebar-container:not( .modal-open ) {
 		transition: right $transition-timing;
 	}
 
+	// The notes glue hides the iframe until its app announces ready, and its
+	// loading style targets the retired v1 panel id — an early bell open shows
+	// a bare gray panel. Give the loading state a white canvas.
+	#wp-admin-bar-notes #wpnt-notes-panel2.loadingIframe {
+		background: #fff;
+	}
+
 	&.agents-manager-sidebar-container--sidebar-open {
 		@include shrink-sidebar-open( '#wpwrap' );
 
