@@ -1,6 +1,10 @@
 import { fetchUser } from '@automattic/api-core';
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { useSendEmailVerification } from 'calypso/landing/stepper/hooks/use-send-email-verification';
+import {
+	RESEND_MIN_INTERVAL_SECONDS,
+	resendThrottleRetryAfter,
+	useSendEmailVerification,
+} from 'calypso/landing/stepper/hooks/use-send-email-verification';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { EVERY_FIVE_SECONDS, EVERY_SECOND, useInterval } from 'calypso/lib/interval';
 import { useDispatch, useSelector } from 'calypso/state';
@@ -10,7 +14,6 @@ import {
 	cooldownRemainingSeconds,
 	gateResendAvailableAt,
 	markResendUnavailableFor,
-	RESEND_COOLDOWN_SECONDS,
 } from './storage';
 
 // Cross-device confirmation only reaches this tab by polling `/me` (`UserVerificationChecker`
@@ -25,23 +28,6 @@ type CheckStatus = 'idle' | 'checking' | 'unconfirmed' | 'error';
 // refused, and telling someone to retry in a moment is wrong when the wait is an hour.
 type SendStatus = 'idle' | 'sending' | 'error' | 'throttled';
 
-// The server refuses a resend with `throttled`/429 and says how long to wait under
-// `data.retry_after` (seconds). Both the slug and the envelope match what the JSON API returns
-// for rate limits elsewhere. Returns null for anything that isn't a throttle.
-function throttleRetryAfter( error: unknown ): number | null {
-	if ( typeof error !== 'object' || error === null ) {
-		return null;
-	}
-	const { error: slug, code, data } = error as { error?: string; code?: string; data?: unknown };
-	if ( ( slug ?? code ) !== 'throttled' ) {
-		return null;
-	}
-	const retryAfter = ( data as { retry_after?: unknown } | undefined )?.retry_after;
-	// A throttle without a usable hint still holds the button for the standard interval —
-	// releasing it immediately would just earn another refusal.
-	return typeof retryAfter === 'number' && retryAfter > 0 ? retryAfter : RESEND_COOLDOWN_SECONDS;
-}
-
 export function useEmailVerification( flow: string, scope: string ) {
 	const dispatch = useDispatch();
 	const isVerified = useSelector( isCurrentUserEmailVerified );
@@ -51,7 +37,7 @@ export function useEmailVerification( flow: string, scope: string ) {
 	// persistence is unavailable, reopening the button early. Seeded from storage to survive a
 	// refresh — including a server lockout, which would otherwise be forgotten on reload.
 	const availableAtRef = useRef(
-		gateResendAvailableAt( scope ) || Date.now() + RESEND_COOLDOWN_SECONDS * 1000
+		gateResendAvailableAt( scope ) || Date.now() + RESEND_MIN_INTERVAL_SECONDS * 1000
 	);
 
 	const [ sendStatus, setSendStatus ] = useState< SendStatus >( 'idle' );
@@ -79,7 +65,7 @@ export function useEmailVerification( flow: string, scope: string ) {
 			if ( ! success ) {
 				throw new Error( 'unsuccessful_response' );
 			}
-			holdResend( RESEND_COOLDOWN_SECONDS );
+			holdResend( RESEND_MIN_INTERVAL_SECONDS );
 			// A fresh link restarts the polling window — it may be confirmed elsewhere long
 			// after the previous one lapsed.
 			setIsPollingExpired( false );
@@ -91,7 +77,7 @@ export function useEmailVerification( flow: string, scope: string ) {
 				is_resend: true,
 			} );
 		} catch ( error ) {
-			const retryAfter = throttleRetryAfter( error );
+			const retryAfter = resendThrottleRetryAfter( error );
 			if ( retryAfter !== null ) {
 				holdResend( retryAfter );
 			}

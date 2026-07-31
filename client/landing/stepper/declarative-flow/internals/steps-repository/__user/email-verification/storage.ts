@@ -1,10 +1,8 @@
+import { RESEND_MIN_INTERVAL_SECONDS } from 'calypso/landing/stepper/hooks/use-send-email-verification';
+
 // One session-storage record per gate attempt, keyed by flow and user, so the gate survives a
 // refresh. The record's presence means the gate is pending; resolving removes it.
 // `resendAvailableAt` anchors the resend cooldown, `shownAt` the duration metric.
-
-// Matches the server's own minimum interval, so the button reopens exactly when a resend
-// would be accepted. The server remains the authority: when it refuses, it says how long.
-export const RESEND_COOLDOWN_SECONDS = 60;
 
 // The server's hourly lockout is the longest wait it can hand back. Anything beyond that is a
 // corrupt record rather than a real limit, and must not strand the user on a gate with no skip.
@@ -45,7 +43,7 @@ function write( scope: string, record: GateRecord ): void {
 // Called at email account creation: open the gate and start the cooldown, since the activation
 // email from signup counts as the first send. `shownAt` is filled in when the gate renders.
 export function beginGate( scope: string ): void {
-	write( scope, { resendAvailableAt: availableIn( RESEND_COOLDOWN_SECONDS ), shownAt: 0 } );
+	write( scope, { resendAvailableAt: availableIn( RESEND_MIN_INTERVAL_SECONDS ), shownAt: 0 } );
 }
 
 // Stamped when the gate first renders, so the duration metric excludes the token-load and
