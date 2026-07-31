@@ -11,6 +11,7 @@ import {
 	userSettingsQuery,
 } from '@automattic/api-queries';
 import config from '@automattic/calypso-config';
+import { Badge } from '@automattic/ui';
 import { useMutation, useQuery, useSuspenseQuery } from '@tanstack/react-query';
 import {
 	__experimentalHStack as HStack,
@@ -19,6 +20,7 @@ import {
 	Button,
 	Icon,
 	ToggleControl,
+	Tooltip,
 } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
@@ -113,6 +115,17 @@ const features = [
 	__( 'Create beautiful images without leaving WordPress' ),
 ];
 
+const upgradeRequiredText = __( 'Upgrade your plan to enable this setting.' );
+const upgradeRequiredBadge = { text: __( 'Upgrade required' ), intent: 'info' as const };
+
+function UpgradeRequiredBadge() {
+	return (
+		<Tooltip text={ upgradeRequiredText } placement="top">
+			<Badge intent="info">{ upgradeRequiredBadge.text }</Badge>
+		</Tooltip>
+	);
+}
+
 const TELEGRAM_CONNECTION_PATH = '/me/developer';
 
 const INVALID_POST_BY_EMAIL_VALUES = new Set( [
@@ -181,13 +194,16 @@ function getVCardFileName( siteDomain: string ) {
 function EmailAssistantCard( {
 	site,
 	recordTracksEvent,
+	disabled = false,
 }: {
 	site: Site;
 	recordTracksEvent: ReturnType< typeof useAnalytics >[ 'recordTracksEvent' ];
+	disabled?: boolean;
 } ) {
-	const { data: postByEmailSettings, isLoading: isPostByEmailSettingsLoading } = useQuery(
-		sitePostByEmailSettingsQuery( site )
-	);
+	const { data: postByEmailSettings, isLoading: isPostByEmailSettingsLoading } = useQuery( {
+		...sitePostByEmailSettingsQuery( site ),
+		enabled: ! disabled,
+	} );
 	const agentEmailAddress = getAgentEmailAddress( postByEmailSettings?.post_by_email_address );
 	const isAgentEmailEnabled = !! agentEmailAddress;
 	const vCardHref = agentEmailAddress ? getVCardDataUrl( site.slug, agentEmailAddress ) : undefined;
@@ -200,7 +216,7 @@ function EmailAssistantCard( {
 		} )
 	);
 	const isEmailAddressActionDisabled =
-		isPostByEmailSettingsLoading || emailAddressMutation.isPending;
+		disabled || isPostByEmailSettingsLoading || emailAddressMutation.isPending;
 
 	const handleEmailAddressToggle = ( enabled: boolean ) => {
 		emailAddressMutation.mutate(
@@ -246,12 +262,13 @@ function EmailAssistantCard( {
 	};
 
 	return (
-		<Card>
+		<Card className={ disabled ? 'ai-tools-settings__locked-card' : undefined }>
 			<CardBody>
 				<VStack spacing={ 4 }>
 					<SectionHeader
 						title={ __( 'Email WordPress Agent' ) }
 						description={ __( 'Email this site’s WordPress Agent using a private address.' ) }
+						actions={ disabled ? <UpgradeRequiredBadge /> : undefined }
 						level={ 3 }
 					/>
 					<ToggleControl
@@ -421,38 +438,22 @@ export default function AIToolsSettings( { siteSlug }: { siteSlug: string } ) {
 		);
 	};
 
-	const renderContent = () => {
-		if ( ! isAvailable ) {
-			return (
-				<UpsellCallout
-					site={ site }
-					feature={ HostingFeatures.BIG_SKY }
-					upsellId="ai-tools"
-					upsellPlanRequirement="any"
-					upsellTitle={ __( 'Your dream site is just a prompt away' ) }
-					upsellDescription={ __(
-						'Get WordPress Agent to help you build, edit, and redesign your site with ease.'
-					) }
-					upsellIcon={ comment }
-					upsellImage={ upsellIllustrationUrl }
-				/>
-			);
-		}
-
+	const renderSettings = () => {
 		return (
 			<>
-				<Card>
+				<Card className={ ! isAvailable ? 'ai-tools-settings__locked-card' : undefined }>
 					<CardBody>
 						<VStack spacing={ 4 }>
 							<SectionHeader
 								title={ __( 'WordPress Agent' ) }
 								description={ __( 'Helps with site setup, content, design, and more.' ) }
+								actions={ ! isAvailable ? <UpgradeRequiredBadge /> : undefined }
 								level={ 3 }
 							/>
 							<ToggleControl
 								__nextHasNoMarginBottom
 								checked={ isEnabled }
-								disabled={ mutation.isPending }
+								disabled={ ! isAvailable || mutation.isPending }
 								label={ __( 'Enable WordPress Agent' ) }
 								onChange={ handleToggle }
 							/>
@@ -475,23 +476,31 @@ export default function AIToolsSettings( { siteSlug }: { siteSlug: string } ) {
 						</CardFooter>
 					) }
 				</Card>
-				<EmailAssistantCard site={ site } recordTracksEvent={ recordTracksEvent } />
+				<EmailAssistantCard
+					site={ site }
+					recordTracksEvent={ recordTracksEvent }
+					disabled={ ! isAvailable }
+				/>
 				{ config.isEnabled( 'dolly/telegram' ) && (
-					<SummaryButton
-						href={ wpcomLink( TELEGRAM_CONNECTION_PATH ) }
-						title={ __( 'Connect Telegram' ) }
-						description={ __(
-							'Connect your WordPress.com account to Telegram. This connection is shared across multiple sites.'
-						) }
-						decoration={ <Icon icon={ send } size={ 24 } /> }
-						onClick={ () => {
-							recordTracksEvent( 'calypso_dashboard_ai_tool_connect_telegram_click', {
-								site_id: site.ID,
-							} );
-						} }
-					/>
+					<div className={ ! isAvailable ? 'ai-tools-settings__locked-card' : undefined }>
+						<SummaryButton
+							href={ wpcomLink( TELEGRAM_CONNECTION_PATH ) }
+							title={ __( 'Connect Telegram' ) }
+							description={ __(
+								'Connect your WordPress.com account to Telegram. This connection is shared across multiple sites.'
+							) }
+							decoration={ <Icon icon={ send } size={ 24 } /> }
+							onClick={ () => {
+								recordTracksEvent( 'calypso_dashboard_ai_tool_connect_telegram_click', {
+									site_id: site.ID,
+								} );
+							} }
+							badges={ ! isAvailable ? [ upgradeRequiredBadge ] : undefined }
+							disabled={ ! isAvailable }
+						/>
+					</div>
 				) }
-				{ config.isEnabled( 'mcp-settings' ) && (
+				{ config.isEnabled( 'mcp-settings' ) && isAvailable && (
 					<>
 						<Card className="mcp-settings__access-card">
 							<CardBody>
@@ -557,12 +566,21 @@ export default function AIToolsSettings( { siteSlug }: { siteSlug: string } ) {
 					</ConfirmModal>
 				) }
 				{ isEnabled && (
-					<VStack spacing={ 3 }>
-						<SectionHeader title={ __( 'Ways to get started' ) } level={ 3 } />
+					<VStack
+						className={ ! isAvailable ? 'ai-tools-settings__locked-card' : undefined }
+						spacing={ 3 }
+					>
+						<SectionHeader
+							title={ __( 'Ways to get started' ) }
+							actions={ ! isAvailable ? <UpgradeRequiredBadge /> : undefined }
+							level={ 3 }
+						/>
 						<SummaryButtonList>
 							<SummaryButton
 								title={ __( 'Get answers' ) }
 								decoration={ <Icon icon={ help } /> }
+								badges={ ! isAvailable ? [ upgradeRequiredBadge ] : undefined }
+								disabled={ ! isAvailable }
 								onClick={ () => {
 									recordTracksEvent( 'calypso_dashboard_ai_tool_get_answers_click' );
 									setNavigateToRoute( '/odie' );
@@ -573,6 +591,8 @@ export default function AIToolsSettings( { siteSlug }: { siteSlug: string } ) {
 								href={ `${ site.options?.admin_url }site-editor.php?canvas=edit` }
 								title={ __( 'Update your site design' ) }
 								decoration={ <Icon icon={ brush } /> }
+								badges={ ! isAvailable ? [ upgradeRequiredBadge ] : undefined }
+								disabled={ ! isAvailable }
 								onClick={ () => {
 									recordTracksEvent( 'calypso_dashboard_ai_tool_edit_site_click' );
 								} }
@@ -581,6 +601,8 @@ export default function AIToolsSettings( { siteSlug }: { siteSlug: string } ) {
 								href={ `${ site.options?.admin_url }post-new.php` }
 								title={ __( 'Draft and revise content' ) }
 								decoration={ <Icon icon={ termDescription } /> }
+								badges={ ! isAvailable ? [ upgradeRequiredBadge ] : undefined }
+								disabled={ ! isAvailable }
 								onClick={ () => {
 									recordTracksEvent( 'calypso_dashboard_ai_tool_draft_post_click' );
 								} }
@@ -589,6 +611,8 @@ export default function AIToolsSettings( { siteSlug }: { siteSlug: string } ) {
 								href={ `${ site.options?.admin_url }upload.php?ai-assistant` }
 								title={ __( 'Create beautiful images' ) }
 								decoration={ <Icon icon={ image } /> }
+								badges={ ! isAvailable ? [ upgradeRequiredBadge ] : undefined }
+								disabled={ ! isAvailable }
 								onClick={ () => {
 									recordTracksEvent( 'calypso_dashboard_ai_tool_create_images_click' );
 								} }
@@ -611,7 +635,21 @@ export default function AIToolsSettings( { siteSlug }: { siteSlug: string } ) {
 				/>
 			}
 		>
-			{ renderContent() }
+			{ ! isAvailable && (
+				<UpsellCallout
+					site={ site }
+					feature={ HostingFeatures.BIG_SKY }
+					upsellId="ai-tools"
+					upsellPlanRequirement="any"
+					upsellTitle={ __( 'Your dream site is just a prompt away' ) }
+					upsellDescription={ __(
+						'Get WordPress Agent to help you build, edit, and redesign your site with ease.'
+					) }
+					upsellIcon={ comment }
+					upsellImage={ upsellIllustrationUrl }
+				/>
+			) }
+			{ renderSettings() }
 		</PageLayout>
 	);
 }
