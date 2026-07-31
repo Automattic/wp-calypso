@@ -303,4 +303,21 @@ describe( 'FullPostView automatic mark-as-seen on view', () => {
 		expect( requestMarkAsSeen ).not.toHaveBeenCalled();
 		expect( requestMarkAsSeenBlog ).not.toHaveBeenCalled();
 	} );
+
+	it( 'does not hit the seen endpoint when seen is disabled for the feed', () => {
+		const requestMarkAsSeen = jest.fn();
+		const requestMarkAsSeenBlog = jest.fn();
+		const instance = new FullPostView( {
+			...baseProps,
+			isSeenEnabled: false,
+			requestMarkAsSeen,
+			requestMarkAsSeenBlog,
+			post: { ...feedPost, is_seen: false },
+		} );
+
+		runAttemptToSendPageView( instance );
+
+		expect( requestMarkAsSeen ).not.toHaveBeenCalled();
+		expect( requestMarkAsSeenBlog ).not.toHaveBeenCalled();
+	} );
 } );
