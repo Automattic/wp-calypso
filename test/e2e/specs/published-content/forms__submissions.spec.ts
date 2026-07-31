@@ -175,20 +175,14 @@ test.describe(
 			let isInSpam = false;
 
 			await test.step( 'Search for first response email until result shows up', async () => {
-				const searchAndClickFolderWithResult = async () => {
-					await feedbackInboxPage.searchResponses( formData1.email );
-					const tabLocator = page
-						.getByRole( 'tab', { name: /(Inbox|Spam) 1/ } )
-						.or( page.getByRole( 'radio', { name: /(Inbox|Spam)\s*\(\s*1\s*\)/ } ) );
-					await tabLocator.click( { timeout: 4000 } );
-					const tabText = await tabLocator.textContent();
-					isInSpam = tabText?.toLowerCase().includes( 'spam' ) || false;
-				};
-
 				const MAX_ATTEMPTS = 3;
 				for ( let attempt = 1; attempt <= MAX_ATTEMPTS; attempt++ ) {
 					try {
-						await searchAndClickFolderWithResult();
+						// Retries re-enter the same search term, so no request is fired and
+						// there is nothing to wait for. Skip the wait to avoid hanging.
+						await feedbackInboxPage.searchResponses( formData1.email, attempt > 1 );
+						isInSpam =
+							( await feedbackInboxPage.findFolderWithResult( formData1.name ) ) === 'Spam';
 						return;
 					} catch ( err ) {
 						if ( attempt === MAX_ATTEMPTS ) {
@@ -228,21 +222,13 @@ test.describe(
 			await test.step( 'Search for second response email until result shows up', async () => {
 				feedbackInboxPage = new FeedbackInboxPage( page );
 
-				const searchAndClickFolderWithResult = async () => {
-					await feedbackInboxPage.clearSearch( true );
-					await feedbackInboxPage.searchResponses( formData2.email );
-					const tabLocator = page
-						.getByRole( 'tab', { name: /(Inbox|Spam) 1/ } )
-						.or( page.getByRole( 'radio', { name: /(Inbox|Spam)\s*\(\s*1\s*\)/ } ) );
-					await tabLocator.click( { timeout: 4000 } );
-					const tabText = await tabLocator.textContent();
-					isInSpam = tabText?.toLowerCase().includes( 'spam' ) || false;
-				};
-
 				const MAX_ATTEMPTS = 3;
 				for ( let attempt = 1; attempt <= MAX_ATTEMPTS; attempt++ ) {
 					try {
-						await searchAndClickFolderWithResult();
+						await feedbackInboxPage.clearSearch( true );
+						await feedbackInboxPage.searchResponses( formData2.email );
+						isInSpam =
+							( await feedbackInboxPage.findFolderWithResult( formData2.name ) ) === 'Spam';
 						return;
 					} catch ( err ) {
 						if ( attempt === MAX_ATTEMPTS ) {

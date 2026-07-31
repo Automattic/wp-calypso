@@ -185,13 +185,26 @@ export class FeedbackInboxPage {
 			const folderChip = this.page.locator( '.dataviews-filters__summary-chip' ).filter( {
 				hasText: /Folder is:/i,
 			} );
-			await folderChip.click();
-			await this.page.getByRole( 'option', { name: new RegExp( folderName, 'i' ) } ).click();
+			const folderOption = this.page.getByRole( 'option', {
+				name: new RegExp( folderName, 'i' ),
+			} );
+			// Selecting a folder leaves the popover open, so clicking the chip
+			// unconditionally would close it. Only open it when it is shut.
+			if ( ! ( await folderOption.isVisible( { timeout: 1000 } ).catch( () => false ) ) ) {
+				await folderChip.click();
+			}
+			await folderOption.click();
 			// Wait for the chip text to reflect the selected folder.
 			await this.page
 				.locator( '.dataviews-filters__summary-chip' )
 				.filter( { hasText: new RegExp( `Folder is:\\s*${ folderName }`, 'i' ) } )
 				.waitFor( { timeout: 5000 } );
+			// The popover stays open over the table and swallows row clicks, so
+			// dismiss it before handing back control.
+			if ( await folderOption.isVisible( { timeout: 500 } ).catch( () => false ) ) {
+				await this.page.keyboard.press( 'Escape' );
+				await folderOption.waitFor( { state: 'hidden', timeout: 5000 } );
+			}
 			return;
 		}
 
@@ -210,6 +223,64 @@ export class FeedbackInboxPage {
 				} )
 			)
 			.waitFor( { timeout: 5000 } );
+	}
+
+	/**
+	 * Reads the result count from the CFM folder filter chip.
+	 *
+	 * The chip reads "Folder is: Inbox (0)", and the count respects the active
+	 * search — CFM refetches `feedback/counts?search=…` on every query.
+	 *
+	 * @returns {Promise<number>} Responses in the selected folder, 0 if unreadable.
+	 */
+	private async getSelectedFolderCount(): Promise< number > {
+		const chipText = await this.page
+			.locator( '.dataviews-filters__summary-chip' )
+			.filter( { hasText: /Folder is:/i } )
+			.textContent();
+		const count = chipText?.match( /\(\s*(\d+)\s*\)/ );
+		return count ? parseInt( count[ 1 ], 10 ) : 0;
+	}
+
+	/**
+	 * Selects the folder that holds the response matching the given text, and
+	 * returns that folder's name.
+	 *
+	 * Akismet decides whether a submission lands in Inbox or Spam, so the caller
+	 * cannot know up front which folder to look in.
+	 *
+	 * The old dashboard answers this cheaply: folders are tabs (radios on some
+	 * Atomic sites) labelled with a result count, so the tab reading "1" is the
+	 * one holding the match. CFM has no folder tabs — the folder is a DataViews
+	 * filter chip — so there we select each folder in turn and look for the row.
+	 *
+	 * @param {string} text Text identifying the response row, e.g. the name field.
+	 * @returns {Promise<string>} The folder holding the response.
+	 * @throws If neither Inbox nor Spam holds a matching response.
+	 */
+	async findFolderWithResult( text: string ): Promise< 'Inbox' | 'Spam' > {
+		if ( await this.isCentralFormManagement() ) {
+			// The chip carries a search-scoped count for the selected folder
+			// ("Folder is: Inbox (0)"), so one folder switch answers the question.
+			await this.clickFolderTab( 'Inbox' );
+			if ( ( await this.getSelectedFolderCount() ) > 0 ) {
+				return 'Inbox';
+			}
+
+			await this.clickFolderTab( 'Spam' );
+			if ( ( await this.getSelectedFolderCount() ) > 0 ) {
+				return 'Spam';
+			}
+
+			throw new Error( `No response matching "${ text }" found in Inbox or Spam.` );
+		}
+
+		const tabLocator = this.page
+			.getByRole( 'tab', { name: /(Inbox|Spam) 1/ } )
+			.or( this.page.getByRole( 'radio', { name: /(Inbox|Spam)\s*\(\s*1\s*\)/ } ) );
+		await tabLocator.click( { timeout: 4000 } );
+		const tabText = await tabLocator.textContent();
+		return tabText?.toLowerCase().includes( 'spam' ) ? 'Spam' : 'Inbox';
 	}
 
 	/**
