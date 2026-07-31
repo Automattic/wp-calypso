@@ -1,4 +1,3 @@
-import { removePurchase as removePurchaseRequest } from '@automattic/api-core';
 import {
 	purchaseCancelFeaturesQuery,
 	purchaseQuery,
@@ -58,6 +57,7 @@ import {
 	cancelAndRefundPurchaseAsync,
 	cancelAndRefundPurchase,
 	extendPurchaseWithFreeMonth,
+	removePurchaseAsync,
 } from 'calypso/lib/purchases/actions';
 import { hasCustomDomain } from 'calypso/lib/site/utils';
 import CancelPurchaseLoadingPlaceholder from 'calypso/me/purchases/cancel-purchase/loading-placeholder';
@@ -583,7 +583,7 @@ class CancelPurchase extends Component< CancelPurchaseAllProps, CancelPurchaseSt
 	removePurchase = async ( purchase: Purchase ) => {
 		const { translate } = this.props;
 		try {
-			await removePurchaseRequest( purchase.ID );
+			await removePurchaseAsync( purchase.ID );
 			return {
 				success: true,
 				message: translate( '%(purchaseName)s was removed from your account.', {
@@ -713,7 +713,7 @@ class CancelPurchase extends Component< CancelPurchaseAllProps, CancelPurchaseSt
 				// 3. Fire mutation in background. On failure, restore the purchase to
 				//    Redux — the list watches getUserPurchases for reappearance and
 				//    self-dismisses its notice.
-				removePurchaseRequest( purchase.ID ).catch( () => {
+				removePurchaseAsync( purchase.ID ).catch( () => {
 					if ( rawPurchase ) {
 						this.props.restorePurchaseToState( rawPurchase );
 					}
