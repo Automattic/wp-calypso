@@ -1,9 +1,14 @@
 import { Substitution, useTranslate } from 'i18n-calypso';
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useRef, useState } from 'react';
 import Banner from 'calypso/components/banner';
 import EmailVerificationDialog from 'calypso/components/email-verification/email-verification-dialog';
 import useGetEmailToVerify from 'calypso/components/email-verification/hooks/use-get-email-to-verify';
-import { useSendEmailVerification } from 'calypso/landing/stepper/hooks/use-send-email-verification';
+import {
+	RESEND_MIN_INTERVAL_SECONDS,
+	resendThrottleRetryAfter,
+	useSendEmailVerification,
+} from 'calypso/landing/stepper/hooks/use-send-email-verification';
+import { EVERY_SECOND, useInterval } from 'calypso/lib/interval';
 import { emailFormEventEmitter } from 'calypso/me/account/account-email-field';
 import { useDispatch, useSelector } from 'calypso/state';
 import { isCurrentUserEmailVerified } from 'calypso/state/current-user/selectors';
@@ -71,6 +76,25 @@ const EmailVerificationBannerV2: React.FC< Props > = ( { setIsBusy } ) => {
 	const sendVerificationEmail = useSendEmailVerification();
 	const [ isSendingEmail, setIsSendingEmail ] = useState( false );
 
+	// The server allows one resend a minute and five an hour, so the button would otherwise
+	// invite a click it is going to refuse. Anchored to a timestamp rather than decremented,
+	// because timers are suspended while the tab is in the background.
+	const resendAvailableAtRef = useRef( 0 );
+	const [ secondsUntilResend, setSecondsUntilResend ] = useState( 0 );
+
+	const holdResend = ( seconds: number ) => {
+		resendAvailableAtRef.current = Date.now() + seconds * 1000;
+		setSecondsUntilResend( seconds );
+	};
+
+	useInterval(
+		() =>
+			setSecondsUntilResend(
+				Math.max( 0, Math.ceil( ( resendAvailableAtRef.current - Date.now() ) / 1000 ) )
+			),
+		secondsUntilResend > 0 && EVERY_SECOND
+	);
+
 	const highlightEmailInput = useCallback( () => {
 		emailFormEventEmitter?.dispatchEvent( new Event( 'highlightInput' ) );
 	}, [] );
@@ -89,6 +113,7 @@ const EmailVerificationBannerV2: React.FC< Props > = ( { setIsBusy } ) => {
 				// PUT /me/settings won't resend when the email hasn't changed.
 				await sendVerificationEmail();
 			}
+			holdResend( RESEND_MIN_INTERVAL_SECONDS );
 			dispatch(
 				successNotice(
 					translate(
@@ -100,6 +125,12 @@ const EmailVerificationBannerV2: React.FC< Props > = ( { setIsBusy } ) => {
 				)
 			);
 		} catch ( err ) {
+			// A refusal is not a failure: hold the button for as long as the server says it
+			// will keep refusing, and report the wait rather than a generic error.
+			const retryAfter = resendThrottleRetryAfter( err );
+			if ( retryAfter !== null ) {
+				holdResend( retryAfter );
+			}
 			dispatch(
 				errorNotice(
 					err instanceof Error
@@ -134,13 +165,29 @@ const EmailVerificationBannerV2: React.FC< Props > = ( { setIsBusy } ) => {
 		}
 	);
 
+	// The wait is a minute after a send, but up to an hour once the hourly allowance is spent,
+	// and "Resend in 2700s" is not a number anyone reads.
+	let callToAction: React.ReactNode = translate( 'Resend email' );
+	if ( secondsUntilResend > 60 ) {
+		const minutes = Math.ceil( secondsUntilResend / 60 );
+		callToAction = translate( 'Resend in %(minutes)d minute', 'Resend in %(minutes)d minutes', {
+			count: minutes,
+			args: { minutes },
+		} );
+	} else if ( secondsUntilResend > 0 ) {
+		callToAction = translate( 'Resend in %(seconds)ds', {
+			args: { seconds: secondsUntilResend },
+		} );
+	}
+
 	return (
 		<Banner
 			className="email-verification-banner"
 			icon="notice"
 			title={ translate( 'Verify your email' ) }
 			description={ description }
-			callToAction={ translate( 'Resend email' ) }
+			callToAction={ callToAction }
+			isCallToActionDisabled={ secondsUntilResend > 0 }
 			onClick={ resendEmailToVerify }
 			secondaryCallToAction={ translate( 'Update email' ) }
 			secondaryOnClick={ highlightEmailInput }
