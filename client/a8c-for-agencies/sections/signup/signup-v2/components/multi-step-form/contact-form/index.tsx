@@ -253,7 +253,7 @@ const SignupContactForm = ( { onContinue, initialFormData, withEmail = false }: 
 			) }
 			description={ preventWidows(
 				translate(
-					'Join 6000+ agencies and grow your business with {{span}}Automattic for Agencies.{{/span}} Get access to site management, earn commission on referrals, and explore our tier program to launch your business potential.',
+					'Join 8,000+ agencies and grow your business with {{span}}Automattic for Agencies.{{/span}} Get access to site management, earn commission on referrals, and explore our tier program to launch your business potential.',
 					{
 						components: {
 							span: <span className="signup-contact-form__a4a-span" />,
