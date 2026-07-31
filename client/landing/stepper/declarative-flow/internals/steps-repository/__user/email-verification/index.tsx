@@ -31,9 +31,9 @@ interface Props {
 }
 
 const EmailVerificationGate = ( { flow, scope, logo, onDone }: Props ) => {
-	const { __ } = useI18n();
+	const { __, _n } = useI18n();
 	const email = useSelector( getCurrentUserEmail );
-	const { isVerified, isSending, hasSendError, secondsUntilResend, checkStatus, checkNow, resend } =
+	const { isVerified, sendStatus, secondsUntilResend, checkStatus, checkNow, resend } =
 		useEmailVerification( flow, scope );
 
 	const hasSubmitted = useRef( false );
@@ -41,6 +41,24 @@ const EmailVerificationGate = ( { flow, scope, logo, onDone }: Props ) => {
 	const inboxLink = getInboxLink( email ?? undefined );
 
 	const title = __( 'Verify your email' );
+
+	// The interval is seconds, but a server lockout runs to an hour, and "Resend in 2700s" is
+	// not a number anyone reads.
+	let resendLabel: string = __( 'Resend' );
+	if ( secondsUntilResend > 60 ) {
+		const minutes = Math.ceil( secondsUntilResend / 60 );
+		resendLabel = sprintf(
+			// translators: %d is the number of minutes until the email can be resent.
+			_n( 'Resend in %d minute', 'Resend in %d minutes', minutes ),
+			minutes
+		);
+	} else if ( secondsUntilResend > 0 ) {
+		resendLabel = sprintf(
+			// translators: %d is the number of seconds until the email can be resent.
+			__( 'Resend in %ds' ),
+			secondsUntilResend
+		);
+	}
 
 	// Stamp the shown-at time now the gate is actually on screen (see storage.ts).
 	useEffect( () => {
@@ -149,16 +167,10 @@ const EmailVerificationGate = ( { flow, scope, logo, onDone }: Props ) => {
 
 						<Button
 							onClick={ resend }
-							disabled={ isSending || secondsUntilResend > 0 }
-							busy={ isSending }
+							disabled={ sendStatus === 'sending' || secondsUntilResend > 0 }
+							busy={ sendStatus === 'sending' }
 						>
-							{ secondsUntilResend > 0
-								? sprintf(
-										// translators: %d is the number of seconds until the email can be resent.
-										__( 'Resend in %ds' ),
-										secondsUntilResend
-								  )
-								: __( 'Resend' ) }
+							{ resendLabel }
 						</Button>
 
 						{ checkStatus === 'unconfirmed' && (
@@ -175,9 +187,17 @@ const EmailVerificationGate = ( { flow, scope, logo, onDone }: Props ) => {
 							</p>
 						) }
 
-						{ hasSendError && (
+						{ sendStatus === 'error' && (
 							<p className="onboarding-email-verification__notice is-error" role="alert">
 								{ __( 'We couldn’t send the email. Please try again in a moment.' ) }
+							</p>
+						) }
+
+						{ sendStatus === 'throttled' && (
+							<p className="onboarding-email-verification__notice" role="status">
+								{ __(
+									'That’s a lot of emails. Look for one we’ve already sent — the button unlocks shortly.'
+								) }
 							</p>
 						) }
 					</VStack>

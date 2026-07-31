@@ -39,6 +39,17 @@ const mockApi = () => nock( 'https://public-api.wordpress.com:443' );
 const mockSendVerificationEmail = ( response: { success: boolean } = { success: true } ) =>
 	mockApi().post( '/rest/v1.1/me/send-verification-email' ).reply( 200, response );
 
+// The shape the server returns when it refuses a resend: `throttled`/429 with the wait in
+// seconds under `data.retry_after`.
+const mockSendVerificationEmailThrottled = ( retryAfter: number ) =>
+	mockApi()
+		.post( '/rest/v1.1/me/send-verification-email' )
+		.reply( 429, {
+			error: 'throttled',
+			message: 'You have requested too many verification emails.',
+			data: { retry_after: retryAfter },
+		} );
+
 const mockFetchUser = ( emailVerified: boolean ) =>
 	mockApi()
 		.get( '/rest/v1.1/me' )
@@ -195,6 +206,31 @@ describe( 'EmailVerificationGate', () => {
 			screen.queryByText( /We haven’t received your confirmation yet\./ )
 		).not.toBeInTheDocument();
 		expect( onDone ).not.toHaveBeenCalled();
+	} );
+
+	it( 'holds the button for as long as the server says when it throttles', async () => {
+		jest.useFakeTimers();
+		const user = userEvent.setup( { advanceTimers: jest.advanceTimersByTime } );
+		// Past the per-minute interval, so the server is reporting the hourly lockout.
+		mockSendVerificationEmailThrottled( 25 * 60 );
+
+		render();
+
+		act( () => {
+			jest.advanceTimersByTime( COOLDOWN_MS );
+		} );
+		await user.click( await screen.findByRole( 'button', { name: 'Resend' } ) );
+
+		// Held for the server's wait rather than the local 60s, and read in minutes because
+		// "Resend in 1500s" is not a number anyone parses.
+		expect( await screen.findByRole( 'button', { name: 'Resend in 25 minutes' } ) ).toBeVisible();
+		expect( screen.getByText( /Look for one we/ ) ).toBeVisible();
+		// A refusal is not a failure, so the generic send error stays away.
+		expect( screen.queryByText( /We couldn’t send the email/ ) ).not.toBeInTheDocument();
+		expect( recordTracksEvent ).toHaveBeenCalledWith(
+			'calypso_signup_email_verification_email_send_failed',
+			expect.objectContaining( { flow: FLOW, is_resend: true, error: 'throttled' } )
+		);
 	} );
 
 	it( 'resends once the cooldown lapses and restarts it', async () => {

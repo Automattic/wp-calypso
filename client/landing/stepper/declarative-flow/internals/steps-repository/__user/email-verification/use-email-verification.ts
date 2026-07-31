@@ -8,8 +8,8 @@ import { fetchCurrentUser, setUserEmailVerified } from 'calypso/state/current-us
 import { isCurrentUserEmailVerified } from 'calypso/state/current-user/selectors';
 import {
 	cooldownRemainingSeconds,
-	gateSentAt,
-	markResent,
+	gateResendAvailableAt,
+	markResendUnavailableFor,
 	RESEND_COOLDOWN_SECONDS,
 } from './storage';
 
@@ -21,63 +21,93 @@ const POLL_LIMIT_MS = 15 * 60 * 1000;
 // isn't mistaken for an unverified email.
 type CheckStatus = 'idle' | 'checking' | 'unconfirmed' | 'error';
 
+// `throttled` is kept distinct from `error` for the same reason: the send didn't fail, it was
+// refused, and telling someone to retry in a moment is wrong when the wait is an hour.
+type SendStatus = 'idle' | 'sending' | 'error' | 'throttled';
+
+// The server refuses a resend with `throttled`/429 and says how long to wait under
+// `data.retry_after` (seconds). Both the slug and the envelope match what the JSON API returns
+// for rate limits elsewhere. Returns null for anything that isn't a throttle.
+function throttleRetryAfter( error: unknown ): number | null {
+	if ( typeof error !== 'object' || error === null ) {
+		return null;
+	}
+	const { error: slug, code, data } = error as { error?: string; code?: string; data?: unknown };
+	if ( ( slug ?? code ) !== 'throttled' ) {
+		return null;
+	}
+	const retryAfter = ( data as { retry_after?: unknown } | undefined )?.retry_after;
+	// A throttle without a usable hint still holds the button for the standard interval —
+	// releasing it immediately would just earn another refusal.
+	return typeof retryAfter === 'number' && retryAfter > 0 ? retryAfter : RESEND_COOLDOWN_SECONDS;
+}
+
 export function useEmailVerification( flow: string, scope: string ) {
 	const dispatch = useDispatch();
 	const isVerified = useSelector( isCurrentUserEmailVerified );
 	const sendVerificationEmail = useSendEmailVerification();
 
-	// Held in memory because re-reading storage each tick would report no send when persistence
-	// is unavailable, resetting the cooldown to zero. Seeded from storage to survive a refresh.
-	const sentAtRef = useRef( gateSentAt( scope ) || Date.now() );
+	// Held in memory because re-reading storage each tick would report no cooldown when
+	// persistence is unavailable, reopening the button early. Seeded from storage to survive a
+	// refresh — including a server lockout, which would otherwise be forgotten on reload.
+	const availableAtRef = useRef(
+		gateResendAvailableAt( scope ) || Date.now() + RESEND_COOLDOWN_SECONDS * 1000
+	);
 
-	const [ isSending, setIsSending ] = useState( false );
-	const [ hasSendError, setHasSendError ] = useState( false );
+	const [ sendStatus, setSendStatus ] = useState< SendStatus >( 'idle' );
 	const [ secondsUntilResend, setSecondsUntilResend ] = useState( () =>
-		cooldownRemainingSeconds( sentAtRef.current )
+		cooldownRemainingSeconds( availableAtRef.current )
 	);
 	const [ isPollingExpired, setIsPollingExpired ] = useState( false );
 	const [ pollWindowKey, setPollWindowKey ] = useState( 0 );
 	const [ checkStatus, setCheckStatus ] = useState< CheckStatus >( 'idle' );
 	const [ isVisible, setIsVisible ] = useState( () => document.visibilityState === 'visible' );
 
+	// Hold the button until `seconds` have passed, and remember it across a refresh.
+	const holdResend = ( seconds: number ) => {
+		markResendUnavailableFor( scope, seconds );
+		availableAtRef.current = Date.now() + seconds * 1000;
+		setSecondsUntilResend( cooldownRemainingSeconds( availableAtRef.current ) );
+	};
+
 	// The initial email is the activation email from account creation; this only resends.
 	const resend = async () => {
-		setIsSending( true );
-		setHasSendError( false );
+		setSendStatus( 'sending' );
 
 		try {
 			const { success } = await sendVerificationEmail();
 			if ( ! success ) {
 				throw new Error( 'unsuccessful_response' );
 			}
-			sentAtRef.current = Date.now();
-			markResent( scope );
-			setSecondsUntilResend( RESEND_COOLDOWN_SECONDS );
+			holdResend( RESEND_COOLDOWN_SECONDS );
 			// A fresh link restarts the polling window — it may be confirmed elsewhere long
 			// after the previous one lapsed.
 			setIsPollingExpired( false );
 			setPollWindowKey( ( key ) => key + 1 );
 			setCheckStatus( 'idle' );
+			setSendStatus( 'idle' );
 			recordTracksEvent( 'calypso_signup_email_verification_email_sent', {
 				flow,
 				is_resend: true,
 			} );
 		} catch ( error ) {
-			setHasSendError( true );
+			const retryAfter = throttleRetryAfter( error );
+			if ( retryAfter !== null ) {
+				holdResend( retryAfter );
+			}
+			setSendStatus( retryAfter !== null ? 'throttled' : 'error' );
 			recordTracksEvent( 'calypso_signup_email_verification_email_send_failed', {
 				flow,
 				is_resend: true,
-				error: error instanceof Error ? error.message : String( error ),
+				error: retryAfter !== null ? 'throttled' : String( error ),
 			} );
-		} finally {
-			setIsSending( false );
 		}
 	};
 
 	// Recompute the cooldown from the send time rather than decrementing a counter: mobile
 	// browsers suspend timers while the user is away in their email app.
 	useInterval(
-		() => setSecondsUntilResend( cooldownRemainingSeconds( sentAtRef.current ) ),
+		() => setSecondsUntilResend( cooldownRemainingSeconds( availableAtRef.current ) ),
 		secondsUntilResend > 0 && EVERY_SECOND
 	);
 
@@ -87,7 +117,7 @@ export function useEmailVerification( flow: string, scope: string ) {
 			const visible = document.visibilityState === 'visible';
 			setIsVisible( visible );
 			if ( visible ) {
-				setSecondsUntilResend( cooldownRemainingSeconds( sentAtRef.current ) );
+				setSecondsUntilResend( cooldownRemainingSeconds( availableAtRef.current ) );
 				if ( ! isVerified ) {
 					dispatch( fetchCurrentUser() );
 				}
@@ -112,7 +142,9 @@ export function useEmailVerification( flow: string, scope: string ) {
 
 	const checkNow = useCallback( async () => {
 		setCheckStatus( 'checking' );
-		setHasSendError( false );
+		// Clear a stale send failure, but not a throttle — that one is still true, and the
+		// button is still counting down against it.
+		setSendStatus( ( status ) => ( status === 'error' ? 'idle' : status ) );
 		recordTracksEvent( 'calypso_signup_email_verification_check_click', { flow } );
 
 		try {
@@ -131,8 +163,7 @@ export function useEmailVerification( flow: string, scope: string ) {
 
 	return {
 		isVerified,
-		isSending,
-		hasSendError,
+		sendStatus,
 		secondsUntilResend,
 		checkStatus,
 		checkNow,
