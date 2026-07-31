@@ -575,6 +575,9 @@
 		color: var( --color-accent-5 );
 	}
 	.sites-overview__stats-trend {
+		display: flex;
+		align-items: center;
+		justify-content: center;
 		padding: 0 8px 0 4px;
 	}
 	.sites-overview__stats-trend__up,
