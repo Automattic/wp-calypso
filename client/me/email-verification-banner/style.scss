@@ -6,6 +6,10 @@
 
 	.banner__action {
 		display: flex;
+		// The countdown is the only place the remaining wait is shown, and these labels don't
+		// wrap — without room to stack, a narrow screen ellipsises it away to "Resend in…".
+		flex-wrap: wrap;
+		row-gap: 8px;
 
 		.button {
 			white-space: nowrap;

@@ -5,6 +5,7 @@ import EmailVerificationDialog from 'calypso/components/email-verification/email
 import useGetEmailToVerify from 'calypso/components/email-verification/hooks/use-get-email-to-verify';
 import { useSendEmailVerification } from 'calypso/landing/stepper/hooks/use-send-email-verification';
 import {
+	cooldownDisplay,
 	RESEND_MIN_INTERVAL_SECONDS,
 	resendThrottleRetryAfter,
 } from 'calypso/lib/email-verification/resend';
@@ -76,8 +77,6 @@ const EmailVerificationBannerV2: React.FC< Props > = ( { setIsBusy } ) => {
 	const sendVerificationEmail = useSendEmailVerification();
 	const [ isSendingEmail, setIsSendingEmail ] = useState( false );
 
-	// The server allows one resend a minute and five an hour; without this the button invites
-	// a click it is going to refuse.
 	const { secondsUntilResend, hold: holdResend, reset: resetResend } = useResendCooldown();
 
 	// Correcting a typo switches both the address and the endpoint, and the pending-change
@@ -160,19 +159,16 @@ const EmailVerificationBannerV2: React.FC< Props > = ( { setIsBusy } ) => {
 		}
 	);
 
-	// Up to an hour once the hourly allowance is spent, and "Resend in 2700s" is not a number
-	// anyone reads.
+	const { value: waitValue, unit: waitUnit } = cooldownDisplay( secondsUntilResend );
 	let callToAction: React.ReactNode = translate( 'Resend email' );
-	if ( secondsUntilResend > 60 ) {
-		const minutes = Math.ceil( secondsUntilResend / 60 );
-		callToAction = translate( 'Resend in %(minutes)d minute', 'Resend in %(minutes)d minutes', {
-			count: minutes,
-			args: { minutes },
-		} );
-	} else if ( secondsUntilResend > 0 ) {
-		callToAction = translate( 'Resend in %(seconds)ds', {
-			args: { seconds: secondsUntilResend },
-		} );
+	if ( secondsUntilResend > 0 ) {
+		callToAction =
+			waitUnit === 'minute'
+				? translate( 'Resend in %(minutes)d minute', 'Resend in %(minutes)d minutes', {
+						count: waitValue,
+						args: { minutes: waitValue },
+				  } )
+				: translate( 'Resend in %(seconds)ds', { args: { seconds: waitValue } } );
 	}
 
 	return (

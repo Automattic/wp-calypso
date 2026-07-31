@@ -30,6 +30,23 @@ export function cooldownDeadline( seconds: number ): number {
  * `data.retry_after`. Callers need the distinction because telling someone to try again in a
  * moment is wrong when the wait is an hour.
  */
+/**
+ * How a remaining wait should read: seconds up to a minute, minutes past that, where the wait is
+ * long enough that a raw second count stops being a number anyone parses.
+ *
+ * Translation is left to the caller — the two of them use different i18n APIs. Both keep a
+ * singular form even though the threshold means English only ever renders the plural: locales
+ * whose plural rules select the singular form for other counts still need it.
+ */
+export function cooldownDisplay( seconds: number ): {
+	value: number;
+	unit: 'second' | 'minute';
+} {
+	return seconds > 60
+		? { value: Math.ceil( seconds / 60 ), unit: 'minute' }
+		: { value: seconds, unit: 'second' };
+}
+
 export function resendThrottleRetryAfter( error: unknown ): number | null {
 	if ( typeof error !== 'object' || error === null ) {
 		return null;

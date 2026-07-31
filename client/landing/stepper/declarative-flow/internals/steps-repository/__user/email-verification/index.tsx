@@ -8,6 +8,7 @@ import { useI18n } from '@wordpress/react-i18n';
 import { useCallback, useEffect, useMemo, useRef, type ReactNode } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import { cooldownDisplay } from 'calypso/lib/email-verification/resend';
 import UserVerificationChecker from 'calypso/lib/user/verification-checker';
 import { useSelector } from 'calypso/state';
 import { getCurrentUserEmail } from 'calypso/state/current-user/selectors';
@@ -42,21 +43,21 @@ const EmailVerificationGate = ( { flow, scope, logo, onDone }: Props ) => {
 
 	const title = __( 'Verify your email' );
 
-	// A server lockout runs to an hour, and "Resend in 2700s" is not a number anyone reads.
+	const { value: waitValue, unit: waitUnit } = cooldownDisplay( secondsUntilResend );
 	let resendLabel: string = __( 'Resend' );
-	if ( secondsUntilResend > 60 ) {
-		const minutes = Math.ceil( secondsUntilResend / 60 );
-		resendLabel = sprintf(
-			// translators: %d is the number of minutes until the email can be resent.
-			_n( 'Resend in %d minute', 'Resend in %d minutes', minutes ),
-			minutes
-		);
-	} else if ( secondsUntilResend > 0 ) {
-		resendLabel = sprintf(
-			// translators: %d is the number of seconds until the email can be resent.
-			__( 'Resend in %ds' ),
-			secondsUntilResend
-		);
+	if ( secondsUntilResend > 0 ) {
+		resendLabel =
+			waitUnit === 'minute'
+				? sprintf(
+						// translators: %d is the number of minutes until the email can be resent.
+						_n( 'Resend in %d minute', 'Resend in %d minutes', waitValue ),
+						waitValue
+				  )
+				: sprintf(
+						// translators: %d is the number of seconds until the email can be resent.
+						__( 'Resend in %ds' ),
+						waitValue
+				  );
 	}
 
 	// Stamp the shown-at time now the gate is actually on screen (see storage.ts).
