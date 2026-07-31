@@ -14,12 +14,6 @@ import { fetchCurrentUser, setUserEmailVerified } from 'calypso/state/current-us
 import { isCurrentUserEmailVerified } from 'calypso/state/current-user/selectors';
 import { gateResendAvailableAt, markResendUnavailableUntil } from './storage';
 
-// Kept as-is from before throttles were reported separately, so ordinary failures carry the
-// same value they always have.
-function describeError( error: unknown ): string {
-	return error instanceof Error ? error.message : String( error );
-}
-
 // Cross-device confirmation only reaches this tab by polling `/me` (`UserVerificationChecker`
 // covers the same browser instantly). Cap it so a tab left open overnight doesn't poll forever.
 const POLL_LIMIT_MS = 15 * 60 * 1000;
@@ -79,10 +73,13 @@ export function useEmailVerification( flow: string, scope: string ) {
 				holdResend( retryAfter );
 			}
 			setSendStatus( retryAfter !== null ? 'throttled' : 'error' );
+			// Ordinary failures keep the value they have always reported, so their existing
+			// aggregation isn't split by this.
+			const failure = error instanceof Error ? error.message : String( error );
 			recordTracksEvent( 'calypso_signup_email_verification_email_send_failed', {
 				flow,
 				is_resend: true,
-				error: retryAfter !== null ? 'throttled' : describeError( error ),
+				error: retryAfter !== null ? 'throttled' : failure,
 			} );
 		}
 	};

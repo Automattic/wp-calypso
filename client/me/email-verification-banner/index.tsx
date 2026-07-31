@@ -14,6 +14,7 @@ import { emailFormEventEmitter } from 'calypso/me/account/account-email-field';
 import { useDispatch, useSelector } from 'calypso/state';
 import { isCurrentUserEmailVerified } from 'calypso/state/current-user/selectors';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
+import getUserSettings from 'calypso/state/selectors/get-user-settings';
 import isPendingEmailChange from 'calypso/state/selectors/is-pending-email-change';
 import { setUnsavedUserSetting } from 'calypso/state/user-settings/actions';
 import { saveUnsavedUserSettings } from 'calypso/state/user-settings/thunks';
@@ -79,11 +80,19 @@ const EmailVerificationBannerV2: React.FC< Props > = ( { setIsBusy } ) => {
 
 	const { secondsUntilResend, hold: holdResend, reset: resetResend } = useResendCooldown();
 
-	// Correcting a typo switches both the address and the endpoint, and the pending-change
-	// path isn't rate limited at all, so the old wait must not carry over.
+	// What a resend would actually be sent to, from saved settings only. `emailToVerify` also
+	// reflects unsaved input, which changes on every keystroke in the email field without
+	// changing where anything is sent.
+	const savedSettings = useSelector( getUserSettings );
+	const resendTarget = isEmailChangePending
+		? `pending:${ savedSettings?.new_user_email ?? '' }`
+		: `original:${ savedSettings?.user_email ?? '' }`;
+
+	// Correcting a typo switches both the address and the endpoint, and the pending-change path
+	// isn't rate limited at all, so the old wait must not carry over.
 	useEffect( () => {
 		resetResend();
-	}, [ emailToVerify, isEmailChangePending, resetResend ] );
+	}, [ resendTarget, resetResend ] );
 
 	const highlightEmailInput = useCallback( () => {
 		emailFormEventEmitter?.dispatchEvent( new Event( 'highlightInput' ) );

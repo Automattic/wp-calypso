@@ -24,13 +24,6 @@ export function cooldownDeadline( seconds: number ): number {
 }
 
 /**
- * The wait a refused resend asks for, or null if the failure wasn't a refusal.
- *
- * The server rejects with `throttled`/429 and puts the wait, in seconds, under
- * `data.retry_after`. Callers need the distinction because telling someone to try again in a
- * moment is wrong when the wait is an hour.
- */
-/**
  * How a remaining wait should read: seconds up to a minute, minutes past that, where the wait is
  * long enough that a raw second count stops being a number anyone parses.
  *
@@ -47,6 +40,13 @@ export function cooldownDisplay( seconds: number ): {
 		: { value: seconds, unit: 'second' };
 }
 
+/**
+ * The wait a refused resend asks for, or null if the failure wasn't a refusal.
+ *
+ * The server rejects with `throttled`/429 and puts the wait, in seconds, under
+ * `data.retry_after`. Callers need the distinction because telling someone to try again in a
+ * moment is wrong when the wait is an hour.
+ */
 export function resendThrottleRetryAfter( error: unknown ): number | null {
 	if ( typeof error !== 'object' || error === null ) {
 		return null;
