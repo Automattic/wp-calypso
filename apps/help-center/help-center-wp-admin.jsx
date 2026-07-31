@@ -211,10 +211,6 @@ function AdminHelpCenterContent() {
 		};
 	}, [] );
 
-	const botProps = helpCenterData.isCommerceGarden
-		? { newInteractionsBotSlug: 'ciab-workflow-support_chat' }
-		: {};
-
 	return (
 		<HelpCenter
 			locale={ helpCenterData.locale }
@@ -225,7 +221,8 @@ function AdminHelpCenterContent() {
 			onboardingUrl="https://wordpress.com/start"
 			handleClose={ closeCallback }
 			product={ helpCenterData.isCommerceGarden ? 'commerce-garden' : undefined }
-			{ ...botProps }
+			newInteractionsBotSlug={ helpCenterData.newInteractionsBotSlug }
+			newLoggedOutInteractionsBotSlug={ helpCenterData.newLoggedOutInteractionsBotSlug }
 		/>
 	);
 }
