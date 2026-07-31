@@ -41,6 +41,22 @@ const E2E_USER_AGENT_SUFFIX = 'wp-e2e-tests';
 
 const appendE2EUserAgent = ( userAgent: string ) => `${ userAgent } ${ E2E_USER_AGENT_SUFFIX }`;
 
+const loginBrowserUse = {
+	...devices[ 'Desktop Chrome HiDPI' ],
+	bypassCSP: true,
+	launchOptions: {
+		args: [
+			'--disable-blink-features=AutomationControlled',
+			'--disable-features=IsolateOrigins,site-per-process',
+		],
+		slowMo: 1000,
+		env: {},
+		channel: '',
+	},
+	userAgent:
+		'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/94.0.4606.61 Safari/537.36',
+};
+
 function getWorkers(): number | string {
 	if ( process.env.PW_WORKERS ) {
 		return parseInt( process.env.PW_WORKERS, 10 );
@@ -151,21 +167,7 @@ export default defineConfig( {
 			dependencies: [ 'mailosaur-usage-check' ],
 			retries: 0,
 			testDir: './specs/authentication',
-			use: {
-				...devices[ 'Desktop Chrome HiDPI' ],
-				bypassCSP: true,
-				launchOptions: {
-					args: [
-						'--disable-blink-features=AutomationControlled',
-						'--disable-features=IsolateOrigins,site-per-process',
-					],
-					slowMo: 1000,
-					env: {},
-					channel: '',
-				},
-				userAgent:
-					'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML. like Gecko) Chrome/94.0.4606.61 Safari/537.36',
-			},
+			use: loginBrowserUse,
 		},
 	],
 } );
