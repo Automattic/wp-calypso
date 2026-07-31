@@ -158,7 +158,7 @@ const SignupContactForm = ( { onContinue, initialFormData, withEmail = false }: 
 					} )
 				);
 				setIsProceeding( false );
-				onContinue( formData );
+				onContinue( dataToContinue );
 				return;
 			}
 
@@ -207,11 +207,11 @@ const SignupContactForm = ( { onContinue, initialFormData, withEmail = false }: 
 		dispatch( recordTracksEvent( 'calypso_a4a_agency_signup_form_internal_flags_bypass_clicked' ) );
 		setShowDuplicateModal( false );
 		onContinue( {
-			...formData,
+			...dataToContinue,
 			bypass_duplicate_check: true,
 			skip_hubspot: skipHubspot,
 		} as Partial< AgencyDetailsSignupPayload > );
-	}, [ dispatch, formData, onContinue, skipHubspot ] );
+	}, [ dispatch, dataToContinue, onContinue, skipHubspot ] );
 
 	const handleSkipHubspotToggle = useCallback(
 		( checked: boolean ) => {
