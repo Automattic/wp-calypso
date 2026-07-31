@@ -225,6 +225,8 @@ const SignupContactForm = ( { onContinue, initialFormData, withEmail = false }: 
 		[ dispatch ]
 	);
 
+	const closeSupportForm = useCallback( () => setShowSupportForm( false ), [] );
+
 	const supportFormEmail = withEmail ? formData.email : user?.email;
 	const supportFormName = `${ formData.firstName ?? '' } ${ formData.lastName ?? '' }`.trim();
 	const supportDefaultMessage = translate(
@@ -235,6 +237,16 @@ const SignupContactForm = ( { onContinue, initialFormData, withEmail = false }: 
 				agencyUrl: formData.agencyUrl ?? '',
 			},
 		}
+	);
+
+	const anonymousAtSignup = useMemo(
+		() => ( {
+			name: supportFormName,
+			email: supportFormEmail ?? '',
+			agencyName: formData.agencyName ?? '',
+			agencyUrl: formData.agencyUrl ?? '',
+		} ),
+		[ supportFormName, supportFormEmail, formData.agencyName, formData.agencyUrl ]
 	);
 
 	const getInternalFlagsReason = () => {
@@ -463,14 +475,9 @@ const SignupContactForm = ( { onContinue, initialFormData, withEmail = false }: 
 
 			<UserContactSupportModalForm
 				show={ showSupportForm }
-				onClose={ () => setShowSupportForm( false ) }
+				onClose={ closeSupportForm }
 				defaultMessage={ supportDefaultMessage as string }
-				anonymousAtSignup={ {
-					name: supportFormName,
-					email: supportFormEmail ?? '',
-					agencyName: formData.agencyName ?? '',
-					agencyUrl: formData.agencyUrl ?? '',
-				} }
+				anonymousAtSignup={ anonymousAtSignup }
 			/>
 		</Form>
 	);

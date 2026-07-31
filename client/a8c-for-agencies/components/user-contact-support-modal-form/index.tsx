@@ -64,7 +64,7 @@ export default function UserContactSupportModalForm( {
 	const hasCompletedForm =
 		!! message && !! name && !! email && !! product && ( !! agency || isClient || isAnonymousMode );
 
-	const { isSubmitting, submit, isSubmissionSuccessful } = useSubmitContactSupport( {
+	const { isSubmitting, submit, isSubmissionSuccessful, reset } = useSubmitContactSupport( {
 		isSignup: isAnonymousMode,
 	} );
 
@@ -93,8 +93,9 @@ export default function UserContactSupportModalForm( {
 				} )
 			);
 			onModalClose();
+			reset();
 		}
-	}, [ dispatch, isSubmissionSuccessful, onModalClose, translate ] );
+	}, [ dispatch, isSubmissionSuccessful, onModalClose, reset, translate ] );
 
 	useEffect( () => {
 		if ( show ) {
