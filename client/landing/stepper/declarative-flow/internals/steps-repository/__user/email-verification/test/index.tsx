@@ -115,10 +115,10 @@ describe( 'EmailVerificationGate', () => {
 
 		const openButton = await screen.findByRole( 'link', { name: 'Open email inbox' } );
 		expect( openButton.getAttribute( 'href' ) ).toContain( 'mail.google.com' );
-		// For a known provider the inbox link is the primary action, so the manual-check
-		// button isn't shown (a secondary re-check link remains — see the next test).
+		// For a known provider the inbox link is the only confirmation action; the manual
+		// re-check is the fallback for providers without one.
 		expect(
-			screen.queryByRole( 'button', { name: 'I’ve confirmed my email' } )
+			screen.queryByRole( 'button', { name: /confirmed my email/ } )
 		).not.toBeInTheDocument();
 
 		await userEvent.click( openButton );
@@ -134,24 +134,6 @@ describe( 'EmailVerificationGate', () => {
 		// `onboarder@example.com` has no known inbox link.
 		expect( screen.getByRole( 'button', { name: 'I’ve confirmed my email' } ) ).toBeVisible();
 		expect( screen.queryByRole( 'link', { name: /^Open / } ) ).not.toBeInTheDocument();
-	} );
-
-	it( 'offers only the inbox link for known providers', () => {
-		renderStep( <EmailVerificationGate flow={ FLOW } scope={ SCOPE } onDone={ jest.fn() } />, {
-			initialState: {
-				currentUser: {
-					id: USER_ID,
-					user: { ID: USER_ID, email: 'onboarder@gmail.com', email_verified: false },
-				},
-			},
-		} );
-
-		// The manual re-check is the fallback for providers without an inbox link, not a
-		// second action alongside it.
-		expect( screen.getByRole( 'link', { name: 'Open email inbox' } ) ).toBeVisible();
-		expect(
-			screen.queryByRole( 'button', { name: /confirmed my email/ } )
-		).not.toBeInTheDocument();
 	} );
 
 	it( 'finishes as soon as the confirmation lands in another tab', async () => {
