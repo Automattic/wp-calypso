@@ -2,6 +2,8 @@
 
 @import "@wordpress/base-styles/breakpoints";
 
+@import "calypso/assets/stylesheets/shared/mixins/breakpoints";
+
 .dev-tools-overview {
 	.hosting-dashboard-layout__body-wrapper {
 		max-width: unset;
@@ -10,16 +12,13 @@
 	}
 }
 
-.dev-tools-overview__intro {
-	max-width: 650px;
-	margin-inline: 16px;
+.dev-tools-overview .dev-tools-overview__intro {
+	max-width: 1500px;
+	padding: 0;
+	margin-inline: auto;
 
-	@include break-medium {
-		margin-inline: 64px;
-	}
-
-	+ .page-section-columns {
-		padding-block-start: 0;
+	@include breakpoint-deprecated( ">660px" ) {
+		padding-inline: 64px;
 	}
 }
 
