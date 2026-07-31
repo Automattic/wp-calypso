@@ -145,4 +145,35 @@ describe( 'Odyssey Stats CSS scoping (webpack-css-scope.js)', () => {
 		expect( compiled ).not.toContain( ':where(' );
 		expect( compiled ).toMatch( /^\.components-tooltip/m );
 	} );
+
+	it( 'leaves the WebPreview modal root unprefixed — RootChild portals it into a classless body div', () => {
+		const compiled = compile(
+			'.web-preview { opacity: 0; }\n.web-preview.is-visible { opacity: 1; }',
+			{ from: 'client/components/web-preview/style.scss' }
+		);
+
+		expect( compiled ).not.toContain( ':where(' );
+		expect( compiled ).toMatch( /^\.web-preview \{/m );
+		expect( compiled ).toMatch( /^\.web-preview\.is-visible/m );
+	} );
+
+	it( 'scopes WebPreview BEM descendants under the .web-preview root (STATS-393)', () => {
+		const compiled = compile( '.web-preview__backdrop { color: rgb(7, 8, 9); }', {
+			from: 'client/components/web-preview/style.scss',
+		} );
+		document.body.innerHTML =
+			'<div><div class="web-preview"><div class="web-preview__backdrop" id="backdrop"></div></div></div>' +
+			'<div id="adminmenu"><div class="web-preview__backdrop" id="adminmenu-backdrop"></div></div>';
+		const style = document.createElement( 'style' );
+		style.textContent = compiled;
+		document.head.appendChild( style );
+
+		expect( compiled ).toContain( ':where(' );
+		expect( getComputedStyle( document.getElementById( 'backdrop' ) ).color ).toBe(
+			'rgb(7, 8, 9)'
+		);
+		expect( getComputedStyle( document.getElementById( 'adminmenu-backdrop' ) ).color ).not.toBe(
+			'rgb(7, 8, 9)'
+		);
+	} );
 } );
