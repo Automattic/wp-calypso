@@ -23,7 +23,7 @@ export function useResendCooldown( { initialDeadline = 0, onHold, onExpire }: Op
 		cooldownRemainingSeconds( deadlineRef.current )
 	);
 
-	// Kept in refs so a caller passing inline callbacks doesn't get a new `hold` every render.
+	// In refs so inline callbacks don't hand out a new `hold` every render.
 	const onExpireRef = useRef( onExpire );
 	onExpireRef.current = onExpire;
 	const onHoldRef = useRef( onHold );
@@ -43,9 +43,8 @@ export function useResendCooldown( { initialDeadline = 0, onHold, onExpire }: Op
 		onHoldRef.current?.( deadlineRef.current );
 	}, [] );
 
-	// A cooldown belongs to what it was claimed against. Whoever changes that — a different
-	// address, a different endpoint — has to drop it, or the new target inherits a wait nothing
-	// on the server is actually enforcing.
+	// A cooldown belongs to what it was claimed against; a new target must not inherit a wait
+	// the server isn't enforcing against it.
 	const reset = useCallback( () => {
 		deadlineRef.current = 0;
 		setSecondsUntilResend( 0 );
@@ -53,8 +52,8 @@ export function useResendCooldown( { initialDeadline = 0, onHold, onExpire }: Op
 
 	useInterval( sync, secondsUntilResend > 0 && EVERY_SECOND );
 
-	// Coming back to a backgrounded tab, the countdown catches up in one step rather than
-	// resuming where the suspended timer left off.
+	// Returning to a backgrounded tab, the countdown catches up in one step rather than
+	// resuming where the suspended timer stopped.
 	useEffect( () => {
 		const onVisibilityChange = () => {
 			if ( document.visibilityState === 'visible' ) {

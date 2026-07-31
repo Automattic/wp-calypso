@@ -11,7 +11,7 @@ export const RESEND_MIN_INTERVAL_SECONDS = 60;
 
 // The server's hourly lockout is the longest wait it can hand back. Anything past that is a
 // corrupt value rather than a real limit, and must not strand someone on a screen with no way on.
-export const MAX_COOLDOWN_SECONDS = 60 * 60;
+const MAX_COOLDOWN_SECONDS = 60 * 60;
 
 export function cooldownRemainingSeconds( availableAt: number ): number {
 	const remainingMs = availableAt - Date.now();

@@ -76,13 +76,12 @@ const EmailVerificationBannerV2: React.FC< Props > = ( { setIsBusy } ) => {
 	const sendVerificationEmail = useSendEmailVerification();
 	const [ isSendingEmail, setIsSendingEmail ] = useState( false );
 
-	// The server allows one resend a minute and five an hour, so the button would otherwise
-	// invite a click it is going to refuse.
+	// The server allows one resend a minute and five an hour; without this the button invites
+	// a click it is going to refuse.
 	const { secondsUntilResend, hold: holdResend, reset: resetResend } = useResendCooldown();
 
-	// A wait was claimed against one address through one endpoint. Correcting a typo, or
-	// cancelling the correction, switches both — and the pending-change path is not rate
-	// limited at all, so carrying the old wait over would invent a limit that doesn't exist.
+	// Correcting a typo switches both the address and the endpoint, and the pending-change
+	// path isn't rate limited at all, so the old wait must not carry over.
 	useEffect( () => {
 		resetResend();
 	}, [ emailToVerify, isEmailChangePending, resetResend ] );
@@ -94,6 +93,9 @@ const EmailVerificationBannerV2: React.FC< Props > = ( { setIsBusy } ) => {
 	const resendEmailToVerify = useCallback( async () => {
 		setIsBusy( true );
 		setIsSendingEmail( true );
+		const genericError = translate(
+			'There was an error while resending the email. Please try again.'
+		);
 		try {
 			if ( isEmailChangePending ) {
 				// For pending email changes, re-submit the new email via PUT /me/settings
@@ -103,11 +105,12 @@ const EmailVerificationBannerV2: React.FC< Props > = ( { setIsBusy } ) => {
 			} else {
 				// For unverified original emails, use the dedicated endpoint since
 				// PUT /me/settings won't resend when the email hasn't changed.
+				// A refused send is reported in the body rather than thrown, and carries nothing
+				// worth showing, so it takes the generic message and starts no cooldown.
 				const { success } = await sendVerificationEmail();
-				// A refused send is reported in the body rather than thrown. Treated as a failure
-				// so nothing is held back over an email that never went out.
 				if ( ! success ) {
-					throw new Error( 'unsuccessful_response' );
+					dispatch( errorNotice( genericError ) );
+					return;
 				}
 			}
 			holdResend( RESEND_MIN_INTERVAL_SECONDS );
@@ -128,13 +131,7 @@ const EmailVerificationBannerV2: React.FC< Props > = ( { setIsBusy } ) => {
 			if ( retryAfter !== null ) {
 				holdResend( retryAfter );
 			}
-			dispatch(
-				errorNotice(
-					err instanceof Error
-						? err.message
-						: translate( 'There was an error while resending the email. Please try again.' )
-				)
-			);
+			dispatch( errorNotice( err instanceof Error ? err.message : genericError ) );
 		} finally {
 			setIsBusy( false );
 			setIsSendingEmail( false );
@@ -163,8 +160,8 @@ const EmailVerificationBannerV2: React.FC< Props > = ( { setIsBusy } ) => {
 		}
 	);
 
-	// The wait is a minute after a send, but up to an hour once the hourly allowance is spent,
-	// and "Resend in 2700s" is not a number anyone reads.
+	// Up to an hour once the hourly allowance is spent, and "Resend in 2700s" is not a number
+	// anyone reads.
 	let callToAction: React.ReactNode = translate( 'Resend email' );
 	if ( secondsUntilResend > 60 ) {
 		const minutes = Math.ceil( secondsUntilResend / 60 );

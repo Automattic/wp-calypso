@@ -42,8 +42,7 @@ const EmailVerificationGate = ( { flow, scope, logo, onDone }: Props ) => {
 
 	const title = __( 'Verify your email' );
 
-	// The interval is seconds, but a server lockout runs to an hour, and "Resend in 2700s" is
-	// not a number anyone reads.
+	// A server lockout runs to an hour, and "Resend in 2700s" is not a number anyone reads.
 	let resendLabel: string = __( 'Resend' );
 	if ( secondsUntilResend > 60 ) {
 		const minutes = Math.ceil( secondsUntilResend / 60 );
