@@ -373,6 +373,17 @@ export class EditorPage {
 		type: 'post' | 'page' = 'post',
 		{ siteSlug = '' }: { siteSlug?: string } = {}
 	): Promise< Response | null > {
+		if ( envVariables.TEST_ON_ATOMIC && envVariables.ATOMIC_VARIATION === 'private' && siteSlug ) {
+			const siteHost = siteSlug.replace( /^https?:\/\//, '' ).replace( /\/$/, '' );
+
+			// Private Atomic sites can show Jetpack SSO when wp-admin is opened directly.
+			await this.page.goto( `https://${ siteHost }/wp-admin/`, {
+				timeout: 15 * 1000,
+				waitUntil: 'domcontentloaded',
+				referer: 'https://wordpress.com/',
+			} );
+		}
+
 		const request = await this.page.goto( getCalypsoURL( `${ type }/${ siteSlug }` ), {
 			timeout: 30 * 1000,
 			waitUntil: 'domcontentloaded',
