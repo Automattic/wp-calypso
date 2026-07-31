@@ -41,7 +41,6 @@
 			margin-top: 0;
 		}
 
-		// Message action buttons
 		.button-module_button:has( .agents-manager-message-action-icon ) {
 			width: 32px;
 			height: 32px;
@@ -304,21 +303,18 @@
 body.agents-manager-sidebar-container.is-split-screen {
 	--am-sidebar-width: 50vw;
 
-	// Agenttic-ui's `EmptyView` ships fixed max-widths (400/500px) on its
-	// heading + suggestions wrapper. They're sensible at the docked 350px
-	// width but stay capped at split-screen widths, leaving the empty view
-	// stuck in a small box on a wide canvas. Bump them via attribute-prefix
-	// selectors so the override survives CSS-modules class hashing.
+	// Agenttic-ui's `EmptyView` caps its heading + suggestions at 400/500px —
+	// fine at the docked 350px, a small box at split-screen widths. The
+	// attribute-prefix selectors survive CSS-modules class hashing.
 	[class*='EmptyView-module_heading'],
 	[class*='EmptyView-module_help'],
 	[class*='EmptyView-module_suggestionsWrapper'] {
 		max-width: none;
 	}
 
-	// Stretch MessageActions so its flex line spans the bubble; otherwise on
-	// wide viewports the container shrinks to content and the Sources card
-	// never wraps. `flex: 0 0 100%` then makes the card a non-shrinking full
-	// row so the existing -32px overlay lands on the actions row reliably.
+	// Stretch MessageActions to span the bubble — on wide viewports it
+	// shrinks to content and the Sources card never wraps. `flex: 0 0 100%`
+	// then makes the card a full row so the -32px overlay lands reliably.
 	.MessageActions-module_container:has( .agents-manager-sources-display ) {
 		inline-size: 100%;
 	}

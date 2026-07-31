@@ -1,13 +1,10 @@
 import { AGENTS_MANAGER_STORE } from '@automattic/agents-manager';
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { localizeUrl } from '@automattic/i18n-utils';
-import { usePrevious } from '@wordpress/compose';
 import { useSelect as useDateStoreSelect } from '@wordpress/data';
-import { useEffect } from '@wordpress/element';
 import { Icon, comment, backup, page, video, rss } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { useSelector } from 'react-redux';
-import getIsNotificationsOpen from 'calypso/state/selectors/is-notifications-open';
 import { getSectionName } from 'calypso/state/ui/selectors';
 import Item from '../item';
 import {
@@ -22,8 +19,6 @@ import './style.scss';
 const MasterbarAgentsManager = ( { tooltip } ) => {
 	const translate = useTranslate();
 	const sectionName = useSelector( getSectionName );
-	const isNotificationsOpen = useSelector( ( state ) => getIsNotificationsOpen( state ) );
-	const prevIsNotificationsOpen = usePrevious( isNotificationsOpen );
 
 	const agentsManagerVisible = useDateStoreSelect(
 		( select ) => select( AGENTS_MANAGER_STORE ).getAgentsManagerState().isOpen,
@@ -138,13 +133,6 @@ const MasterbarAgentsManager = ( { tooltip } ) => {
 			},
 		],
 	];
-
-	// Close the agents manager when notifications are opened
-	useEffect( () => {
-		if ( ! prevIsNotificationsOpen && isNotificationsOpen && agentsManagerVisible ) {
-			closeAgentsManagerChat();
-		}
-	}, [ agentsManagerVisible, isNotificationsOpen, prevIsNotificationsOpen ] );
 
 	return (
 		<Item
