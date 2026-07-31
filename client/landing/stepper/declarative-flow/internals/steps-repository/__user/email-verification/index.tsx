@@ -145,6 +145,7 @@ const EmailVerificationGate = ( { flow, scope, logo, onDone }: Props ) => {
 								className="onboarding-email-verification__inbox-icon"
 								icon={ arrowUpRight }
 								size={ 16 }
+								fill="currentColor"
 							/>
 						</Button>
 					) : (
