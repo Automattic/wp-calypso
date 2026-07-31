@@ -2,11 +2,9 @@
 	// The layout runs with `noGap`, so this is the whole distance below the title.
 	margin-block-start: 24px;
 
-	// The inbox button carries an icon, so WordPress's Button left-justifies it
-	// (`.has-icon.has-text`); the design centers the label. Match that selector's
-	// specificity plus the scope class to win.
-	.step-container-v2__primary-button.has-icon.has-text {
-		justify-content: center;
+	// The design uses regular weight; WordPress's Button defaults to semibold.
+	.step-container-v2__primary-button {
+		font-weight: 400;
 	}
 }
 
