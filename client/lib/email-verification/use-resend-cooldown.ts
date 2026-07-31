@@ -3,13 +3,11 @@ import { EVERY_SECOND, useInterval } from 'calypso/lib/interval';
 import { cooldownDeadline, cooldownRemainingSeconds } from './resend';
 
 interface Options {
-	// When the cooldown already in effect expires, for a caller that persists one across a
-	// reload. 0 means no cooldown is running.
+	// A cooldown already in effect, for a caller that persists one across a reload.
 	initialDeadline?: number;
-	// Called whenever a new cooldown starts, for callers that persist it.
 	onHold?: ( deadline: number ) => void;
-	// Called when a running cooldown reaches zero, so a caller can retire anything that only
-	// made sense while the wait was on — a notice explaining it, most obviously.
+	// For retiring anything that only made sense while the wait was on — a notice explaining
+	// it, most obviously.
 	onExpire?: () => void;
 }
 
@@ -25,9 +23,11 @@ export function useResendCooldown( { initialDeadline = 0, onHold, onExpire }: Op
 		cooldownRemainingSeconds( deadlineRef.current )
 	);
 
-	// Kept in a ref so a caller passing an inline callback doesn't restart the timer each render.
+	// Kept in refs so a caller passing inline callbacks doesn't get a new `hold` every render.
 	const onExpireRef = useRef( onExpire );
 	onExpireRef.current = onExpire;
+	const onHoldRef = useRef( onHold );
+	onHoldRef.current = onHold;
 
 	const sync = useCallback( () => {
 		const remaining = cooldownRemainingSeconds( deadlineRef.current );
@@ -37,19 +37,24 @@ export function useResendCooldown( { initialDeadline = 0, onHold, onExpire }: Op
 		}
 	}, [] );
 
-	const hold = useCallback(
-		( seconds: number ) => {
-			deadlineRef.current = cooldownDeadline( seconds );
-			setSecondsUntilResend( cooldownRemainingSeconds( deadlineRef.current ) );
-			onHold?.( deadlineRef.current );
-		},
-		[ onHold ]
-	);
+	const hold = useCallback( ( seconds: number ) => {
+		deadlineRef.current = cooldownDeadline( seconds );
+		setSecondsUntilResend( cooldownRemainingSeconds( deadlineRef.current ) );
+		onHoldRef.current?.( deadlineRef.current );
+	}, [] );
+
+	// A cooldown belongs to what it was claimed against. Whoever changes that — a different
+	// address, a different endpoint — has to drop it, or the new target inherits a wait nothing
+	// on the server is actually enforcing.
+	const reset = useCallback( () => {
+		deadlineRef.current = 0;
+		setSecondsUntilResend( 0 );
+	}, [] );
 
 	useInterval( sync, secondsUntilResend > 0 && EVERY_SECOND );
 
-	// Coming back to a backgrounded tab, the countdown has to catch up in one step rather than
-	// resume from where the timer stopped.
+	// Coming back to a backgrounded tab, the countdown catches up in one step rather than
+	// resuming where the suspended timer left off.
 	useEffect( () => {
 		const onVisibilityChange = () => {
 			if ( document.visibilityState === 'visible' ) {
@@ -60,5 +65,5 @@ export function useResendCooldown( { initialDeadline = 0, onHold, onExpire }: Op
 		return () => document.removeEventListener( 'visibilitychange', onVisibilityChange );
 	}, [ sync ] );
 
-	return { secondsUntilResend, hold, sync };
+	return { secondsUntilResend, hold, reset };
 }

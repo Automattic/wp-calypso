@@ -1,5 +1,5 @@
 import { Substitution, useTranslate } from 'i18n-calypso';
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import Banner from 'calypso/components/banner';
 import EmailVerificationDialog from 'calypso/components/email-verification/email-verification-dialog';
 import useGetEmailToVerify from 'calypso/components/email-verification/hooks/use-get-email-to-verify';
@@ -78,7 +78,14 @@ const EmailVerificationBannerV2: React.FC< Props > = ( { setIsBusy } ) => {
 
 	// The server allows one resend a minute and five an hour, so the button would otherwise
 	// invite a click it is going to refuse.
-	const { secondsUntilResend, hold: holdResend } = useResendCooldown();
+	const { secondsUntilResend, hold: holdResend, reset: resetResend } = useResendCooldown();
+
+	// A wait was claimed against one address through one endpoint. Correcting a typo, or
+	// cancelling the correction, switches both — and the pending-change path is not rate
+	// limited at all, so carrying the old wait over would invent a limit that doesn't exist.
+	useEffect( () => {
+		resetResend();
+	}, [ emailToVerify, isEmailChangePending, resetResend ] );
 
 	const highlightEmailInput = useCallback( () => {
 		emailFormEventEmitter?.dispatchEvent( new Event( 'highlightInput' ) );
@@ -96,7 +103,12 @@ const EmailVerificationBannerV2: React.FC< Props > = ( { setIsBusy } ) => {
 			} else {
 				// For unverified original emails, use the dedicated endpoint since
 				// PUT /me/settings won't resend when the email hasn't changed.
-				await sendVerificationEmail();
+				const { success } = await sendVerificationEmail();
+				// A refused send is reported in the body rather than thrown. Treated as a failure
+				// so nothing is held back over an email that never went out.
+				if ( ! success ) {
+					throw new Error( 'unsuccessful_response' );
+				}
 			}
 			holdResend( RESEND_MIN_INTERVAL_SECONDS );
 			dispatch(

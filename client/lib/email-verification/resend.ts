@@ -13,17 +13,12 @@ export const RESEND_MIN_INTERVAL_SECONDS = 60;
 // corrupt value rather than a real limit, and must not strand someone on a screen with no way on.
 export const MAX_COOLDOWN_SECONDS = 60 * 60;
 
-/**
- * How long a caller still has to wait, in whole seconds, or 0 if it may send now.
- */
 export function cooldownRemainingSeconds( availableAt: number ): number {
 	const remainingMs = availableAt - Date.now();
 	return remainingMs > 0 ? Math.min( Math.ceil( remainingMs / 1000 ), MAX_COOLDOWN_SECONDS ) : 0;
 }
 
-/**
- * When a wait of `seconds` from now expires, clamped to what the server could plausibly ask for.
- */
+// Clamped, so a corrupt stored value can't outlast anything the server would ask for.
 export function cooldownDeadline( seconds: number ): number {
 	return Date.now() + Math.min( seconds, MAX_COOLDOWN_SECONDS ) * 1000;
 }
@@ -32,8 +27,8 @@ export function cooldownDeadline( seconds: number ): number {
  * The wait a refused resend asks for, or null if the failure wasn't a refusal.
  *
  * The server rejects with `throttled`/429 and puts the wait, in seconds, under
- * `data.retry_after`. Callers need the distinction because a refusal is not a failure: telling
- * someone to try again in a moment is wrong when the wait is an hour.
+ * `data.retry_after`. Callers need the distinction because telling someone to try again in a
+ * moment is wrong when the wait is an hour.
  */
 export function resendThrottleRetryAfter( error: unknown ): number | null {
 	if ( typeof error !== 'object' || error === null ) {
