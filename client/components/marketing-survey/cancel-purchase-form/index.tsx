@@ -22,16 +22,13 @@ import { useIsSplitCancelRemoveEnabled } from 'calypso/dashboard/me/billing-purc
 import {
 	isAgencyPartnerType,
 	isExpiredOrRemoved,
+	hasAmountAvailableToRefund,
 	isOneTimePurchase,
 	isPartnerPurchase,
 } from 'calypso/dashboard/utils/purchase';
 import { cancelPurchaseSurveyCompleted, submitSurvey } from 'calypso/lib/purchases/actions';
 import wpcom from 'calypso/lib/wp';
-import {
-	hasAmountAvailableToRefund,
-	isRefundable,
-	isSubscription,
-} from 'calypso/me/purchases/lib/raw-purchase-helpers';
+import { isSubscription } from 'calypso/me/purchases/lib/raw-purchase-helpers';
 import useCheckPlanAvailabilityForPurchase from 'calypso/my-sites/plans-features-main/hooks/use-check-plan-availability-for-purchase';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { fetchAtomicTransfer } from 'calypso/state/atomic-transfer/actions';
@@ -284,7 +281,7 @@ class CancelPurchaseForm extends Component< CancelPurchaseFormProps, CancelPurch
 			canRefund: !! parseFloat( this.getRefundAmount() ),
 			canDowngrade: !! downgradeClick,
 			canOfferFreeMonth:
-				!! freeMonthOfferClick && ! purchaseIsAlreadyExtended && ! isRefundable( purchase ),
+				!! freeMonthOfferClick && ! purchaseIsAlreadyExtended && ! purchase.is_refundable,
 		} );
 		const hasSolutionsCards =
 			this.props.isSplitCancelRemoveEnabled && ( getSolutionsForReason( value )?.length ?? 0 ) > 0;
@@ -437,7 +434,7 @@ class CancelPurchaseForm extends Component< CancelPurchaseFormProps, CancelPurch
 		} );
 		const precision = defaultFormatter.resolvedOptions().maximumFractionDigits;
 		const refundAmount =
-			isRefundable( purchase ) && refundOptions?.[ 0 ]?.refund_amount
+			purchase.is_refundable && refundOptions?.[ 0 ]?.refund_amount
 				? refundOptions[ 0 ].refund_amount
 				: 0;
 

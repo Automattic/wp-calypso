@@ -1,3 +1,4 @@
+import { userPurchasesQuery } from '@automattic/api-queries';
 import i18n from 'i18n-calypso';
 import wpcom from 'calypso/lib/wp';
 import {
@@ -13,6 +14,7 @@ import {
 	PURCHASE_REMOVE_FAILED,
 } from 'calypso/state/action-types';
 import { requestAdminMenu } from 'calypso/state/admin-menu/actions';
+import { getCalypsoQueryClient } from 'calypso/state/query-client';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import 'calypso/state/purchases/init';
 
@@ -169,6 +171,11 @@ export const removePurchase = ( purchaseId, userId ) => ( dispatch, getState ) =
 					purchases: data.purchases,
 					userId,
 				} );
+
+				// Updating Redux isn't enough: pages reading purchases through
+				// `@automattic/api-queries` would keep serving the removed purchase.
+				// Invalidating the `[ 'upgrades' ]` root key covers them all at once.
+				getCalypsoQueryClient()?.invalidateQueries( userPurchasesQuery() );
 
 				if ( siteId ) {
 					dispatch( requestAdminMenu( siteId ) );

@@ -5,12 +5,11 @@ import {
 	getRefundEligibilityPromoCopy,
 	getRefundNoticeCopy,
 } from 'calypso/dashboard/me/billing-purchases/cancel-purchase/get-confirmation-copy';
-import { toPurchaseForCopy } from './to-purchase-for-copy';
-import type { Purchases } from '@automattic/data-stores';
+import type { Purchase } from '@automattic/api-core';
 
 interface RefundEligibilityNoticeBaseProps {
 	refundAmount: string;
-	purchase: Purchases.Purchase;
+	purchase: Purchase;
 }
 
 interface RefundEligibilityNoticeRefundEligibilityProps extends RefundEligibilityNoticeBaseProps {
@@ -31,7 +30,7 @@ const RefundEligibilityNotice = ( props: RefundEligibilityNoticeProps ) => {
 			<Notice className="cancel-purchase__refund-eligibility-notice" showDismiss={ false }>
 				<p className="cancel-purchase__refund-eligibility-text">
 					{ getRefundNoticeCopy( {
-						purchase: toPurchaseForCopy( props.purchase ),
+						purchase: props.purchase,
 						refundAmount: props.refundAmount,
 					} ) }
 				</p>
