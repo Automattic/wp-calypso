@@ -46,6 +46,7 @@ export interface CoreDataDispatch {
  */
 export interface CurriedImageStudioSelectors {
 	getIsImageStudioOpen: () => boolean;
+	getSessionId: () => string;
 	getImageStudioAttachmentId: () => number | null;
 	getImageStudioOriginalImageUrl: () => string | null;
 	getImageStudioCurrentImageUrl: () => string | null;

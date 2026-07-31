@@ -435,7 +435,7 @@ const reducer = (
 				imageStudioAiProcessingSources: {},
 				draftIds: [],
 				savedAttachmentIds: [],
-				// Kept so exit-time events still attribute to it
+				// Preserved rather than reset: it names the conversation that just ended
 				sessionId: state.sessionId,
 			};
 

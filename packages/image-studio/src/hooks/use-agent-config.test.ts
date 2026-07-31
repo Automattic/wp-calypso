@@ -63,6 +63,40 @@ describe( 'useAgentConfig', () => {
 		expect( result.current?.sessionId ).toBe( 'session-build-a' );
 	} );
 
+	it( 'drops the previous config while the new session loads', async () => {
+		mockSessionId = 'session-drop-a';
+		const factory = createFactory();
+
+		const { result, rerender } = renderHook( () => useAgentConfig( factory ) );
+		await waitFor( () => expect( result.current ).not.toBeNull() );
+
+		mockSessionId = 'session-drop-b';
+		rerender();
+
+		// Holding the old config would let a prompt for the new image land in
+		// the previous image's conversation.
+		expect( result.current ).toBeNull();
+		await waitFor( () => expect( result.current?.sessionId ).toBe( 'session-drop-b' ) );
+	} );
+
+	it( 'holds no config when the next session fails to load', async () => {
+		const consoleError = jest.spyOn( console, 'error' ).mockImplementation( () => {} );
+		mockSessionId = 'session-error-a';
+
+		const { result, rerender } = renderHook( () => useAgentConfig( createFactory() ) );
+		await waitFor( () => expect( result.current ).not.toBeNull() );
+
+		mockCreateAgentConfig.mockRejectedValueOnce( new Error( 'no token' ) );
+		mockSessionId = 'session-error-b';
+		rerender();
+
+		// Keeping the old config would leave the chat pointing at the previous
+		// image's conversation with no sign anything went wrong.
+		await waitFor( () => expect( consoleError ).toHaveBeenCalled() );
+		expect( result.current ).toBeNull();
+		consoleError.mockRestore();
+	} );
+
 	it( 'clears the shared conversation when the session changes', async () => {
 		mockSessionId = 'session-clear-a';
 		const factory = createFactory();

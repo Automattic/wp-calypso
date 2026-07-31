@@ -55,6 +55,10 @@ export function useAgentConfig( agentConfigFactory: {
 
 		let mounted = true;
 
+		// Until the new session's config lands, the chat has nowhere valid to
+		// send: the previous config points at the conversation just cleared.
+		setAgentConfigState( null );
+
 		agentConfigFactoryRef.current
 			.createAgentConfig( sessionId )
 			.then( ( loadedConfig ) => {
