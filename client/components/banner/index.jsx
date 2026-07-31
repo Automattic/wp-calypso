@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import {
 	planMatches,
 	isBloggerPlan,
@@ -8,6 +9,7 @@ import {
 	GROUP_JETPACK,
 	GROUP_WPCOM,
 } from '@automattic/calypso-products';
+import { getCalypsoUrl } from '@automattic/calypso-url';
 import { Button, Card, Gridicon, PlanPrice } from '@automattic/components';
 import { isMobile } from '@automattic/viewport';
 import clsx from 'clsx';
@@ -27,6 +29,23 @@ import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selecto
 import './style.scss';
 
 const noop = () => {};
+
+// In wp-admin (Odyssey) a root-relative href is a Calypso route, which the
+// browser would resolve against the site's own domain — a 404. Point it at
+// Calypso absolutely there; getCalypsoUrl() falls back to
+// https://wordpress.com when the current origin isn't a Calypso one, as in
+// wp-admin. Everywhere else (Calypso proper, Jetpack Cloud) this is a no-op.
+export function toCalypsoHref( href ) {
+	if (
+		href &&
+		href.startsWith( '/' ) &&
+		! href.startsWith( '//' ) &&
+		config.isEnabled( 'is_odyssey' )
+	) {
+		return getCalypsoUrl() + href;
+	}
+	return href;
+}
 
 export class Banner extends Component {
 	static propTypes = {
@@ -107,21 +126,23 @@ export class Banner extends Component {
 
 		if ( ! href && siteSlug && canUserUpgrade ) {
 			if ( customerType ) {
-				return `/plans/${ siteSlug }?customerType=${ customerType }`;
+				return toCalypsoHref( `/plans/${ siteSlug }?customerType=${ customerType }` );
 			}
 			const baseUrl = `/plans/${ siteSlug }`;
 			if ( feature || plan ) {
-				return addQueryArgs(
-					{
-						feature,
-						plan,
-					},
-					baseUrl
+				return toCalypsoHref(
+					addQueryArgs(
+						{
+							feature,
+							plan,
+						},
+						baseUrl
+					)
 				);
 			}
-			return baseUrl;
+			return toCalypsoHref( baseUrl );
 		}
-		return href;
+		return toCalypsoHref( href );
 	}
 
 	handleClick = ( e ) => {
@@ -302,7 +323,7 @@ export class Banner extends Component {
 						{ secondaryCallToAction && (
 							<Button
 								compact={ compactButton }
-								href={ secondaryHref }
+								href={ toCalypsoHref( secondaryHref ) }
 								onClick={ this.handleSecondaryClick }
 								primary={ false }
 							>
