@@ -54,6 +54,8 @@
 .woopayments-banner__heading {
 	@include heading-2x-large;
 	margin-block-end: 8px;
+	// Reads as a heading but isn't an h1-h6, so it misses the section-wide rule.
+	text-wrap: balance;
 }
 
 .woopayments-banner__description {
