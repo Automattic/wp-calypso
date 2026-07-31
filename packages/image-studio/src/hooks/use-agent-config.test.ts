@@ -1,9 +1,11 @@
-import { renderHook, waitFor } from '@testing-library/react';
+import { act, renderHook, waitFor } from '@testing-library/react';
 import { useAgentConfig } from './use-agent-config';
 
 let mockSessionId = '';
 
-const mockHasAgent = jest.fn( () => true );
+// Mirrors the agent manager's contract: agents are keyed by agent ID alone.
+const mockCreatedAgents = new Set< string >();
+const mockReplaceMessages = jest.fn();
 const mockRemoveAgent = jest.fn();
 
 jest.mock( '@wordpress/data', () => ( {
@@ -23,54 +25,104 @@ jest.mock(
 	'@automattic/agenttic-client',
 	() => ( {
 		getAgentManager: () => ( {
-			hasAgent: mockHasAgent,
+			hasAgent: ( key: string ) => mockCreatedAgents.has( key ),
 			removeAgent: mockRemoveAgent,
+			replaceMessages: mockReplaceMessages,
 		} ),
 	} ),
 	{ virtual: true }
 );
 
+const mockCreateAgentConfig = jest.fn( async ( sessionId: string ) => ( {
+	agentId: 'wp-orchestrator',
+	agentUrl: 'https://example.com/agent',
+	sessionId,
+} ) );
+
+// A fresh object each call, so tests can vary the factory identity while
+// still counting builds through one mock.
 function createFactory() {
-	return {
-		createAgentConfig: jest.fn( async ( sessionId: string ) => ( {
-			agentId: 'wp-orchestrator',
-			agentUrl: 'https://example.com/agent',
-			sessionId,
-		} ) ),
-	};
+	return { createAgentConfig: mockCreateAgentConfig };
 }
 
 describe( 'useAgentConfig', () => {
 	beforeEach( () => {
 		jest.clearAllMocks();
+		mockCreatedAgents.clear();
 		mockSessionId = '';
 	} );
 
 	it( 'builds the config with the session ID of the open image', async () => {
-		mockSessionId = 'session-for-image-a';
+		mockSessionId = 'session-build-a';
 		const factory = createFactory();
 
 		const { result } = renderHook( () => useAgentConfig( factory ) );
 
 		await waitFor( () => expect( result.current ).not.toBeNull() );
-		expect( factory.createAgentConfig ).toHaveBeenCalledWith( 'session-for-image-a' );
-		expect( result.current?.sessionId ).toBe( 'session-for-image-a' );
+		expect( mockCreateAgentConfig ).toHaveBeenCalledWith( 'session-build-a' );
+		expect( result.current?.sessionId ).toBe( 'session-build-a' );
 	} );
 
-	it( 'rebuilds the config and drops the previous agent when the session changes', async () => {
-		mockSessionId = 'session-for-image-a';
+	it( 'clears the shared conversation when the session changes', async () => {
+		mockSessionId = 'session-clear-a';
 		const factory = createFactory();
 
 		const { result, rerender } = renderHook( () => useAgentConfig( factory ) );
 		await waitFor( () => expect( result.current ).not.toBeNull() );
+		// The chat creates the agent under the agent ID once the config exists.
+		mockCreatedAgents.add( 'wp-orchestrator' );
 
-		mockSessionId = 'session-for-image-b';
+		mockSessionId = 'session-clear-b';
 		rerender();
 
 		await waitFor( () =>
-			expect( factory.createAgentConfig ).toHaveBeenCalledWith( 'session-for-image-b' )
+			expect( mockReplaceMessages ).toHaveBeenCalledWith( 'wp-orchestrator', [] )
 		);
-		expect( mockRemoveAgent ).toHaveBeenCalledWith( 'wp-orchestrator-session-for-image-a' );
+	} );
+
+	it( 'leaves the agent in place, since other consumers share it', async () => {
+		mockSessionId = 'session-keep-a';
+		const factory = createFactory();
+
+		const { result, rerender, unmount } = renderHook( () => useAgentConfig( factory ) );
+		await waitFor( () => expect( result.current ).not.toBeNull() );
+		mockCreatedAgents.add( 'wp-orchestrator' );
+
+		mockSessionId = 'session-keep-b';
+		rerender();
+		await waitFor( () => expect( mockReplaceMessages ).toHaveBeenCalled() );
+		unmount();
+
+		expect( mockRemoveAgent ).not.toHaveBeenCalled();
+		expect( mockCreatedAgents.has( 'wp-orchestrator' ) ).toBe( true );
+	} );
+
+	it( 'clears once per session however many consumers are mounted', async () => {
+		mockSessionId = 'session-once-a';
+		mockCreatedAgents.add( 'wp-orchestrator' );
+
+		const first = renderHook( () => useAgentConfig( createFactory() ) );
+		const second = renderHook( () => useAgentConfig( createFactory() ) );
+
+		await waitFor( () => expect( first.result.current ).not.toBeNull() );
+		await waitFor( () => expect( second.result.current ).not.toBeNull() );
+
+		expect( mockReplaceMessages ).toHaveBeenCalledTimes( 1 );
+	} );
+
+	it( 'does not rebuild when only the factory identity changes', async () => {
+		mockSessionId = 'session-factory-a';
+
+		const { result, rerender } = renderHook( ( { factory } ) => useAgentConfig( factory ), {
+			initialProps: { factory: createFactory() },
+		} );
+		await waitFor( () => expect( result.current ).not.toBeNull() );
+
+		rerender( { factory: createFactory() } );
+		await act( async () => {} );
+
+		// A rebuild would tear down the conversation the user is in the middle of.
+		expect( mockCreateAgentConfig ).toHaveBeenCalledTimes( 1 );
 	} );
 
 	it( 'builds nothing until Image Studio opens and mints a session', async () => {
@@ -78,7 +130,7 @@ describe( 'useAgentConfig', () => {
 
 		const { result } = renderHook( () => useAgentConfig( factory ) );
 
-		await waitFor( () => expect( factory.createAgentConfig ).not.toHaveBeenCalled() );
+		await waitFor( () => expect( mockCreateAgentConfig ).not.toHaveBeenCalled() );
 		expect( result.current ).toBeNull();
 	} );
 } );

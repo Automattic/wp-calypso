@@ -1372,11 +1372,13 @@ describe( 'Image Studio Store', () => {
 	} );
 
 	describe( 'Agent session ID', () => {
+		const UUID_V4 = /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+
 		it( 'mints a different session ID for each open', () => {
 			const first = actions.openImageStudio( 123 );
 			const second = actions.openImageStudio( 456 );
 
-			expect( first.payload.sessionId ).toEqual( expect.any( String ) );
+			expect( first.payload.sessionId ).toMatch( UUID_V4 );
 			expect( first.payload.sessionId ).not.toBe( second.payload.sessionId );
 		} );
 
@@ -1399,7 +1401,7 @@ describe( 'Image Studio Store', () => {
 
 			const state = reducer( previousState, actions.navigateToAttachment( 20 ) );
 
-			expect( selectors.getSessionId( state ) ).toEqual( expect.any( String ) );
+			expect( selectors.getSessionId( state ) ).toMatch( UUID_V4 );
 			expect( selectors.getSessionId( state ) ).not.toBe( 'session-for-image-10' );
 		} );
 

@@ -1,14 +1,36 @@
 import { getAgentManager, UseAgentChatConfig } from '@automattic/agenttic-client';
 import { useSelect } from '@wordpress/data';
-import { useEffect, useState } from '@wordpress/element';
+import { useEffect, useRef, useState } from '@wordpress/element';
 import { store as imageStudioStore } from '../store';
+
+/**
+ * The agent manager keys agents by agent ID, so the main chat and every sidebar
+ * field share one record and its conversation. Clearing that conversation once
+ * per session drops the previous image's turns, which would otherwise be sent
+ * with the next message. Removing the agent instead would break whichever
+ * consumers are still mounted.
+ *
+ * Module-level so it survives Image Studio closing and reopening.
+ */
+let lastClearedSessionId: string | null = null;
+
+function clearConversationForNewSession( agentId: string, sessionId: string ): void {
+	if ( lastClearedSessionId === sessionId ) {
+		return;
+	}
+	lastClearedSessionId = sessionId;
+
+	const agentManager = getAgentManager();
+	if ( agentManager.hasAgent( agentId ) ) {
+		agentManager.replaceMessages( agentId, [] );
+	}
+}
 
 /**
  * Loads and manages agent configuration for Image Studio.
  *
  * - Loads agent config asynchronously from the provided config factory
  * - Rebuilds it whenever the store mints a new session
- * - Handles agent cleanup on unmount
  * - Returns null while loading
  * @param agentConfigFactory                   - Factory function to create agent config
  * @param agentConfigFactory.createAgentConfig
@@ -19,6 +41,11 @@ export function useAgentConfig( agentConfigFactory: {
 } ): UseAgentChatConfig | null {
 	const [ agentConfigState, setAgentConfigState ] = useState< UseAgentChatConfig | null >( null );
 
+	// Held in a ref so a caller passing a fresh factory each render cannot
+	// rebuild mid-conversation. Only a new session rebuilds.
+	const agentConfigFactoryRef = useRef( agentConfigFactory );
+	agentConfigFactoryRef.current = agentConfigFactory;
+
 	const sessionId = useSelect( ( select ) => select( imageStudioStore ).getSessionId(), [] );
 
 	useEffect( () => {
@@ -27,14 +54,13 @@ export function useAgentConfig( agentConfigFactory: {
 		}
 
 		let mounted = true;
-		let agentKey: string | null = null;
 
-		agentConfigFactory
+		agentConfigFactoryRef.current
 			.createAgentConfig( sessionId )
 			.then( ( loadedConfig ) => {
 				if ( mounted ) {
+					clearConversationForNewSession( loadedConfig.agentId, sessionId );
 					setAgentConfigState( loadedConfig );
-					agentKey = `${ loadedConfig.agentId }-${ sessionId }`;
 				}
 			} )
 			.catch( ( error ) => {
@@ -43,15 +69,8 @@ export function useAgentConfig( agentConfigFactory: {
 
 		return () => {
 			mounted = false;
-
-			if ( agentKey ) {
-				const agentManager = getAgentManager();
-				if ( agentManager.hasAgent( agentKey ) ) {
-					agentManager.removeAgent( agentKey );
-				}
-			}
 		};
-	}, [ agentConfigFactory, sessionId ] );
+	}, [ sessionId ] );
 
 	return agentConfigState;
 }
