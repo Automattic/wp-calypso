@@ -279,11 +279,12 @@ function injectScopedReset() {
  * Two things make this trickier than it looks:
  *
  * 1. The chat panel is portalled to `body`, so a rule scoped to the
- *    `#jetpack-reader-chat` mount node never reaches it. We target the same
- *    selectors `injectScopedReset` already relies on.
- * 2. The variables are NOT set on `:root`. `--color-primary` is a common
- *    custom property name, and defining it globally would silently restyle
- *    the host blog's own theme.
+ *    `#jetpack-reader-chat` mount node never reaches it. We target the
+ *    portalled chat, launcher, and popover surfaces directly.
+ * 2. Agenttic defines its default tokens directly on `.agenttic`, so the
+ *    branded values must also be set on that element rather than inherited
+ *    from the portal wrapper. The variables are NOT set on `:root` because
+ *    that would silently restyle the host blog's own theme.
  *
  * Emits nothing when the site has no accent — agenttic's default stands.
  * @param {Object} brand The brand object from JetpackReaderChatConfig.
@@ -302,6 +303,7 @@ function injectBrandTokens( brand ) {
 	style.id = 'jetpack-reader-chat-brand';
 	style.textContent = `
 		.agents-manager-chat,
+		.agents-manager-chat .agenttic,
 		.agents-manager-sidebar-fab,
 		.components-popover {
 			--color-primary: ${ accent };

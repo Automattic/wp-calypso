@@ -128,3 +128,24 @@
 	border-start-start-radius: 0;
 	border-start-end-radius: 0;
 }
+
+.agents-manager-brand-identity {
+	display: flex;
+	min-width: 0;
+	align-items: center;
+	gap: var( --spacing-3 );
+
+	> svg,
+	> .agents-manager-brand-logo {
+		flex-shrink: 0;
+	}
+
+	&__name {
+		min-width: 0;
+		color: var( --color-foreground );
+		font-size: var( --text-base );
+		font-weight: var( --font-weight-semibold );
+		line-height: var( --text-base--line-height );
+		overflow-wrap: anywhere;
+	}
+}

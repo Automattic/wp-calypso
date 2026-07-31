@@ -13,6 +13,8 @@ const mockContainerProps = jest.fn();
 const mockInputProps = jest.fn();
 const mockImageUploaderProps = jest.fn();
 const mockHasAiChatEntry = jest.fn();
+const mockIsReaderChatHost = jest.fn();
+const mockChatHeaderProps = jest.fn();
 
 jest.mock(
 	'@automattic/agenttic-ui',
@@ -108,16 +110,26 @@ jest.mock(
 		}
 
 		function MockEmptyView( {
+			heading,
+			icon,
 			suggestions = [],
 			onSuggestionClick,
 		}: {
+			heading?: string;
+			icon?: ReactNode;
 			suggestions?: Suggestion[];
 			onSuggestionClick?: (
 				selectedSuggestion: Suggestion,
 				availableSuggestions: Suggestion[]
 			) => void;
 		} ) {
-			return <MockSuggestionButtons suggestions={ suggestions } onSubmit={ onSuggestionClick } />;
+			return (
+				<div>
+					{ icon }
+					{ heading && <p>{ heading }</p> }
+					<MockSuggestionButtons suggestions={ suggestions } onSubmit={ onSuggestionClick } />
+				</div>
+			);
 		}
 
 		function MockSuggestions( {
@@ -182,7 +194,10 @@ jest.mock( '../../stores', () => ( {
 } ) );
 jest.mock( '../chat-header', () => ( {
 	__esModule: true,
-	default: () => null,
+	default: ( props: unknown ) => {
+		mockChatHeaderProps( props );
+		return null;
+	},
 } ) );
 jest.mock( '../context-cards', () => ( {
 	__esModule: true,
@@ -203,7 +218,7 @@ jest.mock( '../../utils/is-plugin-compass-agent', () => ( {
 	isPluginCompassHost: () => false,
 } ) );
 jest.mock( '../../utils/is-reader-chat-agent', () => ( {
-	isReaderChatHost: () => false,
+	isReaderChatHost: () => mockIsReaderChatHost(),
 } ) );
 jest.mock( '../../hooks/use-has-ai-chat-entry-button', () => ( {
 	__esModule: true,
@@ -238,7 +253,25 @@ describe( 'AgentChat', () => {
 	beforeEach( () => {
 		jest.clearAllMocks();
 		mockHasAiChatEntry.mockReturnValue( false );
+		mockIsReaderChatHost.mockReturnValue( false );
+		delete ( window as unknown as { agentsManagerData?: unknown } ).agentsManagerData;
 		document.body.className = '';
+	} );
+
+	it( 'shows the Site Chat identity above the greeting instead of in the header', () => {
+		mockIsReaderChatHost.mockReturnValue( true );
+		( window as unknown as { agentsManagerData?: unknown } ).agentsManagerData = {
+			brandName: 'Sa Islang Pantropiko',
+		};
+
+		renderAgentChat( { isOpen: true } );
+
+		const identity = screen.getByText( 'Sa Islang Pantropiko' );
+		const greeting = screen.getByText( 'Ask me anything about this blog.' );
+		expect( identity ).toHaveClass( 'agents-manager-brand-identity__name' );
+		expect( identity.compareDocumentPosition( greeting ) ).toBe( Node.DOCUMENT_POSITION_FOLLOWING );
+		expect( mockChatHeaderProps ).toHaveBeenCalled();
+		expect( mockChatHeaderProps.mock.calls.at( -1 )?.[ 0 ] ).not.toHaveProperty( 'title' );
 	} );
 
 	const imageUpload = ( isUploadingImages: boolean ) =>
