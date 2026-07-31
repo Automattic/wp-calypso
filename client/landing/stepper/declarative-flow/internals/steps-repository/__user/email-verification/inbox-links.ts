@@ -8,8 +8,8 @@ export interface InboxLink {
 }
 
 // Inbox URLs by provider, built from the signup address. Gmail routes through the account
-// chooser so multi-account users land on the address the gate is verifying; the rest use
-// the vetted inbox URLs from magic-login (client/login/magic-login/magic-login-email).
+// chooser so multi-account users land on the right mailbox; the rest are the vetted URLs from
+// client/login/magic-login/magic-login-email.
 const PROVIDER_INBOX_URL: Record< string, ( email: string ) => string > = {
 	gmail: ( email ) => getGmailUrl( email ),
 	outlook: () => 'https://outlook.live.com/mail/',

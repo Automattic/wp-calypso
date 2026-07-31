@@ -1,7 +1,6 @@
-// One session-storage record per gate attempt, keyed by flow and user, so its state
-// survives leaving/re-entering the account step or a refresh. The record's presence means
-// the gate is pending; resolving removes it. `sentAt` anchors the resend cooldown and
-// `shownAt` (stamped when the gate first renders) anchors the duration metric.
+// One session-storage record per gate attempt, keyed by flow and user, so the gate survives a
+// refresh. The record's presence means the gate is pending; resolving removes it. `sentAt`
+// anchors the resend cooldown, `shownAt` the duration metric.
 
 export const RESEND_COOLDOWN_SECONDS = 60;
 
@@ -44,7 +43,7 @@ export function beginGate( scope: string ): void {
 }
 
 // Stamped when the gate first renders, so the duration metric excludes the token-load and
-// user-hydration wait between account creation and the gate.
+// user-hydration wait before it.
 export function markGateShown( scope: string ): void {
 	const record = read( scope );
 	if ( record && ! record.shownAt ) {

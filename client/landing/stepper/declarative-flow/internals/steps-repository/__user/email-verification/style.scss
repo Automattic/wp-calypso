@@ -2,8 +2,8 @@
 	// The layout runs with `noGap`, so this is the whole distance below the title.
 	margin-block-start: 24px;
 
-	// The button lays its content out inline, which leaves the label and the arrow
-	// meeting on a shared text baseline instead of centered against each other.
+	// The button lays its content out inline, which would leave the label and the arrow
+	// meeting on a shared text baseline rather than centered against each other.
 	.button.is-primary {
 		display: flex;
 		align-items: center;
@@ -11,8 +11,8 @@
 	}
 }
 
-// The description lives in the content row so it shares the buttons' width, which
-// takes it out of `.step-container-v2__heading p` and its typography.
+// The description lives in the content row to share the buttons' width, so it no longer
+// inherits `.step-container-v2__heading p`.
 .onboarding-email-verification__sub-text {
 	// The stack owns the spacing below; this only drops the paragraph's own margins.
 	margin-block: 0;
@@ -22,8 +22,8 @@
 	text-wrap: balance;
 }
 
-// Focus is moved here programmatically on mount to announce the screen change; it isn't
-// a tab stop, so suppress the outline the big heading region would otherwise show.
+// Focus lands here programmatically to announce the screen change; it isn't a tab stop, so
+// suppress the outline the heading region would otherwise show.
 .onboarding-email-verification__heading:focus {
 	outline: none;
 }

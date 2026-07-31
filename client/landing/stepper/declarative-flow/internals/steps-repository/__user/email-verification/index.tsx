@@ -17,19 +17,16 @@ import { useEmailVerification } from './use-email-verification';
 
 import './style.scss';
 
-// The description sits in the content row rather than the heading, so the heading
-// (which receives focus on mount) points at it to keep the announcement complete.
+// The description sits outside the heading, so the heading points at it to be announced with it.
 const SUB_TEXT_ID = 'onboarding-email-verification-sub-text';
 
 interface Props {
 	flow: string;
 	// Storage scope for this attempt, computed once by the account step.
 	scope: string;
-	// Partner/Woo branding logo from the account step, so the gate keeps the same top
-	// bar the signup screen had instead of switching to an unbranded one.
+	// Partner/Woo branding, so the top bar doesn't change when the gate replaces the form.
 	logo?: ReactNode;
-	// Called once the user confirms. The account step decides when to render this gate and
-	// what to do next, so eligibility isn't re-checked here.
+	// Called once the user confirms; the account step owns eligibility and what follows.
 	onDone: () => void;
 }
 
@@ -50,16 +47,14 @@ const EmailVerificationGate = ( { flow, scope, logo, onDone }: Props ) => {
 		markGateShown( scope );
 	}, [ scope ] );
 
-	// This gate replaces the account form in place, without a route change, so move focus
-	// onto its heading on mount — otherwise focus is stranded on the now-unmounted submit
-	// button and assistive tech isn't told the screen changed.
+	// The gate replaces the account form without a route change, so move focus onto its heading
+	// — otherwise it strands on the unmounted submit button and the screen change goes unsaid.
 	useEffect( () => {
 		headingRef.current?.focus();
 	}, [] );
 
-	// Resolve as soon as the user is verified — whether they confirm while the gate is open,
-	// or the gate mounts already-verified (e.g. a reload after confirming). This is a hard
-	// gate, so verification is the only way through.
+	// Covers confirming while the gate is open and mounting already-verified, e.g. a reload
+	// after confirming.
 	const finish = useCallback( () => {
 		if ( hasSubmitted.current ) {
 			return;
@@ -110,11 +105,10 @@ const EmailVerificationGate = ( { flow, scope, logo, onDone }: Props ) => {
 				// Same column width as the content row, so the copy lines up with the buttons.
 				headingColumnWidth={ 4 }
 				verticalAlign="center"
-				// The gap below the title is 24px rather than the layout default, so it's
-				// declared on the content row instead (see style.scss).
+				// The 24px below the title is declared on the content row instead (see style.scss).
 				noGap
-				// `step-container-v2--user` opts the gate into the account step's V2 layout
-				// contract, so the step's legacy-layout styles skip it.
+				// Opts the gate into the account step's V2 layout contract, so the step's
+				// legacy-layout styles skip it.
 				className="onboarding-email-verification step-container-v2--user"
 				topBar={ <Step.TopBar logo={ logo } /> }
 				heading={
@@ -134,11 +128,9 @@ const EmailVerificationGate = ( { flow, scope, logo, onDone }: Props ) => {
 					</p>
 
 					<VStack spacing={ 3 }>
-						{ /* Calypso's Button rather than the Step.* ones: the design is drawn from its
-						   outline, radius, and weight, which the step-container buttons don't share. */ }
-
-						{ /* For a known provider, deep-link to its inbox; confirming there resolves the
-						   gate by polling. Unknown providers get a manual "I've confirmed" re-check. */ }
+						{ /* Calypso's Button, not the Step.* ones: the design follows its outline, radius,
+						   and weight. A known provider gets an inbox deep link — confirming there
+						   resolves the gate by polling; the rest get a manual re-check. */ }
 						{ inboxLink ? (
 							<Button primary href={ inboxLink.url } target="_blank" onClick={ openInbox }>
 								{ __( 'Open email inbox' ) }

@@ -14,9 +14,7 @@ import {
 } from './storage';
 
 // Cross-device confirmation only reaches this tab by polling `/me` (`UserVerificationChecker`
-// covers the same-browser case instantly). Cap the polling so a tab left open overnight
-// doesn't hit `/me` forever, and only poll while the tab is visible — the user is usually
-// away in their email app while this screen is up.
+// covers the same browser instantly). Cap it so a tab left open overnight doesn't poll forever.
 const POLL_LIMIT_MS = 15 * 60 * 1000;
 
 // `error` (the request failed) is kept distinct from `unconfirmed` so a network failure
@@ -28,9 +26,8 @@ export function useEmailVerification( flow: string, scope: string ) {
 	const isVerified = useSelector( isCurrentUserEmailVerified );
 	const sendVerificationEmail = useSendEmailVerification();
 
-	// The cooldown runs off this in-memory send time. Re-reading storage each tick would
-	// report no send when persistence is unavailable and reset the cooldown to zero. Seed
-	// from the persisted time to survive a refresh, or now when there's nothing stored.
+	// Held in memory because re-reading storage each tick would report no send when persistence
+	// is unavailable, resetting the cooldown to zero. Seeded from storage to survive a refresh.
 	const sentAtRef = useRef( gateSentAt( scope ) || Date.now() );
 
 	const [ isSending, setIsSending ] = useState( false );
@@ -44,8 +41,6 @@ export function useEmailVerification( flow: string, scope: string ) {
 	const [ isVisible, setIsVisible ] = useState( () => document.visibilityState === 'visible' );
 
 	// The initial email is the activation email from account creation; this only resends.
-	// A plain function (not useCallback): it's only ever an onClick handler, and
-	// `sendVerificationEmail` isn't referentially stable, so memoizing would be a no-op.
 	const resend = async () => {
 		setIsSending( true );
 		setHasSendError( false );
@@ -58,8 +53,8 @@ export function useEmailVerification( flow: string, scope: string ) {
 			sentAtRef.current = Date.now();
 			markResent( scope );
 			setSecondsUntilResend( RESEND_COOLDOWN_SECONDS );
-			// A fresh link restarts the polling window: the user might confirm this new link
-			// from another device long after the previous window lapsed.
+			// A fresh link restarts the polling window — it may be confirmed elsewhere long
+			// after the previous one lapsed.
 			setIsPollingExpired( false );
 			setPollWindowKey( ( key ) => key + 1 );
 			setCheckStatus( 'idle' );
@@ -86,8 +81,7 @@ export function useEmailVerification( flow: string, scope: string ) {
 		secondsUntilResend > 0 && EVERY_SECOND
 	);
 
-	// Track visibility, and on becoming visible refresh the cooldown and check `/me`
-	// once immediately instead of waiting for the next poll tick.
+	// On becoming visible, refresh the cooldown and check `/me` without waiting for the next tick.
 	useEffect( () => {
 		const onVisibilityChange = () => {
 			const visible = document.visibilityState === 'visible';

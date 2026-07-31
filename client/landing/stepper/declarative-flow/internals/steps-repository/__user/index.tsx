@@ -75,9 +75,8 @@ const UserStepComponent: StepType< { accepts: UserStepAccepts } > = function Use
 
 	const gateEnabled =
 		config.isEnabled( 'onboarding/email-verification' ) && flow === ONBOARDING_FLOW;
-	// The scope of the gate this attempt must clear, or null. In-session state is the source
-	// of truth (so a failed storage write can't skip the gate); storage restores it after a
-	// refresh. Social and existing sessions never open the gate.
+	// The scope of the gate this attempt must clear, or null. In-session state is the source of
+	// truth, so a failed storage write can't skip the gate; storage only restores it on refresh.
 	const [ pendingScope, setPendingScope ] = useState< string | null >( null );
 	const storedScope = gateEnabled ? gateScope( flow, userId ) : null;
 	const activeScope =
