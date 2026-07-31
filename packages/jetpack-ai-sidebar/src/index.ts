@@ -47,6 +47,7 @@ import {
 	BLOCK_ACTION_COMPLETE_EVENT,
 	SELECTED_BLOCK_CLEAR_EVENT,
 } from './utils/block-actions';
+import { isImageStudioAvailable, openImageStudioForBlock } from './utils/image-studio';
 import {
 	isAiEditorialReviewEnabled,
 	isBlockTransformationsEnabled,
@@ -936,6 +937,9 @@ type BlockSuggestion = {
 	type: BlockTransformationSuggestionType;
 	condition: ( block: any ) => boolean;
 	options?: SuggestionOption[];
+	// Runs on click instead of sending the prompt. AgentUI submits the prompt
+	// only when this resolves true, so returning false keeps the chat untouched.
+	action?: () => boolean | Promise< boolean >;
 };
 
 /** Change-tone dropdown options; `value` is the full localized prompt filled on selection. */
@@ -1096,6 +1100,24 @@ const BLOCK_SUGGESTIONS: BlockSuggestion[] = [
 		type: 'image',
 		condition: ( block: any ) => IMAGE_BLOCK_TYPES.includes( block?.name ),
 	},
+	{
+		id: 'generate-image',
+		label: __( 'Generate image', __i18n_text_domain__ ),
+		// Empty prompt — opening Image Studio replaces sending anything to the agent.
+		prompt: '',
+		type: 'image',
+		condition: ( block: any ) => block?.name === 'core/image' && isImageStudioAvailable(),
+		action: () => ! openImageStudioForBlock( getSelectedOrRememberedBlock(), 'generate' ),
+	},
+	{
+		id: 'edit-image',
+		label: __( 'Edit image', __i18n_text_domain__ ),
+		prompt: '',
+		type: 'image',
+		condition: ( block: any ) =>
+			block?.name === 'core/image' && !! block?.attributes?.id && isImageStudioAvailable(),
+		action: () => ! openImageStudioForBlock( getSelectedOrRememberedBlock(), 'edit' ),
+	},
 ];
 
 function trackRenderedBlockTransformationSuggestions(
@@ -1151,6 +1173,7 @@ export function useSuggestions(
 		description?: string;
 		prompt?: string;
 		options?: SuggestionOption[];
+		action?: () => boolean | Promise< boolean >;
 	} >;
 	replaceEmptyViewSuggestions: boolean;
 } {
@@ -1253,7 +1276,13 @@ export function useSuggestions(
 	);
 	const blockTransformationSuggestions = useMemo(
 		() =>
-			applicable.map( ( { id, label, prompt, options } ) => ( { id, label, prompt, options } ) ),
+			applicable.map( ( { id, label, prompt, options, action } ) => ( {
+				id,
+				label,
+				prompt,
+				options,
+				action,
+			} ) ),
 		[ applicable ]
 	);
 	// Editor-level reviews (Optimize Title, Generate Feedback, AI Editorial Review)
@@ -1269,6 +1298,7 @@ export function useSuggestions(
 			label: string;
 			prompt: string;
 			options?: SuggestionOption[];
+			action?: () => boolean | Promise< boolean >;
 		} > = selectedBlock ? blockTransformationSuggestions : postLevelSuggestions;
 		return applySuggestionLimit( activeSuggestions, maxSuggestions );
 	}, [
