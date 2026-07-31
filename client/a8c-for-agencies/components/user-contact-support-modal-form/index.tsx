@@ -134,7 +134,7 @@ export default function UserContactSupportModalForm( {
 			product,
 			agency_id: isAnonymousMode ? undefined : agency?.id,
 			...( site && { site } ),
-			...( pressableContactType && { contact_type: pressableContactType } ),
+			...( isPressableSelected && pressableContactType && { contact_type: pressableContactType } ),
 			...( pressable_id && { pressable_id } ),
 			...( isAnonymousMode && { tags: [ 'a4a_duplicate_signup_blocked' ] } ),
 		};
@@ -220,18 +220,20 @@ export default function UserContactSupportModalForm( {
 					/>
 				</FormFieldset>
 
-				<FormFieldset>
-					<FormLabel htmlFor="product">
-						{ translate( 'What Automattic product would you like help with?' ) }
-					</FormLabel>
-					<FormSelect name="product" id="product" value={ product } onChange={ onProductChange }>
-						<option value="a4a">{ translate( 'Automattic for Agencies' ) }</option>
-						<option value="woo">{ translate( 'Woo' ) }</option>
-						<option value="wpcom">{ translate( 'WordPress.com' ) }</option>
-						<option value="jetpack">{ translate( 'Jetpack' ) }</option>
-						<option value="pressable">{ translate( 'Pressable' ) }</option>
-					</FormSelect>
-				</FormFieldset>
+				{ ! isAnonymousMode && (
+					<FormFieldset>
+						<FormLabel htmlFor="product">
+							{ translate( 'What Automattic product would you like help with?' ) }
+						</FormLabel>
+						<FormSelect name="product" id="product" value={ product } onChange={ onProductChange }>
+							<option value="a4a">{ translate( 'Automattic for Agencies' ) }</option>
+							<option value="woo">{ translate( 'Woo' ) }</option>
+							<option value="wpcom">{ translate( 'WordPress.com' ) }</option>
+							<option value="jetpack">{ translate( 'Jetpack' ) }</option>
+							<option value="pressable">{ translate( 'Pressable' ) }</option>
+						</FormSelect>
+					</FormFieldset>
+				) }
 
 				{ isPressableSelected && (
 					<>
