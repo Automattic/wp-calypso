@@ -123,7 +123,7 @@ test.describe(
 
 			await test.step( 'When I cancel storage add-on', async () => {
 				const purchasesPage = new DashboardPurchasesPage( page );
-				await purchasesPage.clickOnPurchase( 'Storage Add-On Space Upgrade 50 GB', siteSlug! );
+				await purchasesPage.clickOnPurchase( 'Storage Add-On Space Upgrade 50 GB', siteSlug );
 				await purchasesPage.cancelPurchase();
 				await removeDashboardUpgradeFlow( page, {
 					improvementText: 'E2E TEST CANCELLATION',
