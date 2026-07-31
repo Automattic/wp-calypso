@@ -231,6 +231,14 @@ describe( 'EmailVerificationGate', () => {
 			'calypso_signup_email_verification_email_send_failed',
 			expect.objectContaining( { flow: FLOW, is_resend: true, error: 'throttled' } )
 		);
+
+		// The refusal expires with the wait it described — a notice explaining a locked button
+		// must not outlive the lock.
+		act( () => {
+			jest.advanceTimersByTime( 25 * 60 * 1000 );
+		} );
+		expect( await screen.findByRole( 'button', { name: 'Resend' } ) ).toBeEnabled();
+		expect( screen.queryByText( /Look for one we/ ) ).not.toBeInTheDocument();
 	} );
 
 	it( 'resends once the cooldown lapses and restarts it', async () => {

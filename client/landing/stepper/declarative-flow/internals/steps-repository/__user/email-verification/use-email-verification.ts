@@ -16,6 +16,12 @@ import {
 	markResendUnavailableFor,
 } from './storage';
 
+// Kept as-is from before throttles were reported separately, so ordinary failures carry the
+// same value they always have.
+function describeError( error: unknown ): string {
+	return error instanceof Error ? error.message : String( error );
+}
+
 // Cross-device confirmation only reaches this tab by polling `/me` (`UserVerificationChecker`
 // covers the same browser instantly). Cap it so a tab left open overnight doesn't poll forever.
 const POLL_LIMIT_MS = 15 * 60 * 1000;
@@ -56,6 +62,16 @@ export function useEmailVerification( flow: string, scope: string ) {
 		setSecondsUntilResend( cooldownRemainingSeconds( availableAtRef.current ) );
 	};
 
+	// A refusal expires with the wait it described: leaving it behind would explain an
+	// unavailable button that is, by then, available again.
+	const syncCooldown = useCallback( () => {
+		const remaining = cooldownRemainingSeconds( availableAtRef.current );
+		setSecondsUntilResend( remaining );
+		if ( remaining === 0 ) {
+			setSendStatus( ( status ) => ( status === 'throttled' ? 'idle' : status ) );
+		}
+	}, [] );
+
 	// The initial email is the activation email from account creation; this only resends.
 	const resend = async () => {
 		setSendStatus( 'sending' );
@@ -85,17 +101,14 @@ export function useEmailVerification( flow: string, scope: string ) {
 			recordTracksEvent( 'calypso_signup_email_verification_email_send_failed', {
 				flow,
 				is_resend: true,
-				error: retryAfter !== null ? 'throttled' : String( error ),
+				error: retryAfter !== null ? 'throttled' : describeError( error ),
 			} );
 		}
 	};
 
-	// Recompute the cooldown from the send time rather than decrementing a counter: mobile
-	// browsers suspend timers while the user is away in their email app.
-	useInterval(
-		() => setSecondsUntilResend( cooldownRemainingSeconds( availableAtRef.current ) ),
-		secondsUntilResend > 0 && EVERY_SECOND
-	);
+	// Recompute from the deadline rather than decrementing a counter: mobile browsers suspend
+	// timers while the user is away in their email app.
+	useInterval( syncCooldown, secondsUntilResend > 0 && EVERY_SECOND );
 
 	// On becoming visible, refresh the cooldown and check `/me` without waiting for the next tick.
 	useEffect( () => {
@@ -103,7 +116,7 @@ export function useEmailVerification( flow: string, scope: string ) {
 			const visible = document.visibilityState === 'visible';
 			setIsVisible( visible );
 			if ( visible ) {
-				setSecondsUntilResend( cooldownRemainingSeconds( availableAtRef.current ) );
+				syncCooldown();
 				if ( ! isVerified ) {
 					dispatch( fetchCurrentUser() );
 				}
@@ -111,7 +124,7 @@ export function useEmailVerification( flow: string, scope: string ) {
 		};
 		document.addEventListener( 'visibilitychange', onVisibilityChange );
 		return () => document.removeEventListener( 'visibilitychange', onVisibilityChange );
-	}, [ isVerified, dispatch ] );
+	}, [ isVerified, dispatch, syncCooldown ] );
 
 	useEffect( () => {
 		if ( isVerified ) {
