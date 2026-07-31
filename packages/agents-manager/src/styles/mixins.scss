@@ -1,4 +1,4 @@
-// Apply styles to `.agents-manager-chat--docked` only when no modal is open.
+// Docked-chat styles. wp-admin drops them during modals; Calypso keeps them.
 @mixin docked-chat-without-modal {
 	body:not( .modal-open.wp-admin ) .agents-manager-chat--docked {
 		@content;

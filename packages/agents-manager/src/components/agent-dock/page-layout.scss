@@ -1,0 +1,279 @@
+/* Shrink mixins */
+// Shrink-layout setup: the container narrows in place and the docked chat is
+// a drawer parked off-screen, sliding on the container's timing so the edges
+// stay in lockstep; visibility waits for the slide-out. Not `transform` — it
+// would trap the viewport-fixed FAB inside.
+@mixin shrink-sidebar-base( $container-selector, $chat-top ) {
+	// Paints the freed strip dark — above the body background, below the
+	// content — so pre-rendered loads are dark before the chat mounts. It
+	// grows on the sidebar timing, exactly tracking the freed zone, so it
+	// never peeks through transparent page regions mid-slide.
+	&::before {
+		content: '';
+		position: fixed;
+		top: 0;
+		right: 0;
+		bottom: 0;
+		width: 0;
+		background-color: $gray-900;
+		z-index: -1;
+		transition: width $transition-timing;
+	}
+
+	#{$container-selector} {
+		transition: width $transition-timing;
+	}
+
+	.agents-manager-chat--docked {
+		top: $chat-top;
+		right: calc( -1 * $sidebar-width );
+		background-color: $gray-900;
+		// `width` keeps split-screen toggles in lockstep too.
+		transition:
+			right $transition-timing,
+			width $transition-timing,
+			visibility 0s $transition-duration;
+	}
+}
+
+// Open state: the container narrows, the chat slides into the freed strip,
+// and the strip pseudo-element widens with them in lockstep.
+@mixin shrink-sidebar-open( $container-selector ) {
+	&::before {
+		width: $sidebar-width;
+	}
+
+	#{$container-selector} {
+		width: calc( 100% - $sidebar-width );
+		// Keep too-wide content from sliding under the chat. `clip`, not
+		// `hidden` — `hidden` would turn the container into the page's scroll
+		// box and break native window scrolling.
+		overflow-x: clip;
+	}
+
+	.agents-manager-chat--docked {
+		visibility: visible;
+		right: 0;
+		// Hold the docked stacking while sliding so page chrome can't cross
+		// the chat, then release so admin bar and masterbar menus overlay it.
+		// Browsers without `allow-discrete` release immediately instead.
+		z-index: unset;
+		transition:
+			right $transition-timing,
+			width $transition-timing,
+			z-index 0s $transition-duration allow-discrete;
+	}
+
+	.agents-manager-sidebar-fab {
+		display: none;
+	}
+}
+
+/* wp-admin */
+// wp-admin keeps its native layout: `#wpwrap` shrinks, the admin bar stays
+// full-width, and the docked chat fills the freed strip below it.
+body.wp-admin.agents-manager-sidebar-container:not( .modal-open ) {
+	@include shrink-sidebar-base( '#wpwrap', $admin-bar-height );
+
+	// The Gutenberg editors pin their roots to the viewport, so they ignore
+	// the shrunken `#wpwrap` — pull their right edges clear of the chat. The
+	// skeleton rule is post-editor-only: the site editor has the same element
+	// but positioned `relative`, where a `right` offset would shift it.
+	&.site-editor-php #site-editor,
+	&:is( .post-php, .post-new-php ) .interface-interface-skeleton.editor-editor-interface {
+		transition: right $transition-timing;
+	}
+
+	// The wpcom notifications panel is fixed to the viewport edge; slide it
+	// clear of the docked chat.
+	#wpnt-notes-panel2 {
+		transition: right $transition-timing;
+	}
+
+	&.agents-manager-sidebar-container--sidebar-open {
+		@include shrink-sidebar-open( '#wpwrap' );
+
+		// `!important` outranks the widget's double-`#` selector.
+		#wpnt-notes-panel2 {
+			right: $sidebar-width !important;
+		}
+
+		// Viewport-fixed editor pieces: the editor roots, the publish panel,
+		// and the save panel with its minimized toggle.
+		&.site-editor-php #site-editor,
+		&:is( .post-php, .post-new-php ) .interface-interface-skeleton.editor-editor-interface,
+		&:is( .post-php, .post-new-php ) .editor-post-publish-panel,
+		&:is( .post-php, .post-new-php, .site-editor-php )
+			.admin-ui-navigable-region.interface-interface-skeleton__actions,
+		&:is( .post-php, .post-new-php, .site-editor-php )
+			.editor-layout__toggle-entities-saved-states-panel {
+			right: $sidebar-width;
+		}
+	}
+}
+
+/* wp-admin: WooCommerce */
+// WooCommerce's fixed header sets its own `width: calc(100% - <menu>)`, so it
+// ignores the shrunken `#wpwrap` — subtract the chat width per menu state,
+// sliding on the sidebar timing to stay in lockstep.
+body.wp-admin.woocommerce-admin-page.agents-manager-sidebar-container {
+	.woocommerce-layout__header {
+		transition: width $transition-timing;
+	}
+
+	&.agents-manager-sidebar-container--sidebar-open:not( .modal-open ) {
+		.woocommerce-layout__header {
+			width: calc( 100% - $admin-sidebar-width - $sidebar-width ) !important;
+		}
+
+		&.is-nav-unification .woocommerce-layout__header {
+			width: calc( 100% - $admin-menu-width-unified - $sidebar-width ) !important;
+		}
+
+		&.folded .woocommerce-layout__header {
+			width: calc( 100% - $admin-sidebar-width-collapsed - $sidebar-width ) !important;
+		}
+	}
+}
+
+/* wp-admin: Jetpack pages */
+// Jetpack's React admin pages pin `#wpbody-content` to the viewport, so it
+// ignores the shrunken `#wpwrap` — pull its right edge clear of the chat.
+body.wp-admin.agents-manager-sidebar-container:is(
+		[class*='jetpack_page_'],
+		[class*='toplevel_page_jetpack']
+	) {
+	#wpbody-content {
+		transition: right $transition-timing;
+	}
+
+	&.agents-manager-sidebar-container--sidebar-open:not( .modal-open ) #wpbody-content {
+		right: $sidebar-width;
+	}
+}
+
+/* Calypso */
+// Calypso keeps its native layout: `#wpcom` shrinks, the fixed masterbar (or
+// MSD omnibar) stays full-width, and the docked chat fills the freed strip
+// below it.
+body:is( [class*='is-group-'], [class*='is-section-'] ).agents-manager-sidebar-container:not(
+		.wp-admin
+	) {
+	@include shrink-sidebar-base( '#wpcom', var( --masterbar-height, #{$admin-bar-height} ) );
+
+	// Stepper flows render no masterbar; the chat starts at the very top.
+	&.is-section-stepper .agents-manager-chat--docked {
+		top: 0;
+	}
+
+	// Migrated Jetpack sections (Activity Log, Earn, Scan, Backup, …) pin
+	// `.layout__primary` and its `.jetpack-footer` to the viewport
+	// (`admin-ui-page-sticky-footer` mixin), so they ignore the shrunken
+	// `#wpcom`. Anchoring both edges lets the open state slide them clear.
+	// `:has()` matches the admin-ui shell, so future migrated sections are
+	// covered — and where the shell isn't pinned (Stats, Subscribers, …),
+	// insets and `width: auto` change nothing, so the rule is inert.
+	.layout__primary:has( > .main > .admin-ui-navigable-region ) {
+		&,
+		.jetpack-footer {
+			left: var( --sidebar-width-max, #{$admin-menu-width-unified} );
+			right: 0;
+			width: auto;
+			transition: right $transition-timing;
+		}
+	}
+
+	// The screen-options "View" switcher is viewport-fixed; slide it with the
+	// chat.
+	.screen-options-tab {
+		transition: right $transition-timing;
+	}
+
+	// No `.modal-open` guard: Calypso keeps the docked layout during modals.
+	&.agents-manager-sidebar-container--sidebar-open {
+		@include shrink-sidebar-open( '#wpcom' );
+
+		.layout__primary:has( > .main > .admin-ui-navigable-region ) {
+			&,
+			.jetpack-footer {
+				right: $sidebar-width;
+			}
+		}
+
+		// The notifications flyout is fixed to the viewport edge; keep it clear
+		// of the docked chat. `.global-notifications` skips the Reader
+		// notifications page, where the same panel renders inside the content
+		// flow.
+		.global-notifications #wpnc-panel {
+			right: $sidebar-width;
+		}
+
+		// The switcher natively sits at `right: 32px`; keep that inset beside
+		// the chat.
+		.screen-options-tab {
+			right: calc( $sidebar-width + 32px );
+		}
+	}
+}
+
+/* Calypso: marketplace */
+// The pinned plugins/themes toolbars are viewport-fixed; keep them clear of
+// the docked chat, sliding on the sidebar timing. Pinning itself never
+// animates: transitions only run from already-pinned values.
+body.agents-manager-sidebar-container:not( .wp-admin ) {
+	// The browse view's pinned search bar anchors `left` with an explicit
+	// width; `width: auto` + `right` derives the width from both edges,
+	// covering every layout-sidebar variant.
+	.search-box-header.fixed-top .search-box-header__search {
+		width: auto;
+		right: 0;
+		transition: right $transition-timing;
+	}
+
+	.layout__secondary ~ .layout__primary {
+		.plugins-browser--site-view .search-categories.fixed-top {
+			transition: right $transition-timing;
+
+			&::after {
+				transition: width $transition-timing;
+			}
+		}
+
+		.themes__content .themes__controls.is-sticky:not( .is-global-sidebar-visible ) {
+			transition: width $transition-timing;
+		}
+	}
+
+	&.agents-manager-sidebar-container--sidebar-open {
+		.search-box-header.fixed-top .search-box-header__search {
+			right: $sidebar-width;
+		}
+
+		.layout__secondary ~ .layout__primary {
+			.plugins-browser--site-view .search-categories.fixed-top {
+				right: $sidebar-width;
+
+				&::after {
+					width: calc(
+						100vw - var( --sidebar-width-max, #{$admin-menu-width-unified} ) - $sidebar-width
+					);
+				}
+			}
+
+			.themes__content .themes__controls.is-sticky:not( .is-global-sidebar-visible ) {
+				width: calc(
+					100vw - var( --sidebar-width-max, #{$admin-menu-width-unified} ) - $sidebar-width - 16px
+				);
+			}
+		}
+	}
+}
+
+/* Reduced motion */
+// Every sidebar transition derives its duration from this variable, so
+// zeroing it here covers them all — present and future.
+@media ( prefers-reduced-motion: reduce ) {
+	body.agents-manager-sidebar-container {
+		--am-transition-duration: 0s;
+	}
+}
