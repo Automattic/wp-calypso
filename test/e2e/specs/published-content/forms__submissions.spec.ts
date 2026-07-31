@@ -46,6 +46,11 @@ test.describe(
 		test( 'As a user, I can submit forms and validate responses in the feedback inbox', async ( {
 			page,
 		} ) => {
+			test.skip(
+				envVariables.TEST_ON_ATOMIC && envVariables.ATOMIC_VARIATION === 'private',
+				'Form submission flow requires a public Atomic site'
+			);
+
 			let publishedFormLocator: Locator;
 			let restAPIClient: RestAPIClient;
 			let newPostDetails: PostResponse;
@@ -150,7 +155,7 @@ test.describe(
 			// --- Validate responses ---
 
 			await test.step( 'Authenticate as site owner', async () => {
-				await testAccount.authenticate( page );
+				await testAccount.authenticate( page, { waitUntilStable: false } );
 
 				// Atomic tests sites might have local users, so the Jetpack SSO login will
 				// show up when visiting the Jetpack dashboard directly. We can bypass it if

@@ -20,9 +20,14 @@ import { expect, tags as allTags, test } from '../../../lib/pw-base';
 export function createBlockTests(
 	specName: string,
 	blockFlows: BlockFlow[],
-	testTags: string[] = [ allTags.GUTENBERG ]
+	testTags: string[] = [ allTags.GUTENBERG ],
+	skip?: { condition: boolean; reason: string }
 ): void {
 	test.describe( DataHelper.createSuiteTitle( specName ), { tag: testTags }, () => {
+		if ( skip ) {
+			test.skip( skip.condition, skip.reason );
+		}
+
 		const features = envToFeatureKey( envVariables );
 		const accountName = getTestAccountByFeature( features, [
 			{
@@ -38,7 +43,7 @@ export function createBlockTests(
 
 			await test.step( 'Given I am authenticated', async () => {
 				const testAccount = new TestAccount( accountName );
-				await testAccount.authenticate( page );
+				await testAccount.authenticate( page, { waitUntilStable: false } );
 			} );
 
 			await test.step( 'When I visit the new post page', async () => {

@@ -2,6 +2,7 @@ import {
 	AllFormFieldsFlow,
 	BlockFlow,
 	ContactFormFlow,
+	envVariables,
 	FormAiFlow,
 	FormPatternsFlow,
 } from '@automattic/calypso-e2e';
@@ -32,7 +33,12 @@ const blockFlows: BlockFlow[] = [
 	} ),
 ];
 
-createBlockTests( 'Blocks: Jetpack Forms', blockFlows, [
-	tags.GUTENBERG,
-	tags.JETPACK_WPCOM_INTEGRATION,
-] );
+createBlockTests(
+	'Blocks: Jetpack Forms',
+	blockFlows,
+	[ tags.GUTENBERG, tags.JETPACK_WPCOM_INTEGRATION ],
+	{
+		condition: envVariables.TEST_ON_ATOMIC && envVariables.ATOMIC_VARIATION === 'private',
+		reason: 'Forms block smoke test requires a public Atomic site',
+	}
+);
