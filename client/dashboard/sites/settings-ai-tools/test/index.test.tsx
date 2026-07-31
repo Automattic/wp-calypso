@@ -226,7 +226,7 @@ describe( '<AIToolsSettings>', () => {
 
 		expect( screen.getByText( 'Your dream site is just a prompt away' ) ).toBeVisible();
 		expect( screen.getByRole( 'button', { name: 'Upgrade plan' } ) ).toBeEnabled();
-		expect( container.querySelectorAll( '.ai-tools-settings__locked-card' ) ).toHaveLength( 3 );
+		expect( container.querySelectorAll( '.ai-tools-settings__locked-card' ) ).toHaveLength( 4 );
 
 		expect( screen.getByRole( 'heading', { name: 'WordPress Agent' } ) ).toBeVisible();
 		const agentToggle = screen.getByRole( 'checkbox', { name: 'Enable WordPress Agent' } );
@@ -245,7 +245,7 @@ describe( '<AIToolsSettings>', () => {
 			screen.queryByText( 'Upgrade your plan to enable this setting.' )
 		).not.toBeInTheDocument();
 		const upgradeBadges = screen.getAllByText( 'Upgrade required' );
-		expect( upgradeBadges ).toHaveLength( 3 );
+		expect( upgradeBadges ).toHaveLength( 4 );
 		await user.hover( upgradeBadges[ 0 ] );
 		expect( await screen.findByRole( 'tooltip' ) ).toHaveTextContent(
 			'Upgrade your plan to enable this setting.'
@@ -261,9 +261,11 @@ describe( '<AIToolsSettings>', () => {
 		expect(
 			screen.queryByRole( 'checkbox', { name: 'Enable MCP access for this site' } )
 		).not.toBeInTheDocument();
-		expect(
-			screen.queryByRole( 'link', { name: /^Connect external AI agent/ } )
-		).not.toBeInTheDocument();
+		const connectExternalAgent = screen.getByRole( 'link', {
+			name: /^Connect external AI agent/,
+		} );
+		expect( connectExternalAgent ).toHaveClass( 'dashboard-summary-button' );
+		expect( connectExternalAgent ).toHaveAttribute( 'aria-disabled', 'true' );
 	} );
 
 	test( 'shows MCP settings without upgrade badging when available', async () => {
@@ -292,7 +294,7 @@ describe( '<AIToolsSettings>', () => {
 		);
 		expect(
 			screen.getByText(
-				'Connect your WordPress.com account to Telegram. This connection is shared across multiple sites.'
+				'Manage your WordPress.com sites from Telegram. This connection is shared across multiple sites.'
 			)
 		).toBeVisible();
 		expect(

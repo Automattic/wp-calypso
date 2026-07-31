@@ -487,7 +487,7 @@ export default function AIToolsSettings( { siteSlug }: { siteSlug: string } ) {
 							href={ wpcomLink( TELEGRAM_CONNECTION_PATH ) }
 							title={ __( 'Connect Telegram' ) }
 							description={ __(
-								'Connect your WordPress.com account to Telegram. This connection is shared across multiple sites.'
+								'Manage your WordPress.com sites from Telegram. This connection is shared across multiple sites.'
 							) }
 							decoration={ <Icon icon={ send } size={ 24 } /> }
 							onClick={ () => {
@@ -500,52 +500,60 @@ export default function AIToolsSettings( { siteSlug }: { siteSlug: string } ) {
 						/>
 					</div>
 				) }
-				{ config.isEnabled( 'mcp-settings' ) && isAvailable && (
+				{ config.isEnabled( 'mcp-settings' ) && (
 					<>
-						<Card className="mcp-settings__access-card">
-							<CardBody>
-								<VStack spacing={ 4 }>
-									<SectionHeader
-										title={ __( 'External AI agent access' ) }
-										description={ __( 'Allow external AI agents to access this site via MCP.' ) }
-										level={ 3 }
-									/>
-									<ToggleControl
-										__nextHasNoMarginBottom
-										checked={ isMcpEnabled }
-										disabled={ mcpMutation.isPending }
-										label={ __( 'Enable MCP access for this site' ) }
-										onChange={ handleMcpToggle }
-									/>
-								</VStack>
-							</CardBody>
-							{ isMcpEnabled && (
-								<>
-									<CardDivider className="mcp-settings__sub-divider" />
-									<RouterLinkSummaryButton
-										to={ `/sites/${ siteSlug }/settings/ai-tools/read` }
-										density="medium"
-										title={ __( 'Read' ) }
-										decoration={ <Icon icon={ seen } size={ 24 } /> }
-										badges={ [ readBadge ] }
-									/>
-									<RouterLinkSummaryButton
-										to={ `/sites/${ siteSlug }/settings/ai-tools/write` }
-										density="medium"
-										title={ __( 'Write' ) }
-										decoration={ <Icon icon={ pencil } size={ 24 } /> }
-										badges={ [ writeBadge ] }
-									/>
-								</>
-							) }
-						</Card>
-						{ isMcpEnabled && (
-							<RouterLinkSummaryButton
-								to={ `/sites/${ siteSlug }/settings/ai-tools/setup` }
-								title={ __( 'Connect external AI agent' ) }
-								description={ __( 'Get instructions for connecting your external AI assistant.' ) }
-								decoration={ <Icon icon={ connection } size={ 24 } /> }
-							/>
+						{ isAvailable && (
+							<Card className="mcp-settings__access-card">
+								<CardBody>
+									<VStack spacing={ 4 }>
+										<SectionHeader
+											title={ __( 'External AI agent access' ) }
+											description={ __( 'Allow external AI agents to access this site via MCP.' ) }
+											level={ 3 }
+										/>
+										<ToggleControl
+											__nextHasNoMarginBottom
+											checked={ isMcpEnabled }
+											disabled={ mcpMutation.isPending }
+											label={ __( 'Enable MCP access for this site' ) }
+											onChange={ handleMcpToggle }
+										/>
+									</VStack>
+								</CardBody>
+								{ isMcpEnabled && (
+									<>
+										<CardDivider className="mcp-settings__sub-divider" />
+										<RouterLinkSummaryButton
+											to={ `/sites/${ siteSlug }/settings/ai-tools/read` }
+											density="medium"
+											title={ __( 'Read' ) }
+											decoration={ <Icon icon={ seen } size={ 24 } /> }
+											badges={ [ readBadge ] }
+										/>
+										<RouterLinkSummaryButton
+											to={ `/sites/${ siteSlug }/settings/ai-tools/write` }
+											density="medium"
+											title={ __( 'Write' ) }
+											decoration={ <Icon icon={ pencil } size={ 24 } /> }
+											badges={ [ writeBadge ] }
+										/>
+									</>
+								) }
+							</Card>
+						) }
+						{ ( ! isAvailable || isMcpEnabled ) && (
+							<div className={ ! isAvailable ? 'ai-tools-settings__locked-card' : undefined }>
+								<RouterLinkSummaryButton
+									to={ `/sites/${ siteSlug }/settings/ai-tools/setup` }
+									title={ __( 'Connect external AI agent' ) }
+									description={ __(
+										'Get instructions for connecting your external AI assistant.'
+									) }
+									decoration={ <Icon icon={ connection } size={ 24 } /> }
+									badges={ ! isAvailable ? [ upgradeRequiredBadge ] : undefined }
+									disabled={ ! isAvailable }
+								/>
+							</div>
 						) }
 					</>
 				) }
