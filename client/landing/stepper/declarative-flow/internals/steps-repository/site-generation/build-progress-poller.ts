@@ -39,6 +39,7 @@ const TOOL_MILESTONES: Record< string, string > = {
 	'generate-images': 'polishing',
 	'page-styles': 'polishing',
 	'custom-motion': 'polishing',
+	'bundle-fonts': 'polishing',
 	'fonts-php': 'polishing',
 	'finalize-theme': 'polishing',
 	'validate-theme': 'polishing',
