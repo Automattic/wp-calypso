@@ -172,11 +172,10 @@ body:is( [class*='is-group-'], [class*='is-section-'] ).agents-manager-sidebar-c
 
 	// Migrated Jetpack sections (Activity Log, Earn, Scan, Backup, …) pin
 	// `.layout__primary` and its `.jetpack-footer` to the viewport
-	// (`admin-ui-page-sticky-footer` mixin), so they ignore the shrunken
-	// `#wpcom`. Anchoring both edges lets the open state slide them clear.
-	// `:has()` matches the admin-ui shell, so future migrated sections are
-	// covered — and where the shell isn't pinned (Stats, Subscribers, …),
-	// insets and `width: auto` change nothing, so the rule is inert.
+	// (`admin-ui-page-sticky-footer` mixin), ignoring the shrunken `#wpcom` —
+	// anchor both edges so the open state can slide them clear. Unpinned
+	// pages with the same shell (Stats, Subscribers, …) ignore these values,
+	// so the rule is inert there.
 	.layout__primary:has( > .main > .admin-ui-navigable-region ) {
 		&,
 		.jetpack-footer {

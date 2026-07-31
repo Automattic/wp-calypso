@@ -9,7 +9,9 @@ $main-border-radius: 8px;
 // CSS custom-property wrapper so reduced-motion can zero every derived
 // transition at once.
 $transition-duration: var( --am-transition-duration, 0.2s );
-$transition-timing: $transition-duration cubic-bezier( 0.4, 0, 0.2, 1 );
+// Decelerate curve: starts at full speed so the slide responds instantly,
+// then eases into place.
+$transition-timing: $transition-duration cubic-bezier( 0, 0, 0.2, 1 );
 // Shared overlay-panel stacking, mirrored in Help Center
 // (packages/help-center/src/components/_variables.scss). A focused panel must
 // always beat an unfocused one, so they share one base + focused offset.
