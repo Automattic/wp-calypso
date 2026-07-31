@@ -69,7 +69,6 @@ import type { UpsellType } from './get-upsell-type';
 import type { Purchase } from '@automattic/api-core';
 import type { PlanSlug } from '@automattic/calypso-products';
 import type { SiteDetails } from '@automattic/data-stores';
-import type { Purchase as LegacyPurchase } from 'calypso/lib/purchases/types';
 import type { DisplayVariant } from 'calypso/lib/purchases/utils';
 import type { IAppState } from 'calypso/state/types';
 import type { ReactNode } from 'react';
@@ -100,7 +99,7 @@ export interface CancelPurchaseFormOwnProps {
 	flowType: string;
 	cancelBundledDomain?: boolean;
 	includedDomainPurchase?: object;
-	linkedPurchases?: LegacyPurchase[];
+	linkedPurchases?: Purchase[];
 	skipRemovePlanSurvey?: boolean;
 	cancellationInProgress?: boolean;
 	intent?: DisplayVariant | null;

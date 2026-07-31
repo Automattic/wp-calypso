@@ -916,9 +916,7 @@ class ManagePurchase extends Component<
 			<CancelPurchaseForm
 				disableButtons={ this.state.isRemoving }
 				purchase={ purchase }
-				linkedPurchases={ this.getActiveMarketplaceSubscriptions().map( ( p ) =>
-					createPurchaseObject( p as unknown as Parameters< typeof createPurchaseObject >[ 0 ] )
-				) }
+				linkedPurchases={ this.getActiveMarketplaceSubscriptions() }
 				isVisible={ this.state.isCancelSurveyVisible }
 				onClose={ this.closeDialog }
 				onSurveyComplete={ this.cancelSubscription }

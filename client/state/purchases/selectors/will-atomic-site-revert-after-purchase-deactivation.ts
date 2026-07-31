@@ -3,6 +3,8 @@ import { isMarketplaceProduct } from 'calypso/state/products-list/selectors';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
 import { getByPurchaseId } from './get-by-purchase-id';
 import { getSitePurchases } from './get-site-purchases';
+import type { Purchase } from '@automattic/api-core';
+import type { AppState } from 'calypso/types';
 
 import 'calypso/state/purchases/init';
 
@@ -11,17 +13,17 @@ import 'calypso/state/purchases/init';
  * The backend has the final say on if this actually happens, see:
  * revert_atomic_site_on_subscription_removal() and deactivate_product().
  * This is a helper for UI elements only, it does not control actual revert decisions.
- * @param   {Object} state           global state
- * @param   {number} purchaseId      the purchase id
- * @param   {Array}  linkedPurchases List of purchases that will be also deactivated because they are
- *                                   linked to the given purchase
- * @returns {boolean} True if the Atomic revert will happen, false otherwise.
+ * @param   state           global state
+ * @param   purchaseId      the purchase id
+ * @param   linkedPurchases List of purchases that will be also deactivated because they are
+ *                          linked to the given purchase
+ * @returns True if the Atomic revert will happen, false otherwise.
  */
 export const willAtomicSiteRevertAfterPurchaseDeactivation = (
-	state,
-	purchaseId,
-	linkedPurchases
-) => {
+	state: AppState,
+	purchaseId: number | undefined | null,
+	linkedPurchases: Purchase[] = []
+): boolean => {
 	if ( ! purchaseId ) {
 		return false;
 	}
@@ -36,7 +38,7 @@ export const willAtomicSiteRevertAfterPurchaseDeactivation = (
 		return false;
 	}
 
-	const isAtomicSupportedProduct = ( productSlug ) => {
+	const isAtomicSupportedProduct = ( productSlug: string ) => {
 		if ( isMarketplaceProduct( state, productSlug ) ) {
 			return true;
 		}
@@ -44,15 +46,11 @@ export const willAtomicSiteRevertAfterPurchaseDeactivation = (
 		return planHasFeature( productSlug, WPCOM_FEATURES_ATOMIC );
 	};
 
-	if ( ! Array.isArray( linkedPurchases ) ) {
-		linkedPurchases = [];
-	}
-
 	// Bail if none of the purchases to deactivate supports Atomic.
 	if (
 		! isAtomicSupportedProduct( purchase.productSlug ) &&
 		linkedPurchases.every(
-			( linkedPurchase ) => ! isAtomicSupportedProduct( linkedPurchase.productSlug )
+			( linkedPurchase ) => ! isAtomicSupportedProduct( linkedPurchase.product_slug )
 		)
 	) {
 		return false;
@@ -61,7 +59,7 @@ export const willAtomicSiteRevertAfterPurchaseDeactivation = (
 	const remainingPurchases = getSitePurchases( state, purchase.siteId ).filter(
 		( sitePurchase ) =>
 			sitePurchase.id !== purchaseId &&
-			linkedPurchases.every( ( linkedPurchase ) => sitePurchase.id !== linkedPurchase.id )
+			linkedPurchases.every( ( linkedPurchase ) => sitePurchase.id !== linkedPurchase.ID )
 	);
 
 	// If there is at least one remaining Atomic supported purchase, the site will be kept in the Atomic infra.
