@@ -47,7 +47,7 @@
 	&:active,
 	&:hover,
 	&:focus {
-		@include heading-medium;
+		font-size: $font-size-small;
 		color: var(--color-accent-80);
 	}
 }
