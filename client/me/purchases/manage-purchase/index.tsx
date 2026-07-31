@@ -1412,15 +1412,7 @@ class ManagePurchase extends Component<
 		return (
 			<Fragment>
 				{ ( this.props.showHeader ?? true ) && (
-					// Temporary bridge (SHILL-2256): PurchaseSiteHeader still expects the
-					// camelCase Purchase. Remove once it reads the raw shape.
-					<PurchaseSiteHeader
-						siteId={ siteId }
-						name={ siteName }
-						purchase={ createPurchaseObject(
-							purchase as unknown as Parameters< typeof createPurchaseObject >[ 0 ]
-						) }
-					/>
+					<PurchaseSiteHeader siteId={ siteId } name={ siteName } purchase={ purchase } />
 				) }
 				<Card className={ classes }>
 					<header className="manage-purchase__header">

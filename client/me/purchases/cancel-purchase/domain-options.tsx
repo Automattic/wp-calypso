@@ -11,29 +11,33 @@ import { useState, useCallback } from 'react';
 import { useDispatch } from 'react-redux';
 import FormCheckbox from 'calypso/components/forms/form-checkbox';
 import FormRadio from 'calypso/components/forms/form-radio';
-import { getName, isRefundable, isSubscription } from 'calypso/lib/purchases';
+import {
+	getName,
+	isRefundable,
+	isSubscription,
+} from 'calypso/me/purchases/lib/raw-purchase-helpers';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import type { CancelPurchaseState } from './index';
-import type { Purchases } from '@automattic/data-stores';
+import type { Purchase } from '@automattic/api-core';
 import type { FormEvent } from 'react';
 
 // Helper function to determine if radio buttons will be shown
 export const willShowDomainOptionsRadioButtons = (
-	includedDomainPurchase: Purchases.Purchase,
-	purchase: Purchases.Purchase
+	includedDomainPurchase: Purchase,
+	purchase: Purchase
 ) => {
 	return (
 		isDomainRegistration( includedDomainPurchase ) &&
 		isRefundable( purchase ) &&
-		!! includedDomainPurchase.costToUnbundleText &&
-		includedDomainPurchase.isWithinInitialRefundWindow
+		!! includedDomainPurchase.cost_to_unbundle_display &&
+		includedDomainPurchase.is_within_initial_refund_window
 	);
 };
 
 const NonRefundableDomainMappingMessage = ( {
 	includedDomainPurchase,
 }: {
-	includedDomainPurchase: Purchases.Purchase;
+	includedDomainPurchase: Purchase;
 } ) => {
 	const translate = useTranslate();
 	if ( ! includedDomainPurchase.meta ) {
@@ -60,8 +64,8 @@ const CancelableDomainMappingMessage = ( {
 	includedDomainPurchase,
 	purchase,
 }: {
-	includedDomainPurchase: Purchases.Purchase;
-	purchase: Purchases.Purchase;
+	includedDomainPurchase: Purchase;
+	purchase: Purchase;
 } ) => {
 	const translate = useTranslate();
 	if ( ! includedDomainPurchase.meta ) {
@@ -110,8 +114,8 @@ const CancelPlanWithoutCancellingDomainMessage = ( {
 	planPurchase,
 	includedDomainPurchase,
 }: {
-	planPurchase: Purchases.Purchase;
-	includedDomainPurchase: Purchases.Purchase;
+	planPurchase: Purchase;
+	includedDomainPurchase: Purchase;
 } ) => {
 	const translate = useTranslate();
 	if ( ! includedDomainPurchase.meta ) {
@@ -138,16 +142,16 @@ const CancelPlanWithoutCancellingDomainMessage = ( {
 							}
 					  ) }
 			</p>
-			{ isRefundable( planPurchase ) && includedDomainPurchase.costToUnbundleText && (
+			{ isRefundable( planPurchase ) && includedDomainPurchase.cost_to_unbundle_display && (
 				<p>
 					{ translate(
 						'You will receive a partial refund of %(refundAmount)s which is %(planCost)s for the plan ' +
 							'minus %(domainCost)s for the domain.',
 						{
 							args: {
-								domainCost: includedDomainPurchase.costToUnbundleText,
-								planCost: planPurchase.totalRefundText,
-								refundAmount: planPurchase.refundText,
+								domainCost: includedDomainPurchase.cost_to_unbundle_display,
+								planCost: planPurchase.total_refund_text,
+								refundAmount: planPurchase.refund_text,
 							},
 						}
 					) }
@@ -164,9 +168,9 @@ const CancelPurchaseDomainOptions = ( {
 	onCancelConfirmationStateChange,
 	isLoading = false,
 }: {
-	includedDomainPurchase: Purchases.Purchase;
+	includedDomainPurchase: Purchase;
 	cancelBundledDomain: boolean;
-	purchase: Purchases.Purchase;
+	purchase: Purchase;
 	onCancelConfirmationStateChange: ( newState: Partial< CancelPurchaseState > ) => void;
 	isLoading: boolean;
 } ) => {
@@ -197,8 +201,8 @@ const CancelPurchaseDomainOptions = ( {
 			// Record tracks event for domain confirmation checkbox
 			dispatch(
 				recordTracksEvent( 'calypso_purchases_domain_confirm_checkbox', {
-					product_slug: purchase.productSlug,
-					purchase_id: purchase.id,
+					product_slug: purchase.product_slug,
+					purchase_id: purchase.ID,
 					domain_name: includedDomainPurchase.meta,
 					checked: checked,
 				} )
@@ -254,8 +258,8 @@ const CancelPurchaseDomainOptions = ( {
 	if (
 		isDomainTransfer( includedDomainPurchase ) ||
 		! isRefundable( purchase ) ||
-		! includedDomainPurchase.costToUnbundleText ||
-		! includedDomainPurchase.isWithinInitialRefundWindow
+		! includedDomainPurchase.cost_to_unbundle_display ||
+		! includedDomainPurchase.is_within_initial_refund_window
 	) {
 		return (
 			<CancelPlanWithoutCancellingDomainMessage
@@ -308,8 +312,8 @@ const CancelPurchaseDomainOptions = ( {
 										{
 											args: {
 												productName: getName( purchase ),
-												domainCost: includedDomainPurchase.costToUnbundleText,
-												refundAmount: purchase.refundText,
+												domainCost: includedDomainPurchase.cost_to_unbundle_display,
+												refundAmount: purchase.refund_text,
 											},
 										}
 									) }
@@ -344,7 +348,7 @@ const CancelPurchaseDomainOptions = ( {
 											"you'll lose it permanently.",
 										{
 											args: {
-												planCost: purchase.totalRefundText,
+												planCost: purchase.total_refund_text,
 											},
 										}
 									) }

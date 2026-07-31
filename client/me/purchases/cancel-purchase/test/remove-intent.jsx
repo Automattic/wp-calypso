@@ -2,7 +2,11 @@
  * @jest-environment jsdom
  */
 
-import { purchaseCancelFeaturesQuery } from '@automattic/api-queries';
+import {
+	purchaseCancelFeaturesQuery,
+	purchaseQuery,
+	sitePurchasesQuery,
+} from '@automattic/api-queries';
 import page from '@automattic/calypso-router';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { render, screen, waitFor } from '@testing-library/react';
@@ -100,6 +104,10 @@ function renderCancelPurchase( purchase, intent ) {
 	queryClient.setQueryData( purchaseCancelFeaturesQuery( Number( purchase.ID ) ).queryKey, {
 		features: [],
 	} );
+	queryClient.setQueryData( purchaseQuery( Number( purchase.ID ) ).queryKey, purchase );
+	queryClient.setQueryData( sitePurchasesQuery( Number( purchase.blog_id ) ).queryKey, [
+		purchase,
+	] );
 
 	return render(
 		<QueryClientProvider client={ queryClient }>

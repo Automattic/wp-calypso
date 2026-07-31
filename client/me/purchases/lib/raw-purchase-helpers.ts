@@ -5,6 +5,7 @@ import {
 	isPurchaseOneTimePurchase,
 } from '@automattic/api-core';
 import {
+	findPlansKeys,
 	getAkismetPro500ProductDisplayName,
 	getJetpackProductsDisplayNames,
 	getPlan,
@@ -29,11 +30,13 @@ import {
 	TERM_ANNUALLY,
 	TERM_BIENNIALLY,
 	TERM_TRIENNIALLY,
+	TYPE_PERSONAL,
 	TYPE_PRO,
 } from '@automattic/calypso-products';
 import { formatCurrency, formatNumber } from '@automattic/number-formatters';
 import i18n from 'i18n-calypso';
 import moment from 'moment';
+import { CANCEL_FLOW_TYPE } from 'calypso/components/marketing-survey/cancel-purchase-form/constants';
 import {
 	isA4AHoldingSitePurchase,
 	isAgencyPartnerType,
@@ -42,6 +45,7 @@ import {
 } from 'calypso/dashboard/utils/purchase';
 import { addPaymentMethod, changePaymentMethod } from '../paths';
 import type { MarketingSurveyResponses, Purchase } from '@automattic/api-core';
+import type { CancelIntent } from 'calypso/dashboard/utils/purchase';
 import type { TranslateResult } from 'i18n-calypso';
 
 const DAY_IN_MS = 1000 * 60 * 60 * 24;
@@ -373,6 +377,75 @@ export function canAutoRenewBeTurnedOff( purchase: Purchase ): boolean {
 	}
 
 	return purchase.is_auto_renew_enabled;
+}
+
+/**
+ * Note: `calypso/dashboard/utils/purchase` exports same-named helpers whose
+ * refundability check is `is_refundable` alone. These keep the classic
+ * `saas_plugin` exclusion above, which changes the flow chosen for a refundable
+ * SaaS-plugin purchase, so the legacy pages must keep using these.
+ */
+export function getPurchaseCancellationFlowType( purchase: Purchase ): string {
+	const isPlanRefundable = isRefundable( purchase );
+
+	if ( isPlanRefundable && hasAmountAvailableToRefund( purchase ) ) {
+		// If the subscription is refundable the subscription should be removed immediately.
+		return CANCEL_FLOW_TYPE.CANCEL_WITH_REFUND;
+	}
+
+	// Expired or grace-period purchases (that aren't refundable) use the removal
+	// flow, matching the "Remove" button on the manage-purchase page (parity
+	// with the Dashboard).
+	if ( isExpiredOrRemoved( purchase ) ) {
+		return CANCEL_FLOW_TYPE.REMOVE;
+	}
+
+	if ( ! isPlanRefundable && purchase.is_auto_renew_enabled ) {
+		// If the subscription is not refundable and auto-renew is on turn off auto-renew.
+		return CANCEL_FLOW_TYPE.CANCEL_AUTORENEW;
+	}
+
+	// If the subscription is not refundable and auto-renew is off subscription should be removed immediately.
+	return CANCEL_FLOW_TYPE.REMOVE;
+}
+
+export function getMutationFlowType( intent: CancelIntent | null, purchase: Purchase ): string {
+	if ( ! intent ) {
+		return getPurchaseCancellationFlowType( purchase );
+	}
+
+	// 'cancel' and 'auto-renew' both map to the disable-auto-renew flow when
+	// auto-renew is on; both fall back to flow-type otherwise.
+	if ( intent === 'cancel' || intent === 'auto-renew' ) {
+		if ( purchase.is_auto_renew_enabled ) {
+			return CANCEL_FLOW_TYPE.CANCEL_AUTORENEW;
+		}
+		return getPurchaseCancellationFlowType( purchase );
+	}
+
+	// intent === 'remove': refundability alone decides the endpoint. A purchase
+	// still inside its refund window goes through cancel-and-refund rather than
+	// the bare DELETE — auto-renew is typically already off by the time Remove is
+	// offered (the user cancelled first), so it must not gate the refund.
+	if ( hasAmountAvailableToRefund( purchase ) ) {
+		return CANCEL_FLOW_TYPE.CANCEL_WITH_REFUND;
+	}
+	return CANCEL_FLOW_TYPE.REMOVE;
+}
+
+export function getDowngradePlanFromPurchase( purchase: Purchase ) {
+	const plan = getPlan( purchase.product_slug );
+	if ( ! plan ) {
+		return null;
+	}
+
+	const newPlanKeys = findPlansKeys( {
+		group: plan.group,
+		type: TYPE_PERSONAL,
+		term: plan.term,
+	} );
+
+	return getPlan( newPlanKeys[ 0 ] );
 }
 
 export function isWithinRefundWindowDowngradeEligible( purchase: Purchase ): boolean {

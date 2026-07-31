@@ -7,12 +7,12 @@ import * as React from 'react';
 import { BlankCanvas } from 'calypso/components/blank-canvas';
 import FormattedHeader from 'calypso/components/formatted-header';
 import { useIsSplitCancelRemoveEnabled } from 'calypso/dashboard/me/billing-purchases/cancel-purchase/use-is-split-cancel-remove-enabled';
-import { getName } from 'calypso/lib/purchases';
 import { submitSurvey } from 'calypso/lib/purchases/actions';
+import { getName } from 'calypso/me/purchases/lib/raw-purchase-helpers';
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import enrichedSurveyData from './enriched-survey-data';
-import type { Purchase } from 'calypso/lib/purchases/types';
+import type { Purchase } from '@automattic/api-core';
 
 /**
  * Style dependencies
@@ -102,7 +102,7 @@ const DomainCancellationSurvey: React.FC< Props > = ( {
 	const handleCloseDialog = () => {
 		props.onClose();
 		recordTracksEvent( 'calypso_domain_cancel_survey_close', {
-			product_slug: purchase.productSlug,
+			product_slug: purchase.product_slug,
 		} );
 	};
 
@@ -119,14 +119,19 @@ const DomainCancellationSurvey: React.FC< Props > = ( {
 			dispatch(
 				submitSurvey(
 					'calypso-cancel-domain',
-					purchase.siteId,
-					enrichedSurveyData( surveyData, purchase )
+					purchase.blog_id,
+					enrichedSurveyData( surveyData, {
+						subscribedDate: purchase.subscribed_date,
+						blogCreatedDate: purchase.blog_created_date,
+						id: purchase.ID,
+						productSlug: purchase.product_slug,
+					} )
 				)
 			);
 		}
 
 		recordTracksEvent( 'calypso_domain_cancel_survey_submit', {
-			product_slug: purchase.productSlug,
+			product_slug: purchase.product_slug,
 			reason: selectedReason,
 		} );
 
