@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { logBuildWowEvent } from 'calypso/landing/stepper/utils/build-wow';
 import { getStepIndexForProgress, pollForBuildProgress } from './build-progress-poller';
 import { pollForBuildWowStatus } from './build-status-poller';
@@ -46,12 +46,13 @@ export function useSiteGeneration( {
 	const [ activeStepIndex, setActiveStepIndex ] = useState( 0 );
 	const [ hasTimedOut, setHasTimedOut ] = useState( false );
 	const hasRequiredParameters = Boolean( siteIdentifier && editorUrl );
-	const stepIds = useMemo( () => steps.map( ( step ) => step.id ), [ steps ] );
 
 	useEffect( () => {
 		if ( ! siteIdentifier || ! editorUrl || hasTimedOut ) {
 			return;
 		}
+
+		const stepIds = steps.map( ( step ) => step.id );
 
 		const generationTimeout = window.setTimeout(
 			() => setHasTimedOut( true ),
@@ -76,12 +77,25 @@ export function useSiteGeneration( {
 					error: reason,
 				} ),
 		} );
-		const stopProgressPolling = pollForBuildProgress( {
+		// `let` so onProgress below can stop its own poller; the callback only
+		// ever fires after pollForBuildProgress has returned.
+		let stopProgressPolling = () => {};
+		stopProgressPolling = pollForBuildProgress( {
 			siteIdentifier,
-			onProgress: ( response ) =>
-				setActiveStepIndex( ( previous ) =>
-					Math.max( previous, getStepIndexForProgress( response, stepIds ) ?? 0 )
-				),
+			onProgress: ( response ) => {
+				const stepIndex = getStepIndexForProgress( response, stepIds );
+				if ( stepIndex === null ) {
+					return;
+				}
+				// Monotonic floor: the backend can reset or reorder the recorded
+				// history (heartbeats, requeues), and the UI must never move back.
+				setActiveStepIndex( ( previous ) => Math.max( previous, stepIndex ) );
+				// The last milestone is as far as this poller can advance the UI;
+				// from here readiness comes from the build-status poller alone.
+				if ( stepIndex >= stepIds.length - 1 ) {
+					stopProgressPolling();
+				}
+			},
 		} );
 
 		return () => {
@@ -89,7 +103,7 @@ export function useSiteGeneration( {
 			stopStatusPolling();
 			stopProgressPolling();
 		};
-	}, [ editorUrl, hasTimedOut, siteIdentifier, stepIds ] );
+	}, [ editorUrl, hasTimedOut, siteIdentifier, steps ] );
 
 	let failureReason: SiteGenerationFailureReason | undefined;
 	if ( ! hasRequiredParameters ) {

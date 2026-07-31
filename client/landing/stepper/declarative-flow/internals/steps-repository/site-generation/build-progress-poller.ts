@@ -1,72 +1,87 @@
-import wpcom from 'calypso/lib/wp';
+import { fetchSiteEndpoint, reportSafely, startPolling } from './poller';
 
 const BUILD_TERMINAL_STATUSES = new Set( [ 'done', 'fail' ] );
 
 export type BuildProgressResponse = {
 	current?: string | null;
-	last_update?: number | null;
 	history?: Array< {
-		timestamp?: number;
 		status?: string;
 	} >;
 };
 
-const TOOL_MILESTONES: Record< string, string > = {
-	'scaffold-theme': 'preparing',
-	'scaffold-plugin': 'preparing',
-	'refine-prompt': 'preparing',
-	'site-spec': 'preparing',
-	'apply-identity': 'designing',
-	'design-direction': 'designing',
-	'theme-json': 'designing',
-	'page-plan': 'designing',
-	'theme-json+page-plan': 'designing',
-	queue: 'building',
-	execute_batch_1: 'building',
-	execute_batch_2: 'building',
-	'big-sky/generate-header': 'building',
-	'big-sky/generate-footer': 'building',
-	'big-sky/generate-section': 'building',
-	sections: 'building',
-	'section-rhythm': 'building',
-	'collect-images': 'building',
-	'normalize-layout': 'building',
-	'header-hero': 'building',
-	'contrast-fix': 'building',
-	'motion-sanity': 'building',
-	'fix-blocks': 'building',
-	'assemble-pages': 'images',
-	'generate-images': 'polishing',
-	'page-styles': 'polishing',
-	'custom-motion': 'polishing',
-	'bundle-fonts': 'polishing',
-	'fonts-php': 'polishing',
-	'finalize-theme': 'polishing',
-	'validate-theme': 'polishing',
-	'cover-contrast': 'polishing',
-	finish: 'polishing',
-	generate: 'publishing',
-	apply: 'publishing',
+// Coarse UI milestones for the persisted pipeline step ids. This map chases
+// backend pipeline internals across a repo boundary, so it will lag when steps
+// are inserted or renamed upstream — an unmapped id degrades to the previous
+// milestone, never to breakage. The server owns two sibling maps over the same
+// step stream (Builder_Progress_Reader::MILESTONE_LABELS and the Big Sky
+// editor's toolId labels); the durable fix is the endpoint serving interpreted
+// milestones so the client stops tracking pipeline internals.
+const MILESTONE_TOOLS: Record< string, string[] > = {
+	preparing: [ 'scaffold-theme', 'scaffold-plugin', 'refine-prompt', 'site-spec' ],
+	designing: [
+		'apply-identity',
+		'design-direction',
+		'theme-json',
+		'page-plan',
+		'theme-json+page-plan',
+	],
+	building: [
+		'queue',
+		'execute_batch_1',
+		'execute_batch_2',
+		'big-sky/generate-header',
+		'big-sky/generate-footer',
+		'big-sky/generate-section',
+		'sections',
+		'section-rhythm',
+		'collect-images',
+		'normalize-layout',
+		'header-hero',
+		'contrast-fix',
+		'motion-sanity',
+		'fix-blocks',
+	],
+	images: [ 'assemble-pages' ],
+	polishing: [
+		'generate-images',
+		'page-styles',
+		'custom-motion',
+		'bundle-fonts',
+		'fonts-php',
+		'finalize-theme',
+		'validate-theme',
+		'cover-contrast',
+		'finish',
+	],
+	publishing: [ 'generate', 'apply' ],
 };
+
+const TOOL_MILESTONES: Record< string, string > = Object.fromEntries(
+	Object.entries( MILESTONE_TOOLS ).flatMap( ( [ milestone, toolIds ] ) =>
+		toolIds.map( ( toolId ) => [ toolId, milestone ] )
+	)
+);
 
 export function getStepIndexForProgress(
 	response: BuildProgressResponse,
 	stepIds: string[]
 ): number | null {
+	// The backend refreshes a repeated step's timestamp (heartbeat), so history
+	// order does not track milestone order — a long-running tool can resurface
+	// after later steps. Take the furthest recognized milestone across the whole
+	// history instead of the most recent entry.
 	const recordedStatuses = [
 		...( response.history ?? [] ).map( ( entry ) => entry.status ),
 		response.current,
 	];
-	const milestone = recordedStatuses.reduceRight< string | undefined >(
-		( found, toolId ) => found ?? ( toolId ? TOOL_MILESTONES[ toolId ] : undefined ),
-		undefined
-	);
-	if ( ! milestone ) {
-		return null;
+	let furthestIndex = -1;
+	for ( const toolId of recordedStatuses ) {
+		const milestone = toolId ? TOOL_MILESTONES[ toolId ] : undefined;
+		if ( milestone ) {
+			furthestIndex = Math.max( furthestIndex, stepIds.indexOf( milestone ) );
+		}
 	}
-
-	const milestoneIndex = stepIds.indexOf( milestone );
-	return milestoneIndex === -1 ? null : milestoneIndex;
+	return furthestIndex === -1 ? null : furthestIndex;
 }
 
 type FetchProgress = (
@@ -74,21 +89,20 @@ type FetchProgress = (
 	signal: AbortSignal
 ) => Promise< BuildProgressResponse >;
 
-const fetchBuildProgress: FetchProgress = async ( siteIdentifier, signal ) => {
-	const response = ( await wpcom.req.get( {
-		path: `/sites/${ siteIdentifier }/big-sky/build-progress`,
-		apiNamespace: 'wpcom/v2',
-		signal,
-	} ) ) as BuildProgressResponse | null;
-
-	return response ?? {};
-};
+const fetchBuildProgress: FetchProgress = async ( siteIdentifier, signal ) =>
+	( await fetchSiteEndpoint< BuildProgressResponse >(
+		siteIdentifier,
+		'build-progress',
+		signal
+	) ) ?? {};
 
 export function pollForBuildProgress( {
 	siteIdentifier,
 	onProgress,
-	pollIntervalMs = 3000,
-	requestTimeoutMs = 15000,
+	// Milestones advance on the order of tens of seconds, and this poller only
+	// supplements the 3s build-status poller — a slower interval loses nothing.
+	pollIntervalMs = 10000,
+	requestTimeoutMs,
 	fetchProgress = fetchBuildProgress,
 }: {
 	siteIdentifier: string;
@@ -97,64 +111,19 @@ export function pollForBuildProgress( {
 	requestTimeoutMs?: number;
 	fetchProgress?: FetchProgress;
 } ): () => void {
-	let isActive = true;
-	let pollTimeout: ReturnType< typeof setTimeout > | undefined;
-	let requestTimeout: ReturnType< typeof setTimeout > | undefined;
-	let requestController: AbortController | undefined;
-
-	const poll = async () => {
-		const controller = new AbortController();
-		const timeout = setTimeout( () => controller.abort(), requestTimeoutMs );
-		requestController = controller;
-		requestTimeout = timeout;
-
-		let response: BuildProgressResponse | undefined;
-
-		try {
-			response = await fetchProgress( siteIdentifier, controller.signal );
-		} catch {
-			// Progress is supplementary; readiness and failure continue to come
-			// from the build-status poller if this request fails.
-		} finally {
-			clearTimeout( timeout );
-			requestController = undefined;
-			requestTimeout = undefined;
-		}
-
-		if ( ! isActive ) {
-			return;
-		}
-
-		const status = typeof response?.current === 'string' ? response.current : undefined;
-
-		if ( response ) {
-			const progressResponse = response;
-			try {
-				onProgress( progressResponse );
-			} catch {}
-		}
-
-		// Readiness and failure are owned by the build-status poller. These values
-		// only stop progress polling after the final history has been reported.
-		if ( status && BUILD_TERMINAL_STATUSES.has( status ) ) {
-			return;
-		}
-
-		pollTimeout = setTimeout( () => {
-			void poll().catch( () => {} );
-		}, pollIntervalMs );
-	};
-
-	void poll().catch( () => {} );
-
-	return () => {
-		isActive = false;
-		if ( pollTimeout !== undefined ) {
-			clearTimeout( pollTimeout );
-		}
-		requestController?.abort();
-		if ( requestTimeout !== undefined ) {
-			clearTimeout( requestTimeout );
-		}
-	};
+	return startPolling< BuildProgressResponse >( {
+		fetch: ( signal ) => fetchProgress( siteIdentifier, signal ),
+		pollIntervalMs,
+		requestTimeoutMs,
+		onResponse: ( response ) => {
+			reportSafely( () => onProgress( response ) );
+			// Readiness and failure are owned by the build-status poller. These
+			// values only stop progress polling after the final history has been
+			// reported.
+			const status = typeof response.current === 'string' ? response.current : undefined;
+			if ( status && BUILD_TERMINAL_STATUSES.has( status ) ) {
+				return 'stop';
+			}
+		},
+	} );
 }

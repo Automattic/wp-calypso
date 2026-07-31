@@ -16,19 +16,30 @@ describe( 'getStepIndexForProgress', () => {
 		expect( getStepIndexForProgress( { current: 'generate' }, stepIds ) ).toBe( 5 );
 	} );
 
-	it( 'uses the most recent recognized event when the current event is internal', () => {
+	it( 'uses the furthest recognized event when the current event is internal', () => {
 		expect(
 			getStepIndexForProgress(
 				{
 					current: 'prepare',
-					history: [
-						{ timestamp: 1, status: 'theme-json' },
-						{ timestamp: 2, status: 'prepare' },
-					],
+					history: [ { status: 'theme-json' }, { status: 'prepare' } ],
 				},
 				stepIds
 			)
 		).toBe( 1 );
+	} );
+
+	it( 'does not move backwards when a heartbeat resurfaces an earlier step', () => {
+		// The backend refreshes a repeated step's timestamp, so a long-running
+		// early tool can reappear at the end of the history after later steps.
+		expect(
+			getStepIndexForProgress(
+				{
+					current: 'theme-json',
+					history: [ { status: 'generate-images' }, { status: 'theme-json' } ],
+				},
+				stepIds
+			)
+		).toBe( 4 );
 	} );
 
 	it( 'returns null when the response has no recognized progress', () => {
@@ -50,7 +61,7 @@ describe( 'pollForBuildProgress', () => {
 	it( 'reports generation events and stops after reporting the final history', async () => {
 		const finalProgress = {
 			current: 'done',
-			history: [ { timestamp: 1, status: 'generate' } ],
+			history: [ { status: 'generate' } ],
 		};
 		const fetchProgress = jest
 			.fn()

@@ -39,10 +39,6 @@ const STEPS = [
 describe( 'useSiteGeneration', () => {
 	beforeEach( () => {
 		jest.useFakeTimers();
-		Object.defineProperty( window, 'location', {
-			value: { ...originalLocation, assign: jest.fn() },
-			configurable: true,
-		} );
 		progressPollMock.mockClear();
 		progressPollMock.mockReturnValue( jest.fn() );
 		statusPollMock.mockClear();
@@ -52,10 +48,6 @@ describe( 'useSiteGeneration', () => {
 
 	afterEach( () => {
 		jest.useRealTimers();
-		Object.defineProperty( window, 'location', {
-			value: originalLocation,
-			configurable: true,
-		} );
 	} );
 
 	it( 'fails with missing-parameters when the editor URL is absent', () => {
@@ -124,27 +116,41 @@ describe( 'useSiteGeneration', () => {
 	} );
 
 	it( 'redirects only when the build status poller reports that the site is ready', () => {
-		renderHook( () =>
-			useSiteGeneration( {
-				siteIdentifier: '123',
-				editorUrl: 'https://example.wordpress.com/wp-admin/site-editor.php',
-				steps: STEPS,
-			} )
-		);
-
-		const { onProgress } = progressPollMock.mock.calls[ 0 ][ 0 ];
-		act( () => {
-			onProgress( { current: 'done' } );
+		// The stub is scoped here because this is the only test that asserts on
+		// window.location.assign.
+		Object.defineProperty( window, 'location', {
+			value: { ...originalLocation, assign: jest.fn() },
+			configurable: true,
 		} );
-		expect( window.location.assign ).not.toHaveBeenCalled();
 
-		const { onReady } = statusPollMock.mock.calls[ 0 ][ 0 ];
-		act( () => {
-			onReady();
-		} );
-		expect( window.location.assign ).toHaveBeenCalledWith(
-			'https://example.wordpress.com/wp-admin/site-editor.php'
-		);
+		try {
+			renderHook( () =>
+				useSiteGeneration( {
+					siteIdentifier: '123',
+					editorUrl: 'https://example.wordpress.com/wp-admin/site-editor.php',
+					steps: STEPS,
+				} )
+			);
+
+			const { onProgress } = progressPollMock.mock.calls[ 0 ][ 0 ];
+			act( () => {
+				onProgress( { current: 'done' } );
+			} );
+			expect( window.location.assign ).not.toHaveBeenCalled();
+
+			const { onReady } = statusPollMock.mock.calls[ 0 ][ 0 ];
+			act( () => {
+				onReady();
+			} );
+			expect( window.location.assign ).toHaveBeenCalledWith(
+				'https://example.wordpress.com/wp-admin/site-editor.php'
+			);
+		} finally {
+			Object.defineProperty( window, 'location', {
+				value: originalLocation,
+				configurable: true,
+			} );
+		}
 	} );
 
 	it( 'advances from persisted generation milestones and keeps completed steps visible', () => {
@@ -181,18 +187,7 @@ describe( 'useSiteGeneration', () => {
 			'pending',
 			'pending',
 		] );
-	} );
 
-	it( 'moves to publishing when theme generation completes', () => {
-		const { result } = renderHook( () =>
-			useSiteGeneration( {
-				siteIdentifier: '123',
-				editorUrl: 'https://example.wordpress.com/wp-admin/site-editor.php',
-				steps: STEPS,
-			} )
-		);
-
-		const { onProgress } = progressPollMock.mock.calls[ 0 ][ 0 ];
 		act( () => {
 			onProgress( { current: 'generate' } );
 		} );
@@ -204,6 +199,30 @@ describe( 'useSiteGeneration', () => {
 			'complete',
 			'active',
 		] );
+	} );
+
+	it( 'stops progress polling once the last milestone is reached', () => {
+		const stopProgressPolling = jest.fn();
+		progressPollMock.mockReturnValue( stopProgressPolling );
+
+		renderHook( () =>
+			useSiteGeneration( {
+				siteIdentifier: '123',
+				editorUrl: 'https://example.wordpress.com/wp-admin/site-editor.php',
+				steps: STEPS,
+			} )
+		);
+
+		const { onProgress } = progressPollMock.mock.calls[ 0 ][ 0 ];
+		act( () => {
+			onProgress( { current: 'assemble-pages' } );
+		} );
+		expect( stopProgressPolling ).not.toHaveBeenCalled();
+
+		act( () => {
+			onProgress( { current: 'generate' } );
+		} );
+		expect( stopProgressPolling ).toHaveBeenCalled();
 	} );
 
 	it( 'never moves progress backwards when statuses arrive out of order', () => {
