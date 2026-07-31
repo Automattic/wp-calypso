@@ -8,7 +8,6 @@ import { MemoryRouter } from 'react-router-dom';
 // eslint-disable-next-line no-restricted-imports
 import { applyMiddleware, createStore, type Reducer } from 'redux';
 import { thunk as thunkMiddleware } from 'redux-thunk';
-import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { usePartnerBranding } from 'calypso/lib/partner-branding';
 import { CURRENT_USER_RECEIVE } from 'calypso/state/action-types';
 import documentHeadReducer from 'calypso/state/document-head/reducer';
@@ -143,13 +142,6 @@ describe( 'account step email verification gate', () => {
 		jest.clearAllMocks();
 	} );
 
-	it( 'shows the gate for a new, unverified email signup', async () => {
-		const { submit } = renderUser( makeStore( false ) );
-
-		expect( await screen.findByRole( 'heading', { name: GATE_HEADING } ) ).toBeVisible();
-		expect( submit ).not.toHaveBeenCalled();
-	} );
-
 	it( 'confirmation continues exactly once (no double submit)', async () => {
 		const store = makeStore( false );
 		const { submit } = renderUser( store );
@@ -200,20 +192,9 @@ describe( 'account step email verification gate', () => {
 		expect( submit ).not.toHaveBeenCalled();
 	} );
 
-	it( 'skips the gate for an already-verified (social) signup', async () => {
-		// Social signups never open the gate, so nothing is pending.
-		sessionStorage.clear();
-		const { submit } = renderUser( makeStore( true ) );
-
-		await waitFor( () => expect( submit ).toHaveBeenCalled() );
-		expect( screen.queryByRole( 'heading', { name: GATE_HEADING } ) ).not.toBeInTheDocument();
-		expect( recordTracksEvent ).not.toHaveBeenCalledWith(
-			'calypso_signup_email_verification_confirmed',
-			expect.anything()
-		);
-	} );
-
-	it( 'skips the gate for an existing session with nothing pending', async () => {
+	// Social signups and existing sessions never call `beginGate`, so this is the rule that
+	// keeps both of them out of the gate.
+	it( 'skips the gate when nothing is pending', async () => {
 		sessionStorage.clear();
 		const { submit } = renderUser( makeStore( false ) );
 

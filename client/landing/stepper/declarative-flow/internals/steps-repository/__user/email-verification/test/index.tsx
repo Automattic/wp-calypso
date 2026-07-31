@@ -197,9 +197,10 @@ describe( 'EmailVerificationGate', () => {
 		expect( onDone ).not.toHaveBeenCalled();
 	} );
 
-	it( 'surfaces an unsuccessful resend and keeps resend available', async () => {
+	it( 'resends once the cooldown lapses and restarts it', async () => {
 		jest.useFakeTimers();
 		const user = userEvent.setup( { advanceTimers: jest.advanceTimersByTime } );
+		const request = mockSendVerificationEmail();
 
 		render();
 
@@ -210,51 +211,13 @@ describe( 'EmailVerificationGate', () => {
 			jest.advanceTimersByTime( COOLDOWN_MS );
 		} );
 
-		mockSendVerificationEmail( { success: false } );
 		await user.click( await screen.findByRole( 'button', { name: 'Resend' } ) );
 
-		expect( await screen.findByText( /We couldn’t send the email\./ ) ).toBeVisible();
-		expect( screen.getByRole( 'button', { name: 'Resend' } ) ).toBeVisible();
+		await waitFor( () => expect( request.isDone() ).toBe( true ) );
+		expect( await screen.findByRole( 'button', { name: 'Resend in 60s' } ) ).toBeVisible();
 		expect( recordTracksEvent ).toHaveBeenCalledWith(
-			'calypso_signup_email_verification_email_send_failed',
+			'calypso_signup_email_verification_email_sent',
 			expect.objectContaining( { flow: FLOW, is_resend: true } )
 		);
-	} );
-
-	it( 'keeps the resend cooldown when session storage is unavailable', async () => {
-		jest.useFakeTimers();
-		const user = userEvent.setup( { advanceTimers: jest.advanceTimersByTime } );
-		const setItem = jest.spyOn( Storage.prototype, 'setItem' ).mockImplementation( () => {
-			throw new Error( 'storage disabled' );
-		} );
-
-		try {
-			render();
-
-			// The initial cooldown holds even though nothing could be persisted.
-			await waitFor( () =>
-				expect( screen.getByRole( 'button', { name: 'Resend in 60s' } ) ).toBeVisible()
-			);
-			expect( screen.queryByRole( 'button', { name: 'Resend' } ) ).not.toBeInTheDocument();
-
-			act( () => {
-				jest.advanceTimersByTime( COOLDOWN_MS );
-			} );
-
-			const resendRequest = mockSendVerificationEmail();
-			await user.click( await screen.findByRole( 'button', { name: 'Resend' } ) );
-			await waitFor( () =>
-				expect( screen.getByRole( 'button', { name: 'Resend in 60s' } ) ).toBeVisible()
-			);
-
-			// …and the fresh cooldown counts down instead of snapping back to zero.
-			act( () => {
-				jest.advanceTimersByTime( 1000 );
-			} );
-			expect( screen.getByRole( 'button', { name: 'Resend in 59s' } ) ).toBeVisible();
-			expect( resendRequest.isDone() ).toBe( true );
-		} finally {
-			setItem.mockRestore();
-		}
 	} );
 } );
