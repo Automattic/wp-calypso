@@ -6,7 +6,7 @@ import { useDispatch, useSelect } from '@wordpress/data';
 import { useState } from '@wordpress/element';
 import { help } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
-import { getQueryArg, removeQueryArgs } from '@wordpress/url';
+import { addQueryArgs, getQueryArg, getQueryArgs, removeQueryArgs } from '@wordpress/url';
 import { useSelector } from 'react-redux';
 import { useLocation } from 'react-router';
 import QueryProductsList from 'calypso/components/data/query-products-list';
@@ -34,6 +34,10 @@ import type { HelpCenterSelect } from '@automattic/data-stores';
 import './style.scss';
 
 const HELP_CENTER_STORE = HelpCenter.register();
+
+// A literal rather than STEPS.DOMAIN_SEARCH: importing the registry that lazy-loads this
+// step from inside the step would be circular.
+const DOMAIN_SEARCH_STEP_SLUG = 'domains';
 
 type OwnershipVerificationData = {
 	ownership_verification_data: {
@@ -157,6 +161,20 @@ const UseMyDomain: StepType< {
 		return lastQuery || initialQuery;
 	};
 
+	// The search step is a sibling in every flow that includes this one, so the destination is
+	// the current location with the step slug swapped. It reads the search term from `new`.
+	const getDomainSearchUrl = ( domain: string ) => {
+		const { step, initialQuery, lastQuery, ...queryArgs } = getQueryArgs( location.search );
+		const pathname = location.pathname
+			.replace( /\/+$/, '' )
+			.replace( /[^/]*$/, DOMAIN_SEARCH_STEP_SLUG );
+
+		return addQueryArgs( `/setup${ pathname }`, {
+			...queryArgs,
+			...( domain && { new: domain } ),
+		} );
+	};
+
 	const getInitialMode = function () {
 		const stepQueryParam = getQueryArg( window.location.search, 'step' );
 		if ( stepQueryParam === 'transfer-or-connect' ) {
@@ -190,6 +208,7 @@ const UseMyDomain: StepType< {
 					onNextStep={ handleOnNext }
 					isStepper
 					stepLocation={ location }
+					getDomainSearchUrl={ getDomainSearchUrl }
 					registerNowAction={ handleGoBack }
 					hideHeader={ shouldUseStepContainerV2( flow ) }
 				/>
