@@ -108,9 +108,6 @@ export default function AccountRecoveryInterstitial() {
 
 	const now = Math.floor( Date.now() / 1000 );
 
-	// A recovery email that matches the account email provides no additional verification value, so
-	// it doesn't count as a recovery method (older accounts may have set this up before the backend
-	// blocked it). See recoveryEmailMatchesAccountEmail.
 	const recoveryEmailIsAccountEmail = recoveryEmailMatchesAccountEmail(
 		accountRecovery?.email,
 		userSettings?.user_email

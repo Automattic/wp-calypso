@@ -16,8 +16,6 @@ export default function SecurityAccountRecoverySummary( { density }: { density?:
 
 	const { email, email_validated, phone, phone_validated } = accountRecovery;
 
-	// A recovery email that matches the account email provides no verification value, so it's flagged
-	// as invalid rather than shown as a working recovery method.
 	const emailIsAccountEmail = recoveryEmailMatchesAccountEmail( email, userSettings?.user_email );
 
 	const badges: SummaryButtonBadgeProps[] = [];

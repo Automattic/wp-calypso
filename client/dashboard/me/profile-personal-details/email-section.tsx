@@ -101,8 +101,6 @@ export default function EmailSection( {
 
 	const { data: accountRecovery } = useQuery( accountRecoveryQuery() );
 	const isAccountRecoveryReady = accountRecovery !== undefined;
-	// A recovery email that matches the account email provides no verification value, so it doesn't
-	// count as a recovery method. See recoveryEmailMatchesAccountEmail.
 	const hasUsableRecoveryEmail =
 		!! accountRecovery?.email &&
 		! recoveryEmailMatchesAccountEmail( accountRecovery.email, userSettings.user_email );

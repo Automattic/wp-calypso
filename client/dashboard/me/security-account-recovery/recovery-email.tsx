@@ -107,9 +107,6 @@ export default function RecoveryEmail() {
 		} );
 	};
 
-	// A recovery email that matches the account email provides no verification value: losing access
-	// to the account email means losing the recovery email too. Older accounts may have set this up
-	// before the backend blocked it, so warn the user and prompt them to change it.
 	const emailMatchesAccountEmail = recoveryEmailMatchesAccountEmail(
 		accountRecoveryEmail,
 		serverData?.user_email

@@ -6,10 +6,6 @@
  * access to the recovery email too. Older accounts may have set this up before the
  * backend started rejecting it, so the UI must not treat such an email as a valid
  * recovery method.
- *
- * The comparison is case-insensitive and trims surrounding whitespace, so
- * `User@example.com` and `user@example.com` (the same mailbox) are treated as a
- * match. Returns `false` when either address is missing.
  */
 export function recoveryEmailMatchesAccountEmail(
 	recoveryEmail: string | undefined,
