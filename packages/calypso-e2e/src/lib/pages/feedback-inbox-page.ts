@@ -188,9 +188,9 @@ export class FeedbackInboxPage {
 			const folderOption = this.page.getByRole( 'option', {
 				name: new RegExp( folderName, 'i' ),
 			} );
-			// Selecting a folder leaves the popover open, so clicking the chip
-			// unconditionally would close it. Only open it when it is shut.
-			if ( ! ( await folderOption.isVisible( { timeout: 1000 } ).catch( () => false ) ) ) {
+			// This method always leaves the popover closed, so an open popover here
+			// means a caller opened it. Clicking the chip then would shut it.
+			if ( ! ( await folderOption.isVisible() ) ) {
 				await folderChip.click();
 			}
 			await folderOption.click();
@@ -198,12 +198,12 @@ export class FeedbackInboxPage {
 			await this.page
 				.locator( '.dataviews-filters__summary-chip' )
 				.filter( { hasText: new RegExp( `Folder is:\\s*${ folderName }`, 'i' ) } )
-				.waitFor( { timeout: 5000 } );
-			// The popover stays open over the table and swallows row clicks, so
-			// dismiss it before handing back control.
-			if ( await folderOption.isVisible( { timeout: 500 } ).catch( () => false ) ) {
+				.waitFor();
+			// Selecting a folder leaves the popover open over the table, where it
+			// swallows clicks on the rows underneath. Dismiss it before returning.
+			if ( await folderOption.isVisible() ) {
 				await this.page.keyboard.press( 'Escape' );
-				await folderOption.waitFor( { state: 'hidden', timeout: 5000 } );
+				await folderOption.waitFor( { state: 'hidden' } );
 			}
 			return;
 		}
