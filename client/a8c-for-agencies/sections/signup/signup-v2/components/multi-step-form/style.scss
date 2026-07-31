@@ -53,11 +53,6 @@
 		@include body-medium;
 	}
 
-	.searchable-dropdown input.components-combobox-control__input[type="text"],
-	.searchable-dropdown .components-combobox-control__reset {
-		color: var(--color-neutral-70);
-	}
-
 	.form-select,
 	.searchable-dropdown {
 		width: 100%;
@@ -170,6 +165,10 @@
 				background-color: #022836;
 				border-color: #E6F5FF1A;
 				color: var(--color-text-inverted);
+			}
+
+			.components-button.has-icon {
+				color: var(--color-neutral-40);
 			}
 		}
 
