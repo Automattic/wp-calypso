@@ -12,14 +12,14 @@ import {
 	cancelDashboardPurchaseFlow,
 	removeDashboardUpgradeFlow,
 } from '@automattic/calypso-e2e';
-import { skipIfNotTrunk, tags, test } from '../../lib/pw-base';
+import { /*skipIfNotTrunk,*/ tags, test, expect } from '../../lib/pw-base';
 import { apiCancelAtomicPlan, apiCloseAccount } from '../shared';
 
 test.describe(
 	DataHelper.createSuiteTitle( 'New Hosted Site Flow: Purchase a hosted site and cancel it' ),
 	{ tag: [ tags.CALYPSO_RELEASE ] },
 	() => {
-		skipIfNotTrunk();
+		// skipIfNotTrunk();
 
 		const planName = 'Business';
 		const testUser = DataHelper.getNewTestUser();
@@ -154,6 +154,10 @@ test.describe(
 				await snackbar.noticeShown( 'Your refund has been processed and your purchase removed.', {
 					exact: true,
 				} );
+			} );
+
+			await test.step( 'intentional fail', () => {
+				expect( 1 ).toBe( 2 );
 			} );
 		} );
 	}
