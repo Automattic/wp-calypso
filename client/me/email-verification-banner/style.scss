@@ -7,7 +7,15 @@
 	.banner__action {
 		display: flex;
 		flex-wrap: wrap;
-		row-gap: 8px;
+		// Spacing belongs to the container so it holds in both directions and once stacked. The
+		// shared rule spaces the primary button with a left margin instead, which becomes an
+		// indent in a column — and takes 8px off its width. Overridden as the same physical
+		// property it was set as, so rtlcss keeps flipping the two together.
+		gap: 8px;
+
+		.button + .is-primary {
+			margin-left: 0;
+		}
 
 		.button {
 			white-space: nowrap;
