@@ -132,7 +132,7 @@ export default function RecoveryEmail() {
 				isDisabled: () => isValidateEmailPending,
 				isValid: {
 					custom: ( item ) => {
-						if ( primaryEmail && item.email.toLowerCase() === primaryEmail.toLowerCase() ) {
+						if ( recoveryEmailMatchesAccountEmail( item.email, primaryEmail ) ) {
 							return __(
 								'You have entered your primary email address. Please enter a different email address.'
 							);
