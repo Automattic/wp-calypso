@@ -10,7 +10,12 @@ import SectionHeader from 'calypso/components/section-header';
 import { getRelativeDayString } from 'calypso/dashboard/utils/datetime';
 import TrackComponentView from 'calypso/lib/analytics/track-component-view';
 import { getRenewalItemFromProduct } from 'calypso/lib/cart-values/cart-items';
-import { getName, isRenewingBeforeExpiration, isExpiredOrRemoved } from 'calypso/lib/purchases';
+import {
+	getName,
+	isRenewingBeforeExpiration,
+	isExpiredOrRemoved,
+	needsToRenewSoon,
+} from 'calypso/me/purchases/lib/raw-purchase-helpers';
 import UpcomingRenewalsDialog from 'calypso/me/purchases/upcoming-renewals/upcoming-renewals-dialog';
 import { PartialCart } from 'calypso/my-sites/checkout/src/components/secondary-cart-promotions';
 import { useSelector, useDispatch } from 'calypso/state';
@@ -18,12 +23,12 @@ import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getCurrentUserId } from 'calypso/state/current-user/selectors';
 import { hasReceivedRemotePreferences } from 'calypso/state/preferences/selectors';
 import {
-	getRenewableSitePurchases,
+	getRawSitePurchases,
 	hasLoadedUserPurchasesFromServer,
 } from 'calypso/state/purchases/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
+import type { Purchase } from '@automattic/api-core';
 import type { MinimalRequestCartProduct } from '@automattic/shopping-cart';
-import type { Purchase } from 'calypso/lib/purchases/types';
 import type { TranslateResult } from 'i18n-calypso';
 
 const URGENT_RENEWAL_WINDOW_IN_DAYS = 10;
@@ -61,8 +66,12 @@ const UpcomingRenewalsReminder: FunctionComponent< Props > = ( { cart, addItemTo
 	const reduxDispatch = useDispatch();
 	const translate = useTranslate();
 	const selectedSite = useSelector( ( state ) => getSelectedSite( state ) as SelectedSite );
-	const renewableSitePurchases: Purchase[] = useSelector( ( state ) =>
-		getRenewableSitePurchases( state, selectedSite?.ID )
+	const sitePurchases: Purchase[] = useSelector( ( state ) =>
+		getRawSitePurchases( state, selectedSite?.ID )
+	);
+	const renewableSitePurchases = useMemo(
+		() => sitePurchases.filter( needsToRenewSoon ),
+		[ sitePurchases ]
 	);
 
 	const purchasesIdsAlreadyInCart = useMemo(
@@ -78,7 +87,7 @@ const UpcomingRenewalsReminder: FunctionComponent< Props > = ( { cart, addItemTo
 	const renewablePurchasesNotAlreadyInCart = useMemo(
 		() =>
 			renewableSitePurchases.filter(
-				( purchase ) => ! purchasesIdsAlreadyInCart.includes( purchase.id )
+				( purchase ) => ! purchasesIdsAlreadyInCart.includes( Number( purchase.ID ) )
 			),
 		[ renewableSitePurchases, purchasesIdsAlreadyInCart ]
 	);
@@ -89,8 +98,8 @@ const UpcomingRenewalsReminder: FunctionComponent< Props > = ( { cart, addItemTo
 		() =>
 			renewablePurchasesNotAlreadyInCart.filter(
 				( purchase ) =>
-					purchase.daysUntilExpiry != null &&
-					purchase.daysUntilExpiry < URGENT_RENEWAL_WINDOW_IN_DAYS
+					purchase.days_until_expiry != null &&
+					purchase.days_until_expiry < URGENT_RENEWAL_WINDOW_IN_DAYS
 			),
 		[ renewablePurchasesNotAlreadyInCart ]
 	);
@@ -99,7 +108,7 @@ const UpcomingRenewalsReminder: FunctionComponent< Props > = ( { cart, addItemTo
 	// modal hidden until the set changes. dismissCard namespaces it under
 	// `dismissible-card-`, e.g. `dismissible-card-checkout-urgent-renewals-10-22`.
 	const sortedPurchaseIds = urgentPurchases
-		.map( ( purchase ) => purchase.id )
+		.map( ( purchase ) => Number( purchase.ID ) )
 		.sort( ( a, b ) => a - b );
 	const dismissPreferenceName = `checkout-urgent-renewals-${ sortedPurchaseIds.join( '-' ) }`;
 	const isUrgentSetDismissed = useSelector( isCardDismissed( dismissPreferenceName ) );
@@ -116,7 +125,14 @@ const UpcomingRenewalsReminder: FunctionComponent< Props > = ( { cart, addItemTo
 	const addPurchasesToCart = useCallback(
 		( purchases: Purchase[] ) => {
 			purchases.forEach( ( purchase ) => {
-				const planCartItem = getRenewalItemFromProduct( purchase, { domain: purchase.meta } );
+				// getRenewalItemFromProduct reads `id` (for extra.purchaseId) and
+				// `isRenewable` (for the non-plan, non-domain fallback branch), neither
+				// of which the raw purchase spells that way. `ID` can come back from the
+				// API as a numeric string, so coerce it the way the assembler used to.
+				const planCartItem = getRenewalItemFromProduct(
+					{ ...purchase, id: Number( purchase.ID ), isRenewable: purchase.is_renewable },
+					{ domain: purchase.meta }
+				);
 				addItemToCart( planCartItem );
 			} );
 		},
@@ -296,7 +312,7 @@ function getMessages( {
 			// This slot feeds both "expired %(expiry)s" and "is expiring %(expiry)s",
 			// so it is clamped to match the tense of the branch it lands in.
 			expiry: getRelativeDayString(
-				new Date( purchase.expiryDate ),
+				new Date( purchase.expiry_date ),
 				isExpiredOrRemoved( purchase ) ? 'past' : 'upcoming'
 			),
 		},
@@ -325,7 +341,7 @@ function getMessages( {
 				'"relativeRenewDate" is relative to the present time and it is already localized, eg. "in a year", "in a month", "today"',
 			args: {
 				purchaseName: getName( purchase ),
-				relativeRenewDate: getRelativeDayString( new Date( purchase.renewDate ), 'upcoming' ),
+				relativeRenewDate: getRelativeDayString( new Date( purchase.renew_date ), 'upcoming' ),
 			},
 		};
 		if ( isDomainRegistration( purchase ) ) {
