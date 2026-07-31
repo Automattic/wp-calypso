@@ -1,5 +1,5 @@
 import config from '@automattic/calypso-config';
-import { Step, StepContainer } from '@automattic/onboarding';
+import { ONBOARDING_FLOW, Step, StepContainer } from '@automattic/onboarding';
 import { Button } from '@wordpress/components';
 import { useViewportMatch } from '@wordpress/compose';
 import { useEffect, useState } from '@wordpress/element';
@@ -24,9 +24,11 @@ import { setSignupIsNewUser } from 'calypso/signup/storageUtils';
 import WpcomLoginForm from 'calypso/signup/wpcom-login-form';
 import { useSelector } from 'calypso/state';
 import { fetchCurrentUser } from 'calypso/state/current-user/actions';
-import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
+import { getCurrentUserId, isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { shouldUseStepContainerV2 } from '../../../helpers/should-use-step-container-v2';
 import { Step as StepType } from '../../types';
+import EmailVerificationGate from './email-verification';
+import { beginGate, gateScope, isGatePending, resolveGate } from './email-verification/storage';
 import { useHandleSocialResponse } from './handle-social-response';
 import { SignupSlider } from './signup-slider';
 import useAccountCreationExperiment from './use-account-creation-experiment';
@@ -65,10 +67,20 @@ const UserStepComponent: StepType< { accepts: UserStepAccepts } > = function Use
 } ) {
 	const translate = useTranslate();
 	const isLoggedIn = useSelector( isUserLoggedIn );
+	const userId = useSelector( getCurrentUserId );
 	const queryArgs = useQuery();
 	const dispatch = useDispatch();
 	const { handleSocialResponse, notice, accountCreateResponse } = useHandleSocialResponse( flow );
 	const [ wpAccountCreateResponse, setWpAccountCreateResponse ] = useState< AccountCreateReturn >();
+
+	const gateEnabled =
+		config.isEnabled( 'onboarding/email-verification' ) && flow === ONBOARDING_FLOW;
+	// The scope of the gate this attempt must clear, or null. In-session state is the source of
+	// truth, so a failed storage write can't skip the gate; storage only restores it on refresh.
+	const [ pendingScope, setPendingScope ] = useState< string | null >( null );
+	const storedScope = gateEnabled ? gateScope( flow, userId ) : null;
+	const activeScope =
+		pendingScope ?? ( storedScope && isGatePending( storedScope ) ? storedScope : null );
 	const { socialServiceResponse } = useSocialService();
 	const { topBarLogo, partnerConfig, signupTosElement } = usePartnerBranding();
 
@@ -82,24 +94,32 @@ const UserStepComponent: StepType< { accepts: UserStepAccepts } > = function Use
 		useAccountCreationExperiment( { flow } );
 	const isEmailFirstVariant = isWooReferrer || isEmailFirstFromExperiment;
 
+	// Load the new account's token and refresh the current user. Depends only on the
+	// account-create response, so gate/navigation state changes don't repeat it.
 	useEffect( () => {
-		if ( wpAccountCreateResponse && 'bearer_token' in wpAccountCreateResponse ) {
-			wpcom.loadToken( wpAccountCreateResponse.bearer_token );
-			if ( ! config.isEnabled( 'oauth' ) ) {
-				reloadProxy();
-				requestAllBlogsAccess();
-			}
-			// Allow retries of fetching new users after creation. New user sign-ups go to one DC
-			// but follow-up API calls go to the closest DC, which may be different and might not
-			// have replicated the user data yet.
-			dispatch( fetchCurrentUser( { retry: true } ) as unknown as AnyAction );
+		if ( ! ( wpAccountCreateResponse && 'bearer_token' in wpAccountCreateResponse ) ) {
+			return;
 		}
+		wpcom.loadToken( wpAccountCreateResponse.bearer_token );
+		if ( ! config.isEnabled( 'oauth' ) ) {
+			reloadProxy();
+			requestAllBlogsAccess();
+		}
+		// Allow retries of fetching new users after creation. New user sign-ups go to one DC
+		// but follow-up API calls go to the closest DC, which may be different and might not
+		// have replicated the user data yet.
+		dispatch( fetchCurrentUser( { retry: true } ) as unknown as AnyAction );
+	}, [ dispatch, wpAccountCreateResponse ] );
+
+	useEffect( () => {
 		if ( ! isLoggedIn ) {
 			dispatch( fetchCurrentUser() as unknown as AnyAction );
-		} else {
+		} else if ( ! activeScope ) {
+			// While a gate is active it renders instead and owns the transition via `onDone`,
+			// so this only submits once nothing is pending.
 			navigation.submit?.();
 		}
-	}, [ dispatch, isLoggedIn, navigation, wpAccountCreateResponse ] );
+	}, [ dispatch, isLoggedIn, navigation, activeScope ] );
 
 	const locale = useFlowLocale();
 
@@ -113,8 +133,20 @@ const UserStepComponent: StepType< { accepts: UserStepAccepts } > = function Use
 	const shouldRenderLocaleSuggestions = ! isLoggedIn; // For logged-in users, we respect the user language settings
 
 	const handleCreateAccountSuccess = ( data: AccountCreateReturn ) => {
-		if ( 'ID' in data ) {
-			setSignupIsNewUser( data.ID );
+		if ( ! ( 'ID' in data ) ) {
+			return;
+		}
+		setSignupIsNewUser( data.ID );
+		if ( gateEnabled ) {
+			// Open the gate. The activation email from signup counts as the initial send, so
+			// the resend cooldown starts here rather than the gate sending a second email.
+			const gateKey = gateScope( flow, data.ID );
+			beginGate( gateKey );
+			setPendingScope( gateKey );
+			recordTracksEvent( 'calypso_signup_email_verification_email_sent', {
+				flow,
+				is_resend: false,
+			} );
 		}
 	};
 
@@ -184,6 +216,20 @@ const UserStepComponent: StepType< { accepts: UserStepAccepts } > = function Use
 			) }
 		</>
 	);
+
+	if ( isLoggedIn && activeScope ) {
+		return (
+			<EmailVerificationGate
+				flow={ flow }
+				scope={ activeScope }
+				logo={ topBarLogo }
+				onDone={ () => {
+					resolveGate( activeScope );
+					navigation.submit?.();
+				} }
+			/>
+		);
+	}
 
 	if ( isStepContainerV2 ) {
 		let headingText = headerText ?? translate( 'Create your account' );
