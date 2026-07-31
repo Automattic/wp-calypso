@@ -4,6 +4,7 @@ import {
 	normalizeWpcomTheme,
 	normalizeWporgTheme,
 	getNormalizedThemesQuery,
+	normalizeThemeSearchTerm,
 	getSerializedThemesQuery,
 	getDeserializedThemesQueryDetails,
 	getSerializedThemesQueryWithoutPage,
@@ -147,6 +148,44 @@ describe( 'utils', () => {
 				},
 				theme_tier: { slug: 'community' },
 			} );
+		} );
+	} );
+
+	describe( '#normalizeThemeSearchTerm()', () => {
+		test( 'should rewrite a year to the default theme slug released that year', () => {
+			expect( normalizeThemeSearchTerm( '2011' ) ).toBe( 'twentyeleven' );
+			expect( normalizeThemeSearchTerm( '2010' ) ).toBe( 'twentyten' );
+			expect( normalizeThemeSearchTerm( '2019' ) ).toBe( 'twentynineteen' );
+			expect( normalizeThemeSearchTerm( '2020' ) ).toBe( 'twentytwenty' );
+			expect( normalizeThemeSearchTerm( '2024' ) ).toBe( 'twentytwentyfour' );
+			expect( normalizeThemeSearchTerm( '2029' ) ).toBe( 'twentytwentynine' );
+		} );
+
+		test( 'should rewrite a year appearing alongside other terms', () => {
+			expect( normalizeThemeSearchTerm( '2011 dark' ) ).toBe( 'twentyeleven dark' );
+			expect( normalizeThemeSearchTerm( 'dark 2011' ) ).toBe( 'dark twentyeleven' );
+		} );
+
+		test( 'should leave years outside the naming scheme alone', () => {
+			expect( normalizeThemeSearchTerm( '2009' ) ).toBe( '2009' );
+			expect( normalizeThemeSearchTerm( '2030' ) ).toBe( '2030' );
+			expect( normalizeThemeSearchTerm( '1999' ) ).toBe( '1999' );
+		} );
+
+		test( 'should only rewrite whole terms', () => {
+			expect( normalizeThemeSearchTerm( 'theme2011' ) ).toBe( 'theme2011' );
+			expect( normalizeThemeSearchTerm( '20111' ) ).toBe( '20111' );
+		} );
+
+		test( 'should pass other search terms through untouched', () => {
+			expect( normalizeThemeSearchTerm( 'twentyeleven' ) ).toBe( 'twentyeleven' );
+			expect( normalizeThemeSearchTerm( 'twenty eleven' ) ).toBe( 'twenty eleven' );
+			expect( normalizeThemeSearchTerm( 'blog' ) ).toBe( 'blog' );
+		} );
+
+		test( 'should pass empty search terms through untouched', () => {
+			expect( normalizeThemeSearchTerm( '' ) ).toBe( '' );
+			expect( normalizeThemeSearchTerm( undefined ) ).toBeUndefined();
 		} );
 	} );
 
