@@ -1,3 +1,6 @@
+/**
+ * @jest-environment jsdom
+ */
 import { FEATURE_SEO_PREVIEW_TOOLS, PLAN_BUSINESS } from '@automattic/calypso-products';
 import { getUpgradeNudgeHref } from '../index';
 

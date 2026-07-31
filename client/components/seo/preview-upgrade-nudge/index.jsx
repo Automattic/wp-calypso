@@ -8,6 +8,7 @@ import {
 	PLAN_BUSINESS,
 	getPlan,
 } from '@automattic/calypso-products';
+import { getCalypsoUrl } from '@automattic/calypso-url';
 import { Gridicon } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
@@ -25,13 +26,15 @@ import upgradeNudgeImage from './preview-upgrade-nudge.webp';
 import './style.scss';
 
 // In wp-admin (Odyssey) UpsellNudge's default Calypso-relative /plans link
-// would resolve against the site's own domain and 404, so link to
-// wordpress.com absolutely there; elsewhere the default is correct.
+// would resolve against the site's own domain and 404, so link to Calypso
+// absolutely there (getCalypsoUrl falls back to https://wordpress.com when
+// the current origin isn't a Calypso one, as in wp-admin); elsewhere the
+// default is correct.
 export const getUpgradeNudgeHref = ( { isOdyssey, siteSlug, plan } ) =>
 	isOdyssey && siteSlug
 		? addQueryArgs(
 				{ feature: FEATURE_SEO_PREVIEW_TOOLS, plan },
-				`https://wordpress.com/plans/${ siteSlug }`
+				`${ getCalypsoUrl() }/plans/${ siteSlug }`
 		  )
 		: undefined;
 
