@@ -52,8 +52,7 @@ test.describe(
 			} );
 		} );
 
-		// Test currently broken on opening the dashboard sidebar on mobile DOTMSD-1480
-		test.skip( 'As a new user, I can purchase a hosted site and cancel it', async ( { page } ) => {
+		test( 'As a new user, I can purchase a hosted site and cancel it', async ( { page } ) => {
 			// ~360s of dominant waits (90s purchase + 180s Atomic transfer + 30s
 			// checkout + two 30s refund notices) plus signup, billing and two
 			// cancellation navigations; 420s covers the worst case.
