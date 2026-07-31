@@ -151,7 +151,7 @@ export function BackupDetails( {
 							<ImagePreview item={ backup } />
 						) }
 					</Grid>
-					{ !! backup.object?.backup_period && (
+					{ !! backup.rewind_id && (
 						<div className="backup-details__file-browser">
 							<FileBrowser
 								key={ backup.rewind_id }
