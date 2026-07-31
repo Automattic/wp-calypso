@@ -139,6 +139,7 @@ describe( 'Image Studio Store', () => {
 						entryPoint: 'media_library',
 						blockType: null,
 						onCloseCallback: callback,
+						sessionId: expect.any( String ),
 					},
 				} );
 			} );
@@ -153,6 +154,7 @@ describe( 'Image Studio Store', () => {
 						entryPoint: null,
 						blockType: null,
 						onCloseCallback: null,
+						sessionId: expect.any( String ),
 					},
 				} );
 			} );
@@ -1366,6 +1368,61 @@ describe( 'Image Studio Store', () => {
 				state = reducer( state, actions.navigateToAttachment( prevId! ) );
 				expect( state.currentNavigationIndex ).toBe( 1 );
 			} );
+		} );
+	} );
+
+	describe( 'Agent session ID', () => {
+		it( 'mints a different session ID for each open', () => {
+			const first = actions.openImageStudio( 123 );
+			const second = actions.openImageStudio( 456 );
+
+			expect( first.payload.sessionId ).toEqual( expect.any( String ) );
+			expect( first.payload.sessionId ).not.toBe( second.payload.sessionId );
+		} );
+
+		it( 'stores the session ID carried by the open action', () => {
+			const action = actions.openImageStudio( 123 );
+
+			const state = reducer( getInitialState(), action );
+
+			expect( selectors.getSessionId( state ) ).toBe( action.payload.sessionId );
+		} );
+
+		it( 'mints a new session ID when navigating to another image', () => {
+			const previousState: ImageStudioState = {
+				...getInitialState(),
+				navigableAttachmentIds: [ 10, 20 ],
+				currentNavigationIndex: 0,
+				imageStudioAttachmentId: 10,
+				sessionId: 'session-for-image-10',
+			};
+
+			const state = reducer( previousState, actions.navigateToAttachment( 20 ) );
+
+			expect( selectors.getSessionId( state ) ).toEqual( expect.any( String ) );
+			expect( selectors.getSessionId( state ) ).not.toBe( 'session-for-image-10' );
+		} );
+
+		it( 'keeps the session ID while the agent generates and saves images', () => {
+			let state = reducer( getInitialState(), actions.openImageStudio( 123 ) );
+			const sessionId = selectors.getSessionId( state );
+
+			state = reducer(
+				state,
+				actions.updateImageStudioCanvas( 'https://example.com/generated.jpg', 456 )
+			);
+			state = reducer( state, actions.addSavedAttachmentId( 456 ) );
+			state = reducer( state, actions.setLastSavedAttachmentId( 456 ) );
+
+			expect( selectors.getSessionId( state ) ).toBe( sessionId );
+		} );
+
+		it( 'keeps the session ID on close so exit events still attribute to it', () => {
+			const opened = reducer( getInitialState(), actions.openImageStudio( 123 ) );
+
+			const state = reducer( opened, actions.closeImageStudio() );
+
+			expect( selectors.getSessionId( state ) ).toBe( selectors.getSessionId( opened ) );
 		} );
 	} );
 } );

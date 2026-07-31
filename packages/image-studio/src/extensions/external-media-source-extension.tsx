@@ -31,13 +31,14 @@ export const addImageStudioMediaSource = (
 			? ImageStudioEntryPoint.JetpackExternalMediaFeaturedImage
 			: ImageStudioEntryPoint.JetpackExternalMediaBlock;
 
+		onClick?.();
+		// Open first so the event carries the new session ID
+		dispatch( imageStudioStore ).openImageStudio( undefined, handleClose, entryPoint );
 		trackImageStudioOpened( {
 			mode: ImageStudioMode.Edit,
 			attachmentId: undefined,
 			entryPoint,
 		} );
-		onClick?.();
-		dispatch( imageStudioStore ).openImageStudio( undefined, handleClose, entryPoint );
 	};
 
 	return [

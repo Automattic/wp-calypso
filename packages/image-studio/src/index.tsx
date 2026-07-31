@@ -146,18 +146,19 @@ function ImageStudioIntegration(): JSX.Element | null {
 				const id = button.getAttribute( 'data-attachment-id' );
 				if ( id ) {
 					const imageId = parseInt( id, 10 );
+					// Open first so the event carries the new session ID
+					openImageStudio( imageId, undefined, ImageStudioEntryPoint.MediaLibrary );
 					trackImageStudioOpened( {
 						mode: ImageStudioMode.Edit,
 						attachmentId: imageId,
 						entryPoint: ImageStudioEntryPoint.MediaLibrary,
 					} );
-					openImageStudio( imageId, undefined, ImageStudioEntryPoint.MediaLibrary );
 				} else {
+					openImageStudio( undefined, undefined, ImageStudioEntryPoint.MediaLibrary );
 					trackImageStudioOpened( {
 						mode: ImageStudioMode.Generate,
 						entryPoint: ImageStudioEntryPoint.MediaLibrary,
 					} );
-					openImageStudio( undefined, undefined, ImageStudioEntryPoint.MediaLibrary );
 				}
 				return;
 			}

@@ -252,19 +252,18 @@ function ImageStudioAgentChat( {
 const ImageStudioAgentUIComponent = ( {
 	agentConfig,
 	attachmentId,
-	modalOpenKey,
 	onChatSubmit,
 	mode,
 }: {
 	agentConfig: UseAgentChatConfig;
 	attachmentId?: number;
-	modalOpenKey?: number;
 	onChatSubmit?: () => void;
 	mode: ImageStudioMode;
 } ) => {
 	return (
+		// Keyed by session so the chat clears for each image
 		<ImageStudioAgentChat
-			key={ `agentchat-${ modalOpenKey || 'default' }` }
+			key={ `agentchat-${ agentConfig.sessionId }` }
 			agentConfig={ agentConfig }
 			attachmentId={ attachmentId }
 			mode={ mode }
@@ -344,7 +343,7 @@ const ImageStudioContent = withInstanceId(
 			originalImageUrl,
 		} );
 
-		const agentConfigState = useAgentConfig( agentConfigFactory, modalOpenKey );
+		const agentConfigState = useAgentConfig( agentConfigFactory );
 
 		const [ isPromptSent, setIsPromptSent ] = useState( false );
 		const [ activeToolbarOption, setActiveToolbarOption ] = useState< ToolbarOption | null >(
@@ -667,7 +666,6 @@ const ImageStudioContent = withInstanceId(
 									<ImageStudioAgentUI
 										agentConfig={ agentConfigState }
 										attachmentId={ attachmentId ?? undefined }
-										modalOpenKey={ modalOpenKey }
 										onChatSubmit={ handleChatSubmit }
 										mode={ mode }
 									/>

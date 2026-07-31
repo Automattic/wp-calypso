@@ -1,40 +1,40 @@
 import { getAgentManager, UseAgentChatConfig } from '@automattic/agenttic-client';
-import { useEffect, useMemo, useState } from '@wordpress/element';
-import { getSessionId } from '../utils/session';
+import { useSelect } from '@wordpress/data';
+import { useEffect, useState } from '@wordpress/element';
+import { store as imageStudioStore } from '../store';
 
 /**
  * Loads and manages agent configuration for Image Studio.
  *
  * - Loads agent config asynchronously from the provided config factory
- * - Manages session ID from the store
+ * - Rebuilds it whenever the store mints a new session
  * - Handles agent cleanup on unmount
  * - Returns null while loading
  * @param agentConfigFactory                   - Factory function to create agent config
  * @param agentConfigFactory.createAgentConfig
- * @param modalOpenKey                         - Key that changes when modal reopens (triggers reload)
  * @returns Loaded agent config or null if still loading
  */
-export function useAgentConfig(
-	agentConfigFactory: {
-		createAgentConfig: ( sessionId: string ) => Promise< UseAgentChatConfig >;
-	},
-	modalOpenKey?: number
-): UseAgentChatConfig | null {
+export function useAgentConfig( agentConfigFactory: {
+	createAgentConfig: ( sessionId: string ) => Promise< UseAgentChatConfig >;
+} ): UseAgentChatConfig | null {
 	const [ agentConfigState, setAgentConfigState ] = useState< UseAgentChatConfig | null >( null );
 
-	const sessionId = getSessionId();
-	const sessionKey = useMemo( () => sessionId || 'image-studio-default', [ sessionId ] );
+	const sessionId = useSelect( ( select ) => select( imageStudioStore ).getSessionId(), [] );
 
 	useEffect( () => {
+		if ( ! sessionId ) {
+			return;
+		}
+
 		let mounted = true;
 		let agentKey: string | null = null;
 
 		agentConfigFactory
-			.createAgentConfig( sessionKey )
+			.createAgentConfig( sessionId )
 			.then( ( loadedConfig ) => {
 				if ( mounted ) {
 					setAgentConfigState( loadedConfig );
-					agentKey = `${ loadedConfig.agentId }-${ sessionKey }`;
+					agentKey = `${ loadedConfig.agentId }-${ sessionId }`;
 				}
 			} )
 			.catch( ( error ) => {
@@ -51,7 +51,7 @@ export function useAgentConfig(
 				}
 			}
 		};
-	}, [ agentConfigFactory, modalOpenKey, sessionKey ] );
+	}, [ agentConfigFactory, sessionId ] );
 
 	return agentConfigState;
 }

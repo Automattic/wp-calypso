@@ -3,7 +3,7 @@
  */
 
 import '@testing-library/jest-dom';
-import { render, screen } from '@testing-library/react';
+import { fireEvent, render, screen } from '@testing-library/react';
 import { useSelect } from '@wordpress/data';
 // eslint-disable-next-line import/order
 import React from 'react';
@@ -32,8 +32,10 @@ jest.mock( '@wordpress/core-data', () => ( {
 	store: 'core',
 } ) );
 
+const mockOpenImageStudio = jest.fn();
+
 jest.mock( '@wordpress/data', () => ( {
-	dispatch: jest.fn( () => ( { openImageStudio: jest.fn() } ) ),
+	dispatch: jest.fn( () => ( { openImageStudio: mockOpenImageStudio } ) ),
 	useSelect: jest.fn(),
 } ) );
 
@@ -44,8 +46,16 @@ jest.mock( '@wordpress/block-editor', () => ( {
 } ) );
 
 jest.mock( '@wordpress/components', () => ( {
-	ToolbarButton: ( { children, label }: { children: React.ReactNode; label: string } ) => (
-		<button data-testid="toolbar-button" aria-label={ label }>
+	ToolbarButton: ( {
+		children,
+		label,
+		onClick,
+	}: {
+		children: React.ReactNode;
+		label: string;
+		onClick?: () => void;
+	} ) => (
+		<button data-testid="toolbar-button" aria-label={ label } onClick={ onClick }>
 			{ children }
 		</button>
 	),
@@ -82,6 +92,7 @@ jest.mock( '../utils/tracking', () => ( {
 jest.mock( '../utils/get-image-data', () => ( {} ) );
 
 // Must import after jest.mock() calls to receive the mocked dependencies.
+import { trackImageStudioOpened } from '../utils/tracking';
 import { withImageStudioToolbarButton } from './image-toolbar-extension';
 
 const BlockEdit = () => <div data-testid="block-edit" />;
@@ -247,5 +258,17 @@ describe( 'withImageStudioToolbarButton', () => {
 			expect( screen.getByTestId( 'block-edit' ) ).toBeInTheDocument();
 			expect( screen.queryByTestId( 'toolbar-button' ) ).not.toBeInTheDocument();
 		} );
+	} );
+
+	it( 'opens Image Studio before tracking, so the event carries the new session', () => {
+		renderToolbar();
+
+		fireEvent.click( screen.getByTestId( 'toolbar-button' ) );
+
+		expect( mockOpenImageStudio ).toHaveBeenCalled();
+		expect( trackImageStudioOpened ).toHaveBeenCalled();
+		expect( mockOpenImageStudio.mock.invocationCallOrder[ 0 ] ).toBeLessThan(
+			( trackImageStudioOpened as jest.Mock ).mock.invocationCallOrder[ 0 ]
+		);
 	} );
 } );

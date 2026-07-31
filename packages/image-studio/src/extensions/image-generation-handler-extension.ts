@@ -62,12 +62,7 @@ export const addImageStudioHandler = (
 		: ImageStudioEntryPoint.EditorSidebar;
 
 	return () => {
-		trackImageStudioOpened( {
-			mode: ImageStudioMode.Generate,
-			attachmentId: undefined,
-			entryPoint: studioEntryPoint,
-		} );
-
+		// Open first so the event carries the new session ID
 		dispatch( imageStudioStore ).openImageStudio(
 			undefined, // Generate mode (no existing attachment)
 			( image: ImageData | null ) => {
@@ -80,5 +75,11 @@ export const addImageStudioHandler = (
 			},
 			studioEntryPoint
 		);
+
+		trackImageStudioOpened( {
+			mode: ImageStudioMode.Generate,
+			attachmentId: undefined,
+			entryPoint: studioEntryPoint,
+		} );
 	};
 };

@@ -72,12 +72,13 @@ export const withImageStudioToolbarButton = createHigherOrderComponent(
 			const attachmentId = attributes.id as number | undefined;
 
 			const handleEditClick = useCallback( () => {
+				// Open first so the event carries the new session ID
+				openImageStudio( attachmentId, handleClose, ImageStudioEntryPoint.EditorBlock, props.name );
 				trackImageStudioOpened( {
 					mode: ImageStudioMode.Edit,
 					attachmentId,
 					entryPoint: ImageStudioEntryPoint.EditorBlock,
 				} );
-				openImageStudio( attachmentId, handleClose, ImageStudioEntryPoint.EditorBlock, props.name );
 			}, [ attachmentId, handleClose, openImageStudio, props.name ] );
 
 			if ( props.name !== 'core/image' || ! attributes?.id ) {

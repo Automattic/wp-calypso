@@ -112,6 +112,9 @@ export interface ImageStudioState {
 	// Once a rating is recorded for an image it stays for the session so the
 	// buttons remain disabled when navigating back to that image.
 	imageRatings: Record< number, 'up' | 'down' >;
+	// Identifies the agent conversation and groups its Tracks events.
+	// Minted per image, so empty until Image Studio opens.
+	sessionId: string;
 }
 
 /**
@@ -124,6 +127,7 @@ type OpenImageStudioAction = {
 		entryPoint: ImageStudioEntryPoint | null;
 		onCloseCallback: ImageStudioCloseCallback | null;
 		blockType?: string | null; // Optional block type for additional context (e.g. 'core/image')
+		sessionId: string;
 	};
 };
 
@@ -230,7 +234,10 @@ type SetNavigableAttachmentIdsAction = {
 
 type NavigateToAttachmentAction = {
 	type: 'NAVIGATE_TO_ATTACHMENT';
-	payload: number; // new attachment ID
+	payload: {
+		attachmentId: number;
+		sessionId: string;
+	};
 };
 
 type SetNavigationPaginationAction = {
@@ -335,6 +342,17 @@ const getSidebarIsOpenStateFromLocalStorage = (): boolean => {
 };
 
 /**
+ * Generate a UUID v4 to identify an agent conversation.
+ */
+function generateSessionId(): string {
+	return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace( /[xy]/g, function ( c ) {
+		const r = ( Math.random() * 16 ) | 0;
+		const v = c === 'x' ? r : ( r & 0x3 ) | 0x8;
+		return v.toString( 16 );
+	} );
+}
+
+/**
  * Initial state for the image studio store
  */
 const initialState: ImageStudioState = {
@@ -369,6 +387,7 @@ const initialState: ImageStudioState = {
 	selectedAspectRatio: null,
 	lastAgentMessageId: null,
 	imageRatings: {},
+	sessionId: '',
 };
 
 /**
@@ -406,6 +425,7 @@ const reducer = (
 				notices: [],
 				// Re-read sidebar state from localStorage on each open
 				isSidebarOpen: getSidebarIsOpenStateFromLocalStorage(),
+				sessionId: action.payload.sessionId,
 			};
 
 		case 'CLOSE_IMAGE_STUDIO':
@@ -415,6 +435,8 @@ const reducer = (
 				imageStudioAiProcessingSources: {},
 				draftIds: [],
 				savedAttachmentIds: [],
+				// Kept so exit-time events still attribute to it
+				sessionId: state.sessionId,
 			};
 
 		case 'UPDATE_IMAGE_STUDIO_CANVAS': {
@@ -567,7 +589,7 @@ const reducer = (
 		}
 
 		case 'NAVIGATE_TO_ATTACHMENT': {
-			const newAttachmentId = action.payload;
+			const newAttachmentId = action.payload.attachmentId;
 			const newIndex = state.navigableAttachmentIds.indexOf( newAttachmentId );
 
 			if ( newIndex === -1 ) {
@@ -609,6 +631,8 @@ const reducer = (
 				blockType: null,
 				// Reset ratings for the new file since it's a new working session
 				imageRatings: {},
+				// A different image gets its own agent conversation
+				sessionId: action.payload.sessionId,
 				// Keep navigation state (navigableAttachmentIds, currentNavigationIndex, pagination)
 				// Keep user preferences (isSidebarOpen, selectedStyle, selectedAspectRatio)
 			};
@@ -762,6 +786,7 @@ const actions = {
 				entryPoint: entryPoint ?? null,
 				onCloseCallback: onCloseCallback ?? null,
 				blockType: blockType ?? null,
+				sessionId: generateSessionId(),
 			},
 		};
 	},
@@ -917,7 +942,7 @@ const actions = {
 	navigateToAttachment( attachmentId: number ): NavigateToAttachmentAction {
 		return {
 			type: 'NAVIGATE_TO_ATTACHMENT',
-			payload: attachmentId,
+			payload: { attachmentId, sessionId: generateSessionId() },
 		};
 	},
 
@@ -1014,6 +1039,7 @@ export interface ImageStudioSelectors {
 	getImageRatings: ( state: ImageStudioState ) => Record< number, 'up' | 'down' >;
 	getImageRating: ( state: ImageStudioState, attachmentId: number | null ) => 'up' | 'down' | null;
 	getSupportedMimeTypes: () => readonly string[];
+	getSessionId: ( state: ImageStudioState ) => string;
 }
 
 /**
@@ -1022,6 +1048,10 @@ export interface ImageStudioSelectors {
 const selectors = {
 	getIsImageStudioOpen( state: ImageStudioState ): boolean {
 		return state.isImageStudioOpen;
+	},
+
+	getSessionId( state: ImageStudioState ): string {
+		return state.sessionId;
 	},
 
 	getImageStudioAttachmentId( state: ImageStudioState ): number | null {
