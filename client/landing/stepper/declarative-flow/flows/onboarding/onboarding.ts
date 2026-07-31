@@ -648,7 +648,9 @@ const onboarding: FlowV2< typeof initialize > = {
 					}
 
 					const launchpadPersonalizationVariation =
-						await resolveLaunchpadPersonalizationVariation( diyLaunchpad );
+						playgroundId || blueprint
+							? 'control'
+							: await resolveLaunchpadPersonalizationVariation( diyLaunchpad );
 					const [ destination, backDestination, backDestinationDomains ] =
 						await getPostCheckoutDestination(
 							providedDependencies,
