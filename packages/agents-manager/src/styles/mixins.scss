@@ -1,4 +1,5 @@
-// Docked-chat styles. wp-admin drops them during modals; Calypso keeps them.
+// Docked-chat styles. wp-admin drops them during modals — the FAB and chat UI
+// would otherwise sit above the modal overlay. Calypso keeps them.
 @mixin docked-chat-without-modal {
 	body:not( .modal-open.wp-admin ) .agents-manager-chat--docked {
 		@content;
