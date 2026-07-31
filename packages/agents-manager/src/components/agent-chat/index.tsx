@@ -188,6 +188,24 @@ function BrandLogo( { src, size = 32 }: { src: string; size?: number } ) {
 	);
 }
 
+/**
+ * Keep Site Chat's mark and assistant name together in the empty state.
+ */
+function BrandIdentity( { name, logoUrl }: { name?: string; logoUrl?: string } ) {
+	const mark = logoUrl ? <BrandLogo src={ logoUrl } /> : <AI size={ 32 } />;
+
+	if ( ! name ) {
+		return mark;
+	}
+
+	return (
+		<span className="agents-manager-brand-identity">
+			{ mark }
+			<span className="agents-manager-brand-identity__name">{ name }</span>
+		</span>
+	);
+}
+
 function getEmptyViewHelp(): string {
 	const override = getAgentsManagerInlineData()?.emptyViewHelp;
 	if ( override ) {
@@ -383,19 +401,18 @@ export default function AgentChat( {
 						suggestions={ emptyViewSuggestions }
 						groupWritingSuggestions={ groupWritingSuggestions }
 						onSuggestionClick={ onSuggestionClick }
-						icon={ brandLogoUrl ? <BrandLogo src={ brandLogoUrl } /> : undefined }
+						icon={
+							brandName || brandLogoUrl ? (
+								<BrandIdentity name={ brandName } logoUrl={ brandLogoUrl } />
+							) : undefined
+						}
 					/>
 				)
 			}
 		>
 			<AgentUI.ConversationView ref={ conversationViewRef }>
 				{ ! isAmAbilitiesDisabled() && isSiteEditorContext() && <EditorHistoryBridge /> }
-				<ChatHeader
-					onClose={ onClose }
-					options={ chatHeaderOptions }
-					isDocked={ isDocked }
-					title={ brandName }
-				/>
+				<ChatHeader onClose={ onClose } options={ chatHeaderOptions } isDocked={ isDocked } />
 				{ isLoadingConversation ? <ChatMessageSkeleton count={ 3 } /> : <AgentUI.Messages /> }
 				{ ( onContextCardAction || onContextCardDismiss ) && (
 					<ContextCards onAction={ onContextCardAction } onDismiss={ onContextCardDismiss } />

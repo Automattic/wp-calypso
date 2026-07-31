@@ -324,6 +324,8 @@ describe( 'injectBrandTokens', () => {
 	} );
 
 	afterEach( () => {
+		document.head.querySelector( '#agenttic-test-defaults' )?.remove();
+		document.body.querySelector( '.agents-manager-chat' )?.remove();
 		getElementByIdSpy.mockReturnValue( null );
 	} );
 
@@ -345,11 +347,32 @@ describe( 'injectBrandTokens', () => {
 		expect( css ).toContain( '--color-primary-foreground: #ffffff;' );
 	} );
 
+	it( 'overrides the default token defined directly on the Agenttic widget', () => {
+		const defaults = document.createElement( 'style' );
+		defaults.id = 'agenttic-test-defaults';
+		defaults.textContent = '.agenttic { --color-primary: #2d5af2; }';
+		document.head.appendChild( defaults );
+
+		const portal = document.createElement( 'div' );
+		portal.className = 'agents-manager-chat';
+		portal.innerHTML = '<div class="agenttic"></div>';
+		document.body.appendChild( portal );
+
+		injectBrandTokens( { accent: '#2271b1', accentForeground: '#ffffff' } );
+
+		expect(
+			window
+				.getComputedStyle( portal.querySelector( '.agenttic' ) )
+				.getPropertyValue( '--color-primary' )
+		).toBe( '#2271b1' );
+	} );
+
 	it( 'targets the portalled selectors, since the panel mounts on body', () => {
 		injectBrandTokens( { accent: '#2271b1', accentForeground: '#ffffff' } );
 
 		const css = document.head.querySelector( '#jetpack-reader-chat-brand' ).textContent;
 		expect( css ).toContain( '.agents-manager-chat' );
+		expect( css ).toContain( '.agents-manager-chat .agenttic' );
 		expect( css ).toContain( '.agents-manager-sidebar-fab' );
 		expect( css ).toContain( '.components-popover' );
 	} );
