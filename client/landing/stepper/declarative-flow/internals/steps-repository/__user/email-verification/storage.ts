@@ -1,12 +1,11 @@
-import { RESEND_MIN_INTERVAL_SECONDS } from 'calypso/landing/stepper/hooks/use-send-email-verification';
+import {
+	cooldownDeadline,
+	RESEND_MIN_INTERVAL_SECONDS,
+} from 'calypso/lib/email-verification/resend';
 
 // One session-storage record per gate attempt, keyed by flow and user, so the gate survives a
 // refresh. The record's presence means the gate is pending; resolving removes it.
 // `resendAvailableAt` anchors the resend cooldown, `shownAt` the duration metric.
-
-// The server's hourly lockout is the longest wait it can hand back. Anything beyond that is a
-// corrupt record rather than a real limit, and must not strand the user on a gate with no skip.
-const MAX_COOLDOWN_SECONDS = 60 * 60;
 
 const STORAGE_KEY = 'onboarding-email-verification-gate';
 
@@ -43,7 +42,10 @@ function write( scope: string, record: GateRecord ): void {
 // Called at email account creation: open the gate and start the cooldown, since the activation
 // email from signup counts as the first send. `shownAt` is filled in when the gate renders.
 export function beginGate( scope: string ): void {
-	write( scope, { resendAvailableAt: availableIn( RESEND_MIN_INTERVAL_SECONDS ), shownAt: 0 } );
+	write( scope, {
+		resendAvailableAt: cooldownDeadline( RESEND_MIN_INTERVAL_SECONDS ),
+		shownAt: 0,
+	} );
 }
 
 // Stamped when the gate first renders, so the duration metric excludes the token-load and
@@ -67,12 +69,12 @@ export function resolveGate( scope: string ): void {
 	}
 }
 
-// Hold the button for `seconds`: the standard interval after a send, or whatever the server
-// asked for when it refused one.
-export function markResendUnavailableFor( scope: string, seconds: number ): void {
+// Remember a cooldown so it survives a reload — a server lockout would otherwise be forgotten
+// and the button would reopen into a refusal.
+export function markResendUnavailableUntil( scope: string, deadline: number ): void {
 	const record = read( scope );
 	if ( record ) {
-		write( scope, { ...record, resendAvailableAt: availableIn( seconds ) } );
+		write( scope, { ...record, resendAvailableAt: deadline } );
 	}
 }
 
@@ -82,13 +84,4 @@ export function gateShownAt( scope: string ): number {
 
 export function gateResendAvailableAt( scope: string ): number {
 	return read( scope )?.resendAvailableAt ?? 0;
-}
-
-function availableIn( seconds: number ): number {
-	return Date.now() + Math.min( seconds, MAX_COOLDOWN_SECONDS ) * 1000;
-}
-
-export function cooldownRemainingSeconds( availableAt: number ): number {
-	const remainingMs = availableAt - Date.now();
-	return remainingMs > 0 ? Math.min( Math.ceil( remainingMs / 1000 ), MAX_COOLDOWN_SECONDS ) : 0;
 }

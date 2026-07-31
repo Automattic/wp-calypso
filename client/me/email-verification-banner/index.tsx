@@ -1,14 +1,14 @@
 import { Substitution, useTranslate } from 'i18n-calypso';
-import React, { useCallback, useRef, useState } from 'react';
+import React, { useCallback, useState } from 'react';
 import Banner from 'calypso/components/banner';
 import EmailVerificationDialog from 'calypso/components/email-verification/email-verification-dialog';
 import useGetEmailToVerify from 'calypso/components/email-verification/hooks/use-get-email-to-verify';
+import { useSendEmailVerification } from 'calypso/landing/stepper/hooks/use-send-email-verification';
 import {
 	RESEND_MIN_INTERVAL_SECONDS,
 	resendThrottleRetryAfter,
-	useSendEmailVerification,
-} from 'calypso/landing/stepper/hooks/use-send-email-verification';
-import { EVERY_SECOND, useInterval } from 'calypso/lib/interval';
+} from 'calypso/lib/email-verification/resend';
+import { useResendCooldown } from 'calypso/lib/email-verification/use-resend-cooldown';
 import { emailFormEventEmitter } from 'calypso/me/account/account-email-field';
 import { useDispatch, useSelector } from 'calypso/state';
 import { isCurrentUserEmailVerified } from 'calypso/state/current-user/selectors';
@@ -77,23 +77,8 @@ const EmailVerificationBannerV2: React.FC< Props > = ( { setIsBusy } ) => {
 	const [ isSendingEmail, setIsSendingEmail ] = useState( false );
 
 	// The server allows one resend a minute and five an hour, so the button would otherwise
-	// invite a click it is going to refuse. Anchored to a timestamp rather than decremented,
-	// because timers are suspended while the tab is in the background.
-	const resendAvailableAtRef = useRef( 0 );
-	const [ secondsUntilResend, setSecondsUntilResend ] = useState( 0 );
-
-	const holdResend = ( seconds: number ) => {
-		resendAvailableAtRef.current = Date.now() + seconds * 1000;
-		setSecondsUntilResend( seconds );
-	};
-
-	useInterval(
-		() =>
-			setSecondsUntilResend(
-				Math.max( 0, Math.ceil( ( resendAvailableAtRef.current - Date.now() ) / 1000 ) )
-			),
-		secondsUntilResend > 0 && EVERY_SECOND
-	);
+	// invite a click it is going to refuse.
+	const { secondsUntilResend, hold: holdResend } = useResendCooldown();
 
 	const highlightEmailInput = useCallback( () => {
 		emailFormEventEmitter?.dispatchEvent( new Event( 'highlightInput' ) );
@@ -145,6 +130,7 @@ const EmailVerificationBannerV2: React.FC< Props > = ( { setIsBusy } ) => {
 	}, [
 		dispatch,
 		emailToVerify,
+		holdResend,
 		isEmailChangePending,
 		sendVerificationEmail,
 		setIsBusy,

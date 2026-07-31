@@ -1,20 +1,18 @@
 import { fetchUser } from '@automattic/api-core';
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
+import { useSendEmailVerification } from 'calypso/landing/stepper/hooks/use-send-email-verification';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import {
+	cooldownDeadline,
 	RESEND_MIN_INTERVAL_SECONDS,
 	resendThrottleRetryAfter,
-	useSendEmailVerification,
-} from 'calypso/landing/stepper/hooks/use-send-email-verification';
-import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
-import { EVERY_FIVE_SECONDS, EVERY_SECOND, useInterval } from 'calypso/lib/interval';
+} from 'calypso/lib/email-verification/resend';
+import { useResendCooldown } from 'calypso/lib/email-verification/use-resend-cooldown';
+import { EVERY_FIVE_SECONDS, useInterval } from 'calypso/lib/interval';
 import { useDispatch, useSelector } from 'calypso/state';
 import { fetchCurrentUser, setUserEmailVerified } from 'calypso/state/current-user/actions';
 import { isCurrentUserEmailVerified } from 'calypso/state/current-user/selectors';
-import {
-	cooldownRemainingSeconds,
-	gateResendAvailableAt,
-	markResendUnavailableFor,
-} from './storage';
+import { gateResendAvailableAt, markResendUnavailableUntil } from './storage';
 
 // Kept as-is from before throttles were reported separately, so ordinary failures carry the
 // same value they always have.
@@ -39,39 +37,22 @@ export function useEmailVerification( flow: string, scope: string ) {
 	const isVerified = useSelector( isCurrentUserEmailVerified );
 	const sendVerificationEmail = useSendEmailVerification();
 
-	// Held in memory because re-reading storage each tick would report no cooldown when
-	// persistence is unavailable, reopening the button early. Seeded from storage to survive a
-	// refresh — including a server lockout, which would otherwise be forgotten on reload.
-	const availableAtRef = useRef(
-		gateResendAvailableAt( scope ) || Date.now() + RESEND_MIN_INTERVAL_SECONDS * 1000
-	);
-
 	const [ sendStatus, setSendStatus ] = useState< SendStatus >( 'idle' );
-	const [ secondsUntilResend, setSecondsUntilResend ] = useState( () =>
-		cooldownRemainingSeconds( availableAtRef.current )
-	);
+
+	const { secondsUntilResend, hold: holdResend } = useResendCooldown( {
+		initialDeadline:
+			gateResendAvailableAt( scope ) || cooldownDeadline( RESEND_MIN_INTERVAL_SECONDS ),
+		onHold: ( deadline ) => markResendUnavailableUntil( scope, deadline ),
+		// A refusal expires with the wait it described: leaving it behind would explain an
+		// unavailable button that is, by then, available again.
+		onExpire: () => setSendStatus( ( status ) => ( status === 'throttled' ? 'idle' : status ) ),
+	} );
 	const [ isPollingExpired, setIsPollingExpired ] = useState( false );
 	const [ pollWindowKey, setPollWindowKey ] = useState( 0 );
 	const [ checkStatus, setCheckStatus ] = useState< CheckStatus >( 'idle' );
 	const [ isVisible, setIsVisible ] = useState( () => document.visibilityState === 'visible' );
 
 	// Hold the button until `seconds` have passed, and remember it across a refresh.
-	const holdResend = ( seconds: number ) => {
-		markResendUnavailableFor( scope, seconds );
-		availableAtRef.current = Date.now() + seconds * 1000;
-		setSecondsUntilResend( cooldownRemainingSeconds( availableAtRef.current ) );
-	};
-
-	// A refusal expires with the wait it described: leaving it behind would explain an
-	// unavailable button that is, by then, available again.
-	const syncCooldown = useCallback( () => {
-		const remaining = cooldownRemainingSeconds( availableAtRef.current );
-		setSecondsUntilResend( remaining );
-		if ( remaining === 0 ) {
-			setSendStatus( ( status ) => ( status === 'throttled' ? 'idle' : status ) );
-		}
-	}, [] );
-
 	// The initial email is the activation email from account creation; this only resends.
 	const resend = async () => {
 		setSendStatus( 'sending' );
@@ -106,25 +87,18 @@ export function useEmailVerification( flow: string, scope: string ) {
 		}
 	};
 
-	// Recompute from the deadline rather than decrementing a counter: mobile browsers suspend
-	// timers while the user is away in their email app.
-	useInterval( syncCooldown, secondsUntilResend > 0 && EVERY_SECOND );
-
-	// On becoming visible, refresh the cooldown and check `/me` without waiting for the next tick.
+	// On becoming visible, check `/me` without waiting for the next poll tick.
 	useEffect( () => {
 		const onVisibilityChange = () => {
 			const visible = document.visibilityState === 'visible';
 			setIsVisible( visible );
-			if ( visible ) {
-				syncCooldown();
-				if ( ! isVerified ) {
-					dispatch( fetchCurrentUser() );
-				}
+			if ( visible && ! isVerified ) {
+				dispatch( fetchCurrentUser() );
 			}
 		};
 		document.addEventListener( 'visibilitychange', onVisibilityChange );
 		return () => document.removeEventListener( 'visibilitychange', onVisibilityChange );
-	}, [ isVerified, dispatch, syncCooldown ] );
+	}, [ isVerified, dispatch ] );
 
 	useEffect( () => {
 		if ( isVerified ) {
