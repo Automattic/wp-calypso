@@ -5,23 +5,23 @@
 import { renderHook } from '@testing-library/react';
 import { useHelpCenterCTA } from '../use-help-center-cta';
 import type { HelpCenterCTAVariant } from '../../components/help-center-cta';
-import type { SupportStatus } from '../../types';
+import type { HelpCenterCTAData } from '../../types';
 
 const mockUseFeatureConfig = jest.fn();
-const mockUseSupportStatus = jest.fn();
+const mockUseHelpCenterCTAQuery = jest.fn();
 
 jest.mock( '../../contexts/HelpCenterContext', () => ( {
 	useFeatureConfig: () => mockUseFeatureConfig(),
 } ) );
 
-jest.mock( '../../data/use-support-status', () => ( {
-	useSupportStatus: ( enabled?: boolean ) => mockUseSupportStatus( enabled ),
+jest.mock( '../../data/use-help-center-cta', () => ( {
+	useHelpCenterCTAQuery: ( enabled?: boolean ) => mockUseHelpCenterCTAQuery( enabled ),
 } ) );
 
 const bannerCta = {
 	id: 'onboarding-call-v1',
 	variant: 'banner',
-	url: 'https://savvycal.com/CustomerExperience/wordpresscom-onboarding-hc',
+	url: 'https://example.test/onboarding-call',
 	title: 'Book Your Free Onboarding Call',
 };
 
@@ -33,11 +33,11 @@ const setup = ( {
 }: {
 	enabled?: boolean;
 	isLoading?: boolean;
-	cta?: SupportStatus[ 'cta' ] | null;
+	cta?: HelpCenterCTAData | null;
 	variant?: HelpCenterCTAVariant;
 } = {} ) => {
 	mockUseFeatureConfig.mockReturnValue( { contextualCta: { enabled } } );
-	mockUseSupportStatus.mockReturnValue( { data: cta ? { cta } : {}, isLoading } );
+	mockUseHelpCenterCTAQuery.mockReturnValue( { data: cta, isLoading } );
 
 	return renderHook( () => useHelpCenterCTA( variant ) );
 };
@@ -99,7 +99,7 @@ describe( 'useHelpCenterCTA', () => {
 		expect( setup( { cta: unknown, variant: 'link-list-item' } ).result.current ).toBeNull();
 	} );
 
-	it( 'returns null while support status is loading', () => {
+	it( 'returns null while the CTA is loading', () => {
 		const { result } = setup( { isLoading: true } );
 
 		expect( result.current ).toBeNull();
@@ -124,7 +124,7 @@ describe( 'useHelpCenterCTA', () => {
 		const cta = {
 			...bannerCta,
 			title: [ 'Book Your Free Onboarding Call' ],
-		} as unknown as SupportStatus[ 'cta' ];
+		} as unknown as HelpCenterCTAData;
 
 		expect( setup( { cta } ).result.current ).toBeNull();
 	} );
@@ -133,7 +133,7 @@ describe( 'useHelpCenterCTA', () => {
 		const cta = {
 			...bannerCta,
 			description: { text: 'Talk one-on-one with a Happiness Engineer.' },
-		} as unknown as SupportStatus[ 'cta' ];
+		} as unknown as HelpCenterCTAData;
 
 		const { result } = setup( { cta } );
 
@@ -189,10 +189,10 @@ describe( 'useHelpCenterCTA', () => {
 		} );
 	} );
 
-	it( 'returns null and asks the support-status query to stay disabled when the product disables it', () => {
+	it( 'returns null and asks the CTA query to stay disabled when the product disables it', () => {
 		const { result } = setup( { enabled: false } );
 
 		expect( result.current ).toBeNull();
-		expect( mockUseSupportStatus ).toHaveBeenCalledWith( false );
+		expect( mockUseHelpCenterCTAQuery ).toHaveBeenCalledWith( false );
 	} );
 } );
