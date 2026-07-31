@@ -6,7 +6,6 @@ import {
 	isJetpackSearchSlug,
 	isJetpackSocialSlug,
 } from '@automattic/calypso-products';
-import page from '@automattic/calypso-router';
 import { Gridicon } from '@automattic/components';
 import { formatCurrency } from '@automattic/number-formatters';
 import { TranslateResult, useTranslate } from 'i18n-calypso';
@@ -30,14 +29,15 @@ import slugToSelectorProduct from 'calypso/my-sites/plans/jetpack-plans/slug-to-
 import useItemPrice from 'calypso/my-sites/plans/jetpack-plans/use-item-price';
 import { useSelector } from 'calypso/state';
 import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selectors';
+import useProductsQuery from 'calypso/state/partner-portal/licenses/hooks/use-products-query';
 import {
 	getCurrentPartner,
 	hasJetpackPartnerAccess as hasJetpackPartnerAccessSelector,
 } from 'calypso/state/partner-portal/partner/selectors';
+import { APIProductFamilyProduct } from 'calypso/state/partner-portal/types';
 import { getSiteAvailableProduct } from 'calypso/state/sites/products/selectors';
 import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import UnusedLicenseNotice from '../unassigned-license-notice';
-import useLicenseProduct, { getLicenseProductPrice } from './use-license-product';
 import type {
 	Duration,
 	SelectorProduct,
@@ -71,13 +71,14 @@ const UpsellProductCard: React.FC< UpsellProductCardProps > = ( {
 	);
 	const isA4AEnabled = isA8CForAgencies();
 
-	let aboveButtonText: TranslateResult | null = null;
-	let billingTerm: Duration = TERM_MONTHLY;
+	let aboveButtonText: TranslateResult | null;
+	let billingTerm: Duration;
 	let ctaButtonURL: string | undefined;
 	let currencyCode: string | null;
 	let discountedPrice: number | undefined;
 	let discountText: TranslateResult | undefined;
 	let isFetchingPrices: boolean;
+	let manageProduct: APIProductFamilyProduct | undefined;
 	let nonManageProductPrice: number | null = null;
 	let onCtaButtonClickInternal = onCtaButtonClick;
 	let originalPrice: number;
@@ -93,18 +94,21 @@ const UpsellProductCard: React.FC< UpsellProductCardProps > = ( {
 		isFetching: isFetchingNonManagePrices,
 	} = useItemPrice( siteId, item, item?.monthlyProductSlug || '' );
 
-	const {
-		productSlug: manageProductSlug,
-		product: manageProduct,
-		isFetching: isFetchingManagePrices,
-	} = useLicenseProduct( nonManageProductSlug );
+	const { data: products, isFetching: isFetchingManagePrices } = useProductsQuery();
 
-	if ( hasJetpackPartnerAccess ) {
+	const manageProductSlug = nonManageProductSlug.replace( '_yearly', '' ).replace( /_/g, '-' );
+
+	if ( isA4AEnabled ) {
+		ctaButtonURL = `${ A4A_MARKETPLACE_CHECKOUT_LINK }?product_slug=${ manageProductSlug }&source=sitesdashboard&site_id=${ siteId }`;
+	} else if ( hasJetpackPartnerAccess ) {
+		manageProduct = products?.find( ( product ) => product.slug === manageProductSlug );
 		isFetchingPrices = isFetchingManagePrices || !! isFetchingNonManagePrices;
 		if ( manageProduct ) {
+			aboveButtonText = null;
+			billingTerm = TERM_MONTHLY;
 			ctaButtonURL = '#';
 			currencyCode = manageProduct.currency;
-			originalPrice = getLicenseProductPrice( manageProduct );
+			originalPrice = parseFloat( manageProduct.amount );
 
 			if (
 				manageProductSlug === 'jetpack-search' &&
@@ -125,12 +129,6 @@ const UpsellProductCard: React.FC< UpsellProductCardProps > = ( {
 			}
 			onCtaButtonClickInternal = () => {
 				onCtaButtonClick();
-				if ( isA4AEnabled ) {
-					page.redirect(
-						`${ A4A_MARKETPLACE_CHECKOUT_LINK }?product_slug=${ manageProductSlug }&source=sitesdashboard&site_id=${ siteId }`
-					);
-					return;
-				}
 				setShowLightbox( true );
 			};
 		}
@@ -221,30 +219,30 @@ const UpsellProductCard: React.FC< UpsellProductCardProps > = ( {
 							</li>
 						) ) }
 				</ul>
-				{ hasJetpackPartnerAccess && (
-					<b>
-						{ isA4AEnabled
-							? translate( 'Price per license:' )
-							: translate( 'Price per Jetpack Manage license:' ) }
-					</b>
+				{ ! isA4AEnabled && (
+					<>
+						{ hasJetpackPartnerAccess && (
+							<b>{ translate( 'Price per Jetpack Manage license:' ) }</b>
+						) }
+						<div className="upsell-product-card__price-container">
+							<DisplayPrice
+								isFree={ ! isFetchingPrices && originalPrice === 0 }
+								discountedPrice={ discountedPrice }
+								currencyCode={ currencyCode }
+								originalPrice={ originalPrice ?? 0 }
+								pricesAreFetching={ isFetchingPrices }
+								belowPriceText={ item.belowPriceText }
+								tooltipText={ tooltipText }
+								billingTerm={ billingTerm }
+								productName={ displayName }
+								hideSavingLabel={ false }
+							/>
+							{ discountText && ! isFetchingPrices && (
+								<div className="upsell-product-card__discount-label">{ discountText }</div>
+							) }
+						</div>
+					</>
 				) }
-				<div className="upsell-product-card__price-container">
-					<DisplayPrice
-						isFree={ ! isFetchingPrices && originalPrice === 0 }
-						discountedPrice={ discountedPrice }
-						currencyCode={ currencyCode }
-						originalPrice={ originalPrice ?? 0 }
-						pricesAreFetching={ isFetchingPrices }
-						belowPriceText={ item.belowPriceText }
-						tooltipText={ tooltipText }
-						billingTerm={ billingTerm }
-						productName={ displayName }
-						hideSavingLabel={ false }
-					/>
-					{ discountText && ! isFetchingPrices && (
-						<div className="upsell-product-card__discount-label">{ discountText }</div>
-					) }
-				</div>
 				{ aboveButtonText && (
 					<p className="upsell-product-card__above-button">{ aboveButtonText }</p>
 				) }
@@ -305,13 +303,15 @@ export const UpsellProductCardPlaceholder: React.FC = () => {
 				</li>
 			</ul>
 
-			<div className="upsell-product-card__price-container">
-				<DisplayPrice
-					pricesAreFetching
-					billingTerm={ TERM_ANNUALLY }
-					productName="Placeholder product"
-				/>
-			</div>
+			{ ! isA8CForAgencies() && (
+				<div className="upsell-product-card__price-container">
+					<DisplayPrice
+						pricesAreFetching
+						billingTerm={ TERM_ANNUALLY }
+						productName="Placeholder product"
+					/>
+				</div>
+			) }
 		</JetpackRnaActionCard>
 	);
 };

@@ -33,9 +33,6 @@ jest.mock( 'calypso/state/analytics/actions', () => ( {
 describe( 'SingleSiteUpsellLightbox', () => {
 	test( 'button link for non manage users is to the WordPress.com purchase page', async () => {
 		const firstState = {
-			a8cForAgencies: {
-				agencies: {},
-			},
 			partnerPortal: {
 				partner: {
 					current: {
@@ -86,9 +83,6 @@ describe( 'SingleSiteUpsellLightbox', () => {
 
 	test( 'button link for manage users does not open the WordPress.com checkout', async () => {
 		const secondState = {
-			a8cForAgencies: {
-				agencies: {},
-			},
 			partnerPortal: {
 				partner: {
 					current: {
