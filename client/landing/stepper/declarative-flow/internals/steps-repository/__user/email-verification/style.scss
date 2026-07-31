@@ -1,15 +1,6 @@
 .onboarding-email-verification {
-	display: flex;
-	flex-direction: column;
-	gap: 16px;
 	// The layout runs with `noGap`, so this is the whole distance below the title.
 	margin-block-start: 24px;
-
-	// Full-width buttons per the design.
-	.step-container-v2__primary-button,
-	.step-container-v2__secondary-button {
-		width: 100%;
-	}
 
 	// The inbox button carries an icon, so WordPress's Button left-justifies it
 	// (`.has-icon.has-text`); the design centers the label. Match that selector's
@@ -22,7 +13,7 @@
 // The description lives in the content row so it shares the buttons' width, which
 // takes it out of `.step-container-v2__heading p` and its typography.
 .onboarding-email-verification__sub-text {
-	// Combined with the container's 16px flex gap, this puts the buttons 32px below.
+	// Combined with the stack's 16px gap, this puts the buttons 32px below.
 	margin-block: 0 16px;
 	color: var(--color-text);
 	font-size: 15px;
