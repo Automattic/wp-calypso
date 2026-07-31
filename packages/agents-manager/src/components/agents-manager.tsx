@@ -17,7 +17,6 @@ import useWebMcpTools from '../hooks/use-webmcp-tools';
 import { AGENTS_MANAGER_STORE } from '../stores';
 import { clearSessionId, getOrCreateSessionId, getSessionId } from '../utils/agent-session';
 import { createAgentConfig } from '../utils/create-agent-config';
-import { isReaderChatAgent } from '../utils/is-reader-chat-agent';
 import {
 	loadExternalProviders,
 	type AbilitiesSetupHook,

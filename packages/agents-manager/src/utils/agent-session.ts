@@ -165,7 +165,11 @@ export function isFreshSession(
 }
 
 /** Clear the fresh flag once a send is committed, so later loads fetch the conversation. */
-export function markSessionUsed( agentId?: string, siteKey?: string, userId?: string | number ): void {
+export function markSessionUsed(
+	agentId?: string,
+	siteKey?: string,
+	userId?: string | number
+): void {
 	try {
 		sessionStorage.removeItem( getFreshFlagKey( agentId, siteKey, userId ) );
 	} catch {
