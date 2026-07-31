@@ -157,8 +157,11 @@ test.describe(
 				// we simulate a redirect from Calypso to WP Admin with a hardcoded referer.
 				if ( envVariables.TEST_ON_ATOMIC ) {
 					const siteUrl = testAccount.getSiteURL( { protocol: true } );
+					// Only the SSO hop matters here — the next step navigates away. Waiting
+					// for "load" would wait on the dashboard's Site widget, which iframes a
+					// whole front-end page and regularly outlasts the timeout.
 					await page.goto( `${ siteUrl }wp-admin/`, {
-						timeout: 15 * 1000,
+						waitUntil: 'domcontentloaded',
 						referer: 'https://wordpress.com/',
 					} );
 				}
