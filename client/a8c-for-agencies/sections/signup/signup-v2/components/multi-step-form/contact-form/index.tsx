@@ -409,10 +409,9 @@ const SignupContactForm = ( { onContinue, initialFormData, withEmail = false }: 
 								{
 									components: {
 										link: (
-											<a
+											<ExternalLink
 												href="https://agencieshelp.automattic.com/knowledge-base/invite-team-members/"
-												target="_blank"
-												rel="noopener noreferrer"
+												children={ null }
 											/>
 										),
 									},
