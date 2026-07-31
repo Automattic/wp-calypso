@@ -73,6 +73,11 @@ const useTooltip = ( type: AllowedRowType, rows: SiteData ): TranslateResult | u
 			return translate( 'Some plugins are managed by the host and cannot be autoupdated' );
 		}
 
+		// A4A renders an empty state instead of an "Add" CTA, so there is no action to describe.
+		if ( row?.status === 'inactive' && isA8CForAgencies() ) {
+			return undefined;
+		}
+
 		return ALL_TOOLTIPS[ type ]?.[ row?.status ]?.( translate );
 	}, [ isMultisiteSupported, hasManagedPlugins, rows, translate, type ] );
 };
