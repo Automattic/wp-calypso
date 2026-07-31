@@ -56,8 +56,12 @@
 		right: 0;
 		// Hold the docked stacking while sliding so page chrome can't cross
 		// the chat, then release so admin bar and masterbar menus overlay it.
-		// Browsers without `allow-discrete` release immediately instead.
+		// The duplicate declaration is the fallback: browsers that can't parse
+		// `allow-discrete` drop the second one and release immediately instead.
 		z-index: unset;
+		transition:
+			right $transition-timing,
+			width $transition-timing;
 		transition:
 			right $transition-timing,
 			width $transition-timing,
