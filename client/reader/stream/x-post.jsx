@@ -9,9 +9,9 @@ import { createRef, PureComponent } from 'react';
 import { connect } from 'react-redux';
 import UserAvatar from 'calypso/blocks/user-avatar';
 import { useFeedQuery } from 'calypso/reader/data/feed';
+import { useIsSeenEnabled } from 'calypso/reader/data/seen-posts';
 import { useSite } from 'calypso/reader/data/site';
 import { useHasSiteSubscriptionOrganization } from 'calypso/reader/data/site-subscriptions';
-import { isEligibleForUnseen } from 'calypso/reader/get-helpers';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
 
@@ -162,22 +162,12 @@ class CrossPost extends PureComponent {
 	};
 
 	render() {
-		const { post, translate, currentRoute, hasOrganization, isWPForTeamsItem } = this.props;
-
-		let isSeen = false;
-		const isSeenEnabled = isEligibleForUnseen( {
-			isWPForTeamsItem,
-			currentRoute,
-			hasOrganization,
-		} );
-		if ( isSeenEnabled ) {
-			isSeen = post?.is_seen;
-		}
+		const { post, translate } = this.props;
 		const articleClasses = clsx( {
 			reader__card: true,
 			'is-x-post': true,
 			'is-selected': this.props.isSelected,
-			'is-seen': isSeen,
+			'is-seen': this.props.isSeenEnabled && post?.is_seen,
 		} );
 
 		// Remove the x-post text from the title.
@@ -241,12 +231,15 @@ export default function CrossPostContainer( props ) {
 	const resolvedFeedId = feedId || site?.feed_ID;
 	const { data: feedFromSite } = useFeedQuery( feedFromKey ? undefined : resolvedFeedId );
 	const hasOrganization = useHasSiteSubscriptionOrganization( feedId, blogId );
+	const isSeenEnabled = useIsSeenEnabled( { feedId, blogId, post: props.post } );
+
 	return (
 		<ConnectedCrossPost
 			{ ...props }
 			site={ site }
 			feed={ feedFromKey || feedFromSite }
 			hasOrganization={ hasOrganization }
+			isSeenEnabled={ isSeenEnabled }
 		/>
 	);
 }

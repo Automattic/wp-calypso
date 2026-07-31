@@ -185,54 +185,6 @@ export const getSiteAuthorName = ( site: ReaderSite ): string => {
 	return decodeEntities( authorFullName || '' );
 };
 
-interface isEligibleForUnseenArgs {
-	isWPForTeamsItem: boolean;
-	currentRoute?: string | null;
-	hasOrganization?: boolean | null;
-}
-
-/**
- * Check if route or feed/blog is eligible to use seen posts feature (unseen counts and mark as seen)
- */
-export const isEligibleForUnseen = ( {
-	isWPForTeamsItem = false,
-	currentRoute = null,
-	hasOrganization = null,
-}: isEligibleForUnseenArgs ): boolean => {
-	let isEligible = isWPForTeamsItem;
-	if ( hasOrganization !== null ) {
-		isEligible = hasOrganization;
-	}
-
-	if ( currentRoute ) {
-		if (
-			[ '/reader/a8c', '/reader/p2' ].includes( currentRoute ) ||
-			[ '/reader/feeds/', '/reader/blogs/' ].some( ( route ) => currentRoute.startsWith( route ) )
-		) {
-			return isEligible;
-		}
-
-		return false;
-	}
-
-	return isEligible;
-};
-
-interface CanBeMarkedAsSeenArgs {
-	post: ReaderPost | null;
-}
-
-/**
- * Check if the post/posts can be marked as seen based on the existence of `is_seen` flag and the current route.
- */
-export const canBeMarkedAsSeen = ( { post = null }: CanBeMarkedAsSeenArgs ): boolean => {
-	if ( post !== null ) {
-		return post.hasOwnProperty( 'is_seen' );
-	}
-
-	return false;
-};
-
 /**
  * Return Featured image alt text.
  */

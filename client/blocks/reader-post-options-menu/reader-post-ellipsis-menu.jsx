@@ -8,11 +8,10 @@ import ConversationFollowButton from 'calypso/blocks/conversation-follow-button'
 import EllipsisMenu from 'calypso/components/ellipsis-menu';
 import PopoverMenuItem from 'calypso/components/popover-menu/item';
 import ReaderFollowConversationIcon from 'calypso/reader/components/icons/follow-conversation-icon';
-import { withSeenPostsMutations } from 'calypso/reader/data/seen-posts';
+import { useIsSeenEnabled, withSeenPostsMutations } from 'calypso/reader/data/seen-posts';
 import { useHasSiteSubscriptionOrganization } from 'calypso/reader/data/site-subscriptions';
 import ReaderFollowButton from 'calypso/reader/follow-button';
 import { READER_POST_OPTIONS_MENU } from 'calypso/reader/follow-sources';
-import { isEligibleForUnseen, canBeMarkedAsSeen } from 'calypso/reader/get-helpers';
 import { isAutomatticTeamMember } from 'calypso/reader/lib/teams';
 import { isConversationFollowable } from 'calypso/reader/post/capabilities';
 import * as stats from 'calypso/reader/stats';
@@ -221,17 +220,7 @@ class ReaderPostEllipsisMenu extends Component {
 	stopPropagation = ( event ) => event.stopPropagation();
 
 	render() {
-		const {
-			post,
-			site,
-			teams,
-			translate,
-			isWPForTeamsItem,
-			currentRoute,
-			hasOrganization,
-			isLoggedIn,
-			followSource,
-		} = this.props;
+		const { post, site, teams, translate, isLoggedIn, followSource, isSeenEnabled } = this.props;
 
 		const { ID: postId, site_ID: siteId, feed_ID: feedId } = post;
 
@@ -250,10 +239,6 @@ class ReaderPostEllipsisMenu extends Component {
 
 		const isSeen = post?.is_seen;
 		const isAutomattician = isAutomatticTeamMember( teams );
-		const isSeenEnabled =
-			isAutomattician ||
-			( isEligibleForUnseen( { isWPForTeamsItem, currentRoute, hasOrganization } ) &&
-				canBeMarkedAsSeen( { post } ) );
 		const showConversationFollowButton =
 			this.props.showConversationFollow && isConversationFollowable( post );
 
@@ -380,7 +365,15 @@ const ConnectedPostEllipsisMenu = connect(
 
 export default function PostEllipsisMenuContainer( props ) {
 	const { feed_ID: feedId, is_external: isExternal, site_ID: siteId } = props.post ?? {};
-	const hasOrganization = useHasSiteSubscriptionOrganization( feedId, isExternal ? null : siteId );
+	const blogId = isExternal ? null : siteId;
+	const hasOrganization = useHasSiteSubscriptionOrganization( feedId, blogId );
+	const isSeenEnabled = useIsSeenEnabled( { feedId, blogId, post: props.post } );
 
-	return <ConnectedPostEllipsisMenu { ...props } hasOrganization={ hasOrganization } />;
+	return (
+		<ConnectedPostEllipsisMenu
+			{ ...props }
+			hasOrganization={ hasOrganization }
+			isSeenEnabled={ isSeenEnabled }
+		/>
+	);
 }

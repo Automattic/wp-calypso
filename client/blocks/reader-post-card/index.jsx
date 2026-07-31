@@ -13,9 +13,8 @@ import ReaderSuggestedFollowsDialog from 'calypso/blocks/reader-suggested-follow
 import { withReaderTeams } from 'calypso/components/data/with-reader-teams';
 import { useFeedQuery } from 'calypso/reader/data/feed';
 import DisplayTypes from 'calypso/reader/data/post/display-types';
+import { useIsSeenEnabled } from 'calypso/reader/data/seen-posts';
 import { useHasSiteSubscriptionOrganization } from 'calypso/reader/data/site-subscriptions';
-import { isEligibleForUnseen } from 'calypso/reader/get-helpers';
-import { isAutomatticTeamMember } from 'calypso/reader/lib/teams';
 import * as stats from 'calypso/reader/stats';
 import { expandCard as expandCardAction } from 'calypso/state/reader-ui/card-expansions/actions';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
@@ -164,22 +163,9 @@ class ReaderPostCard extends Component {
 			isExpanded,
 			expandCard,
 			compact,
-			hasOrganization,
-			isWPForTeamsItem,
 			teams,
 		} = this.props;
 
-		let isSeen = false;
-		const isSeenEnabled =
-			isAutomatticTeamMember( teams ) ||
-			isEligibleForUnseen( {
-				isWPForTeamsItem,
-				currentRoute,
-				hasOrganization,
-			} );
-		if ( isSeenEnabled ) {
-			isSeen = post?.is_seen;
-		}
 		const isPostPhoto = !! ( post.display_type & DisplayTypes.PHOTO_ONLY ) && ! compact;
 		const isGalleryPost = !! ( post.display_type & DisplayTypes.GALLERY ) && ! compact;
 		const isVideo = !! ( post.display_type & DisplayTypes.FEATURED_VIDEO ) && ! compact;
@@ -198,7 +184,7 @@ class ReaderPostCard extends Component {
 			'is-photo': isPostPhoto,
 			'is-gallery': isGalleryPost,
 			'is-selected': isSelected,
-			'is-seen': isSeen,
+			'is-seen': this.props.isSeenEnabled && post?.is_seen,
 			'is-expanded-video': isVideo && isExpanded,
 			'is-compact': compact,
 		} );
@@ -345,12 +331,14 @@ export default function ReaderPostCardContainer( props ) {
 	const blogId = props.postKey?.blogId ?? props.post?.site_ID;
 	const { data: fetchedFeed } = useFeedQuery( feedId );
 	const hasOrganization = useHasSiteSubscriptionOrganization( feedId, blogId );
+	const isSeenEnabled = useIsSeenEnabled( { feedId, blogId, post: props.post } );
 
 	return (
 		<ConnectedReaderPostCard
 			{ ...props }
 			feed={ props.feed ?? fetchedFeed }
 			hasOrganization={ hasOrganization }
+			isSeenEnabled={ isSeenEnabled }
 		/>
 	);
 }

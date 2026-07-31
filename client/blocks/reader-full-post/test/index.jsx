@@ -251,11 +251,8 @@ describe( 'FullPostView Comments API Disabled Logic', () => {
 } );
 
 describe( 'FullPostView automatic mark-as-seen on view', () => {
-	// `hasOrganization` makes `isSeenEnabled()` return true via
-	// `isEligibleForUnseen`, and the post carrying an `is_seen` field satisfies
-	// `canBeMarkedAsSeen`, so the only thing gating the request is `post.is_seen`.
 	const baseProps = {
-		hasOrganization: true,
+		isSeenEnabled: true,
 		teams: [],
 		referralStream: '',
 		setViewingFullPostKey: jest.fn(),

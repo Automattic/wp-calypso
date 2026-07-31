@@ -33,15 +33,14 @@ import { usePostCommentsApiDisabled } from 'calypso/reader/data/comments';
 import { useFeedQuery } from 'calypso/reader/data/feed';
 import { usePost } from 'calypso/reader/data/post';
 import { withPostLikeActions } from 'calypso/reader/data/post/likes';
-import { withSeenPostsMutations } from 'calypso/reader/data/seen-posts';
+import { useIsSeenEnabled, withSeenPostsMutations } from 'calypso/reader/data/seen-posts';
 import { withSite } from 'calypso/reader/data/site';
 import {
 	useSiteSubscriptionForFeed,
 	useHasSiteSubscriptionOrganization,
 } from 'calypso/reader/data/site-subscriptions';
-import { canBeMarkedAsSeen, getSiteName, isEligibleForUnseen } from 'calypso/reader/get-helpers';
+import { getSiteName } from 'calypso/reader/get-helpers';
 import readerContentWidth from 'calypso/reader/lib/content-width';
-import { isAutomatticTeamMember } from 'calypso/reader/lib/teams';
 import { markPostSeen } from 'calypso/reader/mark-post-seen';
 import { isCommentsOpen, isLoginRequiredToComment } from 'calypso/reader/post/capabilities';
 import PostExcerptLink from 'calypso/reader/post-excerpt-link';
@@ -541,7 +540,7 @@ export class FullPostView extends Component {
 		}
 
 		if ( ! this.hasLoaded && post && post._state !== 'pending' ) {
-			if ( this.isSeenEnabled() && ! post.is_seen ) {
+			if ( this.props.isSeenEnabled && ! post.is_seen ) {
 				this.markAsSeen();
 			}
 
@@ -555,17 +554,6 @@ export class FullPostView extends Component {
 			);
 			this.hasLoaded = true;
 		}
-	};
-
-	isSeenEnabled = () => {
-		const { isWPForTeamsItem, hasOrganization, post, teams } = this.props;
-		const isAutomattician = isAutomatticTeamMember( teams );
-
-		return (
-			isAutomattician ||
-			( isEligibleForUnseen( { isWPForTeamsItem, hasOrganization } ) &&
-				canBeMarkedAsSeen( { post } ) )
-		);
 	};
 
 	maybeDisableAppBanner = () => {
@@ -780,7 +768,7 @@ export class FullPostView extends Component {
 										post.discussion?.comment_count > 0
 									}
 									renderMarkAsSeenButton={
-										this.isSeenEnabled() ? this.renderMarkAsSeenButton : null
+										this.props.isSeenEnabled ? this.renderMarkAsSeenButton : null
 									}
 									feedUrl={ feedUrl }
 									siteUrl={ post.site_URL }
@@ -1052,12 +1040,18 @@ export default function FullPostContainer( props ) {
 	const follow = useSiteSubscriptionForFeed( props.feedId );
 	const hasOrganization = useHasSiteSubscriptionOrganization( props.feedId, props.blogId );
 	const feedWithIcon = feed ? { ...feed, site_icon: follow?.site_icon } : feed;
+	const isSeenEnabled = useIsSeenEnabled( {
+		feedId: props.feedId,
+		blogId: props.blogId,
+		post: props.post,
+	} );
 
 	return (
 		<FullPostWithNavigation
 			{ ...props }
 			feed={ feedWithIcon }
 			hasOrganization={ hasOrganization }
+			isSeenEnabled={ isSeenEnabled }
 		/>
 	);
 }
