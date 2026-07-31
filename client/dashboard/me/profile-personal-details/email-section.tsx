@@ -105,7 +105,7 @@ export default function EmailSection( {
 	// count as a recovery method. See recoveryEmailMatchesAccountEmail.
 	const hasUsableRecoveryEmail =
 		!! accountRecovery?.email &&
-		! recoveryEmailMatchesAccountEmail( accountRecovery.email, userData.user_email );
+		! recoveryEmailMatchesAccountEmail( accountRecovery.email, userSettings.user_email );
 	const hasRecoveryMethod = hasUsableRecoveryEmail || !! accountRecovery?.phone;
 
 	const showCustomDomainWarning =

@@ -23,7 +23,7 @@ function mockAccountRecovery( data: Partial< AccountRecovery > ) {
 		} );
 }
 
-const userData = { user_email: ACCOUNT_EMAIL } as UserSettings;
+const userSettings = { user_email: ACCOUNT_EMAIL } as UserSettings;
 const noop = () => {};
 
 const CUSTOM_DOMAIN_WARNING = /uses a custom domain/;
@@ -34,7 +34,14 @@ describe( '<EmailSection>', () => {
 		// value and the "set up a recovery email" warning should still appear.
 		mockAccountRecovery( { email: ACCOUNT_EMAIL, email_validated: true } );
 
-		render( <EmailSection value={ ACCOUNT_EMAIL } onChange={ noop } userData={ userData } /> );
+		render(
+			<EmailSection
+				value={ ACCOUNT_EMAIL }
+				onChange={ noop }
+				userSettings={ userSettings }
+				isEmailVerified
+			/>
+		);
 
 		expect( await screen.findByText( CUSTOM_DOMAIN_WARNING ) ).toBeVisible();
 	} );
@@ -42,7 +49,14 @@ describe( '<EmailSection>', () => {
 	test( 'hides the custom-domain warning when a distinct recovery email is set', async () => {
 		mockAccountRecovery( { email: 'recovery@othersite.com', email_validated: true } );
 
-		render( <EmailSection value={ ACCOUNT_EMAIL } onChange={ noop } userData={ userData } /> );
+		render(
+			<EmailSection
+				value={ ACCOUNT_EMAIL }
+				onChange={ noop }
+				userSettings={ userSettings }
+				isEmailVerified
+			/>
+		);
 
 		await waitFor( () => {
 			expect( screen.queryByText( CUSTOM_DOMAIN_WARNING ) ).not.toBeInTheDocument();
