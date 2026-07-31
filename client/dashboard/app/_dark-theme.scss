@@ -21,6 +21,10 @@
 
 /* Command Palette */
 @mixin dashboard-dark-theme-command-palette {
+	.commands-command-menu__header-search-icon {
+		fill: var( --dashboard__text-color );
+	}
+
 	.commands-command-menu__header .components-button {
 		border-color: var( --dashboard-field__border-color );
 	}
