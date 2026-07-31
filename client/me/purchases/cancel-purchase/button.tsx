@@ -15,10 +15,8 @@ import CancelPurchaseForm from 'calypso/components/marketing-survey/cancel-purch
 import { CANCEL_FLOW_TYPE } from 'calypso/components/marketing-survey/cancel-purchase-form/constants';
 import DomainCancellationSurvey from 'calypso/components/marketing-survey/cancel-purchase-form/domain-cancellation-survey';
 import { getButtonLabels } from 'calypso/dashboard/me/billing-purchases/cancel-purchase/get-confirmation-copy';
-import {
-	getName,
-	getPurchaseCancellationFlowType,
-} from 'calypso/me/purchases/lib/raw-purchase-helpers';
+import { getPurchaseCancellationFlowType } from 'calypso/dashboard/utils/purchase';
+import { getName } from 'calypso/me/purchases/lib/raw-purchase-helpers';
 import { purchasesRoot } from 'calypso/me/purchases/paths';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 import { clearPurchases } from 'calypso/state/purchases/actions';

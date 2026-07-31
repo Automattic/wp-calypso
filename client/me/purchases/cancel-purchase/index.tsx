@@ -46,6 +46,9 @@ import { useIsSplitCancelRemoveEnabled } from 'calypso/dashboard/me/billing-purc
 import { getProductNounForCategory } from 'calypso/dashboard/me/billing-purchases/purchase-settings/classify-purchase-for-copy';
 import {
 	getIncludedDomainPurchase,
+	getMutationFlowType,
+	getPurchaseCancellationFlowType,
+	hasAmountAvailableToRefund,
 	type CancelIntent,
 	type DisplayVariant,
 } from 'calypso/dashboard/utils/purchase';
@@ -61,11 +64,7 @@ import CancelPurchaseLoadingPlaceholder from 'calypso/me/purchases/cancel-purcha
 import {
 	canAutoRenewBeTurnedOff,
 	getDowngradePlanFromPurchase,
-	getMutationFlowType,
 	getName,
-	getPurchaseCancellationFlowType,
-	hasAmountAvailableToRefund,
-	isRefundable,
 	isSubscription,
 } from 'calypso/me/purchases/lib/raw-purchase-helpers';
 import { classifyPurchaseForCopy } from 'calypso/me/purchases/manage-purchase/classify-purchase-for-copy';
@@ -295,7 +294,7 @@ class CancelPurchase extends Component< CancelPurchaseAllProps, CancelPurchaseSt
 			return false;
 		}
 
-		const isDomainTransferCancelable = isRefundable( purchase ) || ! isDomainTransfer( purchase );
+		const isDomainTransferCancelable = purchase.is_refundable || ! isDomainTransfer( purchase );
 		const isValidForCancellation =
 			canAutoRenewBeTurnedOff( purchase ) && isDomainTransferCancelable;
 
@@ -1066,7 +1065,7 @@ class CancelPurchase extends Component< CancelPurchaseAllProps, CancelPurchaseSt
 
 		// Check if we need atomic revert confirmation
 		const needsAtomicRevertConfirmation =
-			this.props.atomicTransfer?.created_at && ! isRefundable( purchase );
+			this.props.atomicTransfer?.created_at && ! purchase.is_refundable;
 
 		const { isSplitCancelRemoveEnabled } = this.props;
 
@@ -1273,7 +1272,7 @@ class CancelPurchase extends Component< CancelPurchaseAllProps, CancelPurchaseSt
 					/>
 				) }
 
-				{ includedDomainPurchase && atomicTransfer?.created_at && ! isRefundable( purchase ) && (
+				{ includedDomainPurchase && atomicTransfer?.created_at && ! purchase.is_refundable && (
 					<h2 className="formatted-header__title formatted-header__title--cancellation-flow">
 						{ translate( 'What happens when you cancel' ) }
 					</h2>
@@ -1295,7 +1294,7 @@ class CancelPurchase extends Component< CancelPurchaseAllProps, CancelPurchaseSt
 						! isSplitCancelRemoveEnabled &&
 							isPlan( purchase ) &&
 							atomicTransfer?.created_at &&
-							! isRefundable( purchase )
+							! purchase.is_refundable
 					) }
 					isLoading={ this.state.isLoading }
 					additionalChanges={ siteWarnings }

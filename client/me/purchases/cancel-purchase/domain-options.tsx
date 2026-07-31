@@ -11,11 +11,7 @@ import { useState, useCallback } from 'react';
 import { useDispatch } from 'react-redux';
 import FormCheckbox from 'calypso/components/forms/form-checkbox';
 import FormRadio from 'calypso/components/forms/form-radio';
-import {
-	getName,
-	isRefundable,
-	isSubscription,
-} from 'calypso/me/purchases/lib/raw-purchase-helpers';
+import { getName, isSubscription } from 'calypso/me/purchases/lib/raw-purchase-helpers';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import type { CancelPurchaseState } from './index';
 import type { Purchase } from '@automattic/api-core';
@@ -28,7 +24,7 @@ export const willShowDomainOptionsRadioButtons = (
 ) => {
 	return (
 		isDomainRegistration( includedDomainPurchase ) &&
-		isRefundable( purchase ) &&
+		purchase.is_refundable &&
 		!! includedDomainPurchase.cost_to_unbundle_display &&
 		includedDomainPurchase.is_within_initial_refund_window
 	);
@@ -142,7 +138,7 @@ const CancelPlanWithoutCancellingDomainMessage = ( {
 							}
 					  ) }
 			</p>
-			{ isRefundable( planPurchase ) && includedDomainPurchase.cost_to_unbundle_display && (
+			{ planPurchase.is_refundable && includedDomainPurchase.cost_to_unbundle_display && (
 				<p>
 					{ translate(
 						'You will receive a partial refund of %(refundAmount)s which is %(planCost)s for the plan ' +
@@ -232,7 +228,7 @@ const CancelPurchaseDomainOptions = ( {
 	// Domain mappings get treated separately for now. (It is also rare for a
 	// plan's domain credit to be used on a domain mapping in the first place.)
 	if ( isDomainMapping( includedDomainPurchase ) ) {
-		if ( ! isRefundable( purchase ) ) {
+		if ( ! purchase.is_refundable ) {
 			return (
 				<NonRefundableDomainMappingMessage includedDomainPurchase={ includedDomainPurchase } />
 			);
@@ -257,7 +253,7 @@ const CancelPurchaseDomainOptions = ( {
 	// to understand exactly what they're cancelling).
 	if (
 		isDomainTransfer( includedDomainPurchase ) ||
-		! isRefundable( purchase ) ||
+		! purchase.is_refundable ||
 		! includedDomainPurchase.cost_to_unbundle_display ||
 		! includedDomainPurchase.is_within_initial_refund_window
 	) {

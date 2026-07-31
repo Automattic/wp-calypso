@@ -88,6 +88,7 @@ import {
 import { getPlanChangeAction } from 'calypso/dashboard/me/billing-purchases/purchase-settings/get-plan-change-action';
 import {
 	getPurchaseCancellationFlowType,
+	hasAmountAvailableToRefund,
 	isA4ABillingDragonPurchase,
 	isA4AHoldingSitePurchase,
 	isAkismetHoldingSitePurchase,
@@ -147,7 +148,6 @@ import {
 	getDisplayName,
 	getName,
 	getRenewalPriceInSmallestUnit,
-	hasAmountAvailableToRefund,
 	hasPaymentMethod,
 	isCloseToExpiration,
 	isExpiredAndInGracePeriod,
