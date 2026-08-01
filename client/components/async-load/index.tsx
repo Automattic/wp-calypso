@@ -9,7 +9,6 @@ type RequireCallback = () => Promise< { default: ComponentType< any > } >;
 type AsyncLoadProps = {
 	placeholder?: ReactNode;
 	loadFailureFallback?: ReactNode;
-	onLoadFailure?: ( error: unknown ) => void;
 	require: RequireCallback;
 	[ key: string ]: unknown;
 };
@@ -17,7 +16,6 @@ type AsyncLoadProps = {
 export default function AsyncLoad( {
 	placeholder = DEFAULT_PLACEHOLDER,
 	loadFailureFallback,
-	onLoadFailure,
 	require,
 	...props
 }: AsyncLoadProps ) {
@@ -29,12 +27,11 @@ export default function AsyncLoad( {
 					return require();
 				}
 
-				return require().catch( ( error ) => {
-					onLoadFailure?.( error );
-					return { default: () => <>{ loadFailureFallback }</> };
-				} );
+				return require().catch( () => ( {
+					default: () => <>{ loadFailureFallback }</>,
+				} ) );
 			} ),
-		/* Only `require` should recreate the lazy factory; adding fallback/handler would remount and re-import when callers pass inline values. */
+		/* Only `require` should recreate the lazy factory; adding the fallback would remount and re-import when callers pass an inline value. */
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 		[ require ]
 	);

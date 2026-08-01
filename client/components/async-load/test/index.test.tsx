@@ -1,7 +1,7 @@
 /**
  * @jest-environment jsdom
  */
-import { render, screen, waitFor } from '@testing-library/react';
+import { render, screen, waitForElementToBeRemoved } from '@testing-library/react';
 import { Component, type ReactNode } from 'react';
 import AsyncLoad from '../index';
 
@@ -10,11 +10,9 @@ const Boom = () => {
 	throw new Error( 'runtime boom' );
 };
 
-const importError = new Error( 'chunk blocked' );
 const requireLoaded = () => Promise.resolve( { default: Loaded } );
 const requireBoom = () => Promise.resolve( { default: Boom } );
-const requireRejectTracked = () => Promise.reject( importError );
-const requireReject = () => Promise.reject( new Error( 'no fallback' ) );
+const requireReject = () => Promise.reject( new Error( 'chunk blocked' ) );
 
 class CatchBoundary extends Component< { children: ReactNode }, { error: Error | null } > {
 	state = { error: null as Error | null };
@@ -47,20 +45,34 @@ describe( 'AsyncLoad', () => {
 		expect( await screen.findByText( 'loaded' ) ).toBeVisible();
 	} );
 
-	test( 'renders loadFailureFallback and calls onLoadFailure when the import rejects', async () => {
-		const onLoadFailure = jest.fn();
-
+	test( 'renders loadFailureFallback when the import rejects', async () => {
 		render(
 			<AsyncLoad
-				require={ requireRejectTracked }
+				require={ requireReject }
 				placeholder={ null }
 				loadFailureFallback={ <div>fallback</div> }
-				onLoadFailure={ onLoadFailure }
 			/>
 		);
 
 		expect( await screen.findByText( 'fallback' ) ).toBeVisible();
-		await waitFor( () => expect( onLoadFailure ).toHaveBeenCalledWith( importError ) );
+	} );
+
+	/* `null` is what the shipped callers pass, and it must stay distinct from an omitted
+	   prop: a falsy check here would let the rejection escape and blank the whole app. */
+	test( 'renders nothing and swallows the rejection when loadFailureFallback is null', async () => {
+		render(
+			<CatchBoundary>
+				<AsyncLoad
+					require={ requireReject }
+					placeholder={ <div>placeholder</div> }
+					loadFailureFallback={ null }
+				/>
+			</CatchBoundary>
+		);
+
+		await waitForElementToBeRemoved( () => screen.queryByText( 'placeholder' ) );
+
+		expect( screen.queryByText( /^boundary:/ ) ).not.toBeInTheDocument();
 	} );
 
 	test( 'propagates the import rejection when no fallback is provided', async () => {
@@ -70,7 +82,7 @@ describe( 'AsyncLoad', () => {
 			</CatchBoundary>
 		);
 
-		expect( await screen.findByText( 'boundary: no fallback' ) ).toBeVisible();
+		expect( await screen.findByText( 'boundary: chunk blocked' ) ).toBeVisible();
 	} );
 
 	test( 'does not swallow runtime errors thrown inside the loaded component', async () => {
