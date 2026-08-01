@@ -103,6 +103,12 @@ describe( 'injectScopedReset', () => {
 		expect( css ).toContain( 'font-size: var( --base-font-size, 16px ) !important;' );
 		expect( css ).toContain( '--base-font-size: 16px !important;' );
 		expect( css ).toContain( 'font-family: var( --reader-chat-font-family,' );
+		expect( css ).toContain( '.agents-manager-chat [data-slot="message"][data-role="user"]' );
+		expect( css ).toContain(
+			'--color-foreground: var( --reader-chat-user-message-foreground, #1f1f1f );'
+		);
+		expect( css ).toContain( '.agents-manager-chat [data-slot="message"][data-role="user"] a' );
+		expect( css ).toContain( 'text-decoration: underline !important;' );
 		expect( css ).toContain(
 			'.agents-manager-chat .components-button.has-icon:not(.components-dropdown-menu__menu-item)'
 		);
@@ -362,7 +368,7 @@ describe( 'injectBrandTokens', () => {
 		injectBrandTokens( {
 			background: '#112233',
 			outline: '#f2eff6',
-			fontFamily: 'rounded',
+			fontFamily: 'serif',
 		} );
 
 		const css = document.head.querySelector( '#jetpack-reader-chat-brand' ).textContent;
@@ -372,7 +378,8 @@ describe( 'injectBrandTokens', () => {
 		expect( css ).toContain( '--color-foreground: #ffffff;' );
 		expect( css ).toContain( '--color-muted-foreground: #d6d6d6;' );
 		expect( css ).toContain( '--color-muted: #f2eff6;' );
-		expect( css ).toContain( '--reader-chat-font-family: ui-rounded' );
+		expect( css ).toContain( '--reader-chat-user-message-foreground: #1f1f1f;' );
+		expect( css ).toContain( '--reader-chat-font-family: Georgia' );
 		expect( css ).toContain( '--reader-chat-menu-background: #112233;' );
 		expect( css ).toContain( '--reader-chat-menu-foreground: #ffffff;' );
 		expect( css ).toContain(
@@ -407,6 +414,12 @@ describe( 'injectBrandTokens', () => {
 		expect( document.head.querySelector( '#jetpack-reader-chat-brand' ) ).toBeNull();
 	} );
 
+	it( 'ignores the removed rounded font value', () => {
+		injectBrandTokens( { fontFamily: 'rounded' } );
+
+		expect( document.head.querySelector( '#jetpack-reader-chat-brand' ) ).toBeNull();
+	} );
+
 	it( 'keeps the selected outline separate from automatic text contrast', () => {
 		injectBrandTokens( { background: '#ffffff', outline: '#f2eff6' } );
 
@@ -414,6 +427,21 @@ describe( 'injectBrandTokens', () => {
 		expect( css ).toContain( '--color-muted: #f2eff6;' );
 		expect( css ).toContain( '--color-foreground: #000000;' );
 		expect( css ).toContain( '--color-muted-foreground: #595959;' );
+	} );
+
+	it( 'uses light text on a dark outgoing message bubble', () => {
+		injectBrandTokens( { background: '#ffffff', outline: '#222222' } );
+
+		const css = document.head.querySelector( '#jetpack-reader-chat-brand' ).textContent;
+		expect( css ).toContain( '--reader-chat-user-message-foreground: #ffffff;' );
+	} );
+
+	it( 'keeps the default light outgoing bubble readable with a dark panel', () => {
+		injectBrandTokens( { background: '#112233' } );
+
+		const css = document.head.querySelector( '#jetpack-reader-chat-brand' ).textContent;
+		expect( css ).not.toContain( '--color-muted:' );
+		expect( css ).toContain( '--reader-chat-user-message-foreground: #1f1f1f;' );
 	} );
 
 	it( 'overrides the default token defined directly on the Agenttic widget', () => {
