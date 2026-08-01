@@ -144,6 +144,65 @@ describe( 'useSiteGeneration', () => {
 		] );
 	} );
 
+	it( 'stops polling when the hook unmounts', () => {
+		const stopPolling = jest.fn();
+		pollMock.mockReturnValue( stopPolling );
+
+		const { unmount } = renderHook( () =>
+			useSiteGeneration( {
+				siteIdentifier: '123',
+				editorUrl: 'https://example.wordpress.com/wp-admin/site-editor.php',
+				steps: STEPS,
+			} )
+		);
+
+		expect( stopPolling ).not.toHaveBeenCalled();
+		unmount();
+		expect( stopPolling ).toHaveBeenCalledTimes( 1 );
+	} );
+
+	it( 'logs a status request failure with the site it belongs to', () => {
+		renderHook( () =>
+			useSiteGeneration( {
+				siteIdentifier: '123',
+				editorUrl: 'https://example.wordpress.com/wp-admin/site-editor.php',
+				steps: STEPS,
+			} )
+		);
+
+		const { onRequestError } = pollMock.mock.calls[ 0 ][ 0 ];
+		act( () => {
+			onRequestError( '502 Bad gateway' );
+		} );
+
+		expect( logMock ).toHaveBeenCalledWith( 'site_generation_status_request_failed', {
+			site_identifier: '123',
+			error: '502 Bad gateway',
+		} );
+	} );
+
+	it( 'keeps the active step in range for a list shorter than the timer sequence', () => {
+		const shortSteps = STEPS.slice( 0, 2 );
+		const { result } = renderHook( () =>
+			useSiteGeneration( {
+				siteIdentifier: '123',
+				editorUrl: 'https://example.wordpress.com/wp-admin/site-editor.php',
+				steps: shortSteps,
+			} )
+		);
+
+		// STEP_DELAYS drives the index past the end of a two-step list; without the
+		// clamp every step reads complete and none is active.
+		act( () => {
+			jest.advanceTimersByTime( 140000 );
+		} );
+
+		expect( result.current.steps.map( ( step ) => step.status ) ).toEqual( [
+			'complete',
+			'active',
+		] );
+	} );
+
 	it( 'never moves progress backwards when statuses arrive out of order', () => {
 		const { result } = renderHook( () =>
 			useSiteGeneration( {

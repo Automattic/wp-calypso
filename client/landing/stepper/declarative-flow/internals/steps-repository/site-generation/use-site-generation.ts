@@ -71,11 +71,14 @@ export function useSiteGeneration( {
 			// user only ever sees the calm "your brief is saved, check again" state
 			// instead of a dead end.
 			onFailed: ( status ) => {
+				// State first: the poller dispatches terminal callbacks unguarded, so a
+				// throw out of the logging call would otherwise strand the user on a
+				// spinner until the generation deadline.
+				setHasTimedOut( true );
 				logBuildWowEvent( 'site_generation_failed', {
 					status,
 					site_identifier: siteIdentifier,
 				} );
-				setHasTimedOut( true );
 			},
 			onProgress: ( status ) =>
 				setStatusStepIndex( ( previous ) =>
@@ -93,6 +96,10 @@ export function useSiteGeneration( {
 			window.clearTimeout( generationTimeout );
 			stopPolling();
 		};
+		// A change to stepCount restarts everything above it: the generation deadline,
+		// the step timers, and the poller's error deduplication. The shipping step list
+		// is a fixed length, so this never fires today — but make the list conditional
+		// and the 30-minute deadline becomes resettable.
 	}, [ editorUrl, siteIdentifier, hasTimedOut, stepCount ] );
 
 	let failureReason: SiteGenerationFailureReason | undefined;
