@@ -45,19 +45,24 @@ const EmailVerificationGate = ( { flow, scope, logo, onDone }: Props ) => {
 
 	const { value: waitValue, unit: waitUnit } = cooldownDisplay( secondsUntilResend );
 	let resendLabel: string = __( 'Resend' );
-	if ( secondsUntilResend > 0 ) {
-		resendLabel =
-			waitUnit === 'minute'
-				? sprintf(
-						// translators: %d is the number of minutes until the email can be resent.
-						_n( 'Resend in %d minute', 'Resend in %d minutes', waitValue ),
-						waitValue
-				  )
-				: sprintf(
-						// translators: %d is the number of seconds until the email can be resent.
-						__( 'Resend in %ds' ),
-						waitValue
-				  );
+	if ( waitUnit === 'hour' ) {
+		resendLabel = sprintf(
+			// translators: %d is the number of hours until the email can be resent.
+			_n( 'Resend in %d hour', 'Resend in %d hours', waitValue ),
+			waitValue
+		);
+	} else if ( waitUnit === 'minute' ) {
+		resendLabel = sprintf(
+			// translators: %d is the number of minutes until the email can be resent.
+			_n( 'Resend in %d minute', 'Resend in %d minutes', waitValue ),
+			waitValue
+		);
+	} else if ( secondsUntilResend > 0 ) {
+		resendLabel = sprintf(
+			// translators: %d is the number of seconds until the email can be resent.
+			__( 'Resend in %ds' ),
+			waitValue
+		);
 	}
 
 	// Stamp the shown-at time now the gate is actually on screen (see storage.ts).

@@ -170,14 +170,18 @@ const EmailVerificationBannerV2: React.FC< Props > = ( { setIsBusy } ) => {
 
 	const { value: waitValue, unit: waitUnit } = cooldownDisplay( secondsUntilResend );
 	let callToAction: React.ReactNode = translate( 'Resend email' );
-	if ( secondsUntilResend > 0 ) {
-		callToAction =
-			waitUnit === 'minute'
-				? translate( 'Resend in %(minutes)d minute', 'Resend in %(minutes)d minutes', {
-						count: waitValue,
-						args: { minutes: waitValue },
-				  } )
-				: translate( 'Resend in %(seconds)ds', { args: { seconds: waitValue } } );
+	if ( waitUnit === 'hour' ) {
+		callToAction = translate( 'Resend in %(hours)d hour', 'Resend in %(hours)d hours', {
+			count: waitValue,
+			args: { hours: waitValue },
+		} );
+	} else if ( waitUnit === 'minute' ) {
+		callToAction = translate( 'Resend in %(minutes)d minute', 'Resend in %(minutes)d minutes', {
+			count: waitValue,
+			args: { minutes: waitValue },
+		} );
+	} else if ( secondsUntilResend > 0 ) {
+		callToAction = translate( 'Resend in %(seconds)ds', { args: { seconds: waitValue } } );
 	}
 
 	return (

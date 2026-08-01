@@ -7,11 +7,12 @@
 // Mirrors the server's own minimum interval between two user-requested verification emails, so a
 // button reopens when a resend would actually be accepted. The server stays the authority: when
 // it refuses, it says how long to wait.
-export const RESEND_MIN_INTERVAL_SECONDS = 60;
+export const RESEND_MIN_INTERVAL_SECONDS = 5 * 60;
 
-// The server's hourly lockout is the longest wait it can hand back. Anything past that is a
-// corrupt value rather than a real limit, and must not strand someone on a screen with no way on.
-const MAX_COOLDOWN_SECONDS = 60 * 60;
+// The server also caps sends per day, and points a caller who has spent that allowance at the end
+// of the day — so a legitimate wait reaches roughly this. Past it the value is corrupt rather than
+// real, and must not strand someone on a screen with no way on.
+const MAX_COOLDOWN_SECONDS = 24 * 60 * 60;
 
 export function cooldownRemainingSeconds( availableAt: number ): number {
 	const remainingMs = availableAt - Date.now();
@@ -24,17 +25,21 @@ export function cooldownDeadline( seconds: number ): number {
 }
 
 /**
- * How a remaining wait should read: seconds up to a minute, minutes past that, where the wait is
- * long enough that a raw second count stops being a number anyone parses.
+ * How a remaining wait should read. Each step up happens where the smaller unit stops being a
+ * number anyone parses: "Resend in 2700s" and "Resend in 1440 minutes" are both unreadable, and
+ * the daily allowance makes waits that long reachable.
  *
- * Translation is left to the caller — the two of them use different i18n APIs. Both keep a
- * singular form even though the threshold means English only ever renders the plural: locales
- * whose plural rules select the singular form for other counts still need it.
+ * Translation is left to the caller — the two of them use different i18n APIs. Each keeps a
+ * singular form even where the thresholds mean English only renders the plural: locales whose
+ * plural rules select the singular form for other counts still need it.
  */
 export function cooldownDisplay( seconds: number ): {
 	value: number;
-	unit: 'second' | 'minute';
+	unit: 'second' | 'minute' | 'hour';
 } {
+	if ( seconds > 60 * 60 ) {
+		return { value: Math.ceil( seconds / ( 60 * 60 ) ), unit: 'hour' };
+	}
 	return seconds > 60
 		? { value: Math.ceil( seconds / 60 ), unit: 'minute' }
 		: { value: seconds, unit: 'second' };

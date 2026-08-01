@@ -258,7 +258,8 @@ describe( 'EmailVerificationGate', () => {
 		await user.click( await screen.findByRole( 'button', { name: 'Resend' } ) );
 
 		await waitFor( () => expect( request.isDone() ).toBe( true ) );
-		expect( await screen.findByRole( 'button', { name: 'Resend in 60s' } ) ).toBeVisible();
+		// Held for the server's interval between sends, not the shorter opening hold.
+		expect( await screen.findByRole( 'button', { name: 'Resend in 5 minutes' } ) ).toBeVisible();
 		expect( recordTracksEvent ).toHaveBeenCalledWith(
 			'calypso_signup_email_verification_email_sent',
 			expect.objectContaining( { flow: FLOW, is_resend: true } )
