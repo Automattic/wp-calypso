@@ -41,6 +41,9 @@ function recordTracksEvent( eventName, props ) {
 }
 
 const queryClient = new QueryClient();
+// Agenttic 0.1.80 uses --color-muted for outgoing-message bubbles and defaults
+// that token to this value in global.css. Keep this fallback aligned on upgrade.
+const AGENTTIC_DEFAULT_MUTED_COLOR = '#e9e9e9';
 
 /**
  * Reset inherited styles from the host theme. Blog themes often set a
@@ -119,6 +122,19 @@ function injectScopedReset() {
 		 */
 		.agents-manager-chat .agenttic {
 			--base-font-size: 16px !important;
+		}
+		/*
+		 * Agenttic uses --color-muted as the outgoing-message bubble fill.
+		 * Site Chat maps the selected outline color to that token, so the
+		 * bubble needs its own foreground rather than the panel foreground.
+		 */
+		.agents-manager-chat [data-slot="message"][data-role="user"] {
+			--color-foreground: var( --reader-chat-user-message-foreground, #1f1f1f );
+			--color-link: var( --reader-chat-user-message-foreground, #1f1f1f );
+		}
+		.agents-manager-chat [data-slot="message"][data-role="user"] a {
+			text-decoration: underline !important;
+			text-underline-offset: 2px !important;
 		}
 		.agents-manager-chat .components-button {
 			-webkit-appearance: none !important;
@@ -336,8 +352,6 @@ function injectBrandTokens( brand ) {
 	const background = normalizeHexColor( brand?.background );
 	const outline = normalizeHexColor( brand?.outline );
 	const fontFamilies = {
-		rounded:
-			'ui-rounded, "SF Pro Rounded", "Nunito Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif',
 		serif: 'Georgia, Cambria, "Times New Roman", Times, serif',
 	};
 	const usesSiteFont = brand?.fontFamily === 'site';
@@ -351,7 +365,15 @@ function injectBrandTokens( brand ) {
 	const menuBackground = background || '#ffffff';
 	const menuForeground = getAccessibleColor( menuBackground, '#1e1e1e' );
 	const menuFocus = getAccessibleColor( menuBackground, accent || '#3858e9', 3 );
+	const userMessageForeground = getAccessibleColor(
+		outline || AGENTTIC_DEFAULT_MUTED_COLOR,
+		'#1f1f1f'
+	);
 	const declarations = [];
+
+	if ( background || outline ) {
+		declarations.push( `--reader-chat-user-message-foreground: ${ userMessageForeground }` );
+	}
 
 	if ( accent ) {
 		declarations.push( `--color-primary: ${ accent }` );
