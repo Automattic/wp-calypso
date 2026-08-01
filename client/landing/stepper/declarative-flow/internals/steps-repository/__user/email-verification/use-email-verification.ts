@@ -22,7 +22,8 @@ const POLL_LIMIT_MS = 15 * 60 * 1000;
 type CheckStatus = 'idle' | 'checking' | 'unconfirmed' | 'error';
 
 // `throttled` is kept distinct from `error` for the same reason: the send didn't fail, it was
-// refused, and telling someone to retry in a moment is wrong when the wait is an hour.
+// refused, and telling someone to retry in a moment is wrong when the wait is an hour. It says
+// only why the button is held — the countdown says whether it still is.
 type SendStatus = 'idle' | 'sending' | 'error' | 'throttled';
 
 export function useEmailVerification( flow: string, scope: string ) {
@@ -35,9 +36,6 @@ export function useEmailVerification( flow: string, scope: string ) {
 	const { secondsUntilResend, hold: holdResend } = useResendCooldown( {
 		initialDeadline: gateResendAvailableAt( scope ),
 		onHold: ( deadline ) => markResendUnavailableUntil( scope, deadline ),
-		// A refusal expires with the wait it described: leaving it behind would explain an
-		// unavailable button that is, by then, available again.
-		onExpire: () => setSendStatus( ( status ) => ( status === 'throttled' ? 'idle' : status ) ),
 	} );
 	const [ isPollingExpired, setIsPollingExpired ] = useState( false );
 	const [ pollWindowKey, setPollWindowKey ] = useState( 0 );

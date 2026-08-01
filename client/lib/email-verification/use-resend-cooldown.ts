@@ -6,9 +6,6 @@ interface Options {
 	// A cooldown already in effect, for a caller that persists one across a reload.
 	initialDeadline?: number;
 	onHold?: ( deadline: number ) => void;
-	// For retiring anything that only made sense while the wait was on — a notice explaining
-	// it, most obviously.
-	onExpire?: () => void;
 }
 
 /**
@@ -17,24 +14,18 @@ interface Options {
  * Anchored to a deadline rather than decremented, because timers are suspended while the tab is
  * in the background — which is exactly where someone is while checking their email.
  */
-export function useResendCooldown( { initialDeadline = 0, onHold, onExpire }: Options = {} ) {
+export function useResendCooldown( { initialDeadline = 0, onHold }: Options = {} ) {
 	const deadlineRef = useRef( initialDeadline );
 	const [ secondsUntilResend, setSecondsUntilResend ] = useState( () =>
 		cooldownRemainingSeconds( deadlineRef.current )
 	);
 
-	// In refs so inline callbacks don't hand out a new `hold` every render.
-	const onExpireRef = useRef( onExpire );
-	onExpireRef.current = onExpire;
+	// In a ref so an inline callback doesn't hand out a new `hold` every render.
 	const onHoldRef = useRef( onHold );
 	onHoldRef.current = onHold;
 
 	const sync = useCallback( () => {
-		const remaining = cooldownRemainingSeconds( deadlineRef.current );
-		setSecondsUntilResend( remaining );
-		if ( remaining === 0 ) {
-			onExpireRef.current?.();
-		}
+		setSecondsUntilResend( cooldownRemainingSeconds( deadlineRef.current ) );
 	}, [] );
 
 	const hold = useCallback( ( seconds: number ) => {
