@@ -1,7 +1,7 @@
 /* Docked chat base */
 // A hidden, fixed strip at the right edge, plus the FAB that reopens a
 // closed docked chat.
-@include docked-chat-without-modal {
+.agents-manager-chat--docked {
 	visibility: hidden;
 	position: fixed;
 	top: 0;
@@ -15,10 +15,10 @@
 	.agents-manager-sidebar-fab {
 		visibility: visible;
 		position: fixed;
-		bottom: 16px;
-		right: 16px;
-		width: 56px;
-		height: 56px;
+		bottom: $grid-unit-20;
+		right: $grid-unit-20;
+		width: $grid-unit-70;
+		height: $grid-unit-70;
 		border-radius: 24px;
 		background-color: #fcfcfc;
 		color: #3858e8;
@@ -27,10 +27,16 @@
 			0 2px 24px rgba( 0, 0, 0, 0.075 );
 
 		svg {
-			width: 32px;
-			height: 32px;
+			width: $grid-unit-40;
+			height: $grid-unit-40;
 		}
 	}
+}
+
+// wp-admin modals must render above the docked chat: release the strip's
+// stacking while one is open.
+body.wp-admin.modal-open .agents-manager-chat--docked {
+	z-index: unset;
 }
 
 /* Agenttic UI */
@@ -187,7 +193,7 @@
 			}
 
 			p {
-				font-size: 13px;
+				font-size: $font-size-medium;
 				color: $gray-700;
 				margin: 0;
 			}
@@ -225,50 +231,48 @@
 }
 
 /* Agenttic UI: docked chat */
-@include docked-chat-without-modal {
-	.agenttic {
-		.Message-module_message {
-			.big-sky__dock__menu__variation-picker {
-				min-height: unset;
+.agents-manager-chat--docked .agenttic {
+	.Message-module_message {
+		.big-sky__dock__menu__variation-picker {
+			min-height: unset;
 
-				.edit-site-global-styles-variations_item {
-					&:not( .is-active ):hover {
-						.edit-site-global-styles-variations_item-preview {
-							outline-color: $gray-600;
-						}
-					}
-
+			.edit-site-global-styles-variations_item {
+				&:not( .is-active ):hover {
 					.edit-site-global-styles-variations_item-preview {
-						outline: 1px solid #545454;
-						overflow: hidden;
+						outline-color: $gray-600;
 					}
 				}
-			}
 
-			.big-sky__item-picker__arrows {
-				bottom: -40px;
-
-				.components-button {
-					color: $gray-700;
-
-					&:not( :disabled ):hover {
-						color: $gray-100;
-					}
-
-					&:disabled {
-						opacity: 0.5;
-					}
-
-					&.is-pressed {
-						color: $gray-100;
-						background-color: #484848;
-					}
+				.edit-site-global-styles-variations_item-preview {
+					outline: 1px solid #545454;
+					overflow: hidden;
 				}
 			}
+		}
 
-			.big-sky__item-picker__pager {
-				color: $gray-400;
+		.big-sky__item-picker__arrows {
+			bottom: -40px;
+
+			.components-button {
+				color: $gray-700;
+
+				&:not( :disabled ):hover {
+					color: $gray-100;
+				}
+
+				&:disabled {
+					opacity: 0.5;
+				}
+
+				&.is-pressed {
+					color: $gray-100;
+					background-color: #484848;
+				}
 			}
+		}
+
+		.big-sky__item-picker__pager {
+			color: $gray-400;
 		}
 	}
 }

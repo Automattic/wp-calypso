@@ -75,7 +75,7 @@
 // `#wpwrap` shrinks, the admin bar stays full-width, and the chat fills the
 // freed strip below it. The editors follow the same layout with their
 // viewport-pinned pieces offset clear of the chat.
-body.wp-admin.agents-manager-sidebar-container:not( .modal-open ) {
+body.wp-admin.agents-manager-sidebar-container {
 	@include shrink-sidebar-base( '#wpwrap', $admin-bar-height );
 
 	// The editors pin their roots to the viewport, ignoring the shrunken
@@ -90,7 +90,7 @@ body.wp-admin.agents-manager-sidebar-container:not( .modal-open ) {
 	// Early bell opens show a bare gray panel while the notes app boots (its
 	// own loading style targets a retired panel id). Paint the wait white.
 	#wp-admin-bar-notes #wpnt-notes-panel2.loadingIframe {
-		background: #fff;
+		background: $white;
 	}
 
 	&.agents-manager-sidebar-container--sidebar-open {
@@ -117,7 +117,7 @@ body.wp-admin.woocommerce-admin-page.agents-manager-sidebar-container {
 		transition: width $transition-timing;
 	}
 
-	&.agents-manager-sidebar-container--sidebar-open:not( .modal-open ) {
+	&.agents-manager-sidebar-container--sidebar-open {
 		.woocommerce-layout__header {
 			width: calc( 100% - $admin-sidebar-width - $sidebar-width ) !important;
 		}
@@ -143,7 +143,7 @@ body.wp-admin.agents-manager-sidebar-container:is(
 		transition: right $transition-timing;
 	}
 
-	&.agents-manager-sidebar-container--sidebar-open:not( .modal-open ) #wpbody-content {
+	&.agents-manager-sidebar-container--sidebar-open #wpbody-content {
 		right: $sidebar-width;
 	}
 }
@@ -182,7 +182,6 @@ body:is( [class*='is-group-'], [class*='is-section-'] ).agents-manager-sidebar-c
 		transition: right $transition-timing;
 	}
 
-	// No `.modal-open` guard: Calypso keeps the docked layout during modals.
 	&.agents-manager-sidebar-container--sidebar-open {
 		@include shrink-sidebar-open( '#wpcom' );
 
