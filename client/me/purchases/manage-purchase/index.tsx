@@ -210,12 +210,6 @@ export interface ManagePurchaseConnectedProps {
 	hasLoadedDomains?: boolean;
 	hasLoadedPurchasesFromServer: boolean;
 	hasLoadedSites: boolean;
-	/**
-	 * Refetches the purchase this page is showing. Needed because Calypso reads
-	 * it from its own query client, which the `@automattic/api-queries` mutations
-	 * do not invalidate.
-	 */
-	refetchPurchase?: () => void;
 	hasCompletedCancelPurchaseSurvey: boolean | null;
 	hasNonPrimaryDomainsFlag?: boolean;
 	hasSetupAds?: boolean;
@@ -1612,7 +1606,6 @@ class ManagePurchase extends Component<
 							getAddNewPaymentMethodUrlFor={
 								getAddNewPaymentMethodUrlFor ?? getAddNewPaymentMethodPath
 							}
-							refetchPurchase={ this.props.refetchPurchase }
 						/>
 					) }
 					<PlanOverlapNotice
@@ -1828,7 +1821,6 @@ const ConnectedManagePurchase = connect(
 			purchases: Purchase[] | undefined;
 			renewableSitePurchases: Purchase[];
 			hasLoadedPurchasesFromServer: boolean;
-			refetchPurchase?: () => void;
 		}
 	) => {
 		const { purchase, purchaseAttachedTo, purchases, renewableSitePurchases } = props;
@@ -1911,11 +1903,7 @@ function ManagePurchaseWithExperiment( props: ManagePurchaseProps ) {
 		...purchaseCancelFeaturesQuery( props.purchaseId ),
 	} );
 	const cancellationFeatures = cancelFeaturesResponse?.features ?? null;
-	const {
-		data: purchase,
-		isPending: isPurchasePending,
-		refetch: refetchPurchase,
-	} = useQuery( {
+	const { data: purchase, isPending: isPurchasePending } = useQuery( {
 		...purchaseQuery( Number( props.purchaseId ) ),
 		enabled: Boolean( props.purchaseId ),
 	} );
@@ -1937,7 +1925,6 @@ function ManagePurchaseWithExperiment( props: ManagePurchaseProps ) {
 			purchases={ sitePurchases }
 			renewableSitePurchases={ renewableSitePurchases }
 			hasLoadedPurchasesFromServer={ ! isPurchasePending }
-			refetchPurchase={ refetchPurchase }
 		/>
 	);
 }

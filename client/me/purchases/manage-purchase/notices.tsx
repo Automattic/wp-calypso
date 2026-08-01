@@ -40,6 +40,7 @@ import { getProductNounForCategory } from 'calypso/dashboard/me/billing-purchase
 import { getCalendarDaysUntil, getRelativeDayString } from 'calypso/dashboard/utils/datetime';
 import { isPartnerPurchase } from 'calypso/dashboard/utils/purchase';
 import TrackComponentView from 'calypso/lib/analytics/track-component-view';
+import { invalidatePurchaseQueries } from 'calypso/lib/purchases/actions';
 import { createPurchasesArray } from 'calypso/lib/purchases/assembler';
 import { getTrialCheckoutUrl } from 'calypso/lib/trials/get-trial-checkout-url';
 import { managePurchase } from 'calypso/me/purchases/paths';
@@ -92,8 +93,6 @@ export interface PurchaseNoticeProps {
 	purchase: Purchase;
 	purchaseAttachedTo: Purchase | null | undefined;
 	renewableSitePurchases: Purchase[];
-	/** Refreshes the purchase after the notice turns auto-renew on. */
-	refetchPurchase?: () => void;
 	selectedSite: SiteDetails | null | undefined;
 	/** Shared with the page's plan-change nav item, so the two can't disagree. */
 	viewOtherPlansUrl?: string;
@@ -1689,7 +1688,7 @@ class PurchaseNotice extends Component<
 					locale={ i18n.getLocaleSlug() ?? 'en' }
 					surface="calypso-manage-purchase"
 					recordTracksEvent={ this.props.recordTracksEvent }
-					onAutoRenewEnabled={ this.props.refetchPurchase }
+					onAutoRenewEnabled={ invalidatePurchaseQueries }
 				/>
 			);
 		}
