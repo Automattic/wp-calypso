@@ -73,6 +73,53 @@ interface PlanExpiryNoticeProps {
 	onAutoRenewEnabled?: () => void;
 }
 
+function PlanExpiryNoticeButton( {
+	action,
+	variant,
+	purchaseId,
+	addPaymentMethodUrl,
+	onClick,
+	onAutoRenewEnabled,
+}: {
+	action: PlanExpiryNoticeAction;
+	variant: 'primary' | 'secondary';
+	purchaseId: number;
+	addPaymentMethodUrl?: string;
+	onClick: () => void;
+	onAutoRenewEnabled?: () => void;
+} ) {
+	const { mutate: setAutoRenew, isPending } = useMutation( userPurchaseSetAutoRenewQuery() );
+
+	if ( action.type === 'enable-auto-renew' ) {
+		return (
+			<Button
+				variant={ variant }
+				disabled={ isPending }
+				isBusy={ isPending }
+				onClick={ () => {
+					onClick();
+					setAutoRenew(
+						{ purchaseId, autoRenew: true },
+						{ onSuccess: () => onAutoRenewEnabled?.() }
+					);
+				} }
+			>
+				{ action.label }
+			</Button>
+		);
+	}
+
+	return (
+		<Button
+			variant={ variant }
+			href={ action.type === 'add-payment-method' ? addPaymentMethodUrl : action.href }
+			onClick={ onClick }
+		>
+			{ action.label }
+		</Button>
+	);
+}
+
 /**
  * A prominent notice for a WordPress.com plan that is approaching or past its
  * expiration date, or is otherwise at risk of not renewing. Renders nothing for
@@ -92,8 +139,6 @@ export function PlanExpiryNotice( {
 	recordTracksEvent,
 	onAutoRenewEnabled,
 }: PlanExpiryNoticeProps ) {
-	const { mutate: setAutoRenew, isPending } = useMutation( userPurchaseSetAutoRenewQuery() );
-
 	const notice = getPlanExpiryNotice( purchase, {
 		viewOtherPlansUrl,
 		locale,
@@ -135,59 +180,46 @@ export function PlanExpiryNotice( {
 		return null;
 	}
 
-	const renderAction = ( action: PlanExpiryNoticeAction, isPrimary: boolean ) => {
-		if ( action.type === 'add-payment-method' && ! addPaymentMethodUrl ) {
-			return null;
-		}
+	// Kept out of the buttons themselves: the notice has to know whether it has
+	// any action at all, or it renders an empty, padded action row.
+	const shown = ( action?: PlanExpiryNoticeAction ) =>
+		action && ( action.type !== 'add-payment-method' || addPaymentMethodUrl ) ? action : undefined;
+	const primaryAction = shown( notice.primaryAction );
+	const secondaryAction = shown( notice.secondaryAction );
 
-		const variant = isPrimary ? 'primary' : 'secondary';
-
-		const track = () =>
-			recordTracksEvent( 'calypso_purchases_plan_expiry_notice_click', {
-				...eventProperties,
-				action: action.type,
-			} );
-
-		if ( action.type === 'enable-auto-renew' ) {
-			return (
-				<Button
-					variant={ variant }
-					disabled={ isPending }
-					isBusy={ isPending }
-					onClick={ () => {
-						track();
-						setAutoRenew(
-							{ purchaseId: purchase.ID, autoRenew: true },
-							{ onSuccess: () => onAutoRenewEnabled?.() }
-						);
-					} }
-				>
-					{ action.label }
-				</Button>
-			);
-		}
-
-		const href = action.type === 'add-payment-method' ? addPaymentMethodUrl : action.href;
-
-		return (
-			<Button variant={ variant } href={ href } onClick={ track }>
-				{ action.label }
-			</Button>
-		);
-	};
-
-	const primary = notice.primaryAction && renderAction( notice.primaryAction, true );
-	const secondary = notice.secondaryAction && renderAction( notice.secondaryAction, false );
+	const recordClick = ( action: PlanExpiryNoticeAction ) =>
+		recordTracksEvent( 'calypso_purchases_plan_expiry_notice_click', {
+			...eventProperties,
+			action: action.type,
+		} );
 
 	return (
 		<Notice
 			variant={ notice.variant }
 			title={ notice.title }
 			actions={
-				( primary || secondary ) && (
+				( primaryAction || secondaryAction ) && (
 					<>
-						{ primary }
-						{ secondary }
+						{ primaryAction && (
+							<PlanExpiryNoticeButton
+								action={ primaryAction }
+								variant="primary"
+								purchaseId={ purchase.ID }
+								addPaymentMethodUrl={ addPaymentMethodUrl }
+								onClick={ () => recordClick( primaryAction ) }
+								onAutoRenewEnabled={ onAutoRenewEnabled }
+							/>
+						) }
+						{ secondaryAction && (
+							<PlanExpiryNoticeButton
+								action={ secondaryAction }
+								variant="secondary"
+								purchaseId={ purchase.ID }
+								addPaymentMethodUrl={ addPaymentMethodUrl }
+								onClick={ () => recordClick( secondaryAction ) }
+								onAutoRenewEnabled={ onAutoRenewEnabled }
+							/>
+						) }
 					</>
 				)
 			}
