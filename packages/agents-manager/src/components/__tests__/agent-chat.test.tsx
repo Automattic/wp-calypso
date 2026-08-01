@@ -144,8 +144,8 @@ jest.mock(
 				<div>
 					{ icon }
 					{ heading && <p>{ heading }</p> }
-					{ help && <p>{ help }</p> }
 					<MockSuggestionButtons suggestions={ suggestions } onSubmit={ onSuggestionClick } />
+					{ help && <p>{ help }</p> }
 				</div>
 			);
 		}
@@ -346,6 +346,22 @@ describe( 'AgentChat', () => {
 		expect( identity.compareDocumentPosition( greeting ) ).toBe( Node.DOCUMENT_POSITION_FOLLOWING );
 		expect( mockChatHeaderProps ).toHaveBeenCalled();
 		expect( mockChatHeaderProps.mock.calls.at( -1 )?.[ 0 ] ).not.toHaveProperty( 'title' );
+	} );
+
+	it( 'shows the Site Chat help override below starter suggestions', () => {
+		mockIsReaderChatHost.mockReturnValue( true );
+		( window as unknown as { agentsManagerData?: unknown } ).agentsManagerData = {
+			emptyViewHelp: 'Choose a prompt or ask below.',
+		};
+
+		renderAgentChat( {
+			isOpen: true,
+			emptyViewSuggestions: [
+				{ id: 'featured', label: 'Featured posts', prompt: 'Show featured posts' },
+			],
+		} );
+
+		expect( screen.getByText( 'Choose a prompt or ask below.' ) ).toBeInTheDocument();
 	} );
 
 	const imageUpload = ( isUploadingImages: boolean ) =>

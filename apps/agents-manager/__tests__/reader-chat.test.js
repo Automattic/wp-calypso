@@ -99,7 +99,7 @@ describe( 'injectScopedReset', () => {
 
 		const css = document.head.querySelector( '#jetpack-reader-chat-reset' ).textContent;
 
-		expect( css ).toContain( 'font-size: 16px !important;' );
+		expect( css ).toContain( 'font-size: var( --base-font-size, 16px ) !important;' );
 		expect( css ).toContain( '--base-font-size: 16px !important;' );
 		expect( css ).toContain(
 			'.agents-manager-chat .components-button.has-icon:not(.components-dropdown-menu__menu-item)'
@@ -329,7 +329,7 @@ describe( 'injectBrandTokens', () => {
 		getElementByIdSpy.mockReturnValue( null );
 	} );
 
-	it( 'emits nothing when the site has no accent', () => {
+	it( 'emits nothing when the site has no appearance overrides', () => {
 		injectBrandTokens( {} );
 		expect( document.head.querySelector( '#jetpack-reader-chat-brand' ) ).toBeNull();
 	} );
@@ -345,6 +345,46 @@ describe( 'injectBrandTokens', () => {
 		const css = document.head.querySelector( '#jetpack-reader-chat-brand' ).textContent;
 		expect( css ).toContain( '--color-primary: #2271b1;' );
 		expect( css ).toContain( '--color-primary-foreground: #ffffff;' );
+	} );
+
+	it( 'sets background, text, outline, font, and text-size tokens from the brand', () => {
+		injectBrandTokens( {
+			background: '#112233',
+			text: '#f2eff6',
+			outline: '#445566',
+			fontFamily: 'rounded',
+			fontSize: 15,
+		} );
+
+		const css = document.head.querySelector( '#jetpack-reader-chat-brand' ).textContent;
+		expect( css ).toContain( '--color-background: #112233;' );
+		expect( css ).toContain( '--color-popover: #112233;' );
+		expect( css ).toContain( '--color-popover-muted: color-mix(in srgb, #112233 80%, #445566);' );
+		expect( css ).toContain( '--color-foreground: #f2eff6;' );
+		expect( css ).toContain( '--color-muted: #445566;' );
+		expect( css ).toContain( '--base-font-size: 15px !important;' );
+		expect( css ).toContain( 'font-family: ui-rounded' );
+	} );
+
+	it( 'ignores malformed and unsupported appearance values', () => {
+		injectBrandTokens( {
+			background: 'url(javascript:alert(1))',
+			text: '#abcd',
+			outline: false,
+			fontFamily: 'toString',
+			fontSize: 100,
+		} );
+
+		expect( document.head.querySelector( '#jetpack-reader-chat-brand' ) ).toBeNull();
+	} );
+
+	it( 'uses a literal background fallback for text-only muted colors', () => {
+		injectBrandTokens( { text: '#f2eff6' } );
+
+		const css = document.head.querySelector( '#jetpack-reader-chat-brand' ).textContent;
+		expect( css ).toContain(
+			'--color-muted-foreground: color-mix(in srgb, #f2eff6 62%, var(--color-background, #fcfcfc));'
+		);
 	} );
 
 	it( 'overrides the default token defined directly on the Agenttic widget', () => {
@@ -374,7 +414,8 @@ describe( 'injectBrandTokens', () => {
 		expect( css ).toContain( '.agents-manager-chat' );
 		expect( css ).toContain( '.agents-manager-chat .agenttic' );
 		expect( css ).toContain( '.agents-manager-sidebar-fab' );
-		expect( css ).toContain( '.components-popover' );
+		expect( css ).toContain( '.agents-manager-chat-header__menu-popover' );
+		expect( css ).not.toContain( '.components-popover {' );
 	} );
 
 	it( 'never defines the tokens globally, which would restyle the host theme', () => {
