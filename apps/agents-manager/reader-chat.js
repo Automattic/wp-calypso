@@ -285,6 +285,23 @@ function normalizeHexColor( value ) {
 }
 
 /**
+ * Normalize a server-resolved theme font stack before writing it to CSS.
+ * Keep this aligned with Jetpack's get_site_font_family() and settings preview.
+ * @param {string} value Candidate font-family value.
+ * @returns {string} A safe font-family value, or an empty string.
+ */
+function normalizeFontFamily( value ) {
+	return typeof value === 'string' &&
+		value.trim() &&
+		value.trim().length <= 200 &&
+		! value.includes( '/' ) &&
+		! value.includes( '\\' ) &&
+		! /[;{}()\r\n\f]/.test( value )
+		? value.trim()
+		: '';
+}
+
+/**
  * Return a color that meets the requested contrast against a background.
  * Black and white are the final candidates because one of them always reaches
  * at least 4.5:1 against an opaque color.
@@ -355,9 +372,13 @@ function injectBrandTokens( brand ) {
 		serif: 'Georgia, Cambria, "Times New Roman", Times, serif',
 	};
 	const usesSiteFont = brand?.fontFamily === 'site';
-	const fontFamily = Object.prototype.hasOwnProperty.call( fontFamilies, brand?.fontFamily )
-		? fontFamilies[ brand.fontFamily ]
-		: '';
+	const siteFontFamily = normalizeFontFamily( brand?.siteFontFamily );
+	let fontFamily = '';
+	if ( usesSiteFont ) {
+		fontFamily = siteFontFamily;
+	} else if ( Object.prototype.hasOwnProperty.call( fontFamilies, brand?.fontFamily ) ) {
+		fontFamily = fontFamilies[ brand.fontFamily ];
+	}
 	const foreground = background ? getAccessibleColor( background ) : '';
 	const mutedForeground = background
 		? getAccessibleColor( background, foreground === '#000000' ? '#595959' : '#d6d6d6' )
@@ -422,7 +443,9 @@ function injectBrandTokens( brand ) {
 		.agents-manager-chat *,
 		.agents-manager-chat-header__menu-popover,
 		.agents-manager-chat-header__menu-popover * {
-			font-family: inherit !important;
+			font-family: ${
+				siteFontFamily ? 'var( --reader-chat-font-family, inherit )' : 'inherit'
+			} !important;
 		}`
 		: '';
 	const style = document.createElement( 'style' );
@@ -440,8 +463,7 @@ function injectBrandTokens( brand ) {
 			--reader-chat-control-hover: color-mix( in srgb, ${ menuForeground } 14%, ${ menuBackground } );
 		}
 		.agents-manager-brand-logo {
-			border-radius: 50%;
-			object-fit: cover;
+			object-fit: contain;
 		}
 	`;
 	document.head.appendChild( style );

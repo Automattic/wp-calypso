@@ -387,7 +387,27 @@ describe( 'injectBrandTokens', () => {
 		);
 	} );
 
-	it( 'inherits the host theme font when the site font is selected', () => {
+	it( 'uses the resolved host theme font when the site font is selected', () => {
+		injectBrandTokens( { fontFamily: 'site', siteFontFamily: 'Manrope, sans-serif' } );
+
+		const css = document.head.querySelector( '#jetpack-reader-chat-brand' ).textContent;
+		expect( css ).toContain( '--reader-chat-font-family: Manrope, sans-serif;' );
+		expect( css ).toContain( '.agents-manager-chat-header__menu-popover *' );
+		expect( css ).toContain( 'font-family: var( --reader-chat-font-family, inherit ) !important;' );
+	} );
+
+	it( 'keeps the Site Logo contained without a circular crop', () => {
+		injectBrandTokens( { accent: '#2271b1' } );
+
+		const css = document.head.querySelector( '#jetpack-reader-chat-brand' ).textContent;
+		expect( css ).toContain(
+			`.agents-manager-brand-logo {
+			object-fit: contain;
+		}`
+		);
+	} );
+
+	it( 'falls back to inheriting when the site font stack is unavailable', () => {
 		injectBrandTokens( { fontFamily: 'site' } );
 
 		const css = document.head.querySelector( '#jetpack-reader-chat-brand' ).textContent;
@@ -395,6 +415,27 @@ describe( 'injectBrandTokens', () => {
 		expect( css ).toContain( '.agents-manager-chat *' );
 		expect( css ).toContain( 'font-family: inherit !important;' );
 		expect( css ).not.toContain( '--reader-chat-font-family: inherit;' );
+	} );
+
+	it( 'keeps a selected preset ahead of an unrelated resolved site font', () => {
+		injectBrandTokens( { fontFamily: 'serif', siteFontFamily: 'Manrope, sans-serif' } );
+
+		const css = document.head.querySelector( '#jetpack-reader-chat-brand' ).textContent;
+		expect( css ).toContain( '--reader-chat-font-family: Georgia' );
+		expect( css ).not.toContain( '--reader-chat-font-family: Manrope' );
+	} );
+
+	it.each( [
+		[ 'extra declaration', 'Arial; color: red' ],
+		[ 'CSS comment', 'Arial/*' ],
+		[ 'CSS escape', 'Arial\\3b color: red' ],
+		[ 'oversized stack', 'A'.repeat( 201 ) ],
+	] )( 'rejects a resolved site font stack containing %s', ( _case, siteFontFamily ) => {
+		injectBrandTokens( { fontFamily: 'site', siteFontFamily } );
+
+		const css = document.head.querySelector( '#jetpack-reader-chat-brand' ).textContent;
+		expect( css ).toContain( 'font-family: inherit !important;' );
+		expect( css ).not.toContain( siteFontFamily );
 	} );
 
 	it( 'ignores malformed and unsupported appearance values', () => {
