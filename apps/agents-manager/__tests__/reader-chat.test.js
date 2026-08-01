@@ -71,6 +71,7 @@ const {
 	normalizeReaderSiteId,
 	decodeHtmlEntities,
 	getReaderEmptyViewHeading,
+	getAccessibleColor,
 	getReaderClientContext,
 	normalizeSuggestions,
 	parseSuggestionsResponse,
@@ -101,6 +102,7 @@ describe( 'injectScopedReset', () => {
 
 		expect( css ).toContain( 'font-size: var( --base-font-size, 16px ) !important;' );
 		expect( css ).toContain( '--base-font-size: 16px !important;' );
+		expect( css ).toContain( 'font-family: var( --reader-chat-font-family,' );
 		expect( css ).toContain(
 			'.agents-manager-chat .components-button.has-icon:not(.components-dropdown-menu__menu-item)'
 		);
@@ -116,7 +118,7 @@ describe( 'injectScopedReset', () => {
 		expect( css ).toContain( 'background: transparent !important;' );
 		expect( css ).toContain( 'color: var( --color-foreground, #1e1e1e ) !important;' );
 		expect( css ).toContain(
-			'background: var( --color-muted, rgba( 0, 0, 0, 0.06 ) ) !important;'
+			'background: var( --reader-chat-control-hover, var( --color-muted, rgba( 0, 0, 0, 0.06 ) ) ) !important;'
 		);
 		expect( css ).toContain( ':not([aria-disabled="true"])' );
 		expect( css ).toContain( '.agents-manager-chat-header__menu-popover' );
@@ -129,6 +131,15 @@ describe( 'injectScopedReset', () => {
 		);
 		expect( css ).toContain( 'cursor: default !important;' );
 		expect( css ).toContain( 'opacity: 0.5 !important;' );
+		expect( css ).toContain(
+			'.agents-manager-chat-header__menu-popover .components-popover__content'
+		);
+		expect( css ).toContain(
+			'.agents-manager-chat-header__menu-popover .components-dropdown-menu__menu-item:focus-visible'
+		);
+		expect( css ).toContain( 'outline: 2px solid var( --reader-chat-menu-focus ) !important;' );
+		expect( css ).not.toMatch( /^\s*\.components-popover\s*\{/m );
+		expect( css ).not.toMatch( /--reader-chat-font-family\s*:/ );
 	} );
 
 	it( 'does not inject duplicate reset styles', () => {
@@ -347,29 +358,41 @@ describe( 'injectBrandTokens', () => {
 		expect( css ).toContain( '--color-primary-foreground: #ffffff;' );
 	} );
 
-	it( 'sets background, text, outline, font, and text-size tokens from the brand', () => {
+	it( 'sets background, accessible text, outline, and font tokens from the brand', () => {
 		injectBrandTokens( {
 			background: '#112233',
-			text: '#f2eff6',
-			outline: '#445566',
+			outline: '#f2eff6',
 			fontFamily: 'rounded',
-			fontSize: 15,
 		} );
 
 		const css = document.head.querySelector( '#jetpack-reader-chat-brand' ).textContent;
 		expect( css ).toContain( '--color-background: #112233;' );
 		expect( css ).toContain( '--color-popover: #112233;' );
-		expect( css ).toContain( '--color-popover-muted: color-mix(in srgb, #112233 80%, #445566);' );
-		expect( css ).toContain( '--color-foreground: #f2eff6;' );
-		expect( css ).toContain( '--color-muted: #445566;' );
-		expect( css ).toContain( '--base-font-size: 15px !important;' );
-		expect( css ).toContain( 'font-family: ui-rounded' );
+		expect( css ).toContain( '--color-popover-muted: color-mix(in srgb, #112233 80%, #f2eff6);' );
+		expect( css ).toContain( '--color-foreground: #ffffff;' );
+		expect( css ).toContain( '--color-muted-foreground: #d6d6d6;' );
+		expect( css ).toContain( '--color-muted: #f2eff6;' );
+		expect( css ).toContain( '--reader-chat-font-family: ui-rounded' );
+		expect( css ).toContain( '--reader-chat-menu-background: #112233;' );
+		expect( css ).toContain( '--reader-chat-menu-foreground: #ffffff;' );
+		expect( css ).toContain(
+			'--reader-chat-control-hover: color-mix( in srgb, #ffffff 14%, #112233 );'
+		);
+	} );
+
+	it( 'inherits the host theme font when the site font is selected', () => {
+		injectBrandTokens( { fontFamily: 'site' } );
+
+		const css = document.head.querySelector( '#jetpack-reader-chat-brand' ).textContent;
+		expect( css ).toContain( '#jetpack-reader-chat *' );
+		expect( css ).toContain( '.agents-manager-chat *' );
+		expect( css ).toContain( 'font-family: inherit !important;' );
+		expect( css ).not.toContain( '--reader-chat-font-family: inherit;' );
 	} );
 
 	it( 'ignores malformed and unsupported appearance values', () => {
 		injectBrandTokens( {
 			background: 'url(javascript:alert(1))',
-			text: '#abcd',
 			outline: false,
 			fontFamily: 'toString',
 			fontSize: 100,
@@ -378,13 +401,19 @@ describe( 'injectBrandTokens', () => {
 		expect( document.head.querySelector( '#jetpack-reader-chat-brand' ) ).toBeNull();
 	} );
 
-	it( 'uses a literal background fallback for text-only muted colors', () => {
-		injectBrandTokens( { text: '#f2eff6' } );
+	it( 'ignores removed text color and font size values', () => {
+		injectBrandTokens( { text: '#ff0000', fontSize: 15 } );
+
+		expect( document.head.querySelector( '#jetpack-reader-chat-brand' ) ).toBeNull();
+	} );
+
+	it( 'keeps the selected outline separate from automatic text contrast', () => {
+		injectBrandTokens( { background: '#ffffff', outline: '#f2eff6' } );
 
 		const css = document.head.querySelector( '#jetpack-reader-chat-brand' ).textContent;
-		expect( css ).toContain(
-			'--color-muted-foreground: color-mix(in srgb, #f2eff6 62%, var(--color-background, #fcfcfc));'
-		);
+		expect( css ).toContain( '--color-muted: #f2eff6;' );
+		expect( css ).toContain( '--color-foreground: #000000;' );
+		expect( css ).toContain( '--color-muted-foreground: #595959;' );
 	} );
 
 	it( 'overrides the default token defined directly on the Agenttic widget', () => {
@@ -441,6 +470,28 @@ describe( 'injectBrandTokens', () => {
 		expect( document.head.querySelector( '#jetpack-reader-chat-brand' ).textContent ).toContain(
 			'#2271b1'
 		);
+	} );
+} );
+
+// ---------------------------------------------------------------------------
+// getAccessibleColor
+// ---------------------------------------------------------------------------
+
+describe( 'getAccessibleColor', () => {
+	it( 'chooses dark text for a light background', () => {
+		expect( getAccessibleColor( '#ffffff' ) ).toBe( '#000000' );
+	} );
+
+	it( 'chooses light text for a dark background', () => {
+		expect( getAccessibleColor( '#700f1b' ) ).toBe( '#ffffff' );
+	} );
+
+	it( 'keeps a preferred color when it meets the requested contrast', () => {
+		expect( getAccessibleColor( '#ffffff', '#3858e9', 3 ) ).toBe( '#3858e9' );
+	} );
+
+	it( 'replaces a preferred color that does not meet contrast', () => {
+		expect( getAccessibleColor( '#700f1b', '#8a101e', 3 ) ).toBe( '#ffffff' );
 	} );
 } );
 

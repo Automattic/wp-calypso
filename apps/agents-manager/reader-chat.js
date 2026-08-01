@@ -60,9 +60,9 @@ function injectScopedReset() {
 		#jetpack-reader-chat *,
 		.agents-manager-chat,
 		.agents-manager-chat *,
-		.components-popover,
-		.components-popover * {
-			font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", Arial, sans-serif !important;
+		.agents-manager-chat-header__menu-popover,
+		.agents-manager-chat-header__menu-popover * {
+			font-family: var( --reader-chat-font-family, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", Arial, sans-serif ) !important;
 		}
 		/*
 		 * Form controls don't inherit font-family by default — browsers
@@ -152,15 +152,25 @@ function injectScopedReset() {
 		.agents-manager-chat .agents-manager-chat-header .components-button.has-icon:not(.components-dropdown-menu__menu-item):hover:not(:disabled):not([aria-disabled="true"]),
 		.agents-manager-chat .agents-manager-copy-action-button.components-button.has-icon:hover:not(:disabled):not([aria-disabled="true"]),
 		.agents-manager-chat .agents-manager-zoom-action-button.components-button.has-icon:hover:not(:disabled):not([aria-disabled="true"]) {
-			background: var( --color-muted, rgba( 0, 0, 0, 0.06 ) ) !important;
+			background: var( --reader-chat-control-hover, var( --color-muted, rgba( 0, 0, 0, 0.06 ) ) ) !important;
 		}
 		.agents-manager-chat-header__menu-popover {
-			--color-foreground: #1e1e1e;
-			--color-muted: rgba( 0, 0, 0, 0.06 );
-			font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", Arial, sans-serif !important;
+			--reader-chat-menu-background: #ffffff;
+			--reader-chat-menu-foreground: #1e1e1e;
+			--reader-chat-menu-focus: #3858e9;
+			--reader-chat-menu-hover: #f0f0f0;
 			font-size: 13px !important;
 			line-height: 1.4 !important;
-			color: var( --color-foreground, #1e1e1e ) !important;
+			color: var( --reader-chat-menu-foreground ) !important;
+			z-index: 2147483647 !important;
+		}
+		.agents-manager-chat-header__menu-popover .components-popover__content {
+			box-sizing: border-box !important;
+			padding: 4px !important;
+			background: var( --reader-chat-menu-background ) !important;
+			border: 1px solid color-mix( in srgb, var( --reader-chat-menu-foreground ) 24%, var( --reader-chat-menu-background ) ) !important;
+			border-radius: 6px !important;
+			box-shadow: 0 4px 14px rgba( 0, 0, 0, 0.18 ) !important;
 		}
 		.agents-manager-chat-header__menu-popover .components-button,
 		.agents-manager-chat-header__menu-popover .components-dropdown-menu__menu-item {
@@ -169,7 +179,7 @@ function injectScopedReset() {
 			background: transparent !important;
 			border: 0 !important;
 			box-shadow: none !important;
-			color: var( --color-foreground, #1e1e1e ) !important;
+			color: var( --reader-chat-menu-foreground ) !important;
 			font-family: inherit !important;
 			font-size: inherit !important;
 			font-weight: 400 !important;
@@ -197,60 +207,34 @@ function injectScopedReset() {
 			max-width: none !important;
 		}
 		.agents-manager-chat-header__menu-popover .components-dropdown-menu__menu-item:hover:not(:disabled):not([aria-disabled="true"]) {
-			background: var( --color-muted, rgba( 0, 0, 0, 0.06 ) ) !important;
+			background: var( --reader-chat-menu-hover ) !important;
+		}
+		.agents-manager-chat-header__menu-popover .components-dropdown-menu__menu-item:active:not(:disabled):not([aria-disabled="true"]) {
+			background: color-mix( in srgb, var( --reader-chat-menu-foreground ) 20%, var( --reader-chat-menu-background ) ) !important;
+		}
+		.agents-manager-chat-header__menu-popover .components-dropdown-menu__menu-item:focus-visible {
+			outline: 2px solid var( --reader-chat-menu-focus ) !important;
+			outline-offset: -2px !important;
 		}
 		.agents-manager-chat-header__menu-popover .components-dropdown-menu__menu-item[aria-disabled="true"],
 		.agents-manager-chat-header__menu-popover .components-dropdown-menu__menu-item:disabled {
 			background: transparent !important;
-			color: var( --color-foreground, #1e1e1e ) !important;
+			color: var( --reader-chat-menu-foreground ) !important;
 			cursor: default !important;
 			opacity: 0.5 !important;
 		}
 		.agents-manager-chat-header__menu-popover .components-dropdown-menu__menu-item svg {
 			fill: currentColor !important;
 		}
-		/*
-		 * wp-components dropdown/menu fix: the popover is portalled to body
-		 * and the theme's global CSS doesn't always include the full
-		 * components-dropdown-menu rules. Items default to display: inline-block
-		 * via .components-button and end up flowing horizontally. Force them
-		 * block and give the menu a usable layout.
-		 */
-		/*
-		 * Popover itself has z-index: auto by default — sits behind the
-		 * chat container's stacking context. Force it above everything
-		 * so the menu is actually visible when opened.
-		 */
-		.components-popover {
-			z-index: 2147483647 !important;
-		}
-		.components-dropdown-menu__menu {
+		.agents-manager-chat-header__menu-popover .components-dropdown-menu__menu {
 			display: flex !important;
 			flex-direction: column !important;
 			min-width: 200px !important;
-			padding: 4px !important;
-			background: var( --color-background, #ffffff ) !important;
-			border: 1px solid var( --color-muted, #dddddd ) !important;
-			border-radius: 4px !important;
-			box-shadow: 0 2px 10px rgba(0,0,0,0.1) !important;
-		}
-		.components-dropdown-menu__menu-item {
-			display: flex !important;
-			align-items: center !important;
-			gap: 8px !important;
-			width: 100% !important;
-			padding: 8px 12px !important;
+			padding: 0 !important;
 			background: transparent !important;
 			border: 0 !important;
-			text-align: left !important;
-			cursor: pointer !important;
-		}
-		.components-dropdown-menu__menu-item:hover {
-			background: color-mix( in srgb, var( --color-background, #ffffff ) 50%, var( --color-muted, #f0f0f0 ) ) !important;
-		}
-		.components-dropdown-menu__menu-item[aria-disabled="true"] {
-			opacity: 0.5 !important;
-			cursor: default !important;
+			border-radius: 4px !important;
+			box-shadow: none !important;
 		}
 		/*
 		 * Move reader-chat launcher and panel to the bottom-left.
@@ -274,21 +258,73 @@ function injectScopedReset() {
 }
 
 /**
+ * Normalize a color before it is written into the public-page style element.
+ * @param {string} value Candidate hex color.
+ * @returns {string} A normalized hex color, or an empty string.
+ */
+function normalizeHexColor( value ) {
+	return typeof value === 'string' && /^#[0-9a-f]{3}([0-9a-f]{3})?$/i.test( value )
+		? value.toLowerCase()
+		: '';
+}
+
+/**
+ * Return a color that meets the requested contrast against a background.
+ * Black and white are the final candidates because one of them always reaches
+ * at least 4.5:1 against an opaque color.
+ * @param {string} background      Background hex color.
+ * @param {string} preferred       Preferred foreground hex color.
+ * @param {number} minimumContrast Required contrast ratio.
+ * @returns {string} Accessible foreground color.
+ */
+function getAccessibleColor( background, preferred = '', minimumContrast = 4.5 ) {
+	const normalizedBackground = normalizeHexColor( background );
+	const normalizedPreferred = normalizeHexColor( preferred );
+	if ( ! normalizedBackground ) {
+		return normalizedPreferred;
+	}
+
+	const expandHex = ( color ) =>
+		color.length === 4
+			? `#${ color[ 1 ] }${ color[ 1 ] }${ color[ 2 ] }${ color[ 2 ] }${ color[ 3 ] }${ color[ 3 ] }`
+			: color;
+	const luminance = ( color ) => {
+		const expanded = expandHex( color );
+		const channels = [ 1, 3, 5 ].map( ( offset ) => {
+			const channel = Number.parseInt( expanded.slice( offset, offset + 2 ), 16 ) / 255;
+			return channel <= 0.04045 ? channel / 12.92 : ( ( channel + 0.055 ) / 1.055 ) ** 2.4;
+		} );
+		return 0.2126 * channels[ 0 ] + 0.7152 * channels[ 1 ] + 0.0722 * channels[ 2 ];
+	};
+	const contrast = ( first, second ) => {
+		const firstLuminance = luminance( first );
+		const secondLuminance = luminance( second );
+		return (
+			( Math.max( firstLuminance, secondLuminance ) + 0.05 ) /
+			( Math.min( firstLuminance, secondLuminance ) + 0.05 )
+		);
+	};
+
+	if (
+		normalizedPreferred &&
+		contrast( normalizedBackground, normalizedPreferred ) >= minimumContrast
+	) {
+		return normalizedPreferred;
+	}
+
+	return contrast( normalizedBackground, '#000000' ) >= contrast( normalizedBackground, '#ffffff' )
+		? '#000000'
+		: '#ffffff';
+}
+
+/**
  * Apply Site Chat appearance settings as agenttic-ui design tokens.
  *
- * Two things make this trickier than it looks:
- *
- * 1. The chat panel is portalled to `body`, so a rule scoped to the
- *    `#jetpack-reader-chat` mount node never reaches it. We target the
- *    portalled chat, launcher, and popover surfaces directly.
- * 2. Agenttic defines its default tokens directly on `.agenttic`, so the
- *    branded values must also be set on that element rather than inherited
- *    from the portal wrapper. The variables are NOT set on `:root` because
- *    that would silently restyle the host blog's own theme.
- *
- * Emits nothing when the site has no appearance overrides — agenttic's
- * defaults stand. Every value is allowlisted before interpolation because
- * this function writes a style element on a public page.
+ * The chat panel is portalled to `body`, and Agenttic defines its defaults on
+ * `.agenttic`, so the allowlisted values target both elements directly. Text
+ * is derived from the background instead of owner-selected, keeping normal
+ * text at 4.5:1 contrast or better. The variables are deliberately not set on
+ * `:root`, where they would also restyle the host blog theme.
  * @param {Object} brand The brand object from JetpackReaderChatConfig.
  */
 function injectBrandTokens( brand ) {
@@ -296,34 +332,31 @@ function injectBrandTokens( brand ) {
 		return;
 	}
 
-	const hexColor = ( value ) =>
-		typeof value === 'string' && /^#[0-9a-f]{3}([0-9a-f]{3})?$/i.test( value ) ? value : '';
-	const accent = hexColor( brand?.accent );
-	const background = hexColor( brand?.background );
-	const text = hexColor( brand?.text );
-	const outline = hexColor( brand?.outline );
+	const accent = normalizeHexColor( brand?.accent );
+	const background = normalizeHexColor( brand?.background );
+	const outline = normalizeHexColor( brand?.outline );
 	const fontFamilies = {
-		site: 'inherit',
 		rounded:
 			'ui-rounded, "SF Pro Rounded", "Nunito Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif',
 		serif: 'Georgia, Cambria, "Times New Roman", Times, serif',
 	};
+	const usesSiteFont = brand?.fontFamily === 'site';
 	const fontFamily = Object.prototype.hasOwnProperty.call( fontFamilies, brand?.fontFamily )
 		? fontFamilies[ brand.fontFamily ]
 		: '';
-	const requestedFontSize = Number( brand?.fontSize );
-	const fontSize =
-		Number.isInteger( requestedFontSize ) && requestedFontSize >= 13 && requestedFontSize <= 18
-			? requestedFontSize
-			: 0;
+	const foreground = background ? getAccessibleColor( background ) : '';
+	const mutedForeground = background
+		? getAccessibleColor( background, foreground === '#000000' ? '#595959' : '#d6d6d6' )
+		: '';
+	const menuBackground = background || '#ffffff';
+	const menuForeground = getAccessibleColor( menuBackground, '#1e1e1e' );
+	const menuFocus = getAccessibleColor( menuBackground, accent || '#3858e9', 3 );
 	const declarations = [];
 
 	if ( accent ) {
-		// Jetpack precomputes the accessible foreground; fall back to white only
-		// if an older PHP deploy sent an accent without one.
 		declarations.push( `--color-primary: ${ accent }` );
 		declarations.push(
-			`--color-primary-foreground: ${ hexColor( brand?.accentForeground ) || '#ffffff' }`
+			`--color-primary-foreground: ${ normalizeHexColor( brand?.accentForeground ) || '#ffffff' }`
 		);
 	}
 	if ( background ) {
@@ -334,49 +367,56 @@ function injectBrandTokens( brand ) {
 				outline || 'var(--color-muted, #e9e9e9)'
 			})`
 		);
-	}
-	if ( text ) {
-		declarations.push( `--color-foreground: ${ text }` );
-		declarations.push(
-			`--color-muted-foreground: color-mix(in srgb, ${ text } 62%, ${
-				background || 'var(--color-background, #fcfcfc)'
-			})`
-		);
+		declarations.push( `--color-foreground: ${ foreground }` );
+		declarations.push( `--color-muted-foreground: ${ mutedForeground }` );
 	}
 	if ( outline ) {
 		declarations.push( `--color-muted: ${ outline }` );
 	}
 	if ( fontFamily ) {
 		declarations.push( `--font-sans: ${ fontFamily }` );
-	}
-	if ( fontSize ) {
-		declarations.push( `--base-font-size: ${ fontSize }px !important` );
+		declarations.push( `--reader-chat-font-family: ${ fontFamily }` );
 	}
 
-	if ( declarations.length === 0 ) {
+	if ( declarations.length === 0 && ! usesSiteFont ) {
 		return;
 	}
 
-	const fontRule = fontFamily
+	const tokenRule = declarations.length
 		? `
 		#jetpack-reader-chat,
-		.agents-manager-chat,
-		.agents-manager-chat .agenttic,
-		.agents-manager-chat-header__menu-popover {
-			font-family: ${ fontFamily } !important;
-		}`
-		: '';
-
-	const style = document.createElement( 'style' );
-	style.id = 'jetpack-reader-chat-brand';
-	style.textContent = `
 		.agents-manager-chat,
 		.agents-manager-chat .agenttic,
 		.agents-manager-sidebar-fab,
 		.agents-manager-chat-header__menu-popover {
 			${ declarations.join( ';\n\t\t\t' ) };
+		}`
+		: '';
+	const siteFontRule = usesSiteFont
+		? `
+		#jetpack-reader-chat,
+		#jetpack-reader-chat *,
+		.agents-manager-chat,
+		.agents-manager-chat *,
+		.agents-manager-chat-header__menu-popover,
+		.agents-manager-chat-header__menu-popover * {
+			font-family: inherit !important;
+		}`
+		: '';
+	const style = document.createElement( 'style' );
+	style.id = 'jetpack-reader-chat-brand';
+	style.textContent = `
+		${ tokenRule }
+		${ siteFontRule }
+		.agents-manager-chat-header__menu-popover {
+			--reader-chat-menu-background: ${ menuBackground };
+			--reader-chat-menu-foreground: ${ menuForeground };
+			--reader-chat-menu-focus: ${ menuFocus };
+			--reader-chat-menu-hover: color-mix( in srgb, ${ menuForeground } 14%, ${ menuBackground } );
 		}
-		${ fontRule }
+		.agents-manager-chat {
+			--reader-chat-control-hover: color-mix( in srgb, ${ menuForeground } 14%, ${ menuBackground } );
+		}
 		.agents-manager-brand-logo {
 			border-radius: 50%;
 			object-fit: cover;
@@ -1276,6 +1316,7 @@ export {
 	normalizeReaderSiteId,
 	decodeHtmlEntities,
 	getReaderEmptyViewHeading,
+	getAccessibleColor,
 	injectBrandTokens,
 	getReaderClientContext,
 	normalizeSuggestions,
