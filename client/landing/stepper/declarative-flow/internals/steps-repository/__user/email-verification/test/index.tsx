@@ -31,7 +31,6 @@ jest.mock( 'calypso/state/current-user/actions', () => ( {
 
 const EMAIL = 'onboarder@example.com';
 const USER_ID = 1;
-const COOLDOWN_MS = 60 * 1000;
 const FLOW = 'onboarding';
 
 const mockApi = () => nock( 'https://public-api.wordpress.com:443' );
@@ -95,16 +94,15 @@ describe( 'EmailVerificationGate', () => {
 
 	afterAll( () => nock.enableNetConnect() );
 
-	it( 'shows the seeded cooldown on mount without sending or recording a send', async () => {
+	it( 'opens ready to resend, without sending or recording a send', async () => {
 		const request = mockSendVerificationEmail();
 
 		render();
 
 		expect( screen.getByRole( 'heading', { name: 'Verify your email' } ) ).toBeVisible();
 		expect( screen.getByText( EMAIL ) ).toBeVisible();
-		await waitFor( () =>
-			expect( screen.getByRole( 'button', { name: 'Resend (1:00)' } ) ).toBeVisible()
-		);
+		// Signup's activation email doesn't claim the server's interval, so nothing is held here.
+		expect( await screen.findByRole( 'button', { name: 'Resend' } ) ).toBeEnabled();
 
 		expect( request.isDone() ).toBe( false );
 		// The initial send is recorded by the account step, not the gate.
@@ -112,25 +110,6 @@ describe( 'EmailVerificationGate', () => {
 			'calypso_signup_email_verification_email_sent',
 			expect.anything()
 		);
-	} );
-
-	it( 'opens with the same hold when session storage is unavailable', async () => {
-		// The gate still renders without storage — the account step keeps the pending attempt in
-		// memory — so the opening hold has to survive too, rather than falling back to the longer
-		// interval that only applies between actual sends.
-		const setItem = jest.spyOn( Storage.prototype, 'setItem' ).mockImplementation( () => {
-			throw new Error( 'storage disabled' );
-		} );
-
-		try {
-			render();
-
-			await waitFor( () =>
-				expect( screen.getByRole( 'button', { name: 'Resend (1:00)' } ) ).toBeVisible()
-			);
-		} finally {
-			setItem.mockRestore();
-		}
 	} );
 
 	it( 'offers an inbox button that deep-links to a known provider', async () => {
@@ -235,9 +214,6 @@ describe( 'EmailVerificationGate', () => {
 
 		render();
 
-		act( () => {
-			jest.advanceTimersByTime( COOLDOWN_MS );
-		} );
 		await user.click( await screen.findByRole( 'button', { name: 'Resend' } ) );
 
 		// Held for the server's wait rather than the opening hold.
@@ -259,24 +235,16 @@ describe( 'EmailVerificationGate', () => {
 		expect( screen.queryByText( /Look for one we/ ) ).not.toBeInTheDocument();
 	} );
 
-	it( 'resends once the cooldown lapses and restarts it', async () => {
+	it( 'resends, then holds for the interval between sends', async () => {
 		jest.useFakeTimers();
 		const user = userEvent.setup( { advanceTimers: jest.advanceTimersByTime } );
 		const request = mockSendVerificationEmail();
 
 		render();
 
-		await waitFor( () =>
-			expect( screen.getByRole( 'button', { name: 'Resend (1:00)' } ) ).toBeVisible()
-		);
-		act( () => {
-			jest.advanceTimersByTime( COOLDOWN_MS );
-		} );
-
 		await user.click( await screen.findByRole( 'button', { name: 'Resend' } ) );
 
 		await waitFor( () => expect( request.isDone() ).toBe( true ) );
-		// Held for the server's interval between sends, not the shorter opening hold.
 		expect( await screen.findByRole( 'button', { name: 'Resend (5:00)' } ) ).toBeVisible();
 		expect( recordTracksEvent ).toHaveBeenCalledWith(
 			'calypso_signup_email_verification_email_sent',

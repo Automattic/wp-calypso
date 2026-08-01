@@ -1,5 +1,3 @@
-import { cooldownDeadline } from 'calypso/lib/email-verification/resend';
-
 // One session-storage record per gate attempt, keyed by flow and user, so the gate survives a
 // refresh. The record's presence means the gate is pending; resolving removes it.
 // `resendAvailableAt` anchors the resend cooldown, `shownAt` the duration metric.
@@ -36,19 +34,11 @@ function write( scope: string, record: GateRecord ): void {
 	}
 }
 
-// Signup's activation email doesn't go through the throttled path, so the server would accept a
-// resend the moment the gate opens. This hold is ours: long enough that nobody resends before the
-// first email has had a chance to land, and shorter than the server's own interval so it never
-// holds the button past the point a resend would be accepted.
-const INITIAL_RESEND_HOLD_SECONDS = 60;
-
-// Called at email account creation: open the gate and start the cooldown, since the activation
-// email from signup counts as the first send. `shownAt` is filled in when the gate renders.
+// Called at email account creation: open the gate. No cooldown is claimed — signup's activation
+// email doesn't go through the throttled path, so the server would accept a resend right away and
+// holding the button here would only invent a limit. `shownAt` is filled in when the gate renders.
 export function beginGate( scope: string ): void {
-	write( scope, {
-		resendAvailableAt: cooldownDeadline( INITIAL_RESEND_HOLD_SECONDS ),
-		shownAt: 0,
-	} );
+	write( scope, { resendAvailableAt: 0, shownAt: 0 } );
 }
 
 // Stamped when the gate first renders, so the duration metric excludes the token-load and
@@ -85,9 +75,8 @@ export function gateShownAt( scope: string ): number {
 	return read( scope )?.shownAt || Date.now();
 }
 
-// No stored deadline means the record never persisted — storage is unavailable, since the gate
-// only renders with an attempt open. Falls back to the same opening hold `beginGate` would have
-// written, not the longer interval that only applies between actual sends.
+// 0 when nothing is stored, which is also the right answer when storage is unavailable: no
+// cooldown has been claimed that anyone needs to honour.
 export function gateResendAvailableAt( scope: string ): number {
-	return read( scope )?.resendAvailableAt ?? cooldownDeadline( INITIAL_RESEND_HOLD_SECONDS );
+	return read( scope )?.resendAvailableAt ?? 0;
 }
