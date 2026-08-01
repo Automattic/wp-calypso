@@ -120,8 +120,10 @@ const EmailVerificationBannerV2: React.FC< Props > = ( { setIsBusy } ) => {
 					dispatch( errorNotice( genericError ) );
 					return;
 				}
+				// Only this path is rate limited, so only this one holds the button. Holding after
+				// a pending-change resend would invent a wait the server doesn't ask for.
+				holdResend( RESEND_MIN_INTERVAL_SECONDS );
 			}
-			holdResend( RESEND_MIN_INTERVAL_SECONDS );
 			dispatch(
 				successNotice(
 					translate(

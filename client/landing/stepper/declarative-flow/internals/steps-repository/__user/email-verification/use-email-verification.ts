@@ -3,7 +3,6 @@ import { useCallback, useEffect, useState } from 'react';
 import { useSendEmailVerification } from 'calypso/landing/stepper/hooks/use-send-email-verification';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import {
-	cooldownDeadline,
 	RESEND_MIN_INTERVAL_SECONDS,
 	resendThrottleRetryAfter,
 } from 'calypso/lib/email-verification/resend';
@@ -34,8 +33,7 @@ export function useEmailVerification( flow: string, scope: string ) {
 	const [ sendStatus, setSendStatus ] = useState< SendStatus >( 'idle' );
 
 	const { secondsUntilResend, hold: holdResend } = useResendCooldown( {
-		initialDeadline:
-			gateResendAvailableAt( scope ) || cooldownDeadline( RESEND_MIN_INTERVAL_SECONDS ),
+		initialDeadline: gateResendAvailableAt( scope ),
 		onHold: ( deadline ) => markResendUnavailableUntil( scope, deadline ),
 		// A refusal expires with the wait it described: leaving it behind would explain an
 		// unavailable button that is, by then, available again.

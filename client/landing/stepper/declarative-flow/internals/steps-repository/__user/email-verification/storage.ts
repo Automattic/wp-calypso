@@ -85,6 +85,9 @@ export function gateShownAt( scope: string ): number {
 	return read( scope )?.shownAt || Date.now();
 }
 
+// No stored deadline means the record never persisted — storage is unavailable, since the gate
+// only renders with an attempt open. Falls back to the same opening hold `beginGate` would have
+// written, not the longer interval that only applies between actual sends.
 export function gateResendAvailableAt( scope: string ): number {
-	return read( scope )?.resendAvailableAt ?? 0;
+	return read( scope )?.resendAvailableAt ?? cooldownDeadline( INITIAL_RESEND_HOLD_SECONDS );
 }

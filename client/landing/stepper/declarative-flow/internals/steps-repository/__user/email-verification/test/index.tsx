@@ -114,6 +114,25 @@ describe( 'EmailVerificationGate', () => {
 		);
 	} );
 
+	it( 'opens with the same hold when session storage is unavailable', async () => {
+		// The gate still renders without storage — the account step keeps the pending attempt in
+		// memory — so the opening hold has to survive too, rather than falling back to the longer
+		// interval that only applies between actual sends.
+		const setItem = jest.spyOn( Storage.prototype, 'setItem' ).mockImplementation( () => {
+			throw new Error( 'storage disabled' );
+		} );
+
+		try {
+			render();
+
+			await waitFor( () =>
+				expect( screen.getByRole( 'button', { name: 'Resend (1:00)' } ) ).toBeVisible()
+			);
+		} finally {
+			setItem.mockRestore();
+		}
+	} );
+
 	it( 'offers an inbox button that deep-links to a known provider', async () => {
 		renderStep( <EmailVerificationGate flow={ FLOW } scope={ SCOPE } onDone={ jest.fn() } />, {
 			initialState: {
@@ -211,7 +230,7 @@ describe( 'EmailVerificationGate', () => {
 	it( 'holds the button for as long as the server says when it throttles', async () => {
 		jest.useFakeTimers();
 		const user = userEvent.setup( { advanceTimers: jest.advanceTimersByTime } );
-		// Past the per-minute interval, so the server is reporting the hourly lockout.
+		// Past the interval between sends, so the server is reporting the daily lockout.
 		mockSendVerificationEmailThrottled( 25 * 60 );
 
 		render();
