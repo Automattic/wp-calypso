@@ -107,9 +107,9 @@ function injectScopedReset() {
 		}
 		#jetpack-reader-chat,
 		.agents-manager-chat {
-			font-size: 16px !important;
+			font-size: var( --base-font-size, 16px ) !important;
 			line-height: 1.5 !important;
-			color: #1e1e1e !important;
+			color: var( --color-foreground, #1e1e1e ) !important;
 		}
 		/*
 		 * The .agenttic widget's sizes are derived from --base-font-size. Some blog
@@ -229,8 +229,8 @@ function injectScopedReset() {
 			flex-direction: column !important;
 			min-width: 200px !important;
 			padding: 4px !important;
-			background: #ffffff !important;
-			border: 1px solid #dddddd !important;
+			background: var( --color-background, #ffffff ) !important;
+			border: 1px solid var( --color-muted, #dddddd ) !important;
 			border-radius: 4px !important;
 			box-shadow: 0 2px 10px rgba(0,0,0,0.1) !important;
 		}
@@ -246,7 +246,7 @@ function injectScopedReset() {
 			cursor: pointer !important;
 		}
 		.components-dropdown-menu__menu-item:hover {
-			background: #f0f0f0 !important;
+			background: color-mix( in srgb, var( --color-background, #ffffff ) 50%, var( --color-muted, #f0f0f0 ) ) !important;
 		}
 		.components-dropdown-menu__menu-item[aria-disabled="true"] {
 			opacity: 0.5 !important;
@@ -266,7 +266,7 @@ function injectScopedReset() {
 			right: auto !important;
 		}
 		.agents-manager-chat--undocked [data-slot="chat-footer"] > [data-slot="suggestions"] button {
-			background: #ffffff !important;
+			background: var( --color-background, #ffffff ) !important;
 		}
 
 	`;
@@ -274,7 +274,7 @@ function injectScopedReset() {
 }
 
 /**
- * Apply the Site Chat brand accent as agenttic-ui design tokens.
+ * Apply Site Chat appearance settings as agenttic-ui design tokens.
  *
  * Two things make this trickier than it looks:
  *
@@ -286,18 +286,86 @@ function injectScopedReset() {
  *    from the portal wrapper. The variables are NOT set on `:root` because
  *    that would silently restyle the host blog's own theme.
  *
- * Emits nothing when the site has no accent — agenttic's default stands.
+ * Emits nothing when the site has no appearance overrides — agenttic's
+ * defaults stand. Every value is allowlisted before interpolation because
+ * this function writes a style element on a public page.
  * @param {Object} brand The brand object from JetpackReaderChatConfig.
  */
 function injectBrandTokens( brand ) {
-	const accent = brand?.accent;
-	if ( ! accent || document.getElementById( 'jetpack-reader-chat-brand' ) ) {
+	if ( document.getElementById( 'jetpack-reader-chat-brand' ) ) {
 		return;
 	}
 
-	// Jetpack precomputes the accessible foreground; fall back to white only
-	// if an older PHP deploy sent an accent without one.
-	const accentForeground = brand?.accentForeground || '#ffffff';
+	const hexColor = ( value ) =>
+		typeof value === 'string' && /^#[0-9a-f]{3}([0-9a-f]{3})?$/i.test( value ) ? value : '';
+	const accent = hexColor( brand?.accent );
+	const background = hexColor( brand?.background );
+	const text = hexColor( brand?.text );
+	const outline = hexColor( brand?.outline );
+	const fontFamilies = {
+		site: 'inherit',
+		rounded:
+			'ui-rounded, "SF Pro Rounded", "Nunito Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif',
+		serif: 'Georgia, Cambria, "Times New Roman", Times, serif',
+	};
+	const fontFamily = Object.prototype.hasOwnProperty.call( fontFamilies, brand?.fontFamily )
+		? fontFamilies[ brand.fontFamily ]
+		: '';
+	const requestedFontSize = Number( brand?.fontSize );
+	const fontSize =
+		Number.isInteger( requestedFontSize ) && requestedFontSize >= 13 && requestedFontSize <= 18
+			? requestedFontSize
+			: 0;
+	const declarations = [];
+
+	if ( accent ) {
+		// Jetpack precomputes the accessible foreground; fall back to white only
+		// if an older PHP deploy sent an accent without one.
+		declarations.push( `--color-primary: ${ accent }` );
+		declarations.push(
+			`--color-primary-foreground: ${ hexColor( brand?.accentForeground ) || '#ffffff' }`
+		);
+	}
+	if ( background ) {
+		declarations.push( `--color-background: ${ background }` );
+		declarations.push( `--color-popover: ${ background }` );
+		declarations.push(
+			`--color-popover-muted: color-mix(in srgb, ${ background } 80%, ${
+				outline || 'var(--color-muted, #e9e9e9)'
+			})`
+		);
+	}
+	if ( text ) {
+		declarations.push( `--color-foreground: ${ text }` );
+		declarations.push(
+			`--color-muted-foreground: color-mix(in srgb, ${ text } 62%, ${
+				background || 'var(--color-background, #fcfcfc)'
+			})`
+		);
+	}
+	if ( outline ) {
+		declarations.push( `--color-muted: ${ outline }` );
+	}
+	if ( fontFamily ) {
+		declarations.push( `--font-sans: ${ fontFamily }` );
+	}
+	if ( fontSize ) {
+		declarations.push( `--base-font-size: ${ fontSize }px !important` );
+	}
+
+	if ( declarations.length === 0 ) {
+		return;
+	}
+
+	const fontRule = fontFamily
+		? `
+		#jetpack-reader-chat,
+		.agents-manager-chat,
+		.agents-manager-chat .agenttic,
+		.agents-manager-chat-header__menu-popover {
+			font-family: ${ fontFamily } !important;
+		}`
+		: '';
 
 	const style = document.createElement( 'style' );
 	style.id = 'jetpack-reader-chat-brand';
@@ -305,10 +373,10 @@ function injectBrandTokens( brand ) {
 		.agents-manager-chat,
 		.agents-manager-chat .agenttic,
 		.agents-manager-sidebar-fab,
-		.components-popover {
-			--color-primary: ${ accent };
-			--color-primary-foreground: ${ accentForeground };
+		.agents-manager-chat-header__menu-popover {
+			${ declarations.join( ';\n\t\t\t' ) };
 		}
+		${ fontRule }
 		.agents-manager-brand-logo {
 			border-radius: 50%;
 			object-fit: cover;
@@ -342,6 +410,7 @@ window.agentsManagerData.siteUrl = readerConfig.siteUrl || '';
 // all — so both sides degrade to the unbranded look rather than throwing.
 window.agentsManagerData.brandName = readerBrand.name || '';
 window.agentsManagerData.brandLogoUrl = readerBrand.logoUrl || '';
+window.agentsManagerData.emptyViewHelp = readerBrand.help || '';
 
 /**
  * Build fallback suggested prompts based on the current page context.
@@ -953,7 +1022,6 @@ function setupFollowupChips() {
  * Checks current state first (covers a relaunch where the panel is
  * already open), then watches the shared store for isOpen turning
  * true. Fires at most once.
- *
  * @param {Function} onFirstOpen    Callback to run on the first open.
  * @param {Object}   deps           Store accessors, injectable for tests.
  * @param {Function} deps.select    @wordpress/data select.
