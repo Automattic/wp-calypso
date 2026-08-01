@@ -25,24 +25,18 @@ export function cooldownDeadline( seconds: number ): number {
 }
 
 /**
- * How a remaining wait should read. Each step up happens where the smaller unit stops being a
- * number anyone parses: "Resend in 2700s" and "Resend in 1440 minutes" are both unreadable, and
- * the daily allowance makes waits that long reachable.
- *
- * Translation is left to the caller — the two of them use different i18n APIs. Each keeps a
- * singular form even where the thresholds mean English only renders the plural: locales whose
- * plural rules select the singular form for other counts still need it.
+ * A remaining wait as a clock: `m:ss`, or `h:mm:ss` once it runs past an hour — which the daily
+ * allowance makes reachable. Ticking digits read as a countdown in a way that a rounded
+ * "in 25 minutes" doesn't, and stay short enough not to crowd the button they sit in.
  */
-export function cooldownDisplay( seconds: number ): {
-	value: number;
-	unit: 'second' | 'minute' | 'hour';
-} {
-	if ( seconds > 60 * 60 ) {
-		return { value: Math.ceil( seconds / ( 60 * 60 ) ), unit: 'hour' };
-	}
-	return seconds > 60
-		? { value: Math.ceil( seconds / 60 ), unit: 'minute' }
-		: { value: seconds, unit: 'second' };
+export function formatCooldown( seconds: number ): string {
+	const hours = Math.floor( seconds / 3600 );
+	const minutes = Math.floor( ( seconds % 3600 ) / 60 );
+	const pad = ( value: number ) => String( value ).padStart( 2, '0' );
+
+	return hours > 0
+		? `${ hours }:${ pad( minutes ) }:${ pad( seconds % 60 ) }`
+		: `${ minutes }:${ pad( seconds % 60 ) }`;
 }
 
 /**

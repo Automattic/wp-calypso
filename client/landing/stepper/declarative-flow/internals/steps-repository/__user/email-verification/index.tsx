@@ -8,7 +8,7 @@ import { useI18n } from '@wordpress/react-i18n';
 import { useCallback, useEffect, useMemo, useRef, type ReactNode } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
-import { cooldownDisplay } from 'calypso/lib/email-verification/resend';
+import { formatCooldown } from 'calypso/lib/email-verification/resend';
 import UserVerificationChecker from 'calypso/lib/user/verification-checker';
 import { useSelector } from 'calypso/state';
 import { getCurrentUserEmail } from 'calypso/state/current-user/selectors';
@@ -32,7 +32,7 @@ interface Props {
 }
 
 const EmailVerificationGate = ( { flow, scope, logo, onDone }: Props ) => {
-	const { __, _n } = useI18n();
+	const { __ } = useI18n();
 	const email = useSelector( getCurrentUserEmail );
 	const { isVerified, sendStatus, secondsUntilResend, checkStatus, checkNow, resend } =
 		useEmailVerification( flow, scope );
@@ -43,27 +43,14 @@ const EmailVerificationGate = ( { flow, scope, logo, onDone }: Props ) => {
 
 	const title = __( 'Verify your email' );
 
-	const { value: waitValue, unit: waitUnit } = cooldownDisplay( secondsUntilResend );
-	let resendLabel: string = __( 'Resend' );
-	if ( waitUnit === 'hour' ) {
-		resendLabel = sprintf(
-			// translators: %d is the number of hours until the email can be resent.
-			_n( 'Resend in %d hour', 'Resend in %d hours', waitValue ),
-			waitValue
-		);
-	} else if ( waitUnit === 'minute' ) {
-		resendLabel = sprintf(
-			// translators: %d is the number of minutes until the email can be resent.
-			_n( 'Resend in %d minute', 'Resend in %d minutes', waitValue ),
-			waitValue
-		);
-	} else if ( secondsUntilResend > 0 ) {
-		resendLabel = sprintf(
-			// translators: %d is the number of seconds until the email can be resent.
-			__( 'Resend in %ds' ),
-			waitValue
-		);
-	}
+	const resendLabel =
+		secondsUntilResend > 0
+			? sprintf(
+					// translators: %s is a countdown to when the email can be resent, e.g. 4:59.
+					__( 'Resend (%s)' ),
+					formatCooldown( secondsUntilResend )
+			  )
+			: __( 'Resend' );
 
 	// Stamp the shown-at time now the gate is actually on screen (see storage.ts).
 	useEffect( () => {

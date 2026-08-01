@@ -5,7 +5,7 @@ import EmailVerificationDialog from 'calypso/components/email-verification/email
 import useGetEmailToVerify from 'calypso/components/email-verification/hooks/use-get-email-to-verify';
 import { useSendEmailVerification } from 'calypso/landing/stepper/hooks/use-send-email-verification';
 import {
-	cooldownDisplay,
+	formatCooldown,
 	RESEND_MIN_INTERVAL_SECONDS,
 	resendThrottleRetryAfter,
 } from 'calypso/lib/email-verification/resend';
@@ -168,21 +168,13 @@ const EmailVerificationBannerV2: React.FC< Props > = ( { setIsBusy } ) => {
 		}
 	);
 
-	const { value: waitValue, unit: waitUnit } = cooldownDisplay( secondsUntilResend );
-	let callToAction: React.ReactNode = translate( 'Resend email' );
-	if ( waitUnit === 'hour' ) {
-		callToAction = translate( 'Resend in %(hours)d hour', 'Resend in %(hours)d hours', {
-			count: waitValue,
-			args: { hours: waitValue },
-		} );
-	} else if ( waitUnit === 'minute' ) {
-		callToAction = translate( 'Resend in %(minutes)d minute', 'Resend in %(minutes)d minutes', {
-			count: waitValue,
-			args: { minutes: waitValue },
-		} );
-	} else if ( secondsUntilResend > 0 ) {
-		callToAction = translate( 'Resend in %(seconds)ds', { args: { seconds: waitValue } } );
-	}
+	const callToAction: React.ReactNode =
+		secondsUntilResend > 0
+			? translate( 'Resend email (%(countdown)s)', {
+					args: { countdown: formatCooldown( secondsUntilResend ) },
+					comment: 'countdown to when the verification email can be resent, e.g. 4:59',
+			  } )
+			: translate( 'Resend email' );
 
 	return (
 		<Banner

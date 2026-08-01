@@ -103,7 +103,7 @@ describe( 'EmailVerificationGate', () => {
 		expect( screen.getByRole( 'heading', { name: 'Verify your email' } ) ).toBeVisible();
 		expect( screen.getByText( EMAIL ) ).toBeVisible();
 		await waitFor( () =>
-			expect( screen.getByRole( 'button', { name: 'Resend in 60s' } ) ).toBeVisible()
+			expect( screen.getByRole( 'button', { name: 'Resend (1:00)' } ) ).toBeVisible()
 		);
 
 		expect( request.isDone() ).toBe( false );
@@ -221,9 +221,8 @@ describe( 'EmailVerificationGate', () => {
 		} );
 		await user.click( await screen.findByRole( 'button', { name: 'Resend' } ) );
 
-		// Held for the server's wait rather than the local 60s, and read in minutes because
-		// "Resend in 1500s" is not a number anyone parses.
-		expect( await screen.findByRole( 'button', { name: 'Resend in 25 minutes' } ) ).toBeVisible();
+		// Held for the server's wait rather than the opening hold.
+		expect( await screen.findByRole( 'button', { name: 'Resend (25:00)' } ) ).toBeVisible();
 		expect( screen.getByText( /Look for one we/ ) ).toBeVisible();
 		// A refusal is not a failure, so the generic send error stays away.
 		expect( screen.queryByText( /We couldn’t send the email/ ) ).not.toBeInTheDocument();
@@ -249,7 +248,7 @@ describe( 'EmailVerificationGate', () => {
 		render();
 
 		await waitFor( () =>
-			expect( screen.getByRole( 'button', { name: 'Resend in 60s' } ) ).toBeVisible()
+			expect( screen.getByRole( 'button', { name: 'Resend (1:00)' } ) ).toBeVisible()
 		);
 		act( () => {
 			jest.advanceTimersByTime( COOLDOWN_MS );
@@ -259,7 +258,7 @@ describe( 'EmailVerificationGate', () => {
 
 		await waitFor( () => expect( request.isDone() ).toBe( true ) );
 		// Held for the server's interval between sends, not the shorter opening hold.
-		expect( await screen.findByRole( 'button', { name: 'Resend in 5 minutes' } ) ).toBeVisible();
+		expect( await screen.findByRole( 'button', { name: 'Resend (5:00)' } ) ).toBeVisible();
 		expect( recordTracksEvent ).toHaveBeenCalledWith(
 			'calypso_signup_email_verification_email_sent',
 			expect.objectContaining( { flow: FLOW, is_resend: true } )
