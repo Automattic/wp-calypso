@@ -28,7 +28,8 @@ const ERROR_DAYS_BEFORE_EXPIRY = 7;
 export type PlanExpiryUrgency = 'info' | 'warning' | 'error';
 
 export type PlanExpiryNoticeAction =
-	| { type: 'link'; label: string; href: string }
+	| { type: 'renew'; label: string; href: string }
+	| { type: 'view-other-plans'; label: string; href: string }
 	| { type: 'enable-auto-renew'; label: string }
 	| { type: 'add-payment-method'; label: string };
 
@@ -190,7 +191,7 @@ function resolveNotice(
 	const isAnnualOrLonger = purchase.bill_period_days >= SubscriptionBillPeriod.PLAN_ANNUAL_PERIOD;
 
 	const renewAction: PlanExpiryNoticeAction = {
-		type: 'link',
+		type: 'renew',
 		label: __( 'Renew now' ),
 		href: getRenewalUrlFromPurchase( purchase, undefined, renewReturnUrl ),
 	};
@@ -229,7 +230,7 @@ function resolveNotice(
 			// action is always there to fall back on.
 			secondaryAction:
 				viewOtherPlansUrl && translationExists( 'View other plans' )
-					? { type: 'link', label: __( 'View other plans' ), href: viewOtherPlansUrl }
+					? { type: 'view-other-plans', label: __( 'View other plans' ), href: viewOtherPlansUrl }
 					: undefined,
 		};
 	}

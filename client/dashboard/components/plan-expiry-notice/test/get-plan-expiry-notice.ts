@@ -166,7 +166,7 @@ describe( 'within 60 days of expiration', () => {
 		expect( notice?.variant ).toBe( 'warning' );
 		// Days, not "in 1 month" — a rounded month reads far less urgent.
 		expect( notice?.title ).toBe( 'Your Business plan expires in 45 days' );
-		expect( notice?.primaryAction ).toMatchObject( { type: 'link', label: 'Renew now' } );
+		expect( notice?.primaryAction ).toMatchObject( { type: 'renew', label: 'Renew now' } );
 	} );
 
 	test( 'sends renewal checkout back where the caller says, not hardcoded to the dashboard', () => {
