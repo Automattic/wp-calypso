@@ -68,8 +68,8 @@ const currentUserState = ( emailVerified: boolean ) => ( {
 const SCOPE = `${ FLOW }:${ USER_ID }`;
 
 const render = ( { onDone = jest.fn(), logo }: { onDone?: jest.Mock; logo?: ReactNode } = {} ) => {
-	// The account step opens the gate on account creation, seeding the send/shown
-	// timestamps; simulate that once. A remount (refresh) must not rewrite them.
+	// The account step opens the gate on account creation; simulate that once. A remount
+	// (refresh) must not rewrite the record.
 	if ( ! isGatePending( SCOPE ) ) {
 		beginGate( SCOPE );
 	}
