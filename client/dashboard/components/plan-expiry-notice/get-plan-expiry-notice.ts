@@ -316,13 +316,6 @@ function resolveNotice(
 		};
 	}
 
-	// Further out than a week, only annual-and-above plans have anything to
-	// say: a monthly plan that can't auto-renew has no meaningful runway
-	// before the window above.
-	if ( ! isAnnualOrLonger ) {
-		return null;
-	}
-
 	// A plan that can still auto-renew is only worth mentioning once its first
 	// scheduled attempt has come and gone without renewing it.
 	if ( canAutoRenew ) {
@@ -361,7 +354,11 @@ function resolveNotice(
 				),
 				{ expiryDate, storageGb }
 			),
-			primaryAction: renewAction,
+			// Renewing early only makes sense once expiration is close relative to
+			// the billing period. A month is most of a monthly plan's cycle, so
+			// paying again that far ahead would be premature; turning auto-renew
+			// back on is the fix at this distance.
+			primaryAction: isAnnualOrLonger ? renewAction : getTurnOnAutoRenewAction( purchase ),
 		};
 	}
 

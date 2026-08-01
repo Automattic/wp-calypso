@@ -342,12 +342,37 @@ describe( 'storage figures', () => {
 } );
 
 describe( 'monthly plans that cannot auto-renew', () => {
-	test( 'stay quiet until the last week', () => {
-		const monthly = makePurchase( {
-			bill_period_days: SubscriptionBillPeriod.PLAN_MONTHLY_PERIOD,
-			expiry_date: expiryInDays( 20 ),
-		} );
+	const monthlyExpiringIn = ( days: number ) =>
+		getPlanExpiryNotice(
+			makePurchase( {
+				bill_period_days: SubscriptionBillPeriod.PLAN_MONTHLY_PERIOD,
+				expiry_date: expiryInDays( days ),
+			} )
+		);
 
-		expect( getPlanExpiryNotice( monthly ) ).toBeNull();
+	test( 'are warned further out than a week, like any other term', () => {
+		expect( monthlyExpiringIn( 8 )?.variant ).toBe( 'warning' );
+	} );
+
+	test( 'are asked to turn auto-renew on rather than to renew a month early', () => {
+		expect( monthlyExpiringIn( 20 ) ).toMatchObject( {
+			variant: 'warning',
+			// The day count, not "in 1 month", which reads far less urgent.
+			title: 'Your Business plan expires in 20 days',
+			primaryAction: { label: 'Turn on auto-renew' },
+		} );
+	} );
+
+	test( 'are asked to renew once expiration is imminent', () => {
+		expect( monthlyExpiringIn( 3 )?.primaryAction ).toMatchObject( { label: 'Renew now' } );
+	} );
+
+	// Uncommon for a monthly plan, but reachable: stacked renewals or a custom
+	// expiration date can put one further out than the warning window.
+	test( 'are told about auto-renew when expiration is further off still', () => {
+		const notice = monthlyExpiringIn( 90 );
+
+		expect( notice?.variant ).toBe( 'info' );
+		expect( notice?.primaryAction ).toMatchObject( { label: 'Turn on auto-renew' } );
 	} );
 } );
