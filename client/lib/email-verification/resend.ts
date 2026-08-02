@@ -3,8 +3,9 @@
  * independent, so any resend button can agree with the server without reaching into Stepper.
  */
 
-// The server's own interval between sends, so a button reopens when a resend would be accepted.
-// It stays the authority though: when it refuses, it says how long to wait.
+// What to assume when a response carries no wait of its own. The server reports one on both
+// outcomes, so this is only reached by an app server answering from before that field existed, or
+// by a bare 429 from somewhere upstream of it.
 export const RESEND_MIN_INTERVAL_SECONDS = 5 * 60;
 
 // A spent daily allowance points at the end of the day, so a real wait reaches roughly this.
@@ -35,27 +36,28 @@ export function formatCooldown( seconds: number ): string {
 		: `${ minutes }:${ pad( seconds % 60 ) }`;
 }
 
+// Seconds, on both outcomes. Anything unusable falls back rather than reopening the button, which
+// would only earn a refusal.
+function retryAfterSeconds( value: unknown ): number {
+	return typeof value === 'number' && value > 0 ? value : RESEND_MIN_INTERVAL_SECONDS;
+}
+
 /**
- * The wait an accepted resend has just imposed.
+ * The wait an accepted resend has just imposed, reported at the top level of the response.
  *
- * The server reports it under the same `retry_after`, in the same units, as a refusal — and it
- * isn't always the interval: a send that spends the last of the daily allowance answers with the
- * wait until that allowance resets. Falls back to the interval for an app server answering from
- * before the field existed.
+ * Not always the interval: a send that spends the last of the daily allowance answers with the
+ * wait until that allowance resets.
  */
 export function resendAcceptedRetryAfter( response: unknown ): number {
-	const retryAfter = ( response as { retry_after?: unknown } | undefined )?.retry_after;
-	return typeof retryAfter === 'number' && retryAfter > 0
-		? retryAfter
-		: RESEND_MIN_INTERVAL_SECONDS;
+	return retryAfterSeconds( ( response as { retry_after?: unknown } | undefined )?.retry_after );
 }
 
 /**
  * The wait a refused resend asks for, or null if the failure wasn't a refusal.
  *
- * The server rejects with `throttled`/429 and puts the wait, in seconds, under
- * `data.retry_after`. Callers need the distinction because telling someone to try again in a
- * moment is wrong when the wait is an hour.
+ * The server rejects with `throttled`/429 and puts the wait under `data.retry_after`. Callers
+ * need the distinction because telling someone to try again in a moment is wrong when the wait
+ * is an hour.
  */
 export function resendThrottleRetryAfter( error: unknown ): number | null {
 	if ( typeof error !== 'object' || error === null ) {
@@ -65,9 +67,5 @@ export function resendThrottleRetryAfter( error: unknown ): number | null {
 	if ( ( slug ?? code ) !== 'throttled' ) {
 		return null;
 	}
-	const retryAfter = ( data as { retry_after?: unknown } | undefined )?.retry_after;
-	// A refusal with no usable hint still holds; reopening now would only earn another.
-	return typeof retryAfter === 'number' && retryAfter > 0
-		? retryAfter
-		: RESEND_MIN_INTERVAL_SECONDS;
+	return retryAfterSeconds( ( data as { retry_after?: unknown } | undefined )?.retry_after );
 }
