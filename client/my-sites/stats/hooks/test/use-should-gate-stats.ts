@@ -1,6 +1,10 @@
 import { isEnabled } from '@automattic/calypso-config';
 import { FEATURE_STATS_PAID } from '@automattic/calypso-products';
-import { STAT_TYPE_CLICKS, STATS_TYPE_DEVICE_STATS } from '../../constants';
+import {
+	STAT_TYPE_CLICKS,
+	STATS_FEATURE_DATE_CONTROL_LAST_30_DAYS,
+	STATS_TYPE_DEVICE_STATS,
+} from '../../constants';
 import { shouldGateStats } from '../use-should-gate-stats';
 
 jest.mock( '@automattic/calypso-config', () => {
@@ -348,40 +352,59 @@ describe( 'shouldGateStats in Odyssey stats', () => {
 		expect( isGatedStats ).toBe( false );
 	} );
 
-	it( 'should gate basic stats for commercial jetpack sites having 1k views count without Stats commercial purchase', () => {
-		const mockState = {
-			sites: {
-				features: {
-					[ siteId ]: {
-						data: {
-							active: [],
-						},
-					},
-				},
-				items: {
-					[ siteId ]: {
-						jetpack: true,
-						options: {
-							is_wpcom_atomic: false,
-							is_commercial: true,
-						},
-					},
-				},
-			},
-			purchases: {
-				data: [],
-			},
-			stats: {
-				planUsage: {
+	const walledCommercialSiteState = {
+		sites: {
+			features: {
+				[ siteId ]: {
 					data: {
-						[ siteId ]: {
-							should_show_paywall: true,
-						},
+						active: [],
 					},
 				},
 			},
-		};
-		const isGatedStats = shouldGateStats( mockState, siteId, gatedStatType );
+			items: {
+				[ siteId ]: {
+					jetpack: true,
+					options: {
+						is_wpcom_atomic: false,
+						is_commercial: true,
+					},
+				},
+			},
+		},
+		purchases: {
+			data: [],
+		},
+		stats: {
+			planUsage: {
+				data: {
+					[ siteId ]: {
+						should_show_paywall: true,
+					},
+				},
+			},
+		},
+	};
+
+	it( 'should not gate basic stats for commercial jetpack sites past the paywall threshold, since the commercial paywall is no longer enforced (STATS-387)', () => {
+		const isGatedStats = shouldGateStats( walledCommercialSiteState, siteId, gatedStatType );
+		expect( isGatedStats ).toBe( false );
+	} );
+
+	it( 'should not gate date controls for commercial jetpack sites past the paywall threshold, lifting the 7-day limit (STATS-387)', () => {
+		const isGatedStats = shouldGateStats(
+			walledCommercialSiteState,
+			siteId,
+			STATS_FEATURE_DATE_CONTROL_LAST_30_DAYS
+		);
+		expect( isGatedStats ).toBe( false );
+	} );
+
+	it( 'should still gate advanced stats for commercial jetpack sites past the paywall threshold', () => {
+		const isGatedStats = shouldGateStats(
+			walledCommercialSiteState,
+			siteId,
+			jetpackStatsAdvancedStatType
+		);
 		expect( isGatedStats ).toBe( true );
 	} );
 

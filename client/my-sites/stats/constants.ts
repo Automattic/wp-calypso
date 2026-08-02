@@ -95,3 +95,10 @@ export const DATE_FORMAT = 'YYYY-MM-DD';
 export const STATS_SUMMARY_MAX_BARS = 10;
 
 export const NAVIGATION_METHOD_ARROW = 'arrow';
+
+// Global kill switch for the Jetpack Stats commercial + traffic classifier paywall (STATS-387).
+// The `jetpack-site-has-commercial-paywall` stickers are deliberately left in place so the cohort
+// stays observable, so the client ignores them instead. Mirrors the backend switch
+// (Usage_Info::COMMERCIAL_PAYWALL_KILLED): flip to `false` to restore the previous gating in one
+// place, without reverting individual commits.
+export const COMMERCIAL_PAYWALL_KILLED = true;
