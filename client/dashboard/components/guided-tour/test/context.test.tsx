@@ -11,9 +11,12 @@ import type { TourStep } from '../context';
 
 const TOUR_ID = 'hosting-dashboard-tours-sites' as const;
 
-// Flush pending microtasks/effects so a hypothetical re-triggered write would fire.
-function flush() {
-	return act( async () => {} );
+// Let any re-triggered completion write fire. On the buggy code the write is
+// re-armed on each failed attempt, so this real-time wait exposes the loop.
+function settle() {
+	return act( async () => {
+		await new Promise( ( resolve ) => setTimeout( resolve, 100 ) );
+	} );
 }
 
 function mockPreferencesRead() {
@@ -37,17 +40,36 @@ function mockFailingPreferencesWrite() {
 	return counter;
 }
 
+// The completion write succeeds and persists the timestamp — the happy path.
+function mockSucceedingPreferencesWrite() {
+	const counter = { count: 0 };
+	nock( 'https://public-api.wordpress.com' )
+		.persist()
+		.post( '/rest/v1.1/me/preferences' )
+		.reply( ( _uri, body ) => {
+			counter.count += 1;
+			return [
+				200,
+				{ calypso_preferences: ( body as { calypso_preferences: unknown } ).calypso_preferences },
+			];
+		} );
+	return counter;
+}
+
 function renderTour( tours: TourStep[], { isSkippable }: { isSkippable?: boolean } = {} ) {
 	// A real element so the step's anchor resolves synchronously (no selector poll).
 	const target = document.createElement( 'div' );
 	document.body.appendChild( target );
 
+	// Use the shared query client so the mutation's `onSuccess` cache write and the
+	// component's `useQuery` read are the same client, as in production.
 	return render(
 		<GuidedTourContextProvider tourId={ TOUR_ID } guidedTours={ tours } isSkippable={ isSkippable }>
 			{ tours.map( ( tour ) => (
 				<GuidedTourStep key={ tour.id } id={ tour.id } target={ target } inline />
 			) ) }
-		</GuidedTourContextProvider>
+		</GuidedTourContextProvider>,
+		{ queryClient }
 	);
 }
 
@@ -58,6 +80,28 @@ describe( '<GuidedTourContextProvider>', () => {
 		document.body.innerHTML = '';
 	} );
 
+	test( 'completing a one-step tour writes once when the write succeeds', async () => {
+		mockPreferencesRead();
+		const write = mockSucceedingPreferencesWrite();
+
+		const { recordTracksEvent } = renderTour( [
+			{ id: 'step-1', title: 'Step 1', description: 'First' },
+		] );
+
+		await userEvent.click( await screen.findByRole( 'button', { name: 'Got it' } ) );
+
+		await waitFor( () => expect( write.count ).toBe( 1 ) );
+		await settle();
+
+		expect( write.count ).toBe( 1 );
+		// The persisted timestamp completes the tour, so the step is gone.
+		expect( screen.queryByRole( 'button', { name: 'Got it' } ) ).not.toBeInTheDocument();
+		expect( recordTracksEvent ).toHaveBeenCalledWith( 'calypso_dashboard_end_tour', {
+			tour_id: TOUR_ID,
+			is_completed: true,
+		} );
+	} );
+
 	test( 'completing a one-step tour writes exactly once when the write keeps failing', async () => {
 		mockPreferencesRead();
 		const write = mockFailingPreferencesWrite();
@@ -66,11 +110,10 @@ describe( '<GuidedTourContextProvider>', () => {
 			{ id: 'step-1', title: 'Step 1', description: 'First' },
 		] );
 
-		const gotIt = await screen.findByRole( 'button', { name: 'Got it' } );
-		await userEvent.click( gotIt );
+		await userEvent.click( await screen.findByRole( 'button', { name: 'Got it' } ) );
 
 		await waitFor( () => expect( write.count ).toBe( 1 ) );
-		await flush();
+		await settle();
 
 		// Before the fix this climbed without bound as the effect re-fired.
 		expect( write.count ).toBe( 1 );
@@ -93,7 +136,7 @@ describe( '<GuidedTourContextProvider>', () => {
 		await userEvent.click( await screen.findByRole( 'button', { name: 'Finish' } ) );
 
 		await waitFor( () => expect( write.count ).toBe( 1 ) );
-		await flush();
+		await settle();
 
 		expect( write.count ).toBe( 1 );
 		expect( recordTracksEvent ).toHaveBeenCalledWith( 'calypso_dashboard_end_tour', {
@@ -120,7 +163,7 @@ describe( '<GuidedTourContextProvider>', () => {
 		await userEvent.click( skip! );
 
 		await waitFor( () => expect( write.count ).toBe( 1 ) );
-		await flush();
+		await settle();
 
 		expect( write.count ).toBe( 1 );
 		expect( recordTracksEvent ).toHaveBeenCalledWith( 'calypso_dashboard_end_tour', {
