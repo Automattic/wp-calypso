@@ -6,7 +6,7 @@ import useGetEmailToVerify from 'calypso/components/email-verification/hooks/use
 import { useSendEmailVerification } from 'calypso/landing/stepper/hooks/use-send-email-verification';
 import {
 	formatCooldown,
-	RESEND_MIN_INTERVAL_SECONDS,
+	resendAcceptedRetryAfter,
 	resendThrottleRetryAfter,
 } from 'calypso/lib/email-verification/resend';
 import { useResendCooldown } from 'calypso/lib/email-verification/use-resend-cooldown';
@@ -113,13 +113,13 @@ const EmailVerificationBannerV2: React.FC< Props > = ( { setIsBusy } ) => {
 				// For unverified original emails, use the dedicated endpoint since
 				// PUT /me/settings won't resend when the email hasn't changed.
 				// A refusal is reported in the body rather than thrown, and carries nothing to show.
-				const { success } = await sendVerificationEmail();
-				if ( ! success ) {
+				const response = await sendVerificationEmail();
+				if ( ! response?.success ) {
 					dispatch( errorNotice( genericError ) );
 					return;
 				}
 				// Only this path is rate limited, so only this one holds the button.
-				holdResend( RESEND_MIN_INTERVAL_SECONDS );
+				holdResend( resendAcceptedRetryAfter( response ) );
 			}
 			dispatch(
 				successNotice(

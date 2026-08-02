@@ -36,6 +36,21 @@ export function formatCooldown( seconds: number ): string {
 }
 
 /**
+ * The wait an accepted resend has just imposed.
+ *
+ * The server reports it under the same `retry_after`, in the same units, as a refusal — and it
+ * isn't always the interval: a send that spends the last of the daily allowance answers with the
+ * wait until that allowance resets. Falls back to the interval for an app server answering from
+ * before the field existed.
+ */
+export function resendAcceptedRetryAfter( response: unknown ): number {
+	const retryAfter = ( response as { retry_after?: unknown } | undefined )?.retry_after;
+	return typeof retryAfter === 'number' && retryAfter > 0
+		? retryAfter
+		: RESEND_MIN_INTERVAL_SECONDS;
+}
+
+/**
  * The wait a refused resend asks for, or null if the failure wasn't a refusal.
  *
  * The server rejects with `throttled`/429 and puts the wait, in seconds, under

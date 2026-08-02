@@ -3,7 +3,7 @@ import { useCallback, useEffect, useState } from 'react';
 import { useSendEmailVerification } from 'calypso/landing/stepper/hooks/use-send-email-verification';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import {
-	RESEND_MIN_INTERVAL_SECONDS,
+	resendAcceptedRetryAfter,
 	resendThrottleRetryAfter,
 } from 'calypso/lib/email-verification/resend';
 import { useResendCooldown } from 'calypso/lib/email-verification/use-resend-cooldown';
@@ -46,11 +46,11 @@ export function useEmailVerification( flow: string, scope: string ) {
 		setSendStatus( 'sending' );
 
 		try {
-			const { success } = await sendVerificationEmail();
-			if ( ! success ) {
+			const response = await sendVerificationEmail();
+			if ( ! response?.success ) {
 				throw new Error( 'unsuccessful_response' );
 			}
-			holdResend( RESEND_MIN_INTERVAL_SECONDS );
+			holdResend( resendAcceptedRetryAfter( response ) );
 			// A fresh link restarts the polling window; it may be confirmed long after the last.
 			setIsPollingExpired( false );
 			setPollWindowKey( ( key ) => key + 1 );

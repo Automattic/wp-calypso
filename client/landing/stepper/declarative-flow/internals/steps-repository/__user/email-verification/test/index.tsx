@@ -35,8 +35,9 @@ const FLOW = 'onboarding';
 
 const mockApi = () => nock( 'https://public-api.wordpress.com:443' );
 
-const mockSendVerificationEmail = ( response: { success: boolean } = { success: true } ) =>
-	mockApi().post( '/rest/v1.1/me/send-verification-email' ).reply( 200, response );
+const mockSendVerificationEmail = (
+	response: { success: boolean; retry_after?: number } = { success: true }
+) => mockApi().post( '/rest/v1.1/me/send-verification-email' ).reply( 200, response );
 
 // The shape the server returns when it refuses a resend: `throttled`/429 with the wait in
 // seconds under `data.retry_after`.
@@ -204,6 +205,20 @@ describe( 'EmailVerificationGate', () => {
 			screen.queryByText( /We haven’t received your confirmation yet\./ )
 		).not.toBeInTheDocument();
 		expect( onDone ).not.toHaveBeenCalled();
+	} );
+
+	it( 'holds an accepted resend for the wait the server reports', async () => {
+		jest.useFakeTimers();
+		const user = userEvent.setup( { advanceTimers: jest.advanceTimersByTime } );
+		// A send that spends the last of the daily allowance answers with the wait until that
+		// allowance resets, not the interval — so the figure has to be read, not assumed.
+		mockSendVerificationEmail( { success: true, retry_after: 4 * 60 * 60 } );
+
+		render();
+
+		await user.click( await screen.findByRole( 'button', { name: 'Resend' } ) );
+
+		expect( await screen.findByRole( 'button', { name: 'Resend (4:00:00)' } ) ).toBeVisible();
 	} );
 
 	it( 'holds the button for as long as the server says when it throttles', async () => {
