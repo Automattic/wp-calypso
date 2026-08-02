@@ -21,9 +21,8 @@ const POLL_LIMIT_MS = 15 * 60 * 1000;
 // isn't mistaken for an unverified email.
 type CheckStatus = 'idle' | 'checking' | 'unconfirmed' | 'error';
 
-// `throttled` is kept distinct from `error` for the same reason: the send didn't fail, it was
-// refused, and telling someone to retry in a moment is wrong when the wait is an hour. It says
-// only why the button is held — the countdown says whether it still is.
+// `throttled` is distinct from `error` for the same reason: the send was refused, not failed. It
+// says only why the button is held — the countdown says whether it still is.
 type SendStatus = 'idle' | 'sending' | 'error' | 'throttled';
 
 export function useEmailVerification( flow: string, scope: string ) {
@@ -42,7 +41,6 @@ export function useEmailVerification( flow: string, scope: string ) {
 	const [ checkStatus, setCheckStatus ] = useState< CheckStatus >( 'idle' );
 	const [ isVisible, setIsVisible ] = useState( () => document.visibilityState === 'visible' );
 
-	// Hold the button until `seconds` have passed, and remember it across a refresh.
 	// The initial email is the activation email from account creation; this only resends.
 	const resend = async () => {
 		setSendStatus( 'sending' );
@@ -53,8 +51,7 @@ export function useEmailVerification( flow: string, scope: string ) {
 				throw new Error( 'unsuccessful_response' );
 			}
 			holdResend( RESEND_MIN_INTERVAL_SECONDS );
-			// A fresh link restarts the polling window — it may be confirmed elsewhere long
-			// after the previous one lapsed.
+			// A fresh link restarts the polling window; it may be confirmed long after the last.
 			setIsPollingExpired( false );
 			setPollWindowKey( ( key ) => key + 1 );
 			setCheckStatus( 'idle' );
@@ -69,8 +66,7 @@ export function useEmailVerification( flow: string, scope: string ) {
 				holdResend( retryAfter );
 			}
 			setSendStatus( retryAfter !== null ? 'throttled' : 'error' );
-			// Ordinary failures keep the value they have always reported, so their existing
-			// aggregation isn't split by this.
+			// Unchanged for ordinary failures, so their existing aggregation isn't split.
 			const failure = error instanceof Error ? error.message : String( error );
 			recordTracksEvent( 'calypso_signup_email_verification_email_send_failed', {
 				flow,

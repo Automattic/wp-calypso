@@ -34,8 +34,7 @@ export function useResendCooldown( { initialDeadline = 0, onHold }: Options = {}
 		onHoldRef.current?.( deadlineRef.current );
 	}, [] );
 
-	// A cooldown belongs to what it was claimed against; a new target must not inherit a wait
-	// the server isn't enforcing against it.
+	// A new target must not inherit a wait the server isn't enforcing against it.
 	const reset = useCallback( () => {
 		deadlineRef.current = 0;
 		setSecondsUntilResend( 0 );
@@ -43,8 +42,7 @@ export function useResendCooldown( { initialDeadline = 0, onHold }: Options = {}
 
 	useInterval( sync, secondsUntilResend > 0 && EVERY_SECOND );
 
-	// Returning to a backgrounded tab, the countdown catches up in one step rather than
-	// resuming where the suspended timer stopped.
+	// Catch up in one step rather than resuming where the suspended timer stopped.
 	useEffect( () => {
 		const onVisibilityChange = () => {
 			if ( document.visibilityState === 'visible' ) {

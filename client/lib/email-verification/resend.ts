@@ -1,17 +1,14 @@
 /**
- * The resend side of email verification: what the server will accept, and how long a caller has
- * to wait when it won't. Transport-independent, so anything that offers a resend button can
- * agree with the server without reaching into another feature's hooks.
+ * What the server will accept from a resend, and how long to wait when it won't. Transport
+ * independent, so any resend button can agree with the server without reaching into Stepper.
  */
 
-// Mirrors the server's own minimum interval between two user-requested verification emails, so a
-// button reopens when a resend would actually be accepted. The server stays the authority: when
-// it refuses, it says how long to wait.
+// The server's own interval between sends, so a button reopens when a resend would be accepted.
+// It stays the authority though: when it refuses, it says how long to wait.
 export const RESEND_MIN_INTERVAL_SECONDS = 5 * 60;
 
-// The server also caps sends per day, and points a caller who has spent that allowance at the end
-// of the day — so a legitimate wait reaches roughly this. Past it the value is corrupt rather than
-// real, and must not strand someone on a screen with no way on.
+// A spent daily allowance points at the end of the day, so a real wait reaches roughly this.
+// Past it the value is corrupt, and must not strand someone on a screen with no way on.
 const MAX_COOLDOWN_SECONDS = 24 * 60 * 60;
 
 export function cooldownRemainingSeconds( availableAt: number ): number {
@@ -25,9 +22,8 @@ export function cooldownDeadline( seconds: number ): number {
 }
 
 /**
- * A remaining wait as a clock: `m:ss`, or `h:mm:ss` once it runs past an hour — which the daily
- * allowance makes reachable. Ticking digits read as a countdown in a way that a rounded
- * "in 25 minutes" doesn't, and stay short enough not to crowd the button they sit in.
+ * A wait as a clock: `m:ss`, or `h:mm:ss` past an hour, which the daily allowance reaches.
+ * Ticking digits read as a countdown where a rounded "in 25 minutes" doesn't.
  */
 export function formatCooldown( seconds: number ): string {
 	const hours = Math.floor( seconds / 3600 );
@@ -55,8 +51,7 @@ export function resendThrottleRetryAfter( error: unknown ): number | null {
 		return null;
 	}
 	const retryAfter = ( data as { retry_after?: unknown } | undefined )?.retry_after;
-	// A refusal with no usable hint still holds for the standard interval; reopening immediately
-	// would only earn another one.
+	// A refusal with no usable hint still holds; reopening now would only earn another.
 	return typeof retryAfter === 'number' && retryAfter > 0
 		? retryAfter
 		: RESEND_MIN_INTERVAL_SECONDS;

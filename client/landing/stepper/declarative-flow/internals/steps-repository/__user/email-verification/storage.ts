@@ -1,6 +1,5 @@
 // One session-storage record per gate attempt, keyed by flow and user, so the gate survives a
 // refresh. The record's presence means the gate is pending; resolving removes it.
-// `resendAvailableAt` anchors the resend cooldown, `shownAt` the duration metric.
 
 const STORAGE_KEY = 'onboarding-email-verification-gate';
 
@@ -34,9 +33,8 @@ function write( scope: string, record: GateRecord ): void {
 	}
 }
 
-// Called at email account creation: open the gate. No cooldown is claimed — signup's activation
-// email doesn't go through the throttled path, so the server would accept a resend right away and
-// holding the button here would only invent a limit. `shownAt` is filled in when the gate renders.
+// Called at email account creation. No cooldown is claimed: signup's activation email doesn't go
+// through the throttled path, so the server would accept a resend right away.
 export function beginGate( scope: string ): void {
 	write( scope, { resendAvailableAt: 0, shownAt: 0 } );
 }
@@ -62,8 +60,7 @@ export function resolveGate( scope: string ): void {
 	}
 }
 
-// Remember a cooldown so it survives a reload — a server lockout would otherwise be forgotten
-// and the button would reopen into a refusal.
+// Persisted so a reload doesn't forget a lockout and reopen the button into a refusal.
 export function markResendUnavailableUntil( scope: string, deadline: number ): void {
 	const record = read( scope );
 	if ( record ) {
@@ -75,8 +72,7 @@ export function gateShownAt( scope: string ): number {
 	return read( scope )?.shownAt || Date.now();
 }
 
-// 0 when nothing is stored, which is also the right answer when storage is unavailable: no
-// cooldown has been claimed that anyone needs to honour.
+// 0 when nothing is stored, which is also right when storage is unavailable: nothing claimed.
 export function gateResendAvailableAt( scope: string ): number {
 	return read( scope )?.resendAvailableAt ?? 0;
 }

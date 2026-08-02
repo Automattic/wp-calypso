@@ -80,9 +80,8 @@ const EmailVerificationBannerV2: React.FC< Props > = ( { setIsBusy } ) => {
 
 	const { secondsUntilResend, hold: holdResend, reset: resetResend } = useResendCooldown();
 
-	// What a resend would actually be sent to, from saved settings only. `emailToVerify` also
-	// reflects unsaved input, which changes on every keystroke in the email field without
-	// changing where anything is sent.
+	// Where a resend would actually go, from saved settings only: `emailToVerify` also reflects
+	// unsaved input, which changes on every keystroke without changing the target.
 	const savedSettings = useSelector( getUserSettings );
 	const resendTarget = isEmailChangePending
 		? `pending:${ savedSettings?.new_user_email ?? '' }`
@@ -113,15 +112,13 @@ const EmailVerificationBannerV2: React.FC< Props > = ( { setIsBusy } ) => {
 			} else {
 				// For unverified original emails, use the dedicated endpoint since
 				// PUT /me/settings won't resend when the email hasn't changed.
-				// A refused send is reported in the body rather than thrown, and carries nothing
-				// worth showing, so it takes the generic message and starts no cooldown.
+				// A refusal is reported in the body rather than thrown, and carries nothing to show.
 				const { success } = await sendVerificationEmail();
 				if ( ! success ) {
 					dispatch( errorNotice( genericError ) );
 					return;
 				}
-				// Only this path is rate limited, so only this one holds the button. Holding after
-				// a pending-change resend would invent a wait the server doesn't ask for.
+				// Only this path is rate limited, so only this one holds the button.
 				holdResend( RESEND_MIN_INTERVAL_SECONDS );
 			}
 			dispatch(
@@ -135,8 +132,7 @@ const EmailVerificationBannerV2: React.FC< Props > = ( { setIsBusy } ) => {
 				)
 			);
 		} catch ( err ) {
-			// A refusal is not a failure: hold the button for as long as the server says it
-			// will keep refusing, and report the wait rather than a generic error.
+			// Not a failure: hold for as long as the server says it will keep refusing.
 			const retryAfter = resendThrottleRetryAfter( err );
 			if ( retryAfter !== null ) {
 				holdResend( retryAfter );
