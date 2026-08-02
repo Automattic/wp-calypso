@@ -187,9 +187,7 @@ const EmailVerificationGate = ( { flow, scope, logo, onDone }: Props ) => {
 
 						{ sendStatus === 'throttled' && secondsUntilResend > 0 && (
 							<p className="onboarding-email-verification__notice" role="status">
-								{ __(
-									'That’s a lot of emails. Look for one we’ve already sent — the button unlocks when the countdown ends.'
-								) }
+								{ __( 'Too many attempts. Please wait before trying again.' ) }
 							</p>
 						) }
 					</VStack>

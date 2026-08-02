@@ -218,7 +218,7 @@ describe( 'EmailVerificationGate', () => {
 
 		// Held for the server's wait rather than the opening hold.
 		expect( await screen.findByRole( 'button', { name: 'Resend (25:00)' } ) ).toBeVisible();
-		expect( screen.getByText( /Look for one we/ ) ).toBeVisible();
+		expect( screen.getByText( /Too many attempts/ ) ).toBeVisible();
 		// A refusal is not a failure, so the generic send error stays away.
 		expect( screen.queryByText( /We couldn’t send the email/ ) ).not.toBeInTheDocument();
 		expect( recordTracksEvent ).toHaveBeenCalledWith(
@@ -232,7 +232,7 @@ describe( 'EmailVerificationGate', () => {
 			jest.advanceTimersByTime( 25 * 60 * 1000 );
 		} );
 		expect( await screen.findByRole( 'button', { name: 'Resend' } ) ).toBeEnabled();
-		expect( screen.queryByText( /Look for one we/ ) ).not.toBeInTheDocument();
+		expect( screen.queryByText( /Too many attempts/ ) ).not.toBeInTheDocument();
 	} );
 
 	it( 'resends, then holds for the interval between sends', async () => {
