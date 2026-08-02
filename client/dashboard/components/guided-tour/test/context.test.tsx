@@ -11,8 +11,8 @@ import type { TourStep } from '../context';
 
 const TOUR_ID = 'hosting-dashboard-tours-sites' as const;
 
-// Let any re-triggered completion write fire. On the buggy code the write is
-// re-armed on each failed attempt, so this real-time wait exposes the loop.
+// Give pending effects (and any network writes they trigger) time to run, so a
+// tour that wrongly retried its completion write would make extra requests here.
 function settle() {
 	return act( async () => {
 		await new Promise( ( resolve ) => setTimeout( resolve, 100 ) );
@@ -26,8 +26,8 @@ function mockPreferencesRead() {
 		.reply( 200, { calypso_preferences: {} } );
 }
 
-// The completion write always fails. Before the fix, the effect that fired it
-// re-armed on the failed write and retried forever.
+// The completion write always fails (e.g. rate-limited). A persistent failure
+// must not cause the write to be retried in a loop.
 function mockFailingPreferencesWrite() {
 	const counter = { count: 0 };
 	nock( 'https://public-api.wordpress.com' )
@@ -75,9 +75,10 @@ function renderTour( tours: TourStep[], { isSkippable }: { isSkippable?: boolean
 
 describe( '<GuidedTourContextProvider>', () => {
 	afterEach( () => {
+		// The shared query client is a module singleton; clear it so a completed tour
+		// cached by one test doesn't suppress the tour in the next. (nock cleanup and
+		// DOM teardown are handled by the standard test setup.)
 		queryClient.clear();
-		nock.cleanAll();
-		document.body.innerHTML = '';
 	} );
 
 	test( 'completing a one-step tour writes once when the write succeeds', async () => {
@@ -115,7 +116,7 @@ describe( '<GuidedTourContextProvider>', () => {
 		await waitFor( () => expect( write.count ).toBe( 1 ) );
 		await settle();
 
-		// Before the fix this climbed without bound as the effect re-fired.
+		// A persistently failing write must be attempted once, never retried in a loop.
 		expect( write.count ).toBe( 1 );
 		expect( recordTracksEvent ).toHaveBeenCalledWith( 'calypso_dashboard_end_tour', {
 			tour_id: TOUR_ID,
