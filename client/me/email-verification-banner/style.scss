@@ -7,8 +7,6 @@
 	.banner__action {
 		display: flex;
 		flex-wrap: wrap;
-		// The shared rule spaces the primary button with a left margin, which indents and
-		// narrows it once stacked. Cleared as the same physical property so rtlcss flips both.
 		gap: 8px;
 
 		.button + .is-primary {
@@ -20,8 +18,7 @@
 		}
 	}
 
-	// Below this width the shared styles give both buttons a zero flex basis, so they shrink
-	// rather than wrap and the countdown — the only place the wait is shown — is ellipsised away.
+	// Stacked, so the countdown isn't ellipsised away by the shared zero flex basis.
 	@media (max-width: $break-mobile) {
 		.banner__action {
 			flex-direction: column;

@@ -39,8 +39,6 @@ const mockSendVerificationEmail = (
 	response: { success: boolean; retry_after?: number } = { success: true }
 ) => mockApi().post( '/rest/v1.1/me/send-verification-email' ).reply( 200, response );
 
-// The shape the server returns when it refuses a resend: `throttled`/429 with the wait in
-// seconds under `data.retry_after`.
 const mockSendVerificationEmailThrottled = ( retryAfter: number ) =>
 	mockApi()
 		.post( '/rest/v1.1/me/send-verification-email' )
@@ -69,8 +67,7 @@ const currentUserState = ( emailVerified: boolean ) => ( {
 const SCOPE = `${ FLOW }:${ USER_ID }`;
 
 const render = ( { onDone = jest.fn(), logo }: { onDone?: jest.Mock; logo?: ReactNode } = {} ) => {
-	// The account step opens the gate on account creation; simulate that once. A remount
-	// (refresh) must not rewrite the record.
+	// The account step opens the gate on account creation; simulate that once.
 	if ( ! isGatePending( SCOPE ) ) {
 		beginGate( SCOPE );
 	}
@@ -125,8 +122,7 @@ describe( 'EmailVerificationGate', () => {
 
 		const openButton = await screen.findByRole( 'link', { name: 'Open email inbox' } );
 		expect( openButton.getAttribute( 'href' ) ).toContain( 'mail.google.com' );
-		// For a known provider the inbox link is the only confirmation action; the manual
-		// re-check is the fallback for providers without one.
+		// The manual re-check is the fallback for providers without an inbox link.
 		expect(
 			screen.queryByRole( 'button', { name: /confirmed my email/ } )
 		).not.toBeInTheDocument();
@@ -148,8 +144,7 @@ describe( 'EmailVerificationGate', () => {
 
 	it( 'finishes as soon as the confirmation lands in another tab', async () => {
 		const onDone = jest.fn();
-		// Only the slices this gate touches: its own user state, plus the two
-		// `DocumentHead` reads.
+		// Only the slices this gate touches, plus the two `DocumentHead` reads.
 		const store = createStore(
 			combineReducers( {
 				currentUser: currentUserReducer,
@@ -169,8 +164,7 @@ describe( 'EmailVerificationGate', () => {
 
 		expect( onDone ).not.toHaveBeenCalled();
 
-		// `UserVerificationChecker` refetches the user when the confirmation
-		// landing page signals it from the other tab; this is what lands in the store.
+		// What `UserVerificationChecker` lands in the store when the other tab confirms.
 		act( () => {
 			store.dispatch( {
 				type: CURRENT_USER_RECEIVE,
@@ -207,31 +201,15 @@ describe( 'EmailVerificationGate', () => {
 		expect( onDone ).not.toHaveBeenCalled();
 	} );
 
-	it( 'holds an accepted resend for the wait the server reports', async () => {
-		jest.useFakeTimers();
-		const user = userEvent.setup( { advanceTimers: jest.advanceTimersByTime } );
-		// A send that spends the last of the daily allowance answers with the wait until that
-		// allowance resets, not the interval — so the figure has to be read, not assumed.
-		mockSendVerificationEmail( { success: true, retry_after: 4 * 60 * 60 } );
-
-		render();
-
-		await user.click( await screen.findByRole( 'button', { name: 'Resend' } ) );
-
-		expect( await screen.findByRole( 'button', { name: 'Resend (4:00:00)' } ) ).toBeVisible();
-	} );
-
 	it( 'holds the button for as long as the server says when it throttles', async () => {
 		jest.useFakeTimers();
 		const user = userEvent.setup( { advanceTimers: jest.advanceTimersByTime } );
-		// Past the interval between sends, so the server is reporting the daily lockout.
 		mockSendVerificationEmailThrottled( 25 * 60 );
 
 		render();
 
 		await user.click( await screen.findByRole( 'button', { name: 'Resend' } ) );
 
-		// Held for the server's wait rather than the opening hold.
 		expect( await screen.findByRole( 'button', { name: 'Resend (25:00)' } ) ).toBeVisible();
 		expect( screen.getByText( /Too many attempts/ ) ).toBeVisible();
 		// A refusal is not a failure, so the generic send error stays away.
@@ -241,8 +219,7 @@ describe( 'EmailVerificationGate', () => {
 			expect.objectContaining( { flow: FLOW, is_resend: true, error: 'throttled' } )
 		);
 
-		// The refusal expires with the wait it described — a notice explaining a locked button
-		// must not outlive the lock.
+		// A notice explaining a locked button must not outlive the lock.
 		act( () => {
 			jest.advanceTimersByTime( 25 * 60 * 1000 );
 		} );
@@ -250,17 +227,18 @@ describe( 'EmailVerificationGate', () => {
 		expect( screen.queryByText( /Too many attempts/ ) ).not.toBeInTheDocument();
 	} );
 
-	it( 'resends, then holds for the interval between sends', async () => {
+	it( 'resends, then holds for the wait the server reports', async () => {
 		jest.useFakeTimers();
 		const user = userEvent.setup( { advanceTimers: jest.advanceTimersByTime } );
-		const request = mockSendVerificationEmail();
+		// Not always the interval: spending the daily allowance answers with its reset.
+		const request = mockSendVerificationEmail( { success: true, retry_after: 4 * 60 * 60 } );
 
 		render();
 
 		await user.click( await screen.findByRole( 'button', { name: 'Resend' } ) );
 
 		await waitFor( () => expect( request.isDone() ).toBe( true ) );
-		expect( await screen.findByRole( 'button', { name: 'Resend (5:00)' } ) ).toBeVisible();
+		expect( await screen.findByRole( 'button', { name: 'Resend (4:00:00)' } ) ).toBeVisible();
 		expect( recordTracksEvent ).toHaveBeenCalledWith(
 			'calypso_signup_email_verification_email_sent',
 			expect.objectContaining( { flow: FLOW, is_resend: true } )
