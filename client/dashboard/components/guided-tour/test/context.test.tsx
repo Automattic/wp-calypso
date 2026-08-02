@@ -158,10 +158,7 @@ describe( '<GuidedTourContextProvider>', () => {
 			{ isSkippable: true }
 		);
 
-		// The skip (X) button has no accessible name; it's the only button besides Next/Previous.
-		await screen.findByRole( 'button', { name: 'Next' } );
-		const skip = screen.getAllByRole( 'button' ).find( ( button ) => ! button.textContent?.trim() );
-		await userEvent.click( skip! );
+		await userEvent.click( await screen.findByRole( 'button', { name: 'Close tour' } ) );
 
 		await waitFor( () => expect( write.count ).toBe( 1 ) );
 		await settle();
