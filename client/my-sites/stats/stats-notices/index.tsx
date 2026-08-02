@@ -118,7 +118,8 @@ const NewStatsNotices = ( { siteId, isOdysseyStats, statsPurchaseSuccess }: Stat
 	);
 
 	// Show the paywall notice if the site has reached the monthly views limit
-	// and no commercial purchase.
+	// and no commercial purchase. Inert while COMMERCIAL_PAYWALL_KILLED is true (STATS-387),
+	// which keeps the notice on its dismissible upgrade variant.
 	const showPaywallNotice =
 		useSelector( ( state ) => {
 			return shouldShowPaywallNotice( state, siteId );

@@ -113,6 +113,13 @@ export const hasSupportedVideoPressUse = ( state: object, siteId: number | null 
 };
 
 export const shouldShowPaywallNotice = ( state: object, siteId: number | null ): boolean => {
+	// `paywall_date_from` is only set for sites carrying the commercial paywall sticker, which
+	// the client ignores. Suppressing it here keeps the upgrade notice on its dismissible
+	// variant instead of escalating to the non-dismissible lockout banner.
+	if ( COMMERCIAL_PAYWALL_KILLED ) {
+		return false;
+	}
+
 	return (
 		! hasSupportedCommercialUse( state, siteId ) && getShouldShowPaywallNotice( state, siteId )
 	);
