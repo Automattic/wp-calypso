@@ -169,6 +169,8 @@ export function readCheckoutPaymentMethodSlug( slug: string ): CheckoutPaymentMe
 		case 'apple-pay':
 		case 'google-pay':
 			return 'web-pay';
+		case 'stripe-link':
+			return 'stripe-link';
 	}
 	return null;
 }

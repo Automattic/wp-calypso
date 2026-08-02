@@ -33,6 +33,7 @@ import {
 import { createWeChatMethod } from '../../payment-methods/wechat';
 import useCreateExistingCards from './use-create-existing-cards';
 import useCreateExistingPayPalPPCP from './use-create-existing-paypal-ppcp';
+import useCreateStripeLink from './use-create-stripe-link';
 import type { StripeConfiguration, StripeLoadingError } from '@automattic/calypso-stripe';
 import type { PaymentMethod } from '@automattic/composite-checkout';
 import type { CartKey } from '@automattic/shopping-cart';
@@ -505,6 +506,12 @@ export default function useCreatePaymentMethods( {
 		stripeLoadingError,
 	} );
 
+	const stripeLinkMethod = useCreateStripeLink( {
+		isStripeLoading,
+		stripeLoadingError,
+		stripe,
+	} );
+
 	// The order of this array is the order that Payment Methods will be
 	// displayed in Checkout, although not all payment methods here will be
 	// listed; the list of allowed payment methods is returned by the shopping
@@ -515,6 +522,7 @@ export default function useCreatePaymentMethods( {
 		...existingPayPalPPCPMethods,
 		applePayMethod,
 		googlePayMethod,
+		stripeLinkMethod,
 		stripeMethod,
 		freePaymentMethod,
 		paypalExpressMethod,
@@ -540,6 +548,7 @@ export default function useCreatePaymentMethods( {
 			...existingPayPalPPCPMethods,
 			applePayMethod,
 			googlePayMethod,
+			stripeLinkMethod,
 			paypalExpressMethod,
 			paypalPPCPMethod,
 			stripeMethod,

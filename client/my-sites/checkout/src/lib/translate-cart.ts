@@ -1,3 +1,4 @@
+import { isEnabled } from '@automattic/calypso-config';
 import {
 	isGoogleWorkspaceExtraLicence,
 	isGSuiteOrGoogleWorkspaceProductSlug,
@@ -37,6 +38,12 @@ export function translateResponseCartToWPCOMCart( serverCart: ResponseCart ): WP
 		.map( readWPCOMPaymentMethodClass )
 		.filter( isValueTruthy )
 		.map( translateWpcomPaymentMethodToCheckoutPaymentMethod );
+
+	// Spike: inject stripe-link directly since there is no backend class yet.
+	// Remove this when SHILL-2100 adds WPCOM_Billing_Stripe_Link.
+	if ( isEnabled( 'checkout/stripe-link' ) ) {
+		allowedPaymentMethods.push( 'stripe-link' );
+	}
 
 	return {
 		allowedPaymentMethods,
