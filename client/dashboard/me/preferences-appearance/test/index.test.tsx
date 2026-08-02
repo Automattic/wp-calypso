@@ -74,7 +74,6 @@ function renderPreferencesAppearance( {
 }
 
 beforeEach( () => {
-	queryClient.clear();
 	queryClient.setDefaultOptions( {
 		queries: { retry: false },
 	} );

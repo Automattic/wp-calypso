@@ -28,10 +28,6 @@ const cancelButton = () => screen.findByRole( 'button', { name: 'Cancel' } );
 const renderScreen = () => render( <SecurityLegacyContact />, { queryClient } );
 
 describe( '<SecurityLegacyContact />', () => {
-	beforeEach( () => {
-		queryClient.clear();
-	} );
-
 	test( 'shows the existing contact and a remove button', async () => {
 		interceptContacts( [ CONTACT ] );
 

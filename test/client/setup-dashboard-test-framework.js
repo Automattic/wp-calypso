@@ -2,6 +2,7 @@ import '@testing-library/jest-dom';
 
 const { TextEncoder, TextDecoder } = require( 'util' );
 const nock = require( 'nock' );
+const { queryClient } = require( '@automattic/api-queries' );
 
 // Fail any network requests which aren't mocked.
 nock.disableNetConnect();
@@ -9,6 +10,7 @@ nock.disableNetConnect();
 afterEach( () => {
 	nock.cleanAll();
 	jest.clearAllMocks();
+	queryClient.clear();
 } );
 
 // Define TextEncoder for ReactDOMServer

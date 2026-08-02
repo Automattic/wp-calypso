@@ -28,10 +28,6 @@ const interceptContact = ( contact: typeof CONTACT_WITH_KEY ) =>
 const renderScreen = () => render( <SecurityLegacyContactPrint />, { queryClient } );
 
 describe( '<SecurityLegacyContactPrint />', () => {
-	beforeEach( () => {
-		queryClient.clear();
-	} );
-
 	test( 'shows the contact details and how to claim access', async () => {
 		interceptContacts( [ CONTACT ] );
 		interceptContact( CONTACT_WITH_KEY );

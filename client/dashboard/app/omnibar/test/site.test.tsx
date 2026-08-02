@@ -20,10 +20,6 @@ function flush() {
 }
 
 describe( 'useSyncOmnibarSite', () => {
-	afterEach( () => {
-		queryClient.clear();
-	} );
-
 	test( 'records the recent site only once when the preference write keeps failing', async () => {
 		queryClient.setQueryData( AUTH_QUERY_KEY, { ID: 1, primary_blog: 123 } as User );
 

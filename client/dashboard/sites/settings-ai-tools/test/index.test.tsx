@@ -165,7 +165,6 @@ function mockClipboard() {
 
 beforeEach( () => {
 	clipboardWriteText = jest.fn().mockResolvedValue( undefined );
-	queryClient.clear();
 	queryClient.setDefaultOptions( {
 		queries: {
 			retry: false,
