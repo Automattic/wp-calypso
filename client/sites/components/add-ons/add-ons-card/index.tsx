@@ -95,6 +95,9 @@ const Container = styled.div`
 			align-items: center;
 			gap: 0.5em;
 			font-size: 13px;
+			// Match the action button's height so the footer is the same height with or
+			// without a button, keeping the status text aligned across cards.
+			min-height: 36px;
 
 			.add-ons-card__checkmark {
 				color: var( --studio-green-30 );
