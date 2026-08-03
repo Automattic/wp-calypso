@@ -7,6 +7,7 @@ import {
 	DashboardSnackbarComponent,
 	DataHelper,
 	DomainSearchComponent,
+	LaunchCelebrationComponent,
 	LoginPage,
 	NewSiteResponse,
 	NewUserResponse,
@@ -99,32 +100,32 @@ test.describe(
 			} );
 
 			await test.step( 'Then prices are shown in GBP', async () => {
-				const cartAmount = ( await cartCheckoutPage!.getCheckoutTotalAmount( {
+				const cartAmount = ( await cartCheckoutPage.getCheckoutTotalAmount( {
 					rawString: true,
 				} ) ) as string;
 				expect( cartAmount.startsWith( '£' ) ).toBe( true );
 			} );
 
 			await test.step( 'When I apply coupon', async () => {
-				originalAmount = ( await cartCheckoutPage!.getCheckoutTotalAmount() ) as number;
-				await cartCheckoutPage!.enterCouponCode( SecretsManager.secrets.testCouponCode );
+				originalAmount = ( await cartCheckoutPage.getCheckoutTotalAmount() ) as number;
+				await cartCheckoutPage.enterCouponCode( SecretsManager.secrets.testCouponCode );
 			} );
 
 			await test.step( 'Then the coupon reduces the purchase amount', async () => {
-				const newAmount = ( await cartCheckoutPage!.getCheckoutTotalAmount() ) as number;
-				expect( newAmount ).toBeLessThan( originalAmount! );
-				const expectedAmount = originalAmount! * 0.99;
+				const newAmount = ( await cartCheckoutPage.getCheckoutTotalAmount() ) as number;
+				expect( newAmount ).toBeLessThan( originalAmount );
+				const expectedAmount = originalAmount * 0.99;
 				expect( newAmount ).toStrictEqual( expectedAmount );
 			} );
 
 			await test.step( 'When I enter billing and payment details', async () => {
 				const paymentDetails = DataHelper.getTestPaymentDetails();
-				await cartCheckoutPage!.enterBillingDetails( paymentDetails );
-				await cartCheckoutPage!.enterPaymentDetails( paymentDetails );
+				await cartCheckoutPage.enterBillingDetails( paymentDetails );
+				await cartCheckoutPage.enterPaymentDetails( paymentDetails );
 			} );
 
 			await test.step( 'When I make purchase', async () => {
-				await cartCheckoutPage!.purchase( { timeout: 90 * 1000 } );
+				await cartCheckoutPage.purchase( { timeout: 90 * 1000 } );
 			} );
 
 			await test.step( 'When I skip upsell if present', async () => {
@@ -166,7 +167,7 @@ test.describe(
 			} );
 
 			await test.step( 'Then site slug exists', async () => {
-				expect( newSiteDetails!.blog_details.site_slug ).toBeDefined();
+				expect( newSiteDetails.blog_details.site_slug ).toBeDefined();
 			} );
 
 			await test.step( 'Then site is not yet launched', async () => {
@@ -174,7 +175,7 @@ test.describe(
 				// about what the public sees, not the authenticated owner.
 				const tmpContext = await browser.newContext();
 				const tmpPage = await tmpContext.newPage();
-				await tmpPage.goto( newSiteDetails!.blog_details.url as string );
+				await tmpPage.goto( newSiteDetails.blog_details.url as string );
 				const comingSoonPage = new ComingSoonPage( tmpPage );
 				await comingSoonPage.validateComingSoonState();
 				await tmpContext.close();
@@ -183,7 +184,7 @@ test.describe(
 			await test.step( 'When I launch site from the dashboard visibility settings', async () => {
 				await page.goto(
 					DataHelper.getDashboardURL(
-						`/sites/${ newSiteDetails!.blog_details.site_slug }/settings/site-visibility`
+						`/sites/${ newSiteDetails.blog_details.site_slug }/settings/site-visibility`
 					)
 				);
 				await page.getByRole( 'link', { name: 'Launch your site' } ).click();
@@ -191,20 +192,17 @@ test.describe(
 
 			await test.step( 'When I skip domain purchase', async () => {
 				const domainSearchComponent = new DomainSearchComponent( page );
-				await domainSearchComponent.search( newSiteDetails!.blog_details.site_slug );
+				await domainSearchComponent.search( newSiteDetails.blog_details.site_slug );
 				await domainSearchComponent.skipPurchase();
 			} );
 
-			await test.step( 'Then the site is launched and publicly visible', async () => {
+			await test.step( 'Then the site launch is confirmed in the dashboard', async () => {
 				// The launch flow returns to the Multi-site Dashboard site overview.
-				await page.waitForURL( /\/sites\// );
-				// Confirm the launch took effect: a logged-out visitor no longer sees
-				// the coming-soon notice.
-				const tmpContext = await browser.newContext();
-				const tmpPage = await tmpContext.newPage();
-				await tmpPage.goto( newSiteDetails!.blog_details.url as string );
-				await expect( tmpPage.locator( ':text("Coming Soon")' ) ).toHaveCount( 0 );
-				await tmpContext.close();
+				await page.waitForURL( new RegExp( `/sites/${ newSiteDetails.blog_details.site_slug }` ) );
+				// A separate spec covers whether the site is actually public; here we
+				// just confirm the dashboard shows the launch celebration.
+				const launchCelebration = new LaunchCelebrationComponent( page );
+				await launchCelebration.validateVisible();
 			} );
 
 			await test.step( 'When I navigate to Billing > Active upgrades', async () => {
@@ -219,7 +217,7 @@ test.describe(
 				const purchasesPage = new DashboardPurchasesPage( page );
 				await purchasesPage.clickOnPurchase(
 					`WordPress.com ${ planName }`,
-					newSiteDetails!.blog_details.site_slug
+					newSiteDetails.blog_details.site_slug
 				);
 				await purchasesPage.cancelPurchase();
 				await cancelDashboardPurchaseFlow( page, {
