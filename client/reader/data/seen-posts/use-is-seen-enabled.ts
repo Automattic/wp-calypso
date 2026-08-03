@@ -5,7 +5,14 @@ import {
 	useIsSubscribed,
 } from 'calypso/reader/data/site-subscriptions';
 import { useSelector } from 'calypso/state';
+import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
+
+const SEEN_DISABLED_ROUTES = [
+	'/activities/likes',
+	'/reader/conversations',
+	'/reader/conversations/a8c',
+];
 
 interface IsSeenEnabledArgs {
 	feedId?: number | string; // Route params arrive as strings.
@@ -22,6 +29,11 @@ export function useIsSeenEnabled( { feedId, blogId, post }: IsSeenEnabledArgs ):
 	const hasOrganization = useHasSiteSubscriptionOrganization( feedId, blogId );
 	const isWPForTeamsItem = useSelector( ( state ) => isSiteWPForTeams( state, Number( blogId ) ) );
 	const { data: subscribedLists } = useQuery( readSubscribedListsQuery() );
+	const currentRoute = useSelector( getCurrentRoute );
+
+	if ( currentRoute && SEEN_DISABLED_ROUTES.includes( currentRoute ) ) {
+		return false;
+	}
 
 	// If the post is already marked as seen, then prefer that over the subscription check.
 	if ( post?.is_seen ) {

@@ -26,6 +26,7 @@ interface SetUp {
 	isAutomattician?: boolean;
 	wpForTeamsBlogIds?: number[];
 	subscribedListFeedIds?: number[];
+	route?: string;
 }
 
 function setUp( {
@@ -33,6 +34,7 @@ function setUp( {
 	isAutomattician = false,
 	wpForTeamsBlogIds = [],
 	subscribedListFeedIds = [],
+	route,
 }: SetUp = {} ) {
 	const queryClient = new QueryClient( { defaultOptions: { queries: { retry: false } } } );
 
@@ -72,6 +74,7 @@ function setUp( {
 				wpForTeamsBlogIds.map( ( id ) => [ id, { options: { is_wpforteams_site: true } } ] )
 			),
 		},
+		route: { path: { current: route ?? null } },
 	};
 	const store = createStore( () => state );
 
@@ -259,6 +262,41 @@ describe( 'useIsSeenEnabled', () => {
 				() => useIsSeenEnabled( { feedId: FEED_ID, post: { is_seen: false } } ),
 				{ wrapper: setUp( eligible ) }
 			);
+
+			expect( result.current ).toBe( true );
+		} );
+	} );
+
+	describe( 'disabled routes', () => {
+		const eligible = { subscriptions: [ organizationSubscription ] };
+
+		it.each( [ '/activities/likes', '/reader/conversations', '/reader/conversations/a8c' ] )(
+			'returns false on %s even when the post already carries the seen flag',
+			( route ) => {
+				const { result } = renderHook(
+					() => useIsSeenEnabled( { feedId: FEED_ID, post: { is_seen: true } } ),
+					{ wrapper: setUp( { ...eligible, route } ) }
+				);
+
+				expect( result.current ).toBe( false );
+			}
+		);
+
+		it.each( [ '/activities/likes', '/reader/conversations', '/reader/conversations/a8c' ] )(
+			'returns false on %s for an automattician',
+			( route ) => {
+				const { result } = renderHook( () => useIsSeenEnabled( { feedId: FEED_ID } ), {
+					wrapper: setUp( { isAutomattician: true, route } ),
+				} );
+
+				expect( result.current ).toBe( false );
+			}
+		);
+
+		it( 'returns true on non-disabled route route when the user is otherwise eligible', () => {
+			const { result } = renderHook( () => useIsSeenEnabled( { feedId: FEED_ID } ), {
+				wrapper: setUp( { ...eligible, route: '/reader' } ),
+			} );
 
 			expect( result.current ).toBe( true );
 		} );
