@@ -10,6 +10,7 @@ const isDevelopment = process.env.NODE_ENV !== 'production';
 
 function getIndividualConfig( options = {} ) {
 	const { name, env, argv, injectPolyfill = true } = options;
+	const isLoggedOutEntry = name === 'help-center-logged-out';
 
 	const outputPath = path.join( __dirname, 'dist' );
 	const webpackConfig = getBaseWebpackConfig( env, argv );
@@ -52,10 +53,15 @@ function getIndividualConfig( options = {} ) {
 				output: path.resolve( './dist/chunks-map.json' ),
 			} ),
 			new DependencyExtractionWebpackPlugin( {
-				injectPolyfill,
+				injectPolyfill: isLoggedOutEntry ? false : injectPolyfill,
 				outputFilename: '[name].asset.json',
 				outputFormat: 'json',
+				useDefaults: ! isLoggedOutEntry,
 				requestToExternal( request ) {
+					if ( isLoggedOutEntry ) {
+						return null;
+					}
+
 					// The extraction logic will only extract a package if requestToExternal
 					// explicitly returns undefined for the given request. Null
 					// shortcuts the logic such that the package will be bundled instead.
