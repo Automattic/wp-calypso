@@ -3,6 +3,9 @@
  */
 import fs from 'fs';
 import path from 'path';
+import chroma from 'chroma-js';
+import postcss from 'postcss';
+import postcssScss from 'postcss-scss';
 
 const REPO_ROOT = path.resolve( __dirname, '../../../..' );
 const SCHEME_DIR = path.join(
@@ -22,29 +25,14 @@ const MIN_RATIO = 3;
 
 const readDeclarations = ( file: string ) => {
 	const map = new Map< string, string >();
-	for ( const line of fs.readFileSync( file, 'utf8' ).split( '\n' ) ) {
-		const match = line.match( /^\s*(--[\w-]+):\s*([^;]+);/ );
-		if ( match ) {
-			map.set( match[ 1 ], match[ 2 ].trim() );
-		}
-	}
+	const root = postcssScss.parse( fs.readFileSync( file, 'utf8' ) );
+	root.walkDecls( /^--/, ( decl ) => {
+		map.set( decl.prop, decl.value.trim() );
+	} );
 	return map;
 };
 
-const luminance = ( hex: string ) => {
-	const channels = [ 0, 2, 4 ].map(
-		( offset ) => parseInt( hex.slice( offset + 1, offset + 3 ), 16 ) / 255
-	);
-	const [ r, g, b ] = channels.map( ( c ) =>
-		c <= 0.03928 ? c / 12.92 : ( ( c + 0.055 ) / 1.055 ) ** 2.4
-	);
-	return 0.2126 * r + 0.7152 * g + 0.0722 * b;
-};
-
-const contrast = ( a: string, b: string ) => {
-	const [ hi, lo ] = [ luminance( a ), luminance( b ) ].sort( ( x, y ) => y - x );
-	return ( hi + 0.05 ) / ( lo + 0.05 );
-};
+const contrast = ( a: string, b: string ) => chroma.contrast( a, b );
 
 const palette = readDeclarations( PALETTE );
 const colorStudio = readDeclarations( COLOR_STUDIO );
@@ -102,61 +90,75 @@ const tokenValue = ( scheme: string, token: string ) => {
 };
 
 const chartStyle = fs.readFileSync( CHART_STYLE, 'utf8' );
+const chartStyleRoot = postcssScss.parse( chartStyle );
 
-const topLevelBlock = ( selector: string ) => {
-	const start = chartStyle.search( new RegExp( `^\\${ selector } \\{$`, 'm' ) );
-	if ( start === -1 ) {
-		throw new Error( `No top-level block for ${ selector } in chart/style.scss` );
+const directRule = ( container: postcss.Container, selector: string ) => {
+	const found = container.nodes?.find(
+		( node ): node is postcss.Rule => node.type === 'rule' && node.selector === selector
+	);
+	if ( ! found ) {
+		throw new Error( `No rule found for ${ selector } in chart/style.scss` );
 	}
-	return chartStyle.slice( start, chartStyle.indexOf( '\n}', start ) );
+	return found;
 };
 
-const backgroundToken = ( block: string, label: string ) => {
-	const match = block.match( /background(?:-color)?:\s*var\(\s*(--[\w-]+)\s*\)/ );
-	if ( ! match ) {
+const backgroundToken = ( rule: postcss.Rule, label: string ) => {
+	let token: string | null = null;
+	rule.each( ( node ) => {
+		if ( node.type === 'decl' && /^background(-color)?$/.test( node.prop ) ) {
+			const match = node.value.match( /var\(\s*(--[\w-]+)\s*\)/ );
+			if ( match ) {
+				token = match[ 1 ];
+			}
+		}
+	} );
+	if ( ! token ) {
 		throw new Error( `No background custom property found for ${ label }` );
 	}
-	return match[ 1 ];
+	return token;
 };
 
-const legendBlock = chartStyle.slice(
-	chartStyle.indexOf( '.chart__legend-color {' ),
-	chartStyle.indexOf( '.chart__legend-checkbox' )
-);
+const legendOptionRule = directRule( chartStyleRoot, '.chart__legend-option' );
+const legendColorRule = directRule( legendOptionRule, '.chart__legend-color' );
+const legendSecondaryRule = directRule( legendColorRule, '&.is-secondary' );
 
 const SERIES = {
-	viewsBar: backgroundToken( topLevelBlock( '.chart__bar-section' ), 'views bar' ),
-	visitorsBar: backgroundToken( topLevelBlock( '.chart__bar-section-inner' ), 'visitors bar' ),
-	viewsSwatch: backgroundToken( legendBlock, 'views legend swatch' ),
-	visitorsSwatch: backgroundToken(
-		legendBlock.slice( legendBlock.indexOf( '&.is-secondary' ) ),
-		'visitors legend swatch'
+	viewsBar: backgroundToken( directRule( chartStyleRoot, '.chart__bar-section' ), 'views bar' ),
+	visitorsBar: backgroundToken(
+		directRule( chartStyleRoot, '.chart__bar-section-inner' ),
+		'visitors bar'
 	),
+	viewsSwatch: backgroundToken( legendColorRule, 'views legend swatch' ),
+	visitorsSwatch: backgroundToken( legendSecondaryRule, 'visitors legend swatch' ),
 };
 
 type SeriesPair = { views: string; visitors: string };
 
-const parseSeriesBody = ( body: string ): SeriesPair => {
-	const values: Partial< Record< 'views' | 'visitors', string > > = {};
-	for ( const match of body.matchAll( /--chart-series-(views|visitors):\s*(var\([^)]+\));/g ) ) {
-		values[ match[ 1 ] as 'views' | 'visitors' ] = match[ 2 ];
-	}
-	if ( ! values.views || ! values.visitors ) {
-		throw new Error( `Incomplete chart-series rule in chart/style.scss: ${ body }` );
-	}
-	return { views: values.views, visitors: values.visitors };
-};
-
-const parseSeriesRules = ( source: string ) => {
-	const ruleRegex =
-		/^((?:(?:\.color-scheme\.is-[\w-]+|:root)(?:,\n)?)+) \{\n((?:\t--chart-series-[\w-]+:[^\n]+;\n)+)\}$/gm;
+const parseSeriesRules = ( root: postcss.Root ) => {
 	let base: SeriesPair | null = null;
 	const overrides = new Map< string, SeriesPair >();
-	let match: RegExpExecArray | null;
-	while ( ( match = ruleRegex.exec( source ) ) !== null ) {
-		const [ , selectorList, body ] = match;
-		const pair = parseSeriesBody( body );
-		for ( const selector of selectorList.split( ',' ).map( ( s ) => s.trim() ) ) {
+	root.each( ( node ) => {
+		if ( node.type !== 'rule' ) {
+			return;
+		}
+		const values: Partial< Record< 'views' | 'visitors', string > > = {};
+		node.each( ( child ) => {
+			if ( child.type !== 'decl' ) {
+				return;
+			}
+			const match = child.prop.match( /^--chart-series-(views|visitors)$/ );
+			if ( match ) {
+				values[ match[ 1 ] as 'views' | 'visitors' ] = child.value.trim();
+			}
+		} );
+		if ( ! values.views && ! values.visitors ) {
+			return;
+		}
+		if ( ! values.views || ! values.visitors ) {
+			throw new Error( `Incomplete chart-series rule in chart/style.scss: ${ node.selector }` );
+		}
+		const pair: SeriesPair = { views: values.views, visitors: values.visitors };
+		for ( const selector of node.selectors ) {
 			if ( selector === ':root' ) {
 				base = pair;
 				continue;
@@ -166,14 +168,14 @@ const parseSeriesRules = ( source: string ) => {
 				overrides.set( schemeMatch[ 1 ], pair );
 			}
 		}
-	}
+	} );
 	if ( ! base ) {
 		throw new Error( 'No :root base chart-series rule found in chart/style.scss' );
 	}
 	return { base, overrides };
 };
 
-const { base: baseSeriesPair, overrides: seriesOverrides } = parseSeriesRules( chartStyle );
+const { base: baseSeriesPair, overrides: seriesOverrides } = parseSeriesRules( chartStyleRoot );
 
 const pairForScheme = ( scheme: string ): SeriesPair =>
 	seriesOverrides.get( scheme ) ?? baseSeriesPair;
