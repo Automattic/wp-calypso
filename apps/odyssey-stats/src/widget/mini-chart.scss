@@ -1,7 +1,5 @@
 @import "@automattic/typography/styles/variables";
 
-$barDarkColor: var(--color-primary-60);
-
 .stats-widget-minichart {
 	border-bottom: 1px solid #c3c4c7;
 
@@ -17,7 +15,7 @@ $barDarkColor: var(--color-primary-60);
 			&,
 			&:hover {
 				.chart__bar-section {
-					background-color: var(--studio-blue-0);
+					background-color: var(--color-accent-0);
 				}
 			}
 		}
@@ -56,10 +54,6 @@ $barDarkColor: var(--color-primary-60);
 			height: 14px;
 			vertical-align: middle;
 			margin-top: -3px;
-
-			&.is-secondary {
-				background-color: $barDarkColor;
-			}
 		}
 	}
 
@@ -89,10 +83,6 @@ $barDarkColor: var(--color-primary-60);
 			color: var(--color-neutral-60);
 			white-space: nowrap;
 		}
-	}
-
-	.chart__bar-section-inner {
-		background-color: $barDarkColor;
 	}
 
 	.stats__empty-state {
