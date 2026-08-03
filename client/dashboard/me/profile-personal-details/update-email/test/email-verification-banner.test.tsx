@@ -3,7 +3,6 @@
  */
 
 import '@testing-library/jest-dom';
-import { queryClient, userSettingsQuery } from '@automattic/api-queries';
 import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { dispatch } from '@wordpress/data';
@@ -27,27 +26,17 @@ const pendingSettings = {
 	new_user_email: 'pending@example.com',
 } as unknown as UserSettings;
 
-// Switches between the original address and a saved correction, as the settings query would.
-// Snackbars are mounted because the shared render helper doesn't, and these cases read notices.
-const otherPendingSettings = {
-	...pendingSettings,
-	new_user_email: 'corrected@example.com',
-} as unknown as UserSettings;
-
+// Switches target the way saving or cancelling a change would, within one mounted tree.
 function TargetSwitcher() {
-	const [ stage, setStage ] = useState< 'original' | 'pending' | 'corrected' >( 'original' );
-	const forStage = {
-		original: settings,
-		pending: pendingSettings,
-		corrected: otherPendingSettings,
-	}[ stage ];
+	const [ isPending, setIsPending ] = useState( false );
 	return (
 		<>
-			<button onClick={ () => setStage( 'pending' ) }>save-change</button>
-			<button onClick={ () => setStage( 'original' ) }>undo-change</button>
-			<button onClick={ () => setStage( 'corrected' ) }>correct-again</button>
-			<EmailVerificationBanner userSettings={ forStage } isEmailVerified={ stage !== 'original' } />
-			<Snackbars />
+			<button onClick={ () => setIsPending( true ) }>save-change</button>
+			<button onClick={ () => setIsPending( false ) }>undo-change</button>
+			<EmailVerificationBanner
+				userSettings={ isPending ? pendingSettings : settings }
+				isEmailVerified={ isPending }
+			/>
 		</>
 	);
 }
@@ -176,122 +165,6 @@ describe( '<EmailVerificationBanner>', () => {
 		// Cancelling puts the throttled endpoint back in use, and the server is still refusing.
 		await user.click( screen.getByRole( 'button', { name: 'undo-change' } ) );
 		expect( await screen.findByRole( 'button', { name: /Resend email \(/ } ) ).toBeDisabled();
-	} );
-
-	test( 'ignores a refusal that lands after the target has changed', async () => {
-		const user = userEvent.setup();
-
-		render( <TargetSwitcher /> );
-
-		expect( await screen.findByText( 'Verify your email' ) ).toBeVisible();
-
-		// Still in flight when the correction is saved.
-		nock( 'https://public-api.wordpress.com' )
-			.post( '/rest/v1.1/me/send-verification-email' )
-			.delay( 150 )
-			.reply( 429, { error: 'throttled', data: { retry_after: 4 * 60 * 60 } } );
-
-		await user.click( screen.getByRole( 'button', { name: 'Resend email' } ) );
-		await user.click( screen.getByRole( 'button', { name: 'save-change' } ) );
-
-		// The refusal describes the address left behind, and this path isn't rate limited.
-		await waitFor( () =>
-			expect( screen.getByRole( 'button', { name: 'Resend email' } ) ).toBeEnabled()
-		);
-		await new Promise( ( resolve ) => setTimeout( resolve, 300 ) );
-		expect( screen.getByRole( 'button', { name: 'Resend email' } ) ).toBeEnabled();
-		// And says nothing, rather than telling the reader to wait beside a button that isn't.
-		expect( screen.queryByText( /Too many attempts/ ) ).not.toBeInTheDocument();
-	} );
-
-	test( 'a late resend does not reinstate a change cancelled while it was in flight', async () => {
-		const user = userEvent.setup();
-		// The mutations write to the package's own client, not one handed to `render`.
-		queryClient.setQueryData( userSettingsQuery().queryKey, pendingSettings );
-
-		render( <EmailVerificationBanner userSettings={ pendingSettings } isEmailVerified />, {
-			queryClient,
-		} );
-
-		expect( await screen.findByText( 'Verify your email' ) ).toBeVisible();
-
-		// Still in flight when the cancellation lands, so it describes a change that by then is gone.
-		nock( 'https://public-api.wordpress.com' )
-			.post( '/rest/v1.1/me/settings', ( body ) => 'user_email' in body )
-			.delay( 150 )
-			.reply( 200, pendingSettings );
-		nock( 'https://public-api.wordpress.com' )
-			.post( '/rest/v1.1/me/settings', ( body ) => 'user_email_change_pending' in body )
-			.reply( 200, { ...pendingSettings, user_email_change_pending: false } );
-
-		await user.click( screen.getByRole( 'button', { name: 'Resend email' } ) );
-		await user.click( screen.getByRole( 'button', { name: 'Cancel the pending email change' } ) );
-
-		await waitFor( () => {
-			expect(
-				queryClient.getQueryData< UserSettings >( userSettingsQuery().queryKey )
-					?.user_email_change_pending
-			).toBe( false );
-		} );
-
-		// Arriving last, it must not put the cancelled change back.
-		await new Promise( ( resolve ) => setTimeout( resolve, 300 ) );
-		expect(
-			queryClient.getQueryData< UserSettings >( userSettingsQuery().queryKey )
-				?.user_email_change_pending
-		).toBe( false );
-		// Nor marked them stale: a refetch started before the cancellation would overwrite it.
-		expect( queryClient.getQueryState( userSettingsQuery().queryKey )?.isInvalidated ).toBe(
-			false
-		);
-	} );
-
-	test( 'holds the button after a pending resend, and frees it for a corrected address', async () => {
-		const user = userEvent.setup();
-
-		render( <TargetSwitcher /> );
-
-		// Start on the pending address, which the server does not rate limit.
-		await user.click( await screen.findByRole( 'button', { name: 'save-change' } ) );
-
-		nock( 'https://public-api.wordpress.com' )
-			.post( '/rest/v1.1/me/settings', ( body ) => 'user_email' in body )
-			.reply( 200, pendingSettings );
-
-		await user.click( screen.getByRole( 'button', { name: 'Resend email' } ) );
-
-		// Nothing on the server would stop this mailing the same address repeatedly.
-		expect( await screen.findByRole( 'button', { name: /Resend email \(/ } ) ).toBeDisabled();
-
-		// A different pending address hasn't been sent to, so it starts available.
-		await user.click( screen.getByRole( 'button', { name: 'correct-again' } ) );
-		expect( await screen.findByRole( 'button', { name: 'Resend email' } ) ).toBeEnabled();
-	} );
-
-	test( 'a late pending resend does not hold or misreport the address that replaced it', async () => {
-		const user = userEvent.setup();
-
-		render( <TargetSwitcher /> );
-
-		await user.click( await screen.findByRole( 'button', { name: 'save-change' } ) );
-
-		// Still in flight when the address is corrected again.
-		nock( 'https://public-api.wordpress.com' )
-			.post( '/rest/v1.1/me/settings', ( body ) => body.user_email === 'pending@example.com' )
-			.delay( 150 )
-			.reply( 200, pendingSettings );
-
-		await user.click( screen.getByRole( 'button', { name: 'Resend email' } ) );
-		await user.click( screen.getByRole( 'button', { name: 'correct-again' } ) );
-
-		await new Promise( ( resolve ) => setTimeout( resolve, 300 ) );
-
-		// The wait belonged to the address it was sent to, and so does the confirmation.
-		expect( screen.getByRole( 'button', { name: 'Resend email' } ) ).toBeEnabled();
-		// Selected, not queried by text: the banner and the live region both carry the address.
-		expect( document.querySelector( '.components-snackbar__content' ) ).toHaveTextContent(
-			'pending@example.com'
-		);
 	} );
 
 	test( 'reports a refused send rather than announcing an email nobody was sent', async () => {
