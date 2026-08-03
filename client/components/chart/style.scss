@@ -11,6 +11,7 @@ $year-bar-chart-border-radius: 4px;
 :root {
 	--chart-series-views: var(--color-accent-40);
 	--chart-series-visitors: var(--color-accent-90);
+	--chart-line-visitors: var(--color-accent-dark);
 }
 
 .color-scheme.is-classic-bright,
@@ -60,6 +61,33 @@ $year-bar-chart-border-radius: 4px;
 .color-scheme.is-contrast {
 	--chart-series-views: var(--color-accent-50);
 	--chart-series-visitors: var(--color-accent-100);
+}
+
+.color-scheme.is-aquatic,
+.color-scheme.is-blue,
+.color-scheme.is-classic-blue,
+.color-scheme.is-coffee,
+.color-scheme.is-contrast,
+.color-scheme.is-default,
+.color-scheme.is-ectoplasm,
+.color-scheme.is-fresh,
+.color-scheme.is-jetpack-cloud,
+.color-scheme.is-light,
+.color-scheme.is-nightfall,
+.color-scheme.is-ocean,
+.color-scheme.is-powder-snow,
+.color-scheme.is-sakura,
+.color-scheme.is-sunrise,
+.color-scheme.is-sunset {
+	--chart-line-visitors: var(--color-accent-dark);
+}
+
+.color-scheme.is-classic-bright,
+.color-scheme.is-classic-dark,
+.color-scheme.is-global,
+.color-scheme.is-midnight,
+.color-scheme.is-modern {
+	--chart-line-visitors: var(--color-accent-80);
 }
 
 // Chart
