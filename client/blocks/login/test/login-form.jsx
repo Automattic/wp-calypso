@@ -68,6 +68,24 @@ describe( 'LoginForm', () => {
 		expect( notice ).toBeInTheDocument();
 	} );
 
+	test( 'displays notice when isFromNewUserEmailConfirmation is true', async () => {
+		render( <LoginForm isFromNewUserEmailConfirmation /> );
+
+		const notice = screen.getByText(
+			/Please log in using the original email address for your account, not the updated email address you are verifying/i
+		);
+		expect( notice ).toBeInTheDocument();
+	} );
+
+	test( 'does not display the new user email notice by default', async () => {
+		render( <LoginForm /> );
+
+		const notice = screen.queryByText(
+			/Please log in using the original email address for your account, not the updated email address you are verifying/i
+		);
+		expect( notice ).not.toBeInTheDocument();
+	} );
+
 	test( 'hides the notice when username input is changed', async () => {
 		render( <LoginForm />, {
 			initialState: { login: { socialAccountLink: { isLinking: true } } },
