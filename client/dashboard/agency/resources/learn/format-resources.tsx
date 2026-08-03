@@ -25,7 +25,7 @@ function getProductLogo( relatedProduct: string ): ReactNode | null {
 		return null;
 	}
 
-	return <img src={ logo.src } alt={ logo.alt } style={ { width: 'auto', height: '16px' } } />;
+	return <img src={ logo.src } alt={ logo.alt } style={ { width: 'auto', height: '24px' } } />;
 }
 
 /**
