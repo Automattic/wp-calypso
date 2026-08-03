@@ -26,21 +26,6 @@ const pendingSettings = {
 	new_user_email: 'pending@example.com',
 } as unknown as UserSettings;
 
-// Switches target the way saving or cancelling a change would, within one mounted tree.
-function TargetSwitcher() {
-	const [ isPending, setIsPending ] = useState( false );
-	return (
-		<>
-			<button onClick={ () => setIsPending( true ) }>save-change</button>
-			<button onClick={ () => setIsPending( false ) }>undo-change</button>
-			<EmailVerificationBanner
-				userSettings={ isPending ? pendingSettings : settings }
-				isEmailVerified={ isPending }
-			/>
-		</>
-	);
-}
-
 const notificationSnackBar = () => {
 	// Snackbar requires a custom matcher because its aria-live is not supported by the testing library
 	return document.getElementById( 'a11y-speak-polite' );
@@ -157,8 +142,23 @@ describe( '<EmailVerificationBanner>', () => {
 	test( 'sets a cooldown aside while a pending change is in play, then applies it again', async () => {
 		const user = userEvent.setup();
 
-		// Stands in for the settings query updating after a correction is saved.
-		render( <TargetSwitcher /> );
+		// The wait lives in the banner, so it has to survive the settings changing underneath it.
+		// Nothing in the banner switches its own target and `render` builds a route from the
+		// element it is given, so the change has to come from a parent held across the mount.
+		function BannerWithSwitchableTarget() {
+			const [ isPending, setIsPending ] = useState( false );
+			return (
+				<>
+					<button onClick={ () => setIsPending( ( current ) => ! current ) }>switch-target</button>
+					<EmailVerificationBanner
+						userSettings={ isPending ? pendingSettings : settings }
+						isEmailVerified={ isPending }
+					/>
+				</>
+			);
+		}
+
+		render( <BannerWithSwitchableTarget /> );
 
 		expect( await screen.findByText( 'Verify your email' ) ).toBeVisible();
 
@@ -169,12 +169,13 @@ describe( '<EmailVerificationBanner>', () => {
 		await user.click( screen.getByRole( 'button', { name: 'Resend email' } ) );
 		expect( await screen.findByRole( 'button', { name: /Resend email \(/ } ) ).toBeDisabled();
 
-		// The pending-change path isn't rate limited, so the wait doesn't apply there.
-		await user.click( screen.getByRole( 'button', { name: 'save-change' } ) );
+		// A saved correction. The pending-change path isn't rate limited, so the wait doesn't
+		// apply there.
+		await user.click( screen.getByRole( 'button', { name: 'switch-target' } ) );
 		expect( await screen.findByRole( 'button', { name: 'Resend email' } ) ).toBeEnabled();
 
 		// Cancelling puts the throttled endpoint back in use, and the server is still refusing.
-		await user.click( screen.getByRole( 'button', { name: 'undo-change' } ) );
+		await user.click( screen.getByRole( 'button', { name: 'switch-target' } ) );
 		expect( await screen.findByRole( 'button', { name: /Resend email \(/ } ) ).toBeDisabled();
 	} );
 
