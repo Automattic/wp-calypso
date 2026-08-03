@@ -210,9 +210,11 @@ const NoteList = ( { filterName, selectedNoteId, setSelectedNoteId }: NoteListPr
 
 	// `groupBy` forces DataViews' list layout off its infinite-scroll path, which
 	// is the only path that renders its built-in load-more spinner — so we render
-	// our own at the foot of the list while a page is in flight over an
-	// already-populated list. An empty list uses the `empty` slot above instead.
-	const showLoadMore = tab.isLoading && data.length > 0;
+	// our own at the foot of the list. Key it on "more to load" rather than the
+	// in-flight fetch so it's already present when the bottom scrolls into view,
+	// not a beat later once `loadMore` dispatches. An empty list uses the `empty`
+	// slot above instead.
+	const showLoadMore = hasMoreNotes && data.length > 0;
 
 	// Full-panel spinner until this tab's first load settles; after that DataViews
 	// is mounted and in-flight loading shows in the `empty` slot or the foot.
