@@ -60,9 +60,9 @@ test.describe(
 			page,
 			browser,
 		} ) => {
-			// Dominant waits: the 90s purchase, the launch flow's two domain-search
-			// settles, and the 60s cancel-and-refund round-trip, on top of signup,
-			// onboarding and launch. 300s leaves margin the 120s default cannot give.
+			// ~245s of dominant waits (90s purchase + 30s launchpad + 30s notice +
+			// the domain-search settle) plus signup, onboarding and launch; 300s
+			// leaves margin the 120s default cannot give.
 			test.setTimeout( 300 * 1000 );
 
 			let cartCheckoutPage: CartCheckoutPage;
