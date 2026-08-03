@@ -63,7 +63,7 @@ test.describe( 'Authentication: Blackbox login allow', { tag: [ tags.AUTHENTICAT
 			// The redirect only fires once remoteLoginUser has settled its token-link
 			// iframes, which it allows 25s each, and is then a full page load. Budget
 			// past that and wait for the URL to change rather than for it to load.
-			await page.waitForURL( ( url ) => ! /log-in/.test( url.toString() ), {
+			await page.waitForURL( ( url ) => ! url.pathname.includes( '/log-in' ), {
 				waitUntil: 'commit',
 				timeout: 60 * 1000,
 			} );
