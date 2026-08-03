@@ -1,5 +1,5 @@
 import { useFeatureConfig } from '../contexts/HelpCenterContext';
-import { useSupportStatus } from '../data/use-support-status';
+import { useHelpCenterCTAQuery } from '../data/use-help-center-cta';
 import type { HelpCenterCTAProps, HelpCenterCTAVariant } from '../components/help-center-cta';
 
 /**
@@ -24,9 +24,7 @@ function isSafeUrl( url: string ): boolean {
  */
 export function useHelpCenterCTA( variant: HelpCenterCTAVariant ): HelpCenterCTAProps | null {
 	const featureConfig = useFeatureConfig();
-	const { data, isLoading } = useSupportStatus( featureConfig.contextualCta.enabled );
-
-	const cta = data?.cta;
+	const { data: cta, isLoading } = useHelpCenterCTAQuery( featureConfig.contextualCta.enabled );
 
 	if ( ! featureConfig.contextualCta.enabled || isLoading || ! cta ) {
 		return null;

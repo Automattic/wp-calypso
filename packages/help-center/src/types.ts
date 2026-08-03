@@ -83,7 +83,7 @@ interface Eligibility {
 	unified_agent_enabled?: boolean;
 }
 
-interface SupportStatusCTA {
+export interface HelpCenterCTAData {
 	id: string;
 	variant: string;
 	url: string;
@@ -99,8 +99,6 @@ interface SupportStatusCTA {
 export interface SupportStatus {
 	eligibility: Eligibility;
 	availability: Availability;
-	/** Absent when the user is not eligible for any contextual CTA. */
-	cta?: SupportStatusCTA;
 }
 
 export interface SupportActivity {
