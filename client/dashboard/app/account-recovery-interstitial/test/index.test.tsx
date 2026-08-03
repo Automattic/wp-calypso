@@ -34,6 +34,16 @@ const EMAIL_ONLY_RECOVERY = {
 	phone_validated: false,
 } as AccountRecovery;
 
+// A validated recovery email that is the same address as the account email — it provides no
+// verification value, so it must not count as a recovery method.
+const ACCOUNT_EMAIL = 'owner@example.com';
+const SELF_MATCHING_RECOVERY = {
+	email: ACCOUNT_EMAIL,
+	email_validated: true,
+	phone: null,
+	phone_validated: false,
+} as AccountRecovery;
+
 function mockAccountRecovery( data: AccountRecovery ) {
 	return nock( 'https://public-api.wordpress.com' )
 		.get( '/rest/v1.1/me/account-recovery' )
@@ -155,6 +165,31 @@ describe( '<AccountRecoveryInterstitial>', () => {
 			{
 				security_level: 'partial-has-recovery',
 				has_recovery_email: true,
+				has_recovery_phone: false,
+				has_two_factor: false,
+				has_backup_codes: false,
+			}
+		);
+	} );
+
+	test( 'does not count a recovery email that matches the account email', async () => {
+		// The user has a validated recovery email, but it is the same address as their account email,
+		// and no 2FA. That email provides no recovery value, so the user should be treated as having
+		// no recovery method: the "no recovery method and no 2FA" modal is shown.
+		mockAccountRecovery( SELF_MATCHING_RECOVERY );
+		mockUserSettings( { user_email: ACCOUNT_EMAIL, two_step_enabled: false } );
+		mockPreferences();
+
+		const { recordTracksEvent } = render( <AccountRecoveryInterstitial /> );
+
+		expect(
+			await screen.findByRole( 'dialog', { name: 'Add a way back into your account' } )
+		).toBeVisible();
+		expect( recordTracksEvent ).toHaveBeenCalledWith(
+			'calypso_account_recovery_nudge_interstitial_impression',
+			{
+				security_level: 'none',
+				has_recovery_email: false,
 				has_recovery_phone: false,
 				has_two_factor: false,
 				has_backup_codes: false,

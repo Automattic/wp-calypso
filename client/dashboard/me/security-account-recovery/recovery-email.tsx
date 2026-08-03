@@ -18,6 +18,7 @@ import { Card, CardBody } from '../../components/card';
 import ConfirmModal from '../../components/confirm-modal';
 import Notice from '../../components/notice';
 import { SectionHeader } from '../../components/section-header';
+import { recoveryEmailMatchesAccountEmail } from './utils';
 import type { Field } from '@wordpress/dataviews';
 
 type SecurityEmailFormData = {
@@ -106,7 +107,13 @@ export default function RecoveryEmail() {
 		} );
 	};
 
-	const shouldShowValidationNotice = accountRecoveryEmail && ! accountRecoveryData.email_validated;
+	const emailMatchesAccountEmail = recoveryEmailMatchesAccountEmail(
+		accountRecoveryEmail,
+		serverData?.user_email
+	);
+
+	const shouldShowValidationNotice =
+		accountRecoveryEmail && ! emailMatchesAccountEmail && ! accountRecoveryData.email_validated;
 
 	const primaryEmail = serverData?.user_email ?? '';
 
@@ -122,7 +129,7 @@ export default function RecoveryEmail() {
 				isDisabled: () => isValidateEmailPending,
 				isValid: {
 					custom: ( item ) => {
-						if ( primaryEmail && item.email.toLowerCase() === primaryEmail.toLowerCase() ) {
+						if ( recoveryEmailMatchesAccountEmail( item.email, primaryEmail ) ) {
 							return __(
 								'You have entered your primary email address. Please enter a different email address.'
 							);
@@ -148,6 +155,13 @@ export default function RecoveryEmail() {
 				<CardBody>
 					<VStack spacing={ 4 }>
 						<SectionHeader title={ __( 'Recovery email' ) } level={ 3 } />
+						{ emailMatchesAccountEmail && (
+							<Notice variant="warning" title={ __( 'Use a different recovery email' ) }>
+								{ __(
+									'This recovery email is the same as your account email, so it can’t help you get back into your account. Enter a different email address.'
+								) }
+							</Notice>
+						) }
 						{ shouldShowValidationNotice && (
 							<Notice
 								variant="warning"
