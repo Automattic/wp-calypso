@@ -21,6 +21,12 @@ jest.mock( 'calypso/reader/stream/use-stream-post-key-selection', () => ( {
 	useStreamPostKeySelection: jest.fn(),
 } ) );
 
+// The seen gate reads React Query caches these tests don't provide.
+jest.mock( 'calypso/reader/data/seen-posts', () => ( {
+	useIsSeenEnabled: jest.fn( () => false ),
+	withSeenPostsMutations: ( WrappedComponent ) => WrappedComponent,
+} ) );
+
 jest.mock( 'calypso/reader/stats', () => ( {
 	recordAction: jest.fn(),
 	recordGaEvent: jest.fn(),
@@ -251,11 +257,8 @@ describe( 'FullPostView Comments API Disabled Logic', () => {
 } );
 
 describe( 'FullPostView automatic mark-as-seen on view', () => {
-	// `hasOrganization` makes `isSeenEnabled()` return true via
-	// `isEligibleForUnseen`, and the post carrying an `is_seen` field satisfies
-	// `canBeMarkedAsSeen`, so the only thing gating the request is `post.is_seen`.
 	const baseProps = {
-		hasOrganization: true,
+		isSeenEnabled: true,
 		teams: [],
 		referralStream: '',
 		setViewingFullPostKey: jest.fn(),
@@ -299,6 +302,23 @@ describe( 'FullPostView automatic mark-as-seen on view', () => {
 			requestMarkAsSeen,
 			requestMarkAsSeenBlog,
 			post: { ...feedPost, is_seen: true },
+		} );
+
+		runAttemptToSendPageView( instance );
+
+		expect( requestMarkAsSeen ).not.toHaveBeenCalled();
+		expect( requestMarkAsSeenBlog ).not.toHaveBeenCalled();
+	} );
+
+	it( 'does not hit the seen endpoint when seen is disabled for the feed', () => {
+		const requestMarkAsSeen = jest.fn();
+		const requestMarkAsSeenBlog = jest.fn();
+		const instance = new FullPostView( {
+			...baseProps,
+			isSeenEnabled: false,
+			requestMarkAsSeen,
+			requestMarkAsSeenBlog,
+			post: { ...feedPost, is_seen: false },
 		} );
 
 		runAttemptToSendPageView( instance );

@@ -38,11 +38,6 @@ export default function MoreMenuActions( {
 	const { mutate: markAllAsSeen } = useMarkAllAsSeenMutation();
 	const unsubscribeWithUndo = useUnsubscribeWithUndo();
 
-	// Remove when "Mark all as seen" is available to all users.
-	if ( ! isAutomattician ) {
-		return null;
-	}
-
 	const handleMarkAllAsSeen = () => {
 		recordReaderTracksEvent( 'calypso_reader_mark_all_as_seen_clicked', { source } );
 		markAllAsSeen( { identifier, feedIds, feedUrls } );
@@ -89,15 +84,19 @@ export default function MoreMenuActions( {
 				oldCopy: translate( 'Mark all as seen' ),
 		  } ) as string );
 
-	const markAsSeenControl = {
-		title,
-		icon: check,
-		onClick: handleMarkAllAsSeen,
-		isDisabled: unseenCount === 0,
-	};
+	const controls = [];
 
-	// Each nested set renders as its own group; DropdownMenu draws a separator before the first item of every set after the first.
-	const controls = [ [ markAsSeenControl ] ];
+	// Remove when SeenPost feature is available for all users.
+	if ( isAutomattician ) {
+		const markAsSeenControl = {
+			title,
+			icon: check,
+			onClick: handleMarkAllAsSeen,
+			isDisabled: unseenCount === 0,
+		};
+
+		controls.push( [ markAsSeenControl ] );
+	}
 
 	// Add the unsubscribe control if this is a single feed.
 	if ( isSingleFeed && feedUrls.length === 1 ) {
