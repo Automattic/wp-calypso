@@ -63,50 +63,29 @@ describe( 'createRevertedTransferWatcher', () => {
 		expect( isRevertOfThisTransfer( { status: 'reverted' } ) ).toBe( false );
 	} );
 
-	it( 'catches a transfer that rolled back before the first poll', () => {
+	it( 'leaves a transfer that was already reverted on arrival to the caller timeout', () => {
 		const isRevertOfThisTransfer = createRevertedTransferWatcher();
 
-		// Already reverting on arrival, and nothing replaces it.
-		expect( isRevertOfThisTransfer( { atomic_transfer_id: 9, status: 'reverting' } ) ).toBe(
-			false
-		);
+		// Indistinguishable from stale history without an id to correlate against.
 		expect( isRevertOfThisTransfer( { atomic_transfer_id: 9, status: 'reverting' } ) ).toBe(
 			false
 		);
 		expect( isRevertOfThisTransfer( { atomic_transfer_id: 9, status: 'reverted' } ) ).toBe( false );
 		expect( isRevertOfThisTransfer( { atomic_transfer_id: 9, status: 'reverted' } ) ).toBe( false );
-
-		// Fifth poll: nothing is coming.
-		expect( isRevertOfThisTransfer( { atomic_transfer_id: 9, status: 'reverted' } ) ).toBe( true );
 	} );
 
-	it( 'still stands down if a new transfer replaces a stale reverted one', () => {
+	it( 'never claims a stale reverted transfer, however long it stays latest', () => {
 		const isRevertOfThisTransfer = createRevertedTransferWatcher();
 
-		// Same start, but this one is history.
-		expect( isRevertOfThisTransfer( { atomic_transfer_id: 1, status: 'reverted' } ) ).toBe( false );
-		expect( isRevertOfThisTransfer( { atomic_transfer_id: 1, status: 'reverted' } ) ).toBe( false );
+		for ( let poll = 0; poll < 20; poll++ ) {
+			expect( isRevertOfThisTransfer( { atomic_transfer_id: 1, status: 'reverted' } ) ).toBe(
+				false
+			);
+		}
 
-		// Real transfer arrives in time.
+		// The real transfer arrives late and still runs normally.
 		expect( isRevertOfThisTransfer( { atomic_transfer_id: 2, status: 'pending' } ) ).toBe( false );
-
-		// Old record no longer counts.
-		expect( isRevertOfThisTransfer( { atomic_transfer_id: 2, status: 'active' } ) ).toBe( false );
-		expect( isRevertOfThisTransfer( { atomic_transfer_id: 2, status: 'completed' } ) ).toBe(
-			false
-		);
-	} );
-
-	it( 'restarts the count when a different reverted transfer appears', () => {
-		const isRevertOfThisTransfer = createRevertedTransferWatcher();
-
-		expect( isRevertOfThisTransfer( { atomic_transfer_id: 1, status: 'reverted' } ) ).toBe( false );
-		expect( isRevertOfThisTransfer( { atomic_transfer_id: 1, status: 'reverted' } ) ).toBe( false );
-		expect( isRevertOfThisTransfer( { atomic_transfer_id: 1, status: 'reverted' } ) ).toBe( false );
-		expect( isRevertOfThisTransfer( { atomic_transfer_id: 1, status: 'reverted' } ) ).toBe( false );
-
-		// Different transfer, own grace period.
-		expect( isRevertOfThisTransfer( { atomic_transfer_id: 2, status: 'reverted' } ) ).toBe( false );
+		expect( isRevertOfThisTransfer( { atomic_transfer_id: 2, status: 'reverted' } ) ).toBe( true );
 	} );
 } );
 

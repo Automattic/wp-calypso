@@ -13,25 +13,23 @@ interface PolledTransfer {
 	status?: string;
 }
 
-// ~15s at the 3s poll interval every caller uses.
-const POLLS_BEFORE_TRUSTING_A_REVERT_SEEN_ON_ARRIVAL = 5;
-
 /**
- * Tells a revert of the transfer being waited on from a revert of an older one.
- * The endpoint returns the site's latest transfer, which early on can still be a
- * previous one — re-upgrading after a downgrade is an ordinary path, and failing
- * on that would break a healthy wait.
+ * Reports a revert of the transfer being waited on, and only that.
  *
- * A revert we watched go in flight is ours. A revert already there on arrival is
- * ambiguous, so we give it a few polls: if it was stale a new transfer takes
- * over, otherwise nothing is coming and it is ours.
+ * The endpoint returns the site's latest transfer, not the one we asked about,
+ * so a revert is only ours once we have watched that same transfer id in flight.
+ * Early in a wait the latest transfer can still be an older, long-reverted one —
+ * re-upgrading after a downgrade is an ordinary path, and failing on that would
+ * break a healthy wait.
+ *
+ * Known gap: a transfer already reverted before our first poll is indistinguishable
+ * from stale history without a transfer id to correlate against, so it falls
+ * through to the caller's timeout. See DOTCOM-18112.
  *
  * One watcher per wait; call on every poll.
  */
 export function createRevertedTransferWatcher() {
 	let transferSeenInFlight: number | undefined;
-	let unexplainedRevertId: number | undefined;
-	let unexplainedRevertPolls = 0;
 
 	return function isRevertOfThisTransfer( transfer?: PolledTransfer ): boolean {
 		if ( ! transfer || transfer.atomic_transfer_id === undefined ) {
@@ -42,23 +40,10 @@ export function createRevertedTransferWatcher() {
 
 		if ( ! isRevertedTransferStatus( transfer.status ) ) {
 			transferSeenInFlight = transferId;
-			unexplainedRevertId = undefined;
-			unexplainedRevertPolls = 0;
 			return false;
 		}
 
-		if ( transferId === transferSeenInFlight ) {
-			return true;
-		}
-
-		if ( transferId !== unexplainedRevertId ) {
-			unexplainedRevertId = transferId;
-			unexplainedRevertPolls = 0;
-		}
-
-		unexplainedRevertPolls++;
-
-		return unexplainedRevertPolls >= POLLS_BEFORE_TRUSTING_A_REVERT_SEEN_ON_ARRIVAL;
+		return transferId === transferSeenInFlight;
 	};
 }
 
