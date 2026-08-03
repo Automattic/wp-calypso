@@ -1,7 +1,6 @@
 import { fetchUserSettings, sendVerificationEmail, updateUserSettings } from '@automattic/api-core';
 import { queryOptions, mutationOptions } from '@tanstack/react-query';
 import { queryClient, clearQueryClient } from './query-client';
-import type { UserSettings } from '@automattic/api-core';
 
 export const userSettingsQuery = () =>
 	queryOptions( {
@@ -45,28 +44,29 @@ export const cancelPendingEmailChangeMutation = () =>
 		},
 	} );
 
-export const resendEmailVerificationMutation = ( email: string ) =>
+// Re-saves the address already pending, which is what prompts another email.
+//
+// Deliberately leaves the settings cache alone. It changes nothing, and both writing the response
+// back and refetching can lose a race with a cancellation — either reinstating a change already
+// cancelled, or reading the settings before it lands and overwriting them afterwards.
+export const resendEmailVerificationMutation = () =>
 	mutationOptions( {
 		meta: { statId: 'email-verify-resend' },
-		mutationFn: () => updateUserSettings( { user_email: email } ),
-		onSuccess: ( newData ) => {
-			queryClient.setQueryData(
-				userSettingsQuery().queryKey,
-				( oldData ) =>
-					oldData && {
-						...oldData,
-						...newData,
-					}
-			);
-		},
+		// The address is a variable rather than closed over, so a caller can tell which request a
+		// late response belongs to.
+		mutationFn: ( email: string ) => updateUserSettings( { user_email: email } ),
 	} );
 
 export const sendEmailVerificationMutation = () =>
 	mutationOptions( {
 		meta: { statId: 'email-verify-send' },
-		// Return `{}` to match `resendEmailVerificationMutation`'s data type.
-		mutationFn: async (): Promise< Partial< UserSettings > > => {
-			await sendVerificationEmail();
-			return {};
+		// A refused send answers 200 with `success: false`. Rejected here so every caller doesn't
+		// have to know that, and so a success snackbar can't announce an email nobody was sent.
+		mutationFn: async () => {
+			const response = await sendVerificationEmail();
+			if ( ! response.success ) {
+				throw new Error( 'unsuccessful_response' );
+			}
+			return response;
 		},
 	} );

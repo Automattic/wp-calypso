@@ -1,12 +1,12 @@
 import { fetchUser } from '@automattic/api-core';
 import { useCallback, useEffect, useState } from 'react';
-import { useSendEmailVerification } from 'calypso/landing/stepper/hooks/use-send-email-verification';
-import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import {
 	resendAcceptedRetryAfter,
 	resendThrottleRetryAfter,
-} from 'calypso/lib/email-verification/resend';
-import { useResendCooldown } from 'calypso/lib/email-verification/use-resend-cooldown';
+} from 'calypso/dashboard/utils/email-verification-resend';
+import { useResendCooldown } from 'calypso/dashboard/utils/use-resend-cooldown';
+import { useSendEmailVerification } from 'calypso/landing/stepper/hooks/use-send-email-verification';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { EVERY_FIVE_SECONDS, useInterval } from 'calypso/lib/interval';
 import { useDispatch, useSelector } from 'calypso/state';
 import { fetchCurrentUser, setUserEmailVerified } from 'calypso/state/current-user/actions';
