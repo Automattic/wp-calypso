@@ -122,6 +122,8 @@ queryClient.setQueryData( [ 'staging-site', 1, 'is-deleting' ], true );
 render( <MyComponent />, { queryClient } );
 ```
 
+Note: the shared `@automattic/api-queries` `queryClient` singleton is cleared globally after each test (just like `nock.cleanAll()`), so you never need to clear it yourself — don't add `afterEach( () => queryClient.clear() )` to your test files.
+
 ### Mocking Modules: use ES imports, not `require()`
 
 Do not use inline `require()` to load a mocked module "after" `jest.mock()` is set up. Jest hoists `jest.mock()` calls above all imports, so a top-level ES import already receives the mocked version. Inline `require()` is also an ESLint error (`@typescript-eslint/no-require-imports`).

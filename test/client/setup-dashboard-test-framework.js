@@ -10,17 +10,17 @@ nock.disableNetConnect();
 global.TextEncoder = TextEncoder;
 global.TextDecoder = TextDecoder;
 
-// @automattic/api-queries exposes a module-level singleton queryClient whose cache can
-// leak between tests in the same file. Clear it after each test, but never load it here:
-// the module drags in the api-core / react-query graph, so loading it ourselves would
-// resolve those deps around whatever the test has mocked and break either construction
-// or the test's mocks. Instead, clear it only when the test itself already loaded it.
+// Clear the global @automattic/api-queries queryClient singleton between tests so its cache
+// doesn't leak across a file — but only if the test actually loaded the real module. Some
+// tests mock api-queries or its deps (or never import it), and loading it here ourselves
+// would run that graph through their mocks and break them. require.cache tells us which
+// tests loaded it, so we only touch the real singleton.
 const apiQueriesId = require.resolve( '@automattic/api-queries' );
 
 afterEach( () => {
 	nock.cleanAll();
 	jest.clearAllMocks();
-	require.cache[ apiQueriesId ]?.exports.queryClient.clear();
+	require.cache[ apiQueriesId ]?.exports.queryClient?.clear();
 } );
 
 global.ResizeObserver = require( 'resize-observer-polyfill' );
