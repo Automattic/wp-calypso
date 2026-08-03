@@ -81,6 +81,16 @@ function CustomizerHelpCenterContent() {
 		};
 	}, [ button, handleToggleHelpCenter ] );
 
+	const customProps = {};
+
+	if ( helpCenterData?.newInteractionsBotSlug ) {
+		customProps.newInteractionsBotSlug = helpCenterData.newInteractionsBotSlug;
+	}
+
+	if ( helpCenterData?.newLoggedOutInteractionsBotSlug ) {
+		customProps.newLoggedOutInteractionsBotSlug = helpCenterData.newLoggedOutInteractionsBotSlug;
+	}
+
 	return (
 		<HelpCenter
 			locale={ helpCenterData.locale }
@@ -91,8 +101,7 @@ function CustomizerHelpCenterContent() {
 			onboardingUrl="https://wordpress.com/start"
 			handleClose={ closeCallback }
 			isCommerceGarden={ helpCenterData.isCommerceGarden }
-			newInteractionsBotSlug={ helpCenterData.newInteractionsBotSlug }
-			newLoggedOutInteractionsBotSlug={ helpCenterData.newLoggedOutInteractionsBotSlug }
+			{ ...customProps }
 		/>
 	);
 }

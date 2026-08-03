@@ -1,7 +1,6 @@
-const loadHelpCenter = () =>
-	import( './async-help-center' ).then( ( { default: asyncLoadHelpCenter } ) =>
-		asyncLoadHelpCenter()
-	);
+import './config';
+import './help-center.scss';
+import loadHelpCenter from './async-help-center';
 
 /**
  * Checks if the help center should be automatically to keep session continuity.

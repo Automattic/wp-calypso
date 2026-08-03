@@ -11,6 +11,7 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { AgentsManagerContextProvider, useAgentsManagerContext } from '../contexts';
 import { useAgentConfig } from '../hooks/use-agent-config';
 import { useEmptyViewSuggestions } from '../hooks/use-empty-view-suggestions';
+import { useOpenChatUrlParam } from '../hooks/use-open-chat-url-param';
 import { AGENTS_MANAGER_STORE } from '../stores';
 import { clearSessionId, getOrCreateSessionId } from '../utils/agent-session';
 import { createAgentConfig } from '../utils/create-agent-config';
@@ -65,7 +66,11 @@ export default function AgentsManager( {
 		return store.getAgentsManagerState();
 	}, [] );
 
-	if ( ! isStoreReady ) {
+	// `?ai-open=true` must be applied to the store before `AgentDock` mounts, so
+	// the chat first-renders already open in both docked and undocked modes.
+	const isOpenParamHandled = useOpenChatUrlParam();
+
+	if ( ! isStoreReady || ! isOpenParamHandled ) {
 		return null;
 	}
 
