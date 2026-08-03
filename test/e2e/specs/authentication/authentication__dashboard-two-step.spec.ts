@@ -94,13 +94,12 @@ async function continueWithSecurityKey( page: Page ): Promise< void > {
 		await switchToSecurityKey.click();
 	}
 
-	// The button is disabled for the duration of the ceremony, so the nudge is best-effort:
-	// a disabled or detached button means the ceremony is already under way, and the
-	// navigation below is the real signal that it succeeded.
+	// The button stays aria-disabled until the ceremony resolves and navigates away, so the
+	// nudge is best-effort; the navigation below is the real signal.
 	await page
 		.getByRole( 'button', { name: 'Continue with security key' } )
 		.click( { timeout: 5_000 } )
-		.catch( () => undefined );
+		.catch( ( error ) => console.warn( `Security key nudge skipped: ${ error }` ) );
 
 	await page.waitForURL( ( url ) => ! url.pathname.includes( '/log-in' ), { timeout: 30_000 } );
 }
