@@ -1,3 +1,4 @@
+import { isPurchaseExpiring } from '@automattic/api-core';
 import config from '@automattic/calypso-config';
 import {
 	isAkismetFreeProduct,
@@ -12,6 +13,10 @@ import { useTranslate } from 'i18n-calypso';
 import InfoPopover from 'calypso/components/info-popover';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
+import {
+	getPlanExpiryUrgency,
+	isEligibleForPlanExpiryNotice,
+} from 'calypso/dashboard/components/plan-expiry-notice';
 import { useIsSplitCancelRemoveEnabled } from 'calypso/dashboard/me/billing-purchases/cancel-purchase/use-is-split-cancel-remove-enabled';
 import {
 	isAkismetHoldingSitePurchase,
@@ -28,6 +33,7 @@ import {
 	isCloseToExpiration,
 	isRenewable,
 	isExpiredAndInGracePeriod,
+	isExpiredOrRemoved,
 	isExpiredWithNoAutoRenewAttemptsLeft,
 	isRemoved,
 } from '../lib/raw-purchase-helpers';
@@ -70,6 +76,20 @@ function PurchaseMetaExpiration( {
 	const isJetpackPurchaseUsingPrimaryCancellationFlow =
 		isJetpackPurchase && config.isEnabled( 'jetpack/cancel-through-main-flow' );
 
+	// Both returns below render a date. While the purchase is simply renewing,
+	// that date is when the next payment is due — "You will be billed on 1
+	// August" — and coloring a statement of what is going to happen would
+	// contradict it. Once it is a deadline, or already past, it takes color.
+	const showsUpcomingRenewalDate =
+		! isPurchaseExpiring( purchase ) && ! isExpiredOrRemoved( purchase );
+	const expiryUrgency = showsUpcomingRenewalDate ? null : getPlanExpiryUrgency( purchase );
+	// The plan-expiry notice owns the coloring for the purchases it covers, so
+	// `is-expiring` is left to the ones it does not.
+	const expiryClasses = {
+		'is-expiring-warning': expiryUrgency === 'warning',
+		'is-expiring-error': expiryUrgency === 'error',
+		'is-expiring': ! isEligibleForPlanExpiryNotice( purchase ) && isCloseToExpiration( purchase ),
+	};
 	const allDomains = useSelector( getAllDomains );
 	const domainDetails = allDomains?.[ purchase.blog_id ]?.find(
 		( domain: ResponseDomain ) => domain.domain === purchase.meta
@@ -223,11 +243,7 @@ function PurchaseMetaExpiration( {
 						) }
 					</div>
 				) }
-				<span
-					className={ clsx( 'manage-purchase__detail', {
-						'is-expiring': isCloseToExpiration( purchase ),
-					} ) }
-				>
+				<span className={ clsx( 'manage-purchase__detail', expiryClasses ) }>
 					{ subsBillingText }
 					{ shouldShowTooltip() && (
 						<InfoPopover position="bottom right">
@@ -267,7 +283,7 @@ function PurchaseMetaExpiration( {
 			<em className="manage-purchase__detail-label">
 				{ renderRenewsOrExpiresOnLabel( { purchase, domainDetails, translate } ) }
 			</em>
-			<span className="manage-purchase__detail">
+			<span className={ clsx( 'manage-purchase__detail', expiryClasses ) }>
 				{ renderRenewsOrExpiresOn( {
 					moment,
 					purchase,

@@ -428,6 +428,12 @@ describe( 'Purchase Management Buttons', () => {
 			is_upgradable: true,
 			is_jetpack_plan_or_product: false,
 			is_plan_type_downgradable: false,
+			// Renewing normally, well clear of expiration. Otherwise the plan-expiry
+			// notice takes over the header and drops the CTA under test. Computed so
+			// the fixture can't age into that window.
+			expiry_date: new Date( Date.now() + 365 * 24 * 60 * 60 * 1000 ).toISOString(),
+			expiry_status: 'auto-renewing',
+			might_still_auto_renew: true,
 		};
 
 		async function renderPurchase( overrides = {} ) {
@@ -476,7 +482,12 @@ describe( 'Purchase Management Buttons', () => {
 		} );
 
 		it( 'still offers a way to pick a different plan once expired', async () => {
-			await renderPurchase( { expiry_status: 'expired', subscription_status: 'active' } );
+			await renderPurchase( {
+				expiry_date: '2023-11-27T00:00:00+00:00',
+				expiry_status: 'expired',
+				subscription_status: 'active',
+				might_still_auto_renew: false,
+			} );
 
 			const cta = await screen.findByText( 'Upgrade plan' );
 			expect( cta ).toHaveAttribute( 'href', expect.stringContaining( '/setup/plan-upgrade' ) );

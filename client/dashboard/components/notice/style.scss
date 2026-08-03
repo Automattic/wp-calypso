@@ -2,6 +2,13 @@
 @import "@wordpress/base-styles/variables";
 
 .dashboard-notice {
+	// Background for action buttons, which are otherwise transparent and let the
+	// notice's color show through them. White here; the dark theme overrides it.
+	--dashboard-notice-action__background-color: var(
+		--dashboard-surface__background-color,
+		var( --color-surface )
+	);
+
 	/**
 	 * Density
 	 */
@@ -90,6 +97,20 @@
 
 .dashboard-notice__actions {
 	padding-bottom: $grid-unit-05;
+
+	.components-button.is-secondary:not( :disabled, [aria-disabled="true"] ) {
+		background: var( --dashboard-notice-action__background-color );
+
+		// Repeat the button's usual hover shade on top of that background, since
+		// the default one is transparent.
+		&:hover:not( .is-pressed ) {
+			background: color-mix(
+				in srgb,
+				var( --wp-components-color-accent, var( --wp-admin-theme-color ) ) 4%,
+				var( --dashboard-notice-action__background-color )
+			);
+		}
+	}
 }
 
 .dashboard-notice__close-button {
