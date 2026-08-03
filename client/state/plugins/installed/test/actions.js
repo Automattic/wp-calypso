@@ -40,6 +40,7 @@ import {
 	PLUGIN_REMOVE_REQUEST_FAILURE,
 	SITE_PLUGIN_UPDATED,
 	PLUGIN_ACTION_STATUS_UPDATE,
+	ANALYTICS_STAT_BUMP,
 } from 'calypso/state/action-types';
 import {
 	fetchSitePlugins,
@@ -284,6 +285,65 @@ describe( 'actions', () => {
 		} );
 	} );
 
+	// One activation of an already-active plugin runs both the success and failure paths.
+	// These assertions describe the behavior we want; Jest records that it does not hold yet.
+	describe( '#activatePlugin() when the API reports activation_error (plugin already active)', () => {
+		beforeAll( () => {
+			nock( 'https://public-api.wordpress.com:443' )
+				.persist()
+				.post( '/rest/v1.1/sites/2916284/plugins/alreadyactive%2Falreadyactive', {
+					active: true,
+				} )
+				.reply( 400, {
+					error: 'activation_error',
+					message: 'The Plugin is already active.',
+				} );
+		} );
+
+		afterAll( () => {
+			nock.cleanAll();
+		} );
+
+		test.failing(
+			'should bump the succeeded stat exactly once and the failed stat zero times',
+			async () => {
+				await activatePlugin( 2916284, {
+					slug: 'alreadyactive',
+					id: 'alreadyactive/alreadyactive',
+					sites: { [ 2916284 ]: { active: false } },
+				} )( spy, getState );
+
+				const statBumpPayloads = spy.mock.calls
+					.map( ( [ action ] ) => action )
+					.filter( ( action ) => action.type === ANALYTICS_STAT_BUMP )
+					.map( ( action ) => action.meta.analytics[ 0 ].payload );
+
+				const succeededBumps = statBumpPayloads.filter(
+					( payload ) =>
+						payload.group === 'calypso_plugin_activated' && payload.name === 'succeeded'
+				);
+				const failedBumps = statBumpPayloads.filter(
+					( payload ) => payload.group === 'calypso_plugin_activated' && payload.name === 'failed'
+				);
+
+				expect( succeededBumps ).toHaveLength( 1 );
+				expect( failedBumps ).toHaveLength( 0 );
+			}
+		);
+
+		test.failing( 'should not dispatch a user-facing activation failure', async () => {
+			await activatePlugin( 2916284, {
+				slug: 'alreadyactive',
+				id: 'alreadyactive/alreadyactive',
+				sites: { [ 2916284 ]: { active: false } },
+			} )( spy, getState );
+
+			expect( spy ).not.toHaveBeenCalledWith(
+				expect.objectContaining( { type: PLUGIN_ACTIVATE_REQUEST_FAILURE } )
+			);
+		} );
+	} );
+
 	describe( '#deactivatePlugin()', () => {
 		beforeAll( () => {
 			nock( 'https://public-api.wordpress.com:443' )
@@ -335,6 +395,55 @@ describe( 'actions', () => {
 				pluginId: 'fake/fake',
 				error: expect.objectContaining( { message: 'Plugin file does not exist.' } ),
 			} );
+		} );
+	} );
+
+	// The deactivatePlugin() twin: 'succeeded' is bumped twice and a false error is shown.
+	describe( '#deactivatePlugin() when the API reports deactivation_error (plugin already inactive)', () => {
+		beforeAll( () => {
+			nock( 'https://public-api.wordpress.com:443' )
+				.persist()
+				.post( '/rest/v1.1/sites/2916284/plugins/alreadyinactive%2Falreadyinactive', {
+					active: false,
+				} )
+				.reply( 400, {
+					error: 'deactivation_error',
+					message: 'The Plugin is already deactivated.',
+				} );
+		} );
+
+		afterAll( () => {
+			nock.cleanAll();
+		} );
+
+		const alreadyInactive = {
+			slug: 'alreadyinactive',
+			id: 'alreadyinactive/alreadyinactive',
+			// Calypso still believes it is active, so the early-return guard does not apply.
+			sites: { [ 2916284 ]: { active: true } },
+		};
+
+		test.failing( 'should bump the succeeded stat exactly once', async () => {
+			await deactivatePlugin( 2916284, alreadyInactive )( spy, getState );
+
+			const succeededBumps = spy.mock.calls
+				.map( ( [ action ] ) => action )
+				.filter( ( action ) => action.type === ANALYTICS_STAT_BUMP )
+				.map( ( action ) => action.meta.analytics[ 0 ].payload )
+				.filter(
+					( payload ) =>
+						payload.group === 'calypso_plugin_deactivated' && payload.name === 'succeeded'
+				);
+
+			expect( succeededBumps ).toHaveLength( 1 );
+		} );
+
+		test.failing( 'should not dispatch a user-facing deactivation failure', async () => {
+			await deactivatePlugin( 2916284, alreadyInactive )( spy, getState );
+
+			expect( spy ).not.toHaveBeenCalledWith(
+				expect.objectContaining( { type: PLUGIN_DEACTIVATE_REQUEST_FAILURE } )
+			);
 		} );
 	} );
 
