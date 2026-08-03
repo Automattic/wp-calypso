@@ -1,7 +1,11 @@
 /**
  * @jest-environment jsdom
  */
-import { getSiteSubscriptionsQueryKey, isAutomatticianQuery } from '@automattic/api-queries';
+import {
+	getSiteSubscriptionsQueryKey,
+	isAutomatticianQuery,
+	readSubscribedListsQuery,
+} from '@automattic/api-queries';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { renderHook } from '@testing-library/react';
 import { Provider } from 'react-redux';
@@ -21,12 +25,14 @@ interface SetUp {
 	subscriptions?: Subscription[];
 	isAutomattician?: boolean;
 	wpForTeamsBlogIds?: number[];
+	subscribedListFeedIds?: number[];
 }
 
 function setUp( {
 	subscriptions = [],
 	isAutomattician = false,
 	wpForTeamsBlogIds = [],
+	subscribedListFeedIds = [],
 }: SetUp = {} ) {
 	const queryClient = new QueryClient( { defaultOptions: { queries: { retry: false } } } );
 
@@ -39,6 +45,24 @@ function setUp( {
 	queryClient.setQueryData( getSiteSubscriptionsQueryKey(), {
 		pages: [ { subscriptions, totalCount: subscriptions.length } ],
 		pageParams: [ 1 ],
+	} );
+
+	queryClient.setQueryData( readSubscribedListsQuery().queryKey, {
+		lists: [
+			{
+				ID: 1,
+				title: 'Test List',
+				slug: 'test-list',
+				description: 'A test list',
+				owner: 'test-user',
+				is_owner: false,
+				is_public: true,
+				feeds: subscribedListFeedIds.map( ( feed_id ) => ( {
+					feed_id,
+					unseen_count: 0,
+				} ) ),
+			},
+		],
 	} );
 
 	const state = {
@@ -164,16 +188,62 @@ describe( 'useIsSeenEnabled', () => {
 		} );
 	} );
 
-	describe( 'post shape', () => {
-		const eligible = { subscriptions: [ organizationSubscription ] };
+	describe( 'subscribed lists', () => {
+		it( 'returns false for a P2 feed not in any subscribed list', () => {
+			const { result } = renderHook(
+				() => useIsSeenEnabled( { feedId: FEED_ID, blogId: BLOG_ID } ),
+				{
+					wrapper: setUp( {
+						wpForTeamsBlogIds: [ BLOG_ID ],
+						subscribedListFeedIds: [ FEED_ID + 1 ],
+					} ),
+				}
+			);
 
-		it( 'returns false for a post returned without the seen flag', () => {
-			const { result } = renderHook( () => useIsSeenEnabled( { feedId: FEED_ID, post: {} } ), {
-				wrapper: setUp( eligible ),
+			expect( result.current ).toBe( false );
+		} );
+
+		it( 'returns false for a non-P2 feed in a subscribed list for a regular user', () => {
+			const { result } = renderHook( () => useIsSeenEnabled( { feedId: FEED_ID } ), {
+				wrapper: setUp( { subscribedListFeedIds: [ FEED_ID ] } ),
 			} );
 
 			expect( result.current ).toBe( false );
 		} );
+
+		it( 'returns true for a P2 feed in a subscribed list the regular user does not follow', () => {
+			const { result } = renderHook(
+				() => useIsSeenEnabled( { feedId: FEED_ID, blogId: BLOG_ID } ),
+				{
+					wrapper: setUp( {
+						wpForTeamsBlogIds: [ BLOG_ID ],
+						subscribedListFeedIds: [ FEED_ID ],
+					} ),
+				}
+			);
+
+			expect( result.current ).toBe( true );
+		} );
+
+		it( 'returns false for an automattician on a feed not in any subscribed list', () => {
+			const { result } = renderHook( () => useIsSeenEnabled( { feedId: FEED_ID } ), {
+				wrapper: setUp( { isAutomattician: true, subscribedListFeedIds: [ FEED_ID + 1 ] } ),
+			} );
+
+			expect( result.current ).toBe( false );
+		} );
+
+		it( 'returns true for an automattician on any feed in a subscribed list', () => {
+			const { result } = renderHook( () => useIsSeenEnabled( { feedId: FEED_ID } ), {
+				wrapper: setUp( { isAutomattician: true, subscribedListFeedIds: [ FEED_ID ] } ),
+			} );
+
+			expect( result.current ).toBe( true );
+		} );
+	} );
+
+	describe( 'post shape', () => {
+		const eligible = { subscriptions: [ organizationSubscription ] };
 
 		it( 'returns true for an usubscribed post carrying the seen flag', () => {
 			const { result } = renderHook(
