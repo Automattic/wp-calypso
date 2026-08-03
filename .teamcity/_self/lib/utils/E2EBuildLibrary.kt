@@ -90,7 +90,8 @@ fun BuildSteps.runTaggedPlaywrightSpecs(
 
 	return bashNodeScript {
 		name = stepName
-		// Failures reach TeamCity via the JUnit report, so run regardless.
+		// The JUnit report marks the build failed as soon as a test fails, which would
+		// skip every later step in the Atomic variation loop. Run regardless.
 		executionMode = BuildStep.ExecutionMode.ALWAYS
 		scriptContent = """
 			# Export additional environment variables.
@@ -101,7 +102,7 @@ fun BuildSteps.runTaggedPlaywrightSpecs(
 
 			# Clear any prior report so a runner crash can't be masked by a stale
 			# file left behind (e.g. an earlier Atomic variation in the loop).
-			rm -f $reportFile
+			rm -f output/results.xml $reportFile
 
 			# Swallow the exit code so later steps still run; failed tests fail
 			# the build through the JUnit report.
