@@ -215,6 +215,11 @@ describe( '<EmailVerificationBanner>', () => {
 			queryClient.getQueryData< UserSettings >( userSettingsQuery().queryKey )
 				?.user_email_change_pending
 		).toBe( false );
+		// Nor may it have marked the settings stale: a refetch it started before the cancellation
+		// would answer with the change still pending and overwrite it.
+		expect( queryClient.getQueryState( userSettingsQuery().queryKey )?.isInvalidated ).toBe(
+			false
+		);
 	} );
 
 	test( 'holds the button after a pending resend, and frees it for a corrected address', async () => {
@@ -263,6 +268,37 @@ describe( '<EmailVerificationBanner>', () => {
 		// live region mirrors whatever the snackbar announced.
 		expect( document.querySelector( '.components-snackbar__content' ) ).toHaveTextContent(
 			'pending@example.com'
+		);
+	} );
+
+	test( 'reports a refused send rather than announcing an email nobody was sent', async () => {
+		const user = userEvent.setup();
+
+		render(
+			<>
+				<EmailVerificationBanner userSettings={ settings } isEmailVerified={ false } />
+				<Snackbars />
+			</>
+		);
+
+		expect( await screen.findByText( 'Verify your email' ) ).toBeVisible();
+
+		// The endpoint answers 200 and reports the refusal in the body.
+		nock( 'https://public-api.wordpress.com' )
+			.post( '/rest/v1.1/me/send-verification-email' )
+			.reply( 200, { success: false } );
+
+		await user.click( screen.getByRole( 'button', { name: 'Resend email' } ) );
+
+		// Scoped to the snackbar: the a11y live region mirrors what it announced.
+		await waitFor( () =>
+			expect( document.querySelector( '.components-snackbar__content' ) ).toHaveTextContent(
+				'Failed to resend'
+			)
+		);
+		// And nothing is held back over an email that never went out.
+		await waitFor( () =>
+			expect( screen.getByRole( 'button', { name: 'Resend email' } ) ).toBeEnabled()
 		);
 	} );
 
