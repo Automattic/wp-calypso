@@ -238,8 +238,6 @@ const lineVisitorsHex = ( scheme: string ) => {
 	return resolved;
 };
 
-const lineViewsHex = ( scheme: string ) => tokenValue( scheme, '--color-accent-light' );
-
 const schemeNames = [ ...schemes.keys() ];
 
 // These schemes' Views colour is the scheme's raw wp-admin --color-accent
@@ -255,7 +253,9 @@ const lineChartSource = fs.readFileSync( LINE_CHART, 'utf8' );
 const LINE_CHART_TOKENS = [ ...lineChartSource.matchAll( /useCssVariable\(\s*'(--[\w-]+)'/g ) ].map(
 	( m ) => m[ 1 ]
 );
-const [ , LINE_CHART_VISITORS_TOKEN ] = LINE_CHART_TOKENS;
+const [ LINE_CHART_VIEWS_TOKEN, LINE_CHART_VISITORS_TOKEN ] = LINE_CHART_TOKENS;
+
+const lineViewsHex = ( scheme: string ) => tokenValue( scheme, LINE_CHART_VIEWS_TOKEN );
 
 describe( 'Stats chart series colours meet WCAG 1.4.11', () => {
 	it( 'bar chart series read the shared --chart-series custom properties', () => {
