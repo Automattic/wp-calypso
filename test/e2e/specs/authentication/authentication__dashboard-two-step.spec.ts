@@ -94,11 +94,13 @@ async function continueWithSecurityKey( page: Page ): Promise< void > {
 		await switchToSecurityKey.click();
 	}
 
-	const continueButton = page.getByRole( 'button', { name: 'Continue with security key' } );
-	const isContinueButtonVisible = await continueButton.isVisible();
-	if ( isContinueButtonVisible ) {
-		await continueButton.click();
-	}
+	// The button is disabled for the duration of the ceremony, so the nudge is best-effort:
+	// a disabled or detached button means the ceremony is already under way, and the
+	// navigation below is the real signal that it succeeded.
+	await page
+		.getByRole( 'button', { name: 'Continue with security key' } )
+		.click( { timeout: 5_000 } )
+		.catch( () => undefined );
 
 	await page.waitForURL( ( url ) => ! url.pathname.includes( '/log-in' ), { timeout: 30_000 } );
 }
