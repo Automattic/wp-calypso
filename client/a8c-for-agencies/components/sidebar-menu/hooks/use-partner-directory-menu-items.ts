@@ -40,7 +40,7 @@ const usePartnerDirectoryMenuItems = ( path: string ) => {
 				},
 				path
 			),
-			// Only show the Agency details menu item if the agency has at least one directory approved
+			// Only show Agency details and Lead matching if the agency has a directory approved
 			...( hasDirectoryApproval
 				? [
 						createItem(
@@ -59,23 +59,23 @@ const usePartnerDirectoryMenuItems = ( path: string ) => {
 							},
 							path
 						),
+						createItem(
+							{
+								icon: people,
+								path: A4A_PARTNER_DIRECTORY_LINK,
+								link: `${ A4A_PARTNER_DIRECTORY_LINK }/${ PARTNER_DIRECTORY_LEAD_MATCHING_SLUG }`,
+								title: translate( 'Lead matching' ),
+								trackEventProps: {
+									menu_item: 'Automattic for Agencies / Partner Directory / Lead matching',
+								},
+								isSelected: isSelected( path, [
+									`${ A4A_PARTNER_DIRECTORY_LINK }/${ PARTNER_DIRECTORY_LEAD_MATCHING_SLUG }`,
+								] ),
+							},
+							path
+						),
 				  ]
 				: [] ),
-			createItem(
-				{
-					icon: people,
-					path: A4A_PARTNER_DIRECTORY_LINK,
-					link: `${ A4A_PARTNER_DIRECTORY_LINK }/${ PARTNER_DIRECTORY_LEAD_MATCHING_SLUG }`,
-					title: translate( 'Lead matching' ),
-					trackEventProps: {
-						menu_item: 'Automattic for Agencies / Partner Directory / Lead matching',
-					},
-					isSelected: isSelected( path, [
-						`${ A4A_PARTNER_DIRECTORY_LINK }/${ PARTNER_DIRECTORY_LEAD_MATCHING_SLUG }`,
-					] ),
-				},
-				path
-			),
 		];
 	}, [ hasDirectoryApproval, path, translate ] );
 	return menuItems;

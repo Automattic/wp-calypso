@@ -20,10 +20,10 @@ export const partnerDirectoryDashboardContext: Callback = ( context, next ) => {
 	);
 	const validSections = [
 		PARTNER_DIRECTORY_DASHBOARD_SLUG,
-		// Agency details is hidden if the agency has no directories approved
+		// Agency details and Lead matching are hidden if the agency has no directories approved
 		...( hasDirectoryApproval ? [ PARTNER_DIRECTORY_AGENCY_DETAILS_SLUG ] : [] ),
 		PARTNER_DIRECTORY_AGENCY_EXPERTISE_SLUG,
-		PARTNER_DIRECTORY_LEAD_MATCHING_SLUG,
+		...( hasDirectoryApproval ? [ PARTNER_DIRECTORY_LEAD_MATCHING_SLUG ] : [] ),
 	];
 
 	const selectedSection = context.params.section ?? PARTNER_DIRECTORY_DASHBOARD_SLUG;
