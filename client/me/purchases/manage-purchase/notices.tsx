@@ -41,7 +41,6 @@ import { getCalendarDaysUntil, getRelativeDayString } from 'calypso/dashboard/ut
 import { isPartnerPurchase } from 'calypso/dashboard/utils/purchase';
 import TrackComponentView from 'calypso/lib/analytics/track-component-view';
 import { invalidatePurchaseQueries } from 'calypso/lib/purchases/actions';
-import { createPurchasesArray } from 'calypso/lib/purchases/assembler';
 import { getTrialCheckoutUrl } from 'calypso/lib/trials/get-trial-checkout-url';
 import { managePurchase } from 'calypso/me/purchases/paths';
 import UpcomingRenewalsDialog from 'calypso/me/purchases/upcoming-renewals/upcoming-renewals-dialog';
@@ -1230,24 +1229,10 @@ class PurchaseNotice extends Component<
 			<>
 				<UpcomingRenewalsDialog
 					isVisible={ this.state.showUpcomingRenewalsDialog }
-					// Temporary bridge (SHILL-2256): UpcomingRenewalsDialog is shared with
-					// checkout and still expects the camelCase Purchase. Convert on the way
-					// in, and map the confirmed selection back to the raw purchases by ID.
-					purchases={ createPurchasesArray(
-						renewableSitePurchases as unknown as Parameters< typeof createPurchasesArray >[ 0 ]
-					) }
+					purchases={ renewableSitePurchases }
 					site={ selectedSite }
 					getManagePurchaseUrlFor={ getManagePurchaseUrlFor }
-					onConfirm={ ( selected ) => {
-						const selectedIds = new Set(
-							selected.map( ( selectedPurchase ) => selectedPurchase.id )
-						);
-						this.handleExpiringNoticeRenewSelection(
-							renewableSitePurchases.filter( ( sitePurchase ) =>
-								selectedIds.has( sitePurchase.ID )
-							)
-						);
-					} }
+					onConfirm={ this.handleExpiringNoticeRenewSelection }
 					onClose={ this.closeUpcomingRenewalsDialog }
 				/>
 				<Notice

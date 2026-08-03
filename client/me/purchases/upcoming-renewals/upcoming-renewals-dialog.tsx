@@ -7,13 +7,12 @@ import FormInputCheckbox from 'calypso/components/forms/form-checkbox';
 import { getRelativeDayString } from 'calypso/dashboard/utils/datetime';
 import {
 	getName,
-	getRenewalPrice,
 	purchaseType,
 	isRenewingBeforeExpiration,
 	isExpiredOrRemoved,
-} from 'calypso/lib/purchases';
+} from '../lib/raw-purchase-helpers';
 import { managePurchase } from '../paths';
-import type { Purchase } from 'calypso/lib/purchases/types';
+import type { Purchase } from '@automattic/api-core';
 
 import './style.scss';
 
@@ -41,21 +40,21 @@ function getExpiresText(
 		return translate( 'renews %(renewDate)s', {
 			comment:
 				'"renewDate" is relative to the present time and it is already localized, eg. "in a year", "in a month", "today"',
-			args: { renewDate: getRelativeDayString( new Date( purchase.renewDate ), 'upcoming' ) },
+			args: { renewDate: getRelativeDayString( new Date( purchase.renew_date ), 'upcoming' ) },
 		} );
 	}
 	if ( isExpiredOrRemoved( purchase ) ) {
 		return translate( 'expired %(expiry)s', {
 			comment:
 				'"expiry" is relative to the present time and it is already localized, eg. "a week ago", "today"',
-			args: { expiry: getRelativeDayString( new Date( purchase.expiryDate ), 'past' ) },
+			args: { expiry: getRelativeDayString( new Date( purchase.expiry_date ), 'past' ) },
 		} );
 	}
 	return translate( 'expires %(expiry)s', {
 		comment:
 			'"expiry" is relative to the present time and it is already localized, eg. "in a year", "in a month", "today"',
 		args: {
-			expiry: getRelativeDayString( new Date( purchase.expiryDate ), 'upcoming' ),
+			expiry: getRelativeDayString( new Date( purchase.expiry_date ), 'upcoming' ),
 		},
 	} );
 }
@@ -76,8 +75,8 @@ const UpcomingRenewalsDialog: FunctionComponent< Props > = ( {
 	const purchasesSortByRecentExpiryDate = useMemo(
 		() =>
 			[ ...purchases ].sort( ( a, b ) => {
-				const compareDateA = isRenewingBeforeExpiration( a ) ? a.renewDate : a.expiryDate;
-				const compareDateB = isRenewingBeforeExpiration( b ) ? b.renewDate : b.expiryDate;
+				const compareDateA = isRenewingBeforeExpiration( a ) ? a.renew_date : a.expiry_date;
+				const compareDateB = isRenewingBeforeExpiration( b ) ? b.renew_date : b.expiry_date;
 
 				return compareDateA?.localeCompare?.( compareDateB );
 			} ),
@@ -86,12 +85,12 @@ const UpcomingRenewalsDialog: FunctionComponent< Props > = ( {
 
 	useEffect( () => {
 		if ( isVisible ) {
-			setSelectedPurchases( purchases.map( ( purchase ) => purchase.id ) );
+			setSelectedPurchases( purchases.map( ( purchase ) => purchase.ID ) );
 		}
 	}, [ isVisible, purchases ] );
 
 	const confirmSelectedPurchases = useCallback( () => {
-		onConfirm( purchases.filter( ( purchase ) => selectedPurchases.includes( purchase.id ) ) );
+		onConfirm( purchases.filter( ( purchase ) => selectedPurchases.includes( purchase.ID ) ) );
 	}, [ purchases, selectedPurchases, onConfirm ] );
 
 	return (
@@ -110,14 +109,14 @@ const UpcomingRenewalsDialog: FunctionComponent< Props > = ( {
 				const expiresText = getExpiresText( translate, purchase ) as string;
 				const purchaseTypeText = purchaseType( purchase );
 				const onChange = () => {
-					if ( selectedPurchases.includes( purchase.id ) ) {
-						setSelectedPurchases( selectedPurchases.filter( ( id ) => id !== purchase.id ) );
+					if ( selectedPurchases.includes( purchase.ID ) ) {
+						setSelectedPurchases( selectedPurchases.filter( ( id ) => id !== purchase.ID ) );
 					} else {
-						setSelectedPurchases( selectedPurchases.concat( [ purchase.id ] ) );
+						setSelectedPurchases( selectedPurchases.concat( [ purchase.ID ] ) );
 					}
 				};
 				return (
-					<Fragment key={ purchase.id }>
+					<Fragment key={ purchase.ID }>
 						<div className="upcoming-renewals-dialog__row">
 							<FormLabel
 								optional={ false }
@@ -127,8 +126,8 @@ const UpcomingRenewalsDialog: FunctionComponent< Props > = ( {
 								<div className="upcoming-renewals-dialog__checkbox">
 									<FormInputCheckbox
 										className="upcoming-renewals-dialog__checkbox-input"
-										name={ `${ purchase.productSlug }-${ purchase.id }` }
-										checked={ selectedPurchases.includes( purchase.id ) }
+										name={ `${ purchase.product_slug }-${ purchase.ID }` }
+										checked={ selectedPurchases.includes( purchase.ID ) }
 										onChange={ onChange }
 									/>
 								</div>
@@ -144,15 +143,17 @@ const UpcomingRenewalsDialog: FunctionComponent< Props > = ( {
 							</FormLabel>
 							<div className="upcoming-renewals-dialog__side">
 								<div className="upcoming-renewals-dialog__price">
-									{ formatCurrency( getRenewalPrice( purchase ), purchase.currencyCode, {
-										stripZeros: true,
-									} ) }
+									{ formatCurrency(
+										purchase.sale_amount || purchase.amount,
+										purchase.currency_code,
+										{ stripZeros: true }
+									) }
 								</div>
 								{ showManagePurchaseLinks && (
 									<div className="upcoming-renewals-dialog__renewal-settings-link">
 										<a
 											onClick={ onClose }
-											href={ getManagePurchaseUrlFor( site.slug, purchase.id ) }
+											href={ getManagePurchaseUrlFor( site.slug, purchase.ID ) }
 										>
 											{ translate( 'Manage purchase' ) }
 										</a>
