@@ -54,6 +54,8 @@ const loginBrowserUse = {
 		// Google OAuth rejects the headless shell as an insecure browser.
 		channel: 'chromium',
 	},
+	// Google OAuth also rejects stale user agents: don't pin `userAgent` here,
+	// let the device descriptor track the bundled Chromium.
 };
 
 function getWorkers(): number | string {
