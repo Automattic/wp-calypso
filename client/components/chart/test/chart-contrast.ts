@@ -77,13 +77,7 @@ const resolve = ( value: string, scheme: string, depth = 0 ): string | null => {
 	if ( ! reference ) {
 		return null;
 	}
-	const sources = [
-		schemes.get( scheme ),
-		schemes.get( 'global' ),
-		schemes.get( 'default' ),
-		palette,
-		colorStudio,
-	];
+	const sources = [ schemes.get( scheme ), schemes.get( 'default' ), palette, colorStudio ];
 	for ( const source of sources ) {
 		if ( source?.has( reference[ 1 ] ) ) {
 			const resolved = resolve( source.get( reference[ 1 ] ) as string, scheme, depth + 1 );
