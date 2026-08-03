@@ -205,7 +205,6 @@ const StatsBenefitsPersonal = () => {
 			<ul className={ `${ COMPONENT_CLASS_NAME }__benefits--not-included` }>
 				<li>{ translate( 'No UTM tracking' ) }</li>
 				<li>{ translate( 'No access to upcoming advanced features' ) }</li>
-				<li>{ translate( 'No commercial use' ) }</li>
 			</ul>
 		</div>
 	);
@@ -226,7 +225,6 @@ const StatsBenefitsFree = () => {
 				<li>{ translate( 'No UTM tracking' ) }</li>
 				<li>{ translate( 'No access to upcoming advanced features' ) }</li>
 				<li>{ translate( 'No Email support (supported by forum)' ) }</li>
-				<li>{ translate( 'No commercial use' ) }</li>
 			</ul>
 		</div>
 	);

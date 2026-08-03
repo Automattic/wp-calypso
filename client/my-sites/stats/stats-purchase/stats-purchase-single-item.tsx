@@ -206,7 +206,7 @@ const useLocalizedStrings = ( isCommercial: boolean ) => {
 			infoText: translate(
 				'Unlock UTM stats, device stats, and region and city locations with a paid plan.',
 				{
-					context: 'Stats: Descriptive text in the commercial purchase flow',
+					context: 'Stats: Descriptive text in the purchase flow',
 				}
 			),
 			continueButtonText: translate( 'Upgrade now and continue' ),
