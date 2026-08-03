@@ -18,7 +18,7 @@ import {
 	UserSignupPage,
 	cancelDashboardPurchaseFlow,
 } from '@automattic/calypso-e2e';
-import { expect, skipIfNotTrunk, tags, test } from '../../lib/pw-base';
+import { expect, tags, test } from '../../lib/pw-base';
 import { apiCloseAccount } from '../shared';
 
 /**
@@ -30,8 +30,6 @@ test.describe(
 	'Lifecyle: Signup, onboard, launch and cancel subscription',
 	{ tag: [ tags.CALYPSO_RELEASE ] },
 	() => {
-		skipIfNotTrunk();
-
 		const planName = 'Personal';
 		const testUser = DataHelper.getNewTestUser( {
 			usernamePrefix: 'ftmepersonal',
