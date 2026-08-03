@@ -1,3 +1,4 @@
+import { createCalypsoAuthProvider } from '@automattic/agents-manager/src/auth/calypso-auth-provider';
 import { useLocale } from '@automattic/i18n-utils';
 import { useEffect } from 'react';
 import { loadSiteSpecScriptAndCSS, resetSiteSpecScriptState } from './script-loader';
@@ -11,6 +12,7 @@ declare global {
 				agentUrl?: string;
 				agentId?: string;
 				buildSiteUrl?: string;
+				authProvider?: SiteSpecConfig[ 'authProvider' ];
 				locale?: string;
 				onMessage?: ( message: unknown ) => void;
 				onSpecConfirm?: ( specData: unknown ) => void | Promise< void >;
@@ -24,6 +26,11 @@ declare global {
  * Track which containers we’ve initialized to avoid double-init.
  */
 const initialized = new WeakSet< HTMLElement >();
+
+// Sign the widget's agent requests as the logged-in user so spec sessions
+// aren't anonymous (anonymous specs are only fetchable for 60 minutes).
+// Resolves without an Authorization header for logged-out visitors.
+const calypsoAuthProvider = createCalypsoAuthProvider( undefined, { logWpcomJwtFailure: false } );
 
 function resolveContainer( target: string | HTMLElement ): HTMLElement | null {
 	if ( typeof target === 'string' ) {
@@ -88,6 +95,7 @@ export function useSiteSpec( options: UseSiteSpecOptions = {} ) {
 
 				window.SiteSpec.init( {
 					container: containerEl,
+					authProvider: calypsoAuthProvider,
 					...config,
 					locale,
 					onMessage,

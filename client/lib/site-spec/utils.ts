@@ -33,6 +33,7 @@ export interface SiteSpecConfig {
 	agentUrl?: string;
 	agentId?: string;
 	buildSiteUrl?: string;
+	authProvider?: () => Promise< Record< string, string > >;
 	theme?: {
 		// Branding
 		brandIcon?: ReactElement | string | null; // ReactElement or image URL; null hides
