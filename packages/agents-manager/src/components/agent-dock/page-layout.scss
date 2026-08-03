@@ -129,6 +129,18 @@ body.wp-admin.woocommerce-admin-page.agents-manager-sidebar-container {
 		&.folded .woocommerce-layout__header {
 			width: calc( 100% - $admin-sidebar-width-collapsed - $sidebar-width ) !important;
 		}
+
+		// The closed activity panel parks an opaque, viewport-fixed wrapper
+		// (z-index 1000) at the page's right edge; shrinking moves that edge
+		// into the chat strip, and the settled chat has released its z-index,
+		// so the wrapper both paints over the chat and swallows its pointer
+		// events. Neutralize it until it actually opens — an open panel is a
+		// transient overlay that intentionally stacks above the settled chat,
+		// same as the notifications panel.
+		.woocommerce-layout__activity-panel-wrapper:not( .is-open ) {
+			opacity: 0;
+			pointer-events: none;
+		}
 	}
 }
 
