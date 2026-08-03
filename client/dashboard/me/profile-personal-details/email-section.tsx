@@ -10,6 +10,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { withSnackbar } from '../../app/snackbars/with-snackbar';
 import { recoveryEmailMatchesAccountEmail } from '../security-account-recovery/utils';
 import { isCustomDomainEmail } from './email-utils';
+import { useIsEmailWritePending } from './use-email-write-pending';
 import type { UserSettings } from '@automattic/api-core';
 import './style.scss';
 
@@ -48,8 +49,11 @@ export default function EmailSection( {
 	onValidationChange,
 }: EmailSectionProps ) {
 	const mutation = cancelPendingEmailChangeMutation();
+	// Also true while the banner's resend or cancellation is running, so the two controls that
+	// offer a cancellation can't both fire, and neither can race a resend.
+	const isEmailWritePending = useIsEmailWritePending();
 
-	const { mutate: cancelPendingEmail, isPending: isCancelPending } = useMutation( {
+	const { mutate: cancelPendingEmail } = useMutation( {
 		...withSnackbar( mutation, {
 			success: __( 'Pending email change canceled.' ),
 			error: __( 'Failed to cancel pending email change.' ),
@@ -142,7 +146,7 @@ export default function EmailSection( {
 					<Button
 						variant="link"
 						onClick={ handleCancelPendingEmail }
-						disabled={ isCancelPending }
+						disabled={ isEmailWritePending }
 						style={ {
 							padding: 0,
 							height: 'auto',
@@ -211,7 +215,7 @@ export default function EmailSection( {
 		currentEmail,
 		emailValidationState,
 		handleCancelPendingEmail,
-		isCancelPending,
+		isEmailWritePending,
 	] );
 
 	return (

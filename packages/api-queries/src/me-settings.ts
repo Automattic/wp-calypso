@@ -8,9 +8,24 @@ export const userSettingsQuery = () =>
 		queryFn: fetchUserSettings,
 	} );
 
-export const userSettingsMutation = () =>
+// Resending re-saves the address already pending, so it is a write like the others. Two landing
+// out of order can leave the account holding a change the reader cancelled: the scope keeps them
+// to one at a time, the key lets a control tell when any is running.
+const emailWriteOptions = {
+	mutationKey: [ 'me', 'settings', 'email' ],
+	scope: { id: 'me-email' },
+};
+
+export const emailWriteFilters = { mutationKey: emailWriteOptions.mutationKey };
+
+// `includesEmail` opts a save into the ordering above; callers saving unrelated settings should
+// not queue behind an email resend.
+export const userSettingsMutation = ( {
+	includesEmail = false,
+}: { includesEmail?: boolean } = {} ) =>
 	mutationOptions( {
 		meta: { statId: 'user-settings-update' },
+		...( includesEmail ? emailWriteOptions : {} ),
 		mutationFn: updateUserSettings,
 		onSuccess: ( newData, variables ) => {
 			queryClient.setQueryData(
@@ -31,6 +46,7 @@ export const userSettingsMutation = () =>
 export const cancelPendingEmailChangeMutation = () =>
 	mutationOptions( {
 		meta: { statId: 'email-change-cancel' },
+		...emailWriteOptions,
 		mutationFn: () => updateUserSettings( { user_email_change_pending: false } ),
 		onSuccess: ( newData ) => {
 			queryClient.setQueryData(
@@ -45,16 +61,23 @@ export const cancelPendingEmailChangeMutation = () =>
 	} );
 
 // Re-saves the address already pending, which is what prompts another email.
-//
-// Deliberately leaves the settings cache alone. It changes nothing, and both writing the response
-// back and refetching can lose a race with a cancellation — either reinstating a change already
-// cancelled, or reading the settings before it lands and overwriting them afterwards.
 export const resendEmailVerificationMutation = () =>
 	mutationOptions( {
 		meta: { statId: 'email-verify-resend' },
+		...emailWriteOptions,
 		// The address is a variable rather than closed over, so a caller can tell which request a
 		// late response belongs to.
 		mutationFn: ( email: string ) => updateUserSettings( { user_email: email } ),
+		onSuccess: ( newData ) => {
+			queryClient.setQueryData(
+				userSettingsQuery().queryKey,
+				( oldData ) =>
+					oldData && {
+						...oldData,
+						...newData,
+					}
+			);
+		},
 	} );
 
 export const sendEmailVerificationMutation = () =>

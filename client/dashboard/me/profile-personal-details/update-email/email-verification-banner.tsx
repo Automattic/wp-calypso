@@ -20,6 +20,7 @@ import {
 	resendThrottleRetryAfter,
 } from '../../../utils/email-verification-resend';
 import { useResendCooldown } from '../../../utils/use-resend-cooldown';
+import { useIsEmailWritePending } from '../use-email-write-pending';
 import type { UserSettings } from '@automattic/api-core';
 
 // Get email verification params from URL
@@ -170,11 +171,15 @@ export default function EmailVerificationBanner( {
 
 	// The address is a mutation variable, so a response that lands late is still reported against
 	// the address it was sent to rather than whichever one is on screen by then.
+	const pendingResend = resendEmailVerificationMutation();
 	const { mutate: resendToPending, isPending: isPendingResendPending } = useMutation( {
-		...resendEmailVerificationMutation(),
+		...pendingResend,
 		// On the options rather than the `mutate()` call: TanStack skips per-call callbacks once
 		// the observer loses its listeners, so navigating away mid-request would report nothing.
-		onSuccess: ( data, email ) => {
+		onSuccess: ( data, email, context ) => {
+			// Declaring onSuccess here would otherwise replace the factory's, losing the cache
+			// update it makes.
+			pendingResend.onSuccess?.( data, email, context );
 			createSuccessNotice( sentToEmail( email ), { type: 'snackbar' } );
 			// A wait is meaningless once the address has moved on.
 			if ( email === pendingEmailRef.current ) {
@@ -188,6 +193,7 @@ export default function EmailVerificationBanner( {
 	const resendEmail = () =>
 		isEmailChangePending ? resendToPending( pendingEmail || '' ) : sendToOriginal();
 	const isResendPending = isSendPending || isPendingResendPending;
+	const isEmailWritePending = useIsEmailWritePending();
 
 	const { mutate: cancelPendingEmail, isPending: isCancelPending } = useMutation(
 		withSnackbar( cancelPendingEmailChangeMutation(), {
@@ -240,7 +246,7 @@ export default function EmailVerificationBanner( {
 							variant="primary"
 							__next40pxDefaultSize
 							onClick={ resendEmail }
-							disabled={ isResendPending || isAwaitingResend }
+							disabled={ isEmailWritePending || isSendPending || isAwaitingResend }
 							isBusy={ isResendPending }
 						>
 							{ isAwaitingResend
@@ -256,7 +262,7 @@ export default function EmailVerificationBanner( {
 								variant="secondary"
 								__next40pxDefaultSize
 								onClick={ () => cancelPendingEmail() }
-								disabled={ isCancelPending }
+								disabled={ isEmailWritePending }
 								isBusy={ isCancelPending }
 							>
 								{ __( 'Cancel the pending email change' ) }
