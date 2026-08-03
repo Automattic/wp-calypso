@@ -4,9 +4,7 @@ Unified AI Agent manager for WordPress and Calypso.
 
 ## Installation
 
-```bash
-yarn add @automattic/agents-manager
-```
+An internal workspace package, not published to npm — add `@automattic/agents-manager` as a dependency in the consuming `wp-calypso` workspace (used by Calypso and `apps/agents-manager`).
 
 ## Usage
 
@@ -80,18 +78,31 @@ The Agents Manager exposes a `window.__agentsManagerActions` API for controlling
 
 See `src/hooks/custom-actions/README.md` for details.
 
+### URL Parameters
+
+The host page URL can carry these query parameters:
+
+| Parameter | Description                                                                                                                                                   |
+| --------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `ai-open` | `ai-open=true` auto-opens the chat (docked or undocked) on page load, e.g. for links from emails. The parameter is stripped from the URL after being applied. |
+| `agent`   | Overrides the agent ID, for testing (e.g., `?agent=wpcom-workflow-support_chat`).                                                                             |
+| `version` | Overrides the agent version, for testing (e.g., `?version=1.0.25`).                                                                                           |
+
 ## API Reference
 
 ### AgentsManager Props
 
-| Prop            | Type                           | Description                                                                                                              |
-| --------------- | ------------------------------ | ------------------------------------------------------------------------------------------------------------------------ |
-| `sectionName`   | `string`                       | The name of the current section (e.g., 'wp-admin', 'gutenberg').                                                         |
-| `currentUser`   | `CurrentUser` (optional)       | Current user (from `@automattic/data-stores`). Sets `isLoggedIn`.                                                        |
-| `site`          | `AgentsManagerSite` (optional) | The selected site object (from `@automattic/data-stores`).                                                               |
-| `currentRoute`  | `string` (optional)            | The current route path.                                                                                                  |
-| `currentSiteId` | `number` (optional)            | The ID of the selected site. When set, chat state is scoped to this site. When omitted, uses a shared "no-site" context. |
-| `agentId`       | `string` (optional)            | Explicit agent ID for hosts that must not fall back to Unified Chat.                                                     |
+| Prop                             | Type                           | Description                                                                                                              |
+| -------------------------------- | ------------------------------ | ------------------------------------------------------------------------------------------------------------------------ |
+| `sectionName`                    | `string`                       | The name of the current section (e.g., 'wp-admin', 'gutenberg').                                                         |
+| `currentUser`                    | `CurrentUser` (optional)       | Current user (from `@automattic/data-stores`). Sets `isLoggedIn`.                                                        |
+| `site`                           | `AgentsManagerSite` (optional) | The selected site object (from `@automattic/data-stores`).                                                               |
+| `currentRoute`                   | `string` (optional)            | The current route path.                                                                                                  |
+| `currentSiteId`                  | `number` (optional)            | The ID of the selected site. When set, chat state is scoped to this site. When omitted, uses a shared "no-site" context. |
+| `agentId`                        | `string` (optional)            | Explicit agent ID for hosts that must not fall back to Unified Chat.                                                     |
+| `zendeskConversationTags`        | `string[]` (optional)          | Zendesk conversation tags to apply when a new support conversation is created.                                           |
+| `zendeskSmoochIntegrationKey`    | `string` (optional)            | Index selecting a dedicated Smooch integration for new support conversations (e.g. `woo`).                               |
+| `zendeskTicketProductFieldValue` | `string` (optional)            | Zendesk Product ticket-field value to apply to new support conversations.                                                |
 
 ### Exported Hooks and Utilities
 
@@ -107,6 +118,8 @@ function MyComponent() {
 	const useUnifiedExperience = getAgentsManagerInlineData()?.useUnifiedExperience;
 }
 ```
+
+Feedback utilities are also exported: `useFeedbackAction`, `submitFeedback`, `rateMessage`, and the `FeedbackInput` component.
 
 ### Exported Types
 
