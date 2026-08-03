@@ -91,6 +91,14 @@
 }
 
 .theme-a8c-for-agencies {
+	// Keep wrapped text from stranding a single word on the last line. This is
+	// inherited, so it reaches components borrowed from other clients too.
+	text-wrap: pretty;
+
+	// `pretty` only fixes the last line. Short blocks need every line evened out.
+	:is(h1, h2, h3, h4, h5, h6, li, td, th, dd, figcaption) {
+		text-wrap: balance;
+	}
 
 	.button.split-button__toggle {
 		border-radius: 0 4px 4px 0;
