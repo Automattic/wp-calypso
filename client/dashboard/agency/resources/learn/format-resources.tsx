@@ -3,15 +3,40 @@ import PressableLogo from '../../marketplace/exclusive-offers/images/pressable-d
 import VIPLogo from '../../marketplace/exclusive-offers/images/vip-descriptor.svg';
 import WooLogo from '../../marketplace/exclusive-offers/images/woo-descriptor.svg';
 import WordPressDotComLogo from '../../marketplace/exclusive-offers/images/wordpressdotcom-descriptor.svg';
+import AgencyHabitsLogo from './images/agencyhabits.png';
 import type { ResourceItem } from './types';
 import type { AgencyResource } from '@automattic/api-core';
 import type { ReactNode } from 'react';
 
+interface Logo {
+	src: string;
+	alt: string;
+}
+
+const AgencyHabits: Logo = { src: AgencyHabitsLogo, alt: 'AgencyHabits' };
+
+/**
+ * Resources the API leaves unattributed still have a destination, so fall back to
+ * the publisher. Matched on hostname rather than the whole URL, because the
+ * campaign parameters also contain the publisher name.
+ */
+function getPublisherLogo( externalUrl: string ): Logo | null {
+	let hostname = '';
+
+	try {
+		hostname = new URL( externalUrl ).hostname.toLowerCase();
+	} catch {
+		return null;
+	}
+
+	return hostname.includes( 'agencyhabits' ) ? AgencyHabits : null;
+}
+
 /**
  * Get logo element based on related product.
  */
-function getProductLogo( relatedProduct: string ): ReactNode | null {
-	const logos: Record< string, { src: string; alt: string } > = {
+function getProductLogo( relatedProduct = '', externalUrl = '' ): ReactNode | null {
+	const logos: Record< string, Logo > = {
 		woocommerce: { src: WooLogo, alt: 'WooCommerce' },
 		jetpack: { src: JetpackLogo, alt: 'Jetpack' },
 		pressable: { src: PressableLogo, alt: 'Pressable' },
@@ -19,7 +44,7 @@ function getProductLogo( relatedProduct: string ): ReactNode | null {
 		'wordpress vip': { src: VIPLogo, alt: 'WordPress VIP' },
 	};
 
-	const logo = logos[ relatedProduct.toLowerCase() ];
+	const logo = logos[ relatedProduct.toLowerCase() ] ?? getPublisherLogo( externalUrl );
 
 	if ( ! logo ) {
 		return null;
@@ -45,7 +70,7 @@ export function formatAgencyResource( resource: AgencyResource ): ResourceItem {
 		section: resource.section,
 		createdAt: resource.created_at,
 		updatedAt: resource.updated_at,
-		logo: getProductLogo( resource.related_product ),
+		logo: getProductLogo( resource.related_product, resource.external_url ),
 	};
 }
 
