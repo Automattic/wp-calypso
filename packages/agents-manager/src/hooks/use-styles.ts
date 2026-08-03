@@ -92,8 +92,7 @@ export default function useStyles() {
 
 			// Font picks only: the legacy block pins typography with `!important`
 			// and nothing else, so it can make a just-applied font pick look like
-			// it did nothing — but cannot affect a color or button pick. Big Sky
-			// offers removal via its own dialog; AM keeps the detection telemetry.
+			// it did nothing — but cannot affect a color or button pick.
 			if ( variationType === 'font' ) {
 				const blocks = detectLegacyCss(
 					( merged.styles as Record< string, unknown > | undefined )?.css
