@@ -549,16 +549,6 @@ export async function closeAccountAndRecordLeak(
 		await new Promise( ( resolve ) => setTimeout( resolve, pollMs ) );
 	}
 
-	if ( sawAtomicSite ) {
-		console.log(
-			`[atomic-teardown] user ${
-				accountDetails.userID
-			} still blocked by an Atomic site after ${ attempts } attempt(s) over ${
-				Date.now() - startedAt
-			}ms; recording leak.`
-		);
-	}
-
 	try {
 		await client.getMyAccountInformation();
 		// Account still exists and we failed to close it: a real leak.

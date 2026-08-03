@@ -196,9 +196,6 @@ object CalypsoE2ETestsBuildTemplate : Template({
 				# Recursive over output/: markers should land in output/teardown-leaks, but a
 				# path drift must not leave a stale marker that fails a later run.
 				find output -name 'account-*.json' -delete 2>/dev/null || true
-				# Same for deferred closes: a record left by a previous run holds a dead
-				# token and would be reported as a leak this run.
-				rm -rf .teardown-pending 2>/dev/null || true
 				echo "CALYPSO_BASE_URL=%CALYPSO_BASE_URL%"
 				export CALYPSO_BASE_URL="%CALYPSO_BASE_URL%"
 				echo "DASHBOARD_BASE_URL=%DASHBOARD_BASE_URL%"
