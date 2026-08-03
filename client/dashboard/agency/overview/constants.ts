@@ -4,8 +4,6 @@ import type { AgencyTierType } from '../tiers/types';
 export const PARTNER_PROGRAM_GUIDE_URL =
 	'https://agencieshelp.automattic.com/knowledge-base/agency-tiering-benefits';
 
-export const PROGRAM_INCENTIVES_URL = 'https://automattic.com/for-agencies/program-incentives/';
-
 interface TierOverviewContent {
 	description: string;
 	hasPartnerManager: boolean;

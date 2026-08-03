@@ -215,7 +215,7 @@ export default function TierOverviewCard( {
 					{ showAdvisorCall && (
 						<TierFooterSection
 							label={ __( 'Your free advisor call' ) }
-							title={ __( 'Learn how to grow with Automattic' ) }
+							title={ __( 'Learn how to grow with Automattic.' ) }
 							action={
 								<Button
 									size="compact"
