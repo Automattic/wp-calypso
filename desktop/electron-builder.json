@@ -41,8 +41,10 @@
 		"artifactName": "wordpress.com-macOS-dmg-${version}-${arch}.${ext}"
 	},
 	"win": {
-		"publisherName": [ "Automattic, Inc.", "Automattic Inc." ],
-		"sign": "./bin/windows-sign.js",
+		"signtoolOptions": {
+			"publisherName": [ "Automattic, Inc.", "Automattic Inc." ],
+			"sign": "./bin/windows-sign.js"
+		},
 		"icon": "./resource/icon.ico",
 		"target": [
 			{
@@ -62,7 +64,9 @@
 		"synopsis": "WordPress.com Desktop Client",
 		"category": "Social",
 		"desktop": {
-			"StartupNotify": true
+			"entry": {
+				"StartupNotify": "true"
+			}
 		},
 		"artifactName": "wordpress.com-linux-x64-${version}.${ext}"
 	},
