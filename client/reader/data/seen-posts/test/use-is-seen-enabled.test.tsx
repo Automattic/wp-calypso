@@ -175,15 +175,7 @@ describe( 'useIsSeenEnabled', () => {
 			expect( result.current ).toBe( false );
 		} );
 
-		it( 'returns false for a post without the seen flag even for an Automattician', () => {
-			const { result } = renderHook( () => useIsSeenEnabled( { feedId: FEED_ID, post: {} } ), {
-				wrapper: setUp( { ...eligible, isAutomattician: true } ),
-			} );
-
-			expect( result.current ).toBe( false );
-		} );
-
-		it( 'returns false for an usubscribed post carrying the seen flag', () => {
+		it( 'returns true for an usubscribed post carrying the seen flag', () => {
 			const { result } = renderHook(
 				() => useIsSeenEnabled( { feedId: FEED_ID, post: { is_seen: false } } ),
 				{ wrapper: setUp() }

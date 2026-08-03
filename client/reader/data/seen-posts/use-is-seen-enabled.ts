@@ -22,8 +22,9 @@ export function useIsSeenEnabled( { feedId, blogId, post }: IsSeenEnabledArgs ):
 	const hasOrganization = useHasSiteSubscriptionOrganization( feedId, blogId );
 	const isWPForTeamsItem = useSelector( ( state ) => isSiteWPForTeams( state, Number( blogId ) ) );
 
-	if ( post && ! ( 'is_seen' in post ) ) {
-		return false;
+	// If the post is already marked as seen, then prefer that over the subscription check.
+	if ( post?.is_seen ) {
+		return true;
 	}
 
 	const isP2 = hasOrganization || Boolean( isWPForTeamsItem );
