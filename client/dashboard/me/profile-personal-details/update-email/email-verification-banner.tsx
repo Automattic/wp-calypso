@@ -238,6 +238,7 @@ export default function EmailVerificationBanner( {
 				actions={
 					<>
 						<Button
+							className="dashboard-email-verification-resend"
 							variant="primary"
 							__next40pxDefaultSize
 							onClick={ resendEmail }
