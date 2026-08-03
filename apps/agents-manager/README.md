@@ -16,7 +16,7 @@ The Agents Manager runs in multiple different environments:
 4. In CIAB (Commerce in a Box)
    - as a Next Admin SPA integration.
 5. In the WooCommerce AI admin
-   - as a standalone chat container, without touching the admin bar.
+   - as a standalone chat container.
 6. On public blog frontends
    - as Reader Chat for logged-out visitors.
 

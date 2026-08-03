@@ -4,9 +4,7 @@ Unified AI Agent manager for WordPress and Calypso.
 
 ## Installation
 
-```bash
-yarn add @automattic/agents-manager
-```
+An internal workspace package, not published to npm — add `@automattic/agents-manager` as a dependency in the consuming `wp-calypso` workspace (used by Calypso and `apps/agents-manager`).
 
 ## Usage
 
