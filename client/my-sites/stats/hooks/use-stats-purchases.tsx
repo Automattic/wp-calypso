@@ -25,6 +25,7 @@ import {
 	getShouldShowPaywallNotice,
 	getShouldShowPaywallAfterGracePeriod,
 } from 'calypso/state/stats/plan-usage/selectors';
+import { COMMERCIAL_PAYWALL_KILLED } from '../constants';
 import type { Purchase } from 'calypso/lib/purchases/types';
 
 const JETPACK_STATS_TIERED_BILLING_LIVE_DATE_2024_01_04 = '2024-01-04T05:30:00+00:00';
@@ -121,6 +122,13 @@ export const shouldShowPaywallAfterGracePeriod = (
 	state: object,
 	siteId: number | null
 ): boolean => {
+	// `should_show_paywall` is derived from the site's `jetpack-site-has-commercial-paywall`
+	// sticker. Those stickers are deliberately left in place so the affected cohort stays
+	// observable, so every consumer ignores them from here rather than at each call site.
+	if ( COMMERCIAL_PAYWALL_KILLED ) {
+		return false;
+	}
+
 	// Make the paywall check more robust by checking the purchase.
 	return (
 		! hasSupportedCommercialUse( state, siteId ) &&

@@ -306,6 +306,53 @@ describe( 'shouldGateStats in Calypso', () => {
 		const isGatedStats = shouldGateStats( mockState, siteId, jetpackStatsAdvancedStatType );
 		expect( isGatedStats ).toBe( false );
 	} );
+
+	// The WPCOM paywall is a separate code path keyed off site features, and must not be
+	// affected by the Jetpack commercial paywall kill switch (STATS-387). A commercial flag
+	// and a paywall sticker on the site are irrelevant here.
+	it.each( [
+		[ 'Simple', false, false ],
+		[ 'Atomic', true, true ],
+	] )(
+		'should keep gating stats for a %s site carrying a paywall sticker',
+		( _, jetpack, atomic ) => {
+			const mockState = {
+				sites: {
+					features: {
+						[ siteId ]: {
+							data: {
+								active: [],
+							},
+						},
+					},
+					items: {
+						[ siteId ]: {
+							jetpack,
+							options: {
+								is_wpcom_atomic: atomic,
+								is_commercial: true,
+							},
+						},
+					},
+				},
+				purchases: {
+					data: [],
+				},
+				stats: {
+					planUsage: {
+						data: {
+							[ siteId ]: {
+								should_show_paywall: true,
+							},
+						},
+					},
+				},
+			};
+
+			expect( shouldGateStats( mockState, siteId, gatedStatType ) ).toBe( true );
+			expect( shouldGateStats( mockState, siteId, notGatedStatType ) ).toBe( false );
+		}
+	);
 } );
 
 describe( 'shouldGateStats in Odyssey stats', () => {
@@ -406,6 +453,16 @@ describe( 'shouldGateStats in Odyssey stats', () => {
 			jetpackStatsAdvancedStatType
 		);
 		expect( isGatedStats ).toBe( true );
+	} );
+
+	// The case the kill switch must leave alone: commercial, unpaid, but never past the threshold.
+	it( 'should treat commercial jetpack sites below the paywall threshold exactly as before', () => {
+		const belowThresholdState = { ...walledCommercialSiteState, stats: { planUsage: {} } };
+
+		expect( shouldGateStats( belowThresholdState, siteId, gatedStatType ) ).toBe( false );
+		expect( shouldGateStats( belowThresholdState, siteId, jetpackStatsAdvancedStatType ) ).toBe(
+			true
+		);
 	} );
 
 	it( 'should gate advanced stats for non-commercial jetpack sites without Stats commercial purchase', () => {
