@@ -218,7 +218,7 @@ const onboarding: FlowV2< typeof initialize > = {
 						providedDependencies.mode &&
 						providedDependencies.domain
 					) {
-						const destination = addQueryArgs( '/use-my-domain', {
+						const destination = addQueryArgs( 'use-my-domain', {
 							...getQueryArgs( window.location.href ),
 							step: providedDependencies.mode,
 							initialQuery: providedDependencies.domain,
