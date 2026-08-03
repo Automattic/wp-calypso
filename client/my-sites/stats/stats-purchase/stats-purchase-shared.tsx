@@ -56,7 +56,6 @@ const StatsBenefitsCommercial = () => {
 	const spikeInfoIconRef = useRef( null );
 	const overageInfoIconRef = useRef( null );
 	const trackingInfoIconRef = useRef( null );
-	const commercialInfoIconRef = useRef( null );
 	const customDateRangesInfoIconRef = useRef( null );
 	const deviceAttributesInfoIconRef = useRef( null );
 	const [ spikeInfoShow, setSpikeInfoShow ] = useState( false );
@@ -68,9 +67,6 @@ const StatsBenefitsCommercial = () => {
 	const [ trackingInfoShow, setTrackingInfoShow ] = useState( false );
 	const handleUTMTrackingPopoverOpen = () => setTrackingInfoShow( true );
 	const handleUTMTrackingPopoverClose = () => setTrackingInfoShow( false );
-	const [ commercialInfoShow, setCommercialInfoShow ] = useState( false );
-	const handleCommercialUsePopoverOpen = () => setCommercialInfoShow( true );
-	const handleCommercialUsePopoverClose = () => setCommercialInfoShow( false );
 	const [ customDateRangesInfoShow, setCustomDateRangesInfoShow ] = useState( false );
 	const handleCustomDatesPopoverOpen = () => setCustomDateRangesInfoShow( true );
 	const handleCustomDatesPopoverClose = () => setCustomDateRangesInfoShow( false );
@@ -87,17 +83,6 @@ const StatsBenefitsCommercial = () => {
 				<li>{ translate( 'GDPR compliance' ) }</li>
 				<li>{ translate( 'Access to upcoming advanced features' ) }</li>
 				<li>{ translate( 'Priority support' ) }</li>
-				<li>
-					{ translate( '{{strong}}Commercial use{{/strong}}', {
-						components: { strong: <strong /> },
-					} ) }
-					<Icon
-						icon={ info }
-						ref={ commercialInfoIconRef }
-						onMouseEnter={ handleCommercialUsePopoverOpen }
-						onMouseLeave={ handleCommercialUsePopoverClose }
-					/>
-				</li>
 				<li>
 					{ translate( 'Custom date ranges' ) }
 					<Icon
@@ -177,18 +162,6 @@ const StatsBenefitsCommercial = () => {
 				<div className="stats-purchase__info-popover-content">
 					{ translate(
 						'It enables you to measure and track traffic through UTM parameters in your URLs, providing a method to assess the success of your campaigns.'
-					) }
-				</div>
-			</Popover>
-			<Popover
-				position="right"
-				isVisible={ commercialInfoShow }
-				context={ commercialInfoIconRef.current }
-				className="stats-purchase__info-popover"
-			>
-				<div className="stats-purchase__info-popover-content">
-					{ translate(
-						'Your Stats license will be valid for commercial use. Any site with commercial activity requires a commercial-use license.'
 					) }
 				</div>
 			</Popover>
