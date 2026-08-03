@@ -20,7 +20,9 @@ export default function useSubmitContactSupport( { isSignup }: Options = {} ): O
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 
-	const { isError, isSuccess, mutate, isPending, reset } = useSubmitSupportFormMutation( { isSignup } );
+	const { isError, isSuccess, mutate, isPending, reset } = useSubmitSupportFormMutation( {
+		isSignup,
+	} );
 
 	useEffect( () => {
 		if ( isError ) {
