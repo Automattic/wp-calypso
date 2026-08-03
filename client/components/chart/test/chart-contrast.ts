@@ -134,6 +134,61 @@ const SERIES = {
 	),
 };
 
+type SeriesPair = { views: string; visitors: string };
+
+const parseSeriesBody = ( body: string ): SeriesPair => {
+	const values: Partial< Record< 'views' | 'visitors', string > > = {};
+	for ( const match of body.matchAll( /--chart-series-(views|visitors):\s*(var\([^)]+\));/g ) ) {
+		values[ match[ 1 ] as 'views' | 'visitors' ] = match[ 2 ];
+	}
+	if ( ! values.views || ! values.visitors ) {
+		throw new Error( `Incomplete chart-series rule in chart/style.scss: ${ body }` );
+	}
+	return { views: values.views, visitors: values.visitors };
+};
+
+const parseSeriesRules = ( source: string ) => {
+	const ruleRegex =
+		/^((?:(?:\.color-scheme\.is-[\w-]+|:root)(?:,\n)?)+) \{\n((?:\t--chart-series-[\w-]+:[^\n]+;\n)+)\}$/gm;
+	let base: SeriesPair | null = null;
+	const overrides = new Map< string, SeriesPair >();
+	let match: RegExpExecArray | null;
+	while ( ( match = ruleRegex.exec( source ) ) !== null ) {
+		const [ , selectorList, body ] = match;
+		const pair = parseSeriesBody( body );
+		for ( const selector of selectorList.split( ',' ).map( ( s ) => s.trim() ) ) {
+			if ( selector === ':root' ) {
+				base = pair;
+				continue;
+			}
+			const schemeMatch = selector.match( /^\.color-scheme\.is-([\w-]+)$/ );
+			if ( schemeMatch ) {
+				overrides.set( schemeMatch[ 1 ], pair );
+			}
+		}
+	}
+	if ( ! base ) {
+		throw new Error( 'No :root base chart-series rule found in chart/style.scss' );
+	}
+	return { base, overrides };
+};
+
+const { base: baseSeriesPair, overrides: seriesOverrides } = parseSeriesRules( chartStyle );
+
+const pairForScheme = ( scheme: string ): SeriesPair =>
+	seriesOverrides.get( scheme ) ?? baseSeriesPair;
+
+const seriesHex = ( scheme: string, series: 'views' | 'visitors' ) => {
+	const value = pairForScheme( scheme )[ series ];
+	const resolved = resolve( value, scheme );
+	if ( ! resolved ) {
+		throw new Error(
+			`Could not resolve --chart-series-${ series } (${ value }) for scheme ${ scheme }`
+		);
+	}
+	return resolved;
+};
+
 const schemeNames = [ ...schemes.keys() ];
 
 const lineChartSource = fs.readFileSync( LINE_CHART, 'utf8' );
@@ -142,12 +197,17 @@ const LINE_CHART_TOKENS = [ ...lineChartSource.matchAll( /useCssVariable\(\s*'(-
 );
 
 describe( 'Stats chart series colours meet WCAG 1.4.11', () => {
+	it( 'bar chart series read the shared --chart-series custom properties', () => {
+		expect( SERIES.viewsBar ).toBe( '--chart-series-views' );
+		expect( SERIES.visitorsBar ).toBe( '--chart-series-visitors' );
+	} );
+
 	it.each( schemeNames )(
 		'bar chart series meet the 3:1 adjacency rule (each other and the surface) in the %s scheme',
 		( scheme ) => {
 			const surface = tokenValue( scheme, '--color-surface' );
-			const views = tokenValue( scheme, SERIES.viewsBar );
-			const visitors = tokenValue( scheme, SERIES.visitorsBar );
+			const views = seriesHex( scheme, 'views' );
+			const visitors = seriesHex( scheme, 'visitors' );
 
 			expect( contrast( views, surface ) ).toBeGreaterThanOrEqual( MIN_RATIO );
 			expect( contrast( visitors, surface ) ).toBeGreaterThanOrEqual( MIN_RATIO );
@@ -165,15 +225,19 @@ describe( 'Stats chart series colours meet WCAG 1.4.11', () => {
 		expect( LINE_CHART_TOKENS[ 0 ] ).not.toBe( LINE_CHART_TOKENS[ 1 ] );
 	} );
 
+	it( 'line chart uses the same two tokens as the bar chart', () => {
+		expect( new Set( LINE_CHART_TOKENS ) ).toEqual(
+			new Set( [ SERIES.viewsBar, SERIES.visitorsBar ] )
+		);
+	} );
+
 	it.each( schemeNames )(
 		'line chart series each meet the 3:1 background-contrast rule (no adjacency requirement) in the %s scheme',
 		( scheme ) => {
 			const surface = tokenValue( scheme, '--color-surface' );
-			const [ viewsToken, visitorsToken ] = LINE_CHART_TOKENS;
-			const views = tokenValue( scheme, viewsToken );
-			const visitors = tokenValue( scheme, visitorsToken );
+			const views = seriesHex( scheme, 'views' );
+			const visitors = seriesHex( scheme, 'visitors' );
 
-			expect( viewsToken ).not.toBe( visitorsToken );
 			expect( contrast( views, surface ) ).toBeGreaterThanOrEqual( MIN_RATIO );
 			expect( contrast( visitors, surface ) ).toBeGreaterThanOrEqual( MIN_RATIO );
 		}
