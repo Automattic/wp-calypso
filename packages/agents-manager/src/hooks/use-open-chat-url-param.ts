@@ -8,6 +8,7 @@ import type { AgentsManagerSelect } from '@automattic/data-stores';
 const OPEN_CHAT_URL_PARAM = 'ai-open';
 
 const hasOpenChatUrlParam = () =>
+	typeof window !== 'undefined' &&
 	new URLSearchParams( window.location.search ).get( OPEN_CHAT_URL_PARAM ) === 'true';
 
 /**
