@@ -486,6 +486,26 @@ describe( 'shouldGateStats in Odyssey stats', () => {
 		expect( shouldGateStats( vipState, siteId, jetpackStatsAdvancedStatType ) ).toBe( false );
 	} );
 
+	// The stats slice is persisted, so a store written before the switch shipped rehydrates with
+	// the raw sticker fields, bypassing `selectPlanUsage`. Gating must still not apply.
+	it( 'should not gate for persisted pre-switch usage data that still carries the sticker', () => {
+		const rehydratedState = {
+			...walledCommercialSiteState,
+			stats: {
+				planUsage: {
+					data: {
+						[ siteId ]: { should_show_paywall: true, paywall_date_from: '2026-07-14' },
+					},
+				},
+			},
+		};
+
+		expect( shouldGateStats( rehydratedState, siteId, gatedStatType ) ).toBe( false );
+		expect(
+			shouldGateStats( rehydratedState, siteId, STATS_FEATURE_DATE_CONTROL_LAST_30_DAYS )
+		).toBe( false );
+	} );
+
 	// The case the kill switch must leave alone: commercial, unpaid, but never past the threshold.
 	it( 'should treat commercial jetpack sites below the paywall threshold exactly as before', () => {
 		const belowThresholdState = { ...walledCommercialSiteState, stats: { planUsage: {} } };

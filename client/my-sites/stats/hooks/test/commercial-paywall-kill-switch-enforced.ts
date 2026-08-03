@@ -63,6 +63,16 @@ describe( 'with COMMERCIAL_PAYWALL_KILLED flipped back to false', () => {
 		expect( shouldShowPaywallAfterGracePeriod( walledCommercialSiteState, siteId ) ).toBe( true );
 	} );
 
+	it( 'honours persisted usage data again, rather than suppressing it on read', () => {
+		const rehydratedState = {
+			...walledCommercialSiteState,
+			stats: { planUsage: { data: { [ siteId ]: walledApiPayload } } },
+		};
+
+		expect( shouldShowPaywallAfterGracePeriod( rehydratedState, siteId ) ).toBe( true );
+		expect( shouldGateStats( rehydratedState, siteId, STAT_TYPE_CLICKS ) ).toBe( true );
+	} );
+
 	it( 'escalates the upgrade notice to its lockout variant again', () => {
 		expect( shouldShowPaywallNotice( walledCommercialSiteState, siteId ) ).toBe( true );
 	} );
