@@ -24,6 +24,7 @@ import LicenseSearch from '../license-search';
 import LicenseStateFilter from '../license-state-filter';
 import LicensesOverviewContext from './context';
 import EmptyState from './empty-state';
+import PressablePurchaseConfirmationMessage from './pressable-purchase-confirmation-message';
 
 import './style.scss';
 
@@ -70,6 +71,7 @@ export default function LicensesOverview( {
 		<Layout className="licenses-overview" title={ title } wide withBorder>
 			<LicensesOverviewContext.Provider value={ context }>
 				<LayoutTop withNavigation>
+					<PressablePurchaseConfirmationMessage />
 					<PressableUsageLimitNotice />
 					<PaymentRiskNoticeBanner source="purchases_licenses" />
 					<LayoutHeader>

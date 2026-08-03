@@ -2,6 +2,7 @@ import page from '@automattic/calypso-router';
 import { StripeHookProvider } from '@automattic/calypso-stripe';
 import { CheckoutErrorBoundary } from '@automattic/composite-checkout';
 import { createRequestCartProduct, useShoppingCart } from '@automattic/shopping-cart';
+import { addQueryArgs } from '@wordpress/url';
 import debugFactory from 'debug';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, useState } from 'react';
@@ -17,6 +18,7 @@ import { getCurrentUserLocale } from 'calypso/state/current-user/selectors';
 import hasLoadedSites from 'calypso/state/selectors/has-loaded-sites';
 import getSite from 'calypso/state/sites/selectors/get-site';
 import { setSelectedSiteId } from 'calypso/state/ui/actions';
+import { isPressableHostingProduct, isPressableAddonProduct } from '../lib/hosting';
 import ClientCheckoutError from './checkout-error';
 import ClientCheckoutPlaceholder from './checkout-placeholder';
 import type { ShoppingCartItem } from '../types';
@@ -237,6 +239,19 @@ function BillingDragonCheckoutContent( {
 		return <ClientCheckoutError title={ translate( 'Error' ) } message={ error } />;
 	}
 
+	// When a Pressable plan is being purchased, flag it on the post-checkout redirect
+	// so the licenses page can surface the Pressable purchase confirmation banner.
+	const candidatePlanSlugs = isPlanCheckout
+		? [ planSlug ].filter( ( slug ): slug is string => !! slug )
+		: cartItems.map( ( item ) => item.slug );
+	const purchasedPressablePlanSlug = candidatePlanSlugs.find(
+		( slug ) => isPressableHostingProduct( slug ) && ! isPressableAddonProduct( slug )
+	);
+	const licensesRedirectUrl = addQueryArgs(
+		window.location.origin + '/purchases/licenses',
+		purchasedPressablePlanSlug ? { pressable_purchased: purchasedPressablePlanSlug } : {}
+	);
+
 	return (
 		<div className="client-checkout-v2">
 			{ withA8cLogo && (
@@ -248,7 +263,7 @@ function BillingDragonCheckoutContent( {
 			) }
 			<CheckoutMain
 				sitelessCheckoutType="a4a"
-				redirectTo={ window.location.origin + '/purchases/licenses' }
+				redirectTo={ licensesRedirectUrl }
 				customizedPreviousPath="/marketplace"
 				siteSlug={ siteSlug ?? '' }
 				siteId={ siteId ?? 0 }
