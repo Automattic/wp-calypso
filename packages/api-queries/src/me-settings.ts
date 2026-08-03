@@ -1,7 +1,6 @@
 import { fetchUserSettings, sendVerificationEmail, updateUserSettings } from '@automattic/api-core';
 import { queryOptions, mutationOptions } from '@tanstack/react-query';
 import { queryClient, clearQueryClient } from './query-client';
-import type { UserSettings } from '@automattic/api-core';
 
 export const userSettingsQuery = () =>
 	queryOptions( {
@@ -45,28 +44,25 @@ export const cancelPendingEmailChangeMutation = () =>
 		},
 	} );
 
-export const resendEmailVerificationMutation = ( email: string ) =>
+// Re-saves the address already pending, which is what prompts another email.
+//
+// The response isn't written back. It describes the state as it was when the request was sent,
+// and this can overlap a cancellation from either of the two controls that offer one — so it may
+// reinstate a change already cancelled, or miss one this request has itself recreated. The
+// settings are refetched instead of guessed, whichever way the two landed.
+export const resendEmailVerificationMutation = () =>
 	mutationOptions( {
 		meta: { statId: 'email-verify-resend' },
-		mutationFn: () => updateUserSettings( { user_email: email } ),
-		onSuccess: ( newData ) => {
-			queryClient.setQueryData(
-				userSettingsQuery().queryKey,
-				( oldData ) =>
-					oldData && {
-						...oldData,
-						...newData,
-					}
-			);
+		// The address is a variable rather than closed over, so a caller can tell which request a
+		// late response belongs to.
+		mutationFn: ( email: string ) => updateUserSettings( { user_email: email } ),
+		onSuccess: () => {
+			void queryClient.invalidateQueries( { queryKey: userSettingsQuery().queryKey } );
 		},
 	} );
 
 export const sendEmailVerificationMutation = () =>
 	mutationOptions( {
 		meta: { statId: 'email-verify-send' },
-		// Return `{}` to match `resendEmailVerificationMutation`'s data type.
-		mutationFn: async (): Promise< Partial< UserSettings > > => {
-			await sendVerificationEmail();
-			return {};
-		},
+		mutationFn: () => sendVerificationEmail(),
 	} );

@@ -1,6 +1,10 @@
 import { wpcom } from '../wpcom-fetcher';
 import { adaptUserSettings } from './adapters';
-import type { PasswordValidationResponse, UserSettings } from './types';
+import type {
+	PasswordValidationResponse,
+	SendVerificationEmailResponse,
+	UserSettings,
+} from './types';
 
 export async function updateUserSettings(
 	data: Partial< UserSettings >
@@ -46,7 +50,7 @@ export async function validatePassword( password: string ): Promise< PasswordVal
 	return await wpcom.req.post( '/me/settings/password/validate', { password } );
 }
 
-export async function sendVerificationEmail(): Promise< void > {
+export async function sendVerificationEmail(): Promise< SendVerificationEmailResponse > {
 	return await wpcom.req.post( {
 		path: '/me/send-verification-email',
 		apiVersion: '1.1',

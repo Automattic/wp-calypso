@@ -1,20 +1,19 @@
 import { Substitution, useTranslate } from 'i18n-calypso';
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useState } from 'react';
 import Banner from 'calypso/components/banner';
 import EmailVerificationDialog from 'calypso/components/email-verification/email-verification-dialog';
 import useGetEmailToVerify from 'calypso/components/email-verification/hooks/use-get-email-to-verify';
-import { useSendEmailVerification } from 'calypso/landing/stepper/hooks/use-send-email-verification';
 import {
 	formatCooldown,
 	resendAcceptedRetryAfter,
 	resendThrottleRetryAfter,
-} from 'calypso/lib/email-verification/resend';
-import { useResendCooldown } from 'calypso/lib/email-verification/use-resend-cooldown';
+} from 'calypso/dashboard/utils/email-verification-resend';
+import { useResendCooldown } from 'calypso/dashboard/utils/use-resend-cooldown';
+import { useSendEmailVerification } from 'calypso/landing/stepper/hooks/use-send-email-verification';
 import { emailFormEventEmitter } from 'calypso/me/account/account-email-field';
 import { useDispatch, useSelector } from 'calypso/state';
 import { isCurrentUserEmailVerified } from 'calypso/state/current-user/selectors';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
-import getUserSettings from 'calypso/state/selectors/get-user-settings';
 import isPendingEmailChange from 'calypso/state/selectors/is-pending-email-change';
 import { setUnsavedUserSetting } from 'calypso/state/user-settings/actions';
 import { saveUnsavedUserSettings } from 'calypso/state/user-settings/thunks';
@@ -78,20 +77,11 @@ const EmailVerificationBannerV2: React.FC< Props > = ( { setIsBusy } ) => {
 	const sendVerificationEmail = useSendEmailVerification();
 	const [ isSendingEmail, setIsSendingEmail ] = useState( false );
 
-	const { secondsUntilResend, hold: holdResend, reset: resetResend } = useResendCooldown();
-
-	// Where a resend would actually go, from saved settings only: `emailToVerify` also reflects
-	// unsaved input, which changes on every keystroke without changing the target.
-	const savedSettings = useSelector( getUserSettings );
-	const resendTarget = isEmailChangePending
-		? `pending:${ savedSettings?.new_user_email ?? '' }`
-		: `original:${ savedSettings?.user_email ?? '' }`;
-
-	// Correcting a typo switches both the address and the endpoint, and the pending-change path
-	// isn't rate limited at all, so the old wait must not carry over.
-	useEffect( () => {
-		resetResend();
-	}, [ resendTarget, resetResend ] );
+	// Only the dedicated endpoint is rate limited; a pending change goes through user settings,
+	// which isn't. So there is one wait to track, and it simply doesn't apply while a pending
+	// change is in play — dropping it there would forget a limit the server still enforces.
+	const { secondsUntilResend, hold: holdResend } = useResendCooldown();
+	const isAwaitingResend = ! isEmailChangePending && secondsUntilResend > 0;
 
 	const highlightEmailInput = useCallback( () => {
 		emailFormEventEmitter?.dispatchEvent( new Event( 'highlightInput' ) );
@@ -166,13 +156,12 @@ const EmailVerificationBannerV2: React.FC< Props > = ( { setIsBusy } ) => {
 		}
 	);
 
-	const callToAction: React.ReactNode =
-		secondsUntilResend > 0
-			? translate( 'Resend email (%(countdown)s)', {
-					args: { countdown: formatCooldown( secondsUntilResend ) },
-					comment: 'countdown to when the verification email can be resent, e.g. 4:59',
-			  } )
-			: translate( 'Resend email' );
+	const callToAction: React.ReactNode = isAwaitingResend
+		? translate( 'Resend email (%(countdown)s)', {
+				args: { countdown: formatCooldown( secondsUntilResend ) },
+				comment: 'countdown to when the verification email can be resent, e.g. 4:59',
+		  } )
+		: translate( 'Resend email' );
 
 	return (
 		<Banner
@@ -181,7 +170,7 @@ const EmailVerificationBannerV2: React.FC< Props > = ( { setIsBusy } ) => {
 			title={ translate( 'Verify your email' ) }
 			description={ description }
 			callToAction={ callToAction }
-			isCallToActionDisabled={ secondsUntilResend > 0 }
+			isCallToActionDisabled={ isAwaitingResend }
 			onClick={ resendEmailToVerify }
 			secondaryCallToAction={ translate( 'Update email' ) }
 			secondaryOnClick={ highlightEmailInput }

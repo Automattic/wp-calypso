@@ -118,3 +118,9 @@ export interface PasswordValidationResponse {
 		}[];
 	};
 }
+
+export interface SendVerificationEmailResponse {
+	success: boolean;
+	// Seconds until another verification email may be requested.
+	retry_after?: number;
+}

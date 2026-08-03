@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { EVERY_SECOND, useInterval } from 'calypso/lib/interval';
-import { cooldownDeadline, cooldownRemainingSeconds } from './resend';
+import { cooldownDeadline, cooldownRemainingSeconds } from './email-verification-resend';
 
 interface Options {
 	// A cooldown already in effect, for a caller that persists one across a reload.
@@ -34,7 +34,6 @@ export function useResendCooldown( { initialDeadline = 0, onHold }: Options = {}
 		onHoldRef.current?.( deadlineRef.current );
 	}, [] );
 
-	// A new target must not inherit a wait the server isn't enforcing against it.
 	const reset = useCallback( () => {
 		deadlineRef.current = 0;
 		setSecondsUntilResend( 0 );

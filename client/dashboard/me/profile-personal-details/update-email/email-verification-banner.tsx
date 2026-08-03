@@ -10,9 +10,16 @@ import { useDispatch } from '@wordpress/data';
 import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { withSnackbar } from '../../../app/snackbars/with-snackbar';
 import Notice from '../../../components/notice';
+import {
+	formatCooldown,
+	resendAcceptedRetryAfter,
+	RESEND_MIN_INTERVAL_SECONDS,
+	resendThrottleRetryAfter,
+} from '../../../utils/email-verification-resend';
+import { useResendCooldown } from '../../../utils/use-resend-cooldown';
 import type { UserSettings } from '@automattic/api-core';
 
 // Get email verification params from URL
@@ -55,8 +62,7 @@ export default function EmailVerificationBanner( {
 	userSettings,
 	isEmailVerified,
 }: EmailVerificationBannerProps ) {
-	const { createErrorNotice } = useDispatch( noticesStore );
-	const [ canResend, setCanResend ] = useState( true );
+	const { createErrorNotice, createSuccessNotice } = useDispatch( noticesStore );
 
 	// Extract verification params to avoid multiple URL parsing calls
 	const {
@@ -83,6 +89,21 @@ export default function EmailVerificationBanner( {
 
 	const pendingEmail = userSettings.new_user_email;
 	const isEmailChangePending = !! userSettings.user_email_change_pending && !! pendingEmail;
+	// A wait per path. The dedicated endpoint's is the server's, and is kept while a pending
+	// change is in play — dropping it would forget a limit the server still enforces. The pending
+	// path has no server limit, so its wait is ours and belongs to one address.
+	const originalCooldown = useResendCooldown();
+	const pendingCooldown = useResendCooldown();
+	const { secondsUntilResend } = isEmailChangePending ? pendingCooldown : originalCooldown;
+	const isAwaitingResend = secondsUntilResend > 0;
+
+	const pendingEmailRef = useRef( pendingEmail );
+	pendingEmailRef.current = pendingEmail;
+
+	const { reset: resetPendingCooldown } = pendingCooldown;
+	useEffect( () => {
+		resetPendingCooldown();
+	}, [ pendingEmail, resetPendingCooldown ] );
 	const shouldShowVerifyNotice = isEmailChangePending || ! isEmailVerified;
 	const unverifiedEmail = isEmailChangePending ? pendingEmail : userSettings.user_email;
 
@@ -112,24 +133,66 @@ export default function EmailVerificationBanner( {
 		emailVerificationFailed,
 	] );
 
-	const resendMutation = isEmailChangePending
-		? resendEmailVerificationMutation( pendingEmail || '' )
-		: sendEmailVerificationMutation();
+	// One mutation per endpoint: TanStack hands a request in flight whatever options the latest
+	// render produced, so a shared one settles against the wrong endpoint's callbacks and copy.
+	const sentToEmail = ( email?: string ) =>
+		email
+			? sprintf(
+					/* translators: %s is the email address awaiting verification */
+					__( 'We sent an email to %s. Please check your inbox to verify your email.' ),
+					email
+			  )
+			: __( 'Verification email sent.' );
 
-	const { mutate: resendEmail, isPending: isResendPending } = useMutation( {
-		...withSnackbar( resendMutation, {
-			success: unverifiedEmail
-				? sprintf(
-						/* translators: %s is the email address awaiting verification */
-						__( 'We sent an email to %s. Please check your inbox to verify your email.' ),
-						unverifiedEmail
-				  )
-				: __( 'Verification email sent.' ),
-			error: __( 'Failed to resend verification email.' ),
+	// A refusal is worth honouring whenever it lands, but only worth mentioning while that
+	// endpoint is on screen — otherwise the notice contradicts an enabled button.
+	const isThrottledPathActiveRef = useRef( ! isEmailChangePending );
+	isThrottledPathActiveRef.current = ! isEmailChangePending;
+
+	const { mutate: sendToOriginal, isPending: isSendPending } = useMutation( {
+		...withSnackbar( sendEmailVerificationMutation(), {
+			success: sentToEmail( userSettings.user_email ),
 		} ),
-		onSuccess: () => setCanResend( false ),
-		onError: () => setCanResend( true ),
+		onSuccess: ( data ) => originalCooldown.hold( resendAcceptedRetryAfter( data ) ),
+		onError: ( error ) => {
+			const retryAfter = resendThrottleRetryAfter( error );
+			if ( retryAfter !== null ) {
+				originalCooldown.hold( retryAfter );
+				if ( isThrottledPathActiveRef.current ) {
+					createErrorNotice( __( 'Too many attempts. Please wait before trying again.' ), {
+						type: 'snackbar',
+					} );
+				}
+				return;
+			}
+			createErrorNotice( __( 'Failed to resend verification email.' ), { type: 'snackbar' } );
+		},
 	} );
+
+	// Same reason, one level down: the address is a variable and the callbacks belong to the
+	// call, so a late response can't report an address it wasn't sent to. Per-call callbacks run
+	// alongside the factory's rather than replacing it.
+	const { mutate: mutateResendToPending, isPending: isPendingResendPending } = useMutation(
+		resendEmailVerificationMutation()
+	);
+
+	const resendToPending = ( email: string ) =>
+		mutateResendToPending( email, {
+			onSuccess: () => {
+				createSuccessNotice( sentToEmail( email ), { type: 'snackbar' } );
+				// Nothing on the server stops this mailing the same address repeatedly — but a wait
+				// is meaningless once the address has moved on.
+				if ( email === pendingEmailRef.current ) {
+					pendingCooldown.hold( RESEND_MIN_INTERVAL_SECONDS );
+				}
+			},
+			onError: () =>
+				createErrorNotice( __( 'Failed to resend verification email.' ), { type: 'snackbar' } ),
+		} );
+
+	const resendEmail = () =>
+		isEmailChangePending ? resendToPending( pendingEmail || '' ) : sendToOriginal();
+	const isResendPending = isSendPending || isPendingResendPending;
 
 	const { mutate: cancelPendingEmail, isPending: isCancelPending } = useMutation(
 		withSnackbar( cancelPendingEmailChangeMutation(), {
@@ -180,11 +243,17 @@ export default function EmailVerificationBanner( {
 						<Button
 							variant="primary"
 							__next40pxDefaultSize
-							onClick={ () => resendEmail() }
-							disabled={ isResendPending || ! canResend }
+							onClick={ resendEmail }
+							disabled={ isResendPending || isAwaitingResend }
 							isBusy={ isResendPending }
 						>
-							{ __( 'Resend email' ) }
+							{ isAwaitingResend
+								? sprintf(
+										/* translators: %s is a countdown to when the email can be resent, e.g. 4:59 */
+										__( 'Resend email (%s)' ),
+										formatCooldown( secondsUntilResend )
+								  )
+								: __( 'Resend email' ) }
 						</Button>
 						{ isEmailChangePending && (
 							<Button
