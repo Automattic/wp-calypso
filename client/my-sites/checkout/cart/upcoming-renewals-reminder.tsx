@@ -335,7 +335,10 @@ function getMessages( {
 				'"relativeRenewDate" is relative to the present time and it is already localized, eg. "in a year", "in a month", "today"',
 			args: {
 				purchaseName: getName( purchase ),
-				relativeRenewDate: getRelativeDayString( new Date( purchase.renew_date ), 'upcoming' ),
+				relativeRenewDate: getRelativeDayString(
+					new Date( purchase.renew_date ?? '' ),
+					'upcoming'
+				),
 			},
 		};
 		if ( isDomainRegistration( purchase ) ) {

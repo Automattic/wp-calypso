@@ -40,7 +40,9 @@ function getExpiresText(
 		return translate( 'renews %(renewDate)s', {
 			comment:
 				'"renewDate" is relative to the present time and it is already localized, eg. "in a year", "in a month", "today"',
-			args: { renewDate: getRelativeDayString( new Date( purchase.renew_date ), 'upcoming' ) },
+			args: {
+				renewDate: getRelativeDayString( new Date( purchase.renew_date ?? '' ), 'upcoming' ),
+			},
 		} );
 	}
 	if ( isExpiredOrRemoved( purchase ) ) {
@@ -78,7 +80,7 @@ const UpcomingRenewalsDialog: FunctionComponent< Props > = ( {
 				const compareDateA = isRenewingBeforeExpiration( a ) ? a.renew_date : a.expiry_date;
 				const compareDateB = isRenewingBeforeExpiration( b ) ? b.renew_date : b.expiry_date;
 
-				return compareDateA?.localeCompare?.( compareDateB );
+				return ( compareDateA ?? '' ).localeCompare( compareDateB ?? '' );
 			} ),
 		[ purchases ]
 	);

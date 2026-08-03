@@ -387,8 +387,8 @@ export interface Purchase {
 	regular_price_integer: number;
 
 	/**
-	 * The date of the next scheduled auto-renewal attempt (ISO 8601), or an
-	 * empty string when no renewal is scheduled.
+	 * The date of the next scheduled auto-renewal attempt (ISO 8601), or
+	 * `undefined` when no renewal is scheduled.
 	 *
 	 * Populated only when the subscription is set to auto-renew and a renewal
 	 * attempt is still upcoming. WordPress.com begins attempting renewals before
@@ -397,12 +397,13 @@ export interface Purchase {
 	 * post-expiry grace period, so this date may fall before or after
 	 * `expiry_date`.
 	 *
-	 * An empty string means no attempt is scheduled: auto-renew is off, or the
+	 * `undefined` means no attempt is scheduled: auto-renew is off, or the
 	 * subscription is in its grace period past the final auto-renewal attempt.
 	 * It does NOT fall back to the expiry date — read `expiry_date` explicitly
-	 * where an expiry date is wanted.
+	 * where an expiry date is wanted. The server may also send an empty string
+	 * for the same "unset" meaning; treat both as falsy.
 	 */
-	renew_date: string;
+	renew_date?: string;
 
 	sale_amount?: number;
 	sale_amount_integer?: number;
