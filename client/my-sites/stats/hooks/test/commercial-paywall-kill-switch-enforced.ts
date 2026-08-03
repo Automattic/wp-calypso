@@ -2,16 +2,17 @@
  * Pins the other side of the kill switch: with COMMERCIAL_PAYWALL_KILLED flipped back to `false`,
  * the classifier paywall must enforce exactly as it did before STATS-387. Without this, nothing
  * proves the switch is reversible rather than simply dead.
+ *
+ * Because the switch is applied on read and never rewrites the stored payload, a store written
+ * while the switch was on is indistinguishable from one written before it shipped — so these
+ * fixtures cover both.
  */
 import { isEnabled } from '@automattic/calypso-config';
 import { STAT_TYPE_CLICKS, STATS_FEATURE_DATE_CONTROL_LAST_30_DAYS } from '../../constants';
-import { selectPlanUsage } from '../use-plan-usage-query';
 import { shouldGateStats } from '../use-should-gate-stats';
 import { shouldShowPaywallAfterGracePeriod, shouldShowPaywallNotice } from '../use-stats-purchases';
-import type { PlanUsage } from '../use-plan-usage-query';
 
-jest.mock( '../../constants', () => ( {
-	...jest.requireActual( '../../constants' ),
+jest.mock( 'calypso/state/stats/plan-usage/constants', () => ( {
 	COMMERCIAL_PAYWALL_KILLED: false,
 } ) );
 
@@ -22,12 +23,6 @@ jest.mock( '@automattic/calypso-config', () => {
 } );
 
 const siteId = 123;
-
-const walledApiPayload = {
-	should_show_paywall: true,
-	paywall_date_from: '2026-07-14',
-	recent_usages: [],
-} as unknown as PlanUsage;
 
 const walledCommercialSiteState = {
 	sites: {
@@ -40,7 +35,13 @@ const walledCommercialSiteState = {
 		},
 	},
 	purchases: { data: [] },
-	stats: { planUsage: { data: { [ siteId ]: selectPlanUsage( walledApiPayload ) } } },
+	stats: {
+		planUsage: {
+			data: {
+				[ siteId ]: { should_show_paywall: true, paywall_date_from: '2026-07-14' },
+			},
+		},
+	},
 };
 
 describe( 'with COMMERCIAL_PAYWALL_KILLED flipped back to false', () => {
@@ -48,29 +49,8 @@ describe( 'with COMMERCIAL_PAYWALL_KILLED flipped back to false', () => {
 		( isEnabled as jest.Mock ).mockImplementation( () => false );
 	} );
 
-	afterAll( () => {
-		jest.clearAllMocks();
-	} );
-
-	it( 'preserves the sticker-derived fields through the query', () => {
-		const usage = selectPlanUsage( walledApiPayload );
-
-		expect( usage.should_show_paywall ).toBe( true );
-		expect( usage.paywall_date_from ).toBe( '2026-07-14' );
-	} );
-
 	it( 'reports the paywall again for a walled commercial site', () => {
 		expect( shouldShowPaywallAfterGracePeriod( walledCommercialSiteState, siteId ) ).toBe( true );
-	} );
-
-	it( 'honours persisted usage data again, rather than suppressing it on read', () => {
-		const rehydratedState = {
-			...walledCommercialSiteState,
-			stats: { planUsage: { data: { [ siteId ]: walledApiPayload } } },
-		};
-
-		expect( shouldShowPaywallAfterGracePeriod( rehydratedState, siteId ) ).toBe( true );
-		expect( shouldGateStats( rehydratedState, siteId, STAT_TYPE_CLICKS ) ).toBe( true );
 	} );
 
 	it( 'escalates the upgrade notice to its lockout variant again', () => {
@@ -85,5 +65,24 @@ describe( 'with COMMERCIAL_PAYWALL_KILLED flipped back to false', () => {
 		expect(
 			shouldGateStats( walledCommercialSiteState, siteId, STATS_FEATURE_DATE_CONTROL_LAST_30_DAYS )
 		).toBe( true );
+	} );
+
+	it( 'still exempts a site that owns commercial use', () => {
+		const paidState = {
+			...walledCommercialSiteState,
+			purchases: {
+				data: [
+					{
+						blog_id: siteId,
+						product_slug: 'jetpack_stats_yearly',
+						expiry_status: 'active',
+						subscription_status: 'active',
+					},
+				],
+			},
+		};
+
+		expect( shouldShowPaywallAfterGracePeriod( paidState, siteId ) ).toBe( false );
+		expect( shouldGateStats( paidState, siteId, STAT_TYPE_CLICKS ) ).toBe( false );
 	} );
 } );

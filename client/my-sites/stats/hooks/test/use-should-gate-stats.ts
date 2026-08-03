@@ -9,9 +9,7 @@ import {
 	STATS_FEATURE_UTM_STATS,
 	STATS_TYPE_DEVICE_STATS,
 } from '../../constants';
-import { selectPlanUsage } from '../use-plan-usage-query';
 import { shouldGateStats } from '../use-should-gate-stats';
-import type { PlanUsage } from '../use-plan-usage-query';
 
 jest.mock( '@automattic/calypso-config', () => {
 	const config = () => 'development';
@@ -405,8 +403,8 @@ describe( 'shouldGateStats in Odyssey stats', () => {
 		expect( isGatedStats ).toBe( false );
 	} );
 
-	// The usage payload is put through `selectPlanUsage` rather than written by hand, so the
-	// fixture holds what actually reaches the store for a site carrying the paywall sticker.
+	// The switch is applied on read, so the store holds exactly what the API said for a site
+	// carrying the paywall sticker.
 	const walledCommercialSiteState = {
 		sites: {
 			features: {
@@ -432,11 +430,7 @@ describe( 'shouldGateStats in Odyssey stats', () => {
 		stats: {
 			planUsage: {
 				data: {
-					[ siteId ]: selectPlanUsage( {
-						should_show_paywall: true,
-						paywall_date_from: '2026-07-14',
-						recent_usages: [],
-					} as unknown as PlanUsage ),
+					[ siteId ]: { should_show_paywall: true, paywall_date_from: '2026-07-14' },
 				},
 			},
 		},
@@ -484,26 +478,6 @@ describe( 'shouldGateStats in Odyssey stats', () => {
 
 		expect( shouldGateStats( vipState, siteId, gatedStatType ) ).toBe( false );
 		expect( shouldGateStats( vipState, siteId, jetpackStatsAdvancedStatType ) ).toBe( false );
-	} );
-
-	// The stats slice is persisted, so a store written before the switch shipped rehydrates with
-	// the raw sticker fields, bypassing `selectPlanUsage`. Gating must still not apply.
-	it( 'should not gate for persisted pre-switch usage data that still carries the sticker', () => {
-		const rehydratedState = {
-			...walledCommercialSiteState,
-			stats: {
-				planUsage: {
-					data: {
-						[ siteId ]: { should_show_paywall: true, paywall_date_from: '2026-07-14' },
-					},
-				},
-			},
-		};
-
-		expect( shouldGateStats( rehydratedState, siteId, gatedStatType ) ).toBe( false );
-		expect(
-			shouldGateStats( rehydratedState, siteId, STATS_FEATURE_DATE_CONTROL_LAST_30_DAYS )
-		).toBe( false );
 	} );
 
 	// The case the kill switch must leave alone: commercial, unpaid, but never past the threshold.

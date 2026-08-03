@@ -35,11 +35,9 @@ describe( 'commercial_site_upgrade notice visibility', () => {
 	it( 'shows for a commercial WPCOM site, which never had the paywall variant', () => {
 		expect(
 			commercialSiteUpgradeNotice?.isVisibleFunc( {
-				siteId: 123,
-				isOdysseyStats: false,
+				...walledJetpackSite,
+				isSiteJetpackNotAtomic: false,
 				isWpcom: true,
-				isCommercial: true,
-				hasPaidStats: false,
 				showPaywallNotice: false,
 			} )
 		).toBe( true );

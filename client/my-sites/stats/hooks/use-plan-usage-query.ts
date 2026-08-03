@@ -1,6 +1,5 @@
 import { useQuery, UseQueryResult } from '@tanstack/react-query';
 import wpcom from 'calypso/lib/wp';
-import { COMMERCIAL_PAYWALL_KILLED } from '../constants';
 import { PriceTierListItemProps } from '../stats-purchase/types';
 import getDefaultQueryParams from './default-query-params';
 
@@ -43,7 +42,7 @@ export function getUsageLimitStatus( usage?: PlanUsage ): {
 	};
 }
 
-export function selectPlanUsage( payload: PlanUsage ): PlanUsage {
+function selectPlanUsage( payload: PlanUsage ): PlanUsage {
 	const recent_usages =
 		payload?.recent_usages
 			?.map( ( usage ) => usage?.views_count ?? 0 )
@@ -51,13 +50,6 @@ export function selectPlanUsage( payload: PlanUsage ): PlanUsage {
 
 	return {
 		...payload,
-		// Both fields are derived from the site's `jetpack-site-has-commercial-paywall` sticker.
-		// The stickers are deliberately left in place so the affected cohort stays observable, so
-		// they are neutralised here instead — every paywall consumer reads them through this
-		// query, whether directly or via the Redux copy dispatched from the page loaders, so this
-		// is the one place that has to know about the switch (STATS-387).
-		should_show_paywall: COMMERCIAL_PAYWALL_KILLED ? false : payload?.should_show_paywall,
-		paywall_date_from: COMMERCIAL_PAYWALL_KILLED ? null : payload?.paywall_date_from,
 		validMonthlyViews: recent_usages.length > 0 ? Math.min( ...recent_usages ) : 0,
 	};
 }

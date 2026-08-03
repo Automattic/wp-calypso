@@ -113,7 +113,7 @@ export const hasSupportedVideoPressUse = ( state: object, siteId: number | null 
 
 export const shouldShowPaywallNotice = ( state: object, siteId: number | null ): boolean => {
 	return (
-		! hasSupportedCommercialUse( state, siteId ) && getShouldShowPaywallNotice( state, siteId )
+		getShouldShowPaywallNotice( state, siteId ) && ! hasSupportedCommercialUse( state, siteId )
 	);
 };
 
@@ -121,10 +121,12 @@ export const shouldShowPaywallAfterGracePeriod = (
 	state: object,
 	siteId: number | null
 ): boolean => {
-	// Make the paywall check more robust by checking the purchase.
+	// Usage check first: it short-circuits on a plain object lookup, whereas the purchase check
+	// scans every site purchase and `shouldGateStats` has already run it once per call.
 	return (
-		! hasSupportedCommercialUse( state, siteId ) &&
-		getShouldShowPaywallAfterGracePeriod( state, siteId )
+		getShouldShowPaywallAfterGracePeriod( state, siteId ) &&
+		// Make the paywall check more robust by checking the purchase.
+		! hasSupportedCommercialUse( state, siteId )
 	);
 };
 
