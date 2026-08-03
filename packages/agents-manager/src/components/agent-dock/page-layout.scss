@@ -200,14 +200,16 @@ body:is( [class*='is-group-'], [class*='is-section-'] ).agents-manager-sidebar-c
 	}
 }
 
-/* Calypso: marketplace */
+/* Marketplace */
 // Pinned plugins/themes toolbars are viewport-fixed; keep them clear of the
-// chat. Pinning itself never animates — transitions only run between
-// already-pinned values.
-body.agents-manager-sidebar-container:not( .wp-admin ) {
+// chat on both platforms (wp-admin serves these pages too). Pinning itself
+// never animates — transitions only run between already-pinned values.
+body.agents-manager-sidebar-container {
 	// The pinned search bar sets `left` + an explicit width; deriving the
 	// width from both edges instead covers every layout-sidebar variant.
-	.search-box-header.fixed-top .search-box-header__search {
+	// `.fixed-top` is repeated to outrank the component's `.has-no-sidebar`
+	// reset.
+	.search-box-header.fixed-top.fixed-top .search-box-header__search {
 		width: auto;
 		right: 0;
 		transition: right $transition-timing;
@@ -228,7 +230,7 @@ body.agents-manager-sidebar-container:not( .wp-admin ) {
 	}
 
 	&.agents-manager-sidebar-container--sidebar-open {
-		.search-box-header.fixed-top .search-box-header__search {
+		.search-box-header.fixed-top.fixed-top .search-box-header__search {
 			right: $sidebar-width;
 		}
 
