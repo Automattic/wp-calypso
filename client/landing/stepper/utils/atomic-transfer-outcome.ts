@@ -1,8 +1,30 @@
 import { __ } from '@wordpress/i18n';
 
+// The full status vocabulary the transfer wait loops understand. Kept in one
+// place so every wait recognises the same outcomes.
+export const transferStates = {
+	PENDING: 'pending',
+	ACTIVE: 'active',
+	PROVISIONED: 'provisioned',
+	COMPLETED: 'completed',
+	ERROR: 'error',
+	REVERTED: 'reverted',
+	RELOCATING_REVERT: 'relocating_revert',
+	RELOCATING_SWITCHEROO: 'relocating_switcheroo',
+	REVERTING: 'reverting',
+	RENAMING: 'renaming',
+	EXPORTING: 'exporting',
+	IMPORTING: 'importing',
+	CLEANUP: 'cleanup',
+} as const;
+
 // `reverting` and `relocating_revert` always end at `reverted`, so treat all
 // three as final rather than making the user wait for the last one.
-const REVERTED_TRANSFER_STATUSES = [ 'reverted', 'reverting', 'relocating_revert' ];
+const REVERTED_TRANSFER_STATUSES: string[] = [
+	transferStates.REVERTED,
+	transferStates.REVERTING,
+	transferStates.RELOCATING_REVERT,
+];
 
 export function isRevertedTransferStatus( status?: string ): boolean {
 	return !! status && REVERTED_TRANSFER_STATUSES.includes( status );

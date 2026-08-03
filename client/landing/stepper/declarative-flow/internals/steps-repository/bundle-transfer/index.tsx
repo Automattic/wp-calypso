@@ -11,6 +11,7 @@ import { ONBOARD_STORE, SITE_STORE } from '../../../../stores';
 import {
 	createRevertedTransferWatcher,
 	getTransferFailureMessage,
+	transferStates,
 } from '../../../../utils/atomic-transfer-outcome';
 import type { Step } from '../../types';
 import type { OnboardSelect, SiteSelect } from '@automattic/data-stores';
@@ -20,22 +21,6 @@ export interface FailureInfo {
 	code: number | string;
 	error: string;
 }
-
-export const transferStates = {
-	PENDING: 'pending',
-	ACTIVE: 'active',
-	PROVISIONED: 'provisioned',
-	COMPLETED: 'completed',
-	ERROR: 'error',
-	REVERTED: 'reverted',
-	RELOCATING_REVERT: 'relocating_revert',
-	RELOCATING_SWITCHEROO: 'relocating_switcheroo',
-	REVERTING: 'reverting',
-	RENAMING: 'renaming',
-	EXPORTING: 'exporting',
-	IMPORTING: 'importing',
-	CLEANUP: 'cleanup',
-} as const;
 
 const wait = ( ms: number ) => new Promise( ( res ) => setTimeout( res, ms ) );
 
