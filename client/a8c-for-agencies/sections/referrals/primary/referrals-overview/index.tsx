@@ -1,4 +1,6 @@
+import { referralCommissionPayoutQuery, referralsQuery } from '@automattic/api-queries';
 import { useDesktopBreakpoint } from '@automattic/viewport-react';
+import { useQuery } from '@tanstack/react-query';
 import { Button } from '@wordpress/components';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
@@ -25,11 +27,12 @@ import LayoutHeader, {
 	LayoutHeaderActions as Actions,
 } from 'calypso/layout/hosting-dashboard/header';
 import { useDispatch, useSelector } from 'calypso/state';
-import { hasApprovedAgencyStatus } from 'calypso/state/a8c-for-agencies/agency/selectors';
+import {
+	getActiveAgencyId,
+	hasApprovedAgencyStatus,
+} from 'calypso/state/a8c-for-agencies/agency/selectors';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import MissingPaymentSettingsNotice from '../../common/missing-payment-settings-notice';
-import useFetchReferrals from '../../hooks/use-fetch-referrals';
-import useGetReferralCommissionPayout from '../../hooks/use-get-referral-commission-payout';
 import useGetTipaltiPayee from '../../hooks/use-get-tipalti-payee';
 import ReferralDetails from '../../referral-details';
 import { ReferralOrderFlowType } from '../../types';
@@ -44,6 +47,7 @@ export default function ReferralsOverview() {
 	const dispatch = useDispatch();
 
 	const isAgencyApproved = useSelector( hasApprovedAgencyStatus );
+	const agencyId = useSelector( getActiveAgencyId ) ?? 0;
 
 	const [ view, setView ] = useState< View >( DEFAULT_VIEW );
 	const [ selectedReferralId, setSelectedReferralId ] = useState< number | null >( null );
@@ -62,12 +66,17 @@ export default function ReferralsOverview() {
 	const isDesktop = useDesktopBreakpoint();
 
 	const { data: tipaltiData, isFetching } = useGetTipaltiPayee();
+	// The page renders its loading state from isFetching, so a refetch on window
+	// focus would flash it. MSD renders from isLoading and keeps the default.
 	const { data: referralCommissionPayout, isFetching: isFetchingReferralCommissionPayout } =
-		useGetReferralCommissionPayout();
+		useQuery( { ...referralCommissionPayoutQuery( agencyId ), refetchOnWindowFocus: false } );
 
 	const wrapperRef = useRef< HTMLButtonElement | null >( null );
 
-	const { data: referrals, isFetching: isFetchingReferrals } = useFetchReferrals();
+	const { data: referrals, isFetching: isFetchingReferrals } = useQuery( {
+		...referralsQuery( agencyId ),
+		refetchOnWindowFocus: false,
+	} );
 
 	const hasReferrals = !! referrals?.length;
 
