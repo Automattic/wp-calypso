@@ -170,7 +170,7 @@ function PurchaseMetaExpiration( {
 		) {
 			subsBillingText = translate( 'You will be billed on {{dateSpan}}%(renewDate)s{{/dateSpan}}', {
 				args: {
-					renewDate: purchase.renew_date && moment( purchase.renew_date ).format( 'LL' ),
+					renewDate: purchase.renew_date ? moment( purchase.renew_date ).format( 'LL' ) : '',
 				},
 				components: {
 					dateSpan,
