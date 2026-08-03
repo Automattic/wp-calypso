@@ -10,6 +10,10 @@ interface Props {
 
 type AddOnPurchaseStatus = {
 	available: boolean;
+	/**
+	 * Why the add-on is unavailable: bought separately, or granted by the site's plan.
+	 */
+	reason?: 'purchased' | 'included';
 	text?: ReturnType< typeof i18n.translate >;
 };
 
@@ -37,15 +41,15 @@ const useAddOnPurchaseStatus = ( { addOnMeta, selectedSiteId }: Props ): AddOnPu
 		if ( addOnMeta.quantity ) {
 			const purchase: Purchases.RawPurchase = Object.values( matchingPurchases )[ 0 ];
 			if ( purchase.renewal_price_tier_usage_quantity === addOnMeta.quantity ) {
-				return { available: false, text: translate( 'Purchased' ) };
+				return { available: false, reason: 'purchased', text: translate( 'Purchased' ) };
 			}
 		} else {
-			return { available: false, text: translate( 'Purchased' ) };
+			return { available: false, reason: 'purchased', text: translate( 'Purchased' ) };
 		}
 	}
 
 	if ( isSiteFeature ) {
-		return { available: false, text: translate( 'Included in your plan' ) };
+		return { available: false, reason: 'included', text: translate( 'Included in your plan' ) };
 	}
 
 	return { available: true };

@@ -118,7 +118,10 @@ const AddOnCard = ( { addOnMeta, actionPrimary, actionSecondary, highlightFeatur
 
 	const shouldRenderLoadingState = addOnMeta.isLoading;
 	const shouldRenderPrimaryAction = purchaseStatus?.available && ! shouldRenderLoadingState;
-	const shouldRenderSecondaryAction = ! purchaseStatus?.available && ! shouldRenderLoadingState;
+	const shouldRenderPurchaseStatus = ! purchaseStatus?.available && ! shouldRenderLoadingState;
+	// Only a separately purchased add-on has something to manage in the site's subscriptions.
+	const shouldRenderSecondaryAction =
+		purchaseStatus?.reason === 'purchased' && ! shouldRenderLoadingState;
 
 	// Return null if the add-on isn't already purchased and the amount of storage isn't available
 	// for purchase
@@ -152,20 +155,16 @@ const AddOnCard = ( { addOnMeta, actionPrimary, actionSecondary, highlightFeatur
 					{ shouldRenderLoadingState && (
 						<Spinner size={ 24 } className="spinner-button__spinner" />
 					) }
-					{ shouldRenderSecondaryAction && (
-						<>
-							{ actionSecondary && (
-								<Button onClick={ onActionSecondary } variant="secondary">
-									{ translate( 'Manage add-on' ) }
-								</Button>
-							) }
-							{ purchaseStatus?.text && (
-								<div className="add-ons-card__selected-tag">
-									<Gridicon size={ 16 } icon="checkmark" className="add-ons-card__checkmark" />
-									<span>{ purchaseStatus.text }</span>
-								</div>
-							) }
-						</>
+					{ shouldRenderSecondaryAction && actionSecondary && (
+						<Button onClick={ onActionSecondary } variant="secondary">
+							{ translate( 'Manage add-on' ) }
+						</Button>
+					) }
+					{ shouldRenderPurchaseStatus && purchaseStatus?.text && (
+						<div className="add-ons-card__selected-tag">
+							<Gridicon size={ 16 } icon="checkmark" className="add-ons-card__checkmark" />
+							<span>{ purchaseStatus.text }</span>
+						</div>
 					) }
 					{ shouldRenderPrimaryAction && actionPrimary && (
 						<Button variant="primary" onClick={ onActionPrimary }>
