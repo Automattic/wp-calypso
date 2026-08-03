@@ -80,6 +80,16 @@ The Agents Manager exposes a `window.__agentsManagerActions` API for controlling
 
 See `src/hooks/custom-actions/README.md` for details.
 
+### URL Parameters
+
+The host page URL can carry these query parameters:
+
+| Parameter | Description                                                                                                                                                   |
+| --------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `ai-open` | `ai-open=true` auto-opens the chat (docked or undocked) on page load, e.g. for links from emails. The parameter is stripped from the URL after being applied. |
+| `agent`   | Overrides the agent ID, for testing (e.g., `?agent=wpcom-workflow-support_chat`).                                                                             |
+| `version` | Overrides the agent version, for testing (e.g., `?version=1.0.25`).                                                                                           |
+
 ## API Reference
 
 ### AgentsManager Props
