@@ -717,7 +717,6 @@ export const tags = {
 	JETPACK_WPCOM_INTEGRATION: '@jetpack-wpcom-integration',
 	LEGAL: '@legal',
 	P2: '@p2',
-	QUARANTINED: '@quarantined',
 	SETTINGS: '@settings',
 };
 

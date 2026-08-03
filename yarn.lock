@@ -34100,7 +34100,6 @@ __metadata:
     jest-environment-node: "npm:^29.6.1"
     jest-runner: "npm:^29.6.1"
     jest-runner-groups: "npm:^2.2.0"
-    jest-teamcity: "npm:^1.12.0"
     mailosaur: "npm:^8.4.0"
     playwright: "npm:1.57.0"
     playwright-ctrf-json-reporter: "npm:^0.0.27"
