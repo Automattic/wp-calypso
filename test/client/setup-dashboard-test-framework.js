@@ -11,20 +11,16 @@ global.TextEncoder = TextEncoder;
 global.TextDecoder = TextDecoder;
 
 // @automattic/api-queries exposes a module-level singleton queryClient whose cache can
-// leak between tests in the same file. Clear it after each test — but only when the test
-// actually loaded the module. We must not force a load here: requiring the barrel would
-// evaluate its module graph through whatever the test has mocked (e.g. a mocked
-// @tanstack/react-query breaks `new QueryClient()`), and loading it eagerly would bind
-// api-queries to real dependencies before a test can mock them (e.g. @automattic/api-core).
-// So we only touch the already-cached instance.
+// leak between tests in the same file. Clear it after each test, but never load it here:
+// the module drags in the api-core / react-query graph, so loading it ourselves would
+// resolve those deps around whatever the test has mocked and break either construction
+// or the test's mocks. Instead, clear it only when the test itself already loaded it.
 const apiQueriesId = require.resolve( '@automattic/api-queries' );
 
 afterEach( () => {
 	nock.cleanAll();
 	jest.clearAllMocks();
-	if ( require.cache[ apiQueriesId ] ) {
-		require( '@automattic/api-queries' ).queryClient.clear();
-	}
+	require.cache[ apiQueriesId ]?.exports.queryClient.clear();
 } );
 
 global.ResizeObserver = require( 'resize-observer-polyfill' );
