@@ -77,6 +77,7 @@ export default function AgencyTeam() {
 
 	const actions = useTeamActions( {
 		canRemove,
+		canInvite,
 		currentUserEmail: user?.email,
 		onResendInvite,
 		onConfirmAction: setActiveRequest,

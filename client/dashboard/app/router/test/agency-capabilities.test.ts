@@ -23,7 +23,9 @@ function collectUnguardedRoutes(
 	ancestorGuarded: boolean,
 	parentPath: string
 ): string[] {
-	const path = route.options?.path;
+	// Index routes carry `path: '/'`; treat it as no segment so paths don't
+	// gain a trailing `//`.
+	const path = route.options?.path === '/' ? undefined : route.options?.path;
 	const fullPath = path ? [ parentPath, path ].filter( Boolean ).join( '/' ) : parentPath;
 	const guarded = ancestorGuarded || !! route.options?.staticData?.requiresAgencyCapability;
 	const children = Array.isArray( route.children ) ? route.children : [];
