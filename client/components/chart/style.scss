@@ -13,6 +13,15 @@ $year-bar-chart-border-radius: 4px;
 	--chart-series-visitors: var(--color-accent-90);
 }
 
+.color-scheme.is-classic-bright,
+.color-scheme.is-classic-dark,
+.color-scheme.is-default,
+.color-scheme.is-global,
+.color-scheme.is-modern {
+	--chart-series-views: var(--color-accent-40);
+	--chart-series-visitors: var(--color-accent-90);
+}
+
 .color-scheme.is-coffee,
 .color-scheme.is-light,
 .color-scheme.is-ocean,

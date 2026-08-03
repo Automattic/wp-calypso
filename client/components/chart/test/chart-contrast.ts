@@ -214,6 +214,22 @@ describe( 'Stats chart series colours meet WCAG 1.4.11', () => {
 	} );
 
 	it.each( schemeNames )(
+		'has an explicit .color-scheme.is-%s rule declaring --chart-series-views and --chart-series-visitors',
+		( scheme ) => {
+			if ( ! seriesOverrides.has( scheme ) ) {
+				throw new Error(
+					`.color-scheme.is-${ scheme } has no explicit --chart-series-views/--chart-series-visitors rule in chart/style.scss. ` +
+						'A scheme cannot rely on the :root fallback: CSS substitutes var() at the element where a custom ' +
+						'property is declared, not where it is used, so --chart-series-views declared on :root resolves ' +
+						"--color-accent-40 against :root (the default scheme's ramp), not against this scheme's ramp. " +
+						`Add an explicit .color-scheme.is-${ scheme } rule with both declarations.`
+				);
+			}
+			expect( seriesOverrides.has( scheme ) ).toBe( true );
+		}
+	);
+
+	it.each( schemeNames )(
 		'Views and Visitors meet the 3:1 pair-contrast rule against each other in the %s scheme',
 		( scheme ) => {
 			const views = seriesHex( scheme, 'views' );
