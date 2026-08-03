@@ -21,16 +21,9 @@ import { StatsNoticeProps } from './types';
 
 const HELP_CENTER_STORE = HelpCenter.register();
 
-const getStatsPurchaseURL = (
-	siteId: number | null,
-	isOdysseyStats: boolean,
-	hasFreeStats = false
-) => {
+const getStatsPurchaseURL = ( siteId: number | null, isOdysseyStats: boolean ) => {
 	const from = isOdysseyStats ? 'jetpack' : 'calypso';
-	const purchasePath = `/stats/purchase/${ siteId }?from=${ from }-stats-upgrade-notice${
-		hasFreeStats ? '&productType=personal' : ''
-	}`;
-	return purchasePath;
+	return `/stats/purchase/${ siteId }?from=${ from }-stats-upgrade-notice`;
 };
 
 const DoYouLoveJetpackStatsNotice = ( {
@@ -54,9 +47,11 @@ const DoYouLoveJetpackStatsNotice = ( {
 	const { setShowHelpCenter, setShowSupportDoc } = useDataStoreDispatch( HELP_CENTER_STORE );
 
 	const dismissNotice = () => {
-		isOdysseyStats
-			? recordTracksEvent( 'jetpack_odyssey_stats_do_you_love_jetpack_stats_notice_dismissed' )
-			: recordTracksEvent( 'calypso_stats_do_you_love_jetpack_stats_notice_dismissed' );
+		recordTracksEvent(
+			isOdysseyStats
+				? 'jetpack_odyssey_stats_do_you_love_jetpack_stats_notice_dismissed'
+				: 'calypso_stats_do_you_love_jetpack_stats_notice_dismissed'
+		);
 
 		setNoticeDismissed( true );
 		postponeNoticeAsync();
@@ -68,20 +63,18 @@ const DoYouLoveJetpackStatsNotice = ( {
 	};
 
 	const gotoJetpackStatsProduct = () => {
-		isOdysseyStats
-			? recordTracksEvent(
-					'jetpack_odyssey_stats_do_you_love_jetpack_stats_notice_support_button_clicked'
-			  )
-			: recordTracksEvent(
-					'calypso_stats_do_you_love_jetpack_stats_notice_support_button_clicked'
-			  );
+		recordTracksEvent(
+			isOdysseyStats
+				? 'jetpack_odyssey_stats_do_you_love_jetpack_stats_notice_support_button_clicked'
+				: 'calypso_stats_do_you_love_jetpack_stats_notice_support_button_clicked'
+		);
 
 		trackStatsAnalyticsEvent( 'stats_upgrade_clicked', {
 			type: 'notice-love-stats',
 		} );
 
 		// Allow some time for the event to be recorded before redirecting.
-		setTimeout( () => page( getStatsPurchaseURL( siteId, isOdysseyStats, hasFreeStats ) ), 250 );
+		setTimeout( () => page( getStatsPurchaseURL( siteId, isOdysseyStats ) ), 250 );
 	};
 
 	const handleCTAClick = () => {
@@ -93,9 +86,11 @@ const DoYouLoveJetpackStatsNotice = ( {
 
 	useEffect( () => {
 		if ( ! noticeDismissed ) {
-			isOdysseyStats
-				? recordTracksEvent( 'jetpack_odyssey_stats_do_you_love_jetpack_stats_notice_viewed' )
-				: recordTracksEvent( 'calypso_stats_do_you_love_jetpack_stats_notice_viewed' );
+			recordTracksEvent(
+				isOdysseyStats
+					? 'jetpack_odyssey_stats_do_you_love_jetpack_stats_notice_viewed'
+					: 'calypso_stats_do_you_love_jetpack_stats_notice_viewed'
+			);
 		}
 	}, [ noticeDismissed, isOdysseyStats ] );
 
@@ -136,7 +131,9 @@ const DoYouLoveJetpackStatsNotice = ( {
 
 	const description = isWPCOMPaidStatsFlow
 		? paidStatsRemoveHardcoding
-		: translate( 'Upgrade to support future development and stop the upgrade banners.' );
+		: translate(
+				'Upgrade to unlock UTM tracking, device stats, and region and city locations, and get priority support.'
+		  );
 
 	const CTAText = isWPCOMPaidStatsFlow ? translate( 'Upgrade' ) : translate( 'Upgrade my Stats' );
 
