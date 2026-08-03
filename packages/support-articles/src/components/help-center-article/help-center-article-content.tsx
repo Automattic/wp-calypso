@@ -10,6 +10,7 @@ import type { ArticleContentProps } from '../../types';
 const ArticleContent = ( {
 	post,
 	isLoading,
+	userId,
 	currentSiteDomain,
 	isEligibleForChat,
 	forceEmailSupport,
@@ -38,7 +39,9 @@ const ArticleContent = ( {
 							ref={ articleContentRef }
 						/>
 						<HelpCenterFeedbackForm
+							key={ `${ userId ?? 'anonymous' }-${ post.ID }` }
 							postId={ post.ID }
+							userId={ userId }
 							isEligibleForChat={ isEligibleForChat }
 							forceEmailSupport={ forceEmailSupport }
 						/>

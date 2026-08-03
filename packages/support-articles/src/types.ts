@@ -22,6 +22,7 @@ export interface PostObject {
 export interface ArticleContentProps {
 	post?: PostObject;
 	isLoading?: boolean;
+	userId?: number;
 	currentSiteDomain?: string;
 	isEligibleForChat: boolean;
 	forceEmailSupport: boolean;

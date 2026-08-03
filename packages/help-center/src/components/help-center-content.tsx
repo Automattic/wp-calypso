@@ -82,7 +82,7 @@ const HelpCenterContent: React.FC< { isRelative?: boolean; currentRoute?: string
 	const containerRef = useRef< HTMLDivElement >( null );
 	const navigate = useNavigate();
 	const { setNavigateToRoute } = useDispatch( HELP_CENTER_STORE );
-	const { sectionName, site } = useHelpCenterContext();
+	const { currentUser, sectionName, site } = useHelpCenterContext();
 	const featureConfig = useFeatureConfig();
 	const { data, isLoading: isLoadingSupportStatus } = useSupportStatus();
 	const { forceEmailSupport } = useChatStatus();
@@ -176,6 +176,7 @@ const HelpCenterContent: React.FC< { isRelative?: boolean; currentRoute?: string
 							element={
 								<HelpCenterArticle
 									sectionName={ sectionName }
+									userId={ currentUser.ID }
 									currentSiteDomain={ currentSiteDomain }
 									isEligibleForChat={ isUserEligibleForPaidSupport }
 									forceEmailSupport={ !! forceEmailSupport || ! featureConfig.chat.enabled }

@@ -14,11 +14,13 @@ declare const __i18n_text_domain__: string;
 
 export const HelpCenterArticle = ( {
 	sectionName,
+	userId,
 	currentSiteDomain,
 	isEligibleForChat,
 	forceEmailSupport,
 }: {
 	sectionName: string;
+	userId?: number;
 	currentSiteDomain?: string;
 	isEligibleForChat: boolean;
 	forceEmailSupport: boolean;
@@ -109,6 +111,7 @@ export const HelpCenterArticle = ( {
 				<ArticleContent
 					post={ post }
 					isLoading={ isLoading }
+					userId={ userId }
 					currentSiteDomain={ currentSiteDomain }
 					isEligibleForChat={ isEligibleForChat }
 					forceEmailSupport={ forceEmailSupport }

@@ -35,7 +35,7 @@ export default function SupportGuide( {
 	onClose,
 	onExpand,
 }: SupportGuideProps ) {
-	const { site, sectionName, isEligibleForChat } = useAgentsManagerContext();
+	const { currentUser, site, sectionName, isEligibleForChat } = useAgentsManagerContext();
 	const navigate = useNavigate();
 	const { state } = useLocation();
 	const { setFloatingPosition, setFreeDragPosition, setFloatingSize } =
@@ -96,6 +96,7 @@ export default function SupportGuide( {
 					<div className="agent-manager-support-guide-content help-center__container-content">
 						<HelpCenterArticle
 							sectionName={ sectionName }
+							userId={ currentUser?.ID }
 							currentSiteDomain={ site?.domain }
 							isEligibleForChat={ isEligibleForChat }
 							forceEmailSupport={ false }
