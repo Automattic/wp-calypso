@@ -83,6 +83,10 @@ export default defineConfig( {
 	},
 	/* Reporter to use. See https://playwright.dev/docs/test-reporters */
 	reporter,
+	/* Runs once before the suite, before any worker starts */
+	globalSetup: require.resolve( './lib/global-setup' ),
+	/* Runs once after the suite, when every worker has finished */
+	globalTeardown: require.resolve( './lib/global-teardown' ),
 	/* Shared settings for all the projects below. See https://playwright.dev/docs/api/class-testoptions. */
 	outputDir: `${ outputPath }/test-results`,
 	use: {

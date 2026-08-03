@@ -5,7 +5,11 @@ import type { AccountDetails, AccountLeak, RestAPIClient } from '@automattic/cal
 // Teardown leak markers live under the published, gitignored e2e output dir.
 // Playwright transpiles TS in place, so `__dirname` is the source dir:
 // `test/e2e/specs/shared` -> `test/e2e/output/teardown-leaks`.
-const LEAK_DIR = path.resolve( __dirname, '..', '..', 'output', 'teardown-leaks' );
+export const LEAK_DIR = path.resolve( __dirname, '..', '..', 'output', 'teardown-leaks' );
+
+// Deferred closes carry a bearer token, so they must stay out of `output/`:
+// CI publishes that whole directory as build artifacts.
+export const PENDING_CLOSE_DIR = path.resolve( __dirname, '..', '..', '.teardown-pending' );
 
 /**
  * Makes an API request to close the user account, maintaining a teardown leak
@@ -17,6 +21,9 @@ const LEAK_DIR = path.resolve( __dirname, '..', '..', 'output', 'teardown-leaks'
  * calling this on an already-closed account (e.g. one closed via the UI) is a
  * safe no-op. Never throws. See `closeAccountAndRecordLeak` for the full logic.
  *
+ * An account whose Atomic site is still deprovisioning is deferred to the
+ * end-of-run reaper (see the `globalTeardown`) instead of being waited on here.
+ *
  * @param {RestAPIClient} client Client to interact with the WP REST API.
  * @param {AccountDetails} accountDetails Details of the account to close.
  */
@@ -24,7 +31,7 @@ export async function apiCloseAccount(
 	client: RestAPIClient,
 	accountDetails: AccountDetails
 ): Promise< void > {
-	await closeAccountAndRecordLeak( client, accountDetails, LEAK_DIR );
+	await closeAccountAndRecordLeak( client, accountDetails, LEAK_DIR, PENDING_CLOSE_DIR );
 }
 
 /**

@@ -217,6 +217,18 @@ object CalypsoE2ETestsBuildTemplate : Template({
 				# check would find nothing and pass a leaking run green. Markers are named
 				# account-*.json wherever they land.
 				MARKERS=${'$'}( find test/e2e/output -name 'account-*.json' 2>/dev/null || true )
+				# The end-of-run reaper clears a record once its account is closed or
+				# written out as a marker above. A record still here means that never
+				# happened - the reaper did not run (aborted run, crashed worker), timed
+				# out, or could not record the leak - so the account is still open.
+				# Count only: these records hold bearer tokens and must not be echoed
+				# into the build log.
+				PENDING=${'$'}( find test/e2e/.teardown-pending -name 'pending-*.json' 2>/dev/null || true )
+				if [ -n "${'$'}PENDING" ]; then
+					PENDING_COUNT=${'$'}( printf '%s\n' "${'$'}PENDING" | wc -l | tr -d ' ' )
+					echo "E2E TEARDOWN LEAK - ${'$'}PENDING_COUNT deferred account close(s) were not completed."
+					echo "##teamcity[buildProblem description='E2E teardown leak: ${'$'}PENDING_COUNT deferred close(s) not completed' identity='e2e_teardown_pending']"
+				fi
 				if [ -n "${'$'}MARKERS" ]; then
 					COUNT=${'$'}( printf '%s\n' "${'$'}MARKERS" | wc -l | tr -d ' ' )
 					echo "E2E TEARDOWN LEAK - the following test users were not closed (their blogs leak with them):"
