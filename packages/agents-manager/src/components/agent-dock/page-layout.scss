@@ -208,8 +208,8 @@ body.agents-manager-sidebar-container {
 	// The pinned search bar sets `left` + an explicit width; deriving the
 	// width from both edges instead covers every layout-sidebar variant.
 	// `.fixed-top` is repeated to outrank the component's `.has-no-sidebar`
-	// reset.
-	.search-box-header.fixed-top.fixed-top .search-box-header__search {
+	// reset, which carries six classes.
+	.search-box-header.fixed-top.fixed-top.fixed-top .search-box-header__search {
 		width: auto;
 		right: 0;
 		transition: right $transition-timing;
