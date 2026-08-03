@@ -5,8 +5,10 @@
  */
 import { isEnabled } from '@automattic/calypso-config';
 import { STAT_TYPE_CLICKS, STATS_FEATURE_DATE_CONTROL_LAST_30_DAYS } from '../../constants';
+import { selectPlanUsage } from '../use-plan-usage-query';
 import { shouldGateStats } from '../use-should-gate-stats';
-import { shouldShowPaywallAfterGracePeriod } from '../use-stats-purchases';
+import { shouldShowPaywallAfterGracePeriod, shouldShowPaywallNotice } from '../use-stats-purchases';
+import type { PlanUsage } from '../use-plan-usage-query';
 
 jest.mock( '../../constants', () => ( {
 	...jest.requireActual( '../../constants' ),
@@ -21,37 +23,24 @@ jest.mock( '@automattic/calypso-config', () => {
 
 const siteId = 123;
 
+const walledApiPayload = {
+	should_show_paywall: true,
+	paywall_date_from: '2026-07-14',
+	recent_usages: [],
+} as unknown as PlanUsage;
+
 const walledCommercialSiteState = {
 	sites: {
-		features: {
-			[ siteId ]: {
-				data: {
-					active: [],
-				},
-			},
-		},
+		features: { [ siteId ]: { data: { active: [] } } },
 		items: {
 			[ siteId ]: {
 				jetpack: true,
-				options: {
-					is_wpcom_atomic: false,
-					is_commercial: true,
-				},
+				options: { is_wpcom_atomic: false, is_commercial: true },
 			},
 		},
 	},
-	purchases: {
-		data: [],
-	},
-	stats: {
-		planUsage: {
-			data: {
-				[ siteId ]: {
-					should_show_paywall: true,
-				},
-			},
-		},
-	},
+	purchases: { data: [] },
+	stats: { planUsage: { data: { [ siteId ]: selectPlanUsage( walledApiPayload ) } } },
 };
 
 describe( 'with COMMERCIAL_PAYWALL_KILLED flipped back to false', () => {
@@ -63,8 +52,19 @@ describe( 'with COMMERCIAL_PAYWALL_KILLED flipped back to false', () => {
 		jest.clearAllMocks();
 	} );
 
+	it( 'preserves the sticker-derived fields through the query', () => {
+		const usage = selectPlanUsage( walledApiPayload );
+
+		expect( usage.should_show_paywall ).toBe( true );
+		expect( usage.paywall_date_from ).toBe( '2026-07-14' );
+	} );
+
 	it( 'reports the paywall again for a walled commercial site', () => {
 		expect( shouldShowPaywallAfterGracePeriod( walledCommercialSiteState, siteId ) ).toBe( true );
+	} );
+
+	it( 'escalates the upgrade notice to its lockout variant again', () => {
+		expect( shouldShowPaywallNotice( walledCommercialSiteState, siteId ) ).toBe( true );
 	} );
 
 	it( 'gates basic stats again', () => {

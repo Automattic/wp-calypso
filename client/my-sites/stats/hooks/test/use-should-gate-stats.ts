@@ -9,7 +9,9 @@ import {
 	STATS_FEATURE_UTM_STATS,
 	STATS_TYPE_DEVICE_STATS,
 } from '../../constants';
+import { selectPlanUsage } from '../use-plan-usage-query';
 import { shouldGateStats } from '../use-should-gate-stats';
+import type { PlanUsage } from '../use-plan-usage-query';
 
 jest.mock( '@automattic/calypso-config', () => {
 	const config = () => 'development';
@@ -403,6 +405,8 @@ describe( 'shouldGateStats in Odyssey stats', () => {
 		expect( isGatedStats ).toBe( false );
 	} );
 
+	// The usage payload is put through `selectPlanUsage` rather than written by hand, so the
+	// fixture holds what actually reaches the store for a site carrying the paywall sticker.
 	const walledCommercialSiteState = {
 		sites: {
 			features: {
@@ -428,9 +432,11 @@ describe( 'shouldGateStats in Odyssey stats', () => {
 		stats: {
 			planUsage: {
 				data: {
-					[ siteId ]: {
+					[ siteId ]: selectPlanUsage( {
 						should_show_paywall: true,
-					},
+						paywall_date_from: '2026-07-14',
+						recent_usages: [],
+					} as unknown as PlanUsage ),
 				},
 			},
 		},
