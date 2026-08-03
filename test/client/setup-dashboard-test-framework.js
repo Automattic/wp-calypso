@@ -10,12 +10,21 @@ nock.disableNetConnect();
 global.TextEncoder = TextEncoder;
 global.TextDecoder = TextDecoder;
 
+// @automattic/api-queries exposes a module-level singleton queryClient whose cache can
+// leak between tests in the same file. Clear it after each test — but only when the test
+// actually loaded the module. We must not force a load here: requiring the barrel would
+// evaluate its module graph through whatever the test has mocked (e.g. a mocked
+// @tanstack/react-query breaks `new QueryClient()`), and loading it eagerly would bind
+// api-queries to real dependencies before a test can mock them (e.g. @automattic/api-core).
+// So we only touch the already-cached instance.
+const apiQueriesId = require.resolve( '@automattic/api-queries' );
+
 afterEach( () => {
 	nock.cleanAll();
 	jest.clearAllMocks();
-	// Required lazily: @automattic/api-queries pulls in superagent → @noble/hashes,
-	// which reference TextEncoder at module load, so it must load after the global above.
-	require( '@automattic/api-queries' ).queryClient.clear();
+	if ( require.cache[ apiQueriesId ] ) {
+		require( '@automattic/api-queries' ).queryClient.clear();
+	}
 } );
 
 global.ResizeObserver = require( 'resize-observer-polyfill' );
