@@ -223,12 +223,10 @@ fun jetpackSimpleDeploymentE2eBuildType( targetDevice: String, buildUuid: String
 		steps {
 			prepareE2eEnvironment()
 
-			runMigratedPlaywrightSpecs(
+			runTaggedPlaywrightSpecs(
 				tag = "@jetpack-wpcom-integration",
 				targetDevice = targetDevice,
 			)
-
-			collectE2eResults()
 		}
 
 		features {
@@ -288,20 +286,18 @@ fun jetpackAtomicDeploymentE2eBuildType( targetDevice: String, buildUuid: String
 			prepareE2eEnvironment()
 
 			atomicVariations.forEach { variation ->
-				runMigratedPlaywrightSpecs(
+				runTaggedPlaywrightSpecs(
 					tag = "@jetpack-wpcom-integration",
 					targetDevice = targetDevice,
 					additionalEnvVars = mapOf(
 						"ATOMIC_VARIATION" to variation,
 						"PW_WORKERS" to "5",
 					),
-					stepName = "Run migrated Playwright specs: $variation",
+					stepName = "Run Playwright specs: $variation",
 					// Per-variation report name so the loop's runs don't overwrite each other.
 					reportSuffix = variation,
 				)
 			}
-
-			collectE2eResults()
 		}
 
 		features {
@@ -363,13 +359,11 @@ fun jetpackAtomicBuildSmokeE2eBuildType( targetDevice: String, buildUuid: String
 		steps {
 			prepareE2eEnvironment()
 
-			runMigratedPlaywrightSpecs(
+			runTaggedPlaywrightSpecs(
 				tag = "@jetpack-wpcom-integration",
 				targetDevice = targetDevice,
 				additionalEnvVars = mapOf( "PW_WORKERS" to "14" ),
 			)
-
-			collectE2eResults()
 		}
 
 		features {

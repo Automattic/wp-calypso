@@ -2,7 +2,6 @@ package _self.projects
 
 import Settings
 import _self.bashNodeScript
-import _self.lib.customBuildType.E2EBuildType
 import _self.lib.utils.allBranchesExceptMergeQueue
 import _self.lib.utils.excludeMergeQueueBranches
 import _self.lib.utils.mergeTrunk
@@ -30,7 +29,6 @@ object WebApp : Project({
 	buildType(PlaywrightTestA4APRMatrix)
 	buildType(PreReleaseE2ETests)
 	buildType(AuthenticationE2ETests)
-	buildType(QuarantinedE2ETests)
 })
 
 object BuildDockerImage : BuildType({
@@ -1266,32 +1264,3 @@ object AuthenticationE2ETests : BuildType({
 		}
 	}
 })
-
-object QuarantinedE2ETests: E2EBuildType(
-	buildId = "calypso_WebApp_Quarantined_E2E_Tests",
-	buildUuid = "14083675-b6de-419f-b2f6-ec89c06d3a8c",
-	buildName = "Quarantined E2E Tests",
-	buildDescription = "E2E tests quarantined due to intermittent failures.",
-	concurrentBuilds = 1,
-	testGroup = "quarantined",
-	buildParams = {
-		param("env.VIEWPORT_NAME", "desktop")
-		param("env.CALYPSO_BASE_URL", "https://wpcalypso.wordpress.com")
-		param("env.DASHBOARD_BASE_URL", "https://my.wordpress.com")
-	},
-	buildFeatures = {
-		notifications {
-			notifierSettings = slackNotifier {
-				connection = "PROJECT_EXT_11"
-				sendTo = "#e2eflowtesting-notif"
-				messageFormat = simpleMessageFormat()
-			}
-			buildFailedToStart = true
-			buildFailed = true
-			buildFinishedSuccessfully = false
-			buildProbablyHanging = true
-		}
-	},
-	buildTriggers = {
-	}
-)

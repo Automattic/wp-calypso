@@ -31,26 +31,6 @@ fun BuildSteps.prepareE2eEnvironment(): ScriptBuildStep {
     }
 }
 
-fun BuildSteps.collectE2eResults(): ScriptBuildStep {
-	return bashNodeScript {
-		name = "Collect results"
-		executionMode = BuildStep.ExecutionMode.RUN_ON_FAILURE
-		scriptContent = """
-			set -x
-
-			mkdir -p screenshots
-			find test/e2e/results -type f \( -iname \*.webm -o -iname \*.png \) -print0 | xargs -r -0 mv -t screenshots
-
-			mkdir -p logs
-			find test/e2e/results -name '*.log' -print0 | xargs -r -0 mv -t logs
-
-			mkdir -p trace
-			find test/e2e/results -name '*.zip' -print0 | xargs -r -0 mv -t trace
-		""".trimIndent()
-		dockerImage = "%docker_image_e2e%"
-	}
-}
-
 fun ParametrizedWithType.defaultE2eParams() {
     param("env.NODE_CONFIG_ENV", "test")
     param("env.PLAYWRIGHT_BROWSERS_PATH", "0")
@@ -74,7 +54,6 @@ fun FailureConditions.defaultE2eFailureConditions() {
 	// Don't fail if the runner exists with a non zero code. This allows a build to pass if the failed tests have been muted previously.
 	nonZeroExitCode = false
 
-	// Support retries using the --onlyFailures flag in Jest.
 	supportTestRetry = true
 
 	// Fail if the number of passing tests is 50% or less than the last build. This will catch the case where the test runner crashes and no tests are run.
@@ -89,27 +68,18 @@ fun FailureConditions.defaultE2eFailureConditions() {
 	}
 }
 
-fun defaultE2eArtifactRules(): String = """
-    logs => logs.tgz
-    screenshots => screenshots
-    trace => trace
-    test/e2e/output => playwright-output
-""".trimIndent()
+fun defaultE2eArtifactRules(): String = "test/e2e/output => playwright-output"
 
 /**
- * Runs the Playwright Test replacements of specs migrated out of this build's
- * Jest test group, so the build keeps its full population during the Jest to
- * Playwright migration. Remove once the build is repointed to the Playwright
- * build types (TESTOPS-20).
- *
- * Failed tests reach TeamCity through the JUnit report: pair every use of this
- * step with the [playwrightJUnitReport] build feature.
+ * For builds not yet repointed at [_self.CalypsoE2ETestsBuildTemplate]
+ * (TESTOPS-20). Pair every use with the [playwrightJUnitReport] build feature:
+ * that report is the only path by which failed tests reach TeamCity.
  */
-fun BuildSteps.runMigratedPlaywrightSpecs(
+fun BuildSteps.runTaggedPlaywrightSpecs(
 	tag: String,
 	targetDevice: String,
 	additionalEnvVars: Map<String, String> = mapOf(),
-	stepName: String = "Run migrated Playwright specs",
+	stepName: String = "Run Playwright specs",
 	reportSuffix: String = ""
 ): ScriptBuildStep {
 	val envVarExport = additionalEnvVars.map { ( key, value ) -> "export $key='$value'" }.joinToString( separator = "\n" )
@@ -120,8 +90,7 @@ fun BuildSteps.runMigratedPlaywrightSpecs(
 
 	return bashNodeScript {
 		name = stepName
-		// Run even when the Jest step above failed: the migrated population must
-		// execute on every run, and the JUnit report carries the failures.
+		// Failures reach TeamCity via the JUnit report, so run regardless.
 		executionMode = BuildStep.ExecutionMode.ALWAYS
 		scriptContent = """
 			# Export additional environment variables.
@@ -153,7 +122,7 @@ fun BuildSteps.runMigratedPlaywrightSpecs(
 
 /**
  * Imports the Playwright Test JUnit report so failed tests from
- * [runMigratedPlaywrightSpecs] fail the build.
+ * [runTaggedPlaywrightSpecs] fail the build.
  */
 fun BuildFeatures.playwrightJUnitReport() {
 	xmlReport {
@@ -161,40 +130,4 @@ fun BuildFeatures.playwrightJUnitReport() {
 		rules = "+:test/e2e/output/results*.xml"
 		verbose = true
 	}
-}
-
-fun BuildSteps.runE2eTestsWithRetry(
-	testGroup: String,
-	additionalEnvVars: Map<String, String> = mapOf(),
-	stepName: String = "Run tests"
-): ScriptBuildStep {
-	val envVarExport = additionalEnvVars.map { ( key, value ) -> "export $key='$value'" }.joinToString( separator = "\n" )
-
-	return bashNodeScript {
-        name = stepName
-        scriptContent = """
-            # Configure bash shell.
-            set -x
-
-            # Export additional environment variables.
-            $envVarExport
-
-            # Enter testing directory.
-            cd test/e2e
-            mkdir -p temp
-
-            # Disable exit on error to support retries.
-            set +o errexit
-
-            # Run suite.
-            xvfb-run yarn jest --reporters=jest-teamcity --reporters=default --maxWorkers=%JEST_E2E_WORKERS% --workerIdleMemoryLimit=1GB --group=$testGroup
-
-            # Restore exit on error.
-            set -o errexit
-
-            # Retry failed tests only.
-            RETRY_COUNT=1 xvfb-run yarn jest --reporters=jest-teamcity --reporters=default --maxWorkers=%JEST_E2E_WORKERS% --workerIdleMemoryLimit=1GB --group=$testGroup --onlyFailures
-        """.trimIndent()
-        dockerImage = "%docker_image_e2e%"
-    }
 }
