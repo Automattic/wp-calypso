@@ -3,10 +3,15 @@
  */
 import { renderHook, act } from '@testing-library/react';
 import { isEditorPage } from '../../utils/is-editor-page';
-import useStyles from '../use-styles';
+import { LEGACY_CSS_END, LEGACY_CSS_START } from '../../utils/legacy-style-variation-css';
+import { recordBigSkyTracksEvent } from '../../utils/tracks';
+import useStyles, { resetLegacyCssSessionFlag } from '../use-styles';
 
 jest.mock( '../../utils/is-editor-page', () => ( {
 	isEditorPage: jest.fn( () => true ),
+} ) );
+jest.mock( '../../utils/tracks', () => ( {
+	recordBigSkyTracksEvent: jest.fn(),
 } ) );
 
 const mockEditEntityRecord = jest.fn();
@@ -42,6 +47,7 @@ describe( 'useStyles', () => {
 		( isEditorPage as jest.Mock ).mockReturnValue( true );
 		mockGlobalStylesId = 'global-styles-1';
 		mockCurrentRecord = makeRecord();
+		resetLegacyCssSessionFlag();
 	} );
 
 	it( 'does not apply off the editor page', () => {
@@ -354,6 +360,40 @@ describe( 'useStyles', () => {
 
 		const merged = mockEditEntityRecord.mock.calls[ 0 ][ 3 ];
 		expect( merged.styles.blocks[ 'core/quote' ] ).toEqual( { color: { text: '#222' } } );
+	} );
+
+	it( 'records legacy CSS telemetry once per session on a font pick', () => {
+		const warn = jest.spyOn( console, 'warn' ).mockImplementation( () => {} );
+		mockCurrentRecord.styles = {
+			...mockCurrentRecord.styles,
+			css: `${ LEGACY_CSS_START }\nh1 {font-family:x !important;}\n${ LEGACY_CSS_END }`,
+		} as unknown as ReturnType< typeof makeRecord >[ 'styles' ];
+		const { result } = renderHook( () => useStyles() );
+
+		act( () => {
+			result.current( { title: 'Modern Sans', styles: {} }, 'font' );
+			result.current( { title: 'Serif', styles: {} }, 'font' );
+		} );
+
+		expect( recordBigSkyTracksEvent ).toHaveBeenCalledTimes( 1 );
+		expect( recordBigSkyTracksEvent ).toHaveBeenCalledWith( 'legacy_css_found', {
+			block_count: 1,
+		} );
+		expect( warn ).toHaveBeenCalled();
+	} );
+
+	it( 'does not scan for legacy CSS on non-font picks', () => {
+		mockCurrentRecord.styles = {
+			...mockCurrentRecord.styles,
+			css: `${ LEGACY_CSS_START }\nh1 {}\n${ LEGACY_CSS_END }`,
+		} as unknown as ReturnType< typeof makeRecord >[ 'styles' ];
+		const { result } = renderHook( () => useStyles() );
+
+		act( () => {
+			result.current( { title: 'Pill', styles: {} }, 'button' );
+		} );
+
+		expect( recordBigSkyTracksEvent ).not.toHaveBeenCalled();
 	} );
 
 	it( 'restores the stashed button color when leaving an outline variation', () => {

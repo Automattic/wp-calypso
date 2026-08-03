@@ -2,15 +2,43 @@ import { store as coreStore } from '@wordpress/core-data';
 import { useDispatch } from '@wordpress/data';
 import { useCallback } from '@wordpress/element';
 import { isEditorPage } from '../utils/is-editor-page';
+import { findLegacyBlocksInStylesValue } from '../utils/legacy-style-variation-css';
 import mergeGlobalStyles from '../utils/merge-global-styles';
 import resetButtonStyles, {
 	mirrorButtonStylesToSubscriptionsBlock,
 } from '../utils/reset-button-styles';
 import resetTypographyStyles from '../utils/reset-typography-styles';
+import { recordBigSkyTracksEvent } from '../utils/tracks';
 import useGlobalStyles from './use-global-styles';
 import type { StyleVariation } from '../components/styles-preview';
 
 export type StyleVariationType = 'color' | 'font' | 'button';
+
+// The legacy block cannot appear mid-session — nothing writes it any more — so
+// the common case scans once per session.
+let hasCheckedLegacyCssThisSession = false;
+
+// Scan the user's Additional CSS for legacy Easy Site Editor blocks, at most
+// once per session. Detection is advisory and must never break an apply: a
+// throw leaves the flag clear so the next apply retries.
+function detectLegacyCss( cssValue: unknown ) {
+	if ( hasCheckedLegacyCssThisSession ) {
+		return [];
+	}
+
+	try {
+		const blocks = findLegacyBlocksInStylesValue( cssValue );
+		hasCheckedLegacyCssThisSession = true;
+		return blocks;
+	} catch {
+		return [];
+	}
+}
+
+// Test seam: the flag is module state.
+export function resetLegacyCssSessionFlag() {
+	hasCheckedLegacyCssThisSession = false;
+}
 
 /**
  * Merges a style variation (color, font, or button) into the editor's global styles.
@@ -61,6 +89,23 @@ export default function useStyles() {
 			}
 
 			editEntityRecord( 'root', 'globalStyles', globalStylesId, merged );
+
+			// Font picks only: the legacy block pins typography with `!important`
+			// and nothing else, so it can make a just-applied font pick look like
+			// it did nothing — but cannot affect a color or button pick. Big Sky
+			// offers removal via its own dialog; AM keeps the detection telemetry.
+			if ( variationType === 'font' ) {
+				const blocks = detectLegacyCss(
+					( merged.styles as Record< string, unknown > | undefined )?.css
+				);
+				if ( blocks.length ) {
+					recordBigSkyTracksEvent( 'legacy_css_found', { block_count: blocks.length } );
+					// eslint-disable-next-line no-console
+					console.warn(
+						'[AgentsManager] Legacy Easy Site Editor CSS found — font picks may not be visible until it is removed.'
+					);
+				}
+			}
 
 			return true;
 		},
