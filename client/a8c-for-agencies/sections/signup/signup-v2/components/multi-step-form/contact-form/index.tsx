@@ -16,7 +16,10 @@ import {
 	isAgencyUrlExists,
 } from 'calypso/a8c-for-agencies/components/form/utils';
 import UserContactSupportModalForm from 'calypso/a8c-for-agencies/components/user-contact-support-modal-form';
-import { AgencyDetailsSignupPayload } from 'calypso/a8c-for-agencies/sections/signup/types';
+import {
+	AgencyDetailsSignupPayload,
+	SignupFormData,
+} from 'calypso/a8c-for-agencies/sections/signup/types';
 import QuerySmsCountries from 'calypso/components/data/query-countries/sms';
 import FormPhoneInput from 'calypso/components/forms/form-phone-input';
 import FormTextInput from 'calypso/components/forms/form-text-input';
@@ -57,27 +60,13 @@ function useSignupContext(): SignupContext | null {
 	return context;
 }
 
-export type PhoneData = {
-	phoneNumber?: string;
-	countryCode?: string;
-	phoneNumberFull?: string;
-};
-
 type Props = {
-	onContinue: ( data: Partial< AgencyDetailsSignupPayload > ) => void;
-	initialFormData: Partial< AgencyDetailsSignupPayload >;
-	initialPhone?: PhoneData;
-	onPhoneChange?: ( phone: PhoneData ) => void;
+	onContinue: ( data: SignupFormData ) => void;
+	initialFormData: SignupFormData;
 	withEmail?: boolean;
 };
 
-const SignupContactForm = ( {
-	onContinue,
-	initialFormData,
-	initialPhone,
-	onPhoneChange,
-	withEmail = false,
-}: Props ) => {
+const SignupContactForm = ( { onContinue, initialFormData, withEmail = false }: Props ) => {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 
@@ -99,13 +88,14 @@ const SignupContactForm = ( {
 		[ signupContext?.non_unique_domains ]
 	);
 
-	const [ formData, setFormData ] = useState< Partial< AgencyDetailsSignupPayload > >( {
+	const [ formData, setFormData ] = useState< SignupFormData >( {
 		firstName: initialFormData.firstName || '',
 		lastName: initialFormData.lastName || '',
 		email: initialFormData.email || '',
 		agencyName: initialFormData.agencyName || '',
 		agencyUrl: initialFormData.agencyUrl || '',
 		phoneNumber: initialFormData.phoneNumber || '',
+		phone: initialFormData.phone,
 	} );
 
 	const [ showDuplicateModal, setShowDuplicateModal ] = useState( false );
@@ -121,20 +111,19 @@ const SignupContactForm = ( {
 		phoneNumberFull: string;
 		countryData?: { code: string };
 	} ) => {
+		const countryCode = data.phoneNumber && data.countryData?.code ? data.countryData.code : '';
 		setFormData( ( prev ) => ( {
 			...prev,
 			phoneNumber: data.phoneNumberFull,
+			phone: {
+				phoneNumber: data.phoneNumber,
+				countryCode: data.countryData?.code,
+			},
 		} ) );
-		const countryCode = data.phoneNumber && data.countryData?.code ? data.countryData.code : '';
 		setPhoneCountryCode( countryCode );
-		onPhoneChange?.( {
-			phoneNumber: data.phoneNumber,
-			countryCode: data.countryData?.code,
-			phoneNumberFull: data.phoneNumberFull,
-		} );
 	};
 
-	const dataToContinue: Partial< AgencyDetailsSignupPayload > = useMemo(
+	const dataToContinue: SignupFormData = useMemo(
 		() => ( phoneCountryCode ? { ...formData, country: phoneCountryCode } : formData ),
 		[ formData, phoneCountryCode ]
 	);
@@ -382,8 +371,8 @@ const SignupContactForm = ( {
 				countrySelectProps={ {
 					id: 'country_code',
 				} }
-				initialCountryCode={ initialPhone?.countryCode || 'US' }
-				initialPhoneNumber={ initialPhone?.phoneNumber }
+				initialCountryCode={ initialFormData.phone?.countryCode || 'US' }
+				initialPhoneNumber={ initialFormData.phone?.phoneNumber }
 			/>
 
 			<div className="signup-contact-form__tos">
