@@ -136,36 +136,48 @@ const SERIES = {
 
 const schemeNames = [ ...schemes.keys() ];
 
-describe( 'Stats chart series colours meet WCAG 1.4.11', () => {
-	it.each( schemeNames )( 'bar chart passes 3:1 in the %s scheme', ( scheme ) => {
-		const surface = tokenValue( scheme, '--color-surface' );
-		const views = tokenValue( scheme, SERIES.viewsBar );
-		const visitors = tokenValue( scheme, SERIES.visitorsBar );
+const lineChartSource = fs.readFileSync( LINE_CHART, 'utf8' );
+const LINE_CHART_TOKENS = [ ...lineChartSource.matchAll( /useCssVariable\(\s*'(--[\w-]+)'/g ) ].map(
+	( m ) => m[ 1 ]
+);
 
-		expect( contrast( views, surface ) ).toBeGreaterThanOrEqual( MIN_RATIO );
-		expect( contrast( visitors, surface ) ).toBeGreaterThanOrEqual( MIN_RATIO );
-		expect( contrast( views, visitors ) ).toBeGreaterThanOrEqual( MIN_RATIO );
-	} );
+describe( 'Stats chart series colours meet WCAG 1.4.11', () => {
+	it.each( schemeNames )(
+		'bar chart series meet the 3:1 adjacency rule (each other and the surface) in the %s scheme',
+		( scheme ) => {
+			const surface = tokenValue( scheme, '--color-surface' );
+			const views = tokenValue( scheme, SERIES.viewsBar );
+			const visitors = tokenValue( scheme, SERIES.visitorsBar );
+
+			expect( contrast( views, surface ) ).toBeGreaterThanOrEqual( MIN_RATIO );
+			expect( contrast( visitors, surface ) ).toBeGreaterThanOrEqual( MIN_RATIO );
+			expect( contrast( views, visitors ) ).toBeGreaterThanOrEqual( MIN_RATIO );
+		}
+	);
 
 	it( 'legend swatches use the same tokens as the bars they label', () => {
 		expect( SERIES.viewsSwatch ).toBe( SERIES.viewsBar );
 		expect( SERIES.visitorsSwatch ).toBe( SERIES.visitorsBar );
 	} );
 
-	it.each( schemeNames )( 'line chart passes 3:1 in the %s scheme', ( scheme ) => {
-		const source = fs.readFileSync( LINE_CHART, 'utf8' );
-		const tokens = [ ...source.matchAll( /useCssVariable\(\s*'(--[\w-]+)'/g ) ].map(
-			( m ) => m[ 1 ]
-		);
-		expect( tokens ).toHaveLength( 2 );
-
-		const surface = tokenValue( scheme, '--color-surface' );
-		const [ views, visitors ] = tokens.map( ( token ) => tokenValue( scheme, token ) );
-
-		expect( contrast( views, surface ) ).toBeGreaterThanOrEqual( MIN_RATIO );
-		expect( contrast( visitors, surface ) ).toBeGreaterThanOrEqual( MIN_RATIO );
-		expect( contrast( views, visitors ) ).toBeGreaterThanOrEqual( MIN_RATIO );
+	it( 'line chart declares exactly two distinct series colour tokens', () => {
+		expect( LINE_CHART_TOKENS ).toHaveLength( 2 );
+		expect( LINE_CHART_TOKENS[ 0 ] ).not.toBe( LINE_CHART_TOKENS[ 1 ] );
 	} );
+
+	it.each( schemeNames )(
+		'line chart series each meet the 3:1 background-contrast rule (no adjacency requirement) in the %s scheme',
+		( scheme ) => {
+			const surface = tokenValue( scheme, '--color-surface' );
+			const [ viewsToken, visitorsToken ] = LINE_CHART_TOKENS;
+			const views = tokenValue( scheme, viewsToken );
+			const visitors = tokenValue( scheme, visitorsToken );
+
+			expect( viewsToken ).not.toBe( visitorsToken );
+			expect( contrast( views, surface ) ).toBeGreaterThanOrEqual( MIN_RATIO );
+			expect( contrast( visitors, surface ) ).toBeGreaterThanOrEqual( MIN_RATIO );
+		}
+	);
 
 	it( 'Odyssey widget mini-chart does not override the shared series colours', () => {
 		const source = fs.readFileSync( WIDGET_CHART, 'utf8' );
