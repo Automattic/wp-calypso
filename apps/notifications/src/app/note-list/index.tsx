@@ -50,52 +50,58 @@ type NoteListProps = {
 
 const NoteList = ( { filterName, selectedNoteId, setSelectedNoteId }: NoteListProps ) => {
 	const filter = getFilters()[ filterName ];
+	const isAllTab = filterName === 'all';
 	const allNotes = useSelector( ( state ) => getAllNotes( state ) || [] ) as Note[];
 	// This tab's cached id list, keyed by tab name, or undefined until its first
 	// fetch. A tab never reads the previous tab's list.
 	const cachedNoteIds = useSelector( ( state ) => getFilteredNoteIds( state, filterName ) ) as
 		| number[]
 		| undefined;
-
-	// The "All" tab renders the whole cache; every filtered tab renders the
-	// server's id list for its filter. `filter.filter` still runs on top so an
-	// in-app change (e.g. reading a note on Unread) drops it out before a refetch.
-	let notes: Note[];
-	if ( filterName === 'all' ) {
-		notes = allNotes.filter( ( note ) => filter.filter( note ) );
-	} else {
-		const notesById = new Map( allNotes.map( ( note ) => [ note.id, note ] ) );
-		notes = ( cachedNoteIds ?? [] )
-			.map( ( id ) => notesById.get( id ) )
-			.filter( ( note ): note is Note => !! note )
-			.filter( ( note ) => filter.filter( note ) );
-	}
-
-	// Filter out hidden notes, i.e. notes that have been just marked as spam or moved to the trash.
 	const hiddenNoteIds = useSelector( ( state ) => getHiddenNoteIds( state ) );
-	const visibleNotes = notes.filter( ( note ) => hiddenNoteIds[ note.id ] !== true );
-
 	const isLoading = useSelector( ( state ) => getIsLoading( state ) );
 	const filteredLoading = useSelector( ( state ) => getFilteredLoading( state ) );
 	const { client } = useAppContext();
 
-	// Loading scoped to this tab, so another tab's fetch (or the background poll)
-	// can't show a loader over this one's cached notes. A filtered tab loads only
-	// while its own fetch is in flight; the All tab uses the shared flag, but not
-	// while a filtered fetch owns it.
-	const isThisTabLoading =
-		filterName === 'all' ? isLoading && ! filteredLoading : filteredLoading === filterName;
+	// Everything the render needs that depends on which tab is active, derived in
+	// one place so the All-vs-filtered split lives here and nowhere else.
+	const tab = useMemo( () => {
+		const { filter: matches } = getFilters()[ filterName ];
+
+		// The All tab renders the whole store; a filtered tab renders the server's
+		// id list for its filter. `matches` still runs on top so an in-app change
+		// (e.g. reading a note on Unread) drops it out before a refetch.
+		const notesById = new Map( allNotes.map( ( note ) => [ note.id, note ] ) );
+		const source = isAllTab
+			? allNotes
+			: ( cachedNoteIds ?? [] )
+					.map( ( id ) => notesById.get( id ) )
+					.filter( ( note ): note is Note => !! note );
+		const notes = source.filter( ( note ) => matches( note ) );
+
+		// Loading scoped to this tab, so another tab's fetch (or the background
+		// poll) can't show a loader over this one's cached notes. A filtered tab
+		// loads only while its own fetch is in flight; the All tab uses the shared
+		// flag, but not while a filtered fetch owns it.
+		const loading = isAllTab ? isLoading && ! filteredLoading : filteredLoading === filterName;
+
+		// Whether this tab's first load has settled — the All tab once its fetch is
+		// done, a filtered tab once its cached list exists (even empty).
+		const hasInitiallyLoaded = isAllTab ? ! loading : cachedNoteIds !== undefined;
+
+		return { notes, isLoading: loading, hasInitiallyLoaded };
+	}, [ isAllTab, allNotes, cachedNoteIds, isLoading, filteredLoading, filterName ] );
+
+	// Filter out hidden notes, i.e. notes that have been just marked as spam or moved to the trash.
+	const visibleNotes = tab.notes.filter( ( note ) => hiddenNoteIds[ note.id ] !== true );
 
 	// DataViews binds its infinite-scroll listener once, on mount, and only after it
 	// first renders as not-loading (with its scroll container present). So mount it
-	// only once this tab's first load has settled — a filtered tab once its cached
-	// list exists (even empty), the All tab once its fetch is done — and pass it
-	// isLoading={false} from then on. A cached tab is already settled, so switching
-	// back mounts it immediately, with its rows.
-	const firstLoadSettled = filterName === 'all' ? ! isThisTabLoading : cachedNoteIds !== undefined;
-	const hasInitiallyLoaded = useRef( false );
-	if ( firstLoadSettled ) {
-		hasInitiallyLoaded.current = true;
+	// only once this tab's first load has settled, and pass it isLoading={false}
+	// from then on. A cached tab is already settled, so switching back mounts it
+	// immediately, with its rows.
+	const hasInitiallyLoadedRef = useRef( false );
+	if ( tab.hasInitiallyLoaded ) {
+		hasInitiallyLoadedRef.current = true;
 	}
 
 	// Drive the client's active tab; it refetches (or shows the cached list) on change.
@@ -193,24 +199,24 @@ const NoteList = ( { filterName, selectedNoteId, setSelectedNoteId }: NoteListPr
 
 	const noteListRef = useRef< HTMLObjectElement >( null );
 
-	useNoteListFocusToLastSelectedNote( { noteListRef, notes } );
+	useNoteListFocusToLastSelectedNote( { noteListRef, notes: tab.notes } );
 	useNoteListNavigationKeyboardShortcuts( { noteListRef, visibleNotes } );
 
 	// Spinner instead of an empty message while the view may still be filling: more
 	// notes to page, this tab's fetch in flight, or a tab never fetched yet (no
 	// cached list).
 	const showEmptyLoader =
-		hasMoreNotes || ( filterName !== 'all' && ( cachedNoteIds === undefined || isThisTabLoading ) );
+		hasMoreNotes || ( ! isAllTab && ( cachedNoteIds === undefined || tab.isLoading ) );
 
 	// `groupBy` forces DataViews' list layout off its infinite-scroll path, which
 	// is the only path that renders its built-in load-more spinner — so we render
 	// our own at the foot of the list while a page is in flight over an
 	// already-populated list. An empty list uses the `empty` slot above instead.
-	const showLoadMore = isThisTabLoading && data.length > 0;
+	const showLoadMore = tab.isLoading && data.length > 0;
 
 	// Full-panel spinner until this tab's first load settles; after that DataViews
 	// is mounted and in-flight loading shows in the `empty` slot or the foot.
-	if ( ! hasInitiallyLoaded.current ) {
+	if ( ! hasInitiallyLoadedRef.current ) {
 		return (
 			<div ref={ noteListRef } className="wpnc__note-list">
 				<VStack alignment="center" style={ { padding: '40px 0' } }>
