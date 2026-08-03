@@ -8,14 +8,16 @@ interface Props {
 	selectedSiteId?: number | null;
 }
 
-type AddOnPurchaseStatus = {
-	available: boolean;
-	/**
-	 * Why the add-on is unavailable: bought separately, or granted by the site's plan.
-	 */
-	reason?: 'purchased' | 'included';
-	text?: ReturnType< typeof i18n.translate >;
-};
+type AddOnPurchaseStatus =
+	| { available: true; reason?: never; text?: never }
+	| {
+			available: false;
+			/**
+			 * Why the add-on is unavailable: bought separately, or granted by the site's plan.
+			 */
+			reason: 'purchased' | 'included';
+			text: ReturnType< typeof i18n.translate >;
+	  };
 
 /**
  * Returns whether add-on product has been purchased or included in site plan.
@@ -39,8 +41,14 @@ const useAddOnPurchaseStatus = ( { addOnMeta, selectedSiteId }: Props ): AddOnPu
 	 */
 	if ( matchingPurchases ) {
 		if ( addOnMeta.quantity ) {
-			const purchase: Purchases.RawPurchase = Object.values( matchingPurchases )[ 0 ];
-			if ( purchase.renewal_price_tier_usage_quantity === addOnMeta.quantity ) {
+			// A site can hold several purchases of the same product slug, so check them all
+			// rather than assuming the matching quantity is on the first one.
+			const purchases: Purchases.RawPurchase[] = Object.values( matchingPurchases );
+			if (
+				purchases.some(
+					( purchase ) => purchase.renewal_price_tier_usage_quantity === addOnMeta.quantity
+				)
+			) {
 				return { available: false, reason: 'purchased', text: translate( 'Purchased' ) };
 			}
 		} else {
