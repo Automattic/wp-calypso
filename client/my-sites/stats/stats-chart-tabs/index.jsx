@@ -415,8 +415,8 @@ const withCssColors = ( WrappedComponent ) => {
 	const WithCssColorsComponent = ( props ) => {
 		const chartContainerRef = useRef( null );
 
-		const primaryColor = useCssVariable( '--color-accent-50', chartContainerRef.current );
-		const secondaryColor = useCssVariable( '--color-accent-70', chartContainerRef.current );
+		const primaryColor = useCssVariable( '--chart-series-views', chartContainerRef.current );
+		const secondaryColor = useCssVariable( '--chart-series-visitors', chartContainerRef.current );
 
 		return (
 			<WrappedComponent
