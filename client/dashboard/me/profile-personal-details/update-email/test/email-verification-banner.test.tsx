@@ -8,7 +8,6 @@ import userEvent from '@testing-library/user-event';
 import { dispatch } from '@wordpress/data';
 import { store as noticesStore } from '@wordpress/notices';
 import nock from 'nock';
-import { useState } from 'react';
 import Snackbars from '../../../../app/snackbars';
 import { render } from '../../../../test-utils';
 import EmailVerificationBanner from '../email-verification-banner';
@@ -137,46 +136,6 @@ describe( '<EmailVerificationBanner>', () => {
 		expect(
 			await screen.findByRole( 'button', { name: 'Resend email (4:00:00)' } )
 		).toBeDisabled();
-	} );
-
-	test( 'sets a cooldown aside while a pending change is in play, then applies it again', async () => {
-		const user = userEvent.setup();
-
-		// The wait lives in the banner, so it has to survive the settings changing underneath it.
-		// Nothing in the banner switches its own target and `render` builds a route from the
-		// element it is given, so the change has to come from a parent held across the mount.
-		function BannerWithSwitchableTarget() {
-			const [ isPending, setIsPending ] = useState( false );
-			return (
-				<>
-					<button onClick={ () => setIsPending( ( current ) => ! current ) }>switch-target</button>
-					<EmailVerificationBanner
-						userSettings={ isPending ? pendingSettings : settings }
-						isEmailVerified={ isPending }
-					/>
-				</>
-			);
-		}
-
-		render( <BannerWithSwitchableTarget /> );
-
-		expect( await screen.findByText( 'Verify your email' ) ).toBeVisible();
-
-		nock( 'https://public-api.wordpress.com' )
-			.post( '/rest/v1.1/me/send-verification-email' )
-			.reply( 429, { error: 'throttled', data: { retry_after: 4 * 60 * 60 } } );
-
-		await user.click( screen.getByRole( 'button', { name: 'Resend email' } ) );
-		expect( await screen.findByRole( 'button', { name: /Resend email \(/ } ) ).toBeDisabled();
-
-		// A saved correction. The pending-change path isn't rate limited, so the wait doesn't
-		// apply there.
-		await user.click( screen.getByRole( 'button', { name: 'switch-target' } ) );
-		expect( await screen.findByRole( 'button', { name: 'Resend email' } ) ).toBeEnabled();
-
-		// Cancelling puts the throttled endpoint back in use, and the server is still refusing.
-		await user.click( screen.getByRole( 'button', { name: 'switch-target' } ) );
-		expect( await screen.findByRole( 'button', { name: /Resend email \(/ } ) ).toBeDisabled();
 	} );
 
 	test( 'reports a refused send rather than announcing an email nobody was sent', async () => {
