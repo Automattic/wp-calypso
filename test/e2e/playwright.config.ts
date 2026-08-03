@@ -51,10 +51,9 @@ const loginBrowserUse = {
 		],
 		slowMo: 1000,
 		env: {},
-		channel: '',
+		// Google OAuth rejects the headless shell as an insecure browser.
+		channel: 'chromium',
 	},
-	userAgent:
-		'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/94.0.4606.61 Safari/537.36',
 };
 
 function getWorkers(): number | string {
