@@ -9,7 +9,6 @@ import {
 	PARTNER_DIRECTORY_DASHBOARD_SLUG,
 	PARTNER_DIRECTORY_LEAD_MATCHING_SLUG,
 } from 'calypso/a8c-for-agencies/sections/partner-directory/constants';
-import { isLeadMatchingSectionVisible } from 'calypso/a8c-for-agencies/sections/partner-directory/lib/lead-matching-visibility';
 import { useSelector } from 'calypso/state';
 import { getActiveAgency } from 'calypso/state/a8c-for-agencies/agency/selectors';
 
@@ -24,8 +23,6 @@ const usePartnerDirectoryMenuItems = ( path: string ) => {
 	const hasDirectoryApproval = agency?.profile?.partner_directory_application?.directories.some(
 		( { status } ) => status === 'approved'
 	);
-	const canAccessLeadMatching = isLeadMatchingSectionVisible();
-
 	const menuItems = useMemo( () => {
 		return [
 			createItem(
@@ -64,27 +61,23 @@ const usePartnerDirectoryMenuItems = ( path: string ) => {
 						),
 				  ]
 				: [] ),
-			...( canAccessLeadMatching
-				? [
-						createItem(
-							{
-								icon: people,
-								path: A4A_PARTNER_DIRECTORY_LINK,
-								link: `${ A4A_PARTNER_DIRECTORY_LINK }/${ PARTNER_DIRECTORY_LEAD_MATCHING_SLUG }`,
-								title: translate( 'Lead matching' ),
-								trackEventProps: {
-									menu_item: 'Automattic for Agencies / Partner Directory / Lead matching',
-								},
-								isSelected: isSelected( path, [
-									`${ A4A_PARTNER_DIRECTORY_LINK }/${ PARTNER_DIRECTORY_LEAD_MATCHING_SLUG }`,
-								] ),
-							},
-							path
-						),
-				  ]
-				: [] ),
+			createItem(
+				{
+					icon: people,
+					path: A4A_PARTNER_DIRECTORY_LINK,
+					link: `${ A4A_PARTNER_DIRECTORY_LINK }/${ PARTNER_DIRECTORY_LEAD_MATCHING_SLUG }`,
+					title: translate( 'Lead matching' ),
+					trackEventProps: {
+						menu_item: 'Automattic for Agencies / Partner Directory / Lead matching',
+					},
+					isSelected: isSelected( path, [
+						`${ A4A_PARTNER_DIRECTORY_LINK }/${ PARTNER_DIRECTORY_LEAD_MATCHING_SLUG }`,
+					] ),
+				},
+				path
+			),
 		];
-	}, [ canAccessLeadMatching, hasDirectoryApproval, path, translate ] );
+	}, [ hasDirectoryApproval, path, translate ] );
 	return menuItems;
 };
 
