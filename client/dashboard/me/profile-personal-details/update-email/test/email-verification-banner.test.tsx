@@ -41,15 +41,28 @@ function TargetSwitcher() {
 	);
 }
 
+const notificationSnackBar = () => {
+	// Snackbar requires a custom matcher because its aria-live is not supported by the testing library
+	return document.getElementById( 'a11y-speak-polite' );
+};
+
 describe( '<EmailVerificationBanner>', () => {
 	// Both outlive a render, so one case's announcement would otherwise be found by the next:
 	// snackbars are their own notice type, and `@wordpress/a11y` keeps a live region on the body.
+	beforeEach( () => {
+		// Snackbar requires window.scrollTo to be defined
+		window.scrollTo = jest.fn();
+	} );
+
 	afterEach( () => {
+		// Snackbars are their own notice type, so the default clear leaves them behind for the
+		// next case to find.
 		dispatch( noticesStore ).removeAllNotices( 'snackbar' );
 		dispatch( noticesStore ).removeAllNotices();
-		document.querySelectorAll( '.a11y-speak-region' ).forEach( ( region ) => {
+		const region = notificationSnackBar();
+		if ( region ) {
 			region.textContent = '';
-		} );
+		}
 	} );
 
 	test( 'shows verification banner and resends email', async () => {
@@ -96,9 +109,7 @@ describe( '<EmailVerificationBanner>', () => {
 
 		render( <Snackbars /> );
 		await waitFor( () =>
-			expect( document.querySelector( '.components-snackbar__content' ) ).toHaveTextContent(
-				'pending@example.com'
-			)
+			expect( notificationSnackBar() ).toHaveTextContent( 'pending@example.com' )
 		);
 	} );
 
@@ -187,11 +198,7 @@ describe( '<EmailVerificationBanner>', () => {
 		await user.click( screen.getByRole( 'button', { name: 'Resend email' } ) );
 
 		// Scoped to the snackbar: the live region mirrors it.
-		await waitFor( () =>
-			expect( document.querySelector( '.components-snackbar__content' ) ).toHaveTextContent(
-				'Failed to resend'
-			)
-		);
+		await waitFor( () => expect( notificationSnackBar() ).toHaveTextContent( 'Failed to resend' ) );
 		// And nothing is held back over an email that never went out.
 		await waitFor( () =>
 			expect( screen.getByRole( 'button', { name: 'Resend email' } ) ).toBeEnabled()
